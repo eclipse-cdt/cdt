@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2006 QNX Software Systems and others.
+ * Copyright (c) 2004, 2009 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -27,6 +27,12 @@ import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
 
+/**
+ * @deprecated use {@link org.eclipse.cdt.utils.PathUtil}, instead.
+ * @noextend This class is not intended to be subclassed by clients.
+ * @noinstantiate This class is not intended to be instantiated by clients.
+ */
+@Deprecated
 public class PathUtil {
 	
 	public static boolean isWindowsFileSystem() {
@@ -133,6 +139,9 @@ public class PathUtil {
         return relativePath;
     }
 
+    /**
+     * @noreference This method is not intended to be referenced by clients.
+     */
     public static ICProject getEnclosingProject(IPath fullPath) {
 		IWorkspaceRoot root = getWorkspaceRoot();
 		if (root != null) {

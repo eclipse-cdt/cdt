@@ -155,7 +155,7 @@ public class TypeSelectionDialog extends TwoPaneElementSelector {
 			
 			if (fMatchGlobalNamespace) {
 				// must match global namespace (eg ::foo)
-				if (info.getRootNamespace(false) != null)
+				if (qualifiedName.segment(0).length() > 0)
 					return false;
 			}
 			
@@ -687,7 +687,7 @@ public class TypeSelectionDialog extends TwoPaneElementSelector {
 	private void addFoldedElements(IndexTypeInfo typeInfo, ArrayList<IndexTypeInfo> result) {
 		ITypeReference[] refs= typeInfo.getReferences();
 		for (ITypeReference ref : refs) {
-			result.add(new IndexTypeInfo(typeInfo, ref));
+			result.add(IndexTypeInfo.create(typeInfo, ref));
 		}
 	}
 }

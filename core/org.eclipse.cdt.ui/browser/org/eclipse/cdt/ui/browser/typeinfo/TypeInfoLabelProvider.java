@@ -179,10 +179,6 @@ public class TypeInfoLabelProvider extends LabelProvider {
 
 		ITypeInfo typeRef= (ITypeInfo) element;
 		if (isSet(SHOW_ENCLOSING_TYPE_ONLY)) {
-			ITypeInfo parentInfo = typeRef.getEnclosingType();
-			if (parentInfo != null) {
-				return getTypeIcon(parentInfo.getCElementType());
-			}
 			IPath path = null;
 			ITypeReference ref = typeRef.getResolvedReference();
 			if (ref != null) {

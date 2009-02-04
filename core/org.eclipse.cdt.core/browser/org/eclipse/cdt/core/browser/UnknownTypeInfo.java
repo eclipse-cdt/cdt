@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2006 QNX Software Systems and others.
+ * Copyright (c) 2004, 2009 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,32 +10,14 @@
  *******************************************************************************/
 package org.eclipse.cdt.core.browser;
 
-import org.eclipse.core.runtime.IPath;
 
+/**
+ * @deprecated not used anywhere.
+ * @noextend This class is not intended to be subclassed by clients.
+ * @noinstantiate This class is not intended to be instantiated by clients.
+ */
+@Deprecated
 public class UnknownTypeInfo extends TypeInfo {
-    
-    public UnknownTypeInfo(String name, IPath path) {
-		this(new QualifiedTypeName(name));
-		if (path != null) {
-		    addReference(new TypeReference(path, null));
-		}
-    }
-
-	public UnknownTypeInfo(IQualifiedTypeName typeName) {
-		super(0, typeName);
-	}
 	
-	@Override
-	public boolean isUndefinedType() {
-		return true;
-	}
-
-	@Override
-	public boolean canSubstituteFor(ITypeInfo info) {
-		int compareType = info.getCElementType();
-		if (fElementType == 0 || compareType == 0 || fElementType == compareType) {
-			return fQualifiedName.equals(info.getQualifiedTypeName());
-		}
-		return false;
-	}
+	private UnknownTypeInfo() {}
 }

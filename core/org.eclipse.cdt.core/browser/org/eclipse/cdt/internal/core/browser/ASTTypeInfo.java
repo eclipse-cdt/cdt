@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008 Wind River Systems, Inc and others.
+ * Copyright (c) 2008, 2009 Wind River Systems, Inc and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -107,64 +107,9 @@ public class ASTTypeInfo implements ITypeInfo, IFunctionInfo {
 		this.returnType= returnType;
 		this.reference= reference;
 	}
-		
-	public void addDerivedReference(ITypeReference location) {
-		throw new PDOMNotImplementedError();
-	}
-
-	public void addReference(ITypeReference location) {
-		throw new PDOMNotImplementedError();
-	}
-
-	public boolean canSubstituteFor(ITypeInfo info) {
-		throw new PDOMNotImplementedError();
-	}
-
-	public boolean encloses(ITypeInfo info) {
-		throw new PDOMNotImplementedError();
-	}
-
-	public boolean exists() {
-		throw new PDOMNotImplementedError();
-	}
-
+	
 	public int getCElementType() {
 		return elementType;
-	}
-
-	public ITypeReference[] getDerivedReferences() {
-		throw new PDOMNotImplementedError();
-	}
-
-	public ITypeInfo[] getEnclosedTypes() {
-		throw new PDOMNotImplementedError();
-	}
-
-	public ITypeInfo[] getEnclosedTypes(int[] kinds) {
-		throw new PDOMNotImplementedError();
-	}
-
-	public ITypeInfo getEnclosingNamespace(boolean includeGlobalNamespace) {
-		throw new PDOMNotImplementedError();
-	}
-
-	public ICProject getEnclosingProject() {
-		if(getResolvedReference()!=null) {
-			IProject project = reference.getProject();
-			if(project!=null) {
-				return CCorePlugin.getDefault().getCoreModel().getCModel().getCProject(project.getName());
-			}
-		}
-		return null;
-	}
-
-	public ITypeInfo getEnclosingType() {
-		// TODO not sure
-		return null;
-	}
-
-	public ITypeInfo getEnclosingType(int[] kinds) {
-		throw new PDOMNotImplementedError();
 	}
 
 	public String getName() {
@@ -179,97 +124,20 @@ public class ASTTypeInfo implements ITypeInfo, IFunctionInfo {
 		return reference;
 	}
 
-	private static ASTTypeReference createReference(IASTName name) {
-		IASTFileLocation floc= name.getFileLocation();
-		if (floc != null) {
-			String filename= floc.getFileName();
-			IIndexFileLocation ifl= IndexLocationFactory.getIFLExpensive(filename);
-			String fullPath= ifl.getFullPath();
-			if (fullPath != null) {
-				IFile file = ResourcesPlugin.getWorkspace().getRoot().getFile(new Path(fullPath));
-				if(file!=null) {
-					return new ASTTypeReference(ifl, name.resolveBinding(), file, 
-							floc.getNodeOffset(), floc.getNodeLength());
-				}
-			} else {
-				IPath path = URIUtil.toPath(ifl.getURI());
-				if (path!=null) {
-					return new ASTTypeReference(ifl, name.resolveBinding(), path,
-							floc.getNodeOffset(), floc.getNodeLength());
-				}
+	public ITypeReference[] getReferences() {
+		return new ITypeReference[] {reference};
+	}
+
+	public ICProject getEnclosingProject() {
+		if(getResolvedReference()!=null) {
+			IProject project = reference.getProject();
+			if(project!=null) {
+				return CCorePlugin.getDefault().getCoreModel().getCModel().getCProject(project.getName());
 			}
 		}
 		return null;
 	}
 
-
-	public ITypeReference[] getReferences() {
-		throw new UnsupportedOperationException();
-	}
-
-	public ITypeInfo getRootNamespace(boolean includeGlobalNamespace) {
-		throw new PDOMNotImplementedError();
-	}
-
-	public ITypeInfo[] getSubTypes() {
-		throw new PDOMNotImplementedError();
-	}
-
-	public ASTAccessVisibility getSuperTypeAccess(ITypeInfo subType) {
-		throw new PDOMNotImplementedError();
-	}
-
-	public ITypeInfo[] getSuperTypes() {
-		throw new PDOMNotImplementedError();
-	}
-
-	public boolean hasEnclosedTypes() {
-		throw new PDOMNotImplementedError();
-	}
-
-	public boolean hasSubTypes() {
-		throw new PDOMNotImplementedError();
-	}
-
-	public boolean hasSuperTypes() {
-		throw new PDOMNotImplementedError();
-	}
-
-	public boolean isClass() {
-		throw new PDOMNotImplementedError();
-	}
-
-	public boolean isEnclosed(ITypeInfo info) {
-		throw new PDOMNotImplementedError();
-	}
-
-	public boolean isEnclosed(ITypeSearchScope scope) {
-		throw new PDOMNotImplementedError();
-	}
-
-	public boolean isEnclosedType() {
-		throw new PDOMNotImplementedError();
-	}
-
-	public boolean isEnclosingType() {
-		throw new PDOMNotImplementedError();
-	}
-
-	public boolean isReferenced(ITypeSearchScope scope) {
-		throw new PDOMNotImplementedError();
-	}
-
-	public boolean isUndefinedType() {
-		throw new PDOMNotImplementedError();
-	}
-
-	public void setCElementType(int type) {
-		throw new PDOMNotImplementedError();
-	}
-
-	/*
-	 * @see org.eclipse.cdt.internal.core.browser.IFunctionInfo#getParameters()
-	 */
 	public String[] getParameters() {
 		return params;
 	}
@@ -312,8 +180,161 @@ public class ASTTypeInfo implements ITypeInfo, IFunctionInfo {
 		return true;
 	}
 
-
 	public IIndexFileLocation getIFL() {
 		return reference.getIFL();
+	}
+
+	private static ASTTypeReference createReference(IASTName name) {
+		IASTFileLocation floc= name.getFileLocation();
+		if (floc != null) {
+			String filename= floc.getFileName();
+			IIndexFileLocation ifl= IndexLocationFactory.getIFLExpensive(filename);
+			String fullPath= ifl.getFullPath();
+			if (fullPath != null) {
+				IFile file = ResourcesPlugin.getWorkspace().getRoot().getFile(new Path(fullPath));
+				if(file!=null) {
+					return new ASTTypeReference(ifl, name.resolveBinding(), file, 
+							floc.getNodeOffset(), floc.getNodeLength());
+				}
+			} else {
+				IPath path = URIUtil.toPath(ifl.getURI());
+				if (path!=null) {
+					return new ASTTypeReference(ifl, name.resolveBinding(), path,
+							floc.getNodeOffset(), floc.getNodeLength());
+				}
+			}
+		}
+		return null;
+	}
+	
+	@Deprecated
+	public void addDerivedReference(ITypeReference location) {
+		throw new PDOMNotImplementedError();
+	}
+
+	@Deprecated
+	public void addReference(ITypeReference location) {
+		throw new PDOMNotImplementedError();
+	}
+
+	@Deprecated
+	public boolean canSubstituteFor(ITypeInfo info) {
+		throw new PDOMNotImplementedError();
+	}
+
+	@Deprecated
+	public boolean encloses(ITypeInfo info) {
+		throw new PDOMNotImplementedError();
+	}
+
+	@Deprecated
+	public boolean exists() {
+		throw new PDOMNotImplementedError();
+	}
+
+	@Deprecated
+	public ITypeReference[] getDerivedReferences() {
+		throw new PDOMNotImplementedError();
+	}
+
+	@Deprecated
+	public ITypeInfo[] getEnclosedTypes() {
+		throw new PDOMNotImplementedError();
+	}
+
+	@Deprecated
+	public ITypeInfo[] getEnclosedTypes(int[] kinds) {
+		throw new PDOMNotImplementedError();
+	}
+
+	@Deprecated
+	public ITypeInfo getEnclosingNamespace(boolean includeGlobalNamespace) {
+		throw new PDOMNotImplementedError();
+	}
+
+	@Deprecated
+	public ITypeInfo getEnclosingType() {
+		// TODO not sure
+		return null;
+	}
+
+	@Deprecated
+	public ITypeInfo getEnclosingType(int[] kinds) {
+		throw new PDOMNotImplementedError();
+	}
+
+	@Deprecated
+	public ITypeInfo getRootNamespace(boolean includeGlobalNamespace) {
+		throw new PDOMNotImplementedError();
+	}
+
+	@Deprecated
+	public ITypeInfo[] getSubTypes() {
+		throw new PDOMNotImplementedError();
+	}
+
+	@Deprecated
+	public ASTAccessVisibility getSuperTypeAccess(ITypeInfo subType) {
+		throw new PDOMNotImplementedError();
+	}
+
+	@Deprecated
+	public ITypeInfo[] getSuperTypes() {
+		throw new PDOMNotImplementedError();
+	}
+
+	@Deprecated
+	public boolean hasEnclosedTypes() {
+		throw new PDOMNotImplementedError();
+	}
+
+	@Deprecated
+	public boolean hasSubTypes() {
+		throw new PDOMNotImplementedError();
+	}
+
+	@Deprecated
+	public boolean hasSuperTypes() {
+		throw new PDOMNotImplementedError();
+	}
+
+	@Deprecated
+	public boolean isClass() {
+		throw new PDOMNotImplementedError();
+	}
+
+	@Deprecated
+	public boolean isEnclosed(ITypeInfo info) {
+		throw new PDOMNotImplementedError();
+	}
+
+	@Deprecated
+	public boolean isEnclosed(ITypeSearchScope scope) {
+		throw new PDOMNotImplementedError();
+	}
+
+	@Deprecated
+	public boolean isEnclosedType() {
+		throw new PDOMNotImplementedError();
+	}
+
+	@Deprecated
+	public boolean isEnclosingType() {
+		throw new PDOMNotImplementedError();
+	}
+
+	@Deprecated
+	public boolean isReferenced(ITypeSearchScope scope) {
+		throw new PDOMNotImplementedError();
+	}
+
+	@Deprecated
+	public boolean isUndefinedType() {
+		throw new PDOMNotImplementedError();
+	}
+
+	@Deprecated
+	public void setCElementType(int type) {
+		throw new PDOMNotImplementedError();
 	}
 }

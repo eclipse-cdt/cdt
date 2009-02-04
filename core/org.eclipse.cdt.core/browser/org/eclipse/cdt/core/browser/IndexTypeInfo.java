@@ -1,12 +1,12 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2008 QNX Software Systems and others.
+ * Copyright (c) 2006, 2009 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- * 		QNX - Initial API and implementation
+ * 		Doug Schaefer (QNX) - Initial API and implementation
  * 		IBM Corporation
  *      Andrew Ferguson (Symbian)
  *      Anton Leherbauer (Wind River Systems)
@@ -50,8 +50,8 @@ import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Path;
 
 /**
- * @author Doug Schaefer
- * @noextend This class is not intended to be subclassed by clients.
+ * @noinstantiate This class is not intended to be instantiated by clients.
+ * @noextend This interface is not intended to be extended by clients.
  */
 public class IndexTypeInfo implements ITypeInfo, IFunctionInfo {
 	private static int hashCode(String[] array) {
@@ -116,7 +116,7 @@ public class IndexTypeInfo implements ITypeInfo, IFunctionInfo {
 
 		return new IndexTypeInfo(fqn, flsq, elementType, index, null, null, null);
 	}
-
+	
 	/**
 	 * Creates a type info object suitable for a macro.
 	 * @param index a non-null index in which to locate references
@@ -137,6 +137,13 @@ public class IndexTypeInfo implements ITypeInfo, IFunctionInfo {
 		return new IndexTypeInfo(new String[] {new String(name)}, ICElement.C_MACRO, params, null, index);
 	}
 
+	/**
+	 * @since 5.1
+	 */
+	public static IndexTypeInfo create(IndexTypeInfo rhs, ITypeReference ref) {
+		return new IndexTypeInfo(rhs, ref);
+	}
+
 	private IndexTypeInfo(String[] fqn, IIndexFileLocation fileLocal, int elementType, IIndex index, String[] params, String returnType, ITypeReference reference) {
 		Assert.isTrue(index != null);
 		this.fqn= fqn;
@@ -148,62 +155,16 @@ public class IndexTypeInfo implements ITypeInfo, IFunctionInfo {
 		this.reference= reference;
 	}
 	
-	/**
-	 * @deprecated, use {@link #create(IIndex, IIndexBinding)}.
-	 */
-	public IndexTypeInfo(String[] fqn, int elementType, IIndex index) {
-		this(fqn, null, elementType, index, null, null, null);
-	}
-
-	/**
-	 * @deprecated, use {@link #create(IIndex, IIndexBinding)}.
-	 */
-	public IndexTypeInfo(String[] fqn, int elementType, String[] params, String returnType, IIndex index) {
+	private IndexTypeInfo(String[] fqn, int elementType, String[] params, String returnType, IIndex index) {
 		this(fqn, null, elementType, index, params, returnType, null);
 	}
 	
-	public IndexTypeInfo(IndexTypeInfo rhs, ITypeReference ref) {
+	private IndexTypeInfo(IndexTypeInfo rhs, ITypeReference ref) {
 		this(rhs.fqn, rhs.fileLocal, rhs.elementType, rhs.index, rhs.params, rhs.returnType, ref);
-	}
-
-	public void addDerivedReference(ITypeReference location) {
-		throw new PDOMNotImplementedError();
-	}
-
-	public void addReference(ITypeReference location) {
-		throw new PDOMNotImplementedError();
-	}
-
-	public boolean canSubstituteFor(ITypeInfo info) {
-		throw new PDOMNotImplementedError();
-	}
-
-	public boolean encloses(ITypeInfo info) {
-		throw new PDOMNotImplementedError();
-	}
-
-	public boolean exists() {
-		throw new PDOMNotImplementedError();
 	}
 
 	public int getCElementType() {
 		return elementType;
-	}
-
-	public ITypeReference[] getDerivedReferences() {
-		throw new PDOMNotImplementedError();
-	}
-
-	public ITypeInfo[] getEnclosedTypes() {
-		throw new PDOMNotImplementedError();
-	}
-
-	public ITypeInfo[] getEnclosedTypes(int[] kinds) {
-		throw new PDOMNotImplementedError();
-	}
-
-	public ITypeInfo getEnclosingNamespace(boolean includeGlobalNamespace) {
-		throw new PDOMNotImplementedError();
 	}
 
 	public ICProject getEnclosingProject() {
@@ -216,21 +177,70 @@ public class IndexTypeInfo implements ITypeInfo, IFunctionInfo {
 		return null;
 	}
 
-	public ITypeInfo getEnclosingType() {
-		// TODO not sure
-		return null;
-	}
-
-	public ITypeInfo getEnclosingType(int[] kinds) {
-		throw new PDOMNotImplementedError();
-	}
-
 	public String getName() {
 		return fqn[fqn.length-1];
 	}
 
 	public IQualifiedTypeName getQualifiedTypeName() {
 		return new QualifiedTypeName(fqn);
+	}
+
+	/*
+	 * @see org.eclipse.cdt.internal.core.browser.IFunctionInfo#getParameters()
+	 */
+	public String[] getParameters() {
+		return params;
+	}
+
+	/*
+	 * @see org.eclipse.cdt.internal.core.browser.IFunctionInfo#getReturnType()
+	 */
+	public String getReturnType() {
+		return returnType;
+	}
+
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + elementType;
+		result = prime * result + ((fileLocal == null) ? 0 : fileLocal.hashCode());
+		result = prime * result + IndexTypeInfo.hashCode(fqn);
+		result = prime * result + IndexTypeInfo.hashCode(params);
+		return result;
+	}
+
+	/**
+	 * Type info objects are equal if they compute the same references.
+	 */
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		IndexTypeInfo other = (IndexTypeInfo) obj;
+		if (elementType != other.elementType)
+			return false;
+		if (fileLocal == null) {
+			if (other.fileLocal != null)
+				return false;
+		} else if (!fileLocal.equals(other.fileLocal))
+			return false;
+		if (!Arrays.equals(fqn, other.fqn))
+			return false;
+		if (!Arrays.equals(params, other.params))
+			return false;
+		return true;
+	}
+	
+	/**
+	 * @since 5.1
+	 */
+	public boolean isFileLocal() {
+		return fileLocal != null;
 	}
 
 	public ITypeReference getResolvedReference() {
@@ -452,121 +462,240 @@ public class IndexTypeInfo implements ITypeInfo, IFunctionInfo {
 		return otherFile.equals(file);
 	}
 
+	/**
+	 * @deprecated
+	 * @noreference This method is not intended to be referenced by clients.
+	 */
+	@Deprecated
+	public void addDerivedReference(ITypeReference location) {
+		throw new PDOMNotImplementedError();
+	}
+
+	/**
+	 * @deprecated
+	 * @noreference This method is not intended to be referenced by clients.
+	 */
+	@Deprecated
+	public void addReference(ITypeReference location) {
+		throw new PDOMNotImplementedError();
+	}
+
+	/**
+	 * @deprecated
+	 * @noreference This method is not intended to be referenced by clients.
+	 */
+	@Deprecated
+	public boolean canSubstituteFor(ITypeInfo info) {
+		throw new PDOMNotImplementedError();
+	}
+
+	/**
+	 * @deprecated
+	 * @noreference This method is not intended to be referenced by clients.
+	 */
+	@Deprecated
+	public boolean encloses(ITypeInfo info) {
+		throw new PDOMNotImplementedError();
+	}
+
+	/**
+	 * @deprecated
+	 * @noreference This method is not intended to be referenced by clients.
+	 */
+	@Deprecated
+	public boolean exists() {
+		throw new PDOMNotImplementedError();
+	}
+
+	/**
+	 * @deprecated
+	 * @noreference This method is not intended to be referenced by clients.
+	 */
+	@Deprecated
+	public ITypeReference[] getDerivedReferences() {
+		throw new PDOMNotImplementedError();
+	}
+
+	/**
+	 * @deprecated
+	 * @noreference This method is not intended to be referenced by clients.
+	 */
+	@Deprecated
+	public ITypeInfo[] getEnclosedTypes() {
+		throw new PDOMNotImplementedError();
+	}
+
+	/**
+	 * @deprecated
+	 * @noreference This method is not intended to be referenced by clients.
+	 */
+	@Deprecated
+	public ITypeInfo[] getEnclosedTypes(int[] kinds) {
+		throw new PDOMNotImplementedError();
+	}
+
+	/**
+	 * @deprecated
+	 * @noreference This method is not intended to be referenced by clients.
+	 */
+	@Deprecated
+	public ITypeInfo getEnclosingNamespace(boolean includeGlobalNamespace) {
+		throw new PDOMNotImplementedError();
+	}
+
+
+	/**
+	 * @deprecated
+	 * @noreference This method is not intended to be referenced by clients.
+	 */
+	@Deprecated
+	public ITypeInfo getEnclosingType() {
+		// TODO not sure
+		return null;
+	}
+
+	/**
+	 * @deprecated
+	 * @noreference This method is not intended to be referenced by clients.
+	 */
+	@Deprecated
+	public ITypeInfo getEnclosingType(int[] kinds) {
+		throw new PDOMNotImplementedError();
+	}
+
+
+	/**
+	 * @deprecated
+	 * @noreference This method is not intended to be referenced by clients.
+	 */
+	@Deprecated
 	public ITypeInfo getRootNamespace(boolean includeGlobalNamespace) {
 		throw new PDOMNotImplementedError();
 	}
 
+	/**
+	 * @deprecated
+	 * @noreference This method is not intended to be referenced by clients.
+	 */
+	@Deprecated
 	public ITypeInfo[] getSubTypes() {
 		throw new PDOMNotImplementedError();
 	}
 
+	/**
+	 * @deprecated
+	 * @noreference This method is not intended to be referenced by clients.
+	 */
+	@Deprecated
 	public ASTAccessVisibility getSuperTypeAccess(ITypeInfo subType) {
 		throw new PDOMNotImplementedError();
 	}
 
+	/**
+	 * @deprecated
+	 * @noreference This method is not intended to be referenced by clients.
+	 */
+	@Deprecated
 	public ITypeInfo[] getSuperTypes() {
 		throw new PDOMNotImplementedError();
 	}
 
+	/**
+	 * @deprecated
+	 * @noreference This method is not intended to be referenced by clients.
+	 */
+	@Deprecated
 	public boolean hasEnclosedTypes() {
 		throw new PDOMNotImplementedError();
 	}
 
+	/**
+	 * @deprecated
+	 * @noreference This method is not intended to be referenced by clients.
+	 */
+	@Deprecated
 	public boolean hasSubTypes() {
 		throw new PDOMNotImplementedError();
 	}
 
+	/**
+	 * @deprecated
+	 * @noreference This method is not intended to be referenced by clients.
+	 */
+	@Deprecated
 	public boolean hasSuperTypes() {
 		throw new PDOMNotImplementedError();
 	}
 
+	/**
+	 * @deprecated
+	 * @noreference This method is not intended to be referenced by clients.
+	 */
+	@Deprecated
 	public boolean isClass() {
 		throw new PDOMNotImplementedError();
 	}
 
+	/**
+	 * @deprecated
+	 * @noreference This method is not intended to be referenced by clients.
+	 */
+	@Deprecated
 	public boolean isEnclosed(ITypeInfo info) {
 		throw new PDOMNotImplementedError();
 	}
 
+	/**
+	 * @deprecated
+	 * @noreference This method is not intended to be referenced by clients.
+	 */
+	@Deprecated
 	public boolean isEnclosed(ITypeSearchScope scope) {
 		throw new PDOMNotImplementedError();
 	}
 
+	/**
+	 * @deprecated
+	 * @noreference This method is not intended to be referenced by clients.
+	 */
+	@Deprecated
 	public boolean isEnclosedType() {
 		throw new PDOMNotImplementedError();
 	}
 
+	/**
+	 * @deprecated
+	 * @noreference This method is not intended to be referenced by clients.
+	 */
+	@Deprecated
 	public boolean isEnclosingType() {
 		throw new PDOMNotImplementedError();
 	}
 
+	/**
+	 * @deprecated
+	 * @noreference This method is not intended to be referenced by clients.
+	 */
+	@Deprecated
 	public boolean isReferenced(ITypeSearchScope scope) {
 		throw new PDOMNotImplementedError();
 	}
 
+	/**
+	 * @deprecated
+	 * @noreference This method is not intended to be referenced by clients.
+	 */
+	@Deprecated
 	public boolean isUndefinedType() {
 		throw new PDOMNotImplementedError();
 	}
 
+	/**
+	 * @deprecated
+	 * @noreference This method is not intended to be referenced by clients.
+	 */
+	@Deprecated
 	public void setCElementType(int type) {
 		throw new PDOMNotImplementedError();
-	}
-
-	/*
-	 * @see org.eclipse.cdt.internal.core.browser.IFunctionInfo#getParameters()
-	 */
-	public String[] getParameters() {
-		return params;
-	}
-
-	/*
-	 * @see org.eclipse.cdt.internal.core.browser.IFunctionInfo#getReturnType()
-	 */
-	public String getReturnType() {
-		return returnType;
-	}
-
-	@Override
-	public int hashCode() {
-		final int prime = 31;
-		int result = 1;
-		result = prime * result + elementType;
-		result = prime * result + ((fileLocal == null) ? 0 : fileLocal.hashCode());
-		result = prime * result + IndexTypeInfo.hashCode(fqn);
-		result = prime * result + IndexTypeInfo.hashCode(params);
-		return result;
-	}
-
-	/**
-	 * Type info objects are equal if they compute the same references.
-	 */
-	@Override
-	public boolean equals(Object obj) {
-		if (this == obj)
-			return true;
-		if (obj == null)
-			return false;
-		if (getClass() != obj.getClass())
-			return false;
-		IndexTypeInfo other = (IndexTypeInfo) obj;
-		if (elementType != other.elementType)
-			return false;
-		if (fileLocal == null) {
-			if (other.fileLocal != null)
-				return false;
-		} else if (!fileLocal.equals(other.fileLocal))
-			return false;
-		if (!Arrays.equals(fqn, other.fqn))
-			return false;
-		if (!Arrays.equals(params, other.params))
-			return false;
-		return true;
-	}
-	
-	/**
-	 * @since 5.1
-	 */
-	public boolean isFileLocal() {
-		return fileLocal != null;
 	}
 }

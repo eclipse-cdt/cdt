@@ -590,13 +590,8 @@ public class Conversions {
 				canConvert = false; 
 				break;
 			} else if (!sourceIsPointer) {
-			    if (s instanceof IArrayType) {
-			    	// 4.2 Array-To-Pointer conversion
-			    	s = new CPPPointerType(((IArrayType) s).getType());
-			    } else {
-					canConvert = false;
-					break;
-			    }
+				canConvert = false;
+				break;
 			} else if (s instanceof ICPPPointerToMemberType ^ t instanceof ICPPPointerToMemberType) {
 				canConvert = false;
 				break;

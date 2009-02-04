@@ -313,7 +313,7 @@ final public class CConfigBasedDescriptor implements ICDescriptor {
 	}
 
 	/**
-	 * Equivalent to {@link #updateConfiguration(ICConfigurationDescription, true)}
+	 * Equivalent to {@code updateConfiguration(des, true)}
 	 * @param des the new ICConfigurationDescription
 	 * @throws CoreException
 	 */

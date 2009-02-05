@@ -11,14 +11,15 @@
 package org.eclipse.cdt.make.ui.views;
 
 
-import java.util.List;
-
+import org.eclipse.cdt.make.core.IMakeTarget;
 import org.eclipse.cdt.make.internal.ui.MakeUIImages;
 import org.eclipse.cdt.make.internal.ui.MakeUIPlugin;
+import org.eclipse.cdt.make.internal.ui.dnd.MakeTargetDndUtil;
 import org.eclipse.cdt.make.ui.dialogs.MakeTargetDialog;
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.swt.dnd.DND;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.actions.SelectionListenerAction;
 
@@ -35,28 +36,33 @@ public class AddTargetAction extends SelectionListenerAction {
 
 	@Override
 	public void run() {
-		if (canAdd()) {
-			try {
-				MakeTargetDialog dialog = new MakeTargetDialog(shell, (IContainer) getStructuredSelection().getFirstElement());
+		Object selection = getSelectedElement();
+		try {
+			if (selection instanceof IContainer) {
+				MakeTargetDialog dialog = new MakeTargetDialog(shell, (IContainer) selection);
 				dialog.open();
-			} catch (CoreException e) {
-				MakeUIPlugin.errorDialog(shell, MakeUIPlugin.getResourceString("AddTargetAction.exception.internalError"), e.toString(), e); //$NON-NLS-1$
+			} else if (selection instanceof IMakeTarget) {
+				IMakeTarget makeTarget = (IMakeTarget)selection;
+				MakeTargetDndUtil.copyOneTarget(makeTarget, makeTarget.getContainer(), DND.DROP_COPY, shell, false);
 			}
+		} catch (CoreException e) {
+			MakeUIPlugin.errorDialog(shell, MakeUIPlugin.getResourceString("AddTargetAction.exception.title"), //$NON-NLS-1$
+				MakeUIPlugin.getResourceString("AddTargetAction.exception.message"), e); //$NON-NLS-1$
 		}
 
 	}
 
 	@Override
 	protected boolean updateSelection(IStructuredSelection selection) {
-		return super.updateSelection(selection) && canAdd();
+		return super.updateSelection(selection) && getSelectedElement()!=null;
 	}
 
-	private boolean canAdd() {
-		List<?> elements = getStructuredSelection().toList();
-		if (elements.size()==1 && (elements.get(0) instanceof IContainer)) {
-			return true;
+	private Object getSelectedElement() {
+		Object element = getStructuredSelection().getFirstElement();
+		if (element instanceof IContainer || element instanceof IMakeTarget) { 
+			return element; 
 		}
-		return false;
+		return null;
 	}
 
 }

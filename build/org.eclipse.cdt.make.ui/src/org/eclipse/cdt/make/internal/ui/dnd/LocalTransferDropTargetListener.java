@@ -162,12 +162,17 @@ public class LocalTransferDropTargetListener extends AbstractContainerAreaDropAd
 			List<?> items = selection.toList();
 			for (Object item : items) {
 				if (item instanceof IMakeTarget) {
-					// Looking for a target which is not being copying/moving to itself
+					// Looking for a target which is not being moving to itself
 					IContainer container = ((IMakeTarget)item).getContainer();
 					// dropContainer==null means disregard the container
 					if (dropContainer==null || !dropContainer.equals(container)) {
 						if (bestOperation < DND.DROP_MOVE) {
 							bestOperation = DND.DROP_MOVE;
+						}
+					} else if (dropContainer.equals(container)) {
+						// Allow to copy/duplicate targets into the same folder
+						if (bestOperation < DND.DROP_COPY) {
+							bestOperation = DND.DROP_COPY;
 						}
 					}
 				} else if (isConvertibleToFile(item)) {
@@ -198,10 +203,7 @@ public class LocalTransferDropTargetListener extends AbstractContainerAreaDropAd
 		List<IMakeTarget> makeTargetsList= new ArrayList<IMakeTarget>(elements.size());
 		for (Object element : elements) {
 			if (element instanceof IMakeTarget) {
-				IMakeTarget makeTarget = (IMakeTarget)element;
-				if (!makeTarget.getContainer().equals(dropContainer)) {
-					makeTargetsList.add(makeTarget);
-				}
+				makeTargetsList.add((IMakeTarget)element);
 				continue;
 			} else if (isConvertibleToFile(element)) {
 				IAdaptable a = (IAdaptable)element;

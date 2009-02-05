@@ -23,17 +23,20 @@ import org.eclipse.cdt.make.core.IMakeTargetManager;
 import org.eclipse.cdt.make.core.MakeCorePlugin;
 import org.eclipse.cdt.make.internal.core.MakeTarget;
 import org.eclipse.cdt.make.internal.ui.MakeUIPlugin;
+import org.eclipse.cdt.make.ui.dialogs.MakeTargetDialog;
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.MessageDialog;
+import org.eclipse.jface.dialogs.MessageDialogWithToggle;
 import org.eclipse.jface.dialogs.ProgressMonitorDialog;
 import org.eclipse.jface.operation.IRunnableContext;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.jface.window.Window;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.SWTException;
 import org.eclipse.swt.dnd.DND;
@@ -43,16 +46,13 @@ import org.eclipse.swt.widgets.Shell;
  * A collection of various functions for Make Target View drag and drop support.
  */
 public class MakeTargetDndUtil {
-	private static final int ANSWER_YES_ID = 0;
-	private static final int ANSWER_YES_TO_ALL_ID = 1;
-	private static final int ANSWER_NO_ID = 2;
-	private static final int ANSWER_NO_TO_ALL_ID = 3;
-	private static final int ANSWER_CANCEL_ID = 4;
+	private static final int RENAME_ID = IDialogConstants.INTERNAL_ID;
+	private static final int RENAME_TO_ALL_ID = IDialogConstants.INTERNAL_ID + 1;
 
 	/**
 	 * The previous answer to the question of overwriting all targets.
 	 */
-	protected static int lastUserAnswer = ANSWER_YES_ID;
+	protected static int lastUserAnswer = IDialogConstants.YES_ID;
 
 	/**
 	 * Default build command.
@@ -137,12 +137,12 @@ public class MakeTargetDndUtil {
 			return;
 		}
 
-		lastUserAnswer = ANSWER_YES_ID;
+		lastUserAnswer = IDialogConstants.YES_ID;
 
 		if (makeTargets.length == 1) {
 			try {
 				// Do not slow down generating modal window for a single target
-				copyOneTarget(makeTargets[0], container, operation, shell);
+				copyOneTarget(makeTargets[0], container, operation, shell, false);
 			} catch (CoreException e) {
 				// log any problem then ignore it
 				MakeUIPlugin.log(e);
@@ -160,6 +160,7 @@ public class MakeTargetDndUtil {
 	 * @param operation - copying operation. Should be one of
 	 *        {@link org.eclipse.swt.dnd.DND} operations.
 	 * @param shell - shell to display user warnings.
+	 * @param offerOverwriteDialog - whether overwrite dialog is provided.
 	 * @throws CoreException on the failure of {@link IMakeTargetManager} or
 	 *         {@link IMakeTarget} operation.
 	 *
@@ -170,24 +171,79 @@ public class MakeTargetDndUtil {
 	 * @see DND#DROP_DEFAULT
 	 */
 	public static void copyOneTarget(IMakeTarget makeTarget, IContainer container,
-		final int operation, Shell shell) throws CoreException {
+		final int operation, Shell shell, boolean offerOverwriteDialog) throws CoreException {
 
 		IMakeTargetManager makeTargetManager = MakeCorePlugin.getDefault().getTargetManager();
 		IMakeTarget exists = makeTargetManager.findTarget(container, makeTarget.getName());
 		if (exists != null) {
-			int userAnswer = overwriteMakeTargetDialog(makeTarget.getName(), shell);
-			if (userAnswer == ANSWER_YES_ID || userAnswer == ANSWER_YES_TO_ALL_ID) {
+			int userAnswer = IDialogConstants.CANCEL_ID;
+			if (offerOverwriteDialog) {
+				userAnswer = overwriteMakeTargetDialog(makeTarget.getName(), shell);
+			} else {
+				userAnswer = RENAME_ID;
+			}
+			if (userAnswer == IDialogConstants.YES_ID || userAnswer == IDialogConstants.YES_TO_ALL_ID) {
 				copyTargetData(makeTarget, exists);
 				if (operation == DND.DROP_MOVE) {
 					makeTargetManager.removeTarget(makeTarget);
 				}
-			} else if (userAnswer == ANSWER_NO_ID || userAnswer == ANSWER_NO_TO_ALL_ID) {
-				// no action
+			} else if (userAnswer == RENAME_ID || userAnswer == RENAME_TO_ALL_ID) {
+				String name = generateUniqueName(makeTarget.getName(), container);
+				IMakeTarget newMakeTarget = cloneTarget(name, makeTarget, container.getProject());
+				newMakeTarget.setContainer(container);
+				int dialogReturnCode = Window.OK;
+				if (userAnswer == RENAME_ID) {
+					MakeTargetDialog dialog;
+					try {
+						dialog = new MakeTargetDialog(shell, newMakeTarget);
+						dialogReturnCode = dialog.open();
+					} catch (CoreException e) {
+						MakeUIPlugin.errorDialog(shell, MakeUIPlugin.getResourceString("AddBuildTargetAction.exception.internal"), e.toString(), e); //$NON-NLS-1$
+					}
+				} else if (userAnswer == RENAME_TO_ALL_ID) {
+					makeTargetManager.addTarget(container, newMakeTarget);
+				}
+				if (operation == DND.DROP_MOVE && dialogReturnCode != Window.CANCEL) {
+					makeTargetManager.removeTarget(makeTarget);
+				}
 			}
 		} else {
-			makeTargetManager.addTarget(container, cloneTarget(makeTarget, container.getProject()));
+			makeTargetManager.addTarget(container, cloneTarget(makeTarget.getName(), makeTarget, container.getProject()));
 			if (operation == DND.DROP_MOVE) {
 				makeTargetManager.removeTarget(makeTarget);
+			}
+		}
+	}
+
+	/**
+	 * Generate a new unique non-existent name of the kind of "Copy (2) of name".
+	 *
+	 * @param targetName - name from where generate unique name.
+	 * @param container - container where the target belongs.
+	 * @return generated name.
+	 * @throws CoreException if {@code findTarget} having a problem.
+	 */
+	private static String generateUniqueName(String targetName, IContainer container) throws CoreException {
+		IMakeTargetManager makeTargetManager = MakeCorePlugin.getDefault().getTargetManager();
+		// Try "name"
+		String newName = targetName;
+		if (makeTargetManager.findTarget(container, newName) == null) {
+			return newName;
+		}
+
+		// Try "Copy of name"
+		newName = MessageFormat.format(MakeUIPlugin.getResourceString("MakeTargetDnD.copyOf.uniqueName"), //$NON-NLS-1$
+			new Object[] { targetName });
+		if (makeTargetManager.findTarget(container, newName) == null) {
+			return newName;
+		}
+
+		// Try "Copy (2) of name"
+		for (int counter = 1;;counter++) {
+			newName = MessageFormat.format(MakeUIPlugin.getResourceString("MakeTargetDnD.countedCopyOf.uniqueName"), //$NON-NLS-1$
+				new Object[] { counter, targetName });
+			if (makeTargetManager.findTarget(container, newName) == null) {
+				return newName;
 			}
 		}
 	}
@@ -224,12 +280,12 @@ public class MakeTargetDndUtil {
 					if (makeTarget != null) {
 						monitor.subTask(textAction + ' ' + makeTarget.getName());
 						try {
-							copyOneTarget(makeTarget, container, operation, shell);
+							copyOneTarget(makeTarget, container, operation, shell, true);
 						} catch (CoreException e) {
 							// log failures but ignore all targets which failed
 							MakeUIPlugin.log(e);
 						}
-						if (lastUserAnswer == ANSWER_CANCEL_ID) {
+						if (lastUserAnswer == IDialogConstants.CANCEL_ID) {
 							break;
 						}
 					}
@@ -239,7 +295,7 @@ public class MakeTargetDndUtil {
 					}
 				}
 				monitor.done();
-				lastUserAnswer = ANSWER_YES_ID;
+				lastUserAnswer = IDialogConstants.YES_ID;
 			}
 		};
 
@@ -263,54 +319,69 @@ public class MakeTargetDndUtil {
 	 */
 	private static int overwriteMakeTargetDialog(String name, Shell shell) {
 
-		if (lastUserAnswer == ANSWER_YES_TO_ALL_ID || lastUserAnswer == ANSWER_NO_TO_ALL_ID) {
+		if ( lastUserAnswer == IDialogConstants.YES_TO_ALL_ID
+			|| lastUserAnswer == IDialogConstants.NO_TO_ALL_ID
+			|| lastUserAnswer == RENAME_TO_ALL_ID ) {
+
 			return lastUserAnswer;
 		}
 
-		String labels[] = new String[] { IDialogConstants.YES_LABEL,
-			IDialogConstants.YES_TO_ALL_LABEL, IDialogConstants.NO_LABEL,
-			IDialogConstants.NO_TO_ALL_LABEL, IDialogConstants.CANCEL_LABEL, };
+		String labels[] = new String[] {
+			IDialogConstants.YES_LABEL,
+			IDialogConstants.NO_LABEL,
+			MakeUIPlugin.getResourceString("MakeTargetDnD.button.rename"), //$NON-NLS-1$
+			IDialogConstants.CANCEL_LABEL, };
+
 		String title = MakeUIPlugin.getResourceString("MakeTargetDnD.title.overwriteTargetConfirm"); //$NON-NLS-1$
 		String question = MessageFormat.format(MakeUIPlugin
 			.getResourceString("MakeTargetDnD.message.overwriteTargetConfirm"), //$NON-NLS-1$
 			new Object[] { name });
+		String toggleApplyToAll = MakeUIPlugin.getResourceString("MakeTargetDnD.toggle.applyToAll"); //$NON-NLS-1$
 
-		MessageDialog dialog = new MessageDialog(shell, title, null, question,
-			MessageDialog.QUESTION, labels, 0);
+		MessageDialogWithToggle dialog = new MessageDialogWithToggle(shell, title, null, question,
+			MessageDialog.QUESTION, labels, 0, toggleApplyToAll, false);
 
 		try {
 			dialog.open();
 			lastUserAnswer = dialog.getReturnCode();
+			boolean toAll = dialog.getToggleState();
+			if (toAll && lastUserAnswer==IDialogConstants.YES_ID) {
+				lastUserAnswer = IDialogConstants.YES_TO_ALL_ID;
+			} else if (toAll && lastUserAnswer==IDialogConstants.NO_ID) {
+				lastUserAnswer = IDialogConstants.NO_TO_ALL_ID;
+			} else if (toAll && lastUserAnswer==RENAME_ID) {
+				lastUserAnswer = RENAME_TO_ALL_ID;
+			}
 		} catch (SWTException e) {
 			MakeUIPlugin.log(e);
-			lastUserAnswer = ANSWER_CANCEL_ID;
+			lastUserAnswer = IDialogConstants.CANCEL_ID;
 		}
 
 		if (lastUserAnswer == SWT.DEFAULT) {
 			// A window close returns SWT.DEFAULT, which has to be
 			// mapped to a cancel
-			lastUserAnswer = ANSWER_CANCEL_ID;
+			lastUserAnswer = IDialogConstants.CANCEL_ID;
 		}
 		return lastUserAnswer;
 	}
 
 	/**
 	 * Creating a copy of IMakeTarget in a different project.
-	 *
+	 * @param name - name of new target.
 	 * @param makeTarget - make target.
 	 * @param project - project where to assign the make target.
+	 *
 	 * @return newly created make target.
 	 * @throws CoreException if there is a problem with creating or copying the
 	 *         target.
 	 */
-	private static IMakeTarget cloneTarget(IMakeTarget makeTarget, IProject project)
+	private static IMakeTarget cloneTarget(String name, IMakeTarget makeTarget, IProject project)
 		throws CoreException {
 		IMakeTargetManager makeTargetManager = MakeCorePlugin.getDefault().getTargetManager();
 		String[] ids = makeTargetManager.getTargetBuilders(project);
 		String builderId = ids[0];
 
-		IMakeTarget newMakeTarget = makeTargetManager.createTarget(project, makeTarget.getName(),
-			builderId);
+		IMakeTarget newMakeTarget = makeTargetManager.createTarget(project, name, builderId);
 		copyTargetData(makeTarget, newMakeTarget);
 		return newMakeTarget;
 	}

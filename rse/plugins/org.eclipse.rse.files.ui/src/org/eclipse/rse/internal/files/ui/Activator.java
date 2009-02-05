@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 20089 IBM Corporation and others.
+ * Copyright (c) 2006, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -119,8 +119,8 @@ public class Activator extends AbstractUIPlugin
 		//FIXME This should really be migrated into a Preferences Initializer Extension
 		//in order to avoid unnecessary plugin activation
 		//IPreferenceStore store = RSEUIPlugin.getDefault().getPreferenceStore();
-		
-		
+
+
 		// as per bug 245260, using scoped store for preference initialization
 		IPreferenceStore store = new ScopedPreferenceStore(new DefaultScope(), RSEUIPlugin.getDefault().getBundle().getSymbolicName());
 
@@ -128,7 +128,7 @@ public class Activator extends AbstractUIPlugin
 		if (store.isDefault(ISystemFilePreferencesConstants.LIMIT_CACHE)){
 			store.setDefault(ISystemFilePreferencesConstants.LIMIT_CACHE, ISystemFilePreferencesConstants.DEFAULT_LIMIT_CACHE);
 		}
-		
+
 		if (store.isDefault(ISystemFilePreferencesConstants.MAX_CACHE_SIZE)){
 			store.setDefault(ISystemFilePreferencesConstants.MAX_CACHE_SIZE, ISystemFilePreferencesConstants.DEFAULT_MAX_CACHE_SIZE);
 		}
@@ -137,32 +137,32 @@ public class Activator extends AbstractUIPlugin
 		// universal preferences
 		if (store.isDefault(ISystemFilePreferencesConstants.FILETRANSFERMODEDEFAULT)){
 			store.setDefault(ISystemFilePreferencesConstants.FILETRANSFERMODEDEFAULT, ISystemFilePreferencesConstants.DEFAULT_FILETRANSFERMODE);
-		}			
-		
+		}
+
 		if (store.isDefault(ISystemFilePreferencesConstants.SHOWHIDDEN)){
 			store.setDefault(ISystemFilePreferencesConstants.SHOWHIDDEN, false);
 		}
-		
+
 		if (store.isDefault(ISystemFilePreferencesConstants.PRESERVETIMESTAMPS)){
 			store.setDefault(ISystemFilePreferencesConstants.PRESERVETIMESTAMPS, ISystemFilePreferencesConstants.DEFAULT_PRESERVETIMESTAMPS);
 		}
-		
+
 		if (store.isDefault(ISystemFilePreferencesConstants.SHARECACHEDFILES)){
 			store.setDefault(ISystemFilePreferencesConstants.SHARECACHEDFILES, ISystemFilePreferencesConstants.DEFAULT_SHARECACHEDFILES);
 		}
-		
+
 		if (store.isDefault(ISystemFilePreferencesConstants.DOSUPERTRANSFER)){
 			store.setDefault(ISystemFilePreferencesConstants.DOSUPERTRANSFER, ISystemFilePreferencesConstants.DEFAULT_DOSUPERTRANSFER);
 		}
-				
-		if (store.isDefault(ISystemFilePreferencesConstants.SUPERTRANSFER_ARC_TYPE)){			
+
+		if (store.isDefault(ISystemFilePreferencesConstants.SUPERTRANSFER_ARC_TYPE)){
 			store.setDefault(ISystemFilePreferencesConstants.SUPERTRANSFER_ARC_TYPE, ISystemFilePreferencesConstants.DEFAULT_SUPERTRANSFER_ARCHIVE_TYPE);
 		}
-		
+
 		if (store.isDefault(ISystemFilePreferencesConstants.DOWNLOAD_BUFFER_SIZE)){
 			store.setDefault(ISystemFilePreferencesConstants.DOWNLOAD_BUFFER_SIZE, ISystemFilePreferencesConstants.DEFAULT_DOWNLOAD_BUFFER_SIZE);
-		}	
-		
+		}
+
 		if (store.isDefault(ISystemFilePreferencesConstants.UPLOAD_BUFFER_SIZE)){
 			store.setDefault(ISystemFilePreferencesConstants.UPLOAD_BUFFER_SIZE, ISystemFilePreferencesConstants.DEFAULT_DOWNLOAD_BUFFER_SIZE);
 		}

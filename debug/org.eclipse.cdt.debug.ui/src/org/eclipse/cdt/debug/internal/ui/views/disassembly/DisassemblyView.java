@@ -439,7 +439,7 @@ public class DisassemblyView extends AbstractDebugEventHandlerView
 		resetViewerInput();
 	}
 
-	protected void setViewerInput( IEditorInput input ) {
+	public void setViewerInput( IEditorInput input ) {
 		SourceViewer viewer = getSourceViewer();
 		if ( viewer == null )
 			return;

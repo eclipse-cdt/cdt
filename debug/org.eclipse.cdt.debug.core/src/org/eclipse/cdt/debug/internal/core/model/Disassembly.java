@@ -97,6 +97,46 @@ public class Disassembly extends CDebugElement implements IDisassembly, ICDIEven
 		}
 		return null;
 	}
+	
+	public IDisassemblyBlock getDisassemblyBlock( IAddress address ) throws DebugException {
+		fBlocks[0] = createBlock( address, null);
+		return fBlocks[0];		
+	}
+
+	public IDisassemblyBlock getDisassemblyBlock( IAddress startAddress, IAddress endAddress ) throws DebugException {
+		fBlocks[0] = createBlock( startAddress, endAddress );
+		return fBlocks[0];		
+	}
+	
+	private DisassemblyBlock createBlock( IAddress startAddress, IAddress endAddress) throws DebugException {
+		ICDITarget target = (ICDITarget)getDebugTarget().getAdapter( ICDITarget.class );
+		if ( target != null ) {
+			ICDIMixedInstruction[] mixedInstrs = new ICDIMixedInstruction[0];
+			if ( mixedInstrs.length == 0 ||
+					!containsAddress( mixedInstrs, startAddress ) ) {
+				try {
+					BigInteger startAddr = new BigInteger( startAddress.toString() );
+					BigInteger endAddr = null;
+					if (endAddress != null) {
+						endAddr = new BigInteger( endAddress.toString() );
+					} else {
+						endAddr = startAddr.add( BigInteger.valueOf( 
+								CDebugCorePlugin.getDefault().getPluginPreferences().getInt(ICDebugConstants.PREF_MAX_NUMBER_OF_INSTRUCTIONS)));
+					}
+					mixedInstrs = target.getMixedInstructions( startAddr, endAddr);
+					return DisassemblyBlock.create( this, mixedInstrs );
+				}
+				catch( CDIException e ) {
+					targetRequestFailed( e.getMessage(), e );
+				}
+			}
+			else {
+				return DisassemblyBlock.create( this, mixedInstrs );
+			}
+		}
+		return null;
+	}
+
 
 	private boolean containsAddress( ICDIMixedInstruction[] mi, IAddress address ) {
 		for( int i = 0; i < mi.length; ++i ) {

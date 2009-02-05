@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2008 IBM Corporation and others.
+ * Copyright (c) 2004, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -171,7 +171,7 @@ public final class ScannerConfigProfileManager {
 	}
 	
 	/**
-	 * returns the list od profile IDs supported for this context
+	 * returns the list of profile IDs supported for this context
 	 * @param context
 	 * @return
 	 */
@@ -179,18 +179,16 @@ public final class ScannerConfigProfileManager {
 		if(context.isDefaultContext() || context.getProject() == null)
 			return getProfileIds();
 		
-		if(contextAwareProfileIds == null){
-			synchronized (fLock) {
-				if(contextAwareProfileIds == null){
-					contextAwareProfileIds = new ArrayList<String>();
-					List<String> all = getProfileIds();
+		synchronized (fLock) {
+			if(contextAwareProfileIds == null){
+				contextAwareProfileIds = new ArrayList<String>();
+				List<String> all = getProfileIds();
 
-					for(int i = 0; i < all.size(); i++){
-						String id = all.get(i);
-						ScannerConfigProfile profile = getSCProfileConfiguration(id);
-						if(profile.supportsContext())
-							contextAwareProfileIds.add(id);
-					}
+				for(int i = 0; i < all.size(); i++){
+					String id = all.get(i);
+					ScannerConfigProfile profile = getSCProfileConfiguration(id);
+					if(profile.supportsContext())
+						contextAwareProfileIds.add(id);
 				}
 			}
 		}

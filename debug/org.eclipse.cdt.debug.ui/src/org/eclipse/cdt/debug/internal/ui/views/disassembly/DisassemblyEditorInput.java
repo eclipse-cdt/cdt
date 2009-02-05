@@ -226,6 +226,9 @@ public class DisassemblyEditorInput implements IEditorInput {
 		return input;
 	}
 
+	public static DisassemblyEditorInput create( IDisassemblyBlock block) throws DebugException {
+		return new DisassemblyEditorInput(block);
+	}
 	private void createContents() {
 		fSourceRegions = new IRegion[0];
 		StringBuffer lines = new StringBuffer();
@@ -320,6 +323,13 @@ public class DisassemblyEditorInput implements IEditorInput {
 		return ( fBlock != null ) ? fBlock.getDisassembly() : null;
 	}
 
+    /**
+	 * @return the disassembly block
+	 */
+	public IDisassemblyBlock getDisassemblyBlock() {
+		return fBlock;
+	}
+	
 	public ICLineBreakpoint breakpointExists( IAddress address ) throws CoreException {
 		Assert.isTrue( address != null );
 		IDisassembly dis = getDisassembly();

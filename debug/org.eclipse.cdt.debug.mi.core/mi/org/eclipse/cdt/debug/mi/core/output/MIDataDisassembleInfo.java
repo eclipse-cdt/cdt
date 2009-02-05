@@ -90,7 +90,7 @@ public class MIDataDisassembleInfo extends MIInfo {
 	}
 
 	void parse(MIList list, List srcList, List asmList) {
-		// src and assenbly is different
+		// src and assembly is different
 		
 		// Mixed mode.
 		MIResult[] results = list.getMIResults();
@@ -100,7 +100,10 @@ public class MIDataDisassembleInfo extends MIInfo {
 				if (var.equals("src_and_asm_line")) { //$NON-NLS-1$
 					MIValue value = results[i].getMIValue();
 					if (value instanceof MITuple) {
-						srcList.add(new MISrcAsm((MITuple)value));
+						MISrcAsm miSrcAsm = new MISrcAsm((MITuple) value);
+						if (miSrcAsm.getMIAsms() != null && miSrcAsm.getMIAsms().length > 0) {
+							srcList.add(miSrcAsm);
+						}
 					}
 				}
 			}

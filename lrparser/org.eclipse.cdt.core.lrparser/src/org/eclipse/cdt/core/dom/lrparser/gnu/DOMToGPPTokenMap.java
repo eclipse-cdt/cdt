@@ -177,8 +177,9 @@ public class DOMToGPPTokenMap implements IDOMTokenMap {
 			case IGCCToken.t__declspec    : return TK___declspec;
 			
 			// GNU supports these but they are not in the C++ spec
-			case t__Complex : return TK__Complex;
+			case t__Complex   : return TK__Complex;
 			case t__Imaginary : return TK__Imaginary;
+			case t_restrict   : return TK_restrict;
 			
 			default:
 				assert false : "token not recognized by the GPP parser: " + token.getType(); //$NON-NLS-1$

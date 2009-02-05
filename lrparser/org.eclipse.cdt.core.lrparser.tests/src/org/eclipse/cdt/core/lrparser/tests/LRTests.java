@@ -128,6 +128,14 @@ public class LRTests extends AST2Tests {
 		} catch(Throwable _) { }
 	}
 	
+	@Override
+	public void testBug75340() { // not legal c99
+		try {
+			super.testBug75340();
+			fail();
+		} catch(Throwable _) { }
+	}
+	
 	
 //    @Override
 //	public void testBug93980() { // some wierd gcc extension I think

@@ -17,12 +17,12 @@ import lpg.lpgjavaruntime.*;
 
 import java.util.*;
 import org.eclipse.cdt.core.dom.ast.*;
-import org.eclipse.cdt.core.dom.lrparser.CPreprocessorAdapter;
 import org.eclipse.cdt.core.dom.lrparser.IDOMTokenMap;
 import org.eclipse.cdt.core.dom.lrparser.IParser;
 import org.eclipse.cdt.core.dom.lrparser.ITokenCollector;
-import org.eclipse.cdt.core.dom.lrparser.lpgextensions.FixedBacktrackingParser;
+import org.eclipse.cdt.core.dom.lrparser.CPreprocessorAdapter;
 import org.eclipse.cdt.core.dom.lrparser.action.ITokenStream;
+import org.eclipse.cdt.core.dom.lrparser.lpgextensions.FixedBacktrackingParser;
 import org.eclipse.cdt.core.dom.lrparser.action.ScopedStack;
 import org.eclipse.cdt.core.parser.IScanner;
 import org.eclipse.cdt.core.dom.parser.IBuiltinBindingsProvider;
@@ -31,6 +31,8 @@ import org.eclipse.cdt.core.index.IIndex;
 import org.eclipse.cdt.internal.core.dom.parser.c.CNodeFactory;
 import org.eclipse.cdt.core.dom.lrparser.action.c99.C99BuildASTParserAction;
 import org.eclipse.cdt.core.dom.lrparser.action.c99.C99SecondaryParserFactory;
+
+import org.eclipse.cdt.core.dom.lrparser.action.gnu.GNUBuildASTParserAction;
 
 import org.eclipse.cdt.core.dom.lrparser.action.gnu.GCCBuildASTParserAction;
 import org.eclipse.cdt.core.dom.lrparser.action.gnu.GCCSecondaryParserFactory;
@@ -172,7 +174,7 @@ public class GCCParser extends PrsStream implements RuleAction, ITokenStream,
     }
 
 
-private  C99BuildASTParserAction  action;
+private  GCCBuildASTParserAction  action;
 private IASTCompletionNode compNode;
 
 
@@ -185,14 +187,14 @@ public GCCParser(IScanner scanner, IDOMTokenMap tokenMap, IBuiltinBindingsProvid
 private void initActions(Set<IParser.Options> options) {
 	ScopedStack<Object> astStack = new ScopedStack<Object>();
 	
-	action = new  C99BuildASTParserAction (this, astStack,  CNodeFactory.getDefault() ,  GCCSecondaryParserFactory.getDefault() );
+	action = new  GCCBuildASTParserAction (this, astStack,  CNodeFactory.getDefault() ,  GCCSecondaryParserFactory.getDefault() );
 	action.setParserOptions(options);
 	
 	
 
-	gnuAction = new  GCCBuildASTParserAction  (this, astStack,  CNodeFactory.getDefault() );
+	gnuAction = new  GNUBuildASTParserAction  (this, astStack,  CNodeFactory.getDefault() );
 	gnuAction.setParserOptions(options);
-	gnuAction.setBaseAction(action);
+	//gnuAction.setBaseAction(action);
 
 }
 
@@ -235,7 +237,7 @@ public String getName() {
 }
 
 
-private  GCCBuildASTParserAction  gnuAction;
+private  GNUBuildASTParserAction  gnuAction;
 
     public void ruleAction(int ruleNumber)
     {
@@ -1329,34 +1331,34 @@ private  GCCBuildASTParserAction  gnuAction;
             }  
   
             //
-            // Rule 360:  typeof_type_specifier ::= typeof unary_expression
+            // Rule 363:  typeof_type_specifier ::= typeof unary_expression
             //
-            case 360: { action.   consumeExpressionUnaryOperator(IASTUnaryExpression.op_typeof);             break;
+            case 363: { action.   consumeExpressionUnaryOperator(IASTUnaryExpression.op_typeof);             break;
             }  
   
             //
-            // Rule 361:  typeof_type_specifier ::= typeof ( type_id )
+            // Rule 364:  typeof_type_specifier ::= typeof ( type_id )
             //
-            case 361: { action.   consumeExpressionTypeId(IASTTypeIdExpression.op_typeof);             break;
+            case 364: { action.   consumeExpressionTypeId(IASTTypeIdExpression.op_typeof);             break;
             }  
- 
+  
             //
             // Rule 365:  declaration_specifiers ::= <openscope-ast> typeof_declaration_specifiers
             //
-            case 365: {  gnuAction.consumeDeclarationSpecifiersTypeof();            break;
-            } 
- 
+            case 365: { action.   consumeDeclarationSpecifiersTypeof();             break;
+            }  
+  
             //
             // Rule 381:  field_name_designator ::= identifier_token :
             //
-            case 381: {  gnuAction.consumeDesignatorField();            break;
-            } 
- 
+            case 381: { action.   consumeDesignatorFieldGCC();             break;
+            }  
+  
             //
             // Rule 382:  array_range_designator ::= [ constant_expression ... constant_expression ]
             //
-            case 382: {  gnuAction.consumeDesignatorArray();            break;
-            } 
+            case 382: { action.   consumeDesignatorArrayRange();             break;
+            }  
   
             //
             // Rule 383:  designated_initializer ::= <openscope-ast> field_name_designator initializer

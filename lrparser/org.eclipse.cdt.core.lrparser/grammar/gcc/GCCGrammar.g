@@ -38,7 +38,7 @@ $End
 
 $Define
 
-    $gnu_action_class  /. GCCBuildASTParserAction ./
+    $build_action_class  /. GCCBuildASTParserAction ./
 	$parser_factory_create_expression /. GCCSecondaryParserFactory.getDefault() ./
 	
 $End
@@ -91,11 +91,11 @@ designator_base
 
 field_name_designator
     ::= identifier_token ':'		
-          /. $BeginAction  gnuAction.consumeDesignatorField();  $EndAction ./
+          /. $Build  consumeDesignatorFieldGCC();  $EndBuild ./
           
 array_range_designator
     ::=  '[' constant_expression '...' constant_expression ']'
-          /. $BeginAction  gnuAction.consumeDesignatorArray();  $EndAction ./
+          /. $Build  consumeDesignatorArrayRange();  $EndBuild ./
 
 designated_initializer
     ::= <openscope-ast> field_name_designator initializer

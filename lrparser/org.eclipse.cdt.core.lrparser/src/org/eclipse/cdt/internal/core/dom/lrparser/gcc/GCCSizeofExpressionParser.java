@@ -17,17 +17,17 @@ import lpg.lpgjavaruntime.*;
 
 import java.util.*;
 import org.eclipse.cdt.core.dom.ast.*;
-import org.eclipse.cdt.core.dom.lrparser.CPreprocessorAdapter;
 import org.eclipse.cdt.core.dom.lrparser.IDOMTokenMap;
 import org.eclipse.cdt.core.dom.lrparser.IParser;
 import org.eclipse.cdt.core.dom.lrparser.ITokenCollector;
+import org.eclipse.cdt.core.dom.lrparser.CPreprocessorAdapter;
+import org.eclipse.cdt.core.dom.lrparser.action.ITokenStream;
 import org.eclipse.cdt.core.dom.lrparser.lpgextensions.FixedBacktrackingParser;
 import org.eclipse.cdt.core.dom.lrparser.action.ScopedStack;
 import org.eclipse.cdt.core.parser.IScanner;
 import org.eclipse.cdt.core.dom.parser.IBuiltinBindingsProvider;
 import org.eclipse.cdt.core.index.IIndex;
 
-import org.eclipse.cdt.core.dom.lrparser.action.ITokenStream;
 import org.eclipse.cdt.core.dom.lrparser.action.ITokenMap;
 import org.eclipse.cdt.core.dom.lrparser.action.TokenMap;
 import org.eclipse.cdt.core.dom.lrparser.ISecondaryParser;
@@ -35,6 +35,8 @@ import org.eclipse.cdt.core.dom.lrparser.ISecondaryParser;
 import org.eclipse.cdt.internal.core.dom.parser.c.CNodeFactory;
 import org.eclipse.cdt.core.dom.lrparser.action.c99.C99BuildASTParserAction;
 import org.eclipse.cdt.core.dom.lrparser.action.c99.C99SecondaryParserFactory;
+
+import org.eclipse.cdt.core.dom.lrparser.action.gnu.GNUBuildASTParserAction;
 
 import org.eclipse.cdt.core.dom.lrparser.action.gnu.GCCBuildASTParserAction;
 import org.eclipse.cdt.core.dom.lrparser.action.gnu.GCCSecondaryParserFactory;
@@ -176,7 +178,7 @@ public class GCCSizeofExpressionParser extends PrsStream implements RuleAction, 
     }
 
 
-private  C99BuildASTParserAction  action;
+private  GCCBuildASTParserAction  action;
 private IASTCompletionNode compNode;
 
 
@@ -189,14 +191,14 @@ public GCCSizeofExpressionParser(IScanner scanner, IDOMTokenMap tokenMap, IBuilt
 private void initActions(Set<IParser.Options> options) {
 	ScopedStack<Object> astStack = new ScopedStack<Object>();
 	
-	action = new  C99BuildASTParserAction (this, astStack,  CNodeFactory.getDefault() ,  GCCSecondaryParserFactory.getDefault() );
+	action = new  GCCBuildASTParserAction (this, astStack,  CNodeFactory.getDefault() ,  GCCSecondaryParserFactory.getDefault() );
 	action.setParserOptions(options);
 	
 	
 
-	gnuAction = new  GCCBuildASTParserAction  (this, astStack,  CNodeFactory.getDefault() );
+	gnuAction = new  GNUBuildASTParserAction  (this, astStack,  CNodeFactory.getDefault() );
 	gnuAction.setParserOptions(options);
-	gnuAction.setBaseAction(action);
+	//gnuAction.setBaseAction(action);
 
 }
 
@@ -252,13 +254,13 @@ public void setTokens(List<IToken> tokens) {
 	addToken(new Token(null, 0, 0, GCCSizeofExpressionParsersym.TK_EOF_TOKEN));
 }
 
-public GCCSizeofExpressionParser(ITokenStream parser, Set<IParser.Options> options) {  // constructor for creating secondary parser
+public GCCSizeofExpressionParser(ITokenStream stream, Set<IParser.Options> options) {  // constructor for creating secondary parser
 	initActions(options);
-	tokenMap = new TokenMap(GCCSizeofExpressionParsersym.orderedTerminalSymbols, parser.getOrderedTerminalSymbols());
+	tokenMap = new TokenMap(GCCSizeofExpressionParsersym.orderedTerminalSymbols, stream.getOrderedTerminalSymbols());
 }	
 
 
-private  GCCBuildASTParserAction  gnuAction;
+private  GNUBuildASTParserAction  gnuAction;
 
     public void ruleAction(int ruleNumber)
     {
@@ -1334,34 +1336,34 @@ private  GCCBuildASTParserAction  gnuAction;
             }  
   
             //
-            // Rule 357:  typeof_type_specifier ::= typeof unary_expression
+            // Rule 360:  typeof_type_specifier ::= typeof unary_expression
             //
-            case 357: { action.   consumeExpressionUnaryOperator(IASTUnaryExpression.op_typeof);             break;
+            case 360: { action.   consumeExpressionUnaryOperator(IASTUnaryExpression.op_typeof);             break;
             }  
   
             //
-            // Rule 358:  typeof_type_specifier ::= typeof ( type_id )
+            // Rule 361:  typeof_type_specifier ::= typeof ( type_id )
             //
-            case 358: { action.   consumeExpressionTypeId(IASTTypeIdExpression.op_typeof);             break;
+            case 361: { action.   consumeExpressionTypeId(IASTTypeIdExpression.op_typeof);             break;
             }  
- 
+  
             //
             // Rule 362:  declaration_specifiers ::= <openscope-ast> typeof_declaration_specifiers
             //
-            case 362: {  gnuAction.consumeDeclarationSpecifiersTypeof();            break;
-            } 
- 
+            case 362: { action.   consumeDeclarationSpecifiersTypeof();             break;
+            }  
+  
             //
             // Rule 378:  field_name_designator ::= identifier_token :
             //
-            case 378: {  gnuAction.consumeDesignatorField();            break;
-            } 
- 
+            case 378: { action.   consumeDesignatorFieldGCC();             break;
+            }  
+  
             //
             // Rule 379:  array_range_designator ::= [ constant_expression ... constant_expression ]
             //
-            case 379: {  gnuAction.consumeDesignatorArray();            break;
-            } 
+            case 379: { action.   consumeDesignatorArrayRange();             break;
+            }  
   
             //
             // Rule 380:  designated_initializer ::= <openscope-ast> field_name_designator initializer

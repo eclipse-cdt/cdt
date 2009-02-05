@@ -20,31 +20,27 @@ import org.eclipse.cdt.core.dom.ast.c.ICASTFieldDesignator;
 import org.eclipse.cdt.core.dom.ast.c.ICASTSimpleDeclSpecifier;
 import org.eclipse.cdt.core.dom.ast.c.ICNodeFactory;
 import org.eclipse.cdt.core.dom.ast.gnu.c.IGCCASTArrayRangeDesignator;
+import org.eclipse.cdt.core.dom.lrparser.action.ISecondaryParserFactory;
 import org.eclipse.cdt.core.dom.lrparser.action.ITokenStream;
 import org.eclipse.cdt.core.dom.lrparser.action.ScopedStack;
 import org.eclipse.cdt.core.dom.lrparser.action.c99.C99BuildASTParserAction;
 
-public class GCCBuildASTParserAction extends GNUBuildASTParserAction {
+public class GCCBuildASTParserAction extends C99BuildASTParserAction {
 
 	private final ICNodeFactory nodeFactory;
 
-	private C99BuildASTParserAction baseAction;
 	
-	public GCCBuildASTParserAction(ITokenStream parser, ScopedStack<Object> astStack, ICNodeFactory nodeFactory) {
-		super(parser, astStack, nodeFactory);
+	public GCCBuildASTParserAction(ITokenStream parser, ScopedStack<Object> astStack, ICNodeFactory nodeFactory, ISecondaryParserFactory parserFactory) {
+		super(parser, astStack, nodeFactory, parserFactory);
 		this.nodeFactory = nodeFactory;
 	}
 	
-	
-	public void setBaseAction(C99BuildASTParserAction baseAction) {
-		this.baseAction = baseAction;
-	}
 	
 	/**
 	 * designator_base
      *     ::= identifier_token ':'		
 	 */
-	public void consumeDesignatorField() {
+	public void consumeDesignatorFieldGCC() {
 		IASTName name = createName(stream.getLeftIToken());
 		ICASTFieldDesignator designator = nodeFactory.newFieldDesignator(name);
 		setOffsetAndLength(designator);
@@ -54,7 +50,7 @@ public class GCCBuildASTParserAction extends GNUBuildASTParserAction {
 	/**
 	 * designator ::= '[' constant_expression '...' constant_expression']'
 	 */
-	public void consumeDesignatorArray() {
+	public void consumeDesignatorArrayRange() {
 		IASTExpression ceiling = (IASTExpression) astStack.pop();
 		IASTExpression floor = (IASTExpression) astStack.pop();
 		IGCCASTArrayRangeDesignator designator = nodeFactory.newArrayRangeDesignatorGCC(floor, ceiling);
@@ -83,7 +79,7 @@ public class GCCBuildASTParserAction extends GNUBuildASTParserAction {
 		
 		// now apply the rest of the specifiers
 		for(Object token : topScope) {
-			baseAction.setSpecifier(declSpec, token);
+			setSpecifier(declSpec, token);
 		}
 
 		setOffsetAndLength(declSpec);

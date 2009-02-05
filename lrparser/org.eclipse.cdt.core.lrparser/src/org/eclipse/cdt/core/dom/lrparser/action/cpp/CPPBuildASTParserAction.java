@@ -91,8 +91,8 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCompositeTypeSpecifier.ICPPASTBas
 import org.eclipse.cdt.core.dom.lrparser.ISecondaryParser;
 import org.eclipse.cdt.core.dom.lrparser.LPGTokenAdapter;
 import org.eclipse.cdt.core.dom.lrparser.action.BuildASTParserAction;
-import org.eclipse.cdt.core.dom.lrparser.action.ITokenStream;
 import org.eclipse.cdt.core.dom.lrparser.action.ITokenMap;
+import org.eclipse.cdt.core.dom.lrparser.action.ITokenStream;
 import org.eclipse.cdt.core.dom.lrparser.action.ParserUtil;
 import org.eclipse.cdt.core.dom.lrparser.action.ScopedStack;
 import org.eclipse.cdt.core.dom.lrparser.action.TokenMap;
@@ -1418,10 +1418,9 @@ public class CPPBuildASTParserAction extends BuildASTParserAction {
     }
     
     
-    private void addCVQualifiersToPointer(IASTPointer pointer, List<Object> tokens) {
+    protected void addCVQualifiersToPointer(IASTPointer pointer, List<Object> tokens) {
     	for(Object t : tokens) {
     		switch(baseKind((IToken) t)) {
-				default : assert false;
 				case TK_const:    pointer.setConst(true);    break;
 				case TK_volatile: pointer.setVolatile(true); break;
 			}

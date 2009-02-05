@@ -16,9 +16,11 @@
 
 $Terminals
 
-   -- GCC allows these C99 keywords to be used in C++
+   -- GCC allows these keywords to be used in C++
    
-   _Complex  _Imaginary
+   _Complex  
+   _Imaginary
+   restrict
    
 $End
 
@@ -33,11 +35,6 @@ $DropRules
 -- will be replaced by extended asm syntax
 asm_definition
     ::= 'asm' '(' 'stringlit' ')' ';'
-
--- need to replace the action associated with this rule with one that supports _Complex and _Imaginary
-declaration_specifiers
-    ::= <openscope-ast> simple_declaration_specifiers
-
 
 $End
 
@@ -55,7 +52,7 @@ $End
 
 $Define
 
-    $gnu_action_class /. GPPBuildASTParserAction ./
+	$build_action_class /. GPPBuildASTParserAction ./
 	$parser_factory_create_expression /. GPPSecondaryParserFactory.getDefault() ./
 
 $End
@@ -106,8 +103,9 @@ simple_type_specifier
       | '_Imaginary'
           /. $Build  consumeToken(); $EndBuild ./
 
-declaration_specifiers
-    ::= <openscope-ast> simple_declaration_specifiers
-          /. $BeginAction  gnuAction.consumeDeclarationSpecifiersSimple();  $EndAction ./
+cv_qualifier
+    ::= 'restrict'
+          /. $Build  consumeToken(); $EndBuild ./
+          
           
 $End

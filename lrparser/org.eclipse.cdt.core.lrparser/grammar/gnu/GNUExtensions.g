@@ -30,22 +30,29 @@ $Terminals
 $End
 
 
-
 $Headers
 /.
 	private $gnu_action_class gnuAction;
 ./
 $End
 
+
+$Globals
+/.
+	import org.eclipse.cdt.core.dom.lrparser.action.gnu.GNUBuildASTParserAction;
+./
+$End
+
+
 $Define
 
-	$gnu_action_class /.  ./
+	$gnu_action_class /. GNUBuildASTParserAction ./  -- overridable
 
 	$action_initializations /.
 	
 		gnuAction = new $gnu_action_class (this, astStack, $node_factory_create_expression);
 		gnuAction.setParserOptions(options);
-		gnuAction.setBaseAction(action);
+		//gnuAction.setBaseAction(action);
 	./
 	
 $End
@@ -176,6 +183,12 @@ case_range_expression
     ::= constant_expression '...' constant_expression
           /. $Build  consumeExpressionBinaryOperator(IASTBinaryExpression.op_assign);  $EndBuild ./
           
+          
+typeof_declaration_specifiers
+    ::= typeof_type_specifier
+      | no_type_declaration_specifiers  typeof_type_specifier
+      | typeof_declaration_specifiers no_type_declaration_specifier
+
 
 typeof_type_specifier
       ::= 'typeof' unary_expression
@@ -183,15 +196,10 @@ typeof_type_specifier
         | 'typeof' '(' type_id ')'
             /. $Build  consumeExpressionTypeId(IASTTypeIdExpression.op_typeof);  $EndBuild ./  
         
-typeof_declaration_specifiers
-    ::= typeof_type_specifier
-      | no_type_declaration_specifiers  typeof_type_specifier
-      | typeof_declaration_specifiers no_type_declaration_specifier
-      
-      
+
 declaration_specifiers
     ::= <openscope-ast> typeof_declaration_specifiers
-          /. $BeginAction  gnuAction.consumeDeclarationSpecifiersTypeof();  $EndAction ./
+          /. $Build  consumeDeclarationSpecifiersTypeof();  $EndBuild ./
         
 $End
 

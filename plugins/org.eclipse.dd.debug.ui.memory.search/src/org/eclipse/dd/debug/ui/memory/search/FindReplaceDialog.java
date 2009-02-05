@@ -903,12 +903,18 @@ public class FindReplaceDialog extends SelectionDialog
 					throws OperationCanceledException {
 
 				final BigInteger searchPhraseLength = BigInteger.valueOf(searchPhrase.getByteLength());
-				BigInteger range = searchForward ? end.subtract(start) : start.subtract(end);
-				BigInteger currentPosition = start;
+				BigInteger range = start.subtract(end);
+				//BigInteger range = searchForward ? end.subtract(start) : start.subtract(end);
+				//BigInteger currentPosition = start;
+				BigInteger currentPosition = searchForward ? start : end.subtract(searchPhraseLength);
 
+				if ( range.compareTo(searchPhraseLength) >= 0 ) {
+					return Status.OK_STATUS;
+				}
+				
 				boolean isReplace = replaceData != null;
 				
-				BigInteger jobs = range.subtract(searchPhraseLength);
+				BigInteger jobs = range;
 				BigInteger factor = BigInteger.ONE;
 				if(jobs.compareTo(BigInteger.valueOf(0x07FFFFFF)) > 0)
 				{
@@ -926,7 +932,7 @@ public class FindReplaceDialog extends SelectionDialog
 		
 				boolean matched = false;
 				while(((searchForward && currentPosition.compareTo(end.subtract(searchPhraseLength)) < 0) 
-					|| (!searchForward && currentPosition.compareTo(end) > 0)) && !monitor.isCanceled()) 
+					|| (!searchForward && currentPosition.compareTo(start) > 0)) && !monitor.isCanceled()) 
 				{
 					try
 					{

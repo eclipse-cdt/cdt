@@ -2504,7 +2504,12 @@ public class AST2CPPSpecTest extends AST2SpecBaseTest {
 	// y.g(); //error
 	// }
 	public void test9_3_2s4() throws Exception {
-		parse(getAboveComment(), ParserLanguage.CPP, true, 0);
+		String[] problems= {"g"};
+		final String code = getAboveComment();
+		IASTTranslationUnit tu= parse(code, ParserLanguage.CPP, problems);
+		BindingAssertionHelper bh= new BindingAssertionHelper(code, true);
+		bh.assertNonProblem("g();", 1); 
+		bh.assertProblem("g(); //error", 1); 
 	}
 
 	// class process {

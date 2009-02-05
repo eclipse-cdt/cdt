@@ -884,6 +884,7 @@ public class CPPSemantics {
 			return null;
 		}
 
+		HashSet<IBinding> baseBindings= bases.length > 1 ? new HashSet<IBinding>() : null;
 		for (ICPPBase base : bases) {
 			if (base instanceof IProblemBinding)
 				continue;
@@ -899,9 +900,11 @@ public class CPPSemantics {
 					continue;
 				}
 
-				inherited = null;
-				
 				final ICPPClassType cls = (ICPPClassType) b;
+				if (baseBindings != null && !baseBindings.add(cls))
+					continue;
+				
+				inherited = null;
 				final ICPPScope classScope = (ICPPScope) cls.getCompositeScope();
 				if (classScope == null || classScope instanceof ICPPInternalUnknownScope) {
 					// 14.6.2.3 scope is not examined 
@@ -2504,7 +2507,9 @@ public class CPPSemantics {
     private static ICPPVariable createVariable(IASTName name, final IType type, final boolean isConst, final boolean isVolatile) {
     	return new CPPVariable(name) {
 			@Override public IType getType() {
-				return new CPPQualifierType(type, isConst, isVolatile);
+				if (isConst || isVolatile)
+					return new CPPQualifierType(type, isConst, isVolatile);
+				return type;
 			}
 		};
     }

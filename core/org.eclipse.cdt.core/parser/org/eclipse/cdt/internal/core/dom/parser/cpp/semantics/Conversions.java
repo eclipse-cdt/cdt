@@ -14,8 +14,7 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.dom.parser.cpp.semantics;
 
-import static org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.SemanticUtil.getUltimateType;
-import static org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.SemanticUtil.getUltimateTypeViaTypedefs;
+import static org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.SemanticUtil.*;
 
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.dom.ast.DOMException;
@@ -67,142 +66,141 @@ public class Conversions {
 	 */
 	public static Cost checkImplicitConversionSequence(boolean allowUDC, IASTExpression sourceExp,
 			IType source, IType target, boolean isImpliedObject) throws DOMException {
-		Cost cost;
-		
 		allowUDC &= !isImpliedObject;
-		target= getUltimateTypeViaTypedefs(target);
-		source= getUltimateTypeViaTypedefs(source);
+		target= getNestedType(target, TYPEDEFS);
+		source= getNestedType(source, TYPEDEFS);
 		
 		if (target instanceof ICPPReferenceType) {
-			// [13.3.3.3.1] Reference binding 
-			IType cv1T1= getUltimateTypeViaTypedefs(((ICPPReferenceType) target).getType());
-			cost= new Cost(source, cv1T1);
-			cost.targetHadReference= true;
+			// [8.5.3-5] initialization of a reference 
+			IType cv1T1= getNestedType(target, TYPEDEFS | REFERENCES);
 			
-			boolean lvalue= sourceExp == null || !CPPVisitor.isRValue(sourceExp);			
+			boolean lvalue= sourceExp == null || !CPPVisitor.isRValue(sourceExp);	
+			if (source instanceof ICPPReferenceType) 
+				source= getNestedType(source, TYPEDEFS | REFERENCES);
+			
 			IType T2= source instanceof IQualifierType ?
-					getUltimateTypeViaTypedefs(((IQualifierType) source).getType()) : source;
+					getNestedType(((IQualifierType) source).getType(), TYPEDEFS | REFERENCES) : source;
 
-			if (lvalue && isReferenceCompatible(cv1T1, source)) {
-				// Direct reference binding
-				// [13.3.3.1.4]
-				if (cost.source.isSameType(cost.target) || 
-						// 7.3.3.13 for overload resolution the implicit this pointer is treated as if 
-						// it were a pointer to the derived class
-						(isImpliedObject && cost.source instanceof ICPPClassType &&
-						cost.target instanceof ICPPClassType)) {
-					cost.rank = Cost.IDENTITY_RANK;
+		    // [8.5.3-5] Is an lvalue (but is not a bit-field), and "cv1 T1" is reference-compatible with "cv2 T2," 
+			if (lvalue) {
+				Cost cost= isReferenceCompatible(cv1T1, source);
+				if (cost != null) {
+					// [8.5.3-5] this is a direct reference binding
+					// [13.3.3.1.4-1] direct binding has either identity or conversion rank.
+
+					// 7.3.3.13 for overload resolution the implicit this pointer is treated as if 
+					// it were a pointer to the derived class
+					if (isImpliedObject) 
+						cost.conversion= 0;
+					
+					// [13.3.3.1.4] 
+					if (cost.conversion > 0) {
+						cost.rank= Cost.DERIVED_TO_BASE_CONVERSION;
+					} else {
+						cost.rank = Cost.IDENTITY_RANK;
+					}
 					return cost;
-				}
-				
-				// Is an lvalue (but is not a bit-field), and "cv1 T1" is reference-compatible with "cv2 T2," 
-				// [13.3.3.1.4-1] direct binding
-				// [8.5.3-5]
-				qualificationConversion(cost);
-
-				derivedToBaseConversion(cost);
-			} else if (T2 instanceof ICPPClassType) {
-				if (allowUDC) {
-					// Or has a class type (i.e., T2 is a class type) and can be implicitly converted to
-					// an lvalue of type "cv3 T3," where "cv1 T1" is reference-compatible with "cv3 T3" 92)
-					// (this conversion is selected by enumerating the applicable conversion functions
-					// (13.3.1.6) and choosing the best one through overload resolution (13.3)).
-					ICPPMethod[] fcns= SemanticUtil.getConversionOperators((ICPPClassType) T2);
-					Cost operatorCost= null;
-					ICPPMethod conv= null;
-					boolean ambiguousConversionOperator= false;
-					if (fcns.length > 0 && !(fcns[0] instanceof IProblemBinding)) {
-						for (final ICPPMethod op : fcns) {
-							Cost cost2 = checkStandardConversionSequence(op.getType().getReturnType(), target,
-									false);
-							if (cost2.rank != Cost.NO_MATCH_RANK) {
-								if (operatorCost == null) {
+				} 
+			}
+			
+			if (T2 instanceof ICPPClassType && allowUDC) {
+				// Or has a class type (i.e., T2 is a class type) and can be implicitly converted to
+				// an lvalue of type "cv3 T3," where "cv1 T1" is reference-compatible with "cv3 T3" 92)
+				// (this conversion is selected by enumerating the applicable conversion functions
+				// (13.3.1.6) and choosing the best one through overload resolution (13.3)).
+				ICPPMethod[] fcns= SemanticUtil.getConversionOperators((ICPPClassType) T2);
+				Cost operatorCost= null;
+				ICPPMethod conv= null;
+				boolean ambiguousConversionOperator= false;
+				if (fcns.length > 0 && !(fcns[0] instanceof IProblemBinding)) {
+					for (final ICPPMethod op : fcns) {
+						Cost cost2 = checkStandardConversionSequence(op.getType().getReturnType(), cv1T1,
+								false);
+						if (cost2.rank != Cost.NO_MATCH_RANK) {
+							if (operatorCost == null) {
+								operatorCost= cost2;
+								conv= op;
+							} else {
+								int cmp= operatorCost.compare(cost2);
+								if (cmp >= 0) {
+									ambiguousConversionOperator= cmp == 0;
 									operatorCost= cost2;
 									conv= op;
-								} else {
-									int cmp= operatorCost.compare(cost2);
-									if (cmp >= 0) {
-										ambiguousConversionOperator= cmp == 0;
-										operatorCost= cost2;
-										conv= op;
-									}
-								}
-							}
-						}
-					}
-
-					if (conv!= null && !ambiguousConversionOperator) {
-						IType newSource= conv.getType().getReturnType();
-						boolean isNewSourceLValue= newSource instanceof ICPPReferenceType;
-						if (isNewSourceLValue && isReferenceCompatible(cv1T1, newSource)) {
-							cost= new Cost(cv1T1, newSource);
-							qualificationConversion(cost);
-							derivedToBaseConversion(cost);
-						}
-					}
-				}
-			}
-
-			// Direct binding failed
-			if (cost.rank == Cost.NO_MATCH_RANK) {
-				// 8.5.3-5 - Otherwise
-				
-				boolean cv1isConst= false;
-				if (cv1T1 instanceof IQualifierType) {
-					cv1isConst= ((IQualifierType) cv1T1).isConst() && !((IQualifierType) cv1T1).isVolatile();
-				} else if (cv1T1 instanceof IPointerType) {
-					cv1isConst= ((IPointerType) cv1T1).isConst() && !((IPointerType) cv1T1).isVolatile();
-				}
-
-				if (cv1isConst) {
-					if (!lvalue && source instanceof ICPPClassType) {
-						cost= new Cost(source, target);
-						cost.rank= Cost.IDENTITY_RANK;
-					} else {
-						// 5 - Otherwise
-						// Otherwise, a temporary of type "cv1 T1" is created and initialized from
-						// the initializer expression using the rules for a non-reference copy
-						// initialization (8.5). The reference is then bound to the temporary.
-
-						// If T1 is reference-related to T2, cv1 must be the same cv-qualification as,
-						// or greater cv-qualification than, cv2; otherwise, the program is ill-formed.
-						// [Example
-						boolean illformed= false;
-						if (isReferenceRelated(cv1T1, source)) {
-							Integer cmp= compareQualifications(cv1T1, source); 
-							if (cmp == null || cmp < 0) {
-								illformed= true;
-							}
-						}
-
-						// We must do a non-reference initialization
-						if (!illformed) {
-							cost= checkStandardConversionSequence(source, cv1T1, isImpliedObject);
-							// 12.3-4 At most one user-defined conversion is implicitly applied to
-							// a single value.  (also prevents infinite loop)				
-							if (allowUDC && (cost.rank == Cost.NO_MATCH_RANK || 
-									cost.rank == Cost.FUZZY_TEMPLATE_PARAMETERS)) { 
-								Cost temp = checkUserDefinedConversionSequence(source, cv1T1);
-								if (temp != null) {
-									cost = temp;
 								}
 							}
 						}
 					}
 				}
-			}
-		} else {
-			// Non-reference binding
-			cost= checkStandardConversionSequence(source, target, isImpliedObject);
-			if (allowUDC && (cost.rank == Cost.NO_MATCH_RANK || 
-					cost.rank == Cost.FUZZY_TEMPLATE_PARAMETERS)) { 
-				Cost temp = checkUserDefinedConversionSequence(source, target);
-				if (temp != null) {
-					cost = temp;
+
+				if (conv!= null && !ambiguousConversionOperator) {
+					IType newSource= conv.getType().getReturnType();
+					if (newSource instanceof ICPPReferenceType) { // require an lvalue
+						IType cvT2= getNestedType(newSource, TYPEDEFS | REFERENCES);
+						Cost cost= isReferenceCompatible(cv1T1, cvT2);
+						if (cost != null) {
+							if (isImpliedObject) {
+								cost.conversion= 0;
+							}
+							cost.rank= Cost.USERDEFINED_CONVERSION_RANK;
+							cost.userDefined= Cost.USERDEFINED_CONVERSION;
+							return cost;
+						}
+					}
 				}
+			}
+
+			// [8.5.3-5] Direct binding failed  - Otherwise
+
+			boolean cv1isConst= false;
+			if (cv1T1 instanceof IQualifierType) {
+				cv1isConst= ((IQualifierType) cv1T1).isConst() && !((IQualifierType) cv1T1).isVolatile();
+			} else if (cv1T1 instanceof IPointerType) {
+				cv1isConst= ((IPointerType) cv1T1).isConst() && !((IPointerType) cv1T1).isVolatile();
+			}
+
+			if (cv1isConst) {
+				if (!lvalue && source instanceof ICPPClassType) {
+					Cost cost= new Cost(source, target);
+					cost.rank= Cost.IDENTITY_RANK;
+					return cost;
+				} else {
+					// 5 - Otherwise
+					// Otherwise, a temporary of type "cv1 T1" is created and initialized from
+					// the initializer expression using the rules for a non-reference copy
+					// initialization (8.5). The reference is then bound to the temporary.
+
+					// If T1 is reference-related to T2, cv1 must be the same cv-qualification as,
+					// or greater cv-qualification than, cv2; otherwise, the program is ill-formed.
+					boolean illformed= isReferenceRelated(cv1T1, source) >= 0 && compareQualifications(cv1T1, source) < 0;
+
+					// We must do a non-reference initialization
+					if (!illformed) {
+						Cost cost= checkStandardConversionSequence(source, cv1T1, isImpliedObject);
+						// 12.3-4 At most one user-defined conversion is implicitly applied to
+						// a single value.  (also prevents infinite loop)				
+						if (allowUDC && (cost.rank == Cost.NO_MATCH_RANK || 
+								cost.rank == Cost.FUZZY_TEMPLATE_PARAMETERS)) { 
+							Cost temp = checkUserDefinedConversionSequence(source, cv1T1);
+							if (temp != null) {
+								cost = temp;
+							}
+						}
+						return cost;
+					}
+				}
+			}
+			return new Cost(source, cv1T1);
+		} 
+		
+		// Non-reference binding
+		Cost cost= checkStandardConversionSequence(source, target, isImpliedObject);
+		if (allowUDC && (cost.rank == Cost.NO_MATCH_RANK || 
+				cost.rank == Cost.FUZZY_TEMPLATE_PARAMETERS)) { 
+			Cost temp = checkUserDefinedConversionSequence(source, target);
+			if (temp != null) {
+				cost = temp;
 			}
 		}
-		
 		return cost;
 	}
 
@@ -215,12 +213,11 @@ public class Conversions {
 	 * @return <ul>
 	 * <li>GT 1 if cv1 is more qualified than cv2
 	 * <li>EQ 0 if cv1 and cv2 are equally qualified
-	 * <li>LT -1 if cv1 is less qualified than cv2
-	 * <li>NC null if cv1 and cv2 are not comparable
+	 * <li>LT -1 if cv1 is less qualified than cv2 or not comparable
 	 * </ul>
 	 * @throws DOMException
 	 */
-	private static final Integer compareQualifications(IType cv1, IType cv2) throws DOMException {
+	private static final int compareQualifications(IType cv1, IType cv2) throws DOMException {
 		boolean cv1Const= false, cv2Const= false, cv1Volatile= false, cv2Volatile= false;
 		if (cv1 instanceof IQualifierType) {
 			IQualifierType qt1= (IQualifierType) cv1;
@@ -251,56 +248,57 @@ public class Conversions {
 			return cmpVolatile;
 		}
 
-		return null;
+		return -1;
 	}
 
 	/**
 	 * [8.5.3] "cv1 T1" is reference-related to "cv2 T2" if T1 is the same type as T2,
 	 * or T1 is a base class of T2.
 	 * Note this is not a symmetric relation.
-	 * @param cv1t1
-	 * @param cv2t2
-	 * @return whether <code>cv1t1</code> is reference-related to <code>cv2t2</code>
-	 * @throws DOMException
+	 * @return inheritance distance, or -1, if <code>cv1t1</code> is not reference-related to <code>cv2t2</code>
 	 */
-	private static final boolean isReferenceRelated(IType cv1t1, IType cv2t2) throws DOMException {
-		// I've not found anything in the spec to justify unrolling cv1t1 or cv1t2 so far
-		IType t1= SemanticUtil.getUltimateTypeUptoPointers(cv1t1);
-		IType t2= SemanticUtil.getUltimateTypeUptoPointers(cv2t2);
+	private static final int isReferenceRelated(IType cv1Target, IType cv2Source) throws DOMException {
+		IType t= SemanticUtil.getNestedType(cv1Target, TYPEDEFS | REFERENCES);
+		IType s= SemanticUtil.getNestedType(cv2Source, TYPEDEFS | REFERENCES);
 		
 		// The way cv-qualification is currently modeled means
 		// we must cope with IPointerType objects separately.
-		if (t1 instanceof IPointerType && t2 instanceof IPointerType) {
-			IType ptt1= ((IPointerType) t1).getType();
-			IType ptt2= ((IPointerType) t2).getType();
-			return ptt1 != null && ptt2 != null ? ptt1.isSameType(ptt2) : ptt1 == ptt2;
+		if (t instanceof IPointerType && s instanceof IPointerType) {
+			t= ((IPointerType) t).getType();
+			s= ((IPointerType) s).getType();
+		} else {
+			t= t instanceof IQualifierType ? ((IQualifierType) t).getType() : t;
+			s= s instanceof IQualifierType ? ((IQualifierType) s).getType() : s;
+
+			if (t instanceof ICPPClassType && s instanceof ICPPClassType) {
+				return calculateInheritanceDepth(CPPSemantics.MAX_INHERITANCE_DEPTH, s, t);
+			}
 		}
-		
-		t1= t1 instanceof IQualifierType ? ((IQualifierType) t1).getType() : t1;
-		t2= t2 instanceof IQualifierType ? ((IQualifierType) t2).getType() : t2;
-		
-		if (t1 instanceof ICPPClassType && t2 instanceof ICPPClassType) {
-			return calculateInheritanceDepth(CPPSemantics.MAX_INHERITANCE_DEPTH, t2, t1) >= 0;
+		if (t == s || (t != null && s != null && t.isSameType(s))) {
+			return 0;
 		}
-		
-		return t1 != null && t2 != null ? t1.isSameType(t2) : t1 == t2; 
+		return -1;
 	}
 
 	/**
 	 * [8.5.3] "cv1 T1" is reference-compatible with "cv2 T2" if T1 is reference-related
 	 * to T2 and cv1 is the same cv-qualification as, or greater cv-qualification than, cv2.
 	 * Note this is not a symmetric relation.
-	 * @param cv1t1
-	 * @param cv2t2
-	 * @return whether <code>cv1t1</code> is reference-compatible with <code>cv2t2</code>
-	 * @throws DOMException
+	 * @return The cost for converting or <code>null</code> if <code>cv1t1</code> is not
+	 * reference-compatible with <code>cv2t2</code>
 	 */
-	private static final boolean isReferenceCompatible(IType cv1t1, IType cv2t2) throws DOMException {
-		if (isReferenceRelated(cv1t1, cv2t2)) {
-			Integer cmp= compareQualifications(cv1t1, cv2t2);
-			return cmp != null && cmp >= 0;
-		}
-		return false;
+	private static final Cost isReferenceCompatible(IType cv1Target, IType cv2Source) throws DOMException {
+		final int inheritanceDist= isReferenceRelated(cv1Target, cv2Source);
+		if (inheritanceDist < 0)
+			return null;
+		final int cmp= compareQualifications(cv1Target, cv2Source);
+		if (cmp < 0)
+			return null;
+		
+		Cost cost= new Cost(cv2Source, cv1Target);
+		cost.qualification= cmp > 0 ? Cost.CONVERSION_RANK : Cost.IDENTITY_RANK;
+		cost.conversion= inheritanceDist;
+		return cost;
 	}
 	
 	/**
@@ -478,7 +476,7 @@ public class Conversions {
 						return 1;
 					}
 
-					tbase= getUltimateTypeViaTypedefs(tbase);
+					tbase= getNestedType(tbase, TYPEDEFS);
 					if (tbase instanceof ICPPClassType) {
 						int n= calculateInheritanceDepth(maxdepth - 1, tbase, ancestorToFind);
 						if (n > 0)

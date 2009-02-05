@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2008 IBM Corporation and others.
+ * Copyright (c) 2004, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -50,6 +50,9 @@ public class SemanticUtil {
 	private static final char[] OPERATOR_CHARS = Keywords.OPERATOR.toCharArray();
 	// Cache of overloadable operator names for fast lookup. Used by isConversionOperator.
 	private static final CharArraySet cas= new CharArraySet(OverloadableOperator.values().length);
+	
+	static final int TYPEDEFS = 0x1;
+	static final int REFERENCES = 0x2;
 	
 	static {
 		final int OPERATOR_SPC= OPERATOR_CHARS.length + 1;
@@ -233,17 +236,31 @@ public class SemanticUtil {
 	 * Descends into a typedef sequence.
 	 */
 	public static IType getUltimateTypeViaTypedefs(IType type) {
+		return getNestedType(type, TYPEDEFS);
+	}
+	
+	/**
+	 * Descends into typedefs, references, etc. as specified by options.
+	 */
+	public static IType getNestedType(IType type, int options) {
+		boolean typedefs= (options & TYPEDEFS) != 0;
+		boolean refs= (options & REFERENCES) != 0;
 		try {
-			while (type instanceof ITypedef) {
-				IType t= ((ITypedef) type).getType();
-				if (t == null) 
+			while (true) {
+				IType t= null;
+				if (typedefs && type instanceof ITypedef) {
+					t= ((ITypedef) type).getType();
+				} else if (refs && type instanceof ICPPReferenceType) {
+					t= ((ICPPReferenceType) type).getType();
+				}
+				if (t == null)
 					return type;
+				
 				type= t;
 			}
 		} catch (DOMException e) {
-			type= e.getProblem();
+			return e.getProblem();
 		}
-		return type;
 	}
 
 	/**

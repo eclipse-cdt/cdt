@@ -46,6 +46,7 @@ public class CompletionTest_MacroRef_NoPrefix  extends CompletionProposalsBaseTe
 			"__null",
 			"__real__",
 			"__stdcall",
+			"__thread",
 	};
 	
 	public CompletionTest_MacroRef_NoPrefix(String name) {

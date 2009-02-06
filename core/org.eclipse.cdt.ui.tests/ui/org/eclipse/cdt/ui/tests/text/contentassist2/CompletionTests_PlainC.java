@@ -375,6 +375,7 @@ public class CompletionTests_PlainC extends AbstractContentAssistTest {
 				"__null",
 				"__real__",
 				"__stdcall",
+				"__thread",
 		};
 		assertCompletionResults(expected);
 	}

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2008 IBM Corporation and others.
+ * Copyright (c) 2000, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -107,7 +107,7 @@ public class CPairMatcher extends DefaultCharacterPairMatcher {
 		if (isTemplateParameterCloseBracket(offset, document, scanner)) {
 			int pos= scanner.findOpeningPeer(offset - 1, Math.max(0, offset - ANGLE_BRACKETS_SEARCH_BOUND), '<', '>');
 			if (pos != CHeuristicScanner.NOT_FOUND) {
-				return new Region(pos, offset - pos);
+				return new Region(pos, offset - pos + 1);
 			}
 		}
 		return null;

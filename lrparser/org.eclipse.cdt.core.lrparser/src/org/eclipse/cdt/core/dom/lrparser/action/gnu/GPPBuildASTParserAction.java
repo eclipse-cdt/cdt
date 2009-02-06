@@ -16,11 +16,13 @@ import java.util.List;
 
 import lpg.lpgjavaruntime.IToken;
 
+import org.eclipse.cdt.core.dom.ast.IASTDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTExpression;
 import org.eclipse.cdt.core.dom.ast.IASTPointer;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTPointerToMember;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTSimpleDeclSpecifier;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPNodeFactory;
+import org.eclipse.cdt.core.dom.ast.gnu.cpp.IGPPASTExplicitTemplateInstantiation;
 import org.eclipse.cdt.core.dom.ast.gnu.cpp.IGPPASTPointer;
 import org.eclipse.cdt.core.dom.ast.gnu.cpp.IGPPASTPointerToMember;
 import org.eclipse.cdt.core.dom.ast.gnu.cpp.IGPPASTSimpleDeclSpecifier;
@@ -169,6 +171,15 @@ public class GPPBuildASTParserAction extends CPPBuildASTParserAction {
 			astStack.push(gppPointer);
 		}
 		
+	}
+	
+	
+	public void consumeTemplateExplicitInstantiationGCC(int modifier) {
+		IASTDeclaration declaration = (IASTDeclaration) astStack.pop();
+		IGPPASTExplicitTemplateInstantiation instantiation = nodeFactory.newExplicitTemplateInstantiationGPP(declaration);
+		instantiation.setModifier(modifier);
+		setOffsetAndLength(instantiation);
+		astStack.push(instantiation);
 	}
 	
 	

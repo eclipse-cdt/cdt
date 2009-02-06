@@ -41,6 +41,7 @@ import org.eclipse.cdt.core.dom.lrparser.action.gnu.GNUBuildASTParserAction;
 
 import org.eclipse.cdt.core.dom.lrparser.action.gnu.GPPBuildASTParserAction;
 import org.eclipse.cdt.core.dom.lrparser.action.gnu.GPPSecondaryParserFactory;
+import org.eclipse.cdt.core.dom.ast.gnu.cpp.*;
 
 public class GPPSizeofExpressionParser extends PrsStream implements RuleAction, ITokenStream, 
                                                        ITokenCollector, IParser< IASTExpression > 
@@ -2075,9 +2076,27 @@ private  GNUBuildASTParserAction  gnuAction;
             }  
   
             //
-            // Rule 601:  no_sizeof_type_id_start ::= ERROR_TOKEN
+            // Rule 600:  explicit_instantiation ::= extern template declaration
             //
-            case 601: { action.   consumeEmpty();             break;
+            case 600: { action.   consumeTemplateExplicitInstantiationGCC(IGPPASTExplicitTemplateInstantiation.ti_extern);             break;
+            }  
+  
+            //
+            // Rule 601:  explicit_instantiation ::= static template declaration
+            //
+            case 601: { action.   consumeTemplateExplicitInstantiationGCC(IGPPASTExplicitTemplateInstantiation.ti_static);             break;
+            }  
+  
+            //
+            // Rule 602:  explicit_instantiation ::= inline template declaration
+            //
+            case 602: { action.   consumeTemplateExplicitInstantiationGCC(IGPPASTExplicitTemplateInstantiation.ti_inline);             break;
+            }  
+  
+            //
+            // Rule 604:  no_sizeof_type_id_start ::= ERROR_TOKEN
+            //
+            case 604: { action.   consumeEmpty();             break;
             }  
 
     

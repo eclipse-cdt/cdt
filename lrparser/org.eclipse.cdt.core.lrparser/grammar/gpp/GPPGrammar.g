@@ -47,6 +47,7 @@ $Globals
 /.
 	import org.eclipse.cdt.core.dom.lrparser.action.gnu.GPPBuildASTParserAction;
 	import org.eclipse.cdt.core.dom.lrparser.action.gnu.GPPSecondaryParserFactory;
+	import org.eclipse.cdt.core.dom.ast.gnu.cpp.*;
 ./
 $End
 
@@ -106,6 +107,15 @@ simple_type_specifier
 cv_qualifier
     ::= 'restrict'
           /. $Build  consumeToken(); $EndBuild ./
+          
+          
+explicit_instantiation
+    ::= 'extern' 'template' declaration
+            /. $Build  consumeTemplateExplicitInstantiationGCC(IGPPASTExplicitTemplateInstantiation.ti_extern);  $EndBuild ./
+      | 'static' 'template' declaration
+            /. $Build  consumeTemplateExplicitInstantiationGCC(IGPPASTExplicitTemplateInstantiation.ti_static);  $EndBuild ./
+      | 'inline' 'template' declaration    
+            /. $Build  consumeTemplateExplicitInstantiationGCC(IGPPASTExplicitTemplateInstantiation.ti_inline);  $EndBuild ./
           
           
 $End

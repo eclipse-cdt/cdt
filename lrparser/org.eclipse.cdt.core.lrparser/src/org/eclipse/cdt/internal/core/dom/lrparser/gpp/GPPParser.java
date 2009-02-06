@@ -37,6 +37,7 @@ import org.eclipse.cdt.core.dom.lrparser.action.gnu.GNUBuildASTParserAction;
 
 import org.eclipse.cdt.core.dom.lrparser.action.gnu.GPPBuildASTParserAction;
 import org.eclipse.cdt.core.dom.lrparser.action.gnu.GPPSecondaryParserFactory;
+import org.eclipse.cdt.core.dom.ast.gnu.cpp.*;
 
 public class GPPParser extends PrsStream implements RuleAction, ITokenStream, 
                                                        ITokenCollector, IParser< IASTTranslationUnit  > 
@@ -2073,6 +2074,24 @@ private  GNUBuildASTParserAction  gnuAction;
             // Rule 603:  cv_qualifier ::= restrict
             //
             case 603: { action.   consumeToken();            break;
+            }  
+  
+            //
+            // Rule 604:  explicit_instantiation ::= extern template declaration
+            //
+            case 604: { action.   consumeTemplateExplicitInstantiationGCC(IGPPASTExplicitTemplateInstantiation.ti_extern);             break;
+            }  
+  
+            //
+            // Rule 605:  explicit_instantiation ::= static template declaration
+            //
+            case 605: { action.   consumeTemplateExplicitInstantiationGCC(IGPPASTExplicitTemplateInstantiation.ti_static);             break;
+            }  
+  
+            //
+            // Rule 606:  explicit_instantiation ::= inline template declaration
+            //
+            case 606: { action.   consumeTemplateExplicitInstantiationGCC(IGPPASTExplicitTemplateInstantiation.ti_inline);             break;
             }  
 
     

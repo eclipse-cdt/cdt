@@ -1390,16 +1390,27 @@ public class CPPTemplates {
 	private static boolean deduceTemplateParameterMapFromFunctionParameters(ICPPFunctionTemplate template, IType[] fnArgs, CPPTemplateParameterMap map) throws DOMException{
 		try {
 			IType[] fnPars = template.getType().getParameterTypes();
+			if (fnPars.length == 0)
+				return true;
+			
 			int len= Math.min(fnPars.length, fnArgs.length);
+			IType[] instPars= new IType[len];
 			for (int j= 0; j < len; j++) {
 				IType par= fnPars[j];
-				par= instantiateType(par, map, null);
-				if (!isValidType(par))
+				IType instPar= instantiateType(par, map, null);
+				if (!isValidType(instPar))
 					return false;
-
-				par= SemanticUtil.adjustParameterType(par);
-				if (isDependentType(par) && !deduceTemplateParameterMap(par, fnArgs[j], map)) {
-					return false;
+				instPars[j]= instPar;
+			}
+			
+			for (int j= 0; j < len; j++) {
+				IType par= instPars[j];
+				if (isDependentType(par)) {
+					// 14.8.2.1
+					par= SemanticUtil.adjustParameterType(par);
+					if (!deduceTemplateParameterMap(par, fnArgs[j], map)) {
+						return false;
+					}
 				}
 			}
 			return true;

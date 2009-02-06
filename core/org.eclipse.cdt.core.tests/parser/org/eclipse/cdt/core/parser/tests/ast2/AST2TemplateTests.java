@@ -3716,4 +3716,21 @@ public class AST2TemplateTests extends AST2BaseTest {
     	parseAndCheckBindings(code, ParserLanguage.CPP);
     }
     
+    // template <typename T> class CT {
+    // public:
+    //    void append(unsigned int __n, T __c) {}
+    //    template<class P> void append(P __first, P __last) {}
+    // };
+    // void test() {
+    //    CT<char> x;
+    //    x.append(3, 'c');
+    // }
+    public void testConflictInTemplateArgumentDeduction() throws Exception {
+    	String code= getAboveComment();
+    	parseAndCheckBindings(code, ParserLanguage.CPP);
+    	BindingAssertionHelper bh= new BindingAssertionHelper(code, true);
+    	ICPPMethod m= bh.assertNonProblem("append(3", 6);
+    	assertFalse(m instanceof ICPPTemplateInstance);
+    }
+
 }

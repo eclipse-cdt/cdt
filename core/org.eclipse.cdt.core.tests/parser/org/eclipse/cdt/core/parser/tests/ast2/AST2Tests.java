@@ -137,7 +137,7 @@ public class AST2Tests extends AST2BaseTest {
 	}
 	
 	public void testBug75340() throws Exception {
-		IASTTranslationUnit tu = parseAndCheckBindings("void f(int i = 0, int * p = 0);"); //$NON-NLS-1$
+		IASTTranslationUnit tu = parseAndCheckBindings("void f(int i = 0, int * p = 0);", ParserLanguage.CPP); //$NON-NLS-1$
 		IASTSimpleDeclaration sd = (IASTSimpleDeclaration) tu.getDeclarations()[0];
 		assertEquals(ASTSignatureUtil.getParameterSignature(sd.getDeclarators()[0]), "(int, int *)"); //$NON-NLS-1$
 	}

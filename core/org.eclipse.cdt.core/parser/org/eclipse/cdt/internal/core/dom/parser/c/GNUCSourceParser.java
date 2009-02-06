@@ -1775,7 +1775,7 @@ public class GNUCSourceParser extends AbstractGNUSourceCodeParser {
         try {
         	fPreventKnrCheck++;
         	declSpec= declSpecifierSeq(option);
-        	declarator = initDeclarator(option);
+        	declarator = declarator(option);
         } catch(FoundDeclaratorException fd) {
         	declSpec= fd.declSpec;
         	declarator= fd.declarator;
@@ -1783,9 +1783,8 @@ public class GNUCSourceParser extends AbstractGNUSourceCodeParser {
         	altDeclarator= fd.altDeclarator;
         	backup(fd.currToken);
         } catch (FoundAggregateInitializer lie) {
-        	if (declSpec == null)
-        		declSpec= lie.fDeclSpec;
-        	declarator= addInitializer(lie);
+        	declSpec= lie.fDeclSpec;
+        	declarator= lie.fDeclarator;
         } finally {
         	fPreventKnrCheck--;
         }

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2008 IBM Corporation and others.
+ * Copyright (c) 2000, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -11,10 +11,12 @@
  * David McKnight   (IBM)        - [216252] [api][nls] Resource Strings specific to subsystems should be moved from rse.ui into files.ui / shells.ui / processes.ui where possible
  * David McKnight   (IBM)        - [216252] MessageFormat.format -> NLS.bind
  * David McKnight   (IBM)        - [220547] [api][breaking] SimpleSystemMessage needs to specify a message id and some messages should be shared
+ * Takuya Miyamoto - [185925] Integrate Platform/Team Synchronization
  *******************************************************************************/
 package org.eclipse.rse.internal.importexport.files;
 
 import java.io.File;
+import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.util.Iterator;
 import java.util.List;
@@ -25,6 +27,7 @@ import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.resources.ResourcesPlugin;
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Path;
@@ -39,6 +42,11 @@ import org.eclipse.rse.internal.importexport.RemoteImportExportPlugin;
 import org.eclipse.rse.internal.importexport.RemoteImportExportResources;
 import org.eclipse.rse.internal.importexport.RemoteImportExportUtil;
 import org.eclipse.rse.internal.importexport.SystemImportExportResources;
+import org.eclipse.rse.internal.synchronize.RSESyncUtils;
+import org.eclipse.rse.internal.synchronize.SynchronizeData;
+import org.eclipse.rse.internal.synchronize.provisional.ISynchronizeOperation;
+import org.eclipse.rse.internal.synchronize.provisional.SynchronizeOperation;
+import org.eclipse.rse.internal.synchronize.provisional.Synchronizer;
 import org.eclipse.rse.services.clientserver.messages.CommonMessages;
 import org.eclipse.rse.services.clientserver.messages.ICommonMessageIds;
 import org.eclipse.rse.services.clientserver.messages.SimpleSystemMessage;
@@ -69,7 +77,7 @@ import org.eclipse.ui.dialogs.WizardExportResourcesPage;
  *
  *  040510 AR	Fix "Create folder" question.  Previous fix changed the way we were
  * 				asking user if they wanted target folder created, to use RSE
- * 				widgets.  But introduced error. 
+ * 				widgets.  But introduced error.
  */
 class RemoteExportWizardPage1 extends WizardExportResourcesPage implements Listener, ISystemWizardPage {
 	private Object destinationFolder = null;
@@ -80,6 +88,7 @@ class RemoteExportWizardPage1 extends WizardExportResourcesPage implements Liste
 	// widgets
 	private Combo destinationNameField;
 	private Button destinationBrowseButton;
+	protected Button reviewSynchronizeCheckbox;
 	protected Button overwriteExistingFilesCheckbox;
 	protected Button createDirectoryStructureButton;
 	protected Button createSelectionOnlyButton;
@@ -98,9 +107,9 @@ class RemoteExportWizardPage1 extends WizardExportResourcesPage implements Liste
 	private static final String STORE_CREATE_DESCRIPTION_FILE_ID = "RemoteExportWizard.STORE_CREATE_DESCRIPTION_FILE_ID"; //$NON-NLS-1$
 	private static final String STORE_DESCRIPTION_FILE_NAME_ID = "RemoteExportWizard.STORE_DESCRIPTION_FILE_NAME_ID"; //$NON-NLS-1$
 	//messages
-	private static final SystemMessage DESTINATION_EMPTY_MESSAGE = new SimpleSystemMessage(RemoteImportExportPlugin.PLUGIN_ID, 
+	private static final SystemMessage DESTINATION_EMPTY_MESSAGE = new SimpleSystemMessage(RemoteImportExportPlugin.PLUGIN_ID,
 			IRemoteImportExportConstants.FILEMSG_DESTINATION_EMPTY,
-			IStatus.ERROR, 
+			IStatus.ERROR,
 			RemoteImportExportResources.FILEMSG_DESTINATION_EMPTY,
 			RemoteImportExportResources.FILEMSG_DESTINATION_EMPTY_DETAILS);
 
@@ -161,13 +170,13 @@ class RemoteExportWizardPage1 extends WizardExportResourcesPage implements Liste
 		//		  SystemWidgetHelpers.setWizardPageMnemonics((Composite)c);
 		//		  parentComposite = (Composite)c;
 		//		  if (helpId != null)
-		//			SystemWidgetHelpers.setHelp(parentComposite, helpId);	    
+		//			SystemWidgetHelpers.setHelp(parentComposite, helpId);
 		//		}
 		//		else if (c instanceof Button)
 		//		{
 		//			Mnemonics ms = new Mnemonics();
 		//			ms.setMnemonic((Button)c);
-		//		}		
+		//		}
 		//		configureMessageLine();
 	}
 
@@ -199,6 +208,9 @@ class RemoteExportWizardPage1 extends WizardExportResourcesPage implements Liste
 	 *	@param optionsGroup the group into which the option buttons will be placed
 	 */
 	protected void createOptionsGroupButtons(Group optionsGroup) {
+		reviewSynchronizeCheckbox = SystemWidgetHelpers.createCheckBox(optionsGroup, 1, null, SystemImportExportResources.RESID_FILEEXPORT_REVIEW_LABEL,
+				SystemImportExportResources.RESID_FILEEXPORT_REVIEW_TOOLTIP);
+		reviewSynchronizeCheckbox.addListener(SWT.Selection, this);
 		overwriteExistingFilesCheckbox = SystemWidgetHelpers.createCheckBox(optionsGroup, 1, null, SystemImportExportResources.RESID_FILEEXPORT_OPTION_OVERWRITE_LABEL,
 				SystemImportExportResources.RESID_FILEEXPORT_OPTION_OVERWRITE_TOOLTIP);
 		createDirectoryStructureButton = SystemWidgetHelpers.createRadioButton(optionsGroup, null, SystemImportExportResources.RESID_FILEEXPORT_OPTION_CREATEALL_LABEL,
@@ -270,6 +282,12 @@ class RemoteExportWizardPage1 extends WizardExportResourcesPage implements Liste
 		descFilePathLabel.setEnabled(isSaveSettings);
 		descFilePathField.setEnabled(isSaveSettings);
 		descFileBrowseButton.setEnabled(isSaveSettings);
+
+		// if review is selected, the other options are grayed out without save settings
+		boolean isReview = reviewSynchronizeCheckbox.getSelection();
+		overwriteExistingFilesCheckbox.setEnabled(!isReview);
+		createDirectoryStructureButton.setEnabled(!isReview);
+		createSelectionOnlyButton.setEnabled(!isReview);
 	}
 
 	/**
@@ -281,11 +299,11 @@ class RemoteExportWizardPage1 extends WizardExportResourcesPage implements Liste
 	 */
 	protected boolean ensureDirectoryExists(File directory) {
 		if (!directory.exists()) {
-			
+
 			String msgTxt = RemoteImportExportResources.FILEMSG_TARGET_EXISTS;
 			String msgDetails = NLS.bind(RemoteImportExportResources.FILEMSG_TARGET_EXISTS_DETAILS, directory.getAbsolutePath());
-			
-			SystemMessage msg = new SimpleSystemMessage(RemoteImportExportPlugin.PLUGIN_ID, 
+
+			SystemMessage msg = new SimpleSystemMessage(RemoteImportExportPlugin.PLUGIN_ID,
 					IRemoteImportExportConstants.FILEMSG_TARGET_EXISTS,
 					IStatus.ERROR, msgTxt, msgDetails);
 			SystemMessageDialog dlg = new SystemMessageDialog(getContainer().getShell(), msg);
@@ -293,8 +311,8 @@ class RemoteExportWizardPage1 extends WizardExportResourcesPage implements Liste
 			if (!directory.mkdirs()) {
 				msgTxt = RemoteImportExportResources.FILEMSG_CREATE_FOLDER_FAILED;
 				msgDetails = NLS.bind(RemoteImportExportResources.FILEMSG_CREATE_FOLDER_FAILED_DETAILS, directory.getAbsolutePath());
-				
-				msg = new SimpleSystemMessage(RemoteImportExportPlugin.PLUGIN_ID, 
+
+				msg = new SimpleSystemMessage(RemoteImportExportPlugin.PLUGIN_ID,
 						IRemoteImportExportConstants.FILEMSG_CREATE_FOLDER_FAILED,
 						IStatus.ERROR, msgTxt, msgDetails);
 				msg.makeSubstitution(directory.getAbsolutePath());
@@ -317,8 +335,8 @@ class RemoteExportWizardPage1 extends WizardExportResourcesPage implements Liste
 		if (targetDirectory.exists() && !targetDirectory.isDirectory()) {
 			String msgTxt = RemoteImportExportResources.FILEMSG_SOURCE_IS_FILE;
 			String msgDetails = NLS.bind(RemoteImportExportResources.FILEMSG_SOURCE_IS_FILE_DETAILS, targetDirectory.getAbsolutePath());
-						
-			SystemMessage msg = new SimpleSystemMessage(RemoteImportExportPlugin.PLUGIN_ID, 
+
+			SystemMessage msg = new SimpleSystemMessage(RemoteImportExportPlugin.PLUGIN_ID,
 					IRemoteImportExportConstants.FILEMSG_SOURCE_IS_FILE,
 					IStatus.ERROR, msgTxt, msgDetails);
 
@@ -352,7 +370,7 @@ class RemoteExportWizardPage1 extends WizardExportResourcesPage implements Liste
 		IStatus status = op.getStatus();
 		if (!status.isOK()) {
 			String msgTxt = NLS.bind(RemoteImportExportResources.FILEMSG_EXPORT_FAILED, status);
-			SystemMessage msg = new SimpleSystemMessage(RemoteImportExportPlugin.PLUGIN_ID, 
+			SystemMessage msg = new SimpleSystemMessage(RemoteImportExportPlugin.PLUGIN_ID,
 					IRemoteImportExportConstants.FILEMSG_EXPORT_FAILED,
 					IStatus.ERROR, msgTxt);
 			SystemMessageDialog dlg = new SystemMessageDialog(getContainer().getShell(), msg);
@@ -391,15 +409,44 @@ class RemoteExportWizardPage1 extends WizardExportResourcesPage implements Liste
 				data.setSaveSettings(saveSettingsButton.getSelection());
 				data.setDescriptionFilePath(getDescriptionLocation());
 				data.setDestination(getDestinationValue());
-				// execute export
-				ret = executeExportOperation(new RemoteFileExportOperation(data, this));
+
+				if (!reviewSynchronizeCheckbox.getSelection()) {
+					// execute export
+					ret = executeExportOperation(new RemoteFileExportOperation(data, this));
+				} else {
+					// run synchronization
+					SynchronizeData data2 = new SynchronizeData(data);
+					if (reviewSynchronizeCheckbox.getSelection()) {
+						data2.setSynchronizeType(ISynchronizeOperation.SYNC_MODE_UI_REVIEW_INITIAL);
+					}
+					try {
+						ret = new Synchronizer(data2).run(new SynchronizeOperation());
+					} catch (Exception e) {
+						// TODO Auto-generated catch block
+						ret = false;
+						e.printStackTrace();
+					}
+
+					// save description after synchronize operation
+					try {
+						if (data.isSaveSettings()) {
+							RSESyncUtils.saveDescription(data);
+						}
+					} catch (CoreException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					} catch (IOException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+				}
 				return ret;
 			}
-			
+
 			String msgTxt = RemoteImportExportResources.FILEMSG_EXPORT_NONE_SELECTED;
 			String msgDetails = RemoteImportExportResources.FILEMSG_EXPORT_NONE_SELECTED_DETAILS;
-			
-			SystemMessage msg = new SimpleSystemMessage(RemoteImportExportPlugin.PLUGIN_ID, 
+
+			SystemMessage msg = new SimpleSystemMessage(RemoteImportExportPlugin.PLUGIN_ID,
 					IRemoteImportExportConstants.FILEMSG_EXPORT_NONE_SELECTED,
 					IStatus.ERROR, msgTxt, msgDetails);
 			setErrorMessage(msg);
@@ -456,7 +503,7 @@ class RemoteExportWizardPage1 extends WizardExportResourcesPage implements Liste
 			action.setDefaultConnection(host);
 			action.setPreSelection(path);
 		}
-		
+
 		action.run();
 		IRemoteFile folder = action.getSelectedFolder();
 
@@ -543,7 +590,7 @@ class RemoteExportWizardPage1 extends WizardExportResourcesPage implements Liste
 		if (!ret) {
 			String msgTxt = RemoteImportExportResources.MSG_IMPORT_EXPORT_UNABLE_TO_USE_CONNECTION;
 			String msgDetails = RemoteImportExportResources.MSG_IMPORT_EXPORT_UNABLE_TO_USE_CONNECTION_DETAILS;
-			SystemMessage msg = new SimpleSystemMessage(RemoteImportExportPlugin.PLUGIN_ID, 
+			SystemMessage msg = new SimpleSystemMessage(RemoteImportExportPlugin.PLUGIN_ID,
 					IRemoteImportExportConstants.MSG_IMPORT_EXPORT_UNABLE_TO_USE_CONNECTION,
 					IStatus.ERROR, msgTxt, msgDetails);
 			SystemMessageDialog.show(getShell(), msg);
@@ -654,7 +701,7 @@ class RemoteExportWizardPage1 extends WizardExportResourcesPage implements Liste
 			}
 			destinationNameField.select(selectionIndex);
 		}
-		destinationFolder = null; // clear destination 
+		destinationFolder = null; // clear destination
 		IHost conn = Utilities.parseForSystemConnection(path);
 		if (conn != null) {
 			IRemoteFile rf = Utilities.parseForIRemoteFile(path);
@@ -676,8 +723,8 @@ class RemoteExportWizardPage1 extends WizardExportResourcesPage implements Liste
 		if (conflictingContainer != null) {
 			String msgTxt = NLS.bind(RemoteImportExportResources.FILEMSG_DESTINATION_CONFLICTING, conflictingContainer);
 			String msgDetails = RemoteImportExportResources.FILEMSG_DESTINATION_CONFLICTING_DETAILS;
-			
-			SystemMessage msg = new SimpleSystemMessage(RemoteImportExportPlugin.PLUGIN_ID, 
+
+			SystemMessage msg = new SimpleSystemMessage(RemoteImportExportPlugin.PLUGIN_ID,
 					IRemoteImportExportConstants.FILEMSG_DESTINATION_CONFLICTING,
 					IStatus.ERROR, msgTxt, msgDetails);
 			setErrorMessage(msg);
@@ -763,7 +810,7 @@ class RemoteExportWizardPage1 extends WizardExportResourcesPage implements Liste
 	/**
 	 * Returns the name of a container with a location that encompasses targetDirectory.
 	 * Returns null if there is no conflict.
-	 * 
+	 *
 	 * @param targetDirectory the path of the directory to check.
 	 * @return the conflicting container name or <code>null</code>
 	 */
@@ -773,8 +820,8 @@ class RemoteExportWizardPage1 extends WizardExportResourcesPage implements Liste
 		if (root.getLocation().isPrefixOf(testPath)) return "workspace root"; //UniversalSystemPlugin.getString("IFSexport.rootName"); //$NON-NLS-1$
 		IProject[] projects = root.getProjects();
 		for (int i = 0; i < projects.length; i++) {
-			IPath loc = projects[i].getLocation();			
-			if (loc != null && loc.isPrefixOf(testPath)) 
+			IPath loc = projects[i].getLocation();
+			if (loc != null && loc.isPrefixOf(testPath))
 				return projects[i].getName();
 		}
 		return null;
@@ -877,8 +924,8 @@ class RemoteExportWizardPage1 extends WizardExportResourcesPage implements Liste
 		if (msgLine != null)
 			msgLine.setErrorMessage(exc);
 		else {
-			String msgTxt = CommonMessages.MSG_ERROR_UNEXPECTED;			
-			SystemMessage msg = new SimpleSystemMessage(RemoteImportExportPlugin.PLUGIN_ID, 
+			String msgTxt = CommonMessages.MSG_ERROR_UNEXPECTED;
+			SystemMessage msg = new SimpleSystemMessage(RemoteImportExportPlugin.PLUGIN_ID,
 					ICommonMessageIds.MSG_ERROR_UNEXPECTED,
 					IStatus.ERROR, msgTxt, exc);
 
@@ -899,7 +946,7 @@ class RemoteExportWizardPage1 extends WizardExportResourcesPage implements Liste
 		//		  ((SystemDialogPageMessageLine)msgLine).internalSetErrorMessage(message);
 	}
 
-	/** 
+	/**
 	 * ISystemMessageLine method. <br>
 	 * If the message line currently displays an error,
 	 *  the message is stored and will be shown after a call to clearErrorMessage
@@ -923,6 +970,6 @@ class RemoteExportWizardPage1 extends WizardExportResourcesPage implements Liste
 		if (msgLine != null) msgLine.setMessage(message);
 		//		super.setMessage(message);
 		//		if (msgLine!=null)
-		//		  ((SystemDialogPageMessageLine)msgLine).internalSetMessage(message);		  
+		//		  ((SystemDialogPageMessageLine)msgLine).internalSetMessage(message);
 	}
 }

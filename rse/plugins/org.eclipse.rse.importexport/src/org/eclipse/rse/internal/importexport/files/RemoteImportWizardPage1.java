@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2008 IBM Corporation and others.
+ * Copyright (c) 2000, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -14,10 +14,12 @@
  * David McKnight   (IBM)        - [219792] use background query when doing import
  * David McKnight   (IBM)        - [220547] [api][breaking] SimpleSystemMessage needs to specify a message id and some messages should be shared
  * David McKnight   (IBM)        - [219792][importexport][ftp] RSE hangs on FTP import
+ * Takuya Miyamoto - [185925] Integrate Platform/Team Synchronization
  *******************************************************************************/
 package org.eclipse.rse.internal.importexport.files;
 
 import java.io.File;
+import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -31,6 +33,7 @@ import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.core.resources.IWorkspaceRoot;
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
@@ -56,10 +59,16 @@ import org.eclipse.rse.internal.importexport.RemoteImportExportPlugin;
 import org.eclipse.rse.internal.importexport.RemoteImportExportResources;
 import org.eclipse.rse.internal.importexport.RemoteImportExportUtil;
 import org.eclipse.rse.internal.importexport.SystemImportExportResources;
+import org.eclipse.rse.internal.synchronize.RSESyncUtils;
+import org.eclipse.rse.internal.synchronize.SynchronizeData;
+import org.eclipse.rse.internal.synchronize.provisional.ISynchronizeOperation;
+import org.eclipse.rse.internal.synchronize.provisional.SynchronizeOperation;
+import org.eclipse.rse.internal.synchronize.provisional.Synchronizer;
 import org.eclipse.rse.services.clientserver.messages.CommonMessages;
 import org.eclipse.rse.services.clientserver.messages.ICommonMessageIds;
 import org.eclipse.rse.services.clientserver.messages.SimpleSystemMessage;
 import org.eclipse.rse.services.clientserver.messages.SystemMessage;
+import org.eclipse.rse.services.clientserver.messages.SystemMessageException;
 import org.eclipse.rse.subsystems.files.core.subsystems.IRemoteFile;
 import org.eclipse.rse.ui.SystemBasePlugin;
 import org.eclipse.rse.ui.SystemWidgetHelpers;
@@ -97,13 +106,13 @@ import org.eclipse.ui.model.WorkbenchContentProvider;
  *	Page 1 of the base resource import-from-file-system Wizard
  */
 class RemoteImportWizardPage1 extends WizardResourceImportPage implements Listener, ISystemWizardPage {
-	
+
 	private class DummyProvider implements ISelectionProvider {
 
 			public void addSelectionChangedListener(
 					ISelectionChangedListener listener) {
 				// TODO Auto-generated method stub
-				
+
 			}
 
 			public ISelection getSelection() {
@@ -114,15 +123,15 @@ class RemoteImportWizardPage1 extends WizardResourceImportPage implements Listen
 			public void removeSelectionChangedListener(
 					ISelectionChangedListener listener) {
 				// TODO Auto-generated method stub
-				
+
 			}
 
 			public void setSelection(ISelection selection) {
 				// TODO Auto-generated method stub
-				
-			}						
+
+			}
 	}
-	
+
 	private class QueryAllJob extends Job
 	{
 		private Object _fileSystemObject;
@@ -137,7 +146,7 @@ class RemoteImportWizardPage1 extends WizardResourceImportPage implements Listen
 			_element = element;
 		}
 
-		
+
 		public IStatus run(IProgressMonitor monitor){
 			_isActive = true;
 			query(_fileSystemObject, _element, monitor);
@@ -150,33 +159,33 @@ class RemoteImportWizardPage1 extends WizardResourceImportPage implements Listen
 				});
 			return Status.OK_STATUS;
 		}
-		
+
 		public boolean isActive()
 		{
 			return _isActive;
 		}
-		
-		
+
+
 		private void query(Object parent, MinimizedFileSystemElement element, IProgressMonitor monitor){
-			
+
 			if (monitor.isCanceled()){
 				return;
 			}
-			
+
 			List children = _provider.getChildren(parent);
 			if (children == null) children = new ArrayList(1);
 
 			Iterator childrenEnum = children.iterator();
-			
+
 			List resultsToQuery = new ArrayList();
-			
+
 			while (childrenEnum.hasNext()) {
 				Object child = childrenEnum.next();
 				String elementLabel = _provider.getLabel(child);
 				//Create one level below
 				MinimizedFileSystemElement result = new MinimizedFileSystemElement(elementLabel, element, _provider.isFolder(child));
 				result.setFileSystemObject(child);
-				
+
 				if (child instanceof UniFilePlus){
 					if (((UniFilePlus)child).isDirectory()){
 						resultsToQuery.add(result);
@@ -189,31 +198,31 @@ class RemoteImportWizardPage1 extends WizardResourceImportPage implements Listen
 				Display.getDefault().asyncExec(new Runnable(){
 					public void run(){
 						DummyProvider provider = new DummyProvider();
-						
+
 						ISelection sel1 = new StructuredSelection(_element.getParent());
 						SelectionChangedEvent evt1 = new SelectionChangedEvent(provider, sel1);
 						selectionGroup.selectionChanged(evt1);
-						
-						ISelection sel2 = new StructuredSelection(_element);					
+
+						ISelection sel2 = new StructuredSelection(_element);
 						SelectionChangedEvent evt2 = new SelectionChangedEvent(provider, sel2);
 						selectionGroup.selectionChanged(evt2);
 					}
 				});
 			}
-			
+
 			for (int i = 0; i < resultsToQuery.size(); i++) {
 				MinimizedFileSystemElement celement = (MinimizedFileSystemElement)resultsToQuery.get(i);
 				query(celement.getFileSystemObject(), celement, monitor);
 				celement.setPopulated(true);
 			}
-			
+
 			element.setPopulated(true);
 		}
-		
+
 	}
-	
-	
-	
+
+
+
 	private Object sourceDirectory = null;
 	private String helpId;
 	private Composite parentComposite;
@@ -222,6 +231,7 @@ class RemoteImportWizardPage1 extends WizardResourceImportPage implements Listen
 	private String pendingString, pendingErrorString;
 	protected Composite sourceComposite;
 	protected Combo sourceNameField;
+	protected Button reviewSynchronizeCheckbox;
 	protected Button overwriteExistingResourcesCheckbox;
 	protected Button createContainerStructureButton;
 	protected Button createOnlySelectedButton;
@@ -235,10 +245,10 @@ class RemoteImportWizardPage1 extends WizardResourceImportPage implements Listen
 	protected Button deselectAllButton;
 	// a boolean to indicate if the user has typed anything
 	private boolean entryChanged = false;
-	
+
 	private QueryAllJob _queryAllJob;
 	private MinimizedFileSystemElement _fileSystemTree;
-	
+
 	// input object
 	protected Object inputObject = null;
 	// flag to indicate whether initial selection was used to set source field
@@ -285,14 +295,14 @@ class RemoteImportWizardPage1 extends WizardResourceImportPage implements Listen
 	 * including button presses and registers
 	 * default buttons with its shell.
 	 * The button id is stored as the buttons client data.
-	 * Note that the parent's layout is assumed to be a GridLayout and 
+	 * Note that the parent's layout is assumed to be a GridLayout and
 	 * the number of columns in this layout is incremented.
 	 * Subclasses may override.
 	 * </p>
 	 *
 	 * @param parent the parent composite
 	 * @param id the id of the button (see
-	 *  <code>IDialogConstants.*_ID</code> constants 
+	 *  <code>IDialogConstants.*_ID</code> constants
 	 *  for standard dialog button ids)
 	 * @param label the label from the button
 	 * @param defaultButton <code>true</code> if the button is to be the
@@ -396,13 +406,13 @@ class RemoteImportWizardPage1 extends WizardResourceImportPage implements Listen
 		//		  SystemWidgetHelpers.setWizardPageMnemonics((Composite)c);
 		//		  parentComposite = (Composite)c;
 		//		  if (helpId != null)
-		//			SystemWidgetHelpers.setHelp(parentComposite, helpId);	    
+		//			SystemWidgetHelpers.setHelp(parentComposite, helpId);
 		//		}
 		//		else if (c instanceof Button)
 		//		{
 		//			Mnemonics ms = new Mnemonics();
 		//			ms.setMnemonic((Button)c);
-		//		}		
+		//		}
 		//		configureMessageLine();
 	}
 
@@ -410,6 +420,9 @@ class RemoteImportWizardPage1 extends WizardResourceImportPage implements Listen
 	 *	Create the import options specification widgets.
 	 */
 	protected void createOptionsGroupButtons(Group optionsGroup) {
+		reviewSynchronizeCheckbox = SystemWidgetHelpers.createCheckBox(optionsGroup, 1, null, SystemImportExportResources.RESID_FILEIMPORT_REVIEW_LABEL,
+				SystemImportExportResources.RESID_FILEIMPORT_REVIEW_TOOLTIP);
+		reviewSynchronizeCheckbox.addListener(SWT.Selection, this);
 		overwriteExistingResourcesCheckbox = SystemWidgetHelpers.createCheckBox(optionsGroup, 1, null, SystemImportExportResources.RESID_FILEIMPORT_OPTION_OVERWRITE_LABEL,
 				SystemImportExportResources.RESID_FILEIMPORT_OPTION_OVERWRITE_TOOLTIP);
 		createContainerStructureButton = SystemWidgetHelpers.createRadioButton(optionsGroup, null, SystemImportExportResources.RESID_FILEIMPORT_OPTION_CREATEALL_LABEL,
@@ -516,24 +529,24 @@ class RemoteImportWizardPage1 extends WizardResourceImportPage implements Listen
 	protected MinimizedFileSystemElement createRootElement(Object fileSystemObject, IImportStructureProvider provider) {
 		boolean isContainer = provider.isFolder(fileSystemObject);
 		String elementLabel = provider.getLabel(fileSystemObject);
-		
+
 		// Use an empty label so that display of the element's full name
 		// doesn't include a confusing label
 		MinimizedFileSystemElement dummyParent = new MinimizedFileSystemElement("", null, true); //$NON-NLS-1$
 		MinimizedFileSystemElement result = new MinimizedFileSystemElement(elementLabel, dummyParent, isContainer);
 		result.setFileSystemObject(fileSystemObject);
-		
+
 		if (_queryAllJob == null){
 			_queryAllJob = new QueryAllJob(fileSystemObject, provider, result);
 			_queryAllJob.schedule();
 		}
-		
+
 		////Get the files for the element so as to build the first level
 		//result.getFiles(provider);
 
 		return dummyParent;
 	}
-	
+
 
 	/**
 	 *	Create the import source specification widgets
@@ -562,8 +575,8 @@ class RemoteImportWizardPage1 extends WizardResourceImportPage implements Listen
 		if (((File) sourceDirectory).isDirectory()) return true;
 		String msgTxt = RemoteImportExportResources.FILEMSG_FOLDER_IS_FILE;
 		String msgDetails = NLS.bind(RemoteImportExportResources.FILEMSG_FOLDER_IS_FILE_DETAILS, ((File)sourceDirectory).getAbsolutePath());
-		
-		SystemMessage msg = new SimpleSystemMessage(RemoteImportExportPlugin.PLUGIN_ID, 
+
+		SystemMessage msg = new SimpleSystemMessage(RemoteImportExportPlugin.PLUGIN_ID,
 				IRemoteImportExportConstants.FILEMSG_FOLDER_IS_FILE,
 				IStatus.ERROR, msgTxt, msgDetails);
 		setErrorMessage(msg);
@@ -586,18 +599,18 @@ class RemoteImportWizardPage1 extends WizardResourceImportPage implements Listen
 		IStatus status = op.getStatus();
 		if (!status.isOK()) {
 			String msgTxt = NLS.bind(RemoteImportExportResources.FILEMSG_IMPORT_FAILED, status);
-			
+
 			SystemMessage msg = null;
 			if (status.getException() != null){
-				msg = new SimpleSystemMessage(RemoteImportExportPlugin.PLUGIN_ID, 
+				msg = new SimpleSystemMessage(RemoteImportExportPlugin.PLUGIN_ID,
 						IRemoteImportExportConstants.FILEMSG_IMPORT_FAILED,
 						IStatus.ERROR, msgTxt, status.getException());
 			} else {
-				msg = new SimpleSystemMessage(RemoteImportExportPlugin.PLUGIN_ID, 
+				msg = new SimpleSystemMessage(RemoteImportExportPlugin.PLUGIN_ID,
 						IRemoteImportExportConstants.FILEMSG_IMPORT_FAILED,
 						IStatus.ERROR, msgTxt);
 			}
-			
+
 			SystemMessageDialog dlg = new SystemMessageDialog(getContainer().getShell(), msg);
 			dlg.openWithDetails();
 			return false;
@@ -642,13 +655,53 @@ class RemoteImportWizardPage1 extends WizardResourceImportPage implements Listen
 			data.setCreateSelectionOnly(createOnlySelectedButton.getSelection());
 			data.setSaveSettings(saveSettingsButton.getSelection());
 			data.setDescriptionFilePath(getDescriptionLocation());
-			boolean ret = executeImportOperation(new RemoteFileImportOperation(data, FileSystemStructureProvider.INSTANCE, this));
-			return ret;
+
+			if (!reviewSynchronizeCheckbox.getSelection()) {
+				boolean ret = executeImportOperation(new RemoteFileImportOperation(data, FileSystemStructureProvider.INSTANCE, this));
+				return ret;
+			} else {
+				// run synchronization
+				SynchronizeData data2 = null;
+				try {
+					data2 = new SynchronizeData(data);
+				} catch (SystemMessageException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				} catch (CoreException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+				if (reviewSynchronizeCheckbox.getSelection()) {
+					data2.setSynchronizeType(ISynchronizeOperation.SYNC_MODE_UI_REVIEW_INITIAL);
+				}
+
+				boolean ret = false;
+
+				try {
+					ret = new Synchronizer(data2).run(new SynchronizeOperation());
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+
+				// save description after synchronize operation
+				try {
+					if (data.isSaveSettings()) {
+						RSESyncUtils.saveDescription(data);
+					}
+				} catch (CoreException e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				} catch (IOException e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				}
+				return ret;
+			}
 		}
 		String msgTxt = RemoteImportExportResources.FILEMSG_IMPORT_NONE_SELECTED;
 		String msgDetails = RemoteImportExportResources.FILEMSG_IMPORT_NONE_SELECTED_DETAILS;
-		
-		SystemMessage msg = new SimpleSystemMessage(RemoteImportExportPlugin.PLUGIN_ID, 
+
+		SystemMessage msg = new SimpleSystemMessage(RemoteImportExportPlugin.PLUGIN_ID,
 				IRemoteImportExportConstants.FILEMSG_IMPORT_NONE_SELECTED,
 				IStatus.ERROR, msgTxt, msgDetails);
 		setErrorMessage(msg);
@@ -657,9 +710,9 @@ class RemoteImportWizardPage1 extends WizardResourceImportPage implements Listen
 
 
 
-	
+
 	/**
-	 * Returns a content provider for <code>FileSystemElement</code>s that returns 
+	 * Returns a content provider for <code>FileSystemElement</code>s that returns
 	 * only files as children.
 	 */
 	protected ITreeContentProvider getFileProvider() {
@@ -693,7 +746,7 @@ class RemoteImportWizardPage1 extends WizardResourceImportPage implements Listen
 	protected MinimizedFileSystemElement getFileSystemTree() {
 		File sourceDirectory = getSourceDirectory();
 		if (sourceDirectory == null) return null;
-		
+
 		if (_fileSystemTree == null){
 			_fileSystemTree = selectFiles(sourceDirectory, FileSystemStructureProvider.INSTANCE);
 		}
@@ -701,7 +754,7 @@ class RemoteImportWizardPage1 extends WizardResourceImportPage implements Listen
 	}
 
 	/**
-	 * Returns a content provider for <code>FileSystemElement</code>s that returns 
+	 * Returns a content provider for <code>FileSystemElement</code>s that returns
 	 * only folders as children.
 	 */
 	protected ITreeContentProvider getFolderProvider() {
@@ -740,13 +793,13 @@ class RemoteImportWizardPage1 extends WizardResourceImportPage implements Listen
 	}
 
 	/**
-	 * Returns this page's collection of currently-specified resources to be 
-	 * imported. This is the primary resource selection facility accessor for 
+	 * Returns this page's collection of currently-specified resources to be
+	 * imported. This is the primary resource selection facility accessor for
 	 * subclasses.
 	 *
 	 * Added here to allow access for inner classes.
 	 *
-	 * @return a collection of resources currently selected 
+	 * @return a collection of resources currently selected
 	 * for export (element type: <code>IResource</code>)
 	 */
 	protected List getSelectedResources() {
@@ -839,7 +892,7 @@ class RemoteImportWizardPage1 extends WizardResourceImportPage implements Listen
 		action.setShowNewConnectionPrompt(true);
 		action.setShowPropertySheet(true, false);
 		action.setFoldersOnly(true);
-		action.run(); 
+		action.run();
 		IRemoteFile folder = action.getSelectedFolder();
 		if (folder != null) {
 			clearErrorMessage();
@@ -946,7 +999,7 @@ class RemoteImportWizardPage1 extends WizardResourceImportPage implements Listen
 			RemoteImportWizard parentWizard = (RemoteImportWizard) getWizard();
 			boolean isInitializingFromImportData = parentWizard.getInitializeFromImportData();
 			if (!isInitializingFromImportData) {
-				// radio buttons and checkboxes	
+				// radio buttons and checkboxes
 				overwriteExistingResourcesCheckbox.setSelection(settings.getBoolean(STORE_OVERWRITE_EXISTING_RESOURCES_ID));
 				boolean createStructure = settings.getBoolean(STORE_CREATE_CONTAINER_STRUCTURE_ID);
 				createContainerStructureButton.setSelection(createStructure);
@@ -1013,7 +1066,7 @@ class RemoteImportWizardPage1 extends WizardResourceImportPage implements Listen
 			if (sourceNames == null) sourceNames = new String[0];
 			sourceNames = addToHistory(sourceNames, getSourceDirectoryName());
 			settings.put(STORE_SOURCE_NAMES_ID, sourceNames);
-			// radio buttons and checkboxes	
+			// radio buttons and checkboxes
 			settings.put(STORE_OVERWRITE_EXISTING_RESOURCES_ID, overwriteExistingResourcesCheckbox.getSelection());
 			settings.put(STORE_CREATE_CONTAINER_STRUCTURE_ID, createContainerStructureButton.getSelection());
 			settings.put(STORE_CREATE_DESCRIPTION_FILE_ID, isSaveSettings());
@@ -1131,7 +1184,7 @@ class RemoteImportWizardPage1 extends WizardResourceImportPage implements Listen
 		};
 		IRunnableWithProgress runnable = new IRunnableWithProgress() {
 			public void run(final IProgressMonitor monitor) throws InterruptedException {
-				
+
 				String msg = RemoteImportExportResources.FILEMSG_IMPORT_FILTERING;
 				monitor.beginTask(msg, IProgressMonitor.UNKNOWN);
 				getSelectedResources(filter, monitor);
@@ -1147,13 +1200,13 @@ class RemoteImportWizardPage1 extends WizardResourceImportPage implements Listen
 			//Got interrupted. Do nothing.
 			return;
 		}
-		// make sure that all paint operations caused by closing the progress 
-		// dialog get flushed, otherwise extra pixels will remain on the screen until 
+		// make sure that all paint operations caused by closing the progress
+		// dialog get flushed, otherwise extra pixels will remain on the screen until
 		// updateSelections is completed
 		getShell().update();
 		// The updateSelections method accesses SWT widgets so cannot be executed
 		// as part of the above progress dialog operation since the operation forks
-		// a new process.	
+		// a new process.
 		updateSelections(selectionMap);
 	}
 
@@ -1219,13 +1272,13 @@ class RemoteImportWizardPage1 extends WizardResourceImportPage implements Listen
 			//Got interrupted. Do nothing.
 			return;
 		}
-		// make sure that all paint operations caused by closing the progress 
-		// dialog get flushed, otherwise extra pixels will remain on the screen until 
+		// make sure that all paint operations caused by closing the progress
+		// dialog get flushed, otherwise extra pixels will remain on the screen until
 		// updateSelections is completed
 		getShell().update();
 		// The updateSelections method accesses SWT widgets so cannot be executed
 		// as part of the above progress dialog operation since the operation forks
-		// a new process.	
+		// a new process.
 		updateSelections(selectionMap);
 	}
 
@@ -1270,6 +1323,12 @@ class RemoteImportWizardPage1 extends WizardResourceImportPage implements Listen
 			descFilePathField.setEnabled(isSaveSettings);
 			descFileBrowseButton.setEnabled(isSaveSettings);
 		}
+
+		// if review is selected, the other options are grayed out without save settings
+		boolean isReview = reviewSynchronizeCheckbox.getSelection();
+		overwriteExistingResourcesCheckbox.setEnabled(!isReview);
+		createContainerStructureButton.setEnabled(!isReview);
+		createOnlySelectedButton.setEnabled(!isReview);
 		// this calls to determine whether page can be completed
 		super.updateWidgetEnablements();
 	}
@@ -1371,7 +1430,7 @@ class RemoteImportWizardPage1 extends WizardResourceImportPage implements Listen
 	 * Returns whether the source location conflicts
 	 * with the destination resource. This will occur if
 	 * the source is already under the destination.
-	 * 
+	 *
 	 * @param sourcePath the path to check
 	 * @return <code>true</code> if there is a conflict, <code>false</code> if not
 	 */
@@ -1403,14 +1462,14 @@ class RemoteImportWizardPage1 extends WizardResourceImportPage implements Listen
 	public boolean performFinish() {
 		return finish();
 	}
-	
+
 	public void cancel() {
 		if (_queryAllJob != null && _queryAllJob.isActive()){
 			_queryAllJob.cancel();
 		}
 	}
-	
-	
+
+
 
 	/* (non-Javadoc)
 	 * @see com.ibm.etools.systems.core.ui.wizards.ISystemWizardPage#setHelp(java.lang.String)
@@ -1429,14 +1488,14 @@ class RemoteImportWizardPage1 extends WizardResourceImportPage implements Listen
 
 	// ----------------
 	// INTERNAL METHODS
-	// ---------------- 
+	// ----------------
 	/**
 	 * Internal method <br>
 	 * Configure the message line
 	 */
-	//	private void configureMessageLine() 
+	//	private void configureMessageLine()
 	//	{
-	//		msgLine = SystemDialogPageMessageLine.createWizardMsgLine(this);    
+	//		msgLine = SystemDialogPageMessageLine.createWizardMsgLine(this);
 	//		if (msgLine!=null)
 	//		{
 	//			if (pendingMessage!=null)
@@ -1444,7 +1503,7 @@ class RemoteImportWizardPage1 extends WizardResourceImportPage implements Listen
 	//			if (pendingErrorMessage!=null)
 	//			  setErrorMessage(pendingErrorMessage);
 	//		}
-	//	}	
+	//	}
 	// -----------------------------
 	// ISystemMessageLine methods...
 	// -----------------------------
@@ -1502,10 +1561,10 @@ class RemoteImportWizardPage1 extends WizardResourceImportPage implements Listen
 		if (msgLine != null)
 			msgLine.setErrorMessage(exc);
 		else {
-			
-			SystemMessage msg = new SimpleSystemMessage(RemoteImportExportPlugin.PLUGIN_ID, 
+
+			SystemMessage msg = new SimpleSystemMessage(RemoteImportExportPlugin.PLUGIN_ID,
 					ICommonMessageIds.MSG_ERROR_UNEXPECTED,
-					IStatus.ERROR, 
+					IStatus.ERROR,
 					CommonMessages.MSG_ERROR_UNEXPECTED, exc);
 			pendingErrorMessage = msg;
 		}
@@ -1528,7 +1587,7 @@ class RemoteImportWizardPage1 extends WizardResourceImportPage implements Listen
 		}
 	}
 
-	/** 
+	/**
 	 * ISystemMessageLine method. <br>
 	 * If the message line currently displays an error,
 	 *  the message is stored and will be shown after a call to clearErrorMessage
@@ -1553,7 +1612,7 @@ class RemoteImportWizardPage1 extends WizardResourceImportPage implements Listen
 			pendingString = message;
 		}
 	}
-	
+
 	public boolean determinePageCompletion(){
 			if (_queryAllJob != null && _queryAllJob.isActive()){
 				return false;

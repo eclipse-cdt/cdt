@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2008 IBM Corporation and others.
+ * Copyright (c) 2000, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -11,10 +11,10 @@
  * David McKnight   (IBM)        - [216252] [api][nls] Resource Strings specific to subsystems should be moved from rse.ui into files.ui / shells.ui / processes.ui where possible
  * David McKnight   (IBM)        - [216252] MessageFormat.format -> NLS.bind
  * David McKnight   (IBM)        - [220547] [api][breaking] SimpleSystemMessage needs to specify a message id and some messages should be shared
+ * Takuya Miyamoto - [185925] Integrate Platform/Team Synchronization
  *******************************************************************************/
 package org.eclipse.rse.internal.importexport.files;
 
-import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -26,18 +26,16 @@ import org.eclipse.core.runtime.MultiStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.osgi.util.NLS;
-import org.eclipse.rse.internal.importexport.IRemoteImportExportConstants;
 import org.eclipse.rse.internal.importexport.RemoteImportExportPlugin;
 import org.eclipse.rse.internal.importexport.RemoteImportExportProblemDialog;
 import org.eclipse.rse.internal.importexport.RemoteImportExportResources;
-import org.eclipse.rse.services.clientserver.messages.SimpleSystemMessage;
-import org.eclipse.rse.services.clientserver.messages.SystemMessage;
-import org.eclipse.rse.ui.SystemBasePlugin;
-import org.eclipse.rse.ui.messages.SystemMessageDialog;
-import org.eclipse.ui.PlatformUI;
+import org.eclipse.rse.internal.synchronize.SynchronizeData;
+import org.eclipse.rse.internal.synchronize.provisional.ISynchronizeOperation;
+import org.eclipse.rse.internal.synchronize.provisional.SynchronizeOperation;
+import org.eclipse.rse.internal.synchronize.provisional.Synchronizer;
 
 /**
- * This class is a remote file export action. 
+ * This class is a remote file export action.
  */
 public class RemoteFileExportActionDelegate extends RemoteFileImportExportActionDelegate {
 	/**
@@ -50,7 +48,7 @@ public class RemoteFileExportActionDelegate extends RemoteFileImportExportAction
 		if (length < 1) {
 			return;
 		}
-		// create read multi status		
+		// create read multi status
 		String message;
 		if (length > 1) {
 			message = RemoteImportExportResources.IMPORT_EXPORT_ERROR_CREATE_FILES_FAILED;
@@ -127,30 +125,38 @@ public class RemoteFileExportActionDelegate extends RemoteFileImportExportAction
 	}
 
 	private IStatus export(RemoteFileExportData[] exportDatas) {
-		IStatus status = null;
-		for (int i = 0; i < exportDatas.length; i++) {
-			RemoteFileExportOperation op = new RemoteFileExportOperation(exportDatas[i], new RemoteFileOverwriteQuery());
-			try {
-				PlatformUI.getWorkbench().getProgressService().run(true, true, op);
-				status = op.getStatus();
-			} catch (InvocationTargetException e) {
-				SystemBasePlugin.logError("Error occured trying to export", e); //$NON-NLS-1$
-				status = new Status(IStatus.ERROR, RemoteImportExportPlugin.getDefault().getBundle().getSymbolicName(), 0, "", e); //$NON-NLS-1$
-			} catch (InterruptedException e) {
-				SystemBasePlugin.logError("Error occured trying to export", e); //$NON-NLS-1$
-				status = new Status(IStatus.OK, RemoteImportExportPlugin.getDefault().getBundle().getSymbolicName(), 0, "", e); //$NON-NLS-1$
-			}
-			if (!status.isOK()) {
-				String msgTxt = NLS.bind(RemoteImportExportResources.FILEMSG_EXPORT_FAILED, status);
-				
-				SystemMessage msg = new SimpleSystemMessage(RemoteImportExportPlugin.PLUGIN_ID, 
-						IRemoteImportExportConstants.FILEMSG_EXPORT_FAILED,
-						IStatus.ERROR, msgTxt);
+//		IStatus status = null;
+//		for (int i = 0; i < exportDatas.length; i++) {
+//			RemoteFileExportOperation op = new RemoteFileExportOperation(exportDatas[i], new RemoteFileOverwriteQuery());
+//			try {
+//				PlatformUI.getWorkbench().getProgressService().run(true, true, op);
+//				status = op.getStatus();
+//			} catch (InvocationTargetException e) {
+//				SystemBasePlugin.logError("Error occured trying to export", e); //$NON-NLS-1$
+//				status = new Status(IStatus.ERROR, RemoteImportExportPlugin.getDefault().getBundle().getSymbolicName(), 0, "", e); //$NON-NLS-1$
+//			} catch (InterruptedException e) {
+//				SystemBasePlugin.logError("Error occured trying to export", e); //$NON-NLS-1$
+//				status = new Status(IStatus.OK, RemoteImportExportPlugin.getDefault().getBundle().getSymbolicName(), 0, "", e); //$NON-NLS-1$
+//			}
+//			if (!status.isOK()) {
+//				String msgTxt = NLS.bind(RemoteImportExportResources.FILEMSG_EXPORT_FAILED, status);
+//
+//				SystemMessage msg = new SimpleSystemMessage(RemoteImportExportPlugin.PLUGIN_ID,
+//						IRemoteImportExportConstants.FILEMSG_EXPORT_FAILED,
+//						IStatus.ERROR, msgTxt);
+//
+//				SystemMessageDialog dlg = new SystemMessageDialog(getShell(), msg);
+//				dlg.openWithDetails();
+//				return null;
+//			}
+//		}
+//		return null;
 
-				SystemMessageDialog dlg = new SystemMessageDialog(getShell(), msg);
-				dlg.openWithDetails();
-				return null;
-			}
+		// Add re-running synchronize operation
+		for (int i = 0; i < exportDatas.length; i++) {
+			SynchronizeData data = new SynchronizeData(exportDatas[i]);
+			data.setSynchronizeType(ISynchronizeOperation.SYNC_MODE_UI_REVIEW);
+			new Synchronizer(data).run(new SynchronizeOperation());
 		}
 		return null;
 	}

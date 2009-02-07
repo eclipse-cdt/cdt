@@ -1,16 +1,17 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2008 IBM Corporation and others.
+ * Copyright (c) 2000, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     IBM Corporation - initial API and implementation
  * Martin Oberhuber (Wind River) - [186128] Move IProgressMonitor last in all API
  * Martin Oberhuber (Wind River) - [183824] Forward SystemMessageException from IRemoteFileSubsystem
  * David McKnight   (IBM)        - [207178] changing list APIs for file service and subsystems
  * David Dykstal (IBM) [230821] fix IRemoteFileSubSystem API to be consistent with IFileService
+ * Takuya Miyamoto - [185925] Integrate Platform/Team Synchronization
  *******************************************************************************/
 package org.eclipse.rse.internal.importexport.files;
 
@@ -18,6 +19,7 @@ import java.io.File;
 import java.io.FileFilter;
 import java.io.FilenameFilter;
 import java.io.IOException;
+import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Vector;
@@ -32,7 +34,7 @@ import org.eclipse.rse.ui.SystemBasePlugin;
 
 public class UniFilePlus extends File {
 	/**
-	 * 
+	 *
 	 */
 	private static final long serialVersionUID = -1717648997950319457L;
 	public IRemoteFile remoteFile = null;
@@ -147,11 +149,11 @@ public class UniFilePlus extends File {
 		return remoteFile.getParentPath();
 	}
 
-	public File getParentFile() {
-		IRemoteFile parent = remoteFile.getParentRemoteFile();
-		if (parent != null) {
-			return new File(parent.getAbsolutePath());
-			//return parent.getFileWrapper();
+	public UniFilePlus getParentFile() {
+		IRemoteFile parentFolder = this.remoteFile.getParentRemoteFileSubSystem().getParentFolder(this.remoteFile, null);
+
+		if (parentFolder != null) {
+			return new UniFilePlus(parentFolder);
 		} else
 			return null;
 	}
@@ -216,6 +218,31 @@ public class UniFilePlus extends File {
 			for (int idx = 0; idx < files.length; idx++)
 				fileNames[idx] = files[idx].getName();
 			return fileNames;
+		} else
+			return null;
+	}
+
+	public File[] listFiles() {
+		IRemoteFile[] files = null;
+
+		try {
+			files = remoteFile.getParentRemoteFileSubSystem().list(this.remoteFile, null);
+		} catch (SystemMessageException e) {
+			e.printStackTrace();
+			SystemBasePlugin.logError("unexpected exception", e); //$NON-NLS-1$
+		}
+		if (files != null) {
+			Vector<UniFilePlus> children = new Vector<UniFilePlus>();
+			for (int i = 0; i < files.length; i++) {
+				// fileName = files[idx].getName();
+				UniFilePlus fileObj = new UniFilePlus(files[i]);
+				children.addElement(fileObj);
+			}
+			UniFilePlus[] fileObjs = new UniFilePlus[children.size()];
+			// for (int i = 0; i < children.size(); i++)
+			// fileObjs[i] = (UniFilePlus) children.elementAt(i);
+			// return fileObjs;
+			return children.toArray(fileObjs);
 		} else
 			return null;
 	}
@@ -306,7 +333,7 @@ public class UniFilePlus extends File {
 	public boolean mkdirs() {
 		IRemoteFile dir = null;
 		try {
-			if (!remoteFile.exists()) dir = remoteFile.getParentRemoteFileSubSystem().createFolder(remoteFile, new NullProgressMonitor());
+			if (!remoteFile.exists()) dir = remoteFile.getParentRemoteFileSubSystem().createFolders(remoteFile, new NullProgressMonitor());
 		} catch (RemoteFileException exc) {
 			Exception e = exc.getRemoteException();
 			if ((e != null) && (e instanceof SecurityException)) throw (SecurityException) e;
@@ -384,4 +411,13 @@ public class UniFilePlus extends File {
 		IProgressMonitor result = new NullProgressMonitor();
 		return result;
 	}
+
+	public IRemoteFile getRemoteFile() {
+		return remoteFile;
+	}
+
+	public InputStream getInputStream() throws SystemMessageException {
+		return this.remoteFile.getParentRemoteFileSubSystem().getInputStream(this.remoteFile.getParentPath(), this.remoteFile.getName(), this.remoteFile.isBinary(), null);
+	}
+
 }

@@ -6,7 +6,12 @@ Bundle-Version: 1.2.0.qualifier
 Bundle-Activator: org.eclipse.rse.internal.importexport.RemoteImportExportPlugin
 Bundle-Localization: plugin
 Export-Package: org.eclipse.rse.internal.importexport;x-internal:=true,
- org.eclipse.rse.internal.importexport.files;x-internal:=true
+ org.eclipse.rse.internal.importexport.files;x-internal:=true,
+ org.eclipse.rse.internal.synchronize;x-internal:=true,
+ org.eclipse.rse.internal.synchronize.filesystem;x-internal:=true,
+ org.eclipse.rse.internal.synchronize.filesystem.subscriber;x-internal:=true,
+ org.eclipse.rse.internal.synchronize.filesystem.ui;x-internal:=true,
+ org.eclipse.rse.internal.synchronize.provisional;x-internal:=true
 Require-Bundle: org.eclipse.core.runtime,
  org.eclipse.core.resources,
  org.eclipse.ui,
@@ -16,8 +21,11 @@ Require-Bundle: org.eclipse.core.runtime,
  org.eclipse.rse.core;bundle-version="[3.0.0,4.0.0)",
  org.eclipse.rse.ui;bundle-version="[3.0.0,4.0.0)",
  org.eclipse.rse.subsystems.files.core;bundle-version="[3.0.0,4.0.0)",
- org.eclipse.rse.files.ui;bundle-version="[3.0.0,4.0.0)"
+ org.eclipse.rse.files.ui;bundle-version="[3.0.0,4.0.0)",
+ org.eclipse.compare,
+ org.eclipse.team.core,
+ org.eclipse.team.ui
 Bundle-ActivationPolicy: lazy
 Eclipse-LazyStart: true
 Bundle-Vendor: %providerName
-Bundle-RequiredExecutionEnvironment: J2SE-1.4
+Bundle-RequiredExecutionEnvironment: J2SE-1.5

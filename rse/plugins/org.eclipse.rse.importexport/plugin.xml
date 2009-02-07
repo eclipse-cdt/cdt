@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
-Copyright (c) 2007, 2009 IBM Corporation and others. All rights reserved.
+Copyright (c) 2002, 2009 IBM Corporation and others. All rights reserved.
 This program and the accompanying materials are made available under the terms
 of the Eclipse Public License v1.0 which accompanies this distribution, and is 
 available at http://www.eclipse.org/legal/epl-v10.html
@@ -13,6 +13,7 @@ Emily Bruner, Mazen Faraj, Adrian Storisteanu, Li Ding, and Kent Hawley.
 
 Contributors:
 David McKnight   (IBM)        - [261019] New File/Folder actions available in Work Offline mode
+Takuya Miyamoto - [185925] Integrate Platform/Team Synchronization (adapted from org.eclipse.team.examples.filesystem / plugin.xml)
 -->
 
 <?eclipse version="3.0"?>
@@ -143,6 +144,108 @@ David McKnight   (IBM)        - [261019] New File/Folder actions available in Wo
                </enablement>
          </action>
       </objectContribution>
+   </extension>
+
+	<!-- ======================================= -->
+	<!-- Synchronize Popup Menu Actions        -->
+	<!-- ======================================= -->
+<!--	<extension point="org.eclipse.ui.popupMenus">
+	      <objectContribution
+            objectClass="org.eclipse.rse.subsystems.files.core.subsystems.IRemoteFile"
+            nameFilter="*.rexpfd"
+            id="org.rse.synchronize.runResynchronization">
+         <action
+               label="ReSynchronize with"
+               tooltip="Rerun synchronization which is alreay mapped to remote"
+               class="org.eclipse.rse.internal.synchronize.ResynchronizeActionDelegate"
+               menubarPath="additions"
+               enablesFor="1"
+               id="resynchronize">
+         </action>
+      </objectContribution>
+	</extension>
+	<extension point="org.eclipse.ui.popupMenus">
+	      <objectContribution
+            objectClass="org.eclipse.rse.subsystems.files.core.subsystems.IRemoteFile"
+            nameFilter="*.rimpfd"
+            id="org.rse.synchronize.runResynchronization">
+         <action
+               label="ReSynchronize with"
+               tooltip="Rerun synchronization which is alreay mapped to remote"
+               class="org.eclipse.rse.internal.synchronize.ResynchronizeActionDelegate"
+               menubarPath="additions"
+               enablesFor="1"
+               id="resynchronize">
+         </action>
+      </objectContribution>
+	</extension>-->
+<!-- =================================================================================== -->
+<!-- Repository Providers																 -->
+<!-- =================================================================================== -->
+
+<extension point="org.eclipse.team.core.repository">
+	<repository
+    	class="org.eclipse.rse.internal.synchronize.filesystem.FileSystemProvider"
+		id="org.eclipse.rse.internal.synchronize.filesystem.FileSystemProvider">
+	</repository>
+</extension>
+
+<!-- =================================================================================== -->
+<!-- Synchronize Participants -->
+<!-- =================================================================================== -->
+
+ <extension
+       point="org.eclipse.team.ui.synchronizeParticipants">
+    <participant
+          persistent="false"
+          class="org.eclipse.rse.internal.synchronize.filesystem.ui.FileSystemSynchronizeParticipant"
+          icon="icons/full/wizards/fsicon_wiz.gif"
+          name="%RSESyncParticipant.name"
+          id="org.eclipse.rse.internal.synchronize.filesystem.participant"/>
+ </extension>
+
+<!-- =================================================================================== -->
+<!-- Common Navigator viewer for the file systen synchronizations						 -->
+<!-- =================================================================================== -->
+   <extension
+         point="org.eclipse.ui.navigator.viewer">
+       <viewer
+           viewerId="org.eclipse.rse.internal.synchronize.filesystem.syncViewer">
+           <popupMenu
+                allowsPlatformContributions="false"
+                id="org.eclipse.rse.synchronize.filesystem.syncViewer#PopupMenu">  
+             <insertionPoint name="file"/>  
+             <insertionPoint name="edit"/>          
+             <insertionPoint name="synchronize"/>
+             <insertionPoint
+                   name="navigate"
+                   separator="true"/>
+             <insertionPoint
+                   name="merge"
+                   separator="true"/>
+             <insertionPoint
+                   name="put"
+                   separator="false"/>
+             <insertionPoint
+                   name="get"
+                   separator="false"/>      
+             <insertionPoint
+                   name="overwrite"
+                   separator="true"/> 
+             <insertionPoint
+                   name="other"
+                   separator="true"/> 
+             <insertionPoint
+                   name="sort"
+                   separator="true"/>
+             <insertionPoint
+                   name="additions"
+                   separator="true"/>              
+             <insertionPoint
+                   name="properties"
+                   separator="true"/>
+          </popupMenu>
+       </viewer>
    </extension>
    
 </plugin>

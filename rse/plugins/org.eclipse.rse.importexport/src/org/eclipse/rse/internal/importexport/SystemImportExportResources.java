@@ -1,12 +1,13 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2008 IBM Corporation and others.
+ * Copyright (c) 2000, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *  David McKnight   (IBM)        - [223204] [cleanup] fix broken nls strings in files.ui and others
+ * Martin Oberhuber (Wind River) - [185925] Support Platform/Team Synchronization
  *******************************************************************************/
 package org.eclipse.rse.internal.importexport;
 
@@ -23,6 +24,8 @@ public class SystemImportExportResources extends NLS {
 	public static String RESID_FILEEXPORT_DESTINATION_TOOLTIP;
 	public static String RESID_FILEEXPORT_DESTINATION_BROWSE_LABEL;
 	public static String RESID_FILEEXPORT_DESTINATION_BROWSE_TOOLTIP;
+	public static String RESID_FILEEXPORT_REVIEW_LABEL;
+	public static String RESID_FILEEXPORT_REVIEW_TOOLTIP;
 	public static String RESID_FILEEXPORT_OPTION_OVERWRITE_LABEL;
 	public static String RESID_FILEEXPORT_OPTION_OVERWRITE_TOOLTIP;
 	public static String RESID_FILEEXPORT_OPTION_CREATEALL_LABEL;
@@ -41,6 +44,8 @@ public class SystemImportExportResources extends NLS {
 	public static String RESID_FILEIMPORT_TITLE;
 	public static String RESID_FILEIMPORT_PAGE1_TITLE;
 	public static String RESID_FILEIMPORT_PAGE1_DESCRIPTION;
+	public static String RESID_FILEIMPORT_REVIEW_LABEL;
+	public static String RESID_FILEIMPORT_REVIEW_TOOLTIP;
 	public static String RESID_FILEIMPORT_OPTION_OVERWRITE_LABEL;
 	public static String RESID_FILEIMPORT_OPTION_OVERWRITE_TOOLTIP;
 	public static String RESID_FILEIMPORT_OPTION_CREATEALL_LABEL;

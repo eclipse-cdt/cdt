@@ -112,7 +112,7 @@ EMFBRANCH=2.5.0
 EMFREL=S
 EMFDATE=200902031500
 EMFVER=2.5.0M5
-if [ ! -f ${DROPIN}/eclipse/plugins/org.eclipse.emf.doc_${EMFVER}.v${EMFDATE}.jar ]; then
+if [ ! -f ${DROPIN}/eclipse/plugins/org.eclipse.emf.doc_${EMFBRANCH}.v${EMFDATE}.jar ]; then
   # Need EMF 2.4 SDK for Service Discovery ISV Docs Backlinks
   echo "Getting EMF SDK..."
   cd ${DROPIN}
@@ -147,7 +147,7 @@ CDTFEAT=5.1.0
 CDTVER=200902031437
 CDTNAME=cdt-master-${CDTREL}-I${CDTVER}.zip
 CDTLOC=builds/${CDTREL}/I.I${CDTVER}/${CDTNAME}
-if [ ! -f eclipse/plugins/org.eclipse.cdt.core_${CDTREL}.${CDTVER}.jar ]; then
+if [ ! -f eclipse/plugins/org.eclipse.cdt.core_${CDTFEAT}.${CDTVER}.jar ]; then
   echo "Getting CDT Runtime..."
   wget "http://download.eclipse.org/tools/cdt/${CDTLOC}"
   CDTTMP=`pwd`/tmp.$$

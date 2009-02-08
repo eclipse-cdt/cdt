@@ -143,6 +143,7 @@ fi
 #CDTNAME=cdt-master-5.0.0.zip
 #CDTLOC=releases/ganymede/dist/${CDTNAME}
 CDTREL=6.0.0
+CDTFEAT=5.1.0
 CDTVER=200902031437
 CDTNAME=cdt-master-${CDTREL}-I${CDTVER}.zip
 CDTLOC=builds/${CDTREL}/I.I${CDTVER}/${CDTNAME}
@@ -160,13 +161,13 @@ if [ ! -f eclipse/plugins/org.eclipse.cdt.core_${CDTREL}.${CDTVER}.jar ]; then
     -command install \
     -from file://${CDTTMP} \
     -featureId org.eclipse.cdt.platform \
-    -version ${CDTREL}.${CDTVER}
+    -version ${CDTFEAT}.${CDTVER}
   java -jar eclipse/plugins/org.eclipse.equinox.launcher_1.0.*.jar \
     -application org.eclipse.update.core.standaloneUpdate \
     -command install \
     -from file://${CDTTMP} \
     -featureId org.eclipse.cdt \
-    -version ${CDTREL}.${CDTVER}
+    -version ${CDTFEAT}.${CDTVER}
   rm -rf ${CDTTMP}
   rm ${CDTNAME}
 fi

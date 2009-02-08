@@ -429,7 +429,7 @@
    <feature url="features/org.eclipse.rse.telnet_2.2.0.qualifier.jar" id="org.eclipse.rse.telnet" version="2.2.0.qualifier">
       <category name="TM and RSE 3.1"/>
    </feature>
-   <feature url="features/org.eclipse.rse.examples_3.0.0.qualifier.jar" id="org.eclipse.rse.examples" version="3.0.0.qualifier">
+   <feature url="features/org.eclipse.rse.examples_3.1.0.qualifier.jar" id="org.eclipse.rse.examples" version="3.1.0.qualifier">
       <category name="TM and RSE 3.1"/>
    </feature>
    <feature url="features/org.eclipse.rse.remotecdt_2.2.0.qualifier.jar" id="org.eclipse.rse.remotecdt" version="2.2.0.qualifier">
@@ -447,7 +447,7 @@
    <feature url="features/org.eclipse.rse.wince_0.2.0.qualifier.jar" id="org.eclipse.rse.wince" version="0.2.0.qualifier" os="win32" arch="x86">
       <category name="TM and RSE 3.1"/>
    </feature>
-   <feature url="features/org.eclipse.tm.discovery_3.0.0.qualifier.jar" id="org.eclipse.tm.discovery" version="3.0.0.qualifier">
+   <feature url="features/org.eclipse.tm.discovery_3.0.100.qualifier.jar" id="org.eclipse.tm.discovery" version="3.0.100.qualifier">
       <category name="TM and RSE 3.1"/>
    </feature>
    <feature url="features/org.eclipse.tm.terminal.sdk_3.0.0.qualifier.jar" id="org.eclipse.tm.terminal.sdk" version="3.0.0.qualifier">

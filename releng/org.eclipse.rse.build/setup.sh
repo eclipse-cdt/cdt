@@ -1,6 +1,6 @@
 #!/bin/sh
 #*******************************************************************************
-# Copyright (c) 2006, 2008 Wind River Systems, Inc.
+# Copyright (c) 2006, 2009 Wind River Systems, Inc.
 # All rights reserved. This program and the accompanying materials 
 # are made available under the terms of the Eclipse Public License v1.0 
 # which accompanies this distribution, and is available at 
@@ -42,11 +42,11 @@ esac
 
 # prepare the base Eclipse installation in folder "eclipse"
 ep_rel=S
-ep_ver=3.5M2
-ep_date=200809180100
+ep_ver=3.5M5
+ep_date=200902021535
 P2_disabled=false
 P2_no_dropins=false
-if [ ! -f eclipse/plugins/org.eclipse.swt_3.5.0.v3509c.jar ]; then
+if [ ! -f eclipse/plugins/org.eclipse.swt_3.5.0.v3529a.jar ]; then
   curdir2=`pwd`
   if [ ! -d eclipse -o -h eclipse ]; then
     if [ -d eclipse-${ep_ver}-${ep_arch} ]; then
@@ -110,15 +110,15 @@ fi
 # EMF 2.5M1
 EMFBRANCH=2.5.0
 EMFREL=S
-EMFDATE=200808111043
-EMFVER=2.5.0M1
+EMFDATE=200902031500
+EMFVER=2.5.0M5
 if [ ! -f ${DROPIN}/eclipse/plugins/org.eclipse.emf.doc_${EMFVER}.v${EMFDATE}.jar ]; then
   # Need EMF 2.4 SDK for Service Discovery ISV Docs Backlinks
   echo "Getting EMF SDK..."
   cd ${DROPIN}
-  wget "http://download.eclipse.org/modeling/emf/emf/downloads/drops/${EMFBRANCH}/${EMFREL}${EMFDATE}/emf-sdo-xsd-SDK-${EMFVER}.zip"
-  unzip -o emf-sdo-xsd-SDK-${EMFVER}.zip
-  rm emf-sdo-xsd-SDK-${EMFVER}.zip
+  wget "http://download.eclipse.org/modeling/emf/emf/downloads/drops/${EMFBRANCH}/${EMFREL}${EMFDATE}/emf-xsd-SDK-${EMFVER}.zip"
+  unzip -o emf-xsd-SDK-${EMFVER}.zip
+  rm emf-xsd-SDK-${EMFVER}.zip
   cd ${DROPUP}
 fi
 if [ ! -f eclipse/plugins/org.junit_3.8.2.v20080602-1318/junit.jar ]; then
@@ -138,12 +138,12 @@ if [ ! -f ${DROPIN}/eclipse/plugins/gnu.io.rxtx_2.1.7.4_v20071016.jar ]; then
 fi
 
 # CDT Runtime
-#CDTREL=5.0.0
-#CDTVER=200806171202
+#CDTREL=6.0.0
+#CDTVER=200902031437
 #CDTNAME=cdt-master-5.0.0.zip
 #CDTLOC=releases/ganymede/dist/${CDTNAME}
-CDTREL=5.0.1
-CDTVER=200808290803
+CDTREL=6.0.0
+CDTVER=200902031437
 CDTNAME=cdt-master-${CDTREL}-I${CDTVER}.zip
 CDTLOC=builds/${CDTREL}/I.I${CDTVER}/${CDTNAME}
 if [ ! -f eclipse/plugins/org.eclipse.cdt.core_${CDTREL}.${CDTVER}.jar ]; then
@@ -172,10 +172,10 @@ if [ ! -f eclipse/plugins/org.eclipse.cdt.core_${CDTREL}.${CDTVER}.jar ]; then
 fi
 
 # checkout the basebuilder
-baseBuilderTag=RC2_34
-if [ ! -f org.eclipse.releng.basebuilder/plugins/org.eclipse.pde.core_3.4.0.v20080515-2000.jar \
+baseBuilderTag=R35_M4
+if [ ! -f org.eclipse.releng.basebuilder/plugins/org.eclipse.pde.core_3.5.0.v20081210-1800.jar \
   -o ! -f org.eclipse.releng.basebuilder/plugins/org.eclipse.pde.build_3.4.0.v20080522/pdebuild.jar \
-  -o ! -f org.eclipse.releng.basebuilder/plugins/org.eclipse.equinox.p2.metadata.generator_1.0.0.v20080523-0001.jar ]; then
+  -o ! -f org.eclipse.releng.basebuilder/plugins/org.eclipse.equinox.p2.metadata.generator_1.0.100.v20081208-2132.jar ]; then
   if [ -d org.eclipse.releng.basebuilder ]; then
     echo "Re-getting basebuilder from CVS..."
     rm -rf org.eclipse.releng.basebuilder

@@ -51,6 +51,7 @@
          id="org.eclipse.rse.useractions.source"
          download-size="281"
          install-size="284"
-         version="0.0.0"/>
+         version="0.0.0"
+         unpack="false"/>
 
 </feature>

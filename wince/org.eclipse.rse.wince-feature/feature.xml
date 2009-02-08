@@ -49,9 +49,17 @@
          unpack="false"/>
 
    <plugin
-         id="org.eclipse.rse.wince.source"
-         download-size="44"
-         install-size="55"
-         version="0.0.0"/>
+         id="org.eclipse.rse.subsystems.wince.source"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="org.eclipse.tm.rapi.source"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
 
 </feature>

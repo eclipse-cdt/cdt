@@ -76,8 +76,16 @@
 
    <plugin
          id="org.eclipse.rse.tests.source"
-         download-size="167"
-         install-size="172"
-         version="0.0.0"/>
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="org.eclipse.rse.tests.framework.source"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
 
 </feature>

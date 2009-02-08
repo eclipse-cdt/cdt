@@ -54,6 +54,7 @@
          id="org.eclipse.rse.remotecdt.source"
          download-size="24"
          install-size="29"
-         version="0.0.0"/>
+         version="0.0.0"
+         unpack="false"/>
 
 </feature>

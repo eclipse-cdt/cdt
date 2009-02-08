@@ -2,7 +2,7 @@
 <feature
       id="org.eclipse.rse.examples"
       label="%featureName"
-      version="3.0.0.qualifier"
+      version="3.1.0.qualifier"
       provider-name="%providerName"
       plugin="org.eclipse.rse.examples.tutorial"
       image="eclipse_update_120.jpg">
@@ -52,9 +52,17 @@
          unpack="false"/>
 
    <plugin
-         id="org.eclipse.rse.examples.source"
-         download-size="51"
-         install-size="212"
-         version="0.0.0"/>
+         id="org.eclipse.rse.examples.daytime.source"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="org.eclipse.rse.examples.tutorial.source"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
 
 </feature>

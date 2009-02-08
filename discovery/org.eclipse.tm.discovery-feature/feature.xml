@@ -2,7 +2,7 @@
 <feature
       id="org.eclipse.tm.discovery"
       label="%featureName"
-      version="3.0.0.qualifier"
+      version="3.0.100.qualifier"
       provider-name="%providerName"
       plugin="org.eclipse.tm.discovery.engine"
       image="eclipse_update_120.jpg">
@@ -109,9 +109,59 @@
          version="0.0.0"/>
 
    <plugin
-         id="org.eclipse.tm.discovery.source"
-         download-size="73"
-         install-size="212"
-         version="0.0.0"/>
+         id="org.eclipse.rse.discovery.source"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="org.eclipse.tm.discovery.engine.source"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="org.eclipse.tm.discovery.model.source"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="org.eclipse.tm.discovery.model.edit.source"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="org.eclipse.tm.discovery.protocol.dnssd.source"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="org.eclipse.tm.discovery.transport.udp.source"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="org.eclipse.tm.discovery.view.source"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="org.eclipse.tm.discovery.wizard.source"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
 
 </feature>

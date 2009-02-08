@@ -162,12 +162,6 @@
 		<antcall target="unpackUpdateJarsForPackaging" />
 	</target>
 
-	<target name="assemble.org.eclipse.rse.terminals">
-		<property name="archiveName" value="RSE-terminals-${buildId}.zip"/>
-		<ant antfile="${assembleScriptName}" dir="${buildDirectory}"/>
-		<antcall target="unpackUpdateJarsForPackaging" />
-	</target>
-
 	<target name="unpackUpdateJarsForPackaging" depends="myInit">
 		<property name="tmpsite" value="${buildDirectory}/tmpsite" />
 		<mkdir dir="${tmpsite}/new/eclipse/features" />

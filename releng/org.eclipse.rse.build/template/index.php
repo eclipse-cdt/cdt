@@ -54,10 +54,12 @@
   <tbody>
     <tr><td><b>TM @buildId@ requires 
     	<a href="http://archive.eclipse.org/eclipse/downloads/">
-         Eclipse 3.3</a> or later for the SSH component; the SSH encoding fix
+         Eclipse 3.3</a> or later for the SSH component;</b> the SSH encoding fix
          (<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=224799">bug 224799</a>)
          requires <a href="http://download.eclipse.org/eclipse/downloads/">Eclipse 3.4</a>
          or later.
+         <b>RSE Import/Export</b> requires <b>Java 1.5</b> or higher, the rest of
+         RSE works with Java 1.4.
     </b></td></tr>
     <tr><td>
       Other components may work with earlier Eclipse versions, but these have not been tested.<br/>
@@ -68,7 +70,10 @@
     </td></tr> 
     <tr><td>
       Prerequisites for the remotecdt and discovery add-ons (CDT, EMF) can be retrieved from the
-      <a href="http://download.eclipse.org/releases/europa/">Europa Discovery Site</a>.
+      <a href="http://download.eclipse.org/releases/europa/">Europa</a>, 
+      <a href="http://download.eclipse.org/releases/ganymede/">Ganymede</a> or
+      <a href="http://download.eclipse.org/releases/galileo/">Galileo</a>
+      Discovery Sites</a>.
     </td></tr> 
 <!--
     <tr><td>
@@ -159,17 +164,6 @@
         <td><small>&nbsp;</small><br/>
         	Tutorial code and example projects for developing against RSE SDK.
         	Includes Source.
-        </td>
-    </tr>
-	<tr><td><div align=left><img src = "OK.gif" width=19 height=23></div></td>
-        <td>All</td>
-        <td><a href="http://www.eclipse.org/downloads/download.php?file=/dsdp/tm/downloads/drops/@dropDir@/RSE-terminals-@buildId@.zip">RSE-terminals-@buildId@.zip</a></td>
-        <td><small>&nbsp;</small><br/>
-			Integration of the TM Terminal Widget into RSE, such that a Terminals Subsystem
-			is provided to show a tabbed view of Terminals similar to the 
-			Remote Command View. Implementations ship for Telnet and SSH, but the subsystem
-			is generic to use with other remote channels. The integration includes the
-			Terminal Widget, but requires RSE core runtime and RSE ssh or RSE telnet installed.
         </td>
     </tr>
 	<tr><td><div align=left><img src = "OK.gif" width=19 height=23></div></td>

@@ -3733,4 +3733,21 @@ public class AST2TemplateTests extends AST2BaseTest {
     	assertFalse(m instanceof ICPPTemplateInstance);
     }
 
+	//	struct A {
+	//	  void m() const;
+	//	};
+	//
+	//	template<typename T>
+	//	struct B : public A {
+	//	};
+	//
+	//	typedef B<char> C;
+	//
+	//	void test(const C& p) {
+	//	  p.m();
+	//	}
+    public void testConversionSequence_263159() throws Exception {
+    	BindingAssertionHelper bh= new BindingAssertionHelper(getAboveComment(), true);
+    	ICPPMethod m= bh.assertNonProblem("m();", 1, ICPPMethod.class);
+    }
 }

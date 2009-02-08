@@ -6610,6 +6610,19 @@ public class AST2CPPTests extends AST2BaseTest {
 		final String code= getAboveComment();
     	parseAndCheckBindings(code);
     }
+	
+	//	struct A {};
+	//	A a();
+	//
+	//	void f(const int& x);
+	//
+	//	void test() {
+	//	  f(a());
+	//	}
+	public void _testBug263152_1() throws Exception {
+		BindingAssertionHelper ba= new BindingAssertionHelper(getAboveComment(), true);
+		ba.assertProblem("f(a())", 1);
+	}
 
 	//	struct A {};
 	//	A a();
@@ -6622,7 +6635,7 @@ public class AST2CPPTests extends AST2BaseTest {
 	//	void test(B p) {
 	//	  p.m(a());
 	//	}
-	public void _testBug263152() throws Exception {
+	public void _testBug263152_2() throws Exception {
 		BindingAssertionHelper ba= new BindingAssertionHelper(getAboveComment(), true);
 		ba.assertNonProblem("m(a())", 1, ICPPMethod.class);
 	}

@@ -25,6 +25,7 @@
 <ul>
 <li>TM @buildId@ <b>requires Eclipse 3.3 or later for the SSH component</b>.
   Other components may work with earlier Eclipse versions, but these have not been tested.
+  <b>Import/Export requires Java 1.5</b>, the rest of RSE runs on Java 1.4.
   Platform Runtime is the minimum requirement for core RSE and Terminal.
   Discovery needs EMF, and the RemoteCDT integration needs CDT.<br>
   <b>Building</b> the RSE SSH service requires <b>Eclipse 3.4</b> or later for the fix
@@ -54,6 +55,14 @@
     by ISystemViewElementAdapter, in order to support declaratively registering
     menus with the org.eclipse.ui.menus extension point. 
     [<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=245039">245039</a>].</li>
+  <li><b>The RSE Platform/Team Synchronization Integration</b> has been added (currently
+    still in alpha state). From the RSE Import/Export wizards, you can now select the
+    new "Review/Synchronize" checkbox to enable review in the Team Synchronization 
+    perspective. For more details, see the
+    <a href="http://wiki.eclipse.org/RSESync/Status_and_Ideas">status and ideas Wiki</a>
+    for the corresponding Summer of Code project. Note that this new contribution 
+    adds a <b>Java 1.5 dependency</b> for the importexport plugin
+    [<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=185925">185925</a>].</li>
   </ul></li>
 <li>At least 21 bugs were fixed: Use 
   <!-- <a href="https://bugs.eclipse.org/bugs/buglist.cgi?query_format=advanced&classification=DSDP&product=Target+Management&component=Core&component=RSE&component=Terminal&bug_status=RESOLVED&bug_status=VERIFIED&bug_status=CLOSED&resolution=FIXED&resolution=WONTFIX&resolution=WORKSFORME&chfieldfrom=2008-12-24&chfieldto=2009-02-08&chfield=resolution&cmdtype=doit&negate0=1&field0-0-0=target_milestone&type0-0-0=regexp&value0-0-0=%5B23%5D.0&field0-0-1=target_milestone&type0-0-1=regexp&value0-0-1=3.1%20M%5B23467%5D"> -->

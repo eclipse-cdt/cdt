@@ -7,27 +7,7 @@
 	<target name="allElements">
 		<ant antfile="${genericTargets}" target="${target}">
 			<property name="type" value="feature" />
-			<property name="id" value="org.eclipse.rse.core" />
-		</ant>
-		<ant antfile="${genericTargets}" target="${target}">
-			<property name="type" value="feature" />
-			<property name="id" value="org.eclipse.rse.dstore" />
-		</ant>
-		<ant antfile="${genericTargets}" target="${target}">
-			<property name="type" value="feature" />
-			<property name="id" value="org.eclipse.rse.ftp" />
-		</ant>
-		<ant antfile="${genericTargets}" target="${target}">
-			<property name="type" value="feature" />
-			<property name="id" value="org.eclipse.rse.local" />
-		</ant>
-		<ant antfile="${genericTargets}" target="${target}">
-			<property name="type" value="feature" />
-			<property name="id" value="org.eclipse.rse.ssh" />
-		</ant>
-		<ant antfile="${genericTargets}" target="${target}">
-			<property name="type" value="feature" />
-			<property name="id" value="org.eclipse.rse.telnet" />
+			<property name="id" value="org.eclipse.rse" />
 		</ant>
 		<ant antfile="${genericTargets}" target="${target}">
 			<property name="type" value="feature" />
@@ -61,10 +41,6 @@
 			<property name="type" value="feature" />
 			<property name="id" value="org.eclipse.tm.terminal.sdk" />
 		</ant>
-		<ant antfile="${genericTargets}" target="${target}">
-			<property name="type" value="feature" />
-			<property name="id" value="org.eclipse.rse.terminals" />
-		</ant>
 	</target>
 
 	<!-- ===================================================================== -->
@@ -74,40 +50,8 @@
 	<!-- Add one target for each root element and each configuration           -->
 	<!-- ===================================================================== -->
 
-	<target name="assemble.org.eclipse.rse.core">
-		<property name="archiveName" value="RSE-runtime-core-${buildId}.zip"/>
-		<ant antfile="${assembleScriptName}" dir="${buildDirectory}"/>
-		<antcall target="unpackUpdateJarsForPackaging" />
-	</target>
-
-	<target name="assemble.org.eclipse.rse.dstore">
-		<property name="archiveName" value="RSE-runtime-dstore-${buildId}.zip"/>
-		<ant antfile="${assembleScriptName}" dir="${buildDirectory}"/>
-		<antcall target="unpackUpdateJarsForPackaging" />
-	</target>
-
-	<target name="assemble.org.eclipse.rse.ftp">
-		<property name="archiveName" value="RSE-runtime-ftp-${buildId}.zip"/>
-		<property name="copyOrbit" value="true"/>
-		<ant antfile="${assembleScriptName}" dir="${buildDirectory}"/>
-		<antcall target="unpackUpdateJarsForPackaging" />
-	</target>
-
-	<target name="assemble.org.eclipse.rse.local">
-		<property name="archiveName" value="RSE-runtime-local-${buildId}.zip"/>
-		<ant antfile="${assembleScriptName}" dir="${buildDirectory}"/>
-		<antcall target="unpackUpdateJarsForPackaging" />
-	</target>
-
-	<target name="assemble.org.eclipse.rse.ssh">
-		<property name="archiveName" value="RSE-runtime-ssh-${buildId}.zip"/>
-		<ant antfile="${assembleScriptName}" dir="${buildDirectory}"/>
-		<antcall target="unpackUpdateJarsForPackaging" />
-	</target>
-
-	<target name="assemble.org.eclipse.rse.telnet">
-		<property name="archiveName" value="RSE-runtime-telnet-${buildId}.zip"/>
-		<property name="copyOrbit" value="true"/>
+	<target name="assemble.org.eclipse.rse">
+		<property name="archiveName" value="RSE-runtime-${buildId}.zip"/>
 		<ant antfile="${assembleScriptName}" dir="${buildDirectory}"/>
 		<antcall target="unpackUpdateJarsForPackaging" />
 	</target>

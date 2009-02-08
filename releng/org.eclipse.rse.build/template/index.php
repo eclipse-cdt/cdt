@@ -89,9 +89,12 @@
 </table>
 <table border="0" cellspacing="5" cellpadding="2" width="100%">
 	<tr>
-		<td align="LEFT" valign="TOP" colspan="3" bgcolor="#0080C0"><b>
-		<font face="Arial,Helvetica" color="#FFFFFF">SDK (includes client runtime, user and ISV documentation, and source)</font></b></td>
+		<td align="LEFT" valign="TOP" colspan="3" bgcolor="#0080C0">
+		<font face="Arial,Helvetica" color="#FFFFFF"><b>All-in-one</b> (includes runtime and documentation for <b>dstore, ftp, local, ssh, and telnet</b>)</font></td>
 	</tr>
+	<tr><td align="LEFT">
+	For tool writers, <b>the SDK</b> also includes the runtime as listed, plus programmer documentation and source.
+	</td></tr>
 </table>
 <table border="0" cellspacing="2" cellpadding="0" width="100%">
 	<tr>
@@ -101,7 +104,13 @@
 		</td>
 		<td width="30%"><b>Platform</b></td>
 		<td width="63%"><b>Download</b></td>
-		<tr><td><div align=left><img src = "OK.gif" width=19 height=23></div></td>
+	</tr>
+	<tr><td><div align=left><img src = "OK.gif" width=19 height=23></div></td>
+        <td>All</td>
+        <td><a href="http://www.eclipse.org/downloads/download.php?file=/dsdp/tm/downloads/drops/@dropDir@/RSE-runtime-@buildId@.zip">RSE-runtime-@buildId@.zip</a>
+           <i>(Recommended for most users)</i></td>
+    </tr>
+	<tr><td><div align=left><img src = "OK.gif" width=19 height=23></div></td>
 		<td>All</td>
 		<td><a href="http://www.eclipse.org/downloads/download.php?file=/dsdp/tm/downloads/drops/@dropDir@/RSE-SDK-@buildId@.zip">RSE-SDK-@buildId@.zip</a></td>
 	</tr>
@@ -140,22 +149,20 @@
     </tr>
 	<tr><td><div align=left><img src = "OK.gif" width=19 height=23></div></td>
         <td>All</td>
-        <td><a href="http://www.eclipse.org/downloads/download.php?file=/dsdp/tm/downloads/drops/@dropDir@/TM-discovery-@buildId@.zip">TM-discovery-@buildId@.zip</a></td>
-        <td><small>&nbsp;</small><br/>
-	    	An API and DNS-SD / Zeroconf based 
-			implementation for remote network service discovery. 
-			Runs stand-alone or integrated with RSE.
-			Requires EMF 2.2.0 or later. Includes Source.
-        </td>
-    </tr>
-	<tr><td><div align=left><img src = "OK.gif" width=19 height=23></div></td>
-        <td>All</td>
         <td><a href="http://www.eclipse.org/downloads/download.php?file=/dsdp/tm/downloads/drops/@dropDir@/RSE-remotecdt-@buildId@.zip">RSE-remotecdt-@buildId@.zip</a></td>
         <td><small>&nbsp;</small><br/>
 			A Launch Configuration for running and debugging C/C++
 			programs on a remote host through RSE-provided shell
 			and file services, and gdbserver. Requires CDT 3.0 or later.
 			Includes Source.
+        </td>
+    </tr>
+	<tr><td><div align=left><img src = "OK.gif" width=19 height=23></div></td>
+		<td>All</td>
+		<td><a href="http://www.eclipse.org/downloads/download.php?file=/dsdp/tm/downloads/drops/@dropDir@/RSE-useractions-@buildId@.zip">RSE-useractions-@buildId@.zip</a></td>
+        <td><small>&nbsp;</small><br/>
+        	Additional Framework for user-defined actions and compile commands.
+        	Includes Source.
         </td>
     </tr>
 	<tr><td><div align=left><img src = "OK.gif" width=19 height=23></div></td>
@@ -167,11 +174,13 @@
         </td>
     </tr>
 	<tr><td><div align=left><img src = "OK.gif" width=19 height=23></div></td>
-		<td>All</td>
-		<td><a href="http://www.eclipse.org/downloads/download.php?file=/dsdp/tm/downloads/drops/@dropDir@/RSE-useractions-@buildId@.zip">RSE-useractions-@buildId@.zip</a></td>
+        <td>All</td>
+        <td><a href="http://www.eclipse.org/downloads/download.php?file=/dsdp/tm/downloads/drops/@dropDir@/TM-discovery-@buildId@.zip">TM-discovery-@buildId@.zip</a></td>
         <td><small>&nbsp;</small><br/>
-        	Additional Framework for user-defined actions and compile commands.
-        	Includes Source.
+	    	An API and DNS-SD / Zeroconf based 
+			implementation for remote network service discovery. 
+			Runs stand-alone or integrated with RSE.
+			Requires EMF 2.2.0 or later. Includes Source.
         </td>
     </tr>
 </table>
@@ -247,46 +256,6 @@
 </table>
 <table border="0" cellspacing="5" cellpadding="2" width="100%">
 	<tr><td colspan="2">&nbsp;</td></tr>
-</table>
-
-<table border="0" cellspacing="5" cellpadding="2" width="100%">
-	<tr>
-		<td align="LEFT" valign="TOP" colspan="3" bgcolor="#808080"><b>
-		<font face="Arial,Helvetica" color="#FFFFFF">Client Runtime Binaries</font></b></td>
-	</tr>
-	<tr>
-	    <td>The runtime binaries do not include source and developer documentation,
-	    and they are available in a more fine-grained packaging for re-use in
-	    other products.<br/>
-	    <b>RSE-runtime-core is required</b>, and includes the user documentation.
-	    All other runtime packages are optional.</td>
-	</tr>
-</table>
-<table border="0" cellspacing="2" cellpadding="0" width="100%">
-	<tr>
-		<td align="RIGHT" valign="TOP" width="7%">
-			<div align="left"><b>Status</b></div>
-		</td>
-		<td width="30%"><b>Platform</b></td>
-		<td width="63%"><b>Download</b></td></tr>
-	<tr><td><div align=left><img src = "OK.gif" width=19 height=23></div></td>
-        <td>All</td>
-        <td><a href="http://www.eclipse.org/downloads/download.php?file=/dsdp/tm/downloads/drops/@dropDir@/RSE-runtime-core-@buildId@.zip">RSE-runtime-core-@buildId@.zip</a></td></tr>
-	<tr><td><div align=left><img src = "OK.gif" width=19 height=23></div></td>
-        <td>All</td>
-        <td><a href="http://www.eclipse.org/downloads/download.php?file=/dsdp/tm/downloads/drops/@dropDir@/RSE-runtime-dstore-@buildId@.zip">RSE-runtime-dstore-@buildId@.zip</a></td></tr>
-	<tr><td><div align=left><img src = "OK.gif" width=19 height=23></div></td>
-        <td>All</td>
-        <td><a href="http://www.eclipse.org/downloads/download.php?file=/dsdp/tm/downloads/drops/@dropDir@/RSE-runtime-ftp-@buildId@.zip">RSE-runtime-ftp-@buildId@.zip</a></td></tr>
-	<tr><td><div align=left><img src = "OK.gif" width=19 height=23></div></td>
-        <td>All</td>
-        <td><a href="http://www.eclipse.org/downloads/download.php?file=/dsdp/tm/downloads/drops/@dropDir@/RSE-runtime-local-@buildId@.zip">RSE-runtime-local-@buildId@.zip</a></td></tr>
-	<tr><td><div align=left><img src = "OK.gif" width=19 height=23></div></td>
-        <td>All</td>
-        <td><a href="http://www.eclipse.org/downloads/download.php?file=/dsdp/tm/downloads/drops/@dropDir@/RSE-runtime-ssh-@buildId@.zip">RSE-runtime-ssh-@buildId@.zip</a></td></tr>
-	<tr><td><div align=left><img src = "OK.gif" width=19 height=23></div></td>
-        <td>All</td>
-        <td><a href="http://www.eclipse.org/downloads/download.php?file=/dsdp/tm/downloads/drops/@dropDir@/RSE-runtime-telnet-@buildId@.zip">RSE-runtime-telnet-@buildId@.zip</a> (<i>Experimental</i>)</td></tr>
 </table>
 
 <table border="0" cellspacing="5" cellpadding="2" width="100%">

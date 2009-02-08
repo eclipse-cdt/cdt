@@ -63,8 +63,10 @@
     for the corresponding Summer of Code project. Note that this new contribution 
     adds a <b>Java 1.5 dependency</b> for the importexport plugin
     [<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=185925">185925</a>].</li>
+  <li><b>The Number of Downloadable items</b> has been reduced by getting rid of the fine-grained
+    runtime packages and in favor of a popular all-in-one runtime download.</li>
   </ul></li>
-<li>At least 21 bugs were fixed: Use 
+<li>At least 26 bugs were fixed: Use 
   <!-- <a href="https://bugs.eclipse.org/bugs/buglist.cgi?query_format=advanced&classification=DSDP&product=Target+Management&component=Core&component=RSE&component=Terminal&bug_status=RESOLVED&bug_status=VERIFIED&bug_status=CLOSED&resolution=FIXED&resolution=WONTFIX&resolution=WORKSFORME&chfieldfrom=2008-12-24&chfieldto=2009-02-08&chfield=resolution&cmdtype=doit&negate0=1&field0-0-0=target_milestone&type0-0-0=regexp&value0-0-0=%5B23%5D.0&field0-0-1=target_milestone&type0-0-1=regexp&value0-0-1=3.1%20M%5B23467%5D"> -->
   <a href="https://bugs.eclipse.org/bugs/buglist.cgi?query_format=advanced&classification=DSDP&product=Target+Management&component=Core&component=RSE&component=Terminal&target_milestone=3.1+M5&bug_status=RESOLVED&bug_status=VERIFIED&bug_status=CLOSED&resolution=FIXED&resolution=WONTFIX&resolution=WORKSFORME&cmdtype=doit">
   this query</a> to show the list of bugs fixed since <!-- the last milestone, -->

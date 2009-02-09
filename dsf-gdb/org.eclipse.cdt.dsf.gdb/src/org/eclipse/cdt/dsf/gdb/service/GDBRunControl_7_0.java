@@ -184,7 +184,7 @@ public class GDBRunControl_7_0 extends MIRunControl implements IReverseRunContro
             			public void handleSuccess() {
             				getConnection().queueCommand(finalcmd, new DataRequestMonitor<MIInfo>(getExecutor(), rm)  {
                     			@Override
-                    			public void handleSuccess() {
+                    			public void handleCompleted() {
                     	            getConnection().queueCommand(
                     	            		new RawCommand(finaldmc, "set exec-direction forward"),
                     	            		new DataRequestMonitor<MIInfo>(getExecutor(), rm));
@@ -266,7 +266,7 @@ public class GDBRunControl_7_0 extends MIRunControl implements IReverseRunContro
         			public void handleSuccess() {
         				getConnection().queueCommand(finalcmd, new DataRequestMonitor<MIInfo>(getExecutor(), rm)  {
                 			@Override
-                			public void handleSuccess() {
+                			public void handleCompleted() {
                 	            getConnection().queueCommand(
                 	            		new RawCommand(finaldmc, "set exec-direction forward"),
                 	            		new DataRequestMonitor<MIInfo>(getExecutor(), rm));

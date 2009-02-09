@@ -46,7 +46,9 @@ public class GdbDebuggerPage extends AbstractCDebuggerPage implements Observer {
 	protected Text fGDBCommandText;
 	protected Text fGDBInitText;
 	protected Button fNonStopCheckBox;
+	protected Button fReverseCheckBox;
 	protected Button fVerboseModeButton;
+
 
 	private IMILaunchConfigurationComponent fSolibBlock;
 	private boolean fIsInitializing = false;
@@ -69,6 +71,8 @@ public class GdbDebuggerPage extends AbstractCDebuggerPage implements Observer {
 				                   IGDBLaunchConfigurationConstants.DEBUGGER_GDB_INIT_DEFAULT);
 		configuration.setAttribute(IGDBLaunchConfigurationConstants.ATTR_DEBUGGER_NON_STOP,
 				                   IGDBLaunchConfigurationConstants.DEBUGGER_NON_STOP_DEFAULT);
+		configuration.setAttribute(IGDBLaunchConfigurationConstants.ATTR_DEBUGGER_REVERSE,
+                				   IGDBLaunchConfigurationConstants.DEBUGGER_REVERSE_DEFAULT);
 		configuration.setAttribute(IGDBLaunchConfigurationConstants.ATTR_DEBUGGER_VERBOSE_MODE, 
 				                   IGDBLaunchConfigurationConstants.DEBUGGER_VERBOSE_MODE_DEFAULT);
 
@@ -95,6 +99,8 @@ public class GdbDebuggerPage extends AbstractCDebuggerPage implements Observer {
 		String gdbCommand = IGDBLaunchConfigurationConstants.DEBUGGER_DEBUG_NAME_DEFAULT;
 		String gdbInit = IGDBLaunchConfigurationConstants.DEBUGGER_GDB_INIT_DEFAULT;
 		boolean nonStopMode = IGDBLaunchConfigurationConstants.DEBUGGER_NON_STOP_DEFAULT;
+		boolean reverseEnabled = IGDBLaunchConfigurationConstants.DEBUGGER_REVERSE_DEFAULT;
+ 
 		boolean verboseMode = IGDBLaunchConfigurationConstants.DEBUGGER_VERBOSE_MODE_DEFAULT;
 
 		try {
@@ -116,6 +122,14 @@ public class GdbDebuggerPage extends AbstractCDebuggerPage implements Observer {
 		}
 		catch(CoreException e) {
 		}
+		
+		try {
+			reverseEnabled = configuration.getAttribute(IGDBLaunchConfigurationConstants.ATTR_DEBUGGER_REVERSE,
+                    									IGDBLaunchConfigurationConstants.DEBUGGER_REVERSE_DEFAULT);
+		}
+		catch(CoreException e) {
+		}
+
 		try {
 			verboseMode = configuration.getAttribute(IGDBLaunchConfigurationConstants.ATTR_DEBUGGER_VERBOSE_MODE,
 					                                 IGDBLaunchConfigurationConstants.DEBUGGER_VERBOSE_MODE_DEFAULT );
@@ -128,6 +142,7 @@ public class GdbDebuggerPage extends AbstractCDebuggerPage implements Observer {
 		fGDBCommandText.setText(gdbCommand);
 		fGDBInitText.setText(gdbInit);
 		fNonStopCheckBox.setSelection(nonStopMode);
+		fReverseCheckBox.setSelection(reverseEnabled);
 		fVerboseModeButton.setSelection(verboseMode);
 
 		setInitializing(false); 
@@ -140,6 +155,8 @@ public class GdbDebuggerPage extends AbstractCDebuggerPage implements Observer {
 				                   fGDBInitText.getText().trim());
 		configuration.setAttribute(IGDBLaunchConfigurationConstants.ATTR_DEBUGGER_NON_STOP,
 				                   fNonStopCheckBox.getSelection());
+		configuration.setAttribute(IGDBLaunchConfigurationConstants.ATTR_DEBUGGER_REVERSE,
+                                   fReverseCheckBox.getSelection());
 		configuration.setAttribute(IGDBLaunchConfigurationConstants.ATTR_DEBUGGER_VERBOSE_MODE, 
 				                   fVerboseModeButton.getSelection() );
 
@@ -291,6 +308,16 @@ public class GdbDebuggerPage extends AbstractCDebuggerPage implements Observer {
 				}
 			});
 
+		// TODO: Ideally, this field should be disabled if the back-end doesn't support reverse debugging
+		// TODO: Find a way to determine if reverse is supported (i.e. find the GDB version) then grey out the check box if necessary 
+		fReverseCheckBox = ControlFactory.createCheckBox(subComp, LaunchUIMessages.getString("GDBDebuggerPage.14")); //$NON-NLS-1$
+		fReverseCheckBox.addSelectionListener( new SelectionAdapter() {
+				@Override
+				public void widgetSelected(SelectionEvent e) {
+					updateLaunchConfigurationDialog();
+				}
+			});
+
 		fVerboseModeButton = ControlFactory.createCheckBox( subComp, LaunchUIMessages.getString( "StandardGDBDebuggerPage.13" ) ); //$NON-NLS-1$
 		fVerboseModeButton.addSelectionListener(new SelectionAdapter() {
 			@Override
@@ -312,8 +339,10 @@ public class GdbDebuggerPage extends AbstractCDebuggerPage implements Observer {
 		fNonStopCheckBox.setLayoutData(gd);
 		gd = new GridData();
 		gd.horizontalSpan = 3;
-		fVerboseModeButton.setLayoutData(gd);
-		
+		fReverseCheckBox.setLayoutData(gd);
+		gd = new GridData();
+		gd.horizontalSpan = 3;
+		fVerboseModeButton.setLayoutData(gd);		
 		// Grayed out until bug 249227 is resolved
 		//
 		fVerboseModeButton.setVisible(false);

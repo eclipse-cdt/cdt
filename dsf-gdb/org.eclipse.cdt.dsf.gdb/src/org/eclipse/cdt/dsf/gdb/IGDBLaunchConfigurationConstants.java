@@ -83,6 +83,12 @@ public class IGDBLaunchConfigurationConstants {
 	public static final String ATTR_DEBUGGER_VERBOSE_MODE = GdbPlugin.PLUGIN_ID + ".verboseMode"; //$NON-NLS-1$
 
 	/**
+	 * Launch configuration attribute key. Boolean value to enable reverse debugging at launch time.
+	 * @since 2.0
+	 */
+	public static final String ATTR_DEBUGGER_REVERSE = GdbPlugin.PLUGIN_ID + ".REVERSE"; //$NON-NLS-1$
+
+	/**
 	 * Launch configuration attribute value. The key is ATTR_DEBUG_NAME.
 	 */
 	public static final String DEBUGGER_DEBUG_NAME_DEFAULT = "gdb"; //$NON-NLS-1$
@@ -114,4 +120,10 @@ public class IGDBLaunchConfigurationConstants {
 	 * @since 1.1
 	 */
 	public static final boolean DEBUGGER_VERBOSE_MODE_DEFAULT = false;
+
+	/**
+	 * Launch configuration attribute value. The key is ATTR_DEBUGGER_REVERSE.
+	 * @since 2.0
+	 */
+	public static final boolean DEBUGGER_REVERSE_DEFAULT = false;
 }

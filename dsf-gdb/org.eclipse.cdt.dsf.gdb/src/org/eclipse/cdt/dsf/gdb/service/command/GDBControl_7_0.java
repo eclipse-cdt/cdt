@@ -28,10 +28,12 @@ import org.eclipse.cdt.dsf.debug.service.IProcesses.IProcessDMContext;
 import org.eclipse.cdt.dsf.debug.service.IRunControl.IContainerDMContext;
 import org.eclipse.cdt.dsf.debug.service.command.ICommandControl;
 import org.eclipse.cdt.dsf.debug.service.command.ICommandControlService;
+import org.eclipse.cdt.dsf.gdb.IGDBLaunchConfigurationConstants;
 import org.eclipse.cdt.dsf.gdb.internal.GdbPlugin;
 import org.eclipse.cdt.dsf.gdb.launching.GdbLaunch;
 import org.eclipse.cdt.dsf.gdb.service.GDBRunControl_7_0;
 import org.eclipse.cdt.dsf.gdb.service.IGDBBackend;
+import org.eclipse.cdt.dsf.gdb.service.IReverseRunControl;
 import org.eclipse.cdt.dsf.gdb.service.SessionType;
 import org.eclipse.cdt.dsf.mi.service.IMIBackend;
 import org.eclipse.cdt.dsf.mi.service.IMIProcesses;
@@ -51,9 +53,9 @@ import org.eclipse.cdt.dsf.mi.service.command.commands.MIExecRun;
 import org.eclipse.cdt.dsf.mi.service.command.commands.MIGDBExit;
 import org.eclipse.cdt.dsf.mi.service.command.commands.MIInferiorTTYSet;
 import org.eclipse.cdt.dsf.mi.service.command.output.MIBreakInsertInfo;
+import org.eclipse.cdt.dsf.mi.service.command.output.MIBreakpoint;
 import org.eclipse.cdt.dsf.mi.service.command.output.MIInfo;
 import org.eclipse.cdt.dsf.service.DsfServiceEventHandler;
-import org.eclipse.cdt.dsf.service.DsfServicesTracker;
 import org.eclipse.cdt.dsf.service.DsfSession;
 import org.eclipse.cdt.utils.pty.PTY;
 import org.eclipse.core.runtime.CoreException;
@@ -277,77 +279,202 @@ public class GDBControl_7_0 extends AbstractMIControl implements IGDBControl {
     /**
      * Insert breakpoint at entry if set, and start or restart the program.
      * Note that restart does not apply to remote or attach sessions.
+     * 
+     * If we want to enable Reverse debugging from the start of the program we do the following:
+     * attachSession => enable reverse
+     * else => set temp bp on main, run, enable reverse, continue if bp on main was not requested by user 
      */
-    protected void startOrRestart(final GdbLaunch launch, boolean restart, final RequestMonitor requestMonitor) {
-    	if (fMIBackend.getIsAttachSession()) {
-    		// When attaching to a running process, we do not need to set a breakpoint or
-    		// start the program; it is left up to the user.
-    		requestMonitor.done();
-    		return;
-    	}
-
-    	DsfServicesTracker servicesTracker = new DsfServicesTracker(GdbPlugin.getBundleContext(), getSession().getId());
-    	IMIProcesses procService = servicesTracker.getService(IMIProcesses.class);
-    	servicesTracker.dispose();
-   		IProcessDMContext procDmc = procService.createProcessContext(fControlDmc, MIProcesses.UNIQUE_GROUP_ID);
-   		final IContainerDMContext containerDmc = procService.createContainerContext(procDmc, MIProcesses.UNIQUE_GROUP_ID);
-
-    	final MICommand<MIInfo> execCommand;
-    	if (fMIBackend.getSessionType() == SessionType.REMOTE) {
-    		// When doing remote debugging, we use -exec-continue instead of -exec-run 
-    		execCommand = new MIExecContinue(containerDmc);
-    	} else {
-    		execCommand = new MIExecRun(containerDmc, new String[0]);	
-    	}
-
-    	boolean stopInMain = false;
+    protected void startOrRestart(final GdbLaunch launch, boolean restart, RequestMonitor requestMonitor) {
+		boolean tmpReverseEnabled = IGDBLaunchConfigurationConstants.DEBUGGER_REVERSE_DEFAULT;
     	try {
-    		stopInMain = launch.getLaunchConfiguration().getAttribute( ICDTLaunchConfigurationConstants.ATTR_DEBUGGER_STOP_AT_MAIN, false );
+    		tmpReverseEnabled = launch.getLaunchConfiguration().getAttribute(IGDBLaunchConfigurationConstants.ATTR_DEBUGGER_REVERSE,
+       																         IGDBLaunchConfigurationConstants.DEBUGGER_REVERSE_DEFAULT);
     	} catch (CoreException e) {
-    		requestMonitor.setStatus(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, -1, "Cannot retrieve stop at entry point boolean", e)); //$NON-NLS-1$
-    		requestMonitor.done();
-    		return;
     	}
+    	final boolean reverseEnabled = tmpReverseEnabled;
+    	
+   		if (fMIBackend.getIsAttachSession()) {
+   			// Restart does not apply to attach sessions.
+   			//
+   			// When attaching to a running process, we do not need to set a breakpoint or
+   			// start the program; it is left up to the user.
+   			// We only need to turn on Reverse Debugging if requested.
+   			if (reverseEnabled) {
+   				IReverseRunControl reverseService = getServicesTracker().getService(IReverseRunControl.class);
+   				if (reverseService != null) {
+   					reverseService.enableReverseMode(fControlDmc, true, requestMonitor);
+   					return;
+   				}
+   			}
+   			requestMonitor.done();
+   			return;
+   		}
 
-    	final DataRequestMonitor<MIInfo> execMonitor = new DataRequestMonitor<MIInfo>(getExecutor(), requestMonitor) {
-    		@Override
-    		public void handleSuccess() {
-    	    	DsfServicesTracker servicesTracker = new DsfServicesTracker(GdbPlugin.getBundleContext(), getSession().getId());
-    	    	GDBRunControl_7_0 reverseService = servicesTracker.getService(GDBRunControl_7_0.class);
-    	    	servicesTracker.dispose();
+   		// When it is not an attach session, it gets a little more complicated
+   		// so let's use a sequence.
+   		getExecutor().execute(new Sequence(getExecutor(), requestMonitor) {
+        	IContainerDMContext fContainerDmc;
+        	MICommand<MIInfo> fExecCommand;
+        	String fUserStopSymbol = null;
+        	
+        	MIBreakpoint fUserBreakpoint = null;
+        	boolean fUserBreakpointIsOnMain = false;
+        	
+    	    Step[] fSteps = new Step[] {
+    	    	/*
+    	    	 * Figure out if we should use 'exec-continue' or '-exec-run'.
+    	    	 */
+          	    new Step() { 
+               	@Override
+              	public void execute(RequestMonitor rm) {
+               		IMIProcesses procService = getServicesTracker().getService(IMIProcesses.class);
+               	    IProcessDMContext procDmc = procService.createProcessContext(fControlDmc, MIProcesses.UNIQUE_GROUP_ID);
+               	    fContainerDmc = procService.createContainerContext(procDmc, MIProcesses.UNIQUE_GROUP_ID);
 
-    			if (reverseService != null) {
-    				// When starting or restarting a program, reverse mode is automatically disabled
-    				reverseService.setReverseModeEnabled(false);
-    			}
-    			requestMonitor.done();
-    		}
-    	};
-
-    	if (!stopInMain) {
-    		// Just start the program.
-    		queueCommand(execCommand, execMonitor);
-    	} else {
-    		String stopSymbol = null;
-    		try {
-    			stopSymbol = launch.getLaunchConfiguration().getAttribute( ICDTLaunchConfigurationConstants.ATTR_DEBUGGER_STOP_AT_MAIN_SYMBOL, ICDTLaunchConfigurationConstants.DEBUGGER_STOP_AT_MAIN_SYMBOL_DEFAULT );
-    		} catch (CoreException e) {
-    			requestMonitor.setStatus(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, DebugException.CONFIGURATION_INVALID, "Cannot retrieve the entry point symbol", e)); //$NON-NLS-1$
-    			requestMonitor.done();
-    			return;
-    		}
-
-    		// Insert a breakpoint at the requested stop symbol.
-    		queueCommand(
-    				new MIBreakInsert(fControlDmc, true, false, null, 0, stopSymbol, 0), 
-    				new DataRequestMonitor<MIBreakInsertInfo>(getExecutor(), requestMonitor) { 
-    					@Override
-    					protected void handleSuccess() {
-    						// After the break-insert is done, execute the -exec-run or -exec-continue command.
-    						queueCommand(execCommand, execMonitor);
-    					}
-    				});
-    	}
+       	    		if (fMIBackend.getSessionType() == SessionType.REMOTE) {
+       	    			// Restart does not apply to remote sessions
+       	    			//
+       	    			// When doing remote debugging, we use -exec-continue instead of -exec-run 
+       	    			fExecCommand = new MIExecContinue(fContainerDmc);
+       	    		} else {
+       	    			fExecCommand = new MIExecRun(fContainerDmc, new String[0]);	
+       	    		}
+       	    		rm.done();
+      	    	}},
+    	    	/*
+    	    	 * If the user requested a 'stopOnMain', let's set the temporary breakpoint
+    	    	 * where the user specified.
+    	    	 */
+    	    	new Step() {
+    	    	@Override
+    	    	public void execute(final RequestMonitor rm) {
+    	        	boolean userRequestedStop = false;
+    	        	try {
+    	        		userRequestedStop = launch.getLaunchConfiguration().getAttribute(
+    	        								ICDTLaunchConfigurationConstants.ATTR_DEBUGGER_STOP_AT_MAIN, 
+    	        								false);
+    	        	} catch (CoreException e) {
+    	        		rm.setStatus(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, -1, "Cannot retrieve stop at entry point boolean", e)); //$NON-NLS-1$
+    	        		rm.done();
+    	        		return;
+    	        	}
+    	        	
+    	           	if (userRequestedStop) {
+    	        		try {
+    	        			fUserStopSymbol = launch.getLaunchConfiguration().getAttribute(
+    	        								ICDTLaunchConfigurationConstants.ATTR_DEBUGGER_STOP_AT_MAIN_SYMBOL, 
+    	        								ICDTLaunchConfigurationConstants.DEBUGGER_STOP_AT_MAIN_SYMBOL_DEFAULT);
+    	        		} catch (CoreException e) {
+    	        			rm.setStatus(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, DebugException.CONFIGURATION_INVALID, "Cannot retrieve the entry point symbol", e)); //$NON-NLS-1$
+    	        			rm.done();
+    	        			return;
+    	        		}
+    	        		
+    	        		queueCommand(new MIBreakInsert(fControlDmc, true, false, null, 0, fUserStopSymbol, 0),
+   	        				         new DataRequestMonitor<MIBreakInsertInfo>(getExecutor(), rm) {
+    	        			@Override
+    	        			public void handleSuccess() {
+    	        				if (getData() != null) {
+    	        					MIBreakpoint[] breakpoints = getData().getMIBreakpoints();
+    	        					if (breakpoints.length > 0) {
+    	        						fUserBreakpoint = breakpoints[0];
+    	        					}
+    	        				}
+    	        				rm.done();
+    	        			}
+    	        		});
+    	           	} else {
+    	           		rm.done();
+    	           	}
+    	    	}},
+    	    	/*
+    	    	 * If reverse debugging, set a breakpoint on main to be able to enable reverse
+    	    	 * as early as possible.
+    	    	 * If the user has requested a stop at the same point, we could skip this breakpoint
+    	    	 * however, we have to first set it to find out!  So, we just leave it.
+    	    	 */
+      	    	new Step() { 
+       	    	@Override
+      	    	public void execute(final RequestMonitor rm) {
+       	    		if (reverseEnabled) {
+     	        		queueCommand(new MIBreakInsert(fControlDmc, true, false, null, 0, 
+     	        									   ICDTLaunchConfigurationConstants.DEBUGGER_STOP_AT_MAIN_SYMBOL_DEFAULT, 0),
+     							     new DataRequestMonitor<MIBreakInsertInfo>(getExecutor(), rm) {
+    	        			@Override
+    	        			public void handleSuccess() {
+    	        				if (getData() != null) {
+    	        					MIBreakpoint[] breakpoints = getData().getMIBreakpoints();
+    	        					if (breakpoints.length > 0 && fUserBreakpoint != null) {
+    	        						fUserBreakpointIsOnMain = breakpoints[0].getAddress().equals(fUserBreakpoint.getAddress());
+    	        					}
+    	        				}
+    	        				rm.done();
+    	        			}
+    	        		});
+       	    		} else {
+       	    			rm.done();
+					}
+       	    	}},
+       	    	/*
+       	    	 * Now, run the program.
+       	    	 */
+      	    	new Step() { 
+       	    	@Override
+      	    	public void execute(RequestMonitor rm) {
+   	    			queueCommand(fExecCommand, new DataRequestMonitor<MIInfo>(getExecutor(), rm));
+       	    	}},
+       	    	/*
+       	    	 * In case of a restart, reverse debugging should be marked as off here because
+       	    	 * GDB will have turned it off. We may turn it back on after.
+       	    	 */
+      	    	new Step() { 
+       	    	@Override
+      	    	public void execute(RequestMonitor rm) {
+       	    		// Although it only makes sense for a restart, it doesn't hurt
+       	    		// do to it all the time.
+          	    	GDBRunControl_7_0 reverseService = getServicesTracker().getService(GDBRunControl_7_0.class);
+          	    	if (reverseService != null) {
+          	    		reverseService.setReverseModeEnabled(false);
+          	    	}
+          	    	rm.done();
+    	    	}},
+    	    	/*
+    	    	 * Since we have started the program, we can turn on reverse debugging if needed
+    	    	 */
+      	    	new Step() { 
+      	    	@Override
+       	    	public void execute(RequestMonitor rm) {
+					if (reverseEnabled) {
+						IReverseRunControl reverseService = getServicesTracker().getService(IReverseRunControl.class);
+						if (reverseService != null) {
+							reverseService.enableReverseMode(fControlDmc, true, rm);
+							return;
+						}
+					}
+					rm.done();
+       	    	}},
+       	    	/*
+       	    	 * Finally, if we are enabling reverse, and the userSymbolStop is not on main,
+       	    	 * we should do a continue because we are currently stopped on main but that 
+       	    	 * is not what the user requested
+       	    	 */
+      	    	new Step() { 
+       	    	@Override
+       	    	public void execute(RequestMonitor rm) {
+       	    		if (reverseEnabled && !fUserBreakpointIsOnMain) {
+       	    			queueCommand(new MIExecContinue(fContainerDmc),
+       	    					     new DataRequestMonitor<MIInfo>(getExecutor(), rm));
+       	    		} else {
+       	    			rm.done();
+       	    		}
+       	    	}},
+    	    };
+    	    
+			@Override
+			public Step[] getSteps() {
+				return fSteps;
+			}
+    	});
     }
 
     /**

@@ -3770,4 +3770,18 @@ public class AST2TemplateTests extends AST2BaseTest {
 		BindingAssertionHelper bh= new BindingAssertionHelper(getAboveComment(), true);
 		bh.assertNonProblem("A<C> make_A(C* p) {", 4, ICPPTemplateInstance.class);
 	}
+	
+	//	template <typename T> class CT {
+	//		public:
+	//			template <typename U> CT(U u) {}
+	//	};
+	//	template <typename T> void any(T t) {}
+	//	void test() {
+	//		int* iptr;
+	//		any(CT<int>(iptr));
+	//	}
+	public void testConstructorTemplateInClassTemplate() throws Exception {
+		String code= getAboveComment();
+		parseAndCheckBindings(code, ParserLanguage.CPP);
+	}
 }

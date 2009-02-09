@@ -607,15 +607,6 @@ public class CPPTemplates {
 			parentOfName= parentOfName.getParent();
 		}
 
-		IASTNode parentOfDeclaration= parentOfName;
-		while (parentOfDeclaration != null) {
-			if (parentOfDeclaration instanceof IASTDeclaration) {
-				parentOfDeclaration= parentOfDeclaration.getParent();
-				break;
-			}
-			parentOfDeclaration= parentOfDeclaration.getParent();
-		}
-
 		return  parentOfName instanceof ICPPASTElaboratedTypeSpecifier ||
 				parentOfName instanceof ICPPASTCompositeTypeSpecifier ||
 				parentOfName instanceof ICPPASTNamedTypeSpecifier || 
@@ -1368,7 +1359,11 @@ public class CPPTemplates {
 			ICPPFunctionTemplate template = (ICPPFunctionTemplate) templates.keyAt(idx);
 			CPPTemplateParameterMap map= new CPPTemplateParameterMap(fnArgs.length);
 			try {
-				ICPPTemplateArgument[] args= deduceTemplateFunctionArguments(template, templateArguments, fnArgs, map);
+				ICPPTemplateArgument[] useArgs = templateArguments;
+				if (template instanceof ICPPConstructor)
+					useArgs= ICPPTemplateArgument.EMPTY_ARGUMENTS;
+				
+				ICPPTemplateArgument[] args= deduceTemplateFunctionArguments(template, useArgs, fnArgs, map);
 				if (args != null) {
 					IBinding temp= instantiateFunctionTemplate(template, args);
 					if (temp instanceof IFunction) {

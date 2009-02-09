@@ -103,7 +103,7 @@ public class CPPASTLiteralExpression extends ASTNode implements ICPPASTLiteralEx
     		case lk_string_literal:
     			IType type = new CPPBasicType(IBasicType.t_char, 0, this);
     			type = new CPPQualifierType(type, true, false);
-    			return new CPPPointerType(type);
+    			return new CPPArrayType(type);
     	}
     	return null;
     }

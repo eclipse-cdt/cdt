@@ -19,7 +19,6 @@ import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.ITypedef;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTPointerToMember;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTQualifiedName;
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunctionType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPPointerToMemberType;
 import org.eclipse.cdt.internal.core.index.IIndexType;
@@ -40,7 +39,7 @@ public class CPPPointerToMemberType extends CPPPointerType implements ICPPPointe
 		this.operator = operator;
 	}
 
-	public CPPPointerToMemberType(IType type, ICPPClassType thisType, boolean isConst, boolean isVolatile) {
+	public CPPPointerToMemberType(IType type, IType thisType, boolean isConst, boolean isVolatile) {
 		super(type, isConst, isVolatile);
 		this.classType = thisType;
 	}

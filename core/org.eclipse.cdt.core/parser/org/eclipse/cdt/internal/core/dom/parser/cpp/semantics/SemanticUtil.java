@@ -37,6 +37,7 @@ import org.eclipse.cdt.core.parser.util.CharArrayUtils;
 import org.eclipse.cdt.core.parser.util.ObjectSet;
 import org.eclipse.cdt.internal.core.dom.parser.ITypeContainer;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPFunctionType;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPPointerToMemberType;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPPointerType;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPQualifierType;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPTemplateArgument;
@@ -53,6 +54,8 @@ public class SemanticUtil {
 	
 	static final int TYPEDEFS = 0x1;
 	static final int REFERENCES = 0x2;
+	static final int QUALIFIERS = 0x4;
+	static final int PTR_QUALIFIERS= 0x8;
 	
 	static {
 		final int OPERATOR_SPC= OPERATOR_CHARS.length + 1;
@@ -161,50 +164,32 @@ public class SemanticUtil {
 	 * @return the deepest type in a type container sequence
 	 */
 	public static IType getUltimateType(IType type, boolean stopAtPointerToMember) {
-	   return getUltimateType(type, null, stopAtPointerToMember);
+	   try {
+	    while (true) {
+			if (type instanceof ITypedef) {
+				IType tt= ((ITypedef) type).getType();
+				if (tt == null)
+					return type;
+				type= tt;
+			} else if (type instanceof IQualifierType) {
+				type= ((IQualifierType) type).getType();
+			} else if (stopAtPointerToMember && type instanceof ICPPPointerToMemberType) {
+	            return type;
+			} else if (type instanceof IPointerType) {
+				type= ((IPointerType) type).getType();
+			} else if (type instanceof IArrayType) {
+				type= ((IArrayType) type).getType();
+			} else if (type instanceof ICPPReferenceType) {
+				type= ((ICPPReferenceType) type).getType();
+			} else { 
+				return type;
+			}
+		}
+	} catch (DOMException e) {
+	    return e.getProblem();
+	}
 	}
 	
-	/**
-	 * Descends into type containers, stopping at pointer-to-member types if specified.
-	 * @param type the root type
-	 * @param lastPointerType if non-null, the deepest pointer or array type encountered
-	 *   is stored in element zero.
-	 * @param stopAtPointerToMember if true, do not descend into ICPPPointerToMember types
-	 * @return the deepest type in a type container sequence
-	 */
-	static IType getUltimateType(IType type, IType[] lastPointerType, boolean stopAtPointerToMember) {
-	    try {
-	        while (true) {
-				if (type instanceof ITypedef) {
-					IType tt= ((ITypedef) type).getType();
-					if (tt == null)
-						return type;
-					type= tt;
-				} else if (type instanceof IQualifierType) {
-					type= ((IQualifierType) type).getType();
-				} else if (stopAtPointerToMember && type instanceof ICPPPointerToMemberType) {
-	                return type;
-				} else if (type instanceof IPointerType) {
-					if (lastPointerType != null) {
-						lastPointerType[0]= type;
-					}
-					type= ((IPointerType) type).getType();
-				} else if (type instanceof IArrayType) {
-					if (lastPointerType != null) {
-						lastPointerType[0]= type;
-					}
-					type= ((IArrayType) type).getType();
-				} else if (type instanceof ICPPReferenceType) {
-					type= ((ICPPReferenceType) type).getType();
-				} else { 
-					return type;
-				}
-			}
-	    } catch (DOMException e) {
-	        return e.getProblem();
-	    }
-	}
-
 	/**
 	 * Descends into type containers, stopping at pointer or
 	 * pointer-to-member types.
@@ -245,6 +230,8 @@ public class SemanticUtil {
 	public static IType getNestedType(IType type, int options) {
 		boolean typedefs= (options & TYPEDEFS) != 0;
 		boolean refs= (options & REFERENCES) != 0;
+		boolean qualifiers= (options & QUALIFIERS) != 0;
+		boolean ptrQualifiers= (options & PTR_QUALIFIERS) != 0;
 		try {
 			while (true) {
 				IType t= null;
@@ -252,6 +239,22 @@ public class SemanticUtil {
 					t= ((ITypedef) type).getType();
 				} else if (refs && type instanceof ICPPReferenceType) {
 					t= ((ICPPReferenceType) type).getType();
+				} else if (qualifiers && type instanceof IQualifierType) {
+					t= ((IQualifierType) type).getType();
+				} else if (ptrQualifiers && type instanceof IPointerType) {
+					if (type instanceof CPPPointerType) {
+						return ((CPPPointerType) type).stripQualifiers();
+					}
+					IPointerType ptr= (IPointerType) type;
+					if (ptr.isConst() || ptr.isVolatile()) {
+						if (ptr instanceof ICPPPointerToMemberType) {
+							final IType memberOfClass = ((ICPPPointerToMemberType) ptr).getMemberOfClass();
+							if (memberOfClass instanceof ICPPClassType)
+								return new CPPPointerToMemberType(ptr.getType(), memberOfClass, false, false);
+						} else {
+							return new CPPPointerType(ptr.getType(), false, false);
+						}
+					}
 				}
 				if (t == null)
 					return type;
@@ -378,36 +381,58 @@ public class SemanticUtil {
 	 * Adjusts the parameter type according to 8.3.5-3:
 	 * cv-qualifiers are deleted, arrays and function types are converted to pointers.
 	 */
-	public static IType adjustParameterType(IType pt) {
+	public static IType adjustParameterType(final IType pt, boolean forFunctionType) {
 		// bug 239975
-		IType noTypedef= SemanticUtil.getUltimateTypeViaTypedefs(pt);
+		IType t= SemanticUtil.getUltimateTypeViaTypedefs(pt);
+		try {
+			if (t instanceof IArrayType) {
+				IArrayType at = (IArrayType) t;
+				return new CPPPointerType(at.getType());
+			}
+		} catch (DOMException e) {
+			return e.getProblem();
+		}
+		if (t instanceof IFunctionType) {
+			return new CPPPointerType(pt);
+		}
 
 		//8.3.5-3 
 		//Any cv-qualifier modifying a parameter type is deleted.
-		//so only create the base type from the declspec and not the qualifiers
-		try {
-			if (noTypedef instanceof IQualifierType) {
-				pt= ((IQualifierType) noTypedef).getType();
-				noTypedef= SemanticUtil.getUltimateTypeViaTypedefs(pt);
-			}
-			if (noTypedef instanceof CPPPointerType) {
-				pt= ((CPPPointerType) noTypedef).stripQualifiers();
-				noTypedef= SemanticUtil.getUltimateTypeViaTypedefs(pt);
-			}
-			//any parameter of type array of T is adjusted to be pointer to T
-			if (noTypedef instanceof IArrayType) {
-				IArrayType at = (IArrayType) noTypedef;
-				pt = new CPPPointerType(at.getType());
-				noTypedef= SemanticUtil.getUltimateTypeViaTypedefs(pt);
-			}
-		} catch (DOMException e) {
-			pt = e.getProblem();
-		}
-
-		//any parameter to type function returning T is adjusted to be pointer to function
-		if (noTypedef instanceof IFunctionType) {
-			pt = new CPPPointerType(pt);
+		if (forFunctionType && (t instanceof IQualifierType || t instanceof IPointerType)) {
+			return SemanticUtil.getNestedType(t, TYPEDEFS | QUALIFIERS | PTR_QUALIFIERS);
 		}
 		return pt;
 	}
+	
+	public static IType addQualifiers(IType baseType, boolean cnst, boolean vol) {
+		if (cnst || vol) {
+			try {
+				if (baseType instanceof IQualifierType) {
+					IQualifierType qt= (IQualifierType) baseType;
+					if ((cnst && !qt.isConst()) || (vol && !qt.isVolatile())) {
+						return new CPPQualifierType(qt.getType(), cnst || qt.isConst(), vol || qt.isVolatile());
+					}
+					return baseType;
+				} else if (baseType instanceof ICPPPointerToMemberType) {
+					ICPPPointerToMemberType pt= (ICPPPointerToMemberType) baseType;
+					if ((cnst && !pt.isConst()) || (vol && !pt.isVolatile())) {
+						return new CPPPointerToMemberType(pt.getType(), pt.getMemberOfClass(), cnst
+								|| pt.isConst(), vol || pt.isVolatile());
+					}
+					return baseType;
+				} else if (baseType instanceof IPointerType) {
+					IPointerType pt= (IPointerType) baseType;
+					if ((cnst && !pt.isConst()) || (vol && !pt.isVolatile())) {
+						return new CPPPointerType(pt.getType(), cnst || pt.isConst(), vol || pt.isVolatile());
+					}
+					return baseType;
+				}
+			} catch (DOMException e) {
+			} 
+			
+			return new CPPQualifierType(baseType, cnst, vol);
+		}
+		return baseType;
+	}
+
 }

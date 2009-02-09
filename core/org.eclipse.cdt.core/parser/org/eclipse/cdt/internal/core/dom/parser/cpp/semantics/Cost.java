@@ -42,8 +42,6 @@ class Cost {
 	public IType source;
 	public IType target;
 	
-	public boolean targetHadReference = false;
-	
 	public int lvalue;
 	public int promotion;
 	public int conversion;
@@ -108,11 +106,7 @@ class Cost {
 				op2 = null;
 				while (true) {
 					if (t1 instanceof ITypedef) {
-						try {
-							t1 = ((ITypedef) t1).getType();
-						} catch (DOMException e) {
-							t1 = e.getProblem();
-						}
+						t1 = ((ITypedef) t1).getType();
 					} else {
 						if (t1 instanceof IPointerType)
 							op1 = (IPointerType) t1;
@@ -121,11 +115,7 @@ class Cost {
 				}
 				while (true) {
 					if (t2 instanceof ITypedef) {
-						try {
-							t2 = ((ITypedef) t2).getType();
-						} catch (DOMException e) {
-							t2 = e.getProblem();
-						}
+						t2 = ((ITypedef) t2).getType();
 					} else {
 						if (t2 instanceof IPointerType)
 							op2 = (IPointerType) t2;

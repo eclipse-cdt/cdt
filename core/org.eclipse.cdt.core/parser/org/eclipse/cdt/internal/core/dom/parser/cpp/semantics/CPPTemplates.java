@@ -822,7 +822,7 @@ public class CPPTemplates {
 					IType newMemberOfClass = instantiateType(memberOfClass, tpMap, within);
 					if (newNestedType != nestedType || newMemberOfClass != memberOfClass) {
 						if (newMemberOfClass instanceof ICPPClassType) {
-							return new CPPPointerToMemberType(newNestedType, (ICPPClassType) newMemberOfClass,
+							return new CPPPointerToMemberType(newNestedType, newMemberOfClass,
 								ptm.isConst(), ptm.isVolatile());
 						}
 						return type;
@@ -1407,7 +1407,7 @@ public class CPPTemplates {
 				IType par= instPars[j];
 				if (isDependentType(par)) {
 					// 14.8.2.1
-					par= SemanticUtil.adjustParameterType(par);
+					par= SemanticUtil.adjustParameterType(par, true);
 					if (!deduceTemplateParameterMap(par, fnArgs[j], map)) {
 						return false;
 					}

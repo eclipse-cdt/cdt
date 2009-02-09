@@ -32,6 +32,7 @@ import org.eclipse.cdt.internal.core.dom.Linkage;
 import org.eclipse.cdt.internal.core.dom.parser.ASTNode;
 import org.eclipse.cdt.internal.core.dom.parser.ProblemBinding;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPVisitor;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.SemanticUtil;
 import org.eclipse.core.runtime.PlatformObject;
 
 /**
@@ -178,7 +179,8 @@ public class CPPParameter extends PlatformObject implements ICPPParameter, ICPPI
 	 */
 	public IType getType() {
 		if (type == null && declarations != null) {
-			type = CPPVisitor.createType((IASTDeclarator) declarations[0].getParent());
+			IType t= CPPVisitor.createType((IASTDeclarator) declarations[0].getParent());
+			type= SemanticUtil.adjustParameterType(t, false);
 		}
 		return type;
 	}

@@ -228,21 +228,25 @@ public class ASTTypeUtil {
 			}
 			result.append(Keywords.cpRBRACKET);
 		} else if (type instanceof IBasicType) {
+			IBasicType basicType= (IBasicType) type;
 			try {
-				if (((IBasicType) type).isSigned()) {
-					result.append(Keywords.SIGNED); needSpace = true;
-				} else if (((IBasicType) type).isUnsigned()) {
+				if (basicType.isSigned()) {
+					// 3.9.1.2: signed integer types
+					if (!normalize || basicType.getType() == IBasicType.t_char) {
+						result.append(Keywords.SIGNED); needSpace = true;
+					}
+				} else if (basicType.isUnsigned()) {
 					if (needSpace) {
 						result.append(SPACE); needSpace = false;
 					}
 					result.append(Keywords.UNSIGNED); needSpace = true;
 				}
-				if (((IBasicType) type).isLong()) {
+				if (basicType.isLong()) {
 					if (needSpace) {
 						result.append(SPACE); needSpace = false;
 					}
 					result.append(Keywords.LONG); needSpace = true;
-				} else if (((IBasicType) type).isShort()) {
+				} else if (basicType.isShort()) {
 					if (needSpace) {
 						result.append(SPACE); needSpace = false;
 					}
@@ -316,7 +320,7 @@ public class ASTTypeUtil {
 			}
 			
 			try {
-				switch (((IBasicType) type).getType()) {
+				switch (basicType.getType()) {
 					case IBasicType.t_char:
 						if (needSpace) result.append(SPACE);
 						result.append(Keywords.CHAR);

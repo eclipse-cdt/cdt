@@ -1532,7 +1532,7 @@ public class CPPVisitor extends ASTQueries {
 	        pt = createType(pDeclSpec);
 	        pt = createType(pt, pDtor);
 
-	        pt = SemanticUtil.adjustParameterType(pt);
+	        pt = SemanticUtil.adjustParameterType(pt, true);
 	        pTypes[i] = pt;
 	    }
 	     
@@ -1766,8 +1766,7 @@ public class CPPVisitor extends ASTQueries {
 						if (type instanceof ICPPClassTemplate) {
 					    	type= CPPTemplates.instantiateWithinClassTemplate((ICPPClassTemplate) type);
 						}
-						if (dtor.isConst() || dtor.isVolatile())
-							type = new CPPQualifierType(type, dtor.isConst(), dtor.isVolatile());
+						type = SemanticUtil.addQualifiers(type, dtor.isConst(), dtor.isVolatile());
 						type = new CPPPointerType(type);
 						return type;
 					}

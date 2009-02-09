@@ -146,7 +146,6 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTTranslationUnit;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPBasicType;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPCompositeBinding;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPNamespace;
-import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPQualifierType;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPReferenceType;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPScope;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPUnknownBinding;
@@ -1974,10 +1973,7 @@ public class CPPSemantics {
 	    if (owner instanceof ICPPClassTemplate) {
 	    	owner= CPPTemplates.instantiateWithinClassTemplate((ICPPClassTemplate) owner);
 	    }
-	    IType implicitType= owner;
-	    if (ftype.isConst() || ftype.isVolatile()) {
-	    	implicitType = new CPPQualifierType(implicitType, ftype.isConst(), ftype.isVolatile());
-	    }
+	    IType implicitType= SemanticUtil.addQualifiers(owner, ftype.isConst(), ftype.isVolatile());
 	    result[0]= new CPPReferenceType(implicitType);
 	    return result;
 	}
@@ -2507,9 +2503,7 @@ public class CPPSemantics {
     private static ICPPVariable createVariable(IASTName name, final IType type, final boolean isConst, final boolean isVolatile) {
     	return new CPPVariable(name) {
 			@Override public IType getType() {
-				if (isConst || isVolatile)
-					return new CPPQualifierType(type, isConst, isVolatile);
-				return type;
+				return SemanticUtil.addQualifiers(type, isConst, isVolatile);
 			}
 		};
     }

@@ -5941,7 +5941,7 @@ public class AST2CPPTests extends AST2BaseTest {
 	//	  f3(r);
 	//	  f4(s);
 	//	}
-	public void _testArrayToPointerConversion() throws Exception {
+	public void testArrayToPointerConversion() throws Exception {
 		BindingAssertionHelper ba= new BindingAssertionHelper(getAboveComment(), true);
 		ba.assertNonProblem("f1(p)", 2, ICPPFunction.class);
 		ba.assertProblem("f2(q)", 2);
@@ -6619,7 +6619,7 @@ public class AST2CPPTests extends AST2BaseTest {
 	//	void test() {
 	//	  f(a());
 	//	}
-	public void _testBug263152_1() throws Exception {
+	public void testBug263152_1() throws Exception {
 		BindingAssertionHelper ba= new BindingAssertionHelper(getAboveComment(), true);
 		ba.assertProblem("f(a())", 1);
 	}
@@ -6635,7 +6635,7 @@ public class AST2CPPTests extends AST2BaseTest {
 	//	void test(B p) {
 	//	  p.m(a());
 	//	}
-	public void _testBug263152_2() throws Exception {
+	public void testBug263152_2() throws Exception {
 		BindingAssertionHelper ba= new BindingAssertionHelper(getAboveComment(), true);
 		ba.assertNonProblem("m(a())", 1, ICPPMethod.class);
 	}
@@ -6699,7 +6699,7 @@ public class AST2CPPTests extends AST2BaseTest {
 	//	  fip(0);
 	//	  fia(0);
 	//	}
-	public void _testNonPointerToPointerConversion_263707() throws Exception {
+	public void testNonPointerToPointerConversion_263707() throws Exception {
 		BindingAssertionHelper ba= new BindingAssertionHelper(getAboveComment(), true);
 		ba.assertProblem("fip(1)", 3);
 		ba.assertProblem("fia(1)", 3);

@@ -59,6 +59,7 @@ import org.eclipse.cdt.internal.core.dom.parser.ASTQueries;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPSemantics;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPTemplates;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPVisitor;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.SemanticUtil;
 
 /**
  * Base implementation for c++ scopes.
@@ -100,7 +101,7 @@ public class CPPClassScope extends CPPScope implements ICPPClassScope {
         char[] className = name.getLookupKey();
 
 		IParameter[] voidPs = new IParameter[] { new CPPParameter(CPPSemantics.VOID_TYPE) };
-		IType pType = new CPPReferenceType(new CPPQualifierType(clsType, true, false));
+		IType pType = new CPPReferenceType(SemanticUtil.addQualifiers(clsType, true, false));
 		IParameter[] ps = new IParameter[] { new CPPParameter(pType) };
 
 		int i= 0;

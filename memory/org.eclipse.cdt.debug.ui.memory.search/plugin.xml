@@ -1,0 +1,41 @@
+<?eclipse version="3.0"?>
+<plugin>
+
+<extension point="org.eclipse.ui.viewActions">
+ <viewContribution
+       id="org.eclipse.debug.ui.MemoryView.findNext"
+       targetID="org.eclipse.debug.ui.MemoryView">
+    <action
+          class="org.eclipse.cdt.debug.ui.memory.search.FindAction"
+          enablesFor="1"
+          id="org.eclipse.cdt.debug.ui.memory.search.FindAction"
+          label="Find Next"
+          menubarPath="additions">
+    </action>
+ </viewContribution>
+ <viewContribution
+       id="org.eclipse.debug.ui.MemoryView.findReplace"
+       targetID="org.eclipse.debug.ui.MemoryView">
+    <action
+          class="org.eclipse.cdt.debug.ui.memory.search.FindAction"
+          enablesFor="1"
+          id="org.eclipse.cdt.debug.ui.memory.search.FindAction"
+          label="Find/Replace..."
+          menubarPath="additions">
+    </action>
+ </viewContribution>
+</extension>
+
+ <extension point="org.eclipse.search.searchResultViewPages">
+	<viewPage
+       	class="org.eclipse.cdt.debug.ui.memory.search.MemorySearchResultsPage"
+       	icon="icons/full/obj16/tsearch_dpdn_obj.gif"
+       	id="org.eclipse.cdt.debug.ui.memory.search.MemorySearchResultsPage"
+       	label="Memory Search Results"
+       	searchResultClass="org.eclipse.cdt.debug.ui.memory.search.MemorySearchResult">
+	</viewPage>
+</extension>
+
+</plugin>
+
+

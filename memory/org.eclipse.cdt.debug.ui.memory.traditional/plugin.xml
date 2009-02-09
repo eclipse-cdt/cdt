@@ -1,0 +1,58 @@
+<?eclipse version="3.0"?>
+<plugin>
+ 
+<extension point="org.eclipse.debug.ui.memoryRenderings">
+    <renderingType 
+        name="Traditional"
+        id="org.eclipse.cdt.debug.ui.memory.traditional.TraditionalRendering"
+        class="org.eclipse.cdt.debug.ui.memory.traditional.TraditionalRenderingTypeDelegate">
+    </renderingType>
+    <renderingBindings
+        renderingIds="org.eclipse.cdt.debug.ui.memory.traditional.TraditionalRendering"
+        defaultIds="org.eclipse.cdt.debug.ui.memory.traditional.TraditionalRendering">
+        <enablement>
+            <instanceof value="org.eclipse.debug.core.model.IMemoryBlockExtension"/>
+        </enablement>    
+    </renderingBindings>          
+</extension>
+
+<extension point="org.eclipse.debug.ui.memoryRenderings">
+    <renderingType 
+        name="Traditional Go To Address"
+        id="org.eclipse.cdt.debug.ui.memory.traditional.TraditionalGoToAddressRendering"
+        class="org.eclipse.cdt.debug.ui.memory.traditional.TraditionalGoToAddressRenderingTypeDelegate">
+    </renderingType>
+</extension>
+
+<extension
+      point="org.eclipse.ui.preferencePages">
+   <page
+         category="org.eclipse.debug.ui.DebugPreferencePage"
+         class="org.eclipse.cdt.debug.ui.memory.traditional.TraditionalRenderingPreferencePage"
+         id="org.eclipse.cdt.debug.ui.memory.traditional.TraditionalRenderingPreferencePage"
+         helpContextId="TraditionalRenderingPreferencePage_context"
+         name="Traditional Memory Rendering"/>
+</extension>
+<extension
+      point="org.eclipse.core.runtime.preferences">
+   <initializer class="org.eclipse.cdt.debug.ui.memory.traditional.TraditionalRenderingPreferenceInitializer"/>
+</extension>
+
+<extension point="org.eclipse.ui.viewActions">
+    <viewContribution
+            targetID="org.eclipse.debug.ui.MemoryView"
+            id="org.eclipse.debug.ui.memoryView.toolbar">
+         <action
+               class="org.eclipse.cdt.debug.ui.memory.traditional.TraditionalRenderingPreferenceAction"
+               helpContextId="TraditionalRenderingPreferenceAction_context"
+               id="org.eclipse.cdt.debug.ui.memory.traditional.preferenceaction"
+               label="%TraditionalRenderingPreferenceActionName"
+               menubarPath="additions"
+               style="push"
+               tooltip="%TraditionalRenderingPreferenceActionName"/>
+	</viewContribution>
+</extension>
+
+</plugin>
+
+

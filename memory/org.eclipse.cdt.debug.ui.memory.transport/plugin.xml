@@ -1,0 +1,73 @@
+<?eclipse version="3.0"?>
+<plugin>
+   <extension-point id="memoryTransport" name="memoryTransport" schema="schema/MemoryTransport.exsd"/>
+	
+	<extension
+	      id="org.eclipse.cdt.debug.ui.memory.transport.dd"
+	      name="org.eclipse.cdt.debug.ui.memory.transport.dd"
+	      point="org.eclipse.cdt.debug.ui.memory.transport.memoryTransport">
+	      
+	    <importer 
+	        name="SRecordImporter"
+	        id="org.eclipse.cdt.debug.ui.memory.transport.SRecordImporter"
+	        class="org.eclipse.cdt.debug.ui.memory.transport.SRecordImporter">
+	    </importer>
+	    <exporter 
+	        name="SRecordExporter"
+	        id="org.eclipse.cdt.debug.ui.memory.transport.SRecordExporter"
+	        class="org.eclipse.cdt.debug.ui.memory.transport.SRecordExporter">
+	    </exporter>
+	    
+	    <importer 
+	        name="PlainTextImporter"
+	        id="org.eclipse.cdt.debug.ui.memory.transport.PlainTextImporter"
+	        class="org.eclipse.cdt.debug.ui.memory.transport.PlainTextImporter">
+	    </importer>
+	    <exporter 
+	        name="PlainTextExporter"
+	        id="org.eclipse.cdt.debug.ui.memory.transport.PlainTextExporter"
+	        class="org.eclipse.cdt.debug.ui.memory.transport.PlainTextExporter">
+	    </exporter>
+	    
+	    <importer 
+	        name="RAWBinaryImporter"
+	        id="org.eclipse.cdt.debug.ui.memory.transport.RAWBinaryImporter"
+	        class="org.eclipse.cdt.debug.ui.memory.transport.RAWBinaryImporter">
+	    </importer>
+	    <exporter 
+	        name="RAWBInaryExporter"
+	        id="org.eclipse.cdt.debug.ui.memory.transport.RAWBinaryExporter"
+	        class="org.eclipse.cdt.debug.ui.memory.transport.RAWBinaryExporter">
+	    </exporter>
+	    
+	</extension>
+	
+	<extension point="org.eclipse.ui.viewActions">
+		<viewContribution
+	    	targetID="org.eclipse.debug.ui.MemoryView"
+	        id="org.eclipse.debug.ui.memoryView.toolbar">
+	        	<action
+                class="org.eclipse.cdt.debug.ui.memory.transport.actions.ExportMemoryAction"
+                enablesFor="1"
+                helpContextId="ExportMemoryAction_context"
+                icon="icons/export.png"
+                id="org.eclipse.cdt.debug.ui.memory.transport.actions.ExportMemoryAction"
+                label="%ExportMemoryAction.label"
+                state="false"
+                style="push"
+                toolbarPath="additions"
+                tooltip="%ExportMemoryAction.label"/>
+	            <action
+                   class="org.eclipse.cdt.debug.ui.memory.transport.actions.ImportMemoryAction"
+                   enablesFor="1"
+                   helpContextId="ImportMemoryAction_context"
+                   icon="icons/import.png"
+                   id="org.eclipse.cdt.debug.ui.memory.transport.actions.ImportMemoryAction"
+                   label="%ImportMemoryAction.label"
+                   state="false"
+                   style="push"
+                   toolbarPath="additions"
+                   tooltip="%ImportMemoryAction.label"/>
+	    </viewContribution>
+	</extension>
+</plugin>

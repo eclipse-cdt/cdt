@@ -14,9 +14,11 @@ import java.util.ArrayList;
 
 import org.eclipse.cdt.debug.core.ICDTLaunchConfigurationConstants;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.variables.IStringVariableManager;
 import org.eclipse.core.variables.VariablesPlugin;
 import org.eclipse.debug.core.ILaunchConfiguration;
+import org.eclipse.osgi.service.environment.Constants;
 
 /**
  * Utility methods.
@@ -52,8 +54,21 @@ public class LaunchUtils {
 		return argumentsToArray(args);
 	}
 	
+	// this method is extracted as CommandLineUtil.argumentsToArray on HEAD
+	private static String[] argumentsToArray(String line) {
+		boolean osWin;
+		try {
+			osWin = Platform.getOS().equals(Constants.OS_WIN32);
+		} catch (Exception e) {
+			osWin = false;
+		}
+		if (osWin) {
+			return argumentsToArrayWindowsStyle(line);
+		} else {
+			return argumentsToArrayUnixStyle(line);
+		}
+	}
 	/**
-	 * 
 	 * Parsing arguments in a shell style.
 	 * i.e.
 	 * <code>
@@ -65,10 +80,8 @@ public class LaunchUtils {
 	 * </code>
 	 * @param line
 	 * @return array of arguments, or empty array if line is null or empty
-	 * 
-	 *  This function is included in {@link CommandLineUtil} class on HEAD
 	 */
-	private static String[] argumentsToArray(String line) {
+	private static String[] argumentsToArrayUnixStyle(String line) {
 		final int INITIAL = 0;
 		final int IN_DOUBLE_QUOTES = 1;
 		final int IN_DOUBLE_QUOTES_ESCAPED = 2;
@@ -158,6 +171,111 @@ public class LaunchUtils {
 				case ESCAPED:
 					buffer.append(c);
 					state = IN_ARG;
+					break;
+			}
+		}
+
+		if (state != INITIAL) { // this allow to process empty string as an argument
+			aList.add(buffer.toString());
+		}
+		return aList.toArray(new String[aList.size()]);
+	}
+	
+	
+	/**
+	 * Parsing arguments in a cmd style.
+	 * i.e.
+	 * <code>
+	 * ["a b c" d] -> [[a b c],[d]]
+	 * [a   d] -> [[a],[d]]
+	 * ['"quoted"'] -> [['quoted']]
+	 * [\\ \" \a] -> [[\\],["],[\a]]
+	 * ["str\\str\a"] -> [[str\\str\a]]
+	 * </code>
+	 * @param line
+	 * @return array of arguments, or empty array if line is null or empty
+	 */
+	private static String[] argumentsToArrayWindowsStyle(String line) {
+		final int INITIAL = 0;
+		final int IN_DOUBLE_QUOTES = 1;
+		final int IN_DOUBLE_QUOTES_ESCAPED = 2;
+		final int ESCAPED = 3;
+		final int IN_ARG = 5;
+
+		if (line == null) {
+			line = ""; //$NON-NLS-1$
+		}
+
+		char[] array = line.trim().toCharArray();
+		ArrayList<String> aList = new ArrayList<String>();
+		StringBuilder buffer = new StringBuilder();
+		int state = INITIAL;
+		for (int i = 0; i < array.length; i++) {
+			char c = array[i];
+
+			switch (state) {
+				case IN_ARG:
+					// fall through
+				case INITIAL:
+					if (Character.isWhitespace(c)) {
+						if (state == INITIAL) break; // ignore extra spaces
+						// add argument
+						state = INITIAL;
+						String arg = buffer.toString();
+						buffer = new StringBuilder();
+						aList.add(arg);
+					} else {
+						switch (c) {
+							case '\\':
+								state = ESCAPED;
+								break;
+							case '\"':
+								state = IN_DOUBLE_QUOTES;
+								break;
+							default:
+								state = IN_ARG;
+								buffer.append(c);
+								break;
+						}
+					}
+					break;
+				case IN_DOUBLE_QUOTES:
+					switch (c) {
+						case '\\':
+							state = IN_DOUBLE_QUOTES_ESCAPED;
+							break;
+						case '\"':
+							state = IN_ARG;
+							break;
+						default:
+							buffer.append(c);
+							break;
+					}
+					break;
+				case IN_DOUBLE_QUOTES_ESCAPED:
+					switch (c) {
+						case '\"':
+							buffer.append(c);
+							break;
+						default:
+							buffer.append('\\');
+							buffer.append(c);
+							break;
+					}
+					state = IN_DOUBLE_QUOTES;
+					break;
+				case ESCAPED:
+					state = IN_ARG;
+					switch (c) {
+					case ' ':
+					case '\"':
+						buffer.append(c);
+						break;
+					default:
+						buffer.append('\\');
+						buffer.append(c);
+						break;
+					}
 					break;
 			}
 		}

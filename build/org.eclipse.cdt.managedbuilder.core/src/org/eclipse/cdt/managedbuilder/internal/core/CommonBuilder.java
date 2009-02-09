@@ -97,11 +97,13 @@ import org.eclipse.core.runtime.MultiStatus;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.OperationCanceledException;
 import org.eclipse.core.runtime.Path;
+import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.QualifiedName;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.SubProgressMonitor;
 import org.eclipse.core.runtime.jobs.ISchedulingRule;
 import org.eclipse.core.runtime.jobs.Job;
+import org.eclipse.osgi.service.environment.Constants;
 
 public class CommonBuilder extends ACBuilder {
 
@@ -2070,7 +2072,46 @@ public class CommonBuilder extends ACBuilder {
 
 	// Turn the string into an array.
 	private String[] makeArray(String line) {
-		// this method is extracted as CommandLineUtil.argumentsToArray on HEAD
+		return argumentsToArray(line);
+	}
+
+	private void removeAllMarkers(IProject currProject) throws CoreException {
+		IWorkspace workspace = currProject.getWorkspace();
+
+		// remove all markers
+		IMarker[] markers = currProject.findMarkers(ICModelMarker.C_MODEL_PROBLEM_MARKER, true, IResource.DEPTH_INFINITE);
+		if (markers != null) {
+			workspace.deleteMarkers(markers);
+		}
+	}
+	// this method is extracted as CommandLineUtil.argumentsToArray on HEAD
+	private static String[] argumentsToArray(String line) {
+		boolean osWin;
+		try {
+			osWin = Platform.getOS().equals(Constants.OS_WIN32);
+		} catch (Exception e) {
+			osWin = false;
+		}
+		if (osWin) {
+			return argumentsToArrayWindowsStyle(line);
+		} else {
+			return argumentsToArrayUnixStyle(line);
+		}
+	}
+	/**
+	 * Parsing arguments in a shell style.
+	 * i.e.
+	 * <code>
+	 * ["a b c" d] -> [[a b c],[d]]
+	 * [a   d] -> [[a],[d]]
+	 * ['"quoted"'] -> [["quoted"]]
+	 * [\\ \" \a] -> [[\],["],[a]]
+	 * ["str\\str\a"] -> [[str\str\a]]
+	 * </code>
+	 * @param line
+	 * @return array of arguments, or empty array if line is null or empty
+	 */
+	private static String[] argumentsToArrayUnixStyle(String line) {
 		final int INITIAL = 0;
 		final int IN_DOUBLE_QUOTES = 1;
 		final int IN_DOUBLE_QUOTES_ESCAPED = 2;
@@ -2078,42 +2119,44 @@ public class CommonBuilder extends ACBuilder {
 		final int IN_SINGLE_QUOTES = 4;
 		final int IN_ARG = 5;
 
-		if (line == null) { 
+		if (line == null) {
 			line = ""; //$NON-NLS-1$
 		}
-				
+
 		char[] array = line.trim().toCharArray();
 		ArrayList<String> aList = new ArrayList<String>();
 		StringBuilder buffer = new StringBuilder();
 		int state = INITIAL;
 		for (int i = 0; i < array.length; i++) {
 			char c = array[i];
+
 			switch (state) {
 				case IN_ARG:
 					// fall through
 				case INITIAL:
-					switch (c) {
-						case ' ':
-							if (state == INITIAL) break; // ignore extra spaces
-							// add argument
-							state = INITIAL;
-							String arg = buffer.toString();
-							buffer = new StringBuilder();
-							aList.add(arg);
-							break;
-						case '\\':
-							state = ESCAPED;
-							break;
-						case '\'':
-							state = IN_SINGLE_QUOTES;
-							break;
-						case '\"':
-							state = IN_DOUBLE_QUOTES;
-							break;
-						default:
-							state = IN_ARG;
-							buffer.append(c);
-							break;
+					if (Character.isWhitespace(c)) {
+						if (state == INITIAL) break; // ignore extra spaces
+						// add argument
+						state = INITIAL;
+						String arg = buffer.toString();
+						buffer = new StringBuilder();
+						aList.add(arg);
+					} else {
+						switch (c) {
+							case '\\':
+								state = ESCAPED;
+								break;
+							case '\'':
+								state = IN_SINGLE_QUOTES;
+								break;
+							case '\"':
+								state = IN_DOUBLE_QUOTES;
+								break;
+							default:
+								state = IN_ARG;
+								buffer.append(c);
+								break;
+						}
 					}
 					break;
 				case IN_DOUBLE_QUOTES:
@@ -2146,12 +2189,12 @@ public class CommonBuilder extends ACBuilder {
 							buffer.append(c);
 							break;
 						case 'n':
-							buffer.append('\n');
+							buffer.append("\n"); //$NON-NLS-1$
 							break;
 						default:
 							buffer.append('\\');
 							buffer.append(c);
-						break;
+							break;
 					}
 					state = IN_DOUBLE_QUOTES;
 					break;
@@ -2161,19 +2204,117 @@ public class CommonBuilder extends ACBuilder {
 					break;
 			}
 		}
-		
-		if (state!=INITIAL) { // this allow to process empty string as an argument
+
+		if (state != INITIAL) { // this allow to process empty string as an argument
 			aList.add(buffer.toString());
 		}
 		return aList.toArray(new String[aList.size()]);
 	}
+	
+	
+	/**
+	 * Parsing arguments in a cmd style.
+	 * i.e.
+	 * <code>
+	 * ["a b c" d] -> [[a b c],[d]]
+	 * [a   d] -> [[a],[d]]
+	 * ['"quoted"'] -> [['quoted']]
+	 * [\\ \" \a] -> [[\\],["],[\a]]
+	 * ["str\\str\a"] -> [[str\\str\a]]
+	 * </code>
+	 * @param line
+	 * @return array of arguments, or empty array if line is null or empty
+	 */
+	private static String[] argumentsToArrayWindowsStyle(String line) {
+		final int INITIAL = 0;
+		final int IN_DOUBLE_QUOTES = 1;
+		final int IN_DOUBLE_QUOTES_ESCAPED = 2;
+		final int ESCAPED = 3;
+		final int IN_ARG = 5;
 
-	private void removeAllMarkers(IProject currProject) throws CoreException {
-		IWorkspace workspace = currProject.getWorkspace();
-
-		// remove all markers
-		IMarker[] markers = currProject.findMarkers(ICModelMarker.C_MODEL_PROBLEM_MARKER, true, IResource.DEPTH_INFINITE);
-		if (markers != null) {
-			workspace.deleteMarkers(markers);
+		if (line == null) {
+			line = ""; //$NON-NLS-1$
 		}
-	}}
+
+		char[] array = line.trim().toCharArray();
+		ArrayList<String> aList = new ArrayList<String>();
+		StringBuilder buffer = new StringBuilder();
+		int state = INITIAL;
+		for (int i = 0; i < array.length; i++) {
+			char c = array[i];
+
+			switch (state) {
+				case IN_ARG:
+					// fall through
+				case INITIAL:
+					if (Character.isWhitespace(c)) {
+						if (state == INITIAL) break; // ignore extra spaces
+						// add argument
+						state = INITIAL;
+						String arg = buffer.toString();
+						buffer = new StringBuilder();
+						aList.add(arg);
+					} else {
+						switch (c) {
+							case '\\':
+								state = ESCAPED;
+								break;
+							case '\"':
+								state = IN_DOUBLE_QUOTES;
+								break;
+							default:
+								state = IN_ARG;
+								buffer.append(c);
+								break;
+						}
+					}
+					break;
+				case IN_DOUBLE_QUOTES:
+					switch (c) {
+						case '\\':
+							state = IN_DOUBLE_QUOTES_ESCAPED;
+							break;
+						case '\"':
+							state = IN_ARG;
+							break;
+						default:
+							buffer.append(c);
+							break;
+					}
+					break;
+				case IN_DOUBLE_QUOTES_ESCAPED:
+					switch (c) {
+						case '\"':
+							buffer.append(c);
+							break;
+						default:
+							buffer.append('\\');
+							buffer.append(c);
+							break;
+					}
+					state = IN_DOUBLE_QUOTES;
+					break;
+				case ESCAPED:
+					state = IN_ARG;
+					switch (c) {
+					case ' ':
+					case '\"':
+						buffer.append(c);
+						break;
+					default:
+						buffer.append('\\');
+						buffer.append(c);
+						break;
+					}
+					break;
+			}
+		}
+
+		if (state != INITIAL) { // this allow to process empty string as an argument
+			aList.add(buffer.toString());
+		}
+		return aList.toArray(new String[aList.size()]);
+	}
+	
+	
+}

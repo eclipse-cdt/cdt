@@ -904,8 +904,6 @@ public class FindReplaceDialog extends SelectionDialog
 
 				final BigInteger searchPhraseLength = BigInteger.valueOf(searchPhrase.getByteLength());
 				BigInteger range = start.subtract(end);
-				//BigInteger range = searchForward ? end.subtract(start) : start.subtract(end);
-				//BigInteger currentPosition = start;
 				BigInteger currentPosition = searchForward ? start : end.subtract(searchPhraseLength);
 
 				if ( range.compareTo(searchPhraseLength) >= 0 ) {

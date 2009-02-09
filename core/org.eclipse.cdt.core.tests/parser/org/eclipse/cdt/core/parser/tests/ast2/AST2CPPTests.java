@@ -6706,4 +6706,16 @@ public class AST2CPPTests extends AST2BaseTest {
 		ba.assertNonProblem("fip(0)", 3, ICPPFunction.class);
 		ba.assertNonProblem("fia(0)", 3, ICPPFunction.class);
 	}
+	
+	//	class cl {};
+	//	typedef cl tl;
+	//	void reset(cl* ptr){};
+	//	void blatest() {
+	//	   reset(new tl());
+	//	   reset(new cl());
+	//	}
+	public void testTypeOfNewExpression_264163() throws Exception {
+		String code= getAboveComment();
+		parseAndCheckBindings(code, ParserLanguage.CPP);
+	}
 }

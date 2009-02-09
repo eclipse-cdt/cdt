@@ -1706,7 +1706,6 @@ public class CPPVisitor extends ASTQueries {
 			if (binding instanceof ICPPConstructor) {
 				try {
 					type= ((ICPPConstructor) binding).getClassOwner();
-					type = new CPPPointerType(type);
 				} catch (DOMException e) {
 					type = e.getProblem();
 				}

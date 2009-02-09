@@ -209,6 +209,7 @@ public class CPPASTNewExpression extends ASTNode implements
     }
     
     public IType getExpressionType() {
-		return CPPVisitor.createType(getTypeId());
+		IType t= CPPVisitor.createType(getTypeId());
+		return new CPPPointerType(t);
     }
 }

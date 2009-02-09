@@ -1265,105 +1265,105 @@ private  GNUBuildASTParserAction  gnuAction;
             }  
  
             //
-            // Rule 340:  extended_asm_declaration ::= asm volatile_opt ( extended_asm_param_seq ) ;
+            // Rule 341:  extended_asm_declaration ::= asm volatile_opt ( extended_asm_param_seq ) ;
             //
-            case 340: {  gnuAction.consumeDeclarationASM();           break;
+            case 341: {  gnuAction.consumeDeclarationASM();           break;
             } 
   
             //
-            // Rule 351:  unary_expression ::= __alignof__ unary_expression
+            // Rule 352:  unary_expression ::= __alignof__ unary_expression
             //
-            case 351: { action.   consumeExpressionUnaryOperator(IASTUnaryExpression.op_alignOf);             break;
+            case 352: { action.   consumeExpressionUnaryOperator(IASTUnaryExpression.op_alignOf);             break;
             }  
   
             //
-            // Rule 352:  unary_expression ::= __alignof__ ( type_id )
+            // Rule 353:  unary_expression ::= __alignof__ ( type_id )
             //
-            case 352: { action.   consumeExpressionTypeId(IASTTypeIdExpression.op_alignof);             break;
+            case 353: { action.   consumeExpressionTypeId(IASTTypeIdExpression.op_alignof);             break;
             }  
   
             //
-            // Rule 353:  unary_expression ::= typeof unary_expression
+            // Rule 354:  unary_expression ::= typeof unary_expression
             //
-            case 353: { action.   consumeExpressionUnaryOperator(IASTUnaryExpression.op_typeof);             break;
+            case 354: { action.   consumeExpressionUnaryOperator(IASTUnaryExpression.op_typeof);             break;
             }  
   
             //
-            // Rule 354:  unary_expression ::= typeof ( type_id )
+            // Rule 355:  unary_expression ::= typeof ( type_id )
             //
-            case 354: { action.   consumeExpressionTypeId(IASTTypeIdExpression.op_typeof);             break;
+            case 355: { action.   consumeExpressionTypeId(IASTTypeIdExpression.op_typeof);             break;
             }  
   
             //
-            // Rule 355:  relational_expression ::= relational_expression >? shift_expression
+            // Rule 356:  relational_expression ::= relational_expression >? shift_expression
             //
-            case 355: { action.   consumeExpressionBinaryOperator(IASTBinaryExpression.op_max);             break;
+            case 356: { action.   consumeExpressionBinaryOperator(IASTBinaryExpression.op_max);             break;
             }  
   
             //
-            // Rule 356:  relational_expression ::= relational_expression <? shift_expression
+            // Rule 357:  relational_expression ::= relational_expression <? shift_expression
             //
-            case 356: { action.   consumeExpressionBinaryOperator(IASTBinaryExpression.op_min);             break;
+            case 357: { action.   consumeExpressionBinaryOperator(IASTBinaryExpression.op_min);             break;
             }  
   
             //
-            // Rule 357:  conditional_expression ::= logical_or_expression ? <empty> : assignment_expression
+            // Rule 358:  conditional_expression ::= logical_or_expression ? <empty> : assignment_expression
             //
-            case 357: { action.   consumeExpressionConditional();             break;
+            case 358: { action.   consumeExpressionConditional();             break;
             }  
  
             //
-            // Rule 358:  primary_expression ::= ( compound_statement )
+            // Rule 359:  primary_expression ::= ( compound_statement )
             //
-            case 358: {  gnuAction.consumeCompoundStatementExpression();            break;
+            case 359: {  gnuAction.consumeCompoundStatementExpression();            break;
             } 
   
             //
-            // Rule 359:  labeled_statement ::= case case_range_expression : statement
+            // Rule 360:  labeled_statement ::= case case_range_expression : statement
             //
-            case 359: { action.   consumeStatementCase();             break;
+            case 360: { action.   consumeStatementCase();             break;
             }  
   
             //
-            // Rule 360:  case_range_expression ::= constant_expression ... constant_expression
+            // Rule 361:  case_range_expression ::= constant_expression ... constant_expression
             //
-            case 360: { action.   consumeExpressionBinaryOperator(IASTBinaryExpression.op_assign);             break;
+            case 361: { action.   consumeExpressionBinaryOperator(IASTBinaryExpression.op_assign);             break;
             }  
   
             //
-            // Rule 364:  typeof_type_specifier ::= typeof unary_expression
+            // Rule 365:  typeof_type_specifier ::= typeof unary_expression
             //
-            case 364: { action.   consumeExpressionUnaryOperator(IASTUnaryExpression.op_typeof);             break;
+            case 365: { action.   consumeExpressionUnaryOperator(IASTUnaryExpression.op_typeof);             break;
             }  
   
             //
-            // Rule 365:  typeof_type_specifier ::= typeof ( type_id )
+            // Rule 366:  typeof_type_specifier ::= typeof ( type_id )
             //
-            case 365: { action.   consumeExpressionTypeId(IASTTypeIdExpression.op_typeof);             break;
+            case 366: { action.   consumeExpressionTypeId(IASTTypeIdExpression.op_typeof);             break;
             }  
   
             //
-            // Rule 366:  declaration_specifiers ::= <openscope-ast> typeof_declaration_specifiers
+            // Rule 367:  declaration_specifiers ::= <openscope-ast> typeof_declaration_specifiers
             //
-            case 366: { action.   consumeDeclarationSpecifiersTypeof();             break;
+            case 367: { action.   consumeDeclarationSpecifiersTypeof();             break;
             }  
   
             //
-            // Rule 382:  field_name_designator ::= identifier_token :
+            // Rule 383:  field_name_designator ::= identifier_token :
             //
-            case 382: { action.   consumeDesignatorFieldGCC();             break;
+            case 383: { action.   consumeDesignatorFieldGCC();             break;
             }  
   
             //
-            // Rule 383:  array_range_designator ::= [ constant_expression ... constant_expression ]
+            // Rule 384:  array_range_designator ::= [ constant_expression ... constant_expression ]
             //
-            case 383: { action.   consumeDesignatorArrayRange();             break;
+            case 384: { action.   consumeDesignatorArrayRange();             break;
             }  
   
             //
-            // Rule 384:  designated_initializer ::= <openscope-ast> field_name_designator initializer
+            // Rule 385:  designated_initializer ::= <openscope-ast> field_name_designator initializer
             //
-            case 384: { action.   consumeInitializerDesignated();             break;
+            case 385: { action.   consumeInitializerDesignated();             break;
             }  
 
     

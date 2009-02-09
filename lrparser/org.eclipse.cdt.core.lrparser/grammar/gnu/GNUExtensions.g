@@ -114,6 +114,7 @@ extended_decl_modifier
     ::= 'identifier'
       | 'identifier' '(' ')'
       | 'identifier' '(' 'identifier' ')'
+      | 'identifier' '(' 'stringlit' ')'
 
 
 ------------------------------------------------------------------------------------

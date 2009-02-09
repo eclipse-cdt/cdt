@@ -1603,495 +1603,501 @@ private  GNUBuildASTParserAction  gnuAction;
             }  
   
             //
-            // Rule 378:  initializer_clause ::= start_initializer_list { <openscope-ast> initializer_list , } end_initializer_list
-            //
-            case 378: { action.   consumeInitializerList();             break;
-            }  
-  
-            //
-            // Rule 379:  initializer_clause ::= start_initializer_list { <openscope-ast> initializer_list } end_initializer_list
+            // Rule 379:  initializer_list ::= start_initializer_list { <openscope-ast> initializer_seq , } end_initializer_list
             //
             case 379: { action.   consumeInitializerList();             break;
             }  
   
             //
-            // Rule 380:  initializer_clause ::= { <openscope-ast> }
+            // Rule 380:  initializer_list ::= start_initializer_list { <openscope-ast> initializer_seq } end_initializer_list
             //
             case 380: { action.   consumeInitializerList();             break;
             }  
   
             //
-            // Rule 381:  start_initializer_list ::= $Empty
+            // Rule 381:  initializer_list ::= { <openscope-ast> }
             //
-            case 381: { action.   initializerListStart();            break;
+            case 381: { action.   consumeInitializerList();             break;
             }  
   
             //
-            // Rule 382:  end_initializer_list ::= $Empty
+            // Rule 382:  start_initializer_list ::= $Empty
             //
-            case 382: { action.   initializerListEnd();            break;
+            case 382: { action.   initializerListStart();            break;
             }  
   
             //
-            // Rule 387:  class_specifier ::= class_head { <openscope-ast> member_declaration_list_opt }
+            // Rule 383:  end_initializer_list ::= $Empty
             //
-            case 387: { action.   consumeClassSpecifier();             break;
+            case 383: { action.   initializerListEnd();            break;
             }  
   
             //
-            // Rule 388:  class_head ::= class_keyword composite_specifier_hook identifier_name_opt class_name_suffix_hook <openscope-ast> base_clause_opt
+            // Rule 388:  class_specifier ::= class_head { <openscope-ast> member_declaration_list_opt }
             //
-            case 388: { action.   consumeClassHead(false);             break;
+            case 388: { action.   consumeClassSpecifier();             break;
             }  
   
             //
-            // Rule 389:  class_head ::= class_keyword composite_specifier_hook template_id_name class_name_suffix_hook <openscope-ast> base_clause_opt
+            // Rule 389:  class_head ::= class_keyword composite_specifier_hook identifier_name_opt class_name_suffix_hook <openscope-ast> base_clause_opt
             //
             case 389: { action.   consumeClassHead(false);             break;
             }  
   
             //
-            // Rule 390:  class_head ::= class_keyword composite_specifier_hook nested_name_specifier identifier_name class_name_suffix_hook <openscope-ast> base_clause_opt
+            // Rule 390:  class_head ::= class_keyword composite_specifier_hook template_id_name class_name_suffix_hook <openscope-ast> base_clause_opt
             //
-            case 390: { action.   consumeClassHead(true);             break;
+            case 390: { action.   consumeClassHead(false);             break;
             }  
   
             //
-            // Rule 391:  class_head ::= class_keyword composite_specifier_hook nested_name_specifier template_id_name class_name_suffix_hook <openscope-ast> base_clause_opt
+            // Rule 391:  class_head ::= class_keyword composite_specifier_hook nested_name_specifier identifier_name class_name_suffix_hook <openscope-ast> base_clause_opt
             //
             case 391: { action.   consumeClassHead(true);             break;
             }  
   
             //
-            // Rule 395:  identifier_name_opt ::= $Empty
+            // Rule 392:  class_head ::= class_keyword composite_specifier_hook nested_name_specifier template_id_name class_name_suffix_hook <openscope-ast> base_clause_opt
             //
-            case 395: { action.   consumeEmpty();             break;
+            case 392: { action.   consumeClassHead(true);             break;
+            }  
+  
+            //
+            // Rule 396:  identifier_name_opt ::= $Empty
+            //
+            case 396: { action.   consumeEmpty();             break;
             } 
   
             //
-            // Rule 399:  visibility_label ::= access_specifier_keyword :
+            // Rule 400:  visibility_label ::= access_specifier_keyword :
             //
-            case 399: { action.   consumeVisibilityLabel();             break;
+            case 400: { action.   consumeVisibilityLabel();             break;
             }  
   
             //
-            // Rule 400:  member_declaration ::= declaration_specifiers_opt <openscope-ast> member_declarator_list ;
+            // Rule 401:  member_declaration ::= declaration_specifiers_opt <openscope-ast> member_declarator_list ;
             //
-            case 400: { action.   consumeDeclarationSimple(true);             break;
+            case 401: { action.   consumeDeclarationSimple(true);             break;
             }  
   
             //
-            // Rule 401:  member_declaration ::= declaration_specifiers_opt ;
+            // Rule 402:  member_declaration ::= declaration_specifiers_opt ;
             //
-            case 401: { action.   consumeDeclarationSimple(false);             break;
+            case 402: { action.   consumeDeclarationSimple(false);             break;
             }  
   
             //
-            // Rule 404:  member_declaration ::= dcolon_opt nested_name_specifier template_opt unqualified_id_name ;
+            // Rule 405:  member_declaration ::= dcolon_opt nested_name_specifier template_opt unqualified_id_name ;
             //
-            case 404: { action.   consumeMemberDeclarationQualifiedId();             break;
+            case 405: { action.   consumeMemberDeclarationQualifiedId();             break;
             }  
   
             //
-            // Rule 410:  member_declaration ::= ERROR_TOKEN
+            // Rule 411:  member_declaration ::= ERROR_TOKEN
             //
-            case 410: { action.   consumeDeclarationProblem();             break;
+            case 411: { action.   consumeDeclarationProblem();             break;
             }  
   
             //
-            // Rule 419:  member_declarator ::= declarator constant_initializer
+            // Rule 420:  member_declarator ::= declarator constant_initializer
             //
-            case 419: { action.   consumeMemberDeclaratorWithInitializer();             break;
+            case 420: { action.   consumeMemberDeclaratorWithInitializer();             break;
             }  
   
             //
-            // Rule 420:  member_declarator ::= bit_field_declarator : constant_expression
+            // Rule 421:  member_declarator ::= bit_field_declarator : constant_expression
             //
-            case 420: { action.   consumeBitField(true);             break;
+            case 421: { action.   consumeBitField(true);             break;
             }  
   
             //
-            // Rule 421:  member_declarator ::= : constant_expression
+            // Rule 422:  member_declarator ::= : constant_expression
             //
-            case 421: { action.   consumeBitField(false);             break;
+            case 422: { action.   consumeBitField(false);             break;
             }  
   
             //
-            // Rule 422:  bit_field_declarator ::= identifier_name
+            // Rule 423:  bit_field_declarator ::= identifier_name
             //
-            case 422: { action.   consumeDirectDeclaratorIdentifier();             break;
+            case 423: { action.   consumeDirectDeclaratorIdentifier();             break;
             }  
   
             //
-            // Rule 423:  constant_initializer ::= = constant_expression
+            // Rule 424:  constant_initializer ::= = constant_expression
             //
-            case 423: { action.   consumeInitializer();             break;
+            case 424: { action.   consumeInitializer();             break;
             }  
   
             //
-            // Rule 429:  base_specifier ::= dcolon_opt nested_name_specifier_opt class_name
+            // Rule 430:  base_specifier ::= dcolon_opt nested_name_specifier_opt class_name
             //
-            case 429: { action.   consumeBaseSpecifier(false, false);             break;
+            case 430: { action.   consumeBaseSpecifier(false, false);             break;
             }  
   
             //
-            // Rule 430:  base_specifier ::= virtual access_specifier_keyword_opt dcolon_opt nested_name_specifier_opt class_name
-            //
-            case 430: { action.   consumeBaseSpecifier(true, true);             break;
-            }  
-  
-            //
-            // Rule 431:  base_specifier ::= access_specifier_keyword virtual dcolon_opt nested_name_specifier_opt class_name
+            // Rule 431:  base_specifier ::= virtual access_specifier_keyword_opt dcolon_opt nested_name_specifier_opt class_name
             //
             case 431: { action.   consumeBaseSpecifier(true, true);             break;
             }  
   
             //
-            // Rule 432:  base_specifier ::= access_specifier_keyword dcolon_opt nested_name_specifier_opt class_name
+            // Rule 432:  base_specifier ::= access_specifier_keyword virtual dcolon_opt nested_name_specifier_opt class_name
             //
-            case 432: { action.   consumeBaseSpecifier(true, false);             break;
+            case 432: { action.   consumeBaseSpecifier(true, true);             break;
             }  
   
             //
-            // Rule 433:  access_specifier_keyword ::= private
+            // Rule 433:  base_specifier ::= access_specifier_keyword dcolon_opt nested_name_specifier_opt class_name
             //
-            case 433: { action.   consumeToken();             break;
+            case 433: { action.   consumeBaseSpecifier(true, false);             break;
             }  
   
             //
-            // Rule 434:  access_specifier_keyword ::= protected
+            // Rule 434:  access_specifier_keyword ::= private
             //
             case 434: { action.   consumeToken();             break;
             }  
   
             //
-            // Rule 435:  access_specifier_keyword ::= public
+            // Rule 435:  access_specifier_keyword ::= protected
             //
             case 435: { action.   consumeToken();             break;
             }  
   
             //
-            // Rule 437:  access_specifier_keyword_opt ::= $Empty
+            // Rule 436:  access_specifier_keyword ::= public
             //
-            case 437: { action.   consumeEmpty();             break;
+            case 436: { action.   consumeToken();             break;
             }  
   
             //
-            // Rule 439:  conversion_function_id_name ::= conversion_function_id < <openscope-ast> template_argument_list_opt >
+            // Rule 438:  access_specifier_keyword_opt ::= $Empty
             //
-            case 439: { action.   consumeTemplateId();             break;
+            case 438: { action.   consumeEmpty();             break;
             }  
   
             //
-            // Rule 440:  conversion_function_id ::= operator conversion_type_id
+            // Rule 440:  conversion_function_id_name ::= conversion_function_id < <openscope-ast> template_argument_list_opt >
             //
-            case 440: { action.   consumeConversionName();            break;
+            case 440: { action.   consumeTemplateId();             break;
             }  
   
             //
-            // Rule 441:  conversion_type_id ::= type_specifier_seq conversion_declarator
+            // Rule 441:  conversion_function_id ::= operator conversion_type_id
             //
-            case 441: { action.   consumeTypeId(true);             break;
+            case 441: { action.   consumeConversionName();            break;
             }  
   
             //
-            // Rule 442:  conversion_type_id ::= type_specifier_seq
+            // Rule 442:  conversion_type_id ::= type_specifier_seq conversion_declarator
             //
-            case 442: { action.   consumeTypeId(false);             break;
+            case 442: { action.   consumeTypeId(true);             break;
             }  
   
             //
-            // Rule 443:  conversion_declarator ::= <openscope-ast> ptr_operator_seq
+            // Rule 443:  conversion_type_id ::= type_specifier_seq
             //
-            case 443: { action.   consumeDeclaratorWithPointer(false);             break;
+            case 443: { action.   consumeTypeId(false);             break;
             }  
   
             //
-            // Rule 449:  mem_initializer ::= mem_initializer_name ( expression_list_opt )
+            // Rule 444:  conversion_declarator ::= <openscope-ast> ptr_operator_seq
             //
-            case 449: { action.   consumeConstructorChainInitializer();             break;
+            case 444: { action.   consumeDeclaratorWithPointer(false);             break;
             }  
   
             //
-            // Rule 450:  mem_initializer_name ::= dcolon_opt nested_name_specifier_opt class_name
+            // Rule 450:  mem_initializer ::= mem_initializer_name ( expression_list_opt )
             //
-            case 450: { action.   consumeQualifiedId(false);             break;
+            case 450: { action.   consumeConstructorChainInitializer();             break;
             }  
   
             //
-            // Rule 453:  operator_function_id_name ::= operator_id_name < <openscope-ast> template_argument_list_opt >
+            // Rule 451:  mem_initializer_name ::= dcolon_opt nested_name_specifier_opt class_name
             //
-            case 453: { action.   consumeTemplateId();             break;
+            case 451: { action.   consumeQualifiedId(false);             break;
             }  
   
             //
-            // Rule 454:  operator_id_name ::= operator overloadable_operator
+            // Rule 454:  operator_function_id_name ::= operator_id_name < <openscope-ast> template_argument_list_opt >
             //
-            case 454: { action.   consumeOperatorName();             break;
+            case 454: { action.   consumeTemplateId();             break;
             }  
   
             //
-            // Rule 497:  template_declaration ::= export_opt template < <openscope-ast> template_parameter_list > declaration
+            // Rule 455:  operator_id_name ::= operator overloadable_operator
             //
-            case 497: { action.   consumeTemplateDeclaration();             break;
+            case 455: { action.   consumeOperatorName();             break;
             }  
   
             //
-            // Rule 498:  export_opt ::= export
+            // Rule 498:  template_declaration ::= export_opt template < <openscope-ast> template_parameter_list > declaration
             //
-            case 498: { action.   consumePlaceHolder();             break;
+            case 498: { action.   consumeTemplateDeclaration();             break;
             }  
   
             //
-            // Rule 499:  export_opt ::= $Empty
+            // Rule 499:  export_opt ::= export
             //
-            case 499: { action.   consumeEmpty();             break;
+            case 499: { action.   consumePlaceHolder();             break;
             }  
   
             //
-            // Rule 503:  template_parameter ::= parameter_declaration
+            // Rule 500:  export_opt ::= $Empty
             //
-            case 503: { action.   consumeTemplateParamterDeclaration();             break;
+            case 500: { action.   consumeEmpty();             break;
             }  
   
             //
-            // Rule 504:  type_parameter ::= class identifier_name_opt
+            // Rule 504:  template_parameter ::= parameter_declaration
             //
-            case 504: { action.   consumeSimpleTypeTemplateParameter(false);             break;
+            case 504: { action.   consumeTemplateParamterDeclaration();             break;
             }  
   
             //
-            // Rule 505:  type_parameter ::= class identifier_name_opt = type_id
+            // Rule 505:  type_parameter ::= class identifier_name_opt
             //
-            case 505: { action.   consumeSimpleTypeTemplateParameter(true);             break;
+            case 505: { action.   consumeSimpleTypeTemplateParameter(false);             break;
             }  
   
             //
-            // Rule 506:  type_parameter ::= typename identifier_name_opt
+            // Rule 506:  type_parameter ::= class identifier_name_opt = type_id
             //
-            case 506: { action.   consumeSimpleTypeTemplateParameter(false);             break;
+            case 506: { action.   consumeSimpleTypeTemplateParameter(true);             break;
             }  
   
             //
-            // Rule 507:  type_parameter ::= typename identifier_name_opt = type_id
+            // Rule 507:  type_parameter ::= typename identifier_name_opt
             //
-            case 507: { action.   consumeSimpleTypeTemplateParameter(true);             break;
+            case 507: { action.   consumeSimpleTypeTemplateParameter(false);             break;
             }  
   
             //
-            // Rule 508:  type_parameter ::= template < <openscope-ast> template_parameter_list > class identifier_name_opt
+            // Rule 508:  type_parameter ::= typename identifier_name_opt = type_id
             //
-            case 508: { action.   consumeTemplatedTypeTemplateParameter(false);             break;
+            case 508: { action.   consumeSimpleTypeTemplateParameter(true);             break;
             }  
   
             //
-            // Rule 509:  type_parameter ::= template < <openscope-ast> template_parameter_list > class identifier_name_opt = id_expression
+            // Rule 509:  type_parameter ::= template < <openscope-ast> template_parameter_list > class identifier_name_opt
             //
-            case 509: { action.   consumeTemplatedTypeTemplateParameter(true);             break;
+            case 509: { action.   consumeTemplatedTypeTemplateParameter(false);             break;
             }  
   
             //
-            // Rule 510:  template_id_name ::= identifier_name < <openscope-ast> template_argument_list_opt >
+            // Rule 510:  type_parameter ::= template < <openscope-ast> template_parameter_list > class identifier_name_opt = id_expression
             //
-            case 510: { action.   consumeTemplateId();             break;
+            case 510: { action.   consumeTemplatedTypeTemplateParameter(true);             break;
             }  
   
             //
-            // Rule 515:  template_argument ::= assignment_expression
+            // Rule 511:  template_id_name ::= identifier_name < <openscope-ast> template_argument_list_opt >
             //
-            case 515: { action.   consumeTemplateArgumentExpression();             break;
+            case 511: { action.   consumeTemplateId();             break;
             }  
   
             //
-            // Rule 516:  template_argument ::= type_id
+            // Rule 516:  template_argument ::= assignment_expression
             //
-            case 516: { action.   consumeTemplateArgumentTypeId();             break;
+            case 516: { action.   consumeTemplateArgumentExpression();             break;
             }  
   
             //
-            // Rule 517:  explicit_instantiation ::= template declaration
+            // Rule 517:  template_argument ::= type_id
             //
-            case 517: { action.   consumeTemplateExplicitInstantiation();             break;
+            case 517: { action.   consumeTemplateArgumentTypeId();             break;
             }  
   
             //
-            // Rule 518:  explicit_specialization ::= template < > declaration
+            // Rule 518:  explicit_instantiation ::= template declaration
             //
-            case 518: { action.   consumeTemplateExplicitSpecialization();             break;
+            case 518: { action.   consumeTemplateExplicitInstantiation();             break;
             }  
   
             //
-            // Rule 519:  try_block ::= try compound_statement <openscope-ast> handler_seq
+            // Rule 519:  explicit_specialization ::= template < > declaration
             //
-            case 519: { action.   consumeStatementTryBlock();             break;
+            case 519: { action.   consumeTemplateExplicitSpecialization();             break;
             }  
   
             //
-            // Rule 522:  handler ::= catch ( exception_declaration ) compound_statement
+            // Rule 520:  try_block ::= try compound_statement <openscope-ast> handler_seq
             //
-            case 522: { action.   consumeStatementCatchHandler(false);             break;
+            case 520: { action.   consumeStatementTryBlock();             break;
             }  
   
             //
-            // Rule 523:  handler ::= catch ( ... ) compound_statement
+            // Rule 523:  handler ::= catch ( exception_declaration ) compound_statement
             //
-            case 523: { action.   consumeStatementCatchHandler(true);             break;
+            case 523: { action.   consumeStatementCatchHandler(false);             break;
             }  
   
             //
-            // Rule 524:  exception_declaration ::= type_specifier_seq <openscope-ast> declarator
+            // Rule 524:  handler ::= catch ( ... ) compound_statement
             //
-            case 524: { action.   consumeDeclarationSimple(true);             break;
+            case 524: { action.   consumeStatementCatchHandler(true);             break;
             }  
   
             //
-            // Rule 525:  exception_declaration ::= type_specifier_seq <openscope-ast> abstract_declarator
+            // Rule 525:  exception_declaration ::= type_specifier_seq <openscope-ast> declarator
             //
             case 525: { action.   consumeDeclarationSimple(true);             break;
             }  
   
             //
-            // Rule 526:  exception_declaration ::= type_specifier_seq
+            // Rule 526:  exception_declaration ::= type_specifier_seq <openscope-ast> abstract_declarator
             //
-            case 526: { action.   consumeDeclarationSimple(false);             break;
+            case 526: { action.   consumeDeclarationSimple(true);             break;
             }  
   
             //
-            // Rule 528:  exception_specification ::= throw ( )
+            // Rule 527:  exception_declaration ::= type_specifier_seq
             //
-            case 528: { action.   consumePlaceHolder();             break;
+            case 527: { action.   consumeDeclarationSimple(false);             break;
             }  
   
             //
-            // Rule 549:  attribute_parameter ::= assignment_expression
+            // Rule 529:  exception_specification ::= throw ( )
             //
-            case 549: { action.   consumeIgnore();            break;
-            }  
- 
-            //
-            // Rule 559:  extended_asm_declaration ::= asm volatile_opt ( extended_asm_param_seq ) ;
-            //
-            case 559: {  gnuAction.consumeDeclarationASM();           break;
-            } 
-  
-            //
-            // Rule 570:  unary_expression ::= __alignof__ unary_expression
-            //
-            case 570: { action.   consumeExpressionUnaryOperator(IASTUnaryExpression.op_alignOf);             break;
+            case 529: { action.   consumePlaceHolder();             break;
             }  
   
             //
-            // Rule 571:  unary_expression ::= __alignof__ ( type_id )
+            // Rule 550:  attribute_parameter ::= assignment_expression
             //
-            case 571: { action.   consumeExpressionTypeId(IASTTypeIdExpression.op_alignof);             break;
-            }  
-  
-            //
-            // Rule 572:  unary_expression ::= typeof unary_expression
-            //
-            case 572: { action.   consumeExpressionUnaryOperator(IASTUnaryExpression.op_typeof);             break;
-            }  
-  
-            //
-            // Rule 573:  unary_expression ::= typeof ( type_id )
-            //
-            case 573: { action.   consumeExpressionTypeId(IASTTypeIdExpression.op_typeof);             break;
-            }  
-  
-            //
-            // Rule 574:  relational_expression ::= relational_expression >? shift_expression
-            //
-            case 574: { action.   consumeExpressionBinaryOperator(IASTBinaryExpression.op_max);             break;
-            }  
-  
-            //
-            // Rule 575:  relational_expression ::= relational_expression <? shift_expression
-            //
-            case 575: { action.   consumeExpressionBinaryOperator(IASTBinaryExpression.op_min);             break;
-            }  
-  
-            //
-            // Rule 576:  conditional_expression ::= logical_or_expression ? <empty> : assignment_expression
-            //
-            case 576: { action.   consumeExpressionConditional();             break;
+            case 550: { action.   consumeIgnore();            break;
             }  
  
             //
-            // Rule 577:  primary_expression ::= ( compound_statement )
+            // Rule 560:  extended_asm_declaration ::= asm volatile_opt ( extended_asm_param_seq ) ;
             //
-            case 577: {  gnuAction.consumeCompoundStatementExpression();            break;
+            case 560: {  gnuAction.consumeDeclarationASM();           break;
             } 
   
             //
-            // Rule 578:  labeled_statement ::= case case_range_expression : statement
+            // Rule 571:  unary_expression ::= __alignof__ unary_expression
             //
-            case 578: { action.   consumeStatementCase();             break;
+            case 571: { action.   consumeExpressionUnaryOperator(IASTUnaryExpression.op_alignOf);             break;
             }  
   
             //
-            // Rule 579:  case_range_expression ::= constant_expression ... constant_expression
+            // Rule 572:  unary_expression ::= __alignof__ ( type_id )
             //
-            case 579: { action.   consumeExpressionBinaryOperator(IASTBinaryExpression.op_assign);             break;
+            case 572: { action.   consumeExpressionTypeId(IASTTypeIdExpression.op_alignof);             break;
             }  
   
             //
-            // Rule 583:  typeof_type_specifier ::= typeof unary_expression
+            // Rule 573:  unary_expression ::= typeof unary_expression
             //
-            case 583: { action.   consumeExpressionUnaryOperator(IASTUnaryExpression.op_typeof);             break;
+            case 573: { action.   consumeExpressionUnaryOperator(IASTUnaryExpression.op_typeof);             break;
             }  
   
             //
-            // Rule 584:  typeof_type_specifier ::= typeof ( type_id )
+            // Rule 574:  unary_expression ::= typeof ( type_id )
             //
-            case 584: { action.   consumeExpressionTypeId(IASTTypeIdExpression.op_typeof);             break;
+            case 574: { action.   consumeExpressionTypeId(IASTTypeIdExpression.op_typeof);             break;
             }  
   
             //
-            // Rule 585:  declaration_specifiers ::= <openscope-ast> typeof_declaration_specifiers
+            // Rule 575:  relational_expression ::= relational_expression >? shift_expression
             //
-            case 585: { action.   consumeDeclarationSpecifiersTypeof();             break;
+            case 575: { action.   consumeExpressionBinaryOperator(IASTBinaryExpression.op_max);             break;
             }  
   
             //
-            // Rule 598:  declarator ::= <openscope-ast> ptr_operator_seq attribute_or_decl_specifier_seq direct_declarator
+            // Rule 576:  relational_expression ::= relational_expression <? shift_expression
             //
-            case 598: { action.   consumeDeclaratorWithPointer(true);             break;
+            case 576: { action.   consumeExpressionBinaryOperator(IASTBinaryExpression.op_min);             break;
             }  
   
             //
-            // Rule 601:  simple_type_specifier ::= _Complex
+            // Rule 577:  conditional_expression ::= logical_or_expression ? <empty> : assignment_expression
             //
-            case 601: { action.   consumeToken();            break;
+            case 577: { action.   consumeExpressionConditional();             break;
+            }  
+ 
+            //
+            // Rule 578:  primary_expression ::= ( compound_statement )
+            //
+            case 578: {  gnuAction.consumeCompoundStatementExpression();            break;
+            } 
+  
+            //
+            // Rule 579:  labeled_statement ::= case case_range_expression : statement
+            //
+            case 579: { action.   consumeStatementCase();             break;
             }  
   
             //
-            // Rule 602:  simple_type_specifier ::= _Imaginary
+            // Rule 580:  case_range_expression ::= constant_expression ... constant_expression
+            //
+            case 580: { action.   consumeExpressionBinaryOperator(IASTBinaryExpression.op_assign);             break;
+            }  
+  
+            //
+            // Rule 584:  typeof_type_specifier ::= typeof unary_expression
+            //
+            case 584: { action.   consumeExpressionUnaryOperator(IASTUnaryExpression.op_typeof);             break;
+            }  
+  
+            //
+            // Rule 585:  typeof_type_specifier ::= typeof ( type_id )
+            //
+            case 585: { action.   consumeExpressionTypeId(IASTTypeIdExpression.op_typeof);             break;
+            }  
+  
+            //
+            // Rule 586:  declaration_specifiers ::= <openscope-ast> typeof_declaration_specifiers
+            //
+            case 586: { action.   consumeDeclarationSpecifiersTypeof();             break;
+            }  
+  
+            //
+            // Rule 599:  declarator ::= <openscope-ast> ptr_operator_seq attribute_or_decl_specifier_seq direct_declarator
+            //
+            case 599: { action.   consumeDeclaratorWithPointer(true);             break;
+            }  
+  
+            //
+            // Rule 602:  simple_type_specifier ::= _Complex
             //
             case 602: { action.   consumeToken();            break;
             }  
   
             //
-            // Rule 603:  cv_qualifier ::= restrict
+            // Rule 603:  simple_type_specifier ::= _Imaginary
             //
             case 603: { action.   consumeToken();            break;
             }  
   
             //
-            // Rule 604:  explicit_instantiation ::= extern template declaration
+            // Rule 604:  cv_qualifier ::= restrict
             //
-            case 604: { action.   consumeTemplateExplicitInstantiationGCC(IGPPASTExplicitTemplateInstantiation.ti_extern);             break;
+            case 604: { action.   consumeToken();            break;
             }  
   
             //
-            // Rule 605:  explicit_instantiation ::= static template declaration
+            // Rule 605:  explicit_instantiation ::= extern template declaration
             //
-            case 605: { action.   consumeTemplateExplicitInstantiationGCC(IGPPASTExplicitTemplateInstantiation.ti_static);             break;
+            case 605: { action.   consumeTemplateExplicitInstantiationGCC(IGPPASTExplicitTemplateInstantiation.ti_extern);             break;
             }  
   
             //
-            // Rule 606:  explicit_instantiation ::= inline template declaration
+            // Rule 606:  explicit_instantiation ::= static template declaration
             //
-            case 606: { action.   consumeTemplateExplicitInstantiationGCC(IGPPASTExplicitTemplateInstantiation.ti_inline);             break;
+            case 606: { action.   consumeTemplateExplicitInstantiationGCC(IGPPASTExplicitTemplateInstantiation.ti_static);             break;
+            }  
+  
+            //
+            // Rule 607:  explicit_instantiation ::= inline template declaration
+            //
+            case 607: { action.   consumeTemplateExplicitInstantiationGCC(IGPPASTExplicitTemplateInstantiation.ti_inline);             break;
+            }  
+  
+            //
+            // Rule 608:  postfix_expression ::= ( type_id ) initializer_list
+            //
+            case 608: { action.   consumeExpressionTypeIdInitializer();             break;
             }  
 
     

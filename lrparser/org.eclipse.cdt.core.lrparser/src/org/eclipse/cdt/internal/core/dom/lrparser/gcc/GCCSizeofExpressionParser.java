@@ -352,7 +352,7 @@ private  GNUBuildASTParserAction  gnuAction;
             }  
   
             //
-            // Rule 28:  postfix_expression ::= ( type_id ) { <openscope-ast> initializer_list comma_opt }
+            // Rule 28:  postfix_expression ::= ( type_id ) initializer_list
             //
             case 28: { action.   consumeExpressionTypeIdInitializer();             break;
             }  
@@ -1168,213 +1168,213 @@ private  GNUBuildASTParserAction  gnuAction;
             }  
   
             //
-            // Rule 281:  initializer ::= start_initializer_list { <openscope-ast> initializer_list comma_opt } end_initializer_list
-            //
-            case 281: { action.   consumeInitializerList();             break;
-            }  
-  
-            //
-            // Rule 282:  initializer ::= { <openscope-ast> }
+            // Rule 282:  initializer_list ::= start_initializer_list { <openscope-ast> initializer_seq comma_opt } end_initializer_list
             //
             case 282: { action.   consumeInitializerList();             break;
             }  
   
             //
-            // Rule 283:  start_initializer_list ::= $Empty
+            // Rule 283:  initializer_list ::= { <openscope-ast> }
             //
-            case 283: { action.   initializerListStart();            break;
+            case 283: { action.   consumeInitializerList();             break;
             }  
   
             //
-            // Rule 284:  end_initializer_list ::= $Empty
+            // Rule 284:  start_initializer_list ::= $Empty
             //
-            case 284: { action.   initializerListEnd();            break;
+            case 284: { action.   initializerListStart();            break;
             }  
   
             //
-            // Rule 289:  designated_initializer ::= <openscope-ast> designation = initializer
+            // Rule 285:  end_initializer_list ::= $Empty
             //
-            case 289: { action.   consumeInitializerDesignated();             break;
+            case 285: { action.   initializerListEnd();            break;
             }  
   
             //
-            // Rule 293:  designator_base ::= [ constant_expression ]
+            // Rule 290:  designated_initializer ::= <openscope-ast> designation = initializer
             //
-            case 293: { action.   consumeDesignatorArray();             break;
+            case 290: { action.   consumeInitializerDesignated();             break;
             }  
   
             //
-            // Rule 294:  designator_base ::= . identifier_token
+            // Rule 294:  designator_base ::= [ constant_expression ]
             //
-            case 294: { action.   consumeDesignatorField();             break;
+            case 294: { action.   consumeDesignatorArray();             break;
             }  
   
             //
-            // Rule 295:  designator ::= [ constant_expression ]
+            // Rule 295:  designator_base ::= . identifier_token
             //
-            case 295: { action.   consumeDesignatorArray();             break;
+            case 295: { action.   consumeDesignatorField();             break;
             }  
   
             //
-            // Rule 296:  designator ::= . identifier_token
+            // Rule 296:  designator ::= [ constant_expression ]
             //
-            case 296: { action.   consumeDesignatorField();             break;
+            case 296: { action.   consumeDesignatorArray();             break;
             }  
   
             //
-            // Rule 297:  translation_unit ::= external_declaration_list
+            // Rule 297:  designator ::= . identifier_token
             //
-            case 297: { action.   consumeTranslationUnit();             break;
+            case 297: { action.   consumeDesignatorField();             break;
+            }  
+  
+            //
+            // Rule 298:  translation_unit ::= external_declaration_list
+            //
+            case 298: { action.   consumeTranslationUnit();             break;
             }   
   
             //
-            // Rule 298:  translation_unit ::= $Empty
+            // Rule 299:  translation_unit ::= $Empty
             //
-            case 298: { action.   consumeTranslationUnit();             break;
+            case 299: { action.   consumeTranslationUnit();             break;
             }  
   
             //
-            // Rule 303:  external_declaration ::= ;
+            // Rule 304:  external_declaration ::= ;
             //
-            case 303: { action.   consumeDeclarationEmpty();             break;
+            case 304: { action.   consumeDeclarationEmpty();             break;
             }  
   
             //
-            // Rule 304:  external_declaration ::= ERROR_TOKEN
+            // Rule 305:  external_declaration ::= ERROR_TOKEN
             //
-            case 304: { action.   consumeDeclarationProblem();             break;
+            case 305: { action.   consumeDeclarationProblem();             break;
             }  
   
             //
-            // Rule 307:  function_definition ::= declaration_specifiers <openscope-ast> function_declarator function_body
+            // Rule 308:  function_definition ::= declaration_specifiers <openscope-ast> function_declarator function_body
             //
-            case 307: { action.   consumeFunctionDefinition(true);             break;
+            case 308: { action.   consumeFunctionDefinition(true);             break;
             }  
   
             //
-            // Rule 308:  function_definition ::= <openscope-ast> function_declarator function_body
+            // Rule 309:  function_definition ::= <openscope-ast> function_declarator function_body
             //
-            case 308: { action.   consumeFunctionDefinition(false);             break;
+            case 309: { action.   consumeFunctionDefinition(false);             break;
             }  
   
             //
-            // Rule 309:  function_definition ::= declaration_specifiers <openscope-ast> knr_function_declarator <openscope-ast> declaration_list compound_statement
+            // Rule 310:  function_definition ::= declaration_specifiers <openscope-ast> knr_function_declarator <openscope-ast> declaration_list compound_statement
             //
-            case 309: { action.   consumeFunctionDefinitionKnR();             break;
+            case 310: { action.   consumeFunctionDefinitionKnR();             break;
             }  
   
             //
-            // Rule 310:  function_body ::= { }
+            // Rule 311:  function_body ::= { }
             //
-            case 310: { action.   consumeStatementCompoundStatement(false);             break;
+            case 311: { action.   consumeStatementCompoundStatement(false);             break;
             }  
   
             //
-            // Rule 311:  function_body ::= { <openscope-ast> block_item_list }
+            // Rule 312:  function_body ::= { <openscope-ast> block_item_list }
             //
-            case 311: { action.   consumeStatementCompoundStatement(true);             break;
+            case 312: { action.   consumeStatementCompoundStatement(true);             break;
             }  
   
             //
-            // Rule 328:  attribute_parameter ::= assignment_expression
+            // Rule 329:  attribute_parameter ::= assignment_expression
             //
-            case 328: { action.   consumeIgnore();            break;
-            }  
- 
-            //
-            // Rule 338:  extended_asm_declaration ::= asm volatile_opt ( extended_asm_param_seq ) ;
-            //
-            case 338: {  gnuAction.consumeDeclarationASM();           break;
-            } 
-  
-            //
-            // Rule 349:  unary_expression ::= __alignof__ unary_expression
-            //
-            case 349: { action.   consumeExpressionUnaryOperator(IASTUnaryExpression.op_alignOf);             break;
-            }  
-  
-            //
-            // Rule 350:  unary_expression ::= typeof unary_expression
-            //
-            case 350: { action.   consumeExpressionUnaryOperator(IASTUnaryExpression.op_typeof);             break;
-            }  
-  
-            //
-            // Rule 351:  relational_expression ::= relational_expression >? shift_expression
-            //
-            case 351: { action.   consumeExpressionBinaryOperator(IASTBinaryExpression.op_max);             break;
-            }  
-  
-            //
-            // Rule 352:  relational_expression ::= relational_expression <? shift_expression
-            //
-            case 352: { action.   consumeExpressionBinaryOperator(IASTBinaryExpression.op_min);             break;
-            }  
-  
-            //
-            // Rule 353:  conditional_expression ::= logical_or_expression ? <empty> : assignment_expression
-            //
-            case 353: { action.   consumeExpressionConditional();             break;
+            case 329: { action.   consumeIgnore();            break;
             }  
  
             //
-            // Rule 354:  primary_expression ::= ( compound_statement )
+            // Rule 339:  extended_asm_declaration ::= asm volatile_opt ( extended_asm_param_seq ) ;
             //
-            case 354: {  gnuAction.consumeCompoundStatementExpression();            break;
+            case 339: {  gnuAction.consumeDeclarationASM();           break;
             } 
   
             //
-            // Rule 355:  labeled_statement ::= case case_range_expression : statement
+            // Rule 350:  unary_expression ::= __alignof__ unary_expression
             //
-            case 355: { action.   consumeStatementCase();             break;
+            case 350: { action.   consumeExpressionUnaryOperator(IASTUnaryExpression.op_alignOf);             break;
             }  
   
             //
-            // Rule 356:  case_range_expression ::= constant_expression ... constant_expression
+            // Rule 351:  unary_expression ::= typeof unary_expression
             //
-            case 356: { action.   consumeExpressionBinaryOperator(IASTBinaryExpression.op_assign);             break;
+            case 351: { action.   consumeExpressionUnaryOperator(IASTUnaryExpression.op_typeof);             break;
             }  
   
             //
-            // Rule 360:  typeof_type_specifier ::= typeof unary_expression
+            // Rule 352:  relational_expression ::= relational_expression >? shift_expression
             //
-            case 360: { action.   consumeExpressionUnaryOperator(IASTUnaryExpression.op_typeof);             break;
+            case 352: { action.   consumeExpressionBinaryOperator(IASTBinaryExpression.op_max);             break;
             }  
   
             //
-            // Rule 361:  typeof_type_specifier ::= typeof ( type_id )
+            // Rule 353:  relational_expression ::= relational_expression <? shift_expression
             //
-            case 361: { action.   consumeExpressionTypeId(IASTTypeIdExpression.op_typeof);             break;
+            case 353: { action.   consumeExpressionBinaryOperator(IASTBinaryExpression.op_min);             break;
             }  
   
             //
-            // Rule 362:  declaration_specifiers ::= <openscope-ast> typeof_declaration_specifiers
+            // Rule 354:  conditional_expression ::= logical_or_expression ? <empty> : assignment_expression
             //
-            case 362: { action.   consumeDeclarationSpecifiersTypeof();             break;
+            case 354: { action.   consumeExpressionConditional();             break;
+            }  
+ 
+            //
+            // Rule 355:  primary_expression ::= ( compound_statement )
+            //
+            case 355: {  gnuAction.consumeCompoundStatementExpression();            break;
+            } 
+  
+            //
+            // Rule 356:  labeled_statement ::= case case_range_expression : statement
+            //
+            case 356: { action.   consumeStatementCase();             break;
             }  
   
             //
-            // Rule 378:  field_name_designator ::= identifier_token :
+            // Rule 357:  case_range_expression ::= constant_expression ... constant_expression
             //
-            case 378: { action.   consumeDesignatorFieldGCC();             break;
+            case 357: { action.   consumeExpressionBinaryOperator(IASTBinaryExpression.op_assign);             break;
             }  
   
             //
-            // Rule 379:  array_range_designator ::= [ constant_expression ... constant_expression ]
+            // Rule 361:  typeof_type_specifier ::= typeof unary_expression
             //
-            case 379: { action.   consumeDesignatorArrayRange();             break;
+            case 361: { action.   consumeExpressionUnaryOperator(IASTUnaryExpression.op_typeof);             break;
             }  
   
             //
-            // Rule 380:  designated_initializer ::= <openscope-ast> field_name_designator initializer
+            // Rule 362:  typeof_type_specifier ::= typeof ( type_id )
             //
-            case 380: { action.   consumeInitializerDesignated();             break;
+            case 362: { action.   consumeExpressionTypeId(IASTTypeIdExpression.op_typeof);             break;
             }  
   
             //
-            // Rule 382:  no_sizeof_type_name_start ::= ERROR_TOKEN
+            // Rule 363:  declaration_specifiers ::= <openscope-ast> typeof_declaration_specifiers
             //
-            case 382: { action.   consumeEmpty();             break;
+            case 363: { action.   consumeDeclarationSpecifiersTypeof();             break;
+            }  
+  
+            //
+            // Rule 379:  field_name_designator ::= identifier_token :
+            //
+            case 379: { action.   consumeDesignatorFieldGCC();             break;
+            }  
+  
+            //
+            // Rule 380:  array_range_designator ::= [ constant_expression ... constant_expression ]
+            //
+            case 380: { action.   consumeDesignatorArrayRange();             break;
+            }  
+  
+            //
+            // Rule 381:  designated_initializer ::= <openscope-ast> field_name_designator initializer
+            //
+            case 381: { action.   consumeInitializerDesignated();             break;
+            }  
+  
+            //
+            // Rule 383:  no_sizeof_type_name_start ::= ERROR_TOKEN
+            //
+            case 383: { action.   consumeEmpty();             break;
             }  
 
     

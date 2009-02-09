@@ -1293,9 +1293,13 @@ initializer
 initializer_clause
     ::= assignment_expression
          /. $Build  consumeInitializer();  $EndBuild ./
-      | start_initializer_list '{' <openscope-ast> initializer_list ',' '}' end_initializer_list
+      | initializer_list
+      
+         
+initializer_list
+    ::= start_initializer_list '{' <openscope-ast> initializer_seq ',' '}' end_initializer_list
          /. $Build  consumeInitializerList();  $EndBuild ./
-      | start_initializer_list '{' <openscope-ast> initializer_list '}' end_initializer_list
+      | start_initializer_list '{' <openscope-ast> initializer_seq '}' end_initializer_list
          /. $Build  consumeInitializerList();  $EndBuild ./
       | '{' <openscope-ast> '}'
          /. $Build  consumeInitializerList();  $EndBuild ./
@@ -1309,9 +1313,9 @@ end_initializer_list
     ::= $empty
           /. $Build  initializerListEnd(); $EndBuild ./
 
-initializer_list
+initializer_seq
     ::= initializer_clause
-      | initializer_list ',' initializer_clause
+      | initializer_seq ',' initializer_clause
 
 
       

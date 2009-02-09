@@ -11,10 +11,7 @@
 
 package org.eclipse.cdt.core.dom.lrparser.action.c99;
 
-import static org.eclipse.cdt.core.dom.lrparser.action.ParserUtil.endOffset;
-import static org.eclipse.cdt.core.dom.lrparser.action.ParserUtil.length;
-import static org.eclipse.cdt.core.dom.lrparser.action.ParserUtil.matchTokens;
-import static org.eclipse.cdt.core.dom.lrparser.action.ParserUtil.offset;
+import static org.eclipse.cdt.core.dom.lrparser.action.ParserUtil.*;
 import static org.eclipse.cdt.internal.core.dom.lrparser.c99.C99Parsersym.*;
 
 import java.util.Collections;
@@ -62,9 +59,9 @@ import org.eclipse.cdt.core.dom.ast.c.ICASTTypedefNameSpecifier;
 import org.eclipse.cdt.core.dom.ast.c.ICNodeFactory;
 import org.eclipse.cdt.core.dom.ast.gnu.c.ICASTKnRFunctionDeclarator;
 import org.eclipse.cdt.core.dom.lrparser.action.BuildASTParserAction;
-import org.eclipse.cdt.core.dom.lrparser.action.ITokenStream;
 import org.eclipse.cdt.core.dom.lrparser.action.ISecondaryParserFactory;
 import org.eclipse.cdt.core.dom.lrparser.action.ITokenMap;
+import org.eclipse.cdt.core.dom.lrparser.action.ITokenStream;
 import org.eclipse.cdt.core.dom.lrparser.action.ParserUtil;
 import org.eclipse.cdt.core.dom.lrparser.action.ScopedStack;
 import org.eclipse.cdt.core.dom.lrparser.action.TokenMap;
@@ -145,41 +142,15 @@ public class C99BuildASTParserAction extends BuildASTParserAction  {
 	
 	
 	/**
-	 * postfix_expression ::= '(' type_name ')' '{' <openscope> initializer_list '}'
-	 * postfix_expression ::= '(' type_name ')' '{' <openscope> initializer_list ',' '}'            
+	 * postfix_expression ::= '(' type_id ')' initializer_list    
 	 */
 	public void consumeExpressionTypeIdInitializer() {
-		consumeInitializerList(); // closes the scope
 		IASTInitializerList list = (IASTInitializerList) astStack.pop();
 		IASTTypeId typeId = (IASTTypeId) astStack.pop();
 		ICASTTypeIdInitializerExpression expr = nodeFactory.newTypeIdInitializerExpression(typeId, list);
 		setOffsetAndLength(expr);
 		astStack.push(expr);
 	}
-	
-	// TODO why is this here?
-//	/**
-//	 * Lots of rules, no need to list them.
-//	 * @param operator From IASTUnaryExpression
-//	 */
-//	public void consumeExpressionSizeofTypeId() {
-//		if(TRACE_ACTIONS) DebugUtil.printMethodTrace();
-//		
-//		IASTTypeId typeId = (IASTTypeId) astStack.pop();
-//		IASTTypeIdExpression expr = nodeFactory.newTypeIdExpression(IASTTypeIdExpression.op_sizeof, typeId);
-//		setOffsetAndLength(expr);
-//		
-//		// try parsing as an expression to resolve ambiguities
-//		C99SizeofExpressionParser secondaryParser = new C99SizeofExpressionParser(C99Parsersym.orderedTerminalSymbols); 
-//		IASTNode alternateExpr = runSecondaryParser(secondaryParser);
-//		
-//		if(alternateExpr == null || alternateExpr instanceof IASTProblemExpression)
-//			astStack.push(expr);
-//		else
-//			astStack.push(nodeFactory.newAmbiguousExpression(expr, (IASTExpression)alternateExpr));
-//		
-//		if(TRACE_AST_STACK) System.out.println(astStack);
-//	}
 	
 	
 	/**

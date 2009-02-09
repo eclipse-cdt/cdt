@@ -119,6 +119,11 @@ explicit_instantiation
             /. $Build  consumeTemplateExplicitInstantiationGCC(IGPPASTExplicitTemplateInstantiation.ti_static);  $EndBuild ./
       | 'inline' 'template' declaration    
             /. $Build  consumeTemplateExplicitInstantiationGCC(IGPPASTExplicitTemplateInstantiation.ti_inline);  $EndBuild ./
-          
+            
+            
+postfix_expression
+    ::= '(' type_id ')' initializer_list
+          /. $Build  consumeExpressionTypeIdInitializer();  $EndBuild ./
+
           
 $End

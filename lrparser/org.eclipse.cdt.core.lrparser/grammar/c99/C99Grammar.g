@@ -193,7 +193,7 @@ postfix_expression
          /. $Build   consumeExpressionUnaryOperator(IASTUnaryExpression.op_postFixIncr);  $EndBuild ./
       | postfix_expression '--'
           /. $Build  consumeExpressionUnaryOperator(IASTUnaryExpression.op_postFixDecr);  $EndBuild ./
-      | '(' type_id ')' '{' <openscope-ast> initializer_list comma_opt '}'
+      | '(' type_id ')' initializer_list
           /. $Build  consumeExpressionTypeIdInitializer();  $EndBuild ./
  
  
@@ -891,7 +891,11 @@ function_direct_abstract_declarator
 initializer
     ::= assignment_expression
           /. $Build  consumeInitializer();  $EndBuild ./
-      | start_initializer_list '{' <openscope-ast> initializer_list comma_opt '}' end_initializer_list
+      | initializer_list  
+          
+          
+initializer_list
+    ::= start_initializer_list '{' <openscope-ast> initializer_seq comma_opt '}' end_initializer_list
           /. $Build  consumeInitializerList();  $EndBuild ./
       | '{' <openscope-ast> '}'
           /. $Build  consumeInitializerList();  $EndBuild ./
@@ -905,12 +909,12 @@ end_initializer_list
     ::= $empty
           /. $Build  initializerListEnd(); $EndBuild ./
           
-
-initializer_list
+          
+initializer_seq
     ::= initializer
       | designated_initializer
-      | initializer_list ',' initializer
-      | initializer_list ',' designated_initializer
+      | initializer_seq ',' initializer
+      | initializer_seq ',' designated_initializer
             
 
 designated_initializer

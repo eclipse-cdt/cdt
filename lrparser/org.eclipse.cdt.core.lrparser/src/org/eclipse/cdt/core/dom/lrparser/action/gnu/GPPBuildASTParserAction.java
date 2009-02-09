@@ -18,7 +18,10 @@ import lpg.lpgjavaruntime.IToken;
 
 import org.eclipse.cdt.core.dom.ast.IASTDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTExpression;
+import org.eclipse.cdt.core.dom.ast.IASTInitializerList;
 import org.eclipse.cdt.core.dom.ast.IASTPointer;
+import org.eclipse.cdt.core.dom.ast.IASTTypeId;
+import org.eclipse.cdt.core.dom.ast.IASTTypeIdInitializerExpression;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTPointerToMember;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTSimpleDeclSpecifier;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPNodeFactory;
@@ -182,5 +185,15 @@ public class GPPBuildASTParserAction extends CPPBuildASTParserAction {
 		astStack.push(instantiation);
 	}
 	
-	
+
+	/**
+	 * postfix_expression ::= '(' type_id ')' initializer_list      
+	 */
+	public void consumeExpressionTypeIdInitializer() {
+		IASTInitializerList list = (IASTInitializerList) astStack.pop();
+		IASTTypeId typeId = (IASTTypeId) astStack.pop();
+		IASTTypeIdInitializerExpression expr = nodeFactory.newTypeIdInitializerExpression(typeId, list);
+		setOffsetAndLength(expr);
+		astStack.push(expr);
+	}
 }

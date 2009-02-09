@@ -6713,6 +6713,7 @@ public class AST2CPPTests extends AST2BaseTest {
 	//	void blatest() {
 	//	   reset(new tl());
 	//	   reset(new cl());
+	//     reset(new cl[1]);
 	//	}
 	public void testTypeOfNewExpression_264163() throws Exception {
 		String code= getAboveComment();

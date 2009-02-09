@@ -97,6 +97,9 @@ declarator
 elaborated_specifier_hook
     ::= attribute_or_decl_specifier_seq
     
+namespace_definition_hook
+    ::= attribute_or_decl_specifier_seq
+    
     
 simple_type_specifier
     ::= '_Complex'

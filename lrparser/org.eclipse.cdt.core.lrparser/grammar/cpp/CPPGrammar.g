@@ -1001,23 +1001,18 @@ namespace_name
     ::= identifier_name
     
     
-namespace_definition
-    ::= named_namespace_definition
-      | unnamed_namespace_definition
-
-
 -- In the spec grammar this is broken down into original_namespace_definition and extension_namespace_definition.
 -- But since we are not tracking identifiers it becomes the same thing, so its simplified here.
-named_namespace_definition
-    ::= 'namespace' namespace_name '{' <openscope-ast> declaration_seq_opt '}'
+namespace_definition
+    ::= 'namespace' namespace_name namespace_definition_hook '{' <openscope-ast> declaration_seq_opt '}'
           /. $Build  consumeNamespaceDefinition(true);  $EndBuild ./
-
-
-unnamed_namespace_definition
-    ::= 'namespace' '{' <openscope-ast> declaration_seq_opt '}'
+      | 'namespace' namespace_definition_hook '{' <openscope-ast> declaration_seq_opt '}'
            /. $Build  consumeNamespaceDefinition(false);  $EndBuild ./
-          
-          
+
+namespace_definition_hook
+    ::= $empty
+    
+              
 namespace_alias_definition
     ::= 'namespace' identifier_token '=' dcolon_opt nested_name_specifier_opt namespace_name ';'
            /. $Build  consumeNamespaceAliasDefinition(); $EndBuild ./

@@ -3,7 +3,8 @@
       id="org.eclipse.rse.telnet.source"
       label="%featureName"
       version="2.1.100.qualifier"
-      provider-name="%providerName">
+      provider-name="%providerName"
+      plugin="org.eclipse.rse.services.telnet.source">
 
    <description>
       %description
@@ -23,12 +24,6 @@
    </url>
 
    <plugin
-         id="org.eclipse.rse.telnet.source"
-         download-size="34"
-         install-size="43"
-         version="0.0.0"/>
-
-   <plugin
          id="org.apache.commons.net.source"
          download-size="180"
          install-size="304"
@@ -41,5 +36,9 @@
          install-size="201"
          version="0.0.0"
          unpack="false"/>
+
+   <plugin id="org.eclipse.rse.connectorservice.telnet" download-size="0" install-size="0" version="0.0.0" unpack="false"/>
+   <plugin id="org.eclipse.rse.services.telnet.source" download-size="0" install-size="0" version="0.0.0" unpack="false"/>
+   <plugin id="org.eclipse.rse.subsystems.shells.telnet.source" download-size="0" install-size="0" version="0.0.0" unpack="false"/>
 
 </feature>

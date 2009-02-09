@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<feature id="org.eclipse.rse.ftp.source" version="3.0.100.qualifier" label="%featureName" provider-name="%providerName">
+<feature id="org.eclipse.rse.ftp.source" version="3.0.100.qualifier" label="%featureName" provider-name="%providerName" plugin="org.eclipse.rse.services.files.ftp.source">
         <description >
                 %description
         </description>

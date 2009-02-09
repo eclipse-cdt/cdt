@@ -2312,7 +2312,27 @@ public class AST2TemplateTests extends AST2BaseTest {
 			}
 		}
 	}
-	
+
+	//	template <class C> class A;
+	//
+	//	template <class C>
+	//	A<C> make_A(C* p);
+	//
+	//	template <class C>
+	//	struct A {
+	//	  A(C* p);
+	//	  friend A<C> make_A<C>(C* p);
+	//	};
+	//
+	//	template <class C>
+	//	A<C> make_A(C* p) {
+	//	  return A<C>(p);
+	//	}
+	public void testForwardDeclarations_264109() throws Exception {
+		BindingAssertionHelper bh= new BindingAssertionHelper(getAboveComment(), true);
+		bh.assertNonProblem("A<C> make_A(C* p) {", 4, ICPPTemplateInstance.class);
+	}
+
 	// template<typename _TpAllocator>
 	// class Allocator {
 	// public:

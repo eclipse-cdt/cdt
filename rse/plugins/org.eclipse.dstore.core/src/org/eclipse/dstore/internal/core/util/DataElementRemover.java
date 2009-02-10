@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2002, 2007 IBM Corporation and others.
+ * Copyright (c) 2002, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -14,6 +14,7 @@
  * Contributors:
  *  David McKnight  (IBM)  - [202822] don't need to remove children from map here
  *  David McKnight  (IBM)  - [255390] check memory to determine whether to queue
+ *  David McKnight  (IBM)  - [261644] [dstore] remote search improvements
  *******************************************************************************/
 
 package org.eclipse.dstore.internal.core.util;

@@ -106,7 +106,8 @@
          id="org.eclipse.tm.discovery.doc.isv"
          download-size="83"
          install-size="185"
-         version="0.0.0"/>
+         version="0.0.0"
+         unpack="false"/>
 
    <plugin
          id="org.eclipse.rse.discovery.source"

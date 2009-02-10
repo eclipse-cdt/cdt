@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2008 IBM Corporation and others.
+ * Copyright (c) 2006, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -24,7 +24,6 @@
 package org.eclipse.rse.internal.subsystems.files.dstore;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 
 import org.eclipse.core.runtime.NullProgressMonitor;
@@ -43,7 +42,6 @@ import org.eclipse.rse.subsystems.files.core.servicesubsystem.OutputRefresh;
 import org.eclipse.rse.subsystems.files.core.subsystems.IHostFileToRemoteFileAdapter;
 import org.eclipse.rse.subsystems.files.core.subsystems.IRemoteFile;
 import org.eclipse.rse.subsystems.files.core.subsystems.IRemoteFileContext;
-import org.eclipse.rse.subsystems.files.core.subsystems.RemoteFileContext;
 import org.eclipse.rse.subsystems.files.core.subsystems.RemoteSearchResultsContentsType;
 import org.eclipse.swt.widgets.Display;
 

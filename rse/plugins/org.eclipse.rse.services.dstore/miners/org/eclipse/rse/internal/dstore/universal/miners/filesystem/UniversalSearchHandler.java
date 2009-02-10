@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2008 IBM Corporation and others.
+ * Copyright (c) 2006, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -30,10 +30,7 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStreamReader;
-import java.lang.reflect.Field;
-import java.lang.reflect.Method;
 import java.util.HashSet;
-import java.util.List;
 
 import org.eclipse.dstore.core.model.DE;
 import org.eclipse.dstore.core.model.DataElement;
@@ -363,48 +360,39 @@ public class UniversalSearchHandler extends SecuredThread implements ICancellabl
 			long MAX_FILE = Runtime.getRuntime().freeMemory() / 4;
 			long fileLength = theFile.length();
 			
-			//System.out.println("file="+absPath);
-			//System.out.println("MAX mem="+MAX_FILE);
-			//System.out.println("fileLength="+fileLength);
-			//if (fileLength < MAX_FILE)
-			if (true){ // if the file is too big, the server will run out of memory
-				inputStream = new FileInputStream(theFile);
-				InputStreamReader reader = new InputStreamReader(inputStream);		
-				BufferedReader bufReader = new BufferedReader(reader);
-	
-				// test for unreadable binary
-				if (isUnreadableBinary(bufReader) || fileLength > MAX_FILE){
-					// search some other way?
-					long size = theFile.length();
-					if (simpleSearch(inputStream, size, _stringMatcher)){			
-						bufReader.close();
-						reader.close();
-						return true;
-					}
-					
+			inputStream = new FileInputStream(theFile);
+			InputStreamReader reader = new InputStreamReader(inputStream);		
+			BufferedReader bufReader = new BufferedReader(reader);
+
+			// test for unreadable binary
+			if (isUnreadableBinary(bufReader) || fileLength > MAX_FILE){
+				// search some other way?
+				long size = theFile.length();
+				if (simpleSearch(inputStream, size, _stringMatcher)){			
 					bufReader.close();
 					reader.close();
-					return false;
+					return true;
 				}
-				else 
-				{
-					SystemSearchStringMatchLocator locator = new SystemSearchStringMatchLocator(bufReader, _stringMatcher);						
-					
-					SystemSearchLineMatch[] matches = locator.locateMatches();									
-					boolean foundMatches = ((matches != null) && (matches.length > 0));
-	
-					if (foundMatches) {
-						if (matches.length * 500 < MAX_FILE){ // only creating match objects if we have enough memory																			
-							convert(remoteFile, absPath, matches);
-						}
-					}
-					return foundMatches;
-				} 
-			}
-			else {
-				_dataStore.trace("skipped:"+absPath  + " due to memory constraints"); //$NON-NLS-1$ //$NON-NLS-2$
+				
+				bufReader.close();
+				reader.close();
 				return false;
 			}
+			else 
+			{
+				SystemSearchStringMatchLocator locator = new SystemSearchStringMatchLocator(bufReader, _stringMatcher);						
+				
+				SystemSearchLineMatch[] matches = locator.locateMatches();									
+				boolean foundMatches = ((matches != null) && (matches.length > 0));
+
+				if (foundMatches) {
+					if (matches.length * 500 < MAX_FILE){ // only creating match objects if we have enough memory																			
+						convert(remoteFile, absPath, matches);
+					}
+				}
+				return foundMatches;
+			} 
+
 		}
 		catch (OutOfMemoryError e){
 			if (SystemServiceManager.getInstance().getSystemService() == null)

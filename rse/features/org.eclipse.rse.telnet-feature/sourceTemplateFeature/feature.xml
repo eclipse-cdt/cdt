@@ -37,7 +37,7 @@
          version="0.0.0"
          unpack="false"/>
 
-   <plugin id="org.eclipse.rse.connectorservice.telnet" download-size="0" install-size="0" version="0.0.0" unpack="false"/>
+   <plugin id="org.eclipse.rse.connectorservice.telnet.source" download-size="0" install-size="0" version="0.0.0" unpack="false"/>
    <plugin id="org.eclipse.rse.services.telnet.source" download-size="0" install-size="0" version="0.0.0" unpack="false"/>
    <plugin id="org.eclipse.rse.subsystems.shells.telnet.source" download-size="0" install-size="0" version="0.0.0" unpack="false"/>
 

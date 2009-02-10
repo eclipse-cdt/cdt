@@ -356,7 +356,7 @@ public class ASTTypeUtil {
 //			101114 fix, do not display class, and for consistency don't display struct/union as well
 			if (type instanceof ICPPClassType) {
 				try {
-					String qn = CPPVisitor.renderQualifiedName(getQualifiedNameForAnonymous((ICPPClassType) type));
+					String qn = CPPVisitor.renderQualifiedName(getQualifiedNameForAnonymous((ICPPClassType) type, normalize));
 					result.append(qn);
 				} catch (DOMException e) {
 					result.append(getNameForAnonymous((ICompositeType) type));
@@ -651,13 +651,12 @@ public class ASTTypeUtil {
 		}
 	}
 	
-	
-	private static String[] getQualifiedNameForAnonymous(ICPPBinding binding) throws DOMException {
+	private static String[] getQualifiedNameForAnonymous(ICPPBinding binding, boolean normalize) throws DOMException {
 		LinkedList<String> result= new LinkedList<String>();
 		result.addFirst(getNameForAnonymous(binding));
 		
 		IBinding owner= binding.getOwner();
-		while(owner instanceof ICPPNamespace || owner instanceof ICPPClassType) {
+		while(owner instanceof ICPPNamespace || owner instanceof IType) {
 			char[] name= owner.getNameCharArray();
 			if (name == null || name.length == 0) {
 				if (!(binding instanceof ICPPNamespace)) {
@@ -667,7 +666,11 @@ public class ASTTypeUtil {
 					}
 				}
 			} else {
-				result.addFirst(new String(name));
+				if (normalize && owner instanceof IType) {
+					result.addFirst(getType((IType) owner, normalize));
+				} else {
+					result.addFirst(new String(name));
+				}
 			}
 			owner= owner.getOwner();
 		}

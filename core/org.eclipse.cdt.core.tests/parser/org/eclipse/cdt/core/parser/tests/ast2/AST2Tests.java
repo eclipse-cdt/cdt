@@ -5821,8 +5821,8 @@ public class AST2Tests extends AST2BaseTest {
 		}
 	}
 
-	private long memoryUsed() {
-		System.gc();System.gc();System.gc();System.gc();System.gc();
+	private long memoryUsed() throws InterruptedException {
+		System.gc();Thread.sleep(200);System.gc();
 		final Runtime runtime = Runtime.getRuntime();
 		return runtime.totalMemory()-runtime.freeMemory();
 	}

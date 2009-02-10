@@ -3780,8 +3780,27 @@ public class AST2TemplateTests extends AST2BaseTest {
 	//		int* iptr;
 	//		any(CT<int>(iptr));
 	//	}
-	public void testConstructorTemplateInClassTemplate() throws Exception {
+	public void testConstructorTemplateInClassTemplate_264314() throws Exception {
 		String code= getAboveComment();
 		parseAndCheckBindings(code, ParserLanguage.CPP);
 	}
+	
+	//	template <typename T> class XT {};
+	//	template <typename T> void func(T t, XT<typename T::A> a) {}
+	//	template <typename T, typename S> void func(S s, XT<typename S::A> a, T t) {}
+	//
+	//	class X {typedef int A;};
+	//	class Y {typedef X A;};
+	//
+	//	void test() {
+	//	    X x; Y y;
+	//	    XT<int> xint; XT<X> xy;
+	//	    func(x, xint);
+	//	    func(y, xy, xint);
+	//	}
+	public void testDistinctDeferredInstances_264367() throws Exception {
+		String code= getAboveComment();
+		parseAndCheckBindings(code, ParserLanguage.CPP);
+	}
+
 }

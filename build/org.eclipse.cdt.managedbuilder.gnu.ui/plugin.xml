@@ -1231,7 +1231,7 @@
 			  dependencyExtensions="h"
 			  dependencyCalculator="org.eclipse.cdt.managedbuilder.makegen.gnu.DefaultGCCDependencyCalculator2"
               id="cdt.managedbuild.tool.gnu.c.compiler.input"
-              scannerConfigDiscoveryProfileId="org.eclipse.cdt.managedbuilder.core.GCCManagedMakePerProjectProfileC"
+              scannerConfigDiscoveryProfileId="org.eclipse.cdt.managedbuilder.core.GCCManagedMakePerProjectProfileC|org.eclipse.cdt.make.core.GCCStandardMakePerFileProfile"
               languageId="org.eclipse.cdt.core.gcc">
           </inputType>
           <outputType

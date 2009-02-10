@@ -588,10 +588,12 @@ public class CEditor extends TextEditor implements ISelectionChangedListener, IC
 			final Point selection = sourceViewer.getSelectedRange();
 			final int offset = selection.x;
 			final int length = selection.y;
-
 			try {
 				IRegion startLine = document.getLineInformationOfOffset(offset);
 				IRegion endLine = document.getLineInformationOfOffset(offset + length);
+				if (startLine != endLine && isBlockSelectionModeEnabled()) {
+					return;
+				}
 
 				ITypedRegion partition = TextUtilities.getPartition(document, ICPartitions.C_PARTITIONING, offset, true);
 				if (!IDocument.DEFAULT_CONTENT_TYPE.equals(partition.getType())
@@ -649,7 +651,7 @@ public class CEditor extends TextEditor implements ISelectionChangedListener, IC
 
 				final char character = event.character;
 				final char closingCharacter = getPeerCharacter(character);
-				final StringBuffer buffer = new StringBuffer();
+				final StringBuilder buffer = new StringBuilder();
 				buffer.append(character);
 				buffer.append(closingCharacter);
 				if (closingCharacter == '>' && nextToken != Symbols.TokenEOF
@@ -814,10 +816,16 @@ public class CEditor extends TextEditor implements ISelectionChangedListener, IC
 				return;
 
 			int next = findNextPosition(position);
-			if (next != BreakIterator.DONE) {
-				setCaretPosition(next);
-				getTextWidget().showSelection();
-				fireSelectionChanged();
+			try {
+				if (isBlockSelectionModeEnabled() && document.getLineOfOffset(next) != document.getLineOfOffset(position)) {
+					super.run(); // may navigate into virtual white space
+				} else if (next != BreakIterator.DONE) {
+					setCaretPosition(next);
+					getTextWidget().showSelection();
+					fireSelectionChanged();
+				}
+			} catch (BadLocationException x) {
+				// ignore
 			}
 		}
 
@@ -892,20 +900,33 @@ public class CEditor extends TextEditor implements ISelectionChangedListener, IC
 				return;
 
 			final ISourceViewer viewer = getSourceViewer();
-			final int caret, length;
-			Point selection = viewer.getSelectedRange();
-			if (selection.y != 0) {
-				caret = selection.x;
-				length = selection.y;
-			} else {
-				caret = widgetOffset2ModelOffset(viewer, viewer.getTextWidget().getCaretOffset());
-				length = position - caret;
-			}
+			StyledText text= viewer.getTextWidget();
+			Point widgetSelection= text.getSelection();
+			if (isBlockSelectionModeEnabled() && widgetSelection.y != widgetSelection.x) {
+				final int caret= text.getCaretOffset();
+				final int offset= modelOffset2WidgetOffset(viewer, position);
 
-			try {
-				viewer.getDocument().replace(caret, length, ""); //$NON-NLS-1$
-			} catch (BadLocationException exception) {
-				// Should not happen
+				if (caret == widgetSelection.x)
+					text.setSelectionRange(widgetSelection.y, offset - widgetSelection.y);
+				else
+					text.setSelectionRange(widgetSelection.x, offset - widgetSelection.x);
+				text.invokeAction(ST.DELETE_NEXT);
+			} else {
+				Point selection= viewer.getSelectedRange();
+				final int caret, length;
+				if (selection.y != 0) {
+					caret= selection.x;
+					length= selection.y;
+				} else {
+					caret= widgetOffset2ModelOffset(viewer, text.getCaretOffset());
+					length= position - caret;
+				}
+
+				try {
+					viewer.getDocument().replace(caret, length, ""); //$NON-NLS-1$
+				} catch (BadLocationException exception) {
+					// Should not happen
+				}
 			}
 		}
 
@@ -999,10 +1020,16 @@ public class CEditor extends TextEditor implements ISelectionChangedListener, IC
 				return;
 
 			int previous = findPreviousPosition(position);
-			if (previous != BreakIterator.DONE) {
-				setCaretPosition(previous);
-				getTextWidget().showSelection();
-				fireSelectionChanged();
+			try {
+				if (isBlockSelectionModeEnabled() && document.getLineOfOffset(previous) != document.getLineOfOffset(position)) {
+					super.run(); // may navigate into virtual white space
+				} else if (previous != BreakIterator.DONE) {
+					setCaretPosition(previous);
+					getTextWidget().showSelection();
+					fireSelectionChanged();
+				}
+			} catch (BadLocationException x) {
+				// ignore - getLineOfOffset failed
 			}
 		}
 
@@ -1078,18 +1105,31 @@ public class CEditor extends TextEditor implements ISelectionChangedListener, IC
 
 			final int length;
 			final ISourceViewer viewer = getSourceViewer();
-			Point selection = viewer.getSelectedRange();
-			if (selection.y != 0) {
-				position = selection.x;
-				length = selection.y;
-			} else {
-				length = widgetOffset2ModelOffset(viewer, viewer.getTextWidget().getCaretOffset()) - position;
-			}
+			StyledText text= viewer.getTextWidget();
+			Point widgetSelection= text.getSelection();
+			if (isBlockSelectionModeEnabled() && widgetSelection.y != widgetSelection.x) {
+				final int caret= text.getCaretOffset();
+				final int offset= modelOffset2WidgetOffset(viewer, position);
 
-			try {
-				viewer.getDocument().replace(position, length, ""); //$NON-NLS-1$
-			} catch (BadLocationException exception) {
-				// Should not happen
+				if (caret == widgetSelection.x)
+					text.setSelectionRange(widgetSelection.y, offset - widgetSelection.y);
+				else
+					text.setSelectionRange(widgetSelection.x, offset - widgetSelection.x);
+				text.invokeAction(ST.DELETE_PREVIOUS);
+			} else {
+				Point selection= viewer.getSelectedRange();
+				if (selection.y != 0) {
+					position= selection.x;
+					length= selection.y;
+				} else {
+					length= widgetOffset2ModelOffset(viewer, text.getCaretOffset()) - position;
+				}
+
+				try {
+					viewer.getDocument().replace(position, length, ""); //$NON-NLS-1$
+				} catch (BadLocationException exception) {
+					// Should not happen
+				}
 			}
 		}
 

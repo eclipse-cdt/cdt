@@ -32,7 +32,6 @@ import org.eclipse.debug.internal.ui.IInternalDebugUIConstants;
 import org.eclipse.debug.internal.ui.views.memory.MemoryViewUtil;
 import org.eclipse.debug.internal.ui.views.memory.renderings.GoToAddressComposite;
 import org.eclipse.jface.dialogs.IDialogConstants;
-import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.dnd.Clipboard;
@@ -501,7 +500,7 @@ public class Rendering extends Composite implements IDebugEventSetListener
         Status status = new Status(IStatus.ERROR, fParent.getRenderingId(),
             DebugException.INTERNAL_ERROR, message, e);
 
-        DebugUIPlugin.getDefault().getLog().log(status);
+        TraditionalRenderingPlugin.getDefault().getLog().log(status);
     }
 
     public void handleFontPreferenceChange(Font font)

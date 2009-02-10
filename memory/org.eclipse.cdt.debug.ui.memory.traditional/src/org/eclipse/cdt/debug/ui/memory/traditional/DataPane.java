@@ -16,7 +16,6 @@ import java.math.BigInteger;
 import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.model.MemoryByte;
 import org.eclipse.swt.events.PaintEvent;
-import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.graphics.Point;
 

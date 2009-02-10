@@ -12,7 +12,6 @@
 package org.eclipse.cdt.debug.ui.memory.traditional;
 
 
-import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.preference.IPreferenceNode;
 import org.eclipse.jface.preference.IPreferencePage;
@@ -46,9 +45,9 @@ public class TraditionalRenderingPreferenceAction extends ActionDelegate impleme
 		
 		PreferenceManager manager = new PreferenceManager();
 		manager.addToRoot(targetNode);
-		final PreferenceDialog dialog = new PreferenceDialog(DebugUIPlugin.getShell(), manager);
+		final PreferenceDialog dialog = new PreferenceDialog(TraditionalRenderingPlugin.getShell(), manager);
 		final boolean [] result = new boolean[] { false };
-		BusyIndicator.showWhile(DebugUIPlugin.getStandardDisplay(), new Runnable() {
+		BusyIndicator.showWhile(TraditionalRenderingPlugin.getStandardDisplay(), new Runnable() {
 			public void run() {
 				dialog.create();
 				dialog.setMessage(targetNode.getLabelText());

@@ -25,9 +25,9 @@ public class MemorySearchResult implements ISearchResult
 	private ISearchQuery fQuery;
 	private String fLabel;
 	
-	private Vector listeners = new Vector();
+	private Vector<ISearchResultListener> listeners = new Vector<ISearchResultListener>();
 	
-	private Vector fMatches = new Vector();
+	private Vector<MemoryMatch> fMatches = new Vector<MemoryMatch>();
 	
 	public MemorySearchResult(ISearchQuery query, String label)
 	{
@@ -69,9 +69,13 @@ public class MemorySearchResult implements ISearchResult
 	
 	private void fireChange()
 	{
-		Enumeration en = listeners.elements();
-		while(en.hasMoreElements())
-			((ISearchResultListener) en.nextElement()).searchResultChanged(new SearchResultEvent(this) {} );
+		Enumeration<ISearchResultListener> en = listeners.elements();
+		while(en.hasMoreElements()) {
+			((ISearchResultListener) en.nextElement()).searchResultChanged(new SearchResultEvent(this) {
+					private static final long serialVersionUID = -1435449002760145835L;
+				} 
+			);
+		}
 	}
 
 	public void addListener(ISearchResultListener l) {

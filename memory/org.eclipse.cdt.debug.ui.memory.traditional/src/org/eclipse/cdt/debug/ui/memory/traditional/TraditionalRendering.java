@@ -11,7 +11,6 @@
 
 package org.eclipse.cdt.debug.ui.memory.traditional;
 
-import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.math.BigInteger;
 
@@ -149,7 +148,7 @@ public class TraditionalRendering extends AbstractMemoryRendering implements IRe
     		});
         
         
-        DebugUIPlugin.getDefault().getPreferenceStore().addPropertyChangeListener(
+        TraditionalRenderingPlugin.getDefault().getPreferenceStore().addPropertyChangeListener(
         	new IPropertyChangeListener()
         	{
         		public void propertyChange(PropertyChangeEvent event)
@@ -1219,7 +1218,7 @@ public class TraditionalRendering extends AbstractMemoryRendering implements IRe
 					public void update() 
 					{
 						// update UI asynchronously
-						Display display = DebugUIPlugin.getDefault().getWorkbench().getDisplay();
+						Display display = TraditionalRenderingPlugin.getDefault().getWorkbench().getDisplay();
 						display.asyncExec(new Runnable() {
 							public void run() {
 								try 
@@ -1358,21 +1357,17 @@ class CopyAction extends Action
             final int radix = fRendering.getRadix();
             final int bytesPerColumn = fRendering.getBytesPerColumn();
             final boolean isLittleEndian = fRendering.isTargetLittleEndian();
-            final int bytesPerCharacter = fRendering.getBytesPerCharacter();
 
-            final int addressWidth = fRendering.getAddressString(start)
-                .length();
+//            final int binaryCellWidth = fRendering.getRadixCharacterCount(
+//                radix, bytesPerColumn) + 1;
+//
+//            final int asciiCellWidth = fRendering.getBytesPerColumn()
+//                / fRendering.getBytesPerCharacter();
 
-            final int binaryCellWidth = fRendering.getRadixCharacterCount(
-                radix, bytesPerColumn) + 1;
-
-            final int asciiCellWidth = fRendering.getBytesPerColumn()
-                / fRendering.getBytesPerCharacter();
-
-            final int combindCellWidths = (fRendering
-                .getPaneVisible(Rendering.PANE_BINARY) ? binaryCellWidth : 0)
-                + (fRendering.getPaneVisible(Rendering.PANE_TEXT) ? asciiCellWidth
-                    : 0);
+//            final int combindCellWidths = (fRendering
+//                .getPaneVisible(Rendering.PANE_BINARY) ? binaryCellWidth : 0)
+//                + (fRendering.getPaneVisible(Rendering.PANE_TEXT) ? asciiCellWidth
+//                    : 0);
 
             final int columns = fRendering.getColumnCount();
 

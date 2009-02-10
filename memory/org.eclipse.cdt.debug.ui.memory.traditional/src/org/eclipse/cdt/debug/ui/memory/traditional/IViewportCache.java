@@ -14,7 +14,6 @@ package org.eclipse.cdt.debug.ui.memory.traditional;
 import java.math.BigInteger;
 
 import org.eclipse.debug.core.DebugException;
-import org.eclipse.debug.core.model.MemoryByte;
 
 public interface IViewportCache {
 

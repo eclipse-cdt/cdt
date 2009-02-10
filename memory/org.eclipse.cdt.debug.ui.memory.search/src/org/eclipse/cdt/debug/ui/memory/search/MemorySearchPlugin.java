@@ -14,7 +14,6 @@ package org.eclipse.cdt.debug.ui.memory.search;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.debug.core.DebugException;
-import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 
 public class MemorySearchPlugin extends AbstractUIPlugin 

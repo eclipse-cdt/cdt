@@ -45,12 +45,10 @@ import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.IActionBars;
 import org.eclipse.ui.IMemento;
 import org.eclipse.ui.part.Page;
-import org.eclipse.ui.part.PageBook;
 
 public class MemorySearchResultsPage extends Page implements ISearchResultPage, IQueryListener {
 
 	private TreeViewer fTreeViewer;
-	private PageBook fPagebook;
 	private Composite fViewerContainer;
 	private IQueryListener fQueryListener;
 	

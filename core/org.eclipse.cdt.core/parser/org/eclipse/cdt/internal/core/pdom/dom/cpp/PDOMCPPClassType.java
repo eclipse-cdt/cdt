@@ -379,9 +379,4 @@ class PDOMCPPClassType extends PDOMCPPBinding implements IPDOMCPPClassType, IPDO
 		}
 		return null;
 	}
-	
-	@Override
-	public String toString() {
-		return ASTTypeUtil.getType(this);
-	}
 }

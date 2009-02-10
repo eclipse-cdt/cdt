@@ -13,7 +13,6 @@
 package org.eclipse.cdt.internal.core.pdom.dom.cpp;
 
 import org.eclipse.cdt.core.CCorePlugin;
-import org.eclipse.cdt.core.dom.ast.ASTTypeUtil;
 import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunction;
@@ -100,28 +99,5 @@ class PDOMCPPFunctionInstance extends PDOMCPPFunctionSpecialization implements I
 	@Deprecated
 	public IType[] getArguments() {
 		return CPPTemplates.getArguments(getTemplateArguments());
-	}
-	
-	/*
-	 * For debug purposes only
-	 */
-	@SuppressWarnings("nls")
-	@Override
-	public String toString() {
-		StringBuilder result = new StringBuilder();
-		result.append(getName());
-		result.append("(){"); 
-		try {
-			result.append(ASTTypeUtil.getType(getType()));
-		} catch (DOMException e) {
-			e.printStackTrace();
-		}
-		result.append("} "); 
-		try {
-			result.append(getConstantNameForValue(getLinkage(), getNodeType()));
-		} catch (CoreException ce) {
-			result.append(getNodeType());
-		}
-		return result.toString();
 	}
 }

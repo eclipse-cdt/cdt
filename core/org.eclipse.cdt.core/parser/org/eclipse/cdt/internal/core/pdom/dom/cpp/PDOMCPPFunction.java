@@ -13,7 +13,6 @@
 package org.eclipse.cdt.internal.core.pdom.dom.cpp;
 
 import org.eclipse.cdt.core.CCorePlugin;
-import org.eclipse.cdt.core.dom.ast.ASTTypeUtil;
 import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.IFunctionType;
@@ -278,21 +277,7 @@ class PDOMCPPFunction extends PDOMCPPBinding implements ICPPFunction, IPDOMOverl
 		int cmp = super.pdomCompareTo(other);
 		return cmp == 0 ? compareSignatures(this, other) : cmp;
 	}
-	
-	@Override
-	public String toString() {
-		StringBuilder result = new StringBuilder();
-		result.append(getName());
-		IFunctionType t = getType();
-		result.append(t != null ? ASTTypeUtil.getParameterTypeString(t) : "()"); //$NON-NLS-1$
-		try {
-			result.append(" " + getConstantNameForValue(getLinkage(), getNodeType())); //$NON-NLS-1$
-		} catch (CoreException e) {
-			result.append(" " + getNodeType()); //$NON-NLS-1$
-		}
-		return result.toString();
-	}
-	
+		
 	protected static int compareSignatures(IPDOMOverloader a, Object b) {
 		if (b instanceof IPDOMOverloader) {
 			IPDOMOverloader bb= (IPDOMOverloader) b;

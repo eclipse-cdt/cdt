@@ -12,7 +12,6 @@
 package org.eclipse.cdt.internal.core.pdom.dom.cpp;
 
 import org.eclipse.cdt.core.CCorePlugin;
-import org.eclipse.cdt.core.dom.ast.ASTTypeUtil;
 import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.IType;
@@ -70,11 +69,6 @@ class PDOMCPPUnknownClassInstance extends PDOMCPPUnknownClassType implements ICP
 			}
 		}
 		return arguments;
-	}
-
-	@Override
-	public String toString() {
-		return getName() + " " + ASTTypeUtil.getArgumentListString(getArguments(), true); //$NON-NLS-1$ 
 	}
 	
 	@Override

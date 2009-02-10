@@ -18,9 +18,13 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.eclipse.cdt.core.CCorePlugin;
+import org.eclipse.cdt.core.dom.ast.ASTTypeUtil;
 import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IBinding;
+import org.eclipse.cdt.core.dom.ast.IFunction;
+import org.eclipse.cdt.core.dom.ast.IFunctionType;
+import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType;
 import org.eclipse.cdt.core.index.IIndexFileSet;
 import org.eclipse.cdt.core.parser.util.CharArrayUtils;
@@ -223,12 +227,32 @@ public abstract class PDOMBinding extends PDOMNamedNode implements IPDOMBinding 
 	 * @see java.lang.Object#toString()
 	 */
 	@Override
-	public String toString() {
+	public final String toString() {
+		String name;
+		name = toStringBase();
 		try {
-			return getName() + " " + getConstantNameForValue(getLinkage(), getNodeType());  //$NON-NLS-1$
+			return name + " " + getConstantNameForValue(getLinkage(), getNodeType());  //$NON-NLS-1$
 		} catch (CoreException ce) {
-			return getName() + " " + getNodeType();  //$NON-NLS-1$
+			return name + " " + getNodeType();  //$NON-NLS-1$
 		}
+	}
+
+	protected String toStringBase() {
+		if (this instanceof IType) {
+			return ASTTypeUtil.getType((IType) this);
+		} else if (this instanceof IFunction) {
+			IFunctionType t= null;
+			try {
+				t = ((IFunction) this).getType();
+			} catch (DOMException e) {
+			}
+			if (t != null) {
+				return getName() + ASTTypeUtil.getParameterTypeString(t);
+			} else {
+				return getName() + "()"; //$NON-NLS-1$
+			}
+		} 
+		return getName();
 	}
 	
 	/**

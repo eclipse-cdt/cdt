@@ -104,22 +104,4 @@ abstract class PDOMCPPSpecialization extends PDOMCPPBinding implements ICPPSpeci
 	public int getSignatureHash() throws CoreException {
 		return getDB().getInt(record + SIGNATURE_HASH);
 	}
-		
-	/*
-	 * For debug purposes only
-	 */
-	@Override
-	public String toString() {
-		StringBuilder result = new StringBuilder();
-		result.append(getName());
-		result.append(' '); 
-		result.append(getArgumentMap().toString());
-		result.append(' '); 
-		try {
-			result.append(getConstantNameForValue(getLinkage(), getNodeType()));
-		} catch (CoreException ce) {
-			result.append(getNodeType());
-		}
-		return result.toString();
-	}
 }

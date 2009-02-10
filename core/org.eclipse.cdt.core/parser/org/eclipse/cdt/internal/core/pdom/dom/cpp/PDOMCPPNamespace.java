@@ -210,7 +210,7 @@ class PDOMCPPNamespace extends PDOMCPPBinding
 	}
 
     @Override
-	public String toString() {
+	protected String toStringBase() {
     	String[] names = getQualifiedName();
     	if (names.length == 0) {
     		return "<unnamed namespace>"; //$NON-NLS-1$

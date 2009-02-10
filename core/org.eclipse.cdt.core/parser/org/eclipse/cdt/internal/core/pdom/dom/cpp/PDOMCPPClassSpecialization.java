@@ -370,11 +370,6 @@ class PDOMCPPClassSpecialization extends PDOMCPPSpecialization implements
 		PDOMCPPClassScope.acceptViaCache(this, visitor, false);
 	}
 	
-	@Override
-	public String toString() {
-		return super.toString() + " <"+ getTemplateParameterMap().toString() + ">";  //$NON-NLS-1$//$NON-NLS-2$
-	}
-
 	public boolean isAnonymous() {
 		return false;
 	}

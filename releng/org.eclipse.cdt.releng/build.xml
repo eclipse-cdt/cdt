@@ -9,6 +9,7 @@
 	<target name="testbuild" depends="zips,test,copy"/>
 	<target name="buildcopy" depends="zips,copy"/>
 	<target name="cdtbuild" depends="tag,zips,test,upload"/>
+	<target name="build2" depends="tag,zips,sign,copy"/>
 	
 	<target name="init">
 		<touch file="${user.home}/.cvspass" />

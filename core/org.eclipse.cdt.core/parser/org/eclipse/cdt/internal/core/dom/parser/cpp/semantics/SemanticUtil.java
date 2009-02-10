@@ -29,7 +29,6 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPMethod;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPPointerToMemberType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPReferenceType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateArgument;
-import org.eclipse.cdt.core.model.ITypeDef;
 import org.eclipse.cdt.core.parser.Keywords;
 import org.eclipse.cdt.core.parser.util.ArrayUtil;
 import org.eclipse.cdt.core.parser.util.CharArraySet;
@@ -284,7 +283,7 @@ public class SemanticUtil {
 				return new CPPFunctionType(ret, params, ((ICPPFunctionType) type).getThisType());
 			} 
 
-			if (type instanceof ITypeDef) {
+			if (type instanceof ITypedef) {
 				IType t= ((ITypedef) type).getType();
 				if (t != null)
 					return getSimplifiedType(t);

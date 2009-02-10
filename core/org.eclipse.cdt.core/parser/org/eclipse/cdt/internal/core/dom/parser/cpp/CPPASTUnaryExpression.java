@@ -162,8 +162,8 @@ public class CPPASTUnaryExpression extends ASTNode implements
 					} catch (DOMException e) {
 						return e.getProblem();
 					}
-					return new CPPPointerToMemberType(type, (ICPPClassType) nestedType,
-							thisType.isConst(), thisType.isVolatile());
+					return new CPPPointerToMemberType(type, nestedType, thisType.isConst(), thisType
+							.isVolatile());
 				}
 			}
 			return new CPPPointerType(type);

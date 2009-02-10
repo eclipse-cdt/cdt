@@ -37,7 +37,6 @@ class Cost {
 	public static final int DERIVED_TO_BASE_CONVERSION = 3;
 	public static final int USERDEFINED_CONVERSION_RANK = 4;
 	public static final int ELLIPSIS_CONVERSION = 5;
-	public static final int FUZZY_TEMPLATE_PARAMETERS = 6;
 	
 	public IType source;
 	public IType target;

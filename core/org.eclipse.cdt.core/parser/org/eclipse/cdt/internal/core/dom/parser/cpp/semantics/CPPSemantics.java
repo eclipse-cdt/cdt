@@ -1651,13 +1651,10 @@ public class CPPSemantics {
 	    final boolean indexBased= data.tu != null && data.tu.getIndex() != null;	    
 	    @SuppressWarnings("unchecked")
 	    ObjectSet<IFunction> fns= ObjectSet.EMPTY_SET;
-	    @SuppressWarnings("unchecked")
-	    ObjectSet<IFunction> templateFns= ObjectSet.EMPTY_SET;
 	    IBinding type = null;
 	    IBinding obj  = null;
 	    IBinding temp = null;
 	    boolean fnsFromAST= false;
-	    boolean fnTmplsFromAST= false;
 	    
 	    Object[] items = (Object[]) data.foundItems;
 	    for (int i = 0; i < items.length && items[i] != null; i++) {
@@ -1713,36 +1710,19 @@ public class CPPSemantics {
 	        	}
 
 	        	IFunction function= (IFunction) temp;
-	        	if (function instanceof ICPPFunctionTemplate) {
-	        		if (templateFns == ObjectSet.EMPTY_SET)
-	        			templateFns = new ObjectSet<IFunction>(2);
-	        		if (isFromIndex(function)) {
-	        			// accept bindings from index only, in case we have none in the AST
-	        			if (!fnTmplsFromAST) {
-	        				templateFns.put(function);
-	        			}
-	        		} else {
-	        			if (!fnTmplsFromAST) {
-	        				templateFns.clear();
-	        				fnTmplsFromAST= true;
-	        			}
-	        			templateFns.put(function);
-	        		}
-	        	} else { 
-	        		if (fns == ObjectSet.EMPTY_SET)
-	        			fns = new ObjectSet<IFunction>(2);
-	        		if (isFromIndex(function)) {
-	        			// accept bindings from index only, in case we have none in the AST
-	        			if (!fnsFromAST) {
-	        				fns.put(function);
-	        			}
-	        		} else {
-	        			if (!fnsFromAST) {
-	        				fns.clear();
-	        				fnsFromAST= true;
-	        			}
+	        	if (fns == ObjectSet.EMPTY_SET)
+	        		fns = new ObjectSet<IFunction>(2);
+	        	if (isFromIndex(function)) {
+	        		// accept bindings from index only, in case we have none in the AST
+	        		if (!fnsFromAST) {
 	        			fns.put(function);
 	        		}
+	        	} else {
+	        		if (!fnsFromAST) {
+	        			fns.clear();
+	        			fnsFromAST= true;
+	        		}
+	        		fns.put(function);
 	        	}
 	        } else if (temp instanceof IType) {
 		        // specializations are selected during instantiation
@@ -1804,46 +1784,31 @@ public class CPPSemantics {
 //	            if (fns == null) return type;
 	            bindings = (IBinding[]) ArrayUtil.append(IBinding.class, bindings, type);
 	            bindings = (IBinding[]) ArrayUtil.addAll(IBinding.class, bindings, fns.keyArray());
-	            bindings = (IBinding[]) ArrayUtil.addAll(IBinding.class, bindings, templateFns.keyArray());
 	        }
 	        bindings = (IBinding[]) ArrayUtil.trim(IBinding.class, bindings);
 	        ICPPUsingDeclaration composite = new CPPUsingDeclaration(data.astName, bindings);
 	        return composite;	
 	    }
 	        
-	    int numTemplateFns = templateFns.size();
-		if (numTemplateFns > 0) {
-			if (data.functionParameters != null && 
-					(!data.forFunctionDeclaration() || data.forExplicitFunctionSpecialization())) {
-				IFunction[] fs = CPPTemplates.selectTemplateFunctions(templateFns, data.functionParameters, data.astName);
-				if (fs != null && fs.length > 0) {
-				    if (fns == ObjectSet.EMPTY_SET)
-				        fns = new ObjectSet<IFunction>(fs.length);
-					fns.addAll(fs);
-				}
-			} else {
-				if (fns == ObjectSet.EMPTY_SET)
-					fns = templateFns;
-				else
-					fns.addAll(templateFns);
-			}
-		}
-		int numFns = fns.size();
-	    if (type != null) {
-	    	if (data.typesOnly || (obj == null && numFns == 0))
+	    if (data.typesOnly) {
+	    	if (type != null)
 	    		return type;
+	    	if (obj instanceof ICPPNamespace)
+	    		return obj;
+	    	return null;
 	    }
-	   
+	    
+		int numFns = fns.size();
 	    if (numFns > 0) {
 	    	if (obj != null)
 	    		return new ProblemBinding(data.astName, IProblemBinding.SEMANTIC_AMBIGUOUS_LOOKUP);
-	    	return resolveFunction(data, fns.keyArray(IFunction.class));
+	    	return resolveFunction(data, fns.keyArray(IFunction.class), true);
 	    }
 	    
-	    if (data.typesOnly && obj instanceof ICPPNamespace == false) {
-	    	return null;
+	    if (obj != null) {
+	    	return obj;
 	    }
-	    return obj;
+	    return type;
 	}
 
 	private static boolean isFromIndex(IBinding binding) {
@@ -1878,12 +1843,14 @@ public class CPPSemantics {
 		// Trim the list down to the set of viable functions
 		IFunction function = null;
 		int size = functions.length;
-		for (int i = 0; i < size && functions[i] != null; i++) {
+		for (int i = 0; i < size; i++) {
 			function = (IFunction) functions[i];
+			if (function == null)
+				continue;
 			if (function instanceof IProblemBinding) {
 				functions[i]= null;
 				continue;
-			}
+			} 
 			if (function instanceof ICPPUnknownBinding) {
 				if (def) {
 					functions[i]= null;
@@ -1978,7 +1945,7 @@ public class CPPSemantics {
 	    return result;
 	}
 	
-	static IBinding resolveFunction(LookupData data, IFunction[] fns) throws DOMException {
+	static IBinding resolveFunction(LookupData data, IFunction[] fns, boolean allowUDC) throws DOMException {
 	    fns= (IFunction[]) ArrayUtil.trim(IFunction.class, fns);
 	    if (fns == null || fns.length == 0)
 	        return null;
@@ -1987,14 +1954,19 @@ public class CPPSemantics {
 			return new CPPUsingDeclaration(data.astName, fns);
 		}
 
-		if (data.astName instanceof ICPPASTConversionName) {
-			return resolveUserDefinedConversion((ICPPASTConversionName) data.astName, fns);
-		}
-		
 		// We don't have any arguments with which to resolve the function
 		if (data.functionParameters == null) {
 		    return resolveTargetedFunction(data, fns);
 		}
+
+		if (!data.forFunctionDeclaration() || data.forExplicitFunctionSpecialization()) {
+			CPPTemplates.instantiateFunctionTemplates(fns, data.functionParameters, data.astName);
+		}
+
+		if (data.astName instanceof ICPPASTConversionName) {
+			return resolveUserDefinedConversion((ICPPASTConversionName) data.astName, fns);
+		}
+		
 		// Reduce our set of candidate functions to only those who have the right number of parameters
 		reduceToViable(data, fns);
 		
@@ -2060,7 +2032,6 @@ public class CPPSemantics {
 				currFnCost= new Cost[sourceLen];	
 			}
 			
-			comparison = 0;
 			boolean varArgs = false;
 			boolean isImpliedObject= false;
 			for (int j = 0; j < sourceLen; j++) {
@@ -2097,8 +2068,8 @@ public class CPPSemantics {
 					cost = new Cost(source, target);
 					cost.rank = Cost.IDENTITY_RANK;	// exact match, no cost
 				} else {
-					cost= Conversions.checkImplicitConversionSequence(!data.forUserDefinedConversion,
-							sourceExp, source, target, isImpliedObject);
+					cost= Conversions.checkImplicitConversionSequence(sourceExp,
+							source, target, allowUDC, isImpliedObject);
 				}
 				
 				if (cost.rank < 0)

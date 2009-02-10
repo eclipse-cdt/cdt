@@ -85,7 +85,6 @@ import org.eclipse.cdt.core.parser.util.ArrayUtil;
 import org.eclipse.cdt.core.parser.util.CharArraySet;
 import org.eclipse.cdt.core.parser.util.CharArrayUtils;
 import org.eclipse.cdt.core.parser.util.ObjectMap;
-import org.eclipse.cdt.core.parser.util.ObjectSet;
 import org.eclipse.cdt.internal.core.dom.parser.ASTAmbiguousNode;
 import org.eclipse.cdt.internal.core.dom.parser.ASTQueries;
 import org.eclipse.cdt.internal.core.dom.parser.IASTInternalScope;
@@ -1332,50 +1331,50 @@ public class CPPTemplates {
 		return result;
 	}
 
-	static protected IFunction[] selectTemplateFunctions(ObjectSet<IFunction> templates,
+	static protected void instantiateFunctionTemplates(IFunction[] functions,
 			Object[] functionArguments, IASTName name) {
-		
-		if (templates == null || templates.size() == 0)
-			return null;
-
-		ICPPTemplateArgument[] templateArguments = ICPPTemplateArgument.EMPTY_ARGUMENTS;
-		final IType[] fnArgs= createTypeArray(functionArguments);
-		try {
-			if (containsDependentType(fnArgs))
-				return new IFunction[] {CPPUnknownFunction.createForSample(templates.keyAt(0), name)};
-
-			if (name instanceof ICPPASTTemplateId) {
-				templateArguments = createTemplateArgumentArray((ICPPASTTemplateId) name);
-				if (hasDependentArgument(templateArguments)) 
-					return new IFunction[] {CPPUnknownFunction.createForSample(templates.keyAt(0), name)};
-			}
-		} catch (DOMException e) {
-			return new IFunction[0];
-		}
-
-		IFunction[] instances= null;
-		final int size = templates.size();
-		for (int idx = 0; idx < size; idx++) {
-			ICPPFunctionTemplate template = (ICPPFunctionTemplate) templates.keyAt(idx);
-			CPPTemplateParameterMap map= new CPPTemplateParameterMap(fnArgs.length);
-			try {
-				ICPPTemplateArgument[] useArgs = templateArguments;
-				if (template instanceof ICPPConstructor)
-					useArgs= ICPPTemplateArgument.EMPTY_ARGUMENTS;
+		ICPPTemplateArgument[] templateArguments= null;
+		IType[] fnArgs= null;
+		for (int i = 0; i < functions.length; i++) {
+			IFunction func = functions[i];
+			if (func instanceof ICPPFunctionTemplate) {
+				ICPPFunctionTemplate template= (ICPPFunctionTemplate) func;
+				functions[i]= null;
 				
-				ICPPTemplateArgument[] args= deduceTemplateFunctionArguments(template, useArgs, fnArgs, map);
-				if (args != null) {
-					IBinding temp= instantiateFunctionTemplate(template, args);
-					if (temp instanceof IFunction) {
-						instances = (IFunction[]) ArrayUtil.append(IFunction.class, instances, temp);
+				// extract template arguments and parameter types.
+				if (templateArguments == null || fnArgs == null) {
+					templateArguments = ICPPTemplateArgument.EMPTY_ARGUMENTS;
+					fnArgs= createTypeArray(functionArguments);
+					try {
+						if (containsDependentType(fnArgs)) {
+							functions[i]= CPPUnknownFunction.createForSample(template, name);
+							return;
+						}
+						if (name instanceof ICPPASTTemplateId && !(template instanceof ICPPConstructor)) {
+							templateArguments = createTemplateArgumentArray((ICPPASTTemplateId) name);
+							if (hasDependentArgument(templateArguments)) {
+								functions[i]= CPPUnknownFunction.createForSample(template, name);
+								return;
+							}
+						}
+					} catch (DOMException e) {
+						return;
 					}
 				}
-			} catch (DOMException e) {
-				// try next candidate
-			}
+				CPPTemplateParameterMap map= new CPPTemplateParameterMap(fnArgs.length);
+				try {
+					ICPPTemplateArgument[] args= deduceTemplateFunctionArguments(template, templateArguments, fnArgs, map);
+					if (args != null) {
+						IBinding instance= instantiateFunctionTemplate(template, args);
+						if (instance instanceof IFunction) {
+							functions[i]= (IFunction) instance;
+						} 
+					}
+				} catch (DOMException e) {
+					// try next candidate
+				}
+			} 
 		}
-
-		return (IFunction[]) ArrayUtil.trim(IFunction.class, instances);
 	}
 
 	/**

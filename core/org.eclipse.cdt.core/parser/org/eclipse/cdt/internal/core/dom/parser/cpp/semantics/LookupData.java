@@ -93,7 +93,6 @@ public class LookupData {
 	public boolean ignoreUsingDirectives = false;
 	public boolean usingDirectivesOnly = false;
 	public boolean forceQualified = false;
-	public boolean forUserDefinedConversion = false;
 	public boolean forAssociatedScopes = false;
 	public boolean contentAssist = false;
 	public boolean prefixLookup = false;

@@ -6719,4 +6719,20 @@ public class AST2CPPTests extends AST2BaseTest {
 		String code= getAboveComment();
 		parseAndCheckBindings(code, ParserLanguage.CPP);
 	}
+	
+	//	template<typename IteratorT> class range {
+	//	public:
+	//		template<class Range> range(const Range& r) {}
+	//	};
+	//	void onRange(const range<const char*>& r) {}
+	//	void test() {
+	//		range<char*> ir(0);
+	//		onRange(ir);
+	//	}
+	public void testConstructorTemplateInImplicitConversion_264314() throws Exception {
+		final String code = getAboveComment();
+		BindingAssertionHelper ba= new BindingAssertionHelper(code, true);
+		ba.assertNonProblem("onRange(ir)", 7);
+		parseAndCheckBindings(code, ParserLanguage.CPP);
+	}
 }

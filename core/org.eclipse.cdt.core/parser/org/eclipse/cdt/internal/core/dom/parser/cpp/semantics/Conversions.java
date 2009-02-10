@@ -52,17 +52,17 @@ public class Conversions {
 	/**
 	 * Computes the cost of an implicit conversion sequence
 	 * [over.best.ics] 13.3.3.1
-	 * 
-	 * @param allowUDC whether a user-defined conversion is allowed during the sequence
 	 * @param sourceExp the expression behind the source type
 	 * @param source the source (argument) type
 	 * @param target the target (parameter) type
+	 * @param allowUDC whether a user-defined conversion is allowed during the sequence
 	 * @param isImpliedObject
+	 * 
 	 * @return the cost of converting from source to target
 	 * @throws DOMException
 	 */
-	public static Cost checkImplicitConversionSequence(boolean allowUDC, IASTExpression sourceExp,
-			IType source, IType target, boolean isImpliedObject) throws DOMException {
+	public static Cost checkImplicitConversionSequence(IASTExpression sourceExp, IType source,
+			IType target, boolean allowUDC, boolean isImpliedObject) throws DOMException {
 		allowUDC &= !isImpliedObject;
 		target= getNestedType(target, TYPEDEFS);
 		source= getNestedType(source, TYPEDEFS);
@@ -166,26 +166,20 @@ public class Conversions {
 
 					// We must do a non-reference initialization
 				if (!illformed) {
-					Cost cost= checkStandardConversionSequence(source, cv1T1, isImpliedObject);
-					// 12.3-4 At most one user-defined conversion is implicitly applied to
-					// a single value.  (also prevents infinite loop)				
-					if (allowUDC && (cost.rank == Cost.NO_MATCH_RANK || 
-							cost.rank == Cost.FUZZY_TEMPLATE_PARAMETERS)) { 
-						Cost temp = checkUserDefinedConversionSequence(source, cv1T1);
-						if (temp != null) {
-							cost = temp;
-						}
-					}
-					return cost;
+					return nonReferenceConversion(source, cv1T1, allowUDC, isImpliedObject);
 				}
 			}
 			return new Cost(source, cv1T1);
 		} 
 		
 		// Non-reference binding
+		return nonReferenceConversion(source, target, allowUDC, isImpliedObject);
+	}
+
+	private static Cost nonReferenceConversion(IType source, IType target, boolean allowUDC,
+			boolean isImpliedObject) throws DOMException {
 		Cost cost= checkStandardConversionSequence(source, target, isImpliedObject);
-		if (allowUDC && (cost.rank == Cost.NO_MATCH_RANK || 
-				cost.rank == Cost.FUZZY_TEMPLATE_PARAMETERS)) { 
+		if (allowUDC && cost.rank == Cost.NO_MATCH_RANK) { 
 			Cost temp = checkUserDefinedConversionSequence(source, target);
 			if (temp != null) {
 				cost = temp;
@@ -349,19 +343,23 @@ public class Conversions {
 
 		//constructors
 		if (t instanceof ICPPClassType) {
-			ICPPConstructor [] constructors= ((ICPPClassType) t).getConstructors();
-			if (constructors.length > 0 && !(constructors[0] instanceof IProblemBinding)) {
+			ICPPConstructor[] ctors= ((ICPPClassType) t).getConstructors();
+			// select converting constructors
+			int j= 0;
+			ICPPConstructor[] convertingCtors= new ICPPConstructor[ctors.length];
+			for (int i = 0; i < ctors.length; i++) {
+				ICPPConstructor ctor= ctors[i];
+				if (!(ctor instanceof IProblemBinding) && !ctor.isExplicit())
+					convertingCtors[j++]= ctor;
+			}
+			if (j > 0) {
 				LookupData data= new LookupData();
-				data.forUserDefinedConversion= true;
 				data.functionParameters= new IType [] { source };
-				IBinding binding = CPPSemantics.resolveFunction(data, constructors);
-				if (binding instanceof ICPPConstructor) {
-					ICPPConstructor constructor= (ICPPConstructor) binding;
-					if (!constructor.isExplicit()) {
-						constructorCost = checkStandardConversionSequence(t, target, false);
-						if (constructorCost.rank == Cost.NO_MATCH_RANK) {
-							constructorCost= null;
-						}
+				IBinding binding = CPPSemantics.resolveFunction(data, convertingCtors, false);
+				if (binding instanceof ICPPConstructor && !(binding instanceof IProblemBinding)) {
+					constructorCost = checkStandardConversionSequence(t, target, false);
+					if (constructorCost.rank == Cost.NO_MATCH_RANK) {
+						constructorCost= null;
 					}
 				}
 			}

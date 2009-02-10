@@ -13,6 +13,7 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.dom.parser.cpp;
 
+import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.dom.IName;
 import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.EScopeKind;
@@ -168,8 +169,20 @@ public class CPPUnknownScope implements ICPPScope, ICPPInternalUnknownScope {
     }
 
     public IBinding[] getBindings(IASTName name, boolean resolve, boolean prefixLookup, IIndexFileSet acceptLocalBindings, boolean checkPointOfDecl) {
-    	if (prefixLookup)
+    	if (prefixLookup) {
+    		if (binding instanceof ICPPDeferredClassInstance) {
+	    		try {
+	    			ICPPDeferredClassInstance instance = (ICPPDeferredClassInstance) binding;
+	    			IScope scope = instance.getClassTemplate().getCompositeScope();
+	    			if (scope != null) {
+	    				return scope.getBindings(name, resolve, prefixLookup, acceptLocalBindings);
+	    			}
+	    		} catch (DOMException exc) {
+	    			CCorePlugin.log(exc);
+	    		}
+    		}
     		return IBinding.EMPTY_BINDING_ARRAY;
+    	}
     	
     	return new IBinding[] {getBinding(name, resolve, acceptLocalBindings)};
 	}

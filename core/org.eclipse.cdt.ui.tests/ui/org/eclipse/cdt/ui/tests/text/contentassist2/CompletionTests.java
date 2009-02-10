@@ -1199,4 +1199,20 @@ public class CompletionTests extends AbstractContentAssistTest {
 		assertCompletionResults(fCursorOffset, expected, COMPARE_DISP_STRINGS);
 	}
 
+	//template <class type>
+	//class Queue {
+	//	TClass<type>* myQueue;
+	//public: 
+	//	Queue() {
+	//		myQueue = new TClass<type>;
+	//	}
+	//	bool isEmtpy() {
+	//		return myQueue->a/*cursor*/
+	//	}
+	//};
+	public void testContentAssistInDeferredClassInstance_Bug194592() throws Exception {
+		final String[] expected= {"add()"};
+		assertCompletionResults(fCursorOffset, expected, COMPARE_REP_STRINGS);
+	}
+
 }

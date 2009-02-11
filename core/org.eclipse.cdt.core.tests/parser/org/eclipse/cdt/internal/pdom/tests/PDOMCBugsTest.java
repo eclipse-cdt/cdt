@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2008 Symbian Software Systems and others.
+ * Copyright (c) 2007, 2009 Symbian Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -23,6 +23,7 @@ import org.eclipse.cdt.core.dom.IPDOMManager;
 import org.eclipse.cdt.core.dom.ast.ASTTypeUtil;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.IFunctionType;
+import org.eclipse.cdt.core.dom.ast.IPointerType;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.ITypedef;
 import org.eclipse.cdt.core.index.IndexFilter;
@@ -94,7 +95,7 @@ public class PDOMCBugsTest extends BaseTestCase {
 				IFunctionType ft= (IFunctionType) type;
 				assertEquals("int (int)", ASTTypeUtil.getType(ft));
 			} else {
-				assertTrue("expected ITypedef, got "+type, type == null || type instanceof ITypedef);
+				assertTrue("expected ITypedef, got "+type, type == null || type instanceof ITypedef || type instanceof IPointerType);
 			}
 		}
 		

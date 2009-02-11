@@ -1,29 +1,37 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2008 IBM Corporation and others.
+ * Copyright (c) 2004, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- * IBM - Initial API and implementation
+ *    John Camelon (IBM) - Initial API and implementation
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.dom.parser.cpp;
+
+import static org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.SemanticUtil.CVQ;
+import static org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.SemanticUtil.REF;
+import static org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.SemanticUtil.TDEF;
 
 import org.eclipse.cdt.core.dom.ast.ASTVisitor;
 import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IASTExpression;
+import org.eclipse.cdt.core.dom.ast.IASTIdExpression;
+import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IASTUnaryExpression;
 import org.eclipse.cdt.core.dom.ast.IArrayType;
+import org.eclipse.cdt.core.dom.ast.IBinding;
+import org.eclipse.cdt.core.dom.ast.IFunction;
 import org.eclipse.cdt.core.dom.ast.IPointerType;
 import org.eclipse.cdt.core.dom.ast.IProblemBinding;
 import org.eclipse.cdt.core.dom.ast.IType;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTQualifiedName;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTUnaryExpression;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunction;
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunctionType;
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPReferenceType;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPMember;
 import org.eclipse.cdt.internal.core.dom.parser.ASTNode;
 import org.eclipse.cdt.internal.core.dom.parser.IASTAmbiguityParent;
 import org.eclipse.cdt.internal.core.dom.parser.ITypeContainer;
@@ -33,7 +41,7 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPVisitor;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.SemanticUtil;
 
 /**
- * @author jcamelon
+ * Unary expression in c++
  */
 public class CPPASTUnaryExpression extends ASTNode implements
         ICPPASTUnaryExpression, IASTAmbiguityParent {
@@ -118,15 +126,14 @@ public class CPPASTUnaryExpression extends ASTNode implements
 			return CPPVisitor.get_type_info(this);
 		}
 		
-		IType type= getOperand().getExpressionType();
-		type = SemanticUtil.getUltimateTypeViaTypedefs(type);
-
+		final IASTExpression operand = getOperand();
 		if (op == IASTUnaryExpression.op_star) {
+			IType type= operand.getExpressionType();
+			type = SemanticUtil.getNestedType(type, TDEF | REF | CVQ);
+	    	if (type instanceof IProblemBinding) {
+	    		return type;
+	    	}
 		    try {
-		    	type = SemanticUtil.getUltimateTypeUptoPointers(type);
-		    	if (type instanceof IProblemBinding) {
-		    		return type;
-		    	}
 				if (type instanceof ICPPClassType) {
 					ICPPFunction operator= CPPSemantics.findOperator(this, (ICPPClassType) type);
 					if (operator != null) {
@@ -137,37 +144,47 @@ public class CPPASTUnaryExpression extends ASTNode implements
 				} else if (type instanceof ICPPUnknownType) {
 					return CPPUnknownClass.createUnnamedInstance();
 				}
-				return new ProblemBinding(this, IProblemBinding.SEMANTIC_INVALID_TYPE,
-						this.getRawSignature().toCharArray());
 			} catch (DOMException e) {
 				return e.getProblem();
 			}
-		} else if (op == IASTUnaryExpression.op_amper) {
-			if (type instanceof ICPPReferenceType) {
-				try {
-					type = ((ICPPReferenceType) type).getType();
-				} catch (DOMException e) {
-				}
+			return new ProblemBinding(this, IProblemBinding.SEMANTIC_INVALID_TYPE, this.getRawSignature().toCharArray());
+		} 
+		if (op == IASTUnaryExpression.op_amper) {
+			IASTNode child= operand;
+			boolean inParenthesis= false;
+			while (child instanceof IASTUnaryExpression && ((IASTUnaryExpression) child).getOperator() == IASTUnaryExpression.op_bracketedPrimary) {
+				child= ((IASTUnaryExpression) child).getOperand();
+				inParenthesis= true;
 			}
-			if (type instanceof ICPPFunctionType) {
-				ICPPFunctionType functionType = (ICPPFunctionType) type;
-				IPointerType thisType = functionType.getThisType();
-				if (thisType != null) {
-					IType nestedType;
+			if (child instanceof IASTIdExpression) {
+				IASTName name= ((IASTIdExpression) child).getName();
+				IBinding b= name.resolveBinding();
+				if (b instanceof ICPPMember) {
+					ICPPMember member= (ICPPMember) b;
 					try {
-						nestedType = thisType.getType();
-						while (nestedType instanceof ITypeContainer) {
-							nestedType = ((ITypeContainer) nestedType).getType();
+						if (name instanceof ICPPASTQualifiedName) {
+							if (!member.isStatic()) {
+								if (!inParenthesis) {
+									return new CPPPointerToMemberType(member.getType(), member.getClassOwner(), false, false);
+								} else if (member instanceof IFunction) {
+									return new ProblemBinding(operand, IProblemBinding.SEMANTIC_INVALID_TYPE, operand.getRawSignature().toCharArray());
+								}
+							}
 						}
 					} catch (DOMException e) {
 						return e.getProblem();
 					}
-					return new CPPPointerToMemberType(type, nestedType, thisType.isConst(), thisType
-							.isVolatile());
 				}
 			}
+
+			IType type= operand.getExpressionType();
+			type = SemanticUtil.getNestedType(type, TDEF | REF);
 			return new CPPPointerType(type);
-		} else if (type instanceof CPPBasicType) {
+		} 
+
+		IType type= operand.getExpressionType();
+		type = SemanticUtil.getNestedType(type, TDEF | REF);
+		if (type instanceof CPPBasicType) {
 			((CPPBasicType) type).setFromExpression(this);
 		}
 		return type;

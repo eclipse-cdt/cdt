@@ -1,29 +1,27 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2008 IBM Corporation and others.
+ * Copyright (c) 2004, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *     IBM Corporation - initial API and implementation
+ *     Andrew Niefer (IBM Corporation) - initial API and implementation
  *     Markus Schorn (Wind River Systems)
  *******************************************************************************/
-/*
- * Created on Dec 10, 2004
- */
 package org.eclipse.cdt.internal.core.dom.parser.cpp;
 
 import org.eclipse.cdt.core.dom.ast.ASTTypeUtil;
+import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IASTPointer;
 import org.eclipse.cdt.core.dom.ast.IPointerType;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.ITypedef;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPPointerToMemberType;
 import org.eclipse.cdt.internal.core.dom.parser.ITypeContainer;
-import org.eclipse.cdt.internal.core.index.IIndexType;
 
 /**
- * @author aniefer
+ * Pointers in c++
  */
 public class CPPPointerType implements IPointerType, ITypeContainer {
 	protected IType type = null;
@@ -59,18 +57,25 @@ public class CPPPointerType implements IPointerType, ITypeContainer {
 	public boolean isSameType(IType o) {
 	    if (o == this)
             return true;
-        if (o instanceof ITypedef || o instanceof IIndexType)
+        if (o instanceof ITypedef)
             return o.isSameType(this);
         
-	    if (!(o instanceof CPPPointerType)) 
+        if (!(o instanceof IPointerType))
+        	return false;
+        
+	    if (this instanceof ICPPPointerToMemberType != o instanceof ICPPPointerToMemberType) 
 	        return false;
 	    
 	    if (type == null)
 	        return false;
 	    
-	    CPPPointerType pt = (CPPPointerType) o;
-	    if (isConst == pt.isConst && isVolatile == pt.isVolatile)
-	        return type.isSameType(pt.getType());
+	    IPointerType pt = (IPointerType) o;
+	    if (isConst == pt.isConst() && isVolatile == pt.isVolatile()) {
+			try {
+				return type.isSameType(pt.getType());
+			} catch (DOMException e) {
+			}
+	    }
 	    return false;
 	}
 

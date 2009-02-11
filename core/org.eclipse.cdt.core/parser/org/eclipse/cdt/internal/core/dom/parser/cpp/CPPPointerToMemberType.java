@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2008 IBM Corporation and others.
+ * Copyright (c) 2005, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -19,9 +19,7 @@ import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.ITypedef;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTPointerToMember;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTQualifiedName;
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunctionType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPPointerToMemberType;
-import org.eclipse.cdt.internal.core.index.IIndexType;
 
 /**
  * Models pointer to members.
@@ -48,16 +46,16 @@ public class CPPPointerToMemberType extends CPPPointerType implements ICPPPointe
 	public boolean isSameType(IType o) {
 	    if (o == this)
             return true;
-        if (o instanceof ITypedef || o instanceof IIndexType)
+        if (o instanceof ITypedef)
             return o.isSameType(this);
+
+	    if (!(o instanceof ICPPPointerToMemberType)) 
+	        return false;   
 
 	    if (!super.isSameType(o))
 	        return false;
 	    
-	    if (!(o instanceof CPPPointerToMemberType)) 
-	        return false;   
-	    
-	    CPPPointerToMemberType pt = (CPPPointerToMemberType) o;
+	    ICPPPointerToMemberType pt = (ICPPPointerToMemberType) o;
 	    IType cls = pt.getMemberOfClass();
 	    if (cls != null)
 	        return cls.isSameType(getMemberOfClass());
@@ -87,15 +85,5 @@ public class CPPPointerToMemberType extends CPPPointerType implements ICPPPointe
 			}
 		}
 		return classType;
-	}
-
-	@Override
-	public boolean isConst() {
-		return super.isConst() || (getType() instanceof ICPPFunctionType && ((ICPPFunctionType) getType()).isConst()); 
-	}
-
-	@Override
-	public boolean isVolatile() {
-		return super.isVolatile() || (getType() instanceof ICPPFunctionType && ((ICPPFunctionType) getType()).isVolatile()); 
 	}
 }

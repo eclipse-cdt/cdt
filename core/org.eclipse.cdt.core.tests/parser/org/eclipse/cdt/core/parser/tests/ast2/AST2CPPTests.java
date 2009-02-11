@@ -6759,4 +6759,61 @@ public class AST2CPPTests extends AST2BaseTest {
 		
 		parseAndCheckBindings(code, ParserLanguage.CPP);
 	}
+	
+	//	class X {
+	//		public:
+	//			int f;
+	//	void m(int) {};
+	//	void cm(int) const {};
+	//	static int sf;
+	//	static void sm(int) {};
+	//	};
+	//	int X::sf;
+	//
+	//	void mpr(int X::* p){}
+	//	void mpr(void (X::* q)(int)){}
+	//	void mprc(void (X::* q)(int) const){}
+	//	void mprcp(void (X::** q)(int) const){}
+	//	void pr(int * p){}
+	//	void pr(void (*q)(int)){}
+	//
+	//	void testxxx() {
+	//		void (X::* ptr)(int) const= &X::cm;
+	//		mpr(&X::f);
+	//		mpr(&X::m);
+	//		mprc(&X::cm);
+	//		mprcp(&ptr);
+	//	    pr(&X::sf);
+	//	    pr(&(X::sf));
+	//	    pr(&X::sm);
+	//	    pr(&(X::sm));
+	//
+	//		// invalid constructs:
+	//		mpr(&(X::f));  // cannot use parenthesis
+	//		mpr(&(X::m));   // cannot use parenthesis
+	//		mpr(&X::sf);    // sf is static
+	//		mpr(&X::sm);    // sm is static
+	//		mpr(&X::cm);    // cm is const
+	//		mprc(&X::m);    // m is not const
+	//	}
+	public void testMemberPtrs_264479() throws Exception {
+		final String code = getAboveComment();
+		BindingAssertionHelper ba= new BindingAssertionHelper(code, true);
+		ba.assertNonProblem("mpr(&X::f)", 3);
+		ba.assertNonProblem("mpr(&X::m)", 3);
+		ba.assertNonProblem("mprc(&X::cm)", 4);
+		ba.assertNonProblem("mprcp(&ptr)", 5);
+		ba.assertNonProblem("pr(&X::sf)", 2);
+		ba.assertNonProblem("pr(&(X::sf))", 2);
+		ba.assertNonProblem("pr(&X::sm)", 2);
+		ba.assertNonProblem("pr(&(X::sm))", 2);
+
+		ba.assertProblem("mpr(&(X::f))", 3);
+		ba.assertProblem("mpr(&(X::m))", 3);
+		ba.assertProblem("mpr(&X::sf)", 3);
+		ba.assertProblem("mpr(&X::sm)", 3);
+		ba.assertProblem("mpr(&X::cm)", 3);
+		ba.assertProblem("mprc(&X::m)", 4);
+	}
+	
 }

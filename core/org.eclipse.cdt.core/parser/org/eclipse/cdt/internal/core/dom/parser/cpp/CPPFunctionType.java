@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2008 IBM Corporation and others.
+ * Copyright (c) 2004, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -26,7 +26,8 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.SemanticUtil;
 public class CPPFunctionType implements ICPPFunctionType {
     private IType[] parameters;
     private IType returnType;
-    private IPointerType thisType;
+    private boolean isConst;
+    private boolean isVolatile;
     
     /**
      * @param returnType
@@ -37,10 +38,11 @@ public class CPPFunctionType implements ICPPFunctionType {
         this.parameters = types;
     }
 
-	public CPPFunctionType(IType returnType, IType[] types, IPointerType thisType) {
+	public CPPFunctionType(IType returnType, IType[] types, boolean isConst, boolean isVolatile) {
         this.returnType = returnType;
         this.parameters = types;
-        this.thisType = thisType;
+        this.isConst = isConst;
+        this.isVolatile= isVolatile;
     }
 
     public boolean isSameType(IType o) {
@@ -66,11 +68,11 @@ public class CPPFunctionType implements ICPPFunctionType {
 			
 			try {
 				if (parameters.length == 1 && fps.length == 0) {
-					IType p0= SemanticUtil.getUltimateTypeViaTypedefs(parameters[0]);
+					IType p0= SemanticUtil.getNestedType(parameters[0], SemanticUtil.TDEF);
 					if (!(p0 instanceof IBasicType) || ((IBasicType) p0).getType() != IBasicType.t_void)
 						return false;
 				} else if (fps.length == 1 && parameters.length == 0) {
-					IType p0= SemanticUtil.getUltimateTypeViaTypedefs(fps[0]);
+					IType p0= SemanticUtil.getNestedType(fps[0], SemanticUtil.TDEF);
 					if (!(p0 instanceof IBasicType) || ((IBasicType) p0).getType() != IBasicType.t_void)
 						return false;
 				} else if (parameters.length != fps.length) {
@@ -119,19 +121,17 @@ public class CPPFunctionType implements ICPPFunctionType {
         return t;
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.cdt.core.dom.ast.ICPPFunctionType#getThisType()
-     */
+    @Deprecated
     public IPointerType getThisType() {
-        return thisType;
+        return null;
     }
 
 	public final boolean isConst() {
-		return thisType != null && thisType.isConst();
+		return isConst;
 	}
 
 	public final boolean isVolatile() {
-		return thisType != null && thisType.isVolatile();
+		return isVolatile;
 	}
 
 	@Override

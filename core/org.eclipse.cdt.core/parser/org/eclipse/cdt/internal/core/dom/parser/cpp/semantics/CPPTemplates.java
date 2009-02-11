@@ -754,17 +754,18 @@ public class CPPTemplates {
 			if (tpMap == null)
 				return type;
 
-			if (type instanceof IFunctionType) {
+			if (type instanceof ICPPFunctionType) {
+				final ICPPFunctionType ft = (ICPPFunctionType) type;
 				IType ret = null;
 				IType[] params = null;
-				final IType r = ((IFunctionType) type).getReturnType();
+				final IType r = ft.getReturnType();
 				ret = instantiateType(r, tpMap, within);
-				IType[] ps = ((IFunctionType) type).getParameterTypes();
+				IType[] ps = ft.getParameterTypes();
 				params = instantiateTypes(ps, tpMap, within);
 				if (ret == r && params == ps) {
 					return type;
 				}
-				return new CPPFunctionType(ret, params, ((ICPPFunctionType) type).getThisType());
+				return new CPPFunctionType(ret, params, ft.isConst(), ft.isVolatile());
 			} 
 
 			if (type instanceof ICPPTemplateParameter) {
@@ -1800,7 +1801,7 @@ public class CPPTemplates {
 		@Override
 		public ICPPFunctionType getType() {
 			if (type == null) {
-				type = CPPVisitor.createImplicitFunctionType(new CPPBasicType(IBasicType.t_void, 0), functionParameters, null);
+				type = CPPVisitor.createImplicitFunctionType(new CPPBasicType(IBasicType.t_void, 0), functionParameters, false, false);
 			}
 			return type;
 		}

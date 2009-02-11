@@ -6,7 +6,7 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *    QNX - Initial API and implementation
+ *    Doug Schaefer (QNX) - Initial API and implementation
  *    Markus Schorn (Wind River Systems)
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.pdom.dom.cpp;
@@ -29,7 +29,7 @@ import org.eclipse.cdt.internal.core.pdom.dom.PDOMNode;
 import org.eclipse.core.runtime.CoreException;
 
 /**
- * @author Doug Schaefer
+ * Typedefs for c++
  */
 class PDOMCPPTypedef extends PDOMCPPBinding implements ITypedef, ITypeContainer, IIndexType {
 
@@ -151,6 +151,11 @@ class PDOMCPPTypedef extends PDOMCPPBinding implements ITypedef, ITypeContainer,
 		} catch (DOMException e) {
 		}
 		return false;
+	}
+	
+	@Override
+	protected String toStringBase() {
+		return getName() + ": " + super.toStringBase(); //$NON-NLS-1$
 	}
 
 	public void setType(IType type) { fail(); }

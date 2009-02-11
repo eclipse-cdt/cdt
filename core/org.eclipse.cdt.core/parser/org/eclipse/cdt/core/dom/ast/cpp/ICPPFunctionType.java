@@ -8,6 +8,7 @@
  * Contributors:
  *     Andrew Niefer (IBM) - Initial API and implementation
  * 	   Sergey Prigogin (Google)
+ *     Markus Schorn (Wind River Systems)
  *******************************************************************************/
 package org.eclipse.cdt.core.dom.ast.cpp;
 
@@ -23,7 +24,10 @@ public interface ICPPFunctionType extends IFunctionType {
 	/**
 	 * Returns type of implicit <code>this</code>. parameter, or null, if the function
 	 * is not a class method or a static method.
+	 * @deprecated function types don't relate to this pointers at all.
+	 * @noreference This method is not intended to be referenced by clients.
 	 */
+	@Deprecated
 	public IPointerType getThisType();
 	
 	/**

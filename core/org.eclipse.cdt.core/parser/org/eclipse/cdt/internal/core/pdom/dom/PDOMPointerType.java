@@ -6,7 +6,7 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *    QNX - Initial API and implementation
+ *    Doug Schaefer (QNX) - Initial API and implementation
  *    Markus Schorn (Wind River Systems)
  *    IBM Corporation
  *******************************************************************************/
@@ -19,6 +19,7 @@ import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IPointerType;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.ITypedef;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPPointerToMemberType;
 import org.eclipse.cdt.internal.core.Util;
 import org.eclipse.cdt.internal.core.dom.parser.ITypeContainer;
 import org.eclipse.cdt.internal.core.index.IIndexBindingConstants;
@@ -28,7 +29,7 @@ import org.eclipse.cdt.internal.core.pdom.db.Database;
 import org.eclipse.core.runtime.CoreException;
 
 /**
- * @author Doug Schaefer
+ * Pointer types for c and c++.
  */
 public class PDOMPointerType extends PDOMNode implements IPointerType,
 		ITypeContainer, IIndexType {
@@ -118,9 +119,12 @@ public class PDOMPointerType extends PDOMNode implements IPointerType,
 		if( type instanceof ITypedef )
 		    return ((ITypedef)type).isSameType( this );
 		
-		if( !( type instanceof IPointerType )) 
-		    return false;
-		
+		if (!(type instanceof IPointerType))
+			return false;
+
+	    if (this instanceof ICPPPointerToMemberType != type instanceof ICPPPointerToMemberType) 
+	        return false;
+
 		IPointerType rhs = (IPointerType) type;
 		try {
 			if (isConst() == rhs.isConst() && isVolatile() == rhs.isVolatile()) {

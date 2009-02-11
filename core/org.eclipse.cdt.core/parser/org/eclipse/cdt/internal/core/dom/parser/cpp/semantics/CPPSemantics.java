@@ -14,6 +14,8 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.dom.parser.cpp.semantics;
 
+import static org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.SemanticUtil.TDEF;
+import static org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.SemanticUtil.getNestedType;
 import static org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.SemanticUtil.getUltimateType;
 import static org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.SemanticUtil.getUltimateTypeUptoPointers;
 
@@ -442,8 +444,13 @@ public class CPPSemantics {
 		if (parent instanceof ICPPASTFunctionDeclarator) {
 			data.functionParameters = ((ICPPASTFunctionDeclarator)parent).getParameters();
 		} else if (parent instanceof IASTIdExpression) {
-		    ASTNodeProperty prop = parent.getPropertyInParent();
-		    if (prop == IASTFunctionCallExpression.FUNCTION_NAME) {
+			IASTNode grand= parent.getParent();
+			while (grand instanceof IASTUnaryExpression
+					&& ((IASTUnaryExpression) grand).getOperator() == IASTUnaryExpression.op_bracketedPrimary) {
+				parent= grand;
+				grand = grand.getParent();
+			}
+		    if (parent.getPropertyInParent() == IASTFunctionCallExpression.FUNCTION_NAME) {
 		        parent = parent.getParent();
 				IASTExpression exp = ((IASTFunctionCallExpression)parent).getParameterExpression();
 				if (exp instanceof IASTExpressionList)
@@ -453,14 +460,22 @@ public class CPPSemantics {
 				else
 					data.functionParameters = IASTExpression.EMPTY_EXPRESSION_ARRAY;
 			}
-		} else if (parent instanceof ICPPASTFieldReference && parent.getPropertyInParent() == IASTFunctionCallExpression.FUNCTION_NAME) {
-		    IASTExpression exp = ((IASTFunctionCallExpression)parent.getParent()).getParameterExpression();
-			if (exp instanceof IASTExpressionList)
-				data.functionParameters = ((IASTExpressionList) exp).getExpressions();
-			else if (exp != null)
-				data.functionParameters = new IASTExpression[] { exp };
-			else
-				data.functionParameters = IASTExpression.EMPTY_EXPRESSION_ARRAY;
+		} else if (parent instanceof ICPPASTFieldReference) {
+			IASTNode grand= parent.getParent();
+			while (grand instanceof IASTUnaryExpression
+					&& ((IASTUnaryExpression) grand).getOperator() == IASTUnaryExpression.op_bracketedPrimary) {
+				parent= grand;
+				grand = grand.getParent();
+			}
+			if (parent.getPropertyInParent() == IASTFunctionCallExpression.FUNCTION_NAME) {
+				IASTExpression exp = ((IASTFunctionCallExpression)parent.getParent()).getParameterExpression();
+				if (exp instanceof IASTExpressionList)
+					data.functionParameters = ((IASTExpressionList) exp).getExpressions();
+				else if (exp != null)
+					data.functionParameters = new IASTExpression[] { exp };
+				else
+					data.functionParameters = IASTExpression.EMPTY_EXPRESSION_ARRAY;
+			}
 		} else if (parent instanceof ICPPASTNamedTypeSpecifier && parent.getParent() instanceof IASTTypeId) {
 	        IASTTypeId typeId = (IASTTypeId) parent.getParent();
 	        if (typeId.getParent() instanceof ICPPASTNewExpression) {
@@ -1833,7 +1848,7 @@ public class CPPSemantics {
 			// check for parameter of type void
 			IType[] argTypes= getSourceParameterTypes(funcArgs);
 			if (argTypes.length == 1) {
-				IType t= SemanticUtil.getUltimateTypeViaTypedefs(argTypes[0]);
+				IType t= getNestedType(argTypes[0], TDEF);
 				if (t instanceof IBasicType && ((IBasicType)t).getType() == IBasicType.t_void) {
 					numArgs= 0;
 				}
@@ -1862,7 +1877,7 @@ public class CPPSemantics {
 			int numPars = params.length;
 			if (numArgs < 2 && numPars == 1) {
 				// check for void
-			    IType t = SemanticUtil.getUltimateTypeViaTypedefs(params[0].getType());
+			    IType t = getNestedType(params[0].getType(), TDEF);
 			    if (t instanceof IBasicType && ((IBasicType)t).getType() == IBasicType.t_void)
 			        numPars= 0;
 			}

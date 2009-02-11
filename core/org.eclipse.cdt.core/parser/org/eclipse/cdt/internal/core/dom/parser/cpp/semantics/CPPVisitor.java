@@ -67,7 +67,6 @@ import org.eclipse.cdt.core.dom.ast.IFunction;
 import org.eclipse.cdt.core.dom.ast.IFunctionType;
 import org.eclipse.cdt.core.dom.ast.ILabel;
 import org.eclipse.cdt.core.dom.ast.IParameter;
-import org.eclipse.cdt.core.dom.ast.IPointerType;
 import org.eclipse.cdt.core.dom.ast.IProblemBinding;
 import org.eclipse.cdt.core.dom.ast.IQualifierType;
 import org.eclipse.cdt.core.dom.ast.IScope;
@@ -118,7 +117,6 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunctionScope;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunctionType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPMethod;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPNamespace;
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPPointerToMemberType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPReferenceType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPScope;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPSpecialization;
@@ -1493,7 +1491,7 @@ public class CPPVisitor extends ASTQueries {
 	 * Generate a function type for an implicit function.
 	 * NOTE: This does not correctly handle parameters with typedef types.
 	 */
-	public static ICPPFunctionType createImplicitFunctionType(IType returnType, IParameter[] parameters, IPointerType thisType) {
+	public static ICPPFunctionType createImplicitFunctionType(IType returnType, IParameter[] parameters, boolean isConst, boolean isVolatile) {
 	    IType[] pTypes = new IType[parameters.length];
 	    IType pt = null;
 	    
@@ -1518,7 +1516,7 @@ public class CPPVisitor extends ASTQueries {
 	        pTypes[i] = pt; 
 	    }
 	    
-	    return new CPPFunctionType(returnType, pTypes, thisType);
+	    return new CPPFunctionType(returnType, pTypes, isConst, isVolatile);
 	}
 	
 	private static IType createType(IType returnType, ICPPASTFunctionDeclarator fnDtor) {
@@ -1547,30 +1545,11 @@ public class CPPVisitor extends ASTQueries {
 	    	returnType = getPointerTypes(returnType, fnDtor);
 	    }
 	    
-	    IScope scope = fnDtor.getFunctionScope();
-	    IType thisType= getThisType(scope);
-	    IASTDeclarator nested = fnDtor.getNestedDeclarator();
-	    if (thisType == null && nested != null) {
-	    	IType pts= getPointerTypes(new CPPBasicType(-1,-1), nested);
-	    	if (pts instanceof ICPPPointerToMemberType) {
-	    		thisType= new CPPPointerType(((ICPPPointerToMemberType)pts).getMemberOfClass());
-	    	}
-	    }
-	    if (thisType instanceof IPointerType) {
-			try {
-				IType classType = ((IPointerType) thisType).getType();
-				// a destructor can be called for const and volatile objects
-				final char[] lookupKey = name.getLookupKey();
-				final boolean isDestructor= lookupKey.length > 0 && lookupKey[0]=='~';
-		    	final boolean isConst = isDestructor || fnDtor.isConst();
-				final boolean isVolatile = isDestructor || fnDtor.isVolatile();
-				thisType = new CPPPointerType(classType, isConst, isVolatile);
-			} catch (DOMException e) {
-			}
-	    } else {
-	    	thisType = null;
-	    }
-	    IType type = new CPPFunctionType(returnType, pTypes, (IPointerType) thisType);
+	    // a destructor can be called for const and volatile objects
+	    final char[] lookupKey = name.getLookupKey();
+	    final boolean isDestructor= lookupKey.length > 0 && lookupKey[0]=='~';
+	    IType type = new CPPFunctionType(returnType, pTypes, isDestructor || fnDtor.isConst(), isDestructor || fnDtor.isVolatile());
+	    final IASTDeclarator nested = fnDtor.getNestedDeclarator();
 	    if (nested != null) {
 	    	return createType(type, nested);
 	    }

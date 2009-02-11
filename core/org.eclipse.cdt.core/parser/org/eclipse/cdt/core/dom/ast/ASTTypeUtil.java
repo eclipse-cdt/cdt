@@ -11,6 +11,8 @@
  *******************************************************************************/
 package org.eclipse.cdt.core.dom.ast;
 
+import static org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.SemanticUtil.TDEF;
+
 import java.util.LinkedList;
 
 import org.eclipse.cdt.core.dom.ast.c.ICArrayType;
@@ -20,7 +22,9 @@ import org.eclipse.cdt.core.dom.ast.c.ICQualifierType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPBasicType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPBinding;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunctionType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPNamespace;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPPointerToMemberType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPReferenceType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateArgument;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateInstance;
@@ -89,7 +93,7 @@ public class ASTTypeUtil {
 		if (parameters.length == 0) {
 			return false;
 		} else if (parameters.length == 1) {
-			IType ultimateType = SemanticUtil.getUltimateTypeViaTypedefs(parameters[0].getType());
+			IType ultimateType = SemanticUtil.getNestedType(parameters[0].getType(), TDEF);
 
 			if (ultimateType instanceof IBasicType) {
 				if (((IBasicType) ultimateType).getType() == IBasicType.t_void) {
@@ -387,9 +391,17 @@ public class ASTTypeUtil {
 				if (temp != null && !temp.equals(EMPTY_STRING)) {
 					result.append(temp); needSpace = false;
 				}
+				if (type instanceof ICPPFunctionType) {
+					ICPPFunctionType ft= (ICPPFunctionType) type;
+					needSpace= appendCVQ(result, needSpace, ft.isConst(), ft.isVolatile());
+				}
 			} catch (DOMException e) {
 			}
 		} else if (type instanceof IPointerType) {
+			if (type instanceof ICPPPointerToMemberType) {
+				result.append(getTypeString(((ICPPPointerToMemberType) type).getMemberOfClass(), normalize));
+				result.append(Keywords.cpCOLONCOLON);
+			}
 			result.append(Keywords.cpSTAR); needSpace = true;
 			
 			if (type instanceof IGPPPointerType) {
@@ -408,18 +420,8 @@ public class ASTTypeUtil {
 				}
 			}
 			
-			if (((IPointerType) type).isConst()) {
-				if (needSpace) {
-					result.append(SPACE); needSpace = false;
-				}
-				result.append(Keywords.CONST); needSpace = true;
-			}
-			if (((IPointerType) type).isVolatile()) {
-				if (needSpace) {
-					result.append(SPACE); needSpace = false;
-				}
-				result.append(Keywords.VOLATILE); needSpace = true;
-			}
+			IPointerType pt= (IPointerType) type;
+			needSpace= appendCVQ(result, needSpace, pt.isConst(), pt.isVolatile());
 		} else if (type instanceof IQualifierType) {
 			if (type instanceof ICQualifierType) {
 				if (((ICQualifierType) type).isRestrict()) {
@@ -431,23 +433,30 @@ public class ASTTypeUtil {
 				}
 			}
 			
-			if (((IQualifierType) type).isConst()) {
-				if (needSpace) {
-					result.append(SPACE); needSpace = false;
-				}
-				result.append(Keywords.CONST); needSpace = true;
-			}
-			if (((IQualifierType) type).isVolatile()) {
-				if (needSpace) {
-					result.append(SPACE); needSpace = false;
-				}
-				result.append(Keywords.VOLATILE); needSpace = true;
-			}
+			IQualifierType qt= (IQualifierType) type;
+			needSpace= appendCVQ(result, needSpace, qt.isConst(), qt.isVolatile());
 		} else if (type instanceof ITypedef) {
 			result.append(((ITypedef) type).getNameCharArray());
 		}
 		
 		return result.toString();
+	}
+
+	private static boolean appendCVQ(StringBuilder target, boolean needSpace, final boolean isConst,
+			final boolean isVolatile) {
+		if (isConst) {
+			if (needSpace) {
+				target.append(SPACE); needSpace = false;
+			}
+			target.append(Keywords.CONST); needSpace = true;
+		}
+		if (isVolatile) {
+			if (needSpace) {
+				target.append(SPACE); needSpace = false;
+			}
+			target.append(Keywords.VOLATILE); needSpace = true;
+		}
+		return needSpace;
 	}
 
 	/**

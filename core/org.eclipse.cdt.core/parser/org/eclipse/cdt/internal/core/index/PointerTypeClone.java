@@ -1,12 +1,13 @@
 /*******************************************************************************
- * Copyright (c) 2007 QNX Software Systems and others.
+ * Copyright (c) 2007, 2009 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- * QNX - Initial API and implementation
+ *    QNX - Initial API and implementation
+ *    Markus Schorn (Wind River Systems)
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.index;
 
@@ -14,6 +15,7 @@ import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IPointerType;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.ITypedef;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPPointerToMemberType;
 import org.eclipse.cdt.internal.core.dom.parser.ITypeContainer;
 
 /**
@@ -49,6 +51,9 @@ public class PointerTypeClone implements IPointerType, ITypeContainer, IIndexTyp
 		if (!(type instanceof IPointerType)) 
 		    return false;
 		
+	    if (this instanceof ICPPPointerToMemberType != type instanceof ICPPPointerToMemberType) 
+	        return false;
+
 		IPointerType rhs = (IPointerType) type;
 		try {
 			if (isConst() == rhs.isConst() && isVolatile() == rhs.isVolatile()) {

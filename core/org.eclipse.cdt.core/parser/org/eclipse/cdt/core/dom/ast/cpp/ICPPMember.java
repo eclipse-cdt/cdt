@@ -7,10 +7,12 @@
  *
  * Contributors:
  *    Doug Schaefer (IBM) - Initial API and implementation
+ *    Markus Schorn (Wind River Systems)
  *******************************************************************************/
 package org.eclipse.cdt.core.dom.ast.cpp;
 
 import org.eclipse.cdt.core.dom.ast.DOMException;
+import org.eclipse.cdt.core.dom.ast.IType;
 
 /**
  * Represents a member of a class. Adds in the visibility attribute.
@@ -20,16 +22,30 @@ import org.eclipse.cdt.core.dom.ast.DOMException;
  */
 public interface ICPPMember extends ICPPBinding {
 
+	public static final int v_private = ICPPASTVisibilityLabel.v_private;
+	public static final int v_protected = ICPPASTVisibilityLabel.v_protected;
+	public static final int v_public = ICPPASTVisibilityLabel.v_public;
+
 	/**
-	 * The visibility.
+	 * Returns the accessibility of the member.
 	 */ 
 	public int getVisibility() throws DOMException;
 
-	public static final int v_private = ICPPASTVisibilityLabel.v_private;
 
-	public static final int v_protected = ICPPASTVisibilityLabel.v_protected;
-
-	public static final int v_public = ICPPASTVisibilityLabel.v_public;
-
+	/**
+	 * Same as {@link #getOwner()}.
+	 */
 	public ICPPClassType getClassOwner() throws DOMException;
+	
+	/**
+	 * Returns whether this is a static member or not.
+	 * @since 5.1
+	 */
+	public boolean isStatic() throws DOMException;
+
+	/**
+	 * Returns the type of the member (function type or type of field)
+	 * @since 5.1
+	 */
+	public IType getType() throws DOMException;
 }

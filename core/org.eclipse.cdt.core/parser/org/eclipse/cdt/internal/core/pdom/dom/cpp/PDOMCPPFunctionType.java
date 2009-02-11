@@ -11,7 +11,6 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.pdom.dom.cpp;
 
-import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.dom.ast.ASTTypeUtil;
 import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IBasicType;
@@ -28,6 +27,7 @@ import org.eclipse.core.runtime.CoreException;
 public class PDOMCPPFunctionType extends PDOMCFunctionType implements ICPPFunctionType {
 	private static IType FALLBACK_RETURN_TYPE= new CPPBasicType(IBasicType.t_void, 0);
 	static ICPPFunctionType FALLBACK= new ICPPFunctionType() {
+		@Deprecated
 		public IPointerType getThisType() {
 			return null;
 		}
@@ -56,15 +56,16 @@ public class PDOMCPPFunctionType extends PDOMCFunctionType implements ICPPFuncti
 	 * Offset for <code>this</code> type of this function (relative to
 	 * the beginning of the record).
 	 */
-	private static final int THIS_TYPE= PDOMCFunctionType.RECORD_SIZE;
+	private static final int CV= PDOMCFunctionType.RECORD_SIZE;
 
 	/**
 	 * The size in bytes of a PDOMCFunctionType record in the database.
 	 */
 	@SuppressWarnings("hiding")
-	private static final int RECORD_SIZE= PDOMCFunctionType.RECORD_SIZE + 4;
+	private static final int RECORD_SIZE= PDOMCFunctionType.RECORD_SIZE + 1;
 	
 	IPointerType thisType;  // Cached value
+	int cvq= -1; // Cached value
 	
 	protected PDOMCPPFunctionType(PDOMLinkage linkage, int offset) {
 		super(linkage, offset);
@@ -73,36 +74,37 @@ public class PDOMCPPFunctionType extends PDOMCFunctionType implements ICPPFuncti
 	protected PDOMCPPFunctionType(PDOMLinkage linkage, PDOMNode parent, ICPPFunctionType type)
 			throws CoreException {
 		super(linkage, parent, type);
-		setThisType(type.getThisType());
+		setcvq(type.isConst(), type.isVolatile());
 	}
 
-	private void setThisType(IPointerType type) throws CoreException {
-		PDOMNode typeNode = getLinkage().addType(this, type);
-		if (typeNode != null) {
-			getDB().putInt(record + THIS_TYPE, typeNode.getRecord());
-		}
+	private void setcvq(boolean isConst, boolean isVolatile) throws CoreException {
+		int v= (isConst ? 1 : 0) + (isVolatile ? 2 : 0);
+		getDB().putByte(record + CV, (byte) v);
 	}
 
+	@Deprecated
 	public IPointerType getThisType() {
-		if (thisType == null) {
-			try {
-				PDOMNode node = getLinkage().getNode(getDB().getInt(record + THIS_TYPE));
-				if (node instanceof IPointerType) {
-					thisType = (IPointerType) node;
-				}
-			} catch (CoreException e) {
-				CCorePlugin.log(e);
-			}
-		}
-		return thisType;
+		return null;
 	}
 
 	public final boolean isConst() {
-		return getThisType() != null && getThisType().isConst();
+		readcvq();
+		return (cvq & 1) != 0;
+	}
+
+	private void readcvq() {
+		if (cvq == -1) {
+			try {
+				cvq= getDB().getByte(record + CV);
+			} catch (CoreException e) {
+				cvq= 0;
+			}
+		}
 	}
 
 	public final boolean isVolatile() {
-		return getThisType() != null && getThisType().isVolatile();
+		readcvq();
+		return (cvq & 2) != 0;
 	}
 
 	@Override

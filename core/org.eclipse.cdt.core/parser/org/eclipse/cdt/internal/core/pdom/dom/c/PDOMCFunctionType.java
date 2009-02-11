@@ -123,11 +123,11 @@ public class PDOMCFunctionType extends PDOMNode implements IIndexType, IFunction
 				IType[] params1= getParameterTypes();
 				IType[] params2= ft.getParameterTypes();
 				if (params1.length == 1 && params2.length == 0) {
-					IType p0= SemanticUtil.getUltimateTypeViaTypedefs(params1[0]);
+					IType p0= SemanticUtil.getNestedType(params1[0], SemanticUtil.TDEF);
 					if (!(p0 instanceof IBasicType) || ((IBasicType) p0).getType() != IBasicType.t_void)
 						return false;
 				} else if (params2.length == 1 && params1.length == 0) {
-					IType p0= SemanticUtil.getUltimateTypeViaTypedefs(params2[0]);
+					IType p0= SemanticUtil.getNestedType(params2[0], SemanticUtil.TDEF);
 					if (!(p0 instanceof IBasicType) || ((IBasicType) p0).getType() != IBasicType.t_void)
 						return false;
 				} else if (params1.length != params2.length) {

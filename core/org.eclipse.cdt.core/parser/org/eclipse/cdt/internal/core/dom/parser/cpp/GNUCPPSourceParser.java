@@ -2576,6 +2576,16 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
     }
 
 	private boolean canHaveConstructorInitializer(IASTDeclSpecifier declspec, IASTDeclarator dtor) {
+		if (declspec instanceof ICPPASTDeclSpecifier) {
+			ICPPASTDeclSpecifier cppspec= (ICPPASTDeclSpecifier) declspec;			
+			if (cppspec.isFriend()) {
+				return false;
+			}
+			if (cppspec.getStorageClass() == IASTDeclSpecifier.sc_typedef) {
+				return false;
+			}
+		}
+
 		if (declspec instanceof ICPPASTSimpleDeclSpecifier) {
 			ICPPASTSimpleDeclSpecifier sspec= (ICPPASTSimpleDeclSpecifier) declspec;
 			switch(sspec.getType()) {
@@ -2592,14 +2602,7 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
 			case IASTSimpleDeclSpecifier.t_void:
 				return false;
 			}
-			
-			if (sspec.isFriend()) {
-				return false;
-			}
-			if (sspec.getStorageClass() == IASTDeclSpecifier.sc_typedef) {
-				return false;
-			}
-		}
+		}		
 		
 		if (dtor != null) {
 			IASTName name = ASTQueries.findInnermostDeclarator(dtor).getName().getLastName();

@@ -3767,8 +3767,10 @@ public class AST2TemplateTests extends AST2BaseTest {
 	//	  return A<C>(p);
 	//	}
 	public void _testForwardDeclarations_264109() throws Exception {
-		BindingAssertionHelper bh= new BindingAssertionHelper(getAboveComment(), true);
+		final String code = getAboveComment();
+		BindingAssertionHelper bh= new BindingAssertionHelper(code, true);
 		bh.assertNonProblem("A<C> make_A(C* p) {", 4, ICPPTemplateInstance.class);
+		parseAndCheckBindings(code, ParserLanguage.CPP);
 	}
 	
 	//	template <typename T> class CT {

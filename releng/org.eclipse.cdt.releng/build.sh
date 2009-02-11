@@ -27,8 +27,8 @@ umask 0022
 # Checkout basebuilder to run the build
 mkdir -p tools
 cd tools
-#cvs -d:pserver:anonymous@dev.eclipse.org:/cvsroot/eclipse \
-#	checkout -r RC2_34 org.eclipse.releng.basebuilder
+cvs -d:pserver:anonymous@dev.eclipse.org:/cvsroot/eclipse \
+	checkout -r RC2_34 org.eclipse.releng.basebuilder
 cd ..
 
 # Let's go!

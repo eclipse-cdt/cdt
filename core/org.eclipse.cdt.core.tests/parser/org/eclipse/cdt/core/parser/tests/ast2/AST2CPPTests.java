@@ -6735,4 +6735,28 @@ public class AST2CPPTests extends AST2BaseTest {
 		ba.assertNonProblem("onRange(ir)", 7);
 		parseAndCheckBindings(code, ParserLanguage.CPP);
 	}
+	
+	//	typedef int * pi;
+	//	typedef int *const* pcpi;
+	//	typedef const pi* pcpi2;
+	//	void check(pcpi) {};
+	//	void testxxx() {
+	//	        pcpi p1;
+	//	        pcpi2 p2;
+	//	        check(p1);
+	//	        check(p2);
+	//	}
+	//  template<typename T> class CT {};
+	//  CT<pcpi> ct1;
+	//  CT<pcpi2> ct2;
+	public void testConstTypedef_264474() throws Exception {
+		final String code = getAboveComment();
+		BindingAssertionHelper ba= new BindingAssertionHelper(code, true);
+		ba.assertNonProblem("check(p2)", 5);
+		IBinding ct1= ba.assertNonProblem("CT<pcpi>", 8);
+		IBinding ct2= ba.assertNonProblem("CT<pcpi2>", 9);
+		assertSame(ct1, ct2);
+		
+		parseAndCheckBindings(code, ParserLanguage.CPP);
+	}
 }

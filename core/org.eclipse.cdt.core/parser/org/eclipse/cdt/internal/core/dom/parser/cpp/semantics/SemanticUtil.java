@@ -238,8 +238,17 @@ public class SemanticUtil {
 					t= ((ITypedef) type).getType();
 				} else if (refs && type instanceof ICPPReferenceType) {
 					t= ((ICPPReferenceType) type).getType();
-				} else if (qualifiers && type instanceof IQualifierType) {
-					t= ((IQualifierType) type).getType();
+				} else if (type instanceof IQualifierType) {
+					final IQualifierType qt = (IQualifierType) type;
+					if (qualifiers) {
+						t= qt.getType();
+					} else if (typedefs) {
+						IType temp= qt.getType();
+						if (temp instanceof ITypedef) {
+							temp= getNestedType(temp, TYPEDEFS);
+							return addQualifiers(temp, qt.isConst(), qt.isVolatile());
+						}
+					}
 				} else if (ptrQualifiers && type instanceof IPointerType) {
 					if (type instanceof CPPPointerType) {
 						return ((CPPPointerType) type).stripQualifiers();
@@ -309,15 +318,10 @@ public class SemanticUtil {
 	public static IType replaceNestedType(ITypeContainer type, IType newNestedType) throws DOMException {
 		// bug 249085 make sure not to add unnecessary qualifications
 		if (type instanceof IQualifierType) {
-			IQualifierType qt1= (IQualifierType) type;
-			if (newNestedType instanceof IQualifierType) {
-				IQualifierType qt2= (IQualifierType) newNestedType;
-				return new CPPQualifierType(qt2.getType(), qt1.isConst() || qt2.isConst(), qt1.isVolatile() || qt2.isVolatile());
-			} else if (newNestedType instanceof IPointerType) {
-				IPointerType pt2= (IPointerType) newNestedType;
-				return new CPPPointerType(pt2.getType(), qt1.isConst() || pt2.isConst(), qt1.isVolatile() || pt2.isVolatile());
-			}
+			IQualifierType qt= (IQualifierType) type;
+			return addQualifiers(newNestedType, qt.isConst(), qt.isVolatile());
 		}
+
 		type = (ITypeContainer) type.clone();
 		type.setType(newNestedType);
 		return type;

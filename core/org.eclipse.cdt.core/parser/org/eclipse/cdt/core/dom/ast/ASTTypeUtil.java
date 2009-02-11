@@ -474,14 +474,33 @@ public class ASTTypeUtil {
 		
 		// push all of the types onto the stack
 		int i = 0;
+		IQualifierType cvq= null;
 		while (type != null && ++i < 100) {
-			final boolean isTypedef= type instanceof ITypedef;
-			if (!normalize || !isTypedef) { 
+			if (!normalize) {
 			    types = (IType[]) ArrayUtil.append(IType.class, types, type);
+				if (type instanceof ITypedef) {
+					type= null;	// stop here
+				}
+			} else {
+				if (type instanceof ITypedef) {
+					// skip it
+				} else {
+					if (cvq != null) {
+						if (type instanceof IQualifierType || type instanceof IPointerType) {
+							type= SemanticUtil.addQualifiers(type, cvq.isConst(), cvq.isVolatile());
+							cvq= null;
+						} else {
+							types = (IType[]) ArrayUtil.append(IType.class, types, cvq);							
+						}
+					} 
+					if (type instanceof IQualifierType) {
+						cvq= (IQualifierType) type;
+					} else {
+						types = (IType[]) ArrayUtil.append(IType.class, types, type);
+					} 
+				}
 			}
-			if (!normalize && isTypedef) {
-				type= null;	// stop here
-			} else if (type instanceof ITypeContainer) {
+			if (type instanceof ITypeContainer) {
 				try {
 					type = ((ITypeContainer) type).getType();
 				} catch (DOMException e) {
@@ -490,7 +509,7 @@ public class ASTTypeUtil {
 			} else {
 				type= null;
 			}
-		}
+		}	 
 		
 		// pop all of the types off of the stack, and build the string representation while doing so
 		for (int j = types.length - 1; j >= 0; j--) {

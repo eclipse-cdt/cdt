@@ -12,7 +12,6 @@ package org.eclipse.cdt.make.internal.core;
 
 import java.io.File;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.Map;
 import java.util.Vector;
 import java.util.Map.Entry;
@@ -47,10 +46,10 @@ public class MakeTargetManager implements IMakeTargetManager, IResourceChangeLis
 
 	private static String TARGETS_EXT = "targets"; //$NON-NLS-1$
 
-	private ListenerList listeners = new ListenerList();
-	Map projectMap = new HashMap();
-	private HashMap builderMap;
-	protected Vector fProjects = new Vector();
+	private final ListenerList listeners = new ListenerList();
+	private final Map<IProject, ProjectTargets> projectMap = new HashMap<IProject, ProjectTargets>();
+	private HashMap<String, String> builderMap;
+	protected Vector<IProject> fProjects = new Vector<IProject>();
 
 	public MakeTargetManager() {
 	}
@@ -62,12 +61,12 @@ public class MakeTargetManager implements IMakeTargetManager, IResourceChangeLis
 	public void addTarget(IMakeTarget target) throws CoreException {
 		addTarget(null, target);
 	}
-	
+
 	public void addTarget(IContainer container, IMakeTarget target) throws CoreException {
 		if (container instanceof IWorkspaceRoot) {
 			throw new CoreException(new Status(IStatus.ERROR, MakeCorePlugin.getUniqueIdentifier(), -1, MakeMessages.getString("MakeTargetManager.add_to_workspace_root"), null)); //$NON-NLS-1$
 		}
-		ProjectTargets projectTargets = (ProjectTargets)projectMap.get(target.getProject());
+		ProjectTargets projectTargets = projectMap.get(target.getProject());
 		if (projectTargets == null) {
 			projectTargets = readTargets(target.getProject());
 		}
@@ -83,15 +82,15 @@ public class MakeTargetManager implements IMakeTargetManager, IResourceChangeLis
 	}
 
 	public boolean targetExists(IMakeTarget target) {
-		ProjectTargets projectTargets = (ProjectTargets)projectMap.get(target.getProject());
+		ProjectTargets projectTargets = projectMap.get(target.getProject());
 		if (projectTargets == null) {
 			projectTargets = readTargets(target.getProject());
 		}
 		return projectTargets.contains((MakeTarget) target);
 	}
-	
+
 	public void removeTarget(IMakeTarget target) throws CoreException {
-		ProjectTargets projectTargets = (ProjectTargets)projectMap.get(target.getProject());
+		ProjectTargets projectTargets = projectMap.get(target.getProject());
 		if (projectTargets == null) {
 			projectTargets = readTargets(target.getProject());
 		}
@@ -107,7 +106,7 @@ public class MakeTargetManager implements IMakeTargetManager, IResourceChangeLis
 	}
 
 	public void renameTarget(IMakeTarget target, String name) throws CoreException {
-		ProjectTargets projectTargets = (ProjectTargets)projectMap.get(target.getProject());
+		ProjectTargets projectTargets = projectMap.get(target.getProject());
 		if (projectTargets == null) {
 			projectTargets = readTargets(target.getProject());
 		}
@@ -119,7 +118,7 @@ public class MakeTargetManager implements IMakeTargetManager, IResourceChangeLis
 	}
 
 	public IMakeTarget[] getTargets(IContainer container) throws CoreException {
-		ProjectTargets projectTargets = (ProjectTargets)projectMap.get(container.getProject());
+		ProjectTargets projectTargets = projectMap.get(container.getProject());
 		if (projectTargets == null) {
 			projectTargets = readTargets(container.getProject());
 		}
@@ -127,7 +126,7 @@ public class MakeTargetManager implements IMakeTargetManager, IResourceChangeLis
 	}
 
 	public IMakeTarget findTarget(IContainer container, String name) throws CoreException {
-		ProjectTargets projectTargets = (ProjectTargets)projectMap.get(container.getProject());
+		ProjectTargets projectTargets = projectMap.get(container.getProject());
 		if (projectTargets == null) {
 			projectTargets = readTargets(container.getProject());
 		}
@@ -135,25 +134,23 @@ public class MakeTargetManager implements IMakeTargetManager, IResourceChangeLis
 	}
 
 	public IProject[] getTargetBuilderProjects() {
-		return (IProject[])fProjects.toArray(new IProject[fProjects.size()]);
+		return fProjects.toArray(new IProject[fProjects.size()]);
 	}
 
 	public String[] getTargetBuilders(IProject project) {
 		if (fProjects.contains(project) || hasTargetBuilder(project)) {
 			try {
-				Vector ids = new Vector();
+				Vector<String> ids = new Vector<String>();
 				IProjectDescription description = project.getDescription();
-				ICommand builder[] = description.getBuildSpec();
-				for (int i = 0; i < builder.length; i++) {
-					Iterator entries = builderMap.entrySet().iterator();
-					while (entries.hasNext()) {
-						Map.Entry entry = (Entry)entries.next();
-						if (entry.getValue().equals(builder[i].getBuilderName())) {
+				ICommand commands[] = description.getBuildSpec();
+				for (ICommand command : commands) {
+					for (Entry<String, String> entry : builderMap.entrySet()) {
+						if (entry.getValue().equals(command.getBuilderName())) {
 							ids.add(entry.getKey());
 						}
 					}
 				}
-				return (String[])ids.toArray(new String[ids.size()]);
+				return ids.toArray(new String[ids.size()]);
 			} catch (CoreException e) {
 			}
 		}
@@ -164,9 +161,9 @@ public class MakeTargetManager implements IMakeTargetManager, IResourceChangeLis
 		try {
 			if (project.isAccessible()) {
 				IProjectDescription description = project.getDescription();
-				ICommand builder[] = description.getBuildSpec();
-				for (int j = 0; j < builder.length; j++) {
-					if (builderMap.containsValue(builder[j].getBuilderName())) {
+				ICommand commands[] = description.getBuildSpec();
+				for (ICommand command : commands) {
+					if (builderMap.containsValue(command.getBuilderName())) {
 						return true;
 					}
 				}
@@ -178,10 +175,10 @@ public class MakeTargetManager implements IMakeTargetManager, IResourceChangeLis
 
 	public void startup() {
 		initializeBuilders();
-		IProject project[] = ResourcesPlugin.getWorkspace().getRoot().getProjects();
-		for (int i = 0; i < project.length; i++) {
-			if (hasTargetBuilder(project[i])) {
-				fProjects.add(project[i]);
+		IProject projects[] = ResourcesPlugin.getWorkspace().getRoot().getProjects();
+		for (IProject project : projects) {
+			if (hasTargetBuilder(project)) {
+				fProjects.add(project);
 			}
 		}
 		ResourcesPlugin.getWorkspace().addResourceChangeListener(this);
@@ -256,7 +253,7 @@ public class MakeTargetManager implements IMakeTargetManager, IResourceChangeLis
 
 	protected void updateTarget(MakeTarget target) throws CoreException {
 	    if  (target.getContainer() != null ) { // target has not been added to manager.
-			ProjectTargets projectTargets = (ProjectTargets)projectMap.get(target.getProject());
+			ProjectTargets projectTargets = projectMap.get(target.getProject());
 	    	if (projectTargets == null || !projectTargets.contains(target)) {
 	    		return; // target has not been added to manager.
 	    	}
@@ -287,15 +284,15 @@ public class MakeTargetManager implements IMakeTargetManager, IResourceChangeLis
 	}
 
 	protected void initializeBuilders() {
-		builderMap = new HashMap();
+		builderMap = new HashMap<String, String>();
         IExtensionPoint point = Platform.getExtensionRegistry().getExtensionPoint(MakeCorePlugin.PLUGIN_ID, MakeTargetManager.TARGET_BUILD_EXT);
-		IExtension[] ext = point.getExtensions();
-		for (int i = 0; i < ext.length; i++) {
-			IConfigurationElement[] element = ext[i].getConfigurationElements();
-			for (int j = 0; j < element.length; j++) {
-				if (element[j].getName().equals("builder")) { //$NON-NLS-1$
-					String builderID = element[j].getAttribute("builderID"); //$NON-NLS-1$
-					String targetID = element[j].getAttribute("id"); //$NON-NLS-1$
+		IExtension[] extensions = point.getExtensions();
+		for (IExtension extension : extensions) {
+			IConfigurationElement[] cfgElements = extension.getConfigurationElements();
+			for (IConfigurationElement cfgElement : cfgElements) {
+				if (cfgElement.getName().equals("builder")) { //$NON-NLS-1$
+					String builderID = cfgElement.getAttribute("builderID"); //$NON-NLS-1$
+					String targetID = cfgElement.getAttribute("id"); //$NON-NLS-1$
 					builderMap.put(targetID, builderID);
 				}
 			}
@@ -303,9 +300,8 @@ public class MakeTargetManager implements IMakeTargetManager, IResourceChangeLis
 	}
 
 	protected void notifyListeners(MakeTargetEvent event) {
-		Object[] list = listeners.getListeners();
-		for (int i = 0; i < list.length; i++) {
-			((IMakeTargetListener)list[i]).targetChanged(event);
+		for (Object listener : listeners.getListeners()) {
+			((IMakeTargetListener)listener).targetChanged(event);
 		}
 	}
 
@@ -318,6 +314,6 @@ public class MakeTargetManager implements IMakeTargetManager, IResourceChangeLis
 	}
 
 	public String getBuilderID(String targetBuilderID) {
-		return (String)builderMap.get(targetBuilderID);
+		return builderMap.get(targetBuilderID);
 	}
 }

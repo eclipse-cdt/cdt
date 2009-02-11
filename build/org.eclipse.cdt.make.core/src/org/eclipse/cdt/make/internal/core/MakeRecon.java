@@ -32,7 +32,9 @@ public class MakeRecon extends OutputStream {
 	MyList log;
 	StringBuffer currentLine;
 
-	class MyList extends ArrayList {
+	class MyList extends ArrayList<String> {
+		private static final long serialVersionUID = 1L;
+
 		public void removeInterval (int start, int len) {
 			removeRange(start, len);
 		}
@@ -108,6 +110,7 @@ public class MakeRecon extends OutputStream {
 	/**
 	 * @see java.io.OutputStream#close()
 	 */
+	@Override
 	public void close() throws IOException {
 		if (console != null) {
 			console.close();
@@ -118,6 +121,7 @@ public class MakeRecon extends OutputStream {
 	/**
 	 * @see java.io.OutputStream#flush()
 	 */
+	@Override
 	public void flush() throws IOException {
 		if (console != null) {
 			console.flush();
@@ -127,6 +131,7 @@ public class MakeRecon extends OutputStream {
 	/**
 	 * @see java.io.OutputStream#write(int)
 	 */
+	@Override
 	public synchronized void write(int b) throws IOException {
 		currentLine.append((char) b);
 		checkProgress(false);
@@ -138,6 +143,7 @@ public class MakeRecon extends OutputStream {
 	/**
 	 * @see java.io.OutputStream#write(...)
 	 */
+	@Override
 	public synchronized void write(byte[] b, int off, int len) throws IOException {
 		if (b == null) {
 			throw new NullPointerException();
@@ -174,7 +180,7 @@ public class MakeRecon extends OutputStream {
 	private void processLine(String line) {
 		int found = -1;
 		for (int i = 0; i < log.size(); i++) {
-			String s = (String)log.get(i);
+			String s = log.get(i);
 			if (s.startsWith(line)) {
 				found = i;
 				break;
@@ -182,13 +188,13 @@ public class MakeRecon extends OutputStream {
 		}
 
 		if (found != -1) {
-			String show = (String)log.get(found);
+			String show = log.get(found);
 			if (show.length() > 50) {
 				show = show.substring(0, 50);
 			}
 			monitor.subTask(show);
 			monitor.worked(found + 1);
 			log.removeInterval(0, found + 1);
-		} 
+		}
 	}
 }

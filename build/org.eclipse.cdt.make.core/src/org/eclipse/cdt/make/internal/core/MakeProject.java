@@ -33,7 +33,7 @@ public class MakeProject implements ICOwner {
 		if (extensionID.equals(CCorePlugin.BINARY_PARSER_UNIQ_ID)) {
 			updateBinaryParsers(cDescriptor);
 		}
-		
+
 		if (extensionID.equals(CCorePlugin.INDEXER_UNIQ_ID)) {
 			updateIndexers(cDescriptor);
 		}
@@ -42,35 +42,33 @@ public class MakeProject implements ICOwner {
 	private void updateBinaryParsers(ICDescriptor cDescriptor) throws CoreException {
 		cDescriptor.remove(CCorePlugin.BINARY_PARSER_UNIQ_ID);
 		Preferences makePrefs = MakeCorePlugin.getDefault().getPluginPreferences();
-		String id = makePrefs.getString(CCorePlugin.PREF_BINARY_PARSER);
-		if (id != null && id.length() != 0) {
-			String[] ids = parseStringToArray(id);
-			for (int i = 0; i < ids.length; i++) {
-				cDescriptor.create(CCorePlugin.BINARY_PARSER_UNIQ_ID, ids[i]);
+		String ids = makePrefs.getString(CCorePlugin.PREF_BINARY_PARSER);
+		if (ids != null && ids.length() != 0) {
+			for (String id : parseStringToArray(ids)) {
+				cDescriptor.create(CCorePlugin.BINARY_PARSER_UNIQ_ID, id);
 			}
 		}
 	}
- 
+
 	private void updateIndexers(ICDescriptor cDescriptor) throws CoreException {
 		cDescriptor.remove(CCorePlugin.INDEXER_UNIQ_ID);
 		Preferences corePrefs = CCorePlugin.getDefault().getPluginPreferences();
-		String id = corePrefs.getString(CCorePlugin.PREF_INDEXER);
-		if (id != null && id.length() != 0) {
-			String[] ids = parseStringToArray(id);
-			for (int i = 0; i < ids.length; i++) {
-				cDescriptor.create(CCorePlugin.INDEXER_UNIQ_ID, ids[i]);
+		String ids = corePrefs.getString(CCorePlugin.PREF_INDEXER);
+		if (ids != null && ids.length() != 0) {
+			for (String id : parseStringToArray(ids)) {
+				cDescriptor.create(CCorePlugin.INDEXER_UNIQ_ID, id);
 			}
 		}
 	}
-	
+
 	private String[] parseStringToArray(String syms) {
 		if (syms != null && syms.length() > 0) {
 			StringTokenizer tok = new StringTokenizer(syms, ";"); //$NON-NLS-1$
-			ArrayList list = new ArrayList(tok.countTokens());
+			ArrayList<String> list = new ArrayList<String>(tok.countTokens());
 			while (tok.hasMoreElements()) {
 				list.add(tok.nextToken());
 			}
-			return (String[]) list.toArray(new String[list.size()]);
+			return list.toArray(new String[list.size()]);
 		}
 		return new String[0];
 	}

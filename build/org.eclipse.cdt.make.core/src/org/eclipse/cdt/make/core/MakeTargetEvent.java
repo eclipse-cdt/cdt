@@ -15,6 +15,8 @@ import java.util.EventObject;
 import org.eclipse.core.resources.IProject;
 
 public class MakeTargetEvent extends EventObject {
+	private static final long serialVersionUID = 1L;
+
 	public static final int TARGET_ADD = 1;
 	public static final int TARGET_CHANGED = 2;
 	public static final int TARGET_REMOVED = 3;
@@ -39,7 +41,7 @@ public class MakeTargetEvent extends EventObject {
 		this.type = type;
 		this.project = project;
 	}
-	
+
 	public int getType() {
 		return type;
 	}

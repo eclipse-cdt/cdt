@@ -18,7 +18,7 @@ import org.eclipse.core.runtime.IPath;
 
 public interface IMakeCommonBuildInfo {
 	public final static String ARGS_PREFIX = MakeCorePlugin.getUniqueIdentifier();
-	
+
 	public final static String BUILD_LOCATION = ARGS_PREFIX + ".build.location"; //$NON-NLS-1$
 	public final static String BUILD_COMMAND = ARGS_PREFIX + ".build.command"; //$NON-NLS-1$
 	public final static String BUILD_ARGUMENTS = ARGS_PREFIX + ".build.arguments"; //$NON-NLS-1$
@@ -31,8 +31,9 @@ public interface IMakeCommonBuildInfo {
 	/**
 	 * @deprecated - use setBuildString(BUILD_LOCATION...)
 	 */
+	@Deprecated
 	void setBuildLocation(IPath location) throws CoreException;
-	
+
 	boolean isStopOnError();
 	void setStopOnError(boolean on) throws CoreException;
 
@@ -44,6 +45,7 @@ public interface IMakeCommonBuildInfo {
 	/**
 	 * @deprecated - use setBuildString(BUILD_COMMAND...)
 	 */
+	@Deprecated
 	void setBuildCommand(IPath command) throws CoreException;
 
 	String getBuildArguments();
@@ -51,16 +53,17 @@ public interface IMakeCommonBuildInfo {
 	/**
 	 * @deprecated - use setBuildString(BUILD_ARGUMENTS...)
 	 */
+	@Deprecated
 	void setBuildArguments(String args) throws CoreException;
 
 	String[] getErrorParsers();
 	void setErrorParsers(String[] parsers) throws CoreException;
 
-	Map getExpandedEnvironment() throws CoreException;
+	Map<String, String> getExpandedEnvironment() throws CoreException;
 
-	Map getEnvironment();
-	void setEnvironment(Map env) throws CoreException;
-	
+	Map<String, String> getEnvironment();
+	void setEnvironment(Map<String, String> env) throws CoreException;
+
 	boolean appendEnvironment();
 	void setAppendEnvironment(boolean append) throws CoreException;
 }

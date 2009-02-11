@@ -12,8 +12,8 @@
 package org.eclipse.cdt.make.internal.core;
 
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.Map;
+import java.util.Map.Entry;
 
 import org.eclipse.cdt.make.core.IMakeBuilderInfo;
 import org.eclipse.cdt.make.core.IMakeCommonBuildInfo;
@@ -44,16 +44,16 @@ public class MakeTarget extends PlatformObject implements IMakeTarget {
 	private boolean isDefaultBuildCmd;
 	private boolean isStopOnError;
 	boolean runAllBuidlers = true;
-	private String targetBuilderID;
+	private final String targetBuilderID;
 	private IContainer container;
 	private int appendEnvironment = USE_PROJECT_ENV_SETTING;
 	private boolean appendProjectEnvironment = true;
-	private Map buildEnvironment = new HashMap();
-	private Map targetAttributes = new HashMap();
+	private Map<String, String> buildEnvironment = new HashMap<String, String>();
+	private final Map<String, String> targetAttributes = new HashMap<String, String>();
 
 	MakeTarget(MakeTargetManager manager, IProject project, String targetBuilderID, String name) throws CoreException {
 		this.manager = manager;
-		this.project = project; 
+		this.project = project;
 		this.targetBuilderID = targetBuilderID;
 		this.name = name;
 		IMakeBuilderInfo info = MakeCorePlugin.createBuildInfo(project, manager.getBuilderID(targetBuilderID));
@@ -66,7 +66,7 @@ public class MakeTarget extends PlatformObject implements IMakeTarget {
 	public IProject getProject() {
 		return project;
 	}
-	
+
 	public void setContainer(IContainer container) {
 		this.container = container;
 	}
@@ -74,8 +74,8 @@ public class MakeTarget extends PlatformObject implements IMakeTarget {
 	void setName(String name) {
 		this.name = name;
 	}
-	
-	Map getAttributeMap() {
+
+	Map<String, String> getAttributeMap() {
 		return targetAttributes;
 	}
 
@@ -138,7 +138,7 @@ public class MakeTarget extends PlatformObject implements IMakeTarget {
 	public void setBuildArguments(String arguments) throws CoreException {
 		setBuildAttribute(IMakeCommonBuildInfo.BUILD_ARGUMENTS, arguments);
 	}
-	
+
 	public void setBuildTarget(String target) throws CoreException {
 		setBuildAttribute(IMakeTarget.BUILD_TARGET, target);
 	}
@@ -149,7 +149,7 @@ public class MakeTarget extends PlatformObject implements IMakeTarget {
 			result = VariablesPlugin.getDefault().getStringVariableManager().performStringSubstitution(result, false);
 		} catch (CoreException e) {
 		}
-		return result;	
+		return result;
 	}
 
 	public void setRunAllBuilders(boolean runAllBuilders) throws CoreException {
@@ -167,7 +167,7 @@ public class MakeTarget extends PlatformObject implements IMakeTarget {
 	}
 
 	public String getBuildAttribute(String name, String defaultValue) {
-		String value = (String)targetAttributes.get(name);
+		String value = targetAttributes.get(name);
 		return value != null ? value : defaultValue;
 	}
 
@@ -193,8 +193,8 @@ public class MakeTarget extends PlatformObject implements IMakeTarget {
 		throw new UnsupportedOperationException();
 	}
 
-	public Map getExpandedEnvironment() throws CoreException {
-		Map env = null;
+	public Map<String, String> getExpandedEnvironment() throws CoreException {
+		Map<String, String> env = null;
 		if (appendProjectEnvironment()) {
 			IMakeBuilderInfo projectInfo;
 			projectInfo = MakeCorePlugin.createBuildInfo(getProject(), manager.getBuilderID(targetBuilderID));
@@ -205,18 +205,17 @@ public class MakeTarget extends PlatformObject implements IMakeTarget {
 		} else {
 			env.putAll(getEnvironment());
 		}
-		HashMap envMap = new HashMap(env.entrySet().size());
-		Iterator iter = env.entrySet().iterator();
+
+		HashMap<String, String> envMap = new HashMap<String, String>(env.entrySet().size());
 		boolean win32 = Platform.getOS().equals(Constants.OS_WIN32);
-		while (iter.hasNext()) {
-			Map.Entry entry = (Map.Entry)iter.next();
-			String key = (String)entry.getKey();
+		for (Entry<String, String> entry : env.entrySet()) {
+			String key = entry.getKey();
 			if (win32) {
 				// Win32 vars are case insensitive. Uppercase everything so
 				// that (for example) "pAtH" will correctly replace "PATH"
 				key = key.toUpperCase();
 			}
-			String value = (String)entry.getValue();
+			String value = entry.getValue();
 			// translate any string substitution variables
 			String translated = value;
 			translated = VariablesPlugin.getDefault().getStringVariableManager().performStringSubstitution(value, false);
@@ -224,33 +223,33 @@ public class MakeTarget extends PlatformObject implements IMakeTarget {
 		}
 		return envMap;
 	}
-	
+
 	public boolean appendProjectEnvironment() {
 		return appendProjectEnvironment;
 	}
 
 	public void setAppendProjectEnvironment(boolean append) {
 		appendProjectEnvironment = append;
-	}	
+	}
 
-	public Map getEnvironment() {
+	public Map<String, String> getEnvironment() {
 		return buildEnvironment;
 	}
 
-	public void setEnvironment(Map env) throws CoreException {
-		buildEnvironment = new HashMap(env);
+	public void setEnvironment(Map<String, String> env) throws CoreException {
+		buildEnvironment = new HashMap<String, String>(env);
 		manager.updateTarget(this);
 	}
 
-	public void setAppendEnvironment(boolean append) throws CoreException {	
+	public void setAppendEnvironment(boolean append) throws CoreException {
 		appendEnvironment = append ? 1 : 0;
 		manager.updateTarget(this);
-	}	
+	}
 
 	public boolean appendEnvironment() {
 		return appendEnvironment == USE_PROJECT_ENV_SETTING ? getProjectEnvSetting(): appendEnvironment == 1;
 	}
-	
+
 	private boolean getProjectEnvSetting() {
 		IMakeBuilderInfo projectInfo;
 		try {
@@ -265,6 +264,7 @@ public class MakeTarget extends PlatformObject implements IMakeTarget {
 		return container;
 	}
 
+	@Override
 	public boolean equals(Object obj) {
 		if (obj == this)
 			return true;
@@ -275,13 +275,14 @@ public class MakeTarget extends PlatformObject implements IMakeTarget {
 		return false;
 	}
 
+	@Override
 	public int hashCode() {
 		return container.hashCode() * 17 + name != null ? name.hashCode(): 0;
 	}
 
 	public void build(IProgressMonitor monitor) throws CoreException {
 		final String builderID = manager.getBuilderID(targetBuilderID);
-		final HashMap infoMap = new HashMap();
+		final HashMap<String, String> infoMap = new HashMap<String, String>();
 
 		IMakeBuilderInfo info = MakeCorePlugin.createBuildInfo(infoMap, builderID);
 		info.setBuildAttribute(IMakeCommonBuildInfo.BUILD_COMMAND, getBuildAttribute(IMakeCommonBuildInfo.BUILD_COMMAND, "make")); //$NON-NLS-1$
@@ -302,19 +303,19 @@ public class MakeTarget extends PlatformObject implements IMakeTarget {
 
 			/*
 			 * (non-Javadoc)
-			 * 
+			 *
 			 * @see org.eclipse.core.resources.IWorkspaceRunnable#run(org.eclipse.core.runtime.IProgressMonitor)
 			 */
 			public void run(IProgressMonitor monitor) throws CoreException {
 				if (runAllBuidlers) {
 					ICommand[] commands = project.getDescription().getBuildSpec();
 					monitor.beginTask("", commands.length); //$NON-NLS-1$
-					for (int i = 0; i < commands.length; i++) {
-						if (commands[i].getBuilderName().equals(builderID)) {
+					for (ICommand command : commands) {
+						if (command.getBuilderName().equals(builderID)) {
 							project.build(IncrementalProjectBuilder.FULL_BUILD, builderID, infoMap, new SubProgressMonitor(monitor, 1));
 						} else {
-							project.build(IncrementalProjectBuilder.FULL_BUILD, commands[i].getBuilderName(),
-									commands[i].getArguments(), new SubProgressMonitor(monitor, 1));
+							project.build(IncrementalProjectBuilder.FULL_BUILD, command.getBuilderName(),
+									command.getArguments(), new SubProgressMonitor(monitor, 1));
 						}
 					}
 					monitor.done();
@@ -330,6 +331,8 @@ public class MakeTarget extends PlatformObject implements IMakeTarget {
 		}
 	}
 
+	@SuppressWarnings("unchecked")
+	@Override
 	public Object getAdapter(Class adapter) {
 		if (adapter.equals(IProject.class)) {
 			return getProject();

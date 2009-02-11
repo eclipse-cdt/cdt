@@ -127,6 +127,7 @@
 		<copy file="buildsite.xml" tofile="${buildDirectory}/site/eclipse/site.xml"/>
 		<replace file="${buildDirectory}/site/eclipse/site.xml">
 			<replacefilter token="@buildVersion@" value="${branchVersion}.${timestamp}"/>
+			<replacefilter token="@date@" value="${timestamp}"/>
 		</replace>
 		<copy file="pack.properties" todir="${buildDirectory}/site/eclipse"/>
 		<!-- for some reason LPG isn't getting picked up-->		

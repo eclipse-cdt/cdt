@@ -3,10 +3,10 @@
 	<category-def name="CDT Main Features" label="CDT Main Features"/>
 	<category-def name="CDT Optional Features" label="CDT Optional Features"/>
 	
-	<feature id="org.eclipse.cdt" url="features/org.eclipse.cdt_@buildVersion@.jar" version="@buildVersion@">
+	<feature id="org.eclipse.cdt" url="features/org.eclipse.cdt_5.0.100.@date@.jar" version="5.0.100.@date@">
 		<category name="CDT Main Features"/>
 	</feature>
-	<feature id="org.eclipse.cdt.sdk" url="features/org.eclipse.cdt.sdk_@buildVersion@.jar" version="@buildVersion@">
+	<feature id="org.eclipse.cdt.sdk" url="features/org.eclipse.cdt.sdk_5.0.100.@date@.jar" version="5.0.100.@date@">
 		<category name="CDT Main Features"/>
 	</feature>
 	<feature id="org.eclipse.cdt.debug.gdbjtag" url="features/org.eclipse.cdt.debug.gdbjtag_@buildVersion@.jar" version="@buildVersion@">
@@ -39,7 +39,7 @@
 	<feature id="org.eclipse.cdt.gnu.debug" url="features/org.eclipse.cdt.gnu.debug_@buildVersion@.jar" version="@buildVersion@">
 		<category name="CDT Optional Features"/>
 	</feature>
-	<feature id="org.eclipse.cdt.platform" url="features/org.eclipse.cdt.platform_@buildVersion@.jar" version="@buildVersion@">
+	<feature id="org.eclipse.cdt.platform" url="features/org.eclipse.cdt.platform_5.0.100.@date@.jar" version="5.0.100.@date@">
 		<category name="CDT Optional Features"/>
 	</feature>
 </site>

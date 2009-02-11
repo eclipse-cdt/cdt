@@ -203,15 +203,7 @@
 	
 	<target name="copy" depends="init" unless="hasErrors">
 		<property name="copyToDir" value="/home/www/tools/cdt/builds/${branchVersion}"/>
-		<replace file="${copyToDir}/index.html">
-			<replacetoken><![CDATA[  <!-- add here -->]]></replacetoken>
-			<replacevalue><![CDATA[  <li><a href="@buildType@.@buildId@/index.html">@buildId@</a></li>
-  <!-- add here -->]]></replacevalue>
-		</replace>
-		<replace file="${copyToDir}/index.html">
-			<replacefilter token="@buildType@" value="${buildType}"/>
-			<replacefilter token="@buildId@" value="${buildId}"/>
-		</replace>
+		
 		<mkdir dir="${copyToDir}/${buildType}.${buildId}"/>
 		<copy todir="${copyToDir}/${buildType}.${buildId}">
 			<fileset dir="${buildDirectory}/${buildType}.${buildId}"/>

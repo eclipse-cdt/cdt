@@ -9,6 +9,7 @@
  * Martin Oberhuber (Wind River) - initial API and implementation
  * David McKnight   (IBM)        - [220547] [api][breaking] SimpleSystemMessage needs to specify a message id and some messages should be shared
  * Anna Dushistova  (MontaVista) - [261478] Remove SshShellService, SshHostShell (or deprecate and schedule for removal in 3.2)
+ * Anna Dushistova  (MontaVista) - [259412] [api][rseterminal] Decide whether to extract any API from DelegatingTerminalService
  *******************************************************************************/
 package org.eclipse.rse.internal.services;
 
@@ -21,6 +22,8 @@ public class RSEServicesMessages extends NLS {
 	private RSEServicesMessages() {
 	}
 
+	public static String AbstractDelegatingTerminalService_description;
+	public static String AbstractDelegatingTerminalService_name;
 	public static String Socket_timeout;
 	public static String FILEMSG_OPERATION_FAILED;
 	public static String FILEMSG_OPERATION_FAILED_DETAILS;

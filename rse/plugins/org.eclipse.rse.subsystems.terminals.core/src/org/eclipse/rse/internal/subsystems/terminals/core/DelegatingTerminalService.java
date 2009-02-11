@@ -1,5 +1,5 @@
 /********************************************************************************
- * Copyright (c) 2008 IBM Corporation. All rights reserved.
+ * Copyright (c) 2008, 2009 IBM Corporation and others. All rights reserved.
  * This program and the accompanying materials are made available under the terms
  * of the Eclipse Public License v1.0 which accompanies this distribution, and is
  * available at http://www.eclipse.org/legal/epl-v10.html
@@ -9,17 +9,15 @@
  * component that contains this file: David McKnight.
  *
  * Contributors:
- * {Name} (company) - description of contribution.
+ * Anna Dushistova (MontaVista) - [259412][api][rseterminal] Decide whether to extract any API from DelegatingTerminalService.
  ********************************************************************************/
 package org.eclipse.rse.internal.subsystems.terminals.core;
 
-import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.rse.core.model.IHost;
 import org.eclipse.rse.core.subsystems.ISubSystem;
 import org.eclipse.rse.services.IService;
-import org.eclipse.rse.services.clientserver.messages.SystemMessageException;
+import org.eclipse.rse.services.terminals.AbstractDelegatingTerminalService;
 import org.eclipse.rse.services.terminals.ITerminalService;
-import org.eclipse.rse.services.terminals.ITerminalShell;
 
 /**
  * Base class that can be used for decorating an existing terminal service with
@@ -35,7 +33,7 @@ import org.eclipse.rse.services.terminals.ITerminalShell;
  *
  * @since org.eclipse.rse.subsystems.terminals.core 1.0
  */
-public class DelegatingTerminalService implements ITerminalService {
+public class DelegatingTerminalService extends AbstractDelegatingTerminalService {
 
 	private IHost _host;
 	private ITerminalService _realService;
@@ -44,7 +42,7 @@ public class DelegatingTerminalService implements ITerminalService {
 		_host = host;
 	}
 
-	private ITerminalService getRealService() {
+	public ITerminalService getRealTerminalService() {
 		if (_host != null && _realService == null) {
 			ISubSystem[] subSystems = _host.getSubSystems();
 			if (subSystems != null) {
@@ -66,33 +64,4 @@ public class DelegatingTerminalService implements ITerminalService {
 
 		return _realService;
 	}
-
-	public ITerminalShell launchTerminal(String ptyType, String encoding,
-			String[] environment, String initialWorkingDirectory,
-			String commandToRun, IProgressMonitor monitor)
-			throws SystemMessageException {
-		return getRealService().launchTerminal(ptyType, encoding, environment,
-				initialWorkingDirectory, commandToRun, monitor);
-	}
-
-	public String getDescription() {
-		return "Generic Terminal Service";
-	}
-
-	public String getName() {
-		return "Terminal Service";
-	}
-
-	public void initService(IProgressMonitor monitor) {
-		getRealService().initService(monitor);
-	}
-
-	public void uninitService(IProgressMonitor monitor) {
-		getRealService().uninitService(monitor);
-	}
-
-	public Object getAdapter(Class adapter) {
-		return getRealService().getAdapter(adapter);
-	}
-
 }

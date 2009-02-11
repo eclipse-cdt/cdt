@@ -3766,7 +3766,7 @@ public class AST2TemplateTests extends AST2BaseTest {
 	//	A<C> make_A(C* p) {
 	//	  return A<C>(p);
 	//	}
-	public void _testForwardDeclarations_264109() throws Exception {
+	public void testForwardDeclarations_264109() throws Exception {
 		final String code = getAboveComment();
 		BindingAssertionHelper bh= new BindingAssertionHelper(code, true);
 		bh.assertNonProblem("A<C> make_A(C* p) {", 4, ICPPTemplateInstance.class);

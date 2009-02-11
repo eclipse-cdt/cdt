@@ -171,11 +171,12 @@ public class PDOM extends PlatformObject implements IPDOM {
 	 *  78.0 - support for updating class templates, bug 254520
 	 *  79.0 - instantiation of values, bug 245027
 	 *  80.0 - support for specializations of partial specializations, bug 259872
+	 *  81.0 - change to c++ function types, bug 264479
 	 */
 	private static int version(int major, int minor) {
 		return major << 16 + minor;
 	}
-	public static final int MAJOR_VERSION = 80; 
+	public static final int MAJOR_VERSION = 81; 
 	public static final int MINOR_VERSION = 0;	// minor versions must be compatible	
 	
 	public static final int CURRENT_VERSION=       version(MAJOR_VERSION, MINOR_VERSION);

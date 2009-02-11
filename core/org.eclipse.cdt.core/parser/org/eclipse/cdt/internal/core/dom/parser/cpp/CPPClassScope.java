@@ -49,6 +49,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassTemplate;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPConstructor;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPMethod;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateScope;
 import org.eclipse.cdt.core.index.IIndexFileSet;
 import org.eclipse.cdt.core.parser.util.ArrayUtil;
 import org.eclipse.cdt.core.parser.util.CharArrayObjectMap;
@@ -168,9 +169,22 @@ public class CPPClassScope extends CPPScope implements ICPPClassScope {
 	@Override
 	public void addName(IASTName name) throws DOMException {
 		if (name instanceof ICPPASTQualifiedName) {
-			IASTName ln= ((ICPPASTQualifiedName) name).getLastName();
-			if (CPPVisitor.getContainingScope(name) != CPPVisitor.getContainingScope(ln)) {
-				return;
+			// check whether the qualification matches
+			IScope scope= this;
+			final ICPPASTQualifiedName qname = (ICPPASTQualifiedName) name;
+			final IASTName[] names= qname.getNames();
+			for (int i = names.length-2; i>=0;) {
+				IName scopeName= scope.getScopeName();
+				if (scopeName != null) {
+					char[] sname= scopeName.toCharArray();
+					if (sname.length != 0) {
+						if (!CharArrayUtils.equals(names[i--].toCharArray(), sname))
+							return;
+					}
+				}
+				do {
+					scope= scope.getParent();
+				} while (scope instanceof ICPPTemplateScope);
 			}
 		}
 		IASTNode parent = name.getParent();

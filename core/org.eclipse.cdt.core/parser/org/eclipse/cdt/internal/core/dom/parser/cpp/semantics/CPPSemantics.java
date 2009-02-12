@@ -296,6 +296,17 @@ public class CPPSemantics {
 								node instanceof ICPPASTTemplatedTypeTemplateParameter) {
 							ok= true; // can be argument or default-value for template template parameter
 							break;
+						} else if (node instanceof IASTElaboratedTypeSpecifier) {
+							IASTNode parent= node.getParent();
+							if (parent instanceof IASTSimpleDeclaration) {
+								IASTDeclSpecifier declspec = ((IASTSimpleDeclaration) parent).getDeclSpecifier();
+								if (declspec instanceof ICPPASTDeclSpecifier) {
+									if (((ICPPASTDeclSpecifier) declspec).isFriend()) {
+										ok= true;  // a friend class template declarations uses resolution.
+										break;
+									}
+								}
+							}
 						}
 						node= node.getParent();
 					}

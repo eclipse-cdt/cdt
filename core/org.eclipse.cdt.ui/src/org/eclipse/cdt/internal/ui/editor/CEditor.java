@@ -1390,6 +1390,9 @@ public class CEditor extends TextEditor implements ISelectionChangedListener, IC
 						new String[] {IDialogConstants.OK_LABEL}, 0,
 						CEditorMessages.Scalability_reappear,  
 						false) {
+					{
+						setShellStyle(SWT.DIALOG_TRIM | SWT.MODELESS | SWT.ON_TOP | getDefaultOrientation());
+					}
 					@Override
 					protected void buttonPressed(int buttonId) {
 						PreferenceConstants.getPreferenceStore().setValue(PreferenceConstants.SCALABILITY_ALERT, !getToggleState());

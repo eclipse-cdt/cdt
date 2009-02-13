@@ -13,6 +13,7 @@
  * Xuan Chen (IBM) - [209827] Update DStore command implementation to enable cancelation of archive operations
  * Noriaki Takatsu (IBM)  - [220126] [dstore][api][breaking] Single process server for multiple clients
  * Martin Oberhuber (Wind River) - [199854][api] Improve error reporting for archive handlers
+ * David McKnight   (IBM)        - [264607] Unable to delete a broken symlink
  *******************************************************************************/
 package org.eclipse.rse.internal.dstore.universal.miners.filesystem;
 
@@ -126,7 +127,22 @@ public class DeleteThread extends SecuredThread implements ICancellableHandler {
 		File deleteObj = new File(subject.getAttribute(DE.A_VALUE)
 				+ File.separatorChar + subject.getName());
 		DataElement deObj = null;
-		if (!deleteObj.exists()) {
+
+		boolean exists = deleteObj.exists();
+		if (!exists){
+			// special case for broken symbolic link
+			String attributes = subject.getSource();
+			String classification = "file"; //$NON-NLS-1$
+			String[] str = attributes.split("\\"+IServiceConstants.TOKEN_SEPARATOR); //$NON-NLS-1$
+			if (str.length > 11){ // 11 is classification index
+				classification = str[11];
+			}
+			if (classification.startsWith("broken symbolic link")){ //$NON-NLS-1$
+				exists = true;
+			}
+		}
+		
+		if (!exists) {
 			thisStatus.setAttribute(DE.A_SOURCE, IServiceConstants.FAILED_WITH_DOES_NOT_EXIST + "|" + deleteObj.getAbsolutePath()); //$NON-NLS-1$
 			UniversalServerUtilities.logError(CLASSNAME,
 					"The object to delete does not exist", null, _dataStore); //$NON-NLS-1$

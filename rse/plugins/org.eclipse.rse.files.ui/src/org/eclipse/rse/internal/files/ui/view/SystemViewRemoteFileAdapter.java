@@ -60,6 +60,7 @@
  * David McKnight     (IBM)      - [251860] Rename a file/folder to a hidden file causes problems
  * David McKnight   (IBM)        - [261019] New File/Folder actions available in Work Offline mode
  * David McKnight   (IBM)        - [254769] Don't get latest file when opening a file always
+ * David McKnight   (IBM)        - [264607] Unable to delete a broken symlink
  *******************************************************************************/
 
 package org.eclipse.rse.internal.files.ui.view;
@@ -2736,7 +2737,15 @@ public class SystemViewRemoteFileAdapter
 	{
 		IRemoteFile file = (IRemoteFile) element;
     	boolean offline = file.getParentRemoteFileSubSystem().isOffline();
- 		return !file.isRoot() && file.canRead() && !offline;
+    	
+    	if (offline || file.isRoot()){
+    		return false;
+    	}
+    	else {
+    		// for deletion, you need write access to the containing directory
+    		IRemoteFile parentFile = file.getParentRemoteFile();
+    		return parentFile.canWrite();
+    	}
 	}
 
 

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008 Wind River Systems, Inc. and others.
+ * Copyright (c) 2008, 2009 Wind River Systems, Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -22,7 +22,6 @@ import org.eclipse.jface.text.TextViewer;
 import org.eclipse.swt.custom.StyleRange;
 import org.eclipse.swt.events.DisposeEvent;
 import org.eclipse.swt.graphics.Color;
-import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.graphics.RGB;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.text.edits.ReplaceEdit;
@@ -113,14 +112,9 @@ class CMacroCompareViewer extends CMergeViewer {
 	
 	public CMacroCompareViewer(Composite parent, int styles, CompareConfiguration mp) {
 		super(parent, styles, mp);
-		Font font= JFaceResources.getFont(CMergeViewer.class.getName());
-		fLeftViewer.getTextWidget().setFont(font);
-		fRightViewer.getTextWidget().setFont(font);
-		fTopViewer.getTextWidget().setFont(font);
-		
 		fChangeBackground= new Color(parent.getDisplay(), CHANGE_COLOR);
-		fLeftViewer.addTextPresentationListener(fLeftHighlighter= new ReplaceEditsHighlighter(fChangeBackground, true));
-		fRightViewer.addTextPresentationListener(fRightHighlighter= new ReplaceEditsHighlighter(fChangeBackground, false));
+		fLeftHighlighter= new ReplaceEditsHighlighter(fChangeBackground, true);
+		fRightHighlighter= new ReplaceEditsHighlighter(fChangeBackground, false);
 		fViewerIndex= 0;
 	}
 
@@ -129,8 +123,12 @@ class CMacroCompareViewer extends CMergeViewer {
 	 */
 	@Override
 	protected void handleDispose(DisposeEvent event) {
-		fLeftViewer.removeTextPresentationListener(fLeftHighlighter);
-		fRightViewer.removeTextPresentationListener(fRightHighlighter);
+		if (fLeftViewer != null) {
+			fLeftViewer.removeTextPresentationListener(fLeftHighlighter);
+		}
+		if (fRightViewer != null) {
+			fRightViewer.removeTextPresentationListener(fRightHighlighter);
+		}
 		fChangeBackground.dispose();
 		super.handleDispose(event);
 	}
@@ -152,12 +150,17 @@ class CMacroCompareViewer extends CMergeViewer {
 		switch (fViewerIndex++) {
 		case 0:
 			fTopViewer= textViewer;
+			fTopViewer.getTextWidget().setFont(JFaceResources.getFont(CMergeViewer.class.getName()));
 			break;
 		case 1:
 			fLeftViewer= textViewer;
+			fLeftViewer.getTextWidget().setFont(JFaceResources.getFont(CMergeViewer.class.getName()));
+			fLeftViewer.addTextPresentationListener(fLeftHighlighter);
 			break;
 		case 2:
 			fRightViewer= textViewer;
+			fRightViewer.getTextWidget().setFont(JFaceResources.getFont(CMergeViewer.class.getName()));
+			fRightViewer.addTextPresentationListener(fRightHighlighter);
 		}
 	}
 	
@@ -184,9 +187,12 @@ class CMacroCompareViewer extends CMergeViewer {
 	 */
 	@Override
 	public void setInput(Object input) {
-		fLeftViewer.setRedraw(false);
-		fRightViewer.setRedraw(false);
-
+		boolean redraw= true;
+		if (fLeftViewer != null && fRightViewer != null) {
+			redraw= false;
+			fLeftViewer.setRedraw(false);
+			fRightViewer.setRedraw(false);
+		}
 		final ReplaceEdit[] edits;
 		
 		try {
@@ -204,13 +210,17 @@ class CMacroCompareViewer extends CMergeViewer {
 			super.setInput(input);
 			
 		} finally {
-			fLeftViewer.setRedraw(true);
-			fRightViewer.setRedraw(true);
+			if (!redraw && fLeftViewer != null && fRightViewer != null) {
+				fLeftViewer.setRedraw(true);
+				fRightViewer.setRedraw(true);
+			}
 		}
 		if (edits.length > 0) {
-			final int firstDiffOffset= fPrefixLength + edits[0].getOffset();
-			fLeftViewer.revealRange(firstDiffOffset, edits[0].getLength());
-			fRightViewer.revealRange(firstDiffOffset, edits[0].getText().length());
+			if (fLeftViewer != null && fRightViewer != null) {
+				final int firstDiffOffset= fPrefixLength + edits[0].getOffset();
+				fLeftViewer.revealRange(firstDiffOffset, edits[0].getLength());
+				fRightViewer.revealRange(firstDiffOffset, edits[0].getText().length());
+			}
 		}
 	}
 

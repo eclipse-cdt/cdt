@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2008 Wind River Systems, Inc. and others.
+ * Copyright (c) 2007, 2009 Wind River Systems, Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -35,7 +35,7 @@ import org.eclipse.cdt.core.parser.OffsetLimitReachedException;
  * The characters in string literals and char-literals are left as they are found, no conversion to
  * an execution character-set is performed.
  */
-final public class Lexer {
+final public class Lexer implements ITokenSequence {
 	public static final int tBEFORE_INPUT   = IToken.FIRST_RESERVED_SCANNER;
 	public static final int tNEWLINE		= IToken.FIRST_RESERVED_SCANNER + 1;
 	public static final int tQUOTE_HEADER_NAME    = IToken.FIRST_RESERVED_SCANNER + 2;

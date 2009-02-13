@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2008 Wind River Systems, Inc. and others.
+ * Copyright (c) 2007, 2009 Wind River Systems, Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -132,5 +132,15 @@ final class ScannerContext {
 			fTokens= (Token) fTokens.getNext();
 		}
 		return currentLexerToken();
+	}
+
+	/**
+	 * If this is a lexer based context the current line is consumed.
+	 * @see Lexer#consumeLine(int)
+	 */
+	public int consumeLine(int originPreprocessorDirective) throws OffsetLimitReachedException {
+		if (fLexer != null)
+			return fLexer.consumeLine(originPreprocessorDirective);
+		return -1;
 	}
 }

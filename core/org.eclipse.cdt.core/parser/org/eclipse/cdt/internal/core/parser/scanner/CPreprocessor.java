@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2008 IBM Corporation and others.
+ * Copyright (c) 2004, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -87,6 +87,12 @@ public class CPreprocessor implements ILexerLog, IScanner, IAdaptable {
     private static final DynamicMacro __TIME__ = new TimeMacro("__TIME__".toCharArray()); //$NON-NLS-1$
     private static final DynamicMacro __LINE__ = new LineMacro("__LINE__".toCharArray()); //$NON-NLS-1$
 
+	private static final int NO_EXPANSION 		 = 0x01;
+	private static final int PROTECT_DEFINED 	 = 0x02;
+	private static final int STOP_AT_NL 		 = 0x04;
+	private static final int CHECK_NUMBERS 		 = 0x08;
+	private static final Token END_OF_INPUT = new Token(IToken.tEND_OF_INPUT, null, 0, 0);
+
 	private interface IIncludeFileTester<T> {
     	T checkFile(String path, String fileName, boolean isHeuristicMatch);
     }
@@ -116,6 +122,37 @@ public class CPreprocessor implements ILexerLog, IScanner, IAdaptable {
     	}
     };
 
+	private final class TokenSequence implements ITokenSequence {
+		private final boolean fStopAtNewline;
+		TokenSequence(boolean stopAtNewline) {
+			fStopAtNewline= stopAtNewline;
+		}
+		public Token nextToken() throws OffsetLimitReachedException {
+       		final Lexer lexer= fCurrentContext.getLexer();
+       		Token t= lexer.nextToken();
+       		if (t.getType() == IToken.tPOUND && lexer.currentTokenIsFirstOnLine()) {
+       			executeDirective(lexer, t.getOffset(), true);
+       			t= lexer.currentToken();
+       		}
+       		if (fStopAtNewline && t.getType() == Lexer.tNEWLINE)
+       			return END_OF_INPUT;
+       		
+       		return t;
+		}
+		public int getLastEndOffset() {
+			return fCurrentContext.getLexer().getLastEndOffset();
+		}
+		public Token currentToken() {
+			Token t= fCurrentContext.currentLexerToken();
+       		if (fStopAtNewline && t.getType() == Lexer.tNEWLINE)
+       			return END_OF_INPUT;
+       		
+       		return t;
+		}
+	}
+	TokenSequence fInputToMacroExpansion= new TokenSequence(false);
+	TokenSequence fLineInputToMacroExpansion= new TokenSequence(true);
+
     final private IParserLogService fLog;
     final private IIndexBasedCodeReaderFactory fCodeReaderFactory;
 
@@ -132,6 +169,7 @@ public class CPreprocessor implements ILexerLog, IScanner, IAdaptable {
     final private String[] fIncludePaths;
     final private String[] fQuoteIncludePaths;
     private String[][] fPreIncludedFiles= null;
+//	private boolean fProcessInactiveCode= false;
 
     private int fContentAssistLimit= -1;
 	private boolean fHandledCompletion= false;
@@ -145,13 +183,14 @@ public class CPreprocessor implements ILexerLog, IScanner, IAdaptable {
 
 	private final Lexer fRootLexer;
 	private final ScannerContext fRootContext;
-	private ScannerContext fCurrentContext;
+	protected ScannerContext fCurrentContext;
 
     private boolean isCancelled= false;
 	private boolean fIsFirstFetchToken= true;
 
 	private Token fPrefetchedTokens;
     private Token fLastToken;
+
 
     public CPreprocessor(CodeReader reader, IScannerInfo info, ParserLanguage language, IParserLogService log,
             IScannerExtensionConfiguration configuration, ICodeReaderFactory readerFactory) {
@@ -239,6 +278,11 @@ public class CPreprocessor implements ILexerLog, IScanner, IAdaptable {
 		fContentAssistLimit= offset;
 		fRootLexer.setContentAssistMode(offset);
 	}
+
+	// mstodo
+//	public void setProcessInactiveCode(boolean val) {
+//		fProcessInactiveCode= val;
+//	}
 
 	public void setScanComments(boolean val) {
 	}
@@ -344,7 +388,7 @@ public class CPreprocessor implements ILexerLog, IScanner, IAdaptable {
     		fCurrentContext= new ScannerContext(ctx, fCurrentContext, new Lexer(buffer, fLexOptions, this, this));
     		ScannerContext preCtx= fCurrentContext;
     		try {
-				while(internalFetchToken(true, false, false, true, preCtx).getType() != IToken.tEND_OF_INPUT) {
+				while(internalFetchToken(preCtx, CHECK_NUMBERS, false).getType() != IToken.tEND_OF_INPUT) {
 				// just eat the tokens
 				}
             	final ILocationCtx locationCtx = fCurrentContext.getLocationCtx();
@@ -433,7 +477,7 @@ public class CPreprocessor implements ILexerLog, IScanner, IAdaptable {
     	}
     	
     	try {
-			t= internalFetchToken(true, false, false, true, fRootContext);
+			t= internalFetchToken(fRootContext, CHECK_NUMBERS, false);
 		} catch (OffsetLimitReachedException e) {
 			fHandledCompletion= true;
 			throw e;
@@ -567,8 +611,7 @@ public class CPreprocessor implements ILexerLog, IScanner, IAdaptable {
     	}
 	}
 
-	Token internalFetchToken(final boolean expandMacros, final boolean isPPCondition, final boolean stopAtNewline, 
-			final boolean checkNumbers, final ScannerContext uptoEndOfCtx) throws OffsetLimitReachedException {
+	Token internalFetchToken(final ScannerContext uptoEndOfCtx, int options, boolean withinExpansion) throws OffsetLimitReachedException {
         Token ppToken= fCurrentContext.currentLexerToken();
         while(true) {
 			switch(ppToken.getType()) {
@@ -577,7 +620,7 @@ public class CPreprocessor implements ILexerLog, IScanner, IAdaptable {
         		continue;
         		
         	case Lexer.tNEWLINE:
-        		if (stopAtNewline) {
+        		if ((options & STOP_AT_NL) != 0) {
         			return ppToken;
         		}
         		ppToken= fCurrentContext.nextPPToken();
@@ -605,7 +648,7 @@ public class CPreprocessor implements ILexerLog, IScanner, IAdaptable {
                	{
                		final Lexer lexer= fCurrentContext.getLexer();
                		if (lexer != null && lexer.currentTokenIsFirstOnLine()) {
-               			executeDirective(lexer, ppToken.getOffset());
+               			executeDirective(lexer, ppToken.getOffset(), withinExpansion);
                			ppToken= fCurrentContext.currentLexerToken();
                			continue;
                		}
@@ -614,9 +657,9 @@ public class CPreprocessor implements ILexerLog, IScanner, IAdaptable {
         	
         	case IToken.tIDENTIFIER:
         		fCurrentContext.nextPPToken(); // consume the identifier
-        		if (expandMacros) {
+        		if ((options & NO_EXPANSION) == 0) {
         			final Lexer lexer= fCurrentContext.getLexer();
-        			if (lexer != null && expandMacro(ppToken, lexer, stopAtNewline, isPPCondition)) {
+        			if (lexer != null && expandMacro(ppToken, lexer, options, withinExpansion)) {
         				ppToken= fCurrentContext.currentLexerToken();
         				continue;
         			}
@@ -630,13 +673,13 @@ public class CPreprocessor implements ILexerLog, IScanner, IAdaptable {
             	return ppToken;
         		
         	case IToken.tINTEGER:
-        		if (checkNumbers) {
+        		if ((options & CHECK_NUMBERS) != 0) {
         			checkNumber(ppToken, false);
         		}
         		break;
 
         	case IToken.tFLOATINGPT:
-        		if (checkNumbers) {
+        		if ((options & CHECK_NUMBERS) != 0) {
         			checkNumber(ppToken, true);
         		}
         		break;
@@ -901,7 +944,7 @@ public class CPreprocessor implements ILexerLog, IScanner, IAdaptable {
      * @param startOffset offset in current file
      * @since 5.0
      */
-    private void executeDirective(final Lexer lexer, final int startOffset) throws OffsetLimitReachedException {
+    private void executeDirective(final Lexer lexer, final int startOffset, boolean withinExpansion) throws OffsetLimitReachedException {
     	final Token ident= lexer.nextToken();
     	switch (ident.getType()) {
     	case IToken.tCOMPLETION:
@@ -922,22 +965,31 @@ public class CPreprocessor implements ILexerLog, IScanner, IAdaptable {
     		break;
 
     	default:
-    		lexer.consumeLine(ORIGIN_PREPROCESSOR_DIRECTIVE);
-    		handleProblem(IProblem.PREPROCESSOR_INVALID_DIRECTIVE, ident.getCharImage(), startOffset, lexer.getLastEndOffset());
+    		int endOffset= lexer.consumeLine(ORIGIN_PREPROCESSOR_DIRECTIVE);
+    		handleProblem(IProblem.PREPROCESSOR_INVALID_DIRECTIVE, ident.getCharImage(), startOffset, endOffset);
     		return;
     	}
 
     	// we have an identifier
+    	boolean isProblem= false;
     	final char[] name = ident.getCharImage();
     	final int type = fPPKeywords.get(name);
     	int condEndOffset;
     	switch (type) {
     	case IPreprocessorDirective.ppImport:
     	case IPreprocessorDirective.ppInclude:
-    		executeInclude(lexer, startOffset, false, true);
+    		if (withinExpansion) {
+    			isProblem= true;
+    		} else {
+    			executeInclude(lexer, startOffset, false, true);
+    		}
     		break;
     	case IPreprocessorDirective.ppInclude_next:
-    		executeInclude(lexer, startOffset, true, true);
+    		if (withinExpansion) {
+    			isProblem= true;
+    		} else {
+    			executeInclude(lexer, startOffset, true, true);
+    		}
     		break;
     	case IPreprocessorDirective.ppDefine:
     		executeDefine(lexer, startOffset);
@@ -946,19 +998,19 @@ public class CPreprocessor implements ILexerLog, IScanner, IAdaptable {
     		executeUndefine(lexer, startOffset);
     		break;
     	case IPreprocessorDirective.ppIfdef:
-    		executeIfdef(lexer, startOffset, true);
+    		executeIfdef(lexer, startOffset, true, withinExpansion);
     		break;
     	case IPreprocessorDirective.ppIfndef:
-    		executeIfdef(lexer, startOffset, false);
+    		executeIfdef(lexer, startOffset, false, withinExpansion);
     		break;
     	case IPreprocessorDirective.ppIf: 
-    		executeIf(lexer, startOffset);
+    		executeIf(lexer, startOffset, withinExpansion);
     		break;
     	case IPreprocessorDirective.ppElse: 
     		lexer.consumeLine(ORIGIN_PREPROCESSOR_DIRECTIVE);
     		if (fCurrentContext.changeBranch(ScannerContext.BRANCH_ELSE)) {
     			fLocationMap.encounterPoundElse(startOffset, ident.getEndOffset(), false);
-    			skipOverConditionalCode(lexer, false);
+    			skipOverConditionalCode(lexer, false, withinExpansion);
     		} 
     		else {
     			handleProblem(IProblem.PREPROCESSOR_UNBALANCE_CONDITION, name, startOffset, ident.getEndOffset());
@@ -970,7 +1022,7 @@ public class CPreprocessor implements ILexerLog, IScanner, IAdaptable {
     		int endOffset= lexer.currentToken().getEndOffset();
     		if (fCurrentContext.changeBranch(ScannerContext.BRANCH_ELIF)) {
     			fLocationMap.encounterPoundElif(startOffset, condOffset, condEndOffset, endOffset, false, IASTName.EMPTY_NAME_ARRAY);
-    			skipOverConditionalCode(lexer, false);
+    			skipOverConditionalCode(lexer, false, withinExpansion);
     		} 
     		else {
     			handleProblem(IProblem.PREPROCESSOR_UNBALANCE_CONDITION, name, startOffset, condEndOffset);
@@ -1007,10 +1059,13 @@ public class CPreprocessor implements ILexerLog, IScanner, IAdaptable {
     		lexer.consumeLine(ORIGIN_PREPROCESSOR_DIRECTIVE);
     		break;
     	default:
-    		condEndOffset= lexer.consumeLine(ORIGIN_PREPROCESSOR_DIRECTIVE);
-			endOffset= lexer.currentToken().getEndOffset();
-    		handleProblem(IProblem.PREPROCESSOR_INVALID_DIRECTIVE, name, startOffset, condEndOffset);
+    		isProblem= true;
     		break;
+    	}
+
+    	if (isProblem) {
+    		int endOffset= lexer.consumeLine(ORIGIN_PREPROCESSOR_DIRECTIVE);
+    		handleProblem(IProblem.PREPROCESSOR_INVALID_DIRECTIVE, ident.getCharImage(), startOffset, endOffset);
     	}
     }
 
@@ -1041,7 +1096,7 @@ public class CPreprocessor implements ILexerLog, IScanner, IAdaptable {
 			
 		case IToken.tIDENTIFIER: 
 			TokenList tl= new TokenList();
-			condEndOffset= nameOffsets[1]= getTokensWithinPPDirective(lexer, false, tl);
+			condEndOffset= nameOffsets[1]= getTokensWithinPPDirective(false, tl, false);
 			Token t= tl.first();
 			if (t != null) {
 				switch(t.getType()) {
@@ -1205,7 +1260,7 @@ public class CPreprocessor implements ILexerLog, IScanner, IAdaptable {
     	fLocationMap.encounterPoundUndef(definition, startOffset, name.getOffset(), name.getEndOffset(), endOffset, namechars);
     }
 
-    private void executeIfdef(Lexer lexer, int startOffset, boolean positive) throws OffsetLimitReachedException {
+    private void executeIfdef(Lexer lexer, int startOffset, boolean positive, boolean withinExpansion) throws OffsetLimitReachedException {
 		final Token name= lexer.nextToken();
     	final int tt= name.getType();
     	if (tt != IToken.tIDENTIFIER) {
@@ -1231,15 +1286,15 @@ public class CPreprocessor implements ILexerLog, IScanner, IAdaptable {
         }
 
         if ((macro == null) == positive) {
-        	skipOverConditionalCode(lexer, true);
+        	skipOverConditionalCode(lexer, true, withinExpansion);
         }
     }
 
-    private void executeIf(Lexer lexer, int startOffset) throws OffsetLimitReachedException {
+    private void executeIf(Lexer lexer, int startOffset, boolean withinExpansion) throws OffsetLimitReachedException {
     	boolean isActive= false;
     	TokenList condition= new TokenList();
     	final int condOffset= lexer.nextToken().getOffset();
-    	final int condEndOffset= getTokensWithinPPDirective(lexer, true, condition);
+    	final int condEndOffset= getTokensWithinPPDirective(true, condition, withinExpansion);
     	final int endOffset= lexer.currentToken().getEndOffset();
     	
     	fExpressionEvaluator.clearMacrosInDefinedExpression();
@@ -1258,7 +1313,7 @@ public class CPreprocessor implements ILexerLog, IScanner, IAdaptable {
     	fLocationMap.encounterPoundIf(startOffset, condOffset, condEndOffset, endOffset, isActive, fExpressionEvaluator.clearMacrosInDefinedExpression());
 		
     	if (!isActive) {
-    		skipOverConditionalCode(lexer, true);
+    		skipOverConditionalCode(lexer, true, withinExpansion);
     	} 
     }
     
@@ -1269,37 +1324,40 @@ public class CPreprocessor implements ILexerLog, IScanner, IAdaptable {
      * converted to the defined-token and its argument is not macro expanded.
      * Returns the end-offset of the last token that was consumed.
      */
-    private int getTokensWithinPPDirective(Lexer lexer, boolean isCondition, TokenList result) throws OffsetLimitReachedException {
+    private int getTokensWithinPPDirective(boolean isCondition, TokenList result, boolean withinExpansion) throws OffsetLimitReachedException {
     	final ScannerContext scannerCtx= fCurrentContext;
-    	boolean expandMacros= true;
+    	int options= STOP_AT_NL;
+    	if (isCondition)
+    		options |= PROTECT_DEFINED;
+    	
     	loop: while(true) {
-    		Token t= internalFetchToken(expandMacros, isCondition, true, false, scannerCtx);
+			Token t= internalFetchToken(scannerCtx, options, withinExpansion);
     		switch(t.getType()) {
     		case IToken.tEND_OF_INPUT:
     		case IToken.tCOMPLETION:
-    			lexer.consumeLine(ORIGIN_PREPROCESSOR_DIRECTIVE); // make sure the exception is thrown.
+    			scannerCtx.consumeLine(ORIGIN_PREPROCESSOR_DIRECTIVE); // make sure the exception is thrown.
     			break loop;
     		case Lexer.tNEWLINE:
     			break loop;
     		case IToken.tIDENTIFIER:
     			if (isCondition && CharArrayUtils.equals(Keywords.cDEFINED, t.getCharImage())) {
     				t.setType(CPreprocessor.tDEFINED);
-    				expandMacros= false;	
+    				options |= NO_EXPANSION;	
     			}
     			break;
     		case IToken.tLPAREN:
     			break;
     		default:
-    			expandMacros= true;
+				options &= ~NO_EXPANSION;	
     			break;
     		}
     		result.append(t);
     	}
     	// make sure an exception is thrown if we are running content assist at the end of the line
-    	return lexer.consumeLine(ORIGIN_PREPROCESSOR_DIRECTIVE);
+    	return scannerCtx.consumeLine(ORIGIN_PREPROCESSOR_DIRECTIVE);
     }
     
-    private void skipOverConditionalCode(final Lexer lexer, boolean takeElseBranch) throws OffsetLimitReachedException {
+    private void skipOverConditionalCode(final Lexer lexer, boolean takeElseBranch, boolean withinExpansion) throws OffsetLimitReachedException {
     	int nesting= 0;
     	while(true) {
     		final Token pound= lexer.nextDirective();
@@ -1326,10 +1384,20 @@ public class CPreprocessor implements ILexerLog, IScanner, IAdaptable {
         	switch (type) {
         	case IPreprocessorDirective.ppImport:
         	case IPreprocessorDirective.ppInclude:
-        		executeInclude(lexer, ident.getOffset(), false, false);
+        		if (withinExpansion) {
+        			int endOffset= lexer.consumeLine(ORIGIN_PREPROCESSOR_DIRECTIVE);
+        			handleProblem(IProblem.PREPROCESSOR_INVALID_DIRECTIVE, ident.getCharImage(), pound.getOffset(), endOffset);
+        		} else {
+        			executeInclude(lexer, ident.getOffset(), false, false);
+        		}
         		break;
         	case IPreprocessorDirective.ppInclude_next:
-        		executeInclude(lexer, ident.getOffset(), true, false);
+        		if (withinExpansion) {
+        			int endOffset= lexer.consumeLine(ORIGIN_PREPROCESSOR_DIRECTIVE);
+        			handleProblem(IProblem.PREPROCESSOR_INVALID_DIRECTIVE, ident.getCharImage(), pound.getOffset(), endOffset);
+        		} else {
+        			executeInclude(lexer, ident.getOffset(), true, false);
+        		}
         		break;
         	case IPreprocessorDirective.ppIfdef:
         		lexer.consumeLine(ORIGIN_PREPROCESSOR_DIRECTIVE);
@@ -1372,7 +1440,7 @@ public class CPreprocessor implements ILexerLog, IScanner, IAdaptable {
         	    	int condOffset= lexer.nextToken().getOffset();
         			if (nesting == 0 && takeElseBranch) {
             	    	TokenList condition= new TokenList();
-        				condEndOffset= getTokensWithinPPDirective(lexer, true, condition);
+        				condEndOffset= getTokensWithinPPDirective(true, condition, withinExpansion);
         				if (condition.first() != null) {
         					try {
         						isActive= fExpressionEvaluator.evaluate(condition, fMacroDictionary, fLocationMap);
@@ -1422,7 +1490,7 @@ public class CPreprocessor implements ILexerLog, IScanner, IAdaptable {
 	 * The method assumes that the identifier is consumed.
 	 * <p>
 	 * Checks whether the identifier causes a macro expansion. May advance the current lexer
-	 * to check for the opening bracket succeeding the identifier.
+	 * over newlines to check for the opening bracket succeeding the identifier.
 	 * <p>
 	 * If applicable the macro is expanded and the resulting tokens are put onto a new context.
 	 * @param identifier the token where macro expansion may occur.
@@ -1431,13 +1499,13 @@ public class CPreprocessor implements ILexerLog, IScanner, IAdaptable {
 	 * @param isPPCondition whether the expansion is inside of a preprocessor condition. This
 	 * implies a specific handling for the defined token.
 	 */
-	private boolean expandMacro(final Token identifier, Lexer lexer, boolean stopAtNewline, final boolean isPPCondition) throws OffsetLimitReachedException {
+	private boolean expandMacro(final Token identifier, Lexer lexer, int options, boolean withinExpansion) throws OffsetLimitReachedException {
 		final char[] name= identifier.getCharImage();
         PreprocessorMacro macro= fMacroDictionary.get(name);
         if (macro == null) {
         	return false;
         }
-        
+        boolean stopAtNewline= (options & STOP_AT_NL) != 0;
         if (macro instanceof FunctionStyleMacro) {
     		Token t= lexer.currentToken();
     		if (!stopAtNewline) {
@@ -1450,9 +1518,12 @@ public class CPreprocessor implements ILexerLog, IScanner, IAdaptable {
     		}
         }
         final boolean contentAssist = fContentAssistLimit>=0 && fCurrentContext == fRootContext;
-        TokenList replacement= fMacroExpander.expand(lexer, stopAtNewline, isPPCondition, macro, identifier, contentAssist);
-    	final IASTName[] expansions= fMacroExpander.clearImplicitExpansions();
-    	final ImageLocationInfo[] ili= fMacroExpander.clearImageLocationInfos();
+        final ITokenSequence input= stopAtNewline ? fLineInputToMacroExpansion : fInputToMacroExpansion;
+		final MacroExpander expander = withinExpansion ? new MacroExpander(this, fMacroDictionary,
+				fLocationMap, fLexOptions) : fMacroExpander;
+        TokenList replacement= expander.expand(input, (options & PROTECT_DEFINED) != 0, macro, identifier, contentAssist);
+    	final IASTName[] expansions= expander.clearImplicitExpansions();
+    	final ImageLocationInfo[] ili= expander.clearImageLocationInfos();
     	final Token last= replacement.last();
     	final int length= last == null ? 0 : last.getEndOffset(); 
     	ILocationCtx ctx= fLocationMap.pushMacroExpansion(

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2008 Wind River Systems, Inc. and others.
+ * Copyright (c) 2007, 2009 Wind River Systems, Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -35,7 +35,6 @@ public class MacroExpander {
 	private static final class AbortMacroExpansionException extends Exception {}
 
 	private static final int ORIGIN = OffsetLimitReachedException.ORIGIN_MACRO_EXPANSION;
-	private static final Token END_TOKEN = new Token(IToken.tEND_OF_INPUT, null, 0, 0);	
 	private static final TokenList EMPTY_TOKEN_LIST = new TokenList();	
 
 	/** 
@@ -77,22 +76,17 @@ public class MacroExpander {
 	 * Combines a list of tokens with the preprocessor to form the input for macro expansion.
 	 */
 	private class TokenSource extends TokenList {
-		private final Lexer fLexer;
-		private final boolean fStopAtNewline;
+		private final ITokenSequence fLexer;
 
-		public TokenSource(Lexer lexer, boolean stopAtNewline) {
+		public TokenSource(ITokenSequence lexer) {
 			fLexer= lexer;
-			fStopAtNewline= stopAtNewline;
 		}
 
 		public Token fetchFirst() throws OffsetLimitReachedException {
 			Token t= removeFirst();
 			if (t == null && fLexer != null) {
 				t= fLexer.currentToken();
-				if (fStopAtNewline && t.getType() == Lexer.tNEWLINE) {
-					t= END_TOKEN;
-				}
-				else {
+				if (t.getType() != IToken.tEND_OF_INPUT) {
 					fEndOffset= t.getEndOffset();
 					fLexer.nextToken();
 				}
@@ -119,14 +113,11 @@ public class MacroExpander {
 
 			if (fLexer != null) {
 				t= fLexer.currentToken();
-				if (!fStopAtNewline) {
-					while(t.getType() == Lexer.tNEWLINE) {
-						t= fLexer.nextToken();
-					}
+				while(t.getType() == Lexer.tNEWLINE) {
+					t= fLexer.nextToken();
 				}
 				return t.getType() == IToken.tLPAREN;
     		}
-
 			return false;
 		}
 	}
@@ -158,7 +149,7 @@ public class MacroExpander {
 	/** 
 	 * Expects that the identifier has been consumed, stores the result in the list provided.
 	 */
-	public TokenList expand(Lexer lexer, boolean stopAtNewline, final boolean isPPCondition, PreprocessorMacro macro, Token identifier, boolean completionMode) throws OffsetLimitReachedException {
+	public TokenList expand(ITokenSequence lexer, final boolean isPPCondition, PreprocessorMacro macro, Token identifier, boolean completionMode) throws OffsetLimitReachedException {
 		fImplicitMacroExpansions.clear();
 		fImageLocationInfos.clear();
 		
@@ -169,7 +160,7 @@ public class MacroExpander {
 		IdentityHashMap<PreprocessorMacro, PreprocessorMacro> forbidden= new IdentityHashMap<PreprocessorMacro, PreprocessorMacro>();
 		
 		// setup input sequence
-		TokenSource input= new TokenSource(lexer, stopAtNewline);
+		TokenSource input= new TokenSource(lexer);
 		TokenList firstExpansion= new TokenList();
 
 		TokenList result;
@@ -225,7 +216,7 @@ public class MacroExpander {
 			IdentityHashMap<PreprocessorMacro, PreprocessorMacro> forbidden= new IdentityHashMap<PreprocessorMacro, PreprocessorMacro>();
 
 			// setup input sequence
-			TokenSource input= new TokenSource(lexer, false);
+			TokenSource input= new TokenSource(lexer);
 			TokenList firstExpansion= new TokenList();
 
 			firstExpansion.append(new ExpansionBoundary(macro, true));
@@ -453,7 +444,7 @@ public class MacroExpander {
 		int idx= 0;
 		int nesting= -1;
 		for (int i = 0; i < result.length; i++) {
-			result[i]= new TokenSource(null, false);
+			result[i]= new TokenSource(null);
 		}
 		
 		boolean missingRParenthesis= false;

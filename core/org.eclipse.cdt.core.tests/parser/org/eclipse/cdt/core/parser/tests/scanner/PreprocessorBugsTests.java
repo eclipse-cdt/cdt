@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2008 IBM Corporation and others.
+ * Copyright (c) 2004, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -231,5 +231,35 @@ public class PreprocessorBugsTests extends PreprocessorTestsBase {
 		validateIdentifier("passed");
 		validateEOF();
 		validateProblemCount(0);
+	}
+	
+	//	#define ID(x) x
+	//	ID(
+	//	#include "bbb"
+	//	) 
+	//  passed1
+	//
+	//  ID(
+	//	#if ID(b)
+	//	#elif ID(c)
+	//	#else
+	//		d
+	//	#endif
+	//	)
+	//  passed2
+	//  ID(
+	//	#if 0
+	//	#include "bbb"
+	//	#endif
+	//	)
+	//  passed3
+	public void testDirectiveInExpansion_Bug240194() throws Exception {
+		initializeScanner();
+		validateIdentifier("passed1");
+		validateIdentifier("d");
+		validateIdentifier("passed2");
+		validateIdentifier("passed3");
+		validateEOF();
+		validateProblemCount(2);  // the inclusions
 	}
 }

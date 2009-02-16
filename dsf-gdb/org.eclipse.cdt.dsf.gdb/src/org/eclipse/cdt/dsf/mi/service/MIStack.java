@@ -13,6 +13,7 @@ package org.eclipse.cdt.dsf.mi.service;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.Hashtable;
 import java.util.List;
 
@@ -123,7 +124,46 @@ public class MIStack extends AbstractDsfService
         }            
     }
     
+    /**
+     * Class to track stack depth requests for our internal cache
+     */
+    private class StackDepthInfo {
+    	// The maximum depth we requested
+    	public int maxDepthRequested;
+    	// The actual depth we received
+    	public int returnedDepth;
+    	
+    	StackDepthInfo(int requested, int returned) {
+    		maxDepthRequested = requested;
+    		returnedDepth = returned;
+    	}
+    }
+    
+    /**
+     * A HashMap for our StackDepth cache, that can clear based on a context.
+     */
+    @SuppressWarnings("serial")
+    private class StackDepthHashMap<V,T> extends HashMap<V,T> {
+    	public void clear(IDMContext context) {
+            final IMIExecutionDMContext execDmc = DMContexts.getAncestorOfType(context, IMIExecutionDMContext.class);
+            if (execDmc != null) {
+            	remove(execDmc.getThreadId());
+            } else {
+            	clear();
+            };
+    	}
+    }
+
 	private CommandCache fMICommandCache;
+	
+	// Two commands such as 
+	//  -stack-info-depth 11
+	//  -stack-info-depth 2
+	// would both be sent to GDB because the command cache sees them as different.
+	// This stackDepthCache allows us to know that if we already ask for a stack depth
+	// we can potentially re-use the answer.
+	StackDepthHashMap<Integer, StackDepthInfo> fStackDepthCache = new StackDepthHashMap<Integer, StackDepthInfo>();
+
     private MIStoppedEvent fCachedStoppedEvent;
     private IRunControl fRunControl;
 
@@ -613,7 +653,7 @@ public class MIStack extends AbstractDsfService
     }
 
     public void getStackDepth(IDMContext dmc, final int maxDepth, final DataRequestMonitor<Integer> rm) {
-        IMIExecutionDMContext execDmc = DMContexts.getAncestorOfType(dmc, IMIExecutionDMContext.class);
+        final IMIExecutionDMContext execDmc = DMContexts.getAncestorOfType(dmc, IMIExecutionDMContext.class);
 	    if (execDmc != null) {
 	    	// Make sure the thread is stopped
 	    	if (!fRunControl.isSuspended(execDmc)) {
@@ -622,6 +662,17 @@ public class MIStack extends AbstractDsfService
 	    		return;
 	    	}
 
+	    	// Check our internal cache first because different commands can
+	    	// still be re-used.
+	    	StackDepthInfo cachedDepth = fStackDepthCache.get(execDmc.getThreadId());
+	    	if (cachedDepth != null) {
+	    		if (cachedDepth.maxDepthRequested == 0 || cachedDepth.maxDepthRequested >= maxDepth) {
+	    	        rm.setData(cachedDepth.returnedDepth);
+	    	        rm.done();
+	    	        return;
+	    		}
+	    	}
+	    	
 	    	MIStackInfoDepth depthCommand = null;
 	    	if (maxDepth > 0) depthCommand = new MIStackInfoDepth(execDmc, maxDepth);
 	    	else depthCommand = new MIStackInfoDepth(execDmc);
@@ -631,6 +682,9 @@ public class MIStack extends AbstractDsfService
 	    			new DataRequestMonitor<MIStackInfoDepthInfo>(getExecutor(), rm) { 
 	    				@Override
 	    				protected void handleSuccess() {
+	    					// Store result in our internal cache
+	    					fStackDepthCache.put(execDmc.getThreadId(), new StackDepthInfo(maxDepth, getData().getDepth()));
+	    					
 	    					rm.setData(getData().getDepth());
 	    					rm.done();
 	    				}
@@ -651,6 +705,7 @@ public class MIStack extends AbstractDsfService
         if (e.getReason() != StateChangeReason.STEP) {
             fCachedStoppedEvent = null;
             fMICommandCache.reset();
+            fStackDepthCache.clear();
         }
     }
     
@@ -663,6 +718,7 @@ public class MIStack extends AbstractDsfService
     public void eventDispatched(ISuspendedDMEvent e) {
     	fMICommandCache.setContextAvailable(e.getDMContext(), true);
         fMICommandCache.reset();
+        fStackDepthCache.clear();
     }
     
 
@@ -693,6 +749,7 @@ public class MIStack extends AbstractDsfService
      */
 	public void flushCache(IDMContext context) {
         fMICommandCache.reset(context);
+       	fStackDepthCache.clear(context);
 	}
 
 }

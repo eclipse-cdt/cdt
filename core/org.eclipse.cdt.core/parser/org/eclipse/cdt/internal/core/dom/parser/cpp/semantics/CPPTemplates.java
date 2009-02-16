@@ -1486,27 +1486,28 @@ public class CPPTemplates {
 	 * - If A is an array type, the pointer type produced by the array-to-pointer conversion is used instead
 	 * - If A is a function type, the pointer type produced by the function-to-pointer conversion is used instead
 	 * - If A is a cv-qualified type, the top level cv-qualifiers are ignored for type deduction
-	 * @param aInfo
+	 * @param type
 	 * @return
 	 */
-	static private IType getArgumentTypeForDeduction(IType aType, boolean pIsAReferenceType) {
-		if (aType instanceof ICPPReferenceType) {
+	static private IType getArgumentTypeForDeduction(IType type, boolean pIsAReferenceType) {
+		type = SemanticUtil.getSimplifiedType(type);
+		if (type instanceof ICPPReferenceType) {
 		    try {
-                aType = ((ICPPReferenceType) aType).getType();
+                type = ((ICPPReferenceType) type).getType();
             } catch (DOMException e) {
             }
 		}
-		IType result = aType;
+		IType result = type;
 		if (!pIsAReferenceType) {
 			try {
-				if (aType instanceof IArrayType) {
-					result = new CPPPointerType(((IArrayType) aType).getType());
-				} else if (aType instanceof IFunctionType) {
-					result = new CPPPointerType(aType);
-				} else if (aType instanceof IQualifierType) {
-					result = ((IQualifierType) aType).getType();
-				} else if (aType instanceof CPPPointerType) {
-					result = ((CPPPointerType) aType).stripQualifiers();
+				if (type instanceof IArrayType) {
+					result = new CPPPointerType(((IArrayType) type).getType());
+				} else if (type instanceof IFunctionType) {
+					result = new CPPPointerType(type);
+				} else if (type instanceof IQualifierType) {
+					result = ((IQualifierType) type).getType();
+				} else if (type instanceof CPPPointerType) {
+					result = ((CPPPointerType) type).stripQualifiers();
 				}
 			} catch (DOMException e) {
 				result = e.getProblem();

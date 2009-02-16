@@ -30,6 +30,7 @@ import org.eclipse.cdt.dsf.gdb.internal.GdbPlugin;
 import org.eclipse.cdt.dsf.mi.service.IMIExecutionDMContext;
 import org.eclipse.cdt.dsf.mi.service.IMIProcesses;
 import org.eclipse.cdt.dsf.mi.service.MIRunControl;
+import org.eclipse.cdt.dsf.mi.service.MIStack;
 import org.eclipse.cdt.dsf.mi.service.command.events.MIEvent;
 import org.eclipse.cdt.dsf.mi.service.command.events.MIThreadExitEvent;
 import org.eclipse.cdt.dsf.service.DsfSession;
@@ -150,5 +151,45 @@ public class GDBRunControl extends MIRunControl {
 		}
 	}
 	
+    @Override
+	public void canStep(final IExecutionDMContext context, StepType stepType, final DataRequestMonitor<Boolean> rm) {
+    	if (context instanceof IContainerDMContext) {
+    		rm.setData(false);
+    		rm.done();
+    		return;
+    	}
+    	
+    	if (stepType == StepType.STEP_RETURN) {
+    		// A step return will always be done in the top stack frame.
+    		// If the top stack frame is the only stack frame, it does not make sense
+    		// to do a step return since GDB will reject it.
+    		
+    		// Until bug 256798 is fixed, the service tracker could be null
+    		if (getServicesTracker() == null) {
+    			// service is shutdown
+    			rm.setData(false);
+    			rm.done();
+    			return;
+    		}
+            MIStack stackService = getServicesTracker().getService(MIStack.class);
+            if (stackService != null) {
+            	// Check that the stack is at least two deep.
+            	stackService.getStackDepth(context, 2, new DataRequestMonitor<Integer>(getExecutor(), rm) {
+            		@Override
+            		public void handleCompleted() {
+            			if (isSuccess() && getData() == 1) {
+            				rm.setData(false);
+            				rm.done();
+            			} else {
+            	    		canResume(context, rm);
+            			}
+            		}
+            	});
+            	return;
+            }
+    	}
+    	
+    	canResume(context, rm);
+    }
 	
 }

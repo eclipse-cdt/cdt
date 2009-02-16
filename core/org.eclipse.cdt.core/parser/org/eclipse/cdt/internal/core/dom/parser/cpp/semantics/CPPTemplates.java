@@ -1486,10 +1486,11 @@ public class CPPTemplates {
 	 * - If A is an array type, the pointer type produced by the array-to-pointer conversion is used instead
 	 * - If A is a function type, the pointer type produced by the function-to-pointer conversion is used instead
 	 * - If A is a cv-qualified type, the top level cv-qualifiers are ignored for type deduction
-	 * @param type
+	 * @param type argument type
+	 * @param parameterIsAReferenceType indicates whether template parameter is a reference type.
 	 * @return
 	 */
-	static private IType getArgumentTypeForDeduction(IType type, boolean pIsAReferenceType) {
+	static private IType getArgumentTypeForDeduction(IType type, boolean parameterIsAReferenceType) {
 		type = SemanticUtil.getSimplifiedType(type);
 		if (type instanceof ICPPReferenceType) {
 		    try {
@@ -1498,7 +1499,7 @@ public class CPPTemplates {
             }
 		}
 		IType result = type;
-		if (!pIsAReferenceType) {
+		if (!parameterIsAReferenceType) {
 			try {
 				if (type instanceof IArrayType) {
 					result = new CPPPointerType(((IArrayType) type).getType());

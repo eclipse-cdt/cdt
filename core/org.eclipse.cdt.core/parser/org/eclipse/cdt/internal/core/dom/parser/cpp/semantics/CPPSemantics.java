@@ -185,6 +185,10 @@ public class CPPSemantics {
 	public static boolean traceBindingResolution = false;
 	public static int traceIndent= 0;
 	
+	// special return value for costForFunctionCall
+	private static final Cost[] CONTAINS_DEPENDENT_TYPES = {};
+
+	
 	static protected IBinding resolveBinding(IASTName name) {
 		if (traceBindingResolution) {
 			for (int i = 0; i < traceIndent; i++) 
@@ -518,7 +522,7 @@ public class CPPSemantics {
 	}
     
     static private ObjectSet<IScope> getAssociatedScopes(LookupData data) {
-        IType[] ps = getSourceParameterTypes(data.functionParameters);
+        IType[] ps = getArgumentTypes(data.functionParameters);
         ObjectSet<IScope> namespaces = new ObjectSet<IScope>(2);
         ObjectSet<ICPPClassType> classes = new ObjectSet<ICPPClassType>(2);
         for (IType p : ps) {
@@ -1857,7 +1861,7 @@ public class CPPSemantics {
 		
 		if (def && numArgs == 1) {
 			// check for parameter of type void
-			IType[] argTypes= getSourceParameterTypes(funcArgs);
+			IType[] argTypes= getArgumentTypes(funcArgs);
 			if (argTypes.length == 1) {
 				IType t= getNestedType(argTypes[0], TDEF);
 				if (t instanceof IBasicType && ((IBasicType)t).getType() == IBasicType.t_void) {
@@ -1925,50 +1929,30 @@ public class CPPSemantics {
 		return false;
 	}
 	
-	static private IType[] getSourceParameterTypes(Object[] params) {
-	    if (params instanceof IType[]) {
-	        return (IType[]) params;
+	static private IType[] getArgumentTypes(Object[] args) {
+	    if (args instanceof IType[]) {
+	        return (IType[]) args;
 	    } 
 	    
-	    if (params == null || params.length == 0)
-	        return new IType[] { VOID_TYPE };
+	    if (args == null || args.length == 0)
+	        return IType.EMPTY_TYPE_ARRAY;
 	    
-	    if (params instanceof IASTExpression[]) {
-			IASTExpression[] exps = (IASTExpression[]) params;
+	    if (args instanceof IASTExpression[]) {
+			IASTExpression[] exps = (IASTExpression[]) args;
 			IType[] result = new IType[exps.length];
 			for (int i = 0; i < exps.length; i++) {
 			    result[i] = exps[i].getExpressionType();
             }
 			return result;
-		} else if (params instanceof IASTParameterDeclaration[]) {
-		    IASTParameterDeclaration[] decls = (IASTParameterDeclaration[]) params;
+		} else if (args instanceof IASTParameterDeclaration[]) {
+		    IASTParameterDeclaration[] decls = (IASTParameterDeclaration[]) args;
 		    IType[] result = new IType[decls.length];
-			for (int i = 0; i < params.length; i++) {
+			for (int i = 0; i < args.length; i++) {
 			    result[i] = CPPVisitor.createType(decls[i].getDeclarator());
             }
 			return result;
 		}
 		return null;
-	}
-	
-	static private IType[] getTargetParameterTypes(IFunction fn) throws DOMException{
-	    final ICPPFunctionType ftype = (ICPPFunctionType) fn.getType();
-	    if (ftype == null)
-	    	return IType.EMPTY_TYPE_ARRAY;
-	    
-		final IType[] ptypes= ftype.getParameterTypes();
-	    if (fn instanceof ICPPMethod == false || fn instanceof ICPPConstructor)
-	    	return ptypes;
-	    	
-	    final IType[] result = new IType[ptypes.length + 1];
-	    System.arraycopy(ptypes, 0, result, 1, ptypes.length);
-	    ICPPClassType owner= ((ICPPMethod) fn).getClassOwner();
-	    if (owner instanceof ICPPClassTemplate) {
-	    	owner= CPPTemplates.instantiateWithinClassTemplate((ICPPClassTemplate) owner);
-	    }
-	    IType implicitType= SemanticUtil.addQualifiers(owner, ftype.isConst(), ftype.isVolatile());
-	    result[0]= new CPPReferenceType(implicitType);
-	    return result;
 	}
 	
 	static IBinding resolveFunction(LookupData data, IFunction[] fns, boolean allowUDC) throws DOMException {
@@ -2008,110 +1992,56 @@ public class CPPSemantics {
 				}
 			}
 		}
-		if (firstViable == null) 
-			return null;
-		if (data.forFunctionDeclaration()) 
+		if (firstViable == null || data.forFunctionDeclaration()) 
 			return firstViable;
 
-		// The parameters the function is being called with
-		final IType[] sourceParameters = getSourceParameterTypes(data.functionParameters);
-		if (CPPTemplates.containsDependentType(sourceParameters)) {
+		// The arguments the function is being called with
+		final Object[] args= data.functionParameters;
+		final IType[] argTypes = getArgumentTypes(data.functionParameters);
+		if (CPPTemplates.containsDependentType(argTypes)) {
 			if (viableCount == 1)
 				return firstViable;
-			
 			return CPPUnknownFunction.createForSample(firstViable, data.astName);
 		}
 		
-		IFunction bestFn = null;				// the best function
-		IFunction currFn = null;				// the function currently under consideration
-		Cost[] bestFnCost = null;				// the cost of the best function
-		Cost[] currFnCost = null;				// the cost for the current function
-				
-		IASTExpression sourceExp; 
-		IType source = null;					// parameter we are called with
-		IType target = null;					// function's parameter
-		
-		int comparison;
-		Cost cost = null;						// the cost of converting source to target
-				 
-		boolean hasWorse = false;				// currFn has a worse parameter fit than bestFn
-		boolean hasBetter = false;				// currFn has a better parameter fit than bestFn
 		boolean ambiguous = false;				// ambiguity, 2 functions are equally good
-		boolean currHasAmbiguousParam = false;	// currFn has an ambiguous parameter conversion (ok if not bestFn)
+		IFunction bestFn = null;				// the best function
+		Cost[] bestFnCost = null;				// the cost of the best function
 		boolean bestHasAmbiguousParam = false;  // bestFn has an ambiguous parameter conversion (not ok, ambiguous)
 
-		final boolean sourceVoid = (data.functionParameters == null || data.functionParameters.length == 0);
-		final IType impliedObjectType = data.getImpliedObjectArgument();
+		final IType thisType = data.getImpliedObjectArgument();
 		
 		// Loop over all functions
-		function_loop: for (int fnIdx = 0; fnIdx < fns.length; fnIdx++) {
-			currFn= fns[fnIdx];
-			if (currFn == null || bestFn == currFn) {
+		for (IFunction fn : fns) {
+			if (fn == null || bestFn == fn) 
+				continue;
+			
+			final Cost[] fnCost= costForFunctionCall(fn, thisType, argTypes, args, allowUDC);
+			if (fnCost == null)
+				continue;
+			
+			if (fnCost == CONTAINS_DEPENDENT_TYPES) {
+				if (viableCount == 1)
+					return firstViable;
+				return CPPUnknownFunction.createForSample(firstViable, data.astName);
+			}
+
+			
+			if (bestFnCost == null) {
+				bestFnCost= fnCost;
+				bestFn= fn;
 				continue;
 			}
-	
-			final IType[] targetParameters = getTargetParameterTypes(currFn);
-			final int useImplicitObj = (currFn instanceof ICPPMethod && !(currFn instanceof ICPPConstructor)) ? 1 : 0;
-			final int sourceLen= Math.max(sourceParameters.length + useImplicitObj, 1);
 			
-			if (currFnCost == null || currFnCost.length != sourceLen) {
-				currFnCost= new Cost[sourceLen];	
-			}
-			
-			boolean varArgs = false;
-			boolean isImpliedObject= false;
-			for (int j = 0; j < sourceLen; j++) {
-			    if (useImplicitObj > 0) {
-			    	isImpliedObject= (j == 0);
-			        source= isImpliedObject ? impliedObjectType : sourceParameters[j - 1];
-			        Object se= isImpliedObject || data.functionParameters.length == 0 ? null : data.functionParameters[j - 1];
-			        sourceExp= se instanceof IASTExpression ? (IASTExpression) se : null;
-			    } else { 
-			        source = sourceParameters[j];
-			        Object se= data.functionParameters.length == 0 ? null : data.functionParameters[j];
-			        sourceExp= se instanceof IASTExpression ? (IASTExpression) se : null;
-			    }
-
-			    if (j < targetParameters.length) {
-			    	target = targetParameters[j];
-			    } else if (currFn.takesVarArgs()) {
-					varArgs = true;
-			    } else {
-			        target = VOID_TYPE;
-			    }
-				
-				if (isImpliedObject && ASTInternal.isStatic(currFn, false)) {
-				    // 13.3.1-4 for static member functions, the implicit object parameter is
-					// considered to match any object
-				    cost = new Cost(source, target);
-					cost.rank = Cost.IDENTITY_RANK;	// exact match, no cost
-				} else if (source == null) {
-				    continue function_loop;
-				} else if (varArgs) {
-					cost = new Cost(source, null);
-					cost.rank = Cost.ELLIPSIS_CONVERSION;
-				} else if (source.isSameType(target) || (sourceVoid && j == useImplicitObj)) {
-					cost = new Cost(source, target);
-					cost.rank = Cost.IDENTITY_RANK;	// exact match, no cost
-				} else {
-					cost= Conversions.checkImplicitConversionSequence(sourceExp,
-							source, target, allowUDC, isImpliedObject);
-				}
-				
-				if (cost.rank < 0)
-					continue function_loop;
-				
-				currFnCost[j] = cost;
-			}
-			
-			hasWorse = false;
-			hasBetter = false;
+			boolean hasWorse = false;
+			boolean hasBetter = false;
+			boolean hasAmbiguousParam= false;
 			// In order for this function to be better than the previous best, it must
 			// have at least one parameter match that is better that the corresponding
 			// match for the other function, and none that are worse.
-			int len = (bestFnCost == null || currFnCost.length < bestFnCost.length) ? currFnCost.length : bestFnCost.length;
+			int len = Math.min(fnCost.length, bestFnCost.length);
 			for (int j = 1; j <= len; j++) {
-				Cost currCost = currFnCost[currFnCost.length - j];
+				Cost currCost = fnCost[fnCost.length - j];
 				if (currCost.rank < 0) {
 					hasWorse = true;
 					hasBetter = false;
@@ -2120,54 +2050,53 @@ public class CPPSemantics {
 				
 				// An ambiguity in the user defined conversion sequence is only a problem
 				// if this function turns out to be the best.
-				currHasAmbiguousParam = (currCost.userDefined == 1);
+				if (currCost.userDefined == Cost.AMBIGUOUS_USERDEFINED_CONVERSION)
+					hasAmbiguousParam = true;
+				
 				if (bestFnCost != null) {
-					comparison = currCost.compare(bestFnCost[bestFnCost.length - j]);
+					int comparison = currCost.compare(bestFnCost[bestFnCost.length - j]);
 					hasWorse |= (comparison < 0);
 					hasBetter |= (comparison > 0);
 				} else {
 					hasBetter = true;
 				}
 			}
+		
+			if (!hasWorse && !hasBetter) {
+				// If they are both template functions, we can order them that way
+				ICPPFunctionTemplate bestAsTemplate= asTemplate(bestFn);
+				ICPPFunctionTemplate currAsTemplate= asTemplate(fn);
+				final boolean bestIsTemplate = bestAsTemplate != null;
+				final boolean currIsTemplate = currAsTemplate != null;
+				if (bestIsTemplate && currIsTemplate) {
+					int order = CPPTemplates.orderTemplateFunctions(bestAsTemplate, currAsTemplate);
+					if (order < 0) {
+						hasBetter= true;	 				
+					} else if (order > 0) {
+						hasWorse= true;
+					}
+				} else if (bestIsTemplate != currIsTemplate) {
+					// We prefer normal functions over template functions, unless we specified template arguments
+					if (data.preferTemplateFunctions() == bestIsTemplate)
+						hasWorse = true;
+					else
+						hasBetter = true;
+				} 
+			}
 			
 			// If function has a parameter match that is better than the current best,
 			// and another that is worse (or everything was just as good, neither better nor worse),
 			// then this is an ambiguity (unless we find something better than both later).
-			ambiguous |= (hasWorse && hasBetter) || (!hasWorse && !hasBetter);
-			
-			// mstodo if ambiguous ??
-			if (!hasWorse) {
-				// If they are both template functions, we can order them that way
-				ICPPFunctionTemplate bestAsTemplate= asTemplate(bestFn);
-				ICPPFunctionTemplate currAsTemplate= asTemplate(currFn);
-				if (bestAsTemplate != null && currAsTemplate != null) {
-					int order = CPPTemplates.orderTemplateFunctions(bestAsTemplate, currAsTemplate);
-					if (order < 0) {
-						hasBetter = true;	 				
-					} else if (order > 0) {
-						ambiguous = false;
-					}
-				} else if (bestAsTemplate != null) {
-					// We prefer normal functions over template functions, unless we specified template arguments
-					if (data.preferTemplateFunctions())
-						ambiguous = false;
-					else
-						hasBetter = true;
-				} else if (currAsTemplate != null) {
-					if (data.preferTemplateFunctions())
-						hasBetter = true;
-					else
-						ambiguous = false;
-				} 
-				if (hasBetter) {
-					// The new best function.
-					ambiguous = false;
-					bestFnCost = currFnCost;
-					bestHasAmbiguousParam = currHasAmbiguousParam;
-					currFnCost = null;
-					bestFn = currFn;
-				} 
-			}
+			if (hasBetter == hasWorse) {
+				ambiguous= true;
+				// here we would need to store the costs to compare to a function that is better later on.
+			} else if (hasBetter && !hasWorse) {
+				bestFn= fn;
+				bestFnCost= fnCost;
+				bestHasAmbiguousParam= hasAmbiguousParam;
+				ambiguous= false;
+				// here we would have to compare to the functions that were previously ambiguous.
+			} 
 		}
 
 		if (ambiguous || bestHasAmbiguousParam) {
@@ -2175,6 +2104,94 @@ public class CPPSemantics {
 		}
 						
 		return bestFn;
+	}
+
+	private static Cost[] costForFunctionCall(IFunction fn, IType thisType, IType[] argTypes, Object[] args,
+			boolean allowUDC) throws DOMException {
+	    final ICPPFunctionType ftype= (ICPPFunctionType) fn.getType();
+	    if (ftype == null)
+	    	return null;
+
+		IType implicitType= null;
+		final IType[] paramTypes= ftype.getParameterTypes();
+		if (fn instanceof ICPPMethod && !(fn instanceof ICPPConstructor)) {
+		    implicitType = getImplicitType((ICPPMethod) fn, ftype.isConst(), ftype.isVolatile());
+		}
+	    
+		int k= 0;
+	    Cost cost;
+		final int sourceLen= argTypes.length;
+		final Cost[] result;
+		if (implicitType == null) {
+			result= new Cost[sourceLen];
+		} else {
+			result= new Cost[sourceLen+1];
+			if (ASTInternal.isStatic(fn, false)) {
+			    // 13.3.1-4 for static member functions, the implicit object parameter always matches
+			    cost = new Cost(thisType, implicitType);
+				cost.rank = Cost.IDENTITY_RANK;	// exact match, no cost
+			} else if (thisType == null) {
+				return null;
+			} else if (thisType.isSameType(implicitType)) {
+				cost = new Cost(thisType, implicitType);
+				cost.rank = Cost.IDENTITY_RANK;	// exact match, no cost
+			} else {
+			    if (CPPTemplates.isDependentType(implicitType))
+			    	return CONTAINS_DEPENDENT_TYPES;
+				cost = Conversions.checkImplicitConversionSequence(null, thisType, implicitType, false, true);
+			}
+			if (cost.rank < 0)
+				return null;
+			
+			result[k++] = cost;
+		}
+		
+		for (int j=0; j<sourceLen; j++) {
+			final IType argType= argTypes[j];
+			final Object arg= j < args.length ? args[j] : null;
+			final IASTExpression argExpr= (arg instanceof IASTExpression) ? (IASTExpression) arg : null;
+
+			if (argType == null)
+				return null;
+
+			IType paramType;
+			if (j < paramTypes.length) {
+				paramType= paramTypes[j];
+			} else if (!fn.takesVarArgs()) {
+				paramType= VOID_TYPE;
+			} else {
+				cost = new Cost(argType, null);
+				cost.rank = Cost.ELLIPSIS_CONVERSION;
+				result[k++]= cost;
+				continue;
+			} 
+			
+			if (argType.isSameType(paramType)) {
+				cost = new Cost(argType, paramType);
+				cost.rank = Cost.IDENTITY_RANK;	// exact match, no cost
+			} else {
+			    if (CPPTemplates.isDependentType(paramType))
+			    	return CONTAINS_DEPENDENT_TYPES;
+				cost = Conversions.checkImplicitConversionSequence(argExpr, argType, paramType, allowUDC, false);
+			}
+			if (cost.rank < 0)
+				return null;
+			
+			result[k++] = cost;
+		}
+		return result;
+	}
+
+	private static IType getImplicitType(ICPPMethod m, final boolean isConst, final boolean isVolatile)
+			throws DOMException {
+		IType implicitType;
+		ICPPClassType owner= m.getClassOwner();
+		if (owner instanceof ICPPClassTemplate) {
+			owner= CPPTemplates.instantiateWithinClassTemplate((ICPPClassTemplate) owner);
+		}
+		implicitType= SemanticUtil.addQualifiers(owner, isConst, isVolatile);
+		implicitType= new CPPReferenceType(implicitType);
+		return implicitType;
 	}
 
 	private static IBinding resolveUserDefinedConversion(ICPPASTConversionName astName, IFunction[] fns) {

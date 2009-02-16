@@ -17,6 +17,7 @@ import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.IField;
 import org.eclipse.cdt.core.dom.ast.IScope;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPBase;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassScope;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassSpecialization;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPConstructor;
@@ -43,8 +44,8 @@ public class CompositeCPPClassSpecialization extends CompositeCPPClassType imple
 	}
 
 	@Override
-	public IScope getCompositeScope() throws DOMException {
-		return cf.getCompositeScope((IIndexScope) ((ICPPClassType) rbinding).getCompositeScope());
+	public ICPPClassScope getCompositeScope() throws DOMException {
+		return (ICPPClassScope) cf.getCompositeScope((IIndexScope) ((ICPPClassType) rbinding).getCompositeScope());
 	}
 
 	public ICPPClassType getSpecializedBinding() {

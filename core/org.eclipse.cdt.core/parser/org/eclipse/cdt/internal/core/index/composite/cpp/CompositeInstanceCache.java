@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008 Wind River Systems, Inc. and others.
+ * Copyright (c) 2008, 2009 Wind River Systems, Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -16,6 +16,7 @@ import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateArgument;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateInstance;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPDeferredClassInstance;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPInstanceCache;
 import org.eclipse.cdt.internal.core.index.IIndexFragment;
 import org.eclipse.cdt.internal.core.index.IIndexFragmentBinding;
@@ -39,6 +40,7 @@ public class CompositeInstanceCache {
 	}
 	
 	private final HashMap<String, ICPPTemplateInstance> fMap;
+	private ICPPDeferredClassInstance fDeferredInstance;
 
 	public CompositeInstanceCache() {
 		fMap= new HashMap<String, ICPPTemplateInstance>();
@@ -80,5 +82,13 @@ public class CompositeInstanceCache {
 
 	synchronized public ICPPTemplateInstance[] getAllInstances() {
 		return fMap.values().toArray(new ICPPTemplateInstance[fMap.size()]);
+	}
+
+	public ICPPDeferredClassInstance getDeferredInstance() {
+		return fDeferredInstance;
+	}
+
+	public void putDeferredInstance(ICPPDeferredClassInstance dci) {
+		fDeferredInstance= dci;
 	}
 }

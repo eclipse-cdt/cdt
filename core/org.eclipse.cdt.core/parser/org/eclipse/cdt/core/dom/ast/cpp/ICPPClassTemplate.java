@@ -19,4 +19,10 @@ import org.eclipse.cdt.core.dom.ast.DOMException;
  */
 public interface ICPPClassTemplate extends ICPPTemplateDefinition, ICPPClassType {
 	public ICPPClassTemplatePartialSpecialization[] getPartialSpecializations() throws DOMException;
+	
+	/**
+	 * Returns a deferred instance that allows lookups within this class template. 
+	 * @since 5.1
+	 */
+	public ICPPTemplateInstance asDeferredInstance() throws DOMException;
 }

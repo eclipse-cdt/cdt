@@ -122,4 +122,9 @@ public class CPPClassTemplatePartialSpecializationSpecialization extends CPPClas
 	public IType[] getArguments() throws DOMException {
 		return CPPTemplates.getArguments(getTemplateArguments());
 	}
+	
+	public ICPPTemplateArgument getDefaultArgFromIndex(int paramPos) throws DOMException {
+		// no default arguments for partial specializations
+		return null;
+	}
 }

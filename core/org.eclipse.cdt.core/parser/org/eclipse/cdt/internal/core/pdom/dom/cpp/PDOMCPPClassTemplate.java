@@ -33,7 +33,10 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateTemplateParameter;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateTypeParameter;
 import org.eclipse.cdt.core.parser.util.CharArrayUtils;
 import org.eclipse.cdt.internal.core.dom.parser.ProblemBinding;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPDeferredClassInstance;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPDeferredClassInstance;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPInstanceCache;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPTemplates;
 import org.eclipse.cdt.internal.core.index.IIndexCPPBindingConstants;
 import org.eclipse.cdt.internal.core.pdom.db.Database;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMLinkage;
@@ -295,5 +298,22 @@ public class PDOMCPPClassTemplate extends PDOMCPPClassType
 				return result;
 		}
 		return null;
+	}
+	
+	public ICPPDeferredClassInstance asDeferredInstance() throws DOMException  {
+		PDOMInstanceCache cache= PDOMInstanceCache.getCache(this);
+		synchronized (cache) {
+			ICPPDeferredClassInstance dci= cache.getDeferredInstance();
+			if (dci == null) {
+				dci= createDeferredInstance();
+				cache.putDeferredInstance(dci);
+			}
+			return dci;
+		}
+	}
+
+	protected ICPPDeferredClassInstance createDeferredInstance() throws DOMException {
+		ICPPTemplateArgument[] args = CPPTemplates.templateParametersAsArguments(getTemplateParameters());
+		return new CPPDeferredClassInstance(this, args, getCompositeScope());
 	}
 }

@@ -102,4 +102,8 @@ public class CPPClassTemplateSpecialization extends CPPClassSpecialization
 		}
 		return fDeferredInstance;
 	}
+	
+	public ICPPTemplateArgument getDefaultArgFromIndex(int paramPos) throws DOMException {
+		return null;
+	}
 }

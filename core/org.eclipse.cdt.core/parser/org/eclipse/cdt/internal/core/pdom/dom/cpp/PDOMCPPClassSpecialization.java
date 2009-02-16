@@ -131,7 +131,7 @@ class PDOMCPPClassSpecialization extends PDOMCPPSpecialization implements
 		return newSpec;
 	}
 
-	public IScope getCompositeScope() throws DOMException {
+	public ICPPClassScope getCompositeScope() {
 		if (fScope == null) {
 			try {
 				if (hasDefinition()) {

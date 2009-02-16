@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2008 IBM Corporation and others.
+ * Copyright (c) 2005, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -21,8 +21,10 @@ import org.eclipse.cdt.core.dom.ast.IASTDeclarator;
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IASTSimpleDeclaration;
+import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.IField;
+import org.eclipse.cdt.core.dom.ast.IScope;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.ITypedef;
 import org.eclipse.cdt.core.dom.ast.cpp.CPPASTVisitor;
@@ -40,6 +42,8 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPConstructor;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPField;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPMethod;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateArgument;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateParameter;
+import org.eclipse.cdt.core.index.IIndex;
 import org.eclipse.cdt.core.parser.util.ArrayUtil;
 import org.eclipse.cdt.core.parser.util.CharArrayUtils;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPTemplates;
@@ -53,11 +57,15 @@ public class CPPClassTemplate extends CPPTemplateDefinition implements
 		ICPPClassTemplate, ICPPClassType, ICPPInternalClassTemplate,
 		ICPPInternalClassTypeMixinHost {
 
+	private ICPPClassTemplate fIndexBinding= null;
+	private boolean checkedIndex= false;
+	private boolean checkedDefinition= false;
+	
 	private class FindDefinitionAction extends CPPASTVisitor {
 		private char[] nameArray = CPPClassTemplate.this.getNameCharArray();
 		public IASTName result = null;
 
-		{
+		FindDefinitionAction() {
 			shouldVisitNames          = true;
 			shouldVisitDeclarations   = true;
 			shouldVisitDeclSpecifiers = true;
@@ -110,6 +118,13 @@ public class CPPClassTemplate extends CPPTemplateDefinition implements
 	}
 
 	public void checkForDefinition() {
+		if (checkedDefinition)
+			return;
+	
+		checkedDefinition= true;
+		if (definition != null)
+			return;
+	
 		FindDefinitionAction action = new FindDefinitionAction();
 		IASTNode node = CPPVisitor.getContainingBlockItem(declarations[0]).getParent();
 		while (node instanceof ICPPASTTemplateDeclaration)
@@ -121,8 +136,6 @@ public class CPPClassTemplate extends CPPTemplateDefinition implements
 			node.getTranslationUnit().accept(action);
 			definition = action.result;
 		}
-
-		return;
 	}
 	
 	public void addPartialSpecialization(ICPPClassTemplatePartialSpecialization spec) {
@@ -152,6 +165,18 @@ public class CPPClassTemplate extends CPPTemplateDefinition implements
 			if (parent instanceof ICPPASTCompositeTypeSpecifier) {
 				ICPPASTCompositeTypeSpecifier compSpec = (ICPPASTCompositeTypeSpecifier)parent;
 				return compSpec.getScope();
+			}
+		}
+		
+		// Forward declarations must be backed up from the index.
+		checkForIndexBinding();
+		if (fIndexBinding != null) {
+			try {
+				IScope scope = fIndexBinding.getCompositeScope();
+				if (scope instanceof ICPPClassScope)
+					return (ICPPClassScope) scope;
+			} catch (DOMException e) {
+				// index bindings don't throw DOMExeptions.
 			}
 		}
 		return null;
@@ -263,5 +288,34 @@ public class CPPClassTemplate extends CPPTemplateDefinition implements
 	protected ICPPDeferredClassInstance createDeferredInstance() throws DOMException {
 		ICPPTemplateArgument[] args = CPPTemplates.templateParametersAsArguments(getTemplateParameters());
 		return new CPPDeferredClassInstance(this, args, getCompositeScope());
+	}
+
+	public ICPPTemplateArgument getDefaultArgFromIndex(int paramPos) throws DOMException {
+		checkForIndexBinding();
+		if (fIndexBinding != null) {
+			ICPPTemplateParameter[] params = fIndexBinding.getTemplateParameters();
+			if (paramPos < params.length) {
+				ICPPTemplateParameter param = params[paramPos];
+				return param.getDefaultValue();
+			}
+		}
+		return null;
+	}
+
+	private void checkForIndexBinding() {
+		if (checkedIndex)
+			return;
+		
+		checkedIndex= true;
+		IASTTranslationUnit tu;
+		if (definition != null) {
+			tu= definition.getTranslationUnit();
+		} else {
+			tu= declarations[0].getTranslationUnit();
+		}
+		IIndex index= tu.getIndex();
+		if (index != null) {
+			fIndexBinding= (ICPPClassTemplate) index.adaptBinding(this);
+		}
 	}
 }

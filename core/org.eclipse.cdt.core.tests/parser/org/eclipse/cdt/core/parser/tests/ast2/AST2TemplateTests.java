@@ -2222,7 +2222,7 @@ public class AST2TemplateTests extends AST2BaseTest {
     	bh.assertNonProblem("f(a(x));", 1, ICPPFunction.class);
     }
 
-    // // Brian W.'s example from bugzilla#167098
+	// // Brian W.'s example from bugzilla#167098
 	//    template<class K>
 	//    class D { //CPPClassTemplate
 	//    public:
@@ -3819,6 +3819,16 @@ public class AST2TemplateTests extends AST2BaseTest {
 	//	    func(y, xy, xint);
 	//	}
 	public void testDistinctDeferredInstances_264367() throws Exception {
+		String code= getAboveComment();
+		parseAndCheckBindings(code, ParserLanguage.CPP);
+	}
+
+	// template <typename T> class XT {
+	//    void m(T t) {
+	//       m(0); // ok with a conversion from 0 to T
+	//    }
+	// };
+	public void testUnknownParameter_264988() throws Exception { 
 		String code= getAboveComment();
 		parseAndCheckBindings(code, ParserLanguage.CPP);
 	}

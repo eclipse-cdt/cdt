@@ -18,7 +18,10 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassTemplatePartialSpecializationSp
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateArgument;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateInstance;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateParameter;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPDeferredClassInstance;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPDeferredClassInstance;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPInstanceCache;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPTemplates;
 import org.eclipse.cdt.internal.core.index.IIndexFragmentBinding;
 import org.eclipse.cdt.internal.core.index.composite.ICompositesFactory;
 
@@ -57,6 +60,23 @@ public class CompositeCPPClassTemplatePartialSpecializationSpecialization extend
 		return TemplateInstanceUtil.getTemplateArguments(cf, (ICPPClassTemplatePartialSpecialization) rbinding);
 	}
 
+	public ICPPDeferredClassInstance asDeferredInstance() throws DOMException  {
+		CompositeInstanceCache cache= CompositeInstanceCache.getCache(cf, rbinding);
+		synchronized (cache) {
+			ICPPDeferredClassInstance dci= cache.getDeferredInstance();
+			if (dci == null) {
+				dci= createDeferredInstance();
+				cache.putDeferredInstance(dci);
+			}
+			return dci;
+		}
+	}
+
+	protected ICPPDeferredClassInstance createDeferredInstance() throws DOMException {
+		ICPPTemplateArgument[] args = CPPTemplates.templateParametersAsArguments(getTemplateParameters());
+		return new CPPDeferredClassInstance(this, args, getCompositeScope());
+	}
+	
 	@Deprecated
 	public IType[] getArguments() {
 		return TemplateInstanceUtil.getArguments(cf, (ICPPClassTemplatePartialSpecialization) rbinding);

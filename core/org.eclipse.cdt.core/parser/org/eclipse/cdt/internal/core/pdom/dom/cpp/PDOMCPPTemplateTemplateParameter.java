@@ -33,6 +33,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateTemplateParameter;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateTypeParameter;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTName;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPTemplateArgument;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPDeferredClassInstance;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPUnknownBinding;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPUnknownType;
 import org.eclipse.cdt.internal.core.index.IIndexCPPBindingConstants;
@@ -342,6 +343,10 @@ public class PDOMCPPTemplateTemplateParameter extends PDOMCPPBinding
 			if (result instanceof ICPPTemplateTemplateParameter)
 				return result;
 		}
+		return null;
+	}
+
+	public ICPPDeferredClassInstance asDeferredInstance() throws DOMException {
 		return null;
 	}
 }

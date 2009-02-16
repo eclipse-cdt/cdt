@@ -199,4 +199,8 @@ public class CPPTemplateTemplateParameter extends CPPTemplateParameter implement
 	public boolean isAnonymous() {
 		return false;
 	}
+	
+	public ICPPDeferredClassInstance asDeferredInstance() {
+		return null;
+	}
 }

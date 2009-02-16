@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2008 Symbian Software Systems and others.
+ * Copyright (c) 2007, 2009 Symbian Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -56,6 +56,7 @@ import org.eclipse.cdt.core.parser.util.ObjectMap;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPBasicType;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPClassSpecializationScope;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPTemplateArgument;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPUnknownBinding;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPTemplates;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.SemanticUtil;
 import org.eclipse.cdt.internal.core.index.IIndexScope;
@@ -1540,4 +1541,39 @@ public class IndexCPPTemplateResolutionTest extends IndexBindingResolutionTestBa
 		ICPPClassType owner= m.getClassOwner();
 		assertInstance(owner, ICPPClassTemplatePartialSpecialization.class);
     }
+    
+    
+    // template<typename T> class XT {
+    //    int f; 
+    //    void m();
+    // };
+
+    // template<typename T> void XT<T>::m() {
+    //    m(); // 1
+    //    f; // 1
+    //    this->m(); // 2
+    //    this->f; // 2
+    // };
+    public void testUnknownBindings_Bug264988() throws Exception { 
+		ICPPMethod m= getBindingFromASTName("m(); // 1", 1, ICPPMethod.class);
+		assertFalse(m instanceof ICPPUnknownBinding);
+		m= getBindingFromASTName("m(); // 2", 1, ICPPMethod.class);
+		assertFalse(m instanceof ICPPUnknownBinding);
+		
+		ICPPField f= getBindingFromASTName("f; // 1", 1, ICPPField.class);
+		assertFalse(f instanceof ICPPUnknownBinding);
+		f= getBindingFromASTName("f; // 2", 1, ICPPField.class);
+		assertFalse(f instanceof ICPPUnknownBinding);
+    }
+    
+	// template <typename T= int> class XT;
+	
+    // #include "header.h"
+	// template <typename T> class XT {};
+	// void test() {
+	//    XT<> x;
+	// };
+	public void testDefaultTemplateArgInHeader_264988() throws Exception { 
+		ICPPTemplateInstance ti= getBindingFromASTName("XT<>", 4, ICPPTemplateInstance.class);
+	}
 }

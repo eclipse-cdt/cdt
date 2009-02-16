@@ -175,7 +175,11 @@ public class CPPTemplates {
 				} else {
 					ICPPTemplateArgument defaultArg= param.getDefaultValue();
 					if (defaultArg == null) {
-						return createProblem(template, IProblemBinding.SEMANTIC_INVALID_TEMPLATE_ARGUMENTS);
+						if (template instanceof ICPPInternalClassTemplate) {
+							defaultArg= ((ICPPInternalClassTemplate) template).getDefaultArgFromIndex(i);
+						}
+						if (defaultArg == null)
+							return createProblem(template, IProblemBinding.SEMANTIC_INVALID_TEMPLATE_ARGUMENTS);
 					}
 					arg= instantiateArgument(defaultArg, map, null);
 					arg= SemanticUtil.getSimplifiedArgument(arg);
@@ -358,9 +362,9 @@ public class CPPTemplates {
 	 * Instantiates the template for usage within its own body. May return <code>null</code>.
 	 */
 	public static ICPPClassType instantiateWithinClassTemplate(ICPPClassTemplate template) throws DOMException {
-		if (template instanceof ICPPInternalClassTemplate) {
-			return ((ICPPInternalClassTemplate) template).asDeferredInstance();
-		}
+		ICPPTemplateInstance di= template.asDeferredInstance();
+		if (di instanceof ICPPClassType)
+			return (ICPPClassType) di;
 		
 		ICPPTemplateArgument[] args;
 		if (template instanceof ICPPClassTemplatePartialSpecialization) {

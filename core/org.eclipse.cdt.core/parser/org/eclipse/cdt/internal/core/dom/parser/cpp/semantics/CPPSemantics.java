@@ -2146,7 +2146,7 @@ public class CPPSemantics {
 			result[k++] = cost;
 		}
 		
-		for (int j=0; j<sourceLen; j++) {
+		for (int j = 0; j < sourceLen; j++) {
 			final IType argType= argTypes[j];
 			final Object arg= j < args.length ? args[j] : null;
 			final IASTExpression argExpr= (arg instanceof IASTExpression) ? (IASTExpression) arg : null;

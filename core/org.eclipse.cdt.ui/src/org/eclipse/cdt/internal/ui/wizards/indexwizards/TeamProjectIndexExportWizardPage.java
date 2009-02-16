@@ -44,7 +44,6 @@ import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.dialogs.WizardDataTransferPage;
 
-import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.model.CModelException;
 import org.eclipse.cdt.core.model.CoreModel;
 import org.eclipse.cdt.core.model.ICProject;
@@ -323,8 +322,8 @@ public class TeamProjectIndexExportWizardPage extends  WizardDataTransferPage {
         } catch (InterruptedException e) {
             return false;
         } catch (InvocationTargetException e) {
-            CUIPlugin.log(CCorePlugin.createStatus(Messages.TeamProjectIndexExportWizardPage_errorExporting,
-            		e.getTargetException()));
+            CUIPlugin.log(Messages.TeamProjectIndexExportWizardPage_errorExporting,
+            		e.getTargetException());
             displayErrorDialog(e.getTargetException());
             return false;
         }

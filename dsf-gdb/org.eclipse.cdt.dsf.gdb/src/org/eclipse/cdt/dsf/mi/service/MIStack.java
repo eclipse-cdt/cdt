@@ -162,7 +162,7 @@ public class MIStack extends AbstractDsfService
 	// would both be sent to GDB because the command cache sees them as different.
 	// This stackDepthCache allows us to know that if we already ask for a stack depth
 	// we can potentially re-use the answer.
-	StackDepthHashMap<Integer, StackDepthInfo> fStackDepthCache = new StackDepthHashMap<Integer, StackDepthInfo>();
+	private StackDepthHashMap<Integer, StackDepthInfo> fStackDepthCache = new StackDepthHashMap<Integer, StackDepthInfo>();
 
     private MIStoppedEvent fCachedStoppedEvent;
     private IRunControl fRunControl;

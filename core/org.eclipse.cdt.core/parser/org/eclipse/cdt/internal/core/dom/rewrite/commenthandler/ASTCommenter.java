@@ -85,24 +85,31 @@ public class ASTCommenter {
 	private static ArrayList<IASTComment> removeAllPreprocessorComments(IASTTranslationUnit tu, ArrayList<IASTComment> comments) {
 		IASTPreprocessorStatement[] preprocessorStatements = tu.getAllPreprocessorStatements();
 		TreeMap<Integer,String> treeOfPreProcessorLines = new TreeMap<Integer,String>();
-		ArrayList<Integer> listOfPreProcessorOffset = new ArrayList<Integer>();
+		TreeMap<String, ArrayList<Integer>> ppOffsetForFiles = new TreeMap<String, ArrayList<Integer>>();
 
 		for (IASTPreprocessorStatement statement : preprocessorStatements) {
 			if (isInWorkspace(statement)) {
-				treeOfPreProcessorLines.put(OffsetHelper.getStartingLineNumber(statement), statement.getFileLocation().getFileName());
-				listOfPreProcessorOffset.add(statement.getFileLocation().getNodeOffset());
+				String fileName = statement.getFileLocation().getFileName();
+				treeOfPreProcessorLines.put(OffsetHelper.getStartingLineNumber(statement), fileName);
+				ArrayList<Integer> offsetList = ppOffsetForFiles.get(fileName);
+				if(offsetList == null) {
+					offsetList = new ArrayList<Integer>();
+					ppOffsetForFiles.put(fileName, offsetList);
+				}
+				offsetList.add(statement.getFileLocation().getNodeOffset());
 			}
 		}
 
 		ArrayList<IASTComment> commentsInCode = new ArrayList<IASTComment>();
 		for (IASTComment comment : comments) {
 			int comStartLineNumber = OffsetHelper.getStartingLineNumber(comment);
+			String fileName = comment.getFileLocation().getFileName();
 			if (treeOfPreProcessorLines.containsKey(comStartLineNumber)
-					&& treeOfPreProcessorLines.get(comStartLineNumber).equals(comment.getFileLocation().getFileName()
+					&& treeOfPreProcessorLines.get(comStartLineNumber).equals(fileName
 					)) {
 					continue;
 			}
-			if(commentIsAtTheBeginningBeforePreprocessorStatements(comment, listOfPreProcessorOffset)) {
+			if(commentIsAtTheBeginningBeforePreprocessorStatements(comment, ppOffsetForFiles.get(fileName))) {
 				continue;
 			}
 			commentsInCode.add(comment);
@@ -113,27 +120,33 @@ public class ASTCommenter {
 	private static boolean commentIsAtTheBeginningBeforePreprocessorStatements(
 			IASTComment comment, 
 			ArrayList<Integer> listOfPreProcessorOffset) {
-		if(listOfPreProcessorOffset.size() <1) {
+		if(listOfPreProcessorOffset == null) {
 			return false;
 		}
 		
 		if(comment.getTranslationUnit()==null || comment.getTranslationUnit().getDeclarations().length < 1) {
 			return true;
 		}
-		IASTDeclaration decl = comment.getTranslationUnit().getDeclarations()[0];		
-		if(decl.getFileLocation().getNodeOffset() < comment.getFileLocation().getNodeOffset()) {
-			return false;
+		IASTDeclaration decl = comment.getTranslationUnit().getDeclarations()[0];
+		boolean sameFile = decl.getFileLocation().getFileName().equals(comment.getFileLocation().getFileName());
+		if(sameFile) {
+			if(decl.getFileLocation().getNodeOffset() < comment.getFileLocation().getNodeOffset()) {
+				return false;
+			}
 		}
-		
 		Collections.sort(listOfPreProcessorOffset);
 		if(listOfPreProcessorOffset.get(0) < comment.getFileLocation().getNodeOffset()) {
 			return false;
 		}
 		
-		if(listOfPreProcessorOffset.get(0) < decl.getFileLocation().getNodeOffset()) {
-			return true;
+		if(sameFile) {
+			if(listOfPreProcessorOffset.get(0) < decl.getFileLocation().getNodeOffset()) {
+				return true;
+			}
+		}else {
+			return true; 
 		}
-		
+
 		return false;
 	}
 

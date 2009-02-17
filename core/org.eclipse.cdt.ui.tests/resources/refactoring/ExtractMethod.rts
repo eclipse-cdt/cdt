@@ -2592,3 +2592,117 @@ int main(int argc, char **argv) {
     exp();
 }
 
+//!Bug#264712 Refactor extract function deletes comments in header
+//#org.eclipse.cdt.ui.tests.refactoring.extractfunction.ExtractFunctionRefactoringTest
+//@.config
+filename=test.cpp
+methodname=exp
+//@classhelper.h
+// Comment
+//
+// Comment
+// Comment
+#ifndef utils_classhelper_h_seen
+#define utils_classhelper_h_seen
+#define IMPORTANT_VALUE 1
+#endif
+
+//@test.h
+/*
+ * Copyright 2009
+ */
+#ifndef test_h_seen
+#define test_h_seen
+
+#include "classhelper.h"
+
+class Test
+{
+  public:
+
+	/**
+	 * Small class with some comments
+	 */
+	Test();
+
+    /** Calculate important things.
+     * @returns the result of the calculation
+     */
+    int calculateStuff();
+
+  private:
+	/**
+	 * Retain a value for something.
+	 */
+    int m_value;
+
+};
+
+#endif
+
+//=
+/*
+ * Copyright 2009
+ */
+#ifndef test_h_seen
+#define test_h_seen
+
+#include "classhelper.h"
+
+class Test
+{
+  public:
+
+	/**
+	 * Small class with some comments
+	 */
+	Test();
+
+    /** Calculate important things.
+     * @returns the result of the calculation
+     */
+    int calculateStuff();
+
+  private:
+	/**
+	 * Retain a value for something.
+	 */
+    int m_value;
+    int exp();
+
+};
+
+#endif
+
+//@test.cpp
+#include "test.h"
+
+Test::Test() {}
+
+int Test::calculateStuff() {
+	// refactor these lines to a new method:
+	/*$*/int result = m_value;
+	result += 10;
+	result *= 10;/*$$*/
+	return result;
+}
+
+//=
+#include "test.h"
+
+Test::Test() {}
+
+int Test::exp()
+{
+    // refactor these lines to a new method:
+    int result = m_value;
+    result += 10;
+    result *= 10;
+    return result;
+}
+
+int Test::calculateStuff() {
+    int result = exp();
+	return result;
+}
+

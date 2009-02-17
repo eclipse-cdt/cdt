@@ -35,6 +35,8 @@ import org.eclipse.cdt.core.dom.ast.IASTSimpleDeclaration;
 import org.eclipse.cdt.core.dom.ast.IArrayType;
 import org.eclipse.cdt.core.dom.ast.IBasicType;
 import org.eclipse.cdt.core.dom.ast.IBinding;
+import org.eclipse.cdt.core.dom.ast.IEnumeration;
+import org.eclipse.cdt.core.dom.ast.IEnumerator;
 import org.eclipse.cdt.core.dom.ast.IFunction;
 import org.eclipse.cdt.core.dom.ast.IFunctionType;
 import org.eclipse.cdt.core.dom.ast.IParameter;
@@ -678,8 +680,8 @@ public class CPPTemplates {
 		return instance;
 	}
 
-	public static ICPPSpecialization createSpecialization(ICPPClassSpecialization owner, IBinding decl) {
-		ICPPSpecialization spec = null;
+	public static IBinding createSpecialization(ICPPClassSpecialization owner, IBinding decl) {
+		IBinding spec = null;
 		final ICPPTemplateParameterMap tpMap= owner.getTemplateParameterMap();
 		if (decl instanceof ICPPClassTemplatePartialSpecialization) {
 			try {
@@ -709,6 +711,9 @@ public class CPPTemplates {
 			spec = new CPPFunctionSpecialization(decl, owner, tpMap);
 		} else if (decl instanceof ITypedef) {
 		    spec = new CPPTypedefSpecialization(decl, owner, tpMap);
+		} else if (decl instanceof IEnumeration || decl instanceof IEnumerator) {
+			// TODO(sprigogin): Deal with a case when an enumerator value depends on a template parameter.
+		    spec = decl;
 		}
 		return spec;
 	}

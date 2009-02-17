@@ -3839,7 +3839,8 @@ public class AST2TemplateTests extends AST2BaseTest {
 	//	};
 	//
 	//	int x = A<0>::e;
-	public void _testEnumeratorInTemplateInstance_265070() throws Exception { 
+	//	A<0>::E y;
+	public void testEnumeratorInTemplateInstance_265070() throws Exception { 
 		String code= getAboveComment();
 		parseAndCheckBindings(code, ParserLanguage.CPP);
 	}

@@ -26,6 +26,7 @@ import org.eclipse.cdt.dsf.debug.service.command.CommandCache;
 import org.eclipse.cdt.dsf.debug.service.command.ICommandControlService;
 import org.eclipse.cdt.dsf.debug.service.command.ICommandControlService.ICommandControlShutdownDMEvent;
 import org.eclipse.cdt.dsf.gdb.internal.GdbPlugin;
+import org.eclipse.cdt.dsf.mi.service.command.commands.MICommand;
 import org.eclipse.cdt.dsf.mi.service.command.commands.MIExecContinue;
 import org.eclipse.cdt.dsf.mi.service.command.commands.MIExecFinish;
 import org.eclipse.cdt.dsf.mi.service.command.commands.MIExecInterrupt;
@@ -506,33 +507,38 @@ public class MIRunControl extends AbstractDsfService implements IRunControl, ICa
     	return !fTerminated && fStepping;
     }
 
-	public void resume(IExecutionDMContext context, final RequestMonitor rm) {
+	public void resume(final IExecutionDMContext context, final RequestMonitor rm) {
 		assert context != null;
 
 		if (doCanResume(context)) {
-            fResumePending = true;
-            // Cygwin GDB will accept commands and execute them after the step
-            // which is not what we want, so mark the target as unavailable
-            // as soon as we send a resume command.
-            fMICommandCache.setContextAvailable(context, false);
             MIExecContinue cmd = null;
-            if(context instanceof IContainerDMContext)
+            if(context instanceof IContainerDMContext) {
             	cmd = new MIExecContinue(context);
-            else{
+            } else {
         		IMIExecutionDMContext dmc = DMContexts.getAncestorOfType(context, IMIExecutionDMContext.class);
-    			if (dmc == null){
+    			if (dmc == null) {
     	            rm.setStatus(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, INVALID_STATE, "Given context: " + context + " is not an execution context.", null)); //$NON-NLS-1$ //$NON-NLS-2$
     	            rm.done();
     	            return;
     			}
             	cmd = new MIExecContinue(dmc);//, new String[0]);
             }
+            
+            fResumePending = true;
+            // Cygwin GDB will accept commands and execute them after the step
+            // which is not what we want, so mark the target as unavailable
+            // as soon as we send a resume command.
+            fMICommandCache.setContextAvailable(context, false);
+
             fConnection.queueCommand(
             	cmd,
             	new DataRequestMonitor<MIInfo>(getExecutor(), rm) {
                     @Override
-                    protected void handleSuccess() {
-                        rm.done();
+                    protected void handleFailure() {
+        	            fResumePending = false;
+        	            fMICommandCache.setContextAvailable(context, true);
+
+                        super.handleFailure();
                     }
             	}
             );
@@ -559,15 +565,7 @@ public class MIRunControl extends AbstractDsfService implements IRunControl, ICa
 				}
 				cmd = new MIExecInterrupt(dmc);
 			}
-            fConnection.queueCommand(
-            	cmd,
-                new DataRequestMonitor<MIInfo>(getExecutor(), rm) {
-                    @Override
-                    protected void handleSuccess() {
-                        rm.done();
-                    }
-            	}
-            );
+            fConnection.queueCommand(cmd, new DataRequestMonitor<MIInfo>(getExecutor(), rm));
         } else {
             rm.setStatus(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, NOT_SUPPORTED, "Given context: " + context + ", is already suspended.", null)); //$NON-NLS-1$ //$NON-NLS-2$
             rm.done();
@@ -583,7 +581,7 @@ public class MIRunControl extends AbstractDsfService implements IRunControl, ICa
         canResume(context, rm);
     }
     
-    public void step(IExecutionDMContext context, StepType stepType, final RequestMonitor rm) {
+    public void step(final IExecutionDMContext context, StepType stepType, final RequestMonitor rm) {
     	assert context != null;
 
     	IMIExecutionDMContext dmc = DMContexts.getAncestorOfType(context, IMIExecutionDMContext.class);
@@ -599,18 +597,13 @@ public class MIRunControl extends AbstractDsfService implements IRunControl, ICa
             return;
         }
 
-        fResumePending = true;
-        fStepping = true;
-        fMICommandCache.setContextAvailable(context, false);
+        MICommand<MIInfo> cmd = null;
         switch(stepType) {
             case STEP_INTO:
-                fConnection.queueCommand(
-                    new MIExecStep(dmc, 1), new DataRequestMonitor<MIInfo>(getExecutor(), rm) {}
-                );
+                cmd = new MIExecStep(dmc, 1);
                 break;
             case STEP_OVER:
-                fConnection.queueCommand(
-                    new MIExecNext(dmc), new DataRequestMonitor<MIInfo>(getExecutor(), rm) {});
+                cmd = new MIExecNext(dmc);
                 break;
             case STEP_RETURN:
                 // The -exec-finish command operates on the selected stack frame, but here we always
@@ -622,27 +615,40 @@ public class MIRunControl extends AbstractDsfService implements IRunControl, ICa
                 MIStack stackService = getServicesTracker().getService(MIStack.class);
                 if (stackService != null) {
                     IFrameDMContext topFrameDmc = stackService.createFrameDMContext(dmc, 0);
-                    fConnection.queueCommand(
-                        new MIExecFinish(topFrameDmc), new DataRequestMonitor<MIInfo>(getExecutor(), rm) {});
+                    cmd = new MIExecFinish(topFrameDmc);
                 } else {
                     rm.setStatus(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, NOT_SUPPORTED, "Cannot create context for command, stack service not available.", null)); //$NON-NLS-1$
                     rm.done();
+                    return;
                 }
                 break;
             case INSTRUCTION_STEP_INTO:
-                fConnection.queueCommand(
-                        new MIExecStepInstruction(dmc, 1), new DataRequestMonitor<MIInfo>(getExecutor(), rm) {}
-                    );
+                cmd = new MIExecStepInstruction(dmc, 1);
                 break;
             case INSTRUCTION_STEP_OVER:
-                fConnection.queueCommand(
-                    new MIExecNextInstruction(dmc, 1), new DataRequestMonitor<MIInfo>(getExecutor(), rm) {}
-                );
+            	cmd = new MIExecNextInstruction(dmc, 1);
                 break;
             default:
                 rm.setStatus(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, INTERNAL_ERROR, "Given step type not supported", null)); //$NON-NLS-1$
                 rm.done();
+                return;
         }
+        
+        fResumePending = true;
+        fStepping = true;
+        fMICommandCache.setContextAvailable(context, false);
+
+        fConnection.queueCommand(cmd, new DataRequestMonitor<MIInfo>(getExecutor(), rm) {
+        	@Override
+        	public void handleFailure() {
+                fResumePending = false;
+                fStepping = false;
+                fMICommandCache.setContextAvailable(context, true);
+                
+                super.handleFailure();
+        	}
+        });
+
     }
 
     public void getExecutionContexts(final IContainerDMContext containerDmc, final DataRequestMonitor<IExecutionDMContext[]> rm) {
@@ -707,13 +713,7 @@ public class MIRunControl extends AbstractDsfService implements IRunControl, ICa
             fResumePending = true;
             fMICommandCache.setContextAvailable(context, false);
     		fConnection.queueCommand(new MIExecUntil(dmc, fileName + ":" + lineNo), //$NON-NLS-1$
-    				new DataRequestMonitor<MIInfo>(
-    						getExecutor(), rm) {
-    					@Override
-    					protected void handleSuccess() {
-    						rm.done();
-    					}
-    				});
+    				new DataRequestMonitor<MIInfo>(getExecutor(), rm));
         } else {
             rm.setStatus(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, NOT_SUPPORTED,
             		"Cannot resume given DMC.", null)); //$NON-NLS-1$

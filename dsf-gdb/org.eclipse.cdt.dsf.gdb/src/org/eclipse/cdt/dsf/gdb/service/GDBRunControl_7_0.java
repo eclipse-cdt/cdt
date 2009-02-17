@@ -195,13 +195,8 @@ public class GDBRunControl_7_0 extends MIRunControl implements IReverseRunContro
 	}
 
     /** @since 2.0 */
-	public void reverseResume(IExecutionDMContext context, final RequestMonitor rm) {
+	public void reverseResume(final IExecutionDMContext context, final RequestMonitor rm) {
 		if (fReverseModeEnabled && doCanResume(context)) {
-            setResumePending(true);
-            // Cygwin GDB will accept commands and execute them after the step
-            // which is not what we want, so mark the target as unavailable
-            // as soon as we send a resume command.
-            getCache().setContextAvailable(context, false);
             MIExecReverseContinue cmd = null;
             if (context instanceof IContainerDMContext) {
             	cmd = new MIExecReverseContinue(context);
@@ -214,20 +209,31 @@ public class GDBRunControl_7_0 extends MIRunControl implements IReverseRunContro
     			}
             	cmd = new MIExecReverseContinue(dmc);
             }
-//            getConnection().queueCommand(cmd, new DataRequestMonitor<MIInfo>(getExecutor(), rm));
+
+            setResumePending(true);
+            // Cygwin GDB will accept commands and execute them after the step
+            // which is not what we want, so mark the target as unavailable
+            // as soon as we send a resume command.
+            getCache().setContextAvailable(context, false);
+
             // temporary
             final MIExecReverseContinue finalcmd = cmd;
             final IExecutionDMContext finaldmc = context;
             getConnection().queueCommand(
-            		new RawCommand(finaldmc, "set exec-direction reverse"),
+            		new RawCommand(finaldmc, "set exec-direction reverse"), //$NON-NLS-1$
             		new DataRequestMonitor<MIInfo>(getExecutor(), rm) {
             			@Override
             			public void handleSuccess() {
             				getConnection().queueCommand(finalcmd, new DataRequestMonitor<MIInfo>(getExecutor(), rm)  {
                     			@Override
                     			public void handleCompleted() {
+                    				if (!isSuccess()) {
+                    			    	setResumePending(false);
+                    			        getCache().setContextAvailable(context, true);
+                    				}
+
                     	            getConnection().queueCommand(
-                    	            		new RawCommand(finaldmc, "set exec-direction forward"),
+                    	            		new RawCommand(finaldmc, "set exec-direction forward"), //$NON-NLS-1$
                     	            		new DataRequestMonitor<MIInfo>(getExecutor(), rm));
                     			}
             				});
@@ -242,7 +248,7 @@ public class GDBRunControl_7_0 extends MIRunControl implements IReverseRunContro
 	}
 
     /** @since 2.0 */
-	public void reverseStep(IExecutionDMContext context, StepType stepType, final RequestMonitor rm) {
+	public void reverseStep(final IExecutionDMContext context, StepType stepType, final RequestMonitor rm) {
     	assert context != null;
 
     	IMIExecutionDMContext dmc = DMContexts.getAncestorOfType(context, IMIExecutionDMContext.class);
@@ -258,9 +264,6 @@ public class GDBRunControl_7_0 extends MIRunControl implements IReverseRunContro
             return;
         }
 
-    	setResumePending(true);
-        fReverseStepping = true;
-        getCache().setContextAvailable(context, false);
         MICommand<MIInfo> cmd = null;
         switch(stepType) {
             case STEP_INTO:
@@ -295,21 +298,31 @@ public class GDBRunControl_7_0 extends MIRunControl implements IReverseRunContro
             default:
                 rm.setStatus(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, INTERNAL_ERROR, "Given step type not supported", null)); //$NON-NLS-1$
                 rm.done();
+                return;
         }
         
+    	setResumePending(true);
+        fReverseStepping = true;
+        getCache().setContextAvailable(context, false);
+
         // temporary
         final MICommand<MIInfo> finalcmd = cmd;
         final IExecutionDMContext finaldmc = context;
         getConnection().queueCommand(
-        		new RawCommand(finaldmc, "set exec-direction reverse"),
+        		new RawCommand(finaldmc, "set exec-direction reverse"), //$NON-NLS-1$
         		new DataRequestMonitor<MIInfo>(getExecutor(), rm) {
         			@Override
         			public void handleSuccess() {
         				getConnection().queueCommand(finalcmd, new DataRequestMonitor<MIInfo>(getExecutor(), rm)  {
                 			@Override
                 			public void handleCompleted() {
+                				if (!isSuccess()) {
+                			    	setResumePending(false);
+                			        fReverseStepping = false;
+                			        getCache().setContextAvailable(context, true);
+                				}
                 	            getConnection().queueCommand(
-                	            		new RawCommand(finaldmc, "set exec-direction forward"),
+                	            		new RawCommand(finaldmc, "set exec-direction forward"), //$NON-NLS-1$
                 	            		new DataRequestMonitor<MIInfo>(getExecutor(), rm));
                 			}
         				});

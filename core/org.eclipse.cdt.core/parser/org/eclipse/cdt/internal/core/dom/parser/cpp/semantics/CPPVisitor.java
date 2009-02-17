@@ -931,7 +931,7 @@ public class CPPVisitor extends ASTQueries {
 					} 
 				}
 				if (i > 0) {
-					IBinding binding = names[i-1].resolveBinding();
+					IBinding binding = names[i - 1].resolveBinding();
 					while (binding instanceof ITypedef) {
 						IType t = ((ITypedef) binding).getType();
 						if (t instanceof IBinding)
@@ -954,7 +954,7 @@ public class CPPVisitor extends ASTQueries {
 					}
 					if (done) {
 						if (scope == null) {
-							return new CPPScope.CPPScopeProblem(names[i-1], IProblemBinding.SEMANTIC_BAD_SCOPE);
+							return new CPPScope.CPPScopeProblem(names[i - 1], IProblemBinding.SEMANTIC_BAD_SCOPE);
 						}
 						return scope;
 					}

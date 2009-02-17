@@ -536,7 +536,7 @@ public class CPPSemantics {
     }
 
     static private void getAssociatedScopes(IType t, ObjectSet<IScope> namespaces,
-    		ObjectSet<ICPPClassType> classes, CPPASTTranslationUnit tu) throws DOMException{
+    		ObjectSet<ICPPClassType> classes, CPPASTTranslationUnit tu) throws DOMException {
         // 3.4.2-2 
 		if (t instanceof ICPPClassType) {
 			ICPPClassType ct= (ICPPClassType) t;
@@ -576,7 +576,7 @@ public class CPPSemantics {
     }
     
     static private ICPPNamespaceScope getContainingNamespaceScope(IBinding binding,
-    		CPPASTTranslationUnit tu) throws DOMException{
+    		CPPASTTranslationUnit tu) throws DOMException {
         if (binding == null) return null;
         IScope scope = binding.getScope();
         while (scope != null && !(scope instanceof ICPPNamespaceScope)) {
@@ -702,7 +702,7 @@ public class CPPSemantics {
 	 * @param data the lookup data created off a name
 	 * @param start either a scope or a name.
 	 */
-	static protected void lookup(LookupData data, Object start) throws DOMException{
+	static protected void lookup(LookupData data, Object start) throws DOMException {
 		final IIndexFileSet fileSet= getIndexFileSet(data);
 		IASTNode blockItem= data.astName;
 		if (blockItem == null) 
@@ -1050,7 +1050,7 @@ public class CPPSemantics {
         	data.inheritanceChain.remove(scope);
 	}
 	
-	private static boolean checkForAmbiguity(LookupData data, Object n, Object names) throws DOMException{
+	private static boolean checkForAmbiguity(LookupData data, Object n, Object names) throws DOMException {
 		if (names instanceof Object[]) {
 		    names = ArrayUtil.trim(Object.class, (Object[]) names);
 		    if (((Object[])names).length == 0)
@@ -1465,7 +1465,7 @@ public class CPPSemantics {
 	 * that transitive directives have been stored in the lookup-data. For qualified lookups the transitive directives
 	 * are considered if the lookup of the original directive returns empty.
 	 */
-	static private void lookupInNominated(LookupData data, ICPPNamespaceScope scope) throws DOMException{
+	static private void lookupInNominated(LookupData data, ICPPNamespaceScope scope) throws DOMException {
 		List<ICPPNamespaceScope> allNominated= data.usingDirectives.remove(scope);
 		while (allNominated != null) {
 			for (ICPPNamespaceScope nominated : allNominated) {
@@ -2620,7 +2620,7 @@ public class CPPSemantics {
 		return null;
 	}
 
-    public static IBinding[] findBindings(IScope scope, String name, boolean qualified) throws DOMException{
+    public static IBinding[] findBindings(IScope scope, String name, boolean qualified) throws DOMException {
 		return findBindings(scope, name.toCharArray(), qualified, null);
 	}
 
@@ -2628,7 +2628,7 @@ public class CPPSemantics {
 		return findBindings(scope, name, qualified, null);
 	}
 
-	public static IBinding[] findBindings(IScope scope, char[] name, boolean qualified, IASTNode beforeNode) throws DOMException{
+	public static IBinding[] findBindings(IScope scope, char[] name, boolean qualified, IASTNode beforeNode) throws DOMException {
 	    CPPASTName astName = new CPPASTName();
 	    astName.setName(name);
 	    astName.setParent(ASTInternal.getPhysicalNodeOfScope(scope));

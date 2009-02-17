@@ -3832,4 +3832,15 @@ public class AST2TemplateTests extends AST2BaseTest {
 		String code= getAboveComment();
 		parseAndCheckBindings(code, ParserLanguage.CPP);
 	}
+
+	//	template<int V>
+	//	struct A {
+	//	  enum E { e };
+	//	};
+	//
+	//	int x = A<0>::e;
+	public void _testEnumeratorInTemplateInstance_265070() throws Exception { 
+		String code= getAboveComment();
+		parseAndCheckBindings(code, ParserLanguage.CPP);
+	}
 }

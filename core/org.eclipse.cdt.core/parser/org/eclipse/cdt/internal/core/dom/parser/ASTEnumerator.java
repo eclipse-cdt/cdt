@@ -27,7 +27,6 @@ public abstract class ASTEnumerator extends ASTNode implements IASTEnumerator, I
     private IASTExpression value;
     private IValue integralValue;
 
-
     public ASTEnumerator() {
 	}
 

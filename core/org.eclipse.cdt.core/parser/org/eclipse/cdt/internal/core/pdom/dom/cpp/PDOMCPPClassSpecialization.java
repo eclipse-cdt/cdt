@@ -52,7 +52,6 @@ import org.eclipse.core.runtime.CoreException;
 
 /**
  * @author Bryan Wilkinson
- * 
  */
 class PDOMCPPClassSpecialization extends PDOMCPPSpecialization implements
 		ICPPClassSpecialization, IPDOMMemberOwner, IIndexType, IPDOMCPPClassType {
@@ -144,8 +143,6 @@ class PDOMCPPClassSpecialization extends PDOMCPPSpecialization implements
 		}
 		return fScope;
 	}
-	
-
 
 	public PDOMCPPBase getFirstBase() throws CoreException {
 		int rec = getDB().getInt(record + FIRSTBASE);
@@ -359,7 +356,6 @@ class PDOMCPPClassSpecialization extends PDOMCPPSpecialization implements
 		list.addMember(member);
 	}
 
-	
 	public void acceptUncached(IPDOMVisitor visitor) throws CoreException {
 		PDOMNodeLinkedList list = new PDOMNodeLinkedList(getLinkage(), record + MEMBERLIST);
 		list.accept(visitor);

@@ -2026,7 +2026,6 @@ public class CPPSemantics {
 				return CPPUnknownFunction.createForSample(firstViable, data.astName);
 			}
 
-			
 			if (bestFnCost == null) {
 				bestFnCost= fnCost;
 				bestFn= fn;

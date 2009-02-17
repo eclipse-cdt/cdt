@@ -1718,7 +1718,11 @@ public class MIBreakpointsTest extends BaseTestCase {
 	public void updateWatchpoint_AddCondition() throws Throwable {
 
 		// Run to the point where the variable is initialized
-		SyncUtil.SyncAddBreakpoint(SOURCE_FILE + ":" + LINE_NUMBER_1, true);
+		String fileName = SOURCE_FILE;
+		if (fileName.contains(" ")) { //$NON-NLS-1$
+			fileName = "\"" + fileName + "\"";  //$NON-NLS-1$//$NON-NLS-2$
+		}
+		SyncUtil.SyncAddBreakpoint(fileName + ":" + LINE_NUMBER_1, true);
 		SyncUtil.SyncResumeUntilStopped();
 		clearEventCounters();
 
@@ -1769,7 +1773,11 @@ public class MIBreakpointsTest extends BaseTestCase {
 	public void updateWatchpoint_RemoveCondition() throws Throwable {
 
 		// Run to the point where the variable is initialized
-		SyncUtil.SyncAddBreakpoint(SOURCE_FILE + ":" + LINE_NUMBER_1, true);
+		String fileName = SOURCE_FILE;
+		if (fileName.contains(" ")) { //$NON-NLS-1$
+			fileName = "\"" + fileName + "\"";  //$NON-NLS-1$//$NON-NLS-2$
+		}
+		SyncUtil.SyncAddBreakpoint(fileName + ":" + LINE_NUMBER_1, true);
 		SyncUtil.SyncResumeUntilStopped();
 		clearEventCounters();
 
@@ -1821,7 +1829,11 @@ public class MIBreakpointsTest extends BaseTestCase {
 	public void updateWatchpoint_ModifyCondition() throws Throwable {
 
 		// Run to the point where the variable is initialized
-		SyncUtil.SyncAddBreakpoint(SOURCE_FILE + ":" + LINE_NUMBER_1, true);
+		String fileName = SOURCE_FILE;
+		if (fileName.contains(" ")) { //$NON-NLS-1$
+			fileName = "\"" + fileName + "\"";  //$NON-NLS-1$//$NON-NLS-2$
+		}
+		SyncUtil.SyncAddBreakpoint(fileName + ":" + LINE_NUMBER_1, true);
 		SyncUtil.SyncResumeUntilStopped();
 		clearEventCounters();
 
@@ -2640,8 +2652,12 @@ public class MIBreakpointsTest extends BaseTestCase {
 	public void breakpointHit_watchpointUpdateCount() throws Throwable {
 
 		// Run to the point where the variable is initialized
-		SyncUtil.SyncAddBreakpoint(SOURCE_FILE + ":" + LINE_NUMBER_3, true);
-		SyncUtil.SyncAddBreakpoint(SOURCE_FILE + ":" + LINE_NUMBER_4, true);
+		String fileName = SOURCE_FILE;
+		if (fileName.contains(" ")) { //$NON-NLS-1$
+			fileName = "\"" + fileName + "\"";  //$NON-NLS-1$//$NON-NLS-2$
+		}
+		SyncUtil.SyncAddBreakpoint(fileName + ":" + LINE_NUMBER_3, true);
+		SyncUtil.SyncAddBreakpoint(fileName + ":" + LINE_NUMBER_4, true);
 		SyncUtil.SyncResumeUntilStopped();
 		clearEventCounters();
 
@@ -2707,8 +2723,12 @@ public class MIBreakpointsTest extends BaseTestCase {
 	public void breakpointHit_watchpointUpdateCondition() throws Throwable {
 
 		// Run to the point where the variable is initialized
-		SyncUtil.SyncAddBreakpoint(SOURCE_FILE + ":" + LINE_NUMBER_3, true);
-		SyncUtil.SyncAddBreakpoint(SOURCE_FILE + ":" + LINE_NUMBER_4, true);
+		String fileName = SOURCE_FILE;
+		if (fileName.contains(" ")) { //$NON-NLS-1$
+			fileName = "\"" + fileName + "\"";  //$NON-NLS-1$//$NON-NLS-2$
+		}
+		SyncUtil.SyncAddBreakpoint(fileName + ":" + LINE_NUMBER_3, true);
+		SyncUtil.SyncAddBreakpoint(fileName + ":" + LINE_NUMBER_4, true);
 		SyncUtil.SyncResumeUntilStopped();
 		clearEventCounters();
 
@@ -2774,8 +2794,12 @@ public class MIBreakpointsTest extends BaseTestCase {
 	public void breakpointHit_WatchpointOutOfScope() throws Throwable {
 
 		// Run to the point where the variable is initialized
-		SyncUtil.SyncAddBreakpoint(SOURCE_FILE + ":" + LINE_NUMBER_1, true);
-		SyncUtil.SyncAddBreakpoint(SOURCE_FILE + ":" + LINE_NUMBER_3, true);
+		String fileName = SOURCE_FILE;
+		if (fileName.contains(" ")) { //$NON-NLS-1$
+			fileName = "\"" + fileName + "\"";  //$NON-NLS-1$//$NON-NLS-2$
+		}
+		SyncUtil.SyncAddBreakpoint(fileName + ":" + LINE_NUMBER_1, true);
+		SyncUtil.SyncAddBreakpoint(fileName + ":" + LINE_NUMBER_3, true);
 		SyncUtil.SyncResumeUntilStopped();
 		clearEventCounters();
 

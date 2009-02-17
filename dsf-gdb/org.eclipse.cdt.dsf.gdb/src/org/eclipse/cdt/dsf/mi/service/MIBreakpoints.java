@@ -460,6 +460,11 @@ public class MIBreakpoints extends AbstractDsfService implements IBreakpoints
 		Integer lineNumber = (Integer) getProperty(attributes, LINE_NUMBER, -1);
 		String  function   = (String)  getProperty(attributes, FUNCTION,  NULL_STRING);
 
+		// Fix for Bug264721
+		if (fileName.contains(" ")) { //$NON-NLS-1$
+			fileName = "\"" + fileName + "\"";  //$NON-NLS-1$//$NON-NLS-2$
+		}
+
 		if (!fileName.equals(NULL_STRING)) {
 			if (lineNumber != -1) {
 				location = fileName + ":" + lineNumber; //$NON-NLS-1$

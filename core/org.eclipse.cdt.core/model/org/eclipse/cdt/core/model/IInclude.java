@@ -38,12 +38,6 @@ public interface IInclude extends ICElement, ISourceReference, ISourceManipulati
 	public boolean isLocal(); 
 	
 	/**
-	 * @return whether this include directive is in active code, ie. not hidden
-	 *         by conditional compilation
-	 */
-	public boolean isActive();
-
-	/**
 	 * @return whether this include directive was resolved and followed.
 	 */
 	boolean isResolved();

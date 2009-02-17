@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2008 IBM Corporation and others.
+ * Copyright (c) 2005, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -206,29 +206,35 @@ public abstract class AbstractGNUSourceCodeParser implements ISourceCodeParser {
     }
 
     /**
-     * Look Ahead in the token list to see what is coming.
-     * 
-     * @param i
-     *            How far ahead do you wish to peek?
+     * Returns the next token without advancing
+     */
+    protected IToken mark() throws EndOfFileException {
+        return currToken == null ? currToken = fetchToken(true) : currToken;
+    }
+
+    /**
+     * Roll back to a previous point, reseting the queue of tokens.
+     * @param mark a token previously obtained via {@link #mark()}.
+     */
+    protected void backup(IToken mark) {
+        currToken = mark;
+    }
+
+    /**
+     * Look ahead in the token list to see what is coming.
+     * @param i number of tokens to look ahead, must be greater or equal to 0.
      * @return the token you wish to observe
-     * @throws EndOfFileException
-     *             if looking ahead encounters EOF, throw EndOfFile
      */
     protected IToken LA(int i) throws EndOfFileException {
-
+    	assert i >= 0;
         if (isCancelled) {
             throw new ParseError(ParseError.ParseErrorKind.TIMEOUT_OR_CANCELLED);
         }
-
-        if (i < 1) // can't go backwards
-            return null;
-        if (currToken == null)
-            currToken = fetchToken();
-        IToken retToken = currToken;
+        IToken retToken= mark();
         for (; i > 1; --i) {
             retToken = retToken.getNext();
             if (retToken == null)
-                retToken = fetchToken();
+                retToken = fetchToken(true);
         }
         return retToken;
     }
@@ -246,12 +252,8 @@ public abstract class AbstractGNUSourceCodeParser implements ISourceCodeParser {
     
     /**
      * Look ahead in the token list and return the token type.
-     * 
-     * @param i
-     *            How far ahead do you wish to peek?
+     * @param i number of tokens to look ahead, must be greater or equal to 0.
      * @return The type of that token
-     * @throws EndOfFileException
-     *             if looking ahead encounters EOF, throw EndOfFile
      */
     protected int LT(int i) throws EndOfFileException {
         return LA(i).getType();
@@ -295,37 +297,29 @@ public abstract class AbstractGNUSourceCodeParser implements ISourceCodeParser {
     }
 
     /**
-     * Consume the next token available, regardless of the type.
+     * Consume the next token available, regardless of the type and returns it.
      * 
      * @return The token that was consumed and removed from our buffer.
      * @throws EndOfFileException
      *             If there is no token to consume.
      */
     protected IToken consume() throws EndOfFileException {
-        if (currToken == null) {
-            currToken = fetchToken();
-        }
-        
-        final IToken lastToken = currToken;
-        currToken= lastToken.getNext();
-        return lastToken;
+        final IToken result= mark();
+        currToken= result.getNext();
+        return result;
     }
 
     /**
-     * Consume the next token available only if the type is as specified.
+     * If the type of the next token matches, it is consumed and returned. Otherwise a
+     * {@link BacktrackException} will be thrown. 
      * 
-     * @param type
-     *            The type of token that you are expecting.
-     * @return the token that was consumed and removed from our buffer.
-     * @throws BacktrackException
-     *             If LT(1) != type
+     * @param type the expected type of the next token.
      */
     protected IToken consume(int type) throws EndOfFileException, BacktrackException {
-    	final IToken la1= LA(1);
-        if (la1.getType() != type)
-            throwBacktrack(la1);
-        	
-        return consume();
+    	final IToken result= consume();
+        if (result.getType() != type)
+            throwBacktrack(result);
+        return result;
     }
 
     /**
@@ -350,15 +344,15 @@ public abstract class AbstractGNUSourceCodeParser implements ISourceCodeParser {
     }
 
     /**
-     * Fetches a token from the scanner.
-     * 
-     * @return the next token from the scanner
-     * @throws EndOfFileException
-     *             thrown when the scanner.nextToken() yields no tokens
+     * Fetches the next token from the scanner.
      */
-    protected IToken fetchToken() throws EndOfFileException {
+    private IToken fetchToken(boolean skipInactive) throws EndOfFileException {
         try {
-        	final IToken result= scanner.nextToken();
+        	IToken result= scanner.nextToken();
+        	while (result.getType() == IToken.tINACTIVE_CODE_START) {
+        		scanner.skipInactiveCode();
+        		result= scanner.nextToken();
+        	}
         	eofOffset= result.getEndOffset();
             return result;
         } catch (OffsetLimitReachedException olre) {
@@ -373,28 +367,6 @@ public abstract class AbstractGNUSourceCodeParser implements ISourceCodeParser {
             throw new EndOfFileException();
         createCompletionNode(exception.getFinalToken());
         throw exception;
-    }
-
-    /**
-     * Mark our place in the buffer so that we could return to it should we have
-     * to.
-     * 
-     * @return The current token.
-     * @throws EndOfFileException
-     *             If there are no more tokens.
-     */
-    protected IToken mark() throws EndOfFileException {
-        return currToken == null ? currToken = fetchToken() : currToken;
-    }
-
-    /**
-     * Rollback to a previous point, reseting the queue of tokens.
-     * 
-     * @param mark
-     *            The point that we wish to restore to.
-     */
-    protected void backup(IToken mark) {
-        currToken = mark;
     }
 
     /**

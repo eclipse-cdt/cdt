@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2003, 2008 IBM Corporation and others.
+ * Copyright (c) 2003, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -82,4 +82,20 @@ public interface IScanner {
 	 * @since 5.0
 	 */
 	public void setComputeImageLocations(boolean val);
+	
+	/**
+	 * Toggles generation of tokens for inactive code branches. When turned on,
+	 * each inactive code branch is preceded by a token of kind {@link IToken#tINACTIVE_CODE_START} and
+	 * succeeded by one of kind {@link IToken#tINACTIVE_CODE_END}.
+	 * 
+	 * @noreference This method is not intended to be referenced by clients.
+	 */
+	public void setProcessInactiveCode(boolean val);
+
+	/**
+	 * When in inactive code, skips all tokens up to the end of the inactive code section. 
+	 * <p> Note, token after calling this method may be another token of type {@link IToken#tINACTIVE_CODE_START}.
+	 * @noreference This method is not intended to be referenced by clients.
+	 */
+	public void skipInactiveCode() throws OffsetLimitReachedException;
 }

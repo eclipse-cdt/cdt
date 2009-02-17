@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2008 Wind River Systems, Inc. and others.
+ * Copyright (c) 2007, 2009 Wind River Systems, Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -331,7 +331,7 @@ public class LocationMap implements ILocationResolver {
 		}
 	}
 	
-	public void encounterPoundDefine(int startOffset, int nameOffset, int nameEndOffset, int expansionOffset, int endOffset, IMacroBinding macrodef) {
+	public void encounterPoundDefine(int startOffset, int nameOffset, int nameEndOffset, int expansionOffset, int endOffset, boolean isActive, IMacroBinding macrodef) {
 		startOffset= getSequenceNumberForOffset(startOffset);	
 		nameOffset= getSequenceNumberForOffset(nameOffset);		
 		nameEndOffset= getSequenceNumberForOffset(nameEndOffset);
@@ -339,10 +339,10 @@ public class LocationMap implements ILocationResolver {
 		endOffset= getSequenceNumberForOffset(endOffset);
 		ASTPreprocessorNode astMacro;
 		if (!macrodef.isFunctionStyle()) {
-			astMacro= new ASTMacroDefinition(fTranslationUnit, macrodef, startOffset, nameOffset, nameEndOffset, expansionOffset, endOffset);
+			astMacro= new ASTMacroDefinition(fTranslationUnit, macrodef, startOffset, nameOffset, nameEndOffset, expansionOffset, endOffset, isActive);
 		}
 		else {
-			astMacro= new ASTFunctionStyleMacroDefinition(fTranslationUnit, macrodef, startOffset, nameOffset, nameEndOffset, expansionOffset, endOffset);
+			astMacro= new ASTFunctionStyleMacroDefinition(fTranslationUnit, macrodef, startOffset, nameOffset, nameEndOffset, expansionOffset, endOffset, isActive);
 		}
 		fDirectives.add(astMacro);
 	}

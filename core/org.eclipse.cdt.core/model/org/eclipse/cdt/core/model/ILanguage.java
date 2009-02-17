@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2008 QNX Software Systems and others.
+ * Copyright (c) 2005, 2009 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -47,7 +47,7 @@ public interface ILanguage extends IAdaptable {
 
 	/**
 	 * Option for {@link #getASTTranslationUnit(CodeReader, IScannerInfo, ICodeReaderFactory, IIndex, int, IParserLogService)}
-	 * Performance optimization, instructs the parser not to create image-locations. 
+	 * Performance optimization, allows the parser not to create image-locations. 
 	 * When using this option {@link IASTName#getImageLocation()} will always return <code>null</code>.
 	 */
 	public final static int OPTION_NO_IMAGE_LOCATIONS= 0x4;
@@ -61,11 +61,20 @@ public interface ILanguage extends IAdaptable {
 
 	/**
 	 * Option for {@link #getASTTranslationUnit(CodeReader, IScannerInfo, ICodeReaderFactory, IIndex, int, IParserLogService)}
-	 * Instructs the parser not to create ast nodes for expressions within aggregate initializers
+	 * Allows the parser not to create ast nodes for expressions within aggregate initializers
 	 * when they do not contain names.
 	 * @since 5.1
 	 */
 	public final static int OPTION_SKIP_TRIVIAL_EXPRESSIONS_IN_AGGREGATE_INITIALIZERS= 0x10;
+
+	/**
+	 * Option for {@link #getASTTranslationUnit(CodeReader, IScannerInfo, ICodeReaderFactory, IIndex, int, IParserLogService)}
+	 * Instructs the parser to create ast nodes for inactive code branches, if possible. There is no guarantee that the ast
+	 * can actually be created for the inactive parts.
+	 * mstodo document how the ast can be accessed.
+	 * @since 5.1
+	 */
+	public final static int OPTION_PARSE_INACTIVE_CODE= 0x20;
 
 	/**
 	 * Return the language id for this language.

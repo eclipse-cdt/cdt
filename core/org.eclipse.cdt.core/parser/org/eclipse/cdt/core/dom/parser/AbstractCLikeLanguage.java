@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2008 IBM Corporation and others.
+ * Copyright (c) 2007, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -114,6 +114,7 @@ public abstract class AbstractCLikeLanguage extends AbstractLanguage implements 
 
 		final IScanner scanner= createScanner(reader, scanInfo, codeReaderFactory, log);
 		scanner.setComputeImageLocations((options & OPTION_NO_IMAGE_LOCATIONS) == 0);
+		scanner.setProcessInactiveCode((options & OPTION_PARSE_INACTIVE_CODE) != 0);
 
 		final ISourceCodeParser parser= createParser(scanner, log, index, false, options);
 

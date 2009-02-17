@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2008 IBM Corporation and others.
+ * Copyright (c) 2000, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -23,7 +23,7 @@ import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Display;
 
-import org.eclipse.cdt.core.model.IInclude;
+import org.eclipse.cdt.core.model.ISourceReference;
 import org.eclipse.cdt.core.model.util.CElementBaseLabels;
 import org.eclipse.cdt.ui.CUIPlugin;
 
@@ -235,9 +235,9 @@ public class CUILabelProvider extends LabelProvider implements IColorProvider {
 	 * @see org.eclipse.jface.viewers.IColorProvider#getForeground(java.lang.Object)
 	 */
 	public Color getForeground(Object element) {
-		if (element instanceof IInclude) {
-			IInclude include= (IInclude)element;
-			if (!include.isActive()) {
+		if (element instanceof ISourceReference) {
+			ISourceReference sref= (ISourceReference)element;
+			if (!sref.isActive()) {
 				if (fInactiveColor == null && Display.getCurrent() != null) {
 					fInactiveColor= CUIPlugin.getStandardDisplay().getSystemColor(SWT.COLOR_DARK_GRAY);
 					fDefaultColor= CUIPlugin.getStandardDisplay().getSystemColor(SWT.COLOR_LIST_FOREGROUND);

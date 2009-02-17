@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2008 QNX Software Systems and others.
+ * Copyright (c) 2000, 2009 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,8 +8,8 @@
  * Contributors:
  *     QNX Software Systems - Initial API and implementation
  *     Anton Leherbauer (Wind River Systems)
+ *     Markus Schorn (Wind River Systems)
  *******************************************************************************/
-
 package org.eclipse.cdt.internal.core.model;
 
 import org.eclipse.cdt.core.model.ICElement;
@@ -17,11 +17,9 @@ import org.eclipse.cdt.core.model.IInclude;
 
 public class Include extends SourceManipulation implements IInclude {
 	
-	private final boolean standard;
 	private String fullPath;
-	private boolean fIsActive= true;
+	private final boolean standard;
 	private boolean fIsResolved= true;
-	private int fIndex= 0;
 
 	public Include(ICElement parent, String name, boolean isStandard) {
 		super(parent, name, ICElement.C_INCLUDE);
@@ -58,17 +56,6 @@ public class Include extends SourceManipulation implements IInclude {
 		this.fullPath = fullPath;
 	}
 
-	public void setActive(boolean active) {
-		fIsActive= active;
-	}
-
-	/*
-	 * @see org.eclipse.cdt.core.model.IInclude#isActive()
-	 */
-	public boolean isActive() {
-		return fIsActive;
-	}
-
 	public void setResolved(boolean resolved) {
 		fIsResolved= resolved;
 	}
@@ -80,25 +67,12 @@ public class Include extends SourceManipulation implements IInclude {
 		return fIsResolved;
 	}
 
-	/**
-	 * Set the index of this include, in case the same include is referenced
-	 * multiple times.
-	 * 
-	 * @param index
-	 */
-	public void setIndex(int index) {
-		fIndex= index;
-	}
-
 	/*
 	 * @see org.eclipse.cdt.internal.core.model.CElement#equals(java.lang.Object)
 	 */
 	@Override
 	public boolean equals(Object other) {
 		if (other instanceof IInclude && equals(this, (IInclude) other)) {
-			if (other instanceof Include) {
-				return fIndex == ((Include)other).fIndex;
-			}
 			return true;
 		}
 		return false;

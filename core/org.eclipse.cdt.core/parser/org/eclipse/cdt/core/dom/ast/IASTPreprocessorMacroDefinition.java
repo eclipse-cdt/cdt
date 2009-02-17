@@ -29,17 +29,8 @@ public interface IASTPreprocessorMacroDefinition extends
 
 	/**
 	 * Get the macro name.
-	 * 
-	 * @return <code>IASTName</code>
 	 */
 	public IASTName getName();
-
-	/**
-	 * Set the macro name.
-	 * 
-	 * @param name
-	 */
-	public void setName(IASTName name);
 
 	/**
 	 * Returns the macro expansion, or an empty string for dynamic style macros.
@@ -53,11 +44,20 @@ public interface IASTPreprocessorMacroDefinition extends
 	 */
 	public IASTFileLocation getExpansionLocation();
 
+	
 	/**
-	 * Set the macro expansion.
-	 * 
-	 * @param exp
-	 *            String
+	 * Returns whether this macro definition occurs in active code.
+	 * @since 5.1
 	 */
-	public void setExpansion(String exp);
+	public boolean isActive();
+
+	/**
+	 * @noreference This method is not intended to be referenced by clients.
+	 */
+	@Deprecated public void setName(IASTName name);
+
+	/**
+	 * @noreference This method is not intended to be referenced by clients.
+	 */
+	@Deprecated public void setExpansion(String exp);
 }

@@ -22,17 +22,28 @@ import org.eclipse.cdt.core.parser.OffsetLimitReachedException;
 final class ScannerContext {
 	private static final Token END_TOKEN = new Token(IToken.tEND_OF_INPUT, null, 0, 0);
 
-	public static final Integer BRANCH_IF = new Integer(0);
-	public static final Integer BRANCH_ELIF = new Integer(1);
-	public static final Integer BRANCH_ELSE = new Integer(2);
-	public static final Integer BRANCH_END = new Integer(3);
+	enum BranchKind {eIf, eElif, eElse, eEnd}
+	enum CodeState {eActive, eParseInactive, eSkipInactive}
+	final static class Conditional {
+		private CodeState fInitialState;
+		private BranchKind fLast;
+		private boolean fTakeElse= true;
+		Conditional(CodeState state) {
+			fInitialState= state;
+			fLast= BranchKind.eIf;
+		}
+		boolean canHaveActiveBranch(boolean withinExpansion) {
+			return fTakeElse && (fInitialState == CodeState.eActive || withinExpansion);
+		}
+	}
 	
+	private CodeState fInactiveState= CodeState.eSkipInactive;
 	private final ILocationCtx fLocationCtx;
 	private final ScannerContext fParent;
 	private final Lexer fLexer;
-	private ArrayList<Integer> fBranches= null;
-
 	private Token fTokens;
+	private ArrayList<Conditional> fConditionals= null;
+	private CodeState fCurrentState= CodeState.eActive;
 
 	/**
 	 * @param ctx 
@@ -49,8 +60,13 @@ final class ScannerContext {
 		fParent= parent;
 		fLexer= null;
 		fTokens= tokens.first();
+		fInactiveState= CodeState.eSkipInactive;  // no branches in result of macro expansion
 	}
 
+	public void setParseInactiveCode(boolean val) {
+		fInactiveState= val ? CodeState.eParseInactive : CodeState.eSkipInactive;
+	}
+	
 	/**
 	 * Returns the location context associated with this scanner context.
 	 */
@@ -75,35 +91,115 @@ final class ScannerContext {
 
 	/**
 	 * Needs to be called whenever we change over to another branch of conditional 
-	 * compilation. Returns whether the change is legal at this point or not.
+	 * compilation. Returns the conditional associated with the branch or <code>null</code>,
+	 * if the change is not legal at this point.
 	 */
-	public final boolean changeBranch(Integer branchKind) {
-		if (fBranches == null) {
-			fBranches= new ArrayList<Integer>();
+	public final Conditional newBranch(BranchKind branchKind, boolean withinExpansion) {
+		if (fConditionals == null) {
+			fConditionals= new ArrayList<Conditional>();
 		}
 		
+		Conditional result;
+		
 		// an if starts a new conditional construct
-		if (branchKind == BRANCH_IF) {
-			fBranches.add(branchKind);
-			return true;
+		if (branchKind == BranchKind.eIf) {
+			fConditionals.add(result= new Conditional(fCurrentState));
+			return result;
 		}
+		
 		// if we are not inside of an conditional there shouldn't be an #else, #elsif or #end
-		final int pos= fBranches.size()-1;
+		final int pos= fConditionals.size()-1;
 		if (pos < 0) {
-			return false;
+			return null;
 		}
-		// an #end just pops one construct.
-		if (branchKind == BRANCH_END) {
-			fBranches.remove(pos);
-			return true;
+		
+		// an #end just pops one construct and restores state
+		if (branchKind == BranchKind.eEnd) {
+			result= fConditionals.remove(pos);
+			// implicit state change
+			changeState(result.fInitialState, withinExpansion);
+			return result;
 		}
-		// #elsif or #else cannot appear after another #else
-		if (fBranches.get(pos) == BRANCH_ELSE) {
-			return false;
+		
+		// #elif or #else cannot appear after another #else
+		result= fConditionals.get(pos);
+		if (result.fLast == BranchKind.eElse)
+			return null;
+		
+		// store last kind
+		result.fLast= branchKind;
+		return result;
+	}
+
+	private void changeState(CodeState state, boolean withinExpansion) {
+		if (!withinExpansion) {
+			switch (state) {
+			case eActive:
+				if (fCurrentState == CodeState.eParseInactive) 
+					stopInactive();
+				break;
+			case eParseInactive:
+				switch (fCurrentState) {
+				case eActive:
+					startInactive();
+					break;
+				case eParseInactive:
+					separateInactive();
+					break;
+				case eSkipInactive:
+					assert false; // in macro expansions, only.
+					break;
+				}
+				break;
+			case eSkipInactive:
+				// no need to report this to the parser.
+				break;
+			}
 		}
-		// overwrite #if, #elsif with #elsif or #else
-		fBranches.set(pos, branchKind);
-		return true;
+		fCurrentState= state;
+	}
+
+	private void startInactive() {
+		if (fTokens != null && fTokens.getType() == IToken.tINACTIVE_CODE_END) {
+			fTokens= new Token(IToken.tINACTIVE_CODE_SEPARATOR, null, 0, 0);
+		} else {
+			fTokens= new Token(IToken.tINACTIVE_CODE_START, null, 0, 0);
+		}
+	}
+
+	private void separateInactive() {
+		if (fTokens == null) {
+			fTokens= new Token(IToken.tINACTIVE_CODE_SEPARATOR, null, 0, 0);
+		}
+	}
+
+	private void stopInactive() {
+		if (fTokens != null && fTokens.getType() == IToken.tINACTIVE_CODE_START) {
+			fTokens= null;
+		} else {
+			fTokens= new Token(IToken.tINACTIVE_CODE_END, null, 0, 0);
+		}
+	}	
+
+	public CodeState getCodeState() {
+		return fCurrentState;
+	}
+	
+	/**
+	 * The preprocessor has to inform the context about the state of if- and elif- branches
+	 */
+	public CodeState setBranchState(Conditional cond, boolean isActive, boolean withinExpansion) {
+		CodeState newState;
+		if (isActive) {
+			cond.fTakeElse= false;
+			newState= cond.fInitialState;
+		} else if (withinExpansion) {
+			newState= CodeState.eParseInactive;
+		} else {
+			newState= fInactiveState;
+		}
+		changeState(newState, withinExpansion);
+		return newState;
 	}
 
 	/** 
@@ -112,11 +208,11 @@ final class ScannerContext {
 	 * @since 5.0
 	 */
 	public final Token currentLexerToken() {
-		if (fLexer != null) {
-			return fLexer.currentToken();
-		}
 		if (fTokens != null) {
 			return fTokens;
+		}
+		if (fLexer != null) {
+			return fLexer.currentToken();
 		}
 		return END_TOKEN;
 	}
@@ -125,13 +221,14 @@ final class ScannerContext {
 	 * Returns the next token from this context. 
 	 */
 	public Token nextPPToken() throws OffsetLimitReachedException {
+		if (fTokens != null) {
+			fTokens= (Token) fTokens.getNext();
+			return currentLexerToken();
+		}
 		if (fLexer != null) {
 			return fLexer.nextToken();
 		}
-		if (fTokens != null) {
-			fTokens= (Token) fTokens.getNext();
-		}
-		return currentLexerToken();
+		return END_TOKEN;
 	}
 
 	/**
@@ -142,5 +239,9 @@ final class ScannerContext {
 		if (fLexer != null)
 			return fLexer.consumeLine(originPreprocessorDirective);
 		return -1;
+	}
+
+	public void clearInactiveCodeMarkerToken() {
+		fTokens= null;
 	}
 }

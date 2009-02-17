@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2008 Wind River Systems, Inc. and others.
+ * Copyright (c) 2007, 2009 Wind River Systems, Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -276,15 +276,17 @@ class ASTMacroDefinition extends ASTPreprocessorNode implements IASTPreprocessor
 	private final ASTPreprocessorName fName;
 	private final int fExpansionNumber;
 	private final int fExpansionOffset;
+	private final boolean fActive;
 	
 	/**
 	 * Regular constructor.
 	 */
 	public ASTMacroDefinition(IASTTranslationUnit parent, IMacroBinding macro, 
-			int startNumber, int nameNumber, int nameEndNumber, int expansionNumber, int endNumber) {
+			int startNumber, int nameNumber, int nameEndNumber, int expansionNumber, int endNumber, boolean active) {
 		super(parent, IASTTranslationUnit.PREPROCESSOR_STATEMENT, startNumber, endNumber);
 		fExpansionNumber= expansionNumber;
 		fExpansionOffset= -1;
+		fActive= active;
 		fName= new ASTPreprocessorDefinition(this, IASTPreprocessorMacroDefinition.MACRO_NAME, nameNumber, nameEndNumber, macro.getNameCharArray(), macro);
 	}
 
@@ -297,6 +299,7 @@ class ASTMacroDefinition extends ASTPreprocessorNode implements IASTPreprocessor
 		fName= new ASTBuiltinName(this, IASTPreprocessorMacroDefinition.MACRO_NAME, floc, macro.getNameCharArray(), macro);
 		fExpansionNumber= -1;
 		fExpansionOffset= expansionOffset;
+		fActive= true;
 	}
 
 	
@@ -357,6 +360,10 @@ class ASTMacroDefinition extends ASTPreprocessorNode implements IASTPreprocessor
 	public String toString() {
 		return getName().toString() + '=' + getExpansion();
 	}
+
+	final public boolean isActive() {
+		return fActive;
+	}
 }
 
 class ASTMacroParameter extends ASTPreprocessorNode implements IASTFunctionStyleMacroParameter  {
@@ -379,8 +386,8 @@ class ASTFunctionStyleMacroDefinition extends ASTMacroDefinition implements IAST
 	 * Regular constructor.
 	 */
 	public ASTFunctionStyleMacroDefinition(IASTTranslationUnit parent, IMacroBinding macro, 
-			int startNumber, int nameNumber, int nameEndNumber, int expansionNumber, int endNumber) {
-		super(parent, macro, startNumber, nameNumber, nameEndNumber, expansionNumber, endNumber);
+			int startNumber, int nameNumber, int nameEndNumber, int expansionNumber, int endNumber, boolean active) {
+		super(parent, macro, startNumber, nameNumber, nameEndNumber, expansionNumber, endNumber, active);
 	}
 
 	/**

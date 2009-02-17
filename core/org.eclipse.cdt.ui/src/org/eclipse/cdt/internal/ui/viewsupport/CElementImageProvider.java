@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2008 IBM Corporation and others.
+ * Copyright (c) 2005, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -38,6 +38,7 @@ import org.eclipse.cdt.core.model.IInclude;
 import org.eclipse.cdt.core.model.IIncludeReference;
 import org.eclipse.cdt.core.model.ILibraryReference;
 import org.eclipse.cdt.core.model.IMethodDeclaration;
+import org.eclipse.cdt.core.model.ISourceReference;
 import org.eclipse.cdt.core.model.ISourceRoot;
 import org.eclipse.cdt.core.model.ITemplate;
 import org.eclipse.cdt.core.model.ITranslationUnit;
@@ -457,12 +458,18 @@ public class CElementImageProvider {
 					if(element instanceof ITemplate){
 						flags |= CElementImageDescriptor.TEMPLATE;
 					}
-				} else if (element instanceof IInclude) {
-					IInclude include= (IInclude) element;
-					if (!include.isActive()) {
+				} 
+				if (element instanceof ISourceReference) {
+					ISourceReference sref= (ISourceReference) element;
+					if (!sref.isActive()) {
 						flags |= CElementImageDescriptor.INACTIVE;
-					} else if (!include.isResolved()) {
-						flags |= CElementImageDescriptor.WARNING;
+					} else {
+						if (element instanceof IInclude) {
+							IInclude include= (IInclude) element;
+							if (!include.isResolved()) {
+								flags |= CElementImageDescriptor.WARNING;
+							}
+						}
 					}
 				}
 			} catch (CModelException e) {

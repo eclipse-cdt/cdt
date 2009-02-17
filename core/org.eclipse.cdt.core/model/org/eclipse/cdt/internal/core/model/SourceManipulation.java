@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2008 QNX Software Systems and others.
+ * Copyright (c) 2000, 2009 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,6 +8,7 @@
  * Contributors:
  *     QNX Software Systems - Initial API and implementation
  *     Anton Leherbauer (Wind River Systems)
+ *     Markus Schorn (Wind River Systems)
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.model;
 
@@ -41,6 +42,8 @@ public class SourceManipulation extends Parent implements ISourceManipulation, I
 	 * An empty list of Strings
 	 */
 	protected static final String[] fgEmptyStrings = {};
+	private boolean fIsActive= true;
+	private short fIndex= 0;
 
 	public SourceManipulation(ICElement parent, String name, int type) {
 		super(parent, name, type);
@@ -350,4 +353,33 @@ public class SourceManipulation extends Parent implements ISourceManipulation, I
 		return CElement.CEM_SOURCEELEMENT;
 	}
 
+	public boolean isActive() {
+		return fIsActive;
+	}
+
+	public int getIndex() {
+		return fIndex;
+	}
+	
+	public void setActive(boolean active) {
+		fIsActive= active;
+	}
+
+	public void setIndex(int i) {
+		fIndex= (short) i;
+	}
+	
+	@Override
+	public int hashCode() {
+		return Util.combineHashCodes(fIndex, super.hashCode());
+	}
+	
+	@Override
+	public boolean equals(Object other) {
+		if (other instanceof ISourceReference) {
+			if (fIndex != ((ISourceReference) other).getIndex())
+				return false;
+		}
+		return super.equals(other);
+	}
 }

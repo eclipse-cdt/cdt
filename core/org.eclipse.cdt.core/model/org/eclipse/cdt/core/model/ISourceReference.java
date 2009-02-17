@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     QNX Software Systems - Initial API and implementation
+ *     Markus Schorn (Wind River Systems)
  *******************************************************************************/
 package org.eclipse.cdt.core.model;
 
@@ -56,4 +57,17 @@ public interface ISourceReference {
 	 * if this member is not declared in a translation unit (for example, a binary type).
 	 */
 	ITranslationUnit getTranslationUnit();
+	
+	/**
+	 * Returns whether this element is in active code. Code is inactive when it is hidden
+	 * by conditional compilation.
+	 * @since 5.1
+	 */
+	public boolean isActive();
+
+	/**
+	 * Allows to differentiate otherwise equal elements of the same file.
+	 * @since 5.1
+	 */
+	int getIndex();
 }

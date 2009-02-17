@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2008 QNX Software Systems and others.
+ * Copyright (c) 2000, 2009 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -401,6 +401,10 @@ public class TranslationUnit extends Openable implements ITranslationUnit {
 		return super.equals(o) && !((ITranslationUnit) o).isWorkingCopy();
 	}
 
+	public IWorkingCopy findSharedWorkingCopy() {
+		return findSharedWorkingCopy(null);
+	}
+
 	public IWorkingCopy findSharedWorkingCopy(IBufferFactory factory) {
 
 		// if factory is null, default factory must be used
@@ -456,6 +460,11 @@ public class TranslationUnit extends Openable implements ITranslationUnit {
 		}
 	}
 
+	public IWorkingCopy getSharedWorkingCopy(IProgressMonitor monitor, IProblemRequestor requestor)
+			throws CModelException {
+		return getSharedWorkingCopy(monitor, null, requestor);
+	}
+
 	public IWorkingCopy getSharedWorkingCopy(IProgressMonitor monitor,IBufferFactory factory)
 		throws CModelException {
 		return getSharedWorkingCopy(monitor, factory, null);
@@ -493,7 +502,11 @@ public class TranslationUnit extends Openable implements ITranslationUnit {
 		return this.getWorkingCopy(null, null);
 	}
 
-	public IWorkingCopy getWorkingCopy(IProgressMonitor monitor, IBufferFactory factory)throws CModelException{
+	public IWorkingCopy getWorkingCopy(IProgressMonitor monitor) throws CModelException {
+		return getWorkingCopy(monitor, null);
+	}
+
+	public IWorkingCopy getWorkingCopy(IProgressMonitor monitor, IBufferFactory factory) throws CModelException{
 		WorkingCopy workingCopy;
 		IFile file= getFile();
 		if (file != null) {
@@ -638,7 +651,7 @@ public class TranslationUnit extends Openable implements ITranslationUnit {
 	 */
 	private void parse(Map<ICElement, CElementInfo> newElements, IProgressMonitor monitor) {
 		boolean quickParseMode = ! (CCorePlugin.getDefault().useStructuralParseMode());
-		IContributedModelBuilder mb = LanguageManager.getInstance().getContributedModelBuilderFor(this);
+		IContributedModelBuilder mb = LanguageManager.getInstance().getContributedModelBuilderFor((ITranslationUnit) this);
 		if (mb == null) {
 			parseUsingCModelBuilder(newElements, quickParseMode, monitor);
 		} else {
@@ -822,6 +835,9 @@ public class TranslationUnit extends Openable implements ITranslationUnit {
 				}
 				if ((style & AST_SKIP_TRIVIAL_EXPRESSIONS_IN_AGGREGATE_INITIALIZERS) != 0) {
 					options |= ILanguage.OPTION_SKIP_TRIVIAL_EXPRESSIONS_IN_AGGREGATE_INITIALIZERS;
+				}
+				if ((style & AST_PARSE_INACTIVE_CODE) != 0) {
+					options |= ILanguage.OPTION_PARSE_INACTIVE_CODE;
 				}
 				if (isSourceUnit()) {
 					options |= ILanguage.OPTION_IS_SOURCE_UNIT;
@@ -1130,4 +1146,11 @@ public class TranslationUnit extends Openable implements ITranslationUnit {
 		return CElement.CEM_TRANSLATIONUNIT;
 	}
 
+	public boolean isActive() {
+		return true;
+	}
+
+	public int getIndex() {
+		return 0;
+	}
 }

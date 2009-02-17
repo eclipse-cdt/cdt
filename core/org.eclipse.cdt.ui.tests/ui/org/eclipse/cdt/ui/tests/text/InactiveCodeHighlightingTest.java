@@ -126,6 +126,7 @@ public class InactiveCodeHighlightingTest extends TestCase {
 				createPosition(28, 33),
 				createPosition(39, 41),
 				createPosition(47, 57),
+				createPosition(63, 65),
 				createPosition(67, 69),
 				createPosition(73, 75),
 			};

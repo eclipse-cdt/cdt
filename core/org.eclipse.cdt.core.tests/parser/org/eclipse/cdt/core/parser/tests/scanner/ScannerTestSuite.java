@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2008 Wind River Systems, Inc. and others.
+ * Copyright (c) 2007, 2009 Wind River Systems, Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -24,6 +24,7 @@ public class ScannerTestSuite extends TestSuite {
 		suite.addTest(InclusionTests.suite());
 		suite.addTest(PreprocessorBugsTests.suite());
 		suite.addTest(ExpansionExplorerTests.suite());
+		suite.addTest(InactiveCodeTests.suite());
 		return suite;
 	}	
 }

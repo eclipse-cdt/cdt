@@ -13,9 +13,8 @@ package org.eclipse.cdt.internal.core.model;
 
 import java.util.Collections;
 import java.util.Comparator;
-import java.util.HashSet;
+import java.util.HashMap;
 import java.util.List;
-import java.util.Set;
 import java.util.Stack;
 
 import org.eclipse.cdt.core.CCorePlugin;
@@ -74,6 +73,7 @@ import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.core.model.IContributedModelBuilder;
 import org.eclipse.cdt.core.model.INamespace;
 import org.eclipse.cdt.core.model.IProblemRequestor;
+import org.eclipse.cdt.core.model.ISourceReference;
 import org.eclipse.cdt.core.model.IStructure;
 import org.eclipse.cdt.core.model.ITranslationUnit;
 import org.eclipse.cdt.core.parser.Keywords;
@@ -98,7 +98,7 @@ public class CModelBuilder2 implements IContributedModelBuilder {
 
 	private ASTAccessVisibility fCurrentVisibility;
 	private Stack<ASTAccessVisibility> fVisibilityStack;
-	private Set<Namespace> fAllNamespaces;
+	private HashMap<ISourceReference, int[]> fEqualElements;
 
 	/**
 	 * Create a model builder for the given translation unit.
@@ -132,11 +132,11 @@ public class CModelBuilder2 implements IContributedModelBuilder {
 			int parseFlags= quickParseMode ? ITranslationUnit.AST_SKIP_ALL_HEADERS : ITranslationUnit.AST_SKIP_INDEXED_HEADERS;
 			if (!(elementInfo instanceof ASTHolderTUInfo)) {
 				parseFlags |= ITranslationUnit.AST_SKIP_FUNCTION_BODIES;
-			}
-			else {
+			} else {
 				parseFlags |= ITranslationUnit.AST_CONFIGURE_USING_SOURCE_CONTEXT;
 			}
 			parseFlags |= ITranslationUnit.AST_SKIP_TRIVIAL_EXPRESSIONS_IN_AGGREGATE_INITIALIZERS;
+			parseFlags |= ITranslationUnit.AST_PARSE_INACTIVE_CODE;
 			final IASTTranslationUnit ast;
 			try {
 				ast= fTranslationUnit.getAST(index, parseFlags, fProgressMonitor);
@@ -193,14 +193,13 @@ public class CModelBuilder2 implements IContributedModelBuilder {
 	 */
 	private void buildModel(IASTTranslationUnit ast) throws CModelException, DOMException {
 		fVisibilityStack= new Stack<ASTAccessVisibility>();
-		fAllNamespaces= new HashSet<Namespace>();
+		fEqualElements= new HashMap<ISourceReference, int[]>();
 
 		// includes
 		final IASTPreprocessorIncludeStatement[] includeDirectives= ast.getIncludeDirectives();
-		Set<Include> allIncludes= new HashSet<Include>();
 		for (IASTPreprocessorIncludeStatement includeDirective : includeDirectives) {
 			if (isLocalToFile(includeDirective)) {
-				createInclusion(fTranslationUnit, includeDirective, allIncludes);
+				createInclusion(fTranslationUnit, includeDirective);
 			}
 		}
 		// macros
@@ -217,6 +216,7 @@ public class CModelBuilder2 implements IContributedModelBuilder {
 				createDeclaration(fTranslationUnit, declaration);
 			}
 		}
+		fEqualElements.clear();
 
 		// sort by offset
 		final List<ICElement> children= fTranslationUnit.getElementInfo().internalGetChildren();
@@ -264,18 +264,15 @@ public class CModelBuilder2 implements IContributedModelBuilder {
 		return node.isPartOfTranslationUnitFile();
 	}
 
-	private Include createInclusion(Parent parent, IASTPreprocessorIncludeStatement inclusion, Set<Include> allIncludes) throws CModelException{
+	private Include createInclusion(Parent parent, IASTPreprocessorIncludeStatement inclusion) throws CModelException{
 		// create element
 		final IASTName name= inclusion.getName();
 		Include element= new Include(parent, ASTStringUtil.getSimpleName(name), inclusion.isSystemInclude());
 		element.setFullPathName(inclusion.getPath());
+		setIndex(element);
+
 		element.setActive(inclusion.isActive());
 		element.setResolved(inclusion.isResolved());
-		// if there is a duplicate include, also set the index
-		if (!allIncludes.add(element)) {
-			element.setIndex(allIncludes.size());
-			allIncludes.add(element);
-		}
 		// add to parent
 		parent.addChild(element);
 		// set positions
@@ -284,10 +281,22 @@ public class CModelBuilder2 implements IContributedModelBuilder {
 		return element;
 	}
 
+	private void setIndex(SourceManipulation element) {
+		int[] idx= fEqualElements.get(element);
+		if (idx == null) {
+			idx= new int[] {0};
+			fEqualElements.put(element, idx);
+		} else {
+			element.setIndex(++idx[0]);
+		}
+	}
+
 	private Macro createMacro(Parent parent, IASTPreprocessorMacroDefinition macro) throws CModelException{
 		// create element
 		final IASTName name= macro.getName();
 		Macro element= new  Macro(parent, ASTStringUtil.getSimpleName(name));
+		setIndex(element);
+		element.setActive(macro.isActive());
 		// add to parent
 		parent.addChild(element);
 		// set positions
@@ -479,11 +488,8 @@ public class CModelBuilder2 implements IContributedModelBuilder {
 		final IASTName name= declaration.getName();
 		final String nsName= ASTStringUtil.getQualifiedName(name);
 		final Namespace element= new Namespace(parent, nsName);
-		// if there is a duplicate namespace, also set the index
-		if (!fAllNamespaces.add(element)) {
-			element.setIndex(fAllNamespaces.size());
-			fAllNamespaces.add(element);
-		}
+		setIndex(element);
+
 		// add to parent
 		parent.addChild(element);
 		// set positions
@@ -499,15 +505,12 @@ public class CModelBuilder2 implements IContributedModelBuilder {
 
 		element.setTypeName(type);
 
-		final Set<Namespace> savedNamespaces= fAllNamespaces;
-		fAllNamespaces= new HashSet<Namespace>();
 		IASTDeclaration[] nsDeclarations= declaration.getDeclarations();
 		for (IASTDeclaration nsDeclaration : nsDeclarations) {
 			if (declaration.getFileLocation() != null || isLocalToFile(nsDeclaration)) {
 				createDeclaration(element, nsDeclaration);
 			}
 		}
-		fAllNamespaces= savedNamespaces;
 	}
 
 	private StructureDeclaration createElaboratedTypeDeclaration(Parent parent, IASTElaboratedTypeSpecifier elaboratedTypeSpecifier, boolean isTemplate) throws CModelException{
@@ -547,6 +550,7 @@ public class CModelBuilder2 implements IContributedModelBuilder {
 		} else {
 			element= new StructureDeclaration(parent, className, kind);
 		}
+		setIndex(element);
 		element.setTypeName(type);
 
 		// add to parent
@@ -571,6 +575,8 @@ public class CModelBuilder2 implements IContributedModelBuilder {
 		final IASTName astEnumName= enumSpecifier.getName();
 		final String enumName= ASTStringUtil.getSimpleName(astEnumName);
 		final Enumeration element= new Enumeration (parent, enumName);
+		setIndex(element);
+		
 		// add to parent
 		parent.addChild(element);
 		final IASTEnumerator[] enumerators= enumSpecifier.getEnumerators();
@@ -592,6 +598,8 @@ public class CModelBuilder2 implements IContributedModelBuilder {
 	private Enumerator createEnumerator(Parent enumarator, IASTEnumerator enumDef) throws CModelException{
 		final IASTName astEnumName= enumDef.getName();
 		final Enumerator element= new Enumerator (enumarator, ASTStringUtil.getSimpleName(astEnumName));
+		setIndex(element);
+
 		IASTExpression initialValue= enumDef.getValue();
 		if(initialValue != null){
 			element.setConstantExpression(ASTSignatureUtil.getExpressionString(initialValue));
@@ -643,6 +651,7 @@ public class CModelBuilder2 implements IContributedModelBuilder {
 			StructureTemplate classTemplate= new StructureTemplate(parent, kind, className);
 			element= classTemplate;
 		}
+		setIndex(element);
 
 		if (compositeTypeSpecifier instanceof ICPPASTCompositeTypeSpecifier) {
 			// store super classes names
@@ -712,6 +721,7 @@ public class CModelBuilder2 implements IContributedModelBuilder {
 		String name= ASTStringUtil.getSimpleName(astTypedefName);
 
         final TypeDef element= new TypeDef(parent, name);
+		setIndex(element);
 
         String typeName= ASTStringUtil.getSignatureString(declSpecifier, declarator);
 		element.setTypeName(typeName);
@@ -752,6 +762,7 @@ public class CModelBuilder2 implements IContributedModelBuilder {
 				|| CModelBuilder2.getScope(astVariableName) instanceof ICPPClassScope) {
 			// field
 			Field newElement= new Field(parent, variableName);
+			setIndex(newElement);
 			if (specifier instanceof ICPPASTDeclSpecifier) {
 				final ICPPASTDeclSpecifier cppSpecifier= (ICPPASTDeclSpecifier)specifier;
 				newElement.setMutable(cppSpecifier.getStorageClass() == ICPPASTDeclSpecifier.sc_mutable);
@@ -777,6 +788,7 @@ public class CModelBuilder2 implements IContributedModelBuilder {
 					element= newElement;
 				}
 			}
+			setIndex(element);
 			element.setTypeName(ASTStringUtil.getSignatureString(specifier, declarator));
 			info= element.getSourceManipulationInfo();
 		}
@@ -867,6 +879,8 @@ public class CModelBuilder2 implements IContributedModelBuilder {
 				methodElement.setParameterTypes(parameterTypes);
 				methodElement.setReturnType(returnType);
 				methodElement.setConst(cppFunctionDeclarator.isConst());
+				setIndex(element);
+
 				final MethodInfo methodInfo= methodElement.getMethodInfo();
 				info= methodInfo;
 				ICPPMethod methodBinding= null;
@@ -929,6 +943,8 @@ public class CModelBuilder2 implements IContributedModelBuilder {
 				}
 				element.setParameterTypes(parameterTypes);
 				element.setReturnType(returnType);
+				setIndex(element);
+				
 				info= element.getFunctionInfo();
 				info.setConst(cppFunctionDeclarator.isConst());
 			}
@@ -938,6 +954,8 @@ public class CModelBuilder2 implements IContributedModelBuilder {
 			element= new Function(parent, functionName);
 			element.setParameterTypes(parameterTypes);
 			element.setReturnType(returnType);
+			setIndex(element);
+			
 			info= element.getFunctionInfo();
 		}
 
@@ -988,6 +1006,7 @@ public class CModelBuilder2 implements IContributedModelBuilder {
 				methodElement.setParameterTypes(parameterTypes);
 				methodElement.setReturnType(returnType);
 				methodElement.setConst(cppFunctionDeclarator.isConst());
+				setIndex(element);
 				final MethodInfo methodInfo= methodElement.getMethodInfo();
 				info= methodInfo;
 				if (declSpecifier instanceof ICPPASTDeclSpecifier) {
@@ -1009,6 +1028,8 @@ public class CModelBuilder2 implements IContributedModelBuilder {
 				}
 				element.setParameterTypes(parameterTypes);
 				element.setReturnType(returnType);
+				setIndex(element);
+				
 				info= (FunctionInfo)element.getElementInfo();
 				info.setConst(cppFunctionDeclarator.isConst());
 			}
@@ -1020,6 +1041,8 @@ public class CModelBuilder2 implements IContributedModelBuilder {
 			}
 			element.setParameterTypes(parameterTypes);
 			element.setReturnType(returnType);
+			setIndex(element);
+
 			info= (FunctionInfo)element.getElementInfo();
 		} else {
 			assert false;
@@ -1044,6 +1067,7 @@ public class CModelBuilder2 implements IContributedModelBuilder {
 		// create the element
 		IASTName name= usingDirDeclaration.getQualifiedName();
         Using element= new Using(parent, ASTStringUtil.getQualifiedName(name), true);
+		setIndex(element);
 
 		// add to parent
 		parent.addChild(element);
@@ -1058,6 +1082,7 @@ public class CModelBuilder2 implements IContributedModelBuilder {
 		// create the element
 		IASTName name= usingDeclaration.getName();
 		Using element= new Using(parent, ASTStringUtil.getSimpleName(name), false);
+		setIndex(element);
 
 		// add to parent
 		parent.addChild(element);

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 QNX Software Systems and others.
+ * Copyright (c) 2000, 2009 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -96,6 +96,14 @@ public interface ITranslationUnit extends ICElement, IParent, IOpenable, ISource
 	public final static int AST_SKIP_TRIVIAL_EXPRESSIONS_IN_AGGREGATE_INITIALIZERS= 0x40;
 
 	/**
+	 * Style constant for {@link #getAST(IIndex, int)}. 
+	 * Instructs the parser to make an attempt to create ast nodes for inactive code branches.
+	 * mstodo document how to access those.
+	 * @since 5.1
+	 */
+	public final static int AST_PARSE_INACTIVE_CODE= 0x80;
+
+	/**
 	 * Creates and returns an include declaration in this translation unit
 	 * with the given name.
 	 * <p>
@@ -167,8 +175,23 @@ public interface ITranslationUnit extends ICElement, IParent, IOpenable, ISource
 	 * @return the found shared working copy for this element, <code>null</code> if none
 	 * @see IBufferFactory
 	 * @since 2.0
+	 * @noreference This method is not intended to be referenced by clients.
 	 */
 	IWorkingCopy findSharedWorkingCopy(IBufferFactory bufferFactory);
+
+	/**
+	 * Returns the shared working copy for this element, using the default <code>IBuffer</code> factory, or
+	 * <code>null</code>, if no working copy has been created for this element.
+	 * <p>
+	 * Users of this method must not destroy the resulting working copy.
+	 * 
+	 * @param bufferFactory
+	 *            the given <code>IBuffer</code> factory
+	 * @return the found shared working copy for this element, or <code>null</code> if none
+	 * @see IBufferFactory
+	 * @since 5.1
+	 */
+	IWorkingCopy findSharedWorkingCopy();
 
 	/**
 	 * Returns the contents of a translation unit as a char[]
@@ -284,13 +307,11 @@ public interface ITranslationUnit extends ICElement, IParent, IOpenable, ISource
 	 * @see IBufferFactory
 	 * @see IProblemRequestor
 	 * @since 2.0
+	 * @noreference This method is not intended to be referenced by clients.
 	 */
+	IWorkingCopy getSharedWorkingCopy(IProgressMonitor monitor, IBufferFactory factory)
+			throws CModelException;
 	
-	IWorkingCopy getSharedWorkingCopy(
-		IProgressMonitor monitor,
-		IBufferFactory factory)
-		throws CModelException;
-
 	/**
 	 * Returns a shared working copy on this element using the given factory to create
 	 * the buffer, or this element if this element is already a working copy.
@@ -333,8 +354,52 @@ public interface ITranslationUnit extends ICElement, IParent, IOpenable, ISource
 	 * @see IBufferFactory
 	 * @see IProblemRequestor
 	 * @since 2.0
+	 * @noreference This method is not intended to be referenced by clients.
 	 */
 	IWorkingCopy getSharedWorkingCopy(IProgressMonitor monitor, IBufferFactory factory, IProblemRequestor requestor) throws CModelException;
+
+	/**
+	 * Returns a shared working copy on this element using the given factory to create the buffer, or this
+	 * element if this element is already a working copy. This API can only answer an already existing working
+	 * copy if it is based on the same original translation unit AND was using the same buffer factory (i.e.
+	 * as defined by <code>Object#equals</code>).
+	 * <p>
+	 * The life time of a shared working copy is as follows:
+	 * <ul>
+	 * <li>The first call to <code>getSharedWorkingCopy(...)</code> creates a new working copy for this
+	 * element</li>
+	 * <li>Subsequent calls increment an internal counter.</li>
+	 * <li>A call to <code>destroy()</code> decrements the internal counter.</li>
+	 * <li>When this counter is 0, the working copy is destroyed.
+	 * </ul>
+	 * So users of this method must destroy exactly once the working copy.
+	 * <p>
+	 * Note that the buffer factory will be used for the life time of this working copy, i.e. if the working
+	 * copy is closed then reopened, this factory will be used. The buffer will be automatically initialized
+	 * with the original's compilation unit content upon creation.
+	 * <p>
+	 * When the shared working copy instance is created, an ADDED ICElementDelta is reported on this working
+	 * copy.
+	 * 
+	 * @param monitor
+	 *            a progress monitor used to report progress while opening this compilation unit or
+	 *            <code>null</code> if no progress should be reported
+	 * @param requestor
+	 *            a requestor which will get notified of problems detected during reconciling as they are
+	 *            discovered. The requestor can be set to <code>null</code> indicating that the client is not
+	 *            interested in problems.
+	 * @exception CModelException
+	 *                if the contents of this element can not be determined. Reasons include:
+	 *                <ul>
+	 *                <li> This C element does not exist (ELEMENT_DOES_NOT_EXIST)</li>
+	 *                </ul>
+	 * @return a shared working copy on this element using the given factory to create the buffer, or this
+	 *         element if this element is already a working copy
+	 * @see IBufferFactory
+	 * @see IProblemRequestor
+	 * @since 5.1
+	 */
+	IWorkingCopy getSharedWorkingCopy(IProgressMonitor monitor, IProblemRequestor requestor) throws CModelException;
 
 	/**
 	 * Returns the first using in this translation unit with the name
@@ -409,7 +474,13 @@ public interface ITranslationUnit extends ICElement, IParent, IOpenable, ISource
 
 	/**
 	 * Returns a new working copy for the Translation Unit.
-	 * @return IWorkingCopy
+	 * @since 5.1
+	 */
+	IWorkingCopy getWorkingCopy(IProgressMonitor monitor) throws CModelException;
+
+	/**
+	 * Returns a new working copy for the Translation Unit.
+	 * @noreference This method is not intended to be referenced by clients.
 	 */
 	IWorkingCopy getWorkingCopy(IProgressMonitor monitor, IBufferFactory factory) throws CModelException;
 

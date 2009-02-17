@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2008 Wind River Systems, Inc. and others.
+ * Copyright (c) 2007, 2009 Wind River Systems, Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -408,8 +408,8 @@ public class LocationMapTests extends BaseTestCase {
 		final String[] params = new String[]{"p1", "p2"};
 		IMacroBinding macro2= new TestMacro("n2", "exp2", params);
 		init(DIGITS);
-		fLocationMap.encounterPoundDefine(0, 0, 0, 0, 0, macro1);
-		fLocationMap.encounterPoundDefine(0, 1, 3, 10, 16, macro2);
+		fLocationMap.encounterPoundDefine(0, 0, 0, 0, 0, true, macro1);
+		fLocationMap.encounterPoundDefine(0, 1, 3, 10, 16, true, macro2);
 		IASTPreprocessorMacroDefinition[] prep= fLocationMap.getMacroDefinitions();
 		assertEquals(2, prep.length);
 		checkMacroDefinition(prep[0], macro1, "", "n1", "", "exp1", null, FN, 0, 0, 1, 0, 0);
@@ -463,7 +463,7 @@ public class LocationMapTests extends BaseTestCase {
 		assertEquals(2, fLocationMap.getCurrentLineNumber('\n'+1));
 		fLocationMap.registerPredefinedMacro(macro1);
 		fLocationMap.registerMacroFromIndex(macro2, new Loc("ifile", 2, 12), 32);
-		fLocationMap.encounterPoundDefine(3, 13, 33, 63, 103, macro3);
+		fLocationMap.encounterPoundDefine(3, 13, 33, 63, 103, true, macro3);
 		IASTName name1= fLocationMap.encounterImplicitMacroExpansion(macro1, null);
 		IASTName name2= fLocationMap.encounterImplicitMacroExpansion(macro2, null);
 		fLocationMap.pushMacroExpansion(110, 115, 125, 30, macro3, new IASTName[]{name1, name2}, new ImageLocationInfo[0]);

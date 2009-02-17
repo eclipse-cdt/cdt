@@ -24,6 +24,7 @@ public class ErrorParserTests {
 		suite.addTest(GCCErrorParserTests.suite());
         suite.addTest(FileBasedErrorParserTests.suite());
         suite.addTest(ErrorParserManagerTest.suite());
+        suite.addTest(ErrorParserFileMatchingTest.suite());
         return suite;
 	}
 

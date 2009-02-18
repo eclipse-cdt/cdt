@@ -26,21 +26,21 @@
          version="0.0.0"/>
 
    <plugin
-         id="org.eclipse.dd.debug.memory.renderings.traditional"
+         id="org.eclipse.cdt.debug.ui.memory.search"
          download-size="0"
          install-size="0"
          version="0.0.0"
          unpack="false"/>
 
    <plugin
-         id="org.eclipse.dd.debug.ui.memory.transport"
+         id="org.eclipse.cdt.debug.ui.memory.traditional"
          download-size="0"
          install-size="0"
          version="0.0.0"
          unpack="false"/>
 
    <plugin
-         id="org.eclipse.dd.debug.ui.memory.search"
+         id="org.eclipse.cdt.debug.ui.memory.transport"
          download-size="0"
          install-size="0"
          version="0.0.0"

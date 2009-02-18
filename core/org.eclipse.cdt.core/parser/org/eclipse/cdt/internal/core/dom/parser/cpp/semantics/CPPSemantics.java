@@ -1684,7 +1684,6 @@ public class CPPSemantics {
 	    IBinding type = null;
 	    IBinding obj  = null;
 	    IBinding temp = null;
-	    boolean fnsFromAST= false;
 	    
 	    Object[] items = (Object[]) data.foundItems;
 	    for (int i = 0; i < items.length && items[i] != null; i++) {
@@ -1738,22 +1737,9 @@ public class CPPSemantics {
 	        		if (!(temp instanceof IFunction))
 	        			continue;
 	        	}
-
-	        	IFunction function= (IFunction) temp;
 	        	if (fns == ObjectSet.EMPTY_SET)
 	        		fns = new ObjectSet<IFunction>(2);
-	        	if (isFromIndex(function)) {
-	        		// accept bindings from index only, in case we have none in the AST
-	        		if (!fnsFromAST) {
-	        			fns.put(function);
-	        		}
-	        	} else {
-	        		if (!fnsFromAST) {
-	        			fns.clear();
-	        			fnsFromAST= true;
-	        		}
-	        		fns.put(function);
-	        	}
+	        	fns.put((IFunction) temp);
 	        } else if (temp instanceof IType) {
 		        // specializations are selected during instantiation
 	        	if (temp instanceof ICPPClassTemplatePartialSpecialization) 
@@ -2083,6 +2069,16 @@ public class CPPSemantics {
 				} 
 			}
 			
+			// if we are ambiguous at this point prefer non-index bindings
+			if (hasBetter == hasWorse) {
+				final boolean bestIsFromIndex= isFromIndex(bestFn);
+				final boolean currIsFromIndex= isFromIndex(fn);
+				if (bestIsFromIndex != currIsFromIndex) {
+					hasBetter= bestIsFromIndex;
+					hasWorse= currIsFromIndex;
+				}
+			}
+								
 			// If function has a parameter match that is better than the current best,
 			// and another that is worse (or everything was just as good, neither better nor worse),
 			// then this is an ambiguity (unless we find something better than both later).
@@ -2232,6 +2228,19 @@ public class CPPSemantics {
         if (fns.length == 1)
             return fns[0];
         
+        IBinding oneFromAST= null;
+        for (IBinding fn : fns) {
+			if (!isFromIndex(fn)) {
+				if (oneFromAST != null) {
+					oneFromAST= null;
+					break;
+				}
+				oneFromAST= fn;
+			}
+		}
+        if (oneFromAST != null)
+        	return oneFromAST;
+        
         if (data.forAssociatedScopes) {
             return new CPPCompositeBinding(fns);
         }
@@ -2263,7 +2272,11 @@ public class CPPSemantics {
                 }
                 if (type.isSameType(ft)) {
                     if (result != null) {
-                        return new ProblemBinding(data.astName, IProblemBinding.SEMANTIC_AMBIGUOUS_LOOKUP);
+                    	boolean fromIndex= isFromIndex(fn);
+                    	if (isFromIndex(result) == fromIndex)
+                    		return new ProblemBinding(data.astName, IProblemBinding.SEMANTIC_AMBIGUOUS_LOOKUP);
+                    	if (!fromIndex)
+                    		result= fn;
                     }
                     result = fn;
                 }

@@ -1068,7 +1068,7 @@ public class IndexCPPBindingResolutionBugs extends IndexBindingResolutionTestBas
 	//      const int* q = p;
 	//		func(q);
 	//	}
-	public void _testOverloadedFunctionFromIndex_Bug256240() throws Exception {
+	public void testOverloadedFunctionFromIndex_Bug256240() throws Exception {
     	getBindingFromASTName("func(q", 4, ICPPFunction.class);
 	}
 

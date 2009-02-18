@@ -229,28 +229,34 @@ abstract public class CPPScope implements ICPPScope, ICPPASTInternalScope {
 	    final char[] c = name.getLookupKey();
 	    IBinding[] result = null;
 	    
-	    Object[] obj = null;
+	    Object obj = null;
 	    if (prefixLookup) {
 	    	Object[] keys = bindings != null ? bindings.keyArray() : new Object[0];
+	    	ObjectSet<Object> all= new ObjectSet<Object>(16);
 	    	for (int i = 0; i < keys.length; i++) {
 	    		final char[] key = (char[]) keys[i];
 	    		if (CharArrayUtils.equals(key, 0, c.length, c, true)) {
-	    			obj = ArrayUtil.append(obj, bindings.get(key));
+	    			obj= bindings.get(key);
+	    			if (obj instanceof ObjectSet<?>) {
+	    				all.addAll((ObjectSet<?>) obj);
+	    			} else if (obj != null) {
+	    				all.put(obj);
+	    			}
 	    		}
 	    	}
+	    	obj= all;
 	    } else {
-	    	obj = bindings != null ? new Object[] {bindings.get(c)} : null;
+	    	obj = bindings != null ? bindings.get(c) : null;
 	    }
 	    
-	    obj = ArrayUtil.trim(Object.class, obj);
-	    for (Object element : obj) {
-	        if (element instanceof ObjectSet<?>) {
-	        	ObjectSet<?> os= (ObjectSet<?>) element;
+	    if (obj != null) {
+	        if (obj instanceof ObjectSet<?>) {
+	        	ObjectSet<?> os= (ObjectSet<?>) obj;
         		for (int j = 0; j < os.size(); j++) {
         			result= addCandidate(os.keyAt(j), name, forceResolve, checkPointOfDecl, expandUsingDirectives, result);
         		}
 	        } else {
-	        	result = addCandidate(element, name, forceResolve, checkPointOfDecl, expandUsingDirectives, result);
+	        	result = addCandidate(obj, name, forceResolve, checkPointOfDecl, expandUsingDirectives, result);
 	        }
 	    }
 	    return (IBinding[]) ArrayUtil.trim(IBinding.class, result);

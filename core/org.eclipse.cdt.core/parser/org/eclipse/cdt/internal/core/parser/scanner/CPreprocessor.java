@@ -993,10 +993,20 @@ public class CPreprocessor implements ILexerLog, IScanner, IAdaptable {
     		executeInclude(lexer, startOffset, true, fCurrentContext.getCodeState() == CodeState.eActive, withinExpansion);
     		break;
     	case IPreprocessorDirective.ppDefine:
-    		executeDefine(lexer, startOffset, fCurrentContext.getCodeState() == CodeState.eActive);
+    		CodeState state= fCurrentContext.getCodeState();
+    		if (state == CodeState.eSkipInactive) {
+        		lexer.consumeLine(ORIGIN_PREPROCESSOR_DIRECTIVE);
+    		} else {
+    			executeDefine(lexer, startOffset, state == CodeState.eActive);
+    		}
     		break;
     	case IPreprocessorDirective.ppUndef:
-    		executeUndefine(lexer, startOffset);
+    		state= fCurrentContext.getCodeState();
+    		if (state == CodeState.eSkipInactive) {
+        		lexer.consumeLine(ORIGIN_PREPROCESSOR_DIRECTIVE);
+    		} else {
+        		executeUndefine(lexer, startOffset, fCurrentContext.getCodeState() == CodeState.eActive);
+    		}
     		break;
     	case IPreprocessorDirective.ppIfdef:
     		if (executeIfdef(lexer, startOffset, false, withinExpansion) == CodeState.eSkipInactive)
@@ -1232,8 +1242,8 @@ public class CPreprocessor implements ILexerLog, IScanner, IAdaptable {
 		}
     }
 
-    private void executeUndefine(Lexer lexer, int startOffset) throws OffsetLimitReachedException {
-		final Token name= lexer.nextToken();
+    private void executeUndefine(Lexer lexer, int startOffset, boolean isActive) throws OffsetLimitReachedException {
+    	final Token name= lexer.nextToken();
     	final int tt= name.getType();
     	if (tt != IToken.tIDENTIFIER) {
     		if (tt == IToken.tCOMPLETION) {
@@ -1243,11 +1253,16 @@ public class CPreprocessor implements ILexerLog, IScanner, IAdaptable {
     		handleProblem(IProblem.PREPROCESSOR_INVALID_MACRO_DEFN, name.getCharImage(), startOffset, name.getEndOffset());
     		return;
     	}
-		lexer.consumeLine(ORIGIN_PREPROCESSOR_DIRECTIVE);
+    	lexer.consumeLine(ORIGIN_PREPROCESSOR_DIRECTIVE);
     	final int endOffset= lexer.currentToken().getEndOffset();
     	final char[] namechars= name.getCharImage();
-    	PreprocessorMacro definition= fMacroDictionary.remove(namechars, 0, namechars.length);
-    	fLocationMap.encounterPoundUndef(definition, startOffset, name.getOffset(), name.getEndOffset(), endOffset, namechars);
+    	PreprocessorMacro definition;
+    	if (isActive) {
+    		definition= fMacroDictionary.remove(namechars, 0, namechars.length);
+    	} else {
+    		definition= fMacroDictionary.get(namechars);
+    	}
+    	fLocationMap.encounterPoundUndef(definition, startOffset, name.getOffset(), name.getEndOffset(), endOffset, namechars, isActive);
     }
 
     private CodeState executeIfdef(Lexer lexer, int offset, boolean isIfndef, boolean withinExpansion) throws OffsetLimitReachedException {
@@ -1433,9 +1448,6 @@ public class CPreprocessor implements ILexerLog, IScanner, IAdaptable {
 				break;
 			case IPreprocessorDirective.ppInclude_next:
 				executeInclude(lexer, ident.getOffset(), true, false, withinExpansion);
-				break;
-			case IPreprocessorDirective.ppDefine:
-				executeDefine(lexer, pound.getOffset(), false);
 				break;
 			case IPreprocessorDirective.ppIfdef:
 				return executeIfdef(lexer, pound.getOffset(), false, withinExpansion);

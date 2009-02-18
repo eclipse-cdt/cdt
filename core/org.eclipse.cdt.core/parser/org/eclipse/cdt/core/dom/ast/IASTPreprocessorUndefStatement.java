@@ -23,4 +23,10 @@ public interface IASTPreprocessorUndefStatement extends	IASTPreprocessorStatemen
 	 * Returns the reference to the macro, or <code>null</code>.
 	 */
     public IASTName getMacroName();
+    
+	/**
+	 * Returns whether this macro definition occurs in active code.
+	 * @since 5.1
+	 */
+	public boolean isActive();
 }

@@ -316,9 +316,8 @@ abstract public class PDOMWriter {
 						}
 					}
 				}
-			}
-			// macros
-			else if (stmt instanceof IASTPreprocessorMacroDefinition || stmt instanceof IASTPreprocessorUndefStatement) {
+			} else if ((stmt instanceof IASTPreprocessorUndefStatement && ((IASTPreprocessorUndefStatement) stmt).isActive())
+					|| (stmt instanceof IASTPreprocessorMacroDefinition && ((IASTPreprocessorMacroDefinition) stmt).isActive())) {
 				IASTFileLocation sourceLoc = stmt.getFileLocation();
 				if (sourceLoc != null) { // skip built-ins and command line macros
 					IIndexFileLocation path2 = fResolver.resolveASTPath(sourceLoc.getFileName());

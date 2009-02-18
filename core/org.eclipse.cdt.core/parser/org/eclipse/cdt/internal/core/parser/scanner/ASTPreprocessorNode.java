@@ -433,13 +433,19 @@ class ASTFunctionStyleMacroDefinition extends ASTMacroDefinition implements IAST
 
 class ASTUndef extends ASTPreprocessorNode implements IASTPreprocessorUndefStatement {
 	private final ASTPreprocessorName fName;
-	public ASTUndef(IASTTranslationUnit parent, char[] name, int startNumber, int nameNumber, int nameEndNumber, IBinding binding) {
+	private final boolean fActive;
+	public ASTUndef(IASTTranslationUnit parent, char[] name, int startNumber, int nameNumber, int nameEndNumber, IBinding binding, boolean isActive) {
 		super(parent, IASTTranslationUnit.PREPROCESSOR_STATEMENT, startNumber, nameEndNumber);
 		fName= new ASTPreprocessorName(this, IASTPreprocessorStatement.MACRO_NAME, nameNumber, nameEndNumber, name, binding);
+		fActive= isActive;
 	}
 
 	public ASTPreprocessorName getMacroName() {
 		return fName;
+	}
+
+	public boolean isActive() {
+		return fActive;
 	}
 }
 

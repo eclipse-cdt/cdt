@@ -74,6 +74,7 @@ public class ErrorParserManagerTest extends TestCase {
 	 * Example code test the packages in the project 
 	 *  "com.qnx.tools.ide.cdt.core"
 	 */
+	@Override
 	protected void setUp() throws Exception {
 		/***
 		 * The test of the tests assume that they have a working workspace
@@ -106,7 +107,14 @@ public class ErrorParserManagerTest extends TestCase {
 			}
 
 		};
-		epManager = new ErrorParserManager(cProject.getProject(), markerGenerator, null);
+		String[] errorParsersIds = {
+			"org.eclipse.cdt.core.MakeErrorParser",
+			"org.eclipse.cdt.core.GCCErrorParser",
+			"org.eclipse.cdt.core.GASErrorParser",
+			"org.eclipse.cdt.core.GLDErrorParser",
+			"org.eclipse.cdt.core.VCErrorParser",
+		};
+		epManager = new ErrorParserManager(cProject.getProject(), markerGenerator, errorParsersIds);
 
 	}
 
@@ -115,6 +123,7 @@ public class ErrorParserManagerTest extends TestCase {
 	*
 	* Called after every test case method.
 	*/
+	@Override
 	protected void tearDown() {
 		// release resources here and clean-up
 	}

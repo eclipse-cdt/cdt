@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2008 Wind River Systems and others.
+ * Copyright (c) 2006, 2009 Wind River Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -363,6 +363,8 @@ public final class SteppingController implements IStepQueueManager
 		getRunControl().step(execCtx, stepType, new RequestMonitor(getExecutor(), null) {
 		    @Override
 		    protected void handleFailure() {
+		    	// in case of a failed step - enable stepping again (bug 265267)
+		    	enableStepping(execCtx);
 		        if (getStatus().getCode() == IDsfStatusConstants.INVALID_STATE) {
 	                // Ignore errors.  During fast stepping there can be expected race
 	                // conditions leading to stepping errors.

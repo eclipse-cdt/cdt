@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2008 Wind River Systems, Inc. and others.
+ * Copyright (c) 2007, 2009 Wind River Systems, Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,6 +10,7 @@
  * Michael Scharf (Wind River) - [205260] Terminal does not take the font from the preferences
  * Michael Scharf (Wind River) - [209746] There are cases where some colors not displayed correctly
  * Michael Scharf (Wind River) - [206328] Terminal does not draw correctly with proportional fonts
+ * Martin Oberhuber (Wind River) - [247700] Terminal uses ugly fonts in JEE package
  *******************************************************************************/
 package org.eclipse.tm.internal.terminal.textcanvas;
 
@@ -41,7 +42,8 @@ public class StyleMap {
 	
 	private static final String PREFIX = "org.eclipse.tm.internal."; //$NON-NLS-1$
 	// TODO propagate the name of the font in the FontRegistry
-	String fFontName="terminal.views.view.font.definition"; //$NON-NLS-1$
+	private static final String fDefaultFontName="terminal.views.view.font.definition"; //$NON-NLS-1$
+	String fFontName=fDefaultFontName;
 	Map fColorMapForeground=new HashMap();
 	Map fColorMapBackground=new HashMap();
 	Map fFontMap=new HashMap();
@@ -169,6 +171,15 @@ public class StyleMap {
 	public void updateFont() {
 		Display display=Display.getCurrent();
 		GC gc = new GC (display);
+		if (JFaceResources.getFontRegistry().hasValueFor(fDefaultFontName)) {
+			fFontName = fDefaultFontName;
+		} else if (JFaceResources.getFontRegistry().hasValueFor("REMOTE_COMMANDS_VIEW_FONT")) { //$NON-NLS-1$
+			//try RSE Shell View Font
+			fFontName = "REMOTE_COMMANDS_VIEW_FONT"; //$NON-NLS-1$
+		} else {
+			//fall back to "basic jface text font"
+			fFontName = "org.eclipse.jface.textfont"; //$NON-NLS-1$
+		}
 		gc.setFont(getFont());
 		fCharSize = gc.textExtent ("W"); //$NON-NLS-1$
 		fProportional=false;
@@ -184,10 +195,18 @@ public class StyleMap {
 			measureChar(gc, c,false);
 		}
 		if(fProportional) {
-			fCharSize.x-=3;
+			fCharSize.x-=2; //works better on small fonts
 		}
 		for (int i = 0; i < fOffsets.length; i++) {
 			fOffsets[i]=(fCharSize.x-fOffsets[i])/2;
+		}
+		if(!fProportional) {
+			//measure font in boldface, too, and if wider then treat like proportional
+			gc.setFont(getFont(fDefaultStyle.setBold(true)));
+			Point charSizeBold = gc.textExtent("W"); //$NON-NLS-1$
+			if (fCharSize.x != charSizeBold.x) {
+				fProportional=true;
+			}
 		}
 		gc.dispose ();
 	}

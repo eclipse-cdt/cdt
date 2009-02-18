@@ -3844,4 +3844,18 @@ public class AST2TemplateTests extends AST2BaseTest {
 		String code= getAboveComment();
 		parseAndCheckBindings(code, ParserLanguage.CPP);
 	}
+	
+	//	template<typename T> class CT {};
+	//	template<class T> CT<T>& getline1(CT<T>& __in);
+	//	template<class T> CT<T>& getline2(CT<T>& __in);
+	//	void test() {
+	//		CT<int> i;
+	//		getline2(i);
+	//	}
+	public void testAmbiguousDeclaratorInFunctionTemplate_265342() throws Exception {
+		final String code = getAboveComment();
+		BindingAssertionHelper bh= new BindingAssertionHelper(code, true);
+		bh.assertNonProblem("getline2(i)", 8, ICPPTemplateInstance.class);
+		parseAndCheckBindings(code, ParserLanguage.CPP);
+	}
 }

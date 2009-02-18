@@ -44,7 +44,7 @@ public class CPPASTAmbiguousCondition extends ASTAmbiguousNode implements IASTAm
 	@Override
 	protected void beforeResolution() {
 		// populate containing scope, so that it will not be affected by the alternative branches.
-		IScope scope= CPPVisitor.getContainingScope(this);
+		IScope scope= CPPVisitor.getContainingNonTemplateScope(this);
 		if (scope instanceof ICPPASTInternalScope) {
 			((ICPPASTInternalScope) scope).populateCache();
 		}

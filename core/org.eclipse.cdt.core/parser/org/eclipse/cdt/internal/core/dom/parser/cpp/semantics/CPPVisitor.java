@@ -578,11 +578,8 @@ public class CPPVisitor extends ASTQueries {
 		IBinding binding= null;
 		final boolean template= tmplDecl != null;
 		boolean isFriendDecl= false;
-		ICPPScope scope = (ICPPScope) getContainingScope((IASTNode) name);
+		ICPPScope scope = (ICPPScope) getContainingNonTemplateScope(name);
 		try {
-			while (scope instanceof ICPPTemplateScope) {
-				scope= (ICPPScope) scope.getParent();
-			}
 			if (parent instanceof IASTSimpleDeclaration && scope instanceof ICPPClassScope) {
 				ICPPASTDeclSpecifier declSpec = (ICPPASTDeclSpecifier) ((IASTSimpleDeclaration) parent).getDeclSpecifier();
 				if (declSpec.isFriend()) {

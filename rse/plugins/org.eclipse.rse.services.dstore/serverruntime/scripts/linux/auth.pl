@@ -1,6 +1,6 @@
 #!/usr/bin/perl -w
 #*******************************************************************************
-# Copyright (c) 2005, 2006 IBM Corporation and others.
+# Copyright (c) 2005, 2009 IBM Corporation and others.
 # All rights reserved. This program and the accompanying materials
 # are made available under the terms of the Eclipse Public License v1.0
 # which accompanies this distribution, and is available at
@@ -9,6 +9,7 @@
 # Contributors:
 # IBM Corporation - initial API and implementation
 # David McKnight   (IBM)   - [254785] [dstore] RSE Server assumes home directory on target machine
+# David McKnight   (IBM)   - [262013] [dstore][unix] RSE Daemon fails to start server on HP-UX
 #*******************************************************************************
 
 use Shell;
@@ -50,7 +51,7 @@ else
   else
   {
     $passwd=$passwdStruct[1];
-    $dir=$passwdStruct[7]; // get the user's home dir
+    $dir=$passwdStruct[7]; # get the user's home dir
     #$passwd = $pass;
     
     $encryptedPWD = crypt($pwdIN, $passwd);
@@ -64,7 +65,7 @@ else
 		$os = uname();
 		chomp($os);
 
-		if (lc($os) eq "aix")
+		if (lc($os) eq "aix" || lc($os) eq "HP-UX")		
 		{
 			$suOptions="-";
 		}

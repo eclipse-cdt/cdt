@@ -446,8 +446,8 @@ public class LocationMapTests extends BaseTestCase {
 		IMacroBinding macro1= new TestMacro("n1", "exp1", null);
 
 		init(DIGITS);
-		fLocationMap.encounterPoundUndef(null, 0, 0, 0, 0, "n1".toCharArray());
-		fLocationMap.encounterPoundUndef(macro1, 0, 3, 7, 16, "n2".toCharArray());
+		fLocationMap.encounterPoundUndef(null, 0, 0, 0, 0, "n1".toCharArray(), true);
+		fLocationMap.encounterPoundUndef(macro1, 0, 3, 7, 16, "n2".toCharArray(), true);
 		IASTPreprocessorStatement[] prep= fLocationMap.getAllPreprocessorStatements();
 		assertEquals(2, prep.length);
 		checkMacroUndef(prep[0], null, "", "n1", "", FN, 0, 0, 1, 0, 0);

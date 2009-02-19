@@ -14,6 +14,7 @@
  * Anna Dushistova  (MontaVista) - [235298][remotecdt] Further improve progress reporting and cancellation of Remote CDT Launch
  * Anna Dushistova  (MontaVista) - [244173][remotecdt][nls] Externalize Strings in RemoteRunLaunchDelegate
  * Anna Dushistova  (MontaVista) - [181517][usability] Specify commands to be run before remote application launch
+ * Nikita Shulga (EmbeddedAlley) - [265236][remotecdt] Wait for RSE to initialize before querying it for host list
  *******************************************************************************/
 
 package org.eclipse.rse.internal.remotecdt;
@@ -91,6 +92,15 @@ public class RemoteRunLaunchDelegate extends AbstractCLaunchDelegate {
 			if (monitor == null)
 				monitor = new NullProgressMonitor();
 
+			if (!RSECorePlugin.isInitComplete(RSECorePlugin.INIT_MODEL)) { 
+				monitor.subTask(Messages.RemoteRunLaunchDelegate_10);
+				try {
+					RSECorePlugin.waitForInitCompletion(RSECorePlugin.INIT_MODEL);
+				} catch (InterruptedException e) {
+					throw new CoreException(new Status(IStatus.ERROR, getPluginID(),
+							IStatus.OK, e.getLocalizedMessage(), e));
+				}
+			}
 			if (mode.equals(ILaunchManager.DEBUG_MODE)) {
 				monitor.beginTask(Messages.RemoteRunLaunchDelegate_0, 100);
 				setDefaultSourceLocator(launch, config);

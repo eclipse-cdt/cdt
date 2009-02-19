@@ -11,6 +11,7 @@
  * Johann Draschwandtner (Wind River) - [231827][remotecdt]Auto-compute default for Remote path
  * Anna Dushistova       (MontaVista) - [244173][remotecdt][nls] Externalize Strings in RemoteRunLaunchDelegate
  * Anna Dushistova       (MontaVista) - [181517][usability] Specify commands to be run before remote application launch
+ * Nikita Shulga      (EmbeddedAlley) - [265236][remotecdt] Wait for RSE to initialize before querying it for host list
  *******************************************************************************/
 package org.eclipse.rse.internal.remotecdt;
 
@@ -48,6 +49,8 @@ public class Messages extends NLS {
 
 	public static String RemoteRunLaunchDelegate_RemoteShell;
 	public static String RemoteRunLaunchDelegate_1;
+
+	public static String RemoteRunLaunchDelegate_10;
 
 	public static String RemoteRunLaunchDelegate_12;
 

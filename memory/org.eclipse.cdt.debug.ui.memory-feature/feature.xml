@@ -22,7 +22,7 @@
    </url>
 
    <includes
-         id="org.eclipse.dd.debug.memory.renderings.source"
+         id="org.eclipse.cdt.debug.ui.memory.source"
          version="0.0.0"/>
 
    <plugin

@@ -36,7 +36,7 @@
    <includes
          id="org.eclipse.cdt.core.lrparser.feature"
          version="0.0.0"/>
-         
+
    <includes
          id="org.eclipse.cdt.core.lrparser.sdk"
          version="0.0.0"/>
@@ -44,7 +44,7 @@
    <includes
          id="org.eclipse.cdt.core.parser.upc.feature"
          version="0.0.0"/>
-         
+
    <includes
          id="org.eclipse.cdt.core.parser.upc.sdk"
          version="0.0.0"/>
@@ -83,6 +83,10 @@
 
    <includes
          id="org.eclipse.cdt.examples.dsf"
+         version="0.0.0"/>
+
+   <includes
+         id="org.eclipse.cdt.debug.ui.memory"
          version="0.0.0"/>
 
 </feature>

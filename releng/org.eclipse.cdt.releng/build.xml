@@ -86,6 +86,9 @@
 			<property name="builder" value="${basedir}/dsfgdb"/>
 		</ant>
 		-->
+		<ant antfile="build.xml" dir="${pde.build.scripts}" target="preBuild">
+			<property name="builder" value="${basedir}/memory"/>
+		</ant>
 		<ant antfile="build.xml" dir="${pde.build.scripts}" target="fetch">
 			<property name="builder" value="${basedir}/platform"/>
 		</ant>
@@ -121,6 +124,9 @@
 			<property name="builder" value="${basedir}/dsfgdb"/>
 		</ant>
 		-->
+		<ant antfile="build.xml" dir="${pde.build.scripts}" target="fetch">
+			<property name="builder" value="${basedir}/memory"/>
+		</ant>
 	</target>
 	
 	<target name="unzip" depends="init" unless="dontUnzip">
@@ -499,6 +505,18 @@
 		</antcall>
 		<antcall target="tagone">
 			<param name="tagmodule" value="org.eclipse.cdt/releng/org.eclipse.cdt.master"/>
+		</antcall>
+		<antcall target="tagone">
+			<param name="tagmodule" value="org.eclipse.cdt/memory/org.eclipse.cdt.debug.ui.memory.traditional"/>
+		</antcall>
+		<antcall target="tagone">
+			<param name="tagmodule" value="org.eclipse.cdt/memory/org.eclipse.cdt.debug.ui.memory.transport"/>
+		</antcall>
+		<antcall target="tagone">
+			<param name="tagmodule" value="org.eclipse.cdt/memory/org.eclipse.cdt.debug.ui.memory.search"/>
+		</antcall>
+		<antcall target="tagone">
+			<param name="tagmodule" value="org.eclipse.cdt/memory/org.eclipse.cdt.debug.ui.memory-feature"/>
 		</antcall>
 		<antcall target="tagone">
 			<param name="tagmodule" value="org.eclipse.cdt/dsf/org.eclipse.cdt.dsf"/>

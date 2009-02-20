@@ -223,6 +223,8 @@ public class ManagedBuildManager extends AbstractCExtension {
 	private static Map extensionOutputTypeMap;
 	// Targets defined in the manifest files (CDT V2.0 object model)
 	private static Map extensionTargetMap;
+	
+	
 	// "Selected configuraton" elements defined in the manifest files.
 	// These are configuration elements that map to objects in the internal
 	// representation of the manifest files.  For example, ListOptionValues
@@ -232,7 +234,8 @@ public class ManagedBuildManager extends AbstractCExtension {
 	// From the PDE Guide:
 	//  A configuration element, with its attributes and children, directly 
 	//  reflects the content and structure of the extension section within the 
-	//  declaring plug-in's manifest (plugin.xml) file. 
+	//  declaring plug-in's manifest (plugin.xml) file.
+	// This map has a lifecycle corresponding to the build definitions extension loading.
 	private static Map configElementMap;
 	
 //	private static List sortedToolChains;
@@ -2249,6 +2252,12 @@ public class ManagedBuildManager extends AbstractCExtension {
 		if (projectTypesLoading)
 			return;
 		projectTypesLoading = true;
+
+		
+		// scalability issue:  configElementMap does not need to live past when loading is done, so we will
+		// deallocate it upon exit with a try...finally
+		
+		try {
 		
 		//The list of the IManagedBuildDefinitionsStartup callbacks 
 		List buildDefStartupList = null;
@@ -2555,6 +2564,12 @@ public class ManagedBuildManager extends AbstractCExtension {
 		projectTypesLoaded = true;
 		
 		ToolChainModificationManager.getInstance().start();
+		
+		} // try
+		
+		finally {
+			configElementMap = null;
+		}
 	}
 	
 	private static void performAdjustments(){
@@ -3207,6 +3222,9 @@ public class ManagedBuildManager extends AbstractCExtension {
 	}
 
 	private static Map getConfigElementMap() {
+		if(!projectTypesLoading)
+			throw new IllegalStateException();
+		
 		if (configElementMap == null) {
 			configElementMap = new HashMap();
 		}
@@ -3214,8 +3232,9 @@ public class ManagedBuildManager extends AbstractCExtension {
 	}
 	
 	/**
-	 * This method public for implementation reasons.  Not intended for use 
+	 * @noreference This method public for implementation reasons.  Not intended for use 
 	 * by clients.
+	 *
 	 */
 	public static void putConfigElement(IBuildObject buildObj, IManagedConfigElement configElement) {
 		getConfigElementMap().put(buildObj, configElement);
@@ -3229,7 +3248,7 @@ public class ManagedBuildManager extends AbstractCExtension {
 	}
 
 	/**
-	 * This method public for implementation reasons.  Not intended for use 
+	 * @noreference This method public for implementation reasons.  Not intended for use 
 	 * by clients.
 	 */
 	public static IManagedConfigElement getConfigElement(IBuildObject buildObj) {

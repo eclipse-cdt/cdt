@@ -434,10 +434,18 @@ public class Tool extends HoldsOptions implements ITool, IOptionCategory, IMatch
        	supportsManagedBuild = tool.supportsManagedBuild; 
 
 
-		commandLineGeneratorElement = tool.commandLineGeneratorElement; 
-		commandLineGenerator = tool.commandLineGenerator; 
-		dependencyGeneratorElement = tool.dependencyGeneratorElement; 
-		dependencyGenerator = tool.dependencyGenerator; 
+		commandLineGenerator = tool.commandLineGenerator;
+		if(commandLineGenerator == null) {
+			// only need XML if the generator hasn't been created yet
+			commandLineGeneratorElement = tool.commandLineGeneratorElement; 
+		}
+		
+		dependencyGenerator = tool.dependencyGenerator;
+		if(dependencyGenerator == null) {
+			// only need XML if the generator hasn't been created yet
+			dependencyGeneratorElement = tool.dependencyGeneratorElement; 
+		}
+		
 		pathconverterElement = tool.pathconverterElement ;
 		optionPathConverter = tool.optionPathConverter ;
 		
@@ -562,19 +570,31 @@ public class Tool extends HoldsOptions implements ITool, IOptionCategory, IMatch
 		if(supportsManagedBuild == null)
 			supportsManagedBuild = tool.supportsManagedBuild; 
 
-
-		if(commandLineGeneratorElement == null)
-			commandLineGeneratorElement = tool.commandLineGeneratorElement;
-		if(commandLineGenerator == null)
+		if(commandLineGenerator == null) {
 			commandLineGenerator = tool.commandLineGenerator;
-		if(dependencyGeneratorElement == null)
-			dependencyGeneratorElement = tool.dependencyGeneratorElement;
-		if(dependencyGenerator == null)
+			// only copy the generator element if we don't already have a generator
+			if(commandLineGenerator == null && commandLineGeneratorElement == null)
+				commandLineGeneratorElement = tool.commandLineGeneratorElement;
+		}
+		
+		if(dependencyGenerator == null) {
 			dependencyGenerator = tool.dependencyGenerator;
-		if(pathconverterElement == null)
-			pathconverterElement = tool.pathconverterElement ;
-		if(optionPathConverter == null)
+			
+			// only copy the generator element if we don't already have a generator
+			if(dependencyGenerator == null) {
+				if(dependencyGeneratorElement == null)
+					dependencyGeneratorElement = tool.dependencyGeneratorElement;
+			}
+		}
+		
+		if(optionPathConverter == null) {
 			optionPathConverter = tool.optionPathConverter ;
+			
+			if(optionPathConverter == null) {
+				if(pathconverterElement == null)
+					pathconverterElement = tool.pathconverterElement ;
+			}
+		}
 		
 		if(envVarBuildPathList == null && tool.envVarBuildPathList != null)
 			envVarBuildPathList = new ArrayList<IEnvVarBuildPath>(tool.envVarBuildPathList);
@@ -2089,6 +2109,7 @@ public class Tool extends HoldsOptions implements ITool, IOptionCategory, IMatch
 			try {
 				if (element.getAttribute(COMMAND_LINE_GENERATOR) != null) {
 					commandLineGenerator = (IManagedCommandLineGenerator) element.createExecutableExtension(COMMAND_LINE_GENERATOR);
+					commandLineGeneratorElement = null; // no longer needed now that we've created one
 					return commandLineGenerator;
 				}
 			} catch (CoreException e) {}
@@ -2143,7 +2164,7 @@ public class Tool extends HoldsOptions implements ITool, IOptionCategory, IMatch
 	 * @see org.eclipse.cdt.managedbuilder.core.ITool#setDependencyGeneratorElement(String)
 	 * @deprecated
 	 */
-	public void setDependencyGeneratorElement(IConfigurationElement element) {
+	private void setDependencyGeneratorElement(IConfigurationElement element) {
 		dependencyGeneratorElement = element;
 		setDirty(true);
 	}
@@ -2165,8 +2186,10 @@ public class Tool extends HoldsOptions implements ITool, IOptionCategory, IMatch
 				if (element.getAttribute(DEP_CALC_ID) != null) {
 					dependencyGenerator = (IManagedDependencyGeneratorType) element.createExecutableExtension(DEP_CALC_ID);
 					if (dependencyGenerator != null) {
-						if (dependencyGenerator instanceof IManagedDependencyGenerator)
+						if (dependencyGenerator instanceof IManagedDependencyGenerator) {
+							dependencyGeneratorElement = null; // no longer needed now that we've created one
 							return (IManagedDependencyGenerator)dependencyGenerator;
+						}
 						else
 							return null;
 					}
@@ -2789,7 +2812,9 @@ public class Tool extends HoldsOptions implements ITool, IOptionCategory, IMatch
 				IToolChain toolchain = (IToolChain) getParent();
 				optionPathConverter = toolchain.getOptionPathConverter();
 			}
-		}		
+		}
+		
+		pathconverterElement = null; // discard now that we've created one
 		return optionPathConverter ;
 	}
 	

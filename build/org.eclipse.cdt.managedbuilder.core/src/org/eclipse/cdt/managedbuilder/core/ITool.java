@@ -12,7 +12,6 @@ package org.eclipse.cdt.managedbuilder.core;
 
 import java.util.List;
 
-import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IPath;
 
 import org.eclipse.cdt.core.settings.model.extension.CLanguageData;
@@ -499,43 +498,10 @@ public interface ITool extends IBuildObject, IHoldsOptions {
 	public void setCommandLinePattern(String pattern);
 	
 	/**
-	 * Returns the plugin.xml element of the commandLineGenerator extension or <code>null</code> if none. 
-	 *  
-	 * @return IConfigurationElement
-	 * 
-	 * @deprecated - use getCommandLineGenerator
-	 */
-	public IConfigurationElement getCommandLineGeneratorElement();
-	
-	/**
-	 * Sets the CommandLineGenerator plugin.xml element
-	 * 
-	 * @param element
-	 * @deprecated
-	 */
-	public void setCommandLineGeneratorElement(IConfigurationElement element);
-	
-	/**
 	 * Returns the command line generator specified for this tool
 	 * @return IManagedCommandLineGenerator
 	 */
 	public IManagedCommandLineGenerator getCommandLineGenerator();
-	
-	/**
-	 * Returns the plugin.xml element of the dependencyGenerator extension or <code>null</code> if none. 
-	 *  
-	 * @return IConfigurationElement
-	 * @deprecated - use getDependencyGeneratorForExtension or IInputType#getDependencyGenerator method
-	 */
-	public IConfigurationElement getDependencyGeneratorElement();
-	
-	/**
-	 * Sets the DependencyGenerator plugin.xml element
-	 * 
-	 * @param element
-	 * @deprecated 
-	 */
-	public void setDependencyGeneratorElement(IConfigurationElement element);
 	
 	/**
 	 * Returns a class instance that implements an interface to generate 
@@ -747,21 +713,11 @@ public interface ITool extends IBuildObject, IHoldsOptions {
 	
 	IResourceInfo getParentResourceInfo();
 	
-/*	IInputType setSourceContentTypeIds(IInputType type, String[] ids);
-
-	IInputType setHeaderContentTypeIds(IInputType type, String[] ids);
-	
-	IInputType setSourceExtensionsAttribute(IInputType type, String[] extensions);
-
-	IInputType setHeaderExtensionsAttribute(IInputType type, String[] extensions);
-*/
 	IInputType getEditableInputType(IInputType base);
 	
 	IOutputType getEditableOutputType(IOutputType base);
 	
 	boolean isEnabled();
-	
-//	boolean isReal();
 	
 	boolean supportsBuild(boolean managed);
 	

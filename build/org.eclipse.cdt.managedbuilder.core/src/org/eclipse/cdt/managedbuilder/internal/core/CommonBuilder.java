@@ -543,7 +543,11 @@ public class CommonBuilder extends ACBuilder {
 		return projects;
 	}
 	
-	protected IProject[] build(int kind, IProject project, IBuilder[] builders, boolean isForeground, IProgressMonitor monitor, MyBoolean isBuild) throws CoreException{
+	protected IProject[] build(int kind, IProject project, IBuilder[] builders, boolean isForeground, IProgressMonitor monitor) throws CoreException{
+		return build(kind, project, builders, isForeground, monitor, new MyBoolean(false));
+	}
+	
+	private IProject[] build(int kind, IProject project, IBuilder[] builders, boolean isForeground, IProgressMonitor monitor, MyBoolean isBuild) throws CoreException{
 		if(!isCdtProjectCreated(project))
 			return project.getReferencedProjects();
 

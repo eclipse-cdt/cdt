@@ -5,7 +5,7 @@
 	</target>
 	
 	<target name="build" depends="zips,test"/>
-	<target name="nightly" depends="tag,zips,sign,generate.p2.metadata,test,update_index_html,copy"/>
+	<target name="nightly" depends="tag,zips,sign,generate.p2.metadata,test,update.index.html,copy"/>
 	<target name="testbuild" depends="zips,test,copy"/>
 	<target name="buildcopy" depends="zips,copy"/>
 	<target name="cdtbuild" depends="tag,zips,test,upload"/>
@@ -267,7 +267,7 @@
 		</exec>
 	</target>
 	
-	<target name="update_index_html" depends="init" unless="hasErrors">
+	<target name="update.index.html" depends="init" unless="hasErrors">
 		<property name="copyToDir" value="/home/www/tools/cdt/builds/${branchVersion}"/>
 		<replace file="${copyToDir}/index.html">
 			<replacetoken><![CDATA[  <!-- add here -->]]></replacetoken>

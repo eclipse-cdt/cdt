@@ -31,8 +31,10 @@ public class GPPScannerExtensionConfiguration extends GNUScannerExtensionConfigu
 		return sInstance;
 	}
 	
+	@SuppressWarnings("nls")
 	public GPPScannerExtensionConfiguration() {
-		addMacro("__null", "0");  //$NON-NLS-1$//$NON-NLS-2$
+		addMacro("__null", "0");  
+		addMacro("__builtin_offsetof(T,m)", "(reinterpret_cast <size_t>(&reinterpret_cast <const volatile char &>(static_cast<T*> (0)->m)))");
 		addKeyword(Keywords.c_COMPLEX, IToken.t__Complex);
 		addKeyword(Keywords.c_IMAGINARY, IToken.t__Imaginary);
 	}

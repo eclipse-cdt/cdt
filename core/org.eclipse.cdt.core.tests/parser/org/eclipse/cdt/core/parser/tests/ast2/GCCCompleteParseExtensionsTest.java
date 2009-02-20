@@ -381,4 +381,31 @@ public class GCCCompleteParseExtensionsTest extends AST2BaseTest {
         parseGPP( writer.toString() );
     }
 	
+	// typedef int size_t;  // will be defined in <stddef.h>
+	// struct S {int m;};
+	// void test() {
+	//    int a= __builtin_offsetof(struct S, m);  
+	// };
+	public void test__builtinOffsetof_Bug265001() throws Exception {
+		// gcc with __GNUC__ >= 4 defines:
+		// #define offsetof(type, field) __builtin_offsetof(type, field)
+
+		String code= getAboveComment();
+		parseGCC(code);
+		parseGPP(code);
+	}
+
+	// typedef struct S {int m;} T;
+	// void test() {
+	//    int a= __offsetof__(1);           
+	// };
+	public void test__offsetof__Bug265001() throws Exception {
+		// gcc with __GNUC__ < 4 defines:
+		//		#define offsetof(type, field)					\
+		//		(__offsetof__ (reinterpret_cast <__size_t>		\
+		//			 (& reinterpret_cast <const volatile char &>	\
+		//			  (static_cast<type *> (0)->field))))
+		String code= getAboveComment();
+		parseGPP(code);
+	}
 }

@@ -412,25 +412,25 @@
          point="org.eclipse.ui.bindings">
       <key
             commandId="org.eclipse.cdt.dsf.gdb.ui.commands.reverseResume"
-            contextId="org.eclipse.ui.contexts.window"
+            contextId="org.eclipse.cdt.debug.ui.debugging"
             schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
             sequence="SHIFT+F8">
       </key>
       <key
             commandId="org.eclipse.cdt.dsf.gdb.ui.commands.reverseStepInto"
-            contextId="org.eclipse.ui.contexts.window"
+            contextId="org.eclipse.cdt.debug.ui.debugging"
             schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
             sequence="SHIFT+F5">
       </key>
       <key
             commandId="org.eclipse.cdt.dsf.gdb.ui.commands.reverseStepOver"
-            contextId="org.eclipse.ui.contexts.window"
+            contextId="org.eclipse.cdt.debug.ui.debugging"
             schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
             sequence="SHIFT+F6">
       </key>
       <key
             commandId="org.eclipse.cdt.dsf.gdb.ui.commands.uncall"
-            contextId="org.eclipse.ui.contexts.window"
+            contextId="org.eclipse.cdt.debug.ui.debugging"
             schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
             sequence="SHIFT+F7">
       </key>

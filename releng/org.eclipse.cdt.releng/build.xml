@@ -5,10 +5,11 @@
 	</target>
 	
 	<target name="build" depends="zips,test"/>
-	<target name="nightly" depends="tag,zips,sign,test,copy"/>
+	<target name="nightly" depends="tag,zips,sign,generate.p2.metadata,test,update_index_html,copy"/>
 	<target name="testbuild" depends="zips,test,copy"/>
 	<target name="buildcopy" depends="zips,copy"/>
 	<target name="cdtbuild" depends="tag,zips,test,upload"/>
+	<target name="testmd5" depends="zips,sign,generate.p2.metadata,copy"/>
 	
 	<target name="init">
 		<touch file="${user.home}/.cvspass" />
@@ -171,7 +172,7 @@
 			basedir="${buildDirectory}/site/eclipse"/>
 	</target>
 	
-	<target name="generate.p2.metadata">
+	<target name="generate.p2.metadata" depends="sign">
 		<!-- unzip the signed master site -->
 		<unzip src="${zipsdir}/${masterFile}" dest="${zipsdir}/p2"/>
 		
@@ -266,7 +267,7 @@
 		</exec>
 	</target>
 	
-	<target name="copy" depends="init" unless="hasErrors">
+	<target name="update_index_html" depends="init" unless="hasErrors">
 		<property name="copyToDir" value="/home/www/tools/cdt/builds/${branchVersion}"/>
 		<replace file="${copyToDir}/index.html">
 			<replacetoken><![CDATA[  <!-- add here -->]]></replacetoken>
@@ -277,6 +278,10 @@
 			<replacefilter token="@buildType@" value="${buildType}"/>
 			<replacefilter token="@buildId@" value="${buildId}"/>
 		</replace>
+	</target>
+	
+	<target name="copy" depends="init" unless="hasErrors">
+		<property name="copyToDir" value="/home/www/tools/cdt/builds/${branchVersion}"/>
 		<mkdir dir="${copyToDir}/${buildType}.${buildId}"/>
 		<copy todir="${copyToDir}/${buildType}.${buildId}">
 			<fileset dir="${buildDirectory}/${buildType}.${buildId}"/>

@@ -167,23 +167,33 @@
 		<!-- remove the master feature from the update site -->
 		<delete verbose="true" file="${buildDirectory}/site/eclipse/features/${masterFeature}"/>
 		
-		<!-- generate p2 metadata -->
-		<antcall target="generate.p2.metadata" />
-		
 		<zip destfile="${zipsdir}/${masterFile}"
 			basedir="${buildDirectory}/site/eclipse"/>
 	</target>
 	
-    <target name="generate.p2.metadata">
+	<target name="generate.p2.metadata">
+		<!-- unzip the signed master site -->
+		<unzip src="${zipsdir}/${masterFile}" dest="${zipsdir}/p2"/>
+		
+		<!-- generate p2 metadata -->
+		<antcall target="p2.metadata.generator" />
+		
+		<!-- zip everything back up -->
+		<zip destfile="${zipsdir}/${masterFile}"
+			basedir="${zipsdir}/p2"/>
+		<delete dir="${zipsdir}/p2"/>
+	</target>
+	
+    <target name="p2.metadata.generator">
     	<echo message="Generate p2 Metadata" />
     	<property name="launcher" value="${basedir}/tools/org.eclipse.releng.basebuilder/plugins/org.eclipse.equinox.launcher.jar"/>
         <java jar="${launcher}" fork="true" timeout="10800000" jvm="${jvm1.5}" failonerror="true" maxmemory="768m" error="${zipsdir}/p2errorlog.txt" dir="${buildDirectory}/eclipse" output="${zipsdir}/p2metadata.txt">
             <arg line="-application org.eclipse.equinox.p2.metadata.generator.EclipseGenerator" />
-            <arg line="-updateSite ${buildDirectory}/site/eclipse"/>
-        	<arg line="-site file:${buildDirectory}/site/eclipse/site.xml"/>
-        	<arg line="-metadataRepository file:${buildDirectory}/site/eclipse"/>
+            <arg line="-updateSite ${zipsdir}/p2"/>
+        	<arg line="-site file:${zipsdir}/p2/site.xml"/>
+        	<arg line="-metadataRepository file:${zipsdir}/p2"/>
         	<arg line="-metadataRepositoryName CDT Update Site"/>
-        	<arg line="-artifactRepository file:${buildDirectory}/site/eclipse"/>
+        	<arg line="-artifactRepository file:${zipsdir}/p2"/>
         	<arg line="-artifactRepositoryName CDT Artifacts"/>
         	<arg line="-compress"/>
         	<arg line="-reusePack200Files"/>

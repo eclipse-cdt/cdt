@@ -2010,6 +2010,14 @@ public class CPPVisitor extends ASTQueries {
 			node= node.getParent();
 		}
 
+		boolean isFriend= false;
+		if (node instanceof IASTSimpleDeclaration) {
+			ICPPASTDeclSpecifier declSpec= (ICPPASTDeclSpecifier) ((IASTSimpleDeclaration) node).getDeclSpecifier();
+			if (declSpec.isFriend()) {
+				isFriend= true;
+			}
+		}
+		
 		// Search for enclosing binding
 		IASTName name= null;
 		node= node.getParent();
@@ -2025,6 +2033,8 @@ public class CPPVisitor extends ASTQueries {
 				break;
 			} 
 			if (node instanceof IASTCompositeTypeSpecifier) {
+				if (isFriend)
+					continue;
 				name= ((IASTCompositeTypeSpecifier) node).getName();
 				break;
 			}
@@ -2037,5 +2047,25 @@ public class CPPVisitor extends ASTQueries {
 			return null;
 		
 		return name.resolveBinding();
+	}
+
+	/**
+	 * Check whether a given declaration is a friend function declaration.
+	 */
+	public static boolean isFriendFunctionDeclaration(IASTDeclaration declaration) {
+		while (declaration instanceof ICPPASTTemplateDeclaration) {
+			declaration= ((ICPPASTTemplateDeclaration) declaration).getDeclaration();
+		}
+		if (declaration instanceof IASTSimpleDeclaration) {
+			IASTSimpleDeclaration sdecl = (IASTSimpleDeclaration) declaration;
+			ICPPASTDeclSpecifier declspec= (ICPPASTDeclSpecifier) sdecl.getDeclSpecifier();
+			if (declspec.isFriend()) {
+				IASTDeclarator[] dtors= sdecl.getDeclarators();
+				if (dtors.length == 1 && findTypeRelevantDeclarator(dtors[0]) instanceof IASTFunctionDeclarator) {
+					return true;
+				}
+			}
+		}
+		return false;
 	}
 }

@@ -57,6 +57,7 @@ public abstract class CPPTemplateParameter extends PlatformObject
 				if (tps == null) {
 					tps= tdecl.getTemplateParameters();
 				}
+				break;
 			} else if (node instanceof ICPPASTTemplatedTypeTemplateParameter) {
 				nesting++;
 				if (tps == null) {

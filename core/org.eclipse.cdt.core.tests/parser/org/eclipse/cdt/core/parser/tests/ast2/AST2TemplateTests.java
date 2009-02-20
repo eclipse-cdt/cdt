@@ -3858,4 +3858,39 @@ public class AST2TemplateTests extends AST2BaseTest {
 		bh.assertNonProblem("getline2(i)", 8, ICPPTemplateInstance.class);
 		parseAndCheckBindings(code, ParserLanguage.CPP);
 	}
+	
+	// class C {
+	//   friend int f1(int);
+	// };
+	// template <typename T> class CT {
+	//   template <typename S> friend int f2(S);
+	// };
+	// template <typename T1> class C1 {
+	//   template <typename T2> class C2 {
+	//      template<typename T3> class C3 {
+	//      }; 
+	//   }; 
+	// };
+	public void testOwnerOfFriendTemplate_265671() throws Exception {
+		final String code = getAboveComment();
+		BindingAssertionHelper bh= new BindingAssertionHelper(code, true);
+		IFunction f= bh.assertNonProblem("f1(", 2, IFunction.class);
+		IBinding owner= f.getOwner();
+		assertNull(owner);
+		ICPPFunctionTemplate ft= bh.assertNonProblem("f2(", 2, ICPPFunctionTemplate.class);
+		owner= f.getOwner();
+		assertNull(owner);
+		ICPPTemplateParameter tpar= ft.getTemplateParameters()[0];
+		assertEquals(0, tpar.getTemplateNestingLevel());
+		
+		tpar= bh.assertNonProblem("T1", 2,  ICPPTemplateParameter.class);
+		assertEquals(0, tpar.getTemplateNestingLevel());
+		tpar= bh.assertNonProblem("T2", 2,  ICPPTemplateParameter.class);
+		assertEquals(1, tpar.getTemplateNestingLevel());
+		tpar= bh.assertNonProblem("T3", 2,  ICPPTemplateParameter.class);
+		assertEquals(2, tpar.getTemplateNestingLevel());
+		
+		parseAndCheckBindings(code, ParserLanguage.CPP);
+	}
+	
 }

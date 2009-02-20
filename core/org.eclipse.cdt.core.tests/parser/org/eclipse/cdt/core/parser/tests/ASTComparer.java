@@ -48,7 +48,9 @@ public class ASTComparer extends Assert {
 		// avoid name resolution
 		"isDeclaration",
 		"isDefinition",
-		"isReference"
+		"isReference",
+		"isAssociatedWithLastName",
+		"getNestingLevel"
 	));
 
 	

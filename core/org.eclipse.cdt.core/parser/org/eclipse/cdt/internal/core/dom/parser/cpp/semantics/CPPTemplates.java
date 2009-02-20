@@ -1068,17 +1068,17 @@ public class CPPTemplates {
 		}
 		
 		// determine nesting level of parent
-		int level= 0;
-		node= outerMostTDecl.getParent();
-		while (node != null) {
-			if (node instanceof ICPPASTInternalTemplateDeclaration) {
-				level= ((ICPPASTInternalTemplateDeclaration) node).getNestingLevel() + 1;
-				break;
+		int level= additionalLevels;
+		if (!CPPVisitor.isFriendFunctionDeclaration(innerMostTDecl.getDeclaration())) {
+			node= outerMostTDecl.getParent();
+			while (node != null) {
+				if (node instanceof ICPPASTInternalTemplateDeclaration) {
+					level+= ((ICPPASTInternalTemplateDeclaration) node).getNestingLevel() + 1;
+					break;
+				}
+				node= node.getParent();
 			}
-			node= node.getParent();
 		}
-		
-		level += additionalLevels;
 		
 		tdecl= outerMostTDecl;
 		while(true) {

@@ -29,14 +29,18 @@ import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTSimpleDeclaration;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.IScope;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassTemplate;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPNamespace;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPNamespaceScope;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateDefinition;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateInstance;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPUsingDirective;
 import org.eclipse.cdt.core.index.IIndexBinding;
 import org.eclipse.cdt.core.index.IIndexFileSet;
 import org.eclipse.cdt.core.parser.util.ArrayUtil;
 import org.eclipse.cdt.core.parser.util.CharArrayMap;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPTemplates;
 import org.eclipse.cdt.internal.core.index.IIndexScope;
 
 /**
@@ -285,6 +289,20 @@ public class CPPScopeMapper {
 	}
 	
 	public ICPPClassType mapToAST(ICPPClassType type) {
+		if (type instanceof ICPPTemplateInstance) {
+			ICPPTemplateInstance inst= (ICPPTemplateInstance) type;
+			ICPPTemplateDefinition template= inst.getTemplateDefinition();
+			if (template instanceof IIndexBinding && template instanceof ICPPClassType) {
+				IBinding mapped= mapToAST((ICPPClassType) template);
+				if (mapped != template && mapped instanceof ICPPClassType) {
+					mapped= CPPTemplates.instantiate((ICPPClassTemplate) mapped, inst.getTemplateArguments());
+					if (mapped instanceof ICPPClassType)
+						return (ICPPClassType) mapped;
+				}
+			}
+			return type;
+		}
+		
 		if (fClasses == null) {
 			fClasses= new CharArrayMap<IASTName[]>();
 			fTu.accept(new Visitor());

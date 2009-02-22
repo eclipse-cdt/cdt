@@ -40,6 +40,10 @@ public interface IStack extends IDMService {
         String getFunction();
         int getLine();
         int getColumn();
+        /**
+         * @since 2.0
+         */
+		String getModule();
     }
     
     /**

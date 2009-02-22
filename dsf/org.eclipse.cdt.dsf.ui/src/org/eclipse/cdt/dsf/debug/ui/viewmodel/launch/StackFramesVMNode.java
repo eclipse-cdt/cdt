@@ -353,8 +353,10 @@ public class StackFramesVMNode extends AbstractDMVMNode
             label.append("()"); //$NON-NLS-1$
         }
         
+        boolean hasFileName = dmData.getFile() != null && dmData.getFile().length() != 0;
+        
         // Add full file name
-        if (dmData.getFile() != null && dmData.getFile().length() != 0) {
+        if (hasFileName) {
             label.append(" at "); //$NON-NLS-1$
             label.append(dmData.getFile());
         }
@@ -365,7 +367,14 @@ public class StackFramesVMNode extends AbstractDMVMNode
             label.append(dmData.getLine());
             label.append(" "); //$NON-NLS-1$
         }
-        
+ 
+        // Add module 
+        if (!hasFileName && (dmData.getModule() != null && dmData.getModule().length() != 0)) { 
+            label.append(" "); //$NON-NLS-1$
+            label.append(dmData.getModule());
+            label.append(" "); //$NON-NLS-1$
+        }
+ 
         // Add the address
         if (dmData.getAddress() != null) {
             label.append("- 0x" + dmData.getAddress().toString(16)); //$NON-NLS-1$

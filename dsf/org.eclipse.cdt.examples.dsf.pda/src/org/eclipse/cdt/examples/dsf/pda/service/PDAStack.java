@@ -117,6 +117,10 @@ public class PDAStack extends AbstractDsfService implements IStack2, ICachingSer
         public IAddress getAddress() {
             return null;
         }
+
+		public String getModule() {
+			return "";//$NON-NLS-1$
+		}
     }
 
     /**

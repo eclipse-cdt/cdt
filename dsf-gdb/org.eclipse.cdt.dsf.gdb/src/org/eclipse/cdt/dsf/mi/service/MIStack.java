@@ -394,6 +394,7 @@ public class MIStack extends AbstractDsfService
             public String getFile() { return getMIFrame().getFile(); }
             public int getLine() { return getMIFrame().getLine(); }
             public String getFunction() { return getMIFrame().getFunction(); }
+            public String getModule() { return ""; }//$NON-NLS-1$
             
             @Override
             public String toString() { return getMIFrame().toString(); }

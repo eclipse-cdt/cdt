@@ -71,6 +71,8 @@ public class CLIInfoLineInfo extends MIInfo {
 	}
 
 	protected void parseLineInfo(String str, List aList) {
+		if (str.endsWith("."))
+			str = str.substring(0, str.length()-1);
 		String[] strbits = str.split("\\s"); //$NON-NLS-1$
 		for (int i = 0; i < strbits.length; i++) {
 			if (strbits[i].equals("Line")) //$NON-NLS-1$
@@ -88,13 +90,11 @@ public class CLIInfoLineInfo extends MIInfo {
 			if (strbits[i].equals("ends")) //$NON-NLS-1$
 			{
 				endAddress = new BigInteger(strbits[i+2].substring(2), 16);
-				endLocation = strbits[i+3];
+				endLocation = i+3<strbits.length? strbits[i+3]: null;
 			}
 		}
 		strbits = str.split("\""); //$NON-NLS-1$
-		for (int i = 0; i < strbits.length; i++) {
-			fileName = strbits[1];
-		}
+		if (strbits.length>0) fileName = strbits[1];
 	}
 
 }

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2008 QNX Software Systems and others.
+ * Copyright (c) 2007, 2009 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -27,6 +27,7 @@ import org.eclipse.cdt.core.model.ITranslationUnit;
 import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.cdt.ui.IFunctionSummary;
 import org.eclipse.cdt.ui.text.ICHelpInvocationContext;
+import org.eclipse.cdt.ui.text.IContentAssistHelpInvocationContext;
 
 import org.eclipse.cdt.internal.ui.CHelpProviderManager;
 import org.eclipse.cdt.internal.ui.viewsupport.CElementImageProvider;
@@ -63,8 +64,11 @@ public class HelpCompletionProposalComputer extends ParsingBasedProposalComputer
 		}
 		
 		final ITranslationUnit tu = cContext.getTranslationUnit();
+		final IASTCompletionNode cn = completionNode;
+		final int cc = cContext.getInvocationOffset();
+		
 		// Find matching functions
-		ICHelpInvocationContext helpContext = new ICHelpInvocationContext() {
+		ICHelpInvocationContext helpContext = new IContentAssistHelpInvocationContext() {
 
 			public IProject getProject() {
 				return tu.getCProject().getProject();
@@ -72,6 +76,14 @@ public class HelpCompletionProposalComputer extends ParsingBasedProposalComputer
 
 			public ITranslationUnit getTranslationUnit() {
 				return tu;
+			}
+			
+			public int getInvocationOffset() {
+				return cc;
+			}
+			
+			public IASTCompletionNode getCompletionNode() {
+				return cn;
 			}
 		};
 

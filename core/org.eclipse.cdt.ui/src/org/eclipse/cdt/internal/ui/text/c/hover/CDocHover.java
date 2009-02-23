@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2008 QNX Software Systems and others.
+ * Copyright (c) 2000, 2009 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -25,6 +25,7 @@ import org.eclipse.cdt.ui.IFunctionSummary;
 import org.eclipse.cdt.ui.IRequiredInclude;
 import org.eclipse.cdt.ui.IFunctionSummary.IFunctionPrototypeSummary;
 import org.eclipse.cdt.ui.text.ICHelpInvocationContext;
+import org.eclipse.cdt.ui.text.IHoverHelpInvocationContext;
 
 import org.eclipse.cdt.internal.ui.CHelpProviderManager;
 import org.eclipse.cdt.internal.ui.editor.CEditorMessages;
@@ -55,10 +56,11 @@ public class CDocHover extends AbstractCEditorTextHover {
 				return null; 
 
 			StringBuilder buffer = new StringBuilder();
+			final IRegion hoverRegion = region;
 
 			// call the Help to get info
 
-			ICHelpInvocationContext context = new ICHelpInvocationContext() {
+			ICHelpInvocationContext context = new IHoverHelpInvocationContext() {
 
 				public IProject getProject() {
 					ITranslationUnit unit = getTranslationUnit();
@@ -71,7 +73,12 @@ public class CDocHover extends AbstractCEditorTextHover {
 				public ITranslationUnit getTranslationUnit() {
 					IEditorInput editorInput= getEditor().getEditorInput();
 					return CUIPlugin.getDefault().getWorkingCopyManager().getWorkingCopy(editorInput);
-				}	
+				}
+
+				public IRegion getHoverRegion() {
+					return hoverRegion; 
+				}
+				
 			};
 
 			IFunctionSummary fs = CHelpProviderManager.getDefault().getFunctionInfo(context, expression);

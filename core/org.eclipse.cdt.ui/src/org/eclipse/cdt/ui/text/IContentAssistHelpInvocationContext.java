@@ -1,38 +1,35 @@
 /**********************************************************************
- * Copyright (c) 2004, 2008 Intel Corporation and others.
+ * Copyright (c) 2009 Red Hat Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  * 
  * Contributors: 
- *     Intel Corporation - Initial API and implementation
+ *     Red Hat Inc. - Initial API and implementation
  **********************************************************************/
 
 package org.eclipse.cdt.ui.text;
 
-import org.eclipse.cdt.core.model.ITranslationUnit;
-import org.eclipse.core.resources.IProject;
+import org.eclipse.cdt.core.dom.ast.IASTCompletionNode;
 
 /**
- * Invocation context for the CHelpProviderManager.
+ * Invocation context for content assist.
  * 
  * @noextend This interface is not intended to be extended by clients.
  * @noimplement This interface is not intended to be implemented by clients.
- * 
- * @see IHoverHelpInvocationContext
- * @see IContentAssistHelpInvocationContext
+ * @since 5.1
  */
-public interface ICHelpInvocationContext {
+public interface IContentAssistHelpInvocationContext extends ICHelpInvocationContext {
 	
 	/**
-	 * @return the project
+	 * @return the offset of the content assist.
 	 */
-	IProject getProject();
-
+	int getInvocationOffset();
+	
 	/**
-	 * @return ITranslationUnit or null
+	 * @return the AST completion node or null.
 	 */
-	ITranslationUnit getTranslationUnit();
-
+	IASTCompletionNode getCompletionNode();
+	
 }

@@ -7,6 +7,7 @@
  *
  * Contributors:
  *    John Camelon (IBM) - Initial API and implementation
+ *    Sergey Prigogin (Google)
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.dom.parser.cpp;
 
@@ -29,6 +30,7 @@ import org.eclipse.cdt.core.dom.ast.IProblemBinding;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTQualifiedName;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTUnaryExpression;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPBasicType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunction;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPMember;
@@ -43,18 +45,15 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.SemanticUtil;
 /**
  * Unary expression in c++
  */
-public class CPPASTUnaryExpression extends ASTNode implements
-        ICPPASTUnaryExpression, IASTAmbiguityParent {
-
+public class CPPASTUnaryExpression extends ASTNode implements ICPPASTUnaryExpression, IASTAmbiguityParent {
     private int op;
     private IASTExpression operand;
-
     
     public CPPASTUnaryExpression() {
 	}
 
 	public CPPASTUnaryExpression(int operator, IASTExpression operand) {
-		this.op = operator;
+		op = operator;
 		setOperand(operand);
 	}
 
@@ -68,9 +67,9 @@ public class CPPASTUnaryExpression extends ASTNode implements
         return op;
     }
 
-    public void setOperator(int value) {
+    public void setOperator(int operator) {
         assertNotFrozen();
-        this.op = value;
+        op = operator;
     }
 
     public IASTExpression getOperand() {
@@ -87,21 +86,21 @@ public class CPPASTUnaryExpression extends ASTNode implements
     }
 
     @Override
-	public boolean accept( ASTVisitor action ){
-        if( action.shouldVisitExpressions ){
-		    switch( action.visit( this ) ){
-	            case ASTVisitor.PROCESS_ABORT : return false;
-	            case ASTVisitor.PROCESS_SKIP  : return true;
+	public boolean accept(ASTVisitor action) {
+        if (action.shouldVisitExpressions) {
+		    switch (action.visit(this)) {
+	            case ASTVisitor.PROCESS_ABORT: return false;
+	            case ASTVisitor.PROCESS_SKIP:  return true;
 	            default : break;
 	        }
 		}
       
-        if( operand != null ) if( !operand.accept( action ) ) return false;
+        if (operand != null && !operand.accept(action)) return false;
         
-        if( action.shouldVisitExpressions ){
-		    switch( action.leave( this ) ){
-	            case ASTVisitor.PROCESS_ABORT : return false;
-	            case ASTVisitor.PROCESS_SKIP  : return true;
+        if (action.shouldVisitExpressions) {
+		    switch (action.leave(this)) {
+	            case ASTVisitor.PROCESS_ABORT: return false;
+	            case ASTVisitor.PROCESS_SKIP:  return true;
 	            default : break;
 	        }
 		}
@@ -109,12 +108,11 @@ public class CPPASTUnaryExpression extends ASTNode implements
     }
 
     public void replace(IASTNode child, IASTNode other) {
-        if( child == operand ) {
-            other.setPropertyInParent( child.getPropertyInParent() );
-            other.setParent( child.getParent() );
+        if (child == operand) {
+            other.setPropertyInParent(child.getPropertyInParent());
+            other.setParent(child.getParent());
             operand  = (IASTExpression) other;
         }
-        
     }
     
     public IType getExpressionType() {
@@ -124,6 +122,8 @@ public class CPPASTUnaryExpression extends ASTNode implements
 			return CPPVisitor.get_SIZE_T(this);
 		case IASTUnaryExpression.op_typeid:
 			return CPPVisitor.get_type_info(this);
+		case IASTUnaryExpression.op_not:
+			return new CPPBasicType(ICPPBasicType.t_bool, 0);
 		}
 		
 		final IASTExpression operand = getOperand();
@@ -147,12 +147,14 @@ public class CPPASTUnaryExpression extends ASTNode implements
 			} catch (DOMException e) {
 				return e.getProblem();
 			}
-			return new ProblemBinding(this, IProblemBinding.SEMANTIC_INVALID_TYPE, this.getRawSignature().toCharArray());
+			return new ProblemBinding(this, IProblemBinding.SEMANTIC_INVALID_TYPE,
+					this.getRawSignature().toCharArray());
 		} 
 		if (op == IASTUnaryExpression.op_amper) {
 			IASTNode child= operand;
 			boolean inParenthesis= false;
-			while (child instanceof IASTUnaryExpression && ((IASTUnaryExpression) child).getOperator() == IASTUnaryExpression.op_bracketedPrimary) {
+			while (child instanceof IASTUnaryExpression &&
+					((IASTUnaryExpression) child).getOperator() == IASTUnaryExpression.op_bracketedPrimary) {
 				child= ((IASTUnaryExpression) child).getOperand();
 				inParenthesis= true;
 			}
@@ -165,9 +167,11 @@ public class CPPASTUnaryExpression extends ASTNode implements
 						if (name instanceof ICPPASTQualifiedName) {
 							if (!member.isStatic()) {
 								if (!inParenthesis) {
-									return new CPPPointerToMemberType(member.getType(), member.getClassOwner(), false, false);
+									return new CPPPointerToMemberType(member.getType(), member.getClassOwner(),
+											false, false);
 								} else if (member instanceof IFunction) {
-									return new ProblemBinding(operand, IProblemBinding.SEMANTIC_INVALID_TYPE, operand.getRawSignature().toCharArray());
+									return new ProblemBinding(operand, IProblemBinding.SEMANTIC_INVALID_TYPE,
+											operand.getRawSignature().toCharArray());
 								}
 							}
 						}

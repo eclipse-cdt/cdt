@@ -6815,5 +6815,14 @@ public class AST2CPPTests extends AST2BaseTest {
 		ba.assertProblem("mpr(&X::cm)", 3);
 		ba.assertProblem("mprc(&X::m)", 4);
 	}
-	
+
+	//	void f(int x);
+	//
+	//	void test(int* p) {
+	//	  f(!p);
+	//	}
+	public void testTypeOfNotExpression_265779() throws Exception {
+		BindingAssertionHelper ba= new BindingAssertionHelper(getAboveComment(), true);
+		ba.assertNonProblem("f(!p)", 1);
+	}
 }

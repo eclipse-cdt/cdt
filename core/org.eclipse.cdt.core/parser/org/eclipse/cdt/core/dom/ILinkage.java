@@ -23,12 +23,25 @@ public interface ILinkage {
 	final static String C_LINKAGE_NAME= "C"; //$NON-NLS-1$
 	final static String CPP_LINKAGE_NAME= "C++"; //$NON-NLS-1$
 	final static String FORTRAN_LINKAGE_NAME= "Fortran"; //$NON-NLS-1$
+	/**
+	 * @since 5.1
+	 */
+	final static String OBJC_LINKAGE_NAME= "Objective-C"; //$NON-NLS-1$
 
 	final static int NO_LINKAGE_ID= 0;
 	final static int CPP_LINKAGE_ID= 1;
 	final static int C_LINKAGE_ID= 2;
 	final static int FORTRAN_LINKAGE_ID= 3;
+	/**
+	 * @since 5.1
+	 */
+	final static int OBJC_LINKAGE_ID= 4;
+
 	
+	/**
+	 * Additional linkage ids may be added in future.
+	 */
+	@Deprecated
 	final static int MAX_LINKAGE_ID= FORTRAN_LINKAGE_ID;
 
 	/**

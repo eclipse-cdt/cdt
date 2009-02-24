@@ -262,4 +262,17 @@ public class PreprocessorBugsTests extends PreprocessorTestsBase {
 		validateEOF();
 		validateProblemCount(2);  // the inclusions
 	}
+	
+	// #if 0xe000
+	// ok
+	// #endif
+	// 0x1p2 0xe0
+	public void testHexConstant_Bug265927() throws Exception {
+		initializeScanner();
+		validateIdentifier("ok");
+		validateFloatingPointLiteral("0x1p2");
+		validateInteger("0xe0");
+		validateEOF();
+		validateProblemCount(0); 
+	}
 }

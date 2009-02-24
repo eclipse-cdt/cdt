@@ -28,7 +28,6 @@ import org.eclipse.core.runtime.CoreException;
  * Access to methods on scopes and bindings internal to the parser.
  */
 public class ASTInternal {
-
 	public static IASTNode[] getDeclarationsOfBinding(IBinding binding) {
 		if( binding instanceof ICPPInternalBinding ) {
 			return ((ICPPInternalBinding)binding).getDeclarations();
@@ -170,5 +169,17 @@ public class ASTInternal {
 			}
 		}
 		return filePath;
+	}
+
+	public static void addDeclaration(IBinding b, IASTNode declaration) {
+		if (b instanceof ICPPInternalBinding && declaration.isActive()) {
+			((ICPPInternalBinding) b).addDeclaration(declaration);
+		}
+	}
+
+	public static void addDefinition(IBinding b, IASTNode declaration) {
+		if (b instanceof ICPPInternalBinding && declaration.isActive()) {
+			((ICPPInternalBinding) b).addDefinition(declaration);
+		}
 	}
 }

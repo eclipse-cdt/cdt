@@ -27,10 +27,13 @@ public interface IToken {
 	public int getEndOffset();
 	public IToken getNext();
 	
-	
 	public void setNext(IToken t);
 	public void setType(int i);	
 
+	/**
+	 * @noreference This method is not intended to be referenced by clients.
+	 */
+	@Deprecated
 	public boolean isOperator();
 	
 	// Token types

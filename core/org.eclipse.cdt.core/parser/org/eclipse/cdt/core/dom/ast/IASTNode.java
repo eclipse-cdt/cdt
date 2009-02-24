@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2008 IBM Corporation and others.
+ * Copyright (c) 2004, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -208,6 +208,11 @@ public interface IASTNode {
 	 */
 	public boolean isFrozen();
 	
+	/**
+	 * Returns false if this node was parsed in an inactive code branch.
+	 * @since 5.1
+	 */
+	public boolean isActive();
 	
 	/**
 	 * Returns a copy of the tree rooted at this node. 

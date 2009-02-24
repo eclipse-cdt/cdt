@@ -224,7 +224,6 @@ class ASTPragma extends ASTDirectiveWithCondition implements IASTPreprocessorPra
 class ASTInclusionStatement extends ASTPreprocessorNode implements IASTPreprocessorIncludeStatement {
 	private final ASTPreprocessorName fName;
 	private final String fPath;
-	private final boolean fIsActive;
 	private final boolean fIsResolved;
 	private final boolean fIsSystemInclude;
 	private final boolean fFoundByHeuristics;
@@ -235,10 +234,12 @@ class ASTInclusionStatement extends ASTPreprocessorNode implements IASTPreproces
 		super(parent, IASTTranslationUnit.PREPROCESSOR_STATEMENT, startNumber, endNumber);
 		fName= new ASTPreprocessorName(this, IASTPreprocessorIncludeStatement.INCLUDE_NAME, nameStartNumber, nameEndNumber, headerName, null);
 		fPath= filePath == null ? "" : filePath; //$NON-NLS-1$
-		fIsActive= active;
 		fIsResolved= filePath != null;
 		fIsSystemInclude= !userInclude;
 		fFoundByHeuristics= heuristic;
+		if (!active) {
+			setInactive();
+		}
 	}
 
 	public IASTName getName() {
@@ -247,10 +248,6 @@ class ASTInclusionStatement extends ASTPreprocessorNode implements IASTPreproces
 
 	public String getPath() {
 		return fPath;
-	}
-
-	public boolean isActive() {
-		return fIsActive;
 	}
 
 	public boolean isResolved() {
@@ -361,6 +358,7 @@ class ASTMacroDefinition extends ASTPreprocessorNode implements IASTPreprocessor
 		return getName().toString() + '=' + getExpansion();
 	}
 
+	@Override
 	final public boolean isActive() {
 		return fActive;
 	}
@@ -433,19 +431,15 @@ class ASTFunctionStyleMacroDefinition extends ASTMacroDefinition implements IAST
 
 class ASTUndef extends ASTPreprocessorNode implements IASTPreprocessorUndefStatement {
 	private final ASTPreprocessorName fName;
-	private final boolean fActive;
 	public ASTUndef(IASTTranslationUnit parent, char[] name, int startNumber, int nameNumber, int nameEndNumber, IBinding binding, boolean isActive) {
 		super(parent, IASTTranslationUnit.PREPROCESSOR_STATEMENT, startNumber, nameEndNumber);
 		fName= new ASTPreprocessorName(this, IASTPreprocessorStatement.MACRO_NAME, nameNumber, nameEndNumber, name, binding);
-		fActive= isActive;
+		if (!isActive)
+			setInactive();
 	}
 
 	public ASTPreprocessorName getMacroName() {
 		return fName;
-	}
-
-	public boolean isActive() {
-		return fActive;
 	}
 }
 

@@ -1,12 +1,13 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2008 IBM Corporation and others.
+ * Copyright (c) 2005, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- * IBM - Initial API and implementation
+ *   Devin Steffler (IBM) - Initial API and implementation
+ *   Markus Schorn (Wind River Systems)
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.dom.parser.cpp;
 
@@ -21,8 +22,6 @@ import org.eclipse.cdt.core.dom.ast.ITypedef;
  * unit but are not actually part of the physical AST created by CDT.
  * 
  * An example is the GCC built-in typedef:  typedef char * __builtin_va_list;
- * 
- * @author dsteffle
  */
 public class CPPImplicitTypedef extends CPPTypedef {
     private IType type=null;
@@ -115,15 +114,6 @@ public class CPPImplicitTypedef extends CPPTypedef {
         // do nothing
     }
     
-    /**
-     * does nothing
-     */
-    @Override
-	public void removeDeclaration(IASTNode node) {
-        // do nothing
-    }
-    
-
     @Override
 	public String[] getQualifiedName() {
         String[] temp = new String[1];

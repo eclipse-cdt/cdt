@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2008 IBM Corporation and others.
+ * Copyright (c) 2005, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -36,6 +36,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateParameter;
 import org.eclipse.cdt.core.parser.util.ArrayUtil;
 import org.eclipse.cdt.core.parser.util.ObjectMap;
 import org.eclipse.cdt.internal.core.dom.Linkage;
+import org.eclipse.cdt.internal.core.dom.parser.ASTInternal;
 import org.eclipse.cdt.internal.core.dom.parser.ASTNode;
 import org.eclipse.cdt.internal.core.dom.parser.ProblemBinding;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPTemplates;
@@ -238,14 +239,6 @@ public abstract class CPPTemplateDefinition extends PlatformObject implements IC
 	    }
 	}	
 	
-	public void removeDeclaration(IASTNode node) {
-		if (definition == node) {
-			definition = null;
-			return;
-		}
-		ArrayUtil.remove(declarations, node);
-	}
-	
 	public IBinding resolveTemplateParameter(ICPPTemplateParameter templateParameter) {
 		int pos= templateParameter.getParameterPosition();
 		
@@ -298,9 +291,7 @@ public abstract class CPPTemplateDefinition extends PlatformObject implements IC
     			IBinding b= oName.resolvePreBinding();
     			IASTName n = CPPTemplates.getTemplateParameterName(updateParams[k]);
     			n.setBinding(b);
-    			if (b instanceof ICPPInternalBinding) {
-    				((ICPPInternalBinding) b).addDeclaration(n);
-    			}
+    			ASTInternal.addDeclaration(b, n);
     		}
     	}
     }

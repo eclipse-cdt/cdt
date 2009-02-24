@@ -422,10 +422,16 @@ public class CPPSemantics {
 	        }
         }
         
-		if (binding != null && !(binding instanceof IProblemBinding)) {
-		    if (data.forFunctionDeclaration()) {
-		        addDefinition(binding, data.astName);
-		    } 
+		if (binding instanceof IFunction && !(binding instanceof IProblemBinding)) {
+			if (data.forFunctionDeclaration()) {
+				IASTNode node = data.astName.getParent();
+				if (node instanceof ICPPASTQualifiedName)
+					node = node.getParent();
+				if (node instanceof ICPPASTFunctionDeclarator
+						&& node.getParent() instanceof IASTFunctionDefinition) {
+					ASTInternal.addDefinition(binding, node);
+				}
+			}
 		}
 		// If we're still null...
 		if (binding == null) {
@@ -1480,18 +1486,6 @@ public class CPPSemantics {
 			}
 			// retry with transitive directives that may have been nominated in a qualified lookup
 			allNominated= data.usingDirectives.remove(scope);
-		}
-	}
-
-	private static void addDefinition(IBinding binding, IASTName name) {
-		if (binding instanceof IFunction) {
-			IASTNode node =  name.getParent();
-			if (node instanceof ICPPASTQualifiedName)
-				node = node.getParent();
-			if (node instanceof ICPPASTFunctionDeclarator && node.getParent() instanceof IASTFunctionDefinition) {
-				if (binding instanceof ICPPInternalBinding)
-				((ICPPInternalBinding)binding).addDefinition(node);
-			}
 		}
 	}
 

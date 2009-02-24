@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2001, 2008 IBM Corporation and others.
+ * Copyright (c) 2001, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -11,13 +11,15 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.ui.viewsupport;
 
+import org.eclipse.jface.viewers.Viewer;
+import org.eclipse.jface.viewers.ViewerFilter;
+
 import org.eclipse.cdt.core.model.CModelException;
 import org.eclipse.cdt.core.model.IDeclaration;
 import org.eclipse.cdt.core.model.IField;
 import org.eclipse.cdt.core.model.IMember;
+import org.eclipse.cdt.core.model.ISourceReference;
 import org.eclipse.cdt.core.parser.ast.ASTAccessVisibility;
-import org.eclipse.jface.viewers.Viewer;
-import org.eclipse.jface.viewers.ViewerFilter;
 
 
 /**
@@ -30,6 +32,8 @@ public class MemberFilter extends ViewerFilter{
 	public static final int FILTER_NONPUBLIC= 1;
 	public static final int FILTER_STATIC= 2;
 	public static final int FILTER_FIELDS= 4;
+	public static final int FILTER_INACTIVE= 0x10;
+	
 	/** @deprecated Unsupported filter constant */
 	@Deprecated
 	public static final int FILTER_LOCALTYPES= 8;
@@ -84,6 +88,11 @@ public class MemberFilter extends ViewerFilter{
 				}
 			} catch (CModelException e) {
 				// ignore
+			}
+		}
+		if (hasFilter(FILTER_INACTIVE)) {
+			if (element instanceof ISourceReference && !((ISourceReference) element).isActive()) {
+				return false;
 			}
 		}
 		return true;

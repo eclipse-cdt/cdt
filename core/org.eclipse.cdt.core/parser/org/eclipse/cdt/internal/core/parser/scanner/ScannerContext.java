@@ -116,8 +116,6 @@ final class ScannerContext {
 		// an #end just pops one construct and restores state
 		if (branchKind == BranchKind.eEnd) {
 			result= fConditionals.remove(pos);
-			// implicit state change
-			changeState(result.fInitialState, withinExpansion);
 			return result;
 		}
 		
@@ -131,20 +129,20 @@ final class ScannerContext {
 		return result;
 	}
 
-	private void changeState(CodeState state, boolean withinExpansion) {
+	private void changeState(CodeState state, BranchKind kind, boolean withinExpansion, int offset) {
 		if (!withinExpansion) {
 			switch (state) {
 			case eActive:
 				if (fCurrentState == CodeState.eParseInactive) 
-					stopInactive();
+					stopInactive(offset, kind);
 				break;
 			case eParseInactive:
 				switch (fCurrentState) {
 				case eActive:
-					startInactive();
+					startInactive(offset, kind);
 					break;
 				case eParseInactive:
-					separateInactive();
+					separateInactive(offset, kind);
 					break;
 				case eSkipInactive:
 					assert false; // in macro expansions, only.
@@ -159,26 +157,35 @@ final class ScannerContext {
 		fCurrentState= state;
 	}
 
-	private void startInactive() {
-		if (fTokens != null && fTokens.getType() == IToken.tINACTIVE_CODE_END) {
-			fTokens= new Token(IToken.tINACTIVE_CODE_SEPARATOR, null, 0, 0);
-		} else {
-			fTokens= new Token(IToken.tINACTIVE_CODE_START, null, 0, 0);
-		}
+	private void startInactive(int offset, BranchKind kind) {
+		final int nesting = getCodeBranchNesting();
+		final int oldNesting = getOldNestingLevel(kind, nesting);
+		fTokens= new InactiveCodeToken(IToken.tINACTIVE_CODE_START, oldNesting, nesting, offset);
 	}
 
-	private void separateInactive() {
-		if (fTokens == null) {
-			fTokens= new Token(IToken.tINACTIVE_CODE_SEPARATOR, null, 0, 0);
-		}
+	private void separateInactive(int offset, BranchKind kind) {
+		final int nesting = getCodeBranchNesting();
+		final int oldNesting = getOldNestingLevel(kind, nesting);
+		fTokens= new InactiveCodeToken(IToken.tINACTIVE_CODE_SEPARATOR, oldNesting, nesting, offset);
 	}
 
-	private void stopInactive() {
-		if (fTokens != null && fTokens.getType() == IToken.tINACTIVE_CODE_START) {
-			fTokens= null;
-		} else {
-			fTokens= new Token(IToken.tINACTIVE_CODE_END, null, 0, 0);
+	private int getOldNestingLevel(BranchKind kind, int nesting) {
+		switch(kind) {
+		case eIf:
+			return nesting-1;
+		case eElif:
+		case eElse:
+			return nesting;
+		case eEnd:
+			return nesting+1;
 		}
+		return nesting;
+	}
+
+	private void stopInactive(int offset, BranchKind kind) {
+		final int nesting = getCodeBranchNesting();
+		final int oldNesting = getOldNestingLevel(kind, nesting);
+		fTokens= new InactiveCodeToken(IToken.tINACTIVE_CODE_END, oldNesting, nesting, offset);
 	}	
 
 	public CodeState getCodeState() {
@@ -188,7 +195,7 @@ final class ScannerContext {
 	/**
 	 * The preprocessor has to inform the context about the state of if- and elif- branches
 	 */
-	public CodeState setBranchState(Conditional cond, boolean isActive, boolean withinExpansion) {
+	public CodeState setBranchState(Conditional cond, boolean isActive, boolean withinExpansion, int offset) {
 		CodeState newState;
 		if (isActive) {
 			cond.fTakeElse= false;
@@ -198,7 +205,17 @@ final class ScannerContext {
 		} else {
 			newState= fInactiveState;
 		}
-		changeState(newState, withinExpansion);
+		changeState(newState, cond.fLast, withinExpansion, offset);
+		return newState;
+	}
+
+	/**
+	 * The preprocessor has to inform the context about the state of if- and elif- branches
+	 */
+	public CodeState setBranchEndState(Conditional cond, boolean withinExpansion, int offset) {
+		// implicit state change
+		CodeState newState = cond.fInitialState;
+		changeState(newState, BranchKind.eEnd, withinExpansion, offset);
 		return newState;
 	}
 
@@ -243,5 +260,14 @@ final class ScannerContext {
 
 	public void clearInactiveCodeMarkerToken() {
 		fTokens= null;
+	}
+
+	/**
+	 * Returns the current nesting within code branches
+	 */
+	public int getCodeBranchNesting() {
+		if (fConditionals == null)
+			return 0;
+		return fConditionals.size();
 	}
 }

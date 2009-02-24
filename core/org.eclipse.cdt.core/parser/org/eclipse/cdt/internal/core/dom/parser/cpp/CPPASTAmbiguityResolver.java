@@ -54,6 +54,7 @@ final class CPPASTAmbiguityResolver extends ASTVisitor {
 	
 	public CPPASTAmbiguityResolver() {
 		super(false);
+		includeInactiveNodes= true;
 		shouldVisitAmbiguousNodes= true;
 		shouldVisitDeclarations= true;
 		shouldVisitDeclSpecifiers= true;

@@ -12,11 +12,7 @@
 package org.eclipse.cdt.internal.core.dom.parser.cpp;
 
 import org.eclipse.cdt.core.dom.ILinkage;
-import org.eclipse.cdt.core.dom.ast.ASTVisitor;
-import org.eclipse.cdt.core.dom.ast.DOMException;
-import org.eclipse.cdt.core.dom.ast.IASTDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTName;
-import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IBasicType;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.IMacroBinding;
@@ -32,7 +28,6 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPNamespaceScope;
 import org.eclipse.cdt.core.parser.ParserLanguage;
 import org.eclipse.cdt.core.parser.util.ArrayUtil;
 import org.eclipse.cdt.internal.core.dom.Linkage;
-import org.eclipse.cdt.internal.core.dom.parser.ASTInternal;
 import org.eclipse.cdt.internal.core.dom.parser.ASTTranslationUnit;
 import org.eclipse.cdt.internal.core.dom.parser.IASTAmbiguityParent;
 import org.eclipse.cdt.internal.core.dom.parser.GCCBuiltinSymbolProvider.CPPBuiltinParameter;
@@ -57,10 +52,6 @@ public class CPPASTTranslationUnit extends ASTTranslationUnit implements ICPPAST
 		return copy;
 	}
 	
-	@Override
-	public void cleanupAfterAmbiguityResolution() {
-	}
-	
     public CPPNamespaceScope getScope() {
         if (fScope == null) {
             fScope = new CPPNamespaceScope(this);
@@ -69,7 +60,7 @@ public class CPPASTTranslationUnit extends ASTTranslationUnit implements ICPPAST
         return fScope;
     }
 	
-	private void addBuiltinOperators(IScope theScope) {
+	private void addBuiltinOperators(CPPScope theScope) {
         // void
         IType cpp_void = new CPPBasicType(IBasicType.t_void, 0);
         // void *
@@ -85,16 +76,12 @@ public class CPPASTTranslationUnit extends ASTTranslationUnit implements ICPPAST
         IParameter[] newTheParms = new IParameter[1];
         newTheParms[0] = new CPPBuiltinParameter(newParms[0]);
         temp = new CPPImplicitFunction(OverloadableOperator.NEW.toCharArray(), theScope, newFunctionType, newTheParms, false);
-        try {
-        	ASTInternal.addBinding(theScope, temp);
-        } catch (DOMException de) {}
+        theScope.addBinding(temp);
 		
 		// void * operator new[] (std::size_t);
 		temp = null;
         temp = new CPPImplicitFunction(OverloadableOperator.NEW_ARRAY.toCharArray(), theScope, newFunctionType, newTheParms, false);
-        try {
-        	ASTInternal.addBinding(theScope, temp);
-        } catch (DOMException de) {}
+        theScope.addBinding(temp);
 		
 		// void operator delete(void*);
         temp = null;
@@ -104,16 +91,12 @@ public class CPPASTTranslationUnit extends ASTTranslationUnit implements ICPPAST
         IParameter[] deleteTheParms = new IParameter[1];
         deleteTheParms[0] = new CPPBuiltinParameter(deleteParms[0]);
         temp = new CPPImplicitFunction(OverloadableOperator.DELETE.toCharArray(), theScope, deleteFunctionType, deleteTheParms, false);
-        try {
-        	ASTInternal.addBinding(theScope, temp);
-        } catch (DOMException de) {}
+        theScope.addBinding(temp);
 		
 		// void operator delete[](void*);
 		temp = null;
         temp = new CPPImplicitFunction(OverloadableOperator.DELETE_ARRAY.toCharArray(), theScope, deleteFunctionType, deleteTheParms, false);
-        try {
-        	ASTInternal.addBinding(theScope, temp);
-        } catch (DOMException de) {}
+        theScope.addBinding(temp);
 	}
 	
     public IASTName[] getDeclarationsInAST(IBinding binding) {
@@ -149,18 +132,6 @@ public class CPPASTTranslationUnit extends ASTTranslationUnit implements ICPPAST
         return fBinding;
     }
 	
-    public void replace(IASTNode child, IASTNode other) {
-        if (fDeclarations == null) return;
-        for(int i=0; i < fDeclarations.length; ++i) {
-           if (fDeclarations[i] == null) break;
-           if (fDeclarations[i] == child) {
-               other.setParent(child.getParent());
-               other.setPropertyInParent(child.getPropertyInParent());
-               fDeclarations[i] = (IASTDeclaration) other;
-           }
-        }
-    }
-
     public ParserLanguage getParserLanguage() {
         return ParserLanguage.CPP;
     }
@@ -198,7 +169,7 @@ public class CPPASTTranslationUnit extends ASTTranslationUnit implements ICPPAST
 	}
 
 	@Override
-	protected ASTVisitor createAmbiguityNodeVisitor() {
-		return new CPPASTAmbiguityResolver();
+	public void resolveAmbiguities() {
+		accept(new CPPASTAmbiguityResolver()); 
 	}
 }

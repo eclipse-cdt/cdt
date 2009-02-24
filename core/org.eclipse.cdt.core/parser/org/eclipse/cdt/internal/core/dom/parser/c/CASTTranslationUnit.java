@@ -14,11 +14,8 @@ package org.eclipse.cdt.internal.core.dom.parser.c;
 
 import org.eclipse.cdt.core.dom.ILinkage;
 import org.eclipse.cdt.core.dom.IName;
-import org.eclipse.cdt.core.dom.ast.ASTVisitor;
 import org.eclipse.cdt.core.dom.ast.EScopeKind;
-import org.eclipse.cdt.core.dom.ast.IASTDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTName;
-import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.ICompositeType;
 import org.eclipse.cdt.core.dom.ast.IMacroBinding;
@@ -99,23 +96,10 @@ public class CASTTranslationUnit extends ASTTranslationUnit implements IASTAmbig
 	}
 
 	@Override
-	protected ASTVisitor createAmbiguityNodeVisitor() {
-		return new CASTAmbiguityResolver();
+	public void resolveAmbiguities() {
+		accept(new CASTAmbiguityResolver()); 
 	}
-	
-    public void replace(IASTNode child, IASTNode other) {
-        if (fDeclarations == null) return;
-        for(int i=0; i < fDeclarations.length; ++i) {
-           if (fDeclarations[i] == null) break;
-           if (fDeclarations[i] == child) {
-               other.setParent(child.getParent());
-               other.setPropertyInParent(child.getPropertyInParent());
-               fDeclarations[i] = (IASTDeclaration) other;
-               return;
-           }
-        }
-    }
-    
+
 	/**
 	 * Maps structs from the index into this AST.
 	 */

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2008 IBM Corporation and others.
+ * Copyright (c) 2005, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -35,6 +35,8 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunction;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunctionTemplate;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunctionType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateParameter;
+import org.eclipse.cdt.internal.core.dom.parser.ASTInternal;
+import org.eclipse.cdt.internal.core.dom.parser.ASTQueries;
 import org.eclipse.cdt.internal.core.dom.parser.ProblemBinding;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPVisitor;
 
@@ -130,11 +132,11 @@ public class CPPFunctionTemplate extends CPPTemplateDefinition
     	IASTParameterDeclaration[] nps = getDeclaratorByName(declName).getParameters();
     	CPPParameter temp = null;
     	for(int i = 0; i < nps.length; i++) {
-    		temp = (CPPParameter) CPPVisitor.findInnermostDeclarator(ops[i].getDeclarator()).getName().getBinding();
+    		temp = (CPPParameter) ASTQueries.findInnermostDeclarator(ops[i].getDeclarator()).getName().getBinding();
     		if (temp != null) {
-    		    IASTName name = CPPVisitor.findInnermostDeclarator(nps[i].getDeclarator()).getName();
+    		    IASTName name = ASTQueries.findInnermostDeclarator(nps[i].getDeclarator()).getName();
     			name.setBinding(temp);
-    			temp.addDeclaration(name);
+    			ASTInternal.addDeclaration(temp, name);
     		}
     	}
 	}
@@ -149,7 +151,7 @@ public class CPPFunctionTemplate extends CPPTemplateDefinition
 			if (size > 0) {
 				for(int i = 0; i < size; i++) {
 					IASTParameterDeclaration p = params[i];
-					final IASTName pname = CPPVisitor.findInnermostDeclarator(p.getDeclarator()).getName();
+					final IASTName pname = ASTQueries.findInnermostDeclarator(p.getDeclarator()).getName();
 					final IBinding binding= pname.resolveBinding();
 					if (binding instanceof IParameter) {
 						result[i]= (IParameter) binding;
@@ -211,7 +213,7 @@ public class CPPFunctionTemplate extends CPPTemplateDefinition
 	}
 
 	public IBinding resolveParameter(IASTParameterDeclaration param) {
-	   	IASTName name = CPPVisitor.findInnermostDeclarator(param.getDeclarator()).getName();
+	   	IASTName name = ASTQueries.findInnermostDeclarator(param.getDeclarator()).getName();
     	IBinding binding = name.getBinding();
     	if (binding != null)
     		return binding;
@@ -231,10 +233,10 @@ public class CPPFunctionTemplate extends CPPTemplateDefinition
     		ICPPASTFunctionDeclarator fdecl= getDeclaratorByName(definition);
     		if (fdecl != null) {
     			temp = fdecl.getParameters()[i];
-    			IASTName n = CPPVisitor.findInnermostDeclarator(temp.getDeclarator()).getName();
+    			IASTName n = ASTQueries.findInnermostDeclarator(temp.getDeclarator()).getName();
     			if (n != name) {
     				n.setBinding(binding);
-    				((CPPParameter)binding).addDeclaration(n);
+    				ASTInternal.addDeclaration(binding, n);
     			}
     		}
     	}
@@ -243,10 +245,10 @@ public class CPPFunctionTemplate extends CPPTemplateDefinition
         		ICPPASTFunctionDeclarator fdecl= getDeclaratorByName(declarations[j]);
         		if (fdecl != null) {
         			temp = fdecl.getParameters()[i];
-        			IASTName n = CPPVisitor.findInnermostDeclarator(temp.getDeclarator()).getName();
+        			IASTName n = ASTQueries.findInnermostDeclarator(temp.getDeclarator()).getName();
         			if (n != name) {
         				n.setBinding(binding);
-        				((CPPParameter)binding).addDeclaration(n);
+        				ASTInternal.addDeclaration(binding, n);
         			}
         		}
     		}

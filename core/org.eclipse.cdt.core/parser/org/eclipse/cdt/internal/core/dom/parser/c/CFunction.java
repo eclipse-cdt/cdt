@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2008 IBM Corporation and others.
+ * Copyright (c) 2004, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -35,6 +35,7 @@ import org.eclipse.cdt.core.dom.ast.gnu.c.ICASTKnRFunctionDeclarator;
 import org.eclipse.cdt.core.parser.util.ArrayUtil;
 import org.eclipse.cdt.core.parser.util.CharArrayUtils;
 import org.eclipse.cdt.internal.core.dom.Linkage;
+import org.eclipse.cdt.internal.core.dom.parser.ASTQueries;
 import org.eclipse.core.runtime.PlatformObject;
 
 /**
@@ -68,6 +69,9 @@ public class CFunction extends PlatformObject implements IFunction, ICInternalFu
     	return null;
     }
     public void addDeclarator( IASTFunctionDeclarator fnDeclarator ){
+    	if (!fnDeclarator.isActive())
+    		return;
+    	
         if( fnDeclarator.getParent() instanceof IASTFunctionDefinition || fnDeclarator instanceof ICASTKnRFunctionDeclarator ) {
         	if (definition == fnDeclarator) {
         		// recursion?
@@ -134,7 +138,7 @@ public class CFunction extends PlatformObject implements IFunction, ICInternalFu
 			if( size > 0 ){
 				for( int i = 0; i < size; i++ ){
 					IASTParameterDeclaration p = params[i];
-					result[i] = (IParameter) CVisitor.findInnermostDeclarator(p.getDeclarator()).getName().resolveBinding();
+					result[i] = (IParameter) ASTQueries.findInnermostDeclarator(p.getDeclarator()).getName().resolveBinding();
 				}
 			}
 		} else if (dtor instanceof ICASTKnRFunctionDeclarator) {
@@ -270,7 +274,7 @@ public class CFunction extends PlatformObject implements IFunction, ICInternalFu
     	    	IASTParameterDeclaration [] parameters = ((IASTStandardFunctionDeclarator)definition).getParameters();
     	    	if( parameters.length > idx ) {
 	    	        temp = parameters[idx];
-	    	        CVisitor.findInnermostDeclarator(temp.getDeclarator()).getName().setBinding( binding );
+	    	        ASTQueries.findInnermostDeclarator(temp.getDeclarator()).getName().setBinding( binding );
     	    	}
     	    } else if( definition instanceof ICASTKnRFunctionDeclarator ){
     	    	fKnRDtor = (ICASTKnRFunctionDeclarator) definition;
@@ -289,7 +293,7 @@ public class CFunction extends PlatformObject implements IFunction, ICInternalFu
     		for( int j = 0; j < declarators.length && declarators[j] != null; j++ ){
     		    if( declarators[j].getParameters().length > idx ){
 					temp = declarators[j].getParameters()[idx];
-					CVisitor.findInnermostDeclarator(temp.getDeclarator()).getName().setBinding( binding );
+					ASTQueries.findInnermostDeclarator(temp.getDeclarator()).getName().setBinding( binding );
     		    }
     		}
     	}
@@ -305,7 +309,7 @@ public class CFunction extends PlatformObject implements IFunction, ICInternalFu
         	if(params.length < nps.length )
         	    return; 
         	for( int i = 0; i < nps.length; i++ ){
-        		IASTName name = CVisitor.findInnermostDeclarator(nps[i].getDeclarator()).getName();
+        		IASTName name = ASTQueries.findInnermostDeclarator(nps[i].getDeclarator()).getName();
         		name.setBinding( params[i] );
         		if( params[i] instanceof CParameter )
         			((CParameter)params[i]).addDeclaration( name );

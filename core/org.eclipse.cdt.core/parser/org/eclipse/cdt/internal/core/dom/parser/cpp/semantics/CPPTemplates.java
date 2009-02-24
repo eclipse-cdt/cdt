@@ -88,6 +88,7 @@ import org.eclipse.cdt.core.parser.util.CharArraySet;
 import org.eclipse.cdt.core.parser.util.CharArrayUtils;
 import org.eclipse.cdt.core.parser.util.ObjectMap;
 import org.eclipse.cdt.internal.core.dom.parser.ASTAmbiguousNode;
+import org.eclipse.cdt.internal.core.dom.parser.ASTInternal;
 import org.eclipse.cdt.internal.core.dom.parser.ASTQueries;
 import org.eclipse.cdt.internal.core.dom.parser.IASTInternalScope;
 import org.eclipse.cdt.internal.core.dom.parser.ITypeContainer;
@@ -591,9 +592,9 @@ public class CPPTemplates {
 				result= instantiate(classTemplate, args);
 				if (result instanceof ICPPInternalBinding) {
 					if (isDecl) {
-						((ICPPInternalBinding) result).addDeclaration(id);
+						ASTInternal.addDeclaration(result, id);
 					} else if (isDef) {
-						((ICPPInternalBinding) result).addDefinition(id);
+						ASTInternal.addDefinition(result, id);
 					}
 				}
 			}

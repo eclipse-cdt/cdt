@@ -14,7 +14,9 @@ package org.eclipse.cdt.core.model;
 
 import org.eclipse.cdt.core.dom.ICodeReaderFactory;
 import org.eclipse.cdt.core.dom.ILinkage;
+import org.eclipse.cdt.core.dom.ast.ASTVisitor;
 import org.eclipse.cdt.core.dom.ast.IASTCompletionNode;
+import org.eclipse.cdt.core.dom.ast.IASTDeclarationListOwner;
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
 import org.eclipse.cdt.core.index.IIndex;
@@ -69,9 +71,13 @@ public interface ILanguage extends IAdaptable {
 
 	/**
 	 * Option for {@link #getASTTranslationUnit(CodeReader, IScannerInfo, ICodeReaderFactory, IIndex, int, IParserLogService)}
-	 * Instructs the parser to create ast nodes for inactive code branches, if possible. There is no guarantee that the ast
-	 * can actually be created for the inactive parts.
-	 * mstodo document how the ast can be accessed.
+	 * Instructs the parser to create ast nodes for inactive code branches, if possible. The parser
+	 * makes its best effort to create ast for the inactive code branches but may decide to skip parts
+	 * of the inactive code (e.g. function bodies, entire code branches, etc.).
+	 * <p>
+	 * The inactive nodes can be accessed via {@link IASTDeclarationListOwner#getDeclarations(boolean)} or
+	 * by using a visitor with {@link ASTVisitor#includeInactiveNodes} set to <code>true</code>.
+	 * 
 	 * @since 5.1
 	 */
 	public final static int OPTION_PARSE_INACTIVE_CODE= 0x20;

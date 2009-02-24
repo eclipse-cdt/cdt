@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2008 IBM Corporation and others.
+ * Copyright (c) 2004, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -303,8 +303,8 @@ public class CPPNamespace extends PlatformObject implements ICPPNamespace, ICPPI
 	public void addDefinition(IASTNode node) {
 		if (!(node instanceof IASTName))
 		    return;
-		IASTName name = (IASTName) node;
 		
+		IASTName name = (IASTName) node;
 		if (namespaceDefinitions == null) {
 		    namespaceDefinitions = new IASTName[] { name };
 		    return;
@@ -322,9 +322,6 @@ public class CPPNamespace extends PlatformObject implements ICPPNamespace, ICPPI
 	 */
 	public void addDeclaration(IASTNode node) {
 		addDefinition(node);
-	}
-	public void removeDeclaration(IASTNode node) {
-		ArrayUtil.remove(namespaceDefinitions, node);
 	}
 
 	public IBinding[] getMemberBindings() {

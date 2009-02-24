@@ -120,6 +120,13 @@ public abstract class ASTVisitor {
 	public boolean shouldVisitTemplateParameters = false;
 	
 	/**
+	 * Per default inactive nodes are not visited. You can change that by setting
+	 * this flag to <code>true</code>.
+	 * @since 5.1
+	 */
+	public boolean includeInactiveNodes= false;
+	
+	/**
 	 * For internal use, only.
 	 * @noreference This field is not intended to be referenced by clients.
 	 */
@@ -134,7 +141,8 @@ public abstract class ASTVisitor {
 	
 	/**
 	 * Creates a visitor.
-	 * @param visitNodes whether visitor is setup to visit all nodes per default.
+	 * @param visitNodes whether visitor is setup to visit all nodes per default, except
+	 * ambiguous nodes ({@link #shouldVisitAmbiguousNodes}) and inactive nodes ({@link #includeInactiveNodes}).
 	 * @since 5.1
 	 */
 	public ASTVisitor(boolean visitNodes) {

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2008 IBM Corporation and others.
+ * Copyright (c) 2005, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -29,6 +29,7 @@ import org.eclipse.cdt.core.dom.ast.IValue;
 import org.eclipse.cdt.core.dom.ast.IVariable;
 import org.eclipse.cdt.core.parser.util.ArrayUtil;
 import org.eclipse.cdt.internal.core.dom.Linkage;
+import org.eclipse.cdt.internal.core.dom.parser.ASTQueries;
 import org.eclipse.cdt.internal.core.dom.parser.IInternalVariable;
 import org.eclipse.cdt.internal.core.dom.parser.ProblemBinding;
 import org.eclipse.cdt.internal.core.dom.parser.Value;
@@ -72,9 +73,12 @@ public class CVariable extends PlatformObject implements IInternalVariable, ICIn
         return declarations[0];
     }	
 
-    public void addDeclaration( IASTName name ){
-        declarations = (IASTName[]) ArrayUtil.append( IASTName.class, declarations, name );
-    }
+	public void addDeclaration(IASTName name) {
+		if (name != null && name.isActive()) {
+			declarations = (IASTName[]) ArrayUtil.append(IASTName.class, declarations, name);
+		}
+	}
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.dom.ast.IVariable#getType()
 	 */
@@ -198,6 +202,6 @@ public class CVariable extends PlatformObject implements IInternalVariable, ICIn
 	    if (!(node instanceof IASTDeclarator))
 	        return null;
 
-	    return CVisitor.findOutermostDeclarator((IASTDeclarator) node);
+	    return ASTQueries.findOutermostDeclarator((IASTDeclarator) node);
 	}		
 }

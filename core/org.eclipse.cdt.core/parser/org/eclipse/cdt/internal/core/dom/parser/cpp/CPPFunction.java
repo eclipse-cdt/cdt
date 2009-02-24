@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2008 IBM Corporation and others.
+ * Copyright (c) 2004, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -42,6 +42,7 @@ import org.eclipse.cdt.core.parser.util.ArrayUtil;
 import org.eclipse.cdt.internal.core.dom.Linkage;
 import org.eclipse.cdt.internal.core.dom.parser.ASTInternal;
 import org.eclipse.cdt.internal.core.dom.parser.ASTNode;
+import org.eclipse.cdt.internal.core.dom.parser.ASTQueries;
 import org.eclipse.cdt.internal.core.dom.parser.ProblemBinding;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPVisitor;
 import org.eclipse.core.runtime.PlatformObject;
@@ -115,7 +116,7 @@ public class CPPFunction extends PlatformObject implements ICPPFunction, ICPPInt
 	
 	public CPPFunction(ICPPASTFunctionDeclarator declarator) {
 	    if (declarator != null) {
-			IASTNode parent = CPPVisitor.findOutermostDeclarator(declarator).getParent();
+			IASTNode parent = ASTQueries.findOutermostDeclarator(declarator).getParent();
 			if (parent instanceof IASTFunctionDefinition)
 				definition = declarator;
 			else
@@ -199,24 +200,12 @@ public class CPPFunction extends PlatformObject implements ICPPFunction, ICPPInt
 			node = node.getParent();
 		if (node instanceof IASTDeclarator == false)
 			return null;
-		node= CPPVisitor.findTypeRelevantDeclarator((IASTDeclarator) node);
+		node= ASTQueries.findTypeRelevantDeclarator((IASTDeclarator) node);
 		if (node instanceof ICPPASTFunctionDeclarator == false)
 			return null;
 		
 		return (ICPPASTFunctionDeclarator) node;
 	}
-
-	public void removeDeclaration(IASTNode node) {
-		ICPPASTFunctionDeclarator dtor = extractFunctionDtor(node);
-		if (definition == dtor) {
-			definition = null;
-			return;
-		}
-		if (declarations != null) {
-			ArrayUtil.remove(declarations, dtor);
-		}
-	}
-	
 
 	public IParameter[] getParameters() {
 	    IASTStandardFunctionDeclarator dtor = getPreferredDtor();
@@ -226,7 +215,7 @@ public class CPPFunction extends PlatformObject implements ICPPFunction, ICPPInt
 		if (size > 0) {
 			for (int i = 0; i < size; i++) {
 				IASTParameterDeclaration p = params[i];
-				final IASTName name = CPPVisitor.findInnermostDeclarator(p.getDeclarator()).getName();
+				final IASTName name = ASTQueries.findInnermostDeclarator(p.getDeclarator()).getName();
 				final IBinding binding= name.resolveBinding();
 				if (binding instanceof IParameter) {
 					result[i]= (IParameter) binding;
@@ -262,7 +251,7 @@ public class CPPFunction extends PlatformObject implements ICPPFunction, ICPPInt
 	
 	protected IASTName getASTName() {
 		IASTDeclarator dtor = (definition != null) ? definition : declarations[0];
-		dtor= CPPVisitor.findInnermostDeclarator(dtor);
+		dtor= ASTQueries.findInnermostDeclarator(dtor);
 	    IASTName name= dtor.getName();
 	    if (name instanceof ICPPASTQualifiedName) {
 	        IASTName[] ns = ((ICPPASTQualifiedName)name).getNames();
@@ -277,11 +266,11 @@ public class CPPFunction extends PlatformObject implements ICPPFunction, ICPPInt
 	    if (scope instanceof ICPPClassScope) {
 	    	ICPPASTDeclSpecifier declSpec = null;
 		    if (definition != null) {
-		    	IASTNode node = CPPVisitor.findOutermostDeclarator(definition).getParent();
+		    	IASTNode node = ASTQueries.findOutermostDeclarator(definition).getParent();
 		        IASTFunctionDefinition def = (IASTFunctionDefinition) node;
 			    declSpec = (ICPPASTDeclSpecifier) def.getDeclSpecifier();    
 		    } else {
-		    	IASTNode node = CPPVisitor.findOutermostDeclarator(declarations[0]).getParent();
+		    	IASTNode node = ASTQueries.findOutermostDeclarator(declarations[0]).getParent();
 		        IASTSimpleDeclaration decl = (IASTSimpleDeclaration)node; 
 		        declSpec = (ICPPASTDeclSpecifier) decl.getDeclSpecifier();
 		    }
@@ -328,10 +317,10 @@ public class CPPFunction extends PlatformObject implements ICPPFunction, ICPPInt
     		IASTParameterDeclaration[] paramDecls = definition.getParameters();
     		if (paramDecls.length > i) { // This will be less than i if we have a void parameter
 	    		temp = paramDecls[i];
-	    		IASTName n = CPPVisitor.findInnermostDeclarator(temp.getDeclarator()).getName();
+	    		IASTName n = ASTQueries.findInnermostDeclarator(temp.getDeclarator()).getName();
 	    		if (n != name) {
 	    		    n.setBinding(binding);
-	    		    ((CPPParameter)binding).addDeclaration(n);
+	    		    ASTInternal.addDeclaration(binding, n);
 	    		}
     		}
     	}
@@ -340,10 +329,10 @@ public class CPPFunction extends PlatformObject implements ICPPFunction, ICPPInt
     			IASTParameterDeclaration[] paramDecls = declarations[j].getParameters();
     			if (paramDecls.length > i) {
 	    			temp = paramDecls[i];
-	        		IASTName n = CPPVisitor.findInnermostDeclarator(temp.getDeclarator()).getName();
+	        		IASTName n = ASTQueries.findInnermostDeclarator(temp.getDeclarator()).getName();
 	        		if (n != name) {
 	        		    n.setBinding(binding);
-	        		    ((CPPParameter)binding).addDeclaration(n);
+	        		    ASTInternal.addDeclaration(binding, n);
 	        		}
     			}
     		}
@@ -357,14 +346,14 @@ public class CPPFunction extends PlatformObject implements ICPPFunction, ICPPInt
     	IASTParameterDeclaration[] nps = fdtor.getParameters();
     	CPPParameter temp = null;
     	for (int i = 0; i < ops.length; i++) {
-    		temp = (CPPParameter) CPPVisitor.findInnermostDeclarator(ops[i].getDeclarator()).getName().getBinding();
+    		temp = (CPPParameter) ASTQueries.findInnermostDeclarator(ops[i].getDeclarator()).getName().getBinding();
     		if (temp != null && nps.length > i) {		//length could be different, ie 0 or 1 with void
     		    IASTDeclarator dtor = nps[i].getDeclarator();
     		    while (dtor.getNestedDeclarator() != null)
     		        dtor = dtor.getNestedDeclarator();
     		    IASTName name = dtor.getName();
     			name.setBinding(temp);
-    			temp.addDeclaration(name);
+    			ASTInternal.addDeclaration(temp, name);
     		}
     	}
     }

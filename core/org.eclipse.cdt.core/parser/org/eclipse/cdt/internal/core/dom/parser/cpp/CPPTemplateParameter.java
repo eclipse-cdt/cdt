@@ -198,9 +198,6 @@ public abstract class CPPTemplateParameter extends PlatformObject
 			}
 	    }
 	}
-	public void removeDeclaration(IASTNode node) {
-		ArrayUtil.remove(declarations, node);
-	}
 	
 	public ILinkage getLinkage() {
 		return Linkage.CPP_LINKAGE;

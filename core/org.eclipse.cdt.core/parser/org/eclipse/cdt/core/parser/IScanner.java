@@ -98,4 +98,12 @@ public interface IScanner {
 	 * @noreference This method is not intended to be referenced by clients.
 	 */
 	public void skipInactiveCode() throws OffsetLimitReachedException;
+
+	/**
+	 * Returns the current nesting in code branches.
+	 * @see IInactiveCodeToken#getOldNesting()
+	 * @see IInactiveCodeToken#getNewNesting()
+	 * @noreference This method is not intended to be referenced by clients.
+	 */
+	public int getCodeBranchNesting();
 }

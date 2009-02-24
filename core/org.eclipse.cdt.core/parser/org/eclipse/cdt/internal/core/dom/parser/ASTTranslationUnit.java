@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008 Wind River Systems, Inc. and others.
+ * Copyright (c) 2008, 2009 Wind River Systems, Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -16,7 +16,6 @@ import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.dom.IName;
 import org.eclipse.cdt.core.dom.ast.ASTVisitor;
 import org.eclipse.cdt.core.dom.ast.IASTComment;
-import org.eclipse.cdt.core.dom.ast.IASTDeclSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTFileLocation;
 import org.eclipse.cdt.core.dom.ast.IASTName;
@@ -36,7 +35,6 @@ import org.eclipse.cdt.core.index.IIndex;
 import org.eclipse.cdt.core.index.IIndexFile;
 import org.eclipse.cdt.core.index.IIndexFileSet;
 import org.eclipse.cdt.core.parser.util.ArrayUtil;
-import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTCompositeTypeSpecifier;
 import org.eclipse.cdt.internal.core.parser.scanner.ILocationResolver;
 import org.eclipse.cdt.internal.core.parser.scanner.ISkippedIndexedFilesListener;
 import org.eclipse.cdt.internal.core.parser.scanner.IncludeFileContent;
@@ -54,8 +52,9 @@ public abstract class ASTTranslationUnit extends ASTNode implements IASTTranslat
 	private static final IASTProblem[] EMPTY_PROBLEM_ARRAY = new IASTProblem[0];
 	private static final String EMPTY_STRING = ""; //$NON-NLS-1$
 
-    protected IASTDeclaration[] fDeclarations = null;
-	protected int fLastDeclaration=-1;
+    private IASTDeclaration[] fAllDeclarations = null;
+    private IASTDeclaration[] fActiveDeclarations= null;
+	private int fLastDeclaration=-1;
 
 	protected ILocationResolver fLocationResolver;
 	private IIndex fIndex;
@@ -73,21 +72,41 @@ public abstract class ASTTranslationUnit extends ASTNode implements IASTTranslat
 		if (d != null) {
 			d.setParent(this);
 			d.setPropertyInParent(OWNED_DECLARATION);
-			fDeclarations = (IASTDeclaration[]) ArrayUtil.append( IASTDeclaration.class, fDeclarations, ++fLastDeclaration, d);	
+			fAllDeclarations = (IASTDeclaration[]) ArrayUtil.append( IASTDeclaration.class, fAllDeclarations, ++fLastDeclaration, d);
+			fActiveDeclarations= null;
 		}
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.cdt.core.dom.ast.IASTTranslationUnit#getDeclarations()
-	 */
 	public final IASTDeclaration[] getDeclarations() {
-		if (fDeclarations == null) return IASTDeclaration.EMPTY_DECLARATION_ARRAY;
-		fDeclarations= (IASTDeclaration[]) ArrayUtil.removeNullsAfter( IASTDeclaration.class, fDeclarations, fLastDeclaration);
-		return fDeclarations;
+		IASTDeclaration[] active= fActiveDeclarations;
+		if (active == null) {
+			active = ASTQueries.extractActiveDeclarations(fAllDeclarations, fLastDeclaration+1);
+			fActiveDeclarations= active;
+		}
+		return active;
 	}
 
+	public final IASTDeclaration[] getDeclarations(boolean includeInactive) {
+		if (includeInactive) {
+			fAllDeclarations= (IASTDeclaration[]) ArrayUtil.removeNullsAfter(IASTDeclaration.class, fAllDeclarations, fLastDeclaration);
+			return fAllDeclarations;
+		}
+		return getDeclarations();
+	}
+
+	public final void replace(IASTNode child, IASTNode other) {
+		assert child.isActive() == other.isActive();
+		for (int i = 0; i <= fLastDeclaration; ++i) {
+			if (fAllDeclarations[i] == child) {
+				other.setParent(child.getParent());
+				other.setPropertyInParent(child.getPropertyInParent());
+				fAllDeclarations[i] = (IASTDeclaration) other;
+				fActiveDeclarations= null;
+				return;
+			}
+		}
+	}
+    
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -235,24 +254,21 @@ public abstract class ASTTranslationUnit extends ASTNode implements IASTTranslat
 	
 	 @Override
 	public final boolean accept( ASTVisitor action ){
-        if( action.shouldVisitTranslationUnit){
-		    switch( action.visit( this ) ){
+		if (action.shouldVisitTranslationUnit) {
+			switch (action.visit(this)) {
 	            case ASTVisitor.PROCESS_ABORT : return false;
 	            case ASTVisitor.PROCESS_SKIP  : return true;
 	            default : break;
 	        }
 		}
-        IASTDeclaration [] ds = getDeclarations();
-        for( int i = 0; i < ds.length; i++ ){
-            if( !ds[i].accept( action ) ) return false;
-        }
-        if( action.shouldVisitTranslationUnit){
-		    switch( action.leave( this ) ){
-	            case ASTVisitor.PROCESS_ABORT : return false;
-	            case ASTVisitor.PROCESS_SKIP  : return true;
-	            default : break;
-	        }
+		IASTDeclaration[] decls = getDeclarations(action.includeInactiveNodes);
+		for (IASTDeclaration decl : decls) {
+			if (!decl.accept(action)) return false;
 		}
+        
+        if (action.shouldVisitTranslationUnit && action.leave(this) == ASTVisitor.PROCESS_ABORT)
+        	return false;
+
         return true;
     }
 
@@ -354,35 +370,7 @@ public abstract class ASTTranslationUnit extends ASTNode implements IASTTranslat
 	/**
 	 * Must be called by the parser, before the ast is passed to the clients.
 	 */
-	public void resolveAmbiguities() {
-		accept(createAmbiguityNodeVisitor()); 
-		cleanupAfterAmbiguityResolution();
-	}
-
-	protected abstract ASTVisitor createAmbiguityNodeVisitor();
-
-	protected void cleanupAfterAmbiguityResolution() {
-		// clear bindings (see bug 232811)
-		accept(new ASTVisitor(){
-			{
-				shouldVisitNames= true;
-				shouldVisitDeclSpecifiers= true;
-			}
-			@Override
-			public int visit(IASTName name) {
-				name.setBinding(null);
-				return PROCESS_CONTINUE;
-			}
-		
-			@Override
-			public int visit(IASTDeclSpecifier declSpec) {
-				if (declSpec instanceof CPPASTCompositeTypeSpecifier)
-					((CPPASTCompositeTypeSpecifier) declSpec).setScope(null);
-				return PROCESS_CONTINUE;
-			}
-		});
-	}
-	
+	public abstract void resolveAmbiguities();
 	
 	protected void copyAbstractTU(ASTTranslationUnit copy) {
 		copy.setIndex(fIndex);

@@ -163,6 +163,10 @@ public class CPPClassScope extends CPPScope implements ICPPClassScope {
 
 	@Override
 	public void addName(IASTName name) throws DOMException {
+		// don't add names from inactive code branches
+		if (!name.isActive())
+			return;
+		
 		if (name instanceof ICPPASTQualifiedName) {
 			// check whether the qualification matches
 			IBinding b= getClassType();

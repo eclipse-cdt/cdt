@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2008 IBM Corporation and others.
+ * Copyright (c) 2004, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -129,6 +129,7 @@ public class AST2BaseTest extends BaseTestCase {
     		boolean expectNoProblems, boolean skipTrivialInitializers) throws ParserException {
         IScanner scanner = createScanner(new CodeReader(code.toCharArray()), lang, ParserMode.COMPLETE_PARSE, 
         		new ScannerInfo());
+        configureScanner(scanner);
         AbstractGNUSourceCodeParser parser = null;
         if (lang == ParserLanguage.CPP) {
             ICPPParserExtensionConfiguration config = null;
@@ -170,6 +171,9 @@ public class AST2BaseTest extends BaseTestCase {
         
         return tu;
     }
+
+	protected void configureScanner(IScanner scanner) {
+	}
 
 	public static IScanner createScanner(CodeReader codeReader, ParserLanguage lang, ParserMode mode,
 			IScannerInfo scannerInfo) {
@@ -492,6 +496,16 @@ public class AST2BaseTest extends BaseTestCase {
     		return (T) binding;
     	}
 
+    	public void assertNoName(String section, int len) {
+    		final int offset = contents.indexOf(section);
+    		assertTrue(offset >= 0);
+			final String selection = section.substring(0, len);
+			IASTName name= tu.getNodeSelector(null).findName(offset, len);
+			if (name != null) {
+				fail("Found unexpected \""+selection+"\": " + name.resolveBinding());
+			}
+    	}
+    	
     	private String renderProblemID(int i) {
     		try {
     			for (Field field : IProblemBinding.class.getDeclaredFields()) {
@@ -523,6 +537,7 @@ public class AST2BaseTest extends BaseTestCase {
     	
     	private IBinding binding(String section, int len) {
     		final int offset = contents.indexOf(section);
+    		assertTrue(offset >= 0);
     		final String selection = section.substring(0, len);
 			IASTName name= tu.getNodeSelector(null).findName(offset, len);
 			assertNotNull("did not find \""+selection+"\"", name);

@@ -78,6 +78,10 @@ abstract public class CPPScope implements ICPPScope, ICPPASTInternalScope {
 
 	@SuppressWarnings("unchecked")
 	public void addName(IASTName name) throws DOMException {
+		// don't add inactive names to the scope
+		if (!name.isActive())
+			return;
+		
 		if (bindings == null)
 			bindings = new CharArrayObjectMap(1);
 		if (name instanceof ICPPASTQualifiedName) {

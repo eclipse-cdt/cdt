@@ -19,6 +19,7 @@ import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IScope;
 import org.eclipse.cdt.core.dom.ast.c.ICASTCompositeTypeSpecifier;
 import org.eclipse.cdt.core.parser.util.ArrayUtil;
+import org.eclipse.cdt.internal.core.dom.parser.ASTQueries;
 import org.eclipse.cdt.internal.core.dom.parser.IASTAmbiguityParent;
 
 /**
@@ -27,15 +28,18 @@ import org.eclipse.cdt.internal.core.dom.parser.IASTAmbiguityParent;
 public class CASTCompositeTypeSpecifier extends CASTBaseDeclSpecifier implements
         ICASTCompositeTypeSpecifier, IASTAmbiguityParent {
 
-    private int key;
-    private IASTName name;
-
-
+    private int fKey;
+    private IASTName fName;
+    private IASTDeclaration[] fActiveDeclarations= null;
+    private IASTDeclaration [] fAllDeclarations = null;
+    private int fDeclarationsPos=-1;
+    private IScope fScope = null;
+    
     public CASTCompositeTypeSpecifier() {
 	}
 
 	public CASTCompositeTypeSpecifier(int key, IASTName name) {
-		this.key = key;
+		this.fKey = key;
 		setName(name);
 	}
     
@@ -47,106 +51,115 @@ public class CASTCompositeTypeSpecifier extends CASTBaseDeclSpecifier implements
 	
 	protected void copyCompositeTypeSpecifier(CASTCompositeTypeSpecifier copy) {
 		copyBaseDeclSpec(copy);
-		copy.setKey(key);
-		copy.setName(name == null ? null : name.copy());
+		copy.setKey(fKey);
+		copy.setName(fName == null ? null : fName.copy());
 		for(IASTDeclaration member : getMembers())
 			copy.addMemberDeclaration(member == null ? null : member.copy());	
 	}
 	
-	
     public int getKey() {
-        return key;
+        return fKey;
     }
 
     public void setKey(int key) {
         assertNotFrozen();
-        this.key = key;
+        this.fKey = key;
     }
 
     public IASTName getName() {
-        return name;
+        return fName;
     }
     
     public void setName(IASTName name) {
         assertNotFrozen();
-        this.name = name;
+        this.fName = name;
         if (name != null) {
 			name.setParent(this);
 			name.setPropertyInParent(TYPE_NAME);
 		}
     }
 
-    
-    private IASTDeclaration [] declarations = null;
-    private int declarationsPos=-1;
-    private IScope scope = null;
-    
+	public IASTDeclaration[] getMembers() {
+		IASTDeclaration[] active= fActiveDeclarations;
+		if (active == null) {
+			active = ASTQueries.extractActiveDeclarations(fAllDeclarations, fDeclarationsPos+1);
+			fActiveDeclarations= active;
+		}
+		return active;
+	}
 
-    public IASTDeclaration [] getMembers() {
-        if( declarations == null ) return IASTDeclaration.EMPTY_DECLARATION_ARRAY;
-        declarations = (IASTDeclaration[]) ArrayUtil.removeNullsAfter( IASTDeclaration.class, declarations, declarationsPos );
-        return declarations;
-    }
-
+	public final IASTDeclaration[] getDeclarations(boolean includeInactive) {
+		if (includeInactive) {
+			fAllDeclarations= (IASTDeclaration[]) ArrayUtil.removeNullsAfter(IASTDeclaration.class, fAllDeclarations, fDeclarationsPos);
+			return fAllDeclarations;
+		}
+		return getMembers();
+	}
 
     public void addMemberDeclaration(IASTDeclaration declaration) {
         assertNotFrozen();
     	if (declaration != null) {
     		declaration.setParent(this);
     		declaration.setPropertyInParent(MEMBER_DECLARATION);
-    		declarations = (IASTDeclaration[]) ArrayUtil.append( IASTDeclaration.class, declarations, ++declarationsPos, declaration );
+			fAllDeclarations = (IASTDeclaration[]) ArrayUtil.append(IASTDeclaration.class, fAllDeclarations,
+					++fDeclarationsPos, declaration);
+			fActiveDeclarations= null;
     	}
     }
     
+    public void addDeclaration(IASTDeclaration declaration) {
+    	addMemberDeclaration(declaration);
+    }
+    
     public IScope getScope() {
-        if( scope == null )
-            scope = new CCompositeTypeScope( this );
-        return scope;
+        if( fScope == null )
+            fScope = new CCompositeTypeScope( this );
+        return fScope;
     }
 
     @Override
 	public boolean accept( ASTVisitor action ){
-        if( action.shouldVisitDeclSpecifiers ){
-		    switch( action.visit( this ) ){
+		if (action.shouldVisitDeclSpecifiers) {
+			switch (action.visit(this)) {
 	            case ASTVisitor.PROCESS_ABORT : return false;
 	            case ASTVisitor.PROCESS_SKIP  : return true;
 	            default : break;
 	        }
 		}
-        if( name != null ) if( !name.accept( action ) ) return false;
+		if (fName != null && !fName.accept(action))
+			return false;
            
-        IASTDeclaration [] decls = getMembers();
-        for( int i = 0; i < decls.length; i++ )
-            if( !decls[i].accept( action ) ) return false;
-            
-        if( action.shouldVisitDeclSpecifiers ){
-		    switch( action.leave( this ) ){
-	            case ASTVisitor.PROCESS_ABORT : return false;
-	            case ASTVisitor.PROCESS_SKIP  : return true;
-	            default : break;
-	        }
+		IASTDeclaration[] decls= getDeclarations(action.includeInactiveNodes);
+		for (int i = 0; i < decls.length; i++) {
+			if (!decls[i].accept(action)) return false;
+		}
+        
+		if (action.shouldVisitDeclSpecifiers) {
+			switch (action.leave(this)) {
+			    case ASTVisitor.PROCESS_ABORT: return false;
+			    case ASTVisitor.PROCESS_SKIP: return true;
+			    default: break;
+			}
 		}
         return true;
     }
 
-
 	public int getRoleForName(IASTName n) {
-		if( n == this.name )
+		if( n == this.fName )
 			return r_definition;
 		return r_unclear;
 	}
 
     public void replace(IASTNode child, IASTNode other) {
-        if (declarations == null) return;
-        for(int i=0; i < declarations.length; ++i) {
-           if (declarations[i] == null) break;
-           if (declarations[i] == child) {
-               other.setParent(child.getParent());
-               other.setPropertyInParent(child.getPropertyInParent());
-               declarations[i] = (IASTDeclaration) other;
-               break;
-           }
-        }
+		assert child.isActive() == other.isActive();
+		for (int i = 0; i <= fDeclarationsPos; ++i) {
+			if (fAllDeclarations[i] == child) {
+				other.setParent(child.getParent());
+				other.setPropertyInParent(child.getPropertyInParent());
+				fAllDeclarations[i] = (IASTDeclaration) other;
+				fActiveDeclarations= null;
+				return;
+			}
+		}
     }
-
 }

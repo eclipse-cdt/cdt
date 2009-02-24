@@ -354,9 +354,7 @@ public class CPPVisitor extends ASTQueries {
 	    }
 	    if (binding instanceof IIndexBinding && binding instanceof ICPPClassType) {
 	    	binding= ((CPPASTTranslationUnit) elabType.getTranslationUnit()).mapToAST((ICPPClassType) binding);
-		    if (binding instanceof ICPPInternalBinding) {
-		    	((ICPPInternalBinding) binding).addDeclaration(elabType);
-		    }
+	    	ASTInternal.addDeclaration(binding, elabType);
 	    }
 	    
 		if (binding != null && 
@@ -392,7 +390,7 @@ public class CPPVisitor extends ASTQueries {
         	if (scope != null) {
         		binding = scope.getBinding(elabType.getName(), false);
         	}
-            if (!(binding instanceof ICPPInternalBinding) || !(binding instanceof ICPPClassType)) {
+            if (!(binding instanceof ICPPInternalBinding) || !(binding instanceof ICPPClassType) && name.isActive()) {
     			if (elabType.getKind() != IASTElaboratedTypeSpecifier.k_enum) {
 					if (template)
 	            		binding = new CPPClassTemplate(name);
@@ -403,7 +401,7 @@ public class CPPVisitor extends ASTQueries {
     			}
     		} else {
 				if ((binding instanceof ICPPClassTemplate) == template) {
-					((ICPPInternalBinding) binding).addDeclaration(elabType);
+					ASTInternal.addDeclaration(binding, elabType);
 				} else {
     				binding = new ProblemBinding(name, IProblemBinding.SEMANTIC_INVALID_REDECLARATION);
     			}
@@ -435,19 +433,18 @@ public class CPPVisitor extends ASTQueries {
     		} 
         	if (name.getLookupKey().length > 0 && scope != null) // can't lookup anonymous things
         		binding = scope.getBinding(name, false);
-            if (!(binding instanceof ICPPInternalBinding) || !(binding instanceof ICPPClassType)) {
-            	if (template) {
-            		binding = new CPPClassTemplate(name);
+            if (binding instanceof ICPPInternalBinding && binding instanceof ICPPClassType && name.isActive()) {
+            	ICPPInternalBinding internal = (ICPPInternalBinding) binding;
+				if (internal.getDefinition() == null && (binding instanceof ICPPClassTemplate) == template) {
+            		ASTInternal.addDefinition(internal, compType);
             	} else {
-            		binding = new CPPClassType(name, binding);
+            		binding = new ProblemBinding(name, IProblemBinding.SEMANTIC_INVALID_REDEFINITION);
             	}
     		} else {
-    			ICPPInternalBinding internal = (ICPPInternalBinding) binding;
-    			if (internal.getDefinition() == null &&
-    					(binding instanceof ICPPClassTemplate) == template) {
-    				internal.addDefinition(compType);
-    		    } else {
-    				binding = new ProblemBinding(name, IProblemBinding.SEMANTIC_INVALID_REDEFINITION);
+    			if (template) {
+    				binding = new CPPClassTemplate(name);
+    			} else {
+    				binding = new CPPClassType(name, binding);
     			}
     		}
         } catch (DOMException e) {
@@ -539,11 +536,10 @@ public class CPPVisitor extends ASTQueries {
 		ICPPASTTemplateDeclaration tmplDecl= CPPTemplates.getTemplateDeclaration(name);
 		if (tmplDecl instanceof ICPPASTTemplateSpecialization) {
 			IBinding b= CPPSemantics.resolveBinding(name);
-			if (b instanceof ICPPInternalBinding) {
-				if (parent instanceof ICPPASTFunctionDefinition)
-					((ICPPInternalBinding) b).addDefinition(name);
-				else 
-					((ICPPInternalBinding) b).addDeclaration(name);
+			if (parent instanceof ICPPASTFunctionDefinition) {
+				ASTInternal.addDefinition(b, name);
+			} else { 
+				ASTInternal.addDeclaration(b, name);
 			}
 			return b;
 		} 
@@ -625,13 +621,12 @@ public class CPPVisitor extends ASTQueries {
 			}
 		} else if (simpleDecl != null &&
 				simpleDecl.getDeclSpecifier().getStorageClass() == IASTDeclSpecifier.sc_typedef) {
-		    if (binding instanceof ICPPInternalBinding && binding instanceof ITypedef) {
+		    if (binding instanceof ICPPInternalBinding && binding instanceof ITypedef && name.isActive()) {
 		        try {
                     IType t1 = ((ITypedef) binding).getType();
                     IType t2 = createType(declarator);
                     if (t1 != null && t2 != null && t1.isSameType(t2)) {
-        		        ICPPInternalBinding internal = (ICPPInternalBinding) binding;
-                        internal.addDeclaration(name);
+                        ASTInternal.addDeclaration(binding, name);
                         return binding;
                     }
                 } catch (DOMException e1) {
@@ -646,14 +641,14 @@ public class CPPVisitor extends ASTQueries {
 		    td.setType(targetType);
 		    binding = td;
 		} else if (funcDeclarator != null) {
-			if (binding instanceof ICPPInternalBinding && binding instanceof IFunction) {
+			if (binding instanceof ICPPInternalBinding && binding instanceof IFunction && name.isActive()) {
 			    IFunction function = (IFunction) binding;
 			    if (CPPSemantics.isSameFunction(function, funcDeclarator)) {
 			        ICPPInternalBinding internal = (ICPPInternalBinding) function;
 			        if (parent instanceof IASTSimpleDeclaration) {
-			            internal.addDeclaration(name);
+			            ASTInternal.addDeclaration(internal, name);
 			        } else if (internal.getDefinition() == null) {
-			            internal.addDefinition(name);
+			        	ASTInternal.addDefinition(internal, name);
 			        } else {
 		                IASTNode def = internal.getDefinition();
 		                if (def instanceof IASTDeclarator)
@@ -690,8 +685,7 @@ public class CPPVisitor extends ASTQueries {
 		    }
 		    if (t1 != null && t2 != null) {
 		    	if (t1.isSameType(t2)) {
-		    		if (binding instanceof ICPPInternalBinding)
-		    			((ICPPInternalBinding) binding).addDeclaration(name);
+		    		ASTInternal.addDeclaration(binding, name);
 		    	} else {
 		    		binding = new ProblemBinding(name, IProblemBinding.SEMANTIC_INVALID_REDECLARATION);
 		    	}

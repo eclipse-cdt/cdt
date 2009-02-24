@@ -14,6 +14,7 @@
 package org.eclipse.cdt.internal.core.dom.parser;
 
 import org.eclipse.cdt.core.dom.ast.ASTCompletionNode;
+import org.eclipse.cdt.core.dom.ast.ASTGenericVisitor;
 import org.eclipse.cdt.core.dom.ast.ASTVisitor;
 import org.eclipse.cdt.core.dom.ast.IASTASMDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTArrayDeclarator;
@@ -22,11 +23,13 @@ import org.eclipse.cdt.core.dom.ast.IASTBreakStatement;
 import org.eclipse.cdt.core.dom.ast.IASTCaseStatement;
 import org.eclipse.cdt.core.dom.ast.IASTCastExpression;
 import org.eclipse.cdt.core.dom.ast.IASTCompletionNode;
+import org.eclipse.cdt.core.dom.ast.IASTCompositeTypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTCompoundStatement;
 import org.eclipse.cdt.core.dom.ast.IASTConditionalExpression;
 import org.eclipse.cdt.core.dom.ast.IASTContinueStatement;
 import org.eclipse.cdt.core.dom.ast.IASTDeclSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTDeclaration;
+import org.eclipse.cdt.core.dom.ast.IASTDeclarationListOwner;
 import org.eclipse.cdt.core.dom.ast.IASTDeclarationStatement;
 import org.eclipse.cdt.core.dom.ast.IASTDeclarator;
 import org.eclipse.cdt.core.dom.ast.IASTDefaultStatement;
@@ -70,6 +73,7 @@ import org.eclipse.cdt.core.dom.parser.ISourceCodeParser;
 import org.eclipse.cdt.core.parser.AbstractParserLogService;
 import org.eclipse.cdt.core.parser.EndOfFileException;
 import org.eclipse.cdt.core.parser.IGCCToken;
+import org.eclipse.cdt.core.parser.IInactiveCodeToken;
 import org.eclipse.cdt.core.parser.IParserLogService;
 import org.eclipse.cdt.core.parser.IProblem;
 import org.eclipse.cdt.core.parser.IScanner;
@@ -107,6 +111,17 @@ public abstract class AbstractGNUSourceCodeParser implements ISourceCodeParser {
             this.currToken =t;
         }
     }
+    
+	private static final ASTVisitor MARK_INACTIVE = new ASTGenericVisitor(true) {
+		{
+			shouldVisitAmbiguousNodes= true;
+		}
+		@Override
+		protected int genericVisit(IASTNode node) {
+			((ASTNode) node).setInactive();
+			return PROCESS_CONTINUE;
+		}
+	};
 
 	protected static final int DEFAULT_DESIGNATOR_LIST_SIZE = 4;
     protected static int parseCount = 0;
@@ -135,8 +150,8 @@ public abstract class AbstractGNUSourceCodeParser implements ISourceCodeParser {
      *  enter a nested declaration, in order to avoid holding on to all the tokens.
      */
     protected IToken declarationMark;
-    protected IToken currToken;
-    protected int eofOffset;
+    protected IToken nextToken;
+    protected IToken lastTokenFromScanner;
     protected boolean onTopInTemplateArgs= false;
     protected boolean inBinaryExpression= true;
 
@@ -149,6 +164,7 @@ public abstract class AbstractGNUSourceCodeParser implements ISourceCodeParser {
     protected IASTTypeId fTypeIdForCastAmbiguity;
     
     private final INodeFactory nodeFactory;
+	private boolean fActiveCode= true;
 	
     protected AbstractGNUSourceCodeParser(IScanner scanner,
             IParserLogService logService, ParserMode parserMode,
@@ -206,43 +222,179 @@ public abstract class AbstractGNUSourceCodeParser implements ISourceCodeParser {
     }
 
     /**
-     * Returns the next token without advancing
+     * Fetches the next token from the scanner.
      */
-    protected IToken mark() throws EndOfFileException {
-        return currToken == null ? currToken = fetchToken(true) : currToken;
+    private final IToken fetchToken(boolean skipInactive) throws EndOfFileException {
+        try {
+        	IToken t= scanner.nextToken();
+        	if (skipInactive) {
+        		while (t.getType() == IToken.tINACTIVE_CODE_START) {
+        			scanner.skipInactiveCode();
+        			t= scanner.nextToken();
+        		}
+        	}
+        	if (lastTokenFromScanner != null)
+        		lastTokenFromScanner.setNext(t);
+        	lastTokenFromScanner= t;
+        	return t;
+        } catch (OffsetLimitReachedException olre) {
+        	if (mode != ParserMode.COMPLETION_PARSE)
+			    throw new EndOfFileException();
+			createCompletionNode(olre.getFinalToken());
+			throw olre;
+        }
+    }
+    
+    private final IToken nextToken(boolean skipInactive) throws EndOfFileException {
+    	IToken t= nextToken;
+    	if (t == null) {
+    		t= fetchToken(skipInactive);
+    	}
+    	nextToken= t;
+    	return t;
+    }
+
+    private final IToken lookaheadToken(int i, boolean skipInactive) throws EndOfFileException {
+    	assert i >= 0;
+        if (isCancelled) {
+            throw new ParseError(ParseError.ParseErrorKind.TIMEOUT_OR_CANCELLED);
+        }
+        IToken t= nextToken(skipInactive);
+        for (; i > 1; --i) {
+            t = t.getNext();
+            if (t == null) 
+                t = fetchToken(skipInactive);
+        }
+        return t;
+    }
+    
+    /**
+     * Returns the next token without advancing. Same as {@code LA(1)}.
+     */
+    protected final IToken LA() throws EndOfFileException {
+    	IToken t= nextToken(true);
+    	checkForEOI(t);
+    	return t;
+    }
+
+    /**
+     * Returns one of the next tokens. With {@code i == 1}, the next token is returned.
+     * @param i number of tokens to look ahead, must be greater than 0.
+     */
+    protected final IToken LA(int i) throws EndOfFileException {
+        IToken t= lookaheadToken(i, true);
+        checkForEOI(t);
+        return t;
+    }
+
+    /**
+     * Consumes and returns the next token available.
+     */
+    protected final IToken consume() throws EndOfFileException {
+        IToken t= nextToken(true);
+		checkForEOI(t);
+		
+        nextToken= t.getNext();
+        return t;
+    }
+
+	/**
+	 * Tests whether we are looking at a change from active to inactive code at this point. If so, the change
+	 * is accepted.
+	 * 
+	 * @param nesting
+	 *            the nesting level of the code branch we have to stay within
+	 * @return <code>false</code> if an inactive code branch was rejected because of its nesting level,
+	 *         <code>true</code>, otherwise.
+	 */
+    protected final boolean acceptInactiveCodeBoundary(int nesting) {
+        try {
+        	while (true) {
+        		IToken t= nextToken(false);
+        		switch (t.getType()) {
+        		case IToken.tINACTIVE_CODE_START:
+        		case IToken.tINACTIVE_CODE_SEPARATOR:
+        			IInactiveCodeToken it = (IInactiveCodeToken) t;
+					if (it.getNewNesting() < nesting || (it.getNewNesting() == nesting && it.getOldNesting() == nesting)) {
+        				return false;
+        			}        			
+        			fActiveCode= false;
+        			nextToken= t.getNext(); // consume the token
+        			continue;
+        		case IToken.tINACTIVE_CODE_END:
+        			it = (IInactiveCodeToken) t;
+					if (it.getNewNesting() < nesting || (it.getNewNesting() == nesting && it.getOldNesting() == nesting)) {
+        				return false;
+        			}        			
+        			fActiveCode= true;
+        			nextToken= t.getNext(); // consume the token
+        			continue;
+        		default:
+        			return true;
+        		}
+        	}
+        } catch (EndOfFileException e) {
+        }
+        return true;
+    }
+    
+    protected final void skipInactiveCode() throws OffsetLimitReachedException {
+    	IToken t= nextToken;
+    	if (fActiveCode && (t == null || t.getType() != IToken.tINACTIVE_CODE_START))
+    		return;
+    	try {
+        	fActiveCode= true;
+        	while (t != null && t.getType() != IToken.tINACTIVE_CODE_END)
+        		t= t.getNext();
+        	
+        	if (t != null) {
+        		nextToken= t.getNext();
+        	} else {
+        		nextToken= null;
+        		scanner.skipInactiveCode();
+        	}
+		} catch (OffsetLimitReachedException olre) {
+			if (mode == ParserMode.COMPLETION_PARSE) {
+				createCompletionNode(olre.getFinalToken());
+				throw olre;
+			}
+		} 
+    }
+    
+    protected final boolean isActiveCode() {
+    	return fActiveCode;
+    }
+    
+    protected final int getCodeBranchNesting() {
+    	return scanner.getCodeBranchNesting();
+    }
+
+    /**
+     * Returns the next token, which can be used to reset the input back to
+     * this point in the stream.
+     */
+    protected final IToken mark() throws EndOfFileException {
+    	return LA();
     }
 
     /**
      * Roll back to a previous point, reseting the queue of tokens.
      * @param mark a token previously obtained via {@link #mark()}.
      */
-    protected void backup(IToken mark) {
-        currToken = mark;
+    protected final void backup(IToken mark) {
+        nextToken = mark;
     }
 
-    /**
-     * Look ahead in the token list to see what is coming.
-     * @param i number of tokens to look ahead, must be greater or equal to 0.
-     * @return the token you wish to observe
-     */
-    protected IToken LA(int i) throws EndOfFileException {
-    	assert i >= 0;
-        if (isCancelled) {
-            throw new ParseError(ParseError.ParseErrorKind.TIMEOUT_OR_CANCELLED);
-        }
-        IToken retToken= mark();
-        for (; i > 1; --i) {
-            retToken = retToken.getNext();
-            if (retToken == null)
-                retToken = fetchToken(true);
-        }
-        return retToken;
-    }
+	private final void checkForEOI(IToken t) throws EndOfFileException {
+		final int lt= t.getType();
+    	if (lt == IToken.tINACTIVE_CODE_SEPARATOR || lt == IToken.tINACTIVE_CODE_END)
+    		throw new EndOfFileException(true);
+	}
 
     /**
      * Same as {@link #LA(int)}, but returns <code>null</code> when eof is reached.
      */
-    protected IToken LAcatchEOF(int i) {
+    protected final IToken LAcatchEOF(int i) {
     	try {
     		return LA(i);
     	} catch (EndOfFileException e) {
@@ -255,14 +407,14 @@ public abstract class AbstractGNUSourceCodeParser implements ISourceCodeParser {
      * @param i number of tokens to look ahead, must be greater or equal to 0.
      * @return The type of that token
      */
-    protected int LT(int i) throws EndOfFileException {
+    protected final int LT(int i) throws EndOfFileException {
         return LA(i).getType();
     }
     
     /**
      * Same as {@link #LT(int)}, but returns <code>0</code> when eof is reached.
      */
-    protected int LTcatchEOF(int i) {
+    protected final int LTcatchEOF(int i) {
     	try {
     		return LT(i);
     	} catch (EndOfFileException e) {
@@ -270,68 +422,28 @@ public abstract class AbstractGNUSourceCodeParser implements ISourceCodeParser {
     	}
     }
     
-	protected boolean isOnSameLine(int offset1, int offset2) {
-		ILocationResolver lr= (ILocationResolver) getTranslationUnit().getAdapter(ILocationResolver.class);
-		IASTFileLocation floc= lr.getMappedFileLocation(offset1, offset2-offset1+1);
-		return floc.getFileName().equals(lr.getContainingFilePath(offset1)) &&
-			floc.getStartingLineNumber() == floc.getEndingLineNumber();
-	}
-
-    protected int calculateEndOffset(IASTNode n) {
-        ASTNode node = (ASTNode) n;
-        return node.getOffset() + node.getLength();
-    }
-
-    protected void setRange(IASTNode n, IASTNode from) {
-    	((ASTNode) n).setOffsetAndLength((ASTNode) from);
-    }
-
-    protected void setRange(IASTNode n, int offset, int endOffset) {
-    	((ASTNode) n).setOffsetAndLength(offset, endOffset-offset);
-    }
-    
-    protected void adjustLength(IASTNode n, IASTNode endNode) {
-        final int endOffset= calculateEndOffset(endNode);
-        final ASTNode node = (ASTNode) n;
-        node.setLength(endOffset-node.getOffset());
-    }
-
-    /**
-     * Consume the next token available, regardless of the type and returns it.
-     * 
-     * @return The token that was consumed and removed from our buffer.
-     * @throws EndOfFileException
-     *             If there is no token to consume.
-     */
-    protected IToken consume() throws EndOfFileException {
-        final IToken result= mark();
-        currToken= result.getNext();
-        return result;
-    }
-
     /**
      * If the type of the next token matches, it is consumed and returned. Otherwise a
      * {@link BacktrackException} will be thrown. 
-     * 
      * @param type the expected type of the next token.
      */
-    protected IToken consume(int type) throws EndOfFileException, BacktrackException {
+    protected final IToken consume(int type) throws EndOfFileException, BacktrackException {
     	final IToken result= consume();
         if (result.getType() != type)
             throwBacktrack(result);
         return result;
     }
 
-    /**
-     * Consume the next token available only if the type is as specified. In case we
-     * reached the end of completion, no token is consumed and the eoc-token returned.
-     * 
-     * @param type
-     *            The type of token that you are expecting.
-     * @return the token that was consumed and removed from our buffer.
-     * @throws BacktrackException
-     *             If LT(1) != type
-     */
+	/**
+	 * Consume the next token available only if the type is as specified. In case we reached the end of
+	 * completion, no token is consumed and the eoc-token returned.
+	 * 
+	 * @param type
+	 *            The type of token that you are expecting.
+	 * @return the token that was consumed and removed from our buffer.
+	 * @throws BacktrackException
+	 *             if LT(1) != type
+	 */
     protected IToken consumeOrEOC(int type) throws EndOfFileException, BacktrackException {
     	final IToken la1= LA(1);
         final int lt1 = la1.getType();
@@ -343,30 +455,36 @@ public abstract class AbstractGNUSourceCodeParser implements ISourceCodeParser {
         return consume();
     }
 
-    /**
-     * Fetches the next token from the scanner.
-     */
-    private IToken fetchToken(boolean skipInactive) throws EndOfFileException {
-        try {
-        	IToken result= scanner.nextToken();
-        	while (result.getType() == IToken.tINACTIVE_CODE_START) {
-        		scanner.skipInactiveCode();
-        		result= scanner.nextToken();
-        	}
-        	eofOffset= result.getEndOffset();
-            return result;
-        } catch (OffsetLimitReachedException olre) {
-            handleOffsetLimitException(olre);
-            // never returns, to make the java-compiler happy:
-            return null;
-        }
+	protected final boolean isOnSameLine(int offset1, int offset2) {
+		ILocationResolver lr= (ILocationResolver) getTranslationUnit().getAdapter(ILocationResolver.class);
+		IASTFileLocation floc= lr.getMappedFileLocation(offset1, offset2-offset1+1);
+		return floc.getFileName().equals(lr.getContainingFilePath(offset1)) &&
+			floc.getStartingLineNumber() == floc.getEndingLineNumber();
+	}
+
+    protected final int calculateEndOffset(IASTNode n) {
+        ASTNode node = (ASTNode) n;
+        return node.getOffset() + node.getLength();
     }
 
-    protected void handleOffsetLimitException(OffsetLimitReachedException exception) throws EndOfFileException {
-        if (mode != ParserMode.COMPLETION_PARSE)
-            throw new EndOfFileException();
-        createCompletionNode(exception.getFinalToken());
-        throw exception;
+    protected final void setRange(IASTNode n, IASTNode from) {
+    	((ASTNode) n).setOffsetAndLength((ASTNode) from);
+    }
+
+    protected final void setRange(IASTNode n, int offset, int endOffset) {
+    	((ASTNode) n).setOffsetAndLength(offset, endOffset-offset);
+    }
+    
+    protected final void adjustLength(IASTNode n, IASTNode endNode) {
+        final int endOffset= calculateEndOffset(endNode);
+        final ASTNode node = (ASTNode) n;
+        node.setLength(endOffset-node.getOffset());
+    }
+
+    protected final int getEndOffset() {
+    	if (lastTokenFromScanner == null)
+    		return 0;
+    	return lastTokenFromScanner.getEndOffset();
     }
 
     /**
@@ -487,14 +605,24 @@ public abstract class AbstractGNUSourceCodeParser implements ISourceCodeParser {
 
     protected abstract void nullifyTranslationUnit();
 
-    protected IToken skipOverCompoundStatement() throws BacktrackException,
-            EndOfFileException {
+	protected IToken skipOverCompoundStatement() throws BacktrackException, EndOfFileException {
         // speed up the parser by skipping the body, simply look for matching brace and return
+        final boolean isActive = isActiveCode();
+		final int codeBranchNesting= getCodeBranchNesting();
+		
         consume(IToken.tLBRACE);
         IToken result = null;
         int depth = 1;
         while (depth > 0) {
-            result = consume();
+            if (!isActive) {
+                IToken t= lookaheadToken(1, false);
+    			final int lt= t.getType();
+				if (lt == IToken.tINACTIVE_CODE_SEPARATOR || lt == IToken.tINACTIVE_CODE_END || lt == IToken.tINACTIVE_CODE_START) {
+					if (!acceptInactiveCodeBoundary(codeBranchNesting))
+						throw new EndOfFileException(true);
+				} 
+            }
+			result = consume();
             switch (result.getType()) {
             case IToken.tRBRACE:
                 --depth;
@@ -541,7 +669,7 @@ public abstract class AbstractGNUSourceCodeParser implements ISourceCodeParser {
 			while(true) {
 				switch (LT(1)) {
 				case IToken.tEOC:
-					endOffset= eofOffset;
+					endOffset= getEndOffset();
 					break loop;
 				case IToken.tSEMI:
 					if (depth == 0) {
@@ -567,7 +695,7 @@ public abstract class AbstractGNUSourceCodeParser implements ISourceCodeParser {
 				endOffset= consume().getEndOffset();
 			}
 		} catch (EndOfFileException e) {
-			endOffset= eofOffset;
+			endOffset= getEndOffset();
 		}
 		return endOffset;
 	}
@@ -581,7 +709,7 @@ public abstract class AbstractGNUSourceCodeParser implements ISourceCodeParser {
 			while(true) {
 				switch (LT(1)) {
 				case IToken.tEOC:
-					endOffset= eofOffset;
+					endOffset= getEndOffset();
 					break loop;
 				case IToken.tSEMI:
 				case IToken.tLBRACE:
@@ -610,7 +738,7 @@ public abstract class AbstractGNUSourceCodeParser implements ISourceCodeParser {
 				endOffset= consume().getEndOffset();
 			}
 		} catch (EndOfFileException e) {
-			endOffset= eofOffset;
+			endOffset= getEndOffset();
 		}
 		IASTProblem problem= createProblem(IProblem.SYNTAX_ERROR, offset, endOffset-offset);
 		return buildProblemExpression(problem);
@@ -698,7 +826,7 @@ public abstract class AbstractGNUSourceCodeParser implements ISourceCodeParser {
     protected IASTExpression compoundStatementExpression() throws EndOfFileException, BacktrackException {
         int startingOffset = consume().getOffset(); // tLPAREN always
         IASTCompoundStatement compoundStatement = null;
-        if (mode == ParserMode.QUICK_PARSE || mode == ParserMode.STRUCTURAL_PARSE)
+        if (mode == ParserMode.QUICK_PARSE || mode == ParserMode.STRUCTURAL_PARSE || !isActiveCode())
             skipOverCompoundStatement();
         else if (mode == ParserMode.COMPLETION_PARSE || mode == ParserMode.SELECTION_PARSE) {
             if (scanner.isOnTopContext())
@@ -863,44 +991,94 @@ public abstract class AbstractGNUSourceCodeParser implements ISourceCodeParser {
 
 	protected void parseTranslationUnit() {
 		final IASTTranslationUnit tu= getTranslationUnit();
-		int offset= -1;
-        while (true) {
-            try {
-            	IToken next= LAcatchEOF(1);
-            	if (next == null || next.getType() == IToken.tEOC)
-            		break;
-            	          
-            	final int nextOffset = next.getOffset();
-        		declarationMark= next;
-        		next= null; // don't hold on to the token while parsing namespaces, class bodies, etc.
+		declarationList(tu, DeclarationOptions.GLOBAL, false, 0);
+        ((ASTNode) tu).setLength(getEndOffset());
+	}
 
-        		if (offset == nextOffset) {
-        			// no progress
-            		tu.addDeclaration(skipProblemDeclaration(offset));
-            	} else {
-            		offset= nextOffset;
-            		final IASTDeclaration declaration= declaration(DeclarationOptions.GLOBAL);
-            		tu.addDeclaration(declaration);
-            	}
-            } catch (BacktrackException bt) {
-            	IASTDeclaration[] decls= problemDeclaration(offset, bt, DeclarationOptions.GLOBAL);
-            	for (IASTDeclaration declaration : decls) {
-            		tu.addDeclaration(declaration);
-            	}
-            } catch (EndOfFileException e) {
-            	tu.addDeclaration(skipProblemDeclaration(offset));
-            	break;
-            } catch (OutOfMemoryError oome) {
-                logThrowable("translationUnit", oome); //$NON-NLS-1$
-                throw oome;
-            } catch (Exception e) {
-                logException("translationUnit", e); //$NON-NLS-1$
-                tu.addDeclaration(skipProblemDeclaration(offset));
-            } finally {
-            	declarationMark= null;
-            }
-        }
-        ((ASTNode) tu).setLength(eofOffset);
+	protected final void declarationListInBraces(final IASTDeclarationListOwner tu, int offset, DeclarationOptions options) throws EndOfFileException, BacktrackException {
+		// consume brace, if requested
+		int codeBranchNesting= getCodeBranchNesting();
+		consume(IToken.tLBRACE);
+		declarationList(tu, options, true, codeBranchNesting);
+
+		final int lt1 = LTcatchEOF(1);
+		if (lt1 == IToken.tRBRACE) {
+			int endOffset= consume().getEndOffset();
+			setRange(tu, offset, endOffset);
+			return;
+		}
+		
+		final int endOffset = getEndOffset();
+		setRange(tu, offset, endOffset);
+		if (lt1 == IToken.tEOC || (lt1 == 0 && tu instanceof IASTCompositeTypeSpecifier)) {
+			return;
+		}
+		throwBacktrack(createProblem(IProblem.SYNTAX_ERROR, endOffset, 0), tu);
+	}
+	
+	private final void declarationList(final IASTDeclarationListOwner tu, DeclarationOptions options, boolean upToBrace, int codeBranchNesting) {
+		final boolean wasActive= isActiveCode();
+		while (true) {
+			final boolean ok= acceptInactiveCodeBoundary(codeBranchNesting);
+			if (!ok) {
+				// we left to an enclosing code branch. If we started in inactive code, it's time to leave.
+				if (!wasActive) 
+					return;
+				
+				// if we started in active code, we need to skip the outer and therefore unrelated 
+				// inactive branches until we hit active code again.
+				try {
+					skipInactiveCode();
+				} catch (OffsetLimitReachedException e) {
+					return;
+				}
+				codeBranchNesting= Math.min(getCodeBranchNesting()+1, codeBranchNesting);
+				
+				// we could be at the start of inactive code so restart the loop
+				continue; 
+			}
+			
+			final boolean active= isActiveCode();
+			IToken next= LAcatchEOF(1);
+			if (next == null || next.getType() == IToken.tEOC)
+				return;
+
+			if (upToBrace && next.getType() == IToken.tRBRACE && active == wasActive) {
+				return;
+			}
+			
+			final int offset = next.getOffset();
+			declarationMark= next;
+			next= null; // don't hold on to the token while parsing namespaces, class bodies, etc.
+			try {
+				IASTDeclaration declaration= declaration(options);
+				if (((ASTNode) declaration).getLength() == 0 && LTcatchEOF(1) != IToken.tEOC) {
+					declaration= skipProblemDeclaration(offset);
+				}
+				addDeclaration(tu, declaration, active);
+			} catch (BacktrackException bt) {
+				IASTDeclaration[] decls= problemDeclaration(offset, bt, options);
+				for (IASTDeclaration declaration : decls) {
+					addDeclaration(tu, declaration, active);
+				}
+			} catch (EndOfFileException e) {
+				IASTDeclaration declaration= skipProblemDeclaration(offset);
+				addDeclaration(tu, declaration, active);
+				if (!e.endsInactiveCode()) {
+					break;
+				}
+			} finally {
+				declarationMark= null;
+			}
+		}
+	}
+
+	private void addDeclaration(final IASTDeclarationListOwner parent, IASTDeclaration declaration,
+			final boolean active) {
+		if (!active) {
+			declaration.accept(MARK_INACTIVE);
+		}
+		parent.addDeclaration(declaration);
 	}
 
     protected IASTExpression assignmentOperatorExpression(int kind,
@@ -1162,19 +1340,19 @@ public abstract class AbstractGNUSourceCodeParser implements ISourceCodeParser {
 
     protected IASTStatement handleFunctionBody() throws BacktrackException, EndOfFileException {
     	declarationMark= null; 
-        if (mode == ParserMode.QUICK_PARSE || mode == ParserMode.STRUCTURAL_PARSE) {
-            IToken curr = LA(1);
+        if (mode == ParserMode.QUICK_PARSE || mode == ParserMode.STRUCTURAL_PARSE || !isActiveCode()) {
+            int offset = LA(1).getOffset();
             IToken last = skipOverCompoundStatement();
             IASTCompoundStatement cs = nodeFactory.newCompoundStatement();
-            ((ASTNode) cs).setOffsetAndLength(curr.getOffset(), last.getEndOffset() - curr.getOffset());
+            setRange(cs, offset, last.getEndOffset());
             return cs;
         } else if (mode == ParserMode.COMPLETION_PARSE || mode == ParserMode.SELECTION_PARSE) {
             if (scanner.isOnTopContext())
                 return functionBody();
-            IToken curr = LA(1);
+            int offset = LA(1).getOffset();
             IToken last = skipOverCompoundStatement();
             IASTCompoundStatement cs = nodeFactory.newCompoundStatement();
-            ((ASTNode) cs).setOffsetAndLength(curr.getOffset(), last.getEndOffset() - curr.getOffset());
+            setRange(cs, offset, last.getEndOffset());
             return cs;
         } 
 
@@ -1261,7 +1439,7 @@ public abstract class AbstractGNUSourceCodeParser implements ISourceCodeParser {
         	loop: while (true) {
         		switch (LTcatchEOF(1)) {
         		case 0: // eof
-        			endOffset= eofOffset;
+        			endOffset= getEndOffset();
         			break loop;
         		case IToken.tRBRACE:
         			endOffset= consume().getEndOffset();
@@ -1302,7 +1480,7 @@ public abstract class AbstractGNUSourceCodeParser implements ISourceCodeParser {
         		}
         	}
         } catch (EndOfFileException eof) {
-        	throwBacktrack(createProblem(IProblem.SYNTAX_ERROR, problemOffset, eofOffset-problemOffset), result);
+        	throwBacktrack(createProblem(IProblem.SYNTAX_ERROR, problemOffset, getEndOffset()-problemOffset), result);
         } catch (BacktrackException bt) {
         	IASTProblem problem= skipProblemEnumerator(problemOffset);
         	throwBacktrack(problem, result);
@@ -1352,7 +1530,7 @@ public abstract class AbstractGNUSourceCodeParser implements ISourceCodeParser {
     		return new IASTDeclaration[] {(IASTDeclaration) n, buildProblemDeclaration(origProblem)};
     	} 
     	
-    	if (declarationMark != null) {
+    	if (declarationMark != null && isActiveCode()) {
     		IASTDeclaration trailingProblem= null;
     		offset= declarationMark.getOffset();
     		
@@ -1382,7 +1560,7 @@ public abstract class AbstractGNUSourceCodeParser implements ISourceCodeParser {
     			    		break;
     			    	} 
     				} catch (EndOfFileException e) {
-    					endOffset= eofOffset;
+    					endOffset= getEndOffset();
     					break;
     				}
     			}
@@ -1995,10 +2173,10 @@ public abstract class AbstractGNUSourceCodeParser implements ISourceCodeParser {
      */
     protected void __attribute_decl_seq(boolean allowAttrib, boolean allowDeclspec) throws BacktrackException, EndOfFileException {
         while (true) {
-        	IToken token = LA(1);
-        	if ( allowAttrib && (token.getType() == IGCCToken.t__attribute__)) {
+        	final int lt = LTcatchEOF(1);
+        	if ( allowAttrib && (lt == IGCCToken.t__attribute__)) {
         		__attribute__();
-        	} else if (allowDeclspec && (token.getType() == IGCCToken.t__declspec)) {
+        	} else if (allowDeclspec && (lt == IGCCToken.t__declspec)) {
         		__declspec();
         	} else {
         		break;

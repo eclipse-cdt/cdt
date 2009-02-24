@@ -10,19 +10,16 @@
  *******************************************************************************/ 
 package org.eclipse.cdt.internal.core.dom.parser;
 
+import org.eclipse.cdt.core.dom.ast.ASTVisitor;
 import org.eclipse.cdt.core.dom.ast.IASTArrayModifier;
-import org.eclipse.cdt.core.dom.ast.IASTBinaryExpression;
-import org.eclipse.cdt.core.dom.ast.IASTCastExpression;
-import org.eclipse.cdt.core.dom.ast.IASTConditionalExpression;
+import org.eclipse.cdt.core.dom.ast.IASTDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTDeclarator;
 import org.eclipse.cdt.core.dom.ast.IASTExpression;
-import org.eclipse.cdt.core.dom.ast.IASTExpressionList;
 import org.eclipse.cdt.core.dom.ast.IASTFieldDeclarator;
 import org.eclipse.cdt.core.dom.ast.IASTFunctionDeclarator;
-import org.eclipse.cdt.core.dom.ast.IASTIdExpression;
-import org.eclipse.cdt.core.dom.ast.IASTLiteralExpression;
+import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
-import org.eclipse.cdt.core.dom.ast.IASTUnaryExpression;
+import org.eclipse.cdt.core.parser.util.ArrayUtil;
 import org.eclipse.cdt.internal.core.dom.parser.c.CVisitor;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPVisitor;
 
@@ -30,43 +27,38 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPVisitor;
  * Base class for {@link CVisitor} and {@link CPPVisitor}
  */
 public class ASTQueries {
+	private static class NameSearch extends ASTVisitor {
+		private boolean fFound;
+		NameSearch() {
+			super(false);
+			shouldVisitAmbiguousNodes= true;
+			shouldVisitNames= true;
+		}
+		public void reset() {
+			fFound= false;
+		}
+		public boolean foundName() {
+			return fFound;
+		}
+		@Override
+		public int visit(IASTName name) {
+			fFound= true;
+			return PROCESS_ABORT;
+		}
+	}
+	private static NameSearch NAME_SEARCH= new NameSearch();
+	
 	/**
 	 * Tests whether the given expression can contain ast-names, suitable to be used before ambiguity 
 	 * resolution.
 	 */
 	public static boolean canContainName(IASTExpression expr) {
-		if (expr == null || expr instanceof IASTLiteralExpression) 
+		if (expr == null)
 			return false;
-
-		if (expr instanceof IASTAmbiguousExpression) 
-			return true;
-		if (expr instanceof IASTIdExpression) 
-			return true;
-		if (expr instanceof IASTCastExpression)
-			return true;
 		
-		if (expr instanceof IASTUnaryExpression) {
-			IASTUnaryExpression uexpr= (IASTUnaryExpression) expr;
-			return canContainName(uexpr.getOperand());
-		}
-		if (expr instanceof IASTBinaryExpression) {
-			IASTBinaryExpression bexpr= (IASTBinaryExpression) expr;
-			return canContainName(bexpr.getOperand1()) || canContainName(bexpr.getOperand2());
-		}
-		if (expr instanceof IASTConditionalExpression) {
-			IASTConditionalExpression cexpr= (IASTConditionalExpression) expr;
-			return canContainName(cexpr.getLogicalConditionExpression()) || 
-					canContainName(cexpr.getPositiveResultExpression()) || canContainName(cexpr.getNegativeResultExpression());
-		}
-		if (expr instanceof IASTExpressionList) {
-			IASTExpressionList lexpr= (IASTExpressionList) expr;
-			IASTExpression[] subexprs= lexpr.getExpressions();
-			for (IASTExpression subexpr : subexprs) {
-				if (canContainName(subexpr))
-					return true;
-			}
-		}
-		return true;
+		NAME_SEARCH.reset();
+		expr.accept(NAME_SEARCH);
+		return NAME_SEARCH.foundName();
 	}
 	
 	/** 
@@ -113,5 +105,26 @@ public class ASTQueries {
 			}
 		}
 		return result;
+	}
+	
+	/**
+	 * Extracts the active declarations from an array of declarations.
+	 */
+	public static IASTDeclaration[] extractActiveDeclarations(final IASTDeclaration[] allDeclarations, final int size) {
+		IASTDeclaration[] active;
+		if (size == 0) {
+			active= IASTDeclaration.EMPTY_DECLARATION_ARRAY;
+		} else {
+			active= new IASTDeclaration[size];
+			int j= 0;
+			for (int i = 0; i < size; i++) {
+				IASTDeclaration d= allDeclarations[i];
+				if (d.isActive()) {
+					active[j++]= d;
+				}
+			}
+			active= (IASTDeclaration[]) ArrayUtil.removeNullsAfter(IASTDeclaration.class, active, j-1);
+		}
+		return active;
 	}
 }

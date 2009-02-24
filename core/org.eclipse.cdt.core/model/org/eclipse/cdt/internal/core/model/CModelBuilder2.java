@@ -210,7 +210,7 @@ public class CModelBuilder2 implements IContributedModelBuilder {
 			}
 		}
 		// declarations
-		final IASTDeclaration[] declarations= ast.getDeclarations();
+		final IASTDeclaration[] declarations= ast.getDeclarations(true);
 		for (IASTDeclaration declaration : declarations) {
 			if (isLocalToFile(declaration)) {
 				createDeclaration(fTranslationUnit, declaration);
@@ -405,7 +405,7 @@ public class CModelBuilder2 implements IContributedModelBuilder {
 	 * @throws DOMException
 	 */
 	private void createLinkageSpecification(Parent parent, ICPPASTLinkageSpecification linkageDeclaration) throws CModelException, DOMException {
-		IASTDeclaration[] declarations= linkageDeclaration.getDeclarations();
+		IASTDeclaration[] declarations= linkageDeclaration.getDeclarations(true);
 		for (IASTDeclaration declaration : declarations) {
 			if (linkageDeclaration.getFileLocation() != null || isLocalToFile(declaration)) {
 				createDeclaration(parent, declaration);
@@ -489,6 +489,7 @@ public class CModelBuilder2 implements IContributedModelBuilder {
 		final String nsName= ASTStringUtil.getQualifiedName(name);
 		final Namespace element= new Namespace(parent, nsName);
 		setIndex(element);
+		element.setActive(declaration.isActive());
 
 		// add to parent
 		parent.addChild(element);
@@ -505,7 +506,7 @@ public class CModelBuilder2 implements IContributedModelBuilder {
 
 		element.setTypeName(type);
 
-		IASTDeclaration[] nsDeclarations= declaration.getDeclarations();
+		IASTDeclaration[] nsDeclarations= declaration.getDeclarations(true);
 		for (IASTDeclaration nsDeclaration : nsDeclarations) {
 			if (declaration.getFileLocation() != null || isLocalToFile(nsDeclaration)) {
 				createDeclaration(element, nsDeclaration);
@@ -551,6 +552,7 @@ public class CModelBuilder2 implements IContributedModelBuilder {
 			element= new StructureDeclaration(parent, className, kind);
 		}
 		setIndex(element);
+		element.setActive(elaboratedTypeSpecifier.isActive());
 		element.setTypeName(type);
 
 		// add to parent
@@ -576,6 +578,7 @@ public class CModelBuilder2 implements IContributedModelBuilder {
 		final String enumName= ASTStringUtil.getSimpleName(astEnumName);
 		final Enumeration element= new Enumeration (parent, enumName);
 		setIndex(element);
+		element.setActive(enumSpecifier.isActive());
 		
 		// add to parent
 		parent.addChild(element);
@@ -599,6 +602,7 @@ public class CModelBuilder2 implements IContributedModelBuilder {
 		final IASTName astEnumName= enumDef.getName();
 		final Enumerator element= new Enumerator (enumarator, ASTStringUtil.getSimpleName(astEnumName));
 		setIndex(element);
+		element.setActive(enumDef.isActive());
 
 		IASTExpression initialValue= enumDef.getValue();
 		if(initialValue != null){
@@ -652,6 +656,7 @@ public class CModelBuilder2 implements IContributedModelBuilder {
 			element= classTemplate;
 		}
 		setIndex(element);
+		element.setActive(compositeTypeSpecifier.isActive());
 
 		if (compositeTypeSpecifier instanceof ICPPASTCompositeTypeSpecifier) {
 			// store super classes names
@@ -696,7 +701,7 @@ public class CModelBuilder2 implements IContributedModelBuilder {
 		// add members
 		pushDefaultVisibility(defaultVisibility);
 		try {
-			final IASTDeclaration[] memberDeclarations= compositeTypeSpecifier.getMembers();
+			final IASTDeclaration[] memberDeclarations= compositeTypeSpecifier.getDeclarations(true);
 			for (IASTDeclaration member : memberDeclarations) {
 				if (compositeTypeSpecifier.getFileLocation() != null || isLocalToFile(member)) {
 					createDeclaration(element, member);
@@ -722,6 +727,7 @@ public class CModelBuilder2 implements IContributedModelBuilder {
 
         final TypeDef element= new TypeDef(parent, name);
 		setIndex(element);
+		element.setActive(declarator.isActive());
 
         String typeName= ASTStringUtil.getSignatureString(declSpecifier, declarator);
 		element.setTypeName(typeName);
@@ -792,6 +798,7 @@ public class CModelBuilder2 implements IContributedModelBuilder {
 			element.setTypeName(ASTStringUtil.getSignatureString(specifier, declarator));
 			info= element.getSourceManipulationInfo();
 		}
+		element.setActive(declarator.isActive());
 		element.setConst(specifier.isConst());
 		element.setVolatile(specifier.isVolatile());
 		// TODO [cmodel] correctly resolve isStatic
@@ -958,6 +965,7 @@ public class CModelBuilder2 implements IContributedModelBuilder {
 			
 			info= element.getFunctionInfo();
 		}
+		element.setActive(functionDeclaration.isActive());
 
 		// TODO [cmodel] correctly resolve isStatic
 		info.setStatic(declSpecifier.getStorageClass() == IASTDeclSpecifier.sc_static);
@@ -1048,7 +1056,8 @@ public class CModelBuilder2 implements IContributedModelBuilder {
 			assert false;
 			return null;
 		}
-
+		element.setActive(declarator.isActive());
+		
 		// TODO [cmodel] correctly resolve isStatic
 		info.setStatic(declSpecifier.getStorageClass() == IASTDeclSpecifier.sc_static);
 
@@ -1068,6 +1077,7 @@ public class CModelBuilder2 implements IContributedModelBuilder {
 		IASTName name= usingDirDeclaration.getQualifiedName();
         Using element= new Using(parent, ASTStringUtil.getQualifiedName(name), true);
 		setIndex(element);
+		element.setActive(usingDirDeclaration.isActive());
 
 		// add to parent
 		parent.addChild(element);
@@ -1083,7 +1093,7 @@ public class CModelBuilder2 implements IContributedModelBuilder {
 		IASTName name= usingDeclaration.getName();
 		Using element= new Using(parent, ASTStringUtil.getSimpleName(name), false);
 		setIndex(element);
-
+		element.setActive(usingDeclaration.isActive());
 		// add to parent
 		parent.addChild(element);
 

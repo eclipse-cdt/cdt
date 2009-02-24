@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2008 IBM Corporation and others.
+ * Copyright (c) 2004, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -48,7 +48,10 @@ public class CEnumeration extends PlatformObject implements IEnumeration, ICInte
         enumeration.setBinding( this );
 	}
 	
-    public void addDeclaration( IASTName decl ){
+	public void addDeclaration(IASTName decl) {
+		if (!decl.isActive())
+			return;
+    	
         if( decl.getPropertyInParent() != IASTElaboratedTypeSpecifier.TYPE_NAME )
             return;
             
@@ -141,12 +144,10 @@ public class CEnumeration extends PlatformObject implements IEnumeration, ICInte
         return bindings;
     }
 
-    /**
-     * @param name
-     */
-    public void addDefinition( IASTName name ) {
-        definition = name;
-    }
+	public void addDefinition(IASTName name) {
+		if (name.isActive())
+			definition = name;
+	}
 
     /* (non-Javadoc)
      * @see org.eclipse.cdt.core.dom.ast.IType#isSameType(org.eclipse.cdt.core.dom.ast.IType)

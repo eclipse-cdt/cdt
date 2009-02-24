@@ -14,7 +14,26 @@ package org.eclipse.cdt.core.parser;
  * @noextend This interface is not intended to be extended by clients.
  * @noinstantiate This class is not intended to be instantiated by clients.
  */
-public class EndOfFileException extends Exception
-{
+public class EndOfFileException extends Exception {
 	private static final long serialVersionUID= 1607883323361197919L;
+	
+	private final boolean fEndsInactiveCode;
+
+	public EndOfFileException() {
+		fEndsInactiveCode= false;
+	}
+	
+	/**
+	 * @since 5.1
+	 */
+	public EndOfFileException(boolean endsInactiveCode) {
+		fEndsInactiveCode= true;
+	}
+	
+	/**
+	 * @since 5.1
+	 */
+	public boolean endsInactiveCode() {
+		return fEndsInactiveCode;
+	}
 }

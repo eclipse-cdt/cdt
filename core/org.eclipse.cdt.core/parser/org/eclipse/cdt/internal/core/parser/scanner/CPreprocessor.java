@@ -611,6 +611,11 @@ public class CPreprocessor implements ILexerLog, IScanner, IAdaptable {
     	}
 	}
 
+    
+	public int getCodeBranchNesting() {
+		return fCurrentContext.getCodeBranchNesting();
+	}
+
 	private void appendStringContent(StringBuffer buf, Token t1) {
     	final char[] image= t1.getCharImage();
     	final int length= image.length;
@@ -1296,7 +1301,7 @@ public class CPreprocessor implements ILexerLog, IScanner, IAdaptable {
 		} else {
 			fLocationMap.encounterPoundIfdef(offset, nameOffset, nameEndOffset, endOffset, isActive, macro);
 		}
-		return fCurrentContext.setBranchState(conditional, isActive, withinExpansion);
+		return fCurrentContext.setBranchState(conditional, isActive, withinExpansion, offset);
     }
 
     private CodeState executeIf(Lexer lexer, int startOffset, boolean isElif, boolean withinExpansion) throws OffsetLimitReachedException {
@@ -1339,7 +1344,7 @@ public class CPreprocessor implements ILexerLog, IScanner, IAdaptable {
 		} else {
 			fLocationMap.encounterPoundIf(startOffset, condOffset, condEndOffset, endOffset, isActive, refs);
 		}
-		return fCurrentContext.setBranchState(cond, isActive, withinExpansion);
+		return fCurrentContext.setBranchState(cond, isActive, withinExpansion, startOffset);
     }
     
 	private CodeState executeElse(final Lexer lexer, final int startOffset,boolean withinExpansion)
@@ -1353,7 +1358,7 @@ public class CPreprocessor implements ILexerLog, IScanner, IAdaptable {
 		
 		final boolean isActive= cond.canHaveActiveBranch(withinExpansion);
 		fLocationMap.encounterPoundElse(startOffset, endOffset, isActive);
-		return fCurrentContext.setBranchState(cond, isActive, withinExpansion);
+		return fCurrentContext.setBranchState(cond, isActive, withinExpansion, startOffset);
 	}
 
 	private CodeState executeEndif(Lexer lexer, int startOffset, boolean withinExpansion) throws OffsetLimitReachedException {
@@ -1364,7 +1369,7 @@ public class CPreprocessor implements ILexerLog, IScanner, IAdaptable {
 		} else {
 			fLocationMap.encounterPoundEndIf(startOffset, endOffset);
 		}
-		return fCurrentContext.getCodeState();
+		return fCurrentContext.setBranchEndState(cond, withinExpansion, startOffset);
 	}
 	
     /**

@@ -480,7 +480,7 @@ public class CVisitor extends ASTQueries {
 	    	} catch (DOMException e) {
 	    	}
 	    }
-        if (binding != null && !(binding instanceof IIndexBinding)) {
+        if (binding != null && !(binding instanceof IIndexBinding) && name.isActive()) {
         	if (binding instanceof IEnumeration) {
             	if (binding instanceof CEnumeration) {
             	    ((CEnumeration)binding).addDefinition(name);
@@ -546,7 +546,7 @@ public class CVisitor extends ASTQueries {
 					binding= scope.getBinding(name, false);
 				} catch (DOMException e) {
 				}
-				if (binding != null) {
+				if (binding != null && name.isActive()) {
 					if (binding instanceof CEnumeration) {
 				        ((CEnumeration)binding).addDeclaration(name);
 				    } else if (binding instanceof CStructure) {
@@ -559,7 +559,7 @@ public class CVisitor extends ASTQueries {
 					insertIntoScope= elabTypeSpec.getTranslationUnit().getScope();
 					try {
 						binding= insertIntoScope.getBinding(name, false);
-						if (binding != null) {
+						if (binding != null && name.isActive()) {
 							if (binding instanceof CEnumeration) {
 						        ((CEnumeration)binding).addDeclaration(name);
 						    } else if (binding instanceof CStructure) {
@@ -691,7 +691,7 @@ public class CVisitor extends ASTQueries {
 					binding = scope.getBinding(name, false);
 				} catch (DOMException e) {
 				}
-				if (binding != null && binding instanceof IIndexBinding == false) {
+				if (binding != null && !(binding instanceof IIndexBinding) && name.isActive()) {
 				    if (binding instanceof ICInternalFunction)
 				        ((ICInternalFunction)binding).addDeclarator((ICASTKnRFunctionDeclarator) declarator);
 				    else 
@@ -755,7 +755,7 @@ public class CVisitor extends ASTQueries {
         		return binding;
         	}
 		} else if (funcDeclarator != null) {
-			if (binding != null && !(binding instanceof IIndexBinding)) {
+			if (binding != null && !(binding instanceof IIndexBinding) && name.isActive()) {
 			    if (binding instanceof IFunction) {
 			        IFunction function = (IFunction) binding;
 			        if (function instanceof CFunction) {
@@ -774,7 +774,7 @@ public class CVisitor extends ASTQueries {
 				binding = new CTypedef(name);
 			} else {
 			    IType t1 = null, t2 = null;
-			    if (binding != null && !(binding instanceof IIndexBinding)) {
+			    if (binding != null && !(binding instanceof IIndexBinding) && name.isActive()) {
 			        if (binding instanceof IParameter) {
 			            return new ProblemBinding(name, IProblemBinding.SEMANTIC_INVALID_REDECLARATION, name.toCharArray());
 			        } else if (binding instanceof IVariable) {
@@ -812,7 +812,7 @@ public class CVisitor extends ASTQueries {
 				
 			if (scope != null) {
 				binding = scope.getBinding(name, false);
-				if (binding != null && !(binding instanceof IIndexBinding)) {
+				if (binding != null && !(binding instanceof IIndexBinding) && name.isActive()) {
 					if (binding instanceof CStructure)
 						((CStructure)binding).addDefinition(compositeTypeSpec);
 					return binding;

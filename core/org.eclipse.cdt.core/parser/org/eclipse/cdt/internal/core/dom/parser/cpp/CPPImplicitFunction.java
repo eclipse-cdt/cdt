@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2008 IBM Corporation and others.
+ * Copyright (c) 2005, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -18,7 +18,8 @@ import org.eclipse.cdt.core.dom.ast.IParameter;
 import org.eclipse.cdt.core.dom.ast.IScope;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTFunctionDeclarator;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunctionType;
-import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPVisitor;
+import org.eclipse.cdt.internal.core.dom.parser.ASTInternal;
+import org.eclipse.cdt.internal.core.dom.parser.ASTQueries;
 
 /**
  * The CPPImplicitFunction is used to represent implicit functions that exist on the translation
@@ -82,56 +83,56 @@ public class CPPImplicitFunction extends CPPFunction {
     }
     
     @Override
-	public IBinding resolveParameter( IASTParameterDeclaration param ){
-        IASTName aName = CPPVisitor.findInnermostDeclarator(param.getDeclarator()).getName();
-        IParameter binding = (IParameter) aName.getBinding();
-        if( binding != null )
-            return binding;
-        
-        //get the index in the parameter list
-        ICPPASTFunctionDeclarator fdtor = (ICPPASTFunctionDeclarator) param.getParent();
-        IASTParameterDeclaration [] ps = fdtor.getParameters();
-        int i = 0;
-        for( ; i < ps.length; i++ ){
-            if( param == ps[i] )
-                break;
-        }
-        
-        //set the binding for the corresponding parameter in all known defns and decls
-        binding = parms[i];
-        IASTParameterDeclaration temp = null;
-        if( definition != null ){
-            temp = definition.getParameters()[i];
-            IASTName n = CPPVisitor.findInnermostDeclarator(temp.getDeclarator()).getName();
-            n.setBinding( binding );
-            ((CPPParameter)binding).addDeclaration( n );
-        }
-        if( declarations != null ){
-            for( int j = 0; j < declarations.length && declarations[j] != null; j++ ){
-                temp = declarations[j].getParameters()[i];
-                IASTName n = CPPVisitor.findInnermostDeclarator(temp.getDeclarator()).getName();
-                n.setBinding( binding );
-                ((CPPParameter)binding).addDeclaration( n );
-            }
-        }
-        return binding;
+	public IBinding resolveParameter(IASTParameterDeclaration param) {
+		IASTName aName = ASTQueries.findInnermostDeclarator(param.getDeclarator()).getName();
+		IParameter binding = (IParameter) aName.getBinding();
+		if (binding != null)
+			return binding;
+
+		// get the index in the parameter list
+		ICPPASTFunctionDeclarator fdtor = (ICPPASTFunctionDeclarator) param.getParent();
+		IASTParameterDeclaration[] ps = fdtor.getParameters();
+		int i = 0;
+		for (; i < ps.length; i++) {
+			if (param == ps[i])
+				break;
+		}
+
+		// set the binding for the corresponding parameter in all known defns and decls
+		binding = parms[i];
+		IASTParameterDeclaration temp = null;
+		if (definition != null) {
+			temp = definition.getParameters()[i];
+			IASTName n = ASTQueries.findInnermostDeclarator(temp.getDeclarator()).getName();
+			n.setBinding(binding);
+			ASTInternal.addDeclaration(binding, n);
+		}
+		if (declarations != null) {
+			for (int j = 0; j < declarations.length && declarations[j] != null; j++) {
+				temp = declarations[j].getParameters()[i];
+				IASTName n = ASTQueries.findInnermostDeclarator(temp.getDeclarator()).getName();
+				n.setBinding(binding);
+				ASTInternal.addDeclaration(binding, n);
+			}
+		}
+		return binding;
     }
    
     @Override
-	protected void updateParameterBindings( ICPPASTFunctionDeclarator fdtor ){
-        if( parms != null ){
-            IASTParameterDeclaration [] nps = fdtor.getParameters();
-            if( nps.length != parms.length )
-                return;
+	protected void updateParameterBindings(ICPPASTFunctionDeclarator fdtor) {
+		if (parms != null) {
+			IASTParameterDeclaration[] nps = fdtor.getParameters();
+			if (nps.length != parms.length)
+				return;
 
-            for( int i = 0; i < nps.length; i++ ){
-                IASTName aName = CPPVisitor.findInnermostDeclarator(nps[i].getDeclarator()).getName(); 
-                aName.setBinding( parms[i] );
-				if( parms[i] instanceof ICPPInternalBinding )
-					((ICPPInternalBinding)parms[i]).addDeclaration( aName );
-            }
-        }
-    }
+			for (int i = 0; i < nps.length; i++) {
+				IASTName aName = ASTQueries.findInnermostDeclarator(nps[i].getDeclarator()).getName();
+				final IParameter param = parms[i];
+				aName.setBinding(param);
+				ASTInternal.addDeclaration(param, aName);
+			}
+		}
+	}
 
     @Override
 	public boolean takesVarArgs() {

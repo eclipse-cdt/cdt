@@ -57,9 +57,6 @@ public class CPPUnknownBinding extends PlatformObject
     public void addDeclaration(IASTNode node) {
     }
 
-    public void removeDeclaration(IASTNode node) {
-    }
-
     public String[] getQualifiedName() {
         return CPPVisitor.getQualifiedName(this);
     }

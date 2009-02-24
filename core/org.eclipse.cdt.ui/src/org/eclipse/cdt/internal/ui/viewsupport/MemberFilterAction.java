@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2001, 2008 IBM Corporation and others.
+ * Copyright (c) 2001, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -12,6 +12,7 @@ package org.eclipse.cdt.internal.ui.viewsupport;
 
 import org.eclipse.jface.action.Action;
 import org.eclipse.ui.PlatformUI;
+
 import org.eclipse.cdt.ui.actions.MemberFilterActionGroup;
 
 /**
@@ -28,8 +29,9 @@ public class MemberFilterAction extends Action {
 		fFilterActionGroup= actionGroup;
 		fFilterProperty= property;
 		
-		PlatformUI.getWorkbench().getHelpSystem().setHelp(this, contextHelpId);
-
+		if (contextHelpId != null) {
+			PlatformUI.getWorkbench().getHelpSystem().setHelp(this, contextHelpId);
+		}
 		setChecked(initValue);
 	}
 	

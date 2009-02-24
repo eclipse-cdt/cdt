@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2008 IBM Corporation and others.
+ * Copyright (c) 2005, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -42,6 +42,7 @@ public abstract class ASTNode implements IASTNode {
     private int offset;
 
     private boolean frozen = false;
+    private boolean active = true;
     
     public IASTNode getParent() {
     	return parent;
@@ -56,6 +57,10 @@ public abstract class ASTNode implements IASTNode {
 		return frozen;
 	}
 	
+	public boolean isActive() {
+		return active;
+	}
+	
 	public void freeze() {
 		frozen = true;
 		for(IASTNode child : getChildren()) {
@@ -63,6 +68,12 @@ public abstract class ASTNode implements IASTNode {
 				((ASTNode)child).freeze();
 			}
 		}
+	}
+	
+	public void setInactive() {
+		if(frozen)
+			throw new IllegalStateException("attempt to modify frozen AST node"); //$NON-NLS-1$
+		active= false;
 	}
     
 	protected void assertNotFrozen() throws IllegalStateException {

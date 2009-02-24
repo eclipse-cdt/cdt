@@ -137,7 +137,7 @@ public class GNUCSourceParser extends AbstractGNUSourceCodeParser {
     }
 
     protected IASTInitializer optionalCInitializer() throws EndOfFileException, BacktrackException {
-        if (LT(1) == IToken.tASSIGN) {
+        if (LTcatchEOF(1) == IToken.tASSIGN) {
             consume();
             return cInitializerClause(false);
         }
@@ -414,9 +414,10 @@ public class GNUCSourceParser extends AbstractGNUSourceCodeParser {
         for (IASTDeclarator declarator : declarators)
             simpleDeclaration.addDeclarator(declarator);
         
-        ((ASTNode) simpleDeclaration).setOffsetAndLength(firstOffset, endOffset-firstOffset);
+    	setRange(simpleDeclaration, firstOffset, endOffset);
         if ( altDeclSpec != null && altDeclarator != null) {
         	simpleDeclaration= new CASTAmbiguousSimpleDeclaration(simpleDeclaration, altDeclSpec, altDeclarator);
+        	setRange(simpleDeclaration, firstOffset, endOffset);
         }
         
         if (insertSemi) {
@@ -1221,48 +1222,7 @@ public class GNUCSourceParser extends AbstractGNUSourceCodeParser {
         	name= nodeFactory.newName();
         }
         ICASTCompositeTypeSpecifier result = nodeFactory.newCompositeTypeSpecifier(classKind, name);
-
-        int endOffset= consume().getEndOffset();
-        int declOffset= -1;
-        loop: while (true) {
-        	try {
-        		IToken next= LAcatchEOF(1);
-        		if (next == null || next.getType() == IToken.tEOC)
-        			break loop; // the missing semicolon will cause a problem, just break the loop.
-
-        		if (next.getType() == IToken.tRBRACE) {
-        			endOffset= consume().getEndOffset();
-        			break loop;
-        		}
-
-        		final int nextOffset = next.getOffset();
-        		declarationMark= next;
-        		next= null; // don't hold on to the token while parsing namespaces, class bodies, etc.
-
-        		IASTDeclaration d;
-        		if (declOffset == nextOffset) {
-        			// no progress
-        			d= skipProblemDeclaration(declOffset);
-        		} else {
-        			d = declaration(DeclarationOptions.C_MEMBER);
-        		}
-        		result.addMemberDeclaration(d);
-        		endOffset= calculateEndOffset(d);
-    		} catch (BacktrackException bt) {
-    			IASTDeclaration[] decls= problemDeclaration(declOffset, bt, DeclarationOptions.C_MEMBER);
-    			for (IASTDeclaration declaration : decls) {
-    				result.addMemberDeclaration(declaration);
-    				endOffset= calculateEndOffset(declaration);
-    			}
-    		} catch (EndOfFileException e) {
-    			result.addMemberDeclaration(skipProblemDeclaration(declOffset));
-    			endOffset= eofOffset;
-    			break loop;
-    		} finally {
-    			declarationMark= null;
-    		}
-        }
-        ((ASTNode) result).setOffsetAndLength(offset, endOffset - offset);
+        declarationListInBraces(result, offset, DeclarationOptions.C_MEMBER);
         return result;
     }
 
@@ -1302,7 +1262,7 @@ public class GNUCSourceParser extends AbstractGNUSourceCodeParser {
     		throws EndOfFileException, BacktrackException, FoundAggregateInitializer {
         IASTDeclarator d = declarator(option);
 
-        if (LT(1) == IToken.tASSIGN && LT(2) == IToken.tLBRACE) 
+        if (LTcatchEOF(1) == IToken.tASSIGN && LT(2) == IToken.tLBRACE) 
         	throw new FoundAggregateInitializer(d);
        
         IASTInitializer i = optionalCInitializer();
@@ -1409,8 +1369,9 @@ public class GNUCSourceParser extends AbstractGNUSourceCodeParser {
 			final int startingOffset, int endOffset, 
 			final DeclarationOptions option) throws EndOfFileException, BacktrackException {
         IASTDeclarator result= null;
+        int lt1;
         loop: while(true) {
-        	final int lt1= LT(1);
+        	lt1= LTcatchEOF(1);
         	switch (lt1) {
         	case IToken.tLPAREN:
         		result= functionDeclarator(isAbstract(declaratorName, nestedDeclarator) 
@@ -1445,7 +1406,8 @@ public class GNUCSourceParser extends AbstractGNUSourceCodeParser {
         		break loop;
         	}
         }
-		__attribute_decl_seq(supportAttributeSpecifiers, supportDeclspecSpecifiers);
+        if (lt1 != 0)
+        	__attribute_decl_seq(supportAttributeSpecifiers, supportDeclspecSpecifiers);
 
         if (result == null) {
         	result= nodeFactory.newDeclarator(null);
@@ -1454,7 +1416,7 @@ public class GNUCSourceParser extends AbstractGNUSourceCodeParser {
         	endOffset= calculateEndOffset(result);
         }
 
-        if (LT(1) == IToken.t_asm) { // asm labels bug 226121
+        if (lt1 != 0 && LT(1) == IToken.t_asm) { // asm labels bug 226121
     		consume();
     		endOffset= asmExpression(null).getEndOffset();
 

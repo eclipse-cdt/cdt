@@ -333,14 +333,6 @@ public class CPPClassType extends PlatformObject implements ICPPInternalClassTyp
 		}
 	}
 
-	public void removeDeclaration(IASTNode node) {
-		if (definition == node) {
-			definition = null;
-			return;
-		}
-		ArrayUtil.remove(declarations, node);
-	}
-
 	public String[] getQualifiedName() {
 		return CPPVisitor.getQualifiedName(this);
 	}

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2008 IBM Corporation and others.
+ * Copyright (c) 2005, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -31,6 +31,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunctionType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPParameter;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateParameterMap;
 import org.eclipse.cdt.core.index.IIndexBinding;
+import org.eclipse.cdt.internal.core.dom.parser.ASTInternal;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPVisitor;
 
 /**
@@ -179,10 +180,10 @@ public class CPPFunctionSpecialization extends CPPSpecialization implements ICPP
         try {
             IParameter[] params = getParameters();
             if (i < params.length) {
-        	    name.setBinding(params[i]);
-        	    if (params[i] instanceof ICPPInternalBinding)
-        	        ((ICPPInternalBinding)params[i]).addDeclaration(name);
-        	    return params[i];
+        	    final IParameter myParam = params[i];
+				name.setBinding(myParam);
+        	    ASTInternal.addDeclaration(myParam, name);
+        	    return myParam;
         	}
 
         } catch (DOMException e) {
@@ -222,15 +223,14 @@ public class CPPFunctionSpecialization extends CPPSpecialization implements ICPP
         }
         IASTParameterDeclaration[] nps = fdtor.getParameters();
     	for (int i = 0; i < nps.length; i++) {
-    		//temp = (CPPParameter) ops[i].getDeclarator().getName().getBinding();
-    		if (params[i] != null) {
+    		final IParameter param = params[i];
+			if (param != null) {
     		    IASTDeclarator dtor = nps[i].getDeclarator();
     		    while (dtor.getNestedDeclarator() != null)
     		        dtor = dtor.getNestedDeclarator();
     		    IASTName name = dtor.getName();
-    			name.setBinding(params[i]);
-    			if (params[i] instanceof ICPPInternalBinding)
-    			    ((ICPPInternalBinding) params[i]).addDeclaration(name);
+    			name.setBinding(param);
+    			ASTInternal.addDeclaration(param, name);
     		}
     	}
     }

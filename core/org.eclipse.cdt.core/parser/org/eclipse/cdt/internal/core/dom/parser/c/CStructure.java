@@ -222,16 +222,15 @@ public class CStructure extends PlatformObject implements ICompositeType, ICInte
         return t;
     }
 
-	/**
-	 * @param compositeTypeSpec
-	 */
 	public void addDefinition(ICASTCompositeTypeSpecifier compositeTypeSpec) {
-		definition = compositeTypeSpec.getName();
-		compositeTypeSpec.getName().setBinding( this );
+		if (compositeTypeSpec.isActive()) {
+			definition = compositeTypeSpec.getName();
+			compositeTypeSpec.getName().setBinding(this);
+		}
 	}
 	
 	public void addDeclaration(IASTName decl) {
-		if (decl.getPropertyInParent() != IASTElaboratedTypeSpecifier.TYPE_NAME)
+		if (!decl.isActive() || decl.getPropertyInParent() != IASTElaboratedTypeSpecifier.TYPE_NAME)
 			return;
 
 		decl.setBinding(this);

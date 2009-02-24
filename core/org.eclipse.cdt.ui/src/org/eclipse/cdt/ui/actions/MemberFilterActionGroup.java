@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2001, 2008 IBM Corporation and others.
+ * Copyright (c) 2001, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -29,37 +29,48 @@ package org.eclipse.cdt.ui.actions;
  */
 import java.util.ArrayList;
 
-import org.eclipse.cdt.internal.ui.viewsupport.MemberFilter;
-import org.eclipse.cdt.internal.ui.viewsupport.MemberFilterAction;
-import org.eclipse.cdt.ui.CUIPlugin;
-import org.eclipse.cdt.ui.PreferenceConstants;
-import org.eclipse.cdt.internal.ui.actions.ActionMessages;
+import org.eclipse.core.runtime.Assert;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.IToolBarManager;
 import org.eclipse.jface.preference.IPreferenceStore;
-import org.eclipse.core.runtime.Assert;
 import org.eclipse.jface.viewers.StructuredViewer;
 import org.eclipse.swt.custom.BusyIndicator;
 import org.eclipse.ui.IActionBars;
 import org.eclipse.ui.IMemento;
 import org.eclipse.ui.actions.ActionGroup;
-import org.eclipse.cdt.internal.ui.ICHelpContextIds;
+
+import org.eclipse.cdt.ui.CUIPlugin;
+import org.eclipse.cdt.ui.PreferenceConstants;
+
 import org.eclipse.cdt.internal.ui.CPluginImages;
+import org.eclipse.cdt.internal.ui.ICHelpContextIds;
+import org.eclipse.cdt.internal.ui.actions.ActionMessages;
+import org.eclipse.cdt.internal.ui.viewsupport.MemberFilter;
+import org.eclipse.cdt.internal.ui.viewsupport.MemberFilterAction;
 
 public class MemberFilterActionGroup extends ActionGroup {
 	public static final int FILTER_NONPUBLIC= MemberFilter.FILTER_NONPUBLIC;
 	public static final int FILTER_STATIC= MemberFilter.FILTER_STATIC;
 	public static final int FILTER_FIELDS= MemberFilter.FILTER_FIELDS;
+	/**
+	 * @since 5.1
+	 */
+	public static final int FILTER_INACTIVE= MemberFilter.FILTER_INACTIVE;
 	
 	/** @deprecated Unsupported filter constant */
 	@Deprecated
 	public static final int FILTER_LOCALTYPES= MemberFilter.FILTER_LOCALTYPES;
 	
+	/**
+	 * @deprecated we may choose to add more filters in future versions.
+	 */
+	@Deprecated
 	public static final int ALL_FILTERS= FILTER_NONPUBLIC | FILTER_FIELDS | FILTER_STATIC;
 	
 	private static final String TAG_HIDEFIELDS= "hidefields"; //$NON-NLS-1$
 	private static final String TAG_HIDESTATIC= "hidestatic"; //$NON-NLS-1$
 	private static final String TAG_HIDENONPUBLIC= "hidenonpublic"; //$NON-NLS-1$
+	private static final String TAG_HIDEINACTIVE= "hideinactive"; //$NON-NLS-1$
 	
 	private MemberFilterAction[] fFilterActions;
 	private MemberFilter fFilter;
@@ -101,6 +112,7 @@ public class MemberFilterActionGroup extends ActionGroup {
 		boolean doHideFields= store.getBoolean(getPreferenceKey(FILTER_FIELDS));
 		boolean doHideStatic= store.getBoolean(getPreferenceKey(FILTER_STATIC));
 		boolean doHidePublic= store.getBoolean(getPreferenceKey(FILTER_NONPUBLIC));
+		boolean doHideInactive= store.getBoolean(getPreferenceKey(FILTER_INACTIVE));
 
 		fFilter= new MemberFilter();
 		if (doHideFields)
@@ -108,7 +120,9 @@ public class MemberFilterActionGroup extends ActionGroup {
 		if (doHideStatic)
 			fFilter.addFilter(FILTER_STATIC);			
 		if (doHidePublic)
-			fFilter.addFilter(FILTER_NONPUBLIC);		
+			fFilter.addFilter(FILTER_NONPUBLIC);	
+		if (doHideInactive)
+			fFilter.addFilter(FILTER_INACTIVE);
 	
 		// fields
 		String title= ActionMessages.getString("MemberFilterActionGroup.hide_fields.label"); //$NON-NLS-1$
@@ -133,9 +147,16 @@ public class MemberFilterActionGroup extends ActionGroup {
 		hideNonPublic.setDescription(ActionMessages.getString("MemberFilterActionGroup.hide_nonpublic.description")); //$NON-NLS-1$
 		hideNonPublic.setToolTipText(ActionMessages.getString("MemberFilterActionGroup.hide_nonpublic.tooltip")); //$NON-NLS-1$
 		CPluginImages.setImageDescriptors(hideNonPublic, CPluginImages.T_LCL, CPluginImages.IMG_ACTION_SHOW_PUBLIC); 
-	
+
+		// inactive
+		title= ActionMessages.getString("MemberFilterActionGroup.hide_inactive.label"); //$NON-NLS-1$
+		MemberFilterAction hideInactive= new MemberFilterAction(this, title, FILTER_INACTIVE, null, doHideInactive);
+		hideInactive.setDescription(ActionMessages.getString("MemberFilterActionGroup.hide_inactive.description")); //$NON-NLS-1$
+		hideInactive.setToolTipText(ActionMessages.getString("MemberFilterActionGroup.hide_inactive.tooltip")); //$NON-NLS-1$
+		CPluginImages.setImageDescriptors(hideInactive, CPluginImages.T_LCL, CPluginImages.IMG_ACTION_HIDE_INACTIVE); 
+
 		// order corresponds to order in toolbar
-		fFilterActions= new MemberFilterAction[] { hideFields, hideStatic, hideNonPublic };
+		fFilterActions= new MemberFilterAction[] { hideFields, hideStatic, hideNonPublic, hideInactive };
 		
 		fViewer.addFilter(fFilter);
 	}
@@ -148,9 +169,9 @@ public class MemberFilterActionGroup extends ActionGroup {
 	 * the last used filter settings in the preference store
 	 * @param inViewMenu if <code>true</code> the actions are added to the view
 	 * menu. If <code>false</code> they are added to the toobar.
-	 * @param availableFilters Specifies which filter action should be contained. <code>FILTER_NONPUBLIC</code>,
-	 * <code>FILTER_STATIC</code> and <code>FILTER_FIELDS</code>
-	 * or a combination of these constants are possible values. Use <code>ALL_FILTERS</code> to select all available filters.
+	 * @param availableFilters Specifies which filter action should be contained. {@link #FILTER_NONPUBLIC},
+	 * {@link #FILTER_STATIC}, {@link #FILTER_FIELDS}, {@link #FILTER_INACTIVE}
+	 * or a combination of these constants are possible values. 
 	 */
 	public MemberFilterActionGroup(StructuredViewer viewer, String viewerId, boolean inViewMenu, int availableFilters) {	
 				
@@ -211,7 +232,22 @@ public class MemberFilterActionGroup extends ActionGroup {
 			CPluginImages.setImageDescriptors(hideNonPublic, CPluginImages.T_LCL, "public_co.gif"); //$NON-NLS-1$
 			actions.add(hideNonPublic);
 		}
-		
+
+		// non-public
+		filterProperty= FILTER_INACTIVE;
+		if (isSet(filterProperty, availableFilters)) {
+			boolean filterEnabled= store.getBoolean(getPreferenceKey(filterProperty));
+			if (filterEnabled) {
+				fFilter.addFilter(filterProperty);
+			}
+			title= ActionMessages.getString("MemberFilterActionGroup.hide_inactive.label"); //$NON-NLS-1$
+			MemberFilterAction hideInactive= new MemberFilterAction(this, title, filterProperty, null, filterEnabled);
+			hideInactive.setDescription(ActionMessages.getString("MemberFilterActionGroup.hide_inactive.description")); //$NON-NLS-1$
+			hideInactive.setToolTipText(ActionMessages.getString("MemberFilterActionGroup.hide_inactive.tooltip")); //$NON-NLS-1$
+			CPluginImages.setImageDescriptors(hideInactive, CPluginImages.T_LCL, "filterInactive.gif"); //$NON-NLS-1$
+			actions.add(hideInactive);
+		}
+
 		// order corresponds to order in toolbar
 		fFilterActions= actions.toArray(new MemberFilterAction[actions.size()]);
 		
@@ -230,7 +266,7 @@ public class MemberFilterActionGroup extends ActionGroup {
 	 * Sets the member filters.
 	 * 
 	 * @param filterProperty the filter to be manipulated. Valid values are <code>FILTER_FIELDS</code>, 
-	 * <code>FILTER_PUBLIC</code>, and <code>FILTER_PRIVATE</code> as defined by this action 
+	 * <code>FILTER_PUBLIC</code>, <code>FILTER_PRIVATE</code> and <code>FILTER_INACTIVE</code> as defined by this action 
 	 * group
 	 * @param set if <code>true</code> the given filter is installed. If <code>false</code> the
 	 * given filter is removed
@@ -278,8 +314,8 @@ public class MemberFilterActionGroup extends ActionGroup {
 	 * Returns <code>true</code> if the given filter is installed.
 	 * 
 	 * @param filterProperty the filter to be tested. Valid values are <code>FILTER_FIELDS</code>, 
-	 * <code>FILTER_PUBLIC</code>, and <code>FILTER_PRIVATE</code> as defined by this action 
-	 * group
+	 * <code>FILTER_PUBLIC</code>, <code>FILTER_PRIVATE</code> and <code>FILTER_INACTIVE</code> 
+	 * as defined by this action group
 	 */	
 	public boolean hasMemberFilter(int filterProperty) {
 		return fFilter.hasFilter(filterProperty);
@@ -294,6 +330,7 @@ public class MemberFilterActionGroup extends ActionGroup {
 		memento.putString(TAG_HIDEFIELDS, String.valueOf(hasMemberFilter(FILTER_FIELDS)));
 		memento.putString(TAG_HIDESTATIC, String.valueOf(hasMemberFilter(FILTER_STATIC)));
 		memento.putString(TAG_HIDENONPUBLIC, String.valueOf(hasMemberFilter(FILTER_NONPUBLIC)));
+		memento.putString(TAG_HIDEINACTIVE, String.valueOf(hasMemberFilter(FILTER_INACTIVE)));
 	}
 	
 	/**
@@ -305,11 +342,12 @@ public class MemberFilterActionGroup extends ActionGroup {
 	 */	
 	public void restoreState(IMemento memento) {
 		setMemberFilters(
-			new int[] {FILTER_FIELDS, FILTER_STATIC, FILTER_NONPUBLIC},
+			new int[] {FILTER_FIELDS, FILTER_STATIC, FILTER_NONPUBLIC, FILTER_INACTIVE},
 			new boolean[] {
 				Boolean.valueOf(memento.getString(TAG_HIDEFIELDS)).booleanValue(),
 				Boolean.valueOf(memento.getString(TAG_HIDESTATIC)).booleanValue(),
-				Boolean.valueOf(memento.getString(TAG_HIDENONPUBLIC)).booleanValue()
+				Boolean.valueOf(memento.getString(TAG_HIDENONPUBLIC)).booleanValue(),
+				Boolean.valueOf(memento.getString(TAG_HIDEINACTIVE)).booleanValue()
 			}, false);
 	}
 	
@@ -332,6 +370,7 @@ public class MemberFilterActionGroup extends ActionGroup {
 		tbm.add(fFilterActions[0]); // fields
 		tbm.add(fFilterActions[1]); // static
 		tbm.add(fFilterActions[2]); // public
+		tbm.add(fFilterActions[3]); // inactive
 	}
 	
 	/**
@@ -348,10 +387,12 @@ public class MemberFilterActionGroup extends ActionGroup {
 			menu.prependToGroup(filters, fFilterActions[0]); // fields
 			menu.prependToGroup(filters, fFilterActions[1]); // static
 			menu.prependToGroup(filters, fFilterActions[2]); // public
+			menu.prependToGroup(filters, fFilterActions[3]); // inactive
 		} else {
 			menu.add(fFilterActions[0]); // fields
 			menu.add(fFilterActions[1]); // static
 			menu.add(fFilterActions[2]); // public
+			menu.add(fFilterActions[3]); // inactive
 		}
 	}
 	

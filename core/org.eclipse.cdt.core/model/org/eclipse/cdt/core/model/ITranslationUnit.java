@@ -13,7 +13,9 @@ package org.eclipse.cdt.core.model;
 
 import java.util.Map;
 
+import org.eclipse.cdt.core.dom.ast.ASTVisitor;
 import org.eclipse.cdt.core.dom.ast.IASTCompletionNode;
+import org.eclipse.cdt.core.dom.ast.IASTDeclarationListOwner;
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
 import org.eclipse.cdt.core.index.IIndex;
 import org.eclipse.cdt.core.parser.CodeReader;
@@ -97,8 +99,13 @@ public interface ITranslationUnit extends ICElement, IParent, IOpenable, ISource
 
 	/**
 	 * Style constant for {@link #getAST(IIndex, int)}. 
-	 * Instructs the parser to make an attempt to create ast nodes for inactive code branches.
-	 * mstodo document how to access those.
+	 * Instructs the parser to make an attempt to create ast nodes for inactive code branches. The parser
+	 * makes its best effort to create ast for the inactive code branches but may decide to skip parts
+	 * of the inactive code (e.g. function bodies, entire code branches, etc.).
+	 * <p>
+	 * The inactive nodes can be accessed via {@link IASTDeclarationListOwner#getDeclarations(boolean)} or
+	 * by using a visitor with {@link ASTVisitor#includeInactiveNodes} set to <code>true</code>.
+	 * 
 	 * @since 5.1
 	 */
 	public final static int AST_PARSE_INACTIVE_CODE= 0x80;

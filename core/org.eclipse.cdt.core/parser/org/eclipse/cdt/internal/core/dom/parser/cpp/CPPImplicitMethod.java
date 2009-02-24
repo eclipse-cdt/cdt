@@ -149,9 +149,9 @@ public class CPPImplicitMethod extends CPPImplicitFunction implements ICPPMethod
 					if (ok) {
 						name.setBinding(this);
 						if (member instanceof IASTSimpleDeclaration)
-							addDeclaration(dtor);
+							ASTInternal.addDeclaration(this, dtor);
 						else if (member instanceof IASTFunctionDefinition)
-							addDefinition(dtor);
+							ASTInternal.addDefinition(this, dtor);
 						return member;
 					}
 				}

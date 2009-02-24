@@ -12,6 +12,7 @@ package org.eclipse.cdt.core.dom.ast.cpp;
 
 import org.eclipse.cdt.core.dom.ast.ASTNodeProperty;
 import org.eclipse.cdt.core.dom.ast.IASTDeclaration;
+import org.eclipse.cdt.core.dom.ast.IASTDeclarationListOwner;
 
 /**
  * This interface represents a linkage specification. e.g. extern "C" { ... }
@@ -19,7 +20,7 @@ import org.eclipse.cdt.core.dom.ast.IASTDeclaration;
  * @noextend This interface is not intended to be extended by clients.
  * @noimplement This interface is not intended to be implemented by clients.
  */
-public interface ICPPASTLinkageSpecification extends IASTDeclaration {
+public interface ICPPASTLinkageSpecification extends IASTDeclaration, IASTDeclarationListOwner {
 
 	/**
 	 * Get the "literal" that represents the linkage.

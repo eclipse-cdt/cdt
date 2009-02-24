@@ -729,7 +729,7 @@ public class CPreprocessor implements ILexerLog, IScanner, IAdaptable {
                 if (isHex && !hasExponent) {
                     continue;
                 }
-                if (isFloat && !isHex && !hasExponent && pos+1 <= image.length) {
+                if (isFloat && !isHex && !hasExponent && pos+1 < image.length) {
                 	switch (image[pos+1]) {
                 	case '+': case '-':
                 	case '0': case '1': case '2': case '3': case '4': case '5': case '6': case '7': case '8': case '9':
@@ -742,7 +742,7 @@ public class CPreprocessor implements ILexerLog, IScanner, IAdaptable {
 
             // check for hex float exponent
             case 'p': case 'P':
-                if (isFloat && isHex && !hasExponent && pos+1 >= image.length) {
+                if (isFloat && isHex && !hasExponent && pos+1 < image.length) {
                 	switch (image[pos+1]) {
                 	case '+': case '-':
                 	case '0': case '1': case '2': case '3': case '4': case '5': case '6': case '7': case '8': case '9':

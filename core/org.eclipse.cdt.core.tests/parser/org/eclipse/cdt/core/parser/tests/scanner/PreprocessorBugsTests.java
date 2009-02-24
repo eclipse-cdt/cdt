@@ -186,5 +186,18 @@ public class PreprocessorBugsTests extends PreprocessorTestsBase {
 		validateProblemCount(1);
 		validateProblem(0, IProblem.PREPROCESSOR_MISSING_RPAREN_PARMLIST, null);
 	}
+	
+	// #if 0xe000
+	// ok
+	// #endif
+	// 0x1p2 0xe0
+	public void testHexConstant_Bug265927() throws Exception {
+		initializeScanner();
+		validateIdentifier("ok");
+		validateFloatingPointLiteral("0x1p2");
+		validateInteger("0xe0");
+		validateEOF();
+		validateProblemCount(0); 
+	}
 
 }

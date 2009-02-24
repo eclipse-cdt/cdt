@@ -868,16 +868,17 @@ final public class Lexer {
 	
 	private Token number(final int start, int length, boolean isFloat) throws OffsetLimitReachedException {
 		boolean isPartOfNumber= true;
+		boolean isHex= false;
 		int c= fCharPhase3;
 		while (true) {
 			switch(c) {
 			// non-digit
             case 'a': case 'b': case 'c': case 'd':           case 'f': case 'g': case 'h': case 'i': 
             case 'j': case 'k': case 'l': case 'm': case 'n': case 'o':           case 'q': case 'r': 
-            case 's': case 't': case 'u': case 'v': case 'w': case 'x': case 'y': case 'z':
+            case 's': case 't': case 'u': case 'v': case 'w':           case 'y': case 'z':
             case 'A': case 'B': case 'C': case 'D':           case 'F': case 'G': case 'H': case 'I':
             case 'J': case 'K': case 'L': case 'M': case 'N': case 'O':           case 'Q': case 'R': 
-            case 'S': case 'T': case 'U': case 'V': case 'W': case 'X': case 'Y': case 'Z':
+            case 'S': case 'T': case 'U': case 'V': case 'W': 		    case 'Y': case 'Z':
             case '_': 
             	
             // digit
@@ -885,22 +886,30 @@ final public class Lexer {
             case '5': case '6': case '7': case '8': case '9':
             	break;
             	
+            case 'x': case 'X':
+            	isHex= !isFloat;
+            	break;
+            	
             // period
             case '.':
             	isFloat= true;
             	break;
             	
-            // sign
-            case 'p':
-            case 'P':
+            // exponents
             case 'e':
             case 'E':
+            	if (isHex)
+            		break;
+            	//$FALL-THROUGH$
+            case 'p':
+            case 'P':
             	length++;
             	c= nextCharPhase3();
             	switch (c) {
             	case '+': case '-':
             	case '0': case '1': case '2': case '3': case '4': case '5': case '6': case '7': case '8': case '9':
             		isFloat= true;
+            		isHex= false;
             		length++;
                 	c= nextCharPhase3();
             		break;

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2008 IBM Corporation and others.
+ * Copyright (c) 2004, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,10 +8,6 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-
-/*
- * Created on Jul 15, 2004
- */
 package org.eclipse.cdt.core.parser.util;
 
 import java.util.Collections;
@@ -33,6 +29,13 @@ public class ObjectSet<T> extends ObjectTable<T> {
     	@Override public void addAll( ObjectSet set ) { throw new UnsupportedOperationException(); }
     };
 
+    /**
+	 * @since 5.1
+	 */
+    @SuppressWarnings("unchecked")
+	public static <T> ObjectSet<T> emptySet() {
+    	return EMPTY_SET;
+    }
     /**
      * Construct an empty ObjectSet, allocating an initial storage for the specified
      * number of elements

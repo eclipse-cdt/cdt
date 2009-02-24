@@ -700,6 +700,9 @@ public class ASTTypeUtil {
 					result.addFirst(new String(name));
 				}
 			}
+			if (owner instanceof ICPPTemplateParameter)
+				break;
+			
 			owner= owner.getOwner();
 		}
 	    return result.toArray(new String[result.size()]);

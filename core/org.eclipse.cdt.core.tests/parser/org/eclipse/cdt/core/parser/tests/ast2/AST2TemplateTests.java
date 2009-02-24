@@ -3893,4 +3893,17 @@ public class AST2TemplateTests extends AST2BaseTest {
 		parseAndCheckBindings(code, ParserLanguage.CPP);
 	}
 	
+	// template <typename T> void f(T t) {
+	//     g(t);
+	// }
+	// template <typename T> void g(T t) {}
+	public void testDependentNameReferencingLaterDeclaration_265926() throws Exception {
+		final String code = getAboveComment();
+		BindingAssertionHelper bh= new BindingAssertionHelper(code, true);
+		IFunction gref= bh.assertNonProblem("g(t)", 1);
+		assertInstance(gref, ICPPUnknownBinding.class);
+		IFunction gdecl= bh.assertNonProblem("g(T t)", 1);
+		
+		parseAndCheckBindings(code, ParserLanguage.CPP);
+	}
 }

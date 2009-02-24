@@ -1310,41 +1310,8 @@ public class CPPTemplates {
 		return result;
 	}
 	
-	/*
-	 * aftodo - need to review this
-	 */
-	static public IType[] createTypeArray(Object[] params) {
-		if (params == null)
-			return IType.EMPTY_TYPE_ARRAY;
-
-		if (params instanceof IType[])
-			return (IType[]) params;
-
-		IType[] result = new IType[params.length];
-		for (int i = 0; i < params.length; i++) {
-			IType type= null;
-		    final Object param = params[i];
-			if (param instanceof IASTNode) {
-		    	type= CPPVisitor.createType((IASTNode) param);
-			} else if (param instanceof IParameter) {
-				try {
-					type= ((IParameter) param).getType();
-				} catch (DOMException e) {
-					type= e.getProblem();
-				}
-			}
-			// prevent null pointer exception when the type cannot be determined
-			// happens when templates with still ambiguous template-ids are accessed during
-			// resolution of other ambiguities.
-		    result[i]= type == null ? new CPPBasicType(-1, 0) : type;
-		}
-		return result;
-	}
-
-	static protected void instantiateFunctionTemplates(IFunction[] functions,
-			Object[] functionArguments, IASTName name) {
+	static protected void instantiateFunctionTemplates(IFunction[] functions, IType[] fnArgs, IASTName name) {
 		ICPPTemplateArgument[] templateArguments= null;
-		IType[] fnArgs= null;
 		for (int i = 0; i < functions.length; i++) {
 			IFunction func = functions[i];
 			if (func instanceof ICPPFunctionTemplate) {
@@ -1354,7 +1321,6 @@ public class CPPTemplates {
 				// extract template arguments and parameter types.
 				if (templateArguments == null || fnArgs == null) {
 					templateArguments = ICPPTemplateArgument.EMPTY_ARGUMENTS;
-					fnArgs= createTypeArray(functionArguments);
 					try {
 						if (containsDependentType(fnArgs)) {
 							functions[i]= CPPUnknownFunction.createForSample(template, name);

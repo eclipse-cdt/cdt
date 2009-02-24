@@ -26,6 +26,7 @@ import org.eclipse.cdt.core.dom.ast.IASTCompositeTypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTDeclarator;
 import org.eclipse.cdt.core.dom.ast.IASTExpression;
+import org.eclipse.cdt.core.dom.ast.IASTExpressionList;
 import org.eclipse.cdt.core.dom.ast.IASTFieldReference;
 import org.eclipse.cdt.core.dom.ast.IASTFunctionCallExpression;
 import org.eclipse.cdt.core.dom.ast.IASTFunctionDefinition;
@@ -34,6 +35,7 @@ import org.eclipse.cdt.core.dom.ast.IASTInitializer;
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTNamedTypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
+import org.eclipse.cdt.core.dom.ast.IASTParameterDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTSimpleDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTTypeId;
 import org.eclipse.cdt.core.dom.ast.IPointerType;
@@ -102,8 +104,8 @@ public class LookupData {
 
 	public ICPPClassType skippedScope;
 	public Object foundItems = null;
-	public Object[] functionParameters;
-	public ICPPASTTemplateId templateId;
+	private Object[] functionArgs;
+	private IType[] functionArgTypes;
 	public ProblemBinding problem;
 	
 	public LookupData(IASTName n) {
@@ -511,5 +513,97 @@ public class LookupData {
 		if (astName == null)
 			return false;
 		return (astName instanceof ICPPASTTemplateId || astName.getPropertyInParent() == ICPPASTTemplateId.TEMPLATE_NAME);
+	}
+	
+	public void setFunctionArguments(IASTExpression args) {
+		IASTExpression[] exprs;
+		if (args instanceof IASTExpressionList) {
+			ASTNodeProperty prop = args.getPropertyInParent();
+			if (prop == IASTFunctionCallExpression.PARAMETERS || prop == ICPPASTNewExpression.NEW_INITIALIZER 
+					|| prop == ICPPASTConstructorChainInitializer.INITIALIZER) {
+				exprs= ((IASTExpressionList) args).getExpressions();
+			} else {
+				exprs= new IASTExpression[] {args};
+			}
+		} else if (args != null) {
+			exprs= new IASTExpression[] { args };
+		} else {
+			exprs = IASTExpression.EMPTY_EXPRESSION_ARRAY;
+		}
+		setFunctionArguments(exprs);
+	}
+
+	public void setFunctionArguments(IASTExpression[] exprs) {
+		functionArgs= exprs;
+		if (exprs.length != 0) {
+			IASTNode node= exprs[0];
+			boolean checkForDependentName= false;
+			while (node != null) {
+				if (node instanceof ICPPASTTemplateDeclaration) {
+					checkForDependentName= true;
+					break;
+				}
+				node= node.getParent();
+			}
+			if (checkForDependentName) {
+				IType[] types= getFunctionArgumentTypes();
+				for (int i = 0; i < types.length; i++) {
+					if (CPPTemplates.isDependentType(types[i])) {
+						checkPointOfDecl= false;
+						break;
+					}
+				}
+			}
+		}
+	}
+
+	public IType[] getFunctionArgumentTypes() {
+		if (functionArgTypes == null && functionArgs != null) {
+			if (functionArgs instanceof IASTParameterDeclaration[]) {
+				IASTParameterDeclaration[] pdecls= (IASTParameterDeclaration[]) functionArgs;
+				functionArgTypes= new IType[pdecls.length];
+				for (int i = 0; i < pdecls.length; i++) {
+					IASTParameterDeclaration p = pdecls[i];
+					functionArgTypes[i]= CPPVisitor.createType(p.getDeclarator());
+				}
+			} else if (functionArgs instanceof IASTExpression[]) {
+				IASTExpression[] exprs= (IASTExpression[]) functionArgs;
+				functionArgTypes= new IType[exprs.length];
+				for (int i = 0; i < exprs.length; i++) {
+					IASTExpression e = exprs[i];
+					IType etype= e.getExpressionType();
+					functionArgTypes[i]= etype;
+				}
+
+			}
+		}
+		return functionArgTypes;
+	}
+
+	public void setFunctionArgumentTypes(IType[] paramTypes) {
+		functionArgTypes= paramTypes;
+	}
+
+	public void setFunctionParameters(IASTParameterDeclaration[] parameters) {
+		functionArgs= parameters;
+	}
+
+	public IASTExpression[] getFunctionArguments() {
+		if (functionArgs instanceof IASTExpression[])
+			return (IASTExpression[]) functionArgs;
+		
+		return null;
+	}
+	
+	public int getFunctionArgumentCount() {
+		if (functionArgs != null)
+			return functionArgs.length;
+		if (functionArgTypes != null)
+			return functionArgTypes.length;
+		return 0;
+	}
+
+	public boolean hasArgumentTypes() {
+		return functionArgTypes != null || functionArgs != null;
 	}
 }

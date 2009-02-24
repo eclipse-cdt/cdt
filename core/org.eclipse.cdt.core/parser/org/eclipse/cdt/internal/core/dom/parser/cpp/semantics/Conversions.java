@@ -14,7 +14,13 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.dom.parser.cpp.semantics;
 
-import static org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.SemanticUtil.*;
+import static org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.SemanticUtil.CVQ;
+import static org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.SemanticUtil.PTR_CVQ;
+import static org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.SemanticUtil.REF;
+import static org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.SemanticUtil.TDEF;
+import static org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.SemanticUtil.addQualifiers;
+import static org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.SemanticUtil.getNestedType;
+import static org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.SemanticUtil.getUltimateType;
 
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.dom.ast.DOMException;
@@ -354,7 +360,7 @@ public class Conversions {
 			}
 			if (j > 0) {
 				LookupData data= new LookupData();
-				data.functionParameters= new IType [] { source };
+				data.setFunctionArgumentTypes(new IType [] { source });
 				IBinding binding = CPPSemantics.resolveFunction(data, convertingCtors, false);
 				if (binding instanceof ICPPConstructor && !(binding instanceof IProblemBinding)) {
 					constructorCost = checkStandardConversionSequence(t, target, false);

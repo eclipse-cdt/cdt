@@ -6425,6 +6425,108 @@ public class AST2CPPTests extends AST2BaseTest {
         ba.assertProblem("a; //6", 1);
     }
     
+    
+    // struct A {
+	//   int x;
+	// };
+	//
+	// struct B {
+	//    A& operator++(); // prefix
+	//    A operator++(int); // postfix
+	// };
+	//
+	// void test(B p1, B p2) {
+	//    (p1++).x; //1
+	//    (++p1).x; //2
+	// }
+    public void testOverloadedUnaryOperator_259927_3() throws Exception {
+    	BindingAssertionHelper ba= new BindingAssertionHelper(getAboveComment(), true);
+    	ba.assertNonProblem("x; //1", 1, ICPPField.class);
+    	ba.assertNonProblem("x; //2", 1, ICPPField.class);
+    }
+    
+    
+	// struct A {
+	//   int x;
+	// };
+	// struct B { };
+    // A& operator++(B); // prefix
+	// A operator++(B, int); // postfix
+	//
+	// void test(B p1, B p2) {
+	//    (p1++).x; //1
+	//    (++p1).x; //2
+	// }
+    public void testOverloadedUnaryOperator_259927_4() throws Exception {
+    	BindingAssertionHelper ba= new BindingAssertionHelper(getAboveComment(), true);
+    	ba.assertNonProblem("x; //1", 1, ICPPField.class);
+    	ba.assertNonProblem("x; //2", 1, ICPPField.class);
+    }
+    
+
+	// struct A {
+	//	int xx;
+	// };
+	//
+	//
+	// struct B {
+	//	A operator*();
+	//	A operator&();
+	//	A operator+();
+	//	A operator-();
+	//	A operator!();
+	//	A operator~();
+	// };
+	//
+	// int main() {
+	//	B b;
+	//
+	//	(*b).xx; // 1
+	//	(&b).xx; // 2
+	//	(+b).xx; // 3
+	//	(-b).xx; // 4
+	//	(!b).xx; // 5
+	//	(~b).xx; // 6
+	// }
+    public void testOverloadedUnaryOperator_259927_5() throws Exception {
+    	BindingAssertionHelper ba= new BindingAssertionHelper(getAboveComment(), true);
+    	for(int i = 1; i <=6; i++)
+    		ba.assertNonProblem("xx; // "+i, 2, ICPPField.class);
+    }
+    
+	// struct A {
+	//	int xx;
+	// };
+	//
+	//
+	// struct B {
+	// };
+	//
+	// A operator*(B);
+	// A operator&(B);
+	// A operator+(B);
+	// A operator-(B);
+	// A operator!(B);
+	// A operator~(B);
+	//
+	// int main() {
+	//	B b;
+	//
+	//	(*b).xx; // 1
+	//	(&b).xx; // 2
+	//	(+b).xx; // 3
+	//	(-b).xx; // 4
+	//	(!b).xx; // 5
+	//	(~b).xx; // 6
+	//}
+    public void testOverloadedUnaryOperator_259927_6() throws Exception {
+    	BindingAssertionHelper ba= new BindingAssertionHelper(getAboveComment(), true);
+    	for(int i = 1; i <=6; i++)
+    		ba.assertNonProblem("xx; // "+i, 2, ICPPField.class);	
+    }
+    
+    
+    
     // int a,b,c,d ;
     // class X {
     //	 void m() {

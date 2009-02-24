@@ -1,6 +1,6 @@
 /*******************************************************************************
  * Copyright (c) 2004, 2009 IBM Corporation and others.
- * All rights reserved. This program and the accompanying materials
+ * All rights reserved. This program and the accompanying masterials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
@@ -8,12 +8,11 @@
  * Contributors:
  *    John Camelon (IBM) - Initial API and implementation
  *    Sergey Prigogin (Google)
+ *    Mike Kucera (IBM)
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.dom.parser.cpp;
 
-import static org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.SemanticUtil.CVQ;
-import static org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.SemanticUtil.REF;
-import static org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.SemanticUtil.TDEF;
+import static org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.SemanticUtil.*;
 
 import org.eclipse.cdt.core.dom.ast.ASTVisitor;
 import org.eclipse.cdt.core.dom.ast.DOMException;
@@ -122,39 +121,14 @@ public class CPPASTUnaryExpression extends ASTNode implements ICPPASTUnaryExpres
 			return CPPVisitor.get_SIZE_T(this);
 		case IASTUnaryExpression.op_typeid:
 			return CPPVisitor.get_type_info(this);
-		case IASTUnaryExpression.op_not:
-			return new CPPBasicType(ICPPBasicType.t_bool, 0);
 		}
 		
 		final IASTExpression operand = getOperand();
-		if (op == IASTUnaryExpression.op_star) {
-			IType type= operand.getExpressionType();
-			type = SemanticUtil.getNestedType(type, TDEF | REF | CVQ);
-	    	if (type instanceof IProblemBinding) {
-	    		return type;
-	    	}
-		    try {
-				if (type instanceof ICPPClassType) {
-					ICPPFunction operator= CPPSemantics.findOperator(this, (ICPPClassType) type);
-					if (operator != null) {
-						return operator.getType().getReturnType();
-					}
-				} else if (type instanceof IPointerType || type instanceof IArrayType) {
-					return ((ITypeContainer) type).getType();
-				} else if (type instanceof ICPPUnknownType) {
-					return CPPUnknownClass.createUnnamedInstance();
-				}
-			} catch (DOMException e) {
-				return e.getProblem();
-			}
-			return new ProblemBinding(this, IProblemBinding.SEMANTIC_INVALID_TYPE,
-					this.getRawSignature().toCharArray());
-		} 
-		if (op == IASTUnaryExpression.op_amper) {
+
+		if (op == IASTUnaryExpression.op_amper) {  // check for pointer to member
 			IASTNode child= operand;
 			boolean inParenthesis= false;
-			while (child instanceof IASTUnaryExpression &&
-					((IASTUnaryExpression) child).getOperator() == IASTUnaryExpression.op_bracketedPrimary) {
+			while (child instanceof IASTUnaryExpression && ((IASTUnaryExpression) child).getOperator() == IASTUnaryExpression.op_bracketedPrimary) {
 				child= ((IASTUnaryExpression) child).getOperand();
 				inParenthesis= true;
 			}
@@ -165,13 +139,11 @@ public class CPPASTUnaryExpression extends ASTNode implements ICPPASTUnaryExpres
 					ICPPMember member= (ICPPMember) b;
 					try {
 						if (name instanceof ICPPASTQualifiedName) {
-							if (!member.isStatic()) {
+							if (!member.isStatic()) { // so if the member is static it will fall through
 								if (!inParenthesis) {
-									return new CPPPointerToMemberType(member.getType(), member.getClassOwner(),
-											false, false);
+									return new CPPPointerToMemberType(member.getType(), member.getClassOwner(), false, false);
 								} else if (member instanceof IFunction) {
-									return new ProblemBinding(operand, IProblemBinding.SEMANTIC_INVALID_TYPE,
-											operand.getRawSignature().toCharArray());
+									return new ProblemBinding(operand, IProblemBinding.SEMANTIC_INVALID_TYPE, operand.getRawSignature().toCharArray());
 								}
 							}
 						}
@@ -183,14 +155,75 @@ public class CPPASTUnaryExpression extends ASTNode implements ICPPASTUnaryExpres
 
 			IType type= operand.getExpressionType();
 			type = SemanticUtil.getNestedType(type, TDEF | REF);
+			
+			IType operator = findOperatorReturnType(type);
+			if(operator != null)
+				return operator;
+
 			return new CPPPointerType(type);
 		} 
+		
+		
+		if (op == IASTUnaryExpression.op_star) {
+			IType type= operand.getExpressionType();
+			type = SemanticUtil.getNestedType(type, TDEF | REF | CVQ);
+	    	if (type instanceof IProblemBinding) {
+	    		return type;
+	    	}
+		    try {
+		    	IType operator = findOperatorReturnType(type);
+				if(operator != null) {
+					return operator;
+				} else if (type instanceof IPointerType || type instanceof IArrayType) {
+					return ((ITypeContainer) type).getType();
+				} else if (type instanceof ICPPUnknownType) {
+					return CPPUnknownClass.createUnnamedInstance();
+				}
+			} catch (DOMException e) {
+				return e.getProblem();
+			}
+			return new ProblemBinding(this, IProblemBinding.SEMANTIC_INVALID_TYPE, this.getRawSignature().toCharArray());
+		} 
+		
 
 		IType type= operand.getExpressionType();
 		type = SemanticUtil.getNestedType(type, TDEF | REF);
+		IType operator = findOperatorReturnType(type);
+		if(operator != null) {
+			return operator;
+		}
+		
+		if(op == IASTUnaryExpression.op_not) {
+			return new CPPBasicType(ICPPBasicType.t_bool, 0);
+		}
 		if (type instanceof CPPBasicType) {
 			((CPPBasicType) type).setFromExpression(this);
 		}
 		return type;
+    }
+    
+    
+    private IType findOperatorReturnType(IType type) {
+    	ICPPFunction operatorFunction = findOperatorFunction(type);
+    	if(operatorFunction != null) {
+    		try {
+				return operatorFunction.getType().getReturnType();
+			} catch (DOMException e) {
+				return e.getProblem();
+			}
+    	}
+    	return null;
+    }
+    
+    
+    private ICPPFunction findOperatorFunction(IType type) {
+    	if(type instanceof ICPPClassType) {
+			ICPPFunction operator = CPPSemantics.findOperator(this, (ICPPClassType) type);
+			if(operator != null)
+				return operator;
+			return CPPSemantics.findOverloadedOperator(this); 
+		}
+    	
+    	return null;
     }
 }

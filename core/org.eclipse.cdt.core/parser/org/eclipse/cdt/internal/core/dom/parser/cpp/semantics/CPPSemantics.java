@@ -11,13 +11,11 @@
  *    Bryan Wilkinson (QNX)
  *    Andrew Ferguson (Symbian)
  *    Sergey Prigogin (Google)
+ *    Mike Kucera (IBM)
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.dom.parser.cpp.semantics;
 
-import static org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.SemanticUtil.TDEF;
-import static org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.SemanticUtil.getNestedType;
-import static org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.SemanticUtil.getUltimateType;
-import static org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.SemanticUtil.getUltimateTypeUptoPointers;
+import static org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.SemanticUtil.*;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -142,6 +140,7 @@ import org.eclipse.cdt.internal.core.dom.parser.IASTInternalScope;
 import org.eclipse.cdt.internal.core.dom.parser.ProblemBinding;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTFieldReference;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTIdExpression;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTLiteralExpression;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTName;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTNameBase;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTTranslationUnit;
@@ -2493,12 +2492,7 @@ public class CPPSemantics {
 	    astName.setPropertyInParent(STRING_LOOKUP_PROPERTY);
 	    LookupData data;
 	    
-	    if (exp instanceof IASTUnaryExpression) {
-	    	astName.setName(OverloadableOperator.STAR.toCharArray());
-		    data = new LookupData(astName);
-		    data.forceQualified = true;
-		    data.setFunctionArguments(IASTExpression.EMPTY_EXPRESSION_ARRAY);
-	    } else if (exp instanceof IASTArraySubscriptExpression) {
+	    if (exp instanceof IASTArraySubscriptExpression) {
 		    astName.setName(OverloadableOperator.BRACKET.toCharArray());
 		    data = new LookupData(astName);
 		    data.forceQualified = true;
@@ -2523,6 +2517,20 @@ public class CPPSemantics {
 		    data = new LookupData(astName);
 		    data.forceQualified = true;
 		    data.setFunctionArguments(new IASTExpression[] { binary.getOperand2() });
+		} else if (exp instanceof IASTUnaryExpression) {
+	    	IASTUnaryExpression unary = (IASTUnaryExpression) exp;
+	    	OverloadableOperator operator = OverloadableOperator.fromUnaryExpression(unary);
+	    	if(operator == null) {
+	    		return null;
+	    	}
+	    	astName.setName(operator.toCharArray());
+		    data = new LookupData(astName);
+		    data.forceQualified = true;
+		    int op = unary.getOperator();
+		    if(op == IASTUnaryExpression.op_postFixDecr || op == IASTUnaryExpression.op_postFixIncr)
+		    	data.setFunctionArguments(new IASTExpression[] { CPPASTLiteralExpression.INT_ZERO });
+		    else 
+		    	data.setFunctionArguments(IASTExpression.EMPTY_EXPRESSION_ARRAY);
 		} else {
 			return null;
 		}
@@ -2545,6 +2553,30 @@ public class CPPSemantics {
      */
     public static ICPPFunction findOverloadedOperator(IASTBinaryExpression exp) {
         OverloadableOperator operator = OverloadableOperator.fromBinaryExpression(exp);
+        IASTExpression[] args = { exp.getOperand1(), exp.getOperand2() };
+        return findOverloadedOperator(exp, operator, args);
+	}
+
+    
+    /**
+     * Returns the overloaded operator corresponding to a unary expression, or {@code null}
+     * if no such operator is found.
+     */
+    public static ICPPFunction findOverloadedOperator(IASTUnaryExpression exp) {
+        OverloadableOperator operator = OverloadableOperator.fromUnaryExpression(exp);
+        
+        IASTExpression[] args = null;
+        int op = exp.getOperator();
+	    if(op == IASTUnaryExpression.op_postFixDecr || op == IASTUnaryExpression.op_postFixIncr)
+	    	args = new IASTExpression[] { exp.getOperand(), CPPASTLiteralExpression.INT_ZERO };
+	    else
+	    	args = new IASTExpression[] { exp.getOperand() };
+	    
+	    return findOverloadedOperator(exp, operator, args);
+	}
+
+    
+    private static ICPPFunction findOverloadedOperator(IASTExpression exp, OverloadableOperator operator, IASTExpression[] args) {
         if (operator == null) {
         	return null;
         }
@@ -2558,18 +2590,18 @@ public class CPPSemantics {
 	    astName.setPropertyInParent(STRING_LOOKUP_PROPERTY);
 	    astName.setName(operator.toCharArray());
 	    LookupData data = new LookupData(astName);
-	    data.setFunctionArguments(new IASTExpression[] {exp.getOperand1(), exp.getOperand2()});
-
+	    data.setFunctionArguments(args);
+	    
 		try {
 		    lookup(data, scope);
 		    IBinding binding = resolveAmbiguities(data, astName);
 		    if (binding instanceof ICPPFunction)
 		    	return (ICPPFunction) binding;
-		} catch (DOMException e) {
-		}
+		} catch (DOMException e) {}
 		return null;
-	}
-
+    }
+    
+    
     public static IBinding[] findBindings(IScope scope, String name, boolean qualified) throws DOMException {
 		return findBindings(scope, name.toCharArray(), qualified, null);
 	}

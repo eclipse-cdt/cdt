@@ -26,6 +26,9 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPVisitor;
  */
 public class CPPASTLiteralExpression extends ASTNode implements ICPPASTLiteralExpression {
 
+	public static final CPPASTLiteralExpression INT_ZERO = new CPPASTLiteralExpression(lk_integer_constant, new char[] {'0'} );
+	
+	
     private int kind;
     private char[] value = CharArrayUtils.EMPTY;
 

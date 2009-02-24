@@ -7,11 +7,13 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Mike Kucera (IBM)
  *     Sergey Prigogin (Google)
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.dom.parser.cpp;
 
 import org.eclipse.cdt.core.dom.ast.IASTBinaryExpression;
+import org.eclipse.cdt.core.dom.ast.IASTUnaryExpression;
 import org.eclipse.cdt.core.parser.IToken;
 
 /**
@@ -19,8 +21,6 @@ import org.eclipse.cdt.core.parser.IToken;
  * 
  * Note: toString() has not been overridden, use toCharArray() to get
  * a character representation of the operator.
- * 
- * @author Mike Kucera
  */
 @SuppressWarnings("nls")
 public enum OverloadableOperator {
@@ -185,6 +185,22 @@ public enum OverloadableOperator {
 		case IASTBinaryExpression.op_assign: 			return ASSIGN; 
 		}
 		
+		return null;
+	}
+	
+	public static OverloadableOperator fromUnaryExpression(IASTUnaryExpression expression) {
+		switch(expression.getOperator()) {
+		case IASTUnaryExpression.op_prefixIncr:  return INCR;
+		case IASTUnaryExpression.op_prefixDecr:  return DECR;
+		case IASTUnaryExpression.op_plus:        return PLUS;
+		case IASTUnaryExpression.op_minus:       return MINUS;
+		case IASTUnaryExpression.op_star:        return STAR;
+		case IASTUnaryExpression.op_amper:       return AMPER;
+		case IASTUnaryExpression.op_tilde:       return BITCOMPLEMENT;
+		case IASTUnaryExpression.op_not:         return NOT;
+		case IASTUnaryExpression.op_postFixIncr: return INCR;
+		case IASTUnaryExpression.op_postFixDecr: return DECR;
+		}
 		return null;
 	}
 }

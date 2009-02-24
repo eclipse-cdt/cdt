@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2008 Wind River Systems, Inc. and others.
+ * Copyright (c) 2006, 2009 Wind River Systems, Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -97,7 +97,7 @@ public class CIndex implements IIndex {
 			 return fFragments[0].findBindings(patterns, isFullyQualified, filter, monitor); 
 		} else {
 			List<IIndexBinding[]> result = new ArrayList<IIndexBinding[]>();
-			ILinkage[] linkages = Linkage.getAllLinkages();
+			ILinkage[] linkages = Linkage.getIndexerLinkages();
 			for(int j=0; j < linkages.length; j++) {
 				if(filter.acceptLinkage(linkages[j])) {
 					IIndexFragmentBinding[][] fragmentBindings = new IIndexFragmentBinding[fPrimaryFragmentCount][];
@@ -124,7 +124,7 @@ public class CIndex implements IIndex {
 			 return fFragments[0].findMacroContainers(pattern, filter, monitor); 
 		} else {
 			List<IIndexBinding[]> result = new ArrayList<IIndexBinding[]>();
-			ILinkage[] linkages = Linkage.getAllLinkages();
+			ILinkage[] linkages = Linkage.getIndexerLinkages();
 			for(int j=0; j < linkages.length; j++) {
 				if(filter.acceptLinkage(linkages[j])) {
 					IIndexFragmentBinding[][] fragmentBindings = new IIndexFragmentBinding[fPrimaryFragmentCount][];
@@ -378,7 +378,7 @@ public class CIndex implements IIndex {
 				monitor= new NullProgressMonitor();
 			}
 			List<IIndexBinding[]> result = new ArrayList<IIndexBinding[]>();
-			ILinkage[] linkages = Linkage.getAllLinkages();
+			ILinkage[] linkages = Linkage.getIndexerLinkages();
 			monitor.beginTask(Messages.CIndex_FindBindingsTask_label, fFragments.length * linkages.length);
 			for(int j=0; j < linkages.length; j++) {
 				if(filter.acceptLinkage(linkages[j])) {
@@ -504,7 +504,7 @@ public class CIndex implements IIndex {
 			return fFragments[0].findBindingsForPrefix(prefix, filescope, filter, monitor);
 		} else {
 			List<IIndexBinding[]> result = new ArrayList<IIndexBinding[]>();
-			ILinkage[] linkages = Linkage.getAllLinkages();
+			ILinkage[] linkages = Linkage.getIndexerLinkages();
 			for(int j=0; j < linkages.length; j++) {
 				if(filter.acceptLinkage(linkages[j])) {
 					IIndexFragmentBinding[][] fragmentBindings = new IIndexFragmentBinding[fPrimaryFragmentCount][];
@@ -531,7 +531,7 @@ public class CIndex implements IIndex {
 			return fFragments[0].findBindings(name, filescope, filter, monitor);
 		} else {
 			List<IIndexBinding[]> result = new ArrayList<IIndexBinding[]>();
-			ILinkage[] linkages = Linkage.getAllLinkages();
+			ILinkage[] linkages = Linkage.getIndexerLinkages();
 			for(int j=0; j < linkages.length; j++) {
 				if(filter.acceptLinkage(linkages[j])) {
 					IIndexFragmentBinding[][] fragmentBindings = new IIndexFragmentBinding[fPrimaryFragmentCount][];

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2008 QNX Software Systems and others.
+ * Copyright (c) 2000, 2009 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -40,7 +40,7 @@ public class CCorePreferenceInitializer extends AbstractPreferenceInitializer {
 		Map<String, String> defaultOptionsMap = DefaultCodeFormatterConstants.getDefaultSettings(); // code formatter defaults
 
 		// Compiler settings
-		defaultOptionsMap.put(CCorePreferenceConstants.TODO_TASK_TAGS, CCorePreferenceConstants.DEFAULT_TASK_TAG); 
+		defaultOptionsMap.put(CCorePreferenceConstants.TODO_TASK_TAGS, CCorePreferenceConstants.DEFAULT_TASK_TAGS); 
 		defaultOptionsMap.put(CCorePreferenceConstants.TODO_TASK_PRIORITIES, CCorePreferenceConstants.DEFAULT_TASK_PRIORITY); 
 		defaultOptionsMap.put(CCorePreferenceConstants.TODO_TASK_CASE_SENSITIVE, CCorePreferenceConstants.DEFAULT_TASK_CASE_SENSITIVE); 
 		defaultOptionsMap.put(CCorePreferenceConstants.CODE_FORMATTER, CCorePreferenceConstants.DEFAULT_CODE_FORMATTER); 

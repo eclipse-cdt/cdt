@@ -722,6 +722,9 @@ public class Target extends SessionObject implements ICDITarget, ICDIBreakpointM
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.debug.core.cdi.model.ICDIExecuteMoveInstructionPointer#moveInstructionPointer(org.eclipse.cdt.debug.core.cdi.ICDILocation)
 	 */
+	/**
+	 * @since 6.0
+	 */
 	public void moveInstructionPointer(ICDILocation location) throws CDIException {
 		// Most of this code was taken from our Resume()
 		// method. The only differences are that we create a temporary

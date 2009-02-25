@@ -2,20 +2,20 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: %pluginName
 Bundle-SymbolicName: org.eclipse.cdt.debug.mi.ui; singleton:=true
-Bundle-Version: 5.1.0.qualifier
+Bundle-Version: 6.0.0.qualifier
 Bundle-Activator: org.eclipse.cdt.debug.mi.internal.ui.MIUIPlugin
 Bundle-Vendor: %providerName
 Bundle-Localization: plugin
-Export-Package: org.eclipse.cdt.debug.mi.internal.ui,
- org.eclipse.cdt.debug.mi.internal.ui.actions,
- org.eclipse.cdt.debug.mi.internal.ui.dialogfields,
- org.eclipse.cdt.debug.mi.internal.ui.preferences,
- org.eclipse.cdt.debug.mi.internal.ui.propertypages,
+Export-Package: org.eclipse.cdt.debug.mi.internal.ui;x-internal:=true,
+ org.eclipse.cdt.debug.mi.internal.ui.actions;x-internal:=true,
+ org.eclipse.cdt.debug.mi.internal.ui.dialogfields;x-internal:=true,
+ org.eclipse.cdt.debug.mi.internal.ui.preferences;x-internal:=true,
+ org.eclipse.cdt.debug.mi.internal.ui.propertypages;x-internal:=true,
  org.eclipse.cdt.debug.mi.ui
 Require-Bundle: org.eclipse.core.resources;bundle-version="[3.2.0,4.0.0)",
  org.eclipse.ui;bundle-version="[3.2.0,4.0.0)",
- org.eclipse.cdt.debug.mi.core;bundle-version="[5.0.0,6.0.0)",
- org.eclipse.cdt.debug.ui;bundle-version="[5.0.0,6.0.0)",
+ org.eclipse.cdt.debug.mi.core;bundle-version="[6.0.0,7.0.0)",
+ org.eclipse.cdt.debug.ui;bundle-version="[6.0.0,7.0.0)",
  org.eclipse.cdt.debug.core;bundle-version="[6.0.0,7.0.0)",
  org.eclipse.cdt.core;bundle-version="[5.0.0,6.0.0)",
  org.eclipse.cdt.ui;bundle-version="[5.0.0,6.0.0)",

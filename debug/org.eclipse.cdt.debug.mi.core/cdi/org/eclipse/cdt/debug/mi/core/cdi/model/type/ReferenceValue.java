@@ -43,6 +43,7 @@ public class ReferenceValue extends DerivedValue implements ICDIReferenceValue {
 	/**
 	 * Construct a value object for the referred variable
 	 * @param v
+	 * @since 6.0
 	 */
 	public ReferenceValue(Variable v) {
 		super(v);

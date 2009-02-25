@@ -34,6 +34,7 @@ public interface ICDebugUIConstants {
 
     /**
      * Signals view identifier (value <code>"org.eclipse.cdt.debug.ui.SignalsView"</code>).
+     * @since 6.0
      */
     public static final String ID_SIGNALS_VIEW = PREFIX + "SignalsView"; //$NON-NLS-1$
 

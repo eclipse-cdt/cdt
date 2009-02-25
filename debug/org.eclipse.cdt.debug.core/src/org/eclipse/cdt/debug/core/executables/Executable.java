@@ -71,6 +71,7 @@ public class Executable extends PlatformObject {
 		return true;
 	}
 
+	@Override
 	public boolean equals(Object arg0) {
 		if (arg0 instanceof Executable)
 		{
@@ -130,6 +131,10 @@ public class Executable extends PlatformObject {
 		return super.getAdapter(adapter);
 	}
 
+	/**
+	 * @noreference This method is not intended to be referenced by clients.
+	 * @since 6.0
+	 */
 	public TranslationUnit[] getSourceFiles(IProgressMonitor monitor) {
 		
 		if (!refreshSourceFiles)
@@ -224,6 +229,9 @@ public class Executable extends PlatformObject {
 		return sourceFiles.toArray(new TranslationUnit[sourceFiles.size()]) ;
 	}
 
+	/**
+	 * @since 6.0
+	 */
 	public void setRefreshSourceFiles(boolean refreshSourceFiles) {
 		this.refreshSourceFiles = refreshSourceFiles;
 	}

@@ -90,6 +90,9 @@ public class CMainTab extends CLaunchConfigurationTab {
 	protected Label fProgLabel;
 	protected Text fProgText;
 	protected Button fSearchButton;
+	/**
+	 * @since 6.0
+	 */
 	protected Combo fBuildConfigCombo;
 
 	private final boolean fWantsTerminalOption;
@@ -142,6 +145,9 @@ public class CMainTab extends CLaunchConfigurationTab {
 		LaunchUIPlugin.setDialogShell(parent.getShell());
 	}
 
+	/**
+	 * @since 6.0
+	 */
 	protected void createProjectGroup(Composite parent, int colSpan) {
 		Composite projComp = new Composite(parent, SWT.NONE);
 		GridLayout projLayout = new GridLayout();
@@ -173,6 +179,7 @@ public class CMainTab extends CLaunchConfigurationTab {
 		fProjButton = createPushButton(projComp, LaunchMessages.getString("Launch.common.Browse_1"), null); //$NON-NLS-1$
 		fProjButton.addSelectionListener(new SelectionAdapter() {
 
+			@Override
 			public void widgetSelected(SelectionEvent evt) {
 				handleProjectButtonSelected();
 				updateLaunchConfigurationDialog();
@@ -180,6 +187,9 @@ public class CMainTab extends CLaunchConfigurationTab {
 		});
 	}
 
+	/**
+	 * @since 6.0
+	 */
 	protected void updateBuildConfigCombo(String selectedConfigID) {
 		fBuildConfigCombo.removeAll();
 		fBuildConfigCombo.add(LaunchMessages.getString("CMainTab.Use_Active")); //$NON-NLS-1$
@@ -208,6 +218,9 @@ public class CMainTab extends CLaunchConfigurationTab {
 		
 	}
 
+	/**
+	 * @since 6.0
+	 */
 	protected void createBuildConfigCombo(Composite parent, int colspan) {
 		Composite comboComp = new Composite(parent, SWT.NONE);
 		GridLayout layout = new GridLayout(2, false);
@@ -256,6 +269,7 @@ public class CMainTab extends CLaunchConfigurationTab {
 
 		fSearchButton = createPushButton(mainComp, LaunchMessages.getString("CMainTab.Search..."), null); //$NON-NLS-1$
 		fSearchButton.addSelectionListener(new SelectionAdapter() {
+			@Override
 			public void widgetSelected(SelectionEvent evt) {
 				handleSearchButtonSelected();
 				updateLaunchConfigurationDialog();
@@ -265,6 +279,7 @@ public class CMainTab extends CLaunchConfigurationTab {
 		Button fBrowseForBinaryButton;
 		fBrowseForBinaryButton = createPushButton(mainComp, LaunchMessages.getString("Launch.common.Browse_2"), null); //$NON-NLS-1$
 		fBrowseForBinaryButton.addSelectionListener(new SelectionAdapter() {
+			@Override
 			public void widgetSelected(SelectionEvent evt) {
 				handleBinaryBrowseButtonSelected();
 				updateLaunchConfigurationDialog();
@@ -290,6 +305,7 @@ public class CMainTab extends CLaunchConfigurationTab {
 		fTerminalButton = createCheckButton(mainComp, LaunchMessages.getString("CMainTab.UseTerminal")); //$NON-NLS-1$
 		fTerminalButton.addSelectionListener(new SelectionAdapter() {
 
+			@Override
 			public void widgetSelected(SelectionEvent evt) {
 				updateLaunchConfigurationDialog();
 			}
@@ -376,6 +392,7 @@ public class CMainTab extends CLaunchConfigurationTab {
 
 		ILabelProvider programLabelProvider = new CElementLabelProvider() {
 
+			@Override
 			public String getText(Object element) {
 				if (element instanceof IBinary) {
 					IBinary bin = (IBinary)element;
@@ -386,6 +403,7 @@ public class CMainTab extends CLaunchConfigurationTab {
 				return super.getText(element);
 			}
 
+			@Override
 			public Image getImage(Object element) {
 				if (! (element instanceof ICElement)) {
 					return super.getImage(element);
@@ -405,6 +423,7 @@ public class CMainTab extends CLaunchConfigurationTab {
 
 		ILabelProvider qualifierLabelProvider = new CElementLabelProvider() {
 
+			@Override
 			public String getText(Object element) {
 				if (element instanceof IBinary) {
 					IBinary bin = (IBinary)element;
@@ -568,6 +587,7 @@ public class CMainTab extends CLaunchConfigurationTab {
 	 * 
 	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#isValid(org.eclipse.debug.core.ILaunchConfiguration)
 	 */
+	@Override
 	public boolean isValid(ILaunchConfiguration config) {
 
 		setErrorMessage(null);
@@ -774,6 +794,7 @@ public class CMainTab extends CLaunchConfigurationTab {
 	 * 
 	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#getImage()
 	 */
+	@Override
 	public Image getImage() {
 		return LaunchImages.get(LaunchImages.IMG_VIEW_MAIN_TAB);
 	}
@@ -783,6 +804,7 @@ public class CMainTab extends CLaunchConfigurationTab {
 	 * 
 	 * @see org.eclipse.debug.ui.AbstractLaunchConfigurationTab#updateLaunchConfigurationDialog()
 	 */
+	@Override
 	protected void updateLaunchConfigurationDialog() {
 		super.updateLaunchConfigurationDialog();
 	}

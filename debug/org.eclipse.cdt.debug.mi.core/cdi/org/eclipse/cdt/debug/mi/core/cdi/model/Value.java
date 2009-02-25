@@ -32,6 +32,7 @@ public class Value extends CObject implements ICDIValue {
 	 * it is, then some decoding is needed on the value string we get from gdb,
 	 * since it will contain two things: the address of the variable being
 	 * referenced and the value.
+	 * @since 6.0
 	 */
 	protected boolean fIsReference;
 
@@ -145,6 +146,7 @@ public class Value extends CObject implements ICDIValue {
 	 * introducing it that way at this point in time would cause a lot of churn
 	 * in the codebase, since this class is not directly instantiated, and it
 	 * has many subclasses.
+	 * @since 6.0
 	 */
 	public void setIsReference(boolean isReference) {
 		fIsReference = isReference;

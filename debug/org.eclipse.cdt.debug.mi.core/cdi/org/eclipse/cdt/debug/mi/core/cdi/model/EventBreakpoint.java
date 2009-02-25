@@ -18,6 +18,9 @@ import org.eclipse.cdt.debug.core.cdi.model.ICDIEventBreakpoint;
 import org.eclipse.cdt.debug.core.model.ICBreakpointType;
 import org.eclipse.cdt.debug.mi.core.output.MIBreakpoint;
 
+/**
+ * @since 6.0
+ */
 public class EventBreakpoint extends Breakpoint implements ICDIEventBreakpoint {
 	
 	public static final String CATCH = "org.eclipse.cdt.debug.gdb.catch";
@@ -26,13 +29,37 @@ public class EventBreakpoint extends Breakpoint implements ICDIEventBreakpoint {
 	public static final String STOP_ON_FORK = "org.eclipse.cdt.debug.gdb.catch_fork";
 	public static final String STOP_ON_VFORK = "org.eclipse.cdt.debug.gdb.catch_vfork";
 	public static final String STOP_ON_EXEC = "org.eclipse.cdt.debug.gdb.catch_exec";
+	/**
+	 * @since 6.0
+	 */
 	public static final String CATCH_EXIT = "org.eclipse.cdt.debug.gdb.catch_exit";
+	/**
+	 * @since 6.0
+	 */
 	public static final String CATCH_START = "org.eclipse.cdt.debug.gdb.catch_start";
+	/**
+	 * @since 6.0
+	 */
 	public static final String CATCH_STOP = "org.eclipse.cdt.debug.gdb.catch_stop";
+	/**
+	 * @since 6.0
+	 */
 	public static final String CATCH_THREAD_START = "org.eclipse.cdt.debug.gdb.catch_thread_start";
+	/**
+	 * @since 6.0
+	 */
 	public static final String CATCH_THREAD_EXIT = "org.eclipse.cdt.debug.gdb.catch_thread_exit";
+	/**
+	 * @since 6.0
+	 */
 	public static final String CATCH_THREAD_JOIN = "org.eclipse.cdt.debug.gdb.catch_thread_join";
+	/**
+	 * @since 6.0
+	 */
 	public static final String CATCH_LOAD = "org.eclipse.cdt.debug.gdb.catch_load";
+	/**
+	 * @since 6.0
+	 */
 	public static final String CATCH_UNLOAD = "org.eclipse.cdt.debug.gdb.catch_unload";
 
 	private String eventType;

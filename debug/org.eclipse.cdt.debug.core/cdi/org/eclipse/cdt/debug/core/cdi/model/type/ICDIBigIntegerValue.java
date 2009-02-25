@@ -16,7 +16,7 @@ package org.eclipse.cdt.debug.core.cdi.model.type;
  * 
  * Represents the value of a variable.
  *
- * @since Nov 6.0 , 2008
+ * @since 6.0
  */
 public interface ICDIBigIntegerValue extends ICDIIntegralValue {
 

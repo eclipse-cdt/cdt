@@ -98,6 +98,7 @@ abstract public class AbstractCLaunchDelegate extends LaunchConfigurationDelegat
 	 * @exception CoreException
 	 *                if unable to retrieve the attribute
 	 */
+	@Deprecated
 	public File getWorkingDir(ILaunchConfiguration configuration) throws CoreException {
 		return getWorkingDirectory(configuration);
 	}
@@ -209,6 +210,7 @@ abstract public class AbstractCLaunchDelegate extends LaunchConfigurationDelegat
 	 * @throws CoreException
 	 * @deprecated
 	 */
+	@Deprecated
 	protected void setSourceLocator(ILaunch launch, ILaunchConfiguration config) throws CoreException {
 		setDefaultSourceLocator(launch, config);
 	}
@@ -310,6 +312,7 @@ abstract public class AbstractCLaunchDelegate extends LaunchConfigurationDelegat
 	/**
 	 * @deprecated
 	 */
+	@Deprecated
 	protected String renderDebuggerProcessLabel() {
 		String format = "{0} ({1})"; //$NON-NLS-1$
 		String timestamp = DateFormat.getInstance().format(new Date(System.currentTimeMillis()));
@@ -324,6 +327,7 @@ abstract public class AbstractCLaunchDelegate extends LaunchConfigurationDelegat
 	 * @throws CoreException
 	 * @deprecated Use <code>verifyProgramFile</code> instead.
 	 */
+	@Deprecated
 	protected IFile getProgramFile(ILaunchConfiguration config) throws CoreException {
 		ICProject cproject = verifyCProject(config);
 		String fileName = getProgramName(config);
@@ -535,6 +539,7 @@ abstract public class AbstractCLaunchDelegate extends LaunchConfigurationDelegat
 	 * @throws CoreException
 	 *             if an exception occurrs while building
 	 */
+	@Override
 	public boolean buildForLaunch(ILaunchConfiguration configuration, String mode, IProgressMonitor monitor) throws CoreException {
 		//This matches the old code, but I don't know that it is the right behaviour.
 		//We should be building the local project as well, not just the ordered projects
@@ -605,6 +610,7 @@ abstract public class AbstractCLaunchDelegate extends LaunchConfigurationDelegat
 	 * @throws CoreException
 	 *             if an exception occurs while checking for compile errors.
 	 */
+	@Override
 	public boolean finalLaunchCheck(ILaunchConfiguration configuration, String mode, IProgressMonitor monitor) throws CoreException {
 		boolean continueLaunch = true;
 		if(orderedProjects == null) {
@@ -681,6 +687,7 @@ abstract public class AbstractCLaunchDelegate extends LaunchConfigurationDelegat
 	 * @param proj
 	 *            The project to search
 	 * @return true if compile errors exist, otherwise false
+	 * @since 6.0
 	 */
 	protected boolean existsErrors(IProject proj) throws CoreException {
 		IMarker[] markers = proj.findMarkers(ICModelMarker.C_MODEL_PROBLEM_MARKER, true, IResource.DEPTH_INFINITE);
@@ -702,6 +709,7 @@ abstract public class AbstractCLaunchDelegate extends LaunchConfigurationDelegat
 	 * @see org.eclipse.debug.core.model.ILaunchConfigurationDelegate2#preLaunchCheck(org.eclipse.debug.core.ILaunchConfiguration,
 	 *      java.lang.String, org.eclipse.core.runtime.IProgressMonitor)
 	 */
+	@Override
 	public boolean preLaunchCheck(ILaunchConfiguration configuration, String mode, IProgressMonitor monitor) throws CoreException {
 		if(monitor == null) {
 			monitor = new NullProgressMonitor();
@@ -820,6 +828,7 @@ abstract public class AbstractCLaunchDelegate extends LaunchConfigurationDelegat
 	 * name=value
 	 * @deprecated
 	 */
+	@Deprecated
 	protected String[] getEnvironmentArray(ILaunchConfiguration config) {
 		Map env = null;
 		try {
@@ -844,6 +853,7 @@ abstract public class AbstractCLaunchDelegate extends LaunchConfigurationDelegat
 	 * does not include the default environment of the target.
 	 * @deprecated
 	 */
+	@Deprecated
 	protected Properties getEnvironmentProperty(ILaunchConfiguration config) {
 		Properties prop = new Properties();
 		Map env = null;

@@ -74,6 +74,7 @@ public class Thread extends CObject implements ICDIThread, ICDIExecuteMoveInstru
 		currentFrames = null;
 	}
 
+	@Override
 	public String toString() {
 		String str = Integer.toString(id);
 		if (name != null) {
@@ -554,6 +555,9 @@ public class Thread extends CObject implements ICDIThread, ICDIExecuteMoveInstru
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.debug.core.cdi.model.ICDIExecuteMoveInstructionPointer#moveInstructionPointer(org.eclipse.cdt.debug.core.cdi.ICDILocation)
+	 */
+	/**
+	 * @since 6.0
 	 */
 	public void moveInstructionPointer(ICDILocation location) throws CDIException {
 		Target target = (Target)getTarget();

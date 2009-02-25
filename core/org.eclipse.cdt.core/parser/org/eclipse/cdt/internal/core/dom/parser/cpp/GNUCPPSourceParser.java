@@ -497,12 +497,8 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
     		} else {
     			// not a type-id - try as expression
     			backup(argStart);
-    			try {
-    				IASTExpression expression = assignmentExpression();
-    				list.add(expression);
-    			} catch (BacktrackException e) {
-    				backup(argStart);
-    			}
+    			IASTExpression expression = assignmentExpression();
+    			list.add(expression);
     		}
 
     		if (LT(1) == IToken.tCOMMA) {
@@ -671,6 +667,8 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
         try {
             throwExpression = expression();
         } catch (BacktrackException bte) {
+        	backup(throwToken);
+        	consume();
         }
         int o = throwExpression != null ? calculateEndOffset(throwExpression)
                 : throwToken.getEndOffset();
@@ -1368,7 +1366,6 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
      *             request for a backtrack
      */
     protected IASTDeclaration templateDeclaration(DeclarationOptions option) throws EndOfFileException, BacktrackException {
-    	IToken mark = mark();
     	IToken firstToken = null;
     	boolean exported = false;
     	boolean encounteredExtraMod = false;
@@ -1429,29 +1426,24 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
     		return templateSpecialization;
     	}
 
+    	final boolean wasOnTop= onTopInTemplateArgs;
+    	onTopInTemplateArgs= true;
+    	List<ICPPASTTemplateParameter> parms;
     	try {
-    		final boolean wasOnTop= onTopInTemplateArgs;
-    		onTopInTemplateArgs= true;
-    		List<ICPPASTTemplateParameter> parms;
-    		try {
-    			parms = templateParameterList();
-    			consume(IToken.tGT);
-    		} finally {
-    			onTopInTemplateArgs= wasOnTop;
-    		}
-    		IASTDeclaration d = declaration(option);
-    		ICPPASTTemplateDeclaration templateDecl = nodeFactory.newTemplateDeclaration(d);
-    		((ASTNode) templateDecl).setOffsetAndLength(firstToken.getOffset(), calculateEndOffset(d) - firstToken.getOffset());
-    		templateDecl.setExported(exported);
-    		for (int i = 0; i < parms.size(); ++i) {
-    			ICPPASTTemplateParameter parm = parms.get(i);
-    			templateDecl.addTemplateParamter(parm);
-    		}
-    		return templateDecl;
-    	} catch (BacktrackException bt) {
-    		backup(mark);
-    		throw bt;
+    		parms = templateParameterList();
+    		consume(IToken.tGT);
+    	} finally {
+    		onTopInTemplateArgs= wasOnTop;
     	}
+    	IASTDeclaration d = declaration(option);
+    	ICPPASTTemplateDeclaration templateDecl = nodeFactory.newTemplateDeclaration(d);
+    	((ASTNode) templateDecl).setOffsetAndLength(firstToken.getOffset(), calculateEndOffset(d) - firstToken.getOffset());
+    	templateDecl.setExported(exported);
+    	for (int i = 0; i < parms.size(); ++i) {
+    		ICPPASTTemplateParameter parm = parms.get(i);
+    		templateDecl.addTemplateParamter(parm);
+    	}
+    	return templateDecl;
     }
 
     /**
@@ -1607,11 +1599,14 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
 		} catch (BacktrackException e) {
 			if (option != DeclarationOptions.CPP_MEMBER || declarationMark == null)
 				throw e;
+			BacktrackException orig= new BacktrackException(e); // copy the exception
+			IToken mark= mark();
 			backup(declarationMark);
 			try {
 				return usingDeclaration(declarationMark.getOffset());
 			} catch (BacktrackException e2) {
-				throw e; // throw original exception;
+				backup(mark);
+				throw orig; // throw original exception;
 			}
 		}
     }
@@ -2670,8 +2665,7 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
     	if (!canBeTypeSpecifier()) {
     		return null;
     	}
-        IToken mark = mark();
-        int startingOffset = mark.getOffset();
+        int startingOffset = mark().getOffset();
         IASTDeclSpecifier declSpecifier = null;
         IASTDeclarator declarator = null;
         rejectLogicalOperatorInTemplateID++;

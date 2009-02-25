@@ -1564,10 +1564,10 @@ public abstract class AbstractGNUSourceCodeParser implements ISourceCodeParser {
     					decl= declaration(option);
     					break;
     				} catch (BacktrackException bt2) {
-    			    	n= bt.getNodeBeforeProblem();
+    			    	n= bt2.getNodeBeforeProblem();
     			    	if (n instanceof IASTDeclaration) {
     			    		decl= (IASTDeclaration) n;
-    			    		trailingProblem= buildProblemDeclaration(bt.getProblem());
+    			    		trailingProblem= buildProblemDeclaration(bt2.getProblem());
     			    		break;
     			    	} 
     				} catch (EndOfFileException e) {
@@ -1727,7 +1727,6 @@ public abstract class AbstractGNUSourceCodeParser implements ISourceCodeParser {
             ds = nodeFactory.newDeclarationStatement(d);
             ((ASTNode) ds).setOffsetAndLength(((ASTNode) d).getOffset(), ((ASTNode) d).getLength());
         } catch (BacktrackException b) {
-            backup(mark);
             if (expressionStatement == null) {
             	throw b;
             }

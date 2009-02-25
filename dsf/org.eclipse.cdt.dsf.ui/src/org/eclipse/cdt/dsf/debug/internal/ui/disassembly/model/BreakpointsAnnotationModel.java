@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008 Wind River Systems, Inc. and others.
+ * Copyright (c) 2008, 2009 Wind River Systems, Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -178,9 +178,11 @@ public class BreakpointsAnnotationModel extends AnnotationModel implements IBrea
 	}
 
 	private Position createPositionFromAddress(BigInteger address) {
-		AddressRangePosition p= getDisassemblyDocument().getDisassemblyPosition(address);
-		if (p != null && p.fValid) {
-			return new Position(p.offset, p.length);
+		if (address != null) {
+			AddressRangePosition p= getDisassemblyDocument().getDisassemblyPosition(address);
+			if (p != null && p.fValid) {
+				return new Position(p.offset, p.length);
+			}
 		}
 		return null;
 	}
@@ -195,13 +197,20 @@ public class BreakpointsAnnotationModel extends AnnotationModel implements IBrea
 	 * 
 	 * @param string
 	 *            decimal or hexadecimal representation of an non-negative integer
-	 * @return address value as <code>BigInteger</code>
+	 * @return address value as <code>BigInteger</code> or <code>null</code> in case of a <code>NumberFormatException</code>
 	 */
 	private static BigInteger decodeAddress(String string) {
-		if (string.startsWith("0x")) { //$NON-NLS-1$
-			return new BigInteger(string.substring(2), 16);
+		try {
+			if (string.startsWith("0x")) { //$NON-NLS-1$
+				return new BigInteger(string.substring(2), 16);
+			}
+			if (string.length() > 0) {
+				return new BigInteger(string);
+			}
+		} catch (NumberFormatException nfe) {
+			// don't propagate
 		}
-		return new BigInteger(string);
+		return null;
 	}
 
 	/*

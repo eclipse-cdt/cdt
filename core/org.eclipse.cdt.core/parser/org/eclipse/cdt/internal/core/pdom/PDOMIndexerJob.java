@@ -1,12 +1,12 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2008 QNX Software Systems
+ * Copyright (c) 2005, 2009 QNX Software Systems
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *     QNX Software Systems - initial API and implementation
+ *     Doug Schaefer (QNX Software Systems) - initial API and implementation
  *     Markus Schorn (Wind River Systems)
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.pdom;
@@ -23,10 +23,35 @@ import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
 
 /**
- * @author dschaefer
- *
+ * Job running multiple indexer tasks.
  */
 public class PDOMIndexerJob extends Job {
+	/**
+	 * Job updating the progress monitor of the indexer job.
+	 */
+	final class ProgressUpdateJob extends Job {
+		private boolean fStopped= false;
+
+		private ProgressUpdateJob() {
+			super(CCorePlugin.getResourceString("PDOMIndexerJob.updateMonitorJob")); //$NON-NLS-1$
+			setSystem(true);
+		}
+
+		@Override
+		protected IStatus run(IProgressMonitor m) {
+			int currentTick= 0;
+			while(!fStopped && !m.isCanceled()) {
+				currentTick= pdomManager.getMonitorMessage(PDOMIndexerJob.this, currentTick, TOTAL_MONITOR_WORK);
+				try {
+					Thread.sleep(PROGRESS_UPDATE_INTERVAL);
+				} catch (InterruptedException e) {
+					return Status.CANCEL_STATUS;
+				}
+			}
+			return Status.OK_STATUS;
+		}
+	}
+
 	private static final int PROGRESS_UPDATE_INTERVAL = 500;
 	private static final int TOTAL_MONITOR_WORK = 1000;
 	static volatile String sMonitorDetail= null;
@@ -45,22 +70,40 @@ public class PDOMIndexerJob extends Job {
 		setPriority(Job.LONG);
 	}
 
+	public synchronized void subTask(String msg) {
+		if (fMonitor != null) {
+			fMonitor.subTask(msg);
+		}
+	}
+
+	public synchronized void worked(int i) {
+		if (fMonitor != null) {
+			fMonitor.worked(i);
+		}
+	}
+
 	@Override
 	protected IStatus run(IProgressMonitor monitor) {
-		final long start= System.currentTimeMillis();
 		fMonitor = monitor;
 		String taskName = CCorePlugin.getResourceString("pdom.indexer.task"); //$NON-NLS-1$
 		monitor.beginTask(taskName, TOTAL_MONITOR_WORK);
-		Job monitorJob= startMonitorJob(monitor);
+		ProgressUpdateJob monitorJob= new ProgressUpdateJob();
+		monitorJob.schedule();
 		try {
 			IProgressMonitor npm= new NullProgressMonitor() {
 				@Override
 				public boolean isCanceled() {
-					return fMonitor.isCanceled();
+					synchronized(PDOMIndexerJob.this) {
+						return fMonitor == null || fMonitor.isCanceled();
+					}
 				}
 				@Override
 				public void setCanceled(boolean cancelled) {
-					fMonitor.setCanceled(cancelled);
+					synchronized(PDOMIndexerJob.this) {
+						if (fMonitor != null) {
+							fMonitor.setCanceled(cancelled);
+						}
+					}
 				}
 				@Override
 				public void subTask(String name) {
@@ -105,16 +148,6 @@ public class PDOMIndexerJob extends Job {
 				}
 			}
 			while (currentTask != null);
-			
-			// work-around for https://bugs.eclipse.org/bugs/show_bug.cgi?id=197258
-			long rest= 100-(System.currentTimeMillis()-start);
-			if (rest > 0) {
-				try {
-					Thread.sleep(rest);
-				} catch (InterruptedException e) {
-					Thread.currentThread().interrupt();
-				}
-			}
 			return Status.OK_STATUS;
 		}
 		catch (RuntimeException e) {
@@ -136,7 +169,9 @@ public class PDOMIndexerJob extends Job {
 			throw e;
 		}
 		finally {
-			monitorJob.cancel();
+			synchronized(this) {
+				fMonitor= null;
+			}
 			monitor.done();
 		}
 	}
@@ -147,32 +182,15 @@ public class PDOMIndexerJob extends Job {
 		return name;
 	}
 		
-	private Job startMonitorJob(final IProgressMonitor targetMonitor) {
-		Job monitorJob= new Job(CCorePlugin.getResourceString("PDOMIndexerJob.updateMonitorJob")) {  //$NON-NLS-1$
-			@Override
-			protected IStatus run(IProgressMonitor m) {
-				int currentTick= 0;
-				while(!m.isCanceled() && !targetMonitor.isCanceled()) {
-					currentTick= pdomManager.getMonitorMessage(targetMonitor, currentTick, TOTAL_MONITOR_WORK);
-					try {
-						Thread.sleep(PROGRESS_UPDATE_INTERVAL);
-					} catch (InterruptedException e) {
-						return Status.CANCEL_STATUS;
-					}
-				}
-				return Status.OK_STATUS;
-			}
-		};
-		monitorJob.setSystem(true);
-		monitorJob.schedule();
-		return monitorJob;
-	}
-
 	public void cancelJobs(IPDOMIndexer indexer, boolean waitUntilCancelled) {
 		synchronized (taskMutex) {
 			if (currentTask != null && 
 					(indexer == null || currentTask.getIndexer() == indexer)) {
-				fMonitor.setCanceled(true);
+				synchronized(this) {
+					if (fMonitor != null) {
+						fMonitor.setCanceled(true);
+					}
+				}
 				cancelledByManager = true;
 				if (waitUntilCancelled) {
 					while (currentTask != null && currentTask.getIndexer() == indexer) {

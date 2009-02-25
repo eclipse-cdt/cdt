@@ -97,16 +97,15 @@ import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.OperationCanceledException;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Platform;
-import org.eclipse.core.runtime.Preferences;
 import org.eclipse.core.runtime.QualifiedName;
 import org.eclipse.core.runtime.SafeRunner;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.SubProgressMonitor;
-import org.eclipse.core.runtime.Preferences.IPropertyChangeListener;
-import org.eclipse.core.runtime.Preferences.PropertyChangeEvent;
 import org.eclipse.core.runtime.jobs.ISchedulingRule;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.core.runtime.jobs.MultiRule;
+import org.eclipse.core.runtime.preferences.IPreferencesService;
+import org.eclipse.core.runtime.preferences.InstanceScope;
 import org.eclipse.core.runtime.preferences.IEclipsePreferences.IPreferenceChangeListener;
 import org.eclipse.core.runtime.preferences.IEclipsePreferences.PreferenceChangeEvent;
 
@@ -127,7 +126,7 @@ public class PDOMManager implements IWritableIndexManager, IListener {
 		}
 	}
 	
-	private final class PCL implements IPreferenceChangeListener, IPropertyChangeListener {
+	private final class PCL implements IPreferenceChangeListener {
 		private ICProject fProject;
 		public PCL(ICProject prj) {
 			fProject= prj;
@@ -135,15 +134,6 @@ public class PDOMManager implements IWritableIndexManager, IListener {
 		public void preferenceChange(PreferenceChangeEvent event) {
 			if (fProject.getProject().isOpen()) {
 				onPreferenceChange(fProject, event);
-			}
-		}
-		public void propertyChange(PropertyChangeEvent event) {
-			String property = event.getProperty();
-			if (property.equals(CCorePreferenceConstants.TODO_TASK_TAGS) ||
-					property.equals(CCorePreferenceConstants.TODO_TASK_PRIORITIES) ||
-					property.equals(CCorePreferenceConstants.TODO_TASK_CASE_SENSITIVE)) {
-				// Rebuild index if task tag preferences change.
-				reindex(fProject);
 			}
 		}
 	}
@@ -184,6 +174,7 @@ public class PDOMManager implements IWritableIndexManager, IListener {
 	private ILanguageMappingChangeListener fLanguageChangeListener = new LanguageMappingChangeListener(this);
 	private final ICProjectDescriptionListener fProjectDescriptionListener;
 	private final JobChangeListener fJobChangeListener;
+	private final IPreferenceChangeListener fPreferenceChangeListener;
 	
 	private IndexFactory fIndexFactory= new IndexFactory(this);
     private IndexProviderManager fIndexProviderManager = new IndexProviderManager();
@@ -202,6 +193,11 @@ public class PDOMManager implements IWritableIndexManager, IListener {
 	public PDOMManager() {
 		fProjectDescriptionListener= new CProjectDescriptionListener(this);
 		fJobChangeListener= new JobChangeListener(this);
+		fPreferenceChangeListener= new IPreferenceChangeListener() {
+			public void preferenceChange(PreferenceChangeEvent event) {
+				onPreferenceChange(event);
+			}
+		};
 	}
 	
 	public Job startup() {
@@ -227,8 +223,9 @@ public class PDOMManager implements IWritableIndexManager, IListener {
 		// the model listener is attached outside of the job in
 		// order to avoid a race condition where its not noticed
 		// that new projects are being created
-		initializeDatabaseCache();
+		new InstanceScope().getNode(CCorePlugin.PLUGIN_ID).addPreferenceChangeListener(fPreferenceChangeListener);
 		Job.getJobManager().addJobChangeListener(fJobChangeListener);
+		adjustCacheSize();
 		fIndexProviderManager.startup();
 		
 		final CoreModel model = CoreModel.getDefault();
@@ -247,8 +244,9 @@ public class PDOMManager implements IWritableIndexManager, IListener {
 			CCorePlugin.log(e);
 		}
 	}
-	
+
 	public void shutdown() {
+		new InstanceScope().getNode(CCorePlugin.PLUGIN_ID).removePreferenceChangeListener(fPreferenceChangeListener);
 		CCorePlugin.getDefault().getProjectDescriptionManager().removeCProjectDescriptionListener(fProjectDescriptionListener);
 		final CoreModel model = CoreModel.getDefault();
 		model.removeElementChangedListener(fCModelListener);
@@ -267,25 +265,22 @@ public class PDOMManager implements IWritableIndexManager, IListener {
 		Job.getJobManager().removeJobChangeListener(fJobChangeListener);
 	}
 
-	private void initializeDatabaseCache() {
-		adjustCacheSize();
-		CCorePlugin.getDefault().getPluginPreferences().addPropertyChangeListener(
-			new IPropertyChangeListener() {
-				public void propertyChange(PropertyChangeEvent event) {
-					String prop= event.getProperty();
-					if (prop.equals(CCorePreferenceConstants.INDEX_DB_CACHE_SIZE_PCT) || 
-							prop.equals(CCorePreferenceConstants.MAX_INDEX_DB_CACHE_SIZE_MB)) {
-						adjustCacheSize();
-					}
-				}
-			}
-		);
+	protected void onPreferenceChange(PreferenceChangeEvent event) {
+		String prop = event.getKey();
+		if (prop.equals(CCorePreferenceConstants.INDEX_DB_CACHE_SIZE_PCT)
+				|| prop.equals(CCorePreferenceConstants.MAX_INDEX_DB_CACHE_SIZE_MB)) {
+			adjustCacheSize();
+		} else if (prop.equals(CCorePreferenceConstants.TODO_TASK_TAGS) ||
+				prop.equals(CCorePreferenceConstants.TODO_TASK_PRIORITIES) ||
+				prop.equals(CCorePreferenceConstants.TODO_TASK_CASE_SENSITIVE)) {
+			reindexAll();
+		}
 	}
-
+	
 	protected void adjustCacheSize() {
-		final Preferences prefs= CCorePlugin.getDefault().getPluginPreferences();
-		int cachePct= prefs.getInt(CCorePreferenceConstants.INDEX_DB_CACHE_SIZE_PCT);
-		int cacheMax= prefs.getInt(CCorePreferenceConstants.MAX_INDEX_DB_CACHE_SIZE_MB);
+		IPreferencesService prefs = Platform.getPreferencesService();
+		int cachePct= prefs.getInt(CCorePlugin.PLUGIN_ID, CCorePreferenceConstants.INDEX_DB_CACHE_SIZE_PCT, 10, null);
+		int cacheMax= prefs.getInt(CCorePlugin.PLUGIN_ID, CCorePreferenceConstants.MAX_INDEX_DB_CACHE_SIZE_MB, 64, null);
 		cachePct= Math.max(1, Math.min(50, cachePct));   // 1%-50%
 		cacheMax= Math.max(1, cacheMax);                 // >= 1mb
 		long m1= Runtime.getRuntime().maxMemory()/100L * cachePct;
@@ -742,8 +737,6 @@ public class PDOMManager implements IWritableIndexManager, IListener {
 			fPrefListeners.put(prj, pcl);
 		}
 		IndexerPreferences.addChangeListener(prj, pcl);
-        Preferences pref = CCorePlugin.getDefault().getPluginPreferences();
-		pref.addPropertyChangeListener(pcl);
 	}
 
 	private void unregisterPreferenceListener(ICProject project) {
@@ -751,8 +744,6 @@ public class PDOMManager implements IWritableIndexManager, IListener {
 		PCL pcl= fPrefListeners.remove(prj);
 		if (pcl != null) {
 			IndexerPreferences.removeChangeListener(prj, pcl);
-	        Preferences pref = CCorePlugin.getDefault().getPluginPreferences();
-			pref.removePropertyChangeListener(pcl);
 		}
 	}
 
@@ -890,6 +881,19 @@ public class PDOMManager implements IWritableIndexManager, IListener {
 			jobToCancel.cancelJobs(indexer, true);
 		}
 	}    
+	
+	private void reindexAll() {
+		ICProject[] cProjects;
+		try {
+			cProjects = CoreModel.getDefault().getCModel().getCProjects();
+			for (int i = 0; i < cProjects.length; i++) {
+				ICProject project = cProjects[i];
+				reindex(project);
+			}
+		} catch (CModelException e) {
+			CCorePlugin.log(e);
+		}
+	}
 
 	public void reindex(final ICProject project) {
 		Job job= new Job(Messages.PDOMManager_notifyJob_label) { 
@@ -1049,7 +1053,7 @@ public class PDOMManager implements IWritableIndexManager, IListener {
 		}
 	}
 		
-	int getMonitorMessage(IProgressMonitor monitor, int currentTicks, int base) {
+	int getMonitorMessage(PDOMIndexerJob job, int currentTicks, int base) {
 		assert !Thread.holdsLock(fTaskQueue);
 		
 		int sourceCount, sourceEstimate, headerCount, tickCount, tickEstimate;
@@ -1085,12 +1089,12 @@ public class PDOMManager implements IWritableIndexManager, IListener {
 		if (detail != null) {
 			msg= msg+ ": " + detail;  //$NON-NLS-1$
 		}
-		monitor.subTask(msg);
 		
+		job.subTask(msg);
 		if (tickCount > 0 && tickCount <= tickEstimate) {
 			int newTick= tickCount*base/tickEstimate;
 			if (newTick > currentTicks) {
-				monitor.worked(newTick-currentTicks);
+				job.worked(newTick-currentTicks);
 				return newTick;
 			}
 		}

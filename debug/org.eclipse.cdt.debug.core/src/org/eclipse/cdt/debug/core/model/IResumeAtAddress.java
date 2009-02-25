@@ -15,6 +15,7 @@ import org.eclipse.debug.core.DebugException;
 
 /**
  * Provides the ability to resume a debug target at the given address.
+ * @since 6.0
  */
 public interface IResumeAtAddress {
 

@@ -20,6 +20,11 @@ import java.util.HashMap;
 import java.util.List;
 
 import org.eclipse.cdt.debug.core.CDebugCorePlugin;
+import org.eclipse.cdt.debug.internal.core.executables.ExecutablesChangeEvent;
+import org.eclipse.cdt.debug.internal.core.executables.StandardExecutableImporter;
+import org.eclipse.cdt.debug.internal.core.executables.StandardExecutableProvider;
+import org.eclipse.cdt.debug.internal.core.executables.StandardSourceFileRemapping;
+import org.eclipse.cdt.debug.internal.core.executables.StandardSourceFilesProvider;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
@@ -101,10 +106,16 @@ public class ExecutablesManager extends PlatformObject {
 		executableProviders.add(provider);
 	}
 
+	/**
+	 * @since 6.0
+	 */
 	public void addSourceFilesProvider(ISourceFilesProvider provider) {
 		sourceFileProviders.add(provider);
 	}
 
+	/**
+	 * @since 6.0
+	 */
 	public void removeSourceFilesProvider(ISourceFilesProvider provider) {
 		sourceFileProviders.remove(provider);
 	}
@@ -178,6 +189,9 @@ public class ExecutablesManager extends PlatformObject {
 		}
 	}
 
+	/**
+	 * @since 6.0
+	 */
 	public String remapSourceFile(Executable executable, String filePath) {
 		synchronized (sourceFileRemappings) {
 			for (ISourceFileRemapping remapping : sourceFileRemappings) {
@@ -231,6 +245,9 @@ public class ExecutablesManager extends PlatformObject {
 		return executableProviders.toArray(new IExecutableProvider[executableProviders.size()]);
 	}
 
+	/**
+	 * @since 6.0
+	 */
 	public ISourceFilesProvider[] getSourceFileProviders() {
 		return sourceFileProviders.toArray(new ISourceFilesProvider[sourceFileProviders.size()]);
 	}
@@ -254,6 +271,9 @@ public class ExecutablesManager extends PlatformObject {
 		}
 	}
 
+	/**
+	 * @since 6.0
+	 */
 	public String[] getSourceFiles(final Executable executable,
 			IProgressMonitor monitor) {
 		String[] result = new String[0];
@@ -284,6 +304,9 @@ public class ExecutablesManager extends PlatformObject {
 		return result;
 	}
 
+	/**
+	 * @since 6.0
+	 */
 	public IStatus removeExecutables(Executable[] executables, IProgressMonitor monitor) {
 		IExecutableProvider[] exeProviders = getExecutableProviders();
 
@@ -326,6 +349,9 @@ public class ExecutablesManager extends PlatformObject {
 		return result;
 	}
 
+	/**
+	 * @since 6.0
+	 */
 	public void setRefreshNeeded(boolean refresh) {
 		refreshNeeded = true;
 	}

@@ -14,9 +14,18 @@ import org.eclipse.core.runtime.IProgressMonitor;
 
 public interface IExecutableImporter {
 
-	static int LOW_PRIORITY = 25;
-	static int NORMAL_PRIORITY = 50;
-	static int HIGH_PRIORITY = 75;
+	/**
+	 * @since 6.0
+	 */
+	public static final int LOW_PRIORITY = 25;
+	/**
+	 * @since 6.0
+	 */
+	public static final int NORMAL_PRIORITY = 50;
+	/**
+	 * @since 6.0
+	 */
+	public static final int HIGH_PRIORITY = 75;
 	
 	/**
 	 * Gets the priority to be used when importing these executables.
@@ -26,9 +35,13 @@ public interface IExecutableImporter {
 	 * 
 	 * @param executable
 	 * @return the priority level to be used for this ISourceFilesProvider
+	 * @since 6.0
 	 */
 	int getPriority(String[] fileNames);
 
+	/**
+	 * @since 6.0
+	 */
 	public abstract boolean importExecutables(String[] fileNames, IProgressMonitor monitor);
 
 }

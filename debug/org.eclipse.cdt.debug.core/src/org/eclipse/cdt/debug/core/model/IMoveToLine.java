@@ -14,6 +14,7 @@ import org.eclipse.debug.core.DebugException;
 
 /**
  * Provides the ability to move the instruction pointer of a debug target to the given line.
+ * @since 6.0
  */
 public interface IMoveToLine {
 

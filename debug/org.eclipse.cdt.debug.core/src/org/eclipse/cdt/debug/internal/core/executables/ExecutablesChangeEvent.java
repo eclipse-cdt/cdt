@@ -8,8 +8,10 @@
  * Contributors:
  * Nokia - Initial API and implementation
  *******************************************************************************/
-package org.eclipse.cdt.debug.core.executables;
+package org.eclipse.cdt.debug.internal.core.executables;
 
+import org.eclipse.cdt.debug.core.executables.Executable;
+import org.eclipse.cdt.debug.core.executables.IExecutablesChangeEvent;
 import org.eclipse.core.runtime.PlatformObject;
 
 public class ExecutablesChangeEvent extends PlatformObject implements IExecutablesChangeEvent {

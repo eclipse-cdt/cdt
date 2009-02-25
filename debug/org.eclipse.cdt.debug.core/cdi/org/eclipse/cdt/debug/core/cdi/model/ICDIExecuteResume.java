@@ -16,6 +16,7 @@ import org.eclipse.cdt.debug.core.cdi.ICDILocation;
 
 /**
  * Provides the ability to resume a thread or debug target.
+ * @since 6.0
  */
 public interface ICDIExecuteResume {
 

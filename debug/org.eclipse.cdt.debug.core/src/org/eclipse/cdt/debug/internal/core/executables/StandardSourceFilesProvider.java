@@ -1,4 +1,4 @@
-package org.eclipse.cdt.debug.core.executables;
+package org.eclipse.cdt.debug.internal.core.executables;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -8,6 +8,8 @@ import java.io.InputStream;
 import org.eclipse.cdt.core.IBinaryParser;
 import org.eclipse.cdt.core.ISymbolReader;
 import org.eclipse.cdt.core.IBinaryParser.IBinaryFile;
+import org.eclipse.cdt.debug.core.executables.Executable;
+import org.eclipse.cdt.debug.core.executables.ISourceFilesProvider;
 import org.eclipse.cdt.internal.core.model.BinaryParserConfig;
 import org.eclipse.cdt.internal.core.model.CModelManager;
 import org.eclipse.core.resources.IFile;

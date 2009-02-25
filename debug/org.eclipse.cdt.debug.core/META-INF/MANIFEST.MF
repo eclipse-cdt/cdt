@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: %pluginName
 Bundle-SymbolicName: org.eclipse.cdt.debug.core; singleton:=true
-Bundle-Version: 5.0.100.qualifier
+Bundle-Version: 6.0.0.qualifier
 Bundle-Activator: org.eclipse.cdt.debug.core.CDebugCorePlugin
 Bundle-Vendor: %providerName
 Bundle-Localization: plugin
@@ -18,7 +18,7 @@ Export-Package: org.eclipse.cdt.debug.core,
  org.eclipse.cdt.debug.core.sourcelookup,
  org.eclipse.cdt.debug.internal.core,
  org.eclipse.cdt.debug.internal.core.breakpoints,
- org.eclipse.cdt.debug.internal.core.model,
+ org.eclipse.cdt.debug.internal.core.model;x-internal:=true,
  org.eclipse.cdt.debug.internal.core.sourcelookup
 Require-Bundle: org.eclipse.core.resources;bundle-version="[3.2.0,4.0.0)",
  org.eclipse.debug.core;bundle-version="[3.2.0,4.0.0)",

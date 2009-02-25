@@ -16,14 +16,15 @@ import org.eclipse.core.runtime.IProgressMonitor;
  * ISourceFileProvider supplies a list of source files used by a given Executable.
  * 
  * @author Ken Ryall
+ * @since 6.0
  * 
  */
 
 public interface ISourceFilesProvider {
 	
-	static int LOW_PRIORITY = 25;
-	static int NORMAL_PRIORITY = 50;
-	static int HIGH_PRIORITY = 75;
+	public static final int LOW_PRIORITY = 25;
+	public static final int NORMAL_PRIORITY = 50;
+	public static final int HIGH_PRIORITY = 75;
 	
 	/**
 	 * Gets the priority to be used for this executable.

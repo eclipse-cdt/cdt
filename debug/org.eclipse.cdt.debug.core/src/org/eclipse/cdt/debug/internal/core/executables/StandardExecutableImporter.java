@@ -8,7 +8,7 @@
  * Contributors:
  * Nokia - Initial API and implementation
  *******************************************************************************/
-package org.eclipse.cdt.debug.core.executables;
+package org.eclipse.cdt.debug.internal.core.executables;
 
 import java.io.File;
 import java.io.IOException;
@@ -21,6 +21,9 @@ import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.core.settings.model.ICConfigExtensionReference;
 import org.eclipse.cdt.core.settings.model.ICProjectDescription;
 import org.eclipse.cdt.debug.core.CDebugCorePlugin;
+import org.eclipse.cdt.debug.core.executables.Executable;
+import org.eclipse.cdt.debug.core.executables.ExecutablesManager;
+import org.eclipse.cdt.debug.core.executables.IExecutableImporter;
 import org.eclipse.core.filesystem.EFS;
 import org.eclipse.core.filesystem.IFileStore;
 import org.eclipse.core.resources.IContainer;

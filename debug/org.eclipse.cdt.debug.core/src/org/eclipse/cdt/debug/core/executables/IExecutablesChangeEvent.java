@@ -11,9 +11,16 @@
 
 package org.eclipse.cdt.debug.core.executables;
 
+
 public interface IExecutablesChangeEvent {
 
+	/**
+	 * @since 6.0
+	 */
 	public Executable[] getCurrentExecutables();
 
+	/**
+	 * @since 6.0
+	 */
 	public Executable[] getPreviousExecutables();
 }

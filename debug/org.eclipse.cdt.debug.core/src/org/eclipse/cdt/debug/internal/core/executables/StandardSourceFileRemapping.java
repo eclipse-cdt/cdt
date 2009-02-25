@@ -9,9 +9,11 @@
  * Nokia - Initial API and implementation
  *******************************************************************************/
 
-package org.eclipse.cdt.debug.core.executables;
+package org.eclipse.cdt.debug.internal.core.executables;
 
 import org.eclipse.cdt.debug.core.CDebugCorePlugin;
+import org.eclipse.cdt.debug.core.executables.Executable;
+import org.eclipse.cdt.debug.core.executables.ISourceFileRemapping;
 import org.eclipse.cdt.debug.core.sourcelookup.ICSourceLocator;
 import org.eclipse.cdt.debug.internal.core.sourcelookup.CSourceLookupDirector;
 import org.eclipse.core.runtime.CoreException;

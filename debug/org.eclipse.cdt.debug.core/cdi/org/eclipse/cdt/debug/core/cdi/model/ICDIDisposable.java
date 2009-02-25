@@ -26,6 +26,7 @@ package org.eclipse.cdt.debug.core.cdi.model;
  * <li>{@link ICDIStackFrame}
  * <li>{@link ICDIThread}
  * </ul>
+ * @since 6.0
  */
 public interface ICDIDisposable {
 	/**

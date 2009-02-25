@@ -9,7 +9,7 @@
  * Nokia - Initial API and implementation
  *******************************************************************************/
 
-package org.eclipse.cdt.debug.core.executables;
+package org.eclipse.cdt.debug.internal.core.executables;
 
 import java.util.ArrayList;
 
@@ -21,6 +21,9 @@ import org.eclipse.cdt.core.settings.model.CProjectDescriptionEvent;
 import org.eclipse.cdt.core.settings.model.ICProjectDescription;
 import org.eclipse.cdt.core.settings.model.ICProjectDescriptionListener;
 import org.eclipse.cdt.debug.core.CDebugCorePlugin;
+import org.eclipse.cdt.debug.core.executables.Executable;
+import org.eclipse.cdt.debug.core.executables.ExecutablesManager;
+import org.eclipse.cdt.debug.core.executables.IExecutableProvider;
 import org.eclipse.cdt.internal.core.model.CModelManager;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;

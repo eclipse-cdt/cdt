@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.cdt.debug.core.executables;
 
+
 /**
  * ISourceFileRemapping is used by the Executables Manager when finding missing
  * source files.
@@ -19,6 +20,9 @@ package org.eclipse.cdt.debug.core.executables;
  */
 public interface ISourceFileRemapping {
 
+	/**
+	 * @since 6.0
+	 */
 	String remapSourceFile(Executable executable, String filePath);
 
 }

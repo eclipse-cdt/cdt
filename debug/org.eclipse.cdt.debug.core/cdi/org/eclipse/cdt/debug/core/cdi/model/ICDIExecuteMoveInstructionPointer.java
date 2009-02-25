@@ -16,6 +16,7 @@ import org.eclipse.cdt.debug.core.cdi.ICDILocation;
 
 /**
  * Provides the ability to perform a jump without changing the run state of a thread or debug target.
+ * @since 6.0
  */
 public interface ICDIExecuteMoveInstructionPointer {
 

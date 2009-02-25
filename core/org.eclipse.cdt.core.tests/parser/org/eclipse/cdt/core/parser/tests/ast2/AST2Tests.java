@@ -5827,6 +5827,19 @@ public class AST2Tests extends AST2BaseTest {
 		return runtime.totalMemory()-runtime.freeMemory();
 	}
 
+	// int n= 0;
+	// int a[]= {0x00, sizeof(n)};
+	public void testNonTrivialInitializer_Bug253690() throws Exception {
+		final String code= getAboveComment();
+		for (ParserLanguage lang : ParserLanguage.values()) {
+			IASTTranslationUnit tu= parse(code, lang, false, true, true);
+			IASTSimpleDeclaration d= getDeclaration(tu, 0);
+			IBinding b= d.getDeclarators()[0].getName().resolveBinding();
+			IASTName[] refs = tu.getReferences(b);
+			assertEquals(1, refs.length);
+		}
+	}
+
 	// void test() {
 	//    const void* p = 1+2;
 	// }

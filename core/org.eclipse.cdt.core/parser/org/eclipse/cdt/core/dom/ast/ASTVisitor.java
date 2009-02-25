@@ -127,7 +127,9 @@ public abstract class ASTVisitor {
 	public boolean includeInactiveNodes= false;
 	
 	/**
-	 * For internal use, only.
+	 * Normally neither ambiguous nodes nor their children are visited. By setting
+	 * this flag to <code>true</code> ambiguous nodes are visited, their children
+	 * are not.
 	 * @noreference This field is not intended to be referenced by clients.
 	 */
 	public boolean shouldVisitAmbiguousNodes = false;

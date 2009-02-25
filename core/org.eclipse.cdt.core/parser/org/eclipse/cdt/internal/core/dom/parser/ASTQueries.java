@@ -45,6 +45,15 @@ public class ASTQueries {
 			fFound= true;
 			return PROCESS_ABORT;
 		}
+		@Override
+		public int visit(ASTAmbiguousNode node) {
+			IASTNode[] alternatives= node.getNodes();
+			for (IASTNode alt : alternatives) {
+				if (!alt.accept(this))
+					return PROCESS_ABORT;
+			}
+			return PROCESS_CONTINUE;
+		}
 	}
 	private static NameSearch NAME_SEARCH= new NameSearch();
 	

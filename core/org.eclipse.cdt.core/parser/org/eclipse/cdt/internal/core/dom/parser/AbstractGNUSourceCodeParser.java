@@ -121,6 +121,17 @@ public abstract class AbstractGNUSourceCodeParser implements ISourceCodeParser {
 			((ASTNode) node).setInactive();
 			return PROCESS_CONTINUE;
 		}
+		
+		@Override
+		public int visit(ASTAmbiguousNode node) {
+			node.setInactive();
+			IASTNode[] alternatives= node.getNodes();
+			for (IASTNode alt : alternatives) {
+				if (!alt.accept(this))
+					return PROCESS_ABORT;
+			}
+			return PROCESS_CONTINUE;
+		}
 	};
 
 	protected static final int DEFAULT_DESIGNATOR_LIST_SIZE = 4;

@@ -40,12 +40,14 @@ class PDOMCPPTypeList {
 		db.putShort(p, len); p+=2;
 		for (int i=0; i<len; i++, p+=NODE_SIZE) {
 			final IType type = types[i];
+			int rec= 0;
 			if (type != null) {
 				final PDOMNode pdomType = linkage.addType(parent, type);
-				db.putInt(p, pdomType.getRecord());
-			} else {
-				db.putInt(p, 0);
+				if (pdomType != null) {
+					rec= pdomType.getRecord();
+				} 
 			}
+			db.putInt(p, rec);
 		}
 		return block;
 	}

@@ -148,7 +148,7 @@ public abstract class PDOMIndexerTask extends AbstractIndexerTask implements IPD
 		if (ct != null) {
 			ILanguage l = LanguageManager.getInstance().getLanguage(ct);
 			if (l instanceof AbstractLanguage) {
-				if (ct.getId().equals(CCorePlugin.CONTENT_TYPE_CXXHEADER) && l.getLinkageID() == ILinkage.CPP_LINKAGE_ID) {
+				if (filename.indexOf('.') >= 0 && ct.getId().equals(CCorePlugin.CONTENT_TYPE_CXXHEADER) && l.getLinkageID() == ILinkage.CPP_LINKAGE_ID) {
 					ILanguage l2= LanguageManager.getInstance().getLanguageForContentTypeID(CCorePlugin.CONTENT_TYPE_CHEADER);
 					if (l2 instanceof AbstractLanguage) {
 						return new AbstractLanguage[] {(AbstractLanguage) l, (AbstractLanguage) l2};

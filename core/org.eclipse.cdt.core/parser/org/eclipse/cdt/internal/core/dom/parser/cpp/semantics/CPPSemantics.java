@@ -24,6 +24,7 @@ import java.util.List;
 import java.util.Set;
 
 import org.eclipse.cdt.core.dom.ast.ASTNodeProperty;
+import org.eclipse.cdt.core.dom.ast.ASTVisitor;
 import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.EScopeKind;
 import org.eclipse.cdt.core.dom.ast.IASTArraySubscriptExpression;
@@ -46,6 +47,7 @@ import org.eclipse.cdt.core.dom.ast.IASTIdExpression;
 import org.eclipse.cdt.core.dom.ast.IASTInitializer;
 import org.eclipse.cdt.core.dom.ast.IASTInitializerExpression;
 import org.eclipse.cdt.core.dom.ast.IASTLabelStatement;
+import org.eclipse.cdt.core.dom.ast.IASTLiteralExpression;
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTNameOwner;
 import org.eclipse.cdt.core.dom.ast.IASTNamedTypeSpecifier;
@@ -56,6 +58,8 @@ import org.eclipse.cdt.core.dom.ast.IASTSimpleDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTStatement;
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
 import org.eclipse.cdt.core.dom.ast.IASTTypeId;
+import org.eclipse.cdt.core.dom.ast.IASTTypeIdExpression;
+import org.eclipse.cdt.core.dom.ast.IASTTypeIdInitializerExpression;
 import org.eclipse.cdt.core.dom.ast.IASTUnaryExpression;
 import org.eclipse.cdt.core.dom.ast.IBasicType;
 import org.eclipse.cdt.core.dom.ast.IBinding;
@@ -88,6 +92,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTNamespaceAlias;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTNamespaceDefinition;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTNewExpression;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTQualifiedName;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTSimpleTypeConstructorExpression;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTSwitchStatement;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTemplateDeclaration;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTemplateId;
@@ -569,7 +574,7 @@ public class CPPSemantics {
         return (ICPPNamespaceScope) scope;
     }
     
-	static private ICPPScope getLookupScope(IASTName name) throws DOMException {
+	static private ICPPScope getLookupScope(IASTName name, LookupData data) throws DOMException {
 	    IASTNode parent = name.getParent();
 	    IScope scope = null;
     	if (parent instanceof ICPPASTBaseSpecifier) {
@@ -586,7 +591,7 @@ public class CPPSemantics {
 	    	if (!(binding instanceof IProblemBinding))
 	    		scope = binding.getScope();
 	    } else {
-	    	scope = CPPVisitor.getContainingScope(name);
+	    	scope = CPPVisitor.getContainingScope(name, data);
 	    }
     	if (scope instanceof ICPPScope) {
     		return (ICPPScope)scope;
@@ -688,15 +693,14 @@ public class CPPSemantics {
 	 */
 	static protected void lookup(LookupData data, Object start) throws DOMException {
 		final IIndexFileSet fileSet= getIndexFileSet(data);
-		IASTNode blockItem= data.astName;
-		if (blockItem == null) 
+		if (data.astName == null) 
 			return;
 
 		ICPPScope nextScope= null;
 		if (start instanceof ICPPScope) {
 			nextScope= (ICPPScope) start;
 		} else if (start instanceof IASTName) {
-			nextScope= getLookupScope((IASTName) start);
+			nextScope= getLookupScope((IASTName) start, data);
 		}
 		if (nextScope == null)
 			return;
@@ -717,6 +721,12 @@ public class CPPSemantics {
 		} else {
 			nextTmplScope= enclosingTemplateScope(data.astName);
 		}
+		if (!data.usesEnclosingScope && nextTmplScope != null) {
+			nextTmplScope= null;
+			if (dependsOnTemplateFieldReference(data.astName)) {
+				data.checkPointOfDecl= false;
+			}
+		}
 		
 		while (nextScope != null || nextTmplScope != null) {
 			// when the non-template scope is no longer contained within the first template scope,
@@ -735,7 +745,6 @@ public class CPPSemantics {
 			if (scope instanceof IIndexScope && data.tu != null) {
 				scope= (ICPPScope) data.tu.mapToASTScope(((IIndexScope) scope));
 			}
-			blockItem = CPPVisitor.getContainingBlockItem(blockItem);
 			
 			if (!data.usingDirectivesOnly) {
 				IBinding[] bindings= getBindingsFromScope(scope, fileSet, data);
@@ -800,7 +809,95 @@ public class CPPSemantics {
 		}
 	}
 
-	private static IBinding[] getBindingsFromScope(ICPPScope scope, final IIndexFileSet fileSet, LookupData data) throws DOMException {
+	/**
+	 * Checks whether the name directly or indirectly depends on the this pointer.
+	 */
+	private static boolean dependsOnTemplateFieldReference(IASTName astName) {
+		if (astName.getPropertyInParent() != IASTFieldReference.FIELD_NAME) 
+			return false;
+		
+		final boolean[] result= {false};
+		final IASTExpression fieldOwner = ((IASTFieldReference)astName.getParent()).getFieldOwner();
+		fieldOwner.accept(new ASTVisitor(){
+			{
+				shouldVisitNames= true;
+				shouldVisitExpressions= true;
+			}
+
+			@Override
+			public int visit(IASTName name) {
+				IBinding b= name.resolvePreBinding();
+				if (b instanceof ICPPUnknownBinding || b instanceof ICPPTemplateDefinition) {
+					result[0]= true;
+					return PROCESS_ABORT;
+				}
+				if (b instanceof ICPPMember) {
+					ICPPMember mem= (ICPPMember) b;
+					try {
+						if (!mem.isStatic()) {
+							ICPPClassType owner= mem.getClassOwner();
+							if (owner instanceof ICPPUnknownBinding || owner instanceof ICPPTemplateDefinition) {
+								result[0]= true;
+								return PROCESS_ABORT;
+							}
+						}
+					} catch (DOMException e) {
+					}
+				}
+				if (name instanceof ICPPASTTemplateId)
+					return PROCESS_SKIP;
+				return PROCESS_CONTINUE;
+			}
+
+			@Override
+			public int visit(IASTExpression expression) {
+				if (expression instanceof IASTLiteralExpression) {
+					if (((IASTLiteralExpression) expression).getKind() == IASTLiteralExpression.lk_this) {
+						final IType thisType = SemanticUtil.getNestedType(expression.getExpressionType(), TDEF | CVQ | PTR | ARRAY | MPTR | REF);
+						if (thisType instanceof ICPPUnknownBinding || thisType instanceof ICPPTemplateDefinition) {
+							result[0]= true;
+							return PROCESS_ABORT;
+						}
+					}
+				}
+				if (expression instanceof IASTUnaryExpression) {
+					switch (((IASTUnaryExpression) expression).getOperator()) {
+					case IASTUnaryExpression.op_sizeof:
+					case IASTUnaryExpression.op_typeid:
+					case IASTUnaryExpression.op_throw:
+						return PROCESS_SKIP;
+					}
+				} else if (expression instanceof IASTTypeIdExpression) {
+					switch (((IASTTypeIdExpression) expression).getOperator()) {
+					case IASTTypeIdExpression.op_sizeof:
+					case IASTTypeIdExpression.op_typeid:
+						return PROCESS_SKIP;
+					}
+				} else if (expression instanceof IASTCastExpression) {
+					if (!((IASTCastExpression) expression).getTypeId().accept(this)) {
+						return PROCESS_ABORT;
+					}
+					return PROCESS_SKIP;
+				} else if (expression instanceof ICPPASTNewExpression) {
+					if (!((ICPPASTNewExpression) expression).getTypeId().accept(this)) {
+						return PROCESS_ABORT;
+					}
+					return PROCESS_SKIP;
+				} else if (expression instanceof ICPPASTSimpleTypeConstructorExpression) {
+					return PROCESS_SKIP;
+				} else if (expression instanceof IASTTypeIdInitializerExpression) {
+					if (!((IASTTypeIdInitializerExpression) expression).getTypeId().accept(this)) {
+						return PROCESS_ABORT;
+					}
+					return PROCESS_SKIP;
+				}
+				return PROCESS_CONTINUE;
+			}
+		});
+		return result[0];
+   }
+
+   private static IBinding[] getBindingsFromScope(ICPPScope scope, final IIndexFileSet fileSet, LookupData data) throws DOMException {
 		IBinding[] bindings;
 		if (scope instanceof ICPPASTInternalScope) {
 			bindings= ((ICPPASTInternalScope) scope).getBindings(data.astName, true, data.prefixLookup, fileSet, data.checkPointOfDecl);

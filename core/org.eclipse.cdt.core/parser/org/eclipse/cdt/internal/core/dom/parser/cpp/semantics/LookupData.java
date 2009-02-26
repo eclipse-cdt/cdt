@@ -101,6 +101,7 @@ public class LookupData {
 	public boolean typesOnly = false;
 	public boolean considerConstructors = false;
 	public boolean checkPointOfDecl= true; // for lookup of unknown bindings the point of declaration can be reversed.
+	public boolean usesEnclosingScope= true; // for field references or qualified names, enclosing template declarations are ignored.
 
 	public ICPPClassType skippedScope;
 	public Object foundItems = null;

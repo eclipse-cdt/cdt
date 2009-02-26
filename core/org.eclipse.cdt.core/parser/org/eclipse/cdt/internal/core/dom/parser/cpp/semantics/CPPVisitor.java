@@ -890,7 +890,11 @@ public class CPPVisitor extends ASTQueries {
 	}
 	
 	public static IScope getContainingScope(IASTName name) {
-		IScope scope= getContainingScopeOrNull(name);
+		return getContainingScope(name, null);
+	}
+	
+	public static IScope getContainingScope(IASTName name, LookupData data) {
+		IScope scope= getContainingScopeOrNull(name, data);
 		if (scope == null) {
 			return new CPPScope.CPPScopeProblem(name, IProblemBinding.SEMANTIC_BAD_SCOPE);
 		}
@@ -898,7 +902,7 @@ public class CPPVisitor extends ASTQueries {
 		return scope;
 	}
 	
-	private static IScope getContainingScopeOrNull(IASTName name) {
+	private static IScope getContainingScopeOrNull(IASTName name, LookupData data) {
 		if (name == null) {
 			return null;
 		}
@@ -922,6 +926,9 @@ public class CPPVisitor extends ASTQueries {
 					} 
 				}
 				if (i > 0) {
+					if (data != null) {
+						data.usesEnclosingScope= false;
+					}
 					IBinding binding = names[i - 1].resolveBinding();
 					while (binding instanceof ITypedef) {
 						IType t = ((ITypedef) binding).getType();
@@ -954,6 +961,9 @@ public class CPPVisitor extends ASTQueries {
 					}
 				} 
 			} else if (parent instanceof ICPPASTFieldReference) {
+				if (data != null) {
+					data.usesEnclosingScope= false;
+				}
 				final ICPPASTFieldReference fieldReference = (ICPPASTFieldReference) parent;
 				IType type = CPPSemantics.getChainedMemberAccessOperatorReturnType(fieldReference);
 				if (fieldReference.isPointerDereference()) {

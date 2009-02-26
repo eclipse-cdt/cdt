@@ -3897,13 +3897,34 @@ public class AST2TemplateTests extends AST2BaseTest {
 	//     g(t);
 	// }
 	// template <typename T> void g(T t) {}
-	public void testDependentNameReferencingLaterDeclaration_265926() throws Exception {
+	public void testDependentNameReferencingLaterDeclaration_265926a() throws Exception {
 		final String code = getAboveComment();
 		BindingAssertionHelper bh= new BindingAssertionHelper(code, true);
 		IFunction gref= bh.assertNonProblem("g(t)", 1);
 		assertInstance(gref, ICPPUnknownBinding.class);
 		IFunction gdecl= bh.assertNonProblem("g(T t)", 1);
 		
+		parseAndCheckBindings(code, ParserLanguage.CPP);
+	}
+	
+	//	class C;
+	//	C* c(void*) {return 0;}
+	//
+	//	template <typename T> class XT {
+	//		void m();
+	//		C* ptr() {return 0;}
+	//	};
+	//
+	//	template <typename T> void XT<T>::m() {
+	//		c(this)->a();
+	//		ptr()->a();
+	//	};
+	//
+	//	class C {
+	//		void a() {};
+	//	};
+	public void testDependentNameReferencingLaterDeclaration_265926b() throws Exception {
+		final String code = getAboveComment();
 		parseAndCheckBindings(code, ParserLanguage.CPP);
 	}
 }

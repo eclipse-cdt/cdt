@@ -19,6 +19,8 @@ import org.eclipse.cdt.dsf.service.IDsfService;
 
 /**
  * Disassembly service interface
+ * 
+ * @since 1.0
  */
 public interface IDisassembly extends IDsfService {
 

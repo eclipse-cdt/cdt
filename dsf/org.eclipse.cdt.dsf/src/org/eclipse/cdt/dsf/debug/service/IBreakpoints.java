@@ -23,6 +23,8 @@ import org.eclipse.cdt.dsf.service.IDsfService;
 
 /**
  * Breakpoint service interface
+ * 
+ * @since 1.0
  */
 public interface IBreakpoints extends IDsfService {
 

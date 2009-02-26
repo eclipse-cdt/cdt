@@ -15,6 +15,7 @@ import org.eclipse.cdt.dsf.service.DsfSession;
 /**
  * A factory to create DSF services.  Using this interface allows
  * to easily have different service implementation for different backends.
+ * 
  * @since 1.1
  */
 public interface IDsfDebugServicesFactory {

@@ -27,7 +27,6 @@ import org.eclipse.cdt.dsf.datamodel.IDMContext;
 import org.eclipse.cdt.dsf.debug.service.ICachingService;
 import org.eclipse.cdt.dsf.debug.service.IRunControl;
 import org.eclipse.cdt.dsf.debug.service.IStack;
-import org.eclipse.cdt.dsf.debug.service.IStack2;
 import org.eclipse.cdt.dsf.debug.service.IRunControl.IExecutionDMContext;
 import org.eclipse.cdt.dsf.debug.service.IRunControl.IResumedDMEvent;
 import org.eclipse.cdt.dsf.debug.service.IRunControl.ISuspendedDMEvent;
@@ -57,7 +56,7 @@ import org.eclipse.core.runtime.Status;
 import org.osgi.framework.BundleContext;
 
 public class MIStack extends AbstractDsfService
-	implements IStack2, ICachingService
+	implements IStack, ICachingService
 {
     protected static class MIFrameDMC extends AbstractDMContext 
         implements IFrameDMContext

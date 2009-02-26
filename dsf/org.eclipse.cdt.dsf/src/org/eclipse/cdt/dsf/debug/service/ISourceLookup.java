@@ -20,6 +20,8 @@ import org.eclipse.cdt.dsf.service.IDsfService;
  * primarily by other services that need to access source-path mappings, such
  * as the breakpoints service.  For UI components, the platform source lookup
  * interfaces could be sufficient.
+ * 
+ * @since 1.0
  */
 public interface ISourceLookup extends IDsfService {
 

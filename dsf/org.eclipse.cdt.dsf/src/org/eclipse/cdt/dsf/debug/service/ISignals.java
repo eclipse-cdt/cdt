@@ -14,7 +14,9 @@ import org.eclipse.cdt.dsf.datamodel.IDMContext;
 import org.eclipse.cdt.dsf.service.IDsfService;
 
 /**
+ * Place holder interface for a signals implementation.
  * 
+ * @since 1.0
  */
 public interface ISignals extends IDsfService {
     /**

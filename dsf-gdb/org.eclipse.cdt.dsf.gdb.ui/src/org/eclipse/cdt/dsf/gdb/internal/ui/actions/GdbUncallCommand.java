@@ -41,7 +41,7 @@ public class GdbUncallCommand extends GdbAbstractReverseStepCommand implements I
 	 @Override
 	 protected final StepType getStepType() {
 		 boolean instructionSteppingEnabled = getSteppingMode() != null && getSteppingMode().isInstructionSteppingEnabled();
-		 return instructionSteppingEnabled ? StepType.INSTRUCTION_STEP_RETUTRN : StepType.STEP_RETURN;
+		 return instructionSteppingEnabled ? StepType.INSTRUCTION_STEP_RETURN : StepType.STEP_RETURN;
 	 }
 }
 

@@ -15,6 +15,8 @@ import java.math.BigInteger;
 
 /**
  * Represents an assembly instruction
+ * 
+ * @since 1.0
  */
 public interface IInstruction {
 

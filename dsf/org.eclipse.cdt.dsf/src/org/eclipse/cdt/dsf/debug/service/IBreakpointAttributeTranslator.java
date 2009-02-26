@@ -18,6 +18,11 @@ import org.eclipse.cdt.dsf.debug.service.IBreakpoints.IBreakpointDMContext;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.debug.core.model.IBreakpoint;
 
+/**
+ * Breakpoint attribute translator interface
+ * 
+ * @since 1.0
+ */
 
 @ThreadSafeAndProhibitedFromDsfExecutor("")
 public interface IBreakpointAttributeTranslator {

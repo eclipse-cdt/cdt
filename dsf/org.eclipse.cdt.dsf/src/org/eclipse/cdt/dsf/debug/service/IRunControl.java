@@ -25,6 +25,8 @@ import org.eclipse.cdt.dsf.datamodel.IDMService;
  * even have methods for getting labels.  That's because it is expected that
  * higher level services, ones that deal with processes, kernels, or target 
  * features will provide that functionality. 
+ * 
+ * @since 1.0
  */
 public interface IRunControl extends IDMService
 {
@@ -120,7 +122,18 @@ public interface IRunControl extends IDMService
     boolean isSuspended(IExecutionDMContext context);
     void resume(IExecutionDMContext context, RequestMonitor requestMonitor);
     void suspend(IExecutionDMContext context, RequestMonitor requestMonitor);
-    public enum StepType { STEP_OVER, STEP_INTO, STEP_RETURN, INSTRUCTION_STEP_OVER, INSTRUCTION_STEP_INTO, INSTRUCTION_STEP_RETUTRN };
+    
+    public enum StepType { 
+    	STEP_OVER, 
+    	STEP_INTO, 
+    	STEP_RETURN, 
+    	INSTRUCTION_STEP_OVER, 
+    	INSTRUCTION_STEP_INTO,
+        /**
+	     * @since 2.0
+	     */
+        INSTRUCTION_STEP_RETURN };
+        
     boolean isStepping(IExecutionDMContext context);
     void canStep(IExecutionDMContext context, StepType stepType, DataRequestMonitor<Boolean> rm);
     void step(IExecutionDMContext context, StepType stepType, RequestMonitor requestMonitor);

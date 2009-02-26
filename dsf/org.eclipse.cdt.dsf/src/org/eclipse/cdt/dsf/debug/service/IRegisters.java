@@ -18,6 +18,8 @@ import org.eclipse.cdt.dsf.datamodel.IDMEvent;
 
 /**
  * Service for accessing register data.
+ * 
+ * @since 1.0
  */
 public interface IRegisters extends IFormattedValues {
     

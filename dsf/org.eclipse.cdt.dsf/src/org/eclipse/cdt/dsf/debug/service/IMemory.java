@@ -24,6 +24,8 @@ import org.eclipse.debug.core.model.MemoryByte;
  * Service for accessing memory.  Memory contexts are not meant to be 
  * represented in tree or table views, so it doesn't need to implement
  * IDMService interface. 
+ * 
+ * @since 1.0
  */
 public interface IMemory extends IDsfService {
 

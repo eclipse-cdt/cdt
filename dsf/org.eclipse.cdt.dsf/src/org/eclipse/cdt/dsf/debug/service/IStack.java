@@ -19,6 +19,8 @@ import org.eclipse.cdt.dsf.datamodel.IDMService;
 /**
  * Stack service provides access to stack information for a 
  * given execution context.
+ * 
+ * @since 1.0
  */
 public interface IStack extends IDMService {
 
@@ -82,11 +84,35 @@ public interface IStack extends IDMService {
     void getFrames(IDMContext execContext, DataRequestMonitor<IFrameDMContext[]> rm);
     
     /**
+	 * When passed in the endIndex of getFrames(...) it indicates that all stack frames are to be retrieved.
+	 * @since 2.0
+	 */
+    public final static int ALL_FRAMES = -1;
+	
+	/**
+	 * Retrieves list of stack frames for the given execution context.  Request
+	 * will fail if the stack frame data is not available. 
+	 * <p>The range of stack frames can be limited by the <code>startIndex</code> and <code>endIndex</code> arguments. 
+	 * It is no error to specify an <code>endIndex</code> exceeding the number of available stack frames.
+	 * A negative value for <code>endIndex</code> means to retrieve all stack frames. <code>startIndex</code> must be a non-negative value.
+	 * </p>
+	 * 
+	 * @param execContext  the execution context to retrieve stack frames for
+	 * @param startIndex  the index of the first frame to retrieve
+	 * @param endIndex  the index of the last frame to retrieve (inclusive) or {@link #ALL_FRAMES}
+	 * @param rm  the request monitor
+	 * 
+	 * @see #getFrames(IDMContext, DataRequestMonitor)
+	 * @since 2.0
+	 */
+	public abstract void getFrames(IDMContext execContext, int startIndex, int endIndex, DataRequestMonitor<IFrameDMContext[]> rm);
+	
+    /**
      * Retrieves the top stack frame for the given execution context.  
      * Retrieving just the top frame DMC and corresponding data can be much 
      * more efficient than just retrieving the whole stack, before the data
      * is often included in the stopped event.  Also for some UI functionality, 
-     * such as setpping, only top stack frame is often needed. 
+     * such as stepping, only top stack frame is often needed. 
      * @param execContext
      * @param rm
      */
@@ -110,6 +136,4 @@ public interface IStack extends IDMService {
      * @param rm Callback 
      */
     void getStackDepth(IDMContext dmc, int maxDepth, DataRequestMonitor<Integer> rm);
-
-        
 }

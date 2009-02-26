@@ -13,6 +13,8 @@ package org.eclipse.cdt.dsf.debug.service;
 
 /**
  * Represents the assembly instruction(s) corresponding to a source line
+ * 
+ * @since 1.0
  */
 public interface IMixedInstruction {
 

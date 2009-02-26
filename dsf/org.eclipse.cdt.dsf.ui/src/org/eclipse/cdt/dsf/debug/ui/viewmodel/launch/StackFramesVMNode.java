@@ -24,7 +24,6 @@ import org.eclipse.cdt.dsf.datamodel.DMContexts;
 import org.eclipse.cdt.dsf.datamodel.IDMContext;
 import org.eclipse.cdt.dsf.debug.service.IRunControl;
 import org.eclipse.cdt.dsf.debug.service.IStack;
-import org.eclipse.cdt.dsf.debug.service.IStack2;
 import org.eclipse.cdt.dsf.debug.service.IRunControl.IContainerDMContext;
 import org.eclipse.cdt.dsf.debug.service.IRunControl.IContainerSuspendedDMEvent;
 import org.eclipse.cdt.dsf.debug.service.IRunControl.IExecutionDMContext;
@@ -190,14 +189,13 @@ public class StackFramesVMNode extends AbstractDMVMNode
                 });
             
         } else {
-        	if (startIndex >= 0 && update.getLength() > 0 && stackService instanceof IStack2) {
+        	if (startIndex >= 0 && update.getLength() > 0) {
             	// partial stack dump
-        		IStack2 stackService2= (IStack2) stackService;
                 int endIndex= startIndex + update.getLength() - 1;
             	if (startIndex < stackFrameLimit && endIndex >= stackFrameLimit) {
             		endIndex = stackFrameLimit - 1;
             	}
-				stackService2.getFrames(
+            	stackService.getFrames(
                     execDmc, 
                     startIndex,
                     endIndex,

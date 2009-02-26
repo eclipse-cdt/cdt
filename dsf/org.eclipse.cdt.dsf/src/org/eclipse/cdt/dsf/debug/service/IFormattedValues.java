@@ -17,6 +17,13 @@ import org.eclipse.cdt.dsf.datamodel.IDMContext;
 import org.eclipse.cdt.dsf.datamodel.IDMData;
 import org.eclipse.cdt.dsf.datamodel.IDMService;
 
+/**
+ * Formatted values interface describes the kinds of formatted information
+ * which may be returned and the methods for obtaining and manipulating
+ * those values.
+ * 
+ * @since 1.0
+ */
 public interface IFormattedValues extends IDMService {
     
     /** Marker interface for a DMC that has a formatted value. */

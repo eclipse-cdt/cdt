@@ -23,7 +23,6 @@ import org.eclipse.cdt.dsf.datamodel.IDMContext;
 import org.eclipse.cdt.dsf.debug.service.ICachingService;
 import org.eclipse.cdt.dsf.debug.service.IRunControl;
 import org.eclipse.cdt.dsf.debug.service.IStack;
-import org.eclipse.cdt.dsf.debug.service.IStack2;
 import org.eclipse.cdt.dsf.debug.service.IRunControl.IExecutionDMContext;
 import org.eclipse.cdt.dsf.debug.service.IRunControl.IResumedDMEvent;
 import org.eclipse.cdt.dsf.debug.service.IRunControl.ISuspendedDMEvent;
@@ -52,7 +51,7 @@ import org.osgi.framework.BundleContext;
  * this service is initialized.
  * </p>
  */
-public class PDAStack extends AbstractDsfService implements IStack2, ICachingService {
+public class PDAStack extends AbstractDsfService implements IStack, ICachingService {
 
     /**
      * PDA stack frame contains only the stack frame level.  It is only 

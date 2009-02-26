@@ -30,6 +30,7 @@ import org.eclipse.core.runtime.CoreException;
  * plugins that declare them are not loaded unless requested by a client.   
  * 
  * @see ICBreakpoint#getExtension(String, Class)
+ * @since 1.0
  */
 public interface IDsfBreakpointExtension extends ICBreakpointExtension {
    

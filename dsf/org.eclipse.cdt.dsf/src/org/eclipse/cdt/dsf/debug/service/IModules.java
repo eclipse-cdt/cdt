@@ -17,7 +17,9 @@ import org.eclipse.cdt.dsf.datamodel.IDMEvent;
 import org.eclipse.cdt.dsf.service.IDsfService;
 
 /**
- * Debugger service representing module handling logic of a debugger.  
+ * Debugger service representing module handling logic of a debugger.
+ * 
+ * @since 1.0
  */
 public interface IModules extends IDsfService {
     

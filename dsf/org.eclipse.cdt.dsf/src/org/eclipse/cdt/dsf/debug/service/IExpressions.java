@@ -24,6 +24,8 @@ import org.eclipse.cdt.dsf.datamodel.IDMEvent;
  * Expressions service provides access to the debugger's expression evaluator. This service has
  * dependencies on the Stack service, as it is be used to provide context for an 
  * expression to be evaluated.
+ * 
+ * @since 1.0
  */
 @SuppressWarnings("nls")
 public interface IExpressions extends IFormattedValues {

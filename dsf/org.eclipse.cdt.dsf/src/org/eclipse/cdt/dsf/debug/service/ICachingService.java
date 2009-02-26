@@ -14,6 +14,7 @@ import org.eclipse.cdt.dsf.datamodel.IDMContext;
 
 /**
  * Interface for services which use an internal cache for data.
+ * 
  * @since 1.1  
  */
 public interface ICachingService {

@@ -20,7 +20,9 @@ import org.eclipse.cdt.dsf.datamodel.IDMService;
  * Service for accessing debugger symbols.  This service builds on the Modules
  * service, but not all debuggers provide access for parsing symbols so this
  * service is separated.
+ * 
  * @see IModules
+ * @since 1.0
  */
 public interface ISymbols extends IDMService {
     public interface ISymbolObjectDMContext extends IDMContext {}
@@ -37,7 +39,7 @@ public interface ISymbols extends IDMService {
     /**
      * Indicates that the list of symbol objects is changed.  Parsing debug 
      * symbols can be a long running operation (order of 10's of seconds or 
-     * minues), so it is useful for the service to provide access to the data
+     * minutes), so it is useful for the service to provide access to the data
      * even while it's still parsing.  This event may be issued periodically
      * by the service to indicate that a section of debug symbols has been 
      * parsed.

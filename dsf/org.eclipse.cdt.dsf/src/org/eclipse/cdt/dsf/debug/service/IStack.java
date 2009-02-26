@@ -105,7 +105,7 @@ public interface IStack extends IDMService {
 	 * @see #getFrames(IDMContext, DataRequestMonitor)
 	 * @since 2.0
 	 */
-	public abstract void getFrames(IDMContext execContext, int startIndex, int endIndex, DataRequestMonitor<IFrameDMContext[]> rm);
+	public void getFrames(IDMContext execContext, int startIndex, int endIndex, DataRequestMonitor<IFrameDMContext[]> rm);
 	
     /**
      * Retrieves the top stack frame for the given execution context.  

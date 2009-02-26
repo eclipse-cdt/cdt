@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2008 Wind River Systems, Inc. and others.
+ * Copyright (c) 2007, 2009 Wind River Systems, Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -33,6 +33,7 @@ import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
+import org.eclipse.core.runtime.content.IContentType;
 
 /**
  * Provides information about translation-units.
@@ -174,6 +175,18 @@ public class ProjectIndexerInputAdapter extends IndexerInputAdapter {
 	public boolean isSourceUnit(Object tuo) {
 		ITranslationUnit tu= (ITranslationUnit) tuo;
 		return tu.isSourceUnit();
+	}
+	
+	@Override
+	public boolean isSource(String filename) {
+		IContentType ct= CCorePlugin.getContentType(fCProject.getProject(), filename);
+		if (ct != null) {
+			String id = ct.getId();
+			if (CCorePlugin.CONTENT_TYPE_CSOURCE.equals(id) || CCorePlugin.CONTENT_TYPE_CXXSOURCE.equals(id)) {
+				return true;
+			}
+		}
+		return false;
 	}
 
 	@Override

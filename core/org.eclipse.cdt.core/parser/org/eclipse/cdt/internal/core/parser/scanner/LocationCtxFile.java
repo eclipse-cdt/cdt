@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007 Wind River Systems, Inc. and others.
+ * Copyright (c) 2007, 2009 Wind River Systems, Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -22,11 +22,15 @@ import org.eclipse.cdt.core.dom.ast.IASTPreprocessorMacroExpansion;
 class LocationCtxFile extends LocationCtxContainer {
 	private final String fFilename;
 	private final ASTInclusionStatement fASTInclude;
+	private final boolean fIsSource;
 
-	public LocationCtxFile(LocationCtxContainer parent, String filename, char[] source, int parentOffset, int parentEndOffset, int sequenceNumber, ASTInclusionStatement inclusionStatement) {
+	public LocationCtxFile(LocationCtxContainer parent, String filename, char[] source, int parentOffset,
+			int parentEndOffset, int sequenceNumber, ASTInclusionStatement inclusionStatement,
+			boolean isSource) {
 		super(parent, source, parentOffset, parentEndOffset, sequenceNumber);
 		fFilename= new String(filename);
 		fASTInclude= inclusionStatement;
+		fIsSource= isSource;
 	}
 	
 	@Override
@@ -119,5 +123,10 @@ class LocationCtxFile extends LocationCtxContainer {
 				}
 			}
 		}
+	}
+	
+	@Override
+	public boolean isSourceFile() {
+		return fIsSource;
 	}
 }

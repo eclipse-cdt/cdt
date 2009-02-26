@@ -13,7 +13,6 @@ package org.eclipse.cdt.internal.core.dom.parser;
 import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
-import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.IFunction;
 import org.eclipse.cdt.core.dom.ast.IScope;
@@ -121,18 +120,16 @@ public class ASTInternal {
 	}
 
 	private static String isPartOfSource(String filePath, IASTNode decl) {
-		IASTTranslationUnit tu;
-		if (filePath == null) {
-			tu= decl.getTranslationUnit();
-			if (tu.isHeaderUnit()) {
-				return null;
+		if (decl instanceof ASTNode) {
+			if (((ASTNode) decl).isPartOfSourceFile()) {
+				if (filePath == null)
+					return decl.getContainingFilename();
+				
+				if (filePath.equals(decl.getContainingFilename()))
+					return filePath;
 			}
-			filePath= tu.getFilePath();
 		}
-		if (!filePath.equals(decl.getContainingFilename())) {
-			return null;
-		}
-		return filePath;
+		return null;
 	}
 
 	public static String getDeclaredInOneFileOnly(IBinding binding) {

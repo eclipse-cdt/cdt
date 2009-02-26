@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008 Wind River Systems, Inc. and others.
+ * Copyright (c) 2008, 2009 Wind River Systems, Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -44,6 +44,7 @@ public class IncludeFileContent {
 	private final List<ICPPUsingDirective> fUsingDirectives;
 	private final String fFileLocation;
 	private boolean fHeuristic;
+	private boolean fIsSource= false;
 	private List<IIndexFile> fFiles;
 	
 	/**
@@ -155,5 +156,13 @@ public class IncludeFileContent {
 	
 	public void setFoundByHeuristics(boolean val) {
 		fHeuristic= val;
+	}
+
+	public boolean isSource() {
+		return fIsSource;
+	}
+
+	public void setIsSource(boolean isSource) {
+		fIsSource= isSource;
 	}
 }

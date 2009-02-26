@@ -96,7 +96,7 @@ public class LocationMap implements ILocationResolver {
 	public ILocationCtx pushTranslationUnit(String filename, char[] buffer) {
 		assert fCurrentContext == null;
 		fTranslationUnitPath= filename;
-		fCurrentContext= fRootContext= new LocationCtxFile(null, filename, buffer, 0, 0, 0, null);
+		fCurrentContext= fRootContext= new LocationCtxFile(null, filename, buffer, 0, 0, 0, null, true);
 		fLastChildInsertionOffset= 0;
 		return fCurrentContext;
 	}
@@ -126,7 +126,7 @@ public class LocationMap implements ILocationResolver {
 	 * @param userInclude <code>true</code> when specified with double-quotes.
 	 */
 	public ILocationCtx pushInclusion(int startOffset,	int nameOffset, int nameEndOffset, int endOffset, 
-			char[] buffer, String filename, char[] name, boolean userInclude, boolean heuristic) {
+			char[] buffer, String filename, char[] name, boolean userInclude, boolean heuristic, boolean isSource) {
 		assert fCurrentContext instanceof LocationCtxContainer;
 		int startNumber= getSequenceNumberForOffset(startOffset);	
 		int nameNumber= getSequenceNumberForOffset(nameOffset);		
@@ -135,7 +135,7 @@ public class LocationMap implements ILocationResolver {
 		final ASTInclusionStatement inclusionStatement= 
 			new ASTInclusionStatement(fTranslationUnit, startNumber, nameNumber, nameEndNumber, endNumber, name, filename, userInclude, true, heuristic);
 		fDirectives.add(inclusionStatement);
-		fCurrentContext= new LocationCtxFile((LocationCtxContainer) fCurrentContext, filename, buffer, startOffset, endOffset, endNumber, inclusionStatement);
+		fCurrentContext= new LocationCtxFile((LocationCtxContainer) fCurrentContext, filename, buffer, startOffset, endOffset, endNumber, inclusionStatement, isSource);
 		fLastChildInsertionOffset= 0;
 		return fCurrentContext;
 	}
@@ -396,6 +396,14 @@ public class LocationMap implements ILocationResolver {
 	public String getContainingFilePath(int sequenceNumber) {
 		LocationCtx ctx= fRootContext.findSurroundingContext(sequenceNumber, 1);
 		return new String(ctx.getFilePath());
+	}
+
+	public boolean isPartOfSourceFile(int sequenceNumber) {
+		LocationCtx ctx= fRootContext.findSurroundingContext(sequenceNumber, 1);
+		if (ctx == fRootContext && fTranslationUnit != null)
+			return !fTranslationUnit.isHeaderUnit();
+		
+		return ctx.isSourceFile();
 	}
 
 	public ASTFileLocation getMappedFileLocation(int sequenceNumber, int length) {

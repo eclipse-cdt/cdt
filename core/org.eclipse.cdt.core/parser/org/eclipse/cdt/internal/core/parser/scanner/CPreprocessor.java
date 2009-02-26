@@ -1166,7 +1166,7 @@ public class CPreprocessor implements ILexerLog, IScanner, IAdaptable {
 					if (reader != null && !isCircularInclusion(path)) {
 						reported= true;
 						fAllIncludedFiles.add(path);
-						ILocationCtx ctx= fLocationMap.pushInclusion(poundOffset, nameOffsets[0], nameOffsets[1], condEndOffset, reader.buffer, path, headerName, userInclude, isHeuristic);
+						ILocationCtx ctx= fLocationMap.pushInclusion(poundOffset, nameOffsets[0], nameOffsets[1], condEndOffset, reader.buffer, path, headerName, userInclude, isHeuristic, fi.isSource());
 						ScannerContext fctx= new ScannerContext(ctx, fCurrentContext, new Lexer(reader.buffer, fLexOptions, this, this));
 						fCurrentContext= fctx;
 					}

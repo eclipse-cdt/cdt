@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2008 Wind River Systems, Inc. and others.
+ * Copyright (c) 2007, 2009 Wind River Systems, Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -142,5 +142,11 @@ abstract class LocationCtx implements ILocationCtx {
 
 	public Collection<LocationCtx> getChildren() {
 		return Collections.emptySet();
+	}
+
+	public boolean isSourceFile() {
+		if (fParent == null)
+			return false;
+		return fParent.isSourceFile();
 	}
 }

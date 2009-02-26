@@ -1651,4 +1651,28 @@ public class IndexBugsTests extends BaseTestCase {
 			fIndex.releaseReadLock();
 		}
 	}
+	
+	
+	// #include "B.cpp"
+
+	// static int STATIC;
+	// void ref() {STATIC=1;}
+	public void testStaticVarInSourceIncluded_Bug265821() throws Exception {
+		String[] contents= getContentsForTest(2);
+		final IIndexManager indexManager = CCorePlugin.getIndexManager();
+		IFile a= TestSourceReader.createFile(fCProject.getProject(), "A.cpp", contents[0]);
+		IFile b= TestSourceReader.createFile(fCProject.getProject(), "B.cpp", contents[1]);
+		indexManager.reindex(fCProject);
+		waitForIndexer();
+		ITranslationUnit tu= (ITranslationUnit) CoreModel.getDefault().create(b);
+		fIndex.acquireReadLock();
+		try {
+			IASTTranslationUnit ast= tu.getAST(fIndex, ITranslationUnit.AST_CONFIGURE_USING_SOURCE_CONTEXT | ITranslationUnit.AST_SKIP_INDEXED_HEADERS);
+			IBinding var= ((IASTSimpleDeclaration) ast.getDeclarations()[0]).getDeclarators()[0].getName().resolveBinding();
+			IIndexBinding adapted = fIndex.adaptBinding(var);
+			assertNotNull(adapted);
+		} finally {
+			fIndex.releaseReadLock();
+		}
+	}
 }

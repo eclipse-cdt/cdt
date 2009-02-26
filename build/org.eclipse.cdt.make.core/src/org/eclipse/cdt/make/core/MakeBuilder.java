@@ -61,6 +61,7 @@ public class MakeBuilder extends ACBuilder {
 	/**
 	 * @see IncrementalProjectBuilder#build
 	 */
+	@Override
 	protected IProject[] build(int kind, Map args, IProgressMonitor monitor) throws CoreException {
 		boolean bPerformBuild = true;
 		IMakeBuilderInfo info = MakeCorePlugin.createBuildInfo(args, MakeBuilder.BUILDER_ID);
@@ -89,6 +90,7 @@ public class MakeBuilder extends ACBuilder {
 	}
 
 	
+	@Override
 	protected void clean(IProgressMonitor monitor) throws CoreException {
 		final IMakeBuilderInfo info = MakeCorePlugin.createBuildInfo(getProject(), BUILDER_ID);
 		if (shouldBuild(CLEAN_BUILD, info)) {
@@ -98,6 +100,7 @@ public class MakeBuilder extends ACBuilder {
 				/* (non-Javadoc)
 				 * @see org.eclipse.core.runtime.jobs.Job#run(org.eclipse.core.runtime.IProgressMonitor)
 				 */
+				@Override
 				protected IStatus run(IProgressMonitor monitor) {
 					try {
 						ResourcesPlugin.getWorkspace().run(new IWorkspaceRunnable() {
@@ -260,6 +263,7 @@ public class MakeBuilder extends ACBuilder {
 	 * Refresh project. Can be overridden to not call actual refresh or to do something else.
 	 * Method is called after build is complete.
 	 * @param project
+	 * @since 6.0
 	 */
 	protected void refreshProject(IProject project) {
 		try {

@@ -2,20 +2,20 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: %pluginName
 Bundle-SymbolicName: org.eclipse.cdt.make.ui; singleton:=true
-Bundle-Version: 5.0.100.qualifier
+Bundle-Version: 6.0.0.qualifier
 Bundle-Activator: org.eclipse.cdt.make.internal.ui.MakeUIPlugin
 Bundle-Vendor: %providerName
 Bundle-Localization: plugin
-Export-Package: org.eclipse.cdt.make.internal.ui,
- org.eclipse.cdt.make.internal.ui.compare,
- org.eclipse.cdt.make.internal.ui.editor,
- org.eclipse.cdt.make.internal.ui.part,
- org.eclipse.cdt.make.internal.ui.preferences,
- org.eclipse.cdt.make.internal.ui.properties,
- org.eclipse.cdt.make.internal.ui.scannerconfig,
- org.eclipse.cdt.make.internal.ui.text,
- org.eclipse.cdt.make.internal.ui.text.makefile,
- org.eclipse.cdt.make.internal.ui.wizards,
+Export-Package: org.eclipse.cdt.make.internal.ui;x-internal:=true,
+ org.eclipse.cdt.make.internal.ui.compare;x-internal:=true,
+ org.eclipse.cdt.make.internal.ui.editor;x-internal:=true,
+ org.eclipse.cdt.make.internal.ui.part;x-internal:=true,
+ org.eclipse.cdt.make.internal.ui.preferences;x-internal:=true,
+ org.eclipse.cdt.make.internal.ui.properties;x-internal:=true,
+ org.eclipse.cdt.make.internal.ui.scannerconfig;x-internal:=true,
+ org.eclipse.cdt.make.internal.ui.text;x-internal:=true,
+ org.eclipse.cdt.make.internal.ui.text.makefile;x-internal:=true,
+ org.eclipse.cdt.make.internal.ui.wizards;x-internal:=true,
  org.eclipse.cdt.make.ui,
  org.eclipse.cdt.make.ui.actions,
  org.eclipse.cdt.make.ui.dialogs,
@@ -30,7 +30,7 @@ Require-Bundle: org.eclipse.ui.ide;bundle-version="[3.2.0,4.0.0)",
  org.eclipse.ui;bundle-version="[3.2.0,4.0.0)",
  org.eclipse.cdt.core;bundle-version="[5.0.0,6.0.0)",
  org.eclipse.cdt.ui;bundle-version="[5.0.0,6.0.0)",
- org.eclipse.cdt.make.core;bundle-version="[5.0.0,6.0.0)",
+ org.eclipse.cdt.make.core;bundle-version="[6.0.0,7.0.0)",
  org.eclipse.core.runtime;bundle-version="[3.2.0,4.0.0)",
  org.eclipse.debug.ui;bundle-version="[3.2.0,4.0.0)",
  org.eclipse.ui.navigator;bundle-version="[3.2.0,4.0.0)";resolution:=optional,

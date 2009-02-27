@@ -16,6 +16,7 @@ import java.io.File;
 import org.eclipse.cdt.core.IBinaryParser.IBinaryObject;
 import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.debug.core.CDIDebugModel;
+import org.eclipse.cdt.debug.core.CDebugUtils;
 import org.eclipse.cdt.debug.core.ICDTLaunchConfigurationConstants;
 import org.eclipse.cdt.debug.core.ICDebugConfiguration;
 import org.eclipse.cdt.debug.core.cdi.CDIException;
@@ -58,7 +59,7 @@ public class CoreFileLaunchDelegate extends AbstractCLaunchDelegate {
 
 			ICDebugConfiguration debugConfig = getDebugConfig(config);
 			ICDISession dsession = null;
-			ICProject cproject = getCProject(config);
+			ICProject cproject = CDebugUtils.getCProject(config);
 
 			String path = config.getAttribute(ICDTLaunchConfigurationConstants.ATTR_COREFILE_PATH, (String)null);
 			if (path == null) {

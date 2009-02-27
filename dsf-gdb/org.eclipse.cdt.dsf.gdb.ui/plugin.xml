@@ -2,44 +2,124 @@
 <?eclipse version="3.0"?>
 <plugin>
 
+   <extension
+         point="org.eclipse.debug.ui.launchConfigurationTabs">
+      <!-- Local application launch tabs-->
+      <tab
+            id="org.eclipse.cdt.dsf.gdb.launch.localApplicationLaunch.mainTab"
+            group="org.eclipse.cdt.launch.applicationLaunchTabGroup"
+            name="%launchTab.main.name"
+            class="org.eclipse.cdt.dsf.gdb.internal.ui.launching.CMainTab">
+        <associatedDelegate delegate="org.eclipse.cdt.dsf.gdb.launch.localCLaunch"/>
+      </tab>
+      <tab id="org.eclipse.cdt.dsf.gdb.launch.localApplicationLaunch.argumentsTab"
+            group="org.eclipse.cdt.launch.applicationLaunchTabGroup"
+            name="%launchTab.arguments.name"
+            class="org.eclipse.cdt.dsf.gdb.internal.ui.launching.CArgumentsTab">
+        <associatedDelegate delegate="org.eclipse.cdt.dsf.gdb.launch.localCLaunch"/>
+        <placement after="org.eclipse.cdt.dsf.gdb.launch.mainTab"/>
+      </tab>
+      <tab
+            id="org.eclipse.cdt.dsf.gdb.launch.localApplicationLaunch.debuggerTab"
+            group="org.eclipse.cdt.launch.applicationLaunchTabGroup"
+            name="%launchTab.debugger.name"
+            class="org.eclipse.cdt.dsf.gdb.internal.ui.launching.LocalApplicationCDebuggerTab">
+        <associatedDelegate delegate="org.eclipse.cdt.dsf.gdb.launch.localCLaunch"/>
+        <placement after="org.eclipse.cdt.dsf.gdb.launch.argumentsTab"/>
+      </tab>
+      <tab
+            id="org.eclipse.cdt.dsf.gdb.launch.localApplicationLaunch.sourceLookupTab"
+            group="org.eclipse.cdt.launch.applicationLaunchTabGroup"
+            name="%launchTab.sourceLookup.name"
+            class="org.eclipse.debug.ui.sourcelookup.SourceLookupTab">
+        <associatedDelegate delegate="org.eclipse.cdt.dsf.gdb.launch.localCLaunch"/>
+        <placement after="org.eclipse.cdt.dsf.gdb.launch.debuggerTab"/>
+      </tab>
+      <tab
+            id="org.eclipse.cdt.dsf.gdb.launch.localApplicationLaunch.commonTab"
+            group="org.eclipse.cdt.launch.applicationLaunchTabGroup"
+            name="%launchTab.common.name"
+            class="org.eclipse.debug.ui.CommonTab">
+        <associatedDelegate delegate="org.eclipse.cdt.dsf.gdb.launch.localCLaunch"/>
+        <placement after="org.eclipse.debug.ui.sourceLookupTab"/>
+      </tab>
+
+      <!-- Remote application launch tabs-->
+      <tab
+            id="org.eclipse.cdt.dsf.gdb.launch.remoteApplicationLaunch.mainTab"
+            group="org.eclipse.cdt.launch.applicationLaunchTabGroup"
+            name="%launchTab.main.name"
+            class="org.eclipse.cdt.dsf.gdb.internal.ui.launching.CMainTab">
+        <associatedDelegate delegate="org.eclipse.cdt.dsf.gdb.launch.remoteCLaunch"/>
+      </tab>
+      <tab
+            id="org.eclipse.cdt.dsf.gdb.launch.remoteApplicationLaunch.debuggerTab"
+            group="org.eclipse.cdt.launch.applicationLaunchTabGroup"
+            name="%launchTab.debugger.name"
+            class="org.eclipse.cdt.dsf.gdb.internal.ui.launching.LocalApplicationCDebuggerTab">
+        <associatedDelegate delegate="org.eclipse.cdt.dsf.gdb.launch.remoteCLaunch"/>
+        <placement after="org.eclipse.cdt.dsf.gdb.launch.mainTab"/>
+      </tab>
+      <tab
+            id="org.eclipse.cdt.dsf.gdb.launch.remoteApplicationLaunch.sourceLookupTab"
+            group="org.eclipse.cdt.launch.applicationLaunchTabGroup"
+            name="%launchTab.sourceLookup.name"
+            class="org.eclipse.debug.ui.sourcelookup.SourceLookupTab">
+        <associatedDelegate delegate="org.eclipse.cdt.dsf.gdb.launch.remoteCLaunch"/>
+        <placement after="org.eclipse.cdt.dsf.gdb.launch.debuggerTab"/>
+      </tab>
+      <tab
+            id="org.eclipse.cdt.dsf.gdb.launch.remoteApplicationLaunch.commonTab"
+            group="org.eclipse.cdt.launch.applicationLaunchTabGroup"
+            name="%launchTab.common.name"
+            class="org.eclipse.debug.ui.CommonTab">
+        <associatedDelegate delegate="org.eclipse.cdt.dsf.gdb.launch.remoteCLaunch"/>
+        <placement after="org.eclipse.debug.ui.sourceLookupTab"/>
+      </tab>
+
+      <!-- Attach launch tabs-->
+      <tab
+            id="org.eclipse.cdt.dsf.gdb.launch.attachLaunch.mainTab"
+            group="org.eclipse.cdt.launch.attachLaunchTabGroup"
+            name="%launchTab.main.name"
+            class="org.eclipse.cdt.dsf.gdb.internal.ui.launching.CMainAttachTab">
+        <associatedDelegate delegate="org.eclipse.cdt.dsf.gdb.launch.attachCLaunch"/>
+      </tab>
+      <tab
+            id="org.eclipse.cdt.dsf.gdb.launch.attachLaunch.debuggerTab"
+            group="org.eclipse.cdt.launch.attachLaunchTabGroup"
+            name="%launchTab.debugger.name"
+            class="org.eclipse.cdt.dsf.gdb.internal.ui.launching.AttachCDebuggerTab">
+        <associatedDelegate delegate="org.eclipse.cdt.dsf.gdb.launch.attachCLaunch"/>
+        <placement after="org.eclipse.cdt.dsf.gdb.launch.mainTab"/>
+      </tab>
+      <tab
+            id="org.eclipse.cdt.dsf.gdb.launch.attachLaunch.sourceLookupTab"
+            group="org.eclipse.cdt.launch.attachLaunchTabGroup"
+            name="%launchTab.sourceLookup.name"
+            class="org.eclipse.debug.ui.sourcelookup.SourceLookupTab">
+        <associatedDelegate delegate="org.eclipse.cdt.dsf.gdb.launch.attachCLaunch"/>
+        <placement after="org.eclipse.cdt.dsf.gdb.launch.debuggerTab"/>
+      </tab>
+      <tab
+            id="org.eclipse.cdt.dsf.gdb.launch.attachLaunch.commonTab"
+            group="org.eclipse.cdt.launch.attachLaunchTabGroup"
+            name="%launchTab.common.name"
+            class="org.eclipse.debug.ui.CommonTab">
+        <associatedDelegate delegate="org.eclipse.cdt.dsf.gdb.launch.attachCLaunch"/>
+        <placement after="org.eclipse.debug.ui.sourceLookupTab"/>
+      </tab>
+   </extension>
+   
     <extension
          point="org.eclipse.debug.ui.launchConfigurationTabGroups">
-      <launchConfigurationTabGroup
-            class="org.eclipse.cdt.dsf.gdb.internal.ui.launching.GdbLocalRunLaunchConfigurationTabGroup"
-            id="org.eclipse.cdt.dsf.gdb.launch.localRunLaunchTabGroup"
-            type="org.eclipse.cdt.dsf.gdb.launch.localCLaunch">
-      </launchConfigurationTabGroup>
       <launchConfigurationTabGroup
             class="org.eclipse.cdt.dsf.gdb.internal.ui.launching.GdbRemoteRunLaunchConfigurationTabGroup"
             id="org.eclipse.cdt.dsf.gdb.launch.remoteRunLaunchTabGroup"
             type="org.eclipse.cdt.dsf.gdb.launch.remoteCLaunch">
       </launchConfigurationTabGroup>
-      <launchConfigurationTabGroup
-            class="org.eclipse.cdt.dsf.gdb.internal.ui.launching.GdbAttachLaunchConfigurationTabGroup"
-            id="org.eclipse.cdt.dsf.gdb.launch.localAttachLaunchTabGroup"
-            type="org.eclipse.cdt.dsf.gdb.launch.attachCLaunch">
-      </launchConfigurationTabGroup>
-   </extension>
-   <extension
-         point="org.eclipse.debug.ui.launchConfigurationTypeImages">
-      <launchConfigurationTypeImage
-            configTypeID="org.eclipse.cdt.dsf.gdb.launch.localCLaunch"
-            icon="icons/full/obj16/c_app.gif"
-            id="org.eclipse.cdt.dsf.gdb.launch.localRunLaunchImage">
-      </launchConfigurationTypeImage>
-      <launchConfigurationTypeImage
-            configTypeID="org.eclipse.cdt.dsf.gdb.launch.remoteCLaunch"
-            icon="icons/full/obj16/c_app.gif"
-            id="org.eclipse.cdt.dsf.gdb.launch.remoteRunLaunchImage">
-      </launchConfigurationTypeImage>
-      <launchConfigurationTypeImage
-            configTypeID="org.eclipse.cdt.dsf.gdb.launch.attachCLaunch"
-            icon="icons/full/obj16/c_app.gif"
-            id="org.eclipse.cdt.dsf.gdb.launch.attachRunLaunchImage">
-      </launchConfigurationTypeImage>
    </extension>
    
-
    <extension point="org.eclipse.core.runtime.adapters">
       <factory 
         	class="org.eclipse.cdt.dsf.gdb.internal.ui.GdbAdapterFactory" 

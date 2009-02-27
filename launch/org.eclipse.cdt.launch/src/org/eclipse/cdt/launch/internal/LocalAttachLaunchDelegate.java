@@ -11,9 +11,11 @@
 package org.eclipse.cdt.launch.internal;
 
 import java.io.FileNotFoundException;
+
 import org.eclipse.cdt.core.IBinaryParser.IBinaryObject;
 import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.debug.core.CDIDebugModel;
+import org.eclipse.cdt.debug.core.CDebugUtils;
 import org.eclipse.cdt.debug.core.ICDTLaunchConfigurationConstants;
 import org.eclipse.cdt.debug.core.ICDebugConfiguration;
 import org.eclipse.cdt.debug.core.cdi.CDIException;
@@ -61,7 +63,7 @@ public class LocalAttachLaunchDelegate extends AbstractCLaunchDelegate {
 		try {
 			monitor.worked(1);
 			ICProject cproject = verifyCProject(config);
-			IPath exePath = getProgramPath(config);
+			IPath exePath = CDebugUtils.getProgramPath(config);
 			if (exePath != null && !exePath.isEmpty()) {
 				if (!exePath.isAbsolute()) {
 					IFile wsProgramPath = cproject.getProject().getFile(exePath);

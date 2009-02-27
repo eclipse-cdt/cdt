@@ -13,8 +13,8 @@ package org.eclipse.cdt.launch.internal.ui;
 import java.io.File;
 
 import org.eclipse.cdt.core.model.ICProject;
+import org.eclipse.cdt.debug.core.CDebugUtils;
 import org.eclipse.cdt.debug.core.ICDTLaunchConfigurationConstants;
-import org.eclipse.cdt.launch.AbstractCLaunchDelegate;
 import org.eclipse.cdt.launch.ui.CLaunchConfigurationTab;
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IResource;
@@ -249,7 +249,7 @@ public class WorkingDirectoryBlock extends CLaunchConfigurationTab {
 		try {
 			ILaunchConfiguration config = getLaunchConfiguration();
 			if (config != null) {
-				ICProject cProject = AbstractCLaunchDelegate.getCProject(config);
+				ICProject cProject = CDebugUtils.getCProject(config);
 				if (cProject != null) {
 					fWorkingDirText.setText("${workspace_loc:" + cProject.getPath().makeRelative().toOSString() + "}"); //$NON-NLS-1$ //$NON-NLS-2$
 					return;

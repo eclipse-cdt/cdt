@@ -28,6 +28,8 @@ import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 
+import org.eclipse.cdt.core.CCorePlugin;
+import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.debug.core.cdi.CDIException;
 import org.eclipse.cdt.debug.core.model.ICAddressBreakpoint;
 import org.eclipse.cdt.debug.core.model.ICBreakpoint;
@@ -40,11 +42,13 @@ import org.eclipse.cdt.debug.core.model.ICWatchpoint2;
 import org.eclipse.cdt.debug.internal.core.model.CFloatingPointValue;
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IProject;
+import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.debug.core.DebugPlugin;
+import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.IStatusHandler;
 import org.eclipse.debug.core.model.IBreakpoint;
 import org.w3c.dom.Document;
@@ -511,4 +515,50 @@ public class CDebugUtils {
 		return fDecoder;
 	}
 
+	/**
+     * Note: Moved from AbstractCLaunchDelegate
+     * @since 6.0
+	 */
+    public static ICProject getCProject(ILaunchConfiguration configuration) throws CoreException {
+        String projectName = getProjectName(configuration);
+        if (projectName != null) {
+            projectName = projectName.trim();
+            if (projectName.length() > 0) {
+                IProject project = ResourcesPlugin.getWorkspace().getRoot().getProject(projectName);
+                ICProject cProject = CCorePlugin.getDefault().getCoreModel().create(project);
+                if (cProject != null && cProject.exists()) {
+                    return cProject;
+                }
+            }
+        }
+        return null;
+    }
+
+    /**
+     * Note: Moved from AbstractCLaunchDelegate
+     * @since 6.0
+     */
+    public static String getProjectName(ILaunchConfiguration configuration) throws CoreException {
+        return configuration.getAttribute(ICDTLaunchConfigurationConstants.ATTR_PROJECT_NAME, (String)null);
+    }
+
+    /**
+     * Note: Moved from AbstractCLaunchDelegate
+     * @since 6.0
+     */
+    public static String getProgramName(ILaunchConfiguration configuration) throws CoreException {
+        return configuration.getAttribute(ICDTLaunchConfigurationConstants.ATTR_PROGRAM_NAME, (String)null);
+    }
+
+    /**
+     * Note: Moved from AbstractCLaunchDelegate
+     * @since 6.0
+     */
+    public static IPath getProgramPath(ILaunchConfiguration configuration) throws CoreException {
+        String path = getProgramName(configuration);
+        if (path == null || path.trim().length() == 0) {
+            return null;
+        }
+        return new Path(path);
+    }
 }

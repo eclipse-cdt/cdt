@@ -8,6 +8,119 @@
 
 <!-- Extensions -->
    <extension
+         point="org.eclipse.debug.ui.launchConfigurationTypeImages">
+      <launchConfigurationTypeImage
+            icon="icons/obj16/c_app.gif"
+            configTypeID="org.eclipse.cdt.launch.applicationLaunchType"
+            id="org.eclipse.cdt.launch.localRunLaunchImage">
+      </launchConfigurationTypeImage>
+      <launchConfigurationTypeImage
+            icon="icons/obj16/c_app.gif"
+            configTypeID="org.eclipse.cdt.launch.attachLaunchType"
+            id="org.eclipse.cdt.launch.localAttachLaunchImage">
+      </launchConfigurationTypeImage>
+      <launchConfigurationTypeImage
+            icon="icons/obj16/c_app.gif"
+            configTypeID="org.eclipse.cdt.launch.postmortemLaunchType"
+            id="org.eclipse.cdt.launch.coreFileLaunchImage">
+      </launchConfigurationTypeImage>
+   </extension>
+
+   <extension
+         point="org.eclipse.debug.ui.launchConfigurationTabGroups">
+      <launchConfigurationTabGroup
+            type="org.eclipse.cdt.launch.applicationLaunchType"
+            class="org.eclipse.cdt.debug.internal.ui.launch.PlaceHolderLaunchConfigurationTabGroup"
+            id="org.eclipse.cdt.launch.applicationLaunchTabGroup">
+      </launchConfigurationTabGroup>
+      <launchConfigurationTabGroup
+            type="org.eclipse.cdt.launch.attachLaunchType"
+            class="org.eclipse.cdt.debug.internal.ui.launch.PlaceHolderLaunchConfigurationTabGroup"
+            id="org.eclipse.cdt.launch.attachLaunchTabGroup">
+      </launchConfigurationTabGroup>
+      <launchConfigurationTabGroup
+            type="org.eclipse.cdt.launch.postmortemLaunchType"
+            class="org.eclipse.cdt.debug.internal.ui.launch.PlaceHolderLaunchConfigurationTabGroup"
+            id="org.eclipse.cdt.launch.postmortemLaunchTabGroup">
+      </launchConfigurationTabGroup>
+   </extension>
+
+   <extension
+         point="org.eclipse.debug.ui.launchShortcuts">
+      <shortcut
+            label="%CApplicationShortcut.label"
+            icon="icons/obj16/c_app.gif"
+            modes="run, debug"
+            class="org.eclipse.cdt.debug.internal.ui.launch.CApplicationLaunchShortcut"
+            id="org.eclipse.cdt.debug.ui.localCShortcut">
+         <contextualLaunch>
+           <enablement>
+             <with variable="selection">
+               <count value="1"/>
+               <iterate>
+                   <or>
+                     <instanceof value="org.eclipse.cdt.core.model.IBinary"/>
+                     <instanceof value="org.eclipse.cdt.core.model.ICProject"/>
+                     <test
+                           forcePluginActivation="true"
+                           property="org.eclipse.cdt.launch.isExecutable"/>
+                     <test
+                           forcePluginActivation="true"
+                           property="org.eclipse.cdt.launch.isCProject"/>
+                     <and>
+                       <instanceof value="org.eclipse.ui.IFileEditorInput"/>
+                       <adapt type="org.eclipse.core.resources.IResource">
+                         <adapt type="org.eclipse.cdt.core.model.ICElement"/>
+                       </adapt>
+                     </and>
+                   </or>
+               </iterate>
+             </with>
+           </enablement>
+         </contextualLaunch>
+         <description
+             mode="run"
+             description="%ContextualRunCApplication.description"/>
+          <description
+             mode="debug"
+             description="%ContextualDebugCApplication.description"/>
+         <configurationType
+               id="org.eclipse.cdt.launch.applicationLaunchType">
+         </configurationType>
+	</shortcut>
+   </extension>
+<!-- Property testers -->
+   <extension point="org.eclipse.core.expressions.propertyTesters">
+      <propertyTester
+      		namespace="org.eclipse.cdt.launch"
+            properties="isExecutable,isCProject"
+            type="org.eclipse.core.runtime.IAdaptable"
+            class="org.eclipse.cdt.debug.internal.ui.launch.CPropertyTester"
+            id="org.eclipse.cdt.launch.CPropertyTester">
+      </propertyTester>
+   </extension>
+
+	<!-- Adapters for contextual launch -->
+	<extension point="org.eclipse.core.runtime.adapters">
+         <factory 
+            class="" 
+            adaptableType="org.eclipse.cdt.core.model.IBinary">
+            <adapter type="org.eclipse.debug.ui.actions.ILaunchable"/>
+         </factory>
+         <factory 
+            class="" 
+            adaptableType="org.eclipse.core.resources.IResource">
+            <adapter type="org.eclipse.debug.ui.actions.ILaunchable"/>
+         </factory>         
+         <factory 
+            class="" 
+            adaptableType="org.eclipse.cdt.core.model.ICProject">
+            <adapter type="org.eclipse.debug.ui.actions.ILaunchable"/>
+         </factory>         
+    </extension>
+	
+
+   <extension
          point="org.eclipse.debug.ui.debugModelPresentations">
       <debugModelPresentation
             class="org.eclipse.cdt.debug.internal.ui.CDebugModelPresentation"

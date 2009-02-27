@@ -61,6 +61,15 @@ import org.eclipse.swt.widgets.Text;
 
 public class CDebuggerTab extends AbstractCDebuggerTab {
 	
+    /**
+     * Tab identifier used for ordering of tabs added using the 
+     * <code>org.eclipse.debug.ui.launchConfigurationTabs</code>
+     * extension point.
+     *   
+     * @since 2.0
+     */
+    public static final String TAB_ID = "org.eclipse.cdt.dsf.gdb.launch.debuggerTab";
+
 	private final static String LOCAL_DEBUGGER_ID = "org.eclipse.cdt.dsf.gdb.GdbDebugger";//$NON-NLS-1$
 	private final static String REMOTE_DEBUGGER_ID = "org.eclipse.cdt.dsf.gdb.GdbServerDebugger";//$NON-NLS-1$
 	
@@ -83,6 +92,11 @@ public class CDebuggerTab extends AbstractCDebuggerTab {
 			CDebugCorePlugin.getDefault().getPluginPreferences().setDefault(ICDebugConstants.PREF_DEFAULT_DEBUGGER_TYPE,
 					                                                        LOCAL_DEBUGGER_ID);
 		}
+	}
+
+	@Override
+	public String getId() {
+	    return TAB_ID;
 	}
 
 	@Override

@@ -48,6 +48,15 @@ import org.eclipse.swt.widgets.Text;
  */
 public class CArgumentsTab extends CLaunchConfigurationTab {
 
+    /**
+     * Tab identifier used for ordering of tabs added using the 
+     * <code>org.eclipse.debug.ui.launchConfigurationTabs</code>
+     * extension point.
+     *   
+     * @since 2.0
+     */
+    public static final String TAB_ID = "org.eclipse.cdt.dsf.gdb.launch.argumentsTab";
+        
 	// Program arguments UI widgets
 	protected Label fPrgmArgumentsLabel;
 	protected Text fPrgmArgumentsText;
@@ -222,6 +231,11 @@ public class CArgumentsTab extends CLaunchConfigurationTab {
 		return null;
 	}
 
+    @Override
+    public String getId() {
+        return TAB_ID;
+    }
+    
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#getName()
 	 */

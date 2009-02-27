@@ -9,7 +9,7 @@
  * QNX Software Systems - Initial API and implementation
  * Ken Ryall (Nokia) - bug 178731
  *******************************************************************************/
-package org.eclipse.cdt.launch.internal;
+package org.eclipse.cdt.debug.internal.ui.launch;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
@@ -24,13 +24,11 @@ import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.core.settings.model.ICConfigurationDescription;
 import org.eclipse.cdt.core.settings.model.ICProjectDescription;
 import org.eclipse.cdt.debug.core.CDebugCorePlugin;
+import org.eclipse.cdt.debug.core.CDebugUtils;
 import org.eclipse.cdt.debug.core.ICDTLaunchConfigurationConstants;
 import org.eclipse.cdt.debug.core.ICDebugConfiguration;
 import org.eclipse.cdt.debug.ui.CDebugUIPlugin;
 import org.eclipse.cdt.debug.ui.ICDebuggerPage;
-import org.eclipse.cdt.launch.AbstractCLaunchDelegate;
-import org.eclipse.cdt.launch.internal.ui.LaunchMessages;
-import org.eclipse.cdt.launch.internal.ui.LaunchUIPlugin;
 import org.eclipse.cdt.ui.CElementLabelProvider;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
@@ -58,6 +56,7 @@ import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.jface.window.Window;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IEditorPart;
+import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.dialogs.ElementListSelectionDialog;
 import org.eclipse.ui.dialogs.TwoPaneElementSelector;
 
@@ -94,8 +93,8 @@ public class CApplicationLaunchShortcut implements ILaunchShortcut {
 			candidateConfigs = new ArrayList(configs.length);
 			for (int i = 0; i < configs.length; i++) {
 				ILaunchConfiguration config = configs[i];
-				IPath programPath = AbstractCLaunchDelegate.getProgramPath(config);
-				String projectName = AbstractCLaunchDelegate.getProjectName(config);
+				IPath programPath = CDebugUtils.getProgramPath(config);
+				String projectName = CDebugUtils.getProjectName(config);
 				IPath name = bin.getResource().getProjectRelativePath();
 				if (programPath != null && programPath.equals(name)) {
 					if (projectName != null && projectName.equals(bin.getCProject().getProject().getName())) {
@@ -104,7 +103,7 @@ public class CApplicationLaunchShortcut implements ILaunchShortcut {
 				}
 			}
 		} catch (CoreException e) {
-			LaunchUIPlugin.log(e);
+		    CDebugUIPlugin.log(e);
 		}
 
 		// If there are no existing configs associated with the IBinary, create one.
@@ -207,7 +206,7 @@ public class CApplicationLaunchShortcut implements ILaunchShortcut {
 			
 			config = wc.doSave();
 		} catch (CoreException ce) {
-			LaunchUIPlugin.log(ce);
+			CDebugUIPlugin.log(ce);
 		}
 		return config;
 	}
@@ -228,7 +227,11 @@ public class CApplicationLaunchShortcut implements ILaunchShortcut {
 	 * Convenience method to get the window that owns this action's Shell.
 	 */
 	protected Shell getShell() {
-		return LaunchUIPlugin.getActiveWorkbenchShell();
+       IWorkbenchWindow w = CDebugUIPlugin.getDefault().getActiveWorkbenchWindow();
+        if (w != null) {
+            return w.getShell();
+        }
+        return null;
 	}
 
 	/**

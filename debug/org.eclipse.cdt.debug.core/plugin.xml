@@ -6,6 +6,25 @@
      <extension-point id="BreakpointActionType" name="%BreakpointAction" schema="schema/BreakpointAction.exsd"/>
      <extension-point id="BreakpointExtension" name="%BreakpointAction" schema="schema/BreakpointExtension.exsd"/>
 
+    <extension
+         point="org.eclipse.debug.core.launchConfigurationTypes">
+      <launchConfigurationType
+            id="org.eclipse.cdt.launch.applicationLaunchType"
+            name="%ApplicationLaunch.name"
+            public="true">
+      </launchConfigurationType>
+      <launchConfigurationType
+            id="org.eclipse.cdt.launch.attachLaunchType"
+            name="%AttachLaunch.name"
+            public="true">
+      </launchConfigurationType>
+      <launchConfigurationType
+            id="org.eclipse.cdt.launch.postmortemLaunchType"
+            name="%PostMortemLaunch.name"
+            public="true">
+      </launchConfigurationType>
+   </extension>
+
    <extension
          id="cBreakpointMarker"
          point="org.eclipse.core.resources.markers">

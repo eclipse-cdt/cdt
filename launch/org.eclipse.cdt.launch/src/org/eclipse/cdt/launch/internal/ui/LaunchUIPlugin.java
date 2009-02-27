@@ -11,7 +11,9 @@
 package org.eclipse.cdt.launch.internal.ui;
 
 import org.eclipse.cdt.core.model.ICProject;
-import org.eclipse.cdt.launch.AbstractCLaunchDelegate;
+import org.eclipse.cdt.debug.core.CDebugCorePlugin;
+import org.eclipse.cdt.debug.core.CDebugUtils;
+import org.eclipse.cdt.debug.core.ICDebugConstants;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
@@ -185,6 +187,7 @@ public class LaunchUIPlugin extends AbstractUIPlugin implements IDebugEventSetLi
 	 */
 	public void start(BundleContext context) throws Exception {
 		super.start(context);
+		LaunchUIPlugin.getDefault().getPluginPreferences().getString( ICDebugConstants.PREF_FILTERED_DEBUGGERS );
 		DebugPlugin.getDefault().addDebugEventListener(this);
 	}
 
@@ -216,7 +219,7 @@ public class LaunchUIPlugin extends AbstractUIPlugin implements IDebugEventSetLi
 					try {
 						ILaunchConfiguration launchConfig = proc.getLaunch().getLaunchConfiguration();
 						if (launchConfig != null) {
-							cproject = AbstractCLaunchDelegate.getCProject(launchConfig);
+							cproject = CDebugUtils.getCProject(launchConfig);
 						}
 					} catch (CoreException e) {
 					}

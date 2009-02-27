@@ -38,6 +38,7 @@ import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.core.settings.model.ICConfigurationDescription;
 import org.eclipse.cdt.core.settings.model.ICProjectDescription;
 import org.eclipse.cdt.debug.core.CDebugCorePlugin;
+import org.eclipse.cdt.debug.core.CDebugUtils;
 import org.eclipse.cdt.debug.core.ICDTLaunchConfigurationConstants;
 import org.eclipse.cdt.debug.core.ICDebugConfiguration;
 import org.eclipse.cdt.debug.ui.CDebugUIPlugin;
@@ -173,35 +174,32 @@ abstract public class AbstractCLaunchDelegate extends LaunchConfigurationDelegat
 
 	abstract protected String getPluginID();
 
+    /**
+     * @deprecated Use {@link org.eclipse.cdt.debug.core.CDebugUtils} instead.
+     */
 	public static ICProject getCProject(ILaunchConfiguration configuration) throws CoreException {
-		String projectName = getProjectName(configuration);
-		if (projectName != null) {
-			projectName = projectName.trim();
-			if (projectName.length() > 0) {
-				IProject project = ResourcesPlugin.getWorkspace().getRoot().getProject(projectName);
-				ICProject cProject = CCorePlugin.getDefault().getCoreModel().create(project);
-				if (cProject != null && cProject.exists()) {
-					return cProject;
-				}
-			}
-		}
-		return null;
+	    return CDebugUtils.getCProject(configuration);
 	}
 
+    /**
+     * @deprecated Use {@link org.eclipse.cdt.debug.core.CDebugUtils} instead.
+     */
 	public static String getProjectName(ILaunchConfiguration configuration) throws CoreException {
-		return configuration.getAttribute(ICDTLaunchConfigurationConstants.ATTR_PROJECT_NAME, (String)null);
+        return CDebugUtils.getProjectName(configuration);
 	}
 
+    /**
+     * @deprecated Use {@link org.eclipse.cdt.debug.core.CDebugUtils} instead.
+     */
 	public static String getProgramName(ILaunchConfiguration configuration) throws CoreException {
-		return configuration.getAttribute(ICDTLaunchConfigurationConstants.ATTR_PROGRAM_NAME, (String)null);
+        return CDebugUtils.getProgramName(configuration);
 	}
 
+    /**
+     * @deprecated Use {@link org.eclipse.cdt.debug.core.CDebugUtils} instead.
+     */
 	public static IPath getProgramPath(ILaunchConfiguration configuration) throws CoreException {
-		String path = getProgramName(configuration);
-		if (path == null || path.trim().length() == 0) {
-			return null;
-		}
-		return new Path(path);
+        return CDebugUtils.getProgramPath(configuration);
 	}
 	
 	/**
@@ -233,7 +231,7 @@ abstract public class AbstractCLaunchDelegate extends LaunchConfigurationDelegat
 			IPersistableSourceLocator sourceLocator;
 			String id = configuration.getAttribute(ILaunchConfiguration.ATTR_SOURCE_LOCATOR_ID, (String)null);
 			if (id == null) {
-				ICProject cProject = getCProject(configuration);
+				ICProject cProject = CDebugUtils.getCProject(configuration);
 				if (cProject == null) {
 					abort(LaunchMessages.getString("Launch.common.Project_does_not_exist"), null, //$NON-NLS-1$
 							ICDTLaunchConfigurationConstants.ERR_NOT_A_C_PROJECT);
@@ -330,7 +328,7 @@ abstract public class AbstractCLaunchDelegate extends LaunchConfigurationDelegat
 	@Deprecated
 	protected IFile getProgramFile(ILaunchConfiguration config) throws CoreException {
 		ICProject cproject = verifyCProject(config);
-		String fileName = getProgramName(config);
+		String fileName = CDebugUtils.getProgramName(config);
 		if (fileName == null) {
 			abort(LaunchMessages.getString("AbstractCLaunchDelegate.Program_file_not_specified"), null, //$NON-NLS-1$
 					ICDTLaunchConfigurationConstants.ERR_UNSPECIFIED_PROGRAM);
@@ -349,12 +347,12 @@ abstract public class AbstractCLaunchDelegate extends LaunchConfigurationDelegat
 	}
 
 	protected ICProject verifyCProject(ILaunchConfiguration config) throws CoreException {
-		String name = getProjectName(config);
+		String name = CDebugUtils.getProjectName(config);
 		if (name == null) {
 			abort(LaunchMessages.getString("AbstractCLaunchDelegate.C_Project_not_specified"), null, //$NON-NLS-1$
 					ICDTLaunchConfigurationConstants.ERR_UNSPECIFIED_PROJECT);
 		}
-		ICProject cproject = getCProject(config);
+		ICProject cproject = CDebugUtils.getCProject(config);
 		if (cproject == null) {
 			IProject proj = ResourcesPlugin.getWorkspace().getRoot().getProject(name);
 			if (!proj.exists()) {
@@ -373,7 +371,7 @@ abstract public class AbstractCLaunchDelegate extends LaunchConfigurationDelegat
 
 	protected IPath verifyProgramPath(ILaunchConfiguration config) throws CoreException {
 		ICProject cproject = verifyCProject(config);
-		IPath programPath = getProgramPath(config);
+		IPath programPath = CDebugUtils.getProgramPath(config);
 		if (programPath == null || programPath.isEmpty()) {
 			abort(LaunchMessages.getString("AbstractCLaunchDelegate.Program_file_not_specified"), null, //$NON-NLS-1$
 					ICDTLaunchConfigurationConstants.ERR_UNSPECIFIED_PROGRAM);
@@ -386,7 +384,7 @@ abstract public class AbstractCLaunchDelegate extends LaunchConfigurationDelegat
 					// Try the old way, which is required to support linked resources.
 					IFile projFile = null;
 					try {
-						projFile = project.getFile(getProgramPath(config));
+						projFile = project.getFile(CDebugUtils.getProgramPath(config));
 					}
 					catch (IllegalArgumentException exc) {}	// thrown if relative path that resolves to a root file (e.g., "..\somefile")
 					if (projFile != null && projFile.exists()) {
@@ -426,7 +424,7 @@ abstract public class AbstractCLaunchDelegate extends LaunchConfigurationDelegat
 		IPath path = getWorkingDirectoryPath(configuration);
 		if (path == null) {
 			// default working dir is the project if this config has a project
-			ICProject cp = getCProject(configuration);
+			ICProject cp = CDebugUtils.getCProject(configuration);
 			if (cp != null) {
 				IProject p = cp.getProject();
 				return p.getLocation().toFile();
@@ -723,7 +721,7 @@ abstract public class AbstractCLaunchDelegate extends LaunchConfigurationDelegat
 			
 			// build project list
 			orderedProjects = null;
-			ICProject cProject = getCProject(configuration);
+			ICProject cProject = CDebugUtils.getCProject(configuration);
 			if (cProject != null) {
 				project = cProject.getProject();
 				HashSet projectSet = new HashSet();

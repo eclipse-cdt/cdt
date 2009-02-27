@@ -71,6 +71,15 @@ import org.eclipse.ui.dialogs.TwoPaneElementSelector;
 
 public class CMainTab extends CLaunchConfigurationTab {
 
+    /**
+     * Tab identifier used for ordering of tabs added using the 
+     * <code>org.eclipse.debug.ui.launchConfigurationTabs</code>
+     * extension point.
+     *   
+     * @since 2.0
+     */
+    public static final String TAB_ID = "org.eclipse.cdt.dsf.gdb.launch.mainTab";
+
 	// Project UI widgets
 	protected Label fProjLabel;
 	protected Text fProjText;
@@ -697,6 +706,11 @@ public class CMainTab extends CLaunchConfigurationTab {
 		}
 	}
 
+    @Override
+    public String getId() {
+        return TAB_ID;
+    }
+    
 	/*
 	 * (non-Javadoc)
 	 * 

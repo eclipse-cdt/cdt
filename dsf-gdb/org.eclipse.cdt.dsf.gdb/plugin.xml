@@ -2,34 +2,38 @@
 <?eclipse version="3.0"?>
 <plugin>
 
-   <extension point="org.eclipse.debug.core.launchConfigurationTypes">
-      <launchConfigurationType
-            sourceLocatorId="org.eclipse.cdt.debug.core.sourceLocator"
-            delegate="org.eclipse.cdt.dsf.gdb.launching.GdbLaunchDelegate"
-            public="true"
-            sourcePathComputerId="org.eclipse.cdt.debug.core.sourcePathComputer"
-            name="C/C++ Local Application (Experimental - DSF)"
+    <!-- TODO: externalize the strings.  For some reason strings from plugin.properties are not working -->
+    <extension point="org.eclipse.debug.core.launchDelegates">
+      <launchDelegate
             id="org.eclipse.cdt.dsf.gdb.launch.localCLaunch"
-            modes="debug">
-      </launchConfigurationType>
-      <launchConfigurationType
+            type="org.eclipse.cdt.launch.applicationLaunchType"
+            modes="debug"
             delegate="org.eclipse.cdt.dsf.gdb.launching.GdbLaunchDelegate"
+            name="GDB (DSF) Create Process"
+            delegateDescription="Start new application under control of GDB debugger integrated using the Debugger Services Framework (DSF)."
+            sourceLocatorId="org.eclipse.cdt.debug.core.sourceLocator"
+            sourcePathComputerId="org.eclipse.cdt.debug.core.sourcePathComputer">
+      </launchDelegate>
+      <launchDelegate
             id="org.eclipse.cdt.dsf.gdb.launch.remoteCLaunch"
+            type="org.eclipse.cdt.launch.applicationLaunchType"
             modes="debug"
-            name="C/C++ Remote Application  (Experimental - DSF)"
-            public="true"
-            sourceLocatorId="org.eclipse.cdt.debug.core.sourceLocator"
-            sourcePathComputerId="org.eclipse.cdt.debug.core.sourcePathComputer">
-      </launchConfigurationType>
-      <launchConfigurationType
             delegate="org.eclipse.cdt.dsf.gdb.launching.GdbLaunchDelegate"
-            id="org.eclipse.cdt.dsf.gdb.launch.attachCLaunch"
-            modes="debug"
-            name="C/C++ Attach to Running Application (Experimental - DSF)"
-            public="true"
+            name="GDB (DSF) Remote System Process"
+            delegateDescription="Start new application on a remote system under control of GDB debugger integrated using the Debugger Services Framework (DSF)"
             sourceLocatorId="org.eclipse.cdt.debug.core.sourceLocator"
             sourcePathComputerId="org.eclipse.cdt.debug.core.sourcePathComputer">
-      </launchConfigurationType>
+      </launchDelegate>
+      <launchDelegate
+            id="org.eclipse.cdt.dsf.gdb.launch.attachCLaunch"
+            type="org.eclipse.cdt.launch.attachLaunchType"
+            modes="debug"
+            delegate="org.eclipse.cdt.dsf.gdb.launching.GdbLaunchDelegate"
+            name="GDB (DSF) Attach to Process"
+            delegateDescription="Attach the GDB debugger, integrated using the Debugger Services Framework (DSF), to a running program."
+            sourceLocatorId="org.eclipse.cdt.debug.core.sourceLocator"
+            sourcePathComputerId="org.eclipse.cdt.debug.core.sourcePathComputer">
+      </launchDelegate>
    </extension>
    
    <extension

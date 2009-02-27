@@ -9,7 +9,7 @@
  *     IBM Corporation - initial implementation
  *     Ken Ryall (Nokia) - Modified to launch on a project context.
  *******************************************************************************/
-package org.eclipse.cdt.launch.internal;
+package org.eclipse.cdt.debug.internal.ui.launch;
 
 import org.eclipse.cdt.core.model.CoreModel;
 import org.eclipse.cdt.core.model.IBinary;

@@ -17,10 +17,24 @@ public interface ICDTLaunchConfigurationConstants {
 	public static final String CDT_LAUNCH_ID = "org.eclipse.cdt.launch"; //$NON-NLS-1$
 
 	/**
-	 * This is the launch type id.
+	 * This is the application launch type id.
 	 */
-	public static final String ID_LAUNCH_C_APP = "org.eclipse.cdt.launch.localCLaunch"; //$NON-NLS-1$
+	public static final String ID_LAUNCH_C_APP = "org.eclipse.cdt.launch.applicationLaunchType"; //$NON-NLS-1$
 
+	/**
+     * This is the attach launch type id.
+     *
+     * @since 6.0
+     */
+    public static final String ID_LAUNCH_C_ATTACH = "org.eclipse.cdt.launch.attachLaunchType"; //$NON-NLS-1$
+
+    /**
+     * This is the post-mortem launch type id.
+     *
+     * @since 6.0
+     */
+    public static final String ID_LAUNCH_C_POST_MORTEM = "org.eclipse.cdt.launch.postmortemLaunchType"; //$NON-NLS-1$
+    
 	/**
 	 * Identifier for the C/C++ program process type, which is annotated on processes created
 	 * by the C/C++ application launch delegate.

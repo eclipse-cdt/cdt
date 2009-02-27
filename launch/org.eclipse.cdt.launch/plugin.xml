@@ -3,124 +3,155 @@
 <plugin>
 
      <extension
-         point="org.eclipse.debug.core.launchConfigurationTypes">
-      <launchConfigurationType
-            sourceLocatorId="org.eclipse.cdt.debug.core.sourceLocator"
+         point="org.eclipse.debug.core.launchDelegates">
+      <launchDelegate
+            id="org.eclipse.cdt.cdi.launch.localCLaunch"
+            type="org.eclipse.cdt.launch.applicationLaunchType"
             delegate="org.eclipse.cdt.launch.internal.LocalCDILaunchDelegate"
-            public="true"
-            sourcePathComputerId="org.eclipse.cdt.debug.core.sourcePathComputer"
+            modes="run,debug"
             name="%LocalCDTLaunch.name"
-            id="org.eclipse.cdt.launch.localCLaunch"
-            modes="run,debug">
-      </launchConfigurationType>
-      <launchConfigurationType
+            delegateDescription="%LocalCDTLaunch.description"
+            sourceLocatorId="org.eclipse.cdt.debug.core.sourceLocator"
+            sourcePathComputerId="org.eclipse.cdt.debug.core.sourcePathComputer">
+      </launchDelegate>
+      <launchDelegate
+            id="org.eclipse.cdt.cdi.launch.localCAttachLaunch"
+            type="org.eclipse.cdt.launch.attachLaunchType"
             delegate="org.eclipse.cdt.launch.internal.LocalCDILaunchDelegate"
-            id="org.eclipse.cdt.launch.localAttachCLaunch"
             modes="debug"
             name="%LocalAttachCDTLaunch.name"
-            public="true"
+            delegateDescription="%LocalAttachCDTLaunch.description"
             sourceLocatorId="org.eclipse.cdt.debug.core.sourceLocator"
             sourcePathComputerId="org.eclipse.cdt.debug.core.sourcePathComputer">
-      </launchConfigurationType>
-      <launchConfigurationType
+      </launchDelegate>
+      <launchDelegate
+            id="org.eclipse.cdt.cdi.launch.coreFileCLaunch"
+            type="org.eclipse.cdt.launch.postmortemLaunchType"
             delegate="org.eclipse.cdt.launch.internal.LocalCDILaunchDelegate"
-            id="org.eclipse.cdt.launch.coreFileCLaunch"
             modes="debug"
             name="%CoreFileCDTLaunch.name"
-            public="true"
+            delegateDescription="%CoreFileCDTLaunch.description"
             sourceLocatorId="org.eclipse.cdt.debug.core.sourceLocator"
             sourcePathComputerId="org.eclipse.cdt.debug.core.sourcePathComputer">
-      </launchConfigurationType>
+      </launchDelegate>
    </extension>
+   
    <extension
-         point="org.eclipse.debug.ui.launchConfigurationTypeImages">
-      <launchConfigurationTypeImage
-            icon="icons/obj16/c_app.gif"
-            configTypeID="org.eclipse.cdt.launch.localCLaunch"
-            id="org.eclipse.cdt.launch.localRunLaunchImage">
-      </launchConfigurationTypeImage>
-      <launchConfigurationTypeImage
-            icon="icons/obj16/c_app.gif"
-            configTypeID="org.eclipse.cdt.launch.localAttachCLaunch"
-            id="org.eclipse.cdt.launch.localAttachLaunchImage">
-      </launchConfigurationTypeImage>
-      <launchConfigurationTypeImage
-            icon="icons/obj16/c_app.gif"
-            configTypeID="org.eclipse.cdt.launch.coreFileCLaunch"
-            id="org.eclipse.cdt.launch.coreFileLaunchImage">
-      </launchConfigurationTypeImage>
-   </extension>
-   <extension
-         point="org.eclipse.debug.ui.launchConfigurationTabGroups">
-      <launchConfigurationTabGroup
-            type="org.eclipse.cdt.launch.localCLaunch"
-            class="org.eclipse.cdt.launch.internal.ui.LocalRunLaunchConfigurationTabGroup"
-            id="org.eclipse.cdt.launch.localRunLaunchTabGroup">
-      </launchConfigurationTabGroup>
-      <launchConfigurationTabGroup
-            type="org.eclipse.cdt.launch.localAttachCLaunch"
-            class="org.eclipse.cdt.launch.internal.ui.LocalAttachLaunchConfigurationTabGroup"
-            id="org.eclipse.cdt.launch.localAttachLaunchTabGroup">
-      </launchConfigurationTabGroup>
-      <launchConfigurationTabGroup
-            type="org.eclipse.cdt.launch.coreFileCLaunch"
-            class="org.eclipse.cdt.launch.internal.ui.CoreFileLaunchConfigurationTabGroup"
-            id="org.eclipse.cdt.launch.coreFileCLaunchTabGroup">
-      </launchConfigurationTabGroup>
-   </extension>
-   <extension
-         point="org.eclipse.debug.ui.launchShortcuts">
-      <shortcut
-            label="%CApplicationShortcut.label"
-            icon="icons/obj16/c_app.gif"
-            modes="run, debug"
-            class="org.eclipse.cdt.launch.internal.CApplicationLaunchShortcut"
-            id="org.eclipse.cdt.debug.ui.localCShortcut">
-         <contextualLaunch>
-           <enablement>
-             <with variable="selection">
-               <count value="1"/>
-               <iterate>
-                   <or>
-                     <instanceof value="org.eclipse.cdt.core.model.IBinary"/>
-                     <instanceof value="org.eclipse.cdt.core.model.ICProject"/>
-                     <test
-                           forcePluginActivation="true"
-                           property="org.eclipse.cdt.launch.isExecutable"/>
-                     <test
-                           forcePluginActivation="true"
-                           property="org.eclipse.cdt.launch.isCProject"/>
-                     <and>
-                       <instanceof value="org.eclipse.ui.IFileEditorInput"/>
-                       <adapt type="org.eclipse.core.resources.IResource">
-                         <adapt type="org.eclipse.cdt.core.model.ICElement"/>
-                       </adapt>
-                     </and>
-                   </or>
-               </iterate>
-             </with>
-           </enablement>
-         </contextualLaunch>
-         <description
-             mode="run"
-             description="%ContextualRunCApplication.description"/>
-          <description
-             mode="debug"
-             description="%ContextualDebugCApplication.description"/>
-         <configurationType
-               id="org.eclipse.cdt.launch.localCLaunch">
-         </configurationType>
-	</shortcut>
-   </extension>
-<!-- Property testers -->
-   <extension point="org.eclipse.core.expressions.propertyTesters">
-      <propertyTester
-      		namespace="org.eclipse.cdt.launch"
-            properties="isExecutable,isCProject"
-            type="org.eclipse.core.runtime.IAdaptable"
-            class="org.eclipse.cdt.launch.internal.CPropertyTester"
-            id="org.eclipse.cdt.launch.CPropertyTester">
-      </propertyTester>
+         point="org.eclipse.debug.ui.launchConfigurationTabs">
+      <!-- Application launch tabs-->
+      <tab
+            id="org.eclipse.cdt.cdi.launch.applicationLaunch.mainTab"
+            group="org.eclipse.cdt.launch.applicationLaunchTabGroup"
+            name="%MainLaunchTab.name"
+            class="org.eclipse.cdt.launch.ui.CMainTab">
+        <associatedDelegate delegate="org.eclipse.cdt.cdi.launch.localCLaunch"/>
+      </tab>
+      <tab
+            id="org.eclipse.cdt.cdi.launch.applicationLaunch.argumentsTab"
+            group="org.eclipse.cdt.launch.applicationLaunchTabGroup"
+            name="%ArgumentsLaunchTab.name"
+            class="org.eclipse.cdt.launch.ui.CArgumentsTab">
+        <associatedDelegate delegate="org.eclipse.cdt.cdi.launch.localCLaunch"/>
+        <placement after="org.eclipse.cdt.cdi.launch.mainTab"/>
+      </tab>
+      <tab
+            id="org.eclipse.cdt.cdi.launch.applicationLaunch.environmentTab"
+            group="org.eclipse.cdt.launch.applicationLaunchTabGroup"
+            name="%EnvironmentLaunchTab.name"
+            class="org.eclipse.debug.ui.EnvironmentTab">
+        <associatedDelegate delegate="org.eclipse.cdt.cdi.launch.localCLaunch"/>
+        <placement after="org.eclipse.cdt.cdi.launch.argumentsTab"/>
+      </tab>
+      <tab
+            id="org.eclipse.cdt.cdi.launch.applicationLaunch.debuggerTab"
+            group="org.eclipse.cdt.launch.applicationLaunchTabGroup"
+            name="%DebuggerLaunchTab.name"
+            class="org.eclipse.cdt.launch.ui.ApplicationCDebuggerTab">
+        <associatedDelegate delegate="org.eclipse.cdt.cdi.launch.localCLaunch"/>
+        <placement after="org.eclipse.debug.ui.environmentTab"/>
+      </tab>
+      <tab
+            id="org.eclipse.cdt.cdi.launch.applicationLaunch.sourceLookupTab"
+            group="org.eclipse.cdt.launch.applicationLaunchTabGroup"
+            name="%SourceLookupLaunchTab.name"
+            class="org.eclipse.debug.ui.sourcelookup.SourceLookupTab">
+        <associatedDelegate delegate="org.eclipse.cdt.cdi.launch.localCLaunch"/>
+        <placement after="org.eclipse.cdt.cdi.launch.debuggerTab"/>
+      </tab>
+      <tab
+            id="org.eclipse.cdt.cdi.launch.applicationLaunch.commonTab"
+            group="org.eclipse.cdt.launch.applicationLaunchTabGroup"
+            name="%CommonLaunchTab.name"
+            class="org.eclipse.debug.ui.CommonTab">
+        <associatedDelegate delegate="org.eclipse.cdt.cdi.launch.localCLaunch"/>
+        <placement after="org.eclipse.debug.ui.sourceLookupTab"/>
+      </tab>
+
+      <!-- Attach launch tabs-->
+      <tab
+            id="org.eclipse.cdt.cdi.launch.attachLaunch.mainAttachTab"
+            group="org.eclipse.cdt.launch.attachLaunchTabGroup"
+            name="%MainLaunchTab.name"
+            class="org.eclipse.cdt.launch.ui.CMainAttachTab">
+        <associatedDelegate delegate="org.eclipse.cdt.cdi.launch.localCAttachLaunch"/>
+      </tab>
+      <tab
+            id="org.eclipse.cdt.cdi.launch.attachLaunch.debuggerTab"
+            group="org.eclipse.cdt.launch.attachLaunchTabGroup"
+            name="%DebuggerLaunchTab.name"
+            class="org.eclipse.cdt.launch.ui.AttachCDebuggerTab">
+        <associatedDelegate delegate="org.eclipse.cdt.cdi.launch.localCAttachLaunch"/>
+        <placement after="org.eclipse.cdt.cdi.launch.mainTab"/>
+      </tab>
+      <tab
+            id="org.eclipse.cdt.cdi.launch.attachLaunch.sourceLookupTab"
+            group="org.eclipse.cdt.launch.attachLaunchTabGroup"
+            name="%SourceLookupLaunchTab.name"
+            class="org.eclipse.debug.ui.sourcelookup.SourceLookupTab">
+        <associatedDelegate delegate="org.eclipse.cdt.cdi.launch.localCAttachLaunch"/>
+        <placement after="org.eclipse.cdt.cdi.launch.debuggerTab"/>
+      </tab>
+      <tab
+            id="org.eclipse.cdt.cdi.launch.attachLaunch.commonTab"
+            group="org.eclipse.cdt.launch.attachLaunchTabGroup"
+            name="%CommonLaunchTab.name"
+            class="org.eclipse.debug.ui.CommonTab">
+        <associatedDelegate delegate="org.eclipse.cdt.cdi.launch.localCAttachLaunch"/>
+        <placement after="org.eclipse.debug.ui.sourceLookupTab"/>
+      </tab>
+      
+      <!-- Post mortem launch tabs-->
+      <tab
+            id="org.eclipse.cdt.cdi.launch.postmortemLaunch.mainTab"
+            group="org.eclipse.cdt.launch.postmortemLaunchTabGroup"
+            name="%MainLaunchTab.name"
+            class="org.eclipse.cdt.launch.ui.CMainTab">
+        <associatedDelegate delegate="org.eclipse.cdt.cdi.launch.coreFileCLaunch"/>
+      </tab>
+      <tab
+            id="org.eclipse.cdt.cdi.launch.postmortemLaunch.coreTab"
+            group="org.eclipse.cdt.launch.postmortemLaunchTabGroup"
+            name="%CoreFileLaunchTab.name"
+            class="org.eclipse.cdt.launch.ui.CoreFileDebuggerTab">
+        <associatedDelegate delegate="org.eclipse.cdt.cdi.launch.coreFileCLaunch"/>
+        <placement after="org.eclipse.cdt.cdi.launch.mainTab"/>
+      </tab>
+      <tab
+            id="org.eclipse.cdt.cdi.launch.postmortemLaunch.sourceLookupTab"
+            group="org.eclipse.cdt.launch.postmortemLaunchTabGroup"
+            name="%SourceLookupLaunchTab.name"
+            class="org.eclipse.debug.ui.sourcelookup.SourceLookupTab">
+        <associatedDelegate delegate="org.eclipse.cdt.cdi.launch.coreFileCLaunch"/>
+        <placement after="org.eclipse.cdt.cdi.launch.coreTab"/>
+      </tab>
+      <tab
+            id="org.eclipse.cdt.cdi.launch.postmortemLaunch.commonTab"
+            group="org.eclipse.cdt.launch.postmortemLaunchTabGroup"
+            name="%CommonLaunchTab.name"
+            class="org.eclipse.debug.ui.CommonTab">
+        <associatedDelegate delegate="org.eclipse.cdt.cdi.launch.coreFileCLaunch"/>
+        <placement after="org.eclipse.debug.ui.sourceLookupTab"/>
+      </tab>
    </extension>
    <extension
          point="org.eclipse.debug.core.statusHandlers">
@@ -137,24 +168,5 @@
             id="org.eclipse.cdt.launch.statusHandler.coreFilePrompter">
       </statusHandler>  
 	</extension>
-	
-	<!-- Adapters for contextual launch -->
-	<extension point="org.eclipse.core.runtime.adapters">
-         <factory 
-            class="" 
-            adaptableType="org.eclipse.cdt.core.model.IBinary">
-            <adapter type="org.eclipse.debug.ui.actions.ILaunchable"/>
-         </factory>
-         <factory 
-            class="" 
-            adaptableType="org.eclipse.core.resources.IResource">
-            <adapter type="org.eclipse.debug.ui.actions.ILaunchable"/>
-         </factory>         
-         <factory 
-            class="" 
-            adaptableType="org.eclipse.cdt.core.model.ICProject">
-            <adapter type="org.eclipse.debug.ui.actions.ILaunchable"/>
-         </factory>         
-    </extension>
 	
 </plugin>

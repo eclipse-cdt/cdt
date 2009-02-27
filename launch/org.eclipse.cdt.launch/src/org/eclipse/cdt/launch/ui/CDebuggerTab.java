@@ -65,6 +65,15 @@ import org.eclipse.swt.widgets.Text;
 
 public class CDebuggerTab extends AbstractCDebuggerTab {
 
+    /**
+     * Tab identifier used for ordering of tabs added using the 
+     * <code>org.eclipse.debug.ui.launchConfigurationTabs</code>
+     * extension point.
+     *   
+     * @since 6.0
+     */
+    public static final String TAB_ID = "org.eclipse.cdt.cdi.launch.debuggerTab";
+    
 	public class AdvancedDebuggerOptionsDialog extends Dialog {
 
 		private Button fVarBookKeeping;
@@ -154,6 +163,11 @@ public class CDebuggerTab extends AbstractCDebuggerTab {
 		}
 	}
 
+	@Override
+	public String getId() {
+	    return TAB_ID;
+	}
+	
 	public void createControl(Composite parent) {
 		fContainer = new ScrolledComposite( parent, SWT.V_SCROLL | SWT.H_SCROLL );
 		fContainer.setLayoutData(new GridData(GridData.FILL_BOTH));

@@ -22,6 +22,10 @@ import org.eclipse.debug.core.commands.IDebugCommandRequest;
 import org.eclipse.debug.core.commands.IEnabledStateRequest;
 import org.eclipse.debug.core.commands.ISuspendHandler;
 
+/**
+ * 
+ * @since 1.0
+ */
 @Immutable
 public class DsfSuspendCommand implements ISuspendHandler {
     private final DsfExecutor fExecutor;

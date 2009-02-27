@@ -10,9 +10,12 @@
  *******************************************************************************/
 package org.eclipse.cdt.dsf.concurrent;
 
+
 /**
  * Untility class for easy pretty-printing stack traces.  Local to the 
  * concurrent package.
+ * 
+ * @since 1.0
  */
 @Immutable
 class StackTraceWrapper {

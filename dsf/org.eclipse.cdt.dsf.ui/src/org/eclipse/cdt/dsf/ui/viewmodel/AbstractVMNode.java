@@ -26,6 +26,8 @@ import org.eclipse.debug.internal.ui.viewers.model.provisional.IViewerUpdate;
  * Base implementation of the view model node.  
  * The main functionality implemented here is for building the view model 
  * deltas (IModelDelta), based on the flags returned by child nodes. 
+ * 
+ * @since 1.0
  */
 @SuppressWarnings("restriction")
 abstract public class AbstractVMNode implements IVMNode {

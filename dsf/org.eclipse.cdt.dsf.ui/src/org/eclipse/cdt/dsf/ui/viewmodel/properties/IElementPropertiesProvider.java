@@ -14,6 +14,8 @@ package org.eclipse.cdt.dsf.ui.viewmodel.properties;
 /**
  * Provides context-sensitive properties.  Can be registered as an adapter for 
  * an element or implemented directly
+ * 
+ * @since 1.0
  */
 public interface IElementPropertiesProvider {
 

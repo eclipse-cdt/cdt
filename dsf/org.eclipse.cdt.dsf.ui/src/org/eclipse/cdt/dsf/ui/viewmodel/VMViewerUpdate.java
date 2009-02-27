@@ -34,6 +34,8 @@ import org.eclipse.jface.viewers.TreePath;
  * and {@link IElementMementoProvider}.  The viewer update can be constructed 
  * using a higher level update object or a set of parameters to fulfill the 
  * <code>IViewerUpdate</code> interface. 
+ * 
+ * @since 1.0
  */
 @SuppressWarnings("restriction")
 public class VMViewerUpdate implements IViewerUpdate {

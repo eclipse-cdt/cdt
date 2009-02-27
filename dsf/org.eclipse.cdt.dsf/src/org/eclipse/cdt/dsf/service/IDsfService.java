@@ -34,6 +34,8 @@ import org.eclipse.cdt.dsf.concurrent.RequestMonitor;
  * be documented so. 
  *  
  * @see org.osgi.framework.BundleContext#registerService(String[], Object, Dictionary)
+ * 
+ * @since 1.0
  */
 @ConfinedToDsfExecutor("getExecutor")
 public interface IDsfService {

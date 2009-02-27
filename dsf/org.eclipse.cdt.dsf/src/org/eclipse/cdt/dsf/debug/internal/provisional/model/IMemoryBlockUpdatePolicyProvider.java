@@ -11,10 +11,12 @@
 
 package org.eclipse.cdt.dsf.debug.internal.provisional.model;
 
-/*
- * This interface is EXPERIMENTAL.
-*/
 
+/**
+ * This interface is EXPERIMENTAL.
+ * 
+ * @since 1.1
+ */
 public interface IMemoryBlockUpdatePolicyProvider 
 {
 	public String[] getUpdatePolicies();

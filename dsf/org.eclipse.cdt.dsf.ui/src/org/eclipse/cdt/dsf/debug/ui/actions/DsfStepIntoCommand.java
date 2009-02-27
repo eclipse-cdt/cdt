@@ -22,6 +22,10 @@ import org.eclipse.debug.core.commands.IDebugCommandRequest;
 import org.eclipse.debug.core.commands.IEnabledStateRequest;
 import org.eclipse.debug.core.commands.IStepIntoHandler;
 
+/**
+ * 
+ * @since 1.0
+ */
 @Immutable
 public class DsfStepIntoCommand implements IStepIntoHandler {
 

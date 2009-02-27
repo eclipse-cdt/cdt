@@ -100,6 +100,8 @@ import org.eclipse.ui.texteditor.ITextEditor;
  * Hence there is some involved logic which ensures that the jobs are run in 
  * proper order.  To avoid race conditions, this logic uses the session's 
  * dispatch thread to synchronize access to the state data of the running jobs.
+ * 
+ * @since 1.0
  */
 @ThreadSafe
 public class DsfSourceDisplayAdapter implements ISourceDisplay, ISteppingControlParticipant

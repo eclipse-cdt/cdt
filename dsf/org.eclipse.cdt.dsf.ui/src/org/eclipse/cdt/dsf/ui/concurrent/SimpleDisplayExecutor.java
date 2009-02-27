@@ -28,6 +28,8 @@ import org.eclipse.swt.widgets.Display;
  * {@link java.util.concurrent.ScheduledExecutorService}). However, this 
  * implementation is much more efficient than DisplayDsfExecutor as it does
  * not use a separate thread or maintain its own queue.
+ * 
+ * @since 1.0
  */
 public class SimpleDisplayExecutor implements Executor{
     /**

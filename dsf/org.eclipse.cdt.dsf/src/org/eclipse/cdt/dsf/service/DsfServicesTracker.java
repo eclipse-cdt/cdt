@@ -39,6 +39,8 @@ import org.osgi.framework.ServiceReference;
  * OSGI Service tracker for the additional features it provides. 
  * 
  * @see org.osgi.util.tracker.ServiceTracker
+ * 
+ * @since 1.0
  */
 public class DsfServicesTracker {
     

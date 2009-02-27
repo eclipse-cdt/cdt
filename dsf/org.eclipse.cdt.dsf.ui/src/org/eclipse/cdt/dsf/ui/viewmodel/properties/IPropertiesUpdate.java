@@ -14,6 +14,8 @@ import org.eclipse.debug.internal.ui.viewers.model.provisional.IViewerUpdate;
 
 /**
  * Context sensitive properties update request for an element.
+ * 
+ * @since 1.0
  */
 @SuppressWarnings("restriction")
 public interface IPropertiesUpdate extends IViewerUpdate {

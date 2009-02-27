@@ -12,6 +12,9 @@ package org.eclipse.cdt.dsf.ui.viewmodel.properties;
 
 import org.eclipse.osgi.util.NLS;
 
+/**
+ * @noinstantiate This class is not intended to be instantiated by clients.
+ */
 class MessagesForProperties extends NLS {
     private static final String BUNDLE_NAME = "org.eclipse.cdt.dsf.ui.viewmodel.properties.messages"; //$NON-NLS-1$
 

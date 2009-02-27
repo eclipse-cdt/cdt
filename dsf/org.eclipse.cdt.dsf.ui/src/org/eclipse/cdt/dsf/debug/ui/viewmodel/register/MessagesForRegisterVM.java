@@ -12,6 +12,9 @@ package org.eclipse.cdt.dsf.debug.ui.viewmodel.register;
 
 import org.eclipse.osgi.util.NLS;
 
+/**
+ * @noinstantiate This class is not intended to be instantiated by clients.
+ */
 public class MessagesForRegisterVM extends NLS {
     private static final String BUNDLE_NAME = "org.eclipse.cdt.dsf.debug.ui.viewmodel.register.messages"; //$NON-NLS-1$
 

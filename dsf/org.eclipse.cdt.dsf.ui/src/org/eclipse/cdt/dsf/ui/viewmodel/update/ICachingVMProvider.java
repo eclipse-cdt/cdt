@@ -16,6 +16,8 @@ import org.eclipse.cdt.dsf.ui.viewmodel.IVMProvider;
  * A view model provider which supports caching of data returned by view model
  * nodes.  The methods in this interface allow clients to configure how the  
  * cache should be updated in response to different events.
+ * 
+ * @since 1.0
  */
 public interface ICachingVMProvider extends IVMProvider {
     

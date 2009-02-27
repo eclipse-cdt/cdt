@@ -48,6 +48,8 @@ import org.osgi.framework.Filter;
  * sent on that session's executor dispatch thread.      
  * 
  * @see org.eclipse.cdt.dsf.concurrent.DsfExecutor
+ * 
+ * @since 1.0
  */
 @ConfinedToDsfExecutor("getExecutor") 
 public class DsfSession 

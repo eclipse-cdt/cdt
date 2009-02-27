@@ -8,7 +8,7 @@
   </extension>
 
    <extension point="org.eclipse.core.runtime.preferences">
-		<initializer class="org.eclipse.cdt.dsf.debug.ui.PreferenceInitializer"/>
+		<initializer class="org.eclipse.cdt.dsf.debug.internal.ui.PreferenceInitializer"/>
    </extension>
 	
    <extension point="org.eclipse.ui.editors.annotationTypes">

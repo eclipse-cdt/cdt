@@ -28,6 +28,8 @@ import org.eclipse.debug.internal.ui.viewers.model.provisional.ILabelUpdate;
  * Clients are not intended to extend this class.
  * 
  * @see PropertyBasedLabelProvider
+ * 
+ * @since 1.0
  */
 @SuppressWarnings("restriction")
 @ThreadSafe

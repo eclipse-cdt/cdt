@@ -20,6 +20,8 @@ import org.eclipse.debug.internal.ui.viewers.model.provisional.IModelDelta;
 /**
  * Default implementation of a root view model node.  This class may be sub-classed
  * to implement model-specific event handling.
+ * 
+ * @since 1.0
  */
 @SuppressWarnings("restriction")
 public class RootVMNode extends AbstractVMNode implements IRootVMNode {

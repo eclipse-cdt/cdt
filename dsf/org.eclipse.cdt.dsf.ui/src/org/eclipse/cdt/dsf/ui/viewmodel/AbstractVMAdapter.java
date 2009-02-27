@@ -39,10 +39,12 @@ import org.eclipse.debug.internal.ui.viewers.model.provisional.IViewerUpdate;
  * Base implementation for View Model Adapters.  The implementation uses
  * its own single-thread executor for communicating with providers and 
  * layout nodes. 
+ * 
+ * @since 1.0
  */
 @ThreadSafe
 @SuppressWarnings("restriction")
-abstract public class AbstractVMAdapter implements IVMAdapterExtension
+abstract public class AbstractVMAdapter implements IVMAdapter
 {
  
 	private boolean fDisposed;

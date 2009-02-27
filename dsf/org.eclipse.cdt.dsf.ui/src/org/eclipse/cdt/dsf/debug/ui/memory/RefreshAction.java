@@ -24,6 +24,10 @@ import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.ui.IViewActionDelegate;
 import org.eclipse.ui.IViewPart;
 
+/**
+ * 
+ * @since 1.0
+ */
 @SuppressWarnings("restriction")
 public class RefreshAction implements IViewActionDelegate {
 

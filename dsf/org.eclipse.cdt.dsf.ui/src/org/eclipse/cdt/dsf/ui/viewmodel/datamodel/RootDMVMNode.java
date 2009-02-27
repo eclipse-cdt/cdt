@@ -27,6 +27,8 @@ import org.eclipse.cdt.dsf.ui.viewmodel.RootVMNode;
  * selection, as in IStructuredSelection.getFirstElement().  Therefore the root 
  * node also has to use the first element as the root object instead of the 
  * whole selection. 
+ * 
+ * @since 1.0
  */
 public class RootDMVMNode extends RootVMNode 
     implements IRootVMNode

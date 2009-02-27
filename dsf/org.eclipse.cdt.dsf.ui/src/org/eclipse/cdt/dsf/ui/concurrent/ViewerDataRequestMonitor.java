@@ -19,6 +19,8 @@ import org.eclipse.debug.internal.ui.viewers.model.provisional.IViewerUpdate;
  * Data Request monitor that takean <code>IViewerUpdate</code> as a parent.
  * If the IViewerUpdate is canceled, this request monitor becomes canceled as well.
  * @see IViewerUpdate
+ * 
+ * @since 1.0
  */
 @SuppressWarnings("restriction")
 public class ViewerDataRequestMonitor<V> extends DataRequestMonitor<V> {

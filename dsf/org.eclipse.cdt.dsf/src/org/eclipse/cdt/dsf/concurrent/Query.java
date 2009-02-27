@@ -47,6 +47,8 @@ import org.eclipse.core.runtime.CoreException;
  * </pre>
  * <p> 
  * @see java.util.concurrent.Callable
+ * 
+ * @since 1.0
  */
 @ThreadSafe
 abstract public class Query<V> extends DsfRunnable 

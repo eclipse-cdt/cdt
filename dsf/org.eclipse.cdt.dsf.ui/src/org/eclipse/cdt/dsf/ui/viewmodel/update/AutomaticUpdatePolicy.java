@@ -16,6 +16,8 @@ import org.eclipse.jface.viewers.TreePath;
  * An "automatic" update policy which causes the view model provider cache to 
  * be flushed whenever an event causes a delta to be generated in the given 
  * model.
+ * 
+ * @since 1.0
  */
 public class AutomaticUpdatePolicy implements IVMUpdatePolicy {
 

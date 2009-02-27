@@ -14,6 +14,8 @@ package org.eclipse.cdt.dsf.debug.service.command;
  * Token returned by ICommandControl.queueCommand().  This token can be used
  * to uniquely identify a command when calling ICommandControl.removeCommand()
  * or when implementing the ICommandListener listener methods.
+ * 
+ * @since 1.0
  */
 public interface ICommandToken {
     /**

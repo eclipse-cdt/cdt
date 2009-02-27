@@ -34,6 +34,8 @@ import org.eclipse.swt.widgets.Listener;
  * and callables.  The implementation is based on the default DSF executor 
  * which still creates its own thread.  However this thread blocks when running
  * each executable in the display thread.   
+ * 
+ * @since 1.0
  */
 public class DisplayDsfExecutor extends DefaultDsfExecutor 
 {

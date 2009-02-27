@@ -16,7 +16,7 @@ import org.eclipse.cdt.dsf.ui.viewmodel.update.IElementUpdateTester;
 import org.eclipse.cdt.dsf.ui.viewmodel.update.ManualUpdatePolicy;
 
 /**
- * 
+ * @since 1.0
  */
 public class BreakpointHitUpdatePolicy extends ManualUpdatePolicy {
     

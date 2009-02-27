@@ -23,6 +23,8 @@ import org.eclipse.cdt.dsf.concurrent.ThreadSafe;
 
 /**
  * Holder for utility static methods for manipulating IDMContext objects.
+ * 
+ * @since 1.0
  */
 public class DMContexts {
 

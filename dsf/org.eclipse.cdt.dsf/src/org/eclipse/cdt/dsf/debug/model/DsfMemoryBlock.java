@@ -49,6 +49,8 @@ import org.eclipse.debug.core.model.MemoryByte;
  * of a getBytesFromAddress() call from the platform.
  * 
  * It performs its read/write functions using the MemoryService.
+ * 
+ * @since 1.0
  */
 public class DsfMemoryBlock extends PlatformObject implements IMemoryBlockExtension, IMemoryBlockUpdatePolicyProvider
 {

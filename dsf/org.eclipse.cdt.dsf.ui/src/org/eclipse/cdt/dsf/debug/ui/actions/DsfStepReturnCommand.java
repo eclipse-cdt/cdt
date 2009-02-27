@@ -22,6 +22,10 @@ import org.eclipse.debug.core.commands.IDebugCommandRequest;
 import org.eclipse.debug.core.commands.IEnabledStateRequest;
 import org.eclipse.debug.core.commands.IStepReturnHandler;
 
+/**
+ * 
+ * @since 1.0
+ */
 @Immutable
 public class DsfStepReturnCommand implements IStepReturnHandler {
 

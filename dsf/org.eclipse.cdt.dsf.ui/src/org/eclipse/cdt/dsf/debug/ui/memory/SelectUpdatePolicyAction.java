@@ -34,6 +34,7 @@ import org.eclipse.ui.IViewPart;
 
 /**
  * 
+ * @since 1.0
  */
 public class SelectUpdatePolicyAction implements IMenuCreator, IViewActionDelegate, IDebugContextListener, IActionDelegate2 {
 

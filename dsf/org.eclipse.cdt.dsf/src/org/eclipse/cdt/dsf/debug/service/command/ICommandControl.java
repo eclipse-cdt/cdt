@@ -18,6 +18,8 @@ import org.eclipse.cdt.dsf.concurrent.DataRequestMonitor;
  * or a non-service object.
  * 
  * @see ICommandControlService
+ * 
+ * @since 1.0
  */
 public interface ICommandControl {
 

@@ -30,6 +30,8 @@ import org.eclipse.debug.internal.ui.viewers.model.provisional.ILabelUpdate;
  * 
  * @see PropertyBasedLabelProvider
  * @see LabelColumnInfo 
+ * 
+ * @since 1.0
  */
 @SuppressWarnings("restriction")
 abstract public class LabelAttribute {

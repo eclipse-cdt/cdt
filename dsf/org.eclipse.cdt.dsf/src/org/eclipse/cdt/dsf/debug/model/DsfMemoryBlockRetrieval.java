@@ -72,6 +72,7 @@ import org.w3c.dom.NodeList;
  * However, if the 'simpler' IMemoryBlockRetrieval is to be implemented, the
  * code will still be functional after some trivial adjustments.
  * 
+ * @since 1.0
  */
 public class DsfMemoryBlockRetrieval extends PlatformObject implements IMemoryBlockRetrievalExtension
 {

@@ -27,7 +27,9 @@ import java.lang.annotation.Target;
  * and validation code.
  * 
  * @param value The value indicates the method to use to obtain the executor.  
- * It should be null if it cannot be determined from the given object. 
+ * It should be null if it cannot be determined from the given object.
+ * 
+ * @since 1.0
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Target({ElementType.PACKAGE, ElementType.TYPE, ElementType.METHOD, ElementType.FIELD, ElementType.CONSTRUCTOR})

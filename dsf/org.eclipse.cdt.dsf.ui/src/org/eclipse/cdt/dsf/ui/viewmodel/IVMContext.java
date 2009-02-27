@@ -18,6 +18,8 @@ import org.eclipse.core.runtime.IAdaptable;
  * The implementation of this interface is usually a wrapper object for an object 
  * from some data model, which is then used to correctly implement the 
  * {@link #equals(Object)} and {@link #hashCode()} methods of this wrapper.
+ * 
+ * @since 1.0
  */
 @Immutable
 public interface IVMContext extends IAdaptable {

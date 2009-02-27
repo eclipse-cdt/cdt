@@ -46,6 +46,8 @@ import org.eclipse.debug.internal.ui.viewers.model.provisional.IViewerInputProvi
  * {@link IVMAdapter} which implements <code>IElementContentProvider</code>, 
  * and <code>IVMAdapter</code> implementation is expected to switch to 
  * provider's thread before delegating the call to it.
+ * 
+ * @since 1.0
  */
 @ConfinedToDsfExecutor("#getExecutor()")
 @SuppressWarnings("restriction")

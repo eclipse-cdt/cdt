@@ -37,6 +37,8 @@ import org.eclipse.debug.ui.contexts.ISuspendTriggerListener;
  * the debugger suspends.
  *   
  * @see ISuspendTrigger
+ * 
+ * @since 1.0
  */
 @ConfinedToDsfExecutor("fSession.getExecutor()")
 public class DsfSuspendTrigger implements ISuspendTrigger {

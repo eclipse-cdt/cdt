@@ -16,6 +16,8 @@ import org.eclipse.cdt.dsf.concurrent.Immutable;
  * Marker interface for data corresponding to IDMContext, retrieved from a 
  * service.  These data objects are meant to be processed by clients on 
  * different threads, therefore they should be immutable.
+ * 
+ * @since 1.0
  */
 @Immutable
 public interface IDMData {

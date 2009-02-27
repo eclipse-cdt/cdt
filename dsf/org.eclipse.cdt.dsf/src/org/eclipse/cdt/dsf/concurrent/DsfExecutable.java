@@ -23,6 +23,8 @@ import org.eclipse.core.runtime.Platform;
  * an object only implementing the Runnable/Callable interface, the DsfExecutable
  * contains fields and methods that used for debugging and tracing when 
  * tracing is enabled.
+ * 
+ * @since 1.0
  */
 @Immutable
 public class DsfExecutable {

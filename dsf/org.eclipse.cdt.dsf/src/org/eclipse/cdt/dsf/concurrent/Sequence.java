@@ -50,6 +50,8 @@ import org.eclipse.core.runtime.SubProgressMonitor;
  * if progress reporting, cancellability, and roll-back ability is required, it
  * has to be re-implemented every time.  The Sequence class tries to address
  * this problem by containing this pattern in a single class. 
+ * 
+ * @since 1.0
  */
 @ThreadSafe
 abstract public class Sequence extends DsfRunnable implements Future<Object> {

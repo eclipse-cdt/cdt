@@ -38,6 +38,8 @@ import org.eclipse.core.runtime.Status;
  *  Resetting the cache has to be performed by the object owning the cache when
  *  when an event indicates that the data is obsolete (which is specific to the
  *  types of commands being cached).  
+ * 
+ * @since 1.0
  */
  
 public class CommandCache implements ICommandListener

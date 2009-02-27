@@ -17,6 +17,8 @@ import org.eclipse.jface.viewers.TreePath;
  * entries should be updated during a flush operation.  
  * 
  * @see IVMUpdatePolicy
+ * 
+ * @since 1.0
  */
 public interface IElementUpdateTester {
 

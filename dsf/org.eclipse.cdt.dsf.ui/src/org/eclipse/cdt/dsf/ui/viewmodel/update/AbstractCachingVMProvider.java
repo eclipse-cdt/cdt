@@ -36,7 +36,6 @@ import org.eclipse.cdt.dsf.ui.concurrent.ViewerDataRequestMonitor;
 import org.eclipse.cdt.dsf.ui.viewmodel.AbstractVMAdapter;
 import org.eclipse.cdt.dsf.ui.viewmodel.AbstractVMProvider;
 import org.eclipse.cdt.dsf.ui.viewmodel.IVMModelProxy;
-import org.eclipse.cdt.dsf.ui.viewmodel.IVMModelProxyExtension;
 import org.eclipse.cdt.dsf.ui.viewmodel.IVMNode;
 import org.eclipse.cdt.dsf.ui.viewmodel.VMChildrenCountUpdate;
 import org.eclipse.cdt.dsf.ui.viewmodel.VMChildrenUpdate;
@@ -739,45 +738,39 @@ public class AbstractCachingVMProvider extends AbstractVMProvider implements ICa
    
         flush(new FlushMarkerKey(proxyStrategy.getRootElement(), elementTester));
         
-        if (proxyStrategy instanceof IVMModelProxyExtension) {
-            IVMModelProxyExtension proxyStrategyExtension = (IVMModelProxyExtension)proxyStrategy;
-            
-            CountingRequestMonitor multiRm = new CountingRequestMonitor(getExecutor(), rm);
-            super.handleEvent(proxyStrategy, event, multiRm);
-            int rmCount = 1;
-            
-            if(fDelayEventHandleForViewUpdate) {
-    	        if(this.getActiveUpdateScope().getID().equals(AllUpdateScope.ALL_UPDATE_SCOPE_ID)) {
-  	        	    new MultiLevelUpdateHandler(getExecutor(), proxyStrategyExtension, getPresentationContext(), this, multiRm).
-  	        	        startUpdate();
-  	        	    rmCount++;
-    	        } else if (!proxyStrategy.isDisposed()) {
-                    // block updating only the viewport
-    	        	TreeViewer viewer = (TreeViewer) proxyStrategyExtension.getViewer();
-    	        	Tree tree = viewer.getTree();
-    	        	int count = tree.getSize().y / tree.getItemHeight();
-    	        	
-    	        	TreeItem topItem = tree.getTopItem();
-    	        	int index = computeTreeIndex(topItem);
-    	        	
-    	        	MultiLevelUpdateHandler handler = new MultiLevelUpdateHandler(
-    	        			getExecutor(), proxyStrategyExtension, getPresentationContext(), this, multiRm);
-    	        	handler.setRange(index, index + count);
-					handler.startUpdate();
-                    rmCount++;
-    	        }
-            } else {
-            	if(this.getActiveUpdateScope().getID().equals(AllUpdateScope.ALL_UPDATE_SCOPE_ID)) {
-    	        	MultiLevelUpdateHandler handler = new MultiLevelUpdateHandler(
-    	        			getExecutor(), proxyStrategyExtension, getPresentationContext(), this, multiRm);
-					handler.startUpdate();
-                    rmCount++;
-    	        } 
-            }
-            multiRm.setDoneCount(rmCount);
+        CountingRequestMonitor multiRm = new CountingRequestMonitor(getExecutor(), rm);
+        super.handleEvent(proxyStrategy, event, multiRm);
+        int rmCount = 1;
+        
+        if(fDelayEventHandleForViewUpdate) {
+	        if(this.getActiveUpdateScope().getID().equals(AllUpdateScope.ALL_UPDATE_SCOPE_ID)) {
+        	    new MultiLevelUpdateHandler(getExecutor(), proxyStrategy, getPresentationContext(), this, multiRm).
+        	        startUpdate();
+        	    rmCount++;
+	        } else if (!proxyStrategy.isDisposed()) {
+                // block updating only the viewport
+	        	TreeViewer viewer = (TreeViewer) proxyStrategy.getViewer();
+	        	Tree tree = viewer.getTree();
+	        	int count = tree.getSize().y / tree.getItemHeight();
+	        	
+	        	TreeItem topItem = tree.getTopItem();
+	        	int index = computeTreeIndex(topItem);
+	        	
+	        	MultiLevelUpdateHandler handler = new MultiLevelUpdateHandler(
+	        			getExecutor(), proxyStrategy, getPresentationContext(), this, multiRm);
+	        	handler.setRange(index, index + count);
+				handler.startUpdate();
+                rmCount++;
+	        }
         } else {
-            super.handleEvent(proxyStrategy, event, rm);
+        	if(this.getActiveUpdateScope().getID().equals(AllUpdateScope.ALL_UPDATE_SCOPE_ID)) {
+	        	MultiLevelUpdateHandler handler = new MultiLevelUpdateHandler(
+	        			getExecutor(), proxyStrategy, getPresentationContext(), this, multiRm);
+				handler.startUpdate();
+                rmCount++;
+	        } 
         }
+        multiRm.setDoneCount(rmCount);
     }
         
 	private static int computeTreeIndex(TreeItem child) {

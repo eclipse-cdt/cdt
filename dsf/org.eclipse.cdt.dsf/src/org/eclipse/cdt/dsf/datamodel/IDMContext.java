@@ -36,6 +36,7 @@ import org.eclipse.core.runtime.IAdaptable;
  * This may prevent the service from being garbage collected, possibly keeping 
  * a lot of resources tied up.  
  * 
+ * @since 1.0
  */
 @Immutable
 public interface IDMContext extends IAdaptable 

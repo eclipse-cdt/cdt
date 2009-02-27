@@ -18,6 +18,8 @@ import org.eclipse.debug.core.sourcelookup.ISourceLookupParticipant;
  
 /**
  * DSF source lookup director.
+ * 
+ * @since 1.0
  */
 public class DsfSourceLookupDirector extends CSourceLookupDirector {
 

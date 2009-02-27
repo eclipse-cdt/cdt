@@ -20,6 +20,8 @@ import org.eclipse.cdt.dsf.datamodel.IDMContext;
  * for the DSF GDB reference implemenation. The command represents
  * the GDB/MI request which will be put on the wire to the GDB
  * backend. 
+ * 
+ * @since 1.0
  */
 
 public interface ICommand<V extends ICommandResult> {

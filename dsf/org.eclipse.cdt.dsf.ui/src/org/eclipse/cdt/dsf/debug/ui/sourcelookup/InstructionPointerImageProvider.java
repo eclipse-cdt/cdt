@@ -19,7 +19,7 @@ import org.eclipse.swt.graphics.Image;
 import org.eclipse.ui.texteditor.IAnnotationImageProvider;
 
 @ThreadSafe
-public class InstructionPointerImageProvider implements IAnnotationImageProvider {
+class InstructionPointerImageProvider implements IAnnotationImageProvider {
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.texteditor.IAnnotationImageProvider#getManagedImage(org.eclipse.jface.text.source.Annotation)

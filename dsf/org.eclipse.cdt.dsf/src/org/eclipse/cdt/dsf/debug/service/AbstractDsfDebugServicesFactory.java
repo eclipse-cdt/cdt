@@ -15,6 +15,7 @@ import org.eclipse.cdt.dsf.service.DsfSession;
 
 /**
  * Convenience base class for {@link IDsfDebugServicesFactory}
+ *
  * @since 1.1
  */
 public abstract class AbstractDsfDebugServicesFactory implements IDsfDebugServicesFactory {

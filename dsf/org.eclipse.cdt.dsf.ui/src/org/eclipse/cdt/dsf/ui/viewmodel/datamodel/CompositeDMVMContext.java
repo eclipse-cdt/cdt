@@ -22,6 +22,8 @@ import org.eclipse.jface.viewers.TreePath;
  * Object used to combine several DM Contexts found in a tree path of a viewer 
  * update.  This object allows the view model to pass complete data model context 
  * information found in the view to the services.  
+ * 
+ * @since 1.0
  */
 @SuppressWarnings("restriction")
 public class CompositeDMVMContext extends CompositeDMContext {

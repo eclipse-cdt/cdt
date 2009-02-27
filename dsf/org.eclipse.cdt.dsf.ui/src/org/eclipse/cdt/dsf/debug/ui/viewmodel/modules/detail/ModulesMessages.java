@@ -15,7 +15,7 @@ import java.util.MissingResourceException;
 import java.util.ResourceBundle;
 
 /**
- * Comment for .
+ * @noinstantiate This class is not intended to be instantiated by clients.
  */
 public class ModulesMessages {
 

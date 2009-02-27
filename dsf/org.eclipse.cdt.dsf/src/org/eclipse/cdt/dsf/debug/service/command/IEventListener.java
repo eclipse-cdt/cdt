@@ -5,8 +5,9 @@ import org.eclipse.cdt.dsf.concurrent.ConfinedToDsfExecutor;
 /**
  * Synchronous listener for events issued from the debugger.  All 
  * registered listeners will be called in the same dispatch cycle.
+ * 
+ * @since 1.0
  */
-
 @ConfinedToDsfExecutor("")
 public interface IEventListener {
     /**

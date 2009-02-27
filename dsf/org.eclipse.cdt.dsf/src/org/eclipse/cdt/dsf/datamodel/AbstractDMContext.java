@@ -28,6 +28,8 @@ import org.eclipse.core.runtime.PlatformObject;
  * therefore a proper equals implementation is critical. 
  * </p>
  * @param <V> Data Model data type that this context is for.
+ * 
+ * @since 1.0
  */
 @Immutable
 abstract public class AbstractDMContext extends PlatformObject 

@@ -16,6 +16,8 @@ import org.eclipse.cdt.dsf.concurrent.ConfinedToDsfExecutor;
  * Synchronous listener to commands being sent and received.
  * All the registered listeners will be called in the same 
  * dispatch cycle as when the result of the command is submitted. 
+ * 
+ * @since 1.0
  */
 
 @ConfinedToDsfExecutor("")

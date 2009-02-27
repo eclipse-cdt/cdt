@@ -13,6 +13,8 @@ package org.eclipse.cdt.dsf.ui.viewmodel;
 import org.eclipse.cdt.dsf.concurrent.DataRequestMonitor;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IModelDelta;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IModelProxy;
+import org.eclipse.jface.viewers.TreePath;
+import org.eclipse.jface.viewers.Viewer;
 
 /**
  * View Model extension to the platform IModelProxy interface.  This extension
@@ -21,6 +23,8 @@ import org.eclipse.debug.internal.ui.viewers.model.provisional.IModelProxy;
  * <br/> 
  * Note: The IVMModelProxy.init() may be called twice when installed, as a 
  * workaround for bug 241024. 
+ * 
+ * @since 1.0
  */
 @SuppressWarnings("restriction")
 public interface IVMModelProxy extends IModelProxy {
@@ -46,4 +50,26 @@ public interface IVMModelProxy extends IModelProxy {
      */
     public void fireModelChanged(IModelDelta delta);
 
+    /**
+     * Returns the viewer.
+     * 
+     * @since 2.0
+     */
+    public Viewer getViewer();
+
+    /**
+     * Returns the viewer input that was set to the viewer when this proxy 
+     * was created.  
+     * 
+     * @since 2.0
+     */
+    public Object getViewerInput();
+
+    /**
+     * Returns the full path for the root element.  If the path is empty, it
+     * means that the root element is the viewer input.
+     * 
+     * @since 2.0
+     */
+    public TreePath getRootPath();
 }

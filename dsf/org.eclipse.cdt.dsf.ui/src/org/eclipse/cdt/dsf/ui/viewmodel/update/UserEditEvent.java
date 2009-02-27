@@ -18,6 +18,8 @@ import java.util.Set;
  * a viewer is configured to be in a manual update mode, if user edits a value, the 
  * viewer should still update at least the value that the user editor.  This event
  * is used to accomplish that behavior.
+ * 
+ * @since 1.0
  */
 public class UserEditEvent {
     private final Set<Object> fElements;

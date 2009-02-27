@@ -20,6 +20,8 @@ import org.eclipse.cdt.dsf.ui.viewmodel.AbstractVMAdapter;
 
 /** 
  * Base implementation for DSF-based view model adapters.
+ * 
+ * @since 1.0
  */
 @ThreadSafe
 abstract public class AbstractDMVMAdapter extends AbstractVMAdapter

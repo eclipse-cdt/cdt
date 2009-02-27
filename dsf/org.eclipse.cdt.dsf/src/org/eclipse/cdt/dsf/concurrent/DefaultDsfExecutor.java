@@ -31,6 +31,8 @@ import org.eclipse.core.runtime.Status;
 /**
  * Default implementation of a DSF executor interfaces, based on the 
  * standard java.util.concurrent.ThreadPoolExecutor.
+ * 
+ * @since 1.0
  */
 
 public class DefaultDsfExecutor extends ScheduledThreadPoolExecutor 

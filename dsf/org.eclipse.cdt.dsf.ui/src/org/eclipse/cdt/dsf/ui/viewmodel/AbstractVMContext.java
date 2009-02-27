@@ -28,6 +28,8 @@ import org.eclipse.core.runtime.Platform;
  * This is because the view model context objects are just wrappers that are 
  * created by the view model on demand, so the equals methods must use the 
  * object being wrapped to perform a meaningful comparison.    
+ * 
+ * @since 1.0
  */
 abstract public class AbstractVMContext implements IVMContext {
     protected final IVMNode fNode;

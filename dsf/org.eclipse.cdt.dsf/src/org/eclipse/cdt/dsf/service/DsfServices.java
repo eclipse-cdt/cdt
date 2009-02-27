@@ -13,6 +13,8 @@ package org.eclipse.cdt.dsf.service;
 
 /**
  *  Utility class containing status methods to use with DSF services.
+ * 
+ * @since 1.0
  */
 public class DsfServices {
 

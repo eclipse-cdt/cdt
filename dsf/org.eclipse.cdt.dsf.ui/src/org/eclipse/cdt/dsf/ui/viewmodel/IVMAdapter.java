@@ -22,6 +22,8 @@ import org.eclipse.debug.internal.ui.viewers.model.provisional.IViewerInputProvi
  * set of viewers.  This adapter should be returned by an adapter factory for 
  * the input object of the viewer, and this adapter implementation will then 
  * populate the view contents.  
+ * 
+ * @since 1.0
  */
 @ThreadSafe
 @SuppressWarnings("restriction")
@@ -33,4 +35,14 @@ public interface IVMAdapter
      * context.  Returns <code>null</code> if there is none.
      */
     public IVMProvider getVMProvider(IPresentationContext presentationContext);
+
+    /**
+     * Retrieves the currently active VM providers in this adapter.
+     * 
+     * @return array of VM providers
+     * 
+     * @since 2.0
+     */
+    public IVMProvider[] getActiveProviders();
+
 }

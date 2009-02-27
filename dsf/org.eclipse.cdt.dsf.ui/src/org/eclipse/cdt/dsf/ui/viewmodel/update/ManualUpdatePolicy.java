@@ -18,6 +18,8 @@ import org.eclipse.jface.viewers.TreePath;
 /**
  * An "manual" update policy which causes the view model provider cache to be 
  * flushed only as a result of an explicit user action.    
+ * 
+ * @since 1.0
  */
 public class ManualUpdatePolicy implements IVMUpdatePolicy {
 

@@ -23,6 +23,8 @@ import org.eclipse.cdt.dsf.service.IDsfService;
  * @deprecated Without getModelData method this service has no function.
  * There's also no need for it as a marker interface so we may as well
  * get rid of it.
+ * 
+ * @since 1.0
  */
 public interface IDMService extends IDsfService {
     /**

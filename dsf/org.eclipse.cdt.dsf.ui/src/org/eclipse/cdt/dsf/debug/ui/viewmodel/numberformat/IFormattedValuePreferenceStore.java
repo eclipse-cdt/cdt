@@ -14,8 +14,8 @@ import org.eclipse.debug.internal.ui.viewers.model.provisional.IPresentationCont
 
 /**
  * 
+ * @since 1.0
  */
-
 @SuppressWarnings("restriction")
 public interface IFormattedValuePreferenceStore {
     /*

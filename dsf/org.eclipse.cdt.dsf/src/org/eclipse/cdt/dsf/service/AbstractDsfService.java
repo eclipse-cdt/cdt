@@ -28,6 +28,8 @@ import org.osgi.framework.ServiceRegistration;
  * Standard base implementation of the DSF service.  This is a convenience
  * class that provides the basic functionality that all DSF services have 
  * to implement.
+ * 
+ * @since 1.0
  */
 abstract public class AbstractDsfService 
     implements IDsfService, IDsfStatusConstants

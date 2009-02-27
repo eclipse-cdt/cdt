@@ -40,6 +40,8 @@ import org.eclipse.ui.IWorkbenchPart;
  * value is the currently active number format for the given receiver.</li>
  * </ul>
  * </p>
+ *  
+ * @since 1.0
  */
 @SuppressWarnings("restriction")
 public class NumberFormatsPropertyTester extends PropertyTester {

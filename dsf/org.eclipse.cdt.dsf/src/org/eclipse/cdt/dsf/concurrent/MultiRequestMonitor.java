@@ -39,6 +39,8 @@ import org.eclipse.core.runtime.MultiStatus;
  *             }));
  *     }
  * </pre>
+ * 
+ * @since 1.0
  */
 public class MultiRequestMonitor<V extends RequestMonitor> extends RequestMonitor {
     private List<V> fRequestMonitorList = new LinkedList<V>();

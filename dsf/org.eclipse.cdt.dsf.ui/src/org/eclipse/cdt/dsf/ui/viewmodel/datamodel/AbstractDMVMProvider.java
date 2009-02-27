@@ -36,6 +36,8 @@ import org.eclipse.debug.internal.ui.viewers.provisional.IAsynchronousLabelAdapt
  * @see IAsynchronousLabelAdapter
  * @see IModelProxy
  * @see IVMNode
+ * 
+ * @since 1.0
  */
 @ConfinedToDsfExecutor("fSession#getExecutor")
 @SuppressWarnings("restriction")

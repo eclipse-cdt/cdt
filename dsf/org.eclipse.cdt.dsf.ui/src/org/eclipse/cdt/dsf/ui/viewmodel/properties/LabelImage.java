@@ -21,6 +21,8 @@ import org.eclipse.jface.resource.ImageDescriptor;
  * @see LabelAttribute
  * @see LabelColumnInfo
  * @see PropertyBasedLabelProvider
+ * 
+ * @since 1.0
  */
 @SuppressWarnings("restriction")
 public class LabelImage extends LabelAttribute {

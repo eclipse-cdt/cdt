@@ -11,6 +11,9 @@
 
 package org.eclipse.cdt.dsf.debug.service.command;
 
+/**
+ * @since 1.0
+ */
 public interface ICommandResult {
     /**
      *  Returns an ICommandResult which is a subset command result. The command

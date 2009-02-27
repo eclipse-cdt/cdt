@@ -15,6 +15,8 @@ package org.eclipse.cdt.dsf.ui.viewmodel.update;
  * Interface for an update policy.  The main function of an update policy is 
  * to create an element tester for each given event.  The element tester
  * is then used to update the viewer cache. 
+ * 
+ * @since 1.0
  */
 public interface IVMUpdatePolicy {
 

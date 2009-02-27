@@ -39,6 +39,8 @@ import org.eclipse.debug.internal.ui.viewers.model.provisional.ILabelUpdate;
  * element's property provider to retrieve those properties.  After the property
  * values are retrieved, they are processed in order to produce correct label text, 
  * images, fonts, and colors, for the given element.
+ * 
+ * @since 1.0
  */
 @SuppressWarnings("restriction")
 @ThreadSafe

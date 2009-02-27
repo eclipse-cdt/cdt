@@ -17,6 +17,8 @@ import java.util.concurrent.Executor;
  * Request monitor that allows data to be returned to the request initiator.
  * 
  * @param V The type of the data object that this monitor handles. 
+ * 
+ * @since 1.0
  */
 public class DataRequestMonitor<V> extends RequestMonitor {
 

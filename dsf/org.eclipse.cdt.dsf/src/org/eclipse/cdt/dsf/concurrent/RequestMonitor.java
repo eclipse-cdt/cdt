@@ -69,6 +69,8 @@ import org.eclipse.core.runtime.Status;
  *     }
  * </pre>
  * </p>
+ * 
+ * @since 1.0
  */
 @ThreadSafe
 public class RequestMonitor {

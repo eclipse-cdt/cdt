@@ -34,6 +34,8 @@ import org.eclipse.core.runtime.MultiStatus;
  *     
  *     countingRm.setDoneCount(count);
  * </pre></code>
+ * 
+ * @since 1.0
  */
 public class CountingRequestMonitor extends RequestMonitor {
     /**

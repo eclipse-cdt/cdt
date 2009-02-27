@@ -21,6 +21,8 @@ import org.eclipse.jface.viewers.TreePath;
  * Helper class implementation of the {@link IHasChildrenUpdate} update object.
  * 
  * @see VMViewerUpdate
+ * 
+ * @since 1.0
  */
 @SuppressWarnings("restriction")
 public class VMHasChildrenUpdate extends VMViewerUpdate implements IHasChildrenUpdate {

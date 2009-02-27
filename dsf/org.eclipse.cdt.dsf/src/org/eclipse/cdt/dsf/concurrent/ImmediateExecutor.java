@@ -20,6 +20,8 @@ import org.eclipse.core.runtime.Platform;
  * executor is useful for clients that need to create <code>RequestMonitor</code> 
  * objects, but which do not have their own executor.
  * @see RequestMonitor
+ * 
+ * @since 1.0
  */
 public class ImmediateExecutor implements Executor {
     

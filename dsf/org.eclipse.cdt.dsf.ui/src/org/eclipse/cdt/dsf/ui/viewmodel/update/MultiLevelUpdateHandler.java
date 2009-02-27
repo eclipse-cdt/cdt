@@ -19,7 +19,7 @@ import org.eclipse.cdt.dsf.concurrent.CountingRequestMonitor;
 import org.eclipse.cdt.dsf.concurrent.DataRequestMonitor;
 import org.eclipse.cdt.dsf.concurrent.DsfRunnable;
 import org.eclipse.cdt.dsf.concurrent.RequestMonitor;
-import org.eclipse.cdt.dsf.ui.viewmodel.IVMModelProxyExtension;
+import org.eclipse.cdt.dsf.ui.viewmodel.IVMModelProxy;
 import org.eclipse.cdt.dsf.ui.viewmodel.VMChildrenUpdate;
 import org.eclipse.cdt.dsf.ui.viewmodel.VMHasChildrenUpdate;
 import org.eclipse.core.runtime.IAdaptable;
@@ -38,6 +38,9 @@ import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.swt.graphics.FontData;
 import org.eclipse.swt.graphics.RGB;
 
+/**
+ * @since 1.0
+ */
 @SuppressWarnings("restriction")
 class MultiLevelUpdateHandler extends DataRequestMonitor<List<Object>> {
 	
@@ -123,7 +126,7 @@ class MultiLevelUpdateHandler extends DataRequestMonitor<List<Object>> {
 	private int fPendingUpdates;
 	
 	public MultiLevelUpdateHandler(Executor executor, 
-			IVMModelProxyExtension modelProxy, 
+			IVMModelProxy modelProxy, 
 			IPresentationContext presentationContext, 
 			IElementContentProvider contentProvider,
 			RequestMonitor parentRequestMonitor) {

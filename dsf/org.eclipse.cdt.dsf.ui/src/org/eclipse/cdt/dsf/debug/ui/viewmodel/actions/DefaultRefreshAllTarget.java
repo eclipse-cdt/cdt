@@ -10,7 +10,7 @@
  *******************************************************************************/
 package org.eclipse.cdt.dsf.debug.ui.viewmodel.actions;
 
-import org.eclipse.cdt.dsf.ui.viewmodel.IVMAdapterExtension;
+import org.eclipse.cdt.dsf.ui.viewmodel.IVMAdapter;
 import org.eclipse.cdt.dsf.ui.viewmodel.IVMProvider;
 import org.eclipse.cdt.dsf.ui.viewmodel.update.ICachingVMProvider;
 import org.eclipse.core.runtime.CoreException;
@@ -27,7 +27,7 @@ import org.eclipse.jface.viewers.IStructuredSelection;
 public class DefaultRefreshAllTarget implements IRefreshAllTarget {
 
     public void refresh(ISelection debugContext) throws CoreException {
-        IVMAdapterExtension adapter = getActiveVMAdapter( debugContext );
+        IVMAdapter adapter = getActiveVMAdapter( debugContext );
 
         if (adapter != null) {
             for (IVMProvider provider : adapter.getActiveProviders()) {
@@ -38,12 +38,12 @@ public class DefaultRefreshAllTarget implements IRefreshAllTarget {
         }
     }
 
-    protected IVMAdapterExtension getActiveVMAdapter(ISelection debugContext) {
+    protected IVMAdapter getActiveVMAdapter(ISelection debugContext) {
         
         if (debugContext instanceof IStructuredSelection) {
             Object activeElement = ((IStructuredSelection)debugContext).getFirstElement();
             if (activeElement instanceof IAdaptable) {
-                return (IVMAdapterExtension)((IAdaptable)activeElement).getAdapter(IVMAdapterExtension.class);
+                return (IVMAdapter)((IAdaptable)activeElement).getAdapter(IVMAdapter.class);
             }
         }
         return null;

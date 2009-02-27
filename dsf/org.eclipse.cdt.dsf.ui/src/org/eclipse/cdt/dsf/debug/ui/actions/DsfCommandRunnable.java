@@ -26,6 +26,9 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.debug.core.commands.IDebugCommandRequest;
 
+/**
+ * @since 1.0
+ */
 @Immutable
 public abstract class DsfCommandRunnable extends DsfRunnable {
     private final IExecutionDMContext fContext;

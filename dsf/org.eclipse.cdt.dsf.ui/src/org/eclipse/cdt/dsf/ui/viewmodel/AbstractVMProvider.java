@@ -61,6 +61,8 @@ import org.eclipse.swt.widgets.Display;
  * @see IAsynchronousLabelAdapter
  * @see IModelProxy
  * @see IVMNode
+ * 
+ * @since 1.0
  */
 @SuppressWarnings("restriction")
 abstract public class AbstractVMProvider implements IVMProvider, IVMEventListener

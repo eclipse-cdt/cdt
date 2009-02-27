@@ -27,6 +27,8 @@ import org.eclipse.debug.internal.ui.viewers.model.provisional.ILabelUpdate;
  * @see LabelAttribute
  * @see LabelColumnInfo
  * @see PropertyBasedLabelProvider
+ * 
+ * @since 1.0
  */
 @SuppressWarnings("restriction")
 public class LabelText extends LabelAttribute {

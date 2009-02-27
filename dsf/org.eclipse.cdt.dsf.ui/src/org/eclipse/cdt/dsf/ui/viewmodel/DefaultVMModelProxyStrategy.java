@@ -49,10 +49,12 @@ import org.eclipse.jface.viewers.Viewer;
  * This class is closely linked with a view model provider which is required
  * for the constructor.  The view model provider is used to access the correct
  * executor and the node hierarchy. 
+ * 
+ * @since 1.0
  */
 @ConfinedToDsfExecutor("#getProvider()#getExecutor()")
 @SuppressWarnings("restriction")
-public class DefaultVMModelProxyStrategy implements IVMModelProxy, IVMModelProxyExtension {
+public class DefaultVMModelProxyStrategy implements IVMModelProxy {
 
     private final AbstractVMProvider fProvider;
     private final Object fRootElement;

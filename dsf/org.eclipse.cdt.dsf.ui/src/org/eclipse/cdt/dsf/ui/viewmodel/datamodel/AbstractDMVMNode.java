@@ -45,6 +45,8 @@ import org.eclipse.jface.viewers.TreePath;
  * The assumption in this implementation is that elements of this node have
  * a single IDMContext associated with them, and all of these contexts 
  * are of the same class type.   
+ * 
+ * @since 1.0
  */
 @SuppressWarnings("restriction")
 abstract public class AbstractDMVMNode extends AbstractVMNode implements IVMNode {

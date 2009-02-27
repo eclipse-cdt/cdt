@@ -40,6 +40,8 @@ import org.eclipse.debug.internal.ui.viewers.model.provisional.IViewerUpdate;
  * This class is closely linked with a view model provider which is required
  * for the constructor.  The view model provider is used to access the correct
  * executor and the node hierarchy. 
+ * 
+ * @since 1.0
  */
 @ConfinedToDsfExecutor("#getExecutor()")
 @SuppressWarnings("restriction")

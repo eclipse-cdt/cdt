@@ -22,6 +22,8 @@ import org.eclipse.swt.graphics.FontData;
  * @see LabelAttribute
  * @see LabelColumnInfo
  * @see PropertyBasedLabelProvider
+ * 
+ * @since 1.0
  */
 @SuppressWarnings("restriction")
 public class LabelFont extends LabelAttribute {

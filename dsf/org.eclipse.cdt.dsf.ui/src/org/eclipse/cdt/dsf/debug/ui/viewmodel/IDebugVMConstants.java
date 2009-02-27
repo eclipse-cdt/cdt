@@ -12,6 +12,10 @@ package org.eclipse.cdt.dsf.debug.ui.viewmodel;
 
 import org.eclipse.cdt.dsf.internal.ui.DsfUIPlugin;
 
+/**
+ * 
+ * @since 1.0
+ */
 public interface IDebugVMConstants {
     /**
      * Standard across the board column IDs.

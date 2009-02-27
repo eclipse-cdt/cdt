@@ -42,6 +42,8 @@ import org.eclipse.debug.core.sourcelookup.ISourceLookupParticipant;
 
 /**
  * Source lookup participant that should be used with DSF-based debuggers.
+ * 
+ * @since 1.0
  */
 @ThreadSafe
 public class DsfSourceLookupParticipant implements ISourceLookupParticipant {

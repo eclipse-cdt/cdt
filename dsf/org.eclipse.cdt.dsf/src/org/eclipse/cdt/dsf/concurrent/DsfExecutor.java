@@ -19,6 +19,8 @@ import java.util.concurrent.ScheduledExecutorService;
  * <br>Note: A DSF executor dispatch thread does not necessarily have 
  * to be exclusive to the executor, it could be shared with 
  * another event dispatch service, such as the SWT display dispatch thread.
+ * 
+ * @since 1.0
  */
 @ThreadSafe
 public interface DsfExecutor extends ScheduledExecutorService

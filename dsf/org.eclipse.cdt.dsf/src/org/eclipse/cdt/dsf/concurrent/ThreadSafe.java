@@ -25,6 +25,8 @@ import java.lang.annotation.Target;
  * <p>
  * Note: the runtime retention policy is there to allow automated testing 
  * and validation code.
+ * 
+ * @since 1.0
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Target({ElementType.PACKAGE, ElementType.TYPE, ElementType.METHOD, ElementType.FIELD, ElementType.CONSTRUCTOR})

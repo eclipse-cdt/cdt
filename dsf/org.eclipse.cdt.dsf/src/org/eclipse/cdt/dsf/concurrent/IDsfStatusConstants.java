@@ -10,9 +10,12 @@
  *******************************************************************************/
 package org.eclipse.cdt.dsf.concurrent;
 
+
 /**
  * Interface that hold the codes used when reporting status using the DSF 
  * Request Monitor. 
+ * 
+ * @since 1.0
  */
 public interface IDsfStatusConstants {
     /** 

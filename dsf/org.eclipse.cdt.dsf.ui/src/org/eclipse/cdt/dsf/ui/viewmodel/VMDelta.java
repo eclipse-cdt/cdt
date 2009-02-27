@@ -21,6 +21,8 @@ import org.eclipse.debug.internal.ui.viewers.model.provisional.ModelDelta;
  * constructed. 
  *
  * @see IModelDelta#getNodes()
+ * 
+ * @since 1.0
  */
 @SuppressWarnings("restriction")
 public class VMDelta extends ModelDelta {

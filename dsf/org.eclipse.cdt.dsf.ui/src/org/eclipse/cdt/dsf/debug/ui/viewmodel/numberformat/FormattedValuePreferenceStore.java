@@ -16,6 +16,8 @@ import org.eclipse.debug.internal.ui.viewers.model.provisional.IPresentationCont
 
 /**
  *  Provides default implementation of preference storage.
+ *  
+ * @since 1.0
  */
 @SuppressWarnings("restriction")
 public class FormattedValuePreferenceStore implements IFormattedValuePreferenceStore {

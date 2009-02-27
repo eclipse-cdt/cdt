@@ -17,6 +17,8 @@ import java.util.Arrays;
  * clients and other services to combine several contexts into one in order to
  * pass them as an argument to a method which takes a generic context as an 
  * argument. 
+ * 
+ * @since 1.0
  */
 public class CompositeDMContext implements IDMContext {
     

@@ -13,6 +13,9 @@ package org.eclipse.cdt.dsf.debug.ui.viewmodel.variable;
 
 import org.eclipse.osgi.util.NLS;
 
+/**
+ * @noinstantiate This class is not intended to be instantiated by clients.
+ */
 public class MessagesForVariablesVM extends NLS {
     private static final String BUNDLE_NAME = "org.eclipse.cdt.dsf.debug.ui.viewmodel.variable.messages"; //$NON-NLS-1$
 

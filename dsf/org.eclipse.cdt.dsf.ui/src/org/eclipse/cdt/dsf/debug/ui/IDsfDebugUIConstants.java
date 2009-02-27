@@ -14,6 +14,8 @@ import org.eclipse.debug.ui.IDebugUIConstants;
 
 /**
  * @noimplement This interface is not intended to be implemented by clients.
+ * 
+ * @since 1.0
  */
 public interface IDsfDebugUIConstants {
 

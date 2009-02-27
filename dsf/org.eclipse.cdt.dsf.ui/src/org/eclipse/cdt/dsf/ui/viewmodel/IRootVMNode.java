@@ -16,6 +16,8 @@ import org.eclipse.cdt.dsf.concurrent.DataRequestMonitor;
  * Special type of the view model node, which can be used as a root node
  * for a hierarchy.  The root node of a layout hierarchy has to implement this
  * interface.
+ * 
+ * @since 1.0
  */
 public interface IRootVMNode extends IVMNode{
     

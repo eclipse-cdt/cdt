@@ -15,6 +15,8 @@ import org.eclipse.cdt.dsf.concurrent.Immutable;
 /**
  * Base implementation of the IDMEvent interface.  It only handles the
  * required DM-Context reference.
+ * 
+ * @since 1.0
  */
 @Immutable
 abstract public class AbstractDMEvent<V extends IDMContext> implements IDMEvent<V> {

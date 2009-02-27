@@ -527,7 +527,7 @@ public class SemanticHighlightingReconciler implements ICReconcilingListener {
 					}
 				};
 //				fJob.setSystem(true);
-				fJob.setPriority(Job.DECORATE);
+				fJob.setPriority(Job.SHORT);
 				fJob.schedule();
 			}
 		}

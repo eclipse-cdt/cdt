@@ -114,6 +114,7 @@ public class CReconcilingStrategy implements IReconcilingStrategy, IReconcilingS
 					if (index != null) {
 						index.releaseReadLock();
 					}
+					fProgressMonitor.setCanceled(false);
 				}
 			}
 		}

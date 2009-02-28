@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 QNX Software Systems and others.
+ * Copyright (c) 2009 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -13,7 +13,6 @@
 package org.eclipse.cdt.dsf.mi.service.command.commands;
 
 import org.eclipse.cdt.dsf.debug.service.command.ICommandControlService.ICommandControlDMContext;
-import org.eclipse.cdt.dsf.mi.service.command.MIControlDMContext;
 import org.eclipse.cdt.dsf.mi.service.command.output.MIOutput;
 import org.eclipse.cdt.dsf.mi.service.command.output.MIVarDeleteInfo;
 
@@ -33,11 +32,6 @@ public class MIVarDelete extends MICommand<MIVarDeleteInfo>
      */
     public MIVarDelete(ICommandControlDMContext dmc, String name) {
         super(dmc, "-var-delete", new String[]{name}); //$NON-NLS-1$
-    }
-    
-    @Deprecated
-    public MIVarDelete(MIControlDMContext dmc, String name) {
-        this ((ICommandControlDMContext)dmc, name);
     }
     
     @Override

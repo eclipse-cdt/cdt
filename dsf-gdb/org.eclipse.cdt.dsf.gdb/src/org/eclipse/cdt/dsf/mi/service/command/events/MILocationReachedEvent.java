@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 QNX Software Systems and others.
+ * Copyright (c) 2009 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -13,9 +13,7 @@
 package org.eclipse.cdt.dsf.mi.service.command.events;
 
 import org.eclipse.cdt.dsf.concurrent.Immutable;
-import org.eclipse.cdt.dsf.debug.service.IRunControl.IContainerDMContext;
 import org.eclipse.cdt.dsf.debug.service.IRunControl.IExecutionDMContext;
-import org.eclipse.cdt.dsf.mi.service.MIRunControl;
 import org.eclipse.cdt.dsf.mi.service.command.output.MIFrame;
 import org.eclipse.cdt.dsf.mi.service.command.output.MIResult;
 
@@ -27,14 +25,6 @@ public class MILocationReachedEvent extends MIStoppedEvent {
 
     protected MILocationReachedEvent(IExecutionDMContext ctx, int token, MIResult[] results, MIFrame frame) {
         super(ctx, token, results, frame);
-    }
-    
-    @Deprecated
-    public static MILocationReachedEvent parse(
-        MIRunControl runControl, IContainerDMContext containerDmc, int token, MIResult[] results) 
-    {
-        MIStoppedEvent stoppedEvent = MIStoppedEvent.parse(runControl, containerDmc, token, results); 
-        return new MILocationReachedEvent(stoppedEvent.getDMContext(), token, results, stoppedEvent.getFrame());
     }
 
     /**

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 QNX Software Systems and others.
+ * Copyright (c) 2009 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -15,7 +15,6 @@ package org.eclipse.cdt.dsf.mi.service.command.commands;
 
 import org.eclipse.cdt.dsf.debug.service.IFormattedValues;
 import org.eclipse.cdt.dsf.debug.service.command.ICommandControlService.ICommandControlDMContext;
-import org.eclipse.cdt.dsf.mi.service.command.MIControlDMContext;
 import org.eclipse.cdt.dsf.mi.service.command.output.MIOutput;
 import org.eclipse.cdt.dsf.mi.service.command.output.MIVarSetFormatInfo;
 
@@ -40,11 +39,6 @@ public class MIVarSetFormat extends MICommand<MIVarSetFormatInfo>
     public MIVarSetFormat(ICommandControlDMContext ctx, String name, String fmt) {
         super(ctx, "-var-set-format"); //$NON-NLS-1$
         setParameters(new String[]{name, getFormat(fmt)});
-    }
-    
-    @Deprecated
-    public MIVarSetFormat(MIControlDMContext ctx, String name, String fmt) {
-        this ((ICommandControlDMContext)ctx, name, fmt);
     }
     
     private String getFormat(String fmt){

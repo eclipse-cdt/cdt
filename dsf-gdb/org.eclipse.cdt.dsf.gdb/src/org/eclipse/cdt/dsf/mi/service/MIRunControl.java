@@ -40,7 +40,6 @@ import org.eclipse.cdt.dsf.mi.service.command.events.IMIDMEvent;
 import org.eclipse.cdt.dsf.mi.service.command.events.MIBreakpointHitEvent;
 import org.eclipse.cdt.dsf.mi.service.command.events.MIErrorEvent;
 import org.eclipse.cdt.dsf.mi.service.command.events.MIEvent;
-import org.eclipse.cdt.dsf.mi.service.command.events.MIGDBExitEvent;
 import org.eclipse.cdt.dsf.mi.service.command.events.MIRunningEvent;
 import org.eclipse.cdt.dsf.mi.service.command.events.MISharedLibEvent;
 import org.eclipse.cdt.dsf.mi.service.command.events.MISignalEvent;
@@ -428,16 +427,6 @@ public class MIRunControl extends AbstractDsfService implements IRunControl, ICa
             ? e.getTriggeringContexts()[0] : null;
         fSuspended = true;
         fStepping = false;
-    }
-    
-    /**
-     * Not used, kept for API compatibility.  ICommandControlShutdownDMEvent is used instead
-     * @nooverride This method is not intended to be re-implemented or extended by clients.
-     * @noreference This method is not intended to be referenced by clients.
-     */
-    @DsfServiceEventHandler
-    public void eventDispatched(MIGDBExitEvent e) {
-        fTerminated = true;
     }
     
     /**

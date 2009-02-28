@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008  Ericsson and others.
+ * Copyright (c) 2009 Ericsson and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -11,7 +11,6 @@
 package org.eclipse.cdt.dsf.mi.service.command.commands;
 
 import org.eclipse.cdt.dsf.debug.service.command.ICommandControlService.ICommandControlDMContext;
-import org.eclipse.cdt.dsf.mi.service.command.MIControlDMContext;
 
 /**
  * 
@@ -38,9 +37,4 @@ public class MIGDBSetSolibSearchPath extends MIGDBSet
 		String[] p = new String [] {"solib-search-path", buffer.toString()}; //$NON-NLS-1$
 		setParameters(p);
 	}
-    
-    @Deprecated
-    public MIGDBSetSolibSearchPath(MIControlDMContext ctx, String[] paths) {
-        this ((ICommandControlDMContext)ctx, paths);
-    }
 }

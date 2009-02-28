@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007 Ericsson and others.
+ * Copyright (c) 2009 Ericsson and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -12,7 +12,6 @@
 package org.eclipse.cdt.dsf.mi.service.command.commands;
 
 import org.eclipse.cdt.dsf.debug.service.command.ICommandControlService.ICommandControlDMContext;
-import org.eclipse.cdt.dsf.mi.service.command.MIControlDMContext;
 import org.eclipse.cdt.dsf.mi.service.command.output.MIOutput;
 import org.eclipse.cdt.dsf.mi.service.command.output.MIVarInfoPathExpressionInfo;
 
@@ -37,12 +36,7 @@ public class MIVarInfoPathExpression extends MICommand<MIVarInfoPathExpressionIn
 	public MIVarInfoPathExpression(ICommandControlDMContext dmc, String name) {
 		super(dmc, "-var-info-path-expression", new String[]{name}); //$NON-NLS-1$
 	}
-    
-    @Deprecated
-	public MIVarInfoPathExpression(MIControlDMContext dmc, String name) {
-	    this ((ICommandControlDMContext)dmc, name);
-	}
-	
+
     @Override
     public MIVarInfoPathExpressionInfo getResult(MIOutput out) {
         return new MIVarInfoPathExpressionInfo(out);

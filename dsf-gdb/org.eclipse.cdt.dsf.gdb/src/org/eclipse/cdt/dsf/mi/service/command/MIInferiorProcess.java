@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 QNX Software Systems and others.
+ * Copyright (c) 2009 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -28,11 +28,8 @@ import org.eclipse.cdt.dsf.concurrent.DsfRunnable;
 import org.eclipse.cdt.dsf.concurrent.IDsfStatusConstants;
 import org.eclipse.cdt.dsf.concurrent.ImmediateExecutor;
 import org.eclipse.cdt.dsf.concurrent.Query;
-import org.eclipse.cdt.dsf.datamodel.AbstractDMEvent;
 import org.eclipse.cdt.dsf.debug.service.IRunControl.IContainerDMContext;
 import org.eclipse.cdt.dsf.debug.service.IRunControl.IExecutionDMContext;
-import org.eclipse.cdt.dsf.debug.service.IRunControl.IExitedDMEvent;
-import org.eclipse.cdt.dsf.debug.service.IRunControl.IStartedDMEvent;
 import org.eclipse.cdt.dsf.debug.service.command.ICommandControlService;
 import org.eclipse.cdt.dsf.debug.service.command.ICommandListener;
 import org.eclipse.cdt.dsf.debug.service.command.ICommandResult;
@@ -70,34 +67,6 @@ public class MIInferiorProcess extends Process
     implements IEventListener, ICommandListener 
 {
     
-    /**
-     * Event indicating that the GDB inferior process has started.  This event
-     * implements the {@link IStartedDMEvent} from the IRunControl service. 
-     * @deprecated
-     */
-	@Deprecated
-    public static class InferiorStartedDMEvent extends AbstractDMEvent<IExecutionDMContext> 
-        implements IStartedDMEvent
-    {
-        public InferiorStartedDMEvent(IExecutionDMContext context) {
-            super(context);
-        }
-    }        
-    
-    /**
-     * Event indicating that the GDB inferior process has exited.  This event
-     * implements the {@link IExitedDMEvent} from the IRunControl service. 
-     * @deprecated 
-     */
-    @Deprecated
-    public static class InferiorExitedDMEvent extends AbstractDMEvent<IExecutionDMContext> 
-        implements IExitedDMEvent
-    {
-        public InferiorExitedDMEvent(IExecutionDMContext context) {
-            super(context);
-        }
-    }        
-
     public enum State { RUNNING, STOPPED, TERMINATED }
 
     private final OutputStream fOutputStream;
@@ -153,21 +122,6 @@ public class MIInferiorProcess extends Process
         this(commandControl, gdbOutputStream, null);
     }
     
-    @Deprecated
-    public MIInferiorProcess(AbstractMIControl commandControl, IExecutionDMContext inferiorExecCtx, OutputStream gdbOutputStream) {
-        this(commandControl, gdbOutputStream, null);
-    }
-
-    /**
-     * @deprecated {@link #MIInferiorProcess(ICommandControlService, IExecutionDMContext, OutputStream)} 
-     * should be used instead.
-     */
-    @ConfinedToDsfExecutor("fSession#getExecutor")
-    @Deprecated
-    public MIInferiorProcess(AbstractMIControl commandControl, OutputStream gdbOutputStream) {
-        this(commandControl, gdbOutputStream, null);
-    }
-
     /**
      * Creates an inferior process object which uses the given terminal 
      * to write the user standard input into.
@@ -183,21 +137,6 @@ public class MIInferiorProcess extends Process
         this(commandControl, null, p);
     }
     
-    @Deprecated
-    public MIInferiorProcess(AbstractMIControl commandControl, IExecutionDMContext inferiorExecCtx, PTY p) {
-        this(commandControl, (OutputStream)null, p);
-    }
-    
-    /**
-     * @deprecated Should use {@link #MIInferiorProcess(ICommandControlService, IExecutionDMContext, PTY)}
-     * instead.
-     */
-    @ConfinedToDsfExecutor("fSession#getExecutor")
-    @Deprecated
-    public MIInferiorProcess(AbstractMIControl commandControl, PTY p) {
-        this(commandControl, (OutputStream)null, p);
-    }
-
     @ConfinedToDsfExecutor("fSession#getExecutor")
     private MIInferiorProcess(ICommandControlService commandControl, final OutputStream gdbOutputStream, PTY p) {
         fCommandControl = commandControl;
@@ -262,9 +201,6 @@ public class MIInferiorProcess extends Process
         return fSession;
     }
     
-    @Deprecated
-    protected AbstractMIControl getCommandControl() { return (AbstractMIControl)fCommandControl; }
-
     /**
      * @since 1.1
      */

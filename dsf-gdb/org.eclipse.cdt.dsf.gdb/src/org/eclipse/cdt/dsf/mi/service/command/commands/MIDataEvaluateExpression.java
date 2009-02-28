@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 QNX Software Systems and others.
+ * Copyright (c) 2009 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -16,7 +16,6 @@ import org.eclipse.cdt.dsf.debug.service.IExpressions.IExpressionDMContext;
 import org.eclipse.cdt.dsf.debug.service.IStack.IFrameDMContext;
 import org.eclipse.cdt.dsf.debug.service.command.ICommandControlService.ICommandControlDMContext;
 import org.eclipse.cdt.dsf.mi.service.IMIExecutionDMContext;
-import org.eclipse.cdt.dsf.mi.service.command.MIControlDMContext;
 import org.eclipse.cdt.dsf.mi.service.command.output.MIDataEvaluateExpressionInfo;
 import org.eclipse.cdt.dsf.mi.service.command.output.MIOutput;
 
@@ -38,12 +37,6 @@ public class MIDataEvaluateExpression<V extends MIDataEvaluateExpressionInfo> ex
         super(ctx, "-data-evaluate-expression", new String[]{expr}); //$NON-NLS-1$
     }
 
-    @Deprecated
-    public MIDataEvaluateExpression(MIControlDMContext ctx, String expr) {
-        this ((ICommandControlDMContext)ctx, expr);
-    }
-
-    
     public MIDataEvaluateExpression(IMIExecutionDMContext execDmc, String expr) {
         super(execDmc, "-data-evaluate-expression", new String[]{expr}); //$NON-NLS-1$
     }

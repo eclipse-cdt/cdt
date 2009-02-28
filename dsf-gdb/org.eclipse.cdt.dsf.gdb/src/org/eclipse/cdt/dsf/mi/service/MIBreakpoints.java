@@ -35,7 +35,6 @@ import org.eclipse.cdt.dsf.mi.service.command.commands.MIBreakEnable;
 import org.eclipse.cdt.dsf.mi.service.command.commands.MIBreakInsert;
 import org.eclipse.cdt.dsf.mi.service.command.commands.MIBreakList;
 import org.eclipse.cdt.dsf.mi.service.command.commands.MIBreakWatch;
-import org.eclipse.cdt.dsf.mi.service.command.events.MIGDBExitEvent;
 import org.eclipse.cdt.dsf.mi.service.command.events.MIWatchpointScopeEvent;
 import org.eclipse.cdt.dsf.mi.service.command.output.MIBreakInsertInfo;
 import org.eclipse.cdt.dsf.mi.service.command.output.MIBreakListInfo;
@@ -272,16 +271,6 @@ public class MIBreakpoints extends AbstractDsfService implements IBreakpoints
 	        }
 	    }
 	}
-
-    /**
-     * This method is left for API compatibility only.
-     * ICommandControlShutdownDMEvent is used instead
-     * @nooverride This method is not intended to be re-implemented or extended by clients.
-     * @noreference This method is not intended to be referenced by clients.
-     */
-    @DsfServiceEventHandler
-    public void eventDispatched(MIGDBExitEvent e) {
-    }
 
     /**
      * @since 1.1

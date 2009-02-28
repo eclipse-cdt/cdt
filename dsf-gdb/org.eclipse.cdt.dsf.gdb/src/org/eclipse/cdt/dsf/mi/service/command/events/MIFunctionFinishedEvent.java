@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 QNX Software Systems and others.
+ * Copyright (c) 2009 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -13,9 +13,7 @@
 package org.eclipse.cdt.dsf.mi.service.command.events;
 
 import org.eclipse.cdt.dsf.concurrent.Immutable;
-import org.eclipse.cdt.dsf.debug.service.IRunControl.IContainerDMContext;
 import org.eclipse.cdt.dsf.debug.service.IRunControl.IExecutionDMContext;
-import org.eclipse.cdt.dsf.mi.service.MIRunControl;
 import org.eclipse.cdt.dsf.mi.service.command.output.MIConst;
 import org.eclipse.cdt.dsf.mi.service.command.output.MIFrame;
 import org.eclipse.cdt.dsf.mi.service.command.output.MIResult;
@@ -51,35 +49,6 @@ public class MIFunctionFinishedEvent extends MIStoppedEvent {
 
     public String getReturnType() {
     	return returnType;
-    }
-
-    @Deprecated
-    public static MIFunctionFinishedEvent parse(
-        MIRunControl runControl, IContainerDMContext containerDmc, int token, MIResult[] results) 
-    {
-        String gdbResult = ""; //$NON-NLS-1$
-        String returnValue = ""; //$NON-NLS-1$
-        String returnType = ""; //$NON-NLS-1$
-        
-        for (int i = 0; i < results.length; i++) {
-			String var = results[i].getVariable();
-			MIValue value = results[i].getMIValue();
-			String str = ""; //$NON-NLS-1$
-			if (value instanceof MIConst) {
-				str = ((MIConst)value).getString();
-			}
-
-			if (var.equals("gdb-result-var")) { //$NON-NLS-1$
-				gdbResult = str;
-			} else if (var.equals("return-value")) { //$NON-NLS-1$
-				returnValue = str;
-			} else if (var.equals("return-type")) { //$NON-NLS-1$
-				returnType = str;
-			} 
-		}
-
-        MIStoppedEvent stoppedEvent = MIStoppedEvent.parse(runControl, containerDmc, token, results); 
-        return new MIFunctionFinishedEvent(stoppedEvent.getDMContext(), token, results, stoppedEvent.getFrame(), gdbResult, returnValue, returnType);
     }
 
     /**

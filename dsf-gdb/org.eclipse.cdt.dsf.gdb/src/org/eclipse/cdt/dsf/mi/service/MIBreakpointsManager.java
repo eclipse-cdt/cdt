@@ -59,7 +59,6 @@ import org.eclipse.cdt.dsf.mi.service.MIBreakpoints.MIBreakpointDMContext;
 import org.eclipse.cdt.dsf.mi.service.MIRunControl.SuspendedEvent;
 import org.eclipse.cdt.dsf.mi.service.breakpoint.actions.BreakpointActionAdapter;
 import org.eclipse.cdt.dsf.mi.service.command.events.MIBreakpointHitEvent;
-import org.eclipse.cdt.dsf.mi.service.command.events.MIGDBExitEvent;
 import org.eclipse.cdt.dsf.mi.service.command.events.MIWatchpointScopeEvent;
 import org.eclipse.cdt.dsf.mi.service.command.events.MIWatchpointTriggerEvent;
 import org.eclipse.cdt.dsf.service.AbstractDsfService;
@@ -1258,18 +1257,6 @@ public class MIBreakpointsManager extends AbstractDsfService implements IBreakpo
     //-------------------------------------------------------------------------
     // Session exit
     //-------------------------------------------------------------------------
-
-	// Not used, kept for API compatibility.  
-    /**
-     * This method is left for API compatibility only.
-     * ICommandControlShutdownDMEvent is used instead.
-     * @nooverride This method is not intended to be re-implemented or extended by clients.
-     * @noreference This method is not intended to be referenced by clients.
-     */
-    @DsfServiceEventHandler
-    public void eventDispatched(MIGDBExitEvent e) {
-        terminated();
-    }
 
     /**
      * @since 1.1

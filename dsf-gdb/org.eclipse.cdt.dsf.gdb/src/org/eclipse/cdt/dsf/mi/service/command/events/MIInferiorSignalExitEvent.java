@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 QNX Software Systems and others.
+ * Copyright (c) 2009 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -14,7 +14,6 @@ package org.eclipse.cdt.dsf.mi.service.command.events;
 
 import org.eclipse.cdt.dsf.concurrent.Immutable;
 import org.eclipse.cdt.dsf.debug.service.command.ICommandControlService.ICommandControlDMContext;
-import org.eclipse.cdt.dsf.mi.service.command.MIControlDMContext;
 import org.eclipse.cdt.dsf.mi.service.command.output.MIConst;
 import org.eclipse.cdt.dsf.mi.service.command.output.MIResult;
 import org.eclipse.cdt.dsf.mi.service.command.output.MIValue;
@@ -40,11 +39,6 @@ public class MIInferiorSignalExitEvent extends MIEvent<ICommandControlDMContext>
         this.sigMeaning = sigMeaning;
     }
     
-    @Deprecated
-    public MIInferiorSignalExitEvent(MIControlDMContext ctx, int token, MIResult[] results, String sigName, String sigMeaning) {
-        this((ICommandControlDMContext)ctx, token, results, sigName, sigMeaning);
-    }
-
     public String getName() {
     	return sigName;
     }
@@ -53,11 +47,6 @@ public class MIInferiorSignalExitEvent extends MIEvent<ICommandControlDMContext>
     	return sigMeaning;
     }
     
-    @Deprecated
-    public static MIInferiorSignalExitEvent parse(MIControlDMContext ctx, int token, MIResult[] results) {
-        return parse((ICommandControlDMContext)ctx, token, results);
-    }
-
     /**
      * @since 1.1
      */

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 QNX Software Systems and others.
+ * Copyright (c) 2009 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -14,7 +14,6 @@ package org.eclipse.cdt.dsf.mi.service.command.events;
 
 import org.eclipse.cdt.dsf.concurrent.Immutable;
 import org.eclipse.cdt.dsf.debug.service.command.ICommandControlService.ICommandControlDMContext;
-import org.eclipse.cdt.dsf.mi.service.command.MIControlDMContext;
 import org.eclipse.cdt.dsf.mi.service.command.output.MIConst;
 import org.eclipse.cdt.dsf.mi.service.command.output.MIResult;
 import org.eclipse.cdt.dsf.mi.service.command.output.MIValue;
@@ -38,20 +37,10 @@ public class MIInferiorExitEvent extends MIEvent<ICommandControlDMContext> {
     	this.code = code;
     }
     
-    @Deprecated
-    public MIInferiorExitEvent(MIControlDMContext ctx, int token, MIResult[] results, int code) {
-        this ((ICommandControlDMContext)ctx, token, results, code);
-    }
-    
     public int getExitCode() {
     	return code;
     }
     
-    @Deprecated
-    public static MIInferiorExitEvent parse(MIControlDMContext ctx, int token, MIResult[] results) {
-        return parse((ICommandControlDMContext)ctx, token, results);
-    }
-
     /**
      * @since 1.1
      */

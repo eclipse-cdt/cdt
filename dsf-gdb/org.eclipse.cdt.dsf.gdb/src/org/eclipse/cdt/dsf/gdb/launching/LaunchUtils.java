@@ -228,9 +228,9 @@ public class LaunchUtils {
         			version = matcher.group(2);
         			// Temporary for cygwin, until GDB 7 is released
         			// Any cygwin GDB staring with 6.8 should be treated as plain 6.8
-        			if (line.toLowerCase().indexOf("cygwin") != -1 &&
-        					version.startsWith("6.8")) {
-        				version = "6.8";
+        			if (line.toLowerCase().indexOf("cygwin") != -1 && //$NON-NLS-1$
+        					version.startsWith("6.8")) { //$NON-NLS-1$
+        				version = "6.8"; //$NON-NLS-1$
         			}
         		}
         	}
@@ -279,16 +279,5 @@ public class LaunchUtils {
     	}
     	return SessionType.LOCAL;
     }
-
-	public static boolean getConsoleVerboseMode(ILaunchConfiguration config) {
-		boolean verboseMode = IGDBLaunchConfigurationConstants.DEBUGGER_VERBOSE_MODE_DEFAULT;
-    	try {
-    		verboseMode = config.getAttribute(IGDBLaunchConfigurationConstants.ATTR_DEBUGGER_VERBOSE_MODE, 
-    				                          IGDBLaunchConfigurationConstants.DEBUGGER_VERBOSE_MODE_DEFAULT);
-    	} catch (CoreException e) {    		
-    	}
-    	return verboseMode;
-    }
-
 }
 

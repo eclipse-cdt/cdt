@@ -47,8 +47,6 @@ public class GdbDebuggerPage extends AbstractCDebuggerPage implements Observer {
 	protected Text fGDBInitText;
 	protected Button fNonStopCheckBox;
 	protected Button fReverseCheckBox;
-	protected Button fVerboseModeButton;
-
 
 	private IMILaunchConfigurationComponent fSolibBlock;
 	private boolean fIsInitializing = false;
@@ -73,8 +71,6 @@ public class GdbDebuggerPage extends AbstractCDebuggerPage implements Observer {
 				                   IGDBLaunchConfigurationConstants.DEBUGGER_NON_STOP_DEFAULT);
 		configuration.setAttribute(IGDBLaunchConfigurationConstants.ATTR_DEBUGGER_REVERSE,
                 				   IGDBLaunchConfigurationConstants.DEBUGGER_REVERSE_DEFAULT);
-		configuration.setAttribute(IGDBLaunchConfigurationConstants.ATTR_DEBUGGER_VERBOSE_MODE, 
-				                   IGDBLaunchConfigurationConstants.DEBUGGER_VERBOSE_MODE_DEFAULT);
 
 		if (fSolibBlock != null)
 			fSolibBlock.setDefaults(configuration);
@@ -100,8 +96,6 @@ public class GdbDebuggerPage extends AbstractCDebuggerPage implements Observer {
 		String gdbInit = IGDBLaunchConfigurationConstants.DEBUGGER_GDB_INIT_DEFAULT;
 		boolean nonStopMode = IGDBLaunchConfigurationConstants.DEBUGGER_NON_STOP_DEFAULT;
 		boolean reverseEnabled = IGDBLaunchConfigurationConstants.DEBUGGER_REVERSE_DEFAULT;
- 
-		boolean verboseMode = IGDBLaunchConfigurationConstants.DEBUGGER_VERBOSE_MODE_DEFAULT;
 
 		try {
 			gdbCommand = configuration.getAttribute(IGDBLaunchConfigurationConstants.ATTR_DEBUG_NAME,
@@ -130,21 +124,13 @@ public class GdbDebuggerPage extends AbstractCDebuggerPage implements Observer {
 		catch(CoreException e) {
 		}
 
-		try {
-			verboseMode = configuration.getAttribute(IGDBLaunchConfigurationConstants.ATTR_DEBUGGER_VERBOSE_MODE,
-					                                 IGDBLaunchConfigurationConstants.DEBUGGER_VERBOSE_MODE_DEFAULT );
-		}
-		catch(CoreException e) {
-		}
-
 		if (fSolibBlock != null)
 			fSolibBlock.initializeFrom(configuration);
 		fGDBCommandText.setText(gdbCommand);
 		fGDBInitText.setText(gdbInit);
 		fNonStopCheckBox.setSelection(nonStopMode);
 		fReverseCheckBox.setSelection(reverseEnabled);
-		fVerboseModeButton.setSelection(verboseMode);
-
+		
 		setInitializing(false); 
 	}
 
@@ -157,8 +143,6 @@ public class GdbDebuggerPage extends AbstractCDebuggerPage implements Observer {
 				                   fNonStopCheckBox.getSelection());
 		configuration.setAttribute(IGDBLaunchConfigurationConstants.ATTR_DEBUGGER_REVERSE,
                                    fReverseCheckBox.getSelection());
-		configuration.setAttribute(IGDBLaunchConfigurationConstants.ATTR_DEBUGGER_VERBOSE_MODE, 
-				                   fVerboseModeButton.getSelection() );
 
 		if (fSolibBlock != null)
 			fSolibBlock.performApply(configuration);
@@ -318,20 +302,6 @@ public class GdbDebuggerPage extends AbstractCDebuggerPage implements Observer {
 				}
 			});
 
-		fVerboseModeButton = ControlFactory.createCheckBox( subComp, LaunchUIMessages.getString( "StandardGDBDebuggerPage.13" ) ); //$NON-NLS-1$
-		fVerboseModeButton.addSelectionListener(new SelectionAdapter() {
-			@Override
-			public void widgetDefaultSelected(SelectionEvent e) {
-				if (!isInitializing())
-				    updateLaunchConfigurationDialog();
-			}
-			
-			@Override
-			public void widgetSelected(SelectionEvent e) {
-				if (!isInitializing())
-				    updateLaunchConfigurationDialog();
-			}
-		});
 		
 		// fit options one per line
 		gd = new GridData();
@@ -340,14 +310,6 @@ public class GdbDebuggerPage extends AbstractCDebuggerPage implements Observer {
 		gd = new GridData();
 		gd.horizontalSpan = 3;
 		fReverseCheckBox.setLayoutData(gd);
-		gd = new GridData();
-		gd.horizontalSpan = 3;
-		fVerboseModeButton.setLayoutData(gd);		
-		// Grayed out until bug 249227 is resolved
-		//
-		fVerboseModeButton.setVisible(false);
-		//
-
 	}
 
 	public void createSolibTab(TabFolder tabFolder) {

@@ -77,12 +77,6 @@ public class IGDBLaunchConfigurationConstants {
 	public static final String ATTR_DEBUGGER_AUTO_SOLIB_LIST = GdbPlugin.PLUGIN_ID + ".AUTO_SOLIB_LIST"; //$NON-NLS-1$
 
 	/**
-	 * Launch configuration attribute key.  The value is a boolean specifying the mode of the gdb console.
-	 * @since 1.1
-	 */
-	public static final String ATTR_DEBUGGER_VERBOSE_MODE = GdbPlugin.PLUGIN_ID + ".verboseMode"; //$NON-NLS-1$
-
-	/**
 	 * Launch configuration attribute key. Boolean value to enable reverse debugging at launch time.
 	 * @since 2.0
 	 */
@@ -114,12 +108,6 @@ public class IGDBLaunchConfigurationConstants {
      * @since 1.1
 	 */
 	public static final boolean DEBUGGER_USE_SOLIB_SYMBOLS_FOR_APP_DEFAULT = false;
-
-	/**
-	 * Launch configuration attribute value. The key is ATTR_DEBUGGER_VERBOSE_MODE.
-	 * @since 1.1
-	 */
-	public static final boolean DEBUGGER_VERBOSE_MODE_DEFAULT = false;
 
 	/**
 	 * Launch configuration attribute value. The key is ATTR_DEBUGGER_REVERSE.

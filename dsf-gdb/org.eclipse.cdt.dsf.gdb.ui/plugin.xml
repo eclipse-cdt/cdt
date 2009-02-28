@@ -632,5 +632,20 @@
             type="org.eclipse.ui.IWorkbenchPart">
       </propertyTester>
    </extension>
+   <extension
+         point="org.eclipse.ui.preferencePages">
+      <page   
+            category="org.eclipse.cdt.dsf.debug.ui.preferences"
+            class="org.eclipse.cdt.dsf.gdb.internal.ui.preferences.GdbDebugPreferencePage"
+            id="org.eclipse.cdt.dsf.gdb.ui.preferences"
+            name="%gdbPreferencePage.name">
+      </page> 
+   </extension>
+   <extension
+         point="org.eclipse.core.runtime.preferences">
+      <initializer
+            class="org.eclipse.cdt.dsf.gdb.internal.ui.preferences.GdbPreferenceInitializer">
+      </initializer>
+   </extension>
    
 </plugin>

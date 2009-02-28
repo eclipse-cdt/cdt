@@ -13,6 +13,7 @@
 package org.eclipse.cdt.dsf.gdb.service.command;
 
 import java.io.IOException;
+import java.io.OutputStream;
 import java.util.Hashtable;
 import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
@@ -370,6 +371,13 @@ public class GDBControl extends AbstractMIControl implements IGDBControl {
         return fInferiorProcess;
     }
     
+	/**
+	 * @since 2.0
+	 */
+	public void setTracingStream(OutputStream tracingStream) {
+		setMITracingStream(tracingStream);
+	}
+	
     @DsfServiceEventHandler 
     public void eventDispatched(ICommandControlShutdownDMEvent e) {
         // Handle our "GDB Exited" event and stop processing commands.

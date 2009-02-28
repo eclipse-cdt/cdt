@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008 Ericsson and others.
+ * Copyright (c) 2009 Ericsson and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse  License v1.0
  * which accompanies this distribution, and is available at
@@ -9,6 +9,8 @@
  *     Ericsson - initial API and implementation
  *******************************************************************************/
 package org.eclipse.cdt.dsf.gdb.service.command;
+
+import java.io.OutputStream;
 
 import org.eclipse.cdt.dsf.concurrent.RequestMonitor;
 import org.eclipse.cdt.dsf.debug.service.command.ICommandControlService;
@@ -33,4 +35,9 @@ public interface IGDBControl extends ICommandControlService {
 	AbstractCLIProcess getCLIProcess();
 
 	MIInferiorProcess getInferiorProcess();
+
+	/**
+	 * @since 2.0
+	 */
+	void setTracingStream(OutputStream tracingStream);
 }

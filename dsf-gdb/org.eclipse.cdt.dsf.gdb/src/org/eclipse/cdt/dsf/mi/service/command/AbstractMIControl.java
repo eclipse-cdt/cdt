@@ -110,6 +110,13 @@ public abstract class AbstractMIControl extends AbstractDsfService
      * Flag indicating that the command control has stopped processing commands.
      */
     private boolean fStoppedCommandProcessing = false;
+
+    /**
+     * An output stream that MI communication should be output to.
+     * It serves for debugging. Can be <code>null</code> to disable tracing.
+     */
+    private OutputStream fTracingStream = null;
+
     
     public AbstractMIControl(DsfSession session) {
         super(session);
@@ -124,6 +131,25 @@ public abstract class AbstractMIControl extends AbstractDsfService
         fUseThreadAndFrameOptions = useThreadAndFrameOptions;
     }
 
+    /**
+     * Set the tracing stream for the MI communication.  If this method is never
+     * called, tracing will be off, by default.
+     * 
+     * @param tracingStream The stream to use.  Can be <code>null</code>
+     * to disable tracing.
+     * @since 2.0
+     */
+    protected void setMITracingStream(OutputStream tracingStream) {
+    	fTracingStream = tracingStream;
+    }
+
+    /**
+     * Returns the MI tracing stream.
+     */
+    private OutputStream getMITracingStream() {
+    	return fTracingStream;
+    }
+    
     /**
      * Starts the threads that process the debugger input/output channels.
      * To be invoked by the initialization routine of the extending class.
@@ -524,6 +550,22 @@ public abstract class AbstractMIControl extends AbstractDsfService
                         fOutputStream.flush();
 
                         GdbPlugin.debug(GdbPlugin.getDebugTime() + " " + str); //$NON-NLS-1$
+                        getExecutor().execute(new DsfRunnable() {
+                        	public void run() {
+                        		if (getMITracingStream() != null) {
+                        			try {
+                        				getMITracingStream().write(GdbPlugin.getDebugTime().getBytes());
+                        				getMITracingStream().write(' ');
+                        				getMITracingStream().write(str.getBytes());
+                        			} catch (IOException e) {
+                        				// The tracing stream could be closed at any time
+                        				// since the user can set a preference to turn off
+                        				// this tracing.
+                        				setMITracingStream(null);
+                        			}
+                        		}
+                        	}
+                        });
                     }
                 } catch (IOException e) {
                     // Shutdown thread in case of IO error.
@@ -556,6 +598,26 @@ public abstract class AbstractMIControl extends AbstractDsfService
                 while ((line = reader.readLine()) != null) {
                     if (line.length() != 0) {
                         GdbPlugin.debug(GdbPlugin.getDebugTime() + " " + line +"\n"); //$NON-NLS-1$ //$NON-NLS-2$
+                        
+                        final String finalLine = line;
+                        getExecutor().execute(new DsfRunnable() {
+                        	public void run() {
+                                if (getMITracingStream() != null) {
+                                	try {
+                                		getMITracingStream().write(GdbPlugin.getDebugTime().getBytes());
+                                		getMITracingStream().write(' ');
+                                		getMITracingStream().write(finalLine.getBytes());
+                                		getMITracingStream().write('\n');
+                                	} catch (IOException e) {
+                                		// The tracing stream could be closed at any time
+                                		// since the user can set a preference to turn off
+                                		// this tracing.
+                                		setMITracingStream(null);
+                                	}
+                                }
+                        	}
+                        });
+                        
                     	processMIOutput(line);
                     }
                 }

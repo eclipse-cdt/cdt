@@ -58,7 +58,7 @@ import org.eclipse.debug.core.model.ITerminate;
  */
 @ThreadSafe
 public class GdbLaunch extends Launch
-    implements ITerminate, IDisconnect
+    implements ITerminate, IDisconnect, ITracedLaunch
 {
     private DefaultDsfExecutor fExecutor;
     private DsfSession fSession;

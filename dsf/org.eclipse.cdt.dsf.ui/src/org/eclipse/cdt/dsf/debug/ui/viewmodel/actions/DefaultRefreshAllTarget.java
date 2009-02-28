@@ -38,6 +38,9 @@ public class DefaultRefreshAllTarget implements IRefreshAllTarget {
         }
     }
 
+    /**
+	 * @since 2.0
+	 */
     protected IVMAdapter getActiveVMAdapter(ISelection debugContext) {
         
         if (debugContext instanceof IStructuredSelection) {

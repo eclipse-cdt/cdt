@@ -388,7 +388,16 @@ public class FinalLaunchSequence extends Sequence {
        new Step() {
         	@Override
         	public void execute(final RequestMonitor requestMonitor) {
-        		if (fAttach) {
+        		// A local attach can figure out the binary from the attach
+        		// command.  This allows the user not to specify the binary
+        		// in the launch.  But for breakpoints to work, we must do the
+        		// attach before we set the breakpoints, i.e., here.
+        		// On the other hand, for a remote attach, we need to specify
+        		// the binary anyway, or use the solib command.  In both cases,
+        		// breakpoints can be set before we attach.  Therefore, we don't
+        		// force an attach here, but wait for the user to decide to connect
+        		// using the connect action.
+        		if (fAttach && fSessionType != SessionType.REMOTE) {
         			// If we are attaching, get the process id.
         			int pid = -1;
         			try {

@@ -2201,7 +2201,7 @@ public class AST2TemplateTests extends AST2BaseTest {
 	// pair<int, int> p = make_pair(1, 2);
     public void testFunctionTemplateWithUsing() throws Exception {
 		BindingAssertionHelper bh= new BindingAssertionHelper(getAboveComment(), true);
-		ICPPFunction fn= bh.assertNonProblem("make_pair(1", 9, ICPPFunction.class);
+		bh.assertNonProblem("make_pair(1", 9, ICPPFunction.class);
     }
 
 	//	template<class T>
@@ -2222,7 +2222,22 @@ public class AST2TemplateTests extends AST2BaseTest {
     	bh.assertNonProblem("f(a(x));", 1, ICPPFunction.class);
     }
 
-	// // Brian W.'s example from bugzilla#167098
+	//	template <class T, class P>
+	//	void f(void (T::*member)(P));
+	//
+	//	struct A {
+	//	  void m(int& p);
+	//	};
+	//
+	//	void test() {
+	//	  f(&A::m);
+	//	}
+    public void _testFunctionTemplate_266532() throws Exception {
+    	BindingAssertionHelper bh= new BindingAssertionHelper(getAboveComment(), true);
+    	bh.assertNonProblem("f(&A::m);", 1, ICPPFunction.class);
+    }
+
+    // // Brian W.'s example from bugzilla#167098
 	//    template<class K>
 	//    class D { //CPPClassTemplate
 	//    public:

@@ -465,7 +465,9 @@ public final class SteppingController
 	 * @param execCtx
 	 */
 	private void disableStepping(IExecutionDMContext execCtx) {
-        fStepInProgress.put(execCtx, new ArrayList<ISteppingControlParticipant>(fParticipants));
+		if (!fParticipants.isEmpty()) {
+			fStepInProgress.put(execCtx, new ArrayList<ISteppingControlParticipant>(fParticipants));
+		}
 	}
 
     /**

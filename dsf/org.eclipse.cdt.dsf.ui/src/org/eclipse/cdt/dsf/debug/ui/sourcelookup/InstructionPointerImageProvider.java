@@ -18,8 +18,13 @@ import org.eclipse.jface.text.source.Annotation;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.ui.texteditor.IAnnotationImageProvider;
 
+/**
+ * @noinstantiate This class is not intended to be instantiated by clients.
+ * @noextend This class is not intended to be subclassed by clients.
+ * @since 1.0
+ */
 @ThreadSafe
-class InstructionPointerImageProvider implements IAnnotationImageProvider {
+public class InstructionPointerImageProvider implements IAnnotationImageProvider {
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.texteditor.IAnnotationImageProvider#getManagedImage(org.eclipse.jface.text.source.Annotation)

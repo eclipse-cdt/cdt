@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2008 QNX Software Systems and others.
+ * Copyright (c) 2005, 2009 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -137,8 +137,6 @@ public class PDOMManager implements IWritableIndexManager, IListener {
 			}
 		}
 	}
-
-	public static final int UPDATE_EXTERNAL_FILES_FOR_PROJECT = 0x10000;	// must not collide with IIndexManager.UPDATE...
 
 	private static final String SETTINGS_FOLDER_NAME = ".settings"; //$NON-NLS-1$
 	private static final QualifiedName dbNameProperty= new QualifiedName(CCorePlugin.PLUGIN_ID, "pdomName"); //$NON-NLS-1$

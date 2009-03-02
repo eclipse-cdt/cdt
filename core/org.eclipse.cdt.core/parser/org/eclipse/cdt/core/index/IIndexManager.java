@@ -8,7 +8,6 @@
  * Contributors:
  *    Markus Schorn - initial API and implementation
  *******************************************************************************/ 
-
 package org.eclipse.cdt.core.index;
 
 import org.eclipse.cdt.core.CCorePlugin;
@@ -68,9 +67,17 @@ public interface IIndexManager extends IPDOMManager {
 
 	/**
 	 * Constant for indicating to update translation units if their configuration
-	 * has changed.
+	 * has changed. The flag currently has no effect.
 	 */
 	public final static int UPDATE_CHECK_CONFIGURATION= 0x4;
+
+	/**
+	 * Constant for requesting to update the external files for a project, also. This flag works only
+	 * if it is used to update one or more projects. It shall be used together with {@link #UPDATE_ALL} 
+	 * or {@link #UPDATE_CHECK_TIMESTAMPS}.
+	 * @since 5.1
+	 */
+	public final static int UPDATE_EXTERNAL_FILES_FOR_PROJECT= 0x8;
 
 	/**
 	 * Returns the index for the given project.
@@ -183,9 +190,9 @@ public interface IIndexManager extends IPDOMManager {
 	 * the options supplied. The selection is defined by an array of translation
 	 * units, containers and projects. For containers and projects all recursively
 	 * nested translation units are considered.
-	 * Valid options are {@link #UPDATE_ALL} and {@link #UPDATE_CHECK_TIMESTAMPS}
 	 * @param tuSelection the translation units to update.
-	 * @param options one of {@link #UPDATE_ALL} or {@link #UPDATE_CHECK_TIMESTAMPS}.
+	 * @param options one of {@link #UPDATE_ALL} or {@link #UPDATE_CHECK_TIMESTAMPS} optionally
+	 * combined with {@link #UPDATE_EXTERNAL_FILES_FOR_PROJECT}.
 	 * @throws CoreException
 	 * @since 4.0
 	 */

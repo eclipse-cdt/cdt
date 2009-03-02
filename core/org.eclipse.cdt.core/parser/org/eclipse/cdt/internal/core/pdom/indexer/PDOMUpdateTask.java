@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2008 Wind River Systems, Inc. and others.
+ * Copyright (c) 2007, 2009 Wind River Systems, Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -21,13 +21,13 @@ import org.eclipse.cdt.core.dom.IPDOMManager;
 import org.eclipse.cdt.core.index.IIndex;
 import org.eclipse.cdt.core.index.IIndexFile;
 import org.eclipse.cdt.core.index.IIndexFileLocation;
+import org.eclipse.cdt.core.index.IIndexManager;
 import org.eclipse.cdt.core.index.IndexLocationFactory;
 import org.eclipse.cdt.core.model.CoreModel;
 import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.core.model.ITranslationUnit;
 import org.eclipse.cdt.internal.core.pdom.IndexerProgress;
-import org.eclipse.cdt.internal.core.pdom.PDOMManager;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -97,7 +97,7 @@ public class PDOMUpdateTask implements IPDOMIndexerTask {
 				elem.accept(collector);
 			}
 		}
-		if (haveProject && (fUpdateOptions & PDOMManager.UPDATE_EXTERNAL_FILES_FOR_PROJECT) != 0) {
+		if (haveProject && (fUpdateOptions & IIndexManager.UPDATE_EXTERNAL_FILES_FOR_PROJECT) != 0) {
 			IIndex index= CCorePlugin.getIndexManager().getIndex(project);
 			index.acquireReadLock();
 			try {

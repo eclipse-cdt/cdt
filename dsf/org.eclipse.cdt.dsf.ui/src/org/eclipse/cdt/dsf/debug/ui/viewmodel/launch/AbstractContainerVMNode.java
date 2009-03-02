@@ -1,12 +1,12 @@
 /*******************************************************************************
- * Copyright (c) 2008 Wind River Systems, Inc. and others.
+ * Copyright (c) 2008, 2009 Wind River Systems, Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *     Anton Leherbauer (Wind River Systems) - initial API and implementation
+ *     Wind River Systems - initial API and implementation
  *******************************************************************************/
 package org.eclipse.cdt.dsf.debug.ui.viewmodel.launch;
 
@@ -24,7 +24,6 @@ import org.eclipse.cdt.dsf.debug.service.IRunControl.IContainerResumedDMEvent;
 import org.eclipse.cdt.dsf.debug.service.IRunControl.IContainerSuspendedDMEvent;
 import org.eclipse.cdt.dsf.debug.service.IRunControl.IExitedDMEvent;
 import org.eclipse.cdt.dsf.debug.service.IRunControl.IStartedDMEvent;
-import org.eclipse.cdt.dsf.debug.service.StepQueueManager.ISteppingTimedOutEvent;
 import org.eclipse.cdt.dsf.debug.ui.viewmodel.SteppingController.SteppingTimedOutEvent;
 import org.eclipse.cdt.dsf.service.DsfSession;
 import org.eclipse.cdt.dsf.ui.viewmodel.IVMContext;
@@ -95,11 +94,6 @@ public abstract class AbstractContainerVMNode extends AbstractDMVMNode implement
 	        {
 	            return IModelDelta.CONTENT;
 	        }
-	    } else if (e instanceof ISteppingTimedOutEvent) {
-	        if (dmc instanceof IContainerDMContext) 
-	        {
-	            return IModelDelta.CONTENT;
-	        }
 	    } else if (e instanceof IExitedDMEvent) {
 	        return IModelDelta.CONTENT;
 	    } else if (e instanceof IStartedDMEvent) {
@@ -138,15 +132,6 @@ public abstract class AbstractContainerVMNode extends AbstractDMVMNode implement
 		        parentDelta.addNode(createVMContext(dmc), IModelDelta.CONTENT);
 		    }
 		} else if (e instanceof SteppingTimedOutEvent) {
-		    // Stepping time-out indicates that a step operation is taking 
-		    // a long time, and the view needs to be refreshed to show 
-		    // the user that the program is running.
-		    // If the step was issued for the whole container refresh
-		    // the whole container.
-		    if (dmc instanceof IContainerDMContext) {
-	            parentDelta.addNode(createVMContext(dmc), IModelDelta.CONTENT);
-		    }
-		} else if (e instanceof ISteppingTimedOutEvent) {
 		    // Stepping time-out indicates that a step operation is taking 
 		    // a long time, and the view needs to be refreshed to show 
 		    // the user that the program is running.

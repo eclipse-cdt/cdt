@@ -27,7 +27,6 @@ import org.eclipse.cdt.dsf.concurrent.RequestMonitor;
 import org.eclipse.cdt.dsf.datamodel.AbstractDMEvent;
 import org.eclipse.cdt.dsf.datamodel.DMContexts;
 import org.eclipse.cdt.dsf.debug.service.IRunControl;
-import org.eclipse.cdt.dsf.debug.service.IStepQueueManager;
 import org.eclipse.cdt.dsf.debug.service.IRunControl.IExecutionDMContext;
 import org.eclipse.cdt.dsf.debug.service.IRunControl.IResumedDMEvent;
 import org.eclipse.cdt.dsf.debug.service.IRunControl.ISuspendedDMEvent;
@@ -53,7 +52,7 @@ import org.eclipse.jface.util.PropertyChangeEvent;
  * 
  * @since 1.1
  */
-public final class SteppingController implements IStepQueueManager
+public final class SteppingController
 {
     /**
      * Amount of time in milliseconds, that it takes the SteppingTimedOutEvent 

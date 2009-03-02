@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2008 Wind River Systems and others.
+ * Copyright (c) 2006, 2009 Wind River Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -28,7 +28,6 @@ import org.eclipse.cdt.dsf.debug.service.IRunControl.IContainerSuspendedDMEvent;
 import org.eclipse.cdt.dsf.debug.service.IRunControl.IExecutionDMContext;
 import org.eclipse.cdt.dsf.debug.service.IRunControl.IResumedDMEvent;
 import org.eclipse.cdt.dsf.debug.service.IRunControl.ISuspendedDMEvent;
-import org.eclipse.cdt.dsf.debug.service.StepQueueManager.ISteppingTimedOutEvent;
 import org.eclipse.cdt.dsf.debug.ui.viewmodel.SteppingController.SteppingTimedOutEvent;
 import org.eclipse.cdt.dsf.internal.ui.DsfUIPlugin;
 import org.eclipse.cdt.dsf.service.DsfSession;
@@ -124,15 +123,6 @@ public abstract class AbstractThreadVMNode extends AbstractDMVMNode
           rm.setStatus(new Status(IStatus.ERROR, DsfUIPlugin.PLUGIN_ID, IDsfStatusConstants.NOT_SUPPORTED, "", null)); //$NON-NLS-1$
           rm.done();
           return;
-        } else if (e instanceof ISteppingTimedOutEvent && 
-                   ((ISteppingTimedOutEvent)e).getDMContext() instanceof IContainerDMContext) 
-        {
-             // The timed out event occured on a container and not on a thread.  Do not
-             // return a context for this event, which will force the view model to generate
-             // a delta for all the threads.
-             rm.setStatus(new Status(IStatus.ERROR, DsfUIPlugin.PLUGIN_ID, IDsfStatusConstants.NOT_SUPPORTED, "", null)); //$NON-NLS-1$
-             rm.done();
-             return;
         } else if (e instanceof FullStackRefreshEvent &&
                 ((FullStackRefreshEvent)e).getDMContext() instanceof IContainerDMContext)
         {
@@ -246,8 +236,6 @@ public abstract class AbstractThreadVMNode extends AbstractDMVMNode
             return IModelDelta.CONTENT;
         } else if (e instanceof SteppingTimedOutEvent) {
             return IModelDelta.CONTENT;            
-        } else if (e instanceof ISteppingTimedOutEvent) {
-            return IModelDelta.CONTENT;            
         } else if (e instanceof ModelProxyInstalledEvent) {
             return IModelDelta.SELECT | IModelDelta.EXPAND;
         }
@@ -286,12 +274,6 @@ public abstract class AbstractThreadVMNode extends AbstractDMVMNode
             parentDelta.addNode(createVMContext(dmc), IModelDelta.CONTENT);
             rm.done();
         } else if (e instanceof SteppingTimedOutEvent) {
-            // Stepping time-out indicates that a step operation is taking 
-            // a long time, and the view needs to be refreshed to show 
-            // the user that the program is running.  
-            parentDelta.addNode(createVMContext(dmc), IModelDelta.CONTENT);
-            rm.done();            
-        } else if (e instanceof ISteppingTimedOutEvent) {
             // Stepping time-out indicates that a step operation is taking 
             // a long time, and the view needs to be refreshed to show 
             // the user that the program is running.  

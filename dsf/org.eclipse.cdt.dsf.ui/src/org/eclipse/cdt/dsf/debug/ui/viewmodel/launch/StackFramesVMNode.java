@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2008 Wind River Systems and others.
+ * Copyright (c) 2006, 2009 Wind River Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -31,7 +31,6 @@ import org.eclipse.cdt.dsf.debug.service.IRunControl.IExitedDMEvent;
 import org.eclipse.cdt.dsf.debug.service.IRunControl.ISuspendedDMEvent;
 import org.eclipse.cdt.dsf.debug.service.IStack.IFrameDMContext;
 import org.eclipse.cdt.dsf.debug.service.IStack.IFrameDMData;
-import org.eclipse.cdt.dsf.debug.service.StepQueueManager.ISteppingTimedOutEvent;
 import org.eclipse.cdt.dsf.debug.ui.IDsfDebugUIConstants;
 import org.eclipse.cdt.dsf.debug.ui.viewmodel.SteppingController;
 import org.eclipse.cdt.dsf.debug.ui.viewmodel.SteppingController.SteppingTimedOutEvent;
@@ -425,8 +424,6 @@ public class StackFramesVMNode extends AbstractDMVMNode
         	return IModelDelta.CONTENT | IModelDelta.EXPAND;
         } else if (e instanceof SteppingTimedOutEvent) {
             return IModelDelta.CONTENT;
-        } else if (e instanceof ISteppingTimedOutEvent) {
-            return IModelDelta.CONTENT;
         } else if (e instanceof ModelProxyInstalledEvent) {
             return IModelDelta.SELECT | IModelDelta.EXPAND;
         } else if (e instanceof ExpandStackEvent) {
@@ -479,8 +476,6 @@ public class StackFramesVMNode extends AbstractDMVMNode
             buildDeltaForSuspendedEvent(execDmc, execDmc, parent, nodeOffset, rm);
         } else if (e instanceof SteppingTimedOutEvent) {
             buildDeltaForSteppingTimedOutEvent((SteppingTimedOutEvent)e, parent, nodeOffset, rm);
-        } else if (e instanceof ISteppingTimedOutEvent) {
-            buildDeltaForSteppingTimedOutEvent((ISteppingTimedOutEvent)e, parent, nodeOffset, rm);
         } else if (e instanceof ModelProxyInstalledEvent) {
             buildDeltaForModelProxyInstalledEvent(parent, nodeOffset, rm);
         } else if (e instanceof ExpandStackEvent) {
@@ -557,12 +552,6 @@ public class StackFramesVMNode extends AbstractDMVMNode
 	}
 	
     private void buildDeltaForSteppingTimedOutEvent(final SteppingTimedOutEvent e, final VMDelta parentDelta, final int nodeOffset, final RequestMonitor rm) {
-        // Repaint the stack frame images to have the running symbol.
-        //parentDelta.setFlags(parentDelta.getFlags() | IModelDelta.CONTENT);
-        rm.done();
-    }
-    
-    private void buildDeltaForSteppingTimedOutEvent(final ISteppingTimedOutEvent e, final VMDelta parentDelta, final int nodeOffset, final RequestMonitor rm) {
         // Repaint the stack frame images to have the running symbol.
         //parentDelta.setFlags(parentDelta.getFlags() | IModelDelta.CONTENT);
         rm.done();

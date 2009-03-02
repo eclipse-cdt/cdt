@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2008 Wind River Systems and others.
+ * Copyright (c) 2006, 2009 Wind River Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -15,6 +15,7 @@ import org.eclipse.cdt.dsf.concurrent.DsfExecutor;
 import org.eclipse.cdt.dsf.concurrent.ImmediateExecutor;
 import org.eclipse.cdt.dsf.concurrent.Immutable;
 import org.eclipse.cdt.dsf.debug.service.IRunControl.StepType;
+import org.eclipse.cdt.dsf.debug.ui.viewmodel.SteppingController;
 import org.eclipse.cdt.dsf.internal.ui.DsfUIPlugin;
 import org.eclipse.cdt.dsf.service.DsfServicesTracker;
 import org.eclipse.cdt.dsf.service.DsfSession;
@@ -53,7 +54,13 @@ public class DsfStepOverCommand implements IStepOverHandler {
         fExecutor.submit(new DsfCommandRunnable(fTracker, request.getElements()[0], request) {
             final StepType stepType= getStepType();
             @Override public void doExecute() {
-            	getStepQueueManager().canEnqueueStep(
+                SteppingController steppingControl = getSteppingController();
+                if (steppingControl == null) {
+                    request.setEnabled(false);
+                    request.done();
+                    return;
+                }
+            	steppingControl.canEnqueueStep(
                     getContext(), stepType,
                     new DataRequestMonitor<Boolean>(ImmediateExecutor.getInstance(), null) {
                         @Override
@@ -75,7 +82,7 @@ public class DsfStepOverCommand implements IStepOverHandler {
         final StepType stepType= getStepType();
         fExecutor.submit(new DsfCommandRunnable(fTracker, request.getElements()[0], request) {
             @Override public void doExecute() {
-            	getStepQueueManager().enqueueStep(getContext(), stepType);
+            	getSteppingController().enqueueStep(getContext(), stepType);
             }
         });
         return true;

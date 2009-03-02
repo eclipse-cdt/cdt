@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2008 Wind River Systems and others.
+ * Copyright (c) 2006, 2009 Wind River Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -15,8 +15,6 @@ import org.eclipse.cdt.dsf.concurrent.Immutable;
 import org.eclipse.cdt.dsf.datamodel.DMContexts;
 import org.eclipse.cdt.dsf.debug.service.IProcesses;
 import org.eclipse.cdt.dsf.debug.service.IRunControl;
-import org.eclipse.cdt.dsf.debug.service.IStepQueueManager;
-import org.eclipse.cdt.dsf.debug.service.StepQueueManager;
 import org.eclipse.cdt.dsf.debug.service.IRunControl.IExecutionDMContext;
 import org.eclipse.cdt.dsf.debug.ui.viewmodel.SteppingController;
 import org.eclipse.cdt.dsf.internal.ui.DsfUIPlugin;
@@ -38,25 +36,6 @@ public abstract class DsfCommandRunnable extends DsfRunnable {
     public IExecutionDMContext getContext() { return fContext; }
     public IRunControl getRunControl() {
         return fTracker.getService(IRunControl.class);
-    }
-    /**
-     * @deprecated Use {@link #getStepQueueManager()} instead.
-     */
-    @Deprecated
-	public StepQueueManager getStepQueueMgr() {
-        return fTracker.getService(StepQueueManager.class);
-    }
-
-    /**
-	 * @since 1.1
-	 */
-	public IStepQueueManager getStepQueueManager() {
-		// for backwards compatibility
-		IStepQueueManager mgr= getStepQueueMgr();
-		if (mgr != null) {
-			return mgr;
-		}
-		return getSteppingController();
     }
 
     /**
@@ -95,7 +74,7 @@ public abstract class DsfCommandRunnable extends DsfRunnable {
         }
         if (getContext() == null) {
             fRequest.setStatus(makeError("Selected object does not support run control.", null));             //$NON-NLS-1$
-        } else if (getRunControl() == null || getStepQueueManager() == null) {
+        } else if (getRunControl() == null || getSteppingController() == null) {
             fRequest.setStatus(makeError("Run Control not available", null)); //$NON-NLS-1$
         } else {
             doExecute();

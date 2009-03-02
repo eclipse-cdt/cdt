@@ -22,10 +22,11 @@ import org.eclipse.cdt.dsf.concurrent.Immutable;
  *  The description field can be different depending on the target we are connected to.
  *
  *  -list-thread-groups --available:
- *  ^done,groups=[{id="160",description="name: JIM_InstallerProcess, type 555481, locked: N, system: N, state: Idle"},
- *               {id="161",description="name: JIM_TcpSetupHandlerProcess, type 555505, locked: N, system: N, state: Idle"},
- *               {id="162",description="name: JUnitProcess_PT, type 1094605, locked: N, system: N, state: Idle"}]
- *               
+ *  ^done,groups=[{id="161",type="process",description="name: JIM_InstallerProcess, type 555481, locked: N, system: N, state: Idle"},
+ *                {id="162",type="process",description="name: JIM_TcpSetupHandlerProcess, type 555505, locked: N, system: N, state: Idle"},
+ *                {id="165",type="process",description="name: JUnitProcess2_PT, type 1094608, locked: N, system: N, state: Idle"},
+ *                {id="166",type="process",description="name: JUnitProcess_PT, type 1094605, locked: N, system: N, state: Idle"}]
+ *          
  *  -list-thread-groups: 
  *  ^done,groups=[{id="162",type="process",pid="162"}]
  *

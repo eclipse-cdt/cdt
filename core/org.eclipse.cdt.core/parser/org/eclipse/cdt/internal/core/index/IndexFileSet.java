@@ -79,4 +79,16 @@ public class IndexFileSet implements IIndexFileSet {
 		}
 		return result;
 	}
+
+	public boolean contains(IIndexFile file) throws CoreException {
+		if (!(file instanceof IIndexFragmentFile))
+			return false;
+		
+		IIndexFragmentFile ifile= (IIndexFragmentFile) file;
+		IIndexFragmentFileSet subSet= fSubSets.get(ifile.getIndexFragment());
+		if (subSet != null) {
+			return subSet.contains(ifile);
+		}
+		return false;
+	}
 }

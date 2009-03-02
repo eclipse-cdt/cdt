@@ -24,4 +24,9 @@ public interface IIndexFragmentFileSet {
 	 * Adds the fragment file to the file-set.
 	 */
 	void add(IIndexFragmentFile fragFile);
+
+	/**
+	 * Returns whether the file set contains the given file.
+	 */
+	boolean contains(IIndexFragmentFile file) throws CoreException;
 }

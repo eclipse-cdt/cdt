@@ -32,4 +32,11 @@ public class PDOMFileSet implements IIndexFragmentFileSet {
 		PDOMBinding pdomBinding= (PDOMBinding) fb;
 		return fFileIDs.contains(pdomBinding.getLocalToFileRec());
 	}
+
+	public boolean contains(IIndexFragmentFile file) throws CoreException {
+		if (file instanceof PDOMFile) {
+			return fFileIDs.contains(((PDOMFile) file).getRecord());
+		}
+		return false;
+	}
 }

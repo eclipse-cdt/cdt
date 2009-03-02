@@ -50,6 +50,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPVariable;
 import org.eclipse.cdt.core.index.IIndex;
 import org.eclipse.cdt.core.index.IIndexBinding;
 import org.eclipse.cdt.core.index.IIndexFile;
+import org.eclipse.cdt.core.index.IIndexFileSet;
 import org.eclipse.cdt.core.index.IIndexInclude;
 import org.eclipse.cdt.core.index.IIndexMacro;
 import org.eclipse.cdt.core.index.IIndexManager;
@@ -1671,6 +1672,45 @@ public class IndexBugsTests extends BaseTestCase {
 			IBinding var= ((IASTSimpleDeclaration) ast.getDeclarations()[0]).getDeclarators()[0].getName().resolveBinding();
 			IIndexBinding adapted = fIndex.adaptBinding(var);
 			assertNotNull(adapted);
+		} finally {
+			fIndex.releaseReadLock();
+		}
+	}
+	
+	// int a;
+	
+	// #include "a.h"
+	// void test() {a=0;}
+	public void testDeclarationForBinding_Bug254844() throws Exception {
+		String[] contents= getContentsForTest(2);
+		final IIndexManager indexManager = CCorePlugin.getIndexManager();
+		IFile a= TestSourceReader.createFile(fCProject.getProject(), "a.h", contents[0]);
+		IFile b= TestSourceReader.createFile(fCProject.getProject(), "b.h", contents[0]);
+		IFile source= TestSourceReader.createFile(fCProject.getProject(), "source.cpp", contents[1]);
+		indexManager.reindex(fCProject);
+		waitForIndexer();
+		ITranslationUnit tu= (ITranslationUnit) CoreModel.getDefault().create(source);
+		fIndex.acquireReadLock();
+		try {
+			IASTTranslationUnit ast= tu.getAST(fIndex, ITranslationUnit.AST_SKIP_INDEXED_HEADERS);
+			IIndexFileSet fileset= ast.getIndexFileSet();
+			IBinding var= getBindingFromASTName(ast, contents[1], "a=", 1, IBinding.class);
+			IName[] decls= ast.getDeclarations(var);
+			assertEquals(2, decls.length);
+			int check= 0;
+			for (int i = 0; i < decls.length; i++) {
+				IName name = decls[i];
+				assert name instanceof IIndexName;
+				IIndexName iName= (IIndexName) name;
+				if (iName.getFileLocation().getFileName().endsWith("a.h")) {
+					check |= 1;
+					assertTrue(fileset.contains(iName.getFile()));
+				} else {
+					check |= 2;
+					assertFalse(fileset.contains(iName.getFile()));
+				}
+			}
+			assertEquals(3, check);
 		} finally {
 			fIndex.releaseReadLock();
 		}

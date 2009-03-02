@@ -12,6 +12,7 @@ package org.eclipse.cdt.core.index;
 
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.internal.core.index.IndexFileSet;
+import org.eclipse.core.runtime.CoreException;
 
 /**
  * File set for index files. Can be used to filter file-local bindings.
@@ -23,14 +24,20 @@ public interface IIndexFileSet {
 	IIndexFileSet EMPTY = new IndexFileSet();
 
 	/**
+	 * Returns whether the given file is part of this file set.
+	 * @since 5.1
+	 */
+	boolean contains(IIndexFile file) throws CoreException;
+
+	/**
 	 * Returns an array of bindings where all local bindings that are not part of this file-set
 	 * have been removed.
 	 */
-	IBinding[] filterFileLocalBindings(IBinding[] bindings);
+	IBinding[] filterFileLocalBindings(IBinding[] bindings);	
 
 	/**
 	 * Adds a file to this set.
-	 * @param indexFile
+	 * @noreference This method is not intended to be referenced by clients.
 	 */
 	void add(IIndexFile indexFile);
 }

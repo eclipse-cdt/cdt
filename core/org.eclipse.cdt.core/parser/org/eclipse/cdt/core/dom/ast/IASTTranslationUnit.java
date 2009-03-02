@@ -14,6 +14,7 @@ package org.eclipse.cdt.core.dom.ast;
 import org.eclipse.cdt.core.dom.ILinkage;
 import org.eclipse.cdt.core.dom.IName;
 import org.eclipse.cdt.core.index.IIndex;
+import org.eclipse.cdt.core.index.IIndexFileSet;
 import org.eclipse.cdt.core.parser.ParserLanguage;
 import org.eclipse.core.runtime.IAdaptable;
 
@@ -244,11 +245,13 @@ public interface IASTTranslationUnit extends IASTNode, IASTDeclarationListOwner,
     public IIndex getIndex();
     
     /**
-     * Set the Index to be used for this translation unit.
-     * 
-     * @param index
+     * Return the set of files that have been skipped because they have been part of the index
+     * prior to creating this AST, or <code>null</code> if not available.
+     * Applies only, if AST was created with an index and the option to skip headers found in the
+     * index.
+     * @since 5.1
      */
-    public void setIndex(IIndex index);
+    IIndexFileSet getIndexFileSet();
     
 	/**
 	 * In case the ast was created in a way that supports comment parsing,
@@ -272,17 +275,24 @@ public interface IASTTranslationUnit extends IASTNode, IASTDeclarationListOwner,
 	public boolean isHeaderUnit();
 
 	/**
-	 * Sets whether this ast represents a header file.
-	 */
-	public void setIsHeaderUnit(boolean headerUnit);
-	
-	/**
 	 * Returns the node factory that was used to build the AST.
 	 * 
 	 * @noreference This method is not intended to be referenced by clients.
 	 * @since 5.1
 	 */
 	public INodeFactory getASTNodeFactory();
+
+    /**
+     * Set the Index to be used for this translation unit.
+     * @noreference This method is not intended to be referenced by clients.
+     */
+    public void setIndex(IIndex index);
+
+	/**
+	 * Sets whether this ast represents a header file.
+	 * @noreference This method is not intended to be referenced by clients.
+	 */
+	public void setIsHeaderUnit(boolean headerUnit);
 	
 	/**
 	 * Causes this node and all the nodes rooted at this node to become immutable. 

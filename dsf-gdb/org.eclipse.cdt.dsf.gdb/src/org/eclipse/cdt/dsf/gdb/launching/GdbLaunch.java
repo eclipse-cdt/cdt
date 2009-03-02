@@ -201,19 +201,7 @@ public class GdbLaunch extends Launch
     // ITerminate
     @Override
     public boolean canTerminate() {
-        return super.canTerminate() && fInitialized && !fShutDown;
-    }
-
-    @Override
-    public boolean isTerminated() {
-        return super.isTerminated() || fShutDown;
-    }
-
-
-    @Override
-    public void terminate() throws DebugException {
-        if (fShutDown) return;
-        super.terminate();
+        return fInitialized && super.canTerminate();
     }
     // ITerminate
     ///////////////////////////////////////////////////////////////////////////

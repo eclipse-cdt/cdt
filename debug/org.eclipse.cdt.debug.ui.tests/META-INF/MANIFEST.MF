@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: org.eclipse.cdt.debug.ui.tests
 Bundle-SymbolicName: org.eclipse.cdt.debug.ui.tests;singleton:=true
-Bundle-Version: 5.0.100.qualifier
+Bundle-Version: 6.0.0.qualifier
 Bundle-Activator: org.eclipse.core.internal.compatibility.PluginActivator
 Bundle-Localization: plugin
 Export-Package: org.eclipse.cdt.debug.core.tests,

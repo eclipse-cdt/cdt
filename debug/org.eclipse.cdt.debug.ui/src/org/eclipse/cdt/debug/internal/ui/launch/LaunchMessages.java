@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2006 QNX Software Systems and others.
+ * Copyright (c) 2004, 2009 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -16,7 +16,7 @@ import java.util.ResourceBundle;
 
 public class LaunchMessages {
 
-	private static final String BUNDLE_NAME = "org.eclipse.cdt.launch.internal.ui.LaunchMessages";//$NON-NLS-1$
+	private static final String BUNDLE_NAME = "org.eclipse.cdt.debug.internal.ui.launch.LaunchMessages";//$NON-NLS-1$
 
 	private static final ResourceBundle RESOURCE_BUNDLE = ResourceBundle.getBundle(BUNDLE_NAME);
 

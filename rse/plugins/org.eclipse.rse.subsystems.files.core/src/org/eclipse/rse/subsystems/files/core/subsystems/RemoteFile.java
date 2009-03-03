@@ -1115,10 +1115,19 @@ public abstract class RemoteFile implements IRemoteFile,  IAdaptable, Comparable
 			String path = this.getAbsolutePath();
 			//String otherHost = other.getHostName();
 
-			String alias1 = this.getParentRemoteFileSubSystem().getHostAliasName();
-			String alias2 = other.getParentRemoteFileSubSystem().getHostAliasName();
-
-			//return getHostName().equals(otherHost) && path.equals(otherPath);
+			IRemoteFileSubSystem ss1 = this.getParentRemoteFileSubSystem();
+			IRemoteFileSubSystem ss2 = other.getParentRemoteFileSubSystem();
+			
+			String alias1 = ""; //$NON-NLS-1$
+			if (ss1 != null){
+				alias1 = ss1.getHostAliasName();
+			}
+			
+			String alias2 = "";
+			if (ss2 != null){
+				alias2 = ss2.getHostAliasName();
+			}
+			
 			return alias1.equals(alias2) && path.equals(otherPath);
 		}
 		else

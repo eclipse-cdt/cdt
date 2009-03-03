@@ -21,6 +21,7 @@ import org.eclipse.jface.action.IMenuListener;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.action.Separator;
+import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.viewers.ViewerComparator;
 import org.eclipse.jface.viewers.ViewerDropAdapter;
@@ -177,6 +178,19 @@ public class ExecutablesViewer extends BaseViewer implements IExecutablesChangeL
 
 			@Override
 			public IStatus runInUIThread(IProgressMonitor monitor) {
+				// if the user has selected an executable, they expect its
+				// list of source files to be refreshed automatically
+				if (viewer.getSelection() != null &&
+					viewer.getSelection() instanceof IStructuredSelection) {
+					IStructuredSelection selection = (IStructuredSelection) viewer.getSelection();
+					
+					Object firstElement = selection.getFirstElement();
+					if (firstElement instanceof Executable) {
+						Executable executable = (Executable)firstElement;
+						executable.setRefreshSourceFiles(true);
+						viewer.setSelection(selection);
+					}
+				}
 				viewer.refresh(null);
 				viewer.packColumns();
 				return Status.OK_STATUS;

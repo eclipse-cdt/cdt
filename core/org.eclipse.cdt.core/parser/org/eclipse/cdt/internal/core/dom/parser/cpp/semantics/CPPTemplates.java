@@ -1377,9 +1377,14 @@ public class CPPTemplates {
 			for (int j= 0; j < len; j++) {
 				IType par= instPars[j];
 				if (isDependentType(par)) {
-					// 14.8.2.1
-					par= SemanticUtil.adjustParameterType(par, true);
-					if (!deduceTemplateParameterMap(par, fnArgs[j], map)) {
+					par= SemanticUtil.getNestedType(par, SemanticUtil.TDEF); // adjustParameterType preserves typedefs
+					par= SemanticUtil.adjustParameterType(par, false);
+					// 14.8.2.1.2
+					final boolean isReferenceType = par instanceof ICPPReferenceType;
+					final IType arg= getArgumentTypeForDeduction(fnArgs[j], isReferenceType);
+					par= getParameterTypeForDeduction(par, isReferenceType);
+					
+					if (!deduceTemplateParameterMap(par, arg, map)) {
 						return false;
 					}
 				}
@@ -1437,23 +1442,12 @@ public class CPPTemplates {
 	/**
 	 * 14.8.2.1-2 If P is a cv-qualified type, the top level cv-qualifiers of P's type are ignored for type
 	 * deduction.  If P is a reference type, the type referred to by P is used for Type deduction.
-	 * @param pSymbol
-	 * @return
 	 */
-	static private IType getParameterTypeForDeduction(IType pType) {
-		IType result = pType;
-		try {
-			if (pType instanceof IQualifierType) {
-				result = ((IQualifierType) pType).getType();
-			} else if (pType instanceof ICPPReferenceType) {
-				result = ((ICPPReferenceType) pType).getType();
-			} else if (pType instanceof  CPPPointerType) {
-				result = ((CPPPointerType) pType).stripQualifiers();
-			}
-		} catch (DOMException e) {
-			result = e.getProblem();
+	static private IType getParameterTypeForDeduction(IType pType, boolean isReferenceType) {
+		if (isReferenceType) {
+			return SemanticUtil.getNestedType(pType, SemanticUtil.REF | SemanticUtil.TDEF);
 		}
-		return result;
+		return SemanticUtil.getNestedType(pType, SemanticUtil.TDEF | SemanticUtil.CVQ | SemanticUtil.PTR_CVQ);
 	}
 
 	/**
@@ -1481,24 +1475,17 @@ public class CPPTemplates {
 					result = new CPPPointerType(((IArrayType) type).getType());
 				} else if (type instanceof IFunctionType) {
 					result = new CPPPointerType(type);
-				} else if (type instanceof IQualifierType) {
-					result = ((IQualifierType) type).getType();
-				} else if (type instanceof CPPPointerType) {
-					result = ((CPPPointerType) type).stripQualifiers();
-				}
+				} else {
+					result = SemanticUtil.getNestedType(type, SemanticUtil.TDEF | SemanticUtil.CVQ | SemanticUtil.PTR_CVQ );
+				} 
 			} catch (DOMException e) {
 				result = e.getProblem();
 			}
 		}
-
 		return result;
 	}
 
 	private static boolean deduceTemplateParameterMap(IType p, IType a, CPPTemplateParameterMap map) throws DOMException {
-		boolean pIsAReferenceType = (p instanceof ICPPReferenceType);
-		p = getParameterTypeForDeduction(p);
-		a = getArgumentTypeForDeduction(a, pIsAReferenceType);
-
 		while (p != null) {
 			while (a instanceof ITypedef)
 				a = ((ITypedef) a).getType();

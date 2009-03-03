@@ -2232,7 +2232,7 @@ public class AST2TemplateTests extends AST2BaseTest {
 	//	void test() {
 	//	  f(&A::m);
 	//	}
-    public void _testFunctionTemplate_266532() throws Exception {
+    public void testFunctionTemplate_266532() throws Exception {
     	BindingAssertionHelper bh= new BindingAssertionHelper(getAboveComment(), true);
     	bh.assertNonProblem("f(&A::m);", 1, ICPPFunction.class);
     }

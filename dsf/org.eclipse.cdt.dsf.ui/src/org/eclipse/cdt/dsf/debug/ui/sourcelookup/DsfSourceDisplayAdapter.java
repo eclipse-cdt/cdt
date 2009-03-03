@@ -318,14 +318,15 @@ public class DsfSourceDisplayAdapter implements ISourceDisplay, ISteppingControl
                         IExecutionDMContext.class);
                     
                     IRunControl runControl = fServicesTracker.getService(IRunControl.class);
-                    rm.setData(runControl != null && execCtx != null && 
-                               (fController.getPendingStepCount(execCtx) != 0 || runControl.isStepping(execCtx)));
+                    rm.setData(runControl != null && execCtx != null 
+                    		&& (fController != null && fController.getPendingStepCount(execCtx) != 0
+                    				|| runControl.isStepping(execCtx)));
                     rm.done();
                 }
             };
 
             try {
-                fController.getExecutor().execute(delaySelectionChangeQuery);
+                fExecutor.execute(delaySelectionChangeQuery);
             } catch (RejectedExecutionException e) {
                 return false;
             }

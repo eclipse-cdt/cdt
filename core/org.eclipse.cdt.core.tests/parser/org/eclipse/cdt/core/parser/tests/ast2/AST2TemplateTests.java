@@ -3942,4 +3942,16 @@ public class AST2TemplateTests extends AST2BaseTest {
 		final String code = getAboveComment();
 		parseAndCheckBindings(code, ParserLanguage.CPP);
 	}
+	
+	// template<typename T> class XT {
+	//    operator T() {return 0;}
+	//    void m() {
+	//       XT<T*> xt;
+	//       xt.operator T*()->something();
+	//    }
+	// };
+	public void testDeferredConversionOperator() throws Exception {
+		final String code = getAboveComment();
+		parseAndCheckBindings(code, ParserLanguage.CPP);
+	}
 }

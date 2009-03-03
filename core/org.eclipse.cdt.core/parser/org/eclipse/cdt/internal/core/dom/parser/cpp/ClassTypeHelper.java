@@ -59,6 +59,7 @@ import org.eclipse.cdt.core.parser.util.ArrayUtil;
 import org.eclipse.cdt.core.parser.util.CharArrayUtils;
 import org.eclipse.cdt.core.parser.util.ObjectSet;
 import org.eclipse.cdt.internal.core.dom.parser.ASTInternal;
+import org.eclipse.cdt.internal.core.dom.parser.ASTQueries;
 import org.eclipse.cdt.internal.core.dom.parser.ProblemBinding;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPClassType.CPPClassTypeProblem;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPSemantics;
@@ -102,7 +103,7 @@ public class ClassTypeHelper {
 					} else {
 						for (IASTDeclarator dtor : dtors) {
 							if (dtor == null) break;
-							dtor= CPPVisitor.findInnermostDeclarator(dtor);
+							dtor= ASTQueries.findInnermostDeclarator(dtor);
 							resultSet.put(dtor.getName().resolveBinding());
 						}    
 					}
@@ -111,7 +112,7 @@ public class ClassTypeHelper {
 				ICPPASTDeclSpecifier declSpec = (ICPPASTDeclSpecifier) ((IASTFunctionDefinition)decl).getDeclSpecifier();
 				if (declSpec.isFriend()) {
 					IASTDeclarator dtor = ((IASTFunctionDefinition)decl).getDeclarator();
-					dtor= CPPVisitor.findInnermostDeclarator(dtor);
+					dtor= ASTQueries.findInnermostDeclarator(dtor);
 					resultSet.put(dtor.getName().resolveBinding());
 				}
 			}
@@ -184,7 +185,7 @@ public class ClassTypeHelper {
 			if (decl instanceof IASTSimpleDeclaration) {
 				IASTDeclarator[] dtors = ((IASTSimpleDeclaration)decl).getDeclarators();
 				for (IASTDeclarator dtor : dtors) {
-					binding = CPPVisitor.findInnermostDeclarator(dtor).getName().resolveBinding();
+					binding = ASTQueries.findInnermostDeclarator(dtor).getName().resolveBinding();
 					if (binding instanceof ICPPField)
 						result = (ICPPField[]) ArrayUtil.append(ICPPField.class, result, binding);
 				}
@@ -256,6 +257,10 @@ public class ClassTypeHelper {
 		if (host.getDefinition() == null) {
 			host.checkForDefinition();
 			if (host.getDefinition() == null) {
+				ICPPClassType backup= getBackupDefinition(host);
+				if (backup != null)
+					return backup.getDeclaredMethods();
+
 				IASTNode[] declarations= host.getDeclarations();
 				IASTNode node = (declarations != null && declarations.length > 0) ? declarations[0] : null;
 				return new ICPPMethod[] { new CPPMethod.CPPMethodProblem(node, IProblemBinding.SEMANTIC_DEFINITION_NOT_FOUND, host.getNameCharArray()) };
@@ -271,13 +276,13 @@ public class ClassTypeHelper {
 			if (decl instanceof IASTSimpleDeclaration) {
 				IASTDeclarator[] dtors = ((IASTSimpleDeclaration)decl).getDeclarators();
 				for (IASTDeclarator dtor : dtors) {
-					binding = CPPVisitor.findInnermostDeclarator(dtor).getName().resolveBinding();
+					binding = ASTQueries.findInnermostDeclarator(dtor).getName().resolveBinding();
 					if (binding instanceof ICPPMethod)
 						result = (ICPPMethod[]) ArrayUtil.append(ICPPMethod.class, result, binding);
 				}
 			} else if (decl instanceof IASTFunctionDefinition) {
 				IASTDeclarator dtor = ((IASTFunctionDefinition)decl).getDeclarator();
-				dtor = CPPVisitor.findInnermostDeclarator(dtor);
+				dtor = ASTQueries.findInnermostDeclarator(dtor);
 				binding = dtor.getName().resolveBinding();
 				if (binding instanceof ICPPMethod) {
 					result = (ICPPMethod[]) ArrayUtil.append(ICPPMethod.class, result, binding);

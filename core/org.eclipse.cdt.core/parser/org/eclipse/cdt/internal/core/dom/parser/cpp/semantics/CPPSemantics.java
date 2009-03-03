@@ -844,6 +844,16 @@ public class CPPSemantics {
 					} catch (DOMException e) {
 					}
 				}
+				if (b instanceof IVariable) {
+					try {
+						IType t= SemanticUtil.getUltimateType(((IVariable) b).getType(), true);
+						if (t instanceof ICPPUnknownBinding || t instanceof ICPPTemplateDefinition) {
+							result[0]= true;
+							return PROCESS_ABORT;
+						}
+					} catch (DOMException e) {
+					}
+				}
 				if (name instanceof ICPPASTTemplateId)
 					return PROCESS_SKIP;
 				return PROCESS_CONTINUE;
@@ -2234,17 +2244,23 @@ public class CPPSemantics {
 		if (t == null) {
 			return new ProblemBinding(astName, IProblemBinding.SEMANTIC_INVALID_TYPE);
 		}
+		IFunction unknown= null;
 		for (IFunction function : fns) {
 			if (function != null) {
 				try {
 					IType t2= function.getType().getReturnType();
 					if (t.isSameType(t2))
 						return function;
+					if (unknown == null && function instanceof ICPPUnknownBinding) {
+						unknown= function;
+					}
 				} catch (DOMException e) {
 					// ignore, try other candidates
 				}
 			}
 		}
+		if (unknown != null)
+			return unknown;
 		return new ProblemBinding(astName, IProblemBinding.SEMANTIC_NAME_NOT_FOUND);
 	}
 

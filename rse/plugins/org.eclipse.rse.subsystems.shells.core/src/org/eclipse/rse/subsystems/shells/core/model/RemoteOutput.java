@@ -206,4 +206,7 @@ public class RemoteOutput implements IAdaptable, IRemoteOutput
 		return _endOffset;
 	}
 
+	public String toString(){
+		return getLabel();
+	}
 }

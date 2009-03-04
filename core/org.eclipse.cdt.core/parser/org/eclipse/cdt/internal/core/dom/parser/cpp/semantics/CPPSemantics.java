@@ -162,6 +162,7 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPUsingDeclaration;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPUsingDirective;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPVariable;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPASTInternalScope;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPClassSpecializationScope;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPDeferredClassInstance;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPInternalBinding;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPInternalUnknownScope;
@@ -962,11 +963,11 @@ public class CPPSemantics {
 		IScope parentScope= scope.getParent();
 		// the index cannot return the translation unit as parent scope
 		if (unit != null) {
-			if (parentScope == null && scope instanceof IIndexScope) {
-				parentScope= unit.getScope();
-			}
-			else if (parentScope instanceof IIndexScope) {
-				parentScope= unit.mapToASTScope((IIndexScope) parentScope);
+			if (parentScope == null
+					&& (scope instanceof IIndexScope || scope instanceof ICPPClassSpecializationScope)) {
+				parentScope = unit.getScope();
+			} else if (parentScope instanceof IIndexScope) {
+				parentScope = unit.mapToASTScope((IIndexScope) parentScope);
 			}
 		}
 		return (ICPPScope) parentScope;

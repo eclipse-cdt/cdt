@@ -1576,4 +1576,16 @@ public class IndexCPPTemplateResolutionTest extends IndexBindingResolutionTestBa
 	public void testDefaultTemplateArgInHeader_264988() throws Exception { 
 		ICPPTemplateInstance ti= getBindingFromASTName("XT<>", 4, ICPPTemplateInstance.class);
 	}
+	
+	// typedef int TInt;
+	// template <typename T> class XT {
+	//    void m();
+	// };
+	
+	// template<> void XT<int>::m() {
+	//    TInt t;
+	// }
+	public void testParentScopeOfSpecialization_267013() throws Exception { 
+		ITypedef ti= getBindingFromASTName("TInt", 4, ITypedef.class);
+	}
 }

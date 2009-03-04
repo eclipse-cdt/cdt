@@ -8,25 +8,21 @@
  * Contributors:
  *     Wind River Systems - initial API and implementation
  *******************************************************************************/
-package org.eclipse.cdt.dsf.ui.viewmodel.update;
+package org.eclipse.cdt.dsf.debug.internal.ui.viewmodel.update.provisional;
 
 
-/**
- * An "automatic" update policy which causes the view model provider cache to 
- * be flushed whenever an event causes a delta to be generated in the given 
- * model.
- * 
+/** 
  * @since 1.1
  */
-public class AllUpdateScope implements IVMUpdateScope {
+public interface IVMUpdateScope {
 
-    public static String ALL_UPDATE_SCOPE_ID = "org.eclipse.cdt.dsf.ui.viewmodel.update.allUpdateScope";  //$NON-NLS-1$
+    /**
+     * Returns unique ID of this update policy.
+     */
+    public String getID();
     
-    public String getID() {
-        return ALL_UPDATE_SCOPE_ID;
-    }
-
-    public String getName() {
-        return ViewModelUpdateMessages.AllUpdateScope_name;
-    }
+    /**
+     * Returns the user-presentable name of this update policy.
+     */
+    public String getName();
 }

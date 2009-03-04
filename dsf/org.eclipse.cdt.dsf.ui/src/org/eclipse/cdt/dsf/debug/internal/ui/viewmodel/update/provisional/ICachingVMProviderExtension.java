@@ -8,7 +8,9 @@
  * Contributors:
  *     Wind River Systems - initial API and implementation
  *******************************************************************************/
-package org.eclipse.cdt.dsf.ui.viewmodel.update;
+package org.eclipse.cdt.dsf.debug.internal.ui.viewmodel.update.provisional;
+
+import org.eclipse.cdt.dsf.ui.viewmodel.update.ICachingVMProvider;
 
 
 /**

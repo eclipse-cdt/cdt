@@ -29,6 +29,10 @@ import org.eclipse.cdt.dsf.concurrent.RequestMonitor;
 import org.eclipse.cdt.dsf.datamodel.IDMContext;
 import org.eclipse.cdt.dsf.datamodel.IDMData;
 import org.eclipse.cdt.dsf.datamodel.IDMService;
+import org.eclipse.cdt.dsf.debug.internal.ui.viewmodel.update.provisional.AllUpdateScope;
+import org.eclipse.cdt.dsf.debug.internal.ui.viewmodel.update.provisional.ICachingVMProviderExtension;
+import org.eclipse.cdt.dsf.debug.internal.ui.viewmodel.update.provisional.IVMUpdateScope;
+import org.eclipse.cdt.dsf.debug.internal.ui.viewmodel.update.provisional.VisibleUpdateScope;
 import org.eclipse.cdt.dsf.internal.ui.DsfUIPlugin;
 import org.eclipse.cdt.dsf.ui.concurrent.SimpleDisplayExecutor;
 import org.eclipse.cdt.dsf.ui.concurrent.ViewerCountingRequestMonitor;
@@ -1044,6 +1048,8 @@ public class AbstractCachingVMProvider extends AbstractVMProvider implements ICa
     }
 
     /**
+     * @noreference This method is an implementation of a provisional interface and 
+     * not intended to be referenced by clients.
      * @since 1.1
      */
     public IVMUpdateScope[] getAvailableUpdateScopes() {
@@ -1051,6 +1057,8 @@ public class AbstractCachingVMProvider extends AbstractVMProvider implements ICa
     }
 
     /**
+     * @noreference This method is an implementation of a provisional interface and 
+     * not intended to be referenced by clients.
      * @since 1.1
      */
     public IVMUpdateScope getActiveUpdateScope() {
@@ -1068,6 +1076,8 @@ public class AbstractCachingVMProvider extends AbstractVMProvider implements ICa
     }
 
     /**
+     * @noreference This method is an implementation of a provisional interface and 
+     * not intended to be referenced by clients.
      * @since 1.1
      */
     public void setActiveUpdateScope(IVMUpdateScope updateScope) {

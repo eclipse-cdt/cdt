@@ -13,10 +13,10 @@ package org.eclipse.cdt.dsf.debug.internal.ui.viewmodel.actions;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.eclipse.cdt.dsf.debug.internal.ui.viewmodel.update.provisional.ICachingVMProviderExtension;
+import org.eclipse.cdt.dsf.debug.internal.ui.viewmodel.update.provisional.IVMUpdateScope;
 import org.eclipse.cdt.dsf.debug.ui.viewmodel.actions.VMHandlerUtils;
 import org.eclipse.cdt.dsf.ui.viewmodel.IVMProvider;
-import org.eclipse.cdt.dsf.ui.viewmodel.update.ICachingVMProviderExtension;
-import org.eclipse.cdt.dsf.ui.viewmodel.update.IVMUpdateScope;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.ActionContributionItem;
 import org.eclipse.jface.action.ContributionItem;

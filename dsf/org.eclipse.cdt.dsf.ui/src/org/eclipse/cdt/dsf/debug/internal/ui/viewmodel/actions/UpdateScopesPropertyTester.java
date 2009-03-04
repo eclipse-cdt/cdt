@@ -10,11 +10,11 @@
  *******************************************************************************/
 package org.eclipse.cdt.dsf.debug.internal.ui.viewmodel.actions;
 
+import org.eclipse.cdt.dsf.debug.internal.ui.viewmodel.update.provisional.ICachingVMProviderExtension;
+import org.eclipse.cdt.dsf.debug.internal.ui.viewmodel.update.provisional.IVMUpdateScope;
 import org.eclipse.cdt.dsf.debug.ui.viewmodel.actions.VMHandlerUtils;
 import org.eclipse.cdt.dsf.ui.viewmodel.IVMContext;
 import org.eclipse.cdt.dsf.ui.viewmodel.IVMProvider;
-import org.eclipse.cdt.dsf.ui.viewmodel.update.ICachingVMProviderExtension;
-import org.eclipse.cdt.dsf.ui.viewmodel.update.IVMUpdateScope;
 import org.eclipse.core.expressions.PropertyTester;
 import org.eclipse.debug.ui.IDebugView;
 import org.eclipse.ui.IWorkbenchPart;

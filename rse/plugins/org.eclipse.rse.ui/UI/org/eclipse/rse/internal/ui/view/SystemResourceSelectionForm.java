@@ -649,7 +649,9 @@ public class SystemResourceSelectionForm implements ISelectionChangedListener
 	 */
     public void setConnectionComboLabel(String label)
     {
-    	_connectionCombo.setLabel(label);
+    	if (_connectionCombo != null){
+    		_connectionCombo.setLabel(label);
+    	}
     }
 
 }

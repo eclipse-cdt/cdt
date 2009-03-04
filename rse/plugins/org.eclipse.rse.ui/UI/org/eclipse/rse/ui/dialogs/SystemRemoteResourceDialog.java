@@ -17,6 +17,7 @@
  * Kevin Doyle (IBM) - [198114] Allowed to move file into existing folder/archive on first attempt
  * Xuan Chen (IBM) - [220999] [api] Need to change class SystemSelectRemoteFileAction to use SystemRemoteFileDialog
  * David McKnight   (IBM)        - [225506] [api][breaking] RSE UI leaks non-API types
+ * David McKnight   (IBM)        - [267061] resource dialog/form to allow custom host combo label
  *******************************************************************************/
 
 package org.eclipse.rse.ui.dialogs;
@@ -36,7 +37,9 @@ import org.eclipse.swt.widgets.Shell;
 
 public abstract class SystemRemoteResourceDialog extends SystemPromptDialog
 {
+
 	private SystemResourceSelectionForm	_form;
+	
 	private ISystemResourceSelectionInputProvider _inputProvider;
 	private Object _preSelection;
 	private IValidatorRemoteSelection _selectionValidator;
@@ -304,6 +307,16 @@ public abstract class SystemRemoteResourceDialog extends SystemPromptDialog
 	{
 		return _form.isPageComplete();
 	}
+	
+	/**
+	 * Sets the label for the connection combo in the form
+	 * 
+	 * @since 3.1
+	 */
+	public void setConnectionComboLabel(String label){
+		_form.setConnectionComboLabel(label);
+	}
+	
 
 	public abstract SystemActionViewerFilter getViewerFilter();
 	public abstract String getVerbiage();

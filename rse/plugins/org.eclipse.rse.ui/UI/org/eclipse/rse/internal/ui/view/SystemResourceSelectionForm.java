@@ -1,5 +1,5 @@
 /********************************************************************************
- * Copyright (c) 2006, 2008 IBM Corporation and others. All rights reserved.
+ * Copyright (c) 2006, 2009 IBM Corporation and others. All rights reserved.
  * This program and the accompanying materials are made available under the terms
  * of the Eclipse Public License v1.0 which accompanies this distribution, and is 
  * available at http://www.eclipse.org/legal/epl-v10.html
@@ -19,6 +19,7 @@
  * David McKnight   (IBM)        - [225506] [api][breaking] RSE UI leaks non-API types
  * David Dykstal (IBM) - [232130] meaningless label provided for filter references
  * David McKnight   (IBM)        - [244430] [regression] Incorrect behaviour for SystemSelectRemoteFolderAction
+ * David McKnight   (IBM)        - [267061] resource dialog/form to allow custom host combo label
  ********************************************************************************/
 
 package org.eclipse.rse.internal.ui.view;
@@ -642,5 +643,13 @@ public class SystemResourceSelectionForm implements ISelectionChangedListener
     	_systemViewForm.setToolTipText(tip);
     }
 
+    
+	/**
+	 * Sets the label for the connection combo in the form
+	 */
+    public void setConnectionComboLabel(String label)
+    {
+    	_connectionCombo.setLabel(label);
+    }
 
 }

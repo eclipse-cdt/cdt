@@ -24,7 +24,7 @@ import org.junit.runners.Suite;
 @Suite.SuiteClasses({
         MIRegistersTest.class,
         MIRunControlTest.class,
-        ExpressionServiceTest.class,
+        MIExpressionsTest.class,
         MIMemoryTest.class,
         MIBreakpointsTest.class,
         MIDisassemblyTest.class,

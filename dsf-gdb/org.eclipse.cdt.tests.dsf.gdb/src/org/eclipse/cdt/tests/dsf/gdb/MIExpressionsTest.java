@@ -53,7 +53,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 
 @RunWith(BackgroundRunner.class)
-public class ExpressionServiceTest extends BaseTestCase {
+public class MIExpressionsTest extends BaseTestCase {
 
     private DsfSession fSession;
 

@@ -60,7 +60,7 @@ import org.osgi.framework.BundleContext;
  * This class implements a debugger expression evaluator as a DSF service. The
  * primary interface that clients of this class should use is IExpressions.
  */
-public class ExpressionService extends AbstractDsfService implements IExpressions, ICachingService {
+public class MIExpressions extends AbstractDsfService implements IExpressions, ICachingService {
 
 	/**
 	 * This class represents the two expressions that characterize an Expression Context.
@@ -405,7 +405,7 @@ public class ExpressionService extends AbstractDsfService implements IExpression
 	private MIVariableManager varManager;
 
 	
-	public ExpressionService(DsfSession session) {
+	public MIExpressions(DsfSession session) {
 		super(session);
 	}
 
@@ -440,7 +440,7 @@ public class ExpressionService extends AbstractDsfService implements IExpression
         
 		// Register this service.
 		register(new String[] { IExpressions.class.getName(),
-				ExpressionService.class.getName() },
+				MIExpressions.class.getName() },
 				new Hashtable<String, String>());
 		
 		// Create the expressionService-specific CommandControl which is our

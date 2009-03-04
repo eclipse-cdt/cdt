@@ -1,7 +1,7 @@
 package org.eclipse.cdt.dsf.mi.service;
 
 import org.eclipse.cdt.dsf.debug.service.IExpressions.IExpressionDMContext;
-import org.eclipse.cdt.dsf.mi.service.ExpressionService.MIExpressionDMC;
+import org.eclipse.cdt.dsf.mi.service.MIExpressions.MIExpressionDMC;
 
 public class ClassAccessor {
 

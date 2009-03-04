@@ -40,7 +40,7 @@ import org.eclipse.cdt.dsf.debug.service.IRunControl.StateChangeReason;
 import org.eclipse.cdt.dsf.debug.service.command.CommandCache;
 import org.eclipse.cdt.dsf.debug.service.command.ICommandControlService;
 import org.eclipse.cdt.dsf.gdb.internal.GdbPlugin;
-import org.eclipse.cdt.dsf.mi.service.ExpressionService.ExpressionChangedEvent;
+import org.eclipse.cdt.dsf.mi.service.MIExpressions.ExpressionChangedEvent;
 import org.eclipse.cdt.dsf.mi.service.command.commands.MIDataReadMemory;
 import org.eclipse.cdt.dsf.mi.service.command.commands.MIDataWriteMemory;
 import org.eclipse.cdt.dsf.mi.service.command.output.MIDataReadMemoryInfo;

@@ -531,7 +531,7 @@ public class MIRegisters extends AbstractDsfService implements IRegisters, ICach
       final MIRegisterDMC regDmc = (MIRegisterDMC)regCtx;
 	  // There is only one group and its number must be 0.
 	  if ( grpDmc.getGroupNo() == 0 ) {
-	  	final ExpressionService exprService = getServicesTracker().getService(ExpressionService.class);
+	  	final MIExpressions exprService = getServicesTracker().getService(MIExpressions.class);
 	  	String regName = regDmc.getName();
 	      final IExpressionDMContext exprCtxt = exprService.createExpression(regCtx, "$" + regName); //$NON-NLS-1$
 	      exprService.getModelData(exprCtxt, new DataRequestMonitor<IExpressionDMData>(getExecutor(), rm) {

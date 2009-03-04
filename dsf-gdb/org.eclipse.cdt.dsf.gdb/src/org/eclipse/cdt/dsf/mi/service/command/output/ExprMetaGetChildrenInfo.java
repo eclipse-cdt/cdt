@@ -12,7 +12,7 @@ package org.eclipse.cdt.dsf.mi.service.command.output;
 
 import org.eclipse.cdt.dsf.debug.service.command.ICommand;
 import org.eclipse.cdt.dsf.debug.service.command.ICommandResult;
-import org.eclipse.cdt.dsf.mi.service.ExpressionService.ExpressionInfo;
+import org.eclipse.cdt.dsf.mi.service.MIExpressions.ExpressionInfo;
 
 public class ExprMetaGetChildrenInfo implements ICommandResult {
     

@@ -27,7 +27,7 @@ import org.eclipse.cdt.dsf.debug.service.command.ICommandControl;
 import org.eclipse.cdt.dsf.gdb.service.command.GDBControl;
 import org.eclipse.cdt.dsf.gdb.service.command.GDBControl_7_0;
 import org.eclipse.cdt.dsf.mi.service.CSourceLookup;
-import org.eclipse.cdt.dsf.mi.service.ExpressionService;
+import org.eclipse.cdt.dsf.mi.service.MIExpressions;
 import org.eclipse.cdt.dsf.mi.service.IMIBackend;
 import org.eclipse.cdt.dsf.mi.service.MIBreakpoints;
 import org.eclipse.cdt.dsf.mi.service.MIBreakpointsManager;
@@ -104,7 +104,7 @@ public class GdbDebugServicesFactory extends AbstractDsfDebugServicesFactory {
 	
 	@Override
 	protected IExpressions createExpressionService(DsfSession session) {
-		return new ExpressionService(session);
+		return new MIExpressions(session);
 	}
 
 	@Override

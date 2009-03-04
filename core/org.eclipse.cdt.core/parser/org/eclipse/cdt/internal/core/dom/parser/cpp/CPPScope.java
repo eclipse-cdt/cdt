@@ -24,6 +24,7 @@ import org.eclipse.cdt.core.dom.ast.IScope;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCompositeTypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTNamespaceDefinition;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTQualifiedName;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTemplateId;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassScope;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPNamespace;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPNamespaceScope;
@@ -279,10 +280,15 @@ abstract public class CPPScope implements ICPPScope, ICPPASTInternalScope {
 		IBinding binding;
 		if (candidate instanceof IASTName) {
 			final IASTName candName= (IASTName) candidate;
-			if (forceResolve && candName != name && candName != name.getParent()) {
-				binding = candName.resolvePreBinding();
+			IASTName simpleName= candName.getLastName();
+			if (simpleName instanceof ICPPASTTemplateId) {
+				simpleName= ((ICPPASTTemplateId) simpleName).getTemplateName();
+			}
+			if (forceResolve && candName != name && simpleName != name) {
+				candName.resolvePreBinding(); // make sure to resolve the template-id
+				binding = simpleName.resolvePreBinding();
 			} else {
-				binding = candName.getLastName().getBinding();
+				binding = simpleName.getPreBinding();
 			}
 		} else {
 			binding= (IBinding) candidate;

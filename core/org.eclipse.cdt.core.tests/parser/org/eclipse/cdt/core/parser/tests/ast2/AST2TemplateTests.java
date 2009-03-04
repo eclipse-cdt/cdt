@@ -3954,4 +3954,18 @@ public class AST2TemplateTests extends AST2BaseTest {
 		final String code = getAboveComment();
 		parseAndCheckBindings(code, ParserLanguage.CPP);
 	}
+	
+	//	template <typename T> class X {};
+	//	template <typename T> class X1 {
+	//		friend class X<T>;
+	//	};
+	//	template <typename T> class Y  : X1<int> {
+	//		void test() {
+	//			X<int> x; // problem binding on X<int>
+	//		}
+	//	};
+	public void testFriendClassTemplate_266992() throws Exception {
+		final String code = getAboveComment();
+		parseAndCheckBindings(code, ParserLanguage.CPP);		
+	}
 }

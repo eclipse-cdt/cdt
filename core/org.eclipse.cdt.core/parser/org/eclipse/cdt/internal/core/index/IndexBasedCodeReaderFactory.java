@@ -261,6 +261,7 @@ public final class IndexBasedCodeReaderFactory extends AbstractCodeReaderFactory
 				return file;
 			}
 			file= context;
+			include= context.getParsedInContext();
 		}
 		return file;
 	}

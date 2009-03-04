@@ -1488,7 +1488,32 @@ public class IndexBugsTests extends BaseTestCase {
 			fIndex.releaseReadLock();
 		}
 	}
+
+	// #include "h2.h"
 	
+	// int BUG;
+
+	// #define BUG ok
+	// #include "h1.h"
+	public void testIndirectContext_Bug228012() throws Exception {
+		String[] contents= getContentsForTest(3);
+		final IIndexManager indexManager = CCorePlugin.getIndexManager();
+		TestSourceReader.createFile(fCProject.getProject(), "h1.h", contents[0]);
+		IFile hfile= TestSourceReader.createFile(fCProject.getProject(), "h2.h", contents[1]);
+		TestSourceReader.createFile(fCProject.getProject(), "source.cpp", contents[2]);
+		indexManager.reindex(fCProject);
+		waitForIndexer();
+		ITranslationUnit tu= (ITranslationUnit) CoreModel.getDefault().create(hfile);
+		fIndex.acquireReadLock();
+		try {
+			IASTTranslationUnit ast= tu.getAST(fIndex, ITranslationUnit.AST_CONFIGURE_USING_SOURCE_CONTEXT | ITranslationUnit.AST_SKIP_INDEXED_HEADERS);
+			IASTSimpleDeclaration decl= (IASTSimpleDeclaration) ast.getDeclarations()[0];
+			assertEquals("ok", decl.getDeclarators()[0].getName().toString());
+		} finally {
+			fIndex.releaseReadLock();
+		}
+	}
+
 	
 	// #include <header.h>
 	// #define _CONCAT(x,y) x##y

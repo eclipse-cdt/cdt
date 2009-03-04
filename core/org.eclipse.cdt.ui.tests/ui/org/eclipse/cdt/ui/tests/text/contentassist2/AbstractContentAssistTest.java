@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2008 IBM Corporation and others.
+ * Copyright (c) 2004, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -40,6 +40,8 @@ import org.eclipse.cdt.ui.tests.text.EditorTestHelper;
 import org.eclipse.cdt.ui.text.ICCompletionProposal;
 import org.eclipse.cdt.ui.text.ICPartitions;
 
+import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTNameBase;
+
 import org.eclipse.cdt.internal.ui.text.contentassist.CCompletionProposal;
 import org.eclipse.cdt.internal.ui.text.contentassist.CContentAssistProcessor;
 import org.eclipse.cdt.internal.ui.text.contentassist.RelevanceConstants;
@@ -60,6 +62,7 @@ public abstract class AbstractContentAssistTest extends BaseUITestCase {
 		fIsCpp= isCpp;
 	}
 
+	@Override
 	protected void setUp() throws Exception {
 		super.setUp();
 		if (fIsCpp) {
@@ -73,6 +76,8 @@ public abstract class AbstractContentAssistTest extends BaseUITestCase {
 		CCorePlugin.getIndexManager().joinIndexer(8000, new NullProgressMonitor());
 		fEditor= (ITextEditor)EditorTestHelper.openInEditor(fCFile, true);
 		assertNotNull(fEditor);
+		CPPASTNameBase.sAllowNameComputation= true;
+
 //		EditorTestHelper.joinBackgroundActivities((AbstractTextEditor)fEditor);
 	}
 
@@ -84,6 +89,7 @@ public abstract class AbstractContentAssistTest extends BaseUITestCase {
 	 */
 	protected abstract IFile setUpProjectContent(IProject project) throws Exception;
 
+	@Override
 	protected void tearDown() throws Exception {
 		EditorTestHelper.closeEditor(fEditor);
 		fEditor= null;

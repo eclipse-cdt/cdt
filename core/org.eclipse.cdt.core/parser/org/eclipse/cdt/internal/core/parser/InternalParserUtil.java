@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2003, 2008 IBM Corporation and others.
+ * Copyright (c) 2003, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -20,6 +20,7 @@ import org.eclipse.cdt.core.parser.CodeReader;
 import org.eclipse.cdt.core.parser.ParserFactory;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResource;
+import org.eclipse.core.resources.IResourceStatus;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
@@ -62,7 +63,18 @@ public class InternalParserUtil extends ParserFactory {
 	 */
 	public static CodeReader createWorkspaceFileReader(String path, IFile file) throws CoreException, IOException{
 		path = normalizePath(path, file);
-		InputStream in= file.getContents(true);
+		InputStream in;
+		try {
+			in= file.getContents(true);
+		} catch (CoreException e) {
+			switch (e.getStatus().getCode()) {
+			case IResourceStatus.NOT_FOUND_LOCAL:
+			case IResourceStatus.NO_LOCATION_LOCAL:
+			case IResourceStatus.FAILED_READ_LOCAL:
+				return null;
+			}
+			throw e;
+		}
 		try {
 			return new CodeReader(path, file.getCharset(), in);
 		} finally {

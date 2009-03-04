@@ -1,29 +1,45 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2008 IBM Corporation and others.
+ * Copyright (c) 2004, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *    IBM - Initial API and implementation
+ *    John Camelon (IBM) - Initial API and implementation
  *    Markus Schorn (Wind River Systems)
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.dom.parser.cpp;
 
+import java.util.Arrays;
+
 import org.eclipse.cdt.core.dom.ast.ASTVisitor;
+import org.eclipse.cdt.core.dom.ast.IASTCompletionContext;
 import org.eclipse.cdt.core.dom.ast.IASTExpression;
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
+import org.eclipse.cdt.core.dom.ast.IBinding;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCompositeTypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTConstructorChainInitializer;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPConstructor;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPField;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPNamespace;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCompositeTypeSpecifier.ICPPASTBaseSpecifier;
+import org.eclipse.cdt.core.parser.util.ArrayUtil;
 import org.eclipse.cdt.internal.core.dom.parser.ASTNode;
 import org.eclipse.cdt.internal.core.dom.parser.IASTAmbiguityParent;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPSemantics;
 
 /**
- * @author jcamelon
+ * For example in the constructor definition <br>
+ * <code>
+ * Derived() : Base(), field() { <br>
+ * }
+ * </code><br>
+ * {@code Base()} and {@code field()} are the constructor chain initializers.<br>
  */
 public class CPPASTConstructorChainInitializer extends ASTNode implements
-        ICPPASTConstructorChainInitializer, IASTAmbiguityParent {
+        ICPPASTConstructorChainInitializer, IASTAmbiguityParent, IASTCompletionContext {
 
     private IASTName name;
     private IASTExpression value;
@@ -109,4 +125,52 @@ public class CPPASTConstructorChainInitializer extends ASTNode implements
             value = (IASTExpression) other;
         }
     }
+
+	public IBinding[] findBindings(IASTName n, boolean isPrefix) {
+		IBinding[] bindings = CPPSemantics.findBindingsForContentAssist(n, isPrefix);
+
+		ICPPASTBaseSpecifier[] baseClasses = null;
+
+		for (int i = 0; i < bindings.length; i++) {
+
+			if ((bindings[i] instanceof ICPPField) || (bindings[i] instanceof ICPPNamespace)) {
+				continue;
+			} else if (bindings[i] instanceof ICPPConstructor) {
+
+				if (baseClasses == null) {
+					baseClasses = getBaseClasses(n);
+				}
+				boolean isBaseClassConstructor = false;
+				if (baseClasses != null) {
+					for (ICPPASTBaseSpecifier b : baseClasses) {
+						char[] bindingName = bindings[i].getNameCharArray();
+						char[] baseName = b.getName().getLastName().getSimpleID();
+						if (Arrays.equals(bindingName, baseName)) {
+							isBaseClassConstructor = true;
+							break;
+						}
+					}
+				}
+
+				if (!isBaseClassConstructor) {
+					bindings[i] = null;
+				}
+			} else {
+				bindings[i] = null;
+			}
+		}
+		return (IBinding[]) ArrayUtil.removeNulls(IBinding.class, bindings);
+	}
+
+	private ICPPASTBaseSpecifier[] getBaseClasses(IASTName name) {
+		for (IASTNode parent = name.getParent(); parent != null; parent = parent.getParent()) {
+			if (parent instanceof ICPPASTCompositeTypeSpecifier) {
+				ICPPASTCompositeTypeSpecifier specifier = (ICPPASTCompositeTypeSpecifier) parent;
+
+				return specifier.getBaseSpecifiers();
+			}
+		}
+
+		return null;
+	}
 }

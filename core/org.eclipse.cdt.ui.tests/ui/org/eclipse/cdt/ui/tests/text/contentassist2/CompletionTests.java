@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2008 Wind River Systems, Inc. and others.
+ * Copyright (c) 2006, 2009 Wind River Systems, Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -1214,5 +1214,106 @@ public class CompletionTests extends AbstractContentAssistTest {
 		final String[] expected= {"add()"};
 		assertCompletionResults(fCursorOffset, expected, COMPARE_REP_STRINGS);
 	}
+	
+	//namespace ns {
+	//  template<class T>
+	//  class Base {
+	//  public:
+	//    Base(int par) {}
+	//  };
+	//}
+	//
+	//class Helper {
+	//public:
+	//  Helper() {}
+	//};
+	//
+	//class InitializerListTest : public ::ns::Base<Helper>, Helper {
+	//private:
+	//  int mOne;
+	//public:
+	//  InitializerListTest() : /*cursor*/
+	//};
+	public void testCunstructorInitializerList_EmptyInput_Bug266586() throws Exception {
+		final String[] expected= {"mOne",
+				"Base(int)", "Base(const ns::Base<Helper> &)",
+				"Helper(void)", "Helper(const Helper &)",
+				// Namespaces must be offered as well. In order for this code
+				// to compile with gcc (e.g. 4.1.2), you need to write
+				// ::ns::Base<Helper>() instead of just Base<Helper>().
+				"ns"};
+		assertCompletionResults(fCursorOffset, expected, COMPARE_ID_STRINGS);
+	}
 
+	//namespace ns {
+	//  template<class T>
+	//  class Base {
+	//  public:
+	//    Base(int par) {}
+	//  };
+	//}
+	//
+	//class Helper {
+	//public:
+	//  Helper() {}
+	//};
+	//
+	//class InitializerListTest : public ::ns::Base<Helper>, Helper {
+	//private:
+	//  int mOne;
+	//public:
+	//  InitializerListTest() : ::ns/*cursor*/
+	//};
+	public void testCunstructorInitializerList_NameContextInput_Bug266586() throws Exception {
+		final String[] expected= { "ns" };
+		assertCompletionResults(fCursorOffset, expected, COMPARE_ID_STRINGS);
+	}
+
+	//namespace ns {
+	//  template<class T>
+	//  class Base {
+	//  public:
+	//    Base(int par) {}
+	//  };
+	//}
+	//
+	//class Helper {
+	//public:
+	//  Helper() {}
+	//};
+	//
+	//class InitializerListTest : public ::ns::Base<Helper>, Helper {
+	//private:
+	//  int mOne;
+	//public:
+	//  InitializerListTest() : m/*cursor*/
+	//};
+	public void testCunstructorInitializerList_MemberInput_Bug266586() throws Exception {
+		final String[] expected= { "mOne" };
+		assertCompletionResults(fCursorOffset, expected, COMPARE_ID_STRINGS);
+	}
+	
+	//namespace ns {
+	//  template<class T>
+	//  class Base {
+	//  public:
+	//    Base(int par) {}
+	//  };
+	//}
+	//
+	//class Helper {
+	//public:
+	//  Helper() {}
+	//};
+	//
+	//class InitializerListTest : public ::ns::Base<Helper>, Helper {
+	//private:
+	//  int mOne;
+	//public:
+	//  InitializerListTest() : h/*cursor*/
+	//};
+	public void testCunstructorInitializerList_BaseClassInput_Bug266586() throws Exception {
+		final String[] expected= { "Helper(void)", "Helper(const Helper &)" };
+		assertCompletionResults(fCursorOffset, expected, COMPARE_ID_STRINGS);
+	}
 }

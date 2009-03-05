@@ -34,7 +34,7 @@
       <import plugin="org.eclipse.debug.ui"/>
       <import plugin="org.eclipse.cdt.ui"/>
       <import plugin="org.eclipse.cdt.managedbuilder.ui"/>
-      <import feature="org.eclipse.cdt.gnu.debug" version="5.0.0"/>
+      <import feature="org.eclipse.cdt.gnu.debug" version="6.0.0"/>
       <import plugin="org.eclipse.ui.ide"/>
    </requires>
 

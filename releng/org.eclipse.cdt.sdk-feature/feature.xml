@@ -27,7 +27,7 @@
 
    <requires>
       <import plugin="org.eclipse.help" version="3.2.0" match="compatible"/>
-      <import feature="org.eclipse.cdt" version="5.0.0" match="compatible"/>
+      <import feature="org.eclipse.cdt" version="6.0.0" match="greaterOrEqual"/>
    </requires>
 
    <plugin

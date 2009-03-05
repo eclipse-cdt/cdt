@@ -7,7 +7,8 @@
  * 
  * Contributors: 
  * Martin Oberhuber (Wind River) - initial API and implementation 
- * Sheldon D'souza (Celunite) - adapted form SshServiceResources
+ * Sheldon D'souza  (Celunite)   - adapted form SshServiceResources
+ * Anna Dushistova  (MontaVista) - [267226] Wrong name and description in TelnetTerminalService 
  *******************************************************************************/
 package org.eclipse.rse.internal.services.telnet;
 
@@ -19,9 +20,9 @@ public class TelnetServiceResources extends NLS {
 
 	public static String TelnetPlugin_Unexpected_Exception;
 	
-	public static String TelnetShellService_Description;
+	public static String TelnetTerminalService_Description;
 
-	public static String TelnetShellService_Name;
+	public static String TelnetTerminalService_Name;
 	
 	static {
 		// initialize resource bundle

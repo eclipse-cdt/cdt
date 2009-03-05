@@ -9,6 +9,7 @@
  * Martin Oberhuber (Wind River) - initial API and implementation
  * Anna Dushistova  (MontaVista) - adapted from SshTerminalService
  * Anna Dushistova  (MontaVista) - [240523] [rseterminals] Provide a generic adapter factory that adapts any ITerminalService to an IShellService
+ * Anna Dushistova  (MontaVista) - [267226] Wrong name and description in TelnetTerminalService
  *******************************************************************************/
 
 package org.eclipse.rse.internal.services.telnet.terminal;
@@ -45,11 +46,11 @@ public class TelnetTerminalService extends AbstractTerminalService implements IT
     }
 
 	public String getName() {
-        return TelnetServiceResources.TelnetShellService_Name;
+        return TelnetServiceResources.TelnetTerminalService_Name;
     }
 
     public String getDescription() {
-        return TelnetServiceResources.TelnetShellService_Description;
+        return TelnetServiceResources.TelnetTerminalService_Description;
     }
 
 }

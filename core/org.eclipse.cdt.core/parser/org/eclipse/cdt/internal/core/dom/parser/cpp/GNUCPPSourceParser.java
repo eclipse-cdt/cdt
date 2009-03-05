@@ -1717,7 +1717,7 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
         	// scalability: don't keep references to tokens, initializer may be large
         	declarationMark= null;
         	markBeforDtor= null;
-        	dtor= addInitializer(lie);
+        	dtor= addInitializer(lie, declOption);
         } catch (FoundDeclaratorException e) {
         	declSpec= (ICPPASTDeclSpecifier) e.declSpec;
         	dtor= e.declarator;
@@ -1743,7 +1743,7 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
         	        // scalability: don't keep references to tokens, initializer may be large
         			declarationMark= null;
         			markBeforDtor= null;
-        			dtor= addInitializer(e);
+        			dtor= addInitializer(e, declOption);
         		}
         		declarators = (IASTDeclarator[]) ArrayUtil.append(IASTDeclarator.class, declarators, dtor);
         	}
@@ -1944,7 +1944,7 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
         } catch (FoundAggregateInitializer lie) {
         	if (declSpec == null)
         		declSpec= lie.fDeclSpec;
-        	declarator= addInitializer(lie);
+        	declarator= addInitializer(lie, DeclarationOptions.PARAMETER);
         }
 
         final ICPPASTParameterDeclaration parm = nodeFactory.newParameterDeclaration(declSpec, declarator);
@@ -2555,7 +2555,7 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
             if (LTcatchEOF(1) == IToken.tASSIGN && LTcatchEOF(2) == IToken.tLBRACE) 
             	throw new FoundAggregateInitializer(dtor);
 
-        	IASTInitializer initializer= optionalCPPInitializer(dtor);
+        	IASTInitializer initializer= optionalCPPInitializer(dtor, option);
         	if (initializer != null) {
         		dtor.setInitializer(initializer);
         		adjustLength(dtor, initializer);
@@ -2565,10 +2565,10 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
     }
     
     @Override
-	protected IASTDeclarator addInitializer(FoundAggregateInitializer e) throws EndOfFileException {
+	protected IASTDeclarator addInitializer(FoundAggregateInitializer e, DeclarationOptions option) throws EndOfFileException {
 	    final IASTDeclarator d = e.fDeclarator;
         try {
-			IASTInitializer i = optionalCPPInitializer(e.fDeclarator);
+			IASTInitializer i = optionalCPPInitializer(e.fDeclarator, option);
 			if (i != null) {
 				d.setInitializer(i);
 			    ((ASTNode) d).setLength(calculateEndOffset(i) - ((ASTNode) d).getOffset());
@@ -2579,18 +2579,35 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
 		return d;
     }
 
-    protected IASTInitializer optionalCPPInitializer(IASTDeclarator d) throws EndOfFileException, BacktrackException {
+    protected IASTInitializer optionalCPPInitializer(IASTDeclarator d, DeclarationOptions option) throws EndOfFileException, BacktrackException {
         // handle initializer
     	final int lt1= LTcatchEOF(1);
         if (lt1 == IToken.tASSIGN) {
             consume();
+            // for member functions we need to consider pure-virtual syntax
+			if (option == DeclarationOptions.CPP_MEMBER && LTcatchEOF(1) == IToken.tINTEGER) {
+				IASTDeclarator relDtor = ASTQueries.findTypeRelevantDeclarator(d);
+				// note the declarator for a member function cannot be ambiguous because it cannot be abstract
+				if (relDtor instanceof ICPPASTFunctionDeclarator) {
+					// check for pure virtual
+					IToken t = consume();
+					char[] image = t.getCharImage();
+					if (image.length != 1 || image[0] != '0') {
+						throwBacktrack(t); 
+					}
+
+					((ICPPASTFunctionDeclarator) relDtor).setPureVirtual(true);
+					adjustEndOffset(d, t.getEndOffset()); // we can only adjust the offset of the outermost dtor.
+					return null;
+				}
+			}
             try {
                 return initializerClause(false);
             } catch (EndOfFileException eof) {
                 failParse();
                 throw eof;
             }
-        } else if (lt1 == IToken.tLPAREN) {
+        } else if (option.fAllowConstructorInitializer && lt1 == IToken.tLPAREN) {
             if (d instanceof IASTFunctionDeclarator && d.getNestedDeclarator() == null) {
                 // constructor initializer doesn't make sense for a function
                 // declarator,
@@ -3080,17 +3097,7 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
 			__attribute_decl_seq(supportAttributeSpecifiers, false);
 		}
 
-		// pure virtual
-		if (LT(1) == IToken.tASSIGN && LT(2) == IToken.tINTEGER) {
-			char[] image = LA(2).getCharImage();
-			if (image.length == 1 && image[0] == '0') {
-				consume(); // tASSIGN
-				endOffset= consume().getEndOffset(); // tINTEGER
-			    fc.setPureVirtual(true);
-			}
-		}
-
-        ((ASTNode) fc).setOffsetAndLength(startOffset, endOffset-startOffset);
+        setRange(fc, startOffset, endOffset);
         return fc;
 	}
 
@@ -3345,7 +3352,7 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
         } catch (FoundAggregateInitializer lie) {
         	if (declSpec == null)
         		declSpec= lie.fDeclSpec;
-        	declarator= addInitializer(lie);
+        	declarator= addInitializer(lie, options);
     	}
 
     	final int endOffset = figureEndOffset(declSpec, declarator);

@@ -24,6 +24,7 @@ import org.eclipse.cdt.core.dom.ast.IASTExpression;
 import org.eclipse.cdt.core.dom.ast.IASTFunctionDefinition;
 import org.eclipse.cdt.core.dom.ast.IASTInitializer;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
+import org.eclipse.cdt.core.dom.ast.IASTParameterDeclaration;
 import org.eclipse.cdt.core.dom.ast.IScope;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCompositeTypeSpecifier;
 import org.eclipse.cdt.internal.core.dom.parser.ASTAmbiguousNode;
@@ -68,6 +69,10 @@ final class CPPASTAmbiguityResolver extends ASTVisitor {
 			while(node != null) {
 				if (node instanceof IASTDeclaration) {
 					fRepopulate.add((IASTDeclaration) node);
+					break;
+				}
+				if (node instanceof IASTParameterDeclaration) {
+					repopulateScope((IASTParameterDeclaration) node);
 					break;
 				}
 				if (node instanceof IASTExpression) {
@@ -167,6 +172,12 @@ final class CPPASTAmbiguityResolver extends ASTVisitor {
 	}
 
 	private void repopulateScope(IASTDeclaration declaration) {
+		IScope scope= CPPVisitor.getContainingNonTemplateScope(declaration);
+		if (scope instanceof ICPPASTInternalScope) {
+			CPPSemantics.populateCache((ICPPASTInternalScope) scope, declaration);
+		}
+	}
+	private void repopulateScope(IASTParameterDeclaration declaration) {
 		IScope scope= CPPVisitor.getContainingNonTemplateScope(declaration);
 		if (scope instanceof ICPPASTInternalScope) {
 			CPPSemantics.populateCache((ICPPASTInternalScope) scope, declaration);

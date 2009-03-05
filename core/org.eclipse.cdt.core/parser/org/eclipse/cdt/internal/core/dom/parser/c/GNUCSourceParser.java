@@ -338,7 +338,7 @@ public class GNUCSourceParser extends AbstractGNUSourceCodeParser {
         	// scalability: don't keep references to tokens, initializer may be large
         	declarationMark= null;
         	markBeforDtor= null;
-        	dtor= addInitializer(lie);
+        	dtor= addInitializer(lie, declOption);
         } catch (FoundDeclaratorException e) {
         	if (e.altSpec != null) {
         		declSpec= e.altSpec;
@@ -371,7 +371,7 @@ public class GNUCSourceParser extends AbstractGNUSourceCodeParser {
         	        // scalability: don't keep references to tokens, initializer may be large
         			declarationMark= null;
         			markBeforDtor= null;
-        			dtor= addInitializer(e);
+        			dtor= addInitializer(e, declOption);
         		}
         		declarators= (IASTDeclarator[]) ArrayUtil.append( IASTDeclarator.class, declarators, dtor);
         	}
@@ -1274,7 +1274,7 @@ public class GNUCSourceParser extends AbstractGNUSourceCodeParser {
     }
     
     @Override
-	protected IASTDeclarator addInitializer(FoundAggregateInitializer e) throws EndOfFileException {
+	protected IASTDeclarator addInitializer(FoundAggregateInitializer e, DeclarationOptions options) throws EndOfFileException {
 	    final IASTDeclarator d = e.fDeclarator;
         try {
 			IASTInitializer i = optionalCInitializer();

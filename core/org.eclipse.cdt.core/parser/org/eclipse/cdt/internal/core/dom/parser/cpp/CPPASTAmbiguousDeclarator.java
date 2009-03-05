@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.dom.parser.cpp;
 
+import org.eclipse.cdt.core.dom.ast.ASTVisitor;
 import org.eclipse.cdt.core.dom.ast.IASTDeclarator;
 import org.eclipse.cdt.core.dom.ast.IASTInitializer;
 import org.eclipse.cdt.core.dom.ast.IASTName;
@@ -31,6 +32,7 @@ public class CPPASTAmbiguousDeclarator extends ASTAmbiguousNode implements IASTA
 
     private IASTDeclarator[] dtors = new IASTDeclarator[2];
     private int dtorPos=-1;
+	private IASTInitializer fInitializer;
 
     
     public CPPASTAmbiguousDeclarator(IASTDeclarator... decls) {
@@ -49,8 +51,18 @@ public class CPPASTAmbiguousDeclarator extends ASTAmbiguousNode implements IASTA
 			((ICPPASTInternalScope) scope).populateCache();
 		}
 	}
+	
+    @Override
+	protected void afterResolution(ASTVisitor resolver, IASTNode best) {
+    	// if we have an initializer it needs to be added to the chosen alternative.
+    	// we also need to resolve ambiguities in the initializer.
+    	if (fInitializer != null) {
+    		((IASTDeclarator) best).setInitializer(fInitializer);
+    		fInitializer.accept(resolver);
+    	}
+	}
 
-    public IASTDeclarator copy() {
+	public IASTDeclarator copy() {
 		throw new UnsupportedOperationException();
 	}
     
@@ -74,7 +86,7 @@ public class CPPASTAmbiguousDeclarator extends ASTAmbiguousNode implements IASTA
     }
 
 	public IASTInitializer getInitializer() {
-		return dtors[0].getInitializer();
+		return fInitializer;
 	}
 
 	public IASTName getName() {
@@ -99,8 +111,8 @@ public class CPPASTAmbiguousDeclarator extends ASTAmbiguousNode implements IASTA
 	}
 
 	public void setInitializer(IASTInitializer initializer) {
-        assertNotFrozen();
-		Assert.isLegal(false);
+		// store the initializer until the ambiguity is resolved
+		fInitializer= initializer;
 	}
 
 	public void setName(IASTName name) {

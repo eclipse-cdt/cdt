@@ -102,6 +102,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPMember;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPMethod;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPNamespace;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPNamespaceAlias;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPParameter;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPPointerToMemberType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPReferenceType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPUsingDeclaration;
@@ -6941,6 +6942,46 @@ public class AST2CPPTests extends AST2BaseTest {
 	//	}
 	public void testNewPointerOfClass_267168() throws Exception {
 		final String code = getAboveComment();
+		parseAndCheckBindings(code, ParserLanguage.CPP);
+	}
+	
+	//	void f(char *(names[2])= 0);
+	//  void f2(const char *(n[])) {
+	//     if (n && 1){}
+	//  }
+	public void testPointerToArrayWithDefaultVal_267184() throws Exception {
+		final String code = getAboveComment();
+		BindingAssertionHelper ba= new BindingAssertionHelper(code, true);
+		ICPPParameter p= ba.assertNonProblem("names", 5);
+		assertTrue(p.hasDefaultValue());
+		IType t= p.getType();
+		assertInstance(t, IPointerType.class);  // parameter of type array is converted to pointer
+		t= ((IPointerType) t).getType();
+		assertInstance(t, IPointerType.class);
+		t= ((IPointerType) t).getType();
+		assertInstance(t, IBasicType.class);
+		
+		parseAndCheckBindings(code, ParserLanguage.CPP);
+	}
+	
+	// class X {
+	//    virtual void pv() = 0;
+	//    void (*ptrToFunc) ()= 0;
+	// };
+	public void testPureVirtualVsInitDeclarator_267184() throws Exception {
+		final String code = getAboveComment();
+		IASTTranslationUnit tu= parseAndCheckBindings(code, ParserLanguage.CPP);
+		ICPPASTCompositeTypeSpecifier ct= getCompositeType(tu, 0);
+		IASTSimpleDeclaration sdecl= getDeclaration(ct, 0);
+		ICPPASTFunctionDeclarator dtor= (ICPPASTFunctionDeclarator) sdecl.getDeclarators()[0];
+		assertTrue(dtor.isPureVirtual());
+		assertNull(dtor.getInitializer());
+
+		sdecl= getDeclaration(ct, 1);
+		dtor= (ICPPASTFunctionDeclarator) sdecl.getDeclarators()[0];
+		assertFalse(dtor.isPureVirtual());
+		assertNotNull(dtor.getInitializer());
+
 		parseAndCheckBindings(code, ParserLanguage.CPP);
 	}
 }

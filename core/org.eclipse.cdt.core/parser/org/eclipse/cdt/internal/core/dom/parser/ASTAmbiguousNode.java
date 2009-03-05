@@ -65,6 +65,9 @@ public abstract class ASTAmbiguousNode extends ASTNode  {
 	protected void beforeResolution() {
 	}
 
+	protected void afterResolution(ASTVisitor resolver, IASTNode best) {
+	}
+
     public IASTNode resolveAmbiguity(ASTVisitor resolver) {
     	beforeResolution();
 		final IASTAmbiguityParent owner= (IASTAmbiguityParent) getParent();
@@ -127,6 +130,7 @@ public abstract class ASTAmbiguousNode extends ASTNode  {
 		if (nodeToReplace != bestAlternative) {
 			owner.replace(nodeToReplace, bestAlternative);
 		}
+		afterResolution(resolver, bestAlternative);
 		return bestAlternative;
 	}
 }

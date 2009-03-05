@@ -488,9 +488,13 @@ public abstract class AbstractGNUSourceCodeParser implements ISourceCodeParser {
     
     protected final void adjustLength(IASTNode n, IASTNode endNode) {
         final int endOffset= calculateEndOffset(endNode);
-        final ASTNode node = (ASTNode) n;
-        node.setLength(endOffset-node.getOffset());
+        adjustEndOffset(n, endOffset);
     }
+
+	protected final void adjustEndOffset(IASTNode n, final int endOffset) {
+		final ASTNode node = (ASTNode) n;
+        node.setLength(endOffset-node.getOffset());
+	}
 
     protected final int getEndOffset() {
     	if (lastTokenFromScanner == null)
@@ -1628,7 +1632,7 @@ public abstract class AbstractGNUSourceCodeParser implements ISourceCodeParser {
         } catch (FoundAggregateInitializer lie) {
         	if (declSpec == null)
         		declSpec= lie.fDeclSpec;
-        	dtor= addInitializer(lie);
+        	dtor= addInitializer(lie, DeclarationOptions.FUNCTION_STYLE_ASM);
     	}
 
     	if (LT(1) != IToken.tLBRACE)
@@ -1649,7 +1653,7 @@ public abstract class AbstractGNUSourceCodeParser implements ISourceCodeParser {
     	return funcDefinition;
 	}
 
-	protected abstract IASTDeclarator addInitializer(FoundAggregateInitializer lie) throws EndOfFileException;
+	protected abstract IASTDeclarator addInitializer(FoundAggregateInitializer lie, DeclarationOptions option) throws EndOfFileException;
 
 	protected IToken asmExpression(StringBuilder content) throws EndOfFileException, BacktrackException {
 		IToken t= consume(IToken.tLPAREN);

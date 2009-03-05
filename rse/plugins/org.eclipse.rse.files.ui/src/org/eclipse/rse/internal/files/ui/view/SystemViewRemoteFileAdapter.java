@@ -2742,9 +2742,16 @@ public class SystemViewRemoteFileAdapter
     		return false;
     	}
     	else {
-    		// for deletion, you need write access to the containing directory
-    		IRemoteFile parentFile = file.getParentRemoteFile();
-    		return parentFile.canWrite();
+    		/*
+    		if (file.getHost().getSystemType().isWindows()){
+    			return true;
+    		}
+    		else {
+    			// for deletion, you need write access to the containing directory
+    			IRemoteFile parentFile = file.getParentRemoteFile();
+    			return parentFile.canWrite();
+    		}*/
+    		return true;
     	}
 	}
 

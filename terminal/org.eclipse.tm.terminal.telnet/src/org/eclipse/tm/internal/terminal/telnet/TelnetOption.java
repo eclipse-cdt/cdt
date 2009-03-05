@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2008 Wind River Systems, Inc. and others.
+ * Copyright (c) 2005, 2009 Wind River Systems, Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -11,8 +11,9 @@
  * Helmut Haigermoser and Ted Williams.
  *
  * Contributors:
- * Michael Scharf (Wind River) - split into core, view and connector plugins 
+ * Michael Scharf (Wind River) - split into core, view and connector plugins
  * Martin Oberhuber (Wind River) - fixed copyright headers and beautified
+ * Martin Oberhuber (Wind River) - [267181] Fix telnet option negotiation loop
  *******************************************************************************/
 package org.eclipse.tm.internal.terminal.telnet;
 
@@ -647,8 +648,7 @@ class TelnetOption implements TelnetCodes
 	 * @return Returns true if the new negotiation should be ignored, false if not.
 	 */
 	protected boolean ignoreNegotiation() {
-		return (System.currentTimeMillis() - negotiationCompletionTime
-				.getTime()) > NEGOTIATION_IGNORE_DURATION;
+		return (System.currentTimeMillis() - negotiationCompletionTime.getTime()) < NEGOTIATION_IGNORE_DURATION;
 	}
 
 	/**

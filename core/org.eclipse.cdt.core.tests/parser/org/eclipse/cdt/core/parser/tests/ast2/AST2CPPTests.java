@@ -6927,4 +6927,20 @@ public class AST2CPPTests extends AST2BaseTest {
 		BindingAssertionHelper ba= new BindingAssertionHelper(getAboveComment(), true);
 		ba.assertNonProblem("f(!p)", 1);
 	}
+	
+	//	class S {
+	//		S(int);
+	//	};
+	//	void test() {
+	//		S **temp = new S*[1]; // problem on S
+	//		temp = new S*;        // problem on S
+	//		temp = new (S*);      // problem on S
+	//		temp = new ::S*[1]; // problem on S
+	//		temp = new ::S*;        // problem on S
+	//		temp = new (::S*);      // problem on S
+	//	}
+	public void testNewPointerOfClass_267168() throws Exception {
+		final String code = getAboveComment();
+		parseAndCheckBindings(code, ParserLanguage.CPP);
+	}
 }

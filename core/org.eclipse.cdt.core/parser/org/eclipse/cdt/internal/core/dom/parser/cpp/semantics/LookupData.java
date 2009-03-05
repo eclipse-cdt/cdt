@@ -38,6 +38,7 @@ import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IASTParameterDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTSimpleDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTTypeId;
+import org.eclipse.cdt.core.dom.ast.IASTUnaryExpression;
 import org.eclipse.cdt.core.dom.ast.IPointerType;
 import org.eclipse.cdt.core.dom.ast.IScope;
 import org.eclipse.cdt.core.dom.ast.IType;
@@ -253,26 +254,39 @@ public class LookupData {
 		IASTNode p1 = astName.getParent();
 		IASTNode p2 = p1.getParent();
 		
-		if (p1 instanceof ICPPASTConstructorChainInitializer)
-			return true;
-		if (p1 instanceof ICPPASTNamedTypeSpecifier && p2 instanceof IASTTypeId) {
-			return p2.getParent() instanceof ICPPASTNewExpression;
-		} else if (p1 instanceof ICPPASTQualifiedName) {
+		if (p1 instanceof ICPPASTQualifiedName) {
 			if (((ICPPASTQualifiedName) p1).getLastName() != astName)
 				return false;
 			if (p2 instanceof ICPPASTFunctionDeclarator) {
 				IASTName[] names = ((ICPPASTQualifiedName)p1).getNames();
 				if (names.length >= 2 && names[names.length - 1] == astName)
 				    return CPPVisitor.isConstructor(names[names.length - 2], (IASTDeclarator) p2);
-			} else if (p2 instanceof ICPPASTNamedTypeSpecifier) {
-				IASTNode p3 = p2.getParent();
-				return p3 instanceof IASTTypeId && p3.getParent() instanceof ICPPASTNewExpression;
-			} else if (p2 instanceof IASTIdExpression) {
-				return p2.getParent() instanceof IASTFunctionCallExpression;
 			}
-		} else if (p1 instanceof IASTFunctionCallExpression || p2 instanceof IASTFunctionCallExpression) {
+			if (p2 != null) {
+				p1= p2;
+				p2= p1.getParent();
+			}
+		}
+		if (p1 instanceof ICPPASTConstructorChainInitializer) {
 			return true;
 		}
+		if (p1 instanceof IASTExpression) {
+			if (p1 instanceof IASTIdExpression) {
+				p1= p1.getParent();
+			}
+			while (p1 instanceof IASTUnaryExpression && ((IASTUnaryExpression) p1).getOperator() == IASTUnaryExpression.op_bracketedPrimary) {
+				p1= p1.getParent();
+			}
+			if (p1 instanceof IASTFunctionCallExpression) {
+				return true;
+			}
+		} else if (p1 instanceof ICPPASTNamedTypeSpecifier && p2 instanceof IASTTypeId) {
+			if (p2.getParent() instanceof ICPPASTNewExpression) {
+				IASTDeclarator dtor = ((IASTTypeId) p2).getAbstractDeclarator();
+				if (dtor.getPointerOperators().length == 0)
+					return true;
+			}
+		} 
 		return false;
 	}
 	

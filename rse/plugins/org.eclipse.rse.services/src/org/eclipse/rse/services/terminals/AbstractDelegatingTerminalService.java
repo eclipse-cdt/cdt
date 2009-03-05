@@ -10,6 +10,7 @@
  *
  * Contributors:
  * Anna Dushistova (MontaVista) - extracted from DelegatingTerminalService
+ * Anna Dushistova (MontaVista) - fixed getName() and getDescription() methods 
  ********************************************************************************/
 package org.eclipse.rse.services.terminals;
 
@@ -38,10 +39,16 @@ public abstract class AbstractDelegatingTerminalService extends AbstractTerminal
 	}
 
 	public String getDescription() {
+		if(getRealTerminalService() != null){
+			return getRealTerminalService().getDescription();
+		}
 		return RSEServicesMessages.AbstractDelegatingTerminalService_description;
 	}
 
 	public String getName() {
+		if(getRealTerminalService() != null){
+			return getRealTerminalService().getName();
+		}
 		return RSEServicesMessages.AbstractDelegatingTerminalService_name;
 	}
 

@@ -1,5 +1,5 @@
 /********************************************************************************
- * Copyright (c) 2006, 2008 IBM Corporation and others. All rights reserved.
+ * Copyright (c) 2006, 2009 IBM Corporation and others. All rights reserved.
  * This program and the accompanying materials are made available under the terms
  * of the Eclipse Public License v1.0 which accompanies this distribution, and is 
  * available at http://www.eclipse.org/legal/epl-v10.html
@@ -24,6 +24,7 @@
  * David Dykstal (IBM) - [233876] filters lost after restart
  * David Dykstal (IBM) - [236516] Bug in user code causes failure in RSE initialization
  * David McKnight (IBM) - [245198] [dstore] ServerLauncherProperties not restored
+ * David McKnight (IBM) - [267052] need to be able to create subsystems-after-the-fact
  ********************************************************************************/
 
 package org.eclipse.rse.internal.persistence.dom;
@@ -232,6 +233,32 @@ public class RSEDOMImporter {
 				subSystem.setConnectorService(service);
 			}
 		}
+		
+		// are the subsystems that were installed after the last session?
+		ISubSystem[] sses = host.getSubSystems();		   
+		ISubSystemConfiguration[] configs = _registry.getSubSystemConfigurationsBySystemType(host.getSystemType(), true, true);
+		
+		// create subsystems if they never existed before
+		for (int c = 0; c < configs.length; c++){
+			ISubSystemConfiguration config = configs[c];
+			boolean found = false;
+			   
+			// is there a corresponding subsystem for this configuration?
+			for (int i = 0; i < sses.length && !found; i++){
+				ISubSystem ss = sses[i];
+				if (ss.getSubSystemConfiguration() == config){
+					found = true;
+				}
+			}
+   
+			   // if not, create the subsystem after the fact
+		   if (!found){ // create this after the fact
+			   if (config.supportsFilters()){
+				   config.getFilterPoolManager(host.getSystemProfile(), true); // create the filter pool
+			   }
+			   config.createSubSystem(host, true, null);
+		   }
+		}					   					   					   
 
 		// restore all property sets
 		RSEDOMNode[] psChildren = connectorServiceNode.getChildren(IRSEDOMConstants.TYPE_PROPERTY_SET);

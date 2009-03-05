@@ -161,7 +161,9 @@ public class GdbLaunchDelegate extends LaunchConfigurationDelegate
 
         // Add the CLI and "inferior" process objects to the launch.
         launch.addCLIProcess("gdb"); //$NON-NLS-1$
-        launch.addInferiorProcess(exePath.lastSegment());
+        if (!attach) {
+        	launch.addInferiorProcess(exePath.lastSegment());
+        }
 
         monitor.worked(1);
         

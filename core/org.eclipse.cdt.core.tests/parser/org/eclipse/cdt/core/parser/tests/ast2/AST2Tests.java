@@ -5993,4 +5993,18 @@ public class AST2Tests extends AST2BaseTest {
 		bh= new BindingAssertionHelper(code, false);
 		bh.assertProblem("TInt; //ref", 4);
     }
+    
+    // typedef int x, y;
+    // void func(int c) {
+    //    c= sizeof(x(y));
+    //    x(y);
+    // }
+    public void testSizeofFunctionType_252243() throws Exception {
+		final String code= getAboveComment();
+		for (ParserLanguage lang : ParserLanguage.values()) {
+			BindingAssertionHelper ba= new BindingAssertionHelper(code, lang == ParserLanguage.CPP);
+			ba.assertProblem("y));", 1);
+			IVariable v= ba.assertNonProblem("y);", 1);
+		}
+    }
 }

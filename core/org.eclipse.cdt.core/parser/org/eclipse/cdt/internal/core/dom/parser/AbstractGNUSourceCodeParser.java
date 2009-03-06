@@ -17,7 +17,6 @@ import org.eclipse.cdt.core.dom.ast.ASTCompletionNode;
 import org.eclipse.cdt.core.dom.ast.ASTGenericVisitor;
 import org.eclipse.cdt.core.dom.ast.ASTVisitor;
 import org.eclipse.cdt.core.dom.ast.IASTASMDeclaration;
-import org.eclipse.cdt.core.dom.ast.IASTArrayDeclarator;
 import org.eclipse.cdt.core.dom.ast.IASTBinaryExpression;
 import org.eclipse.cdt.core.dom.ast.IASTBreakStatement;
 import org.eclipse.cdt.core.dom.ast.IASTCaseStatement;
@@ -38,7 +37,6 @@ import org.eclipse.cdt.core.dom.ast.IASTEnumerationSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTExpression;
 import org.eclipse.cdt.core.dom.ast.IASTExpressionList;
 import org.eclipse.cdt.core.dom.ast.IASTExpressionStatement;
-import org.eclipse.cdt.core.dom.ast.IASTFieldDeclarator;
 import org.eclipse.cdt.core.dom.ast.IASTFileLocation;
 import org.eclipse.cdt.core.dom.ast.IASTFunctionCallExpression;
 import org.eclipse.cdt.core.dom.ast.IASTFunctionDeclarator;
@@ -1776,23 +1774,6 @@ public abstract class AbstractGNUSourceCodeParser implements ISourceCodeParser {
 					backup(lastTokenOfExpression); consume();
 					return expressionStatement;
 	        	}
-
-	        	// a function call interpreted as declaration: 'func(x);' --> 'func x;'
-	        	if (declarators.length == 1) {
-	        		IASTName name= ((IASTNamedTypeSpecifier) declspec).getName();
-        			final IASTDeclarator dtor= declarators[0];
-	        		if (name.contains(declspec)) {
-	        			if (dtor.getNestedDeclarator() != null) {
-	        				if (dtor instanceof IASTAmbiguousDeclarator == false
-	        					&& dtor instanceof IASTArrayDeclarator == false 
-	        					&& dtor instanceof IASTFieldDeclarator == false
-	        					&& dtor instanceof IASTFunctionDeclarator == false) {
-	        					backup(lastTokenOfExpression); consume();
-	        					return expressionStatement;
-	        				}
-	        			}
-	        		}
-	        	}
 	        }
 		}
 
@@ -2090,7 +2071,9 @@ public abstract class AbstractGNUSourceCodeParser implements ISourceCodeParser {
         	consume(IToken.tLPAREN);
         	int typeidOffset= LA(1).getOffset();
             typeid= typeId(DeclarationOptions.TYPEID);
-            if (typeid != null) {	
+            if (!isValidTypeIDForUnaryExpression(unaryExprKind, typeid)) {
+            	typeid= null;
+            } else {
             	switch(LT(1)) {
             	case IToken.tRPAREN:
             	case IToken.tEOC:
@@ -2167,7 +2150,18 @@ public abstract class AbstractGNUSourceCodeParser implements ISourceCodeParser {
         return ambExpr;
     }
 
-    protected abstract IASTAmbiguousExpression createAmbiguousExpression();
+	private boolean isValidTypeIDForUnaryExpression(int unaryExprKind, IASTTypeId typeid) {
+		if (typeid == null)
+			return false;
+		if (unaryExprKind == IASTUnaryExpression.op_sizeof) {
+			// 5.3.3.1
+			if (ASTQueries.findTypeRelevantDeclarator(typeid.getAbstractDeclarator()) instanceof IASTFunctionDeclarator)
+				return false;
+		}
+		return true;
+	}
+
+	protected abstract IASTAmbiguousExpression createAmbiguousExpression();
     protected abstract IASTAmbiguousExpression createAmbiguousBinaryVsCastExpression(IASTBinaryExpression binary, IASTCastExpression castExpr);
     protected abstract IASTAmbiguousExpression createAmbiguousCastVsFunctionCallExpression(IASTCastExpression castExpr, IASTFunctionCallExpression funcCall);
 

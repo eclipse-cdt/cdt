@@ -10,10 +10,8 @@
  *******************************************************************************/ 
 package org.eclipse.cdt.internal.core.dom.parser.cpp;
 
-import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.LinkedList;
-import java.util.List;
 
 import org.eclipse.cdt.core.dom.ast.ASTVisitor;
 import org.eclipse.cdt.core.dom.ast.IASTDeclSpecifier;
@@ -25,6 +23,7 @@ import org.eclipse.cdt.core.dom.ast.IASTFunctionDefinition;
 import org.eclipse.cdt.core.dom.ast.IASTInitializer;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IASTParameterDeclaration;
+import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
 import org.eclipse.cdt.core.dom.ast.IScope;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCompositeTypeSpecifier;
 import org.eclipse.cdt.internal.core.dom.parser.ASTAmbiguousNode;
@@ -36,22 +35,10 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPVisitor;
  * Visitor to resolve ast ambiguities in the right order
  */
 final class CPPASTAmbiguityResolver extends ASTVisitor {
-	private static class ClassContext {
-		ArrayList<IASTNode> fDeferredNodes;
-		final IASTNode fNode;
-		public ClassContext(IASTNode node) {
-			fNode= node;
-		}
-		public void deferNode(IASTNode node) {
-			if (fDeferredNodes == null)
-				fDeferredNodes= new ArrayList<IASTNode>();
-			fDeferredNodes.add(node);
-		}
-	}
-	private LinkedList<ClassContext> fContextStack;
-	private ClassContext fCurrentContext;
 	private int fSkipInitializers= 0;
+	private int fDeferFunctions= 1;
 	private HashSet<IASTDeclaration> fRepopulate= new HashSet<IASTDeclaration>();
+	private LinkedList<IASTNode> fDeferredNodes= new LinkedList<IASTNode>();
 	
 	public CPPASTAmbiguityResolver() {
 		super(false);
@@ -60,6 +47,7 @@ final class CPPASTAmbiguityResolver extends ASTVisitor {
 		shouldVisitDeclarations= true;
 		shouldVisitDeclSpecifiers= true;
 		shouldVisitInitializers= true;
+		shouldVisitTranslationUnit= true;
 	}
 
 	@Override
@@ -91,13 +79,7 @@ final class CPPASTAmbiguityResolver extends ASTVisitor {
 	@Override
 	public int visit(IASTDeclSpecifier declSpec) {
 		if (declSpec instanceof ICPPASTCompositeTypeSpecifier) {
-			if (fCurrentContext != null) {
-				// defer visiting nested classes until the outer class body has been visited.
-				fCurrentContext.deferNode(declSpec);
-				return PROCESS_SKIP;
-			}
-			pushContext();
-			fCurrentContext= new ClassContext(declSpec);
+			fDeferFunctions++;
 		}
 		return PROCESS_CONTINUE;
 	}
@@ -105,46 +87,14 @@ final class CPPASTAmbiguityResolver extends ASTVisitor {
 	@Override
 	public int leave(IASTDeclSpecifier declSpec) {
 		if (declSpec instanceof ICPPASTCompositeTypeSpecifier) {
-			assert fCurrentContext != null;
-			assert fCurrentContext.fNode == declSpec;
-			if (fCurrentContext != null) {
-				final List<IASTNode> deferredNodes = fCurrentContext.fDeferredNodes;
-				fCurrentContext= null;
-				if (deferredNodes != null) {
-					for (IASTNode node : deferredNodes) {
-						node.accept(this);
-					}
-				}
-				popContext();
-			}
+			fDeferFunctions--;
 		}
 		return PROCESS_CONTINUE;
 	}
 
-	private void pushContext() {
-		if (fCurrentContext==null) {
-			if (fContextStack != null && !fContextStack.isEmpty()) {
-				fContextStack.addLast(null);
-			}
-		} else {
-			if (fContextStack == null) {
-				fContextStack= new LinkedList<ClassContext>();
-			}
-			fContextStack.addLast(fCurrentContext);
-		}
-	}
-
-	private void popContext() {
-		if (fContextStack == null || fContextStack.isEmpty()) {
-			fCurrentContext= null;
-		} else {
-			fCurrentContext= fContextStack.removeLast();
-		}
-	}
-
 	@Override
 	public int visit(IASTDeclaration decl) {
-		if (decl instanceof IASTFunctionDefinition) {
+		if (fDeferFunctions > 0 && decl instanceof IASTFunctionDefinition) {
 			final IASTFunctionDefinition fdef= (IASTFunctionDefinition) decl;
 
 			// visit the declarator first, it may contain ambiguous template arguments needed 
@@ -152,13 +102,10 @@ final class CPPASTAmbiguityResolver extends ASTVisitor {
 			fSkipInitializers++;
 			ASTQueries.findOutermostDeclarator(fdef.getDeclarator()).accept(this);
 			fSkipInitializers--;
-			
-			if (fCurrentContext != null) {
-				// defer visiting the body of the function until the class body has been visited.
-				fdef.getDeclSpecifier().accept(this);
-				fCurrentContext.deferNode(decl);
-				return PROCESS_SKIP;
-			}
+			fdef.getDeclSpecifier().accept(this);
+			// defer visiting the body of the function until the class body has been visited.
+			fDeferredNodes.add(decl);
+			return PROCESS_SKIP;
 		} 
 		return PROCESS_CONTINUE;
 	}
@@ -167,6 +114,23 @@ final class CPPASTAmbiguityResolver extends ASTVisitor {
 	public int leave(IASTDeclaration declaration) {
 		if (fRepopulate.remove(declaration)) {
 			repopulateScope(declaration);
+		}
+		return PROCESS_CONTINUE;
+	}
+
+	@Override
+	public int visit(IASTInitializer initializer) {
+		if (fSkipInitializers > 0)
+			return PROCESS_SKIP;
+
+		return PROCESS_CONTINUE;
+	}
+
+	@Override
+	public int leave(IASTTranslationUnit tu) {
+		while (!fDeferredNodes.isEmpty()) {
+			fDeferFunctions= 0;
+			fDeferredNodes.removeFirst().accept(this);
 		}
 		return PROCESS_CONTINUE;
 	}
@@ -182,13 +146,5 @@ final class CPPASTAmbiguityResolver extends ASTVisitor {
 		if (scope instanceof ICPPASTInternalScope) {
 			CPPSemantics.populateCache((ICPPASTInternalScope) scope, declaration);
 		}
-	}
-
-	@Override
-	public int visit(IASTInitializer initializer) {
-		if (fSkipInitializers > 0)
-			return PROCESS_SKIP;
-
-		return PROCESS_CONTINUE;
 	}
 }

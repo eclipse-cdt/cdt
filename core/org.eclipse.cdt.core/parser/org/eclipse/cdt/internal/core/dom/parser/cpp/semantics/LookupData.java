@@ -271,13 +271,15 @@ public class LookupData {
 			return true;
 		}
 		if (p1 instanceof IASTExpression) {
+			ASTNodeProperty prop = p1.getPropertyInParent();
 			if (p1 instanceof IASTIdExpression) {
 				p1= p1.getParent();
 			}
 			while (p1 instanceof IASTUnaryExpression && ((IASTUnaryExpression) p1).getOperator() == IASTUnaryExpression.op_bracketedPrimary) {
+				prop = p1.getPropertyInParent();
 				p1= p1.getParent();
 			}
-			if (p1 instanceof IASTFunctionCallExpression) {
+			if (p1 instanceof IASTFunctionCallExpression && prop == IASTFunctionCallExpression.FUNCTION_NAME) {
 				return true;
 			}
 		} else if (p1 instanceof ICPPASTNamedTypeSpecifier && p2 instanceof IASTTypeId) {

@@ -1116,4 +1116,24 @@ public class IndexCPPBindingResolutionBugs extends IndexBindingResolutionTestBas
 		buf.append('}');
 		return buf.toString();
 	}
+	
+	//	namespace ns {
+	//		struct S {
+	//			int a;
+	//		};
+	//	}
+	//	class A {
+	//		public:
+	//			template<typename T> operator T*(){return 0;};
+	//	};
+
+	//	namespace ns {
+	//		void bla() {
+	//			A a;
+	//			a.operator S *();
+	//		}
+	//	}
+	public void testLookupScopeForConversionNames_267221() throws Exception {
+    	getBindingFromASTName("operator S *", 12, ICPPMethod.class);
+	}
 }

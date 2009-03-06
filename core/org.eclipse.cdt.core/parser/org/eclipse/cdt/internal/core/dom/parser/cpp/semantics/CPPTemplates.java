@@ -621,6 +621,7 @@ public class CPPTemplates {
 
 	/**
 	 * Deduce arguments for a template function from the template id + the template function parameters.
+	 * 14.8.2.1
 	 */
 	static private ICPPTemplateArgument[] deduceTemplateFunctionArguments(ICPPFunctionTemplate template,
 			ICPPTemplateArgument[] tmplArgs, IType[] fnArgs, CPPTemplateParameterMap map) throws DOMException {
@@ -646,6 +647,31 @@ public class CPPTemplates {
 		if (!deduceTemplateParameterMapFromFunctionParameters(template, fnArgs, map)) 
 			return null;
 		
+		for (int i = 0; i < length; i++) {
+			if (result[i] == null) {
+				ICPPTemplateArgument deducedArg= map.getArgument(tmplParams[i]);
+				if (deducedArg == null)
+					return null;
+				result[i]= deducedArg;
+			}
+		}
+		return result;
+	}
+
+	/**
+	 * Deduce arguments for a user defined conversion template 
+	 * 14.8.2.3
+	 */
+	static private ICPPTemplateArgument[] deduceTemplateConversionArguments(ICPPFunctionTemplate template,
+			IType conversionType, CPPTemplateParameterMap map) throws DOMException {
+		final ICPPTemplateParameter[] tmplParams = template.getTemplateParameters();
+		final int length = tmplParams.length;
+		
+		ICPPTemplateArgument[] result = new ICPPTemplateArgument[length];
+		if (!deduceTemplateParameterMap(template.getType().getReturnType(), conversionType, map)) {
+			return null;
+		}
+
 		for (int i = 0; i < length; i++) {
 			if (result[i] == null) {
 				ICPPTemplateArgument deducedArg= map.getArgument(tmplParams[i]);
@@ -1341,6 +1367,42 @@ public class CPPTemplates {
 				CPPTemplateParameterMap map= new CPPTemplateParameterMap(fnArgs.length);
 				try {
 					ICPPTemplateArgument[] args= deduceTemplateFunctionArguments(template, templateArguments, fnArgs, map);
+					if (args != null) {
+						IBinding instance= instantiateFunctionTemplate(template, args);
+						if (instance instanceof IFunction) {
+							functions[i]= (IFunction) instance;
+						} 
+					}
+				} catch (DOMException e) {
+					// try next candidate
+				}
+			} 
+		}
+	}
+
+	static protected void instantiateConversionTemplates(IFunction[] functions, IType conversionType, IASTName name) {
+		boolean checkedForDependentType= false;
+		for (int i = 0; i < functions.length; i++) {
+			IFunction func = functions[i];
+			if (func instanceof ICPPFunctionTemplate) {
+				ICPPFunctionTemplate template= (ICPPFunctionTemplate) func;
+				functions[i]= null;
+				
+				// extract template arguments and parameter types.
+				if (!checkedForDependentType) {
+					try {
+						if (isDependentType(conversionType)) {
+							functions[i]= CPPUnknownFunction.createForSample(template, name);
+							return;
+						}
+						checkedForDependentType= true;
+					} catch (DOMException e) {
+						return;
+					}
+				}
+				CPPTemplateParameterMap map= new CPPTemplateParameterMap(1);
+				try {
+					ICPPTemplateArgument[] args= deduceTemplateConversionArguments(template, conversionType, map);
 					if (args != null) {
 						IBinding instance= instantiateFunctionTemplate(template, args);
 						if (instance instanceof IFunction) {

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2008 QNX Software Systems and others.
+ * Copyright (c) 2005, 2009 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -20,6 +20,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.eclipse.cdt.core.CCorePlugin;
+import org.eclipse.cdt.core.dom.ILinkage;
 import org.eclipse.cdt.core.dom.IPDOMNode;
 import org.eclipse.cdt.core.dom.IPDOMVisitor;
 import org.eclipse.cdt.core.dom.ast.DOMException;
@@ -27,6 +28,7 @@ import org.eclipse.cdt.core.dom.ast.EScopeKind;
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.ICompositeType;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTConversionName;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassScope;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassTemplatePartialSpecialization;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType;
@@ -37,10 +39,13 @@ import org.eclipse.cdt.core.index.IIndexBinding;
 import org.eclipse.cdt.core.index.IIndexFileSet;
 import org.eclipse.cdt.core.index.IIndexName;
 import org.eclipse.cdt.core.index.IndexFilter;
+import org.eclipse.cdt.core.parser.Keywords;
 import org.eclipse.cdt.core.parser.util.CharArrayMap;
 import org.eclipse.cdt.core.parser.util.CharArrayUtils;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPClassScope;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPSemantics;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.SemanticUtil;
+import org.eclipse.cdt.internal.core.index.DeclaredBindingsFilter;
 import org.eclipse.cdt.internal.core.index.IIndexScope;
 import org.eclipse.cdt.internal.core.pdom.PDOM;
 import org.eclipse.cdt.internal.core.pdom.dom.BindingCollector;
@@ -51,6 +56,15 @@ import org.eclipse.core.runtime.CoreException;
  * Represents the class scope for a class stored in the index.
  */
 class PDOMCPPClassScope implements ICPPClassScope, IIndexScope {
+	private static final IndexFilter CONVERSION_FILTER = new DeclaredBindingsFilter(ILinkage.CPP_LINKAGE_ID, true, false) {
+		@Override
+		public boolean acceptBinding(IBinding binding) throws CoreException {
+			return binding instanceof ICPPMethod && 
+				SemanticUtil.isConversionOperator(((ICPPMethod) binding)) &&
+				super.acceptBinding(binding);
+		}
+	};
+	
 	private IPDOMCPPClassType fBinding;
 
 	public PDOMCPPClassScope(IPDOMCPPClassType binding) {
@@ -101,8 +115,13 @@ class PDOMCPPClassScope implements ICPPClassScope, IIndexScope {
 	}
 	
 	public IBinding[] getBindings(IASTName name, boolean resolve, boolean prefixLookup, IIndexFileSet fileSet) throws DOMException {
-		IBinding[] result = null;
 		try {
+			if (name instanceof ICPPASTConversionName) {
+				BindingCollector visitor = new BindingCollector(fBinding.getLinkage(), Keywords.cOPERATOR, CONVERSION_FILTER, true, true);
+				acceptViaCache(fBinding, visitor, true);
+				return visitor.getBindings();
+			} 
+
 			final char[] nameChars = name.getSimpleID();
 			if (!prefixLookup) {
 				if (CharArrayUtils.equals(fBinding.getNameCharArray(), nameChars)) {
@@ -121,11 +140,11 @@ class PDOMCPPClassScope implements ICPPClassScope, IIndexScope {
 		        visitor.visit((IPDOMNode) getClassNameBinding());
 			}
 			acceptViaCache(fBinding, visitor, true);
-			result= visitor.getBindings();
+			return visitor.getBindings();
 		} catch (CoreException e) {
 			CCorePlugin.log(e);
 		}
-		return result;
+		return null;
 	}
 
 	public static IBinding[] getBindingsViaCache(IPDOMCPPClassType ct, final char[] name, IndexFilter filter) throws CoreException {

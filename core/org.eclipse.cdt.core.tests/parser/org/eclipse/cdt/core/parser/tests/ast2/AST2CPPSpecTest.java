@@ -4603,7 +4603,7 @@ public class AST2CPPSpecTest extends AST2SpecBaseTest {
 	// ip = a.operator int*(); // explicit call to template operator
 	// // A::operator int*()
 	// }
-	public void _test14_5_2s5() throws Exception {
+	public void test14_5_2s5() throws Exception {
 		parse(getAboveComment(), ParserLanguage.CPP, true, 0);
 	}
 

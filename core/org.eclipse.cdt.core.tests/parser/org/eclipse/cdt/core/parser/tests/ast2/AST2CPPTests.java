@@ -6984,4 +6984,24 @@ public class AST2CPPTests extends AST2BaseTest {
 
 		parseAndCheckBindings(code, ParserLanguage.CPP);
 	}
+	
+	//	namespace ns {
+	//		struct S {
+	//			int a;
+	//		};
+	//	}
+	//	class A {
+	//		public:
+	//			operator ns::S*(){return 0;};
+	//	};
+	//	namespace ns {
+	//		void bla() {
+	//			A a;
+	//			a.operator S *();
+	//		}
+	//	}
+	public void testLookupScopeForConversionNames_267221() throws Exception {
+		final String code = getAboveComment();
+		parseAndCheckBindings(code, ParserLanguage.CPP);
+	}
 }

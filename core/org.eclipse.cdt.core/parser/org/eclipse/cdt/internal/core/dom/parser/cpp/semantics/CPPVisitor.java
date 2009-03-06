@@ -786,8 +786,9 @@ public class CPPVisitor extends ASTQueries {
 			} else if (node instanceof IASTStatement) {
 		        return getContainingScope((IASTStatement) node); 
 			} else if (node instanceof IASTTypeId) {
-				if (node.getPropertyInParent() == ICPPASTTemplateId.TEMPLATE_ID_ARGUMENT) {
-					node= node.getParent(); // template-id
+				ASTNodeProperty prop = node.getPropertyInParent();
+				if (prop == ICPPASTTemplateId.TEMPLATE_ID_ARGUMENT || prop == ICPPASTConversionName.TYPE_ID) {
+					node= node.getParent(); // template-id or conversion name
 					while (node instanceof IASTName) { 
 						node= node.getParent();
 					}

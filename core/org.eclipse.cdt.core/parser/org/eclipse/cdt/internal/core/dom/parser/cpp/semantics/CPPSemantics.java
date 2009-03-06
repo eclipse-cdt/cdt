@@ -2007,12 +2007,12 @@ public class CPPSemantics {
 		    return resolveTargetedFunction(data, fns);
 		}
 
-		if (!data.forFunctionDeclaration() || data.forExplicitFunctionSpecialization()) {
-			CPPTemplates.instantiateFunctionTemplates(fns, data.getFunctionArgumentTypes(), data.astName);
+		if (data.astName instanceof ICPPASTConversionName) {
+			return resolveUserDefinedConversion(data, fns);
 		}
 
-		if (data.astName instanceof ICPPASTConversionName) {
-			return resolveUserDefinedConversion((ICPPASTConversionName) data.astName, fns);
+		if (!data.forFunctionDeclaration() || data.forExplicitFunctionSpecialization()) {
+			CPPTemplates.instantiateFunctionTemplates(fns, data.getFunctionArgumentTypes(), data.astName);
 		}
 		
 		// Reduce our set of candidate functions to only those who have the right number of parameters
@@ -2240,11 +2240,16 @@ public class CPPSemantics {
 		return implicitType;
 	}
 
-	private static IBinding resolveUserDefinedConversion(ICPPASTConversionName astName, IFunction[] fns) {
+	private static IBinding resolveUserDefinedConversion(LookupData data, IFunction[] fns) {
+		ICPPASTConversionName astName= (ICPPASTConversionName) data.astName;
 		IType t= CPPVisitor.createType(astName.getTypeId());
 		if (t == null) {
 			return new ProblemBinding(astName, IProblemBinding.SEMANTIC_INVALID_TYPE);
 		}
+		if (!data.forFunctionDeclaration() || data.forExplicitFunctionSpecialization()) {
+			CPPTemplates.instantiateConversionTemplates(fns, t, data.astName);
+		}
+
 		IFunction unknown= null;
 		for (IFunction function : fns) {
 			if (function != null) {

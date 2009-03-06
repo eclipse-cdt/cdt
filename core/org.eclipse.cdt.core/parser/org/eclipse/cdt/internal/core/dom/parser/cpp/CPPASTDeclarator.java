@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2008 IBM Corporation and others.
+ * Copyright (c) 2004, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -26,7 +26,7 @@ import org.eclipse.cdt.core.dom.ast.IASTSimpleDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTTypeId;
 import org.eclipse.cdt.core.parser.util.ArrayUtil;
 import org.eclipse.cdt.internal.core.dom.parser.ASTNode;
-import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPVisitor;
+import org.eclipse.cdt.internal.core.dom.parser.ASTQueries;
 
 /**
  * C++ specific declarator.
@@ -130,13 +130,13 @@ public class CPPASTDeclarator extends ASTNode implements IASTDeclarator {
 	        }
 		}
         
-        IASTPointerOperator[] ptrOps = getPointerOperators();
-        for (int i = 0; i < ptrOps.length; i++) {
-            if (!ptrOps[i].accept(action)) return false;
+        for (int i = 0; i <= pointerOpsPos; i++) {
+            if (!pointerOps[i].accept(action))
+            	return false;
         }
         
         if (nested == null && name != null) {
-        	IASTDeclarator outermost= CPPVisitor.findOutermostDeclarator(this);
+        	IASTDeclarator outermost= ASTQueries.findOutermostDeclarator(this);
         	if (outermost.getPropertyInParent() != IASTTypeId.ABSTRACT_DECLARATOR) {
         		if (!name.accept(action)) return false;
             }

@@ -52,6 +52,7 @@ import org.eclipse.cdt.core.dom.ast.IASTNamedTypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IASTNullStatement;
 import org.eclipse.cdt.core.dom.ast.IASTParameterDeclaration;
+import org.eclipse.cdt.core.dom.ast.IASTPointerOperator;
 import org.eclipse.cdt.core.dom.ast.IASTPreprocessorMacroDefinition;
 import org.eclipse.cdt.core.dom.ast.IASTProblem;
 import org.eclipse.cdt.core.dom.ast.IASTProblemDeclaration;
@@ -5868,11 +5869,12 @@ public class AST2Tests extends AST2BaseTest {
 			assertInstance(children[1], IASTDeclarator.class);
 
 			children= children[1].getChildren();  
-			assertEquals(2, children.length);
-			assertInstance(children[0], IASTName.class);
-			assertInstance(children[1], IASTInitializer.class);
+			assertEquals(3, children.length);
+			assertInstance(children[0], IASTPointerOperator.class);
+			assertInstance(children[1], IASTName.class);
+			assertInstance(children[2], IASTInitializer.class);
 
-			children= children[1].getChildren()[0].getChildren(); // skip binary expression  
+			children= children[2].getChildren()[0].getChildren(); // skip binary expression  
 			assertEquals(2, children.length);
 			assertInstance(children[0], IASTLiteralExpression.class);
 			assertInstance(children[1], IASTLiteralExpression.class);
@@ -6005,6 +6007,19 @@ public class AST2Tests extends AST2BaseTest {
 			BindingAssertionHelper ba= new BindingAssertionHelper(code, lang == ParserLanguage.CPP);
 			ba.assertProblem("y));", 1);
 			IVariable v= ba.assertNonProblem("y);", 1);
+		}
+    }
+    
+    // int* v;
+    public void testPointerOperatorsAsChildren_260461() throws Exception {
+		final String code= getAboveComment();
+		for (ParserLanguage lang : ParserLanguage.values()) {
+			IASTTranslationUnit tu= parseAndCheckBindings(code, lang, true);
+			IASTSimpleDeclaration decl= getDeclaration(tu, 0);
+			IASTDeclarator dtor= decl.getDeclarators()[0];
+			IASTNode[] nodes = dtor.getChildren();
+			assertEquals(2, nodes.length);
+			assertInstance(nodes[0], IASTPointerOperator.class);
 		}
     }
 }

@@ -71,6 +71,11 @@ public abstract class ASTVisitor {
 	 */
 	public boolean shouldVisitArrayModifiers = false;
 	/**
+	 * Set this flag to visit pointer operators of declarators.
+	 * @since 5.1
+	 */
+	public boolean shouldVisitPointerOperators = false;
+	/**
 	 * Set this flag to visit expressions.
 	 */
 	public boolean shouldVisitExpressions = false;
@@ -160,6 +165,7 @@ public abstract class ASTVisitor {
 		shouldVisitNames= visitNodes;
 		shouldVisitNamespaces= visitNodes;
 		shouldVisitParameterDeclarations= visitNodes;
+		shouldVisitPointerOperators= visitNodes;
 		shouldVisitProblems= visitNodes;
 		shouldVisitStatements= visitNodes;
 		shouldVisitTemplateParameters= visitNodes;
@@ -200,6 +206,13 @@ public abstract class ASTVisitor {
 	 * @since 5.1
 	 */
 	public int visit(IASTArrayModifier arrayModifier) {
+		return PROCESS_CONTINUE;
+	}
+
+	/**
+	 * @since 5.1
+	 */
+	public int visit(IASTPointerOperator ptrOperator) {
 		return PROCESS_CONTINUE;
 	}
 
@@ -256,6 +269,12 @@ public abstract class ASTVisitor {
 	 * @since 5.1
 	 */
 	public int leave(IASTArrayModifier arrayModifier) {
+		return PROCESS_CONTINUE;
+	}
+	/**
+	 * @since 5.1
+	 */
+	public int leave(IASTPointerOperator ptrOperator) {
 		return PROCESS_CONTINUE;
 	}
 

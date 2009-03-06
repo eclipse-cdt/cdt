@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2008 IBM Corporation and others.
+ * Copyright (c) 2005, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -131,6 +131,11 @@ public class CASTDeclarator extends ASTNode implements IASTDeclarator, IASTAmbig
 	        }
 		}
         
+        for (int i = 0; i <= pointerOpsPos; i++) {
+            if (!pointerOps[i].accept(action))
+            	return false;
+        }
+
         if (getPropertyInParent() != IASTTypeId.ABSTRACT_DECLARATOR && nestedDeclarator == null) {
             if (getParent() instanceof IASTDeclarator) {
                 IASTDeclarator outermostDeclarator = (IASTDeclarator) getParent();
@@ -148,12 +153,6 @@ public class CASTDeclarator extends ASTNode implements IASTDeclarator, IASTAmbig
         	return false;
         }
         
-        IASTPointerOperator[] ptrOps = getPointerOperators();
-        for (int i = 0; i < ptrOps.length; i++) {
-            if (!ptrOps[i].accept(action))
-            	return false;
-        }
-
         if (!postAccept(action))
 			return false;
 

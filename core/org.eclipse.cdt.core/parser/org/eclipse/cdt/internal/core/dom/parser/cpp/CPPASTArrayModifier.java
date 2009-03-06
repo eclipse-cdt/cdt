@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2008 IBM Corporation and others.
+ * Copyright (c) 2004, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -53,25 +53,20 @@ public class CPPASTArrayModifier extends ASTNode implements IASTArrayModifier, I
 
     @Override
 	public boolean accept(ASTVisitor action) {
-        if (exp != null) {
-            if( action.shouldVisitArrayModifiers ){
-    		    switch( action.visit( this ) ){
-    	            case ASTVisitor.PROCESS_ABORT : return false;
-    	            case ASTVisitor.PROCESS_SKIP  : return true;
-    	            default : break;
-    	        }
+		if (action.shouldVisitArrayModifiers) {
+			switch (action.visit(this)) {
+    		case ASTVisitor.PROCESS_ABORT : return false;
+    		case ASTVisitor.PROCESS_SKIP  : return true;
+    		default : break;
     		}
-            if (!exp.accept(action))
-                return false;
-            if( action.shouldVisitArrayModifiers ){
-    		    switch( action.leave( this ) ){
-    	            case ASTVisitor.PROCESS_ABORT : return false;
-    	            case ASTVisitor.PROCESS_SKIP  : return true;
-    	            default : break;
-    	        }
-    		}
-        }
-        return true;
+    	}
+        if (exp != null && !exp.accept(action))
+        	return false;
+        
+		if (action.shouldVisitArrayModifiers && action.leave(this) == ASTVisitor.PROCESS_ABORT)
+			return false;
+
+		return true;
     }
 
     public void replace(IASTNode child, IASTNode other) {

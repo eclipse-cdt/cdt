@@ -52,6 +52,11 @@ public abstract class ASTGenericVisitor extends ASTVisitor implements ICPPASTVis
 	public int visit(IASTArrayModifier arrayModifier) {
 		return genericVisit(arrayModifier);
 	}
+	
+	@Override
+	public int visit(IASTPointerOperator ptrOperator) {
+		return genericVisit(ptrOperator);
+	}
 
 	@Override
 	public int visit(IASTDeclaration declaration) {
@@ -136,6 +141,11 @@ public abstract class ASTGenericVisitor extends ASTVisitor implements ICPPASTVis
 	@Override
 	public int leave(IASTArrayModifier arrayModifier) {
 		return genericLeave(arrayModifier);
+	}
+	
+	@Override
+	public int leave(IASTPointerOperator ptrOperator) {
+		return genericLeave(ptrOperator);
 	}
 
 	@Override

@@ -491,11 +491,43 @@ public class GDBProcesses_7_0 extends AbstractDsfService
 
 	public void getExecutionData(IThreadDMContext dmc, final DataRequestMonitor<IThreadDMData> rm) {
 		if (dmc instanceof IMIProcessDMContext) {
-			String id = ((IMIProcessDMContext)dmc).getProcId();
+			final String id = ((IMIProcessDMContext)dmc).getProcId();
 			String name = fProcessNames.get(id);
-			if (name == null) name = "Unknown name"; //$NON-NLS-1$
-			rm.setData(new MIThreadDMData(name, id));
-			rm.done();
+			if (name == null) {
+				// We don't have the name yet.  Maybe we didn't fetch names yet,
+				// or maybe this is a new process
+				// This is not very efficient, but GDB does not provide a way to get the name
+				// of a single process.
+				ICommandControlDMContext controlDmc = DMContexts.getAncestorOfType(dmc, ICommandControlDMContext.class);
+				fCommandControl.queueCommand(
+						new MIListThreadGroups(controlDmc, true),
+						new DataRequestMonitor<MIListThreadGroupsInfo>(getExecutor(), rm) {
+							@Override
+							protected void handleCompleted() {
+								String name = null;
+								if (isSuccess()) {
+									for (IThreadGroupInfo groupInfo : getData().getGroupList()) {
+										fProcessNames.put(groupInfo.getPid(), groupInfo.getName());
+										if (groupInfo.getPid().equals(id)) {
+											name = groupInfo.getName();
+										}
+									}
+								}
+								
+								if (name == null) {
+									// We still don't have the name... weird.
+									// Don't go into an infinite loop by trying again, just give up
+									name = "Unknown name"; //$NON-NLS-1$
+								}
+								rm.setData(new MIThreadDMData(name, id));
+								rm.done();	
+							}
+						});
+
+			} else {
+				rm.setData(new MIThreadDMData(name, id));
+				rm.done();
+			}
 		} else if (dmc instanceof MIThreadDMC) {
 			final MIThreadDMC threadDmc = (MIThreadDMC)dmc;
 			

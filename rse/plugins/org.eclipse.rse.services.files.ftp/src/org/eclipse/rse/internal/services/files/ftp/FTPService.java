@@ -94,6 +94,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.io.PrintStream;
 import java.io.UnsupportedEncodingException;
 import java.text.MessageFormat;
 import java.util.ArrayList;
@@ -101,6 +102,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.net.ProtocolCommandEvent;
+import org.apache.commons.net.ProtocolCommandListener;
 import org.apache.commons.net.ftp.FTP;
 import org.apache.commons.net.ftp.FTPClient;
 import org.apache.commons.net.ftp.FTPClientConfig;
@@ -151,6 +154,7 @@ public class FTPService extends AbstractFileService implements IFTPService, IFil
 	private transient String _controlEncoding; //Encoding to be used for file and path names
 
 	private OutputStream _ftpLoggingOutputStream;
+	private ProtocolCommandListener _ftpProtocolCommandListener;
 	private IPropertySet _ftpPropertySet;
 	private Exception _exception;
 
@@ -368,7 +372,20 @@ public class FTPService extends AbstractFileService implements IFTPService, IFil
 
 		if(_ftpLoggingOutputStream!=null)
 		{
-			_ftpClient.registerSpyStream(_ftpLoggingOutputStream);
+			_ftpProtocolCommandListener = new ProtocolCommandListener() {
+
+				private PrintStream os = new PrintStream(_ftpLoggingOutputStream);
+
+				public void protocolCommandSent(ProtocolCommandEvent event) {
+					os.print(event.getMessage());
+				}
+
+				public void protocolReplyReceived(ProtocolCommandEvent event) {
+					os.println(event.getMessage());
+				}
+
+			};
+			_ftpClient.addProtocolCommandListener(_ftpProtocolCommandListener);
 		}
 
 		if (_portNumber == 0) {
@@ -382,18 +399,17 @@ public class FTPService extends AbstractFileService implements IFTPService, IFil
 		if(FTPReply.isPositiveIntermediate(userReply))
 		{
 			//intermediate response, provide password and hide it from the console
-
-			String newLine = System.getProperty("line.separator"); //$NON-NLS-1$
-
-			_ftpClient.registerSpyStream(null);
-
-			_ftpLoggingOutputStream.write(("PASS ******"+newLine).getBytes()); //$NON-NLS-1$
-			int passReply = _ftpClient.pass(_password);
-			_ftpLoggingOutputStream.write((_ftpClient.getReplyString()+newLine).getBytes());
-
-			if(_ftpLoggingOutputStream!=null)
+			int passReply;
+			if (_ftpProtocolCommandListener != null)
 			{
-				_ftpClient.registerSpyStream(_ftpLoggingOutputStream);
+				_ftpClient.removeProtocolCommandListener(_ftpProtocolCommandListener);
+				String newLine = System.getProperty("line.separator"); //$NON-NLS-1$
+				_ftpLoggingOutputStream.write(("PASS ******" + newLine).getBytes()); //$NON-NLS-1$
+				passReply = _ftpClient.pass(_password);
+				_ftpLoggingOutputStream.write((_ftpClient.getReplyString() + newLine).getBytes());
+				_ftpClient.addProtocolCommandListener(_ftpProtocolCommandListener);
+			} else {
+				passReply = _ftpClient.pass(_password);
 			}
 
 			if(!FTPReply.isPositiveCompletion(passReply))
@@ -548,7 +564,9 @@ public class FTPService extends AbstractFileService implements IFTPService, IFil
 			} else {
 				ftpClient.setFileType(FTP.ASCII_FILE_TYPE);
 			}
-			ftpClient.registerSpyStream(_ftpLoggingOutputStream);
+			if (_ftpProtocolCommandListener != null) {
+				ftpClient.addProtocolCommandListener(_ftpProtocolCommandListener);
+			}
 			ok=true;
 		} finally {
 			//disconnect the erroneous ftpClient, but forward the exception

@@ -10,6 +10,7 @@
  * Anna Dushistova  (MontaVista) - [170910] Integrate the TM Terminal View with RSE
  * Martin Oberhuber (Wind River) - [227320] Fix endless loop in TelnetTerminalShell
  * Anna Dushistova  (MontaVista) - [240523] [rseterminals] Provide a generic adapter factory that adapts any ITerminalService to an IShellService
+ * Martin Oberhuber (Wind River) - [267402] [telnet] "launch shell" takes forever
  *******************************************************************************/
 
 package org.eclipse.rse.internal.services.telnet.terminal;
@@ -91,14 +92,17 @@ public class TelnetTerminalShell extends AbstractTerminalShell {
 					|| System.getProperty("os.name").toLowerCase().startsWith( //$NON-NLS-1$
 							"linux");//$NON-NLS-1$
 			fEncoding = encoding;
-			fTelnetClient = new TelnetClient(ptyType);
+			if (ptyType == null) {
+				fTelnetClient = new TelnetClient();
+			} else {
+				fTelnetClient = new TelnetClient(ptyType);
+				fTelnetClient.addOptionHandler(new TerminalTypeOptionHandler(ptyType, true, true, true, true));
+			}
 			// request remote echo, but accept local if desired
 			fTelnetClient.addOptionHandler(new EchoOptionHandler(false, true,
 					true, true));
 			fTelnetClient.addOptionHandler(new SuppressGAOptionHandler(true,
 					true, true, true));
-			fTelnetClient.addOptionHandler(new TerminalTypeOptionHandler(
-					ptyType, true, true, true, true));
 			fTelnetClient = fSessionProvider.loginTelnetClient(fTelnetClient,
 					new NullProgressMonitor());
 			fOutputStream = fTelnetClient.getOutputStream();

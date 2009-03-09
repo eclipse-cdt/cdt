@@ -20,6 +20,7 @@
  * Anna Dushistova  (MontaVista) - adapted from SshShellService
  * Anna Dushistova  (MontaVista) - [240523] [rseterminals] Provide a generic adapter factory that adapts any ITerminalService to an IShellService
  * Anna Dushistova  (MontaVista) - [261478] Remove SshShellService, SshHostShell (or deprecate and schedule for removal in 3.2)
+ * Martin Oberhuber (Wind River) - [267402] [telnet] "launch shell" takes forever
  *******************************************************************************/
 package org.eclipse.rse.internal.services.shells;
 
@@ -49,18 +50,19 @@ public class TerminalShellService extends AbstractShellService {
 	public IHostShell launchShell(String initialWorkingDirectory,
 			String encoding, String[] environment, IProgressMonitor monitor)
 			throws SystemMessageException {
-		ITerminalShell terminalShell = fTerminalService.launchTerminal(null,
-				encoding, environment, initialWorkingDirectory, null, monitor);
-		TerminalServiceHostShell hostShell = new TerminalServiceHostShell(
-				terminalShell, initialWorkingDirectory,
-				TerminalServiceHostShell.SHELL_INVOCATION, environment);
-		return hostShell;
+		return runCommand(initialWorkingDirectory, TerminalServiceHostShell.SHELL_INVOCATION, encoding, environment, monitor);
 	}
 
-	public IHostShell runCommand(String initialWorkingDirectory,
-			String command, String encoding, String[] environment,
-			IProgressMonitor monitor) throws SystemMessageException {
-		ITerminalShell terminalShell = fTerminalService.launchTerminal(null,
+	public IHostShell runCommand(String initialWorkingDirectory, String command, String encoding, String[] environment, IProgressMonitor monitor)
+			throws SystemMessageException {
+		// vt100 is the most common kind of terminal, and default for Telnet
+		// and SSH: see Commons Net TelnetClient#TelnetClient() and JSch
+		// ChannelSession#ttype.
+		// We therefore pick vt100 here, and adapt to it by ignoring control
+		// sequences in TerminalServiceShellOutputReader line 100. We could
+		// also request a "dumb" type here, but testing showed that the
+		// prompt is then not detected correctly.
+		ITerminalShell terminalShell = fTerminalService.launchTerminal("vt100", //$NON-NLS-1$
 				encoding, environment, initialWorkingDirectory, null, monitor);
 		TerminalServiceHostShell hostShell = new TerminalServiceHostShell(
 				terminalShell, initialWorkingDirectory, command, environment);
@@ -95,7 +97,7 @@ public class TerminalShellService extends AbstractShellService {
 		}
 		return o;
 	}
-	
+
 	public String getName()
 	{
 		return RSEServicesMessages.TerminalShellService_name;

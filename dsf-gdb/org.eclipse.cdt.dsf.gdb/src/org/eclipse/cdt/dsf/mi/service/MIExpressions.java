@@ -59,6 +59,10 @@ import org.osgi.framework.BundleContext;
 /**
  * This class implements a debugger expression evaluator as a DSF service. The
  * primary interface that clients of this class should use is IExpressions.
+ * 
+ * This class used to be name ExpressionService in the 1.1 release.
+ * 
+ * @since 2.0
  */
 public class MIExpressions extends AbstractDsfService implements IExpressions, ICachingService {
 

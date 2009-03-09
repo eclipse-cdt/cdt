@@ -1042,26 +1042,32 @@ public class CPreprocessor implements ILexerLog, IScanner, IAdaptable {
     	case IPreprocessorDirective.ppError:
     		int condOffset= lexer.nextToken().getOffset();
     		condEndOffset= lexer.consumeLine(ORIGIN_PREPROCESSOR_DIRECTIVE);
-    		int endOffset= lexer.currentToken().getEndOffset();
-    		final char[] warning= lexer.getInputChars(condOffset, condEndOffset);
-    		final int id= type == IPreprocessorDirective.ppError 
-    				? IProblem.PREPROCESSOR_POUND_ERROR 
-    				: IProblem.PREPROCESSOR_POUND_WARNING;
-    		handleProblem(id, warning, condOffset, condEndOffset); 
-    		fLocationMap.encounterPoundError(startOffset, condOffset, condEndOffset, endOffset);
+    		if (fCurrentContext.getCodeState() == CodeState.eActive) {
+    			int endOffset= lexer.currentToken().getEndOffset();
+    			final char[] warning= lexer.getInputChars(condOffset, condEndOffset);
+    			final int id= type == IPreprocessorDirective.ppError 
+    			? IProblem.PREPROCESSOR_POUND_ERROR 
+    					: IProblem.PREPROCESSOR_POUND_WARNING;
+    			handleProblem(id, warning, condOffset, condEndOffset); 
+    			fLocationMap.encounterPoundError(startOffset, condOffset, condEndOffset, endOffset);
+    		}
     		break;
     	case IPreprocessorDirective.ppPragma: 
     		condOffset= lexer.nextToken().getOffset();
     		condEndOffset= lexer.consumeLine(ORIGIN_PREPROCESSOR_DIRECTIVE);
-    		endOffset= lexer.currentToken().getEndOffset();
-    		fLocationMap.encounterPoundPragma(startOffset, condOffset, condEndOffset, endOffset);
+    		if (fCurrentContext.getCodeState() == CodeState.eActive) {
+    			int endOffset= lexer.currentToken().getEndOffset();
+    			fLocationMap.encounterPoundPragma(startOffset, condOffset, condEndOffset, endOffset);
+    		}
     		break;
     	case IPreprocessorDirective.ppIgnore:
     		lexer.consumeLine(ORIGIN_PREPROCESSOR_DIRECTIVE);
     		break;
     	default:
-    		endOffset= lexer.consumeLine(ORIGIN_PREPROCESSOR_DIRECTIVE);
-    		handleProblem(IProblem.PREPROCESSOR_INVALID_DIRECTIVE, ident.getCharImage(), startOffset, endOffset);
+    		int endOffset= lexer.consumeLine(ORIGIN_PREPROCESSOR_DIRECTIVE);
+    		if (fCurrentContext.getCodeState() == CodeState.eActive) {
+    			handleProblem(IProblem.PREPROCESSOR_INVALID_DIRECTIVE, ident.getCharImage(), startOffset, endOffset);
+    		}
     		break;
     	}
     }

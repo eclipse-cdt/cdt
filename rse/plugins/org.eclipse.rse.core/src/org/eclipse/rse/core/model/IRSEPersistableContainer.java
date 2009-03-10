@@ -14,6 +14,7 @@
  * David Dykstal (IBM) - adding new persistence support
  * David Dykstal (IBM) - 142806: refactoring persistence framework
  * David Dykstal (IBM) - [226561] Add API markup to RSE javadocs for extend / implement
+ * David Dykstal (IBM) - [261486][api] add noextend to interfaces that require it
  ********************************************************************************/
 
 package org.eclipse.rse.core.model;
@@ -27,6 +28,7 @@ package org.eclipse.rse.core.model;
  * in the parent chain from SystemFilterPool to SystemProfile.
  * @noimplement This interface is not intended to be implemented by clients.
  * The standard implementations are included in the framework. 
+ * @noextend This interface is not intended to be extended by clients.
  */
 public interface IRSEPersistableContainer {
 	

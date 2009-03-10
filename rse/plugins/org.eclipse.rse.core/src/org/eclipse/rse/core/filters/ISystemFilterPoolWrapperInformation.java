@@ -14,6 +14,7 @@
  * Contributors:
  * David McKnight   (IBM)        - [225506] [api][breaking] RSE UI leaks non-API types
  * David Dykstal (IBM) - [226561] Add API markup to RSE Javadocs where extend / implement is allowed
+ * David Dykstal (IBM) - [261486][api] add noextend to interfaces that require it
  *******************************************************************************/
 
 package org.eclipse.rse.core.filters;
@@ -29,6 +30,7 @@ package org.eclipse.rse.core.filters;
  * that implements all this and is populated via setters.
  * 
  * @noimplement This interface is not intended to be implemented by clients.
+ * @noextend This interface is not intended to be extended by clients.
  */
 public interface ISystemFilterPoolWrapperInformation {
 

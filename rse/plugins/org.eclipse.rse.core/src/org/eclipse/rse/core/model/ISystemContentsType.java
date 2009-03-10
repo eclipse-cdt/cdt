@@ -13,6 +13,7 @@
  *
  * Contributors:
  * David Dykstal (IBM) - [226561] Add API markup to RSE javadocs for extend / implement
+ * David Dykstal (IBM) - [261486][api] add noextend to interfaces that require it
  *******************************************************************************/
 
 package org.eclipse.rse.core.model;
@@ -22,6 +23,7 @@ package org.eclipse.rse.core.model;
  * can be stored in an IRemoteContainer.
  * 
  * @noimplement This interface is not intended to be implemented by clients.
+ * @noextend This interface is not intended to be extended by clients.
  */
 public interface ISystemContentsType {
 	/*

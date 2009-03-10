@@ -15,6 +15,7 @@
  * Martin Oberhuber (Wind River) - [210534] Remove ISystemHostPool.getHostList() and setName()
  * David Dykstal (IBM) - [210537] removed exception signalling from this interface, no longer needed
  * David Dykstal (IBM) - [226561] Add API markup to RSE javadocs for extend / implement
+ * David Dykstal (IBM) - [261486][api] add noextend to interfaces that require it
  ********************************************************************************/
 
 package org.eclipse.rse.core.model;
@@ -32,6 +33,7 @@ import org.eclipse.rse.core.IRSEUserIdConstants;
  * </p>
  * @noimplement This interface is not intended to be implemented by clients.
  * The standard implementations are included in the framework.
+ * @noextend This interface is not intended to be extended by clients.
  */
 public interface ISystemHostPool extends IRSEPersistableContainer {
 

@@ -13,6 +13,7 @@
  *
  * Contributors:
  * David Dykstal (IBM) - [226561] Add API markup to RSE Javadocs where extend / implement is allowed
+ * David Dykstal (IBM) - [261486][api] add noextend to interfaces that require it
  *******************************************************************************/
 
 package org.eclipse.rse.core.filters;
@@ -28,6 +29,7 @@ import org.eclipse.rse.core.subsystems.ISubSystem;
  *
  * @noimplement This interface is not intended to be implemented by clients. The
  *              allowable implementations are already present in the framework.
+ * @noextend This interface is not intended to be extended by clients.
  */
 public interface ISystemFilterReference extends IRSEReferencingObject, ISystemFilterContainerReference, ISystemContainer {
 	/**

@@ -16,6 +16,7 @@
  * Martin Oberhuber (Wind River) - [cleanup] Add API "since" Javadoc tags
  * David Dykstal (IBM) - [224671] [api] org.eclipse.rse.core API leaks non-API types
  * David Dykstal (IBM) - [226561] Add API markup to RSE Javadocs where extend / implement is allowed
+ * David Dykstal (IBM) - [261486][api] add noextend to interfaces that require it
  *******************************************************************************/
 
 package org.eclipse.rse.core.filters;
@@ -33,6 +34,7 @@ import org.eclipse.rse.core.subsystems.ISubSystem;
  * 
  * @noimplement This interface is not intended to be implemented by clients. The
  *              allowable implementations already present in the framework.
+ * @noextend This interface is not intended to be extended by clients.
  */
 
 public interface ISystemFilter extends IRSEReferencedObject, ISystemFilterContainer, IRSEModelObject {

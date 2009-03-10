@@ -13,6 +13,7 @@
  * 
  * Contributors:
  * David Dykstal (IBM) - [226561] Add API markup to RSE javadocs for extend / implement
+ * David Dykstal (IBM) - [261486][api] add noextend to interfaces that require it
  *******************************************************************************/
 
 package org.eclipse.rse.core.model;
@@ -27,6 +28,7 @@ import org.eclipse.rse.services.clientserver.messages.SystemMessage;
  * may be remote RSE resources, or local workspace resources. 
  * @noimplement This interface is not intended to be implemented by clients.
  * Extend {@link AbstractSystemResourceSet} instead.
+ * @noextend This interface is not intended to be extended by clients.
  */
 public interface ISystemResourceSet {
 	

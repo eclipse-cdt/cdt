@@ -13,6 +13,7 @@
  * 
  * Contributors:
  * Martin Oberhuber (Wind River) - [cleanup] Add API "since" Javadoc tags
+ * David Dykstal (IBM) - [261486][api] add noextend to interfaces that require it
  *******************************************************************************/
 
 package org.eclipse.rse.core.subsystems;
@@ -25,6 +26,7 @@ import org.eclipse.rse.core.model.IHost;
  * @noimplement This interface is not intended to be implemented by clients.
  *              Clients should subclass {@link AbstractConnectorServiceManager}
  *              instead.
+ * @noextend This interface is not intended to be extended by clients.       
  */
 public interface IConnectorServiceManager {
 	IConnectorService getConnectorService(IHost host, Class commonSSinterface);

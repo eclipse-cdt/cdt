@@ -16,6 +16,7 @@
  * Martin Oberhuber (Wind River) - [206742] Make SystemHostPool thread-safe
  * David Dykstal (IBM) - [197036] cleaned javddoc for getConnectorServices()
  * David Dykstal (IBM) - [226561] Add API markup to RSE javadocs for extend / implement
+ * David Dykstal (IBM) - [261486][api] add noextend to interfaces that require it
  *******************************************************************************/
 
 package org.eclipse.rse.core.model;
@@ -33,6 +34,7 @@ import org.eclipse.rse.core.subsystems.ISubSystem;
  * object oriented containment.
  * @noimplement This interface is not intended to be implemented by clients.
  * The standard implementations are included in the framework.
+ * @noextend This interface is not intended to be extended by clients.
  */
 public interface IHost extends IAdaptable, IRSEModelObject {
 	

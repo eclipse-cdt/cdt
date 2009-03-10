@@ -13,6 +13,7 @@
  *
  * Contributors:
  * David Dykstal (IBM) - [226561] Add API markup to RSE Javadocs where extend / implement is allowed
+ * David Dykstal (IBM) - [261486][api] add noextend to interfaces that require it
  *******************************************************************************/
 
 package org.eclipse.rse.core.filters;
@@ -23,7 +24,7 @@ import org.eclipse.rse.services.clientserver.messages.SystemMessage;
  * An interface required if you wish to be called back by the system filter
  * wizard, when the user selects a target filter pool.
  * 
- * @noimplement This interface is not intended to be implemented by clients.
+ * @noextend This interface is not intended to be extended by clients.
  */
 public interface ISystemFilterPoolSelectionValidator {
 

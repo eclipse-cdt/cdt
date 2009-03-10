@@ -13,6 +13,7 @@
  * 
  * Contributors:
  * David Dykstal (IBM) - [226561] Add API markup to RSE Javadocs where extend / implement is allowed
+ * David Dykstal (IBM) - [261486][api] add noextend to interfaces that require it
  *******************************************************************************/
 
 package org.eclipse.rse.core.filters;
@@ -33,6 +34,7 @@ import org.eclipse.core.runtime.IAdaptable;
  * callbacks that done to the provider for every interesting event. Should you 
  * not care about these, supply empty shells for these methods.
  * @noimplement This interface is not intended to be implemented by clients.
+ * @noextend This interface is not intended to be extended by clients.
  */
 public interface ISystemFilterPoolManagerProvider extends IAdaptable {
 

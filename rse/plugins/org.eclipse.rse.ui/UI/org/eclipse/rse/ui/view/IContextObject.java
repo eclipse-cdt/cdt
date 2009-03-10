@@ -11,6 +11,7 @@
  *
  * Contributors:
  * David McKnight   (IBM)        - [187739] [refresh] Sub Directories are collapsed when Parent Directory is Refreshed on Remote Systems
+ * David Dykstal (IBM) - [261486][api] add noextend to interfaces that require it
  *******************************************************************************/
 package org.eclipse.rse.ui.view;
 
@@ -29,6 +30,7 @@ import org.eclipse.rse.core.subsystems.ISubSystem;
  *
  * @noimplement This interface is not intended to be implemented by clients
  *              (this message added in RSE 3.0.1).
+ * @noextend This interface is not intended to be extended by clients.      
  */
 public interface IContextObject
 {

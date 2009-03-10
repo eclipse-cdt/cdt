@@ -12,6 +12,7 @@
  * 
  * Contributors:
  * David Dykstal (IBM) - [226561] Add API markup for noextend / noimplement where needed
+ * David Dykstal (IBM) - [261486][api] add noextend to interfaces that require it
  ********************************************************************************/
 
 package org.eclipse.rse.core.references;
@@ -27,6 +28,7 @@ package org.eclipse.rse.core.references;
  * by the subtype IRSEPersistableReferencedObject.
  * @noimplement This interface is not intended to be implemented by clients.
  * The standard implementations are included in the framework.
+ * @noextend This interface is not intended to be extended by clients.
  */
 public interface IRSEReferencedObject extends IRSEBaseReferencedObject {
 

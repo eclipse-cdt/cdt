@@ -13,6 +13,7 @@
  * 
  * Contributors:
  * David Dykstal (IBM) - [226561] Add API markup to RSE javadocs for extend / implement
+ * David Dykstal (IBM) - [261486][api] add noextend to interfaces that require it
  *******************************************************************************/
 
 package org.eclipse.rse.core.model;
@@ -21,7 +22,8 @@ package org.eclipse.rse.core.model;
  * ISystemContainer is an interface implemented by objects that can contain remote resources.
  * @noimplement This interface is not intended to be implemented by clients.
  * The standard implementations are included in the framework.
- * These can be extended by clients.
+ * These implementations can be extended by clients.
+ * @noextend This interface is not intended to be extended by clients.
  */
 public interface ISystemContainer {
 

@@ -7,6 +7,7 @@
  * Contributors:
  * David Dykstal (IBM) - [224671] [api] org.eclipse.rse.core API leaks non-API types
  * David Dykstal (IBM) - [226561] Add API markup to RSE javadocs for extend / implement
+ * David Dykstal (IBM) - [261486][api] add noextend to interfaces that require it
  *********************************************************************************/
 
 package org.eclipse.rse.core.model;
@@ -16,6 +17,7 @@ package org.eclipse.rse.core.model;
  * 
  * @noimplement This interface is not intended to be implemented by clients. The
  *              standard implementations are included in the framework.
+ * @noextend This interface is not intended to be extended by clients.
  *
  * @since org.eclipse.rse.core 3.0
  */

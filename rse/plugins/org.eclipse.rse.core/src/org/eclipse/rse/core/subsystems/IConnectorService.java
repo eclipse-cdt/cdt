@@ -18,6 +18,7 @@
  * Martin Oberhuber (Wind River) - [cleanup] Add API "since" Javadoc tags
  * David Dykstal (IBM) - [210474] Deny save password function missing
  * David Dykstal (IBM) - [225089][ssh][shells][api] Canceling connection leads to exception
+ * David Dykstal (IBM) - [261486][api] add noextend to interfaces that require it
  ********************************************************************************/
 
 package org.eclipse.rse.core.subsystems;
@@ -50,6 +51,7 @@ import org.eclipse.rse.services.clientserver.messages.SystemMessageException;
  * @noimplement This interface is not intended to be implemented by clients.
  *              Clients should subclass {@link AbstractConnectorService}
  *              instead.
+ * @noextend This interface is not intended to be extended by clients.
  */
 public interface IConnectorService extends IRSEModelObject {
 

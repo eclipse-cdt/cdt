@@ -90,7 +90,6 @@ public class MemoryManager {
 		}
 		catch (Exception e){
 			// java version to old so no mbean created - will use fallback
-			e.printStackTrace();
 		}
 	}
 

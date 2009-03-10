@@ -16,6 +16,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.RejectedExecutionException;
 
+import org.eclipse.cdt.core.IAddress;
+import org.eclipse.cdt.dsf.concurrent.ConfinedToDsfExecutor;
 import org.eclipse.cdt.dsf.concurrent.DataRequestMonitor;
 import org.eclipse.cdt.dsf.concurrent.DsfRunnable;
 import org.eclipse.cdt.dsf.concurrent.IDsfStatusConstants;
@@ -34,6 +36,7 @@ import org.eclipse.cdt.dsf.debug.service.IStack.IFrameDMData;
 import org.eclipse.cdt.dsf.debug.ui.IDsfDebugUIConstants;
 import org.eclipse.cdt.dsf.debug.ui.viewmodel.SteppingController;
 import org.eclipse.cdt.dsf.debug.ui.viewmodel.SteppingController.SteppingTimedOutEvent;
+import org.eclipse.cdt.dsf.internal.ui.DsfUIPlugin;
 import org.eclipse.cdt.dsf.service.DsfSession;
 import org.eclipse.cdt.dsf.ui.concurrent.ViewerDataRequestMonitor;
 import org.eclipse.cdt.dsf.ui.viewmodel.AbstractVMContext;
@@ -44,6 +47,14 @@ import org.eclipse.cdt.dsf.ui.viewmodel.VMDelta;
 import org.eclipse.cdt.dsf.ui.viewmodel.datamodel.AbstractDMVMNode;
 import org.eclipse.cdt.dsf.ui.viewmodel.datamodel.AbstractDMVMProvider;
 import org.eclipse.cdt.dsf.ui.viewmodel.datamodel.IDMVMContext;
+import org.eclipse.cdt.dsf.ui.viewmodel.properties.IElementPropertiesProvider;
+import org.eclipse.cdt.dsf.ui.viewmodel.properties.IPropertiesUpdate;
+import org.eclipse.cdt.dsf.ui.viewmodel.properties.LabelAttribute;
+import org.eclipse.cdt.dsf.ui.viewmodel.properties.LabelColumnInfo;
+import org.eclipse.cdt.dsf.ui.viewmodel.properties.LabelImage;
+import org.eclipse.cdt.dsf.ui.viewmodel.properties.LabelText;
+import org.eclipse.cdt.dsf.ui.viewmodel.properties.PropertiesBasedLabelProvider;
+import org.eclipse.core.runtime.IStatus;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IChildrenCountUpdate;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IChildrenUpdate;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IElementCompareRequest;
@@ -58,10 +69,13 @@ import org.eclipse.debug.ui.IDebugUIConstants;
 import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.ui.IMemento;
 
-@SuppressWarnings("restriction")
 public class StackFramesVMNode extends AbstractDMVMNode 
-    implements IElementLabelProvider, IElementMementoProvider
+    implements IElementLabelProvider, IElementMementoProvider, IElementPropertiesProvider
 {
+    /**
+     * @since 2.0
+     */    
+    public static final String PROP_IS_INCOMPLETE_STACK_MARKER = "is_incomplete_stack_marker";  //$NON-NLS-1$
     
 	/**
 	 * View model context representing the end of an incomplete stack.
@@ -100,8 +114,17 @@ public class StackFramesVMNode extends AbstractDMVMNode
 	 */
 	private Map<IExecutionDMContext, Integer> fTemporaryLimits = new HashMap<IExecutionDMContext, Integer>();
 
+    /**
+     * The label provider delegate.  This VM node will delegate label updates to this provider
+     * which can be created by sub-classes. 
+     *  
+     * @since 2.0
+     */    
+    private IElementLabelProvider fLabelProvider;
+
 	public StackFramesVMNode(AbstractDMVMProvider provider, DsfSession session) {
         super(provider, session, IStack.IFrameDMContext.class);
+        fLabelProvider = createLabelProvider();
     }
     
     @Override
@@ -109,6 +132,102 @@ public class StackFramesVMNode extends AbstractDMVMNode
         return "StackFramesVMNode(" + getSession().getId() + ")";  //$NON-NLS-1$ //$NON-NLS-2$
     }
     
+    /**
+     * Creates the label provider delegate.  This VM node will delegate label 
+     * updates to this provider which can be created by sub-classes.   
+     *  
+     * @return Returns the label provider for this node. 
+     *  
+     * @since 2.0
+     */    
+    protected IElementLabelProvider createLabelProvider() {
+        PropertiesBasedLabelProvider provider = new PropertiesBasedLabelProvider();
+
+        provider.setColumnInfo(
+            PropertiesBasedLabelProvider.ID_COLUMN_NO_COLUMNS, 
+            new LabelColumnInfo(new LabelAttribute[] { 
+                new LabelText(
+                    MessagesForLaunchVM.StackFramesVMNode_No_columns__Incomplete_stack_marker__text_format,
+                    new String[] { PROP_NAME })
+                {
+                    @Override
+                    public boolean isEnabled(IStatus status, Map<String, Object> properties) {
+                        return Boolean.TRUE.equals(properties.get(PROP_IS_INCOMPLETE_STACK_MARKER));
+                    }
+                    
+                },
+                new LabelText(
+                    MessagesForLaunchVM.StackFramesVMNode_No_columns__text_format, 
+                    new String[] { 
+                        ILaunchVMConstants.PROP_FRAME_ADDRESS, 
+                        ILaunchVMConstants.PROP_FRAME_FUNCTION, 
+                        ILaunchVMConstants.PROP_FRAME_FILE, 
+                        ILaunchVMConstants.PROP_FRAME_LINE, 
+                        ILaunchVMConstants.PROP_FRAME_COLUMN, 
+                        ILaunchVMConstants.PROP_FRAME_MODULE})
+                {
+                    @Override
+                    public boolean isEnabled(IStatus status, java.util.Map<String,Object> properties) {
+                        Integer line = (Integer)properties.get(ILaunchVMConstants.PROP_FRAME_LINE);
+                        String file = (String)properties.get(ILaunchVMConstants.PROP_FRAME_FILE);
+                        return line != null && line >= 0 && file != null && file.length() > 0;
+                    };
+                },
+                new LabelText(
+                    MessagesForLaunchVM.StackFramesVMNode_No_columns__No_line__text_format, 
+                    new String[] { 
+                        ILaunchVMConstants.PROP_FRAME_ADDRESS, 
+                        ILaunchVMConstants.PROP_FRAME_FUNCTION, 
+                        ILaunchVMConstants.PROP_FRAME_MODULE})
+                {
+                    @Override
+                    public boolean isEnabled(IStatus status, java.util.Map<String,Object> properties) {
+                        String function = (String)properties.get(ILaunchVMConstants.PROP_FRAME_FUNCTION);
+                        String module = (String)properties.get(ILaunchVMConstants.PROP_FRAME_MODULE);
+                        return function != null && function.length() > 0 && module != null && module.length() > 0;
+                    };
+                },
+                new LabelText(
+                    MessagesForLaunchVM.StackFramesVMNode_No_columns__No_function__text_format, 
+                    new String[] { 
+                        ILaunchVMConstants.PROP_FRAME_ADDRESS, 
+                        ILaunchVMConstants.PROP_FRAME_MODULE})
+                {
+                    @Override
+                    public boolean isEnabled(IStatus status, java.util.Map<String,Object> properties) {
+                        String module = (String)properties.get(ILaunchVMConstants.PROP_FRAME_MODULE);
+                        return module != null && module.length() > 0;
+                    };
+                },
+                new LabelText(
+                    MessagesForLaunchVM.StackFramesVMNode_No_columns__No_module__text_format, 
+                    new String[] { 
+                        ILaunchVMConstants.PROP_FRAME_ADDRESS, 
+                        ILaunchVMConstants.PROP_FRAME_FUNCTION})
+                {
+                    @Override
+                    public boolean isEnabled(IStatus status, java.util.Map<String,Object> properties) {
+                        String function = (String)properties.get(ILaunchVMConstants.PROP_FRAME_FUNCTION);
+                        return function != null && function.length() > 0;
+                    };
+                },
+                new LabelText(
+                    MessagesForLaunchVM.StackFramesVMNode_No_columns__Address_only__text_format, 
+                    new String[] { ILaunchVMConstants.PROP_FRAME_ADDRESS }),
+                new LabelImage(DebugUITools.getImageDescriptor(IDebugUIConstants.IMG_OBJS_STACKFRAME_RUNNING)) {
+                    { setPropertyNames(new String[] { ILaunchVMConstants.PROP_IS_SUSPENDED }); }
+                    
+                    @Override
+                    public boolean isEnabled(IStatus status, java.util.Map<String,Object> properties) {
+                        return Boolean.FALSE.equals( properties.get(ILaunchVMConstants.PROP_IS_SUSPENDED) );
+                    };
+                },
+                new LabelImage(DebugUITools.getImageDescriptor(IDebugUIConstants.IMG_OBJS_STACKFRAME))
+            }));
+        
+        return provider;
+    }
+
     /*
      * (non-Javadoc)
      * @see org.eclipse.cdt.dsf.ui.viewmodel.datamodel.AbstractDMVMNode#updateHasElementsInSessionThread(org.eclipse.debug.internal.ui.viewers.model.provisional.IHasChildrenUpdate)
@@ -239,83 +358,86 @@ public class StackFramesVMNode extends AbstractDMVMNode
         }
     }
     
-	/*
-     * (non-Javadoc)
-     * @see org.eclipse.debug.internal.ui.viewers.model.provisional.IElementLabelProvider#update(org.eclipse.debug.internal.ui.viewers.model.provisional.ILabelUpdate[])
-     */
     public void update(final ILabelUpdate[] updates) {
+        fLabelProvider.update(updates);
+    }
+    
+    /**
+     * @see IElementPropertiesProvider#update(IPropertiesUpdate[])
+     * 
+     * @since 2.0
+     */    
+    public void update(final IPropertiesUpdate[] updates) {
         try {
             getSession().getExecutor().execute(new DsfRunnable() {
                 public void run() {
-                    updateLabelInSessionThread(updates);
+                    updatePropertiesInSessionThread(updates);
                 }});
         } catch (RejectedExecutionException e) {
-            for (ILabelUpdate update : updates) {
+            for (IPropertiesUpdate update : updates) {
                 handleFailedUpdate(update);
             }
         }
     }
-
-    protected void updateLabelInSessionThread(ILabelUpdate[] updates) {
-        for (final ILabelUpdate update : updates) {
-            IStack stackService = getServicesTracker().getService(IStack.class);
-            
-            if (stackService == null) {
+    
+    /**
+     * @since 2.0
+     */
+    @ConfinedToDsfExecutor("getSession().getExecutor()")
+    protected void updatePropertiesInSessionThread(final IPropertiesUpdate[] updates) {
+        IStack service = getServicesTracker().getService(IStack.class);
+        
+        for (final IPropertiesUpdate update : updates) {
+            if (service == null) {
             	handleFailedUpdate(update);
             	continue;
             }
 
         	if (update.getElement() instanceof IncompleteStackVMContext) {
-				update.setLabel("<...more frames...>", 0); //$NON-NLS-1$
-        		update.setImageDescriptor(DebugUITools.getImageDescriptor(IDebugUIConstants.IMG_OBJS_STACKFRAME), 0);
+        	    update.setProperty(PROP_IS_INCOMPLETE_STACK_MARKER, Boolean.TRUE);
         		update.done();
         		continue;
         	}
 
-            final IFrameDMContext dmc = findDmcInPath(update.getViewerInput(), update.getElementPath(), IFrameDMContext.class);
+            IFrameDMContext dmc = findDmcInPath(update.getViewerInput(), update.getElementPath(), IFrameDMContext.class);
             if (dmc == null) {
             	handleFailedUpdate(update);
             	continue;
             }
 
-            getDMVMProvider().getModelData(
-                this, update, 
-                getServicesTracker().getService(IStack.class, null),
+            IRunControl runControlService = getServicesTracker().getService(IRunControl.class);
+            IExecutionDMContext execDmc = DMContexts.getAncestorOfType(dmc, IExecutionDMContext.class);
+            if (execDmc != null && runControlService != null) {
+                update.setProperty(ILaunchVMConstants.PROP_IS_SUSPENDED, runControlService.isSuspended(execDmc));
+                update.setProperty(ILaunchVMConstants.PROP_IS_STEPPING, runControlService.isStepping(execDmc));
+            } else {
+                update.setStatus(DsfUIPlugin.newErrorStatus(IDsfStatusConstants.INVALID_HANDLE, "Invalid context or service not available", null)); //$NON-NLS-1$                
+            }
+
+            service.getFrameData(
                 dmc, 
                 new ViewerDataRequestMonitor<IFrameDMData>(getSession().getExecutor(), update) { 
                     @Override
-                    protected void handleCompleted() {
-                        /*
-                         * Check that the request was evaluated and data is still
-                         * valid.  The request could fail if the state of the 
-                         * service changed during the request, but the view model
-                         * has not been updated yet.
-                         */ 
-                        if (!isSuccess()) {
-                            assert getStatus().isOK() || 
-                                   getStatus().getCode() != IDsfStatusConstants.INTERNAL_ERROR || 
-                                   getStatus().getCode() != IDsfStatusConstants.NOT_SUPPORTED;
-                            handleFailedUpdate(update);
-                            return;
-                        }
-                        
-                        /*
-                         * If columns are configured, call the protected methods to 
-                         * fill in column values.  
-                         */
-                        String[] localColumns = update.getColumnIds();
-                        if (localColumns == null) localColumns = new String[] { null };
-                        
-                        for (int i = 0; i < localColumns.length; i++) {
-                            fillColumnLabel(dmc, getData(), localColumns[i], i, update);
-                        }
+                    protected void handleSuccess() {
+                        fillFrameDataProperties(update, getData());
                         update.done();
                     }
-                },
-                getExecutor());
+                });
         }
     }
 
+    protected void fillFrameDataProperties(IPropertiesUpdate update, IFrameDMData data) {
+        IAddress address = data.getAddress();
+        if (address != null) {
+            update.setProperty(ILaunchVMConstants.PROP_FRAME_ADDRESS, "0x" + address.toString(16)); //$NON-NLS-1$
+        }
+        update.setProperty(ILaunchVMConstants.PROP_FRAME_FILE, data.getFile());
+        update.setProperty(ILaunchVMConstants.PROP_FRAME_FUNCTION, data.getFunction());
+        update.setProperty(ILaunchVMConstants.PROP_FRAME_LINE, data.getLine());
+        update.setProperty(ILaunchVMConstants.PROP_FRAME_COLUMN, data.getColumn());
+        update.setProperty(ILaunchVMConstants.PROP_FRAME_MODULE, data.getModule());        
+    }
+    
     protected void fillColumnLabel(IFrameDMContext dmContext, IFrameDMData dmData, String columnId, int idx, ILabelUpdate update) 
     {
         if (idx != 0) return;

@@ -15,7 +15,7 @@ import org.eclipse.cdt.dsf.concurrent.DataRequestMonitor;
 import org.eclipse.cdt.dsf.datamodel.AbstractDMContext;
 import org.eclipse.cdt.dsf.datamodel.IDMContext;
 import org.eclipse.cdt.dsf.datamodel.IDMData;
-import org.eclipse.cdt.dsf.datamodel.IDMService;
+import org.eclipse.cdt.dsf.service.IDsfService;
 
 /**
  * Formatted values interface describes the kinds of formatted information
@@ -24,7 +24,7 @@ import org.eclipse.cdt.dsf.datamodel.IDMService;
  * 
  * @since 1.0
  */
-public interface IFormattedValues extends IDMService {
+public interface IFormattedValues extends IDsfService {
     
     /** Marker interface for a DMC that has a formatted value. */
     public interface IFormattedDataDMContext extends IDMContext {}
@@ -78,7 +78,7 @@ public interface IFormattedValues extends IDMService {
     {
         private final String fFormatID;
         
-        public FormattedValueDMContext(IDMService service, IDMContext parent, String formatId) {
+        public FormattedValueDMContext(IDsfService service, IDMContext parent, String formatId) {
             super(service, new IDMContext[] { parent });
             fFormatID = formatId;
         }

@@ -38,6 +38,7 @@ import org.eclipse.core.runtime.MultiStatus;
  * @since 1.0
  */
 public class CountingRequestMonitor extends RequestMonitor {
+
     /**
      * Counter tracking the remaining number of times that the done() method
      * needs to be called before this request monitor is actually done.
@@ -51,7 +52,20 @@ public class CountingRequestMonitor extends RequestMonitor {
 
     public CountingRequestMonitor(Executor executor, RequestMonitor parentRequestMonitor) {
         super(executor, parentRequestMonitor);
-        super.setStatus(new MultiStatus(DsfPlugin.PLUGIN_ID, 0, "Collective status for set of sub-operations.", null)); //$NON-NLS-1$
+        super.setStatus(new MultiStatus(DsfPlugin.PLUGIN_ID, 0, "", null) { //$NON-NLS-1$
+            @Override
+            public String getMessage() {
+                StringBuffer message = new StringBuffer();
+                IStatus[] children = getChildren();
+                for (int i = 0; i < children.length; i++) {
+                    message.append(children[i].getMessage());
+                    if (i + 1 < children.length) {
+                        message.append(" ,"); //$NON-NLS-1$
+                    }
+                }
+                return message.toString();
+            }
+        }); 
     }
 
     /**

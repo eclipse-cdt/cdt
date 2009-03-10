@@ -469,26 +469,6 @@ public class GDBProcesses_7_0 extends AbstractDsfService
     	return execDmcList.toArray(new IMIExecutionDMContext[0]);
     }
 
-	/**
-	 * This method obtains the model data for a given IThreadDMContext object
-	 * which can represent a thread or a process.
-	 * 
-	 * @param dmc
-	 *            The context for which we are requesting the data
-	 * @param rm
-	 *            The request monitor that will contain the requested data
-	 */
-	@SuppressWarnings("unchecked")
-	public void getModelData(IDMContext dmc, DataRequestMonitor<?> rm) {
-		if (dmc instanceof IThreadDMContext) {
-			getExecutionData((IThreadDMContext) dmc, 
-					(DataRequestMonitor<IThreadDMData>) rm);
-		} else {
-            rm.setStatus(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, INVALID_HANDLE, "Invalid DMC type", null)); //$NON-NLS-1$
-            rm.done();
-		}
-	}
-
 	public void getExecutionData(IThreadDMContext dmc, final DataRequestMonitor<IThreadDMData> rm) {
 		if (dmc instanceof IMIProcessDMContext) {
 			final String id = ((IMIProcessDMContext)dmc).getProcId();

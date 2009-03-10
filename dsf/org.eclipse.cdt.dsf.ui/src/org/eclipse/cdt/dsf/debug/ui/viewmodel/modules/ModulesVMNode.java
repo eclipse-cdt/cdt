@@ -11,10 +11,11 @@
  *******************************************************************************/
 package org.eclipse.cdt.dsf.debug.ui.viewmodel.modules;
 
+import java.util.Map;
 import java.util.concurrent.RejectedExecutionException;
 
+import org.eclipse.cdt.dsf.concurrent.ConfinedToDsfExecutor;
 import org.eclipse.cdt.dsf.concurrent.DsfRunnable;
-import org.eclipse.cdt.dsf.concurrent.IDsfStatusConstants;
 import org.eclipse.cdt.dsf.concurrent.RequestMonitor;
 import org.eclipse.cdt.dsf.datamodel.IDMContext;
 import org.eclipse.cdt.dsf.debug.service.IModules;
@@ -23,21 +24,33 @@ import org.eclipse.cdt.dsf.debug.service.IModules.IModuleDMContext;
 import org.eclipse.cdt.dsf.debug.service.IModules.IModuleDMData;
 import org.eclipse.cdt.dsf.debug.service.IModules.ISymbolDMContext;
 import org.eclipse.cdt.dsf.debug.ui.IDsfDebugUIConstants;
-import org.eclipse.cdt.dsf.internal.ui.DsfUIPlugin;
+import org.eclipse.cdt.dsf.internal.ui.DsfUILabelImage;
 import org.eclipse.cdt.dsf.service.DsfSession;
 import org.eclipse.cdt.dsf.ui.concurrent.ViewerDataRequestMonitor;
 import org.eclipse.cdt.dsf.ui.viewmodel.VMDelta;
 import org.eclipse.cdt.dsf.ui.viewmodel.datamodel.AbstractDMVMNode;
 import org.eclipse.cdt.dsf.ui.viewmodel.datamodel.AbstractDMVMProvider;
 import org.eclipse.cdt.dsf.ui.viewmodel.datamodel.IDMVMContext;
+import org.eclipse.cdt.dsf.ui.viewmodel.properties.IElementPropertiesProvider;
+import org.eclipse.cdt.dsf.ui.viewmodel.properties.IPropertiesUpdate;
+import org.eclipse.cdt.dsf.ui.viewmodel.properties.LabelAttribute;
+import org.eclipse.cdt.dsf.ui.viewmodel.properties.LabelColumnInfo;
+import org.eclipse.cdt.dsf.ui.viewmodel.properties.LabelFont;
+import org.eclipse.cdt.dsf.ui.viewmodel.properties.LabelText;
+import org.eclipse.cdt.dsf.ui.viewmodel.properties.PropertiesBasedLabelProvider;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.debug.internal.ui.IInternalDebugUIConstants;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IChildrenUpdate;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IElementLabelProvider;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.ILabelUpdate;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IModelDelta;
+import org.eclipse.jface.resource.JFaceResources;
 
-@SuppressWarnings("restriction")
+/**
+ * @since 1.0
+ */    
 public class ModulesVMNode extends AbstractDMVMNode
-    implements IElementLabelProvider
+    implements IElementLabelProvider, IElementPropertiesProvider
 {
     /**
      * Marker type for the modules VM context.  It allows action enablement 
@@ -49,9 +62,57 @@ public class ModulesVMNode extends AbstractDMVMNode
         }
     }
     
+    /**
+     * @since 2.0
+     */    
+    public static final String PROP_IS_LOADED = "is_loaded";  //$NON-NLS-1$
     
+    
+    /**
+     * The label provider delegate.  This VM node will delegate label updates to this provider
+     * which can be created by sub-classes. 
+     *  
+     * @since 2.0
+     */    
+    private IElementLabelProvider fLabelProvider;
+
+    /**
+     * Creates the label provider delegate.  This VM node will delegate label 
+     * updates to this provider which can be created by sub-classes.   
+     *  
+     * @return Returns the label provider for this node. 
+     *  
+     * @since 2.0
+     */    
+    protected IElementLabelProvider createLabelProvider() {
+        PropertiesBasedLabelProvider provider = new PropertiesBasedLabelProvider();
+
+        provider.setColumnInfo(
+            PropertiesBasedLabelProvider.ID_COLUMN_NO_COLUMNS, 
+            new LabelColumnInfo(new LabelAttribute[] { 
+                new LabelText(MessagesForModulesVM.ModulesVMNode_No_columns__text_format, new String[] { PROP_NAME }),
+                new DsfUILabelImage(IDsfDebugUIConstants.IMG_OBJS_SHARED_LIBRARY_SYMBOLS_LOADED) {
+                    { setPropertyNames(new String[] { PROP_IS_LOADED }); }
+                    
+                    @Override
+                    public boolean checkProperty(String propertyName, IStatus status, Map<String,Object> properties) {
+                        if (PROP_IS_LOADED.equals(propertyName)) {
+                            return Boolean.TRUE.equals( properties.get(propertyName) );
+                        }
+                        return super.checkProperty(propertyName, status, properties);
+                    };
+                },
+                new DsfUILabelImage(IDsfDebugUIConstants.IMG_OBJS_SHARED_LIBRARY_SYMBOLS_UNLOADED),
+                new LabelFont(JFaceResources.getFontDescriptor(IInternalDebugUIConstants.VARIABLE_TEXT_FONT).getFontData()[0])
+            }));
+        
+        return provider;
+    }
+
     public ModulesVMNode(AbstractDMVMProvider provider, DsfSession session) {
         super(provider, session, IModuleDMContext.class);
+        
+        fLabelProvider = createLabelProvider();
     }
     
     @Override
@@ -88,80 +149,60 @@ public class ModulesVMNode extends AbstractDMVMNode
         return new ModuleVMContext(dmc);
     }
     
-    public void update(final ILabelUpdate[] updates) {
+    /*
+     * @since 2.0
+     */    
+    public void update(final IPropertiesUpdate[] updates) {
         try {
             getSession().getExecutor().execute(new DsfRunnable() {
                 public void run() {
-                    updateLabelInSessionThread(updates);
+                    updatePropertiesInSessionThread(updates);
                 }});
         } catch (RejectedExecutionException e) {
-            for (ILabelUpdate update : updates) {
+            for (IPropertiesUpdate update : updates) {
                 handleFailedUpdate(update);
             }
         }
     }
-
     
-    protected void updateLabelInSessionThread(ILabelUpdate[] updates) {
-        for (final ILabelUpdate update : updates) {
-            IModules modulesService = getServicesTracker().getService(IModules.class);
+    public void update(final ILabelUpdate[] updates) {
+        fLabelProvider.update(updates);
+    }
+    
+    /**
+     * @since 2.0
+     */    
+    @ConfinedToDsfExecutor("getSession().getExecutor()")
+    protected void updatePropertiesInSessionThread(final IPropertiesUpdate[] updates) {
+        IModules modulesService = getServicesTracker().getService(IModules.class);
+        for (final IPropertiesUpdate update : updates) {
             final IModuleDMContext dmc = findDmcInPath(update.getViewerInput(), update.getElementPath(), IModuleDMContext.class);
             // If either update or service are not valid, fail the update and exit.
             if ( modulesService == null || dmc == null ) {
             	handleFailedUpdate(update);
-                continue;
+                return;
             }
             
-            // Use  different image for loaded and unloaded symbols when event to report loading of symbols is implemented.
-            update.setImageDescriptor(DsfUIPlugin.getImageDescriptor(IDsfDebugUIConstants.IMG_OBJS_SHARED_LIBRARY_SYMBOLS_LOADED), 0);
-      
             modulesService.getModuleData(
                 dmc, 
                 new ViewerDataRequestMonitor<IModuleDMData>(getSession().getExecutor(), update) { 
                     @Override
-                    protected void handleCompleted() {
-                        /*
-                         * The request could fail if the state of the service 
-                         * changed during the request, but the view model
-                         * has not been updated yet.
-                         */ 
-                        if (!isSuccess()) {
-                            assert getStatus().isOK() || 
-                                   getStatus().getCode() != IDsfStatusConstants.INTERNAL_ERROR || 
-                                   getStatus().getCode() != IDsfStatusConstants.NOT_SUPPORTED;
-                            handleFailedUpdate(update);
-                            return;
-                        }
-                        
-                        /*
-                         * If columns are configured, call the protected methods to 
-                         * fill in column values.  
-                         */
-                        String[] localColumns = update.getColumnIds();
-                        if (localColumns == null) localColumns = new String[] { null };
-                        
-                        for (int i = 0; i < localColumns.length; i++) {
-                            fillColumnLabel(dmc, getData(), localColumns[i], i, update);
-                        }
+                    protected void handleSuccess() {
+                        fillModuleDataProperties(update, getData());
                         update.done();
                     }
                 });
         }
     }
 
-    protected void fillColumnLabel(IModuleDMContext dmContext, IModuleDMData dmData,
-                                   String columnId, int idx, ILabelUpdate update) 
-    {
-        if ( columnId == null ) {
-            /*
-             *  If the Column ID comes in as "null" then this is the case where the user has decided
-             *  to not have any columns. So we need a default action which makes the most sense  and
-             *  is doable. In this case we elect to simply display the name.
-             */
-            update.setLabel(dmData.getName(), idx);
-        }
-    }
-    
+    /**
+     * @since 2.0
+     */
+    protected void fillModuleDataProperties(IPropertiesUpdate update, IModuleDMData data) {
+        update.setProperty(PROP_NAME, data.getName());
+        update.setProperty(PROP_IS_LOADED, data.isSymbolsLoaded());
+    }    
+
     public int getDeltaFlags(Object e) {
         if (e instanceof IRunControl.ISuspendedDMEvent) {
             return IModelDelta.CONTENT;

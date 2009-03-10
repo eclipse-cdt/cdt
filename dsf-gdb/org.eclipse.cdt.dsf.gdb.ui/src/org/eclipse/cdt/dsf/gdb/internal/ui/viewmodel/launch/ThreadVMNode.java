@@ -11,26 +11,27 @@
  *******************************************************************************/
 package org.eclipse.cdt.dsf.gdb.internal.ui.viewmodel.launch;
 
+import org.eclipse.cdt.dsf.concurrent.IDsfStatusConstants;
+import org.eclipse.cdt.dsf.concurrent.ImmediateExecutor;
 import org.eclipse.cdt.dsf.datamodel.IDMContext;
 import org.eclipse.cdt.dsf.debug.service.IProcesses;
-import org.eclipse.cdt.dsf.debug.service.IRunControl;
-import org.eclipse.cdt.dsf.debug.service.IProcesses.IThreadDMContext;
+import org.eclipse.cdt.dsf.debug.service.IProcesses.IProcessDMContext;
 import org.eclipse.cdt.dsf.debug.service.IProcesses.IThreadDMData;
-import org.eclipse.cdt.dsf.debug.service.IRunControl.IExecutionDMData;
-import org.eclipse.cdt.dsf.debug.service.IRunControl.StateChangeReason;
 import org.eclipse.cdt.dsf.debug.ui.viewmodel.launch.AbstractThreadVMNode;
+import org.eclipse.cdt.dsf.debug.ui.viewmodel.launch.ILaunchVMConstants;
+import org.eclipse.cdt.dsf.internal.ui.DsfUIPlugin;
 import org.eclipse.cdt.dsf.mi.service.IMIExecutionDMContext;
 import org.eclipse.cdt.dsf.service.DsfSession;
+import org.eclipse.cdt.dsf.ui.concurrent.ViewerCountingRequestMonitor;
 import org.eclipse.cdt.dsf.ui.concurrent.ViewerDataRequestMonitor;
 import org.eclipse.cdt.dsf.ui.viewmodel.datamodel.AbstractDMVMProvider;
 import org.eclipse.cdt.dsf.ui.viewmodel.datamodel.IDMVMContext;
+import org.eclipse.cdt.dsf.ui.viewmodel.properties.IPropertiesUpdate;
+import org.eclipse.cdt.dsf.ui.viewmodel.properties.VMDelegatingPropertiesUpdate;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IElementCompareRequest;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IElementLabelProvider;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IElementMementoProvider;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IElementMementoRequest;
-import org.eclipse.debug.internal.ui.viewers.model.provisional.ILabelUpdate;
-import org.eclipse.debug.ui.DebugUITools;
-import org.eclipse.debug.ui.IDebugUIConstants;
 import org.eclipse.ui.IMemento;
 
 
@@ -48,84 +49,57 @@ public class ThreadVMNode extends AbstractThreadVMNode
     }
     
     @Override
-    protected void updateLabelInSessionThread(ILabelUpdate[] updates) {
-        for (final ILabelUpdate update : updates) {
-        	final IRunControl runControl = getServicesTracker().getService(IRunControl.class);
-            if (runControl == null) {
-                    handleFailedUpdate(update);
-                    continue;
-            }
+    protected void updatePropertiesInSessionThread(IPropertiesUpdate[] updates) {
+        IPropertiesUpdate[] parentUpdates = new IPropertiesUpdate[updates.length]; 
+        
+        for (int i = 0; i < updates.length; i++) {
+            final IPropertiesUpdate update = updates[i];
             
-            final IMIExecutionDMContext execDmc = findDmcInPath(update.getViewerInput(), update.getElementPath(), IMIExecutionDMContext.class);
-
-            String imageKey = null;
-            final boolean threadSuspended;
-            if (runControl.isSuspended(execDmc)) {
-            	threadSuspended = true;
-                imageKey = IDebugUIConstants.IMG_OBJS_THREAD_SUSPENDED;
+            final ViewerCountingRequestMonitor countringRm = 
+                new ViewerCountingRequestMonitor(ImmediateExecutor.getInstance(), updates[i]);
+            int count = 0;
+            
+            // Create a delegating update which will let the super-class fill in the 
+            // standard container properties.
+            parentUpdates[i] = new VMDelegatingPropertiesUpdate(updates[i], countringRm);
+            count++;
+            
+            IProcesses processService = getServicesTracker().getService(IProcesses.class);
+            final IProcessDMContext procDmc = findDmcInPath(update.getViewerInput(), update.getElementPath(), IProcessDMContext.class);
+            
+            if (processService == null || procDmc == null) {
+                update.setStatus(DsfUIPlugin.newErrorStatus(IDsfStatusConstants.INVALID_HANDLE, "Service or handle invalid", null)); //$NON-NLS-1$
             } else {
-            	threadSuspended = false;
-                imageKey = IDebugUIConstants.IMG_OBJS_THREAD_RUNNING;
-            }
-            update.setImageDescriptor(DebugUITools.getImageDescriptor(imageKey), 0);
-
-            // Find the Reason for the State
-            runControl.getExecutionData(execDmc,
-            		new ViewerDataRequestMonitor<IExecutionDMData>(getSession().getExecutor(), update) {
-            	@Override
-				public void handleCompleted(){
-                    if (!isSuccess()) {
-                    	update.setLabel("<unavailable>", 0); //$NON-NLS-1$
-                    	update.done();
-                        return;
-                    }
-
-                    final IProcesses procService = getServicesTracker().getService(IProcesses.class);
-                    if ( procService == null ) {
-                        handleFailedUpdate(update);
-                        return;
-                    }
-
-                    final StateChangeReason reason = getData().getStateChangeReason();
-
-                    // Retrieve the rest of the thread information
-                    final IThreadDMContext threadDmc = findDmcInPath(update.getViewerInput(), update.getElementPath(), IThreadDMContext.class);
-
-                    procService.getExecutionData(
-                    	threadDmc,
-                        new ViewerDataRequestMonitor<IThreadDMData>(getSession().getExecutor(), update) {
-                            @Override
-                            public void handleCompleted() {
-                            	// We can still generate a good enough label even if this call fails
-                            	// so continue and check if we should use getData() or not.
-
-                                // Create Labels of type Thread[GDBthreadId]RealThreadID/Name (State: Reason)
-                                // Thread[1] 3457 (Suspended:BREAKPOINT)
-                                final StringBuilder builder = new StringBuilder("Thread["); //$NON-NLS-1$
-                                builder.append(execDmc.getThreadId());
-                                builder.append("] "); //$NON-NLS-1$
-                                if (isSuccess()) {
-                                	builder.append(getData().getId());
-                                	builder.append(getData().getName());
+                processService.getExecutionData(
+                    procDmc,
+                    new ViewerDataRequestMonitor<IThreadDMData>(getExecutor(), update) {
+                        @Override
+                        public void handleCompleted() {
+                            if (isSuccess()) {
+                                fillThreadDataProperties(update, getData());
+                            } else {
+                                final IMIExecutionDMContext execDmc = findDmcInPath(
+                                    update.getViewerInput(), update.getElementPath(), IMIExecutionDMContext.class);
+                                if (execDmc != null) {
+                                    update.setProperty(ILaunchVMConstants.PROP_ID, Integer.toString(execDmc.getThreadId()));
+                                } else {
+                                    update.setStatus(getStatus());
                                 }
-                                if(threadSuspended)
-                                    builder.append(" (Suspended"); //$NON-NLS-1$
-                                else
-                                    builder.append(" (Running"); //$NON-NLS-1$
-                                // Reason will be null before ContainerSuspendEvent is fired
-                                if(reason != null) {
-                                    builder.append(" : "); //$NON-NLS-1$
-                                    builder.append(reason);
-                                }
-                                builder.append(")"); //$NON-NLS-1$
-                                update.setLabel(builder.toString(), 0);
-                                update.done();
                             }
-                        });
-            	}
-            });
+                            countringRm.done();
+                        }
+                    });
+                count++;
+            }
             
+            countringRm.setDoneCount(count);
         }
+        super.updatePropertiesInSessionThread(parentUpdates);
+    }
+    
+    protected void fillThreadDataProperties(IPropertiesUpdate update, IThreadDMData data) {
+        update.setProperty(PROP_NAME, data.getName());
+        update.setProperty(ILaunchVMConstants.PROP_ID, data.getId());
     }
 
 	private String produceThreadElementName(String viewName, IMIExecutionDMContext execCtx) {

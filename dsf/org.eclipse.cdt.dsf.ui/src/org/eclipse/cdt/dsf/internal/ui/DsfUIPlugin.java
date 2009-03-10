@@ -10,11 +10,11 @@
  *******************************************************************************/
 package org.eclipse.cdt.dsf.internal.ui;
 
+import org.eclipse.cdt.dsf.concurrent.IDsfStatusConstants;
 import org.eclipse.cdt.dsf.debug.internal.ui.disassembly.model.SourceDocumentProvider;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
-import org.eclipse.debug.ui.IDebugUIConstants;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.osgi.framework.BundleContext;
@@ -124,7 +124,7 @@ public class DsfUIPlugin extends AbstractUIPlugin {
      * @param t throwable to log 
      */
     public static void log(Throwable t) {
-        log(newErrorStatus("Error logged from Debug UI: ", t)); //$NON-NLS-1$
+        log(newErrorStatus(IDsfStatusConstants.INTERNAL_ERROR, "Error logged from Debug UI: ", t)); //$NON-NLS-1$
     }
     
     /**
@@ -135,17 +135,21 @@ public class DsfUIPlugin extends AbstractUIPlugin {
     public static void logErrorMessage(String message) {
         // this message is intentionally not internationalized, as an exception may
         // be due to the resource bundle itself
-        log(newErrorStatus("Internal message logged from Debug UI: " + message, null)); //$NON-NLS-1$   
+        log(newErrorStatus(IDsfStatusConstants.INTERNAL_ERROR, "Internal message logged from Debug UI: " + message, null)); //$NON-NLS-1$   
     }
     
     /**
      * Returns a new error status for this plug-in with the given message
+     * 
      * @param message the message to be included in the status
+     * @param error code
      * @param exception the exception to be included in the status or <code>null</code> if none
      * @return a new error status
+     * 
+     * @since 2.0
      */
-    public static IStatus newErrorStatus(String message, Throwable exception) {
-        return new Status(IStatus.ERROR, DsfUIPlugin.PLUGIN_ID, IDebugUIConstants.INTERNAL_ERROR, message, exception);
+    public static IStatus newErrorStatus(int code, String message, Throwable exception) {
+        return new Status(IStatus.ERROR, DsfUIPlugin.PLUGIN_ID, code, message, exception);
     }
 
 }

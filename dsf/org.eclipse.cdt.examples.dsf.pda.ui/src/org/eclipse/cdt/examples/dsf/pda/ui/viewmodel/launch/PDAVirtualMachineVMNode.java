@@ -13,17 +13,24 @@
 package org.eclipse.cdt.examples.dsf.pda.ui.viewmodel.launch;
 
 
+import org.eclipse.cdt.dsf.concurrent.IDsfStatusConstants;
 import org.eclipse.cdt.dsf.concurrent.ImmediateExecutor;
 import org.eclipse.cdt.dsf.datamodel.IDMContext;
 import org.eclipse.cdt.dsf.debug.service.IRunControl;
 import org.eclipse.cdt.dsf.debug.service.IRunControl.IExecutionDMData;
 import org.eclipse.cdt.dsf.debug.ui.viewmodel.launch.AbstractContainerVMNode;
+import org.eclipse.cdt.dsf.debug.ui.viewmodel.launch.ILaunchVMConstants;
 import org.eclipse.cdt.dsf.service.DsfSession;
 import org.eclipse.cdt.dsf.ui.concurrent.ViewerDataRequestMonitor;
 import org.eclipse.cdt.dsf.ui.viewmodel.datamodel.AbstractDMVMProvider;
 import org.eclipse.cdt.dsf.ui.viewmodel.datamodel.IDMVMContext;
+import org.eclipse.cdt.dsf.ui.viewmodel.properties.IPropertiesUpdate;
 import org.eclipse.cdt.examples.dsf.pda.service.PDACommandControl;
+import org.eclipse.cdt.examples.dsf.pda.service.PDAThreadDMContext;
 import org.eclipse.cdt.examples.dsf.pda.service.PDAVirtualMachineDMContext;
+import org.eclipse.cdt.examples.dsf.pda.ui.PDAUIPlugin;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IChildrenUpdate;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IElementCompareRequest;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IElementMementoProvider;
@@ -70,70 +77,22 @@ public class PDAVirtualMachineVMNode extends AbstractContainerVMNode
         update.done();
 	}
 
-	
     @Override
-	protected void updateLabelInSessionThread(final ILabelUpdate update) {
-        // Get a reference to the run control service.
-        final IRunControl runControl = getServicesTracker().getService(IRunControl.class);
-        if (runControl == null) {
-            handleFailedUpdate(update);
-            return;
+    protected void updatePropertiesInSessionThread(IPropertiesUpdate[] updates) {
+        for (int i = 0; i < updates.length; i++) {
+            // Find the PDA program context.
+            final PDAVirtualMachineDMContext dmc = 
+                findDmcInPath(updates[i].getViewerInput(), updates[i].getElementPath(), PDAVirtualMachineDMContext.class);
+            if (dmc != null) {
+                updates[i].setProperty(PROP_NAME, "PDA");
+                updates[i].setProperty(ILaunchVMConstants.PROP_ID, dmc.getProgram());
+            } else {
+                updates[i].setStatus(new Status(IStatus.ERROR, PDAUIPlugin.PLUGIN_ID, IDsfStatusConstants.INVALID_HANDLE, "Invalid context", null)); //$NON-NLS-1$
+            }
         }
-        
-        // Find the PDA program context.
-        final PDAVirtualMachineDMContext programCtx = 
-            findDmcInPath(update.getViewerInput(), update.getElementPath(), PDAVirtualMachineDMContext.class);
-
-        // Call service to get current program state
-        final boolean isSuspended = runControl.isSuspended(programCtx);
-
-        // Set the program icon based on the running state of the program.
-        String imageKey = null;
-        if (isSuspended) {
-            imageKey = IDebugUIConstants.IMG_OBJS_THREAD_SUSPENDED;
-        } else {
-            imageKey = IDebugUIConstants.IMG_OBJS_THREAD_RUNNING;
-        }
-        update.setImageDescriptor(DebugUITools.getImageDescriptor(imageKey), 0);
-
-        // Retrieve the last state change reason 
-        getDMVMProvider().getModelData(
-            this, update, runControl, programCtx, 
-            new ViewerDataRequestMonitor<IExecutionDMData>(ImmediateExecutor.getInstance(), update) 
-            { 
-                @Override
-                public void handleCompleted(){
-                    // If the request failed, fail the udpate. 
-                    if (!isSuccess()) {
-                        handleFailedUpdate(update);
-                        return;
-                    }
-    
-                    // Compose the thread name string.
-                    final StringBuilder builder = new StringBuilder(); 
-    
-                    builder.append("PDA [");
-                    builder.append(programCtx.getProgram());
-                    builder.append("]");
-                    
-                    if(isSuspended) {
-                        builder.append(" (Suspended"); 
-                    } else {
-                        builder.append(" (Running"); 
-                    }
-                    // Reason will be null before ContainerSuspendEvent is fired
-                    if(getData().getStateChangeReason() != null) {
-                        builder.append(" : "); 
-                        builder.append(getData().getStateChangeReason());
-                    }
-                    builder.append(")"); 
-                    update.setLabel(builder.toString(), 0);
-                    update.done();
-                }
-            },
-            getExecutor());        
+        super.updatePropertiesInSessionThread(updates);
     }
-
+	
     private String produceProgramElementName( String viewName , PDAVirtualMachineDMContext execCtx ) {
         return "PDA." + execCtx.getProgram(); //$NON-NLS-1$
     }

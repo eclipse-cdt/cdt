@@ -14,7 +14,7 @@ import org.eclipse.cdt.dsf.concurrent.DataRequestMonitor;
 import org.eclipse.cdt.dsf.datamodel.IDMContext;
 import org.eclipse.cdt.dsf.datamodel.IDMData;
 import org.eclipse.cdt.dsf.datamodel.IDMEvent;
-import org.eclipse.cdt.dsf.datamodel.IDMService;
+import org.eclipse.cdt.dsf.service.IDsfService;
 
 /**
  * Service for accessing debugger symbols.  This service builds on the Modules
@@ -24,7 +24,7 @@ import org.eclipse.cdt.dsf.datamodel.IDMService;
  * @see IModules
  * @since 1.0
  */
-public interface ISymbols extends IDMService {
+public interface ISymbols extends IDsfService {
     public interface ISymbolObjectDMContext extends IDMContext {}
     
     /**

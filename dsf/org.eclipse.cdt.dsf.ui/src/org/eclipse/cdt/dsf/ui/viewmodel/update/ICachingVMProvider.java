@@ -11,6 +11,7 @@
 package org.eclipse.cdt.dsf.ui.viewmodel.update;
 
 import org.eclipse.cdt.dsf.ui.viewmodel.IVMProvider;
+import org.eclipse.cdt.dsf.ui.viewmodel.properties.IElementPropertiesProvider;
 
 /**
  * A view model provider which supports caching of data returned by view model
@@ -19,8 +20,18 @@ import org.eclipse.cdt.dsf.ui.viewmodel.IVMProvider;
  * 
  * @since 1.0
  */
-public interface ICachingVMProvider extends IVMProvider {
+public interface ICachingVMProvider extends IVMProvider, IElementPropertiesProvider {
+
+    /**
+     * @since 2.0
+     */
+    public static final String PROP_IS_CHANGED_PREFIX = "is_changed."; //$NON-NLS-1$
     
+    /**
+     * @since 2.0
+     */
+    public static final String PROP_CACHE_ENTRY_DIRTY = "cache_entry_dirty"; //$NON-NLS-1$
+
     /**
      * Returns the update policies that the given provider supports.
      */

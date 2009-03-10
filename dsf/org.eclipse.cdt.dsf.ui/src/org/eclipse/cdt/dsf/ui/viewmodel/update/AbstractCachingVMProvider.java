@@ -17,37 +17,31 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.Executor;
-import java.util.concurrent.RejectedExecutionException;
 
 import org.eclipse.cdt.dsf.concurrent.CountingRequestMonitor;
 import org.eclipse.cdt.dsf.concurrent.DataRequestMonitor;
-import org.eclipse.cdt.dsf.concurrent.DsfExecutor;
-import org.eclipse.cdt.dsf.concurrent.DsfRunnable;
 import org.eclipse.cdt.dsf.concurrent.IDsfStatusConstants;
 import org.eclipse.cdt.dsf.concurrent.RequestMonitor;
-import org.eclipse.cdt.dsf.datamodel.IDMContext;
-import org.eclipse.cdt.dsf.datamodel.IDMData;
-import org.eclipse.cdt.dsf.datamodel.IDMService;
 import org.eclipse.cdt.dsf.debug.internal.ui.viewmodel.update.provisional.AllUpdateScope;
 import org.eclipse.cdt.dsf.debug.internal.ui.viewmodel.update.provisional.ICachingVMProviderExtension;
 import org.eclipse.cdt.dsf.debug.internal.ui.viewmodel.update.provisional.IVMUpdateScope;
 import org.eclipse.cdt.dsf.debug.internal.ui.viewmodel.update.provisional.VisibleUpdateScope;
 import org.eclipse.cdt.dsf.internal.ui.DsfUIPlugin;
-import org.eclipse.cdt.dsf.ui.concurrent.SimpleDisplayExecutor;
 import org.eclipse.cdt.dsf.ui.concurrent.ViewerCountingRequestMonitor;
 import org.eclipse.cdt.dsf.ui.concurrent.ViewerDataRequestMonitor;
 import org.eclipse.cdt.dsf.ui.viewmodel.AbstractVMAdapter;
 import org.eclipse.cdt.dsf.ui.viewmodel.AbstractVMProvider;
+import org.eclipse.cdt.dsf.ui.viewmodel.IVMContext;
 import org.eclipse.cdt.dsf.ui.viewmodel.IVMModelProxy;
 import org.eclipse.cdt.dsf.ui.viewmodel.IVMNode;
 import org.eclipse.cdt.dsf.ui.viewmodel.VMChildrenCountUpdate;
 import org.eclipse.cdt.dsf.ui.viewmodel.VMChildrenUpdate;
 import org.eclipse.cdt.dsf.ui.viewmodel.VMHasChildrenUpdate;
 import org.eclipse.cdt.dsf.ui.viewmodel.properties.IElementPropertiesProvider;
+import org.eclipse.cdt.dsf.ui.viewmodel.properties.IPropertiesUpdate;
+import org.eclipse.cdt.dsf.ui.viewmodel.properties.VMPropertiesUpdate;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Platform;
-import org.eclipse.core.runtime.Status;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IChildrenCountUpdate;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IChildrenUpdate;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IHasChildrenUpdate;
@@ -58,16 +52,27 @@ import org.eclipse.debug.internal.ui.viewers.model.provisional.IViewerUpdate;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.ModelDelta;
 import org.eclipse.jface.viewers.TreePath;
 import org.eclipse.jface.viewers.TreeViewer;
-import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Tree;
 import org.eclipse.swt.widgets.TreeItem;
 
 /**
- * Base implementation of a caching view model provider.  
+ * Base implementation of a caching view model provider.
+ * 
+ * @since 1.0
  */
-@SuppressWarnings("restriction")
-public class AbstractCachingVMProvider extends AbstractVMProvider implements ICachingVMProvider, ICachingVMProviderExtension {
-
+public class AbstractCachingVMProvider extends AbstractVMProvider 
+    implements ICachingVMProvider, IElementPropertiesProvider, ICachingVMProviderExtension
+{
+    /**
+     * @since 2.0
+     */
+    private final static String PROP_UPDATE_STATUS = "org.eclipse.cdt.dsf.ui.viewmodel.update.update_status";  //$NON-NLS-1$
+    
+    /**
+     * @since 2.0
+     */
+    private final static int LENGTH_PROP_IS_CHANGED_PREFIX = PROP_IS_CHANGED_PREFIX.length();
+    
 	private boolean fDelayEventHandleForViewUpdate = false;
 	
 	// debug flag
@@ -169,7 +174,7 @@ public class AbstractCachingVMProvider extends AbstractVMProvider implements ICa
     /**
      * Entry with cached element data. 
      */
-    static class ElementDataEntry extends Entry {
+    private static class ElementDataEntry extends Entry {
         ElementDataEntry(ElementDataKey key) {
             super(key);
         }
@@ -210,15 +215,19 @@ public class AbstractCachingVMProvider extends AbstractVMProvider implements ICa
         Map<Integer,Object> fChildren = null;
         
         /**
-         * Map of IDMData objects, keyed by the DM context.
+         * Map containing element properties.
+         * 
+         * @since 2.0
          */
-        Map<IDMContext,Object> fDataOrStatus = new HashMap<IDMContext,Object>(1);
-        
+        Map<String, Object> fProperties = null;
+
         /**
-         * Previous known value of the DM data objects.
+         * Previous known element properties.
+         * 
+         * @since 2.0
          */
-        Map<IDMContext,IDMData> fArchiveData = new HashMap<IDMContext,IDMData>(1);;
-        
+        Map<String, Object> fArchiveProperties = null;
+
         void ensureChildrenMap() {
             if (fChildren == null) {
                 Integer childrenCount = fChildrenCount;
@@ -234,8 +243,8 @@ public class AbstractCachingVMProvider extends AbstractVMProvider implements ICa
                 "[hasChildren=" + fHasChildren + ", " +//$NON-NLS-1$ //$NON-NLS-2$
                 "childrenCount=" + fChildrenCount + //$NON-NLS-1$
                 ", children=" + fChildren + //$NON-NLS-1$ 
-                ", data/status=" + fDataOrStatus + //$NON-NLS-1$ 
-                ", oldData=" + fArchiveData + "]"; //$NON-NLS-1$ //$NON-NLS-2$ 
+                ", properties=" + fProperties + //$NON-NLS-1$ 
+                ", oldProperties=" + fArchiveProperties + "]"; //$NON-NLS-1$ //$NON-NLS-2$ 
         }
     }
 
@@ -694,24 +703,22 @@ public class AbstractCachingVMProvider extends AbstractVMProvider implements ICa
                         // We are saving current data for change history, check if the data is valid.
                         // If it valid, save it for archive, if it's not valid old archive data will be used
                         // if there is any.  And if there is no old archive data, just remove the cache entry.
-                        for (Iterator<Map.Entry<IDMContext, Object>> itr = elementDataEntry.fDataOrStatus.entrySet().iterator();
-                             itr.hasNext();)
-                        {
-                            Map.Entry<IDMContext, Object> dataOrStatusEntry = itr.next();
-                            if (dataOrStatusEntry.getValue() instanceof IDMData) {
-                                elementDataEntry.fArchiveData.put(dataOrStatusEntry.getKey(), (IDMData)dataOrStatusEntry.getValue());
-                            }
+                        if (elementDataEntry.fProperties != null) {
+                            elementDataEntry.fArchiveProperties = elementDataEntry.fProperties;
                         }
-                        elementDataEntry.fDataOrStatus.clear();
-                        if (elementDataEntry.fArchiveData.isEmpty()) {
+                        elementDataEntry.fProperties = null;
+                        
+                        // There is no archived data, which means that this entry is empty, so remove it from cache 
+                        // completely.
+                        if (elementDataEntry.fArchiveProperties == null) {
                             fCacheData.remove(entry.fKey);
                             entry.remove();
-                        }
+                        }                        
                     } else {
                         // We are not changing the archived data.  If archive data exists in the entry, leave it.
                         // Otherwise remove the whole entry.
-                        if (!elementDataEntry.fArchiveData.isEmpty()) {
-                            elementDataEntry.fDataOrStatus.clear();
+                        if (elementDataEntry.fArchiveProperties != null) {
+                            elementDataEntry.fProperties.clear();
                         } else {
                             fCacheData.remove(entry.fKey);
                             entry.remove();
@@ -943,110 +950,163 @@ public class AbstractCachingVMProvider extends AbstractVMProvider implements ICa
     }
     
     /**
-     * Retrieves the deprecated IDMData object for the given IDMContext.  This 
-     * method should be removed once the use of IDMData is replaced with 
-     * {@link IElementPropertiesProvider}.
+     * @since 2.0
      */
-    @Deprecated
-    public void getModelData(final IVMNode node, final IViewerUpdate update, final IDMService service, final IDMContext dmc, 
-        final DataRequestMonitor rm, final Executor executor)
-    {
-    	// Determine if this request is being issues on the a VM executor thread. If so
-    	// then we do not need to create a new one to insure data integrity.
-    	Executor vmExecutor = getExecutor();
-    	if ( vmExecutor instanceof SimpleDisplayExecutor && 
-    	     Display.getDefault().getThread() == Thread.currentThread() ) 
-    	{
-    		getCacheModelData(node, update, service, dmc, rm, executor );
-    	} else {
-    		vmExecutor.execute(new DsfRunnable() {
-    			public void run() {
-    				getCacheModelData(node, update, service, dmc, rm, executor );
-    			}
-    		});
-    	}
-    }
-    
-    private void getCacheModelData(final IVMNode node, final IViewerUpdate update, final IDMService service, final IDMContext dmc, 
-            final DataRequestMonitor rm, final Executor executor)
-    {
-    	ElementDataKey key = makeEntryKey(node, update);
-    	final ElementDataEntry entry = getElementDataEntry(key);
-    	/*if (entry.fDirty) {
-            rm.setStatus(Status.CANCEL_STATUS);
-            rm.done();
-        } else */{
-        	Object dataOrStatus = entry.fDataOrStatus.get(dmc);
-        	if(dataOrStatus != null) {
-        		if (dataOrStatus instanceof IDMData) {
-        			rm.setData( dataOrStatus );
-        		} else {
-        			rm.setStatus((IStatus)dataOrStatus );
-        		}
-        		rm.done();
-        	} else {
-        		// Determine if we are already running on a DSF executor thread. if so then
-        		// we do not need to create a new one to issue the request to the service.
-        		DsfExecutor dsfExecutor = service.getExecutor();
-        		if ( dsfExecutor.isInExecutorThread() ) {
-        			getModelDataFromService(node, update, service, dmc, rm, executor, entry );
-        		}
-        		else {
-        		    try {
-            			dsfExecutor.execute(new DsfRunnable() {
-            				public void run() {
-            					getModelDataFromService(node, update, service, dmc, rm, executor, entry );
-            				}
-            			});
-        		    } catch (RejectedExecutionException e) {
-            		    rm.setStatus(new Status(IStatus.ERROR, DsfUIPlugin.PLUGIN_ID, IDsfStatusConstants.INVALID_STATE, "Service session's executor shut down.", null)); //$NON-NLS-1$
-            		    rm.done();
-            		}
-        		}
-        	}
+    public void update(IPropertiesUpdate[] updates) {
+        if (updates.length == 0)
+            return;
+
+        // Optimization: if all the updates belong to the same node, avoid
+        // creating any new lists/arrays.
+        boolean allNodesTheSame = true;
+        IVMNode firstNode = getNodeForElement(updates[0].getElement());
+        for (int i = 1; i < updates.length; i++) {
+            if (firstNode != getNodeForElement(updates[i].getElement())) {
+                allNodesTheSame = false;
+                break;
+            }
+        }
+
+        if (allNodesTheSame) {
+            if ( !(firstNode instanceof IElementPropertiesProvider) ) {
+                for (IPropertiesUpdate update : updates) {
+                    update.setStatus(DsfUIPlugin.newErrorStatus(IDsfStatusConstants.INVALID_HANDLE, "Element is not a VM Context or its node is not a properties provider.", null)); //$NON-NLS-1$
+                    update.done();
+                }
+            } else {
+                updateNode(firstNode, updates);
+            }
+        } else {
+            // Sort the updates by the node.
+            Map<IVMNode, List<IPropertiesUpdate>> nodeUpdatesMap = new HashMap<IVMNode, List<IPropertiesUpdate>>();
+            for (IPropertiesUpdate update : updates) {
+                // Get the VM Context for last element in path.
+                IVMNode node = getNodeForElement(update.getElement());
+                if ( node == null || !(node instanceof IElementPropertiesProvider) ) {
+                    // Misdirected update.
+                    update.setStatus(DsfUIPlugin.newErrorStatus(IDsfStatusConstants.INVALID_HANDLE, "Element is not a VM Context or its node is not a properties provider.", null)); //$NON-NLS-1$
+                    update.done();
+                    continue;
+                }
+                if (!nodeUpdatesMap.containsKey(node)) {
+                    nodeUpdatesMap.put(node, new ArrayList<IPropertiesUpdate>());
+                }
+                nodeUpdatesMap.get(node).add(update);
+            }
+
+            // Iterate through the nodes in the sorted map.
+            for (IVMNode node : nodeUpdatesMap.keySet()) {
+                updateNode(node, nodeUpdatesMap.get(node).toArray(
+                    new IPropertiesUpdate[nodeUpdatesMap.get(node).size()]));
+            }
         }
     }
     
-    private void getModelDataFromService(final IVMNode node, final IViewerUpdate update, final IDMService service, final IDMContext dmc, 
-            final DataRequestMonitor rm, final Executor executor, final ElementDataEntry entry)
-    {
-    	service.getModelData(
-    		dmc,
-			new ViewerDataRequestMonitor<IDMData>(executor, update) {
-			@Override
-			protected void handleCompleted() {
-				if (isSuccess()) {
-					entry.fDataOrStatus.put(dmc, getData());
-					rm.setData(getData());
-				} else {
-					if (!isCanceled()) {
-						entry.fDataOrStatus.put(dmc, getStatus());
-					}
-					rm.setStatus(getStatus());
-				}
-				rm.done();
-			}
-		});
-    }
-    
     /**
-     * Retrieves the deprecated IDMData object for the given IDMContext.  This 
-     * method should be removed once the use of IDMData is replaced with 
-     * {@link IElementPropertiesProvider}.
+     * Convenience method that finds the VM node corresponding to given element.
+     * It returns <code>null</code> if the element is not a VM context.
+     * 
+     * @param element Element to find the VM Node for.
+     * @return View Model Node that this element was created by, or <code>null</code>.
+     * 
+     * @since 2.0
      */
-    @Deprecated
-    public IDMData getArchivedModelData(IVMNode node, IViewerUpdate update, IDMContext dmc) {
-        ElementDataKey key = makeEntryKey(node, update);
-        final Entry entry = fCacheData.get(key);
-        if ( entry instanceof ElementDataEntry) {
-            Map<IDMContext,IDMData> archiveData = ((ElementDataEntry)entry).fArchiveData; 
-            if (archiveData != null) {
-                return archiveData.get(dmc);
-            }
+    private IVMNode getNodeForElement(Object element) {
+        if (element instanceof IVMContext) {
+            return ((IVMContext) element).getVMNode();
         }
         return null;
     }
 
+    
+    protected void updateNode(final IVMNode node, IPropertiesUpdate[] updates) {
+        LinkedList <IPropertiesUpdate> missUpdates = new LinkedList<IPropertiesUpdate>();
+        for(final IPropertiesUpdate update : updates) {
+            // Find or create the cache entry for the element of this update.
+            ElementDataKey key = makeEntryKey(node, update);
+            final ElementDataEntry entry = getElementDataEntry(key);
+            
+            // The request can be retrieved from cache if all the properties that were requested in the update are 
+            // found in the map.
+            if (entry.fProperties != null && entry.fProperties.keySet().containsAll(update.getProperties())) {
+                // Cache Hit!  Just return the value.
+                if (DEBUG_CACHE && (DEBUG_PRESENTATION_ID == null || getPresentationContext().getId().equals(DEBUG_PRESENTATION_ID))) {
+                    DsfUIPlugin.debug("cacheHitHasChildren(node = " + node + ", update = " + update + ", " + entry.fHasChildren + ")"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
+                }
+                update.setAllProperties(entry.fProperties);
+                update.setStatus((IStatus)entry.fProperties.get(PROP_UPDATE_STATUS));
+                update.done();
+            } else {
+                // Cache miss!  Save the flush counter of the entry and create a proxy update.
+                final int flushCounter = entry.fFlushCounter;
+                missUpdates.add(new VMPropertiesUpdate(
+                    update.getProperties(),
+                    update, 
+                    new ViewerDataRequestMonitor<Map<String, Object>>(getExecutor(), update) {
+                        @Override
+                        protected void handleCompleted() {
+                            Map<String, Object> properties;
+                            if (!isCanceled() && flushCounter == entry.fFlushCounter) {
+                                // We are caching the result of this update.  Copy the properties from the update
+                                // to the cached properties map.
+                                if (entry.fProperties == null) {
+                                    entry.fProperties = new HashMap<String, Object>(getData().size() + 1 * 4/3);
+                                    entry.fProperties.put(PROP_CACHE_ENTRY_DIRTY, entry.fDirty);
+                                } 
+                                properties = entry.fProperties;
+                                properties.putAll(getData());
+                                
+                                // Make sure that all the properties that were requested by the user are in the 
+                                // properties map.  Otherwise, we'll never get a cache hit because the cache 
+                                // test makes sure that all keys that are requested are in the properties map.  
+                                for (String updateProperty : update.getProperties()) {
+                                    if (!properties.containsKey(updateProperty)) {
+                                        properties.put(updateProperty, null);
+                                    }
+                                }
+                            } else {
+                                // We are not caching the result of this update, but we should still
+                                // return valid data to the client.
+                                properties = new HashMap<String, Object>(getData().size() + 1 * 4/3);                                
+                                properties.put(PROP_CACHE_ENTRY_DIRTY, Boolean.TRUE);
+                                properties.putAll(getData());
+                            }
+                            
+                            properties.put(PROP_UPDATE_STATUS, getStatus());
+
+                            // If there is archive data available, calculate the requested changed value properties.
+                            // Do not calculate the changed flags if the entry has been flushed. 
+                            if (entry.fArchiveProperties != null && flushCounter == entry.fFlushCounter) {
+                                for (String updateProperty : update.getProperties()) {
+                                    if (updateProperty.startsWith(PROP_IS_CHANGED_PREFIX)) {
+                                        String changedPropertyName = updateProperty.substring(LENGTH_PROP_IS_CHANGED_PREFIX);
+                                        Object newValue = properties.get(changedPropertyName);
+                                        Object oldValue = entry.fArchiveProperties.get(changedPropertyName);
+                                        if (oldValue != null) {
+                                            properties.put(updateProperty, !oldValue.equals(newValue));
+                                        }
+                                    }
+                                }
+                            }
+                            
+                            if (DEBUG_CACHE && (DEBUG_PRESENTATION_ID == null || getPresentationContext().getId().equals(DEBUG_PRESENTATION_ID))) {
+                                DsfUIPlugin.debug("cacheSavedProperties(node = " + node + ", update = " + update + ", " + getData() + ")"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
+                            }
+                            
+                            update.setAllProperties(properties);                            
+                            update.setStatus(getStatus());
+                            update.done();
+                        }
+                    }));
+            }
+        }
+        
+        // Issue all the update proxies with one call.
+        if (!missUpdates.isEmpty()) {
+            ((IElementPropertiesProvider)node).update(missUpdates.toArray(new IPropertiesUpdate[missUpdates.size()]));
+        }
+    }
+    
     /**
      * @noreference This method is an implementation of a provisional interface and 
      * not intended to be referenced by clients.

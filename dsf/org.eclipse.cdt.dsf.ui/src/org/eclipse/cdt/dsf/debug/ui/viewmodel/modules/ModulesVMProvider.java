@@ -27,9 +27,8 @@ import org.eclipse.cdt.dsf.ui.viewmodel.datamodel.RootDMVMNode;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IPresentationContext;
 
 /**
- * 
+ * @since 1.0
  */
-@SuppressWarnings("restriction")
 public class ModulesVMProvider extends AbstractDMVMProvider {
     /*
      *  Current default for register formatting.

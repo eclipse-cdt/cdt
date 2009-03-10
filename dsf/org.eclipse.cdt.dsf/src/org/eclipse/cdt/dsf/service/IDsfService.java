@@ -44,24 +44,24 @@ public interface IDsfService {
      * Property name for the session-id of this service.  This property should be set by 
      * all DSF services when they are registered with OSGI service framework. 
      */
-    final static String PROP_SESSION_ID = "org.eclipse.cdt.dsf.service.IService.session_id"; //$NON-NLS-1$
+    public final static String PROP_SESSION_ID = "org.eclipse.cdt.dsf.service.IService.session_id"; //$NON-NLS-1$
         
     /** 
      * Returns the DSF Session that this service belongs to.
      */
-    DsfSession getSession();
+    public DsfSession getSession();
     
     /**
      * Returns the executor that should be used to call methods of this service.
      * This method is equivalent to calling getSession().getExecutor()
      */
-    DsfExecutor getExecutor();
+    public DsfExecutor getExecutor();
     
     /**
      * Returns the map of properties that this service was registered with.
      */
     @SuppressWarnings("unchecked")
-    Dictionary getProperties();
+    public Dictionary getProperties();
     
     /**
      * Returns a filter string that can be used to uniquely identify this 
@@ -69,7 +69,7 @@ public interface IDsfService {
      * name, which were used to register this service.
      * @see org.osgi.framework.BundleContext#getServiceReferences
      */
-    String getServiceFilter();
+    public String getServiceFilter();
     
     /**
      * Performs initialization and registration of the given service.  Implementation 
@@ -81,13 +81,23 @@ public interface IDsfService {
      * initializaiton should fail.  
      * @param requestMonitor callback to be submitted when the initialization is complete
      */
-    void initialize(RequestMonitor requestMonitor);
+    public void initialize(RequestMonitor requestMonitor);
     
     /**
      * Performs shutdown and de-registration of the given service.    
      * @param requestMonitor callback to be submitted when shutdown is complete
      */
-    void shutdown(RequestMonitor requestMonitor);
+    public void shutdown(RequestMonitor requestMonitor);
+    
+    /**
+     * Returns whether the service is currently active.  A service should be 
+     * active after it is initialized and before it has been shut down.
+     * 
+     * @return <code>true</code> if active
+     * 
+     * @since 2.0
+     */
+    public boolean isActive(); 
     
     /**
      * Returns the startup order number of this service among services in the same session.
@@ -97,5 +107,5 @@ public interface IDsfService {
      * @return startup order number of this service
      * @see org.eclipse.cdt.dsf.service.DsfSession#getAndIncrementServiceStartupCounter()
      */
-    int getStartupNumber();
+    public int getStartupNumber();
 }

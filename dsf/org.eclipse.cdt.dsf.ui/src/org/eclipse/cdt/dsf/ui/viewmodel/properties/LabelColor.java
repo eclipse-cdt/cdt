@@ -12,6 +12,7 @@ package org.eclipse.cdt.dsf.ui.viewmodel.properties;
 
 import java.util.Map;
 
+import org.eclipse.core.runtime.IStatus;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.ILabelUpdate;
 import org.eclipse.swt.graphics.RGB;
 
@@ -21,7 +22,7 @@ import org.eclipse.swt.graphics.RGB;
  * 
  * @see LabelAttribute
  * @see LabelColumnInfo
- * @see PropertyBasedLabelProvider
+ * @see PropertiesBasedLabelProvider
  * 
  * @since 1.0
  */
@@ -50,16 +51,14 @@ public class LabelColor extends LabelAttribute {
     
     public void setForeground(RGB foreground) {
         fForeground = foreground;
-        fireAttributeChanged();
     }
 
     public void setBackground(RGB background) {
         fBackground = background;
-        fireAttributeChanged();
     }
 
     @Override
-    public void updateAttribute(ILabelUpdate update, int columnIndex, Map<String, Object> properties) {
+    public void updateAttribute(ILabelUpdate update, int columnIndex, IStatus status, Map<String, Object> properties) {
         RGB foreground = getForeground();
         if (foreground != null) {
             update.setForeground(foreground, columnIndex);

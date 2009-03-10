@@ -208,20 +208,6 @@ public class MIStack extends AbstractDsfService
         super.shutdown(rm);
     }
 
-    @SuppressWarnings("unchecked")
-    public void getModelData(IDMContext dmc, DataRequestMonitor<?> rm) {
-        if (dmc instanceof MIFrameDMC) {
-            getFrameData((MIFrameDMC)dmc, (DataRequestMonitor<IFrameDMData>)rm);
-            // getFrameData invokes rm 
-        } else if (dmc instanceof MIVariableDMC) {
-            getVariableData((MIVariableDMC)dmc, (DataRequestMonitor<IVariableDMData>)rm);
-            // getVariablesData invokes rm 
-        } else {
-            rm.setStatus(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, INVALID_HANDLE, "Unknown DMC type", null)); //$NON-NLS-1$
-            rm.done();
-        }
-    }
-
     /**
      * Creates a frame context.  This method is intended to be used by other MI 
      * services and sub-classes which need to create a frame context directly.

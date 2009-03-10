@@ -20,15 +20,19 @@ public class MessagesForNumberFormat extends NLS {
 	
     private static final String BUNDLE_NAME = "org.eclipse.cdt.dsf.debug.ui.viewmodel.numberformat.messages"; //$NON-NLS-1$
 
-    public static String NumberFormatContribution_Natural_label;
-    public static String NumberFormatContribution_Decimal_label;
-    public static String NumberFormatContribution_Hex_label;
-    public static String NumberFormatContribution_Octal_label;
-    public static String NumberFormatContribution_Binary_label;
-    public static String NumberFormatContribution_String_label;
+    public static String FormattedValueVMUtil_Natural_format__label;
+    public static String FormattedValueVMUtil_Decimal_format__label;
+    public static String FormattedValueVMUtil_Hex_format__label;
+    public static String FormattedValueVMUtil_Octal_format__label;
+    public static String FormattedValueVMUtil_Binary_format__label;
+    public static String FormattedValueVMUtil_String_format__label;
+    public static String FormattedValueVMUtil_Other_format__format_text;
 
     public static String NumberFormatContribution_EmptyFormatsList_label;
 
+    public static String FormattedValueLabelText__Value__text_format;
+    public static String FormattedValueLabelText__text_format;
+    
     static {
         // initialize resource bundle
         NLS.initializeMessages(BUNDLE_NAME, MessagesForNumberFormat.class);

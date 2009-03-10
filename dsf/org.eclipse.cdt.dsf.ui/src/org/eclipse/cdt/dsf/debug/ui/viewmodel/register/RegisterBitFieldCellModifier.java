@@ -18,7 +18,7 @@ import org.eclipse.cdt.dsf.debug.service.IRegisters.IBitFieldDMData;
 import org.eclipse.cdt.dsf.debug.service.IRegisters.IMnemonic;
 import org.eclipse.cdt.dsf.debug.ui.viewmodel.IDebugVMConstants;
 import org.eclipse.cdt.dsf.debug.ui.viewmodel.expression.WatchExpressionCellModifier;
-import org.eclipse.cdt.dsf.debug.ui.viewmodel.numberformat.IFormattedValuePreferenceStore;
+import org.eclipse.cdt.dsf.debug.ui.viewmodel.numberformat.FormattedValueVMUtil;
 import org.eclipse.cdt.dsf.ui.viewmodel.IVMContext;
 import org.eclipse.cdt.dsf.ui.viewmodel.datamodel.IDMVMContext;
 import org.eclipse.cdt.dsf.ui.viewmodel.update.AbstractCachingVMProvider;
@@ -35,15 +35,16 @@ public class RegisterBitFieldCellModifier extends WatchExpressionCellModifier {
     private IBitFieldDMData fBitFieldData = null;
     private Object fElement = null;
     private SyncRegisterDataAccess fDataAccess = null;
-    private IFormattedValuePreferenceStore fFormatPrefStore;
     
+    /**
+     * @since 2.0
+     */
     public RegisterBitFieldCellModifier(AbstractCachingVMProvider provider, 
-        IFormattedValuePreferenceStore formatPrefStore, BitFieldEditorStyle style, SyncRegisterDataAccess access ) 
+        BitFieldEditorStyle style, SyncRegisterDataAccess access ) 
     {
         fProvider = provider;
         fStyle = style;
         fDataAccess = access;
-        fFormatPrefStore = formatPrefStore;
     }
 
     /*
@@ -109,8 +110,7 @@ public class RegisterBitFieldCellModifier extends WatchExpressionCellModifier {
                      */
                     IVMContext ctx = (IVMContext) element;
                     IPresentationContext presCtx = ctx.getVMNode().getVMProvider().getPresentationContext();
-                    
-                    formatId = fFormatPrefStore.getCurrentNumericFormat(presCtx);
+                    formatId = FormattedValueVMUtil.getPreferredFormat(presCtx);
                 }
                 else {
                     formatId = IFormattedValues.NATURAL_FORMAT;
@@ -167,8 +167,7 @@ public class RegisterBitFieldCellModifier extends WatchExpressionCellModifier {
                          */
                         IVMContext ctx = (IVMContext) element;
                         IPresentationContext presCtx = ctx.getVMNode().getVMProvider().getPresentationContext();
-                        
-                        formatId = fFormatPrefStore.getCurrentNumericFormat(presCtx);
+                        formatId = FormattedValueVMUtil.getPreferredFormat(presCtx);
                     }
                     else {
                         formatId = IFormattedValues.NATURAL_FORMAT;

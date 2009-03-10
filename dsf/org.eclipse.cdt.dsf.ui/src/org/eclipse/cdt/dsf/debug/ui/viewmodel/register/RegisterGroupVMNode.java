@@ -12,6 +12,7 @@ package org.eclipse.cdt.dsf.debug.ui.viewmodel.register;
 
 import java.util.concurrent.RejectedExecutionException;
 
+import org.eclipse.cdt.dsf.concurrent.ConfinedToDsfExecutor;
 import org.eclipse.cdt.dsf.concurrent.DataRequestMonitor;
 import org.eclipse.cdt.dsf.concurrent.DsfRunnable;
 import org.eclipse.cdt.dsf.concurrent.IDsfStatusConstants;
@@ -31,15 +32,22 @@ import org.eclipse.cdt.dsf.debug.ui.viewmodel.expression.WatchExpressionCellModi
 import org.eclipse.cdt.dsf.internal.ui.DsfUIPlugin;
 import org.eclipse.cdt.dsf.service.DsfSession;
 import org.eclipse.cdt.dsf.ui.concurrent.ViewerDataRequestMonitor;
-import org.eclipse.cdt.dsf.ui.viewmodel.IVMContext;
 import org.eclipse.cdt.dsf.ui.viewmodel.VMDelta;
 import org.eclipse.cdt.dsf.ui.viewmodel.datamodel.AbstractDMVMProvider;
 import org.eclipse.cdt.dsf.ui.viewmodel.datamodel.IDMVMContext;
+import org.eclipse.cdt.dsf.ui.viewmodel.properties.IElementPropertiesProvider;
+import org.eclipse.cdt.dsf.ui.viewmodel.properties.IPropertiesUpdate;
+import org.eclipse.cdt.dsf.ui.viewmodel.properties.LabelAttribute;
+import org.eclipse.cdt.dsf.ui.viewmodel.properties.LabelColumnInfo;
+import org.eclipse.cdt.dsf.ui.viewmodel.properties.LabelFont;
+import org.eclipse.cdt.dsf.ui.viewmodel.properties.LabelImage;
+import org.eclipse.cdt.dsf.ui.viewmodel.properties.LabelText;
+import org.eclipse.cdt.dsf.ui.viewmodel.properties.PropertiesBasedLabelProvider;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
+import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.model.IExpression;
-import org.eclipse.debug.internal.ui.DebugPluginImages;
 import org.eclipse.debug.internal.ui.IInternalDebugUIConstants;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IChildrenUpdate;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IElementCompareRequest;
@@ -50,6 +58,7 @@ import org.eclipse.debug.internal.ui.viewers.model.provisional.IElementMementoRe
 import org.eclipse.debug.internal.ui.viewers.model.provisional.ILabelUpdate;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IModelDelta;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IPresentationContext;
+import org.eclipse.debug.ui.DebugUITools;
 import org.eclipse.debug.ui.IDebugUIConstants;
 import org.eclipse.debug.ui.actions.IWatchExpressionFactoryAdapter2;
 import org.eclipse.jface.resource.JFaceResources;
@@ -59,10 +68,14 @@ import org.eclipse.jface.viewers.TextCellEditor;
 import org.eclipse.jface.viewers.TreePath;
 import org.eclipse.swt.widgets.Composite;
 
-@SuppressWarnings("restriction")
 public class RegisterGroupVMNode extends AbstractExpressionVMNode
-    implements IElementEditor, IElementLabelProvider, IElementMementoProvider
+    implements IElementEditor, IElementLabelProvider, IElementMementoProvider, IElementPropertiesProvider
 {
+    /**
+     * @since 2.0
+     */    
+    private static final String PROP_REGISTER_GROUP_DESCRIPTION = "register_group_description";  //$NON-NLS-1$
+
     protected class RegisterGroupVMC extends DMVMContext
     {
         private IExpression fExpression;
@@ -129,8 +142,17 @@ public class RegisterGroupVMNode extends AbstractExpressionVMNode
     private IWatchExpressionFactoryAdapter2 fRegisterGroupExpressionFactory = null; 
     private WatchExpressionCellModifier fWatchExpressionCellModifier = new WatchExpressionCellModifier();
 
+    /**
+     * The label provider delegate.  This VM node will delegate label updates to this provider
+     * which can be created by sub-classes. 
+     *  
+     * @since 2.0
+     */    
+    private IElementLabelProvider fLabelProvider;
+
     public RegisterGroupVMNode(AbstractDMVMProvider provider, DsfSession session, SyncRegisterDataAccess syncDataAccess) {
         super(provider, session, IRegisterGroupDMContext.class);
+        fLabelProvider = createLabelProvider();
         fSyncRegisterDataAccess = syncDataAccess;
     }
 
@@ -152,11 +174,7 @@ public class RegisterGroupVMNode extends AbstractExpressionVMNode
     	}
     	return fRegisterGroupExpressionFactory;
     }
-    
-    /*
-     * (non-Javadoc)
-     * @see org.eclipse.cdt.dsf.ui.viewmodel.datamodel.AbstractDMVMNode#updateElementsInSessionThread(org.eclipse.debug.internal.ui.viewers.model.provisional.IChildrenUpdate)
-     */
+
     @Override
     protected void updateElementsInSessionThread(final IChildrenUpdate update) {
     	
@@ -180,131 +198,131 @@ public class RegisterGroupVMNode extends AbstractExpressionVMNode
                     update.done();
                 }}); 
     }
-    
-    /*
-     * (non-Javadoc)
-     * @see org.eclipse.cdt.dsf.ui.viewmodel.datamodel.AbstractDMVMNode#createVMContext(org.eclipse.cdt.dsf.datamodel.IDMContext)
-     */
+
     @Override
     protected IDMVMContext createVMContext(IDMContext dmc) {
         return new RegisterGroupVMC(dmc);
     }
 
-    /*
-     * (non-Javadoc)
-     * @see org.eclipse.debug.internal.ui.viewers.model.provisional.IElementLabelProvider#update(org.eclipse.debug.internal.ui.viewers.model.provisional.ILabelUpdate[])
-     */
+    /**
+     * Creates the label provider delegate.  This VM node will delegate label 
+     * updates to this provider which can be created by sub-classes.   
+     *  
+     * @return Returns the label provider for this node. 
+     *  
+     * @since 2.0
+     */    
+    protected IElementLabelProvider createLabelProvider() {
+        PropertiesBasedLabelProvider provider = new PropertiesBasedLabelProvider();
+
+        // The name column consists of the group name.  
+        provider.setColumnInfo(
+            IDebugVMConstants.COLUMN_ID__NAME,
+            new LabelColumnInfo(new LabelAttribute[] { 
+                new LabelText(
+                    MessagesForRegisterVM.RegisterGroupVMNode_Name_column__text_format, 
+                    new String[] { PROP_NAME }),
+                new LabelImage(DebugUITools.getImageDescriptor(IDebugUIConstants.IMG_OBJS_REGISTER_GROUP)),
+                new LabelFont(JFaceResources.getFontDescriptor(IInternalDebugUIConstants.VARIABLE_TEXT_FONT).getFontData()[0])
+            }));
+
+        // The description column contains a brief description of the register group. 
+        provider.setColumnInfo(
+            IDebugVMConstants.COLUMN_ID__DESCRIPTION,
+            new LabelColumnInfo(new LabelAttribute[] { 
+                new LabelText(MessagesForRegisterVM.RegisterGroupVMNode_Description_column__text_format, 
+                new String[] { PROP_REGISTER_GROUP_DESCRIPTION }),
+                new LabelFont(JFaceResources.getFontDescriptor(IInternalDebugUIConstants.VARIABLE_TEXT_FONT).getFontData()[0])
+            }));
+
+        // Expression column is visible only in the expressions view.  It shows the expression string that the user 
+        // entered.  Expression column images are the same as for the name column.
+        provider.setColumnInfo(
+            IDebugVMConstants.COLUMN_ID__EXPRESSION,
+            new LabelColumnInfo(new LabelAttribute[] { 
+                new LabelText(
+                    MessagesForRegisterVM.RegisterGroupVMNode_Expression_column__text_format, 
+                    new String[] { PROP_ELEMENT_EXPRESSION }),
+                new LabelImage(DebugUITools.getImageDescriptor(IDebugUIConstants.IMG_OBJS_REGISTER_GROUP)),
+                new LabelFont(JFaceResources.getFontDescriptor(IInternalDebugUIConstants.VARIABLE_TEXT_FONT).getFontData()[0])
+            }));
+
+        provider.setColumnInfo(
+            PropertiesBasedLabelProvider.ID_COLUMN_NO_COLUMNS, 
+            new LabelColumnInfo(new LabelAttribute[] { 
+                new LabelText(MessagesForRegisterVM.RegisterGroupVMNode_No_columns__text_format, 
+                    new String[] { PROP_NAME, PROP_REGISTER_GROUP_DESCRIPTION}),
+                new LabelImage(DebugUITools.getImageDescriptor(IDebugUIConstants.IMG_OBJS_REGISTER_GROUP)),
+                new LabelFont(JFaceResources.getFontDescriptor(IInternalDebugUIConstants.VARIABLE_TEXT_FONT).getFontData()[0])
+            }));
+        
+        return provider;
+    }
+
     public void update(final ILabelUpdate[] updates) {
+        fLabelProvider.update(updates);
+    }
+
+    /**
+     * @see IElementPropertiesProvider#update(IPropertiesUpdate[])
+     * 
+     * @since 2.0
+     */    
+    public void update(final IPropertiesUpdate[] updates) {
         try {
             getSession().getExecutor().execute(new DsfRunnable() {
                 public void run() {
-                    updateLabelInSessionThread(updates);
+                    updatePropertiesInSessionThread(updates);
                 }});
         } catch (RejectedExecutionException e) {
-            for (ILabelUpdate update : updates) {
+            for (IPropertiesUpdate update : updates) {
                 handleFailedUpdate(update);
             }
         }
     }
 
-    /*
-     *  Updates the labels with the required information for each visible column.
+    /**
+     * @since 2.0
      */
-    protected void updateLabelInSessionThread(ILabelUpdate[] updates) {
-        for (final ILabelUpdate update : updates) {
-        	
-            final IRegisterGroupDMContext dmc = findDmcInPath(update.getViewerInput(), update.getElementPath(), IRegisterGroupDMContext.class);
-            if ( dmc == null ) {
-            	handleFailedUpdate(update);
-                continue;
+    @ConfinedToDsfExecutor("getSession().getExecutor()")
+    protected void updatePropertiesInSessionThread(IPropertiesUpdate[] updates) {
+        IRegisters service = getServicesTracker().getService(IRegisters.class, null);
+
+        for (final IPropertiesUpdate update : updates) {
+            IExpression expression = (IExpression)DebugPlugin.getAdapter(update.getElement(), IExpression.class);
+            if (expression != null) {
+                update.setProperty(AbstractExpressionVMNode.PROP_ELEMENT_EXPRESSION, expression.getExpressionText());
             }
             
+            IRegisterGroupDMContext dmc = findDmcInPath(update.getViewerInput(), update.getElementPath(), IRegisterGroupDMContext.class);
             IRegisters regService = getServicesTracker().getService(IRegisters.class);
-            if ( regService == null ) {
+            
+            if ( dmc == null || regService == null) {
             	handleFailedUpdate(update);
-                continue;
+                return;
             }
             
-            getDMVMProvider().getModelData(
-                this, 
-                update, 
-                regService,
+            service.getRegisterGroupData(
                 dmc, 
                 new ViewerDataRequestMonitor<IRegisterGroupDMData>(getSession().getExecutor(), update) { 
                     @Override
-                    protected void handleCompleted() {
-                        /*
-                         * Check that the request was evaluated and data is still
-                         * valid.  The request could fail if the state of the 
-                         * service changed during the request, but the view model
-                         * has not been updated yet.
-                         */ 
-                        if (!isSuccess()) {
-                            assert getStatus().isOK() || 
-                                   getStatus().getCode() != IDsfStatusConstants.INTERNAL_ERROR || 
-                                   getStatus().getCode() != IDsfStatusConstants.NOT_SUPPORTED;
-                            handleFailedUpdate(update);
-                            return;
-                        }
-                        
-                        /*
-                         * If columns are configured, call the protected methods to 
-                         * fill in column values.  
-                         */
-                        String[] localColumns = update.getColumnIds();
-                        if (localColumns == null) localColumns = new String[] { null };
-                        
-                        for (int i = 0; i < localColumns.length; i++) {
-                            fillColumnLabel(dmc, getData(), localColumns[i], i, update);
-                        }
+                    protected void handleSuccess() {
+                        fillRegisterGroupDataProperties(update, getData());
                         update.done();
                     }
-                },
-                getExecutor());
+                });
         }
+    }
+    
+    /**
+     * @since 2.0
+     */
+    @ConfinedToDsfExecutor("getSession().getExecutor()")
+    protected void fillRegisterGroupDataProperties(IPropertiesUpdate update, IRegisterGroupDMData data) {
+        update.setProperty(PROP_NAME, data.getName());
+        update.setProperty(PROP_REGISTER_GROUP_DESCRIPTION, data.getName());
     }
 
-    /*
-     * Based on the specified visible column, provide the appropriate value/label.
-     */
-    protected void fillColumnLabel(IRegisterGroupDMContext dmContext, IRegisterGroupDMData dmData,
-                                   String columnId, int idx, ILabelUpdate update) 
-    {
-    	update.setFontData(JFaceResources.getFontDescriptor(IInternalDebugUIConstants.VARIABLE_TEXT_FONT).getFontData()[0], idx);
-        
-        if (IDebugVMConstants.COLUMN_ID__NAME.equals(columnId)) {
-            update.setLabel(dmData.getName(), idx);
-            update.setImageDescriptor(DebugPluginImages.getImageDescriptor(IDebugUIConstants.IMG_OBJS_REGISTER_GROUP), idx);
-        } else if (IDebugVMConstants.COLUMN_ID__VALUE.equals(columnId)) {
-            update.setLabel("", idx); //$NON-NLS-1$
-        } else if (IDebugVMConstants.COLUMN_ID__DESCRIPTION.equals(columnId)) {
-            update.setLabel(dmData.getDescription(), idx);
-        } else if (IDebugVMConstants.COLUMN_ID__TYPE.equals(columnId)) {
-            update.setLabel("", idx); //$NON-NLS-1$
-        } else if (IDebugVMConstants.COLUMN_ID__EXPRESSION.equals(columnId)) {
-            IVMContext vmc = (IVMContext)update.getElement();
-            IExpression expression = (IExpression)vmc.getAdapter(IExpression.class);
-            if (expression != null) {
-                update.setLabel(expression.getExpressionText(), idx);
-            } else {
-                update.setLabel(dmData.getName(), idx);
-            }
-        }
-        else if ( columnId == null ) {
-            /*
-             *  If the Column ID comes in as "null" then this is the case where the user has decided
-             *  to not have any columns. So we need a default action which makes the most sense  and
-             *  is doable. In this case we elect to simply display the name.
-             */
-            update.setLabel(dmData.getName(), idx);
-            update.setImageDescriptor(DebugPluginImages.getImageDescriptor(IDebugUIConstants.IMG_OBJS_REGISTER_GROUP), idx);
-        }
-    }
-   
-    /*
-     * (non-Javadoc)
-     * @see org.eclipse.cdt.dsf.ui.viewmodel.IVMNode#getDeltaFlags(java.lang.Object)
-     */
     public int getDeltaFlags(Object e) {
         if (e instanceof ISuspendedDMEvent) {
             return IModelDelta.CONTENT;
@@ -318,10 +336,6 @@ public class RegisterGroupVMNode extends AbstractExpressionVMNode
         return IModelDelta.NO_CHANGE;
     }
 
-    /*
-     * (non-Javadoc)
-     * @see org.eclipse.cdt.dsf.ui.viewmodel.IVMNode#buildDelta(java.lang.Object, org.eclipse.cdt.dsf.ui.viewmodel.VMDelta, int, org.eclipse.cdt.dsf.concurrent.RequestMonitor)
-     */
     public void buildDelta(Object e, VMDelta parentDelta, int nodeOffset, RequestMonitor rm) {
         // Although the register groups themselves are not affected by the 
         // suspended event, typically all the registers are.  Add a CONTENT changed
@@ -341,10 +355,6 @@ public class RegisterGroupVMNode extends AbstractExpressionVMNode
         rm.done();
     }
     
-    /*
-     * (non-Javadoc)
-     * @see org.eclipse.cdt.dsf.debug.ui.viewmodel.expression.IExpressionVMNode#canParseExpression(org.eclipse.debug.core.model.IExpression)
-     */
     public boolean canParseExpression(IExpression expression) {
         return parseExpressionForGroupName(expression.getExpressionText()) != null;
     }

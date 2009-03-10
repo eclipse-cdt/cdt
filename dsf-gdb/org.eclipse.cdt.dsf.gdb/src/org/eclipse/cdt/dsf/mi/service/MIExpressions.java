@@ -562,29 +562,6 @@ public class MIExpressions extends AbstractDsfService implements IExpressions, I
 				IFormattedValues.OCTAL_FORMAT, IFormattedValues.DECIMAL_FORMAT });
 		rm.done();
 	}
-	
-	/**
-	 * This method obtains the model data for a given ExpressionDMC object or
-	 * for a FormattedValueDMC, or for this DSF service.
-	 * 
-	 * @param dmc
-	 *            The context for which we are requesting the data
-	 * @param rm
-	 *            The request monitor that will contain the requested data
-	 */
-	@SuppressWarnings("unchecked")
-	public void getModelData(IDMContext dmc, DataRequestMonitor<?> rm) {
-		if (dmc instanceof MIExpressionDMC) {
-			getExpressionData((MIExpressionDMC) dmc,
-					(DataRequestMonitor<IExpressionDMData>) rm);
-		} else if (dmc instanceof FormattedValueDMContext) {
-			getFormattedExpressionValue((FormattedValueDMContext) dmc,
-					(DataRequestMonitor<FormattedValueDMData>) rm);
-		} else {
-            rm.setStatus(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, INVALID_HANDLE, "Unknown DMC type", null)); //$NON-NLS-1$
-            rm.done();
-		}
-	}
 
 	/**
 	 * Obtains the static data of an expression represented 

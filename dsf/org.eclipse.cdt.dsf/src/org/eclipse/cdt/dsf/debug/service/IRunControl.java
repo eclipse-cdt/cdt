@@ -16,7 +16,7 @@ import org.eclipse.cdt.dsf.concurrent.RequestMonitor;
 import org.eclipse.cdt.dsf.datamodel.IDMContext;
 import org.eclipse.cdt.dsf.datamodel.IDMData;
 import org.eclipse.cdt.dsf.datamodel.IDMEvent;
-import org.eclipse.cdt.dsf.datamodel.IDMService;
+import org.eclipse.cdt.dsf.service.IDsfService;
 
 /**
  * This interface provides access to controlling and monitoring the execution 
@@ -28,7 +28,7 @@ import org.eclipse.cdt.dsf.datamodel.IDMService;
  * 
  * @since 1.0
  */
-public interface IRunControl extends IDMService
+public interface IRunControl extends IDsfService
 {
     /**
      * Execution context is the object on which run control operations can be

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007 Wind River Systems and others.
+ * Copyright (c) 2008 Wind River Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,13 +8,15 @@
  * Contributors:
  *     Wind River Systems - initial API and implementation
  *******************************************************************************/
-package org.eclipse.cdt.dsf.ui.viewmodel.properties;
+package org.eclipse.cdt.dsf.internal.ui;
+
+import org.eclipse.cdt.dsf.ui.viewmodel.properties.LabelImage;
 
 /**
- * 
- * @since 1.0
+ * @since 2.0 
  */
-public interface ILabelAttributeChangedListener {
-    
-    public void attributesChanged();
+public class DsfUILabelImage extends LabelImage {
+    public DsfUILabelImage(String imageId) {
+        super(DsfUIPlugin.getImageDescriptor(imageId));
+    }
 }

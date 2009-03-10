@@ -26,7 +26,6 @@ import org.eclipse.debug.internal.ui.viewers.model.provisional.IViewerInputProvi
  * @since 1.0
  */
 @ThreadSafe
-@SuppressWarnings("restriction")
 public interface IVMAdapter
     extends IElementContentProvider, IModelProxyFactory, IColumnPresentationFactory, IViewerInputProvider 
 {

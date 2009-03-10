@@ -16,5 +16,4 @@ import org.eclipse.cdt.dsf.ui.viewmodel.IVMContext;
  * @since 1.0
  */
 public interface IFormattedValueVMContext extends IVMContext {
-    IFormattedValuePreferenceStore getPreferenceStore();
 }

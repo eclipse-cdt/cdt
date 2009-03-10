@@ -39,7 +39,7 @@ import org.eclipse.swt.graphics.FontData;
 import org.eclipse.swt.graphics.RGB;
 
 /**
- * @since 1.0
+ * @since 1.1
  */
 @SuppressWarnings("restriction")
 class MultiLevelUpdateHandler extends DataRequestMonitor<List<Object>> {

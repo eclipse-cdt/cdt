@@ -399,26 +399,6 @@ public class MIProcesses extends AbstractDsfService implements IMIProcesses, ICa
     	return createContainerContext(processDmc, groupId);
     }
 
-	/**
-	 * This method obtains the model data for a given IThreadDMContext object
-	 * which can represent a thread or a process.
-	 * 
-	 * @param dmc
-	 *            The context for which we are requesting the data
-	 * @param rm
-	 *            The request monitor that will contain the requested data
-	 */
-	@SuppressWarnings("unchecked")
-	public void getModelData(IDMContext dmc, DataRequestMonitor<?> rm) {
-		if (dmc instanceof IThreadDMContext) {
-			getExecutionData((IThreadDMContext) dmc, 
-					(DataRequestMonitor<IThreadDMData>) rm);
-		} else {
-            rm.setStatus(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, INVALID_HANDLE, "Invalid DMC type", null)); //$NON-NLS-1$
-            rm.done();
-		}
-	}
-
 	public void getExecutionData(IThreadDMContext dmc, final DataRequestMonitor<IThreadDMData> rm) {
 		if (dmc instanceof MIProcessDMC) {
 			rm.setData(new MIThreadDMData("", ((MIProcessDMC)dmc).getProcId())); //$NON-NLS-1$

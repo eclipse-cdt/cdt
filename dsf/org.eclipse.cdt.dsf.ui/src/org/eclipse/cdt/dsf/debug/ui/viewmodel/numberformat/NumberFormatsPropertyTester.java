@@ -81,7 +81,7 @@ public class NumberFormatsPropertyTester extends PropertyTester {
         } else if (AVAILABLE.equals(property)) {
             return AVAILABLE_FORMATS.contains(expectedValue);
         } else if (ACTIVE.equals(property)) {
-            Object activeId = provider.getPresentationContext().getProperty(IDebugVMConstants.CURRENT_FORMAT_STORAGE);
+            Object activeId = provider.getPresentationContext().getProperty(IDebugVMConstants.PROP_FORMATTED_VALUE_FORMAT_PREFERENCE);
             return expectedValue != null && expectedValue.equals(activeId);
         } 
         return false;

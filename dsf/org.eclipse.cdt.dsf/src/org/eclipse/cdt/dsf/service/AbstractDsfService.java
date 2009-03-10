@@ -82,6 +82,10 @@ abstract public class AbstractDsfService
         fTracker = null;
         rm.done();
     }
+    
+    public boolean isActive() {
+        return getServiceRegistration() != null;
+    }
 
     /** Returns the session object for this service */
     public DsfSession getSession() { return fSession; }

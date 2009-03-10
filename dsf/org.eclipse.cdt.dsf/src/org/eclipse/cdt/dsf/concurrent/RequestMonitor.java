@@ -73,7 +73,7 @@ import org.eclipse.core.runtime.Status;
  * @since 1.0
  */
 @ThreadSafe
-public class RequestMonitor {
+public class RequestMonitor extends DsfExecutable {
     
     /**
      * Interface used by RequestMonitor to notify when a given request monitor
@@ -227,6 +227,8 @@ public class RequestMonitor {
      * </p>  
      */
     public synchronized void done() {
+        setSubmitted();
+        
         if (fDone) {
             throw new IllegalStateException("RequestMonitor: " + this + ", done() method called more than once");  //$NON-NLS-1$//$NON-NLS-2$
         }

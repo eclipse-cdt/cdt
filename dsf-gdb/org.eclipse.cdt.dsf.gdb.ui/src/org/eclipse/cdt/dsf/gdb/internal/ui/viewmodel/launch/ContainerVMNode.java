@@ -16,29 +16,32 @@ package org.eclipse.cdt.dsf.gdb.internal.ui.viewmodel.launch;
 import java.util.concurrent.RejectedExecutionException;
 
 import org.eclipse.cdt.dsf.concurrent.DsfRunnable;
+import org.eclipse.cdt.dsf.concurrent.IDsfStatusConstants;
+import org.eclipse.cdt.dsf.concurrent.ImmediateExecutor;
 import org.eclipse.cdt.dsf.concurrent.RequestMonitor;
 import org.eclipse.cdt.dsf.datamodel.IDMContext;
 import org.eclipse.cdt.dsf.debug.service.IProcesses;
-import org.eclipse.cdt.dsf.debug.service.IRunControl;
 import org.eclipse.cdt.dsf.debug.service.IProcesses.IProcessDMContext;
 import org.eclipse.cdt.dsf.debug.service.IProcesses.IThreadDMData;
 import org.eclipse.cdt.dsf.debug.service.IRunControl.IContainerDMContext;
 import org.eclipse.cdt.dsf.debug.service.command.ICommandControlService;
 import org.eclipse.cdt.dsf.debug.service.command.ICommandControlService.ICommandControlShutdownDMEvent;
 import org.eclipse.cdt.dsf.debug.ui.viewmodel.launch.AbstractContainerVMNode;
+import org.eclipse.cdt.dsf.debug.ui.viewmodel.launch.ILaunchVMConstants;
+import org.eclipse.cdt.dsf.internal.ui.DsfUIPlugin;
 import org.eclipse.cdt.dsf.service.DsfSession;
+import org.eclipse.cdt.dsf.ui.concurrent.ViewerCountingRequestMonitor;
 import org.eclipse.cdt.dsf.ui.concurrent.ViewerDataRequestMonitor;
 import org.eclipse.cdt.dsf.ui.viewmodel.VMDelta;
 import org.eclipse.cdt.dsf.ui.viewmodel.datamodel.AbstractDMVMProvider;
 import org.eclipse.cdt.dsf.ui.viewmodel.datamodel.IDMVMContext;
+import org.eclipse.cdt.dsf.ui.viewmodel.properties.IPropertiesUpdate;
+import org.eclipse.cdt.dsf.ui.viewmodel.properties.VMDelegatingPropertiesUpdate;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IChildrenUpdate;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IElementCompareRequest;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IElementMementoProvider;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IElementMementoRequest;
-import org.eclipse.debug.internal.ui.viewers.model.provisional.ILabelUpdate;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IModelDelta;
-import org.eclipse.debug.ui.DebugUITools;
-import org.eclipse.debug.ui.IDebugUIConstants;
 import org.eclipse.ui.IMemento;
 
 
@@ -79,50 +82,56 @@ public class ContainerVMNode extends AbstractContainerVMNode
 				});
 	}
 
-	
-	@Override
-	protected void updateLabelInSessionThread(final ILabelUpdate update) {
-		IProcesses processService = getServicesTracker().getService(IProcesses.class);
-		IRunControl runControl = getServicesTracker().getService(IRunControl.class);
-		if (processService == null || runControl == null) {
-			handleFailedUpdate(update);
-			return;
-		}
+    @Override
+    protected void updatePropertiesInSessionThread(IPropertiesUpdate[] updates) {
+        IPropertiesUpdate[] parentUpdates = new IPropertiesUpdate[updates.length]; 
+        
+        for (int i = 0; i < updates.length; i++) {
+            final IPropertiesUpdate update = updates[i];
+            
+            final ViewerCountingRequestMonitor countringRm = 
+                new ViewerCountingRequestMonitor(ImmediateExecutor.getInstance(), updates[i]);
+            int count = 0;
+            
+            // Create a delegating update which will let the super-class fill in the 
+            // standard container properties.
+            parentUpdates[i] = new VMDelegatingPropertiesUpdate(updates[i], countringRm);
+            count++;
+            
+            IProcesses processService = getServicesTracker().getService(IProcesses.class);
+            final IProcessDMContext procDmc = findDmcInPath(update.getViewerInput(), update.getElementPath(), IProcessDMContext.class);
+            
+            if (processService == null || procDmc == null) {
+                update.setStatus(DsfUIPlugin.newErrorStatus(IDsfStatusConstants.INVALID_HANDLE, "Service or handle invalid", null)); //$NON-NLS-1$
+            } else {
+                processService.getExecutionData(
+                    procDmc,
+                    new ViewerDataRequestMonitor<IThreadDMData>(getExecutor(), update) {
+                        @Override
+                        public void handleCompleted() {
+                            if (isSuccess()) {
+                                fillThreadDataProperties(update, getData());
+                            } else {
+                                update.setStatus(getStatus());
+                            }
+                            countringRm.done();
+                        }
+                    });
+                count++;
+            }
+            
+            countringRm.setDoneCount(count);
+        }
+        
+        super.updatePropertiesInSessionThread(parentUpdates);
+    }
+    
+    protected void fillThreadDataProperties(IPropertiesUpdate update, IThreadDMData data) {
+        update.setProperty(PROP_NAME, data.getName());
+        update.setProperty(ILaunchVMConstants.PROP_ID, data.getId());
+    }
 
-		final IProcessDMContext procDmc = findDmcInPath(update.getViewerInput(), update.getElementPath(), IProcessDMContext.class);
-		final IContainerDMContext contDmc = findDmcInPath(update.getViewerInput(), update.getElementPath(), IContainerDMContext.class);
-
-		String imageKey = null;
-		if (runControl.isSuspended(contDmc)) {
-			imageKey = IDebugUIConstants.IMG_OBJS_THREAD_SUSPENDED;
-		} else {
-			imageKey = IDebugUIConstants.IMG_OBJS_THREAD_RUNNING;
-		}
-		update.setImageDescriptor(DebugUITools.getImageDescriptor(imageKey), 0);
-
-		processService.getExecutionData(
-				procDmc,
-				new ViewerDataRequestMonitor<IThreadDMData>(getExecutor(), update) {
-					@Override
-					public void handleCompleted() {
-						if (!isSuccess()) {
-							update.setLabel("<unavailable>", 0); //$NON-NLS-1$
-							update.done();
-							return;
-						}
-
-						// Create Labels of type Name[PID] if the pid is available
-						final StringBuilder builder = new StringBuilder();
-						builder.append(getData().getName());
-						if (getData().getId() != null && getData().getId().length() > 0) {
-							builder.append("[" + getData().getId()+ "]"); //$NON-NLS-1$//$NON-NLS-2$
-						}
-						update.setLabel(builder.toString(), 0);
-						update.done();
-					}
-				});
-	}
-
+    
 	@Override
 	public int getDeltaFlags(Object e) {
 		if (e instanceof ICommandControlShutdownDMEvent) {

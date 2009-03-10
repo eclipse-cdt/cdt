@@ -202,27 +202,6 @@ public class MIRegisters extends AbstractDsfService implements IRegisters, ICach
 
     public boolean isValid() { return true; }
     
-    @SuppressWarnings("unchecked")
-    public void getModelData(IDMContext dmc, DataRequestMonitor<?> rm) {
-        /*
-         * This is the method which is called when actual results need to be returned.  We
-         * can be called either with a service DMC for which we return ourselves or we can
-         * be called with the DMC's we have handed out. If the latter is the case then  we
-         * data mine by talking to the Debug Engine.
-         */
-        
-        if (dmc instanceof MIRegisterGroupDMC) {
-            getRegisterGroupData((MIRegisterGroupDMC)dmc, (DataRequestMonitor<IRegisterGroupDMData>)rm);
-        } else if (dmc instanceof MIRegisterDMC) {
-            getRegisterData((MIRegisterDMC)dmc, (DataRequestMonitor<IRegisterDMData>)rm);
-        } else if (dmc instanceof FormattedValueDMContext) {
-            getFormattedExpressionValue((FormattedValueDMContext)dmc, (DataRequestMonitor<FormattedValueDMData>)rm);
-        } else {
-            rm.setStatus(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, -1, "Unknown DMC type", null));  //$NON-NLS-1$
-            rm.done();
-        }
-    }
-
     public void getFormattedExpressionValue(FormattedValueDMContext dmc, DataRequestMonitor<FormattedValueDMData> rm) {
         if (dmc.getParents().length == 1 && dmc.getParents()[0] instanceof MIRegisterDMC) {
                 getRegisterDataValue( (MIRegisterDMC) dmc.getParents()[0], dmc.getFormatID(), rm);
@@ -534,12 +513,12 @@ public class MIRegisters extends AbstractDsfService implements IRegisters, ICach
 	  	final MIExpressions exprService = getServicesTracker().getService(MIExpressions.class);
 	  	String regName = regDmc.getName();
 	      final IExpressionDMContext exprCtxt = exprService.createExpression(regCtx, "$" + regName); //$NON-NLS-1$
-	      exprService.getModelData(exprCtxt, new DataRequestMonitor<IExpressionDMData>(getExecutor(), rm) {
+	      exprService.getExpressionData(exprCtxt, new DataRequestMonitor<IExpressionDMData>(getExecutor(), rm) {
 				@Override
 				protected void handleSuccess() {
 					// Evaluate the expression - request HEX since it works in every case 
 					final FormattedValueDMContext valueDmc = exprService.getFormattedValueContext(exprCtxt, formatId);
-					exprService.getModelData(
+					exprService.getFormattedExpressionValue(
 	              	valueDmc, 
 	                  new DataRequestMonitor<FormattedValueDMData>(getExecutor(), rm) {
 	          			@Override

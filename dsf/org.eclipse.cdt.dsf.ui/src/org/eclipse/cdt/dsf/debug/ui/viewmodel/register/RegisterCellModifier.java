@@ -17,7 +17,7 @@ import org.eclipse.cdt.dsf.debug.service.IRegisters.IRegisterDMContext;
 import org.eclipse.cdt.dsf.debug.service.IRegisters.IRegisterDMData;
 import org.eclipse.cdt.dsf.debug.ui.viewmodel.IDebugVMConstants;
 import org.eclipse.cdt.dsf.debug.ui.viewmodel.expression.WatchExpressionCellModifier;
-import org.eclipse.cdt.dsf.debug.ui.viewmodel.numberformat.IFormattedValuePreferenceStore;
+import org.eclipse.cdt.dsf.debug.ui.viewmodel.numberformat.FormattedValueVMUtil;
 import org.eclipse.cdt.dsf.ui.viewmodel.IVMContext;
 import org.eclipse.cdt.dsf.ui.viewmodel.datamodel.IDMVMContext;
 import org.eclipse.cdt.dsf.ui.viewmodel.update.AbstractCachingVMProvider;
@@ -29,23 +29,17 @@ public class RegisterCellModifier extends WatchExpressionCellModifier {
     
     private AbstractCachingVMProvider fProvider; 
     private SyncRegisterDataAccess fDataAccess = null;
-    private IFormattedValuePreferenceStore fFormattedValuePreferenceStore;
     
-    public RegisterCellModifier(AbstractCachingVMProvider provider, 
-        IFormattedValuePreferenceStore formattedValuePreferenceStore, SyncRegisterDataAccess access) 
+    public RegisterCellModifier(AbstractCachingVMProvider provider, SyncRegisterDataAccess access) 
     {
         fProvider = provider;
         fDataAccess = access;
-        fFormattedValuePreferenceStore = formattedValuePreferenceStore;
     }
     
     public SyncRegisterDataAccess getRegisterDataAccess() {
         return fDataAccess;
     }
     
-    public IFormattedValuePreferenceStore getPreferenceStore() {
-        return fFormattedValuePreferenceStore;
-    }
     /*
      *  Used to make sure we are dealing with a valid register.
      */
@@ -102,8 +96,7 @@ public class RegisterCellModifier extends WatchExpressionCellModifier {
                  */
                 IVMContext ctx = (IVMContext) element;
                 IPresentationContext presCtx = ctx.getVMNode().getVMProvider().getPresentationContext();
-                
-                formatId = fFormattedValuePreferenceStore.getCurrentNumericFormat(presCtx);
+                formatId = FormattedValueVMUtil.getPreferredFormat(presCtx);
             }
             else {
                 formatId = IFormattedValues.NATURAL_FORMAT;
@@ -141,8 +134,7 @@ public class RegisterCellModifier extends WatchExpressionCellModifier {
                      */
                     IVMContext ctx = (IVMContext) element;
                     IPresentationContext presCtx = ctx.getVMNode().getVMProvider().getPresentationContext();
-                    
-                    formatId = fFormattedValuePreferenceStore.getCurrentNumericFormat(presCtx);
+                    formatId = FormattedValueVMUtil.getPreferredFormat(presCtx);
                 }
                 else {
                     formatId = IFormattedValues.NATURAL_FORMAT;

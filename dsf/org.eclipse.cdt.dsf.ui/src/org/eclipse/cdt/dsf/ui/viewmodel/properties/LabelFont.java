@@ -12,6 +12,7 @@ package org.eclipse.cdt.dsf.ui.viewmodel.properties;
 
 import java.util.Map;
 
+import org.eclipse.core.runtime.IStatus;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.ILabelUpdate;
 import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.swt.graphics.FontData;
@@ -21,7 +22,7 @@ import org.eclipse.swt.graphics.FontData;
  * 
  * @see LabelAttribute
  * @see LabelColumnInfo
- * @see PropertyBasedLabelProvider
+ * @see PropertiesBasedLabelProvider
  * 
  * @since 1.0
  */
@@ -48,11 +49,10 @@ public class LabelFont extends LabelAttribute {
 
     public void setFontData(FontData fontData) {
         fFontData = fontData;
-        fireAttributeChanged();
     }
 
     @Override
-    public void updateAttribute(ILabelUpdate update, int columnIndex, Map<String, Object> properties) {
+    public void updateAttribute(ILabelUpdate update, int columnIndex, IStatus status, Map<String, Object> properties) {
         update.setFontData(getFontData(), columnIndex);
     }
 

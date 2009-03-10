@@ -22,8 +22,6 @@ import org.eclipse.cdt.dsf.debug.service.IRegisters;
 import org.eclipse.cdt.dsf.debug.service.IRunControl.ISuspendedDMEvent;
 import org.eclipse.cdt.dsf.debug.ui.DsfDebugUITools;
 import org.eclipse.cdt.dsf.debug.ui.IDsfDebugUIConstants;
-import org.eclipse.cdt.dsf.debug.ui.viewmodel.numberformat.FormattedValuePreferenceStore;
-import org.eclipse.cdt.dsf.debug.ui.viewmodel.numberformat.IFormattedValuePreferenceStore;
 import org.eclipse.cdt.dsf.debug.ui.viewmodel.register.RegisterBitFieldVMNode;
 import org.eclipse.cdt.dsf.debug.ui.viewmodel.register.RegisterGroupVMNode;
 import org.eclipse.cdt.dsf.debug.ui.viewmodel.register.RegisterVMNode;
@@ -198,8 +196,6 @@ public class ExpressionVMProvider extends AbstractDMVMProvider
      */
     protected void configureLayout() {
     	
-    	IFormattedValuePreferenceStore prefStore = FormattedValuePreferenceStore.getDefault();
-        
         /*
          *  Allocate the synchronous data providers.
          */
@@ -222,13 +218,13 @@ public class ExpressionVMProvider extends AbstractDMVMProvider
          */
         IExpressionVMNode registerGroupNode = new RegisterGroupVMNode(this, getSession(), syncRegDataAccess);
         
-        IExpressionVMNode registerNode = new RegisterVMNode(prefStore, this, getSession(), syncRegDataAccess);
+        IExpressionVMNode registerNode = new RegisterVMNode(this, getSession(), syncRegDataAccess);
         addChildNodes(registerGroupNode, new IExpressionVMNode[] {registerNode});
         
         /*
          * Create the next level which is the bit-field level.
          */
-        IVMNode bitFieldNode = new RegisterBitFieldVMNode(prefStore, this, getSession(), syncRegDataAccess);
+        IVMNode bitFieldNode = new RegisterBitFieldVMNode(this, getSession(), syncRegDataAccess);
         addChildNodes(registerNode, new IVMNode[] { bitFieldNode });
         
         /*
@@ -236,7 +232,7 @@ public class ExpressionVMProvider extends AbstractDMVMProvider
          *  view comes in as a fully qualified expression so we go directly to the SubExpression layout
          *  node.
          */
-        IExpressionVMNode variableNode =  new VariableVMNode(prefStore, this, getSession(), syncvarDataAccess);
+        IExpressionVMNode variableNode =  new VariableVMNode(this, getSession(), syncvarDataAccess);
         addChildNodes(variableNode, new IExpressionVMNode[] {variableNode});
         
         /*

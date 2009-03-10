@@ -11,24 +11,22 @@
  *******************************************************************************/
 package org.eclipse.cdt.examples.dsf.pda.ui.viewmodel.launch;
 
+import org.eclipse.cdt.dsf.concurrent.IDsfStatusConstants;
 import org.eclipse.cdt.dsf.datamodel.IDMContext;
-import org.eclipse.cdt.dsf.debug.service.IRunControl;
-import org.eclipse.cdt.dsf.debug.service.IRunControl.IExecutionDMData;
-import org.eclipse.cdt.dsf.debug.service.IRunControl.StateChangeReason;
 import org.eclipse.cdt.dsf.debug.ui.viewmodel.launch.AbstractThreadVMNode;
+import org.eclipse.cdt.dsf.debug.ui.viewmodel.launch.ILaunchVMConstants;
 import org.eclipse.cdt.dsf.service.DsfSession;
-import org.eclipse.cdt.dsf.ui.concurrent.ViewerDataRequestMonitor;
 import org.eclipse.cdt.dsf.ui.viewmodel.datamodel.AbstractDMVMProvider;
 import org.eclipse.cdt.dsf.ui.viewmodel.datamodel.IDMVMContext;
-import org.eclipse.cdt.examples.dsf.pda.service.PDARunControl;
+import org.eclipse.cdt.dsf.ui.viewmodel.properties.IPropertiesUpdate;
 import org.eclipse.cdt.examples.dsf.pda.service.PDAThreadDMContext;
+import org.eclipse.cdt.examples.dsf.pda.ui.PDAUIPlugin;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IElementCompareRequest;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IElementLabelProvider;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IElementMementoProvider;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IElementMementoRequest;
-import org.eclipse.debug.internal.ui.viewers.model.provisional.ILabelUpdate;
-import org.eclipse.debug.ui.DebugUITools;
-import org.eclipse.debug.ui.IDebugUIConstants;
 import org.eclipse.ui.IMemento;
 
 
@@ -50,68 +48,16 @@ public class PDAThreadsVMNode extends AbstractThreadVMNode
     }
     
     @Override
-    protected void updateLabelInSessionThread(ILabelUpdate[] updates) {
-        for (final ILabelUpdate update : updates) {
-        	final PDARunControl runControl = getServicesTracker().getService(PDARunControl.class);
-            if ( runControl == null ) {
-                    handleFailedUpdate(update);
-                    continue;
-            }
-            
-            final PDAThreadDMContext dmc = findDmcInPath(update.getViewerInput(), update.getElementPath(), PDAThreadDMContext.class);
-
-            String imageKey = null;
-            if (getServicesTracker().getService(IRunControl.class).isSuspended(dmc)) {
-                imageKey = IDebugUIConstants.IMG_OBJS_THREAD_SUSPENDED;
+    protected void updatePropertiesInSessionThread(IPropertiesUpdate[] updates) {
+        for (int i = 0; i < updates.length; i++) {
+            final PDAThreadDMContext dmc = findDmcInPath(updates[i].getViewerInput(), updates[i].getElementPath(), PDAThreadDMContext.class);
+            if (dmc != null) {
+                updates[i].setProperty(ILaunchVMConstants.PROP_ID, Integer.toString(dmc.getID()));
             } else {
-                imageKey = IDebugUIConstants.IMG_OBJS_THREAD_RUNNING;
+                updates[i].setStatus(new Status(IStatus.ERROR, PDAUIPlugin.PLUGIN_ID, IDsfStatusConstants.INVALID_HANDLE, "Invalid context", null)); //$NON-NLS-1$
             }
-            update.setImageDescriptor(DebugUITools.getImageDescriptor(imageKey), 0);
-
-            // Find the Reason for the State
-            getDMVMProvider().getModelData(
-                this, update, runControl, dmc,
-                new ViewerDataRequestMonitor<IExecutionDMData>(getSession().getExecutor(), update) {
-                    @Override
-                    public void handleCompleted(){
-                        if (!isSuccess()) {
-                            update.setLabel("<unavailable>", 0);
-                            update.done();
-                            return;
-                        }
-
-                        // We're in a new dispatch cycle, and we have to check whether the
-                        // service reference is still valid.
-                        final PDARunControl runControl = getServicesTracker().getService(PDARunControl.class);
-                        if ( runControl == null ) {
-                            handleFailedUpdate(update);
-                            return;
-                        }
-    
-                        final StateChangeReason reason = getData().getStateChangeReason();
-    
-                        // Create Labels of type Thread[GDBthreadId]RealThreadID/Name (State: Reason)
-                        // Thread[1] 3457 (Suspended:BREAKPOINT)
-                        final StringBuilder builder = new StringBuilder();
-                        builder.append("Thread ");
-                        builder.append(dmc.getID());
-                        if(getServicesTracker().getService(IRunControl.class).isSuspended(dmc))
-                            builder.append(" (Suspended"); 
-                        else
-                            builder.append(" (Running"); 
-                        // Reason will be null before ContainerSuspendEvent is fired
-                        if(reason != null) {
-                            builder.append(" : "); 
-                            builder.append(reason);
-                        }
-                        builder.append(")"); 
-                        update.setLabel(builder.toString(), 0);
-                        update.done();
-                	}
-                }, 
-                getExecutor());
-            
         }
+        super.updatePropertiesInSessionThread(updates);
     }
 
 	private String produceThreadElementName(String viewName, PDAThreadDMContext execCtx) {

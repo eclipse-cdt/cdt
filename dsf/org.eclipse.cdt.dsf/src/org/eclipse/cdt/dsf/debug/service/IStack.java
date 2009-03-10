@@ -14,7 +14,7 @@ import org.eclipse.cdt.core.IAddress;
 import org.eclipse.cdt.dsf.concurrent.DataRequestMonitor;
 import org.eclipse.cdt.dsf.datamodel.IDMContext;
 import org.eclipse.cdt.dsf.datamodel.IDMData;
-import org.eclipse.cdt.dsf.datamodel.IDMService;
+import org.eclipse.cdt.dsf.service.IDsfService;
 
 /**
  * Stack service provides access to stack information for a 
@@ -22,7 +22,7 @@ import org.eclipse.cdt.dsf.datamodel.IDMService;
  * 
  * @since 1.0
  */
-public interface IStack extends IDMService {
+public interface IStack extends IDsfService {
 
     /**
      * Context for a specific stack frame.  Besides allowing access to stack

@@ -43,6 +43,12 @@ import org.eclipse.debug.internal.ui.viewers.model.provisional.IChildrenUpdate;
 public abstract class AbstractExpressionVMNode extends AbstractDMVMNode 
     implements IExpressionVMNode
 {
+    /**
+     * @since 2.0
+     */    
+    protected static final String PROP_ELEMENT_EXPRESSION = "element_expression";  //$NON-NLS-1$
+
+    
     public AbstractExpressionVMNode(AbstractDMVMProvider provider, DsfSession session, Class<? extends IDMContext> dmcClassType) {
         super(provider, session, dmcClassType);
     }

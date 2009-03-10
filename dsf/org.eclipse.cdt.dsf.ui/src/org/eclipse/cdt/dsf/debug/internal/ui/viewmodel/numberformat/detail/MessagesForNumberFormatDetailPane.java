@@ -20,13 +20,7 @@ public class MessagesForNumberFormatDetailPane extends NLS {
 	
     private static final String BUNDLE_NAME = "org.eclipse.cdt.dsf.debug.internal.ui.viewmodel.numberformat.detail.messages"; //$NON-NLS-1$
 
-    public static String NumberFormatDetailPane_Natural_label;
-    public static String NumberFormatDetailPane_Decimal_label;
-    public static String NumberFormatDetailPane_Hex_label;
-    public static String NumberFormatDetailPane_Octal_label;
-    public static String NumberFormatDetailPane_Binary_label;
-    public static String NumberFormatDetailPane_String_label;
-    public static String NumberFormatDetailPane_Other_label;
+    public static String NumberFormatDetailPane_format_separator__label;
     public static String NumberFormatDetailPane_Name_label;
     public static String NumberFormatDetailPane_Spaces_label;   
     public static String NumberFormatDetailPane_CarriageReturn_label;

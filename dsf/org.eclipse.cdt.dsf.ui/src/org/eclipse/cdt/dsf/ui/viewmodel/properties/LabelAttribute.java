@@ -12,7 +12,7 @@ package org.eclipse.cdt.dsf.ui.viewmodel.properties;
 
 import java.util.Map;
 
-import org.eclipse.core.runtime.ListenerList;
+import org.eclipse.core.runtime.IStatus;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.ILabelUpdate;
 
 /**
@@ -28,7 +28,7 @@ import org.eclipse.debug.internal.ui.viewers.model.provisional.ILabelUpdate;
  * also override how the attribute settings are stored, for example in 
  * order to use a preference.  
  * 
- * @see PropertyBasedLabelProvider
+ * @see PropertiesBasedLabelProvider
  * @see LabelColumnInfo 
  * 
  * @since 1.0
@@ -38,74 +38,84 @@ abstract public class LabelAttribute {
     public static final String[] EMPTY_PROPERTY_NAMES_ARRAY = new String[0];
     
     /**
-     * Listeners for when this attribute is modified.
+     * @since 2.0
      */
-    private ListenerList fListeners = new ListenerList();
+    private String[] fPropertyNames = EMPTY_PROPERTY_NAMES_ARRAY;
     
     public LabelAttribute() {
+        this(EMPTY_PROPERTY_NAMES_ARRAY);
     }
     
     /**
-     * Disposes this attribute.
+     * @since 2.0
      */
-    public void dispose() {
+    public LabelAttribute(String[] propertyNames) {
+        setPropertyNames(propertyNames);
+    }
+    
+    protected void setPropertyNames(String[] propertyNames) {
+        fPropertyNames = propertyNames;
     }
     
     /**
-     * Registers the given listener for changes in this attribute. A change in 
-     * the attributes of a label should cause a view to repaint.
-     * @param listener Listener to register.
-     */
-    public void addChangedListener(ILabelAttributeChangedListener listener) {
-        fListeners.add(listener);
-    }
-    
-    /**
-     * Unregisters the given listener.
-     * @param listener Listener to unregister.
-     */
-    public void removeChangedListener(ILabelAttributeChangedListener listener) {
-        fListeners.remove(listener);
-    }
-    
-    /**
-     * Calls the listeners to notify them that this attribute has changed.
-     */
-    protected void fireAttributeChanged() {
-        Object[] listeners = fListeners.getListeners();
-        for (Object listener : listeners) {
-            ((ILabelAttributeChangedListener)listener).attributesChanged();
-        }
-    }
-    
-    /**
-     * Returns the propertis that are needed by this attribute in order to 
+     * Returns the properties that are needed by this attribute in order to 
      * determine whether this attribute is enabled and/or for the actual
      * attribute itself.
      * @return Array of names of properties for the element properties provider.
      */
     public String[] getPropertyNames() {
-        return EMPTY_PROPERTY_NAMES_ARRAY;
+        return fPropertyNames;
     }
     
     /**
      * Returns whether this attribute is enabled for an element which has
-     * the given properties.
-     * @param properties Map or element properties.  The client should ensure
-     * that all properties specified by {@link #getPropertyNames()} are 
-     * supplied in this map.
+     * the given properties.  The default implementation checks if all the 
+     * label's attributes are present in the properties map.
+     * 
+     * @param status Result of the properties update.
+     * @param properties Properties supplied by a property update.
      * @return true if this attribute is enabled.
+     * 
+     * @since 2.0
      */
-    public boolean isEnabled(Map<String, Object> properties) {
+    public boolean isEnabled(IStatus status, Map<String, Object> properties) {
+        for (String propertyName : getPropertyNames()) {
+            if (!checkProperty(propertyName, status, properties)) {
+                return false;
+            }
+        }
         return true;
     }
-    
+
+
     /**
-     * Updates the label with this attribute.
+     * Checks the status of the given property in the given properties map.  The
+     * default implementation returns <code>true</code> if the given property
+     * exists and is not null.  
+     * 
+     * @param propertyName Name of the property to check.
+     * @param status Result of the properties update.
+     * @param properties Properties map following an update.
+     * @return <code>true</code> if the property exists in the given map and 
+     * its value is not null. 
+     * 
+     * @since 2.0
+     */
+    protected boolean checkProperty(String propertyName, IStatus status, Map<String, Object> properties) {
+        return properties.get(propertyName) != null;
+    }
+
+    /**
+     * Updates the label with this attribute. 
      * 
      * @param update Label update object to write to.
-     * @param columnIndex Colum index to write at.
-     * @param properties Element properties to use.
+     * @param columnIndex Column index to write at.
+     * @param status Result of the property update.
+     * @param properties Property values map.  It is guaranteed to contain all
+     * the properties that this attribute requested through 
+     * {@link getPropertyNames()}.
+     * 
+     * @since 2.0
      */
-    abstract public void updateAttribute(ILabelUpdate update, int columnIndex, Map<String, Object> properties);
+    abstract public void updateAttribute(ILabelUpdate update, int columnIndex, IStatus status, Map<String, Object> properties);
 }

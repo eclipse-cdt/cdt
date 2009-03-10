@@ -20,6 +20,14 @@ package org.eclipse.cdt.dsf.ui.viewmodel.properties;
 public interface IElementPropertiesProvider {
 
     /**
+     * Common property representing an element's name.  This property can be 
+     * used in future extensions for filtering and sorting.
+     * 
+     * @since 2.0
+     */
+    public static final String PROP_NAME = "name"; //$NON-NLS-1$
+    
+    /**
      * Updates the specified property sets.
      * 
      * @param updates each update specifies the element and context for which 

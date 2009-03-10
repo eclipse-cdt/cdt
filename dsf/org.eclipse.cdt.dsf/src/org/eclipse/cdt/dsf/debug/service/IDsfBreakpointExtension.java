@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.cdt.dsf.debug.service;
 
+import org.eclipse.cdt.debug.core.model.ICBreakpoint;
 import org.eclipse.cdt.debug.core.model.ICBreakpointExtension;
 import org.eclipse.cdt.dsf.debug.service.IRunControl.IContainerDMContext;
 import org.eclipse.cdt.dsf.debug.service.IRunControl.IExecutionDMContext;

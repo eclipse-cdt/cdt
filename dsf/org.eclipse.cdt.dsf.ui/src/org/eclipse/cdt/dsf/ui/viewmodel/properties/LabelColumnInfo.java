@@ -15,11 +15,12 @@ import java.util.List;
 import java.util.Map;
 
 import org.eclipse.cdt.dsf.concurrent.ThreadSafe;
+import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.ListenerList;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.ILabelUpdate;
 
 /**
- * Class used by the PropertyBasedLabelProvider to generate store 
+ * Class used by the PropertiesBasedLabelProvider to generate store 
  * label attributes related to a single column.  Each column info is 
  * configured with an array of attributes (there are currently four
  * types of attributes: text, image, font, and color), which are 
@@ -27,15 +28,24 @@ import org.eclipse.debug.internal.ui.viewers.model.provisional.ILabelUpdate;
  * <p/>
  * Clients are not intended to extend this class.
  * 
- * @see PropertyBasedLabelProvider
+ * @see PropertiesBasedLabelProvider
  * 
  * @since 1.0
  */
-@SuppressWarnings("restriction")
 @ThreadSafe
-public class LabelColumnInfo implements ILabelAttributeChangedListener {
+public class LabelColumnInfo  {
+
+    /**
+     * @since 2.0
+     */
+    private static final LabelAttribute[] DEFAULT_FAILED_UPDATE_ATTRIBUTES = new LabelAttribute[] {
+        new LabelText("...", new String[0])
+    };
     
-    private static final LabelAttribute[] EMPTY_ATTRIBUTES_ARRAY = new LabelAttribute[0]; 
+    /**
+     * @since 2.0
+     */
+    private static final LabelAttribute[] EMPTY_ATTRIBUTES = new LabelAttribute[0]; 
     
     /** 
      * Calculated list of property names that need to be retrieved to 
@@ -47,7 +57,7 @@ public class LabelColumnInfo implements ILabelAttributeChangedListener {
      * Array of label attribute objects.   
      */
     private LabelAttribute[] fLabelAttributes;
-    
+
     /**
      * Listeners for when column attributes are modified.
      */
@@ -63,26 +73,12 @@ public class LabelColumnInfo implements ILabelAttributeChangedListener {
 
         List<String> names = new LinkedList<String>();
         for (LabelAttribute attr : attributes) {
-            attr.addChangedListener(this);
             for (String name : attr.getPropertyNames()) {
                 names.add(name);
             }
         }
 
         fPropertyNames = names.toArray(new String[names.size()]);
-    }
-
-    /**
-     * Disposes this column info object and the attribute objects 
-     * within it.
-     */
-    public void dispose() {
-        for (LabelAttribute attr : fLabelAttributes) {
-            attr.dispose();
-            attr.removeChangedListener(this);
-        } 
-        fLabelAttributes = EMPTY_ATTRIBUTES_ARRAY;
-        fPropertyNames = null;
     }
         
     /**
@@ -97,43 +93,27 @@ public class LabelColumnInfo implements ILabelAttributeChangedListener {
     public LabelAttribute[] getLabelAttributes() { return fLabelAttributes; }
 
     /**
-     * Registers the given listener for changes in the attributes of this 
-     * column.  A change in the attributes of a label should cause
-     * a view to repaint.
-     * @param listener Listener to register.
+     * Returns the list of configured label attributes for this column.
+     * 
+     * @since 2.0
      */
-    public void addChangedListener(ILabelAttributeChangedListener listener) {
-        fListeners.add(listener);
-    }
-    
-    /**
-     * Unregisters the given listener.
-     * @param listener Listener to unregister.
-     */
-    public void removeChangedListener(ILabelAttributeChangedListener listener) {
-        fListeners.remove(listener);
-    }
+    protected LabelAttribute[] setLabelAttributes(LabelAttribute attributes) { 
+        return fLabelAttributes; 
+    }    
 
-    /** 
-     * Listener method called by the attribute objects.
-     * @see ILabelAttributeChangedListener
-     */
-    public void attributesChanged() {
-        Object[] listeners = fListeners.getListeners();
-        for (Object listener : listeners) {
-            ((ILabelAttributeChangedListener)listener).attributesChanged();
-        }
-    }
-    
     /**
      * Updates the label parameters for this column based on the provided
      * properties.  The label information is written to the givne label
      * update under the given column index.   
+     * 
      * @param update Update to write to.
      * @param columnIndex Column to write label information under.
+     * @param status Result of the properties update
      * @param properties Map of properties to use to generate the label.
+     * 
+     * @since 2.0
      */
-    public void updateColumn(ILabelUpdate update, int columnIndex, Map<String,Object> properties) {
+    public void updateColumn(ILabelUpdate update, int columnIndex, IStatus status, Map<String,Object> properties) {
         boolean textSet = false;
         boolean imageSet = false;
         boolean fontSet = false;
@@ -146,10 +126,9 @@ public class LabelColumnInfo implements ILabelAttributeChangedListener {
                 !(info instanceof LabelImage && imageSet) &&
                 !(info instanceof LabelFont && fontSet) &&
                 !(info instanceof LabelColor && colorSet) &&
-                info.isEnabled(properties))
+                info.isEnabled(status, properties))
             {
-                info.updateAttribute(update, columnIndex, properties);
-                
+                info.updateAttribute(update, columnIndex, status, properties);
                 textSet = textSet || info instanceof LabelText;
                 imageSet = imageSet || info instanceof LabelImage;
                 fontSet = fontSet || info instanceof LabelFont;

@@ -12,7 +12,7 @@ package org.eclipse.cdt.dsf.ui.concurrent;
 
 import java.util.concurrent.Executor;
 
-import org.eclipse.cdt.dsf.concurrent.DataRequestMonitor;
+import org.eclipse.cdt.dsf.concurrent.RequestMonitor;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IViewerUpdate;
 
 /**
@@ -20,12 +20,12 @@ import org.eclipse.debug.internal.ui.viewers.model.provisional.IViewerUpdate;
  * If the IViewerUpdate is canceled, this request monitor becomes canceled as well.
  * @see IViewerUpdate
  * 
- * @since 1.0
+ * @since 2.0
  */
-public class ViewerDataRequestMonitor<V> extends DataRequestMonitor<V> {
+public class ViewerRequestMonitor extends RequestMonitor {
     
     private final IViewerUpdate fUpdate;
-    public ViewerDataRequestMonitor(Executor executor, IViewerUpdate update) {
+    public ViewerRequestMonitor(Executor executor, IViewerUpdate update) {
         super(executor, null);
         fUpdate = update;
     }

@@ -18,7 +18,6 @@ import org.eclipse.cdt.dsf.debug.service.IExpressions;
 import org.eclipse.cdt.dsf.debug.service.IRunControl.ISuspendedDMEvent;
 import org.eclipse.cdt.dsf.debug.ui.DsfDebugUITools;
 import org.eclipse.cdt.dsf.debug.ui.IDsfDebugUIConstants;
-import org.eclipse.cdt.dsf.debug.ui.viewmodel.numberformat.FormattedValuePreferenceStore;
 import org.eclipse.cdt.dsf.debug.ui.viewmodel.update.BreakpointHitUpdatePolicy;
 import org.eclipse.cdt.dsf.internal.ui.DsfUIPlugin;
 import org.eclipse.cdt.dsf.service.DsfServicesTracker;
@@ -38,7 +37,6 @@ import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
 
-@SuppressWarnings("restriction")
 public class VariableVMProvider extends AbstractDMVMProvider 
     implements IColumnPresentationFactory 
 {
@@ -81,7 +79,7 @@ public class VariableVMProvider extends AbstractDMVMProvider
         /*
          * Create the next level which represents members of structs/unions/enums and elements of arrays.
          */
-        IVMNode subExpressioNode = new VariableVMNode(FormattedValuePreferenceStore.getDefault(), this, getSession(), varAccess);
+        IVMNode subExpressioNode = new VariableVMNode(this, getSession(), varAccess);
         addChildNodes(rootNode, new IVMNode[] { subExpressioNode });
 
         // Configure the sub-expression node to be a child of itself.  This way the content

@@ -26,7 +26,7 @@ import org.eclipse.debug.internal.ui.viewers.model.provisional.ILabelUpdate;
  * @see MessageFormat#format(Object[], StringBuffer, java.text.FieldPosition)
  * @see LabelAttribute
  * @see LabelColumnInfo
- * @see PropertyBasedLabelProvider
+ * @see PropertiesBasedLabelProvider
  * 
  * @since 1.0
  */
@@ -52,6 +52,15 @@ public class LabelText extends LabelAttribute {
         this(DEFAULT_MESSAGE, EMPTY_PROPERTY_NAMES_ARRAY);
     }
 
+    /**
+     * @since 2.0
+     * @param formatPattern
+     * @param propertyNames
+     */
+    public LabelText(String formatPattern, String[] propertyNames) {
+        this (new MessageFormat(formatPattern), propertyNames);
+    }
+
     public LabelText(MessageFormat format, String[] propertyNames) {
         fMessageFormat = format;
         fPropertyNames = propertyNames;
@@ -68,15 +77,14 @@ public class LabelText extends LabelAttribute {
 
     public void setMessageFormat(MessageFormat messageFormat) {
         fMessageFormat = messageFormat;
-        fireAttributeChanged();
     }
 
     @Override
-    public void updateAttribute(ILabelUpdate update, int columnIndex, Map<String, Object> properties) {
+    public void updateAttribute(ILabelUpdate update, int columnIndex, IStatus status, Map<String, Object> properties) {
         String[] propertyNames = getPropertyNames();
         Object[] propertyValues = new Object[propertyNames.length];
         for (int i = 0; i < propertyNames.length; i++) {
-            propertyValues[i] = properties.get(propertyNames[i]); 
+            propertyValues[i] = getPropertyValue(propertyNames[i], status, properties); 
         }
         
         try {
@@ -84,5 +92,9 @@ public class LabelText extends LabelAttribute {
         } catch (IllegalArgumentException e) {
             update.setStatus(new Status(IStatus.ERROR, DsfUIPlugin.PLUGIN_ID, 0, "Failed formatting a message for column " + columnIndex + ", for update " + update, e)); //$NON-NLS-1$ //$NON-NLS-2$
         }
+    }
+    
+    protected Object getPropertyValue(String propertyName, IStatus status, Map<String, Object> properties) {
+        return properties.get(propertyName);
     }
 }

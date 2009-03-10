@@ -11,9 +11,8 @@
 package org.eclipse.cdt.dsf.debug.ui.viewmodel.numberformat;
 
 import java.util.ArrayList;
-import java.util.LinkedHashMap;
+import java.util.LinkedList;
 import java.util.List;
-import java.util.Map;
 
 import org.eclipse.cdt.dsf.debug.service.IFormattedValues;
 import org.eclipse.cdt.dsf.debug.ui.viewmodel.IDebugVMConstants;
@@ -37,24 +36,23 @@ import org.eclipse.ui.services.IServiceLocator;
  * 
  * @since 1.1
  */
-@SuppressWarnings("restriction")
 public class NumberFormatsContribution extends CompoundContributionItem implements IWorkbenchContribution {
     
-    private static final Map<String, String> FORMATS = new LinkedHashMap<String, String>(); 
+    private static final List<String> FORMATS = new LinkedList<String>(); 
     static {
-        FORMATS.put(IFormattedValues.NATURAL_FORMAT, MessagesForNumberFormat.NumberFormatContribution_Natural_label);
-        FORMATS.put(IFormattedValues.HEX_FORMAT, MessagesForNumberFormat.NumberFormatContribution_Hex_label);
-        FORMATS.put(IFormattedValues.DECIMAL_FORMAT, MessagesForNumberFormat.NumberFormatContribution_Decimal_label);
-        FORMATS.put(IFormattedValues.OCTAL_FORMAT, MessagesForNumberFormat.NumberFormatContribution_Octal_label);
-        FORMATS.put(IFormattedValues.BINARY_FORMAT, MessagesForNumberFormat.NumberFormatContribution_Binary_label);
-        FORMATS.put(IFormattedValues.STRING_FORMAT, MessagesForNumberFormat.NumberFormatContribution_String_label);
+        FORMATS.add(IFormattedValues.NATURAL_FORMAT);
+        FORMATS.add(IFormattedValues.HEX_FORMAT);
+        FORMATS.add(IFormattedValues.DECIMAL_FORMAT);
+        FORMATS.add(IFormattedValues.OCTAL_FORMAT);
+        FORMATS.add(IFormattedValues.BINARY_FORMAT);
+        FORMATS.add(IFormattedValues.STRING_FORMAT);
     }
     
     private class SelectNumberFormatAction extends Action {
         private final IPresentationContext fContext;
         private final String fFormatId;
         SelectNumberFormatAction(IPresentationContext context, String formatId) {
-            super(FORMATS.get(formatId), AS_RADIO_BUTTON);
+            super(FormattedValueVMUtil.getFormatLabel(formatId), AS_RADIO_BUTTON);
             fContext = context;
             fFormatId = formatId;
         }
@@ -62,7 +60,7 @@ public class NumberFormatsContribution extends CompoundContributionItem implemen
         @Override
         public void run() {
             if (isChecked()) {
-                fContext.setProperty(IDebugVMConstants.CURRENT_FORMAT_STORAGE, fFormatId);
+                fContext.setProperty(IDebugVMConstants.PROP_FORMATTED_VALUE_FORMAT_PREFERENCE, fFormatId);
             }
         }
     }
@@ -95,13 +93,13 @@ public class NumberFormatsContribution extends CompoundContributionItem implemen
         }
         
         IPresentationContext context = provider.getPresentationContext(); 
-        Object activeId = context.getProperty(IDebugVMConstants.CURRENT_FORMAT_STORAGE);
+        Object activeId = context.getProperty(IDebugVMConstants.PROP_FORMATTED_VALUE_FORMAT_PREFERENCE);
         if (activeId == null) {
             activeId = IFormattedValues.NATURAL_FORMAT;
         }
         
         List<Action> actions = new ArrayList<Action>(FORMATS.size());
-        for (String formatId : FORMATS.keySet()) {
+        for (String formatId : FORMATS) {
             Action action = new SelectNumberFormatAction(context, formatId);
             if (formatId.equals(activeId)) {
                 action.setChecked(true);

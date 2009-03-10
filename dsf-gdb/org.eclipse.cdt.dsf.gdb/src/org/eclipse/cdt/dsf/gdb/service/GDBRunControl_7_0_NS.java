@@ -245,20 +245,6 @@ public class GDBRunControl_7_0_NS extends AbstractDsfService implements IRunCont
 	}
 
 	///////////////////////////////////////////////////////////////////////////
-	// IDMService
-	///////////////////////////////////////////////////////////////////////////
-
-	@SuppressWarnings("unchecked")
-	public void getModelData(IDMContext dmc, DataRequestMonitor<?> rm) {
-		if (dmc instanceof IExecutionDMContext) {
-			getExecutionData((IExecutionDMContext) dmc, (DataRequestMonitor<IExecutionDMData>) rm);
-		} else {
-			rm.setStatus(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, INVALID_HANDLE, "Unknown DMC type", null)); //$NON-NLS-1$
-			rm.done();
-		}
-	}
-
-	///////////////////////////////////////////////////////////////////////////
 	// IRunControl
 	///////////////////////////////////////////////////////////////////////////
 

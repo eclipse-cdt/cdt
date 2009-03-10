@@ -21,7 +21,6 @@ import org.eclipse.cdt.dsf.debug.service.IRunControl.IExecutionDMContext;
 import org.eclipse.cdt.dsf.debug.service.IRunControl.ISuspendedDMEvent;
 import org.eclipse.cdt.dsf.debug.ui.DsfDebugUITools;
 import org.eclipse.cdt.dsf.debug.ui.IDsfDebugUIConstants;
-import org.eclipse.cdt.dsf.debug.ui.viewmodel.numberformat.FormattedValuePreferenceStore;
 import org.eclipse.cdt.dsf.debug.ui.viewmodel.update.BreakpointHitUpdatePolicy;
 import org.eclipse.cdt.dsf.internal.ui.DsfUIPlugin;
 import org.eclipse.cdt.dsf.service.DsfServicesTracker;
@@ -95,13 +94,13 @@ public class RegisterVMProvider extends AbstractDMVMProvider
         /*
          * Create the next level which is the registers themselves.
          */
-        IVMNode registerNode = new RegisterVMNode(FormattedValuePreferenceStore.getDefault(), this, getSession(), regAccess);
+        IVMNode registerNode = new RegisterVMNode(this, getSession(), regAccess);
         addChildNodes(registerGroupNode, new IVMNode[] { registerNode });
         
         /*
          * Create the next level which is the bitfield level.
          */
-        IVMNode bitFieldNode = new RegisterBitFieldVMNode(FormattedValuePreferenceStore.getDefault(), this, getSession(), regAccess);
+        IVMNode bitFieldNode = new RegisterBitFieldVMNode(this, getSession(), regAccess);
         addChildNodes(registerNode, new IVMNode[] { bitFieldNode });
         
         /*

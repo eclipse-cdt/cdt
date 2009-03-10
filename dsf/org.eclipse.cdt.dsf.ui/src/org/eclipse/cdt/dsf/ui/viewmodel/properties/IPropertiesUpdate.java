@@ -10,6 +10,9 @@
  *******************************************************************************/
 package org.eclipse.cdt.dsf.ui.viewmodel.properties;
 
+import java.util.Map;
+import java.util.Set;
+
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IViewerUpdate;
 
 /**
@@ -20,15 +23,22 @@ import org.eclipse.debug.internal.ui.viewers.model.provisional.IViewerUpdate;
 @SuppressWarnings("restriction")
 public interface IPropertiesUpdate extends IViewerUpdate {
     /**
-     * Returns the list of element properties that the provider should set.
-     * If <code>null</code>, all available properties should be set. 
+     * Returns the set of element properties that the provider should update.
      */
-    public String[] getProperties();
+    public Set<String> getProperties();
     
     /**
      * Sets the given property to update.
+     * 
      * @param property Property ID.
      * @param value Property value.
      */
     public void setProperty(String property, Object value);
+    
+    /**
+     * Sets the given map as the complete property map for this update.
+     * 
+     * @param properties Full properties map.
+     */
+    public void setAllProperties(Map<String, Object> properties);
 }

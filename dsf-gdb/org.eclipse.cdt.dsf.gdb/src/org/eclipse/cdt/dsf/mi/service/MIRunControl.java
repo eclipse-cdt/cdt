@@ -314,16 +314,6 @@ public class MIRunControl extends AbstractDsfService implements IRunControl, ICa
     /** @since 2.0 */
     protected void setTerminated(boolean terminated) { fTerminated = terminated; }
     
-    @SuppressWarnings("unchecked")
-    public void getModelData(IDMContext dmc, DataRequestMonitor<?> rm) {
-        if (dmc instanceof IExecutionDMContext) {
-            getExecutionData((IExecutionDMContext)dmc, (DataRequestMonitor<IExecutionDMData>)rm);
-        } else {
-            rm.setStatus(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, INVALID_HANDLE, "Unknown DMC type", null)); //$NON-NLS-1$
-            rm.done();
-        }
-    }
-    
     public CommandCache getCache() { return fMICommandCache; }
     /** @since 2.0 */
     protected ICommandControlService getConnection() { return fConnection; }

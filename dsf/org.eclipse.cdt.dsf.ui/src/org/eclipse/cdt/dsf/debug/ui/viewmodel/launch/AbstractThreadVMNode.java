@@ -12,8 +12,10 @@
 package org.eclipse.cdt.dsf.debug.ui.viewmodel.launch;
 
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.RejectedExecutionException;
 
+import org.eclipse.cdt.dsf.concurrent.ConfinedToDsfExecutor;
 import org.eclipse.cdt.dsf.concurrent.DataRequestMonitor;
 import org.eclipse.cdt.dsf.concurrent.DsfRunnable;
 import org.eclipse.cdt.dsf.concurrent.IDsfStatusConstants;
@@ -26,8 +28,10 @@ import org.eclipse.cdt.dsf.debug.service.IRunControl.IContainerDMContext;
 import org.eclipse.cdt.dsf.debug.service.IRunControl.IContainerResumedDMEvent;
 import org.eclipse.cdt.dsf.debug.service.IRunControl.IContainerSuspendedDMEvent;
 import org.eclipse.cdt.dsf.debug.service.IRunControl.IExecutionDMContext;
+import org.eclipse.cdt.dsf.debug.service.IRunControl.IExecutionDMData;
 import org.eclipse.cdt.dsf.debug.service.IRunControl.IResumedDMEvent;
 import org.eclipse.cdt.dsf.debug.service.IRunControl.ISuspendedDMEvent;
+import org.eclipse.cdt.dsf.debug.service.IRunControl.StateChangeReason;
 import org.eclipse.cdt.dsf.debug.ui.viewmodel.SteppingController.SteppingTimedOutEvent;
 import org.eclipse.cdt.dsf.internal.ui.DsfUIPlugin;
 import org.eclipse.cdt.dsf.service.DsfSession;
@@ -39,12 +43,21 @@ import org.eclipse.cdt.dsf.ui.viewmodel.VMDelta;
 import org.eclipse.cdt.dsf.ui.viewmodel.datamodel.AbstractDMVMNode;
 import org.eclipse.cdt.dsf.ui.viewmodel.datamodel.AbstractDMVMProvider;
 import org.eclipse.cdt.dsf.ui.viewmodel.datamodel.IDMVMContext;
+import org.eclipse.cdt.dsf.ui.viewmodel.properties.IElementPropertiesProvider;
+import org.eclipse.cdt.dsf.ui.viewmodel.properties.IPropertiesUpdate;
+import org.eclipse.cdt.dsf.ui.viewmodel.properties.LabelAttribute;
+import org.eclipse.cdt.dsf.ui.viewmodel.properties.LabelColumnInfo;
+import org.eclipse.cdt.dsf.ui.viewmodel.properties.LabelImage;
+import org.eclipse.cdt.dsf.ui.viewmodel.properties.LabelText;
+import org.eclipse.cdt.dsf.ui.viewmodel.properties.PropertiesBasedLabelProvider;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IChildrenUpdate;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IElementLabelProvider;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.ILabelUpdate;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IModelDelta;
+import org.eclipse.debug.ui.DebugUITools;
+import org.eclipse.debug.ui.IDebugUIConstants;
 
 
 /**
@@ -53,14 +66,78 @@ import org.eclipse.debug.internal.ui.viewers.model.provisional.IModelDelta;
  * 
  * @since 1.1
  */
-@SuppressWarnings("restriction")
 public abstract class AbstractThreadVMNode extends AbstractDMVMNode
-    implements IElementLabelProvider
+    implements IElementLabelProvider, IElementPropertiesProvider
 {
+    /**
+     * The label provider delegate.  This VM node will delegate label updates to this provider
+     * which can be created by sub-classes. 
+     *  
+     * @since 2.0
+     */    
+    private IElementLabelProvider fLabelProvider;
+
     public AbstractThreadVMNode(AbstractDMVMProvider provider, DsfSession session) {
         super(provider, session, IExecutionDMContext.class);
+        fLabelProvider = createLabelProvider();
     }
 
+    
+    /**
+     * Creates the label provider delegate.  This VM node will delegate label 
+     * updates to this provider which can be created by sub-classes.   
+     *  
+     * @return Returns the label provider for this node. 
+     *  
+     * @since 2.0
+     */    
+    protected IElementLabelProvider createLabelProvider() {
+        PropertiesBasedLabelProvider provider = new PropertiesBasedLabelProvider();
+
+        provider.setColumnInfo(
+            PropertiesBasedLabelProvider.ID_COLUMN_NO_COLUMNS, 
+            new LabelColumnInfo(new LabelAttribute[] { 
+                // Text is made of the thread name followed by its state and state change reason. 
+                new ExecutionContextLabelText(
+                    MessagesForLaunchVM.AbstractThreadVMNode_No_columns__text_format,
+                    new String[] { 
+                        ExecutionContextLabelText.PROP_NAME_KNOWN, 
+                        PROP_NAME, 
+                        ExecutionContextLabelText.PROP_ID_KNOWN, 
+                        ILaunchVMConstants.PROP_ID, 
+                        ILaunchVMConstants.PROP_IS_SUSPENDED, 
+                        ILaunchVMConstants.PROP_STATE_CHANGE_REASON })
+                {
+                    @Override
+                    public boolean isEnabled(IStatus status, Map<String, Object> properties) {
+                        String reason = (String)properties.get(ILaunchVMConstants.PROP_STATE_CHANGE_REASON);
+                        return 
+                            reason != null && reason.length() != 0 && 
+                            !StateChangeReason.UNKNOWN.equals(reason);
+                    }
+                },
+                // If no state change reason is available compose a string without it. 
+                new ExecutionContextLabelText(
+                    MessagesForLaunchVM.AbstractThreadVMNode_No_columns__No_reason__text_format,
+                    new String[] { 
+                        ExecutionContextLabelText.PROP_NAME_KNOWN, 
+                        PROP_NAME, 
+                        ExecutionContextLabelText.PROP_ID_KNOWN, 
+                        ILaunchVMConstants.PROP_ID}), 
+                new LabelText(MessagesForLaunchVM.AbstractThreadVMNode_No_columns__Error__label, new String[0]),
+                new LabelImage(DebugUITools.getImageDescriptor(IDebugUIConstants.IMG_OBJS_THREAD_RUNNING)) {
+                    { setPropertyNames(new String[] { ILaunchVMConstants.PROP_IS_SUSPENDED }); }
+                    
+                    @Override
+                    public boolean isEnabled(IStatus status, java.util.Map<String,Object> properties) {
+                        return !((Boolean)properties.get(ILaunchVMConstants.PROP_IS_SUSPENDED)).booleanValue();
+                    };
+                },
+                new LabelImage(DebugUITools.getImageDescriptor(IDebugUIConstants.IMG_OBJS_THREAD_SUSPENDED)),
+            }));
+        return provider;
+    }
+    
 	@Override
     protected void updateElementsInSessionThread(final IChildrenUpdate update) {
     	IRunControl runControl = getServicesTracker().getService(IRunControl.class);
@@ -85,19 +162,67 @@ public abstract class AbstractThreadVMNode extends AbstractDMVMNode
     }
 
 
+    
     public void update(final ILabelUpdate[] updates) {
+        fLabelProvider.update(updates);
+    }
+
+    /**
+     * @see IElementPropertiesProvider#update(IPropertiesUpdate[])
+     * 
+     * @since 2.0
+     */    
+    public void update(final IPropertiesUpdate[] updates) {
         try {
             getSession().getExecutor().execute(new DsfRunnable() {
                 public void run() {
-                    updateLabelInSessionThread(updates);
+                    updatePropertiesInSessionThread(updates);
                 }});
         } catch (RejectedExecutionException e) {
-            for (ILabelUpdate update : updates) {
+            for (IPropertiesUpdate update : updates) {
                 handleFailedUpdate(update);
             }
         }
     }
 
+    /**
+     * @since 2.0
+     */
+    @ConfinedToDsfExecutor("getSession().getExecutor()")
+    protected void updatePropertiesInSessionThread(final IPropertiesUpdate[] updates) {
+        IRunControl service = getServicesTracker().getService(IRunControl.class);
+        
+        for (final IPropertiesUpdate update : updates) {
+            if (service == null) {
+                handleFailedUpdate(update);
+                continue;
+            }
+
+            IExecutionDMContext dmc = findDmcInPath(update.getViewerInput(), update.getElementPath(), IExecutionDMContext.class);
+            if (dmc == null) {
+                handleFailedUpdate(update);
+                continue;
+            }
+
+            update.setProperty(ILaunchVMConstants.PROP_IS_SUSPENDED, service.isSuspended(dmc));
+            update.setProperty(ILaunchVMConstants.PROP_IS_STEPPING, service.isStepping(dmc));
+            
+            service.getExecutionData(
+                dmc, 
+                new ViewerDataRequestMonitor<IExecutionDMData>(getSession().getExecutor(), update) { 
+                    @Override
+                    protected void handleSuccess() {
+                        fillExecutionDataProperties(update, getData());
+                        update.done();
+                    }
+                });
+        }        
+    }
+    
+    protected void fillExecutionDataProperties(IPropertiesUpdate update, IExecutionDMData data) {
+        update.setProperty(ILaunchVMConstants.PROP_STATE_CHANGE_REASON, data.getStateChangeReason().name());
+    }
+    
     @Override
     public void getContextsForEvent(VMDelta parentDelta, Object e, final DataRequestMonitor<IVMContext[]> rm) {
         if(e instanceof IContainerResumedDMEvent) {
@@ -211,14 +336,6 @@ public abstract class AbstractThreadVMNode extends AbstractDMVMNode
                 }
             }));
     }
-    
-    /**
-     * Perform the given label updates in the session executor thread.
-     * 
-     * @param updates  the pending label updates
-     * @see {@link #update(ILabelUpdate[])
-     */
-    protected abstract void updateLabelInSessionThread(ILabelUpdate[] updates);
     
     
     public int getDeltaFlags(Object e) {

@@ -12,6 +12,7 @@ package org.eclipse.cdt.dsf.ui.viewmodel.properties;
 
 import java.util.Map;
 
+import org.eclipse.core.runtime.IStatus;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.ILabelUpdate;
 import org.eclipse.jface.resource.ImageDescriptor;
 
@@ -20,7 +21,7 @@ import org.eclipse.jface.resource.ImageDescriptor;
  * 
  * @see LabelAttribute
  * @see LabelColumnInfo
- * @see PropertyBasedLabelProvider
+ * @see PropertiesBasedLabelProvider
  * 
  * @since 1.0
  */
@@ -42,11 +43,10 @@ public class LabelImage extends LabelAttribute {
     
     public void setImageDescriptor(ImageDescriptor image) {
         fImageDescriptor = image;
-        fireAttributeChanged();
     }
     
     @Override
-    public void updateAttribute(ILabelUpdate update, int columnIndex, Map<String, Object> properties) {
+    public void updateAttribute(ILabelUpdate update, int columnIndex, IStatus status, Map<String, Object> properties) {
         ImageDescriptor descriptor = getImageDescriptor();
         if (descriptor != null) {
             update.setImageDescriptor(descriptor, columnIndex);

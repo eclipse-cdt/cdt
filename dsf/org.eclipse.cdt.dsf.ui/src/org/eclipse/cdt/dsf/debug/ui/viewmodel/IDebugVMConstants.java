@@ -10,7 +10,10 @@
  *******************************************************************************/
 package org.eclipse.cdt.dsf.debug.ui.viewmodel;
 
+import org.eclipse.cdt.dsf.debug.service.IFormattedValues;
+import org.eclipse.cdt.dsf.debug.ui.viewmodel.numberformat.FormattedValueVMUtil;
 import org.eclipse.cdt.dsf.internal.ui.DsfUIPlugin;
+import org.eclipse.cdt.dsf.ui.viewmodel.update.ICachingVMProvider;
 
 /**
  * 
@@ -30,6 +33,38 @@ public interface IDebugVMConstants {
 
     /**
      * Location of the current format in the IPresentationContext data store.
+     *
+     * @since 2.0
      */
-    public final static String CURRENT_FORMAT_STORAGE = "CurrentNumericStyle" ;  //$NON-NLS-1$
+    public final static String PROP_FORMATTED_VALUE_FORMAT_PREFERENCE = "CurrentNumericStyle" ;  //$NON-NLS-1$
+
+    /**
+     * @since 2.0
+     */
+    public static final String PROP_FORMATTED_VALUE_ACTIVE_FORMAT_VALUE = "formatted_value_active_format_value";  //$NON-NLS-1$
+
+    /**
+     * @since 2.0
+     */
+    public static final String PROP_FORMATTED_VALUE_AVAILABLE_FORMATS = "formatted_value_available_formats";  //$NON-NLS-1$    
+
+    /**
+     * @since 2.0
+     */
+    public static final String PROP_FORMATTED_VALUE_ACTIVE_FORMAT = "formatted_value_active_format";  //$NON-NLS-1$
+    
+    /**
+     * @since 2.0
+     */
+    public static final String PROP_FORMATTED_VALUE_BASE = "formatted_value_base";  //$NON-NLS-1$    
+
+    /**
+     * @since 2.0
+     */
+    public static final String PROP_IS_STRING_FORMAT_VALUE_CHANGED = ICachingVMProvider.PROP_IS_CHANGED_PREFIX + FormattedValueVMUtil.getPropertyForFormatId(IFormattedValues.STRING_FORMAT);
+
+    /**
+     * @since 2.0
+     */
+    public static final String PROP_IS_ACTIVE_FORMATTED_VALUE_CHANGED = ICachingVMProvider.PROP_IS_CHANGED_PREFIX + FormattedValueVMUtil.getPropertyForFormatId(IFormattedValues.NATURAL_FORMAT);
 }

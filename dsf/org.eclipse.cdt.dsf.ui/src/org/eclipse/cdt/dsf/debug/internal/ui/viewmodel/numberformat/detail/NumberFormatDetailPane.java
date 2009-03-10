@@ -12,44 +12,38 @@
 package org.eclipse.cdt.dsf.debug.internal.ui.viewmodel.numberformat.detail;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
+import java.util.concurrent.Executor;
 
-import org.eclipse.cdt.dsf.concurrent.CountingRequestMonitor;
 import org.eclipse.cdt.dsf.concurrent.DataRequestMonitor;
-import org.eclipse.cdt.dsf.datamodel.DMContexts;
 import org.eclipse.cdt.dsf.debug.internal.ui.viewmodel.detailsupport.DetailPaneMaxLengthAction;
 import org.eclipse.cdt.dsf.debug.internal.ui.viewmodel.detailsupport.DetailPaneWordWrapAction;
 import org.eclipse.cdt.dsf.debug.internal.ui.viewmodel.detailsupport.MessagesForDetailPane;
 import org.eclipse.cdt.dsf.debug.internal.ui.viewmodel.detailsupport.TextViewerAction;
-import org.eclipse.cdt.dsf.debug.service.IExpressions;
-import org.eclipse.cdt.dsf.debug.service.IFormattedValues;
-import org.eclipse.cdt.dsf.debug.service.IRegisters;
-import org.eclipse.cdt.dsf.debug.service.IExpressions.IExpressionDMContext;
-import org.eclipse.cdt.dsf.debug.service.IFormattedValues.FormattedValueDMContext;
-import org.eclipse.cdt.dsf.debug.service.IFormattedValues.FormattedValueDMData;
-import org.eclipse.cdt.dsf.debug.service.IFormattedValues.IFormattedDataDMContext;
-import org.eclipse.cdt.dsf.debug.service.IRegisters.IBitFieldDMContext;
-import org.eclipse.cdt.dsf.debug.service.IRegisters.IBitFieldDMData;
-import org.eclipse.cdt.dsf.debug.service.IRegisters.IRegisterDMContext;
-import org.eclipse.cdt.dsf.debug.service.IRegisters.IRegisterDMData;
 import org.eclipse.cdt.dsf.debug.ui.IDsfDebugUIConstants;
+import org.eclipse.cdt.dsf.debug.ui.viewmodel.IDebugVMConstants;
+import org.eclipse.cdt.dsf.debug.ui.viewmodel.numberformat.FormattedValueVMUtil;
 import org.eclipse.cdt.dsf.internal.ui.DsfUIPlugin;
-import org.eclipse.cdt.dsf.service.DsfServicesTracker;
-import org.eclipse.cdt.dsf.ui.viewmodel.IVMNode;
-import org.eclipse.cdt.dsf.ui.viewmodel.datamodel.IDMVMContext;
-import org.eclipse.cdt.dsf.ui.viewmodel.update.AbstractCachingVMProvider;
+import org.eclipse.cdt.dsf.ui.concurrent.SimpleDisplayExecutor;
+import org.eclipse.cdt.dsf.ui.viewmodel.properties.IElementPropertiesProvider;
+import org.eclipse.cdt.dsf.ui.viewmodel.properties.IPropertiesUpdate;
+import org.eclipse.cdt.dsf.ui.viewmodel.properties.VMPropertiesUpdate;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
+import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.model.IDebugModelProvider;
 import org.eclipse.debug.core.model.IValue;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IPresentationContext;
-import org.eclipse.debug.internal.ui.viewers.model.provisional.IViewerUpdate;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.TreeModelViewer;
 import org.eclipse.debug.ui.IDebugModelPresentation;
 import org.eclipse.debug.ui.IDebugUIConstants;
@@ -249,35 +243,12 @@ public class NumberFormatDetailPane implements IDetailPane, IAdaptable, IPropert
     /**
      * Useful shortened names for the internationalized strings.
      */
-    public static String HEX     = MessagesForNumberFormatDetailPane.NumberFormatDetailPane_Hex_label;
-    public static String NATURAL = MessagesForNumberFormatDetailPane.NumberFormatDetailPane_Natural_label;
-    public static String DECIMAL = MessagesForNumberFormatDetailPane.NumberFormatDetailPane_Decimal_label;
-    public static String OCTAL   = MessagesForNumberFormatDetailPane.NumberFormatDetailPane_Octal_label;
-    public static String BINARY  = MessagesForNumberFormatDetailPane.NumberFormatDetailPane_Binary_label;
-    public static String STRING  = MessagesForNumberFormatDetailPane.NumberFormatDetailPane_String_label;
-    public static String OTHER   = MessagesForNumberFormatDetailPane.NumberFormatDetailPane_String_label;
+    public static String FORMAT_SEPARATOR = MessagesForNumberFormatDetailPane.NumberFormatDetailPane_format_separator__label;
     public static String NAME    = MessagesForNumberFormatDetailPane.NumberFormatDetailPane_Name_label;
     public static String SPACES  = MessagesForNumberFormatDetailPane.NumberFormatDetailPane_Spaces_label;   
     public static String CRLF    = MessagesForNumberFormatDetailPane.NumberFormatDetailPane_CarriageReturn_label;
     public static String DOTS    = MessagesForNumberFormatDetailPane.NumberFormatDetailPane_DotDotDot_label;
     
-    /*
-     * Returns a formatted combination of format label and its corresponding value.
-     */
-    private String formatNumericResult(String format, String value) {
-    	
-    	/*
-    	 * Select the proper string format and create the total value to be displayed.
-    	 */
-    	     if ( format == IFormattedValues.HEX_FORMAT)     { return(HEX     + value); }
-        else if ( format == IFormattedValues.OCTAL_FORMAT)   { return(OCTAL   + value); }
-        else if ( format == IFormattedValues.NATURAL_FORMAT) { return(NATURAL + value); }
-        else if ( format == IFormattedValues.BINARY_FORMAT)  { return(BINARY  + value); }
-        else if ( format == IFormattedValues.DECIMAL_FORMAT) { return(DECIMAL + value); }
-        else if ( format == IFormattedValues.STRING_FORMAT)  { return(STRING  + value); }
-        else                                                 { return(OTHER   + value); }
-    }
-
     /**
      * Job to compute the details for a selection
      */
@@ -299,142 +270,11 @@ public class NumberFormatDetailPane implements IDetailPane, IAdaptable, IPropert
             fElements = elements;
         }
         
-        /*
-         *  This is the routine which will actually process the various format requests
-         *  for a given element.  It is expected and required that this routine will be
-         *  called from within a DSF executor.
-         */
-        private void putInformationIntoDetailPane( final AbstractCachingVMProvider provider,
-                                                   final IVMNode node, 
-                                                   final TreePath path,
-                                                   final IFormattedDataDMContext finalDmc , 
-        		 								   final IFormattedValues service, 
-        										   final IProgressMonitor monitor, 
-        										   final String name ) {
-
-            /*
-             *  Now that we can process this one. Find out how many formats we can
-             *  show this in. We will choose to show all of the supported formats.
-             *  Since we are doing this in the background and the debug engines do
-             *  typically cache the results so producing multiple formats will not
-             *  typically be a burden. We should probably consider perhaps doing a
-             *  preference where they can select what formats they want to show.
-             */
-            final DataRequestMonitor<String[]> getAvailableFormatsDone = 
-                new DataRequestMonitor<String[]>(service.getExecutor(), null) {
-                    @Override
-                    protected void handleSuccess() {
-                        if (monitor.isCanceled()) {
-                        	notifyAll();
-                            return;
-                        }
-                        
-                        /*
-                         *  Now we have a set of formats for each one fire up an independent
-                         *  asynchronous request to get the data in that format. We do not
-                         *  go through the cache manager here because when the values are
-                         *  edited and written the cache is bypassed.
-                         */
-                        String[] formats = getData();
-                        
-                        final List<String> completedFormatStrings = new ArrayList<String>();
-                        
-                        final CountingRequestMonitor countingRm = new CountingRequestMonitor(service.getExecutor(), null) {
-                            @Override
-                            protected void handleCompleted() {
-                                
-                                if (monitor.isCanceled()) {
-                                	notifyAll();
-                                    return;
-                                }
-                                
-                                /*
-                                 *  We sort the array to make the strings appear always in the same order.
-                                 */
-                                java.util.Collections.sort( completedFormatStrings );
-
-                                int len = completedFormatStrings.size() ;
-                                
-                                if ( len == 0 ) {
-                                	detailComputed(null,""); //$NON-NLS-1$
-                                }
-                                else {
-                                	/*
-                                	 *  Add the HEADER which identifies what is being represented. When there
-                                	 *  are multiple selections in the view the detail pane contains multiple
-                                	 *  entries.  They would be all compressed together  and even though  the 
-                                	 *  order of the  entries is the order of the selections in the view  and
-                                	 *  it is very hard to know what goes with what. This makes it easy.
-                                	 */
-                                	String finalResult = NAME + name + CRLF;
-                                	int cnt = 0 ;
-
-                                	for (String str : completedFormatStrings) {
-
-                                		finalResult += SPACES + str ;
-
-                                		if ( ( ++ cnt ) < len ) {
-                                			finalResult += CRLF; 
-                                		}
-                                	}
-
-                                	detailComputed(null,finalResult);
-                                }
-                            }
-                        };
-                        
-                        countingRm.setDoneCount(formats.length);
-                        
-                        for ( final String str : formats ) {
-                            /*
-                             *  Format has been validated. Get the formatted value.
-                             */
-                            final FormattedValueDMContext valueDmc = service.getFormattedValueContext(finalDmc, str);
-                            
-                            provider.getModelData(
-                                node, 
-                                new IViewerUpdate() {
-                                    public void cancel() {}
-                                    public void done() {}
-                                    public Object getViewerInput() { return fViewerInput; }
-                                    public TreePath getElementPath() { return path; }
-                                    public Object getElement() { return path.getLastSegment(); }
-                                    public IPresentationContext getPresentationContext() { return fPresentationContext; }
-                                    public boolean isCanceled() { return monitor.isCanceled(); }
-                                    public void setStatus(IStatus status) {}
-                                    public IStatus getStatus() { return null; }
-                                }, 
-                                service, valueDmc, 
-                                new DataRequestMonitor<FormattedValueDMData>(service.getExecutor(), null) {
-                                    @Override
-                                    public void handleCompleted() {
-                                        if (getStatus().isOK()) {
-                                            /*
-                                             *  Show the information indicating the format.
-                                             */
-                                        	completedFormatStrings.add( formatNumericResult( str, getData().getFormattedValue() ) );
-                                        }
-                                        countingRm.done();
-                                    }
-                                },
-                                provider.getExecutor());
-                        }
-                    }
-                };
-
-                /*
-                 *  Get the supported formats.
-                 */
-                service.getAvailableFormats(finalDmc, getAvailableFormatsDone);
-        }
-        
         /* (non-Javadoc)
          * @see org.eclipse.core.runtime.jobs.Job#run(org.eclipse.core.runtime.IProgressMonitor)
          */
         @Override
         protected IStatus run(final IProgressMonitor monitor) {
-            
-            String message = null;
             if ( fMonitor != null && ! fMonitor.isCanceled() ) {
                 fMonitor.setCanceled(true);
             }
@@ -447,158 +287,62 @@ public class NumberFormatDetailPane implements IDetailPane, IAdaptable, IPropert
                 final TreePath path = paths[i];
                 Object element = paths[i].getLastSegment();
                 
-                /*
-                 *  Make sure this is an element we want to deal with.
-                 */
-                if ( element instanceof IDMVMContext) {
-                    IDMVMContext vmc = (IDMVMContext)element;
-                    /*
-                     *  We are specifically looking to support the following Data Model Contexts
-                     *  
-                     *  IRegisterDMContext
-                     *  IBitFieldDMContext
-                     *  IExpressionDMContext
-                     *  
-                     *  At first you might think that we should just use the service which is
-                     *  associated with the dmc. But there are implementations where the data
-                     *  model contexts are extended but the services do not extend each other
-                     *  ( this is the case with the WindRiver OCD extensions for example ).
-                     *  
-                     *  So here we specifically look for the service which knows how to  deal
-                     *  with the formatted data.
-                     *  
-                     *  Please note that the order or searching for the ancestor is important.
-                     *  A BitField Data Model Context will have a Register Data Model Context 
-                     *  as its parent so if we search for a Register DMC first when we actually
-                     *  have a BitField DMC we will get the register and show the value of  the
-                     *  register not the bit field.
-                     */
-
-                    DsfServicesTracker tracker = new DsfServicesTracker(DsfUIPlugin.getBundleContext(), vmc.getDMContext().getSessionId());
-
-                    final AbstractCachingVMProvider provider = (AbstractCachingVMProvider)vmc.getAdapter(AbstractCachingVMProvider.class);
-                    final IVMNode node = (IVMNode)vmc.getAdapter(IVMNode.class);
-                                        
-                    final IBitFieldDMContext bitfieldDmc = DMContexts.getAncestorOfType(((IDMVMContext) element).getDMContext(), IBitFieldDMContext.class);
-                    if ( bitfieldDmc != null ) {
-                    	/*
-                         *  Get the name so we can construct the header which identifies the detail
-                         *  set of values.
-                         */
-                    	final IRegisters regService = tracker.getService(IRegisters.class);
-                    	
-                    	regService.getExecutor().submit(
-                    		new Runnable() {
-                    			public void run() {
-                    				regService.getBitFieldData(
-                    					bitfieldDmc,
-                    					new DataRequestMonitor<IBitFieldDMData>(regService.getExecutor(), null) {
-                    						@Override
-                    						public void handleCompleted() {
-                    							if (getStatus().isOK()) {
-                    								putInformationIntoDetailPane(provider, node, path, bitfieldDmc , regService, monitor, getData().getName());
-                    							}
-                    						}
-                    					}
-                    				);
-                    			}
-                    		}
-                        );
-                    }
-                    else {
-                        final IRegisterDMContext regDmc = DMContexts.getAncestorOfType(((IDMVMContext) element).getDMContext(), IRegisterDMContext.class);
-
-                        if ( regDmc != null ) {
-                            /*
-                             *  Get the name so we can construct the header which identifies the detail
-                             *  set of values.
-                             */
-                        	final IRegisters regService = tracker.getService(IRegisters.class);
-                        	
-                            regService.getExecutor().submit(
-                            	new Runnable() {
-                            		public void run() {
-                            			regService.getRegisterData(
-                                           	regDmc,
-                                            new DataRequestMonitor<IRegisterDMData>(regService.getExecutor(), null) {
-                                           		@Override
-                                           		public void handleCompleted() {
-                                           			if (getStatus().isOK()) {
-                                           				putInformationIntoDetailPane(provider, node, path, regDmc , regService, monitor, getData().getName());
-                                           			}
-                                           		}
-                                           	}
-                            			);
-                            		}
-                            	}
-                            );
-                        }
-                        else {
-                            final IExpressionDMContext exprDmc = DMContexts.getAncestorOfType(((IDMVMContext) element).getDMContext(), IExpressionDMContext.class);
-
-                            if ( exprDmc != null ) {
-                                final IExpressions exprService = tracker.getService(IExpressions.class);;
-                                
-                                exprService.getExecutor().submit(
-                                    new Runnable() {
-                                    	public void run() {
-                                    		putInformationIntoDetailPane(provider, node, path, exprDmc , exprService, monitor, exprDmc.getExpression());
-                                    	}
-                                    }
-                                );
-                            }
-                            else {
-                            	/*
-                            	 *  For whatever reason we are seeing some form of context we do not handle. So we 
-                            	 *  will skip this one  and try and process any remaining ones.  At least this way
-                            	 *  we can fill the detail pane with those we do understand.
-                            	 */
-                            	continue;
-                            }
-                        }
-                    }
-                    
-                    tracker.dispose();
-                    
-                    /*
-                     *  We need to wait until all the values are in. This causes the work
-                     *  to in effect be synchronous,  but if we do not wait  then when we
-                     *  are stepping fast if we exit  before the job is finished then  we
-                     *  will enter and start to update the pane before the previous  work
-                     *  is actually done.  This causes  the data to be screwed  up in  an 
-                     *  overlapped way.  It should be the case that most of the jobs that
-                     *  occur in the middle will be cancelled,  so there is not a lot  of
-                     *  waste actually going on.
-                     */
-                    synchronized (this) {
-                       	try {
-                       		// wait for a max of 30 seconds for result, then cancel
-                       		wait(30000);
-                       		if (!fComputed) {
-                       			fMonitor.setCanceled(true);
-                       		}
-                       	} catch (InterruptedException e) {
-                       		break;
-                       	}
-                    }
-                }
-                else {
-                    if (element instanceof String) { message = (String) element;   }
-                    else                           { message = element.toString(); }
-                    fComputed = true;
-                }
+                final IElementPropertiesProvider propertiesProvider = 
+                    (IElementPropertiesProvider)DebugPlugin.getAdapter(element, IElementPropertiesProvider.class);
                 
-                /*
-                 *  If no details were computed for the selected variable, clear the pane
-                 *  or use the message.
-                 */
-                if (!fComputed){
-                    if (message == null) {
-                        detailComputed(null,""); //$NON-NLS-1$
-                    } else {
-                        detailComputed(null, message);
-                    }
-                }
+                final Executor executor = SimpleDisplayExecutor.getSimpleDisplayExecutor(
+                    fWorkbenchPartSite.getShell().getDisplay());
+                Set<String> properties = new HashSet<String>(1);
+                properties.add(IDebugVMConstants.PROP_FORMATTED_VALUE_AVAILABLE_FORMATS);
+                propertiesProvider.update(new IPropertiesUpdate[] { new VMPropertiesUpdate(
+                    properties, path, fViewerInput, fPresentationContext, 
+                    new DataRequestMonitor<Map<String,Object>>(executor, null) {
+                        @Override
+                        protected void handleCompleted() {
+                            Set<String> properties = new HashSet<String>(1);
+                            properties.add(IElementPropertiesProvider.PROP_NAME);
+                            final String[] formats = (String[])getData().get(
+                                IDebugVMConstants.PROP_FORMATTED_VALUE_AVAILABLE_FORMATS);
+                            if (formats != null) {
+                                for (String format : formats) {
+                                    properties.add(FormattedValueVMUtil.getPropertyForFormatId(format));
+                                }
+                            }
+                            
+                            propertiesProvider.update(new IPropertiesUpdate[] { new VMPropertiesUpdate(
+                                properties, path, fViewerInput, fPresentationContext,
+                                new DataRequestMonitor<Map<String,Object>>(executor, null) {
+                                    @Override
+                                    protected void handleSuccess() {
+                                        StringBuffer finalResult = new StringBuffer();
+                                        finalResult.append(NAME).append(getData().get(IElementPropertiesProvider.PROP_NAME)).append(CRLF);
+
+                                        List<String> formatsList = new ArrayList<String>(Arrays.asList(formats));
+                                        Collections.sort(formatsList);
+
+                                        for (int i = 0; i < formatsList.size(); i++) {
+                                            String formatId = formatsList.get(i);
+                                            finalResult.append(SPACES);
+                                            finalResult.append( FormattedValueVMUtil.getFormatLabel(formatId) );
+                                            finalResult.append(FORMAT_SEPARATOR);
+                                            finalResult.append( getData().get(FormattedValueVMUtil.getPropertyForFormatId(formatId)) );                                            
+                                            if ( i < formatsList.size() + 1 ) {
+                                                finalResult.append(CRLF); 
+                                            }
+                                        }
+                                        detailComputed(null, finalResult.toString());
+                                    }
+                                    
+                                    @Override
+                                    protected void handleErrorOrWarning() {
+                                        detailComputed(null, getStatus().getMessage());  
+                                    };
+                                }) 
+                            });
+                        }
+                    }) 
+                });
+                continue;
             }
             
             return Status.OK_STATUS;

@@ -18,7 +18,7 @@ import org.eclipse.cdt.dsf.concurrent.RequestMonitor;
 import org.eclipse.cdt.dsf.datamodel.IDMContext;
 import org.eclipse.cdt.dsf.datamodel.IDMData;
 import org.eclipse.cdt.dsf.datamodel.IDMEvent;
-import org.eclipse.cdt.dsf.datamodel.IDMService;
+import org.eclipse.cdt.dsf.service.IDsfService;
 
 /**
  * This interface provides access to the OS's process 
@@ -29,7 +29,7 @@ import org.eclipse.cdt.dsf.datamodel.IDMService;
  * 
  * @since 1.1
  */
-public interface IProcesses extends IDMService {
+public interface IProcesses extends IDsfService {
     
 	/**
 	 *  A thread as known by the OS.

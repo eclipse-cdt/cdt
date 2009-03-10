@@ -14,7 +14,7 @@ import org.eclipse.cdt.dsf.debug.service.IFormattedValues;
 import org.eclipse.cdt.dsf.debug.service.IExpressions.IExpressionDMContext;
 import org.eclipse.cdt.dsf.debug.ui.viewmodel.IDebugVMConstants;
 import org.eclipse.cdt.dsf.debug.ui.viewmodel.expression.WatchExpressionCellModifier;
-import org.eclipse.cdt.dsf.debug.ui.viewmodel.numberformat.IFormattedValuePreferenceStore;
+import org.eclipse.cdt.dsf.debug.ui.viewmodel.numberformat.FormattedValueVMUtil;
 import org.eclipse.cdt.dsf.ui.viewmodel.IVMContext;
 import org.eclipse.cdt.dsf.ui.viewmodel.update.AbstractCachingVMProvider;
 import org.eclipse.cdt.dsf.ui.viewmodel.update.UserEditEvent;
@@ -26,14 +26,11 @@ public class VariableCellModifier extends WatchExpressionCellModifier {
     
     private AbstractCachingVMProvider fProvider;
     private SyncVariableDataAccess fDataAccess = null;
-    private IFormattedValuePreferenceStore fPrefStore;
     
-    public VariableCellModifier(AbstractCachingVMProvider provider, 
-        IFormattedValuePreferenceStore formattedValuePreferenceStore, SyncVariableDataAccess access) 
+    public VariableCellModifier(AbstractCachingVMProvider provider, SyncVariableDataAccess access) 
     {
         fProvider = provider;
         fDataAccess = access;
-        fPrefStore = formattedValuePreferenceStore;
     }
     
     /*
@@ -81,8 +78,7 @@ public class VariableCellModifier extends WatchExpressionCellModifier {
                  */
                 IVMContext ctx = (IVMContext) element;
                 IPresentationContext presCtx = ctx.getVMNode().getVMProvider().getPresentationContext();
-                
-                formatId = fPrefStore.getCurrentNumericFormat(presCtx);
+                formatId = FormattedValueVMUtil.getPreferredFormat(presCtx);
             }
             else {
                 formatId = IFormattedValues.NATURAL_FORMAT;
@@ -119,8 +115,7 @@ public class VariableCellModifier extends WatchExpressionCellModifier {
                      */
                     IVMContext ctx = (IVMContext) element;
                     IPresentationContext presCtx = ctx.getVMNode().getVMProvider().getPresentationContext();
-                    
-                    formatId = fPrefStore.getCurrentNumericFormat(presCtx);
+                    formatId = FormattedValueVMUtil.getPreferredFormat(presCtx);
                 }
                 else {
                     formatId = IFormattedValues.NATURAL_FORMAT;

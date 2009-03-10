@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2002, 2007 QNX Software Systems and others.
+ * Copyright (c) 2002, 2009 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -161,7 +161,6 @@ JNIEXPORT jint JNICALL Java_org_eclipse_cdt_utils_spawner_SpawnerInputStream_clo
 		_stprintf(buffer, _T("Close %i\n"), fd);
 		OutputDebugStringW(buffer);
 #endif
-		DisconnectNamedPipe((HANDLE)fd);
 		rc = (CloseHandle((HANDLE)fd) ? 0 : -1);	
 #ifdef DEBUG_MONITOR
 		_stprintf(buffer, _T("Closed %i\n"), fd);
@@ -240,7 +239,7 @@ JNIEXPORT jint JNICALL Java_org_eclipse_cdt_utils_spawner_SpawnerOutputStream_cl
 		_stprintf(buffer, _T("Close %i\n"), fd);
 		OutputDebugStringW(buffer);
 #endif
-		DisconnectNamedPipe((HANDLE)fd);
+		FlushFileBuffers((HANDLE)fd);
 		rc = (CloseHandle((HANDLE)fd) ? 0 : -1);	
 #ifdef DEBUG_MONITOR
 		_stprintf(buffer, _T("Closed %i\n"), fd);

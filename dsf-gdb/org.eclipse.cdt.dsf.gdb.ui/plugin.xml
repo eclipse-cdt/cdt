@@ -56,7 +56,7 @@
             id="org.eclipse.cdt.dsf.gdb.launch.remoteApplicationLaunch.debuggerTab"
             group="org.eclipse.cdt.launch.applicationLaunchTabGroup"
             name="%launchTab.debugger.name"
-            class="org.eclipse.cdt.dsf.gdb.internal.ui.launching.LocalApplicationCDebuggerTab">
+            class="org.eclipse.cdt.dsf.gdb.internal.ui.launching.RemoteApplicationCDebuggerTab">
         <associatedDelegate delegate="org.eclipse.cdt.dsf.gdb.launch.remoteCLaunch"/>
         <placement after="org.eclipse.cdt.dsf.gdb.launch.mainTab"/>
       </tab>

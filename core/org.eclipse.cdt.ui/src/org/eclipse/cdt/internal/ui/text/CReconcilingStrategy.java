@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2008 IBM Corporation and others.
+ * Copyright (c) 2005, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -97,14 +97,15 @@ public class CReconcilingStrategy implements IReconcilingStrategy, IReconcilingS
 					index= ast.getIndex();
 				}
 				try {
-					if (ast == null || fProgressMonitor.isCanceled()) {
+					final boolean canceled = fProgressMonitor.isCanceled();
+					if (ast == null || canceled) {
 						((ICReconcilingListener)fEditor).reconciled(null, forced, fProgressMonitor);
 					} else {
 						synchronized (ast) {
 							((ICReconcilingListener)fEditor).reconciled(ast, forced, fProgressMonitor);
 						}
 					}
-					if (fProgressMonitor.isCanceled()) {
+					if (canceled) {
 						aboutToBeReconciled();
 					}
 				} catch(Exception e) {
@@ -114,7 +115,6 @@ public class CReconcilingStrategy implements IReconcilingStrategy, IReconcilingS
 					if (index != null) {
 						index.releaseReadLock();
 					}
-					fProgressMonitor.setCanceled(false);
 				}
 			}
 		}

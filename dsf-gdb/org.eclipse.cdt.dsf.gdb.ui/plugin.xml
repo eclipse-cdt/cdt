@@ -272,24 +272,20 @@
    <extension
          point="org.eclipse.ui.menus">
       <menuContribution
-            locationURI="toolbar:org.eclipse.ui.main.toolbar?after=additions">
-         <toolbar
-               id="org.eclipse.cdt.dsf.gdb.ui.toolbars.reverseDebuggingToolbar">
-            <command
-                  commandId="org.eclipse.cdt.dsf.gdb.ui.commands.reverseToggle"
-                  icon="icons/full/obj16/reversetoggle.gif"
-                  id="org.eclipse.cdt.dsf.gdb.ui.button.reverseToggle"
-                  label="%command.reverseToggle.label"
-                  style="toggle">
-               <visibleWhen
-                     checkEnabled="false">
-                  <reference
-                        definitionId="org.eclipse.cdt.dsf.gdb.ui.testIsReverseDebuggingActionSetActive">
-                  </reference>
-               </visibleWhen>
-            </command>
-                     </toolbar>
-            
+            locationURI="toolbar:org.eclipse.debug.ui.DebugView?after=additions">
+         <command
+               commandId="org.eclipse.cdt.dsf.gdb.ui.commands.reverseToggle"
+               icon="icons/full/obj16/reversetoggle.gif"
+               id="org.eclipse.cdt.dsf.gdb.ui.button.reverseToggle"
+               label="%command.reverseToggle.label"
+               style="toggle">
+            <visibleWhen
+                  checkEnabled="false">
+               <reference
+                     definitionId="org.eclipse.cdt.dsf.gdb.ui.testIsReverseDebuggingActionSetActive">
+               </reference>
+            </visibleWhen>
+         </command>
       </menuContribution>
       <menuContribution
             locationURI="toolbar:org.eclipse.debug.ui.DebugView?after=threadGroup">

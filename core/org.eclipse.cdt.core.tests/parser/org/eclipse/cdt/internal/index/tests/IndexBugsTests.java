@@ -1495,7 +1495,7 @@ public class IndexBugsTests extends BaseTestCase {
 
 	// #define BUG ok
 	// #include "h1.h"
-	public void testIndirectContext_Bug228012() throws Exception {
+	public void testIndirectContext_Bug267907() throws Exception {
 		String[] contents= getContentsForTest(3);
 		final IIndexManager indexManager = CCorePlugin.getIndexManager();
 		TestSourceReader.createFile(fCProject.getProject(), "h1.h", contents[0]);

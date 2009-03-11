@@ -718,7 +718,7 @@ public class AbstractCachingVMProvider extends AbstractVMProvider
                         // We are not changing the archived data.  If archive data exists in the entry, leave it.
                         // Otherwise remove the whole entry.
                         if (elementDataEntry.fArchiveProperties != null) {
-                            elementDataEntry.fProperties.clear();
+                            elementDataEntry.fProperties = null;
                         } else {
                             fCacheData.remove(entry.fKey);
                             entry.remove();

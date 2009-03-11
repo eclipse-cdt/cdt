@@ -10,7 +10,6 @@
  *******************************************************************************/
 package org.eclipse.cdt.examples.dsf.timers;
 
-import java.text.MessageFormat;
 import java.util.concurrent.RejectedExecutionException;
 
 import org.eclipse.cdt.dsf.concurrent.ConfinedToDsfExecutor;
@@ -26,7 +25,7 @@ import org.eclipse.cdt.dsf.ui.viewmodel.properties.LabelAttribute;
 import org.eclipse.cdt.dsf.ui.viewmodel.properties.LabelColumnInfo;
 import org.eclipse.cdt.dsf.ui.viewmodel.properties.LabelImage;
 import org.eclipse.cdt.dsf.ui.viewmodel.properties.LabelText;
-import org.eclipse.cdt.dsf.ui.viewmodel.properties.PropertyBasedLabelProvider;
+import org.eclipse.cdt.dsf.ui.viewmodel.properties.PropertiesBasedLabelProvider;
 import org.eclipse.cdt.examples.dsf.DsfExamplesPlugin;
 import org.eclipse.cdt.examples.dsf.timers.AlarmService.TriggerDMContext;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IChildrenUpdate;
@@ -55,23 +54,21 @@ class TriggersVMNode extends AbstractDMVMNode
     private static final String PROP_TRIGGER_VALUE = "alarmTriggerValue"; 
     
     // Create and configure the label provider.
-    private static final PropertyBasedLabelProvider fgLabelProvider;
+    private static final PropertiesBasedLabelProvider fgLabelProvider;
     static {
-        fgLabelProvider = new PropertyBasedLabelProvider();
+        fgLabelProvider = new PropertiesBasedLabelProvider();
 
         LabelColumnInfo idCol = new LabelColumnInfo(
             new LabelAttribute[] { 
-                new LabelText(new MessageFormat("Trigger #{0}"), 
-                    new String[] { PROP_TRIGGER_NUMBER }), 
+                new LabelText("Trigger #{0}", new String[] { PROP_TRIGGER_NUMBER }), 
                 new LabelImage(DsfExamplesPlugin.getDefault().getImageRegistry().
                     getDescriptor(DsfExamplesPlugin.IMG_ALARM))
             });
         fgLabelProvider.setColumnInfo(TimersViewColumnPresentation.COL_ID, idCol);
         
         LabelColumnInfo valueCol = new LabelColumnInfo(
-            new LabelAttribute[] { 
-                new LabelText(new MessageFormat("{0}"), 
-                    new String[] { PROP_TRIGGER_VALUE }) 
+            new LabelAttribute[] {
+                new LabelText("{0}", new String[] { PROP_TRIGGER_VALUE }) 
             });
         fgLabelProvider.setColumnInfo(TimersViewColumnPresentation.COL_VALUE, 
             valueCol);            

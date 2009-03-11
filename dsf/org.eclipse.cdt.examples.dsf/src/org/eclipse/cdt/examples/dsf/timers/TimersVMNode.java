@@ -10,7 +10,6 @@
  *******************************************************************************/
 package org.eclipse.cdt.examples.dsf.timers;
 
-import java.text.MessageFormat;
 import java.util.concurrent.RejectedExecutionException;
 
 import org.eclipse.cdt.dsf.concurrent.ConfinedToDsfExecutor;
@@ -26,7 +25,7 @@ import org.eclipse.cdt.dsf.ui.viewmodel.properties.LabelAttribute;
 import org.eclipse.cdt.dsf.ui.viewmodel.properties.LabelColumnInfo;
 import org.eclipse.cdt.dsf.ui.viewmodel.properties.LabelImage;
 import org.eclipse.cdt.dsf.ui.viewmodel.properties.LabelText;
-import org.eclipse.cdt.dsf.ui.viewmodel.properties.PropertyBasedLabelProvider;
+import org.eclipse.cdt.dsf.ui.viewmodel.properties.PropertiesBasedLabelProvider;
 import org.eclipse.cdt.examples.dsf.DsfExamplesPlugin;
 import org.eclipse.cdt.examples.dsf.timers.TimerService.TimerDMContext;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IChildrenUpdate;
@@ -50,14 +49,13 @@ class TimersVMNode extends AbstractDMVMNode
     private static final String PROP_TIMER_VALUE = "alarmTriggerValue"; 
     
     // Create and configure the label provider.
-    private static final PropertyBasedLabelProvider fgLabelProvider;
+    private static final PropertiesBasedLabelProvider fgLabelProvider;
     static {
-        fgLabelProvider = new PropertyBasedLabelProvider();
+        fgLabelProvider = new PropertiesBasedLabelProvider();
 
         LabelColumnInfo idCol = new LabelColumnInfo(
             new LabelAttribute[] { 
-                new LabelText(new MessageFormat("Timer #{0}"), 
-                    new String[] { PROP_TIMER_NUMBER }), 
+                new LabelText("Timer #{0}", new String[] { PROP_TIMER_NUMBER }), 
                 new LabelImage(DsfExamplesPlugin.getDefault().getImageRegistry().
                     getDescriptor(DsfExamplesPlugin.IMG_ALARM))
             });
@@ -65,8 +63,7 @@ class TimersVMNode extends AbstractDMVMNode
         
         LabelColumnInfo valueCol = new LabelColumnInfo(
             new LabelAttribute[] { 
-                new LabelText(new MessageFormat("{0}"), 
-                    new String[] { PROP_TIMER_VALUE }) 
+                new LabelText("{0}", new String[] { PROP_TIMER_VALUE }) 
             });
         fgLabelProvider.setColumnInfo(TimersViewColumnPresentation.COL_VALUE, 
             valueCol);            

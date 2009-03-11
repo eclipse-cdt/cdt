@@ -14,6 +14,7 @@
  * Martin Oberhuber (Wind River) - [184095] Replace systemTypeName by IRSESystemType
  * Martin Oberhuber (Wind River) - [186773] split ISystemRegistryUI from ISystemRegistry
  * Martin Oberhuber (Wind River) - [220020][api][breaking] SystemFileTransferModeRegistry should be internal
+ * David McKnight   (IBM)        - [267247] Wrong encoding - new method to get source encoding for IFile
  ********************************************************************************/
 
 package org.eclipse.rse.subsystems.files.core.model;
@@ -21,6 +22,8 @@ package org.eclipse.rse.subsystems.files.core.model;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.eclipse.core.resources.IFile;
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.rse.core.IRSESystemType;
 import org.eclipse.rse.core.RSECorePlugin;
 import org.eclipse.rse.core.model.IHost;
@@ -28,6 +31,7 @@ import org.eclipse.rse.core.model.ISystemRegistry;
 import org.eclipse.rse.core.subsystems.ISubSystem;
 import org.eclipse.rse.core.subsystems.ISubSystemConfiguration;
 import org.eclipse.rse.internal.subsystems.files.core.model.SystemFileTransferModeRegistry;
+import org.eclipse.rse.services.clientserver.SystemEncodingUtil;
 import org.eclipse.rse.subsystems.files.core.subsystems.IRemoteFileSubSystem;
 import org.eclipse.rse.subsystems.files.core.subsystems.IRemoteFileSubSystemConfiguration;
 
@@ -40,7 +44,30 @@ import org.eclipse.rse.subsystems.files.core.subsystems.IRemoteFileSubSystemConf
  */
 public class RemoteFileUtility
 {
-
+	/**
+	 * Return the workspace encoding for a given IFile.  In none is specified
+	 * for this particular file, then the default charset is used.  If an exception
+	 * is hit trying to get the encoding, then the fallback is UTF-8
+	 * 
+	 * @since 3.1
+	 */
+	public static String getSourceEncoding(IFile file)
+	{
+		String srcEncoding = null;
+		
+		try {
+			srcEncoding = file.getCharset(true);
+			if (srcEncoding == null || srcEncoding.length() == 0)
+			{
+				srcEncoding = file.getWorkspace().getRoot().getDefaultCharset();
+			}
+		}
+		catch (CoreException e){			
+			srcEncoding = SystemEncodingUtil.ENCODING_UTF_8;
+		}
+		return srcEncoding;
+	}
+	
 	/**
 	 * Return the first remote file subsystem associated with a connection.
 	 * @param connection the connection to query.

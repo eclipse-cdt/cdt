@@ -107,7 +107,6 @@ public class PropertiesBasedLabelProvider
                     @Override
                     protected void handleCompleted() {
                         updateLabel(labelUpdate, getStatus(), getData());
-                        labelUpdate.done();
                     }
                 });
         }

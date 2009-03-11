@@ -172,6 +172,7 @@ public class PDOMIndexerJob extends Job {
 			synchronized(this) {
 				fMonitor= null;
 			}
+			monitorJob.cancel();
 			monitor.done();
 		}
 	}

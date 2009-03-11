@@ -1325,10 +1325,14 @@ class RemoteImportWizardPage1 extends WizardResourceImportPage implements Listen
 		}
 
 		// if review is selected, the other options are grayed out without save settings
-		boolean isReview = reviewSynchronizeCheckbox.getSelection();
-		overwriteExistingResourcesCheckbox.setEnabled(!isReview);
-		createContainerStructureButton.setEnabled(!isReview);
-		createOnlySelectedButton.setEnabled(!isReview);
+		if (reviewSynchronizeCheckbox != null){ // event handling could come before the widgets are created
+			boolean isReview = reviewSynchronizeCheckbox.getSelection();
+			overwriteExistingResourcesCheckbox.setEnabled(!isReview);
+			createContainerStructureButton.setEnabled(!isReview);
+			createOnlySelectedButton.setEnabled(!isReview);
+		}
+		
+			
 		// this calls to determine whether page can be completed
 		super.updateWidgetEnablements();
 	}

@@ -247,6 +247,7 @@ public final class IndexBasedCodeReaderFactory implements IIndexBasedCodeReaderF
 				return file;
 			}
 			file= context;
+			include= context.getParsedInContext();
 		}
 		return file;
 	}

@@ -24,7 +24,6 @@ import org.eclipse.jface.resource.JFaceResources;
  * 
  * @since 1.1
  */
-@SuppressWarnings("restriction")
 public class InvalidExpressionVMContext extends AbstractVMContext implements IElementLabelProvider {
     
     final private IExpression fExpression;

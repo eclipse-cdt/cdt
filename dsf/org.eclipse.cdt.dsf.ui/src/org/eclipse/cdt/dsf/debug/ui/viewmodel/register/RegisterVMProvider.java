@@ -44,7 +44,6 @@ import org.eclipse.jface.util.PropertyChangeEvent;
 /**
  *  Provides the VIEW MODEL for the DEBUG MODEL REGISTER view.
  */
-@SuppressWarnings("restriction")
 public class RegisterVMProvider extends AbstractDMVMProvider 
 {
     private IPropertyChangeListener fPreferencesListener = new IPropertyChangeListener() {

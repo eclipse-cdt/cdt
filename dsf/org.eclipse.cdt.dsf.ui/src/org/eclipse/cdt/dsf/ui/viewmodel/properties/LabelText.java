@@ -30,7 +30,6 @@ import org.eclipse.debug.internal.ui.viewers.model.provisional.ILabelUpdate;
  * 
  * @since 1.0
  */
-@SuppressWarnings("restriction")
 public class LabelText extends LabelAttribute {
     
     public static final MessageFormat DEFAULT_MESSAGE = new MessageFormat(MessagesForProperties.DefaultLabelMessage_label);

@@ -26,7 +26,6 @@ import org.eclipse.swt.graphics.FontData;
  * 
  * @since 1.0
  */
-@SuppressWarnings("restriction")
 public class LabelFont extends LabelAttribute {
     private static final FontData DEFAULT_FONT = JFaceResources.getDefaultFontDescriptor().getFontData()[0];
     

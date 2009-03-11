@@ -37,7 +37,6 @@ import org.eclipse.ui.services.IServiceLocator;
  * 
  * @since 1.1
  */
-@SuppressWarnings("restriction")
 public class VMHandlerUtils {
 
     /**

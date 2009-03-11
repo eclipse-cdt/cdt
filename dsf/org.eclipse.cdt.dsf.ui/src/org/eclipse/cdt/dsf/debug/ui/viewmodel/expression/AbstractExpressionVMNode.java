@@ -39,7 +39,6 @@ import org.eclipse.debug.internal.ui.viewers.model.provisional.IChildrenUpdate;
  * by the sub-class as well.   
  * </p>
  */
-@SuppressWarnings("restriction")
 public abstract class AbstractExpressionVMNode extends AbstractDMVMNode 
     implements IExpressionVMNode
 {

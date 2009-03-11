@@ -25,7 +25,6 @@ import org.eclipse.debug.internal.ui.viewers.model.provisional.IElementMementoRe
  * Register View does not collapse and redraw when going from frame to frame 
  * when stepping or just when selecting within the view. 
  */
-@SuppressWarnings("restriction")
 public class RegisterRootDMVMNode extends RootDMVMNode implements IElementMementoProvider {
 	
 	public RegisterRootDMVMNode(AbstractVMProvider provider) {

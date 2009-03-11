@@ -25,7 +25,6 @@ import org.eclipse.jface.viewers.TreePath;
 /**
  * 
  */
-@SuppressWarnings("restriction")
 class VMExpressionUpdate extends VMViewerUpdate implements IExpressionUpdate {
 
     private final IExpression fExpression;

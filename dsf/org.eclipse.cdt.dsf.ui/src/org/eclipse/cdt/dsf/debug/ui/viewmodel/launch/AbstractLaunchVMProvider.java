@@ -58,7 +58,6 @@ import org.eclipse.jface.viewers.IStructuredSelection;
 /**
  * @since 1.1
  */
-@SuppressWarnings("restriction")
 public class AbstractLaunchVMProvider extends AbstractDMVMProvider 
     implements IDebugEventSetListener, ILaunchesListener2
 {

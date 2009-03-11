@@ -19,7 +19,6 @@ import org.eclipse.jface.resource.ImageDescriptor;
 /**
  * 
  */
-@SuppressWarnings("restriction")
 public class ExpressionColumnPresentation implements IColumnPresentation {
 
     public static final String ID = DsfUIPlugin.PLUGIN_ID + ".EXPRESSION_COLUMN_PRESENTATION_ID"; //$NON-NLS-1$

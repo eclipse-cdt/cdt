@@ -43,7 +43,6 @@ import org.eclipse.debug.internal.ui.viewers.model.provisional.IViewerUpdate;
  * @since 1.0
  */
 @ThreadSafe
-@SuppressWarnings("restriction")
 abstract public class AbstractVMAdapter implements IVMAdapter
 {
  

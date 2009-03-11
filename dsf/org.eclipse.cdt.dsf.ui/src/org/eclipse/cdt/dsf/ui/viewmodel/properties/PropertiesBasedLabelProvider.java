@@ -38,7 +38,6 @@ import org.eclipse.debug.internal.ui.viewers.model.provisional.ILabelUpdate;
  * 
  * @since 2.0 - Renamed from PropertyBasedLabelProvider 
  */
-@SuppressWarnings("restriction")
 @ThreadSafe
 public class PropertiesBasedLabelProvider 
     implements IElementLabelProvider

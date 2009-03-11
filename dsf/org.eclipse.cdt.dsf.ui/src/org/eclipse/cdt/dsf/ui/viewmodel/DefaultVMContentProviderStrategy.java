@@ -44,7 +44,6 @@ import org.eclipse.debug.internal.ui.viewers.model.provisional.IViewerUpdate;
  * @since 1.0
  */
 @ConfinedToDsfExecutor("#getExecutor()")
-@SuppressWarnings("restriction")
 public class DefaultVMContentProviderStrategy implements IElementContentProvider {
 
     private final AbstractVMProvider fVMProvider;

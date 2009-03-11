@@ -41,7 +41,6 @@ import org.eclipse.swt.graphics.RGB;
 /**
  * @since 1.1
  */
-@SuppressWarnings("restriction")
 class MultiLevelUpdateHandler extends DataRequestMonitor<List<Object>> {
 	
 	private static final boolean DEBUG = Boolean.parseBoolean(Platform.getDebugOption("org.eclipse.cdt.dsf.ui/debug/vm/atomicUpdate")); //$NON-NLS-1$ //;

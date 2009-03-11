@@ -46,7 +46,6 @@ import org.eclipse.debug.internal.ui.viewers.model.provisional.IModelDelta;
  * @since 1.0
  */
 @ConfinedToDsfExecutor("")
-@SuppressWarnings("restriction")
 public interface IVMNode extends IElementContentProvider
 {
     /**

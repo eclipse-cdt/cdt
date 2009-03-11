@@ -27,7 +27,6 @@ import org.eclipse.swt.graphics.RGB;
  * @since 1.0
  */
 
-@SuppressWarnings("restriction")
 public class LabelColor extends LabelAttribute {
     private RGB fForeground;
     private RGB fBackground;

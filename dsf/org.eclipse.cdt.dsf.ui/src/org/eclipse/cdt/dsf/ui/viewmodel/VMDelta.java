@@ -24,7 +24,6 @@ import org.eclipse.debug.internal.ui.viewers.model.provisional.ModelDelta;
  * 
  * @since 1.0
  */
-@SuppressWarnings("restriction")
 public class VMDelta extends ModelDelta {
 
 	private VMDelta fParent;

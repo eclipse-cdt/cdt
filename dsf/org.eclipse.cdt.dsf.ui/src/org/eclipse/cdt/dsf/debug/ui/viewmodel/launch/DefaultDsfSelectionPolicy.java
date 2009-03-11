@@ -32,7 +32,6 @@ import org.eclipse.jface.viewers.TreeSelection;
  * (<code>DefaultSelectionPolicy</code>).
  * @since 1.1
  */
-@SuppressWarnings("restriction")
 public class DefaultDsfSelectionPolicy implements IModelSelectionPolicy {
 
 	private IDMContext fDMContext;

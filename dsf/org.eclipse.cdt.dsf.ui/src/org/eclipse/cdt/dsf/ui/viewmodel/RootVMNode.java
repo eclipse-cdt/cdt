@@ -23,7 +23,6 @@ import org.eclipse.debug.internal.ui.viewers.model.provisional.IModelDelta;
  * 
  * @since 1.0
  */
-@SuppressWarnings("restriction")
 public class RootVMNode extends AbstractVMNode implements IRootVMNode {
 
     public RootVMNode(AbstractVMProvider provider) {

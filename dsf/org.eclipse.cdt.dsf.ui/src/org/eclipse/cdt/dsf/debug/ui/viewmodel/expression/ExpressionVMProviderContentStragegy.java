@@ -23,7 +23,6 @@ import org.eclipse.core.runtime.Status;
  * 
  * @see ExpressionVMProvider
  */
-@SuppressWarnings("restriction")
 public class ExpressionVMProviderContentStragegy extends DefaultVMContentProviderStrategy {
     public ExpressionVMProviderContentStragegy(ExpressionVMProvider provider) {
         super(provider);

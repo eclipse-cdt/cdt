@@ -25,7 +25,6 @@ import org.eclipse.jface.resource.ImageDescriptor;
  * 
  * @since 1.0
  */
-@SuppressWarnings("restriction")
 public class LabelImage extends LabelAttribute {
     private ImageDescriptor fImageDescriptor;
 

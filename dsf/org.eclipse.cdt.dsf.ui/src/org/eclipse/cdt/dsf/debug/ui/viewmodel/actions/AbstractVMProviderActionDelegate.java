@@ -32,7 +32,6 @@ import org.eclipse.ui.IViewPart;
 /**
  * @since 1.1
  */
-@SuppressWarnings("restriction")
 abstract public class AbstractVMProviderActionDelegate implements IViewActionDelegate, IDebugContextListener, IActionDelegate2 {
 
     private IViewPart fView = null;

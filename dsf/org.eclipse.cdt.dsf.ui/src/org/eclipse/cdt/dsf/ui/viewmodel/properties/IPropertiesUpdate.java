@@ -20,7 +20,6 @@ import org.eclipse.debug.internal.ui.viewers.model.provisional.IViewerUpdate;
  * 
  * @since 1.0
  */
-@SuppressWarnings("restriction")
 public interface IPropertiesUpdate extends IViewerUpdate {
     /**
      * Returns the set of element properties that the provider should update.

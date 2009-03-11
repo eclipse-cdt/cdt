@@ -24,7 +24,6 @@ import org.eclipse.debug.internal.ui.viewers.model.provisional.IViewerUpdate;
  * 
  * @since 1.0
  */
-@SuppressWarnings("restriction")
 public class ViewerCountingRequestMonitor extends CountingRequestMonitor {
 
     private final IViewerUpdate fUpdate;

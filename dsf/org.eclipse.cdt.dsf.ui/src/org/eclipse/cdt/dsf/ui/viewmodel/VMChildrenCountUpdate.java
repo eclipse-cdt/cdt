@@ -24,7 +24,6 @@ import org.eclipse.jface.viewers.TreePath;
  * 
  * @since 1.0
  */
-@SuppressWarnings("restriction")
 public class VMChildrenCountUpdate extends VMViewerUpdate implements IChildrenCountUpdate {
     final private DataRequestMonitor<Integer> fCountRequestMonitor;
     

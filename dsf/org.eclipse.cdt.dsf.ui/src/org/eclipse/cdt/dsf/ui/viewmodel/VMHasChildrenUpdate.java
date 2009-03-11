@@ -24,7 +24,6 @@ import org.eclipse.jface.viewers.TreePath;
  * 
  * @since 1.0
  */
-@SuppressWarnings("restriction")
 public class VMHasChildrenUpdate extends VMViewerUpdate implements IHasChildrenUpdate {
 
     final private DataRequestMonitor<Boolean> fHasElemsRequestMonitor;

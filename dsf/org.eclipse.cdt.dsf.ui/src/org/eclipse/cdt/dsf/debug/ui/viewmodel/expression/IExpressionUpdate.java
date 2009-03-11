@@ -18,7 +18,6 @@ import org.eclipse.debug.internal.ui.viewers.model.provisional.IViewerUpdate;
  * this update needs to create an expression element based on the tree path and the
  * expression object in this update.
  */
-@SuppressWarnings("restriction")
 public interface IExpressionUpdate extends IViewerUpdate {
 
     /**

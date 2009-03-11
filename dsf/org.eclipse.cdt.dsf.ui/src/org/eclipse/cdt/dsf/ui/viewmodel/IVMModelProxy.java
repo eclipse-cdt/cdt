@@ -26,7 +26,6 @@ import org.eclipse.jface.viewers.Viewer;
  * 
  * @since 1.0
  */
-@SuppressWarnings("restriction")
 public interface IVMModelProxy extends IModelProxy {
 
     /**

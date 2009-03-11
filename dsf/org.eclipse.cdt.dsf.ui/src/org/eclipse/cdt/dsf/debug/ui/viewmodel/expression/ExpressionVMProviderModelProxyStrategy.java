@@ -28,7 +28,6 @@ import org.eclipse.jface.viewers.TreePath;
  * 
  * @see ExpressionVMProvider
  */
-@SuppressWarnings("restriction")
 public class ExpressionVMProviderModelProxyStrategy extends DefaultVMModelProxyStrategy {
 
     public ExpressionVMProviderModelProxyStrategy(ExpressionVMProvider provider, Object rootElement) {

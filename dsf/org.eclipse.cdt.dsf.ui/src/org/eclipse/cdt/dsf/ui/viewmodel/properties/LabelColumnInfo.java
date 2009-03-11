@@ -16,7 +16,6 @@ import java.util.Map;
 
 import org.eclipse.cdt.dsf.concurrent.ThreadSafe;
 import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.ListenerList;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.ILabelUpdate;
 
 /**
@@ -34,19 +33,6 @@ import org.eclipse.debug.internal.ui.viewers.model.provisional.ILabelUpdate;
  */
 @ThreadSafe
 public class LabelColumnInfo  {
-
-    /**
-     * @since 2.0
-     */
-    private static final LabelAttribute[] DEFAULT_FAILED_UPDATE_ATTRIBUTES = new LabelAttribute[] {
-        new LabelText("...", new String[0])
-    };
-    
-    /**
-     * @since 2.0
-     */
-    private static final LabelAttribute[] EMPTY_ATTRIBUTES = new LabelAttribute[0]; 
-    
     /** 
      * Calculated list of property names that need to be retrieved to 
      * generate the label for this column.
@@ -58,11 +44,6 @@ public class LabelColumnInfo  {
      */
     private LabelAttribute[] fLabelAttributes;
 
-    /**
-     * Listeners for when column attributes are modified.
-     */
-    private ListenerList fListeners = new ListenerList();
-        
     /**
      * Creates the column info object with given array of attributes.
      * @param attributeInfos Attributes for the label.

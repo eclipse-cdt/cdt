@@ -29,7 +29,6 @@ import org.eclipse.debug.internal.ui.viewers.model.provisional.IViewerUpdate;
  * 
  * @since 1.0
  */
-@SuppressWarnings("restriction")
 abstract public class AbstractVMNode implements IVMNode {
 
     private final AbstractVMProvider fProvider;

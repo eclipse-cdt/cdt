@@ -35,7 +35,6 @@ import org.eclipse.debug.internal.ui.viewers.model.provisional.IModelDelta;
  * the root of a hierarchy.  It does not implement the label provider
  * functionality, so the default adapters should be used to retrieve the label.  
  */
-@SuppressWarnings("restriction")
 public class LaunchRootVMNode extends RootVMNode 
     implements IRootVMNode
 {

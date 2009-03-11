@@ -43,7 +43,6 @@ import org.eclipse.ui.IWorkbenchPart;
  *  
  * @since 1.0
  */
-@SuppressWarnings("restriction")
 public class NumberFormatsPropertyTester extends PropertyTester {
 
     private static final String SUPPORTED = "areNumberFormatsSupported"; //$NON-NLS-1$

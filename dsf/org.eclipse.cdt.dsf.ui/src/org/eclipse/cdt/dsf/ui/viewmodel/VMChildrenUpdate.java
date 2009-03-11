@@ -27,7 +27,6 @@ import org.eclipse.jface.viewers.TreePath;
  * 
  * @since 1.0
  */
-@SuppressWarnings("restriction")
 public class VMChildrenUpdate extends VMViewerUpdate implements IChildrenUpdate {
     private final int fOffset;
     private final int fLength;

@@ -33,7 +33,6 @@ import org.eclipse.debug.internal.ui.viewers.model.provisional.ILabelUpdate;
  * 
  * @since 1.0
  */
-@SuppressWarnings("restriction")
 abstract public class LabelAttribute {
     public static final String[] EMPTY_PROPERTY_NAMES_ARRAY = new String[0];
     

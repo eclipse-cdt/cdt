@@ -24,7 +24,6 @@ import org.eclipse.cdt.dsf.ui.viewmodel.update.AbstractCachingVMProvider;
 import org.eclipse.cdt.dsf.ui.viewmodel.update.UserEditEvent;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IPresentationContext;
 
-@SuppressWarnings("restriction")
 public class RegisterCellModifier extends WatchExpressionCellModifier {
     
     private AbstractCachingVMProvider fProvider; 

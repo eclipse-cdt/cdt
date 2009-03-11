@@ -50,7 +50,6 @@ import org.eclipse.debug.internal.ui.viewers.model.provisional.IViewerInputProvi
  * @since 1.0
  */
 @ConfinedToDsfExecutor("#getExecutor()")
-@SuppressWarnings("restriction")
 public interface IVMProvider 
     extends IElementContentProvider, IModelProxyFactory, IColumnPresentationFactory, IViewerInputProvider
 {

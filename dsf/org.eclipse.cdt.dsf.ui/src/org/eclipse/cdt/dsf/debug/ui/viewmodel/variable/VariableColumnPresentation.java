@@ -19,7 +19,6 @@ import org.eclipse.jface.resource.ImageDescriptor;
 /**
  * 
  */
-@SuppressWarnings("restriction")
 public class VariableColumnPresentation implements IColumnPresentation {
     public static final String ID = DsfUIPlugin.PLUGIN_ID + ".VARIABLES_COLUMN_PRESENTATION_ID"; //$NON-NLS-1$
     

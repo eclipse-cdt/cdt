@@ -21,7 +21,6 @@ import org.eclipse.cdt.dsf.ui.viewmodel.update.UserEditEvent;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IPresentationContext;
 
-@SuppressWarnings("restriction")
 public class VariableCellModifier extends WatchExpressionCellModifier {
     
     private AbstractCachingVMProvider fProvider;

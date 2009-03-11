@@ -19,7 +19,6 @@ import org.eclipse.jface.viewers.Viewer;
  * 
  * @since 1.0
  */
-@SuppressWarnings("restriction")
 public class ModelProxyInstalledEvent {
     private final IModelProxy fProxy;
     private final Viewer fViewer;

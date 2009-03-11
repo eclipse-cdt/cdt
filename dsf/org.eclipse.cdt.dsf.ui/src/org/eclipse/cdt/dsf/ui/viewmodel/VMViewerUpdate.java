@@ -37,7 +37,6 @@ import org.eclipse.jface.viewers.TreePath;
  * 
  * @since 1.0
  */
-@SuppressWarnings("restriction")
 public class VMViewerUpdate implements IViewerUpdate {
     
     /**

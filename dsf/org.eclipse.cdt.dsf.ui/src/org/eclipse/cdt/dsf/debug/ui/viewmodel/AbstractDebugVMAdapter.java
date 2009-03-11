@@ -26,7 +26,6 @@ import org.eclipse.debug.internal.ui.viewers.model.provisional.IPresentationCont
  * 
  * @since 1.1
  */
-@SuppressWarnings("restriction")
 public class AbstractDebugVMAdapter extends AbstractDMVMAdapter
     implements ISteppingControlParticipant 
 {

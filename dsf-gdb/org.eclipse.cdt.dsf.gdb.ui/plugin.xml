@@ -424,6 +424,22 @@
          </command>
       </menuContribution>
       <menuContribution
+            locationURI="popup:org.eclipse.debug.ui.DebugView?before=stepGroup">
+         <command
+               commandId="org.eclipse.cdt.dsf.gdb.ui.commands.reverseToggle"
+               icon="icons/full/obj16/reversetoggle.gif"
+               id="org.eclipse.cdt.dsf.gdb.ui.button.reverseToggle"
+               label="%command.reverseToggle.label"
+               style="toggle">
+            <visibleWhen
+                  checkEnabled="false">
+               <reference
+                     definitionId="org.eclipse.cdt.dsf.gdb.ui.testIsReverseDebuggingActionSetActive">
+               </reference>
+            </visibleWhen>
+         </command>
+      </menuContribution>
+      <menuContribution
             locationURI="popup:org.eclipse.debug.ui.DebugView?after=threadGroup">
          <command
                commandId="org.eclipse.cdt.dsf.gdb.ui.commands.reverseResume"

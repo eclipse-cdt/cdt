@@ -23,6 +23,7 @@
  * David McKnight   (IBM)        - [235221] Files truncated on exit of Eclipse
  * David McKnight   (IBM)        - [249544] Save conflict dialog appears when saving files in the editor
  * Kevin Doyle		(IBM)		 - [242389] [usability] RSE Save Conflict dialog should indicate which file is in conflict
+ * David McKnight   (IBM)        - [267247] Wrong encoding
  *******************************************************************************/
 
 package org.eclipse.rse.internal.files.ui.actions;
@@ -48,7 +49,6 @@ import org.eclipse.rse.internal.files.ui.Activator;
 import org.eclipse.rse.internal.files.ui.FileResources;
 import org.eclipse.rse.internal.files.ui.ISystemFileConstants;
 import org.eclipse.rse.internal.ui.SystemResources;
-import org.eclipse.rse.services.clientserver.SystemEncodingUtil;
 import org.eclipse.rse.services.clientserver.messages.CommonMessages;
 import org.eclipse.rse.services.clientserver.messages.ICommonMessageIds;
 import org.eclipse.rse.services.clientserver.messages.SimpleSystemMessage;
@@ -57,6 +57,7 @@ import org.eclipse.rse.services.clientserver.messages.SystemMessageException;
 import org.eclipse.rse.services.files.RemoteFileIOException;
 import org.eclipse.rse.services.files.RemoteFileSecurityException;
 import org.eclipse.rse.subsystems.files.core.SystemIFileProperties;
+import org.eclipse.rse.subsystems.files.core.model.RemoteFileUtility;
 import org.eclipse.rse.subsystems.files.core.subsystems.IRemoteFile;
 import org.eclipse.rse.subsystems.files.core.subsystems.IRemoteFileSubSystem;
 import org.eclipse.rse.ui.RSEUIPlugin;
@@ -124,8 +125,9 @@ public class SystemUploadConflictAction extends SystemBaseAction implements Runn
  
                 try
                 {                    	
+            		String srcEncoding = RemoteFileUtility.getSourceEncoding(_tempFile);
                     // copy temp file to remote system
-                    fs.upload(_tempFile.getLocation().makeAbsolute().toOSString(), _saveasFile, SystemEncodingUtil.ENCODING_UTF_8, monitor);
+                    fs.upload(_tempFile.getLocation().makeAbsolute().toOSString(), _saveasFile, srcEncoding, monitor);
                  
                     // set original time stamp to 0 so that file will be overwritten next download
                     SystemIFileProperties properties = new SystemIFileProperties(_tempFile);
@@ -157,12 +159,14 @@ public class SystemUploadConflictAction extends SystemBaseAction implements Runn
 			 try
              {     	
 		        IRemoteFileSubSystem fs = _remoteFile.getParentRemoteFileSubSystem();
-	            SystemIFileProperties properties = new SystemIFileProperties(_tempFile);
+		        SystemIFileProperties properties = new SystemIFileProperties(_tempFile);
 	            	
-                 // download remote version
-                 fs.download(_remoteFile, _tempFile.getLocation().makeAbsolute().toOSString(), SystemEncodingUtil.ENCODING_UTF_8, monitor);
+                // download remote version
+		        String srcEncoding = RemoteFileUtility.getSourceEncoding(_tempFile);
 
-                 properties.setRemoteFileTimeStamp(_remoteFile.getLastModified());
+                fs.download(_remoteFile, _tempFile.getLocation().makeAbsolute().toOSString(), srcEncoding, monitor);
+
+                properties.setRemoteFileTimeStamp(_remoteFile.getLastModified());
 					//properties.setRemoteFileTimeStamp(-1);                
                  
                  properties.setDirty(false);
@@ -204,7 +208,9 @@ public class SystemUploadConflictAction extends SystemBaseAction implements Runn
             	// making sure we have the same version as is in the cache
             	_remoteFile = fs.getRemoteFileObject(_remoteFile.getAbsolutePath(), monitor);
             	
-                fs.upload(_tempFile.getLocation().makeAbsolute().toOSString(), _remoteFile, SystemEncodingUtil.ENCODING_UTF_8, monitor);
+        		String srcEncoding = RemoteFileUtility.getSourceEncoding(_tempFile);
+        		
+                fs.upload(_tempFile.getLocation().makeAbsolute().toOSString(), _remoteFile, srcEncoding, monitor);
 
                 // wait for timestamp to update before re-fetching remote file
                 _remoteFile.markStale(true);

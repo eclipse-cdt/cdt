@@ -12,7 +12,7 @@
  * Emily Bruner, Mazen Faraj, Adrian Storisteanu, Li Ding, and Kent Hawley.
  * 
  * Contributors:
- * {Name} (company) - description of contribution.
+ * David McKnight   (IBM)        - [267247] Wrong encoding
  *******************************************************************************/
 
 package org.eclipse.rse.internal.files.ui.actions;
@@ -35,6 +35,7 @@ import org.eclipse.compare.internal.CompareUIPlugin;
 import org.eclipse.compare.internal.Utilities;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IFileState;
+import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.dialogs.MessageDialog;
@@ -43,7 +44,6 @@ import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.rse.files.ui.resources.SystemEditableRemoteFile;
-import org.eclipse.rse.services.clientserver.SystemEncodingUtil;
 import org.eclipse.rse.subsystems.files.core.subsystems.IRemoteFile;
 import org.eclipse.rse.subsystems.files.core.subsystems.RemoteFile;
 import org.eclipse.rse.ui.actions.SystemBaseAction;
@@ -304,7 +304,8 @@ public class SystemEditionAction extends SystemBaseAction
 		try
 		{
 			InputStream is = sa.getContents();
-			String text = Utilities.readString(is, SystemEncodingUtil.ENCODING_UTF_8);
+			String encoding = ResourcesPlugin.getEncoding();
+			String text = Utilities.readString(is, encoding);
 			document.replace(0, document.getLength(), text);
 		}
 		catch (CoreException e)

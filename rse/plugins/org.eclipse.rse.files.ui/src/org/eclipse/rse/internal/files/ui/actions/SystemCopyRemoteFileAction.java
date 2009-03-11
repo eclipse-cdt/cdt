@@ -313,7 +313,7 @@ implements  IValidatorRemoteSelection
 				path = path.append(absolutePath);
 
 				String tempFile = path.toString();
-
+   
 				srcFS.download(srcFileOrFolder, tempFile, SystemEncodingUtil.ENCODING_UTF_8, null);
 				targetFS.upload(tempFile, SystemEncodingUtil.ENCODING_UTF_8, newPath, System.getProperty("file.encoding"), null);	 //$NON-NLS-1$
 			}

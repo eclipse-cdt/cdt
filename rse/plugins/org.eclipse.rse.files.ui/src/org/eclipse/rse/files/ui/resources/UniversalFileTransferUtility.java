@@ -1582,20 +1582,7 @@ public class UniversalFileTransferUtility {
 				{
 					try
 					{
-						String srcCharSet = null;
-						try
-						{
-							srcCharSet = ((IFile)srcFileOrFolder).getCharset(false);
-							if (srcCharSet == null || srcCharSet.length() == 0)
-							{	
-								srcCharSet = srcFileOrFolder.getWorkspace().getRoot().getDefaultCharset();
-							}
-						}
-						catch (CoreException e)
-						{
-							srcCharSet = SystemEncodingUtil.ENCODING_UTF_8;
-						}
-
+						String srcCharSet = RemoteFileUtility.getSourceEncoding((IFile)srcFileOrFolder);
 
 						String srcFileLocation = srcFileOrFolder.getLocation().toOSString();
 
@@ -1806,18 +1793,7 @@ public class UniversalFileTransferUtility {
 				boolean isText = RemoteFileUtility.getSystemFileTransferModeRegistry().isText(newPath);
 				if (isText)
 				{
-					try
-					{
-						srcCharSet = ((IFile)srcFileOrFolder).getCharset(false);
-						if (srcCharSet == null || srcCharSet.length() == 0)
-						{
-							srcCharSet = srcFileOrFolder.getWorkspace().getRoot().getDefaultCharset();
-						}
-					}
-					catch (CoreException e)
-					{
-						srcCharSet = SystemEncodingUtil.ENCODING_UTF_8;
-					}
+					srcCharSet = RemoteFileUtility.getSourceEncoding((IFile)srcFileOrFolder);
 				}
 				IPath location = srcFileOrFolder.getLocation();
 				IRemoteFile copiedFile = null;

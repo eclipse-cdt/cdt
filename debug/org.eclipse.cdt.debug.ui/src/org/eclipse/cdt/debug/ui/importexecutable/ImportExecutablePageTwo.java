@@ -85,17 +85,23 @@ public class ImportExecutablePageTwo extends WizardPage {
 	private void addLaunchConfigTypes() {
 		ILaunchConfigurationType[] configTypeList = DebugPlugin.getDefault()
 				.getLaunchManager().getLaunchConfigurationTypes();
+		int j = 0, capp = 0;
 		for (int i = 0; i < configTypeList.length; i++) {
-			String configTypeName = configTypeList[i].getName();
-			if (configTypeList[i].isPublic()
-					&& configTypeList[i]
-							.supportsMode(ILaunchManager.DEBUG_MODE)) {
-				if (wizard.supportsConfigurationType(configTypeList[i])) {
+			ILaunchConfigurationType type = configTypeList[i];
+			String configTypeName = type.getName();
+			if (type.isPublic()
+					&& type.supportsMode(ILaunchManager.DEBUG_MODE)) {
+				if (wizard.supportsConfigurationType(type)) {
 					configTypes.add(configTypeName);
+					
+					if (type.getIdentifier().equals("org.eclipse.cdt.launch.applicationLaunchType")) {
+						capp = j;
+					}
+					j++;
 				}
 			}
 		}
-		configTypes.select(0);
+		configTypes.select(capp);
 	}
 
 	public void checkExecutableSettings() {

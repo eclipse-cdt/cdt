@@ -36,15 +36,12 @@ public class ImportExecutableWizard extends AbstractImportExecutableWizard {
 
 	public void setupFileDialog(FileDialog dialog) {
 		dialog.setText(Messages.ImportExecutableWizard_fileDialogTitle);
-		dialog.setFilterExtensions(new String[] { "*.*", "*.exe", "*.dll" });
+		dialog.setFilterExtensions(new String[] { "*", "*.exe", "*.dll" });
 		dialog.setFilterNames(new String[] { Messages.ImportExecutableWizard_AllFiles, Messages.ImportExecutableWizard_Applications, Messages.ImportExecutableWizard_LIbaries });
 	}
 
 	public boolean supportsConfigurationType(ILaunchConfigurationType type) {
-		return type.getIdentifier().startsWith("org.eclipse.cdt.launch")
-			// Just for fun, lets support QNX launches too.
-			// Really points at something missing, no?
-			|| type.getIdentifier().startsWith("com.qnx");
+		return true;
 	}
 
 }

@@ -424,13 +424,6 @@ public class RegisterVMNode extends AbstractExpressionVMNode
                     protected void handleCompleted() {
                         if (isSuccess()) {
                             fillRegisterDataProperties(update, getData());
-                            update.setProperty(PROP_NAME, getData().getName());
-                            update.setProperty(IRegisterVMConstants.PROP_DESCRIPTION, getData().getDescription());
-                            update.setProperty(IRegisterVMConstants.PROP_IS_FLOAT, getData().isFloat());
-                            update.setProperty(IRegisterVMConstants.PROP_IS_READABLE, getData().isReadable());
-                            update.setProperty(IRegisterVMConstants.PROP_IS_READONCE, getData().isReadOnce());
-                            update.setProperty(IRegisterVMConstants.PROP_IS_WRITEABLE, getData().isWriteable());
-                            update.setProperty(IRegisterVMConstants.PROP_IS_WRITEONCE, getData().isWriteOnce());
                         } else {
                             update.setStatus(getStatus());
                         }
@@ -456,7 +449,6 @@ public class RegisterVMNode extends AbstractExpressionVMNode
         update.setProperty(IRegisterVMConstants.PROP_IS_WRITEABLE, data.isWriteable());
         update.setProperty(IRegisterVMConstants.PROP_IS_WRITEONCE, data.isWriteOnce());
     }
-        
     
     /*
      * (non-Javadoc)

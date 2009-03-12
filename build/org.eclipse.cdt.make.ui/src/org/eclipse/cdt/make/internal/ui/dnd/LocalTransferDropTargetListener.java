@@ -90,17 +90,18 @@ public class LocalTransferDropTargetListener extends AbstractContainerAreaDropAd
 	 * Operation on dragging over target . Adjusted to be the least of user
 	 * initiated operation and best supported operation for a given selection
 	 * considering drop container. The operation will be indicated by mouse
-	 * cursor.
+	 * cursor. Note that drop on itself is not allowed here.
 	 *
 	 * @param operation - incoming operation.
 	 * @param dropContainer - container where drop is going to be.
 	 * @return changed operation.
 	 */
 	@Override
-	public int dragOverOperation(int operation, IContainer dropContainer) {
+	public int dragOverOperation(int operation, IContainer dropContainer, Object dropTarget) {
 		int bestOperation = DND.DROP_NONE;
-		if (dropContainer != null) {
-			bestOperation = determineBestOperation(getSelection(), dropContainer);
+		IStructuredSelection selection = getSelection();
+		if (dropContainer != null && selection != null && !selection.toList().contains(dropTarget)) {
+			bestOperation = determineBestOperation(selection, dropContainer);
 			if (bestOperation > operation) {
 				bestOperation = operation;
 			}

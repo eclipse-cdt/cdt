@@ -66,7 +66,7 @@ public class FileTransferDropTargetListener extends AbstractContainerAreaDropAda
 	 */
 	@Override
 	public int dragEnterOperation(int operation) {
-		return dragOverOperation(operation, null);
+		return dragOverOperation(operation, null, null);
 	}
 
 	/**
@@ -77,7 +77,7 @@ public class FileTransferDropTargetListener extends AbstractContainerAreaDropAda
 	 * @return changed operation.
 	 */
 	@Override
-	public int dragOverOperation(int operation, IContainer dropContainer) {
+	public int dragOverOperation(int operation, IContainer dropContainer, Object dropTarget) {
 		// This class is intended only for drag/drop between eclipse instances,
 		// so DND_COPY always set and we don't bother checking if the target is the source
 		if (operation!=DND.DROP_NONE) {

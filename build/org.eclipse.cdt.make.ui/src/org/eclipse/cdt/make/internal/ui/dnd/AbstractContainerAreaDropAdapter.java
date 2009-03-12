@@ -32,7 +32,7 @@ import org.eclipse.swt.dnd.TransferData;
 public abstract class AbstractContainerAreaDropAdapter implements TransferDropTargetListener {
 
 	private int originallyRequestedOperation = DND.DROP_NONE;
-	private IContainer lastDragOverContainer = null;
+	private Object lastDragOverTarget = null;
 	private int lastDragOverOperation = DND.DROP_NONE;
 
 	/**
@@ -60,6 +60,7 @@ public abstract class AbstractContainerAreaDropAdapter implements TransferDropTa
 	 *
 	 * @param operation - incoming operation.
 	 * @param dropContainer - container where drop is going to be.
+	 * @param dropTarget - drop target.
 	 * @return changed operation. The return must be one of
 	 *         {@link org.eclipse.swt.dnd.DND} operations.
 	 *
@@ -71,7 +72,7 @@ public abstract class AbstractContainerAreaDropAdapter implements TransferDropTa
 	 * @see DND#DROP_LINK
 	 * @see DND#DROP_DEFAULT
 	 */
-	protected abstract int dragOverOperation(int operation, IContainer dropContainer);
+	protected abstract int dragOverOperation(int operation, IContainer dropContainer, Object dropTarget);
 
 	/**
 	 * Implementation of the actual drop of {@code dropObject} to {@code dropContainer}.
@@ -120,7 +121,7 @@ public abstract class AbstractContainerAreaDropAdapter implements TransferDropTa
 	 * @see DropTargetEvent
 	 */
 	public void dragEnter(DropTargetEvent event) {
-		lastDragOverContainer = null;
+		lastDragOverTarget = null;
 		lastDragOverOperation = DND.DROP_NONE;
 
 		if (isSupportedType(event.currentDataType)) {
@@ -143,7 +144,7 @@ public abstract class AbstractContainerAreaDropAdapter implements TransferDropTa
 	public void dragOperationChanged(DropTargetEvent event) {
 		originallyRequestedOperation = event.detail;
 		event.detail = dragOverOperationCached(originallyRequestedOperation,
-			determineDropContainer(event));
+			determineDropContainer(event), determineDropTarget(event));
 	}
 
 	/**
@@ -156,7 +157,7 @@ public abstract class AbstractContainerAreaDropAdapter implements TransferDropTa
 	 */
 	public void dragOver(DropTargetEvent event) {
 		event.detail = dragOverOperationCached(originallyRequestedOperation,
-			determineDropContainer(event));
+			determineDropContainer(event), determineDropTarget(event));
 
 		if (originallyRequestedOperation != DND.DROP_NONE) {
 			// let user discover items even if event.detail is DND.DROP_NONE
@@ -205,7 +206,7 @@ public abstract class AbstractContainerAreaDropAdapter implements TransferDropTa
 	public void drop(DropTargetEvent event) {
 		IContainer dropContainer = determineDropContainer(event);
 		if (dropContainer != null) {
-			event.detail = dragOverOperationCached(event.detail, dropContainer);
+			event.detail = dragOverOperationCached(event.detail, dropContainer, determineDropTarget(event));
 			dropToContainer(event.data, dropContainer, event.detail);
 		} else {
 			event.detail = DND.DROP_NONE;
@@ -218,6 +219,7 @@ public abstract class AbstractContainerAreaDropAdapter implements TransferDropTa
 	 *
 	 * @param operation - incoming operation.
 	 * @param dropContainer - container where drop is going to be.
+	 * @param dropTarget - drop target.
 	 * @return changed operation. The return must be one of
 	 *         org.eclipse.swt.dnd.DND operations such as {@link DND#DROP_NONE},
 	 *         {@link DND#DROP_COPY}, {@link DND#DROP_MOVE},
@@ -226,10 +228,10 @@ public abstract class AbstractContainerAreaDropAdapter implements TransferDropTa
 	 *
 	 * @see DropTargetListener#dragOver(DropTargetEvent)
 	 */
-	private int dragOverOperationCached(int operation, IContainer dropContainer) {
-		if (dropContainer != lastDragOverContainer || operation != lastDragOverOperation) {
-			lastDragOverOperation = dragOverOperation(operation, dropContainer);
-			lastDragOverContainer = dropContainer;
+	private int dragOverOperationCached(int operation, IContainer dropContainer, Object dropTarget) {
+		if (dropTarget != lastDragOverTarget || operation != lastDragOverOperation) {
+			lastDragOverOperation = dragOverOperation(operation, dropContainer, dropTarget);
+			lastDragOverTarget = dropTarget;
 		}
 		return lastDragOverOperation;
 	}

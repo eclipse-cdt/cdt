@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2002, 2008 IBM Corporation and others.
+ * Copyright (c) 2002, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -35,6 +35,7 @@
  * David McKnight   (IBM)        - [244116] [dstore][daemon][ssl]  Connecting to RSE server doesn't complete when the connection is SSL
  * David McKnight   (IBM)        - [233160] [dstore] SSL/non-SSL alert are not appropriate
  * David Dykstal (IBM) [235284] Cancel password change causes problem
+ * David McKnight   (IBM)        - [267236] [dstore] Can't connect after a wrong password
  *******************************************************************************/
 
 package org.eclipse.rse.connectorservice.dstore;
@@ -1374,6 +1375,7 @@ public class DStoreConnectorService extends StandardConnectorService implements 
 		String serverPort = (String)starter.launch(monitor);
 		if (monitor.isCanceled())
 		{
+			_isConnecting = false;
 			SystemMessage msg = createSystemMessage(ICommonMessageIds.MSG_OPERATION_CANCELLED, IStatus.CANCEL, CommonMessages.MSG_OPERATION_CANCELLED);
 			throw new SystemMessageException(msg);
 		}

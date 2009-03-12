@@ -22,7 +22,6 @@ import org.eclipse.cdt.dsf.concurrent.IDsfStatusConstants;
 import org.eclipse.cdt.dsf.concurrent.Immutable;
 import org.eclipse.cdt.dsf.concurrent.RequestMonitor;
 import org.eclipse.cdt.dsf.datamodel.AbstractDMEvent;
-import org.eclipse.cdt.dsf.datamodel.IDMContext;
 import org.eclipse.cdt.dsf.datamodel.IDMEvent;
 import org.eclipse.cdt.dsf.debug.service.IRunControl;
 import org.eclipse.cdt.dsf.debug.service.command.IEventListener;
@@ -283,19 +282,6 @@ public class PDARunControl extends AbstractDsfService
         fCommandControl.removeEventListener(this);
         getSession().removeServiceEventListener(this);
         super.shutdown(rm);
-    }
-    
-    @Deprecated
-    @SuppressWarnings("unchecked")
-    public void getModelData(IDMContext dmc, DataRequestMonitor<?> rm) {
-        // The getModelData() is deprecated and clients are expected to switch
-        // to getExecutionData() and other data retrieve methods directly.
-        // However the UI cache still uses it for now.
-        if (dmc instanceof IExecutionDMContext) {
-            getExecutionData((IExecutionDMContext)dmc, (DataRequestMonitor<IExecutionDMData>)rm); 
-        } else {
-            PDAPlugin.failRequest(rm, INVALID_HANDLE, "Unknown DMC type");
-        }
     }
     
     public void eventReceived(Object output) {

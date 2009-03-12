@@ -57,17 +57,6 @@ abstract public class Query<V> extends DsfRunnable
     /** The synchronization object for this query */
     private final Sync fSync = new Sync();
 
-    /**
-     * The Query constructor no longer requires an executor to be specified.
-     * This executor was used to contruct the DataRequestMonitor argument to the
-     * {@link #execute(DataRequestMonitor)} method.  But a simplification in the 
-     * RequestMonitor object, made this unnecessary.
-     * @param executor
-     */
-    @Deprecated
-    public Query(DsfExecutor executor) {
-    }
-    
     /** 
      * The no-argument constructor 
      */

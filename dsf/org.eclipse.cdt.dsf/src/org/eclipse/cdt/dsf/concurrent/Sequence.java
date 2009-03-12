@@ -240,6 +240,9 @@ abstract public class Sequence extends DsfRunnable implements Future<Object> {
     
     /**
      * Constructor that initialized the steps and the result callback.
+     * <p>Note: This constructor should not be used because it creates a 
+     * potential ambiguity when one of the two monitors is canceled.</p>
+     * 
      * @param executor The DSF executor which will be used to invoke all 
      * steps. 
      * @param pm Progress monitor for monitoring this sequence.  This 
@@ -253,12 +256,8 @@ abstract public class Sequence extends DsfRunnable implements Future<Object> {
      * @param Result that will be submitted to executor when sequence is 
      * finished.  Can be null if calling from non-executor thread and using 
      * {@link Future#get()} method to wait for the sequence result.
-     * 
-     * @deprecated This constructor should not be used because it creates a 
-     * potential ambiguity when one of the two monitors is canceled.
      */
-    @Deprecated
-    public Sequence(DsfExecutor executor, IProgressMonitor pm, String taskName, String rollbackTaskName, RequestMonitor rm) {
+    private Sequence(DsfExecutor executor, IProgressMonitor pm, String taskName, String rollbackTaskName, RequestMonitor rm) {
         fExecutor = executor;
         fProgressMonitor = pm;
         fTaskName = taskName;

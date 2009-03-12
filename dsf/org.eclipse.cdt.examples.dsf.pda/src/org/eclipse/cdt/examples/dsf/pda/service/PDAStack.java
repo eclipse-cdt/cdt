@@ -434,21 +434,6 @@ public class PDAStack extends AbstractDsfService implements IStack, ICachingServ
         IExecutionDMContext execCtx = DMContexts.getAncestorOfType(context, IExecutionDMContext.class);
         return execCtx != null && (fRunControl.isSuspended(execCtx) || (fRunControl.isStepping(execCtx)));
     }
-
-    @SuppressWarnings("unchecked")
-    @Deprecated
-    public void getModelData(IDMContext dmc, DataRequestMonitor<?> rm) {
-        // The getModelData() is deprecated and clients are expected to switch
-        // to getExecutionData() and other data retrieve methods directly.
-        // However the UI cache still uses it for now.
-        if (dmc instanceof IFrameDMContext) {
-            getFrameData((IFrameDMContext)dmc, (DataRequestMonitor<IFrameDMData>)rm);
-        } else if (dmc instanceof IVariableDMContext) {
-            getVariableData((IVariableDMContext)dmc, (DataRequestMonitor<IVariableDMData>)rm);
-        } else {
-            PDAPlugin.failRequest(rm, IDsfStatusConstants.INVALID_HANDLE, "Unknown context type");
-        }
-    }
     
     /**
      * Returns a frame context for the given thread and level;

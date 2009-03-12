@@ -23,7 +23,6 @@ import org.eclipse.cdt.dsf.datamodel.IDMEvent;
 import org.eclipse.cdt.dsf.internal.ui.DsfUIPlugin;
 import org.eclipse.cdt.dsf.service.DsfServicesTracker;
 import org.eclipse.cdt.dsf.service.DsfSession;
-import org.eclipse.cdt.dsf.service.IDsfService;
 import org.eclipse.cdt.dsf.ui.viewmodel.AbstractVMContext;
 import org.eclipse.cdt.dsf.ui.viewmodel.AbstractVMNode;
 import org.eclipse.cdt.dsf.ui.viewmodel.IVMContext;
@@ -178,73 +177,6 @@ abstract public class AbstractDMVMNode extends AbstractVMNode implements IVMNode
         return true;
     }
 
-    /** 
-     * Convenience method that checks whether the given dmc context is null.  If it is null, an 
-     * appropriate error message is set in the update.
-     * @param dmc Data Model Context (DMC) to check.
-     * @param update Update to handle in case the DMC is null.
-     * @return true if the DMC is NOT null, indicating that it's OK to proceed. 
-     * 
-     *  This method has been deprecated. Users should simply perform this functionality in-line
-     *  
-     *  Example :
-     *  
-     *      IExampleDmc dmc = final TimerDMContext dmc = findDmcInPath(...)
-     *      if ( dmc == null ) {
-     *          handleFailedUpdate(update);
-     *          //
-     *          // Perform whatever cleanup or completion is needed because of a lack of 
-     *          // a valid data model context.
-     *          //
-     *          ........
-     *          return;
-     *      }
-     */
-    
-    @Deprecated
-    protected boolean checkDmc(IDMContext dmc, IViewerUpdate update) {
-        if (dmc == null) {
-            update.setStatus(new Status(IStatus.ERROR, DsfUIPlugin.PLUGIN_ID, IDsfStatusConstants.INVALID_STATE, 
-                                        "No valid context found.", null)); //$NON-NLS-1$
-            handleFailedUpdate(update);
-            return false;
-        }
-        return true;
-    }    
-
-    /**
-     * A convenience method that checks whether a given service exists.  If the service does not
-     * exist, the update is filled in with the appropriate error message. 
-     * @param serviceClass Service class to find.
-     * @param filter Service filter to use in addition to the service class name.
-     * @param update Update object to fill in.
-     * @return true if service IS found, indicating that it's OK to proceed. 
-     * 
-     *  This method has been deprecated. Users should simply perform this functionality in-line
-     *  
-     *  Example :
-     *  
-     *      IExampleService service = getServicesTracker().getService(IExampleService.class,null);
-     *      if ( service == null ) {
-     *          handleFailedUpdate(update);
-     *          //
-     *          // Perform whatever cleanup or completion is needed because of a lack of the service.
-     *          //
-     *          ........
-     *          return;
-     *      }
-     */
-    @Deprecated
-    protected boolean checkService(Class<? extends IDsfService> serviceClass, String filter, IViewerUpdate update) {
-        if (getServicesTracker().getService(serviceClass, filter) == null) {
-            update.setStatus(new Status(IStatus.ERROR, DsfUIPlugin.PLUGIN_ID, IDsfStatusConstants.INVALID_STATE, 
-                                        "Service " + serviceClass.getName() + " not available.", null)); //$NON-NLS-1$ //$NON-NLS-2$
-            handleFailedUpdate(update);
-            return false;
-        }
-        return true;
-    }
-    
     public void update(final IHasChildrenUpdate[] updates) {
         try {
             getSession().getExecutor().execute(new DsfRunnable() {

@@ -510,18 +510,6 @@ public class PDAExpressions extends AbstractDsfService implements ICachingServic
         }
     }
 
-    @SuppressWarnings("unchecked")
-    @Deprecated
-    public void getModelData(IDMContext dmc, DataRequestMonitor<?> rm) {
-        if (dmc instanceof IExpressionDMContext) {
-            getExpressionData((IExpressionDMContext) dmc, (DataRequestMonitor<IExpressionDMData>) rm);
-        } else if (dmc instanceof FormattedValueDMContext) {
-            getFormattedExpressionValue((FormattedValueDMContext) dmc, (DataRequestMonitor<FormattedValueDMData>) rm);
-        } else {
-            PDAPlugin.failRequest(rm, INVALID_HANDLE, "Unknown DMC type");
-        }
-    }
-
     @DsfServiceEventHandler 
     public void eventDispatched(IResumedDMEvent e) {
         // Mark the cache as not available, so that data retrieval commands 

@@ -11,8 +11,6 @@
 package org.eclipse.cdt.dsf.ui.viewmodel.datamodel;
 
 import org.eclipse.cdt.dsf.concurrent.ConfinedToDsfExecutor;
-import org.eclipse.cdt.dsf.datamodel.IDMEvent;
-import org.eclipse.cdt.dsf.service.DsfServiceEventHandler;
 import org.eclipse.cdt.dsf.service.DsfSession;
 import org.eclipse.cdt.dsf.ui.viewmodel.AbstractVMAdapter;
 import org.eclipse.cdt.dsf.ui.viewmodel.IVMNode;
@@ -56,13 +54,4 @@ abstract public class AbstractDMVMProvider extends AbstractCachingVMProvider
     }    
 
     public DsfSession getSession() { return fSession; }
-
-    /**
-     * @deprecated Kept for API compatibility reasons. 
-     * Events are now received and dispatched by the VM adapter.
-     */
-    @Deprecated
-	@DsfServiceEventHandler
-    public void eventDispatched(final IDMEvent<?> event) {
-    }
 }

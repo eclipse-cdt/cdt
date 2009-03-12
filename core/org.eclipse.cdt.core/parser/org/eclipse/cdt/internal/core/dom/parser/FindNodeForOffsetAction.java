@@ -13,6 +13,7 @@ package org.eclipse.cdt.internal.core.dom.parser;
 import org.eclipse.cdt.core.dom.ast.ASTGenericVisitor;
 import org.eclipse.cdt.core.dom.ast.IASTDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTDeclarator;
+import org.eclipse.cdt.core.dom.ast.IASTImplicitName;
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IASTPointerOperator;
@@ -31,6 +32,10 @@ public class FindNodeForOffsetAction extends ASTGenericVisitor {
 		shouldVisitNames = true;
 		shouldVisitDeclarations= true;
 		includeInactiveNodes= true;
+		
+		// only visit implicit names if asked
+		shouldVisitImplicitNames = 
+		shouldVisitImplicitNameAlternates = nodeSpec.requiresClass(IASTImplicitName.class);
 	}
 
 	@Override

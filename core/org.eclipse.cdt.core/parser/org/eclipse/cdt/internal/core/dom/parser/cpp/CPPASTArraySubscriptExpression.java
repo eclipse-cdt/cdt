@@ -1,23 +1,26 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2008 IBM Corporation and others.
+ * Copyright (c) 2004, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- * IBM - Initial API and implementation
+ *     John Camelon (IBM) - Initial API and implementation
+ *     Mike Kucera (IBM)
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.dom.parser.cpp;
  
 import org.eclipse.cdt.core.dom.ast.ASTVisitor;
 import org.eclipse.cdt.core.dom.ast.DOMException;
-import org.eclipse.cdt.core.dom.ast.IASTArraySubscriptExpression;
 import org.eclipse.cdt.core.dom.ast.IASTExpression;
+import org.eclipse.cdt.core.dom.ast.IASTImplicitName;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IArrayType;
 import org.eclipse.cdt.core.dom.ast.IPointerType;
+import org.eclipse.cdt.core.dom.ast.IProblemBinding;
 import org.eclipse.cdt.core.dom.ast.IType;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTArraySubscriptExpression;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunction;
 import org.eclipse.cdt.internal.core.dom.parser.ASTNode;
@@ -28,11 +31,12 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.SemanticUtil;
 /**
  * @author jcamelon
  */
-public class CPPASTArraySubscriptExpression extends ASTNode implements IASTArraySubscriptExpression, IASTAmbiguityParent {
+public class CPPASTArraySubscriptExpression extends ASTNode implements ICPPASTArraySubscriptExpression, IASTAmbiguityParent {
 
     private IASTExpression subscriptExp;
     private IASTExpression arrayExpression;
 
+    private IASTImplicitName[] implicitNames = null;
     
     public CPPASTArraySubscriptExpression() {
 	}
@@ -77,6 +81,41 @@ public class CPPASTArraySubscriptExpression extends ASTNode implements IASTArray
 		}
     }
     
+    public IASTImplicitName[] getImplicitNames() {
+		if(implicitNames == null) {
+			ICPPFunction overload = getOverload();
+			if(overload == null)
+				return implicitNames = IASTImplicitName.EMPTY_NAME_ARRAY;
+			
+			// create separate implicit names for the two brackets
+			CPPASTImplicitName n1 = new CPPASTImplicitName(OverloadableOperator.BRACKET, this);
+			n1.setBinding(overload);
+			n1.computeOperatorOffsets(arrayExpression, true);
+
+			CPPASTImplicitName n2 = new CPPASTImplicitName(OverloadableOperator.BRACKET, this);
+			n2.setBinding(overload);
+			n2.computeOperatorOffsets(subscriptExp, true);
+			n2.setAlternate(true);
+			
+			implicitNames = new IASTImplicitName[] { n1, n2 };
+		}
+		
+		return implicitNames;
+	}
+    
+    
+    public ICPPFunction getOverload() {
+    	IType type1 = arrayExpression.getExpressionType();
+    	IType ultimateType1 = SemanticUtil.getUltimateTypeUptoPointers(type1);
+		if (ultimateType1 instanceof IProblemBinding) {
+			return null;
+		}
+		if (ultimateType1 instanceof ICPPClassType) {
+			return CPPSemantics.findOperator(this, (ICPPClassType) ultimateType1);
+		}
+		return null;
+    }
+    
     @Override
 	public boolean accept( ASTVisitor action ){
         if( action.shouldVisitExpressions ){
@@ -88,8 +127,17 @@ public class CPPASTArraySubscriptExpression extends ASTNode implements IASTArray
 		}
         if( arrayExpression != null ) 
             if( !arrayExpression.accept( action ) ) return false;
+        
+        IASTImplicitName[] implicits = action.shouldVisitImplicitNames ? getImplicitNames() : null;
+        
+        if(implicits != null && implicits.length > 0)
+        	if(!implicits[0].accept(action)) return false;
+        
         if( subscriptExp != null )   
             if( !subscriptExp.accept( action ) ) return false;
+        
+        if(implicits != null && implicits.length > 0)
+        	if(!implicits[1].accept(action)) return false;
         
         if( action.shouldVisitExpressions ){
 		    switch( action.leave( this ) ){

@@ -23,19 +23,42 @@ public interface IASTNodeSelector {
 
 	/**
 	 * Returns the name for the exact given range, or <code>null</code> if there is no such node.
+     * Will not return an implicit name.
 	 */
 	IASTName findName(int offset, int length);
 
 	/**
 	 * Returns the smallest name enclosing the given range, or <code>null</code> if there is no such node.
+     * Will not return an implicit name.
 	 */
 	IASTName findEnclosingName(int offset, int length);
 
 	/**
 	 * Returns the first name contained in the given range, or <code>null</code> if there is no such node.
+     * Will not return an implicit name.
 	 */
 	IASTName findFirstContainedName(int offset, int length);
 
+	/**
+	 * Returns the implicit name for the exact given range, or <code>null</code> if there is no such node.
+	 * 
+	 * Note that there can be more than one implicit name in the same location.
+	 * The implicit name's parent can be used to get all the names at the location.
+	 * 
+	 * @since 5.1
+	 */
+	IASTImplicitName findImplicitName(int offset, int length);
+	
+	/**
+	 * Returns the first implicit name enclosing the given range.
+	 * 
+	 * Note that there can be more than one implicit name in the same location.
+	 * The implicit name's parent can be used to get all the names at the location.
+	 * 
+	 * @since 5.1
+	 */
+	IASTImplicitName findEnclosingImplicitName(int offset, int length);
+	
 	/**
 	 * Returns the node for the exact given range, or <code>null</code> if there is no such node.
 	 * <p>

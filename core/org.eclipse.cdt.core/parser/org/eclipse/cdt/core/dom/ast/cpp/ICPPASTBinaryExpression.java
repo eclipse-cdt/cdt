@@ -7,10 +7,12 @@
  *
  * Contributors:
  *    John Camelon (IBM) - Initial API and implementation
+ *    Mike Kucera (IBM)
  *******************************************************************************/
 package org.eclipse.cdt.core.dom.ast.cpp;
 
 import org.eclipse.cdt.core.dom.ast.IASTBinaryExpression;
+import org.eclipse.cdt.core.dom.ast.IASTImplicitNameOwner;
 
 /**
  * C++ adds a few more binary expressions over C.
@@ -18,7 +20,7 @@ import org.eclipse.cdt.core.dom.ast.IASTBinaryExpression;
  * @noextend This interface is not intended to be extended by clients.
  * @noimplement This interface is not intended to be implemented by clients.
  */
-public interface ICPPASTBinaryExpression extends IASTBinaryExpression {
+public interface ICPPASTBinaryExpression extends IASTBinaryExpression, IASTImplicitNameOwner {
 
 	/**
 	 * <code>op_pmdot</code> pointer-to-member field dereference.

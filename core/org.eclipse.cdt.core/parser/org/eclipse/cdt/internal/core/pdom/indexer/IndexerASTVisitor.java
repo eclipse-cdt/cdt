@@ -47,6 +47,7 @@ abstract public class IndexerASTVisitor extends ASTVisitor {
 
 	public IndexerASTVisitor() {
 		shouldVisitNames= true;
+		shouldVisitImplicitNames = true;
 		shouldVisitDeclarations= true;
 		shouldVisitInitializers= true;
 		shouldVisitDeclSpecifiers= true;

@@ -156,4 +156,11 @@ public interface ICPPNodeFactory extends INodeFactory {
 	public ICPPASTTemplatedTypeTemplateParameter newTemplatedTypeTemplateParameter(IASTName name, IASTExpression defaultValue);
 	
 	public IASTProblemTypeId newProblemTypeId(IASTProblem problem);
+	
+	public ICPPASTExpressionList newExpressionList();
+	
+	public ICPPASTArraySubscriptExpression newArraySubscriptExpression(IASTExpression arrayExpr, IASTExpression subscript);
+	
+	public ICPPASTFunctionCallExpression newFunctionCallExpression(IASTExpression idExpr, IASTExpression argList);
+	
 }

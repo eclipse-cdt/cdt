@@ -8,12 +8,14 @@
  * Contributors:
  *    John Camelon (IBM) - Initial API and implementation
  *    Markus Schorn (Wind River Systems)
+ *    Mike Kucera (IBM)
  *******************************************************************************/
 package org.eclipse.cdt.core.dom.ast.cpp;
 
 import org.eclipse.cdt.core.dom.ast.ASTNodeProperty;
 import org.eclipse.cdt.core.dom.ast.IASTExpression;
 import org.eclipse.cdt.core.dom.ast.IASTTypeId;
+import org.eclipse.cdt.core.dom.ast.IASTImplicitNameOwner;
 
 /**
  * This interface represents a new expression.
@@ -21,7 +23,7 @@ import org.eclipse.cdt.core.dom.ast.IASTTypeId;
  * @noextend This interface is not intended to be extended by clients.
  * @noimplement This interface is not intended to be implemented by clients.
  */
-public interface ICPPASTNewExpression extends IASTExpression {
+public interface ICPPASTNewExpression extends IASTExpression, IASTImplicitNameOwner {
 
 	/**
 	 * Is this a ::new expression?
@@ -110,6 +112,14 @@ public interface ICPPASTNewExpression extends IASTExpression {
 	 */
 	public void setIsNewTypeId(boolean value);
 
+	
+	/**
+	 * Returns true if this expression is allocating an array.
+	 * @since 5.1
+	 */
+	public boolean isArrayAllocation();
+	
+	
 	/**
 	 * Expressions that go inside array brackets.
 	 */

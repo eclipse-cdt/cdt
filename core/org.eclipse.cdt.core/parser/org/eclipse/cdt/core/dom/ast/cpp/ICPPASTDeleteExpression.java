@@ -7,11 +7,13 @@
  *
  * Contributors:
  *    John Camelon (IBM) - Initial API and implementation
+ *    Mike Kucera (IBM)
  *******************************************************************************/
 package org.eclipse.cdt.core.dom.ast.cpp;
 
 import org.eclipse.cdt.core.dom.ast.ASTNodeProperty;
 import org.eclipse.cdt.core.dom.ast.IASTExpression;
+import org.eclipse.cdt.core.dom.ast.IASTImplicitNameOwner;
 
 /**
  * This interface represents a delete expression. delete [] operand;
@@ -19,7 +21,7 @@ import org.eclipse.cdt.core.dom.ast.IASTExpression;
  * @noextend This interface is not intended to be extended by clients.
  * @noimplement This interface is not intended to be implemented by clients.
  */
-public interface ICPPASTDeleteExpression extends IASTExpression {
+public interface ICPPASTDeleteExpression extends IASTExpression, IASTImplicitNameOwner {
 
 	/**
 	 * <code>OPERAND</code> is the expression representing the pointer being

@@ -1,13 +1,14 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2008 IBM Corporation and others.
+ * Copyright (c) 2004, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *    IBM - Initial API and implementation
+ *    John Camelon (IBM) - Initial API and implementation
  *    Markus Schorn (Wind River Systems)
+ *    Mike Kucera (IBM)
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.dom.parser.cpp;
 
@@ -17,21 +18,25 @@ import org.eclipse.cdt.core.dom.ast.IASTArrayDeclarator;
 import org.eclipse.cdt.core.dom.ast.IASTArrayModifier;
 import org.eclipse.cdt.core.dom.ast.IASTDeclarator;
 import org.eclipse.cdt.core.dom.ast.IASTExpression;
+import org.eclipse.cdt.core.dom.ast.IASTImplicitName;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IASTPointerOperator;
 import org.eclipse.cdt.core.dom.ast.IASTTypeId;
 import org.eclipse.cdt.core.dom.ast.IArrayType;
+import org.eclipse.cdt.core.dom.ast.IPointerType;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTNewExpression;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunction;
+import org.eclipse.cdt.core.parser.IProblem;
 import org.eclipse.cdt.internal.core.dom.parser.ASTNode;
 import org.eclipse.cdt.internal.core.dom.parser.ASTQueries;
 import org.eclipse.cdt.internal.core.dom.parser.IASTAmbiguityParent;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPSemantics;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPVisitor;
 import org.eclipse.core.runtime.Assert;
 
-/**
- * @author jcamelon
- */
+
 public class CPPASTNewExpression extends ASTNode implements
         ICPPASTNewExpression, IASTAmbiguityParent {
 
@@ -43,7 +48,8 @@ public class CPPASTNewExpression extends ASTNode implements
     
     private IASTExpression [] arrayExpressions = null;
 
-
+    private IASTImplicitName[] implicitNames = null;
+    
     
     public CPPASTNewExpression() {
 	}
@@ -171,6 +177,57 @@ public class CPPASTNewExpression extends ASTNode implements
     	((IASTArrayDeclarator) dtor).addArrayModifier(mod);
     }
     
+    
+    public IASTImplicitName[] getImplicitNames() {
+    	if(implicitNames == null) {
+    		IType type = getExpressionType();
+    		if(type instanceof IProblem)
+    			return implicitNames = IASTImplicitName.EMPTY_NAME_ARRAY;
+    		
+    		try {
+				type = ((IPointerType)type).getType();
+			} catch (DOMException e) {
+				return implicitNames = IASTImplicitName.EMPTY_NAME_ARRAY;
+			}
+    		
+			ICPPFunction operatorFunction = findOperatorFunction(type);
+			if(operatorFunction == null) {
+				implicitNames = IASTImplicitName.EMPTY_NAME_ARRAY;
+			}
+			else {
+				CPPASTImplicitName operatorName = new CPPASTImplicitName(operatorFunction.getNameCharArray(), this);
+				operatorName.setOperator(true);
+				operatorName.setBinding(operatorFunction);
+				operatorName.setOffsetAndLength(getOffset(), 3);
+				implicitNames = new IASTImplicitName[] { operatorName };
+			}
+    	}
+    	
+    	return implicitNames;  
+    }
+
+    
+    // TODO this code is repeated in too many places
+    private ICPPFunction findOperatorFunction(IType type) {
+    	if(type instanceof ICPPClassType) {
+			ICPPFunction operator = CPPSemantics.findOperator(this, (ICPPClassType) type);
+			if(operator != null)
+				return operator;
+		}
+    	return CPPSemantics.findOverloadedOperator(this); 
+    }
+    
+    
+    /**
+	 * Returns true if this expression is allocating an array.
+	 * @since 5.1
+	 */
+	public boolean isArrayAllocation() {
+		IType t = CPPVisitor.createType(getTypeId());
+		return t instanceof IArrayType;
+	}
+	
+    
     @Override
 	public boolean accept( ASTVisitor action ){
         if( action.shouldVisitExpressions ){
@@ -181,9 +238,16 @@ public class CPPASTNewExpression extends ASTNode implements
 	        }
 		}
         
+        if(action.shouldVisitImplicitNames) { 
+        	for(IASTImplicitName name : getImplicitNames()) {
+        		if(!name.accept(action)) return false;
+        	}
+        }
+        
         if( placement != null ) if( !placement.accept( action ) ) return false;
         if( typeId != null ) if( !typeId.accept( action ) ) return false;
         if( initializer != null ) if( !initializer.accept( action ) ) return false;
+       
         
         if( action.shouldVisitExpressions ){
 		    switch( action.leave( this ) ){

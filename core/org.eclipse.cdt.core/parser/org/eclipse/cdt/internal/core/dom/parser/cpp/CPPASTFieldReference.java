@@ -1,13 +1,14 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2008 IBM Corporation and others.
+ * Copyright (c) 2004, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- * IBM - Initial API and implementation
- * Bryan Wilkinson (QNX)
+ *     John Camelon (IBM) - Initial API and implementation
+ *     Bryan Wilkinson (QNX)
+ *     Mike Kucera (IBM)
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.dom.parser.cpp;
 
@@ -18,6 +19,8 @@ import org.eclipse.cdt.core.dom.ast.ASTVisitor;
 import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IASTCompletionContext;
 import org.eclipse.cdt.core.dom.ast.IASTExpression;
+import org.eclipse.cdt.core.dom.ast.IASTImplicitName;
+import org.eclipse.cdt.core.dom.ast.IASTImplicitNameOwner;
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IBinding;
@@ -27,6 +30,7 @@ import org.eclipse.cdt.core.dom.ast.IProblemBinding;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.IVariable;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTFieldReference;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunction;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPMethod;
 import org.eclipse.cdt.internal.core.dom.parser.ASTNode;
 import org.eclipse.cdt.internal.core.dom.parser.IASTAmbiguityParent;
@@ -36,13 +40,14 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPSemantics;
  * @author jcamelon
  */
 public class CPPASTFieldReference extends ASTNode implements
-        ICPPASTFieldReference, IASTAmbiguityParent, IASTCompletionContext {
+        ICPPASTFieldReference, IASTAmbiguityParent, IASTCompletionContext, IASTImplicitNameOwner {
 
     private boolean isTemplate;
     private IASTExpression owner;
     private IASTName name;
     private boolean isDeref;
-
+    
+    private IASTImplicitName[] implicitNames = null;
     
     public CPPASTFieldReference() {
 	}
@@ -106,6 +111,34 @@ public class CPPASTFieldReference extends ASTNode implements
         isDeref = value;
     }
     
+    public IASTImplicitName[] getImplicitNames() {
+    	if(implicitNames == null) {
+    		if(!isDeref)
+    			return implicitNames = IASTImplicitName.EMPTY_NAME_ARRAY;
+			
+    		// collect the function bindings
+			List<ICPPFunction> functionBindings = new ArrayList<ICPPFunction>();
+			try {
+				CPPSemantics.getChainedMemberAccessOperatorReturnType(this, functionBindings);
+			} catch (DOMException e) {
+				return implicitNames = IASTImplicitName.EMPTY_NAME_ARRAY;
+			}
+			if(functionBindings.isEmpty())
+				return implicitNames = IASTImplicitName.EMPTY_NAME_ARRAY;
+			
+			// create a name to wrap each binding
+			implicitNames = new IASTImplicitName[functionBindings.size()];
+			for(int i = 0, n = functionBindings.size(); i < n; i++) {
+				CPPASTImplicitName operatorName = new CPPASTImplicitName(OverloadableOperator.ARROW, this);
+				operatorName.setBinding(functionBindings.get(i));
+				operatorName.computeOperatorOffsets(owner, true);
+				implicitNames[i] = operatorName;
+			}
+		}
+		
+		return implicitNames;
+	}
+        
     @Override
 	public boolean accept(ASTVisitor action) {
         if (action.shouldVisitExpressions) {
@@ -117,6 +150,13 @@ public class CPPASTFieldReference extends ASTNode implements
 		}
       
         if (owner != null && !owner.accept(action)) return false;
+        
+        if(action.shouldVisitImplicitNames) { 
+        	for(IASTImplicitName name : getImplicitNames()) {
+        		if(!name.accept(action)) return false;
+        	}
+        }
+        
         if (name != null && !name.accept(action)) return false;
         
         if (action.shouldVisitExpressions) {

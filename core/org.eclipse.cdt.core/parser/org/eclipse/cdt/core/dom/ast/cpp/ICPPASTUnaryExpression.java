@@ -7,16 +7,18 @@
  *
  * Contributors:
  *    John Camelon (IBM) - Initial API and implementation
+ *    Mike Kucera
  *******************************************************************************/
 package org.eclipse.cdt.core.dom.ast.cpp;
 
 import org.eclipse.cdt.core.dom.ast.IASTUnaryExpression;
+import org.eclipse.cdt.core.dom.ast.IASTImplicitNameOwner;
 
 /**
  * @noextend This interface is not intended to be extended by clients.
  * @noimplement This interface is not intended to be implemented by clients.
  */
-public interface ICPPASTUnaryExpression extends IASTUnaryExpression {
+public interface ICPPASTUnaryExpression extends IASTUnaryExpression, IASTImplicitNameOwner {
 
 	/**
 	 * <code>op_throw</code> throw exp

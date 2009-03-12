@@ -1,12 +1,13 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2008 IBM Corporation and others.
+ * Copyright (c) 2004, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- * IBM - Initial API and implementation
+ *     John Camelon (IBM) - Initial API and implementation
+ *     Mike Kucera (IBM)
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.dom.parser.cpp;
 
@@ -14,6 +15,7 @@ import org.eclipse.cdt.core.dom.ast.ASTVisitor;
 import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IASTBinaryExpression;
 import org.eclipse.cdt.core.dom.ast.IASTExpression;
+import org.eclipse.cdt.core.dom.ast.IASTImplicitName;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IEnumeration;
 import org.eclipse.cdt.core.dom.ast.IPointerType;
@@ -31,17 +33,17 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPSemantics;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPVisitor;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.SemanticUtil;
 
-/**
- * @author jcamelon
- */
-public class CPPASTBinaryExpression extends ASTNode implements
-        ICPPASTBinaryExpression, IASTAmbiguityParent {
 
-    private int op;
+public class CPPASTBinaryExpression extends ASTNode implements ICPPASTBinaryExpression, IASTAmbiguityParent {
+
+	private int op;
     private IASTExpression operand1;
     private IASTExpression operand2;
     private IType type;
-
+    
+    private IASTImplicitName[] implicitNames = null;
+    
+    
     public CPPASTBinaryExpression() {
 	}
 
@@ -95,6 +97,24 @@ public class CPPASTBinaryExpression extends ASTNode implements
 		}
     }
 
+	public IASTImplicitName[] getImplicitNames() {
+		if(implicitNames == null) {
+			ICPPFunction overload = getOverload();
+			if(overload == null)
+				return implicitNames = IASTImplicitName.EMPTY_NAME_ARRAY;
+				
+			CPPASTImplicitName operatorName = new CPPASTImplicitName(overload.getNameCharArray(), this);
+			operatorName.setBinding(overload);
+			operatorName.setOperator(true);
+			operatorName.computeOperatorOffsets(operand1, true);
+			implicitNames = new IASTImplicitName[] { operatorName };
+		}
+		
+		return implicitNames;
+	}
+
+	
+	
     @Override
 	public boolean accept( ASTVisitor action ){
         if( action.shouldVisitExpressions ){
@@ -106,6 +126,13 @@ public class CPPASTBinaryExpression extends ASTNode implements
 		}
         
         if( operand1 != null ) if( !operand1.accept( action ) ) return false;
+        
+        if(action.shouldVisitImplicitNames) { 
+        	for(IASTImplicitName name : getImplicitNames()) {
+        		if(!name.accept(action)) return false;
+        	}
+        }
+        
         if( operand2 != null ) if( !operand2.accept( action ) ) return false;
         
         if(action.shouldVisitExpressions ){
@@ -140,9 +167,41 @@ public class CPPASTBinaryExpression extends ASTNode implements
     	return type;
     }
 
+    
+    
+    /**
+     * Returns the operator function that is invoked or null
+     * if it is actually a built-in operator.
+     */
+    public ICPPFunction getOverload() {
+    	// try to find a method
+    	IType type1 = getOperand1().getExpressionType();
+    	IType ultimateType1 = SemanticUtil.getUltimateTypeUptoPointers(type1);
+		if (ultimateType1 instanceof IProblemBinding) {
+			return null;
+		}
+		if (ultimateType1 instanceof ICPPClassType) {
+			ICPPFunction operator = CPPSemantics.findOperator(this, (ICPPClassType) ultimateType1);
+			if (operator != null)
+				return operator;
+		}
+		
+		// try to find a function
+		if(op != op_assign) {
+			IType type2 = getOperand2().getExpressionType();
+			IType ultimateType2 = SemanticUtil.getUltimateTypeUptoPointers(type2);
+			if (ultimateType2 instanceof IProblemBinding)
+				return null;
+			if (isUserDefined(ultimateType1) || isUserDefined(ultimateType2))
+				return CPPSemantics.findOverloadedOperator(this);
+		}
+    	return null;
+    }
+    
+    
+    
 	private IType createExpressionType() {
-
-        // Check for overloaded operator.
+		// Check for overloaded operator.
 		IType type1 = getOperand1().getExpressionType();
 		IType ultimateType1 = SemanticUtil.getUltimateTypeUptoPointers(type1);
 		if (ultimateType1 instanceof IProblemBinding) {
@@ -158,13 +217,13 @@ public class CPPASTBinaryExpression extends ASTNode implements
 				}
 			}
 		}
+		
 		IType type2 = getOperand2().getExpressionType();
 		IType ultimateType2 = SemanticUtil.getUltimateTypeUptoPointers(type2);
 		if (ultimateType2 instanceof IProblemBinding) {
 			return type2;
 		}
-		if (ultimateType1 instanceof ICPPClassType || ultimateType1 instanceof IEnumeration ||
-				ultimateType2 instanceof ICPPClassType || ultimateType2 instanceof IEnumeration) {
+		if(op != op_assign && isUserDefined(ultimateType1) || isUserDefined(ultimateType2)) {
 			// If at least one of the types is user defined, the operator can be overloaded.
 			ICPPFunction operator = CPPSemantics.findOverloadedOperator(this);
 			if (operator != null) {
@@ -175,7 +234,8 @@ public class CPPASTBinaryExpression extends ASTNode implements
 				}
 			}
 		}
-        
+		
+		
         final int op = getOperator();
         switch (op) {
         case IASTBinaryExpression.op_lessEqual:
@@ -215,4 +275,10 @@ public class CPPASTBinaryExpression extends ASTNode implements
         }
 		return type1;
 	}
+	
+	
+	private static boolean isUserDefined(IType type) {
+    	return type instanceof ICPPClassType || type instanceof IEnumeration;
+    }
+
 }

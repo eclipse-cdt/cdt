@@ -11,6 +11,7 @@
 package org.eclipse.cdt.internal.core.dom.parser;
 
 import org.eclipse.cdt.core.dom.ast.IASTFileLocation;
+import org.eclipse.cdt.core.dom.ast.IASTImplicitName;
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IASTNodeSelector;
@@ -119,72 +120,51 @@ public class ASTNodeSelector implements IASTNodeSelector {
 		return nodeSpec.getBestNode();
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.dom.ast.IASTNodeSelector#getFirstContainedNode(int, int)
-	 */
+
 	public IASTNode findFirstContainedNode(int offset, int length) {
 		return findNode(offset, length, Relation.FIRST_CONTAINED, IASTNode.class);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.dom.ast.IASTNodeSelector#getNode(int, int)
-	 */
 	public IASTNode findNode(int offset, int length) {
 		return findNode(offset, length, Relation.EXACT_MATCH, IASTNode.class);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.dom.ast.IASTNodeSelector#getSurroundingNode(int, int)
-	 */
 	public IASTNode findEnclosingNode(int offset, int length) {
 		return findNode(offset, length, Relation.ENCLOSING, IASTNode.class);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.dom.ast.IASTNodeSelector#getFirstContainedNode(int, int)
-	 */
 	public IASTNode findFirstContainedNodeInExpansion(int offset, int length) {
 		return findNode(offset, length, Relation.FIRST_CONTAINED, IASTNode.class, true);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.dom.ast.IASTNodeSelector#getNode(int, int)
-	 */
 	public IASTNode findNodeInExpansion(int offset, int length) {
 		return findNode(offset, length, Relation.EXACT_MATCH, IASTNode.class, true);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.dom.ast.IASTNodeSelector#getSurroundingNode(int, int)
-	 */
 	public IASTNode findEnclosingNodeInExpansion(int offset, int length) {
 		return findNode(offset, length, Relation.ENCLOSING, IASTNode.class, true);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.dom.ast.IASTNodeSelector#getFirstContainedNode(int, int)
-	 */
 	public IASTName findFirstContainedName(int offset, int length) {
 		return findNode(offset, length, Relation.FIRST_CONTAINED, IASTName.class);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.dom.ast.IASTNodeSelector#getNode(int, int)
-	 */
 	public IASTName findName(int offset, int length) {
 		return findNode(offset, length, Relation.EXACT_MATCH, IASTName.class);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.dom.ast.IASTNodeSelector#getSurroundingNode(int, int)
-	 */
 	public IASTName findEnclosingName(int offset, int length) {
 		return findNode(offset, length, Relation.ENCLOSING, IASTName.class);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.dom.ast.IASTNodeSelector#findSurrundingMacroExpansion(int, int)
-	 */
+	public IASTImplicitName findImplicitName(int offset, int length) {
+		return findNode(offset, length, Relation.EXACT_MATCH, IASTImplicitName.class);
+	}
+	
+	public IASTImplicitName findEnclosingImplicitName(int offset, int length) {
+		return findNode(offset, length, Relation.ENCLOSING, IASTImplicitName.class);
+	}
+	
 	public IASTPreprocessorMacroExpansion findEnclosingMacroExpansion(int offset, int length) {
 		return findNode(offset, length, Relation.ENCLOSING, IASTPreprocessorMacroExpansion.class);
 	}

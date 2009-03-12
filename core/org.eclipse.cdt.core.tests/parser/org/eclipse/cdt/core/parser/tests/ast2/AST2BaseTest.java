@@ -9,6 +9,7 @@
  *     IBM Corporation - initial API and implementation
  *     Markus Schorn (Wind River Systems)
  *     Andrew Ferguson (Symbian)
+ *     Mike Kucera (IBM)
  *******************************************************************************/
 package org.eclipse.cdt.core.parser.tests.ast2;
 
@@ -35,8 +36,11 @@ import org.eclipse.cdt.core.dom.ast.IASTExpression;
 import org.eclipse.cdt.core.dom.ast.IASTExpressionStatement;
 import org.eclipse.cdt.core.dom.ast.IASTFunctionDefinition;
 import org.eclipse.cdt.core.dom.ast.IASTIdExpression;
+import org.eclipse.cdt.core.dom.ast.IASTImplicitName;
+import org.eclipse.cdt.core.dom.ast.IASTImplicitNameOwner;
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
+import org.eclipse.cdt.core.dom.ast.IASTNodeSelector;
 import org.eclipse.cdt.core.dom.ast.IASTSimpleDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTStatement;
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
@@ -76,6 +80,7 @@ import org.eclipse.cdt.core.parser.tests.scanner.FileCodeReaderFactory;
 import org.eclipse.cdt.core.testplugin.CTestPlugin;
 import org.eclipse.cdt.core.testplugin.util.BaseTestCase;
 import org.eclipse.cdt.core.testplugin.util.TestSourceReader;
+import org.eclipse.cdt.internal.core.dom.parser.ASTNode;
 import org.eclipse.cdt.internal.core.dom.parser.AbstractGNUSourceCodeParser;
 import org.eclipse.cdt.internal.core.dom.parser.c.CVisitor;
 import org.eclipse.cdt.internal.core.dom.parser.c.GNUCSourceParser;
@@ -477,6 +482,10 @@ public class AST2BaseTest extends BaseTestCase {
     		this.tu= parse(contents, isCPP ? ParserLanguage.CPP : ParserLanguage.C, true, false);
 		}
     	
+    	public IASTTranslationUnit getTranslationUnit() {
+    		return tu;
+    	}
+    	
     	public IBinding assertProblem(String section, int len) {
     		IBinding binding= binding(section, len);
     		assertTrue("Non-ProblemBinding for name: " + section.substring(0, len),
@@ -497,15 +506,65 @@ public class AST2BaseTest extends BaseTestCase {
     	}
 
     	public void assertNoName(String section, int len) {
-    		final int offset = contents.indexOf(section);
-    		assertTrue(offset >= 0);
-			final String selection = section.substring(0, len);
-			IASTName name= tu.getNodeSelector(null).findName(offset, len);
+			IASTName name= findName(section,len,false);
 			if (name != null) {
+				String selection = section.substring(0, len);
 				fail("Found unexpected \""+selection+"\": " + name.resolveBinding());
 			}
     	}
+
+    	/**
+    	 * Asserts that there is exactly one name at the given location and that
+    	 * it resolves to the given type of binding.
+    	 */
+    	public IASTImplicitName assertImplicitName(String section, int len, Class<?> bindingClass) {
+    		IASTName name = findName(section,len,true);
+    		final String selection = section.substring(0, len);
+			assertNotNull("did not find \""+selection+"\"", name);
+			
+			assertInstance(name, IASTImplicitName.class);
+			IASTImplicitNameOwner owner = (IASTImplicitNameOwner) name.getParent();
+			IASTImplicitName[] implicits = owner.getImplicitNames();
+			assertNotNull(implicits);
+			
+			if(implicits.length > 1) {
+				boolean found = false;
+				for(IASTImplicitName n : implicits) {
+					if(((ASTNode)n).getOffset() == ((ASTNode)name).getOffset()) {
+						assertFalse(found);
+						found = true;
+					}
+				}
+				assertTrue(found);
+			}
+			
+    		assertEquals(selection, name.getRawSignature());
+    		IBinding binding = name.resolveBinding();
+    		assertNotNull(binding);
+    		assertInstance(binding, bindingClass);
+    		return (IASTImplicitName) name;
+    	}
     	
+    	public void assertNoImplicitName(String section, int len) {
+    		IASTName name = findName(section,len,true);
+    		final String selection = section.substring(0, len);
+    		assertNull("found name \""+selection+"\"", name);
+    	}
+    	
+    	public IASTImplicitName[] getImplicitNames(String section, int len) {
+    		IASTName name = findName(section,len,true);
+    		IASTImplicitNameOwner owner = (IASTImplicitNameOwner) name.getParent();
+			IASTImplicitName[] implicits = owner.getImplicitNames();
+			return implicits;
+    	}
+    	
+    	private IASTName findName(String section, int len, boolean implicit) {
+    		final int offset = contents.indexOf(section);
+    		assertTrue(offset >= 0);
+    		IASTNodeSelector selector = tu.getNodeSelector(null);
+    		return implicit ? selector.findImplicitName(offset, len) : selector.findName(offset, len);
+    	}
+
     	private String renderProblemID(int i) {
     		try {
     			for (Field field : IProblemBinding.class.getDeclaredFields()) {
@@ -536,10 +595,8 @@ public class AST2BaseTest extends BaseTestCase {
     	}
     	
     	private IBinding binding(String section, int len) {
-    		final int offset = contents.indexOf(section);
-    		assertTrue(offset >= 0);
+    		IASTName name = findName(section, len,false);
     		final String selection = section.substring(0, len);
-			IASTName name= tu.getNodeSelector(null).findName(offset, len);
 			assertNotNull("did not find \""+selection+"\"", name);
     		assertEquals(selection, name.getRawSignature());
     			

@@ -18,6 +18,7 @@ import org.eclipse.cdt.core.dom.ast.ASTVisitor;
 import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IASTExpression;
 import org.eclipse.cdt.core.dom.ast.IASTIdExpression;
+import org.eclipse.cdt.core.dom.ast.IASTImplicitName;
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IASTUnaryExpression;
@@ -47,6 +48,8 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.SemanticUtil;
 public class CPPASTUnaryExpression extends ASTNode implements ICPPASTUnaryExpression, IASTAmbiguityParent {
     private int op;
     private IASTExpression operand;
+    
+    private IASTImplicitName[] implicitNames = null;
     
     public CPPASTUnaryExpression() {
 	}
@@ -83,7 +86,29 @@ public class CPPASTUnaryExpression extends ASTNode implements ICPPASTUnaryExpres
 			expression.setPropertyInParent(OPERAND);
 		}
     }
-
+    
+    public boolean isPostfixOperator() {
+    	return op == op_postFixDecr || op == op_postFixIncr;
+    }
+	
+	
+    public IASTImplicitName[] getImplicitNames() {
+		if(implicitNames == null) {
+			ICPPFunction overload = getOverload();
+			if(overload == null)
+				return implicitNames = IASTImplicitName.EMPTY_NAME_ARRAY;
+			
+			CPPASTImplicitName operatorName = new CPPASTImplicitName(overload.getNameCharArray(), this);
+			operatorName.setOperator(true);
+			operatorName.setBinding(overload);
+			operatorName.computeOperatorOffsets(operand, isPostfixOperator());
+			implicitNames = new IASTImplicitName[] { operatorName };
+		}
+		
+		return implicitNames; 
+	}
+	
+	
     @Override
 	public boolean accept(ASTVisitor action) {
         if (action.shouldVisitExpressions) {
@@ -94,7 +119,21 @@ public class CPPASTUnaryExpression extends ASTNode implements ICPPASTUnaryExpres
 	        }
 		}
       
+        final boolean isPostfix = isPostfixOperator();
+        
+        if(!isPostfix && action.shouldVisitImplicitNames) { 
+        	for(IASTImplicitName name : getImplicitNames()) {
+        		if(!name.accept(action)) return false;
+        	}
+        }
+        
         if (operand != null && !operand.accept(action)) return false;
+        
+        if(isPostfix && action.shouldVisitImplicitNames) { 
+        	for(IASTImplicitName name : getImplicitNames()) {
+        		if(!name.accept(action)) return false;
+        	}
+        }
         
         if (action.shouldVisitExpressions) {
 		    switch (action.leave(this)) {
@@ -114,18 +153,30 @@ public class CPPASTUnaryExpression extends ASTNode implements ICPPASTUnaryExpres
         }
     }
     
+    
+    public ICPPFunction getOverload() {
+    	if(operand == null)
+    		return null;
+    	if(getExpressionType() instanceof CPPPointerToMemberType) // then it must be the builtin &
+    		return null;
+    	IType type = operand.getExpressionType();
+		type = SemanticUtil.getNestedType(type, TDEF | REF);
+		return findOperatorFunction(type);
+    }
+    
+    
     public IType getExpressionType() {
     	final int op= getOperator();
 		switch (op) {
-		case IASTUnaryExpression.op_sizeof:
+		case op_sizeof:
 			return CPPVisitor.get_SIZE_T(this);
-		case IASTUnaryExpression.op_typeid:
+		case op_typeid:
 			return CPPVisitor.get_type_info(this);
 		}
 		
 		final IASTExpression operand = getOperand();
 
-		if (op == IASTUnaryExpression.op_amper) {  // check for pointer to member
+		if (op == op_amper) {  // check for pointer to member
 			IASTNode child= operand;
 			boolean inParenthesis= false;
 			while (child instanceof IASTUnaryExpression && ((IASTUnaryExpression) child).getOperator() == IASTUnaryExpression.op_bracketedPrimary) {
@@ -164,7 +215,7 @@ public class CPPASTUnaryExpression extends ASTNode implements ICPPASTUnaryExpres
 		} 
 		
 		
-		if (op == IASTUnaryExpression.op_star) {
+		if (op == op_star) {
 			IType type= operand.getExpressionType();
 			type = SemanticUtil.getNestedType(type, TDEF | REF | CVQ);
 	    	if (type instanceof IProblemBinding) {
@@ -193,7 +244,7 @@ public class CPPASTUnaryExpression extends ASTNode implements ICPPASTUnaryExpres
 			return operator;
 		}
 		
-		if(op == IASTUnaryExpression.op_not) {
+		if(op == op_not) {
 			return new CPPBasicType(ICPPBasicType.t_bool, 0);
 		}
 		if (type instanceof CPPBasicType) {

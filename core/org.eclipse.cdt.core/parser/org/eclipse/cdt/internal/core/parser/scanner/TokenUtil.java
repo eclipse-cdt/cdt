@@ -145,4 +145,18 @@ public class TokenUtil {
             return CharArrayUtils.EMPTY; 
         }
 	}
+	
+	
+	/**
+	 * Returns the last token in the given token list.
+	 * @throws NullPointerException if the argument is null
+	 */
+	public static IToken getLast(IToken tokenList) {
+		IToken last;
+		do {
+			last = tokenList;
+		} while((tokenList = tokenList.getNext()) != null);
+		return last;
+	}
+	
 }

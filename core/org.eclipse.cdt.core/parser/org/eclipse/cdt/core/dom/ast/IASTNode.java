@@ -215,7 +215,7 @@ public interface IASTNode {
 	public boolean isActive();
 	
 	/**
-	 * Returns a copy of the tree rooted at this node. 
+	 * Returns a mutable copy of the tree rooted at this node. 
 	 * The following postconditions hold:
 	 * 
 	 * <code>
@@ -226,9 +226,11 @@ public interface IASTNode {
 	 * 
 	 * Preprocessor nodes do not currently support being copied.
 	 * 
+	 * Implicit name nodes are not copied, instead they can be regenerated
+	 * if required.
+	 * 
 	 * @since 5.1
-	 * @throws UnsupportedOperationException if this node or one of its descendants
-	 * does not support copying
+	 * @throws UnsupportedOperationException if this node or one of its descendants does not support copying
 	 */
 	public IASTNode copy();
 }

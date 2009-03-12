@@ -9,6 +9,7 @@
  *     IBM Corporation - initial API and implementation
  *     Yuan Zhang / Beth Tibbitts (IBM Research)
  *     Markus Schorn (Wind River Systems)
+ *     Mike Kucera (IBM) - implicit names
  *******************************************************************************/
 package org.eclipse.cdt.core.dom.ast;
 
@@ -139,6 +140,23 @@ public abstract class ASTVisitor {
 	 */
 	public boolean shouldVisitAmbiguousNodes = false;
 	
+	
+	/**
+	 * Implicit names are created to allow implicit bindings to be resolved,
+	 * normally they are not visited, set this flag to true to visit them.
+	 * @since 5.1
+	 */
+	public boolean shouldVisitImplicitNames = false;
+	
+	
+	/**
+	 * Sometimes more than one implicit name is created for a binding,
+	 * set this flag to true to visit more than one name for an implicit binding.
+	 * @since 5.1
+	 */
+	public boolean shouldVisitImplicitNameAlternates = false;
+	
+	
 	/**
 	 * Creates a visitor that does not visit any kind of node per default.
 	 */
@@ -149,7 +167,9 @@ public abstract class ASTVisitor {
 	/**
 	 * Creates a visitor.
 	 * @param visitNodes whether visitor is setup to visit all nodes per default, except
-	 * ambiguous nodes ({@link #shouldVisitAmbiguousNodes}) and inactive nodes ({@link #includeInactiveNodes}).
+	 * ambiguous nodes ({@link #shouldVisitAmbiguousNodes}),
+	 * inactive nodes ({@link #includeInactiveNodes}),
+	 * and implicit names (@link {@link #shouldVisitImplicitNames}).
 	 * @since 5.1
 	 */
 	public ASTVisitor(boolean visitNodes) {

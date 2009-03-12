@@ -7,10 +7,12 @@
  *
  * Contributors:
  *    John Camelon (IBM) - Initial API and implementation
+ *    Mike Kucera (IBM)
  *******************************************************************************/
 package org.eclipse.cdt.core.dom.ast.cpp;
 
 import org.eclipse.cdt.core.dom.ast.IASTFieldReference;
+import org.eclipse.cdt.core.dom.ast.IASTImplicitNameOwner;
 
 /**
  * Certain field references in C++ require the use the keyword template to
@@ -19,7 +21,7 @@ import org.eclipse.cdt.core.dom.ast.IASTFieldReference;
  * @noextend This interface is not intended to be extended by clients.
  * @noimplement This interface is not intended to be implemented by clients.
  */
-public interface ICPPASTFieldReference extends IASTFieldReference {
+public interface ICPPASTFieldReference extends IASTFieldReference, IASTImplicitNameOwner {
 
 	/**
 	 * Was template keyword used?

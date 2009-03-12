@@ -50,7 +50,8 @@ public class ASTComparer extends Assert {
 		"isDefinition",
 		"isReference",
 		"isAssociatedWithLastName",
-		"getNestingLevel"
+		"getNestingLevel",
+		"getImplicitNames"
 	));
 
 	

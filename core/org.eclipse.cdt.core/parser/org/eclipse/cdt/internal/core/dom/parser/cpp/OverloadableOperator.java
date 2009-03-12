@@ -12,8 +12,12 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.dom.parser.cpp;
 
+import java.util.Arrays;
+
 import org.eclipse.cdt.core.dom.ast.IASTBinaryExpression;
 import org.eclipse.cdt.core.dom.ast.IASTUnaryExpression;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTDeleteExpression;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTNewExpression;
 import org.eclipse.cdt.core.parser.IToken;
 
 /**
@@ -78,9 +82,26 @@ public enum OverloadableOperator {
 		return rep;
 	}
 	
+	
+	/**
+	 * Returns true if the given name equals 'operator new'
+	 * or 'operator new[]'.
+	 */
+	public static boolean isNew(char[] name) {
+		return Arrays.equals(name, NEW.rep) || Arrays.equals(name, NEW_ARRAY.rep);
+	}
+	
+	/**
+	 * Returns true if the given name equals 'operator delete'
+	 * or 'operator delete[]'.
+	 */
+	public static boolean isDelete(char[] name) {
+		return Arrays.equals(name, DELETE.rep) || Arrays.equals(name, DELETE_ARRAY.rep);
+	}
+	
 	/**
 	 * Returns the OverloadableOperator constant that corresponds to
-	 * the given token. Only works for operators that consist of one token.
+	 * the given token. Does not work for new[] and delete[] operators.
 	 * 
 	 * @throws NullPointerException if {@code token} is {@code null}.
 	 */
@@ -132,6 +153,11 @@ public enum OverloadableOperator {
 		// other
 		case IToken.tASSIGN: return ASSIGN; 
 		case IToken.tCOMMA:  return COMMA;
+		
+		case IToken.tLBRACKET: return BRACKET;
+		case IToken.tRBRACKET: return BRACKET;
+		case IToken.tLPAREN: return PAREN;
+		case IToken.tRPAREN: return PAREN;
 		}
 		
 		return null;
@@ -202,5 +228,13 @@ public enum OverloadableOperator {
 		case IASTUnaryExpression.op_postFixDecr: return DECR;
 		}
 		return null;
+	}
+	
+	public static OverloadableOperator fromDeleteExpression(ICPPASTDeleteExpression expression) {
+		return expression.isVectored() ? DELETE_ARRAY : DELETE;
+	}
+	
+	public static OverloadableOperator fromNewExpression(ICPPASTNewExpression expression) {
+		return expression.isArrayAllocation() ? NEW_ARRAY : NEW;
 	}
 }

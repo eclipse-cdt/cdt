@@ -46,6 +46,7 @@ import org.eclipse.cdt.core.dom.ast.c.ICASTFieldDesignator;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCompositeTypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTConstructorChainInitializer;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTDeclSpecifier;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTDeleteExpression;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTElaboratedTypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTExplicitTemplateInstantiation;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTFieldReference;
@@ -409,6 +410,13 @@ public class LookupData {
         		if (tempNameParent instanceof IASTBinaryExpression) {
         			return ((IASTBinaryExpression) tempNameParent).getOperand1().getExpressionType();
         		}
+        		if (tempNameParent instanceof ICPPASTDeleteExpression) {
+        			IType implied = ((ICPPASTDeleteExpression) tempNameParent).getOperand().getExpressionType();
+        			if(implied instanceof IPointerType) {
+        				return ((IPointerType)implied).getType();
+        			}
+        			return implied;
+        		}
         		return null;
         	} 
         	if (prop == IASTFieldReference.FIELD_NAME) {
@@ -549,8 +557,8 @@ public class LookupData {
 		}
 		setFunctionArguments(exprs);
 	}
-
-	public void setFunctionArguments(IASTExpression[] exprs) {
+	
+	public void setFunctionArguments(IASTExpression... exprs) {
 		functionArgs= exprs;
 		if (exprs.length != 0) {
 			IASTNode node= exprs[0];

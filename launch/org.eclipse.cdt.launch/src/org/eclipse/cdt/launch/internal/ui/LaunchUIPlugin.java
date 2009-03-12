@@ -11,7 +11,6 @@
 package org.eclipse.cdt.launch.internal.ui;
 
 import org.eclipse.cdt.core.model.ICProject;
-import org.eclipse.cdt.debug.core.CDebugCorePlugin;
 import org.eclipse.cdt.debug.core.CDebugUtils;
 import org.eclipse.cdt.debug.core.ICDebugConstants;
 import org.eclipse.core.resources.IProject;

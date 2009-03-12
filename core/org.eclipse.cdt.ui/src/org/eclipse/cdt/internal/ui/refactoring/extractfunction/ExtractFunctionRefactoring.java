@@ -651,7 +651,7 @@ public class ExtractFunctionRefactoring extends CRefactoring {
 
 			for (IASTPointerOperator pointer : orgDecl.getDeclarators()[0]
 					.getPointerOperators()) {
-				declarator.addPointerOperator(pointer);
+				declarator.addPointerOperator(pointer.copy());
 			}
 
 			IASTInitializerExpression initializer = new CPPASTInitializerExpression();

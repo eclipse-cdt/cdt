@@ -285,7 +285,7 @@ public class LookupData {
 		} else if (p1 instanceof ICPPASTNamedTypeSpecifier && p2 instanceof IASTTypeId) {
 			if (p2.getParent() instanceof ICPPASTNewExpression) {
 				IASTDeclarator dtor = ((IASTTypeId) p2).getAbstractDeclarator();
-				if (dtor.getPointerOperators().length == 0)
+				if (dtor != null && dtor.getPointerOperators().length == 0)
 					return true;
 			}
 		} 

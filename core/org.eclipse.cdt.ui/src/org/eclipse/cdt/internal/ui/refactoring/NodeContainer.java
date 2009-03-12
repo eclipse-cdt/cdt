@@ -160,7 +160,7 @@ public class NodeContainer {
 			declarator.setName(new CPPASTName(getDeclaration().toCharArray()));
 			for (IASTPointerOperator pointerOp : sourceDeclarator
 					.getPointerOperators()) {
-				declarator.addPointerOperator(pointerOp);
+				declarator.addPointerOperator(pointerOp.copy());
 			}
 
 			if (isReference && !hasReferenceOperartor(declarator)) {

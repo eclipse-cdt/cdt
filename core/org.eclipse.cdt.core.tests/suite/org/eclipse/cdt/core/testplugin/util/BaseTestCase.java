@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2008 Wind River Systems, Inc. and others.
+ * Copyright (c) 2006, 2009 Wind River Systems, Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -32,6 +32,7 @@ import org.eclipse.cdt.core.model.ElementChangedEvent;
 import org.eclipse.cdt.core.model.IElementChangedListener;
 import org.eclipse.cdt.core.testplugin.TestScannerProvider;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTNameBase;
+import org.eclipse.core.resources.IResourceStatus;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.ILogListener;
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -123,6 +124,13 @@ public class BaseTestCase extends TestCase {
 		ILogListener logListener= new ILogListener() {
 			public void logging(IStatus status, String plugin) {
 				if(!status.isOK() && status.getSeverity() != IStatus.INFO) {
+					switch (status.getCode()) {
+					case IResourceStatus.NOT_FOUND_LOCAL:
+					case IResourceStatus.NO_LOCATION_LOCAL:
+					case IResourceStatus.FAILED_READ_LOCAL:
+						// logged by the resources plugin.
+						return;
+					}
 					statusLog.add(status);
 				}
 			}

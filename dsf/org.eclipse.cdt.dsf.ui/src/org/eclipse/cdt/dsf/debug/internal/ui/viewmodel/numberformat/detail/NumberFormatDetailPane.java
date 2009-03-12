@@ -90,7 +90,6 @@ import org.eclipse.ui.progress.WorkbenchJob;
 import org.eclipse.ui.texteditor.IUpdate;
 import org.eclipse.ui.texteditor.IWorkbenchActionDefinitionIds;
 
-@SuppressWarnings("restriction")
 public class NumberFormatDetailPane implements IDetailPane, IAdaptable, IPropertyChangeListener {
 
     /**

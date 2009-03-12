@@ -1089,6 +1089,23 @@
          </action>
       </viewContribution>
       <viewContribution
+            id="org.eclipse.cdt.debug.ui.disassemblyView.menu"
+            targetID="org.eclipse.cdt.debug.ui.DisassemblyView">
+         <menu
+               id="org.eclipse.cdt.debug.ui.disassemblyViewMenu"
+               label="disassemblyViewMenu">
+         </menu>
+         <action
+               class="org.eclipse.cdt.debug.internal.ui.views.disassembly.GoToAddressActionDelegate"
+               icon="icons/elcl16/show_ascii.gif"
+               id="org.eclipse.cdt.debug.internal.ui.actions.disassemblyViewAction"
+               label="%DisassemblyViewAction.label"
+               menubarPath="org.eclipse.cdt.debug.ui.disassemblyViewMenu"
+               style="push"
+               tooltip="%DisassemblyViewAction.tooltip">
+         </action>
+      </viewContribution>
+      <viewContribution
             targetID="org.eclipse.debug.ui.VariableView"
             id="org.eclipse.debug.ui.variablesView.toolbar">
          <action

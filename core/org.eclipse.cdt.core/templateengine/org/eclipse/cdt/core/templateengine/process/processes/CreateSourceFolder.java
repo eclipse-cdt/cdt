@@ -60,18 +60,12 @@ public class CreateSourceFolder extends ProcessRunner {
 		if (!projectHandle.exists()) {
 			throw new ProcessFailureException(Messages.getString("CreateSourceFolder.0") + projectName); //$NON-NLS-1$
 		}
-		
+
+		CreateFolder.createFolder(projectName, targetPath, monitor);
+
 		IPath projPath = projectHandle.getFullPath();
-			
 		IFolder folder = projectHandle.getFolder(targetPath);
-		if (!folder.exists()) {
-			try {
-				folder.create(true, true, monitor);
-			} catch (CoreException e) {
-				throw new ProcessFailureException(Messages.getString("CreateSourceFolder.1") + e.getMessage(), e); //$NON-NLS-1$
-			}			
-		}
-		
+
 		try {
 			ICProject cProject = CoreModel.getDefault().create(projectHandle);
 			if (cProject != null) {

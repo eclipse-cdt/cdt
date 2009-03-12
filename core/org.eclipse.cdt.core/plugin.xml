@@ -590,6 +590,12 @@
          <simple name="path"/>
       </processType>
       <processType
+            name="CreateFolder"
+            processRunner="org.eclipse.cdt.core.templateengine.process.processes.CreateFolder">
+         <simple name="projectName"/>
+         <simple name="path"/>
+      </processType>
+      <processType
             name="AddLink"
             processRunner="org.eclipse.cdt.core.templateengine.process.processes.AddLink">
          <simple name="projectName"/>

@@ -241,18 +241,16 @@ public class MapStorageElement implements ICStorageElement {
 	}
 	
 	public static String encodeMap(Map<String, String> values) {
-		List<String> list = new ArrayList<String>();
-		Iterator entries = values.entrySet().iterator();
+		Iterator<Entry<String, String>> entries = values.entrySet().iterator();
 		StringBuffer str = new StringBuffer();
 		while (entries.hasNext()) {
-			Entry entry = (Entry)entries.next();
-			str.append(escapeChars((String)entry.getKey(), "=|\\", '\\')); //$NON-NLS-1$
+			Entry<String, String> entry = entries.next();
+			str.append(escapeChars(entry.getKey(), "=|\\", '\\')); //$NON-NLS-1$
 			str.append("="); //$NON-NLS-1$
-			str.append(escapeChars((String)entry.getValue(), "|\\", '\\')); //$NON-NLS-1$
-			list.add(str.toString());
-			str.delete(0, str.length());
+			str.append(escapeChars(entry.getValue(), "|\\", '\\')); //$NON-NLS-1$
+			str.append("|"); //$NON-NLS-1$
 		}
-		return encodeList(list);
+		return str.toString();
 	}
 	
 	public static String encodeList(List<String> values) {
@@ -261,8 +259,6 @@ public class MapStorageElement implements ICStorageElement {
 		while (entries.hasNext()) {
 			String entry = entries.next();
 			str.append(escapeChars(entry, "|\\", '\\')); //$NON-NLS-1$
-//			str.append("="); //$NON-NLS-1$
-//			str.append(escapeChars((String)entry.getValue(), "|\\", '\\')); //$NON-NLS-1$
 			str.append("|"); //$NON-NLS-1$
 		}
 		return str.toString();

@@ -21,6 +21,7 @@ import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IncrementalProjectBuilder;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.Preferences;
+import org.eclipse.osgi.util.NLS;
 
 public abstract class ACBuilder extends IncrementalProjectBuilder implements IMarkerGenerator {
 
@@ -53,13 +54,20 @@ public abstract class ACBuilder extends IncrementalProjectBuilder implements IMa
 			/*
 			 * Try to find matching markers and don't put in duplicates
 			 */
+			String externalLocation = null;
+			if (problemMarkerInfo.externalPath != null) {
+				externalLocation = problemMarkerInfo.externalPath.toOSString();
+			}
 			if ((cur != null) && (cur.length > 0)) {
 				for (IMarker element : cur) {
 					int line = ((Integer) element.getAttribute(IMarker.LINE_NUMBER)).intValue();
 					int sev = ((Integer) element.getAttribute(IMarker.SEVERITY)).intValue();
 					String mesg = (String) element.getAttribute(IMarker.MESSAGE);
+					String extloc = (String) element.getAttribute(ICModelMarker.C_MODEL_MARKER_EXTERNAL_LOCATION);
 					if (line == problemMarkerInfo.lineNumber && sev == mapMarkerSeverity(problemMarkerInfo.severity) && mesg.equals(problemMarkerInfo.description)) {
-						return;
+						if (extloc==externalLocation || (extloc!=null && extloc.equals(externalLocation))) {
+							return;
+						}
 					}
 				}
 			}
@@ -73,8 +81,11 @@ public abstract class ACBuilder extends IncrementalProjectBuilder implements IMa
 			if (problemMarkerInfo.variableName != null) {
 				marker.setAttribute(ICModelMarker.C_MODEL_MARKER_VARIABLE, problemMarkerInfo.variableName);
 			}
-			if (problemMarkerInfo.externalPath != null) {
-				marker.setAttribute(ICModelMarker.C_MODEL_MARKER_EXTERNAL_LOCATION, problemMarkerInfo.externalPath.toOSString());
+			if (externalLocation != null) {
+				marker.setAttribute(ICModelMarker.C_MODEL_MARKER_EXTERNAL_LOCATION, externalLocation);
+				String locationText = NLS.bind(CCorePlugin.getResourceString("ACBuilder.ProblemsView.Location"), //$NON-NLS-1$
+						problemMarkerInfo.lineNumber, externalLocation);
+				marker.setAttribute(IMarker.LOCATION, locationText);
 			}
 		}
 		catch (CoreException e) {

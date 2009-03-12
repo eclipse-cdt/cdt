@@ -140,7 +140,6 @@ public class ErrorPattern {
 			if (file == null) {
 				// If the file is not found in the workspace we attach the problem to the project
 				// and add the external path to the file.
-				desc = fileName + " " + desc; //$NON-NLS-1$
 				file = eoParser.getProject();
 				externalPath = getLocation(fileName);
 			}
@@ -162,7 +161,11 @@ public class ErrorPattern {
 			try {
 				cygpath = new CygPath("cygpath"); //$NON-NLS-1$
 				String cygfilename = cygpath.getFileName(filename);
-				path = new Path(cygfilename);
+				IPath convertedPath = new Path(cygfilename);
+				file = convertedPath.toFile() ;
+				if (file.exists()) {
+					path = convertedPath;
+				}
 			} catch (IOException e) {
 			}
 			finally  {

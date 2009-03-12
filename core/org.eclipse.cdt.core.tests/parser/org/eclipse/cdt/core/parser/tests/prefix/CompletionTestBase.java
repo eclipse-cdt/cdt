@@ -1,5 +1,5 @@
 /**********************************************************************
- * Copyright (c) 2004, 2007 IBM Corporation and others.
+ * Copyright (c) 2004, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,15 +7,22 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Markus Schorn (Wind River Systems)
  *******************************************************************************/
 package org.eclipse.cdt.core.parser.tests.prefix;
 
+import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
+import java.util.Iterator;
+import java.util.List;
 
-import junit.framework.TestCase;
+import junit.framework.AssertionFailedError;
 
+import org.eclipse.cdt.core.dom.ast.IASTCompletionContext;
 import org.eclipse.cdt.core.dom.ast.IASTCompletionNode;
+import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.parser.ISourceCodeParser;
 import org.eclipse.cdt.core.dom.parser.c.ANSICParserExtensionConfiguration;
@@ -32,11 +39,14 @@ import org.eclipse.cdt.core.parser.ParserLanguage;
 import org.eclipse.cdt.core.parser.ParserMode;
 import org.eclipse.cdt.core.parser.ScannerInfo;
 import org.eclipse.cdt.core.parser.tests.ast2.AST2BaseTest;
+import org.eclipse.cdt.core.testplugin.CTestPlugin;
+import org.eclipse.cdt.core.testplugin.util.BaseTestCase;
+import org.eclipse.cdt.core.testplugin.util.TestSourceReader;
 import org.eclipse.cdt.internal.core.dom.parser.c.GNUCSourceParser;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.GNUCPPSourceParser;
 import org.eclipse.cdt.internal.core.parser.ParserException;
 
-public class CompletionTestBase extends TestCase {
+public class CompletionTestBase extends BaseTestCase {
 
     private static final IParserLogService NULL_LOG = new NullLogService();
 
@@ -96,5 +106,48 @@ public class CompletionTestBase extends TestCase {
 	protected IBinding[] sortBindings(IBinding[] bindings) {
 		Arrays.sort(bindings, bindingsComparator);
 		return bindings;
+	}
+	
+	protected String getAboveComment() throws IOException {
+		return getContents(1)[0].toString();
+	}
+	
+	protected StringBuffer[] getContents(int sections) throws IOException {
+		CTestPlugin plugin = CTestPlugin.getDefault();
+		if (plugin == null)
+			throw new AssertionFailedError("This test must be run as a JUnit plugin test");
+		return TestSourceReader.getContentsForTest(plugin.getBundle(), "parser", getClass(), getName(), sections);
+	}
+	
+	protected List<IBinding> proposeBindings(IASTCompletionNode completionNode) {
+		List<IBinding> proposals = new ArrayList<IBinding>();
+		boolean handleMacros= false;
+		IASTName[] names = completionNode.getNames();
+
+		for (int i = 0; i < names.length; ++i) {
+			if (names[i].getTranslationUnit() == null)
+				// The node isn't properly hooked up, must have backtracked out of this node
+				continue;
+
+			IASTCompletionContext astContext = names[i].getCompletionContext();
+			if (astContext == null) {
+				continue;
+			} 
+			IBinding[] bindings = astContext.findBindings(names[i], true);
+			if (bindings != null)
+				for (int j = 0; j < bindings.length; ++j)
+					proposals.add(bindings[j]);
+		}
+		return proposals;
+	}
+	
+	protected String[] getSortedNames(List<IBinding> bindings) {
+		String[] result= new String[bindings.size()];
+		Iterator<IBinding> it= bindings.iterator();
+		for (int i = 0; i < result.length; i++) {
+			result[i]= it.next().getName();
+		}
+		Arrays.sort(result);
+		return result;
 	}
 }

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2008 IBM Corporation and others.
+ * Copyright (c) 2004, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,6 +10,8 @@
  *     Bryan Wilkinson (QNX)
  *******************************************************************************/
 package org.eclipse.cdt.core.parser.tests.prefix;
+
+import java.util.List;
 
 import org.eclipse.cdt.core.dom.ast.IASTCompletionNode;
 import org.eclipse.cdt.core.dom.ast.IASTName;
@@ -123,5 +125,23 @@ public class BasicCompletionTest extends CompletionTestBase {
 		// C
 		node = getGCCCompletionNode(code);
 		assertNotNull(node);
+	}
+	
+	//	template <typename T> class CT {};
+	//	template <typename T> class B: public A<T> {
+	//	public: 
+	//       void doit(){}
+	//	};
+	//	int main() {
+	//	   B<int> b;
+	//	   b.
+	public void testBug267911() throws Exception {
+		String code = getAboveComment();
+		IASTCompletionNode node = getGPPCompletionNode(code);
+		assertNotNull(node);
+		List<IBinding> bindings= proposeBindings(node);
+		String[] names= getSortedNames(bindings);
+		assertEquals("B", names[0]);
+		assertEquals("doit", names[1]);
 	}
 }

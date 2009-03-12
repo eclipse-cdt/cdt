@@ -51,6 +51,7 @@ import org.eclipse.core.runtime.NullProgressMonitor;
  * Base class for c++-scopes of the ast.
  */
 abstract public class CPPScope implements ICPPScope, ICPPASTInternalScope {
+	protected static final char[] CONSTRUCTOR_KEY = "!!!CTOR!!!".toCharArray(); //$NON-NLS-1$
 	private static final IProgressMonitor NPM = new NullProgressMonitor();
     private IASTNode physicalNode;
 	private boolean isCached = false;
@@ -240,7 +241,7 @@ abstract public class CPPScope implements ICPPScope, ICPPASTInternalScope {
 	    	ObjectSet<Object> all= new ObjectSet<Object>(16);
 	    	for (int i = 0; i < keys.length; i++) {
 	    		final char[] key = (char[]) keys[i];
-	    		if (CharArrayUtils.equals(key, 0, c.length, c, true)) {
+	    		if (key != CONSTRUCTOR_KEY && CharArrayUtils.equals(key, 0, c.length, c, true)) {
 	    			obj= bindings.get(key);
 	    			if (obj instanceof ObjectSet<?>) {
 	    				all.addAll((ObjectSet<?>) obj);

@@ -23,6 +23,7 @@ import org.eclipse.cdt.core.dom.ast.EScopeKind;
 import org.eclipse.cdt.core.dom.ast.IASTDeclSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTDeclarator;
+import org.eclipse.cdt.core.dom.ast.IASTFieldReference;
 import org.eclipse.cdt.core.dom.ast.IASTFunctionDefinition;
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
@@ -64,7 +65,6 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.SemanticUtil;
  * Base implementation for c++ scopes.
  */
 public class CPPClassScope extends CPPScope implements ICPPClassScope {
-	private static final char[] CONSTRUCTOR_KEY = "!!!CTOR!!!".toCharArray(); //$NON-NLS-1$
     private ICPPMethod[] implicits = null;
 
 	public CPPClassScope(ICPPASTCompositeTypeSpecifier physicalNode) {
@@ -349,6 +349,8 @@ public class CPPClassScope extends CPPScope implements ICPPClassScope {
 	        if (parent instanceof IASTTypeId && parent.getParent() instanceof ICPPASTNewExpression)
 	            return true;
 	        return false;
+	    } else if (node instanceof IASTFieldReference) {
+	    	return false;
 	    }
 	    return true;
 	}

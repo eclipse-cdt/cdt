@@ -62,6 +62,9 @@ import org.eclipse.core.runtime.PlatformObject;
 public class CPPClassType extends PlatformObject implements ICPPInternalClassTypeMixinHost {
 	
 	public static class CPPClassTypeProblem extends ProblemBinding implements ICPPClassType {
+		public CPPClassTypeProblem(IASTName name, int id) {
+			super(name, id);
+		}
 		public CPPClassTypeProblem(IASTNode node, int id, char[] arg) {
 			super(node, id, arg);
 		}

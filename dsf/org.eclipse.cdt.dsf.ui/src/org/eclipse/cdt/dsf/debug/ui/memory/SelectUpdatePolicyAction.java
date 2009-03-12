@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008 Wind River Systems and others.
+ * Copyright (c) 2008, 2009 Wind River Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -34,7 +34,7 @@ import org.eclipse.ui.IViewPart;
 
 /**
  * 
- * @since 1.0
+ * @since 2.0  Moved to different package, exists since 1.0.
  */
 public class SelectUpdatePolicyAction implements IMenuCreator, IViewActionDelegate, IDebugContextListener, IActionDelegate2 {
 

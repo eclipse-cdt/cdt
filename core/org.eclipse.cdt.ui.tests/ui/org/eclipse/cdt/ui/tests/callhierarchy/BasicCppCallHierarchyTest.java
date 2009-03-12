@@ -335,7 +335,7 @@ public class BasicCppCallHierarchyTest extends CallHierarchyBaseTest {
 		checkTreeNode(tree, 0, 0, "heap()");
 	}
 	
-	public void _testDestructor_156669() throws Exception {
+	public void testDestructor_156669() throws Exception {
 		String content = readTaggedComment("testConstructor");
 		IFile file= createFile(getProject(), "testConstructor.cpp", content);
 		waitForIndexer(fIndex, file, CallHierarchyBaseTest.INDEXER_WAIT_TIME);

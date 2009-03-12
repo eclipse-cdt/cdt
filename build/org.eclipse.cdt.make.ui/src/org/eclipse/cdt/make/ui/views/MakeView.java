@@ -77,11 +77,11 @@ public class MakeView extends ViewPart {
 	private BuildTargetAction buildTargetAction;
 	private EditTargetAction editTargetAction;
 	private DeleteTargetAction deleteTargetAction;
-	AddTargetAction addTargetAction;
+	private AddTargetAction addTargetAction;
 	private CopyTargetAction copyTargetAction;
 	private PasteTargetAction pasteTargetAction;
-	TreeViewer fViewer;
-	DrillDownAdapter drillDownAdapter;
+	private TreeViewer fViewer;
+	private DrillDownAdapter drillDownAdapter;
 	private Action trimEmptyFolderAction;
 
 	public MakeView() {

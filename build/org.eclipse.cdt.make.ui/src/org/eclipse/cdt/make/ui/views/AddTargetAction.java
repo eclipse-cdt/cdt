@@ -58,9 +58,11 @@ public class AddTargetAction extends SelectionListenerAction {
 	}
 
 	private Object getSelectedElement() {
-		Object element = getStructuredSelection().getFirstElement();
-		if (element instanceof IContainer || element instanceof IMakeTarget) { 
-			return element; 
+		if (getStructuredSelection().size()==1) {
+			Object element = getStructuredSelection().getFirstElement();
+			if (element instanceof IContainer || element instanceof IMakeTarget) {
+				return element;
+			}
 		}
 		return null;
 	}

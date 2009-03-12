@@ -471,8 +471,13 @@ public class MakeTargetDialog extends Dialog {
 	protected void okPressed() {
 		IMakeTarget target = fTarget;
 		try {
-			if (fTarget == null) {
-				target = fTargetManager.createTarget(fContainer.getProject(), getTargetName(), targetBuildID);
+			String targetName = getTargetName();
+			if (target == null) {
+				target = fTargetManager.createTarget(fContainer.getProject(), targetName, targetBuildID);
+			} else {
+				if (!target.getName().equals(targetName)) {
+					fTargetManager.renameTarget(target, targetName);
+				}
 			}
 			target.setStopOnError(isStopOnError());
 			target.setRunAllBuilders(runAllBuilders());
@@ -506,10 +511,6 @@ public class MakeTargetDialog extends Dialog {
 
 			if (fTarget == null || !MakeCorePlugin.getDefault().getTargetManager().targetExists(fTarget)) {
 				fTargetManager.addTarget(fContainer, target);
-			} else {
-				if (!target.getName().equals(getTargetName())) {
-					fTargetManager.renameTarget(target, getTargetName());
-				}
 			}
 		} catch (CoreException e) {
 			MakeUIPlugin.errorDialog(

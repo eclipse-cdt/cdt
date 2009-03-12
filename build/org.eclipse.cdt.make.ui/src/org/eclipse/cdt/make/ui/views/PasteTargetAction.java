@@ -11,8 +11,7 @@
 
 package org.eclipse.cdt.make.ui.views;
 
-import java.util.List;
-
+import org.eclipse.cdt.make.core.IMakeTarget;
 import org.eclipse.cdt.make.internal.ui.MakeUIPlugin;
 import org.eclipse.cdt.make.internal.ui.dnd.FileTransferDropTargetListener;
 import org.eclipse.cdt.make.internal.ui.dnd.MakeTargetTransfer;
@@ -72,11 +71,7 @@ public class PasteTargetAction extends SelectionListenerAction {
 			return false;
 		}
 
-		if (selection.size() == 1 && (selection.getFirstElement() instanceof IContainer)) {
-			return true;
-		}
-
-		return false;
+		return determineDropContainer()!=null;
 	}
 
 	/**
@@ -85,11 +80,10 @@ public class PasteTargetAction extends SelectionListenerAction {
 	 */
 	@Override
 	public void run() {
-		List<?> resources = getSelectedResources();
-		if (resources.size() != 1 || !(resources.get(0) instanceof IContainer)) {
+		IContainer dropContainer = determineDropContainer();
+		if (dropContainer==null) {
 			return;
 		}
-		IContainer dropContainer = (IContainer) resources.get(0);
 
 		Object clipboardContent;
 
@@ -114,6 +108,43 @@ public class PasteTargetAction extends SelectionListenerAction {
 			return;
 		}
 
+	}
+
+	/**
+	 * Drop container is determined by first element. The rest of the logic is
+	 * to figure out if drop is allowed. The drop is allowed if the selection is
+	 * one {@code IContainer} or {@code IMakeTarget}s from the same folder.
+	 *
+	 * @return drop container or {@code null}.
+	 */
+	private IContainer determineDropContainer() {
+		IStructuredSelection selection = getStructuredSelection();
+		if (selection.size()==0) {
+			return null;
+		}
+
+		Object first = selection.getFirstElement();
+
+		if (first instanceof IContainer) {
+			if (selection.size()==1) {
+				return (IContainer)first;
+			} else {
+				return null;
+			}
+		}
+
+		if (first instanceof IMakeTarget) {
+			// it has to be selection of IMakeTargets only and from the same IContainer
+			IContainer dropContainer = ((IMakeTarget)first).getContainer();
+			for (Object item : selection.toList()) {
+				if ( !(item instanceof IMakeTarget) || ((IMakeTarget)item).getContainer()!=dropContainer ) {
+					return null;
+				}
+			}
+			return dropContainer;
+		}
+
+		return null;
 	}
 
 }

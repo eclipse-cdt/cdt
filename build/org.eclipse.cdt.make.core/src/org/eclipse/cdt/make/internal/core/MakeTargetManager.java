@@ -106,15 +106,17 @@ public class MakeTargetManager implements IMakeTargetManager, IResourceChangeLis
 	}
 
 	public void renameTarget(IMakeTarget target, String name) throws CoreException {
-		ProjectTargets projectTargets = projectMap.get(target.getProject());
+		MakeTarget makeTarget = (MakeTarget)target;
+
+		ProjectTargets projectTargets = projectMap.get(makeTarget.getProject());
 		if (projectTargets == null) {
-			projectTargets = readTargets(target.getProject());
+			projectTargets = readTargets(makeTarget.getProject());
 		}
-		if (!projectTargets.contains((MakeTarget)target)) {
-			throw new CoreException(new Status(IStatus.ERROR, MakeCorePlugin.getUniqueIdentifier(), -1, MakeMessages.getString("MakeTargetManager.target_exists"), null)); //$NON-NLS-1$
+
+		makeTarget.setName(name);
+		if (projectTargets.contains(makeTarget)) {
+			updateTarget(makeTarget);
 		}
-		((MakeTarget)target).setName(name);
-		updateTarget((MakeTarget) target);
 	}
 
 	public IMakeTarget[] getTargets(IContainer container) throws CoreException {

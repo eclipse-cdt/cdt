@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+Copyright (c) 2006 PalmSource, Inc. and others
+All rights reserved. This program and the accompanying materials 
+are made available under the terms of the Eclipse Public License v1.0 
+which accompanies this distribution, and is available at 
+http://www.eclipse.org/legal/epl-v10.html 
+
+Contributors: 
+Ewa Matejska (PalmSource) - initial API and implementation 
+Martin Oberhuber (Wind River) - fix 158529: Migrate docs to HTML / TOC format 
+-->
+<?eclipse version="3.0"?>
+<plugin>
+   <extension
+         point="org.eclipse.debug.core.launchConfigurationTypes">
+      <launchConfigurationType
+            sourceLocatorId="org.eclipse.cdt.debug.core.sourceLocator"
+            delegate="org.eclipse.cdt.launch.remote.RemoteRunLaunchDelegate"
+            public="true"
+            sourcePathComputerId="org.eclipse.cdt.debug.core.sourcePathComputer"
+            name="C/C++ Remote Application"
+            id="org.eclipse.rse.remotecdt.RemoteApplicationLaunch"
+            modes="debug,run">
+      </launchConfigurationType>
+   </extension>
+   <extension
+         point="org.eclipse.debug.ui.launchConfigurationTypeImages">
+      <launchConfigurationTypeImage
+            icon="icons/full/obj16/c_app.gif"
+            configTypeID="org.eclipse.rse.remotecdt.RemoteApplicationLaunch"
+            id="org.eclipse.cdt.launch.localRunLaunchImagefff">
+      </launchConfigurationTypeImage>
+   </extension>    
+   <extension
+         point="org.eclipse.debug.ui.launchConfigurationTabGroups">
+      <launchConfigurationTabGroup
+            class="org.eclipse.cdt.launch.remote.RemoteLaunchConfigurationTabGroup"
+            helpContextId="org.eclipse.rse.remotecdt.launchgroup"
+            id="org.eclipse.rse.remotecdt.RemoteLaunchTabGroup"
+            type="org.eclipse.rse.remotecdt.RemoteApplicationLaunch">
+      </launchConfigurationTabGroup>
+   </extension>
+   <extension
+         point="org.eclipse.cdt.debug.core.CDebugger">
+      <debugger
+            class="org.eclipse.cdt.debug.mi.core.GDBServerCDIDebugger2"
+            cpu="*"
+            id="org.eclipse.rse.remotecdt.RemoteGDBDebugger"
+            modes="run"
+            name="remote gdb/mi"
+            platform="*">
+      </debugger>
+   </extension>
+   <extension
+         point="org.eclipse.cdt.debug.ui.CDebuggerPage">
+      <debuggerPage
+            class="org.eclipse.cdt.launch.remote.RemoteGDBDebuggerPage"
+            debuggerID="org.eclipse.rse.remotecdt.RemoteGDBDebugger"
+            id="org.eclipse.rse.remotecdt.RemoteGDBDebuggerPage">
+      </debuggerPage>
+   </extension>
+
+	<!-- ============================================ -->
+	<!-- Define Help Context                          -->
+	<!-- ============================================ -->
+	<extension point="org.eclipse.help.contexts">
+  		<contexts file="HelpContexts.xml"/>
+	</extension>
+	<extension point="org.eclipse.help.toc">
+		<toc file="toc.xml"/>
+	</extension>
+
+</plugin>

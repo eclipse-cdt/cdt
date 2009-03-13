@@ -203,7 +203,7 @@ public class PDARunControl extends AbstractDsfService
     private boolean fVMResumePending = false;
     private boolean fVMSuspendPending = false;
 	private boolean fVMStepping = false;
-	private StateChangeReason fVMStateChangeReason;
+	private StateChangeReason fVMStateChangeReason = StateChangeReason.UNKNOWN;
 	
 	// Threads' state data 
     private static class ThreadInfo {

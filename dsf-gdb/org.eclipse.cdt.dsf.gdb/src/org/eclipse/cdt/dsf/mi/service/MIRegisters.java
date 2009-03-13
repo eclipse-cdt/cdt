@@ -19,10 +19,10 @@ import org.eclipse.cdt.dsf.datamodel.AbstractDMContext;
 import org.eclipse.cdt.dsf.datamodel.DMContexts;
 import org.eclipse.cdt.dsf.datamodel.IDMContext;
 import org.eclipse.cdt.dsf.debug.service.ICachingService;
+import org.eclipse.cdt.dsf.debug.service.IExpressions;
 import org.eclipse.cdt.dsf.debug.service.IRegisters;
 import org.eclipse.cdt.dsf.debug.service.IRunControl;
 import org.eclipse.cdt.dsf.debug.service.IExpressions.IExpressionDMContext;
-import org.eclipse.cdt.dsf.debug.service.IExpressions.IExpressionDMData;
 import org.eclipse.cdt.dsf.debug.service.IRunControl.IContainerDMContext;
 import org.eclipse.cdt.dsf.debug.service.IRunControl.StateChangeReason;
 import org.eclipse.cdt.dsf.debug.service.command.CommandCache;
@@ -510,36 +510,31 @@ public class MIRegisters extends AbstractDsfService implements IRegisters, ICach
       final MIRegisterDMC regDmc = (MIRegisterDMC)regCtx;
 	  // There is only one group and its number must be 0.
 	  if ( grpDmc.getGroupNo() == 0 ) {
-	  	final MIExpressions exprService = getServicesTracker().getService(MIExpressions.class);
+	  	final IExpressions exprService = getServicesTracker().getService(IExpressions.class);
 	  	String regName = regDmc.getName();
-	      final IExpressionDMContext exprCtxt = exprService.createExpression(regCtx, "$" + regName); //$NON-NLS-1$
-	      exprService.getExpressionData(exprCtxt, new DataRequestMonitor<IExpressionDMData>(getExecutor(), rm) {
-				@Override
-				protected void handleSuccess() {
-					// Evaluate the expression - request HEX since it works in every case 
-					final FormattedValueDMContext valueDmc = exprService.getFormattedValueContext(exprCtxt, formatId);
-					exprService.getFormattedExpressionValue(
-	              	valueDmc, 
-	                  new DataRequestMonitor<FormattedValueDMData>(getExecutor(), rm) {
-	          			@Override
-	          			protected void handleSuccess() {
-	          				if(! regValue.equals(getData().getFormattedValue()) || ! valueDmc.getFormatID().equals(formatId)){
-		          	            exprService.writeExpression(exprCtxt, regValue, formatId, new DataRequestMonitor<MIInfo>(getExecutor(), rm) {
-		          	                @Override
-		          	                protected void handleSuccess() {
-		          	                	generateRegisterChangedEvent(regDmc);
-		          	                	rm.done();
-		          	                }
-		          	            });
-	          				}//if
-	          				else {
-	          					rm.done();
-	          				}
-	          			}//handleOK
-	              	}
-	              );
-				}
-			});            
+	  	final IExpressionDMContext exprCtxt = exprService.createExpression(regCtx, "$" + regName); //$NON-NLS-1$
+
+	  	final FormattedValueDMContext valueDmc = exprService.getFormattedValueContext(exprCtxt, formatId);
+	  	exprService.getFormattedExpressionValue(
+	  			valueDmc, 
+	  			new DataRequestMonitor<FormattedValueDMData>(getExecutor(), rm) {
+	  				@Override
+	  				protected void handleSuccess() {
+	  					if(! regValue.equals(getData().getFormattedValue()) || ! valueDmc.getFormatID().equals(formatId)){
+	  						exprService.writeExpression(exprCtxt, regValue, formatId, new DataRequestMonitor<MIInfo>(getExecutor(), rm) {
+	  							@Override
+	  							protected void handleSuccess() {
+	  								generateRegisterChangedEvent(regDmc);
+	  								rm.done();
+	  							}
+	  						});
+	  					}//if
+	  					else {
+	  						rm.done();
+	  					}
+	  				}//handleSuccess
+	  			}
+	  	);      
 	  }
 	  else {
         rm.setStatus(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, NOT_SUPPORTED, "Invalid group = " + grpDmc, null)); //$NON-NLS-1$

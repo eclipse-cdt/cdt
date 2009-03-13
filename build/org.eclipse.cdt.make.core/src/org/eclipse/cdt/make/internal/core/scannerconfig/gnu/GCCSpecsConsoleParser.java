@@ -18,6 +18,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.eclipse.cdt.core.IMarkerGenerator;
+import org.eclipse.cdt.make.core.MakeCorePlugin;
 import org.eclipse.cdt.make.core.scannerconfig.IScannerInfoCollector;
 import org.eclipse.cdt.make.core.scannerconfig.IScannerInfoConsoleParser;
 import org.eclipse.cdt.make.core.scannerconfig.ScannerInfoTypes;
@@ -64,7 +65,27 @@ public class GCCSpecsConsoleParser implements IScannerInfoConsoleParser {
 		if (line.startsWith(DEFINE)) {
 			String[] defineParts = line.split("\\s+", 3); //$NON-NLS-1$
 			if (defineParts[0].equals(DEFINE)) {
-				String symbol = null;
+                if (defineParts[1].indexOf('(') >= 0) {
+                	// #define __X__(P1, P2) __Y__(P1, P2)
+                    // Enclose matching parentheses pairs
+                    // in the macro name if they are present
+                	int i = line.indexOf(')'); // macro definition itself can have only one pair of brackets
+
+                    // i now marks the space between the name and definition
+					if (i > 0) {
+						int start = line.indexOf(defineParts[1]); // start of definition
+						defineParts[1] = line.substring(start, i);
+						if (defineParts.length > 2) {
+							defineParts[2] = line.substring(i + 1);
+						}
+					} else {
+						MakeCorePlugin.log(new Exception("GCCSpecsConsoleParser ERROR: Unmatched brackets: ["+ line+ "]"));
+					}
+                }
+
+                // Now defineParts[1] is the symbol name, and [2] is the
+                // definition
+                String symbol = null;
 				switch (defineParts.length) {
 					case 2:
 						symbol = defineParts[1];

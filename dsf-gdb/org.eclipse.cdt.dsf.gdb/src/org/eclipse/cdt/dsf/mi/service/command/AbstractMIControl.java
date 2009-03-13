@@ -678,7 +678,7 @@ public abstract class AbstractMIControl extends AbstractDsfService
         		clientMsg.append("Error message from debugger back end:\n"); //$NON-NLS-1$
         		if (parameters != null) {
         			try {
-        				clientMsg.append(MessageFormat.format(message, (Object[])parameters));
+        				clientMsg.append(MessageFormat.format(message, parameters));
         			} catch(IllegalArgumentException e2) {
         				// Message format string invalid.  Fallback to just appending the strings. 
         				clientMsg.append(message);

@@ -31,11 +31,11 @@ public class LaunchUIMessages {
 	private LaunchUIMessages() {}
 
 	public static String getFormattedString(String key, String arg) {
-		return MessageFormat.format(getString(key), (Object[])new String[]{arg});
+		return MessageFormat.format(getString(key), new String[]{arg});
 	}
 
 	public static String getFormattedString(String key, String[] args) {
-		return MessageFormat.format(getString(key), (Object[])args);
+		return MessageFormat.format(getString(key), args);
 	}
 
 	public static String getString(String key) {

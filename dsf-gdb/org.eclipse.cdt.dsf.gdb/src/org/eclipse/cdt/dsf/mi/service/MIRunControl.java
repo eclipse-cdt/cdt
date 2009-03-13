@@ -75,8 +75,7 @@ import org.osgi.framework.BundleContext;
  */
 public class MIRunControl extends AbstractDsfService implements IRunControl, ICachingService
 {
-    @Deprecated
-	protected class MIExecutionDMC extends AbstractDMContext implements IMIExecutionDMContext
+	private static class MIExecutionDMC extends AbstractDMContext implements IMIExecutionDMContext
 	{
 		/**
 		 * Integer ID that is used to identify the thread in the GDB/MI protocol.

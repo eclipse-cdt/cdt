@@ -525,6 +525,9 @@
 			<param name="tagmodule" value="org.eclipse.cdt/memory/org.eclipse.cdt.debug.ui.memory.traditional"/>
 		</antcall>
 		<antcall target="tagone">
+			<param name="tagmodule" value="org.eclipse.cdt/memory/org.eclipse.cdt.debug.ui.memory.memorybrowser"/>
+		</antcall>
+		<antcall target="tagone">
 			<param name="tagmodule" value="org.eclipse.cdt/memory/org.eclipse.cdt.debug.ui.memory.transport"/>
 		</antcall>
 		<antcall target="tagone">

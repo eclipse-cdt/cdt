@@ -119,4 +119,5 @@ feature@org.eclipse.cdt.gnu.dsf=@cdtTag@,:pserver:anonymous@dev.eclipse.org:/cvs
 plugin@org.eclipse.cdt.debug.ui.memory.traditional=@cdtTag@,:pserver:anonymous@dev.eclipse.org:/cvsroot/tools,,org.eclipse.cdt/memory/org.eclipse.cdt.debug.ui.memory.traditional
 plugin@org.eclipse.cdt.debug.ui.memory.transport=@cdtTag@,:pserver:anonymous@dev.eclipse.org:/cvsroot/tools,,org.eclipse.cdt/memory/org.eclipse.cdt.debug.ui.memory.transport
 plugin@org.eclipse.cdt.debug.ui.memory.search=@cdtTag@,:pserver:anonymous@dev.eclipse.org:/cvsroot/tools,,org.eclipse.cdt/memory/org.eclipse.cdt.debug.ui.memory.search
+plugin@org.eclipse.cdt.debug.ui.memory.memorybrowser=@cdtTag@,:pserver:anonymous@dev.eclipse.org:/cvsroot/tools,,org.eclipse.cdt/memory/org.eclipse.cdt.debug.ui.memory.memorybrowser
 feature@org.eclipse.cdt.debug.ui.memory=@cdtTag@,:pserver:anonymous@dev.eclipse.org:/cvsroot/tools,,org.eclipse.cdt/memory/org.eclipse.cdt.debug.ui.memory-feature

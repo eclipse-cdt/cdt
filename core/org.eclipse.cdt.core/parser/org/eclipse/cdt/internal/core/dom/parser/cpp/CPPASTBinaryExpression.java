@@ -35,12 +35,12 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.SemanticUtil;
 
 
 public class CPPASTBinaryExpression extends ASTNode implements ICPPASTBinaryExpression, IASTAmbiguityParent {
-
+	private static final ICPPFunction UNINITIALIZED = new CPPFunction(null);
 	private int op;
     private IASTExpression operand1;
     private IASTExpression operand2;
     private IType type;
-    
+    private ICPPFunction overload= UNINITIALIZED;
     private IASTImplicitName[] implicitNames = null;
     
     
@@ -167,15 +167,15 @@ public class CPPASTBinaryExpression extends ASTNode implements ICPPASTBinaryExpr
     	return type;
     }
 
-    
-    
-    /**
-     * Returns the operator function that is invoked or null
-     * if it is actually a built-in operator.
-     */
     public ICPPFunction getOverload() {
-    	// try to find a method
-    	IType type1 = getOperand1().getExpressionType();
+    	if (overload != UNINITIALIZED)
+    		return overload;
+    	
+    	return overload= computeOverload();
+    }
+    
+    private ICPPFunction computeOverload() {
+		IType type1 = getOperand1().getExpressionType();
     	IType ultimateType1 = SemanticUtil.getUltimateTypeUptoPointers(type1);
 		if (ultimateType1 instanceof IProblemBinding) {
 			return null;
@@ -202,20 +202,19 @@ public class CPPASTBinaryExpression extends ASTNode implements ICPPASTBinaryExpr
     
 	private IType createExpressionType() {
 		// Check for overloaded operator.
+		ICPPFunction o= getOverload();
+		if (o != null) {
+			try {
+				return o.getType().getReturnType();
+			} catch (DOMException e) {
+				e.getProblem();
+			}
+		}
+		
 		IType type1 = getOperand1().getExpressionType();
 		IType ultimateType1 = SemanticUtil.getUltimateTypeUptoPointers(type1);
 		if (ultimateType1 instanceof IProblemBinding) {
 			return type1;
-		}
-		if (ultimateType1 instanceof ICPPClassType) {
-			ICPPFunction operator= CPPSemantics.findOperator(this, (ICPPClassType) ultimateType1);
-			if (operator != null) {
-				try {
-					return operator.getType().getReturnType();
-				} catch (DOMException e) {
-					return e.getProblem();
-				}
-			}
 		}
 		
 		IType type2 = getOperand2().getExpressionType();
@@ -223,18 +222,6 @@ public class CPPASTBinaryExpression extends ASTNode implements ICPPASTBinaryExpr
 		if (ultimateType2 instanceof IProblemBinding) {
 			return type2;
 		}
-		if(op != op_assign && isUserDefined(ultimateType1) || isUserDefined(ultimateType2)) {
-			// If at least one of the types is user defined, the operator can be overloaded.
-			ICPPFunction operator = CPPSemantics.findOverloadedOperator(this);
-			if (operator != null) {
-				try {
-					return operator.getType().getReturnType();
-				} catch (DOMException e) {
-					return e.getProblem();
-				}
-			}
-		}
-		
 		
         final int op = getOperator();
         switch (op) {

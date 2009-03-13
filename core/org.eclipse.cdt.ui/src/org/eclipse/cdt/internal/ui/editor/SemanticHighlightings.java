@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2008 IBM Corporation and others.
+ * Copyright (c) 2000, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -22,6 +22,7 @@ import org.eclipse.swt.graphics.RGB;
 import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IASTDeclSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTFunctionDeclarator;
+import org.eclipse.cdt.core.dom.ast.IASTImplicitName;
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IASTProblem;
@@ -56,6 +57,8 @@ import org.eclipse.cdt.core.index.IIndexFile;
 import org.eclipse.cdt.core.index.IIndexName;
 import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.cdt.ui.PreferenceConstants;
+
+import org.eclipse.cdt.internal.core.dom.parser.cpp.OverloadableOperator;
 
 /**
  * Semantic highlightings.
@@ -176,6 +179,12 @@ public class SemanticHighlightings {
 	 * A named preference part that controls the highlighting of external SDK.
 	 */
 	public static final String EXTERNAL_SDK="externalSDK"; //$NON-NLS-1$
+	
+	/**
+	 * A named preference part that controls the highlighting of operators that have been overloaded.
+	 */
+	public static final String OVERLOADED_OPERATOR="overloadedOperator"; //$NON-NLS-1$
+	
 
 	/** Init debugging mode */
 	private static final boolean DEBUG= "true".equalsIgnoreCase(Platform.getDebugOption("org.eclipse.cdt.ui/debug/SemanticHighlighting"));  //$NON-NLS-1$//$NON-NLS-2$
@@ -574,6 +583,8 @@ public class SemanticHighlightings {
 		@Override
 		public boolean consumes(SemanticToken token) {
 			IASTNode node= token.getNode();
+			if (node instanceof IASTImplicitName)
+				return false;
 			if (node instanceof IASTName) {
 				IASTName name= (IASTName)node;
 				if (name instanceof ICPPASTQualifiedName && name.isReference()) {
@@ -739,6 +750,8 @@ public class SemanticHighlightings {
 		@Override
 		public boolean consumes(SemanticToken token) {
 			IASTNode node= token.getNode();
+			if (node instanceof IASTImplicitName)
+				return false;
 			if (node instanceof IASTName) {
 				IASTName name= (IASTName)node;
 				if (name instanceof ICPPASTQualifiedName && name.isReference()) {
@@ -1867,6 +1880,9 @@ public class SemanticHighlightings {
 				if (name instanceof ICPPASTQualifiedName) {
 					return false;
 				}
+				if (name instanceof IASTImplicitName) {
+					return false;
+				}
 				if (name.isReference()) {
 					IBinding binding= token.getBinding();
 					IIndex index= token.getRoot().getIndex();
@@ -1901,6 +1917,82 @@ public class SemanticHighlightings {
 					CUIPlugin.log(exc.getStatus());
 					return false;
 				}
+			}
+			return false;
+		}
+	}
+	
+	/**
+	 * Semantic highlighting for functions.
+	 */
+	private static final class OverloadedOperatorHighlighting extends SemanticHighlighting {
+
+		/*
+		 * @see org.eclipse.cdt.internal.ui.editor.SemanticHighlighting#getPreferenceKey()
+		 */
+		@Override
+		public String getPreferenceKey() {
+			return OVERLOADED_OPERATOR;
+		}
+
+		/*
+		 * @see org.eclipse.cdt.internal.ui.editor.SemanticHighlighting#getDefaultTextColor()
+		 */
+		@Override
+		public RGB getDefaultTextColor() {
+			return new RGB(200, 100, 0); // orange
+		}
+
+		/*
+		 * @see org.eclipse.cdt.internal.ui.editor.SemanticHighlighting#getDefaultTextStyleBold()
+		 */
+		@Override
+		public boolean isBoldByDefault() {
+			return false;
+		}
+
+		/*
+		 * @see org.eclipse.cdt.internal.ui.editor.SemanticHighlighting#isItalicByDefault()
+		 */
+		@Override
+		public boolean isItalicByDefault() {
+			return false;
+		}
+
+		/*
+		 * @see org.eclipse.cdt.internal.ui.editor.SemanticHighlighting#isEnabledByDefault()
+		 */
+		@Override
+		public boolean isEnabledByDefault() {
+			return true;
+		}
+
+		/*
+		 * @see org.eclipse.cdt.internal.ui.editor.SemanticHighlighting#getDisplayName()
+		 */
+		@Override
+		public String getDisplayName() {
+			return CEditorMessages.SemanticHighlighting_overloadedOperators; 
+		}
+
+		/*
+		 * @see org.eclipse.cdt.internal.ui.editor.SemanticHighlighting#consumes(org.eclipse.cdt.internal.ui.editor.SemanticToken)
+		 */
+		@Override
+		public boolean consumes(SemanticToken token) {
+			IASTNode node = token.getNode();
+			// so far we only have implicit names for overloaded operators and destructors, so this works
+			if(node instanceof IASTImplicitName) {
+				IASTImplicitName name = (IASTImplicitName) node;
+				IBinding binding = name.resolveBinding();
+				if(binding instanceof ICPPMethod && ((ICPPMethod)binding).isImplicit()) {
+					return false;
+				}
+				char[] chars = name.toCharArray();
+				if(chars[0] == '~' || OverloadableOperator.isNew(chars) || OverloadableOperator.isDelete(chars)) {
+					return false;
+				}
+				return true;
 			}
 			return false;
 		}
@@ -1985,6 +2077,7 @@ public class SemanticHighlightings {
 				new LocalVariableHighlighting(),
 				new GlobalVariableHighlighting(),
 				new TemplateParameterHighlighting(), // before template arguments!
+				new OverloadedOperatorHighlighting(), // before both method and function
 				new MethodHighlighting(), // before types to get ctors
 				new EnumHighlighting(),
 				new MacroDefinitionHighlighting(),

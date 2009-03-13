@@ -6,6 +6,7 @@ using namespace std;
 typedef unsigned int uint;
 int static myfunc(uint parameter) {
   if (parameter == 0) fprintf(stdout, "zero\n");
+  cout << "hello\n";
   return parameter - 1;
 }
 class MyClass {

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2008 IBM Corporation and others.
+ * Copyright (c) 2000, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -9,6 +9,7 @@
  *     IBM Corporation - initial API and implementation
  *     Markus Schorn (Wind River Systems)
  *     Ed Swartz (Nokia)
+ *     Mike Kucera (IBM)
  *******************************************************************************/
 package org.eclipse.cdt.internal.ui.search.actions;
 
@@ -39,6 +40,8 @@ import org.eclipse.cdt.core.dom.IName;
 import org.eclipse.cdt.core.dom.ast.ASTNameCollector;
 import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IASTFileLocation;
+import org.eclipse.cdt.core.dom.ast.IASTImplicitName;
+import org.eclipse.cdt.core.dom.ast.IASTImplicitNameOwner;
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IASTNodeSelector;
@@ -65,6 +68,7 @@ import org.eclipse.cdt.core.model.util.CElementBaseLabels;
 import org.eclipse.cdt.core.parser.util.ArrayUtil;
 import org.eclipse.cdt.ui.CUIPlugin;
 
+import org.eclipse.cdt.internal.core.dom.parser.ASTNode;
 import org.eclipse.cdt.internal.core.model.ASTCache.ASTRunnable;
 import org.eclipse.cdt.internal.core.model.ext.CElementHandleFactory;
 import org.eclipse.cdt.internal.core.model.ext.ICElementHandle;
@@ -150,8 +154,29 @@ public class OpenDeclarationsAction extends SelectionParseAction implements ASTR
 		int selectionLength = fTextSelection.getLength();
 
 		final IASTNodeSelector nodeSelector = ast.getNodeSelector(null);
+		
 		IASTName searchName= nodeSelector.findEnclosingName(selectionStart, selectionLength);
-		if (searchName != null) { // just right, only one name selected
+		if (searchName == null) {
+			IASTName implicit = nodeSelector.findEnclosingImplicitName(selectionStart, selectionLength);
+			if(implicit != null) {
+				IASTImplicitNameOwner owner = (IASTImplicitNameOwner) implicit.getParent();
+				IASTImplicitName[] implicits = owner.getImplicitNames();
+				// there may be more than one name in the same spot
+				if(implicits.length > 0) {
+					List<IName> allNames = new ArrayList<IName>();
+					for(IASTImplicitName name : implicits) {
+						if(((ASTNode)name).getOffset() == ((ASTNode)implicit).getOffset()) {
+							IBinding binding = name.resolveBinding(); // guaranteed to resolve
+							IName[] declNames = findNames(fIndex, ast, KIND_OTHER, binding);
+							allNames.addAll(Arrays.asList(declNames));
+						}
+					}
+					if(navigateViaCElements(fWorkingCopy.getCProject(), fIndex, allNames.toArray(new IName[0])))
+						return Status.OK_STATUS;
+				}
+			}
+		}
+		else {
 			boolean found= false;
 			final IASTNode parent = searchName.getParent();
 			if (parent instanceof IASTPreprocessorIncludeStatement) {

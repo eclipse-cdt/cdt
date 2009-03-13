@@ -92,6 +92,8 @@ struct CppStruct {
 
 union CppUnion {
     int unionField;
+    CppUnion operator+(CppUnion);
+    CppUnion operator[](int);
 };
 
 typedef CppUnion TUnion;
@@ -119,6 +121,7 @@ INT ClassContainer::staticPrivMethod() {
     CppUnion un;
     un.unionField= 2;
     staticPubMethod(staticPrivField);
+    un + un[6];
 label:
     FUNCTION_MACRO(0);
     if (un.unionField < st->structField) goto label;

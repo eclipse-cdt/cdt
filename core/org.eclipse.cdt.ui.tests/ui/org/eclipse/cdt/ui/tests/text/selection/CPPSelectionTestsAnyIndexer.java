@@ -1104,4 +1104,45 @@ public abstract class CPPSelectionTestsAnyIndexer extends BaseSelectionTestsInde
         decl= testF3(file, offset2);
         assertNode("ADD", offset1, decl);
     }
+    
+	//  struct X {
+	//		int operator +(X);
+    //      int operator [](int);
+	//		~X();
+	//	};
+	//
+	//	int test(X x) {
+	//		x + x;
+	//		x[6];
+	//		X* xx = new X();
+	//		delete xx;
+	//	}    
+    public void testNavigationToImplicitNames() throws Exception {
+    	StringBuffer[] buffers= getContents(1);
+        String code= buffers[0].toString();
+        IFile file = importFile("in.cpp", code); 
+        waitUntilFileIsIndexed(index, file, MAX_WAIT_TIME);
+        
+        int offset1 = code.indexOf("operator +");
+        int offset2 = code.indexOf("+ x;");
+        IASTNode decl = testF3(file, offset2);
+        assertNode("operator +", offset1, decl);
+        decl = testF3(file, offset2+1);
+        assertNode("operator +", offset1, decl);
+        
+        offset1 = code.indexOf("operator []");
+        offset2 = code.indexOf("[6];");
+        decl = testF3(file, offset2+1);
+        assertNode("operator []", offset1, decl);
+        offset2 = code.indexOf("];");
+        decl = testF3(file, offset2);
+        assertNode("operator []", offset1, decl);
+        decl = testF3(file, offset2+1);
+        assertNode("operator []", offset1, decl);
+        
+        offset1 = code.indexOf("~X()");
+        offset2 = code.indexOf("delete");
+        decl = testF3(file, offset2);
+        assertNode("~X", offset1, decl);
+    }
 }

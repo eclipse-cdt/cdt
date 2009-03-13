@@ -27,3 +27,4 @@ Export-Package: org.eclipse.cdt.dsf.gdb.internal.ui.actions;x-internal:=true,
  org.eclipse.cdt.dsf.gdb.internal.ui.launching;x-internal:=true,
  org.eclipse.cdt.dsf.gdb.internal.ui.viewmodel;x-internal:=true,
  org.eclipse.cdt.dsf.gdb.internal.ui.viewmodel.launch;x-internal:=true
+Import-Package: com.ibm.icu.text

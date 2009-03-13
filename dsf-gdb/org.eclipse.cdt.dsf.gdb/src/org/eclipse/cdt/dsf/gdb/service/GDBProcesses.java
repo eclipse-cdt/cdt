@@ -33,8 +33,6 @@ import org.eclipse.cdt.dsf.mi.service.IMIProcessDMContext;
 import org.eclipse.cdt.dsf.mi.service.IMIProcesses;
 import org.eclipse.cdt.dsf.mi.service.MIProcesses;
 import org.eclipse.cdt.dsf.mi.service.command.MIInferiorProcess;
-import org.eclipse.cdt.dsf.mi.service.command.commands.CLIMonitorListProcesses;
-import org.eclipse.cdt.dsf.mi.service.command.output.CLIMonitorListProcessesInfo;
 import org.eclipse.cdt.dsf.service.DsfSession;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IStatus;
@@ -262,27 +260,11 @@ public class GDBProcesses extends MIProcesses {
 			}
 			rm.done();
 		} else {
-			// monitor list processes is only for remote session
-			fGdb.queueCommand(
-					new CLIMonitorListProcesses(dmc), 
-					new DataRequestMonitor<CLIMonitorListProcessesInfo>(getExecutor(), rm) {
-						@Override
-						protected void handleCompleted() {
-							if (isSuccess()) {
-								for (IProcessInfo procInfo : getData().getProcessList()) {
-									fProcessNames.put(procInfo.getPid(), procInfo.getName());
-								}
-								rm.setData(makeProcessDMCs(controlDmc, getData().getProcessList()));
-							} else {
-								// The monitor list command is not supported.
-								// Just return an empty list and let the caller deal with it.
-								fProcessNames.clear();
-								rm.setData(new IProcessDMContext[0]);
-							}
-							rm.done();
-						}
-
-					});
+			// Pre-GDB 7.0, there is no way to list processes on a remote host
+			// Just return an empty list and let the caller deal with it.
+			fProcessNames.clear();
+			rm.setData(new IProcessDMContext[0]);
+			rm.done();
 		}
 	}
 

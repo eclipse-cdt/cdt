@@ -10,7 +10,7 @@
  *******************************************************************************/
 package org.eclipse.cdt.debug.mi.internal.ui.preferences;
 
-import java.text.MessageFormat;
+import com.ibm.icu.text.MessageFormat;
 import java.util.HashMap;
 import java.util.Iterator;
 import org.eclipse.cdt.debug.mi.core.IMIConstants;

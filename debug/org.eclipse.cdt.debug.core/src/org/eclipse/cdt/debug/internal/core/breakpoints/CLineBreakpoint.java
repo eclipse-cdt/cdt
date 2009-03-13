@@ -10,7 +10,7 @@
  *******************************************************************************/
 package org.eclipse.cdt.debug.internal.core.breakpoints;
 
-import java.text.MessageFormat;
+import com.ibm.icu.text.MessageFormat;
 import java.util.Map;
 
 import org.eclipse.cdt.debug.core.CDebugUtils;

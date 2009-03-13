@@ -12,7 +12,7 @@ package org.eclipse.cdt.core.templateengine;
 
 import java.io.IOException;
 import java.net.URL;
-import java.text.MessageFormat;
+import com.ibm.icu.text.MessageFormat;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Iterator;

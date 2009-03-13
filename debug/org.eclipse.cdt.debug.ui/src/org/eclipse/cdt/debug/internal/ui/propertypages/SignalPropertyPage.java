@@ -10,7 +10,7 @@
  *******************************************************************************/
 package org.eclipse.cdt.debug.internal.ui.propertypages; 
 
-import java.text.MessageFormat;
+import com.ibm.icu.text.MessageFormat;
 import org.eclipse.cdt.debug.core.CDIDebugModel;
 import org.eclipse.cdt.debug.core.CDebugUtils;
 import org.eclipse.cdt.debug.core.model.ICSignal;

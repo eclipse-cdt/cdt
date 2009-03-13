@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2008 Intel Corporation and others.
+ * Copyright (c) 2007, 2009 Intel Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -22,7 +22,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
 import java.net.URI;
-import java.text.MessageFormat;
+import com.ibm.icu.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -764,7 +764,7 @@ public class CProjectDescriptionManager implements ICProjectDescriptionManager {
 			settingProjectDescription.set(true);
 			if(des != null){
 				if (!project.isAccessible())
-					throw ExceptionFactory.createCoreException(MessageFormat.format(CCorePlugin.getResourceString("ProjectDescription.ProjectNotAccessible"), project.getName())); //$NON-NLS-1$
+					throw ExceptionFactory.createCoreException(MessageFormat.format(CCorePlugin.getResourceString("ProjectDescription.ProjectNotAccessible"), new Object[] {project.getName()})); //$NON-NLS-1$
 
 				if(!des.isValid() && (!fAllowEmptyCreatingDescription || !des.isCdtProjectCreating()))
 					throw ExceptionFactory.createCoreException(SettingsModelMessages.getString("CProjectDescriptionManager.17") + project.getName()); //$NON-NLS-1$
@@ -1018,7 +1018,7 @@ public class CProjectDescriptionManager implements ICProjectDescriptionManager {
 					&& cfgId.equals(child.getAttribute(CConfigurationSpecSettings.ID)))
 				throw ExceptionFactory.createCoreException(MessageFormat
 						.format(SettingsModelMessages.getString("CProjectDescriptionManager.cfgIDAlreadyExists"), //$NON-NLS-1$
-								cfgId));
+								new Object[] {cfgId}));
 		}
 		ICStorageElement config = rootElement.importChild(base);
 		config.setAttribute(CConfigurationSpecSettings.ID, cfgId);

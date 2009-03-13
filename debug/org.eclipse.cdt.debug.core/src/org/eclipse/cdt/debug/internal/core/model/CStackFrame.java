@@ -11,8 +11,8 @@
 package org.eclipse.cdt.debug.internal.core.model;
 
 import java.math.BigInteger;
-import java.text.MessageFormat;
-import java.text.NumberFormat;
+import com.ibm.icu.text.MessageFormat;
+import com.ibm.icu.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;

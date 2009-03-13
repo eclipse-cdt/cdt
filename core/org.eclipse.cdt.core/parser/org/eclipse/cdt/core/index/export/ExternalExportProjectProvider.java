@@ -11,8 +11,8 @@
 package org.eclipse.cdt.core.index.export;
 
 import java.io.File;
-import java.text.DateFormat;
-import java.text.MessageFormat;
+import com.ibm.icu.text.DateFormat;
+import com.ibm.icu.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;

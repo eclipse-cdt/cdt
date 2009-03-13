@@ -12,7 +12,7 @@ package org.eclipse.cdt.debug.ui.sourcelookup;
 
 import java.io.IOException;
 import java.io.StringReader;
-import java.text.MessageFormat;
+import com.ibm.icu.text.MessageFormat;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;

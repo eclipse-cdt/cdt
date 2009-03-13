@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2008 IBM Corporation and others.
+ * Copyright (c) 2000, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -12,7 +12,7 @@
 
 package org.eclipse.cdt.internal.ui.text.correction.proposals;
 
-import java.text.MessageFormat;
+import com.ibm.icu.text.MessageFormat;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IStatus;
@@ -185,7 +185,7 @@ public class ChangeCorrectionProposal implements ICCompletionProposal, ICommandA
 	public String getDisplayString() {
 		String shortCutString= CorrectionCommandHandler.getShortCutString(getCommandId());
 		if (shortCutString != null) {
-			return MessageFormat.format(CorrectionMessages.ChangeCorrectionProposal_name_with_shortcut, getName(), shortCutString);
+			return MessageFormat.format(CorrectionMessages.ChangeCorrectionProposal_name_with_shortcut, new Object[] {getName(), shortCutString});
 		}
 		return getName();
 	}
@@ -198,7 +198,7 @@ public class ChangeCorrectionProposal implements ICCompletionProposal, ICommandA
 		
 		String shortCutString= CorrectionCommandHandler.getShortCutString(getCommandId());
 		if (shortCutString != null) {
-			String decorated= MessageFormat.format(CorrectionMessages.ChangeCorrectionProposal_name_with_shortcut, getName(), shortCutString);
+			String decorated= MessageFormat.format(CorrectionMessages.ChangeCorrectionProposal_name_with_shortcut, new Object[] {getName(), shortCutString});
 			return ColoringLabelProvider.decorateStyledString(str, decorated, StyledString.QUALIFIER_STYLER); 
 		}
 		return str;

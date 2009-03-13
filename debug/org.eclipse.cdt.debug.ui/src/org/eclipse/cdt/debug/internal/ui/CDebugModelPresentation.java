@@ -14,7 +14,7 @@
 package org.eclipse.cdt.debug.internal.ui;
 
 import java.io.File;
-import java.text.MessageFormat;
+import com.ibm.icu.text.MessageFormat;
 import java.util.HashMap;
 
 import org.eclipse.cdt.core.IAddress;

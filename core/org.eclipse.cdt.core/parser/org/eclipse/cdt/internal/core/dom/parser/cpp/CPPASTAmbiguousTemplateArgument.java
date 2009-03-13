@@ -8,10 +8,11 @@
  * Contributors:
  *    Andrew Ferguson (Symbian) - Initial Implementation
  *    Markus Schorn (Wind River Systems)
+ *    IBM Corporation
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.dom.parser.cpp;
 
-import java.text.MessageFormat;
+import com.ibm.icu.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -44,7 +45,7 @@ public class CPPASTAmbiguousTemplateArgument extends ASTAmbiguousNode implements
 				fNodes.add(node);
 			} else {
 				String ns= node == null ? "null" : node.getClass().getName(); //$NON-NLS-1$
-				String msg= MessageFormat.format(ParserMessages.getString("CPPASTAmbiguousTemplateArgument_InvalidConstruction"), ns); //$NON-NLS-1$
+				String msg= MessageFormat.format(ParserMessages.getString("CPPASTAmbiguousTemplateArgument_InvalidConstruction"), new Object[] {ns}); //$NON-NLS-1$
 				throw new IllegalArgumentException(msg);
 			}
 		}

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2008 IBM Corporation and others.
+ * Copyright (c) 2000, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -12,7 +12,7 @@
 
 package org.eclipse.cdt.internal.ui.preferences;
 
-import java.text.MessageFormat;
+import com.ibm.icu.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -193,7 +193,7 @@ public class ScalabilityPreferencePage extends PreferencePage implements
 		fLinesToTrigger.setValidRange( 1, Integer.MAX_VALUE );
 		String minValue = Integer.toString( 1 );
 		String maxValue = Integer.toString( Integer.MAX_VALUE );
-		fLinesToTrigger.setErrorMessage( MessageFormat.format(PreferencesMessages.ScalabilityPreferencePage_error, minValue, maxValue) );
+		fLinesToTrigger.setErrorMessage( MessageFormat.format(PreferencesMessages.ScalabilityPreferencePage_error, new Object[] {minValue, maxValue}) );
 		fLinesToTrigger.load();
 		fLinesToTrigger.setPropertyChangeListener( new IPropertyChangeListener() {
 

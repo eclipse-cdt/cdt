@@ -15,7 +15,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.nio.charset.Charset;
 import java.nio.charset.CharsetDecoder;
-import java.text.MessageFormat;
+import com.ibm.icu.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Iterator;

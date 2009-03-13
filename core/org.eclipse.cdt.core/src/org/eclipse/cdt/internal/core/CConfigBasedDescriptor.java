@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2008 Intel Corporation and others.
+ * Copyright (c) 2007, 2009 Intel Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -9,13 +9,14 @@
  * Intel Corporation - Initial API and implementation
  * Anton Leherbauer (Wind River Systems)
  * James Blackburn (Broadcom Corp.)
+ * IBM Corporation
  *******************************************************************************/
 package org.eclipse.cdt.internal.core;
 
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
-import java.text.MessageFormat;
+import com.ibm.icu.text.MessageFormat;
 import java.util.HashMap;
 import java.util.LinkedHashSet;
 import java.util.Map;
@@ -127,7 +128,7 @@ final public class CConfigBasedDescriptor implements ICDescriptor {
 
 		public void serialize() throws CoreException {
 			if (!getProject().isAccessible())
-				throw ExceptionFactory.createCoreException(MessageFormat.format(CCorePlugin.getResourceString("ProjectDescription.ProjectNotAccessible"), getProject().getName())); //$NON-NLS-1$
+				throw ExceptionFactory.createCoreException(MessageFormat.format(CCorePlugin.getResourceString("ProjectDescription.ProjectNotAccessible"), new Object[] {getProject().getName()})); //$NON-NLS-1$
 			if(fIsDirty) {
 				ICProjectDescription des = fCfgDes.getProjectDescription();
 				if(des.isCdtProjectCreating())

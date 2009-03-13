@@ -12,7 +12,7 @@
 package org.eclipse.cdt.internal.core.pdom.export;
 
 import java.io.File;
-import java.text.MessageFormat;
+import com.ibm.icu.text.MessageFormat;
 import java.util.Map;
 
 import org.eclipse.cdt.core.CCorePlugin;

@@ -11,7 +11,7 @@
 package org.eclipse.cdt.make.ui.views;
 
 
-import java.text.MessageFormat;
+import com.ibm.icu.text.MessageFormat;
 import java.util.List;
 
 import org.eclipse.cdt.make.core.IMakeTarget;

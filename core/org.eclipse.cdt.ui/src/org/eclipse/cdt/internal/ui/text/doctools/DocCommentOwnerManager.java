@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008 Symbian Software Systems and others.
+ * Copyright (c) 2008, 2009 Symbian Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,10 +7,11 @@
  *
  * Contributors:
  * Andrew Ferguson (Symbian) - Initial implementation
+ * IBM Corporation
  *******************************************************************************/
 package org.eclipse.cdt.internal.ui.text.doctools;
 
-import java.text.MessageFormat;
+import com.ibm.icu.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -234,7 +235,7 @@ public class DocCommentOwnerManager {
 						String id= element.getAttribute(ATTRKEY_OWNER_ID);
 						String name= element.getAttribute(ATTRKEY_OWNER_NAME);
 						if(result.put(id, new DocCommentOwner(id, name, multi, single))!=null) {
-							String msg= MessageFormat.format(Messages.DocCommentOwnerManager_DuplicateMapping0, id);
+							String msg= MessageFormat.format(Messages.DocCommentOwnerManager_DuplicateMapping0, new Object[] {id});
 							CUIPlugin.log(new Status(IStatus.WARNING, CUIPlugin.PLUGIN_ID, msg));
 						}
 					}

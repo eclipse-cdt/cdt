@@ -13,7 +13,7 @@ package org.eclipse.cdt.utils.xcoff;
 import java.io.EOFException;
 import java.io.IOException;
 import java.io.RandomAccessFile;
-import java.text.DateFormat;
+import com.ibm.icu.text.DateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 

@@ -10,8 +10,8 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.corext.template.c;
 
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
+import com.ibm.icu.text.DateFormat;
+import com.ibm.icu.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
 

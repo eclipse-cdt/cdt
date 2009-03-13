@@ -13,8 +13,8 @@
 package org.eclipse.cdt.launch.ui;
 
 import java.io.IOException;
-import java.text.Collator;
-import java.text.MessageFormat;
+import com.ibm.icu.text.Collator;
+import com.ibm.icu.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;

@@ -9,7 +9,7 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 package org.eclipse.cdt.make.internal.ui.part;
-import java.text.MessageFormat;
+import com.ibm.icu.text.MessageFormat;
 
 import org.eclipse.cdt.make.internal.ui.MakeUIPlugin;
 import org.eclipse.jface.viewers.CheckboxTableViewer;

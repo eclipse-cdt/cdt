@@ -11,7 +11,7 @@
 
 package org.eclipse.cdt.internal.ui.util;
 
-import java.text.MessageFormat;
+import com.ibm.icu.text.MessageFormat;
 
 public class Messages {
     public static String format(String pattern, Object[] args) {

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2008 IBM Corporation and others.
+ * Copyright (c) 2004, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -12,7 +12,7 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.dom.parser;
 
-import java.text.MessageFormat;
+import com.ibm.icu.text.MessageFormat;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -82,7 +82,7 @@ public class ASTProblem extends ASTNode implements IASTProblem {
             msg = ""; //$NON-NLS-1$
 
         if (arg != null) {
-            return MessageFormat.format(msg, arg);
+            return MessageFormat.format(msg, new Object[] {arg});
         }
         return msg;
     }

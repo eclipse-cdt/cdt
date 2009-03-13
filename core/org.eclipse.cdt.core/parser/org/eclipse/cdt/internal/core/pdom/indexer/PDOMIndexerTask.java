@@ -11,7 +11,7 @@
  *******************************************************************************/ 
 package org.eclipse.cdt.internal.core.pdom.indexer;
 
-import java.text.NumberFormat;
+import com.ibm.icu.text.NumberFormat;
 import java.util.Calendar;
 import java.util.Map;
 

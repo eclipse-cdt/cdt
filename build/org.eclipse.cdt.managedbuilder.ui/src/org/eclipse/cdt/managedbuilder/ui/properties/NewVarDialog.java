@@ -10,7 +10,7 @@
  *******************************************************************************/
 package org.eclipse.cdt.managedbuilder.ui.properties;
 
-import java.text.Collator;
+import com.ibm.icu.text.Collator;
 import java.util.Arrays;
 import java.util.Comparator;
 

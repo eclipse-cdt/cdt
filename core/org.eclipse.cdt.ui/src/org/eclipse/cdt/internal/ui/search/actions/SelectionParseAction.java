@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2008 IBM Corporation and others.
+ * Copyright (c) 2004, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -14,7 +14,7 @@
 
 package org.eclipse.cdt.internal.ui.search.actions;
 
-import java.text.MessageFormat;
+import com.ibm.icu.text.MessageFormat;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
@@ -122,7 +122,7 @@ public class SelectionParseAction extends Action {
     protected void reportSourceFileOpenFailure(IPath path) {
     	showStatusLineMessage(MessageFormat.format(
     			CSearchMessages.SelectionParseAction_FileOpenFailure_format, 
-    			path.toOSString()));
+    			new Object[] {path.toOSString()}));
     }
     
     protected void reportSelectionMatchFailure() {
@@ -132,13 +132,13 @@ public class SelectionParseAction extends Action {
     protected void reportSymbolLookupFailure(String symbol) {
     	showStatusLineMessage(MessageFormat.format(
     			CSearchMessages.SelectionParseAction_SymbolNotFoundInIndex_format, 
-    			symbol));
+    			new Object[] {symbol}));
     }
     
     protected void reportIncludeLookupFailure(String filename) {
     	showStatusLineMessage(MessageFormat.format(
     			CSearchMessages.SelectionParseAction_IncludeNotFound_format, 
-    			filename));
+    			new Object[] {filename}));
     }
 
 }

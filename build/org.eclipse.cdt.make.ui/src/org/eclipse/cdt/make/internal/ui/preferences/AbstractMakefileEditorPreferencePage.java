@@ -14,7 +14,7 @@ package org.eclipse.cdt.make.internal.ui.preferences;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.text.MessageFormat;
+import com.ibm.icu.text.MessageFormat;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2002, 2006 QNX Software Systems and others.
+ * Copyright (c) 2002, 2009 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,11 +8,12 @@
  * Contributors:
  *     QNX Software Systems - Initial API and implementation
  *     Sergey Prigogin (Google)
+ *     IBM Corporation
  *******************************************************************************/
 
 package org.eclipse.cdt.internal.ui.text.c.hover;
 
-import java.text.MessageFormat;
+import com.ibm.icu.text.MessageFormat;
 import java.util.Iterator;
 
 import org.eclipse.core.filebuffers.FileBuffers;
@@ -336,7 +337,7 @@ public class AbstractAnnotationHover extends AbstractCEditorTextHover {
 			if (proposals.length == 1) {
 				text= CHoverMessages.AbstractAnnotationHover_message_singleQuickFix;
 			} else {
-				text= MessageFormat.format(CHoverMessages.AbstractAnnotationHover_message_multipleQuickFix, String.valueOf(proposals.length));
+				text= MessageFormat.format(CHoverMessages.AbstractAnnotationHover_message_multipleQuickFix, new Object[] {String.valueOf(proposals.length)});
 			}
 			quickFixLabel.setText(text);
 

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007 Symbian Software Limited and others.
+ * Copyright (c) 2007, 2009 Symbian Software Limited and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,10 +7,11 @@
  *
  * Contributors:
  * Bala Torati (Symbian) - Initial API and implementation
+ * IBM Corporation
  *******************************************************************************/
 package org.eclipse.cdt.ui.templateengine.uitree;
 
-import java.text.MessageFormat;
+import com.ibm.icu.text.MessageFormat;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -118,11 +119,11 @@ public class UIElementTreeBuilderHelper implements IUIElementTreeBuilderHelper {
 				}
 				if(label==null || value==null) {
 					String msg= Messages.getString("UIElementTreeBuilderHelper.InvalidEmptyLabel"); //$NON-NLS-1$
-					CUIPlugin.log(MessageFormat.format(msg, id), null);
+					CUIPlugin.log(MessageFormat.format(msg, new Object[] {id}), null);
 				} else {
 					if(value2name.put(value, label)!=null) {
 						String msg= Messages.getString("UIElementTreeBuilderHelper.InvalidNonUniqueValue"); //$NON-NLS-1$
-						CUIPlugin.log(MessageFormat.format(msg, id), null);
+						CUIPlugin.log(MessageFormat.format(msg, new Object[] {id}), null);
 					}
 				}
 			}
@@ -146,7 +147,7 @@ public class UIElementTreeBuilderHelper implements IUIElementTreeBuilderHelper {
 			// Note: This is not implemented now as we haven't found a use case
 			// for generating UI pages as TABS in a single page. 
 		} else {
-			String msg= MessageFormat.format(Messages.getString("UIElementTreeBuilderHelper.UnknownWidgetType0"), type); //$NON-NLS-1$
+			String msg= MessageFormat.format(Messages.getString("UIElementTreeBuilderHelper.UnknownWidgetType0"), new Object[] {type}); //$NON-NLS-1$
 			CUIPlugin.log(msg, null);
 		}
 

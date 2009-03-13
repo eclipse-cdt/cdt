@@ -10,7 +10,7 @@
  *******************************************************************************/
 package org.eclipse.cdt.make.internal.ui;
 
-import java.text.MessageFormat;
+import com.ibm.icu.text.MessageFormat;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Iterator;

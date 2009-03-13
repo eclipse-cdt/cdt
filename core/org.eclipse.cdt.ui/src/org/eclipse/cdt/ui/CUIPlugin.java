@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2003, 2008 IBM Corporation and others.
+ * Copyright (c) 2003, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -16,7 +16,6 @@
 package org.eclipse.cdt.ui;
 
 import java.io.IOException;
-import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -62,6 +61,8 @@ import org.eclipse.ui.texteditor.ConfigurationElementSorter;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.BundleException;
+
+import com.ibm.icu.text.MessageFormat;
 
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.model.CoreModel;
@@ -269,7 +270,7 @@ public class CUIPlugin extends AbstractUIPlugin {
 	}
 	
 	public static String getFormattedString(String key, String arg) {
-		return MessageFormat.format(getResourceString(key), arg);
+		return MessageFormat.format(getResourceString(key), new Object[] {arg});
 	}
 
 	public static String getFormattedString(String key, String[] args) {

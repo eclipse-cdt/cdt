@@ -10,7 +10,7 @@
  *******************************************************************************/ 
 package org.eclipse.cdt.internal.core.parser.scanner;
 
-import java.text.DateFormatSymbols;
+import com.ibm.icu.text.DateFormatSymbols;
 import java.util.Calendar;
 
 import org.eclipse.cdt.core.dom.ILinkage;

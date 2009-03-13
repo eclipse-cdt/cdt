@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008 Broadcom Corporation and others.
+ * Copyright (c) 2008, 2009 Broadcom Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,10 +7,11 @@
  *
  * Contributors:
  *     James Blackburn (Broadcom Corp.)
+ *     IBM Corporation
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.settings.model;
 
-import java.text.MessageFormat;
+import com.ibm.icu.text.MessageFormat;
 
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.model.ICProject;
@@ -155,7 +156,7 @@ public abstract class AbstractCProjectDescriptionStorage {
 	 */
 	public ICProjectDescription getProjectDescription(int flags, IProgressMonitor monitor) throws CoreException {
 		if (!project.isAccessible())
-			throw ExceptionFactory.createCoreException(MessageFormat.format(CCorePlugin.getResourceString("ProjectDescription.ProjectNotAccessible"), getProject().getName())); //$NON-NLS-1$
+			throw ExceptionFactory.createCoreException(MessageFormat.format(CCorePlugin.getResourceString("ProjectDescription.ProjectNotAccessible"), new Object[] {getProject().getName()})); //$NON-NLS-1$
 		return currentThreadProjectDescription.get();
 	}
 

@@ -15,7 +15,7 @@
 package org.eclipse.cdt.core;
 
 import java.io.IOException;
-import java.text.MessageFormat;
+import com.ibm.icu.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;

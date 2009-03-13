@@ -13,7 +13,7 @@
 
 package org.eclipse.cdt.internal.core.pdom.db;
 
-import java.text.MessageFormat;
+import com.ibm.icu.text.MessageFormat;
 
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.core.runtime.CoreException;

@@ -12,7 +12,7 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.ui.refactoring.utils;
 
-import java.text.MessageFormat;
+import com.ibm.icu.text.MessageFormat;
 import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;

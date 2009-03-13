@@ -12,7 +12,7 @@
 
 package org.eclipse.cdt.debug.internal.ui.sourcelookup;
 
-import java.text.MessageFormat;
+import com.ibm.icu.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Iterator;

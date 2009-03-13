@@ -12,7 +12,7 @@ package org.eclipse.cdt.debug.internal.core.sourcelookup;
 
 import java.io.File;
 import java.io.IOException;
-import java.text.MessageFormat;
+import com.ibm.icu.text.MessageFormat;
 import java.util.ArrayList;
 
 import org.eclipse.cdt.core.model.CoreModel;

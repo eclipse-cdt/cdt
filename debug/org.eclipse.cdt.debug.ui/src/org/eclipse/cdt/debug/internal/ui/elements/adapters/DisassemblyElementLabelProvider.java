@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008 ARM Limited and others.
+ * Copyright (c) 2008, 2009 ARM Limited and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  * ARM Limited - Initial API and implementation
+ * IBM Corporation
  *******************************************************************************/
 
 package org.eclipse.cdt.debug.internal.ui.elements.adapters;
@@ -16,7 +17,7 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 import java.math.BigInteger;
-import java.text.MessageFormat;
+import com.ibm.icu.text.MessageFormat;
 
 import org.eclipse.cdt.debug.core.CDebugUtils;
 import org.eclipse.cdt.debug.core.model.IDisassemblyInstruction;
@@ -97,7 +98,7 @@ public class DisassemblyElementLabelProvider implements IDocumentElementLabelPro
 
     private String getSourceLineText( IDisassemblySourceLine line ) {
         File file = line.getFile();
-        String text = MessageFormat.format( "File {0} not found.", file.getPath() );
+        String text = MessageFormat.format( "File {0} not found.", new Object[] {file.getPath()} );
         ISourceLocator locator = line.getDebugTarget().getLaunch().getSourceLocator();
         if ( locator instanceof ISourceLookupDirector ) {
             ISourceLookupDirector director = (ISourceLookupDirector)locator;
@@ -141,6 +142,6 @@ public class DisassemblyElementLabelProvider implements IDocumentElementLabelPro
             br.close();
         }
         
-        throw new IOException( MessageFormat.format( "Line {0} doesn't exist in {1}.", Integer.valueOf( lineNumber ), file.getPath() ) );
+        throw new IOException( MessageFormat.format( "Line {0} doesn't exist in {1}.", new Object[] {Integer.valueOf( lineNumber ), file.getPath()}) );
     }
 }

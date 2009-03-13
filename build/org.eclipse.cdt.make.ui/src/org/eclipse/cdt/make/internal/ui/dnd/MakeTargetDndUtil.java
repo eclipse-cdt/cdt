@@ -12,7 +12,7 @@
 package org.eclipse.cdt.make.internal.ui.dnd;
 
 import java.lang.reflect.InvocationTargetException;
-import java.text.MessageFormat;
+import com.ibm.icu.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.List;
 

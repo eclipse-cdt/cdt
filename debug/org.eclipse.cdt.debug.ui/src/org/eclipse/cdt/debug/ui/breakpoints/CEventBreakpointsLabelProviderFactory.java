@@ -12,7 +12,7 @@
  *******************************************************************************/
 package org.eclipse.cdt.debug.ui.breakpoints;
 
-import java.text.MessageFormat;
+import com.ibm.icu.text.MessageFormat;
 
 import org.eclipse.cdt.debug.core.DebugCoreMessages;
 import org.eclipse.cdt.debug.core.model.ICBreakpoint;

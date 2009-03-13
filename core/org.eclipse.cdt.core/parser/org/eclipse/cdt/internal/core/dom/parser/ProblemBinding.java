@@ -12,7 +12,7 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.dom.parser;
 
-import java.text.MessageFormat;
+import com.ibm.icu.text.MessageFormat;
 
 import org.eclipse.cdt.core.dom.ILinkage;
 import org.eclipse.cdt.core.dom.IName;

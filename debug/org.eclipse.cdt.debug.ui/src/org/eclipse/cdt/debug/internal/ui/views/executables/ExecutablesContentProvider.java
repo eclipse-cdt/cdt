@@ -11,7 +11,7 @@
 
 package org.eclipse.cdt.debug.internal.ui.views.executables;
 
-import java.text.DateFormat;
+import com.ibm.icu.text.DateFormat;
 import java.util.Date;
 
 import org.eclipse.cdt.debug.core.executables.Executable;

@@ -10,7 +10,7 @@
  *******************************************************************************/
 package org.eclipse.cdt.debug.internal.ui.preferences; 
 
-import java.text.MessageFormat;
+import com.ibm.icu.text.MessageFormat;
 import java.util.Arrays;
 import java.util.List;
 import org.eclipse.cdt.debug.core.CDebugCorePlugin;

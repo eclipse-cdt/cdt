@@ -19,8 +19,8 @@ import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
 import java.io.UnsupportedEncodingException;
 import java.io.Writer;
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
+import com.ibm.icu.text.DateFormat;
+import com.ibm.icu.text.SimpleDateFormat;
 import java.util.Date;
 
 import org.eclipse.cdt.core.CCorePlugin;

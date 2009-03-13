@@ -10,8 +10,8 @@
  *******************************************************************************/
 package org.eclipse.cdt.debug.internal.core;
 
-import java.text.DateFormat;
-import java.text.MessageFormat;
+import com.ibm.icu.text.DateFormat;
+import com.ibm.icu.text.MessageFormat;
 import java.util.Date;
 
 import org.eclipse.cdt.core.CCorePlugin;

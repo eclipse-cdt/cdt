@@ -16,6 +16,7 @@ import org.eclipse.debug.ui.AbstractLaunchConfigurationTabGroup;
 import org.eclipse.debug.ui.CommonTab;
 import org.eclipse.debug.ui.ILaunchConfigurationDialog;
 import org.eclipse.debug.ui.ILaunchConfigurationTab;
+import org.eclipse.debug.ui.RefreshTab;
 import org.eclipse.debug.ui.sourcelookup.SourceLookupTab;
 
 public class LocalAttachLaunchConfigurationTabGroup extends AbstractLaunchConfigurationTabGroup {
@@ -28,6 +29,7 @@ public class LocalAttachLaunchConfigurationTabGroup extends AbstractLaunchConfig
 			new CMainAttachTab(),
 			new CDebuggerTab(true),
 			new SourceLookupTab(),
+            new RefreshTab(),
 			new CommonTab()
 		};
 		setTabs(tabs);

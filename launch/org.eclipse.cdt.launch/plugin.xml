@@ -79,12 +79,24 @@
         <placement after="org.eclipse.cdt.cdi.launch.debuggerTab"/>
       </tab>
       <tab
+            class="org.eclipse.debug.ui.RefreshTab"
+            group="org.eclipse.cdt.launch.applicationLaunchTabGroup"
+            id="org.eclipse.cdt.launch.applicationLaunch.refreshTab"
+            name="%RefreshLaunchTab.name">
+         <associatedDelegate
+               delegate="org.eclipse.cdt.cdi.launch.localCLaunch">
+         </associatedDelegate>
+         <placement
+               after="org.eclipse.debug.ui.sourceLookupTab">
+         </placement>
+      </tab>
+      <tab
             id="org.eclipse.cdt.cdi.launch.applicationLaunch.commonTab"
             group="org.eclipse.cdt.launch.applicationLaunchTabGroup"
             name="%CommonLaunchTab.name"
             class="org.eclipse.debug.ui.CommonTab">
         <associatedDelegate delegate="org.eclipse.cdt.cdi.launch.localCLaunch"/>
-        <placement after="org.eclipse.debug.ui.sourceLookupTab"/>
+        <placement after="org.eclipse.debug.ui.refreshTab"/>
       </tab>
 
       <!-- Attach launch tabs-->
@@ -112,12 +124,24 @@
         <placement after="org.eclipse.cdt.cdi.launch.debuggerTab"/>
       </tab>
       <tab
+            class="org.eclipse.debug.ui.RefreshTab"
+            group="org.eclipse.cdt.launch.attachLaunchTabGroup"
+            id="org.eclipse.cdt.cdi.launch.attachLaunch.refreshTab"
+            name="%RefreshLaunchTab.name">
+         <associatedDelegate
+               delegate="org.eclipse.cdt.cdi.launch.localCAttachLaunch">
+         </associatedDelegate>
+         <placement
+               after="org.eclipse.debug.ui.sourceLookupTab">
+         </placement>
+      </tab>
+      <tab
             id="org.eclipse.cdt.cdi.launch.attachLaunch.commonTab"
             group="org.eclipse.cdt.launch.attachLaunchTabGroup"
             name="%CommonLaunchTab.name"
             class="org.eclipse.debug.ui.CommonTab">
         <associatedDelegate delegate="org.eclipse.cdt.cdi.launch.localCAttachLaunch"/>
-        <placement after="org.eclipse.debug.ui.sourceLookupTab"/>
+        <placement after="org.eclipse.debug.ui.refreshTab"/>
       </tab>
       
       <!-- Post mortem launch tabs-->

@@ -10,11 +10,7 @@
  *******************************************************************************/
 package org.eclipse.cdt.launch.internal.ui;
 
-import org.eclipse.cdt.core.model.ICProject;
-import org.eclipse.cdt.debug.core.CDebugUtils;
 import org.eclipse.cdt.debug.core.ICDebugConstants;
-import org.eclipse.core.resources.IProject;
-import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
@@ -25,6 +21,7 @@ import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.IDebugEventSetListener;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.model.IProcess;
+import org.eclipse.debug.ui.RefreshTab;
 import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IWorkbenchPage;
@@ -213,29 +210,30 @@ public class LaunchUIPlugin extends AbstractUIPlugin implements IDebugEventSetLi
 			if (events[i].getKind() == DebugEvent.TERMINATE) {
 				Object o = events[i].getSource();
 				if (o instanceof IProcess) {
-					IProcess proc = (IProcess)o;
-					ICProject cproject = null;
+					IProcess process = (IProcess)o;
+					final ILaunchConfiguration config = process.getLaunch().getLaunchConfiguration();
 					try {
-						ILaunchConfiguration launchConfig = proc.getLaunch().getLaunchConfiguration();
-						if (launchConfig != null) {
-							cproject = CDebugUtils.getCProject(launchConfig);
-						}
-					} catch (CoreException e) {
-					}
-					if (cproject != null) {
-						final IProject project = cproject.getProject();
-						Job projectRefreshJob = new Job("Refresh"){
+					    if (RefreshTab.getRefreshScope(config) != null) {
+					        Job refreshJob = new Job("Refresh"){
 
-							@Override
-							protected IStatus run(IProgressMonitor monitor) {
-								try {
-									project.refreshLocal(IResource.DEPTH_INFINITE, monitor);
-								} catch (CoreException e) {
-									return new Status(Status.CANCEL, PLUGIN_ID, 1, e.getLocalizedMessage(), e);
-								}
-								return Status.OK_STATUS;
-							}};
-						projectRefreshJob.schedule();
+					            /* (non-Javadoc)
+					             * @see org.eclipse.core.runtime.jobs.Job#run(org.eclipse.core.runtime.IProgressMonitor)
+					             */
+					            @Override
+					            protected IStatus run(IProgressMonitor monitor) {
+					                try {
+					                    RefreshTab.refreshResources(config, monitor);
+					                } catch (CoreException e) {
+					                    return new Status(IStatus.ERROR, PLUGIN_ID, 1, e.getLocalizedMessage(), e);
+					                }
+					                return Status.OK_STATUS;
+					            }};
+					        refreshJob.setSystem(true);
+					        refreshJob.schedule();
+					    }
+					}
+					catch(CoreException e) {
+					    LaunchUIPlugin.log( e.getStatus() );
 					}
 				}
 			}

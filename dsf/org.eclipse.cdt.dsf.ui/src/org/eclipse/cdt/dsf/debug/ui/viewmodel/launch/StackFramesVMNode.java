@@ -618,14 +618,6 @@ public class StackFramesVMNode extends AbstractDMVMNode
     }
     
 	private void buildDeltaForSuspendedEvent(final IExecutionDMContext executionCtx, final IExecutionDMContext triggeringCtx, final VMDelta parentDelta, final int nodeOffset, final RequestMonitor rm) {
-        IRunControl runControlService = getServicesTracker().getService(IRunControl.class); 
-        IStack stackService = getServicesTracker().getService(IStack.class);
-        if (stackService == null || runControlService == null) {
-            // Required services have not initialized yet.  Ignore the event.
-            rm.done();
-            return;
-        }          
-        
         // Check if we are building a delta for the thread that triggered the event.
         // Only then expand the stack frames and select the top one.
         if (executionCtx.equals(triggeringCtx)) {
@@ -649,28 +641,35 @@ public class StackFramesVMNode extends AbstractDMVMNode
                         }
                     })
                 );
-        } else {
-            rm.done();
         }
     }
     
 	private void buildDeltaForFullStackRefreshEvent(final IExecutionDMContext executionCtx, final IExecutionDMContext triggeringCtx, final VMDelta parentDelta, final int nodeOffset, final RequestMonitor rm) {
-        IRunControl runControlService = getServicesTracker().getService(IRunControl.class); 
-        IStack stackService = getServicesTracker().getService(IStack.class);
-        if (stackService == null || runControlService == null) {
-            // Required services have not initialized yet.  Ignore the event.
-            rm.done();
-            return;
-        }          
-        
-        // Refresh the whole list of stack frames unless the target is already stepping the next command.  In 
-        // which case, the refresh will occur when the stepping sequence slows down or stops.  Trying to
-        // refresh the whole stack trace with every step would slow down stepping too much.
-        if (triggeringCtx == null || !runControlService.isStepping(triggeringCtx)) {
-            parentDelta.setFlags(parentDelta.getFlags() | IModelDelta.CONTENT);
-        }
-        
-        rm.done();
+	    try {
+    	    getSession().getExecutor().execute(new DsfRunnable() {
+    	        public void run() {
+    	            IRunControl runControlService = getServicesTracker().getService(IRunControl.class); 
+    	            IStack stackService = getServicesTracker().getService(IStack.class);
+    	            if (stackService == null || runControlService == null) {
+    	                // Required services have not initialized yet.  Ignore the event.
+    	                rm.done();
+    	                return;
+    	            }         
+    	            
+    	            // Refresh the whole list of stack frames unless the target is already stepping the next command.  In 
+    	            // which case, the refresh will occur when the stepping sequence slows down or stops.  Trying to
+    	            // refresh the whole stack trace with every step would slow down stepping too much.
+    	            if (triggeringCtx == null || !runControlService.isStepping(triggeringCtx)) {
+    	                parentDelta.setFlags(parentDelta.getFlags() | IModelDelta.CONTENT);
+    	            }
+    	            
+    	            rm.done();
+    	        }
+    	    });
+	    } catch (RejectedExecutionException e) {
+	        // Session shut down, no delta to build.
+	        rm.done();
+	    }
 	}
 	
     private void buildDeltaForSteppingTimedOutEvent(final SteppingTimedOutEvent e, final VMDelta parentDelta, final int nodeOffset, final RequestMonitor rm) {

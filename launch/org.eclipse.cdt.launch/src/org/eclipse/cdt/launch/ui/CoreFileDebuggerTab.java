@@ -35,6 +35,15 @@ import org.eclipse.swt.widgets.Composite;
 
 public class CoreFileDebuggerTab extends AbstractCDebuggerTab {
 
+    /**
+     * Tab identifier used for ordering of tabs added using the 
+     * <code>org.eclipse.debug.ui.launchConfigurationTabs</code>
+     * extension point.
+     *   
+     * @since 6.0
+     */
+    public static final String TAB_ID = "org.eclipse.cdt.cdi.launch.coreTab"; //$NON-NLS-1$
+
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -90,7 +99,15 @@ public class CoreFileDebuggerTab extends AbstractCDebuggerTab {
 		}
 	}
 
-	public void initializeFrom(ILaunchConfiguration config) {
+	/* (non-Javadoc)
+     * @see org.eclipse.debug.ui.AbstractLaunchConfigurationTab#getId()
+     */
+    @Override
+    public String getId() {
+        return TAB_ID;
+    }
+
+    public void initializeFrom(ILaunchConfiguration config) {
 		setInitializing(true);
 		setLaunchConfiguration(config);
 		try {

@@ -13,9 +13,14 @@ package org.eclipse.cdt.dsf.service;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
+import java.util.concurrent.RejectedExecutionException;
 
+import org.eclipse.cdt.dsf.concurrent.ConfinedToDsfExecutor;
+import org.eclipse.cdt.dsf.concurrent.DsfRunnable;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.InvalidSyntaxException;
+import org.osgi.framework.ServiceEvent;
+import org.osgi.framework.ServiceListener;
 import org.osgi.framework.ServiceReference;
 
 /**
@@ -42,6 +47,7 @@ import org.osgi.framework.ServiceReference;
  * 
  * @since 1.0
  */
+@ConfinedToDsfExecutor("DsfSession.getSession(sessionId).getExecutor()")
 public class DsfServicesTracker {
     
     private static String getServiceFilter(String sessionId) {
@@ -73,19 +79,69 @@ public class DsfServicesTracker {
         }
     }
     
+    private final String fSessionId;    
+    private boolean fDisposed = false;
     private BundleContext fBundleContext;
     private Map<ServiceKey,ServiceReference> fServiceReferences = new HashMap<ServiceKey,ServiceReference>();
     private Map<ServiceReference,Object> fServices = new HashMap<ServiceReference,Object>();
     private String fServiceFilter;
 
+    private ServiceListener fListner = new ServiceListener() {
+        public void serviceChanged(final ServiceEvent event) {
+            // Only listen to unregister events.
+            if (event.getType() != ServiceEvent.UNREGISTERING) {
+                return;
+            }
+            
+            // If session is not active anymore, just exit.  The tracker should 
+            // soon be disposed.
+            DsfSession session = DsfSession.getSession(fSessionId);
+            if (session == null) {
+                return;
+            }
+            
+            if (session.getExecutor().isInExecutorThread()) {
+                handleUnregisterEvent(event);
+            } else {
+                try {
+                    session.getExecutor().execute(new DsfRunnable() {
+                       public void run() {
+                           handleUnregisterEvent(event);
+                       }; 
+                    });
+                } catch (RejectedExecutionException e) {
+                    // Same situation as when the session is not active
+                }
+            }
+        }
+    };
+    
+    private void handleUnregisterEvent(ServiceEvent event) {
+        for (Iterator<Map.Entry<ServiceKey, ServiceReference>> itr = fServiceReferences.entrySet().iterator(); itr.hasNext();) {
+            Map.Entry<ServiceKey, ServiceReference> entry = itr.next();
+            if ( entry.getValue().equals(event.getServiceReference()) ) {
+                itr.remove();
+            }
+        }
+        if (fServices.remove(event.getServiceReference()) != null) {
+            fBundleContext.ungetService(event.getServiceReference());
+        }
+    }
+    
     /** 
      * Only constructor.
      * @param bundleContext Context of the plugin that the client lives in. 
      * @param sessionId The DSF session that this tracker will be used for. 
      */
     public DsfServicesTracker(BundleContext bundleContext, String sessionId) {
+        fSessionId = sessionId;
         fBundleContext = bundleContext;
         fServiceFilter = getServiceFilter(sessionId); 
+        try {
+            fBundleContext.addServiceListener(fListner, fServiceFilter);
+        } catch (InvalidSyntaxException e) {
+            assert false : "Invalid session ID syntax"; //$NON-NLS-1$
+        }
     }
     
     /**
@@ -100,6 +156,17 @@ public class DsfServicesTracker {
      */
     @SuppressWarnings("unchecked")
     public ServiceReference getServiceReference(Class serviceClass, String filter) {
+        if (fDisposed) {
+            return null;
+        }
+        
+        // If the session is not active, all of its services are gone.
+        DsfSession session = DsfSession.getSession(fSessionId);
+        if (session == null) {
+            return null;
+        }
+        assert session.getExecutor().isInExecutorThread();
+        
         ServiceKey key = new ServiceKey(serviceClass, filter != null ? filter : fServiceFilter);
         if (fServiceReferences.containsKey(key)) {
             return fServiceReferences.get(key);
@@ -162,10 +229,19 @@ public class DsfServicesTracker {
      * to avoid leaking OSGI service references.
      */
     public void dispose() {
+        assert !fDisposed;
+        fDisposed = true;
+        fBundleContext.removeServiceListener(fListner);
         for (Iterator<ServiceReference> itr = fServices.keySet().iterator(); itr.hasNext();) {
             fBundleContext.ungetService(itr.next());
-            itr.remove();
         }
+        fServices.clear();
+        fServiceReferences.clear();
     }
 
+    @Override
+    protected void finalize() throws Throwable {
+        assert fDisposed;
+        super.finalize();
+    }
 }

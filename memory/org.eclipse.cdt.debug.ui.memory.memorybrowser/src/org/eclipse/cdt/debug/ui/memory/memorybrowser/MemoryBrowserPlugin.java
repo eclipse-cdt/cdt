@@ -9,7 +9,7 @@
  *     Ted R Williams (Wind River Systems, Inc.) - initial implementation
  *******************************************************************************/
 
-package org.cdt.debug.ui.memory.memorybrowser;
+package org.eclipse.cdt.debug.ui.memory.memorybrowser;
 
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
@@ -21,7 +21,7 @@ import org.osgi.framework.BundleContext;
 public class MemoryBrowserPlugin extends AbstractUIPlugin {
 
 	// The plug-in ID
-	public static final String PLUGIN_ID = "org.cdt.debug.ui.memory.memorybrowser";
+	public static final String PLUGIN_ID = "org.eclipse.cdt.debug.ui.memory.memorybrowser";
 
 	// The shared instance
 	private static MemoryBrowserPlugin plugin;

@@ -9,7 +9,7 @@
  *     Ted R Williams (Wind River Systems, Inc.) - initial implementation
  *******************************************************************************/
 
-package org.cdt.debug.ui.memory.memorybrowser;
+package org.eclipse.cdt.debug.ui.memory.memorybrowser;
 
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.swt.SWT;

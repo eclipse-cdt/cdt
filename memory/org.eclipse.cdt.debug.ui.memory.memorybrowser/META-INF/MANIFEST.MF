@@ -3,7 +3,7 @@ Bundle-ManifestVersion: 2
 Bundle-Name: Memory Browser
 Bundle-SymbolicName: org.eclipse.cdt.debug.ui.memory.memorybrowser;singleton:=true
 Bundle-Version: 1.2.0
-Bundle-Activator: org.cdt.debug.ui.memory.memorybrowser.MemoryBrowserPlugin
+Bundle-Activator: org.eclipse.cdt.debug.ui.memory.memorybrowser.MemoryBrowserPlugin
 Bundle-Vendor: org.eclipse
 Require-Bundle: org.eclipse.ui,
  org.eclipse.core.runtime,

@@ -9,7 +9,7 @@
  *     Ted R Williams (Wind River Systems, Inc.) - initial implementation
  *******************************************************************************/
 
-package org.cdt.debug.ui.memory.memorybrowser;
+package org.eclipse.cdt.debug.ui.memory.memorybrowser;
 
 import java.lang.reflect.Method;
 import java.math.BigInteger;
@@ -98,7 +98,7 @@ import org.eclipse.ui.progress.WorkbenchJob;
 
 public class MemoryBrowser extends ViewPart implements IDebugContextListener, ILaunchListener
 {
-	public static final String ID = "org.cdt.debug.ui.memory.memorybrowser.MemoryBrowser";  //$NON-NLS-1$
+	public static final String ID = "org.eclipse.cdt.debug.ui.memory.memorybrowser.MemoryBrowser";  //$NON-NLS-1$
 	
 	protected StackLayout fStackLayout;
 	private Composite fRenderingsComposite;
@@ -350,7 +350,8 @@ public class MemoryBrowser extends ViewPart implements IDebugContextListener, IL
 	private void contributeToActionBars() {
 		IActionBars bars = getViewSite().getActionBars();
 		fillLocalPullDown(bars.getMenuManager());
-		fillLocalToolBar(bars.getToolBarManager());
+		fillLocalToolBar(bars.getToolBarManager()); 
+		bars.getToolBarManager().add(new Action() { });
 	}
 
 	private void fillLocalPullDown(IMenuManager manager) {

@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.0"?>
+<plugin>
+
+   <extension
+         point="org.eclipse.ui.views">
+      <view
+            name="Memory Browser"
+            icon="icons/memorybrowser_view.gif"
+            category="org.eclipse.debug.ui"
+            class="org.cdt.debug.ui.memory.memorybrowser.MemoryBrowser"
+            id="org.cdt.debug.ui.memory.memorybrowser.MemoryBrowser">
+      </view>
+   </extension>
+   <extension
+         point="org.eclipse.help.contexts">
+      <contexts
+            file="contexts.xml">
+      </contexts>
+   </extension>
+
+</plugin>

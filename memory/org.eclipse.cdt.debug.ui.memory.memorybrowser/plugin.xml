@@ -8,8 +8,8 @@
             name="Memory Browser"
             icon="icons/memorybrowser_view.gif"
             category="org.eclipse.debug.ui"
-            class="org.cdt.debug.ui.memory.memorybrowser.MemoryBrowser"
-            id="org.cdt.debug.ui.memory.memorybrowser.MemoryBrowser">
+            class="org.eclipse.cdt.debug.ui.memory.memorybrowser.MemoryBrowser"
+            id="org.eclipse.cdt.debug.ui.memory.memorybrowser.MemoryBrowser">
       </view>
    </extension>
    <extension

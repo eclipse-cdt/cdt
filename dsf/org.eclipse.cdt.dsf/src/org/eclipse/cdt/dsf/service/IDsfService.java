@@ -90,14 +90,14 @@ public interface IDsfService {
     public void shutdown(RequestMonitor requestMonitor);
     
     /**
-     * Returns whether the service is currently active.  A service should be 
-     * active after it is initialized and before it has been shut down.
+     * Returns whether the service is currently registered.  A service should be 
+     * registered after it is initialized and before it has been shut down.
      * 
-     * @return <code>true</code> if active
+     * @return <code>true</code> if registered
      * 
      * @since 2.0
      */
-    public boolean isActive(); 
+    public boolean isRegistered(); 
     
     /**
      * Returns the startup order number of this service among services in the same session.

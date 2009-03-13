@@ -86,7 +86,7 @@ abstract public class AbstractDsfService
     /**
 	 * @since 2.0
 	 */
-    public boolean isActive() {
+    public boolean isRegistered() {
         return getServiceRegistration() != null;
     }
 

@@ -598,6 +598,16 @@ public class VariableVMNode extends AbstractExpressionVMNode
         if (type != null) {
             update.setProperty(PROP_VARIABLE_BASIC_TYPE, type.name());
         }
+        
+        /*
+         * If this node has an expression then it has already been filled in by the higher
+         * level logic. If not then we need to supply something.  In the  previous version
+         * ( pre-property based ) we supplied the name. So we will do that here also.
+         */
+        IExpression expression = (IExpression)DebugPlugin.getAdapter(update.getElement(), IExpression.class);
+        if (expression == null) {
+            update.setProperty(AbstractExpressionVMNode.PROP_ELEMENT_EXPRESSION, data.getName());
+        }
     }
 
     /**

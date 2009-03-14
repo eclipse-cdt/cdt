@@ -469,6 +469,16 @@ public class RegisterBitFieldVMNode extends AbstractExpressionVMNode
             update.setProperty(IRegisterVMConstants.PROP_CURRENT_MNEMONIC_LONG_NAME, mnemonic.getLongName());
             update.setProperty(IRegisterVMConstants.PROP_CURRENT_MNEMONIC_SHORT_NAME, mnemonic.getShortName());
         }
+        
+        /*
+         * If this node has an expression then it has already been filled in by the higher
+         * level logic. If not then we need to supply something.  In the  previous version
+         * ( pre-property based ) we supplied the name. So we will do that here also.
+         */
+        IExpression expression = (IExpression)DebugPlugin.getAdapter(update.getElement(), IExpression.class);
+        if (expression == null) {
+            update.setProperty(AbstractExpressionVMNode.PROP_ELEMENT_EXPRESSION, data.getName());
+        }
     }
     
     @Override

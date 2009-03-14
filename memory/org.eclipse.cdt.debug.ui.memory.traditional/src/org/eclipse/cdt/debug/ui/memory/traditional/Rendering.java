@@ -859,12 +859,12 @@ public class Rendering extends Composite implements IDebugEventSetListener
         {
             try
             {
-                final IMemoryBlockExtension memoryBlock = getMemoryBlock();
+                IMemoryBlockExtension memoryBlock = getMemoryBlock();
 
-                final BigInteger lengthInBytes = endAddress.subtract(startAddress);
-                final BigInteger addressableSize = BigInteger.valueOf(getAddressableSize());
+                BigInteger lengthInBytes = endAddress.subtract(startAddress);
+                BigInteger addressableSize = BigInteger.valueOf(getAddressableSize());
                 
-                final long units = lengthInBytes.divide(addressableSize).add(
+                long units = lengthInBytes.divide(addressableSize).add(
                 		lengthInBytes.mod(addressableSize).compareTo(BigInteger.ZERO) > 0
                 			? BigInteger.ONE : BigInteger.ZERO).longValue();
                 
@@ -873,9 +873,8 @@ public class Rendering extends Composite implements IDebugEventSetListener
                 // change history. Ideally, we should strictly use the back end change notification
                 // and history, but it is only guaranteed to work for bytes within the address range
                 // of the MemoryBlock. 
-                final MemoryByte readBytes[] = memoryBlock
-                	.getBytesFromAddress(startAddress, units);
-                
+                MemoryByte readBytes[] = memoryBlock.getBytesFromAddress(startAddress, units);
+
                 TraditionalMemoryByte cachedBytes[] = new TraditionalMemoryByte[readBytes.length];
                 for(int i = 0; i < readBytes.length; i++)
                 	cachedBytes[i] = new TraditionalMemoryByte(readBytes[i].getValue(), readBytes[i].getFlags());
@@ -905,8 +904,14 @@ public class Rendering extends Composite implements IDebugEventSetListener
             			cachedBytes = cachedBytesAsByteSequence;
             		}
             	}
-                
+            	
             	final TraditionalMemoryByte[] cachedBytesFinal = cachedBytes;
+                
+            	fCache = new MemoryUnit();
+                fCache.start = startAddress;
+                fCache.end = endAddress;
+                fCache.bytes = cachedBytesFinal;
+                
                 Display.getDefault().asyncExec(new Runnable()
                 {
                     public void run()
@@ -943,11 +948,6 @@ public class Rendering extends Composite implements IDebugEventSetListener
 	                            }
 	                        }
                     	}
-
-                        fCache = new MemoryUnit();
-                        fCache.start = startAddress;
-                        fCache.end = endAddress;
-                        fCache.bytes = cachedBytesFinal;
                         
                         // If the history does not exist, populate the history with the just populated cache. This solves the
                         // use case of 1) connect to target; 2) edit memory before the first suspend debug event; 3) paint

@@ -804,20 +804,18 @@ public class Rendering extends Composite implements IDebugEventSetListener
                     if(fQueue.size() > 0)
                     {
                     	Request request = (Request) fQueue.elementAt(0);
-                    	Class type = null;
-                    	if(request instanceof ArchiveDeltas)
-                    	{
-                    		archiveDeltas = true;
-                    		type = ArchiveDeltas.class;
-                    	}
-                    	else if(request instanceof AddressPair)
-                    	{
-                    		pair = (AddressPair) request;
-                    		type = AddressPair.class;
-                    	}
+                    	Class type = request.getClass();
                     	
                     	while(fQueue.size() > 0 && type.isInstance(fQueue.elementAt(0)))
+                    	{
+                    		request = (Request) fQueue.elementAt(0);
                     		fQueue.removeElementAt(0);
+                    	}
+                    	
+                    	if(request instanceof ArchiveDeltas)
+                    		archiveDeltas = true;
+                    	else if(request instanceof AddressPair)
+                    		pair = (AddressPair) request;
                     }
                 }
                 if(archiveDeltas)

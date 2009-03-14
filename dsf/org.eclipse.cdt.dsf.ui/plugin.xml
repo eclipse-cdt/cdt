@@ -531,6 +531,18 @@
            toolbarPath="additions">
          </action>
          </viewContribution>
+    	<viewContribution
+            targetID="org.eclipse.cdt.debug.ui.memory.memorybrowser.MemoryBrowser"
+            id="org.eclipse.cdt.debug.ui.memory.memorybrowser.MemoryBrowser.toolbar">
+	    	<action
+	           class="org.eclipse.cdt.dsf.debug.ui.memory.RefreshAction"
+	           enablesFor="1"
+	           icon="icons/refresh.gif"
+	           id="org.eclipse.cdt.debug.ui.memory.memorybrowser.MemoryBrowser.memoryBrowserRefresh"
+	           label="Refresh"
+	           toolbarPath="additions">
+	         </action>
+         </viewContribution>
     </extension>
     <extension
          point="org.eclipse.ui.viewActions">

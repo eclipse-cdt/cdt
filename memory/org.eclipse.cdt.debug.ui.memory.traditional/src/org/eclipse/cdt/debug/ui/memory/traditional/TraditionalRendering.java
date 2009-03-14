@@ -561,7 +561,7 @@ public class TraditionalRendering extends AbstractMemoryRendering implements IRe
                 TraditionalRenderingMessages
                     .getString("TraditionalRendering.COPY_ADDRESS")) //$NON-NLS-1$
             {
-                public void run()
+   				public void run()
                 {
                     Display.getDefault().asyncExec(new Runnable()
                     {
@@ -1063,6 +1063,10 @@ public class TraditionalRendering extends AbstractMemoryRendering implements IRe
                 manager.add(sub);
                 manager.add(new Separator());
                 
+                BigInteger start = fRendering.getSelection().getStart();
+                BigInteger end = fRendering.getSelection().getEnd();
+				copyAction.setEnabled(start != null && end != null);
+				
                 manager.add(copyAction);
                 manager.add(copyAddressAction);
 
@@ -1329,7 +1333,7 @@ class CopyAction extends Action
         setDisabledImageDescriptor(DebugPluginImages
             .getImageDescriptor(IInternalDebugUIConstants.IMG_DLCL_COPY_VIEW_TO_CLIPBOARD));
     }
-
+    
     public void run()
     {
         final String PANE_SPACING = "  "; //$NON-NLS-1$

@@ -25,10 +25,10 @@ import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.model.IMemoryBlock;
-import org.eclipse.debug.internal.ui.views.memory.MemoryView;
 import org.eclipse.debug.internal.ui.views.memory.RenderingViewPane;
 import org.eclipse.debug.ui.memory.IMemoryRendering;
 import org.eclipse.debug.ui.memory.IMemoryRenderingContainer;
+import org.eclipse.debug.ui.memory.IMemoryRenderingSite;
 import org.eclipse.debug.ui.memory.IRepositionableMemoryRendering;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.swt.SWT;
@@ -61,16 +61,16 @@ public class ImportMemoryDialog extends SelectionDialog
 	
 	private Properties fProperties = new Properties();
 	
-	private MemoryView fMemoryView;
+	private IMemoryRenderingSite fMemoryView;
 	
-	public ImportMemoryDialog(Shell parent, IMemoryBlock memoryBlock, MemoryView view)
+	public ImportMemoryDialog(Shell parent, IMemoryBlock memoryBlock, IMemoryRenderingSite renderingSite)
 	{
 		super(parent);
 		super.setTitle("Download to Memory");  
 		setShellStyle(getShellStyle() | SWT.RESIZE);
 		
 		fMemoryBlock = memoryBlock;
-		fMemoryView = view;
+		fMemoryView = renderingSite;
 	}
 	
 	protected void scrollRenderings(final BigInteger address)

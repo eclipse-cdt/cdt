@@ -13,12 +13,15 @@ package org.eclipse.cdt.debug.ui.memory.memorybrowser;
 
 import java.lang.reflect.Method;
 import java.math.BigInteger;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.DebugPlugin;
@@ -52,11 +55,14 @@ import org.eclipse.jface.resource.ColorRegistry;
 import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
+import org.eclipse.jface.util.SafeRunnable;
 import org.eclipse.jface.viewers.IBasicPropertyConstants;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.ISelectionProvider;
+import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.StructuredSelection;
+import org.eclipse.jface.viewers.TreeSelection;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.CTabFolder;
 import org.eclipse.swt.custom.CTabFolder2Adapter;
@@ -74,11 +80,12 @@ import org.eclipse.swt.layout.FormLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.ui.IActionBars;
 import org.eclipse.ui.IWorkbenchActionConstants;
-import org.eclipse.ui.IWorkbenchPartSite;
 import org.eclipse.ui.IWorkbenchPreferenceConstants;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.part.ViewPart;
@@ -96,7 +103,7 @@ import org.eclipse.ui.progress.WorkbenchJob;
  * 
  */
 
-public class MemoryBrowser extends ViewPart implements IDebugContextListener, ILaunchListener
+public class MemoryBrowser extends ViewPart implements IDebugContextListener, ILaunchListener, IMemoryRenderingSite
 {
 	public static final String ID = "org.eclipse.cdt.debug.ui.memory.memorybrowser.MemoryBrowser";  //$NON-NLS-1$
 	
@@ -140,20 +147,7 @@ public class MemoryBrowser extends ViewPart implements IDebugContextListener, IL
 		else if(types.length > 0)
 			defaultRenderingTypeId = types[0].getId();
 		
-		getSite().setSelectionProvider(new ISelectionProvider() {
-
-			public void addSelectionChangedListener(
-					ISelectionChangedListener listener) {}
-
-			public ISelection getSelection() {
-				return null;
-			}
-
-			public void removeSelectionChangedListener(
-					ISelectionChangedListener listener) {}
-
-			public void setSelection(ISelection selection) {}
-		});
+		getSite().setSelectionProvider(new SelectionProviderAdapter());
 		
 		fMainComposite = new Composite(parent, SWT.NONE);
 		
@@ -218,6 +212,11 @@ public class MemoryBrowser extends ViewPart implements IDebugContextListener, IL
 			.addDebugContextListener(this);
 		
 		DebugPlugin.getDefault().getLaunchManager().addLaunchListener(this);
+		
+		Object selection = DebugUITools.getDebugContextManager()
+			.getContextService(getSite().getWorkbenchWindow()).getActiveContext();
+		if(selection instanceof StructuredSelection)
+			handleDebugContextChanged(((StructuredSelection) selection).getFirstElement());
 	}
 	
 	public void dispose() {
@@ -234,6 +233,57 @@ public class MemoryBrowser extends ViewPart implements IDebugContextListener, IL
 		IMemoryBlockRetrieval retrieval = ((IMemoryBlockRetrieval) launch.getAdapter(IMemoryBlockRetrieval.class));
 		if(retrieval != null)
 			releaseTabFolder(retrieval);
+	}
+	
+	public IMemoryRenderingContainer getContainer(String id) {
+		return null;
+	}
+
+	public IMemoryRenderingContainer[] getMemoryRenderingContainers() {
+		return new IMemoryRenderingContainer[] {
+			new IMemoryRenderingContainer()
+			{
+
+				public void addMemoryRendering(IMemoryRendering rendering) {
+					
+				}
+
+				public IMemoryRendering getActiveRendering() {
+					if(fStackLayout.topControl instanceof CTabFolder)
+					{
+						CTabFolder activeFolder = (CTabFolder) fStackLayout.topControl;
+						if(activeFolder.getSelection() != null)
+							return (IMemoryRendering) activeFolder.getSelection().getData(KEY_RENDERING);
+					}
+					return null;
+				}
+
+				public String getId() {
+					return null;
+				}
+
+				public String getLabel() {
+					return null;
+				}
+
+				public IMemoryRenderingSite getMemoryRenderingSite() {
+					return MemoryBrowser.this;
+				}
+
+				public IMemoryRendering[] getRenderings() {
+					return null;
+				}
+
+				public void removeMemoryRendering(IMemoryRendering rendering) {
+					
+				}
+				
+			}
+		};
+	}
+
+	public IMemoryRenderingSynchronizationService getSynchronizationService() {
+		return null;
 	}
 	
 	private void handleUnsupportedSelection()
@@ -256,6 +306,7 @@ public class MemoryBrowser extends ViewPart implements IDebugContextListener, IL
 				populateTabWithRendering(item, retrieval, context);
 				setTabFolder(retrieval, activeFolder);
 				activeFolder.setSelection(item);
+				getSite().getSelectionProvider().setSelection(new StructuredSelection(item.getData(KEY_RENDERING)));
 			}
 			
 			Control c = activeFolder.getSelection().getControl();
@@ -350,8 +401,7 @@ public class MemoryBrowser extends ViewPart implements IDebugContextListener, IL
 	private void contributeToActionBars() {
 		IActionBars bars = getViewSite().getActionBars();
 		fillLocalPullDown(bars.getMenuManager());
-		fillLocalToolBar(bars.getToolBarManager()); 
-		bars.getToolBarManager().add(new Action() { });
+		fillLocalToolBar(bars.getToolBarManager());
 	}
 
 	private void fillLocalPullDown(IMenuManager manager) {
@@ -426,49 +476,57 @@ public class MemoryBrowser extends ViewPart implements IDebugContextListener, IL
 	public void setFocus() {
 		getControl().setFocus();
 	}
-
+	
 	public void debugContextChanged(DebugContextEvent event) {
+		handleDebugContextChanged(((StructuredSelection) event.getContext()).getFirstElement());
+	}
+	
+	public void handleDebugContextChanged(Object context) {
 		if(defaultRenderingTypeId == null)
 			return;
-		
-		if(event.getContext() instanceof StructuredSelection)
+	
+		if(context instanceof IAdaptable)
 		{
-			Object context = ((StructuredSelection) event.getContext()).getFirstElement();
-			if(context instanceof IAdaptable)
+			IMemoryBlockRetrieval retrieval = ((IMemoryBlockRetrieval) ((IAdaptable) context).getAdapter(IMemoryBlockRetrieval.class));
+			if(retrieval != null)
 			{
-				IMemoryBlockRetrieval retrieval = ((IMemoryBlockRetrieval) ((IAdaptable) context).getAdapter(IMemoryBlockRetrieval.class));
-				if(retrieval != null)
+				fGotoAddressBarControl.setVisible(true);
+				if(getTabFolder(retrieval) != null)
 				{
-					fGotoAddressBarControl.setVisible(true);
-					if(getTabFolder(retrieval) != null)
-					{
-						fStackLayout.topControl = getTabFolder(retrieval);
-					}
-					else
-					{
-						CTabFolder newFolder = this.createTabFolder(fRenderingsComposite);
-						newFolder.addCTabFolder2Listener(new CTabFolder2Adapter() {
-							public void close(CTabFolderEvent event) {
-								event.doit = true;
-							}
-						});
-						
-						newFolder.setData(KEY_CONTEXT, context);
-						newFolder.setData(KEY_RETRIEVAL, retrieval);
-						
-						CTabItem item = createTab(newFolder, 0);
-						populateTabWithRendering(item, retrieval, context);
-						setTabFolder(retrieval, newFolder);
-						
-						fStackLayout.topControl = getTabFolder(retrieval);
-					}
+					fStackLayout.topControl = getTabFolder(retrieval);
 				}
 				else
 				{
-					handleUnsupportedSelection();
+					CTabFolder newFolder = this.createTabFolder(fRenderingsComposite);
+					newFolder.addCTabFolder2Listener(new CTabFolder2Adapter() {
+						public void close(CTabFolderEvent event) {
+							event.doit = true;
+						}
+					});
+					newFolder.addSelectionListener(new SelectionListener()
+					{
+						public void widgetDefaultSelected(SelectionEvent e) {}
+
+						public void widgetSelected(SelectionEvent e) {
+							getSite().getSelectionProvider().setSelection(new StructuredSelection(((CTabItem) e.item).getData(KEY_RENDERING)));
+						}
+					});
+					
+					newFolder.setData(KEY_CONTEXT, context);
+					newFolder.setData(KEY_RETRIEVAL, retrieval);
+					
+					CTabItem item = createTab(newFolder, 0);
+					populateTabWithRendering(item, retrieval, context);
+					setTabFolder(retrieval, newFolder);
+					
+					fStackLayout.topControl = getTabFolder(retrieval);
 				}
-				fStackLayout.topControl.getParent().layout(true);	
 			}
+			else
+			{
+				handleUnsupportedSelection();
+			}
+			fStackLayout.topControl.getParent().layout(true);
 		}
 	}
 	
@@ -504,24 +562,7 @@ public class MemoryBrowser extends ViewPart implements IDebugContextListener, IL
 				}
 
 				public IMemoryRenderingSite getMemoryRenderingSite() {
-					return new IMemoryRenderingSite() {
-						public IMemoryRenderingContainer getContainer(String id) {
-							return null;
-						}
-
-						public IMemoryRenderingContainer[] getMemoryRenderingContainers() {
-							return null;
-						}
-
-						public IWorkbenchPartSite getSite() {
-							return MemoryBrowser.this.getSite();
-						}
-
-						public IMemoryRenderingSynchronizationService getSynchronizationService() {
-							return null;
-						}
-						
-					};
+					return MemoryBrowser.this;
 				}
 
 				public IMemoryRendering[] getRenderings() {
@@ -546,6 +587,7 @@ public class MemoryBrowser extends ViewPart implements IDebugContextListener, IL
 			tab.setControl(rendering.getControl());
 			tab.getParent().setSelection(0);
 			tab.setData(KEY_RENDERING, rendering);
+			getSite().getSelectionProvider().setSelection(new StructuredSelection(tab.getData(KEY_RENDERING)));
 			updateLabel(tab, rendering);
 			
 			rendering.addPropertyChangeListener(new IPropertyChangeListener()
@@ -590,6 +632,42 @@ public class MemoryBrowser extends ViewPart implements IDebugContextListener, IL
 				tab.dispose();
 		}
 		fContextFolders.remove(context);
+	}
+	
+	class SelectionProviderAdapter implements ISelectionProvider {
+
+	    List listeners = new ArrayList();
+
+	    ISelection theSelection = StructuredSelection.EMPTY;
+
+	    public void addSelectionChangedListener(ISelectionChangedListener listener) {
+	        listeners.add(listener);
+	    }
+
+	    public ISelection getSelection() {
+	        return theSelection;
+	    }
+
+	    public void removeSelectionChangedListener(
+	            ISelectionChangedListener listener) {
+	        listeners.remove(listener);
+	    }
+
+	    public void setSelection(ISelection selection) {
+	        theSelection = selection;
+	        final SelectionChangedEvent e = new SelectionChangedEvent(this, selection);
+	        Object[] listenersArray = listeners.toArray();
+	        
+	        for (int i = 0; i < listenersArray.length; i++) {
+	            final ISelectionChangedListener l = (ISelectionChangedListener) listenersArray[i];
+	            Platform.run(new SafeRunnable() {
+	                public void run() {
+	                    l.selectionChanged(e);
+	                }
+	            });
+			}
+	    }
+
 	}
 }
 

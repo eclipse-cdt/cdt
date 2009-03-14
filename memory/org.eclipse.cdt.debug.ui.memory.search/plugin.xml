@@ -24,6 +24,30 @@
           menubarPath="additions">
     </action>
  </viewContribution>
+ 
+ <viewContribution
+       id="org.eclipse.cdt.debug.ui.memory.memorybrowser.MemoryBrowser.findNext"
+       targetID="org.eclipse.cdt.debug.ui.memory.memorybrowser.MemoryBrowser">
+    <action
+          class="org.eclipse.cdt.debug.ui.memory.search.FindAction"
+          enablesFor="1"
+          id="org.eclipse.cdt.debug.ui.memory.search.FindAction"
+          label="Find Next"
+          menubarPath="additions">
+    </action>
+ </viewContribution>
+ <viewContribution
+       id="org.eclipse.debug.ui.MemoryView.findReplace"
+       targetID="org.eclipse.cdt.debug.ui.memory.memorybrowser.MemoryBrowser">
+    <action
+          class="org.eclipse.cdt.debug.ui.memory.search.FindAction"
+          enablesFor="1"
+          id="org.eclipse.cdt.debug.ui.memory.search.FindAction"
+          label="Find/Replace..."
+          menubarPath="additions">
+    </action>
+ </viewContribution>
+ 
 </extension>
 
  <extension point="org.eclipse.search.searchResultViewPages">

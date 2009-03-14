@@ -11,7 +11,6 @@
 
 package org.eclipse.cdt.debug.ui.memory.search;
 
-import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.math.BigInteger;
 import java.util.Properties;
@@ -26,11 +25,9 @@ import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.model.IMemoryBlockExtension;
 import org.eclipse.debug.core.model.MemoryByte;
-import org.eclipse.debug.internal.ui.DebugUIPlugin;
-import org.eclipse.debug.internal.ui.views.memory.MemoryView;
-import org.eclipse.debug.ui.IDebugUIConstants;
 import org.eclipse.debug.ui.memory.IMemoryRendering;
 import org.eclipse.debug.ui.memory.IMemoryRenderingContainer;
+import org.eclipse.debug.ui.memory.IMemoryRenderingSite;
 import org.eclipse.debug.ui.memory.IRepositionableMemoryRendering;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.viewers.ISelection;
@@ -80,7 +77,7 @@ public class FindReplaceDialog extends SelectionDialog
 	private Button fReplaceAllButton;
 	private Button fCloseButton;
 
-	private MemoryView fMemoryView;
+	private IMemoryRenderingSite fMemoryView;
 	
 	private Button fFormatAsciiButton;
 	private Button fFormatHexButton;
@@ -114,7 +111,7 @@ public class FindReplaceDialog extends SelectionDialog
 	protected final static String SEARCH_FORMAT_WRAP = "SEARCH_FORMAT_WRAP"; //$NON-NLS-1$
 	protected final static String SEARCH_ENABLE_FIND_NEXT = "SEARCH_ENABLE_FIND_NEXT"; //$NON-NLS-1$
 	
-	public FindReplaceDialog(Shell parent, IMemoryBlockExtension memoryBlock, MemoryView memoryView, Properties properties)
+	public FindReplaceDialog(Shell parent, IMemoryBlockExtension memoryBlock, IMemoryRenderingSite memoryView, Properties properties)
 	{
 		super(parent);
 		super.setTitle(Messages.getString("FindReplaceDialog.Title"));  //$NON-NLS-1$
@@ -456,7 +453,7 @@ public class FindReplaceDialog extends SelectionDialog
 	
 	private String getViewportStart()
 	{
-		ISelection selection = fMemoryView.getViewPane(IDebugUIConstants.ID_RENDERING_VIEW_PANE_1).getSelectionProvider().getSelection();
+		ISelection selection = fMemoryView.getMemoryRenderingContainers()[0].getMemoryRenderingSite().getSite().getSelectionProvider().getSelection();
 		if(selection instanceof StructuredSelection)
 		{
 			if(((StructuredSelection) selection).getFirstElement() instanceof IRepositionableMemoryRendering)
@@ -1029,7 +1026,7 @@ public class FindReplaceDialog extends SelectionDialog
 				return Status.OK_STATUS;
 			}
 
-			public MemoryView getMemoryView() {
+			public IMemoryRenderingSite getMemoryView() {
 				return fMemoryView;
 			}
 		};
@@ -1190,7 +1187,7 @@ public class FindReplaceDialog extends SelectionDialog
 	
 	interface IMemorySearchQuery extends ISearchQuery
 	{
-		public MemoryView getMemoryView();
+		public IMemoryRenderingSite getMemoryView();
 	};
 	
 }

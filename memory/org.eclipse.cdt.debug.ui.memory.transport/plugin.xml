@@ -47,16 +47,16 @@
 	    	targetID="org.eclipse.debug.ui.MemoryView"
 	        id="org.eclipse.debug.ui.memoryView.toolbar">
 	        	<action
-                class="org.eclipse.cdt.debug.ui.memory.transport.actions.ExportMemoryAction"
-                enablesFor="1"
-                helpContextId="ExportMemoryAction_context"
-                icon="icons/export.png"
-                id="org.eclipse.cdt.debug.ui.memory.transport.actions.ExportMemoryAction"
-                label="%ExportMemoryAction.label"
-                state="false"
-                style="push"
-                toolbarPath="additions"
-                tooltip="%ExportMemoryAction.label"/>
+	                class="org.eclipse.cdt.debug.ui.memory.transport.actions.ExportMemoryAction"
+	                enablesFor="1"
+	                helpContextId="ExportMemoryAction_context"
+	                icon="icons/export.png"
+	                id="org.eclipse.cdt.debug.ui.memory.transport.actions.ExportMemoryAction"
+	                label="%ExportMemoryAction.label"
+	                state="false"
+	                style="push"
+	                toolbarPath="additions"
+	                tooltip="%ExportMemoryAction.label"/>
 	            <action
                    class="org.eclipse.cdt.debug.ui.memory.transport.actions.ImportMemoryAction"
                    enablesFor="1"
@@ -69,5 +69,32 @@
                    toolbarPath="additions"
                    tooltip="%ImportMemoryAction.label"/>
 	    </viewContribution>
+	    <viewContribution
+	    	targetID="org.eclipse.cdt.debug.ui.memory.memorybrowser.MemoryBrowser"
+	        id="org.eclipse.cdt.debug.ui.memory.memorybrowser.MemoryBrowser.toolbar">
+	        	<action
+	                class="org.eclipse.cdt.debug.ui.memory.transport.actions.ExportMemoryAction"
+	                enablesFor="1"
+	                helpContextId="ExportMemoryAction_context"
+	                icon="icons/export.png"
+	                id="org.eclipse.cdt.debug.ui.memory.transport.actions.ExportMemoryAction"
+	                label="%ExportMemoryAction.label"
+	                state="false"
+	                style="push"
+	                toolbarPath="additions"
+	                tooltip="%ExportMemoryAction.label"/>
+	            <action
+	               class="org.eclipse.cdt.debug.ui.memory.transport.actions.ImportMemoryAction"
+	               enablesFor="1"
+	               helpContextId="ImportMemoryAction_context"
+	               icon="icons/import.png"
+	               id="org.eclipse.cdt.debug.ui.memory.transport.actions.ImportMemoryAction2"
+	               label="%ImportMemoryAction.label"
+	               state="false"
+	               style="push"
+	               toolbarPath="additions"
+	               tooltip="%ImportMemoryAction.label"/>
+	    </viewContribution>
 	</extension>
+	
 </plugin>

@@ -18,6 +18,7 @@ import org.eclipse.debug.core.model.IMemoryBlockExtension;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.debug.internal.ui.views.memory.MemoryView;
 import org.eclipse.debug.ui.memory.IMemoryRendering;
+import org.eclipse.debug.ui.memory.IMemoryRenderingSite;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
@@ -27,13 +28,13 @@ import org.eclipse.ui.IViewPart;
 
 public class FindAction implements IViewActionDelegate {
 
-	private MemoryView fView;
+	private IMemoryRenderingSite fView;
 	
 	private static Properties fSearchDialogProperties = new Properties();
 
 	public void init(IViewPart view) {
-		if (view instanceof MemoryView)
-			fView = (MemoryView) view;
+		if (view instanceof IMemoryRenderingSite)
+			fView = (IMemoryRenderingSite) view;
 	}
 
 	public void run(IAction action) {

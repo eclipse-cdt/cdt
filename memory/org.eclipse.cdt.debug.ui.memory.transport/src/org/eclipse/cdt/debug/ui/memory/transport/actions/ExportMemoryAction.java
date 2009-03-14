@@ -14,8 +14,8 @@ package org.eclipse.cdt.debug.ui.memory.transport.actions;
 import org.eclipse.cdt.debug.ui.memory.transport.ExportMemoryDialog;
 import org.eclipse.cdt.debug.ui.memory.transport.MemoryTransportPlugin;
 import org.eclipse.debug.core.model.IMemoryBlock;
-import org.eclipse.debug.internal.ui.views.memory.MemoryView;
 import org.eclipse.debug.ui.memory.IMemoryRendering;
+import org.eclipse.debug.ui.memory.IMemoryRenderingSite;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
@@ -27,11 +27,11 @@ import org.eclipse.ui.IViewPart;
  */
 public class ExportMemoryAction implements IViewActionDelegate {
 
-	private MemoryView fView;
+	private IMemoryRenderingSite fView;
 
 	public void init(IViewPart view) {
-		if (view instanceof MemoryView)
-			fView = (MemoryView) view;
+		if (view instanceof IMemoryRenderingSite)
+			fView = (IMemoryRenderingSite) view;
 	}
 
 	private IMemoryBlock getMemoryBlock(ISelection selection)

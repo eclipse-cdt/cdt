@@ -727,9 +727,9 @@ public class Rendering extends Composite implements IDebugEventSetListener
         public void dispose()
         {
             fDisposed = true;
-            synchronized(this)
+            synchronized(fQueue)
             {
-                this.notify();
+            	fQueue.notify();
             }
         }
         
@@ -789,10 +789,7 @@ public class Rendering extends Composite implements IDebugEventSetListener
         			fQueue.addElement(element);
                 	fLastQueued = element;
                 }
-            }
-            synchronized(this)
-            {
-                this.notify();
+        		fQueue.notify();
             }
         }
 
@@ -836,11 +833,14 @@ public class Rendering extends Composite implements IDebugEventSetListener
                 }
                 else
                 {
-                    synchronized(this)
+                    synchronized(fQueue)
                     {
                         try
                         {
-                            this.wait();
+                        	if(fQueue.isEmpty())
+                        	{
+                        		fQueue.wait();
+                        	}
                         }
                         catch(Exception e)
                         {

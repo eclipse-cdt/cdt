@@ -142,6 +142,12 @@ public class Rendering extends Composite implements IDebugEventSetListener
     
     // flag whether the memory cache is dirty
     private boolean fCacheDirty = false;
+    
+    // update modes
+    public final static int UPDATE_ALWAYS = 1;
+    public final static int UPDATE_ON_BREAKPOINT = 2;
+    public final static int UPDATE_MANUAL = 3;
+    public int fUpdateMode = UPDATE_ALWAYS;
 
     public Rendering(Composite parent, TraditionalRendering renderingParent)
     {
@@ -535,6 +541,7 @@ public class Rendering extends Composite implements IDebugEventSetListener
     	
     	boolean isChangeOnly = false;
     	boolean isSuspend = false;
+    	boolean isBreakpointHit = false;
     	
     	for(int i = 0; i < events.length; i++)
         {	
@@ -548,6 +555,8 @@ public class Rendering extends Composite implements IDebugEventSetListener
                 if(source.getDebugTarget() == getMemoryBlock()
                         .getDebugTarget())
                 {
+                	if((detail & DebugEvent.BREAKPOINT) != 0)
+                		isBreakpointHit = true;
                 	if(kind == DebugEvent.SUSPEND)
                 	{
                 		handleSuspendEvent(detail);
@@ -563,32 +572,39 @@ public class Rendering extends Composite implements IDebugEventSetListener
         }
     	
     	if(isSuspend)
-    		handleSuspend();
+    		handleSuspend(isBreakpointHit);
     	else if(isChangeOnly)
     		handleChange();
     }
     
-    protected void handleSuspend()
+    protected void handleSuspend(boolean isBreakpointHit)
     {
-    	Display.getDefault().asyncExec(new Runnable()
-        {
-            public void run()
+    	if(getUpdateMode() == UPDATE_ALWAYS || 
+    		(getUpdateMode() == UPDATE_ON_BREAKPOINT && isBreakpointHit))
+    	{
+    		Display.getDefault().asyncExec(new Runnable()
             {
-            	archiveDeltas();
-                refresh();
-            }
-        });
+                public void run()
+                {
+                	archiveDeltas();
+                    refresh();
+                }
+            });
+    	}
     }
     
     protected void handleChange()
     {
-    	Display.getDefault().asyncExec(new Runnable()
-        {
-            public void run()
-            {
-                refresh();
-            }
-        });
+    	if(getUpdateMode() == UPDATE_ALWAYS)
+    	{
+	    	Display.getDefault().asyncExec(new Runnable()
+	        {
+	            public void run()
+	            {
+	                refresh();
+	            }
+	        });
+    	}
     }
 
     protected void handleSuspendEvent(int detail)
@@ -1629,7 +1645,15 @@ public class Rendering extends Composite implements IDebugEventSetListener
     	return fTextMode;
     }
     
-    protected String getCharacterSet(int mode)
+    public int getUpdateMode() {
+		return fUpdateMode;
+	}
+
+	public void setUpdateMode(int fUpdateMode) {
+		this.fUpdateMode = fUpdateMode;
+	}
+
+	protected String getCharacterSet(int mode)
     {
     	switch(mode)
     	{

@@ -1061,6 +1061,49 @@ public class TraditionalRendering extends AbstractMemoryRendering implements IRe
                 
                 sub.add(displayColumnCountCustom);
                 manager.add(sub);
+                
+                final Action updateAlwaysAction = new Action(
+                        TraditionalRenderingMessages
+                        .getString("TraditionalRendering.UPDATE_ALWAYS"), //$NON-NLS-1$
+                    IAction.AS_RADIO_BUTTON)
+                {
+                    public void run()
+                    {
+                    	fRendering.setUpdateMode(Rendering.UPDATE_ALWAYS);
+                    }
+                };
+                updateAlwaysAction.setChecked(fRendering.getUpdateMode() == Rendering.UPDATE_ALWAYS);
+                
+                final Action updateOnBreakpointAction = new Action(
+                        TraditionalRenderingMessages
+                        .getString("TraditionalRendering.UPDATE_ON_BREAKPOINT"), //$NON-NLS-1$
+                    IAction.AS_RADIO_BUTTON)
+                {
+                    public void run()
+                    {
+                    	fRendering.setUpdateMode(Rendering.UPDATE_ON_BREAKPOINT);
+                    }
+                };
+                updateOnBreakpointAction.setChecked(fRendering.getUpdateMode() == Rendering.UPDATE_ON_BREAKPOINT);
+                
+                final Action updateManualAction = new Action(
+                        TraditionalRenderingMessages
+                        .getString("TraditionalRendering.UPDATE_MANUAL"), //$NON-NLS-1$
+                    IAction.AS_RADIO_BUTTON)
+                {
+                    public void run()
+                    {
+                    	fRendering.setUpdateMode(Rendering.UPDATE_MANUAL);
+                    }
+                };
+                updateManualAction.setChecked(fRendering.getUpdateMode() == Rendering.UPDATE_MANUAL);
+                
+                sub = new MenuManager(TraditionalRenderingMessages
+                    .getString("TraditionalRendering.UPDATEMODE")); //$NON-NLS-1$
+                sub.add(updateAlwaysAction);
+                sub.add(updateOnBreakpointAction);
+                sub.add(updateManualAction);
+                manager.add(sub);
                 manager.add(new Separator());
                 
                 BigInteger start = fRendering.getSelection().getStart();

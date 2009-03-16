@@ -56,6 +56,7 @@ import org.eclipse.cdt.core.dom.ast.IASTStandardFunctionDeclarator;
 import org.eclipse.cdt.core.dom.ast.IASTStatement;
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
 import org.eclipse.cdt.core.dom.ast.IASTTypeId;
+import org.eclipse.cdt.core.dom.ast.IASTTypeIdInitializerExpression;
 import org.eclipse.cdt.core.dom.ast.IASTUnaryExpression;
 import org.eclipse.cdt.core.dom.ast.IArrayType;
 import org.eclipse.cdt.core.dom.ast.IBasicType;
@@ -812,14 +813,16 @@ public class CPPVisitor extends ASTQueries {
 			    }
 			} else if (node instanceof IASTInitializerExpression) {
 			    IASTNode parent = node.getParent();
-			    while (!(parent instanceof IASTDeclarator))
+			    while (!(parent instanceof IASTDeclarator || parent instanceof IASTTypeIdInitializerExpression))
 			        parent = parent.getParent();
-	    	    IASTDeclarator dtor = (IASTDeclarator) parent;
-	    	    IASTName name = dtor.getName();
-	    	    if (name instanceof ICPPASTQualifiedName) {
-	    	        IASTName[] ns = ((ICPPASTQualifiedName) name).getNames();
-	    	        return getContainingScope(ns[ns.length - 1]);
-	    	    }
+			    if(parent instanceof IASTDeclarator) {
+		    	    IASTDeclarator dtor = (IASTDeclarator) parent;
+		    	    IASTName name = dtor.getName();
+		    	    if (name instanceof ICPPASTQualifiedName) {
+		    	        IASTName[] ns = ((ICPPASTQualifiedName) name).getNames();
+		    	        return getContainingScope(ns[ns.length - 1]);
+		    	    }
+			    }
 			} else if (node instanceof IASTExpression) {
 		    	IASTNode parent = node.getParent();
 			    if (parent instanceof IASTForStatement) {
@@ -840,15 +843,18 @@ public class CPPVisitor extends ASTQueries {
 			    	}
 			    } else if (parent instanceof IASTArrayModifier || parent instanceof IASTInitializer) {
 			        IASTNode d = parent.getParent();
-			        while (!(d instanceof IASTDeclarator))
+			        while (!(d instanceof IASTDeclarator || d instanceof IASTTypeIdInitializerExpression)) {
 			            d = d.getParent();
-			        IASTDeclarator dtor = (IASTDeclarator) d;
-			        while (dtor.getNestedDeclarator() != null)
-			            dtor = dtor.getNestedDeclarator();
-			        IASTName name = dtor.getName();
-			        if (name instanceof ICPPASTQualifiedName) {
-			            IASTName[] ns = ((ICPPASTQualifiedName) name).getNames();
-			            return getContainingScope(ns[ns.length - 1]);
+			        }
+			        if(d instanceof IASTDeclarator) {
+				        IASTDeclarator dtor = (IASTDeclarator) d;
+				        while (dtor.getNestedDeclarator() != null)
+				            dtor = dtor.getNestedDeclarator();
+				        IASTName name = dtor.getName();
+				        if (name instanceof ICPPASTQualifiedName) {
+				            IASTName[] ns = ((ICPPASTQualifiedName) name).getNames();
+				            return getContainingScope(ns[ns.length - 1]);
+				        }
 			        }
 			    } else if (parent instanceof ICPPASTTemplateId &&
 			    		node.getPropertyInParent() == ICPPASTTemplateId.TEMPLATE_ID_ARGUMENT) {

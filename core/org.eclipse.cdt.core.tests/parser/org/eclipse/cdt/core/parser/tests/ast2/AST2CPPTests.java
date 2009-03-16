@@ -7004,4 +7004,18 @@ public class AST2CPPTests extends AST2BaseTest {
 		final String code = getAboveComment();
 		parseAndCheckBindings(code, ParserLanguage.CPP);
 	}
+	
+	
+	//	struct A {int a;};
+	//
+	//	int foo();
+	//	int bar(A);
+	//
+	//	int func() {
+	//		bar((A){foo()});
+	//	}
+	public void testBug268714() throws Exception {
+		final String code = getAboveComment();
+		parseAndCheckBindings(code, ParserLanguage.CPP);
+	}
 }

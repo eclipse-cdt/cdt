@@ -188,6 +188,17 @@ public class CWizardHandler implements Cloneable {
 			throws CoreException {
 		createProject(proj, defaults, monitor);
 	}
+	
+	/**
+	 * Converts an already created project
+	 * 
+	 * @param proj - the project to convert
+	 * 
+	 * @throws CoreException
+	 * @since 5.1
+	 */
+	public void convertProject(IProject proj, IProgressMonitor monitor) throws CoreException {}
+	
 	/**
 	 * 
 	 * @return true if settings were changed 

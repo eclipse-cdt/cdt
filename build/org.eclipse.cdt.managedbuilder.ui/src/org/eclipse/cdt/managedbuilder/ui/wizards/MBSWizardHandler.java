@@ -524,54 +524,7 @@ public class MBSWizardHandler extends CWizardHandler {
 	public void createProject(IProject project, boolean defaults, boolean onFinish, IProgressMonitor monitor) throws CoreException {
 		try {
 			monitor.beginTask("", 100); //$NON-NLS-1$
-			ICProjectDescriptionManager mngr = CoreModel.getDefault().getProjectDescriptionManager();
-			ICProjectDescription des = mngr.createProjectDescription(project, false, !onFinish);
-			ManagedBuildInfo info = ManagedBuildManager.createBuildInfo(project);
-			monitor.worked(10);
-			cfgs = fConfigPage.getCfgItems(false);
-			if (cfgs == null || cfgs.length == 0) 
-				cfgs = CDTConfigWizardPage.getDefaultCfgs(this);
-			
-			if (cfgs == null || cfgs.length == 0 || cfgs[0].getConfiguration() == null) {
-				throw new CoreException(new Status(IStatus.ERROR, 
-						ManagedBuilderUIPlugin.getUniqueIdentifier(),
-						Messages.getString("CWizardHandler.6"))); //$NON-NLS-1$
-			}
-			Configuration cf = (Configuration)cfgs[0].getConfiguration();
-			ManagedProject mProj = new ManagedProject(project, cf.getProjectType());
-			info.setManagedProject(mProj);
-			monitor.worked(10);
-			cfgs = CfgHolder.unique(cfgs);
-			cfgs = CfgHolder.reorder(cfgs);
-			
-			ICConfigurationDescription cfgDebug = null;
-			ICConfigurationDescription cfgFirst = null;
-			
-			int work = 50/cfgs.length;
-			
-			for(int i = 0; i < cfgs.length; i++){
-				cf = (Configuration)cfgs[i].getConfiguration();
-				String id = ManagedBuildManager.calculateChildId(cf.getId(), null);
-				Configuration config = new Configuration(mProj, cf, id, false, true);
-				CConfigurationData data = config.getConfigurationData();
-				ICConfigurationDescription cfgDes = des.createConfiguration(ManagedBuildManager.CFG_DATA_PROVIDER_ID, data);
-				config.setConfigurationDescription(cfgDes);
-				config.exportArtifactInfo();
-	
-				IBuilder bld = config.getEditableBuilder();
-				if (bld != null) { 	bld.setManagedBuildOn(true); }
-				
-				config.setName(cfgs[i].getName());
-				config.setArtifactName(removeSpaces(project.getName()));
-				
-				IBuildProperty b = config.getBuildProperties().getProperty(PROPERTY);
-				if (cfgDebug == null && b != null && b.getValue() != null && PROP_VAL.equals(b.getValue().getId()))
-					cfgDebug = cfgDes;
-				if (cfgFirst == null) // select at least first configuration 
-					cfgFirst = cfgDes; 
-				monitor.worked(work);
-			}
-			mngr.setProjectDescription(project, des);
+			setProjectDescription(project, defaults, onFinish, monitor);
 			doTemplatesPostProcess(project);
 			doCustom(project);
 			monitor.worked(30);
@@ -579,6 +532,61 @@ public class MBSWizardHandler extends CWizardHandler {
 			monitor.done();
 		}
 	}
+
+	public void convertProject(IProject proj, IProgressMonitor monitor) throws CoreException {
+	    setProjectDescription(proj, true, true, monitor);
+	}
+	
+	private void setProjectDescription(IProject project, boolean defaults, boolean onFinish, IProgressMonitor monitor) throws CoreException {
+	    ICProjectDescriptionManager mngr = CoreModel.getDefault().getProjectDescriptionManager();
+	    ICProjectDescription des = mngr.createProjectDescription(project, false, !onFinish);
+	    ManagedBuildInfo info = ManagedBuildManager.createBuildInfo(project);
+	    monitor.worked(10);
+	    cfgs = getCfgItems(false);
+	    if (cfgs == null || cfgs.length == 0) 
+	    	cfgs = CDTConfigWizardPage.getDefaultCfgs(this);
+	    
+	    if (cfgs == null || cfgs.length == 0 || cfgs[0].getConfiguration() == null) {
+	    	throw new CoreException(new Status(IStatus.ERROR, 
+	    			ManagedBuilderUIPlugin.getUniqueIdentifier(),
+	    			Messages.getString("CWizardHandler.6"))); //$NON-NLS-1$
+	    }
+	    Configuration cf = (Configuration)cfgs[0].getConfiguration();
+	    ManagedProject mProj = new ManagedProject(project, cf.getProjectType());
+	    info.setManagedProject(mProj);
+	    monitor.worked(10);
+	    cfgs = CfgHolder.unique(cfgs);
+	    cfgs = CfgHolder.reorder(cfgs);
+	    
+	    ICConfigurationDescription cfgDebug = null;
+	    ICConfigurationDescription cfgFirst = null;
+	    
+	    int work = 50/cfgs.length;
+	    
+	    for(int i = 0; i < cfgs.length; i++){
+	    	cf = (Configuration)cfgs[i].getConfiguration();
+	    	String id = ManagedBuildManager.calculateChildId(cf.getId(), null);
+	    	Configuration config = new Configuration(mProj, cf, id, false, true);
+	    	CConfigurationData data = config.getConfigurationData();
+	    	ICConfigurationDescription cfgDes = des.createConfiguration(ManagedBuildManager.CFG_DATA_PROVIDER_ID, data);
+	    	config.setConfigurationDescription(cfgDes);
+	    	config.exportArtifactInfo();
+
+	    	IBuilder bld = config.getEditableBuilder();
+	    	if (bld != null) { 	bld.setManagedBuildOn(true); }
+	    	
+	    	config.setName(cfgs[i].getName());
+	    	config.setArtifactName(removeSpaces(project.getName()));
+	    	
+	    	IBuildProperty b = config.getBuildProperties().getProperty(PROPERTY);
+	    	if (cfgDebug == null && b != null && b.getValue() != null && PROP_VAL.equals(b.getValue().getId()))
+	    		cfgDebug = cfgDes;
+	    	if (cfgFirst == null) // select at least first configuration 
+	    		cfgFirst = cfgDes; 
+	    	monitor.worked(work);
+	    }
+	    mngr.setProjectDescription(project, des);
+    }
 	
 	protected void doTemplatesPostProcess(IProject prj) {
 		if(entryInfo == null)

@@ -1112,29 +1112,7 @@ public class TraditionalRendering extends AbstractMemoryRendering implements IRe
 				
                 manager.add(copyAction);
                 manager.add(copyAddressAction);
-
-                // IMemoryGoToAddressProvider interface, called using reflection, waiting on platform acceptance of patch
-                final IMemoryBlockRetrieval retrieve = MemoryViewUtil.getMemoryBlockRetrieval(TraditionalRendering.this.getMemoryBlock());
-				if (retrieve != null)
-				{
-					try
-					{
-		                Method m = retrieve.getClass().getMethod("getGoToAddressRenderingId", new Class[] {});
-						m.setAccessible(true);
-						
-						if(m != null)
-						{
-							String id = (String) m.invoke(retrieve, new Object[] {});
-							if(id == null)
-								manager.add(gotoAddressAction);
-						}
-					}
-					catch(Exception e)
-					{
-						// do nothing
-					}
-				}
-				
+                
                 manager.add(gotoBaseAddressAction);
                 manager.add(refreshAction);
                 manager.add(new Separator());

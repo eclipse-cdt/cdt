@@ -13,7 +13,7 @@
       <launchConfigurationType
             sourceLocatorId="org.eclipse.cdt.examples.dsf.pda.sourceLocator"
             delegate="org.eclipse.cdt.examples.dsf.pda.launch.PDALaunchDelegate"
-            sourcePathComputerId="org.eclipse.cdt.examples.pda.dsf.sourcePathComputer"
+            sourcePathComputerId="org.eclipse.cdt.examples.dsf.pda.sourcePathComputer"
             name="DSF PDA Application"
             id="org.eclipse.cdt.examples.dsf.pda.launchType"
             modes="run, debug"/>

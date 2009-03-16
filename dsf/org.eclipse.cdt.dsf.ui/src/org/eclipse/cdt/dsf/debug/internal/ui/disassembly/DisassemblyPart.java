@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2008 Wind River Systems and others.
+ * Copyright (c) 2007, 2009 Wind River Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -24,8 +24,10 @@ import java.util.concurrent.ExecutionException;
 import org.eclipse.cdt.core.IAddress;
 import org.eclipse.cdt.debug.core.CDIDebugModel;
 import org.eclipse.cdt.debug.core.model.ICBreakpoint;
+import org.eclipse.cdt.debug.core.model.ICBreakpointType;
 import org.eclipse.cdt.dsf.concurrent.DataRequestMonitor;
 import org.eclipse.cdt.dsf.concurrent.DsfExecutor;
+import org.eclipse.cdt.dsf.concurrent.DsfRunnable;
 import org.eclipse.cdt.dsf.concurrent.Query;
 import org.eclipse.cdt.dsf.datamodel.DMContexts;
 import org.eclipse.cdt.dsf.datamodel.IDMContext;
@@ -1496,18 +1498,18 @@ public abstract class DisassemblyPart extends WorkbenchPart implements IDisassem
 	 * @see org.eclipse.cdt.dsf.debug.internal.ui.disassembly.IDisassemblyPart#gotoSymbol(java.lang.String)
 	 */
 	public final void gotoSymbol(final String symbol) {
-		if (!fActive || !isSuspended() || fTargetFrameContext == null) {
+		if (!fActive || fTargetFrameContext == null) {
 			return;
 		}
-		final IExpressions expressions= getService(IExpressions.class);
-		if (expressions == null) {
-			return;
-		}
-		IExpressionDMContext exprDmc= expressions.createExpression(fTargetContext, '&'+symbol);
-		final FormattedValueDMContext valueDmc= expressions.getFormattedValueContext(exprDmc, IFormattedValues.HEX_FORMAT);
 		final DsfExecutor executor= getSession().getExecutor();
-		executor.submit(new Runnable() {
+		executor.execute(new DsfRunnable() {
 			public void run() {
+				final IExpressions expressions= getService(IExpressions.class);
+				if (expressions == null) {
+					return;
+				}
+				IExpressionDMContext exprDmc= expressions.createExpression(fTargetContext, '&'+symbol);
+				final FormattedValueDMContext valueDmc= expressions.getFormattedValueContext(exprDmc, IFormattedValues.HEX_FORMAT);
 				expressions.getFormattedExpressionValue(valueDmc, new DataRequestMonitor<FormattedValueDMData>(executor, null) {
 					@Override
 					protected void handleSuccess() {
@@ -1788,7 +1790,6 @@ public abstract class DisassemblyPart extends WorkbenchPart implements IDisassem
 			internalError(exc);
 		}
 
-		final IDisassembly disassembly= fServicesTracker.getService(IDisassembly.class);
 		final IDisassemblyDMContext context= DMContexts.getAncestorOfType(fTargetContext, IDisassemblyDMContext.class);
 
 		final String finalFile= debuggerPath;
@@ -1819,8 +1820,14 @@ public abstract class DisassemblyPart extends WorkbenchPart implements IDisassem
 		};
 		assert !fUpdatePending;
 		fUpdatePending = true;
-		executor.submit(new Runnable() {
+		executor.execute(new Runnable() {
 			public void run() {
+				final IDisassembly disassembly= fServicesTracker.getService(IDisassembly.class);
+				if (disassembly == null) {
+					disassemblyRequest.cancel();
+					disassemblyRequest.done();
+					return;
+				}
 				disassembly.getMixedInstructions(context, finalFile, 1, lines, disassemblyRequest);
 			}});
 	}
@@ -1856,7 +1863,6 @@ public abstract class DisassemblyPart extends WorkbenchPart implements IDisassem
 		final BigInteger finalEndAddress= endAddress;
 
 		final DsfExecutor executor= getSession().getExecutor();
-		final IDisassembly disassembly= fServicesTracker.getService(IDisassembly.class);
 		final IDisassemblyDMContext context= DMContexts.getAncestorOfType(fTargetContext, IDisassemblyDMContext.class);
 
 		if (mixed) {
@@ -1889,13 +1895,25 @@ public abstract class DisassemblyPart extends WorkbenchPart implements IDisassem
 				}
 			};
 			if (file != null) {
-				executor.submit(new Runnable() {
+				executor.execute(new Runnable() {
 					public void run() {
+						final IDisassembly disassembly= fServicesTracker.getService(IDisassembly.class);
+						if (disassembly == null) {
+							disassemblyRequest.cancel();
+							disassemblyRequest.done();
+							return;
+						}
 						disassembly.getMixedInstructions(context, finalFile, finalLineNumber, lines*2, disassemblyRequest);
 					}});
 			} else {
-				executor.submit(new Runnable() {
+				executor.execute(new Runnable() {
 					public void run() {
+						final IDisassembly disassembly= fServicesTracker.getService(IDisassembly.class);
+						if (disassembly == null) {
+							disassemblyRequest.cancel();
+							disassemblyRequest.done();
+							return;
+						}
 						disassembly.getMixedInstructions(context, startAddress, finalEndAddress, disassemblyRequest);
 					}});
 			}
@@ -1925,13 +1943,25 @@ public abstract class DisassemblyPart extends WorkbenchPart implements IDisassem
 				}
 			};
 			if (file != null) {
-				executor.submit(new Runnable() {
+				executor.execute(new Runnable() {
 					public void run() {
+						final IDisassembly disassembly= fServicesTracker.getService(IDisassembly.class);
+						if (disassembly == null) {
+							disassemblyRequest.cancel();
+							disassemblyRequest.done();
+							return;
+						}
 						disassembly.getInstructions(context, finalFile, finalLineNumber, lines, disassemblyRequest);
 					}});
 			} else {
-				executor.submit(new Runnable() {
+				executor.execute(new Runnable() {
 					public void run() {
+						final IDisassembly disassembly= fServicesTracker.getService(IDisassembly.class);
+						if (disassembly == null) {
+							disassemblyRequest.cancel();
+							disassemblyRequest.done();
+							return;
+						}
 						disassembly.getInstructions(context, startAddress, finalEndAddress, disassemblyRequest);
 					}});
 			}
@@ -2148,60 +2178,60 @@ public abstract class DisassemblyPart extends WorkbenchPart implements IDisassem
 			}
 			if (DEBUG) System.out.println("retrieveFrameAddress "+frame); //$NON-NLS-1$
 			fUpdatePending = true;
-			final IStack stack= fServicesTracker.getService(IStack.class);
 			final DsfExecutor executor= getSession().getExecutor();
-			if (fTargetFrameContext == null) {
-				if (frame == 0) {
-					final DataRequestMonitor<IFrameDMContext> request= new DataRequestMonitor<IFrameDMContext>(executor, null) {
-						@Override
-						protected void handleCompleted() {
-							fUpdatePending= false;
-							fTargetFrameContext= getData();
-							if (fTargetFrameContext != null) {
-								retrieveFrameAddress(targetContext, frame);
-							}
-						}
-					};
-					executor.submit(new Runnable() {
-						public void run() {
-							stack.getTopFrame(targetContext, request);
-						}});
-				} else {
-					// TODO retrieve other stack frame
-				}
-				return;
-			}
-			final DataRequestMonitor<IFrameDMData> request= new DataRequestMonitor<IFrameDMData>(executor, null) {
-				@Override
-				protected void handleCompleted() {
-					if (!isCanceled()) {
-						fUpdatePending= false;
-						final IFrameDMData frameData= getData();
-						fTargetFrameData= frameData;
-						final IAddress address= frameData.getAddress();
-						final BigInteger addressValue= address.getValue();
-						if (DEBUG) System.out.println("retrieveFrameAddress done "+getAddressText(addressValue)); //$NON-NLS-1$
-						asyncExec(new Runnable() {
-							public void run() {
-								if (address.getSize() * 4 > fAddressSize) {
-									addressSizeChanged(address.getSize() * 4);
-								}
-								if (frame == 0) {
-									updatePC(addressValue);
-								} else {
-									gotoFrame(frame, addressValue);
-								}
-							}
-
-						});
-					}
-				}
-			};
-			executor.submit(new Runnable() {
+			executor.execute(new DsfRunnable() {
 				public void run() {
-					stack.getFrameData(fTargetFrameContext, request);
+					retrieveFrameAddressInSessionThread(targetContext, frame);
 				}});
 		}
+	}
+
+	private void retrieveFrameAddressInSessionThread(final IExecutionDMContext targetContext, final int frame) {
+		final IStack stack= fServicesTracker.getService(IStack.class);
+		final DsfExecutor executor= getSession().getExecutor();
+		if (fTargetFrameContext == null) {
+			if (frame == 0) {
+				stack.getTopFrame(targetContext, new DataRequestMonitor<IFrameDMContext>(executor, null) {
+					@Override
+					protected void handleCompleted() {
+						fUpdatePending= false;
+						fTargetFrameContext= getData();
+						if (fTargetFrameContext != null) {
+							retrieveFrameAddressInSessionThread(targetContext, frame);
+						}
+					}
+				});
+			} else {
+				// TODO retrieve other stack frame
+			}
+			return;
+		}
+		stack.getFrameData(fTargetFrameContext, new DataRequestMonitor<IFrameDMData>(executor, null) {
+			@Override
+			protected void handleCompleted() {
+				if (!isCanceled()) {
+					fUpdatePending= false;
+					final IFrameDMData frameData= getData();
+					fTargetFrameData= frameData;
+					final IAddress address= frameData.getAddress();
+					final BigInteger addressValue= address.getValue();
+					if (DEBUG) System.out.println("retrieveFrameAddress done "+getAddressText(addressValue)); //$NON-NLS-1$
+					asyncExec(new Runnable() {
+						public void run() {
+							if (address.getSize() * 4 > fAddressSize) {
+								addressSizeChanged(address.getSize() * 4);
+							}
+							if (frame == 0) {
+								updatePC(addressValue);
+							} else {
+								gotoFrame(frame, addressValue);
+							}
+						}
+
+					});
+				}
+			}
+		});
 	}
 
 	private void addressSizeChanged(int addressSize) {
@@ -2722,8 +2752,31 @@ public abstract class DisassemblyPart extends WorkbenchPart implements IDisassem
 		fRulerContextMenuListeners.remove(listener);
 	}
 
-	private boolean isSuspended(IExecutionDMContext targetContext) {
-		return getRunControl().isSuspended(targetContext);
+	private boolean isSuspended(final IExecutionDMContext targetContext) {
+		DsfSession session = getSession();
+		if (session == null || !session.isActive()) {
+			return false;
+		}
+		if (session.getExecutor().isInExecutorThread()) {
+			return getRunControl().isSuspended(targetContext);
+		}
+		Query<Boolean> query = new Query<Boolean>() {
+			@Override
+			protected void execute(DataRequestMonitor<Boolean> rm) {
+				try {
+					rm.setData(getRunControl().isSuspended(targetContext));
+				} finally {
+					rm.done();
+				}
+			}
+		};
+		session.getExecutor().execute(query);
+		try {
+			return query.get();
+		} catch (InterruptedException exc) {
+		} catch (ExecutionException exc) {
+		}
+		return false;
 	}
 
 	private IRunControl getRunControl() {
@@ -3280,12 +3333,11 @@ public abstract class DisassemblyPart extends WorkbenchPart implements IDisassem
 		} catch (BadLocationException e) {
 			// should not happen, but its safe to ignore anyway
 		}
-        boolean lineBreakpoint = srcPos != null && srcPos.length > 0;
 
     	IResource resource;
     	ICBreakpoint bp;
     	
-		if (lineBreakpoint) {
+		if (srcPos != null && srcPos.length > 0) {
             SourceFileInfo srcInfo = srcPos.fFileInfo;
             String filePath = null;
             resource = (IResource)srcInfo.fFile.getAdapter(IResource.class);
@@ -3305,11 +3357,11 @@ public abstract class DisassemblyPart extends WorkbenchPart implements IDisassem
             if (pos instanceof DisassemblyPosition) {
             	srcLine = ((DisassemblyPosition)pos).getLine();
             }
-            bp= CDIDebugModel.createLineBreakpoint(filePath, resource, srcLine + 1, true, 0, "", true); //$NON-NLS-1$
+            bp= CDIDebugModel.createLineBreakpoint(filePath, resource, srcLine + 1, ICBreakpointType.REGULAR, true, 0, "", true); //$NON-NLS-1$
     	} else {
     		resource = ResourcesPlugin.getWorkspace().getRoot();
     		BigInteger address = getAddressOfLine(line);
-    		bp= CDIDebugModel.createAddressBreakpoint(null, null, resource, new Addr64(address), true, 0, "", true); //$NON-NLS-1$
+    		bp= CDIDebugModel.createAddressBreakpoint(null, null, resource, ICBreakpointType.REGULAR, new Addr64(address), true, 0, "", true); //$NON-NLS-1$
     	}
 
     	return bp;
@@ -3320,7 +3372,6 @@ public abstract class DisassemblyPart extends WorkbenchPart implements IDisassem
 		if (fFile2Storage.containsKey(file)) {
 			sourceElement = fFile2Storage.get(file);
 		} else {
-			final ISourceLookup lookup= getService(ISourceLookup.class);
 			final ISourceLookupDMContext ctx= DMContexts.getAncestorOfType(fTargetContext, ISourceLookupDMContext.class);
 			final DsfExecutor executor= getSession().getExecutor();
 			Query<Object> query= new Query<Object>() {
@@ -3333,6 +3384,7 @@ public abstract class DisassemblyPart extends WorkbenchPart implements IDisassem
 							rm.done();
 						}
 					};
+					final ISourceLookup lookup= getService(ISourceLookup.class);
 					lookup.getSource(ctx, file, request);
 				}
 			};

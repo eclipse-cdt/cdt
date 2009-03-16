@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008 Wind River Systems, Inc. and others.
+ * Copyright (c) 2008, 2009 Wind River Systems, Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,6 +10,10 @@
  *******************************************************************************/
 package org.eclipse.cdt.dsf.debug.ui.viewmodel.launch;
 
+import java.util.concurrent.ExecutionException;
+
+import org.eclipse.cdt.dsf.concurrent.DataRequestMonitor;
+import org.eclipse.cdt.dsf.concurrent.Query;
 import org.eclipse.cdt.dsf.datamodel.DMContexts;
 import org.eclipse.cdt.dsf.datamodel.IDMContext;
 import org.eclipse.cdt.dsf.debug.service.IRunControl;
@@ -17,6 +21,7 @@ import org.eclipse.cdt.dsf.debug.service.IRunControl.IExecutionDMContext;
 import org.eclipse.cdt.dsf.debug.service.IStack.IFrameDMContext;
 import org.eclipse.cdt.dsf.internal.ui.DsfUIPlugin;
 import org.eclipse.cdt.dsf.service.DsfServicesTracker;
+import org.eclipse.cdt.dsf.service.DsfSession;
 import org.eclipse.cdt.dsf.ui.viewmodel.datamodel.IDMVMContext;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IModelSelectionPolicy;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IPresentationContext;
@@ -82,20 +87,40 @@ public class DefaultDsfSelectionPolicy implements IModelSelectionPolicy {
 	protected boolean isSticky(Object element) {
 		if (element instanceof IDMVMContext) {
 			IDMVMContext dmvmContext= (IDMVMContext) element;
-			IDMContext dmContext= dmvmContext.getDMContext();
+			final IDMContext dmContext= dmvmContext.getDMContext();
 			if (dmContext instanceof IFrameDMContext) {
-				IExecutionDMContext execContext= DMContexts.getAncestorOfType(dmContext, IExecutionDMContext.class);
+				final IExecutionDMContext execContext= DMContexts.getAncestorOfType(dmContext, IExecutionDMContext.class);
 				if (execContext != null) {
-					DsfServicesTracker servicesTracker = new DsfServicesTracker(DsfUIPlugin.getBundleContext(), dmContext.getSessionId());
-					try {
-						IRunControl runControl= servicesTracker.getService(IRunControl.class);
-						if (runControl != null) {
-							if (runControl.isSuspended(execContext)) {
-								return true;
+					Query<Boolean> query = new Query<Boolean>() {
+						@Override
+						protected void execute(DataRequestMonitor<Boolean> rm) {
+							DsfServicesTracker servicesTracker = new DsfServicesTracker(DsfUIPlugin.getBundleContext(), dmContext.getSessionId());
+							try {
+								IRunControl runControl= servicesTracker.getService(IRunControl.class);
+								if (runControl != null) {
+									rm.setData(runControl.isSuspended(execContext));
+								}
+							} finally {
+								servicesTracker.dispose();
+								rm.done();
 							}
 						}
-					} finally {
-						servicesTracker.dispose();
+					};
+					DsfSession session = DsfSession.getSession(dmContext.getSessionId());
+					if (session != null) {
+						if (session.getExecutor().isInExecutorThread()) {
+							query.run();
+						} else {
+							session.getExecutor().execute(query);
+						}
+						try {
+							Boolean result = query.get();
+							return result != null && result.booleanValue();
+						} catch (InterruptedException exc) {
+							Thread.currentThread().interrupt();
+						} catch (ExecutionException exc) {
+							DsfUIPlugin.log(exc);
+						}
 					}
 				}
 			}

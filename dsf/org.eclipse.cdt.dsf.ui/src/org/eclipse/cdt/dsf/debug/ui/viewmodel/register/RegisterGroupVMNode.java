@@ -48,7 +48,6 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.model.IExpression;
-import org.eclipse.debug.internal.ui.IInternalDebugUIConstants;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IChildrenUpdate;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IElementCompareRequest;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IElementEditor;
@@ -223,7 +222,7 @@ public class RegisterGroupVMNode extends AbstractExpressionVMNode
                     MessagesForRegisterVM.RegisterGroupVMNode_Name_column__text_format, 
                     new String[] { PROP_NAME }),
                 new LabelImage(DebugUITools.getImageDescriptor(IDebugUIConstants.IMG_OBJS_REGISTER_GROUP)),
-                new LabelFont(JFaceResources.getFontDescriptor(IInternalDebugUIConstants.VARIABLE_TEXT_FONT).getFontData()[0])
+                new LabelFont(JFaceResources.getFontDescriptor(IDebugUIConstants.PREF_VARIABLE_TEXT_FONT).getFontData()[0])
             }));
 
         // The description column contains a brief description of the register group. 
@@ -232,7 +231,7 @@ public class RegisterGroupVMNode extends AbstractExpressionVMNode
             new LabelColumnInfo(new LabelAttribute[] { 
                 new LabelText(MessagesForRegisterVM.RegisterGroupVMNode_Description_column__text_format, 
                 new String[] { PROP_REGISTER_GROUP_DESCRIPTION }),
-                new LabelFont(JFaceResources.getFontDescriptor(IInternalDebugUIConstants.VARIABLE_TEXT_FONT).getFontData()[0])
+                new LabelFont(JFaceResources.getFontDescriptor(IDebugUIConstants.PREF_VARIABLE_TEXT_FONT).getFontData()[0])
             }));
 
         // Expression column is visible only in the expressions view.  It shows the expression string that the user 
@@ -244,7 +243,7 @@ public class RegisterGroupVMNode extends AbstractExpressionVMNode
                     MessagesForRegisterVM.RegisterGroupVMNode_Expression_column__text_format, 
                     new String[] { PROP_ELEMENT_EXPRESSION }),
                 new LabelImage(DebugUITools.getImageDescriptor(IDebugUIConstants.IMG_OBJS_REGISTER_GROUP)),
-                new LabelFont(JFaceResources.getFontDescriptor(IInternalDebugUIConstants.VARIABLE_TEXT_FONT).getFontData()[0])
+                new LabelFont(JFaceResources.getFontDescriptor(IDebugUIConstants.PREF_VARIABLE_TEXT_FONT).getFontData()[0])
             }));
 
         provider.setColumnInfo(
@@ -253,7 +252,7 @@ public class RegisterGroupVMNode extends AbstractExpressionVMNode
                 new LabelText(MessagesForRegisterVM.RegisterGroupVMNode_No_columns__text_format, 
                     new String[] { PROP_NAME, PROP_REGISTER_GROUP_DESCRIPTION}),
                 new LabelImage(DebugUITools.getImageDescriptor(IDebugUIConstants.IMG_OBJS_REGISTER_GROUP)),
-                new LabelFont(JFaceResources.getFontDescriptor(IInternalDebugUIConstants.VARIABLE_TEXT_FONT).getFontData()[0])
+                new LabelFont(JFaceResources.getFontDescriptor(IDebugUIConstants.PREF_VARIABLE_TEXT_FONT).getFontData()[0])
             }));
         
         return provider;

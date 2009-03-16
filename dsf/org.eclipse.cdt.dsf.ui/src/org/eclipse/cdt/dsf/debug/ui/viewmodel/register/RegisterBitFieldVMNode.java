@@ -61,7 +61,6 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.model.IExpression;
-import org.eclipse.debug.internal.ui.IInternalDebugUIConstants;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IChildrenUpdate;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IElementCompareRequest;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IElementEditor;
@@ -197,7 +196,7 @@ public class RegisterBitFieldVMNode extends AbstractExpressionVMNode
                     MessagesForRegisterVM.RegisterBitFieldVMNode_Name_column__text_format, 
                     new String[] { PROP_NAME }),
                 new LabelImage(DebugUITools.getImageDescriptor(IDebugUIConstants.IMG_OBJS_REGISTER)),
-                new LabelFont(JFaceResources.getFontDescriptor(IInternalDebugUIConstants.VARIABLE_TEXT_FONT).getFontData()[0])
+                new LabelFont(JFaceResources.getFontDescriptor(IDebugUIConstants.PREF_VARIABLE_TEXT_FONT).getFontData()[0])
             }));
 
         // The description column contains a brief description of the bit field. 
@@ -207,7 +206,7 @@ public class RegisterBitFieldVMNode extends AbstractExpressionVMNode
                 new LabelText(
                     MessagesForRegisterVM.RegisterBitFieldVMNode_Description_column__text_format, 
                     new String[] { IRegisterVMConstants.PROP_DESCRIPTION }),
-                new LabelFont(JFaceResources.getFontDescriptor(IInternalDebugUIConstants.VARIABLE_TEXT_FONT).getFontData()[0])
+                new LabelFont(JFaceResources.getFontDescriptor(IDebugUIConstants.PREF_VARIABLE_TEXT_FONT).getFontData()[0])
             }));
 
         // In the type column add information about bit field read/write/fload flags.
@@ -246,7 +245,7 @@ public class RegisterBitFieldVMNode extends AbstractExpressionVMNode
                         }
                     }                    
                 },
-                new LabelFont(JFaceResources.getFontDescriptor(IInternalDebugUIConstants.VARIABLE_TEXT_FONT).getFontData()[0])
+                new LabelFont(JFaceResources.getFontDescriptor(IDebugUIConstants.PREF_VARIABLE_TEXT_FONT).getFontData()[0])
             }));
 
         // Value column shows the value in the active value format, followed by the active mnemonic if one is 
@@ -278,7 +277,7 @@ public class RegisterBitFieldVMNode extends AbstractExpressionVMNode
                 },
                 new LabelColor(
                     null, 
-                    DebugUITools.getPreferenceColor(IInternalDebugUIConstants.PREF_CHANGED_VALUE_BACKGROUND).getRGB()) 
+                    DebugUITools.getPreferenceColor(IDebugUIConstants.PREF_CHANGED_VALUE_BACKGROUND).getRGB()) 
                 {
                     { 
                         setPropertyNames(new String[] { 
@@ -297,7 +296,7 @@ public class RegisterBitFieldVMNode extends AbstractExpressionVMNode
                         return  Boolean.TRUE.equals(activeChanged) && !Boolean.TRUE.equals(activeFormatChanged);
                     }
                 },
-                new LabelFont(JFaceResources.getFontDescriptor(IInternalDebugUIConstants.VARIABLE_TEXT_FONT).getFontData()[0])
+                new LabelFont(JFaceResources.getFontDescriptor(IDebugUIConstants.PREF_VARIABLE_TEXT_FONT).getFontData()[0])
             }));
 
         // Expression column is visible only in the expressions view.  It shows the expression string that the user 
@@ -309,7 +308,7 @@ public class RegisterBitFieldVMNode extends AbstractExpressionVMNode
                     MessagesForRegisterVM.RegisterBitFieldVMNode_Expression_column__text_format, 
                     new String[] { PROP_ELEMENT_EXPRESSION }),
                 new LabelImage(DebugUITools.getImageDescriptor(IDebugUIConstants.IMG_OBJS_REGISTER)),
-                new LabelFont(JFaceResources.getFontDescriptor(IInternalDebugUIConstants.VARIABLE_TEXT_FONT).getFontData()[0])
+                new LabelFont(JFaceResources.getFontDescriptor(IDebugUIConstants.PREF_VARIABLE_TEXT_FONT).getFontData()[0])
             }));
 
         provider.setColumnInfo(
@@ -351,7 +350,7 @@ public class RegisterBitFieldVMNode extends AbstractExpressionVMNode
                         return  Boolean.TRUE.equals(activeChanged) && !Boolean.TRUE.equals(activeFormatChanged);
                     }
                 },
-                new LabelFont(JFaceResources.getFontDescriptor(IInternalDebugUIConstants.VARIABLE_TEXT_FONT).getFontData()[0])
+                new LabelFont(JFaceResources.getFontDescriptor(IDebugUIConstants.PREF_VARIABLE_TEXT_FONT).getFontData()[0])
             }));
 
         return provider;

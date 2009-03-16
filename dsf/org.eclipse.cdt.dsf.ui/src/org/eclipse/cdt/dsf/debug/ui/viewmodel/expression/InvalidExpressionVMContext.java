@@ -4,7 +4,6 @@ import org.eclipse.cdt.dsf.debug.ui.viewmodel.IDebugVMConstants;
 import org.eclipse.cdt.dsf.ui.viewmodel.AbstractVMContext;
 import org.eclipse.cdt.dsf.ui.viewmodel.IVMNode;
 import org.eclipse.debug.core.model.IExpression;
-import org.eclipse.debug.internal.ui.IInternalDebugUIConstants;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IElementLabelProvider;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.ILabelUpdate;
 import org.eclipse.debug.ui.DebugUITools;
@@ -77,7 +76,7 @@ public class InvalidExpressionVMContext extends AbstractVMContext implements IEl
                 } else {
                     update.setLabel("", i); //$NON-NLS-1$
                 }
-                update.setFontData(JFaceResources.getFontDescriptor(IInternalDebugUIConstants.VARIABLE_TEXT_FONT).getFontData()[0], i);            
+                update.setFontData(JFaceResources.getFontDescriptor(IDebugUIConstants.PREF_VARIABLE_TEXT_FONT).getFontData()[0], i);            
             }
 
             update.done();

@@ -16,7 +16,6 @@ import org.eclipse.cdt.debug.internal.ui.CDebugUIUtils;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.debug.core.model.IValue;
 import org.eclipse.debug.core.model.IVariable;
-import org.eclipse.debug.internal.ui.IInternalDebugUIConstants;
 import org.eclipse.debug.internal.ui.elements.adapters.VariableColumnPresentation;
 import org.eclipse.debug.internal.ui.model.elements.DebugElementLabelProvider;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IPresentationContext;
@@ -98,7 +97,7 @@ public class CVariableLabelProvider extends DebugElementLabelProvider {
 				IVariable variable = (IVariable)element;
 				if ( variable.hasValueChanged() ) {
 					// No public access to the changed value background color of the Variables view. See https://bugs.eclipse.org/bugs/show_bug.cgi?id=187509
-					return DebugUITools.getPreferenceColor( IInternalDebugUIConstants.PREF_CHANGED_VALUE_BACKGROUND ).getRGB();
+					return DebugUITools.getPreferenceColor( IDebugUIConstants.PREF_CHANGED_VALUE_BACKGROUND ).getRGB();
 				}
 			}
 		}
@@ -110,7 +109,7 @@ public class CVariableLabelProvider extends DebugElementLabelProvider {
 	 */
 	protected FontData getFontData( TreePath elementPath, IPresentationContext presentationContext, String columnId ) throws CoreException {
 		// No public access to the Variables view text font id. See https://bugs.eclipse.org/bugs/show_bug.cgi?id=187509
-		return JFaceResources.getFontDescriptor( IInternalDebugUIConstants.VARIABLE_TEXT_FONT ).getFontData()[0];
+		return JFaceResources.getFontDescriptor( IDebugUIConstants.PREF_VARIABLE_TEXT_FONT ).getFontData()[0];
 	}
 
 	/* (non-Javadoc)

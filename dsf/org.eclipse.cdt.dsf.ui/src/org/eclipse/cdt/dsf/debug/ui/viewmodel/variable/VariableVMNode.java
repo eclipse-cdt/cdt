@@ -70,7 +70,6 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.model.IExpression;
-import org.eclipse.debug.internal.ui.IInternalDebugUIConstants;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IChildrenUpdate;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IElementCompareRequest;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IElementEditor;
@@ -256,7 +255,7 @@ public class VariableVMNode extends AbstractExpressionVMNode
                 pointerLabelImage,
                 aggregateLabelImage, 
                 simpleLabelImage,
-                new LabelFont(JFaceResources.getFontDescriptor(IInternalDebugUIConstants.VARIABLE_TEXT_FONT).getFontData()[0])
+                new LabelFont(JFaceResources.getFontDescriptor(IDebugUIConstants.PREF_VARIABLE_TEXT_FONT).getFontData()[0])
             }));
 
         // Expression column is visible only in the expressions view.  It shows the expression string that the user 
@@ -270,7 +269,7 @@ public class VariableVMNode extends AbstractExpressionVMNode
                 pointerLabelImage,
                 aggregateLabelImage, 
                 simpleLabelImage,
-                new LabelFont(JFaceResources.getFontDescriptor(IInternalDebugUIConstants.VARIABLE_TEXT_FONT).getFontData()[0])
+                new LabelFont(JFaceResources.getFontDescriptor(IDebugUIConstants.PREF_VARIABLE_TEXT_FONT).getFontData()[0])
             }));
         
         // Type column only contains the type name.
@@ -281,7 +280,7 @@ public class VariableVMNode extends AbstractExpressionVMNode
                     MessagesForVariablesVM.VariableVMNode_Type_column__text_format, 
                     new String[] { PROP_VARIABLE_TYPE_NAME }),
                 new LabelText( MessagesForVariablesVM.VariableVMNode_Type_column__Error__text_format, new String[] {}),
-                new LabelFont(JFaceResources.getFontDescriptor(IInternalDebugUIConstants.VARIABLE_TEXT_FONT).getFontData()[0])
+                new LabelFont(JFaceResources.getFontDescriptor(IDebugUIConstants.PREF_VARIABLE_TEXT_FONT).getFontData()[0])
             }));
             
         // Value column is more complicated:
@@ -332,7 +331,7 @@ public class VariableVMNode extends AbstractExpressionVMNode
                 // 
                 new LabelColor(
                     null, 
-                    DebugUITools.getPreferenceColor(IInternalDebugUIConstants.PREF_CHANGED_VALUE_BACKGROUND).getRGB()) 
+                    DebugUITools.getPreferenceColor(IDebugUIConstants.PREF_CHANGED_VALUE_BACKGROUND).getRGB()) 
                 {
                     { 
                         setPropertyNames(new String[] { 
@@ -356,7 +355,7 @@ public class VariableVMNode extends AbstractExpressionVMNode
                             ( Boolean.TRUE.equals(activeChanged) && !Boolean.TRUE.equals(activeFormatChanged));
                     };                    
                 },
-                new LabelFont(JFaceResources.getFontDescriptor(IInternalDebugUIConstants.VARIABLE_TEXT_FONT).getFontData()[0])
+                new LabelFont(JFaceResources.getFontDescriptor(IDebugUIConstants.PREF_VARIABLE_TEXT_FONT).getFontData()[0])
             }));
 
         // Address column shows the variable's address.  It is highlighted with the change background color when the 
@@ -370,7 +369,7 @@ public class VariableVMNode extends AbstractExpressionVMNode
                 new LabelText(MessagesForVariablesVM.VariableVMNode_Address_column__Error__text_format, new String[] {}), 
                 new LabelColor(
                     null, 
-                    DebugUITools.getPreferenceColor(IInternalDebugUIConstants.PREF_CHANGED_VALUE_BACKGROUND).getRGB()) 
+                    DebugUITools.getPreferenceColor(IDebugUIConstants.PREF_CHANGED_VALUE_BACKGROUND).getRGB()) 
                 {
                     { setPropertyNames(new String[] { PROP_VARIABLE_ADDRESS, PROP_VARIABLE_ADDRESS_CHANGED}); }
 
@@ -380,7 +379,7 @@ public class VariableVMNode extends AbstractExpressionVMNode
                         return Boolean.TRUE.equals(changed);
                     };                    
                 },
-                new LabelFont(JFaceResources.getFontDescriptor(IInternalDebugUIConstants.VARIABLE_TEXT_FONT).getFontData()[0]),
+                new LabelFont(JFaceResources.getFontDescriptor(IDebugUIConstants.PREF_VARIABLE_TEXT_FONT).getFontData()[0]),
             }));
 
         // Description column is shown in the expression view, but is not supported for variables. 
@@ -390,7 +389,7 @@ public class VariableVMNode extends AbstractExpressionVMNode
             new LabelColumnInfo(new LabelAttribute[] { 
                 new LabelText(MessagesForVariablesVM.VariableVMNode_Description_column__text_format, new String[] {}) {
                 },
-                new LabelFont(JFaceResources.getFontDescriptor(IInternalDebugUIConstants.VARIABLE_TEXT_FONT).getFontData()[0])
+                new LabelFont(JFaceResources.getFontDescriptor(IDebugUIConstants.PREF_VARIABLE_TEXT_FONT).getFontData()[0])
             }));
 
         // Configure the case where there are no columns visible.  It basically combines the name and the value columns only.
@@ -463,7 +462,7 @@ public class VariableVMNode extends AbstractExpressionVMNode
                         return Boolean.TRUE.equals(stringChanged) || Boolean.TRUE.equals(activeChanged);
                     };                    
                 },
-                new LabelFont(JFaceResources.getFontDescriptor(IInternalDebugUIConstants.VARIABLE_TEXT_FONT).getFontData()[0])
+                new LabelFont(JFaceResources.getFontDescriptor(IDebugUIConstants.PREF_VARIABLE_TEXT_FONT).getFontData()[0])
             }));
         
         return provider;

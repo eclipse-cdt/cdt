@@ -206,7 +206,8 @@ public class ErrorParserFileMatchingTest extends TestCase {
 		// No match found
 		assertEquals("P/FindMatchingFilesTest",problemMarkerInfo.file.toString());
 		assertEquals(1,problemMarkerInfo.lineNumber);
-		assertEquals("testMissing.c error",problemMarkerInfo.description);
+		assertEquals("error",problemMarkerInfo.description);
+		assertEquals(new Path("testMissing.c"),problemMarkerInfo.externalPath);
 	}
 
 	/**
@@ -226,7 +227,8 @@ public class ErrorParserFileMatchingTest extends TestCase {
 		ProblemMarkerInfo problemMarkerInfo = errorList.get(0);
 		// Ambiguous match
 		assertEquals("P/FindMatchingFilesTest",problemMarkerInfo.file.toString());
-		assertEquals("testDuplicate.c error",problemMarkerInfo.description);
+		assertEquals("error",problemMarkerInfo.description);
+		assertEquals(new Path("testDuplicate.c"),problemMarkerInfo.externalPath);
 	}
 
 	/**
@@ -304,7 +306,8 @@ public class ErrorParserFileMatchingTest extends TestCase {
 		ProblemMarkerInfo problemMarkerInfo = errorList.get(0);
 		// Ambiguous match
 		assertEquals("P/FindMatchingFilesTest",problemMarkerInfo.file.toString());
-		assertEquals("testDuplicateLinkedFile.c error",problemMarkerInfo.description);
+		assertEquals("error",problemMarkerInfo.description);
+		assertEquals(new Path("testDuplicateLinkedFile.c"),problemMarkerInfo.externalPath);
 	}
 
 	/**
@@ -343,7 +346,8 @@ public class ErrorParserFileMatchingTest extends TestCase {
 		ProblemMarkerInfo problemMarkerInfo = errorList.get(0);
 		// No match found
 		assertEquals("P/FindMatchingFilesTest",problemMarkerInfo.file.toString());
-		assertEquals("testDuplicateInLinkedFolder.c error",problemMarkerInfo.description);
+		assertEquals("error",problemMarkerInfo.description);
+		assertEquals(new Path("testDuplicateInLinkedFolder.c"),problemMarkerInfo.externalPath);
 	}
 
 	/**
@@ -561,7 +565,8 @@ public class ErrorParserFileMatchingTest extends TestCase {
 		// No match
 		assertEquals("P/FindMatchingFilesTest",problemMarkerInfo.file.toString());
 		assertEquals(1,problemMarkerInfo.lineNumber);
-		assertEquals("NotMatchingFolder/testRelativePathNotMatchingFolder.c error",problemMarkerInfo.description);
+		assertEquals("error",problemMarkerInfo.description);
+		assertEquals(new Path("NotMatchingFolder/testRelativePathNotMatchingFolder.c"),problemMarkerInfo.externalPath);
 	}
 
 	/**
@@ -583,7 +588,8 @@ public class ErrorParserFileMatchingTest extends TestCase {
 		// No match found
 		assertEquals("P/FindMatchingFilesTest",problemMarkerInfo.file.toString());
 		assertEquals(1,problemMarkerInfo.lineNumber);
-		assertEquals("Folder/testRelativePathDuplicate.c error",problemMarkerInfo.description);
+		assertEquals("error",problemMarkerInfo.description);
+		assertEquals(new Path("Folder/testRelativePathDuplicate.c"),problemMarkerInfo.externalPath);
 	}
 
 	/**
@@ -636,7 +642,8 @@ public class ErrorParserFileMatchingTest extends TestCase {
 		// No match found
 		assertEquals("P/FindMatchingFilesTest",problemMarkerInfo.file.toString());
 		assertEquals(1,problemMarkerInfo.lineNumber);
-		assertEquals("../SubFolder/testRelativePathUpDuplicate.c error",problemMarkerInfo.description);
+		assertEquals("error",problemMarkerInfo.description);
+		assertEquals(new Path("../SubFolder/testRelativePathUpDuplicate.c"),problemMarkerInfo.externalPath);
 	}
 
 	/**
@@ -689,7 +696,8 @@ public class ErrorParserFileMatchingTest extends TestCase {
 		// No match
 		assertEquals("P/FindMatchingFilesTest",problemMarkerInfo.file.toString());
 		assertEquals(1,problemMarkerInfo.lineNumber);
-		assertEquals("./NotMatchingFolder/testRelativePathDotNotMatchingFolder.c error",problemMarkerInfo.description);
+		assertEquals("error",problemMarkerInfo.description);
+		assertEquals(new Path("./NotMatchingFolder/testRelativePathDotNotMatchingFolder.c"),problemMarkerInfo.externalPath);
 	}
 
 	/**
@@ -712,7 +720,8 @@ public class ErrorParserFileMatchingTest extends TestCase {
 		// No match found
 		assertEquals("P/FindMatchingFilesTest",problemMarkerInfo.file.toString());
 		assertEquals(1,problemMarkerInfo.lineNumber);
-		assertEquals("./Folder/testRelativePathDotDuplicate.c error",problemMarkerInfo.description);
+		assertEquals("error",problemMarkerInfo.description);
+		assertEquals(new Path("./Folder/testRelativePathDotDuplicate.c"),problemMarkerInfo.externalPath);
 	}
 
 
@@ -775,7 +784,8 @@ public class ErrorParserFileMatchingTest extends TestCase {
 		// No match found
 		assertEquals("P/FindMatchingFilesTest",problemMarkerInfo.file.toString());
 		assertEquals(1,problemMarkerInfo.lineNumber);
-		assertEquals("UpCase4.c error",problemMarkerInfo.description);
+		assertEquals("error",problemMarkerInfo.description);
+		assertEquals(new Path("UpCase4.c"),problemMarkerInfo.externalPath);
 	}
 
 	/**

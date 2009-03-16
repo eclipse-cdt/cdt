@@ -161,7 +161,8 @@ public class ErrorParserManagerTest extends TestCase {
 		assertEquals(1, errorList.size());
 		
 		ProblemMarkerInfo problemMarkerInfo = errorList.get(0);
-		assertEquals("catchpoints.cpp no return statement in function returning non-void",problemMarkerInfo.description);
+		assertEquals("no return statement in function returning non-void",problemMarkerInfo.description);
+		assertEquals(new Path("catchpoints.cpp"),problemMarkerInfo.externalPath);
 	}
 	public void testParsersSanityTrimmed() throws CoreException, IOException {
 		output("   catchpoints.cpp:12: warning: no return statement in function returning non-void   \n");
@@ -169,7 +170,8 @@ public class ErrorParserManagerTest extends TestCase {
 		assertEquals(1, errorList.size());
 		
 		ProblemMarkerInfo problemMarkerInfo = errorList.get(0);
-		assertEquals("catchpoints.cpp no return statement in function returning non-void",problemMarkerInfo.description);
+		assertEquals("no return statement in function returning non-void",problemMarkerInfo.description);
+		assertEquals(new Path("catchpoints.cpp"),problemMarkerInfo.externalPath);
 	}
 
 	public void testOutput() throws IOException {

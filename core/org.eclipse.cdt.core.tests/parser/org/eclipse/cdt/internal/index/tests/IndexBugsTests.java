@@ -16,6 +16,7 @@ import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.lang.reflect.Field;
 import java.util.regex.Pattern;
 
 import junit.framework.TestSuite;
@@ -27,7 +28,10 @@ import org.eclipse.cdt.core.dom.IPDOMManager;
 import org.eclipse.cdt.core.dom.ast.ASTTypeUtil;
 import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IASTDeclaration;
+import org.eclipse.cdt.core.dom.ast.IASTImplicitName;
+import org.eclipse.cdt.core.dom.ast.IASTImplicitNameOwner;
 import org.eclipse.cdt.core.dom.ast.IASTName;
+import org.eclipse.cdt.core.dom.ast.IASTNodeSelector;
 import org.eclipse.cdt.core.dom.ast.IASTSimpleDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
 import org.eclipse.cdt.core.dom.ast.IBasicType;
@@ -57,6 +61,7 @@ import org.eclipse.cdt.core.index.IIndexManager;
 import org.eclipse.cdt.core.index.IIndexName;
 import org.eclipse.cdt.core.index.IndexFilter;
 import org.eclipse.cdt.core.index.IndexLocationFactory;
+import org.eclipse.cdt.core.model.CModelException;
 import org.eclipse.cdt.core.model.CoreModel;
 import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.core.model.ICProject;
@@ -66,6 +71,7 @@ import org.eclipse.cdt.core.testplugin.CTestPlugin;
 import org.eclipse.cdt.core.testplugin.TestScannerProvider;
 import org.eclipse.cdt.core.testplugin.util.BaseTestCase;
 import org.eclipse.cdt.core.testplugin.util.TestSourceReader;
+import org.eclipse.cdt.internal.core.dom.parser.ASTNode;
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
@@ -83,6 +89,140 @@ public class IndexBugsTests extends BaseTestCase {
 	public IndexBugsTests(String name) {
 		super(name);
 	}
+
+	protected class BindingAssertionHelper {
+		protected IASTTranslationUnit tu;
+		protected String contents;
+    	
+    	public BindingAssertionHelper(IFile file, String contents, IIndex index) throws CModelException, CoreException {
+    		this.contents= contents;
+    		this.tu= TestSourceReader.createIndexBasedAST(index, fCProject, file);
+		}
+    	
+    	public IASTTranslationUnit getTranslationUnit() {
+    		return tu;
+    	}
+    	
+    	public IBinding assertProblem(String section, int len) {
+    		IBinding binding= binding(section, len);
+    		assertTrue("Non-ProblemBinding for name: " + section.substring(0, len),
+    				binding instanceof IProblemBinding);
+    		return binding;
+    	}
+    	
+    	public <T extends IBinding> T assertNonProblem(String section, int len) {
+    		IBinding binding= binding(section, len);
+    		if (binding instanceof IProblemBinding) {
+    			IProblemBinding problem= (IProblemBinding) binding;
+    			fail("ProblemBinding for name: " + section.substring(0, len) + " (" + renderProblemID(problem.getID())+")"); 
+    		}
+    		if (binding == null) {
+    			fail("Null binding resolved for name: " + section.substring(0, len));
+    		}
+    		return (T) binding;
+    	}
+
+    	public void assertNoName(String section, int len) {
+			IASTName name= findName(section,len,false);
+			if (name != null) {
+				String selection = section.substring(0, len);
+				fail("Found unexpected \"" + selection + "\": " + name.resolveBinding());
+			}
+    	}
+
+    	/**
+    	 * Asserts that there is exactly one name at the given location and that
+    	 * it resolves to the given type of binding.
+    	 */
+    	public IASTImplicitName assertImplicitName(String section, int len, Class<?> bindingClass) {
+    		IASTName name = findName(section,len,true);
+    		final String selection = section.substring(0, len);
+			assertNotNull("did not find \""+selection+"\"", name);
+			
+			assertInstance(name, IASTImplicitName.class);
+			IASTImplicitNameOwner owner = (IASTImplicitNameOwner) name.getParent();
+			IASTImplicitName[] implicits = owner.getImplicitNames();
+			assertNotNull(implicits);
+			
+			if (implicits.length > 1) {
+				boolean found = false;
+				for (IASTImplicitName n : implicits) {
+					if (((ASTNode)n).getOffset() == ((ASTNode)name).getOffset()) {
+						assertFalse(found);
+						found = true;
+					}
+				}
+				assertTrue(found);
+			}
+			
+    		assertEquals(selection, name.getRawSignature());
+    		IBinding binding = name.resolveBinding();
+    		assertNotNull(binding);
+    		assertInstance(binding, bindingClass);
+    		return (IASTImplicitName) name;
+    	}
+    	
+    	public void assertNoImplicitName(String section, int len) {
+    		IASTName name = findName(section,len,true);
+    		final String selection = section.substring(0, len);
+    		assertNull("found name \""+selection+"\"", name);
+    	}
+    	
+    	public IASTImplicitName[] getImplicitNames(String section, int len) {
+    		IASTName name = findName(section,len,true);
+    		IASTImplicitNameOwner owner = (IASTImplicitNameOwner) name.getParent();
+			IASTImplicitName[] implicits = owner.getImplicitNames();
+			return implicits;
+    	}
+    	
+    	private IASTName findName(String section, int len, boolean implicit) {
+    		final int offset = contents.indexOf(section);
+    		assertTrue(offset >= 0);
+    		IASTNodeSelector selector = tu.getNodeSelector(null);
+    		return implicit ? selector.findImplicitName(offset, len) : selector.findName(offset, len);
+    	}
+
+    	private String renderProblemID(int i) {
+    		try {
+    			for (Field field : IProblemBinding.class.getDeclaredFields()) {
+    				if (field.getName().startsWith("SEMANTIC_")) {
+    					if (field.getType() == int.class) {
+    						Integer ci= (Integer) field.get(null);
+    						if (ci.intValue() == i) {
+    							return field.getName();
+    						}
+    					}
+    				}
+    			}
+    		} catch(IllegalAccessException iae) {
+    			throw new RuntimeException(iae);
+    		}
+    		return "Unknown problem ID";
+    	}
+    	
+    	public <T extends IBinding> T assertNonProblem(String section, int len, Class<T> type, Class... cs) {
+    		IBinding binding= binding(section, len);
+    		assertTrue("ProblemBinding for name: " + section.substring(0, len),
+    				!(binding instanceof IProblemBinding));
+    		assertInstance(binding, type);
+    		for (Class c : cs) {
+    			assertInstance(binding, c);
+    		}
+    		return type.cast(binding);
+    	}
+    	
+    	private IBinding binding(String section, int len) {
+    		IASTName name = findName(section, len,false);
+    		final String selection = section.substring(0, len);
+			assertNotNull("Did not find \"" + selection + "\"", name);
+    		assertEquals(selection, name.getRawSignature());
+    			
+    		IBinding binding = name.resolveBinding();
+    		assertNotNull("No binding for " + name.getRawSignature(), binding);
+    		
+    		return name.resolveBinding();
+    	}
+    }
 
 	public static TestSuite suite() {
 		final TestSuite ts = suite(IndexBugsTests.class);
@@ -167,24 +307,24 @@ public class IndexBugsTests extends BaseTestCase {
 	 * @return the associated name's binding
 	 */
 	protected <T> T getBindingFromASTName(IASTTranslationUnit ast, String source, String section, int len,
-			Class<T> clazz, Class ... cs) {
+			Class<T> clazz, Class... cs) {
 		IASTName name= ast.getNodeSelector(null).findName(source.indexOf(section), len);
-		assertNotNull("name not found for \""+section+"\"", name);
+		assertNotNull("Name not found for \"" + section + "\"", name);
 		assertEquals(section.substring(0, len), name.getRawSignature());
 		
 		IBinding binding = name.resolveBinding();
-		assertNotNull("No binding for "+name.getRawSignature(), binding);
-		assertFalse("Binding is a ProblemBinding for name "+name.getRawSignature(),
-				IProblemBinding.class.isAssignableFrom(name.resolveBinding().getClass()));
+		assertNotNull("No binding for " + section.substring(0, len), binding);
+		assertTrue("ProblemBinding for name: " + section.substring(0, len),
+				!(binding instanceof IProblemBinding));
 		assertInstance(binding, clazz, cs);
 		return clazz.cast(binding);
 	}
 
 	protected static <T> T assertInstance(Object o, Class<T> clazz, Class ... cs) {
-		assertNotNull("Expected "+clazz.getName()+" but got null", o);
-		assertTrue("Expected "+clazz.getName()+" but got "+o.getClass().getName(), clazz.isInstance(o));
+		assertNotNull("Expected " + clazz.getName() + " but got null", o);
+		assertTrue("Expected " + clazz.getName() + " but got " + o.getClass().getName(), clazz.isInstance(o));
 		for (Class c : cs) {
-			assertTrue("Expected "+clazz.getName()+" but got "+o.getClass().getName(), c.isInstance(o));
+			assertTrue("Expected " + clazz.getName() + " but got " + o.getClass().getName(), c.isInstance(o));
 		}
 		return clazz.cast(o);
 	}
@@ -1738,6 +1878,93 @@ public class IndexBugsTests extends BaseTestCase {
 			assertEquals(3, check);
 		} finally {
 			fIndex.releaseReadLock();
+		}
+	}
+
+	//  // a.h
+	//	struct A {
+	//	  int i;
+	//	};
+	
+	//  #include "a.h"
+	//  void test() {
+	//    A a;
+	//    a.i = 0;
+	//    a.j = 0;
+	//  }
+
+	//  // b.h
+	//	struct A {
+	//	  int j;
+	//	};
+	
+	//  #include "b.h"
+	//  void test() {
+	//    A a;
+	//    a.i = 0;
+	//    a.j = 0;
+	//  }
+	public void _testDisambiguationByReachability_268685() throws Exception {
+		waitForIndexer();
+
+		String[] testData = getContentsForTest(4);
+		TestSourceReader.createFile(fCProject.getProject(), "a.h", testData[0]);
+		IFile a = TestSourceReader.createFile(fCProject.getProject(), "a.cpp", testData[1]);
+		TestSourceReader.createFile(fCProject.getProject(), "b.h", testData[2]);
+		IFile b = TestSourceReader.createFile(fCProject.getProject(), "b.cpp", testData[3]);
+		final IIndexManager indexManager = CCorePlugin.getIndexManager();
+		indexManager.reindex(fCProject);
+		waitForIndexer();
+		IIndex index= indexManager.getIndex(fCProject);
+		index.acquireReadLock();
+		try {
+			BindingAssertionHelper aHelper = new BindingAssertionHelper(a, testData[1], index);
+			aHelper.assertNonProblem("i = 0;", 1, ICPPVariable.class);
+			aHelper.assertProblem("j = 0;", 1);
+			BindingAssertionHelper bHelper = new BindingAssertionHelper(b, testData[3], index);
+			bHelper.assertProblem("i = 0;", 1);
+			bHelper.assertNonProblem("j = 0;", 1, ICPPVariable.class);
+		} finally {
+			index.releaseReadLock();
+		}
+	}
+
+	//  // a.h
+	//	namespace ns {
+	//	  enum E1 { e = 1 };
+	//	}
+	
+	//  #include "a.h"
+	//	using namespace ns;
+	//	int i = e;
+
+	//  // b.h
+	//	enum E2 { e = 2 };
+	
+	//  #include "b.h"
+	//	int i = e;
+	public void _testDisambiguationByReachability_268704() throws Exception {
+		waitForIndexer();
+
+		String[] testData = getContentsForTest(4);
+		TestSourceReader.createFile(fCProject.getProject(), "a.h", testData[0]);
+		IFile a = TestSourceReader.createFile(fCProject.getProject(), "a.cpp", testData[1]);
+		TestSourceReader.createFile(fCProject.getProject(), "b.h", testData[2]);
+		IFile b = TestSourceReader.createFile(fCProject.getProject(), "b.cpp", testData[3]);
+		final IIndexManager indexManager = CCorePlugin.getIndexManager();
+		indexManager.reindex(fCProject);
+		waitForIndexer();
+		IIndex index= indexManager.getIndex(fCProject);
+		index.acquireReadLock();
+		try {
+			BindingAssertionHelper aHelper = new BindingAssertionHelper(a, testData[1], index);
+			IEnumerator e1 = aHelper.assertNonProblem("e;", 1, IEnumerator.class);
+			assertEquals(1, e1.getValue().numericalValue().longValue());
+			BindingAssertionHelper bHelper = new BindingAssertionHelper(b, testData[3], index);
+			IEnumerator e2 = bHelper.assertNonProblem("e;", 1, IEnumerator.class);
+			assertEquals(2, e2.getValue().numericalValue().longValue());
+		} finally {
+			index.releaseReadLock();
 		}
 	}
 }

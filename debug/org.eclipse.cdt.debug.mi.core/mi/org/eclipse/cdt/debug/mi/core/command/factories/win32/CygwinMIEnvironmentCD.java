@@ -14,6 +14,7 @@ package org.eclipse.cdt.debug.mi.core.command.factories.win32;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import org.eclipse.cdt.core.CommandLauncher;
+import org.eclipse.cdt.core.ICommandLauncher;
 import org.eclipse.core.runtime.Path;
 
 /**
@@ -24,14 +25,14 @@ public class CygwinMIEnvironmentCD extends WinMIEnvironmentCD {
 	CygwinMIEnvironmentCD( String miVersion, String path ) {
 		super( miVersion, path );
 		// Use the cygpath utility to convert the path
-		CommandLauncher launcher = new CommandLauncher();
+		ICommandLauncher launcher = new CommandLauncher();
 		ByteArrayOutputStream out = new ByteArrayOutputStream();
 		ByteArrayOutputStream err = new ByteArrayOutputStream();
 		String newPath = null;
 		launcher.execute( new Path( "cygpath" ), //$NON-NLS-1$
 		new String[]{ "-u", path }, //$NON-NLS-1$
 		new String[0], new Path( "." ) ); //$NON-NLS-1$
-		if ( launcher.waitAndRead( out, err ) == CommandLauncher.OK ) {
+		if ( launcher.waitAndRead( out, err ) == ICommandLauncher.OK ) {
 			newPath = out.toString();
 			if ( newPath != null ) {
 				newPath = newPath.trim();

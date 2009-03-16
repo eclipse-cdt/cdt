@@ -24,12 +24,13 @@ import org.eclipse.core.runtime.IProgressMonitor;
 /**
  * @noextend This class is not intended to be subclassed by clients.
  */
-public class CommandLauncher {
+public class CommandLauncher implements ICommandLauncher {
 
-	public final static int COMMAND_CANCELED = 1;
-	public final static int ILLEGAL_COMMAND = -1;
-	public final static int OK = 0;
+	public final static int COMMAND_CANCELED = ICommandLauncher.COMMAND_CANCELED;
+	public final static int ILLEGAL_COMMAND = ICommandLauncher.ILLEGAL_COMMAND;
+	public final static int OK = ICommandLauncher.OK;
 
+	
 	protected Process fProcess;
 	protected boolean fShowCommand;
 	protected String[] fCommandArgs;
@@ -54,31 +55,43 @@ public class CommandLauncher {
 		lineSeparator = System.getProperty("line.separator", "\n"); //$NON-NLS-1$ //$NON-NLS-2$
 	}
 
-	/**
-	 * Sets if the command should be printed out first before executing
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.core.ICommandLauncher#showCommand(boolean)
 	 */
 	public void showCommand(boolean show) {
 		fShowCommand = show;
 	}
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.core.ICommandLauncher#getErrorMessage()
+	 */
 	public String getErrorMessage() {
 		return fErrorMessage;
 	}
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.core.ICommandLauncher#setErrorMessage(java.lang.String)
+	 */
 	public void setErrorMessage(String error) {
 		fErrorMessage = error;
 	}
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.core.ICommandLauncher#getCommandArgs()
+	 */
 	public String[] getCommandArgs() {
 		return fCommandArgs;
 	}
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.core.ICommandLauncher#getEnvironment()
+	 */
 	public Properties getEnvironment() {
 		return EnvironmentReader.getEnvVars();
 	}
 
-	/**
-	 * return the constructed Command line.
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.core.ICommandLauncher#getCommandLine()
 	 */
 	public String getCommandLine() {
 		return getCommandLine(getCommandArgs());
@@ -94,8 +107,8 @@ public class CommandLauncher {
 		return args;
 	}
 
-	/**
-	 * Execute a command
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.core.ICommandLauncher#execute(org.eclipse.core.runtime.IPath, java.lang.String[], java.lang.String[], org.eclipse.core.runtime.IPath)
 	 */
 	public Process execute(IPath commandPath, String[] args, String[] env, IPath changeToDirectory) {
 		try {
@@ -116,8 +129,8 @@ public class CommandLauncher {
 		return fProcess;
 	}
 
-	/**
-	 * Reads output form the process to the streams.
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.core.ICommandLauncher#waitAndRead(java.io.OutputStream, java.io.OutputStream)
 	 */
 	public int waitAndRead(OutputStream out, OutputStream err) {
 		if (fShowCommand) {
@@ -133,11 +146,8 @@ public class CommandLauncher {
 		return OK;
 	}
 
-	/**
-	 * Reads output form the process to the streams. A progress monitor is
-	 * polled to test if the cancel button has been pressed. Destroys the
-	 * process if the monitor becomes canceled override to implement a different
-	 * way to read the process inputs
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.core.ICommandLauncher#waitAndRead(java.io.OutputStream, java.io.OutputStream, org.eclipse.core.runtime.IProgressMonitor)
 	 */
 	public int waitAndRead(OutputStream output, OutputStream err, IProgressMonitor monitor) {
 		if (fShowCommand) {

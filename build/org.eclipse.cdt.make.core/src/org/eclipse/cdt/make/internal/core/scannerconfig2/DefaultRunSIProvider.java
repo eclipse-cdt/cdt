@@ -19,6 +19,7 @@ import java.util.Properties;
 
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.CommandLauncher;
+import org.eclipse.cdt.core.ICommandLauncher;
 import org.eclipse.cdt.core.IMarkerGenerator;
 import org.eclipse.cdt.core.resources.IConsole;
 import org.eclipse.cdt.internal.core.ConsoleOutputSniffer;
@@ -101,7 +102,7 @@ public class DefaultRunSIProvider implements IExternalScannerInfoProvider {
             monitor.subTask(MakeMessages.getString("ExternalScannerInfoProvider.Reading_Specs")); //$NON-NLS-1$
             
             String errMsg = null;
-            CommandLauncher launcher = new CommandLauncher();
+            ICommandLauncher launcher = new CommandLauncher();
             // Print the command for visual interaction.
             launcher.showCommand(true);
 
@@ -125,7 +126,7 @@ public class DefaultRunSIProvider implements IExternalScannerInfoProvider {
                     p.getOutputStream().close();
                 } catch (IOException e) {
                 }
-                if (launcher.waitAndRead(consoleOut, consoleErr, new SubProgressMonitor(monitor, 0)) != CommandLauncher.OK) {
+                if (launcher.waitAndRead(consoleOut, consoleErr, new SubProgressMonitor(monitor, 0)) != ICommandLauncher.OK) {
                     errMsg = launcher.getErrorMessage();
                 }
                 monitor.subTask(MakeMessages.getString("ExternalScannerInfoProvider.Parsing_Output")); //$NON-NLS-1$
@@ -213,7 +214,7 @@ public class DefaultRunSIProvider implements IExternalScannerInfoProvider {
      * @param launcher
      * @return
      */
-    protected String[] setEnvironment(CommandLauncher launcher, Properties initialEnv) {
+    protected String[] setEnvironment(ICommandLauncher launcher, Properties initialEnv) {
         // Set the environmennt, some scripts may need the CWD var to be set.
         Properties props = initialEnv != null ? initialEnv : launcher.getEnvironment();
         

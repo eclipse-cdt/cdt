@@ -26,9 +26,9 @@ import org.eclipse.cdt.build.core.scannerconfig.CfgInfoContext;
 import org.eclipse.cdt.build.core.scannerconfig.ICfgScannerConfigBuilderInfo2Set;
 import org.eclipse.cdt.build.internal.core.scannerconfig2.CfgScannerConfigProfileManager;
 import org.eclipse.cdt.core.CCorePlugin;
-import org.eclipse.cdt.core.CommandLauncher;
 import org.eclipse.cdt.core.ConsoleOutputStream;
 import org.eclipse.cdt.core.ErrorParserManager;
+import org.eclipse.cdt.core.ICommandLauncher;
 import org.eclipse.cdt.core.IMarkerGenerator;
 import org.eclipse.cdt.core.ProblemMarkerInfo;
 import org.eclipse.cdt.core.envvar.IEnvironmentVariable;
@@ -1934,7 +1934,7 @@ public class CommonBuilder extends ACBuilder {
 					isClean = true;
 
 				String errMsg = null;
-				CommandLauncher launcher = new CommandLauncher();
+				ICommandLauncher launcher = builder.getCommandLauncher();
 				// Print the command for visual interaction.
 				launcher.showCommand(true);
 
@@ -1986,7 +1986,7 @@ public class CommonBuilder extends ACBuilder {
 					// Before launching give visual cues via the monitor
 					monitor.subTask(ManagedMakeMessages.getResourceString("MakeBuilder.Invoking_Command") + launcher.getCommandLine()); //$NON-NLS-1$
 					if (launcher.waitAndRead(consoleOut, consoleErr, new SubProgressMonitor(monitor, 0))
-						!= CommandLauncher.OK)
+						!= ICommandLauncher.OK)
 						errMsg = launcher.getErrorMessage();
 					monitor.subTask(ManagedMakeMessages.getResourceString("MakeBuilder.Updating_project")); //$NON-NLS-1$
 

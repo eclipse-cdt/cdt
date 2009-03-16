@@ -22,9 +22,9 @@ import java.util.Set;
 import java.util.Vector;
 
 import org.eclipse.cdt.core.CCorePlugin;
-import org.eclipse.cdt.core.CommandLauncher;
 import org.eclipse.cdt.core.ConsoleOutputStream;
 import org.eclipse.cdt.core.ErrorParserManager;
+import org.eclipse.cdt.core.ICommandLauncher;
 import org.eclipse.cdt.core.IMarkerGenerator;
 import org.eclipse.cdt.core.model.ICModelMarker;
 import org.eclipse.cdt.core.resources.ACBuilder;
@@ -34,6 +34,7 @@ import org.eclipse.cdt.managedbuilder.buildmodel.IBuildDescription;
 import org.eclipse.cdt.managedbuilder.buildmodel.IBuildIOType;
 import org.eclipse.cdt.managedbuilder.buildmodel.IBuildResource;
 import org.eclipse.cdt.managedbuilder.buildmodel.IBuildStep;
+import org.eclipse.cdt.managedbuilder.core.IBuilder;
 import org.eclipse.cdt.managedbuilder.core.IConfiguration;
 import org.eclipse.cdt.managedbuilder.core.IManagedBuildInfo;
 import org.eclipse.cdt.managedbuilder.core.ManagedBuildManager;
@@ -945,7 +946,8 @@ public class GeneratedMakefileBuilder extends ACBuilder {
 			
 				// Get a launcher for the make command
 				String errMsg = null;
-				CommandLauncher launcher = new CommandLauncher();
+				IBuilder builder = info.getDefaultConfiguration().getBuilder();
+				ICommandLauncher launcher = builder.getCommandLauncher();
 				launcher.showCommand(true);
 	
 				// Set the environmennt
@@ -1016,7 +1018,7 @@ public class GeneratedMakefileBuilder extends ACBuilder {
 							}
 							if (launcher.waitAndRead(epm.getOutputStream(), epm.getOutputStream(),
 									new SubProgressMonitor(monitor,
-											IProgressMonitor.UNKNOWN)) != CommandLauncher.OK) {
+											IProgressMonitor.UNKNOWN)) != ICommandLauncher.OK) {
 								errMsg = launcher.getErrorMessage();
 							}
 						} else {
@@ -1087,10 +1089,10 @@ public class GeneratedMakefileBuilder extends ACBuilder {
 						int state = launcher.waitAndRead(epm.getOutputStream(), epm.getOutputStream(),
 								new SubProgressMonitor(monitor,
 										IProgressMonitor.UNKNOWN));
-						if(state != CommandLauncher.OK){
+						if(state != ICommandLauncher.OK){
 							errMsg = launcher.getErrorMessage();
 							
-							if(state == CommandLauncher.COMMAND_CANCELED){
+							if(state == ICommandLauncher.COMMAND_CANCELED){
 								//TODO: the better way of handling cancel is needed
 								//currently the rebuild state is set to true forcing the full rebuild
 								//on the next builder invocation

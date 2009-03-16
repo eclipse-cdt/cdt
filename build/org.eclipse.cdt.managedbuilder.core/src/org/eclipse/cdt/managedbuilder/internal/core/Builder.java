@@ -23,7 +23,9 @@ import java.util.SortedMap;
 import java.util.StringTokenizer;
 
 import org.eclipse.cdt.core.CCorePlugin;
+import org.eclipse.cdt.core.CommandLauncher;
 import org.eclipse.cdt.core.ErrorParserManager;
+import org.eclipse.cdt.core.ICommandLauncher;
 import org.eclipse.cdt.core.cdtvariables.CdtVariableException;
 import org.eclipse.cdt.core.cdtvariables.ICdtVariableManager;
 import org.eclipse.cdt.core.settings.model.COutputEntry;
@@ -131,6 +133,9 @@ public class Builder extends BuildObject implements IBuilder, IMatchKeyProvider,
 	private List identicalList;
 	
 	private ICOutputEntry[] outputEntries;
+	
+	private ICommandLauncher fCommandLauncher = null;
+	private IConfigurationElement fCommandLauncherElement = null;
 
 	/*
 	 *  C O N S T R U C T O R S
@@ -318,6 +323,9 @@ public class Builder extends BuildObject implements IBuilder, IMatchKeyProvider,
 		} else {
 			setDirty(true);
 		}
+		
+		fCommandLauncher = builder.fCommandLauncher;
+		fCommandLauncherElement = builder.fCommandLauncherElement;
 	}
 	
 	public void copySettings(Builder builder, boolean allBuildSettings){
@@ -563,6 +571,12 @@ public class Builder extends BuildObject implements IBuilder, IMatchKeyProvider,
         		}
         	}
         }
+        
+        String commandLauncher = element.getAttribute(ATTRIBUTE_COMMAND_LAUNCHER); 
+		if(commandLauncher != null && element instanceof DefaultManagedConfigElement){
+			fCommandLauncherElement = ((DefaultManagedConfigElement)element).getConfigurationElement();
+		}
+        
 	}
 	
 	/* (non-Javadoc)
@@ -2710,6 +2724,27 @@ public class Builder extends BuildObject implements IBuilder, IMatchKeyProvider,
 	}
 	public String toString() {
 		return getUniqueRealName();
+	}
+
+	public ICommandLauncher getCommandLauncher() {
+		if(fCommandLauncher != null)
+			return fCommandLauncher;
+		
+		if(fCommandLauncher == null && fCommandLauncherElement != null){
+			try{
+				fCommandLauncher = (ICommandLauncher)fCommandLauncherElement.createExecutableExtension(ATTRIBUTE_COMMAND_LAUNCHER);
+				return fCommandLauncher;
+			}catch(CoreException e){
+				e.printStackTrace();
+			}
+		}
+		if(fCommandLauncher == null && superClass != null)
+			return superClass.getCommandLauncher();
+		
+		else if(fCommandLauncher == null) // catch all for backwards compatibility
+			fCommandLauncher = new CommandLauncher();
+		
+		return fCommandLauncher;
 	}
 
 }

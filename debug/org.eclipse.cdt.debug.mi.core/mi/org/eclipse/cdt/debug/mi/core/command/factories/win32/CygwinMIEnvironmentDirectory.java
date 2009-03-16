@@ -14,6 +14,7 @@ import java.io.ByteArrayOutputStream;
 import java.util.StringTokenizer;
 
 import org.eclipse.cdt.core.CommandLauncher;
+import org.eclipse.cdt.core.ICommandLauncher;
 import org.eclipse.cdt.debug.mi.core.command.MIEnvironmentDirectory;
 import org.eclipse.core.runtime.Path;
 
@@ -85,14 +86,14 @@ public class CygwinMIEnvironmentDirectory extends MIEnvironmentDirectory {
 	 */
 	private String convertPath0(String path) {
 		String result = path;
-		CommandLauncher launcher = new CommandLauncher();
+		ICommandLauncher launcher = new CommandLauncher();
 		ByteArrayOutputStream out = new ByteArrayOutputStream();
 		launcher.execute(
 			new Path("cygpath"), //$NON-NLS-1$
 			new String[] { "-p", "-u", path }, //$NON-NLS-1$ //$NON-NLS-2$
 			new String[0],
 			new Path(".")); //$NON-NLS-1$
-		if (launcher.waitAndRead(out, out) == CommandLauncher.OK)
+		if (launcher.waitAndRead(out, out) == ICommandLauncher.OK)
 			result = out.toString().trim();
 		return result;
 	}

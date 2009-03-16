@@ -1,6 +1,6 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <!-- Schema file written by PDE -->
-<schema targetNamespace="org.eclipse.cdt.managedbuilder.core">
+<schema targetNamespace="org.eclipse.cdt.managedbuilder.core" xmlns="http://www.w3.org/2001/XMLSchema">
 <annotation>
       <appInfo>
          <meta.schema plugin="org.eclipse.cdt.managedbuilder.core" id="buildDefinitions" name="Managed Build Definitions"/>
@@ -11,6 +11,11 @@
    </annotation>
 
    <element name="extension">
+      <annotation>
+         <appInfo>
+            <meta.element />
+         </appInfo>
+      </annotation>
       <complexType>
          <sequence>
             <element ref="projectType" minOccurs="0" maxOccurs="unbounded"/>
@@ -1710,6 +1715,16 @@ If the builder supports specifying custom number of parallel jobs, the option de
                <documentation>
                   the system elements are used by the system for specific needs and are not displayed in UI
                </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="commandLauncher" type="string">
+            <annotation>
+               <documentation>
+                  A concrete Java class that implements org.eclipse.cdt.core.ICommandLauncher to launch the builder command.
+               </documentation>
+               <appInfo>
+                  <meta.attribute kind="java" basedOn=":org.eclipse.cdt.core.ICommandLauncher"/>
+               </appInfo>
             </annotation>
          </attribute>
       </complexType>

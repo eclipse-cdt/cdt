@@ -19,6 +19,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.eclipse.cdt.core.CommandLauncher;
+import org.eclipse.cdt.core.ICommandLauncher;
 import org.eclipse.cdt.managedbuilder.buildmodel.IBuildCommand;
 import org.eclipse.cdt.managedbuilder.internal.core.ManagedMakeMessages;
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -154,7 +155,7 @@ public class CommandBuilder implements IBuildModelBuilder {
 		monitor.beginTask("", getNumCommands());	//$NON-NLS-1$
 		monitor.subTask(""/*getCommandLine()*/);	//$NON-NLS-1$
 		
-		CommandLauncher launcher = createLauncher();
+		ICommandLauncher launcher = createLauncher();
 		int status = STATUS_OK;
 
 		launcher.showCommand(true);
@@ -173,11 +174,11 @@ public class CommandBuilder implements IBuildModelBuilder {
 		int st = launcher.waitAndRead(wrap(out), wrap(err),
 				new SubProgressMonitor(monitor,	getNumCommands()));
 		switch(st){
-		case CommandLauncher.OK:
+		case ICommandLauncher.OK:
 			if(fProcess.exitValue() != 0)
 				status = STATUS_ERROR_BUILD;
 			break;
-		case CommandLauncher.COMMAND_CANCELED:
+		case ICommandLauncher.COMMAND_CANCELED:
 			status = STATUS_CANCELLED;
 			fErrMsg = launcher.getErrorMessage(); 
 			if(DbgUtil.DEBUG)
@@ -185,7 +186,7 @@ public class CommandBuilder implements IBuildModelBuilder {
 			
 			printMessage(fErrMsg, out);
 			break;
-		case CommandLauncher.ILLEGAL_COMMAND:
+		case ICommandLauncher.ILLEGAL_COMMAND:
 		default:
 			status = STATUS_ERROR_LAUNCH;
 			fErrMsg = launcher.getErrorMessage(); 
@@ -200,7 +201,7 @@ public class CommandBuilder implements IBuildModelBuilder {
 		return status;
 	}
 	
-	protected CommandLauncher createLauncher() {
+	protected ICommandLauncher createLauncher() {
 //		if(isWindows())
 //			return new CommandLauncher();
 		return new CommandSearchLauncher();

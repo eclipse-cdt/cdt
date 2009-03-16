@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.cdt.managedbuilder.core;
 
+import org.eclipse.cdt.core.ICommandLauncher;
 import org.eclipse.cdt.core.settings.model.extension.CBuildData;
 import org.eclipse.cdt.managedbuilder.macros.IFileContextBuildMacroValues;
 import org.eclipse.cdt.managedbuilder.macros.IReservedMacroNameSupplier;
@@ -87,6 +88,8 @@ public interface IBuilder extends IBuildObject, IMakeBuilderInfo {
 	static final String DEFAULT_TARGET_INCREMENTAL = "all";  //$NON-NLS-1$
 	static final String DEFAULT_TARGET_CLEAN = "clean";  //$NON-NLS-1$
 	static final String DEFAULT_TARGET_AUTO = "all"; //$NON-NLS-1$
+	
+	static final String ATTRIBUTE_COMMAND_LAUNCHER = "commandLauncher"; //$NON-NLS-1$
 	
 	/**
 	 * Returns the command line arguments to pass to the build/make utility used 
@@ -317,4 +320,12 @@ public interface IBuilder extends IBuildObject, IMakeBuilderInfo {
 	boolean isSystemObject();
 	
 	String getUniqueRealName();
+	
+	/**
+	 * Returns the ICommandLauncher which should be used to launch the builder command.
+	 * 
+	 * @return ICommandLauncher
+	 * @since 5.1
+	 */
+	public ICommandLauncher getCommandLauncher();
 }

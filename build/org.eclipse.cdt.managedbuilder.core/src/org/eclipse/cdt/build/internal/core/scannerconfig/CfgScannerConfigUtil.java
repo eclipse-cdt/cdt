@@ -22,6 +22,8 @@ import org.eclipse.cdt.managedbuilder.internal.core.ToolChain;
 
 public class CfgScannerConfigUtil {
 	public static CfgInfoContext adjustPerRcTypeContext(CfgInfoContext context){
+		if(((Configuration)context.getConfiguration()).isPreference())
+			return context;
         Tool tool = (Tool)context.getTool();
         IResourceInfo rcInfo = context.getResourceInfo();
         IInputType inType = context.getInputType();

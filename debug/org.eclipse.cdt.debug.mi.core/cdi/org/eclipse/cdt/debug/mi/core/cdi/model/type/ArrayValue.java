@@ -44,7 +44,7 @@ public class ArrayValue extends DerivedValue implements ICDIArrayValue, ICDIPoin
 	public ArrayValue(Variable v, String hexAddress) {
 		super(v);
 		if (hexAddress == null || hexAddress.trim().length()==0) {
-			this.hexAddress = "0";
+			return;
 		} else if (hexAddress.startsWith("0x") || hexAddress.startsWith("0X")) {
 			this.hexAddress = hexAddress.substring(2);
 		} else {
@@ -102,6 +102,12 @@ public class ArrayValue extends DerivedValue implements ICDIArrayValue, ICDIPoin
 	 * @see org.eclipse.cdt.debug.core.cdi.model.type.ICDIPointerValue#pointerValue()
 	 */
 	public BigInteger pointerValue() throws CDIException {
-		return new BigInteger(hexAddress, 16);
+		if (hexAddress == null) 
+			return null;
+		try {
+			return new BigInteger(hexAddress, 16);
+		} catch (NumberFormatException e) {
+			return null;
+		}
 	}
 }

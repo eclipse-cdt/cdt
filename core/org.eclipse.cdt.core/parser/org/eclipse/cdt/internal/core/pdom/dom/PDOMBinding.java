@@ -51,6 +51,7 @@ public abstract class PDOMBinding extends PDOMNamedNode implements IPDOMBinding 
 	
 	@SuppressWarnings("hiding")
 	protected static final int RECORD_SIZE = PDOMNamedNode.RECORD_SIZE + 16;
+	private byte hasDeclaration= -1;
 	
 	protected PDOMBinding(PDOMLinkage linkage, PDOMNode parent, char[] name) throws CoreException {
 		super(linkage, parent, name);
@@ -86,9 +87,17 @@ public abstract class PDOMBinding extends PDOMNamedNode implements IPDOMBinding 
 	}
 	
 	public final boolean hasDeclaration() throws CoreException {
-		Database db = getDB();
-		return db.getInt(record + FIRST_DECL_OFFSET) != 0
-			|| db.getInt(record + FIRST_DEF_OFFSET) != 0;
+		if (hasDeclaration == -1) {
+			final Database db = getDB();
+			if (db.getInt(record + FIRST_DECL_OFFSET) != 0
+					|| db.getInt(record + FIRST_DEF_OFFSET) != 0) {
+				hasDeclaration= 1;
+				return true;
+			}
+			hasDeclaration= 0;
+			return false;
+		}
+		return hasDeclaration != 0;
 	}
 	
 	public void addDeclaration(PDOMName name) throws CoreException {

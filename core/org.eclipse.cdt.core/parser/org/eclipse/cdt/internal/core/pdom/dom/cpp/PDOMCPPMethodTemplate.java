@@ -34,7 +34,7 @@ class PDOMCPPMethodTemplate extends PDOMCPPFunctionTemplate implements ICPPMetho
 	 * Offset of remaining annotation information (relative to the beginning of
 	 * the record).
 	 */
-	protected static final int ANNOTATION1 = PDOMCPPFunctionTemplate.RECORD_SIZE; // byte
+	private static final int ANNOTATION1 = PDOMCPPFunctionTemplate.RECORD_SIZE; // byte
 	
 	/**
 	 * The size in bytes of a PDOMCPPMethodTemplate record in the database.
@@ -46,6 +46,8 @@ class PDOMCPPMethodTemplate extends PDOMCPPFunctionTemplate implements ICPPMetho
 	 * The bit offset of CV qualifier flags within ANNOTATION1.
 	 */
 	private static final int CV_OFFSET = PDOMCPPAnnotation.MAX_EXTRA_OFFSET + 1;
+
+	private byte annotation1= -1;
 	
 	public PDOMCPPMethodTemplate(PDOMCPPLinkage linkage, PDOMNode parent, ICPPMethod method) 
 			throws CoreException, DOMException {
@@ -79,15 +81,21 @@ class PDOMCPPMethodTemplate extends PDOMCPPFunctionTemplate implements ICPPMetho
 	}
 
 	public boolean isDestructor() throws DOMException {
-		return getBit(getByte(record + ANNOTATION1), PDOMCPPAnnotation.DESTRUCTOR_OFFSET);
+		return getBit(getAnnotation1(), PDOMCPPAnnotation.DESTRUCTOR_OFFSET);
+	}
+
+	final protected byte getAnnotation1() {
+		if (annotation1 == -1)
+			annotation1= getByte(record + ANNOTATION1);
+		return annotation1;
 	}
 
 	public boolean isImplicit() {
-		return getBit(getByte(record + ANNOTATION1), PDOMCPPAnnotation.IMPLICIT_METHOD_OFFSET);
+		return getBit(getAnnotation1(), PDOMCPPAnnotation.IMPLICIT_METHOD_OFFSET);
 	}
 
 	public boolean isVirtual() throws DOMException {
-		return getBit(getByte(record + ANNOTATION1), PDOMCPPAnnotation.VIRTUAL_OFFSET);
+		return getBit(getAnnotation1(), PDOMCPPAnnotation.VIRTUAL_OFFSET);
 	}
 
 	public ICPPClassType getClassOwner() throws DOMException {
@@ -95,15 +103,15 @@ class PDOMCPPMethodTemplate extends PDOMCPPFunctionTemplate implements ICPPMetho
 	}
 
 	public int getVisibility() throws DOMException {
-		return PDOMCPPAnnotation.getVisibility(getByte(record + ANNOTATION));
+		return PDOMCPPAnnotation.getVisibility(getAnnotation());
 	}
 
 	public boolean isConst() {
-		return getBit(getByte(record + ANNOTATION1), PDOMCAnnotation.CONST_OFFSET + CV_OFFSET);
+		return getBit(getAnnotation1(), PDOMCAnnotation.CONST_OFFSET + CV_OFFSET);
 	}
 
 	public boolean isVolatile() {
-		return getBit(getByte(record + ANNOTATION1), PDOMCAnnotation.VOLATILE_OFFSET + CV_OFFSET);
+		return getBit(getAnnotation1(), PDOMCAnnotation.VOLATILE_OFFSET + CV_OFFSET);
 	}
 	
 	@Override

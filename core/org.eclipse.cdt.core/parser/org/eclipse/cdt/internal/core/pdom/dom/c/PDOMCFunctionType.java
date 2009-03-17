@@ -52,6 +52,8 @@ public class PDOMCFunctionType extends PDOMNode implements IIndexType, IFunction
 	@SuppressWarnings("hiding")
 	protected static final int RECORD_SIZE= PDOMNode.RECORD_SIZE + 8;
 
+	private IType[] parameterTypes;
+
 	public PDOMCFunctionType(PDOMLinkage linkage, int record) {
 		super(linkage, record);
 	}
@@ -147,7 +149,15 @@ public class PDOMCFunctionType extends PDOMNode implements IIndexType, IFunction
 		return false;
 	}
 
-	public IType[] getParameterTypes() {
+	public final IType[] getParameterTypes() {
+		if (parameterTypes == null)
+			parameterTypes= readParameterTypes();
+
+		// public method, it is safer to clone.
+		return parameterTypes.clone();
+	}
+	
+	private final IType[] readParameterTypes() {
 		final List<IType> result= new ArrayList<IType>();
 		try {
 			PDOMNodeLinkedList list = new PDOMNodeLinkedList(getLinkage(), record + TYPELIST, true);

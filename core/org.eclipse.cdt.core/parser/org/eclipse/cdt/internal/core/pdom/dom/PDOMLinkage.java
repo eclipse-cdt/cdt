@@ -13,6 +13,9 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.pdom.dom;
 
+import java.lang.ref.Reference;
+import java.lang.ref.SoftReference;
+
 import org.eclipse.cdt.core.dom.IPDOMVisitor;
 import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IASTDeclSpecifier;
@@ -33,6 +36,7 @@ import org.eclipse.cdt.core.dom.ast.ITypedef;
 import org.eclipse.cdt.core.dom.ast.IVariable;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPUsingDirective;
 import org.eclipse.cdt.core.index.IIndexLinkage;
+import org.eclipse.cdt.core.parser.util.CharArrayMap;
 import org.eclipse.cdt.internal.core.dom.parser.ASTInternal;
 import org.eclipse.cdt.internal.core.index.IIndexBindingConstants;
 import org.eclipse.cdt.internal.core.pdom.PDOM;
@@ -43,6 +47,7 @@ import org.eclipse.cdt.internal.core.pdom.db.IBTreeComparator;
 import org.eclipse.cdt.internal.core.pdom.db.IBTreeVisitor;
 import org.eclipse.cdt.internal.core.pdom.db.IString;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IProgressMonitor;
 
 /**
  * This class represents a collection of symbols that can be linked together at
@@ -412,5 +417,40 @@ public abstract class PDOMLinkage extends PDOMNamedNode implements IIndexLinkage
 	 */
 	public PDOMBinding addUnknownValue(IBinding binding) throws CoreException {
 		return null;
+	}
+
+	/**
+	 * Returns the list of global bindings for the given name.
+	 * @throws CoreException 
+	 */
+	public PDOMBinding[] getBindingsViaCache(char[] name, IProgressMonitor monitor) throws CoreException {
+		CharArrayMap<PDOMBinding[]> map = getBindingMap();
+		synchronized(map) {
+			PDOMBinding[] result= map.get(name);
+			if (result != null)
+				return result;
+		}
+		
+		BindingCollector visitor = new BindingCollector(this, name, null, false, true);
+		visitor.setMonitor(monitor);
+		getIndex().accept(visitor);
+		PDOMBinding[] result= visitor.getBindings();
+		synchronized(map) {
+			map.put(name, result);
+		}
+		return result;
+	}
+	
+	private CharArrayMap<PDOMBinding[]> getBindingMap() {
+		final Integer key= getRecord();
+		final PDOM pdom = getPDOM();
+		@SuppressWarnings("unchecked")
+		Reference<CharArrayMap<PDOMBinding[]>> cached= (Reference<CharArrayMap<PDOMBinding[]>>) pdom.getCachedResult(key);
+		CharArrayMap<PDOMBinding[]> map= cached == null ? null : cached.get();
+		if (map == null) {
+			map= new CharArrayMap<PDOMBinding[]>();
+			pdom.putCachedResult(key, new SoftReference<CharArrayMap<?>>(map));
+		}
+		return map;
 	}
 }

@@ -25,6 +25,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPMethod;
 import org.eclipse.cdt.internal.core.Util;
 import org.eclipse.cdt.internal.core.index.IIndexCPPBindingConstants;
 import org.eclipse.cdt.internal.core.index.IndexCPPSignatureUtil;
+import org.eclipse.cdt.internal.core.pdom.PDOM;
 import org.eclipse.cdt.internal.core.pdom.db.Database;
 import org.eclipse.cdt.internal.core.pdom.dom.IPDOMOverloader;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMBinding;
@@ -71,13 +72,15 @@ class PDOMCPPFunction extends PDOMCPPBinding implements ICPPFunction, IPDOMOverl
 	 * Offset of annotation information (relative to the beginning of the
 	 * record).
 	 */
-	protected static final int ANNOTATION = PDOMCPPBinding.RECORD_SIZE + 20; // byte
+	private static final int ANNOTATION = PDOMCPPBinding.RECORD_SIZE + 20; // byte
 
 	/**
 	 * The size in bytes of a PDOMCPPFunction record in the database.
 	 */
 	@SuppressWarnings("hiding")
 	protected static final int RECORD_SIZE = PDOMCPPBinding.RECORD_SIZE + 21;
+
+	private byte annotation= -1;
 	
 	public PDOMCPPFunction(PDOMLinkage linkage, PDOMNode parent, ICPPFunction function, boolean setTypes) throws CoreException, DOMException {
 		super(linkage, parent, function.getNameCharArray());
@@ -129,6 +132,7 @@ class PDOMCPPFunction extends PDOMCPPBinding implements ICPPFunction, IPDOMOverl
 			}
 			final Database db = getDB();
 			db.putByte(record + ANNOTATION, newAnnotation);
+			annotation= newAnnotation;
 			
 			int oldRec = db.getInt(record+EXCEPTION_SPEC);
 			storeExceptionSpec(db, func);
@@ -166,6 +170,7 @@ class PDOMCPPFunction extends PDOMCPPBinding implements ICPPFunction, IPDOMOverl
 	private PDOMCPPFunctionType setType(ICPPFunctionType ft) throws CoreException {
 		PDOMCPPFunctionType pft = (PDOMCPPFunctionType) getLinkage().addType(this, ft);
 		getDB().putInt(record + FUNCTION_TYPE, pft.getRecord());
+		getPDOM().putCachedResult(record, pft, true);
 		return pft;
 	}
 	
@@ -204,11 +209,17 @@ class PDOMCPPFunction extends PDOMCPPBinding implements ICPPFunction, IPDOMOverl
 	}
 	
 	public boolean isInline() throws DOMException {
-		return getBit(getByte(record + ANNOTATION), PDOMCAnnotation.INLINE_OFFSET);
+		return getBit(getAnnotation(), PDOMCAnnotation.INLINE_OFFSET);
+	}
+
+	final protected byte getAnnotation() {
+		if (annotation == -1)
+			annotation= getByte(record + ANNOTATION);
+		return annotation;
 	}
 
 	public boolean isExternC() throws DOMException {
-		return getBit(getByte(record + ANNOTATION), PDOMCPPAnnotation.EXTERN_C_OFFSET);
+		return getBit(getAnnotation(), PDOMCPPAnnotation.EXTERN_C_OFFSET);
 	}
 
 	public boolean isMutable() throws DOMException {
@@ -235,7 +246,17 @@ class PDOMCPPFunction extends PDOMCPPBinding implements ICPPFunction, IPDOMOverl
 		}
 	}
 
-	public ICPPFunctionType getType() {		
+	public final ICPPFunctionType getType() {	
+		final PDOM pdom= getPDOM();
+		ICPPFunctionType ftype= (ICPPFunctionType) pdom.getCachedResult(record);
+		if (ftype == null) {
+			ftype= readFunctionType();
+			pdom.putCachedResult(record, ftype, false);
+		}
+		return ftype;
+	}
+	
+	private final ICPPFunctionType readFunctionType() {
 		try {
 			int offset= getDB().getInt(record + FUNCTION_TYPE);
 			return offset==0 ? null : new PDOMCPPFunctionType(getLinkage(), offset); 
@@ -251,7 +272,7 @@ class PDOMCPPFunction extends PDOMCPPBinding implements ICPPFunction, IPDOMOverl
 	}
 
 	public boolean isExtern() throws DOMException {
-		return getBit(getByte(record + ANNOTATION), PDOMCAnnotation.EXTERN_OFFSET);
+		return getBit(getAnnotation(), PDOMCAnnotation.EXTERN_OFFSET);
 	}
 
 	public boolean isRegister() throws DOMException {
@@ -260,11 +281,11 @@ class PDOMCPPFunction extends PDOMCPPBinding implements ICPPFunction, IPDOMOverl
 	}
 
 	public boolean isStatic() throws DOMException {
-		return getBit(getByte(record + ANNOTATION), PDOMCAnnotation.STATIC_OFFSET);
+		return getBit(getAnnotation(), PDOMCAnnotation.STATIC_OFFSET);
 	}
 
 	public boolean takesVarArgs() throws DOMException {
-		return getBit(getByte(record + ANNOTATION), PDOMCAnnotation.VARARGS_OFFSET);
+		return getBit(getAnnotation(), PDOMCAnnotation.VARARGS_OFFSET);
 	}
 
 	@Override

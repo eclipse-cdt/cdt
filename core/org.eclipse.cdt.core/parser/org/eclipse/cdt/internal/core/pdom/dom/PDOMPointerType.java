@@ -43,6 +43,11 @@ public class PDOMPointerType extends PDOMNode implements IPointerType,
 	private static final int CONST = 0x1;
 	private static final int VOLATILE = 0x2;
 	
+	
+	// cached values
+	private byte flags= -1;
+	private IType targetType;
+	
 	public PDOMPointerType(PDOMLinkage linkage, int record) {
 		super(linkage, record);
 	}
@@ -84,10 +89,20 @@ public class PDOMPointerType extends PDOMNode implements IPointerType,
 	}
 	
 	private byte getFlags() throws CoreException {
-		return getDB().getByte(record + FLAGS);
+		if (flags == -1) {
+			flags= getDB().getByte(record + FLAGS);
+		}
+		return flags;
 	}
 	
 	public IType getType() {
+		if (targetType == null)
+			targetType= readType();
+		
+		return targetType;
+	}
+
+	private IType readType() {
 		try {
 			PDOMNode node = getLinkage().getNode(getDB().getInt(record + TYPE));
 			return node instanceof IType ? (IType)node : null;

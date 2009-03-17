@@ -71,6 +71,7 @@ public class InternalParserUtil extends ParserFactory {
 			case IResourceStatus.NOT_FOUND_LOCAL:
 			case IResourceStatus.NO_LOCATION_LOCAL:
 			case IResourceStatus.FAILED_READ_LOCAL:
+			case IResourceStatus.RESOURCE_NOT_LOCAL:
 				return null;
 			}
 			throw e;

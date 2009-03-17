@@ -46,7 +46,7 @@ class PDOMCPPMethod extends PDOMCPPFunction implements ICPPMethod {
 	 * Offset of remaining annotation information (relative to the beginning of
 	 * the record).
 	 */
-	protected static final int ANNOTATION1 = PDOMCPPFunction.RECORD_SIZE; // byte
+	private static final int ANNOTATION1 = PDOMCPPFunction.RECORD_SIZE; // byte
 
 	/**
 	 * The size in bytes of a PDOMCPPMethod record in the database.
@@ -59,14 +59,16 @@ class PDOMCPPMethod extends PDOMCPPFunction implements ICPPMethod {
 	 */
 	private static final int CV_OFFSET = PDOMCPPAnnotation.MAX_EXTRA_OFFSET + 1;
 
+	private byte annotation1= -1;
+
 	public PDOMCPPMethod(PDOMLinkage linkage, PDOMNode parent, ICPPMethod method) throws CoreException, DOMException {
 		super(linkage, parent, method, true);
 
 		Database db = getDB();
 
 		try {
-			byte annotation= PDOMCPPAnnotation.encodeExtraAnnotation(method);
-			db.putByte(record + ANNOTATION1, annotation);
+			annotation1= PDOMCPPAnnotation.encodeExtraAnnotation(method);
+			db.putByte(record + ANNOTATION1, annotation1);
 		} catch (DOMException e) {
 			throw new CoreException(Util.createStatus(e));
 		}
@@ -81,8 +83,11 @@ class PDOMCPPMethod extends PDOMCPPFunction implements ICPPMethod {
 		if (newBinding instanceof ICPPMethod) {
 			ICPPMethod method= (ICPPMethod) newBinding;
 			super.update(linkage, newBinding);
+			annotation1= -1;
 			try {
-				getDB().putByte(record + ANNOTATION1, PDOMCPPAnnotation.encodeExtraAnnotation(method));
+				final byte annot = PDOMCPPAnnotation.encodeExtraAnnotation(method);
+				getDB().putByte(record + ANNOTATION1, annot);
+				annotation1= annot;
 			} catch (DOMException e) {
 				throw new CoreException(Util.createStatus(e));
 			}
@@ -100,15 +105,21 @@ class PDOMCPPMethod extends PDOMCPPFunction implements ICPPMethod {
 	}
 
 	public boolean isVirtual() throws DOMException {
-		return getBit(getByte(record + ANNOTATION1), PDOMCPPAnnotation.VIRTUAL_OFFSET);
+		return getBit(getAnnotation1(), PDOMCPPAnnotation.VIRTUAL_OFFSET);
+	}
+
+	protected byte getAnnotation1() {
+		if (annotation1 == -1)
+			annotation1= getByte(record + ANNOTATION1);
+		return annotation1;
 	}
 
 	public boolean isPureVirtual() throws DOMException {
-		return getBit(getByte(record + ANNOTATION1), PDOMCPPAnnotation.PURE_VIRTUAL_OFFSET);
+		return getBit(getAnnotation1(), PDOMCPPAnnotation.PURE_VIRTUAL_OFFSET);
 	}
 
 	public boolean isDestructor() throws DOMException {
-		return getBit(getByte(record + ANNOTATION1), PDOMCPPAnnotation.DESTRUCTOR_OFFSET);
+		return getBit(getAnnotation1(), PDOMCPPAnnotation.DESTRUCTOR_OFFSET);
 	}
 
 	@Override
@@ -117,7 +128,7 @@ class PDOMCPPMethod extends PDOMCPPFunction implements ICPPMethod {
 	}
 
 	public boolean isImplicit() {
-		return getBit(getByte(record + ANNOTATION1), PDOMCPPAnnotation.IMPLICIT_METHOD_OFFSET);
+		return getBit(getAnnotation1(), PDOMCPPAnnotation.IMPLICIT_METHOD_OFFSET);
 	}
 	
 	@Override
@@ -149,7 +160,7 @@ class PDOMCPPMethod extends PDOMCPPFunction implements ICPPMethod {
 	}
 
 	public int getVisibility() throws DOMException {
-		return PDOMCPPAnnotation.getVisibility(getByte(record + ANNOTATION));
+		return PDOMCPPAnnotation.getVisibility(getAnnotation());
 	}
 
 	public ICPPClassType getClassOwner() throws DOMException {
@@ -162,11 +173,11 @@ class PDOMCPPMethod extends PDOMCPPFunction implements ICPPMethod {
 	}
 
 	public boolean isConst() {
-		return getBit(getByte(record + ANNOTATION1), PDOMCAnnotation.CONST_OFFSET + CV_OFFSET);
+		return getBit(getAnnotation1(), PDOMCAnnotation.CONST_OFFSET + CV_OFFSET);
 	}
 
 	public boolean isVolatile() {
-		return getBit(getByte(record + ANNOTATION1), PDOMCAnnotation.VOLATILE_OFFSET + CV_OFFSET);
+		return getBit(getAnnotation1(), PDOMCAnnotation.VOLATILE_OFFSET + CV_OFFSET);
 	}
 
 	@Override

@@ -864,25 +864,28 @@ public class PDOM extends PlatformObject implements IPDOM {
 
 	public IIndexFragmentBinding[] findBindings(char[] name, boolean filescope, IndexFilter filter, IProgressMonitor monitor) throws CoreException {
 		ArrayList<IIndexFragmentBinding> result= new ArrayList<IIndexFragmentBinding>();
-		for (PDOMLinkage linkage : getLinkageList()) {
-			if (filter.acceptLinkage(linkage)) {
-				PDOMBinding[] bindings;
-				BindingCollector visitor = new BindingCollector(linkage, name, filter, false, true);
-				visitor.setMonitor(monitor);
-				try {
-					linkage.accept(visitor);
+		try {
+			for (PDOMLinkage linkage : getLinkageList()) {
+				if (filter.acceptLinkage(linkage)) {
+					PDOMBinding[] bindings= linkage.getBindingsViaCache(name, monitor);
+					for (PDOMBinding binding : bindings) {
+						if (filter.acceptBinding(binding)) {
+							result.add(binding);
+						}
+					}
 					if (!filescope) {
+						BindingCollector visitor = new BindingCollector(linkage, name, filter, false, true);
+						visitor.setMonitor(monitor);
 						linkage.getNestedBindingsIndex().accept(visitor);
+
+						bindings= visitor.getBindings();
+						for (PDOMBinding binding : bindings) {
+							result.add(binding);
+						}
 					}
 				}
-				catch (OperationCanceledException e) {
-				}
-				bindings= visitor.getBindings();
-
-				for (PDOMBinding binding : bindings) {
-					result.add(binding);
-				}
 			}
+		} catch (OperationCanceledException e) {
 		}
 		return result.toArray(new IIndexFragmentBinding[result.size()]);
 	}

@@ -34,7 +34,7 @@ class PDOMCPPConstructorTemplate extends PDOMCPPMethodTemplate implements
 	}
 
 	public boolean isExplicit() throws DOMException {
-		return getBit(getByte(record + ANNOTATION1), PDOMCPPAnnotation.EXPLICIT_CONSTRUCTOR_OFFSET);
+		return getBit(getAnnotation1(), PDOMCPPAnnotation.EXPLICIT_CONSTRUCTOR_OFFSET);
 	}
 	
 	@Override

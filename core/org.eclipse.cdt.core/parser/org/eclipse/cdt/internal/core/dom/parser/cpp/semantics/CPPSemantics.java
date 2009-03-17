@@ -1957,11 +1957,13 @@ public class CPPSemantics {
 				continue;
 			}
 				
-			final IParameter[] params = function.getParameters();
-			int numPars = params.length;
+			// the index is optimized to provide the function type, try not to use the parameters
+			// as long as possible.
+			final IType[] parameterTypes = function.getType().getParameterTypes();
+			int numPars = parameterTypes.length;
 			if (numArgs < 2 && numPars == 1) {
 				// check for void
-			    IType t = getNestedType(params[0].getType(), TDEF);
+			    IType t = getNestedType(parameterTypes[0], TDEF);
 			    if (t instanceof IBasicType && ((IBasicType)t).getType() == IBasicType.t_void)
 			        numPars= 0;
 			}
@@ -1978,10 +1980,15 @@ public class CPPSemantics {
 					}
 				} else if (numArgs < numPars) {
 					// fewer arguments than parameters --> need default values
-					for (int j = numArgs; j < numPars; j++) {
-						if (!((ICPPParameter) params[j]).hasDefaultValue()) {
-							functions[i] = null;
-							break;
+					IParameter[] params = function.getParameters();
+					if (params.length < numPars) {
+						functions[i]= null;
+					} else {
+						for (int j = numArgs; j < numPars; j++) {
+							if (!((ICPPParameter) params[j]).hasDefaultValue()) {
+								functions[i] = null;
+								break;
+							}
 						}
 					}
 				}

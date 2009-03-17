@@ -128,6 +128,7 @@ public class BaseTestCase extends TestCase {
 					case IResourceStatus.NOT_FOUND_LOCAL:
 					case IResourceStatus.NO_LOCATION_LOCAL:
 					case IResourceStatus.FAILED_READ_LOCAL:
+					case IResourceStatus.RESOURCE_NOT_LOCAL:
 						// logged by the resources plugin.
 						return;
 					}

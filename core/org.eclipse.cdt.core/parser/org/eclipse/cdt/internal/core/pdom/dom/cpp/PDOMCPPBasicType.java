@@ -39,6 +39,7 @@ class PDOMCPPBasicType extends PDOMNode implements ICPPBasicType, IIndexType {
 	private static final int RECORD_SIZE = PDOMNode.RECORD_SIZE + 4;
 
 	protected short fFlags= -1;
+	protected short fType= -1;
 
 	public PDOMCPPBasicType(PDOMLinkage linkage, int record) {
 		super(linkage, record);
@@ -93,12 +94,15 @@ class PDOMCPPBasicType extends PDOMNode implements ICPPBasicType, IIndexType {
 	}
 
 	public int getType() {
-		try {
-			return getDB().getShort(record + TYPE_ID);
-		} catch (CoreException e) {
-			CCorePlugin.log(e);
-			return 0;
+		if (fType == -1) {
+			try {
+				fType=  getDB().getShort(record + TYPE_ID);
+			} catch (CoreException e) {
+				CCorePlugin.log(e);
+				fType= 0;
+			}
 		}
+		return fType;
 	}
 
 	@Deprecated

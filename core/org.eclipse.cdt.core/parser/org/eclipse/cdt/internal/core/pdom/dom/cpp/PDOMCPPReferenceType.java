@@ -9,7 +9,6 @@
  *    Markus Schorn - initial API and implementation
  *    Bryan Wilkinson (QNX)
  *******************************************************************************/ 
-
 package org.eclipse.cdt.internal.core.pdom.dom.cpp;
 
 import org.eclipse.cdt.core.CCorePlugin;
@@ -35,6 +34,8 @@ class PDOMCPPReferenceType extends PDOMNode implements ICPPReferenceType, ITypeC
 	
 	@SuppressWarnings("hiding")
 	protected static final int RECORD_SIZE = PDOMNode.RECORD_SIZE + 4;
+
+	private IType targetType;
 	
 	public PDOMCPPReferenceType(PDOMLinkage linkage, int record) {
 		super(linkage, record);
@@ -71,6 +72,13 @@ class PDOMCPPReferenceType extends PDOMNode implements ICPPReferenceType, ITypeC
 	}
 
 	public IType getType() {
+		if (targetType == null)
+			targetType= readType();
+		
+		return targetType;
+	}
+
+	private IType readType() {
 		try {
 			PDOMNode node = getLinkage().getNode(getDB().getInt(record + TYPE));
 			return node instanceof IType ? (IType)node : null;

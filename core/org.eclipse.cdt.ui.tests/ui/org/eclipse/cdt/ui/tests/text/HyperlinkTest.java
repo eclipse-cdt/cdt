@@ -50,11 +50,13 @@ public class HyperlinkTest extends TestCase {
 		"    void set(int x, int y); \n" +
 		"    int getX(); \n" +
 		"    int getY(); \n" +
+		"    Point operator+(Point); \n" +
 		"  private: \n" +
 		"    int x, y; \n" +
 		"}; \n" +
-		"int main() {  \n" +
+		"int test(Point p) {  \n" +
 		"    char* str = \"STRING LITERAL\"; \n" +
+		"    p + p;" +
 		"} \n";
 	
 	
@@ -172,6 +174,9 @@ public class HyperlinkTest extends TestCase {
 		assertHyperlink(CPP_CODE.indexOf("set(") + 1, CPP_CODE.indexOf("set("), "set".length());
 		assertHyperlink(CPP_CODE.indexOf("getX()") + 1, CPP_CODE.indexOf("getX()"), "getX".length());
 		assertHyperlink(CPP_CODE.indexOf("getY()") + 1, CPP_CODE.indexOf("getY()"), "getY".length());
+		
+		// hyperlinks for overloaded operators
+		assertHyperlink(CPP_CODE.indexOf("+ p"), CPP_CODE.indexOf("+ p"), 1);
 	}
 	
 	
@@ -180,6 +185,9 @@ public class HyperlinkTest extends TestCase {
 		
 		// 'class' is not a keyword in C, it should be hyperlinked
 		assertHyperlink(C_CODE_1.indexOf("class") + 1, C_CODE_1.indexOf("class"), "class".length());
+		
+		// no hyperlinks for numeric literals
+		assertNotHyperlink(C_CODE_1.indexOf("99") + 1);
 	}
 	
 	

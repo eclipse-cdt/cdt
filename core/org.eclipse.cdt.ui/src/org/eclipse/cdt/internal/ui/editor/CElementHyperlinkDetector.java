@@ -91,10 +91,16 @@ public class CElementHyperlinkDetector extends AbstractHyperlinkDetector {
 						}
 					}
 					else { 
-						// search for include statement
-						final IASTNode cand= nodeSelector.findEnclosingNode(offset, length);
-						if (cand instanceof IASTPreprocessorIncludeStatement) {
-							linkLocation= cand.getFileLocation();
+						final IASTNode implicit = nodeSelector.findEnclosingImplicitName(offset, length);
+						if(implicit != null) {
+							linkLocation = implicit.getFileLocation();
+						}
+						else {
+							// search for include statement
+							final IASTNode cand= nodeSelector.findEnclosingNode(offset, length);
+							if (cand instanceof IASTPreprocessorIncludeStatement) {
+								linkLocation= cand.getFileLocation();
+							}
 						}
 					}
 					if (linkLocation != null) {
@@ -106,13 +112,13 @@ public class CElementHyperlinkDetector extends AbstractHyperlinkDetector {
 						IRegion wordRegion= CWordFinder.findWord(document, offset);
 						if (wordRegion != null) {
 							try {
-								String word= document.get(wordRegion.getOffset(), wordRegion.getLength());
-								if (!isLanguageKeyword(lang, word)) {
+								String word = document.get(wordRegion.getOffset(), wordRegion.getLength());
+								if(word.length() > 0 && !Character.isDigit(word.charAt(0)) && !isLanguageKeyword(lang, word)) {
 									result[0]= 	new CElementHyperlink(
 											new Region(wordRegion.getOffset(), wordRegion.getLength()), openAction);
 								}
 							} catch (BadLocationException exc) {
-								// ingore
+								// ignore
 							}
 						}
 					}

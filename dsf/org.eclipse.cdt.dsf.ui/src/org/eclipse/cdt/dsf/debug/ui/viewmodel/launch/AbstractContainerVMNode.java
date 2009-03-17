@@ -97,7 +97,7 @@ public abstract class AbstractContainerVMNode extends AbstractDMVMNode
                     
                     @Override
                     public boolean isEnabled(IStatus status, java.util.Map<String,Object> properties) {
-                        return !Boolean.TRUE.equals(properties.get(ILaunchVMConstants.PROP_IS_SUSPENDED));
+                        return Boolean.TRUE.equals(properties.get(ILaunchVMConstants.PROP_IS_SUSPENDED));
                     };
                 },
                 new LabelImage(DebugUITools.getImageDescriptor(IDebugUIConstants.IMG_OBJS_DEBUG_TARGET)),

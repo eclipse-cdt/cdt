@@ -43,10 +43,9 @@ public class ArrayValue extends DerivedValue implements ICDIArrayValue, ICDIPoin
 	 */
 	public ArrayValue(Variable v, String hexAddress) {
 		super(v);
-		if (hexAddress == null) {
-			return;
-		}
-		if (hexAddress.startsWith("0x") || hexAddress.startsWith("0X")) {
+		if (hexAddress == null || hexAddress.trim().length()==0) {
+			this.hexAddress = "0";
+		} else if (hexAddress.startsWith("0x") || hexAddress.startsWith("0X")) {
 			this.hexAddress = hexAddress.substring(2);
 		} else {
 			this.hexAddress = hexAddress;

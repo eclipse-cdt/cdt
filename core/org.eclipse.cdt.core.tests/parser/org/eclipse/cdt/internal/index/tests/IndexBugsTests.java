@@ -1882,11 +1882,14 @@ public class IndexBugsTests extends BaseTestCase {
 	}
 
 	//  // a.h
+	//	namespace ns {
 	//	struct A {
 	//	  int i;
 	//	};
+	//  }
 	
 	//  #include "a.h"
+	//	using ns::A;
 	//  void test() {
 	//    A a;
 	//    a.i = 0;
@@ -1904,7 +1907,7 @@ public class IndexBugsTests extends BaseTestCase {
 	//    a.i = 0;
 	//    a.j = 0;
 	//  }
-	public void _testDisambiguationByReachability_268685() throws Exception {
+	public void _testDisambiguationByReachability_268704_1() throws Exception {
 		waitForIndexer();
 
 		String[] testData = getContentsForTest(4);
@@ -1919,9 +1922,11 @@ public class IndexBugsTests extends BaseTestCase {
 		index.acquireReadLock();
 		try {
 			BindingAssertionHelper aHelper = new BindingAssertionHelper(a, testData[1], index);
+			aHelper.assertNonProblem("A a;", 1, ICPPVariable.class);
 			aHelper.assertNonProblem("i = 0;", 1, ICPPVariable.class);
 			aHelper.assertProblem("j = 0;", 1);
 			BindingAssertionHelper bHelper = new BindingAssertionHelper(b, testData[3], index);
+			aHelper.assertNonProblem("A a;", 1, ICPPVariable.class);
 			bHelper.assertProblem("i = 0;", 1);
 			bHelper.assertNonProblem("j = 0;", 1, ICPPVariable.class);
 		} finally {
@@ -1943,7 +1948,7 @@ public class IndexBugsTests extends BaseTestCase {
 	
 	//  #include "b.h"
 	//	int i = e;
-	public void _testDisambiguationByReachability_268704() throws Exception {
+	public void _testDisambiguationByReachability_268704_2() throws Exception {
 		waitForIndexer();
 
 		String[] testData = getContentsForTest(4);

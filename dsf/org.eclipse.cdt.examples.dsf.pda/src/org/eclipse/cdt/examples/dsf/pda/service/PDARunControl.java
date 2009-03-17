@@ -468,7 +468,7 @@ public class PDARunControl extends AbstractDsfService
             if (!fVMSuspended) { 
                 ThreadInfo state = fThreads.get(threadContext.getID());
                 if (state != null) {
-                    return !state.fSuspended && state.fSuspendPending;
+                    return !state.fSuspended && !state.fSuspendPending;
                 }
             }
         } else {

@@ -103,6 +103,10 @@ public class ArrayValue extends DerivedValue implements ICDIArrayValue, ICDIPoin
 	 * @see org.eclipse.cdt.debug.core.cdi.model.type.ICDIPointerValue#pointerValue()
 	 */
 	public BigInteger pointerValue() throws CDIException {
-		return new BigInteger(hexAddress, 16);
+		try {
+			return new BigInteger(hexAddress, 16);
+		} catch (Exception e) {
+			return null;
+		}
 	}
 }

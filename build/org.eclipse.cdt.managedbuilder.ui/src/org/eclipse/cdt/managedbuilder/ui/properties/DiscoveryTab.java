@@ -311,43 +311,47 @@ public class DiscoveryTab extends AbstractCBuildPropertyTab implements IBuildInf
         int pos = 0;
         String savedId = buildInfo.getSelectedProfileId();
         ITool[] tools = null;
-		Tool tool = (Tool)iContext.getTool();
-		if(null == tool) {
-			IConfiguration conf = iContext.getConfiguration();
-			if(null != conf) {
-				tools = conf.getToolChain().getTools();
+        boolean needPerRcProfile = cbi.isPerRcTypeDiscovery();
+		if(!page.isForPrefs()) {
+			Tool tool = (Tool)iContext.getTool();
+			if(null == tool) {
+				IConfiguration conf = iContext.getConfiguration();
+				if(null != conf) {
+					tools = conf.getToolChain().getTools();
+				}
+				if(null == tools)
+					return;
 			}
-			if(null == tools)
-				return;
+			else
+				tools = new ITool[] { tool };
 		}
-		else
-			tools = new ITool[] { tool };
-        
         for (String profileId : profilesList) {
-    		boolean ok = false;
-        	for(int i = 0; i < tools.length; ++i) {
-        		IInputType[] inputTypes = ((Tool)tools[i]).getAllInputTypes();
-	        	if(null != inputTypes) {
-		        	for(IInputType it : inputTypes) {
-		        		String[] requiedProfiles = getDiscoveryProfileIds(tools[i], it);
-		        		if(null != requiedProfiles) {
-		        			for(String requiredProfile : requiedProfiles) {
-				        		if(profileId.equals(requiredProfile)) {
-				        			ok = true;
-				        			break;
-				        		}
-		        			}
-		        		}
+        	if(tools != null) {
+	    		boolean ok = false;
+	        	for(int i = 0; i < tools.length; ++i) {
+	        		IInputType[] inputTypes = ((Tool)tools[i]).getAllInputTypes();
+		        	if(null != inputTypes) {
+			        	for(IInputType it : inputTypes) {
+			        		String[] requiedProfiles = getDiscoveryProfileIds(tools[i], it);
+			        		if(null != requiedProfiles) {
+			        			for(String requiredProfile : requiedProfiles) {
+					        		if(profileId.equals(requiredProfile)) {
+					        			ok = true;
+					        			break;
+					        		}
+			        			}
+			        		}
+			        	}
 		        	}
+		        	if(ok)
+		        		break;
 	        	}
-	        	if(ok)
-	        		break;
-        	}
-        	if (!ok)
-        		continue;
-            //if (cbi.isPerRcTypeDiscovery() && !CfgScannerConfigProfileManager.isPerFileProfile(profileId))
-              //  continue;
-
+	        	if (!ok)
+	        		continue;
+        	} 
+    		if (needPerRcProfile && !CfgScannerConfigProfileManager.isPerFileProfile(profileId))
+    			continue;
+        
  			visibleProfilesList.add(profileId);
             labels[counter] = profiles[counter] = getProfileName(profileId);
             if (profileId.equals(savedId)) 

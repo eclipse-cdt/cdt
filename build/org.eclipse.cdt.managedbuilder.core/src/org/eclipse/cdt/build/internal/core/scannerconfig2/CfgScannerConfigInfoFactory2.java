@@ -208,6 +208,8 @@ public class CfgScannerConfigInfoFactory2 {
 									}
 								}
 							} else {
+								if(cfg.isPreference())
+									continue;
 								CfgInfoContext context = new CfgInfoContext(rcInfo, tool, null);
 								context = CfgScannerConfigUtil.adjustPerRcTypeContext(context);
 								if(context != null && context.getResourceInfo() != null){
@@ -304,7 +306,7 @@ public class CfgScannerConfigInfoFactory2 {
 			if(!isPerRcTypeDiscovery())
 				return true;
 
-			return !CfgScannerConfigProfileManager.isPerFileProfile(profileId);
+			return CfgScannerConfigProfileManager.isPerFileProfile(profileId);
 		}
 	}
 

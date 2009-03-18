@@ -123,7 +123,8 @@ public abstract class AbstractThreadVMNode extends AbstractDMVMNode
                         ExecutionContextLabelText.PROP_NAME_KNOWN, 
                         PROP_NAME, 
                         ExecutionContextLabelText.PROP_ID_KNOWN, 
-                        ILaunchVMConstants.PROP_ID}), 
+                        ILaunchVMConstants.PROP_ID, 
+                        ILaunchVMConstants.PROP_IS_SUSPENDED }), 
                 new LabelText(MessagesForLaunchVM.AbstractThreadVMNode_No_columns__Error__label, new String[0]),
                 new LabelImage(DebugUITools.getImageDescriptor(IDebugUIConstants.IMG_OBJS_THREAD_RUNNING)) {
                     { setPropertyNames(new String[] { ILaunchVMConstants.PROP_IS_SUSPENDED }); }

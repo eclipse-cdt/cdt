@@ -221,7 +221,10 @@ public abstract class AbstractThreadVMNode extends AbstractDMVMNode
     }
     
     protected void fillExecutionDataProperties(IPropertiesUpdate update, IExecutionDMData data) {
-        update.setProperty(ILaunchVMConstants.PROP_STATE_CHANGE_REASON, data.getStateChangeReason().name());
+        StateChangeReason reason = data.getStateChangeReason();
+        if (reason != null) {
+            update.setProperty(ILaunchVMConstants.PROP_STATE_CHANGE_REASON, data.getStateChangeReason().name());
+        }
     }
     
     @Override

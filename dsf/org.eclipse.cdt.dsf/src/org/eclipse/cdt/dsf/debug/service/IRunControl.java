@@ -98,6 +98,12 @@ public interface IRunControl extends IDsfService
      * Display information for an execution context.
      */
     public interface IExecutionDMData extends IDMData {
+        
+        /**
+         * Reason for the last change in execution state.  Could be 
+         * <code>null</code> if the service does not support tracking this 
+         * information. 
+         */
         StateChangeReason getStateChangeReason();
     }
 

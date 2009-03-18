@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2008 IBM Corporation and others.
+ * Copyright (c) 2000, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -367,7 +367,7 @@ public class Scribe {
 	}
 
 	public String getEmptyLines(int linesNumber) {
-		StringBuffer buffer= new StringBuffer();
+		StringBuilder buffer= new StringBuilder();
 		if (lastNumberOfNewLines == 0) {
 			linesNumber++; // add an extra line breaks
 			for (int i= 0; i < linesNumber; i++) {
@@ -823,7 +823,7 @@ public class Scribe {
 					column= 1;
 					line++;
 
-					StringBuffer buffer= new StringBuffer();
+					StringBuilder buffer= new StringBuilder();
 					buffer.append(lineSeparator);
 					printIndentationIfNecessary(buffer);
 					buffer.append(' ');
@@ -1115,7 +1115,7 @@ public class Scribe {
 	}
 
 	void printIndentationIfNecessary() {
-		StringBuffer buffer= new StringBuffer();
+		StringBuilder buffer= new StringBuilder();
 		printIndentationIfNecessary(buffer);
 		if (buffer.length() > 0) {
 			addInsertEdit(scanner.getCurrentTokenStartPosition(), buffer.toString());
@@ -1123,7 +1123,7 @@ public class Scribe {
 		}
 	}
 
-	private void printIndentationIfNecessary(StringBuffer buffer) {
+	private void printIndentationIfNecessary(StringBuilder buffer) {
 		switch (tabChar) {
 		case DefaultCodeFormatterOptions.TAB:
 			boolean useTabsForLeadingIndents= useTabsOnlyForLeadingIndents;
@@ -1252,6 +1252,11 @@ public class Scribe {
 		}
 		currentToken= scanner.nextToken();
 		if (currentToken == null || expectedTokenType != currentToken.type) {
+			if (pendingSpace) {
+				addInsertEdit(scanner.getCurrentTokenStartPosition(), SPACE);
+			}
+			pendingSpace= false;
+			needSpace= true;
 			throw new AbortFormatting(
 					"["	+ (line+1) + "/" + column + "] unexpected token type, expecting:" + expectedTokenType + ", actual:" + currentToken);//$NON-NLS-1$//$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
 		}
@@ -1269,7 +1274,12 @@ public class Scribe {
 		}
 		currentToken= scanner.nextToken();
 		if (Arrays.binarySearch(expectedTokenTypes, currentToken.type) < 0) {
-			StringBuffer expectations= new StringBuffer(5);
+			if (pendingSpace) {
+				addInsertEdit(scanner.getCurrentTokenStartPosition(), SPACE);
+			}
+			pendingSpace= false;
+			needSpace= true;
+			StringBuilder expectations= new StringBuilder(5);
 			for (int i= 0; i < expectedTokenTypes.length; i++) {
 				if (i > 0) {
 					expectations.append(',');
@@ -1282,7 +1292,7 @@ public class Scribe {
 		print(currentToken.getLength(), considerSpaceIfAny);
 	}
 
-	private void printRule(StringBuffer stringBuffer) {
+	private void printRule(StringBuilder stringBuffer) {
 		for (int i= 0; i < pageWidth; i++) {
 			if ((i % tabLength) == 0) {
 				stringBuffer.append('+');
@@ -1450,31 +1460,31 @@ public class Scribe {
 
 	@Override
 	public String toString() {
-		StringBuffer stringBuffer= new StringBuffer();
-		stringBuffer.append("(page width = " + pageWidth + ") - (tabChar = ");//$NON-NLS-1$//$NON-NLS-2$
+		StringBuilder buffer= new StringBuilder();
+		buffer.append("(page width = " + pageWidth + ") - (tabChar = ");//$NON-NLS-1$//$NON-NLS-2$
 		switch (tabChar) {
 		case DefaultCodeFormatterOptions.TAB:
-			stringBuffer.append("TAB");//$NON-NLS-1$
+			buffer.append("TAB");//$NON-NLS-1$
 			break;
 		case DefaultCodeFormatterOptions.SPACE:
-			stringBuffer.append("SPACE");//$NON-NLS-1$
+			buffer.append("SPACE");//$NON-NLS-1$
 			break;
 		default:
-			stringBuffer.append("MIXED");//$NON-NLS-1$
+			buffer.append("MIXED");//$NON-NLS-1$
 		}
-		stringBuffer
-				.append(") - (tabSize = " + tabLength + ")")//$NON-NLS-1$//$NON-NLS-2$
-				.append(lineSeparator)
-				.append(
-						"(line = " + line + ") - (column = " + column + ") - (identationLevel = " + indentationLevel + ")") //$NON-NLS-1$	//$NON-NLS-2$	//$NON-NLS-3$	//$NON-NLS-4$
-				.append(lineSeparator)
-				.append(
-						"(needSpace = " + needSpace + ") - (lastNumberOfNewLines = " + lastNumberOfNewLines + ") - (checkLineWrapping = " + checkLineWrapping + ")") //$NON-NLS-1$	//$NON-NLS-2$	//$NON-NLS-3$	//$NON-NLS-4$
-				.append(lineSeparator).append(
-						"==================================================================================") //$NON-NLS-1$
-				.append(lineSeparator);
-		printRule(stringBuffer);
-		return stringBuffer.toString();
+		buffer
+			.append(") - (tabSize = " + tabLength + ")")//$NON-NLS-1$//$NON-NLS-2$
+			.append(lineSeparator)
+			.append(
+					"(line = " + line + ") - (column = " + column + ") - (identationLevel = " + indentationLevel + ")") //$NON-NLS-1$	//$NON-NLS-2$	//$NON-NLS-3$	//$NON-NLS-4$
+			.append(lineSeparator)
+			.append(
+					"(needSpace = " + needSpace + ") - (lastNumberOfNewLines = " + lastNumberOfNewLines + ") - (checkLineWrapping = " + checkLineWrapping + ")") //$NON-NLS-1$	//$NON-NLS-2$	//$NON-NLS-3$	//$NON-NLS-4$
+			.append(lineSeparator).append(
+					"==================================================================================") //$NON-NLS-1$
+			.append(lineSeparator);
+		printRule(buffer);
+		return buffer.toString();
 	}
 
 	public void unIndent() {

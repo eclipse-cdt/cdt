@@ -797,8 +797,10 @@ public class DsfSourceDisplayAdapter implements ISourceDisplay, ISteppingControl
 				        if (dmc instanceof IFrameDMContext && DMContexts.isAncestorOf(dmc, e.getDMContext())) {
 				        	IWorkbenchPage page = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage();
 							doDisplaySource((IFrameDMContext) dmc, page, false, true);
+							return;
 				        }
 			        }
+		    		doneStepping(e.getDMContext());
 				}});
     	} else {
     		doneStepping(e.getDMContext());

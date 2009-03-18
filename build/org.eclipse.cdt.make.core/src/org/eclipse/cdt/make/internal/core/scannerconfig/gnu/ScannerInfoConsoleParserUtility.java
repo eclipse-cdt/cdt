@@ -205,7 +205,7 @@ public class ScannerInfoConsoleParserUtility extends AbstractGCCBOPConsoleParser
 					if (fileName.startsWith("..")) {	//$NON-NLS-1$
 						// probably multiple choices for cwd, hopeless
 						final String error = MakeMessages.getString("ConsoleParser.Working_Directory_Error_Message"); //$NON-NLS-1$
-						TraceUtil.outputError(error, fileName); //$NON-NLS-1$
+						TraceUtil.outputError(error, fileName);
 						generateMarker(file, -1, error,	 IMarkerGenerator.SEVERITY_WARNING, fileName);				
 						break;
 					}

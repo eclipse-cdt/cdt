@@ -61,7 +61,7 @@ public class ProjectTargets {
 	private static final String TARGET_USE_DEFAULT_CMD = "useDefaultCommand"; //$NON-NLS-1$
 	private static final String TARGET_ARGUMENTS = "buildArguments"; //$NON-NLS-1$
 	private static final String TARGET_COMMAND = "buildCommand"; //$NON-NLS-1$
-	private static final String TARGET_RUN_ALL_BUILDERS = "runAllBuilders";
+	private static final String TARGET_RUN_ALL_BUILDERS = "runAllBuilders"; //$NON-NLS-1$
 	private static final String BAD_TARGET = "buidlTarget"; //$NON-NLS-1$
 	private static final String TARGET = "buildTarget"; //$NON-NLS-1$
 

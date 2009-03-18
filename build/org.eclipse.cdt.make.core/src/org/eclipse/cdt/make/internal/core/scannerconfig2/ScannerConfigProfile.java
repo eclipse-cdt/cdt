@@ -203,7 +203,7 @@ public class ScannerConfigProfile {
 			if (providerKind.equals(RUN)) {
 				this.action = new ScannerConfigProfile.Run(actions[0]);
 			}
-			else if (providerKind.equals(OPEN)) { //$NON-NLS-1$
+			else if (providerKind.equals(OPEN)) {
 				this.action = new ScannerConfigProfile.Open(actions[0]);
 			}
 			else {

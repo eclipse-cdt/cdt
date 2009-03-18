@@ -19,6 +19,7 @@
  *  David McKnight     (IBM)   [224906] [dstore] changes for getting properties and doing exit due to single-process capability
  *  David McKnight     (IBM)   [250203] [dstore][shells]%var% is substituted to null in Unix shell
  *  David McKnight     (IBM)   [249715] [dstore][shells] Unix shell does not echo command
+ *  David McKnight     (IBM)   [153275] [dstore-shells] Ctrl+C does not break remote program
  *******************************************************************************/
 
 package org.eclipse.rse.internal.dstore.universal.miners.command;
@@ -570,6 +571,9 @@ public class CommandMinerThread extends MinerThread
 			    // pty executable handles the break now
 				if (input.equals("#break") && !_isTTY) //$NON-NLS-1$
 				{
+					// if no pty, then do it explicitly
+					_theProcess.destroy();					
+					
 					return;
 				}
 				else if (input.equals("#enter")) //$NON-NLS-1$

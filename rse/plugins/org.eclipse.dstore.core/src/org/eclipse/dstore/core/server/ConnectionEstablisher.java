@@ -22,6 +22,7 @@
  * Noriaki Takatsu  (IBM) - [226237] [dstore] Move the place where the ServerLogger instance is made
  * David McKnight   (IBM) - [226561] [apidoc] Add API markup to RSE Javadocs where extend / implement is allowed
  * Noriaki Takatsu  (IBM) - [242968] [multithread] serverSocket must be closed when an exception happens in Accept
+ * David McKnight   (IBM) - [257321] [dstore] "Error binding socket" should include port of the failed socket
  *******************************************************************************/
 
 package org.eclipse.dstore.core.server;
@@ -330,7 +331,6 @@ public class ConnectionEstablisher
 						}
 						catch (Exception e)
 						{
-							e.printStackTrace();
 						}
 					}
 					else
@@ -347,6 +347,10 @@ public class ConnectionEstablisher
 					return serverSocket;
 				}
 			}
+			if (serverSocket == null){
+				_msg = ServerReturnCodes.RC_BIND_ERROR  + " on ports " + portStr; //$NON-NLS-1$
+				System.err.println(_msg); 				
+			}
 		}
 		else
 		{
@@ -360,6 +364,10 @@ public class ConnectionEstablisher
 				{
 					serverSocket = sslContext.getServerSocketFactory().createServerSocket(port);
 				}
+				catch (BindException e){
+					_msg = ServerReturnCodes.RC_BIND_ERROR  + " on port " + port + ": " + e.getMessage(); //$NON-NLS-1$ //$NON-NLS-2$
+					System.err.println(_msg);
+				}
 				catch (Exception e)
 				{
 					_dataStore.trace(e);
@@ -370,6 +378,10 @@ public class ConnectionEstablisher
 				try
 				{
 					serverSocket = new ServerSocket(port);
+				}
+				catch (BindException e){
+					_msg = ServerReturnCodes.RC_BIND_ERROR  + " on port " + port + ": " + e.getMessage(); //$NON-NLS-1$ //$NON-NLS-2$
+					System.err.println(_msg);
 				}
 				catch (Exception e)
 				{
@@ -425,8 +437,6 @@ public class ConnectionEstablisher
 			_serverSocket = createSocket(portStr);
 			if (_serverSocket == null)
 			{
-				System.err.println(ServerReturnCodes.RC_BIND_ERROR);
-				_msg = ServerReturnCodes.RC_BIND_ERROR;
 				_continue = false;
 			}
 			else
@@ -461,25 +471,25 @@ public class ConnectionEstablisher
 		}
 		catch (UnknownHostException e)
 		{
-			System.err.println(ServerReturnCodes.RC_UNKNOWN_HOST_ERROR);
+			System.err.println(ServerReturnCodes.RC_UNKNOWN_HOST_ERROR + ':' + e.getMessage());
 			_msg = ServerReturnCodes.RC_UNKNOWN_HOST_ERROR;
 			_continue = false;
 		}
-		catch (BindException e)
+	   catch (BindException e)
 		{
-			System.err.println(ServerReturnCodes.RC_BIND_ERROR);
+			System.err.println(ServerReturnCodes.RC_BIND_ERROR + ':' + e.getMessage());
 			_msg = ServerReturnCodes.RC_BIND_ERROR;
 			_continue = false;
 		}
 		catch (IOException e)
 		{
-			System.err.println(ServerReturnCodes.RC_GENERAL_IO_ERROR);
+			System.err.println(ServerReturnCodes.RC_GENERAL_IO_ERROR + ':' + e.getMessage());
 			_msg = ServerReturnCodes.RC_GENERAL_IO_ERROR;
 			_continue = false;
 		}
 		catch (SecurityException e)
 		{
-			System.err.println(ServerReturnCodes.RC_SECURITY_ERROR);
+			System.err.println(ServerReturnCodes.RC_SECURITY_ERROR + ':' + e.getMessage());
 			_msg = ServerReturnCodes.RC_SECURITY_ERROR;
 			_continue = false;
 		}

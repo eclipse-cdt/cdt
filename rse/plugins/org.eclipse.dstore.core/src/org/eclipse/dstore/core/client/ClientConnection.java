@@ -20,6 +20,7 @@
  * David McKnight   (IBM) - [225507][api][breaking] RSE dstore API leaks non-API types
  * David McKnight   (IBM) - [226561] [apidoc] Add API markup to RSE Javadocs where extend / implement is allowed
  * David Dykstal (IBM) [235284] Cancel password change causes problem
+ * David McKnight   (IBM) - [257321] [dstore] "Error binding socket" should include port of the failed socket
  *******************************************************************************/
 
 package org.eclipse.dstore.core.client;
@@ -58,6 +59,7 @@ import org.eclipse.dstore.internal.core.client.ClientCommandHandler;
 import org.eclipse.dstore.internal.core.client.ClientReceiver;
 import org.eclipse.dstore.internal.core.client.ClientUpdateHandler;
 import org.eclipse.dstore.internal.core.server.ServerCommandHandler;
+import org.eclipse.dstore.internal.core.server.ServerReturnCodes;
 import org.eclipse.dstore.internal.core.util.ExternalLoader;
 import org.eclipse.dstore.internal.core.util.Sender;
 import org.eclipse.dstore.internal.core.util.ssl.DStoreSSLContext;
@@ -912,11 +914,16 @@ public class ClientConnection
 
 	public boolean isKnownStatus(String status)
 	{
-		return  status.equals(IDataStoreConstants.CONNECTED) ||
+		boolean known = status.equals(IDataStoreConstants.CONNECTED) ||
 		status.equals(IDataStoreConstants.AUTHENTICATION_FAILED) ||
 		status.equals(IDataStoreConstants.UNKNOWN_PROBLEM) ||
 		status.startsWith(IDataStoreConstants.SERVER_FAILURE) ||
 		status.equals(IDataStoreConstants.PASSWORD_EXPIRED) ||
 		status.equals(IDataStoreConstants.NEW_PASSWORD_INVALID);
+		
+		if (!known){ // check for bind error
+			known = status.startsWith(ServerReturnCodes.RC_BIND_ERROR);
+		}
+		return known;
 	}
 }

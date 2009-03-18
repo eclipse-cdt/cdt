@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2008 IBM Corporation and others.
+ * Copyright (c) 2000, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -479,6 +479,21 @@ public class MarkOccurrenceTest extends BaseUITestCase {
 		assertOccurrencesInWidget();
 	}
 
+	public void testMarkOperatorOccurrences() {
+		try {
+			fMatch= fFindReplaceDocumentAdapter.find(0, "operator+", true, true, true, false);
+		} catch (BadLocationException e) {
+			fail();
+		}
+		assertNotNull(fMatch);
+
+		fEditor.selectAndReveal(fMatch.getOffset(), fMatch.getLength());
+		
+		assertOccurrences(2);
+		assertOccurrencesInWidget();
+	}
+	
+	
 	public void testNoOccurrencesIfDisabled() {
 		CUIPlugin.getDefault().getPreferenceStore().setValue(PreferenceConstants.EDITOR_MARK_OCCURRENCES, false);
 		fOccurrences= Integer.MAX_VALUE;

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2008 IBM Corporation and others.
+ * Copyright (c) 2000, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -20,6 +20,8 @@ import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTemplateId;
+
+import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPVisitor;
 
 import org.eclipse.cdt.internal.ui.util.Messages;
 
@@ -55,15 +57,19 @@ public class OccurrencesFinder implements IOccurrencesFinder {
 		if (fResult == null) {
 			fResult= new ArrayList<OccurrenceLocation>();
 			IASTName[] names= fRoot.getDeclarationsInAST(fTarget);
-			for (int i= 0; i < names.length; i++) {
-				IASTName candidate= names[i];
+			for (IASTName candidate : names) {
 				if (candidate.isPartOfTranslationUnitFile()) {
 					addUsage(candidate, candidate.resolveBinding());
 				}
 			}
 			names= fRoot.getReferences(fTarget);
-			for (int i= 0; i < names.length; i++) {
-				IASTName candidate= names[i];
+			for (IASTName candidate : names) {
+				if (candidate.isPartOfTranslationUnitFile()) {
+					addUsage(candidate, candidate.resolveBinding());
+				}
+			}
+			names= CPPVisitor.getImplicitReferences(fRoot, fTarget);
+			for (IASTName candidate : names) {
 				if (candidate.isPartOfTranslationUnitFile()) {
 					addUsage(candidate, candidate.resolveBinding());
 				}

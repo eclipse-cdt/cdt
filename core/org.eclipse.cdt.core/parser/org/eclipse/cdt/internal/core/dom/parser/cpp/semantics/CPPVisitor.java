@@ -38,6 +38,7 @@ import org.eclipse.cdt.core.dom.ast.IASTFunctionDeclarator;
 import org.eclipse.cdt.core.dom.ast.IASTFunctionDefinition;
 import org.eclipse.cdt.core.dom.ast.IASTGotoStatement;
 import org.eclipse.cdt.core.dom.ast.IASTIdExpression;
+import org.eclipse.cdt.core.dom.ast.IASTImplicitNameOwner;
 import org.eclipse.cdt.core.dom.ast.IASTInitializer;
 import org.eclipse.cdt.core.dom.ast.IASTInitializerExpression;
 import org.eclipse.cdt.core.dom.ast.IASTLabelStatement;
@@ -1438,7 +1439,8 @@ public class CPPVisitor extends ASTQueries {
 							prop == ICPPASTUsingDeclaration.NAME ||
 							prop == IASTNamedTypeSpecifier.NAME ||
 							prop == ICPPASTConstructorChainInitializer.MEMBER_ID ||
-							prop == ICPPASTTemplateId.TEMPLATE_ID_ARGUMENT)	{
+							prop == ICPPASTTemplateId.TEMPLATE_ID_ARGUMENT ||
+							prop == IASTImplicitNameOwner.IMPLICIT_NAME) {
 						break;
 					}
 					return PROCESS_CONTINUE;
@@ -1824,6 +1826,18 @@ public class CPPVisitor extends ASTQueries {
 
 	public static IASTName[] getReferences(IASTTranslationUnit tu, IBinding binding) {
 		CollectReferencesAction action = new CollectReferencesAction(binding);
+		tu.accept(action);
+		return action.getReferences();
+	}
+	
+	public static IASTName[] getImplicitReferences(IASTTranslationUnit tu, IBinding binding) {
+		CollectReferencesAction action = new CollectReferencesAction(binding) {
+			{ 
+				shouldVisitNames = false;
+				shouldVisitImplicitNames = true; 
+				shouldVisitImplicitNameAlternates = true; 
+			}
+		};
 		tu.accept(action);
 		return action.getReferences();
 	}

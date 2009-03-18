@@ -79,7 +79,7 @@ public class GCCSpecsConsoleParser implements IScannerInfoConsoleParser {
 							defineParts[2] = line.substring(i + 1);
 						}
 					} else {
-						MakeCorePlugin.log(new Exception("GCCSpecsConsoleParser ERROR: Unmatched brackets: ["+ line+ "]"));
+						MakeCorePlugin.log(new Exception("GCCSpecsConsoleParser ERROR: Unmatched brackets: ["+ line+ "]")); //$NON-NLS-1$ //$NON-NLS-2$
 					}
                 }
 

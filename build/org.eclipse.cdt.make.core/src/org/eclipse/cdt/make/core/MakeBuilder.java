@@ -150,7 +150,7 @@ public class MakeBuilder extends ACBuilder {
 				IPath workingDirectory = MakeBuilderUtil.getBuildDirectory(currProject, info);
 
 				String[] targets = getTargets(kind, info);
-				if (targets.length != 0 && targets[targets.length - 1].equals(info.getCleanBuildTarget())) //$NON-NLS-1$
+				if (targets.length != 0 && targets[targets.length - 1].equals(info.getCleanBuildTarget()))
 					isClean = true;
 
 				String errMsg = null;

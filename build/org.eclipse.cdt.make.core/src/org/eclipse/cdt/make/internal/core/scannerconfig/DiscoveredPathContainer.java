@@ -76,12 +76,12 @@ public class DiscoveredPathContainer implements IPathEntryContainer {
         Map syms = info.getSymbols();
         List entries = new ArrayList(includes.length + syms.size());
         for (int i = 0; i < includes.length; i++) {
-            entries.add(CoreModel.newIncludeEntry(Path.EMPTY, Path.EMPTY, includes[i], true)); //$NON-NLS-1$ //$NON-NLS-2$
+            entries.add(CoreModel.newIncludeEntry(Path.EMPTY, Path.EMPTY, includes[i], true));
         }
         Iterator iter = syms.entrySet().iterator();
         while (iter.hasNext()) {
             Entry entry = (Entry)iter.next();
-            entries.add(CoreModel.newMacroEntry(Path.EMPTY, (String)entry.getKey(), (String)entry.getValue())); //$NON-NLS-1$
+            entries.add(CoreModel.newMacroEntry(Path.EMPTY, (String)entry.getKey(), (String)entry.getValue()));
         }
         return (IPathEntry[])entries.toArray(new IPathEntry[entries.size()]);
     }

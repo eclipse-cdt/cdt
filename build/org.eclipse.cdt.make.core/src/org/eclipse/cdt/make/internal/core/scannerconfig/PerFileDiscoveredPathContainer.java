@@ -59,7 +59,7 @@ public class PerFileDiscoveredPathContainer extends DiscoveredPathContainer
     				Map syms = filePathInfo.getSymbols(path);
     				for (Iterator iter = syms.entrySet().iterator(); iter.hasNext(); ) {
     					Entry entry = (Entry)iter.next();
-    					entries.add(CoreModel.newMacroEntry(path, (String)entry.getKey(), (String)entry.getValue())); //$NON-NLS-1$
+    					entries.add(CoreModel.newMacroEntry(path, (String)entry.getKey(), (String)entry.getValue()));
     				}
         		}
         		// compare the resource with include and macros files

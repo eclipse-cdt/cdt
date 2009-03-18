@@ -18,6 +18,7 @@ Export-Package: org.eclipse.cdt.debug.core,
  org.eclipse.cdt.debug.core.sourcelookup,
  org.eclipse.cdt.debug.internal.core;x-internal:=true,
  org.eclipse.cdt.debug.internal.core.breakpoints;x-internal:=true,
+ org.eclipse.cdt.debug.internal.core.executables,
  org.eclipse.cdt.debug.internal.core.model;x-internal:=true,
  org.eclipse.cdt.debug.internal.core.sourcelookup;x-internal:=true
 Require-Bundle: org.eclipse.core.resources;bundle-version="[3.2.0,4.0.0)",

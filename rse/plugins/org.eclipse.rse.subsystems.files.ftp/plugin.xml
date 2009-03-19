@@ -20,6 +20,7 @@ Martin Oberhuber (Wind River) - [186523] Move subsystemConfigurations from UI to
 Javier Montalvo Orus (Symbian) - improved autodetection of FTPListingParser
 Martin Oberhuber (Wind River) - [198692] Use FTP LIST -a to list UNIX hidden files
 Javier Montalvo Orus (Symbian) - [225821] [ftp] opening "/home" fails on OS/400 IFS
+Martin Oberhuber (Wind River) - [214141] Avoid NPE if missing SYST command
 -->
 <?eclipse version="3.1"?>
 <plugin>
@@ -96,6 +97,15 @@ Javier Montalvo Orus (Symbian) - [225821] [ftp] opening "/home" fails on OS/400 
              id="org.eclipse.rse.ftp.parser.VMS"
              label="%FTPParser.VMS"
              priority="100">
+      </parser>
+      <!-- Bug 214141: Default parser if nothing matches is Unix -->
+      <parser
+            class="org.apache.commons.net.ftp.parser.UnixFTPEntryParser"
+            id="org.eclipse.rse.ftp.parser.UnixDefault"
+            label="%FTPParser.UNIXDefault"
+            listCommandModifiers="-a"
+            priority="10000"
+            systemTypeRegex=".*">
       </parser>
    </extension>
  

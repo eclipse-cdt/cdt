@@ -105,6 +105,8 @@ public abstract class AbstractThreadVMNode extends AbstractDMVMNode
                         PROP_NAME, 
                         ExecutionContextLabelText.PROP_ID_KNOWN, 
                         ILaunchVMConstants.PROP_ID, 
+                        ExecutionContextLabelText.PROP_ID2_KNOWN, 
+                        ILaunchVMConstants.PROP_ID2, 
                         ILaunchVMConstants.PROP_IS_SUSPENDED, 
                         ILaunchVMConstants.PROP_STATE_CHANGE_REASON })
                 {
@@ -124,6 +126,8 @@ public abstract class AbstractThreadVMNode extends AbstractDMVMNode
                         PROP_NAME, 
                         ExecutionContextLabelText.PROP_ID_KNOWN, 
                         ILaunchVMConstants.PROP_ID, 
+                        ExecutionContextLabelText.PROP_ID2_KNOWN, 
+                        ILaunchVMConstants.PROP_ID2, 
                         ILaunchVMConstants.PROP_IS_SUSPENDED }), 
                 new LabelText(MessagesForLaunchVM.AbstractThreadVMNode_No_columns__Error__label, new String[0]),
                 new LabelImage(DebugUITools.getImageDescriptor(IDebugUIConstants.IMG_OBJS_THREAD_RUNNING)) {

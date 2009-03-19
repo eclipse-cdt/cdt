@@ -25,6 +25,13 @@ class ExecutionContextLabelText extends LabelText {
     public static final String PROP_ID_KNOWN = "id_known";  //$NON-NLS-1$
 
     /**
+     * A second ID, such as the OS Id for a thread.
+     * 
+     * Value <code>0</code> means it's not known.  Value <code>1</code>, means it's known.
+     */
+    public static final String PROP_ID2_KNOWN = "id2_known";  //$NON-NLS-1$
+
+    /**
      * Value <code>0</code> means it's not known.  Value <code>1</code>, means it's known.
      */
     public static final String PROP_NAME_KNOWN = "name_known";  //$NON-NLS-1$
@@ -70,8 +77,13 @@ class ExecutionContextLabelText extends LabelText {
             return val != null ? val : "";  //$NON-NLS-1$
         } else if (PROP_ID_KNOWN.equals(propertyName)) {
             return properties.get(ILaunchVMConstants.PROP_ID) != null ? 1 : 0;
+        } else if (PROP_ID2_KNOWN.equals(propertyName)) {
+            return properties.get(ILaunchVMConstants.PROP_ID2) != null ? 1 : 0;
         } else if (ILaunchVMConstants.PROP_ID.equals(propertyName)) {
             Object val = properties.get(ILaunchVMConstants.PROP_ID);
+            return val != null ? val : "";  //$NON-NLS-1$
+        } else if (ILaunchVMConstants.PROP_ID2.equals(propertyName)) {
+            Object val = properties.get(ILaunchVMConstants.PROP_ID2);
             return val != null ? val : "";  //$NON-NLS-1$
         }
         return super.getPropertyValue(propertyName, status, properties);

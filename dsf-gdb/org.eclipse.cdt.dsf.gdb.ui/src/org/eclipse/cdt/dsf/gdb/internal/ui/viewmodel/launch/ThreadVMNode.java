@@ -15,7 +15,7 @@ import org.eclipse.cdt.dsf.concurrent.IDsfStatusConstants;
 import org.eclipse.cdt.dsf.concurrent.ImmediateExecutor;
 import org.eclipse.cdt.dsf.datamodel.IDMContext;
 import org.eclipse.cdt.dsf.debug.service.IProcesses;
-import org.eclipse.cdt.dsf.debug.service.IProcesses.IProcessDMContext;
+import org.eclipse.cdt.dsf.debug.service.IProcesses.IThreadDMContext;
 import org.eclipse.cdt.dsf.debug.service.IProcesses.IThreadDMData;
 import org.eclipse.cdt.dsf.debug.ui.viewmodel.launch.AbstractThreadVMNode;
 import org.eclipse.cdt.dsf.debug.ui.viewmodel.launch.ILaunchVMConstants;
@@ -65,13 +65,13 @@ public class ThreadVMNode extends AbstractThreadVMNode
             count++;
             
             IProcesses processService = getServicesTracker().getService(IProcesses.class);
-            final IProcessDMContext procDmc = findDmcInPath(update.getViewerInput(), update.getElementPath(), IProcessDMContext.class);
+            final IThreadDMContext threadDmc = findDmcInPath(update.getViewerInput(), update.getElementPath(), IThreadDMContext.class);
             
-            if (processService == null || procDmc == null) {
+            if (processService == null || threadDmc == null) {
                 update.setStatus(DsfUIPlugin.newErrorStatus(IDsfStatusConstants.INVALID_HANDLE, "Service or handle invalid", null)); //$NON-NLS-1$
             } else {
                 processService.getExecutionData(
-                    procDmc,
+                	threadDmc,
                     new ViewerDataRequestMonitor<IThreadDMData>(getExecutor(), update) {
                         @Override
                         public void handleCompleted() {
@@ -98,8 +98,16 @@ public class ThreadVMNode extends AbstractThreadVMNode
     }
     
     protected void fillThreadDataProperties(IPropertiesUpdate update, IThreadDMData data) {
-        update.setProperty(PROP_NAME, data.getName());
-        update.setProperty(ILaunchVMConstants.PROP_ID, data.getId());
+    	if (data.getName() != null && data.getName().length() > 0) {
+    		update.setProperty(PROP_NAME, data.getName());
+    	}
+    	
+        IMIExecutionDMContext execDmc = findDmcInPath(
+                update.getViewerInput(), update.getElementPath(), IMIExecutionDMContext.class);
+        if (execDmc != null) {
+            update.setProperty(ILaunchVMConstants.PROP_ID, Integer.toString(execDmc.getThreadId()));
+        }
+        update.setProperty(ILaunchVMConstants.PROP_ID2, data.getId());
     }
 
 	private String produceThreadElementName(String viewName, IMIExecutionDMContext execCtx) {

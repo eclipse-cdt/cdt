@@ -17,6 +17,7 @@ package org.eclipse.cdt.dsf.debug.ui.viewmodel.launch;
 public interface ILaunchVMConstants {
 
     public static final String PROP_ID = "id";  //$NON-NLS-1$
+    public static final String PROP_ID2 = "id2";  //$NON-NLS-1$
     
     public static final String PROP_IS_SUSPENDED = "is_suspended";  //$NON-NLS-1$
 

@@ -31,6 +31,7 @@
  * David Dykstal (IBM) - [235800] Document naming restriction for profiles and filter pools
  * David Dykstal (IBM) - [236516] Bug in user code causes failure in RSE initialization
  * Martin Oberhuber (Wind River) - [261486][api][cleanup] Mark @noimplement interfaces as @noextend
+ * Martin Oberhuber (Wind River) - [245154][api] add getSubSystemConfigurationProxiesBySystemType()
  ********************************************************************************/
 
 package org.eclipse.rse.core.model;
@@ -84,23 +85,44 @@ public interface ISystemRegistry extends ISchedulingRule, IAdaptable, ISystemVie
 	// ----------------------------
 
 	/**
-	 * Public method to retrieve list of subsystem factory proxies registered by extension points.
+	 * Public method to retrieve list of subsystem configuration proxies
+	 * registered by extension points.
+	 *
+	 * @return all subsystem configuration proxies.
 	 */
 	public ISubSystemConfigurationProxy[] getSubSystemConfigurationProxies();
 
 	/**
-	 * Return all subsystem factory proxies matching a subsystem factory category.
+	 * Return all subsystem configuration proxies matching a subsystem
+	 * configuration category.
+	 *
+	 * @param configurationCategory a subsystem configuration category.
+	 * @return all subsystem configuration proxies matching the given category,
+	 *         or an empty array if none matches.
 	 * @see ISubSystemConfigurationCategories
 	 */
-	public ISubSystemConfigurationProxy[] getSubSystemConfigurationProxiesByCategory(String factoryCategory);
+	public ISubSystemConfigurationProxy[] getSubSystemConfigurationProxiesByCategory(String configurationCategory);
+
+	/**
+	 * Return all subsystem configuration proxies that are registered against
+	 * the given system type.
+	 *
+	 * @param systemType system type to filter
+	 * @return all subsystem configuration proxies matching the given system
+	 *         type, or an empty array if none matches.
+	 * @since 3.1
+	 */
+	public ISubSystemConfigurationProxy[] getSubSystemConfigurationProxiesBySystemType(IRSESystemType systemType);
 
 	/**
 	 * Return all subsystem factories.
 	 *
-	 * Be careful when you call this, as it activates all subsystem configurations.
-	 * @deprecated use {@link #getSubSystemConfigurationProxies()} and filter the
-	 *    list of needed subsystem configurations in order to activate only those
-	 *    that are really needed.
+	 * Be careful when you call this, as it activates all subsystem
+	 * configurations.
+	 *
+	 * @deprecated use {@link #getSubSystemConfigurationProxies()} and filter
+	 *             the list of needed subsystem configurations in order to
+	 *             activate only those that are really needed.
 	 */
 	public ISubSystemConfiguration[] getSubSystemConfigurations();
 

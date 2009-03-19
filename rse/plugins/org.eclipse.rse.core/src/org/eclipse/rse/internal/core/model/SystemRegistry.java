@@ -1,5 +1,5 @@
 /********************************************************************************
- * Copyright (c) 2006, 2008 IBM Corporation and others. All rights reserved.
+ * Copyright (c) 2006, 2009 IBM Corporation and others. All rights reserved.
  * This program and the accompanying materials are made available under the terms
  * of the Eclipse Public License v1.0 which accompanies this distribution, and is
  * available at http://www.eclipse.org/legal/epl-v10.html
@@ -57,7 +57,8 @@
  * David McKnight   (IBM)        - [240991] RSE startup creates display on worker thread before workbench.
  * David Dykstal (IBM) - [236516] Bug in user code causes failure in RSE initialization
  * David McKnight   (IBM)        - [249247] Expand New Connections
- * David McKnight   (IBM(        - [254590] When disconnecting a subsystem with COLLAPSE option, subsystems of other connector services also get collapsed
+ * David McKnight   (IBM)        - [254590] When disconnecting a subsystem with COLLAPSE option, subsystems of other connector services also get collapsed
+ * Martin Oberhuber (Wind River) - [245154][api] add getSubSystemConfigurationProxiesBySystemType()
  ********************************************************************************/
 
 package org.eclipse.rse.internal.core.model;
@@ -299,6 +300,22 @@ public class SystemRegistry implements ISystemRegistry
 			proxies[idx] = (ISubSystemConfigurationProxy) v.elementAt(idx);
 		}
 		return proxies;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * @see org.eclipse.rse.core.model.ISystemRegistry#getSubSystemConfigurationProxiesBySystemType(org.eclipse.rse.core.IRSESystemType)
+	 */
+	public ISubSystemConfigurationProxy[] getSubSystemConfigurationProxiesBySystemType(IRSESystemType systemType)
+	{
+		List l = new ArrayList();
+		if (subsystemConfigurationProxies != null)
+		{
+			for (int idx = 0; idx < subsystemConfigurationProxies.length; idx++)
+				if (Arrays.asList(subsystemConfigurationProxies[idx].getSystemTypes()).contains(systemType))
+					l.add(subsystemConfigurationProxies[idx]);
+		}
+		return (ISubSystemConfigurationProxy[]) l.toArray(new ISubSystemConfigurationProxy[l.size()]);
 	}
 
 	/**
@@ -1814,7 +1831,7 @@ public class SystemRegistry implements ISystemRegistry
 				ISubSystem ss = subSystems[s];
 				fireModelChangeEvent(ISystemModelChangeEvents.SYSTEM_RESOURCE_ADDED, ISystemModelChangeEvents.SYSTEM_RESOURCETYPE_SUBSYSTEM, ss, null);
 			}
-			
+
 			// for bug 249247 - expand the connection after completing the wizard
 			if (expandHost){
 				SystemResourceChangeEvent expandEvent = new SystemResourceChangeEvent(conn, ISystemResourceChangeEvents.EVENT_SELECT_EXPAND, reg);
@@ -2321,9 +2338,9 @@ public class SystemRegistry implements ISystemRegistry
 	public void connectedStatusChange(ISubSystem subsystem, boolean connected, boolean wasConnected, boolean collapseTree)
 	{
 		IHost conn = subsystem.getHost();
-		
+
 		IConnectorService effectedConnectorService = subsystem.getConnectorService();
-		
+
 		if (connected != wasConnected)
 		{
 			int eventId = ISystemResourceChangeEvents.EVENT_ICON_CHANGE;
@@ -2332,13 +2349,13 @@ public class SystemRegistry implements ISystemRegistry
 			SystemResourceChangeEvent event = new SystemResourceChangeEvent(subsystem, eventId, conn);
 			fireEvent(event);
 
-				
+
 			// fire for each subsystem
 			ISubSystem[] sses = getSubSystems(conn);
 			for (int i = 0; i < sses.length; i++)
 			{
 			    ISubSystem ss = sses[i];
-			    
+
 			    // only fire the event for subsystems that share the effected connector service
 			    if (ss != subsystem && ss.getConnectorService().equals(effectedConnectorService))
 			    {
@@ -2367,7 +2384,7 @@ public class SystemRegistry implements ISystemRegistry
 			for (int i = 0; i < sses.length; i++)
 			{
 			    ISubSystem ss = sses[i];
-			    
+
 			    // only fire the event for subsystems that share the effected connector service
 			    if (ss != subsystem && ss.getConnectorService().equals(effectedConnectorService) && !ss.isConnected())
 			    {

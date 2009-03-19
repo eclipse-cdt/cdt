@@ -163,14 +163,6 @@ public class GDBRunControl extends MIRunControl {
     		// A step return will always be done in the top stack frame.
     		// If the top stack frame is the only stack frame, it does not make sense
     		// to do a step return since GDB will reject it.
-    		
-    		// Until bug 256798 is fixed, the service tracker could be null
-    		if (getServicesTracker() == null) {
-    			// service is shutdown
-    			rm.setData(false);
-    			rm.done();
-    			return;
-    		}
             MIStack stackService = getServicesTracker().getService(MIStack.class);
             if (stackService != null) {
             	// Check that the stack is at least two deep.

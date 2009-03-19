@@ -450,33 +450,33 @@ public class PerFileSICollector implements IScannerInfoCollector3, IScannerInfoC
             monitor = new NullProgressMonitor();
         }
         monitor.beginTask(MakeMessages.getString("ScannerInfoCollector.Processing"), 100); //$NON-NLS-1$
-//        removeUnusedCommands();
         monitor.subTask(MakeMessages.getString("ScannerInfoCollector.Processing")); //$NON-NLS-1$
+        ArrayList<IResource> changedResources = null;
         synchronized (fLock) {
-	        if (scannerInfoChanged()) {
-				applyFileDeltas();
-		        removeUnusedCommands();
-	            monitor.worked(50);
-	            monitor.subTask(MakeMessages.getString("ScannerInfoCollector.Updating") + project.getName()); //$NON-NLS-1$
-	            try {
-	                // update scanner configuration
-	//                MakeCorePlugin.getDefault().getDiscoveryManager().
-	//                        updateDiscoveredInfo(createPathInfoObject(), siChangedForFileList);
-	                IDiscoveredPathInfo pathInfo = MakeCorePlugin.getDefault().getDiscoveryManager().getDiscoveredInfo(project, context);
-	                if (!(pathInfo instanceof IPerFileDiscoveredPathInfo)) {
-	                	pathInfo = createPathInfoObject();
-	                }
-	                MakeCorePlugin.getDefault().getDiscoveryManager().
-	                		updateDiscoveredInfo(context, pathInfo, context.isDefaultContext(), new ArrayList<IResource>(siChangedForFileMap.keySet()));
-	                monitor.worked(50);
-	            } catch (CoreException e) {
-	                MakeCorePlugin.log(e);
-	            }
-	        }
-	//        siChangedForFileList.clear();
-			siChangedForFileMap.clear();
-			siChangedForCommandIdList.clear();
+        	if (scannerInfoChanged()) {
+        		applyFileDeltas();
+        		removeUnusedCommands();
+        		changedResources = new ArrayList<IResource>(siChangedForFileMap.keySet());
+        		siChangedForFileMap.clear();
+        	}
+        	siChangedForCommandIdList.clear();
         }
+	    monitor.worked(50);
+        if (changedResources != null) {
+	        // update outside monitor scope
+	        try {
+	        	// update scanner configuration
+	        	monitor.subTask(MakeMessages.getString("ScannerInfoCollector.Updating") + project.getName()); //$NON-NLS-1$
+	        	IDiscoveredPathInfo pathInfo = MakeCorePlugin.getDefault().getDiscoveryManager().getDiscoveredInfo(project, context);
+	        	if (!(pathInfo instanceof IPerFileDiscoveredPathInfo)) {
+	        		pathInfo = createPathInfoObject();
+	        	}
+	        	MakeCorePlugin.getDefault().getDiscoveryManager().updateDiscoveredInfo(context, pathInfo, context.isDefaultContext(), changedResources);
+	        } catch (CoreException e) {
+	        	MakeCorePlugin.log(e);
+	        }
+	    }
+	    monitor.worked(50);
 		monitor.done();
     }
 

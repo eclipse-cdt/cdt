@@ -284,10 +284,12 @@ class RemoteExportWizardPage1 extends WizardExportResourcesPage implements Liste
 		descFileBrowseButton.setEnabled(isSaveSettings);
 
 		// if review is selected, the other options are grayed out without save settings
-		boolean isReview = reviewSynchronizeCheckbox.getSelection();
-		overwriteExistingFilesCheckbox.setEnabled(!isReview);
-		createDirectoryStructureButton.setEnabled(!isReview);
-		createSelectionOnlyButton.setEnabled(!isReview);
+		if (reviewSynchronizeCheckbox != null) { // event handling could come before the widgets are created
+			boolean isReview = reviewSynchronizeCheckbox.getSelection();
+			overwriteExistingFilesCheckbox.setEnabled(!isReview);
+			createDirectoryStructureButton.setEnabled(!isReview);
+			createSelectionOnlyButton.setEnabled(!isReview);
+		}
 	}
 
 	/**

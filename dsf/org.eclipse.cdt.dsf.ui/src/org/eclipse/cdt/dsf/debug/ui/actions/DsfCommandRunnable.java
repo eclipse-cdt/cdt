@@ -83,8 +83,7 @@ public abstract class DsfCommandRunnable extends DsfRunnable {
     }
 
     /**
-     * Method to perform the actual work.  It should not call monitor.done(), because
-     * it will be called in the super-class.
+     * Method to perform the actual work.
      */
     protected abstract void doExecute();
     

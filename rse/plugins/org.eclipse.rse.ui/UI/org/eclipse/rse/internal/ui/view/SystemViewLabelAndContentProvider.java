@@ -1,21 +1,22 @@
 /********************************************************************************
- * Copyright (c) 2006, 2008 IBM Corporation and others. All rights reserved.
+ * Copyright (c) 2006, 2009 IBM Corporation and others. All rights reserved.
  * This program and the accompanying materials are made available under the terms
- * of the Eclipse Public License v1.0 which accompanies this distribution, and is 
+ * of the Eclipse Public License v1.0 which accompanies this distribution, and is
  * available at http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Initial Contributors:
  * The following IBM employees contributed to the Remote System Explorer
- * component that contains this file: David McKnight, Kushal Munir, 
- * Michael Berger, David Dykstal, Phil Coulthard, Don Yantzi, Eric Simpson, 
+ * component that contains this file: David McKnight, Kushal Munir,
+ * Michael Berger, David Dykstal, Phil Coulthard, Don Yantzi, Eric Simpson,
  * Emily Bruner, Mazen Faraj, Adrian Storisteanu, Li Ding, and Kent Hawley.
- * 
+ *
  * Contributors:
  * Martin Oberhuber (Wind River) - [168975] Move RSE Events API to Core
  * Martin Oberhuber (Wind River) - [186128] Move IProgressMonitor last in all API
  * Martin Oberhuber (Wind River) - [190271] Move ISystemViewInputProvider to Core
  * Martin Oberhuber (Wind River) - [197550] Fix NPE when refreshing Pending items
  * David McKnight   (IBM)        - [236505] Remote systems dialog not working
+ * Martin Oberhuber (Wind River) - [238519][api] Support styled label decorations
  ********************************************************************************/
 
 package org.eclipse.rse.internal.ui.view;
@@ -34,7 +35,9 @@ import org.eclipse.jface.viewers.ILabelProvider;
 import org.eclipse.jface.viewers.ITableLabelProvider;
 import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.jface.viewers.LabelProvider;
+import org.eclipse.jface.viewers.StyledString;
 import org.eclipse.jface.viewers.Viewer;
+import org.eclipse.jface.viewers.DelegatingStyledCellLabelProvider.IStyledLabelProvider;
 import org.eclipse.rse.core.model.ISystemViewInputProvider;
 import org.eclipse.rse.core.model.SystemMessageObject;
 import org.eclipse.rse.core.subsystems.ISubSystem;
@@ -54,7 +57,7 @@ import org.eclipse.ui.progress.PendingUpdateAdapter;
 /**
  * Provides tree contents for objects that have the ISystemViewElement
  * adapter registered. Also provides label contents, so can be used for
- * both a content and label provider for TreeViewers. 
+ * both a content and label provider for TreeViewers.
  * <p>
  * This has a general flavor, which is used in most cases, and also has
  * a specialized flavor for universal file systems, which allows restricting
@@ -62,10 +65,10 @@ import org.eclipse.ui.progress.PendingUpdateAdapter;
  * setting an input filter or filter string.
  */
 public class SystemViewLabelAndContentProvider extends LabelProvider
-       implements ITreeContentProvider, ILabelProvider, ITableLabelProvider
+ implements ITreeContentProvider, ILabelProvider, ITableLabelProvider, IStyledLabelProvider
        // ,IResourceChangeListener
 {
-	private static final Object[] NO_OBJECTS = new Object[0];	
+	private static final Object[] NO_OBJECTS = new Object[0];
 
 	protected Viewer                    viewer;
 	private boolean                     filesOnly, foldersOnly;
@@ -79,7 +82,7 @@ public class SystemViewLabelAndContentProvider extends LabelProvider
 	 */
 	public SystemViewLabelAndContentProvider()
 	{
-        // System.out.println("inside ctor for LCProvider " + this);		 
+        // System.out.println("inside ctor for LCProvider " + this);
 	}
 	/**
 	 * Constructor to restrict to remote folders or files
@@ -88,7 +91,7 @@ public class SystemViewLabelAndContentProvider extends LabelProvider
 	{
 		this();
         this.foldersOnly = foldersOnly;
-        this.filesOnly = filesOnly;		
+        this.filesOnly = filesOnly;
 	}
     /**
      * Set a filter string to subset the list by. For example, "A*.java" or "java,class,"
@@ -109,9 +112,9 @@ public class SystemViewLabelAndContentProvider extends LabelProvider
     {
     	return filterString;
     }
-    
 
-    
+
+
     /**
      * Flush the in-memory cache which remembers the result of the last
      *  getChildren request when we are in files-only or folders-only
@@ -121,7 +124,7 @@ public class SystemViewLabelAndContentProvider extends LabelProvider
     {
     	resolvedChildrenPerFolder = null;
     }
-	
+
 	/**
 	 * Return the current viewer we are associated with
 	 */
@@ -129,26 +132,26 @@ public class SystemViewLabelAndContentProvider extends LabelProvider
 	{
 		return viewer;
 	}
-	
+
 	/**
 	 * The visual part that is using this content provider is about
 	 * to be disposed. Deallocate all allocated SWT resources.
 	 */
-	public void dispose() 
+	public void dispose()
 	{
 	    // AS LONG AS WE DON'T SUPPORT IWORKSPACE OBJECT THIS IS NOT NEEDED.
-	    // WE LEAVE IT IN BECAUSE IT IS HARMLESS AND MIGHT BE OF VALUE SOMEDAY.		
-	    if (viewer != null) 
+	    // WE LEAVE IT IN BECAUSE IT IS HARMLESS AND MIGHT BE OF VALUE SOMEDAY.
+	    if (viewer != null)
 	    {
 		  Object obj = viewer.getInput();
 		  if (obj != null)
 		  {
-	  	    if (obj instanceof IWorkspace) 
+	  	    if (obj instanceof IWorkspace)
 	  	    {
 			  //IWorkspace workspace = (IWorkspace) obj;
 			  //workspace.removeResourceChangeListener(this);
-		    } 
-		    else if (obj instanceof IContainer) 
+		    }
+		    else if (obj instanceof IContainer)
 		    {
 		      //IWorkspace workspace = ((IContainer) obj).getWorkspace();
 		      //workspace.removeResourceChangeListener(this);
@@ -157,19 +160,19 @@ public class SystemViewLabelAndContentProvider extends LabelProvider
 	    }
     }
 
-	
+
     /**
      * Returns the implementation of ISystemViewElement for the given
      * object.  Returns null if the adapter is not defined or the
      * object is not adaptable.
      */
-    protected ISystemViewElementAdapter getViewAdapter(Object o) 
+    protected ISystemViewElementAdapter getViewAdapter(Object o)
     {
     	if (o instanceof IContextObject)
     	{
     		o = ((IContextObject)o).getModelObject();
     	}
-    	ISystemViewElementAdapter adapter = null;    	
+    	ISystemViewElementAdapter adapter = null;
     	if (o == null)
     	{
     	  	SystemBasePlugin.logWarning("ERROR: null passed to getAdapter in SystemViewLabelAndContentProvider");    	   //$NON-NLS-1$
@@ -177,7 +180,7 @@ public class SystemViewLabelAndContentProvider extends LabelProvider
     	else
     	{
     	  	if (o instanceof IAdaptable)
-    	  	{ 
+    	  	{
     	    	adapter = (ISystemViewElementAdapter)((IAdaptable)o).getAdapter(ISystemViewElementAdapter.class);
     	  	}
     	  	else
@@ -193,7 +196,7 @@ public class SystemViewLabelAndContentProvider extends LabelProvider
     	  	}
     	}
     	if ((adapter!=null) && (viewer != null))
-    	{    	
+    	{
     	  	Shell shell = null;
     	  	if (viewer instanceof ISystemShellProvider)
     	    	shell = ((ISystemShellProvider)viewer).getShell();
@@ -213,18 +216,18 @@ public class SystemViewLabelAndContentProvider extends LabelProvider
     	  	SystemBasePlugin.logWarning("VIEWER IS NULL FOR SYSTEMVIEWLABELANDCONTENTPROVIDER");    	 //$NON-NLS-1$
     	return adapter;
     }
-    
+
     /**
 	 * Cancel any jobs that are fetching content from the given location.
 	 * @param location
 	 */
-	public void cancelJobs(Object location) 
+	public void cancelJobs(Object location)
 	{
 		if (manager != null) {
 			manager.cancel(location);
 		}
 	}
-	
+
 	protected boolean supportsDeferredQueries()
 	{
 	    //IPreferenceStore store = RSEUIPlugin.getDefault().getPreferenceStore();
@@ -232,17 +235,17 @@ public class SystemViewLabelAndContentProvider extends LabelProvider
 		//return true; // DKM now enforcing deferred queries
 		return _enableDeferredQueries;
 	}
-	
+
 	public void setEnableDeferredQueries(boolean enable)
 	{
 		_enableDeferredQueries = enable;
 	}
 
-    
+
     /**
      * @see ITreeContentProvider
      */
-    public Object[] getChildren(Object object) 
+    public Object[] getChildren(Object object)
     {
     	Object element = object;
     	if (object instanceof IContextObject)
@@ -254,7 +257,7 @@ public class SystemViewLabelAndContentProvider extends LabelProvider
     	{
     		  // The adapter  needs to be checked to be not null, otherwise
     		  // we run into an NPE here.
-	        if (manager != null && adapter != null) 
+	        if (manager != null && adapter != null)
 	        {
 	        	ISubSystem ss = null;
 	        	if (object instanceof IContextObject)
@@ -269,11 +272,11 @@ public class SystemViewLabelAndContentProvider extends LabelProvider
 	            {
 	               // if (ss.isConnected())
 	                {
-			            
+
 						Object[] children = manager.getChildren(object, getViewer());
-						if (children != null) 
+						if (children != null)
 						{
-							// This will be a placeholder to indicate 
+							// This will be a placeholder to indicate
 							// that the real children are being fetched
 							return children;
 						}
@@ -281,13 +284,13 @@ public class SystemViewLabelAndContentProvider extends LabelProvider
 	            }
 			}
     	}
-        
-    
+
+
     	//System.out.println("inside getChildren for landcProvider");
     	//System.out.println("...element = " + element);
-    	//System.out.println("...adapter = " + adapter);    	
-    	if (adapter != null) 
-    	{    	  
+    	//System.out.println("...adapter = " + adapter);
+    	if (adapter != null)
+    	{
     	  // we first test to see if this is an expand-to filter in effect for this
     	  //  object, and if so use it...
     	  if ((viewer instanceof SystemView) && (((SystemView)viewer).getSystemViewPart() != null) &&
@@ -297,7 +300,7 @@ public class SystemViewLabelAndContentProvider extends LabelProvider
     	  	  if (expandToFilter != null)
     	  	    return adapter.getChildrenUsingExpandToFilter(element, expandToFilter);
     	  }
-    	  Object[] children = null;    	  
+    	  Object[] children = null;
     	  // The re-usable Eclipse GUI widgets are not very efficient.
     	  // The are always re-asking for children, which for remote requests
     	  //  causes a lot of flashing and unnecessary trips to the host.
@@ -306,11 +309,11 @@ public class SystemViewLabelAndContentProvider extends LabelProvider
     	  //  same files or folders, we can return that remembered cache.
     	  // The tricky part is what to key each request by. We use the element
     	  //  as the key ... this is the parent folder which children are being
-    	  //  asked for. However, for the same folder we will be asked for 
+    	  //  asked for. However, for the same folder we will be asked for
     	  //  folders and files in separate requests. It turns out this is not
-    	  //  not a problem though, because a separate instance of us is used 
+    	  //  not a problem though, because a separate instance of us is used
     	  //  for files versus folders so each maintains its own cache.
-    	  
+
     	  if ((filesOnly || foldersOnly) && (resolvedChildrenPerFolder != null))
     	  {
     	  	children = (Object[])resolvedChildrenPerFolder.get(element);
@@ -322,13 +325,13 @@ public class SystemViewLabelAndContentProvider extends LabelProvider
     	  {
     		  children = adapter.getChildren((IContextObject)object, new NullProgressMonitor());
     	  }
-    	  else 
+    	  else
     	  {
     		  children = adapter.getChildren((IAdaptable)object, new NullProgressMonitor());
     	  }
-    	  
 
-    	  if ((filesOnly || foldersOnly) && 
+
+    	  if ((filesOnly || foldersOnly) &&
     	      // an array of one SystemMessageObject item implies some kind of error, so don't cache...
     	      ((children.length != 1) || !(children[0] instanceof SystemMessageObject)) )
     	  {
@@ -344,17 +347,17 @@ public class SystemViewLabelAndContentProvider extends LabelProvider
     /**
      * @see ITreeContentProvider
      */
-    public Object[] getElements(Object element) 
+    public Object[] getElements(Object element)
     {
     	return getChildren(element);
     }
     /**
      * @see ITreeContentProvider
      */
-    public Object getParent(Object element) 
+    public Object getParent(Object element)
     {
     	ISystemViewElementAdapter adapter = getViewAdapter(element);
-    	if (adapter != null) 
+    	if (adapter != null)
     	  return adapter.getParent(element);
     	return null;
     }
@@ -367,7 +370,7 @@ public class SystemViewLabelAndContentProvider extends LabelProvider
      *  get a plus but that is way better than a very slow remote
      *  system query just to decide if we want a plus or not!
      */
-    public boolean hasChildren(Object element) 
+    public boolean hasChildren(Object element)
     {
     	ISystemViewElementAdapter adapter = getViewAdapter(element);
     	if (adapter!=null) {
@@ -391,41 +394,41 @@ public class SystemViewLabelAndContentProvider extends LabelProvider
     	}
     	return false;
     }
-    
+
     /**
      * inputChanged method comment.
 	 * AS LONG AS WE DON'T SUPPORT IWORKSPACE OBJECT THIS IS NOT NEEDED.
 	 * WE LEAVE IT IN BECAUSE IT IS HARMLESS AND MIGHT BE OF VALUE SOMEDAY.
      */
-    public void inputChanged(Viewer viewer, Object oldInput, Object newInput) 
+    public void inputChanged(Viewer viewer, Object oldInput, Object newInput)
     {
     	//System.out.println("Inside LCProvider "+this+". viewer = " + viewer);
     	this.viewer = viewer;
-    	if (newInput instanceof IWorkspace) 
+    	if (newInput instanceof IWorkspace)
     	{
     		//IWorkspace workspace = (IWorkspace)newInput;
     		//workspace.addResourceChangeListener(this);
-    	} 
-    	else if (newInput instanceof IContainer) 
+    	}
+    	else if (newInput instanceof IContainer)
     	{
     		//IWorkspace workspace = ((IContainer)newInput).getWorkspace();
     		//workspace.addResourceChangeListener(this);
     	}
-    	if (viewer instanceof AbstractTreeViewer) 
+    	if (viewer instanceof AbstractTreeViewer)
     	{
 			manager = new SystemDeferredTreeContentManager(this, (AbstractTreeViewer) viewer);
 		}
     }
-    
-    public Image getColumnImage(Object element, int columnIndex) 
+
+    public Image getColumnImage(Object element, int columnIndex)
     {
     	return getImage(element);
     }
-    public String getColumnText(Object element, int columnIndex) 
+    public String getColumnText(Object element, int columnIndex)
     {
     	return getText(element);
     }
-    public Image getImage(Object element) 
+    public Image getImage(Object element)
     {
     	ISystemViewElementAdapter adapter = getViewAdapter(element);
     	//System.out.println("Inside getImage. element = " + element + ", adapter = " + adapter);
@@ -433,41 +436,41 @@ public class SystemViewLabelAndContentProvider extends LabelProvider
 		  return null;
 
 	    ImageDescriptor descriptor = adapter.getImageDescriptor(element);
-    
+
 	    if (descriptor == null)
 		  return null;
-	    
+
 	    //add any annotations to the image descriptor
 	    descriptor = decorateImage(descriptor, element);
 	    //obtain the cached image corresponding to the descriptor
 	    Image image = RSEImageMap.get(descriptor);
-	    if (image == null) 
+	    if (image == null)
 	    {
 		  image = descriptor.createImage();
 		  RSEImageMap.put(descriptor, image);
 	    }
-	    
-	    return image;    	
+
+	    return image;
     }
     /**
      * Returns the label text for the given object.
      */
-    public String getText(Object element) 
+    public String getText(Object element)
     {
     	ISystemViewElementAdapter adapter = getViewAdapter(element);
     	//System.out.println("INSIDE GETTEXT FOR SVLandCprovider: " + element + ", adapter = " + adapter);
 	    if (adapter == null)
 	    {
 	        IWorkbenchAdapter wadapter = (IWorkbenchAdapter)((IAdaptable) element).getAdapter(IWorkbenchAdapter.class);
-	   
-			if (wadapter == null) 
+
+			if (wadapter == null)
 			{
 			    return super.getText(element);
 			}
 			return wadapter.getLabel(element);
 	    }
 	    //return the decorated label (FROM WorkbenchLabelProvider)
-	    return decorateText(adapter.getText(element), element);    	
+	    return decorateText(adapter.getText(element), element);
     }
 
     /**
@@ -479,10 +482,11 @@ public class SystemViewLabelAndContentProvider extends LabelProvider
      * image.
      * @see org.eclipse.jface.resource.ImageDescriptor
      */
-    protected ImageDescriptor decorateImage(ImageDescriptor input, Object element) 
+    protected ImageDescriptor decorateImage(ImageDescriptor input, Object element)
     {
     	return input;
     }
+
     /**
      * Returns a label that is based on the given label,
      * but decorated with additional information relating to the state
@@ -491,8 +495,17 @@ public class SystemViewLabelAndContentProvider extends LabelProvider
      * Subclasses may implement this method to decorate an object's
      * label.
      */
-    protected String decorateText(String input, Object element) 
+    protected String decorateText(String input, Object element)
     {
     	return input;
-    }    
+	}
+
+	/**
+	 * @InheritDoc
+	 * @since 3.1
+	 * @see org.eclipse.jface.viewers.DelegatingStyledCellLabelProvider.IStyledLabelProvider#getStyledText(java.lang.Object)
+	 */
+	public StyledString getStyledText(Object element) {
+		return new StyledString(getText(element));
+	}
 }

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2008 Wind River Systems, Inc. and others.
+ * Copyright (c) 2006, 2009 Wind River Systems, Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -35,6 +35,7 @@
  * David McKnight   (IBM)        - [235472] [ssh] RSE doesn't show correct properties of the file system root ("/")
  * Martin Oberhuber (Wind River) - [238703] getFile() needs to lstat for consistency with internalFetch()
  * Martin Oberhuber (Wind River) - [237616][ssh] Dont perform forced setLastModified during upload
+ * Martin Oberhuber (Wind River) - [227135] Cryptic exception when sftp-server is missing
  *******************************************************************************/
 
 package org.eclipse.rse.internal.services.ssh.files;
@@ -82,6 +83,7 @@ import org.eclipse.rse.services.clientserver.messages.SystemLockTimeoutException
 import org.eclipse.rse.services.clientserver.messages.SystemMessage;
 import org.eclipse.rse.services.clientserver.messages.SystemMessageException;
 import org.eclipse.rse.services.clientserver.messages.SystemOperationCancelledException;
+import org.eclipse.rse.services.clientserver.messages.SystemOperationFailedException;
 import org.eclipse.rse.services.clientserver.messages.SystemUnexpectedErrorException;
 import org.eclipse.rse.services.files.AbstractFileService;
 import org.eclipse.rse.services.files.HostFilePermissions;
@@ -177,6 +179,8 @@ public class SftpFileService extends AbstractFileService implements ISshService,
 	private static String defaultEncoding = new java.io.InputStreamReader(new java.io.ByteArrayInputStream(new byte[0])).getEncoding();
 	/** Indicates the encoding that our JSch channel uses */
 	private String fJSchChannelEncoding = defaultEncoding;
+	private long fLastConnectFailureTime = 0;
+	private static long CONNECT_RETRY_MILLIS = 10000; //re-try unsuccessful sftp connect attempt after 10 seconds
 
 	//	public SftpFileService(SshConnectorService conn) {
 	//		fConnector = conn;
@@ -338,8 +342,11 @@ public class SftpFileService extends AbstractFileService implements ISshService,
 	}
 
 	public void connect() throws SystemMessageException {
-		Activator.trace("SftpFileService.connecting..."); //$NON-NLS-1$
+		if (fLastConnectFailureTime > 0 && System.currentTimeMillis() - fLastConnectFailureTime < CONNECT_RETRY_MILLIS) {
+			throw new SystemOperationFailedException(Activator.PLUGIN_ID, SshServiceResources.SftpFileService_Error_no_sftp);
+		}
 		try {
+			Activator.trace("SftpFileService.connecting..."); //$NON-NLS-1$
 			Session session = fSessionProvider.getSession();
 			Channel channel=session.openChannel("sftp"); //$NON-NLS-1$
 			channel.connect();
@@ -349,7 +356,8 @@ public class SftpFileService extends AbstractFileService implements ISshService,
 			Activator.trace("SftpFileService.connected"); //$NON-NLS-1$
 		} catch(Exception e) {
 			Activator.trace("SftpFileService.connecting failed: "+e.toString()); //$NON-NLS-1$
-			throw makeSystemMessageException(e);
+			fLastConnectFailureTime = System.currentTimeMillis();
+			throw new SystemOperationFailedException(Activator.PLUGIN_ID, SshServiceResources.SftpFileService_Error_no_sftp, e);
 		}
 	}
 
@@ -1118,13 +1126,13 @@ public class SftpFileService extends AbstractFileService implements ISshService,
 	public void initService(IProgressMonitor monitor) {
 		Activator.trace("SftpFileService.initService"); //$NON-NLS-1$
 		super.initService(monitor);
-		try
-		{
-			connect();
-		}
-		catch (Exception e)
-		{
-		}
+		// try
+		// {
+		// connect();
+		// }
+		// catch (Exception e)
+		// {
+		// }
 	}
 
 	public void uninitService(IProgressMonitor monitor) {

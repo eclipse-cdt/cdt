@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2003, 2008 IBM Corporation and others.
+ * Copyright (c) 2003, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -18,6 +18,7 @@
  * Xuan Chen (IBM) - [218491] ArchiveHandlerManager#cleanUpVirtualPath is messing up the file separators (with updated fix)
  * Johnson Ma (Wind River) - [195402] [api] add tar.gz archive support
  * Martin Oberhuber (Wind River) - [199854][api] Improve error reporting for archive handlers
+ * Martin Oberhuber (Wind River) - [227135] Cryptic exception when sftp-server is missing
  *******************************************************************************/
 
 package org.eclipse.rse.services.clientserver.archiveutils;
@@ -308,11 +309,11 @@ public class ArchiveHandlerManager
 				catch (InvocationTargetException e)
 				{
 					//Throwable target = e.getCause();
-					throw new SystemOperationFailedException(IClientServerConstants.PLUGIN_ID, "instantiate handler for " + file.getName(), e); //$NON-NLS-1$
+					throw new SystemOperationFailedException(IClientServerConstants.PLUGIN_ID, "Failed to instantiate handler for " + file.getName(), e); //$NON-NLS-1$
 				}
 				catch (Exception e)
 				{
-					throw new SystemOperationFailedException(IClientServerConstants.PLUGIN_ID, "instantiate handler for " + file.getName(), e); //$NON-NLS-1$
+					throw new SystemOperationFailedException(IClientServerConstants.PLUGIN_ID, "Failed to instantiate handler for " + file.getName(), e); //$NON-NLS-1$
 				}
 				_handlers.put(file, handler);
 				return handler;
@@ -500,7 +501,7 @@ public class ArchiveHandlerManager
 
 	/**
 	 * Create an empty archive
-	 * 
+	 *
 	 * @throws SystemMessageException in case of an error
 	 * @since 3.0 returns void but throws SystemMessageException
 	 */

@@ -1,5 +1,5 @@
 /********************************************************************************
- * Copyright (c) 2008 IBM Corporation. All rights reserved.
+ * Copyright (c) 2008, 2009 IBM Corporation and others. All rights reserved.
  * This program and the accompanying materials are made available under the terms
  * of the Eclipse Public License v1.0 which accompanies this distribution, and is
  * available at http://www.eclipse.org/legal/epl-v10.html
@@ -12,6 +12,7 @@
  * David McKnight   (IBM)        - [220547] [api][breaking] SimpleSystemMessage needs to specify a message id and some messages should be shared
  * David McKnight   (IBM)        - [223204] [cleanup] fix broken nls strings in files.ui and others
  * Martin Oberhuber (Wind River) - [226374] [api] Need default SystemMessageException specialisations
+ * Martin Oberhuber (Wind River) - [227135] Cryptic exception when sftp-server is missing
  ********************************************************************************/
 package org.eclipse.rse.services.clientserver.messages;
 
@@ -27,7 +28,12 @@ public class CommonMessages extends NLS {
 
 	public static String MSG_EXCEPTION_OCCURRED;
 	public static String MSG_ERROR_UNEXPECTED;
-
+	/**
+	 * General message format for concatenating a message with a cause
+	 *
+	 * @since 3.1
+	 */
+	public static String MSG_FAILURE_WITH_CAUSE;
 
 	public static String MSG_COMM_AUTH_FAILED;
 	public static String MSG_COMM_AUTH_FAILED_DETAILS;

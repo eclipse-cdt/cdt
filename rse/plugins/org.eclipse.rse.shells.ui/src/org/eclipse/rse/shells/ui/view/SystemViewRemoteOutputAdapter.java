@@ -29,6 +29,7 @@
  * David McKnight   (IBM)        - [233349] Could not drag and drop file from Shell view to local folder.
  * David McKnight   (IBM)        - [233475] Cannot drag and drop file/folder within the shell output
  * Kevin Doyle		(IBM)		 - [247297] Double Clicking on a Shell doesn't open that Shell
+ * Martin Oberhuber (Wind River) - [227135] Cryptic exception when sftp-server is missing
  *******************************************************************************/
 
 package org.eclipse.rse.shells.ui.view;
@@ -377,9 +378,12 @@ implements ISystemRemoteElementAdapter
 	}
 
 	/**
-	 * Returns the associated IRemoteFile for this line of remote output if one exists
+	 * Returns the associated IRemoteFile for this line of remote output if one
+	 * exists
+	 * 
 	 * @param output the line of remote output
-	 * @return the associated remote file
+	 * @return the associated remote file, or <code>null</code> if an error
+	 *         occurred
 	 */
 	public static IRemoteFile outputToFile(IRemoteOutput output)
 	{

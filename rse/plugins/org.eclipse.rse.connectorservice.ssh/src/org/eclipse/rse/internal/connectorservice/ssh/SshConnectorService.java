@@ -1,10 +1,10 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2008 Wind River Systems, Inc. and others.
+ * Copyright (c) 2006, 2009 Wind River Systems, Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  * Martin Oberhuber (Wind River) - initial API and implementation
  * David Dykstal (IBM) - 168977: refactoring IConnectorService and ServerLauncher hierarchies
@@ -18,6 +18,7 @@
  * David McKnight (IBM) - [216252] [api][nls] Resource Strings specific to subsystems should be moved from rse.ui into files.ui / shells.ui / processes.ui where possible
  * David McKnight (IBM) - [220547] [api][breaking] SimpleSystemMessage needs to specify a message id and some messages should be shared
  * Johnson Ma (Wind River) - [218880] Add UI setting for ssh keepalives
+ * Martin Oberhuber (Wind River) - [227135] Cryptic exception when sftp-server is missing
  *******************************************************************************/
 
 package org.eclipse.rse.internal.connectorservice.ssh;
@@ -60,6 +61,7 @@ import org.eclipse.rse.services.clientserver.messages.CommonMessages;
 import org.eclipse.rse.services.clientserver.messages.ICommonMessageIds;
 import org.eclipse.rse.services.clientserver.messages.SimpleSystemMessage;
 import org.eclipse.rse.services.clientserver.messages.SystemMessage;
+import org.eclipse.rse.services.clientserver.messages.SystemOperationFailedException;
 import org.eclipse.rse.ui.RSEUIPlugin;
 import org.eclipse.rse.ui.SystemBasePlugin;
 import org.eclipse.rse.ui.messages.SystemMessageDialog;
@@ -192,7 +194,8 @@ public class SshConnectorService extends StandardConnectorService implements ISs
 			if(e.toString().indexOf("Auth cancel")>=0) {  //$NON-NLS-1$
 				throw new OperationCanceledException();
 			}
-			throw e;
+			throw new SystemOperationFailedException(Activator.PLUGIN_ID, NLS.bind(SshConnectorResources.SshConnectorService_Missing_sshd, 
+					host, Integer.toString(getSshPort())), e);
 		}
 		userInfo.connectionMade();
 		fSessionLostHandler = new SessionLostHandler(this);
@@ -272,7 +275,7 @@ public class SshConnectorService extends StandardConnectorService implements ISs
 	 * Handle session-lost events.
 	 * This is generic for any sort of connector service.
 	 * Most of this is extracted from dstore's ConnectionStatusListener.
-	 * 
+	 *
 	 * TODO should be refactored to make it generally available, and allow
 	 * dstore to derive from it.
 	 */

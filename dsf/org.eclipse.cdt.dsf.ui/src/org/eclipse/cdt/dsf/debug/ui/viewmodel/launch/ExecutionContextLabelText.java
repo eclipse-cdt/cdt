@@ -94,7 +94,9 @@ class ExecutionContextLabelText extends LabelText {
         if (PROP_NAME_KNOWN.equals(propertyName) ||
             IElementPropertiesProvider.PROP_NAME.equals(propertyName) ||
             PROP_ID_KNOWN.equals(propertyName) ||
-            ILaunchVMConstants.PROP_ID.equals(propertyName)) 
+            ILaunchVMConstants.PROP_ID.equals(propertyName) ||
+            PROP_ID2_KNOWN.equals(propertyName) ||
+            ILaunchVMConstants.PROP_ID2.equals(propertyName)) 
         {
             return true;
         } 

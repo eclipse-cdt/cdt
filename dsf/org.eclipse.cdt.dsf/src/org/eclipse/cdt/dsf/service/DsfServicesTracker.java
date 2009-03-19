@@ -37,8 +37,10 @@ import org.osgi.framework.ServiceReference;
  * service references.
  * <br>4. OSGI Service tracker explicitly listens to OSGI service 
  * startup/shutdown events and it will clear a reference to a service as
- * soon as it's shut down.  This class leaves it up to the client to make
- * sure that it doesn't access a service once that service has been shut down.
+ * soon as it's shut down.  
+ * Since version 2.0, this class listens to service unregister events
+ * as an indication of service shutdown.  In the case of an unregister event,
+ * this class will clear the reference to that service.
  * <p>
  * That said, it might be more convenient for certain types of clients to use
  * OSGI Service tracker for the additional features it provides. 

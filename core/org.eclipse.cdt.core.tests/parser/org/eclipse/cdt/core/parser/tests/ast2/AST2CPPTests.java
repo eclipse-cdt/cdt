@@ -7018,4 +7018,15 @@ public class AST2CPPTests extends AST2BaseTest {
 		final String code = getAboveComment();
 		parseAndCheckBindings(code, ParserLanguage.CPP);
 	}
+	
+	//	void f(int volatile * const * ) {}
+	//	void f(int const volatile * const *) {}
+	//	void test() {
+	//	   int ** x;
+	//	   f(x);  // problem binding here
+	//	}
+	public void testRankingOfQualificationConversion_Bug269321() throws Exception {		
+		final String code = getAboveComment();
+		parseAndCheckBindings(code, ParserLanguage.CPP);
+	}
 }

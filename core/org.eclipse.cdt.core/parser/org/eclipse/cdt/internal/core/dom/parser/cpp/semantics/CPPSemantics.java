@@ -174,6 +174,7 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPInternalUnknownScope;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPUnknownBinding;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPUnknownType;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.OverloadableOperator;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.Cost.Rank;
 import org.eclipse.cdt.internal.core.index.IIndexScope;
 
 /**
@@ -2091,7 +2092,7 @@ public class CPPSemantics {
 			int len = Math.min(fnCost.length, bestFnCost.length);
 			for (int j = 1; j <= len; j++) {
 				Cost currCost = fnCost[fnCost.length - j];
-				if (currCost.rank < 0) {
+				if (currCost.getRank() == Rank.NO_MATCH) {
 					hasWorse = true;
 					hasBetter = false;
 					break;
@@ -2099,13 +2100,13 @@ public class CPPSemantics {
 				
 				// An ambiguity in the user defined conversion sequence is only a problem
 				// if this function turns out to be the best.
-				if (currCost.userDefined == Cost.AMBIGUOUS_USERDEFINED_CONVERSION)
+				if (currCost.isAmbiguousUserdefinedConversion())
 					hasAmbiguousParam = true;
 				
 				if (bestFnCost != null) {
 					int comparison = currCost.compare(bestFnCost[bestFnCost.length - j]);
-					hasWorse |= (comparison < 0);
-					hasBetter |= (comparison > 0);
+					hasWorse |= (comparison > 0);
+					hasBetter |= (comparison < 0);
 				} else {
 					hasBetter = true;
 				}
@@ -2186,20 +2187,18 @@ public class CPPSemantics {
 		} else {
 			result= new Cost[sourceLen+1];
 			if (ASTInternal.isStatic(fn, false)) {
-			    // 13.3.1-4 for static member functions, the implicit object parameter always matches
-			    cost = new Cost(thisType, implicitType);
-				cost.rank = Cost.IDENTITY_RANK;	// exact match, no cost
+			    // 13.3.1-4 for static member functions, the implicit object parameter always matches, no cost
+			    cost = new Cost(thisType, implicitType, Rank.IDENTITY);
 			} else if (thisType == null) {
 				return null;
 			} else if (thisType.isSameType(implicitType)) {
-				cost = new Cost(thisType, implicitType);
-				cost.rank = Cost.IDENTITY_RANK;	// exact match, no cost
+				cost = new Cost(thisType, implicitType, Rank.IDENTITY);
 			} else {
 			    if (CPPTemplates.isDependentType(implicitType))
 			    	return CONTAINS_DEPENDENT_TYPES;
 				cost = Conversions.checkImplicitConversionSequence(null, thisType, implicitType, false, true);
 			}
-			if (cost.rank < 0)
+			if (cost.getRank() == Rank.NO_MATCH)
 				return null;
 			
 			result[k++] = cost;
@@ -2218,21 +2217,19 @@ public class CPPSemantics {
 			} else if (!fn.takesVarArgs()) {
 				paramType= VOID_TYPE;
 			} else {
-				cost = new Cost(argType, null);
-				cost.rank = Cost.ELLIPSIS_CONVERSION;
+				cost = new Cost(argType, null, Rank.ELLIPSIS_CONVERSION);
 				result[k++]= cost;
 				continue;
 			} 
 			
 			if (argType.isSameType(paramType)) {
-				cost = new Cost(argType, paramType);
-				cost.rank = Cost.IDENTITY_RANK;	// exact match, no cost
+				cost = new Cost(argType, paramType, Rank.IDENTITY);
 			} else {
 			    if (CPPTemplates.isDependentType(paramType))
 			    	return CONTAINS_DEPENDENT_TYPES;
 				cost = Conversions.checkImplicitConversionSequence(arg, argType, paramType, allowUDC, false);
 			}
-			if (cost.rank < 0)
+			if (cost.getRank() == Rank.NO_MATCH)
 				return null;
 			
 			result[k++] = cost;

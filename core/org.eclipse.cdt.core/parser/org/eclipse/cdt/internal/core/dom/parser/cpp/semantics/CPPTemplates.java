@@ -138,6 +138,7 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPUnknownBinding;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPUnknownClassInstance;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPUnknownClassType;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPUnknownType;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.Cost.Rank;
 
 /**
  * Collection of static methods to perform template instantiation, member specialization and
@@ -1962,7 +1963,7 @@ public class CPPTemplates {
 			}
 		}
 		Cost cost = Conversions.checkStandardConversionSequence(arg, paramType, false);
-		return cost != null && cost.rank != Cost.NO_MATCH_RANK;
+		return cost != null && cost.getRank() != Rank.NO_MATCH;
 	}
 
 	static boolean argsAreTrivial(ICPPTemplateParameter[] pars, ICPPTemplateArgument[] args) {

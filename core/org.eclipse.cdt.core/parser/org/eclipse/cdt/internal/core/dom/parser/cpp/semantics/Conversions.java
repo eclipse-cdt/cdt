@@ -43,6 +43,7 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPBasicType;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPPointerToMemberType;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPPointerType;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPDeferredClassInstance;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.Cost.Rank;
 import org.eclipse.cdt.internal.core.index.IIndexFragmentBinding;
 import org.eclipse.core.runtime.CoreException;
 
@@ -80,22 +81,13 @@ public class Conversions {
 
 		    // [8.5.3-5] Is an lvalue (but is not a bit-field), and "cv1 T1" is reference-compatible with "cv2 T2," 
 			if (lvalue) {
-				Cost cost= isReferenceCompatible(cv1T1, source);
+				Cost cost= isReferenceCompatible(cv1T1, source, isImpliedObject);
 				if (cost != null) {
 					// [8.5.3-5] this is a direct reference binding
-					// [13.3.3.1.4-1] direct binding has either identity or conversion rank.
-
-					// 7.3.3.13 for overload resolution the implicit this pointer is treated as if 
-					// it were a pointer to the derived class
-					if (isImpliedObject) 
-						cost.conversion= 0;
-					
-					// [13.3.3.1.4] 
-					if (cost.conversion > 0) {
-						cost.rank= Cost.DERIVED_TO_BASE_CONVERSION;
-					} else {
-						cost.rank = Cost.IDENTITY_RANK;
-					}
+					// [13.3.3.1.4-1] direct binding has either identity or conversion rank.					
+					if (cost.getInheritanceDistance() > 0) {
+						cost.setRank(Rank.CONVERSION);
+					} 
 					return cost;
 				} 
 			}
@@ -107,42 +99,30 @@ public class Conversions {
 				// (13.3.1.6) and choosing the best one through overload resolution (13.3)).
 				ICPPMethod[] fcns= SemanticUtil.getConversionOperators((ICPPClassType) T2);
 				Cost operatorCost= null;
-				ICPPMethod conv= null;
 				boolean ambiguousConversionOperator= false;
 				if (fcns.length > 0 && !(fcns[0] instanceof IProblemBinding)) {
 					for (final ICPPMethod op : fcns) {
-						Cost cost2 = checkStandardConversionSequence(op.getType().getReturnType(), cv1T1,
-								false);
-						if (cost2.rank != Cost.NO_MATCH_RANK) {
-							if (operatorCost == null) {
-								operatorCost= cost2;
-								conv= op;
-							} else {
-								int cmp= operatorCost.compare(cost2);
-								if (cmp >= 0) {
+						IType newSource= op.getType().getReturnType();
+						if (newSource instanceof ICPPReferenceType) { // require an lvalue
+							IType cvT2= getNestedType(newSource, TDEF | REF);
+							Cost cost2= isReferenceCompatible(cv1T1, cvT2, false); 
+							if (cost2 != null) {
+								int cmp= cost2.compare(operatorCost);
+								if (cmp <= 0) {
 									ambiguousConversionOperator= cmp == 0;
 									operatorCost= cost2;
-									conv= op;
+									operatorCost.setUserDefinedConversion(op);
 								}
 							}
 						}
 					}
 				}
 
-				if (conv!= null && !ambiguousConversionOperator) {
-					IType newSource= conv.getType().getReturnType();
-					if (newSource instanceof ICPPReferenceType) { // require an lvalue
-						IType cvT2= getNestedType(newSource, TDEF | REF);
-						Cost cost= isReferenceCompatible(cv1T1, cvT2);
-						if (cost != null) {
-							if (isImpliedObject) {
-								cost.conversion= 0;
-							}
-							cost.rank= Cost.USERDEFINED_CONVERSION_RANK;
-							cost.userDefined= Cost.USERDEFINED_CONVERSION;
-							return cost;
-						}
+				if (operatorCost != null && !ambiguousConversionOperator) {
+					if (isImpliedObject) {
+						operatorCost.setInheritanceDistance(0);
 					}
+					return operatorCost;
 				}
 			}
 
@@ -150,7 +130,7 @@ public class Conversions {
 			boolean cv1isConst= getCVQualifier(cv1T1) == 1;
 			if (cv1isConst)  {
 				if (!lvalue && T2 instanceof ICPPClassType) {
-					Cost cost= isReferenceCompatible(cv1T1, source);
+					Cost cost= isReferenceCompatible(cv1T1, source, isImpliedObject);
 					if (cost != null)
 						return cost;
 				}
@@ -162,15 +142,19 @@ public class Conversions {
 
 				// If T1 is reference-related to T2, cv1 must be the same cv-qualification as,
 				// or greater cv-qualification than, cv2; otherwise, the program is ill-formed.
-				IType T1= getNestedType(cv1T1, TDEF | REF | CVQ | PTR_CVQ);
-				boolean illformed= isReferenceRelated(T1, T2) >= 0 && compareQualifications(cv1T1, source) < 0;
+				
+				// 13.3.3.1.7 no temporary object when converting the implicit object parameter
+				if (!isImpliedObject) {
+					IType T1= getNestedType(cv1T1, TDEF | REF | CVQ | PTR_CVQ);
+					boolean illformed= isReferenceRelated(T1, T2) >= 0 && compareQualifications(cv1T1, source) < 0;
 
 					// We must do a non-reference initialization
-				if (!illformed) {
-					return nonReferenceConversion(source, cv1T1, allowUDC, isImpliedObject);
+					if (!illformed) {
+						return nonReferenceConversion(source, cv1T1, allowUDC, isImpliedObject);
+					}
 				}
 			}
-			return new Cost(source, cv1T1);
+			return new Cost(source, cv1T1, Rank.NO_MATCH);
 		} 
 		
 		// Non-reference binding
@@ -180,7 +164,7 @@ public class Conversions {
 	private static Cost nonReferenceConversion(IType source, IType target, boolean allowUDC,
 			boolean isImpliedObject) throws DOMException {
 		Cost cost= checkStandardConversionSequence(source, target, isImpliedObject);
-		if (allowUDC && cost.rank == Cost.NO_MATCH_RANK) { 
+		if (allowUDC && cost.getRank() == Rank.NO_MATCH) { 
 			Cost temp = checkUserDefinedConversionSequence(source, target);
 			if (temp != null) {
 				cost = temp;
@@ -280,18 +264,22 @@ public class Conversions {
 	 * @return The cost for converting or <code>null</code> if <code>cv1t1</code> is not
 	 * reference-compatible with <code>cv2t2</code>
 	 */
-	private static final Cost isReferenceCompatible(IType cv1Target, IType cv2Source) throws DOMException {
-		final int inheritanceDist= isReferenceRelated(cv1Target, cv2Source);
+	private static final Cost isReferenceCompatible(IType cv1Target, IType cv2Source, boolean isImpliedObject) throws DOMException {
+		int inheritanceDist= isReferenceRelated(cv1Target, cv2Source);
 		if (inheritanceDist < 0)
 			return null;
 		final int cmp= compareQualifications(cv1Target, cv2Source);
 		if (cmp < 0)
 			return null;
 		
-		Cost cost= new Cost(cv2Source, cv1Target);
-		cost.qualification= cmp > 0 ? Cost.CONVERSION_RANK : Cost.IDENTITY_RANK;
-		cost.conversion= inheritanceDist;
-		cost.rank= Cost.IDENTITY_RANK;
+		// 7.3.3.13 for overload resolution the implicit this pointer is treated as if 
+		// it were a pointer to the derived class
+		if (isImpliedObject) 
+			inheritanceDist= 0;
+
+		Cost cost= new Cost(cv2Source, cv1Target, Rank.IDENTITY);
+		cost.setQualificationAdjustment(cmp);
+		cost.setInheritanceDistance(inheritanceDist);
 		return cost;
 	}
 	
@@ -305,8 +293,7 @@ public class Conversions {
 	 */
 	protected static final Cost checkStandardConversionSequence(IType source, IType target,
 			boolean isImplicitThis) throws DOMException {
-		final Cost cost= new Cost(source, target);
-		cost.rank= Cost.IDENTITY_RANK;
+		final Cost cost= new Cost(source, target, Rank.IDENTITY);
 		if (lvalue_to_rvalue(cost))
 			return cost;
 
@@ -320,12 +307,8 @@ public class Conversions {
 			return cost;
 
 		// If we can't convert the qualifications, then we can't do anything
-		cost.rank= Cost.NO_MATCH_RANK;
+		cost.setRank(Rank.NO_MATCH);
 		return cost;
-
-//		if (cost.rank == -1) {
-//			relaxTemplateParameters(cost);
-//		}
 	}
 
 	/**
@@ -359,8 +342,10 @@ public class Conversions {
 				IBinding binding = CPPSemantics.resolveFunction(data, convertingCtors, false);
 				if (binding instanceof ICPPConstructor && !(binding instanceof IProblemBinding)) {
 					constructorCost = checkStandardConversionSequence(t, target, false);
-					if (constructorCost.rank == Cost.NO_MATCH_RANK) {
+					if (constructorCost.getRank() == Rank.NO_MATCH) {
 						constructorCost= null;
+					} else {
+						constructorCost.setUserDefinedConversion((ICPPConstructor)binding);
 					}
 				}
 			}
@@ -373,15 +358,12 @@ public class Conversions {
 			if (ops.length > 0 && !(ops[0] instanceof IProblemBinding)) {
 				for (final ICPPMethod op : ops) {
 					Cost cost= checkStandardConversionSequence(op.getType().getReturnType(), target, false);
-					if (cost.rank != Cost.NO_MATCH_RANK) {
-						if (operatorCost == null) {
+					if (cost.getRank() != Rank.NO_MATCH) {
+						int cmp= cost.compare(operatorCost);
+						if (cmp <= 0) {
+							cost.setUserDefinedConversion(op);
 							operatorCost= cost;
-						} else {
-							int cmp= operatorCost.compare(cost);
-							if (cmp >= 0) {
-								ambiguousConversionOperator= cmp == 0;
-								operatorCost= cost;
-							}
+							ambiguousConversionOperator= cmp == 0;
 						}
 					}
 				}
@@ -389,25 +371,18 @@ public class Conversions {
 		}
 
 		if (constructorCost != null) {
-			if (operatorCost == null || ambiguousConversionOperator) {
-				constructorCost.userDefined = Cost.USERDEFINED_CONVERSION;
-				constructorCost.rank = Cost.USERDEFINED_CONVERSION_RANK;
-			} else {
+			if (operatorCost != null && !ambiguousConversionOperator) {
 				// If both are valid, then the conversion is ambiguous
-				constructorCost.userDefined = Cost.AMBIGUOUS_USERDEFINED_CONVERSION;	
-				constructorCost.rank = Cost.USERDEFINED_CONVERSION_RANK;
-			}
+				constructorCost.setAmbiguousUserdefinedConversion(true);
+			} 
 			return constructorCost;
 		} 
+		
 		if (operatorCost != null) {
-			operatorCost.rank = Cost.USERDEFINED_CONVERSION_RANK;
-			if (ambiguousConversionOperator) {
-				operatorCost.userDefined = Cost.AMBIGUOUS_USERDEFINED_CONVERSION;
-			} else {
-				operatorCost.userDefined = Cost.USERDEFINED_CONVERSION;
-			} 			
+			operatorCost.setAmbiguousUserdefinedConversion(ambiguousConversionOperator);
 			return operatorCost;
 		}
+
 		return null;
 	}
 
@@ -481,13 +456,13 @@ public class Conversions {
 						source= srcRValue;
 					} else {
 						// ill-formed
-						cost.rank= Cost.NO_MATCH_RANK;
+						cost.setRank(Rank.NO_MATCH);
 						return true;
 					}
 				} else {
 					source= unqualifiedSrcRValue;
 				}
-				cost.rank= Cost.LVALUE_OR_QUALIFICATION_RANK;
+				cost.setRank(Rank.LVALUE_TRANSFORMATION);
 				isConverted= true;
 			}
 		}
@@ -510,8 +485,8 @@ public class Conversions {
 								IASTLiteralExpression lit= (IASTLiteralExpression) val;
 								if (lit.getKind() == IASTLiteralExpression.lk_string_literal) {
 									source= new CPPPointerType(tmp, false, false);
-									cost.qualification= Cost.CONVERSION_RANK;
-									cost.rank= Cost.LVALUE_OR_QUALIFICATION_RANK;
+									cost.setQualificationAdjustment(getCVQualifier(targetPtrTgt) | 1);
+									cost.setRank(Rank.LVALUE_TRANSFORMATION);
 									isConverted= true;
 								}
 							}
@@ -521,7 +496,7 @@ public class Conversions {
 			}
 			if (!isConverted && (target instanceof IPointerType || target instanceof IBasicType)) {
 				source = new CPPPointerType(getNestedType(arrayType.getType(), TDEF));
-				cost.rank= Cost.LVALUE_OR_QUALIFICATION_RANK;
+				cost.setRank(Rank.LVALUE_TRANSFORMATION);
 				isConverted= true;
 			}
 		}
@@ -531,7 +506,7 @@ public class Conversions {
 			final IType targetPtrTgt= getNestedType(((IPointerType) target).getType(), TDEF);
 			if (targetPtrTgt instanceof IFunctionType && srcRValue instanceof IFunctionType) {
 				source = new CPPPointerType(source);
-				cost.rank= Cost.LVALUE_OR_QUALIFICATION_RANK;
+				cost.setRank(Rank.LVALUE_TRANSFORMATION);
 				isConverted= true;
 			} 
 		}
@@ -548,7 +523,7 @@ public class Conversions {
 		}		
 
 		if (source == null || target == null) {
-			cost.rank= Cost.NO_MATCH_RANK;
+			cost.setRank(Rank.NO_MATCH);
 			return true;
 		} 
 		cost.source= source;
@@ -569,10 +544,12 @@ public class Conversions {
 		IType t = cost.target;
 		boolean constInEveryCV2k = true;
 		boolean firstPointer= true;
+		int adjustments= 0;
 		while (true) {
 			s= getNestedType(s, TDEF | REF);
 			t= getNestedType(t, TDEF | REF);
 			if (s instanceof IPointerType && t instanceof IPointerType) {
+				adjustments <<= 2;
 				final int cmp= compareQualifications(t, s);  // is t more qualified than s?
 				if (cmp < 0 || (cmp > 0 && !constInEveryCV2k)) {
 					return false;
@@ -590,31 +567,33 @@ public class Conversions {
 					}
 				}
 
-				if (cmp != 0) {
-					cost.qualification= Cost.CONVERSION_RANK;
-				}
 				final IPointerType tPtr = (IPointerType) t;
 				final IPointerType sPtr = (IPointerType) s;
 				constInEveryCV2k &= (firstPointer || tPtr.isConst());
 				s= sPtr.getType();
 				t= tPtr.getType();
 				firstPointer= false;
+				adjustments |= cmp;
 			} else {
 				break;
 			}
 		}
 
 		if (s instanceof IQualifierType || t instanceof IQualifierType) {
+			adjustments <<= 2;
 			int cmp= compareQualifications(t, s);  // is t more qualified than s?
-			if (cmp == -1 || (cmp == 1 && !constInEveryCV2k)) {
+			if (cmp < 0 || (cmp > 0 && !constInEveryCV2k)) {
 				return false;
-			} else if (cmp != 0) {
-				cost.qualification= Cost.CONVERSION_RANK;
-			}
+			} 
+
+			adjustments |= cmp;
 			s= getNestedType(s, CVQ | TDEF | REF);
 			t= getNestedType(t, CVQ | TDEF | REF);
 		} 
 		
+		if (adjustments > 0) {
+			cost.setQualificationAdjustment(adjustments);
+		}
 		return s != null && t != null && s.isSameType(t);
 	}
 
@@ -668,8 +647,7 @@ public class Conversions {
 			}
 		}
 		if (canPromote) {
-			cost.promotion = 1;
-			cost.rank= Cost.PROMOTION_RANK;
+			cost.setRank(Rank.PROMOTION);
 			return true;
 		}
 		return false;
@@ -687,9 +665,6 @@ public class Conversions {
 		final IType s = cost.source;
 		final IType t = cost.target;
 
-		cost.conversion = 0;
-		cost.detail = 0;
-		
 		if (t instanceof IBasicType) {
 			// 4.7 integral conversion
 			// 4.8 floating point conversion
@@ -697,15 +672,13 @@ public class Conversions {
 			if (s instanceof IBasicType || s instanceof IEnumeration) {
 				// 4.7 An rvalue of an integer type can be converted to an rvalue of another integer type.  
 				// An rvalue of an enumeration type can be converted to an rvalue of an integer type.
-				cost.rank = Cost.CONVERSION_RANK;
-				cost.conversion = 1;	
+				cost.setRank(Rank.CONVERSION);
 				return true;
 			} 
 			// 4.12 pointer or pointer to member type can be converted to an rvalue of type bool
 			final int tgtType = ((IBasicType) t).getType();
 			if (tgtType == ICPPBasicType.t_bool && s instanceof IPointerType) {
-				cost.rank = Cost.CONVERSION_RANK;
-				cost.conversion = 1;
+				cost.setRank(Rank.CONVERSION_PTR_BOOL);
 				return true;
 			} 
 		}
@@ -720,8 +693,7 @@ public class Conversions {
 				if (exp != null) {
 					Long val= Value.create(exp, Value.MAX_RECURSION_DEPTH).numericalValue();
 					if (val != null && val == 0) {
-						cost.rank = Cost.CONVERSION_RANK;
-						cost.conversion = 1;
+						cost.setRank(Rank.CONVERSION);
 						return true;
 					}
 				}
@@ -733,9 +705,8 @@ public class Conversions {
 				// converted to an rvalue of type "pointer to cv void"
 				IType tgtPtrTgt= getNestedType(tgtPtr.getType(), TDEF | CVQ | REF);
 				if (tgtPtrTgt instanceof IBasicType && ((IBasicType) tgtPtrTgt).getType() == IBasicType.t_void) {
-					cost.rank = Cost.CONVERSION_RANK;
-					cost.conversion = 1;
-					cost.detail = 2;
+					cost.setRank(Rank.CONVERSION);
+					cost.setInheritanceDistance(Short.MAX_VALUE); // mstodo add distance to last base class
 					int cv= getCVQualifier(srcPtr.getType());
 					cost.source= new CPPPointerType(addQualifiers(CPPSemantics.VOID_TYPE, (cv&1) != 0, (cv&2) != 0));
 					return false; 
@@ -750,15 +721,14 @@ public class Conversions {
 					if (tgtPtrTgt instanceof ICPPClassType && srcPtrTgt instanceof ICPPClassType) {
 						int depth= calculateInheritanceDepth(CPPSemantics.MAX_INHERITANCE_DEPTH, srcPtrTgt, tgtPtrTgt);
 						if (depth == -1) {
-							cost.rank= Cost.NO_MATCH_RANK;
+							cost.setRank(Rank.NO_MATCH);
 							return true;
 						}
 						if (depth > 0) {
 							if (!forImplicitThis) {
-								cost.rank= Cost.CONVERSION_RANK;
-								cost.conversion= depth;
+								cost.setRank(Rank.CONVERSION);
+								cost.setInheritanceDistance(depth);
 							}
-							cost.detail= 1;
 							int cv= getCVQualifier(srcPtr.getType());
 							cost.source= new CPPPointerType(addQualifiers(tgtPtrTgt, (cv&1) != 0, (cv&2) != 0));
 						}
@@ -776,13 +746,12 @@ public class Conversions {
 						int depth= calculateInheritanceDepth(CPPSemantics.MAX_INHERITANCE_DEPTH,
 								tpm.getMemberOfClass(), spm.getMemberOfClass());
 						if (depth == -1) {
-							cost.rank= Cost.NO_MATCH_RANK;
+							cost.setRank(Rank.NO_MATCH);
 							return true;
 						}
 						if (depth > 0) {
-							cost.rank= Cost.CONVERSION_RANK;
-							cost.conversion= depth;
-							cost.detail= 1;
+							cost.setRank(Rank.CONVERSION);
+							cost.setInheritanceDistance(depth);
 							cost.source = new CPPPointerToMemberType(spm.getType(),
 									tpm.getMemberOfClass(), spm.isConst(), spm.isVolatile());
 						}

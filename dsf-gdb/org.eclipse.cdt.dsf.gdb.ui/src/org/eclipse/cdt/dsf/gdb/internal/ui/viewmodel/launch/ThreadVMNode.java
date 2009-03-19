@@ -18,6 +18,7 @@ import org.eclipse.cdt.dsf.debug.service.IProcesses;
 import org.eclipse.cdt.dsf.debug.service.IProcesses.IThreadDMContext;
 import org.eclipse.cdt.dsf.debug.service.IProcesses.IThreadDMData;
 import org.eclipse.cdt.dsf.debug.ui.viewmodel.launch.AbstractThreadVMNode;
+import org.eclipse.cdt.dsf.debug.ui.viewmodel.launch.ExecutionContextLabelText;
 import org.eclipse.cdt.dsf.debug.ui.viewmodel.launch.ILaunchVMConstants;
 import org.eclipse.cdt.dsf.internal.ui.DsfUIPlugin;
 import org.eclipse.cdt.dsf.mi.service.IMIExecutionDMContext;
@@ -27,11 +28,19 @@ import org.eclipse.cdt.dsf.ui.concurrent.ViewerDataRequestMonitor;
 import org.eclipse.cdt.dsf.ui.viewmodel.datamodel.AbstractDMVMProvider;
 import org.eclipse.cdt.dsf.ui.viewmodel.datamodel.IDMVMContext;
 import org.eclipse.cdt.dsf.ui.viewmodel.properties.IPropertiesUpdate;
+import org.eclipse.cdt.dsf.ui.viewmodel.properties.LabelAttribute;
+import org.eclipse.cdt.dsf.ui.viewmodel.properties.LabelColumnInfo;
+import org.eclipse.cdt.dsf.ui.viewmodel.properties.LabelImage;
+import org.eclipse.cdt.dsf.ui.viewmodel.properties.LabelText;
+import org.eclipse.cdt.dsf.ui.viewmodel.properties.PropertiesBasedLabelProvider;
 import org.eclipse.cdt.dsf.ui.viewmodel.properties.VMDelegatingPropertiesUpdate;
+import org.eclipse.core.runtime.IStatus;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IElementCompareRequest;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IElementLabelProvider;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IElementMementoProvider;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IElementMementoRequest;
+import org.eclipse.debug.ui.DebugUITools;
+import org.eclipse.debug.ui.IDebugUIConstants;
 import org.eclipse.ui.IMemento;
 
 
@@ -49,6 +58,40 @@ public class ThreadVMNode extends AbstractThreadVMNode
     }
     
     @Override
+    protected IElementLabelProvider createLabelProvider() {
+        PropertiesBasedLabelProvider provider = new PropertiesBasedLabelProvider();
+
+        provider.setColumnInfo(
+            PropertiesBasedLabelProvider.ID_COLUMN_NO_COLUMNS, 
+            new LabelColumnInfo(new LabelAttribute[] { 
+                // Text is made of the thread name followed by its state and state change reason. 
+                new GdbExecutionContextLabelText(
+                    MessagesForGdbLaunchVM.ThreadVMNode_No_columns__text_format,
+                    new String[] { 
+                        ExecutionContextLabelText.PROP_NAME_KNOWN, 
+                        PROP_NAME, 
+                        ExecutionContextLabelText.PROP_ID_KNOWN, 
+                        ILaunchVMConstants.PROP_ID, 
+                        IGdbLaunchVMConstants.PROP_OS_ID_KNOWN, 
+                        IGdbLaunchVMConstants.PROP_OS_ID, 
+                        ILaunchVMConstants.PROP_IS_SUSPENDED, 
+                        ExecutionContextLabelText.PROP_STATE_CHANGE_REASON_KNOWN, 
+                        ILaunchVMConstants.PROP_STATE_CHANGE_REASON }),
+                new LabelText(MessagesForGdbLaunchVM.ThreadVMNode_No_columns__Error__label, new String[0]),
+                new LabelImage(DebugUITools.getImageDescriptor(IDebugUIConstants.IMG_OBJS_THREAD_RUNNING)) {
+                    { setPropertyNames(new String[] { ILaunchVMConstants.PROP_IS_SUSPENDED }); }
+                    
+                    @Override
+                    public boolean isEnabled(IStatus status, java.util.Map<String,Object> properties) {
+                        return !((Boolean)properties.get(ILaunchVMConstants.PROP_IS_SUSPENDED)).booleanValue();
+                    };
+                },
+                new LabelImage(DebugUITools.getImageDescriptor(IDebugUIConstants.IMG_OBJS_THREAD_SUSPENDED)),
+            }));
+        return provider;
+    }
+
+    @Override
     protected void updatePropertiesInSessionThread(IPropertiesUpdate[] updates) {
         IPropertiesUpdate[] parentUpdates = new IPropertiesUpdate[updates.length]; 
         
@@ -63,33 +106,37 @@ public class ThreadVMNode extends AbstractThreadVMNode
             // standard container properties.
             parentUpdates[i] = new VMDelegatingPropertiesUpdate(updates[i], countringRm);
             count++;
-            
+
+            IMIExecutionDMContext execDmc = findDmcInPath(
+                update.getViewerInput(), update.getElementPath(), IMIExecutionDMContext.class);
+            if (execDmc != null) {
+                update.setProperty(ILaunchVMConstants.PROP_ID, Integer.toString(execDmc.getThreadId()));
+            }
+
             IProcesses processService = getServicesTracker().getService(IProcesses.class);
             final IThreadDMContext threadDmc = findDmcInPath(update.getViewerInput(), update.getElementPath(), IThreadDMContext.class);
             
-            if (processService == null || threadDmc == null) {
-                update.setStatus(DsfUIPlugin.newErrorStatus(IDsfStatusConstants.INVALID_HANDLE, "Service or handle invalid", null)); //$NON-NLS-1$
-            } else {
-                processService.getExecutionData(
-                	threadDmc,
-                    new ViewerDataRequestMonitor<IThreadDMData>(getExecutor(), update) {
-                        @Override
-                        public void handleCompleted() {
-                            if (isSuccess()) {
-                                fillThreadDataProperties(update, getData());
-                            } else {
-                                final IMIExecutionDMContext execDmc = findDmcInPath(
-                                    update.getViewerInput(), update.getElementPath(), IMIExecutionDMContext.class);
-                                if (execDmc != null) {
-                                    update.setProperty(ILaunchVMConstants.PROP_ID, Integer.toString(execDmc.getThreadId()));
-                                } else {
-                                    update.setStatus(getStatus());
-                                }
+            if (update.getProperties().contains(PROP_NAME) || 
+                update.getProperties().contains(IGdbLaunchVMConstants.PROP_OS_ID)) 
+            {
+                // 
+                if (processService == null || threadDmc == null) {
+                    update.setStatus(DsfUIPlugin.newErrorStatus(IDsfStatusConstants.INVALID_HANDLE, "Service or handle invalid", null)); //$NON-NLS-1$
+                } else {
+                    processService.getExecutionData(
+                    	threadDmc,
+                        new ViewerDataRequestMonitor<IThreadDMData>(getExecutor(), update) {
+                            @Override
+                            public void handleCompleted() {
+                                if (isSuccess()) {
+                                    fillThreadDataProperties(update, getData());
+                                } 
+                                update.setStatus(getStatus());
+                                countringRm.done();
                             }
-                            countringRm.done();
-                        }
-                    });
-                count++;
+                        });
+                    count++;
+                }
             }
             
             countringRm.setDoneCount(count);
@@ -101,13 +148,7 @@ public class ThreadVMNode extends AbstractThreadVMNode
     	if (data.getName() != null && data.getName().length() > 0) {
     		update.setProperty(PROP_NAME, data.getName());
     	}
-    	
-        IMIExecutionDMContext execDmc = findDmcInPath(
-                update.getViewerInput(), update.getElementPath(), IMIExecutionDMContext.class);
-        if (execDmc != null) {
-            update.setProperty(ILaunchVMConstants.PROP_ID, Integer.toString(execDmc.getThreadId()));
-        }
-        update.setProperty(ILaunchVMConstants.PROP_ID2, data.getId());
+        update.setProperty(IGdbLaunchVMConstants.PROP_OS_ID, data.getId());
     }
 
 	private String produceThreadElementName(String viewName, IMIExecutionDMContext execCtx) {

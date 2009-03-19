@@ -17,33 +17,34 @@ import org.eclipse.cdt.dsf.ui.viewmodel.properties.IElementPropertiesProvider;
 import org.eclipse.cdt.dsf.ui.viewmodel.properties.LabelText;
 import org.eclipse.core.runtime.IStatus;
 
-class ExecutionContextLabelText extends LabelText {
+/**
+ * @since 2.0
+ */
+public class ExecutionContextLabelText extends LabelText {
     
+    /**
+     * Value <code>0</code> means it's not known.  Value <code>1</code>, means it's known.
+     */
+    public static final String PROP_STATE_CHANGE_REASON_KNOWN = "state_change_reason_known";  //$NON-NLS-1$
+
     /**
      * Value <code>0</code> means it's not known.  Value <code>1</code>, means it's known.
      */
     public static final String PROP_ID_KNOWN = "id_known";  //$NON-NLS-1$
 
     /**
-     * A second ID, such as the OS Id for a thread.
-     * 
-     * Value <code>0</code> means it's not known.  Value <code>1</code>, means it's known.
-     */
-    public static final String PROP_ID2_KNOWN = "id2_known";  //$NON-NLS-1$
-
-    /**
      * Value <code>0</code> means it's not known.  Value <code>1</code>, means it's known.
      */
     public static final String PROP_NAME_KNOWN = "name_known";  //$NON-NLS-1$
     
-    protected ExecutionContextLabelText(String formatPattern, String[] propertyNames) {
+    public ExecutionContextLabelText(String formatPattern, String[] propertyNames) {
         super(formatPattern, propertyNames);
     }
     
     @Override
     protected Object getPropertyValue(String propertyName, IStatus status, Map<String, Object> properties) {
         if ( ILaunchVMConstants.PROP_STATE_CHANGE_REASON.equals(propertyName) ) {
-            String reason = (String)properties.get(propertyName);
+            String reason = (String)properties.get(ILaunchVMConstants.PROP_STATE_CHANGE_REASON);
             String reasonLabel = "invalid reason"; //$NON-NLS-1$
             if (StateChangeReason.BREAKPOINT.name().equals(reason)) {
                 reasonLabel = MessagesForLaunchVM.State_change_reason__Breakpoint__label;
@@ -70,6 +71,9 @@ class ExecutionContextLabelText extends LabelText {
         } else if ( ILaunchVMConstants.PROP_IS_SUSPENDED.equals(propertyName) ) {
             Boolean suspended = (Boolean)properties.get(propertyName);
             return suspended ? 1 : 0;
+        } else if ( PROP_STATE_CHANGE_REASON_KNOWN.equals(propertyName) ) {
+            String reason = (String)properties.get(ILaunchVMConstants.PROP_STATE_CHANGE_REASON);
+            return (reason != null && !StateChangeReason.UNKNOWN.name().equals(reason)) ? 1 : 0;
         } else if (PROP_NAME_KNOWN.equals(propertyName)) {
             return properties.get(IElementPropertiesProvider.PROP_NAME) != null ? 1 : 0;
         } else if (IElementPropertiesProvider.PROP_NAME.equals(propertyName)) {
@@ -77,13 +81,8 @@ class ExecutionContextLabelText extends LabelText {
             return val != null ? val : "";  //$NON-NLS-1$
         } else if (PROP_ID_KNOWN.equals(propertyName)) {
             return properties.get(ILaunchVMConstants.PROP_ID) != null ? 1 : 0;
-        } else if (PROP_ID2_KNOWN.equals(propertyName)) {
-            return properties.get(ILaunchVMConstants.PROP_ID2) != null ? 1 : 0;
         } else if (ILaunchVMConstants.PROP_ID.equals(propertyName)) {
             Object val = properties.get(ILaunchVMConstants.PROP_ID);
-            return val != null ? val : "";  //$NON-NLS-1$
-        } else if (ILaunchVMConstants.PROP_ID2.equals(propertyName)) {
-            Object val = properties.get(ILaunchVMConstants.PROP_ID2);
             return val != null ? val : "";  //$NON-NLS-1$
         }
         return super.getPropertyValue(propertyName, status, properties);
@@ -93,10 +92,10 @@ class ExecutionContextLabelText extends LabelText {
     protected boolean checkProperty(String propertyName, IStatus status, Map<String, Object> properties) {
         if (PROP_NAME_KNOWN.equals(propertyName) ||
             IElementPropertiesProvider.PROP_NAME.equals(propertyName) ||
+            PROP_STATE_CHANGE_REASON_KNOWN.equals(propertyName) ||
+            ILaunchVMConstants.PROP_STATE_CHANGE_REASON.equals(propertyName) ||
             PROP_ID_KNOWN.equals(propertyName) ||
-            ILaunchVMConstants.PROP_ID.equals(propertyName) ||
-            PROP_ID2_KNOWN.equals(propertyName) ||
-            ILaunchVMConstants.PROP_ID2.equals(propertyName)) 
+            ILaunchVMConstants.PROP_ID.equals(propertyName)) 
         {
             return true;
         } 

@@ -12,7 +12,6 @@
 package org.eclipse.cdt.dsf.debug.ui.viewmodel.launch;
 
 import java.util.List;
-import java.util.Map;
 import java.util.concurrent.RejectedExecutionException;
 
 import org.eclipse.cdt.dsf.concurrent.ConfinedToDsfExecutor;
@@ -105,30 +104,9 @@ public abstract class AbstractThreadVMNode extends AbstractDMVMNode
                         PROP_NAME, 
                         ExecutionContextLabelText.PROP_ID_KNOWN, 
                         ILaunchVMConstants.PROP_ID, 
-                        ExecutionContextLabelText.PROP_ID2_KNOWN, 
-                        ILaunchVMConstants.PROP_ID2, 
                         ILaunchVMConstants.PROP_IS_SUSPENDED, 
-                        ILaunchVMConstants.PROP_STATE_CHANGE_REASON })
-                {
-                    @Override
-                    public boolean isEnabled(IStatus status, Map<String, Object> properties) {
-                        String reason = (String)properties.get(ILaunchVMConstants.PROP_STATE_CHANGE_REASON);
-                        return 
-                            reason != null && reason.length() != 0 && 
-                            !StateChangeReason.UNKNOWN.equals(reason);
-                    }
-                },
-                // If no state change reason is available compose a string without it. 
-                new ExecutionContextLabelText(
-                    MessagesForLaunchVM.AbstractThreadVMNode_No_columns__No_reason__text_format,
-                    new String[] { 
-                        ExecutionContextLabelText.PROP_NAME_KNOWN, 
-                        PROP_NAME, 
-                        ExecutionContextLabelText.PROP_ID_KNOWN, 
-                        ILaunchVMConstants.PROP_ID, 
-                        ExecutionContextLabelText.PROP_ID2_KNOWN, 
-                        ILaunchVMConstants.PROP_ID2, 
-                        ILaunchVMConstants.PROP_IS_SUSPENDED }), 
+                        ExecutionContextLabelText.PROP_STATE_CHANGE_REASON_KNOWN, 
+                        ILaunchVMConstants.PROP_STATE_CHANGE_REASON }),
                 new LabelText(MessagesForLaunchVM.AbstractThreadVMNode_No_columns__Error__label, new String[0]),
                 new LabelImage(DebugUITools.getImageDescriptor(IDebugUIConstants.IMG_OBJS_THREAD_RUNNING)) {
                     { setPropertyNames(new String[] { ILaunchVMConstants.PROP_IS_SUSPENDED }); }

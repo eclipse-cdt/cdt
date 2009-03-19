@@ -38,7 +38,6 @@ public class MessagesForLaunchVM extends NLS {
     public static String AbstractContainerVMNode_No_columns__Error__label;
 
     public static String AbstractThreadVMNode_No_columns__text_format;
-    public static String AbstractThreadVMNode_No_columns__No_reason__text_format;
     public static String AbstractThreadVMNode_No_columns__Error__label;
     
     public static String State_change_reason__Unknown__label;

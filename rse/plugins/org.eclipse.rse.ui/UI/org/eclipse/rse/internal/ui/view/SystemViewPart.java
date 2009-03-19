@@ -1299,7 +1299,7 @@ public class SystemViewPart
 					// filter pool or filter (depends on showFilterPools)
 				case 3 :
 					
-					if (!(subsystem.getSubSystemConfiguration().supportsFilters())) {
+					if (subsystem != null && !(subsystem.getSubSystemConfiguration().supportsFilters())) {
 						remoteObject = new RemoteObject(token, subsystem, null, null);
 						break;
 					}

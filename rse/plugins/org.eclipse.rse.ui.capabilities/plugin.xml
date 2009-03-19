@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.2"?>
+<plugin>
+
+	<extension
+       point="org.eclipse.ui.activities">
+
+	<!-- EXAMPLE CODE: Uncomment for debugging Capability Defs
+	     Put the activity in the category: By means of not putting it
+	     in any category, the Activity is invisible in the Prefspage UI.
+	     Products can add categories, or define trigger points to enable it.
+	<category id="org.eclipse.rse.Category"
+		description="Remote System Explorer (RSE) Activities"
+		name="Remote System Explorer" />
+	<categoryActivityBinding activityId="org.eclipse.rse.activity"
+		categoryId="org.eclipse.rse.Category" />
+	<categoryActivityBinding activityId="org.eclipse.tm.terminal.activity"
+		categoryId="org.eclipse.rse.Category" />
+	-->
+
+    <!-- EXAMPLE CODE: CreateRemoteProject is special: typically not
+         in the UI, but disabled by default                               
+	<categoryActivityBinding activityId="org.eclipse.rse.CreateRemoteProject"
+		categoryId="org.eclipse.rse.Category" />
+	<defaultEnablement id="org.eclipse.rse.CreateRemoteProject" />  
+	-->
+
+    <!-- All of RSE, defined using general pattern for plugins -->
+    <activity
+    	  description="%activity.rse.desc"
+          id="org.eclipse.rse.activity"
+          name="%activity.rse">
+    </activity>
+    <activityPatternBinding
+          activityId="org.eclipse.rse.activity"
+          pattern="org\.eclipse\.rse\..*/.*">
+    </activityPatternBinding>
+    <activityPatternBinding
+          activityId="org.eclipse.rse.activity"
+          pattern="org\.eclipse\.tm\.discovery\..*/.*">
+    </activityPatternBinding>
+
+	<!-- Create remote project: May be disabled by default without UI -->
+  	<activity id="org.eclipse.rse.CreateRemoteProject"
+		description="Filters EFS Create Remote Project menu in the RSE Views"
+		name="RSE Create Remote Project" />
+	<activityPatternBinding
+       activityId="org.eclipse.rse.CreateRemoteProject"
+       pattern="org\.eclipse\.rse\.efs\.ui/createRemoteProject"/>
+
+	<!-- Terminal -->
+  	<activity id="org.eclipse.tm.terminal.activity"
+		description="%activity.tm.terminal.desc"
+		name="%activity.tm.terminal" />
+	<activityPatternBinding
+       activityId="org.eclipse.tm.terminal.activity"
+       pattern="org\.eclipse\.tm\.terminal\..*/.*"/>
+
+  </extension>
+</plugin>

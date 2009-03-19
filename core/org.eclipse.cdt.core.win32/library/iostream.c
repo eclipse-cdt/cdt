@@ -125,6 +125,17 @@ JNIEXPORT jint JNICALL Java_org_eclipse_cdt_utils_spawner_SpawnerInputStream_rea
 					nBuffOffset = 0;
 					break;
 					}
+				else
+					{
+					// buffer overflow?
+					// according to msdn this happens in message read mode only
+#ifdef DEBUG_MONITOR
+					_stprintf(buffer, _T("Buffer full - %i, bytes read: %i\n"), fd, nNumberOfBytesRead);
+					OutputDebugStringW(buffer);
+#endif
+					// nNumberOfBytesRead can be 0 here for unknown reason (bug 269223)
+					nNumberOfBytesRead = nNumberOfBytesToRead;
+					}
 				}
 			}
 		if(nNumberOfBytesRead > 0)
@@ -138,7 +149,7 @@ JNIEXPORT jint JNICALL Java_org_eclipse_cdt_utils_spawner_SpawnerInputStream_rea
 	CloseHandle(overlapped.hEvent);
 #ifdef DEBUG_MONITOR
 #ifdef READ_REPORT
-	_stprintf(buffer, _T("End read %i\n"), fd);
+	_stprintf(buffer, _T("End read %i - bytes read: %d\n"), fd, nBuffOffset);
 	OutputDebugStringW(buffer);
 #endif
 #endif

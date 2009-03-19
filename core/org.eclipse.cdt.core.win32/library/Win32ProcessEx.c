@@ -868,7 +868,7 @@ void _cdecl waitProcTermination(void* pv)
 			cleanUpProcBlock(pInfo + i);
 #ifdef DEBUG_MONITOR
 				swprintf(buffer, _T("waitProcTermination: set PID %i to 0\n"), 
-					pid, 
+					pInfo[i].pid, 
 					GetLastError());
 				OutputDebugStringW(buffer);
 #endif

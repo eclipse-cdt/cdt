@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+Copyright (c) 2009 IBM Corporation and others. All rights reserved.
+This program and the accompanying materials are made available under the terms
+of the Eclipse Public License v1.0 which accompanies this distribution, and is 
+available at http://www.eclipse.org/legal/epl-v10.html
+
+Initial Contributors:
+The following IBM employees contributed to the Remote System Explorer
+component that contains this file: David McKnight
+
+Contributors:
+David McKnight   (IBM)   - Initial contribution
+-->
+<?eclipse version="3.2"?>
+<plugin>
+
+	    <extension
+         point="org.eclipse.rse.core.subsystemConfigurations">
+      <configuration
+            systemTypeIds="org.eclipse.rse.systemtype.linux;org.eclipse.rse.systemtype.unix"
+            name="DStore Sample SubSystem"     
+            description="his subsystem allows the user to remotely query a parent node to return children."       
+            iconlive="icons/full/obj16/samplesubsystemlive_obj.gif"
+            icon="icons/full/obj16/samplesubsystem_obj.gif"
+            category="dstore.sample"
+            class="org.eclipse.rse.examples.dstore.subsystems.SampleSubSystemConfiguration"
+            vendor="%providerName"
+            priority="200"
+            id="dstore.sample"/>
+   </extension>
+   
+</plugin>

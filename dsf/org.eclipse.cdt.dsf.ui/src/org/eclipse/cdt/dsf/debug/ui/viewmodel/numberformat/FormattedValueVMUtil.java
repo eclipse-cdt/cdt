@@ -128,10 +128,7 @@ public class FormattedValueVMUtil {
             
             service.getAvailableFormats(
                 dmc, 
-                // Use the ViewerDataRequestMonitor in order to propagate the update's cancel request.  But this means that 
-                // we have to override the handleRequestedExecutionException() to guarantee that the caller's RM gets 
-                // completed even when the service session has been shut down.
-                new ViewerDataRequestMonitor<String[]>(service.getExecutor(), update) {
+                new ViewerDataRequestMonitor<String[]>(ImmediateExecutor.getInstance(), update) {
                     @Override
                     protected void handleCompleted() {
                         if (isSuccess()) {
@@ -140,12 +137,6 @@ public class FormattedValueVMUtil {
                         } else {
                             update.setStatus(getStatus()); 
                         }
-                        countingRm.done();
-                    }
-                    
-                    @Override
-                    protected void handleRejectedExecutionException() {
-                        countingRm.setStatus(DsfUIPlugin.newErrorStatus(IDsfStatusConstants.INVALID_STATE, "Request for monitor: '" + toString() + "' resulted in a rejected execution exception.", null));  //$NON-NLS-1$//$NON-NLS-2$
                         countingRm.done();
                     }
                 });

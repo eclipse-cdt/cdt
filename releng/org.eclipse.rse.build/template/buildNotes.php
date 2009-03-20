@@ -112,6 +112,9 @@ More information can be found in the associated bugzilla items.
 
 <ul>
 <li>TM @buildId@ API Specification Updates
+<ul><li>None.</li>
+</ul></li>
+<li>TM 3.1M5 API Specification Updates
 <ul>
 <li>The <b>TerminalState.OPENED</b> state has been removed. This was provisional "internal" API,
   so this change does not constitute an official API change. Still, in order to properly
@@ -160,8 +163,9 @@ Use
 The following critical or major bugs are currently known.
 We'll strive to fix these as soon as possible.
 <ul>
+  <li><a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=268463">bug 268463</a> - maj - [ssh] [sftp] SftpFileService.getFile(...) fails with cryptic jsch exception (4)</li>
+  <li><a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=260796">bug 260796</a> - maj - [ftp] Fetching folder job sometimes runs forever with Outpost firewall</li>
   <li><a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=248913">bug 248913</a> - maj - [ssh] SSH subsystem loses connection</li> 
-  <li><a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=244070">bug 244070</a> - maj - [dstore] DStoreHostShell#exit() does not terminate child processes</li>
   <li><a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=238156">bug 238156</a> - maj - Export/Import Connection doesn't create default filters for the specified connection</li>
   <li><a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=236443">bug 236443</a> - maj - [releng] Using P2 to install "remotecdt" only from update site creates an unusable installation</li>
   <li><a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=226564">bug 226564</a> - maj - [efs] Deadlock while starting dirty workspace
@@ -169,6 +173,7 @@ We'll strive to fix these as soon as possible.
   <li><a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=218387">bug 218387</a> - maj - [efs] Eclipse hangs on startup of a Workspace with a large efs-shared file system on a slow connection</li>
   <li><a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=208185">bug 208185</a> - maj - [terminal][serial] terminal can hang the UI when text is entered while the backend side is not reading characters</li>
   <li><a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=198395">bug 198395</a> - maj - [dstore] Can connect to DStore with expired password</li>
+  <li><a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=175300">bug 175300</a> - maj - [performance] processes.shell.linux subsystem is slow over ssh</li>
 </ul>
 <!--
 <p>No major or critical bugs are known at the time of release.
@@ -178,8 +183,8 @@ Use
 for an up-to-date list of major or critical bugs.</p>
 
 <p>The 
-<a href="http://wiki.eclipse.org/TM_3.0_Known_Issues_and_Workarounds">
-TM 3.0 Known Issues and Workarounds</a> Wiki page gives an up-to-date list
+<a href="http://wiki.eclipse.org/TM_3.1_Known_Issues_and_Workarounds">
+TM 3.1 Known Issues and Workarounds</a> Wiki page gives an up-to-date list
 of the most frequent and obvious problems, and describes workarounds for them.<br/>
 If you have other questions regarding TM or RSE, please check the
 <a href="http://wiki.eclipse.org/TM_and_RSE_FAQ">TM and RSE FAQ</a>

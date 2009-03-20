@@ -12,7 +12,7 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.dom.parser;
 
-import com.ibm.icu.text.MessageFormat;
+import java.text.MessageFormat;
 import java.util.HashMap;
 import java.util.Map;
 

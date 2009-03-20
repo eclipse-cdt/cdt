@@ -23,56 +23,28 @@
 </table>
 <table><tbody><tr><td>
 <ul>
-<li>TM @buildId@ <b>requires Eclipse 3.3 or later for the SSH component</b>.
-  Other components may work with earlier Eclipse versions, but these have not been tested.
-  <b>Import/Export requires Java 1.5</b>, the rest of RSE runs on Java 1.4.
+<li>TM @buildId@ <b>requires Eclipse 3.4 or later</b>, although parts of it will likely run
+  with earlier versions. <b>Import/Export requires Java 1.5</b>, the rest of RSE runs on Java 1.4.
   Platform Runtime is the minimum requirement for core RSE and Terminal.
-  Discovery needs EMF, and the RemoteCDT integration needs CDT.<br>
-  <b>Building</b> the RSE SSH service requires <b>Eclipse 3.4</b> or later for the fix
-  of <a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=224799">bug 224799</a>;
-  the fix also requires 3.4 at runtime, but the code contains a backward 
-  compatibility fallback to also run on Eclipse 3.3 if that particular fix
-  is not required.</li>
+  Discovery needs EMF, and the RemoteCDT integration needs CDT.</li>
 <li>Important Bug Fixes, Enhancements and API changes:<ul>
-  <li><b>The Remote CDT Launch</b> now supports running arbitrary commands before actually invoking the debuggee.
-    This allows for fine-tuning the environment on the remote machine, in which the program is supposed to run
-    [<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=181517">181517</a>]</li>
-  <li><b>Locating an item in the RSE Tree</b> is now possible from the scratchpad, monitor, and remote details
-    table views, as well as the project explorer and resource navigator. This allows for easily finding related 
-    items in case one item is already known; and doing RSE operations such as browsing into an archive based
-    on the context in a normal project explorer workspace.
-    [<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=160105">160105</a>]
-    [<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=218227">218227</a>]</li>
-  <li><b>A new Preference has been added: Remote Systems &gt; Files &gt; Share cached files between different connections to the same host</b>.
-    By default, this setting is on, but it can be turned off to support different virtual
-    file systems being retrieved for different kinds of connections (such as different
-    users for FTP connections, or different ports for SSH-tunneled connections). For 
-    supporting such cases, the setting should be turned <b>off</b>
-    [<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=245260">245260</a>].</li>
-  <li><b>API: DStore Products</b> can now register their own keystores 
-    [<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=259905">259905</a>].</li>
-  <li><b>API: A PropertyTester</b> is now available for the properties served
-    by ISystemViewElementAdapter, in order to support declaratively registering
-    menus with the org.eclipse.ui.menus extension point. 
-    [<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=245039">245039</a>].</li>
-  <li><b>The RSE Platform/Team Synchronization Integration</b> has been added (currently
-    still in alpha state). From the RSE Import/Export wizards, you can now select the
-    new "Review/Synchronize" checkbox to enable review in the Team Synchronization 
-    perspective. For more details, see the
-    <a href="http://wiki.eclipse.org/RSESync/Status_and_Ideas">status and ideas Wiki</a>
-    for the corresponding Summer of Code project. Note that this new contribution 
-    adds a <b>Java 1.5 dependency</b> for the importexport plugin
-    [<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=185925">185925</a>].</li>
-  <li><b>The Number of Downloadable items</b> has been reduced by getting rid of the fine-grained
-    runtime packages and in favor of a popular all-in-one runtime download.</li>
+  <li><b>Encoding</b> is now observed properly when transferring files in text mode
+    [<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=267247">267247</a>]</li>
+  <li><b>New Subsystems</b> are now created after-the-fact on existing connections,
+    when new plugins supporting that subsystem are installed or updated
+    [<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=267052">267052</a>]</li>
+  <li><b>RSE FTP and Telnet</b> are now able to run against Apache Commons Net version 2.0.
+    That library is not yet shipped as part of RSE, but can be installed separately from
+    Orbit for testing
+    [<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=267473">267473</a>].</li>
   </ul></li>
-<li>At least 26 bugs were fixed: Use 
-  <!-- <a href="https://bugs.eclipse.org/bugs/buglist.cgi?query_format=advanced&classification=DSDP&product=Target+Management&component=Core&component=RSE&component=Terminal&bug_status=RESOLVED&bug_status=VERIFIED&bug_status=CLOSED&resolution=FIXED&resolution=WONTFIX&resolution=WORKSFORME&chfieldfrom=2008-12-24&chfieldto=2009-02-08&chfield=resolution&cmdtype=doit&negate0=1&field0-0-0=target_milestone&type0-0-0=regexp&value0-0-0=%5B23%5D.0&field0-0-1=target_milestone&type0-0-1=regexp&value0-0-1=3.1%20M%5B23467%5D"> -->
-  <a href="https://bugs.eclipse.org/bugs/buglist.cgi?query_format=advanced&classification=DSDP&product=Target+Management&component=Core&component=RSE&component=Terminal&target_milestone=3.1+M5&bug_status=RESOLVED&bug_status=VERIFIED&bug_status=CLOSED&resolution=FIXED&resolution=WONTFIX&resolution=WORKSFORME&cmdtype=doit">
+<li>At least 21 bugs were fixed: Use 
+  <!-- <a href="https://bugs.eclipse.org/bugs/buglist.cgi?query_format=advanced&classification=DSDP&product=Target+Management&component=Core&component=RSE&component=Terminal&bug_status=RESOLVED&bug_status=VERIFIED&bug_status=CLOSED&resolution=FIXED&resolution=WONTFIX&resolution=WORKSFORME&chfieldfrom=2009-02-01&chfieldto=2009-03-31&chfield=resolution&cmdtype=doit&negate0=1&field0-0-0=target_milestone&type0-0-0=regexp&value0-0-0=%5B23%5D.0&field0-0-1=target_milestone&type0-0-1=regexp&value0-0-1=3.1%20M%5B23457%5D"> -->
+  <a href="https://bugs.eclipse.org/bugs/buglist.cgi?query_format=advanced&classification=DSDP&product=Target+Management&component=Core&component=RSE&component=Terminal&target_milestone=3.1+M6&bug_status=RESOLVED&bug_status=VERIFIED&bug_status=CLOSED&resolution=FIXED&resolution=WONTFIX&resolution=WORKSFORME&cmdtype=doit">
   this query</a> to show the list of bugs fixed since <!-- the last milestone, -->
-  <a href="http://download.eclipse.org/dsdp/tm/downloads/drops/S-3.1M4-200812191115/">
-  TM 3.1M4</a>
-  [<a href="http://download.eclipse.org/dsdp/tm/downloads/drops/S-3.1M4-200812191115/buildNotes.php">build notes</a>].</li>
+  <a href="http://download.eclipse.org/dsdp/tm/downloads/drops/S-3.1M5-200902081925/">
+  TM 3.1M5</a>
+  [<a href="http://download.eclipse.org/dsdp/tm/downloads/drops/S-3.1M5-200902081925/buildNotes.php">build notes</a>].</li>
 <li>For details on checkins, see
   <a href="http://dsdp.eclipse.org/dsdp/tm/searchcvs.php">TM SearchCVS</a>, the
   <a href="http://download.eclipse.org/dsdp/tm/downloads/drops/N-changelog/index.html">

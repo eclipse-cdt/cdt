@@ -102,7 +102,7 @@ public class ResourceLookup {
 		IFile best= null;
 		int bestRelevance= -1;
 		
-		for (int i = 1; i < files.length; i++) {
+		for (int i = 0; i < files.length; i++) {
 			IFile file = files[i];
 			if (file.isAccessible()) {
 				int relevance= FileRelevance.getRelevance(file, preferredProject);

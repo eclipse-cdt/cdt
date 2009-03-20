@@ -12,7 +12,7 @@
 
 package org.eclipse.cdt.internal.core.indexer;
 
-import java.text.MessageFormat;
+import com.ibm.icu.text.MessageFormat;
 import java.text.NumberFormat;
 import java.util.Collection;
 import java.util.Iterator;

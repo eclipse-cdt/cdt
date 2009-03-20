@@ -12,21 +12,18 @@
 package org.eclipse.cdt.internal.core.dom.parser.cpp;
 
 import org.eclipse.cdt.core.dom.ast.ASTVisitor;
+import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IASTExpression;
 import org.eclipse.cdt.core.dom.ast.IASTFunctionCallExpression;
 import org.eclipse.cdt.core.dom.ast.IASTImplicitName;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
-import org.eclipse.cdt.core.dom.ast.IEnumeration;
-import org.eclipse.cdt.core.dom.ast.IProblemBinding;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTExpressionList;
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunction;
 import org.eclipse.cdt.core.parser.util.ArrayUtil;
 import org.eclipse.cdt.internal.core.dom.parser.ASTNode;
 import org.eclipse.cdt.internal.core.dom.parser.IASTAmbiguityParent;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPSemantics;
-import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.SemanticUtil;
 
 
 public class CPPASTExpressionList extends ASTNode implements ICPPASTExpressionList, IASTAmbiguityParent {
@@ -38,6 +35,8 @@ public class CPPASTExpressionList extends ASTNode implements ICPPASTExpressionLi
 	 */
 	private IASTImplicitName[] implicitNames;
 
+	private ICPPFunction[] overloads = null;
+	
 	
 	public CPPASTExpressionList copy() {
 		CPPASTExpressionList copy = new CPPASTExpressionList();
@@ -112,11 +111,9 @@ public class CPPASTExpressionList extends ASTNode implements ICPPASTExpressionLi
 			
 			implicitNames = new IASTImplicitName[exprs.length-1];
 			
-			if(getPropertyInParent() == IASTFunctionCallExpression.PARAMETERS)
-				return implicitNames;
-			
-			for(int i = 0, n = exprs.length-1; i < n; i++) {
-				ICPPFunction overload = getOverload(i);
+			ICPPFunction[] overloads = getOverloads();
+			for(int i = 0; i < overloads.length; i++) {
+				ICPPFunction overload = overloads[i];
 				if(overload != null) {
 					CPPASTImplicitName operatorName = new CPPASTImplicitName(OverloadableOperator.COMMA, this);
 					operatorName.setBinding(overload);
@@ -135,39 +132,35 @@ public class CPPASTExpressionList extends ASTNode implements ICPPASTExpressionLi
     }
     
     
-    /**
-     * @param index the index of the first argument
-     */
-    private ICPPFunction getOverload(int index) {
-    	// try to find a method
-    	IASTExpression[] exprs = getExpressions();
+    private ICPPFunction[] getOverloads() {
+    	if(overloads == null) {
+	    	IASTExpression[] exprs = getExpressions();
+	    	if(exprs.length < 2 || getPropertyInParent() == IASTFunctionCallExpression.PARAMETERS)
+	    		return overloads = new ICPPFunction[0];
+	    	
+	    	overloads = new ICPPFunction[exprs.length-1];
+	    	IType lookupType = exprs[0].getExpressionType();
+	    	
+	    	for(int i = 1; i < exprs.length; i++) {
+	    		IASTExpression e1 = exprs[i-1], e2 = exprs[i];	
+	    		ICPPFunction overload = CPPSemantics.findOverloadedOperatorComma(e1, e2, lookupType);
+	    		if(overload == null) {
+	    			lookupType = e2.getExpressionType();
+	    		}
+	    		else {
+	    			overloads[i-1] = overload;
+	    			try {
+						lookupType = overload.getType().getReturnType();
+					} catch (DOMException e) {
+						lookupType = e2.getExpressionType();
+					}
+	    		}
+			}
+    	}
     	
-    	IType type1 = exprs[index].getExpressionType();
-    	IType ultimateType1 = SemanticUtil.getUltimateTypeUptoPointers(type1);
-		if (ultimateType1 instanceof IProblemBinding) {
-			return null;
-		}
-		if (ultimateType1 instanceof ICPPClassType) {
-			ICPPFunction operator = CPPSemantics.findOperatorComma(this, index, (ICPPClassType) ultimateType1);
-			if (operator != null)
-				return operator;
-		}
-		
-		// try to find a function
-		IType type2 = exprs[index+1].getExpressionType();
-		IType ultimateType2 = SemanticUtil.getUltimateTypeUptoPointers(type2);
-		if (ultimateType2 instanceof IProblemBinding)
-			return null;
-		if (isUserDefined(ultimateType1) || isUserDefined(ultimateType2))
-			return CPPSemantics.findOverloadedOperator(this, index);
-		
-    	return null;
+    	return overloads;
     }
-    
-    private static boolean isUserDefined(IType type) {
-    	return type instanceof ICPPClassType || type instanceof IEnumeration;
-    }
-    
+
     public void replace(IASTNode child, IASTNode other) {
         if( expressions == null ) return;
         for (int i = 0; i < expressions.length; ++i) {
@@ -180,6 +173,16 @@ public class CPPASTExpressionList extends ASTNode implements ICPPASTExpressionLi
     }
     
     public IType getExpressionType() {
+    	ICPPFunction[] overloads = getOverloads();
+    	if(overloads.length > 0) {
+    		ICPPFunction last = overloads[overloads.length-1];
+    		if(last != null) {
+    			try {
+					return last.getType().getReturnType();
+				} catch (DOMException e) { }
+    		}
+    	}
+    	
     	for (int i = expressions.length-1; i >= 0 ; i--) {
 			IASTExpression expr= expressions[i];
 			if (expr != null)

@@ -6187,7 +6187,7 @@ public class AST2CPPSpecTest extends AST2SpecBaseTest {
 	// };
 	// A a;
 	// void B::f() {
-	// operator+ (a,a); // ERROR - global operator hidden by member
+	// //operator+ (a,a); // ERROR - global operator hidden by member
 	// a + a; // OK - calls global operator+
 	// }
 	public void test13_3_1_2s10() throws Exception {

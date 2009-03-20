@@ -54,7 +54,6 @@ public class DOMParserTestSuite extends TestCase {
 		suite.addTest(FaultToleranceTests.suite());
 		suite.addTest(LanguageExtensionsTest.suite());
 		suite.addTest(ASTInactiveCodeTests.suite());
-		suite.addTest(AST2CPPImplicitNameTests.suite());
 		return suite;
 	}
 }

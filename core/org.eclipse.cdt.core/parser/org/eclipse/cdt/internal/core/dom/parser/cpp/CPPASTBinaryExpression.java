@@ -17,13 +17,11 @@ import org.eclipse.cdt.core.dom.ast.IASTBinaryExpression;
 import org.eclipse.cdt.core.dom.ast.IASTExpression;
 import org.eclipse.cdt.core.dom.ast.IASTImplicitName;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
-import org.eclipse.cdt.core.dom.ast.IEnumeration;
 import org.eclipse.cdt.core.dom.ast.IPointerType;
 import org.eclipse.cdt.core.dom.ast.IProblemBinding;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTBinaryExpression;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPBasicType;
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunction;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPPointerToMemberType;
 import org.eclipse.cdt.internal.core.dom.parser.ASTNode;
@@ -171,34 +169,8 @@ public class CPPASTBinaryExpression extends ASTNode implements ICPPASTBinaryExpr
     	if (overload != UNINITIALIZED)
     		return overload;
     	
-    	return overload= computeOverload();
+    	return overload = CPPSemantics.findOverloadedOperator(this);
     }
-    
-    private ICPPFunction computeOverload() {
-		IType type1 = getOperand1().getExpressionType();
-    	IType ultimateType1 = SemanticUtil.getUltimateTypeUptoPointers(type1);
-		if (ultimateType1 instanceof IProblemBinding) {
-			return null;
-		}
-		if (ultimateType1 instanceof ICPPClassType) {
-			ICPPFunction operator = CPPSemantics.findOperator(this, (ICPPClassType) ultimateType1);
-			if (operator != null)
-				return operator;
-		}
-		
-		// try to find a function
-		if(op != op_assign) {
-			IType type2 = getOperand2().getExpressionType();
-			IType ultimateType2 = SemanticUtil.getUltimateTypeUptoPointers(type2);
-			if (ultimateType2 instanceof IProblemBinding)
-				return null;
-			if (isUserDefined(ultimateType1) || isUserDefined(ultimateType2))
-				return CPPSemantics.findOverloadedOperator(this);
-		}
-    	return null;
-    }
-    
-    
     
 	private IType createExpressionType() {
 		// Check for overloaded operator.
@@ -262,10 +234,5 @@ public class CPPASTBinaryExpression extends ASTNode implements ICPPASTBinaryExpr
         }
 		return type1;
 	}
-	
-	
-	private static boolean isUserDefined(IType type) {
-    	return type instanceof ICPPClassType || type instanceof IEnumeration;
-    }
 
 }

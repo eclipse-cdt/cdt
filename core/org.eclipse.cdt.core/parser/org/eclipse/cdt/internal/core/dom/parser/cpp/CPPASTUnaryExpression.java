@@ -31,7 +31,6 @@ import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTQualifiedName;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTUnaryExpression;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPBasicType;
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunction;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPMember;
 import org.eclipse.cdt.internal.core.dom.parser.ASTNode;
@@ -46,9 +45,11 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.SemanticUtil;
  * Unary expression in c++
  */
 public class CPPASTUnaryExpression extends ASTNode implements ICPPASTUnaryExpression, IASTAmbiguityParent {
+	private static final ICPPFunction UNINITIALIZED = new CPPFunction(null);
     private int op;
     private IASTExpression operand;
     
+    private ICPPFunction overload = UNINITIALIZED;
     private IASTImplicitName[] implicitNames = null;
     
     public CPPASTUnaryExpression() {
@@ -155,13 +156,46 @@ public class CPPASTUnaryExpression extends ASTNode implements ICPPASTUnaryExpres
     
     
     public ICPPFunction getOverload() {
-    	if(operand == null)
-    		return null;
-    	if(getExpressionType() instanceof CPPPointerToMemberType) // then it must be the builtin &
-    		return null;
-    	IType type = operand.getExpressionType();
-		type = SemanticUtil.getNestedType(type, TDEF | REF);
-		return findOperatorFunction(type);
+    	if (overload != UNINITIALIZED)
+    		return overload;
+    	
+    	overload = CPPSemantics.findOverloadedOperator(this);
+    	if(operand != null && op == op_amper && computePointerToMemberType() instanceof CPPPointerToMemberType)
+    		overload = null;
+    	
+    	return overload;
+    }
+    
+    
+    
+    private IType computePointerToMemberType() {
+    	IASTNode child= operand;
+		boolean inParenthesis= false;
+		while (child instanceof IASTUnaryExpression && ((IASTUnaryExpression) child).getOperator() == IASTUnaryExpression.op_bracketedPrimary) {
+			child= ((IASTUnaryExpression) child).getOperand();
+			inParenthesis= true;
+		}
+		if (child instanceof IASTIdExpression) {
+			IASTName name= ((IASTIdExpression) child).getName();
+			IBinding b= name.resolveBinding();
+			if (b instanceof ICPPMember) {
+				ICPPMember member= (ICPPMember) b;
+				try {
+					if (name instanceof ICPPASTQualifiedName) {
+						if (!member.isStatic()) { // so if the member is static it will fall through
+							if (!inParenthesis) {
+								return new CPPPointerToMemberType(member.getType(), member.getClassOwner(), false, false);
+							} else if (member instanceof IFunction) {
+								return new ProblemBinding(operand, IProblemBinding.SEMANTIC_INVALID_TYPE, operand.getRawSignature().toCharArray());
+							}
+						}
+					}
+				} catch (DOMException e) {
+					return e.getProblem();
+				}
+			}
+		}
+		return null;
     }
     
     
@@ -177,40 +211,16 @@ public class CPPASTUnaryExpression extends ASTNode implements ICPPASTUnaryExpres
 		final IASTExpression operand = getOperand();
 
 		if (op == op_amper) {  // check for pointer to member
-			IASTNode child= operand;
-			boolean inParenthesis= false;
-			while (child instanceof IASTUnaryExpression && ((IASTUnaryExpression) child).getOperator() == IASTUnaryExpression.op_bracketedPrimary) {
-				child= ((IASTUnaryExpression) child).getOperand();
-				inParenthesis= true;
-			}
-			if (child instanceof IASTIdExpression) {
-				IASTName name= ((IASTIdExpression) child).getName();
-				IBinding b= name.resolveBinding();
-				if (b instanceof ICPPMember) {
-					ICPPMember member= (ICPPMember) b;
-					try {
-						if (name instanceof ICPPASTQualifiedName) {
-							if (!member.isStatic()) { // so if the member is static it will fall through
-								if (!inParenthesis) {
-									return new CPPPointerToMemberType(member.getType(), member.getClassOwner(), false, false);
-								} else if (member instanceof IFunction) {
-									return new ProblemBinding(operand, IProblemBinding.SEMANTIC_INVALID_TYPE, operand.getRawSignature().toCharArray());
-								}
-							}
-						}
-					} catch (DOMException e) {
-						return e.getProblem();
-					}
-				}
-			}
+			IType ptm = computePointerToMemberType();
+			if(ptm != null)
+				return ptm;
 
-			IType type= operand.getExpressionType();
-			type = SemanticUtil.getNestedType(type, TDEF | REF);
-			
-			IType operator = findOperatorReturnType(type);
+			IType operator = findOperatorReturnType();
 			if(operator != null)
 				return operator;
 
+			IType type= operand.getExpressionType();
+			type = SemanticUtil.getNestedType(type, TDEF | REF);
 			return new CPPPointerType(type);
 		} 
 		
@@ -222,7 +232,7 @@ public class CPPASTUnaryExpression extends ASTNode implements ICPPASTUnaryExpres
 	    		return type;
 	    	}
 		    try {
-		    	IType operator = findOperatorReturnType(type);
+		    	IType operator = findOperatorReturnType();
 				if(operator != null) {
 					return operator;
 				} else if (type instanceof IPointerType || type instanceof IArrayType) {
@@ -239,7 +249,7 @@ public class CPPASTUnaryExpression extends ASTNode implements ICPPASTUnaryExpres
 
 		IType type= operand.getExpressionType();
 		type = SemanticUtil.getNestedType(type, TDEF | REF);
-		IType operator = findOperatorReturnType(type);
+		IType operator = findOperatorReturnType();
 		if(operator != null) {
 			return operator;
 		}
@@ -254,8 +264,8 @@ public class CPPASTUnaryExpression extends ASTNode implements ICPPASTUnaryExpres
     }
     
     
-    private IType findOperatorReturnType(IType type) {
-    	ICPPFunction operatorFunction = findOperatorFunction(type);
+    private IType findOperatorReturnType() {
+    	ICPPFunction operatorFunction = getOverload();
     	if(operatorFunction != null) {
     		try {
 				return operatorFunction.getType().getReturnType();
@@ -267,14 +277,4 @@ public class CPPASTUnaryExpression extends ASTNode implements ICPPASTUnaryExpres
     }
     
     
-    private ICPPFunction findOperatorFunction(IType type) {
-    	if(type instanceof ICPPClassType) {
-			ICPPFunction operator = CPPSemantics.findOperator(this, (ICPPClassType) type);
-			if(operator != null)
-				return operator;
-			return CPPSemantics.findOverloadedOperator(this); 
-		}
-    	
-    	return null;
-    }
 }

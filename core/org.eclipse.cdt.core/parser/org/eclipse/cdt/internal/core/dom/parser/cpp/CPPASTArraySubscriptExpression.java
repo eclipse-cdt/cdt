@@ -18,7 +18,6 @@ import org.eclipse.cdt.core.dom.ast.IASTImplicitName;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IArrayType;
 import org.eclipse.cdt.core.dom.ast.IPointerType;
-import org.eclipse.cdt.core.dom.ast.IProblemBinding;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTArraySubscriptExpression;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType;
@@ -105,15 +104,7 @@ public class CPPASTArraySubscriptExpression extends ASTNode implements ICPPASTAr
     
     
     public ICPPFunction getOverload() {
-    	IType type1 = arrayExpression.getExpressionType();
-    	IType ultimateType1 = SemanticUtil.getUltimateTypeUptoPointers(type1);
-		if (ultimateType1 instanceof IProblemBinding) {
-			return null;
-		}
-		if (ultimateType1 instanceof ICPPClassType) {
-			return CPPSemantics.findOperator(this, (ICPPClassType) ultimateType1);
-		}
-		return null;
+    	return CPPSemantics.findOverloadedOperator(this);
     }
     
     @Override
@@ -172,7 +163,7 @@ public class CPPASTArraySubscriptExpression extends ASTNode implements ICPPASTAr
 				return CPPUnknownClass.createUnnamedInstance();
 			}
 			if (t instanceof ICPPClassType) {
-				ICPPFunction op = CPPSemantics.findOperator(this, (ICPPClassType) t);
+				ICPPFunction op = getOverload();
 				if (op != null) {
 					return op.getType().getReturnType();
 				}

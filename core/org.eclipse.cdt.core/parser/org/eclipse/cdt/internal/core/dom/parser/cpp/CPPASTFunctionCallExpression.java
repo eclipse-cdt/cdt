@@ -219,7 +219,7 @@ public class CPPASTFunctionCallExpression extends ASTNode implements
     		if (t instanceof IFunctionType) {
     			return ((IFunctionType) t).getReturnType();
     		} else if (t instanceof ICPPClassType) {
-    			ICPPFunction op = CPPSemantics.findOperator(this, (ICPPClassType) t);
+    			ICPPFunction op = CPPSemantics.findOverloadedOperator(this, (ICPPClassType)t);
     			if (op != null) {
     				if(overload != null)
     					overload[0] = op;

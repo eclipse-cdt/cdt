@@ -63,6 +63,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTUsingDeclaration;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTUsingDirective;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassScope;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPMethod;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPNamespaceScope;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCompositeTypeSpecifier.ICPPASTBaseSpecifier;
 import org.eclipse.cdt.core.parser.util.CharArrayObjectMap;
@@ -104,7 +105,9 @@ public class LookupData {
 	public boolean considerConstructors = false;
 	public boolean checkPointOfDecl= true; // for lookup of unknown bindings the point of declaration can be reversed.
 	public boolean usesEnclosingScope= true; // for field references or qualified names, enclosing template declarations are ignored.
-
+	public boolean firstArgIsImpliedMethodArg = false; // when computing the cost of a method call treat the first argument as the implied method argument
+	public boolean ignoreMembers = false;
+	
 	public ICPPClassType skippedScope;
 	public Object foundItems = null;
 	private Object[] functionArgs;
@@ -370,6 +373,19 @@ public class LookupData {
         return false;
     }
 
+    public boolean hasMemberFunctionResult() {
+    	if(foundItems == null)
+    		return false;
+    	if(foundItems instanceof Object[]) {
+    		for(Object item : (Object[])foundItems) {
+    			if(item instanceof ICPPMethod) {
+    				return true;
+    			}
+    		}
+    	}
+    	return false;
+    }
+    
     /**
      * an IType[] of function arguments, including the implied object argument
      */

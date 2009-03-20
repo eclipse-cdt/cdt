@@ -23,12 +23,9 @@ import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IASTPointerOperator;
 import org.eclipse.cdt.core.dom.ast.IASTTypeId;
 import org.eclipse.cdt.core.dom.ast.IArrayType;
-import org.eclipse.cdt.core.dom.ast.IPointerType;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTNewExpression;
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunction;
-import org.eclipse.cdt.core.parser.IProblem;
 import org.eclipse.cdt.internal.core.dom.parser.ASTNode;
 import org.eclipse.cdt.internal.core.dom.parser.ASTQueries;
 import org.eclipse.cdt.internal.core.dom.parser.IASTAmbiguityParent;
@@ -180,17 +177,7 @@ public class CPPASTNewExpression extends ASTNode implements
     
     public IASTImplicitName[] getImplicitNames() {
     	if(implicitNames == null) {
-    		IType type = getExpressionType();
-    		if(type instanceof IProblem)
-    			return implicitNames = IASTImplicitName.EMPTY_NAME_ARRAY;
-    		
-    		try {
-				type = ((IPointerType)type).getType();
-			} catch (DOMException e) {
-				return implicitNames = IASTImplicitName.EMPTY_NAME_ARRAY;
-			}
-    		
-			ICPPFunction operatorFunction = findOperatorFunction(type);
+			ICPPFunction operatorFunction = CPPSemantics.findOverloadedOperator(this);
 			if(operatorFunction == null) {
 				implicitNames = IASTImplicitName.EMPTY_NAME_ARRAY;
 			}
@@ -204,17 +191,6 @@ public class CPPASTNewExpression extends ASTNode implements
     	}
     	
     	return implicitNames;  
-    }
-
-    
-    // TODO this code is repeated in too many places
-    private ICPPFunction findOperatorFunction(IType type) {
-    	if(type instanceof ICPPClassType) {
-			ICPPFunction operator = CPPSemantics.findOperator(this, (ICPPClassType) type);
-			if(operator != null)
-				return operator;
-		}
-    	return CPPSemantics.findOverloadedOperator(this); 
     }
     
     

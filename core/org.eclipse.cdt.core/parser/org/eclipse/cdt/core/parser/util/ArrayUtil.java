@@ -9,6 +9,7 @@
  *     Andrew Niefer (IBM Corporation) - initial API and implementation
  *     Markus Schorn (Wind River Systems)
  *     Andrew Ferguson (Symbian)
+ *     Mike Kucera (IBM)
  *******************************************************************************/
 package org.eclipse.cdt.core.parser.util;
 
@@ -385,5 +386,27 @@ public class ArrayUtil {
     		}
     	}
     	return result;
+    }
+    
+    
+    /**
+     * Returns a new array that contains all of the elements of the 
+     * given array except the first one.
+     * 
+	 * @since 5.1
+	 * @throws NullPointerException if args is null
+	 * @throws IllegalArgumentException if args.length <= 0
+	 */
+    @SuppressWarnings("unchecked")
+	public static <T> T[] removeFirst(T[] args) {
+    	int n = args.length;
+    	if(n <= 0)
+    		throw new IllegalArgumentException();
+    	
+    	T[] newArgs = (T[]) Array.newInstance(args.getClass().getComponentType(), n-1);
+    	for(int i = 1; i < n; i++) {
+    		newArgs[i-1] = args[i];
+    	}
+    	return newArgs;
     }
 }

@@ -14,17 +14,13 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.eclipse.cdt.core.dom.ast.ASTVisitor;
-import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IASTExpression;
 import org.eclipse.cdt.core.dom.ast.IASTImplicitName;
-import org.eclipse.cdt.core.dom.ast.IPointerType;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTDeleteExpression;
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunction;
 import org.eclipse.cdt.internal.core.dom.parser.ASTNode;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPSemantics;
-import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.SemanticUtil;
 
 
 public class CPPASTDeleteExpression extends ASTNode implements ICPPASTDeleteExpression {
@@ -87,18 +83,14 @@ public class CPPASTDeleteExpression extends ASTNode implements ICPPASTDeleteExpr
     }
     
     /**
-     * Try to resolve both the destructor and the operator delete.
+     * Try to resolve both the destructor and operator delete.
      */
     public IASTImplicitName[] getImplicitNames() {
     	if(implicitNames == null) {
-    		ICPPClassType nestedType = getNestedClassType();
-	    	if(nestedType == null)
-	    		return implicitNames = IASTImplicitName.EMPTY_NAME_ARRAY;
-	    	
 	    	List<IASTImplicitName> names = new ArrayList<IASTImplicitName>();
 	    	
 	    	if(!isVectored) {
-		    	ICPPFunction destructor = CPPSemantics.findDestructor(this, nestedType);
+		    	ICPPFunction destructor = CPPSemantics.findDestructor(this);
 		    	if(destructor != null) {
 		    		CPPASTImplicitName destructorName = new CPPASTImplicitName(destructor.getNameCharArray(), this);
 		    		destructorName.setBinding(destructor);
@@ -108,7 +100,7 @@ public class CPPASTDeleteExpression extends ASTNode implements ICPPASTDeleteExpr
 	    	}
 	    	
 	    	if(!isGlobal) {
-		    	ICPPFunction deleteOperator = findOperatorFunction(nestedType);
+		    	ICPPFunction deleteOperator = CPPSemantics.findOverloadedOperator(this);
 		    	if(deleteOperator != null) {
 		    		CPPASTImplicitName deleteName = new CPPASTImplicitName(deleteOperator.getNameCharArray(), this);
 		    		deleteName.setOperator(true);
@@ -127,33 +119,6 @@ public class CPPASTDeleteExpression extends ASTNode implements ICPPASTDeleteExpr
     	return implicitNames;    	
 	}
 
-    
-    private ICPPClassType getNestedClassType() {
-    	IType type1 = operand.getExpressionType();
-    	IType ultimateType1 = SemanticUtil.getUltimateTypeUptoPointers(type1);
-    	if(ultimateType1 instanceof IPointerType) {
-    		try {
-				IType classType = ((IPointerType)ultimateType1).getType();
-				if(classType instanceof ICPPClassType)
-					return (ICPPClassType) classType;
-			} catch (DOMException e) {
-				return null;
-			}
-    	}
-		return null;
-    }
-    
-    // TODO this code is repeated in too many places
-    private ICPPFunction findOperatorFunction(IType type) {
-    	if(type instanceof ICPPClassType) {
-			ICPPFunction operator = CPPSemantics.findOperator(this, (ICPPClassType) type);
-			if(operator != null)
-				return operator;
-			return CPPSemantics.findOverloadedOperator(this); 
-		}
-    	
-    	return null;
-    }
     
     @Override
 	public boolean accept( ASTVisitor action ){

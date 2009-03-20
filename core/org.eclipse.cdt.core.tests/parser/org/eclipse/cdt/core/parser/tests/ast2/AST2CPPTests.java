@@ -7029,4 +7029,52 @@ public class AST2CPPTests extends AST2BaseTest {
 		final String code = getAboveComment();
 		parseAndCheckBindings(code, ParserLanguage.CPP);
 	}
+	
+	
+	//	struct A { int a; };
+	//	struct B { int b; };
+	//
+	//	struct X {
+	//	    A operator+(int);
+	//	    X(int);
+	//	};
+	//
+	//	A operator+(X,X);
+	//	B operator+(X,double);
+	//
+	//	void test(X x) {
+	//	    (x + 1).a; //1
+	//	    (1 + x).a; //2
+	//	    (x + 1.0).b; //3
+	//	}
+	public void testOverloadResolutionForOperators_Bug266211() throws Exception {
+		BindingAssertionHelper ba= new BindingAssertionHelper(getAboveComment(), true);
+    	ba.assertNonProblem("a; //1", 1, ICPPField.class);
+    	ba.assertNonProblem("a; //2", 1, ICPPField.class);
+    	ba.assertNonProblem("b; //3", 1, ICPPField.class);
+	}
+	
+	
+	//	struct A { int a; };
+	//	struct X {
+	//	    A operator+(X);
+	//	    void m();
+	//	};
+	//
+	//	A operator+(X,double);
+	//
+	//	void X::m() {
+	//	    X x;
+	//	    (x + x).a; //1
+	//	    (x + 1.0).a; //2
+	//	}
+	public void testOverloadResolutionForOperators_Bug268534() throws Exception {
+		BindingAssertionHelper ba= new BindingAssertionHelper(getAboveComment(), true);
+    	ba.assertNonProblem("a; //1", 1, ICPPField.class);
+    	ba.assertNonProblem("a; //2", 1, ICPPField.class);
+	}
+
+	
+	
+	
 }

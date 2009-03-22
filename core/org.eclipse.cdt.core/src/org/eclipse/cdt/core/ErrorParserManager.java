@@ -8,17 +8,14 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Sergey Prigogin (Google)
+ *     James Blackburn (Broadcom) - Bug 247838
+ *     Andrew Gvozdev (Quoin Inc)
  *******************************************************************************/
 package org.eclipse.cdt.core;
 
-import java.io.File;
 import java.io.IOException;
 import java.io.OutputStream;
-import java.net.URI;
 import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -32,7 +29,6 @@ import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IResourceProxy;
 import org.eclipse.core.resources.IResourceProxyVisitor;
-import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
@@ -47,10 +43,8 @@ public class ErrorParserManager extends OutputStream {
 	private final static String OLD_PREF_ERROR_PARSER = "errorOutputParser"; //$NON-NLS-1$
 	public final static String PREF_ERROR_PARSER = CCorePlugin.PLUGIN_ID + ".errorOutputParser"; //$NON-NLS-1$
 
-	private IProject fProject;
-	private IMarkerGenerator fMarkerGenerator;
-	// Maps a file name without directory to a IFile object or a list of a IFile objects. 
-	private Map<String, Object> fFilesInProject;	// Files or lists of files keyed by the file name
+	private final IProject fProject;
+	private final IMarkerGenerator fMarkerGenerator;
 
 	private Map<String, IErrorParser[]> fErrorParsers;
 	private ArrayList<ProblemMarkerInfo> fErrors;
@@ -60,10 +54,10 @@ public class ErrorParserManager extends OutputStream {
 
 	private String previousLine;
 	private OutputStream outputStream;
-	private StringBuilder currentLine = new StringBuilder();
+	private final StringBuilder currentLine = new StringBuilder();
 
-	private StringBuilder scratchBuffer = new StringBuilder();
-	
+	private final StringBuilder scratchBuffer = new StringBuilder();
+
 	private boolean hasErrors = false;
 
 	public ErrorParserManager(ACBuilder builder) {
@@ -94,38 +88,16 @@ public class ErrorParserManager extends OutputStream {
 	}
 
 	private void initErrorParserManager(IPath workingDirectory) {
-		fFilesInProject = new HashMap<String, Object>();
 		fDirectoryStack = new Vector<IPath>();
 		fErrors = new ArrayList<ProblemMarkerInfo>();
 
-		List<IResource> collectedFiles = new ArrayList<IResource>();
 		fBaseDirectory = (workingDirectory == null || workingDirectory.isEmpty()) ? fProject.getLocation() : workingDirectory;
-		collectFiles(fProject, collectedFiles);
-
-		for (int i = 0; i < collectedFiles.size(); i++) {
-			IFile file = (IFile) collectedFiles.get(i);
-			String filename = file.getName();
-			Object existing = fFilesInProject.put(filename, file);
-			if (existing != null) {
-				Collection<IFile> files;
-				if (existing instanceof IFile) {
-					files = new ArrayList<IFile>();
-					files.add((IFile) existing);
-				} else {
-					@SuppressWarnings("unchecked")
-					final Collection<IFile> casted = (Collection<IFile>) existing;
-					files = casted;
-				}
-				files.add(file);
-				fFilesInProject.put(filename, files);
-			}
-		}
 	}
 
 	public IProject getProject() {
 		return fProject;
 	}
-	
+
 	public IPath getWorkingDirectory() {
 		if (fDirectoryStack.size() != 0) {
 			return fDirectoryStack.lastElement();
@@ -169,19 +141,19 @@ public class ErrorParserManager extends OutputStream {
 			fErrorParsers.put(parserID, parsers);
 		}
 		if (fErrorParsers.size() == 0) {
-			initErrorParsersMap();
 			CCorePlugin.getDefault().getPluginPreferences().setValue(OLD_PREF_ERROR_PARSER, ""); // remove old prefs //$NON-NLS-1$
 		}
 	}
 
-	private void initErrorParsersMap() {
-		String[] parserIDs = CCorePlugin.getDefault().getAllErrorParsersIDs();
-		for (String parserID : parserIDs) {
-			IErrorParser[] parsers = CCorePlugin.getDefault().getErrorParser(parserID);
-			fErrorParsers.put(parserID, parsers);
-		}
-	}
-
+	/**
+	 * This function used to populate member fFilesInProject which is not necessary
+	 * anymore. Now {@link ResourceLookup} is used for search and not collection of files
+	 * kept by {@code ErrorParserManager}.
+	 * 
+	 * Use {@link #findFileName} and {@link #findFilePath} for searches.
+	 * @deprecated
+	 */
+	@Deprecated
 	protected void collectFiles(IProject parent, final List<IResource> result) {
 		try {
 			parent.accept(new IResourceProxyVisitor() {
@@ -207,7 +179,7 @@ public class ErrorParserManager extends OutputStream {
 
 
 		String lineTrimmed = line.trim();
-		
+
 		for (IErrorParser[] parsers : fErrorParsers.values()) {
 			for (IErrorParser curr : parsers) {
 				int types = IErrorParser2.NONE;
@@ -242,150 +214,57 @@ public class ErrorParserManager extends OutputStream {
 
 	/**
 	 * Returns the project file with the given name if that file can be uniquely identified.
-	 * Otherwise returns <code>null</code>. 
+	 * Otherwise returns <code>null</code>.
 	 */
     public IFile findFileName(String fileName) {
-		IPath path = new Path(fileName);
-		Object obj = fFilesInProject.get(path.lastSegment());
-		if (obj == null) {
-			return null;
-		}
-		if (obj instanceof IFile) {
-			IFile file = (IFile) obj;
-			if (isPossibleMatch(path, file)) {
-				return file;
-			}
-			return null;
-		}
-        IFile matchingFile = null;
-        @SuppressWarnings("unchecked")
-		Collection<IFile> files = (Collection<IFile>) obj;
-		for (IFile file : files) {
-			if (isPossibleMatch(path, file)) {
-				if (matchingFile != null) {
-					return null;	// Ambiguous match
-				}
-				matchingFile = file;
-			}
-		}
-		
-		if(matchingFile == null) {
-			// one more attempt... look for a file with that name in the project
-			Object candidateFile = fFilesInProject.get(path.lastSegment());
-			if (candidateFile instanceof IFile) {
-				return (IFile) candidateFile;
-			}
-			// not found or getting list of files which is ambiguous 
-			return null;
-		}
-		
-		return matchingFile;
-	}
-
-	/**
-	 * Checks if a file system path {@code location} may point to a workspace {@code resource}.
-	 * @param location an absolute or relative file system path.
-	 * @param resource a workspace resource.
-	 * @return {@code true} if {@code location} may point to {@code resource}.
-	 */
-	private static boolean isPossibleMatch(IPath location, IResource resource) {
-		IPath resourceLocation = resource.getLocation();
-		if (resourceLocation == null) {
-			// could be an EFS path
-			URI locationURI = resource.getLocationURI();
-			if(locationURI == null)
-				return false;
-			
-			// Use the path information from the URI to see if the path as seen by the build
-			// matches the path that the resource points to.
-			
-			// This relies on the assumption that the EFS filesystem being used stores path information in the path
-			// portion of the URI.  This may not be in fact the case, but most filesystems adhere to such a format.
-			String path = locationURI.getPath();
-			
-			if(path == null)
-				return false;
-			
-			if(location.isAbsolute())
-				return location.toString().equals(path);
-			
-			IPath uriPath = new Path(path);
-			int prefixLen = uriPath.segmentCount() - location.segmentCount(); 
-			return prefixLen >= 0 && uriPath.removeFirstSegments(prefixLen).equals(location);
-			
-		}
-		if (location.getDevice()==null) {
-			resourceLocation = resourceLocation.setDevice(null);
-		}
-		if (location.isAbsolute()) {
-			return location.equals(resourceLocation);
-		} else {
-			int prefixLen = resourceLocation.segmentCount() - location.segmentCount(); 
-			return prefixLen >= 0 && resourceLocation.removeFirstSegments(prefixLen).equals(location);
-		}
+    	IProject[] prjs = new IProject[] {fProject};
+    	IPath path = new Path(fileName);
+    	IFile[] files = ResourceLookup.findFilesByName(path, prjs, false);
+    	if (files.length == 0)
+			files = ResourceLookup.findFilesByName(path, prjs, true);
+    	if (files.length == 1)
+			return files[0];
+    	return null;
 	}
 
 	protected IFile findFileInWorkspace(IPath path) {
-		IFile file = null;
-		if (path.isAbsolute()) {
-			IWorkspaceRoot root = fProject.getWorkspace().getRoot();
-			file =  root.getFileForLocation(path);
-			// It may be a link resource so we must check it also.
-			if (file == null) {
-				file= ResourceLookup.selectFileForLocation(path, fProject);
-			}
-
-		} else {
-			file = fProject.getFile(path);
+		if (!path.isAbsolute()) {
+			path = getWorkingDirectory().append(path);
 		}
-		return file;
+		return ResourceLookup.selectFileForLocation(path, fProject);
 	}
 
 	/**
+	 * Use {@link #findFileName} and {@link #findFilePath} for searches.
+	 * 
 	 * Returns <code>true</code> if the project contains more than one file with the given name.
+	 * @deprecated
 	 */
+	@Deprecated
 	public boolean isConflictingName(String fileName) {
-		IPath path = new Path(fileName);
-		Object obj = fFilesInProject.get(path.lastSegment());
-		return obj != null && !(obj instanceof IFile);
+		return ResourceLookup.findFilesByName(new Path(fileName), new IProject[] {fProject}, false).length > 1;
 	}
 
 	/**
-	 * Called by the error parsers.
+	 * Called by the error parsers to find an IFile for a given
+	 * external filesystem 'location'
+	 * 
+	 * @return IFile representing the external location, or null if one 
+	 *               couldn't be found.
 	 */
 	public IFile findFilePath(String filePath) {
-		IPath path = null;
-		IPath fp = new Path(filePath);
-		if (fp.isAbsolute()) {
-			if (fBaseDirectory.isPrefixOf(fp)) {
-				int segments = fBaseDirectory.matchingFirstSegments(fp);
-				path = fp.removeFirstSegments(segments);
-			} else {
-				path = fp;
-			}
-		} else {
-			path = getWorkingDirectory().append(filePath);
-		}
-
-		IFile file = null;
-		// The workspace may throw an IllegalArgumentException
-		// Catch it and the parser should fallback to scan the entire project.
-		try {
-			file = findFileInWorkspace(path);
-		} catch (Exception e) {
-		}
+		IPath path = new Path(filePath);
+		IFile file = findFileInWorkspace(path);
 
 		// That didn't work, see if it is a cygpath
 		if (file == null) {
 			CygPath cygpath = null;
 			try {
 				cygpath = new CygPath();
-				fp = new Path(cygpath.getFileName(filePath));
-				if (fBaseDirectory.isPrefixOf(fp)) {
-					int segments = fBaseDirectory.matchingFirstSegments(fp);
-					path = fp.removeFirstSegments(segments);
-				} else {
-					path = fp;
+				path = new Path(cygpath.getFileName(filePath));
+				if (fBaseDirectory.isPrefixOf(path)) {
+					int segments = fBaseDirectory.matchingFirstSegments(path);
+					path = path.removeFirstSegments(segments).setDevice(null);
 				}
 				file = findFileInWorkspace(path);
 			} catch (Exception e) {
@@ -395,18 +274,7 @@ public class ErrorParserManager extends OutputStream {
 					cygpath.dispose();
 			}
 		}
-		
-		// We have to do another try, on Windows for cases like "TEST.C" vs "test.c"
-		// We use the java.io.File canonical path.
-		if (file == null || !file.exists()) {
-			File f = path.toFile();
-			try {
-				String canon = f.getCanonicalPath();
-				path = new Path(canon);
-				file = findFileInWorkspace(path);
-			} catch (IOException e1) {
-			}
-		}
+
 		return (file != null && file.exists()) ? file : null;
 	}
 
@@ -505,7 +373,7 @@ public class ErrorParserManager extends OutputStream {
 		String buffer = currentLine.toString();
 		int i = 0;
 		while ((i = buffer.indexOf('\n')) != -1) {
-			String line = buffer.substring(0, i); 
+			String line = buffer.substring(0, i);
 			// get rid of any trailing '\r'
 			if (line.endsWith("\r"))  //$NON-NLS-1$
 				line=line.substring(0,line.length()-1);
@@ -527,9 +395,7 @@ public class ErrorParserManager extends OutputStream {
 	public boolean reportProblems() {
 		boolean reset = false;
 		if (nOpens == 0) {
-			Iterator<ProblemMarkerInfo> iter = fErrors.iterator();
-			while (iter.hasNext()) {
-				ProblemMarkerInfo problemMarkerInfo = iter.next();
+			for (ProblemMarkerInfo problemMarkerInfo : fErrors) {
 				if (problemMarkerInfo.severity == IMarkerGenerator.SEVERITY_ERROR_BUILD) {
 					reset = true;
 				}
@@ -560,7 +426,7 @@ public class ErrorParserManager extends OutputStream {
 	public void clearScratchBuffer() {
 		scratchBuffer.setLength(0);
 	}
-	
+
 	public boolean hasErrors() {
 		return hasErrors;
 	}

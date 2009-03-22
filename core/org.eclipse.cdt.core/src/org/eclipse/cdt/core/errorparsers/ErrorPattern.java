@@ -132,11 +132,11 @@ public class ErrorPattern {
 		
 		IResource file = null;
 		if (fileName != null) {
-			file = eoParser.findFileName(fileName);
+			file = eoParser.findFilePath(fileName);
 			if (file == null) {
-				file = eoParser.findFilePath(fileName);
+				file = eoParser.findFileName(fileName);
 			}
-			
+
 			if (file == null) {
 				// If the file is not found in the workspace we attach the problem to the project
 				// and add the external path to the file.

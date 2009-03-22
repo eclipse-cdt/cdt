@@ -16,6 +16,8 @@ import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.net.URI;
+import java.net.URISyntaxException;
 
 import junit.framework.Assert;
 
@@ -79,6 +81,30 @@ public class ResourceHelper {
 	}
 
 	/**
+	 * Creates CDT project in a specific location and opens it.
+	 *
+	 * @param projectName - project name.
+	 * @param locationURI - location.
+	 * @return - new {@link IProject}.
+	 * @throws CoreException - if the project can't be created.
+	 * @throws OperationCanceledException...
+	 */
+	public static IProject createCDTProject(String projectName, URI locationURI) throws OperationCanceledException, CoreException {
+		IWorkspace workspace = ResourcesPlugin.getWorkspace();
+		IWorkspaceRoot root = workspace.getRoot();
+		IProject project = root.getProject(projectName);
+		IProjectDescription description = workspace.newProjectDescription(projectName);
+		description.setLocationURI(locationURI);
+		project = CCorePlugin.getDefault().createCDTProject(description, project, NULL_MONITOR);
+		Assert.assertNotNull(project);
+
+		project.open(null);
+		Assert.assertTrue(project.isOpen());
+
+		return project;
+	}
+
+	/**
 	 * Creates a project in the workspace and opens it.
 	 *
 	 * @param projectName - project name.
@@ -87,7 +113,7 @@ public class ResourceHelper {
 	 * @throws OperationCanceledException...
 	 */
 	public static IProject createCDTProject(String projectName) throws OperationCanceledException, CoreException {
-		return createCDTProject(projectName, null);
+		return createCDTProject(projectName, (String)null);
 	}
 
 	/**
@@ -220,6 +246,35 @@ public class ResourceHelper {
 	}
 
 	/**
+	 * Creates new eclipse file-link from project root to EFS file.
+	 *
+	 * @param project - project where to create the file.
+	 * @param fileLink - filename of the link being created.
+	 * @param realFile - file on the EFS file system, the target of the link.
+	 * @return file handle.
+	 * @throws CoreException if something goes wrong.
+	 */
+	public static IFile createEfsFile(IProject project, String fileLink, URI realFile) throws CoreException {
+		IFile file= project.getFile(fileLink);
+		file.createLink(realFile, IResource.ALLOW_MISSING_LOCAL, new NullProgressMonitor());
+		return file;
+	}
+
+	/**
+	 * Creates new eclipse file-link from project root to EFS file.
+	 *
+	 * @param project - project where to create the file.
+	 * @param fileLink - filename of the link being created.
+	 * @param realFile - file on the EFS file system, the target of the link.
+	 * @return file handle.
+	 * @throws CoreException if something goes wrong.
+	 * @throws URISyntaxException if wrong URI syntax
+	 */
+	public static IFile createEfsFile(IProject project, String fileLink, String realFile) throws CoreException, URISyntaxException {
+		return createEfsFile(project,fileLink,new URI(realFile));
+	}
+
+	/**
 	 * Creates new eclipse folder-link from project root to file system folder. The folder name
 	 * can include relative path as a part of the name but the the path
 	 * has to be present on disk.
@@ -251,6 +306,41 @@ public class ResourceHelper {
 	 */
 	public static IFolder createLinkedFolder(IProject project, String folderLink, String realFolder) throws CoreException {
 		return createLinkedFolder(project, folderLink, new Path(realFolder));
+	}
+
+	/**
+	 * Creates new eclipse folder-link from project root to EFS folder.
+	 *
+	 * @param project - project where to create the folder.
+	 * @param folderLink - folder name of the link being created.
+	 * @param realFolder - folder on the EFS file system, the target of the link.
+	 * @return folder handle.
+	 * @throws CoreException if something goes wrong.
+	 */
+	public static IFolder createEfsFolder(IProject project, String folderLink, URI realFolder) throws CoreException {
+		IFolder folder= project.getFolder(folderLink);
+		if (folder.exists()) {
+			Assert.assertEquals("Folder with the same name but different location already exists",
+					realFolder, folder.getLocationURI());
+			return folder;
+		}
+
+		folder.createLink(realFolder, IResource.ALLOW_MISSING_LOCAL, new NullProgressMonitor());
+		return folder;
+	}
+
+	/**
+	 * Creates new eclipse folder-link from project root to EFS folder.
+	 *
+	 * @param project - project where to create the folder.
+	 * @param folderLink - folder name of the link being created.
+	 * @param realFolder - folder on the EFS file system, the target of the link.
+	 * @return folder handle.
+	 * @throws CoreException if something goes wrong.
+	 * @throws URISyntaxException if wrong URI syntax
+	 */
+	public static IFolder createEfsFolder(IProject project, String folderLink, String realFolder) throws CoreException, URISyntaxException {
+		return createEfsFolder(project,folderLink,new URI(realFolder));
 	}
 
 	/**

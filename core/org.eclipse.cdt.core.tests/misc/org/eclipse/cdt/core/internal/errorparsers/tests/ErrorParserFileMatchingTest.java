@@ -27,8 +27,10 @@ import org.eclipse.cdt.core.errorparsers.AbstractErrorParser;
 import org.eclipse.cdt.core.errorparsers.ErrorPattern;
 import org.eclipse.cdt.core.testplugin.CTestPlugin;
 import org.eclipse.core.internal.registry.ExtensionRegistry;
+import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
+import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.ContributorFactoryOSGi;
 import org.eclipse.core.runtime.IContributor;
 import org.eclipse.core.runtime.IPath;
@@ -289,6 +291,24 @@ public class ErrorParserFileMatchingTest extends TestCase {
 	 * Checks if a file from error output can be found.
 	 * @throws Exception...
 	 */
+	public void testLinkedFileWithDifferentName() throws Exception {
+		ResourceHelper.createWorkspaceFolder("OutsideFolder");
+		IPath realFile = ResourceHelper.createWorkspaceFile("OutsideFolder/RealFileWithDifferentName.c");
+		ResourceHelper.createFolder(fProject, "Folder");
+		ResourceHelper.createLinkedFile(fProject, "Folder/testLinkedFileWithDifferentName.c", realFile);
+
+		parseOutput("RealFileWithDifferentName.c:1:error");
+		assertEquals(1, errorList.size());
+
+		ProblemMarkerInfo problemMarkerInfo = errorList.get(0);
+		assertEquals("L/FindMatchingFilesTest/Folder/testLinkedFileWithDifferentName.c",problemMarkerInfo.file.toString());
+		assertEquals("error",problemMarkerInfo.description);
+	}
+
+	/**
+	 * Checks if a file from error output can be found.
+	 * @throws Exception...
+	 */
 	public void testDuplicateLinkedFile() throws Exception {
 		ResourceHelper.createWorkspaceFolder("OutsideFolderA");
 		ResourceHelper.createWorkspaceFolder("OutsideFolderB");
@@ -308,6 +328,30 @@ public class ErrorParserFileMatchingTest extends TestCase {
 		assertEquals("P/FindMatchingFilesTest",problemMarkerInfo.file.toString());
 		assertEquals("error",problemMarkerInfo.description);
 		assertEquals(new Path("testDuplicateLinkedFile.c"),problemMarkerInfo.externalPath);
+	}
+
+	/**
+	 * Checks if a file from error output can be found.
+	 * @throws Exception...
+	 */
+	public void testDuplicateLinkedFileDifferentName() throws Exception {
+		ResourceHelper.createWorkspaceFolder("OutsideFolderA");
+		ResourceHelper.createWorkspaceFolder("OutsideFolderB");
+		IPath fileA = ResourceHelper.createWorkspaceFile("OutsideFolderA/testDuplicateLinkedFileDifferentName.c");
+		IPath fileB = ResourceHelper.createWorkspaceFile("OutsideFolderB/testDuplicateLinkedFileDifferentName.c");
+		ResourceHelper.createFolder(fProject, "FolderA");
+		ResourceHelper.createLinkedFile(fProject, "FolderA/DuplicateLinkedFileA.c", fileA);
+		ResourceHelper.createFolder(fProject, "FolderB");
+		ResourceHelper.createLinkedFile(fProject, "FolderB/DuplicateLinkedFileB.c", fileB);
+
+		parseOutput("testDuplicateLinkedFileDifferentName.c:1:error");
+		assertEquals(1, errorList.size());
+
+		ProblemMarkerInfo problemMarkerInfo = errorList.get(0);
+		// No match found
+		assertEquals("P/FindMatchingFilesTest",problemMarkerInfo.file.toString());
+		assertEquals("error",problemMarkerInfo.description);
+		assertEquals(new Path("testDuplicateLinkedFileDifferentName.c"),problemMarkerInfo.externalPath);
 	}
 
 	/**
@@ -521,6 +565,28 @@ public class ErrorParserFileMatchingTest extends TestCase {
 	 * Checks if a file from error output can be found.
 	 * @throws Exception...
 	 */
+	public void testAbsolutePathOutsideWorkspace() throws Exception {
+
+		ResourceHelper.createWorkspaceFolder("OutsideFolder");
+		IPath outsideFile = ResourceHelper.createWorkspaceFile("OutsideFolder/testAbsolutePathOutsideWorkspace.c");
+
+		String fullName = ResourcesPlugin.getWorkspace().getRoot().getLocation()
+			.append("OutsideFolder/testAbsolutePathOutsideWorkspace.c").toOSString();
+
+		parseOutput(fullName+":1:error");
+		assertEquals(1, errorList.size());
+
+		ProblemMarkerInfo problemMarkerInfo = errorList.get(0);
+		// Can't assign marker to non-IResource
+		assertEquals(1,problemMarkerInfo.lineNumber);
+		assertEquals("error",problemMarkerInfo.description);
+		assertEquals(outsideFile, problemMarkerInfo.externalPath);
+	}
+
+	/**
+	 * Checks if a file from error output can be found.
+	 * @throws Exception...
+	 */
 	public void testRelativePathFromProjectRoot() throws Exception {
 		ResourceHelper.createFolder(fProject, "Folder");
 		ResourceHelper.createFile(fProject, "Folder/testRelativePathFromProjectRoot.c");
@@ -539,15 +605,15 @@ public class ErrorParserFileMatchingTest extends TestCase {
 	 * @throws Exception...
 	 */
 	public void testRelativePathFromSubfolder() throws Exception {
-		ResourceHelper.createFolder(fProject, "Subfolder");
-		ResourceHelper.createFolder(fProject, "Subfolder/Folder");
-		ResourceHelper.createFile(fProject, "Subfolder/Folder/testRelativePathFromSubfolder.c");
+		ResourceHelper.createFolder(fProject, "Folder");
+		ResourceHelper.createFolder(fProject, "Folder/SubFolder");
+		ResourceHelper.createFile(fProject, "Folder/SubFolder/testRelativePathFromSubfolder.c");
 
-		parseOutput("Folder/testRelativePathFromSubfolder.c:1:error");
+		parseOutput("SubFolder/testRelativePathFromSubfolder.c:1:error");
 		assertEquals(1, errorList.size());
 
 		ProblemMarkerInfo problemMarkerInfo = errorList.get(0);
-		assertEquals("L/FindMatchingFilesTest/Subfolder/Folder/testRelativePathFromSubfolder.c",problemMarkerInfo.file.toString());
+		assertEquals("L/FindMatchingFilesTest/Folder/SubFolder/testRelativePathFromSubfolder.c",problemMarkerInfo.file.toString());
 		assertEquals(1,problemMarkerInfo.lineNumber);
 		assertEquals("error",problemMarkerInfo.description);
 	}
@@ -558,7 +624,7 @@ public class ErrorParserFileMatchingTest extends TestCase {
 	 */
 	public void testRelativePathNotMatchingFolder() throws Exception {
 		ResourceHelper.createFolder(fProject, "Folder");
-		ResourceHelper.createFile(fProject, "Subfolder/Folder/testRelativePathNotMatchingFolder.c");
+		ResourceHelper.createFile(fProject, "Folder/testRelativePathNotMatchingFolder.c");
 
 		parseOutput("NotMatchingFolder/testRelativePathNotMatchingFolder.c:1:error");
 		assertEquals(1, errorList.size());
@@ -963,6 +1029,26 @@ public class ErrorParserFileMatchingTest extends TestCase {
 
 		ProblemMarkerInfo problemMarkerInfo = errorList.get(0);
 		assertEquals("L/FindMatchingFilesTest/BuildDir/testBuildDirVsProjectRoot.c",problemMarkerInfo.file.toString());
+		assertEquals(1,problemMarkerInfo.lineNumber);
+		assertEquals("error",problemMarkerInfo.description);
+	}
+
+	/**
+	 * Checks if a file from error output can be found.
+	 *
+	 * @throws Exception...
+	 */
+	public void testAbsoluteFileVsLink() throws Exception {
+		ResourceHelper.createFolder(fProject, "Folder");
+		IFile file = ResourceHelper.createFile(fProject, "Folder/testAbsoluteFileVsLink.c");
+		String fullName = file.getLocation().toOSString();
+		ResourceHelper.createLinkedFile(fProject, "testAbsoluteFileVsLink.c", file.getLocation());
+
+		parseOutput(fullName+":1:error");
+		assertEquals(1, errorList.size());
+
+		ProblemMarkerInfo problemMarkerInfo = errorList.get(0);
+		assertEquals("L/FindMatchingFilesTest/Folder/testAbsoluteFileVsLink.c",problemMarkerInfo.file.toString());
 		assertEquals(1,problemMarkerInfo.lineNumber);
 		assertEquals("error",problemMarkerInfo.description);
 	}

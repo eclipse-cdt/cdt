@@ -429,7 +429,8 @@ public class ErrorParserFileMatchingTest extends TestCase {
 		ProblemMarkerInfo problemMarkerInfo = errorList.get(0);
 		// No match found
 		assertEquals("P/FindMatchingFilesTest",problemMarkerInfo.file.toString());
-		assertEquals("testDuplicateSymbolicLink.c error",problemMarkerInfo.description);
+		assertEquals(new Path("testDuplicateSymbolicLink.c"),problemMarkerInfo.externalPath);
+		assertEquals("error",problemMarkerInfo.description);
 	}
 
 	/**
@@ -477,7 +478,8 @@ public class ErrorParserFileMatchingTest extends TestCase {
 		ProblemMarkerInfo problemMarkerInfo = errorList.get(0);
 		// No match found
 		assertEquals("P/FindMatchingFilesTest",problemMarkerInfo.file.toString());
-		assertEquals("testDuplicateFolderSymbolicLink.c error",problemMarkerInfo.description);
+		assertEquals(new Path("testDuplicateFolderSymbolicLink.c"),problemMarkerInfo.externalPath);
+		assertEquals("error",problemMarkerInfo.description);
 	}
 
 	/**

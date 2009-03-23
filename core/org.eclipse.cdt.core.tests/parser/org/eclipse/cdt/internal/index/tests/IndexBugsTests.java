@@ -862,7 +862,7 @@ public class IndexBugsTests extends BaseTestCase {
 	//	#include "test2.h"
 	//	void f(int x);
 	//	void test(B<int>::value_type x) {
-	//	  f(x);  // problem on f
+	//	  f(x);
 	//	}
 	public void test257818_1() throws Exception {
 		waitForIndexer();
@@ -1922,11 +1922,11 @@ public class IndexBugsTests extends BaseTestCase {
 		index.acquireReadLock();
 		try {
 			BindingAssertionHelper aHelper = new BindingAssertionHelper(a, testData[1], index);
-			aHelper.assertNonProblem("A a;", 1, ICPPVariable.class);
+			aHelper.assertNonProblem("A a;", 1, ICPPClassType.class);
 			aHelper.assertNonProblem("i = 0;", 1, ICPPVariable.class);
 			aHelper.assertProblem("j = 0;", 1);
 			BindingAssertionHelper bHelper = new BindingAssertionHelper(b, testData[3], index);
-			aHelper.assertNonProblem("A a;", 1, ICPPVariable.class);
+			aHelper.assertNonProblem("A a;", 1, ICPPClassType.class);
 			bHelper.assertProblem("i = 0;", 1);
 			bHelper.assertNonProblem("j = 0;", 1, ICPPVariable.class);
 		} finally {
@@ -1966,6 +1966,47 @@ public class IndexBugsTests extends BaseTestCase {
 			IEnumerator e1 = aHelper.assertNonProblem("e;", 1, IEnumerator.class);
 			assertEquals(1, e1.getValue().numericalValue().longValue());
 			BindingAssertionHelper bHelper = new BindingAssertionHelper(b, testData[3], index);
+			IEnumerator e2 = bHelper.assertNonProblem("e;", 1, IEnumerator.class);
+			assertEquals(2, e2.getValue().numericalValue().longValue());
+		} finally {
+			index.releaseReadLock();
+		}
+	}
+
+	//  // a.h
+	//	namespace ns { namespace ns2 {
+	//	  enum E { e = 1 };
+	//	}}
+	//	using namespace ns::ns2;
+	
+	//  #include "a.h"
+	//	E i = e;
+
+	//  // b.h
+	//	enum E { e = 2 };
+	
+	//  #include "b.h"
+	//	E i = e;
+	public void _testDisambiguationByReachability_268704_3() throws Exception {
+		waitForIndexer();
+
+		String[] testData = getContentsForTest(4);
+		TestSourceReader.createFile(fCProject.getProject(), "a.h", testData[0]);
+		IFile a = TestSourceReader.createFile(fCProject.getProject(), "a.cpp", testData[1]);
+		TestSourceReader.createFile(fCProject.getProject(), "b.h", testData[2]);
+		IFile b = TestSourceReader.createFile(fCProject.getProject(), "b.cpp", testData[3]);
+		final IIndexManager indexManager = CCorePlugin.getIndexManager();
+		indexManager.reindex(fCProject);
+		waitForIndexer();
+		IIndex index= indexManager.getIndex(fCProject);
+		index.acquireReadLock();
+		try {
+			BindingAssertionHelper aHelper = new BindingAssertionHelper(a, testData[1], index);
+			aHelper.assertNonProblem("E i", 1, IEnumeration.class);
+			IEnumerator e1 = aHelper.assertNonProblem("e;", 1, IEnumerator.class);
+			assertEquals(1, e1.getValue().numericalValue().longValue());
+			BindingAssertionHelper bHelper = new BindingAssertionHelper(b, testData[3], index);
+			aHelper.assertNonProblem("E i", 1, IEnumeration.class);
 			IEnumerator e2 = bHelper.assertNonProblem("e;", 1, IEnumerator.class);
 			assertEquals(2, e2.getValue().numericalValue().longValue());
 		} finally {

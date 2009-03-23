@@ -80,7 +80,7 @@ class PDOMCPPMethodTemplate extends PDOMCPPFunctionTemplate implements ICPPMetho
 		return IIndexCPPBindingConstants.CPP_METHOD_TEMPLATE;
 	}
 
-	public boolean isDestructor() throws DOMException {
+	public boolean isDestructor() {
 		return getBit(getAnnotation1(), PDOMCPPAnnotation.DESTRUCTOR_OFFSET);
 	}
 

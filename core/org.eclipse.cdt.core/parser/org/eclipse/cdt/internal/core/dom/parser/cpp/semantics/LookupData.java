@@ -550,12 +550,6 @@ public class LookupData {
 		return false;
 	}
 	
-	public boolean preferTemplateFunctions() {
-		if (astName == null)
-			return false;
-		return (astName instanceof ICPPASTTemplateId || astName.getPropertyInParent() == ICPPASTTemplateId.TEMPLATE_NAME);
-	}
-	
 	public void setFunctionArguments(IASTExpression args) {
 		IASTExpression[] exprs;
 		if (args instanceof IASTExpressionList) {

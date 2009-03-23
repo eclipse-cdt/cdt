@@ -118,7 +118,7 @@ class PDOMCPPMethod extends PDOMCPPFunction implements ICPPMethod {
 		return getBit(getAnnotation1(), PDOMCPPAnnotation.PURE_VIRTUAL_OFFSET);
 	}
 
-	public boolean isDestructor() throws DOMException {
+	public boolean isDestructor() {
 		return getBit(getAnnotation1(), PDOMCPPAnnotation.DESTRUCTOR_OFFSET);
 	}
 

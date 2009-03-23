@@ -322,8 +322,8 @@ public class Conversions {
 		Cost constructorCost= null;
 		Cost operatorCost= null;
 
-		IType s= getUltimateType(source, true);
-		IType t= getUltimateType(target, true);
+		IType s= getNestedType(source, TDEF | CVQ | REF);
+		IType t= getNestedType(target, TDEF | CVQ | REF);
 
 		//constructors
 		if (t instanceof ICPPClassType) {

@@ -79,7 +79,7 @@ class PDOMCPPMethodSpecialization extends PDOMCPPFunctionSpecialization
 		return IIndexCPPBindingConstants.CPP_METHOD_SPECIALIZATION;
 	}
 	
-	public boolean isDestructor() throws DOMException {
+	public boolean isDestructor() {
 		return getBit(getByte(record + ANNOTATION1), PDOMCPPAnnotation.DESTRUCTOR_OFFSET);
 	}
 

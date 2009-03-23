@@ -43,7 +43,7 @@ class PDOMCPPMethodTemplateSpecialization extends
 		return IIndexCPPBindingConstants.CPP_METHOD_TEMPLATE_SPECIALIZATION;
 	}
 	
-	public boolean isDestructor() throws DOMException {
+	public boolean isDestructor() {
 		IBinding spec = getSpecializedBinding();
 		if (spec instanceof ICPPMethod) {
 			((ICPPMethod)spec).isDestructor();

@@ -1339,6 +1339,16 @@ public class CPPTemplates {
 	}
 	
 	static protected void instantiateFunctionTemplates(IFunction[] functions, IType[] fnArgs, IASTName name) {
+		boolean requireTemplate= false;
+		if (name != null) {
+			if (name.getPropertyInParent() == ICPPASTTemplateId.TEMPLATE_NAME) {
+				name= (IASTName) name.getParent();
+				requireTemplate= true;
+			} else if (name instanceof ICPPASTTemplateId) {
+				requireTemplate= true;
+			} 
+		}
+
 		ICPPTemplateArgument[] templateArguments= null;
 		for (int i = 0; i < functions.length; i++) {
 			IFunction func = functions[i];
@@ -1377,7 +1387,11 @@ public class CPPTemplates {
 				} catch (DOMException e) {
 					// try next candidate
 				}
-			} 
+			} else if (requireTemplate 
+					&& !(func instanceof ICPPConstructor) && !(func instanceof ICPPUnknownBinding)
+					&& !(func instanceof ICPPMethod && ((ICPPMethod) func).isDestructor())) {
+				functions[i]= null;
+			}		
 		}
 	}
 

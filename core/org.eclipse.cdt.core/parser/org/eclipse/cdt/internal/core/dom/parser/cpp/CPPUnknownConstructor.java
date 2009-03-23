@@ -28,7 +28,7 @@ public class CPPUnknownConstructor extends CPPUnknownFunction implements ICPPCon
 		return false;
 	}
 
-	public boolean isDestructor() throws DOMException {
+	public boolean isDestructor() {
 		return false;
 	}
 

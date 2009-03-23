@@ -51,7 +51,7 @@ class PDOMCPPMethodInstance extends PDOMCPPFunctionInstance implements ICPPMetho
 		return IIndexCPPBindingConstants.CPP_METHOD_INSTANCE;
 	}
 	
-	public boolean isDestructor() throws DOMException {
+	public boolean isDestructor() {
 		return ((ICPPMethod)getTemplateDefinition()).isDestructor();
 	}
 

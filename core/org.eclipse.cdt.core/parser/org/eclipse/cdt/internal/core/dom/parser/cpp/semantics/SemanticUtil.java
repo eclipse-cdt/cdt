@@ -166,9 +166,8 @@ public class SemanticUtil {
 	 * @return the deepest type in a type container sequence
 	 */
 	public static IType getUltimateType(IType type, boolean stopAtPointerToMember) {
-		if (stopAtPointerToMember)
-			return getNestedType(type, TDEF | CVQ | PTR | ARRAY | REF);
-		return getNestedType(type, TDEF | CVQ | PTR | ARRAY | MPTR | REF);
+		final int options = TDEF | CVQ | PTR | ARRAY | REF;
+		return getNestedType(type, stopAtPointerToMember ? options : (options | MPTR));
 	}
 	
 	/**

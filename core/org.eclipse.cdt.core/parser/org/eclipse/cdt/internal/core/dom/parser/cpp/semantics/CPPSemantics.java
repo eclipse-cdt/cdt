@@ -198,7 +198,7 @@ public class CPPSemantics {
 	public static int traceIndent= 0;
 	
 	// special return value for costForFunctionCall
-	private static final Cost[] CONTAINS_DEPENDENT_TYPES = {};
+	private static final FunctionCost CONTAINS_DEPENDENT_TYPES = new FunctionCost(null, 0);
 
 	
 	static protected IBinding resolveBinding(IASTName name) {
@@ -1845,9 +1845,9 @@ public class CPPSemantics {
 	        	} else if (type != temp) {
 	        		int c = compareByRelevance(data, type, temp);
 	        		if (c < 0) {
-	        			type= temp;
+        					type= temp;
 	        		} else if (c == 0) {
-        				if (((IType) type).isSameType((IType) temp)) {
+        				if (((IType)type).isSameType((IType) temp)) {
         					if (type instanceof ITypedef && !(temp instanceof ITypedef)) {
         						// Between same types prefer non-typedef.
         						type= temp;
@@ -1855,7 +1855,7 @@ public class CPPSemantics {
         				} else {
         					return new ProblemBinding(data.astName, IProblemBinding.SEMANTIC_AMBIGUOUS_LOOKUP);
         				}
-	        		}
+        			}
 	            }
 	        } else {
 	        	if (obj == null) {
@@ -1865,7 +1865,7 @@ public class CPPSemantics {
 	        	} else {
 	        		int c = compareByRelevance(data, obj, temp);
 	        		if (c < 0) {
-	        			obj= temp;
+	        				obj= temp;
 	        		} else if (c == 0) {
 	        			return new ProblemBinding(data.astName, IProblemBinding.SEMANTIC_AMBIGUOUS_LOOKUP);
 	        		}
@@ -1922,7 +1922,7 @@ public class CPPSemantics {
 	 * the two bindings have the same relevance; -1 if <code>b1</code> is less relevant than
 	 * <code>b2</code>.
 	 */
-	private static int compareByRelevance(LookupData data, IBinding b1, IBinding b2) {
+	static int compareByRelevance(LookupData data, IBinding b1, IBinding b2) {
 		boolean b1FromIndex= isFromIndex(b1);
 		boolean b2FromIndex= isFromIndex(b2);
 		if (b1FromIndex != b2FromIndex) {
@@ -1949,7 +1949,7 @@ public class CPPSemantics {
 		}
 		return false;
 	}
-
+	
 	/**
 	 * Checks if a binding belongs to an AST or is reachable from it through includes. 
 	 * @param ast
@@ -2114,16 +2114,14 @@ public class CPPSemantics {
 		}
 		
 		boolean ambiguous = false;				// ambiguity, 2 functions are equally good
-		IFunction bestFn = null;				// the best function
-		Cost[] bestFnCost = null;				// the cost of the best function
-		boolean bestHasAmbiguousParam = false;  // bestFn has an ambiguous parameter conversion (not ok, ambiguous)
+		FunctionCost bestFnCost = null;		    // the cost of the best function
 				
 		// Loop over all functions
 		for (IFunction fn : fns) {
-			if (fn == null || bestFn == fn) 
+			if (fn == null) 
 				continue;
 			
-			final Cost[] fnCost= costForFunctionCall(fn, argTypes, args, allowUDC, data);
+			final FunctionCost fnCost= costForFunctionCall(fn, argTypes, args, allowUDC, data);
 			if (fnCost == null)
 				continue;
 			
@@ -2133,101 +2131,26 @@ public class CPPSemantics {
 				return CPPUnknownFunction.createForSample(firstViable, data.astName);
 			}
 
-			if (bestFnCost == null) {
+			int cmp= fnCost.compareTo(data, bestFnCost);
+			if (cmp < 0) {
 				bestFnCost= fnCost;
-				bestFn= fn;
-				continue;
-			}
-			
-			boolean hasWorse = false;
-			boolean hasBetter = false;
-			boolean hasAmbiguousParam= false;
-			// In order for this function to be better than the previous best, it must
-			// have at least one parameter match that is better that the corresponding
-			// match for the other function, and none that are worse.
-			int len = Math.min(fnCost.length, bestFnCost.length);
-			for (int j = 1; j <= len; j++) {
-				Cost currCost = fnCost[fnCost.length - j];
-				if (currCost.getRank() == Rank.NO_MATCH) {
-					hasWorse = true;
-					hasBetter = false;
-					break;
-				}
-				
-				// An ambiguity in the user defined conversion sequence is only a problem
-				// if this function turns out to be the best.
-				if (currCost.isAmbiguousUserdefinedConversion())
-					hasAmbiguousParam = true;
-				
-				if (bestFnCost != null) {
-					int comparison = currCost.compare(bestFnCost[bestFnCost.length - j]);
-					hasWorse |= (comparison > 0);
-					hasBetter |= (comparison < 0);
-				} else {
-					hasBetter = true;
-				}
-			}
-		
-			if (!hasWorse && !hasBetter) {
-				// If they are both template functions, we can order them that way
-				ICPPFunctionTemplate bestAsTemplate= asTemplate(bestFn);
-				ICPPFunctionTemplate currAsTemplate= asTemplate(fn);
-				final boolean bestIsTemplate = bestAsTemplate != null;
-				final boolean currIsTemplate = currAsTemplate != null;
-				if (bestIsTemplate && currIsTemplate) {
-					int order = CPPTemplates.orderTemplateFunctions(bestAsTemplate, currAsTemplate);
-					if (order < 0) {
-						hasBetter= true;	 				
-					} else if (order > 0) {
-						hasWorse= true;
-					}
-				} else if (bestIsTemplate != currIsTemplate) {
-					// We prefer normal functions over template functions, unless we specified template arguments
-					if (data.preferTemplateFunctions() == bestIsTemplate)
-						hasWorse = true;
-					else
-						hasBetter = true;
-				} 
-			}
-			
-			// Ff we are ambiguous at this point, prefer a non-index binding or reachable index one.
-			if (hasBetter == hasWorse) {
-				int c = compareByRelevance(data, bestFn, fn);
-				if (c != 0) {
-					hasBetter = (c < 0);
-					hasWorse = !hasBetter;
-				}
-//				final boolean bestIsFromIndex= isFromIndex(bestFn);
-//				final boolean currIsFromIndex= isFromIndex(fn);
-//				if (bestIsFromIndex != currIsFromIndex) {
-//					hasBetter= bestIsFromIndex;
-//					hasWorse= currIsFromIndex;
-//				}
-			}
-								
-			// If function has a parameter match that is better than the current best,
-			// and another that is worse (or everything was just as good, neither better nor worse),
-			// then this is an ambiguity (unless we find something better than both later).
-			if (hasBetter == hasWorse) {
-				ambiguous= true;
-				// here we would need to store the costs to compare to a function that is better later on.
-			} else if (hasBetter && !hasWorse) {
-				bestFn= fn;
-				bestFnCost= fnCost;
-				bestHasAmbiguousParam= hasAmbiguousParam;
 				ambiguous= false;
-				// here we would have to compare to the functions that were previously ambiguous.
-			} 
+			} else if (cmp == 0) {
+				ambiguous= true;
+			}
 		}
 
-		if (ambiguous || bestHasAmbiguousParam) {
+		if (bestFnCost == null)
+			return null;
+		
+		if (ambiguous || bestFnCost.hasAmbiguousUserDefinedConversion()) {
 			return new ProblemBinding(data.astName, IProblemBinding.SEMANTIC_AMBIGUOUS_LOOKUP);
 		}
 						
-		return bestFn;
+		return bestFnCost.getFunction();
 	}
 
-	private static Cost[] costForFunctionCall(IFunction fn, IType[] argTypes, IASTExpression[] args, boolean allowUDC, LookupData data) throws DOMException {
+	private static FunctionCost costForFunctionCall(IFunction fn, IType[] argTypes, IASTExpression[] args, boolean allowUDC, LookupData data) throws DOMException {
 	    final ICPPFunctionType ftype= (ICPPFunctionType) fn.getType();
 	    if (ftype == null)
 	    	return null;
@@ -2245,11 +2168,11 @@ public class CPPSemantics {
 		int k= 0;
 	    Cost cost;
 		final int sourceLen= argTypes.length;
-		final Cost[] result;
+		final FunctionCost result;
 		if (implicitType == null) {
-			result= new Cost[sourceLen];
+			result= new FunctionCost(fn, sourceLen);
 		} else {
-			result= new Cost[sourceLen+1];
+			result= new FunctionCost(fn, sourceLen+1);
 			
 			final IType thisType = data.getImpliedObjectArgument();
 			
@@ -2268,7 +2191,7 @@ public class CPPSemantics {
 			if (cost.getRank() == Rank.NO_MATCH)
 				return null;
 			
-			result[k++] = cost;
+			result.setCost(k++, cost);
 		}
 		
 		for (int j = 0; j < sourceLen; j++) {
@@ -2285,7 +2208,7 @@ public class CPPSemantics {
 				paramType= VOID_TYPE;
 			} else {
 				cost = new Cost(argType, null, Rank.ELLIPSIS_CONVERSION);
-				result[k++]= cost;
+				result.setCost(k++, cost);
 				continue;
 			} 
 			
@@ -2299,7 +2222,7 @@ public class CPPSemantics {
 			if (cost.getRank() == Rank.NO_MATCH)
 				return null;
 			
-			result[k++] = cost;
+			result.setCost(k++, cost);
 		}
 		return result;
 	}
@@ -2346,16 +2269,6 @@ public class CPPSemantics {
 		return new ProblemBinding(astName, IProblemBinding.SEMANTIC_NAME_NOT_FOUND);
 	}
 
-	private static ICPPFunctionTemplate asTemplate(IFunction function) {
-		if (function instanceof ICPPSpecialization) {
-			IBinding original= ((ICPPSpecialization) function).getSpecializedBinding();
-			if (original instanceof ICPPFunctionTemplate) {
-				return (ICPPFunctionTemplate) original;
-			}
-		}
-		return null;
-	}
-	
 	/**
 	 * 13.4-1 A use of an overloaded function without arguments is resolved in certain contexts to a function
      * @param data
@@ -2417,7 +2330,7 @@ public class CPPSemantics {
                     		result= fn;
         				} else if (c == 0) {
                     		return new ProblemBinding(data.astName, IProblemBinding.SEMANTIC_AMBIGUOUS_LOOKUP);
-        				}
+                    }
 //                    	boolean fromIndex= isFromIndex(fn);
 //                    	if (isFromIndex(result) == fromIndex)
 //                    		return new ProblemBinding(data.astName, IProblemBinding.SEMANTIC_AMBIGUOUS_LOOKUP);

@@ -1136,4 +1136,14 @@ public class IndexCPPBindingResolutionBugs extends IndexBindingResolutionTestBas
 	public void testLookupScopeForConversionNames_267221() throws Exception {
     	getBindingFromASTName("operator S *", 12, ICPPMethod.class);
 	}
+
+	//	namespace ns1 { namespace ns2 {
+	//	  class A {};
+	//	}}
+	//	using namespace ns1::ns2;
+	
+	//	A a;
+	public void _testTwoLevelUsingDirective_269727() throws Exception {
+    	getBindingFromASTName("A a", 1, ICPPClassType.class);
+	}
 }

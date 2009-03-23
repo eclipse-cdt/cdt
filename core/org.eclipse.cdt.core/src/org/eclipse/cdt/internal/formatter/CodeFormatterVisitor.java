@@ -1352,14 +1352,14 @@ public class CodeFormatterVisitor extends CPPASTVisitor {
 	}
 
 	private int visit(IASTNamedTypeSpecifier node) {
+		if (scribe.printModifiers()) {
+			scribe.space();
+		}
 		if (node instanceof ICPPASTNamedTypeSpecifier) {
 			if (((ICPPASTNamedTypeSpecifier)node).isTypename()) {
 				scribe.printNextToken(Token.t_typename);
 				scribe.space();
 			}
-		}
-		if (scribe.printModifiers()) {
-			scribe.space();
 		}
 		node.getName().accept(this);
 		return PROCESS_SKIP;

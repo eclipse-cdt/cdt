@@ -1157,4 +1157,14 @@ public class CodeFormatterTest extends BaseUITestCase {
 		assertFormatterResult();
 	}
 
+	//inline   typename A foo();
+	//void   bar(const typename A x)  ;
+	//static   typename A x  ;
+
+	//inline typename A foo();
+	//void bar(const typename A x);
+	//static typename A x;
+	public void testFormatterProblemsWithTypename_Bug269590() throws Exception {
+		assertFormatterResult();
+	}
 }

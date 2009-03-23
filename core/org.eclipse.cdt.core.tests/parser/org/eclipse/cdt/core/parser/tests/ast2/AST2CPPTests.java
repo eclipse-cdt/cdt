@@ -7074,7 +7074,16 @@ public class AST2CPPTests extends AST2BaseTest {
     	ba.assertNonProblem("a; //2", 1, ICPPField.class);
 	}
 
-	
-	
-	
+	//	class C {
+	//		operator int(){return 0;}
+	//	};
+	//	void test(int) {}
+	//	void ref() {
+	//		C* c= 0;
+	//		test(c);
+	//	}
+	public void testInvalidUserDefinedConversion_Bug269729() throws Exception {
+		BindingAssertionHelper ba= new BindingAssertionHelper(getAboveComment(), true);
+    	ba.assertProblem("test(c)", 4);
+	}	
 }

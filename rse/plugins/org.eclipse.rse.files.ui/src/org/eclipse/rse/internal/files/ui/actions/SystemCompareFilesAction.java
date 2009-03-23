@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2002, 2007 IBM Corporation and others.
+ * Copyright (c) 2002, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -12,7 +12,7 @@
  * Emily Bruner, Mazen Faraj, Adrian Storisteanu, Li Ding, and Kent Hawley.
  * 
  * Contributors:
- * {Name} (company) - description of contribution.
+ * David McKnight    (IBM)    - [256644][refresh] RSE Compare with should refresh file cache before opening compare editor
  *******************************************************************************/
 
 package org.eclipse.rse.internal.files.ui.actions;
@@ -23,6 +23,7 @@ import java.util.List;
 
 import org.eclipse.compare.CompareConfiguration;
 import org.eclipse.compare.CompareUI;
+import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.rse.files.ui.compare.SystemCompareInput;
 import org.eclipse.rse.files.ui.resources.SystemEditableRemoteFile;
@@ -66,6 +67,15 @@ public class SystemCompareFilesAction extends SystemBaseAction
 		for (int i = 0; i < _selected.size(); i++)
 		{
 			IRemoteFile file = (IRemoteFile) _selected.get(i);
+			// make sure this is the most up-to-date version
+			try {
+				file = file.getParentRemoteFileSubSystem().getRemoteFileObject(file.getAbsolutePath(), new NullProgressMonitor());
+				// ensure that, if this is cached, we get the latest on download
+				file.markStale(true);
+			}
+			catch (Exception e){				
+			}
+			
 			SystemEditableRemoteFile ef = new SystemEditableRemoteFile(file);
 			fInput.addRemoteEditable(ef);
 		}

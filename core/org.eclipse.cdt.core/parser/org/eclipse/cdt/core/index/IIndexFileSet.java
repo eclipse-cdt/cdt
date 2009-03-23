@@ -7,6 +7,7 @@
  *
  * Contributors:
  *    Markus Schorn - initial API and implementation
+ *    Sergey Prigogin (Google)
  *******************************************************************************/ 
 package org.eclipse.cdt.core.index;
 
@@ -28,6 +29,13 @@ public interface IIndexFileSet {
 	 * @since 5.1
 	 */
 	boolean contains(IIndexFile file) throws CoreException;
+
+	/**
+	 * Returns <code>true</code> if this file set contains a declaration or definition of
+	 * the given binding.
+	 * @since 5.1
+	 */
+	boolean containsDeclaration(IIndexBinding binding);
 
 	/**
 	 * Returns an array of bindings where all local bindings that are not part of this file-set

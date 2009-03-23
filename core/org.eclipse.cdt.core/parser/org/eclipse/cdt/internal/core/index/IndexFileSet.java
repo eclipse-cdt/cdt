@@ -12,9 +12,11 @@ package org.eclipse.cdt.internal.core.index;
 
 import java.util.BitSet;
 import java.util.HashMap;
+import java.util.Map;
 
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.dom.ast.IBinding;
+import org.eclipse.cdt.core.index.IIndexBinding;
 import org.eclipse.cdt.core.index.IIndexFile;
 import org.eclipse.cdt.core.index.IIndexFileSet;
 import org.eclipse.core.runtime.CoreException;
@@ -37,6 +39,26 @@ public class IndexFileSet implements IIndexFileSet {
 		subSet.add(fragFile);
 	}
 
+	public boolean containsDeclaration(IIndexBinding binding) {
+		for (Map.Entry<IIndexFragment, IIndexFragmentFileSet> entry : fSubSets.entrySet()) {
+			try {
+				IIndexFragmentName[] names =
+						entry.getKey().findNames(binding, IIndexFragment.FIND_DECLARATIONS_DEFINITIONS);
+				for (IIndexFragmentName name : names) {
+					try {
+						if (entry.getValue().contains((IIndexFragmentFile) name.getFile())) {
+							return true;
+						}
+					} catch (CoreException e) {
+						CCorePlugin.log(e);
+					}
+				}
+			} catch (CoreException e) {
+				CCorePlugin.log(e);
+			}
+		}
+		return false;
+	}
 
 	public IBinding[] filterFileLocalBindings(IBinding[] bindings) {
 		if (bindings == null || bindings.length == 0) {

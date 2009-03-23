@@ -1843,37 +1843,30 @@ public class CPPSemantics {
 	        	if (type == null) {
 	                type = temp;
 	        	} else if (type != temp) {
-        			boolean i1= isFromIndex(type);
-        			boolean i2= isFromIndex(temp);
-        			if (i1 != i2) {
-        				// prefer non-index bindings
-        				if (i1)  
-        					type= temp;
-        			} else {
-        				if (((IType)type).isSameType((IType) temp)) {
+	        		int c = compareByRelevance(data, type, temp);
+	        		if (c < 0) {
+	        			type= temp;
+	        		} else if (c == 0) {
+        				if (((IType) type).isSameType((IType) temp)) {
         					if (type instanceof ITypedef && !(temp instanceof ITypedef)) {
-        						// prefer non-typedefs
+        						// Between same types prefer non-typedef.
         						type= temp;
         					}
         				} else {
         					return new ProblemBinding(data.astName, IProblemBinding.SEMANTIC_AMBIGUOUS_LOOKUP);
         				}
-        			}
+	        		}
 	            }
 	        } else {
 	        	if (obj == null) {
 	        		obj = temp;
 	        	} else if (obj == temp) {
-	        	    //ok, delegates are synonyms
+	        	    // Ok, delegates are synonyms.
 	        	} else {
-	        		// ignore index stuff in case we have bindings from the ast
-	        		boolean ibobj= isFromIndex(obj);
-	        		boolean ibtemp= isFromIndex(temp);
-	        		// blame it on the index
-	        		if (ibobj != ibtemp) {
-	        			if (ibobj) 
-	        				obj= temp;
-	        		} else { 
+	        		int c = compareByRelevance(data, obj, temp);
+	        		if (c < 0) {
+	        			obj= temp;
+	        		} else if (c == 0) {
 	        			return new ProblemBinding(data.astName, IProblemBinding.SEMANTIC_AMBIGUOUS_LOOKUP);
 	        		}
 	        	}
@@ -1917,6 +1910,36 @@ public class CPPSemantics {
 	    return type;
 	}
 
+	/**
+	 * Compares two bindings for relevance in the context of an AST. AST bindings are
+	 * considered more relevant than index ones since the index may be out of date,
+	 * built for a different configuration, etc. Index bindings reachable through includes
+	 * are more relevant than unreachable ones.
+	 * @param ast
+	 * @param b1
+	 * @param b2
+	 * @return 1 if binding <code>b1</code> is more relevant than <code>b2</code>; 0 if
+	 * the two bindings have the same relevance; -1 if <code>b1</code> is less relevant than
+	 * <code>b2</code>.
+	 */
+	private static int compareByRelevance(LookupData data, IBinding b1, IBinding b2) {
+		boolean b1FromIndex= isFromIndex(b1);
+		boolean b2FromIndex= isFromIndex(b2);
+		if (b1FromIndex != b2FromIndex) {
+			return !b1FromIndex ? 1 : -1;
+		} else if (b1FromIndex) {
+			// Both are from index.
+			if (data.tu != null) {
+	    		boolean b1Reachable= isReachableFromAst(data.tu, b1);
+	    		boolean b2Reachable= isReachableFromAst(data.tu, b2);
+	    		if (b1Reachable != b2Reachable) {
+	    			return b1Reachable ? 1 : -1;
+	    		}
+			}
+		}
+		return 0;
+	}
+
 	private static boolean isFromIndex(IBinding binding) {
 		if (binding instanceof IIndexBinding) {
 			return true;
@@ -1926,7 +1949,32 @@ public class CPPSemantics {
 		}
 		return false;
 	}
-	
+
+	/**
+	 * Checks if a binding belongs to an AST or is reachable from it through includes. 
+	 * @param ast
+	 * @param binding
+	 * @return <code>true</code> if the <code>binding</code> is reachable from <code>ast</code>.
+	 */
+	private static boolean isReachableFromAst(IASTTranslationUnit ast, IBinding binding) {
+		IIndexBinding indexBinding = null;
+		if (binding instanceof IIndexBinding) {
+			indexBinding = (IIndexBinding) binding;
+		}
+		if (binding instanceof ICPPSpecialization) {
+			binding = ((ICPPSpecialization) binding).getSpecializedBinding();
+			if (binding instanceof IIndexBinding) {
+				indexBinding = (IIndexBinding) binding;
+			}
+		}
+		if (indexBinding != null) {
+			IIndexFileSet indexFileSet = ast.getIndexFileSet();
+			return indexFileSet != null && indexFileSet.containsDeclaration(indexBinding);
+		} else {
+			return ast.getDeclarationsInAST(binding).length != 0;
+		}
+	}
+
 	static private void reduceToViable(LookupData data, IBinding[] functions) throws DOMException {
 	    if (functions == null || functions.length == 0)
 	        return;
@@ -2142,14 +2190,19 @@ public class CPPSemantics {
 				} 
 			}
 			
-			// if we are ambiguous at this point prefer non-index bindings
+			// Ff we are ambiguous at this point, prefer a non-index binding or reachable index one.
 			if (hasBetter == hasWorse) {
-				final boolean bestIsFromIndex= isFromIndex(bestFn);
-				final boolean currIsFromIndex= isFromIndex(fn);
-				if (bestIsFromIndex != currIsFromIndex) {
-					hasBetter= bestIsFromIndex;
-					hasWorse= currIsFromIndex;
+				int c = compareByRelevance(data, bestFn, fn);
+				if (c != 0) {
+					hasBetter = (c < 0);
+					hasWorse = !hasBetter;
 				}
+//				final boolean bestIsFromIndex= isFromIndex(bestFn);
+//				final boolean currIsFromIndex= isFromIndex(fn);
+//				if (bestIsFromIndex != currIsFromIndex) {
+//					hasBetter= bestIsFromIndex;
+//					hasWorse= currIsFromIndex;
+//				}
 			}
 								
 			// If function has a parameter match that is better than the current best,
@@ -2356,14 +2409,21 @@ public class CPPSemantics {
                     ft = e.getProblem();
                 }
                 if (type.isSameType(ft)) {
-                    if (result != null) {
-                    	boolean fromIndex= isFromIndex(fn);
-                    	if (isFromIndex(result) == fromIndex)
-                    		return new ProblemBinding(data.astName, IProblemBinding.SEMANTIC_AMBIGUOUS_LOOKUP);
-                    	if (!fromIndex)
+                	if (result == null) {
+                		result = fn;
+                	} else {
+        				int c = compareByRelevance(data, result, fn);
+        				if (c < 0) {
                     		result= fn;
+        				} else if (c == 0) {
+                    		return new ProblemBinding(data.astName, IProblemBinding.SEMANTIC_AMBIGUOUS_LOOKUP);
+        				}
+//                    	boolean fromIndex= isFromIndex(fn);
+//                    	if (isFromIndex(result) == fromIndex)
+//                    		return new ProblemBinding(data.astName, IProblemBinding.SEMANTIC_AMBIGUOUS_LOOKUP);
+//                    	if (!fromIndex)
+//                    		result= fn;
                     }
-                    result = fn;
                 }
             }
 

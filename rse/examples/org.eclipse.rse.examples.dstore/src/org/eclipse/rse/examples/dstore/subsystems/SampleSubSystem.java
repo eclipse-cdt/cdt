@@ -112,11 +112,13 @@ public class SampleSubSystem extends SubSystem {
 
 	@Override
 	public void uninitializeSubSystem(IProgressMonitor monitor) {
-		_root.setHostSampleObject(null);
-		_root.setContents(null);
-		super.uninitializeSubSystem(monitor);
+		if (_root != null){
+			_root.setHostSampleObject(null);
+			_root.setContents(null);
+		}
 		
 		getSampleService().uninitService(monitor);
+		super.uninitializeSubSystem(monitor);
 	}
 
 	

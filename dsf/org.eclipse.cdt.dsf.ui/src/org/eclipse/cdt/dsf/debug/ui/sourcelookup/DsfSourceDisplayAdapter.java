@@ -56,6 +56,7 @@ import org.eclipse.debug.core.sourcelookup.ISourceLookupParticipant;
 import org.eclipse.debug.core.sourcelookup.containers.LocalFileStorage;
 import org.eclipse.debug.ui.DebugUITools;
 import org.eclipse.debug.ui.IDebugUIConstants;
+import org.eclipse.debug.ui.ISourcePresentation;
 import org.eclipse.debug.ui.sourcelookup.CommonSourceNotFoundEditorInput;
 import org.eclipse.debug.ui.sourcelookup.ISourceDisplay;
 import org.eclipse.jface.text.BadLocationException;
@@ -192,24 +193,39 @@ public class DsfSourceDisplayAdapter implements ISourceDisplay, ISteppingControl
             if (sourceElement == null) {
                 editorInput = new CommonSourceNotFoundEditorInput(dmc);
                 editorId = IDebugUIConstants.ID_COMMON_SOURCE_NOT_FOUND_EDITOR;
-            } else if (sourceElement instanceof IFile) {
-                editorId = getEditorIdForFilename(((IFile)sourceElement).getName());
-                editorInput = new FileEditorInput((IFile)sourceElement);
-            } else if (sourceElement instanceof ITranslationUnit) {
-            	try {
-                	URI uriLocation = ((ITranslationUnit)sourceElement).getLocationURI();
-            		IFileStore fileStore = EFS.getStore(uriLocation);
-            		editorInput = new FileStoreEditorInput(fileStore);
-            		editorId = getEditorIdForFilename(fileStore.getName());
-            	} catch (CoreException e) {
-                    editorInput = new CommonSourceNotFoundEditorInput(dmc);
-                    editorId = IDebugUIConstants.ID_COMMON_SOURCE_NOT_FOUND_EDITOR;
-            	}
-            } else if (sourceElement instanceof LocalFileStorage) {
-            	File file = ((LocalFileStorage)sourceElement).getFile();
-            	IFileStore fileStore = EFS.getLocalFileSystem().fromLocalFile(file);
-        		editorInput = new FileStoreEditorInput(fileStore);
-        		editorId = getEditorIdForFilename(file.getName());
+            } else {
+				ISourcePresentation presentation= null;
+				if (fSourceLookup instanceof ISourcePresentation) {
+					presentation = (ISourcePresentation) fSourceLookup;
+				} else {
+				    if (dmc != null) {
+				        presentation = (ISourcePresentation) dmc.getAdapter(ISourcePresentation.class);
+				    }
+				}
+	            if (presentation != null) {
+	            	editorInput = presentation.getEditorInput(sourceElement);
+	            	if (editorInput != null) {
+	            		editorId = presentation.getEditorId(editorInput, sourceElement);
+	            	}
+	            } else if (sourceElement instanceof IFile) {
+	                editorId = getEditorIdForFilename(((IFile)sourceElement).getName());
+	                editorInput = new FileEditorInput((IFile)sourceElement);
+	            } else if (sourceElement instanceof ITranslationUnit) {
+	            	try {
+	                	URI uriLocation = ((ITranslationUnit)sourceElement).getLocationURI();
+	            		IFileStore fileStore = EFS.getStore(uriLocation);
+	            		editorInput = new FileStoreEditorInput(fileStore);
+	            		editorId = getEditorIdForFilename(fileStore.getName());
+	            	} catch (CoreException e) {
+	                    editorInput = new CommonSourceNotFoundEditorInput(dmc);
+	                    editorId = IDebugUIConstants.ID_COMMON_SOURCE_NOT_FOUND_EDITOR;
+	            	}
+	            } else if (sourceElement instanceof LocalFileStorage) {
+	            	File file = ((LocalFileStorage)sourceElement).getFile();
+	            	IFileStore fileStore = EFS.getLocalFileSystem().fromLocalFile(file);
+	        		editorInput = new FileStoreEditorInput(fileStore);
+	        		editorId = getEditorIdForFilename(file.getName());
+	            }
             }
             result.setEditorInput(editorInput);
             result.setEditorId(editorId);

@@ -1558,10 +1558,7 @@ public class CPPVisitor extends ASTQueries {
 	    	returnType = getPointerTypes(returnType, fnDtor);
 	    }
 	    
-	    // a destructor can be called for const and volatile objects
-	    final char[] lookupKey = name.getLookupKey();
-	    final boolean isDestructor= lookupKey.length > 0 && lookupKey[0]=='~';
-	    IType type = new CPPFunctionType(returnType, pTypes, isDestructor || fnDtor.isConst(), isDestructor || fnDtor.isVolatile());
+	    IType type = new CPPFunctionType(returnType, pTypes, fnDtor.isConst(), fnDtor.isVolatile());
 	    final IASTDeclarator nested = fnDtor.getNestedDeclarator();
 	    if (nested != null) {
 	    	return createType(type, nested);

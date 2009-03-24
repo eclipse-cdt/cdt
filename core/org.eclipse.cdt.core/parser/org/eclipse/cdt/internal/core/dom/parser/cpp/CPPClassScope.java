@@ -133,8 +133,7 @@ public class CPPClassScope extends CPPScope implements ICPPClassScope {
 
 		if (!ia.hasUserDeclaredDestructor()) {
 			//destructor: ~A()
-			// a destructor can be called for const and volatile objects
-			ICPPFunctionType ft= CPPVisitor.createImplicitFunctionType(new CPPBasicType(IBasicType.t_unspecified, 0), voidPs, true, true);
+			ICPPFunctionType ft= CPPVisitor.createImplicitFunctionType(new CPPBasicType(IBasicType.t_unspecified, 0), voidPs, false, false);
 			char[] dtorName = CharArrayUtils.concat("~".toCharArray(), className);  //$NON-NLS-1$
 			ICPPMethod m = new CPPImplicitMethod(this, dtorName, ft, voidPs);
 			implicits[i++] = m;

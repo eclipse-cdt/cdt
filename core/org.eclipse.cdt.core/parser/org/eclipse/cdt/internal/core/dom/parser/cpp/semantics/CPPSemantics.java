@@ -2200,7 +2200,8 @@ public class CPPSemantics {
 			
 			final IType thisType = data.getImpliedObjectArgument();
 			
-			if (ASTInternal.isStatic(fn, false)) {
+			if (fn instanceof ICPPMethod && 
+					(((ICPPMethod) fn).isDestructor() || ASTInternal.isStatic(fn, false))) {
 			    // 13.3.1-4 for static member functions, the implicit object parameter always matches, no cost
 			    cost = new Cost(thisType, implicitType, Rank.IDENTITY);
 			} else if (thisType == null) {

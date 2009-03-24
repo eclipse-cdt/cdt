@@ -866,6 +866,10 @@ class PDOMCPPLinkage extends PDOMLinkage implements IIndexCPPBindingConstants {
 				}
 			}
 		} else if (parentNode instanceof ICPPASTUsingDirective) {
+			IASTNode parent= name.getParent();
+			if (parent instanceof ICPPASTQualifiedName) {
+				name = (IASTName) parent;
+			}
 			IScope container= CPPVisitor.getContainingScope(name);
 			try {
 				boolean doit= false;

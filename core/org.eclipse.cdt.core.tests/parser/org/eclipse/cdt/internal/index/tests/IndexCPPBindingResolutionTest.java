@@ -1346,6 +1346,17 @@ public abstract class IndexCPPBindingResolutionTest extends IndexBindingResoluti
 		checkValue(e.getValue(), 5);
 	}
 
+	//	namespace ns1 { namespace ns2 {
+	//	  class A {};
+	//	}}
+	//	using namespace ns1::ns2;
+	
+	//	#include "header.h"
+	//	A a;
+	public void testUsingDirectiveWithQualifiedName_269727() throws Exception {
+    	getBindingFromASTName("A a", 1, ICPPClassType.class);
+	}
+
 	private void checkValue(IValue initialValue, int i) {
 		assertNotNull(initialValue);
 		final Long numericalValue = initialValue.numericalValue();
@@ -1438,8 +1449,8 @@ public abstract class IndexCPPBindingResolutionTest extends IndexBindingResoluti
  		}
  		assertEquals(expectedEnumerators, actualEnumerators);
  	}
- 	/**
- 	 * 
+
+	/**
  	 * @param binding
  	 * @param cqn
  	 * @param qn may be null

@@ -1084,6 +1084,26 @@ public class IndexCPPBindingResolutionBugs extends IndexBindingResolutionTestBas
     	getBindingFromASTName("A::B::m", 7, ICPPMethod.class);
 	}
 
+	//	namespace ns {
+	//		struct S {
+	//			int a;
+	//		};
+	//	}
+	//	class A {
+	//		public:
+	//			template<typename T> operator T*(){return 0;};
+	//	};
+
+	//	namespace ns {
+	//		void bla() {
+	//			A a;
+	//			a.operator S *();
+	//		}
+	//	}
+	public void testLookupScopeForConversionNames_267221() throws Exception {
+    	getBindingFromASTName("operator S *", 12, ICPPMethod.class);
+	}
+
 	private void assertBindings(String[] expected, ICPPBase[] bases) throws DOMException {
 		IBinding[] bindings= new IBinding[bases.length];
 		for (int i = 0; i < bindings.length; i++) {
@@ -1115,35 +1135,5 @@ public class IndexCPPBindingResolutionBugs extends IndexBindingResolutionTestBas
 		}
 		buf.append('}');
 		return buf.toString();
-	}
-	
-	//	namespace ns {
-	//		struct S {
-	//			int a;
-	//		};
-	//	}
-	//	class A {
-	//		public:
-	//			template<typename T> operator T*(){return 0;};
-	//	};
-
-	//	namespace ns {
-	//		void bla() {
-	//			A a;
-	//			a.operator S *();
-	//		}
-	//	}
-	public void testLookupScopeForConversionNames_267221() throws Exception {
-    	getBindingFromASTName("operator S *", 12, ICPPMethod.class);
-	}
-
-	//	namespace ns1 { namespace ns2 {
-	//	  class A {};
-	//	}}
-	//	using namespace ns1::ns2;
-	
-	//	A a;
-	public void _testTwoLevelUsingDirective_269727() throws Exception {
-    	getBindingFromASTName("A a", 1, ICPPClassType.class);
 	}
 }

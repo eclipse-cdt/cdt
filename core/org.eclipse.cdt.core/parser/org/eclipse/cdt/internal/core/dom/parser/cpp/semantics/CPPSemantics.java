@@ -175,6 +175,7 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPInternalUnknownScope;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPUnknownBinding;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPUnknownType;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.OverloadableOperator;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.Conversions.UDCMode;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.Cost.Rank;
 import org.eclipse.cdt.internal.core.index.IIndexScope;
 
@@ -2116,7 +2117,9 @@ public class CPPSemantics {
 		boolean ambiguous = false;				// ambiguity, 2 functions are equally good
 		FunctionCost bestFnCost = null;		    // the cost of the best function
 				
+		
 		// Loop over all functions
+		List<FunctionCost> potentialCosts= null;
 		for (IFunction fn : fns) {
 			if (fn == null) 
 				continue;
@@ -2131,12 +2134,33 @@ public class CPPSemantics {
 				return CPPUnknownFunction.createForSample(firstViable, data.astName);
 			}
 
+			if (fnCost.hasDeferredUDC()) {
+				if (potentialCosts == null) {
+					potentialCosts= new ArrayList<FunctionCost>();
+				}
+				potentialCosts.add(fnCost);
+				continue;
+			}
 			int cmp= fnCost.compareTo(data, bestFnCost);
 			if (cmp < 0) {
 				bestFnCost= fnCost;
 				ambiguous= false;
 			} else if (cmp == 0) {
 				ambiguous= true;
+			}
+		}
+		
+		if (potentialCosts != null) {
+			for (FunctionCost fnCost : potentialCosts) {
+				if (!fnCost.mustBeWorse(bestFnCost) && fnCost.performUDC()) {
+					int cmp= fnCost.compareTo(data, bestFnCost);
+					if (cmp < 0) {
+						bestFnCost= fnCost;
+						ambiguous= false;
+					} else if (cmp == 0) {
+						ambiguous= true;
+					}
+				}
 			}
 		}
 
@@ -2186,14 +2210,15 @@ public class CPPSemantics {
 			} else {
 			    if (CPPTemplates.isDependentType(implicitType))
 			    	return CONTAINS_DEPENDENT_TYPES;
-				cost = Conversions.checkImplicitConversionSequence(null, thisType, implicitType, false, true);
+				cost = Conversions.checkImplicitConversionSequence(null, thisType, implicitType, UDCMode.noUDC, true);
 			}
 			if (cost.getRank() == Rank.NO_MATCH)
 				return null;
 			
 			result.setCost(k++, cost);
 		}
-		
+
+		final UDCMode udc = allowUDC ? UDCMode.deferUDC : UDCMode.noUDC;
 		for (int j = 0; j < sourceLen; j++) {
 			final IType argType= argTypes[j];
 			if (argType == null)
@@ -2217,7 +2242,7 @@ public class CPPSemantics {
 			} else {
 			    if (CPPTemplates.isDependentType(paramType))
 			    	return CONTAINS_DEPENDENT_TYPES;
-				cost = Conversions.checkImplicitConversionSequence(arg, argType, paramType, allowUDC, false);
+				cost = Conversions.checkImplicitConversionSequence(arg, argType, paramType, udc, false);
 			}
 			if (cost.getRank() == Rank.NO_MATCH)
 				return null;

@@ -47,10 +47,32 @@ class FunctionCost {
 	
 	public boolean hasAmbiguousUserDefinedConversion() {
 		for (Cost cost : fCosts) {
-			if (cost.isAmbiguousUserdefinedConversion())
+			if (cost.isAmbiguousUDC())
 				return true;
 		}
 		return false;
+	}
+
+	public boolean hasDeferredUDC() {
+		for (Cost cost : fCosts) {
+			if (cost.isDeferredUDC())
+				return true;
+		}
+		return false;
+	}
+	
+	public boolean performUDC() throws DOMException {
+		for (int i = 0; i < fCosts.length; i++) {
+			Cost cost = fCosts[i];
+			if (cost.isDeferredUDC()) {
+				Cost udcCost= Conversions.checkUserDefinedConversionSequence(cost.source, cost.target, false);
+				if (udcCost == null) {
+					return false;
+				}
+				fCosts[i]= udcCost;
+			}
+		}
+		return true;
 	}
 
 	/**
@@ -75,7 +97,7 @@ class FunctionCost {
 				break;
 			}
 
-			int cmp = cost.compare(other.getCost(idxOther));
+			int cmp = cost.compareTo(other.getCost(idxOther));
 			haveWorse |= (cmp > 0);
 			haveBetter |= (cmp < 0);
 		}
@@ -111,6 +133,36 @@ class FunctionCost {
 			return -1;
 		
 		return 1;
+	}
+	
+	public boolean mustBeWorse(FunctionCost other) {
+		if (other == null)
+			return false;
+		
+		boolean haveWorse= false;
+		int idx= getLength()-1;
+		int idxOther= other.getLength()-1;
+		for (; idx>=0 && idxOther>=0; idx--,idxOther--) {
+			Cost cost= getCost(idx);
+			if (cost.getRank() == Rank.NO_MATCH) 
+				return true;
+			
+			Cost otherCost= other.getCost(idxOther);
+			
+			int cmp;
+			if (cost.isDeferredUDC()) {
+				cmp= cost.getRank().compareTo(otherCost.getRank());
+			} else {
+				cmp= cost.compareTo(otherCost);
+			}
+			
+			if (cmp < 0)
+				return false;
+			if (cmp > 0)
+				haveWorse= true;
+		}
+		
+		return haveWorse;
 	}
 
 	private static ICPPFunctionTemplate asTemplate(IFunction function) {

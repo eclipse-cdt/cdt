@@ -51,21 +51,24 @@ import org.eclipse.core.runtime.CoreException;
  * Routines for calculating the cost of conversions.
  */
 public class Conversions {
+	enum UDCMode {allowUDC, noUDC, deferUDC}
 	/**
 	 * Computes the cost of an implicit conversion sequence
 	 * [over.best.ics] 13.3.3.1
 	 * @param sourceExp the expression behind the source type
 	 * @param source the source (argument) type
 	 * @param target the target (parameter) type
-	 * @param allowUDC whether a user-defined conversion is allowed during the sequence
 	 * @param isImpliedObject
 	 * 
 	 * @return the cost of converting from source to target
 	 * @throws DOMException
 	 */
 	public static Cost checkImplicitConversionSequence(IASTExpression sourceExp, IType source,
-			IType target, boolean allowUDC, boolean isImpliedObject) throws DOMException {
-		allowUDC &= !isImpliedObject;
+			IType target, UDCMode udc, boolean isImpliedObject) throws DOMException {
+		if (isImpliedObject) {
+			udc= UDCMode.noUDC;
+		}
+		
 		target= getNestedType(target, TDEF);
 		source= getNestedType(source, TDEF);
 		
@@ -92,7 +95,7 @@ public class Conversions {
 				} 
 			}
 			
-			if (T2 instanceof ICPPClassType && allowUDC) {
+			if (T2 instanceof ICPPClassType && udc != UDCMode.noUDC) {
 				// Or has a class type (i.e., T2 is a class type) and can be implicitly converted to
 				// an lvalue of type "cv3 T3," where "cv1 T1" is reference-compatible with "cv3 T3" 92)
 				// (this conversion is selected by enumerating the applicable conversion functions
@@ -107,7 +110,7 @@ public class Conversions {
 							IType cvT2= getNestedType(newSource, TDEF | REF);
 							Cost cost2= isReferenceCompatible(cv1T1, cvT2, false); 
 							if (cost2 != null) {
-								int cmp= cost2.compare(operatorCost);
+								int cmp= cost2.compareTo(operatorCost);
 								if (cmp <= 0) {
 									ambiguousConversionOperator= cmp == 0;
 									operatorCost= cost2;
@@ -150,7 +153,7 @@ public class Conversions {
 
 					// We must do a non-reference initialization
 					if (!illformed) {
-						return nonReferenceConversion(source, cv1T1, allowUDC, isImpliedObject);
+						return nonReferenceConversion(source, cv1T1, udc, isImpliedObject);
 					}
 				}
 			}
@@ -158,17 +161,17 @@ public class Conversions {
 		} 
 		
 		// Non-reference binding
-		return nonReferenceConversion(source, target, allowUDC, isImpliedObject);
+		return nonReferenceConversion(source, target, udc, isImpliedObject);
 	}
 
-	private static Cost nonReferenceConversion(IType source, IType target, boolean allowUDC,
-			boolean isImpliedObject) throws DOMException {
+	private static Cost nonReferenceConversion(IType source, IType target, UDCMode udc, boolean isImpliedObject) throws DOMException {
 		Cost cost= checkStandardConversionSequence(source, target, isImpliedObject);
-		if (allowUDC && cost.getRank() == Rank.NO_MATCH) { 
-			Cost temp = checkUserDefinedConversionSequence(source, target);
-			if (temp != null) {
-				cost = temp;
-			}
+		if (cost.getRank() != Rank.NO_MATCH || udc == UDCMode.noUDC) 
+			return cost;
+		
+		Cost temp = checkUserDefinedConversionSequence(source, target, udc == UDCMode.deferUDC);
+		if (temp != null) {
+			cost = temp;
 		}
 		return cost;
 	}
@@ -318,13 +321,23 @@ public class Conversions {
 	 * @return
 	 * @throws DOMException
 	 */
-	private static final Cost checkUserDefinedConversionSequence(IType source, IType target) throws DOMException {
+	static final Cost checkUserDefinedConversionSequence(IType source, IType target, boolean deferUDC) throws DOMException {
 		Cost constructorCost= null;
 		Cost operatorCost= null;
 
 		IType s= getNestedType(source, TDEF | CVQ | REF);
 		IType t= getNestedType(target, TDEF | CVQ | REF);
 
+		if (!(s instanceof ICPPClassType || t instanceof ICPPClassType)) {
+			return null;
+		}
+		
+		if (deferUDC) {
+			Cost c= new Cost(s, t, Rank.USER_DEFINED_CONVERSION);
+			c.setDeferredUDC(true);
+			return c;
+		}
+		
 		//constructors
 		if (t instanceof ICPPClassType) {
 			ICPPConstructor[] ctors= ((ICPPClassType) t).getConstructors();
@@ -359,7 +372,7 @@ public class Conversions {
 				for (final ICPPMethod op : ops) {
 					Cost cost= checkStandardConversionSequence(op.getType().getReturnType(), target, false);
 					if (cost.getRank() != Rank.NO_MATCH) {
-						int cmp= cost.compare(operatorCost);
+						int cmp= cost.compareTo(operatorCost);
 						if (cmp <= 0) {
 							cost.setUserDefinedConversion(op);
 							operatorCost= cost;
@@ -373,13 +386,13 @@ public class Conversions {
 		if (constructorCost != null) {
 			if (operatorCost != null && !ambiguousConversionOperator) {
 				// If both are valid, then the conversion is ambiguous
-				constructorCost.setAmbiguousUserdefinedConversion(true);
+				constructorCost.setAmbiguousUDC(true);
 			} 
 			return constructorCost;
 		} 
 		
 		if (operatorCost != null) {
-			operatorCost.setAmbiguousUserdefinedConversion(ambiguousConversionOperator);
+			operatorCost.setAmbiguousUDC(ambiguousConversionOperator);
 			return operatorCost;
 		}
 

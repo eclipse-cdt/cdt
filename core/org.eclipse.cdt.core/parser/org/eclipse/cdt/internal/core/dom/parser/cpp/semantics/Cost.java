@@ -13,7 +13,6 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.dom.parser.cpp.semantics;
 
-import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunction;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPMethod;
@@ -34,7 +33,8 @@ final class Cost {
 
 	private Rank fRank;
 	private Rank fSecondStandardConversionRank;
-	private boolean fAmbiguousUserdefinedConversion;
+	private boolean fAmbiguousUDC;
+	private boolean fDeferredUDC;
 	private int fQualificationAdjustments;
 	private int fInheritanceDistance;
 	private ICPPFunction fUserDefinedConversion;
@@ -53,12 +53,20 @@ final class Cost {
 		fRank= rank;
 	}
 	
-	public boolean isAmbiguousUserdefinedConversion() {
-		return fAmbiguousUserdefinedConversion;
+	public boolean isAmbiguousUDC() {
+		return fAmbiguousUDC;
 	}
 
-	public void setAmbiguousUserdefinedConversion(boolean val) {
-		fAmbiguousUserdefinedConversion= val;
+	public void setAmbiguousUDC(boolean val) {
+		fAmbiguousUDC= val;
+	}
+
+	public boolean isDeferredUDC() {
+		return fDeferredUDC;
+	}
+
+	public void setDeferredUDC(boolean val) {
+		fDeferredUDC= val;
 	}
 
 	public int getInheritanceDistance() {
@@ -93,10 +101,13 @@ final class Cost {
 	 *        0 if this cost is equal to the other cost,
 	 *        an integer &gt 0 if this cost is larger than the other cost.
 	 */
-	public int compare(Cost other) throws DOMException {
+	public int compareTo(Cost other) {
 		if (other == null)
 			return -1;
 		
+		// cannot compare costs with deferred user defined conversions
+		assert !fDeferredUDC && !other.fDeferredUDC;
+
 		int cmp= fRank.compareTo(other.fRank);
 		if (cmp != 0) 
 			return cmp;
@@ -104,7 +115,7 @@ final class Cost {
 		// rank is equal
 		if (fRank == Rank.USER_DEFINED_CONVERSION) {
 			// 13.3.3.1.10
-			if (isAmbiguousUserdefinedConversion() || other.isAmbiguousUserdefinedConversion())
+			if (isAmbiguousUDC() || other.isAmbiguousUDC())
 				return 0;
 			
 			if (!fUserDefinedConversion.equals(other.fUserDefinedConversion))

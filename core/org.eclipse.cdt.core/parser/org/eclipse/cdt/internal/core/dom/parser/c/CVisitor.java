@@ -51,7 +51,6 @@ import org.eclipse.cdt.core.dom.ast.IASTStandardFunctionDeclarator;
 import org.eclipse.cdt.core.dom.ast.IASTStatement;
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
 import org.eclipse.cdt.core.dom.ast.IASTTypeId;
-import org.eclipse.cdt.core.dom.ast.IArrayType;
 import org.eclipse.cdt.core.dom.ast.IBasicType;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.ICompositeType;
@@ -78,6 +77,7 @@ import org.eclipse.cdt.core.dom.ast.c.ICASTFieldDesignator;
 import org.eclipse.cdt.core.dom.ast.c.ICASTPointer;
 import org.eclipse.cdt.core.dom.ast.c.ICASTSimpleDeclSpecifier;
 import org.eclipse.cdt.core.dom.ast.c.ICASTTypedefNameSpecifier;
+import org.eclipse.cdt.core.dom.ast.c.ICArrayType;
 import org.eclipse.cdt.core.dom.ast.c.ICCompositeTypeScope;
 import org.eclipse.cdt.core.dom.ast.c.ICFunctionScope;
 import org.eclipse.cdt.core.dom.ast.gnu.c.ICASTKnRFunctionDeclarator;
@@ -1277,9 +1277,17 @@ public class CVisitor extends ASTQueries {
         if (isParameter) {
             //C99: 6.7.5.3-7 a declaration of a parameter as "array of type" shall be adjusted to "qualified pointer to type", where the
     		//type qualifiers (if any) are those specified within the[and] of the array type derivation
-            if (type instanceof IArrayType) {
-	            CArrayType at = (CArrayType) type;
-	            type = new CQualifiedPointerType(at.getType(), at.getModifier());
+            if (type instanceof ICArrayType) {
+	            ICArrayType at = (ICArrayType) type;
+	    		try {
+					int q= 0;
+					if (at.isConst()) q |= CPointerType.IS_CONST;
+					if (at.isVolatile()) q |= CPointerType.IS_VOLATILE;
+					if (at.isRestrict()) q |= CPointerType.IS_RESTRICT;
+					type = new CPointerType(at.getType(), q);
+				} catch (DOMException e) {
+					// stick to the array
+				}
 	        } else if (type instanceof IFunctionType) {
 	            //-8 A declaration of a parameter as "function returning type" shall be adjusted to "pointer to function returning type"
 	            type = new CPointerType(type, 0);

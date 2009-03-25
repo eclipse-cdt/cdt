@@ -1,5 +1,5 @@
 /********************************************************************************
- * Copyright (c) 2002, 2008 IBM Corporation and others. All rights reserved.
+ * Copyright (c) 2002, 2009 IBM Corporation and others. All rights reserved.
  * This program and the accompanying materials are made available under the terms
  * of the Eclipse Public License v1.0 which accompanies this distribution, and is
  * available at http://www.eclipse.org/legal/epl-v10.html
@@ -67,6 +67,7 @@
  * David McKnight   (IBM)        - [249245] not showing inappropriate popup actions for: Refresh, Show In Table, Go Into, etc. 
  * David McKnight   (IBM)        - [251625] Widget disposed exception when renaming/pasting a folder
  * David McKnight   (IBM)        - [257721] Doubleclick doing special handling and expanding
+ * David McKnight   (IBM)        - [190805] [performance][dstore] Right-click > Disconnect on a dstore connection is slow and spawns many Jobs
  ********************************************************************************/
 
 package org.eclipse.rse.internal.ui.view;
@@ -2176,18 +2177,38 @@ public class SystemView extends SafeTreeViewer
 			case ISystemResourceChangeEvents.EVENT_ICON_CHANGE:
 				if (debug) logDebugMsg("SV event: EVENT_ICON_CHANGE "); //$NON-NLS-1$
 
-				if (initViewerFilters != null && initViewerFilters.length > 0) {
-					Widget w = findItem(src);
-					if (w == null) {
-						refresh(parent);
+				if (src instanceof Object[]){
+					Object[] srcs = (Object[])src;
+					for (int s = 0; s < srcs.length; s++){
+						if (initViewerFilters != null && initViewerFilters.length > 0) {
+							Widget w = findItem(srcs[s]);
+							if (w == null) {
+								refresh(parent);
+							} else {
+								properties[0] = IBasicPropertyConstants.P_IMAGE;
+								update(srcs[s], properties); // for refreshing non-structural properties in viewer when model changes
+		
+							}
+						} else {
+							properties[0] = IBasicPropertyConstants.P_IMAGE;
+							update(srcs[s], properties); // for refreshing non-structural properties in viewer when model changes
+						}						
+					}
+				}
+				else {
+					if (initViewerFilters != null && initViewerFilters.length > 0) {
+						Widget w = findItem(src);
+						if (w == null) {
+							refresh(parent);
+						} else {
+							properties[0] = IBasicPropertyConstants.P_IMAGE;
+							update(src, properties); // for refreshing non-structural properties in viewer when model changes
+	
+						}
 					} else {
 						properties[0] = IBasicPropertyConstants.P_IMAGE;
 						update(src, properties); // for refreshing non-structural properties in viewer when model changes
-
 					}
-				} else {
-					properties[0] = IBasicPropertyConstants.P_IMAGE;
-					update(src, properties); // for refreshing non-structural properties in viewer when model changes
 				}
 
 				//updatePropertySheet();

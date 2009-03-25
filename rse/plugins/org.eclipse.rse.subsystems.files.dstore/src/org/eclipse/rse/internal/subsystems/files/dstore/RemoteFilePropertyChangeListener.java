@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2002, 2008 IBM Corporation and others.
+ * Copyright (c) 2002, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -14,6 +14,7 @@
  * Contributors:
  * Martin Oberhuber (Wind River) - [168975] Move RSE Events API to Core
  * Martin Oberhuber (Wind River) - [186773] split ISystemRegistryUI from ISystemRegistry
+ * David McKnight   (IBM)        - [190805] [performance][dstore] Right-click > Disconnect on a dstore connection is slow and spawns many Jobs
  *******************************************************************************/
 
 package org.eclipse.rse.internal.subsystems.files.dstore;
@@ -40,8 +41,6 @@ import org.eclipse.rse.dstore.universal.miners.IUniversalDataStoreConstants;
 import org.eclipse.rse.internal.subsystems.files.core.SystemFileResources;
 import org.eclipse.rse.subsystems.files.core.servicesubsystem.FileServiceSubSystem;
 import org.eclipse.rse.subsystems.files.core.subsystems.IRemoteFile;
-import org.eclipse.rse.ui.SystemBasePlugin;
-import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.progress.UIJob;
 
@@ -64,42 +63,15 @@ public class RemoteFilePropertyChangeListener implements IDomainListener,
     protected boolean _networkDown = false;
     
     protected HashMap _decorateJobs;
-
-    protected static class FindShell implements Runnable
-    {
-
-        private Shell shell;
-
-        /**
-         * @see Runnable#run()
-         */
-        public void run()
-        {
-            try
-            {
-                Shell[] shells = Display.getCurrent().getShells();
-                for (int loop = 0; loop < shells.length && shell == null; loop++)
-                {
-                    if (shells[loop].isEnabled())
-                    {
-                        shell = shells[loop];
-                    }
-                }
-            }
-            catch (Exception e)
-            {
-                SystemBasePlugin.logError(
-                        "StatusChangeListener.FindShell exception: ", e); //$NON-NLS-1$
-            }
-        }
-    }
+    
+    protected boolean _finished = false;
     
     public class DecorateJob extends UIJob
     {
-    	private DStoreFile[] _files;
+    	private DataElement[] _files;
     	private DStoreFile   _parentFile;
     	private boolean      _isDone = false;
-    	public DecorateJob(DStoreFile[] files, DStoreFile parentFile)
+    	public DecorateJob(DataElement[] files, DStoreFile parentFile)
     	{
     		super(SystemFileResources.RESID_JOB_DECORATEFILES_NAME);
     		_files= files;
@@ -114,23 +86,28 @@ public class RemoteFilePropertyChangeListener implements IDomainListener,
 		public IStatus runInUIThread(IProgressMonitor monitor)
 		{
 			_isDone = false;
-			for (int i = 0; i < _files.length; i++)
-			{			
-			  _registry.fireEvent(new
-                      org.eclipse.rse.core.events.SystemResourceChangeEvent(_files[i],
-                      ISystemResourceChangeEvents.EVENT_ICON_CHANGE,
-                        _parentFile));
-            }
-              
-			/*
-			_registry.fireEvent(new
-                      org.eclipse.rse.ui.model.SystemResourceChangeEvent(_files,
-                      ISystemResourceChangeEvent.EVENT_REPLACE_CHILDREN,
-                        _parentFile));
-                        */
+			IRemoteFile[] children = new IRemoteFile[_files.length];
+			try {
+				for (int i = 0; i < _files.length; i++)
+				{			
+					DataElement file = _files[i];
+			        StringBuffer path = new StringBuffer(file.getAttribute(DE.A_VALUE));
+			        path.append(_fileSubSystem.getSeparatorChar());
+			    	path.append(file.getName());
+			    
+			    	children[i] = _fileSubSystem.getRemoteFileObject(path.toString(), monitor);
+	            }
+	              
+				_registry.fireEvent(new
+	    				org.eclipse.rse.core.events.SystemResourceChangeEvent(children,
+	    						ISystemResourceChangeEvents.EVENT_ICON_CHANGE,
+	    						_parentFile));				
+			}
+			catch (Exception e){}
+			
 			_isDone = true;
 			_decorateJobs.remove(_parentFile);
-			  return Status.OK_STATUS;
+			 return Status.OK_STATUS;
 		}
     	
     }
@@ -140,6 +117,7 @@ public class RemoteFilePropertyChangeListener implements IDomainListener,
     {
         this.shell = shell;
         this._fileSubSystem = fileSS;
+        
         this.dataStore = dataStore;
         this.system = system;
         this._registry = RSECorePlugin.getTheSystemRegistry();
@@ -185,8 +163,14 @@ public class RemoteFilePropertyChangeListener implements IDomainListener,
     public void finish()
     {
         dataStore.getDomainNotifier().removeDomainListener(this);
+        _finished = true;
     }
 
+    public boolean isFinished()
+    {
+    	return _finished;
+    }
+    
     /**
      * @see IDomainListener#domainChanged(DomainEvent)
      */
@@ -203,7 +187,6 @@ public class RemoteFilePropertyChangeListener implements IDomainListener,
 	    	parentPath.append(parent.getName());
 	    	DStoreFile parentFile = (DStoreFile) _fileSubSystem.getCachedRemoteFile(parentPath.toString());
 	    	
-	        boolean refreshParent = false;
 	        List toUpdate = new ArrayList();
 	        for (int i = 0; i < children.size(); i++)
 	        {
@@ -215,43 +198,19 @@ public class RemoteFilePropertyChangeListener implements IDomainListener,
 	                    type.equals(IUniversalDataStoreConstants.UNIVERSAL_FOLDER_DESCRIPTOR)))
 	                
 	            {
-	            	StringBuffer path = new StringBuffer(subject.getAttribute(DE.A_VALUE));
-	            	path.append(_fileSubSystem.getSeparatorChar());
-	            	path.append(subject.getName());
-	
-	    
-	                // find cached copy
-	                try
-	                {
-	                    DStoreFile updated = (DStoreFile) _fileSubSystem.getCachedRemoteFile(path.toString());
-	               
-	                    if (updated != null)
-	                    {
-	                         String classification = updated.getClassification();
-	                        if (!classification.equals("file") && !classification.equals("directory")) //$NON-NLS-1$ //$NON-NLS-2$
-	                        {
-	                            refreshParent = true;
-	                            toUpdate.add(updated);
-	                        }
-	                      
-	                    }
-	                }
-	                catch (Exception e)
-	                {
-	                    e.printStackTrace();
-	                }
+	            	toUpdate.add(subject);
 	            }
 	        }
 	        
-	        if (refreshParent)
+	        if (!toUpdate.isEmpty())
 	        {
 	        	DecorateJob job = getDecorateJob(parentFile);
 	        	if (job == null)
 	        	{
-	        		job = new DecorateJob((DStoreFile[])toUpdate.toArray(new DStoreFile[toUpdate.size()]), parentFile);
+	        		job = new DecorateJob((DataElement[])toUpdate.toArray(new DataElement[toUpdate.size()]), parentFile);
 	        		job.setRule(parentFile);
 	        		putDecorateJob(parentFile, job);
-	        		job.schedule(5000);
+	        		job.schedule(1000);
 	        	}
         		        	
 	        }
@@ -269,20 +228,7 @@ public class RemoteFilePropertyChangeListener implements IDomainListener,
     	_decorateJobs.put(file, job);
     }
     
-    
-    public Shell getShell()
-    {
-        // dy: DomainNotifier (which calls this method) requires the shell not
-        // be disposed
-        //if (shell == null) {
-        if (shell == null || shell.isDisposed())
-        {
-            FindShell findShell = new FindShell();
-            Display.getDefault().syncExec(findShell);
-            shell = findShell.shell;
-        }
-        return shell;
-    }
+
 
     /**
      * @see ICommunicationsListener#communicationsStateChange(CommunicationsEvent)

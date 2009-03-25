@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2008 IBM Corporation and others.
+ * Copyright (c) 2006, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -16,6 +16,7 @@
  * Martin Oberhuber (Wind River) - [235363][api][breaking] IHostFileToRemoteFileAdapter methods should return AbstractRemoteFile
  * David McKnight   (IBM)        - [244765] Invalid thread access during workbench termination
  * David McKnight   (IBM)        - [255699] NPE when filter string doesn't return result in FileServiceSubSystem.list
+ * David McKnight   (IBM)        - [190805] [performance][dstore] Right-click > Disconnect on a dstore connection is slow and spawns many Jobs
  *******************************************************************************/
 
 package org.eclipse.rse.internal.subsystems.files.dstore;
@@ -43,6 +44,9 @@ public class DStoreFileAdapter implements IHostFileToRemoteFileAdapter
 
 	private void registerFilePropertyChangeListener(FileServiceSubSystem ss)
 	{
+		if (_listener != null && _listener.isFinished()){
+			_listener = null;
+		}
 		if (_listener == null)
 		{
 			DStoreConnectorService connectorService = (DStoreConnectorService)ss.getConnectorService();

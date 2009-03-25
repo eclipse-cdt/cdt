@@ -14,6 +14,7 @@
  * Martin Oberhuber (Wind River) - [168975] Move RSE Events API to Core
  * Martin Oberhuber (Wind River) - [cleanup] Add API "since" Javadoc tags
  * Martin Oberhuber (Wind River) - [261486][api][cleanup] Mark @noimplement interfaces as @noextend
+ * David McKnight   (IBM)        - [190805] [performance][dstore] Right-click > Disconnect on a dstore connection is slow and spawns many Jobs
  ********************************************************************************/
 
 package org.eclipse.rse.core.events;
@@ -137,7 +138,7 @@ public interface ISystemResourceChangeEvents
 
 	/**
 	 * The event is an icon change event
-	 * A source RSE object and it's parent RSE object are the expected parameters
+	 * A source RSE object or an array of source RSE objects and the parent RSE object are the expected parameters
 	 */
 	public static final int EVENT_ICON_CHANGE = 81;
 

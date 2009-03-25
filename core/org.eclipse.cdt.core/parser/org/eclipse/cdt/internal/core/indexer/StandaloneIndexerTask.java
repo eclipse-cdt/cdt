@@ -186,6 +186,16 @@ public abstract class StandaloneIndexerTask extends AbstractIndexerTask {
 	protected IStatus createStatus(String msg) {
 		return new Status(IStatus.ERROR, "org.eclipse.cdt.core", IStatus.ERROR, msg, null); //$NON-NLS-1$
 	}
+	
+	
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.internal.core.pdom.PDOMWriter#createStatus(java.lang.String, java.lang.Throwable)
+	 */
+	@Override
+	protected IStatus createStatus(String msg, Throwable e) {
+		return new Status(IStatus.ERROR, "org.eclipse.cdt.core", IStatus.ERROR, msg, e); //$NON-NLS-1$
+	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.internal.core.pdom.AbstractIndexerTask#getMessage(org.eclipse.cdt.internal.core.pdom.AbstractIndexerTask.MessageKind, java.lang.Object[])

@@ -211,8 +211,7 @@ abstract public class PDOMWriter {
 						th= e;
 					}
 					if (th != null) {
-						stati.add(CCorePlugin.createStatus(
-								NLS.bind(Messages.PDOMWriter_errorWhileParsing, ifl.getURI().getPath()), th));
+						stati.add(createStatus(NLS.bind(Messages.PDOMWriter_errorWhileParsing, ifl.getURI().getPath(), th)));
 					}
 					if (i<ifls.length-1) {
 						updateFileCount(0, 0, 1); // update header count
@@ -524,6 +523,14 @@ abstract public class PDOMWriter {
 	private void reportProblem(IASTProblem problem) {
 		String msg= "Indexer: " + problem.getMessageWithLocation(); //$NON-NLS-1$
 		System.out.println(msg);
+	}
+
+	protected IStatus createStatus(String msg) {
+		return CCorePlugin.createStatus(msg);
+	}
+	
+	protected IStatus createStatus(String msg, Throwable e) {
+		return CCorePlugin.createStatus(msg, e);
 	}
 
 }

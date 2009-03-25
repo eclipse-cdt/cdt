@@ -45,7 +45,7 @@ public class StandaloneIndexerInputAdapter extends IndexerInputAdapter {
 
 	@Override
 	public long getLastModified(IIndexFileLocation location) {
-		return new File(location.getFullPath()).lastModified();
+		return new File(URIUtil.toPath(location.getURI()).toOSString()).lastModified();
 	}
 
 	@Override
@@ -65,7 +65,7 @@ public class StandaloneIndexerInputAdapter extends IndexerInputAdapter {
 
 	@Override
 	public String getASTPath(IIndexFileLocation ifl) {
-		return ifl.getFullPath();
+		return URIUtil.toPath(ifl.getURI()).toOSString();
 	}
 
 	@Override
@@ -101,7 +101,7 @@ public class StandaloneIndexerInputAdapter extends IndexerInputAdapter {
 				// use the original
 			}
 			//Stand-alone indexing stores the absolute paths of files being indexed
-			result = new IndexFileLocation(URIUtil.toURI(includePath),includePath);
+			result = new IndexFileLocation(URIUtil.toURI(includePath),null);
 			fIflCache.put(includePath, result);
 		}
 		return result;
@@ -128,7 +128,7 @@ public class StandaloneIndexerInputAdapter extends IndexerInputAdapter {
 
 	@Override
 	public Object getInputFile(IIndexFileLocation location) {
-		return location.getFullPath();
+		return URIUtil.toPath(location.getURI());
 	}
 
 	@Override

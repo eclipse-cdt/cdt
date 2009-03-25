@@ -717,7 +717,7 @@ public abstract class AbstractIndexerTask extends PDOMWriter {
 				s= new Status(s.getSeverity(), s.getPlugin(), s.getCode(), s.getMessage(), e);
 			}
 		} else {
-			s= CCorePlugin.createStatus(getMessage(MessageKind.errorWhileParsing, file), e);
+			s= createStatus(getMessage(MessageKind.errorWhileParsing, file), e);
 		}
 		logError(s);
 		if (++fStatistics.fErrorCount > MAX_ERRORS) {
@@ -816,10 +816,6 @@ public abstract class AbstractIndexerTask extends PDOMWriter {
 		return null;
 	}
 	
-	
-	protected IStatus createStatus(String msg) {
-		return CCorePlugin.createStatus(msg);
-	}
 	
 	/**
 	 * @return array of linkage IDs that should be parsed

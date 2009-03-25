@@ -22,6 +22,7 @@
  * David McKnight  (IBM)  - [250168] update to just search file of canonical paths (not symbolic links)
  * David McKnight  (IBM)  - [255390] memory checking
  * David McKnight  (IBM)  - [261644] [dstore] remote search improvements
+ * David McKnight  (IBM)  - [243495] [api] New: Allow file name search in Remote Search to not be case sensitive
  ********************************************************************************/
 
 package org.eclipse.rse.internal.dstore.universal.miners.filesystem;
@@ -117,7 +118,11 @@ public class UniversalSearchHandler extends SecuredThread implements ICancellabl
 		// i.e. we do not want to look inside files
 		_isFileSearch = _stringMatcher.isSearchStringEmpty() || _stringMatcher.isSearchStringAsterisk();
 
-		_fileNameMatcher = new SystemSearchFileNameMatcher(_searchString.getFileNamesString(), fsCaseSensitive, _searchString.isFileNamesRegex());
+		boolean fileNamesCaseSensitive = fsCaseSensitive;
+		if  (fileNamesCaseSensitive){ // even though it may be a case sensitive system we may want to search case-insensitive
+			fileNamesCaseSensitive = searchString.isFileNamesCaseSensitive();
+		}
+		_fileNameMatcher = new SystemSearchFileNameMatcher(_searchString.getFileNamesString(), fileNamesCaseSensitive, _searchString.isFileNamesRegex());
 
 		// classification of files to restrict the search to
 		_classificationString = _searchString.getClassificationString();

@@ -20,6 +20,7 @@
  * David McKnight   (IBM)        - [216252] use SimpleSystemMessage instead of getMessage()
  * David McKnight  (IBM)  - [255390] don't assume one update means the search is done
  * David McKnight  (IBM)  - [261644] [dstore] remote search improvements
+ * David McKnight  (IBM)  - [243495] [api] New: Allow file name search in Remote Search to not be case sensitive
  *******************************************************************************/
 
 package org.eclipse.rse.internal.services.dstore.search;
@@ -72,6 +73,7 @@ public class DStoreSearchService extends AbstractDStoreService implements ISearc
 		boolean isCaseSensitive = searchString.isCaseSensitive();
 		boolean isTextRegex = searchString.isTextStringRegex();
 		String fileNamesString = searchString.getFileNamesString();
+		boolean isFileNamesCaseSensitive = searchString.isFileNamesCaseSensitive();
 		boolean isFileNamesRegex = searchString.isFileNamesRegex();
 		boolean includeArchives = searchString.isIncludeArchives();
 		boolean includeSubfolders = searchString.isIncludeSubfolders();
@@ -85,7 +87,7 @@ public class DStoreSearchService extends AbstractDStoreService implements ISearc
 
 		if (queryCmd != null)
 		{
-			ArrayList argList = setSearchAttributes(textString, isCaseSensitive, isTextRegex, fileNamesString, isFileNamesRegex, includeArchives, includeSubfolders, classificationString, true);
+			ArrayList argList = setSearchAttributes(textString, isCaseSensitive, isTextRegex, fileNamesString, isFileNamesCaseSensitive, isFileNamesRegex, includeArchives, includeSubfolders, classificationString, true);
 
 			DataElement status = ds.command(queryCmd, argList, deObj);
 			DStoreSearchResultConfiguration config = (DStoreSearchResultConfiguration) searchConfig;
@@ -142,6 +144,7 @@ public class DStoreSearchService extends AbstractDStoreService implements ISearc
 			boolean isCaseSensitive,
 			boolean isTextRegex,
 			String fileNamesString,
+			boolean isFileNamesCaseSensitive,
 			boolean isFileNamesRegex,
 			boolean includeArchives,
 			boolean includeSubfolders,
@@ -156,13 +159,17 @@ public class DStoreSearchService extends AbstractDStoreService implements ISearc
 			DataElement arg1 = ds.createObject(universaltemp, textString, String.valueOf(isCaseSensitive), String.valueOf(isTextRegex));
 			DataElement arg2 = ds.createObject(universaltemp, fileNamesString, String.valueOf(isFileNamesRegex), classificationString);
 			DataElement arg3 = ds.createObject(universaltemp, String.valueOf(includeArchives), String.valueOf(includeSubfolders), String.valueOf(showHidden));
+			
+			// extra arg (for version 3.1)
+			DataElement arg4 = ds.createObject(universaltemp, "file.name.case.sensitive", String.valueOf(isFileNamesCaseSensitive));
 
 			// add the arguments to the argument list
 			ArrayList argList = new ArrayList();
 			argList.add(arg1);
 			argList.add(arg2);
 			argList.add(arg3);
-
+			argList.add(arg4);
+			
 			return argList;
 	}
 

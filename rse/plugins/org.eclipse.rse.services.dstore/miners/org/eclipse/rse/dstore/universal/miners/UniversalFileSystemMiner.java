@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2002, 2008 IBM Corporation and others.
+ * Copyright (c) 2002, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -39,6 +39,7 @@
  * David McKnight  (IBM)  - [246234] Change of file permissions changes the file owner
  * David McKnight  (IBM)  - [250168] handleCommand should not blindly set the status to "done"
  * David McKnight  (IBM)  - [251729][dstore] problems querying symbolic link folder
+ * David McKnight  (IBM)  - [243495] [api] New: Allow file name search in Remote Search to not be case sensitive
  *******************************************************************************/
 
 package org.eclipse.rse.dstore.universal.miners;
@@ -260,7 +261,7 @@ public class UniversalFileSystemMiner extends Miner {
 	 * Method to do a search.
 	 */
 	public DataElement handleSearch(DataElement theElement, DataElement status,
-			String queryType, boolean fileNamesCaseSensitive) {
+			String queryType, boolean systemFileNamesCaseSensitive) {
 		File fileobj = null;
 
 		DataElement subject = getCommandArgument(theElement, 0);
@@ -290,6 +291,7 @@ public class UniversalFileSystemMiner extends Miner {
 			DataElement arg1 = getCommandArgument(theElement, 1);
 			DataElement arg2 = getCommandArgument(theElement, 2);
 			DataElement arg3 = getCommandArgument(theElement, 3);
+			DataElement arg4 = getCommandArgument(theElement, 4);
 
 			String textString = arg1.getType();
 			boolean isCaseSensitive = Boolean.valueOf(arg1.getName()).booleanValue();
@@ -305,8 +307,13 @@ public class UniversalFileSystemMiner extends Miner {
 //			boolean showHidden = Boolean.valueOf(arg3.getSource()).booleanValue();
 			Boolean.valueOf(arg3.getSource()).booleanValue();
 
+			boolean isFileNamesCaseSensitive = true;
+			if (arg4 != null && arg4.getType().equals("file.name.case.sensitive")){ //$NON-NLS-1$
+				isFileNamesCaseSensitive = Boolean.valueOf(arg4.getName()).booleanValue();
+			}
+			
 			SystemSearchString searchString = new SystemSearchString(
-					textString, isCaseSensitive, isTextRegex, fileNamesString,
+					textString, isCaseSensitive, isTextRegex, fileNamesString, isFileNamesCaseSensitive,
 					isFileNamesRegex, isIncludeArchives, isIncludeSubfolders, classification);
 
 			UniversalSearchHandler searchThread = new UniversalSearchHandler(

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2002, 2008 IBM Corporation and others.
+ * Copyright (c) 2002, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -19,6 +19,7 @@
  * Martin Oberhuber (Wind River) - [196936] Hide disabled system types
  * David McKnight   (IBM)        - [216252] [api][nls] Resource Strings specific to subsystems should be moved from rse.ui into files.ui / shells.ui / processes.ui where possible
  * David McKnight   (IBM)        - [220547] [api][breaking] SimpleSystemMessage needs to specify a message id and some messages should be shared
+ * David McKnight  (IBM)  - [243495] [api] New: Allow file name search in Remote Search to not be case sensitive
  *******************************************************************************/
 
 package org.eclipse.rse.internal.files.ui.search;
@@ -117,8 +118,11 @@ public class SystemSearchPage extends DialogPage implements ISearchPage {
 	private Combo fileNameCombo;
 	private Button fileNameBrowseButton;
 	private Label fileNameHintLabel;
-	private Button fileNameRegexButton;
+	private Button fileNameCaseSensitiveButton;
+	private boolean initialFileNameCaseSensitive;
+	private Button fileNameRegexButton; 
 	private boolean initialFileNameRegex;
+	
 	
 	// file name editor
 	private FileNameEditor fileNameEditor;
@@ -141,6 +145,7 @@ public class SystemSearchPage extends DialogPage implements ISearchPage {
 	private static final String REMOTE_SEARCH_PAGE_NAME = "RemoteSearchPage"; //$NON-NLS-1$
 	private static final String STORE_CONFIG_CASE_SENSITIVE = "caseSensitive"; //$NON-NLS-1$
 	private static final String STORE_CONFIG_STRING_REGEX = "stringRegex"; //$NON-NLS-1$
+	private static final String STORE_CONFIG_FILENAME_CASE_SENSITIVE = "fileNameCaseSensitive"; //$NON-NLS-1$
 	private static final String STORE_CONFIG_FILENAME_REGEX = "fileNameRegex"; //$NON-NLS-1$
 	private static final String STORE_CONFIG_INCLUDE_ARCHIVES = "includeArchives"; //$NON-NLS-1$
 	private static final String STORE_CONFIG_INCLUDE_SUBFOLDERS = "includeSubfolders";	 //$NON-NLS-1$
@@ -153,6 +158,7 @@ public class SystemSearchPage extends DialogPage implements ISearchPage {
 	private static final String STORE_DATA_CASE_SENSITIVE = "caseSensitive"; //$NON-NLS-1$
 	private static final String STORE_DATA_STRING_REGEX = "stringRegex"; //$NON-NLS-1$
 	private static final String STORE_DATA_FILE_NAMES = "fileNames"; //$NON-NLS-1$
+	private static final String STORE_DATA_FILE_NAME_CASE_SENSITIVE = "fileNameCaseSensitive"; //$NON-NLS-1$
 	private static final String STORE_DATA_FILE_NAME_REGEX = "fileNameRegex"; //$NON-NLS-1$
 	private static final String STORE_DATA_PROFILE_NAME = "profileName"; //$NON-NLS-1$
 	private static final String STORE_DATA_CONNECTION_NAME = "connectionName"; //$NON-NLS-1$
@@ -160,7 +166,7 @@ public class SystemSearchPage extends DialogPage implements ISearchPage {
 	private static final String STORE_DATA_INCLUDE_ARCHIVES = "includeArchives"; //$NON-NLS-1$
 	private static final String STORE_DATA_INCLUDE_SUBFOLDERS = "includeSubfolders"; //$NON-NLS-1$
 	
-	// a list to hold previous searche data
+	// a list to hold previous search data
 	private List previousSearchData = new ArrayList();
 	
 	// maximum size of data list
@@ -173,6 +179,7 @@ public class SystemSearchPage extends DialogPage implements ISearchPage {
 		private boolean caseSensitive;
 		private boolean stringRegex;
 		private String fileNames;
+		private boolean fileNameCaseSensitive;
 		private boolean fileNameRegex;
 		private String profileName;
 		private String connectionName;
@@ -186,6 +193,7 @@ public class SystemSearchPage extends DialogPage implements ISearchPage {
 		 * @param caseSensitive <code>true</code> if case sensitive, <code>false</code> otherwise.
 		 * @param stringRegex <code>true</code> if search string is a regular expression, <code>false</code> otherwise.
 		 * @param fileNames set of file names.
+		 * @param fileNameCaseSensitive <code>true</code> if the file name is searched case sensitively, <code>false</code> otherwise.
 		 * @param fileNameRegex <code>true</code> if the file name is a regular expression, <code>false</code> otherwise.
 		 * @param profileName the profile name.
 		 * @param connectionName the connection name.
@@ -194,12 +202,13 @@ public class SystemSearchPage extends DialogPage implements ISearchPage {
 		 * @param includeSubfolders <code>true</code> if subfolders should also be searched, <code>false</code> otherwise.
 		 */
 		private RemoteSearchData(String searchString, boolean caseSensitive, boolean stringRegex, 
-								 String fileNames, boolean fileNameRegex, String profileName, String connectionName,
+								 String fileNames, boolean fileNameCaseSensitive, boolean fileNameRegex, String profileName, String connectionName,
 								 String folderName, boolean includeArchives, boolean includeSubfolders) {
 			this.searchString = searchString;
 			this.caseSensitive = caseSensitive;
 			this.stringRegex = stringRegex;
 			this.fileNames = fileNames;
+			this.fileNameCaseSensitive = fileNameCaseSensitive;
 			this.fileNameRegex = fileNameRegex;
 			this.profileName = profileName;
 			this.connectionName = connectionName;
@@ -603,6 +612,7 @@ public class SystemSearchPage extends DialogPage implements ISearchPage {
 			data.caseSensitive = caseButton.getSelection();
 			data.stringRegex = stringRegexButton.getSelection();
 			data.fileNames = getFileNames();
+			data.fileNameCaseSensitive = fileNameCaseSensitiveButton.getSelection();
 			data.fileNameRegex = fileNameRegexButton.getSelection();
 			data.profileName = getProfileName();
 			data.connectionName = getConnectionName();
@@ -617,7 +627,7 @@ public class SystemSearchPage extends DialogPage implements ISearchPage {
 		// otherwise create new data
 		else {
 			data = new RemoteSearchData(searchString, caseButton.getSelection(), stringRegexButton.getSelection(),
-					getFileNames(), fileNameRegexButton.getSelection(), getProfileName(), getConnectionName(),
+					getFileNames(), fileNameCaseSensitiveButton.getSelection(), fileNameRegexButton.getSelection(), getProfileName(), getConnectionName(),
 					getFolderName(), searchArchivesButton.getSelection(), searchSubfoldersButton.getSelection());
 		}
 		
@@ -718,7 +728,7 @@ public class SystemSearchPage extends DialogPage implements ISearchPage {
 		// get the data corresponding to the current dialog state
 		RemoteSearchData data = getSearchData();
 		
-		SystemSearchString searchString = new SystemSearchString(data.searchString, data.caseSensitive, data.stringRegex, data.fileNames, data.fileNameRegex, data.includeArchives, data.includeSubfolders);
+		SystemSearchString searchString = new SystemSearchString(data.searchString, data.caseSensitive, data.stringRegex, data.fileNames, data.fileNameCaseSensitive, data.fileNameRegex, data.includeArchives, data.includeSubfolders);
 		
 		IRemoteFileSubSystem subsys = getRemoteFileSubSystem(data.profileName, data.connectionName);
 		
@@ -1182,6 +1192,7 @@ public class SystemSearchPage extends DialogPage implements ISearchPage {
 		
 		// set file name regex
 		fileNameHintLabel.setVisible(!data.fileNameRegex);
+		fileNameCaseSensitiveButton.setSelection(data.fileNameCaseSensitive);
 		fileNameRegexButton.setSelection(data.fileNameRegex);
 		
 		// set the remote folder properties
@@ -1270,12 +1281,25 @@ public class SystemSearchPage extends DialogPage implements ISearchPage {
 		gd.horizontalSpan = 2;
 		fileNameHintLabel.setLayoutData(gd);
 		
+		// checkbox for case sensitivity
+		fileNameCaseSensitiveButton = new Button(comp, SWT.CHECK);
+		fileNameCaseSensitiveButton.setText(FileResources.RESID_SEARCH_CASE_BUTTON_LABEL);
+		fileNameCaseSensitiveButton.setToolTipText(FileResources.RESID_SEARCH_CASE_BUTTON_TOOLTIP);
+		
+		gd = new GridData(GridData.HORIZONTAL_ALIGN_BEGINNING);
+		fileNameCaseSensitiveButton.setLayoutData(gd);
+		fileNameCaseSensitiveButton.setSelection(initialFileNameCaseSensitive);
+		
 		// checkbox for regex
 		fileNameRegexButton = new Button(comp, SWT.CHECK);
 		fileNameRegexButton.setText(FileResources.RESID_SEARCH_FILENAME_REGEX_LABEL);
 		fileNameRegexButton.setToolTipText(FileResources.RESID_SEARCH_FILENAME_REGEX_TOOLTIP);
 		
-		gd = new GridData(GridData.HORIZONTAL_ALIGN_BEGINNING);
+		//gd = new GridData(GridData.HORIZONTAL_ALIGN_BEGINNING);
+		
+		gd = new GridData(GridData.HORIZONTAL_ALIGN_END);
+		gd.horizontalSpan = 3;
+		
 		fileNameRegexButton.setLayoutData(gd);
 		fileNameRegexButton.setSelection(initialFileNameRegex);
 		fileNameHintLabel.setVisible(!fileNameRegexButton.getSelection());
@@ -1456,6 +1480,7 @@ public class SystemSearchPage extends DialogPage implements ISearchPage {
 		IDialogSettings s = getConfigDialogSettings();
 		initialCaseSensitive = s.getBoolean(STORE_CONFIG_CASE_SENSITIVE);
 		initialStringRegex = s.getBoolean(STORE_CONFIG_STRING_REGEX);
+		initialFileNameCaseSensitive = s.getBoolean(STORE_CONFIG_FILENAME_CASE_SENSITIVE);
 		initialFileNameRegex = s.getBoolean(STORE_CONFIG_FILENAME_REGEX);
 		initialSearchArchives = s.getBoolean(STORE_CONFIG_INCLUDE_ARCHIVES);
 		initialSearchSubfolders = s.getBoolean(STORE_CONFIG_INCLUDE_SUBFOLDERS);
@@ -1468,6 +1493,7 @@ public class SystemSearchPage extends DialogPage implements ISearchPage {
 		IDialogSettings s = getConfigDialogSettings();
 		s.put(STORE_CONFIG_CASE_SENSITIVE, caseButton.getSelection());
 		s.put(STORE_CONFIG_STRING_REGEX, stringRegexButton.getSelection());
+		s.put(STORE_CONFIG_FILENAME_CASE_SENSITIVE, fileNameCaseSensitiveButton.getSelection());
 		s.put(STORE_CONFIG_FILENAME_REGEX, fileNameRegexButton.getSelection());
 		s.put(STORE_CONFIG_INCLUDE_ARCHIVES, searchArchivesButton.getSelection());
 		s.put(STORE_CONFIG_INCLUDE_SUBFOLDERS, searchSubfoldersButton.getSelection());
@@ -1505,6 +1531,7 @@ public class SystemSearchPage extends DialogPage implements ISearchPage {
  			boolean stringRegex = dataSection.getBoolean(STORE_DATA_STRING_REGEX);
  			
  			String fileNamesString = dataSection.get(STORE_DATA_FILE_NAMES);
+ 			boolean fileNameCaseSensitive = dataSection.getBoolean(STORE_DATA_FILE_NAME_CASE_SENSITIVE);
  			boolean fileNameRegex = dataSection.getBoolean(STORE_DATA_FILE_NAME_REGEX);
  			
  			String profileName = dataSection.get(STORE_DATA_PROFILE_NAME);
@@ -1514,7 +1541,7 @@ public class SystemSearchPage extends DialogPage implements ISearchPage {
  			boolean searchArchives = dataSection.getBoolean(STORE_DATA_INCLUDE_ARCHIVES);
  			boolean searchSubfolders = dataSection.getBoolean(STORE_DATA_INCLUDE_SUBFOLDERS);
  			
- 			RemoteSearchData data = new RemoteSearchData(searchString, caseSensitive, stringRegex, fileNamesString, fileNameRegex, profileName, connectionName, folderName, searchArchives, searchSubfolders);
+ 			RemoteSearchData data = new RemoteSearchData(searchString, caseSensitive, stringRegex, fileNamesString, fileNameCaseSensitive, fileNameRegex, profileName, connectionName, folderName, searchArchives, searchSubfolders);
  			previousSearchData.add(data);
 		}
 	}
@@ -1551,6 +1578,7 @@ public class SystemSearchPage extends DialogPage implements ISearchPage {
 			dataSection.put(STORE_DATA_STRING_REGEX, data.stringRegex);
 			
 			dataSection.put(STORE_DATA_FILE_NAMES, data.fileNames);
+			dataSection.put(STORE_DATA_FILE_NAME_CASE_SENSITIVE, data.fileNameCaseSensitive);
 			dataSection.put(STORE_DATA_FILE_NAME_REGEX, data.fileNameRegex);
 			
 			dataSection.put(STORE_DATA_PROFILE_NAME, data.profileName);

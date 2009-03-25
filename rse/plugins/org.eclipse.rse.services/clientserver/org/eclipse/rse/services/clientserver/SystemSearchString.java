@@ -1,5 +1,5 @@
 /********************************************************************************
- * Copyright (c) 2003, 2006 IBM Corporation. All rights reserved.
+ * Copyright (c) 2003, 2009 IBM Corporation. All rights reserved.
  * This program and the accompanying materials are made available under the terms
  * of the Eclipse Public License v1.0 which accompanies this distribution, and is 
  * available at http://www.eclipse.org/legal/epl-v10.html
@@ -11,7 +11,7 @@
  * Emily Bruner, Mazen Faraj, Adrian Storisteanu, Li Ding, and Kent Hawley.
  * 
  * Contributors:
- * {Name} (company) - description of contribution.
+ * David McKnight  (IBM)  - [243495] [api] New: Allow file name search in Remote Search to not be case sensitive
  ********************************************************************************/
 
 package org.eclipse.rse.services.clientserver;
@@ -31,6 +31,11 @@ public class SystemSearchString {
 	protected boolean isCaseSensitive;
 	protected boolean isTextStringRegex;
 	protected String fileNamesString;
+	
+	/**
+	 * @since 3.1 for determining whether filename should be searched case-sensitive or not
+	 */
+	protected boolean isFileNamesCaseSensitive;
 	protected boolean isFileNamesRegex;
 	protected boolean includeArchives;
 	protected boolean includeSubfolders;
@@ -49,7 +54,26 @@ public class SystemSearchString {
 	public SystemSearchString(String textString, boolean isCaseSensitive, boolean isTextStringRegex,
 							  String fileNamesString, boolean isFileNamesRegex, boolean includeArchives,
 							  boolean includeSubfolders) {
-		this(textString, isCaseSensitive, isTextStringRegex, fileNamesString, isFileNamesRegex, includeArchives,
+		this(textString, isCaseSensitive, isTextStringRegex, fileNamesString, true, isFileNamesRegex, includeArchives,
+				includeSubfolders);
+	}
+	
+	/**
+	 * Creates a new search string.
+	 * @param textString the text string.
+	 * @param isCaseSensitive <code>true</code> if the search should be case sensitive, <code>false</code> otherwise.
+	 * @param isTextStringRegex <code>true</code> if the text string is a regular expression, <code>false</code> otherwise.
+	 * @param fileNamesString the file names pattern.
+	 * @param isFileNamesCaseSensitive <code>true</code> if the file name search should be case sensitive, <code>false</code> otherwise.
+	 * @param isFileNamesRegex <code>true</code> if the file names string is a regular expression, <code>false</code> otherwise.
+	 * @param includeArchives <code>true</code> to search inside archives, <code>false</code> otherwise.
+	 * @param includeSubfolders <code>true</code> to search subfolders, <code>false</code> otherwise.
+	 * @since 3.1 
+	 */
+	public SystemSearchString(String textString, boolean isCaseSensitive, boolean isTextStringRegex,
+							  String fileNamesString, boolean isFileNamesCaseSensitive, boolean isFileNamesRegex, boolean includeArchives,
+							  boolean includeSubfolders) {
+		this(textString, isCaseSensitive, isTextStringRegex, fileNamesString, isFileNamesCaseSensitive, isFileNamesRegex, includeArchives,
 				includeSubfolders, ""); //$NON-NLS-1$
 	}
 	
@@ -67,10 +91,31 @@ public class SystemSearchString {
 	public SystemSearchString(String textString, boolean isCaseSensitive, boolean isTextStringRegex,
 							  String fileNamesString, boolean isFileNamesRegex, boolean includeArchives,
 							  boolean includeSubfolders, String classificationString) {
+		this(textString, isCaseSensitive, isTextStringRegex, fileNamesString, true, isFileNamesRegex, 
+				includeArchives, includeSubfolders, classificationString);
+	}
+	
+	/**
+	 * Creates a new search string that allows search to be restricted to files with a certain classification.
+	 * @param textString the text string.
+	 * @param isCaseSensitive <code>true</code> if the search should be case sensitive, <code>false</code> otherwise.
+	 * @param isTextStringRegex <code>true</code> if the text string is a regular expression, <code>false</code> otherwise.
+	 * @param fileNamesString the file names pattern.
+	 * @param isFileNamesCaseSensitive <code>true</code> if the file name search should be case sensitive, <code>false</code> otherwise.
+	 * @param isFileNamesRegex <code>true</code> if the file names string is a regular expression, <code>false</code> otherwise.
+	 * @param includeArchives <code>true</code> to search inside archives, <code>false</code> otherwise.
+	 * @param includeSubfolders <code>true</code> to search subfolders, <code>false</code> otherwise.
+	 * @param classificationString the classification string that file classifications should match with.
+	 * @since 3.1
+	 */
+	public SystemSearchString(String textString, boolean isCaseSensitive, boolean isTextStringRegex,
+							  String fileNamesString, boolean isFileNamesCaseSensitive, boolean isFileNamesRegex, boolean includeArchives,
+							  boolean includeSubfolders, String classificationString) {
 		this.textString = textString;
 		this.isCaseSensitive = isCaseSensitive;
 		this.isTextStringRegex = isTextStringRegex;
 		this.fileNamesString = fileNamesString;
+		this.isFileNamesCaseSensitive = isFileNamesCaseSensitive;
 		this.isFileNamesRegex = isFileNamesRegex;
 		this.includeArchives = includeArchives;
 		this.includeSubfolders = includeSubfolders;
@@ -107,6 +152,15 @@ public class SystemSearchString {
 	 */
 	public String getFileNamesString() {
 		return fileNamesString;
+	}
+	
+	/**
+	 * Returns whether the file names search is case sensitive.
+	 * @return <code>true</code> if the file names search is case sensitive, <code>false</code> otherwise.
+	 * @since 3.1
+	 */
+	public boolean isFileNamesCaseSensitive() {
+		return isFileNamesCaseSensitive;
 	}
 	
 	/**
@@ -147,7 +201,7 @@ public class SystemSearchString {
 	 */
 	public String toString() {
 		return textString + " - " + isCaseSensitive + " - " + isTextStringRegex + " - " + //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-				fileNamesString + " - " + isFileNamesRegex + " - " + includeArchives + " - " + //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+				fileNamesString + " - " + isFileNamesCaseSensitive + " - " + isFileNamesRegex + " - " + includeArchives + " - " + //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 				includeSubfolders + " - " + classificationString; //$NON-NLS-1$
 	}
 }

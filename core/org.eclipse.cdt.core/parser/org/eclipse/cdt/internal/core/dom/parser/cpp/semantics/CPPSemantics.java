@@ -249,8 +249,7 @@ public class CPPSemantics {
 		LookupData data = createLookupData(name, true);
 		return postResolution(binding, data);
 	}
-	
-	
+
     private static IBinding postResolution(IBinding binding, LookupData data) {
     	// If the normal lookup of the unqualified name finds a class member function, then ADL does not occur
         if (data.checkAssociatedScopes() && !data.hasMemberFunctionResult()) {
@@ -1952,7 +1951,9 @@ public class CPPSemantics {
 	}
 	
 	/**
-	 * Checks if a binding belongs to an AST or is reachable from it through includes. 
+	 * Checks if a binding is an AST binding, or is reachable from the AST through includes.
+	 * The binding is assumed to belong to the AST, if it is not an IIndexBinding and not
+	 * a specialization of an IIndexBinding.
 	 * @param ast
 	 * @param binding
 	 * @return <code>true</code> if the <code>binding</code> is reachable from <code>ast</code>.
@@ -1968,12 +1969,13 @@ public class CPPSemantics {
 				indexBinding = (IIndexBinding) binding;
 			}
 		}
-		if (indexBinding != null) {
-			IIndexFileSet indexFileSet = ast.getIndexFileSet();
-			return indexFileSet != null && indexFileSet.containsDeclaration(indexBinding);
-		} else {
-			return ast.getDeclarationsInAST(binding).length != 0;
+		if (indexBinding == null) {
+			// We don't check if the binding really belongs to the AST specified by the ast
+			// parameter assuming that the caller doesn't deal with two ASTs at a time.
+			return true;
 		}
+		IIndexFileSet indexFileSet = ast.getIndexFileSet();
+		return indexFileSet != null && indexFileSet.containsDeclaration(indexBinding);
 	}
 
 	static private void reduceToViable(LookupData data, IBinding[] functions) throws DOMException {
@@ -2116,8 +2118,7 @@ public class CPPSemantics {
 		
 		boolean ambiguous = false;				// ambiguity, 2 functions are equally good
 		FunctionCost bestFnCost = null;		    // the cost of the best function
-				
-		
+
 		// Loop over all functions
 		List<FunctionCost> potentialCosts= null;
 		for (IFunction fn : fns) {

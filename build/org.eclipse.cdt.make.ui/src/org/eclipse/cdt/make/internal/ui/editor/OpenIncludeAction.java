@@ -1,12 +1,13 @@
 /*******************************************************************************
- * Copyright (c) 2002, 2008 QNX Software Systems and others.
+ * Copyright (c) 2002, 2009 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- * QNX Software Systems - Initial API and implementation
+ *     QNX Software Systems - Initial API and implementation
+ *     Violaine Batthish (IBM) - bug 270013
  *******************************************************************************/
 
 package org.eclipse.cdt.make.internal.ui.editor;
@@ -55,6 +56,7 @@ public class OpenIncludeAction extends Action {
 	 * 
 	 * @see org.eclipse.jface.action.IAction#run()
 	 */
+	@Override
 	public void run() {
 		IInclude[] includes= getIncludeDirective(fSelectionProvider.getSelection());
 		if (includes != null) {
@@ -121,6 +123,7 @@ public class OpenIncludeAction extends Action {
 	}
 
 	public boolean canActionBeAdded(ISelection selection) {
-		return getIncludeDirective(selection) != null;
+        IInclude[] includes =  getIncludeDirective(selection);
+        return includes != null && includes.length != 0;
 	}
 }

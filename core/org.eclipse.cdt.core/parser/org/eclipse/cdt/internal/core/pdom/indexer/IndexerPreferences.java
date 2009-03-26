@@ -56,7 +56,9 @@ public class IndexerPreferences {
 	private static final String KEY_INDEX_IMPORT_LOCATION = "indexImportLocation"; //$NON-NLS-1$
 	
 	private static final String DEFAULT_INDEX_IMPORT_LOCATION = ".settings/cdt-index.zip"; //$NON-NLS-1$
-	private static final String DEFAULT_FILES_TO_PARSE_UP_FRONT= "cstdarg, cstdio, ctime, stdarg.h, stddef.h, sys/types.h"; //$NON-NLS-1$
+	// See https://bugs.eclipse.org/bugs/show_bug.cgi?id=259843 for the rationale.
+	private static final String DEFAULT_FILES_TO_PARSE_UP_FRONT=
+			"cstdarg, cstdio, sys/resource.h, ctime, stdarg.h, stddef.h, sys/types.h"; //$NON-NLS-1$
 	private static final int DEFAULT_UPDATE_POLICY= 0; 
 
 	private static final String QUALIFIER = CCorePlugin.PLUGIN_ID;

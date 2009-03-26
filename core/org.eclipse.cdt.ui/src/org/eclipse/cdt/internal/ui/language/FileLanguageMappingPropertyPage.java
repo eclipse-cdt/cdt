@@ -83,7 +83,7 @@ public class FileLanguageMappingPropertyPage extends PropertyPage {
 	protected Control createContents(Composite parent) {
 		IFile file = getFile();
 		IProject project = file.getProject();
-		fContentType = CContentTypes.getContentType(project, file.getLocation().toString());
+		fContentType = CContentTypes.getContentType(project, file.getName());
 		
 		fContents = new Composite(parent, SWT.NONE);
 		fContents.setLayout(new GridLayout(2, false));

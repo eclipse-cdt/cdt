@@ -2558,14 +2558,12 @@
           priority="normal">
        <triggerPoints>
           <or>
-             <adapt type="org.eclipse.core.resources.IProject">
-                <test
-                      property="org.eclipse.core.resources.projectNature"
-                      value="org.eclipse.cdt.core.cnature"/>
-             </adapt>
-             <instanceof value="org.eclipse.core.resources.IResource"/>
              <instanceof value="org.eclipse.cdt.core.model.ICElement"/>
              <instanceof value="org.eclipse.cdt.ui.CElementGrouping"/>
+             <and>
+	             <instanceof value="org.eclipse.core.resources.IResource"/>
+	             <test property="org.eclipse.core.resources.projectNature" value="org.eclipse.cdt.core.cnature"/>
+             </and>
           </or>
        </triggerPoints>
        <possibleChildren>
@@ -2580,7 +2578,18 @@
              suppressedExtensionId="org.eclipse.ui.navigator.resourceContent"/>
        <commonSorter
              class="org.eclipse.cdt.ui.CElementSorter"
-             id="org.eclipse.cdt.ui.commonSorter"/>
+             id="org.eclipse.cdt.ui.commonSorter">
+          <parentExpression>
+             <or>
+	             <instanceof value="org.eclipse.cdt.core.model.ICElement"/>
+	             <instanceof value="org.eclipse.cdt.ui.CElementGrouping"/>
+		         <and>
+		             <instanceof value="org.eclipse.core.resources.IResource"/>
+		             <test property="org.eclipse.core.resources.projectNature" value="org.eclipse.cdt.core.cnature"/>
+		         </and>
+             </or>
+          </parentExpression>
+       </commonSorter>
        <actionProvider
              class="org.eclipse.cdt.internal.ui.navigator.CNavigatorOpenActionProvider"
              id="org.eclipse.cdt.ui.navigator.actions.open"
@@ -2588,11 +2597,10 @@
 		 <enablement>
 			<or>
 				<instanceof value="org.eclipse.cdt.core.model.ICElement" />	
-	            <adapt type="org.eclipse.core.resources.IProject">
-	               <test
-	                     property="org.eclipse.core.resources.projectNature"
-	                     value="org.eclipse.cdt.core.cnature"/>
-	            </adapt>
+		        <and>
+		            <instanceof value="org.eclipse.core.resources.IProject"/>
+		            <test property="org.eclipse.core.resources.projectNature" value="org.eclipse.cdt.core.cnature"/>
+		        </and>
 			</or>
          </enablement>
        </actionProvider>
@@ -2603,11 +2611,10 @@
 		 <enablement>
 			<or>
 				<instanceof value="org.eclipse.cdt.core.model.ICElement" />	
-	            <adapt type="org.eclipse.core.resources.IProject">
-	               <test
-	                     property="org.eclipse.core.resources.projectNature"
-	                     value="org.eclipse.cdt.core.cnature"/>
-	            </adapt>
+		        <and>
+		            <instanceof value="org.eclipse.core.resources.IProject"/>
+		            <test property="org.eclipse.core.resources.projectNature" value="org.eclipse.cdt.core.cnature"/>
+		        </and>
 			</or>
          </enablement>
        </actionProvider>
@@ -2616,13 +2623,9 @@
              id="org.eclipse.cdt.ui.navigator.actions.search">
           <enablement>
              <and>
-                <instanceof
-                      value="org.eclipse.cdt.core.model.ISourceReference">
-                </instanceof>
+                <instanceof value="org.eclipse.cdt.core.model.ISourceReference" />
                 <not>
-                   <instanceof
-                         value="org.eclipse.cdt.core.model.ITranslationUnit">
-                   </instanceof>
+                   <instanceof value="org.eclipse.cdt.core.model.ITranslationUnit" />
                 </not>
              </and>
           </enablement>
@@ -2641,10 +2644,8 @@
           <enablement>
 			<or>
 				<instanceof value="org.eclipse.cdt.core.model.ICElement" />
-				<instanceof value="org.eclipse.core.resources.IFile" />
-				<instanceof value="org.eclipse.core.resources.IFolder" />
 				<and>
-				   <instanceof value="org.eclipse.core.resources.IProject" />
+				   <instanceof value="org.eclipse.core.resources.IResource" />
 	               <test property="org.eclipse.core.resources.projectNature" value="org.eclipse.cdt.core.cnature"/>
 				</and>
 			</or>
@@ -2657,10 +2658,8 @@
           <enablement>
 			<or>
 				<instanceof value="org.eclipse.cdt.core.model.ICElement" />	
-				<instanceof value="org.eclipse.core.resources.IFile" />
-				<instanceof value="org.eclipse.core.resources.IFolder" />
 				<and>
-				   <instanceof value="org.eclipse.core.resources.IProject" />
+				   <instanceof value="org.eclipse.core.resources.IResource" />
 	               <test property="org.eclipse.core.resources.projectNature" value="org.eclipse.cdt.core.cnature"/>
 				</and>
 			</or>
@@ -2688,11 +2687,10 @@
 		 <enablement>
 			<or>
 				<instanceof value="org.eclipse.cdt.core.model.ICElement" />	
-	            <adapt type="org.eclipse.core.resources.IProject">
-	               <test
-	                     property="org.eclipse.core.resources.projectNature"
-	                     value="org.eclipse.cdt.core.cnature"/>
-	            </adapt>
+		        <and>
+		            <instanceof value="org.eclipse.core.resources.IProject"/>
+		            <test property="org.eclipse.core.resources.projectNature" value="org.eclipse.cdt.core.cnature"/>
+		        </and>
 			</or>
          </enablement>
 	   </commonWizard>
@@ -2704,11 +2702,10 @@
 		 <enablement>
 			<or>
 				<instanceof value="org.eclipse.cdt.core.model.ICElement" />	
-	            <adapt type="org.eclipse.core.resources.IProject">
-	               <test
-	                     property="org.eclipse.core.resources.projectNature"
-	                     value="org.eclipse.cdt.core.cnature"/>
-	            </adapt>
+		        <and>
+		            <instanceof value="org.eclipse.core.resources.IProject"/>
+		            <test property="org.eclipse.core.resources.projectNature" value="org.eclipse.cdt.core.cnature"/>
+		        </and>
 			</or>
          </enablement>
 	   </commonWizard>
@@ -2720,11 +2717,10 @@
 		 <enablement>
 			<or>
 				<instanceof value="org.eclipse.cdt.core.model.ICElement" />	
-	            <adapt type="org.eclipse.core.resources.IContainer">
-	               <test
-	                     property="org.eclipse.core.resources.projectNature"
-	                     value="org.eclipse.cdt.core.cnature"/>
-	            </adapt>
+		        <and>
+		            <instanceof value="org.eclipse.core.resources.IContainer"/>
+		            <test property="org.eclipse.core.resources.projectNature" value="org.eclipse.cdt.core.cnature"/>
+		        </and>
 			</or>
          </enablement>
 	   </commonWizard>
@@ -2736,11 +2732,10 @@
 		 <enablement>
 			<or>
 				<instanceof value="org.eclipse.cdt.core.model.ICElement" />	
-	            <adapt type="org.eclipse.core.resources.IProject">
-	               <test
-	                     property="org.eclipse.core.resources.projectNature"
-	                     value="org.eclipse.cdt.core.ccnature"/>
-	            </adapt>
+		        <and>
+		            <instanceof value="org.eclipse.core.resources.IProject"/>
+		            <test property="org.eclipse.core.resources.projectNature" value="org.eclipse.cdt.core.cnature"/>
+		        </and>
 			</or>
          </enablement>
 	   </commonWizard>
@@ -2751,11 +2746,10 @@
 		 <enablement>
 			<or>
 				<instanceof value="org.eclipse.cdt.core.model.ICElement" />	
-	            <adapt type="org.eclipse.core.resources.IContainer">
-	               <test
-	                     property="org.eclipse.core.resources.projectNature"
-	                     value="org.eclipse.cdt.core.cnature"/>
-	            </adapt>
+		        <and>
+		            <instanceof value="org.eclipse.core.resources.IContainer"/>
+		            <test property="org.eclipse.core.resources.projectNature" value="org.eclipse.cdt.core.cnature"/>
+		        </and>
 			</or>
          </enablement>
 	   </commonWizard>

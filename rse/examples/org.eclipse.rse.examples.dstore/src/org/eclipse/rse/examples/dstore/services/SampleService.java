@@ -33,6 +33,10 @@ public class SampleService extends AbstractDStoreService {
 	}
  
 	public IHostSampleContainer getContainer(String name, IProgressMonitor monitor){
+		if (!isInitialized())
+		{
+			waitForInitialize(monitor);
+		}
 		DataElement universalTemp = getMinerElement();		
 		DataElement containerElement = getDataStore().createObject(universalTemp, "Sample Container", name,"", "", false); //$NON-NLS-1$
 
@@ -40,12 +44,11 @@ public class SampleService extends AbstractDStoreService {
 	}
 	
 	public IHostSampleObject[] query(IHostSampleContainer container, IProgressMonitor monitor){
-		DataElement containerElement = container.getDataElement();
 		if (!isInitialized())
 		{
 			waitForInitialize(monitor);
 		}
-
+		DataElement containerElement = container.getDataElement();
 		DataElement[] results = dsQueryCommand(containerElement, "C_SAMPLE_QUERY", monitor);
 		
 		List<IHostSampleObject> returned = new ArrayList<IHostSampleObject>();

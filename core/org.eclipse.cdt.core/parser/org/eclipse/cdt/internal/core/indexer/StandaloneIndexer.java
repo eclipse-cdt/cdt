@@ -259,6 +259,11 @@ public abstract class StandaloneIndexer {
 		return fMapper;
 	}
 	
+	
+	public void setLanguageMapper(ILanguageMapper mapper) {
+		fMapper = mapper;
+	}
+	
 	/**
 	 * Returns the logger.
 	 */

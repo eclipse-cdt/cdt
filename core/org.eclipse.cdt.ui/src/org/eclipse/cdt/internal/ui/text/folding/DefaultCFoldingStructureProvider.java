@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2008 IBM Corporation and others.
+ * Copyright (c) 2000, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -90,7 +90,7 @@ import org.eclipse.cdt.ui.PreferenceConstants;
 import org.eclipse.cdt.ui.text.ICPartitions;
 import org.eclipse.cdt.ui.text.folding.ICFoldingStructureProvider;
 
-import org.eclipse.cdt.internal.core.dom.parser.c.CVisitor;
+import org.eclipse.cdt.internal.core.dom.parser.ASTQueries;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPVisitor;
 import org.eclipse.cdt.internal.core.model.ASTCache;
 
@@ -237,7 +237,7 @@ public class DefaultCFoldingStructureProvider implements ICFoldingStructureProvi
 			if (declaration instanceof IASTFunctionDefinition) {
 				final IASTFunctionDeclarator declarator = ((IASTFunctionDefinition)declaration).getDeclarator();
 				if (declarator != null) {
-					fFunction= new String(CVisitor.findInnermostDeclarator(declarator).getName().toCharArray());
+					fFunction= new String(ASTQueries.findInnermostDeclarator(declarator).getName().toCharArray());
 					fLevel= 0;
 				}
 			}
@@ -526,17 +526,17 @@ public class DefaultCFoldingStructureProvider implements ICFoldingStructureProvi
 			return fCategory;
 		}
 
-		public void setCategory(int category) {
-			fCategory = category;
-		}
-
-		public boolean isComment() {
-			return fCategory == COMMENT;
-		}
-		
-		public void setIsComment(boolean isComment) {
-			fCategory= isComment ? COMMENT : 0;
-		}
+//		public void setCategory(int category) {
+//			fCategory = category;
+//		}
+//
+//		public boolean isComment() {
+//			return fCategory == COMMENT;
+//		}
+//		
+//		public void setIsComment(boolean isComment) {
+//			fCategory= isComment ? COMMENT : 0;
+//		}
 		/*
 		 * @see java.lang.Object#toString()
 		 */

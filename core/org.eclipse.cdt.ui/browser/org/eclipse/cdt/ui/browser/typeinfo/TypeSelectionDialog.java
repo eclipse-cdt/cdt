@@ -109,11 +109,6 @@ public class TypeSelectionDialog extends TwoPaneElementSelector {
 			fNameMatcher = fSegmentMatchers[fSegmentMatchers.length-1];
 		}
 		
-		public void setVisibleTypes(Collection<Integer> visibleTypes) {
-			fVisibleTypes.clear();
-			fVisibleTypes.addAll(visibleTypes);
-		}
-
 		public Collection<Integer> getVisibleTypes() {
 			return fVisibleTypes;
 		}

@@ -445,8 +445,8 @@ public class CEditor extends TextEditor implements ISelectionChangedListener, IC
 	}
 
 	private static class BracketLevel {
-		int fOffset;
-		int fLength;
+//		int fOffset;
+//		int fLength;
 		LinkedModeUI fUI;
 		Position fFirstPosition;
 		Position fSecondPosition;
@@ -525,14 +525,14 @@ public class CEditor extends TextEditor implements ISelectionChangedListener, IC
 			}
 		}
 
-		/**
-		 * Returns the position category.
-		 *
-		 * @return the position category
-		 */
-		public String getCategory() {
-			return fCategory;
-		}
+//		/**
+//		 * Returns the position category.
+//		 *
+//		 * @return the position category
+//		 */
+//		public String getCategory() {
+//			return fCategory;
+//		}
 	}
 
 	private class BracketInserter implements VerifyKeyListener, ILinkedModeListener {
@@ -673,8 +673,8 @@ public class CEditor extends TextEditor implements ISelectionChangedListener, IC
 				model.addGroup(group);
 				model.forceInstall();
 
-				level.fOffset = offset;
-				level.fLength = 2;
+//				level.fOffset = offset;
+//				level.fLength = 2;
 
 				// set up position tracking for our magic peers
 				if (fBracketLevelStack.size() == 1) {

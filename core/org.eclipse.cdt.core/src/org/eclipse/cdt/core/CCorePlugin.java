@@ -15,7 +15,6 @@
 package org.eclipse.cdt.core;
 
 import java.io.IOException;
-import com.ibm.icu.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -81,6 +80,8 @@ import org.eclipse.core.runtime.SubProgressMonitor;
 import org.eclipse.core.runtime.content.IContentType;
 import org.eclipse.core.runtime.jobs.Job;
 import org.osgi.framework.BundleContext;
+
+import com.ibm.icu.text.MessageFormat;
 
 /**
  * CCorePlugin is the life-cycle owner of the core plug-in, and starting point for access to many core APIs.
@@ -234,6 +235,7 @@ public class CCorePlugin extends Plugin {
 		return MessageFormat.format(getResourceString(key), new Object[] { arg });
 	}
 
+	@SuppressWarnings("cast") // java.text.MessageFormat would require the cast
 	public static String getFormattedString(String key, String[] args) {
 		return MessageFormat.format(getResourceString(key), (Object[])args);
 	}

@@ -273,6 +273,7 @@ public class CUIPlugin extends AbstractUIPlugin {
 		return MessageFormat.format(getResourceString(key), new Object[] {arg});
 	}
 
+	@SuppressWarnings("cast") // java.text.MessageFormat would require the cast
 	public static String getFormattedString(String key, String[] args) {
 		return MessageFormat.format(getResourceString(key), (Object[]) args);
 	}

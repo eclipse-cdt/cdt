@@ -122,10 +122,6 @@ public class IndexerBlock extends AbstractCOptionPage {
             return fElement.getAttribute(ATTRIB_NAME); 
         }
         
-        public String getIndexerID(){
-        	return fElement.getAttribute(ATTRIB_INDEXERID); 
-        }
-
 		public String getLocalId() {
 			return fElement.getAttribute(ATTRIB_ID);
 		}

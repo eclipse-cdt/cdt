@@ -18,6 +18,7 @@ import junit.framework.TestSuite;
 
 import org.eclipse.cdt.core.dom.ast.ASTSignatureUtil;
 import org.eclipse.cdt.core.dom.ast.ASTTypeUtil;
+import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.ExpansionOverlapsBoundaryException;
 import org.eclipse.cdt.core.dom.ast.IASTArrayDeclarator;
 import org.eclipse.cdt.core.dom.ast.IASTArraySubscriptExpression;
@@ -96,12 +97,14 @@ import org.eclipse.cdt.core.dom.ast.c.ICASTFieldDesignator;
 import org.eclipse.cdt.core.dom.ast.c.ICASTPointer;
 import org.eclipse.cdt.core.dom.ast.c.ICASTSimpleDeclSpecifier;
 import org.eclipse.cdt.core.dom.ast.c.ICArrayType;
+import org.eclipse.cdt.core.dom.ast.c.ICBasicType;
 import org.eclipse.cdt.core.dom.ast.c.ICExternalBinding;
 import org.eclipse.cdt.core.dom.ast.c.ICFunctionScope;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunction;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPMethod;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPNamespace;
+import org.eclipse.cdt.core.dom.ast.gnu.cpp.IGPPBasicType;
 import org.eclipse.cdt.core.parser.IToken;
 import org.eclipse.cdt.core.parser.ParserLanguage;
 import org.eclipse.cdt.internal.core.dom.parser.ASTNode;
@@ -6022,4 +6025,200 @@ public class AST2Tests extends AST2BaseTest {
 			assertInstance(nodes[0], IASTPointerOperator.class);
 		}
     }
+    
+
+    //  int a = -142;
+    //  int b = 456L;
+    //  int c = 100000LL;
+    //  int d = 0U;
+    //  int e = 1UL;
+    //  int f = 9u;
+    //  int g = 1234l;
+    //  int h = -123ll;
+    //  int i = 8888uL;
+    public void testBug269705_int_literal() throws Exception {
+		final String code= getAboveComment();
+		
+		for (ParserLanguage lang : ParserLanguage.values()) {
+			IASTTranslationUnit tu = parseAndCheckBindings(code, lang);
+			IASTDeclaration[] declarations = tu.getDeclarations();
+			
+			// int a = -142;
+			{ 
+    			IBasicType t = getTypeForDeclaration(declarations, 0);
+				assertTrue(t.getType() == IBasicType.t_int);
+				assertFalse(t.isUnsigned());
+				assertFalse(t.isSigned());
+				assertFalse(t.isLong());
+				assertFalse(isLongLong(t));
+			}
+			
+			// int b = 456L;
+			{
+    			IBasicType t = getTypeForDeclaration(declarations, 1);
+				assertTrue(t.getType() == IBasicType.t_int);
+				assertFalse(t.isUnsigned());
+				assertFalse(t.isSigned());
+				assertTrue(t.isLong());
+				assertFalse(isLongLong(t));
+			}
+			
+			// int c = 100000LL;
+			{
+    			IBasicType t = getTypeForDeclaration(declarations, 2);
+				assertTrue(t.getType() == IBasicType.t_int);
+				assertFalse(t.isUnsigned());
+				assertFalse(t.isSigned());
+				assertFalse(t.isLong());
+				assertTrue(isLongLong(t));
+			}
+			
+			// int d = 0U;
+			{
+    			IBasicType t = getTypeForDeclaration(declarations, 3);
+				assertTrue(t.getType() == IBasicType.t_int);
+				assertTrue(t.isUnsigned());
+				assertFalse(t.isSigned());
+				assertFalse(isLongLong(t));
+				assertFalse(t.isLong());
+
+			}
+			
+			// int e = 1UL;
+			{
+    			IBasicType t = getTypeForDeclaration(declarations, 4);
+				assertTrue(t.getType() == IBasicType.t_int);
+				assertTrue(t.isUnsigned());
+				assertFalse(t.isSigned());
+				assertTrue(t.isLong());
+				assertFalse(isLongLong(t));
+			}
+			
+			// int f = 9u;
+			{
+    			IBasicType t = getTypeForDeclaration(declarations, 5);
+				assertTrue(t.getType() == IBasicType.t_int);
+				assertTrue(t.isUnsigned());
+				assertFalse(t.isSigned());
+				assertFalse(isLongLong(t));
+				assertFalse(t.isLong());
+
+			}
+			
+			// int g = 1234l;
+			{
+    			IBasicType t = getTypeForDeclaration(declarations, 6);
+				assertTrue(t.getType() == IBasicType.t_int);
+				assertFalse(t.isUnsigned());
+				assertFalse(t.isSigned());
+				assertTrue(t.isLong());
+				assertFalse(isLongLong(t));
+			}
+			
+			// int h = -123ll;
+			{
+    			IBasicType t = getTypeForDeclaration(declarations, 7);
+				assertTrue(t.getType() == IBasicType.t_int);
+				assertFalse(t.isUnsigned());
+				assertFalse(t.isSigned());
+				assertFalse(t.isLong());
+				assertTrue(isLongLong(t));
+			}
+			
+			// int i = 8888uL;
+			{
+    			IBasicType t = getTypeForDeclaration(declarations, 8);
+				assertTrue(t.getType() == IBasicType.t_int);
+				assertTrue(t.isUnsigned());
+				assertFalse(t.isSigned());
+				assertTrue(t.isLong());
+				assertFalse(isLongLong(t));
+			}
+		}
+    }
+    
+    
+    //  int a = -142.0;
+    //  int b = 456.1f;
+    //  int c = 100000.99F;
+    //  int d = 0.123l;
+    //  int e = 1.3L;
+    public void testBug269705_float_literal() throws Exception {
+    	final String code= getAboveComment();
+
+    	for (ParserLanguage lang : ParserLanguage.values()) {
+    		IASTTranslationUnit tu = parseAndCheckBindings(code, lang);
+    		IASTDeclaration[] declarations = tu.getDeclarations();
+
+    		// int a = -142.0;
+    		{
+    			IBasicType t = getTypeForDeclaration(declarations, 0);
+    			assertTrue(t.getType() == IBasicType.t_double);
+    			assertFalse(t.isSigned());
+    			assertFalse(t.isUnsigned());
+    			assertFalse(t.isLong());
+    			assertFalse(isLongLong(t));
+    		}
+
+    		//  int b = 456.1f;
+    		{
+    			IBasicType t = getTypeForDeclaration(declarations, 1);
+    			assertTrue(t.getType() == IBasicType.t_float);
+    			assertFalse(t.isSigned());
+    			assertFalse(t.isUnsigned());
+    			assertFalse(t.isLong());
+    			assertFalse(isLongLong(t));
+    		}
+
+    		// int c = 100000.99F;
+    		{
+    			IBasicType t = getTypeForDeclaration(declarations, 2);
+    			assertTrue(t.getType() == IBasicType.t_float);
+    			assertFalse(t.isSigned());
+    			assertFalse(t.isUnsigned());
+    			assertFalse(t.isLong());
+    			assertFalse(isLongLong(t));
+    		}
+
+    		// int d = 0.123l;
+    		{
+    			IBasicType t = getTypeForDeclaration(declarations, 3);
+    			assertTrue(t.getType() == IBasicType.t_double);
+    			assertFalse(t.isSigned());
+    			assertFalse(t.isUnsigned());
+    			assertFalse(isLongLong(t));
+    			assertTrue(t.isLong());
+    		}
+
+    		// int e = 1.3L;
+    		{
+    			IBasicType t = getTypeForDeclaration(declarations, 4);
+    			assertTrue(t.getType() == IBasicType.t_double);
+    			assertFalse(t.isSigned());
+    			assertFalse(t.isUnsigned());
+    			assertTrue(t.isLong());
+    			assertFalse(isLongLong(t));
+    		}
+    	}
+    }
+
+    boolean isLongLong(IType t) throws DOMException {
+     	if (t instanceof ICBasicType) {
+    		return ((ICBasicType) t).isLongLong();
+    	}
+    	if (t instanceof IGPPBasicType) {
+    		return ((IGPPBasicType) t).isLongLong();
+    	}
+    	return false;
+    }
+    
+	/**
+	 * @param declarations
+	 * @param index
+	 * @return
+	 */
+	private IBasicType getTypeForDeclaration(IASTDeclaration[] declarations, int index) {
+		IASTInitializer init = ((IASTSimpleDeclaration)declarations[index]).getDeclarators()[0].getInitializer();
+		return (IBasicType)((IASTInitializerExpression)init).getExpression().getExpressionType();
+	}
 }

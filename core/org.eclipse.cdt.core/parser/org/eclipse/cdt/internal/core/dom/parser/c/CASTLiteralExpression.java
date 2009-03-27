@@ -88,9 +88,9 @@ public class CASTLiteralExpression extends ASTNode implements IASTLiteralExpress
 		case IASTLiteralExpression.lk_char_constant:
 			return new CBasicType(IBasicType.t_char, 0, this);
 		case IASTLiteralExpression.lk_float_constant:
-			return new CBasicType(IBasicType.t_float, 0, this);
+			return classifyTypeOfFloatLiteral();
 		case IASTLiteralExpression.lk_integer_constant:
-			return new CBasicType(IBasicType.t_int, 0, this);
+			return classifyTypeOfIntLiteral();
 		case IASTLiteralExpression.lk_string_literal:
 			IType type = new CBasicType(IBasicType.t_char, 0, this);
 			type = new CQualifierType(type, true, false, false);
@@ -99,6 +99,62 @@ public class CASTLiteralExpression extends ASTNode implements IASTLiteralExpress
 		return null;
 	}
     
+	private IType classifyTypeOfFloatLiteral() {
+		final char[] lit= getValue();
+		final int len= lit.length;
+		int kind= IBasicType.t_double;
+		int flags= 0;
+		if (len > 0) {
+			switch (lit[len - 1]) {
+			case 'f': case 'F':
+				kind= IBasicType.t_float;
+				break;
+			case 'l': case 'L':
+				kind= IBasicType.t_double;
+				flags |= CBasicType.IS_LONG;
+				break;
+			}
+		}
+		
+		return new CBasicType(kind, flags, this);
+	}
+
+	private IType classifyTypeOfIntLiteral() {
+		int makelong= 0;
+		boolean unsigned= false;
+	
+		final char[] lit= getValue();
+		for (int i= lit.length - 1; i >= 0; i--) {
+			final char c= lit[i];
+			if (!(c > 'f' && c <= 'z') && !(c > 'F' && c <= 'Z')) {
+				break;
+			}
+			switch (c) {
+			case 'u':
+			case 'U':
+				unsigned = true;
+				break;
+			case 'l':
+			case 'L':
+				makelong++;
+				break;
+			}
+		}
+
+		int flags= 0;
+		if (unsigned) {
+			flags |= CBasicType.IS_UNSIGNED;
+		} 
+		
+		if (makelong > 1) {
+			flags |= CBasicType.IS_LONGLONG;
+		} else if (makelong == 1) {
+			flags |= CBasicType.IS_LONG;
+		} 
+		return new CBasicType(IBasicType.t_int, flags, this);
+	}
+	
+	
     /**
      * @deprecated, use {@link #setValue(char[])}, instead.
      */

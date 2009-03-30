@@ -12,29 +12,32 @@
 package org.eclipse.cdt.internal.core.dom.parser.cpp;
 
 import org.eclipse.cdt.core.dom.ast.ASTVisitor;
-import org.eclipse.cdt.core.dom.ast.IASTCastExpression;
 import org.eclipse.cdt.core.dom.ast.IASTExpression;
+import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IASTTypeId;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCastExpression;
+import org.eclipse.cdt.internal.core.dom.parser.ASTNode;
+import org.eclipse.cdt.internal.core.dom.parser.IASTAmbiguityParent;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPVisitor;
 
 /**
  * Cast expression for c++
  */
-public class CPPASTCastExpression extends CPPASTUnaryExpression implements ICPPASTCastExpression {
-
+public class CPPASTCastExpression extends ASTNode implements ICPPASTCastExpression, IASTAmbiguityParent {
+    private int op;
+    private IASTExpression operand;
 	private IASTTypeId typeId;
-    
+	
     public CPPASTCastExpression() {
 	}
     
     public CPPASTCastExpression(int operator, IASTTypeId typeId, IASTExpression operand) {
-    	super(operator, operand);
+		op = operator;
+		setOperand(operand);
 		setTypeId(typeId);
 	}
     
-    @Override
 	public CPPASTCastExpression copy() {
 		CPPASTCastExpression copy = new CPPASTCastExpression();
 		copy.setOperator(getOperator());
@@ -59,19 +62,28 @@ public class CPPASTCastExpression extends CPPASTUnaryExpression implements ICPPA
         return typeId;
     }
     
-    @Override
-	public void setOperand(IASTExpression expression) {
-        assertNotFrozen();
-        super.setOperand(expression);
-        // this needs to be overridden because CPPASTUnaryExpression sets
-        // propertyInParent to ICPPASTUnaryExpression.OPERAND, we want 
-        // ICPPASTCastExpression.OPERAND
-        if (expression != null) {
-			expression.setParent(this);
-			expression.setPropertyInParent(IASTCastExpression.OPERAND);
-		}
+	public int getOperator() {
+        return op;
     }
 
+    public void setOperator(int operator) {
+        assertNotFrozen();
+        op = operator;
+    }
+
+    public IASTExpression getOperand() {
+        return operand;
+    }
+
+    public void setOperand(IASTExpression expression) {
+        assertNotFrozen();
+        operand = expression;
+        if (expression != null) {
+			expression.setParent(this);
+			expression.setPropertyInParent(OPERAND);
+		}
+    }
+    
     @Override
 	public boolean accept( ASTVisitor action ){
         if( action.shouldVisitExpressions ){
@@ -96,7 +108,14 @@ public class CPPASTCastExpression extends CPPASTUnaryExpression implements ICPPA
         return true;
     }
 
-	@Override
+    public void replace(IASTNode child, IASTNode other) {
+        if (child == operand) {
+            other.setPropertyInParent(child.getPropertyInParent());
+            other.setParent(child.getParent());
+            operand  = (IASTExpression) other;
+        }
+    }
+    
 	public IType getExpressionType() {
 		return CPPVisitor.createType(typeId.getAbstractDeclarator());
 	}

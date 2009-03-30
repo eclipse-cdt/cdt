@@ -14,27 +14,31 @@ package org.eclipse.cdt.internal.core.dom.parser.c;
 import org.eclipse.cdt.core.dom.ast.ASTVisitor;
 import org.eclipse.cdt.core.dom.ast.IASTCastExpression;
 import org.eclipse.cdt.core.dom.ast.IASTExpression;
+import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IASTTypeId;
 import org.eclipse.cdt.core.dom.ast.IType;
+import org.eclipse.cdt.internal.core.dom.parser.ASTNode;
+import org.eclipse.cdt.internal.core.dom.parser.IASTAmbiguityParent;
 
 /**
  * Cast expressions for c
  */
-public class CASTCastExpression extends CASTUnaryExpression implements IASTCastExpression {
-
+public class CASTCastExpression extends ASTNode implements IASTCastExpression, IASTAmbiguityParent {
+    private int operator;
+    private IASTExpression operand;
     private IASTTypeId typeId;
 
 
     public CASTCastExpression() {
-    	super(op_cast, null);
+    	this.operator = op_cast;
 	}
 
 	public CASTCastExpression(IASTTypeId typeId, IASTExpression operand) {
-		super(op_cast, operand);
+		this();
+		setOperand(operand);
 		setTypeId(typeId);
 	}
 	
-	@Override
 	public CASTCastExpression copy() {
 		CASTCastExpression copy = new CASTCastExpression();
 		copy.setTypeId(typeId == null ? null : typeId.copy());
@@ -44,6 +48,28 @@ public class CASTCastExpression extends CASTUnaryExpression implements IASTCastE
 		return copy;
 	}
 
+	public int getOperator() {
+        return operator;
+    }
+
+    public void setOperator(int value) {
+        assertNotFrozen();
+        this.operator = value;
+    }
+
+    public IASTExpression getOperand() {
+        return operand;
+    }
+
+    public void setOperand(IASTExpression expression) {
+        assertNotFrozen();
+        operand = expression;
+        if (expression != null) {
+			expression.setParent(this);
+			expression.setPropertyInParent(OPERAND);
+		}
+    }
+    
 	public void setTypeId(IASTTypeId typeId) {
         assertNotFrozen();
         this.typeId = typeId;
@@ -83,7 +109,14 @@ public class CASTCastExpression extends CASTUnaryExpression implements IASTCastE
         return true;
     }
     
-    @Override
+	public void replace(IASTNode child, IASTNode other) {
+		if (child == operand) {
+			other.setPropertyInParent(child.getPropertyInParent());
+			other.setParent(child.getParent());
+			operand = (IASTExpression) other;
+		} 
+	}
+    
 	public IType getExpressionType() {
         IASTTypeId id= getTypeId();
         return CVisitor.createType(id.getAbstractDeclarator());

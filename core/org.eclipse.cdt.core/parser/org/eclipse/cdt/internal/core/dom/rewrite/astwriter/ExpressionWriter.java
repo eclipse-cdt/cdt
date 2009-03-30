@@ -125,8 +125,10 @@ public class ExpressionWriter extends NodeWriter{
 			((IASTIdExpression) expression).getName().accept(visitor);
 		} else if (expression instanceof IASTLiteralExpression) {
 			writeLiteralExpression((IASTLiteralExpression) expression);
-		} else if (expression instanceof IASTUnaryExpression) {//UnaryExpressions including Cast Expressions
+		} else if (expression instanceof IASTUnaryExpression) {
 			writeUnaryExpression((IASTUnaryExpression) expression);
+		} else if (expression instanceof IASTCastExpression) {
+			writeCastExpression((IASTCastExpression) expression);
 		} else if (expression instanceof ICPPASTNewExpression) {
 			writeCPPNewExpression((ICPPASTNewExpression) expression);
 		}else if (expression instanceof IASTConditionalExpression) {
@@ -372,16 +374,12 @@ public class ExpressionWriter extends NodeWriter{
 	}
 
 	private void writeUnaryExpression(IASTUnaryExpression unExp) {
-		if (unExp instanceof IASTCastExpression) {//Castoperatoren sind auch Un�reoperatoren
-			writeCastExpression((IASTCastExpression) unExp);
-		}else{
-			if(isPrefixExpression(unExp )) {
-				scribe.print(getPrefixOperator(unExp));
-			}
-			unExp.getOperand().accept(visitor);
-			if(isPostfixExpression(unExp)) {
-				scribe.print(getPostfixOperator(unExp));
-			}
+		if(isPrefixExpression(unExp )) {
+			scribe.print(getPrefixOperator(unExp));
+		}
+		unExp.getOperand().accept(visitor);
+		if(isPostfixExpression(unExp)) {
+			scribe.print(getPostfixOperator(unExp));
 		}
 	}
 

@@ -433,13 +433,23 @@ public abstract class BuildASTParserAction extends AbstractParserAction {
 		
 		if(alternateExpr == null)
 			astStack.push(expr);
+		else if(isFunctionType(expr)) // bug 252243
+			astStack.push(alternateExpr);
 		else {
 			IASTNode ambiguityNode = createAmbiguousExpression(expr, alternateExpr);
 			setOffsetAndLength(ambiguityNode);
 			astStack.push(ambiguityNode);
 		}
 	}
+	 
 	
+	private static boolean isFunctionType(IASTExpression expr) {
+		if(expr instanceof IASTTypeIdExpression) {
+			IASTTypeId typeId = ((IASTTypeIdExpression) expr).getTypeId();
+			return typeId.getAbstractDeclarator() instanceof IASTFunctionDeclarator;
+		}
+		return false;
+	}
 	
 	
 	/**

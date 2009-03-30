@@ -95,7 +95,7 @@ public abstract class BaseExtensibleLanguage extends AbstractLanguage {
 			ILanguage gppLanguage = getParserLanguage() == ParserLanguage.CPP ? GPPLanguage.getDefault() : GCCLanguage.getDefault();
 			gtu = gppLanguage.getASTTranslationUnit(reader, scanInfo, fileCreator, index, options, log);
 			
-			System.out.println("GPP AST:");
+			System.out.println(gppLanguage.getName() + " AST:");
 			ASTPrinter.print(gtu);
 			System.out.println();
 		}

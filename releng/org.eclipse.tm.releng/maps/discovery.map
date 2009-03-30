@@ -1,7 +1,7 @@
-feature@org.eclipse.tm.discovery=v20080530,:pserver:anonymous:none@dev.eclipse.org:/cvsroot/dsdp,,org.eclipse.tm.core/discovery/org.eclipse.tm.discovery-feature
+feature@org.eclipse.tm.discovery=v200902102200,:pserver:anonymous:none@dev.eclipse.org:/cvsroot/dsdp,,org.eclipse.tm.core/discovery/org.eclipse.tm.discovery-feature
 plugin@org.eclipse.rse.discovery=v20080402,:pserver:anonymous:none@dev.eclipse.org:/cvsroot/dsdp,,org.eclipse.tm.core/discovery/org.eclipse.rse.discovery
 plugin@org.eclipse.tm.discovery.doc.isv=v20080406,:pserver:anonymous:none@dev.eclipse.org:/cvsroot/dsdp,,org.eclipse.tm.core/discovery/org.eclipse.tm.discovery.doc.isv
-plugin@org.eclipse.tm.discovery.engine=v20080331,:pserver:anonymous:none@dev.eclipse.org:/cvsroot/dsdp,,org.eclipse.tm.core/discovery/org.eclipse.tm.discovery.engine
+plugin@org.eclipse.tm.discovery.engine=v200903051330,:pserver:anonymous:none@dev.eclipse.org:/cvsroot/dsdp,,org.eclipse.tm.core/discovery/org.eclipse.tm.discovery.engine
 plugin@org.eclipse.tm.discovery.model=v20080331,:pserver:anonymous:none@dev.eclipse.org:/cvsroot/dsdp,,org.eclipse.tm.core/discovery/org.eclipse.tm.discovery.model
 plugin@org.eclipse.tm.discovery.model.edit=v20080522,:pserver:anonymous:none@dev.eclipse.org:/cvsroot/dsdp,,org.eclipse.tm.core/discovery/org.eclipse.tm.discovery.model.edit
 plugin@org.eclipse.tm.discovery.protocol.dnssd=v20080331,:pserver:anonymous:none@dev.eclipse.org:/cvsroot/dsdp,,org.eclipse.tm.core/discovery/org.eclipse.tm.discovery.protocol.dnssd

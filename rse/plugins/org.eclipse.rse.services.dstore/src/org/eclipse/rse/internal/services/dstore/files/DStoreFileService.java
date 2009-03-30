@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2008 IBM Corporation and others.
+ * Copyright (c) 2006, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -53,6 +53,7 @@
  * David McKnight   (IBM)        - [251429] Pasting local folder to remote does not work in some case
  * David McKnight   (IBM)        - [261375] [dstore] problem comparing virtual path when getting cached element
  * David McKnight   (IBM)        - [256609] [dstore] need to make sure element is resolved properly before finding it's command descriptors
+ * David McKnight   (IBM)        - [270468] [dstore] FileServiceSubSystem.list() returns folders when only FILE_TYPE_FILES is requested
  *******************************************************************************/
 
 package org.eclipse.rse.internal.services.dstore.files;
@@ -1227,7 +1228,7 @@ public class DStoreFileService extends AbstractDStoreService implements IFileSer
 
 		dsQueryCommandMulti(subjects, null, queryStrings, monitor);
 
-		IHostFile[] result = convertToHostFiles(subjects, "*");		 //$NON-NLS-1$
+		IHostFile[] result = convertToHostFiles(subjects, IUniversalDataStoreConstants.C_QUERY_GET_REMOTE_OBJECT, "*");		 //$NON-NLS-1$
 		hostFiles.addAll(Arrays.asList(result));
 	}
 
@@ -1298,7 +1299,7 @@ public class DStoreFileService extends AbstractDStoreService implements IFileSer
 		_dstoreFileMap.put(path, file);
 		return file;
 	}
-	protected IHostFile[] convertToHostFiles(DataElement[] elements, String fileFilter)
+	protected IHostFile[] convertToHostFiles(DataElement[] elements, String queryType, String fileFilter)
 	{
 		IMatcher filematcher = null;
 		if (fileFilter.endsWith(",")) { //$NON-NLS-1$
@@ -1319,12 +1320,16 @@ public class DStoreFileService extends AbstractDStoreService implements IFileSer
 				{
 					if (filematcher.matches(element.getName()))
 					{
-						results.add(convertToHostFile(element));
+						if (!queryType.equals(IUniversalDataStoreConstants.C_QUERY_VIEW_FOLDERS)){	// don't add file if folder query					
+							results.add(convertToHostFile(element));
+						}
 					}
 				}
 				else
 				{
-					results.add(convertToHostFile(element));
+					if (!queryType.equals(IUniversalDataStoreConstants.C_QUERY_VIEW_FILES)){ // don't add folder if a file query
+						results.add(convertToHostFile(element));
+					}
 				}
 			}
 		}
@@ -1894,7 +1899,7 @@ public class DStoreFileService extends AbstractDStoreService implements IFileSer
 		DataElement deObj = ds.createObject(universaltemp, IUniversalDataStoreConstants.UNIVERSAL_FILTER_DESCRIPTOR, "", "", "", false); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 		DataElement[] results = dsQueryCommand(deObj, IUniversalDataStoreConstants.C_QUERY_ROOTS, monitor);
 
-		return convertToHostFiles(results, "*"); //$NON-NLS-1$
+		return convertToHostFiles(results, IUniversalDataStoreConstants.C_QUERY_ROOTS, "*"); //$NON-NLS-1$
 	}
 
 	private String getQueryString(int fileType)
@@ -2085,7 +2090,7 @@ public class DStoreFileService extends AbstractDStoreService implements IFileSer
 		args.add(attributes);
 
 		DataElement[] results = dsQueryCommand(deObj, args, queryType, monitor);
-		return convertToHostFiles(results, fileFilter);
+		return convertToHostFiles(results, queryType, fileFilter);
 	}
 
 	/**
@@ -2129,7 +2134,7 @@ public class DStoreFileService extends AbstractDStoreService implements IFileSer
 		List convertedResults = new ArrayList();
 		for (int r = 0; r < consolidatedResults.size(); r++)
 		{
-			IHostFile[] results = convertToHostFiles((DataElement[])consolidatedResults.get(r), fileFilters[r]);
+			IHostFile[] results = convertToHostFiles((DataElement[])consolidatedResults.get(r), queryTypes[r],fileFilters[r]);
 			for (int c = 0; c < results.length; c++)
 			{
 				convertedResults.add(results[c]);
@@ -2404,7 +2409,6 @@ public class DStoreFileService extends AbstractDStoreService implements IFileSer
 		}
 		return capabilities;
 	}
-
 
 
 }

@@ -11,8 +11,9 @@
  *******************************************************************************/
 package org.eclipse.cdt.dsf.debug.internal.ui.viewmodel.detailsupport;
 
-import org.eclipse.cdt.dsf.debug.ui.IDsfDebugUIConstants;
+import org.eclipse.cdt.dsf.debug.internal.ui.IDsfDebugHelpContextIds;
 import org.eclipse.cdt.dsf.internal.ui.DsfUIPlugin;
+import org.eclipse.debug.ui.IDebugUIConstants;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.dialogs.IInputValidator;
@@ -51,7 +52,7 @@ public class DetailPaneMaxLengthDialog extends TrayDialog {
 	public DetailPaneMaxLengthDialog(Shell parent) {
 		super(parent);
 		setShellStyle(getShellStyle() | SWT.RESIZE);
-		fValue = Integer.toString(DsfUIPlugin.getDefault().getPreferenceStore().getInt(IDsfDebugUIConstants.PREF_MAX_DETAIL_LENGTH));
+		fValue = Integer.toString(DsfUIPlugin.getDefault().getPreferenceStore().getInt(IDebugUIConstants.PREF_MAX_DETAIL_LENGTH));
 		fValidator = new IInputValidator() {
 					public String isValid(String newText) {
 						try {
@@ -88,7 +89,7 @@ public class DetailPaneMaxLengthDialog extends TrayDialog {
 	protected Control createContents(Composite parent) {
 		getShell().setText(MessagesForDetailPane.PaneMaxLengthDialog_ConfigureDetails);
 		Control contents = super.createContents(parent);
-		PlatformUI.getWorkbench().getHelpSystem().setHelp(getDialogArea(), IDsfDebugUIConstants.DETAIL_PANE_MAX_LENGTH_ACTION);
+		PlatformUI.getWorkbench().getHelpSystem().setHelp(getDialogArea(), IDsfDebugHelpContextIds.DETAIL_PANE_MAX_LENGTH_ACTION);
 		return contents;
 	}
 
@@ -129,7 +130,7 @@ public class DetailPaneMaxLengthDialog extends TrayDialog {
 	protected void okPressed() {
 		String text = getValue();
 		try {
-			DsfUIPlugin.getDefault().getPreferenceStore().setValue(IDsfDebugUIConstants.PREF_MAX_DETAIL_LENGTH, Integer.parseInt(text));
+			DsfUIPlugin.getDefault().getPreferenceStore().setValue(IDebugUIConstants.PREF_MAX_DETAIL_LENGTH, Integer.parseInt(text));
 		} 
 		catch (NumberFormatException e) {
 			DsfUIPlugin.log(e);

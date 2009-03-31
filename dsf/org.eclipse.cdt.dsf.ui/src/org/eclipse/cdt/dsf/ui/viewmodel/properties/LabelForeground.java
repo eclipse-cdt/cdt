@@ -17,43 +17,29 @@ import org.eclipse.debug.internal.ui.viewers.model.provisional.ILabelUpdate;
 import org.eclipse.swt.graphics.RGB;
 
 /**
- * The color attribute of a label.  It determines what foreground and 
- * background color to use for the given label.
+ * The color attribute of a label.  It determines what foreground color to use 
+ * for the given label.
  * 
  * @see LabelAttribute
  * @see LabelColumnInfo
  * @see PropertiesBasedLabelProvider
  * 
- * @since 1.0
+ * @since 2.0
  */
 
-public class LabelColor extends LabelAttribute {
+public class LabelForeground extends LabelAttribute {
     private RGB fForeground;
-    private RGB fBackground;
 
-    public LabelColor() {
-        this(null, null);
-    }
-    
-    public LabelColor(RGB foreground, RGB background) {
+    public LabelForeground(RGB foreground) {
         fForeground = foreground;
-        fBackground = background;
     }
     
     public RGB getForeground() {
         return fForeground;
     }
 
-    public RGB getBackground() {
-        return fBackground;
-    }
-    
     public void setForeground(RGB foreground) {
         fForeground = foreground;
-    }
-
-    public void setBackground(RGB background) {
-        fBackground = background;
     }
 
     @Override
@@ -61,11 +47,6 @@ public class LabelColor extends LabelAttribute {
         RGB foreground = getForeground();
         if (foreground != null) {
             update.setForeground(foreground, columnIndex);
-        }
-        
-        RGB background = getBackground();
-        if (background != null) {
-            update.setBackground(background, columnIndex);
         }
     }
 }

@@ -10,6 +10,8 @@
  *******************************************************************************/
 package org.eclipse.cdt.dsf.ui.viewmodel.update;
 
+import java.util.Map;
+
 import org.eclipse.jface.viewers.TreePath;
 
 /**
@@ -48,5 +50,13 @@ public class AutomaticUpdatePolicy implements IVMUpdatePolicy {
 
     public IElementUpdateTester getElementUpdateTester(Object event) {
         return fgUpdateTester;
+    }
+
+    public Object[] getInitialRootElementChildren(Object rootElement) {
+        return null;
+    }
+    
+    public Map<String, Object> getInitialRootElementProperties(Object rootElement) {
+        return null;
     }
 }

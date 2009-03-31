@@ -22,12 +22,13 @@ import org.eclipse.cdt.dsf.concurrent.IDsfStatusConstants;
 import org.eclipse.cdt.dsf.concurrent.Query;
 import org.eclipse.cdt.dsf.datamodel.DMContexts;
 import org.eclipse.cdt.dsf.datamodel.IDMContext;
+import org.eclipse.cdt.dsf.debug.internal.ui.IDsfDebugHelpContextIds;
+import org.eclipse.cdt.dsf.debug.internal.ui.IInternalDsfDebugUIConstants;
 import org.eclipse.cdt.dsf.debug.internal.ui.viewmodel.detailsupport.MessagesForDetailPane;
 import org.eclipse.cdt.dsf.debug.internal.ui.viewmodel.detailsupport.TextViewerAction;
 import org.eclipse.cdt.dsf.debug.service.IModules;
 import org.eclipse.cdt.dsf.debug.service.IModules.IModuleDMContext;
 import org.eclipse.cdt.dsf.debug.service.IModules.IModuleDMData;
-import org.eclipse.cdt.dsf.debug.ui.IDsfDebugUIConstants;
 import org.eclipse.cdt.dsf.internal.ui.DsfUIPlugin;
 import org.eclipse.cdt.dsf.service.DsfServicesTracker;
 import org.eclipse.cdt.dsf.service.DsfSession;
@@ -37,6 +38,7 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
+import org.eclipse.debug.ui.IDebugUIConstants;
 import org.eclipse.debug.ui.IDebugView;
 import org.eclipse.jface.action.IMenuListener;
 import org.eclipse.jface.action.IMenuManager;
@@ -183,8 +185,8 @@ public class ModuleDetailPane extends ModulesAbstractDetailPane implements IAdap
 	
 	public void propertyChange(PropertyChangeEvent event) {
         String propertyName= event.getProperty();
-        if (propertyName.equals(IDsfDebugUIConstants.DETAIL_PANE_FONT)) {
-            fSourceViewer.getTextWidget().setFont(JFaceResources.getFont(IDsfDebugUIConstants.DETAIL_PANE_FONT));
+        if (propertyName.equals(IDebugUIConstants.PREF_DETAIL_PANE_FONT)) {
+            fSourceViewer.getTextWidget().setFont(JFaceResources.getFont(IDebugUIConstants.PREF_DETAIL_PANE_FONT));
         }
 	}
     
@@ -199,10 +201,10 @@ public class ModuleDetailPane extends ModulesAbstractDetailPane implements IAdap
         // Create & configure a SourceViewer
         fSourceViewer = new SourceViewer(parent, null, SWT.V_SCROLL | SWT.H_SCROLL);
         fSourceViewer.setDocument(getDetailDocument());
-        fSourceViewer.getTextWidget().setFont(JFaceResources.getFont(IDsfDebugUIConstants.DETAIL_PANE_FONT));
-        fSourceViewer.getTextWidget().setWordWrap(DsfUIPlugin.getDefault().getPreferenceStore().getBoolean(IDsfDebugUIConstants.PREF_DETAIL_PANE_WORD_WRAP));
+        fSourceViewer.getTextWidget().setFont(JFaceResources.getFont(IDebugUIConstants.PREF_DETAIL_PANE_FONT));
+        fSourceViewer.getTextWidget().setWordWrap(DsfUIPlugin.getDefault().getPreferenceStore().getBoolean(IInternalDsfDebugUIConstants.PREF_DETAIL_PANE_WORD_WRAP));
         fSourceViewer.setEditable(false);
-        PlatformUI.getWorkbench().getHelpSystem().setHelp(fSourceViewer.getTextWidget(), IDsfDebugUIConstants.DETAIL_PANE);
+        PlatformUI.getWorkbench().getHelpSystem().setHelp(fSourceViewer.getTextWidget(), IDsfDebugHelpContextIds.DETAIL_PANE);
         Control control = fSourceViewer.getControl();
         GridData gd = new GridData(GridData.FILL_BOTH);
         control.setLayoutData(gd);  
@@ -316,13 +318,13 @@ public class ModuleDetailPane extends ModulesAbstractDetailPane implements IAdap
         TextViewerAction textAction= new TextViewerAction(fSourceViewer, ITextOperationTarget.SELECT_ALL);
         textAction.configureAction(MessagesForDetailPane.DetailPane_Select_All, "", ""); //$NON-NLS-1$ //$NON-NLS-2$ 
         textAction.setActionDefinitionId(IWorkbenchActionDefinitionIds.SELECT_ALL);
-        PlatformUI.getWorkbench().getHelpSystem().setHelp(textAction, IDsfDebugUIConstants.DETAIL_PANE_SELECT_ALL_ACTION);
+        PlatformUI.getWorkbench().getHelpSystem().setHelp(textAction, IDsfDebugHelpContextIds.DETAIL_PANE_SELECT_ALL_ACTION);
         setAction(DETAIL_SELECT_ALL_ACTION, textAction);
         
         textAction= new TextViewerAction(fSourceViewer, ITextOperationTarget.COPY);
         textAction.configureAction(MessagesForDetailPane.DetailPane_Copy, "", "");  //$NON-NLS-1$ //$NON-NLS-2$
         textAction.setActionDefinitionId(IWorkbenchActionDefinitionIds.COPY);
-        PlatformUI.getWorkbench().getHelpSystem().setHelp(textAction, IDsfDebugUIConstants.DETAIL_PANE_COPY_ACTION);
+        PlatformUI.getWorkbench().getHelpSystem().setHelp(textAction, IDsfDebugHelpContextIds.DETAIL_PANE_COPY_ACTION);
         setAction(DETAIL_COPY_ACTION, textAction);
 
         setSelectionDependantAction(DETAIL_COPY_ACTION);

@@ -17,6 +17,8 @@ public class ViewModelUpdateMessages extends NLS {
 	private static final String BUNDLE_NAME = "org.eclipse.cdt.dsf.ui.viewmodel.update.ViewModelUpdateMessages";//$NON-NLS-1$
 
     public static String AutomaticUpdatePolicy_name;
+    public static String ManualUpdatePolicy_InitialDataElement__label;
+
     public static String ManualUpdatePolicy_name;
     /** 
      * @since 1.1 

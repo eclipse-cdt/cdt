@@ -13,10 +13,7 @@ package org.eclipse.cdt.dsf.debug.internal.ui;
 import org.eclipse.cdt.dsf.debug.ui.IDsfDebugUIConstants;
 import org.eclipse.cdt.dsf.internal.ui.DsfUIPlugin;
 import org.eclipse.core.runtime.preferences.AbstractPreferenceInitializer;
-import org.eclipse.debug.ui.IDebugUIConstants;
 import org.eclipse.jface.preference.IPreferenceStore;
-import org.eclipse.jface.preference.PreferenceConverter;
-import org.eclipse.swt.graphics.RGB;
 
 public class PreferenceInitializer extends AbstractPreferenceInitializer {
 
@@ -31,28 +28,6 @@ public class PreferenceInitializer extends AbstractPreferenceInitializer {
 	public void initializeDefaultPreferences() {
 		
 		IPreferenceStore prefs = DsfUIPlugin.getDefault().getPreferenceStore();
-		
-		/*
-		 *  Common to all views.
-		 */
-		PreferenceConverter.setDefault(prefs, IDebugUIConstants.PREF_CHANGED_DEBUG_ELEMENT_COLOR, new RGB(255, 0, 0));
-		prefs.setDefault(IDsfDebugUIConstants.PREF_DETAIL_PANE_WORD_WRAP, false);
-		prefs.setDefault(IDsfDebugUIConstants.PREF_MAX_DETAIL_LENGTH, 10000);
-		
-		/*
-		 * Variables view
-		 */
-		prefs.setDefault(IDsfDebugUIConstants.VARIABLES_DETAIL_PANE_ORIENTATION, IDsfDebugUIConstants.VARIABLES_DETAIL_PANE_UNDERNEATH);
-		
-		/*
-		 * Registers View
-		 */
-		prefs.setDefault(IDsfDebugUIConstants.REGISTERS_DETAIL_PANE_ORIENTATION, IDsfDebugUIConstants.VARIABLES_DETAIL_PANE_UNDERNEATH);
-		
-		/*
-		 * Expressions View
-		 */
-		prefs.setDefault(IDsfDebugUIConstants.EXPRESSIONS_DETAIL_PANE_ORIENTATION, IDsfDebugUIConstants.VARIABLES_DETAIL_PANE_UNDERNEATH);
 
 		/* 
 		 * Debug View

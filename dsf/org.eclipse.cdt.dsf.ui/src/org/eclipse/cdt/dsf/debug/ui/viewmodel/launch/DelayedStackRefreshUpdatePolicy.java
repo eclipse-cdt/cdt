@@ -10,6 +10,8 @@
  *******************************************************************************/
 package org.eclipse.cdt.dsf.debug.ui.viewmodel.launch;
 
+import java.util.Map;
+
 import org.eclipse.cdt.dsf.datamodel.IDMContext;
 import org.eclipse.cdt.dsf.debug.service.IRunControl.IContainerDMContext;
 import org.eclipse.cdt.dsf.debug.service.IRunControl.IExecutionDMContext;
@@ -171,5 +173,12 @@ public class DelayedStackRefreshUpdatePolicy extends UpdatePolicyDecorator {
 		    return new ThreadsUpdateTester(super.getElementUpdateTester(event), false);
 		}
 	}
+	
+	public Object[] getInitialRootElementChildren(Object rootElement) {
+	    return null;
+	}
 
+    public Map<String, Object> getInitialRootElementProperties(Object rootElement) {
+        return null;
+    }
 }

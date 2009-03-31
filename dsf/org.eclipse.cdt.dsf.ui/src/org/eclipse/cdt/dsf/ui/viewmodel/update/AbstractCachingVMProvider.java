@@ -426,7 +426,9 @@ public class AbstractCachingVMProvider extends AbstractVMProvider
             // Find or create the cache entry for the element of this update.
             ElementDataKey key = makeEntryKey(node, update);
             final ElementDataEntry entry = getElementDataEntry(key);
+            updateRootElementMarker(key.fRootElement, node, update);
             
+            // Check if the cache entry has this request result cached. 
             if (entry.fHasChildren != null) {
                 // Cache Hit!  Just return the value.
                 if (DEBUG_CACHE && (DEBUG_PRESENTATION_ID == null || getPresentationContext().getId().equals(DEBUG_PRESENTATION_ID))) {
@@ -473,7 +475,9 @@ public class AbstractCachingVMProvider extends AbstractVMProvider
         // Find or create the cache entry for the element of this update.
         ElementDataKey key = makeEntryKey(node, update);
         final ElementDataEntry entry = getElementDataEntry(key);
+        updateRootElementMarker(key.fRootElement, node, update);
         
+        // Check if the cache entry has this request result cached. 
         if(entry.fChildrenCount != null) {
             // Cache Hit!  Just return the value.
             if (DEBUG_CACHE && (DEBUG_PRESENTATION_ID == null || getPresentationContext().getId().equals(DEBUG_PRESENTATION_ID))) {
@@ -489,7 +493,7 @@ public class AbstractCachingVMProvider extends AbstractVMProvider
                 new ViewerDataRequestMonitor<Integer>(getExecutor(), update) {
                     @Override
                     protected void handleCompleted() {
-                        // Update completed.  Write value to cache only if update successed 
+                        // Update completed.  Write value to cache only if update succeeded 
                         // and the cache entry wasn't flushed in the mean time. 
                         if(isSuccess()) {
                             if (flushCounter == entry.fFlushCounter) {
@@ -514,6 +518,7 @@ public class AbstractCachingVMProvider extends AbstractVMProvider
         // Find or create the cache entry for the element of this update.
         ElementDataKey key = makeEntryKey(node, update);
         final ElementDataEntry entry = getElementDataEntry(key);
+        updateRootElementMarker(key.fRootElement, node, update);
         
         final int flushCounter = entry.fFlushCounter;
         if (entry.fChildren == null || (update.getOffset() < 0 && !entry.fAllChildrenKnown)) {
@@ -732,6 +737,9 @@ public class AbstractCachingVMProvider extends AbstractVMProvider
                     elementDataEntry.fDirty = false;
                 } else if ((updateFlags & IVMUpdatePolicy.DIRTY) != 0) {
                     elementDataEntry.fDirty = true;
+                    if (elementDataEntry.fProperties != null) {
+                        elementDataEntry.fProperties.put(PROP_CACHE_ENTRY_DIRTY, Boolean.TRUE);
+                    }
                 }
             }
             entry = entry.fPrevious;
@@ -853,6 +861,7 @@ public class AbstractCachingVMProvider extends AbstractVMProvider
             // See bug 241024.
             proxy.init(context);
         }
+        
         return proxy;
     }
     
@@ -916,14 +925,21 @@ public class AbstractCachingVMProvider extends AbstractVMProvider
             entry.reinsert(fCacheListHead);
         }
         
+        
+        return entry;
+    }
+
+    private void updateRootElementMarker(Object rootElement, IVMNode node, IViewerUpdate update) {
+        boolean created = false;
         // Update the root element marker:
         // - ensure that the root marker is root markers' map,
         // - ensure that the root marker is in the cache map,
         // - and ensure that it's at the end of the cache. 
-        RootElementMarkerKey rootMarker = fRootMarkers.get(key.fRootElement);
+        RootElementMarkerKey rootMarker = fRootMarkers.get(rootElement);
         if (rootMarker == null) {
-            rootMarker = new RootElementMarkerKey(key.fRootElement);
-            fRootMarkers.put(key.fRootElement, rootMarker);
+            rootMarker = new RootElementMarkerKey(rootElement);
+            fRootMarkers.put(rootElement, rootMarker);
+            created = true;
         }
         Entry rootMarkerEntry = fCacheData.get(rootMarker);
         if (rootMarkerEntry == null) {
@@ -931,11 +947,36 @@ public class AbstractCachingVMProvider extends AbstractVMProvider
             addEntry(rootMarker, rootMarkerEntry); 
         } else if (rootMarkerEntry.fNext != fCacheListHead) {
             rootMarkerEntry.reinsert(fCacheListHead);
-        }
+        }        
         
-        return entry;
+        if (created) {
+            ElementDataKey rootElementDataKey = 
+                new ElementDataKey(rootElement, node, update.getViewerInput(), update.getElementPath());
+            ElementDataEntry entry = getElementDataEntry(rootElementDataKey);
+            
+            Object[] rootElementChildren = getActiveUpdatePolicy().getInitialRootElementChildren(rootElement);
+            if (rootElementChildren != null) {
+                entry.fHasChildren = rootElementChildren.length > 0;
+                entry.fChildrenCount = rootElementChildren.length;
+                entry.fChildren = new HashMap<Integer, Object>(entry.fChildrenCount * 4/3);
+                for (int i = 0; i < rootElementChildren.length; i++) {
+                    entry.fChildren.put(i, rootElementChildren[i]);
+                }
+                entry.fAllChildrenKnown = true;
+                entry.fDirty = true;
+            }
+            
+            Map<String, Object> rootElementProperties = getActiveUpdatePolicy().getInitialRootElementProperties(rootElement);
+            
+            if (rootElementProperties != null) {
+                entry.fProperties = new HashMap<String, Object>((rootElementProperties.size() + 1) * 4/3);
+                entry.fProperties.putAll(rootElementProperties);
+                entry.fProperties.put(PROP_CACHE_ENTRY_DIRTY, true);
+                entry.fDirty = true;
+            }
+        }
     }
-
+    
     /**
      * Convenience method used by {@link #getElementDataEntry(ElementDataKey)}
      */
@@ -1025,16 +1066,26 @@ public class AbstractCachingVMProvider extends AbstractVMProvider
             // Find or create the cache entry for the element of this update.
             ElementDataKey key = makeEntryKey(node, update);
             final ElementDataEntry entry = getElementDataEntry(key);
+            updateRootElementMarker(key.fRootElement, node, update);
             
             // The request can be retrieved from cache if all the properties that were requested in the update are 
             // found in the map.
             if (entry.fProperties != null && entry.fProperties.keySet().containsAll(update.getProperties())) {
                 // Cache Hit!  Just return the value.
                 if (DEBUG_CACHE && (DEBUG_PRESENTATION_ID == null || getPresentationContext().getId().equals(DEBUG_PRESENTATION_ID))) {
-                    DsfUIPlugin.debug("cacheHitHasChildren(node = " + node + ", update = " + update + ", " + entry.fHasChildren + ")"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
+                    DsfUIPlugin.debug("cacheHitProperties(node = " + node + ", update = " + update + ", " + entry.fProperties + ")"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
                 }
                 update.setAllProperties(entry.fProperties);
                 update.setStatus((IStatus)entry.fProperties.get(PROP_UPDATE_STATUS));
+                update.done();
+            } else if (entry.fProperties != null && entry.fDirty) {
+                // Cache miss, BUT the entry is dirty already.  Rather then fetch new data from model, return 
+                // incomplete data to user.  User can refresh the view to get the complete data set.
+                if (DEBUG_CACHE && (DEBUG_PRESENTATION_ID == null || getPresentationContext().getId().equals(DEBUG_PRESENTATION_ID))) {
+                    DsfUIPlugin.debug("cacheHitPropertiesPartialStaleData(node = " + node + ", update = " + update + ", " + entry.fProperties + ")"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
+                }
+                update.setAllProperties(entry.fProperties);
+                update.setStatus(DsfUIPlugin.newErrorStatus(IDsfStatusConstants.INVALID_STATE, "Cache contains partial stale data for this request.", null)); //$NON-NLS-1$
                 update.done();
             } else {
                 // Cache miss!  Save the flush counter of the entry and create a proxy update.

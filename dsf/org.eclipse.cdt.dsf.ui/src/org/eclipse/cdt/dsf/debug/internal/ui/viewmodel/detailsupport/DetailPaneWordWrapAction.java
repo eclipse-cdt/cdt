@@ -11,7 +11,8 @@
  *******************************************************************************/
 package org.eclipse.cdt.dsf.debug.internal.ui.viewmodel.detailsupport;
 
-import org.eclipse.cdt.dsf.debug.ui.IDsfDebugUIConstants;
+import org.eclipse.cdt.dsf.debug.internal.ui.IDsfDebugHelpContextIds;
+import org.eclipse.cdt.dsf.debug.internal.ui.IInternalDsfDebugUIConstants;
 import org.eclipse.cdt.dsf.internal.ui.DsfUIPlugin;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IAction;
@@ -29,12 +30,12 @@ public class DetailPaneWordWrapAction extends Action {
 	public DetailPaneWordWrapAction(ITextViewer textViewer) {
 		super(MessagesForDetailPane.PaneWordWrapAction_WrapText,IAction.AS_CHECK_BOX);
         
-		PlatformUI.getWorkbench().getHelpSystem().setHelp(this, IDsfDebugUIConstants.DETAIL_PANE_WORD_WRAP_ACTION);
+		PlatformUI.getWorkbench().getHelpSystem().setHelp(this, IDsfDebugHelpContextIds.DETAIL_PANE_WORD_WRAP_ACTION);
 		
 		fTextViewer = textViewer;
 		setEnabled(true);
 		
-		boolean prefSetting = DsfUIPlugin.getDefault().getPreferenceStore().getBoolean(IDsfDebugUIConstants.PREF_DETAIL_PANE_WORD_WRAP);
+		boolean prefSetting = DsfUIPlugin.getDefault().getPreferenceStore().getBoolean(IInternalDsfDebugUIConstants.PREF_DETAIL_PANE_WORD_WRAP);
 		fTextViewer.getTextWidget().setWordWrap(prefSetting);
 		setChecked(prefSetting);
 		
@@ -47,7 +48,7 @@ public class DetailPaneWordWrapAction extends Action {
 	@Override
 	public void run() {
 		fTextViewer.getTextWidget().setWordWrap(isChecked());
-		DsfUIPlugin.getDefault().getPreferenceStore().setValue(IDsfDebugUIConstants.PREF_DETAIL_PANE_WORD_WRAP,isChecked());
+		DsfUIPlugin.getDefault().getPreferenceStore().setValue(IInternalDsfDebugUIConstants.PREF_DETAIL_PANE_WORD_WRAP,isChecked());
 		DsfUIPlugin.getDefault().savePluginPreferences();
 	}
 	

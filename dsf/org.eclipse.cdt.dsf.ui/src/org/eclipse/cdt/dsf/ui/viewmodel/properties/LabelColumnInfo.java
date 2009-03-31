@@ -98,7 +98,8 @@ public class LabelColumnInfo  {
         boolean textSet = false;
         boolean imageSet = false;
         boolean fontSet = false;
-        boolean colorSet = false;
+        boolean foregroundSet = false;
+        boolean backgroundSet = false;
         
         LabelAttribute[] labelAttributes = getLabelAttributes();
         for (LabelAttribute info : labelAttributes) {
@@ -106,14 +107,16 @@ public class LabelColumnInfo  {
             if (!(info instanceof LabelText && textSet) &&
                 !(info instanceof LabelImage && imageSet) &&
                 !(info instanceof LabelFont && fontSet) &&
-                !(info instanceof LabelColor && colorSet) &&
+                !(info instanceof LabelForeground && foregroundSet) &&
+                !(info instanceof LabelBackground && backgroundSet) &&
                 info.isEnabled(status, properties))
             {
                 info.updateAttribute(update, columnIndex, status, properties);
                 textSet = textSet || info instanceof LabelText;
                 imageSet = imageSet || info instanceof LabelImage;
                 fontSet = fontSet || info instanceof LabelFont;
-                colorSet = colorSet || info instanceof LabelColor;
+                foregroundSet = foregroundSet || info instanceof LabelForeground;
+                backgroundSet = backgroundSet || info instanceof LabelBackground;
             }
         }
     }

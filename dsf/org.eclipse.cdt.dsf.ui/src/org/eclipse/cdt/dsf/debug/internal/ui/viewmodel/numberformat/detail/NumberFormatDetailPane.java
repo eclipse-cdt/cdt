@@ -23,11 +23,12 @@ import java.util.Set;
 import java.util.concurrent.Executor;
 
 import org.eclipse.cdt.dsf.concurrent.DataRequestMonitor;
+import org.eclipse.cdt.dsf.debug.internal.ui.IDsfDebugHelpContextIds;
+import org.eclipse.cdt.dsf.debug.internal.ui.IInternalDsfDebugUIConstants;
 import org.eclipse.cdt.dsf.debug.internal.ui.viewmodel.detailsupport.DetailPaneMaxLengthAction;
 import org.eclipse.cdt.dsf.debug.internal.ui.viewmodel.detailsupport.DetailPaneWordWrapAction;
 import org.eclipse.cdt.dsf.debug.internal.ui.viewmodel.detailsupport.MessagesForDetailPane;
 import org.eclipse.cdt.dsf.debug.internal.ui.viewmodel.detailsupport.TextViewerAction;
-import org.eclipse.cdt.dsf.debug.ui.IDsfDebugUIConstants;
 import org.eclipse.cdt.dsf.debug.ui.viewmodel.IDebugVMConstants;
 import org.eclipse.cdt.dsf.debug.ui.viewmodel.numberformat.FormattedValueVMUtil;
 import org.eclipse.cdt.dsf.internal.ui.DsfUIPlugin;
@@ -379,7 +380,7 @@ public class NumberFormatDetailPane implements IDetailPane, IAdaptable, IPropert
                                 insert = CRLF + result;
                             }
                             try {
-                                int max = DsfUIPlugin.getDefault().getPreferenceStore().getInt(IDsfDebugUIConstants.PREF_MAX_DETAIL_LENGTH);
+                                int max = DsfUIPlugin.getDefault().getPreferenceStore().getInt(IDebugUIConstants.PREF_MAX_DETAIL_LENGTH);
                                 if (max > 0 && insert.length() > max) {
                                     insert = insert.substring(0, max) + DOTS;
                                 }
@@ -455,10 +456,10 @@ public class NumberFormatDetailPane implements IDetailPane, IAdaptable, IPropert
         // Create & configure a TextViewer
         fTextViewer = new TextViewer(parent, SWT.V_SCROLL | SWT.H_SCROLL);
         fTextViewer.setDocument(getDetailDocument());
-        fTextViewer.getTextWidget().setFont(JFaceResources.getFont(IDsfDebugUIConstants.DETAIL_PANE_FONT));
-        fTextViewer.getTextWidget().setWordWrap(DsfUIPlugin.getDefault().getPreferenceStore().getBoolean(IDsfDebugUIConstants.PREF_DETAIL_PANE_WORD_WRAP));
+        fTextViewer.getTextWidget().setFont(JFaceResources.getFont(IDebugUIConstants.PREF_DETAIL_PANE_FONT));
+        fTextViewer.getTextWidget().setWordWrap(DsfUIPlugin.getDefault().getPreferenceStore().getBoolean(IInternalDsfDebugUIConstants.PREF_DETAIL_PANE_WORD_WRAP));
         fTextViewer.setEditable(false);
-        PlatformUI.getWorkbench().getHelpSystem().setHelp(fTextViewer.getTextWidget(), IDsfDebugUIConstants.DETAIL_PANE);
+        PlatformUI.getWorkbench().getHelpSystem().setHelp(fTextViewer.getTextWidget(), IDsfDebugHelpContextIds.DETAIL_PANE);
         Control control = fTextViewer.getControl();
         GridData gd = new GridData(GridData.FILL_BOTH);
         control.setLayoutData(gd);  
@@ -522,13 +523,13 @@ public class NumberFormatDetailPane implements IDetailPane, IAdaptable, IPropert
         TextViewerAction textAction= new TextViewerAction(fTextViewer, ITextOperationTarget.SELECT_ALL);
         textAction.configureAction(MessagesForDetailPane.DetailPane_Select_All, "", ""); //$NON-NLS-1$ //$NON-NLS-2$ 
         textAction.setActionDefinitionId(IWorkbenchActionDefinitionIds.SELECT_ALL);
-        PlatformUI.getWorkbench().getHelpSystem().setHelp(textAction, IDsfDebugUIConstants.DETAIL_PANE_SELECT_ALL_ACTION);
+        PlatformUI.getWorkbench().getHelpSystem().setHelp(textAction, IDsfDebugHelpContextIds.DETAIL_PANE_SELECT_ALL_ACTION);
         setAction(DETAIL_SELECT_ALL_ACTION, textAction);
         
         textAction= new TextViewerAction(fTextViewer, ITextOperationTarget.COPY);
         textAction.configureAction(MessagesForDetailPane.DetailPane_Copy, "", "");  //$NON-NLS-1$ //$NON-NLS-2$
         textAction.setActionDefinitionId(IWorkbenchActionDefinitionIds.COPY);
-        PlatformUI.getWorkbench().getHelpSystem().setHelp(textAction, IDsfDebugUIConstants.DETAIL_PANE_COPY_ACTION);
+        PlatformUI.getWorkbench().getHelpSystem().setHelp(textAction, IDsfDebugHelpContextIds.DETAIL_PANE_COPY_ACTION);
         setAction(DETAIL_COPY_ACTION, textAction);
         
         setSelectionDependantAction(DETAIL_COPY_ACTION);
@@ -749,13 +750,13 @@ public class NumberFormatDetailPane implements IDetailPane, IAdaptable, IPropert
      */
     public void propertyChange(PropertyChangeEvent event) {
         String propertyName= event.getProperty();
-        if (propertyName.equals(IDsfDebugUIConstants.DETAIL_PANE_FONT)) {
-            fTextViewer.getTextWidget().setFont(JFaceResources.getFont(IDsfDebugUIConstants.DETAIL_PANE_FONT));
-        } else if (propertyName.equals(IDsfDebugUIConstants.PREF_MAX_DETAIL_LENGTH)) {
+        if (propertyName.equals(IDebugUIConstants.PREF_DETAIL_PANE_FONT)) {
+            fTextViewer.getTextWidget().setFont(JFaceResources.getFont(IDebugUIConstants.PREF_DETAIL_PANE_FONT));
+        } else if (propertyName.equals(IDebugUIConstants.PREF_MAX_DETAIL_LENGTH)) {
             display(fLastDisplayed);
-        } else if (propertyName.equals(IDsfDebugUIConstants.PREF_DETAIL_PANE_WORD_WRAP)) {
-            fTextViewer.getTextWidget().setWordWrap(DsfUIPlugin.getDefault().getPreferenceStore().getBoolean(IDsfDebugUIConstants.PREF_DETAIL_PANE_WORD_WRAP));
-            getAction(DETAIL_WORD_WRAP_ACTION).setChecked(DsfUIPlugin.getDefault().getPreferenceStore().getBoolean(IDsfDebugUIConstants.PREF_DETAIL_PANE_WORD_WRAP));    
+        } else if (propertyName.equals(IInternalDsfDebugUIConstants.PREF_DETAIL_PANE_WORD_WRAP)) {
+            fTextViewer.getTextWidget().setWordWrap(DsfUIPlugin.getDefault().getPreferenceStore().getBoolean(IInternalDsfDebugUIConstants.PREF_DETAIL_PANE_WORD_WRAP));
+            getAction(DETAIL_WORD_WRAP_ACTION).setChecked(DsfUIPlugin.getDefault().getPreferenceStore().getBoolean(IInternalDsfDebugUIConstants.PREF_DETAIL_PANE_WORD_WRAP));    
         }
     }
 }

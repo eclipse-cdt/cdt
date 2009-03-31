@@ -11,7 +11,7 @@
  *******************************************************************************/
 package org.eclipse.cdt.dsf.debug.internal.ui.viewmodel.detailsupport;
 
-import org.eclipse.cdt.dsf.debug.ui.IDsfDebugUIConstants;
+import org.eclipse.cdt.dsf.debug.internal.ui.IDsfDebugHelpContextIds;
 import org.eclipse.jface.action.Action;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.PlatformUI;
@@ -31,7 +31,7 @@ public class DetailPaneMaxLengthAction extends Action {
 		super(MessagesForDetailPane.PaneMaxLengthAction_MaxLength);
 		fDialogShell = dialogShell;
 		
-		PlatformUI.getWorkbench().getHelpSystem().setHelp(this, IDsfDebugUIConstants.DETAIL_PANE_MAX_LENGTH_ACTION);
+		PlatformUI.getWorkbench().getHelpSystem().setHelp(this, IDsfDebugHelpContextIds.DETAIL_PANE_MAX_LENGTH_ACTION);
 		
 	}
 	

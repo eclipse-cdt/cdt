@@ -10,6 +10,9 @@
  *******************************************************************************/
 package org.eclipse.cdt.dsf.ui.viewmodel.update;
 
+import java.util.Map;
+
+
 
 /**
  * Interface for an update policy.  The main function of an update policy is 
@@ -52,4 +55,38 @@ public interface IVMUpdatePolicy {
      * Creates an element tester for the given event.
      */
     public IElementUpdateTester getElementUpdateTester(Object event);
+    
+    /**
+     * Returns the array of elements that should be used to initially populate 
+     * the cache, or <code>null</code> if this update policy does not need to
+     * pre-populate the cache.  These elements will be shown as children 
+     * of the root element in the view. 
+     * <p/>
+     * This method allows an update policy to prevent the UI from reading the
+     * model when the UI first appears and the cache has not been populated yet.
+     * 
+     * @param rootElement The rootElement for which the cache is being
+     * pre-populated.
+     * 
+     * @since 2.0
+     */
+    public Object[] getInitialRootElementChildren(Object rootElement);
+
+    /**
+     * Returns the properties that should be used to initially populate 
+     * the cache, or <code>null</code> if the cache should not be pre-populated
+     * for this update policy.  These properties may be used by the 
+     * view model to generate the label for the root element.
+     * <p/>
+     * This method allows an update policy to prevent the UI from reading the
+     * model when the UI first appears and the cache has not been populated 
+     * yet.  Note however that if the root element is the view input it is 
+     * not shown in the view.
+     * 
+     * @param rootElement The rootElement for which the cache is being
+     * pre-populated.
+     * 
+     * @since 2.0
+     */
+    public Map<String, Object> getInitialRootElementProperties(Object rootElement);
 }

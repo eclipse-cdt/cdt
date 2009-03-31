@@ -58,13 +58,15 @@ import org.eclipse.cdt.dsf.ui.viewmodel.datamodel.IDMVMContext;
 import org.eclipse.cdt.dsf.ui.viewmodel.properties.IElementPropertiesProvider;
 import org.eclipse.cdt.dsf.ui.viewmodel.properties.IPropertiesUpdate;
 import org.eclipse.cdt.dsf.ui.viewmodel.properties.LabelAttribute;
-import org.eclipse.cdt.dsf.ui.viewmodel.properties.LabelColor;
+import org.eclipse.cdt.dsf.ui.viewmodel.properties.LabelBackground;
 import org.eclipse.cdt.dsf.ui.viewmodel.properties.LabelColumnInfo;
-import org.eclipse.cdt.dsf.ui.viewmodel.properties.LabelFont;
+import org.eclipse.cdt.dsf.ui.viewmodel.properties.LabelForeground;
 import org.eclipse.cdt.dsf.ui.viewmodel.properties.LabelImage;
 import org.eclipse.cdt.dsf.ui.viewmodel.properties.LabelText;
 import org.eclipse.cdt.dsf.ui.viewmodel.properties.PropertiesBasedLabelProvider;
 import org.eclipse.cdt.dsf.ui.viewmodel.update.ICachingVMProvider;
+import org.eclipse.cdt.dsf.ui.viewmodel.update.StaleDataLabelBackground;
+import org.eclipse.cdt.dsf.ui.viewmodel.update.StaleDataLabelForeground;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
@@ -83,7 +85,6 @@ import org.eclipse.debug.internal.ui.viewers.model.provisional.IViewerUpdate;
 import org.eclipse.debug.ui.DebugUITools;
 import org.eclipse.debug.ui.IDebugUIConstants;
 import org.eclipse.debug.ui.actions.IWatchExpressionFactoryAdapter2;
-import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.jface.viewers.CellEditor;
 import org.eclipse.jface.viewers.ICellModifier;
@@ -255,7 +256,8 @@ public class VariableVMNode extends AbstractExpressionVMNode
                 pointerLabelImage,
                 aggregateLabelImage, 
                 simpleLabelImage,
-                new LabelFont(JFaceResources.getFontDescriptor(IDebugUIConstants.PREF_VARIABLE_TEXT_FONT).getFontData()[0])
+                new StaleDataLabelForeground(),
+                new VariableLabelFont(),
             }));
 
         // Expression column is visible only in the expressions view.  It shows the expression string that the user 
@@ -269,7 +271,8 @@ public class VariableVMNode extends AbstractExpressionVMNode
                 pointerLabelImage,
                 aggregateLabelImage, 
                 simpleLabelImage,
-                new LabelFont(JFaceResources.getFontDescriptor(IDebugUIConstants.PREF_VARIABLE_TEXT_FONT).getFontData()[0])
+                new StaleDataLabelForeground(),
+                new VariableLabelFont(),
             }));
         
         // Type column only contains the type name.
@@ -280,7 +283,8 @@ public class VariableVMNode extends AbstractExpressionVMNode
                     MessagesForVariablesVM.VariableVMNode_Type_column__text_format, 
                     new String[] { PROP_VARIABLE_TYPE_NAME }),
                 new LabelText( MessagesForVariablesVM.VariableVMNode_Type_column__Error__text_format, new String[] {}),
-                new LabelFont(JFaceResources.getFontDescriptor(IDebugUIConstants.PREF_VARIABLE_TEXT_FONT).getFontData()[0])
+                new StaleDataLabelForeground(),
+                new VariableLabelFont(),
             }));
             
         // Value column is more complicated:
@@ -319,7 +323,7 @@ public class VariableVMNode extends AbstractExpressionVMNode
                 },
                 new FormattedValueLabelText(),
                 new ErrorLabelText(),
-                new LabelColor(new RGB(255, 0, 0), null) // TODO: replace with preference error color
+                new LabelForeground(new RGB(255, 0, 0)) // TODO: replace with preference error color
                 {
                     { setPropertyNames(new String[] { PROP_NAME }); }
 
@@ -329,8 +333,7 @@ public class VariableVMNode extends AbstractExpressionVMNode
                     }
                 },
                 // 
-                new LabelColor(
-                    null, 
+                new LabelBackground(
                     DebugUITools.getPreferenceColor(IDebugUIConstants.PREF_CHANGED_VALUE_BACKGROUND).getRGB()) 
                 {
                     { 
@@ -355,7 +358,8 @@ public class VariableVMNode extends AbstractExpressionVMNode
                             ( Boolean.TRUE.equals(activeChanged) && !Boolean.TRUE.equals(activeFormatChanged));
                     };                    
                 },
-                new LabelFont(JFaceResources.getFontDescriptor(IDebugUIConstants.PREF_VARIABLE_TEXT_FONT).getFontData()[0])
+                new StaleDataLabelForeground(),
+                new VariableLabelFont(),
             }));
 
         // Address column shows the variable's address.  It is highlighted with the change background color when the 
@@ -367,8 +371,7 @@ public class VariableVMNode extends AbstractExpressionVMNode
                     MessagesForVariablesVM.VariableVMNode_Address_column__text_format, 
                     new String[] { PROP_VARIABLE_ADDRESS }),
                 new LabelText(MessagesForVariablesVM.VariableVMNode_Address_column__Error__text_format, new String[] {}), 
-                new LabelColor(
-                    null, 
+                new LabelBackground(
                     DebugUITools.getPreferenceColor(IDebugUIConstants.PREF_CHANGED_VALUE_BACKGROUND).getRGB()) 
                 {
                     { setPropertyNames(new String[] { PROP_VARIABLE_ADDRESS, PROP_VARIABLE_ADDRESS_CHANGED}); }
@@ -379,7 +382,8 @@ public class VariableVMNode extends AbstractExpressionVMNode
                         return Boolean.TRUE.equals(changed);
                     };                    
                 },
-                new LabelFont(JFaceResources.getFontDescriptor(IDebugUIConstants.PREF_VARIABLE_TEXT_FONT).getFontData()[0]),
+                new StaleDataLabelForeground(),
+                new VariableLabelFont(),
             }));
 
         // Description column is shown in the expression view, but is not supported for variables. 
@@ -387,9 +391,8 @@ public class VariableVMNode extends AbstractExpressionVMNode
             IDebugVMConstants.COLUMN_ID__DESCRIPTION,
 
             new LabelColumnInfo(new LabelAttribute[] { 
-                new LabelText(MessagesForVariablesVM.VariableVMNode_Description_column__text_format, new String[] {}) {
-                },
-                new LabelFont(JFaceResources.getFontDescriptor(IDebugUIConstants.PREF_VARIABLE_TEXT_FONT).getFontData()[0])
+                new LabelText(MessagesForVariablesVM.VariableVMNode_Description_column__text_format, new String[] {}),
+                new VariableLabelFont(),
             }));
 
         // Configure the case where there are no columns visible.  It basically combines the name and the value columns only.
@@ -433,7 +436,7 @@ public class VariableVMNode extends AbstractExpressionVMNode
                 pointerLabelImage,
                 aggregateLabelImage, 
                 simpleLabelImage,
-                new LabelColor(new RGB(255, 0, 0), null) // TODO: replace with preference error color
+                new LabelForeground(new RGB(255, 0, 0)) // TODO: replace with preference error color
                 {
                     { setPropertyNames(new String[] { PROP_NAME }); }
 
@@ -442,9 +445,8 @@ public class VariableVMNode extends AbstractExpressionVMNode
                         return !status.isOK();
                     }
                 },
-                new LabelColor(
-                    DebugUITools.getPreferenceColor(IDebugUIConstants.PREF_CHANGED_DEBUG_ELEMENT_COLOR).getRGB(),
-                    null)
+                new LabelForeground(
+                    DebugUITools.getPreferenceColor(IDebugUIConstants.PREF_CHANGED_DEBUG_ELEMENT_COLOR).getRGB())
                 {
                     { 
                         setPropertyNames(new String[] { 
@@ -462,7 +464,8 @@ public class VariableVMNode extends AbstractExpressionVMNode
                         return Boolean.TRUE.equals(stringChanged) || Boolean.TRUE.equals(activeChanged);
                     };                    
                 },
-                new LabelFont(JFaceResources.getFontDescriptor(IDebugUIConstants.PREF_VARIABLE_TEXT_FONT).getFontData()[0])
+                new StaleDataLabelBackground(),
+                new VariableLabelFont(),
             }));
         
         return provider;
@@ -573,7 +576,9 @@ public class VariableVMNode extends AbstractExpressionVMNode
                         protected void handleCompleted() {
                             if (isSuccess()) {
                                 fillAddressDataProperties(update, getData());
-                            } else {
+                            } else if (getStatus().getCode() != IDsfStatusConstants.NOT_SUPPORTED &&
+                                       getStatus().getCode() != IDsfStatusConstants.INVALID_STATE) 
+                            {
                                 update.setStatus(getStatus());
                             }
                             countingRm.done();

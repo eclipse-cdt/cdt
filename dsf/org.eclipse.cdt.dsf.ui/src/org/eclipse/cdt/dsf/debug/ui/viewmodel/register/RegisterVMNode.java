@@ -36,6 +36,7 @@ import org.eclipse.cdt.dsf.debug.ui.viewmodel.expression.AbstractExpressionVMNod
 import org.eclipse.cdt.dsf.debug.ui.viewmodel.numberformat.FormattedValueLabelText;
 import org.eclipse.cdt.dsf.debug.ui.viewmodel.numberformat.FormattedValueVMUtil;
 import org.eclipse.cdt.dsf.debug.ui.viewmodel.numberformat.IFormattedValueVMContext;
+import org.eclipse.cdt.dsf.debug.ui.viewmodel.variable.VariableLabelFont;
 import org.eclipse.cdt.dsf.internal.ui.DsfUIPlugin;
 import org.eclipse.cdt.dsf.service.DsfSession;
 import org.eclipse.cdt.dsf.ui.concurrent.ViewerDataRequestMonitor;
@@ -45,13 +46,15 @@ import org.eclipse.cdt.dsf.ui.viewmodel.datamodel.IDMVMContext;
 import org.eclipse.cdt.dsf.ui.viewmodel.properties.IElementPropertiesProvider;
 import org.eclipse.cdt.dsf.ui.viewmodel.properties.IPropertiesUpdate;
 import org.eclipse.cdt.dsf.ui.viewmodel.properties.LabelAttribute;
-import org.eclipse.cdt.dsf.ui.viewmodel.properties.LabelColor;
+import org.eclipse.cdt.dsf.ui.viewmodel.properties.LabelBackground;
 import org.eclipse.cdt.dsf.ui.viewmodel.properties.LabelColumnInfo;
-import org.eclipse.cdt.dsf.ui.viewmodel.properties.LabelFont;
+import org.eclipse.cdt.dsf.ui.viewmodel.properties.LabelForeground;
 import org.eclipse.cdt.dsf.ui.viewmodel.properties.LabelImage;
 import org.eclipse.cdt.dsf.ui.viewmodel.properties.LabelText;
 import org.eclipse.cdt.dsf.ui.viewmodel.properties.PropertiesBasedLabelProvider;
 import org.eclipse.cdt.dsf.ui.viewmodel.update.ICachingVMProvider;
+import org.eclipse.cdt.dsf.ui.viewmodel.update.StaleDataLabelBackground;
+import org.eclipse.cdt.dsf.ui.viewmodel.update.StaleDataLabelForeground;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
@@ -70,7 +73,6 @@ import org.eclipse.debug.internal.ui.viewers.model.provisional.IPresentationCont
 import org.eclipse.debug.ui.DebugUITools;
 import org.eclipse.debug.ui.IDebugUIConstants;
 import org.eclipse.debug.ui.actions.IWatchExpressionFactoryAdapter2;
-import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.jface.viewers.CellEditor;
 import org.eclipse.jface.viewers.ICellModifier;
@@ -187,7 +189,8 @@ public class RegisterVMNode extends AbstractExpressionVMNode
                     MessagesForRegisterVM.RegisterVMNode_Name_column__text_format, 
                     new String[] { PROP_NAME }),
                 new LabelImage(DebugUITools.getImageDescriptor(IDebugUIConstants.IMG_OBJS_REGISTER)),
-                new LabelFont(JFaceResources.getFontDescriptor(IDebugUIConstants.PREF_VARIABLE_TEXT_FONT).getFontData()[0])
+                new StaleDataLabelForeground(),
+                new VariableLabelFont(),
             }));
 
         // The description column contains a brief description of the register. 
@@ -197,7 +200,8 @@ public class RegisterVMNode extends AbstractExpressionVMNode
                 new LabelText(
                     MessagesForRegisterVM.RegisterVMNode_Description_column__text_format, 
                     new String[] { IRegisterVMConstants.PROP_DESCRIPTION }),
-                new LabelFont(JFaceResources.getFontDescriptor(IDebugUIConstants.PREF_VARIABLE_TEXT_FONT).getFontData()[0])
+                    new StaleDataLabelForeground(),
+                new VariableLabelFont(),
             }));
 
         // In the type column add information about register read/write/fload flags.
@@ -241,7 +245,8 @@ public class RegisterVMNode extends AbstractExpressionVMNode
                         }
                     }                    
                 },
-                new LabelFont(JFaceResources.getFontDescriptor(IDebugUIConstants.PREF_VARIABLE_TEXT_FONT).getFontData()[0])
+                new StaleDataLabelForeground(),
+                new VariableLabelFont(),
             }));
 
         // Value column shows the value in the active value format.
@@ -256,7 +261,7 @@ public class RegisterVMNode extends AbstractExpressionVMNode
             new LabelColumnInfo(new LabelAttribute[] { 
                 new FormattedValueLabelText(), 
                 new ErrorLabelText(),
-                new LabelColor(new RGB(255, 0, 0), null) // TODO: replace with preference error color
+                new LabelForeground(new RGB(255, 0, 0)) // TODO: replace with preference error color
                 {
                     { setPropertyNames(new String[] { PROP_NAME }); }
 
@@ -265,8 +270,7 @@ public class RegisterVMNode extends AbstractExpressionVMNode
                         return !status.isOK();
                     }
                 },
-                new LabelColor(
-                    null, 
+                new LabelBackground(
                     DebugUITools.getPreferenceColor(IDebugUIConstants.PREF_CHANGED_VALUE_BACKGROUND).getRGB()) 
                 {
                     { 
@@ -286,7 +290,8 @@ public class RegisterVMNode extends AbstractExpressionVMNode
                         return  Boolean.TRUE.equals(activeChanged) && !Boolean.TRUE.equals(activeFormatChanged);
                     }
                 },
-                new LabelFont(JFaceResources.getFontDescriptor(IDebugUIConstants.PREF_VARIABLE_TEXT_FONT).getFontData()[0])
+                new StaleDataLabelForeground(),
+                new VariableLabelFont(),
             }));
 
         // Expression column is visible only in the expressions view.  It shows the expression string that the user 
@@ -298,7 +303,8 @@ public class RegisterVMNode extends AbstractExpressionVMNode
                     MessagesForRegisterVM.RegisterVMNode_Expression_column__text_format, 
                     new String[] { PROP_ELEMENT_EXPRESSION }),
                 new LabelImage(DebugUITools.getImageDescriptor(IDebugUIConstants.IMG_OBJS_REGISTER)),
-                new LabelFont(JFaceResources.getFontDescriptor(IDebugUIConstants.PREF_VARIABLE_TEXT_FONT).getFontData()[0])
+                new StaleDataLabelForeground(),
+                new VariableLabelFont(),
             }));
 
         provider.setColumnInfo(
@@ -311,9 +317,8 @@ public class RegisterVMNode extends AbstractExpressionVMNode
                     MessagesForRegisterVM.RegisterVMNode_No_columns__Error__text_format,
                     new String[] { PROP_NAME }),
                 new LabelImage(DebugUITools.getImageDescriptor(IDebugUIConstants.IMG_OBJS_REGISTER)),
-                new LabelColor(
-                    DebugUITools.getPreferenceColor(IDebugUIConstants.PREF_CHANGED_DEBUG_ELEMENT_COLOR).getRGB(), 
-                    null)
+                new LabelForeground(
+                    DebugUITools.getPreferenceColor(IDebugUIConstants.PREF_CHANGED_DEBUG_ELEMENT_COLOR).getRGB())
                 {
                     { 
                         setPropertyNames(new String[] { 
@@ -332,7 +337,8 @@ public class RegisterVMNode extends AbstractExpressionVMNode
                         return  Boolean.TRUE.equals(activeChanged) && !Boolean.TRUE.equals(activeFormatChanged);
                     }
                 },
-                new LabelFont(JFaceResources.getFontDescriptor(IDebugUIConstants.PREF_VARIABLE_TEXT_FONT).getFontData()[0])
+                new StaleDataLabelBackground(),
+                new VariableLabelFont(),
             }));
         
         return provider;

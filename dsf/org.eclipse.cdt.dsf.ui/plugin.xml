@@ -606,6 +606,51 @@
          </viewShortcut>
       </perspectiveExtension>
    </extension>
+   
+   <!-- Color preferences -->
+   <extension
+         point="org.eclipse.ui.themes">
+      <colorDefinition
+            categoryId="org.eclipse.debug.ui.presentation"
+            id="org.eclipse.cdt.dsf.ui.staledata.foreground"
+            isEditable="true"
+            label="%StaleData.foreground.label">
+         <colorFactory
+               class="org.eclipse.ui.themes.RGBBlendColorFactory">
+            <parameter
+                  name="color1"
+                  value="COLOR_LIST_FOREGROUND">
+            </parameter>
+            <parameter
+                  name="color2"
+                  value="COLOR_LIST_BACKGROUND">
+            </parameter>
+         </colorFactory>
+         <description>
+         	%StaleData.foreground.description
+         </description>
+      </colorDefinition>
+      <colorDefinition
+            categoryId="org.eclipse.debug.ui.presentation"
+            id="org.eclipse.cdt.dsf.ui.staledata.background"
+            isEditable="true"
+            label="%StaleData.background.label">
+         <colorFactory
+               class="org.eclipse.ui.themes.RGBBlendColorFactory">
+            <parameter
+                  name="color1"
+                  value="128,128,128">
+            </parameter>
+            <parameter
+                  name="color2"
+                  value="COLOR_LIST_BACKGROUND">
+            </parameter>
+         </colorFactory>
+         <description>
+         	%StaleData.background.description
+         </description>
+      </colorDefinition>
+   </extension>
 
 
 </plugin>

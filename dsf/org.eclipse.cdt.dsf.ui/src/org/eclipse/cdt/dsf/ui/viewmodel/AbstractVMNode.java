@@ -31,10 +31,10 @@ import org.eclipse.debug.internal.ui.viewers.model.provisional.IViewerUpdate;
  */
 abstract public class AbstractVMNode implements IVMNode {
 
-    private final AbstractVMProvider fProvider;
+    private final IVMProvider fProvider;
     private boolean fDisposed = false;
     
-    public AbstractVMNode(AbstractVMProvider provider) {
+    public AbstractVMNode(IVMProvider provider) {
         fProvider = provider;
     }
 

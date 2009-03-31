@@ -10,9 +10,20 @@
  *******************************************************************************/
 package org.eclipse.cdt.dsf.ui.viewmodel.update;
 
+import java.util.Collections;
+import java.util.Map;
 import java.util.Set;
 
+import org.eclipse.cdt.dsf.debug.ui.IDsfDebugUIConstants;
+import org.eclipse.debug.internal.ui.viewers.model.provisional.IChildrenCountUpdate;
+import org.eclipse.debug.internal.ui.viewers.model.provisional.IChildrenUpdate;
+import org.eclipse.debug.internal.ui.viewers.model.provisional.IElementContentProvider;
+import org.eclipse.debug.internal.ui.viewers.model.provisional.IElementLabelProvider;
+import org.eclipse.debug.internal.ui.viewers.model.provisional.IHasChildrenUpdate;
+import org.eclipse.debug.internal.ui.viewers.model.provisional.ILabelUpdate;
+import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.jface.viewers.TreePath;
+import org.eclipse.swt.graphics.RGB;
 
 
 /**
@@ -26,6 +37,47 @@ public class ManualUpdatePolicy implements IVMUpdatePolicy {
     public static String MANUAL_UPDATE_POLICY_ID = "org.eclipse.cdt.dsf.ui.viewmodel.update.manualUpdatePolicy";  //$NON-NLS-1$
     
     public static Object REFRESH_EVENT = new Object();
+
+    private static class BlankDataElement implements IElementContentProvider, IElementLabelProvider {
+        
+        public void update(IHasChildrenUpdate[] updates) {
+            for (IHasChildrenUpdate update : updates) {
+                update.setHasChilren(false);
+                update.done();
+            }
+        }
+        
+        public void update(IChildrenCountUpdate[] updates) {
+            for (IChildrenCountUpdate update : updates) {
+                update.setChildCount(0);
+                update.done();
+            }
+        }
+        
+        public void update(IChildrenUpdate[] updates) {
+            for (IChildrenUpdate update : updates) {
+                update.done();
+            }
+        }
+        
+        public void update(ILabelUpdate[] updates) {
+            RGB staleDataForeground = JFaceResources.getColorRegistry().getRGB(
+                IDsfDebugUIConstants.PREF_COLOR_STALE_DATA_FOREGROUND);
+            RGB staleDataBackground = JFaceResources.getColorRegistry().getRGB(
+                IDsfDebugUIConstants.PREF_COLOR_STALE_DATA_BACKGROUND);
+            for (ILabelUpdate update : updates) {
+                update.setLabel(ViewModelUpdateMessages.ManualUpdatePolicy_InitialDataElement__label, 0);
+                // Set the stale data color to the label.  Use foreground color if column modes are enabled, and 
+                // background color when there are no columns.  
+                if (update.getColumnIds() != null) {
+                    update.setForeground(staleDataForeground, 0);
+                } else {
+                    update.setBackground(staleDataBackground, 0);
+                }
+                update.done();
+            }
+        }
+    }
 
     private static class UserEditEventUpdateTester implements IElementUpdateTester {
         private final Set<Object> fElements;
@@ -105,4 +157,15 @@ public class ManualUpdatePolicy implements IVMUpdatePolicy {
         return fgUpdateTester;
     }
 
+    public Object[] getInitialRootElementChildren(Object rootElement) {
+        // Return an dummy element to show in the view.  The user will 
+        // need to refresh the view to retrieve this data from the model.
+        return new Object[] { new BlankDataElement() };
+    }
+
+    public Map<String, Object> getInitialRootElementProperties(Object rootElement) {
+        // Return an empty set of properties for the root element.  The user will 
+        // need to refresh the view to retrieve this data from the model.
+        return Collections.emptyMap();
+    }
 }

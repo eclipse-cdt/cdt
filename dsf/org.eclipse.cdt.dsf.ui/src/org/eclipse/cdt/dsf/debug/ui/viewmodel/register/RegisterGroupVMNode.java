@@ -29,6 +29,7 @@ import org.eclipse.cdt.dsf.debug.service.IRunControl.ISuspendedDMEvent;
 import org.eclipse.cdt.dsf.debug.ui.viewmodel.IDebugVMConstants;
 import org.eclipse.cdt.dsf.debug.ui.viewmodel.expression.AbstractExpressionVMNode;
 import org.eclipse.cdt.dsf.debug.ui.viewmodel.expression.WatchExpressionCellModifier;
+import org.eclipse.cdt.dsf.debug.ui.viewmodel.variable.VariableLabelFont;
 import org.eclipse.cdt.dsf.internal.ui.DsfUIPlugin;
 import org.eclipse.cdt.dsf.service.DsfSession;
 import org.eclipse.cdt.dsf.ui.concurrent.ViewerDataRequestMonitor;
@@ -39,10 +40,11 @@ import org.eclipse.cdt.dsf.ui.viewmodel.properties.IElementPropertiesProvider;
 import org.eclipse.cdt.dsf.ui.viewmodel.properties.IPropertiesUpdate;
 import org.eclipse.cdt.dsf.ui.viewmodel.properties.LabelAttribute;
 import org.eclipse.cdt.dsf.ui.viewmodel.properties.LabelColumnInfo;
-import org.eclipse.cdt.dsf.ui.viewmodel.properties.LabelFont;
 import org.eclipse.cdt.dsf.ui.viewmodel.properties.LabelImage;
 import org.eclipse.cdt.dsf.ui.viewmodel.properties.LabelText;
 import org.eclipse.cdt.dsf.ui.viewmodel.properties.PropertiesBasedLabelProvider;
+import org.eclipse.cdt.dsf.ui.viewmodel.update.StaleDataLabelBackground;
+import org.eclipse.cdt.dsf.ui.viewmodel.update.StaleDataLabelForeground;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
@@ -60,7 +62,6 @@ import org.eclipse.debug.internal.ui.viewers.model.provisional.IPresentationCont
 import org.eclipse.debug.ui.DebugUITools;
 import org.eclipse.debug.ui.IDebugUIConstants;
 import org.eclipse.debug.ui.actions.IWatchExpressionFactoryAdapter2;
-import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.jface.viewers.CellEditor;
 import org.eclipse.jface.viewers.ICellModifier;
 import org.eclipse.jface.viewers.TextCellEditor;
@@ -222,7 +223,8 @@ public class RegisterGroupVMNode extends AbstractExpressionVMNode
                     MessagesForRegisterVM.RegisterGroupVMNode_Name_column__text_format, 
                     new String[] { PROP_NAME }),
                 new LabelImage(DebugUITools.getImageDescriptor(IDebugUIConstants.IMG_OBJS_REGISTER_GROUP)),
-                new LabelFont(JFaceResources.getFontDescriptor(IDebugUIConstants.PREF_VARIABLE_TEXT_FONT).getFontData()[0])
+                new StaleDataLabelForeground(),
+                new VariableLabelFont(),
             }));
 
         // The description column contains a brief description of the register group. 
@@ -231,7 +233,8 @@ public class RegisterGroupVMNode extends AbstractExpressionVMNode
             new LabelColumnInfo(new LabelAttribute[] { 
                 new LabelText(MessagesForRegisterVM.RegisterGroupVMNode_Description_column__text_format, 
                 new String[] { PROP_REGISTER_GROUP_DESCRIPTION }),
-                new LabelFont(JFaceResources.getFontDescriptor(IDebugUIConstants.PREF_VARIABLE_TEXT_FONT).getFontData()[0])
+                new StaleDataLabelForeground(),
+                new VariableLabelFont(),
             }));
 
         // Expression column is visible only in the expressions view.  It shows the expression string that the user 
@@ -243,7 +246,8 @@ public class RegisterGroupVMNode extends AbstractExpressionVMNode
                     MessagesForRegisterVM.RegisterGroupVMNode_Expression_column__text_format, 
                     new String[] { PROP_ELEMENT_EXPRESSION }),
                 new LabelImage(DebugUITools.getImageDescriptor(IDebugUIConstants.IMG_OBJS_REGISTER_GROUP)),
-                new LabelFont(JFaceResources.getFontDescriptor(IDebugUIConstants.PREF_VARIABLE_TEXT_FONT).getFontData()[0])
+                new StaleDataLabelForeground(),
+                new VariableLabelFont(),
             }));
 
         provider.setColumnInfo(
@@ -252,7 +256,8 @@ public class RegisterGroupVMNode extends AbstractExpressionVMNode
                 new LabelText(MessagesForRegisterVM.RegisterGroupVMNode_No_columns__text_format, 
                     new String[] { PROP_NAME, PROP_REGISTER_GROUP_DESCRIPTION}),
                 new LabelImage(DebugUITools.getImageDescriptor(IDebugUIConstants.IMG_OBJS_REGISTER_GROUP)),
-                new LabelFont(JFaceResources.getFontDescriptor(IDebugUIConstants.PREF_VARIABLE_TEXT_FONT).getFontData()[0])
+                new StaleDataLabelBackground(),
+                new VariableLabelFont(),
             }));
         
         return provider;

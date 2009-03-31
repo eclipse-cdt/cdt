@@ -12,14 +12,11 @@ package org.eclipse.cdt.core.parser.util;
 
 import java.io.PrintStream;
 
+import org.eclipse.cdt.core.dom.ast.ASTGenericVisitor;
 import org.eclipse.cdt.core.dom.ast.DOMException;
-import org.eclipse.cdt.core.dom.ast.IASTArrayDeclarator;
-import org.eclipse.cdt.core.dom.ast.IASTArrayModifier;
 import org.eclipse.cdt.core.dom.ast.IASTComment;
-import org.eclipse.cdt.core.dom.ast.IASTDeclarator;
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
-import org.eclipse.cdt.core.dom.ast.IASTPointerOperator;
 import org.eclipse.cdt.core.dom.ast.IASTPreprocessorStatement;
 import org.eclipse.cdt.core.dom.ast.IASTProblem;
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
@@ -31,6 +28,7 @@ import org.eclipse.cdt.core.dom.ast.c.ICASTArrayModifier;
 import org.eclipse.cdt.core.dom.ast.c.ICASTPointer;
 import org.eclipse.cdt.core.dom.ast.c.ICArrayType;
 import org.eclipse.cdt.core.dom.ast.c.ICPointerType;
+import org.eclipse.cdt.internal.core.dom.parser.ASTAmbiguousNode;
 import org.eclipse.cdt.internal.core.dom.parser.ASTNode;
 import org.eclipse.cdt.internal.core.dom.parser.ITypeContainer;
 
@@ -66,7 +64,7 @@ public class ASTPrinter {
 			}
 		}
 
-		printAST(out, 0, node);
+		node.accept(new PrintVisitor(out));
 		
 		if (node instanceof IASTTranslationUnit) {
 			IASTProblem[] problems = ((IASTTranslationUnit)node).getPreprocessorProblems();
@@ -107,7 +105,7 @@ public class ASTPrinter {
 			return false;
 		}
 		
-		printASTProblems(out, 0, node);
+		node.accept(new PrintProblemsVisitor(out));
 		
 		if (node instanceof IASTTranslationUnit) {
 			IASTProblem[] problems = ((IASTTranslationUnit)node).getPreprocessorProblems();
@@ -133,27 +131,49 @@ public class ASTPrinter {
 	
 	
 	
-	private static void printAST(PrintStream out, int indent, IASTNode node) {
-		print(out, indent, node);
-		indent++;
-		for(IASTNode child : node.getChildren()) {
-			printAST(out, indent, child);
-		}
-	}
-	
-	
-	private static void printASTProblems(PrintStream out, int indent, IASTNode node) {
-		if(node instanceof IASTProblem)
-			print(out, indent, node);
+	private static class PrintVisitor extends ASTGenericVisitor {
+		final PrintStream out;
+		int indentLevel = 0;
 		
-		indent++;
-		for(IASTNode child : node.getChildren()) {
-			printASTProblems(out, indent, child);
+		public PrintVisitor(PrintStream out) {
+			super(true);
+			this.out = out;
+			shouldVisitAmbiguousNodes = true;
+		}
+
+		@Override protected int genericVisit(IASTNode node) {
+			print(out, indentLevel++, node);
+			return PROCESS_CONTINUE;
+		}
+
+		@Override protected int genericLeave(IASTNode node) {
+			indentLevel--;
+			return PROCESS_CONTINUE;
+		}
+		
+		@Override public int visit(ASTAmbiguousNode node) {
+			print(out, indentLevel++, node);
+			for(IASTNode n : node.getNodes())
+				n.accept(this);
+			indentLevel--;
+			return PROCESS_CONTINUE;
 		}
 	}
 	
 	
-	
+	private static class PrintProblemsVisitor extends PrintVisitor {
+		public PrintProblemsVisitor(PrintStream out) {
+			super(out);
+		}
+		
+		@Override protected int genericVisit(IASTNode node) {
+			indentLevel++;
+			if(node instanceof IASTProblem)
+				print(out, indentLevel, node);
+			return PROCESS_CONTINUE;
+		}
+		
+	}
 	
 	
 	private static void print(PrintStream out, int indentLevel, Object n) {
@@ -165,8 +185,7 @@ public class ASTPrinter {
 			return;
 		}
 		
-		String classname = n.getClass().getName();
-		out.print(classname);
+		out.print(n.getClass().getName());
 		
 		if (n instanceof ASTNode) {
 			ASTNode node = (ASTNode) n;
@@ -198,23 +217,6 @@ public class ASTPrinter {
 					print(out, indentLevel, binding);
 				} catch(Exception e) {
 					System.out.println("Exception while resolving binding: " + name);
-				}
-			}
-		} else if(n instanceof IASTDeclarator) {
-			IASTDeclarator declarator = (IASTDeclarator) n;
-		
-			IASTPointerOperator[] pointers = declarator.getPointerOperators();
-			if(pointers != null && pointers.length > 0) {
-				out.println();
-				for (IASTPointerOperator pointer : pointers) {
-					print(out, indentLevel+1, pointer);
-				}
-			}
-			if (declarator instanceof IASTArrayDeclarator) {
-				IASTArrayDeclarator decl = (IASTArrayDeclarator)declarator;
-				org.eclipse.cdt.core.dom.ast.IASTArrayModifier[] modifiers = decl.getArrayModifiers();
-				for (IASTArrayModifier modifier : modifiers) {
-					print(out, indentLevel+1, modifier);
 				}
 			}
 		} else if (n instanceof ICASTPointer) {

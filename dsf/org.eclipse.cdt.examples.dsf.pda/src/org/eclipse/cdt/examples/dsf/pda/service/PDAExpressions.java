@@ -337,17 +337,17 @@ public class PDAExpressions extends AbstractDsfService implements ICachingServic
                 protected void handleSuccess() {
                     try {
                         Integer.parseInt(getData().getFormattedValue());
-                        rm.setData(new String[] { NATURAL_FORMAT, STRING_FORMAT, HEX_FORMAT, DECIMAL_FORMAT, OCTAL_FORMAT, BINARY_FORMAT });                        
+                        rm.setData(new String[] { DECIMAL_FORMAT, HEX_FORMAT, DECIMAL_FORMAT, OCTAL_FORMAT, BINARY_FORMAT });                        
                         rm.done();
                     } catch (NumberFormatException e) {
-                        rm.setData(new String[] { NATURAL_FORMAT, STRING_FORMAT });
+                        rm.setData(new String[] { STRING_FORMAT });
                         rm.done();
                     }
                 }
                 
                 @Override
                 protected void handleErrorOrWarning() {
-                    rm.setData(new String[] { NATURAL_FORMAT, STRING_FORMAT });
+                    rm.setData(new String[] { STRING_FORMAT });
                     rm.done();
                 }
             });

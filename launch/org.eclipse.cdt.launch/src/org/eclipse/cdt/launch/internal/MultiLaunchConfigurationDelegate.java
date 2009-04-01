@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.Map;
 
-
 import org.eclipse.cdt.launch.internal.ui.LaunchMessages;
 import org.eclipse.cdt.launch.internal.ui.LaunchUIPlugin;
 import org.eclipse.core.resources.IProject;
@@ -15,6 +14,7 @@ import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.ILaunch;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
+import org.eclipse.debug.core.ILaunchListener;
 import org.eclipse.debug.core.ILaunchManager;
 import org.eclipse.debug.core.model.ILaunchConfigurationDelegate;
 import org.eclipse.debug.core.model.IProcess;
@@ -29,14 +29,15 @@ import org.eclipse.ui.PlatformUI;
 /**
  * Group Launch delegate. Launches each configuration in the user selected mode
  */
-public class MultiLaunchConfigurationDelegate extends LaunchConfigurationDelegate implements ILaunchConfigurationDelegate {
-	public static final String DEFAULT_MODE = "default";  //$NON-NLS-1$
+public class MultiLaunchConfigurationDelegate extends LaunchConfigurationDelegate implements
+		ILaunchConfigurationDelegate {
+	public static final String DEFAULT_MODE = "default"; //$NON-NLS-1$
 	private static final String NAME_PROP = "name"; //$NON-NLS-1$
 	private static final String ENABLED_PROP = "enabled"; //$NON-NLS-1$
 	private static final String MODE_PROP = "mode"; //$NON-NLS-1$
 	private static final String ACTION_PROP = "action"; //$NON-NLS-1$
 	public static String MULTI_LAUNCH_CONSTANTS_PREFIX = "org.eclipse.cdt.launch.launchGroup"; //$NON-NLS-1$
-	
+
 	public static class LaunchElement {
 		public int index;
 		public boolean enabled;
@@ -50,22 +51,84 @@ public class MultiLaunchConfigurationDelegate extends LaunchConfigurationDelegat
 		// nothing
 	}
 
-	public void launch(ILaunchConfiguration configuration, String mode, ILaunch launch, IProgressMonitor monitor)
-	        throws CoreException {
-		// have to unset "remove terminated launches when new one created" 
-		// because it does not work good for multilaunch
-		boolean dstore = DebugUIPlugin.getDefault().getPreferenceStore()
-		        .getBoolean(IDebugUIConstants.PREF_AUTO_REMOVE_OLD_LAUNCHES);
-		ArrayList<LaunchElement> input = createLaunchElements(configuration, new ArrayList<LaunchElement>());
-		try {
-			
-			monitor.beginTask(LaunchMessages.getString("MultiLaunchConfigurationDelegate.0") + configuration.getName(), 1000);  //$NON-NLS-1$
-			DebugUIPlugin.getDefault().getPreferenceStore().setValue(IDebugUIConstants.PREF_AUTO_REMOVE_OLD_LAUNCHES, false);
+	/**
+	 * Listener for launch changes to add processes, also removes itslef when parent launch is removed
+	 *
+	 */
+	private class MultiLaunchListener implements ILaunchListener {
+		private ILaunch launch;
+		private ArrayList<LaunchElement> input;
+
+		/**
+		 * @param launch - parent launch
+		 * @param input - list of launch elements (children of group launch)
+		 */
+		public MultiLaunchListener(ILaunch launch, ArrayList<LaunchElement> input) {
+			this.launch = launch;
+			this.input = input;
+		}
+
+		public void launchChanged(ILaunch launch2) {
+			if (launch == launch2) return;
+			// add/remove processes
+			if (isChild(launch2, input)) {
+				IProcess[] processes = launch2.getProcesses();
+				for (int i = 0; i < processes.length; i++) {
+					IProcess process = processes[i];
+					launch.addProcess(process);
+				}
+			}
+
+		}
+
+		private boolean isChild(ILaunch launch2, ArrayList<LaunchElement> input) {
 			for (Iterator<LaunchElement> iterator = input.iterator(); iterator.hasNext();) {
 				LaunchElement le = iterator.next();
+				if (le.name.equals(launch2.getLaunchConfiguration().getName())) { return true; }
+			}
+			return false;
+		}
+
+		public void launchRemoved(ILaunch launch2) {
+			if (launch == launch2) {
+				ILaunchManager launchManager = DebugPlugin.getDefault().getLaunchManager();
+				launchManager.removeLaunchListener(this);
+			}
+		}
+
+		public void launchAdded(ILaunch launch2) {
+			// ignore
+
+		}
+	}
+
+	public void launch(ILaunchConfiguration configuration, String mode, final ILaunch launch, IProgressMonitor monitor)
+			throws CoreException {
+		// have to unset "remove terminated launches when new one created" 
+		// because it does not work good for multilaunch
+
+		boolean dstore = DebugUIPlugin.getDefault().getPreferenceStore().getBoolean(
+				IDebugUIConstants.PREF_AUTO_REMOVE_OLD_LAUNCHES);
+
+		try {
+			monitor.beginTask(
+					LaunchMessages.getString("MultiLaunchConfigurationDelegate.0") + configuration.getName(), 1000); //$NON-NLS-1$
+			DebugUIPlugin.getDefault().getPreferenceStore().setValue(IDebugUIConstants.PREF_AUTO_REMOVE_OLD_LAUNCHES,
+					false);
+			
+			final ArrayList<LaunchElement> input = createLaunchElements(configuration, new ArrayList<LaunchElement>());
+			ILaunchListener listener = new MultiLaunchListener(launch, input);
+			ILaunchManager launchManager = DebugPlugin.getDefault().getLaunchManager();
+			launchManager.addLaunchListener(listener); // listener removed when launch is removed
+
+			for (Iterator<LaunchElement> iterator = input.iterator(); iterator.hasNext();) {
+				LaunchElement le = iterator.next();
+				if (le.enabled == false) continue;
+				// find launch
 				final ILaunchConfiguration conf = findLaunch(le.name);
-				if (le.enabled==false) continue;
-				if (conf==null) continue;
+				// not found, skip (error?)
+				if (conf == null) continue;
+				// determine mode for each launch
 				final String localMode;
 				if (le.mode != null && !le.mode.equals(DEFAULT_MODE)) {
 					localMode = le.mode;
@@ -73,27 +136,23 @@ public class MultiLaunchConfigurationDelegate extends LaunchConfigurationDelegat
 					localMode = mode;
 				}
 				ILaunchGroup launchGroup = DebugUITools.getLaunchGroup(conf, localMode);
-				if (launchGroup==null) {
+				if (launchGroup == null) {
 					PlatformUI.getWorkbench().getDisplay().asyncExec(new Runnable() {
 						public void run() {
-							MessageDialog.openError(PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell(), LaunchMessages.getString("LaunchUIPlugin.Error"),  //$NON-NLS-1$ 
+							MessageDialog.openError(PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell(),
+									LaunchMessages.getString("LaunchUIPlugin.Error"), //$NON-NLS-1$ 
 									LaunchMessages.getFormattedString("MultiLaunchConfigurationDelegate.Cannot", //$NON-NLS-1$ 
-											new String[]{conf.toString(), localMode}) 
-							        ); 
+											new String[] { conf.toString(), localMode }));
 						}
 					});
-				
+
 					continue;
 				}
 				try {
 					if (configuration.getName().equals(conf.getName())) throw new StackOverflowError();
-					ILaunch launch2 = DebugUIPlugin.buildAndLaunch(conf, localMode, new SubProgressMonitor(monitor,
-							1000 / input.size()));
-					IProcess[] processes = launch2.getProcesses();
-					for (int i = 0; i < processes.length; i++) {
-						IProcess process = processes[i];
-						launch.addProcess(process);
-					}
+					// LAUNCH child here
+					DebugUIPlugin.buildAndLaunch(conf, localMode, new SubProgressMonitor(monitor, 1000 / input.size()));
+
 				} catch (StackOverflowError e) {
 					PlatformUI.getWorkbench().getDisplay().asyncExec(new Runnable() {
 						public void run() {
@@ -106,22 +165,22 @@ public class MultiLaunchConfigurationDelegate extends LaunchConfigurationDelegat
 				}
 			}
 			if (!launch.hasChildren()) {
-				ILaunchManager launchManager = DebugPlugin.getDefault().getLaunchManager();
 				launchManager.removeLaunch(launch);
 			}
-
 		} finally {
-			DebugUIPlugin.getDefault().getPreferenceStore().setValue(IDebugUIConstants.PREF_AUTO_REMOVE_OLD_LAUNCHES, dstore);
+			DebugUIPlugin.getDefault().getPreferenceStore().setValue(IDebugUIConstants.PREF_AUTO_REMOVE_OLD_LAUNCHES,
+					dstore);
 			monitor.done();
 		}
 	}
 
 	protected void buildProjects(IProject[] projects, IProgressMonitor monitor) throws CoreException {
 		// do nothing, project can be rebuild for each launch individually
-		
+
 	}
 
-	public boolean buildForLaunch(ILaunchConfiguration configuration, String mode, IProgressMonitor monitor) throws CoreException {
+	public boolean buildForLaunch(ILaunchConfiguration configuration, String mode, IProgressMonitor monitor)
+			throws CoreException {
 		// not build for this one
 		return false;
 	}
@@ -131,21 +190,21 @@ public class MultiLaunchConfigurationDelegate extends LaunchConfigurationDelegat
 		ILaunchConfiguration[] launchConfigurations = launchManager.getLaunchConfigurations();
 		for (int i = 0; i < launchConfigurations.length; i++) {
 			ILaunchConfiguration lConf = launchConfigurations[i];
-			if (lConf.getName().equals(name))
-				return lConf;
+			if (lConf.getName().equals(name)) return lConf;
 		}
 		return null;
 	}
 
-	public static ArrayList<LaunchElement> createLaunchElements(ILaunchConfiguration configuration, ArrayList<MultiLaunchConfigurationDelegate.LaunchElement> input) {
+	public static ArrayList<LaunchElement> createLaunchElements(ILaunchConfiguration configuration,
+			ArrayList<MultiLaunchConfigurationDelegate.LaunchElement> input) {
 		try {
 			Map attrs = configuration.getAttributes();
 			for (Iterator iterator = attrs.keySet().iterator(); iterator.hasNext();) {
 				String attr = (String) iterator.next();
 				try {
 					if (attr.startsWith(MultiLaunchConfigurationDelegate.MULTI_LAUNCH_CONSTANTS_PREFIX)) {
-						String prop = attr
-						        .substring(MultiLaunchConfigurationDelegate.MULTI_LAUNCH_CONSTANTS_PREFIX.length() + 1);
+						String prop = attr.substring(MultiLaunchConfigurationDelegate.MULTI_LAUNCH_CONSTANTS_PREFIX
+								.length() + 1);
 						int k = prop.indexOf('.');
 						String num = prop.substring(0, k);
 						int index = Integer.parseInt(num);
@@ -179,8 +238,7 @@ public class MultiLaunchConfigurationDelegate extends LaunchConfigurationDelegat
 		return input;
 	}
 
-	public static void storeLaunchElements(ILaunchConfigurationWorkingCopy configuration,
-			ArrayList<LaunchElement> input) {
+	public static void storeLaunchElements(ILaunchConfigurationWorkingCopy configuration, ArrayList<LaunchElement> input) {
 		int i = 0;
 		removeLaunchElements(configuration);
 		for (Iterator<LaunchElement> iterator = input.iterator(); iterator.hasNext();) {

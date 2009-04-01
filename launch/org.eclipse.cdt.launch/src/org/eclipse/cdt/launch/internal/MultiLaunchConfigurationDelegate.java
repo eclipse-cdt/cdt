@@ -30,20 +30,20 @@ import org.eclipse.ui.PlatformUI;
  * Group Launch delegate. Launches each configuration in the user selected mode
  */
 public class MultiLaunchConfigurationDelegate extends LaunchConfigurationDelegate implements ILaunchConfigurationDelegate {
-	static final String DEFAULT_MODE = "default";  //$NON-NLS-1$
+	public static final String DEFAULT_MODE = "default";  //$NON-NLS-1$
 	private static final String NAME_PROP = "name"; //$NON-NLS-1$
 	private static final String ENABLED_PROP = "enabled"; //$NON-NLS-1$
 	private static final String MODE_PROP = "mode"; //$NON-NLS-1$
 	private static final String ACTION_PROP = "action"; //$NON-NLS-1$
 	public static String MULTI_LAUNCH_CONSTANTS_PREFIX = "org.eclipse.cdt.launch.launchGroup"; //$NON-NLS-1$
 	
-	static class LaunchElement {
-		int index;
-		boolean enabled;
-		String mode;
-		String action;
-		String name;
-		ILaunchConfiguration data;
+	public static class LaunchElement {
+		public int index;
+		public boolean enabled;
+		public String mode;
+		public String action;
+		public String name;
+		public ILaunchConfiguration data;
 	}
 
 	public MultiLaunchConfigurationDelegate() {
@@ -85,19 +85,31 @@ public class MultiLaunchConfigurationDelegate extends LaunchConfigurationDelegat
 				
 					continue;
 				}
-				ILaunch launch2 = DebugUIPlugin.buildAndLaunch(conf, localMode,
-				        new SubProgressMonitor(monitor, 1000 / input.size()));
-				IProcess[] processes = launch2.getProcesses();
-				for (int i = 0; i < processes.length; i++) {
-					IProcess process = processes[i];
-					launch.addProcess(process);
-			
+				try {
+					if (configuration.getName().equals(conf.getName())) throw new StackOverflowError();
+					ILaunch launch2 = DebugUIPlugin.buildAndLaunch(conf, localMode, new SubProgressMonitor(monitor,
+							1000 / input.size()));
+					IProcess[] processes = launch2.getProcesses();
+					for (int i = 0; i < processes.length; i++) {
+						IProcess process = processes[i];
+						launch.addProcess(process);
+					}
+				} catch (StackOverflowError e) {
+					PlatformUI.getWorkbench().getDisplay().asyncExec(new Runnable() {
+						public void run() {
+							MessageDialog.openError(PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell(),
+									LaunchMessages.getString("LaunchUIPlugin.Error"), //$NON-NLS-1$ 
+									LaunchMessages.getFormattedString("MultiLaunchConfigurationDelegate.Loop", //$NON-NLS-1$ 
+											conf.toString()));
+						}
+					});
 				}
 			}
 			if (!launch.hasChildren()) {
 				ILaunchManager launchManager = DebugPlugin.getDefault().getLaunchManager();
 				launchManager.removeLaunch(launch);
 			}
+
 		} finally {
 			DebugUIPlugin.getDefault().getPreferenceStore().setValue(IDebugUIConstants.PREF_AUTO_REMOVE_OLD_LAUNCHES, dstore);
 			monitor.done();

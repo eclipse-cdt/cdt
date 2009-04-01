@@ -1,9 +1,9 @@
-package org.eclipse.cdt.launch.internal;
+package org.eclipse.cdt.launch.internal.ui;
 
 import java.util.HashMap;
 import java.util.Iterator;
 
-import org.eclipse.cdt.launch.internal.ui.LaunchMessages;
+import org.eclipse.cdt.launch.internal.MultiLaunchConfigurationDelegate;
 import org.eclipse.cdt.launch.ui.ComboControlledStackComposite;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.debug.core.DebugPlugin;

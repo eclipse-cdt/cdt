@@ -215,7 +215,7 @@
       <extension
          point="org.eclipse.debug.ui.launchConfigurationTabGroups">
       <launchConfigurationTabGroup
-            class="org.eclipse.cdt.launch.internal.MultiLaunchConfigurationTabGroup"
+            class="org.eclipse.cdt.launch.internal.ui.MultiLaunchConfigurationTabGroup"
             id="org.eclipse.cdt.launch.launchGroup.tabgroup"
             type="org.eclipse.cdt.launch.launchGroup">
       </launchConfigurationTabGroup>

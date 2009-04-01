@@ -1,9 +1,9 @@
-package org.eclipse.cdt.launch.internal;
+package org.eclipse.cdt.launch.internal.ui;
 
 import java.util.ArrayList;
 import java.util.Iterator;
 
-import org.eclipse.cdt.launch.internal.ui.LaunchMessages;
+import org.eclipse.cdt.launch.internal.MultiLaunchConfigurationDelegate;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;

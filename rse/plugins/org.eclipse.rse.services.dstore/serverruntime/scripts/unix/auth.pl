@@ -10,6 +10,7 @@
 # IBM Corporation - initial API and implementation
 # David McKnight   (IBM)   - [254785] [dstore] RSE Server assumes home directory on target machine
 # David McKnight   (IBM)   - [262013] [dstore][unix] RSE Daemon fails to start server on HP-UX
+# David McKnight   (IBM)   - [270015] rseserver fails to run on FreeBSD.
 #*******************************************************************************
 
 use Shell;
@@ -56,7 +57,7 @@ else
     
     $encryptedPWD = crypt($pwdIN, $passwd);
     $classpath=$ENV{CLASSPATH};
-    $suOptions="-p";
+    $suOptions="-";
 
     if ($passwd eq $encryptedPWD)
     {
@@ -65,9 +66,9 @@ else
 		$os = uname();
 		chomp($os);
 
-		if (lc($os) eq "aix" || lc($os) eq "HP-UX")		
+		if (lc($os) eq "linux")		
 		{
-			$suOptions="-";
+			$suOptions="-p";
 		}
 
 		# check for the existence of a home directory

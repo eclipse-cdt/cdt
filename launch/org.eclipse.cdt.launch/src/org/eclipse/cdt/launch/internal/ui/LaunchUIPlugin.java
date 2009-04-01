@@ -11,17 +11,12 @@
 package org.eclipse.cdt.launch.internal.ui;
 
 import org.eclipse.cdt.debug.core.ICDebugConstants;
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.cdt.launch.AbstractCLaunchDelegate.CLaunch;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
-import org.eclipse.core.runtime.jobs.Job;
-import org.eclipse.debug.core.DebugEvent;
 import org.eclipse.debug.core.DebugPlugin;
-import org.eclipse.debug.core.IDebugEventSetListener;
-import org.eclipse.debug.core.ILaunchConfiguration;
-import org.eclipse.debug.core.model.IProcess;
-import org.eclipse.debug.ui.RefreshTab;
+import org.eclipse.debug.core.ILaunch;
+import org.eclipse.debug.core.ILaunchesListener2;
 import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IWorkbenchPage;
@@ -29,7 +24,7 @@ import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.osgi.framework.BundleContext;
 
-public class LaunchUIPlugin extends AbstractUIPlugin implements IDebugEventSetListener {
+public class LaunchUIPlugin extends AbstractUIPlugin implements ILaunchesListener2 {
 
 	public static final String PLUGIN_ID = "org.eclipse.cdt.launch"; //$NON-NLS-1$
 
@@ -181,10 +176,11 @@ public class LaunchUIPlugin extends AbstractUIPlugin implements IDebugEventSetLi
 	 * 
 	 * @see org.eclipse.ui.plugin.AbstractUIPlugin#start(org.osgi.framework.BundleContext)
 	 */
-	public void start(BundleContext context) throws Exception {
+	@Override
+    public void start(BundleContext context) throws Exception {
 		super.start(context);
 		LaunchUIPlugin.getDefault().getPluginPreferences().getString( ICDebugConstants.PREF_FILTERED_DEBUGGERS );
-		DebugPlugin.getDefault().addDebugEventListener(this);
+		DebugPlugin.getDefault().getLaunchManager().addLaunchListener( this );
 	}
 
 	/*
@@ -192,51 +188,38 @@ public class LaunchUIPlugin extends AbstractUIPlugin implements IDebugEventSetLi
 	 * 
 	 * @see org.eclipse.ui.plugin.AbstractUIPlugin#stop(org.osgi.framework.BundleContext)
 	 */
-	public void stop(BundleContext context) throws Exception {
-		DebugPlugin.getDefault().removeDebugEventListener(this);
+	@Override
+    public void stop(BundleContext context) throws Exception {
+        DebugPlugin.getDefault().getLaunchManager().removeLaunchListener( this );
 		super.stop(context);
 	}
 
-	/**
-	 * Notifies this listener of the given debug events. All of the events in
-	 * the given event collection occurred at the same location the program be
-	 * run or debugged.
-	 * 
-	 * @param events
-	 *            the debug events
-	 */
-	public void handleDebugEvents(DebugEvent[] events) {
-		for (int i = 0; i < events.length; i++) {
-			if (events[i].getKind() == DebugEvent.TERMINATE) {
-				Object o = events[i].getSource();
-				if (o instanceof IProcess) {
-					IProcess process = (IProcess)o;
-					final ILaunchConfiguration config = process.getLaunch().getLaunchConfiguration();
-					try {
-					    if (RefreshTab.getRefreshScope(config) != null) {
-					        Job refreshJob = new Job("Refresh"){
+	/* (non-Javadoc)
+     * @see org.eclipse.debug.core.ILaunchesListener#launchesAdded(org.eclipse.debug.core.ILaunch[])
+     */
+    public void launchesAdded( ILaunch[] launches ) {
+    }
 
-					            /* (non-Javadoc)
-					             * @see org.eclipse.core.runtime.jobs.Job#run(org.eclipse.core.runtime.IProgressMonitor)
-					             */
-					            @Override
-					            protected IStatus run(IProgressMonitor monitor) {
-					                try {
-					                    RefreshTab.refreshResources(config, monitor);
-					                } catch (CoreException e) {
-					                    return new Status(IStatus.ERROR, PLUGIN_ID, 1, e.getLocalizedMessage(), e);
-					                }
-					                return Status.OK_STATUS;
-					            }};
-					        refreshJob.setSystem(true);
-					        refreshJob.schedule();
-					    }
-					}
-					catch(CoreException e) {
-					    LaunchUIPlugin.log( e.getStatus() );
-					}
-				}
-			}
-		}
-	}
+    /* (non-Javadoc)
+     * @see org.eclipse.debug.core.ILaunchesListener#launchesChanged(org.eclipse.debug.core.ILaunch[])
+     */
+    public void launchesChanged( ILaunch[] launches ) {
+    }
+
+    /* (non-Javadoc)
+     * @see org.eclipse.debug.core.ILaunchesListener#launchesRemoved(org.eclipse.debug.core.ILaunch[])
+     */
+    public void launchesRemoved( ILaunch[] launches ) {
+    }
+
+    /* (non-Javadoc)
+     * @see org.eclipse.debug.core.ILaunchesListener2#launchesTerminated(org.eclipse.debug.core.ILaunch[])
+     */
+    public void launchesTerminated( ILaunch[] launches ) {
+        for ( ILaunch l : launches ) {
+            if ( l instanceof CLaunch ) {
+                ((CLaunch)l).refresh();
+            }
+        }
+    }
 }

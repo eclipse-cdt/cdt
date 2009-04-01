@@ -16,8 +16,6 @@ package org.eclipse.cdt.launch;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import com.ibm.icu.text.DateFormat;
-import com.ibm.icu.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
@@ -28,6 +26,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 import java.util.Map.Entry;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.IBinaryParser;
@@ -62,19 +61,73 @@ import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.SubProgressMonitor;
+import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.ILaunch;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
 import org.eclipse.debug.core.ILaunchManager;
 import org.eclipse.debug.core.IStatusHandler;
+import org.eclipse.debug.core.Launch;
 import org.eclipse.debug.core.model.IPersistableSourceLocator;
 import org.eclipse.debug.core.model.IProcess;
+import org.eclipse.debug.core.model.ISourceLocator;
 import org.eclipse.debug.core.model.LaunchConfigurationDelegate;
+import org.eclipse.debug.ui.RefreshTab;
+
+import com.ibm.icu.text.DateFormat;
+import com.ibm.icu.text.MessageFormat;
 
 abstract public class AbstractCLaunchDelegate extends LaunchConfigurationDelegate {
 
-	/**
+    public class CLaunch extends Launch {
+
+        private AtomicBoolean fRefreshDone;
+        
+        public CLaunch(ILaunchConfiguration launchConfiguration, String mode, ISourceLocator locator) {
+            super(launchConfiguration, mode, locator);
+            fRefreshDone = new AtomicBoolean(false);
+        }
+
+        public void refresh() {
+            if (fRefreshDone.compareAndSet(false, true)) {
+                final ILaunchConfiguration config = getLaunchConfiguration();
+                try {
+                    if (RefreshTab.getRefreshScope(config) != null) {
+                        Job refreshJob = new Job("Refresh"){
+
+                            /* (non-Javadoc)
+                             * @see org.eclipse.core.runtime.jobs.Job#run(org.eclipse.core.runtime.IProgressMonitor)
+                             */
+                            @Override
+                            protected IStatus run(IProgressMonitor monitor) {
+                                try {
+                                    RefreshTab.refreshResources(config, monitor);
+                                } catch (CoreException e) {
+                                    return new Status(IStatus.ERROR, LaunchUIPlugin.PLUGIN_ID, 1, e.getLocalizedMessage(), e);
+                                }
+                                return Status.OK_STATUS;
+                            }};
+                        refreshJob.setSystem(true);
+                        refreshJob.schedule();
+                    }
+                }
+                catch(CoreException e) {
+                    LaunchUIPlugin.log( e.getStatus() );
+                }
+            }
+        }
+    }
+
+    /* (non-Javadoc)
+     * @see org.eclipse.debug.core.model.LaunchConfigurationDelegate#getLaunch(org.eclipse.debug.core.ILaunchConfiguration, java.lang.String)
+     */
+    @Override
+    public ILaunch getLaunch(ILaunchConfiguration configuration, String mode) throws CoreException {
+        return new CLaunch(configuration, mode, null);
+    }
+
+    /**
 	 * The project containing the programs file being launched
 	 */
 	private IProject project;

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2008 IBM Corporation and others.
+ * Copyright (c) 2004, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -5386,5 +5386,14 @@ public class AST2Tests extends AST2BaseTest {
 			IASTExpression expr= ifstmt.getConditionExpression();
 			assertInstance(expr, IASTBinaryExpression.class);
 		}
+	}
+	
+	//	typedef int* TIntPtr;
+	//	int x(int (int * a));
+	//	int x(int(TIntPtr));
+	public void testInfiniteRecursion_Bug269052() throws Exception {
+		final String code= getAboveComment();
+		parseAndCheckBindings(code, ParserLanguage.C, true);
+		parseAndCheckBindings(code, ParserLanguage.CPP, true);
 	}
 }

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2008 Wind River Systems, Inc. and others.
+ * Copyright (c) 2006, 2009 Wind River Systems, Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -11,7 +11,6 @@
  *******************************************************************************/ 
 package org.eclipse.cdt.internal.core.pdom.indexer;
 
-import com.ibm.icu.text.NumberFormat;
 import java.util.Calendar;
 import java.util.Map;
 
@@ -45,6 +44,8 @@ import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.content.IContentType;
 import org.eclipse.osgi.util.NLS;
 
+import com.ibm.icu.text.NumberFormat;
+
 /**
  * Configures the abstract indexer task suitable for indexing projects.
  */
@@ -68,6 +69,9 @@ public abstract class PDOMIndexerTask extends AbstractIndexerTask implements IPD
 		}
 		else {
 			int skipRefs= 0;
+			if (checkProperty(IndexerPreferences.KEY_SKIP_IMPLICIT_REFERENCES)) {
+				skipRefs |= SKIP_IMPLICIT_REFERENCES;
+			}
 			if (checkProperty(IndexerPreferences.KEY_SKIP_TYPE_REFERENCES)) {
 				skipRefs |= SKIP_TYPE_REFERENCES;
 			}
@@ -251,12 +255,14 @@ public abstract class PDOMIndexerTask extends AbstractIndexerTask implements IPD
 					+ info.fCompletedHeaders + " headers)");    //$NON-NLS-1$
 			boolean allFiles= getIndexAllFiles();
 			boolean skipRefs= checkProperty(IndexerPreferences.KEY_SKIP_ALL_REFERENCES);
+			boolean skipImplRefs= skipRefs || checkProperty(IndexerPreferences.KEY_SKIP_IMPLICIT_REFERENCES);
 			boolean skipTypeRefs= skipRefs || checkProperty(IndexerPreferences.KEY_SKIP_TYPE_REFERENCES);
 			boolean skipMacroRefs= skipRefs || checkProperty(IndexerPreferences.KEY_SKIP_MACRO_REFERENCES);
 			System.out.println(ident + " Options: "     //$NON-NLS-1$
 					+ "indexer='" + kind    //$NON-NLS-1$
 					+ "', parseAllFiles=" + allFiles    //$NON-NLS-1$
 					+ ", skipReferences=" + skipRefs    //$NON-NLS-1$
+					+ ", skipImplicitReferences=" + skipImplRefs    //$NON-NLS-1$
 					+ ", skipTypeReferences=" + skipTypeRefs    //$NON-NLS-1$
 					+ ", skipMacroReferences=" + skipMacroRefs    //$NON-NLS-1$
 					+ ".");    //$NON-NLS-1$

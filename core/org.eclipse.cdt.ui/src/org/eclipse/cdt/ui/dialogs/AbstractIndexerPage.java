@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2008 IBM Corporation and others.
+ * Copyright (c) 2005, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -40,6 +40,7 @@ public abstract class AbstractIndexerPage extends AbstractCOptionPage {
 	private Text fFilesToParseUpFront;
 	private Button fSkipReferences;
 	private Button fSkipTypeReferences;
+	private Button fSkipImplicitReferences;
 	private Button fSkipMacroReferences;
 
 	protected AbstractIndexerPage() {
@@ -60,6 +61,7 @@ public abstract class AbstractIndexerPage extends AbstractCOptionPage {
 		fAllFiles= createAllFilesButton(page);
 		fIncludeHeuristics= createIncludeHeuristicsButton(page);
 		fSkipReferences= createSkipReferencesButton(page);
+		fSkipImplicitReferences= createSkipImplicitReferencesButton(page);
 		fSkipTypeReferences= createSkipTypeReferencesButton(page);
 		fSkipMacroReferences= createSkipMacroReferencesButton(page);
 		fFilesToParseUpFront= createParseUpFrontTextField(page);
@@ -92,6 +94,10 @@ public abstract class AbstractIndexerPage extends AbstractCOptionPage {
 			boolean skipReferences= TRUE.equals(properties.get(IndexerPreferences.KEY_SKIP_ALL_REFERENCES));
 			fSkipReferences.setSelection(skipReferences);
 		}
+		if (fSkipImplicitReferences != null) {
+			boolean skipImplicitReferences= TRUE.equals(properties.get(IndexerPreferences.KEY_SKIP_IMPLICIT_REFERENCES));
+			fSkipImplicitReferences.setSelection(skipImplicitReferences);
+		}		
 		if (fSkipTypeReferences != null) {
 			boolean skipTypeReferences= TRUE.equals(properties.get(IndexerPreferences.KEY_SKIP_TYPE_REFERENCES));
 			fSkipTypeReferences.setSelection(skipTypeReferences);
@@ -125,6 +131,9 @@ public abstract class AbstractIndexerPage extends AbstractCOptionPage {
 		if (fSkipReferences != null) {
 			props.put(IndexerPreferences.KEY_SKIP_ALL_REFERENCES, String.valueOf(fSkipReferences.getSelection()));
 		}
+		if (fSkipImplicitReferences != null) {
+			props.put(IndexerPreferences.KEY_SKIP_IMPLICIT_REFERENCES, String.valueOf(fSkipImplicitReferences.getSelection()));
+		}
 		if (fSkipTypeReferences != null) {
 			props.put(IndexerPreferences.KEY_SKIP_TYPE_REFERENCES, String.valueOf(fSkipTypeReferences.getSelection()));
 		}
@@ -152,11 +161,15 @@ public abstract class AbstractIndexerPage extends AbstractCOptionPage {
 
 	public void updateEnablement() {
 		if (fSkipReferences != null) {
+			final boolean skipReferences = fSkipReferences.getSelection();
+			if (fSkipImplicitReferences != null) {
+				fSkipImplicitReferences.setEnabled(!skipReferences);
+			}
 			if (fSkipTypeReferences != null) {
-				fSkipTypeReferences.setEnabled(!fSkipReferences.getSelection());
+				fSkipTypeReferences.setEnabled(!skipReferences);
 			}
 			if (fSkipMacroReferences != null) {
-				fSkipMacroReferences.setEnabled(!fSkipReferences.getSelection());
+				fSkipMacroReferences.setEnabled(!skipReferences);
 			}
 		}
 	}
@@ -185,6 +198,10 @@ public abstract class AbstractIndexerPage extends AbstractCOptionPage {
 
 	private Button createSkipReferencesButton(Composite page) {
 		return ControlFactory.createCheckBox(page, DialogsMessages.AbstractIndexerPage_skipAllReferences);
+	}
+
+	private Button createSkipImplicitReferencesButton(Composite page) {
+		return ControlFactory.createCheckBox(page, DialogsMessages.AbstractIndexerPage_skipImplicitReferences);
 	}
 
 	private Button createSkipTypeReferencesButton(Composite page) {

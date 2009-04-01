@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007 Wind River Systems, Inc. and others.
+ * Copyright (c) 2007, 2009 Wind River Systems, Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -9,7 +9,6 @@
  *    Markus Schorn - initial API and implementation
  * 	  IBM Corporation
  *******************************************************************************/ 
-
 package org.eclipse.cdt.internal.core.indexer;
 
 import java.io.File;
@@ -25,39 +24,43 @@ import org.eclipse.cdt.core.parser.IParserLogService;
 import org.eclipse.cdt.core.parser.IScannerInfo;
 import org.eclipse.cdt.internal.core.index.IWritableIndex;
 import org.eclipse.cdt.internal.core.pdom.IndexerProgress;
+import org.eclipse.cdt.internal.core.pdom.PDOMWriter;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 
 /**
- * The base class for standalone index population tools.
+ * The base class for stand-alone index population tools.
  * 
  * <p>
- * <strong>EXPERIMENTAL</strong>. This class or interface has been added as
- * part of a work in progress. There is no guarantee that this API will work or
- * that it will remain the same. Please do not use this API without consulting
- * with the CDT team.
- * 
  * This class is not thread safe.
  * </p>
- * 
- * @since 4.0
  */
 public abstract class StandaloneIndexer {
 	
 	/**
 	 * Parser should not skip any references.
 	 */
-	public static final int SKIP_NO_REFERENCES= 0;
+	public static final int SKIP_NO_REFERENCES= PDOMWriter.SKIP_NO_REFERENCES;
 	
 	/**
 	 * Parser to skip all references.
 	 */
-	public static final int SKIP_ALL_REFERENCES= 1; 
+	public static final int SKIP_ALL_REFERENCES= PDOMWriter.SKIP_ALL_REFERENCES; 
 	
 	/**
-	 * Parser to skp type references.
+	 * Parser to skip implicit references.
 	 */
-	public static final int SKIP_TYPE_REFERENCES= 2;
+	public static final int SKIP_IMPLICIT_REFERENCES= PDOMWriter.SKIP_IMPLICIT_REFERENCES;
+
+	/**
+	 * Parser to skip type references.
+	 */
+	public static final int SKIP_TYPE_REFERENCES= PDOMWriter.SKIP_TYPE_REFERENCES;
+	
+	/**
+	 * Parser to skip type references.
+	 */
+	public static final int SKIP_MACRO_REFERENCES= PDOMWriter.SKIP_MACRO_REFERENCES;
 	
 	/**
 	 * Constant for indicating to update all translation units.

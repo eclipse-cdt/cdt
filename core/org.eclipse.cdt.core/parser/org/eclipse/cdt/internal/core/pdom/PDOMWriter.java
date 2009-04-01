@@ -70,6 +70,7 @@ abstract public class PDOMWriter {
 	public static int SKIP_ALL_REFERENCES= -1;
 	public static int SKIP_TYPE_REFERENCES=  1;
 	public static int SKIP_MACRO_REFERENCES= 2;
+	public static int SKIP_IMPLICIT_REFERENCES=  4;
 	public static int SKIP_NO_REFERENCES= 0;
 	
 	private static class Symbols {
@@ -120,7 +121,7 @@ abstract public class PDOMWriter {
 	/**
 	 * Determines whether references are skipped or not. Provide one of 
 	 * {@link #SKIP_ALL_REFERENCES}, {@link #SKIP_NO_REFERENCES} or a combination of
-	 * {@link #SKIP_TYPE_REFERENCES} or {@link #SKIP_MACRO_REFERENCES}.
+	 * {@link #SKIP_IMPLICIT_REFERENCES}, {@link #SKIP_TYPE_REFERENCES} and {@link #SKIP_MACRO_REFERENCES}.
 	 */
 	public void setSkipReferences(int options) {
 		fSkipReferences= options;
@@ -325,7 +326,7 @@ abstract public class PDOMWriter {
 		}
 		
 		// names
-		final IndexerASTVisitor visitor = new IndexerASTVisitor() {
+		final IndexerASTVisitor visitor = new IndexerASTVisitor((fSkipReferences & SKIP_IMPLICIT_REFERENCES) == 0) {
 			@Override
 			public void visit(IASTName name, IASTName caller) {
 				if (fSkipReferences == SKIP_ALL_REFERENCES) {

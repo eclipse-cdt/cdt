@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2008 Wind River Systems, Inc. and others.
+ * Copyright (c) 2007, 2009 Wind River Systems, Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,7 +8,6 @@
  * Contributors:
  *    Markus Schorn - initial API and implementation
  *******************************************************************************/ 
-
 package org.eclipse.cdt.internal.core.pdom.indexer;
 
 import java.util.Map;
@@ -30,6 +29,7 @@ public abstract class AbstractPDOMIndexer implements IPDOMIndexer {
 		fProperties.put(IndexerPreferences.KEY_INCLUDE_HEURISTICS, String.valueOf(true));
 		fProperties.put(IndexerPreferences.KEY_FILES_TO_PARSE_UP_FRONT, ""); //$NON-NLS-1$
 		fProperties.put(IndexerPreferences.KEY_SKIP_ALL_REFERENCES, String.valueOf(false)); 
+		fProperties.put(IndexerPreferences.KEY_SKIP_IMPLICIT_REFERENCES, String.valueOf(false)); 
 		fProperties.put(IndexerPreferences.KEY_SKIP_TYPE_REFERENCES, String.valueOf(false)); 
 		fProperties.put(IndexerPreferences.KEY_SKIP_MACRO_REFERENCES, String.valueOf(false)); 
 	}

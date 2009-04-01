@@ -20,13 +20,13 @@ import org.eclipse.osgi.util.NLS;
  */
 public class DialogsMessages extends NLS {
 	private static final String BUNDLE_NAME = "org.eclipse.cdt.ui.dialogs.DialogsMessages"; //$NON-NLS-1$
-	/**
-	 * @since 5.1
-	 */
+	/** @since 5.1 */
 	public static String AbstractIndexerPage_heuristicIncludes;
 	public static String AbstractIndexerPage_indexAllFiles;
 	public static String AbstractIndexerPage_indexUpFront;
 	public static String AbstractIndexerPage_skipAllReferences;
+	/** @since 5.1 */
+	public static String AbstractIndexerPage_skipImplicitReferences;
 	public static String AbstractIndexerPage_skipTypeReferences;
 	public static String AbstractIndexerPage_skipMacroReferences;
 	public static String CacheSizeBlock_MB;

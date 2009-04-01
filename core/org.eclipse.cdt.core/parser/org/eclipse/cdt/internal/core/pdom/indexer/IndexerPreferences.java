@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2008 Wind River Systems, Inc. and others.
+ * Copyright (c) 2007, 2009 Wind River Systems, Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -48,6 +48,7 @@ public class IndexerPreferences {
 	public static final String KEY_INCLUDE_HEURISTICS= "useHeuristicIncludeResolution"; //$NON-NLS-1$
 	public static final String KEY_FILES_TO_PARSE_UP_FRONT= "filesToParseUpFront"; //$NON-NLS-1$
 	public static final String KEY_SKIP_ALL_REFERENCES= "skipReferences"; //$NON-NLS-1$
+	public static final String KEY_SKIP_IMPLICIT_REFERENCES= "skipImplicitReferences"; //$NON-NLS-1$
 	public static final String KEY_SKIP_TYPE_REFERENCES= "skipTypeReferences"; //$NON-NLS-1$
 	public static final String KEY_SKIP_MACRO_REFERENCES= "skipMacroReferences"; //$NON-NLS-1$
 	public static final String KEY_UPDATE_POLICY= "updatePolicy"; //$NON-NLS-1$
@@ -303,6 +304,7 @@ public class IndexerPreferences {
 		prefs.putBoolean(KEY_INDEX_ALL_FILES, false);
 		prefs.putBoolean(KEY_INCLUDE_HEURISTICS, true);
 		prefs.putBoolean(KEY_SKIP_ALL_REFERENCES, false);
+		prefs.putBoolean(KEY_SKIP_IMPLICIT_REFERENCES, false);
 		prefs.putBoolean(KEY_SKIP_TYPE_REFERENCES, false);
 		prefs.putBoolean(KEY_SKIP_MACRO_REFERENCES, false);
 		prefs.put(KEY_INDEX_IMPORT_LOCATION, DEFAULT_INDEX_IMPORT_LOCATION);

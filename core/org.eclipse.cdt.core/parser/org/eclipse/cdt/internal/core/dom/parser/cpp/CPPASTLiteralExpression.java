@@ -98,17 +98,21 @@ public class CPPASTLiteralExpression extends ASTNode implements ICPPASTLiteralEx
     		case lk_false:
     			return new CPPBasicType(ICPPBasicType.t_bool, 0, this);
     		case lk_char_constant:
-    			return new CPPBasicType(IBasicType.t_char, 0, this);
+    			return new CPPBasicType(getCharType(), 0, this);
     		case lk_float_constant: 
     			return classifyTypeOfFloatLiteral();
     		case lk_integer_constant: 
     			return classifyTypeOfIntLiteral();
     		case lk_string_literal:
-    			IType type = new CPPBasicType(IBasicType.t_char, 0, this);
+    			IType type = new CPPBasicType(getCharType(), 0, this);
     			type = new CPPQualifierType(type, true, false);
     			return new CPPArrayType(type);
     	}
     	return null;
+    }
+    
+    private int getCharType() {
+    	return getValue()[0] == 'L' ? ICPPBasicType.t_wchar_t : IBasicType.t_char;
     }
     
 	private IType classifyTypeOfFloatLiteral() {

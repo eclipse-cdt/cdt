@@ -7085,5 +7085,28 @@ public class AST2CPPTests extends AST2BaseTest {
 	public void testInvalidUserDefinedConversion_Bug269729() throws Exception {
 		BindingAssertionHelper ba= new BindingAssertionHelper(getAboveComment(), true);
     	ba.assertProblem("test(c)", 4);
-	}	
+	}
+	
+
+	//	int foo(char * x);
+	//	int foo(wchar_t * x);
+	//  int foo(char x);
+	//	int foo(wchar_t x);
+	//
+	//	int main() {
+	//		foo("asdf");
+	//		foo(L"asdf");
+	//		foo('a');
+	//		foo(L'a');
+	//	}
+	public void testWideCharacterLiteralTypes_Bug270892() throws Exception {
+		IASTTranslationUnit tu = parse( getAboveComment(), ParserLanguage.CPP ); 
+		CPPNameCollector col = new CPPNameCollector();
+		tu.accept(col);
+		
+		assertSame(col.getName(0).resolveBinding(), col.getName(9).resolveBinding());
+		assertSame(col.getName(2).resolveBinding(), col.getName(10).resolveBinding());
+		assertSame(col.getName(4).resolveBinding(), col.getName(11).resolveBinding());
+		assertSame(col.getName(6).resolveBinding(), col.getName(12).resolveBinding());
+	}
 }

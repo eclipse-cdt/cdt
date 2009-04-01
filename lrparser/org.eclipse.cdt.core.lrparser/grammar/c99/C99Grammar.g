@@ -979,15 +979,17 @@ declaration_list
 -- to avoid a shift/reduce error with the rule for declaration. 
 -- The symbol table scoped is opened in the rule for function_direct_declarator
 function_definition
-    ::= declaration_specifiers <openscope-ast>  function_declarator function_body
-          /. $Build  consumeFunctionDefinition(true);  $EndBuild ./
+    ::= normal_function_definition
          -- this rule is here as a special case (its not C99 spec) just to support implicit int in function definitions
       | <openscope-ast>  function_declarator function_body
           /. $Build  consumeFunctionDefinition(false);  $EndBuild ./
       | declaration_specifiers <openscope-ast>  knr_function_declarator <openscope-ast> declaration_list compound_statement
           /. $Build  consumeFunctionDefinitionKnR();  $EndBuild ./
 
-   
+normal_function_definition
+    ::= declaration_specifiers <openscope-ast>  function_declarator function_body
+          /. $Build  consumeFunctionDefinition(true);  $EndBuild ./
+          
 -- same syntax as compound_statement but a symbol table scope isn't opened
 function_body
     ::= '{' '}' 

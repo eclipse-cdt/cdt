@@ -43,7 +43,7 @@ import org.eclipse.cdt.core.model.ILanguage;
 public class LRDigraphTrigraphTests extends TestCase {
 
 	public static TestSuite suite() {
-    	return new TestSuite(LRCSpecTests.class);
+    	return new TestSuite(LRDigraphTrigraphTests.class);
     }
 	
 	

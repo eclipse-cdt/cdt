@@ -17,12 +17,12 @@ import lpg.lpgjavaruntime.*;
 
 import java.util.*;
 import org.eclipse.cdt.core.dom.ast.*;
-import org.eclipse.cdt.core.dom.lrparser.CPreprocessorAdapter;
 import org.eclipse.cdt.core.dom.lrparser.IDOMTokenMap;
 import org.eclipse.cdt.core.dom.lrparser.IParser;
 import org.eclipse.cdt.core.dom.lrparser.ITokenCollector;
-import org.eclipse.cdt.core.dom.lrparser.lpgextensions.FixedBacktrackingParser;
+import org.eclipse.cdt.core.dom.lrparser.CPreprocessorAdapter;
 import org.eclipse.cdt.core.dom.lrparser.action.ITokenStream;
+import org.eclipse.cdt.core.dom.lrparser.lpgextensions.FixedBacktrackingParser;
 import org.eclipse.cdt.core.dom.lrparser.action.ScopedStack;
 import org.eclipse.cdt.core.parser.IScanner;
 import org.eclipse.cdt.core.dom.parser.IBuiltinBindingsProvider;
@@ -317,7 +317,7 @@ public String getName() {
             }  
   
             //
-            // Rule 28:  postfix_expression ::= ( type_id ) { <openscope-ast> initializer_list comma_opt }
+            // Rule 28:  postfix_expression ::= ( type_id ) initializer_list
             //
             case 28: { action.   consumeExpressionTypeIdInitializer();             break;
             }  
@@ -1139,111 +1139,111 @@ public String getName() {
             }  
   
             //
-            // Rule 282:  initializer ::= start_initializer_list { <openscope-ast> initializer_list comma_opt } end_initializer_list
-            //
-            case 282: { action.   consumeInitializerList();             break;
-            }  
-  
-            //
-            // Rule 283:  initializer ::= { <openscope-ast> }
+            // Rule 283:  initializer_list ::= start_initializer_list { <openscope-ast> initializer_seq comma_opt } end_initializer_list
             //
             case 283: { action.   consumeInitializerList();             break;
             }  
   
             //
-            // Rule 284:  start_initializer_list ::= $Empty
+            // Rule 284:  initializer_list ::= { <openscope-ast> }
             //
-            case 284: { action.   initializerListStart();            break;
+            case 284: { action.   consumeInitializerList();             break;
             }  
   
             //
-            // Rule 285:  end_initializer_list ::= $Empty
+            // Rule 285:  start_initializer_list ::= $Empty
             //
-            case 285: { action.   initializerListEnd();            break;
+            case 285: { action.   initializerListStart();            break;
             }  
   
             //
-            // Rule 290:  designated_initializer ::= <openscope-ast> designation = initializer
+            // Rule 286:  end_initializer_list ::= $Empty
             //
-            case 290: { action.   consumeInitializerDesignated();             break;
+            case 286: { action.   initializerListEnd();            break;
             }  
   
             //
-            // Rule 294:  designator_base ::= [ constant_expression ]
+            // Rule 291:  designated_initializer ::= <openscope-ast> designation = initializer
             //
-            case 294: { action.   consumeDesignatorArray();             break;
+            case 291: { action.   consumeInitializerDesignated();             break;
             }  
   
             //
-            // Rule 295:  designator_base ::= . identifier_token
+            // Rule 295:  designator_base ::= [ constant_expression ]
             //
-            case 295: { action.   consumeDesignatorField();             break;
+            case 295: { action.   consumeDesignatorArray();             break;
             }  
   
             //
-            // Rule 296:  designator ::= [ constant_expression ]
+            // Rule 296:  designator_base ::= . identifier_token
             //
-            case 296: { action.   consumeDesignatorArray();             break;
+            case 296: { action.   consumeDesignatorField();             break;
             }  
   
             //
-            // Rule 297:  designator ::= . identifier_token
+            // Rule 297:  designator ::= [ constant_expression ]
             //
-            case 297: { action.   consumeDesignatorField();             break;
+            case 297: { action.   consumeDesignatorArray();             break;
             }  
   
             //
-            // Rule 298:  translation_unit ::= external_declaration_list
+            // Rule 298:  designator ::= . identifier_token
             //
-            case 298: { action.   consumeTranslationUnit();             break;
+            case 298: { action.   consumeDesignatorField();             break;
+            }  
+  
+            //
+            // Rule 299:  translation_unit ::= external_declaration_list
+            //
+            case 299: { action.   consumeTranslationUnit();             break;
             }   
   
             //
-            // Rule 299:  translation_unit ::= $Empty
+            // Rule 300:  translation_unit ::= $Empty
             //
-            case 299: { action.   consumeTranslationUnit();             break;
+            case 300: { action.   consumeTranslationUnit();             break;
             }  
   
             //
-            // Rule 304:  external_declaration ::= ;
+            // Rule 305:  external_declaration ::= ;
             //
-            case 304: { action.   consumeDeclarationEmpty();             break;
+            case 305: { action.   consumeDeclarationEmpty();             break;
             }  
   
             //
-            // Rule 305:  external_declaration ::= ERROR_TOKEN
+            // Rule 306:  external_declaration ::= ERROR_TOKEN
             //
-            case 305: { action.   consumeDeclarationProblem();             break;
+            case 306: { action.   consumeDeclarationProblem();             break;
             }  
   
             //
-            // Rule 308:  function_definition ::= declaration_specifiers <openscope-ast> function_declarator function_body
+            // Rule 310:  function_definition ::= <openscope-ast> function_declarator function_body
             //
-            case 308: { action.   consumeFunctionDefinition(true);             break;
+            case 310: { action.   consumeFunctionDefinition(false);             break;
             }  
   
             //
-            // Rule 309:  function_definition ::= <openscope-ast> function_declarator function_body
+            // Rule 311:  function_definition ::= declaration_specifiers <openscope-ast> knr_function_declarator <openscope-ast> declaration_list compound_statement
             //
-            case 309: { action.   consumeFunctionDefinition(false);             break;
+            case 311: { action.   consumeFunctionDefinitionKnR();             break;
             }  
   
             //
-            // Rule 310:  function_definition ::= declaration_specifiers <openscope-ast> knr_function_declarator <openscope-ast> declaration_list compound_statement
+            // Rule 312:  normal_function_definition ::= declaration_specifiers <openscope-ast> function_declarator function_body
             //
-            case 310: { action.   consumeFunctionDefinitionKnR();             break;
+            case 312: { action.   consumeFunctionDefinition(true);             break;
             }  
   
             //
-            // Rule 311:  function_body ::= { }
+            // Rule 313:  function_body ::= { }
             //
-            case 311: { action.   consumeStatementCompoundStatement(false);             break;
+            case 313: { action.   consumeStatementCompoundStatement(false);             break;
             }  
   
             //
-            // Rule 312:  function_body ::= { <openscope-ast> block_item_list }
+            // Rule 314:  function_body ::= { <openscope-ast> block_item_list }
             //
-            case 312: { action.   consumeStatementCompoundStatement(true);             break;
+            case 314: { action.   consumeStatementCompoundStatement(true);             break;
             }  
 
     

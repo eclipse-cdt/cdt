@@ -24,23 +24,6 @@
             id="gpp"
             name="LR GPP">
       </language>
-
-      <pdomLinkageFactory
-            class="org.eclipse.cdt.internal.core.pdom.dom.c.PDOMCLinkageFactory"
-            id="c99"/>
-            
-      <pdomLinkageFactory
-            class="org.eclipse.cdt.internal.core.pdom.dom.c.PDOMCLinkageFactory"
-            id="gcc"/>
-            
-      <pdomLinkageFactory
-            class="org.eclipse.cdt.internal.core.pdom.dom.cpp.PDOMCPPLinkageFactory"
-            id="isocpp"/>
-            
-      <pdomLinkageFactory
-            class="org.eclipse.cdt.internal.core.pdom.dom.cpp.PDOMCPPLinkageFactory"
-            id="gpp"/>
-            
    </extension>
    
 </plugin>

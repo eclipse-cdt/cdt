@@ -103,4 +103,10 @@ designated_initializer
           
 
 
+-- Nested functions
+
+block_item
+    ::= normal_function_definition
+          /. $Build  consumeStatementDeclaration();  $EndBuild ./
+          
 $End

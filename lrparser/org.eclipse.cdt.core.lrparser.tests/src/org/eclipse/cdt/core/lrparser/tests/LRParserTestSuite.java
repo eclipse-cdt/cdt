@@ -43,6 +43,7 @@ public class LRParserTestSuite extends TestSuite {
 			addTest(LRDOMLocationTests.suite());
 			addTest(LRDOMPreprocessorInformationTest.suite());
 			addTest(LRGCCTests.suite());
+			addTest(LRGCCCompleteParseExtensionsTest.suite());
 			addTest(LRImageLocationTests.suite());
 			addTest(LRKnRTests.suite()); // mostly fail due to ambiguities
 			addTest(LRNodeSelectorTest.suite());
@@ -54,6 +55,8 @@ public class LRParserTestSuite extends TestSuite {
 			addTest(LRTests.suite()); // has some tests that do fail
 			addTest(LRUtilOldTests.suite());
 			addTest(LRUtilTests.suite());
+			addTest(LRCPPImplicitNameTests.suite());
+			//addTest(LRInactiveCodeTests.suite());
 
 		}};
 	}	

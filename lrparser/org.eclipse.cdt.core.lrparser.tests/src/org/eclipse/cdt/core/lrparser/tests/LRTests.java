@@ -154,5 +154,15 @@ public class LRTests extends AST2Tests {
 	public void _testCastVsFunctionCallAmbiguities_Bug237057() throws Exception { 
 		super.testCastVsFunctionCallAmbiguities_Bug237057();
 	}
+	
+	
+	/* The LR parser generates the AST for switch statements
+	 * differently than the DOM parser.
+	 */
+	@Override
+	public void testCaseRange_Bug211882() { }
+	public void _testCaseRange_Bug211882() throws Exception { 
+		super.testCaseRange_Bug211882();
+	}
 
 }

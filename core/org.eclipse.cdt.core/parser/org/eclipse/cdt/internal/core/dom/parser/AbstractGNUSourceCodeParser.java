@@ -2020,7 +2020,7 @@ public abstract class AbstractGNUSourceCodeParser implements ISourceCodeParser {
 		if (lt1 == IToken.tELLIPSIS) {
 			consume();
         	IASTExpression upperBoundExpression= constantExpression();
-        	caseExpression = buildBinaryExpression(IASTBinaryExpression.op_assign,
+        	caseExpression = buildBinaryExpression(IASTBinaryExpression.op_ellipses,
         			caseExpression, upperBoundExpression, calculateEndOffset(upperBoundExpression));
         	lt1= LT(1);
 		}

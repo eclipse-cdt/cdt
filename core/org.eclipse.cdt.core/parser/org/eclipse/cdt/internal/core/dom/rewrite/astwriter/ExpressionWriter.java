@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008 Institute for Software, HSR Hochschule fuer Technik  
+ * Copyright (c) 2008, 2009 Institute for Software, HSR Hochschule fuer Technik  
  * Rapperswil, University of applied sciences and others
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Eclipse Public License v1.0 
@@ -82,7 +82,7 @@ public class ExpressionWriter extends NodeWriter{
 	private static final String MAX_OP = " >? "; //$NON-NLS-1$
 	private static final String PMARROW_OP = "->*"; //$NON-NLS-1$
 	private static final String PMDOT_OP = ".*"; //$NON-NLS-1$
-	private static final String ELLIPSES = "..."; //$NON-NLS-1$
+	private static final String ELLIPSES = " ... "; //$NON-NLS-1$
 	private static final String NOT_EQUALS_OP = " != "; //$NON-NLS-1$
 	private static final String EQUALS_OP = " == "; //$NON-NLS-1$
 	private static final String BINARY_OR_ASSIGN = " |= "; //$NON-NLS-1$

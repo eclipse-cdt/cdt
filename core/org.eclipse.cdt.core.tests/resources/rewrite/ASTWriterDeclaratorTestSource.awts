@@ -56,7 +56,7 @@ TestClass::TestClass(int a)
 }
 
 void undefPar(const char *c) throw (int);
-virtual void pure() =0;
+virtual void pure() = 0;
 int getV() const;
 int vol() volatile;
 

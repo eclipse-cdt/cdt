@@ -206,6 +206,36 @@ void foo()
 }
 
 
+//!GNUSwitchStatementTest
+//%CPP
+int foo(int a)
+{
+    switch (a){
+        case 1:
+            return 1;
+        case 2 ... 4:
+            return 0;
+        default:
+            return -1;
+    }
+}
+
+
+//!GNUSwitchStatementTest
+//%C
+int foo(int a)
+{
+    switch (a){
+        case 1:
+            return 1;
+        case 2 ... 4:
+            return 0;
+        default:
+            return -1;
+    }
+}
+
+
 //!WhileStatementTest
 //%CPP
 void foo()

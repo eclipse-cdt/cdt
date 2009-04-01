@@ -23,6 +23,7 @@ import org.eclipse.cdt.core.dom.ast.ExpansionOverlapsBoundaryException;
 import org.eclipse.cdt.core.dom.ast.IASTArrayDeclarator;
 import org.eclipse.cdt.core.dom.ast.IASTArraySubscriptExpression;
 import org.eclipse.cdt.core.dom.ast.IASTBinaryExpression;
+import org.eclipse.cdt.core.dom.ast.IASTCaseStatement;
 import org.eclipse.cdt.core.dom.ast.IASTCastExpression;
 import org.eclipse.cdt.core.dom.ast.IASTCompositeTypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTCompoundStatement;
@@ -4840,8 +4841,26 @@ public class AST2Tests extends AST2BaseTest {
 	// }
 	public void testCaseRange_Bug211882() throws Exception {
 		final String code = getAboveComment();
-		parseAndCheckBindings(code, ParserLanguage.C, true);
-		parseAndCheckBindings(code, ParserLanguage.CPP, true);
+		{
+			IASTTranslationUnit tu = parseAndCheckBindings(code, ParserLanguage.C, true);
+			IASTCompoundStatement body = (IASTCompoundStatement)((IASTFunctionDefinition)tu.getDeclarations()[0]).getBody();
+			IASTSwitchStatement switchStmt = (IASTSwitchStatement)body.getStatements()[0];
+			IASTCaseStatement caseStmt = (IASTCaseStatement)((IASTCompoundStatement)switchStmt.getBody()).getStatements()[0];
+			IASTBinaryExpression binExpr = (IASTBinaryExpression)caseStmt.getExpression();
+			assertTrue(binExpr.getOperator() == IASTBinaryExpression.op_ellipses);
+			assertTrue(binExpr.getOperand1() instanceof IASTLiteralExpression);
+			assertTrue(binExpr.getOperand2() instanceof IASTLiteralExpression);
+		}
+		{
+			IASTTranslationUnit tu = parseAndCheckBindings(code, ParserLanguage.CPP, true);
+			IASTCompoundStatement body = (IASTCompoundStatement)((IASTFunctionDefinition)tu.getDeclarations()[0]).getBody();
+			IASTSwitchStatement switchStmt = (IASTSwitchStatement)body.getStatements()[0];
+			IASTCaseStatement caseStmt = (IASTCaseStatement)((IASTCompoundStatement)switchStmt.getBody()).getStatements()[0];
+			IASTBinaryExpression binExpr = (IASTBinaryExpression)caseStmt.getExpression();
+			assertTrue(binExpr.getOperator() == IASTBinaryExpression.op_ellipses);
+			assertTrue(binExpr.getOperand1() instanceof IASTLiteralExpression);
+			assertTrue(binExpr.getOperand2() instanceof IASTLiteralExpression);
+		}
 	}
 	
 	//	template<typename T> class X {

@@ -73,6 +73,7 @@ public class ByteStreamHandler implements IByteStreamHandler
 	
 		if (fileName != null)
 		{
+			_dataStore.trace("Receiving Bytes for " + fileName); //$NON-NLS-1$
 			try
 			{
 				// need to create directories as well
@@ -109,7 +110,7 @@ public class ByteStreamHandler implements IByteStreamHandler
 			}
 			catch (IOException e)
 			{
-				System.out.println(e);
+				_dataStore.trace(e);
 				if (status == null)
 					return;
 				status.setAttribute(DE.A_VALUE, FILEMSG_REMOTE_SAVE_FAILED);
@@ -118,7 +119,7 @@ public class ByteStreamHandler implements IByteStreamHandler
 			}
 			catch (Exception e)
 			{
-				System.out.println(e);
+				_dataStore.trace(e);
 				if (status == null)
 					return;
 				status.setAttribute(DE.A_VALUE, FILEMSG_REMOTE_SAVE_FAILED);
@@ -145,6 +146,7 @@ public class ByteStreamHandler implements IByteStreamHandler
 
 		if (fileName != null)
 		{
+			_dataStore.trace("Receiving Appended Bytes for " + fileName); //$NON-NLS-1$
 			try
 			{
 				// need to create directories as well
@@ -192,7 +194,7 @@ public class ByteStreamHandler implements IByteStreamHandler
 					}
 					catch (Exception e)
 					{
-						e.printStackTrace();
+						_dataStore.trace(e);
 					}
 					
 					outStream.close();
@@ -205,7 +207,7 @@ public class ByteStreamHandler implements IByteStreamHandler
 			}
 			catch (IOException e)
 			{
-				System.out.println(e);
+				_dataStore.trace(e);
 				if (status == null)
 					return;
 				status.setAttribute(DE.A_VALUE, FILEMSG_REMOTE_SAVE_FAILED);

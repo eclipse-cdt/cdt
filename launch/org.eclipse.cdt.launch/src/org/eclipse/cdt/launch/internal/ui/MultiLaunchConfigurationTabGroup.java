@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 
 import org.eclipse.cdt.launch.internal.MultiLaunchConfigurationDelegate;
+import org.eclipse.cdt.launch.internal.MultiLaunchConfigurationDelegate.LaunchElement;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
@@ -14,7 +15,9 @@ import org.eclipse.debug.ui.ILaunchConfigurationDialog;
 import org.eclipse.debug.ui.ILaunchConfigurationTab;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.viewers.BaseLabelProvider;
+import org.eclipse.jface.viewers.CheckStateChangedEvent;
 import org.eclipse.jface.viewers.CheckboxTreeViewer;
+import org.eclipse.jface.viewers.ICheckStateListener;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.IStructuredContentProvider;
 import org.eclipse.jface.viewers.ITableLabelProvider;
@@ -23,6 +26,7 @@ import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.graphics.Image;
@@ -41,7 +45,7 @@ import org.eclipse.ui.PlatformUI;
  */
 public class MultiLaunchConfigurationTabGroup extends AbstractLaunchConfigurationTabGroup {
 	static class ContentProvider implements IStructuredContentProvider, ITreeContentProvider {
-		protected ArrayList input;
+		protected ArrayList<LaunchElement> input;
 
 		public Object[] getElements(Object inputElement) {
 			return getChildren(inputElement);
@@ -81,13 +85,13 @@ public class MultiLaunchConfigurationTabGroup extends AbstractLaunchConfiguratio
 				return null;
 			if (columnIndex == 0) {
 				MultiLaunchConfigurationDelegate.LaunchElement el = (MultiLaunchConfigurationDelegate.LaunchElement) element;
-				if (el.data == null) {
+				if (el.getData() == null) {
 					Image errorImage = PlatformUI.getWorkbench().getSharedImages().getImage(ISharedImages.IMG_OBJS_ERROR_TSK);
 					return errorImage;
 				}
 				
 				try {
-	                String key = el.data.getType().getIdentifier();
+	                String key = el.getData().getType().getIdentifier();
 	                return DebugPluginImages.getImage(key);
                 } catch (CoreException e) {
                 	Image errorImage = PlatformUI.getWorkbench().getSharedImages().getImage(ISharedImages.IMG_OBJS_ERROR_TSK);
@@ -103,14 +107,14 @@ public class MultiLaunchConfigurationTabGroup extends AbstractLaunchConfiguratio
 			MultiLaunchConfigurationDelegate.LaunchElement el = (MultiLaunchConfigurationDelegate.LaunchElement) element;
 			if (columnIndex == 0)
 				try {
-					return (el.data != null) ? el.data.getType().getName() + "::" + el.name : el.name; //$NON-NLS-1$
+					return (el.getData() != null) ? el.getData().getType().getName() + "::" + el.getName() : el.getName(); //$NON-NLS-1$
 				} catch (CoreException e) {
-					return el.name;
+					return el.getName();
 				}
 			if (columnIndex == 1)
-				return el.mode;
+				return el.getMode();
 			if (columnIndex == 2)
-				return el.action;
+				return el.getAction();
 			return null;
 		}
 	}
@@ -210,6 +214,9 @@ public class MultiLaunchConfigurationTabGroup extends AbstractLaunchConfiguratio
 			TreeColumn col2 = new TreeColumn(table, SWT.NONE);
 			col2.setText(LaunchMessages.getString("MultiLaunchConfigurationTabGroup.7")); //$NON-NLS-1$
 			col2.setWidth(100);
+			TreeColumn col3 = new TreeColumn(table, SWT.NONE);
+			col3.setText("Action");
+			col3.setWidth(100);
 		
 			treeViewer.setInput(input);
 			final ButtonComposite buts = new ButtonComposite(comp, SWT.NONE) {
@@ -223,13 +230,13 @@ public class MultiLaunchConfigurationTabGroup extends AbstractLaunchConfiguratio
 						if (conf==null) return;
 						MultiLaunchConfigurationDelegate.LaunchElement el = new MultiLaunchConfigurationDelegate.LaunchElement();
 						input.add(el);
-						el.index = input.size() - 1;
-						el.enabled = true;
-						el.name = conf.getName();
-						el.data = conf;
-						el.mode = dialog.getMode();
+						el.setIndex(input.size() - 1);
+						el.setEnabled(true);
+						el.setName(conf.getName());
+						el.setData(conf);
+						el.setMode(dialog.getMode());
 						treeViewer.refresh(true);
-						treeViewer.setChecked(el, el.enabled);
+						treeViewer.setChecked(el, el.isEnabled());
 						updateWidgetEnablement();
 						updateLaunchConfigurationDialog();
 					}
@@ -251,17 +258,17 @@ public class MultiLaunchConfigurationTabGroup extends AbstractLaunchConfiguratio
 					        .get(index);
 					MultiLaunchConfigurationSelectionDialog dialog = MultiLaunchConfigurationSelectionDialog.createDialog(treeViewer
 					        .getControl().getShell(), LaunchMessages.getString("MultiLaunchConfigurationTabGroup.9"),  //$NON-NLS-1$
-					        el.mode
+					        el.getMode()
 					        );
-					dialog.setInitialSelection(el.data);
+					dialog.setInitialSelection(el);
 					if (dialog.open() == Dialog.OK) {
 						ILaunchConfiguration conf = dialog.getSelectedLaunchConfiguration();
 						if (conf==null) return;
-						el.name = conf.getName();
-						el.data = conf;
-						el.mode = dialog.getMode();
+						el.setName(conf.getName());
+						el.setData(conf);
+						el.setMode(dialog.getMode());
+						el.setAction(dialog.getAction());
 						treeViewer.refresh(true);
-						treeViewer.setChecked(el, el.enabled);
 						updateWidgetEnablement();
 						updateLaunchConfigurationDialog();
 					}
@@ -329,6 +336,20 @@ public class MultiLaunchConfigurationTabGroup extends AbstractLaunchConfiguratio
 					buts.updateWidgetEnablement();
 				}
 			});
+			
+			treeViewer.getTree().addSelectionListener(new SelectionAdapter(){
+				@Override
+				public void widgetDefaultSelected(SelectionEvent e) {
+					buts.editPressed();
+				}
+			});
+			
+			treeViewer.addCheckStateListener(new ICheckStateListener(){
+				public void checkStateChanged(CheckStateChangedEvent event) {
+					((LaunchElement)event.getElement()).setEnabled(event.getChecked());
+					updateLaunchConfigurationDialog();
+				}
+			});
 			buts.updateWidgetEnablement();
 			GridData layoutData = new GridData(GridData.GRAB_VERTICAL);
 			layoutData.verticalAlignment = SWT.BEGINNING;
@@ -345,7 +366,7 @@ public class MultiLaunchConfigurationTabGroup extends AbstractLaunchConfiguratio
 				for (Iterator iterator = input.iterator(); iterator.hasNext();) {
 					MultiLaunchConfigurationDelegate.LaunchElement el = (MultiLaunchConfigurationDelegate.LaunchElement) iterator
 					        .next();
-					treeViewer.setChecked(el, el.enabled);
+					treeViewer.setChecked(el, el.isEnabled());
 				}
 				treeViewer.refresh(true);
 			}

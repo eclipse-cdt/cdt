@@ -39,12 +39,52 @@ public class MultiLaunchConfigurationDelegate extends LaunchConfigurationDelegat
 	public static String MULTI_LAUNCH_CONSTANTS_PREFIX = "org.eclipse.cdt.launch.launchGroup"; //$NON-NLS-1$
 
 	public static class LaunchElement {
-		public int index;
-		public boolean enabled;
-		public String mode;
-		public String action;
-		public String name;
-		public ILaunchConfiguration data;
+		public static final String POST_LAUNCH_WAIT_FOR_TERM = "wait";
+		public static final String POST_LAUNCH_CONTINUE = "";
+		public static final String POST_LAUNCH_DELAY_3_SEC = "delay 3s";
+		public static final String POST_LAUNCH_DELAY_PREFIX = "delay";
+		private int index;
+		private boolean enabled;
+		private String mode;
+		private String action;
+		private String name;
+		private ILaunchConfiguration data;
+		public void setName(String name) {
+			this.name = name;
+		}
+		public String getName() {
+			return name;
+		}
+		public void setAction(String action) {
+			this.action = action;
+		}
+		public String getAction() {
+			return action;
+		}
+		public void setMode(String mode) {
+			this.mode = mode;
+		}
+		public String getMode() {
+			return mode;
+		}
+		public void setEnabled(boolean enabled) {
+			this.enabled = enabled;
+		}
+		public boolean isEnabled() {
+			return enabled;
+		}
+		public void setIndex(int index) {
+			this.index = index;
+		}
+		public int getIndex() {
+			return index;
+		}
+		public void setData(ILaunchConfiguration data) {
+			this.data = data;
+		}
+		public ILaunchConfiguration getData() {
+			return data;
+		}
 	}
 
 	public MultiLaunchConfigurationDelegate() {
@@ -84,7 +124,7 @@ public class MultiLaunchConfigurationDelegate extends LaunchConfigurationDelegat
 		private boolean isChild(ILaunch launch2, ArrayList<LaunchElement> input) {
 			for (Iterator<LaunchElement> iterator = input.iterator(); iterator.hasNext();) {
 				LaunchElement le = iterator.next();
-				if (le.name.equals(launch2.getLaunchConfiguration().getName())) { return true; }
+				if (le.getName().equals(launch2.getLaunchConfiguration().getName())) { return true; }
 			}
 			return false;
 		}
@@ -123,15 +163,15 @@ public class MultiLaunchConfigurationDelegate extends LaunchConfigurationDelegat
 
 			for (Iterator<LaunchElement> iterator = input.iterator(); iterator.hasNext();) {
 				LaunchElement le = iterator.next();
-				if (le.enabled == false) continue;
+				if (le.isEnabled() == false) continue;
 				// find launch
-				final ILaunchConfiguration conf = findLaunch(le.name);
+				final ILaunchConfiguration conf = findLaunch(le.getName());
 				// not found, skip (error?)
 				if (conf == null) continue;
 				// determine mode for each launch
 				final String localMode;
-				if (le.mode != null && !le.mode.equals(DEFAULT_MODE)) {
-					localMode = le.mode;
+				if (le.getMode() != null && !le.getMode().equals(DEFAULT_MODE)) {
+					localMode = le.getMode();
 				} else {
 					localMode = mode;
 				}
@@ -151,7 +191,8 @@ public class MultiLaunchConfigurationDelegate extends LaunchConfigurationDelegat
 				try {
 					if (configuration.getName().equals(conf.getName())) throw new StackOverflowError();
 					// LAUNCH child here
-					DebugUIPlugin.buildAndLaunch(conf, localMode, new SubProgressMonitor(monitor, 1000 / input.size()));
+					ILaunch subLaunch = DebugUIPlugin.buildAndLaunch(conf, localMode, new SubProgressMonitor(monitor, 1000 / input.size()));
+					postLaunchAction(subLaunch, le.getAction(), monitor);
 
 				} catch (StackOverflowError e) {
 					PlatformUI.getWorkbench().getDisplay().asyncExec(new Runnable() {
@@ -171,6 +212,43 @@ public class MultiLaunchConfigurationDelegate extends LaunchConfigurationDelegat
 			DebugUIPlugin.getDefault().getPreferenceStore().setValue(IDebugUIConstants.PREF_AUTO_REMOVE_OLD_LAUNCHES,
 					dstore);
 			monitor.done();
+		}
+	}
+
+	private void postLaunchAction(ILaunch subLaunch, String action, IProgressMonitor monitor) {
+		if (action==null) return;
+		if (LaunchElement.POST_LAUNCH_WAIT_FOR_TERM.equals(action)) {
+			monitor.subTask("Waiting for termination of "+subLaunch.getLaunchConfiguration().getName());
+			while (!subLaunch.isTerminated() && !monitor.isCanceled()) {
+				try {
+					Thread.sleep(1000);
+				} catch (InterruptedException e) {
+					break;
+				}
+			}
+			monitor.subTask("");
+		} else
+		if (action.startsWith(LaunchElement.POST_LAUNCH_DELAY_PREFIX)) {
+			String num = action.substring(LaunchElement.POST_LAUNCH_DELAY_PREFIX.length()).trim();
+			int k = 1000;
+			if (num.endsWith("ms")) {
+				num = num.substring(0,num.length()-2);
+				k = 1;
+			} else if (num.endsWith("s")) {
+				num = num.substring(0,num.length()-1);
+			}
+			int parseInt;
+			try {
+				parseInt = Integer.parseInt(num);
+			} catch (NumberFormatException e) {
+				parseInt = 3;
+				k = 1000;
+			}
+			try {
+				Thread.sleep(parseInt * k);
+			} catch (InterruptedException e) {
+				// ok
+			}
 		}
 	}
 
@@ -211,15 +289,15 @@ public class MultiLaunchConfigurationDelegate extends LaunchConfigurationDelegat
 						String name = prop.substring(k + 1);
 						if (name.equals(NAME_PROP)) {
 							MultiLaunchConfigurationDelegate.LaunchElement el = new MultiLaunchConfigurationDelegate.LaunchElement();
-							el.index = index;
-							el.name = (String) attrs.get(attr);
-							el.action = (String) attrs.get(getProp(index, ACTION_PROP));
-							el.mode = (String) attrs.get(getProp(index, MODE_PROP));
-							el.enabled = "true".equals(attrs.get(getProp(index, ENABLED_PROP))); //$NON-NLS-1$
+							el.setIndex(index);
+							el.setName((String) attrs.get(attr));
+							el.setAction((String) attrs.get(getProp(index, ACTION_PROP)));
+							el.setMode((String) attrs.get(getProp(index, MODE_PROP)));
+							el.setEnabled("true".equals(attrs.get(getProp(index, ENABLED_PROP)))); //$NON-NLS-1$
 							try {
-								el.data = findLaunch(el.name);
+								el.setData(findLaunch(el.getName()));
 							} catch (Exception e) {
-								el.data = null;
+								el.setData(null);
 							}
 							while (index >= input.size()) {
 								input.add(null);
@@ -244,10 +322,10 @@ public class MultiLaunchConfigurationDelegate extends LaunchConfigurationDelegat
 		for (Iterator<LaunchElement> iterator = input.iterator(); iterator.hasNext();) {
 			MultiLaunchConfigurationDelegate.LaunchElement el = iterator.next();
 			if (el == null) continue;
-			configuration.setAttribute(MultiLaunchConfigurationDelegate.getProp(i, NAME_PROP), el.name);
-			configuration.setAttribute(MultiLaunchConfigurationDelegate.getProp(i, ACTION_PROP), el.action);
-			configuration.setAttribute(MultiLaunchConfigurationDelegate.getProp(i, MODE_PROP), el.mode);
-			configuration.setAttribute(MultiLaunchConfigurationDelegate.getProp(i, ENABLED_PROP), el.enabled + ""); //$NON-NLS-1$
+			configuration.setAttribute(MultiLaunchConfigurationDelegate.getProp(i, NAME_PROP), el.getName());
+			configuration.setAttribute(MultiLaunchConfigurationDelegate.getProp(i, ACTION_PROP), el.getAction());
+			configuration.setAttribute(MultiLaunchConfigurationDelegate.getProp(i, MODE_PROP), el.getMode());
+			configuration.setAttribute(MultiLaunchConfigurationDelegate.getProp(i, ENABLED_PROP), el.isEnabled() + ""); //$NON-NLS-1$
 			i++;
 		}
 	}

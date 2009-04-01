@@ -1,9 +1,11 @@
 package org.eclipse.cdt.launch.internal.ui;
 
+
 import java.util.HashMap;
 import java.util.Iterator;
 
 import org.eclipse.cdt.launch.internal.MultiLaunchConfigurationDelegate;
+import org.eclipse.cdt.launch.internal.MultiLaunchConfigurationDelegate.LaunchElement;
 import org.eclipse.cdt.launch.ui.ComboControlledStackComposite;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.debug.core.DebugPlugin;
@@ -29,10 +31,12 @@ import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.layout.GridData;
+import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.dialogs.PatternFilter;
 
@@ -46,6 +50,7 @@ public class MultiLaunchConfigurationSelectionDialog extends TitleAreaDialog imp
 	private ISelection fSelection;
 	private ILaunchGroup[] launchGroups;
 	private String mode;
+	private String action;
 	private boolean isDefaultMode;
 	private ViewerFilter emptyTypeFilter;
 	private IStructuredSelection fInitialSelection;
@@ -160,7 +165,28 @@ public class MultiLaunchConfigurationSelectionDialog extends TitleAreaDialog imp
 				isDefaultMode = ((Button) e.widget).getSelection();
 			}
 		});
+		checkBox.setSelection(isDefaultMode);
+		
+		createPostLaunchControl(comp);
 		return comp;
+	}
+
+	private void createPostLaunchControl(Composite parent) {
+		Composite comp = new Composite(parent, SWT.NONE);
+		comp.setLayout(new GridLayout(2, false));
+		comp.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+		Label label = new Label(comp, SWT.NONE);
+		label.setText("Post launch action:");
+		Combo combo = new Combo(comp, SWT.READ_ONLY);
+		combo.add(LaunchElement.POST_LAUNCH_CONTINUE);
+		combo.add(LaunchElement.POST_LAUNCH_WAIT_FOR_TERM);
+		combo.add(LaunchElement.POST_LAUNCH_DELAY_3_SEC);
+		combo.addSelectionListener(new SelectionAdapter() {
+			public void widgetSelected(SelectionEvent e) {
+				action = ((Combo) e.widget).getText();
+			}
+		});
+		combo.setText(action==null?LaunchElement.POST_LAUNCH_CONTINUE:action);
 	}
 
 	public ILaunchConfiguration getSelectedLaunchConfiguration() {
@@ -177,6 +203,10 @@ public class MultiLaunchConfigurationSelectionDialog extends TitleAreaDialog imp
 			return MultiLaunchConfigurationDelegate.DEFAULT_MODE; //$NON-NLS-1$
 		else
 			return mode;
+	}
+	
+	public String getAction(){
+		return action;
 	}
 
 	public static MultiLaunchConfigurationSelectionDialog createDialog(Shell shell, String title, String groupId) {
@@ -200,8 +230,10 @@ public class MultiLaunchConfigurationSelectionDialog extends TitleAreaDialog imp
 		}
 	}
 
-	public void setInitialSelection(ILaunchConfiguration data) {
-	    fInitialSelection = new StructuredSelection(data);   
+	public void setInitialSelection(LaunchElement el) {
+		action = el.getAction();
+		isDefaultMode = el.getMode().equals(MultiLaunchConfigurationDelegate.DEFAULT_MODE);
+	    fInitialSelection = new StructuredSelection(el.getData());   
 	    fSelection = fInitialSelection;
     }
 }

@@ -6249,4 +6249,17 @@ public class AST2Tests extends AST2BaseTest {
 		IASTInitializer init = ((IASTSimpleDeclaration)declarations[index]).getDeclarators()[0].getInitializer();
 		return (IBasicType)((IASTInitializerExpression)init).getExpression().getExpressionType();
 	}
+	
+	
+	//	void test() {
+	//	    __DATE__;
+	//	    __FILE__;
+	//	    __LINE__;
+	//	    __STDC_HOSTED__;
+	//	    __STDC_VERSION__;
+	//	    __TIME__;
+	//	}
+	public void testPredefinedMacroNamesC() throws Exception {
+		parseAndCheckBindings(getAboveComment(), ParserLanguage.C);
+	}
 }

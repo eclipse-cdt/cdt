@@ -455,12 +455,12 @@ public class UniversalFileSystemMiner extends Miner {
 		{
 			while (iter.hasNext())
 			{
-				String threadName = (String) iter.next();
-				ICancellableHandler theThread = (ICancellableHandler) _cancellableThreads.get(threadName);
+				DataElement threadElement = (DataElement) iter.next();
+				ICancellableHandler theThread = (ICancellableHandler) _cancellableThreads.get(threadElement);
 				if ((theThread == null) ||
 						theThread.isDone() || theThread.isCancelled())
 				{
-					_cancellableThreads.remove(threadName);
+					_cancellableThreads.remove(threadElement);
 				}
 			}
 		}

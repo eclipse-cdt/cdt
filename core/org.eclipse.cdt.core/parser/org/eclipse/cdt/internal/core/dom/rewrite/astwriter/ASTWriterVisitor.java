@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008 Institute for Software, HSR Hochschule fuer Technik  
+ * Copyright (c) 2008, 2009 Institute for Software, HSR Hochschule fuer Technik  
  * Rapperswil, University of applied sciences and others
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Eclipse Public License v1.0 
@@ -22,6 +22,7 @@ import org.eclipse.cdt.core.dom.ast.IASTDeclarator;
 import org.eclipse.cdt.core.dom.ast.IASTExpression;
 import org.eclipse.cdt.core.dom.ast.IASTInitializer;
 import org.eclipse.cdt.core.dom.ast.IASTName;
+import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IASTParameterDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTStatement;
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
@@ -29,7 +30,6 @@ import org.eclipse.cdt.core.dom.ast.cpp.CPPASTVisitor;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTNamespaceDefinition;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTemplateParameter;
 import org.eclipse.cdt.core.dom.ast.gnu.IGNUASTCompoundStatementExpression;
-import org.eclipse.cdt.internal.core.dom.parser.ASTNode;
 import org.eclipse.cdt.internal.core.dom.rewrite.ASTLiteralNode;
 import org.eclipse.cdt.internal.core.dom.rewrite.commenthandler.NodeCommentMap;
 
@@ -128,7 +128,7 @@ public class ASTWriterVisitor extends CPPASTVisitor {
 		return super.leave(tu);
 	}
 
-	private void writeLeadingComments(ASTNode node) {
+	private void writeLeadingComments(IASTNode node) {
 		for(IASTComment comment : commentMap.getLeadingCommentsForNode(node)) {
 			scribe.print(comment.getComment());
 			scribe.newLine();
@@ -141,7 +141,7 @@ public class ASTWriterVisitor extends CPPASTVisitor {
 	
 	@Override
 	public int visit(IASTName name) {
-		writeLeadingComments((ASTNode) name);
+		writeLeadingComments(name);
 		if(!macroHandler.checkisMacroExpansionNode(name)) {
 			nameWriter.writeName(name);
 		}
@@ -152,7 +152,7 @@ public class ASTWriterVisitor extends CPPASTVisitor {
 
 	@Override
 	public int visit(IASTDeclSpecifier declSpec) {
-		writeLeadingComments((ASTNode) declSpec);
+		writeLeadingComments(declSpec);
 		declSpecWriter.writeDelcSpec(declSpec);			
 		return ASTVisitor.PROCESS_SKIP;
 	}
@@ -161,7 +161,7 @@ public class ASTWriterVisitor extends CPPASTVisitor {
 
 	@Override
 	public int visit(IASTExpression expression) {
-		writeLeadingComments((ASTNode) expression);		
+		writeLeadingComments(expression);		
 		if(!macroHandler.checkisMacroExpansionNode(expression)) {
 			if (expression instanceof IGNUASTCompoundStatementExpression) {
 				IGNUASTCompoundStatementExpression gnuCompStmtExp = (IGNUASTCompoundStatementExpression) expression;
@@ -177,7 +177,7 @@ public class ASTWriterVisitor extends CPPASTVisitor {
 
 	@Override
 	public int visit(IASTStatement statement) {
-		writeLeadingComments((ASTNode) statement);
+		writeLeadingComments(statement);
 		if(macroHandler.isStatementWithMixedLocation(statement) && !(statement instanceof IASTCompoundStatement)){
 			return statementWriter.writeMixedStatement(statement);
 		}
@@ -190,7 +190,7 @@ public class ASTWriterVisitor extends CPPASTVisitor {
 
 	@Override
 	public int visit(IASTDeclaration declaration) {
-		writeLeadingComments((ASTNode) declaration);
+		writeLeadingComments(declaration);
 		if(!macroHandler.checkisMacroExpansionNode(declaration)) {
 			declarationWriter.writeDeclaration(declaration);
 		}
@@ -201,7 +201,7 @@ public class ASTWriterVisitor extends CPPASTVisitor {
 
 	@Override
 	public int visit(IASTDeclarator declarator) {
-		writeLeadingComments((ASTNode) declarator);
+		writeLeadingComments(declarator);
 		if(!macroHandler.checkisMacroExpansionNode(declarator)) {
 			declaratorWriter.writeDeclarator(declarator);
 		}
@@ -219,7 +219,7 @@ public class ASTWriterVisitor extends CPPASTVisitor {
 
 	@Override
 	public int visit(IASTInitializer initializer) {
-		writeLeadingComments((ASTNode) initializer);
+		writeLeadingComments(initializer);
 		if(!macroHandler.checkisMacroExpansionNode(initializer)) {
 			initializerWriter.writeInitializer(initializer);
 		}
@@ -230,7 +230,7 @@ public class ASTWriterVisitor extends CPPASTVisitor {
 
 	@Override
 	public int visit(IASTParameterDeclaration parameterDeclaration) {
-		writeLeadingComments((ASTNode) parameterDeclaration);
+		writeLeadingComments(parameterDeclaration);
 		if(!macroHandler.checkisMacroExpansionNode(parameterDeclaration)) {
 			parameterDeclaration.getDeclSpecifier().accept(this);
 			IASTDeclarator declarator = getParameterDeclarator(parameterDeclaration);
@@ -257,7 +257,7 @@ public class ASTWriterVisitor extends CPPASTVisitor {
 	
 	@Override
 	public int visit(ICPPASTNamespaceDefinition namespace) {
-		writeLeadingComments((ASTNode) namespace);
+		writeLeadingComments(namespace);
 		if(!macroHandler.checkisMacroExpansionNode(namespace)) {
 			declarationWriter.writeDeclaration(namespace);
 		}
@@ -266,7 +266,7 @@ public class ASTWriterVisitor extends CPPASTVisitor {
 
 	@Override
 	public int visit(ICPPASTTemplateParameter parameter) {
-		writeLeadingComments((ASTNode) parameter);
+		writeLeadingComments(parameter);
 		if(!macroHandler.checkisMacroExpansionNode(parameter)) {
 			tempParameterWriter.writeTemplateParameter(parameter);
 		}

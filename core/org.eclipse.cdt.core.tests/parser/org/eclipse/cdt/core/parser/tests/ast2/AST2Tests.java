@@ -4863,6 +4863,15 @@ public class AST2Tests extends AST2BaseTest {
 		}
 	}
 	
+	//	typedef int* TIntPtr;
+	//	int x(int (int * a));
+	//	int x(int(TIntPtr));
+	public void testInfiniteRecursion_Bug269052() throws Exception {
+		final String code= getAboveComment();
+		parseAndCheckBindings(code, ParserLanguage.C, true);
+		parseAndCheckBindings(code, ParserLanguage.CPP, true);
+	}
+	
 	//	template<typename T> class X {
 	//		typename T::t func() {
 	//			return typename T::t();

@@ -34,6 +34,16 @@
             sourceLocatorId="org.eclipse.cdt.debug.core.sourceLocator"
             sourcePathComputerId="org.eclipse.cdt.debug.core.sourcePathComputer">
       </launchDelegate>
+      <launchDelegate
+            delegate="org.eclipse.cdt.launch.internal.MultiLaunchConfigurationDelegate"
+            delegateDescription="%LaunchGroup.description"
+            id="org.eclipse.cdt.launch.launchGroup.delegate"
+            type="org.eclipse.cdt.launch.launchGroup"
+            modes="run,debug,profile"
+            name="%LaunchGroup.name"
+            sourceLocatorId="org.eclipse.cdt.debug.core.sourceLocator"
+            sourcePathComputerId="org.eclipse.cdt.debug.core.sourcePathComputer">
+      </launchDelegate>
    </extension>
    
    <extension
@@ -192,5 +202,31 @@
             id="org.eclipse.cdt.launch.statusHandler.coreFilePrompter">
       </statusHandler>  
 	</extension>
-	
+
+    <extension
+         point="org.eclipse.debug.core.launchConfigurationTypes">
+      <launchConfigurationType
+            id="org.eclipse.cdt.launch.launchGroup"
+            name="%LaunchGroup.name"
+            public="true">
+      </launchConfigurationType>
+   </extension>
+   
+      <extension
+         point="org.eclipse.debug.ui.launchConfigurationTabGroups">
+      <launchConfigurationTabGroup
+            class="org.eclipse.cdt.launch.internal.MultiLaunchConfigurationTabGroup"
+            id="org.eclipse.cdt.launch.launchGroup.tabgroup"
+            type="org.eclipse.cdt.launch.launchGroup">
+      </launchConfigurationTabGroup>
+   </extension>
+   
+   <extension
+         point="org.eclipse.debug.ui.launchConfigurationTypeImages">
+     <launchConfigurationTypeImage
+            icon="icons/obj16/exec_obj.gif"
+            configTypeID="org.eclipse.cdt.launch.launchGroup"
+            id="org.eclipse.cdt.launch.launchGroup.image">
+      </launchConfigurationTypeImage>
+   </extension>
 </plugin>

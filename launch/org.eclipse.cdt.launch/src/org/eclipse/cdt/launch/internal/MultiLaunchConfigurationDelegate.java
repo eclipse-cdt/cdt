@@ -3,7 +3,6 @@ package org.eclipse.cdt.launch.internal;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
-import java.util.List;
 import java.util.Map;
 
 import org.eclipse.cdt.launch.internal.ui.LaunchMessages;

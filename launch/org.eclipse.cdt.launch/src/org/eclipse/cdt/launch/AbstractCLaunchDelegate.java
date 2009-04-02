@@ -80,6 +80,9 @@ import com.ibm.icu.text.MessageFormat;
 
 abstract public class AbstractCLaunchDelegate extends LaunchConfigurationDelegate {
 
+    /**
+	 * @since 6.0
+	 */
     public class CLaunch extends Launch {
 
         private AtomicBoolean fRefreshDone;

@@ -1,7 +1,9 @@
 package org.eclipse.cdt.launch.internal;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 
 import org.eclipse.cdt.launch.internal.ui.LaunchMessages;
@@ -92,39 +94,50 @@ public class MultiLaunchConfigurationDelegate extends LaunchConfigurationDelegat
 	}
 
 	/**
-	 * Listener for launch changes to add processes, also removes itslef when parent launch is removed
+	 * Listener for launch changes to add processes, also removes itself when parent launch is removed
 	 *
 	 */
 	private class MultiLaunchListener implements ILaunchListener {
 		private ILaunch launch;
-		private ArrayList<LaunchElement> input;
+
+		// A map of all our sub-launches and the current processes that belong to each one.
+		private Map<ILaunch, IProcess[]> subLaunches = new HashMap<ILaunch, IProcess[]>();
 
 		/**
 		 * @param launch - parent launch
-		 * @param input - list of launch elements (children of group launch)
 		 */
-		public MultiLaunchListener(ILaunch launch, ArrayList<LaunchElement> input) {
+		public MultiLaunchListener(ILaunch launch) {
 			this.launch = launch;
-			this.input = input;
+		}
+		
+		public void addSubLaunch(ILaunch subLaunch) {
+			subLaunches.put(subLaunch, subLaunch.getProcesses());
 		}
 
 		public void launchChanged(ILaunch launch2) {
 			if (launch == launch2) return;
 			// add/remove processes
-			if (isChild(launch2, input)) {
-				IProcess[] processes = launch2.getProcesses();
-				for (int i = 0; i < processes.length; i++) {
-					IProcess process = processes[i];
-					launch.addProcess(process);
+			if (isChild(launch2, subLaunches)) {
+				// Remove old processes
+				IProcess[] oldProcesses = subLaunches.get(launch2);
+				for (IProcess oldProcess : oldProcesses) {
+					launch.removeProcess(oldProcess);
 				}
+				
+				// Add new processes
+				IProcess[] newProcesses = launch2.getProcesses();
+				for (IProcess newProcess : newProcesses) {
+					launch.addProcess(newProcess);
+				}
+				
+				  // Replace the processes of the changed launch
+				  subLaunches.put(launch2, newProcesses);
 			}
-
 		}
 
-		private boolean isChild(ILaunch launch2, ArrayList<LaunchElement> input) {
-			for (Iterator<LaunchElement> iterator = input.iterator(); iterator.hasNext();) {
-				LaunchElement le = iterator.next();
-				if (le.getName().equals(launch2.getLaunchConfiguration().getName())) { return true; }
+		private boolean isChild(ILaunch launch, Map<ILaunch, IProcess[]> subLaunches) {
+			for (ILaunch subLaunch : subLaunches.keySet()) {
+				if (subLaunch == launch) { return true; }
 			}
 			return false;
 		}
@@ -133,12 +146,19 @@ public class MultiLaunchConfigurationDelegate extends LaunchConfigurationDelegat
 			if (launch == launch2) {
 				ILaunchManager launchManager = DebugPlugin.getDefault().getLaunchManager();
 				launchManager.removeLaunchListener(this);
+			} else if (isChild(launch2, subLaunches)) {
+				// Remove old processes
+				IProcess[] oldProcesses = subLaunches.get(launch2);
+				for (IProcess oldProcess : oldProcesses) {
+					launch.removeProcess(oldProcess);
+				}
+				
+				subLaunches.remove(launch2);
 			}
 		}
 
 		public void launchAdded(ILaunch launch2) {
 			// ignore
-
 		}
 	}
 
@@ -157,7 +177,7 @@ public class MultiLaunchConfigurationDelegate extends LaunchConfigurationDelegat
 					false);
 			
 			final ArrayList<LaunchElement> input = createLaunchElements(configuration, new ArrayList<LaunchElement>());
-			ILaunchListener listener = new MultiLaunchListener(launch, input);
+			MultiLaunchListener listener = new MultiLaunchListener(launch);
 			ILaunchManager launchManager = DebugPlugin.getDefault().getLaunchManager();
 			launchManager.addLaunchListener(listener); // listener removed when launch is removed
 
@@ -192,6 +212,13 @@ public class MultiLaunchConfigurationDelegate extends LaunchConfigurationDelegat
 					if (configuration.getName().equals(conf.getName())) throw new StackOverflowError();
 					// LAUNCH child here
 					ILaunch subLaunch = DebugUIPlugin.buildAndLaunch(conf, localMode, new SubProgressMonitor(monitor, 1000 / input.size()));
+					listener.addSubLaunch(subLaunch);
+					
+					// Now that we added the launch in our list, we have already
+					// received the real launchChanged event, and did not know it was part of our list
+					// So, fake another event now.
+					listener.launchChanged(subLaunch);
+
 					postLaunchAction(subLaunch, le.getAction(), monitor);
 
 				} catch (StackOverflowError e) {

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation and others.
+ * Copyright (c) 2000, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -91,6 +91,7 @@ public class BracketInserterTest extends TestCase {
 	private Accessor fAccessor;
 	private ICProject fProject;
 
+	@Override
 	protected void setUp() throws Exception {
 		IPreferenceStore store= CUIPlugin.getDefault().getPreferenceStore();
 		store.setValue(PreferenceConstants.EDITOR_CLOSE_BRACKETS, true);
@@ -128,6 +129,7 @@ public class BracketInserterTest extends TestCase {
 		}
 	}
 	
+	@Override
 	protected void tearDown() throws Exception {
 		EditorTestHelper.closeEditor(fEditor);
 		fEditor= null;
@@ -296,6 +298,18 @@ public class BracketInserterTest extends TestCase {
 		assertSingleLinkedPosition(BODY_OFFSET + 1);
 	}
 	
+	// bug 270916
+	public void testInsertClosingQuoteInMacroDefinition() throws BadLocationException, CModelException, CoreException {
+		setCaret(BODY_OFFSET);
+		type("#define MACRO ");
+		int offset = getCaret();
+		type('"');
+		
+		assertEquals("\"\"", fDocument.get(offset, 2));
+		
+		assertSingleLinkedPosition(offset + 1);
+	}
+	
 	public void testPreferences() throws BadLocationException, CModelException, CoreException {
 		IPreferenceStore store= CUIPlugin.getDefault().getPreferenceStore();
 		store.setValue(PreferenceConstants.EDITOR_CLOSE_BRACKETS, false);
@@ -333,6 +347,14 @@ public class BracketInserterTest extends TestCase {
 		type('<');
 		
 		assertEquals("#include <>", fDocument.get(INCLUDE_OFFSET - 9, 11));
+		assertSingleLinkedPosition(INCLUDE_OFFSET + 1);
+	}
+
+	public void testInsertClosingQuoteInInclude() throws Exception {
+		setCaret(INCLUDE_OFFSET);
+		type('"');
+		
+		assertEquals("#include \"\"", fDocument.get(INCLUDE_OFFSET - 9, 11));
 		assertSingleLinkedPosition(INCLUDE_OFFSET + 1);
 	}
 
@@ -419,6 +441,7 @@ public class BracketInserterTest extends TestCase {
 		fAccessor.invoke("handleKeyDown", new Object[] {event});
 		
 		new DisplayHelper() {
+			@Override
 			protected boolean condition() {
 				return false;
 			}

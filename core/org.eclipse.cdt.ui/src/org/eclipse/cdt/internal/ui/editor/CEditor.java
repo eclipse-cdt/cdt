@@ -620,7 +620,8 @@ public class CEditor extends TextEditor implements ISelectionChangedListener, IC
 					case '<':
 						if (!(fCloseAngularBrackets && fCloseBrackets)
 								|| nextToken == Symbols.TokenLESSTHAN
-								|| prevToken != Symbols.TokenIDENT || !isAngularIntroducer(previous))
+								|| prevToken != Symbols.TokenIDENT 
+								|| !isAngularIntroducer(previous))
 							return;
 						break;
 
@@ -635,10 +636,7 @@ public class CEditor extends TextEditor implements ISelectionChangedListener, IC
 					case '"':
 						if (!fCloseStrings
 								|| nextToken == Symbols.TokenIDENT
-								|| next != null && next.length() > 1
-								|| (!("include".equals(previous) && event.character == '"') //$NON-NLS-1$
-										&& (prevToken == Symbols.TokenIDENT
-												|| previous != null && previous.length() > 1)))
+								|| next != null && (next.length() > 1 || next.charAt(0) == '"'))
 							return;
 						break;
 
@@ -651,7 +649,7 @@ public class CEditor extends TextEditor implements ISelectionChangedListener, IC
 
 				final char character = event.character;
 				final char closingCharacter = getPeerCharacter(character);
-				final StringBuilder buffer = new StringBuilder();
+				final StringBuilder buffer = new StringBuilder(3);
 				buffer.append(character);
 				buffer.append(closingCharacter);
 				if (closingCharacter == '>' && nextToken != Symbols.TokenEOF

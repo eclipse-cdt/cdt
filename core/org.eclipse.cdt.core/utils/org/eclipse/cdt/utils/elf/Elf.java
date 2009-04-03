@@ -13,6 +13,8 @@ package org.eclipse.cdt.utils.elf;
 
 import java.io.EOFException;
 import java.io.IOException;
+import java.nio.ByteBuffer;
+import java.nio.channels.FileChannel.MapMode;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
@@ -332,6 +334,10 @@ public class Elf {
 		public long sh_info;
 		public long sh_addralign;
 		public long sh_entsize;
+
+		public ByteBuffer mapSectionData() throws IOException {
+			return efile.getChannel().map(MapMode.READ_ONLY, sh_offset, sh_size).load().asReadOnlyBuffer();
+		}
 
 		public byte[] loadSectionData() throws IOException {
 			byte[] data = new byte[(int)sh_size];
@@ -943,6 +949,9 @@ public class Elf {
 			if (efile != null) {
 				efile.close();
 				efile = null;
+				
+				// ensure the mappings get cleaned up
+				System.gc();
 			}
 		} catch (IOException e) {
 		}

@@ -11,10 +11,9 @@
 
 package org.eclipse.cdt.utils.debug.dwarf;
 
-import java.io.ByteArrayInputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.lang.reflect.Array;
+import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -160,7 +159,7 @@ public class Dwarf {
 		int identifierCase;
 	}
 
-	Map<String, byte[]> dwarfSections = new HashMap<String, byte[]>();
+	Map<String, ByteBuffer> dwarfSections = new HashMap<String, ByteBuffer>();
 	Map<Integer, Map<Long, AbbreviationEntry>> abbreviationMaps = new HashMap<Integer, Map<Long, AbbreviationEntry>>();
 
 	boolean isLE;
@@ -188,113 +187,105 @@ public class Dwarf {
 			String name = section.toString();
 			for (String element : DWARF_SCNNAMES) {
 				if (name.equals(element)) {
-					dwarfSections.put(element, section.loadSectionData());
+					try {
+						dwarfSections.put(element, section.mapSectionData());
+					} catch (Exception e) {
+						e.printStackTrace();
+						CCorePlugin.log(e);
+					}
 				}
 			}
 		}
 	}
 
-	int read_4_bytes(InputStream in) throws IOException {
+	int read_4_bytes(ByteBuffer in) throws IOException {
 		try {
 			byte[] bytes = new byte[4];
-			int n = in.read(bytes, 0, bytes.length);
-			if (n != 4) {
-				throw new IOException(CCorePlugin.getResourceString("Util.exception.missingBytes")); //$NON-NLS-1$
-			}
-			return read_4_bytes(bytes, 0);
-		} catch (IndexOutOfBoundsException e) {
+			in.get(bytes);
+			return read_4_bytes(bytes);
+		} catch (Exception e) {
 			throw new IOException(CCorePlugin.getResourceString("Util.exception.missingBytes")); //$NON-NLS-1$
 		}
 	}
 
 	// FIXME:This is wrong, it's signed.
-	int read_4_bytes(byte[] bytes, int offset) throws IndexOutOfBoundsException {
+	int read_4_bytes(byte[] bytes) throws IndexOutOfBoundsException {
 		if (isLE) {
 			return (
-				((bytes[offset + 3] & 0xff) << 24)
-					| ((bytes[offset + 2] & 0xff) << 16)
-					| ((bytes[offset + 1] & 0xff) << 8)
-					| (bytes[offset] & 0xff));
+				((bytes[3] & 0xff) << 24)
+					| ((bytes[2] & 0xff) << 16)
+					| ((bytes[1] & 0xff) << 8)
+					| (bytes[0] & 0xff));
 		}
 		return (
-			((bytes[offset] & 0xff) << 24)
-				| ((bytes[offset + 1] & 0xff) << 16)
-				| ((bytes[offset + 2] & 0xff) << 8)
-				| (bytes[offset + 3] & 0xff));
+			((bytes[0] & 0xff) << 24)
+				| ((bytes[1] & 0xff) << 16)
+				| ((bytes[2] & 0xff) << 8)
+				| (bytes[3] & 0xff));
 	}
 
-	long read_8_bytes(InputStream in) throws IOException {
+	long read_8_bytes(ByteBuffer in) throws IOException {
 		try {
 			byte[] bytes = new byte[8];
-			int n = in.read(bytes, 0, bytes.length);
-			if (n != 8) {
-				throw new IOException(CCorePlugin.getResourceString("Util.exception.missingBytes")); //$NON-NLS-1$
-			}
-			return read_8_bytes(bytes, 0);
-		} catch (IndexOutOfBoundsException e) {
+			in.get(bytes);
+			return read_8_bytes(bytes);
+		} catch (Exception e) {
 			throw new IOException(CCorePlugin.getResourceString("Util.exception.missingBytes")); //$NON-NLS-1$
 		}
 	}
 
 	// FIXME:This is wrong, for unsigned.
-	long read_8_bytes(byte[] bytes, int offset) throws IndexOutOfBoundsException {
+	long read_8_bytes(byte[] bytes) throws IndexOutOfBoundsException {
 
 		if (isLE) {
-			return (((bytes[offset + 7] & 0xff) << 56)
-				| ((bytes[offset + 6] & 0xff) << 48)
-				| ((bytes[offset + 5] & 0xff) << 40)
-				| ((bytes[offset + 4] & 0xff) << 32)
-				| ((bytes[offset + 3] & 0xff) << 24)
-				| ((bytes[offset + 2] & 0xff) << 16)
-				| ((bytes[offset + 1] & 0xff) << 8)
-				| (bytes[offset] & 0xff));
+			return (((bytes[7] & 0xff) << 56)
+				| ((bytes[6] & 0xff) << 48)
+				| ((bytes[5] & 0xff) << 40)
+				| ((bytes[4] & 0xff) << 32)
+				| ((bytes[3] & 0xff) << 24)
+				| ((bytes[2] & 0xff) << 16)
+				| ((bytes[1] & 0xff) << 8)
+				| (bytes[0] & 0xff));
 		}
 
-		return (((bytes[offset] & 0xff) << 56)
-			| ((bytes[offset + 1] & 0xff) << 48)
-			| ((bytes[offset + 2] & 0xff) << 40)
-			| ((bytes[offset + 3] & 0xff) << 32)
-			| ((bytes[offset + 4] & 0xff) << 24)
-			| ((bytes[offset + 5] & 0xff) << 16)
-			| ((bytes[offset + 6] & 0xff) << 8)
-			| (bytes[offset] & 0xff));
+		return (((bytes[0] & 0xff) << 56)
+			| ((bytes[1] & 0xff) << 48)
+			| ((bytes[2] & 0xff) << 40)
+			| ((bytes[3] & 0xff) << 32)
+			| ((bytes[4] & 0xff) << 24)
+			| ((bytes[5] & 0xff) << 16)
+			| ((bytes[6] & 0xff) << 8)
+			| (bytes[7] & 0xff));
 	}
 
-	short read_2_bytes(InputStream in) throws IOException {
+	short read_2_bytes(ByteBuffer in) throws IOException {
 		try {
 			byte[] bytes = new byte[2];
-			int n = in.read(bytes, 0, bytes.length);
-			if (n != 2) {
-				throw new IOException(CCorePlugin.getResourceString("Util.exception.missingBytes")); //$NON-NLS-1$
-			}
-			return read_2_bytes(bytes, 0);
-		} catch (IndexOutOfBoundsException e) {
+			in.get(bytes);
+			return read_2_bytes(bytes);
+		} catch (Exception e) {
 			throw new IOException(CCorePlugin.getResourceString("Util.exception.missingBytes")); //$NON-NLS-1$
 		}
 	}
 
-	short read_2_bytes(byte[] bytes, int offset) throws IndexOutOfBoundsException {
+	short read_2_bytes(byte[] bytes) throws IndexOutOfBoundsException {
 		if (isLE) {
-			return (short) (((bytes[offset + 1] & 0xff) << 8) + (bytes[offset] & 0xff));
+			return (short) (((bytes[1] & 0xff) << 8) + (bytes[0] & 0xff));
 		}
-		return (short) (((bytes[offset] & 0xff) << 8) + (bytes[offset + 1] & 0xff));
+		return (short) (((bytes[0] & 0xff) << 8) + (bytes[1] & 0xff));
 	}
 
-	private int num_leb128_read;
-
 	/* unsigned */
-	long read_unsigned_leb128(InputStream in) throws IOException {
+	long read_unsigned_leb128(ByteBuffer in) throws IOException {
 		/* unsigned */
 		long result = 0;
-		num_leb128_read = 0;
 		int shift = 0;
 		short b;
 
 		while (true) {
-			b = (short) in.read();
-			if (b == -1)
+			b = in.get();
+			if (!in.hasRemaining())
 				break; //throw new IOException("no more data");
-			num_leb128_read++;
 			result |= ((long) (b & 0x7f) << shift);
 			if ((b & 0x80) == 0) {
 				break;
@@ -305,19 +296,17 @@ public class Dwarf {
 	}
 
 	/* unsigned */
-	long read_signed_leb128(InputStream in) throws IOException {
+	long read_signed_leb128(ByteBuffer in) throws IOException {
 		/* unsigned */
 		long result = 0;
 		int shift = 0;
 		int size = 32;
-		num_leb128_read = 0;
 		short b;
 
 		while (true) {
-			b = (short) in.read();
-			if (b == -1)
+			b = in.get();
+			if (!in.hasRemaining())
 				throw new IOException(CCorePlugin.getResourceString("Util.exception.noData")); //$NON-NLS-1$
-			num_leb128_read++;
 			result |= ((long) (b & 0x7f) << shift);
 			shift += 7;
 			if ((b & 0x80) == 0) {
@@ -335,28 +324,30 @@ public class Dwarf {
 	}
 
 	void parseDebugInfo(IDebugEntryRequestor requestor) {
-		byte[] data = dwarfSections.get(DWARF_DEBUG_INFO);
+		ByteBuffer data = dwarfSections.get(DWARF_DEBUG_INFO);
 		if (data != null) {
 			try {
-				int length = 0;
-				for (int offset = 0; offset < data.length; offset += (length + 4)) {
+				while (data.hasRemaining()) {
 					CompilationUnitHeader header = new CompilationUnitHeader();
-					header.length = length = read_4_bytes(data, offset);
-					header.version = read_2_bytes(data, offset + 4);
-					header.abbreviationOffset = read_4_bytes(data, offset + 6);
-					header.addressSize = data[offset + 10];
+					header.length = read_4_bytes(data);
+					header.version = read_2_bytes(data);
+					header.abbreviationOffset = read_4_bytes(data);
+					header.addressSize = data.get();
 
 					if (printEnabled) {
-						System.out.println("Compilation Unit @ " + Long.toHexString(offset)); //$NON-NLS-1$
+						System.out.println("Compilation Unit @ " + Long.toHexString(data.position())); //$NON-NLS-1$
 						System.out.println(header);
 					}
 
 					// read the abbrev section.
-					// Note "length+4" is the total size in bytes of the CU data.
-					InputStream in = new ByteArrayInputStream(data, offset + 11, length+4-11);
 					Map<Long, AbbreviationEntry> abbrevs = parseDebugAbbreviation(header);
-					parseDebugInfoEntry(requestor, in, abbrevs, header);
+					// Note "length+4" is the total size in bytes of the CU data.
+					ByteBuffer entryBuffer = data.slice();
+					entryBuffer.limit(header.length + 4 - 11);
+					parseDebugInfoEntry(requestor, entryBuffer, abbrevs, header);
 
+					data.position(data.position() + header.length + 4 - 11);
+					
 					if (printEnabled)
 						System.out.println();
 				}
@@ -367,23 +358,21 @@ public class Dwarf {
 	}
 
 	Map<Long, AbbreviationEntry> parseDebugAbbreviation(CompilationUnitHeader header) throws IOException {
-		int offset = header.abbreviationOffset;
-		Integer key = new Integer(offset);
+		Integer key = new Integer(header.abbreviationOffset);
 		Map<Long, AbbreviationEntry> abbrevs = abbreviationMaps.get(key);
 		if (abbrevs == null) {
 			abbrevs = new HashMap<Long, AbbreviationEntry>();
 			abbreviationMaps.put(key, abbrevs);
-			byte[] data = dwarfSections.get(DWARF_DEBUG_ABBREV);
+			ByteBuffer data = dwarfSections.get(DWARF_DEBUG_ABBREV);
 			if (data != null) {
-				InputStream in = new ByteArrayInputStream(data);
-				in.skip(offset);
-				while (in.available() > 0) {
-					long code = read_unsigned_leb128(in);
+				data.position(header.abbreviationOffset);
+				while (data.remaining() > 0) {
+					long code = read_unsigned_leb128(data);
 					if (code == 0) {
 						break;
 					}
-					long tag = read_unsigned_leb128(in);
-					byte hasChildren = (byte) in.read();
+					long tag = read_unsigned_leb128(data);
+					byte hasChildren = data.get();
 					AbbreviationEntry entry = new AbbreviationEntry(code, tag, hasChildren);
 
 					//System.out.println("\tAbrev Entry: " + code + " " + Long.toHexString(entry.tag) + " " + entry.hasChildren);
@@ -392,8 +381,8 @@ public class Dwarf {
 					long name = 0;
 					long form = 0;
 					do {
-						name = read_unsigned_leb128(in);
-						form = read_unsigned_leb128(in);
+						name = read_unsigned_leb128(data);
+						form = read_unsigned_leb128(data);
 						if (name != 0) {
 							entry.attributes.add(new Attribute(name, form));
 						}
@@ -406,9 +395,9 @@ public class Dwarf {
 		return abbrevs;
 	}
 
-	void parseDebugInfoEntry(IDebugEntryRequestor requestor, InputStream in, Map<Long, AbbreviationEntry> abbrevs, CompilationUnitHeader header)
+	void parseDebugInfoEntry(IDebugEntryRequestor requestor, ByteBuffer in, Map<Long, AbbreviationEntry> abbrevs, CompilationUnitHeader header)
 		throws IOException {
-		while (in.available() > 0) {
+		while (in.remaining() > 0) {
 			long code = read_unsigned_leb128(in);
 			AbbreviationEntry entry = abbrevs.get(new Long(code));
 			if (entry != null) {
@@ -428,7 +417,7 @@ public class Dwarf {
 		}
 	}
 
-	Object readAttribute(int form, InputStream in, CompilationUnitHeader header) throws IOException {
+	Object readAttribute(int form, ByteBuffer in, CompilationUnitHeader header) throws IOException {
 		Object obj = null;
 		switch (form) {
 			case DwarfConstants.DW_FORM_addr :
@@ -440,16 +429,16 @@ public class Dwarf {
 				{
 					int size = (int) read_unsigned_leb128(in);
 					byte[] bytes = new byte[size];
-					in.read(bytes, 0, size);
+					in.get(bytes);
 					obj = bytes;
 				}
 				break;
 
 			case DwarfConstants.DW_FORM_block1 :
 				{
-					int size = in.read();
+					int size = in.get();
 					byte[] bytes = new byte[size];
-					in.read(bytes, 0, size);
+					in.get(bytes);
 					obj = bytes;
 				}
 				break;
@@ -458,7 +447,7 @@ public class Dwarf {
 				{
 					int size = read_2_bytes(in);
 					byte[] bytes = new byte[size];
-					in.read(bytes, 0, size);
+					in.get(bytes);
 					obj = bytes;
 				}
 				break;
@@ -467,13 +456,13 @@ public class Dwarf {
 				{
 					int size = read_4_bytes(in);
 					byte[] bytes = new byte[size];
-					in.read(bytes, 0, size);
+					in.get(bytes);
 					obj = bytes;
 				}
 				break;
 
 			case DwarfConstants.DW_FORM_data1 :
-				obj = new Byte((byte) in.read());
+				obj = new Byte(in.get());
 				break;
 
 			case DwarfConstants.DW_FORM_data2 :
@@ -500,7 +489,7 @@ public class Dwarf {
 				{
 					int c;
 					StringBuffer sb = new StringBuffer();
-					while ((c = in.read()) != -1) {
+					while ((c = in.get()) != -1) {
 						if (c == 0) {
 							break;
 						}
@@ -511,21 +500,22 @@ public class Dwarf {
 				break;
 
 			case DwarfConstants.DW_FORM_flag :
-				obj = new Byte((byte) in.read());
+				obj = new Byte(in.get());
 				break;
 
 			case DwarfConstants.DW_FORM_strp :
 				{
 					int offset = read_4_bytes(in);
-					byte[] data = dwarfSections.get(DWARF_DEBUG_STR);
+					ByteBuffer data = dwarfSections.get(DWARF_DEBUG_STR);
 					if (data == null) {
 						obj = new String();
-					} else if (offset < 0 || offset > data.length) {
+					} else if (offset < 0 || offset > data.capacity()) {
 						obj = new String();
 					} else {
 						StringBuffer sb = new StringBuffer();
-						for (; offset < data.length; offset++) {
-							byte c = data[offset];
+						data.position(offset);
+						while (data.hasRemaining()) {
+							byte c = data.get();
 							if (c == 0) {
 								break;
 							}
@@ -537,7 +527,7 @@ public class Dwarf {
 				break;
 
 			case DwarfConstants.DW_FORM_ref1 :
-				obj = new Byte((byte) in.read());
+				obj = new Byte(in.get());
 				break;
 
 			case DwarfConstants.DW_FORM_ref2 :
@@ -647,7 +637,7 @@ public class Dwarf {
 		}
 	}
 
-	Long readAddress(InputStream in, CompilationUnitHeader header) throws IOException {
+	Long readAddress(ByteBuffer in, CompilationUnitHeader header) throws IOException {
 		long value = 0;
 
 		switch (header.addressSize) {

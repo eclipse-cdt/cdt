@@ -14,10 +14,12 @@ package org.eclipse.cdt.utils.debug.dwarf;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
+import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.ISymbolReader;
 import org.eclipse.cdt.utils.debug.IDebugEntryRequestor;
 import org.eclipse.cdt.utils.elf.Elf;
@@ -45,7 +47,6 @@ public class DwarfReader extends Dwarf implements ISymbolReader {
 	private String		m_exeFileWin32Drive; // Win32 drive of the exe file.
 	private boolean		m_onWindows;
 	private boolean		m_parsed = false;
-	private int 		m_leb128Size = 0;
 	private ArrayList<Integer>	m_parsedLineTableOffsets = new ArrayList<Integer>();
 	private int			m_parsedLineTableSize = 0;
 		
@@ -77,9 +78,10 @@ public class DwarfReader extends Dwarf implements ISymbolReader {
 					// problem itself, but will at least continue to load the other
 					// sections.
 					try {
-						dwarfSections.put(element, section.loadSectionData());
-					} catch (OutOfMemoryError e) {
-						// Don't log this error, handle it silently without any UI.
+						dwarfSections.put(element, section.mapSectionData());
+					} catch (Exception e) {
+						e.printStackTrace();
+						CCorePlugin.log(e);
 					}
 				}
 			}
@@ -104,10 +106,10 @@ public class DwarfReader extends Dwarf implements ISymbolReader {
 			String cuCompDir,	// compilation directory of the CU 
 			int cuStmtList) 	// offset of the CU line table in .debug_line section 
 	{
-		byte[] data = dwarfSections.get(DWARF_DEBUG_LINE);
+		ByteBuffer data = dwarfSections.get(DWARF_DEBUG_LINE);
 		if (data != null) {
 			try {
-				int offset = cuStmtList;
+				data.position(cuStmtList);
 				
 				/* Read line table header:
 				 * 
@@ -127,7 +129,7 @@ public class DwarfReader extends Dwarf implements ISymbolReader {
 				if (! m_parsedLineTableOffsets.contains(cuOffset)) {
 					m_parsedLineTableOffsets.add(cuOffset);
 
-					int length = read_4_bytes(data, offset) + 4;
+					int length = read_4_bytes(data) + 4;
 					m_parsedLineTableSize += length + 4;
 				}
 				else {
@@ -137,9 +139,9 @@ public class DwarfReader extends Dwarf implements ISymbolReader {
 				}
 					
 				// Skip the following till "opcode_base"
-				offset = offset + 14;
-				int opcode_base = data[offset++];
-				offset += opcode_base - 1;
+				data.position(data.position() + 10);
+				int opcode_base = data.get();
+				data.position(data.position() + opcode_base - 1);
 
 				// Read in directories.
 				//
@@ -151,38 +153,32 @@ public class DwarfReader extends Dwarf implements ISymbolReader {
 				String 			str, fileName;
 				
 				while (true) {
-					str = readString(data, offset);
+					str = readString(data);
 					if (str.length() == 0)
 						break;
 					dirList.add(str);
-					offset += str.length()+1;
 				}
-				offset++;
 				
 				// Read file names
 				//
 				long	leb128;
 				while (true) {
-					fileName = readString(data, offset);
+					fileName = readString(data);
 					if (fileName.length() == 0)	// no more file entry
 						break;
-					offset += fileName.length()+1;
 					
 					// dir index
-					leb128 = read_unsigned_leb128(data, offset);
-					offset += m_leb128Size;
+					leb128 = read_unsigned_leb128(data);
 					
 					addSourceFile(dirList.get((int)leb128), fileName);
 					
 					// Skip the followings
 					//
 					// modification time
-					leb128 = read_unsigned_leb128(data, offset);
-					offset += m_leb128Size;						
+					leb128 = read_unsigned_leb128(data);
 
 					// file size in bytes
-					leb128 = read_unsigned_leb128(data, offset);
-					offset += m_leb128Size;						
+					leb128 = read_unsigned_leb128(data);
 				}
 			} catch (IOException e) {
 				e.printStackTrace();
@@ -200,11 +196,11 @@ public class DwarfReader extends Dwarf implements ISymbolReader {
 	 */
 	private void getSourceFilesFromDebugLineSection()
 	{
-		byte[] data = dwarfSections.get(DWARF_DEBUG_LINE);
+		ByteBuffer data = dwarfSections.get(DWARF_DEBUG_LINE);
 		if (data == null) 
 			return;
 		
-		int sectionSize = data.length;
+		int sectionSize = data.capacity();
 		int minHeaderSize = 16;
 
 		// Check if there is data in .debug_line section that is not parsed
@@ -233,13 +229,13 @@ public class DwarfReader extends Dwarf implements ISymbolReader {
 		
 		try {
 			while (lineTableStart < sectionSize - minHeaderSize) {
-				int offset = lineTableStart;
+				data.position(lineTableStart);
 
 				Integer currLineTableStart = new Integer(lineTableStart);
 				
 				// Read length of the line table for one compile unit
 				// Note the length does not including the "length" field itself.
-				int tableLength = read_4_bytes(data, offset);
+				int tableLength = read_4_bytes(data);
 				
 				// Record start of next CU line table
 				lineTableStart += tableLength + 4;
@@ -256,9 +252,12 @@ public class DwarfReader extends Dwarf implements ISymbolReader {
 				if (lineTableStart < sectionSize - minHeaderSize && 
 						(lineTableStart & 0x3) != 0) 
 				{
-					int ltLength = read_4_bytes(data, lineTableStart);
-					int dwarfVer = read_2_bytes(data, lineTableStart+4);
-					int minInstLengh = data[lineTableStart+4+2+4];
+					int savedPosition = data.position();
+					data.position(lineTableStart);
+					
+					int ltLength = read_4_bytes(data);
+					int dwarfVer = read_2_bytes(data);
+					int minInstLengh = data.get(data.position() + 4);
 					
 					boolean dataValid = 
 						ltLength > minHeaderSize && 
@@ -268,6 +267,8 @@ public class DwarfReader extends Dwarf implements ISymbolReader {
 						
 					if (! dataValid)	// padding exists !
 						lineTableStart = (lineTableStart+3) & ~0x3;
+					
+					data.position(savedPosition);
 				}
 				
 				if (m_parsedLineTableOffsets.contains(currLineTableStart))
@@ -275,9 +276,9 @@ public class DwarfReader extends Dwarf implements ISymbolReader {
 					continue;
 
 				// Skip following fields till "opcode_base"
-				offset = offset + 14;
-				int opcode_base = data[offset++];
-				offset += opcode_base - 1;
+				data.position(data.position() + 10);
+				int opcode_base = data.get();
+				data.position(data.position() + opcode_base - 1);
 
 				// Read in directories.
 				//
@@ -289,38 +290,32 @@ public class DwarfReader extends Dwarf implements ISymbolReader {
 				dirList.add(""); //$NON-NLS-1$
 				
 				while (true) {
-					str = readString(data, offset);
+					str = readString(data);
 					if (str.length() == 0)
 						break;
 					dirList.add(str);
-					offset += str.length() + 1;
 				}
-				offset++;
 
 				// Read file names
 				//
 				long leb128;
 				while (true) {
-					fileName = readString(data, offset);
+					fileName = readString(data);
 					if (fileName.length() == 0) // no more file entry
 						break;
-					offset += fileName.length() + 1;
 
 					// dir index. Note "0" is reserved for compilation directory. 
-					leb128 = read_unsigned_leb128(data, offset);
-					offset += m_leb128Size;
+					leb128 = read_unsigned_leb128(data);
 
 					addSourceFile(dirList.get((int) leb128), fileName);
 
 					// Skip the followings
 					//
 					// modification time
-					leb128 = read_unsigned_leb128(data, offset);
-					offset += m_leb128Size;
+					leb128 = read_unsigned_leb128(data);
 
 					// file size in bytes
-					leb128 = read_unsigned_leb128(data, offset);
-					offset += m_leb128Size;
+					leb128 = read_unsigned_leb128(data);
 				}
 			}
 		} catch (IOException e) {
@@ -400,17 +395,16 @@ public class DwarfReader extends Dwarf implements ISymbolReader {
 	}
 	
 	/**
-	 * Read a null-ended string from the given "data" stream starting at the given "offset".
-	 * data	:  IN, byte stream
-	 * offset: IN, offset in the stream
+	 * Read a null-ended string from the given "data" stream.
+	 * data	:  IN, byte buffer
 	 */
-	String readString(byte[] data, int offset)
+	String readString(ByteBuffer data)
 	{
 		String str;
 		
 		StringBuffer sb = new StringBuffer();
-		for (; offset < data.length; offset++) {
-			byte c = data[offset];
+		while (data.hasRemaining()) {
+			byte c = data.get();
 			if (c == 0) {
 				break;
 			}
@@ -419,30 +413,6 @@ public class DwarfReader extends Dwarf implements ISymbolReader {
 
 		str = sb.toString();
 		return str;
-	}
-	
-	// Note this method modifies a data member
-	//
-	long read_unsigned_leb128(byte[] data, int offset) throws IOException {
-		/* unsigned */
-		long result = 0;
-		int shift = 0;
-		short b;
-
-		m_leb128Size = 0;
-		while (true) {
-			b = data[offset++];
-			if (data.length == offset)
-				break; //throw new IOException("no more data");
-			m_leb128Size++;
-			result |= ((long) (b & 0x7f) << shift);
-			if ((b & 0x80) == 0) {
-				break;
-			}
-			shift += 7;
-		}
-		
-		return result;
 	}
 
 	// Override parent: only handle TAG_Compile_Unit.

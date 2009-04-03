@@ -69,7 +69,7 @@ public class PDOMFile implements IIndexFragmentFile {
 	private static final int LINKAGE_ID= 20;
 	private static final int TIME_STAMP = 24;
 	private static final int SCANNER_CONFIG_HASH= 32;
-	private static final int FIRST_USING_DIRECTIVE= 36;
+	private static final int LAST_USING_DIRECTIVE= 36;
 	private static final int FIRST_MACRO_REFERENCE= 40;
 
 	private static final int RECORD_SIZE= 44;
@@ -623,12 +623,12 @@ public class PDOMFile implements IIndexFragmentFile {
 		setFirstIncludedBy(null);
 	}
 
-	public int getFirstUsingDirectiveRec() throws CoreException {
-		return fLinkage.getDB().getInt(record + FIRST_USING_DIRECTIVE);
+	public int getLastUsingDirectiveRec() throws CoreException {
+		return fLinkage.getDB().getInt(record + LAST_USING_DIRECTIVE);
 	}
 
 	public void setFirstUsingDirectiveRec(int rec) throws CoreException {
-		fLinkage.getDB().putInt(record + FIRST_USING_DIRECTIVE, rec);
+		fLinkage.getDB().putInt(record + LAST_USING_DIRECTIVE, rec);
 	}
 
 	/* (non-Javadoc)

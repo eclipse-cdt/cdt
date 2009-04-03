@@ -35,7 +35,8 @@ public class PDOMCPPUsingDirective implements ICPPUsingDirective, IPDOMNode {
 	private static final int CONTAINER_NAMESPACE 	= 0;
 	private static final int NOMINATED_NAMESPACE    = 4;
 	private static final int PREV_DIRECTIVE_OF_FILE	= 8;
-	private static final int RECORD_SIZE 			= 12;
+	private static final int FILE_OFFSET	        = 12;
+	private static final int RECORD_SIZE 			= 16;
 
 	private final PDOMCPPLinkage fLinkage;
 	private final int fRecord;
@@ -45,7 +46,8 @@ public class PDOMCPPUsingDirective implements ICPPUsingDirective, IPDOMNode {
 		fRecord= record;
 	}
 
-	public PDOMCPPUsingDirective(PDOMCPPLinkage linkage, int prevRecInFile, PDOMCPPNamespace containerNS, PDOMBinding nominated) throws CoreException {
+	public PDOMCPPUsingDirective(PDOMCPPLinkage linkage, int prevRecInFile, PDOMCPPNamespace containerNS, 
+			PDOMBinding nominated, int fileOffset) throws CoreException {
 		final Database db= linkage.getDB();
 		final int containerRec= containerNS == null ? 0 : containerNS.getRecord();
 		final int nominatedRec= nominated.getRecord();
@@ -55,6 +57,7 @@ public class PDOMCPPUsingDirective implements ICPPUsingDirective, IPDOMNode {
 		db.putInt(fRecord + CONTAINER_NAMESPACE, containerRec);
 		db.putInt(fRecord + NOMINATED_NAMESPACE, nominatedRec);
 		db.putInt(fRecord + PREV_DIRECTIVE_OF_FILE, prevRecInFile);
+		db.putInt(fRecord + FILE_OFFSET, fileOffset);
 	}
 
 	/* (non-Javadoc)
@@ -97,7 +100,12 @@ public class PDOMCPPUsingDirective implements ICPPUsingDirective, IPDOMNode {
 	 * @see org.eclipse.cdt.core.dom.ast.cpp.ICPPUsingDirective#getPointOfDeclaration()
 	 */
 	public int getPointOfDeclaration() {
-		return 0;
+		final Database db= fLinkage.getDB();
+		try {
+			return db.getInt(fRecord + FILE_OFFSET);
+		} catch (CoreException e) {
+			return 0;
+		}
 	}
 
 	public int getRecord() {

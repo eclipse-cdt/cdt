@@ -891,9 +891,9 @@ class PDOMCPPLinkage extends PDOMLinkage implements IIndexCPPBindingConstants {
 					}
 				}
 				if (doit) {
-					int rec= file.getFirstUsingDirectiveRec();
+					int rec= file.getLastUsingDirectiveRec();
 					PDOMCPPUsingDirective ud= new PDOMCPPUsingDirective(this, rec, containerNS,
-							pdomName.getBinding());
+							pdomName.getBinding(), pdomName.getFileLocation().getNodeOffset());
 					file.setFirstUsingDirectiveRec(ud.getRecord());
 				}
 			} catch (DOMException e) {
@@ -931,7 +931,7 @@ class PDOMCPPLinkage extends PDOMLinkage implements IIndexCPPBindingConstants {
 	 */
 	@Override
 	public ICPPUsingDirective[] getUsingDirectives(PDOMFile file) throws CoreException {
-		int rec= file.getFirstUsingDirectiveRec();
+		int rec= file.getLastUsingDirectiveRec();
 		if (rec == 0) {
 			return ICPPUsingDirective.EMPTY_ARRAY;
 		}

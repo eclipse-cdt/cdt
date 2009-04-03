@@ -32,6 +32,8 @@ import org.eclipse.cdt.core.dom.ast.IASTImplicitName;
 import org.eclipse.cdt.core.dom.ast.IASTImplicitNameOwner;
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTNodeSelector;
+import org.eclipse.cdt.core.dom.ast.IASTPreprocessorIfdefStatement;
+import org.eclipse.cdt.core.dom.ast.IASTPreprocessorStatement;
 import org.eclipse.cdt.core.dom.ast.IASTSimpleDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
 import org.eclipse.cdt.core.dom.ast.IBasicType;
@@ -50,6 +52,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunction;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPMethod;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateInstance;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPUsingDirective;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPVariable;
 import org.eclipse.cdt.core.index.IIndex;
 import org.eclipse.cdt.core.index.IIndexBinding;
@@ -1968,6 +1971,113 @@ public class IndexBugsTests extends BaseTestCase {
 			BindingAssertionHelper bHelper = new BindingAssertionHelper(b, testData[3], index);
 			IEnumerator e2 = bHelper.assertNonProblem("e;", 1, IEnumerator.class);
 			assertEquals(2, e2.getValue().numericalValue().longValue());
+		} finally {
+			index.releaseReadLock();
+		}
+	}
+	
+	//  // a.h
+	//	#undef XXX
+	
+	//  // b.h
+	//  #include "a.h"
+	//	#define XXX
+
+	//  // source.c
+	//	#include "b.h"
+	//  #ifdef XXX
+	//  int ok;
+	//  #endif
+	public void testPreprocessingStatementOrder_270806_1() throws Exception {
+		waitForIndexer();
+		String[] testData = getContentsForTest(3);
+		TestSourceReader.createFile(fCProject.getProject(), "a.h", testData[0]);
+		TestSourceReader.createFile(fCProject.getProject(), "b.h", testData[1]);
+		IFile s= TestSourceReader.createFile(fCProject.getProject(), "s1.c", testData[2]);
+		final IIndexManager indexManager = CCorePlugin.getIndexManager();
+		indexManager.reindex(fCProject);
+		waitForIndexer();
+		IIndex index= indexManager.getIndex(fCProject);
+		index.acquireReadLock();
+		try {
+			IASTTranslationUnit tu = TestSourceReader.createIndexBasedAST(index, fCProject, s);
+			IASTPreprocessorStatement[] pstmts= tu.getAllPreprocessorStatements();
+			IASTPreprocessorStatement ifndef= pstmts[1];
+			assertInstance(ifndef, IASTPreprocessorIfdefStatement.class);
+			assertTrue(((IASTPreprocessorIfdefStatement) ifndef).taken());
+		} finally {
+			index.releaseReadLock();
+		}
+	}
+
+	//  // a.h
+	//	#undef XXX
+	
+	//  // b.h
+	//	#define XXX
+	//  #include "a.h"
+
+	//  // source.c
+	//	#include "b.h"
+	//  #ifdef XXX
+	//  int bug;
+	//  #endif
+	public void testPreprocessingStatementOrder_270806_2() throws Exception {
+		waitForIndexer();
+		String[] testData = getContentsForTest(3);
+		TestSourceReader.createFile(fCProject.getProject(), "a.h", testData[0]);
+		TestSourceReader.createFile(fCProject.getProject(), "b.h", testData[1]);
+		IFile s= TestSourceReader.createFile(fCProject.getProject(), "s1.c", testData[2]);
+		final IIndexManager indexManager = CCorePlugin.getIndexManager();
+		indexManager.reindex(fCProject);
+		waitForIndexer();
+		IIndex index= indexManager.getIndex(fCProject);
+		index.acquireReadLock();
+		try {
+			IASTTranslationUnit tu = TestSourceReader.createIndexBasedAST(index, fCProject, s);
+			IASTPreprocessorStatement[] pstmts= tu.getAllPreprocessorStatements();
+			IASTPreprocessorStatement ifndef= pstmts[1];
+			assertInstance(ifndef, IASTPreprocessorIfdefStatement.class);
+			assertFalse(((IASTPreprocessorIfdefStatement) ifndef).taken());
+		} finally {
+			index.releaseReadLock();
+		}
+	}
+
+	//	namespace X {}
+	//	namespace Y {}
+	//	#define XXX
+	//	#define YYY
+	//  #include "inc.h"
+	//  #include <inc.h>
+	//  using namespace X;
+	//  using namespace Y;
+	public void testPreprocessingStatementOrder_270806_3() throws Exception {
+		waitForIndexer();
+		String[] testData = getContentsForTest(1);
+		IFile f= TestSourceReader.createFile(fCProject.getProject(), "a.cpp", testData[0]);
+		final IIndexManager indexManager = CCorePlugin.getIndexManager();
+		waitUntilFileIsIndexed(f, 4000);
+		IIndex index= indexManager.getIndex(fCProject);
+		index.acquireReadLock();
+		try {
+			IIndexFile file= index.getFile(ILinkage.CPP_LINKAGE_ID, IndexLocationFactory.getWorkspaceIFL(f));
+			// check order of includes
+			IIndexInclude[] incs = file.getIncludes();
+			assertEquals(2, incs.length);
+			assertFalse(incs[0].isSystemInclude());
+			assertTrue(incs[1].isSystemInclude());
+			// check order of macros
+			IIndexMacro[] macros = file.getMacros();
+			assertEquals(2, macros.length);
+			assertEquals("XXX", macros[0].getName());
+			assertEquals("YYY", macros[1].getName());
+			// check order of using directives
+			ICPPUsingDirective[] uds = file.getUsingDirectives();
+			assertEquals(2, uds.length);
+			assertEquals("X", new String(uds[0].getNominatedScope().getScopeName().getSimpleID()));
+			assertEquals("Y", new String(uds[1].getNominatedScope().getScopeName().getSimpleID()));
+			assertTrue(uds[0].getPointOfDeclaration() < uds[1].getPointOfDeclaration());
 		} finally {
 			index.releaseReadLock();
 		}

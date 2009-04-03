@@ -17,11 +17,8 @@ package org.eclipse.cdt.internal.core.index;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.HashSet;
-import java.util.LinkedHashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 
 import org.eclipse.cdt.core.CCorePlugin;
@@ -143,20 +140,15 @@ public final class IndexBasedCodeReaderFactory extends AbstractCodeReaderFactory
 			IIndexFile file= fIndex.getFile(fLinkage, ifl);
 			if (file != null) {
 				try {
-					LinkedHashMap<IIndexFileLocation, FileContent> fileContentMap= new LinkedHashMap<IIndexFileLocation, FileContent>();
 					List<IIndexFile> files= new ArrayList<IIndexFile>();
-					collectFileContent(file, fileContentMap, files, false);
-					ArrayList<IIndexMacro> allMacros= new ArrayList<IIndexMacro>();
-					ArrayList<ICPPUsingDirective> allDirectives= new ArrayList<ICPPUsingDirective>();
-					for (Map.Entry<IIndexFileLocation,FileContent> entry : fileContentMap.entrySet()) {
-						final FileContent content= entry.getValue();
-						allMacros.addAll(Arrays.asList(content.fMacros));
-						allDirectives.addAll(Arrays.asList(content.fDirectives));
-						fIncludedFiles.add(entry.getKey());
-					}
-					return new IncludeFileContent(path, allMacros, allDirectives, files);
-				}
-				catch (NeedToParseException e) {
+					List<IIndexMacro> macros= new ArrayList<IIndexMacro>();
+					List<ICPPUsingDirective> directives= new ArrayList<ICPPUsingDirective>();
+					Set<IIndexFileLocation> ifls= new HashSet<IIndexFileLocation>();
+					collectFileContent(file, ifls, files, macros, directives, false);
+					// add included files only, if no exception was thrown
+					fIncludedFiles.addAll(ifls);
+					return new IncludeFileContent(path, macros, directives, files);
+				} catch (NeedToParseException e) {
 				}
 			}
 		}
@@ -180,9 +172,11 @@ public final class IndexBasedCodeReaderFactory extends AbstractCodeReaderFactory
 	}
 
 
-	private void collectFileContent(IIndexFile file, Map<IIndexFileLocation, FileContent> macroMap, List<IIndexFile> files, boolean checkIncluded) throws CoreException, NeedToParseException {
+	private void collectFileContent(IIndexFile file, Set<IIndexFileLocation> ifls, List<IIndexFile> files,
+			List<IIndexMacro> macros, List<ICPPUsingDirective> usingDirectives, boolean checkIncluded)
+			throws CoreException, NeedToParseException {
 		IIndexFileLocation ifl= file.getLocation();
-		if (macroMap.containsKey(ifl) || (checkIncluded && fIncludedFiles.contains(ifl))) {
+		if (!ifls.add(ifl) || (checkIncluded && fIncludedFiles.contains(ifl))) {
 			return;
 		}
 		FileContent content;
@@ -191,21 +185,23 @@ public final class IndexBasedCodeReaderFactory extends AbstractCodeReaderFactory
 			if (content == null) {
 				throw new NeedToParseException();
 			}
-		}
-		else {
+		} else {
 			content= new FileContent();
-			content.fMacros= file.getMacros();
-			content.fDirectives= file.getUsingDirectives();
+			content.setPreprocessorDirectives(file.getIncludes(), file.getMacros());
+			content.setUsingDirectives(file.getUsingDirectives());
 		}
-		macroMap.put(ifl, content); // prevent recursion
-		files.add(file);
 		
-		// follow the includes
-		IIndexInclude[] includeDirectives= file.getIncludes();
-		for (final IIndexInclude indexInclude : includeDirectives) {
-			IIndexFile includedFile= fIndex.resolveInclude(indexInclude);
-			if (includedFile != null) {
-				collectFileContent(includedFile, macroMap, files, true);
+		files.add(file);
+		usingDirectives.addAll(Arrays.asList(content.getUsingDirectives()));
+		Object[] dirs= content.getPreprocessingDirectives();
+		for (Object d : dirs) {
+			if (d instanceof IIndexMacro) {
+				macros.add((IIndexMacro) d);
+			} else if (d instanceof IIndexInclude) {
+				IIndexFile includedFile= fIndex.resolveInclude((IIndexInclude) d);
+				if (includedFile != null) {
+					collectFileContent(includedFile, ifls, files, macros, usingDirectives, true);
+				}
 			}
 		}
 	}
@@ -242,7 +238,6 @@ public final class IndexBasedCodeReaderFactory extends AbstractCodeReaderFactory
 			for (IIndexFile file : filesIncluded) {
 				fIncludedFiles.add(file.getLocation());
 			}
-			Collections.reverse(macros);
 			return new IncludeFileContent(GAP, macros, directives, new ArrayList<IIndexFile>(filesIncluded));
 		}
 		catch (CoreException e) {
@@ -279,40 +274,36 @@ public final class IndexBasedCodeReaderFactory extends AbstractCodeReaderFactory
 			return false;
 		}
 
-		final IIndexInclude[] includeDirectives= from.getIncludes();
+		final IIndexInclude[] ids= from.getIncludes();
+		final IIndexMacro[] ms= from.getMacros();
+		final Object[] dirs= FileContent.merge(ids, ms);
 		IIndexInclude success= null;
-		for (IIndexInclude indexInclude : includeDirectives) {
-			IIndexFile includedFile= fIndex.resolveInclude(indexInclude);
-			if (includedFile != null) {
-				if (collectFileContentForGap(includedFile, to, filesIncluded, macros, directives)) {
-					success= indexInclude;
-					break;
+		for (Object d : dirs) {
+			if (d instanceof IIndexMacro) {
+				macros.add((IIndexMacro) d);
+			} else if (d instanceof IIndexInclude) {
+				IIndexFile includedFile= fIndex.resolveInclude((IIndexInclude) d);
+				if (includedFile != null) {
+					if (collectFileContentForGap(includedFile, to, filesIncluded, macros, directives)) {
+						success= (IIndexInclude) d;
+						break;
+					}
 				}
 			}
 		}
 
-		IIndexMacro[] mymacros= from.getMacros();
-		ICPPUsingDirective[] mydirectives= from.getUsingDirectives();
-		int startm, startd;
+		final ICPPUsingDirective[] uds= from.getUsingDirectives();
 		if (success == null) {
-			startm= mymacros.length-1;
-			startd= mydirectives.length-1;
+			directives.addAll(Arrays.asList(uds));
+			return false;
 		}
-		else {
-			startm= startd= -1;
-			final int offset= success.getNameOffset();
-			for (IIndexMacro macro : from.getMacros()) {
-				if (macro.getFileLocation().getNodeOffset() < offset) {
-					startm++;
-				}
-			}
+			
+		final int offset= success.getNameOffset();
+		for (ICPPUsingDirective ud : uds) {
+			if (ud.getPointOfDeclaration() > offset)
+				break;
+			directives.add(ud);
 		}
-		for (int i= startm; i >= 0; i--) {
-			macros.add(mymacros[i]);
-		}
-		for (int i= startd; i >= 0; i--) {
-			directives.add(mydirectives[i]);
-		}
-		return success != null;
+		return true;
 	}
 }

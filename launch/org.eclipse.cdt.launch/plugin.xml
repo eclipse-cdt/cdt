@@ -159,7 +159,7 @@
             id="org.eclipse.cdt.cdi.launch.postmortemLaunch.mainTab"
             group="org.eclipse.cdt.launch.postmortemLaunchTabGroup"
             name="%MainLaunchTab.name"
-            class="org.eclipse.cdt.launch.ui.CMainTab">
+            class="org.eclipse.cdt.launch.ui.CMainAttachTab">
         <associatedDelegate delegate="org.eclipse.cdt.cdi.launch.coreFileCLaunch"/>
       </tab>
       <tab

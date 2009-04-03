@@ -588,7 +588,8 @@ public class DsfSourceDisplayAdapter implements ISourceDisplay, ISteppingControl
         fSourceLookupParticipant = new DsfSourceLookupParticipant(session); 
         fSourceLookup.addParticipants(new ISourceLookupParticipant[] {fSourceLookupParticipant} );
 
-        fIPManager = new InstructionPointerManager();
+        final IInstructionPointerPresentation ipPresentation = (IInstructionPointerPresentation) session.getModelAdapter(IInstructionPointerPresentation.class);
+		fIPManager = new InstructionPointerManager(ipPresentation);
         
         fSession.addServiceEventListener(this, null);
 
@@ -607,7 +608,7 @@ public class DsfSourceDisplayAdapter implements ISourceDisplay, ISteppingControl
 	 * @since 1.1
 	 */
     public void setSelectionChangeDelay(int delay) {
-    	fSelectionChangeDelay  = delay;
+    	fSelectionChangeDelay = delay;
     }
 
     public void dispose() {

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2008 IBM Corporation and others.
+ * Copyright (c) 2000, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -11,8 +11,7 @@
  *******************************************************************************/
 package org.eclipse.cdt.dsf.debug.ui.sourcelookup;
 
- 
-import java.util.Collections;
+
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
@@ -22,6 +21,7 @@ import org.eclipse.cdt.dsf.datamodel.DMContexts;
 import org.eclipse.cdt.dsf.debug.service.IRunControl;
 import org.eclipse.cdt.dsf.debug.service.IStack;
 import org.eclipse.cdt.dsf.debug.service.IRunControl.IExecutionDMContext;
+import org.eclipse.cdt.dsf.debug.service.IStack.IFrameDMContext;
 import org.eclipse.debug.ui.DebugUITools;
 import org.eclipse.debug.ui.IDebugUIConstants;
 import org.eclipse.jface.text.Position;
@@ -154,13 +154,30 @@ class InstructionPointerManager {
 	 * Mapping of IDebugTarget objects to (mappings of IThread objects to lists of instruction
 	 * pointer contexts).
 	 */
-	private List<AnnotationWrapper> fAnnotationWrappers;
+	private final List<AnnotationWrapper> fAnnotationWrappers;
+
+	/**
+	 * For customized instruction pointer presentation.
+	 */
+	private final IInstructionPointerPresentation fPresentation;
 
 	/**
 	 * Clients must not instantiate this class.
 	 */
 	public InstructionPointerManager() {
-        fAnnotationWrappers = Collections.synchronizedList(new LinkedList<AnnotationWrapper>());
+		this(null);
+	}
+
+	/**
+	 * Clients must not instantiate this class.
+	 * 
+	 * @param presentation
+	 *            the custom instruction pointer presentation or
+	 *            <code>null</code> to use the default presentation
+	 */
+	public InstructionPointerManager(IInstructionPointerPresentation presentation) {
+		fPresentation = presentation;
+        fAnnotationWrappers = new LinkedList<AnnotationWrapper>();
 	}
 		
 	/**
@@ -177,31 +194,58 @@ class InstructionPointerManager {
             return;
         }        
 
-        String id;
-        String text;
-        Image image;
-        if (isTopFrame) {
-            id = ID_CURRENT_IP;
-            text = "Debug Current Instruction Pointer"; //$NON-NLS-1$
-            image = DebugUITools.getImage(IDebugUIConstants.IMG_OBJS_INSTRUCTION_POINTER_TOP);
-        } else {
-            id = ID_SECONDARY_IP;
-            text = "Debug Call Stack"; //$NON-NLS-1$
-            image = DebugUITools.getImage(IDebugUIConstants.IMG_OBJS_INSTRUCTION_POINTER);
-        }
-
         if (isTopFrame) {
         	// remove other top-frame IP annotation(s) for this execution-context
         	removeAnnotations(DMContexts.getAncestorOfType(frame.getParents()[0], IExecutionDMContext.class));
         }
-        Annotation annotation = new IPAnnotation(frame, id, text, image); 
+        Annotation annotation = createAnnotation(textEditor, frame); 
         
 		// Add the annotation at the position to the editor's annotation model.
 		annModel.removeAnnotation(annotation);
 		annModel.addAnnotation(annotation, position);	
 		
 		// Add to list of existing wrappers
-        fAnnotationWrappers.add(new AnnotationWrapper(textEditor, annotation, frame));
+		synchronized (fAnnotationWrappers) {
+			fAnnotationWrappers.add(new AnnotationWrapper(textEditor, annotation, frame));
+		}
+	}
+
+	private Annotation createAnnotation(ITextEditor editorPart, IStack.IFrameDMContext frame) {
+        String id = null;
+        String text = null;
+        Image image = null;
+		if (fPresentation != null) {
+			Annotation annotation = fPresentation.getInstructionPointerAnnotation(editorPart, frame);
+			if (annotation != null) {
+				return annotation;
+			}
+			id = fPresentation.getInstructionPointerAnnotationType(editorPart, frame);
+			if (id == null) {
+				image = fPresentation.getInstructionPointerImage(editorPart, frame);
+			}
+			text = fPresentation.getInstructionPointerText(editorPart, frame);
+		}
+		if (id == null) {
+	        if (frame.getLevel() == 0) {
+	        	id = ID_CURRENT_IP;
+	        	if (text == null) {
+	        		text = "Debug Current Instruction Pointer"; //$NON-NLS-1$
+	        	}
+	        	if (image == null) {
+	        		image = DebugUITools.getImage(IDebugUIConstants.IMG_OBJS_INSTRUCTION_POINTER_TOP);
+	        	}
+	        } else {
+	            id = ID_SECONDARY_IP;
+	            if (text == null) {
+	            	text = "Debug Call Stack"; //$NON-NLS-1$
+	            }
+	            if (image == null) {
+	            	image = DebugUITools.getImage(IDebugUIConstants.IMG_OBJS_INSTRUCTION_POINTER);
+	            }
+	        }
+	        return new IPAnnotation(frame, id, text, image);
+		}
+		return new Annotation(id, false, text);
 	}
 	
 	/**
@@ -230,8 +274,8 @@ class InstructionPointerManager {
         synchronized(fAnnotationWrappers) {
             for (Iterator<AnnotationWrapper> wrapperItr = fAnnotationWrappers.iterator(); wrapperItr.hasNext();) {
                 AnnotationWrapper wrapper = wrapperItr.next();
-                if (DMContexts.isAncestorOf(wrapper.getFrameDMC(), execDmc) 
-                		&& ID_CURRENT_IP.equals(wrapper.getAnnotation().getType())) {
+                final IFrameDMContext frameDmc= wrapper.getFrameDMC();
+				if (DMContexts.isAncestorOf(frameDmc, execDmc) && frameDmc.getLevel() == 0) {
                     removeAnnotation(wrapper.getTextEditor(), wrapper.getAnnotation());
                     wrapperItr.remove();
                 }

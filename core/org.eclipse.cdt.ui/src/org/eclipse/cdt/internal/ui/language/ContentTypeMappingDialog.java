@@ -11,7 +11,9 @@
 
 package org.eclipse.cdt.internal.ui.language;
 
+import java.util.Arrays;
 import java.util.HashMap;
+import java.util.Map;
 
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.IDialogConstants;
@@ -34,8 +36,8 @@ public abstract class ContentTypeMappingDialog extends Dialog {
 	String fSelectedLanguageID;
 	String fSelectedConfigurationID;
 	String fSelectedConfigurationName;
-	HashMap<String, String> fContentTypeNamesToIDsMap;
-	HashMap<String, String> fLanguageNamesToIDsMap;
+	Map<String, String> fContentTypeNamesToIDsMap;
+	Map<String, String> fLanguageNamesToIDsMap;
 
 	public ContentTypeMappingDialog(Shell parentShell) {
 		super(parentShell);
@@ -79,10 +81,12 @@ public abstract class ContentTypeMappingDialog extends Dialog {
 		ILanguage[] languages = LanguageManager.getInstance()
 				.getRegisteredLanguages();
 		String[] descriptions = new String[languages.length];
+		
 		for (int i = 0; i < descriptions.length; i++) {
 			descriptions[i] = languages[i].getName();
 			fLanguageNamesToIDsMap.put(descriptions[i], languages[i].getId());
 		}
+		Arrays.sort(descriptions);
 		return descriptions;
 	}
 

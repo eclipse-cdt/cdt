@@ -10,6 +10,9 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.ui.language;
 
+import java.util.Collections;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Set;
 
 import org.eclipse.core.runtime.Platform;
@@ -131,17 +134,25 @@ public class ProjectContentTypeMappingDialog extends ContentTypeMappingDialog {
 	private void configureContentTypes(Combo combo, ICConfigurationDescription configuration) {
 		combo.removeAll();
 		IContentTypeManager contentTypeManager = Platform.getContentTypeManager();
+		List<String> names = new LinkedList<String>();
+		
 		for (int i = 0; i < fContentTypesIDs.length; i++) {
 			String contentTypeId = fContentTypesIDs[i];
 			String name = contentTypeManager.getContentType(contentTypeId).getName();
+			
 			if (configuration != null) {
 				String key = ProjectLanguageMappingWidget.createFilterKey(configuration.getId(), contentTypeId);
 				if (!fFilteredContentTypes.contains(key)) {
-					combo.add(name);
+					names.add(name);
 				}
 			} else {
-				combo.add(name);
+				names.add(name);
 			}
+		}
+		
+		Collections.sort(names);
+		for(String name : names) {
+			combo.add(name);
 		}
 	}
 

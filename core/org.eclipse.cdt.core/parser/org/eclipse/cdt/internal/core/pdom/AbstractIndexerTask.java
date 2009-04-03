@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2008 Wind River Systems, Inc. and others.
+ * Copyright (c) 2007, 2009 Wind River Systems, Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -86,8 +86,71 @@ public abstract class AbstractIndexerTask extends PDOMWriter {
 		private boolean fRequestUpdate= false;
 		private boolean fRequestIsCounted= true;
 		private boolean fIsUpdated= false;
-		public IIndexMacro[] fMacros;
-		public ICPPUsingDirective[] fDirectives;
+		private Object[] fPreprocessingDirectives;
+		private ICPPUsingDirective[] fDirectives;
+
+		public Object[] getPreprocessingDirectives() throws CoreException {
+			if (fPreprocessingDirectives == null) {
+				if (fIndexFile == null)
+					return new Object[0];
+				setPreprocessorDirectives(fIndexFile.getIncludes(), fIndexFile.getMacros());
+			}
+			return fPreprocessingDirectives;
+		}
+		
+		public ICPPUsingDirective[] getUsingDirectives() throws CoreException {
+			if (fDirectives == null) {
+				if (fIndexFile == null)
+					return ICPPUsingDirective.EMPTY_ARRAY;
+				setUsingDirectives(fIndexFile.getUsingDirectives());
+			}
+			return fDirectives;
+		}
+
+		public void setPreprocessorDirectives(IIndexInclude[] includes, IIndexMacro[] macros) throws CoreException {
+			fPreprocessingDirectives= merge(includes, macros);
+		}
+
+		public void setUsingDirectives(ICPPUsingDirective[] usingDirectives) {
+			fDirectives= usingDirectives;
+		}
+
+		public void clearCaches() {
+			fPreprocessingDirectives= null;
+			fDirectives= null;
+		}
+		
+		public static Object[] merge(IIndexInclude[] includes, IIndexMacro[] macros) throws CoreException {
+			Object[] merged= new Object[includes.length+macros.length];
+			int i=0;
+			int m=0;
+			int ioffset= getOffset(includes, i);
+			int moffset= getOffset(macros, m);
+			for (int k = 0; k < merged.length; k++) {
+				if (ioffset <= moffset) {
+					merged[k]= includes[i];
+					ioffset= getOffset(includes, ++i);
+				} else {
+					merged[k]= macros[m];
+					moffset= getOffset(macros, ++m);
+				}
+			}
+			return merged;
+		}
+
+		private static int getOffset(IIndexMacro[] macros, int m) throws CoreException {
+			if (m < macros.length) {
+				return macros[m].getFileLocation().getNodeOffset();
+			}
+			return Integer.MAX_VALUE;
+		}
+
+		private static int getOffset(IIndexInclude[] includes, int i) throws CoreException {
+			if (i < includes.length) {
+				return includes[i].getNameOffset();
+			}
+			return Integer.MAX_VALUE;
+		}
 	}
 	
 	protected enum MessageKind {parsingFileTask, errorWhileParsing, tooManyIndexProblems}
@@ -344,7 +407,7 @@ public abstract class AbstractIndexerTask extends PDOMWriter {
 			info= createFileInfo(key, null);
 		}
 		info.fIsUpdated= true;
-		info.fMacros= null;
+		info.clearCaches();
 	}
 
 	private FileContent createFileInfo(FileKey key, IIndexFile ifile) {
@@ -794,12 +857,6 @@ public abstract class AbstractIndexerTask extends PDOMWriter {
 				if (info.fIndexFile == null) {
 					return null;
 				}
-			}
-			if (info.fMacros == null) {
-				info.fMacros= info.fIndexFile.getMacros();
-			}
-			if (info.fDirectives == null) {
-				info.fDirectives= info.fIndexFile.getUsingDirectives();
 			}
 			return info;
 		}

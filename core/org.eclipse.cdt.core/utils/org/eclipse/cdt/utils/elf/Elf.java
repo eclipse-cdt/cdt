@@ -335,6 +335,9 @@ public class Elf {
 		public long sh_addralign;
 		public long sh_entsize;
 
+		/**
+		 * @since 5.1
+		 */
 		public ByteBuffer mapSectionData() throws IOException {
 			return efile.getChannel().map(MapMode.READ_ONLY, sh_offset, sh_size).load().asReadOnlyBuffer();
 		}

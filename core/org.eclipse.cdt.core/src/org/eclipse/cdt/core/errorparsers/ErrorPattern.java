@@ -17,6 +17,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.eclipse.cdt.core.ErrorParserManager;
+import org.eclipse.cdt.core.IMarkerGenerator;
 import org.eclipse.cdt.utils.CygPath;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IPath;
@@ -35,16 +36,23 @@ public class ErrorPattern {
 	private final int groupDesc;
 	private final int groupVarName;
 	private final int severity;
-	
+
+	private static boolean isCygwin = true;
+
 	/**
-	 * Full Pattern Constructor.
-	 * 
-	 * @param pattern
-	 * @param groupFileName
-	 * @param groupLineNum
-	 * @param groupDesc
-	 * @param groupVarName
-	 * @param severity
+	 * Full Pattern Constructor. Note that a group equal -1 means that
+	 * the parameter is missing in the error message.
+	 *
+	 * @param pattern - regular expression describing the message
+	 * @param groupFileName - matcher group of file name
+	 * @param groupLineNum - matcher group of line number
+	 * @param groupDesc - matcher group of description
+	 * @param groupVarName - matcher group of variable name
+	 * @param severity - severity, one of
+	 *        <br>{@link IMarkerGenerator#SEVERITY_INFO},
+	 *        <br>{@link IMarkerGenerator#SEVERITY_WARNING},
+	 *        <br>{@link IMarkerGenerator#SEVERITY_ERROR_RESOURCE},
+	 *        <br>{@link IMarkerGenerator#SEVERITY_ERROR_BUILD}
 	 */
 	public ErrorPattern(String pattern,
 						int groupFileName,
@@ -63,10 +71,14 @@ public class ErrorPattern {
 	/**
 	 * Pattern for errors not associated file a file
 	 * (e.g. make and linker errors).
-	 * 
-	 * @param pattern
-	 * @param groupDesc
-	 * @param severity
+	 *
+	 * @param pattern - regular expression describing the message
+	 * @param groupDesc - matcher group of description
+	 * @param severity - severity, one of
+	 *        <br>{@link IMarkerGenerator#SEVERITY_INFO},
+	 *        <br>{@link IMarkerGenerator#SEVERITY_WARNING},
+	 *        <br>{@link IMarkerGenerator#SEVERITY_ERROR_RESOURCE},
+	 *        <br>{@link IMarkerGenerator#SEVERITY_ERROR_BUILD}
 	 */
 	public ErrorPattern(String pattern, int groupDesc, int severity) {
 		this(pattern, 0, 0, groupDesc, 0, severity);
@@ -75,19 +87,32 @@ public class ErrorPattern {
 	/**
 	 * Pattern for errors that should be skipped.
 	 * 
-	 * @param pattern
+	 * @param pattern - error pattern.
 	 */
 	public ErrorPattern(String pattern) {
 		this(pattern, 0, 0, 0, 0, -1);
 	}
+
+	/**
+	 * @param input - input line.
+	 * @return matcher to interpret the input line.
+	 */
 	public Matcher getMatcher(CharSequence input) {
 		return pattern.matcher(input);
 	}
 	
+	/**
+	 * @param matcher - matcher to parse the input line.
+	 * @return parsed file name or {code null}.
+	 */
 	public String getFileName(Matcher matcher) {
 		return groupFileName != 0 ? matcher.group(groupFileName) : null;
 	}
 	
+	/**
+	 * @param matcher - matcher to parse the input line.
+	 * @return parsed line number or {@code 0}.
+	 */
 	public int getLineNum(Matcher matcher) {
 		try {
 			return groupLineNum != 0
@@ -98,18 +123,38 @@ public class ErrorPattern {
 		}
 	}
 	
+	/**
+	 * @param matcher - matcher to parse the input line.
+	 * @return parsed description or {code null}.
+	 */
 	public String getDesc(Matcher matcher) {
 		return groupDesc != 0 ? matcher.group(groupDesc) : null;
 	}
 	
+	/**
+	 * @param matcher - matcher to parse the input line.
+	 * @return parsed variable name or {code null}.
+	 */
 	public String getVarName(Matcher matcher) {
 		return groupVarName != 0 ? matcher.group(groupVarName) : null;
 	}
 	
+	/**
+	 * @param matcher - matcher to parse the input line.
+	 * @return severity of the problem.
+	 */
 	public int getSeverity(Matcher matcher) {
 		return severity;
 	}
 	
+	/**
+	 * Parse a line of build output and register error/warning for
+	 * Problems view.
+	 * 
+	 * @param line - one line of output.
+	 * @param eoParser - {@link ErrorParserManager}.
+	 * @return {@code true} if error/warning/info problem was found.
+	 */
 	public boolean processLine(String line, ErrorParserManager eoParser) {
 		Matcher matcher = getMatcher(line);
 		if (!matcher.find())
@@ -118,6 +163,13 @@ public class ErrorPattern {
 		return recordError(matcher, eoParser);
 	}
 	
+	/**
+	 * Register the error in {@link ErrorParserManager}.
+	 * 
+	 * @param matcher - matcher to parse the input line.
+	 * @param eoParser - {@link ErrorParserManager}.
+	 * @return {@code true} indicating that error was found.
+	 */
 	protected boolean recordError(Matcher matcher, ErrorParserManager eoParser) {
 		int severity = getSeverity(matcher);
 		if (severity == -1)
@@ -132,10 +184,7 @@ public class ErrorPattern {
 		
 		IResource file = null;
 		if (fileName != null) {
-			file = eoParser.findFilePath(fileName);
-			if (file == null) {
-				file = eoParser.findFileName(fileName);
-			}
+			file = eoParser.findFileName(fileName);
 
 			if (file == null) {
 				// If the file is not found in the workspace we attach the problem to the project
@@ -152,11 +201,14 @@ public class ErrorPattern {
 	/**
 	 * If the file designated by filename exists, return the IPath representation of the filename
 	 * If it does not exist, try cygpath translation
+	 * 
+	 * @param filename - file name
+	 * @return location (outside of the workspace).
 	 */
 	protected IPath getLocation(String filename)  {
 		IPath path = new Path(filename);
 		File file = path.toFile() ;
-		if (!file.exists())  {
+		if (!file.exists() && isCygwin && path.isAbsolute())  {
 			CygPath cygpath = null ;
 			try {
 				cygpath = new CygPath("cygpath"); //$NON-NLS-1$
@@ -166,6 +218,8 @@ public class ErrorPattern {
 				if (file.exists()) {
 					path = convertedPath;
 				}
+			} catch (UnsupportedOperationException e) {
+				isCygwin = false;
 			} catch (IOException e) {
 			}
 			finally  {

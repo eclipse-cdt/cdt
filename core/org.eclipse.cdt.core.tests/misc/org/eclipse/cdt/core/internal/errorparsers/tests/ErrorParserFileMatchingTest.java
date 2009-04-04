@@ -680,6 +680,23 @@ public class ErrorParserFileMatchingTest extends TestCase {
 	 * Checks if a file from error output can be found.
 	 * @throws Exception...
 	 */
+	public void testRelativePathUpSubfolderBug262988() throws Exception {
+		ResourceHelper.createFolder(fProject, "Folder");
+		ResourceHelper.createFile(fProject, "Folder/testRelativePathUpSubfolder.c");
+
+		parseOutput("../Folder/testRelativePathUpSubfolder.c:1:error");
+		assertEquals(1, errorList.size());
+
+		ProblemMarkerInfo problemMarkerInfo = errorList.get(0);
+		assertEquals("L/FindMatchingFilesTest/Folder/testRelativePathUpSubfolder.c",problemMarkerInfo.file.toString());
+		assertEquals(1,problemMarkerInfo.lineNumber);
+		assertEquals("error",problemMarkerInfo.description);
+	}
+
+	/**
+	 * Checks if a file from error output can be found.
+	 * @throws Exception...
+	 */
 	public void testRelativePathUpOtherProject() throws Exception {
 		IProject anotherProject = ResourceHelper.createCDTProject("AnotherProject");
 		ResourceHelper.createFile(anotherProject, "testRelativePathUpOtherProject.c");
@@ -810,6 +827,24 @@ public class ErrorParserFileMatchingTest extends TestCase {
 
 		ProblemMarkerInfo problemMarkerInfo = errorList.get(0);
 		assertEquals("L/FindMatchingFilesTest/upcase1.c",problemMarkerInfo.file.toString());
+		assertEquals(1,problemMarkerInfo.lineNumber);
+		assertEquals("error",problemMarkerInfo.description);
+	}
+
+	/**
+	 * Checks if a file from error output can be found.
+	 * @throws Exception...
+	 */
+	public void testUppercase2InSubFolder() throws Exception {
+		// Note that old MSDOS can handle only 8 characters in file name
+		ResourceHelper.createFolder(fProject, "Folder");
+		ResourceHelper.createFile(fProject, "Folder/UPCASE2.c");
+
+		parseOutput("UpCase2.c:1:error");
+		assertEquals(1, errorList.size());
+
+		ProblemMarkerInfo problemMarkerInfo = errorList.get(0);
+		assertEquals("L/FindMatchingFilesTest/Folder/UPCASE2.c",problemMarkerInfo.file.toString());
 		assertEquals(1,problemMarkerInfo.lineNumber);
 		assertEquals("error",problemMarkerInfo.description);
 	}

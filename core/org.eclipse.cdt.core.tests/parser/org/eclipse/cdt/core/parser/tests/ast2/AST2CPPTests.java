@@ -7109,4 +7109,15 @@ public class AST2CPPTests extends AST2BaseTest {
 		assertSame(col.getName(4).resolveBinding(), col.getName(11).resolveBinding());
 		assertSame(col.getName(6).resolveBinding(), col.getName(12).resolveBinding());
 	}
+
+	//	namespace ns {
+	//	  struct A {};
+	//	}
+	//	using ns::A;
+	//	struct A;
+	//	A a;
+	public void _testForwardDeclarationAfterUsing_271236() throws Exception {
+		BindingAssertionHelper ba= new BindingAssertionHelper(getAboveComment(), true);
+    	ba.assertNonProblem("A a;", 1, ICPPClassType.class);
+	}
 }

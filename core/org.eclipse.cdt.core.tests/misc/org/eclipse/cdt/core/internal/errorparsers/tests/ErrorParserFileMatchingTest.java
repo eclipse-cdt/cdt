@@ -42,11 +42,13 @@ import org.eclipse.core.runtime.Platform;
  * properly locate and resolve filenames found in build output.
  */
 public class ErrorParserFileMatchingTest extends TestCase {
+	private static final String MAKE_ERRORPARSER_ID = "org.eclipse.cdt.core.MakeErrorParser";
+	private String mockErrorParserId = null;
+
 	private final static String testName = "FindMatchingFilesTest";
 
 	// Default project gets created once then used by all test cases.
 	private IProject fProject = null;
-	private String mockErrorParserId = null;
 	private ArrayList<ProblemMarkerInfo> errorList;
 
 	private final IMarkerGenerator markerGenerator = new IMarkerGenerator() {
@@ -143,13 +145,12 @@ public class ErrorParserFileMatchingTest extends TestCase {
 	 *
 	 * @param project - for which project to parse output.
 	 * @param buildDir - location of build for {@link ErrorParserManager}.
+	 * @param errorParsers - error parsers used.
 	 * @param line - one line of output.
 	 * @throws Exception
 	 */
-	private void parseOutput(IProject project, IPath buildDir, String line) throws Exception {
-		ErrorParserManager epManager = new ErrorParserManager(project, buildDir, markerGenerator,
-			new String[] { mockErrorParserId });
-
+	private void parseOutput(IProject project, IPath buildDir, String[] errorParsers, String line) throws Exception {
+		ErrorParserManager epManager = new ErrorParserManager(project, buildDir, markerGenerator, errorParsers);
 		line = line + '\n';
 		epManager.write(line.getBytes(), 0, line.length());
 		epManager.close();
@@ -160,7 +161,7 @@ public class ErrorParserFileMatchingTest extends TestCase {
 	 * Convenience method to parse one line of output.
 	 */
 	private void parseOutput(IProject project, String buildDir, String line) throws Exception {
-		parseOutput(project, new Path(buildDir), line);
+		parseOutput(project, new Path(buildDir), new String[] {mockErrorParserId}, line);
 	}
 
 	/**
@@ -168,7 +169,7 @@ public class ErrorParserFileMatchingTest extends TestCase {
 	 *  Search is done in project location.
 	 */
 	private void parseOutput(IProject project, String line) throws Exception {
-		parseOutput(project, project.getLocation(), line);
+		parseOutput(project, project.getLocation(), new String[] {mockErrorParserId}, line);
 	}
 
 	/**
@@ -176,7 +177,7 @@ public class ErrorParserFileMatchingTest extends TestCase {
 	 * Search is done for current project in default location.
 	 */
 	private void parseOutput(String line) throws Exception {
-		parseOutput(fProject, fProject.getLocation(), line);
+		parseOutput(fProject, fProject.getLocation(), new String[] {mockErrorParserId}, line);
 	}
 
 	/**
@@ -995,7 +996,39 @@ public class ErrorParserFileMatchingTest extends TestCase {
 		assertEquals("L/AnotherProject/Folder/testCustomProjectLocation.c",problemMarkerInfo.file.toString());
 		assertEquals(1,problemMarkerInfo.lineNumber);
 		assertEquals("error",problemMarkerInfo.description);
-}
+	}
+
+	/**
+	 * Checks if a file from error output can be found.
+	 *
+	 * @throws Exception...
+	 */
+	public void testCygwinAndMakeErrorParserBug270772() throws Exception {
+		String fileName = "testCygwinAndMakeErrorParser.c";
+		String windowsFileName = fProject.getLocation().append(fileName).toOSString();
+		String cygwinFileName;
+		try {
+			cygwinFileName = ResourceHelper.windowsToCygwinPath(windowsFileName);
+		} catch (UnsupportedOperationException e) {
+			// Skip the test if Cygwin is not available.
+			return;
+		}
+		assertTrue("cygwinFileName=["+cygwinFileName+"]", cygwinFileName.startsWith("/cygdrive/"));
+
+		ResourceHelper.createFile(fProject, fileName);
+
+		String lines = "make[0]: Entering directory `dir'\n"
+			+ cygwinFileName+":1:error\n";
+		
+		String[] errorParsers = {MAKE_ERRORPARSER_ID, mockErrorParserId };
+		parseOutput(fProject, fProject.getLocation(), errorParsers, lines);
+		assertEquals(1, errorList.size());
+
+		ProblemMarkerInfo problemMarkerInfo = errorList.get(0);
+		assertEquals("L/FindMatchingFilesTest/"+fileName,problemMarkerInfo.file.toString());
+		assertEquals(1,problemMarkerInfo.lineNumber);
+		assertEquals("error",problemMarkerInfo.description);
+	}
 
 	/**
 	 * Checks if a file from error output can be found.

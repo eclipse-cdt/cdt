@@ -348,10 +348,6 @@ public class ErrorParserManager extends OutputStream {
 		try {
 			cygpath = new CygPath();
 			path = new Path(cygpath.getFileName(filePath));
-			if (fBaseDirectory.isPrefixOf(path)) {
-				int segments = fBaseDirectory.matchingFirstSegments(path);
-				path = path.removeFirstSegments(segments).setDevice(null);
-			}
 			file = findFileInWorkspace(path);
 		} catch (UnsupportedOperationException e) {
 			isCygwin = false;

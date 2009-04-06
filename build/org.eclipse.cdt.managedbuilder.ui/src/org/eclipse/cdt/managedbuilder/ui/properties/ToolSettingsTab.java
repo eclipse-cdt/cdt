@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2008 Intel Corporation and others.
+ * Copyright (c) 2007, 2009 Intel Corporation, QNX Software Systems, and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,10 +7,12 @@
  *
  * Contributors:
  * Intel Corporation - Initial API and implementation
+ * QNX Software Systems - [269571] Apply button failure on tool changes
  *******************************************************************************/
 package org.eclipse.cdt.managedbuilder.ui.properties;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.ListIterator;
@@ -624,10 +626,67 @@ public class ToolSettingsTab extends AbstractCBuildPropertyTab implements IPrefe
 			t1 = ((IFileInfo)ri1).getToolsToInvoke();
 			t2 = ((IFileInfo)ri2).getToolsToInvoke();
 		} else return;
-		if (t1.length != t2.length) return; // not our case
-		for (int i=0; i<t1.length; i++)
-			copyHoldsOptions(t1[i], t2[i], ri2);
+		
+		// get the corresponding pairs of tools for which we can copy settings
+		// and do the copy
+		for (Map.Entry<ITool, ITool> pair : getToolCorrespondence(t1, t2).entrySet()) {
+			copyHoldsOptions(pair.getKey(), pair.getValue(), ri2);
+		}
+		
 		setDirty(false);
+	}
+	
+	/**
+	 * Computes the correspondence of tools in the copy-from set (<tt>t1</tt>) and the
+	 * copy-to set (<tt>t2</tt>) in an apply operation.  The resulting pairs are in the order
+	 * of the <tt>t2</tt> array.  Note that tools that have no correspondence do not appear in
+	 * the result, and that order is not significant.  Also, in case of replication of tools
+	 * in a chain (?) they are matched one-for one in the order in which they are found in
+	 * each chain.
+	 * 
+	 * @param t1,&nbsp;t2 two groups of tools.  Neither may be <code>null</code>
+	 * @return the one-for-one correspondence of tools, in order of <tt>t2</tt>
+	 */
+	private Map<ITool, ITool> getToolCorrespondence(ITool[] t1, ITool[] t2) {
+		Map<ITool, ITool> result = new java.util.LinkedHashMap<ITool, ITool>();
+		Map<ITool, List<ITool>> realT1Tools = new java.util.LinkedHashMap<ITool, List<ITool>>();
+		
+		for (ITool next : t1) {
+			ITool real = ManagedBuildManager.getRealTool(next);
+			List<ITool> list = realT1Tools.get(real);
+			if (list == null) {
+				// the immutable singleton list is efficient in storage
+				realT1Tools.put(real, Collections.singletonList(next));
+			} else {
+				if (list.size() == 1) {
+					// make the list mutable
+					list = new java.util.ArrayList<ITool>(list);
+					realT1Tools.put(real, list);
+				}
+				list.add(next);
+			}
+		}
+
+		for (ITool next : t2) {
+			ITool real = ManagedBuildManager.getRealTool(next);
+			List<ITool> correspondents = realT1Tools.get(real);
+			if (correspondents != null) {
+				result.put(correspondents.get(0), next);
+				
+				// consume the correspondent
+				if (correspondents.size() == 1) {
+					// remove the list; no more entries to consume
+					realT1Tools.remove(real);
+				} else {
+					// cost of removal in array-list is not a concern
+					// considering that this is a UI Apply button and
+					// replication of tools is a fringe case
+					correspondents.remove(0);
+				}
+			}
+		}
+		
+		return result;
 	}
 
 	// IPreferencePageContainer methods

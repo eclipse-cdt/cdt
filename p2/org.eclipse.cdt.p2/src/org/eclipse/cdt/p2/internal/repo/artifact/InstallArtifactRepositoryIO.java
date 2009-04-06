@@ -18,7 +18,7 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.net.URL;
+import java.net.URI;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
@@ -42,11 +42,11 @@ import org.eclipse.equinox.internal.provisional.p2.artifact.repository.IArtifact
 import org.eclipse.equinox.internal.provisional.p2.artifact.repository.IArtifactRepository;
 import org.eclipse.equinox.internal.provisional.p2.artifact.repository.processing.ProcessingStepDescriptor;
 import org.eclipse.equinox.internal.provisional.p2.core.ProvisionException;
+import org.eclipse.equinox.internal.provisional.p2.core.Version;
+import org.eclipse.equinox.internal.provisional.p2.core.VersionRange;
 import org.eclipse.equinox.internal.provisional.p2.metadata.IArtifactKey;
-import org.eclipse.osgi.service.resolver.VersionRange;
 import org.eclipse.osgi.util.NLS;
 import org.osgi.framework.BundleContext;
-import org.osgi.framework.Version;
 import org.xml.sax.Attributes;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
@@ -85,7 +85,7 @@ public class InstallArtifactRepositoryIO {
 	 * 
 	 * This method performs buffering, and closes the stream when finished.
 	 */
-	public IArtifactRepository read(URL location, InputStream input) throws ProvisionException {
+	public IArtifactRepository read(URI location, InputStream input) throws ProvisionException {
 		BufferedInputStream bufferedInput = null;
 		try {
 			try {
@@ -210,9 +210,9 @@ public class InstallArtifactRepositoryIO {
 	private class Parser extends XMLParser implements XMLConstants {
 
 		private InstallArtifactRepository theRepository;
-		final URL location;
+		final URI location;
 
-		public Parser(BundleContext _context, String _bundleId, URL _location) {
+		public Parser(BundleContext _context, String _bundleId, URI _location) {
 			super(_context, _bundleId);
 			location = _location;
 		}

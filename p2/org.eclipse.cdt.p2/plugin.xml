@@ -17,8 +17,18 @@
       <touchpoint
             class="org.eclipse.cdt.p2.internal.touchpoint.SDKTouchpoint"
             type="org.eclipse.cdt.p2.internal.touchpoint.SDKTouchpoint"
-            version="1">
+            version="1.0.0">
       </touchpoint>
+   </extension>
+   <extension
+         point="org.eclipse.equinox.p2.engine.actions">
+      <action
+            class="org.eclipse.cdt.p2.internal.touchpoint.ExtractAction"
+            name="extract"
+            touchpointType="org.eclipse.cdt.p2.internal.touchpoint.SDKTouchpoint"
+            touchpointVersion="1.0.0"
+            version="1.0.0">
+      </action>
    </extension>
 
 </plugin>

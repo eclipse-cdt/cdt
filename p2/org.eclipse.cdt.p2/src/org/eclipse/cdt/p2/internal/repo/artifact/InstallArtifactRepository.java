@@ -17,7 +17,7 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.io.PipedInputStream;
 import java.io.PipedOutputStream;
-import java.net.MalformedURLException;
+import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.Collection;
@@ -66,7 +66,7 @@ public class InstallArtifactRepository extends AbstractArtifactRepository {
 	// to be installed at a time.
 	private Map<String, IArtifactDescriptor> artifacts = new HashMap<String, IArtifactDescriptor>();
 	
-	public InstallArtifactRepository(URL aLocation, String aName, Map aProperties) {
+	public InstallArtifactRepository(URI aLocation, String aName, Map aProperties) {
 		super(aName, InstallArtifactRepository.class.getName(), VERSION, aLocation, DESCRIPTION, PROVIDER, aProperties);
 		save();
 	}
@@ -83,15 +83,15 @@ public class InstallArtifactRepository extends AbstractArtifactRepository {
 	 * @param mappingRules
 	 * @param _properties
 	 */
-	InstallArtifactRepository(String _name, String _type, String _version, URL _location, String _description, String _provider, Set<ArtifactDescriptor> _artifacts, Map _properties) {
+	InstallArtifactRepository(String _name, String _type, String _version, URI _location, String _description, String _provider, Set<ArtifactDescriptor> _artifacts, Map _properties) {
 		super(_name, _type, _version, _location, _description, _provider, _properties);
 		for (IArtifactDescriptor descriptor : _artifacts)
 			artifacts.put(descriptor.getArtifactKey().getId(), descriptor);
 	}
 
-	public static URL getActualLocation(URL base) {
+	public static URI getActualLocation(URI base) {
 		final String name = FILENAME;
-		String spec = base.toExternalForm();
+		String spec = base.toString();
 		if (spec.endsWith(name))
 			return base;
 		if (spec.endsWith("/")) //$NON-NLS-1$
@@ -99,8 +99,8 @@ public class InstallArtifactRepository extends AbstractArtifactRepository {
 		else
 			spec += "/" + name; //$NON-NLS-1$
 		try {
-			return new URL(spec);
-		} catch (MalformedURLException e) {
+			return new URI(spec);
+		} catch (URISyntaxException e) {
 			return null;
 		}
 	}
@@ -111,16 +111,16 @@ public class InstallArtifactRepository extends AbstractArtifactRepository {
 		profileId = profileId.replaceAll("[:/\\\\]", "_"); //$NON-NLS-1$ //$NON-NLS-2$
 		try {
 			URL url = location.getDataArea(Activator.PLUGIN_ID);
-			url = new URL(url.toExternalForm() + "installDirRepo/" + profileId + "/" + FILENAME); //$NON-NLS-1$ //$NON-NLS-2$
+			URI uri = new URI(url.toExternalForm() + "installDirRepo/" + profileId + "/" + FILENAME); //$NON-NLS-1$ //$NON-NLS-2$
 			IArtifactRepositoryManager repoMgr = Activator.getDefault().getService(IArtifactRepositoryManager.class);
 			try {
-				return repoMgr.loadRepository(url, null);
+				return repoMgr.loadRepository(uri, null);
 			} catch (ProvisionException e) {
 				Map<String, String> properties = new HashMap<String, String>();
 				properties.put(INSTALL_DIR, profile.getLocalProperty(IProfile.PROP_INSTALL_FOLDER));
-				return repoMgr.createRepository(url, profile.getProfileId(), InstallArtifactRepository.class.getName(), properties);
+				return repoMgr.createRepository(uri, profile.getProfileId(), InstallArtifactRepository.class.getName(), properties);
 			}
-		} catch (MalformedURLException e) {
+		} catch (URISyntaxException e) {
 			Activator.getDefault().log(IStatus.ERROR, "Creating install repo URI", e); //$NON-NLS-1$
 			return null;
 		}
@@ -197,12 +197,7 @@ public class InstallArtifactRepository extends AbstractArtifactRepository {
 	}
 	
 	private File getFileListFile(String artifact) throws IOException {
-		File file;
-		try {
-			file = new File(URLUtil.toURI(location));
-		} catch (URISyntaxException e) {
-			throw new IOException(e);
-		}
+		File file = new File(location);
 		if (file.getName().equals(FILENAME))
 			file = file.getParentFile();
 		return new File(file, artifact + ".txt"); //$NON-NLS-1$
@@ -210,9 +205,6 @@ public class InstallArtifactRepository extends AbstractArtifactRepository {
 	
 	@Override
 	public OutputStream getOutputStream(IArtifactDescriptor descriptor)	throws ProvisionException {
-		// Do the modifiable check in the superclass
-		super.getOutputStream(descriptor);
-		
 		// Add the descriptor to the list and save it
 		IArtifactDescriptor oldDesc = artifacts.get(descriptor.getArtifactKey().getId());
 		if (oldDesc != null)
@@ -292,8 +284,8 @@ public class InstallArtifactRepository extends AbstractArtifactRepository {
 		try {
 			OutputStream os = null;
 			try {
-				URL actualLocation = getActualLocation(location);
-				File artifactsFile = new File(actualLocation.getPath());
+				URI actualLocation = getActualLocation(location);
+				File artifactsFile = new File(actualLocation);
 				artifactsFile.getParentFile().mkdirs();
 				os = new FileOutputStream(artifactsFile);
 				super.setProperty(IRepository.PROP_TIMESTAMP, Long.toString(System.currentTimeMillis()));
@@ -308,6 +300,12 @@ public class InstallArtifactRepository extends AbstractArtifactRepository {
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
+	}
+
+	public IStatus getRawArtifact(IArtifactDescriptor descriptor,
+			OutputStream destination, IProgressMonitor monitor) {
+		// TODO Auto-generated method stub
+		return null;
 	}
 	
 }

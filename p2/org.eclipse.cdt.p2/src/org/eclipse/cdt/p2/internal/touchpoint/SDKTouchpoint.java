@@ -11,11 +11,10 @@
 
 package org.eclipse.cdt.p2.internal.touchpoint;
 
-import org.eclipse.equinox.internal.provisional.p2.engine.ProvisioningAction;
+import org.eclipse.equinox.internal.provisional.p2.core.Version;
 import org.eclipse.equinox.internal.provisional.p2.engine.Touchpoint;
+import org.eclipse.equinox.internal.provisional.p2.metadata.ITouchpointType;
 import org.eclipse.equinox.internal.provisional.p2.metadata.MetadataFactory;
-import org.eclipse.equinox.internal.provisional.p2.metadata.TouchpointType;
-import org.osgi.framework.Version;
 
 /**
  * @author DSchaefe
@@ -23,21 +22,6 @@ import org.osgi.framework.Version;
  */
 public class SDKTouchpoint extends Touchpoint {
 
-	public static final TouchpointType TOUCHPOINT_TYPE = MetadataFactory.createTouchpointType(SDKTouchpoint.class.getName(), new Version("1"));
+	public static final ITouchpointType TOUCHPOINT_TYPE = MetadataFactory.createTouchpointType(SDKTouchpoint.class.getName(), new Version("1"));
 	
-	@Override
-	public ProvisioningAction getAction(String actionId) {
-		if (CollectAction.ACTION_NAME.equals(actionId))
-			return new CollectAction();
-		else if (UninstallAction.ACTION_NAME.equals(actionId))
-			return new UninstallAction();
-		else
-			return null;
-	}
-
-	@Override
-	public TouchpointType getTouchpointType() {
-		return TOUCHPOINT_TYPE;
-	}
-
 }

@@ -17,7 +17,7 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
-import java.net.URL;
+import java.net.URI;
 import java.util.Map;
 
 import org.eclipse.cdt.p2.Activator;
@@ -26,20 +26,20 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.equinox.internal.provisional.p2.artifact.repository.IArtifactRepository;
 import org.eclipse.equinox.internal.provisional.p2.core.ProvisionException;
-import org.eclipse.equinox.internal.provisional.spi.p2.artifact.repository.IArtifactRepositoryFactory;
+import org.eclipse.equinox.internal.provisional.spi.p2.artifact.repository.ArtifactRepositoryFactory;
 import org.eclipse.osgi.util.NLS;
 
 /**
  * @author DSchaefe
  *
  */
-public class InstallArtifactRepositoryFactory implements IArtifactRepositoryFactory {
+public class InstallArtifactRepositoryFactory extends ArtifactRepositoryFactory {
 
-	public IArtifactRepository create(URL location, String name, String type, Map properties) throws ProvisionException {
+	public IArtifactRepository create(URI location, String name, String type, Map properties) throws ProvisionException {
 		return new InstallArtifactRepository(location, name, properties);
 	}
 	
-	public IArtifactRepository load(URL location, IProgressMonitor monitor) throws ProvisionException {
+	public IArtifactRepository load(URI location, IProgressMonitor monitor) throws ProvisionException {
 		File localFile = null;
 		boolean local = false;
 		try {
@@ -48,7 +48,7 @@ public class InstallArtifactRepositoryFactory implements IArtifactRepositoryFact
 			try {
 				descriptorStream = new BufferedInputStream(new FileInputStream(localFile));
 				InstallArtifactRepositoryIO io = new InstallArtifactRepositoryIO();
-				return io.read(localFile.toURI().toURL(), descriptorStream);
+				return io.read(localFile.toURI(), descriptorStream);
 			} finally {
 				if (descriptorStream != null)
 					descriptorStream.close();

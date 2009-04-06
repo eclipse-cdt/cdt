@@ -12,7 +12,7 @@
 package org.eclipse.cdt.p2.generator;
 
 import java.io.File;
-import java.net.URL;
+import java.net.URI;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -24,20 +24,20 @@ import org.eclipse.equinox.internal.provisional.p2.artifact.repository.ArtifactD
 import org.eclipse.equinox.internal.provisional.p2.artifact.repository.IArtifactRepository;
 import org.eclipse.equinox.internal.provisional.p2.artifact.repository.IArtifactRepositoryManager;
 import org.eclipse.equinox.internal.provisional.p2.core.ProvisionException;
+import org.eclipse.equinox.internal.provisional.p2.core.Version;
+import org.eclipse.equinox.internal.provisional.p2.core.VersionRange;
 import org.eclipse.equinox.internal.provisional.p2.metadata.IArtifactKey;
 import org.eclipse.equinox.internal.provisional.p2.metadata.IInstallableUnit;
+import org.eclipse.equinox.internal.provisional.p2.metadata.ILicense;
+import org.eclipse.equinox.internal.provisional.p2.metadata.IProvidedCapability;
+import org.eclipse.equinox.internal.provisional.p2.metadata.IRequiredCapability;
 import org.eclipse.equinox.internal.provisional.p2.metadata.IUpdateDescriptor;
-import org.eclipse.equinox.internal.provisional.p2.metadata.License;
 import org.eclipse.equinox.internal.provisional.p2.metadata.MetadataFactory;
-import org.eclipse.equinox.internal.provisional.p2.metadata.ProvidedCapability;
-import org.eclipse.equinox.internal.provisional.p2.metadata.RequiredCapability;
 import org.eclipse.equinox.internal.provisional.p2.metadata.MetadataFactory.InstallableUnitDescription;
 import org.eclipse.equinox.internal.provisional.p2.metadata.generator.MetadataGeneratorHelper;
 import org.eclipse.equinox.internal.provisional.p2.metadata.repository.IMetadataRepository;
 import org.eclipse.equinox.internal.provisional.p2.metadata.repository.IMetadataRepositoryManager;
-import org.eclipse.osgi.service.resolver.VersionRange;
 import org.osgi.framework.Bundle;
-import org.osgi.framework.Version;
 
 /**
  * @author DSchaefe
@@ -60,7 +60,7 @@ public class MinGWGenerator implements IApplication {
 		new File(repoDir, "artifacts.xml").delete();
 		new File(repoDir, "content.xml").delete();
 		
-		URL repoLocation = new File("C:\\Wascana\\repo").toURI().toURL();
+		URI repoLocation = new File("C:\\Wascana\\repo").toURI();
 		
 		IMetadataRepositoryManager metaRepoMgr = Activator.getDefault().getService(IMetadataRepositoryManager.class);
 		IArtifactRepositoryManager artiRepoMgr = Activator.getDefault().getService(IArtifactRepositoryManager.class);
@@ -68,11 +68,11 @@ public class MinGWGenerator implements IApplication {
 		metaRepo = metaRepoMgr.createRepository(repoLocation, REPO_NAME, IMetadataRepositoryManager.TYPE_SIMPLE_REPOSITORY, null);
 		artiRepo = artiRepoMgr.createRepository(repoLocation, REPO_NAME, IArtifactRepositoryManager.TYPE_SIMPLE_REPOSITORY, null);
 		
-		License publicDomainLic = MetadataFactory.createLicense(null, publicDomain);
-		License gplLic = MetadataFactory.createLicense(gplURL, gpl);
-		License lgplLic = MetadataFactory.createLicense(lgplURL, lgpl);
-		License zlibLic = MetadataFactory.createLicense(zlibLicURL, zlibLicText);
-		License wxLic = MetadataFactory.createLicense(wxLicURL, wxLicText);
+		ILicense publicDomainLic = MetadataFactory.createLicense(null, publicDomain);
+		ILicense gplLic = MetadataFactory.createLicense(new URI(gplURL), gpl);
+		ILicense lgplLic = MetadataFactory.createLicense(new URI(lgplURL), lgpl);
+		ILicense zlibLic = MetadataFactory.createLicense(new URI(zlibLicURL), zlibLicText);
+		ILicense wxLic = MetadataFactory.createLicense(new URI(wxLicURL), wxLicText);
 		
 		Version wascanaVersion = new Version("1.0.0");
 		String mingwSubdir = "mingw";
@@ -108,7 +108,7 @@ public class MinGWGenerator implements IApplication {
 		String gcc4coreId = "wascana.mingw.gcc4.core";
 		Version gcc4Version = new Version("4.3.2.tdm-1");
 		InstallableUnitDescription gcc4coreIUDesc = createIUDesc(gcc4coreId, gcc4Version, "Wascana MinGW gcc-4 core", gplLic);
-		RequiredCapability[] gcc4coreReqs = new RequiredCapability[] {
+		IRequiredCapability[] gcc4coreReqs = new IRequiredCapability[] {
 				MetadataFactory.createRequiredCapability(
 						IInstallableUnit.NAMESPACE_IU_ID,
 						runtimeIU.getId(), new VersionRange(null), null, false, false),
@@ -129,7 +129,7 @@ public class MinGWGenerator implements IApplication {
 		String gcc4gppId = "wascana.mingw.gcc4.g++";
 		InstallableUnitDescription gcc4gppIUDesc = createIUDesc(gcc4gppId, gcc4Version, "Wascana MinGW gcc-4 g++", gplLic);
 		gcc4gppIUDesc.setLicense(gplLic);
-		RequiredCapability[] gcc4gppReqs = new RequiredCapability[] {
+		IRequiredCapability[] gcc4gppReqs = new IRequiredCapability[] {
 				MetadataFactory.createRequiredCapability(
 						IInstallableUnit.NAMESPACE_IU_ID,
 						gcc4coreIU.getId(), new VersionRange(gcc4Version, true, gcc4Version, true), null, false, false),
@@ -161,7 +161,7 @@ public class MinGWGenerator implements IApplication {
 		// MinGW toolchain category
 		InstallableUnitDescription mingwToolchainDesc = createIUDesc("wascana.mingw", wascanaVersion, "MinGW Toolchain", null);;
 		mingwToolchainDesc.setProperty(IInstallableUnit.PROP_TYPE_CATEGORY, Boolean.TRUE.toString());
-		RequiredCapability[] mingwToolchainReqs = new RequiredCapability[] {
+		IRequiredCapability[] mingwToolchainReqs = new IRequiredCapability[] {
 				createRequiredCap(runtimeId),
 				createRequiredCap(w32apiId),
 				createRequiredCap(binutilsId),
@@ -203,7 +203,7 @@ public class MinGWGenerator implements IApplication {
 		// Libraries toolchain category
 		InstallableUnitDescription libsIUDesc = createIUDesc("wascana.libs", wascanaVersion, "Libraries", null);;
 		libsIUDesc.setProperty(IInstallableUnit.PROP_TYPE_CATEGORY, Boolean.TRUE.toString());
-		RequiredCapability[] libsReqs = new RequiredCapability[] {
+		IRequiredCapability[] libsReqs = new IRequiredCapability[] {
 				createRequiredCap(zlibId),
 				createRequiredCap(sdlId),
 				createRequiredCap(wxId),
@@ -236,14 +236,14 @@ public class MinGWGenerator implements IApplication {
 	public void stop() {
 	}
 
-	private InstallableUnitDescription createIUDesc(String id, Version version, String name, License license) throws ProvisionException {
+	private InstallableUnitDescription createIUDesc(String id, Version version, String name, ILicense license) throws ProvisionException {
 		InstallableUnitDescription iuDesc = new MetadataFactory.InstallableUnitDescription();
 		iuDesc.setId(id);
 		iuDesc.setVersion(version);
 		iuDesc.setLicense(license);
 		iuDesc.setSingleton(true);
 		iuDesc.setProperty(IInstallableUnit.PROP_NAME, name);
-		iuDesc.setCapabilities(new ProvidedCapability[] {
+		iuDesc.setCapabilities(new IProvidedCapability[] {
 				MetadataFactory.createProvidedCapability(IInstallableUnit.NAMESPACE_IU_ID, id, version)
 			});
 		iuDesc.setUpdateDescriptor(MetadataFactory.createUpdateDescriptor(id, new VersionRange(null), IUpdateDescriptor.NORMAL, ""));
@@ -266,7 +266,7 @@ public class MinGWGenerator implements IApplication {
 		return MetadataFactory.createInstallableUnit(iuDesc);
 	}
 
-	private RequiredCapability createRequiredCap(String id) {
+	private IRequiredCapability createRequiredCap(String id) {
 		return MetadataFactory.createRequiredCapability(
 				IInstallableUnit.NAMESPACE_IU_ID,
 				id, new VersionRange(null), null, false, false);

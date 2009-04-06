@@ -176,6 +176,12 @@ public abstract class BuildASTParserAction extends AbstractParserAction {
 	}
 
 	
+	@Override
+	public ASTCompletionNode newCompletionNode(String prefix) {
+		return new ASTCompletionNode(prefix, tu);
+	}
+
+
 	/**
 	 * Removes ambiguity nodes from the AST by resolving them.
 	 * 

@@ -112,7 +112,6 @@ public abstract class AbstractParserAction {
 	 */
 	protected void addNameToCompletionNode(IASTName name, String prefix) {
 		if(completionNode == null) {
-			prefix = (prefix == null || prefix.length() == 0) ? null : prefix;
 			completionNode = newCompletionNode(prefix);
 		}
 		
@@ -120,9 +119,8 @@ public abstract class AbstractParserAction {
 	}
 	
 	public ASTCompletionNode newCompletionNode(String prefix) {
-		return new ASTCompletionNode((prefix == null || prefix.length() == 0) ? null : prefix);
+		return new ASTCompletionNode(prefix);
 	}
-	
 	
 	/**
 	 * Returns the completion node if this is a completion parse, null otherwise.

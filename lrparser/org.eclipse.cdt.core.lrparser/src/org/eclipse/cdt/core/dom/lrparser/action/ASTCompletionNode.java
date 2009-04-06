@@ -46,12 +46,11 @@ public class ASTCompletionNode implements IASTCompletionNode {
 	
 	/**
 	 * Creates a completion node.
-	 * @throws NullPointerException if tu is null
-	 * @throws IllegalArgumentException if prefix is the empty string, it should be null instead
+	 * @param prefix The completion prefix, set to null if the empty string is passed.
 	 */
 	public ASTCompletionNode(String prefix, IASTTranslationUnit tu) {
 		if("".equals(prefix)) //$NON-NLS-1$
-			throw new IllegalArgumentException("prefix cannot be the empty string"); //$NON-NLS-1$
+			prefix = null;
 		
 		this.prefix = prefix;
 		this.tu = tu;
@@ -89,14 +88,12 @@ public class ASTCompletionNode implements IASTCompletionNode {
 	public String getPrefix() {
 		return prefix;
 	}
+	
+	public void setTranslationUnit(IASTTranslationUnit tu) {
+		this.tu = tu;
+	}
 
 	public IASTTranslationUnit getTranslationUnit() {
-		if(names.isEmpty())
-			return null;
-		
-		if(tu == null)
-			tu = names.get(0).getTranslationUnit();
-		
 		return tu;
 	}
 	

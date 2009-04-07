@@ -1,5 +1,5 @@
 /********************************************************************************
- * Copyright (c) 2002, 2007 IBM Corporation and others. All rights reserved.
+ * Copyright (c) 2002, 2009 IBM Corporation and others. All rights reserved.
  * This program and the accompanying materials are made available under the terms
  * of the Eclipse Public License v1.0 which accompanies this distribution, and is 
  * available at http://www.eclipse.org/legal/epl-v10.html
@@ -12,6 +12,7 @@
  * 
  * Contributors:
  * Martin Oberhuber (Wind River) - [186773] split ISystemRegistryUI from ISystemRegistry
+ * David McKnight   (IBM)        - [254588] SystemDropActionDelegate performs refreshLocal too early
  ********************************************************************************/
 
 package org.eclipse.rse.internal.ui.view;
@@ -20,14 +21,19 @@ import java.util.ArrayList;
 
 import org.eclipse.core.resources.IProjectNature;
 import org.eclipse.core.resources.IResource;
+import org.eclipse.core.resources.WorkspaceJob;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IAdaptable;
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.jface.dialogs.ProgressMonitorDialog;
 import org.eclipse.jface.operation.IRunnableContext;
 import org.eclipse.rse.core.RSECorePlugin;
 import org.eclipse.rse.core.model.ISystemProfile;
 import org.eclipse.rse.core.model.ISystemRegistry;
 import org.eclipse.rse.core.subsystems.ISubSystem;
+import org.eclipse.rse.internal.ui.GenericMessages;
 import org.eclipse.rse.services.clientserver.messages.SystemMessage;
 import org.eclipse.rse.services.clientserver.messages.SystemMessageException;
 import org.eclipse.rse.ui.ISystemMessages;
@@ -88,11 +94,9 @@ public class SystemDropActionDelegate implements IDropActionDelegate
 				byte[] result = (byte[]) data;
 
 				// get the sources	
-				//StringTokenizer tokenizer = new StringTokenizer(new String(result), SystemViewDataDropAdapter.RESOURCE_SEPARATOR);
 				String[] tokens = (new String(result)).split("\\"+SystemViewDataDropAdapter.RESOURCE_SEPARATOR); //$NON-NLS-1$
 				ArrayList srcObjects = new ArrayList();
 
-				//while (tokenizer.hasMoreTokens())
 				for (int i = 0; i <tokens.length; i++)  
 				{
 					String srcStr = tokens[i];
@@ -101,94 +105,30 @@ public class SystemDropActionDelegate implements IDropActionDelegate
 					srcObjects.add(srcObject);
 				}
 				
-				SystemDNDTransferRunnable runnable = new SystemDNDTransferRunnable(target, srcObjects, null, SystemDNDTransferRunnable.SRC_TYPE_RSE_RESOURCE);
+				final SystemDNDTransferRunnable runnable = new SystemDNDTransferRunnable(target, srcObjects, null, SystemDNDTransferRunnable.SRC_TYPE_RSE_RESOURCE);
+				final IResource lresource = resource;
 				
-				runnable.schedule();
+				Job transferAndRefreshJob = new WorkspaceJob(GenericMessages.TransferOperation_message){
+					public IStatus runInWorkspace(IProgressMonitor monitor){
+						IStatus result = runnable.runInWorkspace(monitor);						
+						
+						if (lresource != null){
+							try {
+								lresource.refreshLocal(IResource.DEPTH_INFINITE, null);
+							}
+							catch (CoreException e)
+							{
+							}
+						}
+						return result;
+					}
+				};
 				
-				if (resource != null)
-				{
-					try
-					{
-						resource.refreshLocal(IResource.DEPTH_INFINITE, null);
-					}
-					catch (CoreException e)
-					{
-					}
-				}
+				transferAndRefreshJob.schedule();
+								
 				RSEUIPlugin.getTheSystemRegistryUI().clearRunnableContext();
 			}
 
-			/** FIXME - IREmoteFile is systems.core independent now
-			IRemoteFileSubSystem localFS = getLocalFileSubSystem();
-			try
-			{
-				IRemoteFile rsfTarget = localFS.getRemoteFileObject(localPath);
-
-				if (data instanceof byte[])
-				{
-					byte[] result = (byte[]) data;
-
-					// get the sources	
-					//StringTokenizer tokenizer = new StringTokenizer(new String(result), SystemViewDataDropAdapter.RESOURCE_SEPARATOR);
-					String[] tokens = (new String(result)).split("\\"+SystemViewDataDropAdapter.RESOURCE_SEPARATOR);
-					ArrayList srcObjects = new ArrayList();
-					ArrayList rulesList = new ArrayList();
-					int j = 0;
-					//while (tokenizer.hasMoreTokens())
-					for (int i = 0; i <tokens.length; i++)  
-					{
-						String srcStr = tokens[i];
-
-						Object srcObject = getObjectFor(srcStr);
-						srcObjects.add(srcObject);
-						if (srcObject instanceof ISchedulingRule)
-						{
-							rulesList.add(srcObject);
-							j++;
-						}
-						else if (srcObject instanceof IRemoteFile)
-						{
-							rulesList.add(new RemoteFileSchedulingRule((IRemoteFile)srcObject));
-							j++;
-						}
-					}
-					if (resource != null)
-					{
-						rulesList.add(resource);
-						j++;
-					}
-					
-					ISchedulingRule[] rules = (ISchedulingRule[])rulesList.toArray(new ISchedulingRule[rulesList.size()]);
-					MultiRule rule = null;
-					if (j > 0)
-					{
-						rule = new MultiRule(rules);
-					}
-					
-					Viewer currentViewer = null; // todo: figure out how to determine the current viewer! Phil
-					SystemDNDTransferRunnable runnable = new SystemDNDTransferRunnable(rsfTarget, srcObjects, currentViewer, SystemDNDTransferRunnable.SRC_TYPE_RSE_RESOURCE);
-										
-					runnable.setRule(rule);
-					
-					runnable.schedule();
-					
-					if (resource != null)
-					{
-						try
-						{
-							resource.refreshLocal(IResource.DEPTH_INFINITE, null);
-						}
-						catch (CoreException e)
-						{
-						}
-					}
-					RSEUIPlugin.getTheSystemRegistryUI().clearRunnableContext();
-				}
-			}
-			catch (SystemMessageException e)
-			{
-			}
-			**/
 			return true;
 		}
 		

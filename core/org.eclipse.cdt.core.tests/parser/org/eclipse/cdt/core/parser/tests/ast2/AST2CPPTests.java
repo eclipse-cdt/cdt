@@ -7116,7 +7116,7 @@ public class AST2CPPTests extends AST2BaseTest {
 	//	using ns::A;
 	//	struct A;
 	//	A a;
-	public void _testForwardDeclarationAfterUsing_271236() throws Exception {
+	public void testForwardDeclarationAfterUsing_271236() throws Exception {
 		BindingAssertionHelper ba= new BindingAssertionHelper(getAboveComment(), true);
     	ba.assertNonProblem("A a;", 1, ICPPClassType.class);
 	}

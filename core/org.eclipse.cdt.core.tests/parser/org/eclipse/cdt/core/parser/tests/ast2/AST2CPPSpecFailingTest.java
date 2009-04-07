@@ -33,32 +33,7 @@ public class AST2CPPSpecFailingTest extends AST2SpecBaseTest {
 	}
 	
 	public void testDummy() {} // avoids JUnit "no tests" warning
-	
-	// struct B {
-	// virtual void f(int);
-	// virtual void f(char);
-	// void g(int);
-	// void h(int);
-	// };
-	// struct D : B {
-	// using B::f;
-	// void f(int); // OK: D::f(int) overrides B::f(int);
-	// using B::g;
-	// void g(char); // OK
-	// using B::h;
-	// void h(int); // OK: D::h(int) hides B::h(int)
-	// };
-	// void k(D* p)
-	// {
-	// p->f(1); //calls D::f(int)
-	// p->f('a'); //calls B::f(char)
-	// p->g(1); //calls B::g(int)
-	// p->g('a'); //calls D::g(char)
-	// }
-	public void _test7_3_3s12() throws Exception { // raised bug 161562 for that
-		parse(getAboveComment(), ParserLanguage.CPP, true, 0);
-	}
-	
+
 	// template <class T> struct B { };
 	// template <class T> struct D : public B<T> {};
 	// struct D2 : public B<int> {};

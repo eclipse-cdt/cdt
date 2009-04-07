@@ -178,7 +178,7 @@ abstract public class CPPScope implements ICPPScope, ICPPASTInternalScope {
 	}
 
 	public IBinding getBindingInAST(IASTName name, boolean forceResolve) throws DOMException {
-		IBinding[] bs= getBindingsInAST(name, forceResolve, false, false, false);
+		IBinding[] bs= getBindingsInAST(name, forceResolve, false, false, true);
 		return CPPSemantics.resolveAmbiguities(name, bs);
 	}
 

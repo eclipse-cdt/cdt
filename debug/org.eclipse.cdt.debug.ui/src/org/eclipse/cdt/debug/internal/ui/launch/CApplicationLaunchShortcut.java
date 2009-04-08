@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2007 QNX Software Systems and others.
+ * Copyright (c) 2005, 2009 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,18 +8,21 @@
  * Contributors:
  * QNX Software Systems - Initial API and implementation
  * Ken Ryall (Nokia) - bug 178731
+ * Ken Ryall (Nokia) - bug 246201
  *******************************************************************************/
 package org.eclipse.cdt.debug.internal.ui.launch;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Iterator;
 import java.util.List;
 
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.model.CModelException;
 import org.eclipse.cdt.core.model.CoreModel;
 import org.eclipse.cdt.core.model.IBinary;
+import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.core.settings.model.ICConfigurationDescription;
 import org.eclipse.cdt.core.settings.model.ICProjectDescription;
@@ -27,9 +30,11 @@ import org.eclipse.cdt.debug.core.CDebugCorePlugin;
 import org.eclipse.cdt.debug.core.CDebugUtils;
 import org.eclipse.cdt.debug.core.ICDTLaunchConfigurationConstants;
 import org.eclipse.cdt.debug.core.ICDebugConfiguration;
+import org.eclipse.cdt.debug.core.executables.Executable;
 import org.eclipse.cdt.debug.ui.CDebugUIPlugin;
 import org.eclipse.cdt.debug.ui.ICDebuggerPage;
 import org.eclipse.cdt.ui.CElementLabelProvider;
+import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
@@ -45,22 +50,26 @@ import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
 import org.eclipse.debug.core.ILaunchManager;
 import org.eclipse.debug.ui.DebugUITools;
 import org.eclipse.debug.ui.IDebugModelPresentation;
-import org.eclipse.debug.ui.ILaunchShortcut;
+import org.eclipse.debug.ui.ILaunchShortcut2;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.dialogs.ProgressMonitorDialog;
 import org.eclipse.jface.operation.IRunnableWithProgress;
+import org.eclipse.jface.text.ITextSelection;
 import org.eclipse.jface.viewers.ILabelProvider;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.jface.window.Window;
 import org.eclipse.swt.widgets.Shell;
+import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IEditorPart;
+import org.eclipse.ui.IFileEditorInput;
+import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.dialogs.ElementListSelectionDialog;
 import org.eclipse.ui.dialogs.TwoPaneElementSelector;
 
-public class CApplicationLaunchShortcut implements ILaunchShortcut {
+public class CApplicationLaunchShortcut implements ILaunchShortcut2 {
 
 	public void launch(IEditorPart editor, String mode) {
 		searchAndLaunch(new Object[] { editor.getEditorInput()}, mode);
@@ -184,7 +193,7 @@ public class CApplicationLaunchShortcut implements ILaunchShortcut {
 				configType.newInstance(null, getLaunchManager().generateUniqueLaunchConfigurationNameFrom(bin.getElementName()));
 			wc.setAttribute(ICDTLaunchConfigurationConstants.ATTR_PROGRAM_NAME, projectName);
 			wc.setAttribute(ICDTLaunchConfigurationConstants.ATTR_PROJECT_NAME, bin.getCProject().getElementName());
-			wc.setMappedResources(new IResource[] {bin.getResource(), bin.getResource().getProject()});
+			wc.setMappedResources(new IResource[] {bin.getResource().getProject()});
 			wc.setAttribute(ICDTLaunchConfigurationConstants.ATTR_WORKING_DIRECTORY, (String) null);
 			wc.setAttribute(ICDTLaunchConfigurationConstants.ATTR_DEBUGGER_STOP_AT_MAIN, true);
 			wc.setAttribute(
@@ -446,6 +455,123 @@ public class CApplicationLaunchShortcut implements ILaunchShortcut {
 		} else {
 			MessageDialog.openError(getShell(), LaunchMessages.getString("CApplicationLaunchShortcut.Application_Launcher"), LaunchMessages.getString("CApplicationLaunchShortcut.Launch_failed_no_project_selected")); //$NON-NLS-1$ //$NON-NLS-2$
 		}
+	}
+
+	public ILaunchConfiguration[] getLaunchConfigurations(ISelection selection) {
+		// This returns null so the platform will use the ILaunchShortcut behavior
+		// and get the configurations based on the project resource association.
+		return null;
+	}
+
+	public ILaunchConfiguration[] getLaunchConfigurations(IEditorPart editorpart) {
+		// This returns null so the platform will use the ILaunchShortcut behavior
+		// and get the configurations based on the project resource association.
+		return null;
+	}
+
+	public IResource getLaunchableResource(ISelection selection) {
+		// Take the selection and determine which project is intended to
+		// be used for the launch.
+		if (selection instanceof IStructuredSelection) {
+			Object firstElement = ((IStructuredSelection) selection).getFirstElement();
+			if (firstElement != null)
+			{
+				if (firstElement instanceof IFile)
+				{
+					IFile file = (IFile) firstElement;
+					return file.getProject();
+				}
+				if (firstElement instanceof Executable)
+				{
+					return ((Executable)firstElement).getProject();
+				}
+				if (firstElement instanceof IBinary)
+				{
+					return ((IBinary)firstElement).getResource().getProject();
+				}
+			}
+		}
+		List<IProject> projects = getProjectsFromSelection(selection);		
+		if (projects.size() > 0) {
+			return projects.get(0);
+		}
+		return null;
+	}
+
+	/**
+	 * Gets the owning project(s) of the selected object(s) if any
+	 * @param selection the current selection
+	 * @return a list of projects - may be empty
+	 */
+	public static List<IProject> getProjectsFromSelection(ISelection selection) {
+		List<IProject> projects = new ArrayList<IProject>();
+
+		if (selection != null && !selection.isEmpty()) {
+			if (selection instanceof ITextSelection) {
+				
+				IWorkbenchWindow activeWindow = CDebugUIPlugin.getActiveWorkbenchWindow();				
+				IWorkbenchPage wpage = activeWindow.getActivePage();
+				if (wpage != null) {
+					IEditorPart ep = wpage.getActiveEditor();
+					if (ep != null) {
+						IEditorInput editorInput = ep.getEditorInput();
+						if (editorInput instanceof IFileEditorInput) {
+							IFile file = ((IFileEditorInput)editorInput).getFile();
+							if (file != null) {
+								projects.add(file.getProject());
+							}
+						}
+					}
+				}
+			} else if (selection instanceof IStructuredSelection) {
+				IStructuredSelection structuredSelection = (IStructuredSelection) selection;
+				
+				for (Iterator<?> iter = structuredSelection.iterator(); iter.hasNext();) {
+					Object element = (Object) iter.next();
+					if (element != null) {
+
+						if (element instanceof ICProject) {
+							projects.add(((ICProject)element).getProject());
+						} else if (element instanceof IResource) {
+							projects.add(((IResource)element).getProject());
+						} else if (element instanceof ICElement) {
+							ICElement unit = (ICElement) element;
+
+							// Get parent of the Element until we reach the owner project.
+							while (unit != null && ! (unit instanceof ICProject))
+								unit = unit.getParent();
+							
+							if (unit != null) {
+								projects.add(((ICProject)unit).getProject());
+							}
+						} else if (element instanceof IAdaptable) {
+							Object adapter = ((IAdaptable)element).getAdapter(IResource.class);
+							if (adapter != null && adapter instanceof IResource) {
+								projects.add(((IResource)adapter).getProject());
+							} else {
+								adapter = ((IAdaptable)element).getAdapter(ICProject.class);
+								if (adapter != null && adapter instanceof ICProject) {
+									projects.add(((ICProject)adapter).getProject());
+								}
+							}
+						}
+					}
+				}
+			}
+		}
+		return projects;
+	}
+
+	public IResource getLaunchableResource(IEditorPart editorpart) {
+		// This handles the case where the selection is text in an editor.
+		IEditorInput editorInput = editorpart.getEditorInput();
+		if (editorInput instanceof IFileEditorInput) {
+			IFile file = ((IFileEditorInput)editorInput).getFile();
+			if (file != null) {
+				return file.getProject();
+			}
+		}
+		return null;
 	}
 
 }

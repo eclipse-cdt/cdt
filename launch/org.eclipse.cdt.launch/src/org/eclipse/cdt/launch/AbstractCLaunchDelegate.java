@@ -800,25 +800,10 @@ abstract public class AbstractCLaunchDelegate extends LaunchConfigurationDelegat
 	 * @throws CoreException
 	 */
 	protected IBinaryObject verifyBinary(ICProject proj, IPath exePath) throws CoreException {
-		ICExtensionReference[] parserRef = CCorePlugin.getDefault().getBinaryParserExtensions(proj.getProject());
-		for (int i = 0; i < parserRef.length; i++) {
-			try {
-				IBinaryParser parser = (IBinaryParser)parserRef[i].createExtension();
-				IBinaryObject exe = (IBinaryObject)parser.getBinary(exePath);
-				if (exe != null) {
-					return exe;
-				}
-			} catch (ClassCastException e) {
-			} catch (IOException e) {
-			}
-		}
-		IBinaryParser parser = CCorePlugin.getDefault().getDefaultBinaryParser();
 		Exception exception;
 		try {
-			return (IBinaryObject)parser.getBinary(exePath);
+			return LaunchUtils.getBinary(proj.getProject(), exePath);
 		} catch (ClassCastException e) {
-			exception = e;
-		} catch (IOException e) {
 			exception = e;
 		}
 		Status status = new Status(IStatus.ERROR,getPluginID(), 

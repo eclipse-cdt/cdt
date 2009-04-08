@@ -29,6 +29,7 @@ import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.core.settings.model.ICConfigurationDescription;
 import org.eclipse.cdt.core.settings.model.ICProjectDescription;
 import org.eclipse.cdt.debug.core.ICDTLaunchConfigurationConstants;
+import org.eclipse.cdt.launch.LaunchUtils;
 import org.eclipse.cdt.launch.internal.ui.LaunchImages;
 import org.eclipse.cdt.launch.internal.ui.LaunchMessages;
 import org.eclipse.cdt.launch.internal.ui.LaunchUIPlugin;
@@ -679,24 +680,10 @@ public class CMainTab extends CLaunchConfigurationTab {
 	 * @throws CoreException
 	 */
 	protected boolean isBinary(IProject project, IPath exePath) throws CoreException {
-		ICExtensionReference[] parserRef = CCorePlugin.getDefault().getBinaryParserExtensions(project);
-		for (int i = 0; i < parserRef.length; i++) {
-			try {
-				IBinaryParser parser = (IBinaryParser)parserRef[i].createExtension();
-				IBinaryObject exe = (IBinaryObject)parser.getBinary(exePath);
-				if (exe != null) {
-					return true;
-				}
-			} catch (ClassCastException e) {
-			} catch (IOException e) {
-			}
-		}
-		IBinaryParser parser = CCorePlugin.getDefault().getDefaultBinaryParser();
 		try {
-			IBinaryObject exe = (IBinaryObject)parser.getBinary(exePath);
+			IBinaryObject exe = LaunchUtils.getBinary(project, exePath);
 			return exe != null;
 		} catch (ClassCastException e) {
-		} catch (IOException e) {
 		}
 		return false;
 	}

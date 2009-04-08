@@ -34,6 +34,7 @@ import org.eclipse.cdt.debug.core.ICDTLaunchConfigurationConstants;
 import org.eclipse.cdt.debug.core.ICDebugConfiguration;
 import org.eclipse.cdt.debug.core.ICDebugConstants;
 import org.eclipse.cdt.debug.ui.ICDebuggerPage;
+import org.eclipse.cdt.launch.LaunchUtils;
 import org.eclipse.cdt.launch.internal.ui.AbstractCDebuggerTab;
 import org.eclipse.cdt.launch.internal.ui.LaunchMessages;
 import org.eclipse.cdt.launch.internal.ui.LaunchUIPlugin;
@@ -372,35 +373,7 @@ public class CDebuggerTab extends AbstractCDebuggerTab {
 		} catch (CoreException e) {
 		}
 		if (programName != null ) {
-			IPath exePath = new Path(programName);
-			if (projectName != null && !projectName.equals("")) { //$NON-NLS-1$
-				IProject project = ResourcesPlugin.getWorkspace().getRoot().getProject(projectName);
-				if (!project.isAccessible()) {
-					return null;
-				}
-				if (!exePath.isAbsolute()) {
-					exePath = project.getLocation().append(exePath);
-				}
-				ICExtensionReference[] parserRef = CCorePlugin.getDefault().getBinaryParserExtensions(project);
-				for (int i = 0; i < parserRef.length; i++) {
-					try {
-						IBinaryParser parser = (IBinaryParser)parserRef[i].createExtension();
-						IBinaryObject exe = (IBinaryObject)parser.getBinary(exePath);
-						if (exe != null) {
-							return exe;
-						}
-					} catch (ClassCastException e) {
-					} catch (IOException e) {
-					}
-				}
-			}
-			IBinaryParser parser = CCorePlugin.getDefault().getDefaultBinaryParser();
-			try {
-				IBinaryObject exe = (IBinaryObject)parser.getBinary(exePath);
-				return exe;
-			} catch (ClassCastException e) {
-			} catch (IOException e) {
-			}
+			return LaunchUtils.getBinary(programName, projectName);
 		}
 		return null;
 	}

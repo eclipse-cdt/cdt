@@ -1,0 +1,15 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: Code Analisys Core
+Bundle-SymbolicName: org.eclipse.cdt.codan.core;singleton:=true
+Bundle-Version: 1.0.0
+Bundle-Activator: org.eclipse.cdt.codan.core.CodanCorePlugin
+Bundle-Vendor: CDT
+Require-Bundle: org.eclipse.core.runtime,
+ org.eclipse.core.resources,
+ org.eclipse.cdt.core
+Bundle-RequiredExecutionEnvironment: JavaSE-1.6
+Bundle-ActivationPolicy: lazy
+Export-Package: org.eclipse.cdt.codan.core,
+ org.eclipse.cdt.codan.core.builder,
+ org.eclipse.cdt.codan.core.model

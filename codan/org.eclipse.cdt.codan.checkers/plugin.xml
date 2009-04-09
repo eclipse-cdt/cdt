@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.4"?>
+<plugin>
+   <extension
+         point="org.eclipse.cdt.codan.core.checkers">
+
+      <checker
+            class="org.eclipse.cdt.codan.checkers.sample.AssignmentInConditionChecker"
+            id="org.eclipse.cdt.codan.checkers.checker1"
+            name="Assignment in condition">
+      <problem
+            defaultSeverity="Warning"
+            id="org.eclipse.cdt.codan.checkers.sample.assignment_in_condition"
+            name="Assignment in condition">
+      </problem>
+      </checker>
+   </extension>
+
+</plugin>

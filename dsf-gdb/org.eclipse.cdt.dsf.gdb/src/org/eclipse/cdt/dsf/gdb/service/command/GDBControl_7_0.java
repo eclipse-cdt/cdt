@@ -230,7 +230,7 @@ public class GDBControl_7_0 extends AbstractMIControl implements IGDBControl {
 
     			// Tell GDB to use this PTY
     			queueCommand(
-    					new MIInferiorTTYSet((ICommandControlDMContext)fControlDmc, fPty.getSlaveName()), 
+    					new MIInferiorTTYSet(fControlDmc, fPty.getSlaveName()), 
     					new DataRequestMonitor<MIInfo>(getExecutor(), requestMonitor) {
     						@Override
     						protected void handleFailure() {
@@ -249,7 +249,9 @@ public class GDBControl_7_0 extends AbstractMIControl implements IGDBControl {
 
 
     public boolean canRestart() {
-    	if (fMIBackend.getIsAttachSession()) return false;
+    	if (fMIBackend.getIsAttachSession()|| fMIBackend.getSessionType() == SessionType.CORE) {
+    		return false;
+    	}
     	
     	// Before GDB6.8, the Linux gdbserver would restart a new
     	// process when getting a -exec-run but the communication

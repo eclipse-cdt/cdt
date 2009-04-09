@@ -152,7 +152,33 @@ public class GDBRunControl extends MIRunControl {
 	}
 	
     @Override
+	public void canResume(IExecutionDMContext context, DataRequestMonitor<Boolean> rm) {
+    	if (fGdb.getSessionType() == SessionType.CORE) {
+    		rm.setData(false);
+    		rm.done();
+    		return;
+    	}
+    	super.canResume(context, rm);
+    }
+    
+    @Override
+	public void canSuspend(IExecutionDMContext context, DataRequestMonitor<Boolean> rm) {
+    	if (fGdb.getSessionType() == SessionType.CORE) {
+    		rm.setData(false);
+    		rm.done();
+    		return;
+    	}
+    	super.canSuspend(context, rm);
+    }
+
+    @Override
 	public void canStep(final IExecutionDMContext context, StepType stepType, final DataRequestMonitor<Boolean> rm) {
+    	if (fGdb.getSessionType() == SessionType.CORE) {
+    		rm.setData(false);
+    		rm.done();
+    		return;
+    	}
+    	
     	if (context instanceof IContainerDMContext) {
     		rm.setData(false);
     		rm.done();

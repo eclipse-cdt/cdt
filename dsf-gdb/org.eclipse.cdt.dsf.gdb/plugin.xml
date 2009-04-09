@@ -34,6 +34,16 @@
             sourceLocatorId="org.eclipse.cdt.debug.core.sourceLocator"
             sourcePathComputerId="org.eclipse.cdt.debug.core.sourcePathComputer">
       </launchDelegate>
+      <launchDelegate
+            id="org.eclipse.cdt.dsf.gdb.launch.coreCLaunch"
+            type="org.eclipse.cdt.launch.postmortemLaunchType"
+            modes="debug"
+            delegate="org.eclipse.cdt.dsf.gdb.launching.GdbLaunchDelegate"
+            name="GDB (DSF) Postmortem Debugger"
+            delegateDescription="Load an application dump under into the GDB debugger integrated using the Debugger Services Framework (DSF)."
+            sourceLocatorId="org.eclipse.cdt.debug.core.sourceLocator"
+            sourcePathComputerId="org.eclipse.cdt.debug.core.sourcePathComputer">
+      </launchDelegate>
    </extension>
    
    <extension

@@ -109,6 +109,39 @@
         <associatedDelegate delegate="org.eclipse.cdt.dsf.gdb.launch.attachCLaunch"/>
         <placement after="org.eclipse.debug.ui.sourceLookupTab"/>
       </tab>
+      
+      <!-- PostMortem launch tabs-->
+      <tab
+            id="org.eclipse.cdt.dsf.gdb.launch.coreLaunch.mainTab"
+            group="org.eclipse.cdt.launch.postmortemLaunchTabGroup"
+            name="%launchTab.main.name"
+            class="org.eclipse.cdt.dsf.gdb.internal.ui.launching.CMainCoreTab">
+         <associatedDelegate delegate="org.eclipse.cdt.dsf.gdb.launch.coreCLaunch"/>
+      </tab>
+      <tab
+            id="org.eclipse.cdt.dsf.gdb.launch.coreLaunch.debuggerTab"
+            group="org.eclipse.cdt.launch.postmortemLaunchTabGroup"
+            name="%launchTab.debugger.name"
+            class="org.eclipse.cdt.dsf.gdb.internal.ui.launching.CoreFileDebuggerTab">
+         <associatedDelegate delegate="org.eclipse.cdt.dsf.gdb.launch.coreCLaunch"/>
+         <placement after="org.eclipse.cdt.dsf.gdb.launch.mainTab"/>
+      </tab>
+      <tab
+            id="org.eclipse.cdt.dsf.gdb.launch.coreLaunch.sourceLookupTab"
+            group="org.eclipse.cdt.launch.postmortemLaunchTabGroup"
+            name="%launchTab.sourceLookup.name"
+            class="org.eclipse.debug.ui.sourcelookup.SourceLookupTab">
+         <associatedDelegate delegate="org.eclipse.cdt.dsf.gdb.launch.coreCLaunch"/>
+         <placement after="org.eclipse.cdt.dsf.gdb.launch.debuggerTab"/>
+      </tab>
+      <tab
+            id="org.eclipse.cdt.dsf.gdb.launch.coreLaunch.commonTab"
+            group="org.eclipse.cdt.launch.postmortemLaunchTabGroup"
+            name="%launchTab.common.name"
+            class="org.eclipse.debug.ui.CommonTab">
+         <associatedDelegate delegate="org.eclipse.cdt.dsf.gdb.launch.coreCLaunch"/>
+         <placement after="org.eclipse.debug.ui.sourceLookupTab"/>
+      </tab>
    </extension>
    
     <extension
@@ -158,6 +191,12 @@
             class="org.eclipse.cdt.dsf.gdb.internal.ui.launching.ProcessPrompter"
             code="100"
             id="org.eclipse.cdt.dsf.gdb.ui.processPrompter"
+            plugin="org.eclipse.cdt.dsf.gdb.ui">
+      </statusHandler>
+      <statusHandler
+            class="org.eclipse.cdt.dsf.gdb.internal.ui.launching.CoreFilePrompter"
+            code="1001"
+            id="org.eclipse.cdt.dsf.gdb.ui.coreFilePrompter"
             plugin="org.eclipse.cdt.dsf.gdb.ui">
       </statusHandler>
    </extension>

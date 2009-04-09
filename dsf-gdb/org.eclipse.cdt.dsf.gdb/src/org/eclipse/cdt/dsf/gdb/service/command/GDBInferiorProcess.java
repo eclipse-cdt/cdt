@@ -51,8 +51,9 @@ class GDBInferiorProcess extends MIInferiorProcess {
                     //   never (we don't kill an independent process.)
                     // - For Program session:
                     //   if the inferior is still running.
-                    // - For PostMortem(Core): send event
-                    // else noop
+                    // - For PostMortem(Core):
+                    //   no need to do anything since the inferior
+                    //    is not running
                     if (fBackend.getIsAttachSession() == false) {
                         // Try to interrupt the inferior, first.
                         if (getState() == State.RUNNING) {

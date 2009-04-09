@@ -71,6 +71,11 @@ public class GDBRunControl_7_0 extends MIRunControl implements IReverseRunContro
         fGdb = getServicesTracker().getService(IGDBBackend.class);
         fProcService = getServicesTracker().getService(IMIProcesses.class);
 
+		if (fGdb.getSessionType() == SessionType.CORE) {
+			// No execution for core files, so no support for reverse
+			fReverseSupported = false;
+		}
+
         register(new String[]{IRunControl.class.getName(), MIRunControl.class.getName(),
         					  IReverseRunControl.class.getName()}, 
         		 new Hashtable<String,String>());
@@ -131,8 +136,34 @@ public class GDBRunControl_7_0 extends MIRunControl implements IReverseRunContro
 				});
     }
 
-    @Override
+	@Override
+	public void canResume(IExecutionDMContext context, DataRequestMonitor<Boolean> rm) {
+		if (fGdb.getSessionType() == SessionType.CORE) {
+			rm.setData(false);
+			rm.done();
+			return;
+		}
+		super.canResume(context, rm);
+	}
+
+	@Override
+	public void canSuspend(IExecutionDMContext context, DataRequestMonitor<Boolean> rm) {
+		if (fGdb.getSessionType() == SessionType.CORE) {
+			rm.setData(false);
+			rm.done();
+			return;
+		}
+		super.canSuspend(context, rm);
+	}
+
+	@Override
 	public void canStep(final IExecutionDMContext context, StepType stepType, final DataRequestMonitor<Boolean> rm) {
+		if (fGdb.getSessionType() == SessionType.CORE) {
+			rm.setData(false);
+			rm.done();
+			return;
+		}
+
     	if (context instanceof IContainerDMContext) {
     		rm.setData(false);
     		rm.done();
@@ -179,6 +210,15 @@ public class GDBRunControl_7_0 extends MIRunControl implements IReverseRunContro
     	}
 
     	if (stepType == StepType.STEP_RETURN) {
+    		
+    		// Check the stuff we know first, before going to the backend for 
+    		// stack info
+    		if (!fReverseModeEnabled || !doCanResume(context)) {
+    	   		rm.setData(false);
+        		rm.done();
+        		return;    			
+    		}
+    		
     		// A step return will always be done in the top stack frame.
     		// If the top stack frame is the only stack frame, it does not make sense
     		// to do a step return since GDB will reject it.

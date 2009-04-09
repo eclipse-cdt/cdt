@@ -39,6 +39,7 @@ import org.eclipse.cdt.dsf.mi.service.command.commands.MIGDBSetAutoSolib;
 import org.eclipse.cdt.dsf.mi.service.command.commands.MIGDBSetNonStop;
 import org.eclipse.cdt.dsf.mi.service.command.commands.MIGDBSetSolibSearchPath;
 import org.eclipse.cdt.dsf.mi.service.command.commands.MITargetSelect;
+import org.eclipse.cdt.dsf.mi.service.command.commands.MITargetSelectCore;
 import org.eclipse.cdt.dsf.mi.service.command.commands.RawCommand;
 import org.eclipse.cdt.dsf.mi.service.command.output.MIInfo;
 import org.eclipse.cdt.dsf.service.DsfServicesTracker;
@@ -47,6 +48,8 @@ import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
+import org.eclipse.debug.core.DebugPlugin;
+import org.eclipse.debug.core.IStatusHandler;
 
 public class FinalLaunchSequence extends Sequence {
 
@@ -298,6 +301,61 @@ public class FinalLaunchSequence extends Sequence {
 
             sourceLookup.setSourceLookupPath(sourceLookupDmc, locator.getSourceContainers(), requestMonitor);
         }},
+    	/*
+    	 * Specify the core file to be debugged if we are launching such a debug session.
+    	 */
+        new Step() {
+       	private String promptForCoreFilePath() throws CoreException {
+       		IStatus promptStatus = new Status(IStatus.INFO, "org.eclipse.debug.ui", 200/*STATUS_HANDLER_PROMPT*/, "", null); //$NON-NLS-1$//$NON-NLS-2$
+       		IStatus filePrompt = new Status(IStatus.INFO, "org.eclipse.cdt.dsf.gdb.ui", 1001, "", null); //$NON-NLS-1$//$NON-NLS-2$
+       		// consult a status handler
+       		IStatusHandler prompter = DebugPlugin.getDefault().getStatusHandler(promptStatus);
+       		if (prompter != null) {
+       			Object result = prompter.handleStatus(filePrompt, null);
+       			if (result instanceof String) {
+       				return (String)result;
+       			}
+       		}
+       		return null;
+       	}
+        @Override
+        public void execute(final RequestMonitor requestMonitor) {
+           	if (fSessionType == SessionType.CORE) {
+           		Exception exception = null;
+           		String coreFile;
+           		try {
+           			coreFile = fLaunch.getLaunchConfiguration().getAttribute(ICDTLaunchConfigurationConstants.ATTR_COREFILE_PATH, ""); //$NON-NLS-1$
+
+           			if (coreFile != null) {
+           				if (coreFile.length() == 0) {
+          					coreFile = promptForCoreFilePath();
+           					if (coreFile == null || coreFile.length()== 0) {
+           		           		requestMonitor.setStatus(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, -1, "Cannot get core file path", exception)); //$NON-NLS-1$
+           		       			requestMonitor.done();
+           						return;
+           					}
+           				}
+           				
+           				fCommandControl.queueCommand(
+       						new MITargetSelectCore(fCommandControl.getContext(), coreFile), 
+       						new DataRequestMonitor<MIInfo>(getExecutor(), requestMonitor) {
+       							@Override
+       							protected void handleSuccess() {
+       								requestMonitor.done();
+       							}
+       						});
+       					return;
+           			}
+           		} catch (CoreException e) {
+           			exception = e;
+           		}		
+
+           		requestMonitor.setStatus(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, -1, "Cannot get core file path", exception)); //$NON-NLS-1$
+       			requestMonitor.done();
+           	} else {
+           		requestMonitor.done();
+           	}
+        }},
         /* 
          * If remote debugging, connect to target.
          */
@@ -429,10 +487,14 @@ public class FinalLaunchSequence extends Sequence {
          */
         new Step() { @Override
         public void execute(final RequestMonitor requestMonitor) {
-            MIBreakpointsManager bpmService = fTracker.getService(MIBreakpointsManager.class);
-       		IBreakpointsTargetDMContext breakpointDmc = (IBreakpointsTargetDMContext)fCommandControl.getContext();
+           	if (fSessionType != SessionType.CORE) {
+           		MIBreakpointsManager bpmService = fTracker.getService(MIBreakpointsManager.class);
+           		IBreakpointsTargetDMContext breakpointDmc = (IBreakpointsTargetDMContext)fCommandControl.getContext();
 
-        	bpmService.startTrackingBreakpoints(breakpointDmc, requestMonitor);
+           		bpmService.startTrackingBreakpoints(breakpointDmc, requestMonitor);
+           	} else {
+           		requestMonitor.done();
+           	}
         }},
         /*
          * Start the program.
@@ -440,7 +502,11 @@ public class FinalLaunchSequence extends Sequence {
         new Step() {
             @Override
             public void execute(final RequestMonitor requestMonitor) {
-            	fCommandControl.start(fLaunch, requestMonitor);
+               	if (fSessionType != SessionType.CORE) {
+               		fCommandControl.start(fLaunch, requestMonitor);
+               	} else {
+               		requestMonitor.done();
+               	}
             }
         },
         /*

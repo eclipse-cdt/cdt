@@ -98,6 +98,8 @@ public class GdbLaunchDelegate extends LaunchConfigurationDelegate
 
         if (sessionType == SessionType.REMOTE) {
             monitor.subTask( "Debugging remote C/C++ application" );     	
+        } else if (sessionType == SessionType.CORE) {
+            monitor.subTask( "Post Mortem Debugging of C/C++ application" ); 
         } else {
             monitor.subTask( "Debugging local C/C++ application" ); 
         }
@@ -161,7 +163,7 @@ public class GdbLaunchDelegate extends LaunchConfigurationDelegate
 
         // Add the CLI and "inferior" process objects to the launch.
         launch.addCLIProcess("gdb"); //$NON-NLS-1$
-        if (!attach) {
+        if (!attach && sessionType != SessionType.CORE) {
         	launch.addInferiorProcess(exePath.lastSegment());
         }
 

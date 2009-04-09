@@ -9,6 +9,7 @@ Require-Bundle: org.eclipse.ui,
  org.eclipse.core.runtime,
  org.eclipse.cdt.core,
  org.eclipse.core.resources
-Eclipse-LazyStart: true
+Bundle-ActivationPolicy: lazy
 Export-Package: org.eclipse.cdt.errorparsers.xlc
 Bundle-Vendor: %providerName
+Bundle-RequiredExecutionEnvironment: J2SE-1.5

@@ -11,3 +11,4 @@ Require-Bundle: org.eclipse.cdt.make.core,
  org.eclipse.core.runtime,
  org.eclipse.cdt.managedbuilder.core
 Export-Package: org.eclipse.cdt.make.xlc.core.scannerconfig
+Bundle-RequiredExecutionEnvironment: J2SE-1.5

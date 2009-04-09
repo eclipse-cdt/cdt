@@ -24,6 +24,15 @@
    <includes
          id="org.eclipse.cdt.platform.source"
          version="0.0.0"/>
+   <includes
+         id="org.eclipse.cdt.gnu.build.source"
+         version="0.0.0"/>
+   <includes
+         id="org.eclipse.cdt.gnu.debug.source"
+         version="0.0.0"/>
+   <includes
+         id="org.eclipse.cdt.gnu.dsf.source"
+         version="0.0.0"/>
 
    <requires>
       <import plugin="org.eclipse.help" version="3.2.0" match="compatible"/>
@@ -43,23 +52,5 @@
          install-size="0"
          version="0.0.0"
          unpack="false"/>
-
-   <plugin
-         id="org.eclipse.cdt.gnu.build.source"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"/>
-
-   <plugin
-         id="org.eclipse.cdt.gnu.debug.source"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"/>
-
-   <plugin
-         id="org.eclipse.cdt.gnu.dsf.source"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"/>
 
 </feature>

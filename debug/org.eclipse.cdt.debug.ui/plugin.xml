@@ -1640,7 +1640,7 @@
    <extension
          point="org.eclipse.debug.ui.sourceContainerPresentations">
       <sourceContainerPresentation
-            browserClass="org.eclipse.cdt.debug.internal.ui.sourcelookup.MappingSourceContainerBrowser"
+            browserClass="org.eclipse.cdt.debug.internal.ui.sourcelookup.NewMappingSourceContainerBrowser"
             containerTypeID="org.eclipse.cdt.debug.core.containerType.mapping"
             icon="icons/obj16/mapping_obj.gif"
             id="org.eclipse.cdt.debug.ui.sourceContainerPresentation.mapping"/>

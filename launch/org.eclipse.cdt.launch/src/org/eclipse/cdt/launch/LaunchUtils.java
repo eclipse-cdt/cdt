@@ -12,6 +12,10 @@ package org.eclipse.cdt.launch;
 
 import java.io.IOException;
 
+import org.eclipse.cdt.core.CCorePlugin;
+import org.eclipse.cdt.core.IBinaryParser;
+import org.eclipse.cdt.core.ICExtensionReference;
+import org.eclipse.cdt.core.IBinaryParser.IBinaryObject;
 import org.eclipse.cdt.debug.core.ICDTLaunchConfigurationConstants;
 import org.eclipse.cdt.utils.CommandLineUtil;
 import org.eclipse.core.resources.IProject;
@@ -22,10 +26,6 @@ import org.eclipse.core.runtime.Path;
 import org.eclipse.core.variables.IStringVariableManager;
 import org.eclipse.core.variables.VariablesPlugin;
 import org.eclipse.debug.core.ILaunchConfiguration;
-import org.eclipse.cdt.core.CCorePlugin;
-import org.eclipse.cdt.core.IBinaryParser;
-import org.eclipse.cdt.core.ICExtensionReference;
-import org.eclipse.cdt.core.IBinaryParser.IBinaryObject;
 
 /**
  * Utility methods.
@@ -51,6 +51,9 @@ public class LaunchUtils {
 		return args;
 	}
 	
+	/**
+	 * @since 6.0
+	 */
 	public static IBinaryObject getBinary(IProject project, IPath exePath) throws CoreException {
 		ICExtensionReference[] parserRef = CCorePlugin.getDefault().getBinaryParserExtensions(project);
 		for (int i = 0; i < parserRef.length; i++) {
@@ -74,6 +77,9 @@ public class LaunchUtils {
 		return null;
 	}
 	
+	/**
+	 * @since 6.0
+	 */
 	public static IBinaryObject getBinary(String programName, String projectName)
 		throws CoreException
 	{

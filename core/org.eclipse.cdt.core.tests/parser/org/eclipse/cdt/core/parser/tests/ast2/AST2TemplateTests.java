@@ -3968,4 +3968,34 @@ public class AST2TemplateTests extends AST2BaseTest {
 		final String code = getAboveComment();
 		parseAndCheckBindings(code, ParserLanguage.CPP);		
 	}
+
+	//	template <int N>
+	//	void S(int (&array)[N]);
+	//
+	//	int a[1];
+	//	void test() {
+	//	  S(a);
+	//	}
+	public void _testFunctionTemplateWithArrayReferenceParameter_269926() throws Exception {
+		final String code = getAboveComment();
+		parseAndCheckBindings(code, ParserLanguage.CPP);		
+	}
+
+	//	template <typename T>
+	//	struct A {};
+	//
+	//	struct B {
+	//	  template <typename T>
+	//	  operator A<T>();
+	//	};
+	//
+	//	void f(A<int> p);
+	//
+	//	void test(B p) {
+	//	  f(p);
+	//	}
+	public void _testTemplateConversionOperator_271948() throws Exception {
+		final String code = getAboveComment();
+		parseAndCheckBindings(code, ParserLanguage.CPP);		
+	}
 }

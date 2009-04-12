@@ -156,11 +156,9 @@ public class CPPFunction extends PlatformObject implements ICPPFunction, ICPPInt
 	    }
 	}
 	
- 
     public IASTNode[] getDeclarations() {
         return declarations;
     }
-
 
     public IASTNode getDefinition() {
         return definition;
@@ -194,7 +192,7 @@ public class CPPFunction extends PlatformObject implements ICPPFunction, ICPPInt
 			}
 		}
 	}
-	
+
 	private ICPPASTFunctionDeclarator extractFunctionDtor(IASTNode node) {
 		if (node instanceof IASTName)
 			node = node.getParent();
@@ -211,7 +209,7 @@ public class CPPFunction extends PlatformObject implements ICPPFunction, ICPPInt
 	    IASTStandardFunctionDeclarator dtor = getPreferredDtor();
 		IASTParameterDeclaration[] params = dtor.getParameters();
 		int size = params.length;
-		IParameter[] result = new IParameter[ size ];
+		IParameter[] result = new IParameter[size];
 		if (size > 0) {
 			for (int i = 0; i < size; i++) {
 				IASTParameterDeclaration p = params[i];
@@ -229,7 +227,6 @@ public class CPPFunction extends PlatformObject implements ICPPFunction, ICPPInt
 		return result;
 	}
 
-
 	public IScope getFunctionScope() {
 	    resolveAllDeclarations();
 	    if (definition != null) {
@@ -239,11 +236,9 @@ public class CPPFunction extends PlatformObject implements ICPPFunction, ICPPInt
 	    return declarations[0].getFunctionScope();
 	}
 
-
 	public String getName() {
 	    return getASTName().toString();
 	}
-
 
 	public char[] getNameCharArray() {
 		return getASTName().getSimpleID();
@@ -255,7 +250,7 @@ public class CPPFunction extends PlatformObject implements ICPPFunction, ICPPInt
 	    IASTName name= dtor.getName();
 	    if (name instanceof ICPPASTQualifiedName) {
 	        IASTName[] ns = ((ICPPASTQualifiedName)name).getNames();
-	        name = ns[ ns.length - 1 ];
+	        name = ns[ns.length - 1];
 	    }
 	    return name;
 	}
@@ -285,7 +280,6 @@ public class CPPFunction extends PlatformObject implements ICPPFunction, ICPPInt
 	    }
 		return scope;
 	}
-
 
     public ICPPFunctionType getType() {
         if (type == null)
@@ -358,7 +352,6 @@ public class CPPFunction extends PlatformObject implements ICPPFunction, ICPPInt
     	}
     }
 
-
     public boolean isStatic() {
         return isStatic(true);
     }
@@ -401,16 +394,13 @@ public class CPPFunction extends PlatformObject implements ICPPFunction, ICPPInt
 //        return false;
 //    }
     
-
     public String[] getQualifiedName() {
         return CPPVisitor.getQualifiedName(this);
     }
 
-
     public char[][] getQualifiedNameCharArray() {
         return CPPVisitor.getQualifiedNameCharArray(this);
     }
-
 
     public boolean isGloballyQualified() throws DOMException {
         IScope scope = getScope();
@@ -543,7 +533,7 @@ public class CPPFunction extends PlatformObject implements ICPPFunction, ICPPInt
 				return IType.EMPTY_TYPE_ARRAY;
 			
 			IType[] typeIds = new IType[astTypeIds.length];
-			for (int i=0; i<astTypeIds.length; ++i) {
+			for (int i= 0; i < astTypeIds.length; ++i) {
 				typeIds[i] = CPPVisitor.createType(astTypeIds[i]);
 			}
 			return typeIds;

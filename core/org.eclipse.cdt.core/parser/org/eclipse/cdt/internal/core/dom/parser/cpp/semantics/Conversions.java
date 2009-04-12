@@ -52,6 +52,7 @@ import org.eclipse.core.runtime.CoreException;
  */
 public class Conversions {
 	enum UDCMode {allowUDC, noUDC, deferUDC}
+
 	/**
 	 * Computes the cost of an implicit conversion sequence
 	 * [over.best.ics] 13.3.3.1
@@ -201,7 +202,7 @@ public class Conversions {
 			return -1;
 		}
 
-		return cv1-cv2;
+		return cv1 - cv2;
 	}
 
 	/** 
@@ -338,10 +339,10 @@ public class Conversions {
 			return c;
 		}
 		
-		//constructors
+		// Constructors
 		if (t instanceof ICPPClassType) {
 			ICPPConstructor[] ctors= ((ICPPClassType) t).getConstructors();
-			// select converting constructors
+			// Select converting constructors
 			int j= 0;
 			ICPPConstructor[] convertingCtors= new ICPPConstructor[ctors.length];
 			for (int i = 0; i < ctors.length; i++) {
@@ -351,23 +352,23 @@ public class Conversions {
 			}
 			if (j > 0) {
 				LookupData data= new LookupData();
-				data.setFunctionArgumentTypes(new IType [] { source });
+				data.setFunctionArgumentTypes(new IType[] { source });
 				IBinding binding = CPPSemantics.resolveFunction(data, convertingCtors, false);
 				if (binding instanceof ICPPConstructor && !(binding instanceof IProblemBinding)) {
 					constructorCost = checkStandardConversionSequence(t, target, false);
 					if (constructorCost.getRank() == Rank.NO_MATCH) {
 						constructorCost= null;
 					} else {
-						constructorCost.setUserDefinedConversion((ICPPConstructor)binding);
+						constructorCost.setUserDefinedConversion((ICPPConstructor) binding);
 					}
 				}
 			}
 		}
 		
-		//conversion operators
+		// Conversion operators
 		boolean ambiguousConversionOperator= false;
 		if (s instanceof ICPPClassType) {
-			ICPPMethod [] ops = SemanticUtil.getConversionOperators((ICPPClassType) s); 
+			ICPPMethod[] ops = SemanticUtil.getConversionOperators((ICPPClassType) s); 
 			if (ops.length > 0 && !(ops[0] instanceof IProblemBinding)) {
 				for (final ICPPMethod op : ops) {
 					Cost cost= checkStandardConversionSequence(op.getType().getReturnType(), target, false);
@@ -455,7 +456,6 @@ public class Conversions {
 		boolean isConverted= false;
 		IType target = getNestedType(cost.target, REF | TDEF);
 		IType source= getNestedType(cost.source, TDEF);
-
 		
 		// 4.1 lvalue to rvalue
 		IType srcRValue= getNestedType(source, REF | TDEF);
@@ -524,7 +524,7 @@ public class Conversions {
 			} 
 		}
 
-		// this should actually be done in 'checkImplicitConversionSequence', see 13.3.3.1-6 and 8.5.14
+		// This should actually be done in 'checkImplicitConversionSequence', see 13.3.3.1-6 and 8.5.14
 		// 8.5.14 cv-qualifiers can be ignored for non-class types
 		IType unqualifiedTarget= getNestedType(target, CVQ | PTR_CVQ | TDEF | REF);
 		if (!(unqualifiedTarget instanceof ICPPClassType)) {
@@ -788,8 +788,8 @@ public class Conversions {
 			if (type instanceof IIndexFragmentBinding) {
 				try {
 					return ((IIndexFragmentBinding) type).hasDefinition();
-				} catch(CoreException ce) {
-					CCorePlugin.log(ce);
+				} catch (CoreException e) {
+					CCorePlugin.log(e);
 				}
 			}
 			try {

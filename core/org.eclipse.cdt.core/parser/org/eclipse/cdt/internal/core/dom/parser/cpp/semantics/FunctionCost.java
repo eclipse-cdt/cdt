@@ -87,9 +87,9 @@ class FunctionCost {
 		// In order for this function to be better than the previous best, it must
 		// have at least one parameter match that is better that the corresponding
 		// match for the other function, and none that are worse.
-		int idx= getLength()-1;
-		int idxOther= other.getLength()-1;
-		for (; idx>=0 && idxOther>=0; idx--,idxOther--) {
+		int idx= getLength() - 1;
+		int idxOther= other.getLength() - 1;
+		for (; idx >= 0 && idxOther >= 0; idx--, idxOther--) {
 			Cost cost= getCost(idx);
 			if (cost.getRank() == Rank.NO_MATCH) {
 				haveWorse = true;
@@ -140,9 +140,9 @@ class FunctionCost {
 			return false;
 		
 		boolean haveWorse= false;
-		int idx= getLength()-1;
-		int idxOther= other.getLength()-1;
-		for (; idx>=0 && idxOther>=0; idx--,idxOther--) {
+		int idx= getLength() - 1;
+		int idxOther= other.getLength() - 1;
+		for (; idx >= 0 && idxOther >= 0; idx--, idxOther--) {
 			Cost cost= getCost(idx);
 			if (cost.getRank() == Rank.NO_MATCH) 
 				return true;

@@ -104,7 +104,7 @@ class PDOMCPPDeferredClassInstance extends PDOMCPPSpecialization implements ICPP
 				return false;
 			
 			return CPPTemplates.haveSameArguments(this, rhs);
-		} 
+		}
 		return false;
 	}
 

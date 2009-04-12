@@ -71,7 +71,7 @@ public class CPPDeferredClassInstance extends CPPUnknownClass implements ICPPDef
 				return false;
 			
 			return CPPTemplates.haveSameArguments(this, rhs);
-		} 
+		}
 		return false;
 	}
 

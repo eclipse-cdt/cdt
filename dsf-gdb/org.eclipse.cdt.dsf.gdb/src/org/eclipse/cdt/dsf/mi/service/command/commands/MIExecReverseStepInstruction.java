@@ -24,6 +24,6 @@ public class MIExecReverseStepInstruction extends MICommand<MIInfo> {
         this(dmc, 1);
     }
     public MIExecReverseStepInstruction(IExecutionDMContext dmc, int count) {
-        super(dmc, "-exec-stepi", new String[] { Integer.toString(count) }); //$NON-NLS-1$
+        super(dmc, "-interpreter-exec", new String[] {"console", "reverse-stepi " + Integer.toString(count) }); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
     }
 }

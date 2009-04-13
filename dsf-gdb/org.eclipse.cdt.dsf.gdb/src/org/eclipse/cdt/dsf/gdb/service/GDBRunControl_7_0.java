@@ -270,30 +270,13 @@ public class GDBRunControl_7_0 extends MIRunControl implements IReverseRunContro
             // as soon as we send a resume command.
             getCache().setContextAvailable(context, false);
 
-            // temporary
-            final MIExecReverseContinue finalcmd = cmd;
-            final IExecutionDMContext finaldmc = context;
-            getConnection().queueCommand(
-            		new RawCommand(finaldmc, "set exec-direction reverse"), //$NON-NLS-1$
-            		new DataRequestMonitor<MIInfo>(getExecutor(), rm) {
-            			@Override
-            			public void handleSuccess() {
-            				getConnection().queueCommand(finalcmd, new DataRequestMonitor<MIInfo>(getExecutor(), rm)  {
-                    			@Override
-                    			public void handleCompleted() {
-                    				if (!isSuccess()) {
-                    			    	setResumePending(false);
-                    			        getCache().setContextAvailable(context, true);
-                    				}
-
-                    	            getConnection().queueCommand(
-                    	            		new RawCommand(finaldmc, "set exec-direction forward"), //$NON-NLS-1$
-                    	            		new DataRequestMonitor<MIInfo>(getExecutor(), rm));
-                    			}
-            				});
-            			}
-            		});
-            // end temporary
+            getConnection().queueCommand(cmd, new DataRequestMonitor<MIInfo>(getExecutor(), rm)  {
+            	@Override
+                public void handleFailure() {
+           			setResumePending(false);
+           			getCache().setContextAvailable(context, true);
+            	}
+            });
         } else {
             rm.setStatus(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, INVALID_STATE, "Given context: " + context + ", is already running or reverse not enabled.", null)); //$NON-NLS-1$ //$NON-NLS-2$
             rm.done();
@@ -359,30 +342,14 @@ public class GDBRunControl_7_0 extends MIRunControl implements IReverseRunContro
         fReverseStepping = true;
         getCache().setContextAvailable(context, false);
 
-        // temporary
-        final MICommand<MIInfo> finalcmd = cmd;
-        final IExecutionDMContext finaldmc = context;
-        getConnection().queueCommand(
-        		new RawCommand(finaldmc, "set exec-direction reverse"), //$NON-NLS-1$
-        		new DataRequestMonitor<MIInfo>(getExecutor(), rm) {
-        			@Override
-        			public void handleSuccess() {
-        				getConnection().queueCommand(finalcmd, new DataRequestMonitor<MIInfo>(getExecutor(), rm)  {
-                			@Override
-                			public void handleCompleted() {
-                				if (!isSuccess()) {
-                			    	setResumePending(false);
-                			        fReverseStepping = false;
-                			        getCache().setContextAvailable(context, true);
-                				}
-                	            getConnection().queueCommand(
-                	            		new RawCommand(finaldmc, "set exec-direction forward"), //$NON-NLS-1$
-                	            		new DataRequestMonitor<MIInfo>(getExecutor(), rm));
-                			}
-        				});
-        			}
-        		});
-        // end temporary
+        getConnection().queueCommand(cmd, new DataRequestMonitor<MIInfo>(getExecutor(), rm)  {
+        	@Override
+        	public void handleFailure() {
+        		setResumePending(false);
+        		fReverseStepping = false;
+        		getCache().setContextAvailable(context, true);
+        	}
+        });
 	}
 
     /** @since 2.0 */

@@ -21,6 +21,6 @@ import org.eclipse.cdt.dsf.mi.service.command.output.MIInfo;
 public class MIExecReverseContinue extends MICommand<MIInfo> {
 
     public MIExecReverseContinue(IExecutionDMContext dmc) {
-        super(dmc, "-exec-continue"); //$NON-NLS-1$
+        super(dmc, "-interpreter-exec", new String[] {"console", "reverse-continue"}); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
     }
 }

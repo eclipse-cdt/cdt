@@ -17,11 +17,11 @@ import org.eclipse.cdt.dsf.mi.service.command.output.MIInfo;
  * Steps backward until the line where the current method
  * was originally called.
  * 
- *  @since 2.0
+ * @since 2.0
  */
 public class MIExecUncall extends MICommand<MIInfo> {
 
     public MIExecUncall(IFrameDMContext dmc) {
-        super(dmc, "-exec-finish"); //$NON-NLS-1$
+        super(dmc, "-interpreter-exec", new String[] {"console", "reverse-finish"}); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
     }
 }

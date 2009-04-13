@@ -25,6 +25,6 @@ public class MIExecReverseNextInstruction extends MICommand<MIInfo> {
     }
 
     public MIExecReverseNextInstruction(IExecutionDMContext dmc, int count) {
-        super(dmc, "-exec-nexti", new String[] { Integer.toString(count) }); //$NON-NLS-1$
+        super(dmc, "-interpreter-exec", new String[] {"console", "reverse-nexti " + Integer.toString(count) }); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
     }
 }

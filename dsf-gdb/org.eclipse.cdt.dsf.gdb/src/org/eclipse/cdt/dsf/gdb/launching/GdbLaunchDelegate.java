@@ -212,7 +212,7 @@ public class GdbLaunchDelegate extends LaunchConfigurationDelegate
 	}
 
 	/**
-	 * Returns the GDB version on the local host. 
+	 * Returns the GDB version. 
 	 * Subclass can override for special need.
      *
 	 * @since 2.0

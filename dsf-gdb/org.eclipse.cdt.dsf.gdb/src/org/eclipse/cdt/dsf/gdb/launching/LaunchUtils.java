@@ -218,7 +218,7 @@ public class LaunchUtils {
 		// GNU gdb 6.8.50.20080730
 		// GNU gdb (GDB) 6.8.50.20080730-cvs
 		// GNU gdb (Ericsson GDB 1.0-10) 6.8.50.20080730-cvs
-		Pattern pattern = Pattern.compile(" gdb( \\(.*\\))? (\\d*(\\.\\d*)*)",  Pattern.MULTILINE); //$NON-NLS-1$
+		Pattern pattern = Pattern.compile(" gdb( \\(.*?\\))? (\\d*(\\.\\d*)*)",  Pattern.MULTILINE); //$NON-NLS-1$
 
 		Matcher matcher = pattern.matcher(versionOutput);
 		if (matcher.find()) {

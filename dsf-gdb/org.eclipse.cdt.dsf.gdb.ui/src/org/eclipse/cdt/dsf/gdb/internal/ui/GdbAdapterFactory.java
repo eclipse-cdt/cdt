@@ -23,7 +23,6 @@ import org.eclipse.cdt.dsf.debug.ui.actions.DsfResumeCommand;
 import org.eclipse.cdt.dsf.debug.ui.actions.DsfStepIntoCommand;
 import org.eclipse.cdt.dsf.debug.ui.actions.DsfStepOverCommand;
 import org.eclipse.cdt.dsf.debug.ui.actions.DsfStepReturnCommand;
-import org.eclipse.cdt.dsf.debug.ui.actions.DsfSteppingModeTarget;
 import org.eclipse.cdt.dsf.debug.ui.actions.DsfSuspendCommand;
 import org.eclipse.cdt.dsf.debug.ui.contexts.DsfSuspendTrigger;
 import org.eclipse.cdt.dsf.debug.ui.sourcelookup.DsfSourceDisplayAdapter;
@@ -45,6 +44,7 @@ import org.eclipse.cdt.dsf.gdb.internal.ui.actions.GdbReverseResumeCommand;
 import org.eclipse.cdt.dsf.gdb.internal.ui.actions.GdbReverseStepIntoCommand;
 import org.eclipse.cdt.dsf.gdb.internal.ui.actions.GdbReverseStepOverCommand;
 import org.eclipse.cdt.dsf.gdb.internal.ui.actions.GdbReverseToggleCommand;
+import org.eclipse.cdt.dsf.gdb.internal.ui.actions.GdbSteppingModeTarget;
 import org.eclipse.cdt.dsf.gdb.internal.ui.actions.GdbUncallCommand;
 import org.eclipse.cdt.dsf.gdb.internal.ui.viewmodel.GdbViewModelAdapter;
 import org.eclipse.cdt.dsf.gdb.launching.GdbLaunch;
@@ -101,7 +101,7 @@ public class GdbAdapterFactory
         final GdbDisconnectCommand fDisconnectCommand;
         final IDebugModelProvider fDebugModelProvider;
         final DsfSuspendTrigger fSuspendTrigger;
-		final DsfSteppingModeTarget fSteppingModeTarget;
+		final GdbSteppingModeTarget fSteppingModeTarget;
 		final IModelSelectionPolicyFactory fModelSelectionPolicyFactory;
 		final SteppingController fSteppingController;
         final DefaultRefreshAllTarget fRefreshAllTarget;
@@ -124,7 +124,7 @@ public class GdbAdapterFactory
             }
             session.registerModelAdapter(ISourceDisplay.class, fSourceDisplayAdapter);
             
-            fSteppingModeTarget= new DsfSteppingModeTarget();
+            fSteppingModeTarget = new GdbSteppingModeTarget(session);
             fStepIntoCommand = new DsfStepIntoCommand(session, fSteppingModeTarget);
             fReverseStepIntoCommand = new GdbReverseStepIntoCommand(session, fSteppingModeTarget);
             fStepOverCommand = new DsfStepOverCommand(session, fSteppingModeTarget);
@@ -206,6 +206,7 @@ public class GdbAdapterFactory
             session.unregisterModelAdapter(IRefreshAllTarget.class);
             session.unregisterModelAdapter(IReverseToggleHandler.class);
             
+            fSteppingModeTarget.dispose();
             fStepIntoCommand.dispose();
             fReverseStepIntoCommand.dispose();
             fStepOverCommand.dispose();

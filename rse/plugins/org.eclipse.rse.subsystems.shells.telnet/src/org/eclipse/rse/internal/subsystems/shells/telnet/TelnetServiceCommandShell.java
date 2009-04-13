@@ -17,6 +17,7 @@
  * Martin Oberhuber (Wind River) - [225510][api] Fix OutputRefreshJob API leakage
  * Anna Dushistova  (MontaVista) - [240523] [rseterminals] Provide a generic adapter factory that adapts any ITerminalService to an IShellService
  * Anna Dushistova  (MontaVista) - [261478] Remove SshShellService, SshHostShell (or deprecate and schedule for removal in 3.2)
+ * David McKnight   (IBM)        - [272032][ssh][telnet][local] shell output not setting line numbers when available
  *******************************************************************************/
 package org.eclipse.rse.internal.subsystems.shells.telnet;
 
@@ -157,6 +158,9 @@ public class TelnetServiceCommandShell extends ServiceCommandShell {
 				else
 				{
 					output.setAbsolutePath(file);
+				}
+				if (parsedMsg.line > 0){
+					output.setLine(parsedMsg.line);
 				}
 			}
 

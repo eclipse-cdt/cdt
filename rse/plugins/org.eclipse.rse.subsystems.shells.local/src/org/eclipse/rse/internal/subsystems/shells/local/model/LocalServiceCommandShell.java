@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2008 IBM Corporation and others.
+ * Copyright (c) 2006, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -13,6 +13,7 @@
  *
  * Contributors:
  * Martin Oberhuber (Wind River) - [225510][api] Fix OutputRefreshJob API leakage
+ * David McKnight   (IBM)        - [272032][ssh][telnet][local] shell output not setting line numbers when available
  *******************************************************************************/
 
 package org.eclipse.rse.internal.subsystems.shells.local.model;
@@ -134,6 +135,9 @@ public class LocalServiceCommandShell extends ServiceCommandShell
 				else
 				{
 					output.setAbsolutePath(_workingDir + File.separatorChar + file);
+				}
+				if (parsedMsg.line > 0){
+					output.setLine(parsedMsg.line);
 				}
 			}
 

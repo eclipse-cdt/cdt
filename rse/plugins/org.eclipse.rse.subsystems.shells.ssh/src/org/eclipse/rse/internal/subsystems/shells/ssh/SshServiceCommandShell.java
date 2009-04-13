@@ -16,6 +16,7 @@
  * Martin Oberhuber (Wind River) - [225510][api] Fix OutputRefreshJob API leakage
  * Anna Dushistova  (MontaVista) - [259414][api] refactor the "SSH Shell" to use the generic Terminal->IHostShell converter
  * Anna Dushistova  (MontaVista) - [261478] Remove SshShellService, SshHostShell (or deprecate and schedule for removal in 3.2)
+ * David McKnight   (IBM)        - [272032][ssh][telnet][local] shell output not setting line numbers when available
  *******************************************************************************/
 
 package org.eclipse.rse.internal.subsystems.shells.ssh;
@@ -146,6 +147,7 @@ public class SshServiceCommandShell extends ServiceCommandShell
 			else  {
 				output = new RemoteOutput(this, type);
 			}
+			
 
 			output.setText(line);
 			if (parsedMsg != null)
@@ -164,6 +166,9 @@ public class SshServiceCommandShell extends ServiceCommandShell
 				else
 				{
 					output.setAbsolutePath(file);
+				}
+				if (parsedMsg.line > 0){
+					output.setLine(parsedMsg.line);
 				}
 			}
 

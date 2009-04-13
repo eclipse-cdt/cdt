@@ -129,7 +129,7 @@ public class GdbLaunchDelegate extends LaunchConfigurationDelegate
     	
         monitor.worked( 1 );
 
-        String gdbVersion = LaunchUtils.getGDBVersion(config);
+        String gdbVersion = getGDBVersion(config);
         
         // First make sure non-stop is supported, if the user want to use this mode
         if (isNonStopSession && !isNonStopSupported(gdbVersion)) {
@@ -209,6 +209,16 @@ public class GdbLaunchDelegate extends LaunchConfigurationDelegate
                 }
             }        
         }
+	}
+
+	/**
+	 * Returns the GDB version on the local host. 
+	 * Subclass can override for special need.
+     *
+	 * @since 2.0
+	 */
+	protected String getGDBVersion(ILaunchConfiguration config) throws CoreException {
+		return LaunchUtils.getGDBVersion(config);
 	}
 
 	/*

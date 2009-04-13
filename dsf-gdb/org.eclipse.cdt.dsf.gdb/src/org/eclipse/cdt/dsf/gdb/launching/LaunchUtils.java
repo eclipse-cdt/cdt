@@ -198,9 +198,43 @@ public class LaunchUtils {
         }
         return retVal;
     }
-    
-	public static String getGDBVersion(final ILaunchConfiguration configuration) throws CoreException {
-        String line, version = "";//$NON-NLS-1$
+
+    /**
+     * Find gdb version info from a string object which is supposed to
+     * contain output text of "gdb --version" command.
+     *   
+     * @param versionOutput 
+     * 		output text from "gdb --version" command .
+     * @return 
+     * 		String representation of version of gdb such as "6.8" on success;
+     *      empty string otherwise.
+     * @since 2.0
+     */
+	public static String getGDBVersionFromText(String versionOutput) {
+        String version = "";//$NON-NLS-1$
+        
+		// These are the GDB version patterns I have seen up to now
+		// The pattern works for all of them extracting the version of 6.8.50.20080730
+		// GNU gdb 6.8.50.20080730
+		// GNU gdb (GDB) 6.8.50.20080730-cvs
+		// GNU gdb (Ericsson GDB 1.0-10) 6.8.50.20080730-cvs
+		Pattern pattern = Pattern.compile(" gdb( \\(.*\\))? (\\d*(\\.\\d*)*)",  Pattern.MULTILINE); //$NON-NLS-1$
+
+		Matcher matcher = pattern.matcher(versionOutput);
+		if (matcher.find()) {
+			version = matcher.group(2);
+			// Temporary for cygwin, until GDB 7 is released
+			// Any cygwin GDB staring with 6.8 should be treated as plain 6.8
+			if (versionOutput.toLowerCase().indexOf("cygwin") != -1 && //$NON-NLS-1$
+					version.startsWith("6.8")) { //$NON-NLS-1$
+				version = "6.8"; //$NON-NLS-1$
+			}
+		}
+
+        return version;
+	}
+	
+	public static String getGDBVersion(final ILaunchConfiguration configuration) throws CoreException {        
         Process process = null;
         String cmd = getGDBPath(configuration).toOSString() + " --version"; //$NON-NLS-1$ 
         try {                        
@@ -209,37 +243,23 @@ public class LaunchUtils {
         	throw new DebugException(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, DebugException.REQUEST_FAILED, 
         			"Error while launching command: " + cmd, e.getCause()));//$NON-NLS-1$
         }
-        
+
+        StringBuilder cmdOutput = new StringBuilder(200);
         try {
         	InputStream stream = process.getInputStream();
         	Reader r = new InputStreamReader(stream);
         	BufferedReader reader = new BufferedReader(r);
         	
-        	// These are the GDB version patterns I have seen up to now
-        	// The pattern works for all of them extracting the version of 6.8.50.20080730
-        	// GNU gdb 6.8.50.20080730
-        	// GNU gdb (GDB) 6.8.50.20080730-cvs
-        	// GNU gdb (Ericsson GDB 1.0-10) 6.8.50.20080730-cvs
-        	Pattern pattern = Pattern.compile(" gdb( \\(.*\\))? (\\d*(\\.\\d*)*)",  Pattern.MULTILINE); //$NON-NLS-1$
-
+        	String line;
         	while ((line = reader.readLine()) != null) {
-        		Matcher matcher = pattern.matcher(line);
-        		if (matcher.find()) {
-        			version = matcher.group(2);
-        			// Temporary for cygwin, until GDB 7 is released
-        			// Any cygwin GDB staring with 6.8 should be treated as plain 6.8
-        			if (line.toLowerCase().indexOf("cygwin") != -1 && //$NON-NLS-1$
-        					version.startsWith("6.8")) { //$NON-NLS-1$
-        				version = "6.8"; //$NON-NLS-1$
-        			}
-        		}
+        		cmdOutput.append(line);
         	}
         } catch (IOException e) {
         	throw new DebugException(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, DebugException.REQUEST_FAILED, 
         			"Error reading GDB STDOUT after sending: " + cmd, e.getCause()));//$NON-NLS-1$
         }
 
-        return version;
+        return getGDBVersionFromText(cmdOutput.toString());
 	}
 	
 	public static boolean getIsAttach(ILaunchConfiguration config) {

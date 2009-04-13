@@ -54,7 +54,7 @@ public class ErrorParserManager extends OutputStream {
 	private ArrayList<ProblemMarkerInfo> fErrors;
 
 	private Vector<IPath> fDirectoryStack;
-	private IPath fBaseDirectory;
+	private final IPath fBaseDirectory;
 
 	private String previousLine;
 	private OutputStream outputStream;
@@ -65,6 +65,7 @@ public class ErrorParserManager extends OutputStream {
 	private boolean hasErrors = false;
 
 	private String cachedFileName = null;
+	private IPath cachedWorkingDirectory = null;
 	private IFile cachedFile = null;
 
 	private static boolean isCygwin = true;
@@ -155,14 +156,10 @@ public class ErrorParserManager extends OutputStream {
 	 */
 	public void pushDirectory(IPath dir) {
 		if (dir != null) {
-			IPath pwd = null;
-			if (fBaseDirectory.isPrefixOf(dir)) {
-				int segments = fBaseDirectory.matchingFirstSegments(dir);
-				pwd = dir.removeFirstSegments(segments);
-			} else {
-				pwd = dir;
-			}
-			fDirectoryStack.addElement(pwd);
+			if (dir.isAbsolute())
+				fDirectoryStack.addElement(dir);
+			else
+				fDirectoryStack.addElement(getWorkingDirectory().append(dir));
 		}
 	}
 
@@ -266,7 +263,7 @@ public class ErrorParserManager extends OutputStream {
 	 * @return - file in the workspace or {@code null}.
 	 */
 	public IFile findFileName(String fileName) {
-		if (fileName.equals(cachedFileName))
+		if (fileName.equals(cachedFileName) && getWorkingDirectory().equals(cachedWorkingDirectory))
 			return cachedFile;
 
 		IPath path = new Path(fileName);
@@ -290,6 +287,7 @@ public class ErrorParserManager extends OutputStream {
 		}
 
 		cachedFileName = fileName;
+		cachedWorkingDirectory = getWorkingDirectory();
 		cachedFile = file;
 		return file;
 	}
@@ -430,7 +428,6 @@ public class ErrorParserManager extends OutputStream {
 		if (nOpens > 0 && --nOpens == 0) {
 			checkLine(true);
 			fDirectoryStack.removeAllElements();
-			fBaseDirectory = null;
 			if (outputStream != null)
 				outputStream.close();
 		}

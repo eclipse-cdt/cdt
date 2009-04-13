@@ -28,6 +28,7 @@ import org.eclipse.cdt.core.errorparsers.ErrorPattern;
 import org.eclipse.cdt.core.testplugin.CTestPlugin;
 import org.eclipse.core.internal.registry.ExtensionRegistry;
 import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.ResourcesPlugin;
@@ -1119,6 +1120,121 @@ public class ErrorParserFileMatchingTest extends TestCase {
 		assertEquals("L/FindMatchingFilesTest/Folder/testAbsoluteFileVsLink.c",problemMarkerInfo.file.toString());
 		assertEquals(1,problemMarkerInfo.lineNumber);
 		assertEquals("error",problemMarkerInfo.description);
+	}
+
+	/**
+	 * Checks if a file from error output can be found.
+	 *
+	 * @throws Exception...
+	 */
+	public void testPushDirectory() throws Exception {
+		String fileName = "testPushDirectory.c";
+		ResourceHelper.createFolder(fProject, "Folder");
+		ResourceHelper.createFile(fProject, fileName);
+		ResourceHelper.createFile(fProject, "Folder/"+fileName);
+
+		String lines = "make[0]: Entering directory `Folder'\n"
+			+ fileName+":1:error\n";
+
+		String[] errorParsers = {MAKE_ERRORPARSER_ID, mockErrorParserId };
+		parseOutput(fProject, fProject.getLocation(), errorParsers, lines);
+		assertEquals(1, errorList.size());
+
+		ProblemMarkerInfo problemMarkerInfo = errorList.get(0);
+		assertEquals("L/FindMatchingFilesTest/Folder/"+fileName,problemMarkerInfo.file.toString());
+		assertEquals(1,problemMarkerInfo.lineNumber);
+		assertEquals("error",problemMarkerInfo.description);
+	}
+
+	/**
+	 * Checks if a file from error output can be found.
+	 *
+	 * @throws Exception...
+	 */
+	public void testPushAbsoluteDirectory() throws Exception {
+		String fileName = "testPushAbsoluteDirectory.c";
+		IFolder folder = ResourceHelper.createFolder(fProject, "Folder");
+		ResourceHelper.createFile(fProject, fileName);
+		ResourceHelper.createFile(fProject, "Folder/"+fileName);
+
+		IPath absoluteDir = folder.getLocation();
+		Assert.assertTrue(absoluteDir.isAbsolute());
+
+		String lines = "make[0]: Entering directory `" + absoluteDir + "'\n"
+			+ fileName+":1:error\n";
+
+		String[] errorParsers = {MAKE_ERRORPARSER_ID, mockErrorParserId };
+		parseOutput(fProject, fProject.getLocation(), errorParsers, lines);
+		assertEquals(1, errorList.size());
+
+		ProblemMarkerInfo problemMarkerInfo = errorList.get(0);
+		assertEquals("L/FindMatchingFilesTest/Folder/"+fileName,problemMarkerInfo.file.toString());
+		assertEquals(1,problemMarkerInfo.lineNumber);
+		assertEquals("error",problemMarkerInfo.description);
+	}
+
+	/**
+	 * Checks if a file from error output can be found.
+	 *
+	 * @throws Exception...
+	 */
+	public void testPopDirectory() throws Exception {
+		String fileName = "testPopDirectory.c";
+
+		ResourceHelper.createFolder(fProject, "Folder");
+		ResourceHelper.createFolder(fProject, "Folder/SubFolder");
+
+		ResourceHelper.createFile(fProject, fileName);
+		ResourceHelper.createFile(fProject, "Folder/"+fileName);
+		ResourceHelper.createFile(fProject, "Folder/SubFolder/"+fileName);
+
+		String lines = "make[1]: Entering directory `Folder'\n"
+			+ "make[2]: Entering directory `SubFolder'\n"
+			+ "make[2]: Leaving directory `SubFolder'\n"
+			+ fileName+":1:error\n";
+
+		String[] errorParsers = {MAKE_ERRORPARSER_ID, mockErrorParserId };
+		parseOutput(fProject, fProject.getLocation(), errorParsers, lines);
+		assertEquals(1, errorList.size());
+
+		ProblemMarkerInfo problemMarkerInfo = errorList.get(0);
+		assertEquals("L/FindMatchingFilesTest/Folder/"+fileName,problemMarkerInfo.file.toString());
+		assertEquals(1,problemMarkerInfo.lineNumber);
+		assertEquals("error",problemMarkerInfo.description);
+	}
+
+	/**
+	 * Checks if a file from error output can be found.
+	 *
+	 * @throws Exception...
+	 */
+	public void testPushDirectoryAndCache() throws Exception {
+		String fileName = "testPushDirectoryCacheProblem.c";
+		ResourceHelper.createFolder(fProject, "Folder");
+		ResourceHelper.createFile(fProject, fileName);
+		ResourceHelper.createFile(fProject, "Folder/"+fileName);
+
+		String lines = fileName+":1:error\n"
+			+ "make[0]: Entering directory `Folder'\n"
+			+ fileName+":1:error\n";
+
+		String[] errorParsers = {MAKE_ERRORPARSER_ID, mockErrorParserId };
+		parseOutput(fProject, fProject.getLocation(), errorParsers, lines);
+		assertEquals(2, errorList.size());
+
+		{
+			ProblemMarkerInfo problemMarkerInfo = errorList.get(0);
+			assertEquals("L/FindMatchingFilesTest/"+fileName,problemMarkerInfo.file.toString());
+			assertEquals(1,problemMarkerInfo.lineNumber);
+			assertEquals("error",problemMarkerInfo.description);
+		}
+
+		{
+			ProblemMarkerInfo problemMarkerInfo = errorList.get(1);
+			assertEquals("L/FindMatchingFilesTest/Folder/"+fileName,problemMarkerInfo.file.toString());
+			assertEquals(1,problemMarkerInfo.lineNumber);
+			assertEquals("error",problemMarkerInfo.description);
+		}
 	}
 
 }

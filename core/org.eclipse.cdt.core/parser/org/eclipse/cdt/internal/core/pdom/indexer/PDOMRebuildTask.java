@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2008 Wind River Systems, Inc. and others.
+ * Copyright (c) 2007, 2009 Wind River Systems, Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -101,7 +101,9 @@ public class PDOMRebuildTask implements IPDOMIndexerTask {
 	}
 
 	private void createDelegate(ICProject project, IProgressMonitor monitor) throws CoreException {
-		boolean allFiles= TRUE.equals(fIndexer.getProperty(IndexerPreferences.KEY_INDEX_ALL_FILES));
+		boolean allFiles = 
+			TRUE.equals(fIndexer.getProperty(IndexerPreferences.KEY_INDEX_UNUSED_HEADERS_WITH_DEFAULT_LANG)) || 
+			TRUE.equals(fIndexer.getProperty(IndexerPreferences.KEY_INDEX_UNUSED_HEADERS_WITH_ALTERNATE_LANG));
 		List<ITranslationUnit> sources= new ArrayList<ITranslationUnit>();
 		List<ITranslationUnit> headers= allFiles ? sources : null;
 		TranslationUnitCollector collector= new TranslationUnitCollector(sources, headers, monitor);

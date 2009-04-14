@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2008 Wind River Systems, Inc. and others.
+ * Copyright (c) 2007, 2009 Wind River Systems, Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -79,7 +79,7 @@ import org.eclipse.cdt.core.model.ITranslationUnit;
 import org.eclipse.cdt.core.model.IWorkingCopy;
 import org.eclipse.cdt.ui.CUIPlugin;
 
-import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPVisitor;
+import org.eclipse.cdt.internal.core.dom.parser.ASTQueries;
 import org.eclipse.cdt.internal.core.model.ASTCache.ASTRunnable;
 import org.eclipse.cdt.internal.core.model.ext.CElementHandleFactory;
 import org.eclipse.cdt.internal.core.model.ext.ICElementHandle;
@@ -429,7 +429,7 @@ public class IndexUI {
 								node= ((IASTFunctionDefinition) node).getDeclarator();
 							}
 							if (node instanceof IASTDeclarator) {
-								IASTDeclarator dtor= CPPVisitor.findTypeRelevantDeclarator((IASTDeclarator) node);
+								IASTDeclarator dtor= ASTQueries.findTypeRelevantDeclarator((IASTDeclarator) node);
 								name= dtor.getName();
 							}
 						}
@@ -457,9 +457,11 @@ public class IndexUI {
 		IResource res= tu.getResource();
 		if (res != null) {
 			Properties props= IndexerPreferences.getProperties(res.getProject());
-			if (props == null || !"true".equals(props.get(IndexerPreferences.KEY_INDEX_ALL_FILES))) { //$NON-NLS-1$
+			if (props == null || !"true".equals(props.get(IndexerPreferences.KEY_INDEX_ALL_FILES)) || //$NON-NLS-1$
+					(!"true".equals(props.get(IndexerPreferences.KEY_INDEX_UNUSED_HEADERS_WITH_DEFAULT_LANG)) && //$NON-NLS-1$
+					 !"true".equals(props.get(IndexerPreferences.KEY_INDEX_UNUSED_HEADERS_WITH_ALTERNATE_LANG)))) { //$NON-NLS-1$
 				msg= msg+ " " + Messages.IndexUI_infoSelectIndexAllFiles; //$NON-NLS-1$
-			}
+			} 
 		}
 		return msg;
 	}

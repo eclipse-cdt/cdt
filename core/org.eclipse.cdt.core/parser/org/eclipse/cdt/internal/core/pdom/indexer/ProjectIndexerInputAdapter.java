@@ -24,6 +24,7 @@ import org.eclipse.cdt.core.model.CoreModelUtil;
 import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.core.model.ILanguage;
 import org.eclipse.cdt.core.model.ITranslationUnit;
+import org.eclipse.cdt.core.model.LanguageManager;
 import org.eclipse.cdt.core.parser.CodeReader;
 import org.eclipse.cdt.core.parser.IScannerInfo;
 import org.eclipse.cdt.core.parser.ScannerInfo;
@@ -43,6 +44,8 @@ public class ProjectIndexerInputAdapter extends IndexerInputAdapter {
 	private final ICProject fCProject;
 	private final HashMap<String, IIndexFileLocation> fIflCache;
 	private final FileExistsCache fExistsCache;
+	private AbstractLanguage fLangC;
+	private AbstractLanguage fLangCpp;
 
 	public ProjectIndexerInputAdapter(ICProject cproject) {
 		this(cproject, true);
@@ -53,10 +56,17 @@ public class ProjectIndexerInputAdapter extends IndexerInputAdapter {
 		if (useCache) {
 			fIflCache= new HashMap<String, IIndexFileLocation>();
 			fExistsCache= new FileExistsCache();
-		}
-		else {
+		} else {
 			fIflCache= null;
 			fExistsCache= null;
+		}
+		ILanguage l= LanguageManager.getInstance().getLanguageForContentTypeID(CCorePlugin.CONTENT_TYPE_CHEADER);
+		if (l instanceof AbstractLanguage) {
+			fLangC= (AbstractLanguage) l;
+		}
+		l= LanguageManager.getInstance().getLanguageForContentTypeID(CCorePlugin.CONTENT_TYPE_CXXHEADER);
+		if (l instanceof AbstractLanguage) {
+			fLangCpp= (AbstractLanguage) l;
 		}
 	}
 
@@ -151,11 +161,22 @@ public class ProjectIndexerInputAdapter extends IndexerInputAdapter {
 
 	
 	@Override
-	public AbstractLanguage[] getLanguages(Object tuo) {
+	public AbstractLanguage[] getLanguages(Object tuo, boolean bothForHeaders) {
 		ITranslationUnit tu= (ITranslationUnit) tuo;
 		try {
 			ILanguage lang= tu.getLanguage();
 			if (lang instanceof AbstractLanguage) {
+				if (bothForHeaders && tu.isHeaderUnit()) {
+					String filename= tu.getElementName();
+					if (filename.indexOf('.') >= 0) {
+						final String contentTypeId= tu.getContentTypeId();
+						if (contentTypeId.equals(CCorePlugin.CONTENT_TYPE_CXXHEADER) && fLangC != null) {
+							return new AbstractLanguage[] {(AbstractLanguage) lang, fLangC};
+						} else if (contentTypeId.equals(CCorePlugin.CONTENT_TYPE_CHEADER) && fLangCpp != null) {
+							return new AbstractLanguage[] {(AbstractLanguage) lang, fLangCpp};
+						}
+					}
+				}
 				return new AbstractLanguage[] {(AbstractLanguage) lang};
 			}
 		}

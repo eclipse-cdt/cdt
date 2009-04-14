@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2008 Wind River Systems, Inc. and others.
+ * Copyright (c) 2006, 2009 Wind River Systems, Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -9,10 +9,8 @@
  *    Markus Schorn - initial API and implementation
  *	  IBM Corporation
  *******************************************************************************/ 
-
 package org.eclipse.cdt.internal.core.indexer;
 
-import com.ibm.icu.text.MessageFormat;
 import java.text.NumberFormat;
 import java.util.Collection;
 import java.util.Iterator;
@@ -28,6 +26,8 @@ import org.eclipse.cdt.internal.core.pdom.IndexerProgress;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
+
+import com.ibm.icu.text.MessageFormat;
 
 /**
  * A task for index updates.
@@ -58,11 +58,11 @@ public abstract class StandaloneIndexerTask extends AbstractIndexerTask {
 		
 		if (getIndexAllFiles()) {
 			setIndexFilesWithoutBuildConfiguration(true);
-			setIndexHeadersWithoutContext(true);
+			setIndexHeadersWithoutContext(UnusedHeaderStrategy.useDefaultLanguage);
 		}
 		else {
 			setIndexFilesWithoutBuildConfiguration(false);
-			setIndexHeadersWithoutContext(false);
+			setIndexHeadersWithoutContext(UnusedHeaderStrategy.skip);
 		}
 	}
 	

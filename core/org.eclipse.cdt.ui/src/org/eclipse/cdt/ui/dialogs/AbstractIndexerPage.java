@@ -25,6 +25,7 @@ import org.eclipse.swt.widgets.Text;
 
 import org.eclipse.cdt.utils.ui.controls.ControlFactory;
 
+import org.eclipse.cdt.internal.core.model.CProject;
 import org.eclipse.cdt.internal.core.pdom.indexer.IndexerPreferences;
 
 
@@ -35,7 +36,9 @@ public abstract class AbstractIndexerPage extends AbstractCOptionPage {
 	protected static final String INDEX_ALL_FILES = DialogsMessages.AbstractIndexerPage_indexAllFiles;
 	protected static final String TRUE = String.valueOf(true);
 
-	private Button fAllFiles;
+	private Button fAllSources;
+	private Button fAllHeadersDefault;
+	private Button fAllHeadersAlt;
 	private Button fIncludeHeuristics;
 	private Text fFilesToParseUpFront;
 	private Button fSkipReferences;
@@ -58,7 +61,14 @@ public abstract class AbstractIndexerPage extends AbstractCOptionPage {
 	@Override
 	public void createControl(Composite parent) {
 		Composite page = ControlFactory.createComposite(parent, 1);
-		fAllFiles= createAllFilesButton(page);
+		fAllSources= createAllFilesButton(page);
+		IProject prj= getCurrentProject();
+		if (prj == null || !CProject.hasCCNature(prj)) {
+			fAllHeadersDefault= createAllHeadersButton(page);
+		} else {
+			fAllHeadersDefault= createAllCppHeadersButton(page);
+			fAllHeadersAlt= createAllCHeadersButton(page);
+		}
 		fIncludeHeuristics= createIncludeHeuristicsButton(page);
 		fSkipReferences= createSkipReferencesButton(page);
 		fSkipImplicitReferences= createSkipImplicitReferencesButton(page);
@@ -66,12 +76,14 @@ public abstract class AbstractIndexerPage extends AbstractCOptionPage {
 		fSkipMacroReferences= createSkipMacroReferencesButton(page);
 		fFilesToParseUpFront= createParseUpFrontTextField(page);
 		
-		fSkipReferences.addSelectionListener(new SelectionAdapter() {
+		final SelectionAdapter selectionListener = new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
 				updateEnablement();
 			}
-		});
+		};
+		fSkipReferences.addSelectionListener(selectionListener);
+		fAllSources.addSelectionListener(selectionListener);
 		setControl(page);
 	}
 
@@ -81,9 +93,17 @@ public abstract class AbstractIndexerPage extends AbstractCOptionPage {
 	 * @since 4.0
 	 */
 	public void setProperties(Properties properties) {
-		if (fAllFiles != null) {
+		if (fAllSources != null) {
 			boolean indexAllFiles= TRUE.equals(properties.get(IndexerPreferences.KEY_INDEX_ALL_FILES));
-			fAllFiles.setSelection(indexAllFiles);
+			fAllSources.setSelection(indexAllFiles);
+		}
+		if (fAllHeadersDefault != null) {
+			boolean indexAllFiles= TRUE.equals(properties.get(IndexerPreferences.KEY_INDEX_UNUSED_HEADERS_WITH_DEFAULT_LANG));
+			fAllHeadersDefault.setSelection(indexAllFiles);
+		}
+		if (fAllHeadersAlt != null) {
+			boolean indexAllFiles= TRUE.equals(properties.get(IndexerPreferences.KEY_INDEX_UNUSED_HEADERS_WITH_ALTERNATE_LANG));
+			fAllHeadersAlt.setSelection(indexAllFiles);
 		}
 		if (fIncludeHeuristics != null) {
 			Object prop= properties.get(IndexerPreferences.KEY_INCLUDE_HEURISTICS);
@@ -119,8 +139,14 @@ public abstract class AbstractIndexerPage extends AbstractCOptionPage {
 	 */
 	public Properties getProperties(){
 		Properties props= new Properties();
-		if (fAllFiles != null) {
-			props.put(IndexerPreferences.KEY_INDEX_ALL_FILES, String.valueOf(fAllFiles.getSelection()));
+		if (fAllSources != null) {
+			props.put(IndexerPreferences.KEY_INDEX_ALL_FILES, String.valueOf(fAllSources.getSelection()));
+		}
+		if (fAllHeadersDefault != null) {
+			props.put(IndexerPreferences.KEY_INDEX_UNUSED_HEADERS_WITH_DEFAULT_LANG, String.valueOf(fAllHeadersDefault.getSelection()));
+		}
+		if (fAllHeadersAlt != null) {
+			props.put(IndexerPreferences.KEY_INDEX_UNUSED_HEADERS_WITH_ALTERNATE_LANG, String.valueOf(fAllHeadersAlt.getSelection()));
 		}
 		if (fIncludeHeuristics != null) {
 			props.put(IndexerPreferences.KEY_INCLUDE_HEURISTICS, String.valueOf(fIncludeHeuristics.getSelection()));
@@ -172,6 +198,15 @@ public abstract class AbstractIndexerPage extends AbstractCOptionPage {
 				fSkipMacroReferences.setEnabled(!skipReferences);
 			}
 		}
+		if (fAllSources != null) {
+			final boolean all= fAllSources.getSelection();
+			if (fAllHeadersDefault != null) {
+				fAllHeadersDefault.setEnabled(all);
+			}
+			if (fAllHeadersAlt != null) {
+				fAllHeadersAlt.setEnabled(all);
+			}
+		}
 	}
 	
 	private String getNotNull(Properties properties, String key) {
@@ -189,7 +224,19 @@ public abstract class AbstractIndexerPage extends AbstractCOptionPage {
 	} 
 
 	private Button createAllFilesButton(Composite page) {
-		return ControlFactory.createCheckBox(page, INDEX_ALL_FILES);
+		return ControlFactory.createCheckBox(page, DialogsMessages.AbstractIndexerPage_indexAllFiles);
+	}
+
+	private Button createAllHeadersButton(Composite page) {
+		return ControlFactory.createCheckBox(page, DialogsMessages.AbstractIndexerPage_indexAllHeaders);
+	}
+
+	private Button createAllCHeadersButton(Composite page) {
+		return ControlFactory.createCheckBox(page, DialogsMessages.AbstractIndexerPage_indexAllHeadersC);
+	}
+
+	private Button createAllCppHeadersButton(Composite page) {
+		return ControlFactory.createCheckBox(page, DialogsMessages.AbstractIndexerPage_indexAllHeadersCpp);
 	}
 
 	private Button createIncludeHeuristicsButton(Composite page) {

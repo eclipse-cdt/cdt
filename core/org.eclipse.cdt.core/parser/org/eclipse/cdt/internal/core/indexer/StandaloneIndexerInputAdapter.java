@@ -132,7 +132,7 @@ public class StandaloneIndexerInputAdapter extends IndexerInputAdapter {
 	}
 
 	@Override
-	public AbstractLanguage[] getLanguages(Object tu) {
+	public AbstractLanguage[] getLanguages(Object tu, boolean bothForHeaders) {
 		ILanguage language = fIndexer.getLanguageMapper().getLanguage((String) tu);
 		if (language instanceof AbstractLanguage) {
 			return new AbstractLanguage[] {(AbstractLanguage) language};

@@ -6,7 +6,7 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *     QNX - Initial API and implementation
+ *     Doug Schaefer (QNX) - Initial API and implementation
  *     Markus Schorn (Wind River Systems)
  *     Andrew Ferguson (Symbian)
  *     Sergey Prigogin (Google)
@@ -21,7 +21,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.nio.channels.FileChannel;
-import com.ibm.icu.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -32,6 +31,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
+
+import com.ibm.icu.text.MessageFormat;
 
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.CCorePreferenceConstants;
@@ -73,6 +74,7 @@ import org.eclipse.cdt.internal.core.pdom.PDOM.IListener;
 import org.eclipse.cdt.internal.core.pdom.db.ChunkCache;
 import org.eclipse.cdt.internal.core.pdom.dom.IPDOMLinkageFactory;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMProjectIndexLocationConverter;
+import org.eclipse.cdt.internal.core.pdom.indexer.AbstractPDOMIndexer;
 import org.eclipse.cdt.internal.core.pdom.indexer.IndexerPreferences;
 import org.eclipse.cdt.internal.core.pdom.indexer.PDOMNullIndexer;
 import org.eclipse.cdt.internal.core.pdom.indexer.PDOMRebuildTask;
@@ -113,8 +115,6 @@ import org.eclipse.core.runtime.preferences.IEclipsePreferences.PreferenceChange
  * The PDOM Provider. This is likely temporary since I hope
  * to integrate the PDOM directly into the core once it has
  * stabilized.
- * 
- * @author Doug Schaefer
  */
 public class PDOMManager implements IWritableIndexManager, IListener {
 	private static final class PerInstanceSchedulingRule implements ISchedulingRule {
@@ -483,6 +483,12 @@ public class PDOMManager implements IWritableIndexManager, IListener {
 				IPDOMIndexer indexer= createIndexer(cproject, newid, props);
 				registerIndexer(cproject, indexer);
 				createPolicy(cproject).clearTUs();
+				if (oldIndexer instanceof AbstractPDOMIndexer) {
+					if (IndexerPreferences.preferDefaultLanguage(((AbstractPDOMIndexer) oldIndexer).getProperties()) !=
+						IndexerPreferences.preferDefaultLanguage(props)) {
+						enqueue(new NotifyCModelManagerTask(cproject.getProject()));
+					}
+				}
 				enqueue(new PDOMRebuildTask(indexer));
 			}
 		}

@@ -61,6 +61,10 @@ import org.eclipse.osgi.util.NLS;
  * @since 5.0
  */
 public abstract class AbstractIndexerTask extends PDOMWriter {
+	protected static enum UnusedHeaderStrategy {
+		skip, useDefaultLanguage, useAlternateLanguage, useBoth
+	}
+
 	private static final int MAX_ERRORS = 500;
 	
 	private static class FileKey {
@@ -157,7 +161,7 @@ public abstract class AbstractIndexerTask extends PDOMWriter {
 	protected enum MessageKind {parsingFileTask, errorWhileParsing, tooManyIndexProblems}
 	
 	private int fUpdateFlags= IIndexManager.UPDATE_ALL;
-	private boolean fIndexHeadersWithoutContext= true;
+	private UnusedHeaderStrategy fIndexHeadersWithoutContext= UnusedHeaderStrategy.useDefaultLanguage;
 	private boolean fIndexFilesWithoutConfiguration= true;
 	private HashMap<FileKey, FileContent> fFileInfos= new HashMap<FileKey, FileContent>();
 
@@ -180,11 +184,17 @@ public abstract class AbstractIndexerTask extends PDOMWriter {
 		updateRequestedFiles(fFilesToUpdate.length + fFilesToRemove.size());
 	}
 	
-	public final void setIndexHeadersWithoutContext(boolean val) {
-		fIndexHeadersWithoutContext= val;
+	public final void setIndexHeadersWithoutContext(UnusedHeaderStrategy mode) {
+		fIndexHeadersWithoutContext= mode;
 	}
 	public final void setIndexFilesWithoutBuildConfiguration(boolean val) {
 		fIndexFilesWithoutConfiguration= val;
+	}
+	public UnusedHeaderStrategy getIndexHeadersWithoutContext() {
+		return fIndexHeadersWithoutContext;
+	}
+	public boolean indexFilesWithoutConfiguration() {
+		return fIndexFilesWithoutConfiguration;
 	}
 	public final void setUpdateFlags(int flags) {
 		fUpdateFlags= flags;
@@ -271,7 +281,7 @@ public abstract class AbstractIndexerTask extends PDOMWriter {
 
 	public final void runTask(IProgressMonitor monitor) throws InterruptedException {
 		if (!fIndexFilesWithoutConfiguration) {
-			fIndexHeadersWithoutContext= false;
+			fIndexHeadersWithoutContext= UnusedHeaderStrategy.skip;
 		}
 		
 		fIndex= createIndex();
@@ -334,9 +344,9 @@ public abstract class AbstractIndexerTask extends PDOMWriter {
 			final boolean isExcludedSource= isSourceUnit && !fIndexFilesWithoutConfiguration && !fResolver.isFileBuildConfigured(tu);
 			final IIndexFragmentFile[] indexFiles= fIndex.getWritableFiles(ifl);
 			
-			if ((isSourceUnit && !isExcludedSource) || fIndexHeadersWithoutContext) {
+			if ((isSourceUnit && !isExcludedSource) || fIndexHeadersWithoutContext != UnusedHeaderStrategy.skip) {
 				// headers or sources required with a specific linkage
-				AbstractLanguage[] langs= fResolver.getLanguages(tu);
+				AbstractLanguage[] langs= fResolver.getLanguages(tu, fIndexHeadersWithoutContext==UnusedHeaderStrategy.useBoth);
 				for (AbstractLanguage lang : langs) {
 					int linkageID = lang.getLinkageID();
 					IIndexFragmentFile ifile= getFile(linkageID, indexFiles);
@@ -641,7 +651,7 @@ public abstract class AbstractIndexerTask extends PDOMWriter {
 	private void parseFile(Object tu, int linkageID, IIndexFileLocation ifl, IScannerInfo scanInfo,
 			IProgressMonitor pm) throws CoreException, InterruptedException {
 		IPath path= getPathForLabel(ifl);
-		AbstractLanguage[] langs= fResolver.getLanguages(tu);
+		AbstractLanguage[] langs= fResolver.getLanguages(tu, fIndexHeadersWithoutContext==UnusedHeaderStrategy.useBoth);
 		AbstractLanguage lang= null;
 		for (AbstractLanguage lang2 : langs) {
 			if (lang2.getLinkageID() == linkageID) {

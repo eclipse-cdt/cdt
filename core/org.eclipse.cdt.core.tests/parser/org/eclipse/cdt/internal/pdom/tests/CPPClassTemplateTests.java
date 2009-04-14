@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2008 Symbian Software Systems and others.
+ * Copyright (c) 2007, 2009 Symbian Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -64,7 +64,6 @@ public class CPPClassTemplateTests extends PDOMTestBase {
 		for(int i=0; i<contents.length; i++) {
 			IFile file= TestSourceReader.createFile(cproject.getProject(), new Path("refs.cpp"), contents[i].toString());
 		}
-		IndexerPreferences.set(cproject.getProject(), IndexerPreferences.KEY_INDEX_ALL_FILES, "true");
 		IndexerPreferences.set(cproject.getProject(), IndexerPreferences.KEY_INDEXER_ID, IPDOMManager.ID_FAST_INDEXER);
 		for(int i=0; i<5 && !CCoreInternals.getPDOMManager().isProjectRegistered(cproject); i++) {
 			Thread.sleep(200);

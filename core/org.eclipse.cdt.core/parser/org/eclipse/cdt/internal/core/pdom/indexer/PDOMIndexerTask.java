@@ -14,6 +14,8 @@ package org.eclipse.cdt.internal.core.pdom.indexer;
 import java.util.Calendar;
 import java.util.Map;
 
+import com.ibm.icu.text.NumberFormat;
+
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.dom.ILinkage;
 import org.eclipse.cdt.core.dom.IPDOMIndexer;
@@ -43,8 +45,6 @@ import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.content.IContentType;
 import org.eclipse.osgi.util.NLS;
-
-import com.ibm.icu.text.NumberFormat;
 
 /**
  * Configures the abstract indexer task suitable for indexing projects.
@@ -82,13 +82,20 @@ public abstract class PDOMIndexerTask extends AbstractIndexerTask implements IPD
 				setSkipReferences(skipRefs);
 			}
 		}
-		if (getIndexAllFiles()) {
+		if (checkProperty(IndexerPreferences.KEY_INDEX_ALL_FILES)) {
 			setIndexFilesWithoutBuildConfiguration(true);
-			setIndexHeadersWithoutContext(true);
-		}
-		else {
+			boolean i1= checkProperty(IndexerPreferences.KEY_INDEX_UNUSED_HEADERS_WITH_DEFAULT_LANG);
+			boolean i2= checkProperty(IndexerPreferences.KEY_INDEX_UNUSED_HEADERS_WITH_ALTERNATE_LANG);
+			UnusedHeaderStrategy strategy;
+			if (i1) {
+				strategy= i2 ? UnusedHeaderStrategy.useBoth : UnusedHeaderStrategy.useDefaultLanguage;
+			} else {
+				strategy= i2 ? UnusedHeaderStrategy.useAlternateLanguage: UnusedHeaderStrategy.skip;
+			}
+			setIndexHeadersWithoutContext(strategy);
+		} else {
 			setIndexFilesWithoutBuildConfiguration(false);
-			setIndexHeadersWithoutContext(false);
+			setIndexHeadersWithoutContext(UnusedHeaderStrategy.skip);
 		}
 		setUpdateFlags(IIndexManager.UPDATE_CHECK_TIMESTAMPS);
 		setForceFirstFiles(forceFiles.length);
@@ -125,10 +132,6 @@ public abstract class PDOMIndexerTask extends AbstractIndexerTask implements IPD
 		String trace= Platform.getDebugOption(option); 
 		boolean internallyActivated= Boolean.getBoolean(option);
 		return internallyActivated || (trace != null && trace.equalsIgnoreCase(value));
-	}
-
-	private boolean getIndexAllFiles() {
-		return checkProperty(IndexerPreferences.KEY_INDEX_ALL_FILES);
 	}
 
 	private boolean checkProperty(String key) {
@@ -253,14 +256,14 @@ public abstract class PDOMIndexerTask extends AbstractIndexerTask implements IPD
 			System.out.println("C/C++ Indexer: Project '" + getProject().getElementName()     //$NON-NLS-1$
 					+ "' (" + info.fCompletedSources + " sources, "      //$NON-NLS-1$//$NON-NLS-2$
 					+ info.fCompletedHeaders + " headers)");    //$NON-NLS-1$
-			boolean allFiles= getIndexAllFiles();
 			boolean skipRefs= checkProperty(IndexerPreferences.KEY_SKIP_ALL_REFERENCES);
 			boolean skipImplRefs= skipRefs || checkProperty(IndexerPreferences.KEY_SKIP_IMPLICIT_REFERENCES);
 			boolean skipTypeRefs= skipRefs || checkProperty(IndexerPreferences.KEY_SKIP_TYPE_REFERENCES);
 			boolean skipMacroRefs= skipRefs || checkProperty(IndexerPreferences.KEY_SKIP_MACRO_REFERENCES);
 			System.out.println(ident + " Options: "     //$NON-NLS-1$
 					+ "indexer='" + kind    //$NON-NLS-1$
-					+ "', parseAllFiles=" + allFiles    //$NON-NLS-1$
+					+ "', parseAllFiles=" + indexFilesWithoutConfiguration()    //$NON-NLS-1$
+					+ ", unusedHeaders=" + getIndexHeadersWithoutContext()    //$NON-NLS-1$
 					+ ", skipReferences=" + skipRefs    //$NON-NLS-1$
 					+ ", skipImplicitReferences=" + skipImplRefs    //$NON-NLS-1$
 					+ ", skipTypeReferences=" + skipTypeRefs    //$NON-NLS-1$

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2008 Wind River Systems, Inc. and others.
+ * Copyright (c) 2006, 2009 Wind River Systems, Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -13,6 +13,7 @@ package org.eclipse.cdt.internal.core;
 
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.model.CoreModel;
+import org.eclipse.cdt.internal.core.pdom.indexer.IndexerPreferences;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.ProjectScope;
 import org.eclipse.core.runtime.CoreException;
@@ -52,7 +53,9 @@ public class CContentTypes {
 				if (usesProjectSpecificContentTypes(project)) {
 					scopeCtx= new ProjectScope(project);
 				}
-				preferCpp= CoreModel.hasCCNature(project) || !CoreModel.hasCNature(project);
+				if (CoreModel.hasCNature(project)) {
+					preferCpp= CoreModel.hasCCNature(project) == IndexerPreferences.preferDefaultLanguage(project);
+				}
 			} catch (CoreException e) {
 				// fallback to workspace wide definitions.
 				matcher= Platform.getContentTypeManager();

@@ -1,3 +1,13 @@
+/*******************************************************************************
+ * Copyright (c) 2009 Wind River Systems, Inc. and others.
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
+ *    Markus Schorn - initial API and implementation
+ *******************************************************************************/ 
 package org.eclipse.cdt.internal.index.tests;
 
 import java.io.File;
@@ -62,6 +72,7 @@ public class Bug246129 extends IndexTestBase {
 		super(name);
 	}
 
+	@Override
 	protected void setUp() throws Exception {
 		super.setUp();
 		if (fProject == null) {
@@ -131,7 +142,7 @@ public class Bug246129 extends IndexTestBase {
 					fExternalIncludeFolder.getAbsolutePath() };
 
 			IndexerPreferences.set(fProject.getProject(),
-					IndexerPreferences.KEY_INDEX_ALL_FILES, "false");
+					IndexerPreferences.KEY_INDEX_UNUSED_HEADERS_WITH_DEFAULT_LANG, "false");
 
 			File falseFriendDirectory = new File(fWrapperIncludeFolder
 					.getLocation().toOSString()
@@ -145,6 +156,7 @@ public class Bug246129 extends IndexTestBase {
 		}
 	}
 
+	@Override
 	protected void tearDown() throws Exception {
 		fExternalWrapperHeader.delete();
 		fExternalWrapperIncludeFolder.delete();

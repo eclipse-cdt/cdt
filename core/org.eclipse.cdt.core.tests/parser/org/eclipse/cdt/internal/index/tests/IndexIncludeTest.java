@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2008 Wind River Systems, Inc. and others.
+ * Copyright (c) 2006, 2009 Wind River Systems, Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -81,11 +81,11 @@ public class IndexIncludeTest extends IndexTestBase {
 	
 	public void testFastIndexer() throws Exception {
 		CCorePlugin.getIndexManager().setIndexerId(fProject, IPDOMManager.ID_FAST_INDEXER);
-		IndexerPreferences.set(fProject.getProject(), IndexerPreferences.KEY_INDEX_ALL_FILES, "false");
+		IndexerPreferences.set(fProject.getProject(), IndexerPreferences.KEY_INDEX_UNUSED_HEADERS_WITH_DEFAULT_LANG, "false");
 		waitForIndexer();
 		checkHeader(false);
 
-		IndexerPreferences.set(fProject.getProject(), IndexerPreferences.KEY_INDEX_ALL_FILES, "true");
+		IndexerPreferences.set(fProject.getProject(), IndexerPreferences.KEY_INDEX_UNUSED_HEADERS_WITH_DEFAULT_LANG, "true");
 		waitForIndexer();
 		checkHeader(true);
 		
@@ -98,11 +98,11 @@ public class IndexIncludeTest extends IndexTestBase {
 
 	public void testFullIndexer() throws Exception {
 		CCorePlugin.getIndexManager().setIndexerId(fProject, IPDOMManager.ID_FULL_INDEXER);
-		IndexerPreferences.set(fProject.getProject(), IndexerPreferences.KEY_INDEX_ALL_FILES, "false");
+		IndexerPreferences.set(fProject.getProject(), IndexerPreferences.KEY_INDEX_UNUSED_HEADERS_WITH_DEFAULT_LANG, "false");
 		waitForIndexer();
 		checkHeader(false);
 
-		IndexerPreferences.set(fProject.getProject(), IndexerPreferences.KEY_INDEX_ALL_FILES, "true");
+		IndexerPreferences.set(fProject.getProject(), IndexerPreferences.KEY_INDEX_UNUSED_HEADERS_WITH_DEFAULT_LANG, "true");
 		waitForIndexer();
 		checkHeader(true);
 		
@@ -261,7 +261,7 @@ public class IndexIncludeTest extends IndexTestBase {
 		TestSourceReader.createFile(fProject.getProject(), "included_20070404.h", content1);
 		TestSourceReader.createFile(fProject.getProject(), "notIncluded_20070404.h", "int notIncluded_20070404\n;");
 		TestSourceReader.createFile(fProject.getProject(), "includer_20070404.cpp", content3);
-		IndexerPreferences.set(fProject.getProject(), IndexerPreferences.KEY_INDEX_ALL_FILES, "false");
+		IndexerPreferences.set(fProject.getProject(), IndexerPreferences.KEY_INDEX_UNUSED_HEADERS_WITH_DEFAULT_LANG, "false");
 		CCorePlugin.getIndexManager().reindex(fProject);
 		waitForIndexer();
 

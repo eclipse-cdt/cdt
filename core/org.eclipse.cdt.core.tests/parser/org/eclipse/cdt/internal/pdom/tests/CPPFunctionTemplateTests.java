@@ -1,13 +1,13 @@
 /*******************************************************************************
- * Copyright (c) 2007 Symbian Software Systems and others.
+ * Copyright (c) 2007, 2009 Symbian Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- * QNX - Initial implementation
- * Andrew Ferguson (Symbian)
+ *    QNX - Initial implementation
+ *    Andrew Ferguson (Symbian)
  *******************************************************************************/
 package org.eclipse.cdt.internal.pdom.tests;
 
@@ -49,7 +49,6 @@ public class CPPFunctionTemplateTests extends PDOMTestBase {
 		for(int i=0; i<contents.length; i++) {
 			IFile file= TestSourceReader.createFile(cproject.getProject(), new Path("refs.cpp"), contents[i].toString());
 		}
-		IndexerPreferences.set(cproject.getProject(), IndexerPreferences.KEY_INDEX_ALL_FILES, "true");
 		IndexerPreferences.set(cproject.getProject(), IndexerPreferences.KEY_INDEXER_ID, IPDOMManager.ID_FAST_INDEXER);
 		CCorePlugin.getIndexManager().reindex(cproject);
 		assertTrue(CCorePlugin.getIndexManager().joinIndexer(360000, new NullProgressMonitor()));

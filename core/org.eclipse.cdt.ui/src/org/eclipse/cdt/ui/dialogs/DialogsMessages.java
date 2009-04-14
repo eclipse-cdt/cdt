@@ -23,6 +23,12 @@ public class DialogsMessages extends NLS {
 	/** @since 5.1 */
 	public static String AbstractIndexerPage_heuristicIncludes;
 	public static String AbstractIndexerPage_indexAllFiles;
+	/** @since 5.1 */
+	public static String AbstractIndexerPage_indexAllHeaders;
+	/** @since 5.1 */
+	public static String AbstractIndexerPage_indexAllHeadersC;
+	/** @since 5.1 */
+	public static String AbstractIndexerPage_indexAllHeadersCpp;
 	public static String AbstractIndexerPage_indexUpFront;
 	public static String AbstractIndexerPage_skipAllReferences;
 	/** @since 5.1 */

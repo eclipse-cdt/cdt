@@ -45,6 +45,8 @@ public class IndexerPreferences {
 	
 	public static final String KEY_INDEXER_ID= "indexerId"; //$NON-NLS-1$
 	public static final String KEY_INDEX_ALL_FILES= "indexAllFiles"; //$NON-NLS-1$
+	public static final String KEY_INDEX_UNUSED_HEADERS_WITH_DEFAULT_LANG= "indexUnusedHeadersWithDefaultLang"; //$NON-NLS-1$
+	public static final String KEY_INDEX_UNUSED_HEADERS_WITH_ALTERNATE_LANG= "indexUnusedHeadersWithAlternateLang"; //$NON-NLS-1$
 	public static final String KEY_INCLUDE_HEURISTICS= "useHeuristicIncludeResolution"; //$NON-NLS-1$
 	public static final String KEY_FILES_TO_PARSE_UP_FRONT= "filesToParseUpFront"; //$NON-NLS-1$
 	public static final String KEY_SKIP_ALL_REFERENCES= "skipReferences"; //$NON-NLS-1$
@@ -159,10 +161,22 @@ public class IndexerPreferences {
 	public static Properties getProperties(IProject project, int scope) {
 		Preferences[] prefs= getPreferences(project, scope);
 		Properties props= new Properties();
-		for (int i=prefs.length-1; i>=0; i--) {
+		for (int i=0; i<prefs.length; i++) {
 			readProperties(prefs[i], props);
+			if (i==0) {
+				migrateProperties(props);
+			}
 		}
 		return props;
+	}
+
+	private static void migrateProperties(Properties props) {
+		if (props.get(KEY_INDEX_UNUSED_HEADERS_WITH_DEFAULT_LANG) == null) {
+			// backward compatibility
+			if ("true".equals(props.get(KEY_INDEX_ALL_FILES))) { //$NON-NLS-1$
+				props.put(KEY_INDEX_UNUSED_HEADERS_WITH_DEFAULT_LANG, "true"); //$NON-NLS-1$
+			}	
+		}
 	}
 	
 	public static Properties getDefaultIndexerProperties() {
@@ -289,9 +303,11 @@ public class IndexerPreferences {
 			String[] keys = preferences.keys();
 			for (int i=0; i < keys.length; i++) {
 				String key= keys[i];
-				String val= preferences.get(key, null);
-				if (val != null) {
-					props.put(key, val);
+				if (props.get(key) == null) {
+					String val= preferences.get(key, null);
+					if (val != null) {
+						props.put(key, val);
+					}
 				}
 			}
 		} catch (BackingStoreException e) {
@@ -301,7 +317,9 @@ public class IndexerPreferences {
 	public static void initializeDefaultPreferences(IEclipsePreferences defaultPreferences) {
 		Preferences prefs= defaultPreferences.node(INDEXER_NODE);
 		prefs.put(KEY_INDEXER_ID, IPDOMManager.ID_FAST_INDEXER);
-		prefs.putBoolean(KEY_INDEX_ALL_FILES, false);
+		prefs.putBoolean(KEY_INDEX_ALL_FILES, true);
+		prefs.putBoolean(KEY_INDEX_UNUSED_HEADERS_WITH_DEFAULT_LANG, false);
+		prefs.putBoolean(KEY_INDEX_UNUSED_HEADERS_WITH_ALTERNATE_LANG, false);
 		prefs.putBoolean(KEY_INCLUDE_HEURISTICS, true);
 		prefs.putBoolean(KEY_SKIP_ALL_REFERENCES, false);
 		prefs.putBoolean(KEY_SKIP_IMPLICIT_REFERENCES, false);
@@ -398,5 +416,29 @@ public class IndexerPreferences {
 			}
 		}
 		return DEFAULT_UPDATE_POLICY;
+	}
+
+	public static boolean preferDefaultLanguage(IProject project) {
+		IPreferencesService prefService = Platform.getPreferencesService();
+		Preferences[] prefs= IndexerPreferences.getPreferences(project);
+		if ("true".equals(prefService.get(KEY_INDEX_UNUSED_HEADERS_WITH_ALTERNATE_LANG, null, prefs))) { //$NON-NLS-1$
+			if ("true".equals(prefService.get(KEY_INDEX_ALL_FILES, null, prefs))) { //$NON-NLS-1$
+				if (!"true".equals(prefService.get(KEY_INDEX_UNUSED_HEADERS_WITH_DEFAULT_LANG, null, prefs))) { //$NON-NLS-1$
+					return false;
+				}
+			}
+		}
+		return true;
+	}
+
+	public static boolean preferDefaultLanguage(Properties props) {
+		if ("true".equals(props.get(KEY_INDEX_UNUSED_HEADERS_WITH_ALTERNATE_LANG))) { //$NON-NLS-1$
+			if ("true".equals(props.get(KEY_INDEX_ALL_FILES))) { //$NON-NLS-1$
+				if (!"true".equals(props.get(KEY_INDEX_UNUSED_HEADERS_WITH_DEFAULT_LANG))) { //$NON-NLS-1$
+					return false;
+				}
+			}
+		}
+		return true;
 	}
 }

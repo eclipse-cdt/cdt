@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2008 Symbian Software Systems and others.
+ * Copyright (c) 2006, 2009 Symbian Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -345,7 +345,6 @@ public abstract class IndexBindingResolutionTestBase extends BaseTestCase {
 			pd.setReferencedProjects(refs);
 			cproject.getProject().setDescription(pd, new NullProgressMonitor());
 
-			IndexerPreferences.set(cproject.getProject(), IndexerPreferences.KEY_INDEX_ALL_FILES, "true");
 			IndexerPreferences.set(cproject.getProject(), IndexerPreferences.KEY_INDEXER_ID, IPDOMManager.ID_FAST_INDEXER);
 			CCorePlugin.getIndexManager().reindex(cproject);
 			assertTrue(CCorePlugin.getIndexManager().joinIndexer(360000, new NullProgressMonitor()));
@@ -366,7 +365,6 @@ public abstract class IndexBindingResolutionTestBase extends BaseTestCase {
 			String content = testData[0].toString();
 			IFile file = TestSourceReader.createFile(referenced.getProject(), new Path("header.h"), content);
 			
-			IndexerPreferences.set(referenced.getProject(), IndexerPreferences.KEY_INDEX_ALL_FILES, "true");
 			IndexerPreferences.set(referenced.getProject(), IndexerPreferences.KEY_INDEXER_ID, IPDOMManager.ID_FAST_INDEXER);
 			CCorePlugin.getIndexManager().reindex(referenced);
 			

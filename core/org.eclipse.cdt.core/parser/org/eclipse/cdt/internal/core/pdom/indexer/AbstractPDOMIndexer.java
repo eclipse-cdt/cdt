@@ -25,6 +25,9 @@ public abstract class AbstractPDOMIndexer implements IPDOMIndexer {
 	protected Properties fProperties= new Properties();
 		
 	public AbstractPDOMIndexer() {
+		fProperties.put(IndexerPreferences.KEY_INDEX_ALL_FILES, String.valueOf(true));
+		fProperties.put(IndexerPreferences.KEY_INDEX_UNUSED_HEADERS_WITH_DEFAULT_LANG, String.valueOf(false));
+		fProperties.put(IndexerPreferences.KEY_INDEX_UNUSED_HEADERS_WITH_ALTERNATE_LANG, String.valueOf(false));
 		fProperties.put(IndexerPreferences.KEY_INDEX_ALL_FILES, String.valueOf(false));
 		fProperties.put(IndexerPreferences.KEY_INCLUDE_HEURISTICS, String.valueOf(true));
 		fProperties.put(IndexerPreferences.KEY_FILES_TO_PARSE_UP_FRONT, ""); //$NON-NLS-1$
@@ -59,6 +62,10 @@ public abstract class AbstractPDOMIndexer implements IPDOMIndexer {
 			}
 		}
 		return false;
+	}
+	
+	public Properties getProperties() {
+		return fProperties;
 	}
 
 	public void setProperties(Properties props) {

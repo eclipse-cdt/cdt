@@ -19,7 +19,9 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.Iterator;
+import java.util.List;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IFolder;
@@ -1018,26 +1020,24 @@ implements
 		return (s == null) ? EMPTY_STR : s;
 	}
 	
-	private synchronized void loadExtensionsSynchronized(Composite parent)
-	{
+	private synchronized void loadExtensionsSynchronized(Composite parent) {
 		// Get the extensions
 		IExtensionPoint extensionPoint = Platform.getExtensionRegistry()
 				.getExtensionPoint(EXTENSION_POINT_ID);
 		if (extensionPoint == null) return;
 		IExtension[] extensions = extensionPoint.getExtensions();
 		if (extensions == null) return;
-		
-		for (int i = 0; i < extensions.length; ++i)	{
-			IConfigurationElement[] elements = extensions[i].getConfigurationElements();
-			
-			Arrays.sort(elements, CDTListComparator.getInstance());
-			
-			for (IConfigurationElement element2 : elements) {
-				if (element2.getName().equals(ELEMENT_NAME)) {
-					if (loadTab(element2, parent)) return;
-				} else {
-					System.out.println(UIMessages.getString("AbstractPage.13") + element2.getName()); //$NON-NLS-1$
-				}
+
+		List<IConfigurationElement> elements = new ArrayList<IConfigurationElement>();
+		for (IExtension ext : extensions)
+			elements.addAll(Arrays.asList(ext.getConfigurationElements()));
+		Collections.sort(elements, CDTUIListComparator.getInstance());
+
+		for (IConfigurationElement element : elements) {
+			if (element.getName().equals(ELEMENT_NAME)) {
+				if (loadTab(element, parent)) return;
+			} else {
+				System.out.println(UIMessages.getString("AbstractPage.13") + element.getName()); //$NON-NLS-1$
 			}
 		}
 	}

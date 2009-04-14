@@ -436,7 +436,7 @@
            class="org.eclipse.cdt.ui.newui.IncludeTab"
            name="%Includes"
            icon="icons/obj16/hfolder_obj.gif"
-           weight="001"
+           weight="010"
            helpId="cdt_u_prop_pns_inc"
            parent="org.eclipse.cdt.make.internal.ui.properties.PathAndSymbolPage"
            tooltip="%Includes.tooltip"/>
@@ -444,7 +444,7 @@
            class="org.eclipse.cdt.ui.newui.SymbolTab"
            name="%Symbols"
            icon="icons/obj16/define_obj.gif"
-           weight="002"
+           weight="020"
            helpId="cdt_u_prop_pns_sym"
            parent="org.eclipse.cdt.make.internal.ui.properties.PathAndSymbolPage"
            tooltip="%Symbols.tooltip"/>

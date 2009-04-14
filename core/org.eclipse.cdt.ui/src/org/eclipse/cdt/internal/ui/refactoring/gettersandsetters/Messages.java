@@ -21,6 +21,11 @@ public final class Messages extends NLS {
 		// Do not instantiate
 	}
 
+	public static String GenerateGettersAndSettersInputPage_DeselectAll;
+	public static String GenerateGettersAndSettersInputPage_header;
+	public static String GenerateGettersAndSettersInputPage_SelectAll;
+	public static String GenerateGettersAndSettersInputPage_SelectGetters;
+	public static String GenerateGettersAndSettersInputPage_SelectSetters;
 	public static String GenerateGettersAndSettersRefactoring_NoCassDefFound;
 	public static String GenerateGettersAndSettersRefactoring_NoFields;
 	public static String GettersAndSetters_Name;

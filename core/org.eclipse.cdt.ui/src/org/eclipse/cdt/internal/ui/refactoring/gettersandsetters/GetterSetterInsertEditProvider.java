@@ -14,12 +14,21 @@ package org.eclipse.cdt.internal.ui.refactoring.gettersandsetters;
 import org.eclipse.cdt.core.dom.ast.IASTFunctionDefinition;
 
 
-public class GetterSetterInsertEditProvider {
+public class GetterSetterInsertEditProvider implements Comparable<GetterSetterInsertEditProvider>{
+	public enum Type{
+		getter,
+		setter;
+	}
+	
+	
 	
 	private IASTFunctionDefinition function;
+	private Type type;
 	
-	public GetterSetterInsertEditProvider(IASTFunctionDefinition function){
+	
+	public GetterSetterInsertEditProvider(IASTFunctionDefinition function, Type type){
 		this.function = function;
+		this.type = type;
 	}
 	
 	@Override
@@ -30,4 +39,14 @@ public class GetterSetterInsertEditProvider {
 	public IASTFunctionDefinition getFunction() {
 		return function;
 	}
+
+	public Type getType() {
+		return type;
+	}
+
+	public int compareTo(GetterSetterInsertEditProvider o) {
+		return toString().compareTo(o.toString());
+	}
+	
+	
 }

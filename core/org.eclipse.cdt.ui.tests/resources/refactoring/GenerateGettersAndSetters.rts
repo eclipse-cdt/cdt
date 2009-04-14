@@ -543,24 +543,24 @@ public:
   const int socSecNo;
   
   Person myFriend;
-    int getSystemId() const
-    {
-        return systemId;
-    }
-
-    void setSystemId(int systemId)
-    {
-        this->systemId = systemId;
-    }
-
     char *getName() const
     {
         return name;
     }
 
+    int getSystemId() const
+    {
+        return systemId;
+    }
+
     void setName(char *name)
     {
         this->name = name;
+    }
+
+    void setSystemId(int systemId)
+    {
+        this->systemId = systemId;
     }
 
     Person(int socSecNo); // contructor
@@ -624,24 +624,24 @@ public:
 	virtual ~GaS();
 	bool isOk;
 	void methode2();
-    bool getIsOk() const
-    {
-        return isOk;
-    }
-
-    void setIsOk(bool isOk)
-    {
-        this->isOk = isOk;
-    }
-
     int getI() const
     {
         return i;
     }
 
+    bool getIsOk() const
+    {
+        return isOk;
+    }
+
     void setI(int i)
     {
         this->i = i;
+    }
+
+    void setIsOk(bool isOk)
+    {
+        this->isOk = isOk;
     }
 
 private:

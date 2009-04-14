@@ -554,10 +554,8 @@ public class CDIDebugModel {
 			}
 			ICLineBreakpoint breakpoint = (ICLineBreakpoint)breakpoints[i];
 			if ( sameSourceHandle( sourceHandle, breakpoint.getSourceHandle() ) ) {
-				if ( breakpoint.getMarker().getResource().equals( resource ) ) {
-					if ( breakpoint.getLineNumber() == lineNumber ) {
-						return breakpoint;
-					}
+				if ( breakpoint.getLineNumber() == lineNumber ) {
+					return breakpoint;
 				}
 			}
 		}

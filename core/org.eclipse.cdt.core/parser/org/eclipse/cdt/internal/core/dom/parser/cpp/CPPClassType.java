@@ -20,10 +20,8 @@ import org.eclipse.cdt.core.dom.ast.IASTCompositeTypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTDeclSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTDeclarator;
-import org.eclipse.cdt.core.dom.ast.IASTFunctionDefinition;
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
-import org.eclipse.cdt.core.dom.ast.IASTParameterDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTSimpleDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
 import org.eclipse.cdt.core.dom.ast.IBinding;
@@ -268,10 +266,10 @@ public class CPPClassType extends PlatformObject implements ICPPInternalClassTyp
 		IScope scope = CPPVisitor.getContainingScope(name);
 		if (definition == null && name.getPropertyInParent() != ICPPASTQualifiedName.SEGMENT_NAME) {
 			IASTNode node = declarations[0].getParent().getParent();
-			if (node instanceof IASTFunctionDefinition || node instanceof IASTParameterDeclaration ||
-					(node instanceof IASTSimpleDeclaration && 
-							(((IASTSimpleDeclaration) node).getDeclarators().length > 0 || getElaboratedTypeSpecifier().isFriend())))
-			{
+			if (node instanceof IASTSimpleDeclaration && ((IASTSimpleDeclaration) node).getDeclarators().length == 0 
+					&& !getElaboratedTypeSpecifier().isFriend()) {
+				// 3.3.1.5 class-key identifier ;
+			} else {
 				while(scope instanceof ICPPClassScope || scope instanceof ICPPFunctionScope) {
 					try {
 						scope = scope.getParent();

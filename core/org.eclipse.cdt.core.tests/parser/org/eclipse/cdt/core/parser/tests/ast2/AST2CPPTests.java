@@ -23,6 +23,7 @@ import java.util.Iterator;
 import junit.framework.TestSuite;
 
 import org.eclipse.cdt.core.dom.ast.ASTSignatureUtil;
+import org.eclipse.cdt.core.dom.ast.EScopeKind;
 import org.eclipse.cdt.core.dom.ast.IASTArrayDeclarator;
 import org.eclipse.cdt.core.dom.ast.IASTBinaryExpression;
 import org.eclipse.cdt.core.dom.ast.IASTCastExpression;
@@ -7119,5 +7120,14 @@ public class AST2CPPTests extends AST2BaseTest {
 	public void testForwardDeclarationAfterUsing_271236() throws Exception {
 		BindingAssertionHelper ba= new BindingAssertionHelper(getAboveComment(), true);
     	ba.assertNonProblem("A a;", 1, ICPPClassType.class);
+	}
+	
+	//	template <class T> class Moo;
+	//	bool getFile(Moo <class Foo> & res);
+	public void testScopeOfClassFwdDecl_270831() throws Exception {
+		BindingAssertionHelper ba= new BindingAssertionHelper(getAboveComment(), true);
+    	ICPPClassType t= ba.assertNonProblem("Foo", 3, ICPPClassType.class);
+    	IScope scope= t.getScope();
+    	assertEquals(EScopeKind.eGlobal, scope.getKind());
 	}
 }

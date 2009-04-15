@@ -50,6 +50,10 @@ public class ImplementMethodInputPage extends UserInputWizardPage{
 
 
 	public void createControl(Composite parent) {
+		
+		setTitle(Messages.ImplementMethodInputPage_PageTitle);
+		setMessage(Messages.ImplementMethodInputPage_Header);
+		
 		Composite comp = new Composite(parent, SWT.NONE );
 		comp.setLayout(new FillLayout());
 		createTree(comp);

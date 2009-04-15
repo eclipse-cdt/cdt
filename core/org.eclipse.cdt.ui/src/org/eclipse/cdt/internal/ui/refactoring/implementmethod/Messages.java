@@ -28,6 +28,7 @@ public final class Messages extends NLS {
 	public static String ImplementMethodRefactoringPage_GeneratingPreview;
 	public static String ImplementMethodRefactoring_NoMethodSelected;
 	public static String ImplementMethodRefactoring_MethodHasImpl;
+	public static String ImplementMethodInputPage_Header;
 
 	static {
 		NLS.initializeMessages(BUNDLE_NAME, Messages.class);

@@ -101,6 +101,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPMember;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPMethod;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPNamespace;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPNamespaceAlias;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPNamespaceScope;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPPointerToMemberType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPReferenceType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPUsingDeclaration;
@@ -6250,5 +6251,14 @@ public class AST2CPPTests extends AST2BaseTest {
         ba.assertNonProblem("a; //4", 1, ICPPField.class);
         ba.assertNonProblem("a; //5", 1, ICPPField.class);
         ba.assertProblem("a; //6", 1);
+    }
+
+    //	template <class T> class Moo;
+    //	bool getFile(Moo <class Foo> & res);
+    public void testScopeOfClassFwdDecl_270831() throws Exception {
+    	BindingAssertionHelper ba= new BindingAssertionHelper(getAboveComment(), true);
+    	ICPPClassType t= ba.assertNonProblem("Foo", 3, ICPPClassType.class);
+    	IScope scope= t.getScope();
+    	assertInstance(scope, ICPPNamespaceScope.class);
     }
 }

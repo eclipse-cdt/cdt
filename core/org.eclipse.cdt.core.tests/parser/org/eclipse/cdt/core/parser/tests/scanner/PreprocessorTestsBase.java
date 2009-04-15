@@ -61,17 +61,27 @@ public abstract class PreprocessorTestsBase extends BaseTestCase {
 	protected void initializeScanner(String input, ParserLanguage lang) throws IOException {
 		initializeScanner(new CodeReader(input.toCharArray()), lang, ParserMode.COMPLETE_PARSE, new ScannerInfo());
 	}
+	
+	protected void initializeScanner(String input, ParserLanguage lang, IScannerExtensionConfiguration scannerConfig) throws IOException {
+		initializeScanner(new CodeReader(input.toCharArray()), lang, ParserMode.COMPLETE_PARSE, new ScannerInfo(), scannerConfig);
+	}
 
 	protected void initializeScanner(CodeReader input, ParserLanguage lang, ParserMode mode, IScannerInfo scannerInfo) throws IOException {
-		ICodeReaderFactory readerFactory= FileCodeReaderFactory.getInstance();
-		IScannerExtensionConfiguration scannerConfig;
+		initializeScanner(input, lang, mode, scannerInfo, null);
+	}
 	
-	    if (lang == ParserLanguage.C) {
-	    	scannerConfig= GCCScannerExtensionConfiguration.getInstance();
-	    }
-	    else {
-	    	scannerConfig= GPPScannerExtensionConfiguration.getInstance();
-	    }
+	protected void initializeScanner(CodeReader input, ParserLanguage lang, ParserMode mode, IScannerInfo scannerInfo, IScannerExtensionConfiguration scannerConfig) throws IOException {
+		ICodeReaderFactory readerFactory= FileCodeReaderFactory.getInstance();
+		//IScannerExtensionConfiguration scannerConfig;
+	
+		if(scannerConfig == null) {
+		    if (lang == ParserLanguage.C) {
+		    	scannerConfig= GCCScannerExtensionConfiguration.getInstance();
+		    }
+		    else {
+		    	scannerConfig= GPPScannerExtensionConfiguration.getInstance();
+		    }
+		}
 	    
 		fScanner= new CPreprocessor(input, scannerInfo, lang, NULL_LOG, scannerConfig, readerFactory);
 		fLocationResolver= fScanner.getLocationMap();
@@ -120,6 +130,18 @@ public abstract class PreprocessorTestsBase extends BaseTestCase {
 		validateToken(IToken.tSTRING, "\"" + expectedImage + "\"");
 	}
 
+	protected void validateLString(String expectedImage) throws Exception {
+		validateToken(IToken.tLSTRING, "L\"" + expectedImage + "\"");
+	}
+	
+	protected void validateUTF16String(String expectedImage) throws Exception {
+		validateToken(IToken.tUTF16STRING, "u\"" + expectedImage + "\"");
+	}
+	
+	protected void validateUTF32String(String expectedImage) throws Exception {
+		validateToken(IToken.tUTF32STRING, "U\"" + expectedImage + "\"");
+	}
+	
 	protected void validateChar(String expectedImage) throws Exception {
 		validateToken(IToken.tCHAR, "'" + expectedImage + "'");
 	}
@@ -127,11 +149,15 @@ public abstract class PreprocessorTestsBase extends BaseTestCase {
 	protected void validateWideChar(String expectedImage) throws Exception {
 		validateToken(IToken.tLCHAR, "L'" + expectedImage + "'");
 	}
-
-	protected void validateLString(String expectedImage) throws Exception {
-		validateToken(IToken.tLSTRING, "L\"" + expectedImage + "\"");
+	
+	protected void validateUTF16Char(String expectedImage) throws Exception {
+		validateToken(IToken.tUTF16CHAR, "u'" + expectedImage + "'");
 	}
-
+	
+	protected void validateUTF32Char(String expectedImage) throws Exception {
+		validateToken(IToken.tUTF32CHAR, "U'" + expectedImage + "'");
+	}
+	
 	protected void validateFloatingPointLiteral(String expectedImage) throws Exception {
 		validateToken(IToken.tFLOATINGPT, expectedImage);
 	}

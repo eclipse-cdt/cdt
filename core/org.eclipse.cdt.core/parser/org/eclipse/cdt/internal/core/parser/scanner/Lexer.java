@@ -7,6 +7,7 @@
  *
  * Contributors:
  *    Markus Schorn - initial API and implementation
+ *    Mike Kucera (IBM) - UTF string literals
  *******************************************************************************/ 
 package org.eclipse.cdt.internal.core.parser.scanner;
 
@@ -51,6 +52,7 @@ final public class Lexer implements ITokenSequence {
 		public boolean fSupportMinAndMax= true;
 		public boolean fCreateImageLocations= true;
 		public boolean fSupportSlashPercentComments= false;
+		public boolean fSupportUTFLiterals= true;
 		
 		@Override
 		public Object clone() {
@@ -254,11 +256,11 @@ final public class Lexer implements ITokenSequence {
 				continue;
 				
 			case '"':
-				stringLiteral(start, false);
+				stringLiteral(start, IToken.tSTRING);
 				continue;
 
 			case '\'':
-				charLiteral(start, false);
+				charLiteral(start, IToken.tCHAR);
 				continue;
 
 			case '/':
@@ -339,28 +341,42 @@ final public class Lexer implements ITokenSequence {
 				switch(d) {
 				case '"':
 					nextCharPhase3();
-					return stringLiteral(start, true);
+					return stringLiteral(start, IToken.tLSTRING);
 				case '\'':
 					nextCharPhase3();
-					return charLiteral(start, true);
+					return charLiteral(start, IToken.tLCHAR);
 				}
 				return identifier(start, 1);
 
+			case 'u': 	
+			case 'U':
+				if(fOptions.fSupportUTFLiterals) {
+					if(d == '"') {
+						nextCharPhase3();
+						return stringLiteral(start, c == 'u' ? IToken.tUTF16STRING : IToken.tUTF32STRING);
+					}
+					if(d == '\'') {
+						nextCharPhase3();
+						return charLiteral(start, c == 'u' ? IToken.tUTF16CHAR : IToken.tUTF32CHAR);
+					}
+				}
+				return identifier(start, 1);
+				
 			case '"':
 				if (fInsideIncludeDirective) {
 					return headerName(start, true);
 				}
-				return stringLiteral(start, false);
+				return stringLiteral(start, IToken.tSTRING);
 
 			case '\'':
-				return charLiteral(start, false);
+				return charLiteral(start, IToken.tCHAR);
 
 			case 'a': case 'b': case 'c': case 'd': case 'e': case 'f': case 'g': case 'h': case 'i': 
 			case 'j': case 'k': case 'l': case 'm': case 'n': case 'o': case 'p': case 'q': case 'r': 
-			case 's': case 't': case 'u': case 'v': case 'w': case 'x': case 'y': case 'z':
+			case 's': case 't':           case 'v': case 'w': case 'x': case 'y': case 'z':
 			case 'A': case 'B': case 'C': case 'D': case 'E': case 'F': case 'G': case 'H': case 'I':
 			case 'J': case 'K':           case 'M': case 'N': case 'O': case 'P': case 'Q': case 'R': 
-			case 'S': case 'T': case 'U': case 'V': case 'W': case 'X': case 'Y': case 'Z':
+			case 'S': case 'T':           case 'V': case 'W': case 'X': case 'Y': case 'Z':
 			case '_':
 				return identifier(start, 1);
 
@@ -726,17 +742,18 @@ final public class Lexer implements ITokenSequence {
 	}
 
 	@SuppressWarnings("fallthrough")
-	private Token stringLiteral(final int start, final boolean wide) throws OffsetLimitReachedException {
+	private Token stringLiteral(final int start, final int tokenType) throws OffsetLimitReachedException {
 		boolean escaped = false;
 		boolean done = false;
-		int length= wide ? 2 : 1;
+		
+		int length = tokenType == IToken.tSTRING ? 1 : 2;
 		int c= fCharPhase3;
 		
 		loop: while (!done) {
 			switch(c) {
 			case END_OF_INPUT:
 				if (fSupportContentAssist) {
-					throw new OffsetLimitReachedException(ORIGIN_LEXER, newToken(wide ? IToken.tLSTRING : IToken.tSTRING, start, length));
+					throw new OffsetLimitReachedException(ORIGIN_LEXER, newToken(tokenType, start, length));
 				}
 				// no break;
 			case '\n':
@@ -759,21 +776,21 @@ final public class Lexer implements ITokenSequence {
 			length++;
 			c= nextCharPhase3();
 		}
-		return newToken(wide ? IToken.tLSTRING : IToken.tSTRING, start, length);
+		return newToken(tokenType, start, length);
 	}
 	
 	@SuppressWarnings("fallthrough")
-	private Token charLiteral(final int start, boolean wide) throws OffsetLimitReachedException {
+	private Token charLiteral(final int start, final int tokenType) throws OffsetLimitReachedException {
 		boolean escaped = false;
 		boolean done = false;
-		int length= wide ? 2 : 1;
+		int length= tokenType == IToken.tCHAR ? 1 : 2;
 		int c= fCharPhase3;
 		
 		loop: while (!done) {
 			switch(c) {
 			case END_OF_INPUT:
 				if (fSupportContentAssist) {
-					throw new OffsetLimitReachedException(ORIGIN_LEXER, newToken(wide ? IToken.tLCHAR : IToken.tCHAR, start, length));
+					throw new OffsetLimitReachedException(ORIGIN_LEXER, newToken(tokenType, start, length));
 				}
 				// no break;
 			case '\n':
@@ -795,7 +812,7 @@ final public class Lexer implements ITokenSequence {
 			length++;
 			c= nextCharPhase3();
 		}
-		return newToken(wide ? IToken.tLCHAR : IToken.tCHAR, start, length);
+		return newToken(tokenType, start, length);
 	}
 	
 	private Token identifier(int start, int length) {

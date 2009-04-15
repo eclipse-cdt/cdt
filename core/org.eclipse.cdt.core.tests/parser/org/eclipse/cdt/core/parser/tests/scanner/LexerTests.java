@@ -99,12 +99,28 @@ public class LexerTests extends BaseTestCase {
 		token(IToken.tLSTRING, "L\"" + expectedImage + "\"");
 	}
 
+	private void utf16str(String expectedImage) throws Exception {
+		token(IToken.tUTF16STRING, "u\"" + expectedImage + "\"");
+	}
+	
+	private void utf32str(String expectedImage) throws Exception {
+		token(IToken.tUTF32STRING, "U\"" + expectedImage + "\"");
+	}
+	
 	private void ch(String expectedImage) throws Exception {
 		token(IToken.tCHAR, expectedImage);
 	}
 
 	private void wch(String expectedImage) throws Exception {
 		token(IToken.tLCHAR, expectedImage);
+	}
+	
+	private void utf16ch(String expectedImage) throws Exception {
+		token(IToken.tUTF16CHAR, expectedImage);
+	}
+	
+	private void utf32ch(String expectedImage) throws Exception {
+		token(IToken.tUTF32CHAR, expectedImage);
 	}
 
 	private void eof() throws Exception {
@@ -388,9 +404,19 @@ public class LexerTests extends BaseTestCase {
 		ch(lit);
 		eof();
 
-		lit= 'L'+lit;
-		init(lit);
-		wch(lit);
+		String lit2= 'L'+lit;
+		init(lit2);
+		wch(lit2);
+		eof();
+		
+		lit2= 'u'+lit;
+		init(lit2);
+		utf16ch(lit2);
+		eof();
+		
+		lit2= 'U'+lit;
+		init(lit2);
+		utf32ch(lit2);
 		eof();
 
 		lit= "'ut\n";
@@ -400,10 +426,24 @@ public class LexerTests extends BaseTestCase {
 		nl();
 		eof();
 
-		lit= 'L'+lit;
-		init(lit);
+		lit2= 'L'+lit;
+		init(lit2);
 		problem(IProblem.SCANNER_BAD_CHARACTER, "L'ut");
 		wch("L'ut");
+		nl();
+		eof();
+		
+		lit2= 'u'+lit;
+		init(lit2);
+		problem(IProblem.SCANNER_BAD_CHARACTER, "u'ut");
+		utf16ch("u'ut");
+		nl();
+		eof();
+		
+		lit2= 'U'+lit;
+		init(lit2);
+		problem(IProblem.SCANNER_BAD_CHARACTER, "U'ut");
+		utf32ch("U'ut");
 		nl();
 		eof();
 		
@@ -413,10 +453,22 @@ public class LexerTests extends BaseTestCase {
 		ch("'ut\\'");
 		eof();
 
-		lit= 'L'+lit;
-		init(lit);
-		problem(IProblem.SCANNER_BAD_CHARACTER, lit);
+		lit2= 'L'+lit;
+		init(lit2);
+		problem(IProblem.SCANNER_BAD_CHARACTER, lit2);
 		wch("L'ut\\'");
+		eof();
+		
+		lit2= 'u'+lit;
+		init(lit2);
+		problem(IProblem.SCANNER_BAD_CHARACTER, lit2);
+		utf16ch("u'ut\\'");
+		eof();
+		
+		lit2= 'U'+lit;
+		init(lit2);
+		problem(IProblem.SCANNER_BAD_CHARACTER, lit2);
+		utf32ch("U'ut\\'");
 		eof();
 	}
 
@@ -428,6 +480,14 @@ public class LexerTests extends BaseTestCase {
 
 		init("L\"" + lit + '"');
 		wstr(lit);
+		eof();
+		
+		init("u\"" + lit + '"');
+		utf16str(lit);
+		eof();
+		
+		init("U\"" + lit + '"');
+		utf32str(lit);
 		eof();
 
 		lit= "ut\n";
@@ -443,16 +503,40 @@ public class LexerTests extends BaseTestCase {
 		nl();
 		eof();
 		
+		init("u\"" + lit);
+		problem(IProblem.SCANNER_UNBOUNDED_STRING, "u\"ut");
+		token(IToken.tUTF16STRING, "u\"ut");
+		nl();
+		eof();
+		
+		init("U\"" + lit);
+		problem(IProblem.SCANNER_UNBOUNDED_STRING, "U\"ut");
+		token(IToken.tUTF32STRING, "U\"ut");
+		nl();
+		eof();
+		
 		lit= "\"ut\\\"";
 		init(lit);
 		problem(IProblem.SCANNER_UNBOUNDED_STRING, lit);
 		token(IToken.tSTRING, "\"ut\\\"");
 		eof();
 
-		lit= 'L'+lit;
-		init(lit);
-		problem(IProblem.SCANNER_UNBOUNDED_STRING, lit);
+		String lit2= 'L'+lit;
+		init(lit2);
+		problem(IProblem.SCANNER_UNBOUNDED_STRING, lit2);
 		token(IToken.tLSTRING, "L\"ut\\\"");
+		eof();
+		
+		lit2= 'u'+lit;
+		init(lit2);
+		problem(IProblem.SCANNER_UNBOUNDED_STRING, lit2);
+		token(IToken.tUTF16STRING, "u\"ut\\\"");
+		eof();
+		
+		lit2= 'U'+lit;
+		init(lit2);
+		problem(IProblem.SCANNER_UNBOUNDED_STRING, lit2);
+		token(IToken.tUTF32STRING, "U\"ut\\\"");
 		eof();
 	}
 

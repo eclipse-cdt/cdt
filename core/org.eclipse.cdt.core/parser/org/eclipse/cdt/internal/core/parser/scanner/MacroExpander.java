@@ -874,8 +874,12 @@ public class MacroExpander {
 			switch(t.getType()) {
 			case IToken.tSTRING:
 			case IToken.tLSTRING:
+	        case IToken.tUTF16STRING:
+	        case IToken.tUTF32STRING:
 			case IToken.tCHAR:
 			case IToken.tLCHAR:
+	    	case IToken.tUTF16CHAR:
+	    	case IToken.tUTF32CHAR:
 				final char[] image= t.getCharImage();
 				for (final char c : image) {
 						if (c == '"' || c == '\\') {

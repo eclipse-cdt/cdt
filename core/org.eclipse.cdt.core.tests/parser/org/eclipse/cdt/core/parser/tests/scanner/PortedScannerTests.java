@@ -22,6 +22,8 @@ import junit.framework.TestSuite;
 import org.eclipse.cdt.core.dom.ast.IASTPreprocessorIncludeStatement;
 import org.eclipse.cdt.core.dom.ast.IASTProblem;
 import org.eclipse.cdt.core.dom.ast.IMacroBinding;
+import org.eclipse.cdt.core.dom.parser.IScannerExtensionConfiguration;
+import org.eclipse.cdt.core.dom.parser.cpp.GPPScannerExtensionConfiguration;
 import org.eclipse.cdt.core.parser.IGCCToken;
 import org.eclipse.cdt.core.parser.IProblem;
 import org.eclipse.cdt.core.parser.IToken;
@@ -232,6 +234,28 @@ public class PortedScannerTests extends PreprocessorTestsBase {
 		validateLString("LONG"); 
 		validateEOF();
 
+	}
+	
+	public void testUTFStrings() throws Exception {
+		IScannerExtensionConfiguration config = new GPPScannerExtensionConfiguration() {
+			@Override public boolean supportUTFLiterals() { return true; }
+		};
+		initializeScanner("ubiquitous u\"utf16\" User U\"utf32\"", ParserLanguage.CPP, config); 
+		validateIdentifier("ubiquitous"); 
+		validateUTF16String("utf16"); 
+		validateIdentifier("User"); 
+		validateUTF32String("utf32"); 
+		validateEOF();
+	}
+	
+	public void testUTFChars() throws Exception {
+		IScannerExtensionConfiguration config = new GPPScannerExtensionConfiguration() {
+			@Override public boolean supportUTFLiterals() { return true; }
+		};
+		initializeScanner("u'asdf' U'1234'", ParserLanguage.CPP, config);
+		validateUTF16Char("asdf");
+		validateUTF32Char("1234");
+		validateEOF();
 	}
 
 	public void testNumerics() throws Exception {
@@ -1475,6 +1499,31 @@ public class PortedScannerTests extends PreprocessorTestsBase {
 	public void testWideToNarrowConcatenation() throws Exception {
 		initializeScanner("\"ONE\" L\"TWO\""); 
 		validateLString("ONETWO"); 
+		validateEOF();
+	}
+	
+	public void testUTFStringConcatenation() throws Exception {
+		IScannerExtensionConfiguration config = new GPPScannerExtensionConfiguration() {
+			@Override public boolean supportUTFLiterals() { return true; }
+		};
+		initializeScanner("u\"a\" u\"b\"", ParserLanguage.CPP, config);
+		validateUTF16String("ab");
+		validateEOF();
+		initializeScanner("u\"a\" \"b\"", ParserLanguage.CPP, config);
+		validateUTF16String("ab");
+		validateEOF();
+		initializeScanner("\"a\" u\"b\"", ParserLanguage.CPP, config);
+		validateUTF16String("ab");
+		validateEOF();
+		
+		initializeScanner("U\"a\" U\"b\"", ParserLanguage.CPP, config);
+		validateUTF32String("ab");
+		validateEOF();
+		initializeScanner("U\"a\" \"b\"", ParserLanguage.CPP, config);
+		validateUTF32String("ab");
+		validateEOF();
+		initializeScanner("\"a\" U\"b\"", ParserLanguage.CPP, config);
+		validateUTF32String("ab");
 		validateEOF();
 	}
 

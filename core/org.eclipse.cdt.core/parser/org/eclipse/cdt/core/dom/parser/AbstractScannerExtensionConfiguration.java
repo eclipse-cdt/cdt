@@ -63,6 +63,16 @@ public abstract class AbstractScannerExtensionConfiguration implements IScannerE
 		return false;
 	}
 	
+	
+	/**
+	 * {@inheritDoc}
+	 * @since 5.1
+	 */
+	public boolean supportUTFLiterals() {
+		return true;
+	}
+	
+	
 	/**
 	 * {@inheritDoc}
 	 * @since 5.1

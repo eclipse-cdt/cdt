@@ -172,10 +172,17 @@ public interface IToken {
 	/** @deprecated use {@link #tXOR} */ @Deprecated int t_xor = 127;
 	/** @deprecated use {@link #tXORASSIGN} */ @Deprecated int t_xor_eq = 128; 
 	int tFLOATINGPT = 129;
+	
 	int tSTRING = 130;
 	int tLSTRING = 131;
+	/** @since 5.1 */ int tUTF16STRING = 5000;
+	/** @since 5.1 */ int tUTF32STRING = 5001;
+	
 	int tCHAR = 132;
 	int tLCHAR = 133;
+	/** @since 5.1 */ int tUTF16CHAR = 5002;
+	/** @since 5.1 */ int tUTF32CHAR = 5003;
+	
 	int t__Bool = 134;
 	int t__Complex = 135;
 	int t__Imaginary = 136;
@@ -197,4 +204,6 @@ public interface IToken {
 	
 	int FIRST_RESERVED_IExtensionToken	= 243;
 	int LAST_RESERVED_IExtensionToken	= 299;
+	
+	
 }

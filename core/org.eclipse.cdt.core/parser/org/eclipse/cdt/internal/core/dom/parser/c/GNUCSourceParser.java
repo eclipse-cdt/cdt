@@ -680,12 +680,16 @@ public class GNUCSourceParser extends AbstractGNUSourceCodeParser {
             return literalExpression;
         case IToken.tSTRING:
         case IToken.tLSTRING:
+        case IToken.tUTF16STRING:
+        case IToken.tUTF32STRING:
             t = consume();
             literalExpression = nodeFactory.newLiteralExpression(IASTLiteralExpression.lk_string_literal, t.getImage());
             ((ASTNode) literalExpression).setOffsetAndLength(t.getOffset(), t.getEndOffset() - t.getOffset());
             return literalExpression;
         case IToken.tCHAR:
         case IToken.tLCHAR:
+        case IToken.tUTF16CHAR:
+        case IToken.tUTF32CHAR:
             t = consume();
             literalExpression = nodeFactory.newLiteralExpression(IASTLiteralExpression.lk_char_constant, t.getImage());
             ((ASTNode) literalExpression).setOffsetAndLength(t.getOffset(), t.getLength());

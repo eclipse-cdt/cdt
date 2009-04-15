@@ -237,6 +237,8 @@ public class ExpressionEvaluator {
             return ~unaryExpression();
         case IToken.tCHAR:
         case IToken.tLCHAR:
+    	case IToken.tUTF16CHAR:
+    	case IToken.tUTF32CHAR:
         case IToken.tINTEGER:
         	long val= getValue(fTokens);
         	consume();
@@ -271,6 +273,8 @@ public class ExpressionEvaluator {
         case IToken.tAMPERASSIGN:
         case IToken.tSTRING:
         case IToken.tLSTRING:
+        case IToken.tUTF16STRING:
+        case IToken.tUTF32STRING:
             throw new EvalException(IProblem.SCANNER_EXPRESSION_SYNTAX_ERROR, null); 
         	
         default:
@@ -326,6 +330,8 @@ public class ExpressionEvaluator {
     	case IToken.tCHAR:
     		return getChar(t.getCharImage(), 1);
     	case IToken.tLCHAR:
+    	case IToken.tUTF16CHAR:
+    	case IToken.tUTF32CHAR:
     		return getChar(t.getCharImage(), 2);
     	case IToken.tINTEGER:
     		return getNumber(t.getCharImage());

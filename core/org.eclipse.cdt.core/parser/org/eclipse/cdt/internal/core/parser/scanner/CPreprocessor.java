@@ -201,6 +201,7 @@ public class CPreprocessor implements ILexerLog, IScanner, IAdaptable {
         fLexOptions.fSupportAtSignInIdentifiers= configuration.supportAtSignInIdentifiers();
         fLexOptions.fSupportMinAndMax = configuration.supportMinAndMaxOperators();
         fLexOptions.fSupportSlashPercentComments= configuration.supportSlashPercentComments();
+        fLexOptions.fSupportUTFLiterals = configuration.supportUTFLiterals();
         fLocationMap= new LocationMap(fLexOptions);
         fKeywords= new CharArrayIntMap(40, -1);
         fPPKeywords= new CharArrayIntMap(40, -1);
@@ -555,7 +556,10 @@ public class CPreprocessor implements ILexerLog, IScanner, IAdaptable {
     		
     	case IToken.tSTRING:
     	case IToken.tLSTRING:
-    		boolean isWide= tt1 == IToken.tLSTRING;
+        case IToken.tUTF16STRING:
+        case IToken.tUTF32STRING:
+        	
+    		StringType st = StringType.fromToken(tt1);
     		Token t2;
     		StringBuffer buf= null;
     		int endOffset= 0;
@@ -565,7 +569,9 @@ public class CPreprocessor implements ILexerLog, IScanner, IAdaptable {
     			switch(tt2) {
     			case IToken.tLSTRING:
     			case IToken.tSTRING:
-    				isWide= tt2 == IToken.tLSTRING;
+    		    case IToken.tUTF16STRING:
+    		    case IToken.tUTF32STRING:
+    				st = StringType.max(st, StringType.fromToken(tt2));
     				if (buf == null) {
     					buf= new StringBuffer();
     					appendStringContent(buf, t1);
@@ -580,15 +586,17 @@ public class CPreprocessor implements ILexerLog, IScanner, IAdaptable {
     		}
     		pushbackToken(t2);
     		if (buf != null) {
-    			char[] image= new char[buf.length() + (isWide ? 3 : 2)];
+    			char[] prefix = st.getPrefix();
+    			char[] image= new char[buf.length() + prefix.length + 2];
     			int off= -1;
-    			if (isWide) {
-    				image[++off]= 'L';
-    			}
+    			
+    			for(char c : prefix)
+    				image[++off] = c;
+    			
     			image[++off]= '"';
     			buf.getChars(0, buf.length(), image, ++off);
     			image[image.length-1]= '"';
-    			t1= new TokenWithImage((isWide ? IToken.tLSTRING : IToken.tSTRING), null, t1.getOffset(), endOffset, image);
+    			t1= new TokenWithImage(st.getTokenValue(), null, t1.getOffset(), endOffset, image);
     		}
     	}
 
@@ -598,7 +606,7 @@ public class CPreprocessor implements ILexerLog, IScanner, IAdaptable {
     	fLastToken= t1;
     	return t1;
     }
-
+    
     
     public void skipInactiveCode() throws OffsetLimitReachedException {
     	final Lexer lexer= fCurrentContext.getLexer();
@@ -619,8 +627,14 @@ public class CPreprocessor implements ILexerLog, IScanner, IAdaptable {
 	private void appendStringContent(StringBuffer buf, Token t1) {
     	final char[] image= t1.getCharImage();
     	final int length= image.length;
+    	int start = 1;
+    	for(char c : image) {
+    		if(c == '"')
+    			break;
+    		start++;
+    	}
+    	
     	if (length > 1) {
-    		final int start= image[0]=='"' ? 1 : 2;
     		final int diff= image[length-1] == '"' ? length-start-1 : length-start;
     		if (diff > 0) {
     			buf.append(image, start, diff);

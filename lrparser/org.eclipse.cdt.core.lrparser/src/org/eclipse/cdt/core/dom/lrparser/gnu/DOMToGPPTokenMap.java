@@ -163,6 +163,10 @@ public class DOMToGPPTokenMap implements IDOMTokenMap {
 			case tFLOATINGPT   : return TK_floating;
 			case tSTRING       : return TK_stringlit;
 			case tLSTRING      : return TK_stringlit;
+			case tUTF16STRING  : return TK_stringlit;
+			case tUTF32STRING  : return TK_stringlit;
+	        case tUTF16CHAR    : return TK_charconst;
+	        case tUTF32CHAR    : return TK_charconst;
 			case tCHAR         : return TK_charconst;
 			case tLCHAR        : return TK_charconst;
 			case tCOMPLETION   : return TK_Completion;

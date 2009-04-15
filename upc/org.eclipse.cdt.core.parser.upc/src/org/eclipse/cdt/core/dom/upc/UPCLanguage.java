@@ -25,8 +25,6 @@ import org.eclipse.cdt.core.dom.parser.upc.DOMToUPCTokenMap;
 import org.eclipse.cdt.core.dom.parser.upc.UPCLanguageKeywords;
 import org.eclipse.cdt.core.index.IIndex;
 import org.eclipse.cdt.core.model.ICLanguageKeywords;
-import org.eclipse.cdt.core.model.IContributedModelBuilder;
-import org.eclipse.cdt.core.model.ITranslationUnit;
 import org.eclipse.cdt.core.parser.IScanner;
 import org.eclipse.cdt.core.parser.ParserLanguage;
 import org.eclipse.cdt.internal.core.dom.parser.upc.UPCParser;
@@ -50,13 +48,6 @@ public class UPCLanguage extends BaseExtensibleLanguage {
 	@Override
 	protected IParser<IASTTranslationUnit> getParser(IScanner scanner, IIndex index, Set<Options> options) {
 		return new UPCParser(scanner, new DOMToUPCTokenMap(), getBuiltinBindingsProvider(), index, options);
-	}
-
-	/**
-	 * @param tu Not used, default model builder used. 
-	 */
-	public IContributedModelBuilder createModelBuilder(ITranslationUnit tu) {
-		return null;
 	}
 	
 	public String getId() {

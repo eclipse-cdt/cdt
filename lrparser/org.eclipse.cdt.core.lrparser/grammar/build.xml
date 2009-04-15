@@ -12,17 +12,8 @@
 <project name="CDT Extensible LR Parser Framework" basedir=".">
     <description>Generates LPG parsers from grammar files</description>
 	
-	
-	<fail unless="lpg_exe">
-		Property $${lpg_exe} not set.
-		This property must be set to the full path to the LPG generator executable.
-	</fail>
-	
-	<fail unless="lpg_template">
-		Property $${lpg_template} not set.
-		This property must be set to the full path to the LPG templates folder.
-	</fail>
-	
+	<import file="generate.xml"/>
+
 	<property name="c99_location" value="../src/org/eclipse/cdt/internal/core/dom/lrparser/c99"/>
 	<property name="gcc_location" value="../src/org/eclipse/cdt/internal/core/dom/lrparser/gcc"/>
 	<property name="cpp_location" value="../src/org/eclipse/cdt/internal/core/dom/lrparser/cpp"/>
@@ -148,24 +139,6 @@
 	
 
 	
-	<target name="generate">
-		<property name="grammar_file" value="${grammar_dir}/${grammar_name}.g"/>
-		<echo message="lpg_exe=${lpg_exe}"/>
-		<echo message="lpg_template=${lpg_template}"/>
-		<echo message="grammar_file=${grammar_file}.g"/>
-		<echo message="output_dir=${output_dir}"/>
-
-		<exec executable="${lpg_exe}">
-			<arg value="${grammar_file}"/>
-			<env key="LPG_TEMPLATE" path="${lpg_template}"/>
-			
-		</exec>
-		
-		<move overwrite="true" toDir="${output_dir}">
-		    <fileset dir=".">
-			    <include name="${grammar_name}*.*"/>
-			</fileset>
-		</move>
-	</target> 
+	
 	
 </project>  

@@ -3994,7 +3994,27 @@ public class AST2TemplateTests extends AST2BaseTest {
 	//	void test(B p) {
 	//	  f(p);
 	//	}
-	public void _testTemplateConversionOperator_271948() throws Exception {
+	public void _testTemplateConversionOperator_271948_1() throws Exception {
+		final String code = getAboveComment();
+		parseAndCheckBindings(code, ParserLanguage.CPP);		
+	}
+	
+	//	template <typename T>
+	//	struct A {
+	//	};
+	//
+	//	template <class U>
+	//	struct B {
+	//	  template <typename T>
+	//	  operator A<T>();
+	//	};
+	//
+	//	void f(A<char*> p);
+	//
+	//	void test(B<int> p) {
+	//	  f(p);
+	//	}
+	public void _testTemplateConversionOperator_271948_2() throws Exception {
 		final String code = getAboveComment();
 		parseAndCheckBindings(code, ParserLanguage.CPP);		
 	}

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2008 QNX Software Systems and others.
+ * Copyright (c) 2004, 2009 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -72,7 +72,16 @@ public class NewClassCodeGenerator {
     private ITranslationUnit fCreatedSourceTU = null;
     private ICElement fCreatedClass = null;
 	private String fFullyQualifiedClassName;
+	private boolean fForceSourceFileCreation;
     
+	/**
+	 * When set to <code>true</code>, the source file is created, even if no stubs have
+	 * been selected.
+	 */
+	public void setForceSourceFileCreation(boolean force) {
+		fForceSourceFileCreation = force;
+	}
+
 	public static class CodeGeneratorException extends CoreException {
         /**
 		 * Comment for <code>serialVersionUID</code>
@@ -195,9 +204,7 @@ public class NewClassCodeGenerator {
                 List<IMethodStub> protectedMethods = getStubs(ASTAccessVisibility.PROTECTED, true);
                 List<IMethodStub> privateMethods = getStubs(ASTAccessVisibility.PRIVATE, true);
                 
-                if (publicMethods.isEmpty() && protectedMethods.isEmpty() && privateMethods.isEmpty()) {
-                    //TODO need prefs option
-                    // don't create source file if no method bodies
+                if (!fForceSourceFileCreation && publicMethods.isEmpty() && protectedMethods.isEmpty() && privateMethods.isEmpty()) {
                     monitor.worked(100);
                 } else {
 		            IFile sourceFile = NewSourceFileGenerator.createSourceFile(fSourcePath, true, new SubProgressMonitor(monitor, 50));

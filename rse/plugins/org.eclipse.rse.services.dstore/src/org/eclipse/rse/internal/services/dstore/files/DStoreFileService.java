@@ -54,6 +54,7 @@
  * David McKnight   (IBM)        - [261375] [dstore] problem comparing virtual path when getting cached element
  * David McKnight   (IBM)        - [256609] [dstore] need to make sure element is resolved properly before finding it's command descriptors
  * David McKnight   (IBM)        - [270468] [dstore] FileServiceSubSystem.list() returns folders when only FILE_TYPE_FILES is requested
+ * David McKnight   (IBM)        - [272335] [dstore] not handling case where upload fails
  *******************************************************************************/
 
 package org.eclipse.rse.internal.services.dstore.files;
@@ -686,6 +687,7 @@ public class DStoreFileService extends AbstractDStoreService implements IFileSer
 			    	String resultStr = result.getSource();
 			    	while (!resultStr.equals("success"))
 			    	{
+
 			    		// sleep until the upload is complete
 			    		try {
 			    			Thread.sleep(200);
@@ -693,7 +695,14 @@ public class DStoreFileService extends AbstractDStoreService implements IFileSer
 			    		catch (InterruptedException e){			    			
 			    		}
 			    		resultStr = result.getSource();
+			    		if (resultStr.equals("failed")){
+			    			String msgTxt = NLS.bind(ServiceResources.FILEMSG_COPY_FILE_FAILED, remotePath);
+			    			SystemMessage msg = new SimpleSystemMessage(Activator.PLUGIN_ID, IStatus.ERROR, msgTxt);
+			    			throw new SystemMessageException(msg);
+			    		}
 			    	}
+			    	
+
 			    }
 			}
 		}

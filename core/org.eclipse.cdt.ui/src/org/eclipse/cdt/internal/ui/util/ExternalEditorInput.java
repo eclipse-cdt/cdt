@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2008 QNX Software Systems and others.
+ * Copyright (c) 2000, 2009 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -104,6 +104,18 @@ public final class ExternalEditorInput extends FileStoreEditorInput implements I
 	 */
 	public ITranslationUnit getTranslationUnit() {
 		return unit;
+	}
+
+	/*
+	 * @see org.eclipse.ui.ide.FileStoreEditorInput#getAdapter(java.lang.Class)
+	 */
+	@SuppressWarnings("unchecked")
+	@Override
+	public Object getAdapter(Class adapter) {
+		if (adapter.isAssignableFrom(ITranslationUnit.class) && unit != null) {
+			return unit;
+		}
+		return super.getAdapter(adapter);
 	}
 
 	/**

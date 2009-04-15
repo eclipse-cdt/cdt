@@ -75,9 +75,9 @@ public class SemanticUtil {
 	 * @return an array of conversion operators.
 	 */
 	public static final ICPPMethod[] getDeclaredConversionOperators(ICPPClassType clazz) throws DOMException {
-		ICPPMethod[] methods= new ICPPMethod[0];
+		ICPPMethod[] methods= ICPPMethod.EMPTY_CPPMETHOD_ARRAY;
 		if (clazz instanceof ICPPDeferredClassInstance) {
-			clazz= (ICPPClassType) ((ICPPDeferredClassInstance)clazz).getTemplateDefinition();
+			clazz= (ICPPClassType) ((ICPPDeferredClassInstance) clazz).getTemplateDefinition();
 		}
 		ICPPMethod[] decs= clazz.getDeclaredMethods();
 		if (decs != null) {
@@ -98,7 +98,7 @@ public class SemanticUtil {
 	 * @return an array of conversion operators.
 	 */
 	public static ICPPMethod[] getConversionOperators(ICPPClassType clazz) throws DOMException {
-		ICPPMethod[] methods= new ICPPMethod[0];
+		ICPPMethod[] methods= ICPPMethod.EMPTY_CPPMETHOD_ARRAY;
 		ObjectSet<ICPPClassType> ancestry= inheritanceClosure(clazz);
 		for (int i = 0; i < ancestry.size(); i++) {
 			methods= (ICPPMethod[]) ArrayUtil.addAll(ICPPMethod.class, methods, getDeclaredConversionOperators(ancestry.keyAt(i)));
@@ -403,5 +403,4 @@ public class SemanticUtil {
 		}
 		return baseType;
 	}
-
 }

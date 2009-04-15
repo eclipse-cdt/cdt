@@ -16,6 +16,7 @@ import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.jface.text.ITextSelection;
 import org.eclipse.jface.window.IShellProvider;
+import org.eclipse.ui.IEditorPart;
 
 import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.core.model.IMethod;
@@ -35,6 +36,14 @@ public class ImplementMethodAction extends RefactoringAction {
 
 	public ImplementMethodAction() {
 		super(Messages.ImplementMethodAction_label);
+	}
+
+	/**
+	 * @since 5.1
+	 */
+	public ImplementMethodAction(IEditorPart editor) {
+		super(Messages.ImplementMethodAction_label);
+		setEditor(editor);
 	}
 
 	@Override

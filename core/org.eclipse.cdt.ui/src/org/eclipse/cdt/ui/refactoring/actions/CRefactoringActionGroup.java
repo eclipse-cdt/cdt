@@ -117,8 +117,6 @@ public class CRefactoringActionGroup extends ActionGroup implements ISelectionCh
     private RefactoringAction fExtractLocalVariableAction;
     private RefactoringAction fExtractFunctionAction;
     private RefactoringAction fHideMethodAction;
-    private RefactoringAction fImplementMethodAction;
-    private RefactoringAction fGettersAndSettersAction;
 	private IWorkbenchSite fSite;
 	private List<RefactoringAction> fAllActions= new ArrayList<RefactoringAction>();
 
@@ -168,13 +166,6 @@ public class CRefactoringActionGroup extends ActionGroup implements ISelectionCh
         fHideMethodAction.setActionDefinitionId(ICEditorActionDefinitionIds.HIDE_METHOD);
         fAllActions.add(fHideMethodAction);
 
-        fImplementMethodAction = new ImplementMethodAction();
-        fImplementMethodAction.setActionDefinitionId(ICEditorActionDefinitionIds.IMPLEMENT_METHOD);
-        fAllActions.add(fImplementMethodAction);
-            	
-    	fGettersAndSettersAction = new GettersAndSettersAction();
-    	fGettersAndSettersAction.setActionDefinitionId(ICEditorActionDefinitionIds.GETTERS_AND_SETTERS);
-    	fAllActions.add(fGettersAndSettersAction);
 	}
 
     public void setWorkbenchSite(IWorkbenchSite site) {
@@ -213,8 +204,6 @@ public class CRefactoringActionGroup extends ActionGroup implements ISelectionCh
 		setActionHandler(actionBar, CdtActionConstants.EXTRACT_LOCAL_VARIABLE, fExtractLocalVariableAction);
 		setActionHandler(actionBar, CdtActionConstants.EXTRACT_METHOD, fExtractFunctionAction);
 		setActionHandler(actionBar, CdtActionConstants.HIDE_METHOD, fHideMethodAction);		
-		setActionHandler(actionBar, CdtActionConstants.IMPLEMENT_METHOD, fImplementMethodAction);		
-		setActionHandler(actionBar, CdtActionConstants.GETTERS_AND_SETTERS, fGettersAndSettersAction);
 	}
 
 	private void setActionHandler(IActionBars actionBar, String id, RefactoringAction action) {
@@ -249,9 +238,7 @@ public class CRefactoringActionGroup extends ActionGroup implements ISelectionCh
 			refactorSubmenu.add(new Separator(GROUP_REORG2));
 			refactorSubmenu.add(new Separator(GROUP_TYPE));
 			refactorSubmenu.add(new Separator(GROUP_TYPE2));
-			refactorSubmenu.add(new Separator(GROUP_CODING2));
-			addAction(refactorSubmenu, fImplementMethodAction);
-			addAction(refactorSubmenu, fGettersAndSettersAction);
+			refactorSubmenu.add(new Separator(GROUP_CODING2));;
 			refactorSubmenu.add(new Separator(GROUP_TYPE3));
         
 			menu.appendToGroup(fGroupName, refactorSubmenu);

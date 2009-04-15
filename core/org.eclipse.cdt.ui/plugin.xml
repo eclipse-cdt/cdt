@@ -1170,20 +1170,28 @@
                id="org.eclipse.cdt.ui.actions.ExtractLocalVariable"
                retarget="true">
          </action>
-         <action
+        <action
                definitionId="org.eclipse.cdt.ui.refactor.getters.and.setters"
                label="%Refactoring.gettersAndSetters.label"
-               menubarPath="org.eclipse.jdt.ui.refactoring.menu/codingGroup2"
+               menubarPath="org.eclipse.jdt.ui.source.menu/generateGroup"
                id="org.eclipse.cdt.ui.actions.GettersAndSetters"
                retarget="true">
-         </action>
+         </action> 
          <action
                definitionId="org.eclipse.cdt.ui.refactor.implement.method"
                label="%Refactoring.implementMethod.label"
-               menubarPath="org.eclipse.jdt.ui.refactoring.menu/codingGroup2"
+               menubarPath="org.eclipse.jdt.ui.source.menu/generateGroup"
                id="org.eclipse.cdt.ui.actions.ImplementMethod"
                retarget="true">
          </action>
+         <menu
+               id="org.eclipse.jdt.ui.source.menu"
+               label="%Source.menu.label"
+               path="edit">
+            <separator
+                  name="generateGroup">
+            </separator>
+         </menu>
       </actionSet>
       <actionSet
             label="%CSearchActionSet.label"
@@ -2041,12 +2049,12 @@
       <command
             name="%ActionDefinition.implementMethod.name"
             description="%ActionDefinition.implementMethod.description"
-            categoryId="org.eclipse.cdt.ui.category.refactoring"
+            categoryId="org.eclipse.cdt.ui.category.source"
             id="org.eclipse.cdt.ui.refactor.implement.method"/>
       <command
       		name="%ActionDefinition.gettersAndSetters.name"
             description="%ActionDefinition.gettersAndSetters.description"
-	        categoryId="org.eclipse.cdt.ui.category.refactoring"
+	        categoryId="org.eclipse.cdt.ui.category.source"
 	        id="org.eclipse.cdt.ui.refactor.getters.and.setters"/>
    </extension>
    <extension

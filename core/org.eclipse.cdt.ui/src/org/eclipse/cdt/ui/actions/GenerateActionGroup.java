@@ -15,11 +15,11 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
+import org.eclipse.core.runtime.Assert;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.action.Separator;
-import org.eclipse.core.runtime.Assert;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.ISelectionProvider;
@@ -36,6 +36,9 @@ import org.eclipse.ui.part.Page;
 import org.eclipse.ui.texteditor.ITextEditorActionConstants;
 import org.eclipse.ui.texteditor.IUpdate;
 import org.eclipse.ui.texteditor.IWorkbenchActionDefinitionIds;
+
+import org.eclipse.cdt.ui.refactoring.actions.GettersAndSettersAction;
+import org.eclipse.cdt.ui.refactoring.actions.ImplementMethodAction;
 
 import org.eclipse.cdt.internal.ui.IContextMenuConstants;
 import org.eclipse.cdt.internal.ui.actions.ActionMessages;
@@ -105,7 +108,8 @@ public class GenerateActionGroup extends ActionGroup {
 	private AddIncludeOnSelectionAction fAddInclude;
 //	private OverrideMethodsAction fOverrideMethods;
 //	private GenerateHashCodeEqualsAction fHashCodeEquals;
-//	private AddGetterSetterAction fAddGetterSetter;
+	private GettersAndSettersAction fAddGetterSetter;
+	private ImplementMethodAction fImplementMethod;
 //	private AddDelegateMethodsAction fAddDelegateMethods;
 //	private AddUnimplementedConstructorsAction fAddUnimplementedConstructors;
 //	private GenerateNewConstructorUsingFieldsAction fGenerateConstructorUsingFields;
@@ -167,9 +171,13 @@ public class GenerateActionGroup extends ActionGroup {
 //		fOverrideMethods.setActionDefinitionId(ICEditorActionDefinitionIds.OVERRIDE_METHODS);
 //		editor.setAction("OverrideMethods", fOverrideMethods); //$NON-NLS-1$
 //		
-//		fAddGetterSetter= new AddGetterSetterAction(editor);
-//		fAddGetterSetter.setActionDefinitionId(ICEditorActionDefinitionIds.CREATE_GETTER_SETTER);
-//		editor.setAction("AddGetterSetter", fAddGetterSetter); //$NON-NLS-1$
+		fAddGetterSetter= new GettersAndSettersAction(editor);
+		fAddGetterSetter.setActionDefinitionId(ICEditorActionDefinitionIds.GETTERS_AND_SETTERS);
+		editor.setAction("org.eclipse.cdt.ui.refactor.getters.and.setters", fAddGetterSetter); //$NON-NLS-1$
+		
+		fImplementMethod = new ImplementMethodAction(editor);
+		fImplementMethod.setActionDefinitionId(ICEditorActionDefinitionIds.IMPLEMENT_METHOD);
+		editor.setAction("org.eclipse.cdt.ui.refactor.implement.method", fImplementMethod); //$NON-NLS-1$
 //
 //		fAddDelegateMethods= new AddDelegateMethodsAction(editor);
 //		fAddDelegateMethods.setActionDefinitionId(ICEditorActionDefinitionIds.CREATE_DELEGATE_METHODS);
@@ -396,7 +404,8 @@ public class GenerateActionGroup extends ActionGroup {
 		source.add(new Separator(GROUP_GENERATE));
 		added+= addEditorAction(source, "ContentAssistProposal"); //$NON-NLS-1$
 //		added+= addAction(source, fOverrideMethods);
-//		added+= addAction(source, fAddGetterSetter);
+		added+= addAction(source, fAddGetterSetter);
+		added+= addAction(source, fImplementMethod);
 //		added+= addAction(source, fAddDelegateMethods);
 //		added+= addAction(source, fHashCodeEquals);
 //		added+= addAction(source, fGenerateConstructorUsingFields);
@@ -420,7 +429,8 @@ public class GenerateActionGroup extends ActionGroup {
 //		added+= addAction(source, fCleanUp);
 		source.add(new Separator(GROUP_GENERATE));
 //		added+= addAction(source, fOverrideMethods);
-//		added+= addAction(source, fAddGetterSetter);
+		added+= addAction(source, fAddGetterSetter);
+		added+= addAction(source, fImplementMethod);
 //		added+= addAction(source, fAddDelegateMethods);
 //		added+= addAction(source, fHashCodeEquals);
 //		added+= addAction(source, fGenerateConstructorUsingFields);
@@ -454,7 +464,8 @@ public class GenerateActionGroup extends ActionGroup {
 	private void setGlobalActionHandlers(IActionBars actionBar) {
 		actionBar.setGlobalActionHandler(CdtActionConstants.ADD_INCLUDE, fAddInclude);
 //		actionBar.setGlobalActionHandler(CdtActionConstants.OVERRIDE_METHODS, fOverrideMethods);
-//		actionBar.setGlobalActionHandler(CdtActionConstants.GENERATE_GETTER_SETTER, fAddGetterSetter);
+		actionBar.setGlobalActionHandler(CdtActionConstants.GETTERS_AND_SETTERS, fAddGetterSetter);
+		actionBar.setGlobalActionHandler(CdtActionConstants.IMPLEMENT_METHOD, fImplementMethod);
 //		actionBar.setGlobalActionHandler(CdtActionConstants.GENERATE_DELEGATE_METHODS, fAddDelegateMethods);
 //		actionBar.setGlobalActionHandler(CdtActionConstants.ADD_CONSTRUCTOR_FROM_SUPERCLASS, fAddUnimplementedConstructors);		
 //		actionBar.setGlobalActionHandler(CdtActionConstants.GENERATE_CONSTRUCTOR_USING_FIELDS, fGenerateConstructorUsingFields);

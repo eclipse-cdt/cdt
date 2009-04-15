@@ -1667,6 +1667,23 @@ public class AST2Tests extends AST2BaseTest {
 		}
 	}
 	
+	// int plainInt = 7;
+	// signed int signedInt = -2;
+	// unsigned int unsignedInt = 99;
+	// noSpec= 12;
+	public void testBug270275_int_is_equivalent_to_signed_int() throws Exception {
+		IASTTranslationUnit tu = parse(getAboveComment(), ParserLanguage.C);
+		IASTDeclaration[] declarations = tu.getDeclarations();
+		IType plainInt = ((IVariable)((IASTSimpleDeclaration)declarations[0]).getDeclarators()[0].getName().resolveBinding()).getType();
+		IType signedInt = ((IVariable)((IASTSimpleDeclaration)declarations[1]).getDeclarators()[0].getName().resolveBinding()).getType();
+		IType unsignedInt = ((IVariable)((IASTSimpleDeclaration)declarations[2]).getDeclarators()[0].getName().resolveBinding()).getType();
+		IType noSpec = ((IVariable)((IASTSimpleDeclaration)declarations[3]).getDeclarators()[0].getName().resolveBinding()).getType();
+		assertTrue(plainInt.isSameType(signedInt));
+		assertFalse(plainInt.isSameType(unsignedInt));
+		assertFalse(signedInt.isSameType(unsignedInt));
+		assertTrue(plainInt.isSameType(noSpec));
+	}
+	
 	// struct A {} a1;              
 	// typedef struct A * AP;       
 	// struct A * const a2;         

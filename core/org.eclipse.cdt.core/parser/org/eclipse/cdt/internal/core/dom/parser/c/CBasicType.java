@@ -127,14 +127,16 @@ public class CBasicType implements ICBasicType {
 		
 		CBasicType cObj = (CBasicType)obj;
 		
-		return (cObj.getType() == this.getType()
-				&& cObj.isLong() == this.isLong() 
-				&& cObj.isShort() == this.isShort() 
-				&& cObj.isSigned() == this.isSigned() 
-				&& cObj.isUnsigned() == this.isUnsigned()
-				&& cObj.isLongLong() == this.isLongLong()
-				&& cObj.isComplex() == this.isComplex() 
-				&& cObj.isImaginary() == this.isImaginary());
+		if (type != cObj.type) {
+			return false;
+		}
+		
+		if (type == IBasicType.t_int) {
+			//signed int and int are equivalent
+			return (qualifiers & ~IS_SIGNED) == (cObj.qualifiers & ~IS_SIGNED);
+		} else {
+			return (qualifiers == cObj.qualifiers);
+		}
 	}
 	
     @Override

@@ -64,7 +64,7 @@ public class CPPBasicType implements ICPPBasicType {
 			//signed int and int are equivalent
 			return (qualifierBits & ~IS_SIGNED) == (t.qualifierBits & ~IS_SIGNED);
 		}
-		return (type == t.type && qualifierBits == t.qualifierBits);
+		return qualifierBits == t.qualifierBits;
 	}
 
 	/* (non-Javadoc)

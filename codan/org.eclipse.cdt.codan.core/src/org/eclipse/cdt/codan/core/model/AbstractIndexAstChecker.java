@@ -15,6 +15,7 @@ import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
 import org.eclipse.cdt.core.index.IIndex;
 import org.eclipse.cdt.core.model.CoreModel;
+import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.core.model.ITranslationUnit;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResource;
@@ -35,8 +36,10 @@ public abstract class AbstractIndexAstChecker extends AbstractChecker implements
 	void processFile(IFile file) throws CoreException, InterruptedException {
 		this.file = file;
 		// create translation unit and access index
-		ITranslationUnit tu = (ITranslationUnit) CoreModel.getDefault().create(
-				file);
+		ICElement model = CoreModel.getDefault().create(file);
+		if (!(model instanceof ITranslationUnit))
+			return;
+		ITranslationUnit tu = (ITranslationUnit) model;
 		if (tu == null)
 			return; // not a C/C++ file
 		IIndex index = CCorePlugin.getIndexManager().getIndex(tu.getCProject());

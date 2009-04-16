@@ -10,14 +10,16 @@
  *******************************************************************************/
 package org.eclipse.cdt.codan.internal.ui.preferences;
 
-import org.eclipse.cdt.codan.core.model.CheckersRegisry;
+import org.eclipse.cdt.codan.core.PreferenceConstants;
+import org.eclipse.cdt.codan.core.builder.CodanPreferencesLoader;
 import org.eclipse.cdt.codan.core.model.CodanProblem;
-import org.eclipse.cdt.codan.core.model.CodanSeverity;
 import org.eclipse.cdt.codan.core.model.IProblem;
 import org.eclipse.cdt.codan.core.model.IProblemCategory;
+import org.eclipse.cdt.codan.core.model.IProblemsProfile;
 import org.eclipse.jface.viewers.BaseLabelProvider;
 import org.eclipse.jface.viewers.CheckStateChangedEvent;
 import org.eclipse.jface.viewers.IBaseLabelProvider;
+import org.eclipse.jface.viewers.ICheckStateProvider;
 import org.eclipse.jface.viewers.IContentProvider;
 import org.eclipse.jface.viewers.ITableLabelProvider;
 import org.eclipse.jface.viewers.ITreeContentProvider;
@@ -28,9 +30,70 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.TreeColumn;
 
 public class ProblemsTreeEditor extends CheckedTreeEditor {
+	private CodanPreferencesLoader codanPreferencesLoader = new CodanPreferencesLoader();
+
 	public ProblemsTreeEditor() {
 		super();
-		// TODO Auto-generated constructor stub
+	}
+
+	class ProblemsCheckStateProvider implements ICheckStateProvider {
+		/*
+		 * (non-Javadoc)
+		 * 
+		 * @see
+		 * org.eclipse.jface.viewers.ICheckStateProvider#isChecked(java.lang
+		 * .Object)
+		 */
+		public boolean isChecked(Object element) {
+			if (element instanceof IProblem) {
+				IProblem p = (IProblem) element;
+				return p.isEnabled();
+			}
+			if (element instanceof IProblemCategory) {
+				// checked if at least one is checked (buy grayed)
+				IProblemCategory p = (IProblemCategory) element;
+				Object[] children = p.getChildren();
+				for (int i = 0; i < children.length; i++) {
+					Object object = children[i];
+					if (isChecked(object)) {
+						return true;
+					}
+				}
+			}
+			return false;
+		}
+
+		/*
+		 * (non-Javadoc)
+		 * 
+		 * @see
+		 * org.eclipse.jface.viewers.ICheckStateProvider#isGrayed(java.lang.
+		 * Object)
+		 */
+		public boolean isGrayed(Object element) {
+			if (element instanceof IProblem) {
+				return false;
+			}
+			if (element instanceof IProblemCategory) {
+				// checked if at least one is checked (buy grayed)
+				IProblemCategory p = (IProblemCategory) element;
+				Object[] children = p.getChildren();
+				boolean all_checked = true;
+				boolean all_unchecked = true;
+				for (int i = 0; i < children.length; i++) {
+					Object object = children[i];
+					if (isChecked(object)) {
+						all_unchecked = false;
+					} else {
+						all_checked = false;
+					}
+				}
+				if (all_checked || all_unchecked)
+					return false;
+				return true;
+			}
+			return false;
+		}
 	}
 
 	class ProblemsContentProvider implements IContentProvider,
@@ -48,6 +111,10 @@ public class ProblemsTreeEditor extends CheckedTreeEditor {
 				return (Object[]) parentElement;
 			if (parentElement instanceof IProblemCategory) {
 				return ((IProblemCategory) parentElement).getChildren();
+			}
+			if (parentElement instanceof IProblemsProfile) {
+				return ((IProblemsProfile) parentElement).getRoot()
+						.getChildren();
 			}
 			return new Object[0];
 		}
@@ -89,35 +156,6 @@ public class ProblemsTreeEditor extends CheckedTreeEditor {
 		}
 	}
 
-	@Override
-	protected String unparseElement(Object element) {
-		IProblem p = ((IProblem) element);
-		return p.getId() + ":" + p.getSeverity();
-	}
-
-	@Override
-	protected Object parseObject(String string) {
-		String[] pair = string.split(":");
-		if (pair.length == 0)
-			return null;
-		String id = pair[0];
-		String arg = "";
-		if (pair.length > 1) {
-			arg = pair[1];
-		}
-		CodanSeverity sev;
-		try {
-			sev = CodanSeverity.valueOf(arg);
-		} catch (RuntimeException e) {
-			sev = CodanSeverity.Warning;
-		}
-		IProblem prob = CheckersRegisry.getInstance().findProblem(id);
-		if (prob instanceof CodanProblem) {
-			((CodanProblem) prob).setSeverity(sev);
-		}
-		return prob;
-	}
-
 	public void checkStateChanged(CheckStateChangedEvent event) {
 		Object element = event.getElement();
 		if (element instanceof CodanProblem) {
@@ -125,13 +163,14 @@ public class ProblemsTreeEditor extends CheckedTreeEditor {
 		}
 	}
 
-	public ProblemsTreeEditor(Composite parent) {
-		super("problems", "Problems", parent);
+	public ProblemsTreeEditor(Composite parent, IProblemsProfile profile) {
+		super(PreferenceConstants.P_PROBLEMS, "Problems", parent);
 		setEmptySelectionAllowed(true);
 		getTreeViewer().getTree().setHeaderVisible(true);
 		// getTreeViewer().getTree().
 		getTreeViewer().setContentProvider(new ProblemsContentProvider());
 		getTreeViewer().setLabelProvider(new ProblemsLabelProvider());
+		getTreeViewer().setCheckStateProvider(new ProblemsCheckStateProvider());
 		// column Name
 		TreeColumn column = new TreeColumn(getTreeViewer().getTree(), SWT.NONE);
 		column.setWidth(300);
@@ -140,7 +179,30 @@ public class ProblemsTreeEditor extends CheckedTreeEditor {
 		TreeColumn column2 = new TreeColumn(getTreeViewer().getTree(), SWT.NONE);
 		column2.setWidth(100);
 		column2.setText("Severity");
-		getTreeViewer().setInput(
-				CheckersRegisry.getInstance().getProblemsTree());
+		codanPreferencesLoader.setInput(profile);
+		getViewer().setInput(profile);
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @seeorg.eclipse.cdt.codan.internal.ui.preferences.CheckedTreeEditor#
+	 * modelFromString(java.lang.String)
+	 */
+	@Override
+	protected Object modelFromString(String s) {
+		return codanPreferencesLoader.modelFromString(s);
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.eclipse.cdt.codan.internal.ui.preferences.CheckedTreeEditor#modelToString
+	 * (java.lang.Object)
+	 */
+	@Override
+	protected String modelToString(Object model) {
+		return codanPreferencesLoader.modelToString(model);
 	}
 }

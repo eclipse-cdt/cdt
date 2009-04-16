@@ -8,11 +8,16 @@
  * Contributors:
  *    Alena Laskavaia  - initial API and implementation
  *******************************************************************************/
-package org.eclipse.cdt.codan.internal.ui.preferences;
+package org.eclipse.cdt.codan.core.model;
 
 /**
- * Constant definitions for plug-in preferences
+ * @author Alena
+ * 
  */
-public class PreferenceConstants {
-	public static final String P_RUN_ON_BUILD = "booleanPreference";
+public interface IProblemsProfile extends IProblemElement {
+	IProblemCategory getRoot();
+
+	IProblem findProblem(String id);
+
+	IProblem[] getProblems();
 }

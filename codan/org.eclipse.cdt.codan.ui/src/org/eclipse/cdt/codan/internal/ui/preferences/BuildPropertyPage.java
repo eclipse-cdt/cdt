@@ -1,12 +1,17 @@
 package org.eclipse.cdt.codan.internal.ui.preferences;
 
+import org.eclipse.cdt.codan.core.CodanCorePlugin;
+import org.eclipse.cdt.codan.core.PreferenceConstants;
 import org.eclipse.cdt.codan.ui.actions.ToggleNatureAction;
 import org.eclipse.core.resources.IProject;
-import org.eclipse.core.resources.IResource;
+import org.eclipse.core.resources.ProjectScope;
 import org.eclipse.core.runtime.IAdaptable;
+import org.eclipse.core.runtime.preferences.IScopeContext;
+import org.eclipse.core.runtime.preferences.InstanceScope;
 import org.eclipse.jface.preference.BooleanFieldEditor;
 import org.eclipse.jface.preference.FieldEditorPreferencePage;
 import org.eclipse.ui.IWorkbenchPropertyPage;
+import org.eclipse.ui.preferences.ScopedPreferenceStore;
 
 public class BuildPropertyPage extends FieldEditorPreferencePage implements
 		IWorkbenchPropertyPage {
@@ -77,9 +82,13 @@ public class BuildPropertyPage extends FieldEditorPreferencePage implements
 	 */
 	public void setElement(IAdaptable element) {
 		this.element = element;
-		setPreferenceStore(new PropertyStore((IResource) getElement(),
-				org.eclipse.cdt.codan.ui.Activator.getDefault()
-						.getPreferenceStore(), getPageId()));
+		ProjectScope ps = new ProjectScope((IProject) getElement());
+		ScopedPreferenceStore scoped = new ScopedPreferenceStore(ps,
+				CodanCorePlugin.PLUGIN_ID);
+		scoped
+				.setSearchContexts(new IScopeContext[] { ps,
+						new InstanceScope() });
+		setPreferenceStore(scoped);
 	}
 
 	protected String getPageId() {

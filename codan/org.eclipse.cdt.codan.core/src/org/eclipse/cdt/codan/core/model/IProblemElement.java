@@ -10,22 +10,10 @@
  *******************************************************************************/
 package org.eclipse.cdt.codan.core.model;
 
-public interface IProblemCategory extends IProblemElement {
-	String getName();
-
-	String getId();
-
-	Object[] getChildren();
-
-	/**
-	 * @param id
-	 * @return
-	 */
-	IProblem findProblem(String id);
-
-	/**
-	 * @param id
-	 * @return
-	 */
-	IProblemCategory findCategory(String id);
+/**
+ * @author Alena
+ * 
+ */
+public interface IProblemElement extends Cloneable {
+	Object clone() throws CloneNotSupportedException;
 }

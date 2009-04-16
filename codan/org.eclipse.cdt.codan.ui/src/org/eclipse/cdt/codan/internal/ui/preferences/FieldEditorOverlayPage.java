@@ -14,10 +14,15 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
+import org.eclipse.cdt.codan.core.CodanCorePlugin;
+import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
+import org.eclipse.core.resources.ProjectScope;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.QualifiedName;
+import org.eclipse.core.runtime.preferences.IScopeContext;
+import org.eclipse.core.runtime.preferences.InstanceScope;
 import org.eclipse.jface.preference.FieldEditor;
 import org.eclipse.jface.preference.FieldEditorPreferencePage;
 import org.eclipse.jface.preference.IPreferenceNode;
@@ -37,43 +42,39 @@ import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.ui.IWorkbenchPropertyPage;
+import org.eclipse.ui.preferences.ScopedPreferenceStore;
 
 /**
  * @author Berthold Daum
  */
-public abstract class FieldEditorOverlayPage
-	extends FieldEditorPreferencePage
-	implements IWorkbenchPropertyPage {
-
-	/*** Name of resource property for the selection of workbench or project settings ***/
+public abstract class FieldEditorOverlayPage extends FieldEditorPreferencePage
+		implements IWorkbenchPropertyPage {
+	/***
+	 * Name of resource property for the selection of workbench or project
+	 * settings
+	 ***/
 	public static final String USEPROJECTSETTINGS = "useProjectSettings"; //$NON-NLS-1$
-
 	private static final String FALSE = "false"; //$NON-NLS-1$
 	private static final String TRUE = "true"; //$NON-NLS-1$
-
 	// Stores all created field editors
 	private List editors = new ArrayList();
-
 	// Stores owning element of properties
 	private IAdaptable element;
-
 	// Additional buttons for property pages
-	private Button useWorkspaceSettingsButton,
-		useProjectSettingsButton,
-		configureButton;
-
+	private Button useWorkspaceSettingsButton, useProjectSettingsButton,
+			configureButton;
 	// Overlay preference store for property pages
 	private IPreferenceStore overlayStore;
-
 	// The image descriptor of this pages title image
 	private ImageDescriptor image;
-
 	// Cache for page id
 	private String pageId;
 
 	/**
 	 * Constructor
-	 * @param style - layout style
+	 * 
+	 * @param style
+	 *            - layout style
 	 */
 	public FieldEditorOverlayPage(int style) {
 		super(style);
@@ -81,8 +82,11 @@ public abstract class FieldEditorOverlayPage
 
 	/**
 	 * Constructor
-	 * @param title - title string
-	 * @param style - layout style
+	 * 
+	 * @param title
+	 *            - title string
+	 * @param style
+	 *            - layout style
 	 */
 	public FieldEditorOverlayPage(String title, int style) {
 		super(title, style);
@@ -90,28 +94,30 @@ public abstract class FieldEditorOverlayPage
 
 	/**
 	 * Constructor
-	 * @param title - title string
-	 * @param image - title image
-	 * @param style - layout style
+	 * 
+	 * @param title
+	 *            - title string
+	 * @param image
+	 *            - title image
+	 * @param style
+	 *            - layout style
 	 */
-	public FieldEditorOverlayPage(
-		String title,
-		ImageDescriptor image,
-		int style) {
+	public FieldEditorOverlayPage(String title, ImageDescriptor image, int style) {
 		super(title, image, style);
 		this.image = image;
 	}
 
 	/**
 	 * Returns the id of the current preference page as defined in plugin.xml
-	 * Subclasses must implement. 
+	 * Subclasses must implement.
 	 * 
 	 * @return - the qualifier
 	 */
 	protected abstract String getPageId();
 
 	/**
-     * Receives the object that owns the properties shown in this property page.
+	 * Receives the object that owns the properties shown in this property page.
+	 * 
 	 * @see org.eclipse.ui.IWorkbenchPropertyPage#setElement(org.eclipse.core.runtime.IAdaptable)
 	 */
 	public void setElement(IAdaptable element) {
@@ -120,6 +126,7 @@ public abstract class FieldEditorOverlayPage
 
 	/**
 	 * Delivers the object that owns the properties shown in this property page.
+	 * 
 	 * @see org.eclipse.ui.IWorkbenchPropertyPage#getElement()
 	 */
 	public IAdaptable getElement() {
@@ -128,15 +135,16 @@ public abstract class FieldEditorOverlayPage
 
 	/**
 	 * Returns true if this instance represents a property page
+	 * 
 	 * @return - true for property pages, false for preference pages
 	 */
 	public boolean isPropertyPage() {
 		return getElement() != null;
 	}
 
-	/** 
-	 * We override the addField method. This allows us to store each field editor added by subclasses
-	 * in a list for later processing.
+	/**
+	 * We override the addField method. This allows us to store each field
+	 * editor added by subclasses in a list for later processing.
 	 * 
 	 * @see org.eclipse.jface.preference.FieldEditorPreferencePage#addField(org.eclipse.jface.preference.FieldEditor)
 	 */
@@ -146,9 +154,9 @@ public abstract class FieldEditorOverlayPage
 	}
 
 	/**
-	 *  We override the createControl method. 
-	 * In case of property pages we create a new PropertyStore as local preference store.
-	 * After all control have been create, we enable/disable these controls.
+	 * We override the createControl method. In case of property pages we create
+	 * a new PropertyStore as local preference store. After all control have
+	 * been create, we enable/disable these controls.
 	 * 
 	 * @see org.eclipse.jface.preference.PreferencePage#createControl()
 	 */
@@ -158,11 +166,12 @@ public abstract class FieldEditorOverlayPage
 			// Cache the page id
 			pageId = getPageId();
 			// Create an overlay preference store and fill it with properties
-			overlayStore =
-				new PropertyStore(
-					(IResource) getElement(),
-					super.getPreferenceStore(),
-					pageId);
+			ProjectScope ps = new ProjectScope((IProject) getElement());
+			ScopedPreferenceStore scoped = new ScopedPreferenceStore(ps,
+					CodanCorePlugin.PLUGIN_ID);
+			scoped.setSearchContexts(new IScopeContext[] { ps,
+					new InstanceScope() });
+			overlayStore = scoped;
 			// Set overlay store as current preference store
 		}
 		super.createControl(parent);
@@ -171,9 +180,9 @@ public abstract class FieldEditorOverlayPage
 			updateFieldEditors();
 	}
 
-	/** 
-	 * We override the createContents method. 
-	 * In case of property pages we insert two radio buttons at the top of the page.
+	/**
+	 * We override the createContents method. In case of property pages we
+	 * insert two radio buttons at the top of the page.
 	 * 
 	 * @see org.eclipse.jface.preference.PreferencePage#createContents(org.eclipse.swt.widgets.Composite)
 	 */
@@ -184,8 +193,11 @@ public abstract class FieldEditorOverlayPage
 	}
 
 	/**
-	 * Creates and initializes a selection group with two choice buttons and one push button.
-	 * @param parent - the parent composite
+	 * Creates and initializes a selection group with two choice buttons and one
+	 * push button.
+	 * 
+	 * @param parent
+	 *            - the parent composite
 	 */
 	private void createSelectionGroup(Composite parent) {
 		Composite comp = new Composite(parent, SWT.NONE);
@@ -197,10 +209,13 @@ public abstract class FieldEditorOverlayPage
 		Composite radioGroup = new Composite(comp, SWT.NONE);
 		radioGroup.setLayout(new GridLayout());
 		radioGroup.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-		useWorkspaceSettingsButton = createRadioButton(radioGroup, Messages.getString("OverlayPage.Use_Workspace_Settings")); //$NON-NLS-1$
-		useProjectSettingsButton = createRadioButton(radioGroup, Messages.getString("OverlayPage.Use_Project_Settings")); //$NON-NLS-1$
+		useWorkspaceSettingsButton = createRadioButton(radioGroup, Messages
+				.getString("OverlayPage.Use_Workspace_Settings")); //$NON-NLS-1$
+		useProjectSettingsButton = createRadioButton(radioGroup, Messages
+				.getString("OverlayPage.Use_Project_Settings")); //$NON-NLS-1$
 		configureButton = new Button(comp, SWT.PUSH);
-		configureButton.setText(Messages.getString("OverlayPage.Configure_Workspace_Settings")); //$NON-NLS-1$
+		configureButton.setText(Messages
+				.getString("OverlayPage.Configure_Workspace_Settings")); //$NON-NLS-1$
 		configureButton.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
 				configureWorkspaceSettings();
@@ -208,9 +223,9 @@ public abstract class FieldEditorOverlayPage
 		});
 		// Set workspace/project radio buttons
 		try {
-			String use =
-				((IResource) getElement()).getPersistentProperty(
-					new QualifiedName(pageId, USEPROJECTSETTINGS));
+			String use = ((IResource) getElement())
+					.getPersistentProperty(new QualifiedName(pageId,
+							USEPROJECTSETTINGS));
 			if (TRUE.equals(use)) {
 				useProjectSettingsButton.setSelection(true);
 				configureButton.setEnabled(false);
@@ -223,8 +238,11 @@ public abstract class FieldEditorOverlayPage
 
 	/**
 	 * Convenience method creating a radio button
-	 * @param parent - the parent composite
-	 * @param label - the button label
+	 * 
+	 * @param parent
+	 *            - the parent composite
+	 * @param label
+	 *            - the button label
 	 * @return - the new button
 	 */
 	private Button createRadioButton(Composite parent, String label) {
@@ -232,8 +250,8 @@ public abstract class FieldEditorOverlayPage
 		button.setText(label);
 		button.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
-				configureButton.setEnabled(
-					button == useWorkspaceSettingsButton);
+				configureButton
+						.setEnabled(button == useWorkspaceSettingsButton);
 				updateFieldEditors();
 			}
 		});
@@ -241,8 +259,9 @@ public abstract class FieldEditorOverlayPage
 	}
 
 	/**
-	 * Returns in case of property pages the overlay store, 
-	 * in case of preference pages the standard preference store
+	 * Returns in case of property pages the overlay store, in case of
+	 * preference pages the standard preference store
+	 * 
 	 * @see org.eclipse.jface.preference.PreferencePage#getPreferenceStore()
 	 */
 	public IPreferenceStore getPreferenceStore() {
@@ -255,15 +274,17 @@ public abstract class FieldEditorOverlayPage
 	 * Enables or disables the field editors and buttons of this page
 	 */
 	private void updateFieldEditors() {
-		// We iterate through all field editors 
+		// We iterate through all field editors
 		boolean enabled = useProjectSettingsButton.getSelection();
 		updateFieldEditors(enabled);
 	}
 
 	/**
-	 * Enables or disables the field editors and buttons of this page
-	 * Subclasses may override.
-	 * @param enabled - true if enabled
+	 * Enables or disables the field editors and buttons of this page Subclasses
+	 * may override.
+	 * 
+	 * @param enabled
+	 *            - true if enabled
 	 */
 	protected void updateFieldEditors(boolean enabled) {
 		Composite parent = getFieldEditorParent();
@@ -274,10 +295,10 @@ public abstract class FieldEditorOverlayPage
 		}
 	}
 
-	/** 
-	 * We override the performOk method. In case of property pages we copy the values in the 
-	 * overlay store into the property values of the selected project.
-	 * We also save the state of the radio buttons.
+	/**
+	 * We override the performOk method. In case of property pages we copy the
+	 * values in the overlay store into the property values of the selected
+	 * project. We also save the state of the radio buttons.
 	 * 
 	 * @see org.eclipse.jface.preference.IPreferencePage#performOk()
 	 */
@@ -287,11 +308,10 @@ public abstract class FieldEditorOverlayPage
 			// Save state of radiobuttons in project properties
 			IResource resource = (IResource) getElement();
 			try {
-				String value =
-					(useProjectSettingsButton.getSelection()) ? TRUE : FALSE;
-				resource.setPersistentProperty(
-					new QualifiedName(pageId, USEPROJECTSETTINGS),
-					value);
+				String value = (useProjectSettingsButton.getSelection()) ? TRUE
+						: FALSE;
+				resource.setPersistentProperty(new QualifiedName(pageId,
+						USEPROJECTSETTINGS), value);
 			} catch (CoreException e) {
 			}
 		}
@@ -320,8 +340,8 @@ public abstract class FieldEditorOverlayPage
 	protected void configureWorkspaceSettings() {
 		try {
 			// create a new instance of the current class
-			IPreferencePage page =
-				(IPreferencePage) this.getClass().newInstance();
+			IPreferencePage page = (IPreferencePage) this.getClass()
+					.newInstance();
 			page.setTitle(getTitle());
 			page.setImageDescriptor(image);
 			// and show it
@@ -335,15 +355,18 @@ public abstract class FieldEditorOverlayPage
 
 	/**
 	 * Show a single preference pages
-	 * @param id - the preference page identification
-	 * @param page - the preference page
+	 * 
+	 * @param id
+	 *            - the preference page identification
+	 * @param page
+	 *            - the preference page
 	 */
 	protected void showPreferencePage(String id, IPreferencePage page) {
 		final IPreferenceNode targetNode = new PreferenceNode(id, page);
 		PreferenceManager manager = new PreferenceManager();
 		manager.addToRoot(targetNode);
-		final PreferenceDialog dialog =
-			new PreferenceDialog(getControl().getShell(), manager);
+		final PreferenceDialog dialog = new PreferenceDialog(getControl()
+				.getShell(), manager);
 		BusyIndicator.showWhile(getControl().getDisplay(), new Runnable() {
 			public void run() {
 				dialog.create();
@@ -352,5 +375,4 @@ public abstract class FieldEditorOverlayPage
 			}
 		});
 	}
-
 }

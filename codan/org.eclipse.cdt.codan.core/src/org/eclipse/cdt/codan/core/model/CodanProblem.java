@@ -56,4 +56,14 @@ public class CodanProblem implements IProblem {
 	public void setEnabled(boolean checked) {
 		this.enabled = checked;
 	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see java.lang.Object#clone()
+	 */
+	@Override
+	public Object clone() throws CloneNotSupportedException {
+		return super.clone();
+	}
 }

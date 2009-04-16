@@ -10,10 +10,6 @@
  *******************************************************************************/
 package org.eclipse.cdt.codan.internal.ui.preferences;
 
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.Map;
-
 import org.eclipse.jface.preference.FieldEditor;
 import org.eclipse.jface.viewers.CheckStateChangedEvent;
 import org.eclipse.jface.viewers.CheckboxTreeViewer;
@@ -40,7 +36,7 @@ import org.eclipse.swt.widgets.Tree;
  * <code>getListSeparator</code> framework methods.
  * </p>
  */
-public class CheckedTreeEditor extends FieldEditor implements
+public abstract class CheckedTreeEditor extends FieldEditor implements
 		ICheckStateListener {
 	/**
 	 * The list widget; <code>null</code> if none (before creation or after
@@ -49,7 +45,6 @@ public class CheckedTreeEditor extends FieldEditor implements
 	private CheckboxTreeViewer treeViewer;
 	private Composite listParent;
 	private boolean isValid;
-	private static String LIST_SEP = ",";
 	private boolean emptySelectionAllowed = false;
 
 	/**
@@ -121,9 +116,15 @@ public class CheckedTreeEditor extends FieldEditor implements
 	protected void doLoad() {
 		if (getTreeControl() != null) {
 			String s = getPreferenceStore().getString(getPreferenceName());
-			setTreeData(parseString(s));
+			getViewer().setInput(modelFromString(s));
 		}
 	}
+
+	/**
+	 * @param s
+	 * @return
+	 */
+	protected abstract Object modelFromString(String s);
 
 	Control getTreeControl() {
 		if (treeViewer == null)
@@ -134,23 +135,6 @@ public class CheckedTreeEditor extends FieldEditor implements
 	public CheckboxTreeViewer getTreeViewer() {
 		return treeViewer;
 	}
-
-	/**
-	 * @param map
-	 */
-	private void setTreeData(Map<Object, Boolean> checked) {
-		for (Iterator iter = checked.keySet().iterator(); iter.hasNext();) {
-			Object element = iter.next();
-			if (element != null) {
-				Boolean state = checked.get(element);
-				treeViewer.setChecked(element, state);
-				checkStateChanged(new CheckStateChangedEvent(treeViewer,
-						element, state));
-			}
-		}
-	}
-
-
 
 	/**
 	 * @Override
@@ -206,7 +190,7 @@ public class CheckedTreeEditor extends FieldEditor implements
 			treeViewer.refresh();
 			String s = getPreferenceStore().getDefaultString(
 					getPreferenceName());
-			setTreeData(parseString(s));
+			getViewer().setInput(modelFromString(s));
 		}
 	}
 
@@ -214,7 +198,7 @@ public class CheckedTreeEditor extends FieldEditor implements
 	 * (non-Javadoc) Method declared on FieldEditor.
 	 */
 	protected void doStore() {
-		String s = unparseTree();
+		String s = modelToString(getViewer().getInput());
 		if (s != null) {
 			getPreferenceStore().setValue(getPreferenceName(), s);
 		}
@@ -266,35 +250,6 @@ public class CheckedTreeEditor extends FieldEditor implements
 		return treeViewer.getControl().getShell();
 	}
 
-	/**
-	 * Stored as element=true|false,...
-	 * 
-	 * @param stringList
-	 * @return
-	 */
-	public Map<Object, Boolean> parseString(String stringList) {
-		Map<Object, Boolean> data = new HashMap<Object, Boolean>();
-		String[] arr = stringList.split(LIST_SEP);
-		for (int i = 0; i < arr.length; i++) {
-			String elem = arr[i];
-			String[] pair = elem.split("=", 2);
-			if (pair.length == 0)
-				continue;
-			String id = pair[0];
-			if (pair.length == 1) {
-				data.put(parseObject(id), true);
-				continue;
-			}
-			String check = pair[1];
-			data.put(parseObject(id), Boolean.valueOf(check));
-		}
-		return data;
-	}
-
-	protected Object parseObject(String string) {
-		return string;
-	}
-
 	/*
 	 * (non-Javadoc) Method declared on FieldEditor.
 	 */
@@ -320,49 +275,9 @@ public class CheckedTreeEditor extends FieldEditor implements
 	 * </p>
 	 * 
 	 * @return the combined string
-	 * @see #parseString
+	 * @see #stringToModel
 	 */
-	protected String unparseTree() {
-		StringBuffer buf = new StringBuffer();
-		Map<Object, Boolean> map = fillElementsFromUi(treeViewer.getInput(),
-				new HashMap<Object, Boolean>());
-		for (Iterator iterator = map.keySet().iterator(); iterator.hasNext();) {
-			Object element = iterator.next();
-			buf.append(unparseElement(element));
-			buf.append('=');
-			buf.append(map.get(element));
-			if (iterator.hasNext())
-				buf.append(LIST_SEP);
-		}
-		return buf.toString();
-	}
-
-	/**
-	 * @param element
-	 * @return
-	 */
-	protected String unparseElement(Object element) {
-		return element.toString();
-	}
-
-	/**
-	 * @param root
-	 */
-	public Map<Object, Boolean> fillElementsFromUi(Object root,
-			Map<Object, Boolean> checked) {
-
-			Object[] children = getContentProvider().getChildren(root);
-		if (children.length == 0) {
-			checked.put(root, treeViewer.getChecked(root));
-			} else {
-				for (int i = 0; i < children.length; i++) {
-					Object object = children[i];
-				fillElementsFromUi(object, checked);
-				}
-			}
-
-		return checked;
-	}
+	protected abstract String modelToString(Object model);
 
 	protected void createControl(Composite parent) {
 		GridLayout ly = (GridLayout) parent.getLayout();
@@ -405,7 +320,6 @@ public class CheckedTreeEditor extends FieldEditor implements
 		clearErrorMessage();
 		return true;
 	}
-
 
 	public final boolean isEmptySelectionAllowed() {
 		return emptySelectionAllowed;

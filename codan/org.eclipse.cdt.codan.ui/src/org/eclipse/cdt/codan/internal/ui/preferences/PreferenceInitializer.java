@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.cdt.codan.internal.ui.preferences;
 
+import org.eclipse.cdt.codan.core.PreferenceConstants;
 import org.eclipse.core.runtime.preferences.AbstractPreferenceInitializer;
 import org.eclipse.jface.preference.IPreferenceStore;
 

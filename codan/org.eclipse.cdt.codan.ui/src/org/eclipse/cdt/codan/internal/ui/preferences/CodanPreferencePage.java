@@ -11,6 +11,8 @@
 package org.eclipse.cdt.codan.internal.ui.preferences;
 
 import org.eclipse.cdt.codan.core.CodanCorePlugin;
+import org.eclipse.cdt.codan.core.model.CheckersRegisry;
+import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.preferences.InstanceScope;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPreferencePage;
@@ -46,7 +48,10 @@ public class CodanPreferencePage extends FieldEditorOverlayPage implements
 	 */
 	public void createFieldEditors() {
 		CheckedTreeEditor checkedTreeEditor = new ProblemsTreeEditor(
-				getFieldEditorParent());
+				getFieldEditorParent(), isPropertyPage() ? CheckersRegisry
+						.getInstance().getResourceProfile(
+								(IResource) getElement()) : CheckersRegisry
+						.getInstance().getWorkspaceProfile());
 		addField(checkedTreeEditor);
 	}
 

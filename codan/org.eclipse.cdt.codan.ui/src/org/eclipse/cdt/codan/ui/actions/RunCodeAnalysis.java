@@ -14,6 +14,7 @@ import java.util.Iterator;
 
 import org.eclipse.cdt.codan.core.builder.CodanBuilder;
 import org.eclipse.core.resources.IResource;
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
@@ -25,7 +26,6 @@ public class RunCodeAnalysis implements IObjectActionDelegate {
 
 	public void setActivePart(IAction action, IWorkbenchPart targetPart) {
 		// TODO Auto-generated method stub
-
 	}
 
 	public void run(IAction action) {
@@ -34,14 +34,17 @@ public class RunCodeAnalysis implements IObjectActionDelegate {
 			Object o = iterator.next();
 			if (o instanceof IResource) {
 				IResource res = (IResource) o;
-				new CodanBuilder().new CodanResourceVisitor().visit(res);
+				try {
+					res.accept(new CodanBuilder().new CodanResourceVisitor());
+				} catch (CoreException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
 			}
 		}
-
 	}
 
 	public void selectionChanged(IAction action, ISelection selection) {
 		this.sel = selection;
-
 	}
 }

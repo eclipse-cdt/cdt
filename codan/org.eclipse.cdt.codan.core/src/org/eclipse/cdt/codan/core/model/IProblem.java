@@ -10,8 +10,7 @@
  *******************************************************************************/
 package org.eclipse.cdt.codan.core.model;
 
-
-public interface IProblem {
+public interface IProblem extends IProblemElement {
 	String getName();
 
 	String getId();

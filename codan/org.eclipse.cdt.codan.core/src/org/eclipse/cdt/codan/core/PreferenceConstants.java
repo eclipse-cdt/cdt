@@ -8,24 +8,12 @@
  * Contributors:
  *    Alena Laskavaia  - initial API and implementation
  *******************************************************************************/
-package org.eclipse.cdt.codan.core.model;
+package org.eclipse.cdt.codan.core;
 
-public interface IProblemCategory extends IProblemElement {
-	String getName();
-
-	String getId();
-
-	Object[] getChildren();
-
-	/**
-	 * @param id
-	 * @return
-	 */
-	IProblem findProblem(String id);
-
-	/**
-	 * @param id
-	 * @return
-	 */
-	IProblemCategory findCategory(String id);
+/**
+ * Constant definitions for plug-in preferences
+ */
+public class PreferenceConstants {
+	public static final String P_RUN_ON_BUILD = "booleanPreference";
+	public static final String P_PROBLEMS = "problems";
 }

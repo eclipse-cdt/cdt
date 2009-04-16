@@ -26,8 +26,8 @@ public class ErrorReporter {
 				throw new NullPointerException("file");
 			if (id == null)
 				throw new NullPointerException("id");
-			IProblem problem = CheckersRegisry.getInstance().getProblemById(id,
-					file);
+			IProblem problem = CheckersRegisry.getInstance()
+					.getResourceProfile(file).findProblem(id);
 			if (problem == null)
 				throw new IllegalArgumentException("Id is not registered");
 			if (problem.isEnabled() == false)

@@ -36,6 +36,7 @@
  * Martin Oberhuber (Wind River) - [238703] getFile() needs to lstat for consistency with internalFetch()
  * Martin Oberhuber (Wind River) - [237616][ssh] Dont perform forced setLastModified during upload
  * Martin Oberhuber (Wind River) - [227135] Cryptic exception when sftp-server is missing
+ * David McKnight   (IBM)        - [271244] [sftp files] "My Home" filter not working
  *******************************************************************************/
 
 package org.eclipse.rse.internal.services.ssh.files;
@@ -1126,13 +1127,13 @@ public class SftpFileService extends AbstractFileService implements ISshService,
 	public void initService(IProgressMonitor monitor) {
 		Activator.trace("SftpFileService.initService"); //$NON-NLS-1$
 		super.initService(monitor);
-		// try
-		// {
-		// connect();
-		// }
-		// catch (Exception e)
-		// {
-		// }
+		 try {
+			 connect();
+		 }
+		 catch (Exception e)
+		 {
+			 Activator.trace("SftpFileService.initService failed: "+e.toString()); //$NON-NLS-1$
+		 }
 	}
 
 	public void uninitService(IProgressMonitor monitor) {

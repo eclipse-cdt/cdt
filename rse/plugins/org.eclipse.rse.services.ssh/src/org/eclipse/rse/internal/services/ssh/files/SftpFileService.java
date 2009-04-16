@@ -861,7 +861,7 @@ public class SftpFileService extends AbstractFileService implements ISshService,
 		if (fUserHome!=null) {
 			int lastSlash = fUserHome.lastIndexOf('/');
 			String name = fUserHome.substring(lastSlash + 1);
-			String parent = fUserHome.substring(0, lastSlash);
+			String parent = lastSlash > 0 ? fUserHome.substring(0, lastSlash) : lastSlash == 0 ? "/" : ""; //$NON-NLS-1$ //$NON-NLS-2$
 			try {
 				return getFile(parent, name, null);
 			} catch(SystemMessageException e) {

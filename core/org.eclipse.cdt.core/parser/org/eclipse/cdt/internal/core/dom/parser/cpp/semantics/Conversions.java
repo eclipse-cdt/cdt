@@ -541,10 +541,7 @@ public class Conversions {
 		} 
 		cost.source= source;
 		cost.target= target;
-		if (source.isSameType(target)) 
-			return true;
-		
-		return false;
+		return source.isSameType(target);
 	}
 	
 	/**

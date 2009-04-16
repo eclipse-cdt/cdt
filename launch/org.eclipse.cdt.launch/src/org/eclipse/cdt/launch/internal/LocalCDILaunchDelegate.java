@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2008 QNX Software Systems and others.
+ * Copyright (c) 2004, 2009 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,6 +8,7 @@
  * Contributors:
  * QNX Software Systems - Initial API and implementation
  * Anton Leherbauer (Wind River Systems) - bugs 205108, 212632, 224187
+ * Ken Ryall (Nokia) - bug 188116
  *******************************************************************************/
 package org.eclipse.cdt.launch.internal; 
 
@@ -471,5 +472,15 @@ public class LocalCDILaunchDelegate extends AbstractCLaunchDelegate {
 			// support old debugger types
 			session = launchOldDebugSession( config, launch, debugger, monitor );
 		return session;
+	}
+
+	@Override
+	public boolean buildForLaunch(ILaunchConfiguration configuration, String mode, IProgressMonitor monitor) throws CoreException {
+		// Never build for attach. Bug 188116
+		String debugMode = configuration.getAttribute( ICDTLaunchConfigurationConstants.ATTR_DEBUGGER_START_MODE, ICDTLaunchConfigurationConstants.DEBUGGER_MODE_RUN );
+		if (debugMode.equals( ICDTLaunchConfigurationConstants.DEBUGGER_MODE_ATTACH ))
+			return false;
+		
+		return super.buildForLaunch(configuration, mode, monitor);
 	}
 }

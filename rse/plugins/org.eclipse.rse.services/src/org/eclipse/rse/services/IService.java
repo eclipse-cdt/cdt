@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2008 IBM Corporation and others.
+ * Copyright (c) 2006, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -13,6 +13,7 @@
  *
  * Contributors:
  * Martin Oberhuber (Wind River) - [226262] Make IService IAdaptable and add Javadoc
+ * David McKnight   (IBM)        - [271244] [sftp files] "My Home" filter not working
  *******************************************************************************/
 
 package org.eclipse.rse.services;
@@ -52,8 +53,8 @@ public interface IService extends IAdaptable
 
 	/**
 	 * Initialize this Service to make it ready for operation. This method may
-	 * be long-running, but is not yet expected to open a connection to a
-	 * particular remote system.
+	 * be long-running and normally gets called after a connection has 
+	 * been established.  
 	 *
 	 * Extenders are expected to override this method.
 	 *

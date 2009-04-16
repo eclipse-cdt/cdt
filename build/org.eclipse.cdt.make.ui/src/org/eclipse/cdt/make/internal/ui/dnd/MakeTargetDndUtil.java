@@ -383,6 +383,9 @@ public class MakeTargetDndUtil {
 
 		IMakeTarget newMakeTarget = makeTargetManager.createTarget(project, name, builderId);
 		copyTargetData(makeTarget, newMakeTarget);
+		if (makeTarget.getName().equals(makeTarget.getBuildAttribute(IMakeTarget.BUILD_TARGET, ""))) { //$NON-NLS-1$
+			newMakeTarget.setBuildAttribute(IMakeTarget.BUILD_TARGET,name);
+		}
 		return newMakeTarget;
 	}
 

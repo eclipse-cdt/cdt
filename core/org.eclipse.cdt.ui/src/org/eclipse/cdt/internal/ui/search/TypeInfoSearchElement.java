@@ -38,7 +38,7 @@ public class TypeInfoSearchElement extends PDOMSearchElement {
 
 	@Override
 	public int hashCode() {
-		return super.hashCode() + (typeInfo.getCElementType() *31 + typeInfo.getName().hashCode())*31;
+		return super.hashCode() + typeInfo.hashCode()*31;
 	}
 	
 	@Override
@@ -49,9 +49,7 @@ public class TypeInfoSearchElement extends PDOMSearchElement {
 		if (!(obj instanceof TypeInfoSearchElement))
 			return false;
 		TypeInfoSearchElement other= (TypeInfoSearchElement)obj;
-		return typeInfo.getCElementType() == other.typeInfo.getCElementType() &&
-			typeInfo.getName().equals(other.typeInfo.getName()) &&
-			super.equals(other);
+		return super.equals(other) && typeInfo.equals(other.typeInfo);
 	}
 
 	public final ITypeInfo getTypeInfo() {

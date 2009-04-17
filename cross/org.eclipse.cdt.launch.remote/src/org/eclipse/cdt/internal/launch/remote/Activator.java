@@ -9,7 +9,7 @@
  * Ewa Matejska (PalmSource)
  *******************************************************************************/
 
-package org.eclipse.cdt.launch.remote;
+package org.eclipse.cdt.internal.launch.remote;
 
 import org.eclipse.core.runtime.Plugin;
 import org.osgi.framework.BundleContext;

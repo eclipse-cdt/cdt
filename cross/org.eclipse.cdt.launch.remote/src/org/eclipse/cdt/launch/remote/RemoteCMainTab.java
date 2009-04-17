@@ -20,6 +20,7 @@
 
 package org.eclipse.cdt.launch.remote;
 
+import org.eclipse.cdt.internal.launch.remote.Messages;
 import org.eclipse.cdt.launch.ui.CMainTab;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;

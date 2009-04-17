@@ -14,6 +14,7 @@
 package org.eclipse.cdt.launch.remote;
 
 import org.eclipse.cdt.debug.mi.internal.ui.GDBDebuggerPage;
+import org.eclipse.cdt.internal.launch.remote.Messages;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;

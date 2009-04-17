@@ -32,6 +32,7 @@ import org.eclipse.cdt.debug.core.cdi.ICDISession;
 import org.eclipse.cdt.debug.core.cdi.model.ICDITarget;
 import org.eclipse.cdt.debug.mi.core.GDBServerCDIDebugger2;
 import org.eclipse.cdt.debug.mi.core.IGDBServerMILaunchConfigurationConstants;
+import org.eclipse.cdt.internal.launch.remote.Messages;
 import org.eclipse.cdt.launch.AbstractCLaunchDelegate;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;

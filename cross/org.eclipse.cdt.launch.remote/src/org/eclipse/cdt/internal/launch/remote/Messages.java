@@ -13,12 +13,12 @@
  * Anna Dushistova       (MontaVista) - [181517][usability] Specify commands to be run before remote application launch
  * Nikita Shulga      (EmbeddedAlley) - [265236][remotecdt] Wait for RSE to initialize before querying it for host list
  *******************************************************************************/
-package org.eclipse.cdt.launch.remote;
+package org.eclipse.cdt.internal.launch.remote;
 
 import org.eclipse.osgi.util.NLS;
 
 public class Messages extends NLS {
-	private static final String BUNDLE_NAME = "org.eclipse.cdt.launch.remote.messages"; //$NON-NLS-1$
+	private static final String BUNDLE_NAME = "org.eclipse.cdt.internal.launch.remote.messages"; //$NON-NLS-1$
 
 	public static String Gdbserver_name_textfield_label;
 

@@ -1361,13 +1361,13 @@ public class CPPTemplates {
 					templateArguments = ICPPTemplateArgument.EMPTY_ARGUMENTS;
 					try {
 						if (containsDependentType(fnArgs)) {
-							functions[i]= CPPUnknownFunction.createForSample(template, name);
+							functions[i]= CPPUnknownFunction.createForSample(template);
 							return;
 						}
 						if (name instanceof ICPPASTTemplateId && !(template instanceof ICPPConstructor)) {
 							templateArguments = createTemplateArgumentArray((ICPPASTTemplateId) name);
 							if (hasDependentArgument(templateArguments)) {
-								functions[i]= CPPUnknownFunction.createForSample(template, name);
+								functions[i]= CPPUnknownFunction.createForSample(template);
 								return;
 							}
 						}
@@ -1396,6 +1396,10 @@ public class CPPTemplates {
 	}
 
 	static protected void instantiateConversionTemplates(IFunction[] functions, IType conversionType, IASTName name) {
+		instantiateConversionTemplates(functions, conversionType);
+	}
+
+	static protected void instantiateConversionTemplates(IFunction[] functions, IType conversionType) {
 		boolean checkedForDependentType= false;
 		for (int i = 0; i < functions.length; i++) {
 			IFunction func = functions[i];
@@ -1407,7 +1411,7 @@ public class CPPTemplates {
 				if (!checkedForDependentType) {
 					try {
 						if (isDependentType(conversionType)) {
-							functions[i]= CPPUnknownFunction.createForSample(template, name);
+							functions[i]= CPPUnknownFunction.createForSample(template);
 							return;
 						}
 						checkedForDependentType= true;

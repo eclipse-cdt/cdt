@@ -369,8 +369,9 @@ public class Conversions {
 		boolean ambiguousConversionOperator= false;
 		if (s instanceof ICPPClassType) {
 			ICPPMethod[] ops = SemanticUtil.getConversionOperators((ICPPClassType) s); 
-			if (ops.length > 0 && !(ops[0] instanceof IProblemBinding)) {
-				for (final ICPPMethod op : ops) {
+			CPPTemplates.instantiateConversionTemplates(ops, target);
+			for (final ICPPMethod op : ops) {
+				if (op != null && !(op instanceof IProblemBinding)) {
 					Cost cost= checkStandardConversionSequence(op.getType().getReturnType(), target, false);
 					if (cost.getRank() != Rank.NO_MATCH) {
 						int cmp= cost.compareTo(operatorCost);

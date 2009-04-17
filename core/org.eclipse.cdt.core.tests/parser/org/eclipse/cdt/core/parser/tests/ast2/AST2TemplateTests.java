@@ -3994,11 +3994,11 @@ public class AST2TemplateTests extends AST2BaseTest {
 	//	void test(B p) {
 	//	  f(p);
 	//	}
-	public void _testTemplateConversionOperator_271948_1() throws Exception {
+	public void testTemplateConversionOperator_271948_1() throws Exception {
 		final String code = getAboveComment();
 		parseAndCheckBindings(code, ParserLanguage.CPP);		
 	}
-	
+
 	//	template <typename T>
 	//	struct A {
 	//	};
@@ -4009,12 +4009,12 @@ public class AST2TemplateTests extends AST2BaseTest {
 	//	  operator A<T>();
 	//	};
 	//
-	//	void f(A<char*> p);
+	//	void f(const A<char*>& p);
 	//
-	//	void test(B<int> p) {
-	//	  f(p);
+	//	void test(B<int> x) {
+	//	  f(x);
 	//	}
-	public void _testTemplateConversionOperator_271948_2() throws Exception {
+	public void testTemplateConversionOperator_271948_2() throws Exception {
 		final String code = getAboveComment();
 		parseAndCheckBindings(code, ParserLanguage.CPP);		
 	}

@@ -2112,7 +2112,7 @@ public class CPPSemantics {
 		if (CPPTemplates.containsDependentType(argTypes)) {
 			if (viableCount == 1)
 				return firstViable;
-			return CPPUnknownFunction.createForSample(firstViable, data.astName);
+			return CPPUnknownFunction.createForSample(firstViable);
 		}
 		
 		boolean ambiguous = false;				// ambiguity, 2 functions are equally good
@@ -2131,7 +2131,7 @@ public class CPPSemantics {
 			if (fnCost == CONTAINS_DEPENDENT_TYPES) {
 				if (viableCount == 1)
 					return firstViable;
-				return CPPUnknownFunction.createForSample(firstViable, data.astName);
+				return CPPUnknownFunction.createForSample(firstViable);
 			}
 
 			if (fnCost.hasDeferredUDC()) {
@@ -2272,7 +2272,7 @@ public class CPPSemantics {
 			return new ProblemBinding(astName, IProblemBinding.SEMANTIC_INVALID_TYPE);
 		}
 		if (!data.forFunctionDeclaration() || data.forExplicitFunctionSpecialization()) {
-			CPPTemplates.instantiateConversionTemplates(fns, t, data.astName);
+			CPPTemplates.instantiateConversionTemplates(fns, t);
 		}
 
 		IFunction unknown= null;

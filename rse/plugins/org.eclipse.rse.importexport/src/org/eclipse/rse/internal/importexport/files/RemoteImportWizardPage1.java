@@ -15,6 +15,7 @@
  * David McKnight   (IBM)        - [220547] [api][breaking] SimpleSystemMessage needs to specify a message id and some messages should be shared
  * David McKnight   (IBM)        - [219792][importexport][ftp] RSE hangs on FTP import
  * Takuya Miyamoto - [185925] Integrate Platform/Team Synchronization
+ * David McKnight   (IBM)        - [272708] [import/export] fix various bugs with the synchronization support
  *******************************************************************************/
 package org.eclipse.rse.internal.importexport.files;
 
@@ -255,6 +256,7 @@ class RemoteImportWizardPage1 extends WizardResourceImportPage implements Listen
 	protected boolean initSourceNameSet = false;
 	// dialog store id constants
 	private final static String STORE_SOURCE_NAMES_ID = "RemoteImportWizardPage1.STORE_SOURCE_NAMES_ID"; //$NON-NLS-1$
+	private final static String STORE_REVIEW_SYNCHRONIZE_ID = "RemoteImportWizardPage1.STORE_REVIEW_SYNCHRONIZE_ID"; //$NON-NLS-1$
 	private final static String STORE_OVERWRITE_EXISTING_RESOURCES_ID = "RemoteImportWizardPage1.STORE_OVERWRITE_EXISTING_RESOURCES_ID"; //$NON-NLS-1$
 	private final static String STORE_CREATE_CONTAINER_STRUCTURE_ID = "RemoteImportWizardPage1.STORE_CREATE_CONTAINER_STRUCTURE_ID"; //$NON-NLS-1$
 	private static final String STORE_CREATE_DESCRIPTION_FILE_ID = "RemoteImportWizardPage1.STORE_CREATE_DESCRIPTION_FILE_ID"; //$NON-NLS-1$
@@ -1000,6 +1002,7 @@ class RemoteImportWizardPage1 extends WizardResourceImportPage implements Listen
 			boolean isInitializingFromImportData = parentWizard.getInitializeFromImportData();
 			if (!isInitializingFromImportData) {
 				// radio buttons and checkboxes
+				reviewSynchronizeCheckbox.setSelection(settings.getBoolean(STORE_REVIEW_SYNCHRONIZE_ID));
 				overwriteExistingResourcesCheckbox.setSelection(settings.getBoolean(STORE_OVERWRITE_EXISTING_RESOURCES_ID));
 				boolean createStructure = settings.getBoolean(STORE_CREATE_CONTAINER_STRUCTURE_ID);
 				createContainerStructureButton.setSelection(createStructure);
@@ -1019,6 +1022,7 @@ class RemoteImportWizardPage1 extends WizardResourceImportPage implements Listen
 					setContainerFieldValue(containerPath);
 				}
 				// radio buttons and checkboxes
+				reviewSynchronizeCheckbox.setSelection(importData.isReviewSynchronize());
 				overwriteExistingResourcesCheckbox.setSelection(importData.isOverWriteExistingFiles());
 				createContainerStructureButton.setSelection(importData.isCreateDirectoryStructure());
 				createOnlySelectedButton.setSelection(importData.isCreateSelectionOnly());
@@ -1067,6 +1071,7 @@ class RemoteImportWizardPage1 extends WizardResourceImportPage implements Listen
 			sourceNames = addToHistory(sourceNames, getSourceDirectoryName());
 			settings.put(STORE_SOURCE_NAMES_ID, sourceNames);
 			// radio buttons and checkboxes
+			settings.put(STORE_REVIEW_SYNCHRONIZE_ID, reviewSynchronizeCheckbox.getSelection());
 			settings.put(STORE_OVERWRITE_EXISTING_RESOURCES_ID, overwriteExistingResourcesCheckbox.getSelection());
 			settings.put(STORE_CREATE_CONTAINER_STRUCTURE_ID, createContainerStructureButton.getSelection());
 			settings.put(STORE_CREATE_DESCRIPTION_FILE_ID, isSaveSettings());

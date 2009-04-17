@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2008 IBM Corporation and others.
+ * Copyright (c) 2000, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -11,6 +11,7 @@
  * David McKnight   (IBM)        - [216252] [api][nls] Resource Strings specific to subsystems should be moved from rse.ui into files.ui / shells.ui / processes.ui where possible
  * David McKnight   (IBM)        - [223204] [cleanup] fix broken nls strings in files.ui and others
  * David McKnight     (IBM)      - [229610] [api] File transfers should use workspace text file encoding
+ * David McKnight   (IBM)        - [272708] [import/export] fix various bugs with the synchronization support
  *******************************************************************************/
 package org.eclipse.rse.internal.importexport.files;
 
@@ -78,6 +79,8 @@ public class RemoteFileImportOperation extends WorkspaceModifyOperation {
 	private static final int OVERWRITE_NONE = 1;
 	private static final int OVERWRITE_ALL = 2;
 	private int overwriteState = OVERWRITE_NOT_SET;
+	
+	private boolean reviewSynchronize = true;
 
 	/**
 	 * Creates a new operation that recursively imports the entire contents of the
@@ -158,6 +161,7 @@ public class RemoteFileImportOperation extends WorkspaceModifyOperation {
 		this(data.getContainerPath(), data.getSource(), provider, overwriteImplementor);
 		setFilesToImport(data.getElements());
 		setOverwriteResources(data.isOverWriteExistingFiles());
+		setReviewSynchronize(data.isReviewSynchronize());
 		setCreateContainerStructure(data.isCreateDirectoryStructure());
 		this.importData = data;
 		this.saveSettings = data.isSaveSettings();
@@ -638,5 +642,15 @@ public class RemoteFileImportOperation extends WorkspaceModifyOperation {
 	 */
 	public void setOverwriteResources(boolean value) {
 		if (value) this.overwriteState = OVERWRITE_ALL;
+	}
+	
+	/**
+	 *	Set this boolean indicating whether exported resources should automatically
+	 *	be reviewed/synchronized
+	 *
+	 *	@param value boolean
+	 */
+	public void setReviewSynchronize(boolean value) {
+		reviewSynchronize = value;
 	}
 }

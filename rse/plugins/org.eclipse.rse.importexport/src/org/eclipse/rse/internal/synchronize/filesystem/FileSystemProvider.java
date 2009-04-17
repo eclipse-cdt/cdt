@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2008 IBM Corporation and others.
+ * Copyright (c) 2000, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,10 +8,13 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  * Takuya Miyamoto - Adapted from org.eclipse.team.examples.filesystem / FileSystemProvider
+ * David McKnight   (IBM)        - [272708] [import/export] fix various bugs with the synchronization support
  *******************************************************************************/
 package org.eclipse.rse.internal.synchronize.filesystem;
 
 import java.io.File;
+import java.util.HashMap;
+import java.util.Map;
 
 import org.eclipse.core.resources.IFileModificationValidator;
 import org.eclipse.core.resources.IResource;
@@ -77,9 +80,12 @@ public class FileSystemProvider extends RepositoryProvider {
 	};
 
 	// The location of the folder on file system where the repository is stored.
-	private IPath rootPath;
+	private IPath remoteRootPath;
+	private IPath localRootPath;
 	private UniFilePlus remoteRoot;
 
+	private Map _resourceMap;
+	
 	// The QualifiedName that is used to persist the location across workspace
 	// as a persistent property on a resource
 	private static QualifiedName FILESYSTEM_REPO_LOC = new QualifiedName(RSESyncUtils.PLUGIN_ID, "disk_location"); //$NON-NLS-1$
@@ -89,8 +95,14 @@ public class FileSystemProvider extends RepositoryProvider {
 	 */
 	public FileSystemProvider() {
 		super();
+		_resourceMap = new HashMap();
 	}
 
+	public void reset()
+	{
+		_resourceMap.clear();
+	}
+	
 	/**
 	 * This method is invoked when the provider is mapped to a project. Although
 	 * we have access to the project at this point (using
@@ -135,11 +147,11 @@ public class FileSystemProvider extends RepositoryProvider {
 	 * 		be stored.
 	 * @throws TeamException
 	 */
-	public void setTargetLocation(String location) throws TeamException {
+	public void setRemoteLocation(String location) throws TeamException {
 		// location = transformRSEtoNormal(location);
 
 		// set the instance variable to the provided path
-		rootPath = new Path(location);
+		remoteRootPath = new Path(location);
 
 		// ensure that the location is a folder (if it exists)
 		File file = new File(location);
@@ -155,6 +167,10 @@ public class FileSystemProvider extends RepositoryProvider {
 			throw FileSystemPlugin.wrapException(e);
 		}
 	}
+	
+	public void setLocalLocation(IPath location){
+		localRootPath = location;		
+	}
 
 	/**
 	 * Returns the folder in the file system to which the provider is connected.
@@ -163,14 +179,14 @@ public class FileSystemProvider extends RepositoryProvider {
 	 * 
 	 * @return IPath The path to the root of the repository.
 	 */
-	public IPath getRoot() {
-		if (rootPath == null) {
+	public IPath getRemoteRoot() {
+		if (remoteRootPath == null) {
 			try {
 				String location = getProject().getPersistentProperty(FILESYSTEM_REPO_LOC);
 				if (location == null) {
 					return null;
 				}
-				rootPath = new Path(location);
+				remoteRootPath = new Path(location);
 			} catch (CoreException e) {
 				// log the problem and carry on
 				FileSystemPlugin.log(e);
@@ -178,7 +194,7 @@ public class FileSystemProvider extends RepositoryProvider {
 			}
 		}
 		// System.out.println(root);
-		return rootPath;
+		return remoteRootPath;
 	}
 
 	/**
@@ -264,39 +280,56 @@ public class FileSystemProvider extends RepositoryProvider {
 	 * @return the file that the resource maps to.
 	 */
 	public File getExportFile(IResource resource) {
-		UniFilePlus file = null;
-		try {
-			if (resource.getProject().equals(getProject())) {
-				UniFilePlus root = getRemoteRootFolder();
-				String relativePath = transformInDependency(root.getRemoteFile().getHost(), resource.getFullPath().toString());
-				// MOB BUGBUG//IRemoteFile remoteFile =
-				// root.getRemoteFile().getParentRemoteFileSubSystem
-				// ().getRemoteFileObject(root.getRemoteFile(),relativePath,
-				// null);
-				IRemoteFile remoteFile = root.getRemoteFile().getParentRemoteFileSubSystem().getRemoteFileObject(root.getRemoteFile().getAbsolutePath() + relativePath, null);
-				file = new UniFilePlus(remoteFile);
-
+		UniFilePlus file = (UniFilePlus)_resourceMap.get(resource);
+		//if (file == null)
+		{
+			try {
+				if (resource.getProject().equals(getProject())) {
+					UniFilePlus root = getRemoteRootFolder();
+	
+					String relativePath = transformInDependency(root.getRemoteFile().getHost(), resource.getFullPath().toString());
+							
+					
+					// MOB BUGBUG//IRemoteFile remoteFile =
+					// root.getRemoteFile().getParentRemoteFileSubSystem
+					// ().getRemoteFileObject(root.getRemoteFile(),relativePath,
+					// null); 
+					
+					String path = root.getRemoteFile().getAbsolutePath()  + relativePath;
+					IRemoteFile remoteFile = root.getRemoteFile().getParentRemoteFileSubSystem().getRemoteFileObject(path,null); 
+					//String remotePath = root.getAbsolutePath() + root.getRemoteFile().getParentRemoteFileSubSystem().getSeparatorChar() +  resource.getName();        
+					//IRemoteFile remoteFile = root.getRemoteFile().getParentRemoteFileSubSystem().getRemoteFileObject(remotePath, null);
+					file = new UniFilePlus(remoteFile);
+					_resourceMap.put(resource, file);
+	
+				}
+			} catch (SystemMessageException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
 			}
-		} catch (SystemMessageException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
 		}
 		return file;
 	}
 	
 	public File getImportFile(IResource resource){
-		UniFilePlus file = null;
-		try {
-			if (resource.getProject().equals(getProject())) {
-				UniFilePlus root = getRemoteRootFolder();
-				String relativePath = transformInDependency(root.getRemoteFile().getHost(), IPath.SEPARATOR + resource.getProjectRelativePath().toString());
-				IRemoteFile remoteFile = root.getRemoteFile().getParentRemoteFileSubSystem().getRemoteFileObject(root.getRemoteFile().getAbsolutePath() + relativePath, null);
-				file = new UniFilePlus(remoteFile);
-
+		UniFilePlus file = (UniFilePlus)_resourceMap.get(resource);
+		//if (file == null){
+		{
+			try {
+				if (resource.getProject().equals(getProject())) {
+					UniFilePlus root = getRemoteRootFolder();
+					String relativePath = transformInDependency(root.getRemoteFile().getHost(), resource.getFullPath().toString());
+					//String relativePath = transformInDependency(root.getRemoteFile().getHost(), IPath.SEPARATOR + resource.getProjectRelativePath().toString());
+					
+					String path = root.getRemoteFile().getAbsolutePath() + relativePath;
+					IRemoteFile remoteFile = root.getRemoteFile().getParentRemoteFileSubSystem().getRemoteFileObject(path, null);
+					file = new UniFilePlus(remoteFile);
+					_resourceMap.put(resource, file);
+				}
+			} catch (SystemMessageException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
 			}
-		} catch (SystemMessageException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
 		}
 		return file;
 	}
@@ -356,7 +389,7 @@ public class FileSystemProvider extends RepositoryProvider {
 	 */
 	public UniFilePlus getRemoteRootFolder() {
 		if (remoteRoot == null) {
-			IPath remoteRootDir = getRoot();
+			IPath remoteRootDir = getRemoteRoot();
 			String remoteRootDirString = transformRSEtoNormal(remoteRootDir.toString());
 			IHost conn = Utilities.parseForSystemConnection(remoteRootDir.toString());
 			String absolutePath = transformInDependency(conn, remoteRootDirString);
@@ -373,6 +406,29 @@ public class FileSystemProvider extends RepositoryProvider {
 			ret = original.replace("/", "\\");
 		} else {
 			ret = original.replace("\\", "/");
+		}
+		
+		
+		// make sure the mapping corresponds to the correct local location
+		if (localRootPath != null){
+			String[] lsegs = localRootPath.segments();
+			String[] rsegs = ret.substring(1).split("/");
+			
+			// relative path should not start with the localRoot path
+			StringBuffer newPath = new StringBuffer();
+			for (int i = 0; i < rsegs.length; i++){
+				if (lsegs.length > i){
+					if (!lsegs[i].equals(rsegs[i])){
+						newPath.append("/");
+						newPath.append(rsegs[i]);
+					}
+				}
+				else {
+					newPath.append("/");
+					newPath.append(rsegs[i]);
+				}
+			}
+			ret = newPath.toString();
 		}
 		return ret;
 	}

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2008 IBM Corporation and others.
+ * Copyright (c) 2000, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -9,6 +9,7 @@
  *     IBM Corporation - initial API and implementation
  * Andreas Voss <av@tonbeller.com> - Bug 181141 [Examples] Team: filesystem provider example can not handle deletions
  * Takuya Miyamoto - Adapted from org.eclipse.team.examples.filesystem / FileSystemOperations
+ * David McKnight   (IBM)        - [272708] [import/export] fix various bugs with the synchronization support
  *******************************************************************************/
 package org.eclipse.rse.internal.synchronize.filesystem;
 
@@ -31,6 +32,8 @@ import org.eclipse.rse.internal.importexport.files.UniFilePlus;
 import org.eclipse.rse.internal.synchronize.filesystem.subscriber.FileSystemResourceVariant;
 import org.eclipse.rse.internal.synchronize.filesystem.subscriber.FileSystemSubscriber;
 import org.eclipse.rse.services.clientserver.messages.SystemMessageException;
+import org.eclipse.rse.subsystems.files.core.SystemIFileProperties;
+import org.eclipse.rse.subsystems.files.core.subsystems.IRemoteFile;
 import org.eclipse.team.core.RepositoryProvider;
 import org.eclipse.team.core.TeamException;
 import org.eclipse.team.core.variants.IResourceVariant;
@@ -345,12 +348,21 @@ public class FileSystemOperations {
 //					remoteFile.getRemoteFile().getParentRemoteFileSubSystem().download(remoteFile.getRemoteFile(), parent.getLocation().toOSString(), localFile.getCharset(), progress);
 					
 					// Mark as read-only to force a checkout before editing
-					//System.out.println(localFile.getLocation() + " : accessible = " + localFile.isAccessible()+", existing = "+localFile.exists());
+					//System.out.println(localFile.getLocation() + " : accessible = " + localFile.isAccessible()+", existing = "+localFile.exists());															
 					if(localFile.isAccessible()){
 						localFile.getResourceAttributes().setReadOnly(true);
 					}
+					
+					localFile.getParent().refreshLocal(IResource.DEPTH_ONE, progress);
+					
 					// update sync status
 					synchronizer.setBaseBytes(localFile, remote.asBytes());
+					
+					// update stored timestamp
+					SystemIFileProperties properties = new SystemIFileProperties(localFile);
+					properties.setRemoteFileTimeStamp(remoteFile.lastModified());
+					properties.setDownloadFileTimeStamp(localFile.getLocalTimeStamp());
+					
 				} catch (SystemMessageException e) {
 					e.printStackTrace();
 				}
@@ -404,6 +416,7 @@ public class FileSystemOperations {
 		FileSystemProvider provider = getProvider(localFile);
 		IResourceVariant base = provider.getResourceVariant(localFile, baseBytes);
 
+		overrideIncoming = true; // DKM - test
 		// Check whether we are overriding a remote change
 		if (base == null && remote != null && !overrideIncoming) {
 			// The remote is an incoming (or conflicting) addition.
@@ -453,6 +466,16 @@ public class FileSystemOperations {
 				// Update the synchronizer base bytes
 				remote = getExportResourceVariant(localFile);
 				synchronizer.setBaseBytes(localFile, remote.asBytes());
+				
+				// update stored timestamp
+				// make sure the remote file is up-to-date
+				remoteFile.getRemoteFile().markStale(true);
+				IRemoteFile updatedRemoteFile = remoteFile.getRemoteFile().getParentRemoteFileSubSystem().getRemoteFileObject(remoteFile.getRemoteFile().getAbsolutePath(), progress);
+				
+				SystemIFileProperties properties = new SystemIFileProperties(localFile);
+				properties.setRemoteFileTimeStamp(updatedRemoteFile.getLastModified());
+				properties.setDownloadFileTimeStamp(localFile.getLocalTimeStamp());
+				
 			} catch (CoreException e) {
 				throw FileSystemPlugin.wrapException(e);
 			} catch (Exception e) {
@@ -490,8 +513,15 @@ public class FileSystemOperations {
 					toDelete.add(diskFile);
 				} else if (folder.exists() && remote == null) {
 					// Create the remote directory and sync up the local
-					diskFile.mkdir();
-					synchronizer.setBaseBytes(folder, provider.getExportResourceVariant(folder).asBytes());
+					diskFile.mkdirs();
+					
+					IResourceVariant variant = provider.getExportResourceVariant(folder);
+					if (variant == null){
+						// remote directory does not exist
+					}
+					else {
+						synchronizer.setBaseBytes(folder, variant.asBytes());
+					}
 				}
 			} else if (container.getType() == IResource.PROJECT) {
 				IProject project = (IProject) container;

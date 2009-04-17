@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008 Takuya Miyamoto and others.
+ * Copyright (c) 2008, 2009 Takuya Miyamoto and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,16 +7,22 @@
  * 
  * Contributors:
  *     Takuya Miyamoto - initial API and implementation
+ * David McKnight   (IBM)        - [272708] [import/export] fix various bugs with the synchronization support
  *******************************************************************************/
 package org.eclipse.rse.internal.synchronize.provisional;
 
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import org.eclipse.core.resources.IContainer;
+import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.rse.internal.importexport.files.UniFilePlus;
 import org.eclipse.rse.internal.synchronize.ISynchronizeData;
 import org.eclipse.rse.internal.synchronize.filesystem.FileSystemProvider;
@@ -44,6 +50,12 @@ public class Synchronizer implements ISynchronizer {
 		
 		for (IResource resource : elements) {
 			projectSet.add(resource.getProject());
+			if (!resource.exists()){
+				IContainer parent = resource.getParent();
+				if (!parent.exists()){
+					createEmptyFolders(parent);
+				}
+			}
 		}
 
 		// get resources to synchronize in the type of Array.
@@ -66,10 +78,15 @@ public class Synchronizer implements ISynchronizer {
 				IProject project = projects[i];
 				connector.connect(project);
 				FileSystemProvider provider = (FileSystemProvider) RepositoryProvider.getProvider(project);
-				String destination = data.getDestination();
-				provider.setTargetLocation(data.getDestination());
+				provider.reset();
+				String remoteLocation = data.getRemoteLocation();
+				IPath localLocation = data.getLocalLocation();				
+				provider.setRemoteLocation(remoteLocation);
+				provider.setLocalLocation(localLocation);
 				this.remoteRoot = provider.getRemoteRootFolder();
 			}
+			
+			
 
 			// run actual synchronize operation.
 			// TODO currently, not support last synchronization date.
@@ -81,5 +98,36 @@ public class Synchronizer implements ISynchronizer {
 		}
 
 		return true;
+	}
+	
+	private void createEmptyFolders(IContainer container){
+		List emptyParent = new ArrayList();
+		boolean go = true;
+		
+		IContainer empty = container;
+		
+		//check to see which parent folders need to be created
+		while(go) {
+			if(!empty.exists() && empty instanceof IFolder){
+				emptyParent.add(empty);
+			}
+			else {
+				go=false;
+			}
+			empty = empty.getParent();
+		}
+		
+		IFolder emptyFolder = null;		
+		
+		// create empty parent folders
+		for(int j=emptyParent.size()-1;j>=0;j--){
+			emptyFolder = (IFolder) emptyParent.get(j);
+			if(!emptyFolder.exists()){
+				try {
+					emptyFolder.create(true, true, new NullProgressMonitor());
+				}
+				catch (CoreException e){}
+			}
+		}
 	}
 }

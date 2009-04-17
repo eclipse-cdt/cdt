@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2008 IBM Corporation and others.
+ * Copyright (c) 2005, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,9 +8,11 @@
  * Contributors:
  * IBM Corporation - initial API and implementation
  * Takuya Miyamoto - Adapted from org.eclipse.team.examples.filesystem / GetOperation
+ * David McKnight   (IBM)        - [272708] [import/export] fix various bugs with the synchronization support
  *******************************************************************************/
 package org.eclipse.rse.internal.synchronize.filesystem.ui;
 
+import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.mapping.ResourceTraversal;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -51,6 +53,9 @@ public class GetOperation extends FileSystemOperation {
 			if (!isOverwriteOutgoing() && hasIncomingChanges(traversals)) {
 				throw new TeamException("Could not get all changes due to conflicts.");
 			}
+			
+			provider.getProject().refreshLocal(IResource.DEPTH_INFINITE, monitor);
+			
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

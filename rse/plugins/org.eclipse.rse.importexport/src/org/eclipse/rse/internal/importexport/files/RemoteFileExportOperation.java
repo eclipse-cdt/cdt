@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2008 IBM Corporation and others.
+ * Copyright (c) 2000, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -11,6 +11,7 @@
  * Martin Oberhuber (Wind River) - [189130] Move SystemIFileProperties from UI to Core
  * David McKnight   (IBM)        - [191479] refreshing destination directory after export
  * David McKnight   (IBM)        - [216252] [api][nls] Resource Strings specific to subsystems should be moved from rse.ui into files.ui / shells.ui / processes.ui where possible
+ * David McKnight   (IBM)        - [272708] [import/export] fix various bugs with the synchronization support
  *******************************************************************************/
 package org.eclipse.rse.internal.importexport.files;
 
@@ -67,6 +68,9 @@ class RemoteFileExportOperation implements IRunnableWithProgress {
 	private RemoteFileExportData exportData;
 	private boolean saveSettings;
 	private String descriptionFilePath;
+	
+	private boolean reviewSynchronize = true;
+	
 	// the constants for the overwrite 3 state
 	private static final int OVERWRITE_NOT_SET = 0;
 	private static final int OVERWRITE_NONE = 1;
@@ -86,7 +90,7 @@ class RemoteFileExportOperation implements IRunnableWithProgress {
 		this.resourcesToExport = resources;
 		this.path = new Path(destinationPath);
 		this.overwriteCallback = overwriteImplementor;
-		this.exporter = new RemoteExporter(conn);
+		this.exporter = new RemoteExporter(conn);		
 	}
 
 	public RemoteFileExportOperation(RemoteFileExportData data, IOverwriteQuery overwriteImplementor) {
@@ -95,6 +99,7 @@ class RemoteFileExportOperation implements IRunnableWithProgress {
 		this.saveSettings = data.isSaveSettings();
 		this.descriptionFilePath = data.getDescriptionFilePath();
 		setCreateLeadupStructure(data.isCreateDirectoryStructure());
+		setReviewSynchronize(data.isReviewSynchronize());
 		setOverwriteFiles(data.isOverWriteExistingFiles());
 	}
 
@@ -554,5 +559,15 @@ class RemoteFileExportOperation implements IRunnableWithProgress {
 		if (value) {
 			overwriteState = OVERWRITE_ALL;
 		}
+	}
+	
+	/**
+	 *	Set this boolean indicating whether exported resources should automatically
+	 *	be reviewed/synchronized
+	 *
+	 *	@param value boolean
+	 */
+	public void setReviewSynchronize(boolean value) {
+		reviewSynchronize = value;
 	}
 }

@@ -12,6 +12,7 @@
  * David McKnight   (IBM)        - [216252] MessageFormat.format -> NLS.bind
  * David McKnight   (IBM)        - [220547] [api][breaking] SimpleSystemMessage needs to specify a message id and some messages should be shared
  * Takuya Miyamoto - [185925] Integrate Platform/Team Synchronization
+ * David McKnight   (IBM)        - [272708] [import/export] fix various bugs with the synchronization support
  *******************************************************************************/
 package org.eclipse.rse.internal.importexport.files;
 
@@ -102,6 +103,7 @@ class RemoteExportWizardPage1 extends WizardExportResourcesPage implements Liste
 	private static final int MY_SIZING_TEXT_FIELD_WIDTH = 250;
 	// dialog store id constants
 	private static final String STORE_DESTINATION_NAMES_ID = "RemoteExportWizard.STORE_DESTINATION_NAMES_ID"; //$NON-NLS-1$
+	private static final String STORE_REVIEW_SYNCHRONIZE_ID = "RemoteExportWizard.STORE_REVIEW_SYNCHRONIZE_ID"; //$NON-NLS-1$
 	private static final String STORE_OVERWRITE_EXISTING_FILES_ID = "RemoteExportWizard.STORE_OVERWRITE_EXISTING_FILES_ID"; //$NON-NLS-1$
 	private static final String STORE_CREATE_STRUCTURE_ID = "RemoteExportWizard.STORE_CREATE_STRUCTURE_ID"; //$NON-NLS-1$
 	private static final String STORE_CREATE_DESCRIPTION_FILE_ID = "RemoteExportWizard.STORE_CREATE_DESCRIPTION_FILE_ID"; //$NON-NLS-1$
@@ -289,7 +291,7 @@ class RemoteExportWizardPage1 extends WizardExportResourcesPage implements Liste
 			overwriteExistingFilesCheckbox.setEnabled(!isReview);
 			createDirectoryStructureButton.setEnabled(!isReview);
 			createSelectionOnlyButton.setEnabled(!isReview);
-		}
+		}	
 	}
 
 	/**
@@ -404,7 +406,10 @@ class RemoteExportWizardPage1 extends WizardExportResourcesPage implements Liste
 			if (resourcesToExport.size() > 0) {
 				// export data
 				RemoteFileExportData data = new RemoteFileExportData();
+				
+				data.setContainerPath( null);
 				data.setElements(resourcesToExport);
+				data.setReviewSynchronize(reviewSynchronizeCheckbox.getSelection());
 				data.setCreateDirectoryStructure(createDirectoryStructureButton.getSelection());
 				data.setCreateSelectionOnly(createSelectionOnlyButton.getSelection());
 				data.setOverWriteExistingFiles(overwriteExistingFilesCheckbox.getSelection());
@@ -576,6 +581,7 @@ class RemoteExportWizardPage1 extends WizardExportResourcesPage implements Liste
 			directoryNames = addToHistory(directoryNames, getDestinationValue());
 			settings.put(STORE_DESTINATION_NAMES_ID, directoryNames);
 			// options
+			settings.put(STORE_REVIEW_SYNCHRONIZE_ID, reviewSynchronizeCheckbox.getSelection());
 			settings.put(STORE_OVERWRITE_EXISTING_FILES_ID, overwriteExistingFilesCheckbox.getSelection());
 			settings.put(STORE_CREATE_STRUCTURE_ID, createDirectoryStructureButton.getSelection());
 			settings.put(STORE_CREATE_DESCRIPTION_FILE_ID, isSaveSettings());
@@ -625,6 +631,7 @@ class RemoteExportWizardPage1 extends WizardExportResourcesPage implements Liste
 			// options
 			// no export data to initialize from, so prefill from previous export
 			if (!isInitializingFromExportData) {
+				reviewSynchronizeCheckbox.setSelection(settings.getBoolean(STORE_REVIEW_SYNCHRONIZE_ID));
 				overwriteExistingFilesCheckbox.setSelection(settings.getBoolean(STORE_OVERWRITE_EXISTING_FILES_ID));
 				boolean createDirectories = settings.getBoolean(STORE_CREATE_STRUCTURE_ID);
 				createDirectoryStructureButton.setSelection(createDirectories);
@@ -644,6 +651,7 @@ class RemoteExportWizardPage1 extends WizardExportResourcesPage implements Liste
 			// initialize from export data
 			else {
 				RemoteFileExportData data = parentWizard.getExportData();
+				reviewSynchronizeCheckbox.setSelection(data.isReviewSynchronize());
 				overwriteExistingFilesCheckbox.setSelection(data.isOverWriteExistingFiles());
 				createDirectoryStructureButton.setSelection(data.isCreateDirectoryStructure());
 				createSelectionOnlyButton.setSelection(data.isCreateSelectionOnly());

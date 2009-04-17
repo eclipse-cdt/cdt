@@ -29,7 +29,7 @@ David McKnight   (IBM)        - [272708] [import/export] fix various bugs with t
       <wizard
             name="%RemoteFileSystemImportWizard.label"
             icon="icons/full/etool16/file_import.gif"
-            category="org.eclipse.rse.importexport.importexportWizards"
+            category="org.eclipse.rse.importexport.importWizards"
             class="org.eclipse.rse.internal.importexport.files.RemoteImportWizard"
             id="org.eclipse.rse.files.importexport.fileImportWizard">
          <description>

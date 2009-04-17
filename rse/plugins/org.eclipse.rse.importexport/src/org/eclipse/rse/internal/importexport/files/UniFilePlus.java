@@ -12,6 +12,7 @@
  * David McKnight   (IBM)        - [207178] changing list APIs for file service and subsystems
  * David Dykstal (IBM) [230821] fix IRemoteFileSubSystem API to be consistent with IFileService
  * Takuya Miyamoto - [185925] Integrate Platform/Team Synchronization
+ * David McKnight   (IBM)        - [272708] [import/export] fix various bugs with the synchronization support
  *******************************************************************************/
 package org.eclipse.rse.internal.importexport.files;
 
@@ -420,4 +421,12 @@ public class UniFilePlus extends File {
 		return this.remoteFile.getParentRemoteFileSubSystem().getInputStream(this.remoteFile.getParentPath(), this.remoteFile.getName(), this.remoteFile.isBinary(), null);
 	}
 
+	public void synchRemoteFile() {
+		// get the latest version of the remote file
+		remoteFile.markStale(true);
+		try {
+			remoteFile = remoteFile.getParentRemoteFileSubSystem().getRemoteFileObject(remoteFile.getAbsolutePath(), new NullProgressMonitor());
+		}
+		catch (Exception e){}
+	}
 }

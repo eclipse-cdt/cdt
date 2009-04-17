@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008 Takuya Miyamoto and others.
+ * Copyright (c) 2008, 2009 Takuya Miyamoto and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  * 
  * Contributors:
  *     Takuya Miyamoto - initial API and implementation
+ * David McKnight   (IBM)        - [272708] [import/export] fix various bugs with the synchronization support
  *******************************************************************************/
 package org.eclipse.rse.internal.synchronize;
 
@@ -14,6 +15,7 @@ import java.util.List;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResource;
+import org.eclipse.core.runtime.IPath;
 
 /**
  * Store synchronize information. This class is needed per each synchronize
@@ -33,15 +35,29 @@ public interface ISynchronizeData {
 	 * 
 	 * @return
 	 */
-	public String getDestination();
+	public String getRemoteLocation();
 
 	/**
-	 * Set destination path
+	 * Set the remote path
 	 * 
-	 * @param destinationPath
+	 * @param location
 	 */
-	public void setDestination(String destination);
+	public void setRemoteLocation(String location);
 
+	/**
+	 * Return the local path.
+	 * 
+	 * @return
+	 */
+	public IPath getLocalLocation();
+
+	/**
+	 * Set the local path
+	 * 
+	 * @param location
+	 */
+	public void setLocalLocation(IPath location);
+	
 	/**
 	 * Return the synchronize type of this operation.
 	 * 

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2008 IBM Corporation and others.
+ * Copyright (c) 2000, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,6 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  * Takuya Miyamoto - Adapted from org.eclipse.team.examples.filesystem / FileSystemRemoteTree
+ * David McKnight   (IBM)        - [272708] [import/export] fix various bugs with the synchronization support
  *******************************************************************************/
 package org.eclipse.rse.internal.synchronize.filesystem.subscriber;
 
@@ -71,4 +72,7 @@ public class FileSystemRemoteTree extends ThreeWayRemoteTree {
 		}
 		return null;
 	}
+	
+	
+
 }

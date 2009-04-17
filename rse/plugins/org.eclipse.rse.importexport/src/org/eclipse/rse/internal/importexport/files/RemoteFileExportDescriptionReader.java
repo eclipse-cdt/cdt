@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 IBM Corporation and others.
+ * Copyright (c) 2000, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,6 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  * Martin Oberhuber (Wind River) - [174945] split importexport icons from rse.ui
+ * David McKnight   (IBM)        - [272708] [import/export] fix various bugs with the synchronization support
  *******************************************************************************/
 package org.eclipse.rse.internal.importexport.files;
 
@@ -100,6 +101,7 @@ public class RemoteFileExportDescriptionReader implements IRemoteFileExportDescr
 
 	private void xmlReadOptions(RemoteFileExportData exportData, Element element) throws IOException {
 		if (element.getNodeName().equals("options")) { //$NON-NLS-1$
+			exportData.setReviewSynchronize(getBooleanAttribute(element, "reviewSynchronize")); //$NON-NLS-1$
 			exportData.setOverWriteExistingFiles(getBooleanAttribute(element, "overWriteExistingFiles")); //$NON-NLS-1$
 			exportData.setCreateDirectoryStructure(getBooleanAttribute(element, "createDirectoryStructure")); //$NON-NLS-1$
 			exportData.setCreateSelectionOnly(getBooleanAttribute(element, "createSelectedOnly")); //$NON-NLS-1$

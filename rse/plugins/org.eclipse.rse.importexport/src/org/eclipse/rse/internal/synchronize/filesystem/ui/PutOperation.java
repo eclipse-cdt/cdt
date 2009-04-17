@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2008 IBM Corporation and others.
+ * Copyright (c) 2005, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,15 +8,21 @@
  * Contributors:
  * IBM Corporation - initial API and implementation
  * Takuya Miyamoto - Adapted from org.eclipse.team.examples.filesystem / PutOperation
+ * David McKnight   (IBM)        - [272708] [import/export] fix various bugs with the synchronization support
  *******************************************************************************/
 package org.eclipse.rse.internal.synchronize.filesystem.ui;
 
 import org.eclipse.core.resources.mapping.ResourceTraversal;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.rse.core.RSECorePlugin;
+import org.eclipse.rse.core.events.ISystemResourceChangeEvents;
+import org.eclipse.rse.core.events.SystemResourceChangeEvent;
+import org.eclipse.rse.core.model.ISystemRegistry;
 import org.eclipse.rse.internal.synchronize.filesystem.FileSystemProvider;
 import org.eclipse.rse.internal.synchronize.filesystem.Policy;
 import org.eclipse.rse.internal.synchronize.filesystem.subscriber.FileSystemSubscriber;
+import org.eclipse.rse.subsystems.files.core.subsystems.IRemoteFile;
 import org.eclipse.team.core.diff.IDiff;
 import org.eclipse.team.core.diff.IDiffVisitor;
 import org.eclipse.team.core.diff.IThreeWayDiff;
@@ -54,6 +60,18 @@ public class PutOperation extends FileSystemOperation {
 	@Override
 	protected void execute(FileSystemProvider provider, ResourceTraversal[] traversals, IProgressMonitor monitor) throws CoreException {
 		provider.getOperations().checkin(traversals, isOverwriteIncoming(), monitor);
+		
+		// refresh RSE
+		IRemoteFile rootFolder = provider.getRemoteRootFolder().getRemoteFile();
+		ISystemRegistry sr = RSECorePlugin.getTheSystemRegistry();
+		
+		try {
+			rootFolder = rootFolder.getParentRemoteFileSubSystem().getRemoteFileObject(rootFolder.getAbsolutePath(), monitor);
+			rootFolder.markStale(true);
+			sr.fireEvent(new SystemResourceChangeEvent(rootFolder, ISystemResourceChangeEvents.EVENT_REFRESH_REMOTE, rootFolder.getAbsolutePath()));
+		}
+		catch (Exception e){}
+		
 		// if (!isOverwriteIncoming() && hasOutgoingChanges(traversals)) {
 		// throw new
 		// TeamException("Could not put all changes due to conflicts.");

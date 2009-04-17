@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2008 IBM Corporation and others.
+ * Copyright (c) 2000, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,6 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  * Takuya Miyamoto - Adapted from org.eclipse.team.examples.filesystem / FileSystemSubscriber
+ * David McKnight   (IBM)        - [272708] [import/export] fix various bugs with the synchronization support
  *******************************************************************************/
 package org.eclipse.rse.internal.synchronize.filesystem.subscriber;
 
@@ -23,6 +24,7 @@ import org.eclipse.core.runtime.QualifiedName;
 import org.eclipse.rse.internal.synchronize.RSEResourceVariantComparator;
 import org.eclipse.rse.internal.synchronize.RSESyncUtils;
 import org.eclipse.rse.internal.synchronize.filesystem.FileSystemProvider;
+import org.eclipse.rse.subsystems.files.core.SystemIFileProperties;
 import org.eclipse.team.core.RepositoryProvider;
 import org.eclipse.team.core.TeamException;
 import org.eclipse.team.core.synchronize.SyncInfo;
@@ -30,6 +32,7 @@ import org.eclipse.team.core.variants.IResourceVariant;
 import org.eclipse.team.core.variants.ThreeWayRemoteTree;
 import org.eclipse.team.core.variants.ThreeWaySubscriber;
 import org.eclipse.team.core.variants.ThreeWaySynchronizer;
+import org.eclipse.team.internal.core.mapping.LocalResourceVariant;
 
 /**
  * This is an example file system subscriber that overrides ThreeWaySubscriber.
@@ -148,8 +151,36 @@ public class FileSystemSubscriber extends ThreeWaySubscriber {
 	 */
 	@Override
 	protected SyncInfo getSyncInfo(IResource local, IResourceVariant base, IResourceVariant remote) throws TeamException {
-		// Override to use a custom sync info
-//		FileSystemSyncInfo info = new FileSystemSyncInfo(local, base, remote, this.getResourceComparator());
+
+		FileSystemResourceVariant rv = null;
+
+		if (remote instanceof FileSystemResourceVariant){
+			rv = (FileSystemResourceVariant)remote;
+			rv.synchRemoteFile();
+		}
+		
+		if (base == null && local.exists()){
+			base = remote;			
+		}
+		if (base != null) {
+			boolean exists = rv.getFile().remoteFile.exists();
+			if (!exists){
+				base = null;
+			}
+			else {
+
+				if (rv != null){
+					long remoteModificationTime = rv.lastModified();					
+					SystemIFileProperties properties = new SystemIFileProperties(local);
+					long storedModificationTime = properties.getRemoteFileTimeStamp();
+				
+					if (remoteModificationTime > storedModificationTime){
+						base = new LocalResourceVariant(local);
+					}		
+				}
+			}
+		}
+		
 		FileSystemSyncInfo info = new FileSystemSyncInfo(local, base, remote, new RSEResourceVariantComparator(getSynchronizer()));
 		info.init();
 		return info;

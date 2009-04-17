@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008 Takuya Miyamoto and others.
+ * Copyright (c) 2008, 2009 Takuya Miyamoto and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  * 
  * Contributors:
  *     Takuya Miyamoto - initial API and implementation
+ *  David McKnight   (IBM)        - [272708] [import/export] fix various bugs with the synchronization support   
  *******************************************************************************/
 package org.eclipse.rse.internal.synchronize;
 
@@ -32,7 +33,8 @@ import org.eclipse.rse.ui.SystemBasePlugin;
 
 public class SynchronizeData implements ISynchronizeData {
 	private String descriptionFilePath;
-	private String destination;
+	private String remoteLocation;
+	private IPath localLocation;
 	private List<IResource> elements;
 	private int synchronizeType;
 	private boolean saveSettings;
@@ -43,7 +45,8 @@ public class SynchronizeData implements ISynchronizeData {
 
 	public SynchronizeData() {
 		setDescriptionFilePath(null);
-		setDestination(null);
+		setRemoteLocation(null);
+		setLocalLocation(null);
 		setElements(null);
 		setSynchronizeType(0);
 		setSaveSettings(false);
@@ -54,12 +57,14 @@ public class SynchronizeData implements ISynchronizeData {
 
 	public SynchronizeData(RemoteFileExportData data) {
 		setDescriptionFilePath(data.getDescriptionFilePath());
-		setDestination(data.getDestination());
-		setElements(data.getElements());
+		setRemoteLocation(data.getDestination());
+		setElements(data.getElements()); // for an export, the elements determine the source
+		setLocalLocation(data.getContainerPath());
 		setSynchronizeType(ISynchronizeOperation.SYNC_MODE_OVERRIDE_DEST);
 		setSaveSettings(data.isSaveSettings());
 		setCreateDirectoryStructure(data.isCreateDirectoryStructure());
 		setCreateSelectionOnly(data.isCreateSelectionOnly());
+		setReviewSynchronzie(data.isReviewSynchronize());
 		setOverWriteExistingFiles(data.isOverWriteExistingFiles());
 	}
 	
@@ -78,9 +83,10 @@ public class SynchronizeData implements ISynchronizeData {
 		ArrayList<IResource> localResource = new ArrayList<IResource>();
 		
 		RSESyncUtils.getSynchronizeResources(localRoot, remoteRoot, remoteRoot, filter, localResource);
-		
+
+		setLocalLocation(data.getContainerPath());
 		setDescriptionFilePath(data.getDescriptionFilePath());
-		setDestination(((UniFilePlus)data.getSource()).getRemoteFile().getAbsolutePathPlusConnection());
+		setRemoteLocation(((UniFilePlus)data.getSource()).getRemoteFile().getAbsolutePathPlusConnection());
 		setElements(localResource);
 		setSynchronizeType(ISynchronizeOperation.SYNC_MODE_OVERRIDE_SOURCE);
 		setSaveSettings(data.isSaveSettings());
@@ -110,14 +116,23 @@ public class SynchronizeData implements ISynchronizeData {
 		this.descriptionFilePath = descriptionFilePath;
 	}
 
-	public String getDestination() {
-		return destination;
+	public String getRemoteLocation() {
+		return remoteLocation;
 	}
 
-	public void setDestination(String destination) {
-		this.destination = destination;
+	public void setRemoteLocation(String location) {
+		this.remoteLocation = location;
 	}
 
+	public IPath getLocalLocation() {
+		return localLocation;
+	}
+
+	public void setLocalLocation(IPath location) {
+		this.localLocation = location;
+	}
+
+	
 	public List<IResource> getElements() {
 		return elements;
 	}
@@ -182,7 +197,7 @@ public class SynchronizeData implements ISynchronizeData {
 		data.setOverWriteExistingFiles(isOverWriteExistingFiles());
 		data.setSaveSettings(isSaveSettings());
 		data.setDescriptionFilePath(getDescriptionFilePath());
-		data.setDestination(getDestination());
+		data.setDestination(getRemoteLocation());
 
 		return data;
 	}

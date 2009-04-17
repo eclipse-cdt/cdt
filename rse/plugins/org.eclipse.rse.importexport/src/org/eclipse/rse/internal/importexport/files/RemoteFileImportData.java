@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 IBM Corporation and others.
+ * Copyright (c) 2000, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,6 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  * Martin Oberhuber (Wind River) - [168870] refactor org.eclipse.rse.core package of the UI plugin
+ * David McKnight   (IBM)        - [272708] [import/export] fix various bugs with the synchronization support
  *******************************************************************************/
 package org.eclipse.rse.internal.importexport.files;
 
@@ -36,6 +37,8 @@ public class RemoteFileImportData {
 	private HashMap map;
 	private List elements;
 
+	private boolean reviewSynchronize;
+	
 	/**
 	 * Constructor.
 	 */
@@ -159,6 +162,14 @@ public class RemoteFileImportData {
 	 */
 	public void setOverWriteExistingFiles(boolean overWriteExistingFiles) {
 		this.overWriteExistingFiles = overWriteExistingFiles;
+	}
+	
+	public boolean isReviewSynchronize(){
+		return reviewSynchronize;
+	}
+	
+	public void setReviewSynchronize(boolean reviewSynchronize){
+		this.reviewSynchronize = reviewSynchronize;
 	}
 
 	/**

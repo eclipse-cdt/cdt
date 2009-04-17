@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.4"?>
+<plugin>
+ <extension point="org.eclipse.cdt.core.language">
+      <language
+            class="org.eclipse.cdt.core.lrparser.xlc.XlcCLanguage"
+            id="c"
+            name="XLC C">
+      </language>
+      
+      <language
+            class="org.eclipse.cdt.core.lrparser.xlc.XlcCPPLanguage"
+            id="cpp"
+            name="XLC C++">
+      </language>
+   </extension>
+ <extension
+       point="org.eclipse.core.runtime.preferences">
+    <initializer
+          class="org.eclipse.cdt.core.lrparser.xlc.preferences.PreferenceInitializer">
+    </initializer>
+ </extension>
+ <extension
+         point="org.eclipse.ui.preferencePages">
+      <page
+            category="org.eclipse.cdt.ui.preferences.CPluginPreferencePage"
+            class="org.eclipse.cdt.internal.core.lrparser.xlc.ui.preferences.XlcLanguageOptionsPreferencePage"
+            id="org.eclipse.cdt.core.lrparser.xlc.ui.XlcLanguagePreferencePage"
+            name="XLC Language Options">
+      </page>
+   </extension>
+   <extension
+         point="org.eclipse.ui.propertyPages">
+      <page
+            category="org.eclipse.cdt.ui.newui.Page_head_general"
+            class="org.eclipse.cdt.internal.core.lrparser.xlc.ui.preferences.XlcLanguageOptionsPreferencePage"
+            id="org.eclipse.cdt.core.lrparser.xlc.ui.XlcLanguagePropertyPage"
+            name="XLC Language Options">
+      </page>
+   </extension>
+</plugin>

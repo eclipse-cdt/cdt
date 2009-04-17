@@ -1,0 +1,60 @@
+/*******************************************************************************
+ * Copyright (c) 2009 IBM Corporation and others.
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
+ *     IBM Corporation - initial API and implementation
+ *******************************************************************************/
+package org.eclipse.cdt.core.lrparser.xlc.action;
+
+import lpg.lpgjavaruntime.IToken;
+
+import org.eclipse.cdt.core.dom.lrparser.action.ITokenStream;
+import org.eclipse.cdt.core.dom.lrparser.action.ScopedStack;
+import org.eclipse.cdt.core.dom.lrparser.action.cpp.ICPPSecondaryParserFactory;
+import org.eclipse.cdt.core.dom.lrparser.action.gnu.GPPBuildASTParserAction;
+import org.eclipse.cdt.core.lrparser.xlc.ast.IXlcCPPASTVectorTypeSpecifier;
+import org.eclipse.cdt.core.lrparser.xlc.ast.IXlcCPPNodeFactory;
+import org.eclipse.cdt.internal.core.lrparser.xlc.cpp.XlcCPPParsersym;
+
+public class XlcCPPBuildASTParserAction extends GPPBuildASTParserAction {
+
+	private IXlcCPPNodeFactory nodeFactory;
+
+	
+	public XlcCPPBuildASTParserAction(ITokenStream parser,
+			ScopedStack<Object> astStack, IXlcCPPNodeFactory nodeFactory,
+			ICPPSecondaryParserFactory parserFactory) {
+		super(parser, astStack, nodeFactory, parserFactory);
+		this.nodeFactory = nodeFactory;
+	}
+
+	/*
+	 * vector_type
+     *     ::= <openscope-ast> sqlist_op 'vector' vector_type_specifier all_specifier_qualifier_list
+	 */
+	public void consumeVectorTypeSpecifier() {
+		IXlcCPPASTVectorTypeSpecifier declSpec = nodeFactory.newVectorTypeSpecifier();
+		
+		for(Object specifier : astStack.closeScope()) {
+			if(specifier instanceof IToken) {
+				switch(((IToken)specifier).getKind()) {
+				case XlcCPPParsersym.TK_pixel :
+					declSpec.setPixel(true);
+					continue;
+				case XlcCPPParsersym.TK_vector :
+					continue;
+				}
+			}
+			
+			setSpecifier(declSpec, specifier);
+		}
+		
+		setOffsetAndLength(declSpec);
+		astStack.push(declSpec);
+	}
+	
+}

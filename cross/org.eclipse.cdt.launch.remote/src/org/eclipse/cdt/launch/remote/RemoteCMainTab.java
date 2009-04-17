@@ -15,6 +15,7 @@
  * Johann Draschwandtner (Wind River) - [233057][remotecdt]Fix button enablement
  * Anna Dushistova       (MontaVista) - [181517][usability] Specify commands to be run before remote application launch
  * Anna Dushistova       (MontaVista) - [223728] [remotecdt] connection combo is not populated until RSE is activated
+ * Anna Dushistova       (MontaVista) - [267951] [remotecdt] Support systemTypes without files subsystem
  *******************************************************************************/
 
 package org.eclipse.cdt.launch.remote;
@@ -368,15 +369,8 @@ public class RemoteCMainTab extends CMainTab {
 		int currentSelection = connectionCombo.getSelectionIndex();
 		String remoteConnection = currentSelection >= 0 ? connectionCombo
 				.getItem(currentSelection) : null;
-		if (remoteConnection == null)
-			return null;
-		IHost[] connections = RSECorePlugin.getTheSystemRegistry().getHosts();
-		int i = 0;
-		for (i = 0; i < connections.length; i++)
-			if (connections[i].getAliasName().equals(remoteConnection))
-				break;
-		return connections[i];
-	}
+        return RSEHelper.getRemoteConnectionByName(remoteConnection);
+    }
 
 	protected void handleRemoteBrowseSelected() {
 		IHost currentConnectionSelected = getCurrentConnection();
@@ -494,8 +488,7 @@ public class RemoteCMainTab extends CMainTab {
 			}
 		// already initialized
 		connectionCombo.removeAll();
-		IHost[] connections = RSECorePlugin.getTheSystemRegistry()
-				.getHostsBySubSystemConfigurationCategory("shells"); //$NON-NLS-1$
+		IHost[] connections = RSEHelper.getSuitableConnections();
 		for (int i = 0; i < connections.length; i++) {
 			IRSESystemType sysType = connections[i].getSystemType();
 			if (sysType != null && sysType.isEnabled()) {
@@ -609,6 +602,18 @@ public class RemoteCMainTab extends CMainTab {
 		}
 		if ((skipDownloadButton != null) && !skipDownloadButton.isDisposed()) {
 			skipDownloadButton.setSelection(getDefaultSkipDownload());
+				if(RSEHelper.getFileSubsystem(getCurrentConnection()) == null){
+					skipDownloadButton.setEnabled(false);
+				} else {
+					skipDownloadButton.setEnabled(true);
+				}
+		}
+		if((remoteBrowseButton!=null) && !remoteBrowseButton.isDisposed()){
+			if(RSEHelper.getFileSubsystem(getCurrentConnection()) == null){
+				remoteBrowseButton.setEnabled(false);
+			} else {
+				remoteBrowseButton.setEnabled(true);
+			}
 		}
 	}
 
@@ -644,6 +649,9 @@ public class RemoteCMainTab extends CMainTab {
 	private boolean getDefaultSkipDownload() {
 		IHost host = getCurrentConnection();
 		if (host != null) {
+			if(RSEHelper.getFileSubsystem(host) == null){
+				return true;
+			}
 			IPropertySet propertySet = host
 					.getPropertySet(IRemoteConnectionHostConstants.PI_REMOTE_CDT);
 			if (propertySet != null) {

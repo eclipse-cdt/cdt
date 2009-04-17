@@ -15,6 +15,7 @@
  * Anna Dushistova  (MontaVista) - [244173][remotecdt][nls] Externalize Strings in RemoteRunLaunchDelegate
  * Anna Dushistova  (MontaVista) - [181517][usability] Specify commands to be run before remote application launch
  * Nikita Shulga (EmbeddedAlley) - [265236][remotecdt] Wait for RSE to initialize before querying it for host list
+ * Anna Dushistova  (MontaVista) - [267951] [remotecdt] Support systemTypes without files subsystem
  *******************************************************************************/
 
 package org.eclipse.cdt.launch.remote;
@@ -37,7 +38,6 @@ import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.NullProgressMonitor;
-import org.eclipse.core.runtime.OperationCanceledException;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.SubProgressMonitor;
@@ -50,20 +50,14 @@ import org.eclipse.debug.core.model.IProcess;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.rse.core.RSECorePlugin;
 import org.eclipse.rse.core.model.IHost;
-import org.eclipse.rse.core.subsystems.ISubSystem;
-import org.eclipse.rse.services.IService;
 import org.eclipse.rse.services.clientserver.messages.SystemOperationCancelledException;
 import org.eclipse.rse.services.files.IFileService;
 import org.eclipse.rse.services.shells.HostShellProcessAdapter;
 import org.eclipse.rse.services.shells.IHostShell;
 import org.eclipse.rse.services.shells.IShellService;
-import org.eclipse.rse.subsystems.files.core.servicesubsystem.IFileServiceSubSystem;
-import org.eclipse.rse.subsystems.shells.core.subsystems.servicesubsystem.IShellServiceSubSystem;
 
 public class RemoteRunLaunchDelegate extends AbstractCLaunchDelegate {
 
-	private final static String SHELL_SERVICE = "shell.service"; //$NON-NLS-1$
-	private final static String FILE_SERVICE = "file.service"; //$NON-NLS-1$
 	private final static String EXIT_CMD = "exit"; //$NON-NLS-1$
 	private final static String CMD_DELIMITER = ";"; //$NON-NLS-1$
 
@@ -92,13 +86,15 @@ public class RemoteRunLaunchDelegate extends AbstractCLaunchDelegate {
 			if (monitor == null)
 				monitor = new NullProgressMonitor();
 
-			if (!RSECorePlugin.isInitComplete(RSECorePlugin.INIT_MODEL)) { 
+			if (!RSECorePlugin.isInitComplete(RSECorePlugin.INIT_MODEL)) {
 				monitor.subTask(Messages.RemoteRunLaunchDelegate_10);
 				try {
-					RSECorePlugin.waitForInitCompletion(RSECorePlugin.INIT_MODEL);
+					RSECorePlugin
+							.waitForInitCompletion(RSECorePlugin.INIT_MODEL);
 				} catch (InterruptedException e) {
-					throw new CoreException(new Status(IStatus.ERROR, getPluginID(),
-							IStatus.OK, e.getLocalizedMessage(), e));
+					throw new CoreException(new Status(IStatus.ERROR,
+							getPluginID(), IStatus.OK, e.getLocalizedMessage(),
+							e));
 				}
 			}
 			if (mode.equals(ILaunchManager.DEBUG_MODE)) {
@@ -255,65 +251,13 @@ public class RemoteRunLaunchDelegate extends AbstractCLaunchDelegate {
 		String remoteConnection = config.getAttribute(
 				IRemoteConnectionConfigurationConstants.ATTR_REMOTE_CONNECTION,
 				""); //$NON-NLS-1$
-
-		IHost[] connections = RSECorePlugin.getTheSystemRegistry().getHosts();
-		int i = 0;
-		for (i = 0; i < connections.length; i++)
-			if (connections[i].getAliasName().equals(remoteConnection))
-				break;
-		if (i >= connections.length) {
+		IHost connection = RSEHelper
+				.getRemoteConnectionByName(remoteConnection);
+		if (connection == null) {
 			abort(Messages.RemoteRunLaunchDelegate_13, null,
 					ICDTLaunchConfigurationConstants.ERR_INTERNAL_ERROR);
 		}
-		return connections[i];
-	}
-
-	protected IService getConnectedRemoteService(ILaunchConfiguration config,
-			String kindOfService, IProgressMonitor monitor)
-			throws CoreException {
-
-		// Check that the service requested is file or shell.
-		if (!kindOfService.equals(SHELL_SERVICE)
-				&& !kindOfService.equals(FILE_SERVICE))
-			abort(Messages.RemoteRunLaunchDelegate_3, null,
-					ICDTLaunchConfigurationConstants.ERR_INTERNAL_ERROR);
-
-		IHost currentConnection = getCurrentConnection(config);
-
-		ISubSystem[] subSystems = currentConnection.getSubSystems();
-		int i = 0;
-		for (i = 0; i < subSystems.length; i++) {
-			if (subSystems[i] instanceof IShellServiceSubSystem
-					&& kindOfService.equals(SHELL_SERVICE))
-				break;
-			if (subSystems[i] instanceof IFileServiceSubSystem
-					&& kindOfService.equals(FILE_SERVICE))
-				break;
-		}
-		if (i >= subSystems.length)
-			abort(Messages.RemoteRunLaunchDelegate_4, null,
-					ICDTLaunchConfigurationConstants.ERR_INTERNAL_ERROR);
-
-		final ISubSystem subsystem = subSystems[i];
-		try {
-			subsystem.connect(monitor, false);
-		} catch (CoreException e) {
-			throw e;
-		} catch (OperationCanceledException e) {
-			throw new CoreException(Status.CANCEL_STATUS);
-		} catch (Exception e) {
-			throw new CoreException(new Status(IStatus.ERROR, getPluginID(),
-					IStatus.OK, e.getLocalizedMessage(), e));
-		}
-
-		if (!subsystem.isConnected())
-			abort(Messages.RemoteRunLaunchDelegate_5, null,
-					ICDTLaunchConfigurationConstants.ERR_INTERNAL_ERROR);
-
-		if (kindOfService.equals(SHELL_SERVICE))
-			return ((IShellServiceSubSystem) subsystem).getShellService();
-		else
-			return ((IFileServiceSubSystem) subsystem).getFileService();
+		return connection;
 	}
 
 	protected Process remoteFileDownload(ILaunchConfiguration config,
@@ -329,11 +273,14 @@ public class RemoteRunLaunchDelegate extends AbstractCLaunchDelegate {
 			// Nothing to do. Download is skipped.
 			return null;
 		monitor.beginTask(Messages.RemoteRunLaunchDelegate_2, 100);
-		IFileService fileService = (IFileService) getConnectedRemoteService(
-				config, FILE_SERVICE, new SubProgressMonitor(monitor, 10));
-		File file = new File(localExePath);
-		Path remotePath = new Path(remoteExePath);
+		IFileService fileService;
 		try {
+			fileService = (IFileService) RSEHelper
+					.getConnectedRemoteFileService(
+							getCurrentConnection(config),
+							new SubProgressMonitor(monitor, 10));
+			File file = new File(localExePath);
+			Path remotePath = new Path(remoteExePath);
 			fileService.upload(file, remotePath.removeLastSegments(1)
 					.toString(), remotePath.lastSegment(), true, null, null,
 					new SubProgressMonitor(monitor, 85));
@@ -379,28 +326,37 @@ public class RemoteRunLaunchDelegate extends AbstractCLaunchDelegate {
 		if (!prelaunchCmd.trim().equals("")) //$NON-NLS-1$
 			remote_command = prelaunchCmd + CMD_DELIMITER + remote_command;
 
-		IShellService shellService = (IShellService) getConnectedRemoteService(
-				config, SHELL_SERVICE, new SubProgressMonitor(monitor, 7));
-
-		// This is necessary because runCommand does not actually run the
-		// command right now.
-		String env[] = new String[0];
+		IShellService shellService;
 		Process p = null;
 		try {
-			IHostShell hostShell = shellService.launchShell(
-					"", env, new SubProgressMonitor(monitor, 3)); //$NON-NLS-1$
-			hostShell.writeToShell(remote_command);
-			p = new HostShellProcessAdapter(hostShell);
-		} catch (Exception e) {
-			if (p != null) {
-				p.destroy();
+			shellService = (IShellService) RSEHelper
+					.getConnectedRemoteShellService(
+							getCurrentConnection(config),
+							new SubProgressMonitor(monitor, 7));
+
+			// This is necessary because runCommand does not actually run the
+			// command right now.
+			String env[] = new String[0];
+			try {
+				IHostShell hostShell = shellService.launchShell(
+						"", env, new SubProgressMonitor(monitor, 3)); //$NON-NLS-1$
+				hostShell.writeToShell(remote_command);
+				p = new HostShellProcessAdapter(hostShell);
+			} catch (Exception e) {
+				if (p != null) {
+					p.destroy();
+				}
+				abort(Messages.RemoteRunLaunchDelegate_7, e,
+						ICDTLaunchConfigurationConstants.ERR_INTERNAL_ERROR);
 			}
-			abort(Messages.RemoteRunLaunchDelegate_7, e,
+		} catch (Exception e1) {
+			// TODO Auto-generated catch block
+			abort(e1.getMessage(), e1,
 					ICDTLaunchConfigurationConstants.ERR_INTERNAL_ERROR);
 		}
+
 		monitor.done();
 		return p;
-
 	}
 
 	protected String getPluginID() {

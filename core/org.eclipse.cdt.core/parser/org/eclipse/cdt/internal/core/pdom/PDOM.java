@@ -515,6 +515,21 @@ public class PDOM extends PlatformObject implements IPDOM {
 		if (monitor == null) {
 			monitor= new NullProgressMonitor();
 		}
+		// check for some easy cases
+		char[][] simpleNames= extractSimpleNames(pattern);
+		if (simpleNames != null) {
+			if (simpleNames.length == 1) {
+				return findBindings(simpleNames[0], isFullyQualified, filter, monitor);
+			} else if (isFullyQualified) {
+				return findBindings(simpleNames, filter, monitor);
+			}
+		}
+		
+		char[] prefix= extractPrefix(pattern);
+		if (prefix != null) {
+			return findBindingsForPrefix(prefix, isFullyQualified, filter, monitor);
+		}
+		
 		BindingFinder finder = new BindingFinder(pattern, isFullyQualified, filter, monitor);
 		for (PDOMLinkage linkage : getLinkageList()) {
 			if (filter.acceptLinkage(linkage)) {
@@ -531,6 +546,38 @@ public class PDOM extends PlatformObject implements IPDOM {
 		return finder.getBindings();
 	}
 
+	private char[][] extractSimpleNames(Pattern[] pattern) {
+		char[][] result= new char[pattern.length][];
+		int i= 0;
+		for (Pattern p : pattern) {
+			char[] input= p.pattern().toCharArray();
+			for (char c : input) {
+				if (!Character.isLetterOrDigit(c) && c != '_') {
+					return null;
+				}
+			}
+			result[i++]= input;
+		}
+		return result;
+	}
+
+	private char[] extractPrefix(Pattern[] pattern) {
+		if (pattern.length != 1)
+			return null;
+		
+		String p= pattern[0].pattern();
+		if (p.endsWith(".*")) { //$NON-NLS-1$
+			char[] input= p.substring(0, p.length()-2).toCharArray();
+			for (char c : input) {
+				if (!Character.isLetterOrDigit(c) && c != '_') {
+					return null;
+				}
+			}
+			return input;
+		}
+		return null;
+	}
+	
 	public IIndexFragmentBinding[] findMacroContainers(Pattern pattern, IndexFilter filter, IProgressMonitor monitor) throws CoreException {
 		if (monitor == null) {
 			monitor= new NullProgressMonitor();

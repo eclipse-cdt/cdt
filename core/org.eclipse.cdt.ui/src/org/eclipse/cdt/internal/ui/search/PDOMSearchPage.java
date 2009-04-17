@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2008 QNX Software Systems and others.
+ * Copyright (c) 2006, 2009 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -34,6 +34,8 @@ import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.events.VerifyEvent;
+import org.eclipse.swt.events.VerifyListener;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
@@ -340,10 +342,25 @@ public class PDOMSearchPage extends DialogPage implements ISearchPage {
 
 		// Pattern combo
 		patternCombo = new Combo( result, SWT.SINGLE | SWT.BORDER );
-		patternCombo.addSelectionListener( new SelectionAdapter() {
-			@Override
-			public void widgetSelected( SelectionEvent e ) {
-				//handlePatternSelected();
+		patternCombo.addVerifyListener(new VerifyListener() {
+			public void verifyText(VerifyEvent e) {
+				char[] chars= e.text.toCharArray();
+				StringBuilder result= new StringBuilder(chars.length);
+				for (char c : chars) {
+					switch (c) {
+					case  '_': 
+					case ':': // scope operator
+					case '?': case '*':  // wild cards
+						result.append(c);
+						break;
+					default:
+						if (Character.isLetterOrDigit(c)) {
+							result.append(c);
+						}
+						break;
+					}
+					e.text= result.toString();
+				}
 			}
 		});
 		

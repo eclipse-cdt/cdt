@@ -8,8 +8,8 @@ Bundle-Vendor: CDT
 Require-Bundle: org.eclipse.core.runtime,
  org.eclipse.core.resources,
  org.eclipse.cdt.core
-Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Bundle-ActivationPolicy: lazy
+Bundle-RequiredExecutionEnvironment: J2SE-1.5
 Export-Package: org.eclipse.cdt.codan.core,
  org.eclipse.cdt.codan.core.builder,
  org.eclipse.cdt.codan.core.model

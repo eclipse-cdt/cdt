@@ -347,24 +347,36 @@ public class NewClassWizardUtil {
      */
     public static boolean isTypeReachable(ITypeInfo type, ICProject project, String[] includePaths) {
         ICProject baseProject = type.getEnclosingProject();
-        if (baseProject != null && baseProject.equals(project)) {
+        if (baseProject == null)
+        	return false;
+        
+        if (baseProject.equals(project)) {
             return true;
         }
         
         // check the include paths
         ITypeReference ref = type.getResolvedReference();
+        IPath location = ref == null ? null : ref.getLocation();
+        boolean isTypeLocation= true;
+        if (location == null) {
+        	isTypeLocation= false;
+            location = baseProject.getProject().getLocation();
+            if (location == null)
+            	return false;
+        }
+    
         for (int i = 0; i < includePaths.length; ++i) {
             IPath includePath = new Path(includePaths[i]);
-            if (ref != null) {
-                if (includePath.isPrefixOf(ref.getLocation()))
+            if (isTypeLocation) {
+				if (includePath.isPrefixOf(location))
                     return true;
             } else {
                 // we don't have the real location, so just check the project path
-                if (baseProject != null && baseProject.getProject().getLocation().isPrefixOf(includePath))
+				if (location.isPrefixOf(includePath))
                     return true;
             }
         }
-
+        
         return false;
     }
 

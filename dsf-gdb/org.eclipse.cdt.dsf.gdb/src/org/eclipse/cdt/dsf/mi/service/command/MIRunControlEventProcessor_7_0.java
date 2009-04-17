@@ -242,87 +242,91 @@ public class MIRunControlEventProcessor_7_0
     }
     
     protected MIEvent<?> createEvent(String reason, MIExecAsyncOutput exec) {
-    	String threadId = null; 
-    	String groupId = null;
-
-    	MIResult[] results = exec.getMIResults();
-    	for (int i = 0; i < results.length; i++) {
-    		String var = results[i].getVariable();
-    		MIValue val = results[i].getMIValue();
-
-    		if (var.equals("thread-id")) { //$NON-NLS-1$
-    			if (val instanceof MIConst) {
-    				threadId = ((MIConst)val).getString();
-    			}
-    		} else if (var.equals("group-id")) { //$NON-NLS-1$
-    			if (val instanceof MIConst) {
-    				groupId = ((MIConst)val).getString();
-    			}
-    		}
-    	}
-
-    	IMIProcesses procService = fServicesTracker.getService(IMIProcesses.class);
-    	if (procService == null) {
-    		return null;
-    	}
-    	
-   		IProcessDMContext procDmc = null;
-		IContainerDMContext containerDmc = null;
-    	if (groupId == null) {
-        	// MI does not currently provide the group-id in these events
-    		if (threadId != null) {
-    			containerDmc = procService.createContainerContextFromThreadId(fControlDmc, threadId);
-    			procDmc = DMContexts.getAncestorOfType(containerDmc, IProcessDMContext.class);
-    		}
-    	} else {
-    		// This code would only trigger if the groupId was provided by MI
-    		procDmc = procService.createProcessContext(fControlDmc, groupId);
-    		containerDmc = procService.createContainerContext(procDmc, groupId);
-    	}
-    	
-    	IExecutionDMContext execDmc = containerDmc;
-    	if (threadId != null) {
-    		IThreadDMContext threadDmc = procService.createThreadContext(procDmc, threadId);
-    		execDmc = procService.createExecutionContext(containerDmc, threadDmc, threadId);
-    	}
-    	
-    	if (execDmc == null) {
-    		// Badly formatted event
-    		return null;
-    	}
-
     	MIEvent<?> event = null;
-    	if ("breakpoint-hit".equals(reason)) { //$NON-NLS-1$
-    		event = MIBreakpointHitEvent.parse(execDmc, exec.getToken(), exec.getMIResults());
-    	} else if (
-    			"watchpoint-trigger".equals(reason) //$NON-NLS-1$
-    			|| "read-watchpoint-trigger".equals(reason) //$NON-NLS-1$
-    			|| "access-watchpoint-trigger".equals(reason)) { //$NON-NLS-1$
-    		event = MIWatchpointTriggerEvent.parse(execDmc, exec.getToken(), exec.getMIResults());
-    	} else if ("watchpoint-scope".equals(reason)) { //$NON-NLS-1$
-    		event = MIWatchpointScopeEvent.parse(execDmc, exec.getToken(), exec.getMIResults());
-    	} else if ("end-stepping-range".equals(reason)) { //$NON-NLS-1$
-    		event = MISteppingRangeEvent.parse(execDmc, exec.getToken(), exec.getMIResults());
-    	} else if ("signal-received".equals(reason)) { //$NON-NLS-1$
-    		event = MISignalEvent.parse(execDmc, exec.getToken(), exec.getMIResults());
-    	} else if ("location-reached".equals(reason)) { //$NON-NLS-1$
-    		event = MILocationReachedEvent.parse(execDmc, exec.getToken(), exec.getMIResults());
-    	} else if ("function-finished".equals(reason)) { //$NON-NLS-1$
-    		event = MIFunctionFinishedEvent.parse(execDmc, exec.getToken(), exec.getMIResults());
-    	} else if ("exited-normally".equals(reason) || "exited".equals(reason)) { //$NON-NLS-1$ //$NON-NLS-2$
+
+    	if ("exited-normally".equals(reason) || "exited".equals(reason)) { //$NON-NLS-1$ //$NON-NLS-2$
     		event = MIInferiorExitEvent.parse(fCommandControl.getContext(), exec.getToken(), exec.getMIResults());
     	} else if ("exited-signalled".equals(reason)) { //$NON-NLS-1$
     		event = MIInferiorSignalExitEvent.parse(fCommandControl.getContext(), exec.getToken(), exec.getMIResults());
-    	} else if (STOPPED_REASON.equals(reason)) {
-    		event = MIStoppedEvent.parse(execDmc, exec.getToken(), exec.getMIResults());
-    	} else if (RUNNING_REASON.equals(reason)) {
-    		// Retrieve the type of command from what we last stored
-    		int type = MIRunningEvent.CONTINUE;
-    		if (fLastRunningCmdType != null) {
-    			type = fLastRunningCmdType;
-    			fLastRunningCmdType = null;
+    	} else {
+
+    		String threadId = null; 
+    		String groupId = null;
+
+    		MIResult[] results = exec.getMIResults();
+    		for (int i = 0; i < results.length; i++) {
+    			String var = results[i].getVariable();
+    			MIValue val = results[i].getMIValue();
+
+    			if (var.equals("thread-id")) { //$NON-NLS-1$
+    				if (val instanceof MIConst) {
+    					threadId = ((MIConst)val).getString();
+    				}
+    			} else if (var.equals("group-id")) { //$NON-NLS-1$
+    				if (val instanceof MIConst) {
+    					groupId = ((MIConst)val).getString();
+    				}
+    			}
     		}
-    		event = new MIRunningEvent(execDmc, exec.getToken(), type);
+
+    		IMIProcesses procService = fServicesTracker.getService(IMIProcesses.class);
+    		if (procService == null) {
+    			return null;
+    		}
+
+    		IProcessDMContext procDmc = null;
+    		IContainerDMContext containerDmc = null;
+    		if (groupId == null) {
+    			// MI does not currently provide the group-id in these events
+    			if (threadId != null) {
+    				containerDmc = procService.createContainerContextFromThreadId(fControlDmc, threadId);
+    				procDmc = DMContexts.getAncestorOfType(containerDmc, IProcessDMContext.class);
+    			}
+    		} else {
+    			// This code would only trigger if the groupId was provided by MI
+    			procDmc = procService.createProcessContext(fControlDmc, groupId);
+    			containerDmc = procService.createContainerContext(procDmc, groupId);
+    		}
+
+    		IExecutionDMContext execDmc = containerDmc;
+    		if (threadId != null) {
+    			IThreadDMContext threadDmc = procService.createThreadContext(procDmc, threadId);
+    			execDmc = procService.createExecutionContext(containerDmc, threadDmc, threadId);
+    		}
+
+    		if (execDmc == null) {
+    			// Badly formatted event
+    			return null;
+    		}
+
+    		if ("breakpoint-hit".equals(reason)) { //$NON-NLS-1$
+    			event = MIBreakpointHitEvent.parse(execDmc, exec.getToken(), exec.getMIResults());
+    		} else if (
+    				"watchpoint-trigger".equals(reason) //$NON-NLS-1$
+    				|| "read-watchpoint-trigger".equals(reason) //$NON-NLS-1$
+    				|| "access-watchpoint-trigger".equals(reason)) { //$NON-NLS-1$
+    			event = MIWatchpointTriggerEvent.parse(execDmc, exec.getToken(), exec.getMIResults());
+    		} else if ("watchpoint-scope".equals(reason)) { //$NON-NLS-1$
+    			event = MIWatchpointScopeEvent.parse(execDmc, exec.getToken(), exec.getMIResults());
+    		} else if ("end-stepping-range".equals(reason)) { //$NON-NLS-1$
+    			event = MISteppingRangeEvent.parse(execDmc, exec.getToken(), exec.getMIResults());
+    		} else if ("signal-received".equals(reason)) { //$NON-NLS-1$
+    			event = MISignalEvent.parse(execDmc, exec.getToken(), exec.getMIResults());
+    		} else if ("location-reached".equals(reason)) { //$NON-NLS-1$
+    			event = MILocationReachedEvent.parse(execDmc, exec.getToken(), exec.getMIResults());
+    		} else if ("function-finished".equals(reason)) { //$NON-NLS-1$
+    			event = MIFunctionFinishedEvent.parse(execDmc, exec.getToken(), exec.getMIResults());
+    		} else if (STOPPED_REASON.equals(reason)) {
+    			event = MIStoppedEvent.parse(execDmc, exec.getToken(), exec.getMIResults());
+    		} else if (RUNNING_REASON.equals(reason)) {
+    			// Retrieve the type of command from what we last stored
+    			int type = MIRunningEvent.CONTINUE;
+    			if (fLastRunningCmdType != null) {
+    				type = fLastRunningCmdType;
+    				fLastRunningCmdType = null;
+    			}
+    			event = new MIRunningEvent(execDmc, exec.getToken(), type);
+    		}
     	}
     	return event;
     }

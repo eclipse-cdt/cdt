@@ -162,6 +162,11 @@
          <adapter type="org.eclipse.debug.ui.contexts.ISuspendTrigger"/>
          <adapter type="org.eclipse.debug.internal.ui.viewers.model.provisional.IColumnPresentationFactory"/>
 	  </factory>         
+      <factory 
+	       	class="org.eclipse.cdt.dsf.gdb.internal.ui.GdbRunToLineAdapterFactory" 
+	        adaptableType="org.eclipse.cdt.dsf.ui.viewmodel.IVMContext">
+         <adapter type="org.eclipse.debug.core.model.ISuspendResume"/>
+	  </factory>
    </extension>	
    
    <extension point="org.eclipse.debug.ui.memoryRenderings">

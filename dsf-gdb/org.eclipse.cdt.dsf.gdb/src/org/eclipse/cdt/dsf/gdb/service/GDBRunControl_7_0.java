@@ -23,6 +23,7 @@ import org.eclipse.cdt.dsf.concurrent.RequestMonitor;
 import org.eclipse.cdt.dsf.datamodel.DMContexts;
 import org.eclipse.cdt.dsf.datamodel.IDMContext;
 import org.eclipse.cdt.dsf.debug.service.IRunControl;
+import org.eclipse.cdt.dsf.debug.service.IBreakpoints.IBreakpointsTargetDMContext;
 import org.eclipse.cdt.dsf.debug.service.IProcesses.IProcessDMContext;
 import org.eclipse.cdt.dsf.debug.service.IProcesses.IThreadDMContext;
 import org.eclipse.cdt.dsf.debug.service.IStack.IFrameDMContext;
@@ -30,9 +31,13 @@ import org.eclipse.cdt.dsf.debug.service.command.ICommandControlService.ICommand
 import org.eclipse.cdt.dsf.gdb.internal.GdbPlugin;
 import org.eclipse.cdt.dsf.mi.service.IMIExecutionDMContext;
 import org.eclipse.cdt.dsf.mi.service.IMIProcesses;
+import org.eclipse.cdt.dsf.mi.service.IMIRunControl;
 import org.eclipse.cdt.dsf.mi.service.MIRunControl;
 import org.eclipse.cdt.dsf.mi.service.MIStack;
+import org.eclipse.cdt.dsf.mi.service.command.commands.MIBreakDelete;
+import org.eclipse.cdt.dsf.mi.service.command.commands.MIBreakInsert;
 import org.eclipse.cdt.dsf.mi.service.command.commands.MICommand;
+import org.eclipse.cdt.dsf.mi.service.command.commands.MIExecContinue;
 import org.eclipse.cdt.dsf.mi.service.command.commands.MIExecReverseContinue;
 import org.eclipse.cdt.dsf.mi.service.command.commands.MIExecReverseNext;
 import org.eclipse.cdt.dsf.mi.service.command.commands.MIExecReverseNextInstruction;
@@ -40,17 +45,45 @@ import org.eclipse.cdt.dsf.mi.service.command.commands.MIExecReverseStep;
 import org.eclipse.cdt.dsf.mi.service.command.commands.MIExecReverseStepInstruction;
 import org.eclipse.cdt.dsf.mi.service.command.commands.MIExecUncall;
 import org.eclipse.cdt.dsf.mi.service.command.commands.RawCommand;
+import org.eclipse.cdt.dsf.mi.service.command.events.MIBreakpointHitEvent;
+import org.eclipse.cdt.dsf.mi.service.command.events.MIInferiorExitEvent;
+import org.eclipse.cdt.dsf.mi.service.command.events.MIStoppedEvent;
+import org.eclipse.cdt.dsf.mi.service.command.output.MIBreakInsertInfo;
 import org.eclipse.cdt.dsf.mi.service.command.output.MIInfo;
+import org.eclipse.cdt.dsf.service.DsfServiceEventHandler;
 import org.eclipse.cdt.dsf.service.DsfSession;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 
 public class GDBRunControl_7_0 extends MIRunControl implements IReverseRunControl {
+	
+	private static class RunToLineActiveOperation {
+		private IMIExecutionDMContext fThreadContext;
+		private int fBpId;
+		private String fLocation;
+		private boolean fSkipBreakpoints;
+		
+		public RunToLineActiveOperation(IMIExecutionDMContext threadContext,
+				int bpId, String location, boolean skipBreakpoints) {
+			fThreadContext = threadContext;
+			fBpId = bpId;
+			fLocation = location;
+			fSkipBreakpoints = skipBreakpoints;
+		}
+		
+		public IMIExecutionDMContext getThreadContext() { return fThreadContext; }
+		public int getBreakointId() { return fBpId; }
+		public String getLocation() { return fLocation; }
+		public boolean shouldSkipBreakpoints() { return fSkipBreakpoints; }
+	}
+
     private IGDBBackend fGdb;
 	private IMIProcesses fProcService;
 	private boolean fReverseSupported = true;
 	private boolean fReverseStepping = false;
 	private boolean fReverseModeEnabled = false;
+
+	private RunToLineActiveOperation fRunToLineActiveOperation = null;
 
     public GDBRunControl_7_0(DsfSession session) {
         super(session);
@@ -76,7 +109,9 @@ public class GDBRunControl_7_0 extends MIRunControl implements IReverseRunContro
 			fReverseSupported = false;
 		}
 
-        register(new String[]{IRunControl.class.getName(), MIRunControl.class.getName(),
+        register(new String[]{IRunControl.class.getName(),
+        					  IMIRunControl.class.getName(),
+        					  MIRunControl.class.getName(),
         					  IReverseRunControl.class.getName()}, 
         		 new Hashtable<String,String>());
         requestMonitor.done();
@@ -400,6 +435,111 @@ public class GDBRunControl_7_0 extends MIRunControl implements IReverseRunContro
     	}
 	}
     
+	/** @since 2.0 */
+	@Override
+	public void runToLine(final IExecutionDMContext context, String fileName, String lineNo, final boolean skipBreakpoints, final DataRequestMonitor<MIInfo> rm){
+	    // Later add support for Address and function.
+	    
+    	assert context != null;
+
+    	final IMIExecutionDMContext dmc = DMContexts.getAncestorOfType(context, IMIExecutionDMContext.class);
+		if (dmc == null){
+            rm.setStatus(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, NOT_SUPPORTED, "Given context: " + context + " is not an execution context.", null)); //$NON-NLS-1$ //$NON-NLS-2$
+            rm.done();
+            return;
+		}
+
+        if (doCanResume(context)) {
+    		final String location = fileName + ":" + lineNo; //$NON-NLS-1$
+        	IBreakpointsTargetDMContext bpDmc = DMContexts.getAncestorOfType(context, IBreakpointsTargetDMContext.class);
+        	getConnection().queueCommand(
+        			new MIBreakInsert(bpDmc, true, false, null, 0, 
+        					          location, dmc.getThreadId()), 
+        		    new DataRequestMonitor<MIBreakInsertInfo>(getExecutor(), rm) {
+        				@Override
+        				public void handleSuccess() {
+        					// We must set are RunToLineActiveOperation *before* we do the resume
+        					// or else we may get the stopped event, before we have set this variable.
+           					int bpId = getData().getMIBreakpoints()[0].getNumber();
+        		        	fRunToLineActiveOperation = new RunToLineActiveOperation(dmc, bpId, location, skipBreakpoints);
+
+        					resume(context, new RequestMonitor(getExecutor(), rm) {
+                				@Override
+                				public void handleFailure() {
+                		    		IBreakpointsTargetDMContext bpDmc = DMContexts.getAncestorOfType(fRunToLineActiveOperation.getThreadContext(),
+                		    				IBreakpointsTargetDMContext.class);
+                		    		int bpId = fRunToLineActiveOperation.getBreakointId();
+
+                		    		getConnection().queueCommand(new MIBreakDelete(bpDmc, new int[] {bpId}),
+                		    				new DataRequestMonitor<MIInfo>(getExecutor(), null));
+                		    		fRunToLineActiveOperation = null;
+
+                		    		super.handleFailure();
+                		    	}
+        					});
+        				}
+        			});
+        } else {
+            rm.setStatus(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, NOT_SUPPORTED,
+            		"Cannot resume given DMC.", null)); //$NON-NLS-1$
+            rm.done();
+        }
+	}
+
+    /**
+     * @nooverride This method is not intended to be re-implemented or extended by clients.
+     * @noreference This method is not intended to be referenced by clients.
+     * 
+     * @since 2.0
+     */
+    @DsfServiceEventHandler
+    public void eventDispatched(MIInferiorExitEvent e) {
+    	if (fRunToLineActiveOperation != null) {
+    		IBreakpointsTargetDMContext bpDmc = DMContexts.getAncestorOfType(fRunToLineActiveOperation.getThreadContext(),
+    				IBreakpointsTargetDMContext.class);
+    		int bpId = fRunToLineActiveOperation.getBreakointId();
+
+    		getConnection().queueCommand(new MIBreakDelete(bpDmc, new int[] {bpId}),
+    				new DataRequestMonitor<MIInfo>(getExecutor(), null));
+    		fRunToLineActiveOperation = null;
+    	}
+    }
+
+	/** @since 2.0 */
+    @Override
+    @DsfServiceEventHandler
+    public void eventDispatched(final MIStoppedEvent e) {
+    	if (fRunToLineActiveOperation != null) {
+			String location = e.getFrame().getFile() + ":" + e.getFrame().getLine();  //$NON-NLS-1$
+			if (location.equals(fRunToLineActiveOperation.getLocation())) {
+    			// We stopped on our temporary breakpoint.  All is well.
+				fRunToLineActiveOperation = null;
+    		} else {
+    			// Didn't stop at the right line yet
+    			if (fRunToLineActiveOperation.shouldSkipBreakpoints() && e instanceof MIBreakpointHitEvent) {
+    				getConnection().queueCommand(
+    						new MIExecContinue(fRunToLineActiveOperation.getThreadContext()),
+    						new DataRequestMonitor<MIInfo>(getExecutor(), null));
+
+    				// Don't send the stop event since we are resuming again.
+    				return;
+    			} else {
+    				// Stopped at another breakpoint.  Just remove our temporary one
+    				// since we don't want it to hit later
+    				IBreakpointsTargetDMContext bpDmc = DMContexts.getAncestorOfType(fRunToLineActiveOperation.getThreadContext(),
+    						IBreakpointsTargetDMContext.class);
+    				int bpId = fRunToLineActiveOperation.getBreakointId();
+
+    				getConnection().queueCommand(new MIBreakDelete(bpDmc, new int[] {bpId}),
+    						new DataRequestMonitor<MIInfo>(getExecutor(), null));
+    				fRunToLineActiveOperation = null;
+    			}
+    		}
+    	}
+
+    	super.eventDispatched(e);
+    }
+
     /** @since 2.0 */
     public void setReverseModeEnabled(boolean enabled) {
     	fReverseModeEnabled = enabled;

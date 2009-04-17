@@ -20,7 +20,6 @@ import org.eclipse.cdt.dsf.datamodel.DMContexts;
 import org.eclipse.cdt.dsf.datamodel.IDMContext;
 import org.eclipse.cdt.dsf.datamodel.IDMEvent;
 import org.eclipse.cdt.dsf.debug.service.ICachingService;
-import org.eclipse.cdt.dsf.debug.service.IRunControl;
 import org.eclipse.cdt.dsf.debug.service.IStack.IFrameDMContext;
 import org.eclipse.cdt.dsf.debug.service.command.CommandCache;
 import org.eclipse.cdt.dsf.debug.service.command.ICommandControlService;
@@ -73,7 +72,7 @@ import org.osgi.framework.BundleContext;
  * events and track service state, to be perfectly in sync with the service
  * state.
  */
-public class MIRunControl extends AbstractDsfService implements IRunControl, ICachingService
+public class MIRunControl extends AbstractDsfService implements IMIRunControl, ICachingService
 {
 	private static class MIExecutionDMC extends AbstractDMContext implements IMIExecutionDMContext
 	{

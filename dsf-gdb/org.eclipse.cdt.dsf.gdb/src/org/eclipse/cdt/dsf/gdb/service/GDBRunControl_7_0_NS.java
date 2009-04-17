@@ -25,6 +25,7 @@ import org.eclipse.cdt.dsf.datamodel.IDMContext;
 import org.eclipse.cdt.dsf.datamodel.IDMEvent;
 import org.eclipse.cdt.dsf.debug.service.ICachingService;
 import org.eclipse.cdt.dsf.debug.service.IRunControl;
+import org.eclipse.cdt.dsf.debug.service.IBreakpoints.IBreakpointsTargetDMContext;
 import org.eclipse.cdt.dsf.debug.service.IProcesses.IProcessDMContext;
 import org.eclipse.cdt.dsf.debug.service.IProcesses.IThreadDMContext;
 import org.eclipse.cdt.dsf.debug.service.IStack.IFrameDMContext;
@@ -33,8 +34,11 @@ import org.eclipse.cdt.dsf.debug.service.command.ICommandControlService.ICommand
 import org.eclipse.cdt.dsf.gdb.internal.GdbPlugin;
 import org.eclipse.cdt.dsf.mi.service.IMIExecutionDMContext;
 import org.eclipse.cdt.dsf.mi.service.IMIProcesses;
+import org.eclipse.cdt.dsf.mi.service.IMIRunControl;
 import org.eclipse.cdt.dsf.mi.service.MIRunControl;
 import org.eclipse.cdt.dsf.mi.service.MIStack;
+import org.eclipse.cdt.dsf.mi.service.command.commands.MIBreakDelete;
+import org.eclipse.cdt.dsf.mi.service.command.commands.MIBreakInsert;
 import org.eclipse.cdt.dsf.mi.service.command.commands.MIExecContinue;
 import org.eclipse.cdt.dsf.mi.service.command.commands.MIExecFinish;
 import org.eclipse.cdt.dsf.mi.service.command.commands.MIExecInterrupt;
@@ -42,11 +46,11 @@ import org.eclipse.cdt.dsf.mi.service.command.commands.MIExecNext;
 import org.eclipse.cdt.dsf.mi.service.command.commands.MIExecNextInstruction;
 import org.eclipse.cdt.dsf.mi.service.command.commands.MIExecStep;
 import org.eclipse.cdt.dsf.mi.service.command.commands.MIExecStepInstruction;
-import org.eclipse.cdt.dsf.mi.service.command.commands.MIExecUntil;
 import org.eclipse.cdt.dsf.mi.service.command.events.IMIDMEvent;
 import org.eclipse.cdt.dsf.mi.service.command.events.MIBreakpointHitEvent;
 import org.eclipse.cdt.dsf.mi.service.command.events.MIErrorEvent;
 import org.eclipse.cdt.dsf.mi.service.command.events.MIEvent;
+import org.eclipse.cdt.dsf.mi.service.command.events.MIInferiorExitEvent;
 import org.eclipse.cdt.dsf.mi.service.command.events.MIRunningEvent;
 import org.eclipse.cdt.dsf.mi.service.command.events.MISharedLibEvent;
 import org.eclipse.cdt.dsf.mi.service.command.events.MISignalEvent;
@@ -55,6 +59,7 @@ import org.eclipse.cdt.dsf.mi.service.command.events.MIStoppedEvent;
 import org.eclipse.cdt.dsf.mi.service.command.events.MIThreadCreatedEvent;
 import org.eclipse.cdt.dsf.mi.service.command.events.MIThreadExitEvent;
 import org.eclipse.cdt.dsf.mi.service.command.events.MIWatchpointTriggerEvent;
+import org.eclipse.cdt.dsf.mi.service.command.output.MIBreakInsertInfo;
 import org.eclipse.cdt.dsf.mi.service.command.output.MIInfo;
 import org.eclipse.cdt.dsf.service.AbstractDsfService;
 import org.eclipse.cdt.dsf.service.DsfServiceEventHandler;
@@ -75,7 +80,7 @@ import org.osgi.framework.BundleContext;
  * sync with the service state.
  * @since 1.1
  */
-public class GDBRunControl_7_0_NS extends AbstractDsfService implements IRunControl, ICachingService
+public class GDBRunControl_7_0_NS extends AbstractDsfService implements IMIRunControl, ICachingService
 {
 	@Immutable
 	private static class ExecutionData implements IExecutionDMData {
@@ -192,6 +197,26 @@ public class GDBRunControl_7_0_NS extends AbstractDsfService implements IRunCont
 		StateChangeReason fStateChangeReason;
 	}
 
+	private static class RunToLineActiveOperation {
+		private IMIExecutionDMContext fThreadContext;
+		private int fBpId;
+		private String fLocation;
+		private boolean fSkipBreakpoints;
+		
+		public RunToLineActiveOperation(IMIExecutionDMContext threadContext,
+				int bpId, String location, boolean skipBreakpoints) {
+			fThreadContext = threadContext;
+			fBpId = bpId;
+			fLocation = location;
+			fSkipBreakpoints = skipBreakpoints;
+		}
+		
+		public IMIExecutionDMContext getThreadContext() { return fThreadContext; }
+		public int getBreakointId() { return fBpId; }
+		public String getLocation() { return fLocation; }
+		public boolean shouldSkipBreakpoints() { return fSkipBreakpoints; }
+	}
+
 	///////////////////////////////////////////////////////////////////////////
 	// MIRunControlNS
 	///////////////////////////////////////////////////////////////////////////
@@ -202,6 +227,8 @@ public class GDBRunControl_7_0_NS extends AbstractDsfService implements IRunCont
 
 	// ThreadStates indexed by the execution context
 	protected Map<IMIExecutionDMContext, MIThreadRunState> fThreadRunStates = new HashMap<IMIExecutionDMContext, MIThreadRunState>();
+
+	private RunToLineActiveOperation fRunToLineActiveOperation = null;
 
 	///////////////////////////////////////////////////////////////////////////
 	// Initialization and shutdown
@@ -222,7 +249,7 @@ public class GDBRunControl_7_0_NS extends AbstractDsfService implements IRunCont
 	}
 
 	private void doInitialize(final RequestMonitor rm) {
-        register(new String[]{IRunControl.class.getName()}, new Hashtable<String,String>());
+        register(new String[]{IRunControl.class.getName(), IMIRunControl.class.getName()}, new Hashtable<String,String>());
 		fConnection = getServicesTracker().getService(ICommandControlService.class);
 		getSession().addServiceEventListener(this, null);
 		rm.done();
@@ -539,13 +566,11 @@ public class GDBRunControl_7_0_NS extends AbstractDsfService implements IRunCont
 	// Run to line
 	// ------------------------------------------------------------------------
 
-	// Later add support for Address and function.
-	// skipBreakpoints is not used at the moment. Implement later
-	public void runToLine(IExecutionDMContext context, String fileName, String lineNo, boolean skipBreakpoints, final DataRequestMonitor<MIInfo> rm) {
+	public void runToLine(IExecutionDMContext context, String fileName, String lineNo, final boolean skipBreakpoints, final DataRequestMonitor<MIInfo> rm) {
 
 		assert context != null;
 
-		IMIExecutionDMContext dmc = DMContexts.getAncestorOfType(context, IMIExecutionDMContext.class);
+		final IMIExecutionDMContext dmc = DMContexts.getAncestorOfType(context, IMIExecutionDMContext.class);
 		if (dmc == null) {
 			rm.setStatus(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, NOT_SUPPORTED,
 				"Given context: " + context + " is not an MI execution context.", null)); //$NON-NLS-1$ //$NON-NLS-2$
@@ -568,9 +593,44 @@ public class GDBRunControl_7_0_NS extends AbstractDsfService implements IRunCont
 			return;
 		}
 
-		threadState.fResumePending = true;
-		fConnection.queueCommand(new MIExecUntil(dmc, fileName + ":" + lineNo), //$NON-NLS-1$
-				new DataRequestMonitor<MIInfo>(getExecutor(), rm));
+		final String location = fileName + ":" + lineNo; //$NON-NLS-1$
+    	IBreakpointsTargetDMContext bpDmc = DMContexts.getAncestorOfType(context, IBreakpointsTargetDMContext.class);
+    	fConnection.queueCommand(
+    			new MIBreakInsert(bpDmc, true, false, null, 0, 
+    					          location, dmc.getThreadId()), 
+    		    new DataRequestMonitor<MIBreakInsertInfo>(getExecutor(), rm) {
+    				@Override
+    				public void handleSuccess() {
+    					// We must set are RunToLineActiveOperation *before* we do the resume
+    					// or else we may get the stopped event, before we have set this variable.
+       					int bpId = getData().getMIBreakpoints()[0].getNumber();
+       					
+       					// It would have been nice to use the address returned by the break-insert as our location,
+       					// but that does not always work because sometimes the address is <MULTIPLE>
+       					//
+       					// Also, we could have used the breakpoint id to know if we hit the proper breakpoint,
+       					// but that also doesn't always work because if there are many bp at that location,
+       					// GDB will report hitting one of them but not all of them (although GDB does consider
+       					// that all those bps did hit.)
+    		        	fRunToLineActiveOperation = new RunToLineActiveOperation(dmc, bpId, location, skipBreakpoints);
+
+    					resume(dmc, new RequestMonitor(getExecutor(), rm) {
+            				@Override
+            				public void handleFailure() {
+            		    		IBreakpointsTargetDMContext bpDmc = DMContexts.getAncestorOfType(fRunToLineActiveOperation.getThreadContext(),
+            		    				IBreakpointsTargetDMContext.class);
+            		    		int bpId = fRunToLineActiveOperation.getBreakointId();
+
+            		    		fConnection.queueCommand(new MIBreakDelete(bpDmc, new int[] {bpId}),
+            		    				new DataRequestMonitor<MIInfo>(getExecutor(), null));
+            		    		fRunToLineActiveOperation = null;
+
+            		    		super.handleFailure();
+            		    	}
+    					});
+    				}
+    			});
+
 	}
 
 	// ------------------------------------------------------------------------
@@ -673,6 +733,37 @@ public class GDBRunControl_7_0_NS extends AbstractDsfService implements IRunCont
      */
 	@DsfServiceEventHandler
 	public void eventDispatched(final MIStoppedEvent e) {
+    	if (fRunToLineActiveOperation != null) {
+    		// First check if it is the right thread that stopped
+    		IMIExecutionDMContext threadDmc = DMContexts.getAncestorOfType(e.getDMContext(), IMIExecutionDMContext.class);
+    		if (fRunToLineActiveOperation.getThreadContext().equals(threadDmc)) {
+    			String location = e.getFrame().getFile() + ":" + e.getFrame().getLine();  //$NON-NLS-1$
+    			if (location.equals(fRunToLineActiveOperation.getLocation())) {
+    				// We stopped on our temporary breakpoint.  All is well.
+    				fRunToLineActiveOperation = null;
+    			} else {
+    				// The right thread stopped but not at the right place yet
+    				if (fRunToLineActiveOperation.shouldSkipBreakpoints() && e instanceof MIBreakpointHitEvent) {
+    					fConnection.queueCommand(
+    							new MIExecContinue(fRunToLineActiveOperation.getThreadContext()),
+    							new DataRequestMonitor<MIInfo>(getExecutor(), null));
+
+    					// Don't send the stop event since we are resuming again.
+    					return;
+    				} else {
+    					// Stopped for any other reasons.  Just remove our temporary one
+    					// since we don't want it to hit later
+    					IBreakpointsTargetDMContext bpDmc = DMContexts.getAncestorOfType(fRunToLineActiveOperation.getThreadContext(),
+    							IBreakpointsTargetDMContext.class);
+    					int bpId = fRunToLineActiveOperation.getBreakointId();
+
+    					fConnection.queueCommand(new MIBreakDelete(bpDmc, new int[] {bpId}),
+    							new DataRequestMonitor<MIInfo>(getExecutor(), null));
+    					fRunToLineActiveOperation = null;
+    				}
+    			}
+    		}
+    	}
         getSession().dispatchEvent(new SuspendedEvent(e.getDMContext(), e), getProperties());
 	}
 
@@ -760,6 +851,26 @@ public class GDBRunControl_7_0_NS extends AbstractDsfService implements IRunCont
 	public void eventDispatched(ICommandControlShutdownDMEvent e) {
 		fTerminated = true;
 	}
+
+
+    /**
+     * @nooverride This method is not intended to be re-implemented or extended by clients.
+     * @noreference This method is not intended to be referenced by clients.
+     * 
+     * @since 2.0
+     */
+    @DsfServiceEventHandler
+    public void eventDispatched(MIInferiorExitEvent e) {
+    	if (fRunToLineActiveOperation != null) {
+    		IBreakpointsTargetDMContext bpDmc = DMContexts.getAncestorOfType(fRunToLineActiveOperation.getThreadContext(),
+    				IBreakpointsTargetDMContext.class);
+    		int bpId = fRunToLineActiveOperation.getBreakointId();
+
+    		fConnection.queueCommand(new MIBreakDelete(bpDmc, new int[] {bpId}),
+    				new DataRequestMonitor<MIInfo>(getExecutor(), null));
+    		fRunToLineActiveOperation = null;
+    	}
+    }
 
 	public void flushCache(IDMContext context) {
 	}

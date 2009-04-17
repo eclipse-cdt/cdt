@@ -24,7 +24,7 @@
 			persist="true"/>
 	</property-group>
 	
-	<process type="tut.cross.good.setCrossCommand">
+	<process type="org.eclipse.cdt.build.crossgcc.setCrossCommand">
 		<simple name="projectName" value="$(projectName)"/>
 		<simple name="prefix" value="$(prefix)"/>
 		<simple name="path" value="$(path)"/>

@@ -15,5 +15,11 @@
       </problem>
       </checker>
    </extension>
-
+   <extension
+         point="org.eclipse.ui.ide.markerResolution">
+      <markerResolutionGenerator
+            class="org.eclipse.cdt.codan.checkers.sample.MarkerResolutionGenerator"
+            markerType="org.eclipse.cdt.codan.core.codanProblem">
+      </markerResolutionGenerator>
+   </extension>
 </plugin>

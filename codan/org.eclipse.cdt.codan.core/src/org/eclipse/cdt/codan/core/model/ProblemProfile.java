@@ -17,7 +17,7 @@ import java.util.Collection;
  * @author Alena
  * 
  */
-public class ProblemsProfile implements IProblemsProfile, Cloneable {
+public class ProblemProfile implements IProblemProfile, Cloneable {
 	private IProblemCategory rootCategory = new CodanProblemCategory("root",
 			"root");
 
@@ -25,7 +25,7 @@ public class ProblemsProfile implements IProblemsProfile, Cloneable {
 	 * (non-Javadoc)
 	 * 
 	 * @see
-	 * org.eclipse.cdt.codan.core.model.IProblemsProfile#getProblem(java.lang
+	 * org.eclipse.cdt.codan.core.model.IProblemProfile#getProblem(java.lang
 	 * .String)
 	 */
 	@Override
@@ -36,7 +36,7 @@ public class ProblemsProfile implements IProblemsProfile, Cloneable {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see org.eclipse.cdt.codan.core.model.IProblemsProfile#getProblems()
+	 * @see org.eclipse.cdt.codan.core.model.IProblemProfile#getProblems()
 	 */
 	@Override
 	public IProblem[] getProblems() {
@@ -65,7 +65,7 @@ public class ProblemsProfile implements IProblemsProfile, Cloneable {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see org.eclipse.cdt.codan.core.model.IProblemsProfile#getRoot()
+	 * @see org.eclipse.cdt.codan.core.model.IProblemProfile#getRoot()
 	 */
 	@Override
 	public IProblemCategory getRoot() {
@@ -90,7 +90,7 @@ public class ProblemsProfile implements IProblemsProfile, Cloneable {
 	@Override
 	public Object clone() {
 		try {
-			ProblemsProfile clone = (ProblemsProfile) super.clone();
+			ProblemProfile clone = (ProblemProfile) super.clone();
 			clone.rootCategory = (IProblemCategory) ((CodanProblemCategory) this.rootCategory)
 					.clone();
 			return clone;

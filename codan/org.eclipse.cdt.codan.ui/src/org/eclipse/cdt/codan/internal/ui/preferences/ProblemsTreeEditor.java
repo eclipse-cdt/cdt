@@ -15,7 +15,7 @@ import org.eclipse.cdt.codan.core.builder.CodanPreferencesLoader;
 import org.eclipse.cdt.codan.core.model.CodanProblem;
 import org.eclipse.cdt.codan.core.model.IProblem;
 import org.eclipse.cdt.codan.core.model.IProblemCategory;
-import org.eclipse.cdt.codan.core.model.IProblemsProfile;
+import org.eclipse.cdt.codan.core.model.IProblemProfile;
 import org.eclipse.jface.viewers.BaseLabelProvider;
 import org.eclipse.jface.viewers.CheckStateChangedEvent;
 import org.eclipse.jface.viewers.IBaseLabelProvider;
@@ -112,8 +112,8 @@ public class ProblemsTreeEditor extends CheckedTreeEditor {
 			if (parentElement instanceof IProblemCategory) {
 				return ((IProblemCategory) parentElement).getChildren();
 			}
-			if (parentElement instanceof IProblemsProfile) {
-				return ((IProblemsProfile) parentElement).getRoot()
+			if (parentElement instanceof IProblemProfile) {
+				return ((IProblemProfile) parentElement).getRoot()
 						.getChildren();
 			}
 			return new Object[0];
@@ -163,7 +163,7 @@ public class ProblemsTreeEditor extends CheckedTreeEditor {
 		}
 	}
 
-	public ProblemsTreeEditor(Composite parent, IProblemsProfile profile) {
+	public ProblemsTreeEditor(Composite parent, IProblemProfile profile) {
 		super(PreferenceConstants.P_PROBLEMS, "Problems", parent);
 		setEmptySelectionAllowed(true);
 		getTreeViewer().getTree().setHeaderVisible(true);

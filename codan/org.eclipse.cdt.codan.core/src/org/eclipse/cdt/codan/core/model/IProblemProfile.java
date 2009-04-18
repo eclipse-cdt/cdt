@@ -14,7 +14,7 @@ package org.eclipse.cdt.codan.core.model;
  * @author Alena
  * 
  */
-public interface IProblemsProfile extends IProblemElement {
+public interface IProblemProfile extends IProblemElement {
 	IProblemCategory getRoot();
 
 	IProblem findProblem(String id);

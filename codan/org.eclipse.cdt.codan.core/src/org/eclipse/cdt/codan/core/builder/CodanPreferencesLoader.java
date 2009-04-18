@@ -17,7 +17,7 @@ import java.util.Map;
 import org.eclipse.cdt.codan.core.model.CodanProblem;
 import org.eclipse.cdt.codan.core.model.CodanSeverity;
 import org.eclipse.cdt.codan.core.model.IProblem;
-import org.eclipse.cdt.codan.core.model.IProblemsProfile;
+import org.eclipse.cdt.codan.core.model.IProblemProfile;
 
 /**
  * @author Alena
@@ -25,12 +25,12 @@ import org.eclipse.cdt.codan.core.model.IProblemsProfile;
  */
 public class CodanPreferencesLoader {
 	private static String LIST_SEP = ",";
-	private IProblemsProfile baseModel;
+	private IProblemProfile baseModel;
 
 	/**
 	 * @param workspaceProfile
 	 */
-	public CodanPreferencesLoader(IProblemsProfile profile) {
+	public CodanPreferencesLoader(IProblemProfile profile) {
 		setInput(profile);
 	}
 
@@ -41,7 +41,7 @@ public class CodanPreferencesLoader {
 	}
 
 	public void setInput(Object model) {
-		baseModel = (IProblemsProfile) model;
+		baseModel = (IProblemProfile) model;
 	}
 
 	/**
@@ -133,8 +133,8 @@ public class CodanPreferencesLoader {
 	 */
 	private Map<Object, Boolean> fillChecked(Object element,
 			HashMap<Object, Boolean> hashMap) {
-		if (element instanceof IProblemsProfile) {
-			IProblemsProfile profile = (IProblemsProfile) element;
+		if (element instanceof IProblemProfile) {
+			IProblemProfile profile = (IProblemProfile) element;
 			IProblem[] problems = profile.getProblems();
 			for (IProblem iProblem : problems) {
 				hashMap.put(iProblem, iProblem.isEnabled());

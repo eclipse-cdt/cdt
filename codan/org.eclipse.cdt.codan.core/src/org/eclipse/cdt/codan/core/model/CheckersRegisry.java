@@ -35,11 +35,11 @@ public class CheckersRegisry implements Iterable<IChecker> {
 	private static final Object DEFAULT = "DEFAULT";
 	private Collection<IChecker> checkers = new ArrayList<IChecker>();
 	private static CheckersRegisry instance;
-	private HashMap<Object, IProblemsProfile> profiles = new HashMap<Object, IProblemsProfile>();
+	private HashMap<Object, IProblemProfile> profiles = new HashMap<Object, IProblemProfile>();
 
 	private CheckersRegisry() {
 		instance = this;
-		profiles.put(DEFAULT, new ProblemsProfile());
+		profiles.put(DEFAULT, new ProblemProfile());
 		readCheckersRegistry();
 	}
 
@@ -127,7 +127,9 @@ public class CheckersRegisry implements Iterable<IChecker> {
 			if (name == null)
 				name = id;
 			CodanProblem p = new CodanProblem(id, name);
-			String category = getAtt(configurationElement, "category");
+			String category = getAtt(configurationElement, "category", false);
+			if (category == null)
+				category = "org.eclipse.cdt.codan.core.categories.ProgrammingProblems";
 			addProblem(p, category);
 			return p;
 		}
@@ -146,7 +148,8 @@ public class CheckersRegisry implements Iterable<IChecker> {
 			CodanCorePlugin.log("Extension "
 					+ configurationElement.getDeclaringExtension()
 							.getUniqueIdentifier()
-					+ " missing required attribute: " + name);
+					+ " missing required attribute: "
+					+ configurationElement.getName() + "." + name);
 		return elementValue;
 	}
 
@@ -165,7 +168,7 @@ public class CheckersRegisry implements Iterable<IChecker> {
 	}
 
 	public void addProblem(IProblem p, String category) {
-		((ProblemsProfile) getDefaultProfile()).addProblem(p,
+		((ProblemProfile) getDefaultProfile()).addProblem(p,
 				getDefaultProfile().getRoot());
 	}
 
@@ -175,18 +178,18 @@ public class CheckersRegisry implements Iterable<IChecker> {
 	/**
 	 * @return
 	 */
-	public IProblemsProfile getDefaultProfile() {
+	public IProblemProfile getDefaultProfile() {
 		return profiles.get(DEFAULT);
 	}
 
 	/**
 	 * @return
 	 */
-	public IProblemsProfile getWorkspaceProfile() {
-		IProblemsProfile wp = profiles.get(ResourcesPlugin.getWorkspace());
+	public IProblemProfile getWorkspaceProfile() {
+		IProblemProfile wp = profiles.get(ResourcesPlugin.getWorkspace());
 		if (wp == null) {
 			try {
-				wp = (IProblemsProfile) getDefaultProfile().clone();
+				wp = (IProblemProfile) getDefaultProfile().clone();
 				// load default values
 				CodanPreferencesLoader loader = new CodanPreferencesLoader(wp);
 				String s = CodanCorePlugin.getDefault().getStorePreferences()
@@ -203,12 +206,12 @@ public class CheckersRegisry implements Iterable<IChecker> {
 	 * @param element
 	 * @return
 	 */
-	public IProblemsProfile getResourceProfile(IResource element) {
-		IProblemsProfile prof = profiles.get(element);
+	public IProblemProfile getResourceProfile(IResource element) {
+		IProblemProfile prof = profiles.get(element);
 		if (prof == null) {
 			if (element instanceof IProject) {
 				try {
-					prof = (IProblemsProfile) getWorkspaceProfile().clone();
+					prof = (IProblemProfile) getWorkspaceProfile().clone();
 					// load default values
 					CodanPreferencesLoader loader = new CodanPreferencesLoader(
 							prof);

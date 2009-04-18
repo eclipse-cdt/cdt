@@ -42,6 +42,16 @@
          point="org.eclipse.core.runtime.preferences">
    </extension>
 
-   
+      <extension
+         point="org.eclipse.cdt.codan.core.checkers"
+         id="org.eclipse.cdt.codan.core.categories">
+
+      <category
+      id="org.eclipse.cdt.codan.core.categories.ProgrammingProblems"
+      name="Potential programming problems"
+      >
+      
+      </category>
+   </extension>
 
 </plugin>

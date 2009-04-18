@@ -2,24 +2,18 @@
 <?eclipse version="3.4"?>
 <plugin>
    <extension
-         point="org.eclipse.cdt.codan.core.checkers">
+         point="org.eclipse.cdt.codan.core.checkers"
+         id="org.eclipse.cdt.codan.core.checkers.sample">
 
       <checker
             class="org.eclipse.cdt.codan.checkers.sample.AssignmentInConditionChecker"
-            id="org.eclipse.cdt.codan.checkers.checker1"
+            id="org.eclipse.cdt.codan.checkers.sample.AssignmentInConditionChecker"
             name="Assignment in condition">
       <problem
             defaultSeverity="Warning"
-            id="org.eclipse.cdt.codan.checkers.sample.assignment_in_condition"
+            id="org.eclipse.cdt.codan.checkers.sample.AssignmentInConditionProblem"
             name="Assignment in condition">
       </problem>
       </checker>
-   </extension>
-   <extension
-         point="org.eclipse.ui.ide.markerResolution">
-      <markerResolutionGenerator
-            class="org.eclipse.cdt.codan.checkers.sample.MarkerResolutionGenerator"
-            markerType="org.eclipse.cdt.codan.core.codanProblem">
-      </markerResolutionGenerator>
    </extension>
 </plugin>

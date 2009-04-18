@@ -16,4 +16,5 @@ package org.eclipse.cdt.codan.core;
 public class PreferenceConstants {
 	public static final String P_RUN_ON_BUILD = "booleanPreference";
 	public static final String P_PROBLEMS = "problems";
+	public static final String P_USE_PARENT = "useParentScope";
 }

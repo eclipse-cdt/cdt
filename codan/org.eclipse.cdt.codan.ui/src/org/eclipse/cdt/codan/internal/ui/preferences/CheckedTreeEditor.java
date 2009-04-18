@@ -187,7 +187,6 @@ public abstract class CheckedTreeEditor extends FieldEditor implements
 	 */
 	protected void doLoadDefault() {
 		if (getTreeControl() != null) {
-			treeViewer.refresh();
 			String s = getPreferenceStore().getDefaultString(
 					getPreferenceName());
 			getViewer().setInput(modelFromString(s));

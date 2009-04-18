@@ -186,12 +186,61 @@ public class ProblemsTreeEditor extends CheckedTreeEditor {
 	/*
 	 * (non-Javadoc)
 	 * 
+	 * @see
+	 * org.eclipse.cdt.codan.internal.ui.preferences.CheckedTreeEditor#doLoad()
+	 */
+	@Override
+	protected void doLoad() {
+		if (getTreeControl() != null) {
+			IProblem[] probs = codanPreferencesLoader.getProblems();
+			for (int i = 0; i < probs.length; i++) {
+				String id = probs[i].getId();
+				String s = getPreferenceStore().getString(id);
+				codanPreferencesLoader.setProperty(id, s);
+			}
+			getViewer().setInput(codanPreferencesLoader.getInput());
+		}
+	}
+
+	@Override
+	protected void doLoadDefault() {
+		if (getTreeControl() != null) {
+			IProblem[] probs = codanPreferencesLoader.getProblems();
+			for (int i = 0; i < probs.length; i++) {
+				String id = probs[i].getId();
+				String s = getPreferenceStore().getDefaultString(id);
+				codanPreferencesLoader.setProperty(id, s);
+			}
+			getViewer().setInput(codanPreferencesLoader.getInput());
+		}
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.eclipse.cdt.codan.internal.ui.preferences.CheckedTreeEditor#doStore()
+	 */
+	@Override
+	protected void doStore() {
+		codanPreferencesLoader.setInput(getViewer().getInput());
+		IProblem[] probs = codanPreferencesLoader.getProblems();
+		for (int i = 0; i < probs.length; i++) {
+			String id = probs[i].getId();
+			String s = codanPreferencesLoader.getProperty(id);
+			getPreferenceStore().setValue(id, s);
+		}
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @seeorg.eclipse.cdt.codan.internal.ui.preferences.CheckedTreeEditor#
 	 * modelFromString(java.lang.String)
 	 */
 	@Override
 	protected Object modelFromString(String s) {
-		return codanPreferencesLoader.modelFromString(s);
+		return codanPreferencesLoader.getInput();
 	}
 
 	/*
@@ -203,6 +252,6 @@ public class ProblemsTreeEditor extends CheckedTreeEditor {
 	 */
 	@Override
 	protected String modelToString(Object model) {
-		return codanPreferencesLoader.modelToString(model);
+		return "";
 	}
 }

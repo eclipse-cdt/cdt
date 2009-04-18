@@ -192,14 +192,19 @@ public class CheckersRegisry implements Iterable<IChecker> {
 				wp = (IProblemProfile) getDefaultProfile().clone();
 				// load default values
 				CodanPreferencesLoader loader = new CodanPreferencesLoader(wp);
-				String s = CodanCorePlugin.getDefault().getStorePreferences()
-						.get(PreferenceConstants.P_PROBLEMS, "");
-				loader.modelFromString(s);
+				loader.load(CodanCorePlugin.getDefault().getStorePreferences());
 			} catch (CloneNotSupportedException e) {
 				wp = getDefaultProfile();
 			}
 		}
 		return wp;
+	}
+
+	public void updateProfile(IResource element, IProblemProfile profile) {
+		if (profile == null)
+			profiles.remove(element);
+		else
+			profiles.put(element, profile);
 	}
 
 	/**
@@ -218,8 +223,12 @@ public class CheckersRegisry implements Iterable<IChecker> {
 					IEclipsePreferences node = new ProjectScope(
 							(IProject) element)
 							.getNode(CodanCorePlugin.PLUGIN_ID);
-					String s = node.get(PreferenceConstants.P_PROBLEMS, "");
-					loader.modelFromString(s);
+					boolean useWorkspace = node.getBoolean(
+							PreferenceConstants.P_USE_PARENT, false);
+					if (!useWorkspace) {
+						loader.load(node);
+					}
+					updateProfile(element, prof);
 				} catch (CloneNotSupportedException e) {
 					// cant
 				}
@@ -228,7 +237,30 @@ public class CheckersRegisry implements Iterable<IChecker> {
 			} else {
 				prof = getResourceProfile(element.getProject());
 			}
+		} else {
 		}
 		return prof;
+	}
+
+	/**
+	 * @param element
+	 * @return
+	 */
+	public IProblemProfile getResourceProfileWorkingCopy(IResource element) {
+		if (element instanceof IProject) {
+			try {
+				IProblemProfile prof = (IProblemProfile) getWorkspaceProfile()
+						.clone();
+				// load default values
+				CodanPreferencesLoader loader = new CodanPreferencesLoader(prof);
+				IEclipsePreferences node = new ProjectScope((IProject) element)
+						.getNode(CodanCorePlugin.PLUGIN_ID);
+				loader.load(node);
+				return prof;
+			} catch (CloneNotSupportedException e) {
+				// cant
+			}
+		}
+		return null;
 	}
 }

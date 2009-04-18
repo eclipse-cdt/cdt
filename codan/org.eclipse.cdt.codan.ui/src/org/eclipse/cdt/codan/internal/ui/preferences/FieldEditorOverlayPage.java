@@ -15,12 +15,10 @@ import java.util.Iterator;
 import java.util.List;
 
 import org.eclipse.cdt.codan.core.CodanCorePlugin;
+import org.eclipse.cdt.codan.core.PreferenceConstants;
 import org.eclipse.core.resources.IProject;
-import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.ProjectScope;
-import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IAdaptable;
-import org.eclipse.core.runtime.QualifiedName;
 import org.eclipse.core.runtime.preferences.IScopeContext;
 import org.eclipse.core.runtime.preferences.InstanceScope;
 import org.eclipse.jface.preference.FieldEditor;
@@ -49,13 +47,6 @@ import org.eclipse.ui.preferences.ScopedPreferenceStore;
  */
 public abstract class FieldEditorOverlayPage extends FieldEditorPreferencePage
 		implements IWorkbenchPropertyPage {
-	/***
-	 * Name of resource property for the selection of workbench or project
-	 * settings
-	 ***/
-	public static final String USEPROJECTSETTINGS = "useProjectSettings"; //$NON-NLS-1$
-	private static final String FALSE = "false"; //$NON-NLS-1$
-	private static final String TRUE = "true"; //$NON-NLS-1$
 	// Stores all created field editors
 	private List editors = new ArrayList();
 	// Stores owning element of properties
@@ -223,15 +214,15 @@ public abstract class FieldEditorOverlayPage extends FieldEditorPreferencePage
 		});
 		// Set workspace/project radio buttons
 		try {
-			String use = ((IResource) getElement())
-					.getPersistentProperty(new QualifiedName(pageId,
-							USEPROJECTSETTINGS));
-			if (TRUE.equals(use)) {
+			Boolean useWorkspace = getPreferenceStore().getBoolean(
+					PreferenceConstants.P_USE_PARENT);
+			if (useWorkspace) {
+				useWorkspaceSettingsButton.setSelection(true);
+			} else {
 				useProjectSettingsButton.setSelection(true);
 				configureButton.setEnabled(false);
-			} else
-				useWorkspaceSettingsButton.setSelection(true);
-		} catch (CoreException e) {
+			}
+		} catch (Exception e) {
 			useWorkspaceSettingsButton.setSelection(true);
 		}
 	}
@@ -306,14 +297,8 @@ public abstract class FieldEditorOverlayPage extends FieldEditorPreferencePage
 		boolean result = super.performOk();
 		if (result && isPropertyPage()) {
 			// Save state of radiobuttons in project properties
-			IResource resource = (IResource) getElement();
-			try {
-				String value = (useProjectSettingsButton.getSelection()) ? TRUE
-						: FALSE;
-				resource.setPersistentProperty(new QualifiedName(pageId,
-						USEPROJECTSETTINGS), value);
-			} catch (CoreException e) {
-			}
+			getPreferenceStore().setValue(PreferenceConstants.P_USE_PARENT,
+					!useProjectSettingsButton.getSelection());
 		}
 		return result;
 	}

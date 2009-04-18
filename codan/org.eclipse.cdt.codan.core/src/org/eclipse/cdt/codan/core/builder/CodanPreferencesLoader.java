@@ -10,21 +10,17 @@
  *******************************************************************************/
 package org.eclipse.cdt.codan.core.builder;
 
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.Map;
-
 import org.eclipse.cdt.codan.core.model.CodanProblem;
 import org.eclipse.cdt.codan.core.model.CodanSeverity;
 import org.eclipse.cdt.codan.core.model.IProblem;
 import org.eclipse.cdt.codan.core.model.IProblemProfile;
+import org.eclipse.core.runtime.preferences.IEclipsePreferences;
 
 /**
  * @author Alena
  * 
  */
 public class CodanPreferencesLoader {
-	private static String LIST_SEP = ",";
 	private IProblemProfile baseModel;
 
 	/**
@@ -45,101 +41,79 @@ public class CodanPreferencesLoader {
 	}
 
 	/**
-	 * Stored as element=true|false,...
-	 * 
-	 * @param stringList
 	 * @return
 	 */
-	public Object modelFromString(String stringList) {
-		String[] arr = stringList.split(LIST_SEP);
-		for (int i = 0; i < arr.length; i++) {
-			String elem = arr[i];
-			String[] pair = elem.split("=", 2);
-			if (pair.length == 0)
-				continue;
-			String id = pair[0];
-			IProblem p = problemFromString(id);
-			if (p == null) {
-				System.err.println("cannot find '" + id + "'");
-				continue;
-			}
-			if (pair.length == 1) {
-				((CodanProblem) p).setEnabled(true);
-			} else {
-				String check = pair[1];
-				Boolean c = Boolean.valueOf(check);
-				((CodanProblem) p).setEnabled(c);
-			}
-		}
-		return baseModel;
+	public IProblem[] getProblems() {
+		IProblem[] problems = baseModel.getProblems();
+		return problems;
 	}
 
-	protected String problemToString(Object element) {
-		IProblem p = ((IProblem) element);
-		return p.getId() + ":" + p.getSeverity();
-	}
-
-	protected IProblem problemFromString(String string) {
-		String[] pair = string.split(":");
-		if (pair.length == 0)
-			return null;
-		String id = pair[0];
-		String arg = "";
-		if (pair.length > 1) {
-			arg = pair[1];
+	/**
+	 * @param id
+	 * @param s
+	 */
+	public void setProperty(String id, String s) {
+		IProblem prob = baseModel.findProblem(id);
+		if (!(prob instanceof CodanProblem))
+			return;
+		String sevs = s;
+		boolean enabled = true;
+		if (sevs.startsWith("-")) {
+			sevs = sevs.substring(1);
+			enabled = false;
 		}
+		((CodanProblem) prob).setEnabled(enabled);
 		CodanSeverity sev;
 		try {
-			sev = CodanSeverity.valueOf(arg);
+			sev = CodanSeverity.valueOf(sevs);
 		} catch (RuntimeException e) {
 			sev = CodanSeverity.Warning;
 		}
-		IProblem prob = baseModel.findProblem(id);
-		if (prob instanceof CodanProblem) {
-			((CodanProblem) prob).setSeverity(sev);
-		}
-		return prob;
+		((CodanProblem) prob).setSeverity(sev);
 	}
 
-	/**
-	 * Combines the given list of items into a single string. This method is the
-	 * converse of <code>parseString</code>.
-	 * <p>
-	 * Subclasses may implement this method.
-	 * </p>
+	/*
+	 * (non-Javadoc)
 	 * 
-	 * @return the combined string
-	 * @see #parseString
+	 * @see java.lang.Object#toString()
 	 */
-	public String modelToString(Object model) {
-		StringBuffer buf = new StringBuffer();
-		Map<Object, Boolean> map = fillChecked(model,
-				new HashMap<Object, Boolean>());
-		for (Iterator iterator = map.keySet().iterator(); iterator.hasNext();) {
-			Object element = iterator.next();
-			buf.append(problemToString(element));
-			buf.append('=');
-			buf.append(map.get(element));
-			if (iterator.hasNext())
-				buf.append(LIST_SEP);
-		}
-		return buf.toString();
+	@Override
+	public String toString() {
+		return getInput().toString();
 	}
 
 	/**
-	 * @param input
-	 * @param hashMap
 	 * @return
 	 */
-	private Map<Object, Boolean> fillChecked(Object element,
-			HashMap<Object, Boolean> hashMap) {
-		if (element instanceof IProblemProfile) {
-			IProblemProfile profile = (IProblemProfile) element;
-			IProblem[] problems = profile.getProblems();
-			for (IProblem iProblem : problems) {
-				hashMap.put(iProblem, iProblem.isEnabled());
+	public IProblemProfile getInput() {
+		return baseModel;
+	}
+
+	/**
+	 * @param id
+	 * @return
+	 */
+	public String getProperty(String id) {
+		IProblem prob = baseModel.findProblem(id);
+		if (!(prob instanceof CodanProblem))
+			return null;
+		String enabled = prob.isEnabled() ? "" : "-";
+		String severity = prob.getSeverity().toString();
+		String res = enabled + severity;
+		return res;
+	}
+
+	/**
+	 * @param storePreferences
+	 */
+	public void load(IEclipsePreferences storePreferences) {
+		IProblem[] probs = getProblems();
+		for (int i = 0; i < probs.length; i++) {
+			String id = probs[i].getId();
+			String s = storePreferences.get(id, null);
+			if (s != null) {
+				setProperty(id, s);
 			}
 		}
-		return hashMap;
 	}
 }

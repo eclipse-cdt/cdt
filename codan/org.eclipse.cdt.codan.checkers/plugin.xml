@@ -14,6 +14,19 @@
             id="org.eclipse.cdt.codan.checkers.sample.AssignmentInConditionProblem"
             name="Assignment in condition">
       </problem>
+      
+      
+      </checker>
+            <checker
+            class="org.eclipse.cdt.codan.checkers.sample.StatementHasNoEffectChecker"
+            id="org.eclipse.cdt.codan.checkers.sample.StatementHasNoEffectChecker"
+            name="StatementHasNoEffectChecker">
+      <problem
+            category="org.eclipse.cdt.codan.core.categories.ProgrammingProblems"
+            defaultSeverity="Warning"
+            id="org.eclipse.cdt.codan.checkers.sample.StatementHasNoEffectProblem"
+            name="Statement has no effect">
+      </problem>
       </checker>
    </extension>
 </plugin>

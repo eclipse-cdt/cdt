@@ -32,6 +32,7 @@ public class CheckersRegisry implements Iterable<IChecker> {
 	private static final String EXTENSION_POINT_NAME = "checkers";
 	private static final String CHECKER_ELEMENT = "checker";
 	private static final String PROBLEM_ELEMENT = "problem";
+	private static final String CATEGORY_ELEMENT = "category";
 	private static final Object DEFAULT = "DEFAULT";
 	private Collection<IChecker> checkers = new ArrayList<IChecker>();
 	private static CheckersRegisry instance;
@@ -50,6 +51,10 @@ public class CheckersRegisry implements Iterable<IChecker> {
 			return;
 		IConfigurationElement[] elements = ep.getConfigurationElements();
 		// process categories
+		for (int i = 0; i < elements.length; i++) {
+			IConfigurationElement configurationElement = elements[i];
+			processCategories(configurationElement);
+		}
 		// process shared problems
 		for (int i = 0; i < elements.length; i++) {
 			IConfigurationElement configurationElement = elements[i];
@@ -59,6 +64,24 @@ public class CheckersRegisry implements Iterable<IChecker> {
 		for (int i = 0; i < elements.length; i++) {
 			IConfigurationElement configurationElement = elements[i];
 			processChecker(configurationElement);
+		}
+	}
+
+	/**
+	 * @param configurationElement
+	 */
+	private void processCategories(IConfigurationElement configurationElement) {
+		if (configurationElement.getName().equals(CATEGORY_ELEMENT)) {
+			String id = getAtt(configurationElement, "id");
+			if (id == null)
+				return;
+			String name = getAtt(configurationElement, "name");
+			if (name == null)
+				return;
+			CodanProblemCategory cat = new CodanProblemCategory(id, name);
+			String category = getAtt(configurationElement, "parentCategory",
+					false);
+			addCategory(cat, category);
 		}
 	}
 
@@ -168,8 +191,17 @@ public class CheckersRegisry implements Iterable<IChecker> {
 	}
 
 	public void addProblem(IProblem p, String category) {
-		((ProblemProfile) getDefaultProfile()).addProblem(p,
-				getDefaultProfile().getRoot());
+		IProblemCategory cat = getDefaultProfile().findCategory(category);
+		if (cat == null)
+			cat = getDefaultProfile().getRoot();
+		((ProblemProfile) getDefaultProfile()).addProblem(p, cat);
+	}
+
+	public void addCategory(IProblemCategory p, String category) {
+		IProblemCategory cat = getDefaultProfile().findCategory(category);
+		if (cat == null)
+			cat = getDefaultProfile().getRoot();
+		((ProblemProfile) getDefaultProfile()).addCategory(p, cat);
 	}
 
 	public void addRefProblem(IChecker c, IProblem p) {

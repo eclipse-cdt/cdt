@@ -19,5 +19,7 @@ public interface IProblemProfile extends IProblemElement {
 
 	IProblem findProblem(String id);
 
+	IProblemCategory findCategory(String id);
+
 	IProblem[] getProblems();
 }

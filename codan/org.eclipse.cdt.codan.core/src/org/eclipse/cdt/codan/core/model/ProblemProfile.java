@@ -98,4 +98,12 @@ public class ProblemProfile implements IProblemProfile, Cloneable {
 			return this;
 		}
 	}
+
+	/**
+	 * @param p
+	 * @param cat
+	 */
+	public void addCategory(IProblemCategory category, IProblemCategory parent) {
+		((CodanProblemCategory) parent).addChild(category);
+	}
 }

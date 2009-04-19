@@ -6,9 +6,8 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *	   QNX - Initial API and implementation
- * 	   Markus Schorn (Wind River Systems)
- *     Sergey Prigogin (Google)
+ * QNX - Initial API and implementation
+ * Markus Schorn (Wind River Systems)
  *******************************************************************************/
 
 package org.eclipse.cdt.internal.core.pdom.dom;
@@ -27,6 +26,7 @@ import org.eclipse.core.runtime.CoreException;
 
 /**
  * @author Doug Schaefer
+ *
  */
 public class PDOMInclude implements IIndexFragmentInclude {
 
@@ -49,7 +49,7 @@ public class PDOMInclude implements IIndexFragmentInclude {
 	private final int record;
 	
 	// cached fields
-	private String fName;
+	private String fName= null;
 
 	public PDOMInclude(PDOMLinkage pdom, int record) {
 		this.linkage = pdom;
@@ -95,7 +95,8 @@ public class PDOMInclude implements IIndexFragmentInclude {
 		if (isResolved()) {
 			// Remove us from the includedBy chain
 			removeThisFromIncludedByChain();
-		} else {
+		}
+		else {
 			getNameForUnresolved().delete();
 		}
 		
@@ -106,11 +107,10 @@ public class PDOMInclude implements IIndexFragmentInclude {
 	private void removeThisFromIncludedByChain() throws CoreException {
 		PDOMInclude prevInclude = getPrevInIncludedBy();
 		PDOMInclude nextInclude = getNextInIncludedBy();
-		if (prevInclude != null) {
+		if (prevInclude != null)
 			prevInclude.setNextInIncludedBy(nextInclude);
-		} else {
+		else
 			((PDOMFile) getIncludes()).setFirstIncludedBy(nextInclude);
-		}
 
 		if (nextInclude != null)
 			nextInclude.setPrevInIncludedBy(prevInclude);
@@ -136,7 +136,8 @@ public class PDOMInclude implements IIndexFragmentInclude {
 		int rec= 0;
 		if (includes == null) {
 			rec= linkage.getDB().newString(name).getRecord();
-		} else {
+		}
+		else {
 			rec= includes.getRecord();
 		}
 		linkage.getDB().putInt(record + INCLUDES_FILE_OR_NAME, rec);
@@ -242,22 +243,17 @@ public class PDOMInclude implements IIndexFragmentInclude {
 		if (fName == null) {
 			computeName();
 		}
-		return fName.substring(fName.lastIndexOf('/') + 1);
-	}
-
-	public String getFullName() throws CoreException {
-		if (fName == null) {
-			computeName();
-		}
 		return fName;
 	}
 
 	private void computeName() throws CoreException {
 		if (isResolved()) {
 			fName= getIncludes().getLocation().getURI().getPath();
-		} else {
+		}
+		else {
 			fName= getNameForUnresolved().getString();
 		}
+		fName= fName.substring(fName.lastIndexOf('/')+1);
 	}
 
 	public void convertToUnresolved() throws CoreException {

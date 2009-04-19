@@ -3996,7 +3996,7 @@ public class AST2TemplateTests extends AST2BaseTest {
 	//	}
 	public void testTemplateConversionOperator_271948_1() throws Exception {
 		final String code = getAboveComment();
-		parseAndCheckBindings(code, ParserLanguage.CPP);		
+		parseAndCheckBindings(code, ParserLanguage.CPP);
 	}
 
 	//	template <typename T>
@@ -4016,6 +4016,6 @@ public class AST2TemplateTests extends AST2BaseTest {
 	//	}
 	public void testTemplateConversionOperator_271948_2() throws Exception {
 		final String code = getAboveComment();
-		parseAndCheckBindings(code, ParserLanguage.CPP);		
+		parseAndCheckBindings(code, ParserLanguage.CPP);
 	}
 }

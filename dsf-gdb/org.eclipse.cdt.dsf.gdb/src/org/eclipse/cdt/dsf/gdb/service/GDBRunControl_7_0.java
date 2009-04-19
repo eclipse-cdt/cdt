@@ -60,20 +60,23 @@ public class GDBRunControl_7_0 extends MIRunControl implements IReverseRunContro
 	private static class RunToLineActiveOperation {
 		private IMIExecutionDMContext fThreadContext;
 		private int fBpId;
-		private String fLocation;
+		private String fFileLocation;
+		private String fAddrLocation;
 		private boolean fSkipBreakpoints;
 		
 		public RunToLineActiveOperation(IMIExecutionDMContext threadContext,
-				int bpId, String location, boolean skipBreakpoints) {
+				int bpId, String fileLoc, String addr, boolean skipBreakpoints) {
 			fThreadContext = threadContext;
 			fBpId = bpId;
-			fLocation = location;
+			fFileLocation = fileLoc;
+			fAddrLocation = addr;
 			fSkipBreakpoints = skipBreakpoints;
 		}
 		
 		public IMIExecutionDMContext getThreadContext() { return fThreadContext; }
 		public int getBreakointId() { return fBpId; }
-		public String getLocation() { return fLocation; }
+		public String getFileLocation() { return fFileLocation; }
+		public String getAddrLocation() { return fAddrLocation; }
 		public boolean shouldSkipBreakpoints() { return fSkipBreakpoints; }
 	}
 
@@ -450,18 +453,19 @@ public class GDBRunControl_7_0 extends MIRunControl implements IReverseRunContro
 		}
 
         if (doCanResume(context)) {
-    		final String location = fileName + ":" + lineNo; //$NON-NLS-1$
+    		final String fileLocation = fileName + ":" + lineNo; //$NON-NLS-1$
         	IBreakpointsTargetDMContext bpDmc = DMContexts.getAncestorOfType(context, IBreakpointsTargetDMContext.class);
         	getConnection().queueCommand(
         			new MIBreakInsert(bpDmc, true, false, null, 0, 
-        					          location, dmc.getThreadId()), 
+        					          fileLocation, dmc.getThreadId()), 
         		    new DataRequestMonitor<MIBreakInsertInfo>(getExecutor(), rm) {
         				@Override
         				public void handleSuccess() {
         					// We must set are RunToLineActiveOperation *before* we do the resume
         					// or else we may get the stopped event, before we have set this variable.
            					int bpId = getData().getMIBreakpoints()[0].getNumber();
-        		        	fRunToLineActiveOperation = new RunToLineActiveOperation(dmc, bpId, location, skipBreakpoints);
+           					String addr = getData().getMIBreakpoints()[0].getAddress();
+        		        	fRunToLineActiveOperation = new RunToLineActiveOperation(dmc, bpId, fileLocation, addr, skipBreakpoints);
 
         					resume(context, new RequestMonitor(getExecutor(), rm) {
                 				@Override
@@ -510,12 +514,30 @@ public class GDBRunControl_7_0 extends MIRunControl implements IReverseRunContro
     @DsfServiceEventHandler
     public void eventDispatched(final MIStoppedEvent e) {
     	if (fRunToLineActiveOperation != null) {
-			String location = e.getFrame().getFile() + ":" + e.getFrame().getLine();  //$NON-NLS-1$
-			if (location.equals(fRunToLineActiveOperation.getLocation())) {
-    			// We stopped on our temporary breakpoint.  All is well.
+    		int bpId = 0;
+    		if (e instanceof MIBreakpointHitEvent) {
+    			bpId = ((MIBreakpointHitEvent)e).getNumber();
+    		}
+			String fileLocation = e.getFrame().getFile() + ":" + e.getFrame().getLine();  //$NON-NLS-1$
+			String addrLocation = e.getFrame().getAddress();
+			// Here we check three different things to see if we are stopped at the right place
+			// 1- The actual location in the file.  But this does not work for breakpoints that
+			//    were set on non-executable lines
+			// 2- The address where the breakpoint was set.  But this does not work for breakpoints
+			//    that have multiple addresses (GDB returns <MULTIPLE>.)  I think that is for multi-process
+			// 3- The breakpoint id that was hit.  But this does not work if another breakpoint
+			//    was also set on the same line because GDB may return that breakpoint as being hit.
+			//
+			// So this works for the large majority of cases.  The case that won't work is when the user
+			// does a runToLine to a line that is non-executable AND has another breakpoint AND
+			// has multiple addresses for the breakpoint.  I'm mean, come on!
+			if (fileLocation.equals(fRunToLineActiveOperation.getFileLocation()) ||
+				addrLocation.equals(fRunToLineActiveOperation.getAddrLocation()) ||
+				bpId == fRunToLineActiveOperation.getBreakointId()) {
+    			// We stopped at the right place.  All is well.
 				fRunToLineActiveOperation = null;
     		} else {
-    			// Didn't stop at the right line yet
+    			// Didn't stop at the right place yet
     			if (fRunToLineActiveOperation.shouldSkipBreakpoints() && e instanceof MIBreakpointHitEvent) {
     				getConnection().queueCommand(
     						new MIExecContinue(fRunToLineActiveOperation.getThreadContext()),
@@ -528,9 +550,8 @@ public class GDBRunControl_7_0 extends MIRunControl implements IReverseRunContro
     				// since we don't want it to hit later
     				IBreakpointsTargetDMContext bpDmc = DMContexts.getAncestorOfType(fRunToLineActiveOperation.getThreadContext(),
     						IBreakpointsTargetDMContext.class);
-    				int bpId = fRunToLineActiveOperation.getBreakointId();
 
-    				getConnection().queueCommand(new MIBreakDelete(bpDmc, new int[] {bpId}),
+    				getConnection().queueCommand(new MIBreakDelete(bpDmc, new int[] {fRunToLineActiveOperation.getBreakointId()}),
     						new DataRequestMonitor<MIInfo>(getExecutor(), null));
     				fRunToLineActiveOperation = null;
     			}

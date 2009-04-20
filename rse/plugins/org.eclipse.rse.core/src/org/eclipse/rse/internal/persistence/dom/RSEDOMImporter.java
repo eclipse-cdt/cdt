@@ -25,6 +25,7 @@
  * David Dykstal (IBM) - [236516] Bug in user code causes failure in RSE initialization
  * David McKnight (IBM) - [245198] [dstore] ServerLauncherProperties not restored
  * David McKnight (IBM) - [267052] need to be able to create subsystems-after-the-fact
+ * David McKnight (IBM) - [271243] [files] Switching service type brings up TWO file subsystems after restart
  ********************************************************************************/
 
 package org.eclipse.rse.internal.persistence.dom;
@@ -246,8 +247,18 @@ public class RSEDOMImporter {
 			// is there a corresponding subsystem for this configuration?
 			for (int i = 0; i < sses.length && !found; i++){
 				ISubSystem ss = sses[i];
-				if (ss.getSubSystemConfiguration() == config){
+				ISubSystemConfiguration ssConfig = ss.getSubSystemConfiguration();
+				if (ssConfig == config){
 					found = true;
+				}
+				else {
+					// check if the subsystem config service type is of the same type
+					Class ssServiceType = ssConfig.getServiceType();
+					Class serviceType = config.getServiceType();
+					if (ssServiceType != null && serviceType != null && ssServiceType.equals(serviceType)){
+						found = true;
+					}
+					
 				}
 			}
    

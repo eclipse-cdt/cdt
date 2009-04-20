@@ -51,7 +51,7 @@ Martin Oberhuber (Wind River) - [235145] Add comments how to hide "Create Remote
     <!-- product built on top of TM. Just copy that XML code to a       -->
     <!-- product's plugin.xml (can be any other plugin) and uncomment.  -->
     <!--                                                                -->
-    <!-- NOTE: Ad per Eclipse 3.5 (Galileo), a separate plugin is       -->
+    <!-- NOTE: As per Eclipse 3.5 (Galileo), a separate plugin is       -->
     <!-- available from CVS holding activity definitions, but not the   -->
     <!-- categories: "org.eclipse.rse.ui.capabilities". For details,    -->
     <!-- https://bugs.eclipse.org/bugs/show_bug.cgi?id=252807#c36       -->

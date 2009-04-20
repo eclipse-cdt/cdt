@@ -1,5 +1,5 @@
 /********************************************************************************
- * Copyright (c) 2002, 2008 IBM Corporation. All rights reserved.
+ * Copyright (c) 2002, 2009 IBM Corporation. All rights reserved.
  * This program and the accompanying materials are made available under the terms
  * of the Eclipse Public License v1.0 which accompanies this distribution, and is
  * available at http://www.eclipse.org/legal/epl-v10.html
@@ -17,6 +17,7 @@
  * Noriaki Takatsu (IBM)  - [232443] [multithread] A single rsecomm.log for all clients
  * Noriaki Takatsu (IBM)  - [239419] [multithread] Dynamically change the level of logging
  * David McKnight  (IBM)  - [244876] [dstore] make DEBUG a non-final variable of the ServerLogger class
+ * David McKnight  (IBM)  - [271914] [dstore] Setting debug on/off dynamically
  ********************************************************************************/
 
 package org.eclipse.dstore.core.server;
@@ -185,6 +186,17 @@ public class ServerLogger implements IServerLogger
 	public void logError(String minerName, String message, Throwable exception) {
 		if (!initialized)
 			initialize();
+		
+		String loggerLogLevel = System.getProperty("DSTORE_LOGGER_LOG_LEVEL"); //$NON-NLS-1$
+		if (loggerLogLevel != null){
+			try {
+				log_level = Integer.parseInt(loggerLogLevel);
+			}
+			catch (NumberFormatException e){
+				System.err.println("ServerLogger: "+e.toString()); //$NON-NLS-1$
+			}
+		}		
+		
 		if (_logFileStream != null) {
 			synchronized(writeLock) {
 				try {
@@ -210,6 +222,16 @@ public class ServerLogger implements IServerLogger
 	public synchronized void logDebugMessage(String minerName, String message) {
 		if (!initialized)
 			initialize();
+		
+		String loggerLogLevel = System.getProperty("DSTORE_LOGGER_LOG_LEVEL"); //$NON-NLS-1$
+		if (loggerLogLevel != null){
+			try {
+				log_level = Integer.parseInt(loggerLogLevel);
+			}
+			catch (NumberFormatException e){
+				System.err.println("ServerLogger: "+e.toString()); //$NON-NLS-1$
+			}
+		}
 		if (DEBUG && log_level == LOG_DEBUG) {
 			if (_logFileStream != null) {
 				synchronized(writeLock) {

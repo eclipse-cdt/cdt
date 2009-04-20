@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2002, 2008 IBM Corporation and others.
+ * Copyright (c) 2002, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -16,6 +16,7 @@
  * David McKnight  (IBM)   [221601][dstore] xmlparser needs to be able to handle very large attributes
  * David McKnight  (IBM)   [222163][dstore] Special characters from old server are not restored
  * David McKnight     (IBM)   [224906] [dstore] changes for getting properties and doing exit due to single-process capability
+ * David McKnight  (IBM)   [246826][dstore] KeepAlive does not work correctly
  *******************************************************************************/
 
 package org.eclipse.dstore.internal.core.util;
@@ -319,7 +320,7 @@ public class XMLparser
 				{
 					if (_firstTime)
 					{
-						_initialKart = new KeepAliveRequestThread(KEEPALIVE_RESPONSE_TIMEOUT);
+						_initialKart = new KeepAliveRequestThread(KEEPALIVE_RESPONSE_TIMEOUT, socket);
 						_firstTime = false;
 						if (VERBOSE_KEEPALIVE) System.out.println("Starting initial KeepAlive thread."); //$NON-NLS-1$
 						_initialKart.start();
@@ -349,10 +350,12 @@ public class XMLparser
 					if (_kart == null || !_kart.isAlive()){  // normal read wait
 						socket.setSoTimeout(IO_SOCKET_READ_TIMEOUT);
 					}
+					/* the SoTimeout is set in the kart before sleeping
 					else { // read wait time when awaking a keepalive response
 						// otherwise, if IO_SOCKET_READ_TIMEOUT is bigger we don't get out of here until IO_SOCKET_READ_TIMEOUT is complete
 						socket.setSoTimeout((int)KEEPALIVE_RESPONSE_TIMEOUT);
 					}
+					*/
 					
 					try
 					{
@@ -370,7 +373,7 @@ public class XMLparser
 						else
 						{
 							if (_kart == null || !_kart.isAlive()){
-								_kart = new KeepAliveRequestThread(KEEPALIVE_RESPONSE_TIMEOUT);
+								_kart = new KeepAliveRequestThread(KEEPALIVE_RESPONSE_TIMEOUT, socket);
 								if (VERBOSE_KEEPALIVE) System.out.println("No activity on socket. KeepAlive thread started."); //$NON-NLS-1$
 								_kart.start();
 								continue;
@@ -1056,19 +1059,24 @@ public class XMLparser
 	{
 		private long _timeout;
 		private boolean _failed;
+		private Socket _socket;
 		
-		public KeepAliveRequestThread(long timeout)
+		public KeepAliveRequestThread(long timeout, Socket socket)
 		{
 			_timeout = timeout;
 			_failed = false;
+			_socket = socket;
 		}
 		
 		public void run()
 		{
-			_dataStore.sendKeepAliveRequest();
+			_dataStore.sendKeepAliveRequest();			
 			try
 			{
+				_socket.setSoTimeout((int)_timeout);
 				sleep(_timeout);
+			}
+			catch (SocketException e){
 			}
 			catch (InterruptedException e)
 			{

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2002, 2008 IBM Corporation and others.
+ * Copyright (c) 2002, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -14,6 +14,7 @@
  * Contributors:
  * David McKnight  (IBM)   [222168][dstore] Buffer in DataElement is not sent
  * David McKnight   (IBM) - [225507][api][breaking] RSE dstore API leaks non-API types
+ * David McKnight  (IBM)   [246826][dstore] KeepAlive does not work correctly
  *******************************************************************************/
 
 package org.eclipse.dstore.internal.core.server;
@@ -440,7 +441,8 @@ public class ServerUpdateHandler extends UpdateHandler
 		document.setAttribute(DE.A_VALUE, "request"); //$NON-NLS-1$
 		document.setParent(null);
 		_pendingKeepAliveRequest = document;
-		notifyInput();
+		
+		handle(); // bypassing threading
 	}
 
 	public void sendKeepAliveConfirmation() 
@@ -451,7 +453,8 @@ public class ServerUpdateHandler extends UpdateHandler
 		document.setAttribute(DE.A_VALUE, "confirm"); //$NON-NLS-1$
 		document.setParent(null);
 		_pendingKeepAliveConfirmation = document;
-		notifyInput();
+				
+		handle(); // bypassing threading
 	}
 
 	public synchronized void waitForInput()

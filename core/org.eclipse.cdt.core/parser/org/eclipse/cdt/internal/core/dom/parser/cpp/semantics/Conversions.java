@@ -162,6 +162,22 @@ public class Conversions {
 		} 
 		
 		// Non-reference binding
+		// [13.3.3.1-6] Subsume cv-qualifications
+		source= getNestedType(source, TDEF | REF | CVQ | PTR_CVQ);
+		target= getNestedType(target, TDEF | REF | CVQ | PTR_CVQ);
+		
+		// [13.3.3.1-6] Derived to base conversion
+		if (source instanceof ICPPClassType && target instanceof ICPPClassType) {
+			int depth= calculateInheritanceDepth(CPPSemantics.MAX_INHERITANCE_DEPTH, source, target);
+			if (depth > -1) {
+				if (depth == 0) {
+					return new Cost(source, target, Rank.IDENTITY);
+				}
+				Cost cost= new Cost(source, target, Rank.CONVERSION);
+				cost.setInheritanceDistance(depth);
+				return cost;
+			}
+		}
 		return nonReferenceConversion(source, target, udc, isImpliedObject);
 	}
 
@@ -799,23 +815,4 @@ public class Conversions {
 		
 		return true;
 	}
-
-//  mstodo must be part of implicit conversion
-//	/**
-//	 * [13.3.3.1-6] Derived to base conversion
-//	 * @param cost
-//	 * @throws DOMException
-//	 */
-//	private static final void derivedToBaseConversion(Cost cost) throws DOMException {
-//		IType s = getUltimateType(cost.source, true);
-//		IType t = getUltimateType(cost.target, true);
-//
-//		if (s instanceof ICPPClassType && t instanceof ICPPClassType) {
-//			int depth= calculateInheritanceDepth(CPPSemantics.MAX_INHERITANCE_DEPTH, s, t);
-//			if (depth > -1) {
-//				cost.rank = Cost.DERIVED_TO_BASE_CONVERSION;
-//				cost.conversion = depth;
-//			}
-//		}
-//	}
 }

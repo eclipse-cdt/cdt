@@ -7130,4 +7130,33 @@ public class AST2CPPTests extends AST2BaseTest {
     	IScope scope= t.getScope();
     	assertEquals(EScopeKind.eGlobal, scope.getKind());
 	}
+	
+	//	class C {};
+	//	class D : public C {};
+	//	class E {
+	//	   public: E(D) {}
+	//	};
+	//	void test(C c) {}
+	//	void test(E e) {}
+	//
+	//	void xx() {
+	//	   D d1;
+	//	   const D d2= D();
+	//	   test(d1); // problem binding here although test(C c) has to be selected
+	//	   test(d2); // problem binding here although test(C c) has to be selected
+	//	}
+	public void testDerivedToBaseConversion_269318() throws Exception {
+		final String code = getAboveComment();
+		BindingAssertionHelper ba= new BindingAssertionHelper(code, true);
+		ICPPFunction t= ba.assertNonProblem("test(d1);", 4, ICPPFunction.class);
+		ICPPClassType ct= (ICPPClassType) t.getParameters()[0].getType();
+    	assertEquals("C", ct.getName());
+
+		t= ba.assertNonProblem("test(d2);", 4, ICPPFunction.class);
+		ct= (ICPPClassType) t.getParameters()[0].getType();
+    	assertEquals("C", ct.getName());
+
+    	parseAndCheckBindings(code, ParserLanguage.CPP);
+	}
+
 }

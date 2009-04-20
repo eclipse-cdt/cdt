@@ -317,7 +317,7 @@ public abstract class AbstractIndexerTask extends PDOMWriter {
 				fIndex.flush();
 			}
 		} catch (CoreException e) {
-			CCorePlugin.log(e);
+			logException(e);
 		} finally {
 			fIndex.releaseReadLock();
 		}
@@ -803,6 +803,10 @@ public abstract class AbstractIndexerTask extends PDOMWriter {
 	 */
 	protected void logError(IStatus s) {
 		CCorePlugin.log(s);
+	}
+	
+	protected void logException(Throwable e) {
+		CCorePlugin.log(e);
 	}
 
 	private static int computeHashCode(IScannerInfo scannerInfo) {

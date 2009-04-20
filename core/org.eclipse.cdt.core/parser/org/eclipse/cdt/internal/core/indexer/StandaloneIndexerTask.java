@@ -234,6 +234,14 @@ public abstract class StandaloneIndexerTask extends AbstractIndexerTask {
 	protected void logError(IStatus s) {
 		getLogService().traceLog(s.getMessage());
 	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.internal.core.pdom.AbstractIndexerTask#logException(java.lang.Throwable)
+	 */
+	@Override
+	protected void logException(Throwable e) {
+		getLogService().traceLog(e.getMessage());
+	}
 
 	@SuppressWarnings("deprecation")
 	@Override

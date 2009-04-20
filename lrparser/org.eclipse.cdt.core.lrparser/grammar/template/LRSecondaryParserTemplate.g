@@ -56,8 +56,8 @@ $Headers
 		addToken(new Token(null, 0, 0, $sym_type.TK_EOF_TOKEN));
 	}
 	
-	public $action_type(ITokenStream stream, Set<IParser.Options> options) {  // constructor for creating secondary parser
-		initActions(options);
+	public $action_type(ITokenStream stream, Map<String,String> properties) {  // constructor for creating secondary parser
+		initActions(properties);
 		tokenMap = new TokenMap($sym_type.orderedTerminalSymbols, stream.getOrderedTerminalSymbols());
 	}	
 	

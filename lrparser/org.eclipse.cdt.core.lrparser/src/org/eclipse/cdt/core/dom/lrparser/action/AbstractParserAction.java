@@ -10,16 +10,15 @@
  *******************************************************************************/
 package org.eclipse.cdt.core.dom.lrparser.action;
 
-import java.util.EnumSet;
+import java.util.Collections;
 import java.util.List;
-import java.util.Set;
+import java.util.Map;
 
 import lpg.lpgjavaruntime.IToken;
 
 import org.eclipse.cdt.core.dom.ast.IASTCompletionNode;
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
-import org.eclipse.cdt.core.dom.lrparser.IParser;
 import org.eclipse.cdt.core.dom.lrparser.ISecondaryParser;
 import org.eclipse.cdt.internal.core.dom.parser.ASTNode;
 
@@ -50,7 +49,7 @@ public abstract class AbstractParserAction {
 	protected ASTCompletionNode completionNode;
 	
 	/** Options that change the behavior of the parser actions */
-	protected Set<IParser.Options> options = EnumSet.noneOf(IParser.Options.class);
+	protected Map<String,String> properties = Collections.emptyMap();
 	
 	
 	
@@ -102,8 +101,8 @@ public abstract class AbstractParserAction {
 		return name;
 	}
 	
-	public void setParserOptions(Set<IParser.Options> options) {
-		this.options = options == null ? EnumSet.noneOf(IParser.Options.class) : options;
+	public void setParserProperties(Map<String,String> properties) {
+		this.properties = properties == null ? Collections.<String,String>emptyMap() : properties;
 	}
 	
 	/**

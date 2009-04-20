@@ -177,17 +177,17 @@ private  C99BuildASTParserAction  action;
 private IASTCompletionNode compNode;
 
 
-public C99SizeofExpressionParser(IScanner scanner, IDOMTokenMap tokenMap, IBuiltinBindingsProvider builtinBindingsProvider, IIndex index, Set<IParser.Options> options) {
-	initActions(options);
+public C99SizeofExpressionParser(IScanner scanner, IDOMTokenMap tokenMap, IBuiltinBindingsProvider builtinBindingsProvider, IIndex index, Map<String,String> properties) {
+	initActions(properties);
 	action.initializeTranslationUnit(scanner, builtinBindingsProvider, index);
 	CPreprocessorAdapter.runCPreprocessor(scanner, this, tokenMap);
 }
 
-private void initActions(Set<IParser.Options> options) {
+private void initActions(Map<String,String> properties) {
 	ScopedStack<Object> astStack = new ScopedStack<Object>();
 	
 	action = new  C99BuildASTParserAction (this, astStack,  CNodeFactory.getDefault() ,  C99SecondaryParserFactory.getDefault() );
-	action.setParserOptions(options);
+	action.setParserProperties(properties);
 	
 	 
 }
@@ -244,8 +244,8 @@ public void setTokens(List<IToken> tokens) {
 	addToken(new Token(null, 0, 0, C99SizeofExpressionParsersym.TK_EOF_TOKEN));
 }
 
-public C99SizeofExpressionParser(ITokenStream stream, Set<IParser.Options> options) {  // constructor for creating secondary parser
-	initActions(options);
+public C99SizeofExpressionParser(ITokenStream stream, Map<String,String> properties) {  // constructor for creating secondary parser
+	initActions(properties);
 	tokenMap = new TokenMap(C99SizeofExpressionParsersym.orderedTerminalSymbols, stream.getOrderedTerminalSymbols());
 }	
 

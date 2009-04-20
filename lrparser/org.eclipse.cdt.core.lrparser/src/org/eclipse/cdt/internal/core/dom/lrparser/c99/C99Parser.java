@@ -173,17 +173,17 @@ private  C99BuildASTParserAction  action;
 private IASTCompletionNode compNode;
 
 
-public C99Parser(IScanner scanner, IDOMTokenMap tokenMap, IBuiltinBindingsProvider builtinBindingsProvider, IIndex index, Set<IParser.Options> options) {
-	initActions(options);
+public C99Parser(IScanner scanner, IDOMTokenMap tokenMap, IBuiltinBindingsProvider builtinBindingsProvider, IIndex index, Map<String,String> properties) {
+	initActions(properties);
 	action.initializeTranslationUnit(scanner, builtinBindingsProvider, index);
 	CPreprocessorAdapter.runCPreprocessor(scanner, this, tokenMap);
 }
 
-private void initActions(Set<IParser.Options> options) {
+private void initActions(Map<String,String> properties) {
 	ScopedStack<Object> astStack = new ScopedStack<Object>();
 	
 	action = new  C99BuildASTParserAction (this, astStack,  CNodeFactory.getDefault() ,  C99SecondaryParserFactory.getDefault() );
-	action.setParserOptions(options);
+	action.setParserProperties(properties);
 	
 	 
 }

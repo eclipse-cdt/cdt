@@ -10,14 +10,13 @@
  *******************************************************************************/
 package org.eclipse.cdt.core.dom.lrparser.c99;
 
-import java.util.Set;
+import java.util.Map;
 
 import org.eclipse.cdt.core.dom.ILinkage;
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
 import org.eclipse.cdt.core.dom.lrparser.BaseExtensibleLanguage;
 import org.eclipse.cdt.core.dom.lrparser.IParser;
 import org.eclipse.cdt.core.dom.lrparser.ScannerExtensionConfiguration;
-import org.eclipse.cdt.core.dom.lrparser.IParser.Options;
 import org.eclipse.cdt.core.dom.parser.IBuiltinBindingsProvider;
 import org.eclipse.cdt.core.dom.parser.IScannerExtensionConfiguration;
 import org.eclipse.cdt.core.dom.parser.c.ANSICParserExtensionConfiguration;
@@ -44,8 +43,8 @@ public class C99Language extends BaseExtensibleLanguage {
 	
 		
 	@Override
-	protected IParser<IASTTranslationUnit> getParser(IScanner scanner, IIndex index, Set<Options> options) {
-		return new C99Parser(scanner, DOMToC99TokenMap.DEFAULT_MAP, getBuiltinBindingsProvider(), index, options);
+	protected IParser<IASTTranslationUnit> getParser(IScanner scanner, IIndex index, Map<String,String> properties) {
+		return new C99Parser(scanner, DOMToC99TokenMap.DEFAULT_MAP, getBuiltinBindingsProvider(), index, properties);
 	}
 
 	@Override

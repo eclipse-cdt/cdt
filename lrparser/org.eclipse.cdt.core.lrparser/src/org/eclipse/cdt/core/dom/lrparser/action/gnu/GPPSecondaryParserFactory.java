@@ -10,12 +10,11 @@
  *******************************************************************************/
 package org.eclipse.cdt.core.dom.lrparser.action.gnu;
 
-import java.util.Set;
+import java.util.Map;
 
 import org.eclipse.cdt.core.dom.ast.IASTDeclarator;
 import org.eclipse.cdt.core.dom.ast.IASTExpression;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTemplateParameter;
-import org.eclipse.cdt.core.dom.lrparser.IParser;
 import org.eclipse.cdt.core.dom.lrparser.ISecondaryParser;
 import org.eclipse.cdt.core.dom.lrparser.action.ITokenStream;
 import org.eclipse.cdt.core.dom.lrparser.action.cpp.ICPPSecondaryParserFactory;
@@ -35,24 +34,24 @@ public class GPPSecondaryParserFactory implements ICPPSecondaryParserFactory {
 	}
 	
 	
-	public ISecondaryParser<ICPPASTTemplateParameter> getTemplateTypeParameterParser(ITokenStream stream, Set<IParser.Options> options) {
-		return new CPPTemplateTypeParameterParser(stream, options);
+	public ISecondaryParser<ICPPASTTemplateParameter> getTemplateTypeParameterParser(ITokenStream stream, Map<String,String> properties) {
+		return new CPPTemplateTypeParameterParser(stream, properties);
 	}
 	
-	public ISecondaryParser<IASTDeclarator> getNoFunctionDeclaratorParser(ITokenStream stream, Set<IParser.Options> options) {
-		return new CPPNoFunctionDeclaratorParser(stream, options); 
+	public ISecondaryParser<IASTDeclarator> getNoFunctionDeclaratorParser(ITokenStream stream, Map<String,String> properties) {
+		return new CPPNoFunctionDeclaratorParser(stream, properties); 
 	}
 
-	public ISecondaryParser<IASTExpression> getExpressionParser(ITokenStream stream, Set<IParser.Options> options) {
-		return new CPPExpressionParser(stream, options);
+	public ISecondaryParser<IASTExpression> getExpressionParser(ITokenStream stream, Map<String,String> properties) {
+		return new CPPExpressionParser(stream, properties);
 	}
 
-	public ISecondaryParser<IASTExpression> getNoCastExpressionParser(ITokenStream stream, Set<IParser.Options> options) {
-		return new CPPNoCastExpressionParser(stream, options);
+	public ISecondaryParser<IASTExpression> getNoCastExpressionParser(ITokenStream stream, Map<String,String> properties) {
+		return new CPPNoCastExpressionParser(stream, properties);
 	}
 
-	public ISecondaryParser<IASTExpression> getSizeofExpressionParser(ITokenStream stream, Set<IParser.Options> options) {
-		return new GPPSizeofExpressionParser(stream, options);
+	public ISecondaryParser<IASTExpression> getSizeofExpressionParser(ITokenStream stream, Map<String,String> properties) {
+		return new GPPSizeofExpressionParser(stream, properties);
 	}
 	
 }

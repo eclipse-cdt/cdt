@@ -180,23 +180,22 @@ private  GPPBuildASTParserAction  action;
 private IASTCompletionNode compNode;
 
 
-public GPPParser(IScanner scanner, IDOMTokenMap tokenMap, IBuiltinBindingsProvider builtinBindingsProvider, IIndex index, Set<IParser.Options> options) {
-	initActions(options);
+public GPPParser(IScanner scanner, IDOMTokenMap tokenMap, IBuiltinBindingsProvider builtinBindingsProvider, IIndex index, Map<String,String> properties) {
+	initActions(properties);
 	action.initializeTranslationUnit(scanner, builtinBindingsProvider, index);
 	CPreprocessorAdapter.runCPreprocessor(scanner, this, tokenMap);
 }
 
-private void initActions(Set<IParser.Options> options) {
+private void initActions(Map<String,String> properties) {
 	ScopedStack<Object> astStack = new ScopedStack<Object>();
 	
 	action = new  GPPBuildASTParserAction (this, astStack,  CPPNodeFactory.getDefault() ,  GPPSecondaryParserFactory.getDefault() );
-	action.setParserOptions(options);
+	action.setParserProperties(properties);
 	
 	
 
 	gnuAction = new  GNUBuildASTParserAction  (this, astStack,  CPPNodeFactory.getDefault() );
-	gnuAction.setParserOptions(options);
-	//gnuAction.setBaseAction(action);
+	gnuAction.setParserProperties(properties);
 
 }
 

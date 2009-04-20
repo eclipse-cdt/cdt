@@ -39,24 +39,9 @@ public class XlcLanguageOptionsPreferencePage extends PreferencePage implements 
 
 	private IAdaptable element;
 	
-	private Button button_vectors;
+	private Button buttonVectors;
+	private Button buttonDecimals;
 	
-
-	public IAdaptable getElement() {
-		return element;
-	}
-
-	public void setElement(IAdaptable element) {
-		this.element = element;
-	}
-
-	public boolean isPropertyPage() {
-		return element != null;
-	}
-	
-	public void init(IWorkbench workbench) {
-		// TODO Auto-generated method stub
-	}
 
 	@Override
 	protected Control createContents(Composite parent) {
@@ -74,8 +59,8 @@ public class XlcLanguageOptionsPreferencePage extends PreferencePage implements 
 		
 		Composite group = ControlFactory.createGroup(page, PreferenceMessages.XlcLanguageOptionsPreferencePage_group, 1);
 		
-		button_vectors = ControlFactory.createCheckBox(group, PreferenceMessages.XlcLanguageOptionsPreferencePage_preference_vectors);
-		initCheckbox(button_vectors, XlcPreferenceKeys.KEY_SUPPORT_VECTOR_TYPES);
+		buttonVectors = ControlFactory.createCheckBox(group, PreferenceMessages.XlcLanguageOptionsPreferencePage_preference_vectors);
+		initCheckbox(buttonVectors, XlcPreferenceKeys.KEY_SUPPORT_VECTOR_TYPES);
 		
 		return page;
 	}
@@ -103,14 +88,14 @@ public class XlcLanguageOptionsPreferencePage extends PreferencePage implements 
 
 	@Override
 	protected void performDefaults() {
-		button_vectors.setSelection(Boolean.valueOf(XlcLanguagePreferences.getDefaultPreference(XlcPreferenceKeys.KEY_SUPPORT_VECTOR_TYPES)));
+		buttonVectors.setSelection(Boolean.valueOf(XlcLanguagePreferences.getDefaultPreference(XlcPreferenceKeys.KEY_SUPPORT_VECTOR_TYPES)));
 		
 		super.performDefaults();
 	}
 
 	@Override
 	public boolean performOk() {
-		setPreference(XlcPreferenceKeys.KEY_SUPPORT_VECTOR_TYPES, button_vectors.getSelection(), getProject());
+		setPreference(XlcPreferenceKeys.KEY_SUPPORT_VECTOR_TYPES, buttonVectors.getSelection(), getProject());
 		return true;
 	}
 	
@@ -126,5 +111,22 @@ public class XlcLanguageOptionsPreferencePage extends PreferencePage implements 
 			XlcLanguagePreferences.setWorkspacePreference(key, String.valueOf(val));
 	}
 	
+	
+	
+	public IAdaptable getElement() {
+		return element;
+	}
+
+	public void setElement(IAdaptable element) {
+		this.element = element;
+	}
+
+	public boolean isPropertyPage() {
+		return element != null;
+	}
+	
+	public void init(IWorkbench workbench) {
+		// TODO Auto-generated method stub
+	}
 		
 }

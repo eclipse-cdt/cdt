@@ -643,7 +643,7 @@ statement
 
 
 labeled_statement
-    ::= identifier ':' statement
+    ::= 'identifier' ':' statement
           /. $Build  consumeStatementLabeled();  $EndBuild ./
       | 'case' constant_expression ':' statement
           /. $Build  consumeStatementCase();  $EndBuild ./

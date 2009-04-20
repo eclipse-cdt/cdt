@@ -10,7 +10,7 @@
  *******************************************************************************/
 package org.eclipse.cdt.core.dom.lrparser.gnu;
 
-import java.util.Set;
+import java.util.Map;
 
 import org.eclipse.cdt.core.dom.ILinkage;
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
@@ -41,8 +41,8 @@ public class GCCLanguage extends BaseExtensibleLanguage {
 	}
 	
 	@Override
-	protected IParser<IASTTranslationUnit> getParser(IScanner scanner, IIndex index, Set<IParser.Options> options) {
-		return new GCCParser(scanner, DOMToGCCTokenMap.DEFAULT_MAP, getBuiltinBindingsProvider(), index, options);
+	protected IParser<IASTTranslationUnit> getParser(IScanner scanner, IIndex index, Map<String,String> properties) {
+		return new GCCParser(scanner, DOMToGCCTokenMap.DEFAULT_MAP, getBuiltinBindingsProvider(), index, properties);
 	}
 
 	@Override

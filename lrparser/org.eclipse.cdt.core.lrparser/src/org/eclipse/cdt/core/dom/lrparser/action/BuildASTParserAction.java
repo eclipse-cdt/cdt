@@ -69,9 +69,9 @@ import org.eclipse.cdt.core.dom.ast.IScope;
 import org.eclipse.cdt.core.dom.ast.IASTEnumerationSpecifier.IASTEnumerator;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCastExpression;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTLiteralExpression;
-import org.eclipse.cdt.core.dom.lrparser.IParser;
 import org.eclipse.cdt.core.dom.lrparser.ISecondaryParser;
 import org.eclipse.cdt.core.dom.lrparser.LRParserPlugin;
+import org.eclipse.cdt.core.dom.lrparser.LRParserProperties;
 import org.eclipse.cdt.core.dom.parser.IBuiltinBindingsProvider;
 import org.eclipse.cdt.core.index.IIndex;
 import org.eclipse.cdt.core.parser.IProblem;
@@ -217,7 +217,7 @@ public abstract class BuildASTParserAction extends AbstractParserAction {
 			List<IToken> expressionTokens = stream.getRuleTokens();
 			expressionTokens = expressionTokens.subList(0, expressionTokens.size()-1); // remove the semicolon at the end
 			
-			ISecondaryParser<IASTExpression> expressionParser = parserFactory.getExpressionParser(stream, options);
+			ISecondaryParser<IASTExpression> expressionParser = parserFactory.getExpressionParser(stream, properties);
 			IASTExpression expr = runSecondaryParser(expressionParser, expressionTokens);
 			
 			if(expr != null) { // the parse may fail
@@ -394,7 +394,7 @@ public abstract class BuildASTParserAction extends AbstractParserAction {
 		IASTExpression alternateExpr = null;
 		if(operator == IASTCastExpression.op_cast) { // don't reparse for dynamic_cast etc as those are not ambiguous
 			// try parsing as non-cast to resolve ambiguities
-			ISecondaryParser<IASTExpression> secondaryParser = parserFactory.getNoCastExpressionParser(stream, options);
+			ISecondaryParser<IASTExpression> secondaryParser = parserFactory.getNoCastExpressionParser(stream, properties);
 			alternateExpr = runSecondaryParser(secondaryParser);
 		}
 		
@@ -434,7 +434,7 @@ public abstract class BuildASTParserAction extends AbstractParserAction {
 		setOffsetAndLength(expr);
 		
 		// try parsing as an expression to resolve ambiguities
-		ISecondaryParser<IASTExpression> secondaryParser = parserFactory.getSizeofExpressionParser(stream, options); 
+		ISecondaryParser<IASTExpression> secondaryParser = parserFactory.getSizeofExpressionParser(stream, properties); 
 		IASTExpression alternateExpr = runSecondaryParser(secondaryParser);
 		
 		if(alternateExpr == null)
@@ -1019,7 +1019,7 @@ public abstract class BuildASTParserAction extends AbstractParserAction {
 	
 	private boolean discardInitializer(IASTExpression expression) {
 		return initializerListNestingLevel > 0
-		    && options.contains(IParser.Options.OPTION_SKIP_TRIVIAL_EXPRESSIONS_IN_AGGREGATE_INITIALIZERS)
+		    && "true".equals(properties.get(LRParserProperties.SKIP_TRIVIAL_EXPRESSIONS_IN_AGGREGATE_INITIALIZERS)) //$NON-NLS-1$
 		    && !ASTQueries.canContainName(expression);
 	}
 	

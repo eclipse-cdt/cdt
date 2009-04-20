@@ -10,10 +10,9 @@
  *******************************************************************************/
 package org.eclipse.cdt.core.dom.lrparser.action.c99;
 
-import java.util.Set;
+import java.util.Map;
 
 import org.eclipse.cdt.core.dom.ast.IASTExpression;
-import org.eclipse.cdt.core.dom.lrparser.IParser;
 import org.eclipse.cdt.core.dom.lrparser.ISecondaryParser;
 import org.eclipse.cdt.core.dom.lrparser.action.ISecondaryParserFactory;
 import org.eclipse.cdt.core.dom.lrparser.action.ITokenStream;
@@ -30,15 +29,15 @@ public class C99SecondaryParserFactory implements ISecondaryParserFactory {
 	}
 	
 	
-	public ISecondaryParser<IASTExpression> getExpressionParser(ITokenStream stream, Set<IParser.Options> options) {
-		return new C99ExpressionParser(stream, options); 
+	public ISecondaryParser<IASTExpression> getExpressionParser(ITokenStream stream, Map<String,String> properties) {
+		return new C99ExpressionParser(stream, properties); 
 	}
 
-	public ISecondaryParser<IASTExpression> getNoCastExpressionParser(ITokenStream stream, Set<IParser.Options> options) {
-		return new C99NoCastExpressionParser(stream, options);
+	public ISecondaryParser<IASTExpression> getNoCastExpressionParser(ITokenStream stream, Map<String,String> properties) {
+		return new C99NoCastExpressionParser(stream, properties);
 	}
 	
-	public ISecondaryParser<IASTExpression> getSizeofExpressionParser(ITokenStream stream, Set<IParser.Options> options) {
-		return new C99SizeofExpressionParser(stream, options);
+	public ISecondaryParser<IASTExpression> getSizeofExpressionParser(ITokenStream stream, Map<String,String> properties) {
+		return new C99SizeofExpressionParser(stream, properties);
 	}
 }

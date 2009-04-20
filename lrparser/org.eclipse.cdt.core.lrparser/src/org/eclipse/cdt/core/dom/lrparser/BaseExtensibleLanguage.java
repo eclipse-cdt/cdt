@@ -10,9 +10,8 @@
  *******************************************************************************/
 package org.eclipse.cdt.core.dom.lrparser;
 
-import java.util.EnumSet;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.HashMap;
+import java.util.Map;
 
 import org.eclipse.cdt.core.dom.ICodeReaderFactory;
 import org.eclipse.cdt.core.dom.ast.IASTCompletionNode;
@@ -46,15 +45,14 @@ import org.eclipse.core.runtime.CoreException;
 /**
  * Implementation of the ILanguage extension point, 
  * provides the ability to add LPG based languages to CDT.
- *
- * @author Mike Kucera
  */
-@SuppressWarnings("restriction")
+@SuppressWarnings({ "restriction", "nls" })
 public abstract class BaseExtensibleLanguage extends AbstractLanguage {
 			
 	
 	private static final boolean DEBUG_PRINT_GCC_AST = false;
 	private static final boolean DEBUG_PRINT_AST     = false;
+
 	
 	
 	/**
@@ -63,7 +61,7 @@ public abstract class BaseExtensibleLanguage extends AbstractLanguage {
 	 * Can be overridden in subclasses to provide a different parser
 	 * for a language extension.
 	 */
-	protected abstract IParser<IASTTranslationUnit> getParser(IScanner scanner, IIndex index, Set<IParser.Options> options);
+	protected abstract IParser<IASTTranslationUnit> getParser(IScanner scanner, IIndex index, Map<String,String> properties);
 	
 	/**
 	 * Returns the ParserLanguage value that is to be used when creating
@@ -79,18 +77,13 @@ public abstract class BaseExtensibleLanguage extends AbstractLanguage {
 	protected abstract IScannerExtensionConfiguration getScannerExtensionConfiguration();
 	
 	
-	
-	@SuppressWarnings("nls")
 	@Override
 	public IASTTranslationUnit getASTTranslationUnit(CodeReader reader, IScannerInfo scanInfo,
 			ICodeReaderFactory fileCreator, IIndex index, int options, IParserLogService log) throws CoreException {
 		
 		IASTTranslationUnit gtu = null;
 		if(DEBUG_PRINT_GCC_AST) {
-			System.out.println();
-			System.out.println("********************************************************");
-			System.out.println("Parsing");
-			System.out.println("Options: " + options);
+			System.out.println("\n********************************************************\nParsing\nOptions: " + options);
 			
 			ILanguage gppLanguage = getParserLanguage() == ParserLanguage.CPP ? GPPLanguage.getDefault() : GCCLanguage.getDefault();
 			gtu = gppLanguage.getASTTranslationUnit(reader, scanInfo, fileCreator, index, options, log);
@@ -106,19 +99,14 @@ public abstract class BaseExtensibleLanguage extends AbstractLanguage {
 		IScanner preprocessor = new CPreprocessor(reader, scanInfo, pl, log, config, fileCreator);
 		preprocessor.setComputeImageLocations((options & ILanguage.OPTION_NO_IMAGE_LOCATIONS) == 0);
 		
-		
-		//parser.setScanner(preprocessor, getTokenMap());
-		//CPreprocessorAdapter.runCPreprocessor(preprocessor, parser, getTokenMap());
-		
-		Set<IParser.Options> parserOptions = new HashSet<IParser.Options>();
-		//if((options & OPTION_SKIP_FUNCTION_BODIES) != 0)
-		//	parserOptions.add(IParser.Options.OPTION_SKIP_FUNCTION_BODIES);
+		Map<String,String> parserProperties = new HashMap<String,String>();
+		parserProperties.put(LRParserProperties.TRANSLATION_UNIT_PATH, reader.getPath());
+		if((options & OPTION_SKIP_FUNCTION_BODIES) != 0)
+			parserProperties.put(LRParserProperties.SKIP_FUNCTION_BODIES, "true");
 		if((options & OPTION_SKIP_TRIVIAL_EXPRESSIONS_IN_AGGREGATE_INITIALIZERS) != 0)
-			parserOptions.add(IParser.Options.OPTION_SKIP_TRIVIAL_EXPRESSIONS_IN_AGGREGATE_INITIALIZERS);
-		if(!parserOptions.isEmpty())
-			parserOptions = EnumSet.copyOf(parserOptions);
+			parserProperties.put(LRParserProperties.SKIP_TRIVIAL_EXPRESSIONS_IN_AGGREGATE_INITIALIZERS, "true");
 		
-		IParser<IASTTranslationUnit> parser = getParser(preprocessor, index, parserOptions);
+		IParser<IASTTranslationUnit> parser = getParser(preprocessor, index, parserProperties);
 		IASTTranslationUnit tu = parser.parse();
 		tu.setIsHeaderUnit((options & OPTION_IS_SOURCE_UNIT) == 0); // the TU is marked as either a source file or a header file
 		
@@ -139,7 +127,6 @@ public abstract class BaseExtensibleLanguage extends AbstractLanguage {
 	}
 
 	
-	@SuppressWarnings("nls")
 	public IASTCompletionNode getCompletionNode(CodeReader reader,
 			IScannerInfo scanInfo, ICodeReaderFactory fileCreator,
 			IIndex index, IParserLogService log, int offset) throws CoreException {
@@ -162,9 +149,15 @@ public abstract class BaseExtensibleLanguage extends AbstractLanguage {
 		IScanner preprocessor = new CPreprocessor(reader, scanInfo, pl, log, config, fileCreator);
 		preprocessor.setContentAssistMode(offset);
 		
-		Set<IParser.Options> parserOptions = EnumSet.of(IParser.Options.OPTION_SKIP_TRIVIAL_EXPRESSIONS_IN_AGGREGATE_INITIALIZERS);
-		IParser<IASTTranslationUnit> parser = getParser(preprocessor, index, parserOptions);
+		
+		Map<String,String> parserProperties = new HashMap<String,String>();
+		parserProperties.put(LRParserProperties.TRANSLATION_UNIT_PATH, reader.getPath());
+		parserProperties.put(LRParserProperties.SKIP_FUNCTION_BODIES, "true");
+		parserProperties.put(LRParserProperties.SKIP_TRIVIAL_EXPRESSIONS_IN_AGGREGATE_INITIALIZERS, "true");
+		
+		IParser<IASTTranslationUnit> parser = getParser(preprocessor, index, parserProperties);
 		parser.parse();
+		
 		IASTCompletionNode completionNode = parser.getCompletionNode();
 		
 		if(DEBUG_PRINT_AST) {
@@ -179,7 +172,6 @@ public abstract class BaseExtensibleLanguage extends AbstractLanguage {
 	/*
 	 * For debugging.
 	 */
-	@SuppressWarnings("nls")
 	private static void printCompletionNode(IASTCompletionNode cn) {
 		if(cn == null) {
 			System.out.println("Completion node is null");

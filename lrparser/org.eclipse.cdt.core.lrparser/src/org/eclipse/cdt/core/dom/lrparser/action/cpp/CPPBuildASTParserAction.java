@@ -407,7 +407,7 @@ public class CPPBuildASTParserAction extends BuildASTParserAction {
 	 */
 	public void consumeTemplateArgumentTypeId() {
 		// TODO is this necessary? It should be able to tell if it looks like an id expression
-		ISecondaryParser<IASTExpression> secondaryParser = parserFactory.getExpressionParser(stream, options);
+		ISecondaryParser<IASTExpression> secondaryParser = parserFactory.getExpressionParser(stream, properties);
 		IASTExpression result = runSecondaryParser(secondaryParser);
 		
 		// The grammar rule allows assignment_expression, but the ambiguity
@@ -1276,7 +1276,7 @@ public class CPPBuildASTParserAction extends BuildASTParserAction {
 		if(!(declarator instanceof IASTFunctionDeclarator))
 			return;
 		
-		ISecondaryParser<IASTDeclarator> secondaryParser = parserFactory.getNoFunctionDeclaratorParser(stream, options); 
+		ISecondaryParser<IASTDeclarator> secondaryParser = parserFactory.getNoFunctionDeclaratorParser(stream, properties); 
 		IASTDeclarator notFunctionDeclarator = runSecondaryParser(secondaryParser);
 	
 		if(notFunctionDeclarator == null)
@@ -1684,7 +1684,7 @@ public class CPPBuildASTParserAction extends BuildASTParserAction {
      * Yes its a hack.
      */
     public void consumeTemplateParamterDeclaration() {
-    	ISecondaryParser<ICPPASTTemplateParameter> typeParameterParser = parserFactory.getTemplateTypeParameterParser(stream, options);
+    	ISecondaryParser<ICPPASTTemplateParameter> typeParameterParser = parserFactory.getTemplateTypeParameterParser(stream, properties);
     	IASTNode alternate = runSecondaryParser(typeParameterParser);
     	
 		if(alternate == null)

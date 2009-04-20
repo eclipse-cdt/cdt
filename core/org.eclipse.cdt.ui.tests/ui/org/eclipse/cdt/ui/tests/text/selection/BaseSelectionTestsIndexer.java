@@ -214,7 +214,7 @@ public class BaseSelectionTestsIndexer extends BaseUITestCase {
         
         if (part instanceof CEditor) {
         	CEditor editor= (CEditor) part;
-    		EditorTestHelper.joinReconciler(EditorTestHelper.getSourceViewer(editor), 100, 500, 10);
+    		EditorTestHelper.joinReconciler(EditorTestHelper.getSourceViewer(editor), 100, 5000, 10);
             ((AbstractTextEditor)part).getSelectionProvider().setSelection(new TextSelection(offset,length));
             
             final OpenDeclarationsAction action = (OpenDeclarationsAction) editor.getAction("OpenDeclarations"); //$NON-NLS-1$
@@ -224,7 +224,7 @@ public class BaseSelectionTestsIndexer extends BaseUITestCase {
             part = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage().getActiveEditor(); 
             assertTrue (part instanceof CEditor);
             editor= (CEditor) part;
-    		EditorTestHelper.joinReconciler(EditorTestHelper.getSourceViewer(editor), 100, 500, 10);
+    		EditorTestHelper.joinReconciler(EditorTestHelper.getSourceViewer(editor), 100, 5000, 10);
 
     		// the action above should highlight the declaration, so now retrieve it and use that selection to get the IASTName selected on the TU
             ISelection sel= editor.getSelectionProvider().getSelection();

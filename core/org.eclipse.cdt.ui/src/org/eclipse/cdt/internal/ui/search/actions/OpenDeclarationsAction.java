@@ -167,7 +167,7 @@ public class OpenDeclarationsAction extends SelectionParseAction implements ASTR
 					for(IASTImplicitName name : implicits) {
 						if(((ASTNode)name).getOffset() == ((ASTNode)implicit).getOffset()) {
 							IBinding binding = name.resolveBinding(); // guaranteed to resolve
-							IName[] declNames = findNames(fIndex, ast, KIND_OTHER, binding);
+							IName[] declNames = findDeclNames(ast, KIND_OTHER, binding);
 							allNames.addAll(Arrays.asList(declNames));
 						}
 					}
@@ -193,29 +193,7 @@ public class OpenDeclarationsAction extends SelectionParseAction implements ASTR
 						isKind= KIND_DEFINITION;
 					}
 				}
-				IName[] declNames = findNames(fIndex, ast, isKind, binding);
-				if (declNames.length == 0) {
-					if (binding instanceof ICPPSpecialization) {
-						// bug 207320, handle template instances
-						IBinding specialized= ((ICPPSpecialization) binding).getSpecializedBinding();
-						if (specialized != null && !(specialized instanceof IProblemBinding)) {
-							declNames = findNames(fIndex, ast, KIND_DEFINITION, specialized);
-						}
-					} else if (binding instanceof ICPPMethod) {
-						// bug 86829, handle implicit methods.
-						ICPPMethod method= (ICPPMethod) binding;
-						if (method.isImplicit()) {
-							try {
-								IBinding clsBinding= method.getClassOwner();
-								if (clsBinding != null && !(clsBinding instanceof IProblemBinding)) {
-									declNames= findNames(fIndex, ast, KIND_OTHER, clsBinding);
-								}
-							} catch (DOMException e) {
-								// don't log problem bindings.
-							}
-						}
-					}
-				}
+				IName[] declNames = findDeclNames(ast, isKind, binding);
 				if (navigateViaCElements(fWorkingCopy.getCProject(), fIndex, declNames)) {
 					found= true;
 				}
@@ -241,6 +219,34 @@ public class OpenDeclarationsAction extends SelectionParseAction implements ASTR
 			reportSelectionMatchFailure();
 		}
 		return Status.OK_STATUS; 
+	}
+
+
+	private IName[] findDeclNames(IASTTranslationUnit ast, int isKind, IBinding binding) throws CoreException {
+		IName[] declNames = findNames(fIndex, ast, isKind, binding);
+		if (declNames.length == 0) {
+			if (binding instanceof ICPPSpecialization) {
+				// bug 207320, handle template instances
+				IBinding specialized= ((ICPPSpecialization) binding).getSpecializedBinding();
+				if (specialized != null && !(specialized instanceof IProblemBinding)) {
+					declNames = findNames(fIndex, ast, KIND_DEFINITION, specialized);
+				}
+			} else if (binding instanceof ICPPMethod) {
+				// bug 86829, handle implicit methods.
+				ICPPMethod method= (ICPPMethod) binding;
+				if (method.isImplicit()) {
+					try {
+						IBinding clsBinding= method.getClassOwner();
+						if (clsBinding != null && !(clsBinding instanceof IProblemBinding)) {
+							declNames= findNames(fIndex, ast, KIND_OTHER, clsBinding);
+						}
+					} catch (DOMException e) {
+						// don't log problem bindings.
+					}
+				}
+			}
+		}
+		return declNames;
 	}
 
 	private boolean navigationFallBack(IASTTranslationUnit ast) {

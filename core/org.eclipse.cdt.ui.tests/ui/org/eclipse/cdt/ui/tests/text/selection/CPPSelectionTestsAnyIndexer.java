@@ -1145,4 +1145,32 @@ public abstract class CPPSelectionTestsAnyIndexer extends BaseSelectionTestsInde
         decl = testF3(file, offset2);
         assertNode("~X", offset1, decl);
     }
+    
+    
+	// template<typename T>
+	// class C {
+	// public:
+	//    T operator+(int);
+	// };
+
+	// void main() {
+	//   C<char> a;
+	//   a + 2;
+	// }
+	public void testBug272744() throws Exception {
+		StringBuffer[] buffers= getContents(2);
+        String hcode= buffers[0].toString();
+        String scode= buffers[1].toString();
+        IFile hfile = importFile("test.h", hcode); //$NON-NLS-1$ 
+        IFile file = importFile("test.cpp", scode); //$NON-NLS-1$
+        waitUntilFileIsIndexed(index, file, MAX_WAIT_TIME);
+        
+        int hoffset= hcode.indexOf("operator+");  //$NON-NLS-1$
+        int soffset = scode.indexOf("+");  //$NON-NLS-1$
+        IASTNode def = testF3(file, soffset + 1);
+        assertTrue(def instanceof IASTName);
+        assertEquals(((IASTName) def).toString(), "operator +"); //$NON-NLS-1$
+        assertEquals(((ASTNode) def).getOffset(), hoffset);
+        assertEquals(((ASTNode) def).getLength(), 9);
+	}
 }

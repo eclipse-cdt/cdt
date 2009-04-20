@@ -249,7 +249,7 @@ public class CPPSelectionTestsNoIndexer extends BaseUITestCase {
         IEditorPart part = null;
         try {
             part = page.openEditor(new FileEditorInput(file), "org.eclipse.cdt.ui.editor.CEditor"); //$NON-NLS-1$
-    		EditorTestHelper.joinReconciler(EditorTestHelper.getSourceViewer((AbstractTextEditor) part), 100, 500, 10);
+    		EditorTestHelper.joinReconciler(EditorTestHelper.getSourceViewer((AbstractTextEditor) part), 100, 5000, 10);
         } catch (PartInitException e) {
             assertFalse(true);
         }

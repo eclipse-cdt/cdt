@@ -278,7 +278,7 @@ public class CSelectionTestsNoIndexer extends BaseUITestCase {
         
         if (part instanceof CEditor) {
         	CEditor editor= (CEditor) part;
-    		EditorTestHelper.joinReconciler(EditorTestHelper.getSourceViewer(editor), 100, 500, 10);
+    		EditorTestHelper.joinReconciler(EditorTestHelper.getSourceViewer(editor), 100, 5000, 10);
             editor.getSelectionProvider().setSelection(new TextSelection(offset,length));
             
             final OpenDeclarationsAction action = (OpenDeclarationsAction) editor.getAction("OpenDeclarations"); //$NON-NLS-1$

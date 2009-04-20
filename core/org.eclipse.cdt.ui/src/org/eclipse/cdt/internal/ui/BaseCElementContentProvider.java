@@ -46,7 +46,6 @@ import org.eclipse.cdt.core.model.ISourceRoot;
 import org.eclipse.cdt.core.model.ITranslationUnit;
 import org.eclipse.cdt.core.model.IWorkingCopy;
 import org.eclipse.cdt.ui.CElementGrouping;
-import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.cdt.ui.IncludesGrouping;
 import org.eclipse.cdt.ui.NamespacesGrouping;
  
@@ -200,7 +199,7 @@ public class BaseCElementContentProvider implements ITreeContentProvider {
 			} else if (element instanceof ICContainer) {
 				return getCResources((ICContainer)element);
 			} else if (element instanceof ITranslationUnit) {
-				// if we want to get the chidren of a translation unit
+				// if we want to get the children of a translation unit
 				if (fProvideMembers) {
 					// if we want to use the working copy of it
 					ITranslationUnit tu = (ITranslationUnit)element;
@@ -208,7 +207,7 @@ public class BaseCElementContentProvider implements ITreeContentProvider {
 						// if it is not already a working copy
 						if (!(element instanceof IWorkingCopy)){
 							// if it has a valid working copy
-							IWorkingCopy copy = tu.findSharedWorkingCopy(CUIPlugin.getDefault().getBufferFactory());
+							IWorkingCopy copy = tu.findSharedWorkingCopy();
 							if (copy != null) {
 								tu = copy;
 							}

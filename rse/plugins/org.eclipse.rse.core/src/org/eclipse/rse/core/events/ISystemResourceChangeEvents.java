@@ -137,8 +137,10 @@ public interface ISystemResourceChangeEvents
 	public static final int EVENT_MOVE_MANY = 75;
 
 	/**
-	 * The event is an icon change event
-	 * A source RSE object or an array of source RSE objects and the parent RSE object are the expected parameters
+	 * The event is an icon change event A source RSE object or an array of
+	 * source RSE objects and the parent RSE object are the expected parameters
+	 * 
+	 * @since 3.1 an array of source RSE objects is allowed
 	 */
 	public static final int EVENT_ICON_CHANGE = 81;
 

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2008 IBM Corporation and others.
+ * Copyright (c) 2004, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -17,6 +17,7 @@
  * Martin Oberhuber (Wind River) - [184095] Replace systemTypeName by IRSESystemType
  * David McKnight  (IBM)  - [224671] [api] org.eclipse.rse.core API leaks non-API types
  * David McKnight  (IBM)  - [240037] [dstore][launcher] NumberFormatException printed to stdout when invalid rexec port is given in new connection wizard
+ * David McKnight  (IBM)  - [272952] [dstore] Unable to set SSL REXEC properties on Launcher Properties Panel of  Connector Services Property page.
  *******************************************************************************/
 
 package org.eclipse.rse.core.subsystems;
@@ -172,7 +173,7 @@ public class RemoteServerLauncher extends ServerLauncher implements IRemoteServe
 					autoDetectProperty.setEnabled(autoDetect);
 					autoDetectProperty.setLabel(RSECoreMessages.RESID_SUBSYSTEM_AUTODETECT_LABEL);
 				
-					_autoDetectSSL = Boolean.getBoolean(autoDetectProperty.getValue());
+					_autoDetectSSL = Boolean.parseBoolean(autoDetectProperty.getValue());
 				}
 				
 				boolean usingRexec = _serverLaunchType != null && _serverLaunchType.getType() == ServerLaunchType.REXEC;

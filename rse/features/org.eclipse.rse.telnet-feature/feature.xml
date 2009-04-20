@@ -35,16 +35,9 @@
    </requires>
 
    <plugin
-         id="org.apache.oro"
-         download-size="30"
-         install-size="73"
-         version="0.0.0"
-         unpack="false"/>
-
-   <plugin
          id="org.apache.commons.net"
-         download-size="66"
-         install-size="189"
+         download-size="0"
+         install-size="0"
          version="0.0.0"
          unpack="false"/>
 

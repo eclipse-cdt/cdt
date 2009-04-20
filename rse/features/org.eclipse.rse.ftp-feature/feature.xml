@@ -28,24 +28,16 @@
       <import plugin="org.eclipse.core.runtime"/>
       <import plugin="org.eclipse.ui"/>
       <import plugin="org.eclipse.ui.console"/>
-      <import plugin="org.apache.oro" version="2.0.8" match="equivalent"/>
-      <import plugin="org.apache.commons.net" version="1.4.1" match="compatible"/>
+      <import plugin="org.apache.commons.net" version="2.0.0" match="compatible"/>
       <import plugin="org.eclipse.rse.services" version="3.0.0" match="compatible"/>
       <import plugin="org.eclipse.rse.subsystems.files.core" version="3.0.0" match="compatible"/>
       <import plugin="org.eclipse.rse.ui" version="3.0.0" match="compatible"/>
    </requires>
 
    <plugin
-         id="org.apache.oro"
-         download-size="30"
-         install-size="73"
-         version="0.0.0"
-         unpack="false"/>
-
-   <plugin
          id="org.apache.commons.net"
-         download-size="66"
-         install-size="189"
+         download-size="0"
+         install-size="0"
          version="0.0.0"
          unpack="false"/>
 

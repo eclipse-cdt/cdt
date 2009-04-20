@@ -90,7 +90,6 @@
 		</ant>
 		<unzip dest="${buildDirectory}/.." src="${downloadsDir}/${orbitFile}">
 			<patternset>
-				<include name="**/org.apache.oro*.jar" />
 				<include name="**/org.apache.commons.net*.jar" />
 			</patternset>
 		</unzip>

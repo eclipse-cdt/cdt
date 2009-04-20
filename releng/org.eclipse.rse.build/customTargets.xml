@@ -134,7 +134,6 @@
 		<copy todir="${orbitDest}/plugins">
 			<fileset dir="${buildDirectory}/plugins">
 				<include name="org.apache.commons.net_*.jar"/>
-				<include name="org.apache.oro_*.jar"/>
 			</fileset>
 		</copy>
 	</target>
@@ -143,7 +142,6 @@
 		<copy todir="${orbitDest}/plugins">
 			<fileset dir="${buildDirectory}/plugins">
 				<include name="org.apache.commons.net.source_*.jar"/>
-				<include name="org.apache.oro.source_*.jar"/>
 			</fileset>
 		</copy>
 	</target>
@@ -233,19 +231,6 @@
 		-->
 		<mkdir dir="${buildDirectory}/plugins"/>
 		<eclipse.fetch
-			elements="plugin@org.apache.oro"
-			buildDirectory="${buildDirectory}"
-			directory="${buildDirectory}/directory.txt"
-			fetchTag=""
-			configInfo="*,*,*"
-			baseLocation="${baseLocation}"
-		/>
-		<!-- Run generated fetch script -->
-		<ant antfile="${buildDirectory}/fetch_org.apache.oro.xml">
-			<property name="featureOnly" value="true"/>
-			<property name="featureAndPlugins" value="true"/>
-		</ant>
-		<eclipse.fetch
 			elements="plugin@org.apache.commons.net"
 			buildDirectory="${buildDirectory}"
 			directory="${buildDirectory}/directory.txt"
@@ -263,19 +248,6 @@
 	<target name="preFetchOrbitSource" depends="myInit">
 		<!-- fetch Orbit stuff since I'm not sure how to get sources -->
 		<mkdir dir="${buildDirectory}/plugins"/>
-		<eclipse.fetch
-			elements="plugin@org.apache.oro.source"
-			buildDirectory="${buildDirectory}"
-			directory="${buildDirectory}/directory.txt"
-			fetchTag=""
-			configInfo="*,*,*"
-			baseLocation="${baseLocation}"
-		/>
-		<!-- Run generated fetch script -->
-		<ant antfile="${buildDirectory}/fetch_org.apache.oro.source.xml">
-			<property name="featureOnly" value="true"/>
-			<property name="featureAndPlugins" value="true"/>
-		</ant>
 		<eclipse.fetch
 			elements="plugin@org.apache.commons.net.source"
 			buildDirectory="${buildDirectory}"

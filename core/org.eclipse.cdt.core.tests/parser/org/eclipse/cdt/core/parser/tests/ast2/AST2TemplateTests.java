@@ -2237,7 +2237,23 @@ public class AST2TemplateTests extends AST2BaseTest {
     	bh.assertNonProblem("f(&A::m);", 1, ICPPFunction.class);
     }
 
-    // // Brian W.'s example from bugzilla#167098
+	//	template<typename T, typename U = int>
+	//	class A {};
+	//
+	//	template <typename P>
+	//	void f(A<P> p);
+	//
+	//	class B {};
+	//
+	//	void test(A<B> p) {
+	//	  f(p);
+	//	}
+	public void _testFunctionTemplate_272848() throws Exception {
+		final String code = getAboveComment();
+		parseAndCheckBindings(code, ParserLanguage.CPP);		
+	}
+
+	// // Brian W.'s example from bugzilla#167098
 	//    template<class K>
 	//    class D { //CPPClassTemplate
 	//    public:

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2002, 2008 IBM Corporation and others.
+ * Copyright (c) 2002, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -14,9 +14,13 @@
  * Contributors:
  * Martin Oberhuber (Wind River) - [186640] Add IRSESystemType.testProperty()
  * David McKnight   (IBM)        - [226143] [api][breaking] Make RSE rename/delete dialogs internal
+ * David McKnight   (IBM)        - [203361] Deleting multiple target connections misleading
  *******************************************************************************/
 
 package org.eclipse.rse.internal.ui.dialogs;
+import java.util.ArrayList;
+import java.util.List;
+
 import org.eclipse.jface.viewers.ColumnLayoutData;
 import org.eclipse.jface.viewers.ColumnPixelData;
 import org.eclipse.jface.viewers.ColumnWeightData;
@@ -43,6 +47,7 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
+import org.eclipse.swt.widgets.TableItem;
 
 /**
  * Dialog for confirming resource deletion.
@@ -66,6 +71,7 @@ public class SystemDeleteDialog extends SystemPromptDialog
     private Table table;
     private TableViewer tableViewer;
     private GridData tableData;
+    private List _selectedResources;
 
     // column headers
 	private String columnHeaders[] = {
@@ -219,12 +225,18 @@ public class SystemDeleteDialog extends SystemPromptDialog
         Object input = getInputObject();
         tableViewer.setInput(input);
 
+        // check all off
+        TableItem[] items = tableViewer.getTable().getItems();
+        for (int i = 0; i < items.length; i++){
+        	items[i].setChecked(true);
+        }
+        
 		return composite;
 	}
 
     private TableViewer createTableViewer(Composite parent, int nbrColumns)
     {
-	   table = new Table(parent, SWT.H_SCROLL | SWT.V_SCROLL | SWT.BORDER | SWT.HIDE_SELECTION);
+	   table = new Table(parent, SWT.CHECK  | SWT.H_SCROLL | SWT.V_SCROLL | SWT.BORDER | SWT.HIDE_SELECTION);
   	   table.setLinesVisible(true);
   	   tableViewer = new TableViewer(table);
 	   tableData = new GridData();
@@ -273,8 +285,23 @@ public class SystemDeleteDialog extends SystemPromptDialog
 	 */
 	protected boolean processOK()
 	{
+		_selectedResources = new ArrayList();
+		TableItem[] items = table.getItems();
+		for (int i = 0; i < items.length; i++){
+			if (items[i].getChecked()){
+				SystemDeleteTableRow row = (SystemDeleteTableRow)items[i].getData();
+				_selectedResources.add(row.getElement());
+			}
+		}
+		
 		return true;
 	}
+	
+	public List getSelectedResources()
+	{
+		return _selectedResources;
+	}
+	
 
 	/**
 	 * Returns the rows of deletable items.

@@ -1,5 +1,5 @@
 /********************************************************************************
- * Copyright (c) 2002, 2008 IBM Corporation and others. All rights reserved.
+ * Copyright (c) 2002, 2009 IBM Corporation and others. All rights reserved.
  * This program and the accompanying materials are made available under the terms
  * of the Eclipse Public License v1.0 which accompanies this distribution, and is 
  * available at http://www.eclipse.org/legal/epl-v10.html
@@ -18,11 +18,11 @@
  * Xuan Chen (IBM) - [209827] Update DStore command implementation to enable cancelation of archive operations
  * David McKnight   (IBM)        - [226143] [api][breaking] Make RSE rename/delete dialogs internal
  * David McKnight   (IBM)        - [234030] SystemCommonDeleteAction should not fire delete event if deleting is failed
+ * David McKnight   (IBM)        - [203361] Deleting multiple target connections misleading
  ********************************************************************************/
 
 package org.eclipse.rse.internal.ui.actions;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Vector;
 
@@ -334,11 +334,11 @@ public class SystemCommonDeleteAction
 				List localSet = new Vector();
 
 				// divide up all objects to delete
-				IStructuredSelection ssel = (IStructuredSelection)selection;
-				Iterator iter = ssel.iterator();
-				while (iter.hasNext())
+				List selectedResources = ((SystemDeleteDialog)dlg).getSelectedResources();
+								
+				for (int i = 0; i < selectedResources.size(); i++)
 				{
-					Object object = iter.next();
+					Object object = selectedResources.get(i);
 					ISystemViewElementAdapter adapter = SystemAdapterHelpers.getViewAdapter(object);
 					if (getRemoteAdapter(object) != null) 
 					{

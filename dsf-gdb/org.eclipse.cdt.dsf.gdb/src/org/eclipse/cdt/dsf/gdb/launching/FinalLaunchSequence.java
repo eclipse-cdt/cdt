@@ -19,6 +19,7 @@ import org.eclipse.cdt.dsf.concurrent.DataRequestMonitor;
 import org.eclipse.cdt.dsf.concurrent.DsfExecutor;
 import org.eclipse.cdt.dsf.concurrent.RequestMonitor;
 import org.eclipse.cdt.dsf.concurrent.Sequence;
+import org.eclipse.cdt.dsf.datamodel.DataModelInitializedEvent;
 import org.eclipse.cdt.dsf.datamodel.IDMContext;
 import org.eclipse.cdt.dsf.debug.service.IBreakpoints.IBreakpointsTargetDMContext;
 import org.eclipse.cdt.dsf.debug.service.ISourceLookup.ISourceLookupDMContext;
@@ -507,6 +508,17 @@ public class FinalLaunchSequence extends Sequence {
                	} else {
                		requestMonitor.done();
                	}
+            }
+        },
+        /*
+         * Indicate that the Data Model has been filled.  This will trigger the Debug view to expand.
+         */
+        new Step() {
+            @Override
+            public void execute(final RequestMonitor requestMonitor) {
+            	fLaunch.getSession().dispatchEvent(new DataModelInitializedEvent(fCommandControl.getContext()),
+            			                           fCommandControl.getProperties());
+            	requestMonitor.done();
             }
         },
         /*

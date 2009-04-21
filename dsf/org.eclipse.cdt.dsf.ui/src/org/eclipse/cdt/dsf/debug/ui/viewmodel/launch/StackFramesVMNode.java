@@ -23,6 +23,7 @@ import org.eclipse.cdt.dsf.concurrent.DsfRunnable;
 import org.eclipse.cdt.dsf.concurrent.IDsfStatusConstants;
 import org.eclipse.cdt.dsf.concurrent.RequestMonitor;
 import org.eclipse.cdt.dsf.datamodel.DMContexts;
+import org.eclipse.cdt.dsf.datamodel.DataModelInitializedEvent;
 import org.eclipse.cdt.dsf.datamodel.IDMContext;
 import org.eclipse.cdt.dsf.debug.service.IRunControl;
 import org.eclipse.cdt.dsf.debug.service.IStack;
@@ -509,7 +510,7 @@ public class StackFramesVMNode extends AbstractDMVMNode
      */
     @Override
     public void getContextsForEvent(final VMDelta parentDelta, Object e, final DataRequestMonitor<IVMContext[]> rm) {
-        if (e instanceof ModelProxyInstalledEvent) {
+        if (e instanceof ModelProxyInstalledEvent || e instanceof DataModelInitializedEvent) {
             // Retrieve the list of stack frames, and mark the top frame to be selected.  
             getVMProvider().updateNode(
                 this,
@@ -546,7 +547,7 @@ public class StackFramesVMNode extends AbstractDMVMNode
         	return IModelDelta.CONTENT | IModelDelta.EXPAND;
         } else if (e instanceof SteppingTimedOutEvent) {
             return IModelDelta.CONTENT;
-        } else if (e instanceof ModelProxyInstalledEvent) {
+        } else if (e instanceof ModelProxyInstalledEvent || e instanceof DataModelInitializedEvent) {
             return IModelDelta.SELECT | IModelDelta.EXPAND;
         } else if (e instanceof ExpandStackEvent) {
         	return IModelDelta.CONTENT;
@@ -598,7 +599,7 @@ public class StackFramesVMNode extends AbstractDMVMNode
             buildDeltaForSuspendedEvent(execDmc, execDmc, parent, nodeOffset, rm);
         } else if (e instanceof SteppingTimedOutEvent) {
             buildDeltaForSteppingTimedOutEvent((SteppingTimedOutEvent)e, parent, nodeOffset, rm);
-        } else if (e instanceof ModelProxyInstalledEvent) {
+        } else if (e instanceof ModelProxyInstalledEvent || e instanceof DataModelInitializedEvent) {
             buildDeltaForModelProxyInstalledEvent(parent, nodeOffset, rm);
         } else if (e instanceof ExpandStackEvent) {
             IExecutionDMContext execDmc = ((ExpandStackEvent)e).getDMContext();

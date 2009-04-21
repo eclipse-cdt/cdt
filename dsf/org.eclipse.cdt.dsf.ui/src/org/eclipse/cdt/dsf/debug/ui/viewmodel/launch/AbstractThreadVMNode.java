@@ -20,6 +20,7 @@ import org.eclipse.cdt.dsf.concurrent.DsfRunnable;
 import org.eclipse.cdt.dsf.concurrent.IDsfStatusConstants;
 import org.eclipse.cdt.dsf.concurrent.RequestMonitor;
 import org.eclipse.cdt.dsf.datamodel.DMContexts;
+import org.eclipse.cdt.dsf.datamodel.DataModelInitializedEvent;
 import org.eclipse.cdt.dsf.datamodel.IDMContext;
 import org.eclipse.cdt.dsf.datamodel.IDMEvent;
 import org.eclipse.cdt.dsf.debug.service.IRunControl;
@@ -243,7 +244,7 @@ public abstract class AbstractThreadVMNode extends AbstractDMVMNode
         	rm.setStatus(new Status(IStatus.ERROR, DsfUIPlugin.PLUGIN_ID, IDsfStatusConstants.NOT_SUPPORTED, "", null)); //$NON-NLS-1$
         	rm.done();
         	return;
-        } else if (e instanceof ModelProxyInstalledEvent) {
+        } else if (e instanceof ModelProxyInstalledEvent || e instanceof DataModelInitializedEvent) {
             getThreadVMCForModelProxyInstallEvent(
                 parentDelta,
                 new DataRequestMonitor<VMContextInfo>(getExecutor(), rm) {
@@ -339,7 +340,7 @@ public abstract class AbstractThreadVMNode extends AbstractDMVMNode
             return IModelDelta.CONTENT;
         } else if (e instanceof SteppingTimedOutEvent) {
             return IModelDelta.CONTENT;            
-        } else if (e instanceof ModelProxyInstalledEvent) {
+        } else if (e instanceof ModelProxyInstalledEvent || e instanceof DataModelInitializedEvent) {
             return IModelDelta.SELECT | IModelDelta.EXPAND;
         }
         return IModelDelta.NO_CHANGE;
@@ -382,7 +383,7 @@ public abstract class AbstractThreadVMNode extends AbstractDMVMNode
             // the user that the program is running.  
             parentDelta.addNode(createVMContext(dmc), IModelDelta.CONTENT);
             rm.done();            
-        } else if (e instanceof ModelProxyInstalledEvent) {
+        } else if (e instanceof ModelProxyInstalledEvent || e instanceof DataModelInitializedEvent) {
             // Model Proxy install event is generated when the model is first 
             // populated into the view.  This happens when a new debug session
             // is started or when the view is first opened.  

@@ -15,6 +15,7 @@ import java.util.List;
 
 import org.eclipse.cdt.dsf.concurrent.DataRequestMonitor;
 import org.eclipse.cdt.dsf.concurrent.IDsfStatusConstants;
+import org.eclipse.cdt.dsf.datamodel.DataModelInitializedEvent;
 import org.eclipse.cdt.dsf.internal.ui.DsfUIPlugin;
 import org.eclipse.cdt.dsf.ui.viewmodel.AbstractVMProvider;
 import org.eclipse.cdt.dsf.ui.viewmodel.IRootVMNode;
@@ -73,7 +74,10 @@ public class LaunchRootVMNode extends RootVMNode
             {
                 return false;
             }
+        } else if (e instanceof DataModelInitializedEvent) {
+        	return true;
         }
+        
         return super.isDeltaEvent(rootObject, e);
     }
     
@@ -85,6 +89,8 @@ public class LaunchRootVMNode extends RootVMNode
             if (le.fType == LaunchesEvent.Type.CHANGED || le.fType == LaunchesEvent.Type.TERMINATED) {
                 flags = IModelDelta.STATE | IModelDelta.CONTENT;
             }
+        } else if (e instanceof DataModelInitializedEvent) {
+        	flags = IModelDelta.EXPAND | IModelDelta.CONTENT;
         }
         
         return flags;
@@ -121,8 +127,9 @@ public class LaunchRootVMNode extends RootVMNode
                     }
                 }
             }
-        } 
-        
+        } else if (event instanceof DataModelInitializedEvent) {
+            rootDelta.setFlags(rootDelta.getFlags() | IModelDelta.EXPAND | IModelDelta.CONTENT);
+        }
         rm.setData(rootDelta);
         rm.done();
     }

@@ -101,7 +101,13 @@ public class RemoteFileExportDescriptionReader implements IRemoteFileExportDescr
 
 	private void xmlReadOptions(RemoteFileExportData exportData, Element element) throws IOException {
 		if (element.getNodeName().equals("options")) { //$NON-NLS-1$
-			exportData.setReviewSynchronize(getBooleanAttribute(element, "reviewSynchronize")); //$NON-NLS-1$
+			try {
+				exportData.setReviewSynchronize(getBooleanAttribute(element, "reviewSynchronize")); //$NON-NLS-1$
+			}
+			catch (IOException e){
+				// this is a new option so if we're reading an older config file, this attribute doesn't exist
+				exportData.setReviewSynchronize(false);
+			}
 			exportData.setOverWriteExistingFiles(getBooleanAttribute(element, "overWriteExistingFiles")); //$NON-NLS-1$
 			exportData.setCreateDirectoryStructure(getBooleanAttribute(element, "createDirectoryStructure")); //$NON-NLS-1$
 			exportData.setCreateSelectionOnly(getBooleanAttribute(element, "createSelectedOnly")); //$NON-NLS-1$

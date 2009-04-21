@@ -15,10 +15,8 @@ public final class XlcPreferenceKeys {
 
 	private XlcPreferenceKeys() {}
 	
-	/**
-	 * Type: boolean
-	 * Default: false
-	 */
 	public static final String KEY_SUPPORT_VECTOR_TYPES = "vectorTypes";
+
+	public static final String KEY_SUPPORT_DECIMAL_FLOATING_POINT_TYPES = "floatingPointTypes";
 }
 

@@ -17,9 +17,12 @@ import org.eclipse.cdt.core.dom.lrparser.IParser;
 import org.eclipse.cdt.core.dom.lrparser.gnu.GCCLanguage;
 import org.eclipse.cdt.core.dom.parser.IScannerExtensionConfiguration;
 import org.eclipse.cdt.core.index.IIndex;
+import org.eclipse.cdt.core.lrparser.xlc.preferences.XlcLanguagePreferences;
+import org.eclipse.cdt.core.lrparser.xlc.preferences.XlcPreferenceKeys;
 import org.eclipse.cdt.core.model.ICLanguageKeywords;
 import org.eclipse.cdt.core.parser.IScanner;
 import org.eclipse.cdt.internal.core.lrparser.xlc.c.XlcCParser;
+import org.eclipse.core.resources.IProject;
 
 /**
  * 
@@ -37,8 +40,11 @@ public class XlcCLanguage extends GCCLanguage {
 	
 	@Override
 	protected IParser<IASTTranslationUnit> getParser(IScanner scanner, IIndex index, Map<String,String> properties) {
-		boolean supportVectors = XlcCPPLanguage.supportVectors(properties);
-		return new XlcCParser(scanner, new XlcCTokenMap(supportVectors), getBuiltinBindingsProvider(), index, properties);
+		IProject project = XlcCPPLanguage.getProject(properties);
+		boolean supportVectors  = Boolean.valueOf(XlcLanguagePreferences.get(XlcPreferenceKeys.KEY_SUPPORT_VECTOR_TYPES, project));
+		boolean supportDecimals = Boolean.valueOf(XlcLanguagePreferences.get(XlcPreferenceKeys.KEY_SUPPORT_DECIMAL_FLOATING_POINT_TYPES, project));
+		
+		return new XlcCParser(scanner, new XlcCTokenMap(supportVectors, supportDecimals), getBuiltinBindingsProvider(), index, properties);
 	}
 	
 	public String getId() {
@@ -55,7 +61,7 @@ public class XlcCLanguage extends GCCLanguage {
 	@Override
 	public Object getAdapter(Class adapter) {
 		if(ICLanguageKeywords.class.equals(adapter))
-			return XlcKeywords.C;
+			return XlcKeywords.ALL_C_KEYWORDS;
 		
 		return super.getAdapter(adapter);
 	}

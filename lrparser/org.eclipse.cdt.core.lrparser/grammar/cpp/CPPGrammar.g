@@ -907,28 +907,21 @@ function_specifier
    
 
 simple_type_specifier
+    ::= simple_type_specifier_token
+          /. $Build  consumeToken(); $EndBuild ./
+
+simple_type_specifier_token
     ::= 'char'
-          /. $Build  consumeToken(); $EndBuild ./
       | 'wchar_t'
-          /. $Build  consumeToken(); $EndBuild ./
       | 'bool'
-          /. $Build  consumeToken(); $EndBuild ./
       | 'short'
-          /. $Build  consumeToken(); $EndBuild ./
       | 'int'
-          /. $Build  consumeToken(); $EndBuild ./
       | 'long'
-          /. $Build  consumeToken(); $EndBuild ./
       | 'signed'
-          /. $Build  consumeToken(); $EndBuild ./
       | 'unsigned'
-          /. $Build  consumeToken(); $EndBuild ./
       | 'float'
-          /. $Build  consumeToken(); $EndBuild ./
       | 'double'
-          /. $Build  consumeToken(); $EndBuild ./
       | 'void'
-          /. $Build  consumeToken(); $EndBuild ./
 
 
 -- last two rules moved here from simple_type_specifier

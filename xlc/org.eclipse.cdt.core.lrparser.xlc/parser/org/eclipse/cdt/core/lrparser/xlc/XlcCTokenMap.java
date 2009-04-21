@@ -16,6 +16,7 @@ import static org.eclipse.cdt.internal.core.lrparser.xlc.c.XlcCParsersym.*;
 import org.eclipse.cdt.core.dom.lrparser.IDOMTokenMap;
 import org.eclipse.cdt.core.parser.IGCCToken;
 import org.eclipse.cdt.core.parser.IToken;
+import org.eclipse.cdt.core.parser.ParserLanguage;
 
 /**
  * Maps tokens types returned by CPreprocessor to token types
@@ -25,10 +26,10 @@ import org.eclipse.cdt.core.parser.IToken;
  */
 public final class XlcCTokenMap implements IDOMTokenMap {
 
-	private final boolean supportVectors;
+	private final XlcKeywords keywordMap;
 	
-	public XlcCTokenMap(boolean supportVectors) {
-		this.supportVectors = supportVectors;
+	public XlcCTokenMap(boolean supportVectors, boolean supportDecimalFloatingPoint) {
+		keywordMap = new XlcKeywords(ParserLanguage.C, supportVectors, supportDecimalFloatingPoint);
 	}
 	
 	
@@ -44,13 +45,8 @@ public final class XlcCTokenMap implements IDOMTokenMap {
 		
 		switch(token.getType()) {
 			case tIDENTIFIER : 
-				if(supportVectors) {
-					Integer keywordKind = XlcKeywords.C.getTokenKind(token.getCharImage());
-					return keywordKind == null ? TK_identifier : keywordKind;
-				}
-				else {
-					return TK_identifier;
-				}
+				Integer keywordKind = keywordMap.getTokenKind(token.getCharImage());
+				return keywordKind == null ? TK_identifier : keywordKind;
 			
 			case tINTEGER      : return TK_integer;
 			case tCOLON        : return TK_Colon;

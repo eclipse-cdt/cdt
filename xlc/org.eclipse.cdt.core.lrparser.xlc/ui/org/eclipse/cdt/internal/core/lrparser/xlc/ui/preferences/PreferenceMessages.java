@@ -26,7 +26,8 @@ public class PreferenceMessages extends NLS {
 	public static String
 		XlcLanguageOptionsPreferencePage_link,
 		XlcLanguageOptionsPreferencePage_group,
-		XlcLanguageOptionsPreferencePage_preference_vectors;
+		XlcLanguageOptionsPreferencePage_preference_vectors,
+		XlcLanguageOptionsPreferencePage_preference_decimals;
 	
 }
 

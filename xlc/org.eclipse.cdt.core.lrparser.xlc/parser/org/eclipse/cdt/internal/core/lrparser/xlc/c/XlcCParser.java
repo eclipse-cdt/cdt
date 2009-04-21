@@ -1376,51 +1376,51 @@ private  GNUBuildASTParserAction  gnuAction;
             }  
   
             //
-            // Rule 388:  type_id ::= vector_type
+            // Rule 391:  type_id ::= vector_type
             //
-            case 388: { action.   consumeTypeId(false);             break;
+            case 391: { action.   consumeTypeId(false);             break;
             }  
   
             //
-            // Rule 389:  type_id ::= vector_type abstract_declarator
+            // Rule 392:  type_id ::= vector_type abstract_declarator
             //
-            case 389: { action.   consumeTypeId(true);             break;
+            case 392: { action.   consumeTypeId(true);             break;
             }  
   
             //
-            // Rule 390:  vector_declaration ::= vector_type <openscope-ast> init_declarator_list ;
+            // Rule 393:  vector_declaration ::= vector_type <openscope-ast> init_declarator_list ;
             //
-            case 390: { action.   consumeDeclarationSimple(true);             break;
+            case 393: { action.   consumeDeclarationSimple(true);             break;
             }  
   
             //
-            // Rule 391:  vector_type ::= <openscope-ast> no_type_declaration_specifiers_opt vector vector_type_specifier all_specifier_qualifier_list_opt
+            // Rule 394:  vector_type ::= <openscope-ast> no_type_declaration_specifiers_opt vector vector_type_specifier all_specifier_qualifier_list_opt
             //
-            case 391: { action.   consumeVectorTypeSpecifier();             break;
+            case 394: { action.   consumeVectorTypeSpecifier();             break;
             }  
   
             //
-            // Rule 392:  vector_type_specifier ::= vector_type_specifier_token
+            // Rule 395:  vector_type_specifier ::= vector_type_specifier_token
             //
-            case 392: { action.   consumeToken();             break;
+            case 395: { action.   consumeToken();             break;
             }  
   
             //
-            // Rule 414:  declarator_id_name ::= pixel
+            // Rule 417:  declarator_id_name ::= pixel
             //
-            case 414: { action.   consumeIdentifierName();             break;
+            case 417: { action.   consumeIdentifierName();             break;
             }  
   
             //
-            // Rule 415:  declarator_id_name ::= vector
+            // Rule 418:  declarator_id_name ::= vector
             //
-            case 415: { action.   consumeIdentifierName();             break;
+            case 418: { action.   consumeIdentifierName();             break;
             }  
   
             //
-            // Rule 416:  declarator_id_name ::= bool
+            // Rule 419:  declarator_id_name ::= bool
             //
-            case 416: { action.   consumeIdentifierName();             break;
+            case 419: { action.   consumeIdentifierName();             break;
             }  
 
     

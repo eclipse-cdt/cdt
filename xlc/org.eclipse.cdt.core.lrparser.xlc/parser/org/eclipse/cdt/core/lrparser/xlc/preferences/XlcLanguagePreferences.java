@@ -30,9 +30,10 @@ public class XlcLanguagePreferences  {
 	private static final String XLC_PREFERENCES_NODE = "xlc.preferences";
 
 
-	public static void initializeDefaultPreferences() {
+	static void initializeDefaultPreferences() {
 		Preferences prefs = getDefaultPreferences();
 		prefs.putBoolean(XlcPreferenceKeys.KEY_SUPPORT_VECTOR_TYPES, true);
+		prefs.putBoolean(XlcPreferenceKeys.KEY_SUPPORT_DECIMAL_FLOATING_POINT_TYPES, true);
 	}
 	
 	public static void setProjectPreference(String key, String value, IProject project) {
@@ -66,23 +67,24 @@ public class XlcLanguagePreferences  {
 	 * 
 	 * @param project If null then just the workspace and default preferences will be checked.
 	 */
-	public static String getPreference(String key, IProject project) {
-		Preferences[] prefs;
+	public static String get(String key, IProject project) {
+		return Platform.getPreferencesService().get(key, null, getPreferences(key, project));
+	}
+
+	private static Preferences[] getPreferences(String key, IProject project) {
 		if(project == null) {
-			prefs = new Preferences[] {
+			return new Preferences[] {
 				getWorkspacePreferences(),
 				getDefaultPreferences()
 			};
 		}
 		else {
-			prefs = new Preferences[] {
+			return new Preferences[] {
 				getProjectPreferences(project),
 				getWorkspacePreferences(),
 				getDefaultPreferences()
 			};
 		}
-		
-		return Platform.getPreferencesService().get(key, null, prefs);
 	}
 	
 	

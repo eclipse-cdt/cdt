@@ -20,6 +20,10 @@ $Terminals
 	pixel
 	bool
 	
+	_Decimal32
+	_Decimal64
+	_Decimal128
+	
 $End
 
 
@@ -27,6 +31,14 @@ $End
 
 
 $Rules
+
+
+
+simple_type_specifier_token
+    ::= '_Decimal32'
+      | '_Decimal64'
+      | '_Decimal128'
+
 
 type_id
     ::= vector_type

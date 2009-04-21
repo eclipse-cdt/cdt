@@ -42,7 +42,8 @@ public class XlcCPPLanguage extends GPPLanguage {
 		return DEFAULT;
 	}
 
-	public static boolean supportVectors(Map<String,String> properties) {
+	
+	static IProject getProject(Map<String,String> properties) {
 		String path = properties.get(LRParserProperties.TRANSLATION_UNIT_PATH);
 		System.out.println("path: " + path);
 		IFile[] file = ResourcesPlugin.getWorkspace().getRoot().findFilesForLocation(new Path(path));
@@ -52,14 +53,18 @@ public class XlcCPPLanguage extends GPPLanguage {
 			project = file[0].getProject();
 		}
 		
-		return Boolean.valueOf(XlcLanguagePreferences.getPreference(XlcPreferenceKeys.KEY_SUPPORT_VECTOR_TYPES, project));
+		return project;
 	}
 	
 	
 	@Override
 	protected IParser<IASTTranslationUnit> getParser(IScanner scanner, IIndex index, Map<String,String> properties) {
-		boolean supportVectors = supportVectors(properties);
-		XlcCPPParser parser = new XlcCPPParser(scanner, new XlcCPPTokenMap(supportVectors), getBuiltinBindingsProvider(), index, properties);
+		IProject project = getProject(properties);
+		boolean supportVectors  = Boolean.valueOf(XlcLanguagePreferences.get(XlcPreferenceKeys.KEY_SUPPORT_VECTOR_TYPES, project));
+		boolean supportDecimals = Boolean.valueOf(XlcLanguagePreferences.get(XlcPreferenceKeys.KEY_SUPPORT_DECIMAL_FLOATING_POINT_TYPES, project));
+		
+		
+		XlcCPPParser parser = new XlcCPPParser(scanner, new XlcCPPTokenMap(supportVectors, supportDecimals), getBuiltinBindingsProvider(), index, properties);
 		return parser;
 	}
 	
@@ -77,7 +82,7 @@ public class XlcCPPLanguage extends GPPLanguage {
 	@Override
 	public Object getAdapter(Class adapter) {
 		if(ICLanguageKeywords.class.equals(adapter))
-			return XlcKeywords.CPP;
+			return XlcKeywords.ALL_CPP_KEYWORDS;
 		
 		return super.getAdapter(adapter);
 	}

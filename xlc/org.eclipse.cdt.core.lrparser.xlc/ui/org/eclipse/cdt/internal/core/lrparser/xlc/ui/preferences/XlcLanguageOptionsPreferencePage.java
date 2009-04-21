@@ -61,10 +61,29 @@ public class XlcLanguageOptionsPreferencePage extends PreferencePage implements 
 		
 		buttonVectors = ControlFactory.createCheckBox(group, PreferenceMessages.XlcLanguageOptionsPreferencePage_preference_vectors);
 		initCheckbox(buttonVectors, XlcPreferenceKeys.KEY_SUPPORT_VECTOR_TYPES);
+		buttonDecimals = ControlFactory.createCheckBox(group, PreferenceMessages.XlcLanguageOptionsPreferencePage_preference_decimals);
+		initCheckbox(buttonDecimals, XlcPreferenceKeys.KEY_SUPPORT_DECIMAL_FLOATING_POINT_TYPES);
 		
 		return page;
 	}
 
+
+	@Override
+	protected void performDefaults() {
+		buttonVectors.setSelection(Boolean.valueOf(XlcLanguagePreferences.getDefaultPreference(XlcPreferenceKeys.KEY_SUPPORT_VECTOR_TYPES)));
+		buttonDecimals.setSelection(Boolean.valueOf(XlcLanguagePreferences.getDefaultPreference(XlcPreferenceKeys.KEY_SUPPORT_DECIMAL_FLOATING_POINT_TYPES)));
+		
+		super.performDefaults();
+	}
+
+	@Override
+	public boolean performOk() {
+		setPreference(XlcPreferenceKeys.KEY_SUPPORT_VECTOR_TYPES, buttonVectors.getSelection(), getProject());
+		setPreference(XlcPreferenceKeys.KEY_SUPPORT_DECIMAL_FLOATING_POINT_TYPES, buttonDecimals.getSelection(), getProject());
+		return true;
+	}
+	
+	
 	
 	private void initCheckbox(Button checkbox, String prefKey) {
 		String preference = null;
@@ -82,21 +101,6 @@ public class XlcLanguageOptionsPreferencePage extends PreferencePage implements 
 		}
 		
 		checkbox.setSelection(Boolean.valueOf(preference));
-	}
-
-	
-
-	@Override
-	protected void performDefaults() {
-		buttonVectors.setSelection(Boolean.valueOf(XlcLanguagePreferences.getDefaultPreference(XlcPreferenceKeys.KEY_SUPPORT_VECTOR_TYPES)));
-		
-		super.performDefaults();
-	}
-
-	@Override
-	public boolean performOk() {
-		setPreference(XlcPreferenceKeys.KEY_SUPPORT_VECTOR_TYPES, buttonVectors.getSelection(), getProject());
-		return true;
 	}
 	
 	

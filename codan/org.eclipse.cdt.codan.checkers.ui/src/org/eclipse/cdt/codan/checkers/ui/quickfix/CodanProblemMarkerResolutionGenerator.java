@@ -10,12 +10,21 @@
  *******************************************************************************/
 package org.eclipse.cdt.codan.checkers.ui.quickfix;
 
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.ui.IMarkerResolution;
 import org.eclipse.ui.IMarkerResolutionGenerator;
 
 public class CodanProblemMarkerResolutionGenerator implements IMarkerResolutionGenerator {
 	public IMarkerResolution[] getResolutions(IMarker marker) {
-		return new IMarkerResolution[] { new QuickFixAssignmentInCondition() };
+		final Pattern patternBuildDependsAdd = Pattern.compile("Possible assignment in condition.*");
+		String description = marker.getAttribute(IMarker.MESSAGE, "no message");
+		Matcher matcherBuildDependsAdd = patternBuildDependsAdd.matcher(description);
+		if (matcherBuildDependsAdd.matches()) {
+			return new IMarkerResolution[] { new QuickFixAssignmentInCondition() };
+		}
+		return new IMarkerResolution[0];
 	}
 }

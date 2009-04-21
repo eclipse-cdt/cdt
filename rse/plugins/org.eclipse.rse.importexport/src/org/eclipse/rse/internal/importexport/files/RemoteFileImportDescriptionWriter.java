@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 IBM Corporation and others.
+ * Copyright (c) 2000, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,6 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  * Martin Oberhuber (Wind River) - [174945] split importexport icons from rse.ui
+ * David McKnight   (IBM)        - [272708] [import/export] fix various bugs with the synchronization support
  *******************************************************************************/
 package org.eclipse.rse.internal.importexport.files;
 
@@ -108,6 +109,7 @@ public class RemoteFileImportDescriptionWriter implements IRemoteFileImportDescr
 	private void xmlWriteOptions(RemoteFileImportData importData, Document document, Element xmlFileDesc) throws DOMException {
 		Element options = document.createElement("options"); //$NON-NLS-1$
 		xmlFileDesc.appendChild(options);
+		options.setAttribute("reviewSynchronize", "" + importData.isReviewSynchronize()); //$NON-NLS-1$ //$NON-NLS-2$
 		options.setAttribute("overWriteExistingFiles", "" + importData.isOverWriteExistingFiles()); //$NON-NLS-1$ //$NON-NLS-2$
 		options.setAttribute("createDirectoryStructure", "" + importData.isCreateDirectoryStructure()); //$NON-NLS-1$ //$NON-NLS-2$
 		options.setAttribute("createSelectedOnly", "" + importData.isCreateSelectionOnly()); //$NON-NLS-1$ //$NON-NLS-2$

@@ -55,7 +55,7 @@ public class BuildPropertyPage extends FieldEditorPreferencePage implements
 				// "Confirmation",
 				// "Do you want to remove existing problems? If build is disabled they won't be updated anymore.");
 				// if (openQuestion == true) {
-				// ErrorReporter.deleteAllMarkers();
+				// CodanProblemReporter.deleteAllMarkers();
 				// }
 				// }
 				return true;

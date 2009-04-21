@@ -14,7 +14,7 @@ import java.util.Map;
 
 import org.eclipse.cdt.codan.core.CodanCorePlugin;
 import org.eclipse.cdt.codan.core.model.CheckersRegisry;
-import org.eclipse.cdt.codan.core.model.ErrorReporter;
+import org.eclipse.cdt.codan.core.model.CodanRuntime;
 import org.eclipse.cdt.codan.core.model.IChecker;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
@@ -90,7 +90,7 @@ public class CodanBuilder extends IncrementalProjectBuilder {
 		// CodanCorePlugin.PLUGIN_ID, "problems", "", null);
 		// System.err.println("set = " + string);
 		// delete general markers
-		ErrorReporter.deleteMarkers(resource);
+		CodanRuntime.getInstance().getProblemReporter().deleteMarkers(resource);
 		for (IChecker checker : CheckersRegisry.getInstance()) {
 			try {
 				boolean run = false;

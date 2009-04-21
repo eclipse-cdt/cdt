@@ -16,10 +16,10 @@ import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 
-public class ErrorReporter {
+public class CodanProblemReporter {
 	public static final String GENERIC_CODE_ANALYSIS_MARKER_TYPE = "org.eclipse.cdt.codan.core.codanProblem";
 
-	public static void reportProblem(String id, IFile file, int lineNumber,
+	public void reportProblem(String id, IFile file, int lineNumber,
 			String message) {
 		try {
 			if (file == null)
@@ -46,7 +46,7 @@ public class ErrorReporter {
 		}
 	}
 
-	public static void deleteMarkers(IResource file) {
+	public void deleteMarkers(IResource file) {
 		try {
 			file.deleteMarkers(GENERIC_CODE_ANALYSIS_MARKER_TYPE, false,
 					IResource.DEPTH_ZERO);
@@ -54,7 +54,7 @@ public class ErrorReporter {
 		}
 	}
 
-	public static void deleteAllMarkers() {
+	public void deleteAllMarkers() {
 		try {
 			// TODO delete contributed markers too
 			ResourcesPlugin.getWorkspace().getRoot().deleteMarkers(

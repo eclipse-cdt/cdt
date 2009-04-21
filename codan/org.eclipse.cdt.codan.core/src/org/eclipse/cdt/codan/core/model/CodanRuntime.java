@@ -10,22 +10,19 @@
  *******************************************************************************/
 package org.eclipse.cdt.codan.core.model;
 
-import org.eclipse.core.resources.IFile;
-import org.eclipse.core.resources.IResource;
+/**
+ * Runtime singleton class to get access to Codan framework parts
+ * 
+ */
+public class CodanRuntime {
+	private static CodanRuntime instance = new CodanRuntime();
+	private CodanProblemReporter problemReporter = new CodanProblemReporter();
 
-public abstract class AbstractChecker implements IChecker {
-	String name;
-
-	public AbstractChecker() {
+	public CodanProblemReporter getProblemReporter() {
+		return problemReporter;
 	}
 
-	public boolean enabledInContext(IResource res) {
-		return true;
-	}
-
-	public void reportProblem(String id, IFile file, int lineNumber,
-			String message) {
-		CodanRuntime.getInstance().getProblemReporter().reportProblem(id, file,
-				lineNumber, message);
+	public static CodanRuntime getInstance() {
+		return instance;
 	}
 }

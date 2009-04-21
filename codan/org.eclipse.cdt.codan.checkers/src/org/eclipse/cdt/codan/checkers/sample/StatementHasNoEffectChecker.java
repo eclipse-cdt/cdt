@@ -63,7 +63,8 @@ public class StatementHasNoEffectChecker extends AbstractIndexAstChecker {
 
 		/**
 		 * We consider has not effect binary statements without assignment and
-		 * unary statement which is not dec and inc
+		 * unary statement which is not dec and inc. If operator is overloaded
+		 * we not going to bother.
 		 * 
 		 * @param e
 		 * @return
@@ -74,6 +75,8 @@ public class StatementHasNoEffectChecker extends AbstractIndexAstChecker {
 				if (binExpr.getOperator() == IASTBinaryExpression.op_assign)
 					return false;
 				if (binExpr instanceof CPPASTBinaryExpression) {
+					// unfortunately ICPPASTBinaryExpression does not have
+					// getOverload public method
 					CPPASTBinaryExpression cppBin = (CPPASTBinaryExpression) binExpr;
 					ICPPFunction overload = cppBin.getOverload();
 					if (overload != null)

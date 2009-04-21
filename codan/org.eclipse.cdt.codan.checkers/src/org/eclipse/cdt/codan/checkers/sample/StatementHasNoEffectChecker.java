@@ -15,9 +15,14 @@ import org.eclipse.cdt.core.dom.ast.ASTVisitor;
 import org.eclipse.cdt.core.dom.ast.IASTBinaryExpression;
 import org.eclipse.cdt.core.dom.ast.IASTExpression;
 import org.eclipse.cdt.core.dom.ast.IASTExpressionStatement;
+import org.eclipse.cdt.core.dom.ast.IASTIdExpression;
 import org.eclipse.cdt.core.dom.ast.IASTStatement;
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
 import org.eclipse.cdt.core.dom.ast.IASTUnaryExpression;
+import org.eclipse.cdt.core.dom.ast.IBasicType;
+import org.eclipse.cdt.core.dom.ast.IType;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunction;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTBinaryExpression;
 
 /**
  * Checker that detects statements without effect such as
@@ -66,7 +71,21 @@ public class StatementHasNoEffectChecker extends AbstractIndexAstChecker {
 		private boolean hasNoEffect(IASTExpression e) {
 			if (e instanceof IASTBinaryExpression) {
 				IASTBinaryExpression binExpr = (IASTBinaryExpression) e;
-				return binExpr.getOperator() != IASTBinaryExpression.op_assign;
+				if (binExpr.getOperator() == IASTBinaryExpression.op_assign)
+					return false;
+				if (binExpr instanceof CPPASTBinaryExpression) {
+					CPPASTBinaryExpression cppBin = (CPPASTBinaryExpression) binExpr;
+					ICPPFunction overload = cppBin.getOverload();
+					if (overload != null)
+						return false;
+					IType expressionType = binExpr.getOperand1()
+							.getExpressionType();
+					if (!(expressionType instanceof IBasicType)) {
+						return false; // must be overloaded but parser could not
+						// find it
+					}
+				}
+				return true;
 			}
 			if (e instanceof IASTUnaryExpression) {
 				IASTUnaryExpression unaryExpr = (IASTUnaryExpression) e;
@@ -78,6 +97,10 @@ public class StatementHasNoEffectChecker extends AbstractIndexAstChecker {
 				case IASTUnaryExpression.op_prefixIncr:
 					return false;
 				}
+				return true;
+			}
+			if (e instanceof IASTIdExpression) {
+				// simply a;
 				return true;
 			}
 			return false;

@@ -125,7 +125,12 @@ public class GdbPlugin extends Plugin {
 
     public static void debug(String message) {
         if (DEBUG) {
-            System.out.print(message);
+			while (message.length() > 100) {
+				String partial = message.substring(0, 100); 
+				message = message.substring(100);
+				System.out.println(partial + "\\"); //$NON-NLS-1$
+			}
+			System.out.print(message);
         }
     }
 

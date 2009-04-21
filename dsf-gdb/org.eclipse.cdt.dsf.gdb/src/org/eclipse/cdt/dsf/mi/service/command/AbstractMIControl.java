@@ -554,9 +554,13 @@ public abstract class AbstractMIControl extends AbstractDsfService
                         	public void run() {
                         		if (getMITracingStream() != null) {
                         			try {
-                        				getMITracingStream().write(GdbPlugin.getDebugTime().getBytes());
-                        				getMITracingStream().write(' ');
-                        				getMITracingStream().write(str.getBytes());
+                                		String message = GdbPlugin.getDebugTime() + " " + str; //$NON-NLS-1$
+                            			while (message.length() > 100) {
+                            				String partial = message.substring(0, 100) + "\\\n"; //$NON-NLS-1$
+                            				message = message.substring(100);
+                                    		getMITracingStream().write(partial.getBytes());
+                            			}
+                            			getMITracingStream().write(message.getBytes());
                         			} catch (IOException e) {
                         				// The tracing stream could be closed at any time
                         				// since the user can set a preference to turn off
@@ -604,10 +608,13 @@ public abstract class AbstractMIControl extends AbstractDsfService
                         	public void run() {
                                 if (getMITracingStream() != null) {
                                 	try {
-                                		getMITracingStream().write(GdbPlugin.getDebugTime().getBytes());
-                                		getMITracingStream().write(' ');
-                                		getMITracingStream().write(finalLine.getBytes());
-                                		getMITracingStream().write('\n');
+                                		String message = GdbPlugin.getDebugTime() + " " + finalLine + "\n"; //$NON-NLS-1$ //$NON-NLS-2$
+                            			while (message.length() > 100) {
+                            				String partial = message.substring(0, 100) + "\\\n"; //$NON-NLS-1$
+                            				message = message.substring(100);
+                                    		getMITracingStream().write(partial.getBytes());
+                            			}
+                            			getMITracingStream().write(message.getBytes());
                                 	} catch (IOException e) {
                                 		// The tracing stream could be closed at any time
                                 		// since the user can set a preference to turn off

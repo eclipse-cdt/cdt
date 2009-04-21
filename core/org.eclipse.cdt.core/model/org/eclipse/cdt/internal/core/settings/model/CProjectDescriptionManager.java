@@ -10,6 +10,7 @@
  * Markus Schorn (Wind River Systems)
  * IBM Corporation
  * James Blackburn (Broadcom Corp.)
+ * Alex Blewitt Bug 132511 - nature order not preserved
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.settings.model;
 
@@ -22,14 +23,15 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
 import java.net.URI;
-import com.ibm.icu.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -125,6 +127,8 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.w3c.dom.ProcessingInstruction;
 import org.xml.sax.SAXException;
+
+import com.ibm.icu.text.MessageFormat;
 
 /**
  * The CProjectDescriptionManager is to marshall the loading and storing
@@ -719,25 +723,30 @@ public class CProjectDescriptionManager implements ICProjectDescriptionManager {
 		CConfigurationDataProviderDescriptor newDr = newBsId != null ? getCfgProviderDescriptor(newBsId) : null;
 		CConfigurationDataProviderDescriptor oldDr = oldBsId != null ? getCfgProviderDescriptor(oldBsId) : null;
 
-		String newNatures[] = newDr != null ? newDr.getNatureIds() : new String[0];
-		String oldNatures[] = oldDr != null ? oldDr.getNatureIds() : new String[0];
-		String conflictingNatures[] = newDr != null ? newDr.getConflictingNatureIds() : new String[0];
-		String natureIds[] = des.getNatureIds();
+		List<String> newNatures, oldNatures, conflictingNatures;
+		newNatures = oldNatures = conflictingNatures = Collections.emptyList();
+		if (oldDr != null)
+			oldNatures = Arrays.asList(oldDr.getNatureIds());
+		if (newDr != null) {
+			newNatures = Arrays.asList(newDr.getNatureIds());
+			conflictingNatures = Arrays.asList(newDr.getConflictingNatureIds());
+		}
 
-		Set<String> curSet = new HashSet<String>(Arrays.asList(natureIds));
-//		Set newSet = new HashSet(Arrays.asList(newNatures));
-//		Set oldSet = new HashSet(Arrays.asList(oldNatures));
-		HashSet<String> newCurSet = new HashSet<String>(curSet);
-//		newSet.removeAll(oldSet);
-//		oldSet.removeAll(tmp);
+		// List of existing natureIds
+		final String[] natureIds = des.getNatureIds();
 
+		// Get the set of items to remove ({oldNatures} - {newNatures}) + conflictingNatures
+		Set<String> toRemove = new HashSet<String>(oldNatures);
+		toRemove.removeAll(newNatures); 		// Don't remove items we're re-adding
+		toRemove.addAll(conflictingNatures);	// Add conflicting natures for removal
+		// Modify an ordered set of the existing natures with the changes
+		final LinkedHashSet<String> cur = new LinkedHashSet<String>(Arrays.asList(natureIds));
+		cur.addAll(newNatures);
+		cur.removeAll(toRemove);
 
-		newCurSet.removeAll(Arrays.asList(oldNatures));
-		newCurSet.addAll(Arrays.asList(newNatures));
-		newCurSet.removeAll(Arrays.asList(conflictingNatures));
-
-		if(!newCurSet.equals(curSet)){
-			des.setNatureIds(newCurSet.toArray(new String[newCurSet.size()]));
+		final String[] newNatureIds = cur.toArray(new String[cur.size()]);
+		if (!Arrays.equals(newNatureIds, natureIds)) {
+			des.setNatureIds(newNatureIds);
 			return true;
 		}
 

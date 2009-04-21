@@ -55,6 +55,8 @@ import org.eclipse.text.edits.InsertEdit;
 import org.eclipse.text.edits.MalformedTreeException;
 import org.eclipse.text.edits.MultiTextEdit;
 import org.eclipse.text.edits.TextEdit;
+import org.eclipse.text.undo.DocumentUndoManagerRegistry;
+import org.eclipse.text.undo.IDocumentUndoManager;
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IFileEditorInput;
 import org.eclipse.ui.editors.text.ForwardingDocumentProvider;
@@ -1048,7 +1050,10 @@ public class CDocumentProvider extends TextFileDocumentProvider {
 			TextEdit edit = createSaveActionEdit(document, changedRegions);
 			if (edit != null) {
 				try {
+					IDocumentUndoManager manager= DocumentUndoManagerRegistry.getDocumentUndoManager(document);
+					manager.beginCompoundChange();
 					edit.apply(document);
+					manager.endCompoundChange();
 				} catch (MalformedTreeException e) {
 					String message= e.getMessage();
 					if (message == null)

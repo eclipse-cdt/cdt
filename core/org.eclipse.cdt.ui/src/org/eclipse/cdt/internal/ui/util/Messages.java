@@ -7,30 +7,29 @@
  *
  * Contributors:
  *    Markus Schorn - initial API and implementation
+ *    Sergey Prigogin (Google)
  *******************************************************************************/ 
-
 package org.eclipse.cdt.internal.ui.util;
 
 import com.ibm.icu.text.MessageFormat;
 
-public class Messages {
-    public static String format(String pattern, Object[] args) {
-        return MessageFormat.format(pattern, args);
+import org.eclipse.osgi.util.NLS;
+
+public class Messages extends NLS {
+	private static final String BUNDLE_NAME= Messages.class.getName();
+
+	public static String EditorUtility_calculatingChangedRegions_message;
+	public static String EditorUtility_error_calculatingChangedRegions;
+
+	public static String format(String pattern, Object... arguments) {
+        return MessageFormat.format(pattern, arguments);
     }
     
-    public static String format(String pattern, Object arg0) {
-        return format(pattern, new Object[] {arg0});
-    }
+	private Messages() {
+		// Do not instantiate
+	}
 
-    public static String format(String pattern, Object arg0, Object arg1) {
-        return format(pattern, new Object[] {arg0, arg1});
-    }
-
-    public static String format(String pattern, Object arg0, Object arg1, Object arg2) {
-        return format(pattern, new Object[] {arg0, arg1, arg2});
-    }
-
-    public static String format(String pattern, Object arg0, Object arg1, Object arg2, Object arg3) {
-        return format(pattern, new Object[] {arg0, arg1, arg2, arg3});
-    }
+	static {
+		NLS.initializeMessages(BUNDLE_NAME, Messages.class);
+	}
 }

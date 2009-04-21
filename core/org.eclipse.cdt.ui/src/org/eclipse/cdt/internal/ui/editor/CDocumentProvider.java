@@ -17,6 +17,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
+import org.eclipse.core.filebuffers.ITextFileBuffer;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IResource;
@@ -26,7 +27,11 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.ListenerList;
+import org.eclipse.core.runtime.NullProgressMonitor;
+import org.eclipse.core.runtime.Status;
+import org.eclipse.core.runtime.SubProgressMonitor;
 import org.eclipse.core.runtime.jobs.ISchedulingRule;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.text.BadLocationException;
@@ -46,6 +51,10 @@ import org.eclipse.jface.text.source.IAnnotationModelListenerExtension;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.text.edits.DeleteEdit;
+import org.eclipse.text.edits.InsertEdit;
+import org.eclipse.text.edits.MalformedTreeException;
+import org.eclipse.text.edits.MultiTextEdit;
+import org.eclipse.text.edits.TextEdit;
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IFileEditorInput;
 import org.eclipse.ui.editors.text.ForwardingDocumentProvider;
@@ -71,6 +80,7 @@ import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.cdt.ui.PreferenceConstants;
 import org.eclipse.cdt.ui.text.ICPartitions;
 
+import org.eclipse.cdt.internal.core.model.CommitWorkingCopyOperation;
 import org.eclipse.cdt.internal.core.model.IBufferFactory;
 import org.eclipse.cdt.internal.core.model.TranslationUnit;
 
@@ -313,7 +323,6 @@ public class CDocumentProvider extends TextFileDocumentProvider {
 			}
 			return true;
 		}
-
 	}
 
 	/**
@@ -926,28 +935,69 @@ public class CDocumentProvider extends TextFileDocumentProvider {
 		super.disposeFileInfo(element, info);
 	}
 
-	protected void commitWorkingCopy(IProgressMonitor monitor, Object element, TranslationUnitInfo info, boolean overwrite)
-			throws CoreException {
+	/**
+	 * Creates and returns a new sub-progress monitor for the
+	 * given parent monitor.
+	 *
+	 * @param monitor the parent progress monitor
+	 * @param ticks the number of work ticks allocated from the parent monitor
+	 * @return the new sub-progress monitor
+	 */
+	private IProgressMonitor getSubProgressMonitor(IProgressMonitor monitor, int ticks) {
+		if (monitor != null)
+			return new SubProgressMonitor(monitor, ticks, SubProgressMonitor.PREPEND_MAIN_LABEL_TO_SUBTASK);
 
-		IDocument document= info.fTextFileBuffer.getDocument();
-		IResource resource= info.fCopy.getResource();
-		
-		if (resource instanceof IFile && !resource.exists()) {
-			// underlying resource has been deleted, just recreate file, ignore the rest
-			createFileFromDocument(monitor, (IFile) resource, document);
-			return;
-		}
+		return new NullProgressMonitor();
+	}
+
+	protected void commitWorkingCopy(IProgressMonitor monitor, Object element, TranslationUnitInfo info,
+			boolean overwrite) throws CoreException {
+		if (monitor == null)
+			monitor= new NullProgressMonitor();
+
+		monitor.beginTask("", 100); //$NON-NLS-1$
 
 		try {
-			commitFileBuffer(monitor, info, overwrite);
-		} catch (CoreException x) {
-			// inform about the failure
-			fireElementStateChangeFailed(element);
-			throw x;
-		} catch (RuntimeException x) {
-			// inform about the failure
-			fireElementStateChangeFailed(element);
-			throw x;
+			IDocument document= info.fTextFileBuffer.getDocument();
+			IResource resource= info.fCopy.getResource();
+			
+			boolean isSynchronized= resource.isSynchronized(IResource.DEPTH_ZERO);
+
+			// Make sure file gets save in commit() if the underlying file has been deleted
+			if (!isSynchronized && isDeleted(element))
+				info.fTextFileBuffer.setDirty(true);
+
+			if (resource instanceof IFile && !resource.exists()) {
+				// Underlying resource has been deleted, just recreate file, ignore the rest
+				createFileFromDocument(monitor, (IFile) resource, document);
+				return;
+			}
+	
+			try {
+				CoreException saveActionException= null;
+				try {
+					performSaveActions(info.fTextFileBuffer, getSubProgressMonitor(monitor, 20));
+				} catch (CoreException e) {
+					saveActionException = e;
+				}
+
+				CommitWorkingCopyOperation op= new CommitWorkingCopyOperation(info.fCopy, isSynchronized || overwrite);
+				op.runOperation(getSubProgressMonitor(monitor, 80));
+
+				if (saveActionException != null) {
+					throw saveActionException;
+				}
+			} catch (CoreException x) {
+				// inform about the failure
+				fireElementStateChangeFailed(element);
+				throw x;
+			} catch (RuntimeException x) {
+				// inform about the failure
+				fireElementStateChangeFailed(element);
+				throw x;
+			}
+		} finally {
+			monitor.done();
 		}
 	}
 
@@ -955,14 +1005,8 @@ public class CDocumentProvider extends TextFileDocumentProvider {
 	 * @see org.eclipse.ui.editors.text.TextFileDocumentProvider#createSaveOperation(java.lang.Object, org.eclipse.jface.text.IDocument, boolean)
 	 */
 	@Override
-	protected DocumentProviderOperation createSaveOperation(final Object element, final IDocument document, final boolean overwrite) throws CoreException {
-		try {
-			performSaveActions(document);
-		} catch (Exception exc) {
-			// log any exeption, but perform save anyway
-			CUIPlugin.log(exc);
-		}
-		
+	protected DocumentProviderOperation createSaveOperation(final Object element, final IDocument document,
+			final boolean overwrite) throws CoreException {
 		final FileInfo info= getFileInfo(element);
 		if (info instanceof TranslationUnitInfo) {
 			return new DocumentProviderOperation() {
@@ -993,66 +1037,117 @@ public class CDocumentProvider extends TextFileDocumentProvider {
 	}
 
 	/**
-	 * Perform configured document manipulations before save.
-	 * 
-	 * @param document
+	 * Removes trailing whitespaces from changed lines and adds newline at the end of the file,
+	 * if the last line of the file was changed.
 	 * @throws BadLocationException 
 	 */
-	private void performSaveActions(final IDocument document) throws BadLocationException {
-		//add a newline to the end of the document (if it is not already present)
-		//-----------------------------------------------------------------------
-		//for people who do not want auto-modification of their files,
-		//this flag will prevent addition of a newline unless the user
-		//explicitly sets the preference thru Window -> Preferences -> C/C++ -> Editor
-		//  -> Appearance Tab -> Ensure newline end of file when saving
-		if (PreferenceConstants.getPreferenceStore().getBoolean(
-				PreferenceConstants.ENSURE_NEWLINE_AT_EOF)) {
-			// even if the document is empty, there will be at least one line in
-			// it (the 0th one)
-			int lastLineIndex = document.getNumberOfLines() - 1;
-
-			// we have to ensure that the length of the last line is 0.
-			// this will also take care of empty files. empty files have
-			// only one line in them and the length of this one and only
-			// line is 0.
-			// Thus we do not need to append an extra line separator to
-			// empty files.
-			int lastLineLength = document.getLineLength(lastLineIndex);
-			if (lastLineLength != 0) {
-				document.replace(document.getLength(), 0,
-						TextUtilities.getDefaultLineDelimiter(document));
-			}
-		}
-		
-		// Remove trailing whitespace when saving. Triggered by the flag
-		// in Preferences -> C/C++ -> Editor
-		if (PreferenceConstants.getPreferenceStore().getBoolean(
-				PreferenceConstants.REMOVE_TRAILING_WHITESPACE)) {
-
-			int lineCount= document.getNumberOfLines();
-			for (int i= 0; i < lineCount; i++) {
-
-				IRegion region= document.getLineInformation(i);
-				if (region.getLength() == 0)
-					continue;
-
-				int lineStart= region.getOffset();
-				int lineExclusiveEnd= lineStart + region.getLength();
-
-				// Find the rightmost none-whitespace character
-				int charPos= lineExclusiveEnd - 1;
-				while (charPos >= lineStart && Character.isWhitespace(document.getChar(charPos)))
-					charPos--;
-
-				charPos++;
-				if (charPos < lineExclusiveEnd) {
-					DeleteEdit edit= new DeleteEdit(charPos, lineExclusiveEnd - charPos);
+	private void performSaveActions(ITextFileBuffer buffer, IProgressMonitor monitor) throws CoreException {
+		if (shouldRemoveTrailingWhitespace() || shouldAddNewlineAtEof()) {
+			IRegion[] changedRegions= EditorUtility.calculateChangedLineRegions(buffer, getSubProgressMonitor(monitor, 20));
+			IDocument document = buffer.getDocument();
+			TextEdit edit = createSaveActionEdit(document, changedRegions);
+			if (edit != null) {
+				try {
 					edit.apply(document);
+				} catch (MalformedTreeException e) {
+					String message= e.getMessage();
+					if (message == null)
+						message= "MalformedTreeException"; //$NON-NLS-1$
+					throw new CoreException(new Status(IStatus.ERROR, CUIPlugin.PLUGIN_ID, message, e));
+				} catch (BadLocationException e) {
+					String message= e.getMessage();
+					if (message == null)
+						message= "BadLocationException"; //$NON-NLS-1$
+					throw new CoreException(new Status(IStatus.ERROR, CUIPlugin.PLUGIN_ID, message, e));
 				}
 			}
 		}
 	}
 
+	private static boolean shouldAddNewlineAtEof() {
+		return PreferenceConstants.getPreferenceStore().getBoolean(
+				PreferenceConstants.ENSURE_NEWLINE_AT_EOF);
+	}
+
+	private static boolean shouldRemoveTrailingWhitespace() {
+		return PreferenceConstants.getPreferenceStore().getBoolean(
+				PreferenceConstants.REMOVE_TRAILING_WHITESPACE);
+	}
+
+	/**
+	 * Creates a text edit for the save actions.
+	 * @return a text edit, or <code>null</code> if the save actions leave the file intact.
+	 */
+	private TextEdit createSaveActionEdit(IDocument document, IRegion[] changedRegions) {
+		TextEdit rootEdit = null;
+		try {
+			if (shouldRemoveTrailingWhitespace()) {
+				// Remove trailing whitespace from changed lines.
+				for (IRegion region : changedRegions) {
+					int firstLine = document.getLineOfOffset(region.getOffset());
+					int lastLine = document.getLineOfOffset(region.getOffset() + region.getLength());
+					for (int line = firstLine; line <= lastLine; line++) {
+						IRegion lineRegion = document.getLineInformation(line);
+						if (lineRegion.getLength() == 0) {
+							continue;
+						}
+						int lineStart = lineRegion.getOffset();
+						int lineEnd = lineStart + lineRegion.getLength();
+
+						// Find the rightmost none-whitespace character
+						int charPos = lineEnd - 1;
+						while (charPos >= lineStart && Character.isWhitespace(document.getChar(charPos)))
+							charPos--;
+
+						charPos++;
+						if (charPos < lineEnd) {
+							TextEdit edit= new DeleteEdit(charPos, lineEnd - charPos);
+							if (rootEdit == null) {
+								rootEdit = new MultiTextEdit();
+							}
+							rootEdit.addChild(edit);
+						}
+					}
+				}
+			}
+			if (shouldAddNewlineAtEof()) {
+				// Add newline at the end of the file.
+				int endOffset = document.getLength();
+				IRegion lastLineRegion = document.getLineInformationOfOffset(endOffset);
+				if (lastLineRegion.getLength() != 0) {
+					for (IRegion region : changedRegions) {
+						if (region.getOffset() + region.getLength() >= lastLineRegion.getOffset()) {
+							// Last line has changed
+							if (!shouldRemoveTrailingWhitespace() || !isWhitespaceRegion(document, lastLineRegion)) {
+								TextEdit edit = new InsertEdit(endOffset,
+										TextUtilities.getDefaultLineDelimiter(document));
+								if (rootEdit == null) {
+									rootEdit = edit;
+								} else {
+									rootEdit.addChild(edit);
+								}
+							}
+							break;
+						}
+					}				
+				}
+			}
+		} catch (BadLocationException e) {
+			CUIPlugin.log(e);
+		}
+		return rootEdit;
+	}
+
+	private static boolean isWhitespaceRegion(IDocument document, IRegion region) throws BadLocationException {
+		int end = region.getOffset() + region.getLength();
+		for (int i = region.getOffset(); i < end; i++) {
+			if (!Character.isWhitespace(document.getChar(i))) {
+				return false;
+			}
+		}
+		return true;
+	}
+	
 	/**
 	 * Returns the preference whether handling temporary problems is enabled.
 	 */

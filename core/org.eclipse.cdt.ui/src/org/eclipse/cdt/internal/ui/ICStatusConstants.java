@@ -11,15 +11,15 @@
 package org.eclipse.cdt.internal.ui;
 
 /**
- * Defines status codes relevant to the Java UI plug-in. When a 
+ * Defines status codes relevant to the CDT UI plug-in. When a 
  * Core exception is thrown, it contain a status object describing
  * the cause of the exception. The status objects originating from the
- * Java UI plug-in use the codes defined in this interface.
+ * CDT UI plug-in use the codes defined in this interface.
   */
 public interface ICStatusConstants {
 
 	// C UI status constants start at 10000 to make sure that we don't
-	// collide with resource and java model constants.
+	// collide with resource and c model constants.
 	
 	public static final int INTERNAL_ERROR= 10001;
 	
@@ -46,4 +46,12 @@ public interface ICStatusConstants {
 	 * parsing template file.
 	 */
 	public static final int TEMPLATE_PARSE_EXCEPTION = 10005;
- }
+
+	/**
+	 * Status constant indication that a problem occurred while calculating
+	 * the changed region during a save.
+	 * 
+	 * @since 5.1
+	 */
+	public static final int EDITOR_CHANGED_REGION_CALCULATION= 10006;
+}

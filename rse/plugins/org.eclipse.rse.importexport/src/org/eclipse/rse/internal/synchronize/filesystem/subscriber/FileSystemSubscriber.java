@@ -175,7 +175,15 @@ public class FileSystemSubscriber extends ThreeWaySubscriber {
 					long storedModificationTime = properties.getRemoteFileTimeStamp();
 				
 					if (remoteModificationTime > storedModificationTime){
-						base = new LocalResourceVariant(local);
+						// what if it's changed locally too?
+						long localDownloadTimeStamp = properties.getDownloadFileTimeStamp();
+						long localTimeStamp = local.getLocalTimeStamp();
+						if (localTimeStamp > localDownloadTimeStamp){
+							base = null; // conflict for both
+						}
+						else {
+							base = new LocalResourceVariant(local);
+						}
 					}		
 				}
 			}

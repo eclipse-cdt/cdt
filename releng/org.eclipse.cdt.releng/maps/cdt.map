@@ -125,5 +125,5 @@ plugin@org.eclipse.cdt.debug.ui.memory.memorybrowser=@cdtTag@,:pserver:anonymous
 feature@org.eclipse.cdt.debug.ui.memory=@cdtTag@,:pserver:anonymous@dev.eclipse.org:/cvsroot/tools,,org.eclipse.cdt/memory/org.eclipse.cdt.debug.ui.memory-feature
 
 ! CDT RSE Remote Launch
-plugin@org.eclipse.cdt.launch.remote=@cdtTag@,:pserver:anonymous@dev.eclipse.org:/cvsroot/tools,,org.eclipse.cdt/cross/org.eclipse.cdt.remote.launch
-feature@org.eclipse.cdt.launch.remote=@cdtTag@,:pserver:anonymous@dev.eclipse.org:/cvsroot/tools,,org.eclipse.cdt/cross/org.eclipse.cdt.remote.launch-feature
+plugin@org.eclipse.cdt.launch.remote=@cdtTag@,:pserver:anonymous@dev.eclipse.org:/cvsroot/tools,,org.eclipse.cdt/cross/org.eclipse.cdt.launch.remote
+feature@org.eclipse.cdt.launch.remote=@cdtTag@,:pserver:anonymous@dev.eclipse.org:/cvsroot/tools,,org.eclipse.cdt/cross/org.eclipse.cdt.launch.remote-feature

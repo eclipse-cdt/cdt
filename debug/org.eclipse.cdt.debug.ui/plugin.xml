@@ -757,7 +757,6 @@
          </action>
          <action
                helpContextId="add_globals_action_context"
-               enablesFor="1"
                label="%AddGlobalsAction.label"
                class="org.eclipse.cdt.debug.internal.ui.actions.AddGlobalsActionDelegate"
                icon="icons/elcl16/watch_globals.gif"
@@ -1143,7 +1142,6 @@
          <action
                helpContextId="add_globals_action_context"
                disabledIcon="icons/dlcl16/watch_globals.gif"
-               enablesFor="1"
                toolbarPath="additions"
                label="%AddGlobalsAction.label"
                tooltip="%AddGlobalsAction.tooltip"

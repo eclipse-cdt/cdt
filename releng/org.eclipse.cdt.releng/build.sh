@@ -21,7 +21,8 @@ export PATH=/opt/public/common/ibm-java2-ppc-50/bin:$PATH
 # make sure we're in the releng project dir 
 cd `dirname $0`
 
-# (TODO why is this here?)
+# make sure the umask doesn't allow for group execute permissions\
+# TODO not sure we really need this any more
 umask 0022
 
 # Checkout basebuilder to run the build
@@ -32,9 +33,8 @@ cvs -d:pserver:anonymous@dev.eclipse.org:/cvsroot/eclipse \
 cd ..
 
 # Let's go!
-java -jar tools/org.eclipse.releng.basebuilder/plugins/org.eclipse.equinox.launcher.jar \
+java $CDT_BUILD_VMARGS -jar tools/org.eclipse.releng.basebuilder/plugins/org.eclipse.equinox.launcher.jar \
 	-ws gtk -arch ppc -os linux -application org.eclipse.ant.core.antRunner $*
 
 # Copy the build.log to where the latest build is
 cp /opt/public/download-staging.priv/tools/cdt/releng/build.log /home/www/tools/cdt/builds/6.0.0/latest
-	

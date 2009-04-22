@@ -11,6 +11,7 @@
  * Martin Oberhuber (Wind River) - [227320] Fix endless loop in TelnetTerminalShell
  * Anna Dushistova  (MontaVista) - [240523] [rseterminals] Provide a generic adapter factory that adapts any ITerminalService to an IShellService
  * Martin Oberhuber (Wind River) - [267402] [telnet] "launch shell" takes forever
+ * Anna Dushistova  (MontaVista) - [267474] [rseterminal][telnet] Notify the remote when terminal window size changes
  *******************************************************************************/
 
 package org.eclipse.rse.internal.services.telnet.terminal;
@@ -25,6 +26,8 @@ import java.io.Writer;
 
 import org.apache.commons.net.io.ToNetASCIIInputStream;
 import org.apache.commons.net.telnet.EchoOptionHandler;
+import org.apache.commons.net.telnet.InvalidTelnetOptionException;
+import org.apache.commons.net.telnet.WindowSizeOptionHandler;
 import org.apache.commons.net.telnet.SuppressGAOptionHandler;
 import org.apache.commons.net.telnet.TelnetClient;
 import org.apache.commons.net.telnet.TelnetOption;
@@ -39,7 +42,7 @@ import org.eclipse.rse.services.terminals.ITerminalService;
 
 /**
  * A remote shell connection supporting Streams for I/O.
- *
+ * 
  * @since 2.0
  */
 public class TelnetTerminalShell extends AbstractTerminalShell {
@@ -57,9 +60,9 @@ public class TelnetTerminalShell extends AbstractTerminalShell {
 
 	/**
 	 * Construct a new Terminal connection.
-	 *
+	 * 
 	 * The SSH channel is immediately connected in the Constructor.
-	 *
+	 * 
 	 * @param sessionProvider
 	 *            SSH session provider
 	 * @param ptyType
@@ -96,13 +99,16 @@ public class TelnetTerminalShell extends AbstractTerminalShell {
 				fTelnetClient = new TelnetClient();
 			} else {
 				fTelnetClient = new TelnetClient(ptyType);
-				fTelnetClient.addOptionHandler(new TerminalTypeOptionHandler(ptyType, true, true, true, true));
+				fTelnetClient.addOptionHandler(new TerminalTypeOptionHandler(
+						ptyType, true, true, true, true));
 			}
 			// request remote echo, but accept local if desired
 			fTelnetClient.addOptionHandler(new EchoOptionHandler(false, true,
 					true, true));
 			fTelnetClient.addOptionHandler(new SuppressGAOptionHandler(true,
 					true, true, true));
+			fTelnetClient.addOptionHandler(new WindowSizeOptionHandler(fWidth,
+					fHeight, true, true, true, true));
 			fTelnetClient = fSessionProvider.loginTelnetClient(fTelnetClient,
 					new NullProgressMonitor());
 			fOutputStream = fTelnetClient.getOutputStream();
@@ -147,7 +153,7 @@ public class TelnetTerminalShell extends AbstractTerminalShell {
 	/**
 	 * Encode String with requested user encoding, in case it differs from
 	 * Platform default encoding.
-	 *
+	 * 
 	 * @param s
 	 *            String to encode
 	 * @param encoding
@@ -171,7 +177,7 @@ public class TelnetTerminalShell extends AbstractTerminalShell {
 
 	/*
 	 * (non-Javadoc)
-	 *
+	 * 
 	 * @see ITerminalHostShell#getInputStream(Object)
 	 */
 	public InputStream getInputStream() {
@@ -180,7 +186,7 @@ public class TelnetTerminalShell extends AbstractTerminalShell {
 
 	/*
 	 * (non-Javadoc)
-	 *
+	 * 
 	 * @see ITerminalHostShell#getOutputStream(Object)
 	 */
 	public OutputStream getOutputStream() {
@@ -191,7 +197,7 @@ public class TelnetTerminalShell extends AbstractTerminalShell {
 	 * Write a command to the shell, honoring specified Encoding. Can only be
 	 * done before an outputStream is obtained, since these commands would
 	 * interfere with the outputStream.
-	 *
+	 * 
 	 * @param command
 	 *            Command String to send, or "#break" to send a Ctrl+C command.
 	 */
@@ -270,6 +276,15 @@ public class TelnetTerminalShell extends AbstractTerminalShell {
 				&& (newWidth != fWidth || newHeight != fHeight)) {
 			// avoid excessive communications due to change size requests by
 			// caching previous size
+			synchronized (fTelnetClient) {
+				try {
+					fTelnetClient.deleteOptionHandler(TelnetOption.WINDOW_SIZE);
+					fTelnetClient.addOptionHandler(new WindowSizeOptionHandler(
+							newWidth, newHeight, true, true, true, true));
+				} catch (InvalidTelnetOptionException e) {
+					e.printStackTrace();
+				}
+			}
 			fWidth = newWidth;
 			fHeight = newHeight;
 		}

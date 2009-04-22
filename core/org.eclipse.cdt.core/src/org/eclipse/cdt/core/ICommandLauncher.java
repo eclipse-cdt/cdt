@@ -3,6 +3,8 @@ package org.eclipse.cdt.core;
 import java.io.OutputStream;
 import java.util.Properties;
 
+import org.eclipse.core.resources.IProject;
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 
@@ -16,6 +18,22 @@ public interface ICommandLauncher {
 	public final static int COMMAND_CANCELED = 1;
 	public final static int ILLEGAL_COMMAND = -1;
 	public final static int OK = 0;
+	
+	
+	/**
+	 * Sets the project that this launcher is associated with, or <code>null</code> if there is no such
+	 * project.
+	 * 
+	 * @param project
+	 */
+	public void setProject(IProject project);
+	
+	/**
+	 * Gets the project this launcher is associated with.
+	 * 
+	 * @return IProject, or <code>null</code> if there is no such project.
+	 */
+	public IProject getProject();
 
 	/**
 	 * Sets if the command should be printed out first before executing.
@@ -64,8 +82,10 @@ public interface ICommandLauncher {
 
 	/**
 	 * Execute a command
+	 * @param env The list of environment variables in variable=value format.
+	 * @throws CoreException if there is an error executing the command.
 	 */
-	public  Process execute(IPath commandPath, String[] args, String[] env, IPath changeToDirectory);
+	public Process execute(IPath commandPath, String[] args, String[] env, IPath changeToDirectory, IProgressMonitor monitor) throws CoreException;
 
 	/**
 	 * Reads output form the process to the streams.

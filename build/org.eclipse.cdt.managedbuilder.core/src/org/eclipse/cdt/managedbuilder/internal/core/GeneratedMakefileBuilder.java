@@ -948,6 +948,7 @@ public class GeneratedMakefileBuilder extends ACBuilder {
 				String errMsg = null;
 				IBuilder builder = info.getDefaultConfiguration().getBuilder();
 				ICommandLauncher launcher = builder.getCommandLauncher();
+				launcher.setProject(currentProject);
 				launcher.showCommand(true);
 	
 				// Set the environmennt
@@ -1009,7 +1010,7 @@ public class GeneratedMakefileBuilder extends ACBuilder {
 						premakeArgs.add("-q"); //$NON-NLS-1$ 
 						premakeArgs.add("main-build"); //$NON-NLS-1$ 
 						premakeTargets = (String[]) premakeArgs.toArray(new String[premakeArgs.size()]);
-						proc = launcher.execute(makeCommand, premakeTargets, env, workingDirectory);
+						proc = launcher.execute(makeCommand, premakeTargets, env, workingDirectory, monitor);
 						if (proc != null) {
 							try {
 								// Close the input of the process since we will never write to it
@@ -1077,8 +1078,7 @@ public class GeneratedMakefileBuilder extends ACBuilder {
 
 				// Launch make - main invocation 
 				if (!isuptodate) {
-					proc = launcher.execute(makeCommand, makeTargets, env,
-								workingDirectory);
+					proc = launcher.execute(makeCommand, makeTargets, env, workingDirectory, monitor);
 					if (proc != null) {
 						try {
 							// Close the input of the process since we will never write to it

@@ -15,6 +15,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import org.eclipse.cdt.core.CommandLauncher;
 import org.eclipse.cdt.core.ICommandLauncher;
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.Path;
 
 /**
@@ -29,9 +30,15 @@ public class CygwinMIEnvironmentCD extends WinMIEnvironmentCD {
 		ByteArrayOutputStream out = new ByteArrayOutputStream();
 		ByteArrayOutputStream err = new ByteArrayOutputStream();
 		String newPath = null;
-		launcher.execute( new Path( "cygpath" ), //$NON-NLS-1$
-		new String[]{ "-u", path }, //$NON-NLS-1$
-		new String[0], new Path( "." ) ); //$NON-NLS-1$
+		try {
+			launcher.execute( new Path( "cygpath" ), //$NON-NLS-1$
+			new String[]{ "-u", path }, //$NON-NLS-1$
+			new String[0], new Path( "." ),
+			null);
+		} catch (CoreException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		} //$NON-NLS-1$
 		if ( launcher.waitAndRead( out, err ) == ICommandLauncher.OK ) {
 			newPath = out.toString();
 			if ( newPath != null ) {

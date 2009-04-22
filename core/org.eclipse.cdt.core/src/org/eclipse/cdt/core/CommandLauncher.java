@@ -18,6 +18,8 @@ import java.util.Properties;
 import org.eclipse.cdt.internal.core.ProcessClosure;
 import org.eclipse.cdt.utils.spawner.EnvironmentReader;
 import org.eclipse.cdt.utils.spawner.ProcessFactory;
+import org.eclipse.core.resources.IProject;
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 
@@ -38,6 +40,7 @@ public class CommandLauncher implements ICommandLauncher {
 	protected String fErrorMessage = ""; //$NON-NLS-1$
 
 	private String lineSeparator;
+	private IProject fProject;
 
 	/**
 	 * The number of milliseconds to pause between polling.
@@ -107,10 +110,40 @@ public class CommandLauncher implements ICommandLauncher {
 		return args;
 	}
 
-	/* (non-Javadoc)
+	/**
+	 * @deprecated
+	 * @param commandPath
+	 * @param args
+	 * @param env
+	 * @param changeToDirectory
+	 * @return
+	 * @throws CoreException
+	 * @since 5.1
+	 */
+	public Process execute(IPath commandPath, String[] args, String[] env, IPath changeToDirectory) throws CoreException {
+		try {
+			// add platform specific arguments (shell invocation)
+			fCommandArgs = constructCommandArray(commandPath.toOSString(), args);
+			
+			File file = null;
+			
+			if(changeToDirectory != null)
+				file = changeToDirectory.toFile();
+			
+			fProcess = ProcessFactory.getFactory().exec(fCommandArgs, env, file);
+			fErrorMessage = ""; //$NON-NLS-1$
+		} catch (IOException e) {
+			setErrorMessage(e.getMessage());
+			fProcess = null;
+		}
+		return fProcess;
+	}
+	
+	/**
+	 * @since 5.1
 	 * @see org.eclipse.cdt.core.ICommandLauncher#execute(org.eclipse.core.runtime.IPath, java.lang.String[], java.lang.String[], org.eclipse.core.runtime.IPath)
 	 */
-	public Process execute(IPath commandPath, String[] args, String[] env, IPath changeToDirectory) {
+	public Process execute(IPath commandPath, String[] args, String[] env, IPath changeToDirectory, IProgressMonitor monitor) throws CoreException {
 		try {
 			// add platform specific arguments (shell invocation)
 			fCommandArgs = constructCommandArray(commandPath.toOSString(), args);
@@ -207,6 +240,23 @@ public class CommandLauncher implements ICommandLauncher {
 			buf.append(lineSeparator);
 		}
 		return buf.toString();
+	}
+
+	
+	/**
+	 * @since 5.1
+	 * @see org.eclipse.cdt.core.ICommandLauncher#getProject()
+	 */
+	public IProject getProject() {
+		return fProject;
+	}
+
+	/**
+	 * @since 5.1
+	 * @see org.eclipse.cdt.core.ICommandLauncher#setProject(org.eclipse.core.resources.IProject)
+	 */
+	public void setProject(IProject project) {
+		fProject = project;
 	}
 
 }

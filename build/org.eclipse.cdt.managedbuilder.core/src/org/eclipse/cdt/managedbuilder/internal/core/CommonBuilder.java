@@ -1935,6 +1935,7 @@ public class CommonBuilder extends ACBuilder {
 
 				String errMsg = null;
 				ICommandLauncher launcher = builder.getCommandLauncher();
+				launcher.setProject(currProject);
 				// Print the command for visual interaction.
 				launcher.showCommand(true);
 
@@ -1975,7 +1976,7 @@ public class CommonBuilder extends ACBuilder {
 				ConsoleOutputSniffer sniffer = createBuildOutputSniffer(stdout, stderr, currProject, cfg, workingDirectory, this, null);
 				OutputStream consoleOut = (sniffer == null ? stdout : sniffer.getOutputStream());
 				OutputStream consoleErr = (sniffer == null ? stderr : sniffer.getErrorStream());
-				Process p = launcher.execute(buildCommand, buildArguments, env, workingDirectory);
+				Process p = launcher.execute(buildCommand, buildArguments, env, workingDirectory, monitor);
 				if (p != null) {
 					try {
 						// Close the input of the Process explicitly.

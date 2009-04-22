@@ -16,6 +16,7 @@ import java.util.StringTokenizer;
 import org.eclipse.cdt.core.CommandLauncher;
 import org.eclipse.cdt.core.ICommandLauncher;
 import org.eclipse.cdt.debug.mi.core.command.MIEnvironmentDirectory;
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.Path;
 
 /**
@@ -88,11 +89,16 @@ public class CygwinMIEnvironmentDirectory extends MIEnvironmentDirectory {
 		String result = path;
 		ICommandLauncher launcher = new CommandLauncher();
 		ByteArrayOutputStream out = new ByteArrayOutputStream();
-		launcher.execute(
-			new Path("cygpath"), //$NON-NLS-1$
-			new String[] { "-p", "-u", path }, //$NON-NLS-1$ //$NON-NLS-2$
-			new String[0],
-			new Path(".")); //$NON-NLS-1$
+		try {
+			launcher.execute(
+				new Path("cygpath"), //$NON-NLS-1$
+				new String[] { "-p", "-u", path }, //$NON-NLS-1$ //$NON-NLS-2$
+				new String[0],
+				new Path("."), null);
+		} catch (CoreException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} //$NON-NLS-1$
 		if (launcher.waitAndRead(out, out) == ICommandLauncher.OK)
 			result = out.toString().trim();
 		return result;

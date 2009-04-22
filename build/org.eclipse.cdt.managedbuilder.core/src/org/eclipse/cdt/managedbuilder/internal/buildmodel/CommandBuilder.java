@@ -22,6 +22,7 @@ import org.eclipse.cdt.core.CommandLauncher;
 import org.eclipse.cdt.core.ICommandLauncher;
 import org.eclipse.cdt.managedbuilder.buildmodel.IBuildCommand;
 import org.eclipse.cdt.managedbuilder.internal.core.ManagedMakeMessages;
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.SubProgressMonitor;
@@ -160,7 +161,15 @@ public class CommandBuilder implements IBuildModelBuilder {
 
 		launcher.showCommand(true);
 
-		fProcess = launcher.execute(fCmd.getCommand(), fCmd.getArgs(), mapToStringArray(fCmd.getEnvironment()), fCmd.getCWD());
+		try {
+			fProcess = launcher.execute(fCmd.getCommand(), fCmd.getArgs(), mapToStringArray(fCmd.getEnvironment()), fCmd.getCWD(), monitor);
+		} catch (CoreException e1) {
+			// TODO Auto-generated catch block
+			if(DbgUtil.DEBUG)
+				DbgUtil.trace("Error launching command: " + e1.getMessage());	//$NON-NLS-1$
+			monitor.done();
+			return STATUS_ERROR_LAUNCH;
+		}
 		
 		if (fProcess != null) {
 			try {

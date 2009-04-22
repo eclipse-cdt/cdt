@@ -103,6 +103,7 @@ public class DefaultRunSIProvider implements IExternalScannerInfoProvider {
             
             String errMsg = null;
             ICommandLauncher launcher = new CommandLauncher();
+            launcher.setProject(currentProject);
             // Print the command for visual interaction.
             launcher.showCommand(true);
 
@@ -118,7 +119,7 @@ public class DefaultRunSIProvider implements IExternalScannerInfoProvider {
             OutputStream consoleOut = (sniffer == null ? cos : sniffer.getOutputStream());
             OutputStream consoleErr = (sniffer == null ? cos : sniffer.getErrorStream());
             TraceUtil.outputTrace("Default provider is executing command:", fCompileCommand.toString() + ca, ""); //$NON-NLS-1$ //$NON-NLS-2$
-            Process p = launcher.execute(getCommandToLaunch(), comandLineOptions, setEnvironment(launcher, env), fWorkingDirectory);
+            Process p = launcher.execute(getCommandToLaunch(), comandLineOptions, setEnvironment(launcher, env), fWorkingDirectory, monitor);
             if (p != null) {
                 try {
                     // Close the input of the Process explicitely.

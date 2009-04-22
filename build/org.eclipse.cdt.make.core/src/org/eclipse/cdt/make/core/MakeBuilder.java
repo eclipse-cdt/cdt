@@ -155,6 +155,7 @@ public class MakeBuilder extends ACBuilder {
 
 				String errMsg = null;
 				ICommandLauncher launcher = new CommandLauncher();
+				launcher.setProject(currProject);
 				// Print the command for visual interaction.
 				launcher.showCommand(true);
 
@@ -208,7 +209,7 @@ public class MakeBuilder extends ACBuilder {
 						stdout, stderr, getProject(), workingDirectory, null, this, null);
 				OutputStream consoleOut = (sniffer == null ? stdout : sniffer.getOutputStream());
 				OutputStream consoleErr = (sniffer == null ? stderr : sniffer.getErrorStream());
-				Process p = launcher.execute(buildCommand, buildArguments, env, workingDirectory);
+				Process p = launcher.execute(buildCommand, buildArguments, env, workingDirectory, monitor);
 				if (p != null) {
 					try {
 						// Close the input of the Process explicitly.

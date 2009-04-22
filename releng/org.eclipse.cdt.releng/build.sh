@@ -32,8 +32,6 @@ cvs -d:pserver:anonymous@dev.eclipse.org:/cvsroot/eclipse \
 	checkout -r R35_M6 org.eclipse.releng.basebuilder
 cd ..
 
-echo $CDT_BUILD_VMARGS
-
 # Let's go!
 java $CDT_BUILD_VMARGS -jar tools/org.eclipse.releng.basebuilder/plugins/org.eclipse.equinox.launcher.jar \
 	-ws gtk -arch ppc -os linux -application org.eclipse.ant.core.antRunner $*

@@ -10,10 +10,13 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.lrparser.xlc.ast;
 
+import org.eclipse.cdt.core.dom.ast.IASTExpression;
+import org.eclipse.cdt.core.lrparser.xlc.ast.IXlcCPPASTModifiedArrayModifier;
 import org.eclipse.cdt.core.lrparser.xlc.ast.IXlcCPPASTVectorTypeSpecifier;
 import org.eclipse.cdt.core.lrparser.xlc.ast.IXlcCPPNodeFactory;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPNodeFactory;
 
+@SuppressWarnings("restriction")
 public class XlcCPPNodeFactory extends CPPNodeFactory implements IXlcCPPNodeFactory {
 	
 private static final XlcCPPNodeFactory DEFAULT_INSTANCE = new XlcCPPNodeFactory();
@@ -24,5 +27,9 @@ private static final XlcCPPNodeFactory DEFAULT_INSTANCE = new XlcCPPNodeFactory(
 	
 	public IXlcCPPASTVectorTypeSpecifier newVectorTypeSpecifier() {
 		return new XlcCPPASTVectorTypeSpecifier();
+	}
+	
+	public IXlcCPPASTModifiedArrayModifier newModifiedArrayModifier(IASTExpression expr) {
+		return new XlcCPPASTModifiedArrayModifier(expr);
 	}
 }

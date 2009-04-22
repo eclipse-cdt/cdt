@@ -5,13 +5,13 @@
       <language
             class="org.eclipse.cdt.core.lrparser.xlc.XlcCLanguage"
             id="c"
-            name="XLC C">
+            name="%language.name.c">
       </language>
       
       <language
             class="org.eclipse.cdt.core.lrparser.xlc.XlcCPPLanguage"
             id="cpp"
-            name="XLC C++">
+            name="%language.name.cpp">
       </language>
    </extension>
  <extension
@@ -26,7 +26,7 @@
             category="org.eclipse.cdt.ui.preferences.CPluginPreferencePage"
             class="org.eclipse.cdt.internal.core.lrparser.xlc.ui.preferences.XlcLanguageOptionsPreferencePage"
             id="org.eclipse.cdt.core.lrparser.xlc.ui.XlcLanguagePreferencePage"
-            name="XLC Language Options">
+            name="%preferences.page.title">
       </page>
    </extension>
    <extension
@@ -35,7 +35,7 @@
             category="org.eclipse.cdt.ui.newui.Page_head_general"
             class="org.eclipse.cdt.internal.core.lrparser.xlc.ui.preferences.XlcLanguageOptionsPreferencePage"
             id="org.eclipse.cdt.core.lrparser.xlc.ui.XlcLanguagePropertyPage"
-            name="XLC Language Options">
+            name="%preferences.page.title">
       </page>
    </extension>
 </plugin>

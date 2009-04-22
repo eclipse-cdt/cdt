@@ -14,6 +14,7 @@ import org.eclipse.cdt.core.lrparser.xlc.ast.IXlcCASTVectorTypeSpecifier;
 import org.eclipse.cdt.core.lrparser.xlc.ast.IXlcCNodeFactory;
 import org.eclipse.cdt.internal.core.dom.parser.c.CNodeFactory;
 
+@SuppressWarnings("restriction")
 public class XlcCNodeFactory extends CNodeFactory implements IXlcCNodeFactory {
 
 	private static final XlcCNodeFactory DEFAULT_INSTANCE = new XlcCNodeFactory();

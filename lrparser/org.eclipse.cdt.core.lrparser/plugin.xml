@@ -2,6 +2,7 @@
 <?eclipse version="3.2"?>
 <plugin>
     
+   <!--
    <extension point="org.eclipse.cdt.core.language">
       <language
             class="org.eclipse.cdt.core.dom.lrparser.c99.C99Language"
@@ -25,5 +26,6 @@
             name="LR GPP">
       </language>
    </extension>
+   -->
    
 </plugin>

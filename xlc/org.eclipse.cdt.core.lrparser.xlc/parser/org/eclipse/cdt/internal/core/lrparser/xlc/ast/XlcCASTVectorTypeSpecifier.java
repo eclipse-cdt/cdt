@@ -13,6 +13,7 @@ package org.eclipse.cdt.internal.core.lrparser.xlc.ast;
 import org.eclipse.cdt.core.lrparser.xlc.ast.IXlcCASTVectorTypeSpecifier;
 import org.eclipse.cdt.internal.core.dom.parser.c.CASTSimpleDeclSpecifier;
 
+@SuppressWarnings("restriction")
 public class XlcCASTVectorTypeSpecifier extends CASTSimpleDeclSpecifier implements IXlcCASTVectorTypeSpecifier {
 
 	private boolean isPixel;

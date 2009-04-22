@@ -13,6 +13,7 @@ package org.eclipse.cdt.internal.core.lrparser.xlc.ast;
 import org.eclipse.cdt.core.lrparser.xlc.ast.IXlcCPPASTVectorTypeSpecifier;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTSimpleDeclSpecifier;
 
+@SuppressWarnings("restriction")
 public class XlcCPPASTVectorTypeSpecifier extends CPPASTSimpleDeclSpecifier implements IXlcCPPASTVectorTypeSpecifier {
 
 	private boolean isPixel;

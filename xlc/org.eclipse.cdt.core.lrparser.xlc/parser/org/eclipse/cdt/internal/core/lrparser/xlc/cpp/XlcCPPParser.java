@@ -2078,6 +2078,48 @@ private  GNUBuildASTParserAction  gnuAction;
             //
             case 643: { action.   consumeToken();            break;
             }  
+  
+            //
+            // Rule 644:  array_modifier ::= [ <openscope-ast> array_modifier_type_qualifiers ]
+            //
+            case 644: { action.   consumeDirectDeclaratorModifiedArrayModifier(false, false, true, false);             break;
+            }  
+  
+            //
+            // Rule 645:  array_modifier ::= [ <openscope-ast> array_modifier_type_qualifiers assignment_expression ]
+            //
+            case 645: { action.   consumeDirectDeclaratorModifiedArrayModifier(false, false, true, true);             break;
+            }  
+  
+            //
+            // Rule 646:  array_modifier ::= [ static assignment_expression ]
+            //
+            case 646: { action.   consumeDirectDeclaratorModifiedArrayModifier(true, false, false, true);             break;
+            }  
+  
+            //
+            // Rule 647:  array_modifier ::= [ static <openscope-ast> array_modifier_type_qualifiers assignment_expression ]
+            //
+            case 647: { action.   consumeDirectDeclaratorModifiedArrayModifier(true, false, true, true);             break;
+            }  
+  
+            //
+            // Rule 648:  array_modifier ::= [ <openscope-ast> array_modifier_type_qualifiers static assignment_expression ]
+            //
+            case 648: { action.   consumeDirectDeclaratorModifiedArrayModifier(true, false, true, true);             break;
+            }  
+  
+            //
+            // Rule 649:  array_modifier ::= [ * ]
+            //
+            case 649: { action.   consumeDirectDeclaratorModifiedArrayModifier(false, true, false, false);             break;
+            }  
+  
+            //
+            // Rule 650:  array_modifier ::= [ <openscope-ast> array_modifier_type_qualifiers * ]
+            //
+            case 650: { action.   consumeDirectDeclaratorModifiedArrayModifier(false, true, true, false);             break;
+            }  
 
     
             default:

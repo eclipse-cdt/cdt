@@ -74,4 +74,29 @@ specifier_qualifier
     ::= 'typedef'
           /. $Build  consumeToken(); $EndBuild ./
           
+          
+array_modifier 
+    ::= '[' <openscope-ast> array_modifier_type_qualifiers ']'
+          /. $Build  consumeDirectDeclaratorModifiedArrayModifier(false, false, true, false);  $EndBuild ./
+      | '[' <openscope-ast> array_modifier_type_qualifiers assignment_expression ']'
+          /. $Build  consumeDirectDeclaratorModifiedArrayModifier(false, false, true, true);  $EndBuild ./
+      | '[' 'static' assignment_expression ']'
+          /. $Build  consumeDirectDeclaratorModifiedArrayModifier(true, false, false, true);  $EndBuild ./
+      | '[' 'static' <openscope-ast> array_modifier_type_qualifiers assignment_expression ']'
+          /. $Build  consumeDirectDeclaratorModifiedArrayModifier(true, false, true, true);  $EndBuild ./
+      | '[' <openscope-ast> array_modifier_type_qualifiers 'static' assignment_expression ']'
+          /. $Build  consumeDirectDeclaratorModifiedArrayModifier(true, false, true, true);  $EndBuild ./
+      | '[' '*' ']'
+          /. $Build  consumeDirectDeclaratorModifiedArrayModifier(false, true, false, false);  $EndBuild ./
+      | '[' <openscope-ast> array_modifier_type_qualifiers '*' ']'
+          /. $Build  consumeDirectDeclaratorModifiedArrayModifier(false, true, true, false);  $EndBuild ./
+          
+          
+array_modifier_type_qualifiers
+    ::= type_qualifier_list 
+    
+type_qualifier_list
+    ::= cv_qualifier         
+      | type_qualifier_list cv_qualifier
+          
 $End

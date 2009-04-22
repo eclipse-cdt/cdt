@@ -89,4 +89,8 @@
          id="org.eclipse.cdt.debug.ui.memory"
          version="0.0.0"/>
 
+   <includes
+         id="org.eclipse.cdt.launch.remote"
+         version="0.0.0"/>
+
 </feature>

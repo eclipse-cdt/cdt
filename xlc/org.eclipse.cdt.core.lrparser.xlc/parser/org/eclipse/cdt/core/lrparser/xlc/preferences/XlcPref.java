@@ -11,12 +11,25 @@
 package org.eclipse.cdt.core.lrparser.xlc.preferences;
 
 
-public final class XlcPreferenceKeys {
+public enum XlcPref {
 
-	private XlcPreferenceKeys() {}
 	
-	public static final String KEY_SUPPORT_VECTOR_TYPES = "vectorTypes";
+	SUPPORT_VECTOR_TYPES("true"),
+	SUPPORT_DECIMAL_FLOATING_POINT_TYPES("true"),
+	SUPPORT_COMPLEX_IN_CPP("true"),
+	SUPPORT_RESTRICT_IN_CPP("true");
 
-	public static final String KEY_SUPPORT_DECIMAL_FLOATING_POINT_TYPES = "floatingPointTypes";
+	
+	private final String defaultVal;
+	
+	private XlcPref(String defaultVal) {
+		this.defaultVal = defaultVal;
+	}
+	
+	public String getDefaultValue() {
+		return defaultVal;
+	}
 }
+
+
 

@@ -13,13 +13,14 @@ package org.eclipse.cdt.core.lrparser.xlc;
 import java.util.Map;
 
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
+import org.eclipse.cdt.core.dom.lrparser.IDOMTokenMap;
 import org.eclipse.cdt.core.dom.lrparser.IParser;
 import org.eclipse.cdt.core.dom.lrparser.LRParserProperties;
 import org.eclipse.cdt.core.dom.lrparser.gnu.GPPLanguage;
 import org.eclipse.cdt.core.dom.parser.IScannerExtensionConfiguration;
 import org.eclipse.cdt.core.index.IIndex;
 import org.eclipse.cdt.core.lrparser.xlc.preferences.XlcLanguagePreferences;
-import org.eclipse.cdt.core.lrparser.xlc.preferences.XlcPreferenceKeys;
+import org.eclipse.cdt.core.lrparser.xlc.preferences.XlcPref;
 import org.eclipse.cdt.core.model.ICLanguageKeywords;
 import org.eclipse.cdt.core.parser.IScanner;
 import org.eclipse.cdt.internal.core.lrparser.xlc.cpp.XlcCPPParser;
@@ -57,16 +58,24 @@ public class XlcCPPLanguage extends GPPLanguage {
 	}
 	
 	
+	static boolean getPref(XlcPref key, IProject project) {
+		return Boolean.valueOf(XlcLanguagePreferences.get(key, project));
+	}
+	
+	
 	@Override
 	protected IParser<IASTTranslationUnit> getParser(IScanner scanner, IIndex index, Map<String,String> properties) {
 		IProject project = getProject(properties);
-		boolean supportVectors  = Boolean.valueOf(XlcLanguagePreferences.get(XlcPreferenceKeys.KEY_SUPPORT_VECTOR_TYPES, project));
-		boolean supportDecimals = Boolean.valueOf(XlcLanguagePreferences.get(XlcPreferenceKeys.KEY_SUPPORT_DECIMAL_FLOATING_POINT_TYPES, project));
+		boolean supportVectors  = getPref(XlcPref.SUPPORT_VECTOR_TYPES, project);
+		boolean supportDecimals = getPref(XlcPref.SUPPORT_DECIMAL_FLOATING_POINT_TYPES, project);
+		boolean supportComplex  = getPref(XlcPref.SUPPORT_COMPLEX_IN_CPP, project);
+		boolean supportRestrict = getPref(XlcPref.SUPPORT_RESTRICT_IN_CPP, project);
+		IDOMTokenMap tokenMap = new XlcCPPTokenMap(supportVectors, supportDecimals, supportComplex, supportRestrict);
 		
-		
-		XlcCPPParser parser = new XlcCPPParser(scanner, new XlcCPPTokenMap(supportVectors, supportDecimals), getBuiltinBindingsProvider(), index, properties);
+		XlcCPPParser parser = new XlcCPPParser(scanner, tokenMap, getBuiltinBindingsProvider(), index, properties);
 		return parser;
 	}
+	
 	
 	public String getId() {
 		return ID;

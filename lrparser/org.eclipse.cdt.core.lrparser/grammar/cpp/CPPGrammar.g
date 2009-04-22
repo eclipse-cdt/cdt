@@ -964,10 +964,14 @@ elaborated_specifier_hook
 --   ::= identifier_token
 
 
+comma_opt
+    ::= ',' | $empty
+    
+    
 enum_specifier
-    ::= 'enum' enum_specifier_hook '{' <openscope-ast> enumerator_list_opt '}'
+    ::= 'enum' enum_specifier_hook '{' <openscope-ast> enumerator_list_opt comma_opt '}'
           /. $Build  consumeTypeSpecifierEnumeration(false); $EndBuild ./
-      | 'enum' enum_specifier_hook identifier_token '{' <openscope-ast> enumerator_list_opt '}'
+      | 'enum' enum_specifier_hook identifier_token '{' <openscope-ast> enumerator_list_opt comma_opt '}'
           /. $Build  consumeTypeSpecifierEnumeration(true); $EndBuild ./
 
 enum_specifier_hook

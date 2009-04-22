@@ -16,7 +16,6 @@ import static org.eclipse.cdt.internal.core.lrparser.xlc.cpp.XlcCPPParsersym.*;
 import org.eclipse.cdt.core.dom.lrparser.IDOMTokenMap;
 import org.eclipse.cdt.core.parser.IGCCToken;
 import org.eclipse.cdt.core.parser.IToken;
-import org.eclipse.cdt.core.parser.ParserLanguage;
 
 /**
  * Maps tokens types returned by CPreprocessor to token types
@@ -28,8 +27,8 @@ public class XlcCPPTokenMap implements IDOMTokenMap {
 
 	private final XlcKeywords keywordMap;
 	
-	public XlcCPPTokenMap(boolean supportVectors, boolean supportDecimalFloatingPoint) {
-		keywordMap = new XlcKeywords(ParserLanguage.CPP, supportVectors, supportDecimalFloatingPoint);
+	public XlcCPPTokenMap(boolean supportVectors, boolean supportDecimalFloatingPoint, boolean supportComplex, boolean supportRestrict) {
+		keywordMap = XlcKeywords.createCPP(supportVectors, supportDecimalFloatingPoint, supportComplex, supportRestrict);
 	}
 	
 	

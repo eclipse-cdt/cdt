@@ -23,46 +23,63 @@ import org.eclipse.cdt.internal.core.lrparser.xlc.cpp.XlcCPPParsersym;
 
 public class XlcKeywords extends CLanguageKeywords {
 	
-	public static final XlcKeywords ALL_C_KEYWORDS = new XlcKeywords(ParserLanguage.C, true, true);
-	public static final XlcKeywords ALL_CPP_KEYWORDS = new XlcKeywords(ParserLanguage.CPP, true, true);
+	public static final XlcKeywords ALL_C_KEYWORDS = createC(true, true);
+	public static final XlcKeywords ALL_CPP_KEYWORDS = createCPP(true, true, true, true);
 	
 	
 	private final CharArrayMap<Integer> map = new CharArrayMap<Integer>();
 	private final ParserLanguage language;
 	private String[] allKeywords = null;
 	
-	public XlcKeywords(ParserLanguage language, boolean supportVectors, boolean supportDeclimalFloatingPoint) {
+	
+	public static XlcKeywords createC(boolean supportVectors, boolean supportDecimalFloatingPoint) {
+		XlcKeywords keywords = new XlcKeywords(ParserLanguage.C);
+		CharArrayMap<Integer> map = keywords.map;
+		if(supportVectors) {
+			map.put("vector".toCharArray(),   XlcCParsersym.TK_vector);
+			map.put("__vector".toCharArray(), XlcCParsersym.TK_vector);
+			map.put("pixel".toCharArray(),    XlcCParsersym.TK_pixel);
+			map.put("__pixel".toCharArray(),  XlcCParsersym.TK_pixel);
+			map.put("bool".toCharArray(),     XlcCParsersym.TK_bool);
+		}
+		if(supportDecimalFloatingPoint) {
+			map.put("_Decimal32".toCharArray(),  XlcCParsersym.TK__Decimal32);
+			map.put("_Decimal64".toCharArray(),  XlcCParsersym.TK__Decimal64);
+			map.put("_Decimal128".toCharArray(), XlcCParsersym.TK__Decimal128);
+		}
+		return keywords;
+	}
+	
+	public static XlcKeywords createCPP(boolean supportVectors, boolean supportDecimalFloatingPoint, boolean supportComplex, boolean supportRestrict) {
+		XlcKeywords keywords = new XlcKeywords(ParserLanguage.CPP);
+		CharArrayMap<Integer> map = keywords.map;
+		if(supportVectors) {
+			map.put("vector".toCharArray(),   XlcCPPParsersym.TK_vector);
+			map.put("__vector".toCharArray(), XlcCPPParsersym.TK_vector);
+			map.put("pixel".toCharArray(),    XlcCPPParsersym.TK_pixel);
+			map.put("__pixel".toCharArray(),  XlcCPPParsersym.TK_pixel);
+		}
+		if(supportDecimalFloatingPoint) {
+			map.put("_Decimal32".toCharArray(),  XlcCPPParsersym.TK__Decimal32);
+			map.put("_Decimal64".toCharArray(),  XlcCPPParsersym.TK__Decimal64);
+			map.put("_Decimal128".toCharArray(), XlcCPPParsersym.TK__Decimal128);
+		}
+		if(supportComplex) {
+			map.put("_Complex".toCharArray(), XlcCPPParsersym.TK__Complex);
+		}
+		if(supportRestrict) {
+			map.put("restrict".toCharArray(), XlcCPPParsersym.TK_restrict);
+			map.put("__restrict".toCharArray(), XlcCPPParsersym.TK_restrict);
+			map.put("__restrict__".toCharArray(), XlcCPPParsersym.TK_restrict);
+		}
+		
+		return keywords;
+	}
+	
+
+	private XlcKeywords(ParserLanguage language) {
 		super(language, XlcScannerExtensionConfiguration.getInstance());
 		this.language = language;
-		
-		if(language.isCPP()) {
-			if(supportVectors) {
-				map.put("vector".toCharArray(),   XlcCPPParsersym.TK_vector);
-				map.put("__vector".toCharArray(), XlcCPPParsersym.TK_vector);
-				map.put("pixel".toCharArray(),    XlcCPPParsersym.TK_pixel);
-				map.put("__pixel".toCharArray(),  XlcCPPParsersym.TK_pixel);
-			}
-			if(supportDeclimalFloatingPoint) {
-				map.put("_Decimal32".toCharArray(),  XlcCPPParsersym.TK__Decimal32);
-				map.put("_Decimal64".toCharArray(),  XlcCPPParsersym.TK__Decimal64);
-				map.put("_Decimal128".toCharArray(), XlcCPPParsersym.TK__Decimal128);
-			}
-		}
-		else {
-			if(supportVectors) {
-				map.put("vector".toCharArray(),   XlcCParsersym.TK_vector);
-				map.put("__vector".toCharArray(), XlcCParsersym.TK_vector);
-				map.put("pixel".toCharArray(),    XlcCParsersym.TK_pixel);
-				map.put("__pixel".toCharArray(),  XlcCParsersym.TK_pixel);
-				map.put("bool".toCharArray(),     XlcCParsersym.TK_bool);
-			}
-			if(supportDeclimalFloatingPoint) {
-				map.put("_Decimal32".toCharArray(),  XlcCParsersym.TK__Decimal32);
-				map.put("_Decimal64".toCharArray(),  XlcCParsersym.TK__Decimal64);
-				map.put("_Decimal128".toCharArray(), XlcCParsersym.TK__Decimal128);
-			}
-		}
-		
 	}
 	
 	/**

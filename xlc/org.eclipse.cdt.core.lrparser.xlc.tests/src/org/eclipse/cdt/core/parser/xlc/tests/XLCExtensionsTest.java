@@ -10,6 +10,9 @@
  *******************************************************************************/
 package org.eclipse.cdt.core.parser.xlc.tests;
 
+import org.eclipse.cdt.core.lrparser.xlc.preferences.XlcLanguagePreferences;
+import org.eclipse.cdt.core.lrparser.xlc.preferences.XlcPref;
+
 
 public class XLCExtensionsTest extends XLCTestBase {
 
@@ -218,11 +221,18 @@ public class XLCExtensionsTest extends XLCTestBase {
 
 		parse(code, getCLanguage(), true);
 	}
-	public void testRestrictCPP() {
+	
+	public void testRestrictCPPOn() {
+		String code =
+			"void foo(int n, int * restrict  a, int * __restrict b, int * __restrict__  c) {} ";
+
+		parse(code, getCPPLanguage(), true);
+	}
+	public void testRestrictCPPOff() {
+		XlcLanguagePreferences.setWorkspacePreference(XlcPref.SUPPORT_RESTRICT_IN_CPP, String.valueOf(false));
 		String code =
 			"void restrict(); \n " +
-			"void __restrict(); \n " +
-			"void __restrict__(); \n ";
+			"void foo(int n, int * __restrict b, int * __restrict__  c) {} ";
 
 		parse(code, getCPPLanguage(), true);
 	}
@@ -244,7 +254,7 @@ public class XLCExtensionsTest extends XLCTestBase {
 	}
 	
 	
-	public void testFloatingPoingTypes() {
+	public void testFloatingPointTypes() {
 		String code =
 			"  _Decimal32 x = 22.2df; \n " +
 			"  _Decimal64 y = 33.3dd; \n " +

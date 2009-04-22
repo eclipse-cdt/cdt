@@ -30,4 +30,8 @@ public class XlcScannerExtensionConfiguration extends GCCScannerExtensionConfigu
 		return true;
 	}
 
+	@Override
+	public char[] supportAdditionalNumericLiteralSuffixes() {
+        return "dfl".toCharArray(); //$NON-NLS-1$
+    }
 }

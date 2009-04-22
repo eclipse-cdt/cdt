@@ -13,13 +13,12 @@ package org.eclipse.cdt.internal.core.lrparser.xlc.ui.preferences;
 
 
 import org.eclipse.cdt.core.lrparser.xlc.preferences.XlcLanguagePreferences;
-import org.eclipse.cdt.core.lrparser.xlc.preferences.XlcPreferenceKeys;
+import org.eclipse.cdt.core.lrparser.xlc.preferences.XlcPref;
 import org.eclipse.cdt.utils.ui.controls.ControlFactory;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.jface.preference.PreferencePage;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Event;
@@ -38,11 +37,24 @@ import org.eclipse.ui.dialogs.PreferencesUtil;
 public class XlcLanguageOptionsPreferencePage extends PreferencePage implements IWorkbenchPreferencePage, IWorkbenchPropertyPage {
 
 	private IAdaptable element;
+	private PrefCheckbox[] checkboxes;
 	
-	private Button buttonVectors;
-	private Button buttonDecimals;
 	
-
+	private void initializeCheckboxes(Composite group) {
+		XlcPref[] prefs = XlcPref.values();
+		int n = prefs.length;
+		PrefCheckbox[] checkboxes = new PrefCheckbox[n];
+		IProject project = getProject(); // null for preference page
+		
+		for(int i = 0; i < n; i++) {
+			String message = PreferenceMessages.getMessage(prefs[i].toString());			
+			checkboxes[i] = new PrefCheckbox(group, prefs[i], message);
+			String preference = XlcLanguagePreferences.get(prefs[i], project);
+			checkboxes[i].setSelection(Boolean.valueOf(preference));
+		}
+	}
+	
+	
 	@Override
 	protected Control createContents(Composite parent) {
 		Composite page = ControlFactory.createComposite(parent, 1);
@@ -58,11 +70,7 @@ public class XlcLanguageOptionsPreferencePage extends PreferencePage implements 
 		}
 		
 		Composite group = ControlFactory.createGroup(page, PreferenceMessages.XlcLanguageOptionsPreferencePage_group, 1);
-		
-		buttonVectors = ControlFactory.createCheckBox(group, PreferenceMessages.XlcLanguageOptionsPreferencePage_preference_vectors);
-		initCheckbox(buttonVectors, XlcPreferenceKeys.KEY_SUPPORT_VECTOR_TYPES);
-		buttonDecimals = ControlFactory.createCheckBox(group, PreferenceMessages.XlcLanguageOptionsPreferencePage_preference_decimals);
-		initCheckbox(buttonDecimals, XlcPreferenceKeys.KEY_SUPPORT_DECIMAL_FLOATING_POINT_TYPES);
+		initializeCheckboxes(group);
 		
 		return page;
 	}
@@ -70,53 +78,36 @@ public class XlcLanguageOptionsPreferencePage extends PreferencePage implements 
 
 	@Override
 	protected void performDefaults() {
-		buttonVectors.setSelection(Boolean.valueOf(XlcLanguagePreferences.getDefaultPreference(XlcPreferenceKeys.KEY_SUPPORT_VECTOR_TYPES)));
-		buttonDecimals.setSelection(Boolean.valueOf(XlcLanguagePreferences.getDefaultPreference(XlcPreferenceKeys.KEY_SUPPORT_DECIMAL_FLOATING_POINT_TYPES)));
-		
+		for(PrefCheckbox button : checkboxes) {
+			button.setDefault();
+		}
 		super.performDefaults();
 	}
 
 	@Override
 	public boolean performOk() {
-		setPreference(XlcPreferenceKeys.KEY_SUPPORT_VECTOR_TYPES, buttonVectors.getSelection(), getProject());
-		setPreference(XlcPreferenceKeys.KEY_SUPPORT_DECIMAL_FLOATING_POINT_TYPES, buttonDecimals.getSelection(), getProject());
+		IProject project = getProject();
+		for(PrefCheckbox button : checkboxes) {
+			setPreference(button.getKey(), button.getSelection(), project);
+		}
 		return true;
 	}
 	
 	
-	
-	private void initCheckbox(Button checkbox, String prefKey) {
-		String preference = null;
-		
-		if(isPropertyPage()) {
-			IProject project = getProject();
-			preference = XlcLanguagePreferences.getProjectPreference(prefKey, project);
-		}
-		else {
-			preference = XlcLanguagePreferences.getWorkspacePreference(prefKey);
-		}
-		
-		if(preference == null) {
-			preference = XlcLanguagePreferences.getDefaultPreference(prefKey);
-		}
-		
-		checkbox.setSelection(Boolean.valueOf(preference));
+	private static void setPreference(XlcPref key, boolean val, IProject project) {
+		String s = String.valueOf(val);
+		if(project != null)
+			XlcLanguagePreferences.setProjectPreference(key, s, project);
+		else
+			XlcLanguagePreferences.setWorkspacePreference(key, s);
 	}
+	
 	
 	
 	private IProject getProject() {
 		return isPropertyPage() ? (IProject)element.getAdapter(IProject.class) : null;
 	}
-	
-	private static void setPreference(String key, boolean val, IProject project) {
-		if(project != null)
-			XlcLanguagePreferences.setProjectPreference(key, String.valueOf(val), project);
-		else
-			XlcLanguagePreferences.setWorkspacePreference(key, String.valueOf(val));
-	}
-	
-	
-	
+
 	public IAdaptable getElement() {
 		return element;
 	}

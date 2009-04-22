@@ -31,35 +31,36 @@ public class XlcLanguagePreferences  {
 
 
 	static void initializeDefaultPreferences() {
-		Preferences prefs = getDefaultPreferences();
-		prefs.putBoolean(XlcPreferenceKeys.KEY_SUPPORT_VECTOR_TYPES, true);
-		prefs.putBoolean(XlcPreferenceKeys.KEY_SUPPORT_DECIMAL_FLOATING_POINT_TYPES, true);
-	}
-	
-	public static void setProjectPreference(String key, String value, IProject project) {
-		getProjectPreferences(project).put(key, value);
-	}
-	
-	
-	public static void setWorkspacePreference(String key, String value) {
-		getWorkspacePreferences().put(key, value);
+		Preferences defaultNode = getDefaultPreferences();
+		
+		for(XlcPref p : XlcPref.values()) {
+			defaultNode.put(p.toString(), p.getDefaultValue());
+		}
 	}
 	
 	
-	public static String getProjectPreference(String key, IProject project) {
-		return getProjectPreferences(project).get(key, null);
+	
+	public static void setProjectPreference(XlcPref key, String value, IProject project) {
+		getProjectPreferences(project).put(key.toString(), value);
 	}
 	
+	public static void setWorkspacePreference(XlcPref key, String value) {
+		getWorkspacePreferences().put(key.toString(), value);
+	}
+	
+	
+	
+	public static String getProjectPreference(XlcPref key, IProject project) {
+		return getProjectPreferences(project).get(key.toString(), null);
+	}
 
-	public static String getWorkspacePreference(String key) {
-		return getWorkspacePreferences().get(key, null);
+	public static String getWorkspacePreference(XlcPref key) {
+		return getWorkspacePreferences().get(key.toString(), null);
 	}
 	
-	public static String getDefaultPreference(String key) {
-		return getDefaultPreferences().get(key, null);
+	public static String getDefaultPreference(XlcPref key) {
+		return getDefaultPreferences().get(key.toString(), null);
 	}
-	
-
 	
 
 	/**
@@ -67,11 +68,11 @@ public class XlcLanguagePreferences  {
 	 * 
 	 * @param project If null then just the workspace and default preferences will be checked.
 	 */
-	public static String get(String key, IProject project) {
-		return Platform.getPreferencesService().get(key, null, getPreferences(key, project));
+	public static String get(XlcPref key, IProject project) {
+		return Platform.getPreferencesService().get(key.toString(), null, getPreferences(project));
 	}
 
-	private static Preferences[] getPreferences(String key, IProject project) {
+	private static Preferences[] getPreferences(IProject project) {
 		if(project == null) {
 			return new Preferences[] {
 				getWorkspacePreferences(),

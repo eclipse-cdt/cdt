@@ -10,6 +10,8 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.lrparser.xlc.ui.preferences;
 
+import java.lang.reflect.Field;
+
 import org.eclipse.osgi.util.NLS;
 
 public class PreferenceMessages extends NLS {
@@ -19,15 +21,33 @@ public class PreferenceMessages extends NLS {
 	private PreferenceMessages() {}
 	
 	static {
-		NLS.initializeMessages(BUNDLE_NAME, PreferenceMessages.class);
+		initializeMessages(BUNDLE_NAME, PreferenceMessages.class);
+	}
+	
+	public static final String PREFIX = "XlcLanguageOptionsPreferencePage_";
+	
+	
+	public static String getMessage(String suffix) {
+		try {
+			Field field = PreferenceMessages.class.getDeclaredField(PREFIX + suffix);
+			return (String)field.get(null);
+			
+		} catch (NoSuchFieldException e) {
+			return null;
+		} catch (IllegalAccessException e) {
+			return null;
+		}
 	}
 	
 	
 	public static String
 		XlcLanguageOptionsPreferencePage_link,
 		XlcLanguageOptionsPreferencePage_group,
-		XlcLanguageOptionsPreferencePage_preference_vectors,
-		XlcLanguageOptionsPreferencePage_preference_decimals;
+		
+		XlcLanguageOptionsPreferencePage_SUPPORT_VECTOR_TYPES,
+		XlcLanguageOptionsPreferencePage_SUPPORT_DECIMAL_FLOATING_POINT_TYPES,
+		XlcLanguageOptionsPreferencePage_SUPPORT_COMPLEX_IN_CPP,
+		XlcLanguageOptionsPreferencePage_SUPPORT_RESTRICT_IN_CPP;
 	
 }
 

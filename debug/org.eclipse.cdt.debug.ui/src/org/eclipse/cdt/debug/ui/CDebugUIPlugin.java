@@ -31,26 +31,33 @@ import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExtensionPoint;
+import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.debug.core.model.IPersistableSourceLocator;
+import org.eclipse.debug.ui.IDebugUIConstants;
+import org.eclipse.debug.ui.IDebugView;
 import org.eclipse.debug.ui.ILaunchConfigurationTab;
 import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.preference.PreferenceConverter;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.resource.ImageRegistry;
 import org.eclipse.jface.text.source.ISharedTextColors;
+import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.ISharedImages;
+import org.eclipse.ui.IViewPart;
+import org.eclipse.ui.IViewReference;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.editors.text.EditorsUI;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
+import org.eclipse.ui.progress.WorkbenchJob;
 import org.osgi.framework.BundleContext;
 
 /**
@@ -276,6 +283,31 @@ public class CDebugUIPlugin extends AbstractUIPlugin {
         fDisassemblyEditorManager = new DisassemblyEditorManager();
 		EvaluationContextManager.startup();
 		CDebugCorePlugin.getDefault().addCBreakpointListener( CBreakpointUpdater.getInstance() );
+		
+		// We contribute actions to the platform's Variables view with a
+		// criteria to enable only when this plugin is loaded. This can lead to
+		// some edge cases with broken behavior (273306). The solution is to
+		// force a selection change notification after we get loaded.
+		WorkbenchJob wjob = new WorkbenchJob("CDT Variable view action updater") { //$NON-NLS-1$
+			public IStatus runInUIThread(IProgressMonitor monitor) {
+				IWorkbenchWindow[] windows = PlatformUI.getWorkbench().getWorkbenchWindows();
+				for (IWorkbenchWindow window : windows) {
+				   IWorkbenchPage[] pages = window.getPages();
+				   for (IWorkbenchPage page : pages) {
+				      IViewReference viewRef = page.findViewReference(IDebugUIConstants.ID_VARIABLE_VIEW);
+				      IViewPart part = viewRef.getView(true);
+				      if (part instanceof IDebugView) {
+				    	  Viewer viewer = ((IDebugView)part).getViewer();
+				    	  if (viewer != null) {
+				    		  viewer.setSelection(viewer.getSelection());
+				    	  }
+				      }
+				   }
+				}
+				return Status.OK_STATUS;
+			}
+		};
+		wjob.schedule();
 	}
 
 	/*

@@ -95,7 +95,7 @@ public class GPPBuildASTParserAction extends CPPBuildASTParserAction {
 		for(Object o : tokens) {
 			if(o instanceof IToken) {
 				IToken token = (IToken)o;
-				switch(token.getKind()) {
+				switch(gppTokenMap.mapKind(token.getKind())) {
 					case GPPParsersym.TK__Complex:   isComplex = true;   break;
 					case GPPParsersym.TK__Imaginary: isImaginary = true; break;
 					case GPPParsersym.TK_long : numLong++; break;

@@ -14,12 +14,12 @@ import org.eclipse.cdt.core.lrparser.xlc.preferences.XlcLanguagePreferences;
 import org.eclipse.cdt.core.lrparser.xlc.preferences.XlcPref;
 
 
-public class XLCExtensionsTest extends XLCTestBase {
+public class XlcExtensionsTest extends XlcTestBase {
 
-	public XLCExtensionsTest() {
+	public XlcExtensionsTest() {
 	}
 	
-	public XLCExtensionsTest(String name) {
+	public XlcExtensionsTest(String name) {
 		super(name);
 	}
 	

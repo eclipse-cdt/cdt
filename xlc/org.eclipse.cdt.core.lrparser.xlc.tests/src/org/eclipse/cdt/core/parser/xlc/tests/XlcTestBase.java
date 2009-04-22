@@ -18,12 +18,12 @@ import org.eclipse.cdt.core.lrparser.xlc.XlcCLanguage;
 import org.eclipse.cdt.core.lrparser.xlc.XlcCPPLanguage;
 import org.eclipse.cdt.core.model.ILanguage;
 
-public class XLCTestBase extends TestCase {
+public class XlcTestBase extends TestCase {
 
-	public XLCTestBase() {
+	public XlcTestBase() {
 	}
 	
-	public XLCTestBase(String name) {
+	public XlcTestBase(String name) {
 		super(name);
 	}
 	

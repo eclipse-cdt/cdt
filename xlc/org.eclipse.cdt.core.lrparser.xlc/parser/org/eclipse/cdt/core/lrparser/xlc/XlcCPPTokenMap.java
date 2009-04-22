@@ -43,6 +43,7 @@ public class XlcCPPTokenMap implements IDOMTokenMap {
 	public int mapKind(IToken token) {
 		
 		switch(token.getType()) {
+			case t__Complex  :
 			case tIDENTIFIER : 
 				Integer keywordKind = keywordMap.getTokenKind(token.getCharImage());
 				return keywordKind == null ? TK_identifier : keywordKind;
@@ -184,7 +185,7 @@ public class XlcCPPTokenMap implements IDOMTokenMap {
 			case IGCCToken.t__declspec    : return TK___declspec;
 			
 			// GNU supports these but they are not in the C++ spec
-			case t__Complex   : return TK__Complex;
+			
 			case t__Imaginary : return TK__Imaginary;
 			case t_restrict   : return TK_restrict;
 			

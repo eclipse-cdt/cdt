@@ -42,7 +42,6 @@ $End
 
 $Terminals
 
-	_Complex
 	restrict
 	
 $End
@@ -55,8 +54,6 @@ $End
 
 $Rules 
 
-simple_type_specifier_token
-	::= '_Complex'
 	
 cv_qualifier
     ::= 'restrict'

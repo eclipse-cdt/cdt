@@ -8,18 +8,25 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.cdt.core.parser.xlc.tests;
+package org.eclipse.cdt.core.parser.xlc.tests.base;
 
-import junit.framework.Test;
 import junit.framework.TestSuite;
 
-public class XLCParserTestSuite {
+import org.eclipse.cdt.core.lrparser.tests.LRUtilTests;
+import org.eclipse.cdt.core.lrparser.xlc.XlcCLanguage;
+import org.eclipse.cdt.core.lrparser.xlc.XlcCPPLanguage;
+import org.eclipse.cdt.core.model.ILanguage;
 
-
-	public static Test suite() {
-		return new TestSuite() {{
-			addTestSuite(VectorExtensionsTest.class);
-			addTestSuite(XLCExtensionsTest.class);
-		}};
+public class XlcLRUtilTests extends LRUtilTests {
+	public static TestSuite suite() {
+		return suite(XlcLRUtilTests.class);
+	}
+	
+	protected ILanguage getCLanguage() {
+		return XlcCLanguage.getDefault();
+	}
+	
+	protected ILanguage getCPPLanguage() {
+		return XlcCPPLanguage.getDefault();
 	}
 }

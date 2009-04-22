@@ -22,7 +22,7 @@ import org.eclipse.cdt.core.dom.ast.IASTStatement;
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
 
 
-public class VectorExtensionsTest extends XLCTestBase {
+public class VectorExtensionsTest extends XlcTestBase {
 
 	public VectorExtensionsTest() {
 	}

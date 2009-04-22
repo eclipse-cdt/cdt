@@ -46,7 +46,6 @@ public class XlcCPPLanguage extends GPPLanguage {
 	
 	static IProject getProject(Map<String,String> properties) {
 		String path = properties.get(LRParserProperties.TRANSLATION_UNIT_PATH);
-		System.out.println("path: " + path);
 		IFile[] file = ResourcesPlugin.getWorkspace().getRoot().findFilesForLocation(new Path(path));
 		
 		IProject project = null;

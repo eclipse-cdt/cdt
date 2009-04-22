@@ -43,7 +43,7 @@ public class XlcLanguageOptionsPreferencePage extends PreferencePage implements 
 	private void initializeCheckboxes(Composite group) {
 		XlcPref[] prefs = XlcPref.values();
 		int n = prefs.length;
-		PrefCheckbox[] checkboxes = new PrefCheckbox[n];
+		checkboxes = new PrefCheckbox[n];
 		IProject project = getProject(); // null for preference page
 		
 		for(int i = 0; i < n; i++) {

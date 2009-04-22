@@ -13,7 +13,6 @@ package org.eclipse.cdt.core.lrparser.tests;
 import junit.framework.TestSuite;
 
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
-import org.eclipse.cdt.core.dom.lrparser.BaseExtensibleLanguage;
 import org.eclipse.cdt.core.dom.lrparser.gnu.GCCLanguage;
 import org.eclipse.cdt.core.dom.lrparser.gnu.GPPLanguage;
 import org.eclipse.cdt.core.model.ILanguage;
@@ -56,11 +55,11 @@ public class LRCPPSpecFailingTest extends AST2CPPSpecFailingTest {
 	}
 
 	
-	protected BaseExtensibleLanguage getCLanguage() {
+	protected ILanguage getCLanguage() {
 		return GCCLanguage.getDefault();
 	}
 	
-	protected BaseExtensibleLanguage getCPPLanguage() {
+	protected ILanguage getCPPLanguage() {
 		return GPPLanguage.getDefault();
 	}
 	

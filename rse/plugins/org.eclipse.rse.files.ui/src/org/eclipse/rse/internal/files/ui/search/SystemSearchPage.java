@@ -1481,6 +1481,15 @@ public class SystemSearchPage extends DialogPage implements ISearchPage {
 		initialCaseSensitive = s.getBoolean(STORE_CONFIG_CASE_SENSITIVE);
 		initialStringRegex = s.getBoolean(STORE_CONFIG_STRING_REGEX);
 		initialFileNameCaseSensitive = s.getBoolean(STORE_CONFIG_FILENAME_CASE_SENSITIVE);
+		if (!initialFileNameCaseSensitive){
+			// make sure it was set this way as opposed to defaulting
+			// in order to preserve the 3.0 behaviour, the default needs to be true
+			String value = s.get(STORE_CONFIG_FILENAME_CASE_SENSITIVE);
+			if (value == null){
+				initialFileNameCaseSensitive = true;
+			}
+		}
+		
 		initialFileNameRegex = s.getBoolean(STORE_CONFIG_FILENAME_REGEX);
 		initialSearchArchives = s.getBoolean(STORE_CONFIG_INCLUDE_ARCHIVES);
 		initialSearchSubfolders = s.getBoolean(STORE_CONFIG_INCLUDE_SUBFOLDERS);

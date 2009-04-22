@@ -20,6 +20,7 @@
  * Michael Scharf   (Wind River) - [236203] [rseterminal] Potentially UI blocking code in TerminalViewTab.createTabItem
  * Anna Dushistova  (MontaVista) - [244437] [rseterminal] Possible race condition when multiple Terminals are launched after each other                             
  * Martin Oberhuber (Wind River) - [247700] Terminal uses ugly fonts in JEE package
+ * Anna Dushistova  (MontaVista) - [267609] [rseterminal] The first "Launch Terminal" command creates no terminal tab 
  ********************************************************************************/
 package org.eclipse.rse.internal.terminals.ui.views;
 
@@ -151,6 +152,10 @@ public class TerminalViewTab extends Composite {
 
 	}
 
+	public int getItemCount(){
+		return tabFolder.getItemCount();
+	}
+	
 	public CTabItem getSelectedTab() {
 		if (tabFolder.getItemCount() > 0) {
 			int index = tabFolder.getSelectionIndex();

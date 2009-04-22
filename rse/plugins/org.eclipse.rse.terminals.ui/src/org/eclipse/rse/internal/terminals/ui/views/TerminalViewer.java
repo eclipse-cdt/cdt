@@ -1,5 +1,5 @@
 /********************************************************************************
- * Copyright (c) 2002, 2008 IBM Corporation and others. All rights reserved.
+ * Copyright (c) 2002, 2009 IBM Corporation and others. All rights reserved.
  * This program and the accompanying materials are made available under the terms
  * of the Eclipse Public License v1.0 which accompanies this distribution, and is
  * available at http://www.eclipse.org/legal/epl-v10.html
@@ -25,6 +25,7 @@
  * Anna Dushistova  (MontaVista) - [228577] [rseterminal] Clean up RSE Terminal impl
  * Anna Dushistova  (MontaVista) - [238257] Request a help text when no tab is open in "Remote Shell", "Remote Monitor" and "Terminals" views
  * Anna Dushistova  (MontaVista) - [235097] [rseterminal] Cannot activate RSE Terminals View with the keyboard  
+ * Anna Dushistova  (MontaVista) - [267609] [rseterminal] The first "Launch Terminal" command creates no terminal tab 
  *********************************************************************************/
 package org.eclipse.rse.internal.terminals.ui.views;
 
@@ -125,7 +126,7 @@ public class TerminalViewer extends ViewPart implements ISelectionListener,
                 tabFolder.disposePageFor(((TerminalElement) source).getName());
             }
         }else if(event.getType() == ISystemResourceChangeEvents.EVENT_REFRESH){
-        	if(tabFolder.getSelectedTab()==null)
+        	if(tabFolder.getItemCount() == 0)
             	showEmptyPage();
         	else
         		showTabsPage();

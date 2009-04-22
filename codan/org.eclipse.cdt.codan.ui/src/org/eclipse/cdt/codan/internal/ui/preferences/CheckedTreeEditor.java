@@ -215,7 +215,7 @@ public abstract class CheckedTreeEditor extends FieldEditor implements
 		if (table == null) {
 			listParent = parent;
 			treeViewer = new CheckboxTreeViewer(parent, SWT.BORDER | SWT.MULTI
-					| SWT.V_SCROLL | SWT.H_SCROLL);
+					| SWT.V_SCROLL | SWT.H_SCROLL | SWT.FULL_SELECTION);
 			table = treeViewer.getTree();
 			table.setFont(parent.getFont());
 			treeViewer.addCheckStateListener(this);

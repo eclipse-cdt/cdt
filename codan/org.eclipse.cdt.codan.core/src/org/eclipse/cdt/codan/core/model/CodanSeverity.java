@@ -24,4 +24,17 @@ public enum CodanSeverity {
 	public int intValue() {
 		return value;
 	}
+
+	/**
+	 * @return
+	 */
+	public static String[] stringValues() {
+		CodanSeverity[] values = values();
+		String[] svalues = new String[values.length];
+		for (int i = 0; i < values.length; i++) {
+			CodanSeverity sev = values[i];
+			svalues[i] = sev.toString();
+		}
+		return svalues;
+	}
 }

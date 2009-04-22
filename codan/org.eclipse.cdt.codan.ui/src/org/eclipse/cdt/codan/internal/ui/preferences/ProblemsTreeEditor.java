@@ -13,21 +13,26 @@ package org.eclipse.cdt.codan.internal.ui.preferences;
 import org.eclipse.cdt.codan.core.PreferenceConstants;
 import org.eclipse.cdt.codan.core.builder.CodanPreferencesLoader;
 import org.eclipse.cdt.codan.core.model.CodanProblem;
+import org.eclipse.cdt.codan.core.model.CodanSeverity;
 import org.eclipse.cdt.codan.core.model.IProblem;
 import org.eclipse.cdt.codan.core.model.IProblemCategory;
 import org.eclipse.cdt.codan.core.model.IProblemProfile;
 import org.eclipse.jface.viewers.BaseLabelProvider;
+import org.eclipse.jface.viewers.CellEditor;
 import org.eclipse.jface.viewers.CheckStateChangedEvent;
+import org.eclipse.jface.viewers.ColumnLabelProvider;
+import org.eclipse.jface.viewers.ComboBoxCellEditor;
+import org.eclipse.jface.viewers.EditingSupport;
 import org.eclipse.jface.viewers.IBaseLabelProvider;
 import org.eclipse.jface.viewers.ICheckStateProvider;
 import org.eclipse.jface.viewers.IContentProvider;
 import org.eclipse.jface.viewers.ITableLabelProvider;
 import org.eclipse.jface.viewers.ITreeContentProvider;
+import org.eclipse.jface.viewers.TreeViewerColumn;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.TreeColumn;
 
 public class ProblemsTreeEditor extends CheckedTreeEditor {
 	private CodanPreferencesLoader codanPreferencesLoader = new CodanPreferencesLoader();
@@ -132,6 +137,13 @@ public class ProblemsTreeEditor extends CheckedTreeEditor {
 		}
 	}
 
+	public void checkStateChanged(CheckStateChangedEvent event) {
+		Object element = event.getElement();
+		if (element instanceof CodanProblem) {
+			((CodanProblem) element).setEnabled(event.getChecked());
+		}
+	}
+
 	class ProblemsLabelProvider extends BaseLabelProvider implements
 			IBaseLabelProvider, ITableLabelProvider {
 		public Image getColumnImage(Object element, int columnIndex) {
@@ -156,29 +168,66 @@ public class ProblemsTreeEditor extends CheckedTreeEditor {
 		}
 	}
 
-	public void checkStateChanged(CheckStateChangedEvent event) {
-		Object element = event.getElement();
-		if (element instanceof CodanProblem) {
-			((CodanProblem) element).setEnabled(event.getChecked());
-		}
-	}
-
 	public ProblemsTreeEditor(Composite parent, IProblemProfile profile) {
 		super(PreferenceConstants.P_PROBLEMS, "Problems", parent);
 		setEmptySelectionAllowed(true);
 		getTreeViewer().getTree().setHeaderVisible(true);
 		// getTreeViewer().getTree().
 		getTreeViewer().setContentProvider(new ProblemsContentProvider());
-		getTreeViewer().setLabelProvider(new ProblemsLabelProvider());
 		getTreeViewer().setCheckStateProvider(new ProblemsCheckStateProvider());
 		// column Name
-		TreeColumn column = new TreeColumn(getTreeViewer().getTree(), SWT.NONE);
-		column.setWidth(300);
-		column.setText("Name");
+		TreeViewerColumn column1 = new TreeViewerColumn(getTreeViewer(),
+				SWT.NONE);
+		column1.getColumn().setWidth(300);
+		column1.getColumn().setText("Name");
+		column1.setLabelProvider(new ColumnLabelProvider() {
+			public String getText(Object element) {
+				if (element instanceof IProblem) {
+					IProblem p = (IProblem) element;
+					return p.getName();
+				}
+				if (element instanceof IProblemCategory) {
+					IProblemCategory p = (IProblemCategory) element;
+					return p.getName();
+				}
+				return null;
+			}
+		});
 		// column Severity
-		TreeColumn column2 = new TreeColumn(getTreeViewer().getTree(), SWT.NONE);
-		column2.setWidth(100);
-		column2.setText("Severity");
+		TreeViewerColumn column2 = new TreeViewerColumn(getTreeViewer(),
+				SWT.NONE);
+		column2.getColumn().setWidth(100);
+		column2.getColumn().setText("Severity");
+		column2.setLabelProvider(new ColumnLabelProvider() {
+			public String getText(Object element) {
+				if (element instanceof IProblem) {
+					IProblem p = (IProblem) element;
+					return p.getSeverity().toString();
+				}
+				return null;
+			}
+		});
+		column2.setEditingSupport(new EditingSupport(getTreeViewer()) {
+			protected boolean canEdit(Object element) {
+				return element instanceof CodanProblem;
+			}
+
+			protected CellEditor getCellEditor(Object element) {
+				return new ComboBoxCellEditor(getTreeViewer().getTree(),
+						CodanSeverity.stringValues());
+			}
+
+			protected Object getValue(Object element) {
+				return ((CodanProblem) element).getSeverity().intValue();
+			}
+
+			protected void setValue(Object element, Object value) {
+				int index = ((Integer) value).intValue();
+				CodanSeverity val = CodanSeverity.values()[index];
+				((CodanProblem) element).setSeverity(val);
+				getTreeViewer().update(element, null);
+			}
+		});
 		codanPreferencesLoader.setInput(profile);
 		getViewer().setInput(profile);
 	}

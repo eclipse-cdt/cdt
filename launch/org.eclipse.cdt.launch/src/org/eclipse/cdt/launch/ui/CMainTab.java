@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2008 QNX Software Systems and others.
+ * Copyright (c) 2005, 2009 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -374,9 +374,15 @@ public class CMainTab extends CLaunchConfigurationTab {
 	 */
 	public void performApply(ILaunchConfigurationWorkingCopy config) {
 		ICProject cProject = this.getCProject();
-		if (cProject != null)
+		if (cProject != null && cProject.exists())
 		{
 			config.setMappedResources(new IResource[] { cProject.getProject() });
+		}
+		else
+		{
+			// the user typed in a non-existent project name.  Ensure that
+			// won't be suppressed from the dialog.  This matches JDT behaviour
+			config.setMappedResources(null);
 		}
 		config.setAttribute(ICDTLaunchConfigurationConstants.ATTR_PROJECT_NAME, fProjText.getText());
 		config.setAttribute(ICDTLaunchConfigurationConstants.ATTR_PROJECT_BUILD_CONFIG_ID, (String)fBuildConfigCombo.getData(Integer.toString(fBuildConfigCombo.getSelectionIndex())));
@@ -706,6 +712,9 @@ public class CMainTab extends CLaunchConfigurationTab {
 		if (cElement != null) {
 			initializeCProject(cElement, config);
 			initializeProgramName(cElement, config);
+		} else {
+			// don't want to remember the interim value from before
+			config.setMappedResources(null);
 		}
 		if (wantsTerminalOption()) {
 			config.setAttribute(ICDTLaunchConfigurationConstants.ATTR_USE_TERMINAL, ICDTLaunchConfigurationConstants.USE_TERMINAL_DEFAULT);

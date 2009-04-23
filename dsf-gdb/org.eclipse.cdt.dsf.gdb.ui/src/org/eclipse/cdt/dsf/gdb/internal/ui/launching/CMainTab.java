@@ -314,7 +314,7 @@ public class CMainTab extends CLaunchConfigurationTab {
 	 */
 	public void performApply(ILaunchConfigurationWorkingCopy config) {
 		ICProject cProject = this.getCProject();
-		if (cProject != null)
+		if (cProject != null && cProject.exists())
 		{
 			config.setMappedResources(new IResource[] { cProject.getProject() });
 			try { // Only initialize the build config ID once.
@@ -660,6 +660,9 @@ public class CMainTab extends CLaunchConfigurationTab {
 		if (cElement != null) {
 			initializeCProject(cElement, config);
 			initializeProgramName(cElement, config);
+		} else {
+			// don't want to remember the interim value from before
+			config.setMappedResources(null);
 		}
 	}
 

@@ -229,4 +229,35 @@
             id="org.eclipse.cdt.launch.launchGroup.image">
       </launchConfigurationTypeImage>
    </extension>
+   <extension
+         point="org.eclipse.ltk.core.refactoring.renameParticipants">
+      <renameParticipant
+            class="org.eclipse.cdt.launch.internal.refactoring.ResourceRenameParticipant"
+            id="org.eclipse.cdt.launch.resourceRenameParticipant"
+            name="%resourceRenameParticipant.name">
+         <enablement>
+            <with
+                  variable="affectedNatures">
+               <iterate
+                     ifEmpty="false"
+                     operator="or">
+                  <or>
+                     <equals
+                           value="org.eclipse.cdt.core.cnature">
+                     </equals>
+                     <equals
+                           value="org.eclipse.cdt.core.ccnature">
+                     </equals>
+                  </or>
+               </iterate>
+            </with>
+            <with
+                  variable="element">
+               <instanceof
+                     value="org.eclipse.core.resources.IResource">
+               </instanceof>
+            </with>
+         </enablement>
+      </renameParticipant>
+   </extension>
 </plugin>

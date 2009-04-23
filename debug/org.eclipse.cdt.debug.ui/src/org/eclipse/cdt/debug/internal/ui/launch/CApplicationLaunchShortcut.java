@@ -15,6 +15,7 @@ package org.eclipse.cdt.debug.internal.ui.launch;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 
@@ -47,6 +48,7 @@ import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchConfigurationType;
 import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
+import org.eclipse.debug.core.ILaunchDelegate;
 import org.eclipse.debug.core.ILaunchManager;
 import org.eclipse.debug.ui.DebugUITools;
 import org.eclipse.debug.ui.IDebugModelPresentation;
@@ -166,7 +168,7 @@ public class CApplicationLaunchShortcut implements ILaunchShortcut2 {
 			}
 			
 			if (debugConfig != null) {
-				configuration = createConfiguration(bin, debugConfig);
+				configuration = createConfiguration(bin, debugConfig, mode);
 			}
 		} else if (candidateCount == 1) {
 			configuration = (ILaunchConfiguration) candidateConfigs.get(0);
@@ -184,7 +186,7 @@ public class CApplicationLaunchShortcut implements ILaunchShortcut2 {
 	 * @param bin
 	 * @return ILaunchConfiguration
 	 */
-	private ILaunchConfiguration createConfiguration(IBinary bin, ICDebugConfiguration debugConfig) {
+	private ILaunchConfiguration createConfiguration(IBinary bin, ICDebugConfiguration debugConfig, String mode) {
 		ILaunchConfiguration config = null;
 		try {
 			String projectName = bin.getResource().getProjectRelativePath().toString();
@@ -201,6 +203,17 @@ public class CApplicationLaunchShortcut implements ILaunchShortcut2 {
 				ICDTLaunchConfigurationConstants.DEBUGGER_MODE_RUN);
 			wc.setAttribute(ICDTLaunchConfigurationConstants.ATTR_DEBUGGER_ID, debugConfig.getID());
 
+	        // Workaround for bug 262840: select the standard CDT launcher by default.
+	        HashSet<String> set = new HashSet<String>();
+	        set.add(mode);
+	        try {
+	            ILaunchDelegate preferredDelegate = wc.getPreferredDelegate(set);
+	            if (preferredDelegate == null) {
+                    wc.setPreferredLaunchDelegate(set, "org.eclipse.cdt.cdi.launch.localCLaunch");
+	            }
+	        } catch (CoreException e) {}
+			// End workaround for bug 262840
+	        
 			ICProjectDescription projDes = CCorePlugin.getDefault().getProjectDescription(bin.getCProject().getProject());
 			if (projDes != null)
 			{

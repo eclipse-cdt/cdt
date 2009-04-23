@@ -13,6 +13,7 @@
 package org.eclipse.cdt.launch.ui;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 
 import org.eclipse.cdt.core.CCorePlugin;
@@ -42,6 +43,7 @@ import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
+import org.eclipse.debug.core.ILaunchDelegate;
 import org.eclipse.debug.ui.DebugUITools;
 import org.eclipse.debug.ui.IDebugUIConstants;
 import org.eclipse.jface.dialogs.MessageDialog;
@@ -86,7 +88,7 @@ public class CMainTab extends CLaunchConfigurationTab {
      *   
      * @since 6.0
      */
-    public static final String TAB_ID = "org.eclipse.cdt.cdi.launch.mainTab";
+    public static final String TAB_ID = "org.eclipse.cdt.cdi.launch.mainTab"; //$NON-NLS-1$
 
 	// Project UI widgets
 	protected Label fProjLabel;
@@ -696,6 +698,23 @@ public class CMainTab extends CLaunchConfigurationTab {
 	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#setDefaults(org.eclipse.debug.core.ILaunchConfigurationWorkingCopy)
 	 */
 	public void setDefaults(ILaunchConfigurationWorkingCopy config) {
+	    
+	    // Workaround for bug 262840: select the standard CDT launcher by default.
+	    HashSet<String> set = new HashSet<String>();
+	    set.add(getLaunchConfigurationDialog().getMode());
+	    try {
+    	    ILaunchDelegate preferredDelegate = config.getPreferredDelegate(set);
+    	    if (preferredDelegate == null) {
+    	        if (config.getType().getIdentifier().equals(ICDTLaunchConfigurationConstants.ID_LAUNCH_C_APP)) {
+    	            config.setPreferredLaunchDelegate(set, "org.eclipse.cdt.cdi.launch.localCLaunch");
+    	        } else if (config.getType().getIdentifier().equals(ICDTLaunchConfigurationConstants.ID_LAUNCH_C_ATTACH)) {
+                    config.setPreferredLaunchDelegate(set, "org.eclipse.cdt.cdi.launch.localCAttachLaunch");
+    	        } else if (config.getType().getIdentifier().equals(ICDTLaunchConfigurationConstants.ID_LAUNCH_C_POST_MORTEM)) {
+                    config.setPreferredLaunchDelegate(set, "org.eclipse.cdt.cdi.launch.coreFileCLaunch");
+                } 
+    	    }
+	    } catch (CoreException e) {}
+	        
 		// We set empty attributes for project & program so that when one config
 		// is
 		// compared to another, the existence of empty attributes doesn't cause

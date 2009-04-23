@@ -8,6 +8,7 @@
  * Contributors:
  *    Markus Schorn - initial API and implementation
  *    Andrew Ferguson (Symbian)
+ *    Sergey Prigogin (Google)
  *******************************************************************************/
 package org.eclipse.cdt.core.index;
 
@@ -57,8 +58,16 @@ public interface IIndexInclude {
 	String getName() throws CoreException;
 
 	/**
-	 * Returns the character offset of the name of the include in its source file. The name does
-	 * not include the enclosing quotes or angle brackets.
+	 * Returns the name of the include. The name does not include the enclosing quotes
+	 * or angle brackets. E.g.: for '<sys/types.h>' 'sys/types.h' will be returned.
+	 * @throws CoreException 
+	 * @since 5.1
+	 */
+	String getFullName() throws CoreException;
+
+	/**
+	 * Returns the character offset of the name of the include in its source file.
+	 * The name does not include the enclosing quotes or angle brackets.
 	 * @throws CoreException 
 	 */
 	int getNameOffset() throws CoreException;

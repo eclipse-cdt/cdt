@@ -90,7 +90,7 @@ public class LaunchRootVMNode extends RootVMNode
                 flags = IModelDelta.STATE | IModelDelta.CONTENT;
             }
         } else if (e instanceof DataModelInitializedEvent) {
-        	flags = IModelDelta.EXPAND | IModelDelta.CONTENT;
+        	flags = IModelDelta.EXPAND;
         }
         
         return flags;
@@ -128,7 +128,7 @@ public class LaunchRootVMNode extends RootVMNode
                 }
             }
         } else if (event instanceof DataModelInitializedEvent) {
-            rootDelta.setFlags(rootDelta.getFlags() | IModelDelta.EXPAND | IModelDelta.CONTENT);
+            rootDelta.setFlags(rootDelta.getFlags() | IModelDelta.EXPAND);
         }
         rm.setData(rootDelta);
         rm.done();

@@ -115,7 +115,7 @@ public class CMainTab extends CLaunchConfigurationTab {
 	public static final int DONT_CHECK_PROGRAM = 2;
 	
 	public CMainTab() {
-		this(0);
+		this(WANTS_TERMINAL);
 	}
 
 	public CMainTab(boolean terminalOption) {

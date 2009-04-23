@@ -15,6 +15,10 @@ import org.eclipse.debug.core.ILaunchConfiguration;
 
 public class CMainAttachTab extends CMainTab {
 
+	public CMainAttachTab() {
+		super(false);
+	}
+	
 	public boolean isValid(ILaunchConfiguration config) {
 		if (super.isValid(config) == false) {
 			String name = fProgText.getText().trim();

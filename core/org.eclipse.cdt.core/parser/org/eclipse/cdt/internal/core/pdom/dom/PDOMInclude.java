@@ -265,7 +265,9 @@ public class PDOMInclude implements IIndexFragmentInclude {
 	}
 
 	public String getName() throws CoreException {
-		return getFullName().substring(fName.lastIndexOf('/') + 1);
+		final String fullName= getFullName();
+		final int idx= Math.max(fullName.lastIndexOf('/'), fullName.lastIndexOf('\\'));
+		return fullName.substring(idx + 1);
 	}
 
 	public void convertToUnresolved() throws CoreException {

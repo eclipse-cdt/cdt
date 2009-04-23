@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008 Wind River Systems, Inc. and others.
+ * Copyright (c) 2008, 2009 Wind River Systems, Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -314,7 +314,7 @@ public class CreateParserLogAction implements IObjectActionDelegate {
 						outputUnresolvedIncludes(index, out, indent, inc.getIncludesLocation(), linkageID, handled);
 					}
 					else {
-						out.println(indent + "Unresolved inclusion: " + inc.getName() + " in file " +  
+						out.println(indent + "Unresolved inclusion: " + inc.getFullName() + " in file " +  
 								inc.getIncludedByLocation().getURI());
 					}
 				}

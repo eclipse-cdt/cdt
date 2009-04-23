@@ -304,7 +304,7 @@ public class CIndex implements IIndex {
 			for (int k= 0; k < includes.length; k++) {
 				IIndexInclude include = includes[k];
 				IIndexFileLocation target= include.getIncludesLocation();
-				Object key= target != null ? (Object) target : include.getName();
+				Object key= target != null ? (Object) target : include.getFullName();
 				if (handled.add(key)) {
 					out.add(include);
 					if (depth != 0) {

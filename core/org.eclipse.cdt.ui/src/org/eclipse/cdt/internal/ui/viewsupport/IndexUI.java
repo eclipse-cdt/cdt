@@ -243,7 +243,6 @@ public class IndexUI {
 					for (int j=0; j<files.length; j++) {
 						IIndexFile file= files[j];
 						String elementName= include.getElementName();
-						elementName= elementName.substring(elementName.lastIndexOf('/')+1);
 						ISourceRange pos= include.getSourceRange();
 						IRegion region= getConvertedRegion(tu, file, pos.getIdStartPos(), pos.getIdLength());
 
@@ -256,7 +255,7 @@ public class IndexUI {
 							if (diff > bestDiff) {
 								break;
 							}
-							if (candidate.getName().endsWith(elementName)) {
+							if (candidate.getFullName().endsWith(elementName)) {
 								bestDiff= diff;
 								best= candidate;
 							}

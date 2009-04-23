@@ -82,7 +82,6 @@ import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.cdt.ui.PreferenceConstants;
 import org.eclipse.cdt.ui.text.ICPartitions;
 
-import org.eclipse.cdt.internal.core.model.CommitWorkingCopyOperation;
 import org.eclipse.cdt.internal.core.model.IBufferFactory;
 import org.eclipse.cdt.internal.core.model.TranslationUnit;
 
@@ -962,19 +961,13 @@ public class CDocumentProvider extends TextFileDocumentProvider {
 		try {
 			IDocument document= info.fTextFileBuffer.getDocument();
 			IResource resource= info.fCopy.getResource();
-			
-			boolean isSynchronized= resource.isSynchronized(IResource.DEPTH_ZERO);
-
-			// Make sure file gets save in commit() if the underlying file has been deleted
-			if (!isSynchronized && isDeleted(element))
-				info.fTextFileBuffer.setDirty(true);
 
 			if (resource instanceof IFile && !resource.exists()) {
-				// Underlying resource has been deleted, just recreate file, ignore the rest
+				// The underlying resource has been deleted, just recreate the file, ignore the rest
 				createFileFromDocument(monitor, (IFile) resource, document);
 				return;
 			}
-	
+
 			try {
 				CoreException saveActionException= null;
 				try {
@@ -983,18 +976,17 @@ public class CDocumentProvider extends TextFileDocumentProvider {
 					saveActionException = e;
 				}
 
-				CommitWorkingCopyOperation op= new CommitWorkingCopyOperation(info.fCopy, isSynchronized || overwrite);
-				op.runOperation(getSubProgressMonitor(monitor, 80));
+				commitFileBuffer(monitor, info, overwrite);
 
 				if (saveActionException != null) {
 					throw saveActionException;
 				}
 			} catch (CoreException x) {
-				// inform about the failure
+				// Inform about the failure
 				fireElementStateChangeFailed(element);
 				throw x;
 			} catch (RuntimeException x) {
-				// inform about the failure
+				// Inform about the failure
 				fireElementStateChangeFailed(element);
 				throw x;
 			}

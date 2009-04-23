@@ -1167,4 +1167,17 @@ public class CodeFormatterTest extends BaseUITestCase {
 	public void testFormatterProblemsWithTypename_Bug269590() throws Exception {
 		assertFormatterResult();
 	}
+
+	//void
+	//foo();
+	//int*
+	//bar();
+	
+	//void
+	//foo();
+	//int*
+	//bar();
+	public void testPreserveNewlineBetweenTypeAndFunctionDeclarator() throws Exception {
+		assertFormatterResult();
+	}
 }

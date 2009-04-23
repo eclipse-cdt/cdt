@@ -1241,9 +1241,15 @@ public class CodeFormatterVisitor extends CPPASTVisitor {
 		IASTDeclSpecifier declSpec= node.getDeclSpecifier();
 		declSpec.accept(this);
 		final List<IASTDeclarator> declarators= Arrays.asList(node.getDeclarators());
-		if (declarators.size() >= 1) {
-			if (scribe.printComment()) {
-				scribe.space();
+		if (!declarators.isEmpty()) {
+			if (declarators.size() == 1 && declarators.get(0) instanceof IASTFunctionDeclarator) {
+				if (scribe.preserveNewLine()) {
+					scribe.space();
+				}
+			} else {
+				if (scribe.printComment()) {
+					scribe.space();
+				}
 			}
 			final ListAlignment align= new ListAlignment(preferences.alignment_for_declarator_list);
 			align.fSpaceAfterComma= preferences.insert_space_after_comma_in_declarator_list;
@@ -1309,7 +1315,7 @@ public class CodeFormatterVisitor extends CPPASTVisitor {
 				scribe.indent();
 			}
 		} else {
-			// preserve newline if not explicitely requested
+			// preserve newline if not explicitly requested
 			scribe.preserveNewLine();
 		}
 

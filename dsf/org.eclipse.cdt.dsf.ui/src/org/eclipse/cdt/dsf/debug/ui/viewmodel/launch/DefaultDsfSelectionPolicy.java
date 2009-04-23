@@ -169,7 +169,9 @@ public class DefaultDsfSelectionPolicy implements IModelSelectionPolicy {
             ITreeSelection treeSelection = (ITreeSelection)invalidSelection;
             if (treeSelection.getPaths().length == 1) {
                 TreePath path = treeSelection.getPaths()[0];
-                return new TreeSelection(path.getParentPath());
+                if (path.getSegmentCount() > 1) {
+                    return new TreeSelection(path.getParentPath());
+                }
             }
         }
         return newSelection;

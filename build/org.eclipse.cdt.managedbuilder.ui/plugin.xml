@@ -675,7 +675,17 @@
             class="org.eclipse.cdt.make.ui.dialogs.GCCPerProjectSCDProfilePage"
             name="%MBSPerProjectProfile.name"
             profileId="org.eclipse.cdt.managedbuilder.core.GCCWinManagedMakePerProjectProfileCPP"/>
-   </extension>  
+   </extension>
+     <extension
+           point="org.eclipse.cdt.ui.workingSetConfigurations">
+        <projectConfigurationFactory
+              class="org.eclipse.cdt.managedbuilder.internal.ui.workingsets.MBSProjectConfigurationFactory"
+              id="org.eclipse.cdt.managedbuilder.ui.mbsProjectConfigurationFactory">
+           <projectNature
+                 id="org.eclipse.cdt.managedbuilder.core.managedBuildNature">
+           </projectNature>
+        </projectConfigurationFactory>
+     </extension>  
    
  
    

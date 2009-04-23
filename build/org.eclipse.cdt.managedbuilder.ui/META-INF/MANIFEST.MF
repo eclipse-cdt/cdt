@@ -6,7 +6,8 @@ Bundle-Version: 5.0.100.qualifier
 Bundle-Activator: org.eclipse.cdt.managedbuilder.ui.properties.ManagedBuilderUIPlugin
 Bundle-Vendor: %providerName
 Bundle-Localization: plugin
-Export-Package: org.eclipse.cdt.managedbuilder.ui.actions,
+Export-Package: org.eclipse.cdt.managedbuilder.internal.ui.workingsets,
+ org.eclipse.cdt.managedbuilder.ui.actions,
  org.eclipse.cdt.managedbuilder.ui.properties,
  org.eclipse.cdt.managedbuilder.ui.wizards
 Require-Bundle: org.eclipse.ui.ide;bundle-version="[3.2.0,4.0.0)",

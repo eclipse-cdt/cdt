@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<component id="org.eclipse.cdt.ui" version="2">
+    <resource path="src/org/eclipse/cdt/ui/actions/WorkingSetConfigAction.java" type="org.eclipse.cdt.ui.actions.WorkingSetConfigAction">
+        <filter id="338755678">
+            <message_arguments>
+                <message_argument value="org.eclipse.cdt.ui.actions.WorkingSetConfigAction"/>
+                <message_argument value="IMG_CONF"/>
+            </message_arguments>
+        </filter>
+        <filter id="338755678">
+            <message_arguments>
+                <message_argument value="org.eclipse.cdt.ui.actions.WorkingSetConfigAction"/>
+                <message_argument value="IMG_PROJ"/>
+            </message_arguments>
+        </filter>
+    </resource>
+</component>

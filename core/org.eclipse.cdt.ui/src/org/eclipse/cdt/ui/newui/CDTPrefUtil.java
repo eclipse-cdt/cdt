@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     Intel Corporation - initial API and implementation
+ *     QNX Software Systems - [272416] Rework the working set configurations
  *******************************************************************************/
 package org.eclipse.cdt.ui.newui;
 
@@ -21,6 +22,8 @@ import java.util.TreeSet;
 import org.eclipse.jface.preference.IPreferenceStore;
 
 import org.eclipse.cdt.ui.CUIPlugin;
+
+import org.eclipse.cdt.internal.ui.workingsets.WorkingSetConfigurationManager;
 
 /**
  * @noextend This class is not intended to be subclassed by clients.
@@ -226,9 +229,18 @@ public class CDTPrefUtil {
 		return s1;
 	}
 	
+	/**
+	 * @deprecated Use the {@link WorkingSetConfigurationManager} class, instead.
+	 */
+	@Deprecated
 	public static List<String> readConfigSets() {
 		return new LinkedList<String>(Arrays.asList(getStr(KEY_CONFSET).split(CONFSETDEL)));
 	}
+	
+	/**
+	 * @deprecated Use the {@link WorkingSetConfigurationManager} class, instead.
+	 */
+	@Deprecated
 	public static void saveConfigSets(List<String> out) {
 		StringBuilder b = new StringBuilder(); 
 		for (String s : out) {

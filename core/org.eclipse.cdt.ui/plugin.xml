@@ -24,6 +24,7 @@
    <extension-point id="quickFixProcessors" name="%quickFixProcessorExtensionPoint" schema="schema/quickFixProcessors.exsd"/>
    <extension-point id="quickAssistProcessors" name="%quickAssistProcessorExtensionPoint" schema="schema/quickAssistProcessors.exsd"/>
    <extension-point id="DocCommentOwner" name="%DocCommentOwner.name" schema="schema/DocCommentOwner.exsd"/>
+   <extension-point id="workingSetConfigurations" name="%workingSetConfigurationsExtensionPoint" schema="schema/workingSetConfigurations.exsd"/>
 
    <extension
          point="org.eclipse.core.runtime.adapters">
@@ -1116,6 +1117,77 @@
             contentMergeViewerId="org.eclipse.cdt.ui.compare.AsmContentViewerCreator"/>
    </extension>
    <extension
+         point="org.eclipse.ui.menus">
+      <menuContribution
+            locationURI="menu:project?after=build">
+         <menu
+               id="org.eclipse.cdt.ui.prjmenu"
+               label="%Configurations.menu">
+            <separator
+                  name="gm1" visible="false">
+            </separator>
+            <separator
+                  name="s2" visible="true">
+            </separator>
+            <separator
+                  name="gm2" visible="false">
+            </separator>
+            <separator
+                  name="s3" visible="true">
+            </separator>
+            <separator
+                  name="gm3" visible="false">
+            </separator>
+            <separator
+                  name="gm4" visible="false">
+            </separator>
+         </menu>
+      </menuContribution>
+      <menuContribution
+            locationURI="menu:org.eclipse.cdt.ui.prjmenu?before=gm4">
+         <menu
+               id="org.eclipse.cdt.ui.workingSets.buildMenu"
+               label="%buildWorkingSetConfig.label">
+            <visibleWhen>
+               <with
+                     variable="activeContexts">
+                  <iterate
+                        ifEmpty="false"
+                        operator="or">
+                     <equals
+                           value="org.eclipse.cdt.ui.buildConfigActionSet">
+                     </equals>
+                  </iterate>
+               </with>
+            </visibleWhen>
+            <dynamic
+                  class="org.eclipse.cdt.internal.ui.workingsets.BuildWorkingSetsContribution"
+                  id="org.eclipse.cdt.ui.buildWorkingSetConfigs">
+            </dynamic>
+         </menu>
+         <menu
+               id="org.eclipse.cdt.ui.workingSets.activateMenu"
+               label="%activateWorkingSetConfig.label">
+            <visibleWhen>
+               <with
+                     variable="activeContexts">
+                  <iterate
+                        ifEmpty="false"
+                        operator="or">
+                     <equals
+                           value="org.eclipse.cdt.ui.buildConfigActionSet">
+                     </equals>
+                  </iterate>
+               </with>
+            </visibleWhen>
+            <dynamic
+                  class="org.eclipse.cdt.internal.ui.workingsets.ActivateWorkingSetsContribution"
+                  id="org.eclipse.cdt.ui.activateWorkingSetConfigs">
+            </dynamic>
+         </menu>
+      </menuContribution>
+   </extension>
+   <extension
          point="org.eclipse.ui.actionSets">
       <actionSet
             label="%CodingActionSet.label"
@@ -1287,26 +1359,6 @@
            id="org.eclipse.cdt.ui.buildConfigActionSet"
            label="%BuildConfigActionSet.label"
            visible="false">
-        <menu
-              id="org.eclipse.cdt.ui.prjmenu"
-              label="%Configurations.menu"
-              path="project/build">
-           <groupMarker
-                 name="gm1">
-           </groupMarker>
-           <separator
-                 name="s2">
-           </separator>
-           <groupMarker
-                 name="gm2">
-           </groupMarker>
-           <separator
-                 name="s3">
-           </separator>
-           <groupMarker
-                 name="gm3">
-           </groupMarker>
-        </menu>
         <action
               class="org.eclipse.cdt.ui.actions.ChangeBuildConfigMenuAction"
               disabledIcon="icons/dlcl16/config-tool.gif"
@@ -1353,7 +1405,7 @@
               class="org.eclipse.cdt.ui.actions.WorkingSetConfigAction"
               id="org.eclipse.cdt.ui.wsselection"
               label="%wsselection"
-              menubarPath="project/org.eclipse.cdt.ui.prjmenu/gm3"
+              menubarPath="project/org.eclipse.cdt.ui.prjmenu/gm4"
               style="push"
               />
      </actionSet>
@@ -2859,6 +2911,12 @@
            namespace="org.eclipse.cdt.ui"
            properties="isSource"
            type="org.eclipse.core.resources.IFile"/>
+      <propertyTester
+           id="org.eclipse.cdt.ui.workingSetPropertyTester"
+           class="org.eclipse.cdt.internal.ui.workingsets.WorkingSetPropertyTester"
+           namespace="org.eclipse.cdt.ui"
+           properties="hasCProjects"
+           type="org.eclipse.ui.IWorkingSet"/>
   </extension>
   <extension
         point="org.eclipse.ui.exportWizards">
@@ -3017,6 +3075,76 @@
                class="org.eclipse.core.resources.IProject">
          </selection>
       </wizard>
+   </extension>
+   <extension
+         point="org.eclipse.cdt.ui.workingSetConfigurations">
+      <projectConfigurationFactory
+            class="org.eclipse.cdt.internal.ui.workingsets.IWorkingSetProjectConfigurationFactory$Registry$Default"
+            id="org.eclipse.cdt.ui.defaultWorkingSetProjectConfigFactory">
+         <projectNature
+               id="org.eclipse.cdt.core.cnature">
+         </projectNature>
+         <projectNature
+               id="org.eclipse.cdt.core.ccnature">
+         </projectNature>
+      </projectConfigurationFactory>
+   </extension>
+   <extension
+         point="org.eclipse.ui.menus">
+      <menuContribution
+            locationURI="popup:org.eclipse.ui.popup.any?after=additions">
+         <menu
+               label="%workingSetConfigs.context.label">
+            <menu
+                  id="org.eclipse.cdt.ui.wsContextMenu.activateMenu"
+                  label="%activateWorkingSetConfig.context.label">
+               <dynamic
+                     class="org.eclipse.cdt.internal.ui.workingsets.ActivateWorkingSetConfigsContribution"
+                     id="org.eclipse.cdt.ui.wsContextMenu.activateContrib">
+               </dynamic>
+            </menu>
+            <menu
+                  id="org.eclipse.cdt.ui.wsContextMenu.buildMenu"
+                  label="%buildWorkingSetConfig.context.label">
+               <dynamic
+                     class="org.eclipse.cdt.internal.ui.workingsets.BuildWorkingSetConfigsContribution"
+                     id="org.eclipse.cdt.ui.wsContextMenu.buildContrib">
+               </dynamic>
+            </menu>
+            <visibleWhen
+                  checkEnabled="false">
+               <with
+                     variable="activeMenuSelection">
+                  <count
+                        value="1">
+                  </count>
+                  <iterate>
+                     <adapt
+                           type="org.eclipse.ui.IWorkingSet">
+                        <test
+                              property="org.eclipse.cdt.ui.hasCProjects">
+                        </test>
+                     </adapt>
+                  </iterate>
+               </with>
+            </visibleWhen>
+         </menu>
+      </menuContribution>
+   </extension>
+   <extension
+         point="org.eclipse.ui.propertyPages">
+      <page
+            adaptable="true"
+            class="org.eclipse.cdt.internal.ui.workingsets.WorkingSetConfigurationsPage"
+            id="org.eclipse.ui.cdt.workingSets.configurations"
+            name="%workingSetConfigsPage"
+            objectClass="org.eclipse.ui.IWorkingSet">
+         <enabledWhen>
+            <test
+                  property="org.eclipse.cdt.ui.hasCProjects">
+            </test>
+         </enabledWhen>
+      </page>
    </extension>
 
 </plugin>

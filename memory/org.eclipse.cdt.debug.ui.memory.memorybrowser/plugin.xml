@@ -18,5 +18,13 @@
             file="contexts.xml">
       </contexts>
    </extension>
+   <extension point="org.eclipse.ui.perspectiveExtensions">
+      <perspectiveExtension targetID="org.eclipse.debug.ui.DebugPerspective">
+         <view id="org.eclipse.cdt.debug.ui.memory.memorybrowser.MemoryBrowser"
+               relationship="stack" relative="org.eclipse.ui.console.ConsoleView" visible="false">
+         </view>
+         <viewShortcut id="org.eclipse.cdt.debug.ui.memory.memorybrowser.MemoryBrowser"/>
+      </perspectiveExtension>
+   </extension>
 
 </plugin>

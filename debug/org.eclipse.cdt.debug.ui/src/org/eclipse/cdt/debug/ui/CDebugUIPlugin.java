@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2008 QNX Software Systems and others.
+ * Copyright (c) 2004, 2009 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -289,19 +289,22 @@ public class CDebugUIPlugin extends AbstractUIPlugin {
 		// some edge cases with broken behavior (273306). The solution is to
 		// force a selection change notification after we get loaded.
 		WorkbenchJob wjob = new WorkbenchJob("CDT Variable view action updater") { //$NON-NLS-1$
+			@Override
 			public IStatus runInUIThread(IProgressMonitor monitor) {
 				IWorkbenchWindow[] windows = PlatformUI.getWorkbench().getWorkbenchWindows();
 				for (IWorkbenchWindow window : windows) {
 				   IWorkbenchPage[] pages = window.getPages();
 				   for (IWorkbenchPage page : pages) {
-				      IViewReference viewRef = page.findViewReference(IDebugUIConstants.ID_VARIABLE_VIEW);
-				      IViewPart part = viewRef.getView(true);
-				      if (part instanceof IDebugView) {
-				    	  Viewer viewer = ((IDebugView)part).getViewer();
-				    	  if (viewer != null) {
-				    		  viewer.setSelection(viewer.getSelection());
-				    	  }
-				      }
+					   IViewReference viewRef = page.findViewReference(IDebugUIConstants.ID_VARIABLE_VIEW);
+					   if (viewRef != null) {
+						   IViewPart part = viewRef.getView(false);
+						   if (part instanceof IDebugView) {
+							   Viewer viewer = ((IDebugView)part).getViewer();
+							   if (viewer != null) {
+								   viewer.setSelection(viewer.getSelection());
+							   }
+						   }
+					   }
 				   }
 				}
 				return Status.OK_STATUS;

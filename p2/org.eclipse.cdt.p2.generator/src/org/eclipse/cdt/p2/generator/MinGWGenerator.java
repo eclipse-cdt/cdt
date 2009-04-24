@@ -61,11 +61,13 @@ public class MinGWGenerator implements IApplication {
 
 		Activator.getDefault().getBundle("org.eclipse.equinox.p2.exemplarysetup").start(Bundle.START_TRANSIENT); //$NON-NLS-1$
 
-		File repoDir = new File("C:\\Wascana\\repo");
+		File repoDir = new File("E:\\Wascana\\repo");
+		repoDir.mkdirs();
+		
 		new File(repoDir, "artifacts.xml").delete();
 		new File(repoDir, "content.xml").delete();
 		
-		URI repoLocation = new File("C:\\Wascana\\repo").toURI();
+		URI repoLocation = repoDir.toURI();
 		
 		IMetadataRepositoryManager metaRepoMgr = Activator.getDefault().getService(IMetadataRepositoryManager.class);
 		IArtifactRepositoryManager artiRepoMgr = Activator.getDefault().getService(IArtifactRepositoryManager.class);
@@ -269,7 +271,7 @@ public class MinGWGenerator implements IApplication {
 		}
 		
 		tpdata.put("install", cmd);
-		tpdata.put("install", "cleanup" + cmd);
+		tpdata.put("uninstall", "cleanup" + cmd);
 		
 		iuDesc.addTouchpointData(MetadataFactory.createTouchpointData(tpdata));
 		IArtifactKey artiKey = PublisherHelper.createBinaryArtifactKey(id, version);

@@ -5,7 +5,7 @@
          point="org.eclipse.equinox.p2.engine.actions">
       <action
             class="org.eclipse.cdt.internal.p2.touchpoint.natives.actions.UntarAction"
-            name="untar"
+            name="org.eclipse.equinox.p2.touchpoint.natives.untar"
             touchpointType="org.eclipse.equinox.p2.native"
             touchpointVersion="1.0.0"
             version="1.0.0">
@@ -15,7 +15,7 @@
          point="org.eclipse.equinox.p2.engine.actions">
       <action
             class="org.eclipse.cdt.internal.p2.touchpoint.natives.actions.CleanupUntarAction"
-            name="cleanupuntar"
+            name="org.eclipse.equinox.p2.touchpoint.natives.cleanupuntar"
             touchpointType="org.eclipse.equinox.p2.native"
             touchpointVersion="1.0.0"
             version="1.0.0">

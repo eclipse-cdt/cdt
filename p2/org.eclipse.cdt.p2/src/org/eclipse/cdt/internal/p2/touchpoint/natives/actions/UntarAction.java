@@ -112,10 +112,12 @@ public class UntarAction extends ProvisioningAction {
 	
 	private static File[] untar(String source, String destination, Compression compression) {
 		File zipFile = new File(source);
-		if (zipFile == null || !zipFile.exists()) {
+		if (!zipFile.exists()) {
 			Util.log(UnzipAction.class.getName() + " the files to be unzipped is not here"); //$NON-NLS-1$
 		}
 
+		File target = new File(destination);
+		
 		try {
 			FileInputStream fileIn = new FileInputStream(zipFile);
 			InputStream compIn = fileIn;
@@ -130,7 +132,7 @@ public class UntarAction extends ProvisioningAction {
 			ArrayList<File> fileList = new ArrayList<File>();
 			TarInputStream tarIn = new TarInputStream(compIn);
 			for (TarEntry tarEntry = tarIn.getNextEntry(); tarEntry != null; tarEntry = tarIn.getNextEntry()) {
-				File outFile = new File(source, tarEntry.getName());
+				File outFile = new File(target, tarEntry.getName());
 				if (tarEntry.isDirectory()) {
 					outFile.mkdirs();
 				} else {
@@ -149,7 +151,8 @@ public class UntarAction extends ProvisioningAction {
 			tarIn.close();
 			return fileList.toArray(new File[fileList.size()]);
 		} catch (IOException e) {
-			Util.log(UnzipAction.class.getName() + " error unzipping zipfile: " + zipFile.getAbsolutePath() + "destination: " + destination); //$NON-NLS-1$ //$NON-NLS-2$
+			Util.log(UnzipAction.class.getName() + " error unzipping zipfile: " + zipFile.getAbsolutePath() + " destination: " + destination); //$NON-NLS-1$ //$NON-NLS-2$
+			Util.log(e.getLocalizedMessage());
 		}
 		return null;
 	}

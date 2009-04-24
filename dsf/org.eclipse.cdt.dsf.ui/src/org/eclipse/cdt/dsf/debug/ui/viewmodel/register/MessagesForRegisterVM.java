@@ -34,18 +34,19 @@ public class MessagesForRegisterVM extends NLS {
     public static String RegisterVMNode_Expression_column__text_format;
     public static String RegisterVMNode_Type_column__text_format;
     public static String RegisterVMNode_No_columns__text_format;
+    public static String RegisterVMNode_No_columns__text_format_with_type;
     public static String RegisterVMNode_No_columns__Error__text_format;
-
+    
     public static String RegisterBitFieldVMNode_Name_column__text_format;
     public static String RegisterBitFieldVMNode_Description_column__text_format;
     public static String RegisterBitFieldVMNode_Type_column__text_format;
     public static String RegisterBitFieldVMNode_Value_column__With_mnemonic__text_format;
     public static String RegisterBitFieldVMNode_Expression_column__text_format;
     public static String RegisterBitFieldVMNode_No_columns__text_format;
+    public static String RegisterBitFieldVMNode_No_columns__text_format_with_type;
     public static String RegisterBitFieldVMNode_No_columns__With_mnemonic__text_format;
+    public static String RegisterBitFieldVMNode_No_columns__With_mnemonic__text_format_with_type;
     public static String RegisterBitFieldVMNode_No_columns__Error__text_format;
-
-
     
     static {
         // initialize resource bundle

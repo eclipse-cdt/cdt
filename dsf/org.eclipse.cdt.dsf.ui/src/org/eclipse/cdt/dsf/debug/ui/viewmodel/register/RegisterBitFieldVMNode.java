@@ -10,6 +10,8 @@
  *******************************************************************************/
 package org.eclipse.cdt.dsf.debug.ui.viewmodel.register;
 
+import java.lang.reflect.Method;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.RejectedExecutionException;
 
@@ -74,6 +76,7 @@ import org.eclipse.debug.internal.ui.viewers.model.provisional.ILabelUpdate;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IModelDelta;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IPresentationContext;
 import org.eclipse.debug.ui.DebugUITools;
+import org.eclipse.debug.ui.IDebugModelPresentation;
 import org.eclipse.debug.ui.IDebugUIConstants;
 import org.eclipse.debug.ui.actions.IWatchExpressionFactoryAdapter2;
 import org.eclipse.jface.util.PropertyChangeEvent;
@@ -88,6 +91,11 @@ import org.eclipse.swt.widgets.Composite;
 public class RegisterBitFieldVMNode extends AbstractExpressionVMNode 
     implements IElementEditor, IElementLabelProvider, IElementMementoProvider, IElementPropertiesProvider
 {
+	/**
+     * @since 2.0
+     */
+    private static final String PROP_BITFIELD_SHOW_TYPE_NAMES = "bitfield_show_type_names"; //$NON-NLS-1$
+    
     protected class BitFieldVMC extends DMVMContext
         implements IFormattedValueVMContext
     {
@@ -179,6 +187,26 @@ public class RegisterBitFieldVMNode extends AbstractExpressionVMNode
         return "RegisterBitFieldVMNode(" + getSession().getId() + ")";  //$NON-NLS-1$ //$NON-NLS-2$
     }
 
+    private Object[] constructTypeObjects( Map<String, Object> properties ) {
+    	int readAttr = 0;
+        if ( Boolean.TRUE.equals(properties.get(IRegisterVMConstants.PROP_IS_READABLE)) ) { 
+            readAttr = 1;
+        } else if ( Boolean.TRUE.equals(properties.get(IRegisterVMConstants.PROP_IS_READONCE)) ) {
+            readAttr = 2;
+        }
+
+        int writeAttr = 0;
+        if ( Boolean.TRUE.equals(properties.get(IRegisterVMConstants.PROP_IS_WRITEABLE)) ) { 
+            writeAttr = 1;
+        } else if ( Boolean.TRUE.equals(properties.get(IRegisterVMConstants.PROP_IS_WRITEONCE)) ) {
+            writeAttr = 2;
+        }
+        
+        Object[] messageAttrs = new Object[] { readAttr, writeAttr };
+        
+    	return messageAttrs;
+    }
+    
     /**
      * Creates the label provider delegate.  This VM node will delegate label 
      * updates to this provider which can be created by sub-classes.   
@@ -220,27 +248,14 @@ public class RegisterBitFieldVMNode extends AbstractExpressionVMNode
                 new LabelText(
                     MessagesForRegisterVM.RegisterBitFieldVMNode_Type_column__text_format, 
                     new String[] { 
-                        IRegisterVMConstants.PROP_IS_READABLE, IRegisterVMConstants.PROP_IS_READONCE, 
-                        IRegisterVMConstants.PROP_IS_WRITEABLE, IRegisterVMConstants.PROP_IS_WRITEONCE
-                        }) 
+                        IRegisterVMConstants.PROP_IS_READABLE, 
+                        IRegisterVMConstants.PROP_IS_READONCE, 
+                        IRegisterVMConstants.PROP_IS_WRITEABLE,
+                        IRegisterVMConstants.PROP_IS_WRITEONCE}) 
                 {
                     @Override
                     public void updateAttribute(ILabelUpdate update, int columnIndex, IStatus status, Map<String, Object> properties) {
-                        int readAttr = 0;
-                        if ( Boolean.TRUE.equals(properties.get(IRegisterVMConstants.PROP_IS_READABLE)) ) { 
-                            readAttr = 1;
-                        } else if ( Boolean.TRUE.equals(properties.get(IRegisterVMConstants.PROP_IS_READONCE)) ) {
-                            readAttr = 2;
-                        }
-
-                        int writeAttr = 0;
-                        if ( Boolean.TRUE.equals(properties.get(IRegisterVMConstants.PROP_IS_WRITEABLE)) ) { 
-                            writeAttr = 1;
-                        } else if ( Boolean.TRUE.equals(properties.get(IRegisterVMConstants.PROP_IS_WRITEONCE)) ) {
-                            writeAttr = 2;
-                        }
-                        
-                        Object[] messageAttrs = new Object[] { readAttr, writeAttr };
+                        Object[] messageAttrs = constructTypeObjects( properties );
                         try {
                             update.setLabel(getMessageFormat().format(
                                 messageAttrs, new StringBuffer(), null).toString(), columnIndex);
@@ -325,12 +340,108 @@ public class RegisterBitFieldVMNode extends AbstractExpressionVMNode
                     new String[] {
                         PROP_NAME, 
                         IDebugVMConstants.PROP_FORMATTED_VALUE_ACTIVE_FORMAT_VALUE,  
-                        IRegisterVMConstants.PROP_CURRENT_MNEMONIC_LONG_NAME}),
+                        IRegisterVMConstants.PROP_CURRENT_MNEMONIC_LONG_NAME})
+                {
+                	@Override
+                    public boolean isEnabled(IStatus status, Map<String, Object> properties) {
+                        Boolean showTypeNames = (Boolean) properties.get(PROP_BITFIELD_SHOW_TYPE_NAMES);
+                        return 
+                            showTypeNames != null && 
+                           !showTypeNames.booleanValue() &&
+                            super.isEnabled(status, properties);
+                    }                  
+                },
                 new FormattedValueLabelText(
-                    MessagesForRegisterVM.RegisterBitFieldVMNode_No_columns__With_mnemonic__text_format, 
+                    MessagesForRegisterVM.RegisterBitFieldVMNode_No_columns__With_mnemonic__text_format_with_type, 
                     new String[] {
                         PROP_NAME, 
-                        IDebugVMConstants.PROP_FORMATTED_VALUE_ACTIVE_FORMAT_VALUE}),
+                        IDebugVMConstants.PROP_FORMATTED_VALUE_ACTIVE_FORMAT_VALUE,  
+                        IRegisterVMConstants.PROP_CURRENT_MNEMONIC_LONG_NAME,
+                        IRegisterVMConstants.PROP_IS_READABLE, 
+                        IRegisterVMConstants.PROP_IS_READONCE, 
+                        IRegisterVMConstants.PROP_IS_WRITEABLE,
+                        IRegisterVMConstants.PROP_IS_WRITEONCE,
+                        PROP_BITFIELD_SHOW_TYPE_NAMES})
+                {
+                    @Override
+                    public void updateAttribute(ILabelUpdate update, int columnIndex, IStatus status, Map<String, Object> properties) {
+                        Object[] messageAttrs = constructTypeObjects( properties );
+                        Object[] combinedAttrs = new Object[ messageAttrs.length + 3 ];
+                        combinedAttrs[0] = super.getPropertyValue(PROP_NAME, status, properties);
+                        combinedAttrs[1] = super.getPropertyValue(IDebugVMConstants.PROP_FORMATTED_VALUE_ACTIVE_FORMAT_VALUE, status, properties);
+                        combinedAttrs[2] = super.getPropertyValue(IRegisterVMConstants.PROP_CURRENT_MNEMONIC_LONG_NAME, status, properties);
+                        for ( int idx = 0 ; idx < messageAttrs.length; idx ++ ) {
+                        	combinedAttrs[ idx + 3 ] = messageAttrs[ idx ];
+                        }
+                        	
+                        try {
+                        	update.setLabel(getMessageFormat().format(combinedAttrs, new StringBuffer(), null).toString(), columnIndex);
+                        } catch (IllegalArgumentException e) {
+                        	update.setStatus(new Status(IStatus.ERROR, DsfUIPlugin.PLUGIN_ID, 0, "Failed formatting a message for column " + columnIndex + ", for update " + update, e)); //$NON-NLS-1$ //$NON-NLS-2$
+                        }
+                    }   
+                        
+                    @Override
+                    public boolean isEnabled(IStatus status, Map<String, Object> properties) {
+                        Boolean showTypeNames = (Boolean) properties.get(PROP_BITFIELD_SHOW_TYPE_NAMES);
+                        return 
+                            showTypeNames != null && 
+                            showTypeNames.booleanValue() &&
+                            super.isEnabled(status, properties);
+                    }  
+                },
+                new FormattedValueLabelText(
+                    MessagesForRegisterVM.RegisterBitFieldVMNode_No_columns__text_format, 
+                    new String[] {
+                        PROP_NAME, 
+                        IDebugVMConstants.PROP_FORMATTED_VALUE_ACTIVE_FORMAT_VALUE})
+                {
+                    @Override
+                    public boolean isEnabled(IStatus status, Map<String, Object> properties) {
+                        Boolean showTypeNames = (Boolean) properties.get(PROP_BITFIELD_SHOW_TYPE_NAMES);
+                        return 
+                             showTypeNames != null && 
+                            !showTypeNames.booleanValue() &&
+                             super.isEnabled(status, properties);
+                    }  
+                },
+                new FormattedValueLabelText(
+                       MessagesForRegisterVM.RegisterBitFieldVMNode_No_columns__text_format_with_type, 
+                       new String[] {
+                           PROP_NAME, 
+                           IDebugVMConstants.PROP_FORMATTED_VALUE_ACTIVE_FORMAT_VALUE,
+                           IRegisterVMConstants.PROP_IS_READABLE, 
+                           IRegisterVMConstants.PROP_IS_READONCE, 
+                           IRegisterVMConstants.PROP_IS_WRITEABLE,
+                           IRegisterVMConstants.PROP_IS_WRITEONCE,
+                           PROP_BITFIELD_SHOW_TYPE_NAMES})     
+                {
+                    @Override
+                    public void updateAttribute(ILabelUpdate update, int columnIndex, IStatus status, Map<String, Object> properties) {
+                        Object[] messageAttrs = constructTypeObjects( properties );
+                        Object[] combinedAttrs = new Object[ messageAttrs.length + 2 ];
+                        combinedAttrs[0] = super.getPropertyValue(PROP_NAME, status, properties);
+                        combinedAttrs[1] = super.getPropertyValue(IDebugVMConstants.PROP_FORMATTED_VALUE_ACTIVE_FORMAT_VALUE, status, properties);
+                        for ( int idx = 0 ; idx < messageAttrs.length; idx ++ ) {
+                        	combinedAttrs[ idx + 2 ] = messageAttrs[ idx ];
+                        }
+                        	
+                        try {
+                        	update.setLabel(getMessageFormat().format(combinedAttrs, new StringBuffer(), null).toString(), columnIndex);
+                        } catch (IllegalArgumentException e) {
+                        	update.setStatus(new Status(IStatus.ERROR, DsfUIPlugin.PLUGIN_ID, 0, "Failed formatting a message for column " + columnIndex + ", for update " + update, e)); //$NON-NLS-1$ //$NON-NLS-2$
+                        }
+                    }   
+                        
+                    @Override
+                    public boolean isEnabled(IStatus status, Map<String, Object> properties) {
+                        Boolean showTypeNames = (Boolean) properties.get(PROP_BITFIELD_SHOW_TYPE_NAMES);
+                        return 
+                            showTypeNames != null && 
+                            showTypeNames.booleanValue() &&
+                            super.isEnabled(status, properties);
+                    }  
+                },
                 new ErrorLabelText(
                     MessagesForRegisterVM.RegisterBitFieldVMNode_No_columns__Error__text_format, 
                     new String[] { PROP_NAME }),                    
@@ -401,6 +512,93 @@ public class RegisterBitFieldVMNode extends AbstractExpressionVMNode
         }
     }
 
+    //
+    // We encapsulate  the determination  of the state  of the "Show Type Names" ICON
+    // selection to this routine. This attribute information is not readily available
+    // from standard Interface definitions. So we use reflection to get the info. But
+    // in the future this will change and then we can just change this routine.  This
+    // really should just be as simple as the code below,  which could be done inline
+    // once it comes to pass.
+    // 
+    //  Boolean attribute = (Boolean) context.getProperty(IDebugModelPresentation.DISPLAY_VARIABLE_TYPE_NAMES);
+    //	if (attribute != null) {
+    //		return attribute;
+    //	}
+    //	return Boolean.FALSE;
+    //
+    //  @param return-value Boolean.TRUE  --> Show Types ICON is     selected/depressed
+    //  @param return-value Boolean.FALSE --> Show Types ICON is not selected/depressed
+    //
+    
+    @SuppressWarnings("unchecked")
+	private Boolean getShowTypeNamesState( IPresentationContext context ) {
+    	// This is fairly ugly stuff.  It should be the case  that the "getPropery()"
+    	// method of the presentation context  should contain this attribute,  but it
+    	// does not. So we have to go mining for it. As it turns out the presentation
+    	// context is actually an implementation class  DebugModelPresentationContext
+    	// from which you can get the IDebugModelPresentation instance. In turn  this
+    	// is a DelegatingModelPresentation  instance which allows  you to obtain the
+    	// current set of internal attributes,  which contains  the current state  of 
+    	// "Show Type Names" ICON selection.
+    	Class<? extends IPresentationContext> contextClass = context.getClass();
+    	Method contextMethod = null;
+    	try {
+    		// Will return the instance of the class "DebugModelPresentationContext"
+    		// if this is indeed the implementation we are expecting.
+    		contextMethod = contextClass.getMethod( "getModelPresentation" , new Class[] {} ); //$NON-NLS-1$
+    	}
+    	catch ( Exception ex ) {}
+    		
+    	IDebugModelPresentation debugModelPresentation = null ;
+    	if (contextMethod != null) {
+    		try {
+    			// We invoke the "getModelPresntation" method to get the actual instance
+    			// of the "DelegatingModelPresentation".
+    			debugModelPresentation = (IDebugModelPresentation) contextMethod.invoke(context , new Object[0]);
+    		}
+    		catch ( Exception e ) {}
+    	}
+    	
+    	if (debugModelPresentation != null) {
+    		Class<? extends IDebugModelPresentation> presentationClass = debugModelPresentation.getClass();
+        	Method presentationMethod = null;
+        	try {
+        		// The "getAttributeMethod" is a public method which returns the internal
+        		// attributes. These should be part of the Interface but they are not. So
+        		// we get them through this available method.
+        		presentationMethod = presentationClass.getMethod( "getAttributeMap" , new Class[] {} ); //$NON-NLS-1$
+        	}
+        	catch ( Exception ex ) {}
+        	
+        	HashMap attributeMap = null;
+        	if (presentationMethod != null) {
+        		try {
+        			// Now get the actual HashMap attribute list so we can see if there is
+        			// state information about the "Show Type Names" ICON.
+        			attributeMap = (HashMap) presentationMethod.invoke(debugModelPresentation , new Object[0]);
+        		}
+        		catch ( Exception e ) {}
+        	}
+        	
+        	if (attributeMap != null) {
+        		// This attribute ( which is globally defined ) reflect the state of the ICON.
+        		// If is exists is contains the current state.  Non-existence would mean  that
+        		// the ICON has never been selected or changed.  This is so at  the very start
+        		// when the view is first brought up.
+        		Boolean attribute = (Boolean) attributeMap.get(IDebugModelPresentation.DISPLAY_VARIABLE_TYPE_NAMES);
+        		
+        		if (attribute != null) {
+        			return attribute;
+        		}
+        	}
+    	}
+    	
+    	// Could not get to the one of the methods needs to determine the state of the
+    	// ICON or we could not get the attribute.  Assume we are not showing the TYPE 
+    	// NAMES.
+    	return Boolean.FALSE;
+    }
+    
     /**
      * @since 2.0
      */
@@ -429,6 +627,11 @@ public class RegisterBitFieldVMNode extends AbstractExpressionVMNode
                 update.setProperty(AbstractExpressionVMNode.PROP_ELEMENT_EXPRESSION, expression.getExpressionText());
             }
 
+         // Capture the current "Show Type Names" ICON state in case there are no columns.
+            if (update.getProperties().contains(PROP_BITFIELD_SHOW_TYPE_NAMES)) {
+            	update.setProperty(PROP_BITFIELD_SHOW_TYPE_NAMES, getShowTypeNamesState(update.getPresentationContext()));
+            }
+            
             IBitFieldDMContext dmc = findDmcInPath(update.getViewerInput(), update.getElementPath(), IBitFieldDMContext.class);
             if (dmc == null || service == null) {
                 handleFailedUpdate(update);

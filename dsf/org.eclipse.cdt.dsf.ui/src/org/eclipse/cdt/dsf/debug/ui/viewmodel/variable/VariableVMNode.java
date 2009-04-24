@@ -11,8 +11,10 @@
 
 package org.eclipse.cdt.dsf.debug.ui.viewmodel.variable;
 
+import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.RejectedExecutionException;
@@ -83,6 +85,7 @@ import org.eclipse.debug.internal.ui.viewers.model.provisional.IModelDelta;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IPresentationContext;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IViewerUpdate;
 import org.eclipse.debug.ui.DebugUITools;
+import org.eclipse.debug.ui.IDebugModelPresentation;
 import org.eclipse.debug.ui.IDebugUIConstants;
 import org.eclipse.debug.ui.actions.IWatchExpressionFactoryAdapter2;
 import org.eclipse.jface.util.PropertyChangeEvent;
@@ -94,8 +97,9 @@ import org.eclipse.swt.graphics.RGB;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.IMemento;
 
+@SuppressWarnings("restriction")
 public class VariableVMNode extends AbstractExpressionVMNode 
-    implements IElementEditor, IElementLabelProvider, IElementPropertiesProvider, IElementMementoProvider 
+                            implements IElementEditor, IElementLabelProvider, IElementPropertiesProvider, IElementMementoProvider 
 {
     /**
      * @since 2.0
@@ -111,6 +115,11 @@ public class VariableVMNode extends AbstractExpressionVMNode
      * @since 2.0
      */    
     private static final String PROP_VARIABLE_ADDRESS = "variable_address";  //$NON-NLS-1$
+    
+    /**
+     * @since 2.0
+     */
+    private static final String PROP_VARIABLE_SHOW_TYPE_NAMES = "variable_show_type_names"; //$NON-NLS-1$
     
     /**
      * @since 2.0
@@ -407,21 +416,23 @@ public class VariableVMNode extends AbstractExpressionVMNode
                         FormattedValueVMUtil.getPropertyForFormatId(IFormattedValues.STRING_FORMAT),
                         IDebugVMConstants.PROP_FORMATTED_VALUE_AVAILABLE_FORMATS, 
                         IDebugVMConstants.PROP_FORMATTED_VALUE_ACTIVE_FORMAT,
-                        IDebugVMConstants.PROP_FORMATTED_VALUE_FORMAT_PREFERENCE}) 
+                        IDebugVMConstants.PROP_FORMATTED_VALUE_FORMAT_PREFERENCE,
+                        PROP_VARIABLE_SHOW_TYPE_NAMES}) 
                 {
-                    @Override
+					@Override
                     public boolean isEnabled(IStatus status, Map<String, Object> properties) {
-                        String[] formatIds = 
-                            (String[])properties.get(IDebugVMConstants.PROP_FORMATTED_VALUE_AVAILABLE_FORMATS);
-                        String activeFormat = (String)properties.get(IDebugVMConstants.PROP_FORMATTED_VALUE_ACTIVE_FORMAT);
+                        Boolean showTypeNames = (Boolean) properties.get(PROP_VARIABLE_SHOW_TYPE_NAMES);
+                        String[] formatIds = (String[]) properties.get(IDebugVMConstants.PROP_FORMATTED_VALUE_AVAILABLE_FORMATS);
+                        String activeFormat = (String) properties.get(IDebugVMConstants.PROP_FORMATTED_VALUE_ACTIVE_FORMAT);
                         return 
-                            !IFormattedValues.STRING_FORMAT.equals(activeFormat) &&
+                            showTypeNames != null && 
+                           !showTypeNames.booleanValue() &&
+                           !IFormattedValues.STRING_FORMAT.equals(activeFormat) &&
                             formatIds != null &&
                             Arrays.asList(formatIds).contains(IFormattedValues.STRING_FORMAT) &&
                             super.isEnabled(status, properties);
                     }
                 },
-                
                 new FormattedValueLabelText(
                     MessagesForVariablesVM.VariableVMNode_NoColumns_column__No_string__text_format, 
                     new String[] { 
@@ -429,7 +440,64 @@ public class VariableVMNode extends AbstractExpressionVMNode
                         IDebugVMConstants.PROP_FORMATTED_VALUE_ACTIVE_FORMAT_VALUE,
                         IDebugVMConstants.PROP_FORMATTED_VALUE_AVAILABLE_FORMATS,
                         IDebugVMConstants.PROP_FORMATTED_VALUE_ACTIVE_FORMAT,
-                        IDebugVMConstants.PROP_FORMATTED_VALUE_FORMAT_PREFERENCE}), 
+                        IDebugVMConstants.PROP_FORMATTED_VALUE_FORMAT_PREFERENCE,
+                        PROP_VARIABLE_SHOW_TYPE_NAMES})
+                {
+                	@Override
+                	public boolean isEnabled(IStatus status, Map<String, Object> properties) {
+                		Boolean showTypeNames = (Boolean) properties.get(PROP_VARIABLE_SHOW_TYPE_NAMES);
+                		return
+                		     showTypeNames != null && 
+                		    !showTypeNames.booleanValue() &&
+                             super.isEnabled(status, properties);
+                	}
+                },
+                new FormattedValueLabelText(
+                        MessagesForVariablesVM.VariableVMNode_NoColumns_column__text_format_with_type, 
+                        new String[] { 
+                            PROP_NAME, 
+                            IDebugVMConstants.PROP_FORMATTED_VALUE_ACTIVE_FORMAT_VALUE,
+                            FormattedValueVMUtil.getPropertyForFormatId(IFormattedValues.STRING_FORMAT),
+                            PROP_VARIABLE_TYPE_NAME,
+                            IDebugVMConstants.PROP_FORMATTED_VALUE_AVAILABLE_FORMATS, 
+                            IDebugVMConstants.PROP_FORMATTED_VALUE_ACTIVE_FORMAT,
+                            IDebugVMConstants.PROP_FORMATTED_VALUE_FORMAT_PREFERENCE,
+                            PROP_VARIABLE_SHOW_TYPE_NAMES}) 
+                    {
+    					@Override
+                        public boolean isEnabled(IStatus status, Map<String, Object> properties) {
+                            Boolean showTypeNames = (Boolean) properties.get(PROP_VARIABLE_SHOW_TYPE_NAMES);
+                            String[] formatIds = (String[]) properties.get(IDebugVMConstants.PROP_FORMATTED_VALUE_AVAILABLE_FORMATS);
+                            String activeFormat = (String) properties.get(IDebugVMConstants.PROP_FORMATTED_VALUE_ACTIVE_FORMAT);
+                            return 
+                                showTypeNames != null && 
+                                showTypeNames.booleanValue() &&
+                               !IFormattedValues.STRING_FORMAT.equals(activeFormat) &&
+                                formatIds != null &&
+                                Arrays.asList(formatIds).contains(IFormattedValues.STRING_FORMAT) &&
+                                super.isEnabled(status, properties);
+                        }
+                    },
+                    new FormattedValueLabelText(
+                        MessagesForVariablesVM.VariableVMNode_NoColumns_column__No_string__text_format_with_type, 
+                        new String[] { 
+                            PROP_NAME, 
+                            IDebugVMConstants.PROP_FORMATTED_VALUE_ACTIVE_FORMAT_VALUE,
+                            PROP_VARIABLE_TYPE_NAME,
+                            IDebugVMConstants.PROP_FORMATTED_VALUE_AVAILABLE_FORMATS,
+                            IDebugVMConstants.PROP_FORMATTED_VALUE_ACTIVE_FORMAT,
+                            IDebugVMConstants.PROP_FORMATTED_VALUE_FORMAT_PREFERENCE,
+                            PROP_VARIABLE_SHOW_TYPE_NAMES})
+                    {
+                    	@Override
+                    	public boolean isEnabled(IStatus status, Map<String, Object> properties) {
+                    		Boolean showTypeNames = (Boolean) properties.get(PROP_VARIABLE_SHOW_TYPE_NAMES);
+                    		return
+               		            showTypeNames != null && 
+               		            showTypeNames.booleanValue() &&
+                                super.isEnabled(status, properties);
+                    	}
+                    },
                 new ErrorLabelText(
                     MessagesForVariablesVM.VariableVMNode_NoColumns_column__Error__text_format, 
                     new String[] { PROP_NAME }),
@@ -504,6 +572,93 @@ public class VariableVMNode extends AbstractExpressionVMNode
         }
     }
     
+    //
+    // We encapsulate  the determination  of the state  of the "Show Type Names" ICON
+    // selection to this routine. This attribute information is not readily available
+    // from standard Interface definitions. So we use reflection to get the info. But
+    // in the future this will change and then we can just change this routine.  This
+    // really should just be as simple as the code below,  which could be done inline
+    // once it comes to pass.
+    // 
+    //  Boolean attribute = (Boolean) context.getProperty(IDebugModelPresentation.DISPLAY_VARIABLE_TYPE_NAMES);
+    //	if (attribute != null) {
+    //		return attribute;
+    //	}
+    //	return Boolean.FALSE;
+    //
+    //  @param return-value Boolean.TRUE  --> Show Types ICON is     selected/depressed
+    //  @param return-value Boolean.FALSE --> Show Types ICON is not selected/depressed
+    //
+    
+    @SuppressWarnings("unchecked")
+	private Boolean getShowTypeNamesState( IPresentationContext context ) {
+    	// This is fairly ugly stuff.  It should be the case  that the "getPropery()"
+    	// method of the presentation context  should contain this attribute,  but it
+    	// does not. So we have to go mining for it. As it turns out the presentation
+    	// context is actually an implementation class  DebugModelPresentationContext
+    	// from which you can get the IDebugModelPresentation instance. In turn  this
+    	// is a DelegatingModelPresentation  instance which allows  you to obtain the
+    	// current set of internal attributes,  which contains  the current state  of 
+    	// "Show Type Names" ICON selection.
+    	Class<? extends IPresentationContext> contextClass = context.getClass();
+    	Method contextMethod = null;
+    	try {
+    		// Will return the instance of the class "DebugModelPresentationContext"
+    		// if this is indeed the implementation we are expecting.
+    		contextMethod = contextClass.getMethod( "getModelPresentation" , new Class[] {} ); //$NON-NLS-1$
+    	}
+    	catch ( Exception ex ) {}
+    		
+    	IDebugModelPresentation debugModelPresentation = null ;
+    	if (contextMethod != null) {
+    		try {
+    			// We invoke the "getModelPresntation" method to get the actual instance
+    			// of the "DelegatingModelPresentation".
+    			debugModelPresentation = (IDebugModelPresentation) contextMethod.invoke(context , new Object[0]);
+    		}
+    		catch ( Exception e ) {}
+    	}
+    	
+    	if (debugModelPresentation != null) {
+    		Class<? extends IDebugModelPresentation> presentationClass = debugModelPresentation.getClass();
+        	Method presentationMethod = null;
+        	try {
+        		// The "getAttributeMethod" is a public method which returns the internal
+        		// attributes. These should be part of the Interface but they are not. So
+        		// we get them through this available method.
+        		presentationMethod = presentationClass.getMethod( "getAttributeMap" , new Class[] {} ); //$NON-NLS-1$
+        	}
+        	catch ( Exception ex ) {}
+        	
+        	HashMap attributeMap = null;
+        	if (presentationMethod != null) {
+        		try {
+        			// Now get the actual HashMap attribute list so we can see if there is
+        			// state information about the "Show Type Names" ICON.
+        			attributeMap = (HashMap) presentationMethod.invoke(debugModelPresentation , new Object[0]);
+        		}
+        		catch ( Exception e ) {}
+        	}
+        	
+        	if (attributeMap != null) {
+        		// This attribute ( which is globally defined ) reflect the state of the ICON.
+        		// If is exists is contains the current state.  Non-existence would mean  that
+        		// the ICON has never been selected or changed.  This is so at  the very start
+        		// when the view is first brought up.
+        		Boolean attribute = (Boolean) attributeMap.get(IDebugModelPresentation.DISPLAY_VARIABLE_TYPE_NAMES);
+        		
+        		if (attribute != null) {
+        			return attribute;
+        		}
+        	}
+    	}
+    	
+    	// Could not get to the one of the methods needs to determine the state of the
+    	// ICON or we could not get the attribute.  Assume we are not showing the TYPE 
+    	// NAMES.
+    	return Boolean.FALSE;
+    }
+    
     /**
      * @since 2.0
      */
@@ -529,7 +684,12 @@ public class VariableVMNode extends AbstractExpressionVMNode
         for (final IPropertiesUpdate update : updates) {
             IExpression expression = (IExpression)DebugPlugin.getAdapter(update.getElement(), IExpression.class);
             if (expression != null) {
-                update.setProperty(AbstractExpressionVMNode.PROP_ELEMENT_EXPRESSION, expression.getExpressionText());
+            	update.setProperty(AbstractExpressionVMNode.PROP_ELEMENT_EXPRESSION, expression.getExpressionText());
+            }
+            
+            // Capture the current "Show Type Names" ICON state in case there are no columns.
+            if (update.getProperties().contains(PROP_VARIABLE_SHOW_TYPE_NAMES)) {
+            	update.setProperty(PROP_VARIABLE_SHOW_TYPE_NAMES, getShowTypeNamesState(update.getPresentationContext()));
             }
             
             IExpressionDMContext dmc = findDmcInPath(update.getViewerInput(), update.getElementPath(), IExpressions.IExpressionDMContext.class);
@@ -603,11 +763,11 @@ public class VariableVMNode extends AbstractExpressionVMNode
             update.setProperty(PROP_VARIABLE_BASIC_TYPE, type.name());
         }
         
-        /*
-         * If this node has an expression then it has already been filled in by the higher
-         * level logic. If not then we need to supply something.  In the  previous version
-         * ( pre-property based ) we supplied the name. So we will do that here also.
-         */
+        //
+        // If this node has an expression then it has already been filled in by the higher
+        // level logic. If not then we need to supply something.  In the  previous version
+        // ( pre-property based ) we supplied the name. So we will do that here also.
+        //
         IExpression expression = (IExpression)DebugPlugin.getAdapter(update.getElement(), IExpression.class);
         if (expression == null) {
             update.setProperty(AbstractExpressionVMNode.PROP_ELEMENT_EXPRESSION, data.getName());
@@ -863,8 +1023,6 @@ public class VariableVMNode extends AbstractExpressionVMNode
 
         stackFrameService.getLocals(frameDmc, rm);
     }
-    
-    //private final static int MAX_STRING_VALUE_LENGTH = 40;
     
     public int getDeltaFlags(Object e) {
         if ( e instanceof ISuspendedDMEvent || 

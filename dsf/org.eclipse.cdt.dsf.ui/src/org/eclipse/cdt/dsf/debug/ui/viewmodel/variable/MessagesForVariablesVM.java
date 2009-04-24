@@ -31,6 +31,8 @@ public class MessagesForVariablesVM extends NLS {
     public static String VariableVMNode_Name_column__text_format;
     public static String VariableVMNode_NoColumns_column__Error__text_format;
     public static String VariableVMNode_NoColumns_column__text_format;
+    public static String VariableVMNode_NoColumns_column__No_string__text_format_with_type;
+    public static String VariableVMNode_NoColumns_column__text_format_with_type;
     public static String VariableVMNode_NoColumns_column__No_string__text_format;
     public static String VariableVMNode_Type_column__Error__text_format;
     public static String VariableVMNode_Type_column__text_format;

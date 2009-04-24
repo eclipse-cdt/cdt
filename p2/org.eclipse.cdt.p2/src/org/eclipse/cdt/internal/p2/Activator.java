@@ -1,4 +1,4 @@
-package org.eclipse.cdt.p2;
+package org.eclipse.cdt.internal.p2;
 
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Platform;

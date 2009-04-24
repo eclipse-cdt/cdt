@@ -16,8 +16,6 @@ import java.net.URI;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.eclipse.cdt.p2.internal.repo.artifact.InstallArtifactRepository;
-import org.eclipse.cdt.p2.internal.touchpoint.SDKTouchpoint;
 import org.eclipse.equinox.app.IApplication;
 import org.eclipse.equinox.app.IApplicationContext;
 import org.eclipse.equinox.internal.provisional.p2.artifact.repository.ArtifactDescriptor;
@@ -31,12 +29,13 @@ import org.eclipse.equinox.internal.provisional.p2.metadata.IInstallableUnit;
 import org.eclipse.equinox.internal.provisional.p2.metadata.ILicense;
 import org.eclipse.equinox.internal.provisional.p2.metadata.IProvidedCapability;
 import org.eclipse.equinox.internal.provisional.p2.metadata.IRequiredCapability;
+import org.eclipse.equinox.internal.provisional.p2.metadata.ITouchpointType;
 import org.eclipse.equinox.internal.provisional.p2.metadata.IUpdateDescriptor;
 import org.eclipse.equinox.internal.provisional.p2.metadata.MetadataFactory;
 import org.eclipse.equinox.internal.provisional.p2.metadata.MetadataFactory.InstallableUnitDescription;
-import org.eclipse.equinox.internal.provisional.p2.metadata.generator.MetadataGeneratorHelper;
 import org.eclipse.equinox.internal.provisional.p2.metadata.repository.IMetadataRepository;
 import org.eclipse.equinox.internal.provisional.p2.metadata.repository.IMetadataRepositoryManager;
+import org.eclipse.equinox.spi.p2.publisher.PublisherHelper;
 import org.osgi.framework.Bundle;
 
 /**
@@ -46,6 +45,12 @@ import org.osgi.framework.Bundle;
 public class MinGWGenerator implements IApplication {
 
 	private static final String REPO_NAME = "Wascana";
+	
+	private static final ITouchpointType NATIVE_TOUCHPOINT
+		= MetadataFactory.createTouchpointType("org.eclipse.equinox.p2.native", new Version("1.0.0"));
+	private static final String GZ_COMPRESSION = "gz";
+	private static final String BZ2_COMPRESSION = "bz2";
+	private static final String ZIP_COMPRESSION = "zip";
 	
 	IMetadataRepository metaRepo;
 	IArtifactRepository artiRepo;
@@ -84,7 +89,7 @@ public class MinGWGenerator implements IApplication {
 		IInstallableUnit runtimeIU = createIU(runtimeIUDesc, runtimeId,	runtimeVersion,
 				"http://downloads.sourceforge.net/mingw/mingwrt-3.15.1-mingw32.tar.gz",
 				mingwSubdir,
-				InstallArtifactRepository.GZIP_COMPRESSION);
+				GZ_COMPRESSION);
 
 		// w32api
 		String w32apiId = "wascana.mingw.w32api";
@@ -93,7 +98,7 @@ public class MinGWGenerator implements IApplication {
 		IInstallableUnit w32apiIU = createIU(w32apiIUDesc, w32apiId, w32apiVersion,
 				"http://downloads.sourceforge.net/mingw/w32api-3.13-mingw32-dev.tar.gz",
 				mingwSubdir,
-				InstallArtifactRepository.GZIP_COMPRESSION);
+				GZ_COMPRESSION);
 
 		// binutils
 		String binutilsId = "wascana.mingw.binutils";
@@ -102,7 +107,7 @@ public class MinGWGenerator implements IApplication {
 		IInstallableUnit binutilsIU = createIU(binutilsIUDesc, binutilsId, binutilsVersion,
 				"http://downloads.sourceforge.net/mingw/binutils-2.19-mingw32-bin.tar.gz",
 				mingwSubdir,
-				InstallArtifactRepository.GZIP_COMPRESSION);
+				GZ_COMPRESSION);
 		
 		// gcc-4 core
 		String gcc4coreId = "wascana.mingw.gcc4.core";
@@ -123,7 +128,7 @@ public class MinGWGenerator implements IApplication {
 		IInstallableUnit gcc4coreIU = createIU(gcc4coreIUDesc, gcc4coreId, gcc4Version,
 				"http://downloads.sourceforge.net/tdm-gcc/gcc-4.3.2-tdm-1-core.tar.gz",
 				mingwSubdir,
-				InstallArtifactRepository.GZIP_COMPRESSION);
+				GZ_COMPRESSION);
 
 		// gcc-4 g++
 		String gcc4gppId = "wascana.mingw.gcc4.g++";
@@ -138,7 +143,7 @@ public class MinGWGenerator implements IApplication {
 		IInstallableUnit gcc4gppIU = createIU(gcc4gppIUDesc, gcc4gppId, gcc4Version,
 				"http://downloads.sourceforge.net/tdm-gcc/gcc-4.3.2-tdm-1-g++.tar.gz",
 				mingwSubdir,
-				InstallArtifactRepository.GZIP_COMPRESSION);
+				GZ_COMPRESSION);
 		
 		// gdb
 		String gdbId = "wascana.mingw.gdb";
@@ -147,7 +152,7 @@ public class MinGWGenerator implements IApplication {
 		IInstallableUnit gdbIU = createIU(gdbIUDesc, gdbId, gdbVersion,
 				"http://downloads.sourceforge.net/mingw/gdb-6.8-mingw-3.tar.bz2",
 				mingwSubdir,
-				InstallArtifactRepository.BZIP2_COMPRESSION);
+				BZ2_COMPRESSION);
 		
 		// msys
 		String msysId = "wascana.msys.core";
@@ -156,7 +161,7 @@ public class MinGWGenerator implements IApplication {
 		IInstallableUnit msysIU = createIU(msysIUDesc, msysId, msysVersion,
 				"http://downloads.sourceforge.net/mingw/msysCORE-1.0.11-20080826.tar.gz",
 				"msys",
-				InstallArtifactRepository.GZIP_COMPRESSION);
+				GZ_COMPRESSION);
 		
 		// MinGW toolchain category
 		InstallableUnitDescription mingwToolchainDesc = createIUDesc("wascana.mingw", wascanaVersion, "MinGW Toolchain", null);;
@@ -180,7 +185,7 @@ public class MinGWGenerator implements IApplication {
 		IInstallableUnit zlibIU = createIU(zlibIUDesc, zlibId, zlibVersion,
 				"http://downloads.sourceforge.net/wascana/zlib-mingw-1.2.3.zip",
 				mingwSubdir,
-				InstallArtifactRepository.ZIP_COMPRESSION);
+				ZIP_COMPRESSION);
 		
 		// SDL
 		String sdlId = "wascana.sdl";
@@ -189,7 +194,7 @@ public class MinGWGenerator implements IApplication {
 		IInstallableUnit sdlIU = createIU(sdlIUDesc, sdlId, sdlVersion,
 				"http://downloads.sourceforge.net/wascana/SDL-mingw-1.2.13.zip",
 				mingwSubdir,
-				InstallArtifactRepository.ZIP_COMPRESSION);
+				ZIP_COMPRESSION);
 
 		// wxWidgets
 		String wxId = "wascana.wxWidgets";
@@ -198,7 +203,7 @@ public class MinGWGenerator implements IApplication {
 		IInstallableUnit wxIU = createIU(wxDesc, wxId, wxVersion,
 				"http://downloads.sourceforge.net/wascana/wxMSW-mingw-2.8.9.zip",
 				mingwSubdir,
-				InstallArtifactRepository.ZIP_COMPRESSION);
+				ZIP_COMPRESSION);
 
 		// Libraries toolchain category
 		InstallableUnitDescription libsIUDesc = createIUDesc("wascana.libs", wascanaVersion, "Libraries", null);;
@@ -252,14 +257,23 @@ public class MinGWGenerator implements IApplication {
 
 	private IInstallableUnit createIU(InstallableUnitDescription iuDesc, String id, Version version, String location, String subdir, String compression) throws ProvisionException {
 		iuDesc.setProperty(IInstallableUnit.PROP_TYPE_GROUP, Boolean.TRUE.toString());
-		iuDesc.setTouchpointType(SDKTouchpoint.TOUCHPOINT_TYPE);
+		iuDesc.setTouchpointType(NATIVE_TOUCHPOINT);
 		Map<String, String> tpdata = new HashMap<String, String>();
-		tpdata.put("uninstall", "uninstall()");
+		
+		String cmd;
+		if (compression.equals(ZIP_COMPRESSION)) {
+			cmd = "unzip(source:@artifact, target:${installFolder}/" + subdir + ");";
+		} else {
+			cmd = "untar(source:@artifact, target:${installFolder}/" + subdir
+				+ ", compression:" + compression + ");";
+		}
+		
+		tpdata.put("install", cmd);
+		tpdata.put("install", "cleanup" + cmd);
+		
 		iuDesc.addTouchpointData(MetadataFactory.createTouchpointData(tpdata));
-		IArtifactKey artiKey = MetadataGeneratorHelper.createLauncherArtifactKey(id, version);
+		IArtifactKey artiKey = PublisherHelper.createBinaryArtifactKey(id, version);
 		ArtifactDescriptor artiDesc = new ArtifactDescriptor(artiKey);
-		artiDesc.setProperty(InstallArtifactRepository.SUB_DIR, subdir);
-		artiDesc.setProperty(InstallArtifactRepository.COMPRESSION, compression);
 		artiDesc.setRepositoryProperty("artifact.reference", location);
 		artiRepo.addDescriptor(artiDesc);
 		iuDesc.setArtifacts(new IArtifactKey[] { artiKey });

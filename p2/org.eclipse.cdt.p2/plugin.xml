@@ -2,30 +2,21 @@
 <?eclipse version="3.2"?>
 <plugin>
    <extension
-         id="org.eclipse.cdt.p2.internal.repo.artifact.InstallArtifactRepository"
-         name="%installArtifactRepository"
-         point="org.eclipse.equinox.p2.artifact.repository.artifactRepositories">
-      <factory
-            class="org.eclipse.cdt.p2.internal.repo.artifact.InstallArtifactRepositoryFactory">
-      </factory>
-      <filter
-            suffix="installArtifact.xml">
-      </filter>
-   </extension>
-   <extension
-         point="org.eclipse.equinox.p2.engine.touchpoints">
-      <touchpoint
-            class="org.eclipse.cdt.p2.internal.touchpoint.SDKTouchpoint"
-            type="org.eclipse.cdt.p2.internal.touchpoint.SDKTouchpoint"
+         point="org.eclipse.equinox.p2.engine.actions">
+      <action
+            class="org.eclipse.cdt.internal.p2.touchpoint.natives.actions.UntarAction"
+            name="untar"
+            touchpointType="org.eclipse.equinox.p2.native"
+            touchpointVersion="1.0.0"
             version="1.0.0">
-      </touchpoint>
+      </action>
    </extension>
    <extension
          point="org.eclipse.equinox.p2.engine.actions">
       <action
-            class="org.eclipse.cdt.p2.internal.touchpoint.ExtractAction"
-            name="extract"
-            touchpointType="org.eclipse.cdt.p2.internal.touchpoint.SDKTouchpoint"
+            class="org.eclipse.cdt.internal.p2.touchpoint.natives.actions.CleanupUntarAction"
+            name="cleanupuntar"
+            touchpointType="org.eclipse.equinox.p2.native"
             touchpointVersion="1.0.0"
             version="1.0.0">
       </action>

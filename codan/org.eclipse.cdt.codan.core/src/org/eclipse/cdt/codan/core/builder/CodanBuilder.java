@@ -10,18 +10,26 @@
  *******************************************************************************/
 package org.eclipse.cdt.codan.core.builder;
 
+import java.io.File;
+import java.net.URI;
 import java.util.Map;
 
 import org.eclipse.cdt.codan.core.CodanCorePlugin;
 import org.eclipse.cdt.codan.core.model.CheckersRegisry;
 import org.eclipse.cdt.codan.core.model.CodanRuntime;
+import org.eclipse.cdt.codan.core.model.ICAstChecker;
 import org.eclipse.cdt.codan.core.model.IChecker;
+import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
+import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IResourceDelta;
 import org.eclipse.core.resources.IResourceDeltaVisitor;
 import org.eclipse.core.resources.IResourceVisitor;
+import org.eclipse.core.resources.IWorkspace;
+import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.resources.IncrementalProjectBuilder;
+import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 
@@ -100,6 +108,31 @@ public class CodanBuilder extends IncrementalProjectBuilder {
 					checker.processResource(resource);
 			} catch (Throwable e) {
 				CodanCorePlugin.log(e);
+			}
+		}
+	}
+
+	public void reconcileAst(IASTTranslationUnit ast, IProgressMonitor monitor) {
+		String filePath = ast.getFilePath();
+		IWorkspace workspace = ResourcesPlugin.getWorkspace();
+		IWorkspaceRoot root = workspace.getRoot();
+		IFile[] resources;
+		URI uri = new File(filePath).toURI();
+		resources = root.findFilesForLocationURI(uri);
+		if (resources != null && resources.length > 0) {
+			IFile resource = resources[0];
+			CodanRuntime.getInstance().getProblemReporter().deleteMarkers(
+					resource);
+			for (IChecker checker : CheckersRegisry.getInstance()) {
+				try {
+					boolean run = false;
+					if (checker.enabledInContext(resource))
+						run = true;
+					if (run && checker instanceof ICAstChecker)
+						((ICAstChecker) checker).processAst(ast);
+				} catch (Throwable e) {
+					CodanCorePlugin.log(e);
+				}
 			}
 		}
 	}

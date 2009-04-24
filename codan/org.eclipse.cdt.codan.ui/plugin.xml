@@ -62,4 +62,9 @@
             class="org.eclipse.cdt.codan.internal.ui.preferences.PreferenceInitializer">
       </initializer>
    </extension>
+   <extension
+         point="org.eclipse.ui.startup">
+      <startup
+            class="org.eclipse.cdt.codan.ui.Startup"></startup>
+   </extension>
 </plugin>

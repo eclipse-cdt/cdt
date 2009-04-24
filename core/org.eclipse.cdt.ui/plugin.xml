@@ -3134,17 +3134,14 @@
    <extension
          point="org.eclipse.ui.propertyPages">
       <page
-            adaptable="true"
             class="org.eclipse.cdt.internal.ui.workingsets.WorkingSetConfigurationsPage"
             id="org.eclipse.ui.cdt.workingSets.configurations"
-            name="%workingSetConfigsPage"
-            objectClass="org.eclipse.ui.IWorkingSet">
+            name="%workingSetConfigsPage">
          <enabledWhen>
-            <test
-                  property="org.eclipse.cdt.ui.hasCProjects">
-            </test>
+		     <adapt type="org.eclipse.ui.IWorkingSet">
+		          <test property="org.eclipse.cdt.ui.hasCProjects"/>
+		     </adapt>         
          </enabledWhen>
       </page>
    </extension>
-
 </plugin>

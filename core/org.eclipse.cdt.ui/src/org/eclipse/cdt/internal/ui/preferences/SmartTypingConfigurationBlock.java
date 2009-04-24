@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2008 IBM Corporation and others.
+ * Copyright (c) 2000, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,12 +10,11 @@
  *     Sergey Prigogin, Google
  *     Anton Leherbauer (Wind River Systems)
  *******************************************************************************/
-
 package org.eclipse.cdt.internal.ui.preferences;
 
+import org.eclipse.core.runtime.Assert;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.preference.IPreferenceStore;
-import org.eclipse.core.runtime.Assert;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.swt.SWT;
@@ -194,9 +193,9 @@ class SmartTypingConfigurationBlock extends AbstractConfigurationBlock {
 		String text;
 		String indentMode= CUIPlugin.getDefault().getCombinedPreferenceStore().getString(DefaultCodeFormatterConstants.FORMATTER_TAB_CHAR);
 		if (CCorePlugin.TAB.equals(indentMode))
-			text= Messages.format(PreferencesMessages.SmartTypingConfigurationBlock_tabs_message_tab_text, new String[] {Integer.toString(getTabDisplaySize())});
+			text= Messages.format(PreferencesMessages.SmartTypingConfigurationBlock_tabs_message_tab_text, Integer.toString(getTabDisplaySize()));
 		else
-			text= Messages.format(PreferencesMessages.SmartTypingConfigurationBlock_tabs_message_others_text, new String[] {Integer.toString(getTabDisplaySize()), Integer.toString(getIndentSize()), getIndentMode()}); 
+			text= Messages.format(PreferencesMessages.SmartTypingConfigurationBlock_tabs_message_others_text, Integer.toString(getTabDisplaySize()), Integer.toString(getIndentSize()), getIndentMode()); 
 		
 		final Link link= new Link(composite, SWT.NONE);
 		link.setText(text);

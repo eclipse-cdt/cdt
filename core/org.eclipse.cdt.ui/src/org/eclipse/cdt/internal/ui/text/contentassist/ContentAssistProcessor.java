@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2008 IBM Corporation and others.
+ * Copyright (c) 2005, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -559,11 +559,11 @@ public class ContentAssistProcessor implements IContentAssistProcessor {
 	}
 	
 	private String createEmptyMessage() {
-		return Messages.format(ContentAssistMessages.ContentAssistProcessor_empty_message, new String[]{getCategoryLabel(fRepetition)});
+		return Messages.format(ContentAssistMessages.ContentAssistProcessor_empty_message, getCategoryLabel(fRepetition));
 	}
 	
 	private String createIterationMessage() {
-		return Messages.format(ContentAssistMessages.ContentAssistProcessor_toggle_affordance_update_message, new String[]{ getCategoryLabel(fRepetition), fIterationGesture, getCategoryLabel(fRepetition + 1) });
+		return Messages.format(ContentAssistMessages.ContentAssistProcessor_toggle_affordance_update_message, getCategoryLabel(fRepetition), fIterationGesture, getCategoryLabel(fRepetition + 1));
 	}
 	
 	private String getCategoryLabel(int repetition) {

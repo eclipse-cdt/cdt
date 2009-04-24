@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2008 IBM Corporation and others.
+ * Copyright (c) 2000, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -368,7 +368,7 @@ public abstract class ModifyDialogTabPage implements IModifyDialogTabPage {
 		}
 		
 		private IStatus createErrorStatus() {
-		    return new Status(IStatus.ERROR, CUIPlugin.getPluginId(), 0, Messages.format(FormatterMessages.ModifyDialogTabPage_NumberPreference_error_invalid_value, new String [] {Integer.toString(fMinValue), Integer.toString(fMaxValue)}), null); 
+		    return new Status(IStatus.ERROR, CUIPlugin.getPluginId(), 0, Messages.format(FormatterMessages.ModifyDialogTabPage_NumberPreference_error_invalid_value, Integer.toString(fMinValue), Integer.toString(fMaxValue)), null); 
 		}
 
 		protected void focusGained() {

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005 IBM Corporation and others.
+ * Copyright (c) 2005, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -112,14 +112,9 @@ public class CommandLauncher implements ICommandLauncher {
 
 	/**
 	 * @deprecated
-	 * @param commandPath
-	 * @param args
-	 * @param env
-	 * @param changeToDirectory
-	 * @return
-	 * @throws CoreException
 	 * @since 5.1
 	 */
+	@Deprecated
 	public Process execute(IPath commandPath, String[] args, String[] env, IPath changeToDirectory) throws CoreException {
 		try {
 			// add platform specific arguments (shell invocation)
@@ -141,7 +136,7 @@ public class CommandLauncher implements ICommandLauncher {
 	
 	/**
 	 * @since 5.1
-	 * @see org.eclipse.cdt.core.ICommandLauncher#execute(org.eclipse.core.runtime.IPath, java.lang.String[], java.lang.String[], org.eclipse.core.runtime.IPath)
+	 * @see org.eclipse.cdt.core.ICommandLauncher#execute(IPath, String[], String[], IPath, IProgressMonitor)
 	 */
 	public Process execute(IPath commandPath, String[] args, String[] env, IPath changeToDirectory, IProgressMonitor monitor) throws CoreException {
 		try {

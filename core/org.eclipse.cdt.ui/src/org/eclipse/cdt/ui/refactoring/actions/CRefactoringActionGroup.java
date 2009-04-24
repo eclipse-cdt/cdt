@@ -238,7 +238,7 @@ public class CRefactoringActionGroup extends ActionGroup implements ISelectionCh
 			refactorSubmenu.add(new Separator(GROUP_REORG2));
 			refactorSubmenu.add(new Separator(GROUP_TYPE));
 			refactorSubmenu.add(new Separator(GROUP_TYPE2));
-			refactorSubmenu.add(new Separator(GROUP_CODING2));;
+			refactorSubmenu.add(new Separator(GROUP_CODING2));
 			refactorSubmenu.add(new Separator(GROUP_TYPE3));
         
 			menu.appendToGroup(fGroupName, refactorSubmenu);

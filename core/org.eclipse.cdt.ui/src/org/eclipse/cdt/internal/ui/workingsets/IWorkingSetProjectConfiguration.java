@@ -67,14 +67,6 @@ public interface IWorkingSetProjectConfiguration extends IWorkingSetConfiguratio
 	String getSelectedConfigurationID();
 
 	/**
-	 * Sets the ID of the build configuration that is currently selected for my project.
-	 * 
-	 * @param id
-	 *            my selected build configuration ID
-	 */
-	void setSelectedConfigurationID(String id);
-
-	/**
 	 * <p>
 	 * Resolves my selected configuration reference to the C model's description handle for it.
 	 * </p>
@@ -166,5 +158,13 @@ public interface IWorkingSetProjectConfiguration extends IWorkingSetConfiguratio
 	 */
 	interface ISnapshot extends IWorkingSetProjectConfiguration, IWorkingSetConfigurationElement.ISnapshot {
 		IWorkingSetConfiguration.ISnapshot getWorkingSetConfiguration();
+
+		/**
+		 * Sets the ID of the build configuration that is currently selected for my project.
+		 * 
+		 * @param id
+		 *            my selected build configuration ID
+		 */
+		void setSelectedConfigurationID(String id);
 	}
 }

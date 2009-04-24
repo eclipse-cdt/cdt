@@ -92,7 +92,7 @@ public class WorkingSetProjectConfiguration implements IWorkingSetProjectConfigu
 		return selectedConfiguration;
 	}
 
-	public void setSelectedConfigurationID(String id) {
+	protected void setSelectedConfigurationID(String id) {
 		this.selectedConfiguration = id;
 	}
 
@@ -263,6 +263,10 @@ public class WorkingSetProjectConfiguration implements IWorkingSetProjectConfigu
 		@Override
 		public final String getProjectName() {
 			return resolveProject().getName();
+		}
+
+		public void setSelectedConfigurationID(String id) {
+			super.setSelectedConfigurationID(id);
 		}
 
 		@Override

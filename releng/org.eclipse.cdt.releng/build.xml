@@ -577,5 +577,11 @@
 		<antcall target="tagone">
 			<param name="tagmodule" value="org.eclipse.cdt/dsf-gdb/org.eclipse.cdt.gnu.dsf-feature"/>
 		</antcall>
+		<antcall target="tagone">
+			<param name="tagmodule" value="org.eclipse.cdt/cross/org.eclipse.cdt.launch.remote-feature"/>
+		</antcall>
+		<antcall target="tagone">
+			<param name="tagmodule" value="org.eclipse.cdt/cross/org.eclipse.cdt.launch.remote"/>
+		</antcall>
 	</target>
 </project>

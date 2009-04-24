@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2008 IBM Corporation and others.
+ * Copyright (c) 2006, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,20 +8,17 @@
  * Contributors:
  * IBM Corporation - initial API and implementation
  * Takuya Miyamoto - Adapted from org.eclipse.team.examples.filesystem / FileSystemMergeContext
+ * David McKnight   (IBM)        - [272708] [import/export] fix various bugs with the synchronization support
  *******************************************************************************/
 package org.eclipse.rse.internal.synchronize.filesystem.subscriber;
 
-import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.jobs.ISchedulingRule;
-import org.eclipse.rse.internal.synchronize.RSESyncUtils;
 import org.eclipse.team.core.diff.IDiff;
-import org.eclipse.team.core.diff.IThreeWayDiff;
 import org.eclipse.team.core.mapping.ISynchronizationScopeManager;
-import org.eclipse.team.core.mapping.provider.MergeStatus;
 import org.eclipse.team.core.mapping.provider.ResourceDiffTree;
 import org.eclipse.team.core.subscribers.SubscriberMergeContext;
 
@@ -105,6 +102,7 @@ public class FileSystemMergeContext extends SubscriberMergeContext {
 		// is because the file system provider doesn't really have the proper
 		// base
 		// so merging conflicts doesn't work properly
+		/*
 		if (!ignoreLocalChanges) {
 			IResource resource = ResourceDiffTree.getResourceFor(diff);
 			if (diff instanceof IThreeWayDiff && resource instanceof IFile) {
@@ -117,6 +115,7 @@ public class FileSystemMergeContext extends SubscriberMergeContext {
 				}
 			}
 		}
+		*/
 		return super.merge(diff, ignoreLocalChanges, monitor);
 	}
 

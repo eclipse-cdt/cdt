@@ -8,6 +8,7 @@
  * Contributors:
  *  David McKnight   (IBM)        - [223204] [cleanup] fix broken nls strings in files.ui and others
  * Martin Oberhuber (Wind River) - [185925] Support Platform/Team Synchronization
+ * David McKnight   (IBM)        - [272708] [import/export] fix various bugs with the synchronization support
  *******************************************************************************/
 package org.eclipse.rse.internal.importexport;
 
@@ -69,6 +70,14 @@ public class SystemImportExportResources extends NLS {
 	public static String RESID_FILEIMPEXP_BUTTON_SELECTTYPES_LABEL;
 	public static String RESID_FILEIMPEXP_BUTTON_SELECTTYPES_TOOLTIP;
 
+	// synchronize actions
+	public static String RESID_SYNCHRONIZE_ACTIONS_PUT_LABEL;
+	public static String RESID_SYNCHRONIZE_ACTIONS_PUT_ALL_LABEL;
+	public static String RESID_SYNCHRONIZE_ACTIONS_GET_LABEL;
+	public static String RESID_SYNCHRONIZE_ACTIONS_GET_ALL_LABEL;
+	public static String RESID_SYNCHRONIZE_ACTIONS_MERGE_LABEL;
+	public static String RESID_SYNCHRONIZE_ACTIONS_MERGE_ALL_LABEL;
+	
 	static {
 		// load message values from bundle file
 		NLS.initializeMessages(BUNDLE_NAME, SystemImportExportResources.class);

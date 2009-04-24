@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2008 IBM Corporation and others.
+ * Copyright (c) 2000, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,6 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  * Takuya Miyamoto - Adapted from org.eclipse.team.examples.filesystem / FileSystemSynchronizeParticipant
+ * David McKnight   (IBM)        - [272708] [import/export] fix various bugs with the synchronization support
  *******************************************************************************/
 package org.eclipse.rse.internal.synchronize.filesystem.ui;
 
@@ -22,6 +23,7 @@ import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.viewers.ILabelDecorator;
 import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.jface.viewers.TreeSelection;
+import org.eclipse.rse.internal.importexport.SystemImportExportResources;
 import org.eclipse.rse.internal.synchronize.filesystem.FileSystemPlugin;
 import org.eclipse.rse.internal.synchronize.filesystem.subscriber.FileSystemMergeContext;
 import org.eclipse.rse.internal.synchronize.filesystem.subscriber.FileSystemSubscriber;
@@ -63,6 +65,7 @@ public class FileSystemSynchronizeParticipant extends ModelSynchronizeParticipan
 	/**
 	 * Custom menu groups included in the viewer definition in the plugin.xml.
 	 */
+	public static final String CONTEXT_MENU_MERGE_GROUP_1 = "merge"; //$NON-NLS-1$
 	public static final String CONTEXT_MENU_PUT_GROUP_1 = "put"; //$NON-NLS-1$
 	public static final String CONTEXT_MENU_GET_GROUP_1 = "get"; //$NON-NLS-1$
 	public static final String CONTEXT_MENU_OVERWRITE_GROUP_1 = "overwrite"; //$NON-NLS-1$
@@ -117,6 +120,7 @@ public class FileSystemSynchronizeParticipant extends ModelSynchronizeParticipan
 	public class FileSystemParticipantActionGroup extends ModelSynchronizeParticipantActionGroup {
 		private ModelPutAction putAction;
 		private ModelGetAction getAction;
+		private ModelMergeAction mergeAction;
 		
 		/*
 		 * (non-Javadoc)
@@ -130,6 +134,7 @@ public class FileSystemSynchronizeParticipant extends ModelSynchronizeParticipan
 			super.initialize(configuration);
 			putAction = new ModelPutAction("", configuration);
 			getAction = new ModelGetAction("", configuration);
+			mergeAction = new ModelMergeAction("", configuration);
 		}
 		
 		
@@ -144,6 +149,7 @@ public class FileSystemSynchronizeParticipant extends ModelSynchronizeParticipan
 				TreeSelection selection = (TreeSelection)getConfiguration().getSite().getSelectionProvider().getSelection();
 				boolean hasOutgoingChange = false;
 				boolean hasIncomingChange = false;
+				boolean hasConflictingChange = false;
 				boolean hasSingleResource = selection.size() == 1?true:false;
 				
 				List<IResource> resources = new ArrayList<IResource>();
@@ -156,18 +162,33 @@ public class FileSystemSynchronizeParticipant extends ModelSynchronizeParticipan
 					IResource resource = (IResource) iterator.next();
 					SyncInfo info =  FileSystemSubscriber.getInstance().getSyncInfo(resource);						
 					
-					if(SyncInfo.getDirection(info.getKind()) == SyncInfo.OUTGOING){
+					int kind = info.getKind();
+					
+					if(SyncInfo.getDirection(kind) == SyncInfo.OUTGOING){
 						hasOutgoingChange = true;
-					} else if (SyncInfo.getDirection(info.getKind()) == SyncInfo.INCOMING){
+					} else if (SyncInfo.getDirection(kind) == SyncInfo.INCOMING){
 						hasIncomingChange = true;
 					}
+					else if (SyncInfo.getDirection(kind) == SyncInfo.CONFLICTING){
+						hasConflictingChange = true;
+					}
+				}
+				
+				if (hasConflictingChange){
+					if(hasSingleResource){
+						mergeAction.setText(SystemImportExportResources.RESID_SYNCHRONIZE_ACTIONS_MERGE_LABEL);
+					}else{
+						mergeAction.setText(SystemImportExportResources.RESID_SYNCHRONIZE_ACTIONS_MERGE_ALL_LABEL);
+					}
+					appendToGroup(ISynchronizePageConfiguration.P_CONTEXT_MENU, CONTEXT_MENU_MERGE_GROUP_1, putAction);
+					menu.appendToGroup(CONTEXT_MENU_MERGE_GROUP_1, mergeAction);										
 				}
 				
 				if(hasOutgoingChange){
 					if(hasSingleResource){
-						putAction.setText("Put");
+						putAction.setText(SystemImportExportResources.RESID_SYNCHRONIZE_ACTIONS_PUT_LABEL);
 					}else{
-						putAction.setText("Put All");
+						putAction.setText(SystemImportExportResources.RESID_SYNCHRONIZE_ACTIONS_PUT_ALL_LABEL);
 					}
 					appendToGroup(ISynchronizePageConfiguration.P_CONTEXT_MENU, CONTEXT_MENU_PUT_GROUP_1, putAction);
 					menu.appendToGroup(CONTEXT_MENU_PUT_GROUP_1, putAction);
@@ -175,13 +196,14 @@ public class FileSystemSynchronizeParticipant extends ModelSynchronizeParticipan
 				
 				if(hasIncomingChange){
 					if(hasSingleResource){
-						getAction.setText("Get");
+						getAction.setText(SystemImportExportResources.RESID_SYNCHRONIZE_ACTIONS_GET_LABEL);
 					}else{
-						getAction.setText("Get All");
+						getAction.setText(SystemImportExportResources.RESID_SYNCHRONIZE_ACTIONS_GET_ALL_LABEL);
 					}
 					appendToGroup(ISynchronizePageConfiguration.P_CONTEXT_MENU, CONTEXT_MENU_GET_GROUP_1, getAction);
 					menu.appendToGroup(CONTEXT_MENU_GET_GROUP_1, getAction);
 				}
+					
 				
 			} catch (Exception e) {
 				// TODO Auto-generated catch block

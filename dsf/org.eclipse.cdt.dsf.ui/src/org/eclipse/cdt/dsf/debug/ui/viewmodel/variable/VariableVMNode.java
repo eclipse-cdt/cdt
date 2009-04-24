@@ -11,10 +11,8 @@
 
 package org.eclipse.cdt.dsf.debug.ui.viewmodel.variable;
 
-import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.RejectedExecutionException;
@@ -573,90 +571,17 @@ public class VariableVMNode extends AbstractExpressionVMNode
     }
     
     //
-    // We encapsulate  the determination  of the state  of the "Show Type Names" ICON
-    // selection to this routine. This attribute information is not readily available
-    // from standard Interface definitions. So we use reflection to get the info. But
-    // in the future this will change and then we can just change this routine.  This
-    // really should just be as simple as the code below,  which could be done inline
-    // once it comes to pass.
-    // 
-    //  Boolean attribute = (Boolean) context.getProperty(IDebugModelPresentation.DISPLAY_VARIABLE_TYPE_NAMES);
-    //	if (attribute != null) {
-    //		return attribute;
-    //	}
-    //	return Boolean.FALSE;
-    //
     //  @param return-value Boolean.TRUE  --> Show Types ICON is     selected/depressed
     //  @param return-value Boolean.FALSE --> Show Types ICON is not selected/depressed
     //
-    
-    @SuppressWarnings("unchecked")
 	private Boolean getShowTypeNamesState( IPresentationContext context ) {
-    	// This is fairly ugly stuff.  It should be the case  that the "getPropery()"
-    	// method of the presentation context  should contain this attribute,  but it
-    	// does not. So we have to go mining for it. As it turns out the presentation
-    	// context is actually an implementation class  DebugModelPresentationContext
-    	// from which you can get the IDebugModelPresentation instance. In turn  this
-    	// is a DelegatingModelPresentation  instance which allows  you to obtain the
-    	// current set of internal attributes,  which contains  the current state  of 
-    	// "Show Type Names" ICON selection.
-    	Class<? extends IPresentationContext> contextClass = context.getClass();
-    	Method contextMethod = null;
-    	try {
-    		// Will return the instance of the class "DebugModelPresentationContext"
-    		// if this is indeed the implementation we are expecting.
-    		contextMethod = contextClass.getMethod( "getModelPresentation" , new Class[] {} ); //$NON-NLS-1$
-    	}
-    	catch ( Exception ex ) {}
-    		
-    	IDebugModelPresentation debugModelPresentation = null ;
-    	if (contextMethod != null) {
-    		try {
-    			// We invoke the "getModelPresntation" method to get the actual instance
-    			// of the "DelegatingModelPresentation".
-    			debugModelPresentation = (IDebugModelPresentation) contextMethod.invoke(context , new Object[0]);
-    		}
-    		catch ( Exception e ) {}
-    	}
-    	
-    	if (debugModelPresentation != null) {
-    		Class<? extends IDebugModelPresentation> presentationClass = debugModelPresentation.getClass();
-        	Method presentationMethod = null;
-        	try {
-        		// The "getAttributeMethod" is a public method which returns the internal
-        		// attributes. These should be part of the Interface but they are not. So
-        		// we get them through this available method.
-        		presentationMethod = presentationClass.getMethod( "getAttributeMap" , new Class[] {} ); //$NON-NLS-1$
-        	}
-        	catch ( Exception ex ) {}
-        	
-        	HashMap attributeMap = null;
-        	if (presentationMethod != null) {
-        		try {
-        			// Now get the actual HashMap attribute list so we can see if there is
-        			// state information about the "Show Type Names" ICON.
-        			attributeMap = (HashMap) presentationMethod.invoke(debugModelPresentation , new Object[0]);
-        		}
-        		catch ( Exception e ) {}
-        	}
-        	
-        	if (attributeMap != null) {
-        		// This attribute ( which is globally defined ) reflect the state of the ICON.
-        		// If is exists is contains the current state.  Non-existence would mean  that
-        		// the ICON has never been selected or changed.  This is so at  the very start
-        		// when the view is first brought up.
-        		Boolean attribute = (Boolean) attributeMap.get(IDebugModelPresentation.DISPLAY_VARIABLE_TYPE_NAMES);
-        		
-        		if (attribute != null) {
-        			return attribute;
-        		}
-        	}
-    	}
-    	
-    	// Could not get to the one of the methods needs to determine the state of the
-    	// ICON or we could not get the attribute.  Assume we are not showing the TYPE 
-    	// NAMES.
-    	return Boolean.FALSE;
+      Boolean attribute = (Boolean) context.getProperty(IDebugModelPresentation.DISPLAY_VARIABLE_TYPE_NAMES);
+      
+      if (attribute != null) {
+    	  return attribute;
+      }
+      
+      return Boolean.FALSE;
     }
     
     /**

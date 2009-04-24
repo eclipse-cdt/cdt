@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2008 IBM Corporation and others.
+ * Copyright (c) 2004, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -196,7 +196,7 @@ public class SimpleScanner {
             	digit = c - 'A' + 10;
             	break;
             default:
-                ungetChar(c);
+            	internalUngetChar(c);
             	return unicode;
             }
             fUniversalCharBuffer.append((char) c);
@@ -205,16 +205,21 @@ public class SimpleScanner {
         } while (true);
 	}
 
+	private void internalUngetChar(int c) {
+		fTokenBuffer.deleteCharAt(fTokenBuffer.length() - 1);
+		fContext.pushUndo(c);
+	}
+
 	protected void ungetChar(int c) {
-		if (c < 256) {
-			fTokenBuffer.deleteCharAt(fTokenBuffer.length() - 1);
-			fContext.pushUndo(c);
-		} else {
+		if (c < 256 || c == fTokenBuffer.charAt(fTokenBuffer.length() - 1)) {
+        	internalUngetChar(c);
+		} else if (fUniversalCharBuffer.length() > 0) {
 			char[] chs = fUniversalCharBuffer.toString().toCharArray();
 			for (int i = chs.length-1; i >= 0; --i) {
-				fTokenBuffer.deleteCharAt(fTokenBuffer.length() - 1);
-				fContext.pushUndo(chs[i]);
+            	internalUngetChar(chs[i]);
 			}
+		} else {
+        	internalUngetChar(c);
 		}
 	}
 

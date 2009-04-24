@@ -1167,7 +1167,7 @@ public class CodeFormatterTest extends BaseUITestCase {
 	public void testFormatterProblemsWithTypename_Bug269590() throws Exception {
 		assertFormatterResult();
 	}
-
+	
 	//void
 	//foo();
 	//int*
@@ -1180,4 +1180,22 @@ public class CodeFormatterTest extends BaseUITestCase {
 	public void testPreserveNewlineBetweenTypeAndFunctionDeclarator() throws Exception {
 		assertFormatterResult();
 	}
+
+	//class 大大大大
+	//{
+	//public:
+	//	大大大大();
+	//	virtual ~大大大大();
+	//};	
+	
+	//class 大大大大
+	//{
+	//public:
+	//	大大大大();
+	//	virtual ~大大大大();
+	//};
+	public void testFormatGeneratedClass_Bug272006() throws Exception {
+		assertFormatterResult();
+	}
+
 }

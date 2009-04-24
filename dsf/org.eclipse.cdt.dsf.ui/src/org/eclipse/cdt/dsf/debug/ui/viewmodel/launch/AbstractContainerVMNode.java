@@ -10,13 +10,16 @@
  *******************************************************************************/
 package org.eclipse.cdt.dsf.debug.ui.viewmodel.launch;
 
+import java.util.List;
 import java.util.concurrent.RejectedExecutionException;
 
 import org.eclipse.cdt.dsf.concurrent.ConfinedToDsfExecutor;
 import org.eclipse.cdt.dsf.concurrent.DataRequestMonitor;
 import org.eclipse.cdt.dsf.concurrent.DsfRunnable;
+import org.eclipse.cdt.dsf.concurrent.IDsfStatusConstants;
 import org.eclipse.cdt.dsf.concurrent.RequestMonitor;
 import org.eclipse.cdt.dsf.datamodel.DMContexts;
+import org.eclipse.cdt.dsf.datamodel.DataModelInitializedEvent;
 import org.eclipse.cdt.dsf.datamodel.IDMContext;
 import org.eclipse.cdt.dsf.datamodel.IDMEvent;
 import org.eclipse.cdt.dsf.debug.service.IRunControl;
@@ -29,12 +32,16 @@ import org.eclipse.cdt.dsf.debug.service.IRunControl.IExitedDMEvent;
 import org.eclipse.cdt.dsf.debug.service.IRunControl.IStartedDMEvent;
 import org.eclipse.cdt.dsf.debug.service.IRunControl.StateChangeReason;
 import org.eclipse.cdt.dsf.debug.ui.viewmodel.SteppingController.SteppingTimedOutEvent;
+import org.eclipse.cdt.dsf.internal.ui.DsfUIPlugin;
 import org.eclipse.cdt.dsf.service.DsfSession;
 import org.eclipse.cdt.dsf.ui.concurrent.ViewerDataRequestMonitor;
 import org.eclipse.cdt.dsf.ui.viewmodel.IVMContext;
+import org.eclipse.cdt.dsf.ui.viewmodel.ModelProxyInstalledEvent;
+import org.eclipse.cdt.dsf.ui.viewmodel.VMChildrenUpdate;
 import org.eclipse.cdt.dsf.ui.viewmodel.VMDelta;
 import org.eclipse.cdt.dsf.ui.viewmodel.datamodel.AbstractDMVMNode;
 import org.eclipse.cdt.dsf.ui.viewmodel.datamodel.AbstractDMVMProvider;
+import org.eclipse.cdt.dsf.ui.viewmodel.datamodel.IDMVMContext;
 import org.eclipse.cdt.dsf.ui.viewmodel.properties.IElementPropertiesProvider;
 import org.eclipse.cdt.dsf.ui.viewmodel.properties.IPropertiesUpdate;
 import org.eclipse.cdt.dsf.ui.viewmodel.properties.LabelAttribute;
@@ -43,6 +50,7 @@ import org.eclipse.cdt.dsf.ui.viewmodel.properties.LabelImage;
 import org.eclipse.cdt.dsf.ui.viewmodel.properties.LabelText;
 import org.eclipse.cdt.dsf.ui.viewmodel.properties.PropertiesBasedLabelProvider;
 import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IElementLabelProvider;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.ILabelUpdate;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IModelDelta;
@@ -173,10 +181,87 @@ public abstract class AbstractContainerVMNode extends AbstractDMVMNode
 
     @Override
     public void getContextsForEvent(VMDelta parentDelta, Object e, final DataRequestMonitor<IVMContext[]> rm) {
-        super.getContextsForEvent(parentDelta, e, rm);
+    	if (e instanceof ModelProxyInstalledEvent || e instanceof DataModelInitializedEvent) {
+    		getContainerVMCForModelProxyInstallEvent(
+    				parentDelta,
+    				new DataRequestMonitor<VMContextInfo>(getExecutor(), rm) {
+    					@Override
+    					protected void handleCompleted() {
+    						if (isSuccess()) {
+    							rm.setData(new IVMContext[] { getData().fVMContext });
+    						} else {
+    							rm.setData(new IVMContext[0]);
+    						}
+    						rm.done();
+    					}
+    				});
+    	} else {
+    		super.getContextsForEvent(parentDelta, e, rm);
+    	}
     }
-            
-	public int getDeltaFlags(Object e) {
+
+    private static class VMContextInfo {
+        final IVMContext fVMContext;
+        final int fIndex;
+        final boolean fIsSuspended;
+        VMContextInfo(IVMContext vmContext, int index, boolean isSuspended) {
+            fVMContext = vmContext;
+            fIndex = index;
+            fIsSuspended = isSuspended;
+        }
+    }
+    
+    private void getContainerVMCForModelProxyInstallEvent(VMDelta parentDelta, final DataRequestMonitor<VMContextInfo> rm) {
+        getVMProvider().updateNode(this, new VMChildrenUpdate(
+            parentDelta, getVMProvider().getPresentationContext(), -1, -1,
+            new DataRequestMonitor<List<Object>>(getExecutor(), rm) {
+                @Override
+                protected void handleSuccess() {
+                    try {
+                        getSession().getExecutor().execute(new DsfRunnable() {
+                            public void run() {
+                                final IRunControl runControl = getServicesTracker().getService(IRunControl.class);
+                                if (runControl != null) {
+                                    int vmcIdx = -1;
+                                    int suspendedVmcIdx = -1;
+                                    
+                                    for (int i = 0; i < getData().size(); i++) {
+                                        if (getData().get(i) instanceof IDMVMContext) {
+                                            IDMVMContext vmc = (IDMVMContext)getData().get(i);
+                                            IContainerDMContext containerDmc = DMContexts.getAncestorOfType(
+                                                vmc.getDMContext(), IContainerDMContext.class);
+                                            if (containerDmc != null) {
+                                                vmcIdx = vmcIdx < 0 ? i : vmcIdx;
+                                                if (runControl.isSuspended(containerDmc)) {
+                                                    suspendedVmcIdx = suspendedVmcIdx < 0 ? i : suspendedVmcIdx;
+                                                }
+                                            }
+                                        }
+                                    }
+                                    if (suspendedVmcIdx >= 0) {
+                                        rm.setData(new VMContextInfo(
+                                            (IVMContext)getData().get(suspendedVmcIdx), suspendedVmcIdx, true));
+                                    } else if (vmcIdx >= 0) {
+                                        rm.setData(new VMContextInfo((IVMContext)getData().get(vmcIdx), vmcIdx, false));
+                                    } else {
+                                        rm.setStatus(new Status(IStatus.ERROR, DsfUIPlugin.PLUGIN_ID, IDsfStatusConstants.REQUEST_FAILED, "No container available", null)); //$NON-NLS-1$
+                                    }
+                                    rm.done();
+                                } else {
+                                    rm.setStatus(new Status(IStatus.ERROR, DsfUIPlugin.PLUGIN_ID, IDsfStatusConstants.REQUEST_FAILED, "No container available", null)); //$NON-NLS-1$
+                                    rm.done();
+                                }
+                            }
+                        });
+                    } catch (RejectedExecutionException e) {
+                        rm.setStatus(new Status(IStatus.ERROR, DsfUIPlugin.PLUGIN_ID, IDsfStatusConstants.NOT_SUPPORTED, "", null)); //$NON-NLS-1$
+                        rm.done();
+                    }
+                }
+            }));
+    }
+
+    public int getDeltaFlags(Object e) {
         IDMContext dmc = e instanceof IDMEvent<?> ? ((IDMEvent<?>)e).getDMContext() : null;
 
 	    if (e instanceof IContainerResumedDMEvent) {
@@ -203,6 +288,8 @@ public abstract class AbstractContainerVMNode extends AbstractDMVMNode
 	    	} else {
 		        return IModelDelta.CONTENT;
 	    	}
+        } else if (e instanceof ModelProxyInstalledEvent || e instanceof DataModelInitializedEvent) {
+            return IModelDelta.SELECT | IModelDelta.EXPAND;
 	    }
 	    return IModelDelta.NO_CHANGE;
 	}
@@ -269,6 +356,29 @@ public abstract class AbstractContainerVMNode extends AbstractDMVMNode
 					parentDelta.addNode(createVMContext(containerCtx), IModelDelta.CONTENT);
 				}
 			}
+        } else if (e instanceof ModelProxyInstalledEvent || e instanceof DataModelInitializedEvent) {
+            // Model Proxy install event is generated when the model is first 
+            // populated into the view.  This happens when a new debug session
+            // is started or when the view is first opened.  
+            // In both cases, if there are already thread containers in the debug model, 
+            // the desired user behavior is to show the containers and to select
+            // the first thread.  
+            // If the container is suspended, do not select it, instead, 
+            // one of its threads will be selected.
+            getContainerVMCForModelProxyInstallEvent(
+                parentDelta,
+                new DataRequestMonitor<VMContextInfo>(getExecutor(), requestMonitor) {
+                    @Override
+                    protected void handleCompleted() {
+                        if (isSuccess()) {
+                            parentDelta.addNode(
+                                getData().fVMContext, nodeOffset + getData().fIndex,
+                                IModelDelta.EXPAND | (getData().fIsSuspended ? 0 : IModelDelta.SELECT));
+                        }
+                        requestMonitor.done();
+                    }
+                });
+            return;
 	    }
 	
 		requestMonitor.done();

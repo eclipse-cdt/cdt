@@ -19,6 +19,7 @@ import org.eclipse.cdt.dsf.datamodel.DataModelInitializedEvent;
 import org.eclipse.cdt.dsf.internal.ui.DsfUIPlugin;
 import org.eclipse.cdt.dsf.ui.viewmodel.AbstractVMProvider;
 import org.eclipse.cdt.dsf.ui.viewmodel.IRootVMNode;
+import org.eclipse.cdt.dsf.ui.viewmodel.ModelProxyInstalledEvent;
 import org.eclipse.cdt.dsf.ui.viewmodel.RootVMNode;
 import org.eclipse.cdt.dsf.ui.viewmodel.VMDelta;
 import org.eclipse.core.runtime.IStatus;
@@ -74,7 +75,7 @@ public class LaunchRootVMNode extends RootVMNode
             {
                 return false;
             }
-        } else if (e instanceof DataModelInitializedEvent) {
+        } else if (e instanceof ModelProxyInstalledEvent || e instanceof DataModelInitializedEvent) {
         	return true;
         }
         
@@ -89,8 +90,8 @@ public class LaunchRootVMNode extends RootVMNode
             if (le.fType == LaunchesEvent.Type.CHANGED || le.fType == LaunchesEvent.Type.TERMINATED) {
                 flags = IModelDelta.STATE | IModelDelta.CONTENT;
             }
-        } else if (e instanceof DataModelInitializedEvent) {
-        	flags = IModelDelta.EXPAND;
+        } else if (e instanceof ModelProxyInstalledEvent || e instanceof DataModelInitializedEvent) {
+        	flags = IModelDelta.EXPAND | IModelDelta.SELECT;
         }
         
         return flags;
@@ -127,8 +128,8 @@ public class LaunchRootVMNode extends RootVMNode
                     }
                 }
             }
-        } else if (event instanceof DataModelInitializedEvent) {
-            rootDelta.setFlags(rootDelta.getFlags() | IModelDelta.EXPAND);
+        } else if (event instanceof ModelProxyInstalledEvent || event instanceof DataModelInitializedEvent) {
+            rootDelta.setFlags(rootDelta.getFlags() | IModelDelta.EXPAND | IModelDelta.SELECT);
         }
         rm.setData(rootDelta);
         rm.done();

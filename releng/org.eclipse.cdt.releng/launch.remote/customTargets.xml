@@ -24,6 +24,9 @@
 <!-- ===================================================================== -->
 
 <target name="assemble.org.eclipse.cdt.launch.remote">
+	<ant antfile="${assembleScriptName}" dir="${buildDirectory}">
+			<property name="archiveName" value="cdt-launch-${branchVersion}-${buildId}.zip"/>
+		</ant>
 </target>
 
 <!-- ===================================================================== -->

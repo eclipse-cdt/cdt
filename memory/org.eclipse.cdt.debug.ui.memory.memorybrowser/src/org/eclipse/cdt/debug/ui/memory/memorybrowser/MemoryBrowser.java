@@ -21,7 +21,7 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.Platform;
+import org.eclipse.core.runtime.SafeRunner;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.DebugPlugin;
@@ -62,7 +62,6 @@ import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.ISelectionProvider;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.StructuredSelection;
-import org.eclipse.jface.viewers.TreeSelection;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.CTabFolder;
 import org.eclipse.swt.custom.CTabFolder2Adapter;
@@ -80,9 +79,7 @@ import org.eclipse.swt.layout.FormLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
-import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Label;
-import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.ui.IActionBars;
 import org.eclipse.ui.IWorkbenchActionConstants;
@@ -309,7 +306,6 @@ public class MemoryBrowser extends ViewPart implements IDebugContextListener, IL
 				getSite().getSelectionProvider().setSelection(new StructuredSelection(item.getData(KEY_RENDERING)));
 			}
 			
-			Control c = activeFolder.getSelection().getControl();
 			final IRepositionableMemoryRendering rendering = (IRepositionableMemoryRendering) activeFolder.getSelection().getData(KEY_RENDERING);
 			final String expression = fGotoAddressBar.getExpressionText();
 			
@@ -636,7 +632,7 @@ public class MemoryBrowser extends ViewPart implements IDebugContextListener, IL
 	
 	class SelectionProviderAdapter implements ISelectionProvider {
 
-	    List listeners = new ArrayList();
+	    List<ISelectionChangedListener> listeners = new ArrayList<ISelectionChangedListener>();
 
 	    ISelection theSelection = StructuredSelection.EMPTY;
 
@@ -660,7 +656,7 @@ public class MemoryBrowser extends ViewPart implements IDebugContextListener, IL
 	        
 	        for (int i = 0; i < listenersArray.length; i++) {
 	            final ISelectionChangedListener l = (ISelectionChangedListener) listenersArray[i];
-	            Platform.run(new SafeRunnable() {
+	            SafeRunner.run(new SafeRunnable() {
 	                public void run() {
 	                    l.selectionChanged(e);
 	                }

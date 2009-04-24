@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2008 Wind River Systems and others.
+ * Copyright (c) 2007, 2009 Wind River Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -54,6 +54,8 @@ public class DisassemblyDocument extends REDDocument {
 
 	private int fNumberOfInstructions;
 	private double fMeanSizeOfInstructions = 4;
+
+	private long fErrorAlignment = 0x1L;
 
 	public DisassemblyDocument() {
 		super();
@@ -1020,7 +1022,7 @@ public class DisassemblyDocument extends REDDocument {
 	public AddressRangePosition insertErrorLine(AddressRangePosition pos, BigInteger address, BigInteger length, String line)
 		throws BadLocationException {
 		int hashCode = line.hashCode();
-		final long alignment = 0x1L;
+		final long alignment = fErrorAlignment;
 		if (alignment > 1 && !(pos instanceof ErrorPosition)) {
 			AddressRangePosition before = getPositionOfAddress(address.subtract(BigInteger.ONE));
 			if (before instanceof ErrorPosition && before.hashCode() == hashCode && before.offset + before.length == pos.offset) {
@@ -1050,7 +1052,7 @@ public class DisassemblyDocument extends REDDocument {
 				}
 			}
 			AddressRangePosition after = getPositionOfAddress(address.add(length));
-			if (after instanceof ErrorPosition && after.hashCode() == hashCode && pos.offset + pos.length == after.offset) {
+			if (after instanceof ErrorPosition && after.hashCode() == hashCode && pos != null && pos.offset + pos.length == after.offset) {
 				assert after.fAddressOffset == address.add(length);
 				assert pos.fAddressOffset.add(pos.fAddressLength).compareTo(after.fAddressOffset) == 0;
 				// merge with next error position
@@ -1079,16 +1081,6 @@ public class DisassemblyDocument extends REDDocument {
 		while (length.compareTo(BigInteger.ZERO) > 0) {
 			AddressRangePosition errorPos = new ErrorPosition(0, 0, address, posLen, hashCode);
 			String errorLine = buildDisassemblyLine(address, null, line);
-			// TLEHACK: check for error messages, which occur only temporarily:
-			// "Target is busy. Try again later"
-			// "Cannot Perform requested Operation"
-			if (line.startsWith("Target is busy") || line.startsWith("Cannot perform")) {  //$NON-NLS-1$  //$NON-NLS-2$
-				// try again only once...
-				if (!(pos instanceof ErrorPosition)) {
-					errorLine = "...\n"; //$NON-NLS-1$
-					errorPos.fValid = false;
-				}
-			}
 			errorPos.length = errorLine.length();
 			pos = insertAddressRange(pos, errorPos, errorLine, true);
 			addDisassemblyPosition(errorPos);

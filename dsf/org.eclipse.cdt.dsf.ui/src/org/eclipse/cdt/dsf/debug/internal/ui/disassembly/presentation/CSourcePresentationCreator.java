@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2008 Wind River Systems and others.
+ * Copyright (c) 2007, 2009 Wind River Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -17,9 +17,7 @@ import org.eclipse.cdt.core.model.ICModel;
 import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.core.model.ILanguage;
 import org.eclipse.cdt.core.model.ITranslationUnit;
-import org.eclipse.cdt.internal.ui.editor.ITranslationUnitEditorInput;
-import org.eclipse.cdt.internal.ui.text.CTextTools;
-import org.eclipse.cdt.internal.ui.util.EditorUtility;
+import org.eclipse.cdt.ui.CDTUITools;
 import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.cdt.ui.text.AsmSourceViewerConfiguration;
 import org.eclipse.cdt.ui.text.CSourceViewerConfiguration;
@@ -53,7 +51,6 @@ import org.eclipse.ui.IEditorInput;
 /**
  * A presentation creator based on CDT syntax highlighting.
  */
-@SuppressWarnings("restriction")
 public class CSourcePresentationCreator extends PresentationReconciler implements ISourcePresentationCreator, IPropertyChangeListener {
 
 	/**
@@ -245,10 +242,10 @@ public class CSourcePresentationCreator extends PresentationReconciler implement
 		if (language != null) {
 			fViewer= textViewer;
 			fPreferenceStore= CUIPlugin.getDefault().getCombinedPreferenceStore();
-			CTextTools textTools = CUIPlugin.getDefault().getTextTools();
-			fSourceViewerConfiguration= new CustomCSourceViewerConfiguration(textTools.getColorManager(), fPreferenceStore, language);
+			final IColorManager colorManager= CDTUITools.getColorManager();
+			fSourceViewerConfiguration= new CustomCSourceViewerConfiguration(colorManager, fPreferenceStore, language);
 			setDocumentPartitioning(fSourceViewerConfiguration.getConfiguredDocumentPartitioning(null));
-			initializeDamagerRepairer(storage, textTools.getColorManager(), fPreferenceStore);
+			initializeDamagerRepairer(storage, colorManager, fPreferenceStore);
 			fPreferenceStore.addPropertyChangeListener(this);
 		}
 	}
@@ -364,9 +361,9 @@ public class CSourcePresentationCreator extends PresentationReconciler implement
 			} catch (CModelException e) {
 			}
 		} else {
-			IEditorInput input= EditorUtility.getEditorInputForLocation(storage.getFullPath(), null);
-			if (input instanceof ITranslationUnitEditorInput) {
-				tUnit= ((ITranslationUnitEditorInput)input).getTranslationUnit();
+			IEditorInput input= CDTUITools.getEditorInputForLocation(storage.getFullPath(), null);
+			if (input != null) {
+				tUnit= (ITranslationUnit) input.getAdapter(ITranslationUnit.class);
 			}
 		}
 		if (tUnit != null) {

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2008 Wind River Systems and others.
+ * Copyright (c) 2007, 2009 Wind River Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -53,7 +53,6 @@ public final class REDTextStore implements ITextStore {
 			fText = text;
 			setName("Swapping editor buffer to disk"); //$NON-NLS-1$
 			setPriority(Job.LONG);
-//			setSystem(true);
 		}
 
 		@Override
@@ -449,7 +448,6 @@ public final class REDTextStore implements ITextStore {
 	 */
 	private final static class RunSpec {
 		public LinkedRun fRun = null;
-		public int fOrg = -1;
 		public int fOff = -1;
 		public boolean isValid() {
 			return fRun != null;
@@ -529,7 +527,7 @@ public final class REDTextStore implements ITextStore {
 			cur = cur.fNext;
 		}
 		if (pos != 0) {
-			while (pos - curPos <= 0) {
+			while (pos - curPos <= 0 && cur != null) {
 				cur = cur.fPrev;
 				curPos -= cur.fLength;
 			}
@@ -542,7 +540,6 @@ public final class REDTextStore implements ITextStore {
 			spec = fRunSpec;
 		}
 		spec.fRun = cur;
-		spec.fOrg = curPos;
 		spec.fOff = pos - curPos;
 
 		return spec;

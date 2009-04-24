@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2008 Wind River Systems and others.
+ * Copyright (c) 2007, 2009 Wind River Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -107,10 +107,10 @@ public class DisassemblyViewerConfiguration extends TextSourceViewerConfiguratio
 	public IHyperlinkDetector[] getHyperlinkDetectors(ISourceViewer sourceViewer) {
 		IHyperlinkDetector[] inheritedDetectors= super.getHyperlinkDetectors(sourceViewer);
 		
-		if (fPart == null)
+		if (fPart == null || inheritedDetectors == null)
 			return inheritedDetectors;
 		
-		int inheritedDetectorsLength= inheritedDetectors != null ? inheritedDetectors.length : 0;
+		int inheritedDetectorsLength= inheritedDetectors.length;
 		IHyperlinkDetector[] detectors= new IHyperlinkDetector[inheritedDetectorsLength + 1];
 		detectors[0]= new DisassemblyHyperlinkDetector(fPart);
 		for (int i= 0; i < inheritedDetectorsLength; i++) {

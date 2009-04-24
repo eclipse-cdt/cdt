@@ -2416,15 +2416,24 @@
 <!--- Template extension for the editor -->
    <extension
          point="org.eclipse.ui.editors.templates">
+      <contextTypeRegistry id="org.eclipse.cdt.ui.editor.CEditor"/>
       <contextType
             name="%c.contextType.name"
             class="org.eclipse.cdt.internal.corext.template.c.CContextType"
-            id="org.eclipse.cdt.ui.text.templates.c">
+            id="org.eclipse.cdt.ui.text.templates.c"
+            registryId="org.eclipse.cdt.ui.editor.CEditor">
       </contextType>
       <contextType
             class="org.eclipse.cdt.internal.corext.template.c.CommentContextType"
             id="org.eclipse.cdt.ui.text.templates.comment"
-            name="%comment.contextType.name">
+            name="%comment.contextType.name"
+            registryId="org.eclipse.cdt.ui.editor.CEditor">
+      </contextType>
+      <contextType
+            class="org.eclipse.cdt.internal.corext.template.c.DocCommentContextType"
+            id="org.eclipse.cdt.ui.text.templates.doccomment"
+            name="%doccomment.contextType.name"
+            registryId="org.eclipse.cdt.ui.editor.CEditor">
       </contextType>
       <include
       		file="templates/default-templates.xml"
@@ -2542,6 +2551,8 @@
             <partition type="__dftl_partition_content_type"/>
             <partition type="__c_multiline_comment"/>
             <partition type="__c_singleline_comment"/>
+            <partition type="__c_multiline_doc_comment"/>
+            <partition type="__c_singleline_doc_comment"/>
         </completionProposalComputer>
     </extension>
     <!-- help provider proposals -->

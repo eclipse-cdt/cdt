@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007 Wind River Systems, Inc. and others.
+ * Copyright (c) 2007, 2009 Wind River Systems, Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -30,6 +30,7 @@ import org.eclipse.cdt.ui.text.contentassist.ICompletionProposalComputer;
 
 import org.eclipse.cdt.internal.corext.template.c.CContextType;
 import org.eclipse.cdt.internal.corext.template.c.CommentContextType;
+import org.eclipse.cdt.internal.corext.template.c.DocCommentContextType;
 
 import org.eclipse.cdt.internal.ui.text.CHeuristicScanner;
 import org.eclipse.cdt.internal.ui.text.template.TemplateEngine;
@@ -43,6 +44,7 @@ public class TemplateCompletionProposalComputer implements ICompletionProposalCo
 
 	private final TemplateEngine fCTemplateEngine;
 	private final TemplateEngine fCommentTemplateEngine;
+	private final TemplateEngine fDocCommentTemplateEngine;
 
 	/**
 	 * Default constructor is required (executable extension).
@@ -60,6 +62,12 @@ public class TemplateCompletionProposalComputer implements ICompletionProposalCo
 			CUIPlugin.getDefault().getTemplateContextRegistry().addContextType(contextType);
 		}
 		fCommentTemplateEngine= new TemplateEngine(contextType);
+		contextType= CUIPlugin.getDefault().getTemplateContextRegistry().getContextType(DocCommentContextType.ID);
+		if (contextType == null) {
+			contextType= new DocCommentContextType();
+			CUIPlugin.getDefault().getTemplateContextRegistry().addContextType(contextType);
+		}
+		fDocCommentTemplateEngine= new TemplateEngine(contextType);
 	}
 	
 	/*
@@ -73,6 +81,8 @@ public class TemplateCompletionProposalComputer implements ICompletionProposalCo
 			String partition= TextUtilities.getContentType(viewer.getDocument(), ICPartitions.C_PARTITIONING, offset, true);
 			if (partition.equals(ICPartitions.C_MULTI_LINE_COMMENT) || partition.equals(ICPartitions.C_SINGLE_LINE_COMMENT)) {
 				engine= fCommentTemplateEngine;
+			} else if (partition.equals(ICPartitions.C_MULTI_LINE_DOC_COMMENT) || partition.equals(ICPartitions.C_SINGLE_LINE_DOC_COMMENT)) {
+				engine= fDocCommentTemplateEngine;
 			} else {
 				if (isValidContext(context)) {
 					engine= fCTemplateEngine;

@@ -75,6 +75,7 @@ import org.eclipse.cdt.internal.core.model.IBufferFactory;
 import org.eclipse.cdt.internal.corext.template.c.CContextType;
 import org.eclipse.cdt.internal.corext.template.c.CodeTemplateContextType;
 import org.eclipse.cdt.internal.corext.template.c.CommentContextType;
+import org.eclipse.cdt.internal.corext.template.c.DocCommentContextType;
 import org.eclipse.cdt.internal.corext.template.c.FileTemplateContextType;
 
 import org.eclipse.cdt.internal.ui.CElementAdapterFactory;
@@ -872,9 +873,10 @@ public class CUIPlugin extends AbstractUIPlugin {
 	 */
 	public ContextTypeRegistry getTemplateContextRegistry() {
 		if (fContextTypeRegistry == null) {
-			fContextTypeRegistry= new ContributionContextTypeRegistry();
+			fContextTypeRegistry= new ContributionContextTypeRegistry(EDITOR_ID);
 			fContextTypeRegistry.addContextType(CContextType.ID);
 			fContextTypeRegistry.addContextType(CommentContextType.ID);
+			fContextTypeRegistry.addContextType(DocCommentContextType.ID);
 		}
 		return fContextTypeRegistry;
 	}

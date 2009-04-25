@@ -104,7 +104,6 @@ public class AddIncludeOnSelectionAction extends Action implements IUpdate {
 		public boolean isStandard() {
 			return isStandard;
 		}
-
 	}
 
 	public AddIncludeOnSelectionAction(ITextEditor editor) {	
@@ -127,7 +126,6 @@ public class AddIncludeOnSelectionAction extends Action implements IUpdate {
 		} catch (InterruptedException e) {
 			// Do nothing. Operation has been canceled.
 		}
-
 	}
 	
 	protected ITranslationUnit getTranslationUnit () {
@@ -156,8 +154,7 @@ public class AddIncludeOnSelectionAction extends Action implements IUpdate {
 			try {
 				extractIncludes(fEditor, index);
 				addInclude(tu);
-			}
-			finally {
+			} finally {
 				index.releaseReadLock();
 			}
 		} catch (CoreException e) {
@@ -173,8 +170,7 @@ public class AddIncludeOnSelectionAction extends Action implements IUpdate {
 	 * To be used by ElementListSelectionDialog for user to choose which declarations/
 	 * definitions for "add include" when there are more than one to choose from.  
 	 */
-	private static class DisplayName extends Object 
-	{
+	private static class DisplayName extends Object {
 		private IIndexName name;
 		private IIndexBinding binding;
 		
@@ -184,8 +180,7 @@ public class AddIncludeOnSelectionAction extends Action implements IUpdate {
 		}
 
 		@Override
-		public String toString()
-		{			
+		public String toString() {			
 			try {				
 				if (binding != null) {
 					return getBindingQualifiedName(binding) + " - " + name.getFileLocation().getFileName(); //$NON-NLS-1$
@@ -204,9 +199,7 @@ public class AddIncludeOnSelectionAction extends Action implements IUpdate {
 		public IIndexBinding getBinding() {
 			return binding;
 		}
-		
 	}
-	
 
 	/**
 	 * Extract the includes for the given selection.  This can be both used to perform
@@ -243,13 +236,14 @@ public class AddIncludeOnSelectionAction extends Action implements IUpdate {
 				fRequiredIncludes = fs.getIncludes();
 				String ns = fs.getNamespace();
 				if (ns != null && ns.length() > 0) {
-					fUsings = new String[] {fs.getNamespace()};
+					fUsings = new String[] { fs.getNamespace() };
 				}
 			}
 
 			try {			
 				IndexFilter filter= IndexFilter.ALL_DECLARED_OR_IMPLICIT;
-				IIndexBinding[] bindings= index.findBindings(name.toCharArray(), false, filter, new NullProgressMonitor());
+				IIndexBinding[] bindings= index.findBindings(name.toCharArray(), false, filter,
+						new NullProgressMonitor());
 				ArrayList<DisplayName> pdomNames= new ArrayList<DisplayName>();
 				for (int i = 0; i < bindings.length; ++i) {
 					IIndexBinding binding= bindings[i];
@@ -257,8 +251,7 @@ public class AddIncludeOnSelectionAction extends Action implements IUpdate {
 					// class, struct union, enumeration
 					if (binding instanceof ICompositeType || binding instanceof IEnumeration) {
 						defs= index.findDefinitions(binding);
-					}
-					else if (binding instanceof ITypedef || binding instanceof IFunction) {
+					} else if (binding instanceof ITypedef || binding instanceof IFunction) {
 						defs= index.findDeclarations(binding);
 					}
 					if (defs != null) {
@@ -268,8 +261,7 @@ public class AddIncludeOnSelectionAction extends Action implements IUpdate {
 					}
 				}
 																
-				if (pdomNames.size() > 1)
-				{				
+				if (pdomNames.size() > 1) {				
 					ElementListSelectionDialog dialog= new ElementListSelectionDialog(getShell(), new TypeInfoLabelProvider(TypeInfoLabelProvider.SHOW_NAME_ONLY));
 					dialog.setElements(pdomNames.toArray());
 					dialog.setTitle(CEditorMessages.AddIncludeOnSelection_label); 
@@ -281,7 +273,8 @@ public class AddIncludeOnSelectionAction extends Action implements IUpdate {
 						fRequiredIncludes = new IRequiredInclude[selects.length];
 						List<String> usings = new ArrayList<String>(selects.length);
 						for (int i = 0; i < fRequiredIncludes.length; i++) {
-							IRequiredInclude include = getRequiredInclude(((DisplayName)selects[i]).getName().getFileLocation().getFileName(), getTranslationUnit());
+							IRequiredInclude include = getRequiredInclude(
+									((DisplayName)selects[i]).getName().getFileLocation().getFileName(), getTranslationUnit());
 							if (include != null) {
 								fRequiredIncludes[i] = include;
 								IIndexBinding binding = ((DisplayName)selects[i]).getBinding();
@@ -295,7 +288,7 @@ public class AddIncludeOnSelectionAction extends Action implements IUpdate {
 								}
 							} 
 						}
-						if(usings.size() > 0)
+						if (usings.size() > 0)
 						{
 							fUsings = new String[usings.size()];
 							for (int i = 0; i < usings.size(); i++)
@@ -304,9 +297,7 @@ public class AddIncludeOnSelectionAction extends Action implements IUpdate {
 							}
 						}						
 					}
-				}
-				else if (pdomNames.size() == 1)
-				{	
+				} else if (pdomNames.size() == 1) {	
 					// we should use the IIndexName.getLocation here rather than getFileLocation
 					String fileName = (pdomNames.get(0)).getName().getFileLocation().getFileName();
 					fRequiredIncludes = new IRequiredInclude[] {getRequiredInclude(fileName, getTranslationUnit())};
@@ -332,9 +323,9 @@ public class AddIncludeOnSelectionAction extends Action implements IUpdate {
 			if (fRequiredIncludes == null && fUsings == null) {
 			}
 		} catch (BadLocationException e) {
-			MessageDialog.openError(getShell(), CEditorMessages.AddIncludeOnSelection_error_message3, CEditorMessages.AddIncludeOnSelection_error_message4 + e.getMessage()); 
+			MessageDialog.openError(getShell(), CEditorMessages.AddIncludeOnSelection_error_message3,
+					CEditorMessages.AddIncludeOnSelection_error_message4 + e.getMessage()); 
 		}
-		
 	}
 
 	private IFunctionSummary findContribution (final String name) {
@@ -436,12 +427,11 @@ public class AddIncludeOnSelectionAction extends Action implements IUpdate {
 	 * @return binding's fully qualified name
 	 * @throws CoreException
 	 */
-	private static String getBindingQualifiedName(IIndexBinding binding) throws CoreException
-	{
+	private static String getBindingQualifiedName(IIndexBinding binding) throws CoreException {
 		StringBuffer buf = new StringBuffer();
 		String[] qname= binding.getQualifiedName();
 		for (int i = 0; i < qname.length; i++) {
-			if (i>0) {
+			if (i > 0) {
 				buf.append("::"); //$NON-NLS-1$
 			}
 			buf.append(qname[i]);

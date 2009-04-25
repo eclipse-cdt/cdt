@@ -88,6 +88,10 @@
    	label="C/C++ Editor Hovers Preferences"/>
 </context>
 <context id ="scalability_preference_page_context">
+   <description>This page allows to configure editor scalability mode options.</description>
+   <topic href="reference/cdt_u_c_editor_save_actions.htm"
+   	label="C/C++ Editor Save Actions Preferences"/>
+<context id ="scalability_preference_page_context">
    <description>This page allows to configure editor scalability mode options. The scalability mode helps to deal with very large source files.</description>
    <topic href="reference/cdt_u_c_editor_scalability.htm"
    	label="C/C++ Editor Scalability Preferences"/>

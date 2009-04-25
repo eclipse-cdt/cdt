@@ -171,7 +171,7 @@ class MarkOccurrencesConfigurationBlock implements IPreferenceConfigurationBlock
 
 	private static void indent(Control control) {
 		GridData gridData= new GridData();
-		gridData.horizontalIndent= 10;
+		gridData.horizontalIndent= 20;
 		control.setLayoutData(gridData);		
 	}
 

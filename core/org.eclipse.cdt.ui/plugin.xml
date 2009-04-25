@@ -710,6 +710,14 @@
           <keywordReference id="org.eclipse.cdt.ui.common"/>
       </page>
       <page
+            name="%SaveActionsPreferencePage.name"
+            category="org.eclipse.cdt.ui.preferences.CEditorPreferencePage"
+            class="org.eclipse.cdt.internal.ui.preferences.SaveActionsPreferencePage"
+            id="org.eclipse.cdt.ui.preferences.SaveActionsPreferencePage">
+          <keywordReference id="org.eclipse.cdt.ui.saveactions"/>
+          <keywordReference id="org.eclipse.cdt.ui.common"/>
+      </page>
+      <page
             name="%ScalabilityPreferencePage.name"
             category="org.eclipse.cdt.ui.preferences.CEditorPreferencePage"
             class="org.eclipse.cdt.internal.ui.preferences.ScalabilityPreferencePage"
@@ -755,6 +763,9 @@
       <keyword
             label="%preferenceKeywords.hover"
             id="org.eclipse.cdt.ui.hover"/>
+      <keyword
+            label="%preferenceKeywords.saveactions"
+            id="org.eclipse.cdt.ui.saveactions"/>
       <keyword
             label="%preferenceKeywords.scalability"
             id="org.eclipse.cdt.ui.scalability"/>

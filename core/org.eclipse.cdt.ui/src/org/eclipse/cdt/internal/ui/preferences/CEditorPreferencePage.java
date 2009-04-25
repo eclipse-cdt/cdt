@@ -81,8 +81,6 @@ public class CEditorPreferencePage extends AbstractPreferencePage {
 		overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.BOOLEAN, CEditor.MATCHING_BRACKETS));
 		overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.STRING, CEditor.INACTIVE_CODE_COLOR));
 		overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.BOOLEAN, CEditor.INACTIVE_CODE_ENABLE));
-		overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.BOOLEAN, PreferenceConstants.ENSURE_NEWLINE_AT_EOF));
-		overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.BOOLEAN, PreferenceConstants.REMOVE_TRAILING_WHITESPACE));
 		overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.STRING, ContentAssistPreference.PROPOSALS_BACKGROUND));
 		overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.STRING, ContentAssistPreference.PROPOSALS_FOREGROUND));
 		overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.STRING, ContentAssistPreference.PARAMETERS_BACKGROUND));
@@ -228,22 +226,6 @@ public class CEditorPreferencePage extends AbstractPreferencePage {
 		return behaviorComposite;
 	}
 
-	private Control createSaveActionsBlock(Composite parent) {
-		Composite saveActionsComposite= ControlFactory.createGroup(parent, PreferencesMessages.CEditorPreferencePage_SaveActionsTitle, 1);
-		
-		GridLayout layout = new GridLayout();
-		layout.numColumns = 2;
-		saveActionsComposite.setLayout(layout);
-
-		String label = PreferencesMessages.CEditorPreferencePage_behaviorPage_removeTrailingWhitespace;
-		addCheckBox(saveActionsComposite, label, PreferenceConstants.REMOVE_TRAILING_WHITESPACE, 0);
-
-		label = PreferencesMessages.CEditorPreferencePage_behaviorPage_ensureNewline;
-		addCheckBox(saveActionsComposite, label, PreferenceConstants.ENSURE_NEWLINE_AT_EOF, 0);
-		
-		return saveActionsComposite;
-	}
-
 	private void handleAppearanceColorListSelection() {
 		int i = fAppearanceColorList.getSelectionIndex();
 		String key = fAppearanceColorListModel[i][1];
@@ -293,25 +275,25 @@ public class CEditorPreferencePage extends AbstractPreferencePage {
 		fOverlayStore.load();
 		fOverlayStore.start();
 
-		createHeader(parent);
+		Composite contents= ControlFactory.createComposite(parent, 1);
+		contents.setLayoutData(new GridData(GridData.FILL_BOTH));
 
-		ControlFactory.createEmptySpace(parent, 2);
-		createBehaviorBlock(parent);
+		createHeader(contents);
 
-		ControlFactory.createEmptySpace(parent, 2);
-		createSaveActionsBlock(parent);
+		ControlFactory.createEmptySpace(contents, 2);
+		createBehaviorBlock(contents);
 
-		ControlFactory.createEmptySpace(parent, 2);
+		ControlFactory.createEmptySpace(contents, 2);
 		
 		String dsc= PreferencesMessages.CEditorPreferencePage_SelectDocToolDescription;
 		String msg= PreferencesMessages.CEditorPreferencePage_WorkspaceDefaultLabel;
 		IDocCommentOwner workspaceOwner= DocCommentOwnerManager.getInstance().getWorkspaceCommentOwner();
-		fDocCommentOwnerComposite= new DocCommentOwnerComposite(parent, workspaceOwner, dsc, msg);
-		fDocCommentOwnerComposite.setLayoutData(GridDataFactory.fillDefaults().grab(true,false).create());
+		fDocCommentOwnerComposite= new DocCommentOwnerComposite(contents, workspaceOwner, dsc, msg);
+		fDocCommentOwnerComposite.setLayoutData(GridDataFactory.fillDefaults().grab(true, false).create());
 		
 		initialize();
 
-		return parent;
+		return contents;
 	}
 
 	private void initialize() {
@@ -357,5 +339,4 @@ public class CEditorPreferencePage extends AbstractPreferencePage {
 		initializeDefaultColors();
 		handleAppearanceColorListSelection();
 	}
-
 }

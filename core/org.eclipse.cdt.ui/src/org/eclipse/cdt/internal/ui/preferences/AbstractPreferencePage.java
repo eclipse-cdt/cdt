@@ -120,7 +120,8 @@ public abstract class AbstractPreferencePage extends PreferencePage implements I
 		radioButton.setLayoutData(gd);
 		radioButton.addSelectionListener(fCheckBoxListener);
 
-		fCheckBoxes.put(radioButton, key);
+		if (key != null)
+			fCheckBoxes.put(radioButton, key);
 
 		return radioButton;
 	}

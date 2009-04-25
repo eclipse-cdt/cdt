@@ -947,6 +947,16 @@ public class PreferenceConstants {
 	public final static String REMOVE_TRAILING_WHITESPACE = "removeTrailingWhitespace"; //$NON-NLS-1$
 	
 	/**
+	 * Preference key controlling how REMOVE_TRAILING_WHITESPACE option is applied.
+	 * If REMOVE_TRAILING_WHITESPACE is enabled, this option limits the scope of
+	 * the removal to edited lines only. This option has no effect if
+	 * REMOVE_TRAILING_WHITESPACE is disabled.
+	 *
+	 * @since 5.1
+	 */
+	public final static String REMOVE_TRAILING_WHITESPACE_LIMIT_TO_EDITED_LINES = "removeTrailingWhitespaceEditedLines"; //$NON-NLS-1$
+
+	/**
 	 * A named preference that defines whether the hint to make hover sticky should be shown.
 	 *
 	 * @since 3.1.1
@@ -1536,6 +1546,7 @@ public class PreferenceConstants {
 		store.setDefault(PreferenceConstants.EDITOR_AUTO_INDENT, true);
 
 		store.setDefault(PreferenceConstants.REMOVE_TRAILING_WHITESPACE, true);
+		store.setDefault(PreferenceConstants.REMOVE_TRAILING_WHITESPACE_LIMIT_TO_EDITED_LINES, true);
 		store.setDefault(PreferenceConstants.ENSURE_NEWLINE_AT_EOF, true);
 
 		// formatter profile

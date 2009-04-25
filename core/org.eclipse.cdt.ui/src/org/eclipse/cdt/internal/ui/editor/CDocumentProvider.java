@@ -41,6 +41,7 @@ import org.eclipse.jface.text.IDocumentExtension3;
 import org.eclipse.jface.text.ILineTracker;
 import org.eclipse.jface.text.IRegion;
 import org.eclipse.jface.text.Position;
+import org.eclipse.jface.text.Region;
 import org.eclipse.jface.text.TextUtilities;
 import org.eclipse.jface.text.source.Annotation;
 import org.eclipse.jface.text.source.AnnotationModel;
@@ -1037,7 +1038,9 @@ public class CDocumentProvider extends TextFileDocumentProvider {
 	 */
 	private void performSaveActions(ITextFileBuffer buffer, IProgressMonitor monitor) throws CoreException {
 		if (shouldRemoveTrailingWhitespace() || shouldAddNewlineAtEof()) {
-			IRegion[] changedRegions= EditorUtility.calculateChangedLineRegions(buffer, getSubProgressMonitor(monitor, 20));
+			IRegion[] changedRegions= needsChangedRegions() ?
+					EditorUtility.calculateChangedLineRegions(buffer, getSubProgressMonitor(monitor, 20)) :
+				    null;
 			IDocument document = buffer.getDocument();
 			TextEdit edit = createSaveActionEdit(document, changedRegions);
 			if (edit != null) {
@@ -1071,14 +1074,28 @@ public class CDocumentProvider extends TextFileDocumentProvider {
 				PreferenceConstants.REMOVE_TRAILING_WHITESPACE);
 	}
 
+	private static boolean isLimitedRemoveTrailingWhitespace() {
+		return PreferenceConstants.getPreferenceStore().getBoolean(
+				PreferenceConstants.REMOVE_TRAILING_WHITESPACE_LIMIT_TO_EDITED_LINES);
+	}
+	
+	private static boolean needsChangedRegions() {
+		return shouldRemoveTrailingWhitespace() && isLimitedRemoveTrailingWhitespace();
+	}
+
 	/**
 	 * Creates a text edit for the save actions.
 	 * @return a text edit, or <code>null</code> if the save actions leave the file intact.
 	 */
 	private TextEdit createSaveActionEdit(IDocument document, IRegion[] changedRegions) {
 		TextEdit rootEdit = null;
+		TextEdit lastWhitespaceEdit = null;
 		try {
 			if (shouldRemoveTrailingWhitespace()) {
+				if (!isLimitedRemoveTrailingWhitespace()) {
+					// Pretend that the whole document changed.
+					changedRegions = new IRegion[] { new Region(0, document.getLength()) };
+				}
 				// Remove trailing whitespace from changed lines.
 				for (IRegion region : changedRegions) {
 					int firstLine = document.getLineOfOffset(region.getOffset());
@@ -1098,11 +1115,11 @@ public class CDocumentProvider extends TextFileDocumentProvider {
 
 						charPos++;
 						if (charPos < lineEnd) {
-							TextEdit edit= new DeleteEdit(charPos, lineEnd - charPos);
+							lastWhitespaceEdit= new DeleteEdit(charPos, lineEnd - charPos);
 							if (rootEdit == null) {
 								rootEdit = new MultiTextEdit();
 							}
-							rootEdit.addChild(edit);
+							rootEdit.addChild(lastWhitespaceEdit);
 						}
 					}
 				}
@@ -1111,22 +1128,18 @@ public class CDocumentProvider extends TextFileDocumentProvider {
 				// Add newline at the end of the file.
 				int endOffset = document.getLength();
 				IRegion lastLineRegion = document.getLineInformationOfOffset(endOffset);
-				if (lastLineRegion.getLength() != 0) {
-					for (IRegion region : changedRegions) {
-						if (region.getOffset() + region.getLength() >= lastLineRegion.getOffset()) {
-							// Last line has changed
-							if (!shouldRemoveTrailingWhitespace() || !isWhitespaceRegion(document, lastLineRegion)) {
-								TextEdit edit = new InsertEdit(endOffset,
-										TextUtilities.getDefaultLineDelimiter(document));
-								if (rootEdit == null) {
-									rootEdit = edit;
-								} else {
-									rootEdit.addChild(edit);
-								}
-							}
-							break;
-						}
-					}				
+				// Insert newline at the end of the document if the last line is not empty and
+				// will not become empty after removal of trailing whitespace.
+				if (lastLineRegion.getLength() != 0 &&
+						(lastWhitespaceEdit == null ||
+						lastWhitespaceEdit.getOffset() != lastLineRegion.getOffset() ||
+						lastWhitespaceEdit.getLength() != lastLineRegion.getLength())) {
+					TextEdit edit = new InsertEdit(endOffset, TextUtilities.getDefaultLineDelimiter(document));
+					if (rootEdit == null) {
+						rootEdit = edit;
+					} else {
+						rootEdit.addChild(edit);
+					}
 				}
 			}
 		} catch (BadLocationException e) {

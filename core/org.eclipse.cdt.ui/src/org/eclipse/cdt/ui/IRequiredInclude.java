@@ -27,7 +27,7 @@ public interface IRequiredInclude {
 
 	/**
 	 * Returns whether the include is to search on "standard places" like /usr/include first .
-	 * An include is standard if it starts with <code>"\<"</code>.
+	 * An include is standard if it starts with <code>"&lt;"</code>.
 	 */
 	boolean isStandard();
 }

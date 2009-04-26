@@ -13,15 +13,19 @@ package org.eclipse.cdt.core.internal.errorparsers.tests;
 
 import java.io.BufferedReader;
 import java.io.ByteArrayInputStream;
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.util.HashSet;
+import java.util.Set;
 
 import junit.framework.Assert;
 
 import org.eclipse.cdt.core.CCorePlugin;
+import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IProject;
@@ -37,6 +41,7 @@ import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.OperationCanceledException;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Platform;
+import org.eclipse.core.runtime.jobs.Job;
 
 /**
  * This class contains utility methods for creating resources
@@ -53,6 +58,9 @@ import org.eclipse.core.runtime.Platform;
 public class ResourceHelper {
 	private final static IProgressMonitor NULL_MONITOR = new NullProgressMonitor();
 
+	private final static Set<String> externalFilesCreated = new HashSet<String>();
+	private final static Set<IResource> resourcesCreated = new HashSet<IResource>();
+
 	/**
 	 * Creates CDT project in a specific location and opens it.
 	 *
@@ -66,6 +74,7 @@ public class ResourceHelper {
 		IWorkspace workspace = ResourcesPlugin.getWorkspace();
 		IWorkspaceRoot root = workspace.getRoot();
 		IProject project = root.getProject(projectName);
+		resourcesCreated.add(project);
 		IProjectDescription description = workspace.newProjectDescription(projectName);
 		if(locationInWorkspace != null) {
 			IPath absoluteLocation = root.getLocation().append(locationInWorkspace);
@@ -73,8 +82,17 @@ public class ResourceHelper {
 		}
 		project = CCorePlugin.getDefault().createCDTProject(description, project, NULL_MONITOR);
 		Assert.assertNotNull(project);
-
 		project.open(null);
+
+		try {
+			// CDT opens the Project with BACKGROUND_REFRESH enabled which causes the 
+			// refresh manager to refresh the project 200ms later.  This Job interferes
+			// with the resource change handler firing see: bug 271264
+			Job.getJobManager().join(ResourcesPlugin.FAMILY_AUTO_REFRESH, null);
+		} catch (Exception e) {
+			// Ignore
+		}
+
 		Assert.assertTrue(project.isOpen());
 
 		return project;
@@ -97,8 +115,17 @@ public class ResourceHelper {
 		description.setLocationURI(locationURI);
 		project = CCorePlugin.getDefault().createCDTProject(description, project, NULL_MONITOR);
 		Assert.assertNotNull(project);
-
 		project.open(null);
+
+		try {
+			// CDT opens the Project with BACKGROUND_REFRESH enabled which causes the 
+			// refresh manager to refresh the project 200ms later.  This Job interferes
+			// with the resource change handler firing see: bug 271264
+			Job.getJobManager().join(ResourcesPlugin.FAMILY_AUTO_REFRESH, null);
+		} catch (Exception e) {
+			// Ignore
+		}
+
 		Assert.assertTrue(project.isOpen());
 
 		return project;
@@ -131,6 +158,7 @@ public class ResourceHelper {
 
 		InputStream inputStream = new ByteArrayInputStream(contents.getBytes());
 		file.create(inputStream, true, NULL_MONITOR);
+		resourcesCreated.add(file);
 		return file;
 	}
 
@@ -145,6 +173,8 @@ public class ResourceHelper {
 	 * @throws CoreException if something goes wrong.
 	 */
 	public static IFile createFile(IProject project, String name) throws CoreException {
+		if (new Path(name).segmentCount() > 1)
+			createFolder(project, new Path(name).removeLastSegments(1).toString());
 		return createFile(project.getFile(name), null);
 	}
 
@@ -168,6 +198,8 @@ public class ResourceHelper {
 		}
 		Assert.assertTrue(file.exists());
 
+		externalFilesCreated.add(fullPath.toOSString());
+		workspaceRoot.refreshLocal(IResource.DEPTH_INFINITE, new NullProgressMonitor());
 		return fullPath;
 	}
 
@@ -182,11 +214,15 @@ public class ResourceHelper {
 	 * @throws CoreException if something goes wrong.
 	 */
 	public static IFolder createFolder(IProject project, String name) throws CoreException {
-		IFolder folder= project.getFolder(name);
-		if (!folder.exists()) {
-			folder.create(true, true, NULL_MONITOR);
+		final IPath p = new Path(name);
+		IContainer folder = project;
+		for (String seg : p.segments()) {
+			folder = folder.getFolder(new Path(seg));
+			if (!folder.exists())
+				((IFolder)folder).create(true, true, NULL_MONITOR);
 		}
-		return folder;
+		resourcesCreated.add(folder);
+		return (IFolder)folder;
 	}
 
 	/**
@@ -198,7 +234,7 @@ public class ResourceHelper {
 	 * @return full folder path.
 	 * @throws IOException if something goes wrong.
 	 */
-	public static IPath createWorkspaceFolder(String name) throws IOException {
+	public static IPath createWorkspaceFolder(String name) throws CoreException, IOException {
 		IWorkspaceRoot workspaceRoot = ResourcesPlugin.getWorkspace().getRoot();
 		IPath fullPath = workspaceRoot.getLocation().append(name);
 		java.io.File folder = new java.io.File(fullPath.toOSString());
@@ -208,6 +244,8 @@ public class ResourceHelper {
 		}
 		Assert.assertTrue(folder.exists());
 
+		externalFilesCreated.add(fullPath.toOSString());
+		workspaceRoot.refreshLocal(IResource.DEPTH_INFINITE, NULL_MONITOR);
 		return fullPath;
 	}
 
@@ -226,7 +264,7 @@ public class ResourceHelper {
 		IFile file = project.getFile(fileLink);
 		file.createLink(realFile, IResource.REPLACE, null);
 		Assert.assertTrue(file.exists());
-
+		resourcesCreated.add(file);
 		return file;
 	}
 
@@ -256,7 +294,8 @@ public class ResourceHelper {
 	 */
 	public static IFile createEfsFile(IProject project, String fileLink, URI realFile) throws CoreException {
 		IFile file= project.getFile(fileLink);
-		file.createLink(realFile, IResource.ALLOW_MISSING_LOCAL, new NullProgressMonitor());
+		file.createLink(realFile, IResource.ALLOW_MISSING_LOCAL, NULL_MONITOR);
+		resourcesCreated.add(file);
 		return file;
 	}
 
@@ -289,7 +328,7 @@ public class ResourceHelper {
 		IFolder folder = project.getFolder(folderLink);
 		folder.createLink(realFolder, IResource.REPLACE, null);
 		Assert.assertTrue(folder.exists());
-
+		resourcesCreated.add(folder);
 		return folder;
 	}
 
@@ -326,6 +365,7 @@ public class ResourceHelper {
 		}
 
 		folder.createLink(realFolder, IResource.ALLOW_MISSING_LOCAL, new NullProgressMonitor());
+		resourcesCreated.add(folder);
 		return folder;
 	}
 
@@ -381,6 +421,8 @@ public class ResourceHelper {
 		}
 		Assert.assertTrue(resource.exists());
 
+		externalFilesCreated.add(linkedPath.toOSString());
+		ResourcesPlugin.getWorkspace().getRoot().refreshLocal(IResource.DEPTH_INFINITE, NULL_MONITOR);
 		return resource;
 	}
 
@@ -452,4 +494,53 @@ public class ResourceHelper {
 		return windowsPath.trim();
 	}
 
+	/**
+	 * Clean-up any files created as part of a unit test.
+	 * This method removes *all* Workspace IResources and any external
+	 * files / folders created with the #createWorkspaceFile #createWorkspaceFolder
+	 * methods in this class
+	 */
+	public static void cleanUp() throws CoreException, IOException {
+		IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
+		root.refreshLocal(IResource.DEPTH_INFINITE, NULL_MONITOR);
+		
+		// Delete all external files & folders created using ResourceHelper
+		for (String loc : externalFilesCreated) {
+			File f = new File(loc);
+			if (f.exists())
+				deleteRecursive(f);
+		}
+		externalFilesCreated.clear();
+		
+		// Remove IResources created by this helper
+		for (IResource r : resourcesCreated) {
+			if (r.exists())
+				try {
+					r.delete(true, NULL_MONITOR);
+				} catch (CoreException e) {
+					// Ignore
+				}
+		}
+		resourcesCreated.clear();
+	}
+
+	/**
+	 * Recursively delete a directory / file
+	 *
+	 * For safety this method only deletes files created under the workspace
+	 *
+	 * @param file
+	 */
+	private static final void deleteRecursive(File f) throws IllegalArgumentException {
+		// Ensure that the file being deleted is a child of the workspace
+		// root to prevent anything nasty happening
+		if (! f.getAbsolutePath().startsWith(
+				ResourcesPlugin.getWorkspace().getRoot().getLocation().toFile().getAbsolutePath()))
+			throw new IllegalArgumentException("File must exist within the workspace!");
+
+		if (f.isDirectory())
+			for (File f1 : f.listFiles())
+				deleteRecursive(f1);
+		f.delete();
+	}
 }

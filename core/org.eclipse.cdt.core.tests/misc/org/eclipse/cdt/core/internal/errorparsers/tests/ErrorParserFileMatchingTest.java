@@ -96,7 +96,9 @@ public class ErrorParserFileMatchingTest extends TestCase {
 	}
 
 	@Override
-	protected void tearDown() {
+	protected void tearDown() throws Exception {
+		ResourceHelper.cleanUp();
+		fProject = null;
 	}
 
 	/**

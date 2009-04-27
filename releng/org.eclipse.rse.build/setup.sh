@@ -173,7 +173,7 @@ if [ ! -f eclipse/plugins/org.eclipse.cdt.core_${CDTFEAT}.${CDTVER}.jar ]; then
 fi
 
 # checkout the basebuilder
-baseBuilderTag=R35_M4
+baseBuilderTag=R35_M6
 if [ ! -f org.eclipse.releng.basebuilder/plugins/org.eclipse.pde.core_3.5.0.v20081210-1800.jar \
   -o ! -f org.eclipse.releng.basebuilder/plugins/org.eclipse.pde.build_3.5.0.v20081210/pdebuild.jar \
   -o ! -f org.eclipse.releng.basebuilder/plugins/org.eclipse.equinox.p2.metadata.generator_1.0.100.v20081208-2132.jar ]; then

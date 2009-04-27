@@ -23,7 +23,6 @@ import org.eclipse.cdt.debug.internal.ui.ICDebugHelpContextIds;
 import org.eclipse.cdt.debug.internal.ui.IInternalCDebugUIConstants;
 import org.eclipse.cdt.debug.internal.ui.actions.CBreakpointPropertiesRulerAction;
 import org.eclipse.cdt.debug.internal.ui.actions.EnableDisableBreakpointRulerAction;
-import org.eclipse.cdt.debug.internal.ui.actions.ToggleBreakpointRulerAction;
 import org.eclipse.cdt.debug.internal.ui.views.AbstractDebugEventHandler;
 import org.eclipse.cdt.debug.internal.ui.views.AbstractDebugEventHandlerView;
 import org.eclipse.cdt.debug.internal.ui.views.IDebugExceptionHandler;
@@ -37,6 +36,7 @@ import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.model.IThread;
 import org.eclipse.debug.ui.DebugUITools;
 import org.eclipse.debug.ui.IDebugUIConstants;
+import org.eclipse.debug.ui.actions.ToggleBreakpointAction;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.action.IMenuListener;
 import org.eclipse.jface.action.IMenuManager;
@@ -46,6 +46,7 @@ import org.eclipse.jface.action.Separator;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.jface.text.BadLocationException;
+import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.IRegion;
 import org.eclipse.jface.text.Position;
 import org.eclipse.jface.text.TextPresentation;
@@ -304,7 +305,7 @@ public class DisassemblyView extends AbstractDebugEventHandlerView
 	protected void createActions() {
 		IAction action;
 		IVerticalRuler ruler = getVerticalRuler();
-		action= new ToggleBreakpointRulerAction( this, ruler );
+		action= new ToggleBreakpointAction( this, null, ruler );
 		setAction( IInternalCDebugUIConstants.ACTION_TOGGLE_BREAKPOINT, action );
 		action= new EnableDisableBreakpointRulerAction( this, ruler );
 		setAction( IInternalCDebugUIConstants.ACTION_ENABLE_DISABLE_BREAKPOINT, action );
@@ -961,5 +962,13 @@ public class DisassemblyView extends AbstractDebugEventHandlerView
 			CDebugCorePlugin.getDefault().getPluginPreferences().setValue( ICDebugConstants.PREF_INSTRUCTION_STEP_MODE_ON, false );
 		}
 		super.partDeactivated( part );
+	}
+	
+	@Override
+	public Object getAdapter(Class adapter) {
+	    if (IDocument.class.equals(adapter)) {
+	        return getDocumentProvider().getDocument(getInput());
+	    }
+	    return super.getAdapter(adapter);
 	}
 }

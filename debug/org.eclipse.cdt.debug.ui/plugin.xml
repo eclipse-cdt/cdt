@@ -420,9 +420,9 @@
          <action
                label="%AddBreakpoint.label"
                helpContextId="manage_breakpoint_action_context"
-               class="org.eclipse.cdt.debug.internal.ui.actions.ManageBreakpointRulerActionDelegate"
+               class="org.eclipse.debug.ui.actions.RulerToggleBreakpointActionDelegate"
                menubarPath="debug"
-               id="org.eclipse.cdt.debug.internal.ui.actions.ManageBreakpointRulerActionDelegate">
+               id="org.eclipse.debug.ui.actions.RulerToggleBreakpointAction">
          </action>
       </viewerContribution>
       <viewerContribution
@@ -525,9 +525,9 @@
          <action
                label="%AddBreakpoint.label"
                helpContextId="manage_breakpoint_action_context"
-               class="org.eclipse.cdt.debug.internal.ui.actions.ManageBreakpointRulerActionDelegate"
+               class="org.eclipse.debug.ui.actions.RulerToggleBreakpointActionDelegate"
                menubarPath="debug"
-               id="org.eclipse.cdt.debug.internal.ui.actions.ManageBreakpointRulerActionDelegate">
+               id="org.eclipse.debug.ui.actions.RulerToggleBreakpointAction">
          </action>
       </viewerContribution>
       <viewerContribution
@@ -689,10 +689,10 @@
                icon="icons/elcl16/function_brkpt_co.gif"
                helpContextId="manage_function_breakpoint_action_context"
                tooltip="%ManageFunctionBreakpointAction.tooltip"
-               class="org.eclipse.cdt.debug.internal.ui.actions.ManageFunctionBreakpointActionDelegate"
+               class="org.eclipse.debug.ui.actions.ToggleMethodBreakpointActionDelegate"
                menubarPath="additions"
                enablesFor="1"
-               id="org.eclipse.cdt.debug.internal.ui.actions.ManageFunctionBreakpointActionDelegate">
+               id="org.eclipse.cdt.debug.ui.actions.function.ToggleMethodBreakpointAction">
          </action>
       </objectContribution>
       <objectContribution
@@ -703,10 +703,10 @@
                icon="icons/elcl16/function_brkpt_co.gif"
                helpContextId="manage_function_breakpoint_action_context"
                tooltip="%ManageFunctionBreakpointAction.tooltip"
-               class="org.eclipse.cdt.debug.internal.ui.actions.ManageFunctionBreakpointActionDelegate"
+               class="org.eclipse.debug.ui.actions.ToggleMethodBreakpointActionDelegate"
                menubarPath="additions"
                enablesFor="1"
-               id="org.eclipse.cdt.debug.internal.ui.actions.ManageFunctionBreakpointActionDelegate">
+               id="org.eclipse.cdt.debug.ui.actions.method.ToggleMethodBreakpointAction">
          </action>
       </objectContribution>
       <objectContribution
@@ -717,10 +717,10 @@
                enablesFor="1"
                label="%ToggleWatchpointAction.label"
                icon="icons/elcl16/watchpoint_co.gif"
-               class="org.eclipse.cdt.debug.internal.ui.actions.ToggleWatchpointActionDelegate"
+               class="org.eclipse.debug.ui.actions.ToggleWatchpointActionDelegate"
                tooltip="%ToggleWatchpointAction.tooltip"
                menubarPath="additions"
-               id="org.eclipse.cdt.debug.internal.ui.actions.ToggleWatchpointActionDelegate"/>
+               id="org.eclipse.cdt.debug.ui.actions.ToggleWatchpointAction"/>
       </objectContribution>
       <viewerContribution
             targetID="org.eclipse.debug.ui.VariableView"
@@ -1193,9 +1193,9 @@
             id="org.eclipse.cdt.debug.ui.CEditor.BreakpointRulerActions">
          <action
                label="%Dummy.label"
-               class="org.eclipse.cdt.debug.internal.ui.actions.ManageBreakpointRulerActionDelegate"
+               class="org.eclipse.debug.ui.actions.RulerToggleBreakpointActionDelegate"
                actionID="RulerDoubleClick"
-               id="org.eclipse.cdt.debug.ui.CEditor.ManageBreakpointRulerAction">
+               id="org.eclipse.cdt.debug.ui.CEditor.RulerTobbleBreakpointAction">
          </action>
       </editorContribution>
       <editorContribution
@@ -1203,9 +1203,9 @@
             id="org.eclipse.cdt.ui.editor.asm.AsmEditor.BreakpointRulerActions">
          <action
                label="%Dummy.label"
-               class="org.eclipse.cdt.debug.internal.ui.actions.ManageBreakpointRulerActionDelegate"
+               class="org.eclipse.debug.ui.actions.RulerToggleBreakpointActionDelegate"
                actionID="RulerDoubleClick"
-               id="org.eclipse.cdt.debug.ui.CEditor.ManageBreakpointRulerAction">
+               id="org.eclipse.cdt.debug.ui.CEditor.RulerTobbleBreakpointAction">
          </action>
       </editorContribution>
    </extension>
@@ -1411,9 +1411,6 @@
             class="org.eclipse.cdt.debug.internal.ui.actions.RetargettableActionAdapterFactory"
             adaptableType="org.eclipse.cdt.internal.ui.editor.CEditor">
          <adapter
-               type="org.eclipse.debug.ui.actions.IToggleBreakpointsTarget">
-         </adapter>
-         <adapter
                type="org.eclipse.debug.ui.actions.IRunToLineTarget">
          </adapter>
          <adapter type="org.eclipse.cdt.debug.internal.ui.actions.IResumeAtLineTarget"/>
@@ -1422,9 +1419,6 @@
       <factory
             class="org.eclipse.cdt.debug.internal.ui.actions.RetargettableActionAdapterFactory"
             adaptableType="org.eclipse.cdt.internal.ui.editor.asm.AsmTextEditor">
-         <adapter
-               type="org.eclipse.debug.ui.actions.IToggleBreakpointsTarget">
-         </adapter>
          <adapter
                type="org.eclipse.debug.ui.actions.IRunToLineTarget">
          </adapter>
@@ -1435,20 +1429,10 @@
             class="org.eclipse.cdt.debug.internal.ui.actions.RetargettableActionAdapterFactory"
             adaptableType="org.eclipse.cdt.debug.internal.ui.views.disassembly.DisassemblyView">
          <adapter
-               type="org.eclipse.debug.ui.actions.IToggleBreakpointsTarget">
-         </adapter>
-         <adapter
                type="org.eclipse.debug.ui.actions.IRunToLineTarget">
          </adapter>
          <adapter type="org.eclipse.cdt.debug.internal.ui.actions.IResumeAtLineTarget"/>
          <adapter type="org.eclipse.cdt.debug.internal.ui.actions.IMoveToLineTarget"/>
-      </factory>
-      <factory
-            class="org.eclipse.cdt.debug.internal.ui.actions.RetargettableActionAdapterFactory"
-            adaptableType="org.eclipse.ui.views.contentoutline.ContentOutline">
-         <adapter
-               type="org.eclipse.debug.ui.actions.IToggleBreakpointsTarget">
-         </adapter>
       </factory>
       <factory
             class="org.eclipse.cdt.debug.internal.ui.CBreakpointWorkbenchAdapterFactory"
@@ -1903,5 +1887,30 @@
      </attribute> 
      </breakpointLabels>
  </extension>
+
+   <extension point="org.eclipse.debug.ui.toggleBreakpointsTargetFactories">
+      <toggleTargetFactory
+            id="org.eclipse.cdt.debug.ui.ToggleCBreakpointsTargetFactory"
+            class="org.eclipse.cdt.debug.internal.ui.actions.ToggleCBreakpointsTargetFactory">
+            <enablement>
+            <!-- Enable the breakpoint toggle for CDT's editors and model elements -->
+            <or>
+               <instanceof value="org.eclipse.cdt.internal.ui.editor.CEditor"/>
+               <instanceof value="org.eclipse.cdt.internal.ui.editor.asm.AsmTextEditor"/>
+               <instanceof value="org.eclipse.cdt.debug.internal.ui.views.disassembly.DisassemblyView"/>
+               <with variable="selection">
+                  <count value="1"/>
+                  <iterate>
+                     <or>
+                        <instanceof value="org.eclipse.cdt.core.model.IFunction"/>
+                        <instanceof value="org.eclipse.cdt.core.model.IMethod"/>
+                        <instanceof value="org.eclipse.cdt.core.model.IVariable"/>
+                     </or>
+                  </iterate>
+               </with>            
+            </or>
+         </enablement>
+      </toggleTargetFactory>
+   </extension>
 
 </plugin>

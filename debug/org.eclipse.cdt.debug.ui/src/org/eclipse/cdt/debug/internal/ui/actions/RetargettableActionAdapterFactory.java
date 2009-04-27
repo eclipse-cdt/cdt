@@ -12,7 +12,6 @@ package org.eclipse.cdt.debug.internal.ui.actions;
 
 import org.eclipse.core.runtime.IAdapterFactory;
 import org.eclipse.debug.ui.actions.IRunToLineTarget;
-import org.eclipse.debug.ui.actions.IToggleBreakpointsTarget;
 
 /**
  * Creates adapters for retargettable actions in debug platform.
@@ -25,9 +24,6 @@ public class RetargettableActionAdapterFactory implements IAdapterFactory {
 	 * @see org.eclipse.core.runtime.IAdapterFactory#getAdapter(java.lang.Object, java.lang.Class)
 	 */
 	public Object getAdapter( Object adaptableObject, Class adapterType ) {
-		if ( adapterType == IToggleBreakpointsTarget.class ) {
-			return new ToggleBreakpointAdapter();
-		}
 		if ( adapterType == IRunToLineTarget.class ) {
 			return new RunToLineAdapter();
 		} 
@@ -44,6 +40,6 @@ public class RetargettableActionAdapterFactory implements IAdapterFactory {
 	 * @see org.eclipse.core.runtime.IAdapterFactory#getAdapterList()
 	 */
 	public Class[] getAdapterList() {
-		return new Class[]{ IRunToLineTarget.class, IToggleBreakpointsTarget.class, IResumeAtLineTarget.class, IMoveToLineTarget.class };
+		return new Class[]{ IRunToLineTarget.class, IResumeAtLineTarget.class, IMoveToLineTarget.class };
 	}
 }

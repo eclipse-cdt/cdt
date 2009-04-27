@@ -15,7 +15,6 @@ import org.eclipse.cdt.debug.core.disassembly.IDisassemblyContextProvider;
 import org.eclipse.cdt.debug.internal.ui.IInternalCDebugUIConstants;
 import org.eclipse.cdt.debug.internal.ui.actions.CBreakpointPropertiesRulerAction;
 import org.eclipse.cdt.debug.internal.ui.actions.EnableDisableBreakpointRulerAction;
-import org.eclipse.cdt.debug.internal.ui.actions.ToggleBreakpointRulerAction;
 import org.eclipse.cdt.debug.internal.ui.disassembly.viewer.DisassemblyDocumentProvider;
 import org.eclipse.cdt.debug.internal.ui.disassembly.viewer.DisassemblyPane;
 import org.eclipse.cdt.debug.internal.ui.disassembly.viewer.DocumentContentProvider;
@@ -26,9 +25,11 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.debug.ui.DebugUITools;
+import org.eclipse.debug.ui.actions.ToggleBreakpointAction;
 import org.eclipse.debug.ui.contexts.DebugContextEvent;
 import org.eclipse.debug.ui.contexts.IDebugContextListener;
 import org.eclipse.jface.action.IAction;
+import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.IRegion;
 import org.eclipse.jface.text.source.IAnnotationModel;
 import org.eclipse.jface.text.source.IVerticalRuler;
@@ -338,7 +339,7 @@ public class DisassemblyEditor extends EditorPart implements ITextEditor, IReusa
 
     protected void createActions() {
         IVerticalRuler ruler = fDisassemblyPane.getVerticalRuler();
-        IAction action= new ToggleBreakpointRulerAction( this, ruler );
+        IAction action= new ToggleBreakpointAction( this, null, ruler );
         setAction( IInternalCDebugUIConstants.ACTION_TOGGLE_BREAKPOINT, action );
         action= new EnableDisableBreakpointRulerAction( this, ruler );
         setAction( IInternalCDebugUIConstants.ACTION_ENABLE_DISABLE_BREAKPOINT, action );
@@ -351,5 +352,13 @@ public class DisassemblyEditor extends EditorPart implements ITextEditor, IReusa
      */
     public void propertyChange( PropertyChangeEvent event ) {
         getViewer().refresh();
+    }
+    
+    @Override
+    public Object getAdapter(Class adapter) {
+        if (IDocument.class.equals(adapter)) {
+            return getDocumentProvider().getDocument(getEditorInput());
+        }
+        return super.getAdapter(adapter);
     }
 }

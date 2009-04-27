@@ -1,2 +1,2 @@
-plugin@org.apache.commons.net,2.0.0=GET,http://download.eclipse.org/tools/orbit/downloads/drops/I20090407030832/bundles/org.apache.commons.net_2.0.0.v200903061330.jar
-plugin@org.apache.commons.net.source,2.0.0=GET,http://download.eclipse.org/tools/orbit/downloads/drops/I20090407030832/bundles/org.apache.commons.net.source_2.0.0.v200903061330.jar
+plugin@org.apache.commons.net,2.0.0=GET,http://download.eclipse.org/tools/orbit/downloads/drops/S20090426201227/bundles/org.apache.commons.net_2.0.0.v200903061330.jar
+plugin@org.apache.commons.net.source,2.0.0=GET,http://download.eclipse.org/tools/orbit/downloads/drops/S20090426201227/bundles/org.apache.commons.net.source_2.0.0.v200903061330.jar

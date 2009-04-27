@@ -72,6 +72,7 @@
 			<topic label="Folding preferences" href="reference/cdt_u_c_editor_folding.htm"/>
 			<topic label="Hovers preferences" href="reference/cdt_u_c_editor_hov.htm"/>
 			<topic label="Mark Occurrences preferences" href="reference/cdt_u_c_editor_mark_occurrences.htm"/>
+			<topic label="Save Actions preferences" href="reference/cdt_u_c_editor_save_actions.htm"/>
 			<topic label="Scalability preferences" href="reference/cdt_u_c_editor_scalability.htm"/>
 			<topic label="Syntax Coloring preferences" href="reference/cdt_u_c_editor_color.htm"/>
 			<topic label="Templates preferences" href="reference/cdt_u_code_temp.htm"/>

@@ -87,8 +87,8 @@
    <topic href="reference/cdt_u_c_editor_hov.htm"
    	label="C/C++ Editor Hovers Preferences"/>
 </context>
-<context id ="scalability_preference_page_context">
-   <description>This page allows to configure editor scalability mode options.</description>
+<context id ="save_actions_preference_page_context">
+   <description>This page allows to configure editor save actions.</description>
    <topic href="reference/cdt_u_c_editor_save_actions.htm"
    	label="C/C++ Editor Save Actions Preferences"/>
 <context id ="scalability_preference_page_context">

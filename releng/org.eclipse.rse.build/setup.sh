@@ -174,9 +174,9 @@ fi
 
 # checkout the basebuilder
 baseBuilderTag=R35_M6
-if [ ! -f org.eclipse.releng.basebuilder/plugins/org.eclipse.pde.core_3.5.0.v20081210-1800.jar \
-  -o ! -f org.eclipse.releng.basebuilder/plugins/org.eclipse.pde.build_3.5.0.v20081210/pdebuild.jar \
-  -o ! -f org.eclipse.releng.basebuilder/plugins/org.eclipse.equinox.p2.metadata.generator_1.0.100.v20081208-2132.jar ]; then
+if [ ! -f org.eclipse.releng.basebuilder/plugins/org.eclipse.pde.core_3.5.0.v20090309-1900.jar \
+  -o ! -f org.eclipse.releng.basebuilder/plugins/org.eclipse.pde.build_3.5.0.v20090312-1500/pdebuild.jar \
+  -o ! -f org.eclipse.releng.basebuilder/plugins/org.eclipse.equinox.p2.metadata.generator_1.0.100.v20090309-1845.jar ]; then
   if [ -d org.eclipse.releng.basebuilder ]; then
     echo "Re-getting basebuilder from CVS..."
     rm -rf org.eclipse.releng.basebuilder

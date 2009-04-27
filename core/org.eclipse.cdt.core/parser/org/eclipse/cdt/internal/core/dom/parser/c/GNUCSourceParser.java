@@ -389,20 +389,27 @@ public class GNUCSourceParser extends AbstractGNUSourceCodeParser {
         		endOffset= figureEndOffset(declSpec, declarators);
         		break;
         	default:
-         		if (declOption != DeclarationOptions.LOCAL && endOffset != firstOffset) {
+         		if (declOption != DeclarationOptions.LOCAL) {
         			insertSemi= true;
-        			if (markBeforDtor != null && !isOnSameLine(calculateEndOffset(declSpec), markBeforDtor.getOffset())) {
-        				backup(markBeforDtor);
-        				declarators= IASTDeclarator.EMPTY_DECLARATOR_ARRAY;
-        				endOffset= calculateEndOffset(declSpec);
-        				break;
+        			if (markBeforDtor != null) {
+    					endOffset= calculateEndOffset(declSpec);
+        				if (firstOffset != endOffset && !isOnSameLine(endOffset, markBeforDtor.getOffset())) {
+        					backup(markBeforDtor);
+        					declarators= IASTDeclarator.EMPTY_DECLARATOR_ARRAY;
+        					break;
+        				}
         			}
         			endOffset= figureEndOffset(declSpec, declarators);
-        			if (lt1 == 0 || !isOnSameLine(endOffset, LA(1).getOffset())) {
+        			if (lt1 == 0) {
         				break;
         			}
-        			if (declarators.length == 1 && declarators[0] instanceof IASTFunctionDeclarator) {
-        				break;
+        			if (firstOffset != endOffset) {
+        				if (!isOnSameLine(endOffset, LA(1).getOffset())) {
+        					break;
+        				}
+        				if (declarators.length == 1 && declarators[0] instanceof IASTFunctionDeclarator) {
+        					break;
+        				}
         			}
         		}
         		throwBacktrack(LA(1));

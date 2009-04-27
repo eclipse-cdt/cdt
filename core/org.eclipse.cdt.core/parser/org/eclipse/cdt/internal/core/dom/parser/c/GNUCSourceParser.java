@@ -389,7 +389,7 @@ public class GNUCSourceParser extends AbstractGNUSourceCodeParser {
         		endOffset= figureEndOffset(declSpec, declarators);
         		break;
         	default:
-        		if (declOption != DeclarationOptions.LOCAL) {
+         		if (declOption != DeclarationOptions.LOCAL && endOffset != firstOffset) {
         			insertSemi= true;
         			if (markBeforDtor != null && !isOnSameLine(calculateEndOffset(declSpec), markBeforDtor.getOffset())) {
         				backup(markBeforDtor);

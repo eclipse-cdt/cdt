@@ -1539,8 +1539,11 @@ public abstract class AbstractGNUSourceCodeParser implements ISourceCodeParser {
     	// a node was detected by assuming additional tokens (e.g. missing semicolon)
     	IASTNode n= bt.getNodeBeforeProblem();
     	if (n instanceof IASTDeclaration) {
-    		declarationMark= null;
-    		return new IASTDeclaration[] {(IASTDeclaration) n, buildProblemDeclaration(origProblem)};
+    		IToken la1= LAcatchEOF(1);
+    		if (la1 == null || la1.getOffset() > offset) {
+    			declarationMark= null;
+    			return new IASTDeclaration[] {(IASTDeclaration) n, buildProblemDeclaration(origProblem)};
+    		}
     	} 
     	
     	if (declarationMark != null && isActiveCode()) {

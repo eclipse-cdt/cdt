@@ -242,4 +242,22 @@ public class FaultToleranceTests extends AST2BaseTest {
     	IASTSimpleDeclaration s= getDeclaration(ct, 2);
     	assertEquals("int i;", s.getRawSignature());
     }
+    
+	
+	//	#define XX() .
+	//	int c;
+	//	XX(
+	//	);
+	//	int d;
+	public void testErrorRecovery_273759() throws Exception {
+		IASTTranslationUnit tu= parse(getAboveComment(), ParserLanguage.C, false, false); 
+    	IASTSimpleDeclaration s= getDeclaration(tu, 0);
+    	IASTProblemDeclaration p= getDeclaration(tu, 1);
+    	s= getDeclaration(tu, 2);
+		
+    	tu= parse(getAboveComment(), ParserLanguage.CPP, false, false); 
+    	s= getDeclaration(tu, 0);
+    	p= getDeclaration(tu, 1);
+    	s= getDeclaration(tu, 2);
+	}
 }

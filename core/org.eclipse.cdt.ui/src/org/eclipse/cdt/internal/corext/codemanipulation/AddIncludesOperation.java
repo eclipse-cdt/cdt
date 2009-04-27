@@ -36,11 +36,10 @@ import org.eclipse.cdt.ui.IRequiredInclude;
 
 import org.eclipse.cdt.internal.ui.editor.CEditorMessages;
 
-
 /**
  * Add includes to a translation unit.
  * The input is an array of full qualified type names. No elimination of unnecessary
- * includes is not done. Dublicates are eliminated.
+ * includes is not done. Duplicates are eliminated.
  * If the translation unit is open in an editor, be sure to pass over its working copy.
  */
 public class AddIncludesOperation implements IWorkspaceRunnable {
@@ -216,7 +215,6 @@ public class AddIncludesOperation implements IWorkspaceRunnable {
 	}
 
 	public void run(IProgressMonitor monitor) throws CoreException {
-
 		if (monitor == null) {
 			monitor= new NullProgressMonitor();
 		}			
@@ -234,5 +232,4 @@ public class AddIncludesOperation implements IWorkspaceRunnable {
 	public ISchedulingRule getScheduleRule() {
 		return ResourcesPlugin.getWorkspace().getRoot();
 	}
-
 }

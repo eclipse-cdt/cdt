@@ -61,7 +61,6 @@ import org.eclipse.cdt.internal.ui.util.EditorUtility;
 
 public class OpenIncludeAction extends Action {
 
-
 	private static final String PREFIX= "OpenIncludeAction."; //$NON-NLS-1$
 	
 	private static final String DIALOG_TITLE= PREFIX + "dialog.title"; //$NON-NLS-1$
@@ -179,7 +178,7 @@ public class OpenIncludeAction extends Action {
 	 * Returns the path as is, if it points to a workspace resource. If the path
 	 * does not point to a workspace resource, but there are linked workspace
 	 * resources pointing to it, returns the paths of these resources.
-	 * Othervise, returns the path as is. 
+	 * Otherwise, returns the path as is. 
 	 */
 	private IPath[] resolveIncludeLink(IPath path) {
 		if (!isInProject(path)) {
@@ -280,7 +279,6 @@ public class OpenIncludeAction extends Action {
 		return null;
 	}
 
-
 	private static IInclude getIncludeStatement(ISelection sel) {
 		if (!sel.isEmpty() && sel instanceof IStructuredSelection) {
 			List<?> list= ((IStructuredSelection)sel).toList();
@@ -304,5 +302,4 @@ public class OpenIncludeAction extends Action {
 		}
 		return false;
 	}	
-
 }

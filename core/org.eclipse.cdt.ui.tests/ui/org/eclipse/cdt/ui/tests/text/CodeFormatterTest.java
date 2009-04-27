@@ -16,6 +16,7 @@ import java.util.Map;
 
 import junit.framework.TestSuite;
 
+import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.Document;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.TextUtilities;
@@ -59,9 +60,13 @@ public class CodeFormatterTest extends BaseUITestCase {
 	protected void assertFormatterResult() throws Exception {
 		StringBuffer[] contents= getContentsForTest(2);
 		String before= contents[0].toString();
-		IDocument document= new Document(before);
 		String expected= contents[1].toString();
-		TextEdit edit= CodeFormatterUtil.format(CodeFormatter.K_TRANSLATION_UNIT, before, 0, TextUtilities.getDefaultLineDelimiter(document), fOptions);
+		assertFormatterResult(before, expected);
+	}
+
+	private void assertFormatterResult(String original, String expected) throws BadLocationException {
+		IDocument document= new Document(original);
+		TextEdit edit= CodeFormatterUtil.format(CodeFormatter.K_TRANSLATION_UNIT, original, 0, TextUtilities.getDefaultLineDelimiter(document), fOptions);
 		assertNotNull(edit);
 		edit.apply(document);
 		assertEquals(expected, document.get());
@@ -1181,21 +1186,21 @@ public class CodeFormatterTest extends BaseUITestCase {
 		assertFormatterResult();
 	}
 
-	//class 大大大大
-	//{
-	//public:
-	//	大大大大();
-	//	virtual ~大大大大();
-	//};	
-	
-	//class 大大大大
-	//{
-	//public:
-	//	大大大大();
-	//	virtual ~大大大大();
-	//};
 	public void testFormatGeneratedClass_Bug272006() throws Exception {
-		assertFormatterResult();
+		String original = 
+			"class \u5927\u5927\u5927\u5927\n" + 
+			"{\n" + 
+			"public:\n" + 
+			"	\u5927\u5927\u5927\u5927();\n" + 
+			"	virtual ~\u5927\u5927\u5927\u5927();\n" + 
+			"};\n";
+		String expected = 
+			"class \u5927\u5927\u5927\u5927 {\n" + 
+			"public:\n" + 
+			"	\u5927\u5927\u5927\u5927();\n" + 
+			"	virtual ~\u5927\u5927\u5927\u5927();\n" + 
+			"};\n";
+		assertFormatterResult(original, expected);
 	}
 
 }

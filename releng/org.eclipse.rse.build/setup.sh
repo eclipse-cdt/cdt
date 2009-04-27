@@ -41,9 +41,12 @@ case ${uname_s}${uname_m} in
 esac
 
 # prepare the base Eclipse installation in folder "eclipse"
-ep_rel=S
-ep_ver=3.5M5
-ep_date=200902021535
+#ep_rel="S-"
+#ep_ver=3.5M5
+#ep_date="-200902021535"
+ep_rel=
+ep_ver=I20090426-2000
+ep_date=
 P2_disabled=false
 P2_no_dropins=false
 if [ ! -f eclipse/plugins/org.eclipse.swt_3.5.0.v3529a.jar ]; then
@@ -59,7 +62,7 @@ if [ ! -f eclipse/plugins/org.eclipse.swt_3.5.0.v3529a.jar ]; then
   fi
   # Eclipse SDK: Need the SDK so we can link into docs
   echo "Getting Eclipse SDK..."
-  wget "http://download.eclipse.org/eclipse/downloads/drops/${ep_rel}-${ep_ver}-${ep_date}/eclipse-SDK-${ep_ver}-${ep_arch}.tar.gz"
+  wget "http://download.eclipse.org/eclipse/downloads/drops/${ep_rel}${ep_ver}${ep_date}/eclipse-SDK-${ep_ver}-${ep_arch}.tar.gz"
   tar xfvz eclipse-SDK-${ep_ver}-${ep_arch}.tar.gz
   rm eclipse-SDK-${ep_ver}-${ep_arch}.tar.gz
   if ${P2_disabled} ; then
@@ -124,7 +127,7 @@ fi
 if [ ! -f eclipse/plugins/org.junit_3.8.2.v20080602-1318/junit.jar ]; then
   # Eclipse Test Framework
   echo "Getting Eclipse Test Framework..."
-  wget "http://download.eclipse.org/eclipse/downloads/drops/${ep_rel}-${ep_ver}-${ep_date}/eclipse-test-framework-${ep_ver}.zip"
+  wget "http://download.eclipse.org/eclipse/downloads/drops/${ep_rel}${ep_ver}${ep_date}/eclipse-test-framework-${ep_ver}.zip"
   unzip -o eclipse-test-framework-${ep_ver}.zip
   rm eclipse-test-framework-${ep_ver}.zip
 fi

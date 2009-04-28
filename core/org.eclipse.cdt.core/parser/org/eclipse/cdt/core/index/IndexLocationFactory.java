@@ -110,7 +110,7 @@ public class IndexLocationFactory {
 	public static IIndexFileLocation getIFLExpensive(ICProject cproject, String absolutePath) {
 		final IProject preferredProject= cproject == null ? null : cproject.getProject();
 		IFile file= ResourceLookup.selectFileForLocation(new Path(absolutePath), preferredProject);
-		if (file != null)
+		if (file != null && file.exists())
 			return getWorkspaceIFL(file);
 
 		return getExternalIFL(absolutePath);

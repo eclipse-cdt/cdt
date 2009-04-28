@@ -231,7 +231,7 @@ public class ChangeGenerator extends CPPASTVisitor {
 			String currentFile = targetLocation.getFileName();
 			IPath implPath = new Path(currentFile);
 			IFile relevantFile= ResourceLookup.selectFileForLocation(implPath, null);
-			if (relevantFile == null) { // if not in workspace or local file system
+			if (relevantFile == null || !relevantFile.exists()) { // if not in workspace or local file system
 			    throw new UnhandledASTModificationException(modification);
 			}
 			MultiTextEdit edit;

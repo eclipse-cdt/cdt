@@ -72,6 +72,7 @@ public class ResourceLookup {
 	 * @param location an URI for the location of the files to search for.
 	 * @param preferredProject a project to be preferred over others, or <code>null</code>.
 	 * @return a file for the location in one of the given projects, or <code>null</code>.
+	 * 			NB the returned IFile may not exist
 	 */
 	public static IFile selectFileForLocationURI(URI location, IProject preferredProject) {
 		return selectFile(findFilesForLocationURI(location), preferredProject);
@@ -84,6 +85,7 @@ public class ResourceLookup {
 	 * @param location a path for the location of the files to search for.
 	 * @param preferredProject a project to be preferred over others, or <code>null</code>.
 	 * @return a file for the location or <code>null</code>.
+	 * 			NB the returned IFile may not exist
 	 */
 	public static IFile selectFileForLocation(IPath location, IProject preferredProject) {
 		return selectFile(findFilesForLocation(location), preferredProject);
@@ -92,26 +94,21 @@ public class ResourceLookup {
 	private static IFile selectFile(IFile[] files, IProject preferredProject) {
 		if (files.length == 0)
 			return null;
-		
-		if (files.length == 1) {
-			final IFile file= files[0];
-			if (file.isAccessible())
-				return file;
-		}
-		
+
+		if (files.length == 1)
+			return files[0];
+
 		IFile best= null;
 		int bestRelevance= -1;
-		
+
 		for (int i = 0; i < files.length; i++) {
 			IFile file = files[i];
-			if (file.isAccessible()) {
-				int relevance= FileRelevance.getRelevance(file, preferredProject);
-				if (best == null || relevance > bestRelevance ||
-						(relevance == bestRelevance && 
-								best.getFullPath().toString().compareTo(file.getFullPath().toString()) > 0)) {
-					bestRelevance= relevance;
-					best= file;
-				}
+			int relevance= FileRelevance.getRelevance(file, preferredProject);
+			if (best == null || relevance > bestRelevance ||
+					(relevance == bestRelevance && 
+							best.getFullPath().toString().compareTo(file.getFullPath().toString()) > 0)) {
+				bestRelevance= relevance;
+				best= file;
 			}
 		}
 		return best;
@@ -128,11 +125,6 @@ public class ResourceLookup {
 	public static void sortFilesByRelevance(IFile[] filesToSort, final IProject preferredProject) {
 		Collections.sort(Arrays.asList(filesToSort), new Comparator<IFile>() {
 			public int compare(IFile f1, IFile f2) {
-				boolean a1= f1.isAccessible();
-				boolean a2= f2.isAccessible();
-				if (a1 != a2) 
-					return a1 ? -1 : 1;
-		
 				int r1= FileRelevance.getRelevance(f1, preferredProject);
 				int r2= FileRelevance.getRelevance(f2, preferredProject);
 				

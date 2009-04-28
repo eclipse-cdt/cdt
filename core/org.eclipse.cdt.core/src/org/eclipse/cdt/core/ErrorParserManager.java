@@ -296,13 +296,16 @@ public class ErrorParserManager extends OutputStream {
 	 * Find exact match in the workspace. If path is not absolute search is done in working directory.
 	 * 
 	 * @param path - file path.
-	 * @return - file in the workspace or {@code null}.
+	 * @return - file in the workspace or {@code null} if such a file doesn't exist
 	 */
 	protected IFile findFileInWorkspace(IPath path) {
 		if (!path.isAbsolute()) {
 			path = getWorkingDirectory().append(path);
 		}
-		return ResourceLookup.selectFileForLocation(path, fProject);
+		IFile f = ResourceLookup.selectFileForLocation(path, fProject);
+		if (f != null && f.isAccessible())
+			return f;
+		return null;
 	}
 
 	/**

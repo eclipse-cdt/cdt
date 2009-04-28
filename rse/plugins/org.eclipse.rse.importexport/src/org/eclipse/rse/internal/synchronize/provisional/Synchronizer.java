@@ -81,16 +81,18 @@ public class Synchronizer implements ISynchronizer {
 					// user should be prompted before disconnect or he/she will lose team synch info
 					if (connector.isConnected(project)){
 						
-						String msg = NLS.bind(SystemImportExportResources.RESID_SYNCHRONIZE_DISCONNECT_WARNING, project.getName());
-						SystemMessage msgObj = new SimpleSystemMessage(RemoteImportExportPlugin.PLUGIN_ID, IStatus.WARNING, msg);
+						RepositoryProvider provider = RepositoryProvider.getProvider(project);
+						if (!(provider instanceof FileSystemProvider)){						
+							String msg = NLS.bind(SystemImportExportResources.RESID_SYNCHRONIZE_DISCONNECT_WARNING, project.getName());
+							SystemMessage msgObj = new SimpleSystemMessage(RemoteImportExportPlugin.PLUGIN_ID, IStatus.WARNING, msg);
 						
-						SystemMessageDialog dlg = new SystemMessageDialog(SystemBasePlugin.getActiveWorkbenchShell(), msgObj);
-						if (dlg.openQuestionNoException(true)){												
-							connector.disconnect(project);
+							SystemMessageDialog dlg = new SystemMessageDialog(SystemBasePlugin.getActiveWorkbenchShell(), msgObj);
+							if (!dlg.openQuestionNoException(true)){												
+								return false;
+							}
 						}
-						else {
-							return false;
-						}
+
+						connector.disconnect(project);
 					}
 				}
 

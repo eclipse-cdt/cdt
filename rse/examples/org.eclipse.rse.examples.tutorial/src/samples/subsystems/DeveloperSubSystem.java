@@ -24,6 +24,7 @@ import org.eclipse.rse.core.model.IHost;
 import org.eclipse.rse.core.subsystems.IConnectorService;
 import org.eclipse.rse.core.subsystems.SubSystem;
 import org.eclipse.rse.services.clientserver.NamePatternMatcher;
+import org.eclipse.rse.services.clientserver.messages.SystemMessageException;
 
 import samples.model.DeveloperResource;
 import samples.model.TeamResource;
@@ -50,7 +51,7 @@ public class DeveloperSubSystem extends SubSystem
 	 * (non-Javadoc)
 	 * @see SubSystem#initializeSubSystem(IProgressMonitor)
 	 */
-	public void initializeSubSystem(IProgressMonitor monitor) {
+	public void initializeSubSystem(IProgressMonitor monitor) throws SystemMessageException {
 		super.initializeSubSystem(monitor);
 	}
 

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2008 IBM Corporation and others.
+ * Copyright (c) 2006, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -18,6 +18,7 @@
  * David McKnight   (IBM)        - [209593] [api] check for existing query to avoid duplicates
  * David McKnight   (IBM)        - [216252] use SimpleSystemMessage instead of getMessage()
  * Martin Oberhuber (Wind River) - [226262] Make IService IAdaptable
+ * David McKnight   (IBM)        - [272882] [api] Handle exceptions in IService.initService()
  *******************************************************************************/
 
 package org.eclipse.rse.services.dstore;
@@ -34,6 +35,7 @@ import org.eclipse.dstore.core.model.IDataStoreProvider;
 import org.eclipse.rse.internal.services.dstore.ServiceResources;
 import org.eclipse.rse.services.AbstractService;
 import org.eclipse.rse.services.clientserver.messages.SystemMessage;
+import org.eclipse.rse.services.clientserver.messages.SystemMessageException;
 import org.eclipse.rse.services.dstore.util.DStoreStatusMonitor;
 
 public abstract class AbstractDStoreService extends AbstractService implements IDStoreService
@@ -412,7 +414,7 @@ public abstract class AbstractDStoreService extends AbstractService implements I
 		}
 	}
 
-	public void initService(IProgressMonitor monitor)
+	public void initService(IProgressMonitor monitor) throws SystemMessageException
 	{
 		super.initService(monitor);
 		initMiner(monitor);

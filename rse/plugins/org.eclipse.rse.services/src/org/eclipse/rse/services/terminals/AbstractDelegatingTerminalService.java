@@ -52,7 +52,7 @@ public abstract class AbstractDelegatingTerminalService extends AbstractTerminal
 		return RSEServicesMessages.AbstractDelegatingTerminalService_name;
 	}
 
-	public void initService(IProgressMonitor monitor) {
+	public void initService(IProgressMonitor monitor) throws SystemMessageException {
 		getRealTerminalService().initService(monitor);
 	}
 

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2008 IBM Corporation and others.
+ * Copyright (c) 2006, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -43,6 +43,7 @@
  * David McKnight   (IBM)        - [223461] [Refresh][api] Refresh expanded folder under filter refreshes Filter
  * Martin Oberhuber (Wind River) - [240704] Protect against illegal API use of getRemoteFileObject() with relative path as name
  * Martin Oberhuber (Wind River) - [234026] Clarify IFileService#createFolder() Javadocs
+ * David McKnight   (IBM)        - [272882] [api] Handle exceptions in IService.initService()
  *******************************************************************************/
 
 package org.eclipse.rse.subsystems.files.core.servicesubsystem;
@@ -76,7 +77,6 @@ import org.eclipse.rse.services.clientserver.archiveutils.ArchiveHandlerManager;
 import org.eclipse.rse.services.clientserver.messages.CommonMessages;
 import org.eclipse.rse.services.clientserver.messages.ICommonMessageIds;
 import org.eclipse.rse.services.clientserver.messages.SimpleSystemMessage;
-import org.eclipse.rse.services.clientserver.messages.SystemElementNotFoundException;
 import org.eclipse.rse.services.clientserver.messages.SystemMessage;
 import org.eclipse.rse.services.clientserver.messages.SystemMessageException;
 import org.eclipse.rse.services.files.IFileService;
@@ -1138,7 +1138,7 @@ public class FileServiceSubSystem extends RemoteFileSubSystem implements IFileSe
 		return IFileService.class;
 	}
 
-	public void initializeSubSystem(IProgressMonitor monitor)
+	public void initializeSubSystem(IProgressMonitor monitor) throws SystemMessageException
 	{
 		super.initializeSubSystem(monitor);
 		getFileService().initService(monitor);

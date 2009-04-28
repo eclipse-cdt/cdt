@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2008 MontaVista Software, Inc. and others.
+ * Copyright (c) 2006, 2009 MontaVista Software, Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -13,6 +13,7 @@
  * Martin Oberhuber (Wind River) - [226262] Make IService IAdaptable and add Javadoc
  * Martin Oberhuber (Wind River) - [226301][api] IShellService should throw SystemMessageException on error
  * Anna Dushistova  (MontaVista) - [239159] The shell process subsystem not working without the shells subsystem present for the systemType
+ * David McKnight   (IBM)        - [272882] [api] Handle exceptions in IService.initService()
  *******************************************************************************/
 
 package org.eclipse.rse.internal.subsystems.processes.shell.linux;
@@ -187,7 +188,7 @@ public class LinuxShellProcessService extends AbstractProcessService {
         return LinuxShellProcessResources.LinuxRemoteProcessService_name;
     }
 
-    public void initService(final IProgressMonitor monitor) {
+    public void initService(final IProgressMonitor monitor) throws SystemMessageException {
     	super.initService(monitor);
         linuxProcessHelper = new LinuxProcessHelper();
         // initialize username /uid hashmap before getting any process

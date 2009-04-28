@@ -1,5 +1,5 @@
 /********************************************************************************
- * Copyright (c) 2002, 2008 IBM Corporation and others. All rights reserved.
+ * Copyright (c) 2002, 2009 IBM Corporation and others. All rights reserved.
  * This program and the accompanying materials are made available under the terms
  * of the Eclipse Public License v1.0 which accompanies this distribution, and is
  * available at http://www.eclipse.org/legal/epl-v10.html
@@ -46,6 +46,7 @@
  * Don Yantzi       (IBM)        - [244807] Delay connecting if resolving filters while restoring from cache
  * David McKnight   (IBM)        - [226787] [services] Dstore processes subsystem is empty after switching from shell processes
  * David McKnight   (IBM)        - [262930] Remote System Details view not restoring filter memento input
+ * David McKnight   (IBM)        - [272882] [api] Handle exceptions in IService.initService()
  ********************************************************************************/
 
 package org.eclipse.rse.core.subsystems;
@@ -2421,8 +2422,9 @@ implements IAdaptable, ISubSystem, ISystemFilterPoolReferenceManagerProvider
 	 *            during long-running operation. Cancellation is typically not
 	 *            supported since it might leave the system in an inconsistent
 	 *            state.
+	 * @throws SystemMessageException if an error occurs during initialization.          
 	 */
-	public void initializeSubSystem(IProgressMonitor monitor) {
+	public void initializeSubSystem(IProgressMonitor monitor) throws SystemMessageException {
 		_isInitialized = true;
 	}
 
@@ -3401,7 +3403,12 @@ implements IAdaptable, ISubSystem, ISystemFilterPoolReferenceManagerProvider
 		if (newConnectorService.isConnected()){
 			// make sure that the new service is initialized properly
 			// since we're already connected and normally it's done as part of connect
-			initializeSubSystem(new NullProgressMonitor());
+			try {
+				initializeSubSystem(new NullProgressMonitor());
+			}
+			catch (SystemMessageException e){
+				SystemBasePlugin.logError(e.getMessage(), e);
+			}
 		}
 		
 

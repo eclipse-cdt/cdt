@@ -1,5 +1,5 @@
 /********************************************************************************
- * Copyright (c) 2006, 2008 IBM Corporation and others. All rights reserved.
+ * Copyright (c) 2006, 2009 IBM Corporation and others. All rights reserved.
  * This program and the accompanying materials are made available under the terms
  * of the Eclipse Public License v1.0 which accompanies this distribution, and is
  * available at http://www.eclipse.org/legal/epl-v10.html
@@ -16,6 +16,7 @@
  * David McKnight   (IBM)        - [159092] For to use correct process miner id
  * David McKnight   (IBM)        - [196624] dstore miner IDs should be String constants rather than dynamic lookup
  * Martin Oberhuber (Wind River) - [226262] Make IService IAdaptable and add Javadoc
+ * David McKnight   (IBM)        - [272882] [api] Handle exceptions in IService.initService()
  ********************************************************************************/
 
 package org.eclipse.rse.internal.services.dstore.processes;
@@ -40,7 +41,6 @@ import org.eclipse.rse.services.dstore.util.DStoreStatusMonitor;
 import org.eclipse.rse.services.processes.AbstractProcessService;
 
 public class DStoreProcessService extends AbstractProcessService
-// TODO implements IDStoreService ?
 {
 	protected IDataStoreProvider _provider;
 	protected DataElement _minerElement = null;
@@ -272,7 +272,7 @@ public class DStoreProcessService extends AbstractProcessService
 		return getDataStore().find(_minerElement, DE.A_NAME, "universal.killinfo"); //$NON-NLS-1$
 	}
 
-	public void initService(IProgressMonitor monitor)
+	public void initService(IProgressMonitor monitor) throws SystemMessageException
 	{
 		super.initService(monitor);
 		initMiner(monitor);

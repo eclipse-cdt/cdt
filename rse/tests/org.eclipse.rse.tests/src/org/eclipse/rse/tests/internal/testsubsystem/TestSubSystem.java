@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2008 Wind River Systems, Inc. and others.
+ * Copyright (c) 2006, 2009 Wind River Systems, Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,6 +10,7 @@
  * Martin Oberhuber (Wind River) - [182454] improve getAbsoluteName() documentation
  * Martin Oberhuber (Wind River) - [186128][refactoring] Move IProgressMonitor last in public base classes
  * Martin Oberhuber (Wind River) - [218304] Improve deferred adapter loading
+ * David McKnight   (IBM)        - [272882] [api] Handle exceptions in IService.initService()
  *******************************************************************************/
 package org.eclipse.rse.tests.internal.testsubsystem;
 
@@ -20,6 +21,7 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.rse.core.model.IHost;
 import org.eclipse.rse.core.subsystems.IConnectorService;
 import org.eclipse.rse.core.subsystems.SubSystem;
+import org.eclipse.rse.services.clientserver.messages.SystemMessageException;
 import org.eclipse.rse.tests.testsubsystem.TestSubSystemContainerNode;
 import org.eclipse.rse.tests.testsubsystem.TestSubSystemNode;
 import org.eclipse.rse.tests.testsubsystem.interfaces.ITestSubSystem;
@@ -47,7 +49,7 @@ public class TestSubSystem extends SubSystem implements ITestSubSystem {
 	/* (non-Javadoc)
 	 * @see org.eclipse.rse.core.subsystems.SubSystem#initializeSubSystem(org.eclipse.core.runtime.IProgressMonitor)
 	 */
-	public void initializeSubSystem(IProgressMonitor monitor) {
+	public void initializeSubSystem(IProgressMonitor monitor) throws SystemMessageException {
 		super.initializeSubSystem(monitor);
 		TestSubSystemContainerNode parent0 = new TestSubSystemContainerNode("0"); //$NON-NLS-1$
 		TestSubSystemContainerNode child0 = new TestSubSystemContainerNode("0:0"); //$NON-NLS-1$

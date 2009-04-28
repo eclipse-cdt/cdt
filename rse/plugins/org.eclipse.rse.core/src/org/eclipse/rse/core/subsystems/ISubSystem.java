@@ -1,5 +1,5 @@
 /********************************************************************************
- * Copyright (c) 2006, 2008 IBM Corporation and others. All rights reserved.
+ * Copyright (c) 2006, 2009 IBM Corporation and others. All rights reserved.
  * This program and the accompanying materials are made available under the terms
  * of the Eclipse Public License v1.0 which accompanies this distribution, and is
  * available at http://www.eclipse.org/legal/epl-v10.html
@@ -20,6 +20,7 @@
  * Martin Oberhuber (Wind River) - [cleanup] Add API "since" Javadoc tags
  * David Dykstal (IBM) - [225089][ssh][shells][api] Canceling connection leads to exception
  * Martin Oberhuber (Wind River) - [218304] Improve deferred adapter loading
+ * David McKnight   (IBM)        - [272882] [api] Handle exceptions in IService.initService()
  ********************************************************************************/
 
 package org.eclipse.rse.core.subsystems;
@@ -99,8 +100,10 @@ public interface ISubSystem extends ISystemFilterPoolReferenceManagerProvider, I
 	 *            during long-running operation. Cancellation is typically not
 	 *            supported since it might leave the system in an inconsistent
 	 *            state.
+	 *            
+	 * @throws SystemMessageException if an error occurs during initialization.
 	 */
-	public void initializeSubSystem(IProgressMonitor monitor);
+	public void initializeSubSystem(IProgressMonitor monitor) throws SystemMessageException;
 
 	/**
 	 * Called on each subsystem associated with a particular

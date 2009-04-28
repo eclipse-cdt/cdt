@@ -37,6 +37,7 @@
  * Martin Oberhuber (Wind River) - [237616][ssh] Dont perform forced setLastModified during upload
  * Martin Oberhuber (Wind River) - [227135] Cryptic exception when sftp-server is missing
  * David McKnight   (IBM)        - [271244] [sftp files] "My Home" filter not working
+ * David McKnight   (IBM)        - [272882] [api] Handle exceptions in IService.initService()
  *******************************************************************************/
 
 package org.eclipse.rse.internal.services.ssh.files;
@@ -1124,16 +1125,10 @@ public class SftpFileService extends AbstractFileService implements ISshService,
 		}
 	}
 
-	public void initService(IProgressMonitor monitor) {
+	public void initService(IProgressMonitor monitor) throws SystemMessageException {
 		Activator.trace("SftpFileService.initService"); //$NON-NLS-1$
 		super.initService(monitor);
-		 try {
-			 connect();
-		 }
-		 catch (Exception e)
-		 {
-			 Activator.trace("SftpFileService.initService failed: "+e.toString()); //$NON-NLS-1$
-		 }
+		connect();
 	}
 
 	public void uninitService(IProgressMonitor monitor) {

@@ -1,5 +1,5 @@
 /********************************************************************************
- * Copyright (c) 2008 MontaVista Software, Inc. and others.
+ * Copyright (c) 2008, 2009 MontaVista Software, Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -12,6 +12,7 @@
  * Martin Oberhuber (Wind River) - [228577] [rseterminal] Further cleanup
  * Anna Dushistova  (MontaVista) - [227569] [rseterminal][api] Provide a "generic" Terminal subsystem
  * Anna Dushistova  (MontaVista) - [257638] [rseterminal] Terminal subsystem doesn't have service properties
+ * David McKnight   (IBM)        - [272882] [api] Handle exceptions in IService.initService()
  ********************************************************************************/
 
 package org.eclipse.rse.subsystems.terminals.core;
@@ -30,6 +31,7 @@ import org.eclipse.rse.core.subsystems.ICommunicationsListener;
 import org.eclipse.rse.core.subsystems.IConnectorService;
 import org.eclipse.rse.core.subsystems.ISubSystemConfiguration;
 import org.eclipse.rse.core.subsystems.SubSystem;
+import org.eclipse.rse.services.clientserver.messages.SystemMessageException;
 import org.eclipse.rse.services.terminals.ITerminalService;
 import org.eclipse.rse.subsystems.terminals.core.elements.TerminalElement;
 import org.eclipse.swt.widgets.Display;
@@ -195,7 +197,7 @@ public class TerminalServiceSubSystem extends SubSystem implements
 				ISystemResourceChangeEvents.EVENT_COMMAND_SHELL_REMOVED, null));
 	}
 
-	public void initializeSubSystem(IProgressMonitor monitor) {
+	public void initializeSubSystem(IProgressMonitor monitor) throws SystemMessageException {
 		super.initializeSubSystem(monitor);
 		getConnectorService().addCommunicationsListener(this);
 	}

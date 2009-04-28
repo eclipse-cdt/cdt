@@ -1,5 +1,5 @@
 /********************************************************************************
- * Copyright (c) 2006, 2008 IBM Corporation and others. All rights reserved.
+ * Copyright (c) 2006, 2009 IBM Corporation and others. All rights reserved.
  * This program and the accompanying materials are made available under the terms
  * of the Eclipse Public License v1.0 which accompanies this distribution, and is
  * available at http://www.eclipse.org/legal/epl-v10.html
@@ -17,6 +17,7 @@
  * David Dykstal (IBM) - [217556] remove service subsystem types
  * David McKnight (IBM) - [220524] internalSwitchServiceSubSystemConfiguration -> internalSwitchSubSystemConfiguration
  * Martin Oberhuber (Wind River) - [218304] Improve deferred adapter loading
+ * David McKnight   (IBM)        - [272882] [api] Handle exceptions in IService.initService()
  ********************************************************************************/
 
 package org.eclipse.rse.subsystems.processes.servicesubsystem;
@@ -177,7 +178,7 @@ public class ProcessServiceSubSystem extends RemoteProcessSubSystemImpl implemen
 	/* (non-Javadoc)
 	 * @see org.eclipse.rse.subsystems.processes.core.subsystem.impl.RemoteProcessSubSystemImpl#initializeSubSystem(org.eclipse.core.runtime.IProgressMonitor)
 	 */
-	public void initializeSubSystem(IProgressMonitor monitor)
+	public void initializeSubSystem(IProgressMonitor monitor) throws SystemMessageException
 	{
 		super.initializeSubSystem(monitor);
 		getProcessService().initService(monitor);

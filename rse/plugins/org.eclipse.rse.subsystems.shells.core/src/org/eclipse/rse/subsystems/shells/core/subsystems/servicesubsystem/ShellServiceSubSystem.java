@@ -1,5 +1,5 @@
 /********************************************************************************
- * Copyright (c) 2006, 2008 IBM Corporation and others. All rights reserved.
+ * Copyright (c) 2006, 2009 IBM Corporation and others. All rights reserved.
  * This program and the accompanying materials are made available under the terms
  * of the Eclipse Public License v1.0 which accompanies this distribution, and is
  * available at http://www.eclipse.org/legal/epl-v10.html
@@ -20,6 +20,7 @@
  * David McKnight (IBM) - [220524] internalSwitchServiceSubSystemConfiguration -> internalSwitchSubSystemConfiguration
  * Martin Oberhuber (Wind River) - [226301][api] IShellService should throw SystemMessageException on error
  * Martin Oberhuber (Wind River) - [218304] Improve deferred adapter loading
+ * David McKnight   (IBM)        - [272882] [api] Handle exceptions in IService.initService()
  ********************************************************************************/
 
 package org.eclipse.rse.subsystems.shells.core.subsystems.servicesubsystem;
@@ -239,7 +240,7 @@ public final class ShellServiceSubSystem extends RemoteCmdSubSystem implements I
 		return IShellService.class;
 	}
 
-	public void initializeSubSystem(IProgressMonitor monitor)
+	public void initializeSubSystem(IProgressMonitor monitor) throws SystemMessageException
 	{
 		super.initializeSubSystem(monitor);
 		getShellService().initService(monitor);

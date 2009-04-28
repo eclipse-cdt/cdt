@@ -14,12 +14,15 @@
  * Contributors:
  * Martin Oberhuber (Wind River) - [226262] Make IService IAdaptable and add Javadoc
  * David McKnight   (IBM)        - [271244] [sftp files] "My Home" filter not working
+ * David McKnight   (IBM)        - [272882] [api] Handle exceptions in IService.initService()
  *******************************************************************************/
 
 package org.eclipse.rse.services;
 
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IProgressMonitor;
+
+import org.eclipse.rse.services.clientserver.messages.SystemMessageException;
 
 /**
  * IService is the base interface for any non-UI service contributions to RSE.
@@ -62,8 +65,10 @@ public interface IService extends IAdaptable
 	 *            operation. There is no guarantee that cancellation is actually
 	 *            supported by a Service since it would leave the service in a
 	 *            potentially inconsistent, partially initialized state.
+	 *            
+	 * @throws SystemMessageException if an error occurs during initialization.
 	 */
-	public void initService(IProgressMonitor monitor);
+	public void initService(IProgressMonitor monitor) throws SystemMessageException;
 
 	/**
 	 * Clean up this Service. This method is called by clients as part of a

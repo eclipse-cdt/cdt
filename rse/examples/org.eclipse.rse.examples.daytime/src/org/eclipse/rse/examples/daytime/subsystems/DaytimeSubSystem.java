@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2008 Wind River Systems, Inc.
+ * Copyright (c) 2006, 2009 Wind River Systems, Inc.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -11,6 +11,7 @@
  * David McKnight   (IBM)        - [216252] [api][nls] Resource Strings specific to subsystems should be moved from rse.ui into files.ui / shells.ui / processes.ui where possible
  * David McKnight   (IBM)        - [220547] [api][breaking] SimpleSystemMessage needs to specify a message id and some messages should be shared
  * Martin Oberhuber (Wind River) - [218304] Improve deferred adapter loading
+ * David McKnight   (IBM)        - [272882] [api] Handle exceptions in IService.initService()
  *******************************************************************************/
 
 package org.eclipse.rse.examples.daytime.subsystems;
@@ -35,6 +36,7 @@ import org.eclipse.rse.services.clientserver.messages.CommonMessages;
 import org.eclipse.rse.services.clientserver.messages.ICommonMessageIds;
 import org.eclipse.rse.services.clientserver.messages.SimpleSystemMessage;
 import org.eclipse.rse.services.clientserver.messages.SystemMessage;
+import org.eclipse.rse.services.clientserver.messages.SystemMessageException;
 import org.eclipse.rse.ui.RSEUIPlugin;
 import org.eclipse.rse.ui.model.ISystemRegistryUI;
 
@@ -51,7 +53,7 @@ public class DaytimeSubSystem extends SubSystem {
 		fDaytimeService = daytimeService;
 	}
 
-	public void initializeSubSystem(IProgressMonitor monitor) {
+	public void initializeSubSystem(IProgressMonitor monitor)throws SystemMessageException {
 		//This is called after connect - expand the daytime node.
 		// Always called in worker thread.
 		super.initializeSubSystem(monitor);

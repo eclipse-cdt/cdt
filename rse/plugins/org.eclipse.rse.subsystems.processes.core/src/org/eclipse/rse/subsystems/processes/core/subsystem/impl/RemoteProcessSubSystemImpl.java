@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2008 IBM Corporation and others.
+ * Copyright (c) 2006, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -16,6 +16,7 @@
  * Martin Oberhuber (Wind River) - [186128][refactoring] Move IProgressMonitor last in public base classes
  * Martin Oberhuber (Wind River) - [218304] Improve deferred adapter loading
  * David McKnight   (IBM)        - [262930] Remote System Details view not restoring filter memento input
+ * David McKnight   (IBM)        - [272882] [api] Handle exceptions in IService.initService()
  *******************************************************************************/
 
 package org.eclipse.rse.subsystems.processes.core.subsystem.impl;
@@ -95,7 +96,7 @@ public abstract class RemoteProcessSubSystemImpl extends SubSystem implements
 	/* (non-Javadoc)
 	 * @see org.eclipse.rse.core.subsystems.SubSystem#initializeSubSystem(org.eclipse.core.runtime.IProgressMonitor)
 	 */
-	public void initializeSubSystem(IProgressMonitor monitor)
+	public void initializeSubSystem(IProgressMonitor monitor) throws SystemMessageException
 	{
 		super.initializeSubSystem(monitor);
 		// load UI plugin for adapters right after successful connect

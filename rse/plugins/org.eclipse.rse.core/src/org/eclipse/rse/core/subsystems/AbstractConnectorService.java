@@ -18,6 +18,7 @@
  * David Dykstal (IBM) - [189483] fix spelling in initialize/uninitialize method signatures
  * David Dykstal (IBM) - [210474] Deny save password function missing
  * David McKnight (IBM) - [249222] [api] Access to communication listeners in AbstractConnectorService
+ * David McKnight   (IBM)        - [272882] [api] Handle exceptions in IService.initService()
  ********************************************************************************/
 package org.eclipse.rse.core.subsystems;
 
@@ -32,6 +33,7 @@ import org.eclipse.rse.core.RSEPreferencesManager;
 import org.eclipse.rse.core.model.IHost;
 import org.eclipse.rse.core.model.IRSEPersistableContainer;
 import org.eclipse.rse.core.model.RSEModelObject;
+import org.eclipse.rse.services.clientserver.messages.SystemMessageException;
 
 /**
  * This is a base class to make it easier to create connector services.
@@ -295,7 +297,7 @@ public abstract class AbstractConnectorService extends RSEModelObject implements
 	 * Initialize any subsystems just after connecting to the host.
 	 * @param monitor a progress monitor to report progress of initialization.
 	 */
-	protected final void initializeSubSystems(IProgressMonitor monitor) {
+	protected final void initializeSubSystems(IProgressMonitor monitor) throws SystemMessageException {
 		for (int i = 0; i < _registeredSubSystems.size(); i++)
 		{
 			ISubSystem ss = (ISubSystem)_registeredSubSystems.get(i);

@@ -9,7 +9,7 @@
  * component that contains this file: David McKnight.
  * 
  * Contributors:
- * {Name} (company) - description of contribution.
+ * David McKnight   (IBM)        - [272882] [api] Handle exceptions in IService.initService()
  ********************************************************************************/
 package org.eclipse.rse.examples.dstore.subsystems;
 
@@ -20,6 +20,7 @@ import org.eclipse.rse.core.subsystems.SubSystem;
 import org.eclipse.rse.examples.dstore.services.IHostSampleContainer;
 import org.eclipse.rse.examples.dstore.services.IHostSampleObject;
 import org.eclipse.rse.examples.dstore.services.SampleService;
+import org.eclipse.rse.services.clientserver.messages.SystemMessageException;
 
 public class SampleSubSystem extends SubSystem {
 
@@ -104,7 +105,7 @@ public class SampleSubSystem extends SubSystem {
 	}
 
 	@Override
-	public void initializeSubSystem(IProgressMonitor monitor) {
+	public void initializeSubSystem(IProgressMonitor monitor) throws SystemMessageException{
 		super.initializeSubSystem(monitor);
 		
 		getSampleService().initService(monitor);

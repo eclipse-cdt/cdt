@@ -429,11 +429,6 @@ public class TranslationUnit extends Openable implements ITranslationUnit {
 	protected boolean buildStructure(OpenableInfo info, IProgressMonitor pm, Map<ICElement, CElementInfo> newElements, IResource underlyingResource) throws CModelException {
 		TranslationUnitInfo unitInfo = (TranslationUnitInfo) info;
 
-		// We reuse the general info cache in the CModelBuilder, We should not do this
-		// and instead create the info explicitly(see JDT).
-		// So to get by we need to remove in the LRU all the info of this handle
-		CModelManager.getDefault().removeChildrenInfo(this);
-
 		// generate structure
 		this.parse(newElements, pm);
 
@@ -665,7 +660,7 @@ public class TranslationUnit extends Openable implements ITranslationUnit {
 	 */
 	private void parseUsingCModelBuilder(Map<ICElement, CElementInfo> newElements, boolean quickParseMode, IProgressMonitor monitor) {
 		try {
-			new CModelBuilder2(this, monitor).parse(quickParseMode);
+			new CModelBuilder2(this, newElements, monitor).parse(quickParseMode);
 		} catch (OperationCanceledException oce) {
 			if (isWorkingCopy()) {
 				throw oce;
@@ -677,6 +672,12 @@ public class TranslationUnit extends Openable implements ITranslationUnit {
 	}
 
 	private void parseUsingContributedModelBuilder(IContributedModelBuilder mb, boolean quickParseMode, IProgressMonitor monitor) {
+		// We did reuse the shared info cache in the internal model builder.
+		// This has been fixed (bug 273471).
+		// Contributed model builders cannot apply the same fix.
+		// So to get by we need to remove in the LRU all the info of this handle.
+		// This might result in a race condition as observed in bug 273471.
+		CModelManager.getDefault().removeChildrenInfo(this);
 		try {
 			mb.parse(quickParseMode);
 		} catch (Exception e) {

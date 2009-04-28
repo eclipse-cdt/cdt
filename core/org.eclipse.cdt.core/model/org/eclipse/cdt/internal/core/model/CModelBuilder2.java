@@ -15,6 +15,7 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Stack;
 
 import org.eclipse.cdt.core.CCorePlugin;
@@ -94,6 +95,7 @@ public class CModelBuilder2 implements IContributedModelBuilder {
 	private final static boolean DEBUG= Util.isActive(DebugLogConstants.MODEL);
 
 	private final TranslationUnit fTranslationUnit;
+	private final Map<ICElement, CElementInfo> fNewElements;
 	private final IProgressMonitor fProgressMonitor;
 
 	private ASTAccessVisibility fCurrentVisibility;
@@ -104,10 +106,12 @@ public class CModelBuilder2 implements IContributedModelBuilder {
 	 * Create a model builder for the given translation unit.
 	 * 
 	 * @param tu  the translation unit (must be a {@link TranslationUnit}
+	 * @param newElements  element cache
 	 * @param monitor the progress monitor
 	 */
-	public CModelBuilder2(ITranslationUnit tu, IProgressMonitor monitor) {
+	public CModelBuilder2(ITranslationUnit tu, Map<ICElement, CElementInfo> newElements, IProgressMonitor monitor) {
 		fTranslationUnit= (TranslationUnit)tu;
+		fNewElements= newElements;
 		fProgressMonitor= monitor;
 	}
 
@@ -128,7 +132,7 @@ public class CModelBuilder2 implements IContributedModelBuilder {
 			}
 			checkCanceled();
 			long startTime= System.currentTimeMillis();
-			final CElementInfo elementInfo= fTranslationUnit.getElementInfo();
+			final CElementInfo elementInfo= getElementInfo(fTranslationUnit);
 			int parseFlags= quickParseMode ? ITranslationUnit.AST_SKIP_ALL_HEADERS : ITranslationUnit.AST_SKIP_INDEXED_HEADERS;
 			if (!(elementInfo instanceof ASTHolderTUInfo)) {
 				parseFlags |= ITranslationUnit.AST_SKIP_FUNCTION_BODIES;
@@ -158,7 +162,7 @@ public class CModelBuilder2 implements IContributedModelBuilder {
 			buildModel(ast);
 			elementInfo.setIsStructureKnown(true);
 			if (DEBUG) Util.debugLog("CModelBuilder2: building " //$NON-NLS-1$
-					+"children="+ fTranslationUnit.getElementInfo().internalGetChildren().size() //$NON-NLS-1$
+					+"children="+ elementInfo.internalGetChildren().size() //$NON-NLS-1$
 					+" time="+ (System.currentTimeMillis() - startTime) + "ms", //$NON-NLS-1$ //$NON-NLS-2$
 					DebugLogConstants.MODEL, false);
 
@@ -219,20 +223,16 @@ public class CModelBuilder2 implements IContributedModelBuilder {
 		fEqualElements.clear();
 
 		// sort by offset
-		final List<ICElement> children= fTranslationUnit.getElementInfo().internalGetChildren();
+		final List<ICElement> children= getElementInfo(fTranslationUnit).internalGetChildren();
 		Collections.sort(children, new Comparator<ICElement>() {
 			public int compare(ICElement o1, ICElement o2) {
-				try {
-					final SourceManipulationInfo info1= ((SourceManipulation) o1).getSourceManipulationInfo();
-					final SourceManipulationInfo info2= ((SourceManipulation) o2).getSourceManipulationInfo();
-					int delta= info1.getStartPos() - info2.getStartPos();
-					if (delta == 0) {
-						delta= info1.getIdStartPos() - info2.getIdStartPos();
-					}
-					return delta;
-				} catch (CModelException exc) {
-					return 0;
+				final SourceManipulationInfo info1= getSourceManipulationInfo((SourceManipulation) o1);
+				final SourceManipulationInfo info2= getSourceManipulationInfo((SourceManipulation) o2);
+				int delta= info1.getStartPos() - info2.getStartPos();
+				if (delta == 0) {
+					delta= info1.getIdStartPos() - info2.getIdStartPos();
 				}
+				return delta;
 			}});
 
 		if (isCanceled()) {
@@ -553,21 +553,22 @@ public class CModelBuilder2 implements IContributedModelBuilder {
 		}
 		setIndex(element);
 		element.setActive(elaboratedTypeSpecifier.isActive());
-		element.setTypeName(type);
+		StructureInfo info= (StructureInfo) getElementInfo(element);
+		info.setTypeName(type);
 
 		// add to parent
 		parent.addChild(element);
 
 		// set positions
 		if (className.length() > 0) {
-			setIdentifierPosition(element, astClassName);
+			setIdentifierPosition(info, astClassName);
 		} else {
 			final IASTFileLocation classLocation= getMinFileLocation(elaboratedTypeSpecifier.getNodeLocations());
 			if (classLocation != null) {
-				element.setIdPos(classLocation.getNodeOffset(), type.length());
+				info.setIdPos(classLocation.getNodeOffset(), type.length());
 			}
 		}
-		setBodyPosition(element, elaboratedTypeSpecifier);
+		setBodyPosition(info, elaboratedTypeSpecifier);
 		return element;
 	}
 
@@ -586,15 +587,16 @@ public class CModelBuilder2 implements IContributedModelBuilder {
 		for (final IASTEnumerator enumerator : enumerators) {
 			createEnumerator(element, enumerator);
 		}
+		EnumerationInfo info= (EnumerationInfo) getElementInfo(element);
 		// set enumeration position
 		if (astEnumName != null && enumName.length() > 0) {
-			setIdentifierPosition(element, astEnumName);
+			setIdentifierPosition(info, astEnumName);
 		} else {
 			final IASTFileLocation enumLocation= enumSpecifier.getFileLocation();
-			element.setIdPos(enumLocation.getNodeOffset(), type.length());
+			info.setIdPos(enumLocation.getNodeOffset(), type.length());
 		}
-		setBodyPosition(element, enumSpecifier);
-		element.setTypeName(type);
+		setBodyPosition(info, enumSpecifier);
+		info.setTypeName(type);
 		return element;
 	}
 
@@ -682,20 +684,21 @@ public class CModelBuilder2 implements IContributedModelBuilder {
 			}
 		}
 
-		element.setTypeName(type);
+		StructureInfo info= (StructureInfo) getElementInfo(element);
+		info.setTypeName(type);
 
 		// add to parent
 		parent.addChild(element);
 		// set positions
 		if(!isTemplate){
-			setBodyPosition(element, compositeTypeSpecifier);
+			setBodyPosition(info, compositeTypeSpecifier);
 		}
 		if (className.length() > 0) {
-			setIdentifierPosition(element, astClassName);
+			setIdentifierPosition(info, astClassName);
 		} else {
 			final IASTFileLocation classLocation= getMinFileLocation(compositeTypeSpecifier.getNodeLocations());
 			if (classLocation != null) {
-				element.setIdPos(classLocation.getNodeOffset(), type.length());
+				info.setIdPos(classLocation.getNodeOffset(), type.length());
 			}
 		}
 		// add members
@@ -736,7 +739,7 @@ public class CModelBuilder2 implements IContributedModelBuilder {
 		parent.addChild(element);
 
 		// set positions
-		final SourceManipulationInfo info= element.getSourceManipulationInfo();
+		final SourceManipulationInfo info= getSourceManipulationInfo(element);
 		if (name.length() > 0) {
 			setIdentifierPosition(info, astTypedefName);
 		} else {
@@ -773,8 +776,8 @@ public class CModelBuilder2 implements IContributedModelBuilder {
 				final ICPPASTDeclSpecifier cppSpecifier= (ICPPASTDeclSpecifier)specifier;
 				newElement.setMutable(cppSpecifier.getStorageClass() == ICPPASTDeclSpecifier.sc_mutable);
 			}
-			newElement.setTypeName(ASTStringUtil.getSignatureString(specifier, declarator));
-			final FieldInfo fieldInfo= (FieldInfo)newElement.getElementInfo();
+			final FieldInfo fieldInfo= (FieldInfo)getElementInfo(newElement);
+			fieldInfo.setTypeName(ASTStringUtil.getSignatureString(specifier, declarator));
 			fieldInfo.setVisibility(getCurrentVisibility());
 			element= newElement;
 			info= fieldInfo;
@@ -795,8 +798,9 @@ public class CModelBuilder2 implements IContributedModelBuilder {
 				}
 			}
 			setIndex(element);
-			element.setTypeName(ASTStringUtil.getSignatureString(specifier, declarator));
-			info= element.getSourceManipulationInfo();
+			VariableInfo varInfo= (VariableInfo) getElementInfo(element);
+			varInfo.setTypeName(ASTStringUtil.getSignatureString(specifier, declarator));
+			info= varInfo;
 		}
 		element.setActive(declarator.isActive());
 		element.setConst(specifier.isConst());
@@ -888,7 +892,7 @@ public class CModelBuilder2 implements IContributedModelBuilder {
 				methodElement.setConst(cppFunctionDeclarator.isConst());
 				setIndex(element);
 
-				final MethodInfo methodInfo= methodElement.getMethodInfo();
+				final MethodInfo methodInfo= (MethodInfo) getElementInfo(methodElement);
 				info= methodInfo;
 				ICPPMethod methodBinding= null;
 				if (scope != null) {
@@ -952,7 +956,7 @@ public class CModelBuilder2 implements IContributedModelBuilder {
 				element.setReturnType(returnType);
 				setIndex(element);
 				
-				info= element.getFunctionInfo();
+				info= (FunctionInfo) getElementInfo(element);
 				info.setConst(cppFunctionDeclarator.isConst());
 			}
 
@@ -963,7 +967,7 @@ public class CModelBuilder2 implements IContributedModelBuilder {
 			element.setReturnType(returnType);
 			setIndex(element);
 			
-			info= element.getFunctionInfo();
+			info= (FunctionInfo) getElementInfo(element);
 		}
 		element.setActive(functionDeclaration.isActive());
 
@@ -1015,7 +1019,7 @@ public class CModelBuilder2 implements IContributedModelBuilder {
 				methodElement.setReturnType(returnType);
 				methodElement.setConst(cppFunctionDeclarator.isConst());
 				setIndex(element);
-				final MethodInfo methodInfo= methodElement.getMethodInfo();
+				final MethodInfo methodInfo= (MethodInfo) getElementInfo(methodElement);
 				info= methodInfo;
 				if (declSpecifier instanceof ICPPASTDeclSpecifier) {
 					final ICPPASTDeclSpecifier cppDeclSpecifier= (ICPPASTDeclSpecifier)declSpecifier;
@@ -1038,7 +1042,7 @@ public class CModelBuilder2 implements IContributedModelBuilder {
 				element.setReturnType(returnType);
 				setIndex(element);
 				
-				info= (FunctionInfo)element.getElementInfo();
+				info= (FunctionInfo)getElementInfo(element);
 				info.setConst(cppFunctionDeclarator.isConst());
 			}
 		} else if (declarator instanceof IASTStandardFunctionDeclarator) {
@@ -1051,7 +1055,7 @@ public class CModelBuilder2 implements IContributedModelBuilder {
 			element.setReturnType(returnType);
 			setIndex(element);
 
-			info= (FunctionInfo)element.getElementInfo();
+			info= (FunctionInfo)getElementInfo(element);
 		} else {
 			assert false;
 			return null;
@@ -1103,6 +1107,19 @@ public class CModelBuilder2 implements IContributedModelBuilder {
 		return element;
 	}
 
+	private CElementInfo getElementInfo(CElement cElement) {
+		CElementInfo info = fNewElements.get(cElement);
+		if (info == null) {
+			info = cElement.createElementInfo();
+			fNewElements.put(cElement, info);
+		}
+		return info;
+	}
+
+	private SourceManipulationInfo getSourceManipulationInfo(SourceManipulation cElement) {
+		return (SourceManipulationInfo) getElementInfo(cElement);
+	}
+
 	/**
 	 * Utility method to set the body position of an element from an AST node.
 	 *
@@ -1111,7 +1128,7 @@ public class CModelBuilder2 implements IContributedModelBuilder {
 	 * @throws CModelException
 	 */
 	private void setBodyPosition(SourceManipulation element, IASTNode astNode) throws CModelException {
-		setBodyPosition(element.getSourceManipulationInfo(), astNode);
+		setBodyPosition(getSourceManipulationInfo(element), astNode);
 	}
 
 	/**
@@ -1150,7 +1167,7 @@ public class CModelBuilder2 implements IContributedModelBuilder {
 	 * @throws CModelException
 	 */
 	private void setIdentifierPosition(SourceManipulation element, IASTName astName) throws CModelException {
-		setIdentifierPosition(element.getSourceManipulationInfo(), astName);
+		setIdentifierPosition(getSourceManipulationInfo(element), astName);
 	}
 
 	/**

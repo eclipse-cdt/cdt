@@ -78,6 +78,8 @@ public class SystemImportExportResources extends NLS {
 	public static String RESID_SYNCHRONIZE_ACTIONS_MERGE_LABEL;
 	public static String RESID_SYNCHRONIZE_ACTIONS_MERGE_ALL_LABEL;
 	
+	public static String RESID_SYNCHRONIZE_DISCONNECT_WARNING;
+	
 	static {
 		// load message values from bundle file
 		NLS.initializeMessages(BUNDLE_NAME, SystemImportExportResources.class);

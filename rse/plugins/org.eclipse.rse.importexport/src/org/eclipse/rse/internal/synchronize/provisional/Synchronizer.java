@@ -22,10 +22,18 @@ import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.NullProgressMonitor;
+import org.eclipse.osgi.util.NLS;
+import org.eclipse.rse.internal.importexport.RemoteImportExportPlugin;
+import org.eclipse.rse.internal.importexport.SystemImportExportResources;
 import org.eclipse.rse.internal.importexport.files.UniFilePlus;
 import org.eclipse.rse.internal.synchronize.ISynchronizeData;
 import org.eclipse.rse.internal.synchronize.filesystem.FileSystemProvider;
+import org.eclipse.rse.services.clientserver.messages.SimpleSystemMessage;
+import org.eclipse.rse.services.clientserver.messages.SystemMessage;
+import org.eclipse.rse.ui.SystemBasePlugin;
+import org.eclipse.rse.ui.messages.SystemMessageDialog;
 import org.eclipse.team.core.RepositoryProvider;
 import org.eclipse.team.core.TeamException;
 
@@ -68,7 +76,22 @@ public class Synchronizer implements ISynchronizer {
 					data.getSynchronizeType() == ISynchronizeOperation.SYNC_MODE_OVERRIDE_SOURCE || 
 					data.getSynchronizeType() == ISynchronizeOperation.SYNC_MODE_UI_REVIEW_INITIAL) {
 				for (int i = 0; i < projects.length; i++) {
-					connector.disconnect(projects[i]);
+					
+					IProject project = projects[i];
+					// user should be prompted before disconnect or he/she will lose team synch info
+					if (connector.isConnected(project)){
+						
+						String msg = NLS.bind(SystemImportExportResources.RESID_SYNCHRONIZE_DISCONNECT_WARNING, project.getName());
+						SystemMessage msgObj = new SimpleSystemMessage(RemoteImportExportPlugin.PLUGIN_ID, IStatus.WARNING, msg);
+						
+						SystemMessageDialog dlg = new SystemMessageDialog(SystemBasePlugin.getActiveWorkbenchShell(), msgObj);
+						if (dlg.openQuestionNoException(true)){												
+							connector.disconnect(project);
+						}
+						else {
+							return false;
+						}
+					}
 				}
 
 			}

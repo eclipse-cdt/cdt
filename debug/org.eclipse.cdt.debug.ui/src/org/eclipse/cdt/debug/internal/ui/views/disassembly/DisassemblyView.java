@@ -66,6 +66,7 @@ import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.Viewer;
+import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.StyleRange;
 import org.eclipse.swt.custom.StyledText;
 import org.eclipse.swt.events.MouseEvent;
@@ -971,4 +972,10 @@ public class DisassemblyView extends AbstractDebugEventHandlerView
 	    }
 	    return super.getAdapter(adapter);
 	}
+	
+	@Override
+    public int getOrientation() {
+        //bug 273250 - Disassembly view should have LTR orientation
+        return SWT.LEFT_TO_RIGHT;
+    }
 }

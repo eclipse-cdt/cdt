@@ -6,7 +6,7 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- * Yu-Fen Kuo (MontaVista) - initial API and implementation
+ * Yu-Fen Kuo       (MontaVista) - initial API and implementation
  * Martin Oberhuber (Wind River) - [refactor] "shell" instead of "ssh" everywhere
  * Martin Oberhuber (Wind River) - [186128] Move IProgressMonitor last in all API
  * David McKnight   (IBM)        - [175308] Need to use a job to wait for shell to exit
@@ -14,6 +14,7 @@
  * Martin Oberhuber (Wind River) - [226301][api] IShellService should throw SystemMessageException on error
  * Anna Dushistova  (MontaVista) - [239159] The shell process subsystem not working without the shells subsystem present for the systemType
  * David McKnight   (IBM)        - [272882] [api] Handle exceptions in IService.initService()
+ * Anna Dushistova  (MontaVista) - [175300][performance] processes.shell.linux subsystem is slow over ssh
  *******************************************************************************/
 
 package org.eclipse.rse.internal.subsystems.processes.shell.linux;
@@ -116,10 +117,21 @@ public class LinuxShellProcessService extends AbstractProcessService {
                 filter.setUsername(connectionUserId);
         	}
         }
+        
         if (monitor != null) {
             monitor.beginTask(
             		LinuxShellProcessResources.LinuxRemoteProcessService_monitor_fetchProcesses,
             		100);
+        }
+        if(!linuxProcessHelper.isInitialized()){
+            // initialize username /uid hashmap before getting any process
+            if (monitor != null) {
+            	monitor.setTaskName(LinuxShellProcessResources.LinuxShellProcessService_initHelper);
+            }
+        	linuxProcessHelper.populateUsernames();
+            if (monitor != null) {
+            	monitor.setTaskName(LinuxShellProcessResources.LinuxRemoteProcessService_monitor_fetchProcesses);
+            }
         }
         IShellService shellService = Activator.getShellService(host);
         IHostShell hostShell = shellService.launchShell(
@@ -190,9 +202,7 @@ public class LinuxShellProcessService extends AbstractProcessService {
 
     public void initService(final IProgressMonitor monitor) throws SystemMessageException {
     	super.initService(monitor);
-        linuxProcessHelper = new LinuxProcessHelper();
-        // initialize username /uid hashmap before getting any process
-        linuxProcessHelper.populateUsernames(host);
+        linuxProcessHelper = new LinuxProcessHelper(host);
     }
 
     private boolean progressWorked(final IProgressMonitor monitor,

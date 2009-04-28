@@ -1,5 +1,5 @@
 /********************************************************************************
- * Copyright (c) 2005, 2008 IBM Corporation and others. All rights reserved.
+ * Copyright (c) 2005, 2009 IBM Corporation and others. All rights reserved.
  * This program and the accompanying materials are made available under the terms
  * of the Eclipse Public License v1.0 which accompanies this distribution, and is
  * available at http://www.eclipse.org/legal/epl-v10.html
@@ -11,11 +11,12 @@
  * Emily Bruner, Mazen Faraj, Adrian Storisteanu, Li Ding, and Kent Hawley.
  *
  * Contributors:
- * Yu-Fen Kuo (MontaVista) - adapted from RSE UniversalLinuxProcessHandler
+ * Yu-Fen Kuo       (MontaVista) - adapted from RSE UniversalLinuxProcessHandler
  * Martin Oberhuber (Wind River) - [refactor] "shell" instead of "ssh" everywhere
  * Martin Oberhuber (Wind River) - [186128] Move IProgressMonitor last in all API
  * David McKnight   (IBM)        - [175308] Need to use a job to wait for shell to exit
  * Martin Oberhuber (Wind River) - [226301][api] IShellService should throw SystemMessageException on error
+ * Anna Dushistova  (MontaVista) - [175300][performance] processes.shell.linux subsystem is slow over ssh
  *******************************************************************************/
 
 package org.eclipse.rse.internal.subsystems.processes.shell.linux;
@@ -43,18 +44,21 @@ public class LinuxProcessHelper {
     private HashMap _usernamesByUid;
 
     private HashMap _uidsByUserName;
+    
+    private IHost _host;
 
     private static String COMMAND_GET_PASSWD = "getent passwd"; //$NON-NLS-1$
 
     /**
      * constructor
      */
-    public LinuxProcessHelper() {
+    public LinuxProcessHelper(IHost host) {
         super();
         stateMap = new HashMap();
         for (int i = ISystemProcessRemoteConstants.STATE_STARTING_INDEX; i < ISystemProcessRemoteConstants.STATE_ENDING_INDEX; i++) {
             stateMap.put(new Character(ISystemProcessRemoteConstants.ALL_STATES[i]), ISystemProcessRemoteConstants.ALL_STATES_STR[i]);
         }
+        _host = host;
     }
 
     /**
@@ -86,13 +90,13 @@ public class LinuxProcessHelper {
      * this code is adapted from
      * org.eclipse.rse.services.clientserver.processes.handlers.UniversalLinuxProcessHandler
      */
-    public void populateUsernames(IHost host) {
-        if (_usernamesByUid != null && _uidsByUserName != null || host == null)
+    public void populateUsernames() {
+        if (_usernamesByUid != null && _uidsByUserName != null || _host == null)
             return;
         _usernamesByUid = new HashMap();
         _uidsByUserName = new HashMap();
 
-        IShellService shellService = Activator.getShellService(host);
+        IShellService shellService = Activator.getShellService(_host);
         Process p = null;
         try {
             IHostShell hostShell = shellService.launchShell("", null, new NullProgressMonitor()); //$NON-NLS-1$
@@ -112,7 +116,6 @@ public class LinuxProcessHelper {
                 new InputStreamReader(p.getInputStream()));
 
         String nextLine;
-
         try {
             while ((nextLine = bufferReader.readLine()) != null
                     && !nextLine.equals(Activator.DONE_MARKUP_STRING)) {
@@ -160,5 +163,12 @@ public class LinuxProcessHelper {
 
     protected String getUserNameCommand() {
         return Activator.formatShellCommand(COMMAND_GET_PASSWD);
+    }
+    
+    public boolean isInitialized(){
+        if (_usernamesByUid != null && _uidsByUserName != null){
+    		return true;
+    	}
+    	return false;
     }
 }

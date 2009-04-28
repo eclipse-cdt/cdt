@@ -846,13 +846,13 @@ public class CCorePlugin extends Plugin {
 				for (IConfigurationElement configElement : configElements) {
 					if (configElement.getName().equals("processList")) { //$NON-NLS-1$
 						String platform = configElement.getAttribute("platform"); //$NON-NLS-1$
-						if (platform == null ) { // first contrbutor found with not platform will be default.
+						if (platform == null ) { // first contributor found with not platform will be default.
 							if (defaultContributor == null) {
 								defaultContributor = configElement;
 							}
 						} else if (platform.equals(Platform.getOS())) {
 							// found explicit contributor for this platform.
-							return (IProcessList) configElements[0].createExecutableExtension("class"); //$NON-NLS-1$
+							return (IProcessList) configElement.createExecutableExtension("class"); //$NON-NLS-1$
 						}
 					}
 				}

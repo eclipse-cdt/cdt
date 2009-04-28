@@ -114,7 +114,7 @@ public interface IWorkingSetProjectConfiguration extends IWorkingSetConfiguratio
 	 * Activates my selected configuration in the workspace, for my project.
 	 * 
 	 * @see #getSelectedConfigurationID()
-	 * @see #setSelectedConfigurationID(String)
+	 * @see ISnapshot#setSelectedConfigurationID(String)
 	 * @see #isActive()
 	 */
 	void activate();

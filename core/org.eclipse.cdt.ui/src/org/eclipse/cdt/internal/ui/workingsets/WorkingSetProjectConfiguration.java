@@ -265,6 +265,7 @@ public class WorkingSetProjectConfiguration implements IWorkingSetProjectConfigu
 			return resolveProject().getName();
 		}
 
+		@Override
 		public void setSelectedConfigurationID(String id) {
 			super.setSelectedConfigurationID(id);
 		}

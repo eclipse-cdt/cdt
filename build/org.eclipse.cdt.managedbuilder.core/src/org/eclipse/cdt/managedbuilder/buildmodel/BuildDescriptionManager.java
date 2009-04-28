@@ -59,7 +59,7 @@ public class BuildDescriptionManager {
 	 */
 	public static final int DEPFILES = 1 << 3;
 	
-	private Set fVisitedSteps = new HashSet();
+	private Set<IBuildStep> fVisitedSteps = new HashSet<IBuildStep>();
 	private boolean fUp;
 	private IBuildDescription fInfo;
 
@@ -94,6 +94,9 @@ public class BuildDescriptionManager {
 		return DefaultBuildDescriptionFactory.getInstance().createBuildDescription(cfg, delta, flags);
 	}
 
+	/**
+	 * @noreference This method is not intended to be referenced by clients.
+	 */
 	static public IBuildDescription createBuildDescription(IConfiguration cfg,
 			IConfigurationBuildState bs,
 			IResourceDelta delta,
@@ -162,7 +165,7 @@ public class BuildDescriptionManager {
 	}
 
 	public static IBuildStep[] getSteps(IBuildStep step, boolean input){
-		Set set = new HashSet();
+		Set<IBuildStep> set = new HashSet<IBuildStep>();
 		
 		IBuildIOType args[] = input ?
 				step.getInputIOTypes() :
@@ -186,17 +189,17 @@ public class BuildDescriptionManager {
 			}
 		}
 		
-		return (IBuildStep[])set.toArray(new IBuildStep[set.size()]);
+		return set.toArray(new IBuildStep[set.size()]);
 	}
 
 	public static IBuildResource[] filterGeneratedBuildResources(IBuildResource rc[], int rcState){
-		List list = new ArrayList();
+		List<IBuildResource> list = new ArrayList<IBuildResource>();
 		
 		addBuildResources(rc, list, rcState);
-		return (IBuildResource[])list.toArray(new IBuildResource[list.size()]);
+		return list.toArray(new IBuildResource[list.size()]);
 	}
 
-	private static void addBuildResources(IBuildResource rcs[], List list, int rcState){
+	private static void addBuildResources(IBuildResource rcs[], List<IBuildResource> list, int rcState){
 		if(rcs.length == 0)
 			return;
 		IBuildStep inputAction = rcs[0].getBuildDescription().getInputStep();
@@ -254,7 +257,7 @@ public class BuildDescriptionManager {
 	 */
 	public static void cleanGeneratedRebuildResources(IBuildDescription des) throws CoreException{
 		IBuildResource bRcs[] = filterGeneratedBuildResources(des.getResources(), REMOVED | REBUILD);
-		List failList = new ArrayList();
+		List<Object[]> failList = new ArrayList<Object[]>();
 		
 		for(int i = 0; i < bRcs.length; i++){
 			if(!bRcs[i].isProjectResource())
@@ -272,8 +275,8 @@ public class BuildDescriptionManager {
 		
 		if(failList.size() != 0){
 			BuildMultiStatus status = new BuildMultiStatus("failed to remove resources", null);	//$NON-NLS-1$
-			for(Iterator iter = failList.iterator(); iter.hasNext();){
-				Object[] err = (Object[])iter.next();
+			for(Iterator<Object[]> iter = failList.iterator(); iter.hasNext();){
+				Object[] err = iter.next();
 				IResource rc = (IResource)err[0];
 				CoreException e = (CoreException)err[1];
 				status.add(new BuildStatus(rc.getFullPath().toString(), e));

@@ -208,6 +208,11 @@ implements IExecutableExtension, IWizardWithMemory
 		ICProjectDescriptionManager mngr = CoreModel.getDefault().getProjectDescriptionManager();
 		
 		ICProjectDescription des = mngr.getProjectDescription(newProject, false);
+		
+		if(des == null ) {
+			return false;
+		}
+		
 		if(des.isCdtProjectCreating()){
 			des = mngr.getProjectDescription(newProject, true);
 			des.setCdtProjectCreated();

@@ -133,6 +133,20 @@
        natureFilter="cnature"
        outputFlag="-o"
        superClass="org.eclipse.cdt.managedbuilder.xlc.ui.tool.abstractCompiler">
+       <inputType
+            dependencyContentType="org.eclipse.cdt.core.cHeader"
+            dependencyExtensions="h"
+            id="cdt.managedbuild.tool.xlc.c.compiler.input"
+            primaryInput="true"
+            scannerConfigDiscoveryProfileId="org.eclipse.cdt.managedbuilder.xlc.core.XLCManagedMakePerProjectProfile"
+            sourceContentType="org.eclipse.cdt.core.cSource"
+            sources="c">
+       </inputType>
+       <outputType
+			outputs="o"
+            buildVariable="OBJS"
+            id="cdt.managedbuild.tool.xlc.c.compiler.output">
+       </outputType>
 		<option
 			name="%Option.Cstdinc"
 			category="xlc.c.compiler.category.Input"
@@ -240,13 +254,19 @@
          outputFlag="-o"
          superClass="org.eclipse.cdt.managedbuilder.xlc.ui.tool.abstractCompiler">
            <inputType
-                 dependencyContentType="org.eclipse.cdt.core.cxxHeader"
-                 dependencyExtensions="h,H,hpp"
-                 id="cdt.managedbuild.tool.xlc.cpp.compiler.input"
-                 scannerConfigDiscoveryProfileId="org.eclipse.cdt.managedbuilder.xlc.core.XLCManagedMakePerProjectProfileCPP"
-                 sourceContentType="org.eclipse.cdt.core.cxxSource"
-                 sources="c,C,cc,cxx,cpp">
+               dependencyContentType="org.eclipse.cdt.core.cxxHeader"
+               dependencyExtensions="h,H,hpp"
+               id="cdt.managedbuild.tool.xlc.cpp.compiler.input"
+               primaryInput="true"
+               scannerConfigDiscoveryProfileId="org.eclipse.cdt.managedbuilder.xlc.core.XLCManagedMakePerProjectProfileCPP"
+               sourceContentType="org.eclipse.cdt.core.cxxSource"
+               sources="c,C,cc,cxx,cpp">
           </inputType>
+         <outputType
+               buildVariable="OBJS"
+               id="org.eclipse.cdt.managedbuilder.xlc.cpp.compiler.output"
+               outputs="o">
+         </outputType>
            <option
                  category="xlc.c.compiler.category.Input"
                  command="-+"
@@ -2989,21 +3009,6 @@
               name="%Option.optdebug"
               valueType="boolean">
         </option>
-
-		  
-          <inputType
-                dependencyContentType="org.eclipse.cdt.core.cHeader"
-                dependencyExtensions="h"
-                id="cdt.managedbuild.tool.xlc.c.compiler.input"
-                scannerConfigDiscoveryProfileId="org.eclipse.cdt.managedbuilder.xlc.core.XLCManagedMakePerProjectProfile"
-                sourceContentType="org.eclipse.cdt.core.cSource"
-                sources="c">
-          </inputType>
-          <outputType
-			  outputs="o"
-              buildVariable="OBJS"
-              id="cdt.managedbuild.tool.xlc.c.compiler.output">
-          </outputType>
           <option
                 applicabilityCalculator="org.eclipse.cdt.managedbuilder.xlc.ui.properties.XLCApplicabilityCalculator"
                 category="xlc.c.compiler.category.output"

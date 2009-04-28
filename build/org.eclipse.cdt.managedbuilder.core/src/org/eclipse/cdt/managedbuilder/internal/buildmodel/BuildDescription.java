@@ -11,6 +11,8 @@
  *******************************************************************************/
 package org.eclipse.cdt.managedbuilder.internal.buildmodel;
 
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -67,6 +69,8 @@ import org.eclipse.cdt.managedbuilder.makegen.IManagedDependencyGenerator2;
 import org.eclipse.cdt.managedbuilder.makegen.IManagedDependencyGeneratorType;
 import org.eclipse.cdt.managedbuilder.makegen.IManagedDependencyInfo;
 import org.eclipse.cdt.managedbuilder.pdomdepgen.PDOMDependencyGenerator;
+import org.eclipse.core.filesystem.EFS;
+import org.eclipse.core.filesystem.IFileStore;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
@@ -1003,9 +1007,14 @@ public class BuildDescription implements IBuildDescription {
 	}
 	
 	private IPath getTopBuildDirLocation(){
-		return fProject.getLocation().append(getTopBuildDirFullPath().removeFirstSegments(1));
+		IPath projLocation = getProjectLocation();
+		return projLocation.append(getTopBuildDirFullPath().removeFirstSegments(1));
 	}
 	
+	private IPath getProjectLocation() {
+		return new Path(fProject.getLocationURI().getPath());
+	}
+
 	private BuildResource[] addOutputs(IPath paths[], BuildIOType buildArg, IPath outDirPath){
 		if(paths != null){
 			List list = new ArrayList();
@@ -1016,27 +1025,48 @@ public class BuildDescription implements IBuildDescription {
 				
 				if(outFullPath.isAbsolute()){
 					outLocation = outFullPath;
-					if(fProject.getLocation().isPrefixOf(outLocation))
-						outFullPath = fProject.getFullPath().append(outLocation.removeFirstSegments(fProject.getLocation().segmentCount()));
+					
+					IPath projLocation = new Path(fProject.getLocationURI().getPath());
+					
+					if(projLocation.isPrefixOf(outLocation))
+						outFullPath = projLocation.append(outLocation.removeFirstSegments(projLocation.segmentCount()));
 					else
 						outFullPath = null;
 				} else {
 					if (outFullPath.segmentCount() == 1) {
 						outFullPath = outDirPath.append(outFullPath); 
-						outLocation = fProject.getLocation().append(outFullPath.removeFirstSegments(1));
+						outLocation = getProjectLocation().append(outFullPath.removeFirstSegments(1));
 					} else {
 						outLocation = getTopBuildDirLocation().append(outFullPath);
 						outFullPath = getTopBuildDirFullPath().append(outFullPath);
 					}
 				}
-
-				BuildResource outRc = createResource(outLocation, outFullPath);
+				
+				BuildResource outRc = createResource(outLocation, getURIForFullPath(outFullPath));
 				list.add(outRc);
 				buildArg.addResource(outRc);
 				
 			}
 			return (BuildResource[])list.toArray(new BuildResource[list.size()]);
 		}
+		return null;
+	}
+
+	private URI getURIForFullPath(IPath fullPath) {
+		// Basically, assume that we use the same type of URI that the project uses.
+		// Create one using the same info, except point the path at the path provided.
+		URI projURI = fProject.getLocationURI();
+		try {
+			URI newURI = new URI(projURI.getScheme(), projURI.getUserInfo(),
+					projURI.getHost(), projURI.getPort(), fullPath
+							.toPortableString(), projURI.getQuery(), projURI
+							.getFragment());
+			return newURI;
+		} catch (URISyntaxException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
 		return null;
 	}
 
@@ -1344,11 +1374,11 @@ public class BuildDescription implements IBuildDescription {
 				String outExt = tool.getOutputExtension(inExt);
 				outFullPath = resolvePercent(outFullPath.addFileExtension(outExt), buildRc.getLocation());
 				
-				outLocation = fProject.getLocation().append(outFullPath.removeFirstSegments(1));
+				outLocation = getProjectLocation().append(outFullPath.removeFirstSegments(1));
 				
 				BuildIOType buildArg = action.createIOType(false, true, null);
 
-				BuildResource outRc = createResource(outLocation, outFullPath);
+				BuildResource outRc = createResource(outLocation, getURIForFullPath(outFullPath));
 				buildArg.addResource(outRc);
 		}
 		
@@ -1432,8 +1462,8 @@ public class BuildDescription implements IBuildDescription {
 	
 	
 	private IPath locationToRel(IPath location){
-		if(fProject.getLocation().isPrefixOf(location))
-			return location.removeFirstSegments(fProject.getLocation().segmentCount()).setDevice(null);
+		if(getProjectLocation().isPrefixOf(location))
+			return location.removeFirstSegments(getProjectLocation().segmentCount()).setDevice(null);
 		//TODO
 		return location;
 	}
@@ -1897,8 +1927,8 @@ public class BuildDescription implements IBuildDescription {
 				}
 				if(inFullPath == null && files.length > 0)
 					inFullPath = files[0].getFullPath();
-				if(inFullPath == null && fProject.getLocation().isPrefixOf(inLocation)){
-					inFullPath = fProject.getFullPath().append(inLocation.removeFirstSegments(fProject.getLocation().segmentCount())); 
+				if(inFullPath == null && getProjectLocation().isPrefixOf(inLocation)){
+					inFullPath = fProject.getFullPath().append(inLocation.removeFirstSegments(getProjectLocation().segmentCount())); 
 				}
 			} else {
 				IPath projPath = inFullPath;
@@ -1906,14 +1936,9 @@ public class BuildDescription implements IBuildDescription {
 
 				IResource res = ResourcesPlugin.getWorkspace().getRoot().getFile(inFullPath);//.findMember(inFullPath);
 				inLocation = calcResourceLocation(res);
-/*				if(res != null)
-					inLocation = res.getLocation();
-				else 
-					inLocation = fProject.getLocation().append(projPath);
-*/
 			}
 			
-			BuildResource rc = createResource(inLocation, inFullPath);
+			BuildResource rc = createResource(inLocation, getURIForFullPath(inFullPath));
 			buildArg.addResource(rc);
 			
 			return rc;
@@ -1929,19 +1954,36 @@ public class BuildDescription implements IBuildDescription {
 	}
 
 	public BuildResource createResource(IPath projPath){
-		return createResource(fProject.getLocation().append(projPath),fProject.getFullPath().append(projPath));
+		return createResource(projPath, createProjectRelativeURI(projPath));
 	}
 	
-	public BuildResource createResource(IResource rc){
-		return createResource(calcResourceLocation(rc), rc.getFullPath());
+	private URI createProjectRelativeURI(IPath projPath) {
+		URI projURI = fProject.getLocationURI();
+		IFileStore projStore = null;
+		try {
+			projStore = EFS.getStore(projURI);
+		} catch (CoreException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		if(projStore == null)
+			return null;
+		
+		IFileStore childStore = projStore.getFileStore(projPath);
+		return childStore.toURI();
 	}
 
-	public BuildResource createResource(IPath location, IPath fullPath){
+	public BuildResource createResource(IResource rc){
+		return createResource(calcResourceLocation(rc), rc.getLocationURI());
+	}
+
+	public BuildResource createResource(IPath projPath, URI locationURI){
 		
-		BuildResource rc = (BuildResource)getBuildResource(location);
+		BuildResource rc = (BuildResource)getBuildResource(projPath);
 		
 		if(rc == null)
-			rc = new BuildResource(this, location, fullPath);
+			rc = new BuildResource(this, projPath, locationURI);
 
 		return rc;
 	}

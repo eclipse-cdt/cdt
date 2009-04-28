@@ -4094,7 +4094,7 @@ public class ManagedBuildManager extends AbstractCExtension {
 				buildDirectory = res.getLocation();
 			}
 		} else {
-			buildDirectory = project.getLocation();
+			buildDirectory = getPathForResource(project);
 			
 			if (buildDirectory != null) {
 				if (builder.isManagedBuildOn())
@@ -4104,6 +4104,10 @@ public class ManagedBuildManager extends AbstractCExtension {
 		return buildDirectory;
 	}
 	
+	private static IPath getPathForResource(IResource resource) {
+		return new Path(resource.getLocationURI().getPath());
+	}
+
 	public static IBuilder[] createBuilders(IProject project, Map args){
 		return ManagedBuilderCorePlugin.createBuilders(project, args);
 	}

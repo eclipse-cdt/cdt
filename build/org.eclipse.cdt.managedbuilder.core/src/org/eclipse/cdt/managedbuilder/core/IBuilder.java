@@ -89,6 +89,9 @@ public interface IBuilder extends IBuildObject, IMakeBuilderInfo {
 	static final String DEFAULT_TARGET_CLEAN = "clean";  //$NON-NLS-1$
 	static final String DEFAULT_TARGET_AUTO = "all"; //$NON-NLS-1$
 	
+	/**
+	 * @since 5.1
+	 */
 	static final String ATTRIBUTE_COMMAND_LAUNCHER = "commandLauncher"; //$NON-NLS-1$
 	
 	/**

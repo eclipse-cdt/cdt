@@ -13,6 +13,7 @@
 package org.eclipse.cdt.managedbuilder.makegen.gnu;
 
 import java.io.ByteArrayInputStream;
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -70,6 +71,8 @@ import org.eclipse.cdt.managedbuilder.makegen.IManagedDependencyGenerator2;
 import org.eclipse.cdt.managedbuilder.makegen.IManagedDependencyGeneratorType;
 import org.eclipse.cdt.managedbuilder.makegen.IManagedDependencyInfo;
 import org.eclipse.cdt.managedbuilder.makegen.IManagedDependencyPreBuild;
+import org.eclipse.core.filesystem.EFS;
+import org.eclipse.core.filesystem.IFileStore;
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IFolder;
@@ -2012,7 +2015,7 @@ public class GnuMakefileGenerator implements IManagedBuilderMakefileGenerator2 {
 //				if( (rcInfo.isExcluded()) )
 //					continue;
 				addFragmentMakefileEntriesForSource(buildVarToRuleStringMap, ruleBuffer, 
-						folder, relativePath, resource, resource.getLocation(), rcInfo, null, false);
+						folder, relativePath, resource, getPathForResource(resource), rcInfo, null, false);
 			}
 		}
 							
@@ -2159,7 +2162,7 @@ public class GnuMakefileGenerator implements IManagedBuilderMakefileGenerator2 {
 						//  because the file is not under the project.  We use this resource in the calls to the dependency generator
 						generateOutputResource = project.getFile(generatedOutput);
 					} else {
-						generatedOutput = project.getLocation().append(getBuildWorkingDir()).append((IPath)generatedOutputs.get(k));
+						generatedOutput = getPathForResource(project).append(getBuildWorkingDir()).append((IPath)generatedOutputs.get(k));
 						generateOutputResource = project.getFile(getBuildWorkingDir().append((IPath)generatedOutputs.get(k)));
 					}
 					IResourceInfo nextRcInfo;
@@ -2192,6 +2195,17 @@ public class GnuMakefileGenerator implements IManagedBuilderMakefileGenerator2 {
 				}
 			}
 		}
+	}
+
+
+	/**
+	 * Gets a path for a resource by extracting the Path field from its
+	 * location URI.
+	 * @return IPath
+	 * @since 5.1
+	 */
+	protected IPath getPathForResource(IResource resource) {
+		return new Path(resource.getLocationURI().getPath());
 	}
 
 	/* (non-Javadoc)
@@ -2415,12 +2429,31 @@ public class GnuMakefileGenerator implements IManagedBuilderMakefileGenerator2 {
 		 * then we must get the actual location of the resource, rather
 		 * than the relative path.
 		 */
-		String projectLocation = project.getLocation().toString();
+		String projectLocation = null;
+		
+		// is the project local?  if so we might have to convert the paths to local format
+		try {
+			IFileStore fileStore = EFS.getStore(project.getLocationURI());
+			File localFile = fileStore.toLocalFile(EFS.NONE, null);
+			
+			if(localFile != null) {
+				// it's a local file... use project location for proper path formatting
+				projectLocation = project.getLocation().addTrailingSeparator().toOSString();
+			}
+			else {
+				// remote... get the path from the URI
+				projectLocation = project.getLocationURI().getPath().toString();
+				
+			}
+		} catch (CoreException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
 
 		// Output file location needed for the file-specific build macros
 		IPath outputLocation = Path.fromOSString(primaryOutputName);
 		if (!outputLocation.isAbsolute()) {
-			outputLocation = project.getLocation().append(getBuildWorkingDir()).append(primaryOutputName);
+			outputLocation = getPathForResource(project).append(getBuildWorkingDir()).append(primaryOutputName);
 		}
 		
 		// A separate rule is needed for the resource in the case where explicit file-specific macros
@@ -2644,7 +2677,7 @@ public class GnuMakefileGenerator implements IManagedBuilderMakefileGenerator2 {
 				IPath addlPath = addlInputPaths[i];
 				if (!(addlPath.toString().startsWith("$("))) {		//$NON-NLS-1$
 					if (!addlPath.isAbsolute()) {
-						IPath tempPath = project.getLocation().append(addlPath);
+						IPath tempPath = getPathForResource(project).append(addlPath);
 						if (tempPath != null) {
 							addlPath = ManagedBuildManager.calculateRelativePath(getTopBuildDir(), tempPath);
 						}
@@ -3854,7 +3887,7 @@ public class GnuMakefileGenerator implements IManagedBuilderMakefileGenerator2 {
 			String relativePath, IPath sourceLocation, boolean generatedSource) {
 		//  Add the source file path to the makefile line that adds source files to the build variable
 		String srcName;
-		IPath projectLocation = project.getLocation();
+		IPath projectLocation = getPathForResource(project);
 		IPath dirLocation = projectLocation;
 		if (generatedSource) {
 			dirLocation = dirLocation.append(getBuildWorkingDir());
@@ -4618,7 +4651,7 @@ public class GnuMakefileGenerator implements IManagedBuilderMakefileGenerator2 {
 	 * Return the configuration's top build directory as an absolute path
 	 */
 	public IPath getTopBuildDir() {
-		return project.getLocation().append(getBuildWorkingDir());
+		return getPathForResource(project).append(getBuildWorkingDir());
 	}
 
 	/**

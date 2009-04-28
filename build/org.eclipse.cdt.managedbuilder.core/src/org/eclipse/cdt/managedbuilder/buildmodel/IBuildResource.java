@@ -10,6 +10,8 @@
  *******************************************************************************/
 package org.eclipse.cdt.managedbuilder.buildmodel;
 
+import java.net.URI;
+
 import org.eclipse.core.runtime.IPath;
 
 /**
@@ -26,13 +28,19 @@ public interface IBuildResource {
 	IPath getLocation();
 	
 	/**
-	 * In case the resource is a workspace resource,
-	 * returns the full workspace path for the resource
-	 * otherwise returns null
+	 * Returns the full path to the build resource as seen on the target machine.
 	 * 
 	 * @return IPath
 	 */
 	IPath getFullPath();
+	
+	/**
+	 * Returns a URI that can be used by EFS to access the build resource.
+	 * 
+	 * @return URI
+	 * @since 5.1
+	 */
+	URI getLocationURI();
 	
 	/**
 	 * Returns the output io type of the step

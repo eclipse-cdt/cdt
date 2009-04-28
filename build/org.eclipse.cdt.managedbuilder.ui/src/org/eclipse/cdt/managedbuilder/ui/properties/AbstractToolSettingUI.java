@@ -30,6 +30,9 @@ public abstract class AbstractToolSettingUI extends FieldEditorPreferencePage {
 		this(info, GRID);
 	}
 	
+	/**
+	 * @since 5.0
+	 */
 	protected AbstractToolSettingUI(IResourceInfo info, int style) {
  		super(style);
  		noDefaultAndApplyButton();

@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.cdt.managedbuilder.internal.buildmodel;
 
+import java.net.URI;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -22,32 +23,38 @@ import org.eclipse.cdt.managedbuilder.buildmodel.IBuildResource;
 import org.eclipse.cdt.managedbuilder.buildmodel.IBuildStep;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.Path;
 
 public class BuildResource implements IBuildResource {
-	private List fDepArgs = new ArrayList();
+	private List<BuildIOType> fDepArgs = new ArrayList<BuildIOType>();
 	private BuildIOType fProducerArg;
 	private boolean fNeedsRebuild;
 	private boolean fIsRemoved;
 	private IPath fLocation; 
-	private IPath fFullPath; 
 	private boolean fIsProjectRc;
 	private BuildDescription fInfo;
+	private URI fLocationURI;
 
 	protected BuildResource(BuildDescription info, IResource rc){
-		this(info, info.calcResourceLocation(rc), rc.getFullPath());
+		this(info, info.calcResourceLocation(rc), rc.getLocationURI());
 	}
 
-	protected BuildResource(BuildDescription info, IPath location, IPath fullPath){
-		fLocation = location;
+	protected BuildResource(BuildDescription info, IPath projectPath, URI locationURI){
+		
+		if(locationURI == null)
+			throw new IllegalArgumentException(); // must point to somewhere!
+		
+		fLocationURI = locationURI;
+		
+		fLocation = projectPath;
 		fInfo = info;
-		fFullPath = fullPath;
-		if(fFullPath != null)
-			fIsProjectRc = fFullPath.segment(0).equals(info.getProject().getName());
+		
+		fIsProjectRc = (projectPath != null);
 
 		info.resourceCreated(this);
 		
 		if(DbgUtil.DEBUG)
-			DbgUtil.trace("resource " + location + " created");	//$NON-NLS-1$	//$NON-NLS-2$
+			DbgUtil.trace("resource " + projectPath + " created");	//$NON-NLS-1$	//$NON-NLS-2$
 	}
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.managedbuilder.builddescription.IBuildResource#getLocation()
@@ -60,7 +67,7 @@ public class BuildResource implements IBuildResource {
 	 * @see org.eclipse.cdt.managedbuilder.builddescription.IBuildResource#getFullPath()
 	 */
 	public IPath getFullPath() {
-		return fFullPath;
+		return new Path(fLocationURI.getPath());
 	}
 
 	/* (non-Javadoc)
@@ -74,7 +81,7 @@ public class BuildResource implements IBuildResource {
 	 * @see org.eclipse.cdt.managedbuilder.builddescription.IBuildResource#getDependentIOTypes()
 	 */
 	public IBuildIOType[] getDependentIOTypes() {
-		return (BuildIOType[])fDepArgs.toArray(new BuildIOType[fDepArgs.size()]);
+		return fDepArgs.toArray(new BuildIOType[fDepArgs.size()]);
 	}
 
 	/* (non-Javadoc)
@@ -183,11 +190,11 @@ public class BuildResource implements IBuildResource {
 	}
 
 	public IBuildStep[] getDependentSteps() {
-		Set set = new HashSet();
-		for(Iterator iter = fDepArgs.iterator(); iter.hasNext();){
-			set.add(((BuildIOType)iter.next()).getStep());
+		Set<IBuildStep> set = new HashSet<IBuildStep>();
+		for(Iterator<BuildIOType> iter = fDepArgs.iterator(); iter.hasNext();){
+			set.add(iter.next().getStep());
 		}
-		return (BuildStep[])set.toArray(new BuildStep[set.size()]);
+		return set.toArray(new BuildStep[set.size()]);
 	}
 
 	public IBuildStep getProducerStep() {
@@ -206,6 +213,13 @@ public class BuildResource implements IBuildResource {
 			buf.append("FS|").append(getLocation()); //$NON-NLS-1$
 			
 		return buf.toString();
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.managedbuilder.buildmodel.IBuildResource#getLocationURI()
+	 */
+	public URI getLocationURI() {
+		return fLocationURI;
 	}
 
 }

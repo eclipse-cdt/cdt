@@ -60,6 +60,7 @@ import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Path;
 
+@SuppressWarnings("restriction")
 public class BuildDescriptionModelTests extends TestCase {
 	private static final String PREFIX = "BuildDescription_";
 	private static final String PROJ_PATH = "testBuildDescriptionProjects";
@@ -68,15 +69,15 @@ public class BuildDescriptionModelTests extends TestCase {
 	private Runnable fCleaner = fCompositeCleaner;
 	
 	private class CompositeCleaner implements Runnable{
-		private List fRunnables = new ArrayList();
+		private List<Runnable> fRunnables = new ArrayList<Runnable>();
 
 		public void addRunnable(Runnable r){
 			fRunnables.add(r);
 		}
 
 		public void run() {
-			for(Iterator iter = fRunnables.iterator(); iter.hasNext();){
-				Runnable r = (Runnable)iter.next();
+			for(Iterator<Runnable> iter = fRunnables.iterator(); iter.hasNext();){
+				Runnable r = iter.next();
 				r.run();
 			}
 			fRunnables.clear();
@@ -84,7 +85,7 @@ public class BuildDescriptionModelTests extends TestCase {
 		
 	}
 	private class ProjectCleaner implements Runnable{
-		List fProjList = new ArrayList();
+		List<String> fProjList = new ArrayList<String>();
 		
 		public ProjectCleaner(){
 		}
@@ -106,8 +107,8 @@ public class BuildDescriptionModelTests extends TestCase {
 		}
 
 		public void run() {
-			for(Iterator iter = fProjList.iterator(); iter.hasNext();){
-				String name = (String)iter.next();
+			for(Iterator<String> iter = fProjList.iterator(); iter.hasNext();){
+				String name = iter.next();
 				ManagedBuildTestHelper.removeProject(name);
 			}
 			fProjList.clear();
@@ -143,7 +144,7 @@ public class BuildDescriptionModelTests extends TestCase {
 		if(aAsmRc != des.createResource("a.asm"))
 			fail("new build resource created for the same resource");
 
-		if(aAsmRc != des.createResource(aAsm.getLocation(), aAsm.getFullPath()))
+		if(aAsmRc != des.createResource(aAsm.getLocation(), aAsm.getLocationURI()))
 			fail("new build resource created for the same resource");
 
 		assertEquals(aAsmRc.getProducerIOType(), null);
@@ -157,6 +158,7 @@ public class BuildDescriptionModelTests extends TestCase {
 		if(type == null)
 			fail("failed to create output type");
 		
+		assertNotNull(type);
 		assertEquals(type.getStep(), inStep);
 		
 		type.addResource(aAsmRc);
@@ -558,21 +560,21 @@ public class BuildDescriptionModelTests extends TestCase {
 	}
 */
 	private void doTestStep(IBuildStep step, IBuildStep oStep, boolean up){
-		Map inMap = new HashMap();
-		Map outMap = new HashMap();
+		Map<IBuildIOType, IBuildIOType> inMap = new HashMap<IBuildIOType, IBuildIOType>();
+		Map<IBuildIOType, IBuildIOType> outMap = new HashMap<IBuildIOType, IBuildIOType>();
 		
 		stepsMatch(step, oStep, inMap, outMap, true);
 		
-		Map map = up ? outMap : inMap;
+		Map<IBuildIOType, IBuildIOType> map = up ? outMap : inMap;
 		
-		for(Iterator iter = map.entrySet().iterator();iter.hasNext();){
+		for(Iterator<?> iter = map.entrySet().iterator();iter.hasNext();){
 			Map.Entry entry = (Map.Entry)iter.next();
 			doTestType((IBuildIOType)entry.getKey(), (IBuildIOType)entry.getValue());
 		}
 	}
 	
 	private void doTestType(IBuildIOType type, IBuildIOType oType){
-		Map map = new HashMap();
+		Map<IBuildResource, IBuildResource> map = new HashMap<IBuildResource, IBuildResource>();
 		
 		typesMatch(type, oType, map, true);
 		
@@ -583,7 +585,7 @@ public class BuildDescriptionModelTests extends TestCase {
 	}
 	
 	private void doTestResource(IBuildResource rc, IBuildResource oRc, boolean up){
-		Map outMap = new HashMap();
+		Map<IBuildIOType, IBuildIOType> outMap = new HashMap<IBuildIOType, IBuildIOType>();
 		
 		doTestResourceMatch(rc, oRc, outMap);
 		
@@ -591,7 +593,7 @@ public class BuildDescriptionModelTests extends TestCase {
 			typesMatch(rc.getProducerIOType(), oRc.getProducerIOType(), null, true);
 			doTestStep(rc.getProducerIOType().getStep(), oRc.getProducerIOType().getStep(), up);
 		} else {
-			Set stepSet = new HashSet();
+			Set<IBuildStep> stepSet = new HashSet<IBuildStep>();
 			
 			for(Iterator iter = outMap.entrySet().iterator(); iter.hasNext();){
 				Map.Entry entry = (Map.Entry)iter.next();
@@ -607,7 +609,7 @@ public class BuildDescriptionModelTests extends TestCase {
 		}
 	}
 	
-	private void doTestResourceMatch(IBuildResource rc, IBuildResource oRc, Map outTypeMap){
+	private void doTestResourceMatch(IBuildResource rc, IBuildResource oRc, Map<IBuildIOType, IBuildIOType> outTypeMap){
 		
 		doTrace("matching resource " + DbgUtil.resourceName(rc));
 		
@@ -642,11 +644,11 @@ public class BuildDescriptionModelTests extends TestCase {
 	}
 
 
-	private boolean stepsMatch(IBuildStep step, IBuildStep oStep, Map inTypeMap, Map outTypeMap, boolean failOnErr){
+	private boolean stepsMatch(IBuildStep step, IBuildStep oStep, Map<IBuildIOType, IBuildIOType> inTypeMap, Map<IBuildIOType, IBuildIOType> outTypeMap, boolean failOnErr){
 		return stepsMatch(step, oStep, inTypeMap, outTypeMap, true, failOnErr);
 	}
 
-	private boolean stepsMatch(IBuildStep step, IBuildStep oStep, Map inTypeMap, Map outTypeMap, boolean checkSteps, boolean failOnErr){
+	private boolean stepsMatch(IBuildStep step, IBuildStep oStep, Map<IBuildIOType, IBuildIOType> inTypeMap, Map<IBuildIOType, IBuildIOType> outTypeMap, boolean checkSteps, boolean failOnErr){
 		IBuildIOType inTypes[] = step.getInputIOTypes();
 		IBuildIOType oInTypes[] = oStep.getInputIOTypes();
 		
@@ -709,7 +711,7 @@ public class BuildDescriptionModelTests extends TestCase {
 		return getCorType(type, oTypes, null, true);
 	}
 
-	private IBuildIOType getCorType(IBuildIOType type, IBuildIOType oTypes[], Map rcMap, boolean checkSteps){
+	private IBuildIOType getCorType(IBuildIOType type, IBuildIOType oTypes[], Map<IBuildResource, IBuildResource> rcMap, boolean checkSteps){
 		for(int i = 0; i < oTypes.length; i++){
 			if(typesMatch(type, oTypes[i], rcMap, checkSteps, false))
 				return oTypes[i];
@@ -746,11 +748,11 @@ public class BuildDescriptionModelTests extends TestCase {
 */
 	}
 
-	private boolean typesMatch(IBuildIOType type, IBuildIOType oType, Map rcMap, boolean failOnError){
+	private boolean typesMatch(IBuildIOType type, IBuildIOType oType, Map<IBuildResource, IBuildResource> rcMap, boolean failOnError){
 		return typesMatch(type, oType, rcMap, true, failOnError);
 	}
 
-	private boolean typesMatch(IBuildIOType type, IBuildIOType oType, Map rcMap, boolean checkStep, boolean failOnError){
+	private boolean typesMatch(IBuildIOType type, IBuildIOType oType, Map<IBuildResource, IBuildResource> rcMap, boolean checkStep, boolean failOnError){
 		
 //		doTrace("matching io type");
 		if(type.isInput() != oType.isInput()){
@@ -766,8 +768,8 @@ public class BuildDescriptionModelTests extends TestCase {
 			return false;
 		
 		if(resourcesMatch(rcs, oRcs, rcMap)){
-			Map inMap = new HashMap();
-			Map outMap = new HashMap();
+			Map<IBuildIOType, IBuildIOType> inMap = new HashMap<IBuildIOType, IBuildIOType>();
+			Map<IBuildIOType, IBuildIOType> outMap = new HashMap<IBuildIOType, IBuildIOType>();
 			if(!checkStep)
 				return true;
 			return stepsMatch(type.getStep(), oType.getStep(), inMap, outMap, false, failOnError);
@@ -779,7 +781,7 @@ public class BuildDescriptionModelTests extends TestCase {
 		return false;
 	}
 	
-	private boolean resourcesMatch(IBuildResource rcs[], IBuildResource oRcs[], Map rcMap){
+	private boolean resourcesMatch(IBuildResource rcs[], IBuildResource oRcs[], Map<IBuildResource, IBuildResource> rcMap){
 		if(rcs.length != oRcs.length)
 			return false;
 		

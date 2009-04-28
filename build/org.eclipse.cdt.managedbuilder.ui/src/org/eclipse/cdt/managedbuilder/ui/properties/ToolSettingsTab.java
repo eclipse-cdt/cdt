@@ -449,10 +449,16 @@ public class ToolSettingsTab extends AbstractCBuildPropertyTab implements IPrefe
 			}
 		}
 		
+		/**
+		 * @since 5.0
+		 */
 		protected void addFilter(ViewerFilter filter) {
 			optionList.addFilter(filter);
 		}
 		
+		/**
+		 * @since 5.0
+		 */
 		@SuppressWarnings("unchecked")
 		protected void setOption(IOption op1, IOption op2, IHoldsOptions dst, IResourceInfo res){
 			try {
@@ -601,6 +607,7 @@ public class ToolSettingsTab extends AbstractCBuildPropertyTab implements IPrefe
 		 * Unlike the default provider, that provider also contains
 		 * the user-modified macros that are not applied yet
 		 * If the "Build Macros" tab is not available, returns the default BuildMacroProvider
+		 * @noreference This method is not intended to be referenced by clients.
 		 */
 		public BuildMacroProvider obtainMacroProvider(){
 			return (BuildMacroProvider)ManagedBuildManager.getBuildMacroProvider();

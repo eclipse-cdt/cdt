@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2008 IBM Corporation and others.
+ * Copyright (c) 2006, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -13,6 +13,7 @@
  * 
  * Contributors:
  * David McKnight   (IBM) - [225507][api][breaking] RSE dstore API leaks non-API types
+ * David McKnight   (IBM) - [264858] [dstore] OpenRSE always picks the first trusted certificate
  *******************************************************************************/
 
 package org.eclipse.dstore.internal.core.util.ssl;
@@ -111,8 +112,10 @@ public class DataStoreTrustManager implements IDataStoreTrustManager
 					X509Certificate tcert = (X509Certificate)_trustedCerts.get(j);
 					try
 					{
-						cert.verify(tcert.getPublicKey());
-						foundMatch = true;
+						if (cert.getSubjectDN().equals(tcert.getIssuerDN())) {
+							cert.verify(tcert.getPublicKey());
+							foundMatch = true;
+						}
 					}
 					catch (Exception e)
 					{		

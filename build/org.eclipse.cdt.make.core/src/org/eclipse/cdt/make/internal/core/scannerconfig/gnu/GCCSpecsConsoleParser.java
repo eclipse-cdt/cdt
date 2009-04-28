@@ -83,19 +83,16 @@ public class GCCSpecsConsoleParser implements IScannerInfoConsoleParser {
 					}
                 }
 
-                // Now defineParts[1] is the symbol name, and [2] is the
-                // definition
+                // Now defineParts[1] is the symbol name, and [2] is the definition
                 String symbol = null;
-				switch (defineParts.length) {
-					case 2:
-						symbol = defineParts[1];
-						break;
-					case 3:
-						symbol = defineParts[1] + "=" + defineParts[2]; //$NON-NLS-1$
-						break;
-				}
-				if (symbol != null && !symbols.contains(symbol)) { 
-					symbols.add(symbol);
+                if (defineParts.length > 1) {
+                	symbol = defineParts[1] + "="; //$NON-NLS-1$
+                	if (defineParts.length > 2) {
+                		symbol += defineParts[2];
+                	}
+                	if (!symbols.contains(symbol)) { 
+                		symbols.add(symbol);
+                	}
 				}
 			}
 		}

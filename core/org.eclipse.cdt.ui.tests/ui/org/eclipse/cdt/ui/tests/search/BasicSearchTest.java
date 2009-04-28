@@ -22,9 +22,11 @@ import junit.framework.TestSuite;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResource;
+import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Path;
+import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.jface.operation.IRunnableContext;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.viewers.ILabelProvider;
@@ -313,7 +315,7 @@ public class BasicSearchTest extends BaseUITestCase {
 		String newContent= "void bar() {}";
 		IFile file = fCProject.getProject().getFile(new Path("references.cpp"));
 		file.setContents(new ByteArrayInputStream(newContent.getBytes()), IResource.FORCE, NPM);
-		runEventQueue(1000);
+		Job.getJobManager().join(ResourcesPlugin.FAMILY_AUTO_REFRESH, null);
 		assertTrue(CCorePlugin.getIndexManager().joinIndexer(360000, new NullProgressMonitor()));
 
 		assertOccurences(query, 1);
@@ -338,7 +340,7 @@ public class BasicSearchTest extends BaseUITestCase {
 		
 		String newContent2= "void bar() {foo(); foo();}";
 		file.setContents(new ByteArrayInputStream(newContent2.getBytes()), IResource.FORCE, NPM);
-		runEventQueue(1000);
+		Job.getJobManager().join(ResourcesPlugin.FAMILY_AUTO_REFRESH, null);
 		assertTrue(CCorePlugin.getIndexManager().joinIndexer(360000, new NullProgressMonitor()));
 
 		assertOccurences(query, 3);

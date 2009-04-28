@@ -15,7 +15,6 @@ package org.eclipse.cdt.internal.ui.wizards.classwizard;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.regex.Pattern;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
@@ -418,14 +417,9 @@ public class NewClassWizardUtil {
 			String fullyQualifiedTypeName = typeName.getFullyQualifiedName();
 			try {
 				IndexFilter filter= IndexFilter.getFilter(ILinkage.CPP_LINKAGE_ID);
-				String[] nameStrs= fullyQualifiedTypeName.split("::"); //$NON-NLS-1$
-				char[][] names= new char[nameStrs.length][];
-				for (int i = 0; i < names.length; i++) {
-					names[i]= nameStrs[i].toCharArray();
-				}
 				//bug 165636: findBindings(char[][]...) does not find nested nodes (classes)
 				//therefore switching back to findBindings(Pattern...)
-				IBinding[] bindings = index.findBindings(Pattern.compile(typeName.getName()), false, filter, new NullProgressMonitor());
+				IBinding[] bindings = index.findBindings(typeName.getName().toCharArray(), false, filter, new NullProgressMonitor());
 				boolean sameTypeNameExists = false; 
 				boolean sameNameDifferentTypeExists = false;
 

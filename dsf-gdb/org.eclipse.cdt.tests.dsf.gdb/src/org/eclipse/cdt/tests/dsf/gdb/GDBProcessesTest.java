@@ -25,6 +25,7 @@ import org.eclipse.cdt.dsf.debug.service.IProcesses.IProcessDMContext;
 import org.eclipse.cdt.dsf.debug.service.IProcesses.IThreadDMContext;
 import org.eclipse.cdt.dsf.debug.service.IProcesses.IThreadDMData;
 import org.eclipse.cdt.dsf.gdb.service.command.IGDBControl;
+import org.eclipse.cdt.dsf.mi.service.IMIProcesses;
 import org.eclipse.cdt.dsf.mi.service.MIProcesses;
 import org.eclipse.cdt.dsf.service.DsfServicesTracker;
 import org.eclipse.cdt.dsf.service.DsfSession;
@@ -52,7 +53,7 @@ public class GDBProcessesTest extends BaseTestCase {
     private DsfServicesTracker fServicesTracker;	
 	
     private IGDBControl fGdbCtrl; 
-	private MIProcesses fProcService; 
+	private IMIProcesses fProcService; 
 	
 	/*
      *  Create a waiter and a generic completion object. They will be used to 
@@ -67,7 +68,7 @@ public class GDBProcessesTest extends BaseTestCase {
         /*
          *  Get the GDBProcesses & MIRunControl service.
          */
-		fProcService = fServicesTracker.getService(MIProcesses.class);
+		fProcService = fServicesTracker.getService(IMIProcesses.class);
         fGdbCtrl = fServicesTracker.getService(IGDBControl.class);
 	}
 

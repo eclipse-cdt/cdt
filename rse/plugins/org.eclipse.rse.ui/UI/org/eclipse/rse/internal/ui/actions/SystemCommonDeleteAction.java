@@ -19,9 +19,11 @@
  * David McKnight   (IBM)        - [226143] [api][breaking] Make RSE rename/delete dialogs internal
  * David McKnight   (IBM)        - [234030] SystemCommonDeleteAction should not fire delete event if deleting is failed
  * David McKnight   (IBM)        - [203361] Deleting multiple target connections misleading
+ * David McKnight   (IBM)        - [261367] RSE- Mutiple selection  Delete does not process all items selected
  ********************************************************************************/
 
 package org.eclipse.rse.internal.ui.actions;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Vector;
@@ -158,7 +160,8 @@ public class SystemCommonDeleteAction
 						objectsToDelete.put(thisObject, objectName);
 						remoteDeletedObjects.add(thisObject);
 					}
-					ok = adapter.doDeleteBatch(getShell(), set.getResourceSet(), monitor);
+					List resSet = new ArrayList(set.getResourceSet());
+					ok = adapter.doDeleteBatch(getShell(), resSet, monitor);
 				}
 				catch (SystemMessageException e)
 				{

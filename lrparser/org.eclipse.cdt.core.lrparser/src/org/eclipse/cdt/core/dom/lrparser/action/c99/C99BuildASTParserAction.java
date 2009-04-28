@@ -234,7 +234,7 @@ public class C99BuildASTParserAction extends BuildASTParserAction  {
 			 boolean isVarSized, boolean hasTypeQualifierList, boolean hasAssignmentExpr) {
 		assert isStatic || isVarSized || hasTypeQualifierList;
 		
-		ICASTArrayModifier arrayModifier = nodeFactory.newModifiedArrayModifier(null);
+		ICASTArrayModifier arrayModifier = nodeFactory.newArrayModifier(null);
 		
 		// consume all the stuff between the square brackets into an array modifier
 		arrayModifier.setStatic(isStatic);

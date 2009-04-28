@@ -43,7 +43,7 @@ public interface ICNodeFactory extends INodeFactory {
 
 	public ICASTCompositeTypeSpecifier newCompositeTypeSpecifier(int key, IASTName name);
 
-	public ICASTArrayModifier newModifiedArrayModifier(IASTExpression expr);
+	public ICASTArrayModifier newArrayModifier(IASTExpression expr);
 	
 	public ICASTTypeIdInitializerExpression newTypeIdInitializerExpression(IASTTypeId typeId, IASTInitializer initializer);
 

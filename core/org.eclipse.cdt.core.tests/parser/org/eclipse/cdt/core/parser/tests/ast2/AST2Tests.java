@@ -6279,4 +6279,25 @@ public class AST2Tests extends AST2BaseTest {
 	public void testPredefinedMacroNamesC() throws Exception {
 		parseAndCheckBindings(getAboveComment(), ParserLanguage.C);
 	}
+	
+	//
+	//  int MyGlobal[10];
+	//
+	public void testBug273797() throws Exception {
+		IASTTranslationUnit tu = parseAndCheckBindings(getAboveComment(), ParserLanguage.C);
+		IASTName n = ((IASTSimpleDeclaration)tu.getDeclarations()[0]).getDeclarators()[0].getName();
+		IVariable v = (IVariable) n.resolveBinding();
+		
+		ICArrayType t = (ICArrayType)v.getType();
+		assertFalse(t.isConst());
+		assertFalse(t.isRestrict());
+		assertFalse(t.isVolatile());
+		assertFalse(t.isVariableLength());
+		assertFalse(t.isStatic());
+
+		IASTExpression e = t.getArraySizeExpression();
+		assertNotNull(e);
+		assertTrue(e instanceof IASTLiteralExpression);
+	}
+
 }

@@ -1711,23 +1711,13 @@ public class GNUCSourceParser extends AbstractGNUSourceCodeParser {
 				throw backtrack;
 			}
 
-
-            IASTArrayModifier arrayMod;
-            if (!(isStatic || isRestrict || isConst || isVolatile || isVarSized))
-                arrayMod = nodeFactory.newArrayModifier(null);
-            else {
-                ICASTArrayModifier temp = nodeFactory.newModifiedArrayModifier(null);
-                temp.setStatic(isStatic);
-                temp.setConst(isConst);
-                temp.setVolatile(isVolatile);
-                temp.setRestrict(isRestrict);
-                temp.setVariableSized(isVarSized);
-                arrayMod = temp;
-            }
+			ICASTArrayModifier arrayMod = nodeFactory.newArrayModifier(exp);
+			arrayMod.setStatic(isStatic);
+			arrayMod.setConst(isConst);
+			arrayMod.setVolatile(isVolatile);
+			arrayMod.setRestrict(isRestrict);
+			arrayMod.setVariableSized(isVarSized);
             ((ASTNode) arrayMod).setOffsetAndLength(startOffset, lastOffset - startOffset);
-            if (exp != null) {
-                arrayMod.setConstantExpression(exp);
-            }
             arrayMods.add(arrayMod);
         }
     }

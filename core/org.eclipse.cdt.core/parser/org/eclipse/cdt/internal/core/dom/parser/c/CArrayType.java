@@ -69,7 +69,7 @@ public class CArrayType implements ICArrayType, ITypeContainer {
 	    this.type = t;
 	}
 	
-	public void setModifiedArrayModifier(ICASTArrayModifier mod) {
+	public void setModifier(ICASTArrayModifier mod) {
 		this.mod = mod;
 	}
 

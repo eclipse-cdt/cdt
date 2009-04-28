@@ -12,7 +12,6 @@ package org.eclipse.cdt.internal.core.dom.parser.c;
 
 import org.eclipse.cdt.core.dom.ast.IASTASMDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTArrayDeclarator;
-import org.eclipse.cdt.core.dom.ast.IASTArrayModifier;
 import org.eclipse.cdt.core.dom.ast.IASTArraySubscriptExpression;
 import org.eclipse.cdt.core.dom.ast.IASTBinaryExpression;
 import org.eclipse.cdt.core.dom.ast.IASTBreakStatement;
@@ -172,12 +171,8 @@ public class CNodeFactory implements ICNodeFactory {
 		return new CASTArrayDeclarator(name);
 	}
 	
-	public IASTArrayModifier newArrayModifier(IASTExpression expr) {
+	public ICASTArrayModifier newArrayModifier(IASTExpression expr) {
 		return new CASTArrayModifier(expr);
-	}
-	
-	public ICASTArrayModifier newModifiedArrayModifier(IASTExpression expr) {
-		return new CASTModifiedArrayModifier(expr);
 	}
 	
 	public IASTStandardFunctionDeclarator newFunctionDeclarator(IASTName name) {

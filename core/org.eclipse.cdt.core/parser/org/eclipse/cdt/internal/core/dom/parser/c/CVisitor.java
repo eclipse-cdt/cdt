@@ -1437,7 +1437,7 @@ public class CVisitor extends ASTQueries {
 			for (IASTArrayModifier mod : mods) {
 				CArrayType arrayType = new CArrayType(lastType);
 				if (mod instanceof ICASTArrayModifier) {
-					arrayType.setModifiedArrayModifier((ICASTArrayModifier)mod);
+					arrayType.setModifier((ICASTArrayModifier)mod);
 				}
 				lastType= arrayType;
 			}

@@ -59,6 +59,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTemplateDeclaration;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTemplateId;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTemplateParameter;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTemplatedTypeTemplateParameter;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPBase;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassScope;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassSpecialization;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassTemplate;
@@ -1460,11 +1461,22 @@ public class CPPTemplates {
 				if (isDependentType(par)) {
 					par= SemanticUtil.getNestedType(par, SemanticUtil.TDEF); // adjustParameterType preserves typedefs
 					par= SemanticUtil.adjustParameterType(par, false);
-					// 14.8.2.1.2
+					// 14.8.2.1.2 and 14.8.2.1.3
 					final boolean isReferenceType = par instanceof ICPPReferenceType;
-					final IType arg= getArgumentTypeForDeduction(fnArgs[j], isReferenceType);
+					IType arg= getArgumentTypeForDeduction(fnArgs[j], isReferenceType);
 					par= getParameterTypeForDeduction(par, isReferenceType);
 					
+					// 14.8.2.1.3
+					if (par instanceof ICPPTemplateInstance && !(par instanceof ICPPTemplateParameter) && arg instanceof ICPPClassType) {
+						ICPPTemplateInstance pInst = (ICPPTemplateInstance) par;
+						ICPPClassTemplate pTemplate= getPrimaryTemplate(pInst);
+						if (pTemplate != null) {
+							ICPPClassType aInst= findBaseInstance((ICPPClassType) arg, pTemplate, CPPSemantics.MAX_INHERITANCE_DEPTH);	
+							if (aInst != null) {
+								arg= aInst;
+							}
+						}
+					}
 					if (!deduceTemplateParameterMap(par, arg, map)) {
 						return false;
 					}
@@ -1625,29 +1637,34 @@ public class CPPTemplates {
 				ICPPTemplateInstance pInst = (ICPPTemplateInstance) p;
 				ICPPTemplateInstance aInst = (ICPPTemplateInstance) a;
 
+				ICPPClassTemplate pTemplate= getPrimaryTemplate(pInst);
+				ICPPClassTemplate aTemplate= getPrimaryTemplate(aInst);
+				if (pTemplate == null || aTemplate == null || !aTemplate.isSameType(pTemplate))
+					return false;
+				
 				ICPPTemplateArgument[] pArgs = pInst.getTemplateArguments();
-				pArgs= pArgs == null ? ICPPTemplateArgument.EMPTY_ARGUMENTS : pArgs; // aftodo - unnecessary?
+				ICPPTemplateArgument[] aArgs = aInst.getTemplateArguments();
+				if (pArgs.length > aArgs.length)
+					return false;
 
-				ICPPTemplateParameterMap aMap = aInst.getTemplateParameterMap();
-				if (aMap != null && !(aInst.getTemplateDefinition() instanceof ICPPClassTemplatePartialSpecialization)) {
-					ICPPTemplateParameter[] aParams = aInst.getTemplateDefinition().getTemplateParameters();
-					if (pArgs.length != aParams.length)
-						return false;
-					for (int i = 0; i < pArgs.length; i++) {
-						ICPPTemplateArgument t = aMap.getArgument(aParams[i]);
-						if (t == null || !deduceTemplateParameterMap(pArgs[i], t, map))
+				ICPPTemplateParameter[] tpars= null;
+				for (int i = 0; i < aArgs.length; i++) {
+					ICPPTemplateArgument pArg;
+					if (i < pArgs.length) {
+						pArg= pArgs[i];
+					} else {
+						if (tpars == null) {
+							tpars= pTemplate.getTemplateParameters();
+							if (tpars.length < aArgs.length)
+								return false;
+						}
+						pArg= tpars[i].getDefaultValue();
+						if (pArg == null) 
 							return false;
+						pArg= instantiateArgument(pArg, map, null);
 					}
-				} else {
-					ICPPTemplateArgument[] aArgs = aInst.getTemplateArguments();
-					aArgs= aArgs == null ? ICPPTemplateArgument.EMPTY_ARGUMENTS : aArgs; // aftodo - unnecessary?
-
-					if (aArgs.length != pArgs.length)
+					if (!deduceTemplateParameterMap(pArg, aArgs[i], map))
 						return false;
-					for (int i = 0; i < pArgs.length; i++) {
-						if (!deduceTemplateParameterMap(pArgs[i], aArgs[i], map))
-							return false;
-					}
 				}
 				return true;
 			} else if (p instanceof ICPPUnknownBinding) {
@@ -1658,6 +1675,40 @@ public class CPPTemplates {
 		}
 
 		return false;
+	}
+
+	/**
+	 * 14.8.2.1.3 If P is a class and has the form template-id, then A can be a derived class of the deduced A.
+	 * @throws DOMException 
+	 */
+	private static ICPPClassType findBaseInstance(ICPPClassType a, ICPPClassTemplate pTemplate, int maxdepth) throws DOMException {
+		if (a instanceof ICPPTemplateInstance) {
+			final ICPPTemplateInstance inst = (ICPPTemplateInstance) a;
+			ICPPClassTemplate tmpl= getPrimaryTemplate(inst);
+			if (pTemplate.isSameType(tmpl))
+				return a;
+		}
+		if (maxdepth-- > 0) {
+			for (ICPPBase cppBase : a.getBases()) {
+				IBinding base= cppBase.getBaseClass();
+				if (base instanceof ICPPClassType) {
+					final ICPPClassType inst= findBaseInstance((ICPPClassType) base, pTemplate, maxdepth);
+					if (inst != null)
+						return inst;
+				}
+			}
+		}
+		return null;
+	}
+
+	private static ICPPClassTemplate getPrimaryTemplate(ICPPTemplateInstance inst) throws DOMException {
+		ICPPTemplateDefinition template= inst.getTemplateDefinition();
+		if (template instanceof ICPPClassTemplatePartialSpecialization) {
+			return ((ICPPClassTemplatePartialSpecialization) template).getPrimaryClassTemplate();
+		} else if (template instanceof ICPPClassTemplate) {
+			return (ICPPClassTemplate) template;
+		}	
+		return null;
 	}
 
 	/**
@@ -1863,8 +1914,7 @@ public class CPPTemplates {
 	 */
 	static private ICPPFunctionTemplate classTemplateSpecializationToFunctionTemplate(ICPPClassTemplatePartialSpecialization specialization) {
 		try {
-//			ICPPTemplateArgument[] args= specialization.getTemplateArguments();
-			ICPPTemplateArgument[] args= (specialization).getTemplateArguments();
+			ICPPTemplateArgument[] args= specialization.getTemplateArguments();
 			IBinding paramType = deferredInstance(specialization, args);
 			if (!(paramType instanceof IType))
 				return null;

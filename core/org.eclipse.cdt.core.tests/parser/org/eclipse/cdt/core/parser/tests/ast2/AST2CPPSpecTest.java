@@ -5691,6 +5691,21 @@ public class AST2CPPSpecTest extends AST2SpecBaseTest {
 		parse(getAboveComment(), ParserLanguage.CPP, true, 0);
 	}
 
+	// template <class T> struct B { };
+	// template <class T> struct D : public B<T> {};
+	// struct D2 : public B<int> {};
+	// template <class T> void f(B<T>&){}
+	// void t()
+	// {
+	// D<int> d;
+	// D2 d2;
+	// f(d); //calls f(B<int>&)
+	// f(d2); //calls f(B<int>&)
+	// }
+	public void test14_8_2_4s8() throws Exception {
+		parse(getAboveComment(), ParserLanguage.CPP, true, 0);
+	}
+
 	// template<class T, T i> void f(double a[10][i]);
 	// int v[10][20];
 	// int foo() {

@@ -33,7 +33,6 @@ public class LRParserTestSuite extends TestSuite {
 			addTest(LRCompleteParser2Tests.suite());
 			addTest(LRCompletionBasicTest.suite());	
 			addTest(LRCompletionParseTest.suite());
-			addTest(LRCPPSpecFailingTest.suite());
 			addTest(LRCPPSpecTest.suite());
 			addTest(LRCPPTests.suite()); 
 			addTest(LRCSpecTests.suite()); // a couple of failures

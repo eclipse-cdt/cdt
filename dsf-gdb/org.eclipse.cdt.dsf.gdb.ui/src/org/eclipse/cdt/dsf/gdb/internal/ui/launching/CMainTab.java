@@ -90,8 +90,11 @@ public class CMainTab extends CLaunchConfigurationTab {
 	protected Button fSearchButton;
 
 	// Core file UI widgets
+	/** @since 2.0 */
 	protected Label fCoreLabel;
+	/** @since 2.0 */
 	protected Text fCoreText;
+	/** @since 2.0 */
 	protected Button fCoreButton;
 
 	private final boolean fDontCheckProgram;

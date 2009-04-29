@@ -28,7 +28,10 @@ import org.eclipse.core.resources.IStorage;
  * 
  * @noextend This class is not intended to be subclassed by clients.
  * @noinstantiate This class is not intended to be instantiated by clients.
+ * @deprecated This class does not take into account language mappings.  Use
+ * org.eclipse.cdt.core.model.ILanguage instead.
  */
+@Deprecated
 public class CDOM implements IASTServiceProvider {
     
     /**

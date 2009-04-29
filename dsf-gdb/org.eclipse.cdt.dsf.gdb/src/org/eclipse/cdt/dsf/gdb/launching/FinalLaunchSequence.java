@@ -49,6 +49,7 @@ import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
+import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.IStatusHandler;
 
@@ -306,57 +307,84 @@ public class FinalLaunchSequence extends Sequence {
     	 * Specify the core file to be debugged if we are launching such a debug session.
     	 */
         new Step() {
-       	private String promptForCoreFilePath() throws CoreException {
-       		IStatus promptStatus = new Status(IStatus.INFO, "org.eclipse.debug.ui", 200/*STATUS_HANDLER_PROMPT*/, "", null); //$NON-NLS-1$//$NON-NLS-2$
-       		IStatus filePrompt = new Status(IStatus.INFO, "org.eclipse.cdt.dsf.gdb.ui", 1001, "", null); //$NON-NLS-1$//$NON-NLS-2$
-       		// consult a status handler
-       		IStatusHandler prompter = DebugPlugin.getDefault().getStatusHandler(promptStatus);
-       		if (prompter != null) {
-       			Object result = prompter.handleStatus(filePrompt, null);
-       			if (result instanceof String) {
-       				return (String)result;
-       			}
-       		}
-       		return null;
-       	}
-        @Override
-        public void execute(final RequestMonitor requestMonitor) {
-           	if (fSessionType == SessionType.CORE) {
-           		Exception exception = null;
-           		String coreFile;
-           		try {
-           			coreFile = fLaunch.getLaunchConfiguration().getAttribute(ICDTLaunchConfigurationConstants.ATTR_COREFILE_PATH, ""); //$NON-NLS-1$
+        	// Need a job because prompter.handleStatus will block
+        	class PromptForCoreJob extends Job {
+        		DataRequestMonitor<String> fRequestMonitor;
 
-           			if (coreFile != null) {
-           				if (coreFile.length() == 0) {
-          					coreFile = promptForCoreFilePath();
-           					if (coreFile == null || coreFile.length()== 0) {
-           		           		requestMonitor.setStatus(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, -1, "Cannot get core file path", exception)); //$NON-NLS-1$
-           		       			requestMonitor.done();
-           						return;
-           					}
-           				}
-           				
-           				fCommandControl.queueCommand(
-       						new MITargetSelectCore(fCommandControl.getContext(), coreFile), 
-       						new DataRequestMonitor<MIInfo>(getExecutor(), requestMonitor) {
-       							@Override
-       							protected void handleSuccess() {
-       								requestMonitor.done();
-       							}
-       						});
-       					return;
-           			}
-           		} catch (CoreException e) {
-           			exception = e;
-           		}		
+        		public PromptForCoreJob(String name, DataRequestMonitor<String> rm) {
+        			super(name);
+        			fRequestMonitor = rm;
+        		}
 
-           		requestMonitor.setStatus(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, -1, "Cannot get core file path", exception)); //$NON-NLS-1$
-       			requestMonitor.done();
-           	} else {
-           		requestMonitor.done();
-           	}
-        }},
+        		@Override
+        		protected IStatus run(IProgressMonitor monitor) {
+        			final IStatus promptStatus = new Status(IStatus.INFO, "org.eclipse.debug.ui", 200/*STATUS_HANDLER_PROMPT*/, "", null); //$NON-NLS-1$//$NON-NLS-2$
+        			final IStatus filePrompt = new Status(IStatus.INFO, "org.eclipse.cdt.dsf.gdb.ui", 1001, "", null); //$NON-NLS-1$//$NON-NLS-2$
+        			// consult a status handler
+        			final IStatusHandler prompter = DebugPlugin.getDefault().getStatusHandler(promptStatus);
+
+        			final Status NO_CORE_STATUS = new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, -1,
+        					LaunchMessages.getString("LocalCDILaunchDelegate.6"), //$NON-NLS-1$
+        					null);
+
+        			if (prompter == null) {
+        				fRequestMonitor.setStatus(NO_CORE_STATUS);
+        				fRequestMonitor.done();
+        				return Status.OK_STATUS;
+        			} 				
+
+        			try {
+        				Object result = prompter.handleStatus(filePrompt, null);
+        				if (result instanceof String) {
+        					fRequestMonitor.setData((String)result);
+        				} else {
+        					fRequestMonitor.setStatus(NO_CORE_STATUS);
+        				}
+        			} catch (CoreException e) {
+        				fRequestMonitor.setStatus(NO_CORE_STATUS);
+        			}
+        			fRequestMonitor.done();
+
+        			return Status.OK_STATUS;
+        		}
+        	};
+        	@Override
+        	public void execute(final RequestMonitor requestMonitor) {
+        		if (fSessionType == SessionType.CORE) {
+        			try {
+        				String coreFile = fLaunch.getLaunchConfiguration().getAttribute(ICDTLaunchConfigurationConstants.ATTR_COREFILE_PATH, ""); //$NON-NLS-1$
+
+        				if (coreFile.length() == 0) {
+        					new PromptForCoreJob(
+        							"Prompt for core file",  //$NON-NLS-1$
+        							new DataRequestMonitor<String>(getExecutor(), requestMonitor) {
+        								@Override
+        								protected void handleSuccess() {
+        									String newCoreFile = getData();
+        									if (newCoreFile == null || newCoreFile.length()== 0) {
+        										requestMonitor.setStatus(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, -1, "Cannot get core file path", null)); //$NON-NLS-1$
+        										requestMonitor.done();
+        									} else {
+        			        					fCommandControl.queueCommand(
+        			        							new MITargetSelectCore(fCommandControl.getContext(), newCoreFile), 
+        			        							new DataRequestMonitor<MIInfo>(getExecutor(), requestMonitor));
+        									}
+        								}
+        							}).schedule();
+        				} else {
+        					fCommandControl.queueCommand(
+        							new MITargetSelectCore(fCommandControl.getContext(), coreFile), 
+        							new DataRequestMonitor<MIInfo>(getExecutor(), requestMonitor));
+        				}
+        			} catch (CoreException e) {
+        				requestMonitor.setStatus(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, -1, "Cannot get core file path", e)); //$NON-NLS-1$
+        				requestMonitor.done();
+        			}
+        		} else {
+        			requestMonitor.done();
+        		}
+        	}
+        },
         /* 
          * If remote debugging, connect to target.
          */

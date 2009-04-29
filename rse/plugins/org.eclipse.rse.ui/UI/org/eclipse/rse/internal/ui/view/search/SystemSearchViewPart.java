@@ -16,6 +16,7 @@
  * Martin Oberhuber (Wind River) - [186773] split ISystemRegistryUI from ISystemRegistry
  * Kevin Doyle 		(IBM)		 - [242431] Register a new unique context menu id, so contributions can be made to all our views
  * David McKnight   (IBM)        - [250169] Problems with extending the menu's of results in Remote Search View
+ * David McKnight   (IBM)        - [214395] Properties View not updated when clicking on Search Results
  *******************************************************************************/
 
 package org.eclipse.rse.internal.ui.view.search;
@@ -418,7 +419,9 @@ public class SystemSearchViewPart extends ViewPart
 	 * @see org.eclipse.ui.IWorkbenchPart#setFocus()
 	 */
 	public void setFocus() {
-		pageBook.setFocus();
+		if (currentViewer != null){
+			getSite().setSelectionProvider(currentViewer);
+		}
 	}
 
 	/**

@@ -53,6 +53,7 @@
  * Radoslav Gerganov (ProSyst)   - [231428] [files] NPE on canceling copy operation from remote host
  * David McKnight     (IBM)      - [262092] Special characters are missing when pasting a file on a different connection
  * David McKnight     (IBM)      - [271831] Set the readonly file attribute when download the file
+ * David McKnight     (IBM)      - [251136] Error copying local file to remote system when temp file is readonly
  *******************************************************************************/
 
 package org.eclipse.rse.files.ui.resources;
@@ -517,7 +518,14 @@ public class UniversalFileTransferUtility {
 		// destinations
 		String[] destinations = new String[remoteFilesForDownload.size()];
 		for (int t = 0; t < tempFilesForDownload.size(); t++){
-			destinations[t] = ((IFile)tempFilesForDownload.get(t)).getLocation().toOSString();
+			IFile destFile = (IFile)tempFilesForDownload.get(t);
+			
+			// make sure the file isn't read-only during the download
+			if (destFile.isReadOnly()){
+				setReadOnly(destFile, false);
+			}
+			
+			destinations[t] = destFile.getLocation().toOSString();
 		}
 
 		if (sources.length > 0){
@@ -1058,6 +1066,12 @@ public class UniversalFileTransferUtility {
 			{
 				File parentDir = destinationFile.getParentFile();
 				parentDir.mkdirs();
+			}
+			else {
+				// make sure the temp file can be written to
+				if (tempFile.isReadOnly()){
+					setReadOnly(tempFile, false);
+				}
 			}
 
 			// encoding conversion required if it a text file but not an xml file

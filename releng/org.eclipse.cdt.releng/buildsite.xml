@@ -60,4 +60,10 @@
 	<feature id="org.eclipse.cdt.launch.remote" url="features/org.eclipse.cdt.launch.remote_6.0.0.@timeStamp@.jar" version="6.0.0.@timeStamp@">
 		<category name="CDT Optional Features"/>
 	</feature>
+	<feature id="org.eclipse.cdt.build.crossgcc" url="features/org.eclipse.cdt.build.crossgcc_1.0.0.@timeStamp@.jar" version="1.0.0.@timeStamp@">
+		<category name="CDT Optional Features"/>
+	</feature>
+	<feature id="org.eclipse.cdt.p2" url="features/org.eclipse.cdt.p2_1.0.0.@timeStamp@.jar" version="1.0.0.@timeStamp@">
+		<category name="CDT Optional Features"/>
+	</feature>
 </site>

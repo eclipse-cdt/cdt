@@ -586,7 +586,7 @@ public class BuildEntryStorage extends AbstractEntryStorage {
 			options = fLangData.getOptionsForKind(kind);
 			for(int i = 0; i < options.length; i++){
 				if(options[i] != newOption)
-					ManagedBuildManager.setOption(rcInfo, tool, option, new String[0]);
+					ManagedBuildManager.setOption(rcInfo, tool, options[i], new String[0]);
 			}
 		}
 	}

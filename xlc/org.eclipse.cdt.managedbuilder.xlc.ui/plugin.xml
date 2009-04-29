@@ -541,12 +541,13 @@
       		errorParsers="org.eclipse.cdt.errorparsers.xlc.XlcErrorParser"
 			id="cdt.managedbuild.config.xlc.exe.debug">
 			<toolChain
-                     archList="all"
-                     osList="all"
-                     name="%ToolChainName.Dbg"
-                     targetTool="cdt.managedbuild.tool.xlc.c.linker.exe.debug;cdt.managedbuild.tool.xlc.cpp.linker.exe.debug"
-                     configurationEnvironmentSupplier="org.eclipse.cdt.managedbuilder.xlc.aix.AixConfigurationEnvironmentSupplier"
-                     id="cdt.managedbuild.toolchain.xlc.exe.debug">
+         archList="all"
+         configurationEnvironmentSupplier="org.eclipse.cdt.managedbuilder.xlc.aix.AixConfigurationEnvironmentSupplier"
+         id="cdt.managedbuild.toolchain.xlc.exe.debug"
+         name="%ToolChainName.Dbg"
+         osList="all"
+         scannerConfigDiscoveryProfileId="org.eclipse.cdt.managedbuilder.xlc.core.XLCManagedMakePerProjectProfileCPP"
+         targetTool="cdt.managedbuild.tool.xlc.c.linker.exe.debug;cdt.managedbuild.tool.xlc.cpp.linker.exe.debug">
 			      <targetPlatform
 					  id="cdt.managedbuild.target.xlc.platform.exe.debug"
 				 	  name="%PlatformName.Dbg"
@@ -607,11 +608,12 @@
 			errorParsers="org.eclipse.cdt.errorparsers.xlc.XlcErrorParser"
 			id="cdt.managedbuild.config.xlc.exe.release">
 			<toolChain
-                     archList="all"
-                     osList="all"
-                     name="%ToolChainName.Rel"
-                     targetTool="cdt.managedbuild.tool.xlc.c.linker.exe.release;cdt.managedbuild.tool.xlc.cpp.linker.exe.release"
-                     id="cdt.managedbuild.toolchain.xlc.exe.release">
+           archList="all"
+           id="cdt.managedbuild.toolchain.xlc.exe.release"
+           name="%ToolChainName.Rel"
+           osList="all"
+           scannerConfigDiscoveryProfileId="org.eclipse.cdt.managedbuilder.xlc.core.XLCManagedMakePerProjectProfileCPP"
+           targetTool="cdt.managedbuild.tool.xlc.c.linker.exe.release;cdt.managedbuild.tool.xlc.cpp.linker.exe.release">
 		          <targetPlatform
 		              id="cdt.managedbuild.target.xlc.platform.exe.release"
 		              name="%PlatformName.Rel"		             
@@ -931,9 +933,10 @@
     </projectType>
     
     <tool
-          id="org.eclipse.cdt.managedbuilder.xlc.ui.tool.abstractCompiler"
-          isAbstract="true"
-          name="Abstract XL Compiler">
+            errorParsers="org.eclipse.cdt.errorparsers.xlc.XlcErrorParser"
+            id="org.eclipse.cdt.managedbuilder.xlc.ui.tool.abstractCompiler"
+            isAbstract="true"
+            name="Abstract XL Compiler">
          <envVarBuildPath 
 			pathType="buildpathInclude"
 			variableList="CPATH,C_INCLUDE_PATH">
@@ -3050,10 +3053,11 @@
           </optionCategory>
     </tool>
     <tool
-          id="org.eclipse.cdt.managedbuilder.xlc.ui.tool.abstractLinker"
-          isAbstract="true"
-          name="Abstract XL Linker"
-          outputFlag="-o">
+            errorParsers="org.eclipse.cdt.errorparsers.xlc.XlcErrorParser"
+            id="org.eclipse.cdt.managedbuilder.xlc.ui.tool.abstractLinker"
+            isAbstract="true"
+            name="Abstract XL Linker"
+            outputFlag="-o">
                   <envVarBuildPath 
          	pathType="buildpathLibrary"
          	variableList="LIBRARY_PATH">
@@ -3245,6 +3249,7 @@
          </outputType>
     </tool>
      <tool
+            errorParsers="org.eclipse.cdt.errorparsers.xlc.XlcErrorParser"
             id="org.eclipse.cdt.managedbuilder.xlc.ui.tool.linker.abstractSOLinker"
             isAbstract="true"
             name="Abstract XL Shared Object Linker"

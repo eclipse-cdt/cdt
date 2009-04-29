@@ -15,9 +15,11 @@ Require-Bundle: org.eclipse.ui,
  org.eclipse.ui.ide,
  org.eclipse.core.variables
 Bundle-ActivationPolicy: lazy
-Export-Package: org.eclipse.cdt.managedbuilder.xlc.ui,
+Export-Package: org.eclipse.cdt.managedbuilder.xlc.aix,
+ org.eclipse.cdt.managedbuilder.xlc.ui,
  org.eclipse.cdt.managedbuilder.xlc.ui.preferences,
  org.eclipse.cdt.managedbuilder.xlc.ui.properties,
+ org.eclipse.cdt.managedbuilder.xlc.ui.variables,
  org.eclipse.cdt.managedbuilder.xlc.ui.wizards
 Bundle-Vendor: %providerName
 Bundle-RequiredExecutionEnvironment: J2SE-1.5

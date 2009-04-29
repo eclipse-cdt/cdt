@@ -99,6 +99,15 @@ public class CMainTab extends CLaunchConfigurationTab {
 	protected Label fProgLabel;
 	protected Text fProgText;
 	protected Button fSearchButton;
+	
+	// Core file UI widgets
+	/** @since 6.0 */
+	protected Label fCoreLabel;
+	/** @since 6.0 */
+	protected Text fCoreText;
+	/** @since 6.0 */
+	protected Button fCoreButton;
+
 	/**
 	 * @since 6.0
 	 */
@@ -108,6 +117,7 @@ public class CMainTab extends CLaunchConfigurationTab {
 	protected Button fTerminalButton;
 
 	private final boolean dontCheckProgram;
+	private final boolean fSpecifyCoreFile;
 	
 	protected static final String EMPTY_STRING = ""; //$NON-NLS-1$
 
@@ -115,6 +125,9 @@ public class CMainTab extends CLaunchConfigurationTab {
 
 	public static final int WANTS_TERMINAL = 1;
 	public static final int DONT_CHECK_PROGRAM = 2;
+	/** @since 6.0 */
+	public static final int SPECIFY_CORE_FILE = 4;
+
 	
 	public CMainTab() {
 		this(WANTS_TERMINAL);
@@ -127,6 +140,7 @@ public class CMainTab extends CLaunchConfigurationTab {
 	public CMainTab(int flags) {
 		fWantsTerminalOption = (flags & WANTS_TERMINAL) != 0;
 		dontCheckProgram = (flags & DONT_CHECK_PROGRAM) != 0;
+		fSpecifyCoreFile = (flags & SPECIFY_CORE_FILE) != 0;
 	}
 	
 	/*
@@ -148,6 +162,9 @@ public class CMainTab extends CLaunchConfigurationTab {
 		createBuildConfigCombo(comp, 1);
 		createExeFileGroup(comp, 1);
 		createVerticalSpacer(comp, 1);
+		if (fSpecifyCoreFile) {
+			createCoreFileGroup(comp, 1);
+		}
 		if (wantsTerminalOption() /* && ProcessFactory.supportesTerminal() */) {
 			createTerminalOption(comp, 1);
 		}
@@ -296,6 +313,45 @@ public class CMainTab extends CLaunchConfigurationTab {
 		});
 	}
 
+	/** @since 6.0 */
+	protected void createCoreFileGroup(Composite parent, int colSpan) {
+		Composite coreComp = new Composite(parent, SWT.NONE);
+		GridLayout coreLayout = new GridLayout();
+		coreLayout.numColumns = 3;
+		coreLayout.marginHeight = 0;
+		coreLayout.marginWidth = 0;
+		coreComp.setLayout(coreLayout);
+		GridData gd = new GridData(GridData.FILL_HORIZONTAL);
+		gd.horizontalSpan = colSpan;
+		coreComp.setLayoutData(gd);
+		fCoreLabel = new Label(coreComp, SWT.NONE);
+		fCoreLabel.setText(LaunchMessages.getString("CMainTab.CoreFile_path")); //$NON-NLS-1$
+		gd = new GridData();
+		gd.horizontalSpan = 3;
+		fCoreLabel.setLayoutData(gd);
+		fCoreText = new Text(coreComp, SWT.SINGLE | SWT.BORDER);
+		gd = new GridData(GridData.FILL_HORIZONTAL);
+		fCoreText.setLayoutData(gd);
+		fCoreText.addModifyListener(new ModifyListener() {
+			public void modifyText(ModifyEvent evt) {
+				updateLaunchConfigurationDialog();
+			}
+		});
+
+		Button browseForCoreButton;
+		browseForCoreButton = createPushButton(coreComp, LaunchMessages.getString("Launch.common.Browse_2"), null); //$NON-NLS-1$
+		browseForCoreButton.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent evt) {
+				String text = handleBrowseButtonSelected();
+				if (text != null) {
+					fCoreText.setText(text);
+				}
+				updateLaunchConfigurationDialog();
+			}
+		});
+	}
+
 	protected boolean wantsTerminalOption() {
 		return fWantsTerminalOption;
 	}
@@ -331,6 +387,7 @@ public class CMainTab extends CLaunchConfigurationTab {
 		filterPlatform = getPlatform(config);
 		updateProjectFromConfig(config);
 		updateProgramFromConfig(config);
+		updateCoreFromConfig(config);
 		updateTerminalFromConfig(config);
 	}
 
@@ -369,6 +426,19 @@ public class CMainTab extends CLaunchConfigurationTab {
 		fProgText.setText(programName);
 	}
 
+	/** @since 6.0 */
+	protected void updateCoreFromConfig(ILaunchConfiguration config) {
+		if (fCoreText != null) {
+			String coreName = EMPTY_STRING;
+			try {
+				coreName = config.getAttribute(ICDTLaunchConfigurationConstants.ATTR_COREFILE_PATH, EMPTY_STRING);
+			} catch (CoreException ce) {
+				LaunchUIPlugin.log(ce);
+			}
+			fCoreText.setText(coreName);
+		}
+	}
+	
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -389,6 +459,9 @@ public class CMainTab extends CLaunchConfigurationTab {
 		config.setAttribute(ICDTLaunchConfigurationConstants.ATTR_PROJECT_NAME, fProjText.getText());
 		config.setAttribute(ICDTLaunchConfigurationConstants.ATTR_PROJECT_BUILD_CONFIG_ID, (String)fBuildConfigCombo.getData(Integer.toString(fBuildConfigCombo.getSelectionIndex())));
 		config.setAttribute(ICDTLaunchConfigurationConstants.ATTR_PROGRAM_NAME, fProgText.getText());
+		if (fCoreText != null) {
+			config.setAttribute(ICDTLaunchConfigurationConstants.ATTR_COREFILE_PATH, fCoreText.getText());
+		}
 		if (fTerminalButton != null) {
 			config.setAttribute(ICDTLaunchConfigurationConstants.ATTR_USE_TERMINAL, fTerminalButton.getSelection());
 		}
@@ -487,6 +560,17 @@ public class CMainTab extends CLaunchConfigurationTab {
 		}
 	}
 
+	/**
+	 * Show a dialog that lets the user select a file.
+	 * 
+	 * @since 6.0
+	 */
+	protected String handleBrowseButtonSelected() {
+		FileDialog fileDialog = new FileDialog(getShell(), SWT.NONE);
+		fileDialog.setFileName(fProgText.getText());
+		return fileDialog.open();
+	}
+	
 	/**
 	 * Iterate through and suck up all of the executable files that we can find.
 	 */
@@ -608,8 +692,7 @@ public class CMainTab extends CLaunchConfigurationTab {
 		setErrorMessage(null);
 		setMessage(null);
 
-		if (dontCheckProgram)
-			return true;
+		if (!dontCheckProgram) {
 
 		String name = fProjText.getText().trim();
 		if (name.length() == 0) {
@@ -674,7 +757,25 @@ public class CMainTab extends CLaunchConfigurationTab {
 			setErrorMessage(e.getLocalizedMessage());
 			return false;
 		}
+		}
 		
+		if (fCoreText != null) {
+			String coreName = fCoreText.getText().trim();
+			// We accept an empty string.  This should trigger a prompt to the user
+			// This allows to re-use the launch, with a different core file.
+			if (!coreName.equals(EMPTY_STRING)) {
+				if (coreName.equals(".") || coreName.equals("..")) { //$NON-NLS-1$ //$NON-NLS-2$
+					setErrorMessage(LaunchMessages.getString("CMainTab.Core_does_not_exist")); //$NON-NLS-1$
+					return false;
+				}
+				IPath corePath = new Path(coreName);
+				if (!corePath.toFile().exists()) {
+					setErrorMessage(LaunchMessages.getString("CMainTab.Core_does_not_exist")); //$NON-NLS-1$
+					return false;
+				}
+			}
+		}
+
 		return true;
 	}
 
@@ -726,6 +827,8 @@ public class CMainTab extends CLaunchConfigurationTab {
 		// plus getContext will use this to base context from if set.
 		config.setAttribute(ICDTLaunchConfigurationConstants.ATTR_PROJECT_NAME, EMPTY_STRING);
 		config.setAttribute(ICDTLaunchConfigurationConstants.ATTR_PROJECT_BUILD_CONFIG_ID, EMPTY_STRING);
+		config.setAttribute(ICDTLaunchConfigurationConstants.ATTR_COREFILE_PATH, EMPTY_STRING);
+
 		ICElement cElement = null;
 		cElement = getContext(config, getPlatform(config));
 		if (cElement != null) {

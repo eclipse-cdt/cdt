@@ -272,7 +272,7 @@ public class LocalCDILaunchDelegate extends AbstractCLaunchDelegate {
 		ILaunchConfigurationWorkingCopy wc = null;
 		ICDebugConfiguration debugConfig = getDebugConfig( config );
 		String path = config.getAttribute( ICDTLaunchConfigurationConstants.ATTR_COREFILE_PATH, (String)null );
-		if ( path == null ) {
+		if ( path == null || path.length() == 0) {
 			ICProject project = verifyCProject( config );
 			IPath corefile = promptForCoreFilePath( (IProject)project.getResource(), debugConfig );
 			if ( corefile == null ) {
@@ -323,8 +323,6 @@ public class LocalCDILaunchDelegate extends AbstractCLaunchDelegate {
 			throw e;
 		}
 		finally {
-			if ( wc != null )
-				wc.setAttribute( ICDTLaunchConfigurationConstants.ATTR_COREFILE_PATH, (String)null );
 			monitor.done();
 		}		
 	}

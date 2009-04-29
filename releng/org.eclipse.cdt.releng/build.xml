@@ -8,6 +8,7 @@
 	<target name="nightly" depends="tag,zips,sign,test,update_index,copy"/>
 	<target name="testbuild" depends="zips,test,copy"/>
 	<target name="buildcopy" depends="zips,copy"/>
+	<target name="buildsigncopy" depends="tag,zips,sign,copy"/>
 	<target name="cdtbuild" depends="tag,zips,test,upload"/>
 	
 	<target name="init">
@@ -36,7 +37,7 @@
 		<property name="baseos" value="${osgi.os}"/>
 		<property name="basews" value="${osgi.ws}"/>
 		<property name="basearch" value="${osgi.arch}"/>
-		<property name="tagbranch" value="-r cdt_5_0"/>
+		<property name="tagbranch" value="-r cdt_5_0_2post"/>
 		<property name="tagname" value="v${timestamp}"/>
 		<property name="testReports" value="${zipsdir}/testReports"/>
 		<property name="junit-report-output" value="${testReports}"/>

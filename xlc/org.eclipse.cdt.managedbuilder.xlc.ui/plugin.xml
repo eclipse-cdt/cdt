@@ -837,6 +837,7 @@
         </configuration>
     </projectType>
     <tool
+          errorParsers="org.eclipse.cdt.errorparsers.xlc.XlcErrorParser"
           id="org.eclipse.cdt.managedbuilder.xlc.ui.tool.abstractCompiler"
           isAbstract="true"
           name="Abstract XL Compiler">
@@ -2862,6 +2863,7 @@
           </outputType>
     </tool>
     <tool
+          errorParsers="org.eclipse.cdt.errorparsers.xlc.XlcErrorParser"
           id="org.eclipse.cdt.managedbuilder.xlc.ui.tool.abstractLinker"
           isAbstract="true"
           name="Abstract XL Linker"
@@ -3057,10 +3059,11 @@
          </outputType>
     </tool>
      <tool
-            id="org.eclipse.cdt.managedbuilder.xlc.ui.tool.linker.abstractSOLinker"
-            isAbstract="true"
-            name="Abstract XL Shared Object Linker"
-            superClass="org.eclipse.cdt.managedbuilder.xlc.ui.tool.abstractLinker">
+           errorParsers="org.eclipse.cdt.errorparsers.xlc.XlcErrorParser"
+           id="org.eclipse.cdt.managedbuilder.xlc.ui.tool.linker.abstractSOLinker"
+           isAbstract="true"
+           name="Abstract XL Shared Object Linker"
+           superClass="org.eclipse.cdt.managedbuilder.xlc.ui.tool.abstractLinker">
             <option
             	name="%Option.Linking.mkshrobj"
 				id="xlc.c.link.so.option.shared"

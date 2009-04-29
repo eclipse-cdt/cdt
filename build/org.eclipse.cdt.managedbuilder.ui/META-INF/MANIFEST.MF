@@ -6,7 +6,7 @@ Bundle-Version: 5.0.100.qualifier
 Bundle-Activator: org.eclipse.cdt.managedbuilder.ui.properties.ManagedBuilderUIPlugin
 Bundle-Vendor: %providerName
 Bundle-Localization: plugin
-Export-Package: org.eclipse.cdt.managedbuilder.internal.ui.workingsets,
+Export-Package: org.eclipse.cdt.managedbuilder.internal.ui.workingsets;x-internal:=true,
  org.eclipse.cdt.managedbuilder.ui.actions,
  org.eclipse.cdt.managedbuilder.ui.preferences,
  org.eclipse.cdt.managedbuilder.ui.properties,

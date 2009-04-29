@@ -93,4 +93,12 @@
          id="org.eclipse.cdt.launch.remote"
          version="0.0.0"/>
 
+   <includes
+         id="org.eclipse.cdt.build.crossgcc"
+         version="0.0.0"/>
+
+   <includes
+         id="org.eclipse.cdt.p2"
+         version="0.0.0"/>
+
 </feature>

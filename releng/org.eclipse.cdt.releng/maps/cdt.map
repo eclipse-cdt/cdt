@@ -127,3 +127,11 @@ feature@org.eclipse.cdt.debug.ui.memory=@cdtTag@,:pserver:anonymous@dev.eclipse.
 ! CDT RSE Remote Launch
 plugin@org.eclipse.cdt.launch.remote=@cdtTag@,:pserver:anonymous@dev.eclipse.org:/cvsroot/tools,,org.eclipse.cdt/cross/org.eclipse.cdt.launch.remote
 feature@org.eclipse.cdt.launch.remote=@cdtTag@,:pserver:anonymous@dev.eclipse.org:/cvsroot/tools,,org.eclipse.cdt/cross/org.eclipse.cdt.launch.remote-feature
+
+! CDT Cross GCC 
+plugin@org.eclipse.cdt.build.crossgcc=@cdtTag@,:pserver:anonymous@dev.eclipse.org:/cvsroot/tools,,org.eclipse.cdt/cross/org.eclipse.cdt.build.crossgcc
+feature@org.eclipse.cdt.build.crossgcc=@cdtTag@,:pserver:anonymous@dev.eclipse.org:/cvsroot/tools,,org.eclipse.cdt/cross/org.eclipse.cdt.build.crossgcc-feature
+
+! CDT P2 Additions
+plugin@org.eclipse.cdt.p2=@cdtTag@,:pserver:anonymous@dev.eclipse.org:/cvsroot/tools,,org.eclipse.cdt/cross/org.eclipse.cdt.p2
+feature@org.eclipse.cdt.p2=@cdtTag@,:pserver:anonymous@dev.eclipse.org:/cvsroot/tools,,org.eclipse.cdt/cross/org.eclipse.cdt.p2-feature

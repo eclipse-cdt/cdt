@@ -143,8 +143,18 @@ public class UntarAction extends ProvisioningAction {
 					FileOutputStream outStream = new FileOutputStream(outFile);
 					tarIn.copyEntryContents(outStream);
 					outStream.close();
+					
+					// Set last modified time from the tar entry
 					long lastModified = tarEntry.getModTime().getTime();
 					outFile.setLastModified(lastModified);
+					
+					// Set the executable bits from the tar entry
+					// we let the umask determine the r/w
+					int mode = tarEntry.getMode();
+					boolean exec = (mode & 0x111) != 0;
+					boolean execOwner = (mode & 0x11) == 0;
+					outFile.setExecutable(exec, execOwner);
+					
 					fileList.add(outFile);
 				}
 			}

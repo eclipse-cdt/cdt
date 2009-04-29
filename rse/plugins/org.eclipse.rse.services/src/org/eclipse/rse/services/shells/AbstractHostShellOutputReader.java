@@ -14,6 +14,7 @@
  * Contributors:
  * Martin Oberhuber (Wind River) - [197848] Fix shell terminated state when remote dies
  * Martin Oberhuber (Wind River) - [217429] Make registering multiple output listeners thread-safe
+ * David McKnight   (IBM)        - [272421] AbstractHostShellOutputReader does not generate notification when error stream is closed
  *******************************************************************************/
 
 package org.eclipse.rse.services.shells;
@@ -184,11 +185,10 @@ public abstract class AbstractHostShellOutputReader  extends Thread implements I
 				_keepRunning = false;
 			}
 		}
-		if (!isErrorReader()) {
-			//Bug 197848: Fire empty event as notification that we are done
-			HostShellChangeEvent event = new HostShellChangeEvent(_hostShell, this, 0, 0);
-			fireOutputChanged(event);
-		}
+
+		//Bug 197848: Fire empty event as notification that we are done
+		HostShellChangeEvent event = new HostShellChangeEvent(_hostShell, this, 0, 0);
+		fireOutputChanged(event);
 	}
 
 	protected abstract IHostOutput internalReadLine();

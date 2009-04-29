@@ -109,14 +109,14 @@ public class ProblemBinding extends PlatformObject implements IProblemBinding, I
      * @see org.eclipse.cdt.core.dom.ast.IBinding#getName()
      */
     public String getName() {
-        return CPPSemantics.EMPTY_NAME;
+        return node instanceof IASTName ? new String(((IASTName) node).getSimpleID()) : CPPSemantics.EMPTY_NAME;
     }
 
     /* (non-Javadoc)
      * @see org.eclipse.cdt.core.dom.ast.IBinding#getNameCharArray()
      */
     public char[] getNameCharArray() {
-        return CharArrayUtils.EMPTY;
+        return node instanceof IASTName ? ((IASTName) node).getSimpleID() : CharArrayUtils.EMPTY;
     }
 
     /* (non-Javadoc)

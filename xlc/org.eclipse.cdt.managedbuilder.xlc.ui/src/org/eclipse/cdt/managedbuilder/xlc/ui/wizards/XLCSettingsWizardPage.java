@@ -131,20 +131,20 @@ public class XLCSettingsWizardPage extends MBSCustomPage {
 		fDirTextBox.setText(compilerPath);
 		
 		// update the page manager with the setting
-		MBSCustomPageManager.addPageProperty(PAGE_ID, PreferenceConstants.P_XL_COMPILER_ROOT, fDirTextBox.getText());
+		MBSCustomPageManager.addPageProperty(pageID, PreferenceConstants.P_XL_COMPILER_ROOT, fDirTextBox.getText());
 		
 		fDirTextBox.addModifyListener(new ModifyListener() {
 
 			public void modifyText(ModifyEvent e) {
 				// update the page manager with the setting
-				MBSCustomPageManager.addPageProperty(PAGE_ID, PreferenceConstants.P_XL_COMPILER_ROOT, fDirTextBox.getText());
+				MBSCustomPageManager.addPageProperty(pageID, PreferenceConstants.P_XL_COMPILER_ROOT, fDirTextBox.getText());
 				
 			}
 			
 		});
 		
 		// create the browse button
-		String selectedPath = null;
+		//String selectedPath = null;
 		GridData buttonData = new GridData();
 		buttonData.horizontalAlignment = SWT.RIGHT;
 		Button browseButton = new Button(fComposite, SWT.PUSH);
@@ -179,13 +179,13 @@ public class XLCSettingsWizardPage extends MBSCustomPage {
 		fVersionCombo.setText(compilerVersion);
 		
 		// update the page manager with the setting
-		MBSCustomPageManager.addPageProperty(PAGE_ID, PreferenceConstants.P_XLC_COMPILER_VERSION, fVersionCombo.getText());
+		MBSCustomPageManager.addPageProperty(pageID, PreferenceConstants.P_XLC_COMPILER_VERSION, fVersionCombo.getText());
 		
 		fVersionCombo.addModifyListener(new ModifyListener() {
 
 			public void modifyText(ModifyEvent e) {
 				// update the page manager with the setting
-				MBSCustomPageManager.addPageProperty(PAGE_ID, PreferenceConstants.P_XLC_COMPILER_VERSION, fVersionCombo.getText());
+				MBSCustomPageManager.addPageProperty(pageID, PreferenceConstants.P_XLC_COMPILER_VERSION, fVersionCombo.getText());
 				
 			}
 			

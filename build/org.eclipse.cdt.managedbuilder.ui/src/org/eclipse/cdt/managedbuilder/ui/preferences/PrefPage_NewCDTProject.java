@@ -20,6 +20,9 @@ import org.eclipse.cdt.ui.newui.ICPropertyTab;
 import org.eclipse.cdt.ui.newui.UIMessages;
 import org.eclipse.core.runtime.CoreException;
 
+/**
+ * @since 5.1
+ */
 public class PrefPage_NewCDTProject extends AbstractPrefPage {
 	private ICConfigurationDescription prefCfgd = null;
 

@@ -34,6 +34,10 @@ import org.eclipse.swt.graphics.Image;
 public class ManagedBuildWizard extends AbstractCWizard {
 	private static final Image IMG = CPluginImages.get(CPluginImages.IMG_OBJS_CONTAINER);
 	public static final String OTHERS_LABEL = Messages.getString("CNewWizard.0");  //$NON-NLS-1$
+	
+	/**
+	 * @since 5.1
+	 */
 	public static final String EMPTY_PROJECT = Messages.getString("AbstractCWizard.0");  //$NON-NLS-1$
 	/**
 	 * Creates and returns an array of items to be displayed 

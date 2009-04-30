@@ -49,7 +49,11 @@ public class ConvertToMakeWizardPage extends ConvertProjectWizardPage {
     private static final String WZ_TITLE = "WizardMakeProjectConversion.title"; //$NON-NLS-1$
     private static final String WZ_DESC = "WizardMakeProjectConversion.description"; //$NON-NLS-1$
     
+    /**
+	 * @since 5.1
+	 */
     protected CWizardHandler h_selected = null;
+    
     // widgets
     private Button specifyProjectTypeButton;
     private Tree tree;
@@ -273,6 +277,9 @@ public class ConvertToMakeWizardPage extends ConvertProjectWizardPage {
 		}
 	}
 
+	/**
+	 * @since 5.1
+	 */
 	public boolean isSetProjectType() {
 		return specifyProjectTypeButton != null && specifyProjectTypeButton.getSelection();
     }

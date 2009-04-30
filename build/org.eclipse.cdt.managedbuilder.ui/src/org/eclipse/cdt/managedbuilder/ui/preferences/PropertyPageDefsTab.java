@@ -22,6 +22,9 @@ import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Group;
 
+/**
+ * @since 5.1
+ */
 public class PropertyPageDefsTab extends AbstractCPropertyTab {
 
 	private static final int SPACING = 5; // for radio buttons layout

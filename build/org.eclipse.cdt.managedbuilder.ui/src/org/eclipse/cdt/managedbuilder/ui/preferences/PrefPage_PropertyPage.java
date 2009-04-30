@@ -16,6 +16,9 @@ import org.eclipse.cdt.ui.newui.AbstractPrefPage;
 import org.eclipse.cdt.ui.newui.ICPropertyTab;
 import org.eclipse.cdt.ui.newui.UIMessages;
 
+/**
+ * @since 5.1
+ */
 public class PrefPage_PropertyPage extends AbstractPrefPage {
 
 	protected String getHeader() {

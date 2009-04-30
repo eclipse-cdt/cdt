@@ -11,5 +11,8 @@
 
 package org.eclipse.cdt.managedbuilder.ui.preferences;
 
+/**
+ * @since 5.1
+ */
 public class PrefPage_MultiConfig extends PrefPage_PropertyPage {
 }

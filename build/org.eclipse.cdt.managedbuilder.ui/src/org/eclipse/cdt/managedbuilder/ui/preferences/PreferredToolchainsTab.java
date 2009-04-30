@@ -37,6 +37,9 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Tree;
 import org.eclipse.swt.widgets.TreeItem;
 
+/**
+ * @since 5.1
+ */
 public class PreferredToolchainsTab extends AbstractCBuildPropertyTab {
 
     protected CWizardHandler h_selected = null;

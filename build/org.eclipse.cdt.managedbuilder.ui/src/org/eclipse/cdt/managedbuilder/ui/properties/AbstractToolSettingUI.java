@@ -31,7 +31,7 @@ public abstract class AbstractToolSettingUI extends FieldEditorPreferencePage {
 	}
 	
 	/**
-	 * @since 5.0
+	 * @since 5.1
 	 */
 	protected AbstractToolSettingUI(IResourceInfo info, int style) {
  		super(style);

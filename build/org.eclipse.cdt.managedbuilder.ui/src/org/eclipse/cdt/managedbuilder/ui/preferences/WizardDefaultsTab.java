@@ -20,6 +20,9 @@ import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 
+/**
+ * @since 5.1
+ */
 public class WizardDefaultsTab extends AbstractCPropertyTab {
 
     private Button show_sup;

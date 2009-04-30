@@ -90,7 +90,7 @@ public interface IBuilder extends IBuildObject, IMakeBuilderInfo {
 	static final String DEFAULT_TARGET_AUTO = "all"; //$NON-NLS-1$
 	
 	/**
-	 * @since 5.1
+	 * @since 6.0
 	 */
 	static final String ATTRIBUTE_COMMAND_LAUNCHER = "commandLauncher"; //$NON-NLS-1$
 	
@@ -328,7 +328,7 @@ public interface IBuilder extends IBuildObject, IMakeBuilderInfo {
 	 * Returns the ICommandLauncher which should be used to launch the builder command.
 	 * 
 	 * @return ICommandLauncher
-	 * @since 5.1
+	 * @since 6.0
 	 */
 	public ICommandLauncher getCommandLauncher();
 }

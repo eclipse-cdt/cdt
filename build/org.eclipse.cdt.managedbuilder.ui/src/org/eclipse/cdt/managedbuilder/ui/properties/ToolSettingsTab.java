@@ -450,14 +450,14 @@ public class ToolSettingsTab extends AbstractCBuildPropertyTab implements IPrefe
 		}
 		
 		/**
-		 * @since 5.0
+		 * @since 5.1
 		 */
 		protected void addFilter(ViewerFilter filter) {
 			optionList.addFilter(filter);
 		}
 		
 		/**
-		 * @since 5.0
+		 * @since 5.1
 		 */
 		@SuppressWarnings("unchecked")
 		protected void setOption(IOption op1, IOption op2, IHoldsOptions dst, IResourceInfo res){

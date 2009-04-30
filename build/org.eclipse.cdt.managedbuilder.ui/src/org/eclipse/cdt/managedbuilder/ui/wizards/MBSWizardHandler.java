@@ -128,6 +128,9 @@ public class MBSWizardHandler extends CWizardHandler {
 			tcs = _tcs;
 		}
 	
+		/**
+		 * @since 5.1
+		 */
 		public EntryInfo(EntryDescriptor dr, SortedMap<String, IToolChain> _tcs, IWizard w){
 			this(dr, _tcs);
 			wizard = w;

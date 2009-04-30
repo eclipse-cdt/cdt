@@ -16,6 +16,9 @@ import org.eclipse.cdt.managedbuilder.ui.properties.Messages;
 import org.eclipse.cdt.ui.newui.AbstractPrefPage;
 import org.eclipse.cdt.ui.newui.ICPropertyTab;
 
+/**
+ * @since 5.1
+ */
 public class PrefPage_NewCDTWizard extends AbstractPrefPage {
 
 	protected String getHeader() {

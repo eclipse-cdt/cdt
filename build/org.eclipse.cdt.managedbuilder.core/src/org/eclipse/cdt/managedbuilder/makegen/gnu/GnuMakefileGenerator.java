@@ -2202,7 +2202,7 @@ public class GnuMakefileGenerator implements IManagedBuilderMakefileGenerator2 {
 	 * Gets a path for a resource by extracting the Path field from its
 	 * location URI.
 	 * @return IPath
-	 * @since 5.1
+	 * @since 6.0
 	 */
 	protected IPath getPathForResource(IResource resource) {
 		return new Path(resource.getLocationURI().getPath());

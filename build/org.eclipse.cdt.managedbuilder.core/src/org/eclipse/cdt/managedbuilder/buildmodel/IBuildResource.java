@@ -38,7 +38,7 @@ public interface IBuildResource {
 	 * Returns a URI that can be used by EFS to access the build resource.
 	 * 
 	 * @return URI
-	 * @since 5.1
+	 * @since 6.0
 	 */
 	URI getLocationURI();
 	

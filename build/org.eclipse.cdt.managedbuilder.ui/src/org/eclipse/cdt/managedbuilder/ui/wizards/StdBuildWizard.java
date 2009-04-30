@@ -19,6 +19,10 @@ import org.eclipse.jface.wizard.IWizard;
 public class StdBuildWizard extends AbstractCWizard {
 	private static final String NAME = Messages.getString("StdBuildWizard.0"); //$NON-NLS-1$
 	private static final String ID = "org.eclipse.cdt.build.makefile.projectType"; //$NON-NLS-1$
+	
+	/**
+	 * @since 5.1
+	 */
 	public static final String EMPTY_PROJECT = Messages.getString("AbstractCWizard.0");  //$NON-NLS-1$
 	
 	public EntryDescriptor[] createItems(boolean supportedOnly, IWizard wizard) {

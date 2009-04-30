@@ -25,6 +25,9 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Label;
 
+/**
+ * @since 5.1
+ */
 public class PropertyMultiCfgTab extends AbstractCPropertyTab {
 
 	private static final int SPACING = 5; // for radio buttons layout

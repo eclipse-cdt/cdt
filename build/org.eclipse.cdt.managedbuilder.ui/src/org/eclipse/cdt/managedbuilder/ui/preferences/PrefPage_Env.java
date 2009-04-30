@@ -12,5 +12,8 @@ package org.eclipse.cdt.managedbuilder.ui.preferences;
 
 import org.eclipse.cdt.ui.newui.PrefPage_Abstract;
 
+/**
+ * @since 5.1
+ */
 public class PrefPage_Env extends PrefPage_Abstract {
 }

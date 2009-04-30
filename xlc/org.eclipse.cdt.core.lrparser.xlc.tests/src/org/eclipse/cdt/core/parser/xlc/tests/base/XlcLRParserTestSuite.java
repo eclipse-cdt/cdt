@@ -33,7 +33,6 @@ public class XlcLRParserTestSuite extends TestSuite {
 			addTest(XlcLRCompleteParser2Tests.suite());
 			addTest(XlcLRCompletionBasicTest.suite());	
 			addTest(XlcLRCompletionParseTest.suite());
-			addTest(XlcLRCPPSpecFailingTest.suite());
 			addTest(XlcLRCPPSpecTest.suite());
 			addTest(XlcLRCPPTests.suite()); 
 			addTest(XlcLRCSpecTests.suite()); // a couple of failures

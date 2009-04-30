@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2008 QNX Software Systems and others.
+ * Copyright (c) 2000, 2009 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,6 +8,7 @@
  * Contributors:
  *     QNX Software Systems - Initial API and implementation
  *     Anton Leherbauer (Wind River Systems)
+ *     IBM Corporation
  *******************************************************************************/
 package org.eclipse.cdt.make.internal.ui.editor;
 
@@ -39,6 +40,7 @@ import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
+import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.IPartService;
 import org.eclipse.ui.IWorkbenchPart;
@@ -432,5 +434,10 @@ public class MakefileEditor extends TextEditor implements ISelectionChangedListe
 	protected void initializeKeyBindingScopes() {
 		setKeyBindingScopes(new String [] { "org.eclipse.cdt.make.ui.makefileEditorScope" } ); //$NON-NLS-1$
 	}
+
+    @Override
+    public int getOrientation() {
+        return SWT.LEFT_TO_RIGHT; // bug 271449: Makefile editor should always be left to right
+    }
 
 }

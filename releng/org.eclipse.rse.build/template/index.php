@@ -58,8 +58,8 @@
          (<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=224799">bug 224799</a>)
          requires <a href="http://download.eclipse.org/eclipse/downloads/">Eclipse 3.4</a>
          or later.
-         <b>RSE Import/Export</b> requires <b>Java 1.5</b> or higher, the rest of
-         RSE works with Java 1.4.
+         <b>RSE Import/Export as well as FTP and Telnet</b> require <b>Java 1.5</b>
+         or higher, the rest of RSE works with Java 1.4.
     </b></td></tr>
     <tr><td>
       Other components may work with earlier Eclipse versions, but these have not been tested.<br/>

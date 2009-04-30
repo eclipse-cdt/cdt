@@ -24,27 +24,29 @@
 <table><tbody><tr><td>
 <ul>
 <li>TM @buildId@ <b>requires Eclipse 3.4 or later</b>, although parts of it will likely run
-  with earlier versions. <b>Import/Export requires Java 1.5</b>, the rest of RSE runs on Java 1.4.
+  with earlier versions. <b>Import/Export, Telnet and FTP require Java 1.5</b>, the rest of
+  RSE runs on Java 1.4.
   Platform Runtime is the minimum requirement for core RSE and Terminal.
-  Discovery needs EMF, and the RemoteCDT integration needs CDT.</li>
+  Discovery needs EMF.</li>
 <li>Important Bug Fixes, Enhancements and API changes:<ul>
-  <li><b>Encoding</b> is now observed properly when transferring files in text mode
-    [<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=267247">267247</a>]</li>
-  <li><b>New Subsystems</b> are now created after-the-fact on existing connections,
-    when new plugins supporting that subsystem are installed or updated
-    [<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=267052">267052</a>]</li>
-  <li><b>RSE FTP and Telnet</b> are now able to run against Apache Commons Net version 2.0.
-    That library is not yet shipped as part of RSE, but can be installed separately from
-    Orbit for testing
-    [<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=267473">267473</a>].</li>
+  <li>For <b>IService.initService()</b> there was an API specification update 
+    (see below).</li>
+  <li>The <b>Remote CDT Launcher Plug-in</b> has been moved into the CDT
+    [<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=267065">267065</a>].</li>
+  <li><b>RSE FTP and Telnet</b> now ship with Apache Commons Net version 2.0.
+    As a prerequisite of Commons Net 2.0, Java5 is now required for these connection types.
+    Besides bug fixes in Commons Net, one new feature due to the change is that RSE now 
+    supports Telnet window size notifications in the RSE Terminal.
+    [<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=267473">267473</a>]
+    [<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=267474">267474</a>].</li>
   </ul></li>
-<li>At least 21 bugs were fixed: Use 
-  <!-- <a href="https://bugs.eclipse.org/bugs/buglist.cgi?query_format=advanced&classification=DSDP&product=Target+Management&component=Core&component=RSE&component=Terminal&bug_status=RESOLVED&bug_status=VERIFIED&bug_status=CLOSED&resolution=FIXED&resolution=WONTFIX&resolution=WORKSFORME&chfieldfrom=2009-02-01&chfieldto=2009-03-31&chfield=resolution&cmdtype=doit&negate0=1&field0-0-0=target_milestone&type0-0-0=regexp&value0-0-0=%5B23%5D.0&field0-0-1=target_milestone&type0-0-1=regexp&value0-0-1=3.1%20M%5B23457%5D"> -->
-  <a href="https://bugs.eclipse.org/bugs/buglist.cgi?query_format=advanced&classification=DSDP&product=Target+Management&component=Core&component=RSE&component=Terminal&target_milestone=3.1+M6&bug_status=RESOLVED&bug_status=VERIFIED&bug_status=CLOSED&resolution=FIXED&resolution=WONTFIX&resolution=WORKSFORME&cmdtype=doit">
-  this query</a> to show the list of bugs fixed since <!-- the last milestone, -->
-  <a href="http://download.eclipse.org/dsdp/tm/downloads/drops/S-3.1M5-200902081925/">
-  TM 3.1M5</a>
-  [<a href="http://download.eclipse.org/dsdp/tm/downloads/drops/S-3.1M5-200902081925/buildNotes.php">build notes</a>].</li>
+<li>At least 32 bugs were fixed: Use 
+  <!-- <a href="https://bugs.eclipse.org/bugs/buglist.cgi?query_format=advanced&classification=DSDP&product=Target+Management&component=Core&component=RSE&component=Terminal&bug_status=RESOLVED&bug_status=VERIFIED&bug_status=CLOSED&resolution=FIXED&resolution=WONTFIX&resolution=WORKSFORME&chfieldfrom=2009-03-19&chfieldto=2009-05-10&chfield=resolution&cmdtype=doit&negate0=1&field0-0-0=target_milestone&type0-0-0=regexp&value0-0-0=%5B23%5D.0&field0-0-1=target_milestone&type0-0-1=regexp&value0-0-1=3.1%20M%5B23456%5D"> -->
+  <a href="https://bugs.eclipse.org/bugs/buglist.cgi?query_format=advanced&classification=DSDP&product=Target+Management&component=Core&component=RSE&component=Terminal&target_milestone=3.1+M7&bug_status=RESOLVED&bug_status=VERIFIED&bug_status=CLOSED&resolution=FIXED&resolution=WONTFIX&resolution=WORKSFORME&cmdtype=doit">
+  this query</a> to show the list of bugs fixed since
+  <a href="http://download.eclipse.org/dsdp/tm/downloads/drops/S-3.1M6-200903192015/">
+  TM 3.1M6</a>
+  [<a href="http://download.eclipse.org/dsdp/tm/downloads/drops/S-3.1M6-200903192015/buildNotes.php">build notes</a>].</li>
 <li>For details on checkins, see
   <a href="http://dsdp.eclipse.org/dsdp/tm/searchcvs.php">TM SearchCVS</a>, the
   <a href="http://download.eclipse.org/dsdp/tm/downloads/drops/N-changelog/index.html">
@@ -112,6 +114,16 @@ More information can be found in the associated bugzilla items.
 
 <ul>
 <li>TM @buildId@ API Specification Updates
+<ul><li>Methods <code><a href="http://dsdp.eclipse.org/help/latest/topic/org.eclipse.rse.doc.isv/reference/api/org/eclipse/rse/services/IService.html#initService(org.eclipse.core.runtime.IProgressMonitor)">IService.initService()</a></code>
+  and <code><a href="http://dsdp.eclipse.org/help/latest/topic/org.eclipse.rse.doc.isv/reference/api/org/eclipse/rse/core/subsystems/ISubSystem.html#initializeSubSystem(org.eclipse.core.runtime.IProgressMonitor)">ISubSystem.initializeSubSystem</a></code>
+  can now throw a <code>SystemMessageException</code> on error. As per the 
+  <a href="http://wiki.eclipse.org/Evolving_Java-based_APIs_2#Evolving_API_interfaces_-_API_methods">Java API compatibility guide</a>,
+  this is not strictly a change breaking binary compatibility, but it does break source compatibility.
+  In other words, you'll need to update your sources when you recompile, though old compiled bundles
+  will continue to run
+  [<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=272882">272882</a>].</li>
+</ul></li>
+<li>TM 3.1M6 API Specification Updates
 <ul><li>None.</li>
 </ul></li>
 <li>TM 3.1M5 API Specification Updates
@@ -167,7 +179,6 @@ We'll strive to fix these as soon as possible.
   <li><a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=260796">bug 260796</a> - maj - [ftp] Fetching folder job sometimes runs forever with Outpost firewall</li>
   <li><a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=248913">bug 248913</a> - maj - [ssh] SSH subsystem loses connection</li> 
   <li><a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=238156">bug 238156</a> - maj - Export/Import Connection doesn't create default filters for the specified connection</li>
-  <li><a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=236443">bug 236443</a> - maj - [releng] Using P2 to install "remotecdt" only from update site creates an unusable installation</li>
   <li><a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=226564">bug 226564</a> - maj - [efs] Deadlock while starting dirty workspace
   <li><a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=222380">bug 222380</a> - maj - [persistence][migration][team] Subsystem association is lost when creating connection with an installation that does not have subsystem impl</li>
   <li><a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=218387">bug 218387</a> - maj - [efs] Eclipse hangs on startup of a Workspace with a large efs-shared file system on a slow connection</li>

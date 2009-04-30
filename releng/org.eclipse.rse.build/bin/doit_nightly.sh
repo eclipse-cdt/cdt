@@ -69,7 +69,6 @@ if [ -d N.latest ]; then
     cd `dirname ${FILES}`
     cp -f RSE-SDK-N*.zip ../N.latest/RSE-SDK-latest.zip
     cp -f TM-discovery-*.zip ../N.latest/TM-discovery-latest.zip
-    cp -f RSE-remotecdt-*.zip ../N.latest/RSE-remotecdt-latest.zip
     cd ../N.latest
     chgrp dsdp-tmadmin *.zip
     chmod g+w *.zip

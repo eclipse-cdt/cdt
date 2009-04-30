@@ -69,7 +69,7 @@
         <a href="http://archive.eclipse.org/eclipse/downloads/drops/R-3.3-200706251500/index.php#EclipseSDK">SDK</a>. 
     </td></tr> 
     <tr><td>
-      Prerequisites for the remotecdt and discovery add-ons (CDT, EMF) can be retrieved from the
+      Prerequisites for the discovery add-on (EMF) can be retrieved from the
       <a href="http://download.eclipse.org/releases/europa/">Europa</a>, 
       <a href="http://download.eclipse.org/releases/ganymede/">Ganymede</a> or
       <a href="http://download.eclipse.org/releases/galileo/">Galileo</a>
@@ -145,16 +145,6 @@
 			for serial line (through RXTX, see the 
 			  <a href="http://dev.eclipse.org/viewcvs/index.cgi/org.eclipse.tm.core/terminal/org.eclipse.tm.terminal.serial/README.txt?revision=1.5&root=DSDP_Project&view=markup">
 			installation notes</a>), ssh and telnet. Includes Source.
-        </td>
-    </tr>
-	<tr><td><div align=left><img src = "OK.gif" width=19 height=23></div></td>
-        <td>All</td>
-        <td><a href="http://www.eclipse.org/downloads/download.php?file=/dsdp/tm/downloads/drops/@dropDir@/RSE-remotecdt-@buildId@.zip">RSE-remotecdt-@buildId@.zip</a></td>
-        <td><small>&nbsp;</small><br/>
-			A Launch Configuration for running and debugging C/C++
-			programs on a remote host through RSE-provided shell
-			and file services, and gdbserver. Requires CDT 3.0 or later.
-			Includes Source.
         </td>
     </tr>
 	<tr><td><div align=left><img src = "OK.gif" width=19 height=23></div></td>

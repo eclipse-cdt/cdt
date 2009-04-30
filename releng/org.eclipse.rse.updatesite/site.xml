@@ -432,9 +432,6 @@
    <feature url="features/org.eclipse.rse.examples_3.1.0.qualifier.jar" id="org.eclipse.rse.examples" version="3.1.0.qualifier">
       <category name="TM and RSE 3.1"/>
    </feature>
-   <feature url="features/org.eclipse.rse.remotecdt_2.2.0.qualifier.jar" id="org.eclipse.rse.remotecdt" version="2.2.0.qualifier">
-      <category name="TM and RSE 3.1"/>
-   </feature>
    <feature url="features/org.eclipse.rse.terminals_1.0.0.qualifier.jar" id="org.eclipse.rse.terminals" version="1.0.0.qualifier">
       <category name="TM and RSE 3.1"/>
    </feature>

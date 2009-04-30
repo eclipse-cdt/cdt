@@ -117,7 +117,6 @@ if [ -f package.count -a "$FILES" != "" ]; then
     rm -f ../N.latest/TM-*.zip
     cp -f RSE-SDK-*.zip ../N.latest/RSE-SDK-latest.zip
     cp -f TM-discovery-*.zip ../N.latest/TM-discovery-latest.zip
-    cp -f RSE-remotecdt-*.zip ../N.latest/RSE-remotecdt-latest.zip
     chgrp dsdp-tmadmin ../N.latest/*.zip
     chmod g+w ../N.latest/*.zip
     if [ -d /shared/dsdp/public_html/tm/downloads/drops/N.latest ]; then

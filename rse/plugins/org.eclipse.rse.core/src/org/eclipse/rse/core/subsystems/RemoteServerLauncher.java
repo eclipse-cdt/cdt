@@ -7,13 +7,13 @@
  *
  * Initial Contributors:
  * The following IBM employees contributed to the Remote System Explorer
- * component that contains this file: David McKnight, Kushal Munir, 
- * Michael Berger, David Dykstal, Phil Coulthard, Don Yantzi, Eric Simpson, 
+ * component that contains this file: David McKnight, Kushal Munir,
+ * Michael Berger, David Dykstal, Phil Coulthard, Don Yantzi, Eric Simpson,
  * Emily Bruner, Mazen Faraj, Adrian Storisteanu, Li Ding, and Kent Hawley.
- * 
+ *
  * Contributors:
  * David Dykstal (IBM) - 168977: refactoring IConnectorService and ServerLauncher hierarchies
- * Martin Oberhuber (Wind River) - [175262] IHost.getSystemType() should return IRSESystemType 
+ * Martin Oberhuber (Wind River) - [175262] IHost.getSystemType() should return IRSESystemType
  * Martin Oberhuber (Wind River) - [184095] Replace systemTypeName by IRSESystemType
  * David McKnight  (IBM)  - [224671] [api] org.eclipse.rse.core API leaks non-API types
  * David McKnight  (IBM)  - [240037] [dstore][launcher] NumberFormatException printed to stdout when invalid rexec port is given in new connection wizard
@@ -36,8 +36,8 @@ import org.eclipse.rse.internal.core.RSECoreMessages;
  * <!-- begin-user-doc -->
  * This subclass of {@link IServerLauncherProperties} is for use by some dstore-based subsystems, although
  *  is possibly of value to vendors as well. The dstore-based subsystems use server code
- *  written in Java, on top of the datastore technology. You can read about this in the 
- *  developer guide for Remote System Explorer. The bottom line, however, is we offer the 
+ *  written in Java, on top of the datastore technology. You can read about this in the
+ *  developer guide for Remote System Explorer. The bottom line, however, is we offer the
  *  user a number of ways to start that remote server from the client, as well to connect
  *  to it if it is already running. This class encapsulates the properties to support that.
  * <p>
@@ -96,27 +96,27 @@ public class RemoteServerLauncher extends ServerLauncher implements IRemoteServe
 	protected static final String REMOTE_ATTRIBUTES_EDEFAULT = null;
 
 	protected static final String RESTRICTED_TYPES_EDEFAULT = null;
-	
+
 	protected static final boolean AUTODETECT_SSL_EDEFAULT = true;
-	
+
 	protected boolean _autoDetectSSL = AUTODETECT_SSL_EDEFAULT;
 
 	protected IPropertyType _serverLauncherEnumType;
-	
+
 	public RemoteServerLauncher(String name, IConnectorService connectorService)
 	{
-		super(name, connectorService);		
+		super(name, connectorService);
 	}
-	
+
 	public IPropertyType getServerLauncherPropertyType()
 	{
 		if (_serverLauncherEnumType == null)
 		{
 			// for persistence
 			List values = Arrays.asList(getSupportedLauncherEnumTypes());
-				// DKM - only need supported types 
+				// DKM - only need supported types
 				/// ServerLaunchType.VALUES;
-			
+
 			String[] enumValues = new String[values.size()];
 			for (int i = 0; i < values.size(); i++)
 			{
@@ -127,7 +127,7 @@ public class RemoteServerLauncher extends ServerLauncher implements IRemoteServe
 		}
 		return _serverLauncherEnumType;
 	}
-	
+
 	protected ServerLaunchType[] getSupportedLauncherEnumTypes()
 	{
 		return new ServerLaunchType[]
@@ -137,7 +137,7 @@ public class RemoteServerLauncher extends ServerLauncher implements IRemoteServe
 		ServerLaunchType.RUNNING_LITERAL
 		                  };
 	}
-	
+
 	public void restoreFromProperties()
 	{
 		IPropertySet set = getPropertySet(PROPERTY_SET_NAME);
@@ -153,53 +153,53 @@ public class RemoteServerLauncher extends ServerLauncher implements IRemoteServe
 				launchTypeProperty.setLabel(RSECoreMessages.RESID_PROP_SERVERLAUNCHER_MEANS_LABEL);
 				String launchTypeName = launchTypeProperty.getValue();
 				_serverLaunchType  = ServerLaunchType.get(launchTypeName);
-				
+
 				IProperty daemonPortProperty = set.getProperty(KEY_DAEMON_PORT);
 				boolean daemon = _serverLaunchType == null || _serverLaunchType.getType() == ServerLaunchType.DAEMON;
 				daemonPortProperty.setEnabled(daemon);
 				daemonPortProperty.setLabel(RSECoreMessages.RESID_CONNECTION_DAEMON_PORT_LABEL);
-				
+
 				try {
 					_daemonPort = Integer.parseInt(daemonPortProperty.getValue());
 				}
 				catch (Exception e){
 					_daemonPort = DAEMON_PORT_EDEFAULT;
 				}
-				
+
 				IProperty autoDetectProperty = set.getProperty(KEY_AUTODETECT_SSL);
 				if (autoDetectProperty != null)
 				{
 					boolean autoDetect = _serverLaunchType == null || _serverLaunchType.getType() == ServerLaunchType.REXEC;
 					autoDetectProperty.setEnabled(autoDetect);
 					autoDetectProperty.setLabel(RSECoreMessages.RESID_SUBSYSTEM_AUTODETECT_LABEL);
-				
-					_autoDetectSSL = Boolean.parseBoolean(autoDetectProperty.getValue());
+
+					_autoDetectSSL = Boolean.valueOf(autoDetectProperty.getValue()).booleanValue();
 				}
-				
+
 				boolean usingRexec = _serverLaunchType != null && _serverLaunchType.getType() == ServerLaunchType.REXEC;
 				IProperty rexecPortProperty = set.getProperty(KEY_REXEC_PORT);
 				rexecPortProperty.setEnabled(usingRexec);
 				rexecPortProperty.setLabel(RSECoreMessages.RESID_CONNECTION_PORT_LABEL);
-				
+
 				try {
 					_rexecPort  = Integer.parseInt(rexecPortProperty.getValue());
 				}
 				catch (Exception e){
 					_rexecPort = REXEC_PORT_EDEFAULT;
 				}
-				
+
 				IProperty serverPathProperty = set.getProperty(KEY_SERVER_PATH);
 				serverPathProperty.setEnabled(usingRexec);
 				serverPathProperty.setLabel(RSECoreMessages.RESID_PROP_SERVERLAUNCHER_PATH);
 				_serverPath = serverPathProperty.getValue();
-				
+
 				IProperty serverScriptProperty = set.getProperty(KEY_SERVER_SCRIPT);
 				serverScriptProperty.setEnabled(usingRexec);
 				serverScriptProperty.setLabel(RSECoreMessages.RESID_PROP_SERVERLAUNCHER_INVOCATION);
 				_serverScript = serverScriptProperty.getValue();
-				
+
 				_hasSetServerLaunchType = true;
-				
+
 			}
 			catch (Exception e)
 			{
@@ -207,7 +207,7 @@ public class RemoteServerLauncher extends ServerLauncher implements IRemoteServe
 			}
 		}
 	}
-	
+
 	public void saveToProperties()
 	{
 		IPropertySet set = getPropertySet(PROPERTY_SET_NAME);
@@ -218,35 +218,35 @@ public class RemoteServerLauncher extends ServerLauncher implements IRemoteServe
 				((ILabeledObject)set).setLabel(PROPERTY_SET_LABEL);
 			}
 		}
-		
+
 		if (_serverLaunchType == null)
 			_serverLaunchType = ServerLaunchType.get(ServerLaunchType.DAEMON);
 		IProperty launchTypeProperty = set.addProperty(KEY_SERVER_LAUNCH_TYPE_NAME, _serverLaunchType.getName(), getServerLauncherPropertyType());
 		launchTypeProperty.setLabel(RSECoreMessages.RESID_PROP_SERVERLAUNCHER_MEANS_LABEL);
-		
+
 		IProperty daemonPortProperty = set.addProperty(KEY_DAEMON_PORT, ""+_daemonPort, PropertyType.getIntegerPropertyType()); //$NON-NLS-1$
 		daemonPortProperty.setEnabled(_serverLaunchType.getType() == ServerLaunchType.DAEMON);
 		daemonPortProperty.setLabel(RSECoreMessages.RESID_CONNECTION_DAEMON_PORT_LABEL);
-		
+
 		IProperty rexecPortProperty  = set.addProperty(KEY_REXEC_PORT, ""+_rexecPort, PropertyType.getIntegerPropertyType());	 //$NON-NLS-1$
 		boolean usingRexec = _serverLaunchType.getType() == ServerLaunchType.REXEC;
 		rexecPortProperty.setEnabled(usingRexec);
 		rexecPortProperty.setLabel(RSECoreMessages.RESID_CONNECTION_PORT_LABEL);
-		
+
 		IProperty autoDetectSSLProperty  = set.addProperty(KEY_AUTODETECT_SSL, ""+_autoDetectSSL, PropertyType.getBooleanPropertyType());	 //$NON-NLS-1$
 		autoDetectSSLProperty.setEnabled(usingRexec);
 		autoDetectSSLProperty.setLabel(RSECoreMessages.RESID_SUBSYSTEM_AUTODETECT_LABEL);
-		
+
 		IProperty serverPathProperty  = set.addProperty(KEY_SERVER_PATH, ""+_serverPath); //$NON-NLS-1$
 		serverPathProperty.setLabel(RSECoreMessages.RESID_PROP_SERVERLAUNCHER_PATH);
 		serverPathProperty.setEnabled(usingRexec);
-		
+
 		IProperty serverScriptProperty  = set.addProperty(KEY_SERVER_SCRIPT, ""+_serverScript); //$NON-NLS-1$
 		serverScriptProperty.setEnabled(usingRexec);
 		serverScriptProperty.setLabel(RSECoreMessages.RESID_PROP_SERVERLAUNCHER_INVOCATION);
 	}
-	
-	
+
+
 	/**
 	 * Clone the contents of this server launcher into the given server launcher
 	 * <i>Your sublcass must override this if you add additional attributes! Be sure
@@ -259,21 +259,21 @@ public class RemoteServerLauncher extends ServerLauncher implements IRemoteServe
 		IRemoteServerLauncher remoteNewOne = (IRemoteServerLauncher)newOne;
 		remoteNewOne.addPropertySets(getPropertySets());
 		remoteNewOne.setDaemonPort(getDaemonPort());
-		remoteNewOne.setRexecPort(getRexecPort());		
+		remoteNewOne.setRexecPort(getRexecPort());
 		remoteNewOne.setServerLaunchType(getServerLaunchTypeGen());
 		remoteNewOne.setServerPath(getServerPath());
 		remoteNewOne.setServerScript(getServerScript());
 		remoteNewOne.setAutoDetectSSL(getAutoDetectSSL());
 		return remoteNewOne;
 	}
-	
+
 	/**
 	 * <!-- begin-user-doc -->
 	 * This is the means by which to start the server-side code, as specified by the user, typically.
 	 * <!-- end-user-doc -->
 	 */
 	public ServerLaunchType getServerLaunchType()
-	{		
+	{
 		if (!isSetServerLaunchType())
 		{
 			if (isEnabledServerLaunchType(ServerLaunchType.DAEMON_LITERAL))
@@ -289,7 +289,7 @@ public class RemoteServerLauncher extends ServerLauncher implements IRemoteServe
 			else if (isEnabledServerLaunchType(ServerLaunchType.FTP_LITERAL))
 				return ServerLaunchType.FTP_LITERAL;
 			else
-				return ServerLaunchType.HTTP_LITERAL;							
+				return ServerLaunchType.HTTP_LITERAL;
 		}
 		return _serverLaunchType;
 	}
@@ -350,7 +350,7 @@ public class RemoteServerLauncher extends ServerLauncher implements IRemoteServe
 			setDirty(true);
 		}
 	}
-	
+
 	/**
 	 * Return the whether or not to auto-detect SSL
 	 */
@@ -386,7 +386,7 @@ public class RemoteServerLauncher extends ServerLauncher implements IRemoteServe
 		{
 			_daemonPort = newDaemonPort;
 			setDirty(true);
-		}		
+		}
 	}
 
 	/**
@@ -400,7 +400,7 @@ public class RemoteServerLauncher extends ServerLauncher implements IRemoteServe
 		String serverPath = _serverPath;
 		if ((serverPath == null) || (serverPath.length() == 0))
 		{
-			serverPath = RemoteServerLauncherConstants.DEFAULT_REXEC_PATH; 
+			serverPath = RemoteServerLauncherConstants.DEFAULT_REXEC_PATH;
 		}
 		return serverPath;
 	}
@@ -428,16 +428,16 @@ public class RemoteServerLauncher extends ServerLauncher implements IRemoteServe
 	public String getServerScript()
 	{
 		String serverScript = _serverScript;
-		
-		if ((serverScript == null) || (serverScript.length() == 0)) 
+
+		if ((serverScript == null) || (serverScript.length() == 0))
 		{
 			serverScript = "server." + getConnectorService().getHost().getSystemType().getName().toLowerCase();  //$NON-NLS-1$
 		}
-		
+
 		return serverScript;
 	}
 
-	
+
 	public void setServerScript(String newServerScript)
 	{
 		String oldServerScript = _serverScript;
@@ -452,7 +452,7 @@ public class RemoteServerLauncher extends ServerLauncher implements IRemoteServe
 	 * This methods returns the enablement state per server launch type.
 	 * If {@link #enableServerLaunchType(ServerLaunchType,boolean)} has not been
 	 *  called for this server launch type, then we defer to the subsystem factory's
-	 *  method: 
+	 *  method:
 	 * {@link ISubSystemConfiguration#supportsServerLaunchType(ServerLaunchType)}.
 	 * @see org.eclipse.rse.core.subsystems.ServerLaunchType
 	 */
@@ -467,18 +467,18 @@ public class RemoteServerLauncher extends ServerLauncher implements IRemoteServe
 				return value.equals("true"); //$NON-NLS-1$
 			}
 		}
-		
+
 		ISubSystem primarySS = getConnectorService().getPrimarySubSystem();
 		if (primarySS != null)
 		{
-			return primarySS.getSubSystemConfiguration().supportsServerLaunchType(serverLaunchType);		
+			return primarySS.getSubSystemConfiguration().supportsServerLaunchType(serverLaunchType);
 
 		}
 		return true;
 	}
 
 
-	
+
 
 	/**
 	 * @deprecated
@@ -492,10 +492,10 @@ public class RemoteServerLauncher extends ServerLauncher implements IRemoteServe
 		}
 		set.addProperty(attributeName, attributeValue);
 	}
-	
+
 	public void enableServerLaunchType(ServerLaunchType serverLaunchType, boolean enable) {
 		// TODO Auto-generated method stubS
-		
+
 	}
 
 } //RemoteServerLauncherImpl

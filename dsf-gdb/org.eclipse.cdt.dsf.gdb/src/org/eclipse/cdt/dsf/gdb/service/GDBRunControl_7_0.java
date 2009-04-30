@@ -427,7 +427,7 @@ public class GDBRunControl_7_0 extends MIRunControl implements IReverseRunContro
         			});
     	} else {
         	getConnection().queueCommand(
-        			new RawCommand(context, "stoprecord"), //$NON-NLS-1$
+        			new RawCommand(context, "record stop"), //$NON-NLS-1$
         			new DataRequestMonitor<MIInfo>(getExecutor(), rm) {
         				@Override
         				public void handleSuccess() {

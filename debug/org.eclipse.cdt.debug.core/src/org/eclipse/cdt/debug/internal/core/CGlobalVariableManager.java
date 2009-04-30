@@ -7,6 +7,8 @@
  *
  * Contributors:
  * QNX Software Systems - Initial API and implementation
+ * Gaetano Santoro (gaetano.santoro@st.com): patch for 
+ * https://bugs.eclipse.org/bugs/show_bug.cgi?id=274499
  *******************************************************************************/
 package org.eclipse.cdt.debug.internal.core; 
 
@@ -112,8 +114,8 @@ public class CGlobalVariableManager implements ICGlobalVariableManager {
 			synchronized( fGlobals ) {
 				fGlobals.addAll( globals );
 			}
-			getDebugTarget().fireChangeEvent( DebugEvent.CONTENT );
 		}
+        getDebugTarget().fireChangeEvent( DebugEvent.CONTENT );
 		if ( !ms.isOK() ) {
 			throw new DebugException( ms );
 		}

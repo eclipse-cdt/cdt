@@ -491,6 +491,9 @@
 			<param name="tagmodule" value="org.eclipse.cdt/xlc/org.eclipse.cdt.managedbuilder.xlc.ui"/>
 		</antcall>
 		<antcall target="tagone">
+			<param name="tagmodule" value="org.eclipse.cdt/xlc/org.eclipse.cdt.managedbuilder.xlupc.ui"/>
+		</antcall>
+		<antcall target="tagone">
 			<param name="tagmodule" value="org.eclipse.cdt/xlc/org.eclipse.cdt.errorparsers.xlc"/>
 		</antcall>
 		<antcall target="tagone">

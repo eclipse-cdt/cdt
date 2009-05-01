@@ -24,6 +24,7 @@
    <requires>
       <import plugin="org.eclipse.cdt.core"/>
       <import plugin="org.eclipse.core.runtime"/>
+      <import plugin="net.sourceforge.lpg.lpgjavaruntime" version="1.1.0" match="greaterOrEqual"/>
    </requires>
 
    <plugin

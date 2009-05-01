@@ -37,6 +37,7 @@
       <import plugin="org.eclipse.ui.ide"/>
       <import plugin="org.eclipse.core.expressions"/>
       <import plugin="org.eclipse.ui.console"/>
+      <import plugin="com.ibm.icu"/>
    </requires>
 
    <plugin

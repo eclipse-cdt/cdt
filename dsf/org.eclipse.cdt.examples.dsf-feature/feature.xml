@@ -35,6 +35,7 @@
       <import plugin="org.eclipse.ui.editors"/>
       <import plugin="org.eclipse.ui.workbench.texteditor"/>
       <import plugin="org.eclipse.ui.ide" version="3.2.0" match="compatible"/>
+      <import plugin="com.ibm.icu"/>
    </requires>
 
    <plugin

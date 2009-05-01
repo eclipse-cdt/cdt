@@ -736,11 +736,9 @@ public class TranslationUnit extends Openable implements ITranslationUnit {
 			try {
 				IFileStore fileStore = EFS.getStore(location);
 				IFileInfo info = fileStore.fetchInfo();
-				
 				return info.exists();
 			} catch (CoreException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+				CCorePlugin.log(e);
 			}
 			
 		}
@@ -767,8 +765,7 @@ public class TranslationUnit extends Openable implements ITranslationUnit {
 		IFile file= getFile();
 		if (file != null) {
 			language = LanguageManager.getInstance().getLanguageForFile(file, configuration, contentTypeId);
-		}
-		else {
+		} else {
 			String filename = getElementName();
 			language = LanguageManager.getInstance().getLanguageForFile(new Path(filename), getCProject().getProject(), configuration, contentTypeId);
 		}
@@ -1098,12 +1095,12 @@ public class TranslationUnit extends Openable implements ITranslationUnit {
 			default:
 				// search for matching element
 				for (ICElement element2 : children) {
-						if (elementType == element2.getElementType()
-								&& elementName.equals(element2.getElementName())) {
-							element= (CElement) element2;
-							break;
-						}
+					if (elementType == element2.getElementType()
+							&& elementName.equals(element2.getElementName())) {
+						element= (CElement) element2;
+						break;
 					}
+				}
 				break;
 			}
 			if (element != null) {

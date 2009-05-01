@@ -91,6 +91,8 @@ public class MinGWGenerator implements IApplication {
 		
 		String mingwSubdir = "mingw";
 		
+		boolean toolGroups = true;
+		
 		// MinGW Runtime DLL
 		Version runtimeVersion = new Version("4.15.2");
 		IInstallableUnit runtimeDLLIU = createIU(
@@ -102,7 +104,7 @@ public class MinGWGenerator implements IApplication {
 				GZ_COMPRESSION,
 				null,
 				publicDomainLic,
-				false);
+				toolGroups);
 		
 		// MinGW Runtime Library
 		IInstallableUnit runtimeLibIU = createIU(
@@ -116,7 +118,7 @@ public class MinGWGenerator implements IApplication {
 					createStrictRequiredCap(runtimeDLLIU)
 				},
 				publicDomainLic,
-				false);
+				toolGroups);
 
 		// w32api
 		IInstallableUnit w32apiIU = createIU(
@@ -128,7 +130,7 @@ public class MinGWGenerator implements IApplication {
 				GZ_COMPRESSION,
 				null,
 				publicDomainLic,
-				false);
+				toolGroups);
 
 		// binutils
 		IInstallableUnit binutilsIU = createIU(
@@ -140,7 +142,7 @@ public class MinGWGenerator implements IApplication {
 				GZ_COMPRESSION,
 				null,
 				gplLic,
-				false);
+				toolGroups);
 		
 		// gcc-4 core
 		Version gcc4version = new Version("4.3.3.tdm-1");
@@ -158,7 +160,7 @@ public class MinGWGenerator implements IApplication {
 						createRequiredCap(binutilsIU)
 				},
 				gplLic,
-				false);
+				toolGroups);
 
 		// gcc-4 g++
 		IInstallableUnit gcc4gppIU = createIU(
@@ -172,7 +174,7 @@ public class MinGWGenerator implements IApplication {
 						createStrictRequiredCap(gcc4coreIU)
 				},
 				gplLic,
-				false);
+				toolGroups);
 		
 		// gdb
 		IInstallableUnit gdbIU = createIU(
@@ -184,12 +186,12 @@ public class MinGWGenerator implements IApplication {
 				BZ2_COMPRESSION,
 				null,
 				gplLic,
-				false);
+				toolGroups);
 		
 		InstallableUnitDescription toolchainIUDesc = createIUDesc(
 				"wascana.toolchain",
-				new Version("4.3.3"),
-				"Wascana Toolchain (gcc, g++, gdb)",
+				new Version("4.3.3"), // Same as gcc
+				"Wascana Toolchain (gcc, gdb, runtime libs)",
 				null);
 		toolchainIUDesc.setProperty(IInstallableUnit.PROP_TYPE_GROUP, Boolean.TRUE.toString());
 		toolchainIUDesc.setRequiredCapabilities(new IRequiredCapability[] {
@@ -207,7 +209,7 @@ public class MinGWGenerator implements IApplication {
 		IInstallableUnit msysIU = createIU(
 				"wascana.msys.core",
 				new Version("1.0.11.20080826"),
-				"Wascana MSYS Shell",
+				"Wascana Shell (MSYS)",
 				"http://downloads.sourceforge.net/mingw/msysCORE-1.0.11-20080826.tar.gz",
 				"msys",
 				GZ_COMPRESSION,
@@ -251,15 +253,26 @@ public class MinGWGenerator implements IApplication {
 				wxLic,
 				true);
 
+		InstallableUnitDescription libsIUDesc = createIUDesc(
+				"wascana.libraries",
+				wascanaVersion,
+				"Wascana Libraries",
+				null);
+		libsIUDesc.setProperty(IInstallableUnit.PROP_TYPE_CATEGORY, Boolean.TRUE.toString());
+		libsIUDesc.setRequiredCapabilities(new IRequiredCapability[] {
+				createRequiredCap(zlibIU),
+				createRequiredCap(sdlIU),
+				createRequiredCap(wxIU),
+		});
+		IInstallableUnit libsIU = MetadataFactory.createInstallableUnit(libsIUDesc);
+
 		// Libraries toolchain category
 		InstallableUnitDescription wascanaIUDesc = createIUDesc("wascana", wascanaVersion, "Wascana Desktop Developer", null);;
 		wascanaIUDesc.setProperty(IInstallableUnit.PROP_TYPE_CATEGORY, Boolean.TRUE.toString());
 		wascanaIUDesc.setRequiredCapabilities(new IRequiredCapability[] {
 				createRequiredCap(toolchainIU),
 				createRequiredCap(msysIU),
-				createRequiredCap(zlibIU),
-				createRequiredCap(sdlIU),
-				createRequiredCap(wxIU),
+				createRequiredCap(libsIU),
 		});
 		IInstallableUnit wascanaIU = MetadataFactory.createInstallableUnit(wascanaIUDesc);
 
@@ -273,11 +286,14 @@ public class MinGWGenerator implements IApplication {
 				gdbIU,
 				msysIU,
 				
+				toolchainIU,
+
 				wxIU,
 				zlibIU,
 				sdlIU,
 				
-				toolchainIU,
+				libsIU,
+				
 				wascanaIU
 			});
 
@@ -314,16 +330,18 @@ public class MinGWGenerator implements IApplication {
 		iuDesc.setTouchpointType(NATIVE_TOUCHPOINT);
 		Map<String, String> tpdata = new HashMap<String, String>();
 		
-		String cmd;
+		String cmd, uncmd;
 		if (compression.equals(ZIP_COMPRESSION)) {
 			cmd = "unzip(source:@artifact, target:${installFolder}/" + subdir + ");";
+			uncmd = "cleanupzip(source:@artifact, target:${installFolder}/" + subdir + ");";
 		} else {
 			cmd = "untar(source:@artifact, target:${installFolder}/" + subdir
 				+ ", compression:" + compression + ");";
+			uncmd = "cleanup" + cmd;
 		}
 		
 		tpdata.put("install", cmd);
-		tpdata.put("uninstall", "cleanup" + cmd);
+		tpdata.put("uninstall", uncmd);
 		
 		iuDesc.addTouchpointData(MetadataFactory.createTouchpointData(tpdata));
 		IArtifactKey artiKey = PublisherHelper.createBinaryArtifactKey(id, version);

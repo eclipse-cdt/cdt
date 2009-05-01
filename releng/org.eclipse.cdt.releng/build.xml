@@ -586,5 +586,17 @@
 		<antcall target="tagone">
 			<param name="tagmodule" value="org.eclipse.cdt/cross/org.eclipse.cdt.launch.remote"/>
 		</antcall>
+		<antcall target="tagone">
+			<param name="tagmodule" value="org.eclipse.cdt/cross/org.eclipse.cdt.build.crossgcc-feature"/>
+		</antcall>
+		<antcall target="tagone">
+			<param name="tagmodule" value="org.eclipse.cdt/cross/org.eclipse.cdt.build.crossgcc"/>
+		</antcall>
+		<antcall target="tagone">
+			<param name="tagmodule" value="org.eclipse.cdt/p2/org.eclipse.cdt.p2-feature"/>
+		</antcall>
+		<antcall target="tagone">
+			<param name="tagmodule" value="org.eclipse.cdt/p2/org.eclipse.cdt.p2"/>
+		</antcall>
 	</target>
 </project>

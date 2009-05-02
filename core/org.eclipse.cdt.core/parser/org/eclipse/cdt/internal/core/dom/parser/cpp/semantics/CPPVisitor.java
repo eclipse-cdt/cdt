@@ -171,7 +171,7 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPUnknownBinding;
 import org.eclipse.cdt.internal.core.index.IIndexScope;
 
 /**
- * Collection of methods to extract information from a c++ translation unit.
+ * Collection of methods to extract information from a C++ translation unit.
  */
 public class CPPVisitor extends ASTQueries {
 	public static final char[] SIZE_T = "size_t".toCharArray(); //$NON-NLS-1$
@@ -1873,7 +1873,7 @@ public class CPPVisitor extends ASTQueries {
 	 * @return the qualified name
 	 */
 	public static String renderQualifiedName(String[] qn) {
-		StringBuffer result = new StringBuffer();
+		StringBuilder result = new StringBuilder();
 		for (int i = 0; i < qn.length; i++) {
 			result.append(qn[i] + (i + 1 < qn.length ? "::" : ""));  //$NON-NLS-1$//$NON-NLS-2$
 		}

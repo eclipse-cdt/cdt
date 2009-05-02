@@ -31,5 +31,5 @@ public interface ICPPNamespace extends ICPPBinding {
 	 * get an array of the all the bindings declared in this namespace.
 	 * @throws DOMException
 	 */
-	public IBinding [] getMemberBindings() throws DOMException;
+	public IBinding[] getMemberBindings() throws DOMException;
 }

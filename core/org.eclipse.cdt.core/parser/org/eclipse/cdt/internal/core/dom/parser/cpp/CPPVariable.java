@@ -48,7 +48,7 @@ import org.eclipse.core.runtime.PlatformObject;
  * @author aniefer
  */
 public class CPPVariable extends PlatformObject implements ICPPVariable, ICPPInternalBinding, IInternalVariable {
-    public static class CPPVariableProblem extends ProblemBinding implements ICPPVariable{
+    public static class CPPVariableProblem extends ProblemBinding implements ICPPVariable {
         public CPPVariableProblem(IASTNode node, int id, char[] arg) {
             super(node, id, arg);
         }
@@ -122,11 +122,11 @@ public class CPPVariable extends PlatformObject implements ICPPVariable, ICPPInt
 	    IASTSimpleDeclaration simpleDecl = (IASTSimpleDeclaration) dtor.getParent();
 	    IASTDeclSpecifier declSpec = simpleDecl.getDeclSpecifier();
 	    
-	    //(3.1-1) A declaration is a definition unless ...
-	    //it contains the extern specifier or a linkage-spec and does not contain an initializer
+	    // (3.1-1) A declaration is a definition unless ...
+	    // it contains the extern specifier or a linkage-spec and does not contain an initializer
 	    if (dtor.getInitializer() == null && declSpec.getStorageClass() == IASTDeclSpecifier.sc_extern)
 	        return false;
-	    //or it declares a static data member in a class declaration
+	    // or it declares a static data member in a class declaration
 	    if (simpleDecl.getParent() instanceof ICPPASTCompositeTypeSpecifier && 
 	    		declSpec.getStorageClass() == IASTDeclSpecifier.sc_static) {
 	        return false;
@@ -274,7 +274,7 @@ public class CPPVariable extends PlatformObject implements ICPPVariable, ICPPInt
 	                parent = parent.getParent();
 	            
 	            if (parent instanceof IASTSimpleDeclaration) {
-	                IASTDeclSpecifier declSpec = ((IASTSimpleDeclaration)parent).getDeclSpecifier();
+	                IASTDeclSpecifier declSpec = ((IASTSimpleDeclaration) parent).getDeclSpecifier();
 	                if (declSpec.getStorageClass() == storage) {
 	                	return true;
 	                }

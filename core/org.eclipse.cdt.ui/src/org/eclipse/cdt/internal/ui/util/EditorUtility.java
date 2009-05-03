@@ -143,8 +143,8 @@ public class EditorUtility {
 	 * Opens an editor for an element (ICElement, IFile, IStorage...)
 	 * @return the IEditorPart or null if wrong element type or opening failed
 	 */
-	public static IEditorPart openInEditor(Object inputElement, boolean activate) throws CModelException, PartInitException {
-
+	public static IEditorPart openInEditor(Object inputElement, boolean activate)
+			throws CModelException, PartInitException {
 		if (inputElement instanceof IFile) {
 			return openInEditor((IFile) inputElement, activate);
 		}
@@ -172,7 +172,7 @@ public class EditorUtility {
 				ISourceReference reference= (ISourceReference) element;
 				try {
 					ISourceRange range= reference.getSourceRange();
-					((ITextEditor)part).selectAndReveal(range.getIdStartPos(), range.getIdLength());
+					((ITextEditor) part).selectAndReveal(range.getIdStartPos(), range.getIdLength());
 				} catch (CModelException exc) {
 					CUIPlugin.log(exc.getStatus());
 				}
@@ -224,7 +224,7 @@ public class EditorUtility {
 			IContainer[] containers = ResourcesPlugin.getWorkspace().getRoot().findContainersForLocation(path);
 
 			for (IContainer container : containers) {
-				if (container instanceof IFolder && ((IFolder)container).isLinked()) {
+				if (container instanceof IFolder && ((IFolder) container).isLinked()) {
 					return true;
 				}
 			}
@@ -241,7 +241,7 @@ public class EditorUtility {
 		MessageBox errorMsg = new MessageBox(CUIPlugin.getActiveWorkbenchShell(), SWT.ICON_ERROR | SWT.OK);
 		errorMsg.setText(CUIPlugin.getResourceString("EditorUtility.closedproject")); //$NON-NLS-1$
 		String desc= CUIPlugin.getResourceString("Editorutility.closedproject.description"); //$NON-NLS-1$
-		errorMsg.setMessage (MessageFormat.format(desc, new Object[]{project.getName()}));
+		errorMsg.setMessage(MessageFormat.format(desc, new Object[]{project.getName()}));
 		errorMsg.open();
 
 	}
@@ -351,7 +351,6 @@ public class EditorUtility {
 				outerFor: for (int i = 0; i < projects.length; i++) {
 					IIncludeReference[] includeReferences = projects[i].getIncludeReferences();
 					for (int j = 0; j < includeReferences.length; j++) {
-						
 						// crecoskie test
 						// TODO FIXME
 						// include entries don't handle URIs yet, so fake it out for now
@@ -395,7 +394,6 @@ public class EditorUtility {
 		}
 		return new ExternalEditorInput(locationURI);
 	}
-
 
 	public static IEditorInput getEditorInputForLocation(IPath location, ICElement context) {
 		IFile resource= getWorkspaceFileAtLocation(location, context);
@@ -442,8 +440,6 @@ public class EditorUtility {
 		return new ExternalEditorInput(location);
 	}
 
-	
-	
 	/**
 	 * Utility method to resolve a file system location to a workspace resource.
 	 * If a context element is given and there are multiple matches in the workspace,
@@ -760,7 +756,8 @@ public class EditorUtility {
 	 * @throws CoreException
 	 * @since 5.1
 	 */
-	public static IRegion[] calculateChangedLineRegions(final ITextFileBuffer buffer, final IProgressMonitor monitor) throws CoreException {
+	public static IRegion[] calculateChangedLineRegions(final ITextFileBuffer buffer,
+			final IProgressMonitor monitor) throws CoreException {
 		final IRegion[][] result= new IRegion[1][];
 		final IStatus[] errorStatus= new IStatus[] { Status.OK_STATUS };
 	
@@ -770,9 +767,12 @@ public class EditorUtility {
 				 * @see org.eclipse.core.runtime.ISafeRunnable#handleException(java.lang.Throwable)
 				 */
 				public void handleException(Throwable exception) {
-					CUIPlugin.log(new Status(IStatus.ERROR, CUIPlugin.PLUGIN_ID, ICStatusConstants.EDITOR_CHANGED_REGION_CALCULATION, exception.getLocalizedMessage(), exception));
+					CUIPlugin.log(new Status(IStatus.ERROR, CUIPlugin.PLUGIN_ID,
+							ICStatusConstants.EDITOR_CHANGED_REGION_CALCULATION, exception.getLocalizedMessage(),
+							exception));
 					String msg= Messages.EditorUtility_error_calculatingChangedRegions;
-					errorStatus[0]= new Status(IStatus.ERROR, CUIPlugin.PLUGIN_ID, ICStatusConstants.EDITOR_CHANGED_REGION_CALCULATION, msg, exception);
+					errorStatus[0]= new Status(IStatus.ERROR, CUIPlugin.PLUGIN_ID,
+							ICStatusConstants.EDITOR_CHANGED_REGION_CALCULATION, msg, exception);
 					result[0]= null;
 				}
 	
@@ -787,7 +787,8 @@ public class EditorUtility {
 					fileBufferManager.connectFileStore(fileStore, getSubProgressMonitor(monitor, 15));
 					try {
 						IDocument currentDocument= buffer.getDocument();
-						IDocument oldDocument= ((ITextFileBuffer) fileBufferManager.getFileStoreFileBuffer(fileStore)).getDocument();
+						IDocument oldDocument= 
+								((ITextFileBuffer) fileBufferManager.getFileStoreFileBuffer(fileStore)).getDocument();
 	
 						result[0]= getChangedLineRegions(oldDocument, currentDocument);
 					} finally {
@@ -805,7 +806,7 @@ public class EditorUtility {
 				 * @return the changed regions
 				 * @throws BadLocationException
 				 */
-				private IRegion[] getChangedLineRegions(IDocument oldDocument, IDocument currentDocument) throws BadLocationException {
+				private IRegion[] getChangedLineRegions(IDocument oldDocument, IDocument currentDocument) {
 					/*
 					 * Do not change the type of those local variables. We use Object
 					 * here in order to prevent loading of the Compare plug-in at load
@@ -829,19 +830,24 @@ public class EditorUtility {
 							int startLine= curr.rightStart();
 							int endLine= curr.rightEnd() - 1;
 
-							IRegion startLineRegion= currentDocument.getLineInformation(startLine);
-							if (startLine >= endLine) {
-								// startLine > endLine indicates a deletion of one or more lines.
-								// Deletions are ignored except at the end of the document. 
-								if (startLine == endLine ||
-										startLineRegion.getOffset() + startLineRegion.getLength() == currentDocument.getLength()) {
-									regions.add(startLineRegion);
+							IRegion startLineRegion;
+							try {
+								startLineRegion = currentDocument.getLineInformation(startLine);
+								if (startLine >= endLine) {
+									// startLine > endLine indicates a deletion of one or more lines.
+									// Deletions are ignored except at the end of the document. 
+									if (startLine == endLine ||
+											startLineRegion.getOffset() + startLineRegion.getLength() == currentDocument.getLength()) {
+										regions.add(startLineRegion);
+									}
+								} else {
+									IRegion endLineRegion= currentDocument.getLineInformation(endLine);
+									int startOffset= startLineRegion.getOffset();
+									int endOffset= endLineRegion.getOffset() + endLineRegion.getLength();
+									regions.add(new Region(startOffset, endOffset - startOffset));
 								}
-							} else {
-								IRegion endLineRegion= currentDocument.getLineInformation(endLine);
-								int startOffset= startLineRegion.getOffset();
-								int endOffset= endLineRegion.getOffset() + endLineRegion.getLength();
-								regions.add(new Region(startOffset, endOffset - startOffset));
+							} catch (BadLocationException e) {
+								CUIPlugin.log(e);
 							}
 						}
 					}

@@ -10,22 +10,36 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.ui.editor;
 
+import java.util.ResourceBundle;
+
 import org.eclipse.osgi.util.NLS;
 
 public final class CEditorMessages extends NLS {
+	private static final String BUNDLE_FOR_CONSTRUCTED_KEYS=
+			"org.eclipse.cdt.internal.ui.editor.ConstructedCEditorMessages"; //$NON-NLS-1$
+	private static ResourceBundle fgBundleForConstructedKeys= ResourceBundle.getBundle(BUNDLE_FOR_CONSTRUCTED_KEYS);
 
-	private static final String BUNDLE_NAME = "org.eclipse.cdt.internal.ui.editor.CEditorMessages";//$NON-NLS-1$
+	/**
+	 * Returns the message bundle which contains constructed keys.
+	 *
+	 * @return the message bundle
+	 * @since 5.1
+	 */
+	public static ResourceBundle getBundleForConstructedKeys() {
+		return fgBundleForConstructedKeys;
+	}
+
+	private static final String BUNDLE_NAME = CEditorMessages.class.getName();
 
 	private CEditorMessages() {
 		// Do not instantiate
 	}
 
-	public static String AddIncludeOnSelection_description;
-	public static String AddIncludeOnSelection_error_message1;
-	public static String AddIncludeOnSelection_error_message3;
-	public static String AddIncludeOnSelection_error_message4;
 	public static String AddIncludeOnSelection_label;
-	public static String AddIncludeOnSelection_tooltip;
+	public static String AddIncludeOnSelection_description;
+	public static String AddIncludeOnSelection_error_title;
+	public static String AddIncludeOnSelection_insertion_failed;
+	public static String AddIncludeOnSelection_help_provider_error;
 	public static String AddIncludesOperation_description;
 	public static String ShowInCView_description;
 	public static String ShowInCView_label;

@@ -8,6 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     QNX Software Systems
+ *     Sergey Prigogin (Google)
  *******************************************************************************/
 
 package org.eclipse.cdt.internal.corext.codemanipulation;
@@ -24,6 +25,8 @@ import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.jobs.ISchedulingRule;
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.IDocument;
+import org.eclipse.jface.text.IRegion;
+import org.eclipse.jface.text.Region;
 
 import org.eclipse.cdt.core.model.CModelException;
 import org.eclipse.cdt.core.model.IBuffer;
@@ -43,26 +46,27 @@ import org.eclipse.cdt.internal.ui.editor.CEditorMessages;
  * If the translation unit is open in an editor, be sure to pass over its working copy.
  */
 public class AddIncludesOperation implements IWorkspaceRunnable {
-	
 	private ITranslationUnit fTranslationUnit;
 	private IRequiredInclude[] fIncludes;
 	private String[] fUsings;
 	private final String fNewLine;
+	private IRegion insertedIncludes;
 
 	/**
 	 * Generate include statements for the passed java elements
 	 */
 	public AddIncludesOperation(ITranslationUnit tu, IRequiredInclude[] includes, boolean save) {
-		this (tu, includes, null, save);
+		this(tu, includes, null, save);
 	}
 
 	/**
 	 * Generate include statements for the passed c elements
 	 */
-	public AddIncludesOperation(ITranslationUnit tu, IRequiredInclude[] includes, String[] using, boolean save) {
+	public AddIncludesOperation(ITranslationUnit tu, IRequiredInclude[] includes, String[] usings,
+			boolean save) {
 		super();
 		fIncludes= includes;
-		fUsings = using;
+		fUsings = usings;
 		fTranslationUnit = tu;
 		fNewLine= getNewLine(tu);
 	}
@@ -82,10 +86,10 @@ public class AddIncludesOperation implements IWorkspaceRunnable {
 		} catch (CModelException e) {
 		} catch (BadLocationException e) {
 		}
-		return System.getProperty("line.separator", "\n");  //$NON-NLS-1$//$NON-NLS-2$	}
+		return System.getProperty("line.separator", "\n");  //$NON-NLS-1$//$NON-NLS-2$
 	}
 
-	public void executeIncludes(IProgressMonitor monitor) throws CoreException {
+	private void insertIncludes(IProgressMonitor monitor) throws CoreException {
 		// Sanity
 		if (fIncludes == null || fIncludes.length == 0) {
 			return;
@@ -96,122 +100,118 @@ public class AddIncludesOperation implements IWorkspaceRunnable {
 			
 			monitor.beginTask(CEditorMessages.AddIncludesOperation_description, 2); 
 			
-			List<?> elements = fTranslationUnit.getChildrenOfType(ICElement.C_INCLUDE);
-			for (int i = 0; i < fIncludes.length; ++i) {
-				String name = fIncludes[i].getIncludeName();
+			List<ICElement> elements = fTranslationUnit.getChildrenOfType(ICElement.C_INCLUDE);
+			for (IRequiredInclude include : fIncludes) {
+				String name = include.getIncludeName();
 				boolean found = false;
-				for (int j = 0; j < elements.size(); ++j) {
-					IInclude include = (IInclude)elements.get(j);
-					if (name.equals(include.getElementName())) {
+				for (ICElement element : elements) {
+					if (name.equals(element.getElementName())) {
 						found = true;
 						break;
 					}
 				}
 				if (!found) {
-					toAdd.add(fIncludes[i]);
+					toAdd.add(include);
 				}
 			}
 			
-			if (toAdd.size() > 0) {
+			if (!toAdd.isEmpty()) {
 				// So we have our list. Now insert.
-				StringBuffer insert = new StringBuffer(""); //$NON-NLS-1$
-				for(int j = 0; j < toAdd.size(); j++) {
-					IRequiredInclude req = toAdd.get(j);
-					if (req.isStandard()) {
-						insert.append("#include <" + req.getIncludeName() + ">").append(fNewLine); //$NON-NLS-1$ //$NON-NLS-2$
+				StringBuilder buf = new StringBuilder();
+				for (IRequiredInclude include : toAdd) {
+					if (include.isStandard()) {
+						buf.append("#include <" + include.getIncludeName() + ">").append(fNewLine); //$NON-NLS-1$ //$NON-NLS-2$
 					} else {
-						insert.append("#include \"" + req.getIncludeName() + "\"").append(fNewLine); //$NON-NLS-1$ //$NON-NLS-2$
+						buf.append("#include \"" + include.getIncludeName() + "\"").append(fNewLine); //$NON-NLS-1$ //$NON-NLS-2$
 					}
 				}
 				
-				int pos;
-				if (elements.size() > 0) {
-					IInclude lastInclude = (IInclude)elements.get(elements.size() - 1);
+				int pos = 0;
+				if (!elements.isEmpty()) {
+					IInclude lastInclude = (IInclude) elements.get(elements.size() - 1);
 					ISourceRange range = lastInclude.getSourceRange();
 					pos = range.getStartPos() + range.getLength();
-				} else {
-					pos = 0;
 				}
 				monitor.worked(1);
-				replace(pos, insert.toString());
+				replace(pos, buf.toString());
+				insertedIncludes = new Region(pos, buf.length());
 				monitor.worked(1);
 			}
 		}
 	}
 
-	public void executeUsings(IProgressMonitor monitor) throws CoreException {
+	private void insertUsings(IProgressMonitor monitor) throws CoreException {
 		// Sanity
 		if (fUsings == null || fUsings.length == 0) {
 			return;
 		}
 
 		if (fTranslationUnit != null) {
-			ArrayList<String> toAdd = new ArrayList<String>();
-			
+			ArrayList<String> toAdd = new ArrayList<String>(fUsings.length);
+
 			monitor.beginTask(CEditorMessages.AddIncludesOperation_description, 2); 
-			
-			List<?> elements = fTranslationUnit.getChildrenOfType(ICElement.C_USING);
-			for (int i = 0; i < fUsings.length; ++i) {
-				String name = fUsings[i];
+
+			List<ICElement> elements = fTranslationUnit.getChildrenOfType(ICElement.C_USING);
+			for (String name : fUsings) {
 				boolean found = false;
-				for (int j = 0; j < elements.size(); ++j) {
-					IUsing using = (IUsing)elements.get(j);
-					if (name.equals(using.getElementName())) {
+				for (ICElement element : elements) {
+					if (name.equals(element.getElementName())) {
 						found = true;
 						break;
 					}
 				}
 				if (!found) {
-					toAdd.add(fUsings[i]);
+					toAdd.add(name);
 				}
 			}
-			
-			if (toAdd.size() > 0) {
+
+			if (!toAdd.isEmpty()) {
 				// So we have our list. Now insert.
-				StringBuffer insert = new StringBuffer(""); //$NON-NLS-1$
-				for(int j = 0; j < toAdd.size(); j++) {
-					String using = toAdd.get(j);
-					insert.append("using namespace " + using + ";").append(fNewLine); //$NON-NLS-1$ //$NON-NLS-2$
+				StringBuilder buf = new StringBuilder();
+				for (String using : toAdd) {
+					buf.append("using ").append(using).append(';').append(fNewLine); //$NON-NLS-1$
 				}
-				
-				int pos;
-				List<?> includes = fTranslationUnit.getChildrenOfType(ICElement.C_INCLUDE);
-				if (includes.size() > 0) {
-					IInclude lastInclude = (IInclude)includes.get(includes.size() - 1);
-					ISourceRange range = lastInclude.getSourceRange();
-					pos = range.getStartPos() + range.getLength();
-				} else if (elements.size() > 0) {
-					IUsing lastUsing = (IUsing)includes.get(includes.size() - 1);
+
+				int pos = 0;
+				if (!elements.isEmpty()) {
+					IUsing lastUsing = (IUsing) elements.get(elements.size() - 1);
 					ISourceRange range = lastUsing.getSourceRange();
 					pos = range.getStartPos() + range.getLength();
 				} else {
-					pos = 0;
+					List<ICElement> includes = fTranslationUnit.getChildrenOfType(ICElement.C_INCLUDE);
+					if (!includes.isEmpty()) {
+						IInclude lastInclude = (IInclude) includes.get(includes.size() - 1);
+						ISourceRange range = lastInclude.getSourceRange();
+						pos = range.getStartPos() + range.getLength();
+					}
+					if (!includes.isEmpty() || insertedIncludes != null) {
+						buf.insert(0, fNewLine);
+					}
 				}
-				
+				if (insertedIncludes != null && pos >= insertedIncludes.getOffset()) {
+					pos += insertedIncludes.getLength();
+				}
+
 				monitor.worked(1);
-				replace(pos, insert.toString());
+				replace(pos, buf.toString());
 				monitor.worked(1);
 			}
 		}	
 	}
 
-	void replace(int pos, String s) {
-		try {
-			IBuffer buffer = fTranslationUnit.getBuffer();
-			// Now find the next newline and insert after that
-			if (pos > 0) {
-				while (buffer.getChar(pos) != '\n') {
-					pos++;
-				}
-				if (buffer.getChar(pos) == '\r') {
-					pos++;
-				}
+	private void replace(int pos, String s) throws CModelException {
+		IBuffer buffer = fTranslationUnit.getBuffer();
+		// Now find the next newline and insert after that
+		if (pos > 0) {
+			while (buffer.getChar(pos) != '\n') {
 				pos++;
 			}
-			buffer.replace(pos, 0, s);
-		} catch (Exception e) {
-			// ignore; should we log ?
+			if (buffer.getChar(pos) == '\r') {
+				pos++;
+			}
+			pos++;
 		}
+		buffer.replace(pos, 0, s);
 	}
 
 	public void run(IProgressMonitor monitor) throws CoreException {
@@ -219,8 +219,8 @@ public class AddIncludesOperation implements IWorkspaceRunnable {
 			monitor= new NullProgressMonitor();
 		}			
 		try {
-			executeUsings(monitor);
-			executeIncludes(monitor);
+			insertIncludes(monitor);
+			insertUsings(monitor);
 		} finally {
 			monitor.done();
 		}
@@ -229,7 +229,7 @@ public class AddIncludesOperation implements IWorkspaceRunnable {
 	/**
 	 * @return Returns the scheduling rule for this operation
 	 */
-	public ISchedulingRule getScheduleRule() {
+	public ISchedulingRule getSchedulingRule() {
 		return ResourcesPlugin.getWorkspace().getRoot();
 	}
 }

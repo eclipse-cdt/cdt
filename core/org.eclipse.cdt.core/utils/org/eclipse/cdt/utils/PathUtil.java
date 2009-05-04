@@ -9,6 +9,7 @@
  *     QNX Software Systems - initial API and implementation
  *     Markus Schorn (Wind River Systems)
  *     Ed Swartz (Nokia)
+ *     Sergey Prigogin (Google)
  *******************************************************************************/
 package org.eclipse.cdt.utils;
 
@@ -23,6 +24,7 @@ import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.resources.ResourcesPlugin;
+import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
 
@@ -65,8 +67,8 @@ public class PathUtil {
 		IWorkspaceRoot workspaceRoot = getWorkspaceRoot();
 		if (workspaceRoot != null) {
 			IPath workspaceLocation = workspaceRoot.getLocation();
-			if (workspaceLocation != null && workspaceLocation.isPrefixOf(fullPath)) {
-				int segments = fullPath.matchingFirstSegments(workspaceLocation);
+			if (workspaceLocation != null && isPrefix(workspaceLocation, fullPath)) {
+				int segments = matchingFirstSegments(fullPath, workspaceLocation);
 				IPath relPath = fullPath.setDevice(null).removeFirstSegments(segments);
 				return new Path("").addTrailingSeparator().append(relPath); //$NON-NLS-1$
 			}
@@ -76,11 +78,11 @@ public class PathUtil {
 	
 	public static IPath getProjectRelativePath(IPath fullPath, IProject project) {
 		IPath projectPath = project.getFullPath();
-		if (projectPath.isPrefixOf(fullPath)) {
+		if (isPrefix(projectPath, fullPath)) {
 			return fullPath.removeFirstSegments(projectPath.segmentCount());
 		}
 		projectPath = project.getLocation();
-		if (projectPath.isPrefixOf(fullPath)) {
+		if (isPrefix(projectPath, fullPath)) {
 			return fullPath.removeFirstSegments(projectPath.segmentCount());
 		}
 		return getWorkspaceRelativePath(fullPath);
@@ -94,7 +96,7 @@ public class PathUtil {
 		IWorkspaceRoot workspaceRoot = getWorkspaceRoot();
 		if (workspaceRoot != null && wsRelativePath != null) {
 			IPath workspaceLocation = workspaceRoot.getLocation();
-			if (workspaceLocation != null && !workspaceLocation.isPrefixOf(wsRelativePath)) {
+			if (workspaceLocation != null && !isPrefix(workspaceLocation, wsRelativePath)) {
 				return workspaceLocation.append(wsRelativePath);
 			}
 		}
@@ -102,7 +104,7 @@ public class PathUtil {
 	}
 
     public static IPath makeRelativePath(IPath path, IPath relativeTo) {
-        int segments = relativeTo.matchingFirstSegments(path);
+        int segments = matchingFirstSegments(relativeTo, path);
         if (segments > 0) {
             IPath prefix = relativeTo.removeFirstSegments(segments);
             IPath suffix = path.removeFirstSegments(segments);
@@ -131,8 +133,8 @@ public class PathUtil {
         int mostSegments = 0;
         for (int i = 0; i < includePaths.length; ++i) {
             IPath includePath = new Path(includePaths[i]);
-            if (includePath.isPrefixOf(fullPath)) {
-                int segments = includePath.matchingFirstSegments(fullPath);
+            if (isPrefix(includePath, fullPath)) {
+                int segments = includePath.segmentCount();
                 if (segments > mostSegments) {
                     relativePath = fullPath.removeFirstSegments(segments).setDevice(null);
                     mostSegments = segments;
@@ -170,5 +172,105 @@ public class PathUtil {
 			}
 		}
 		return null;
+	}
+
+    /**
+	 * Checks whether path1 is the same as path2.
+	 * @return <code>true</code> if path1 is the same as path2, and <code>false</code> otherwise
+     * 
+     * Similar to IPath.equals(Object obj), but takes case sensitivity of the file system
+     * into account.
+     * @since 5.1
+     */
+	public boolean equal(IPath path1, IPath path2) {
+		// Check leading separators
+		if (path1.isAbsolute() != path2.isAbsolute() || path1.isUNC() != path2.isUNC()) {
+			return false;
+		}
+		int i = path1.segmentCount();
+		// Check segment count
+		if (i != path2.segmentCount())
+			return false;
+		// Check segments in reverse order - later segments more likely to differ
+		while (--i >= 0) {
+			if (!path1.segment(i).equals(path2.segment(i)))
+				return false;
+		}
+		// Check device last (least likely to differ)
+		if (path1.getDevice() == null) {
+			return path2.getDevice() == null;
+		} else {
+			return path1.getDevice().equalsIgnoreCase(path2.getDevice());
+		}
+	}
+
+    /**
+	 * Checks whether path1 is a prefix of path2. To be a prefix, path1's segments
+	 * must appear in path1 in the same order, and their device ids must match.
+	 * <p>
+	 * An empty path is a prefix of all paths with the same device; a root path is a prefix of 
+	 * all absolute paths with the same device.
+	 * </p>
+	 * @return <code>true</code> if path1 is a prefix of path2, and <code>false</code> otherwise
+     * 
+     * Similar to IPath.isPrefixOf(IPath anotherPath), but takes case sensitivity of the file system
+     * into account. 
+     * @since 5.1
+     */
+	public static boolean isPrefix(IPath path1, IPath path2) {
+		if (path1.getDevice() == null) {
+			if (path2.getDevice() != null) {
+				return false;
+			}
+		} else {
+			if (!path1.getDevice().equalsIgnoreCase(path2.getDevice())) {
+				return false;
+			}
+		}
+		if (path1.isEmpty() || (path1.isRoot() && path2.isAbsolute())) {
+			return true;
+		}
+		int len1 = path1.segmentCount();
+		if (len1 > path2.segmentCount()) {
+			return false;
+		}
+		boolean caseSensitive = !isWindowsFileSystem();
+		for (int i = 0; i < len1; i++) {
+			if (!(caseSensitive ?
+					path1.segment(i).equals(path2.segment(i)) :
+					path1.segment(i).equalsIgnoreCase(path2.segment(i)))) {
+				return false;
+			}
+		}
+		return true;
+	}
+
+	/**
+	 * Returns the number of segments which match in path1 and path2
+	 * (device ids are ignored), comparing in increasing segment number order.
+	 *
+	 * @return the number of matching segments
+
+	 * Similar to IPath.matchingFirstSegments(IPath anotherPath), but takes case sensitivity
+	 * of the file system into account.
+     * @since 5.1
+	 */
+	public static int matchingFirstSegments(IPath path1, IPath path2) {
+		Assert.isNotNull(path1);
+		Assert.isNotNull(path2);
+		int len1 = path1.segmentCount();
+		int len2 = path2.segmentCount();
+		int max = Math.min(len1, len2);
+		int count = 0;
+		boolean caseSensitive = !isWindowsFileSystem();
+		for (int i = 0; i < max; i++) {
+			if (!(caseSensitive ?
+					path1.segment(i).equals(path2.segment(i)) :
+					path1.segment(i).equalsIgnoreCase(path2.segment(i)))) {
+				return count;
+			}
+			count++;
+		}
+		return count;
 	}
 }

@@ -2010,10 +2010,17 @@ public class CPPVisitor extends ASTQueries {
 		while (node instanceof IASTName) {
 			if (node instanceof ICPPASTQualifiedName) {
 				IASTName[] qn= ((ICPPASTQualifiedName) node).getNames();
-				if (qn.length < 2) 
-					return null;
-				return qn[qn.length - 2].resolveBinding();
+				int i = qn.length;
+				while (--i >= 0) {
+					if (qn[i] == name) {
+						break;
+					}
+				}
+				if (--i < 0) 
+					break;
+				return qn[i].resolveBinding();
 			}
+			name = (IASTName) node;
 			node= node.getParent();
 		}
 		return findDeclarationOwner(node, allowFunction);

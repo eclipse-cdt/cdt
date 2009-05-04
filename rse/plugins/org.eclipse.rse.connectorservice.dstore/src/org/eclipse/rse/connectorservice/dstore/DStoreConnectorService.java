@@ -817,6 +817,48 @@ public class DStoreConnectorService extends StandardConnectorService implements 
 	}
 	
 	/**
+	 * Connect via an overridden launchServer method
+	 * 
+	 * @param clientConnection the clientConnection
+	 * @param info the signon info
+	 * @param serverLauncher the server launcher
+	 * @param monitor the progress monitor
+	 * 
+	 * @return the connection status
+	 * 
+	 * @since 3.1
+	 */
+	protected ConnectionStatus connectWithOther(ClientConnection clientConnection, SystemSignonInformation info, IServerLauncherProperties serverLauncher, IProgressMonitor monitor) throws Exception {
+		ConnectionStatus connectStatus = launchServer(clientConnection, info, serverLauncher, monitor);
+		if (!connectStatus.isConnected() && !clientConnection.isKnownStatus(connectStatus.getMessage())){
+			if (connectStatus.isSLLProblem()){
+				if (setSSLProperties(true)){
+					connectStatus = launchServer(clientConnection, info, serverLauncher, monitor);
+					if (!connectStatus.isConnected() && connectStatus.isSLLProblem()){						
+						List certs = connectStatus.getUntrustedCertificates();
+						if (certs != null && certs.size() > 0){ // we have untrusted certificates - so import them
+							ISystemKeystoreProvider provider = SystemKeystoreProviderManager.getInstance().getDefaultProvider();
+							if (provider != null){
+								if (provider.importCertificates(certs, getHostName())){
+									return connectWithOther(clientConnection, info, serverLauncher, monitor);
+								}
+								else
+								{
+									_isConnecting = false;
+									throw new InterruptedException();
+								}
+							}
+						}
+						else { // SSL connect problem
+							return null;
+						}
+					}
+				}
+			}
+		}
+		return connectStatus;
+	}
+	/**
 	 * Initialize the DataStore connection.
 	 * 
 	 * @param launchStatus the launch status if the server was launched via the daemon.  Otherwise, null.
@@ -1242,6 +1284,8 @@ public class DStoreConnectorService extends StandardConnectorService implements 
 
 	}
 	
+
+	
 	/**
 	 * @see org.eclipse.rse.core.subsystems.IConnectorService#connect(IProgressMonitor)
 	 */
@@ -1286,34 +1330,23 @@ public class DStoreConnectorService extends StandardConnectorService implements 
 			connectStatus = connectStatusPair.getConnectStatus();
 			launchStatus = connectStatusPair.getLaunchStatus();
 
-			if (connectStatus == null){
-				return; // error handling completed
-			}
+			//if (connectStatus == null){
+			//	_isConnecting = false;
+			//	return; // error handling completed
+			//}
 		}
 		else if (serverLauncherType == ServerLaunchType.RUNNING_LITERAL){ // connect to running server
 			connectStatus = connectWithRunning(monitor);
 		}		
 		else { // server launcher type is unknown
-			connectStatus = launchServer(clientConnection, info, serverLauncher, monitor);
-			if (!connectStatus.isConnected() && !clientConnection.isKnownStatus(connectStatus.getMessage())){
-				if (connectStatus.isSLLProblem()){
-					if (setSSLProperties(true)){
-						connectStatus = launchServer(clientConnection, info, serverLauncher, monitor);
-						if (!connectStatus.isConnected() && connectStatus.isSLLProblem()){
-							_isConnecting = false;
-							importCertsAndReconnect(connectStatus, monitor);
-							return;
-						}
-					}
-				}
-			}
+			connectStatus = connectWithOther(clientConnection, info, serverLauncher, monitor);		
 		}
 
 		if (connectStatus != null && connectStatus.isConnected()){  // connected 
 			initializeConnection(launchStatus, connectStatus, alertedNONSSL, monitor);
 		}
 		else  {	// diagnosis, reconnection and other connection failure handling
-			handleConnectionFailure(connectStatus, launchStatus, serverLauncher, serverLauncherType, monitor);
+			handleConnectionFailure(launchStatus, connectStatus, serverLauncher, serverLauncherType, monitor);
 		}
 		_isConnecting = false;
 	}

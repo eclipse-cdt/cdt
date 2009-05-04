@@ -153,7 +153,7 @@ public class UntarAction extends ProvisioningAction {
 					int mode = tarEntry.getMode();
 					boolean exec = (mode & 0x111) != 0;
 					boolean execOwner = (mode & 0x11) == 0;
-					outFile.setExecutable(exec, execOwner);
+//					outFile.setExecutable(exec, execOwner);
 					
 					fileList.add(outFile);
 				}

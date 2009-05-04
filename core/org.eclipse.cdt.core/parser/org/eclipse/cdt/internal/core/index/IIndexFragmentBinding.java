@@ -53,8 +53,8 @@ public interface IIndexFragmentBinding extends IIndexBinding {
 	IIndexScope getScope();
 	
 	/**
-	 * @since 5.1
 	 * {@inheritDoc}
+	 * @since 5.1
 	 */
 	IIndexFragmentBinding getOwner() throws DOMException;
 

@@ -3,7 +3,6 @@ package org.eclipse.cdt.internal.p2.touchpoint.natives.actions;
 import java.util.Map;
 
 import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.Status;
 import org.eclipse.equinox.internal.p2.touchpoint.natives.actions.CleanupzipAction;
 import org.eclipse.equinox.internal.provisional.p2.engine.ProvisioningAction;
 
@@ -28,6 +27,6 @@ public class CleanupUntarAction extends ProvisioningAction {
 	}
 
 	public static IStatus cleanup(Map parameters) {
-		return CleanupzipAction.cleanupzip(parameters);
+		return CleanupzipAction.cleanupzip(parameters, false);
 	}
 }

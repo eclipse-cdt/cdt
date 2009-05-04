@@ -36,6 +36,7 @@
  * David McKnight   (IBM)        - [233160] [dstore] SSL/non-SSL alert are not appropriate
  * David Dykstal (IBM) [235284] Cancel password change causes problem
  * David McKnight   (IBM)        - [267236] [dstore] Can't connect after a wrong password
+ * David McKnight   (IBM)        - [274688] [api][dstore] DStoreConnectorService.internalConnect() needs to be cleaned up
  *******************************************************************************/
 
 package org.eclipse.rse.connectorservice.dstore;
@@ -114,6 +115,23 @@ import org.osgi.framework.Version;
  */
 public class DStoreConnectorService extends StandardConnectorService implements IDataStoreProvider
 {
+	private class ConnectionStatusPair {
+		private ConnectionStatus _connectStatus;
+		private ConnectionStatus _launchStatus;
+		public ConnectionStatusPair(ConnectionStatus connectStatus, ConnectionStatus launchStatus){
+			_connectStatus = connectStatus;
+			_launchStatus = launchStatus;
+		}
+		
+		public ConnectionStatus getConnectStatus(){
+			return _connectStatus;
+		}
+		
+		public ConnectionStatus getLaunchStatus(){
+			return _launchStatus;
+		}
+	}
+	
 	private class StartSpiritThread extends Thread
 	{
 		private DataStore _dataStore;
@@ -164,17 +182,6 @@ public class DStoreConnectorService extends StandardConnectorService implements 
 	{
 		super(name, description, host, 0);
 	}
-
-
-
-	/*
-	 * Set the subsystem, when its not known at constructor time
-	 *
-	public void setSubSystem(SubSystem ss)
-	{
-		super.setSubSystem(ss);
-		setDaemonLaunchEnabled((SubSystemImpl)ss, false);
-	}*/
 
 
 	public int getServerVersion()
@@ -442,33 +449,6 @@ public class DStoreConnectorService extends StandardConnectorService implements 
 		return dstorePath.getAbsolutePath();
 	}
 
-//	/**
-//	 * Specify if you support connecting to a running daemon
-//	 * @deprecated use {@link #enableServerLaunchType(ISubSystem, ServerLaunchType, boolean)}
-//	 *  or your subsystem factory should override {@link org.eclipse.rse.core.subsystems.SubSystemConfiguration#supportsServerLaunchType(ServerLaunchType)}
-//	 */
-//	public void setDaemonLaunchEnabled(SubSystem subsystemImpl, boolean enable) {
-//		enableServerLaunchType(subsystemImpl, ServerLaunchType.DAEMON_LITERAL, enable);
-//	}
-
-//	/**
-//	 * Return if you support connecting to a running daemon
-//	 * @deprecated Use instead {@link #isEnabledServerLaunchType(ISubSystem, ServerLaunchType)}
-//	 *  or {@link org.eclipse.rse.core.subsystems.SubSystemConfiguration#supportsServerLaunchType(ServerLaunchType)}
-//	 */
-//	public boolean getDaemonLaunchEnabled(SubSystem subsystemImpl) {
-//		return isEnabledServerLaunchType(subsystemImpl, ServerLaunchType.DAEMON_LITERAL);
-//	}
-
-//	/**
-//	 * Specify if you support remotely launching a server script
-//	 * @deprecated use {@link #enableServerLaunchType(ISubSystem, ServerLaunchType, boolean)}
-//	 *  or your subsystem factory should override {@link org.eclipse.rse.core.subsystems.SubSystemConfiguration#supportsServerLaunchType(ServerLaunchType)}
-//	 */
-//	public void setRexecLaunchEnabled(SubSystem subsystemImpl, boolean enable) {
-//		enableServerLaunchType(subsystemImpl, ServerLaunchType.REXEC_LITERAL, enable);
-//	}
-
 	/**
 	 * Return if you support remotely launching a server script
 	 * @deprecated Use instead {@link #isServerLaunchTypeEnabled(ISubSystem, ServerLaunchType)}
@@ -478,14 +458,6 @@ public class DStoreConnectorService extends StandardConnectorService implements 
 		return isServerLaunchTypeEnabled(subsystemImpl, ServerLaunchType.REXEC_LITERAL);
 	}
 
-//	/**
-//	 * Specify if you support connecting to a server already running
-//	 * @deprecated use {@link #enableServerLaunchType(ISubSystem, ServerLaunchType, boolean)}
-//	 *  or your subsystem factory should override {@link org.eclipse.rse.core.subsystems.SubSystemConfiguration#supportsServerLaunchType(ServerLaunchType)}
-//	 */
-//	public void setNoLaunchEnabled(SubSystem subsystemImpl, boolean enable) {
-//		enableServerLaunchType(subsystemImpl, ServerLaunchType.RUNNING_LITERAL, enable);
-//	}
 
 	/**
 	 * Return if you support connecting to a server already running
@@ -522,769 +494,541 @@ public class DStoreConnectorService extends StandardConnectorService implements 
 			setDirty(true);
 		}
 	}
-
+	
 	/**
-	 * @see org.eclipse.rse.core.subsystems.IConnectorService#connect(IProgressMonitor)
+	 *  Connect to the server by using REXEC as a daemon to launch it.
+	 *  
+	 * @param info the signon information
+	 * @param serverLauncher the server launcher
+	 * @param monitor the progress monitor
+	 * 
+	 * @return the connection status
+	 *  
+	 * @since 3.1
 	 */
-	protected void internalConnect(IProgressMonitor monitor) throws Exception
-	{
-	    if (isConnected() || _isConnecting) {
-	        return;
-	    }
-	    
-	    _isConnecting = true;
-	    boolean alertedNONSSL = false;
-
-		// set A_PLUGIN_PATH so that dstore picks up the property
-		setPluginPathProperty();
-
-		// Fire comm event to signal state about to change
-		fireCommunicationsEvent(CommunicationsEvent.BEFORE_CONNECT);
+	protected ConnectionStatus connectWithREXEC(SystemSignonInformation info, IRemoteServerLauncher serverLauncher, IProgressMonitor monitor) throws Exception {
+		if (monitor != null) {
+			String cmsg = ConnectorServiceResources.MSG_STARTING_SERVER_VIA_REXEC;
+			monitor.subTask(cmsg);
+		}
 
 		ConnectionStatus connectStatus = null;
-		ConnectionStatus launchStatus = null;
-
-		clientConnection = new ClientConnection(getPrimarySubSystem().getHost().getAliasName());
-
-		clientConnection.setHost(getHostName());
-		clientConnection.setPort(Integer.toString(getPort()));
-
-//		ISubSystem ss = getPrimarySubSystem();
-		getPrimarySubSystem();
-		IRemoteServerLauncher serverLauncher = getDStoreServerLauncher();
-
-		ServerLaunchType serverLauncherType = null;
 		boolean autoDetectSSL = true;
-		if (serverLauncher != null)
-		{
-		    serverLauncherType = serverLauncher.getServerLaunchType();
+		if (serverLauncher != null){
 		    autoDetectSSL = serverLauncher.getAutoDetectSSL();
 		}
-		else
-		{
-		  //  System.out.println("server launcher is null");
-		}
 
-		//long t1 = System.currentTimeMillis();
-		SystemMessage msg = null;
-		boolean launchFailed = false;
-
+		// GC: - if failed to get a connection in another way, try
+		// starting the datastore server with rexec
+		IServerLauncher starter = getRemoteServerLauncher();
+		starter.setSignonInformation(info);
+		starter.setServerLauncherProperties(serverLauncher);
+		
 		// get Socket Timeout Value Preference
 		int timeout = getSocketTimeOutValue();
+		
+		if (starter instanceof RexecDstoreServer){
+			((RexecDstoreServer)starter).setSocketTimeoutValue(timeout);
+		}		
+		
+		if (autoDetectSSL) timeout = 3000;
+		else setSSLProperties(isUsingSSL());
 
-		if (serverLauncherType == ServerLaunchType.REXEC_LITERAL)
+		int iServerPort = launchUsingRexec(info, serverLauncher, monitor);
+
+		if(iServerPort != 0)
 		{
-			if (monitor != null)
-			{
-				String cmsg = ConnectorServiceResources.MSG_STARTING_SERVER_VIA_REXEC;
+			clientConnection.setPort("" + iServerPort); //$NON-NLS-1$
+
+			if (monitor != null) {
+				String cmsg = NLS.bind(ConnectorServiceResources.MSG_CONNECTING_TO_SERVER, clientConnection.getPort());
 				monitor.subTask(cmsg);
 			}
 
-			SystemSignonInformation info = getSignonInformation();
-
-			// GC: - if failed to get a connection in another way, try
-			// starting the datastore server with rexec
-			IServerLauncher starter = getRemoteServerLauncher();
-			starter.setSignonInformation(info);
-			starter.setServerLauncherProperties(serverLauncher);
-			if (starter instanceof RexecDstoreServer){
-				((RexecDstoreServer)starter).setSocketTimeoutValue(timeout);
-			}
-			if (autoDetectSSL) timeout = 3000;
-			else setSSLProperties(isUsingSSL());
-
-			int iServerPort = launchUsingRexec(info, serverLauncher, monitor);
-
-			if(iServerPort != 0)
-			{
-				clientConnection.setPort("" + iServerPort); //$NON-NLS-1$
-
-				if (monitor != null)
-				{
-					String cmsg = NLS.bind(ConnectorServiceResources.MSG_CONNECTING_TO_SERVER, clientConnection.getPort());
-					monitor.subTask(cmsg);
-				}
-
-				// connect to launched server
-				connectStatus = clientConnection.connect(null, timeout);
-				if (!connectStatus.isConnected() && connectStatus.getMessage().startsWith(ClientConnection.CANNOT_CONNECT) && autoDetectSSL)
-				{
-					if (setSSLProperties(true))
+			// connect to launched server
+			connectStatus = clientConnection.connect(null, timeout);
+			if (!connectStatus.isConnected() && connectStatus.getMessage().startsWith(ClientConnection.CANNOT_CONNECT) && autoDetectSSL){
+				if (setSSLProperties(true)){
+					iServerPort = launchUsingRexec(info, serverLauncher, monitor);
+					if (iServerPort != 0)
 					{
-						iServerPort = launchUsingRexec(info, serverLauncher, monitor);
-						if (iServerPort != 0)
-						{
-							clientConnection.setPort("" + iServerPort); //$NON-NLS-1$
-							connectStatus = clientConnection.connect(null, timeout);
-						}
+						clientConnection.setPort("" + iServerPort); //$NON-NLS-1$
+						connectStatus = clientConnection.connect(null, timeout);
 					}
 				}
 			}
+		}
+		else {
+			connectStatus = new ConnectionStatus(false);
+			SystemMessage msg = starter.getErrorMessage();
+			String errorMsg = null;
+			if (msg == null)
+			{
+				errorMsg = NLS.bind(ConnectorServiceResources.MSG_COMM_CONNECT_FAILED, getHostName());
+			}
 			else
 			{
-				launchFailed = true;
-				connectStatus = new ConnectionStatus(false);
-				msg = starter.getErrorMessage();
-				String errorMsg = null;
-				if (msg == null)
+				errorMsg = msg.getLevelTwoText();
+			}
+			connectStatus.setMessage(errorMsg);
+		}
+		return connectStatus;
+	}
+	
+	/**
+	 * Connection to a server via the RSE daemon.
+	 * 
+	 * @param info the signon information
+	 * @param serverLauncher the server launcher
+	 * @param alertedNONSSL indication of whether an alert for NON-ssl has already been issued
+	 * @param monitor the progress monitor
+	 * 
+	 * @return a pair of connection statuses - the launch status for the daemon and the connect status for the server
+	 * @since 3.1
+	 */
+	protected ConnectionStatusPair connectWithDaemon(SystemSignonInformation info, IRemoteServerLauncher serverLauncher, Boolean alertedNONSSL, IProgressMonitor monitor) throws InterruptedException {
+		if (monitor != null) {
+			String cmsg = ConnectorServiceResources.MSG_STARTING_SERVER_VIA_DAEMON;
+			monitor.subTask(cmsg);
+		}
+
+		ConnectionStatus connectStatus = null;
+		
+		// DY:  getLocalUserId() may return null for Windows connections because
+		// we no longer prompt for userid / pwd.  But for other connections the userid
+		// should be the same as the one stored in the password info (and for Windows
+		// this will be the temp remoteuser userid.
+		//launchStatus = clientConnection.launchServer(getLocalUserId(), getPassword(getPasswordInformation()));
+
+		
+		int daemonPort = 0;
+		if (serverLauncher != null)
+			daemonPort = serverLauncher.getDaemonPort();
+
+		// 205986  FIRST TRY SSL, THEN NON-SECURE!
+		boolean usedSSL = true;
+		setSSLProperties(true);
+		
+		// get Socket Timeout Value Preference
+		int timeout = getSocketTimeOutValue();
+
+		ConnectionStatus launchStatus = launchServer(clientConnection, info, daemonPort, monitor, timeout);
+		if (!launchStatus.isConnected() && !clientConnection.isKnownStatus(launchStatus.getMessage()))
+		{
+			Throwable conE = launchStatus.getException();
+			if (conE instanceof SSLHandshakeException)
+			{
+				List certs = launchStatus.getUntrustedCertificates();
+				if (certs != null && certs.size() > 0)
 				{
-					errorMsg = NLS.bind(ConnectorServiceResources.MSG_COMM_CONNECT_FAILED, getHostName());
+					ISystemKeystoreProvider provider = SystemKeystoreProviderManager.getInstance().getDefaultProvider();
+					if (provider != null){
+						if (provider.importCertificates(certs, getHostName())){
+							return connectWithDaemon(info, serverLauncher, alertedNONSSL, monitor);
+						}
+						else{
+							_isConnecting = false;
+							throw new InterruptedException();
+						}
+					}
 				}
-				else
+
+			}
+
+			if (setSSLProperties(false))
+			{
+				usedSSL = false;
+
+				boolean allowNonSSL = true;
+				// warning before launch without SSL
+				IPreferenceStore store = RSEUIPlugin.getDefault().getPreferenceStore();
+				if (store.getBoolean(ISystemPreferencesConstants.ALERT_NONSSL))
 				{
-					errorMsg = msg.getLevelTwoText();
+					String cmsg = NLS.bind(ConnectorServiceResources.MSG_COMM_NOT_USING_SSL, getHostName());
+					SystemMessage msg = createSystemMessage(IConnectorServiceMessageIds.MSG_COMM_NOT_USING_SSL, IStatus.INFO, cmsg);
+
+					DisplayHidableSystemMessageAction msgAction = new DisplayHidableSystemMessageAction(msg, store, ISystemPreferencesConstants.ALERT_NONSSL);
+					Display.getDefault().syncExec(msgAction);
+					if (msgAction.getReturnCode() != IDialogConstants.YES_ID){
+						allowNonSSL = false;
+					} else {
+						alertedNONSSL = new Boolean(true); // changing value to true
+					}						
 				}
-				connectStatus.setMessage(errorMsg);
+				if (allowNonSSL){
+					launchStatus = launchServer(clientConnection, info, daemonPort, monitor, timeout);
+				}
+				else {
+					_isConnecting = false;
+					clientConnection = null;
+					
+					throw new OperationCanceledException();
+				}
 			}
 		}
-		// Start the server via the daemon
-		else if (serverLauncherType == ServerLaunchType.DAEMON_LITERAL)
-		{
+
+		if (!launchStatus.isConnected()) { // launch failed
+			String launchMsg = launchStatus.getMessage();
+			// If password has expired and must be changed
+			if (launchMsg != null && (isPasswordExpired(launchMsg) || isNewPasswordInvalid(launchMsg)))
+			{
+				SystemSignonInformation oldCredentials = (SystemSignonInformation) getCredentialsProvider().getCredentials();
+				SystemSignonInformation newCredentials = null;
+				while (launchMsg != null && (isPasswordExpired(launchMsg) || isNewPasswordInvalid(launchMsg)))
+				{
+					String pmsg = null;
+					String pmsgDetails = null;
+					String msgId = null;
+					boolean expired = isPasswordExpired(launchMsg);
+					if (expired){
+						pmsg = ConnectorServiceResources.MSG_VALIDATE_PASSWORD_EXPIRED;
+						pmsgDetails = ConnectorServiceResources.MSG_VALIDATE_PASSWORD_EXPIRED_DETAILS;
+						msgId = IConnectorServiceMessageIds.MSG_VALIDATE_PASSWORD_EXPIRED;
+					}
+					else {
+						pmsg = ConnectorServiceResources.MSG_VALIDATE_PASSWORD_INVALID;
+						pmsgDetails = ConnectorServiceResources.MSG_VALIDATE_PASSWORD_INVALID_DETAILS;
+						msgId = IConnectorServiceMessageIds.MSG_VALIDATE_PASSWORD_INVALID;
+					}
+
+					SystemMessage message = createSystemMessage(msgId,IStatus.ERROR, pmsg, pmsgDetails);
+					try {
+						getCredentialsProvider().repairCredentials(message);
+					} catch (OperationCanceledException e) {
+						_isConnecting = false;
+						clientConnection = null;
+						throw e;
+					}
+					newCredentials = (SystemSignonInformation) getCredentialsProvider().getCredentials();
+					launchStatus = changePassword(clientConnection, oldCredentials, serverLauncher, monitor, newCredentials.getPassword());
+					launchMsg = launchStatus.getMessage();
+				}
+				if (newCredentials != null){
+					info = newCredentials;
+				}
+				if (launchMsg != null && launchMsg.equals(IDataStoreConstants.ATTEMPT_RECONNECT)){
+					return connectWithDaemon(info, serverLauncher, alertedNONSSL, monitor);
+				}
+			}
+			else if (launchMsg != null && isPortOutOfRange(launchMsg))
+			{
+				_isConnecting = false;
+
+				int colonIndex = launchMsg.indexOf(':');
+				String portRange = launchMsg.substring(colonIndex + 1);
+
+				String pmsg =NLS.bind(ConnectorServiceResources.MSG_PORT_OUT_RANGE, portRange);
+				SystemMessage message = createSystemMessage(IConnectorServiceMessageIds.MSG_PORT_OUT_RANGE, IStatus.ERROR, pmsg);
+
+				// message handled here
+				ShowConnectMessage msgAction = new ShowConnectMessage(message);
+				Display.getDefault().asyncExec(msgAction);
+				return null; // null here indicates no further processing required by internalConnect
+			}
+			else
+			{
+				SystemBasePlugin.logError("Error launching server: " + launchStatus.getMessage(), null); //$NON-NLS-1$
+			}
+		}
+		else { // launch succeeded
 			if (monitor != null)
 			{
-				String cmsg = ConnectorServiceResources.MSG_STARTING_SERVER_VIA_DAEMON;
-				monitor.subTask(cmsg);
+				if (clientConnection == null){
+					SystemBasePlugin.logError("client connection is null!"); //$NON-NLS-1$
+				}
+				String pmsg = NLS.bind(ConnectorServiceResources.MSG_CONNECTING_TO_SERVER, clientConnection.getPort());
+				monitor.subTask(pmsg);
 			}
+			// connect to launched server
+			connectStatus = clientConnection.connect(launchStatus.getTicket(), timeout);
+			Throwable conE = connectStatus.getException();
 
-			// DY:  getLocalUserId() may return null for Windows connections because
-			// we no longer prompt for userid / pwd.  But for other connections the userid
-			// should be the same as the one stored in the password info (and for Windows
-			// this will be the temp remoteuser userid.
-			//launchStatus = clientConnection.launchServer(getLocalUserId(), getPassword(getPasswordInformation()));
-			SystemSignonInformation info = getSignonInformation();
-			if (info == null)
-			{
-				SystemBasePlugin.logError("password info = null!"); //$NON-NLS-1$
-			}
-
-			int daemonPort = 0;
-			if (serverLauncher != null)
-				daemonPort = serverLauncher.getDaemonPort();
-
-			/* String daemonPortStr = getSubSystem().getVendorAttribute("Remote", "DAEMON_PORT");
-			if (daemonPortStr != null && daemonPortStr.length() > 0)
-			{
-				daemonPort = Integer.parseInt(daemonPortStr);
-			}*/
-
-			// 205986]  FIRST TRY SSL, THEN NON-SECURE!
-			boolean usedSSL = true;
-			setSSLProperties(true);
-
-			launchStatus = launchServer(clientConnection, info, daemonPort, monitor, timeout);
-			if (!launchStatus.isConnected() && !clientConnection.isKnownStatus(launchStatus.getMessage()))
-			{
-				Throwable conE = launchStatus.getException();
-				if (conE instanceof SSLHandshakeException)
-				{
-					List certs = launchStatus.getUntrustedCertificates();
-					if (certs != null && certs.size() > 0)
-					{
+			if (!connectStatus.isConnected() &&
+					(connectStatus.getMessage().startsWith(ClientConnection.CANNOT_CONNECT) || conE instanceof SSLException)) { // failed to connect to the server that was launched 
+				if (conE instanceof SSLHandshakeException){ // cause of failure was an SSL handshake exception
+					List certs = connectStatus.getUntrustedCertificates();
+					if (certs != null && certs.size() > 0) {
 						ISystemKeystoreProvider provider = SystemKeystoreProviderManager.getInstance().getDefaultProvider();
-						if (provider != null)
-						{
-							_isConnecting = false;
-							if (provider.importCertificates(certs, getHostName()))
-							{
-								internalConnect(monitor);
-								return;
+						if (provider != null){							
+							if (provider.importCertificates(certs, getHostName())) { // import the certificates and try again								
+								return connectWithDaemon(info, serverLauncher, alertedNONSSL, monitor);
 							}
-							else
-							{
+							else {
+								_isConnecting = false;
 								throw new InterruptedException();
 							}
 						}
 					}
-
 				}
-
-				if (setSSLProperties(false))
-				{
-					usedSSL = false;
-
-					boolean allowNonSSL = true;
-					// warning before launch without SSL
-					IPreferenceStore store = RSEUIPlugin.getDefault().getPreferenceStore();
-					if (store.getBoolean(ISystemPreferencesConstants.ALERT_NONSSL))
-					{
-						String cmsg = NLS.bind(ConnectorServiceResources.MSG_COMM_NOT_USING_SSL, getHostName());
-						msg = createSystemMessage(IConnectorServiceMessageIds.MSG_COMM_NOT_USING_SSL, IStatus.INFO, cmsg);
-
-						DisplayHidableSystemMessageAction msgAction = new DisplayHidableSystemMessageAction(msg, store, ISystemPreferencesConstants.ALERT_NONSSL);
-						Display.getDefault().syncExec(msgAction);
-						if (msgAction.getReturnCode() != IDialogConstants.YES_ID){
-							allowNonSSL = false;
-						} else {
-							alertedNONSSL = true;
-						}						
-					}
-					if (allowNonSSL){
-						launchStatus = launchServer(clientConnection, info, daemonPort, monitor, timeout);
-					}
-					else {
-						_isConnecting = false;
-						clientConnection = null;
-						
-						throw new OperationCanceledException();
+				
+				// relaunching the server via the daemon so that we can connect again to the launched server with toggled useSSL settings
+				launchStatus = launchServer(clientConnection, info, daemonPort, monitor);
+				if (launchStatus.isConnected()) {
+					if (setSSLProperties(!usedSSL)){
+						connectStatus = clientConnection.connect(launchStatus.getTicket(), timeout);
 					}
 				}
 			}
-
-			if (!launchStatus.isConnected())
+			
+			// failure to connect diagnosis - not sure why this is here since I would expect this case was already handled
+			// leaving it here just in case - will review later
+			if (!connectStatus.isConnected() && connectStatus.isSLLProblem())
 			{
-				String launchMsg = launchStatus.getMessage();
-				// If password has expired and must be changed
-				if (launchMsg != null && (isPasswordExpired(launchMsg) || isNewPasswordInvalid(launchMsg)))
-				{
-					SystemSignonInformation oldCredentials = (SystemSignonInformation) getCredentialsProvider().getCredentials();
-					SystemSignonInformation newCredentials = null;
-					while (launchMsg != null && (isPasswordExpired(launchMsg) || isNewPasswordInvalid(launchMsg)))
-					{
-						String pmsg = null;
-						String pmsgDetails = null;
-						String msgId = null;
-						boolean expired = isPasswordExpired(launchMsg);
-						if (expired){
-							pmsg = ConnectorServiceResources.MSG_VALIDATE_PASSWORD_EXPIRED;
-							pmsgDetails = ConnectorServiceResources.MSG_VALIDATE_PASSWORD_EXPIRED_DETAILS;
-							msgId = IConnectorServiceMessageIds.MSG_VALIDATE_PASSWORD_EXPIRED;
+				List certs = connectStatus.getUntrustedCertificates();
+				if (certs != null && certs.size() > 0) {
+					ISystemKeystoreProvider provider = SystemKeystoreProviderManager.getInstance().getDefaultProvider();
+					if (provider != null) {
+						if (provider.importCertificates(certs, getHostName())){
+							return connectWithDaemon(info, serverLauncher, alertedNONSSL, monitor);
 						}
 						else {
-							pmsg = ConnectorServiceResources.MSG_VALIDATE_PASSWORD_INVALID;
-							pmsgDetails = ConnectorServiceResources.MSG_VALIDATE_PASSWORD_INVALID_DETAILS;
-							msgId = IConnectorServiceMessageIds.MSG_VALIDATE_PASSWORD_INVALID;
-						}
-
-						SystemMessage message = createSystemMessage(msgId,IStatus.ERROR, pmsg, pmsgDetails);
-						try {
-							getCredentialsProvider().repairCredentials(message);
-						} catch (OperationCanceledException e) {
 							_isConnecting = false;
-							clientConnection = null;
-							throw e;
-						}
-						newCredentials = (SystemSignonInformation) getCredentialsProvider().getCredentials();
-						launchStatus = changePassword(clientConnection, oldCredentials, serverLauncher, monitor, newCredentials.getPassword());
-						launchMsg = launchStatus.getMessage();
-					}
-					if (newCredentials != null)
-					{
-						info = newCredentials;
-					}
-					if (launchMsg != null && launchMsg.equals(IDataStoreConstants.ATTEMPT_RECONNECT))
-					{
-						_isConnecting = false;
-						internalConnect(monitor);
-						return;
-					}
-				}
-				else if (launchMsg != null && isPortOutOfRange(launchMsg))
-				{
-					_isConnecting = false;
-					launchFailed = true;
-
-
-					int colonIndex = launchMsg.indexOf(':');
-					String portRange = launchMsg.substring(colonIndex + 1);
-
-					String pmsg =NLS.bind(ConnectorServiceResources.MSG_PORT_OUT_RANGE, portRange);
-					SystemMessage message = createSystemMessage(IConnectorServiceMessageIds.MSG_PORT_OUT_RANGE, IStatus.ERROR, pmsg);
-
-					ShowConnectMessage msgAction = new ShowConnectMessage(message);
-					Display.getDefault().asyncExec(msgAction);
-					return;
-				}
-				else
-				{
-					launchFailed = true;
-					SystemBasePlugin.logError("Error launching server: " + launchStatus.getMessage(), null); //$NON-NLS-1$
-				}
-			}
-			if (launchStatus.isConnected())
-			{
-				if (monitor != null)
-				{
-					if (clientConnection == null){
-						SystemBasePlugin.logError("client connection is null!"); //$NON-NLS-1$
-					}
-					String pmsg = NLS.bind(ConnectorServiceResources.MSG_CONNECTING_TO_SERVER, clientConnection.getPort());
-					monitor.subTask(pmsg);
-				}
-				// connect to launched server
-				connectStatus = clientConnection.connect(launchStatus.getTicket(), timeout);
-				Throwable conE = connectStatus.getException();
-				if (!connectStatus.isConnected() &&
-						(connectStatus.getMessage().startsWith(ClientConnection.CANNOT_CONNECT) ||
-						 conE instanceof SSLException
-						 )
-						)
-				{
-					_isConnecting = false;
-					if (conE instanceof SSLHandshakeException)
-					{
-						List certs = connectStatus.getUntrustedCertificates();
-						if (certs != null && certs.size() > 0)
-						{
-							ISystemKeystoreProvider provider = SystemKeystoreProviderManager.getInstance().getDefaultProvider();
-							if (provider != null)
-							{
-								
-								if (provider.importCertificates(certs, getHostName()))
-								{
-									internalConnect(monitor);
-									return;
-								}
-								else
-								{
-									throw new InterruptedException();
-								}
-							}
-						}
-
-					}
-					launchStatus = launchServer(clientConnection, info, daemonPort, monitor);
-					if (!launchStatus.isConnected())
-					{
-						launchFailed = true;
-					}
-					else
-					{
-						if (setSSLProperties(!usedSSL))
-						{
-							connectStatus = clientConnection.connect(launchStatus.getTicket(), timeout);
+							throw new InterruptedException();
 						}
 					}
 				}
-				if (!connectStatus.isConnected() && connectStatus.isSLLProblem())
-				{
-					_isConnecting = false;
-					importCertsAndReconnect(connectStatus, monitor);
-					return;
-				}
-
-				/*
-				if (connectStatus != null && connectStatus.getMessage().startsWith(ClientConnection.INCOMPATIBLE_UPDATE))
-				{
-					// offer to update it
-					clientConnection.getDataStore().queryInstall();
-				}
-				*/
 			}
-			else
-			{
-				connectStatus = new ConnectionStatus(false);
+		} 
 
-				String cmsg = NLS.bind(ConnectorServiceResources.MSG_COMM_CONNECT_FAILED, getHostName());
-				connectStatus.setMessage(cmsg);
+		return new ConnectionStatusPair(connectStatus, launchStatus);
+	}
+	
+	/**
+	 *  Connect to a running server.
+	 *  
+	 * @param monitor the progress monitor
+	 * 
+	 * @return the connection status
+	 * @since 3.1
+	 */
+	protected ConnectionStatus connectWithRunning(IProgressMonitor monitor){
+		if (monitor != null)
+		{
+			String cmsg = NLS.bind(ConnectorServiceResources.MSG_CONNECTING_TO_SERVER, clientConnection.getPort());
+			monitor.subTask(cmsg);
+		}
+		// connect directly
+		boolean useSSL = isUsingSSL();
+		setSSLProperties(useSSL);
+		
+		// get Socket Timeout Value Preference
+		int timeout = getSocketTimeOutValue();
+		return clientConnection.connect(null, timeout);
+	}
+	
+	/**
+	 * Initialize the DataStore connection.
+	 * 
+	 * @param launchStatus the launch status if the server was launched via the daemon.  Otherwise, null.
+	 * @param connectStatus the connect status for the server
+	 * @param alertedNONSSL a boolean indicating whether the user has been alerted to a NON-ssl connection
+	 * @param monitor the status monitor
+	 * 
+	 * @since 3.1
+	 */
+	protected void initializeConnection(ConnectionStatus launchStatus, ConnectionStatus connectStatus, Boolean alertedNONSSL, IProgressMonitor monitor) throws Exception {
+		SystemMessage msg = null;
+		IPreferenceStore store = RSEUIPlugin.getDefault().getPreferenceStore();
+		if (clientConnection.getDataStore().usingSSL() && store.getBoolean(ISystemPreferencesConstants.ALERT_SSL))
+		{
+			String cmsg = NLS.bind(ConnectorServiceResources.MSG_COMM_USING_SSL, getHostName());
+			msg = createSystemMessage(IConnectorServiceMessageIds.MSG_COMM_USING_SSL, IStatus.INFO, cmsg);
+
+			DisplayHidableSystemMessageAction msgAction = new DisplayHidableSystemMessageAction(msg, store, ISystemPreferencesConstants.ALERT_SSL);
+			Display.getDefault().syncExec(msgAction);
+			if (msgAction.getReturnCode() != IDialogConstants.YES_ID)
+			{			
+				internalDisconnect(monitor);
+				_isConnecting = false;
+				throw new InterruptedException();
 			}
 		}
-		else if (serverLauncherType == ServerLaunchType.RUNNING_LITERAL)
+		else if (!clientConnection.getDataStore().usingSSL() && store.getBoolean(ISystemPreferencesConstants.ALERT_NONSSL))
 		{
-			if (monitor != null)
-			{
-				String cmsg = NLS.bind(ConnectorServiceResources.MSG_CONNECTING_TO_SERVER, clientConnection.getPort());
-				monitor.subTask(cmsg);
-			}
-			// connection directly
-			boolean useSSL = isUsingSSL();
-			setSSLProperties(useSSL);
-			connectStatus = clientConnection.connect(null, timeout);
-		}
-		// server launcher type is unknown
-		else
-		{
-			SystemSignonInformation info = getSignonInformation();
-			connectStatus = launchServer(clientConnection, info, serverLauncher, monitor);
-			if (!connectStatus.isConnected() && !clientConnection.isKnownStatus(connectStatus.getMessage()))
-			{
-				if (setSSLProperties(true))
-				{
-					connectStatus = launchServer(clientConnection, info, serverLauncher, monitor);
-					if (!connectStatus.isConnected() && connectStatus.isSLLProblem())
-					{
-						_isConnecting = false;
-						importCertsAndReconnect(connectStatus, monitor);
-						return;
-					}
-				}
-			}
-
-		}
-
-		// if connected
-		if (connectStatus != null && connectStatus.isConnected())
-		{
-			IPreferenceStore store = RSEUIPlugin.getDefault().getPreferenceStore();
-			if (clientConnection.getDataStore().usingSSL() && store.getBoolean(ISystemPreferencesConstants.ALERT_SSL))
-			{
-				String cmsg = NLS.bind(ConnectorServiceResources.MSG_COMM_USING_SSL, getHostName());
-				msg = createSystemMessage(IConnectorServiceMessageIds.MSG_COMM_USING_SSL, IStatus.INFO, cmsg);
-
-				DisplayHidableSystemMessageAction msgAction = new DisplayHidableSystemMessageAction(msg, store, ISystemPreferencesConstants.ALERT_SSL);
+			if (!alertedNONSSL.booleanValue()){ // only alert if we haven't already
+				String cmsg = NLS.bind(ConnectorServiceResources.MSG_COMM_NOT_USING_SSL, getHostName());
+				msg = createSystemMessage(IConnectorServiceMessageIds.MSG_COMM_NOT_USING_SSL, IStatus.INFO, cmsg);
+				
+				DisplayHidableSystemMessageAction msgAction = new DisplayHidableSystemMessageAction(msg, store, ISystemPreferencesConstants.ALERT_NONSSL);
 				Display.getDefault().syncExec(msgAction);
 				if (msgAction.getReturnCode() != IDialogConstants.YES_ID)
-				{			
+				{
 					internalDisconnect(monitor);
 					_isConnecting = false;
 					throw new InterruptedException();
 				}
 			}
-			else if (!clientConnection.getDataStore().usingSSL() && store.getBoolean(ISystemPreferencesConstants.ALERT_NONSSL))
-			{
-				if (!alertedNONSSL){ // only alert if we haven't already
-					String cmsg = NLS.bind(ConnectorServiceResources.MSG_COMM_NOT_USING_SSL, getHostName());
-					msg = createSystemMessage(IConnectorServiceMessageIds.MSG_COMM_NOT_USING_SSL, IStatus.INFO, cmsg);
-					
-					DisplayHidableSystemMessageAction msgAction = new DisplayHidableSystemMessageAction(msg, store, ISystemPreferencesConstants.ALERT_NONSSL);
-					Display.getDefault().syncExec(msgAction);
-					if (msgAction.getReturnCode() != IDialogConstants.YES_ID)
-					{
-						internalDisconnect(monitor);
-						_isConnecting = false;
-						throw new InterruptedException();
-					}
-				}
-			}
+		}
 
-			DataStore dataStore = clientConnection.getDataStore();
+		DataStore dataStore = clientConnection.getDataStore();
 
-			_connectionStatusListener = new ConnectionStatusListener(dataStore.getStatus(), this);
-			dataStore.getDomainNotifier().addDomainListener(_connectionStatusListener);
+		_connectionStatusListener = new ConnectionStatusListener(dataStore.getStatus(), this);
+		dataStore.getDomainNotifier().addDomainListener(_connectionStatusListener);
 
+		StatusMonitor statusMonitor = StatusMonitorFactory.getInstance().getStatusMonitorFor(this, dataStore);
 
-
-			// DKM: dataStore needs a miners location
-			//		for now, I'll use dstore.miners as default location
-			//		(I've inserted the universal miner in it's minerFile.dat file)
-
-			// DY:  defect 46811 The minerFile.dat does not exist in this directory which causes a
-			// java.io.FileNotFoundException to be printed to the console (not very
-			// encouraging for the end user.)  So I'm setting it to the current directory (.)
-			// which should be where the code is run from
-			//dataStore.addMinersLocation("org.eclipse.dstore.miners");
-
-
-			StatusMonitor statusMonitor = StatusMonitorFactory.getInstance().getStatusMonitorFor(this, dataStore);
-
-			if (launchStatus != null && launchStatus.isConnected())
-			{
-				//dataStore.showTicket(launchStatus.getTicket()); // send security token to server, this must be done first
-				DataElement ticket = dataStore.createTicket(launchStatus.getTicket());
-				dataStore.queryShowTicket(ticket);
-				//statusMonitor.waitForUpdate(ticketStatus);
-			}
-			else
-			{
-				dataStore.showTicket(null);
-			}
-
-	      //  if (dataStore.isDoSpirit()) dataStore.queryServerSpiritState();
-			StartSpiritThread thread = new StartSpiritThread(dataStore);
-			thread.start();
-
-			// Fire comm event to signal state changed
-			fireCommunicationsEvent(CommunicationsEvent.AFTER_CONNECT);
-
-			// is there a warning message?
-			String message = connectStatus.getMessage();
-			if (message != null)
-			{
-				if (message.startsWith(ClientConnection.CLIENT_OLDER))
-				{
-					String cmsg = NLS.bind(ConnectorServiceResources.MSG_COMM_CLIENT_OLDER_WARNING, getHostName());
-					String cmsgDetail = ConnectorServiceResources.MSG_COMM_CLIENT_OLDER_WARNING_DETAILS;
-
-					msg = createSystemMessage(IConnectorServiceMessageIds.MSG_COMM_CLIENT_OLDER_WARNING, IStatus.WARNING, cmsg, cmsgDetail);
-
-				}
-				else if (message.startsWith(ClientConnection.SERVER_OLDER))
-				{
-					String cmsg = NLS.bind(ConnectorServiceResources.MSG_COMM_SERVER_OLDER_WARNING, getHostName());
-					String cmsgDetail = ConnectorServiceResources.MSG_COMM_SERVER_OLDER_WARNING_DETAILS;
-
-					msg = createSystemMessage(IConnectorServiceMessageIds.MSG_COMM_SERVER_OLDER_WARNING, IStatus.WARNING, cmsg, cmsgDetail);
-				}
-
-				if (store.getBoolean(IUniversalDStoreConstants.ALERT_MISMATCHED_SERVER)){
-					DisplayHidableSystemMessageAction msgAction = new DisplayHidableSystemMessageAction(msg, store, IUniversalDStoreConstants.ALERT_MISMATCHED_SERVER, false);
-					Display.getDefault().syncExec(msgAction);
-				}
-			}
-
-			// register the classloader for this plugin with the datastore
-			dataStore.registerLocalClassLoader(getClass().getClassLoader());
-
-			int serverVersion = getServerVersion();
-			if (serverVersion >= 8 || (serverVersion == 7 && getServerMinor() >= 1))
-			{
-				//	 register the preference for remote class caching with the datastore
-				boolean cacheRemoteClasses = store.getBoolean(IUniversalDStoreConstants.RESID_PREF_CACHE_REMOTE_CLASSES);
-
-				// this preference is set on the server side
-				dataStore.setPreference(RemoteClassLoader.CACHING_PREFERENCE, cacheRemoteClasses ? "true" : "false", true); //$NON-NLS-1$  //$NON-NLS-2$
-
-				if (serverVersion >= 8){ // keepalive preferences
-					boolean doKeepalive = store.getBoolean(IUniversalDStoreConstants.RESID_PREF_DO_KEEPALIVE);
-
-					int keepaliveResponseTimeout = store.getInt(IUniversalDStoreConstants.RESID_PREF_KEEPALIVE_RESPONSE_TIMEOUT);
-					if (keepaliveResponseTimeout == 0){ // use the default
-						keepaliveResponseTimeout = store.getDefaultInt(IUniversalDStoreConstants.RESID_PREF_KEEPALIVE_RESPONSE_TIMEOUT);
-					}
-
-					int socketTimeout =  store.getInt(IUniversalDStoreConstants.RESID_PREF_SOCKET_READ_TIMEOUT);
-					if (socketTimeout == 0){ // use the default
-						socketTimeout = store.getDefaultInt(IUniversalDStoreConstants.RESID_PREF_SOCKET_READ_TIMEOUT);
-					}
-
-					// these preferences are only for the client
-					dataStore.setPreference(XMLparser.KEEPALIVE_ENABLED_PREFERENCE, doKeepalive ? "true" : "false", false);  //$NON-NLS-1$//$NON-NLS-2$
-					dataStore.setPreference(XMLparser.KEEPALIVE_RESPONSE_TIMEOUT_PREFERENCE, ""+ keepaliveResponseTimeout, false); //$NON-NLS-1$
-					dataStore.setPreference(XMLparser.IO_SOCKET_READ_TIMEOUT_PREFERENCE, ""+socketTimeout, false); //$NON-NLS-1$
-				}
-			}
-			else
-			{
-				dataStore.addMinersLocation("."); //$NON-NLS-1$
-				// older servers initialized in one shot
-				dataStore.getSchema();
-
-		         // Initialzie the miners
-		         if (monitor != null)
-		         {
-		        	 String imsg = ConnectorServiceResources.MSG_INITIALIZING_SERVER;
-		            monitor.subTask(imsg);
-		         }
-		         DataElement initStatus = dataStore.initMiners();
-		         statusMonitor.waitForUpdate(initStatus);
-			}
-			//long t2 = System.currentTimeMillis();
-			//System.out.println("connect time = "+(t2 - t1));
+		if (launchStatus != null && launchStatus.isConnected())
+		{
+			DataElement ticket = dataStore.createTicket(launchStatus.getTicket());
+			dataStore.queryShowTicket(ticket);
 		}
 		else
 		{
-			// if daemon launch failed because of an SSL problem
-		    if (launchFailed && launchStatus != null && launchStatus.isSLLProblem())
-		    {
-		    	if (launchStatus.isSLLProblem())
-				{
-					launchStatus.getException();
+			dataStore.showTicket(null);
+		}
 
-					List certs = launchStatus.getUntrustedCertificates();
-					if (certs.size() > 0)
-					{
-						ISystemKeystoreProvider provider = SystemKeystoreProviderManager.getInstance().getDefaultProvider();
-						if (provider != null)
-						{
-							if (provider.importCertificates(certs, getHostName()))
-							{
-								_isConnecting = false;
-								internalConnect(monitor);
-								return;
-							}
-						}
-					}
-					else
-					{
-						String cmsg = NLS.bind(ConnectorServiceResources.MSG_CONNECT_SSL_EXCEPTION, launchStatus.getMessage());
-						String cmsgDetails = ConnectorServiceResources.MSG_CONNECT_SSL_EXCEPTION_DETAILS;
-						msg = createSystemMessage(IConnectorServiceMessageIds.MSG_CONNECT_SSL_EXCEPTION, IStatus.ERROR, cmsg, cmsgDetails);
-					}
-				}
-		    }
+		StartSpiritThread thread = new StartSpiritThread(dataStore);
+		thread.start();
 
-		    // if daemon launch failed (SSL or otherwise)
-			if (launchFailed && launchStatus != null)
+		// Fire comm event to signal state changed
+		fireCommunicationsEvent(CommunicationsEvent.AFTER_CONNECT);
+
+		// is there a warning message?
+		String message = connectStatus.getMessage();
+		if (message != null)
+		{
+			if (message.startsWith(ClientConnection.CLIENT_OLDER))
 			{
-				String launchMsg = launchStatus.getMessage();
-				if (launchStatus.getException() != null && serverLauncher != null)
-				{
-					Throwable exception = launchStatus.getException();
-					String fmsg = NLS.bind(ConnectorServiceResources.MSG_CONNECT_DAEMON_FAILED_EXCEPTION, getHostName(), ""+serverLauncher.getDaemonPort()); //$NON-NLS-1$
+				String cmsg = NLS.bind(ConnectorServiceResources.MSG_COMM_CLIENT_OLDER_WARNING, getHostName());
+				String cmsgDetail = ConnectorServiceResources.MSG_COMM_CLIENT_OLDER_WARNING_DETAILS;
 
-					msg = createSystemMessage(IConnectorServiceMessageIds.MSG_CONNECT_DAEMON_FAILED_EXCEPTION, IStatus.ERROR, fmsg, exception);
-				}
-				else if (launchMsg != null && launchMsg.indexOf(IDataStoreConstants.AUTHENTICATION_FAILED) != -1)
-				{
-					_isConnecting = false;
-					if (launchFailed)
-				    {
-				        clearPassword(true, true);
-				    }
+				msg = createSystemMessage(IConnectorServiceMessageIds.MSG_COMM_CLIENT_OLDER_WARNING, IStatus.WARNING, cmsg, cmsgDetail);
 
-					// Display error message
-					String msgTxt = CommonMessages.MSG_COMM_AUTH_FAILED;
-					String msgDetails = NLS.bind(CommonMessages.MSG_COMM_AUTH_FAILED_DETAILS, getHostName());
+			}
+			else if (message.startsWith(ClientConnection.SERVER_OLDER))
+			{
+				String cmsg = NLS.bind(ConnectorServiceResources.MSG_COMM_SERVER_OLDER_WARNING, getHostName());
+				String cmsgDetail = ConnectorServiceResources.MSG_COMM_SERVER_OLDER_WARNING_DETAILS;
 
-					msg = createSystemMessage(ICommonMessageIds.MSG_COMM_AUTH_FAILED, IStatus.ERROR, msgTxt, msgDetails);
-
-					DisplaySystemMessageAction msgAction = new DisplaySystemMessageAction(msg);
-					Display.getDefault().syncExec(msgAction);
-
-					// Re-prompt for password
-					connectException = null;
-					Display.getDefault().syncExec(new Runnable()
-					{
-						public void run()
-						{
-							try
-							{
-								acquireCredentials(true);
-							}
-							catch (OperationCanceledException e)
-							{
-								connectException = e;
-							}
-						}
-					});
-
-					// Check if the user cancelled the prompt
-					if (connectException instanceof OperationCanceledException)
-					{
-						throw connectException;
-					}
-
-					
-					// Try to connect again.  This is a recursive call, but will only
-					// call if the user presses OK on the password prompt dialog, otherwise
-					// it will continue and return
-					internalConnect(monitor);
-
-					// Since we got here we must be connected so skip error checking below
-					return;
-				}
-				// If password has expired and must be changed
-				else if (launchMsg != null && (isPasswordExpired(launchMsg) || isNewPasswordInvalid(launchMsg)))
-				{
-					_isConnecting = false;
-					SystemSignonInformation oldCredentials = (SystemSignonInformation) getCredentialsProvider().getCredentials();
-					SystemSignonInformation newCredentials = null;
-					while (launchMsg != null && (isPasswordExpired(launchMsg) || isNewPasswordInvalid(launchMsg)))
-					{
-						String msgTxt = ConnectorServiceResources.MSG_VALIDATE_PASSWORD_INVALID;
-						String msgDetails = ConnectorServiceResources.MSG_VALIDATE_PASSWORD_INVALID_DETAILS;
-						String msgId = IConnectorServiceMessageIds.MSG_VALIDATE_PASSWORD_INVALID;
-						if (isPasswordExpired(launchMsg)){
-							msgTxt = ConnectorServiceResources.MSG_VALIDATE_PASSWORD_EXPIRED;
-							msgDetails = ConnectorServiceResources.MSG_VALIDATE_PASSWORD_EXPIRED_DETAILS;
-							msgId = IConnectorServiceMessageIds.MSG_VALIDATE_PASSWORD_EXPIRED;
-						}
-
-						SystemMessage message = createSystemMessage(msgId, IStatus.ERROR, msgTxt, msgDetails);
-
-						getCredentialsProvider().repairCredentials(message);
-						newCredentials = (SystemSignonInformation) getCredentialsProvider().getCredentials();
-						launchStatus = changePassword(clientConnection, oldCredentials, serverLauncher, monitor, newCredentials.getPassword());
-						launchMsg = launchStatus.getMessage();
-					}
-					if (launchMsg != null && launchMsg.equals(IDataStoreConstants.ATTEMPT_RECONNECT))
-					{						
-						internalConnect(monitor);
-						return;
-					}
-//					NewPasswordInfo newPasswordInfo = null;
-//					while (launchMsg != null && (isPasswordExpired(launchMsg) || isNewPasswordInvalid(launchMsg)))
-//					{
-//						newPasswordInfo = promptForNewPassword(isPasswordExpired(launchMsg) ? RSEUIPlugin.getPluginMessage(ISystemMessages.MSG_VALIDATE_PASSWORD_EXPIRED) : RSEUIPlugin.getPluginMessage(ISystemMessages.MSG_VALIDATE_PASSWORD_INVALID));
-//						launchStatus = changePassword(clientConnection, getPasswordInformation(), serverLauncher, monitor, newPasswordInfo.newPassword);
-//						launchMsg = launchStatus.getMessage();
-//					}
-//					if (newPasswordInfo != null)
-//					{
-//						setPassword(getPasswordInformation().getUserid(), newPasswordInfo.newPassword, newPasswordInfo.savePassword);
-//					}
-//					if (launchMsg != null && launchMsg.equals(IDataStoreConstants.ATTEMPT_RECONNECT))
-//					{
-//						internalConnect(monitor);
-//						return;
-//					}
-				}
-				else if (launchMsg != null)
-				{
-					String msgTxt = NLS.bind(ConnectorServiceResources.MSG_CONNECT_DAEMON_FAILED, getHostName(), clientConnection.getPort());
-					msg = createSystemMessage(IConnectorServiceMessageIds.MSG_CONNECT_DAEMON_FAILED, IStatus.ERROR, msgTxt, launchMsg);
-				}
+				msg = createSystemMessage(IConnectorServiceMessageIds.MSG_COMM_SERVER_OLDER_WARNING, IStatus.WARNING, cmsg, cmsgDetail);
 			}
 
-			// if connection failed for known reason
-			else if (connectStatus != null && !connectStatus.isConnected())
-			{
-				if (connectStatus.getMessage().startsWith(ClientConnection.INCOMPATIBLE_SERVER_UPDATE))
-				{
-					String msgTxt = NLS.bind(ConnectorServiceResources.MSG_COMM_INCOMPATIBLE_UPDATE, getHostName());
-					String msgDetails = ConnectorServiceResources.MSG_COMM_INCOMPATIBLE_UPDATE_DETAILS;
+			if (store.getBoolean(IUniversalDStoreConstants.ALERT_MISMATCHED_SERVER)){
+				DisplayHidableSystemMessageAction msgAction = new DisplayHidableSystemMessageAction(msg, store, IUniversalDStoreConstants.ALERT_MISMATCHED_SERVER, false);
+				Display.getDefault().syncExec(msgAction);
+			}
+		}
 
-					msg = createSystemMessage(IConnectorServiceMessageIds.MSG_COMM_INCOMPATIBLE_UPDATE, IStatus.ERROR, msgTxt, msgDetails);
+		// register the classloader for this plugin with the datastore
+		dataStore.registerLocalClassLoader(getClass().getClassLoader());
+
+		int serverVersion = getServerVersion();
+		if (serverVersion >= 8 || (serverVersion == 7 && getServerMinor() >= 1))
+		{
+			//	 register the preference for remote class caching with the datastore
+			boolean cacheRemoteClasses = store.getBoolean(IUniversalDStoreConstants.RESID_PREF_CACHE_REMOTE_CLASSES);
+
+			// this preference is set on the server side
+			dataStore.setPreference(RemoteClassLoader.CACHING_PREFERENCE, cacheRemoteClasses ? "true" : "false", true); //$NON-NLS-1$  //$NON-NLS-2$
+
+			if (serverVersion >= 8){ // keepalive preferences
+				boolean doKeepalive = store.getBoolean(IUniversalDStoreConstants.RESID_PREF_DO_KEEPALIVE);
+
+				int keepaliveResponseTimeout = store.getInt(IUniversalDStoreConstants.RESID_PREF_KEEPALIVE_RESPONSE_TIMEOUT);
+				if (keepaliveResponseTimeout == 0){ // use the default
+					keepaliveResponseTimeout = store.getDefaultInt(IUniversalDStoreConstants.RESID_PREF_KEEPALIVE_RESPONSE_TIMEOUT);
 				}
-				else if (connectStatus.getMessage().startsWith(ClientConnection.INCOMPATIBLE_PROTOCOL))
-				{
-					String msgTxt = NLS.bind(ConnectorServiceResources.MSG_COMM_INCOMPATIBLE_PROTOCOL, getHostName());
-					String msgDetails = ConnectorServiceResources.MSG_COMM_INCOMPATIBLE_PROTOCOL_DETAILS;
 
-					msg = createSystemMessage(IConnectorServiceMessageIds.MSG_COMM_INCOMPATIBLE_PROTOCOL, IStatus.ERROR, msgTxt, msgDetails);
+				int socketTimeout =  store.getInt(IUniversalDStoreConstants.RESID_PREF_SOCKET_READ_TIMEOUT);
+				if (socketTimeout == 0){ // use the default
+					socketTimeout = store.getDefaultInt(IUniversalDStoreConstants.RESID_PREF_SOCKET_READ_TIMEOUT);
+				}
+
+				// these preferences are only for the client
+				dataStore.setPreference(XMLparser.KEEPALIVE_ENABLED_PREFERENCE, doKeepalive ? "true" : "false", false);  //$NON-NLS-1$//$NON-NLS-2$
+				dataStore.setPreference(XMLparser.KEEPALIVE_RESPONSE_TIMEOUT_PREFERENCE, ""+ keepaliveResponseTimeout, false); //$NON-NLS-1$
+				dataStore.setPreference(XMLparser.IO_SOCKET_READ_TIMEOUT_PREFERENCE, ""+socketTimeout, false); //$NON-NLS-1$
+			}
+		}
+		else
+		{
+			dataStore.addMinersLocation("."); //$NON-NLS-1$
+			// older servers initialized in one shot
+			dataStore.getSchema();
+
+	         // Initialzie the miners
+	         if (monitor != null)
+	         {
+	        	 String imsg = ConnectorServiceResources.MSG_INITIALIZING_SERVER;
+	            monitor.subTask(imsg);
+	         }
+	         DataElement initStatus = dataStore.initMiners();
+	         statusMonitor.waitForUpdate(initStatus);
+		}
+	}
+
+	/**
+	 * Diagnostics the occurs after the failure of a connect.
+	 * 
+	 * @param launchStatus the status of the launching of the server (if a daemon was used)
+	 * @param connectStatus the status of the connecting to the server
+	 * @param serverLauncher the server launcher
+	 * @param serverLauncherType the type of server launcher
+	 * @param monitor the progress monitor
+	 * 
+	 * @since 3.1
+	 */
+	protected void handleConnectionFailure(ConnectionStatus launchStatus, ConnectionStatus connectStatus, IRemoteServerLauncher serverLauncher, ServerLaunchType serverLauncherType, IProgressMonitor monitor) throws Exception
+	{
+		SystemMessage msg = null;
+		boolean launchFailed = false;
+		if (launchStatus != null){
+			launchFailed = !launchStatus.isConnected();
+		}
+		// if daemon launch failed because of an SSL problem			
+	    if (launchFailed && launchStatus.isSLLProblem())
+	    {
+	    	if (launchStatus.isSLLProblem())
+			{
+				launchStatus.getException();
+
+				List certs = launchStatus.getUntrustedCertificates();
+				if (certs.size() > 0)
+				{
+					ISystemKeystoreProvider provider = SystemKeystoreProviderManager.getInstance().getDefaultProvider();
+					if (provider != null)
+					{
+						if (provider.importCertificates(certs, getHostName()))
+						{
+							_isConnecting = false;
+							internalConnect(monitor);
+							return;
+						}
+					}
 				}
 				else
 				{
-					Throwable exception = connectStatus.getException();
-					if (exception instanceof SSLHandshakeException)
-					{
-						List certs = connectStatus.getUntrustedCertificates();
-						if (certs != null && certs.size() > 0)
-						{
-							ISystemKeystoreProvider provider = SystemKeystoreProviderManager.getInstance().getDefaultProvider();
-							if (provider != null)
-							{
-								_isConnecting = false;
-								provider.importCertificates(certs, getHostName());								
-								_isConnecting = false;
-								
-								// Don't attempt reconnect when server was started manually.  The problem is that 
-								// in that situation, the server will have terminated on the failed connection
-								// due to the missing certs
-								if (serverLauncherType != ServerLaunchType.RUNNING_LITERAL){
-									internalConnect(monitor);
-								}
-								return;
-							}
-						}
-					}
-					else if (exception != null)
-					{
-						String msgTxt = NLS.bind(CommonMessages.MSG_CONNECT_FAILED, getHostName());
-						msg = createSystemMessage(ICommonMessageIds.MSG_CONNECT_FAILED, IStatus.ERROR, msgTxt, exception);
-					}
+					String cmsg = NLS.bind(ConnectorServiceResources.MSG_CONNECT_SSL_EXCEPTION, launchStatus.getMessage());
+					String cmsgDetails = ConnectorServiceResources.MSG_CONNECT_SSL_EXCEPTION_DETAILS;
+					msg = createSystemMessage(IConnectorServiceMessageIds.MSG_CONNECT_SSL_EXCEPTION, IStatus.ERROR, cmsg, cmsgDetails);
 				}
 			}
+	    }
 
-			// if connect failed for unknown reason
-			else if (connectStatus == null)
+	    // if daemon launch failed (SSL or otherwise)
+		if (launchFailed && launchStatus != null)
+		{
+			String launchMsg = launchStatus.getMessage();
+			if (launchStatus.getException() != null && serverLauncher != null)
 			{
-				SystemBasePlugin.logError("Failed to connect to remote system", null); //$NON-NLS-1$
-				String msgTxt = NLS.bind(ConnectorServiceResources.MSG_COMM_CONNECT_FAILED, getHostName());
-				String msgDetails = NLS.bind(ConnectorServiceResources.MSG_COMM_CONNECT_FAILED_DETAILS, getHostName());
-				msg = createSystemMessage(IConnectorServiceMessageIds.MSG_COMM_CONNECT_FAILED, IStatus.ERROR, msgTxt, msgDetails);
+				Throwable exception = launchStatus.getException();
+				String fmsg = NLS.bind(ConnectorServiceResources.MSG_CONNECT_DAEMON_FAILED_EXCEPTION, getHostName(), ""+serverLauncher.getDaemonPort()); //$NON-NLS-1$
+
+				msg = createSystemMessage(IConnectorServiceMessageIds.MSG_CONNECT_DAEMON_FAILED_EXCEPTION, IStatus.ERROR, fmsg, exception);
 			}
-
-			// if, for some reason, we don't have a message
-			if (msg == null && connectStatus != null)
+			else if (launchMsg != null && launchMsg.indexOf(IDataStoreConstants.AUTHENTICATION_FAILED) != -1)
 			{
-				SystemBasePlugin.logError("Failed to connect to remote system" + connectStatus.getMessage(), null); //$NON-NLS-1$
-				String msgTxt = NLS.bind(ConnectorServiceResources.MSG_COMM_CONNECT_FAILED, getHostName());
-				String msgDetails = NLS.bind(ConnectorServiceResources.MSG_COMM_CONNECT_FAILED_DETAILS, getHostName());
-				msg = createSystemMessage(IConnectorServiceMessageIds.MSG_COMM_CONNECT_FAILED, IStatus.ERROR, msgTxt, msgDetails);
-			}
-
-			clientConnection.disconnect();
-			clientConnection = null;
-
-			// yantzi: artemis 6.0, check for invalid login (user ID / pwd) and reprompt for signon information
-			if (msg != null &&
-					// tODO use ID or something instead of string
-					msg.getLevelOneText().startsWith(NLS.bind(ConnectorServiceResources.MSG_COMM_INVALID_LOGIN, getHostName())))
-			{
+				_isConnecting = false;
 				if (launchFailed)
 			    {
 			        clearPassword(true, true);
 			    }
+
+				// Display error message
+				String msgTxt = CommonMessages.MSG_COMM_AUTH_FAILED;
+				String msgDetails = NLS.bind(CommonMessages.MSG_COMM_AUTH_FAILED_DETAILS, getHostName());
+
+				msg = createSystemMessage(ICommonMessageIds.MSG_COMM_AUTH_FAILED, IStatus.ERROR, msgTxt, msgDetails);
 
 				DisplaySystemMessageAction msgAction = new DisplaySystemMessageAction(msg);
 				Display.getDefault().syncExec(msgAction);
@@ -1305,8 +1049,6 @@ public class DStoreConnectorService extends StandardConnectorService implements 
 						}
 					}
 				});
-				
-				_isConnecting = false;
 
 				// Check if the user cancelled the prompt
 				if (connectException instanceof OperationCanceledException)
@@ -1320,12 +1062,258 @@ public class DStoreConnectorService extends StandardConnectorService implements 
 				// it will continue and return
 				internalConnect(monitor);
 
-				// we are connected from recursive so continue
+				// Since we got here we must be connected so skip error checking below
 				return;
 			}
+			// If password has expired and must be changed
+			else if (launchMsg != null && (isPasswordExpired(launchMsg) || isNewPasswordInvalid(launchMsg)))
+			{
+				_isConnecting = false;
+				SystemSignonInformation oldCredentials = (SystemSignonInformation) getCredentialsProvider().getCredentials();
+				SystemSignonInformation newCredentials = null;
+				while (launchMsg != null && (isPasswordExpired(launchMsg) || isNewPasswordInvalid(launchMsg)))
+				{
+					String msgTxt = ConnectorServiceResources.MSG_VALIDATE_PASSWORD_INVALID;
+					String msgDetails = ConnectorServiceResources.MSG_VALIDATE_PASSWORD_INVALID_DETAILS;
+					String msgId = IConnectorServiceMessageIds.MSG_VALIDATE_PASSWORD_INVALID;
+					if (isPasswordExpired(launchMsg)){
+						msgTxt = ConnectorServiceResources.MSG_VALIDATE_PASSWORD_EXPIRED;
+						msgDetails = ConnectorServiceResources.MSG_VALIDATE_PASSWORD_EXPIRED_DETAILS;
+						msgId = IConnectorServiceMessageIds.MSG_VALIDATE_PASSWORD_EXPIRED;
+					}
 
+					SystemMessage message = createSystemMessage(msgId, IStatus.ERROR, msgTxt, msgDetails);
+
+					getCredentialsProvider().repairCredentials(message);
+					newCredentials = (SystemSignonInformation) getCredentialsProvider().getCredentials();
+					launchStatus = changePassword(clientConnection, oldCredentials, serverLauncher, monitor, newCredentials.getPassword());
+					launchMsg = launchStatus.getMessage();
+				}
+				if (launchMsg != null && launchMsg.equals(IDataStoreConstants.ATTEMPT_RECONNECT))
+				{						
+					internalConnect(monitor);
+					return;
+				}
+//				NewPasswordInfo newPasswordInfo = null;
+//				while (launchMsg != null && (isPasswordExpired(launchMsg) || isNewPasswordInvalid(launchMsg)))
+//				{
+//					newPasswordInfo = promptForNewPassword(isPasswordExpired(launchMsg) ? RSEUIPlugin.getPluginMessage(ISystemMessages.MSG_VALIDATE_PASSWORD_EXPIRED) : RSEUIPlugin.getPluginMessage(ISystemMessages.MSG_VALIDATE_PASSWORD_INVALID));
+//					launchStatus = changePassword(clientConnection, getPasswordInformation(), serverLauncher, monitor, newPasswordInfo.newPassword);
+//					launchMsg = launchStatus.getMessage();
+//				}
+//				if (newPasswordInfo != null)
+//				{
+//					setPassword(getPasswordInformation().getUserid(), newPasswordInfo.newPassword, newPasswordInfo.savePassword);
+//				}
+//				if (launchMsg != null && launchMsg.equals(IDataStoreConstants.ATTEMPT_RECONNECT))
+//				{
+//					internalConnect(monitor);
+//					return;
+//				}
+			}
+			else if (launchMsg != null)
+			{
+				String msgTxt = NLS.bind(ConnectorServiceResources.MSG_CONNECT_DAEMON_FAILED, getHostName(), clientConnection.getPort());
+				msg = createSystemMessage(IConnectorServiceMessageIds.MSG_CONNECT_DAEMON_FAILED, IStatus.ERROR, msgTxt, launchMsg);
+			}
+		}
+
+		// if connection failed for known reason
+		else if (connectStatus != null && !connectStatus.isConnected())
+		{
+			if (connectStatus.getMessage().startsWith(ClientConnection.INCOMPATIBLE_SERVER_UPDATE))
+			{
+				String msgTxt = NLS.bind(ConnectorServiceResources.MSG_COMM_INCOMPATIBLE_UPDATE, getHostName());
+				String msgDetails = ConnectorServiceResources.MSG_COMM_INCOMPATIBLE_UPDATE_DETAILS;
+
+				msg = createSystemMessage(IConnectorServiceMessageIds.MSG_COMM_INCOMPATIBLE_UPDATE, IStatus.ERROR, msgTxt, msgDetails);
+			}
+			else if (connectStatus.getMessage().startsWith(ClientConnection.INCOMPATIBLE_PROTOCOL))
+			{
+				String msgTxt = NLS.bind(ConnectorServiceResources.MSG_COMM_INCOMPATIBLE_PROTOCOL, getHostName());
+				String msgDetails = ConnectorServiceResources.MSG_COMM_INCOMPATIBLE_PROTOCOL_DETAILS;
+
+				msg = createSystemMessage(IConnectorServiceMessageIds.MSG_COMM_INCOMPATIBLE_PROTOCOL, IStatus.ERROR, msgTxt, msgDetails);
+			}
+			else
+			{
+				Throwable exception = connectStatus.getException();
+				if (exception instanceof SSLHandshakeException)
+				{
+					List certs = connectStatus.getUntrustedCertificates();
+					if (certs != null && certs.size() > 0)
+					{
+						ISystemKeystoreProvider provider = SystemKeystoreProviderManager.getInstance().getDefaultProvider();
+						if (provider != null)
+						{
+							_isConnecting = false;
+							provider.importCertificates(certs, getHostName());								
+
+							
+							// Don't attempt reconnect when server was started manually.  The problem is that 
+							// in that situation, the server will have terminated on the failed connection
+							// due to the missing certs
+							if (serverLauncherType != ServerLaunchType.RUNNING_LITERAL){
+								internalConnect(monitor);
+							}
+							return;
+						}
+					}
+				}
+				else if (exception != null)
+				{
+					String msgTxt = NLS.bind(CommonMessages.MSG_CONNECT_FAILED, getHostName());
+					msg = createSystemMessage(ICommonMessageIds.MSG_CONNECT_FAILED, IStatus.ERROR, msgTxt, exception);
+				}
+			}
+		}
+
+		// if connect failed for unknown reason
+		else if (connectStatus == null)
+		{
+			SystemBasePlugin.logError("Failed to connect to remote system", null); //$NON-NLS-1$
+			String msgTxt = NLS.bind(ConnectorServiceResources.MSG_COMM_CONNECT_FAILED, getHostName());
+			String msgDetails = NLS.bind(ConnectorServiceResources.MSG_COMM_CONNECT_FAILED_DETAILS, getHostName());
+			msg = createSystemMessage(IConnectorServiceMessageIds.MSG_COMM_CONNECT_FAILED, IStatus.ERROR, msgTxt, msgDetails);
+		}
+
+		// if, for some reason, we don't have a message
+		if (msg == null && connectStatus != null)
+		{
+			SystemBasePlugin.logError("Failed to connect to remote system" + connectStatus.getMessage(), null); //$NON-NLS-1$
+			String msgTxt = NLS.bind(ConnectorServiceResources.MSG_COMM_CONNECT_FAILED, getHostName());
+			String msgDetails = NLS.bind(ConnectorServiceResources.MSG_COMM_CONNECT_FAILED_DETAILS, getHostName());
+			msg = createSystemMessage(IConnectorServiceMessageIds.MSG_COMM_CONNECT_FAILED, IStatus.ERROR, msgTxt, msgDetails);
+		}
+
+		clientConnection.disconnect();
+		clientConnection = null;
+
+		// yantzi: artemis 6.0, check for invalid login (user ID / pwd) and reprompt for signon information
+		if (msg != null &&
+				// tODO use ID or something instead of string
+				msg.getLevelOneText().startsWith(NLS.bind(ConnectorServiceResources.MSG_COMM_INVALID_LOGIN, getHostName())))
+		{
+			if (launchFailed)
+		    {
+		        clearPassword(true, true);
+		    }
+
+			DisplaySystemMessageAction msgAction = new DisplaySystemMessageAction(msg);
+			Display.getDefault().syncExec(msgAction);
+
+			// Re-prompt for password
+			connectException = null;
+			Display.getDefault().syncExec(new Runnable()
+			{
+				public void run()
+				{
+					try
+					{
+						acquireCredentials(true);
+					}
+					catch (OperationCanceledException e)
+					{
+						connectException = e;
+					}
+				}
+			});
+			
 			_isConnecting = false;
-			throw new SystemMessageException(msg);
+
+			// Check if the user cancelled the prompt
+			if (connectException instanceof OperationCanceledException)
+			{
+				throw connectException;
+			}
+
+			
+			// Try to connect again.  This is a recursive call, but will only
+			// call if the user presses OK on the password prompt dialog, otherwise
+			// it will continue and return
+			internalConnect(monitor);
+
+			// we are connected from recursive so continue
+			return;
+		}
+
+		_isConnecting = false;
+		throw new SystemMessageException(msg);
+
+	}
+	
+	/**
+	 * @see org.eclipse.rse.core.subsystems.IConnectorService#connect(IProgressMonitor)
+	 */
+	protected void internalConnect(IProgressMonitor monitor) throws Exception
+	{
+	    if (isConnected() || _isConnecting) {
+	        return;
+	    }
+	    
+	    _isConnecting = true;
+	    Boolean alertedNONSSL = new Boolean(false);
+
+		// set A_PLUGIN_PATH so that dstore picks up the property
+		setPluginPathProperty();
+
+		// Fire comm event to signal state about to change
+		fireCommunicationsEvent(CommunicationsEvent.BEFORE_CONNECT);
+
+		ConnectionStatus connectStatus = null;
+		ConnectionStatus launchStatus = null;
+
+		clientConnection = new ClientConnection(getPrimarySubSystem().getHost().getAliasName());
+
+		clientConnection.setHost(getHostName());
+		clientConnection.setPort(Integer.toString(getPort()));
+
+		getPrimarySubSystem();
+		IRemoteServerLauncher serverLauncher = getDStoreServerLauncher();
+
+		ServerLaunchType serverLauncherType = null;
+		if (serverLauncher != null){
+		    serverLauncherType = serverLauncher.getServerLaunchType();
+		}
+
+		SystemSignonInformation info = getSignonInformation();
+		if (serverLauncherType == ServerLaunchType.REXEC_LITERAL){	// start the server via REXEC			
+			connectStatus = connectWithREXEC(info, serverLauncher, monitor);
+		}
+		else if (serverLauncherType == ServerLaunchType.DAEMON_LITERAL) { // start the server via the daemon
+		
+			ConnectionStatusPair connectStatusPair = connectWithDaemon(info, serverLauncher, alertedNONSSL, monitor);
+			connectStatus = connectStatusPair.getConnectStatus();
+			launchStatus = connectStatusPair.getLaunchStatus();
+
+			if (connectStatus == null){
+				return; // error handling completed
+			}
+		}
+		else if (serverLauncherType == ServerLaunchType.RUNNING_LITERAL){ // connect to running server
+			connectStatus = connectWithRunning(monitor);
+		}		
+		else { // server launcher type is unknown
+			connectStatus = launchServer(clientConnection, info, serverLauncher, monitor);
+			if (!connectStatus.isConnected() && !clientConnection.isKnownStatus(connectStatus.getMessage())){
+				if (connectStatus.isSLLProblem()){
+					if (setSSLProperties(true)){
+						connectStatus = launchServer(clientConnection, info, serverLauncher, monitor);
+						if (!connectStatus.isConnected() && connectStatus.isSLLProblem()){
+							_isConnecting = false;
+							importCertsAndReconnect(connectStatus, monitor);
+							return;
+						}
+					}
+				}
+			}
+		}
+
+		if (connectStatus != null && connectStatus.isConnected()){  // connected 
+			initializeConnection(launchStatus, connectStatus, alertedNONSSL, monitor);
+		}
+		else  {	// diagnosis, reconnection and other connection failure handling
+			handleConnectionFailure(connectStatus, launchStatus, serverLauncher, serverLauncherType, monitor);
 		}
 		_isConnecting = false;
 	}

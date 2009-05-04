@@ -13,3 +13,7 @@ namespace nsTest {
 //http://bugs.eclipse.org/262785
 void Unknown1::method() {}      // no qualifier in outline
 void Unknown2::method() {}      // no qualifier in outline
+class Bug274490 {
+    virtual int m();
+    inline const char* m2() const;
+};

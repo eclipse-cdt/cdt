@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2008 Wind River Systems, Inc. and others.
+ * Copyright (c) 2006, 2009 Wind River Systems, Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -39,13 +39,11 @@ import org.eclipse.cdt.core.dom.ast.IASTSimpleDeclSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTSimpleDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTStandardFunctionDeclarator;
 import org.eclipse.cdt.core.dom.ast.IASTTypeId;
-import org.eclipse.cdt.core.dom.ast.c.ICASTDeclSpecifier;
 import org.eclipse.cdt.core.dom.ast.c.ICASTDesignatedInitializer;
 import org.eclipse.cdt.core.dom.ast.c.ICASTPointer;
 import org.eclipse.cdt.core.dom.ast.c.ICASTSimpleDeclSpecifier;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCompositeTypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTConstructorInitializer;
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTDeclSpecifier;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTElaboratedTypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTFunctionDeclarator;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTParameterDeclaration;
@@ -59,7 +57,6 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTemplateParameter;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTemplatedTypeTemplateParameter;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTypenameExpression;
 import org.eclipse.cdt.core.dom.ast.gnu.c.ICASTKnRFunctionDeclarator;
-import org.eclipse.cdt.core.dom.ast.gnu.cpp.IGPPASTDeclSpecifier;
 import org.eclipse.cdt.core.dom.ast.gnu.cpp.IGPPASTPointer;
 import org.eclipse.cdt.core.dom.ast.gnu.cpp.IGPPASTSimpleDeclSpecifier;
 import org.eclipse.cdt.core.parser.Keywords;
@@ -472,35 +469,35 @@ public class ASTStringUtil {
 		if (declSpecifier.isConst()) {
 			buffer.append(Keywords.CONST).append(' ');
 		}
-		if (declSpecifier.isVolatile()) {
-			buffer.append(Keywords.VOLATILE).append(' ');
-		}
+//		if (declSpecifier.isVolatile()) {
+//			buffer.append(Keywords.VOLATILE).append(' ');
+//		}
 //		if (declSpecifier.isInline()) {
 //			buffer.append(Keywords.INLINE).append(' ');
 //		}
-		if (declSpecifier instanceof ICASTDeclSpecifier) {
-			final ICASTDeclSpecifier cDeclSpec= (ICASTDeclSpecifier)declSpecifier;
-			if (cDeclSpec.isRestrict()) {
-				buffer.append(Keywords.RESTRICT).append(' ');
-			}
-		} else if (declSpecifier instanceof ICPPASTDeclSpecifier) {
-			final ICPPASTDeclSpecifier cppDeclSpec= (ICPPASTDeclSpecifier)declSpecifier;
-			if (cppDeclSpec.isFriend()) {
-				buffer.append(Keywords.FRIEND).append(' ');
-			}
-			if (cppDeclSpec.isVirtual()) {
-				buffer.append(Keywords.VIRTUAL).append(' ');
-			}
-			if (cppDeclSpec.isExplicit()) {
-				buffer.append(Keywords.EXPLICIT).append(' ');
-			}
-			if (declSpecifier instanceof IGPPASTDeclSpecifier) {
-				final IGPPASTDeclSpecifier gppDeclSpec= (IGPPASTDeclSpecifier)declSpecifier;
-				if (gppDeclSpec.isRestrict()) {
-					buffer.append(Keywords.RESTRICT).append(' ');
-				}
-			}
-		}
+//		if (declSpecifier instanceof ICASTDeclSpecifier) {
+//			final ICASTDeclSpecifier cDeclSpec= (ICASTDeclSpecifier)declSpecifier;
+//			if (cDeclSpec.isRestrict()) {
+//				buffer.append(Keywords.RESTRICT).append(' ');
+//			}
+//		} else if (declSpecifier instanceof ICPPASTDeclSpecifier) {
+//			final ICPPASTDeclSpecifier cppDeclSpec= (ICPPASTDeclSpecifier)declSpecifier;
+//			if (cppDeclSpec.isFriend()) {
+//				buffer.append(Keywords.FRIEND).append(' ');
+//			}
+//			if (cppDeclSpec.isVirtual()) {
+//				buffer.append(Keywords.VIRTUAL).append(' ');
+//			}
+//			if (cppDeclSpec.isExplicit()) {
+//				buffer.append(Keywords.EXPLICIT).append(' ');
+//			}
+//			if (declSpecifier instanceof IGPPASTDeclSpecifier) {
+//				final IGPPASTDeclSpecifier gppDeclSpec= (IGPPASTDeclSpecifier)declSpecifier;
+//				if (gppDeclSpec.isRestrict()) {
+//					buffer.append(Keywords.RESTRICT).append(' ');
+//				}
+//			}
+//		}
 		// storage class
 //		final int storageClass= declSpecifier.getStorageClass();
 //		switch (storageClass) {

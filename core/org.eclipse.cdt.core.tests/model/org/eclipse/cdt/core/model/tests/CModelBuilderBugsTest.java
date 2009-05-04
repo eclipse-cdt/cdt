@@ -15,6 +15,7 @@ import junit.framework.Test;
 import org.eclipse.cdt.core.dom.IPDOMManager;
 import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.core.model.ICProject;
+import org.eclipse.cdt.core.model.IFunctionDeclaration;
 import org.eclipse.cdt.core.model.INamespace;
 import org.eclipse.cdt.core.model.IStructure;
 import org.eclipse.cdt.core.model.ITranslationUnit;
@@ -74,4 +75,12 @@ public class CModelBuilderBugsTest extends BaseTestCase {
 		assertNotNull(fTU.getElement("Unknown2::method"));
 	}
 
+	public void testModelBuilderBug274490() throws Exception {
+		IStructure clazz= (IStructure) fTU.getElement("Bug274490");
+		assertNotNull(clazz);
+		ICElement[] methods= clazz.getChildren();
+		assertEquals(2, methods.length);
+		assertEquals("int", ((IFunctionDeclaration) methods[0]).getReturnType());
+		assertEquals("const char*", ((IFunctionDeclaration) methods[1]).getReturnType());
+	}
 }

@@ -13,8 +13,8 @@ Require-Bundle: org.eclipse.ui,
  org.eclipse.cdt.ui;bundle-version="5.0.2",
  org.eclipse.ui.ide;bundle-version="3.4.1",
  org.eclipse.core.variables;bundle-version="3.2.100",
- org.eclipse.cdt.managedbuilder.xlc.ui;bundle-version="5.0.0",
- org.eclipse.cdt.core.parser.upc;bundle-version="5.0.0"
+ org.eclipse.cdt.core.parser.upc;bundle-version="5.0.0",
+ org.eclipse.cdt.managedbuilder.xlc.ui;bundle-version="6.0.0"
 Bundle-RequiredExecutionEnvironment: J2SE-1.4
 Bundle-ActivationPolicy: lazy
 Bundle-Vendor: %Bundle-Vendor.0

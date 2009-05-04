@@ -489,7 +489,12 @@ public class ResourceHelper {
 			throw new UnsupportedOperationException("Not a Windows system, Cygwin is unavailable.");
 		}
 		String[] args = {"cygpath", "-w", cygwinPath};
-		Process cygpath = Runtime.getRuntime().exec(args);
+		Process cygpath;
+		try {
+			cygpath = Runtime.getRuntime().exec(args);
+		} catch (IOException ioe) {
+			throw new UnsupportedOperationException("Cygwin utility cygpath is not in the system search path.");
+		}
 		BufferedReader stdout = new BufferedReader(new InputStreamReader(cygpath.getInputStream()));
 
 		String windowsPath = stdout.readLine();

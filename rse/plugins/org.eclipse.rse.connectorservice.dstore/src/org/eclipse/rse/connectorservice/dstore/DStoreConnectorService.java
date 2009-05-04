@@ -37,6 +37,7 @@
  * David Dykstal (IBM) [235284] Cancel password change causes problem
  * David McKnight   (IBM)        - [267236] [dstore] Can't connect after a wrong password
  * David McKnight   (IBM)        - [274688] [api][dstore] DStoreConnectorService.internalConnect() needs to be cleaned up
+ * David McKnight   (IBM)        - [258529] Unable to display connection failure error message
  *******************************************************************************/
 
 package org.eclipse.rse.connectorservice.dstore;
@@ -1207,6 +1208,9 @@ public class DStoreConnectorService extends StandardConnectorService implements 
 					String msgTxt = NLS.bind(CommonMessages.MSG_CONNECT_FAILED, getHostName());
 					msg = createSystemMessage(ICommonMessageIds.MSG_CONNECT_FAILED, IStatus.ERROR, msgTxt, exception);
 				}
+				else if (connectStatus.getMessage() != null){
+					msg = createSystemMessage(ICommonMessageIds.MSG_CONNECT_FAILED, IStatus.ERROR, connectStatus.getMessage());
+				}
 			}
 		}
 
@@ -1329,11 +1333,6 @@ public class DStoreConnectorService extends StandardConnectorService implements 
 			ConnectionStatusPair connectStatusPair = connectWithDaemon(info, serverLauncher, alertedNONSSL, monitor);
 			connectStatus = connectStatusPair.getConnectStatus();
 			launchStatus = connectStatusPair.getLaunchStatus();
-
-			//if (connectStatus == null){
-			//	_isConnecting = false;
-			//	return; // error handling completed
-			//}
 		}
 		else if (serverLauncherType == ServerLaunchType.RUNNING_LITERAL){ // connect to running server
 			connectStatus = connectWithRunning(monitor);

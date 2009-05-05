@@ -47,32 +47,35 @@ cd ws2
 ----------------------------------
 After testing the "invisible" S-build:
 ssh build.eclipse.org
-cd ws2/publish/S-2.0RC3*
+cd ws2/publish/S-3.1RC3*
 mv package.count.orig package.count
 
-3c) Promote an S-build to Europa
+3c) Promote an update site
+--------------------------
+Any build generates its update site in $HOME/downlads-tm/testUpdates
+and $HOME/downloads-tm/signedUpdates . You need to manually copy these
+to its target repository, then re-generate repository metadata:
+
+cd $HOME/downloads-tm/updates/3.1milestones
+rm -rf plugins features
+cp -R ../../signedUpdates/plugins .
+cp -R ../../signedUpdates/features .
+cd bin
+cvs update
+./mkTestUpdates
+
+3d) Promote an S-build to Galileo
 --------------------------------
 After S-build has been prepared (on signedUpdates)
-On local Eclipse client, checkout Europa projects according to
-    http://wiki.eclipse.org/Europa_Build
-Open file 
-    org.eclipse.europa.tools/build-home/features-dsdp-tm.xml
-ssh build.eclipse.org
-cd downloads-tm/updates/milestones
-rm -rf features.prev plugins.prev
-mv features features.prev
-mv plugins plugins.prev
-cp -R ../../signedUpdates/features .
-cp -R ../../signedUpdates/plugins .
-cd bin
-./mkTestUpdates.sh
-From the shell where the build is ongoing, copy & Paste the 
-    version numbers of the features listed in feature-dsdp-tm.xml
-    into features-dsdp-tm.xml
-Commit features-dsdp-tm.xml
+On local Eclipse client, checkout Galileo projects according to
+    http://wiki.eclipse.org/Galileo_Build
+and edit the build contribution.
 
+4) Convert a download to "signed" form
+--------------------------------------
+Normally, only the TM update site is signed whereas the downloadable ZIPs
+are not. Downloadable ZIPs can be converted to signed, if the signed
+update site is available and installed. See
 
-ssh build.eclipse.org
-
-
-
+ org.eclipse.rse.build/bin/make_signed.sh
+ 

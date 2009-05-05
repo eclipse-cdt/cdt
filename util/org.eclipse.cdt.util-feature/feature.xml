@@ -4,6 +4,7 @@
       label="%featureName"
       version="5.1.0.qualifier"
       provider-name="%providerName"
+      plugin="org.eclipse.cdt.util"
       image="eclipse_update_120.jpg">
 
    <description>

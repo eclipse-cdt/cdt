@@ -4,6 +4,7 @@
       label="%featureName"
       version="6.0.0.qualifier"
       provider-name="%providerName"
+      plugin="org.eclipse.cdt.managedbuilder.xlc.core"
       image="eclipse_update_120.jpg">
 
    <description>

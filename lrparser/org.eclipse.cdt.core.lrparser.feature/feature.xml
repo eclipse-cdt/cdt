@@ -3,7 +3,8 @@
       id="org.eclipse.cdt.core.lrparser.feature"
       label="%featureName"
       version="5.1.0.qualifier"
-      provider-name="%providerName">
+      provider-name="%providerName"
+      plugin="org.eclipse.cdt.core.lrparser">
 
    <description>
       %description

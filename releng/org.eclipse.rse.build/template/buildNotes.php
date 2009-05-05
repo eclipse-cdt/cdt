@@ -39,6 +39,8 @@
     supports Telnet window size notifications in the RSE Terminal.
     [<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=267473">267473</a>]
     [<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=267474">267474</a>].</li>
+  <li><b>DStore remote search</b> now also works case insensitive
+    [<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=243495">243495</a>].</li>
   </ul></li>
 <li>At least 32 bugs were fixed: Use 
   <!-- <a href="https://bugs.eclipse.org/bugs/buglist.cgi?query_format=advanced&classification=DSDP&product=Target+Management&component=Core&component=RSE&component=Terminal&bug_status=RESOLVED&bug_status=VERIFIED&bug_status=CLOSED&resolution=FIXED&resolution=WONTFIX&resolution=WORKSFORME&chfieldfrom=2009-03-19&chfieldto=2009-05-10&chfield=resolution&cmdtype=doit&negate0=1&field0-0-0=target_milestone&type0-0-0=regexp&value0-0-0=%5B23%5D.0&field0-0-1=target_milestone&type0-0-1=regexp&value0-0-1=3.1%20M%5B23456%5D"> -->

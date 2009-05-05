@@ -41,15 +41,15 @@ case ${uname_s}${uname_m} in
 esac
 
 # prepare the base Eclipse installation in folder "eclipse"
-#ep_rel="S-"
-#ep_ver=3.5M5
-#ep_date="-200902021535"
-ep_rel=
-ep_ver=I20090426-2000
-ep_date=
+ep_rel="S-"
+ep_ver=3.5M7
+ep_date="-200904302300"
+#ep_rel=
+#ep_ver=I20090426-2000
+#ep_date=
 P2_disabled=false
 P2_no_dropins=false
-if [ ! -f eclipse/plugins/org.eclipse.swt_3.5.0.v3543.jar ]; then
+if [ ! -f eclipse/plugins/org.eclipse.swt_3.5.0.v3545a.jar ]; then
   curdir2=`pwd`
   if [ ! -d eclipse -o -h eclipse ]; then
     if [ -d eclipse-${ep_ver}-${ep_arch} ]; then
@@ -110,11 +110,11 @@ else
   DROPUP=../..
 fi
 
-# EMF 2.5M1
+# EMF 2.5M7
 EMFBRANCH=2.5.0
 EMFREL=S
-EMFDATE=200902031500
-EMFVER=2.5.0M5
+EMFDATE=200905041408
+EMFVER=2.5.0M7
 if [ ! -f ${DROPIN}/eclipse/plugins/org.eclipse.emf.doc_${EMFBRANCH}.v${EMFDATE}.jar ]; then
   # Need EMF 2.4 SDK for Service Discovery ISV Docs Backlinks
   echo "Getting EMF SDK..."
@@ -138,41 +138,6 @@ if [ ! -f ${DROPIN}/eclipse/plugins/gnu.io.rxtx_2.1.7.4_v20071016.jar ]; then
   unzip -o RXTX-SDK-I20071016-1945.zip
   rm RXTX-SDK-I20071016-1945.zip
   cd ${DROPUP}
-fi
-
-# CDT Runtime
-#CDTREL=6.0.0
-#CDTVER=200902031437
-#CDTNAME=cdt-master-5.0.0.zip
-#CDTLOC=releases/ganymede/dist/${CDTNAME}
-CDTREL=6.0.0
-CDTFEAT=5.1.0
-CDTVER=200902031437
-CDTNAME=cdt-master-${CDTREL}-I${CDTVER}.zip
-CDTLOC=builds/${CDTREL}/I.I${CDTVER}/${CDTNAME}
-if [ ! -f eclipse/plugins/org.eclipse.cdt.core_${CDTFEAT}.${CDTVER}.jar ]; then
-  echo "Getting CDT Runtime..."
-  wget "http://download.eclipse.org/tools/cdt/${CDTLOC}"
-  CDTTMP=`pwd`/tmp.$$
-  mkdir ${CDTTMP}
-  cd ${CDTTMP}
-  unzip ../${CDTNAME}
-  cd ..
-  #java -jar eclipse/startup.jar \
-  java -jar eclipse/plugins/org.eclipse.equinox.launcher_1.0.*.jar \
-    -application org.eclipse.update.core.standaloneUpdate \
-    -command install \
-    -from file://${CDTTMP} \
-    -featureId org.eclipse.cdt.platform \
-    -version ${CDTFEAT}.${CDTVER}
-  java -jar eclipse/plugins/org.eclipse.equinox.launcher_1.0.*.jar \
-    -application org.eclipse.update.core.standaloneUpdate \
-    -command install \
-    -from file://${CDTTMP} \
-    -featureId org.eclipse.cdt \
-    -version ${CDTFEAT}.${CDTVER}
-  rm -rf ${CDTTMP}
-  rm ${CDTNAME}
 fi
 
 # checkout the basebuilder

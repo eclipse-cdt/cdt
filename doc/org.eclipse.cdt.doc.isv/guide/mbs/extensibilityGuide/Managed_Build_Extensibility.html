@@ -73,7 +73,7 @@ System Extensibility Document</font><br>
       <font class="indexsub">This document describes the design of the
 managed build system and how to extend it.</font></td>
       <td width="28%"><img src="http://dev.eclipse.org/images/Idea.jpg"
- alt="" height="86" width="120"></td>
+ alt="idea" height="86" width="120"></td>
     </tr>
   </tbody>
 </table>
@@ -4573,7 +4573,7 @@ they are used. The makefile includes external makefiles that have a
 list of build directories, object files, makefile fragments, and
 dependency makefiles. </p>
 <p>
-<img border="0" src="./image036.gif"></p>
+<img border="0" src="./image036.gif" alt="generated makefile"></p>
 <p>This makefile is passed as an argument to <span
  style="font-style: italic;">make</span>, so it contains
 <span style="font-style: italic;">clean</span>
@@ -7063,7 +7063,7 @@ page methods).</P>
 <P class="MsoNormal">For convenience, here is a UML class diagram of the
 IWizardPage interface.<BR>
 <BR>
-<IMG border="0" src="IWizardPage.jpeg" width="176" height="196">
+<IMG border="0" src="IWizardPage.jpeg" width="176" height="196" alt="UML class diagram of the IWizardPage interface">
 <BR>
 <BR><A name="OLE_LINK10"></A><A name="OLE_LINK9"><SPAN
 	style="mso-bookmark:OLE_LINK10">Wizard pages as GUI elements by
@@ -7468,7 +7468,7 @@ allowing the page manager to completely control the ordering of pages.</P>
 <P class="MsoNormal">The following class diagram shows how these
 new classes fit into the existing wizard system in MBS in terms of class
 hierarchies and associations.<BR><BR>
-<IMG border="0" src="classdiagram.jpeg" width="1454" height="1711">
+<IMG border="0" src="classdiagram.jpeg" width="1454" height="1711" alt="High level view of MBS wizard system">
 </P>
 <H5>Figure 12: High level view of MBS wizard system</H5>
 <P><BR>
@@ -7479,7 +7479,7 @@ wizards provided by the CDT's core UI. There are several wizard pages that alway
 </P>
 <P><BR>Drilling down into the custom wizard page system itself, we see the following:<BR>
 <BR>
-<IMG border="0" src="classdiagram2.jpeg" width="776" height="1052">
+<IMG border="0" src="classdiagram2.jpeg" width="776" height="1052" alt="High level view of custom wizard system">
 </P>
 <H5>Figure 12: High level view of custom wizard system</H5>
 <P><BR>The MBSCustomPageManager class is the main entry point to the system. It is responsible for loading all of the extensions which provide custom wizard pages, and storing that data for later use by the wizard. It keeps a list of records of these pages (MBSCustomPageData) which act as a repository for everything that needs to be known about the page, including what circumstances it should be shown under, and what actual IWizardPage should be shown when the page is displayed.<BR>
@@ -7524,7 +7524,7 @@ manager can only do so much as it fills the role of an advisor.<SPAN
 theoretically free to ignore its existence, although this is strongly
 discouraged.<BR>
 <BR>
-<IMG border="0" src="MBSCustomPageManager.jpeg" width="243" height="585">
+<IMG border="0" src="MBSCustomPageManager.jpeg" width="243" height="585" alt="UML diagram of MBSCustomPageManager">
 <BR>
 <BR>
 
@@ -7540,7 +7540,7 @@ for the page manager to store information on a custom wizard page.<SPAN
 loads all contributions to the newWizardPages extension point, and
 stores the loaded data in these records for later use. There is a nested class, ToolchainData, which is used to maintain information on each individual toolchain that a given custom page supports. The MBSCustomPage manager calls various methods on this class (e.g. MBSCustomPageData.shouldBeVisibleForNature()) to determine when a given page should be visible in the wizard.<BR>
 <BR>
-<IMG border="0" src="MBSCustomPageData.jpeg" width="238" height="604">
+<IMG border="0" src="MBSCustomPageData.jpeg" width="238" height="604" alt="UML diagram of MBSCustomPageData">
 </P>
 <P><BR>
 <SPAN style="mso-bookmark:
@@ -7559,7 +7559,7 @@ custom pages do not subclass MBSCustomPage then their page
 implementation must be carefully coded to function properly while still
 respecting the rules laid out by the page manager.<BR>
 <BR>
-<IMG border="0" src="MBSCustomPage.jpeg" width="199" height="234">
+<IMG border="0" src="MBSCustomPage.jpeg" width="199" height="234" alt="UML diagram of MBSCustomPage">
 <BR>
 <BR>7.14.4 Limitations<BR>
 <BR>
@@ -7603,11 +7603,11 @@ and other ordering constraints.</SPAN></P>
     </blockquote>
     <p class="style1">} </p>
   </blockquote>
-  <a name="_TocSectionTutorial_18">
+  <a name="_TocSectionTutorial_18"></a>
   <p>&nbsp;</p>
   <p class="section"><a name="_TocSectionAdvanced"> Advanced Features</a></p>
-  <p class="subsection"><a name="_TocSectionAdvanced_1">8.1 Converting CDT 2.0 Manifest Files</p>
-  </a>
+  <p class="subsection"><a name="_TocSectionAdvanced_1">8.1 Converting CDT 2.0 Manifest Files</a></p>
+
 <p class="MsoNormal">The CDT 2.1 Managed Build System (MBS) defined a new object 
 model for tool integrators to use when integrating their tool definitions.&nbsp; 
 The CDT 3.0 model is upward compatible with the CDT 2.1 model with the exception 
@@ -7618,7 +7618,7 @@ model.</p>
 object model.&nbsp; The CDT 3.0 object model is shown earlier in the document.</p>
 <p class="MsoNormal">&nbsp;<img style="border: 0px solid ;"
  src="./image004.gif"
- title="Figure 2 Managed build model elements"
+ title="Figure 12 CDT 2.0 Managed build model elements"
  alt="UML model of schema elements"></p>
 <h5>Figure 12 CDT 2.0 Managed build model elements</h5>
 <p class="MsoNormal">Below are the detailed instructions for converting a 

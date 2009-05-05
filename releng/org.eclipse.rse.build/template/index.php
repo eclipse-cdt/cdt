@@ -174,6 +174,7 @@
         </td>
     </tr>
 </table>
+<b>Note:</b> As of TM 3.1, the <b>RSE-remotecdt</b> integration for remote launch and debug through gdbserver has moved into CDT 6.0.
 
 <table border="0" cellspacing="5" cellpadding="2" width="100%">
 	<tr><td colspan="2">&nbsp;</td></tr>

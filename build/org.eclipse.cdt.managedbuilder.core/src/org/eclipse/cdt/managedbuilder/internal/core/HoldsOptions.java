@@ -16,6 +16,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Vector;
@@ -462,7 +463,7 @@ public abstract class HoldsOptions extends BuildObject implements IHoldsOptions,
 	 */
 	private Map<String, Option> getOptionMap() {
 		if (optionMap == null) {
-			optionMap = new HashMap<String, Option>();
+			optionMap = new LinkedHashMap<String, Option>();
 		}
 		return optionMap;
 	}

@@ -24,6 +24,7 @@ import org.eclipse.equinox.internal.provisional.p2.artifact.repository.IArtifact
 import org.eclipse.equinox.internal.provisional.p2.core.ProvisionException;
 import org.eclipse.equinox.internal.provisional.p2.core.Version;
 import org.eclipse.equinox.internal.provisional.p2.core.VersionRange;
+import org.eclipse.equinox.internal.provisional.p2.core.repository.IRepository;
 import org.eclipse.equinox.internal.provisional.p2.metadata.IArtifactKey;
 import org.eclipse.equinox.internal.provisional.p2.metadata.IInstallableUnit;
 import org.eclipse.equinox.internal.provisional.p2.metadata.ILicense;
@@ -79,7 +80,10 @@ public class MinGWGenerator implements IApplication {
 		IArtifactRepositoryManager artiRepoMgr = Activator.getDefault().getService(IArtifactRepositoryManager.class);
 		
 		metaRepo = metaRepoMgr.createRepository(repoLocation, REPO_NAME, IMetadataRepositoryManager.TYPE_SIMPLE_REPOSITORY, null);
+		metaRepo.setProperty(IRepository.PROP_COMPRESSED, Boolean.TRUE.toString());
+		
 		artiRepo = artiRepoMgr.createRepository(repoLocation, REPO_NAME, IArtifactRepositoryManager.TYPE_SIMPLE_REPOSITORY, null);
+		artiRepo.setProperty(IRepository.PROP_COMPRESSED, Boolean.TRUE.toString());
 		
 		ILicense publicDomainLic = MetadataFactory.createLicense(null, publicDomain);
 		ILicense gplLic = MetadataFactory.createLicense(new URI(gplURL), gpl);

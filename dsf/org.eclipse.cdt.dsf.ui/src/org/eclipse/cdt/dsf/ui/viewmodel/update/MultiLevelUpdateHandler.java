@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008 Wind River Systems, Inc. and others.
+ * Copyright (c) 2008, 2009 Wind River Systems, Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -123,6 +123,7 @@ class MultiLevelUpdateHandler extends DataRequestMonitor<List<Object>> {
 	private int fLowIndex = 0;
 	private int fHighIndex = Integer.MAX_VALUE - 1;
 	private int fPendingUpdates;
+	private boolean fIsDone;
 	
 	public MultiLevelUpdateHandler(Executor executor, 
 			IVMModelProxy modelProxy, 
@@ -150,11 +151,13 @@ class MultiLevelUpdateHandler extends DataRequestMonitor<List<Object>> {
 		fLowIndex = low;
 		fHighIndex = high;
 	}
-	boolean isDone() {
-		return fStack.isEmpty();
-	}
 	@Override
 	public synchronized void done() {
+		assert !fIsDone;
+		if (fIsDone) {
+			// ignore gracefully
+			return;
+		}
         try {
             fExecutor.execute(new DsfRunnable() {
                 public void run() {
@@ -180,6 +183,7 @@ class MultiLevelUpdateHandler extends DataRequestMonitor<List<Object>> {
 				fStack.clear();
 			}
 			if (fStack.isEmpty()) {
+				fIsDone = true;
 				fRequestMonitor.setDoneCount(fPendingUpdates);
 				super.done();
 				return;

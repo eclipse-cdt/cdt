@@ -17,6 +17,7 @@
  * Martin Oberhuber (Wind River) - [197550] Fix NPE when refreshing Pending items
  * David McKnight   (IBM)        - [236505] Remote systems dialog not working
  * Martin Oberhuber (Wind River) - [238519][api] Support styled label decorations
+ * David McKnight   (IBM)        - [238288] use ImageRegistry to store/retrieve images for RSE label providers
  ********************************************************************************/
 
 package org.eclipse.rse.internal.ui.view;
@@ -30,6 +31,7 @@ import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.jface.resource.ImageDescriptor;
+import org.eclipse.jface.resource.ImageRegistry;
 import org.eclipse.jface.viewers.AbstractTreeViewer;
 import org.eclipse.jface.viewers.ILabelProvider;
 import org.eclipse.jface.viewers.ITableLabelProvider;
@@ -41,7 +43,7 @@ import org.eclipse.jface.viewers.DelegatingStyledCellLabelProvider.IStyledLabelP
 import org.eclipse.rse.core.model.ISystemViewInputProvider;
 import org.eclipse.rse.core.model.SystemMessageObject;
 import org.eclipse.rse.core.subsystems.ISubSystem;
-import org.eclipse.rse.internal.ui.RSEImageMap;
+import org.eclipse.rse.ui.RSEUIPlugin;
 import org.eclipse.rse.ui.SystemBasePlugin;
 import org.eclipse.rse.ui.model.ISystemShellProvider;
 import org.eclipse.rse.ui.operations.SystemDeferredTreeContentManager;
@@ -431,7 +433,6 @@ public class SystemViewLabelAndContentProvider extends LabelProvider
     public Image getImage(Object element)
     {
     	ISystemViewElementAdapter adapter = getViewAdapter(element);
-    	//System.out.println("Inside getImage. element = " + element + ", adapter = " + adapter);
 	    if (adapter == null)
 		  return null;
 
@@ -442,12 +443,14 @@ public class SystemViewLabelAndContentProvider extends LabelProvider
 
 	    //add any annotations to the image descriptor
 	    descriptor = decorateImage(descriptor, element);
+	    
+	    ImageRegistry imageRegistry = RSEUIPlugin.getDefault().getImageRegistry();
+	    Image image = imageRegistry.get(descriptor.toString());
+	    
 	    //obtain the cached image corresponding to the descriptor
-	    Image image = RSEImageMap.get(descriptor);
-	    if (image == null)
-	    {
-		  image = descriptor.createImage();
-		  RSEImageMap.put(descriptor, image);
+	    if (image == null){
+	    	image = descriptor.createImage();
+	    	imageRegistry.put(descriptor.toString(), image);
 	    }
 
 	    return image;

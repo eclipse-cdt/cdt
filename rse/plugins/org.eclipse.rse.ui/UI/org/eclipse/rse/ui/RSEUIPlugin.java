@@ -33,6 +33,7 @@
  * David Dykstal (IBM) - [197167] adding notification and waiting for RSE model
  * David McKnight   (IBM)        - [225506] [api][breaking] RSE UI leaks non-API types
  * David McKnight   (IBM)        - [236505] Remote systems dialog not working
+ * David McKnight   (IBM)        - [238288] use ImageRegistry to store/retrieve images for RSE label providers
  ********************************************************************************/
 
 package org.eclipse.rse.ui;
@@ -54,7 +55,6 @@ import org.eclipse.rse.core.subsystems.ISubSystemConfiguration;
 import org.eclipse.rse.core.subsystems.ISubSystemConfigurationProxy;
 import org.eclipse.rse.internal.core.model.SystemProfileManager;
 import org.eclipse.rse.internal.core.model.SystemRegistry;
-import org.eclipse.rse.internal.ui.RSEImageMap;
 import org.eclipse.rse.internal.ui.RSESystemTypeAdapterFactory;
 import org.eclipse.rse.internal.ui.RSEUIInitJob;
 import org.eclipse.rse.internal.ui.subsystems.SubSystemConfigurationProxyAdapterFactory;
@@ -502,8 +502,6 @@ public class RSEUIPlugin extends SystemBasePlugin
      * @see org.osgi.framework.BundleActivator#stop(org.osgi.framework.BundleContext)
      */
     public void stop(BundleContext context) throws Exception {
-    	RSEImageMap.shutdown();
-
     	// disconnect all active connections
     	disconnectAll(true);
 

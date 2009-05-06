@@ -42,7 +42,7 @@ import org.eclipse.debug.core.ILaunchConfiguration;
 public class GdbDebugServicesFactory extends AbstractDsfDebugServicesFactory {
 
 	// This should eventually be "7.0" once GDB 7.0 is released
-	private static final String GDB_7_0_VERSION = "6.8.50.20081118"; //$NON-NLS-1$
+	private static final String GDB_7_0_VERSION = "6.8.50.20090218"; //$NON-NLS-1$
 	
 	private final String fVersion;
 	
@@ -123,10 +123,7 @@ public class GdbDebugServicesFactory extends AbstractDsfDebugServicesFactory {
 		
 	@Override
 	protected IProcesses createProcessesService(DsfSession session) {
-		// Multi-process is not part of GDB HEAD yet,
-		// but is part of this very specific build.
-		// We'll need to change this when 7.0 is ready
-		if (fVersion.startsWith("6.8.50.20090218")) { //$NON-NLS-1$
+		if (GDB_7_0_VERSION.compareTo(fVersion) <= 0) {
 			return new GDBProcesses_7_0(session);
 		}
 		return new GDBProcesses(session);

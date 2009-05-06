@@ -289,7 +289,7 @@ public class MIRunControlEventProcessor_7_0
     		}
 
     		IExecutionDMContext execDmc = containerDmc;
-    		if (threadId != null) {
+    		if (threadId != null && !threadId.equals("all")) { //$NON-NLS-1$
     			IThreadDMContext threadDmc = procService.createThreadContext(procDmc, threadId);
     			execDmc = procService.createExecutionContext(containerDmc, threadDmc, threadId);
     		}

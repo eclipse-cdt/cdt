@@ -26,7 +26,8 @@ import org.eclipse.cdt.dsf.concurrent.Immutable;
  *                {id="162",type="process",description="name: JIM_TcpSetupHandlerProcess, type 555505, locked: N, system: N, state: Idle"},
  *                {id="165",type="process",description="name: JUnitProcess2_PT, type 1094608, locked: N, system: N, state: Idle"},
  *                {id="166",type="process",description="name: JUnitProcess_PT, type 1094605, locked: N, system: N, state: Idle"}]
- *          
+ *
+ *          	  {id="3602",type="process",description="/usr/sbin/dhcdbd --system",user="root"}
  *  -list-thread-groups: 
  *  ^done,groups=[{id="162",type="process",pid="162"}]
  *
@@ -66,6 +67,10 @@ public class MIListThreadGroupsInfo extends MIInfo {
         	Matcher matcher = pattern.matcher(desc);
         	if (matcher.find()) {
         		name = matcher.group(1);
+        	} else {
+        		// If we didn't get the form "name: " then we expect to have the form
+        		// "/usr/sbin/dhcdbd --system"
+        		name = desc.split("\\s", 2)[0]; //$NON-NLS-1$
         	}
 
 			return name;

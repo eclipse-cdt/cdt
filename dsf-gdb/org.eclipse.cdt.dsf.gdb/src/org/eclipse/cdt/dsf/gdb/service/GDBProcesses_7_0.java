@@ -11,6 +11,7 @@
 package org.eclipse.cdt.dsf.gdb.service;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Hashtable;
 import java.util.Iterator;
@@ -341,12 +342,21 @@ public class GDBProcesses_7_0 extends AbstractDsfService
     private Map<String, String> fThreadToGroupMap = new HashMap<String, String>();
 
     private IGDBControl fCommandControl;
+    private IGDBBackend fBackend;
     
     // A cache for commands about the threadGroups
 	private CommandCache fContainerCommandCache;
 
 	//A cache for commands about the threads
 	private CommandCache fThreadCommandCache;
+	
+	// A temporary cache to avoid using -list-thread-groups --available more than once at the same time.
+	// We cannot cache this command because it lists all available processes, which can
+	// change at any time.  However, it is inefficient to send more than one of this command at
+	// the same time.  This cache will help us avoid that.  The idea is that we cache the command,
+	// but as soon as it returns, we clear the cache.  So the cache will only trigger for those 
+	// overlapping situations.
+	private CommandCache fListThreadGroupsAvailableCache;
 
     // A map of process id to process names.  It is filled when we get all the processes that are running
     private Map<String, String> fProcessNames = new HashMap<String, String>();
@@ -384,10 +394,15 @@ public class GDBProcesses_7_0 extends AbstractDsfService
 	private void doInitialize(RequestMonitor requestMonitor) {
         
 		fCommandControl = getServicesTracker().getService(IGDBControl.class);
+    	fBackend = getServicesTracker().getService(IGDBBackend.class);
+
         fContainerCommandCache = new CommandCache(getSession(), fCommandControl);
         fContainerCommandCache.setContextAvailable(fCommandControl.getContext(), true);
         fThreadCommandCache = new CommandCache(getSession(), fCommandControl);
         fThreadCommandCache.setContextAvailable(fCommandControl.getContext(), true);
+        
+        fListThreadGroupsAvailableCache = new CommandCache(getSession(), fCommandControl);
+        fListThreadGroupsAvailableCache.setContextAvailable(fCommandControl.getContext(), true);
 
         getSession().addServiceEventListener(this, null);
         fCommandControl.addEventListener(this);
@@ -447,6 +462,21 @@ public class GDBProcesses_7_0 extends AbstractDsfService
 
     public IMIContainerDMContext createContainerContextFromThreadId(ICommandControlDMContext controlDmc, String threadId) {
     	String groupId = fThreadToGroupMap.get(threadId);
+    	if (groupId == null) {
+    		// this can happen if the threadId was 'all'
+    		// In such a case, we choose the first process we find
+    		// This works when we run a single process
+    		// but will break for multi-process!!!
+    		if (fThreadToGroupMap.isEmpty()) {
+    			groupId = MIProcesses.UNIQUE_GROUP_ID;
+    		} else {
+    			Collection<String> values = fThreadToGroupMap.values();
+    			for (String value : values) {
+    				groupId = value;
+    				break;
+    			}
+    		}
+    	}
     	IProcessDMContext processDmc = createProcessContext(controlDmc, groupId);
     	return createContainerContext(processDmc, groupId);
     }
@@ -471,42 +501,58 @@ public class GDBProcesses_7_0 extends AbstractDsfService
 
 	public void getExecutionData(IThreadDMContext dmc, final DataRequestMonitor<IThreadDMData> rm) {
 		if (dmc instanceof IMIProcessDMContext) {
-			final String id = ((IMIProcessDMContext)dmc).getProcId();
-			String name = fProcessNames.get(id);
-			if (name == null) {
-				// We don't have the name yet.  Maybe we didn't fetch names yet,
-				// or maybe this is a new process
-				// This is not very efficient, but GDB does not provide a way to get the name
-				// of a single process.
-				ICommandControlDMContext controlDmc = DMContexts.getAncestorOfType(dmc, ICommandControlDMContext.class);
-				fCommandControl.queueCommand(
-						new MIListThreadGroups(controlDmc, true),
-						new DataRequestMonitor<MIListThreadGroupsInfo>(getExecutor(), rm) {
-							@Override
-							protected void handleCompleted() {
-								String name = null;
-								if (isSuccess()) {
-									for (IThreadGroupInfo groupInfo : getData().getGroupList()) {
-										fProcessNames.put(groupInfo.getPid(), groupInfo.getName());
-										if (groupInfo.getPid().equals(id)) {
-											name = groupInfo.getName();
+			if (fBackend.getSessionType() == SessionType.CORE) {
+				// For the Core session, the process is no longer running.
+				// Therefore, we cannot get its name with the -list-thread-groups command
+				// Instead, we take it from the binary we are using.
+				String name = fBackend.getProgramPath().lastSegment();
+				// Also, the pid we get from GDB is 1, which is not correct.
+				// I haven't found a good way to get the pid yet, so let's not show it.
+				rm.setData(new MIThreadDMData(name, null));
+				rm.done();
+			} else {
+				final String id = ((IMIProcessDMContext)dmc).getProcId();
+				String name = fProcessNames.get(id);
+				if (name == null) {
+					// We don't have the name yet.  Maybe we didn't fetch names yet,
+					// or maybe this is a new process
+					// This is not very efficient, but GDB does not provide a way to get the name
+					// of a single process.
+					ICommandControlDMContext controlDmc = DMContexts.getAncestorOfType(dmc, ICommandControlDMContext.class);
+					fListThreadGroupsAvailableCache.execute(
+							new MIListThreadGroups(controlDmc, true),
+							new DataRequestMonitor<MIListThreadGroupsInfo>(getExecutor(), rm) {
+								@Override
+								protected void handleCompleted() {
+									// We cannot actually cache this command since the process
+									// list may change.  But this cache allows to avoid overlapping
+									// sending of this command.
+									fListThreadGroupsAvailableCache.reset();
+
+									String name = null;
+									if (isSuccess()) {
+										for (IThreadGroupInfo groupInfo : getData().getGroupList()) {
+											fProcessNames.put(groupInfo.getPid(), groupInfo.getName());
+											if (groupInfo.getPid().equals(id)) {
+												name = groupInfo.getName();
+											}
 										}
 									}
-								}
-								
-								if (name == null) {
-									// We still don't have the name... weird.
-									// Don't go into an infinite loop by trying again, just give up
-									name = "Unknown name"; //$NON-NLS-1$
-								}
-								rm.setData(new MIThreadDMData(name, id));
-								rm.done();	
-							}
-						});
 
-			} else {
-				rm.setData(new MIThreadDMData(name, id));
-				rm.done();
+									if (name == null) {
+										// We still don't have the name... weird.
+										// Don't go into an infinite loop by trying again, just give up
+										name = "Unknown name"; //$NON-NLS-1$
+									}
+									rm.setData(new MIThreadDMData(name, id));
+									rm.done();	
+								}
+							});
+
+				} else {
+					rm.setData(new MIThreadDMData(name, id));
+					rm.done();
+				}
 			}
 		} else if (dmc instanceof MIThreadDMC) {
 			final MIThreadDMC threadDmc = (MIThreadDMC)dmc;
@@ -554,15 +600,28 @@ public class GDBProcesses_7_0 extends AbstractDsfService
     	rm.done();
     }
     
-    public void isDebuggerAttachSupported(IDMContext dmc, DataRequestMonitor<Boolean> rm) {
+    private boolean doIsDebuggerAttachSupported() {
     	IGDBBackend backend = getServicesTracker().getService(IGDBBackend.class);
-    	rm.setData(backend.getIsAttachSession());
+    	if (backend != null) {
+    		return backend.getIsAttachSession();
+    	}
+    	return false;
+    }
+    
+    public void isDebuggerAttachSupported(IDMContext dmc, DataRequestMonitor<Boolean> rm) {
+    	rm.setData(doIsDebuggerAttachSupported());
     	rm.done();
     }
 
     public void attachDebuggerToProcess(final IProcessDMContext procCtx, final DataRequestMonitor<IDMContext> rm) {
 		if (procCtx instanceof IMIProcessDMContext) {
-			ICommandControlDMContext controlDmc = DMContexts.getAncestorOfType(procCtx, ICommandControlDMContext.class);
+	    	if (!doIsDebuggerAttachSupported()) {
+	            rm.setStatus(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, INTERNAL_ERROR, "Attach not supported.", null)); //$NON-NLS-1$
+	            rm.done();    		
+	    		return;
+	    	}
+	    	
+	    	ICommandControlDMContext controlDmc = DMContexts.getAncestorOfType(procCtx, ICommandControlDMContext.class);
 			fCommandControl.queueCommand(
 					new MITargetAttach(controlDmc, ((IMIProcessDMContext)procCtx).getProcId()),
 					new DataRequestMonitor<MIInfo>(getExecutor(), rm) {
@@ -580,19 +639,33 @@ public class GDBProcesses_7_0 extends AbstractDsfService
             rm.done();
 	    }
 	}
-	
-    public void canDetachDebuggerFromProcess(IDMContext dmc, DataRequestMonitor<Boolean> rm) {
+
+    private boolean doCanDetachDebuggerFromProcess() {
     	IGDBBackend backend = getServicesTracker().getService(IGDBBackend.class);
-    	rm.setData(backend.getIsAttachSession() && fCommandControl.isConnected());
+    	if (backend != null) {
+    		return backend.getIsAttachSession() && fCommandControl.isConnected();
+    	}
+    	return false;
+    }
+    
+    public void canDetachDebuggerFromProcess(IDMContext dmc, DataRequestMonitor<Boolean> rm) {
+    	rm.setData(doCanDetachDebuggerFromProcess());
     	rm.done();
     }
 
     public void detachDebuggerFromProcess(final IDMContext dmc, final RequestMonitor rm) {
+    	
     	ICommandControlDMContext controlDmc = DMContexts.getAncestorOfType(dmc, ICommandControlDMContext.class);
     	IMIProcessDMContext procDmc = DMContexts.getAncestorOfType(dmc, IMIProcessDMContext.class);
 
     	if (controlDmc != null && procDmc != null) {
-    		fCommandControl.queueCommand(
+        	if (!doCanDetachDebuggerFromProcess()) {
+                rm.setStatus(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, INTERNAL_ERROR, "Detach not supported.", null)); //$NON-NLS-1$
+                rm.done();
+                return;
+        	}
+
+        	fCommandControl.queueCommand(
     				new MITargetDetach(controlDmc, procDmc.getProcId()),
     				new DataRequestMonitor<MIInfo>(getExecutor(), rm));
     	} else {
@@ -619,38 +692,29 @@ public class GDBProcesses_7_0 extends AbstractDsfService
 	}
     
 	public void getProcessesBeingDebugged(final IDMContext dmc, final DataRequestMonitor<IDMContext[]> rm) {
-//		MIInferiorProcess inferiorProcess = fCommandControl.getInferiorProcess();
-//		if (fCommandControl.isConnected() &&
-//			inferiorProcess != null && 
-//			inferiorProcess.getState() != MIInferiorProcess.State.TERMINATED) {
-		
-			final ICommandControlDMContext controlDmc = DMContexts.getAncestorOfType(dmc, ICommandControlDMContext.class);
-			final IMIContainerDMContext containerDmc = DMContexts.getAncestorOfType(dmc, IMIContainerDMContext.class);
-			if (containerDmc != null) {
-				fThreadCommandCache.execute(
-						new MIListThreadGroups(controlDmc, containerDmc.getGroupId()),
-						new DataRequestMonitor<MIListThreadGroupsInfo>(getExecutor(), rm) {
-							@Override
-							protected void handleSuccess() {
-								rm.setData(makeExecutionDMCs(containerDmc, getData().getThreadInfo().getThreadList()));
-								rm.done();
-							}
-						});
-			} else {
-				fContainerCommandCache.execute(
-						new MIListThreadGroups(controlDmc),
-						new DataRequestMonitor<MIListThreadGroupsInfo>(getExecutor(), rm) {
-							@Override
-							protected void handleSuccess() {
-								rm.setData(makeContainerDMCs(controlDmc, getData().getGroupList()));
-								rm.done();
-							}
-						});
-			}
-//		} else {
-//			rm.setData(new IDMContext[0]);
-//			rm.done();
-//		}
+		final ICommandControlDMContext controlDmc = DMContexts.getAncestorOfType(dmc, ICommandControlDMContext.class);
+		final IMIContainerDMContext containerDmc = DMContexts.getAncestorOfType(dmc, IMIContainerDMContext.class);
+		if (containerDmc != null) {
+			fThreadCommandCache.execute(
+					new MIListThreadGroups(controlDmc, containerDmc.getGroupId()),
+					new DataRequestMonitor<MIListThreadGroupsInfo>(getExecutor(), rm) {
+						@Override
+						protected void handleSuccess() {
+							rm.setData(makeExecutionDMCs(containerDmc, getData().getThreadInfo().getThreadList()));
+							rm.done();
+						}
+					});
+		} else {
+			fContainerCommandCache.execute(
+					new MIListThreadGroups(controlDmc),
+					new DataRequestMonitor<MIListThreadGroupsInfo>(getExecutor(), rm) {
+						@Override
+						protected void handleSuccess() {
+							rm.setData(makeContainerDMCs(controlDmc, getData().getGroupList()));
+							rm.done();
+						}
+					});
+		}
 	}
 
 	private IExecutionDMContext[] makeExecutionDMCs(IContainerDMContext containerDmc, MIThread[] threadInfos) {
@@ -693,11 +757,16 @@ public class GDBProcesses_7_0 extends AbstractDsfService
 
 		if (controlDmc != null) {
 			// Don't cache this command since the list can change at any time.
-			fCommandControl.queueCommand(
+			fListThreadGroupsAvailableCache.execute(
 				new MIListThreadGroups(controlDmc, true),
 				new DataRequestMonitor<MIListThreadGroupsInfo>(getExecutor(), rm) {
 					@Override
 					protected void handleCompleted() {
+						// We cannot actually cache this command since the process
+						// list may change.  But this cache allows to avoid overlapping
+						// sending of this command.
+						fListThreadGroupsAvailableCache.reset();
+						
 						if (isSuccess()) {
 							for (IThreadGroupInfo groupInfo : getData().getGroupList()) {
 								fProcessNames.put(groupInfo.getPid(), groupInfo.getName());
@@ -737,12 +806,7 @@ public class GDBProcesses_7_0 extends AbstractDsfService
 	}
 
 	public void terminate(IThreadDMContext thread, RequestMonitor rm) {
-		if (thread instanceof IMIProcessDMContext) {
-			fCommandControl.terminate(rm);
-	    } else {
-            rm.setStatus(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, INTERNAL_ERROR, "Invalid process context.", null)); //$NON-NLS-1$
-            rm.done();
-	    }
+		fCommandControl.terminate(rm);
 	}
 	
     @DsfServiceEventHandler
@@ -757,7 +821,6 @@ public class GDBProcesses_7_0 extends AbstractDsfService
     	IProcessDMContext procDmc = e.getDMContext();
         IMIContainerDMContext containerDmc = e.getGroupId() != null ? createContainerContext(procDmc, e.getGroupId()) : null;
 		getSession().dispatchEvent(new ContainerExitedDMEvent(containerDmc), getProperties());
-
     }
     
     @DsfServiceEventHandler
@@ -777,8 +840,8 @@ public class GDBProcesses_7_0 extends AbstractDsfService
     public void eventDispatched(ISuspendedDMEvent e) {
        	if (e instanceof IContainerSuspendedDMEvent) {
     		// This will happen in all-stop mode
-       		fContainerCommandCache.setContextAvailable(e.getDMContext(), true);
-       		fThreadCommandCache.setContextAvailable(e.getDMContext(), true);
+       		fContainerCommandCache.setContextAvailable(fCommandControl.getContext(), true);
+       		fThreadCommandCache.setContextAvailable(fCommandControl.getContext(), true);
        	} else {
        		// This will happen in non-stop mode
        	}
@@ -842,13 +905,6 @@ public class GDBProcesses_7_0 extends AbstractDsfService
     		    			}
     		    		}
     				}
-
-		    		// Until GDB is officially supporting multi-process, we may not get
-		    		// a groupId.  In this case, we are running single process and we'll
-		    		// need its groupId
-		    		if (groupId == null) {
-		    			groupId = MIProcesses.UNIQUE_GROUP_ID;
-		    		}
 
     		    	if ("thread-created".equals(miEvent)) { //$NON-NLS-1$
     		    		// Update the thread to groupId map with the new groupId

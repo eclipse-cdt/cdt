@@ -174,7 +174,7 @@
 			basedir="${buildDirectory}/site/eclipse"/>
 	</target>
 	
-	<target name="generate.p2.metadata">
+	<target name="generate.p2.metadata" depends="init" unless="hasErrors">
 		<!-- unzip the signed master site -->
 		<unzip src="${zipsdir}/${masterFile}" dest="${zipsdir}/p2"/>
 		

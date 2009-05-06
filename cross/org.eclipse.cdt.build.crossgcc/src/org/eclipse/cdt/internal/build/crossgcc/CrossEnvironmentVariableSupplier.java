@@ -13,7 +13,6 @@ import org.eclipse.core.runtime.Platform;
 public class CrossEnvironmentVariableSupplier implements
 		IConfigurationEnvironmentVariableSupplier {
 
-	@Override
 	public IBuildEnvironmentVariable getVariable(String variableName,
 			IConfiguration configuration, IEnvironmentVariableProvider provider) {
 		if (PathEnvironmentVariable.isVar(variableName))
@@ -22,7 +21,6 @@ public class CrossEnvironmentVariableSupplier implements
 			return null;
 	}
 
-	@Override
 	public IBuildEnvironmentVariable[] getVariables(
 			IConfiguration configuration, IEnvironmentVariableProvider provider) {
 		IBuildEnvironmentVariable path = PathEnvironmentVariable.create(configuration);
@@ -53,22 +51,18 @@ public class CrossEnvironmentVariableSupplier implements
 				: name.equals(PathEnvironmentVariable.name);
 		}
 		
-		@Override
 		public String getDelimiter() {
 			return Platform.getOS().equals(Platform.OS_WIN32) ? ";" : ":";
 		}
 
-		@Override
 		public String getName() {
 			return name;
 		}
 
-		@Override
 		public int getOperation() {
 			return IBuildEnvironmentVariable.ENVVAR_PREPEND;
 		}
 
-		@Override
 		public String getValue() {
 			return path.getAbsolutePath();
 		}

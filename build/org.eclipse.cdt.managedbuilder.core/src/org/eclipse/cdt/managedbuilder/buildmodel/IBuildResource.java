@@ -21,14 +21,16 @@ import org.eclipse.core.runtime.IPath;
  */
 public interface IBuildResource {
 	/**
-	 * Returns the resource location
+	 * Returns the absolute path to the resource as seen on the target machine.
 	 * 
 	 * @return IPath
 	 */
 	IPath getLocation();
 	
 	/**
-	 * Returns the full path to the build resource as seen on the target machine.
+	 * In case the resource is a workspace resource,
+	 * returns the full workspace path for the resource
+	 * otherwise returns null
 	 * 
 	 * @return IPath
 	 */

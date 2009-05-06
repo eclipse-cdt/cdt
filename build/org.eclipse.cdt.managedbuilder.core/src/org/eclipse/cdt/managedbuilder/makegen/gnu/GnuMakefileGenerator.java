@@ -2438,7 +2438,7 @@ public class GnuMakefileGenerator implements IManagedBuilderMakefileGenerator2 {
 			
 			if(localFile != null) {
 				// it's a local file... use project location for proper path formatting
-				projectLocation = project.getLocation().addTrailingSeparator().toOSString();
+				projectLocation = project.getLocation().addTrailingSeparator().toString();
 			}
 			else {
 				// remote... get the path from the URI

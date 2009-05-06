@@ -22,6 +22,7 @@ import org.eclipse.cdt.managedbuilder.buildmodel.IBuildIOType;
 import org.eclipse.cdt.managedbuilder.buildmodel.IBuildResource;
 import org.eclipse.cdt.managedbuilder.buildmodel.IBuildStep;
 import org.eclipse.core.resources.IResource;
+import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
 
@@ -30,7 +31,7 @@ public class BuildResource implements IBuildResource {
 	private BuildIOType fProducerArg;
 	private boolean fNeedsRebuild;
 	private boolean fIsRemoved;
-	private IPath fLocation; 
+	private IPath fFullWorkspacePath; 
 	private boolean fIsProjectRc;
 	private BuildDescription fInfo;
 	private URI fLocationURI;
@@ -39,35 +40,44 @@ public class BuildResource implements IBuildResource {
 		this(info, info.calcResourceLocation(rc), rc.getLocationURI());
 	}
 
-	protected BuildResource(BuildDescription info, IPath projectPath, URI locationURI){
+	protected BuildResource(BuildDescription info, IPath fullWorkspacePath, URI locationURI){
 		
 		if(locationURI == null)
 			throw new IllegalArgumentException(); // must point to somewhere!
 		
 		fLocationURI = locationURI;
 		
-		fLocation = projectPath;
+		fFullWorkspacePath = fullWorkspacePath;
 		fInfo = info;
 		
-		fIsProjectRc = (projectPath != null);
+		fIsProjectRc = (fullWorkspacePath != null);
 
 		info.resourceCreated(this);
 		
 		if(DbgUtil.DEBUG)
-			DbgUtil.trace("resource " + projectPath + " created");	//$NON-NLS-1$	//$NON-NLS-2$
+			DbgUtil.trace("resource " + fullWorkspacePath + " created");	//$NON-NLS-1$	//$NON-NLS-2$
 	}
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.managedbuilder.builddescription.IBuildResource#getLocation()
 	 */
 	public IPath getLocation() {
-		return fLocation;
+		IResource resource = ResourcesPlugin.getWorkspace().getRoot().findMember(fFullWorkspacePath);
+		if(resource == null) {
+			return new Path(fLocationURI.getPath());
+		}
+			
+		if(resource.getLocation() != null)
+			return resource.getLocation();
+		else
+			return new Path(fLocationURI.getPath());
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.managedbuilder.builddescription.IBuildResource#getFullPath()
 	 */
 	public IPath getFullPath() {
-		return new Path(fLocationURI.getPath());
+		return fFullWorkspacePath;
+		//return new Path(getLocationURI().getPath().toString());
 	}
 
 	/* (non-Javadoc)

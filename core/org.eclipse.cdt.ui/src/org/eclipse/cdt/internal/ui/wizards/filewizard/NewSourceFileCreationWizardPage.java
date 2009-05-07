@@ -31,6 +31,7 @@ import org.eclipse.cdt.core.model.CoreModel;
 import org.eclipse.cdt.core.model.ITranslationUnit;
 import org.eclipse.cdt.ui.CodeGeneration;
 
+import org.eclipse.cdt.internal.core.model.CProject;
 import org.eclipse.cdt.internal.corext.codemanipulation.StubUtility;
 
 import org.eclipse.cdt.internal.ui.dialogs.StatusInfo;
@@ -187,11 +188,21 @@ public class NewSourceFileCreationWizardPage extends AbstractFileCreationWizardP
 	}
 	
 	/*
-	 * @see org.eclipse.cdt.internal.ui.wizards.filewizard.AbstractFileCreationWizardPage#getPreferredTemplateName()
+	 * @see org.eclipse.cdt.internal.ui.wizards.filewizard.AbstractFileCreationWizardPage#getDefaultTemplateName()
 	 */
 	@Override
-	public String getLastUsedTemplateName() {
-		return getDialogSettings().get(KEY_LAST_USED_TEMPLATE);
+	public String getDefaultTemplateName() {
+		String name = getDialogSettings().get(KEY_LAST_USED_TEMPLATE);
+		if (name == null) {
+			String contentType = CProject.hasCCNature(getCurrentProject()) ?
+					CCorePlugin.CONTENT_TYPE_CXXHEADER : CCorePlugin.CONTENT_TYPE_CHEADER;
+			Template[] templates =
+					StubUtility.getFileTemplatesForContentTypes(new String[] { contentType }, null);
+			if (templates.length != 0) {
+				name = templates[0].getName();
+			}
+		}
+		return name;
 	}
 	
 	/*

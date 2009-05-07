@@ -242,7 +242,7 @@ public abstract class AbstractFileCreationWizardPage extends NewElementWizardPag
 			Template selected= getSelectedTemplate();
 			String name = selected != null ?
 					selected.getName() :
-					getLastUsedTemplateName();
+					getDefaultTemplateName();
 			fTemplates= getApplicableTemplates();
 			int idx= NO_TEMPLATE.equals(name) ? 0 : 1;
 			String[] names= new String[fTemplates.length + 1];
@@ -716,9 +716,10 @@ public abstract class AbstractFileCreationWizardPage extends NewElementWizardPag
 	public abstract ITranslationUnit getCreatedFileTU();
 	
 	/**
-	 * @return the name of the template used in the previous dialog invocation. 
+	 * @return the name of the template used in the previous dialog invocation, or
+	 * the name of the default template.
 	 */
-	public abstract String getLastUsedTemplateName();
+	public abstract String getDefaultTemplateName();
 	
 	/**
 	 * Saves the name of the last used template.

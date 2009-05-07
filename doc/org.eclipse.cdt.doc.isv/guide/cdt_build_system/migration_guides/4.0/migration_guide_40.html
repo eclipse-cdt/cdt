@@ -2,7 +2,7 @@
 <html lang="en" xmlns:v="urn:schemas-microsoft-com:vml" xmlns:o="urn:schemas-microsoft-com:office:office" xmlns="http://www.w3.org/TR/REC-html40">
 <head>
   <meta http-equiv="Content-Type"
- content="text/html; charset=ISO-8859-1">
+ content="text/html; charset=utf-8">
   <meta name="GENERATOR" content="Microsoft FrontPage 6.0">
   <meta http-equiv="Content-Style-Type" content="text/css">
 
@@ -19,8 +19,7 @@ h3
 	margin-bottom:3.0pt;
 	margin-left:0in;
 	page-break-after:avoid;
-	font-size:13.0pt;
-	font-family:Arial}
+	font-size:13.0pt}
 -->
   </style>
 	<!--[if !mso]>
@@ -211,29 +210,29 @@ using this default implementation, no changes are needed.</p>
 	<p class="MsoNormal" style="margin-top:6.0pt">The changes are related to the 
 	way the dot (&quot;./&quot;) prefix are treated by the path constructors, i.e. with 
 	Eclipse 3.2.x the Path(String) constructor and also Path.from*String() 
-	methods generate the &#8220;./some/path&#8221; path given a &#8220;./some/path&#8221; string<br>
+	methods generate the &ldquo;./some/path&rdquo; path given a &ldquo;./some/path&rdquo; string<br>
 	<br>
-	With Eclipse 3.3 the above generate &#8220;some/path&#8221; for the same string (note 
-	the &#8220;./&#8221; stripped)<br>
+	With Eclipse 3.3 the above generate &ldquo;some/path&rdquo; for the same string (note 
+	the &ldquo;./&rdquo; stripped)<br>
 	<br>
 	Historically the Managed Build System contains some logic that behaves 
-	differently depending on whether the &#8220;./&#8221; is prefixed or not, e.g. 
+	differently depending on whether the &ldquo;./&rdquo; is prefixed or not, e.g. 
 	org.eclipse.cdt.managedbuilder.core.IManagedOutputNameProvider is expected 
 	to return a one-segment path to force the path to be prepended by the build 
-	output [sub]directory path, so returning &#8220;./foo.o&#8221; and &#8220;foo.o&#8221; would have 
-	different meaning and behavior, i.e. the &#8220;./foo.o&#8221; would force the foo.o to 
-	be located in the root output directory, while &#8220;foo.o&#8221; would result in 
+	output [sub]directory path, so returning &ldquo;./foo.o&rdquo; and &ldquo;foo.o&rdquo; would have 
+	different meaning and behavior, i.e. the &ldquo;./foo.o&rdquo; would force the foo.o to 
+	be located in the root output directory, while &ldquo;foo.o&rdquo; would result in 
 	putting the foo.o in the output_dir/source/relative/directory/foo.o<br>
 	<br>
 	There was some code in MBS relying on the 3.2 Path behavior, e.g. something 
-	like path = Path.fromOSString(&#8220;./&#8221; + name + extension); Stripping the &#8220;./&#8221; 
+	like path = Path.fromOSString(&ldquo;./&rdquo; + name + extension); Stripping the &ldquo;./&rdquo; 
 	in eclipse 3.3 resulted in incorrect output calculation for the case the 
 	tool wanted to force the output to be located in the build output root 
 	directory for.<br>
 	<br>
 	If your tool-chain needs to specify the &quot;./&quot; prefix to the paths, they could 
 	do it by using the following construction</p>
-	<p class="MsoNormal" style="margin-top:6.0pt">path = new Path(&#8220;./&#8221;).append(fileName);</p>
+	<p class="MsoNormal" style="margin-top:6.0pt">path = new Path(&ldquo;./&rdquo;).append(fileName);</p>
 	<p class="MsoNormal" style="margin-top:6.0pt">instead of </p>
 	<p class="MsoNormal" style="margin-top:6.0pt">path = new Path(&quot;./&quot; + 
 	fileName);</p></li>

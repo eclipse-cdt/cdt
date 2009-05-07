@@ -353,7 +353,7 @@ user overrides through the UI between sessions, in the project's .cdtbuild file.
 System</a></p>
 <p>There is also a standard build system supplied as part
 of the CDT framework that is unrelated to the managed build system. The
-standard system provides a small set of tools to build a user&#8217;s
+standard system provides a small set of tools to build a user&rsquo;s
 projects. The user is expected to supply a makefile which includes
 enough information to build their project. The UI allows the user to
 switch between targets defined in the makefile, and can dynamically
@@ -369,7 +369,7 @@ and maintaining makefiles for projects to be a chore. For these users,
 the trade-off for the convenience of not having to maintain them is the
 flexibility of being in control of the makefiles.</p>
 <p class="section"><a name="_TocSectionUIModel">2</a> User Model</p>
-<p class="MsoNormal" style="margin-top:6.0pt">The CDT user&#8217;s model of the MBS 
+<p class="MsoNormal" style="margin-top:6.0pt">The CDT user&rsquo;s model of the MBS 
 contains the following primary objects:&nbsp;</p>
 <table class="MsoTableGrid" border="1" cellspacing="0" cellpadding="0" style="border-collapse: collapse; border: medium none" id="table9">
 	<tr>
@@ -442,7 +442,7 @@ contains the following primary objects:&nbsp;</p>
 in <font color="#FF0000">red </font>indicates MBS functionality that is not yet 
 implemented, but is intended to be implemented in future releases of MBS.</p>
 <h3 class="subsection">2.1.1 Creating a New Project</h3>
-<p class="MsoNormal" style="margin-top:6.0pt">The CDT user&#8217;s experience with the 
+<p class="MsoNormal" style="margin-top:6.0pt">The CDT user&rsquo;s experience with the 
 MBS begins when she creates a new Managed Make project.&nbsp; The user picks the type 
 of project to create from the list of project types defined in the installed 
 manifest files.&nbsp; The list of project types is, by default, filtered by:</p>
@@ -481,7 +481,7 @@ configuration filtering, however configurations that use tool-chains that are
 not installed will not be able to be built on the host system.</p>
 <p class="MsoNormal" style="margin-top:6.0pt">After selecting the initial set of 
 configurations for the project, the user can select any of the standard tabs in 
-the &#8220;Additional Project Settings&#8221; page in order to customize additional options 
+the &ldquo;Additional Project Settings&rdquo; page in order to customize additional options 
 that are common to all Managed Build system projects (e.g., the projects that the new project depends upon, etc.).</p>
 <p class="MsoNormal" style="margin-top:6.0pt">The user 
 can proceed to any additional pages provided by the project type in order to 
@@ -495,7 +495,7 @@ the user can use any of the Eclipse methods of adding files to the project.</p>
 configuration based upon the settings used by one of the existing 
 configurations.&nbsp; <span style="color:red">The user can select a different 
 tool-chain from the project type if desired.&nbsp; This allows a project type to be 
-defined (e.g., &#8220;Gnu Executable&#8221;) that contains tool-chains for multiple 
+defined (e.g., &ldquo;Gnu Executable&rdquo;) that contains tool-chains for multiple 
 combinations of host and target platforms, and/or for multiple versions of a 
 tool-chain.&nbsp; It should be easy for a user to take an existing CDT project to a 
 different host system and quickly create a configuration that builds on that 
@@ -545,21 +545,21 @@ and modify the following attributes of the tool-chain: </p>
 	<li class="MsoNormal" style="margin-top: 6.0pt">
 	<font face="arial, helvetica, geneva" size="2"><span style="color:red">The 
 	mapping of an individual resource to a tool:&nbsp; </span>
-	<span style="color:red">The available tools come from the configuration&#8217;s 
+	<span style="color:red">The available tools come from the configuration&rsquo;s 
 	tool-chain, from a different tool-chain or from individually defined tools.</span></font></li>
 	<li class="MsoNormal" style="margin-top: 6.0pt">
 	<font face="arial, helvetica, geneva" size="2"><span style="color:red">The 
 	mapping of a set file extensions to a category of tools 
 	or a specific tool:&nbsp; The user can modify the current assignments and add new 
-	assignments.&nbsp; The available tools come from the configuration&#8217;s tool-chain, 
+	assignments.&nbsp; The available tools come from the configuration&rsquo;s tool-chain, 
 	from a different tool-chain or from individually defined tools.</span></font></li>
 </ol>
 <h3 class="subsection">2.1.4 Modifying the Tool Options of the Configuration</h3>
 <p class="MsoNormal" style="margin-top:6.0pt">The user can modify the options of 
 an individual configuration<font color="#FF0000">, or he can make changes to a set of configurations 
 that he has selected</font>.&nbsp; <font color="#FF0000">The user can select a set of configurations individually</font><span style="color:red"> 
-or by selecting a &#8220;category&#8221; of configurations.&nbsp; The names of the categories are 
-defined by the configuration provider &#8211; &#8220;debug&#8221; and &#8220;release&#8221; are commonly 
+or by selecting a &ldquo;category&rdquo; of configurations.&nbsp; The names of the categories are 
+defined by the configuration provider &#8211; &ldquo;debug&rdquo; and &ldquo;release&rdquo; are commonly 
 supported.&nbsp; Categories which group configurations by target platform could also 
 be useful.&nbsp; </span></p>
 <p class="MsoNormal" style="margin-top:6.0pt">The user can modify the options of 
@@ -569,7 +569,7 @@ is not valid.&nbsp; The current value of a build setting is bolded if the value 
 different from the default value for the tool.&nbsp; The user can easily set the 
 value back to the default value without knowing what the default value is.</span></p>
 <p class="MsoNormal" style="margin-top:6.0pt"><span style="color:red">The user 
-can modify certain &#8220;well known&#8221; build settings for multiple selected 
+can modify certain &ldquo;well known&rdquo; build settings for multiple selected 
 configurations, even when the configurations do not use the same tool-chain.</span></p>
 <p class="MsoNormal" style="margin-top:6.0pt">The user 
 can use Build Macros in all options that accept text.&nbsp; MBS pre-defines many 
@@ -578,9 +578,9 @@ additional macros.&nbsp; Additional macros can be defined in the MBS preferences
 and for individual projects or configurations.&nbsp; Build Macros are referenced in strings by 
 enclosing them in braces, preceded by a dollar sign.</p>
 <p class="MsoNormal" style="margin-top:6.0pt"><span style="color:red">Tool 
-integrators may define property setting &#8220;wizards&#8221; that modify sets of tool 
+integrators may define property setting &ldquo;wizards&rdquo; that modify sets of tool 
 options in order to reach an overall user-desired goal.&nbsp; An example would be a 
-&#8220;Most Highly Optimized Build&#8221; wizard that set options on multiple tools.</span></p>
+&ldquo;Most Highly Optimized Build&rdquo; wizard that set options on multiple tools.</span></p>
 <h3 class="subsection">2.1.5 Modifying the Tool Options of an Individual File</h3>
 <p class="MsoNormal" style="margin-top:6.0pt">The user can specify different 
 configuration specific build settings for individual files in the project.<span style="color:red"> 
@@ -740,7 +740,7 @@ in the UI and new project wizards.</p>
 hierarchies to promote the efficient sharing of configurations. If you have 
 defined a project-type that should not be selected by the user, but is a root 
 for other project-types, it may be declared abstract by setting the <i>
-isAbstract</i> attribute to &#8216;true&#8217;. Abstract project-types do not appear in the 
+isAbstract</i> attribute to &lsquo;true&rsquo;. Abstract project-types do not appear in the 
 UI.&nbsp; Descendents of an abstract project-type will have the same 
 configurations that the abstract project-type has. For these children to 
 function properly, their <i>superClass</i> attribute must contain 
@@ -950,7 +950,7 @@ CDT user creates a new Managed Build project:</p>
 	the selected configuration element.</font></li>
 	<li><font face="arial, helvetica, geneva" size="2">For each tool element 
 	child of the tool-chain that is the child of the selected configuration 
-	element, create a tool element child of the cloned configuration&#8217;s 
+	element, create a tool element child of the cloned configuration&rsquo;s 
 	tool-chain element that specifies the original tool element as its <i>
 	superClass</i>.</font></li>
 </ol>
@@ -1011,12 +1011,12 @@ UI. This is the name that the user entered in the New Project wizard.</td>
 <p class="MsoNormal" style="margin-top:6.0pt">The configuration element 
 represents the configuration in the user model.&nbsp; A tool-integrator defines 
 default configurations as children of the project type.&nbsp; These provide a 
-template for the configurations added to the user&#8217;s project, which are stored in 
-the project&#8217;s .cdtbuild file.&nbsp; A projectType must have at least one default 
+template for the configurations added to the user&rsquo;s project, which are stored in 
+the project&rsquo;s .cdtbuild file.&nbsp; A projectType must have at least one default 
 configuration defined for it, and a project must always contain at least one 
 configuration.</p>
 <p class="MsoNormal" style="margin-top:6.0pt">The configuration contains one 
-child of type tool-chain.&nbsp; This describes how the project&#8217;s resources are 
+child of type tool-chain.&nbsp; This describes how the project&rsquo;s resources are 
 transformed into the build artifact.&nbsp; The configuration is responsible for 
 maintaining the name of the final build goal. The user selects the name of the 
 build artifact in the UI, and the configuration maintains it in the <i>
@@ -1028,7 +1028,7 @@ the configuration as a whole.&nbsp; </p>
 attribute that will be used by the build model to manage the
 configuration. It must also have a <var>name</var> that will be
 displayed in the UI in the build property page and new project wizards.&nbsp; 
-The configuration contains the information needed to &#8220;clean&#8221; the build files on 
+The configuration contains the information needed to &ldquo;clean&rdquo; the build files on 
 the host machine. &nbsp;The configuration can specify the <i>cleanCommand</i> 
 attribute which specifies a command that removes the build files.</p>
 <p class="MsoNormal" style="margin-top:6.0pt">The<i> prebuildStep, 
@@ -1109,7 +1109,7 @@ track of this specific configuration.</td>
       <td
  style="border-style: none solid solid none; border-width: medium 1pt 1pt medium; border-right: 1pt solid windowtext; border-bottom: 1pt solid windowtext; padding: 0in 5.4pt; vertical-align: top;">
       <font size="2">The extension that the build goal will have, for example 
-		&#8216;.exe&#8217; or &#8216;.so&#8217;</font></td>
+		&lsquo;.exe&rsquo; or &lsquo;.so&rsquo;</font></td>
       <td
  style="border-style: none double solid none; border-width: medium 1.5pt 1pt medium; border-right: 1.5pt double windowtext; border-bottom: 1pt solid windowtext; padding: 0in 5.4pt; vertical-align: top;">
       in hierarchy</td>
@@ -1229,7 +1229,7 @@ track of this specific configuration.</td>
 <p class="subsection"><a name="_TocSectionGrammar_5">3.5 Tool Chain</a></p>
 <p class="MsoNormal" style="margin-top:6.0pt">The toolChain element represents 
 the tool chain in the user model.&nbsp; It is a tool-integrator-defined set 
-of tools that transform the project&#8217;s input into the project&#8217;s outputs. &nbsp;A 
+of tools that transform the project&rsquo;s input into the project&rsquo;s outputs. &nbsp;A 
 tool-chain can be defined as part of a configuration, or as an independent 
 specification that is referenced in a separate configuration via the toolChain 
 superclass attribute.</p>
@@ -1239,7 +1239,7 @@ children of type tool.&nbsp; These define the tools used in the tool-chain.</p>
 of type targetPlatform.&nbsp; This defines the architecture/os combination(s) where 
 the outputs of the project can be deployed.</p>
 <p class="MsoNormal" style="margin-top:6.0pt">The toolChain contains one child 
-of type builder.&nbsp; This defines the &#8220;build&#8221; or &#8220;make&#8221; utility that is used to 
+of type builder.&nbsp; This defines the &ldquo;build&rdquo; or &ldquo;make&rdquo; utility that is used to 
 drive the transformation of the inputs into outputs. </p>
 <p class="MsoNormal" style="margin-top:6.0pt">The tooChain may contain one or 
 more children of type optionCategory and option.&nbsp; These define tool-chain 
@@ -1267,7 +1267,7 @@ definition and specify the id with version number of the tool chain definition
 to convert to in the <i>convertToId</i> attribute.&nbsp; If changes to the project 
 information need to be performed by the conversion, the tool chain must provide 
 a converter extension to perform the conversion.&nbsp; If no converter extension is 
-provided, then there won&#8217;t be any conversion.&nbsp; See § 8.2 for additional 
+provided, then there won&rsquo;t be any conversion.&nbsp; See § 8.2 for additional 
 information.</p>
 <p class="MsoNormal" style="margin-top:6.0pt">A tool-chain may define a 
 configuration level environment variable provider in the <i>configurationEnvironmentSupplier</i> attribute.&nbsp; See § 
@@ -1575,7 +1575,7 @@ the schema table below.</p>
 <p class="subsection"><a name="_TocSectionGrammar_6">3.6 Builder</a></p>
 <p class="MsoNormal" style="margin-top:6.0pt">The builder element represents the 
 utility that drives the build process (typically, but not necessarily, a variant 
-of &#8220;make&#8221;).&nbsp; It defines the command needed to invoke the build utility in the <i>
+of &ldquo;make&rdquo;).&nbsp; It defines the command needed to invoke the build utility in the <i>
 command</i> attribute. Any special flags that need to be passed to the builder 
 are defined in the <i>arguments</i> attribute. &nbsp;&nbsp;The builder can specify the 
 error parser(s) to be used to parse its output.&nbsp; The builder also specifies a 
@@ -1613,7 +1613,7 @@ specify the id with version number of the new builder to convert to in the <i>
 convertToId</i> attribute.&nbsp; If changes to the project information need to be 
 performed by the conversion, the tool chain definition must provide a converter 
 extension to perform the conversion.&nbsp; If no converter extension is provided, 
-then there won&#8217;t be any conversion.&nbsp; See § 8.2 for additional information.</p>
+then there won&rsquo;t be any conversion.&nbsp; See § 8.2 for additional information.</p>
 <p class="MsoNormal" style="margin-top:6.0pt">Additional builder attributes are described in 
 the schema table below.</p>
 <p class="subsection">3.6.1 Schema</p>
@@ -1708,7 +1708,7 @@ track of this specific builder.</font></td>
 		builder. If the user changes the flags through the UI, the overriden 
 		value will be stored in the project build settings file. The build model 
 		will default to this value if the user ever resets a change. The default 
-		is &#8220;-k&#8221;.</font></td>
+		is &ldquo;-k&rdquo;.</font></td>
       <td
  style="border-style: none double solid none; border-width: medium 1.5pt 1pt medium; border-right: 1.5pt double windowtext; border-bottom: 1pt solid windowtext; padding: 0in 5.4pt; vertical-align: top;">
       <font face="Arial">no</font></td>
@@ -1778,8 +1778,8 @@ track of this specific builder.</font></td>
  style="border-style: none solid solid none; border-width: medium 1pt 1pt medium; border-right: 1pt solid windowtext; border-bottom: 1pt solid windowtext; padding: 0in 5.4pt;"
  valign="top">
       <span style="font-family: Arial"><font size="2">Specifies whether the 
-		builder variables are case sensitive or not. Can be set to either &#8220;true&#8221; 
-		or &#8220;false&#8221;. The default is &#8220;true&#8221;. If the builder does not support 
+		builder variables are case sensitive or not. Can be set to either &ldquo;true&rdquo; 
+		or &ldquo;false&rdquo;. The default is &ldquo;true&rdquo;. If the builder does not support 
 		case-sensitive variables and there are some build environment variables 
 		that differ only in case (Environment variables on Unix-like operating 
 		systems are case sensitive), then those macros will always get resolved 
@@ -1801,8 +1801,8 @@ track of this specific builder.</font></td>
       <p class="MsoNormal"><font face="Arial">Comma-separated list of reserved 
 		macro names. The macro name could contain either the exact name or the 
 		java regular expression. The latter could be used to supply the pattern 
-		of variable names that are generated by MBS in case the &#8220;buildVariable&#8221; 
-		attribute of the &#8220;InputType&#8221; element is not specified, etc.&nbsp; If 
+		of variable names that are generated by MBS in case the &ldquo;buildVariable&rdquo; 
+		attribute of the &ldquo;InputType&rdquo; element is not specified, etc.&nbsp; If 
 		this attribute is specified and the reservedMacroNameSupplier is not 
 		specified, the following macro names will be treated as reserved:</font></p>
 		<p class="MsoNormal" style="text-indent: -.25in; margin-left: .25in">
@@ -1820,7 +1820,7 @@ track of this specific builder.</font></td>
 		<span style="font-family: Arial"><font size="2">If this attribute is not 
 		specified, MBS will assume that there are no reserved macro names that 
 		could conflict with the build environment variable macros, except names 
-		specified in the &#8220;buildVariable&#8221; attribute of the &#8220;InputType&#8221; elements: 
+		specified in the &ldquo;buildVariable&rdquo; attribute of the &ldquo;InputType&rdquo; elements: 
 		these names will always be treated as reserved.</font></span></td>
       <td
  style="border-style: none double solid none; border-width: medium 1.5pt 1pt medium; border-right: 1.5pt double windowtext; border-bottom: 1pt solid windowtext; padding: 0in 5.4pt;"
@@ -2214,8 +2214,8 @@ independent specification.</p>
 children of type option which define the tool command line settings that can be 
 changed by the user.</p>
 <p class="MsoNormal" style="margin-top:6.0pt">A tool may contain one or more 
-children of type optionCategory.&nbsp; These are used to simplify the user&#8217;s 
-managements of the tool&#8216;s settings by dividing the options into a hierarchy of 
+children of type optionCategory.&nbsp; These are used to simplify the user&rsquo;s 
+managements of the tool&lsquo;s settings by dividing the options into a hierarchy of 
 categories. </p>
 <p class="MsoNormal" style="margin-top:6.0pt">A tool may contain one or more 
 children of type inputType and outputType.&nbsp; These define the inputs and 
@@ -2228,16 +2228,16 @@ library paths.</p>
 certain kinds of projects. For example, the Gnu compiler is invoked differently 
 for C and C++ source files. You can specify a filter for a tool based on the 
 nature of a project using the <i>natureFilter</i> attribute. When a new C 
-project is created, a &#8220;cnature&#8221; is added to it. New C++ projects have both a 
-&#8220;cnature&#8221; and &#8220;ccnature&#8221;. The build model interprets the filter as follows. If 
-you specify a &#8216;cnature&#8217; filter, then the tool will only be displayed if the 
-project has a &#8220;cnature&#8221; and does <i>not</i> have a &#8220;ccnature&#8221;. If you specify a 
-&#8216;ccnature&#8217; filter, then the tool will be displayed if the project has a &#8220;ccnature&#8221;. 
+project is created, a &ldquo;cnature&rdquo; is added to it. New C++ projects have both a 
+&ldquo;cnature&rdquo; and &ldquo;ccnature&rdquo;. The build model interprets the filter as follows. If 
+you specify a &lsquo;cnature&rsquo; filter, then the tool will only be displayed if the 
+project has a &ldquo;cnature&rdquo; and does <i>not</i> have a &ldquo;ccnature&rdquo;. If you specify a 
+&lsquo;ccnature&rsquo; filter, then the tool will be displayed if the project has a &ldquo;ccnature&rdquo;. 
 The default if no filter is specified is to display the tool for all projects.</p>
 <p class="MsoNormal" style="margin-top:6.0pt">Each tool specifies a <i>command</i> 
 that will be placed in the build file during the build file generation stage of 
 building.&nbsp; If the tool 
-requires a special output flag, such as &#8216;-o&#8217; for a compiler or linker, the 
+requires a special output flag, such as &lsquo;-o&rsquo; for a compiler or linker, the 
 implementer must specify that in the <i>outputFlag</i> attribute.</p>
 <p class="MsoNormal" style="margin-top:6.0pt">The <i>commandLineGenerator</i> 
 attribute allows the implementer to specify a class that implements the <code>IManagedCommandLineGenerator</code>
@@ -2252,7 +2252,7 @@ a tool, they continue to ship the old tool definition and specify the id with
 version number of the tool to convert to in the <i>convertToId</i> attribute.&nbsp; 
 If changes to the project information need to be performed by the conversion, 
 the tool chain must provide a converter extension to perform the conversion.&nbsp; If 
-no converter extension is provided, then there won&#8217;t be any conversion.&nbsp; 
+no converter extension is provided, then there won&rsquo;t be any conversion.&nbsp; 
 See § 8.2 for additional information.</p>
 <p class="MsoNormal" style="margin-top:6.0pt">Additional tool attributes are 
 described in the schema table below.</p>
@@ -2469,7 +2469,7 @@ Gnu C compiler, or g++ for the Gnu C++ compiler.</td>
       <td
  style="border-style: none solid solid none; border-width: medium 1pt 1pt medium; border-right: 1pt solid windowtext; border-bottom: 1pt solid windowtext; padding: 0in 5.4pt;"
  valign="top">
-      <font size="2">Specifies a command &#8220;pattern&#8221; that indicates how the parts 
+      <font size="2">Specifies a command &ldquo;pattern&rdquo; that indicates how the parts 
 		of the command line are used to create the entire command line.&nbsp; The 
 		pattern consists of the replaceable variables COMMAND, FLAGS, 
 		OUTPUT_FLAG, OUTPUT_PREFIX, OUTPUT and INPUTS.&nbsp; The default command line 
@@ -2494,7 +2494,7 @@ Gnu C compiler, or g++ for the Gnu C++ compiler.</td>
       <span style="font-family: Arial"><font size="2">When True, indicates that 
 		the Tool represents a CDT end-user-defined custom build step.&nbsp; The default is 
 		False.&nbsp; When True, the default value of the commandLinePattern attribute 
-		changes to &#8220;$(command)&#8221;.&nbsp; This attribute is used by the 
+		changes to &ldquo;$(command)&rdquo;.&nbsp; This attribute is used by the 
 		implementation of Custom Build Steps on the MBS configuration property 
 		page.&nbsp; It is not intended for use by tools defined by a 
 		tool-integrator.</font></span></td>
@@ -2531,8 +2531,8 @@ Gnu C compiler, or g++ for the Gnu C++ compiler.</td>
  style="border-style: none solid solid none; border-width: medium 1pt 1pt medium; border-right: 1pt solid windowtext; border-bottom: 1pt solid windowtext; padding: 0in 5.4pt;"
  valign="top">
       Specifies a string that is written to the build output prior to each 
-		invocation of the tool. The default value is &#8220;Invoking tool-name 
-		(tool-id)&#8230;&#8221;</td>
+		invocation of the tool. The default value is &ldquo;Invoking tool-name 
+		(tool-id)&#8230;&rdquo;</td>
       <td
  style="border-style: none double solid none; border-width: medium 1.5pt 1pt medium; border-right: 1.5pt double windowtext; border-bottom: 1pt solid windowtext; padding: 0in 5.4pt;"
  valign="top">
@@ -2928,7 +2928,7 @@ attributes of the InputType element are described in the table below.</p>
       <span style="font-family: Arial"><font size="2">A variable used in the 
 		build file to represent the list of input files.&nbsp; The same variable name 
 		can be used by an outputType to identify a set of output files that 
-		contribute to this tool&#8217;s input (i.e., those using the same 
+		contribute to this tool&rsquo;s input (i.e., those using the same 
 		buildVariable name).&nbsp; A build variable is ignored when multipleOfType is 
 		false and this is the primary input of the tool. &nbsp;The default name is 
 		chosen by MBS.</font></span></td>
@@ -3033,7 +3033,7 @@ to generate correct build files, and to allow for input ordering.&nbsp; The prec
 order for determining the output resource names is the following:</p>
 <ol style="margin-top: 0in; margin-bottom: 0in" start="1" type="1">
 	<li class="MsoNormal" style="margin-top: 6.0pt"><font face="Arial" size="2">
-	If this is the &#8220;target&#8221; tool in the tool-chain, and this is the primary 
+	If this is the &ldquo;target&rdquo; tool in the tool-chain, and this is the primary 
 	OutputType, use the user-defined artifact name and extension.</font></li>
 	<li class="MsoNormal" style="margin-top: 6.0pt"><font face="Arial" size="2">
 	If the <i>option</i> attribute is specified, use the value of the option.</font></li>
@@ -3047,7 +3047,7 @@ order for determining the output resource names is the following:</p>
 	file name.</font></li>
 </ol>
 <p>&nbsp;If the output of the tool usually has a special prefix, like the prefix 
-&#8216;lib&#8217; for libraries on POSIX systems, the implementer must specify this in the <i>outputPrefix</i> 
+&lsquo;lib&rsquo; for libraries on POSIX systems, the implementer must specify this in the <i>outputPrefix</i> 
 attribute.</p>
 <p class="subsection">3.11.1 Schema</p>
 <table
@@ -3149,7 +3149,7 @@ attribute.</p>
  style="border-style: none solid solid none; border-width: medium 1pt 1pt medium; border-right: 1pt solid windowtext; border-bottom: 1pt solid windowtext; padding: 0in 5.4pt;"
  valign="top">
       The id of the option that is used on the command line to specify this 
-		output.&nbsp; The default is to use the Tool &#8220;outputFlag&#8221; attribute if 
+		output.&nbsp; The default is to use the Tool &ldquo;outputFlag&rdquo; attribute if 
 		primaryOutput is True.&nbsp; If option is not specified, and primaryOutput is 
 		False, then the output file(s) of this outputType are not added to the 
 		command line.&nbsp; If specified, the nameProvider, namePattern and 
@@ -3183,7 +3183,7 @@ attribute.</p>
       <td
  style="border-style: none solid solid none; border-width: medium 1pt 1pt medium; border-right: 1pt solid windowtext; border-bottom: 1pt solid windowtext; padding: 0in 5.4pt;"
  valign="top">
-      Id of the input type that is used in determining the build &#8220;rules&#8221; for the 
+      Id of the input type that is used in determining the build &ldquo;rules&rdquo; for the 
 		output type and for the default name of the output file.&nbsp; The default is 
 		the input type with primaryInput == true.</td>
       <td
@@ -3216,8 +3216,8 @@ attribute.</p>
  valign="top" height="83">
       Some tools produce files with a special prefix that must be specified.&nbsp; 
 		For example, a librarian on POSIX systems expects the output to be lib.a 
-		so &#8216;lib&#8217; would be the prefix.&nbsp; The default is to use the Tool 
-		&#8220;outputPrefix&#8221; attribute if primaryOutput is True, otherwise the default 
+		so &lsquo;lib&rsquo; would be the prefix.&nbsp; The default is to use the Tool 
+		&ldquo;outputPrefix&rdquo; attribute if primaryOutput is True, otherwise the default 
 		is an empty string.</td>
       <td
  style="border-style: none double solid none; border-width: medium 1.5pt 1pt medium; border-right: 1.5pt double windowtext; border-bottom: 1pt solid windowtext; padding: 0in 5.4pt;"
@@ -3250,7 +3250,7 @@ attribute.</p>
  valign="top">
       Specifies a name pattern with the file extension, using the Gnu pattern 
 		rule syntax, for deriving the output resource name from the input 
-		resource name.&nbsp; The default, &#8220;%&#8221;, is to use the input file base filename 
+		resource name.&nbsp; The default, &ldquo;%&rdquo;, is to use the input file base filename 
 		with the output extension.</td>
       <td
  style="border-style: none double solid none; border-width: medium 1.5pt 1pt medium; border-right: 1.5pt double windowtext; border-bottom: 1pt solid windowtext; padding: 0in 5.4pt;"
@@ -3285,7 +3285,7 @@ attribute.</p>
  valign="top">
       A variable used in the build file to represent the list of output files.&nbsp; 
 		The same variable name can be used by an inputType to identify a set of 
-		output files that contribute to the tool&#8217;s input (i.e., those using the 
+		output files that contribute to the tool&rsquo;s input (i.e., those using the 
 		same buildVariable name).&nbsp; The default name is chosen by MBS.</td>
       <td
  style="border-style: none double solid none; border-width: medium 1.5pt 1pt medium; border-right: 1.5pt double windowtext; border-bottom: 1pt solid windowtext; padding: 0in 5.4pt;"
@@ -3419,7 +3419,7 @@ to
 indicate to the build model what kind of option it is.</p>
 <p>Specifying the type of value an option contains is an important
 design decision, since it controls how the build model treats the
-contents of the option&#8217;s attributes, and just as importantly, how the
+contents of the option&rsquo;s attributes, and just as importantly, how the
 option is displayed to the user. The basic types are <code>string</code>,
 <code>boolean</code>, <code>stringList</code>, and <code>enumerated</code>.
 </p>
@@ -3493,18 +3493,18 @@ MBS performs the following steps until a value is found:</p>
 	<li><font face="arial, helvetica, geneva" size="2">Examine the <i>value</i> 
 	attribute of the option.</font></li>
 	<li><font face="arial, helvetica, geneva" size="2">Examine the <i>value</i> 
-	attribute of the option&#8217;s <i>superClass </i>recursively.</font></li>
+	attribute of the option&rsquo;s <i>superClass </i>recursively.</font></li>
 	<li><font face="arial, helvetica, geneva" size="2">Examine the <i>
 	defaultValue</i> attribute of the option.</font></li>
 	<li><font face="arial, helvetica, geneva" size="2">Examine the <i>
-	defaultValue</i> attribute of the option&#8217;s <i>superClass recursively</i>.</font></li>
+	defaultValue</i> attribute of the option&rsquo;s <i>superClass recursively</i>.</font></li>
 	<li><font face="arial, helvetica, geneva" size="2">Use the default value for 
 	the option type.</font></li>
 </ol>
 <p class="MsoNormal" style="margin-top:6.0pt">The type of option will determine 
 how the build model treats the value it finds associated with the attribute. 
 Options that define simple string values will use the value as-is as described 
-below.&nbsp; For boolean options any value but the string &#8216;true&#8217; will be treated as 
+below.&nbsp; For boolean options any value but the string &lsquo;true&rsquo; will be treated as 
 false. List options treat all the defined list option values as default, and 
 enumerated options search through the defined enumerated values for the default.</p>
 <p class="subsection">3.13.3 Option Commands</p>
@@ -3512,7 +3512,7 @@ enumerated options search through the defined enumerated values for the default.
 are passed to build tools with unique flags, depending on the compiler and the 
 option. For example, an option defining the paths a linker should search for 
 libraries might contain a large number of search paths, but each path is passed 
-to the linker with a &#8216;-L&#8217; flag. The <i>command</i> attribute is used to hold the 
+to the linker with a &lsquo;-L&rsquo; flag. The <i>command</i> attribute is used to hold the 
 actual flag to pass along with the option value. </p>
 <p class="MsoNormal" style="margin-top:6.0pt">The build model handles the value 
 it finds associated with the command attribute differently depending on the type 
@@ -3762,7 +3762,7 @@ can be the id of the tool which is also a category.&nbsp; The default category
  style="border-style: none solid solid none; border-width: medium 1pt 1pt medium; border-right: 1pt solid windowtext; border-bottom: 1pt solid windowtext; padding: 0in 5.4pt; vertical-align: top;" height="18">
       <font size="2">Value assigned to the option by the end user or in a 
 		default configuration.&nbsp; </font>For options containing a Boolean 
-		value, the string &#8216;true&#8217; is treated as true, any other value as false.</td>
+		value, the string &lsquo;true&rsquo; is treated as true, any other value as false.</td>
       <td
  style="border-style: none double solid none; border-width: medium 1.5pt 1pt medium; border-right: 1.5pt double windowtext; border-bottom: 1pt solid windowtext; padding: 0in 5.4pt; vertical-align: top;" height="18">
       no</td>
@@ -3777,7 +3777,7 @@ can be the id of the tool which is also a category.&nbsp; The default category
  style="border-style: none solid solid none; border-width: medium 1pt 1pt medium; border-right: 1pt solid windowtext; border-bottom: 1pt solid windowtext; padding: 0in 5.4pt; vertical-align: top;">
       <p>Optionally specifies the value for the option if the user has
 not edited it. For options containing a Boolean value, the string
-&#8216;true&#8217; is treated as true, any other value as false.</p>
+&lsquo;true&rsquo; is treated as true, any other value as false.</p>
       </td>
       <td
  style="border-style: none double solid none; border-width: medium 1.5pt 1pt medium; border-right: 1.5pt double windowtext; border-bottom: 1pt solid windowtext; padding: 0in 5.4pt;"
@@ -3796,9 +3796,9 @@ not edited it. For options containing a Boolean value, the string
  valign="top">
       <p>An optional value that specifies the actual command that will
 be passed to the tool on the command line.&nbsp; <font size="2">The command 
-		provides a &#8220;pattern&#8221; for specifying where the value should be placed for 
+		provides a &ldquo;pattern&rdquo; for specifying where the value should be placed for 
 		options of type string and stringlist.&nbsp; The pattern can 
-		contain the replaceable variable &#8220;value&#8221;.&nbsp; If no ${value} is specified 
+		contain the replaceable variable &ldquo;value&rdquo;.&nbsp; If no ${value} is specified 
 		in the command, the option value is appended to the end of the specified 
 		command.</font></p>
       </td>
@@ -3843,10 +3843,10 @@ needed.</td>
       <td
  style="border-style: none solid solid none; border-width: medium 1pt 1pt medium; border-right: 1pt solid windowtext; border-bottom: 1pt solid windowtext; padding: 0in 5.4pt;"
  valign="top"><font size="2">Specifies the resource types that this option 
-		applies to.&nbsp; The values are &#8220;project&#8221;, &#8220;file&#8221;, and &#8220;all&#8221;.&nbsp; The default 
-		is &#8220;all&#8221;.&nbsp; Specifying &#8220;project&#8221; indicates that the option is displayed 
-		when modifying a configuration&#8217;s options, but not when modifying an 
-		individual file&#8217;s options.&nbsp; Specifying &#8220;file&#8221; indicates the opposite.</font></td>
+		applies to.&nbsp; The values are &ldquo;project&rdquo;, &ldquo;file&rdquo;, and &ldquo;all&rdquo;.&nbsp; The default 
+		is &ldquo;all&rdquo;.&nbsp; Specifying &ldquo;project&rdquo; indicates that the option is displayed 
+		when modifying a configuration&rsquo;s options, but not when modifying an 
+		individual file&rsquo;s options.&nbsp; Specifying &ldquo;file&rdquo; indicates the opposite.</font></td>
       <td
  style="border-style: none double solid none; border-width: medium 1.5pt 1pt medium; border-right: 1.5pt double windowtext; border-bottom: 1pt solid windowtext; padding: 0in 5.4pt;"
  valign="top">no</td>
@@ -3996,7 +3996,7 @@ be shown to the user in the UI. It also has a <var>command</var> which
 should correspond to the command line option that gets passed to the
 tool by the builder if this element is selected.</p>
 <p>A default element can be indicated by setting the value of <var>isDefault</var>
-to &#8216;true&#8217;. If the user has not overridden the selection in the UI, the
+to &lsquo;true&rsquo;. If the user has not overridden the selection in the UI, the
 default element will be displayed. If no default is specified, the
 first
 element in the list is assumed to be the default and is displayed to
@@ -4210,8 +4210,8 @@ attributes are specified in the schema table below.</p>
       pathType</td>
       <td
  style="border-style: none solid solid none; border-width: medium 1pt 1pt medium; border-right: 1pt solid windowtext; border-bottom: 1pt solid windowtext; padding: 0in 5.4pt; vertical-align: top;">
-      The build path type. Can be one of the following: &#8220;buildpathInclude&#8221;, 
-		&#8220;buildpathLibrary&#8221;</td>
+      The build path type. Can be one of the following: &ldquo;buildpathInclude&rdquo;, 
+		&ldquo;buildpathLibrary&rdquo;</td>
       <td
  style="border-style: none double solid none; border-width: medium 1.5pt 1pt medium; border-right: 1.5pt double windowtext; border-bottom: 1pt solid windowtext; padding: 0in 5.4pt; vertical-align: top;">
       yes</td>
@@ -4238,9 +4238,9 @@ attributes are specified in the schema table below.</p>
       <td
  style="border-style: none solid solid none; border-width: medium 1pt 1pt medium; border-right: 1pt solid windowtext; border-bottom: 1pt solid windowtext; padding: 0in 5.4pt; vertical-align: top;">
       <p class="MsoNormal">Represent the delimiter used to separate the paths. 
-		If omitted the default system delimiter will be used. That is the &#8220;:&#8221; 
-		for Unix-like systems and the &#8220;;&#8221; for Windows systems.&nbsp; If the 
-		&#8220;buildPathResolver&#8221; attribute is specified, the &#8220;pathDelimiter&#8221; is 
+		If omitted the default system delimiter will be used. That is the &ldquo;:&rdquo; 
+		for Unix-like systems and the &ldquo;;&rdquo; for Windows systems.&nbsp; If the 
+		&ldquo;buildPathResolver&rdquo; attribute is specified, the &ldquo;pathDelimiter&rdquo; is 
 		ignored</td>
       <td
  style="border-style: none double solid none; border-width: medium 1.5pt 1pt medium; border-right: 1.5pt double windowtext; border-bottom: 1pt solid windowtext; padding: 0in 5.4pt; vertical-align: top;">
@@ -4262,7 +4262,7 @@ attributes are specified in the schema table below.</p>
 		The example of such a tool is gcc for Win32 Cygwin.&nbsp; The cygwin 
 		version of gcc does not accept the windows-style paths stored in the 
 		build paths environment variables.&nbsp; The path must be specified in 
-		the POSIX format and using the &#8220;:&#8221; delimiter, for example: &#8220;/cygdrive/c/includes:/cygdrive/d/&#8230;&#8221;</td>
+		the POSIX format and using the &ldquo;:&rdquo; delimiter, for example: &ldquo;/cygdrive/c/includes:/cygdrive/d/&#8230;&rdquo;</td>
       <td
  style="border-style: none double solid none; border-width: medium 1.5pt 1pt medium; border-right: 1.5pt double windowtext; border-bottom: 1pt solid windowtext; padding: 0in 5.4pt; vertical-align: top;">
       no</td>
@@ -4400,8 +4400,8 @@ consists of two drop-down list controls and a button. The first
 drop-down list is currently read-only, and displays the type of project.
 The second contains a list of configurations that are defined for the
 project. The figure below shows a project targeted solely at a Windows shared 
-library built with GCC that has two configurations; &#8216;Release&#8217; (not shown), and 
-&#8216;Debug&#8217;. Note that the build settings model is queried for the project-type and configuration <var>name</var> information.</p>
+library built with GCC that has two configurations; &lsquo;Release&rsquo; (not shown), and 
+&lsquo;Debug&rsquo;. Note that the build settings model is queried for the project-type and configuration <var>name</var> information.</p>
 <p>
 <img style="border: 0px solid ;"
  src="./image026.gif"
@@ -4566,7 +4566,7 @@ generated by the default build file generator in more detail.</p>
 <p> There is one main makefile generated for each project configuration. Based on
 information for the configuration, the proper clean command is defined as a
 macro. Note that for efficiency, wherever possible the default build file
-generator takes advantage of Gnu make's &#8216;:=&#8217; and &#8216;+=&#8217; variable
+generator takes advantage of Gnu make's &lsquo;:=&rsquo; and &lsquo;+=&rsquo; variable
 assignment operators so that the contents of the makefile macros are
 only evaluated when a value is assigned or modified, not every time
 they are used. The makefile includes external makefiles that have a
@@ -4598,7 +4598,7 @@ subdirectory looks like.</p>
  title="" alt="Generated fragment makefile"></p>
 <p>As you can see, the fragment contributes one file, <code>class1.cpp</code>,
 and a
-rule to build all source files with the &#8216;cpp&#8217; extension in the
+rule to build all source files with the &lsquo;cpp&rsquo; extension in the
 subdirectory where it is located. The content of
 the dependency and command lines is derived from the build settings
 model. The dependency line is supplied by the build
@@ -4839,10 +4839,10 @@ Select <span style="font-weight: bold;">New
 should appear below the extension point. That's a bit verbose, so
 rename it to <code>example.toolchain.executable</code>.<br>
   </li>
-  <li>Let&#8217;s give the new projectType a human-readable name. Locate the <span
+  <li>Let&rsquo;s give the new projectType a human-readable name. Locate the <span
  style="font-weight: bold;">name</span>
 property in the <span style="font-weight: bold;">Extension Element
-Details</span> column. For now, let&#8217;s use the name <code>Example
+Details</span> column. For now, let&rsquo;s use the name <code>Example
 Executable</code> for our projectType.</li>
   <li>Make sure that the values of <span style="font-weight: bold;">isTest</span>
 	and<b> isAbstract</b> are<b> </b>set
@@ -4999,7 +4999,7 @@ Each tool describes its inputs and outputs in InputType and OutputType elements.
 	<font face="Courier New">org.eclipse.cdt.core.cSource</font>.</p></li>
 	<li>
 	<p style="font-weight: normal;">The build model needs to know if there are any special file
-extensions that indicate a file is a &#8216;header&#8217; file. Set the 
+extensions that indicate a file is a &lsquo;header&rsquo; file. Set the 
 	<span style="font-weight: 700">dependencyContentType</span>
 property to be <code>org.eclipse.cdt.core.cHeader </code><font face="Arial">
 	<code><font face="Arial">and the <span style="font-weight: 700">
@@ -5019,7 +5019,7 @@ property to be <code>org.eclipse.cdt.core.cHeader </code><font face="Arial">
 	<li>
 	<p style="font-weight: normal;">Let us
 assume that the output of the compiler is an object module that has the
-extension &#8216;o&#8217;. Set the value of the <span style="font-weight: bold;">outputs</span>
+extension &lsquo;o&rsquo;. Set the value of the <span style="font-weight: bold;">outputs</span>
 property of the
 tool to <code>o</code>.</p></li>
 	<li>
@@ -5038,7 +5038,7 @@ tool to <code>o</code>.</p></li>
 <a name="_TocSectionTutorial_11">6.11 Testing the ProjectType</a></p>
 <p>We have now defined enough information to create a project for
 our
-new example project-type, so let&#8217;s go test it out.</p>
+new example project-type, so let&rsquo;s go test it out.</p>
 <ol style="margin-top: 0in;" start="1" type="1">
   <li>Make sure our example project is selected in the <span
  style="font-weight: bold;">Package
@@ -5181,12 +5181,12 @@ specifying your own tool integration.</p>
 <p class="subsection">6.13.1 Adding More
 Tools</p>
 <p>Unless you just happen to have a compiler on your system that is
-invoked with &#8216;ccc&#8217;, the example tool we created is not going to build 
+invoked with &lsquo;ccc&rsquo;, the example tool we created is not going to build 
 anything. Further, the tool we defined transforms source files into object 
 files. Another tool, like a linker, would be needed to transform those object 
 files into a final build goal. For many tool-chains, defining
 a
-compiler and &#8220;something else&#8221; is usually sufficient, but you may have
+compiler and &ldquo;something else&rdquo; is usually sufficient, but you may have
 to
 define additional tools if your tool-chain requires intermediate build
 steps to function properly.</p>
@@ -5206,7 +5206,7 @@ number of sources:</p>
 tool options as
 special so the build model will know to pay special attention to them.
 As the implementer of the tool integration, you should make sure your
-specification has options of type &#8220;includePaths&#8221; and &#8220;definedSymbols&#8221;. 
+specification has options of type &ldquo;includePaths&rdquo; and &ldquo;definedSymbols&rdquo;. 
 The build model will pay special attention to these options and provide
 them to the appropriate clients in the CDT core without any further
 intervention on your part.</p>
@@ -5216,7 +5216,7 @@ compiler settings.&nbsp; See the org.eclipse.cdt.make.core.ScannerConfigurationD
 extension point description in the reference documentation for more information.&nbsp; 
 If a collector is specified, MBS invokes it to return the pre-defined symbols 
 and include paths.&nbsp; If a collector is not specified, MBS searches for 
-options of type &#8220;includePaths&#8221; and &#8220;definedSymbols&#8221; with the <b>builtIn</b> 
+options of type &ldquo;includePaths&rdquo; and &ldquo;definedSymbols&rdquo; with the <b>builtIn</b> 
 attribute set to true.</p>
 <p><b>Environment include paths:&nbsp; </b>Your build definition may specify a 
 envVarBuildPath element with the <b>pathType</b> attribute set to &quot;buildpathInclude&quot;.&nbsp; 
@@ -5230,7 +5230,7 @@ Modules</p>
 the final build step. The build model needs to be told to pay special attention 
 to an option containing libraries so that when the build file generator requests 
 them, it can provide a valid list. Flag the
-option value type as &#8220;libs&#8221; for external libraries or &#8220;userObjs&#8221; for
+option value type as &ldquo;libs&rdquo; for external libraries or &ldquo;userObjs&rdquo; for
 object modules.</p>
 <p class="subsection">6.13.4 ProjectType and Other 
 Element
@@ -5861,7 +5861,7 @@ the CDT user and to inform the user when support needed by their project is not
 installed. If the method is not provided by the tool-chain definition, the 
 tool-chain is treated as supported.&nbsp; If all configurations defined for the 
 given project type are not supported the project type is treated as unsupported.</p>
-<p>In order to provide this functionality, the &#8220;isToolChainSupported&#8221; 
+<p>In order to provide this functionality, the &ldquo;isToolChainSupported&rdquo; 
 attribute in the toolChain 
 definition must be specified. The value of this attribute should be set to the 
 name of the class which implements the <font face="Courier New">I</font><span style="font-family: Courier New"><font size="2">ManagedIsToolChainSupported</font></span> 
@@ -5879,11 +5879,11 @@ instance);</font></p>
 <p class="MsoNormal" style="margin-top: 0; margin-bottom: 0">The version 
 argument specifies the version of the ToolChain, or null if the ToolChain does 
 not have a version number.&nbsp; The instance argument is currently null.&nbsp; It will be 
-used when &#8220;Multi-Instance&#8221; support is implemented.</p>
+used when &ldquo;Multi-Instance&rdquo; support is implemented.</p>
 <p class="subsection"><a name="_TocSectionDynamic_6">7.6 Defining Environment Variables</a></p>
 <p>A tool-integrator can provide a method to be called that identifies the default 
 environment variables for the tool-chain.&nbsp; These would typically include the 
-build path variables (&#8220;bin&#8221;, &#8220;include&#8221;, &#8220;lib&#8221;). These environment variables are 
+build path variables (&ldquo;bin&rdquo;, &ldquo;include&rdquo;, &ldquo;lib&rdquo;). These environment variables are 
 defined by MBS for the process in which the builder (e.g., make) runs. In 
 addition to providing environment variables the tool-chain integrator can 
 specify the names of the environment variables used by the tool for specifying 
@@ -5892,7 +5892,7 @@ appropriate information about includes and libraries to the rest of the CDT.</p>
 <p class="MsoNormal">The tool-integrator can provide Project-level and 
 Configuration-level environment variable suppliers separately:&nbsp;</p>
 <p class="MsoNormal" style="margin-left: 0in">To provide a Configuration-level 
-supplier the &#8220;configurationEnvironmentSupplier&#8221; attribute in the toolChain 
+supplier the &ldquo;configurationEnvironmentSupplier&rdquo; attribute in the toolChain 
 definition must be specified. The value of this attribute should be set to the 
 name of the class which implements the <font face="Courier New">IConfigurationEnvironmentVariableSupplier</font> 
 interface </p>
@@ -5916,7 +5916,7 @@ the supplier. The supplier should use this provider to obtain</span></font></p>
 <p class="MsoNormal" style="margin-top: 0; margin-bottom: 0">
 <font face="Courier New" color="#003366">&nbsp; </font><font face="Courier New">
 <span style="color: #003366">&nbsp;* the already defined environment instead of using 
-the &#8220;default&#8221; provider returned by the</span></font></p>
+the &ldquo;default&rdquo; provider returned by the</span></font></p>
 <p class="MsoNormal" style="margin-top: 0; margin-bottom: 0">
 <font face="Courier New" color="#003366">&nbsp; </font><font face="Courier New">
 <span style="color: #003366">&nbsp;* 
@@ -5974,7 +5974,7 @@ environment variable provider to be used for querying the</span></font></p>
 the supplier. The supplier should use this provider to obtain</span></font></p>
 <p class="MsoNormal" style="margin-top: 0; margin-bottom: 0">
 <font face="Courier New" color="#003366">&nbsp;&nbsp; *</font><font face="Courier New"><span style="color: #003366"> the already defined environment instead of using 
-the &#8220;default&#8221; provider returned by the</span></font></p>
+the &ldquo;default&rdquo; provider returned by the</span></font></p>
 <p class="MsoNormal" style="margin-top: 0; margin-bottom: 0">
 <font face="Courier New" color="#003366">&nbsp;&nbsp; </font>
 <font face="Courier New"><span style="color: #003366">* 
@@ -6014,7 +6014,7 @@ higher levels.</span></font></p>
 <p class="MsoNormal" style="margin-top: 0; margin-bottom: 0">
 <font face="Courier New">}</font></p>
 <p class="MsoNormal" style="margin-left: 0in">To provide a Project-level 
-supplier the &#8220;projectEnvironmentSupplier&#8221; attribute in the projectType 
+supplier the &ldquo;projectEnvironmentSupplier&rdquo; attribute in the projectType 
 definition must be specified. The value of this attribute should be set to the 
 name of the class which implements the <font face="Courier New">IProjectEnvironmentVariableSupplier</font> 
 interface.</p>
@@ -6037,7 +6037,7 @@ the supplier. The supplier should use this provider to obtain</span></font></p>
 <p class="MsoNormal" style="margin-top: 0; margin-bottom: 0">
 <font face="Courier New" color="#003366">&nbsp;&nbsp; </font>
 <font face="Courier New"><span style="color: #003366">* the already defined environment instead of using 
-the &#8220;default&#8221; provider returned by the</span></font></p>
+the &ldquo;default&rdquo; provider returned by the</span></font></p>
 <p class="MsoNormal" style="margin-top: 0; margin-bottom: 0">
 <font face="Courier New" color="#003366">&nbsp;&nbsp; </font>
 <font face="Courier New"><span style="color: #003366">* 
@@ -6104,7 +6104,7 @@ the supplier. The supplier should use this provider to obtain</span></font></p>
 <p class="MsoNormal" style="margin-top: 0; margin-bottom: 0">
 <font face="Courier New" color="#003366">&nbsp;&nbsp; </font>
 <font face="Courier New"><span style="color: #003366">* the already defined environment instead of using 
-the &#8220;default&#8221; provider returned by the</span></font></p>
+the &ldquo;default&rdquo; provider returned by the</span></font></p>
 <p class="MsoNormal" style="margin-top: 0; margin-bottom: 0">
 <font face="Courier New" color="#003366">&nbsp;&nbsp; </font>
 <font face="Courier New"><span style="color: #003366">* 
@@ -6210,14 +6210,14 @@ value the new </span></font></p>
 <font face="Courier New"><span style="color: #003366">&nbsp;* value will be calculated in the following way:</span></font></p>
 <p class="MsoNormal" style="margin-top: 0; margin-bottom: 0">
 <font face="Courier New" color="#003366">&nbsp;&nbsp; </font>
-<font face="Courier New"><span style="color: #003366">&nbsp;* For the &#8220;prepend&#8221; operation:</span></font></p>
+<font face="Courier New"><span style="color: #003366">&nbsp;* For the &ldquo;prepend&rdquo; operation:</span></font></p>
 <p class="MsoNormal" style="margin-top: 0; margin-bottom: 0">
 <font face="Courier New" color="#003366">&nbsp;&nbsp; </font>
 <font face="Courier New"><span style="color: #003366">&nbsp;* &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;New value&gt; = &lt;the value from the 
 getValue() method&gt;&lt;delimiter&gt;&lt;Old value&gt;</span></font></p>
 <p class="MsoNormal" style="margin-top: 0; margin-bottom: 0">
 <font face="Courier New" color="#003366">&nbsp;&nbsp; </font>
-<font face="Courier New"><span style="color: #003366">&nbsp;* For the &#8220;append&#8221; operation:</span></font></p>
+<font face="Courier New"><span style="color: #003366">&nbsp;* For the &ldquo;append&rdquo; operation:</span></font></p>
 <p class="MsoNormal" style="margin-top: 0; margin-bottom: 0">
 <font face="Courier New" color="#003366">&nbsp;&nbsp; </font>
 <font face="Courier New"><span style="color: #003366">&nbsp;* &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;New value&gt; = &lt;Old value&gt;&lt;delimiter&gt;&lt;the 
@@ -6228,7 +6228,7 @@ value from the getValue() method&gt;</span></font></p>
 <p class="MsoNormal" style="margin-top: 0; margin-bottom: 0">
 <font face="Courier New" color="#003366">&nbsp;&nbsp; </font>
 <font face="Courier New"><span style="color: #003366">&nbsp;* The Environment Variable Provider will also 
-remove the duplicates of &#8220;sub-values&#8221; </span></font></p>
+remove the duplicates of &ldquo;sub-values&rdquo; </span></font></p>
 <p class="MsoNormal" style="margin-top: 0; margin-bottom: 0">
 <font face="Courier New" color="#003366">&nbsp;&nbsp; </font>
 <font face="Courier New"><span style="color: #003366">&nbsp;* in the resulting value. </span>
@@ -6239,20 +6239,20 @@ remove the duplicates of &#8220;sub-values&#8221; </span></font></p>
 <p class="MsoNormal" style="margin-top: 0; margin-bottom: 0">
 <font face="Courier New" color="#003366">&nbsp;&nbsp; </font>
 <font face="Courier New"><span style="color: #003366">&nbsp;* If the current value is 
-&#8220;string1:string2:string3&#8221;, the getDelimiter() method returns &#8220;:&#8221; </span>
+&ldquo;string1:string2:string3&rdquo;, the getDelimiter() method returns &ldquo;:&rdquo; </span>
 </font></p>
 <p class="MsoNormal" style="margin-top: 0; margin-bottom: 0">
 <font face="Courier New" color="#003366">&nbsp;&nbsp; </font>
-<font face="Courier New"><span style="color: #003366">&nbsp;* and getValue() method returns &#8220;string4:string2&#8221; 
+<font face="Courier New"><span style="color: #003366">&nbsp;* and getValue() method returns &ldquo;string4:string2&rdquo; 
 the new value will contain:</span></font></p>
 <p class="MsoNormal" style="margin-top: 0; margin-bottom: 0">
 <font face="Courier New" color="#003366">&nbsp;&nbsp; </font>
-<font face="Courier New"><span style="color: #003366">&nbsp;* For the &#8220;prepend&#8221; operation: 
-&#8220;string4:string2:string1:string3&#8221;</span></font></p>
+<font face="Courier New"><span style="color: #003366">&nbsp;* For the &ldquo;prepend&rdquo; operation: 
+&ldquo;string4:string2:string1:string3&rdquo;</span></font></p>
 <p class="MsoNormal" style="margin-top: 0; margin-bottom: 0">
 <font face="Courier New" color="#003366">&nbsp;&nbsp; </font>
-<font face="Courier New"><span style="color: #003366">&nbsp;* For the &#8220;append&#8221; operation: 
-&#8220;string1:string3:string4:string2&#8221;</span></font></p>
+<font face="Courier New"><span style="color: #003366">&nbsp;* For the &ldquo;append&rdquo; operation: 
+&ldquo;string1:string3:string4:string2&rdquo;</span></font></p>
 <p class="MsoNormal" style="margin-top: 0; margin-bottom: 0">
 <font face="Courier New" color="#003366">&nbsp;&nbsp; </font>
 <font face="Courier New"><span style="color: #003366">&nbsp;* <br>
@@ -6378,7 +6378,7 @@ supplier. The supplier should use this provider to obtain</span></font></p>
 <p class="MsoNormal" style="margin-top: 0; margin-bottom: 0">
 <font face="Courier New" color="#003366">&nbsp;&nbsp;&nbsp; </font>
 <font face="Courier New"><span style="color: #003366">* the already defined build macros instead of using 
-the &#8220;default&#8221; provider returned by the</span></font></p>
+the &ldquo;default&rdquo; provider returned by the</span></font></p>
 <p class="MsoNormal" style="margin-top: 0; margin-bottom: 0">
 <font face="Courier New" color="#003366">&nbsp;&nbsp;&nbsp; </font>
 <font face="Courier New"><span style="color: #003366">* ManagedBuildManager.getBuildMacroProvider().</span></font></p>
@@ -6441,7 +6441,7 @@ supplier. The supplier should use this provider to obtain</span></font></p>
 <p class="MsoNormal" style="margin-top: 0; margin-bottom: 0">
 <font face="Courier New" color="#003366">&nbsp;&nbsp;&nbsp; </font>
 <font face="Courier New"><span style="color: #003366">* the already defined build macros instead of using 
-the &#8220;default&#8221; provider returned by the</span></font></p>
+the &ldquo;default&rdquo; provider returned by the</span></font></p>
 <p class="MsoNormal" style="margin-top: 0; margin-bottom: 0">
 <font face="Courier New" color="#003366">&nbsp;&nbsp;&nbsp; </font>
 <font face="Courier New"><span style="color: #003366">* ManagedBuildManager.getBuildMacroProvider().</span></font></p>
@@ -6515,7 +6515,7 @@ supplier. The supplier should use this provider to obtain</span></font></p>
 <p class="MsoNormal" style="margin-top: 0; margin-bottom: 0">
 <font face="Courier New" color="#003366">&nbsp;&nbsp;&nbsp; </font>
 <font face="Courier New"><span style="color: #003366">* the already defined build macros instead of using 
-the &#8220;default&#8221; provider returned by the</span></font></p>
+the &ldquo;default&rdquo; provider returned by the</span></font></p>
 <p class="MsoNormal" style="margin-top: 0; margin-bottom: 0">
 <font face="Courier New" color="#003366">&nbsp;&nbsp;&nbsp; </font>
 <font face="Courier New"><span style="color: #003366">* ManagedBuildManager.getBuildMacroProvider().</span></font></p>
@@ -6583,7 +6583,7 @@ supplier. The supplier should use this provider to obtain</span></font></p>
 <p class="MsoNormal" style="margin-top: 0; margin-bottom: 0">
 <font face="Courier New" color="#003366">&nbsp;&nbsp;&nbsp; </font>
 <font face="Courier New"><span style="color: #003366">* the already defined build macros instead of using 
-the &#8220;default&#8221; provider returned by the</span></font></p>
+the &ldquo;default&rdquo; provider returned by the</span></font></p>
 <p class="MsoNormal" style="margin-top: 0; margin-bottom: 0">
 <font face="Courier New" color="#003366">&nbsp;&nbsp;&nbsp; </font>
 <font face="Courier New"><span style="color: #003366">* ManagedBuildManager.getBuildMacroProvider().</span></font></p>
@@ -6723,9 +6723,9 @@ names are not very &quot;user-friendly&quot;, particularly for a user who intend
 single version of your tool-chain.&nbsp; The alternative is to dynamically 
 assign unique configuration names using a configuration name provider (see the&nbsp; <font face="Courier New">
 getNewConfigurationName </font><font face="Arial">method below.)&nbsp; </font>The first configuration 
-that is created gets to use the most &#8220;basic&#8221; name &#8211; for example, &#8220;Debug&#8221;.&nbsp; When another configuration is 
-created that uses a different tool-chain version, it would see that &#8220;Debug&#8221; was 
-already chosen, so it could return a more qualified name - for example, &#8220;Debug_2.0&#8221;.&nbsp; 
+that is created gets to use the most &ldquo;basic&rdquo; name &#8211; for example, &ldquo;Debug&rdquo;.&nbsp; When another configuration is 
+created that uses a different tool-chain version, it would see that &ldquo;Debug&rdquo; was 
+already chosen, so it could return a more qualified name - for example, &ldquo;Debug_2.0&rdquo;.&nbsp; 
 The same technique could be used when your tool-chain supports multiple 
 host/target platforms.</p>
 <p class="MsoNormal"><font face="Courier New">public interface 
@@ -7662,7 +7662,7 @@ created as the child of each Configuration element.&nbsp; The <i>name</i> and <i
 of the ToolChain are not dependent upon the name of any of the old model 
 objects.&nbsp; However, if you allow users to create CDT 2.1 projects using your CDT 
 2.0 manifest file, then the <i>id</i> of your new ToolChain must be the parent 
-Configuration <i>id, </i>appended with &#8220;.toolchain&#8221;.&nbsp; The Target <i>isAbstract, 
+Configuration <i>id, </i>appended with &ldquo;.toolchain&rdquo;.&nbsp; The Target <i>isAbstract, 
 osList, </i>a<i>rchList</i> and <i>scannerInfoCollector </i>attributes are 
 transferred to the ToolChain element.</p>
 <p class="MsoNormal" style="margin-top:6.0pt">A new Builder element can be 
@@ -7670,7 +7670,7 @@ created as the child of each ToolChain element.&nbsp; The <i>name</i> and <i>id<
 the Builder are not dependent upon the name of any of the old model elements.&nbsp; 
 However, if you allow users to create CDT 2.1 projects using your CDT 2.0 
 manifest file, then the <i>id</i> of your new Builder must be the parent 
-Configuration <i>id, </i>appended with &#8220;.builder&#8221;.&nbsp; The target <i>isAbstract</i> 
+Configuration <i>id, </i>appended with &ldquo;.builder&rdquo;.&nbsp; The target <i>isAbstract</i> 
 attribute is transferred to the Builder element.&nbsp; <i>&nbsp;</i>The target <i>
 makeCommand</i> attribute should be transferred to the Builder element as the <i>
 command </i>attribute (Note the name change).<i>&nbsp; </i>The target <i>
@@ -7683,11 +7683,11 @@ created as the child of each ToolChain element.&nbsp; The <i>name</i> and <i>id<
 the TargetPlatform are not dependent upon the name of any of the old model 
 elements.&nbsp; However, if you allow users to create CDT 2.1 projects using your CDT 
 2.0 manifest file, then the <i>id</i> of your new TargetPlatform must be the 
-parent Configuration <i>id, </i>appended with &#8220;.targetplatform&#8221;.&nbsp; The target <i>
+parent Configuration <i>id, </i>appended with &ldquo;.targetplatform&rdquo;.&nbsp; The target <i>
 isAbstract</i> and <i>binaryParser </i>attributes are transferred to the 
 TargetPlatform element.&nbsp; The TargetPlatform element contains <i>osList </i>and <i>
 archList</i> attributes that specify the architecture(s) and operating system(s) 
-on which the Configuration&#8217;s build artifact(s) execute.&nbsp; You can transfer the 
+on which the Configuration&rsquo;s build artifact(s) execute.&nbsp; You can transfer the 
 Target <i>osList </i>and <i>archList</i> attributes if appropriate.</p>
 <h3 class="subsection">8.1.4 MBS 2.0 Tool Element</h3>
 <p class="MsoNormal">The old model allows Tools to be defined at the top level 
@@ -7703,7 +7703,7 @@ Tool attributes are supported by the new model.</p>
 must remain unchanged in order to support the conversion of old model project 
 files.&nbsp; The <i>outputs </i>attribute no longer defaults to an empty string.&nbsp; If 
 your Tool produces files by default with no extension, you must specify 
-&#8216;outputs=&#8221;&#8221;&#8217; in the definition of the Tool or one of its ancestors (<i>superClass</i>).</p>
+&lsquo;outputs=&rdquo;&rdquo;&rsquo; in the definition of the Tool or one of its ancestors (<i>superClass</i>).</p>
 <h3 class="subsection">8.1.5 MBS 2.0 ToolReference Element</h3>
 <p class="MsoNormal">The new model does not define a ToolReference element.&nbsp; 
 Instead, a Tool element can specify the <i>superClass</i> attribute in order to 
@@ -7712,7 +7712,7 @@ attributes from another Tool and can override one or more attributes.</p>
 <p class="MsoNormal" style="margin-top:6.0pt">The old model uses ToolReferences 
 in two ways.&nbsp; They can be specified as the child of a Configuration element.&nbsp; In 
 this case, the ToolReference should be converted a Tool element child of the 
-Configuration&#8217;s ToolChain, transferring the value of the <i>id </i>attribute to 
+Configuration&rsquo;s ToolChain, transferring the value of the <i>id </i>attribute to 
 the Tool <i>superClass </i>attribute.</p>
 <p class="MsoNormal" style="margin-top:6.0pt">A ToolReference can also be 
 specified as the child of a Target element.&nbsp; In this case, the ToolReference 

@@ -27,6 +27,7 @@ import org.eclipse.cdt.internal.ui.wizards.dialogfields.IDialogFieldListener;
 import org.eclipse.cdt.internal.ui.wizards.dialogfields.LayoutUtil;
 import org.eclipse.cdt.internal.ui.wizards.dialogfields.StringDialogField;
 import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
@@ -193,12 +194,15 @@ public class NewHeaderFileCreationWizardPage extends AbstractFileCreationWizardP
 	public String getDefaultTemplateName() {
 		String name = getDialogSettings().get(KEY_LAST_USED_TEMPLATE);
 		if (name == null) {
-			String contentType = CProject.hasCCNature(getCurrentProject()) ?
-					CCorePlugin.CONTENT_TYPE_CXXHEADER : CCorePlugin.CONTENT_TYPE_CHEADER;
-			Template[] templates =
-					StubUtility.getFileTemplatesForContentTypes(new String[] { contentType }, null);
-			if (templates.length != 0) {
-				name = templates[0].getName();
+			IProject project = getCurrentProject();
+			if (project != null) {
+				String contentType = CProject.hasCCNature(project) ?
+						CCorePlugin.CONTENT_TYPE_CXXHEADER : CCorePlugin.CONTENT_TYPE_CHEADER;
+				Template[] templates =
+						StubUtility.getFileTemplatesForContentTypes(new String[] { contentType }, null);
+				if (templates.length != 0) {
+					name = templates[0].getName();
+				}
 			}
 		}
 		return name;

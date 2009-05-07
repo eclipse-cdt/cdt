@@ -2646,6 +2646,7 @@
 	             <instanceof value="org.eclipse.core.resources.IResource"/>
 	             <test property="org.eclipse.core.resources.projectNature" value="org.eclipse.cdt.core.cnature"/>
              </and>
+             <instanceof value="org.eclipse.core.resources.IWorkspaceRoot"/>
           </or>
        </triggerPoints>
        <possibleChildren>

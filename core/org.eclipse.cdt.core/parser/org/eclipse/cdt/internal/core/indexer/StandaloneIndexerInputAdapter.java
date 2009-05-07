@@ -78,7 +78,7 @@ public class StandaloneIndexerInputAdapter extends IndexerInputAdapter {
 				// use the original
 			}
 			//Standalone indexing stores the absolute paths of files being indexed
-			result = new IndexFileLocation(URIUtil.toURI(astPath),astPath);
+			result = new IndexFileLocation(URIUtil.toURI(astPath), null);
 			fIflCache.put(astPath, result);
 		}
 		return result;

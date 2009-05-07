@@ -8,7 +8,7 @@
  * Contributors:
  *     Ericsson - Initial Implementation
  *******************************************************************************/
-package org.eclipse.cdt.tests.dsf.gdb;
+package org.eclipse.cdt.tests.dsf.gdb.tests;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;

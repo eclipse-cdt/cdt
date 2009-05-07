@@ -60,7 +60,6 @@ public class BaseTestCase {
 
 		attrs.put(ICDTLaunchConfigurationConstants.ATTR_DEBUGGER_STOP_AT_MAIN, true);
 		attrs.put(ICDTLaunchConfigurationConstants.ATTR_DEBUGGER_STOP_AT_MAIN_SYMBOL, ICDTLaunchConfigurationConstants.DEBUGGER_STOP_AT_MAIN_SYMBOL_DEFAULT);
-		attrs.put(IGDBLaunchConfigurationConstants.ATTR_DEBUG_NAME, "gdb");
 		attrs.put(IGDBLaunchConfigurationConstants.ATTR_GDB_INIT, ".gdbinit");
 		attrs.put(ICDTLaunchConfigurationConstants.ATTR_DEBUGGER_START_MODE, ICDTLaunchConfigurationConstants.DEBUGGER_MODE_RUN );
 
@@ -104,9 +103,6 @@ public class BaseTestCase {
 
  	@After
 	public void baseAfterMethod() throws Exception {
- 		System.out.println("====================================================================");
-		System.out.println("Tearing down test application: " + attrs.get(ICDTLaunchConfigurationConstants.ATTR_PROGRAM_NAME));
-		System.out.println("====================================================================");
  		if (fLaunch != null) {
  			fLaunch.terminate();
             fLaunch = null;

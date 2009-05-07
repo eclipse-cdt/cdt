@@ -1,4 +1,4 @@
-package org.eclipse.cdt.tests.dsf.gdb;
+package org.eclipse.cdt.tests.dsf.gdb.tests;
 
 
 import static org.junit.Assert.assertTrue;

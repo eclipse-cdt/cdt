@@ -8,7 +8,7 @@
  * Contributors:
  *     Ericsson	AB		  - Initial implementation of Test cases
  *******************************************************************************/
-package org.eclipse.cdt.tests.dsf.gdb;
+package org.eclipse.cdt.tests.dsf.gdb.tests;
 
 
 import org.eclipse.cdt.debug.core.ICDTLaunchConfigurationConstants;
@@ -31,6 +31,7 @@ import org.eclipse.cdt.dsf.mi.service.command.events.MIStoppedEvent;
 import org.eclipse.cdt.dsf.mi.service.command.output.MIInfo;
 import org.eclipse.cdt.dsf.service.DsfServicesTracker;
 import org.eclipse.cdt.tests.dsf.gdb.framework.AsyncCompletionWaitor;
+import org.eclipse.cdt.tests.dsf.gdb.framework.BackgroundRunner;
 import org.eclipse.cdt.tests.dsf.gdb.framework.BaseTestCase;
 import org.eclipse.cdt.tests.dsf.gdb.framework.ServiceEventWaitor;
 import org.eclipse.cdt.tests.dsf.gdb.framework.SyncUtil;
@@ -42,11 +43,13 @@ import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Ignore;
 import org.junit.Test;
+import org.junit.runner.RunWith;
 
 
-/*
+/**
  * Tests MIRunControl class for Multi-threaded application. 
  */
+@RunWith(BackgroundRunner.class)
 public class MIRunControlTest extends BaseTestCase {
 
     private DsfServicesTracker fServicesTracker;    
@@ -273,7 +276,7 @@ public class MIRunControlTest extends BaseTestCase {
         	/*
         	 * getModelData should return StateChangeReason.  
         	 */
-	   	 	Assert.assertTrue(" State change reason for a normal execution should be USER_REQUEST." , 
+	   	 	Assert.assertTrue(" State change reason for a normal execution should be USER_REQUEST instead of " + data.getStateChangeReason(), 
                 StateChangeReason.USER_REQUEST == data.getStateChangeReason());
        } 
 	}
@@ -369,8 +372,16 @@ public class MIRunControlTest extends BaseTestCase {
 	 * getModelData() for Container DMC
 	 */
 	@Test
-	public void getModelDataForContainer() throws InterruptedException{
+	public void getModelDataForContainer() throws Throwable {
 	    final AsyncCompletionWaitor wait = new AsyncCompletionWaitor();
+		/* 
+		 * Add a breakpoint
+		 */
+	    SyncUtil.SyncAddBreakpoint(SOURCE_NAME + ":21", false);
+		/*
+		 * Resume till the breakpoint is hit
+		 */
+		SyncUtil.SyncResumeUntilStopped();
 
 	    final DataRequestMonitor<IExecutionDMData> rm = 
         	new DataRequestMonitor<IExecutionDMData>(fRunCtrl.getExecutor(), null) {
@@ -395,11 +406,8 @@ public class MIRunControlTest extends BaseTestCase {
         if(data == null)
         	Assert.fail("No data returned.");
         else{
-        	/*
-        	 * StateChangeReason in getModelData for Container DMC is null. 
-        	 */
-            Assert.assertTrue(" State change reason for a normal execution should be USER_REQUEST." , 
-                StateChangeReason.USER_REQUEST == data.getStateChangeReason());
+            Assert.assertTrue(" State change reason for a normal execution should be BREAKPOINT instead of " + data.getStateChangeReason(), 
+                StateChangeReason.BREAKPOINT == data.getStateChangeReason());
        } 
 	}
         

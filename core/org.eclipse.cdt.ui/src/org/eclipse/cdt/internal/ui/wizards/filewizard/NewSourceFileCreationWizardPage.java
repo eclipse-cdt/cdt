@@ -198,7 +198,7 @@ public class NewSourceFileCreationWizardPage extends AbstractFileCreationWizardP
 			IProject project = getCurrentProject();
 			if (project != null) {
 				String contentType = CProject.hasCCNature(project) ?
-						CCorePlugin.CONTENT_TYPE_CXXHEADER : CCorePlugin.CONTENT_TYPE_CHEADER;
+						CCorePlugin.CONTENT_TYPE_CXXSOURCE : CCorePlugin.CONTENT_TYPE_CSOURCE;
 				Template[] templates =
 						StubUtility.getFileTemplatesForContentTypes(new String[] { contentType }, null);
 				if (templates.length != 0) {

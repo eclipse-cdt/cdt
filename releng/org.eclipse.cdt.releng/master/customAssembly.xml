@@ -22,10 +22,6 @@
 	<!-- folder ${target.folder}/${projectName}                                 -->
 	<!-- =====================================================================  -->
 	<target name="gather.bin.parts">	
-		<apitooling.apifilesgenerator
-					projectName="${projectName}"
-					targetFolder="${target.folder}"
-				projectLocation="${projectLocation}" />
 	</target>
 
 	

@@ -12,6 +12,7 @@ package org.eclipse.cdt.codan.checkers.sample;
 
 import java.text.MessageFormat;
 
+import org.eclipse.cdt.codan.checkers.Activator;
 import org.eclipse.cdt.codan.core.model.AbstractIndexAstChecker;
 import org.eclipse.cdt.core.dom.ast.ASTVisitor;
 import org.eclipse.cdt.core.dom.ast.DOMException;
@@ -34,9 +35,6 @@ import org.eclipse.core.resources.IFile;
  */
 public class NonVirtualDestructor extends AbstractIndexAstChecker {
 	private static final String ER_ID = "org.eclipse.cdt.codan.checkers.sample.NonVirtualDestructorProblem";
-	private IASTName className;
-	private IBinding virMethodName;
-	private IBinding destName;
 
 	@Override
 	public void processAst(IASTTranslationUnit ast) {
@@ -45,6 +43,10 @@ public class NonVirtualDestructor extends AbstractIndexAstChecker {
 	}
 
 	class OnEachClass extends ASTVisitor {
+		private IASTName className;
+		private IBinding virMethodName;
+		private IBinding destName;
+
 		OnEachClass() {
 			// shouldVisitDeclarations = true;
 			shouldVisitDeclSpecifiers = true;
@@ -76,6 +78,8 @@ public class NonVirtualDestructor extends AbstractIndexAstChecker {
 					}
 				} catch (DOMException e) {
 					// ignore, no error
+				} catch (Exception e) {
+					Activator.log(e);
 				}
 				return PROCESS_SKIP;
 			}
@@ -88,8 +92,6 @@ public class NonVirtualDestructor extends AbstractIndexAstChecker {
 		 */
 		private boolean hasErrorCondition(IASTDeclSpecifier decl)
 				throws DOMException {
-			virMethodName = null;
-			destName = null;
 			ICPPASTCompositeTypeSpecifier spec = (ICPPASTCompositeTypeSpecifier) decl;
 			className = spec.getName();
 			IBinding binding = className.getBinding();
@@ -98,6 +100,8 @@ public class NonVirtualDestructor extends AbstractIndexAstChecker {
 			}
 			if (binding instanceof ICPPClassType) {
 				ICPPClassType type = (ICPPClassType) binding;
+				virMethodName = null;
+				destName = null;
 				// check for the following conditions:
 				// class has own virtual method and own non-virtual destructor
 				// class has own virtual method and base non-virtual destructor
@@ -105,10 +109,8 @@ public class NonVirtualDestructor extends AbstractIndexAstChecker {
 				ICPPMethod[] declaredMethods = type.getDeclaredMethods();
 				boolean hasOwnVirtualMethod = false;
 				boolean hasOwnNonVirDestructor = false;
-				boolean hasOwnDestructor = false;
 				boolean hasDestructor = false;
 				boolean hasVirtualMethod = false;
-				boolean hasNonVirtualDestructor = false;
 				for (int i = 0; i < declaredMethods.length; i++) {
 					ICPPMethod icppMethod = declaredMethods[i];
 					if (icppMethod.isVirtual() && !icppMethod.isDestructor()) {
@@ -123,7 +125,7 @@ public class NonVirtualDestructor extends AbstractIndexAstChecker {
 						}
 					}
 				}
-				boolean hasNonVirDestructor = false;
+				boolean hasVirDestructor = false;
 				// class has own virtual method and own non-virtual destructor
 				if (hasOwnVirtualMethod && hasOwnNonVirDestructor) {
 					return true;
@@ -132,7 +134,7 @@ public class NonVirtualDestructor extends AbstractIndexAstChecker {
 				// destructor
 				// - not an error
 				if (hasOwnVirtualMethod == false && hasDestructor == true
-						&& hasNonVirDestructor == false) {
+						&& hasOwnNonVirDestructor == false) {
 					return false;
 				}
 				ICPPMethod[] allDeclaredMethods = type.getAllDeclaredMethods();
@@ -145,8 +147,9 @@ public class NonVirtualDestructor extends AbstractIndexAstChecker {
 					}
 					if (icppMethod.isDestructor()) {
 						hasDestructor = true;
-						if (!icppMethod.isVirtual()) {
-							hasNonVirDestructor = true;
+						if (icppMethod.isVirtual()) {
+							hasVirDestructor = true;
+						} else {
 							if (destName == null)
 								destName = icppMethod;
 						}
@@ -155,8 +158,7 @@ public class NonVirtualDestructor extends AbstractIndexAstChecker {
 				if (hasOwnVirtualMethod) {
 					// class has own virtual method and base non-virtual
 					// destructor
-					if (hasOwnDestructor == false
-							&& hasNonVirtualDestructor == true) {
+					if (hasDestructor == true && hasVirDestructor == false) {
 						return true;
 					}
 				} else if (hasVirtualMethod) {

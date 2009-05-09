@@ -2248,7 +2248,24 @@ public class AST2TemplateTests extends AST2BaseTest {
 	//	void test(A<B> p) {
 	//	  f(p);
 	//	}
-	public void testFunctionTemplate_272848() throws Exception {
+	public void testFunctionTemplate_272848_1() throws Exception {
+		final String code = getAboveComment();
+		parseAndCheckBindings(code, ParserLanguage.CPP);		
+	}
+
+	//	template <typename S>
+	//	class B {};
+	//
+	//	template <typename T, typename U = B<T> >
+	//	class A {};
+	//
+	//	template <typename P>
+	//	void f(A<P*> p);
+	//
+	//	void test(A<int*> p) {
+	//	  f(p);
+	//	}
+	public void _testFunctionTemplate_272848_2() throws Exception {
 		final String code = getAboveComment();
 		parseAndCheckBindings(code, ParserLanguage.CPP);		
 	}

@@ -1,6 +1,8 @@
 package org.eclipse.cdt.codan.checkers;
 
+import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Plugin;
+import org.eclipse.core.runtime.Status;
 import org.osgi.framework.BundleContext;
 
 /**
@@ -49,5 +51,24 @@ public class Activator extends Plugin {
 	 */
 	public static Activator getDefault() {
 		return plugin;
+	}
+
+	/**
+	 * @param e
+	 */
+	public static void log(Throwable e) {
+		getDefault().getLog().log(getStatus(e));
+	}
+
+	public static void log(String message) {
+		getDefault().getLog().log(new Status(Status.ERROR, PLUGIN_ID, message));
+	}
+
+	/**
+	 * @param e
+	 * @return
+	 */
+	public static IStatus getStatus(Throwable e) {
+		return new Status(Status.ERROR, PLUGIN_ID, e.getLocalizedMessage(), e);
 	}
 }

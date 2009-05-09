@@ -68,4 +68,9 @@ public class CPPUsingDirective implements ICPPUsingDirective {
 	public IScope getContainingScope() {
 		return CPPVisitor.getContainingScope(fNamespaceName);
 	}
+
+	@Override
+	public String toString() {
+		return fNamespaceName.toString();
+	}
 }

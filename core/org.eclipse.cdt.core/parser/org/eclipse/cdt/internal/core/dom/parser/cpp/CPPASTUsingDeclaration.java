@@ -27,8 +27,8 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPSemantics;
 /**
  * @author jcamelon
  */
-public class CPPASTUsingDeclaration extends ASTNode implements
-        ICPPASTUsingDeclaration, IASTCompletionContext {
+public class CPPASTUsingDeclaration extends ASTNode
+		implements ICPPASTUsingDeclaration, IASTCompletionContext {
 
     private boolean typeName;
     private IASTName name;
@@ -70,19 +70,19 @@ public class CPPASTUsingDeclaration extends ASTNode implements
     }
 
     @Override
-	public boolean accept( ASTVisitor action ){
-        if( action.shouldVisitDeclarations ){
-		    switch( action.visit( this ) ){
+	public boolean accept(ASTVisitor action) {
+        if (action.shouldVisitDeclarations) {
+		    switch (action.visit(this)) {
 	            case ASTVisitor.PROCESS_ABORT : return false;
 	            case ASTVisitor.PROCESS_SKIP  : return true;
 	            default : break;
 	        }
 		}
         
-        if( name != null ) if( !name.accept( action ) ) return false;
+        if (name != null) if (!name.accept(action)) return false;
         
-        if( action.shouldVisitDeclarations ){
-		    switch( action.leave( this ) ){
+        if (action.shouldVisitDeclarations) {
+		    switch(action.leave(this)) {
 	            case ASTVisitor.PROCESS_ABORT : return false;
 	            case ASTVisitor.PROCESS_SKIP  : return true;
 	            default : break;
@@ -92,7 +92,7 @@ public class CPPASTUsingDeclaration extends ASTNode implements
     }
 
 	public int getRoleForName(IASTName n) {
-		if( n == name )
+		if (n == name)
 			return r_definition;
 		return r_unclear;
 	}
@@ -101,12 +101,17 @@ public class CPPASTUsingDeclaration extends ASTNode implements
 		IBinding[] bindings = CPPSemantics.findBindingsForContentAssist(n, isPrefix);
 		List<IBinding> filtered = new ArrayList<IBinding>();
 		
-		for (int i = 0;i < bindings.length; i++) {
+		for (int i = 0; i < bindings.length; i++) {
 			if (bindings[i] instanceof ICPPNamespace) {
 				filtered.add(bindings[i]);
 			}
 		}
 		
 		return filtered.toArray(new IBinding[filtered.size()]);
+	}
+
+	@Override
+	public String toString() {
+		return name.toString();
 	}
 }

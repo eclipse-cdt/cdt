@@ -46,6 +46,7 @@ import org.eclipse.ui.texteditor.TextEditorAction;
 
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.dom.ast.DOMException;
+import org.eclipse.cdt.core.dom.ast.IASTDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTNodeSelector;
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
@@ -53,9 +54,11 @@ import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.ICompositeType;
 import org.eclipse.cdt.core.dom.ast.IEnumeration;
 import org.eclipse.cdt.core.dom.ast.IFunction;
-import org.eclipse.cdt.core.dom.ast.IProblemBinding;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.ITypedef;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTQualifiedName;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTUsingDeclaration;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTUsingDirective;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPBinding;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPMethod;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPNamespace;
@@ -78,7 +81,6 @@ import org.eclipse.cdt.ui.text.ICHelpInvocationContext;
 import org.eclipse.cdt.ui.text.SharedASTJob;
 import org.eclipse.cdt.utils.PathUtil;
 
-import org.eclipse.cdt.internal.core.dom.parser.ProblemBinding;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPVisitor;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.SemanticUtil;
 import org.eclipse.cdt.internal.core.resources.ResourceLookup;
@@ -111,8 +113,8 @@ public class AddIncludeOnSelectionAction extends TextEditorAction {
 		AddIncludesOperation op= new AddIncludesOperation(fTu, includes, usings, false);
 		try {
 			PlatformUI.getWorkbench().getProgressService().runInUI(
-				PlatformUI.getWorkbench().getProgressService(),
-				new WorkbenchRunnableAdapter(op), op.getSchedulingRule());
+					PlatformUI.getWorkbench().getProgressService(),
+					new WorkbenchRunnableAdapter(op), op.getSchedulingRule());
 		} catch (InvocationTargetException e) {
 			ExceptionHandler.handle(e, getShell(), CEditorMessages.AddIncludeOnSelection_error_title,
 					CEditorMessages.AddIncludeOnSelection_insertion_failed); 
@@ -212,8 +214,7 @@ public class AddIncludeOnSelectionAction extends TextEditorAction {
 				type = SemanticUtil.getNestedType(type,
 						SemanticUtil.CVQ | SemanticUtil.PTR | SemanticUtil.ARRAY | SemanticUtil.REF);
 				if (type instanceof IBinding) {
-					binding = (IBinding) type;
-					nameChars = binding.getNameCharArray();
+					nameChars = ((IBinding) type).getNameCharArray();
 				}
 			}
 		} catch (DOMException e) {
@@ -273,11 +274,8 @@ public class AddIncludeOnSelectionAction extends TextEditorAction {
 			IIndexBinding indexBinding = candidate.getBinding();
 
 			if (indexBinding instanceof ICPPBinding && !(indexBinding instanceof IIndexMacro)) {
-				// Decide what 'using' declaration should be added along with the include.
-				if (binding == null) {
-					binding = new ProblemBinding(name, IProblemBinding.SEMANTIC_NAME_NOT_FOUND);
-				}
-				String usingDeclaration = deduceUsingDeclaration(binding, indexBinding);
+				// Decide what 'using' declaration, if any, should be added along with the include.
+				String usingDeclaration = deduceUsingDeclaration(binding, indexBinding, ast);
 				if (usingDeclaration != null)
 					fUsingDeclarations = new String[] { usingDeclaration };						
 			}
@@ -303,7 +301,7 @@ public class AddIncludeOnSelectionAction extends TextEditorAction {
 		}
 	}
 
-	private String deduceUsingDeclaration(IBinding source, IBinding target) {
+	private String deduceUsingDeclaration(IBinding source, IBinding target, IASTTranslationUnit ast) {
 		if (source.equals(target)) {
 			return null;  // No using declaration is needed.
 		}
@@ -311,6 +309,27 @@ public class AddIncludeOnSelectionAction extends TextEditorAction {
 		if (targetChain.size() <= 1) {
 			return null;  // Target is not in a namespace
 		}
+
+		// Check if any of the existing using declarations and directives matches
+		// the target.
+		final IASTDeclaration[] declarations= ast.getDeclarations(false);
+		for (IASTDeclaration declaration : declarations) {
+			if (declaration.isPartOfTranslationUnitFile()) {
+				IASTName name = null;
+				if (declaration instanceof ICPPASTUsingDeclaration) {
+					name = ((ICPPASTUsingDeclaration) declaration).getName();
+					if (match(name, targetChain, false)) {
+						return null;
+					}
+				} else if (declaration instanceof ICPPASTUsingDirective) {
+					name = ((ICPPASTUsingDirective) declaration).getQualifiedName();
+					if (match(name, targetChain, true)) {
+						return null;
+					}
+				}
+			}
+		}
+
 		ArrayList<String> sourceChain = getUsingChain(source);
 		if (sourceChain.size() >= targetChain.size()) {
 			int j = targetChain.size();
@@ -333,6 +352,28 @@ public class AddIncludeOnSelectionAction extends TextEditorAction {
 		return buf.toString();
 	}
 	
+	private boolean match(IASTName name, ArrayList<String> usingChain, boolean excludeLast) {
+		IASTName[] names;
+		if (name instanceof ICPPASTQualifiedName) {
+			names = ((ICPPASTQualifiedName) name).getNames();
+		} else {
+			names = new IASTName[] { name };
+		}
+		if (names.length != usingChain.size() - (excludeLast ? 1 : 0)) {
+			return false;
+		}
+		for (int i = 0; i < names.length; i++) {
+			if (!names[i].toString().equals(usingChain.get(usingChain.size() - 1 - i))) {
+				return false;
+			}
+		}
+		return true;
+	}
+
+	/**
+	 * Returns components of the qualified name in reverse order.
+	 * For ns1::ns2::Name, e.g., it returns [Name, ns2, ns1].
+	 */
 	private ArrayList<String> getUsingChain(IBinding binding) {
 		ArrayList<String> chain = new ArrayList<String>(4);
 		try {

@@ -65,6 +65,6 @@ public class CodanCReconciler implements ICReconcilingListener {
 	public void reconciled(IASTTranslationUnit ast, boolean force,
 			IProgressMonitor progressMonitor) {
 		new CodanBuilder().reconcileAst(ast, progressMonitor);
-		System.err.println("ast reconsiled");
+		// System.err.println("ast reconsiled");
 	}
 }

@@ -8,6 +8,7 @@
  * Contributors:
  *    Markus Schorn - initial API and implementation
  *    Andrew Ferguson (Symbian)
+ *    Sergey Prigogin (Google)
  *******************************************************************************/
 
 package org.eclipse.cdt.ui.tests.text;
@@ -74,5 +75,8 @@ public class TextTestSuite extends TestSuite {
 		// block comment tests
 		addTest(AddBlockCommentTest.suite());
 		addTest(RemoveBlockCommentTest.suite());
+	
+		// add include
+		addTest(AddIncludeTest.suite());
     }
 }

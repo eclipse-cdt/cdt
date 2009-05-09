@@ -1,0 +1,10 @@
+#include "A.h"
+#include "OverloadedFunction.h"
+
+namespace ns3 {
+
+void test() {
+  func(0);
+}
+
+}

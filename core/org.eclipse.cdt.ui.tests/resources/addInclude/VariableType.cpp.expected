@@ -1,0 +1,12 @@
+#include "VariableTypeHelper.h"
+#include "VariableType.h"
+
+using ns1::A;
+
+namespace ns2 {
+
+void VT::method() {
+  a_->m();
+}
+
+}

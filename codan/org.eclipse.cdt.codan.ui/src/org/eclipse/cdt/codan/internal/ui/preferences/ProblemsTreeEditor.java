@@ -228,6 +228,7 @@ public class ProblemsTreeEditor extends CheckedTreeEditor {
 				getTreeViewer().update(element, null);
 			}
 		});
+		getTreeViewer().setAutoExpandLevel(2);
 		codanPreferencesLoader.setInput(profile);
 		getViewer().setInput(profile);
 	}

@@ -96,8 +96,7 @@ public class OpenDeclarationsAction extends SelectionParseAction implements ASTR
 		protected IStatus run(IProgressMonitor monitor) {
 			try {
 				return performNavigation(monitor);
-			}
-			catch (CoreException e) {
+			} catch (CoreException e) {
 				return e.getStatus();
 			}
 		}		
@@ -114,13 +113,12 @@ public class OpenDeclarationsAction extends SelectionParseAction implements ASTR
 	 * Creates a new action with the given editor
 	 */
 	public OpenDeclarationsAction(CEditor editor) {
-		super( editor );
+		super(editor);
 		setText(CEditorMessages.OpenDeclarations_label); 
 		setToolTipText(CEditorMessages.OpenDeclarations_tooltip); 
 		setDescription(CEditorMessages.OpenDeclarations_description); 
 	}
 
-	
 	protected IStatus performNavigation(IProgressMonitor monitor) throws CoreException {
 		clearStatusLine();
 
@@ -158,25 +156,24 @@ public class OpenDeclarationsAction extends SelectionParseAction implements ASTR
 		IASTName searchName= nodeSelector.findEnclosingName(selectionStart, selectionLength);
 		if (searchName == null) {
 			IASTName implicit = nodeSelector.findEnclosingImplicitName(selectionStart, selectionLength);
-			if(implicit != null) {
+			if (implicit != null) {
 				IASTImplicitNameOwner owner = (IASTImplicitNameOwner) implicit.getParent();
 				IASTImplicitName[] implicits = owner.getImplicitNames();
 				// there may be more than one name in the same spot
-				if(implicits.length > 0) {
+				if (implicits.length > 0) {
 					List<IName> allNames = new ArrayList<IName>();
-					for(IASTImplicitName name : implicits) {
-						if(((ASTNode)name).getOffset() == ((ASTNode)implicit).getOffset()) {
+					for (IASTImplicitName name : implicits) {
+						if (((ASTNode)name).getOffset() == ((ASTNode) implicit).getOffset()) {
 							IBinding binding = name.resolveBinding(); // guaranteed to resolve
 							IName[] declNames = findDeclNames(ast, KIND_OTHER, binding);
 							allNames.addAll(Arrays.asList(declNames));
 						}
 					}
-					if(navigateViaCElements(fWorkingCopy.getCProject(), fIndex, allNames.toArray(new IName[0])))
+					if (navigateViaCElements(fWorkingCopy.getCProject(), fIndex, allNames.toArray(new IName[0])))
 						return Status.OK_STATUS;
 				}
 			}
-		}
-		else {
+		} else {
 			boolean found= false;
 			final IASTNode parent = searchName.getParent();
 			if (parent instanceof IASTPreprocessorIncludeStatement) {
@@ -196,8 +193,7 @@ public class OpenDeclarationsAction extends SelectionParseAction implements ASTR
 				IName[] declNames = findDeclNames(ast, isKind, binding);
 				if (navigateViaCElements(fWorkingCopy.getCProject(), fIndex, declNames)) {
 					found= true;
-				}
-				else {
+				} else {
 					// leave old method as fallback for local variables, parameters and 
 					// everything else not covered by ICElementHandle.
 					found = navigateOneLocation(declNames);
@@ -220,7 +216,6 @@ public class OpenDeclarationsAction extends SelectionParseAction implements ASTR
 		}
 		return Status.OK_STATUS; 
 	}
-
 
 	private IName[] findDeclNames(IASTTranslationUnit ast, int isKind, IBinding binding) throws CoreException {
 		IName[] declNames = findNames(fIndex, ast, isKind, binding);
@@ -266,7 +261,7 @@ public class OpenDeclarationsAction extends SelectionParseAction implements ASTR
 				for (IASTName astName : candidates) {
 					try {
 						IBinding b= astName.resolveBinding();
-						if (b!=null && !(b instanceof IProblemBinding)) {
+						if (b != null && !(b instanceof IProblemBinding)) {
 							if (bindings.add(b)) {
 								ignoreIndexBindings.add(fIndex.adaptBinding(b));
 							}
@@ -358,7 +353,6 @@ public class OpenDeclarationsAction extends SelectionParseAction implements ASTR
 		return navigateCElements(elements);
 	}
 
-
 	private void convertToCElements(ICProject project, IIndex index, IName[] declNames, List<ICElement> elements) {
 		for (IName declName : declNames) {
 			try {
@@ -382,8 +376,7 @@ public class OpenDeclarationsAction extends SelectionParseAction implements ASTR
 				ISourceReference target= null;
 				if (elements.size() == 1) {
 					target= (ISourceReference) elements.get(0);
-				}
-				else {
+				} else {
 					if (sIsJUnitTest) {
 						throw new RuntimeException("ambiguous input"); //$NON-NLS-1$
 					}
@@ -491,8 +484,7 @@ public class OpenDeclarationsAction extends SelectionParseAction implements ASTR
 	private void runInUIThread(Runnable runnable) {
 		if (Display.getCurrent() != null) {
 			runnable.run();
-		}
-		else {
+		} else {
 			Display.getDefault().asyncExec(runnable);
 		}
 	}
@@ -508,15 +500,13 @@ public class OpenDeclarationsAction extends SelectionParseAction implements ASTR
 		}
 	}
 
-
 	private void computeSelectedWord() {
 		fTextSelection = getSelectedStringFromEditor();
 		fSelectedText= null;
 		if (fTextSelection != null) {
 			if (fTextSelection.getLength() > 0) {
 				fSelectedText= fTextSelection.getText();
-			}
-			else {
+			} else {
 				IDocument document= fEditor.getDocumentProvider().getDocument(fEditor.getEditorInput());
 				IRegion reg= CWordFinder.findWord(document, fTextSelection.getOffset());
 				if (reg != null && reg.getLength() > 0) {
@@ -530,4 +520,3 @@ public class OpenDeclarationsAction extends SelectionParseAction implements ASTR
 		}
 	}
 }
-

@@ -47,15 +47,15 @@ public class SelectionParseAction extends Action {
 		super();
 	}
 	
-	public SelectionParseAction( CEditor editor ) {
+	public SelectionParseAction(CEditor editor) {
 		super();
-		fEditor=editor;
-		fSite=editor.getSite();
+		fEditor= editor;
+		fSite= editor.getSite();
 	}
 	
-	public SelectionParseAction(IWorkbenchSite site){
+	public SelectionParseAction(IWorkbenchSite site) {
 		super();
-		fSite=site;
+		fSite= site;
 	}
 
 	public IWorkbenchSite getSite() {
@@ -65,13 +65,14 @@ public class SelectionParseAction extends Action {
 	protected void showStatusLineMessage(final String message) {
 		StatusLineHandler.showStatusLineMessage(fSite, message);
 	}
+
 	protected void clearStatusLine() {
 		StatusLineHandler.clearStatusLine(fSite);
 	}
     	
 	protected ISelection getSelection() {
 		ISelection sel = null;
-		if (fSite != null && fSite.getSelectionProvider() != null ){
+		if (fSite != null && fSite.getSelectionProvider() != null) {
 			sel = fSite.getSelectionProvider().getSelection();
 		}
 		
@@ -80,10 +81,10 @@ public class SelectionParseAction extends Action {
 	
     protected ITextSelection getSelectedStringFromEditor() {
         ISelection selection = getSelection();
-        if( selection == null || !(selection instanceof ITextSelection) ) 
-             return null;
+        if (!(selection instanceof ITextSelection)) 
+        	return null;
 
-        return (ITextSelection)selection;
+        return (ITextSelection) selection;
     }
     
     /**
@@ -112,7 +113,7 @@ public class SelectionParseAction extends Action {
 
 		IEditorPart editor = EditorUtility.openInEditor(path, fEditor.getInputCElement());
 		if (editor instanceof ITextEditor) {
-			ITextEditor textEditor = (ITextEditor)editor;
+			ITextEditor textEditor = (ITextEditor) editor;
 			textEditor.selectAndReveal(currentOffset, currentLength);
 		} else {
 			reportSourceFileOpenFailure(path);
@@ -122,7 +123,7 @@ public class SelectionParseAction extends Action {
     protected void reportSourceFileOpenFailure(IPath path) {
     	showStatusLineMessage(MessageFormat.format(
     			CSearchMessages.SelectionParseAction_FileOpenFailure_format, 
-    			new Object[] {path.toOSString()}));
+    			new Object[] { path.toOSString() }));
     }
     
     protected void reportSelectionMatchFailure() {
@@ -132,13 +133,12 @@ public class SelectionParseAction extends Action {
     protected void reportSymbolLookupFailure(String symbol) {
     	showStatusLineMessage(MessageFormat.format(
     			CSearchMessages.SelectionParseAction_SymbolNotFoundInIndex_format, 
-    			new Object[] {symbol}));
+    			new Object[] { symbol }));
     }
     
     protected void reportIncludeLookupFailure(String filename) {
     	showStatusLineMessage(MessageFormat.format(
     			CSearchMessages.SelectionParseAction_IncludeNotFound_format, 
-    			new Object[] {filename}));
+    			new Object[] { filename }));
     }
-
 }

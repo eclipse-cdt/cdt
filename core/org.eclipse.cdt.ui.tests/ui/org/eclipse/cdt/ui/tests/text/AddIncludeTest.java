@@ -91,6 +91,7 @@ public class AddIncludeTest extends TestCase {
 	}
 
 	private void assertAddIncludeResult() throws Exception {
+		AddIncludeOnSelectionAction.sIsJUnitTest= true;
 		new AddIncludeOnSelectionAction(fEditor).run();
 
 		String file= createFileName(".expected");

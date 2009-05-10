@@ -96,6 +96,8 @@ import org.eclipse.cdt.internal.ui.util.ExceptionHandler;
  * selected name. 
  */
 public class AddIncludeOnSelectionAction extends TextEditorAction {
+	public static boolean sIsJUnitTest = false;	
+
 	private ITranslationUnit fTu;
 	private IProject fProject;
 	private String[] fIncludePath;
@@ -251,6 +253,9 @@ public class AddIncludeOnSelectionAction extends TextEditorAction {
 		
 		final ArrayList<IncludeCandidate> candidates = new ArrayList<IncludeCandidate>(candidatesMap.values());
 		if (candidates.size() > 1) {
+			if (sIsJUnitTest) {
+				throw new RuntimeException("ambiguous input"); //$NON-NLS-1$
+			}
 			runInUIThread(new Runnable() {
 				public void run() {
 					ElementListSelectionDialog dialog=

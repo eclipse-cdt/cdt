@@ -299,10 +299,18 @@ public class DefaultVMContentProviderStrategy implements IElementContentProvider
         int multiRmCount = 0;
 
         // Iterate through all child nodes and if requested range matches, call
-        // them to
-        // get their elements.
+        // them to get their elements.
         int updateStartIdx = update.getOffset();
-        int updateEndIdx = update.getOffset() + update.getLength();
+        if (updateStartIdx < 0) {
+        	updateStartIdx = 0;
+        }
+        int updateEndIdx;
+        int length = update.getLength();
+        if (length <= 0) {
+        	updateEndIdx = Integer.MAX_VALUE;
+        } else {
+			updateEndIdx = updateStartIdx + length;
+        }
         int idx = 0;
         IVMNode[] nodes = getVMProvider().getChildVMNodes(node);
         for (int i = 0; i < nodes.length; i++) {

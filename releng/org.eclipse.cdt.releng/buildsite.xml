@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<site>
+<site pack200="true">
 	<category-def name="CDT Main Features" label="CDT Main Features"/>
 	<category-def name="CDT Optional Features" label="CDT Optional Features"/>
 	

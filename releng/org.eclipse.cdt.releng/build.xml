@@ -9,7 +9,7 @@
 	<target name="testbuild" depends="zips,test,copy"/>
 	<target name="buildcopy" depends="zips,generate.p2.metadata,copy"/>
 	<target name="cdtbuild" depends="tag,zips,test,upload"/>
-	<target name="testmd5" depends="zips,sign,generate.p2.metadata,copy"/>
+	<target name="testpack" depends="zips,sign,pack,generate.p2.metadata,copy"/>
 	
 	<target name="init">
 		<touch file="${user.home}/.cvspass" />
@@ -172,6 +172,19 @@
 		
 		<zip destfile="${zipsdir}/${masterFile}"
 			basedir="${buildDirectory}/site/eclipse"/>
+	</target>
+	
+	<target name="pack" depends="init" unless="hasErrors">
+    	<echo message="Pack200" />
+    	<property name="launcher" value="${basedir}/tools/org.eclipse.releng.basebuilder/plugins/org.eclipse.equinox.launcher.jar"/>
+        <java jar="${launcher}" fork="true" timeout="10800000" jvm="${jvm1.5}" failonerror="true" maxmemory="768m" dir="${buildDirectory}/eclipse">
+            <arg line="-application org.eclipse.update.core.siteOptimizer" />
+            <arg line="-jarProcessor"/>
+        	<arg line="-verbose"/>
+        	<arg line="-processAll"/>
+        	<arg line="-pack"/>
+        	<arg line="-outputDir ${zipsdir}/tmp ${zipsdir}/${masterFile}"/>
+        </java>
 	</target>
 	
 	<target name="generate.p2.metadata" depends="init" unless="hasErrors">

@@ -159,54 +159,76 @@ public class GdbConnectCommand implements IConnect {
 
     								final List<IProcessInfo> procInfoList = new ArrayList<IProcessInfo>();
 
-    								// For each process, obtain its name
-    								// Once all the names are obtained, prompt the user for the pid to use
-    								final CountingRequestMonitor countingRm = 
-    									new CountingRequestMonitor(fExecutor, rm) {
-    									@Override
-    									protected void handleSuccess() {
-    										new PromptForPidJob(
-    												"Prompt for Process", procInfoList.toArray(new IProcessInfo[0]),   //$NON-NLS-1$
-    												new DataRequestMonitor<Integer>(fExecutor, rm) {
-    													@Override
-    													protected void handleSuccess() {
-    														// New cycle, look for service again
-    														final IMIProcesses procService = fTracker.getService(IMIProcesses.class);
-    														if (procService != null) {
-    															IProcessDMContext procDmc = procService.createProcessContext(controlCtx,
-    																	Integer.toString(getData()));
-    															procService.attachDebuggerToProcess(procDmc, new DataRequestMonitor<IDMContext>(fExecutor, rm));
-    														}
-    													}
-    												}).schedule();
-    									}
-    								};
+									final CountingRequestMonitor countingRm = 
+										new CountingRequestMonitor(fExecutor, rm) {
+										@Override
+										protected void handleSuccess() {
+											new PromptForPidJob(
+													"Prompt for Process", procInfoList.toArray(new IProcessInfo[0]),   //$NON-NLS-1$
+													new DataRequestMonitor<Integer>(fExecutor, rm) {
+														@Override
+														protected void handleSuccess() {
+															// New cycle, look for service again
+															final IMIProcesses procService = fTracker.getService(IMIProcesses.class);
+															if (procService != null) {
+																IProcessDMContext procDmc = procService.createProcessContext(controlCtx,
+																		Integer.toString(getData()));
+																procService.attachDebuggerToProcess(procDmc, new DataRequestMonitor<IDMContext>(fExecutor, rm));
+															}
+														}
+													}).schedule();
+										}
+									};
 
-    								// New cycle, look for service again
-    								final IProcesses procService = fTracker.getService(IProcesses.class);
+    								if (getData().length > 0 && getData()[0] instanceof IThreadDMData) {
+    									// The list of running processes also contains the name of the processes
+    									// This is much more efficient.  Let's use it.
+										for (IProcessDMContext processCtx : getData()) {
+											IThreadDMData processData = (IThreadDMData) processCtx;
+											int pid = 0;
+											try {
+												pid = Integer.parseInt(processData.getId());
+											} catch (NumberFormatException e) {
+											}
+											procInfoList.add(new ProcessInfo(pid, processData.getName()));
+										}
 
-    								if (procService != null) {
-    									countingRm.setDoneCount(getData().length);
-
-    									for (IProcessDMContext processCtx : getData()) {
-    										procService.getExecutionData(
-    												processCtx,
-    												new DataRequestMonitor<IThreadDMData> (fExecutor, countingRm) {
-    													@Override
-    													protected void handleSuccess() {
-    														int pid = 0;
-    														try {
-    															pid = Integer.parseInt(getData().getId());
-    														} catch (NumberFormatException e) {
-    														}
-    														procInfoList.add(new ProcessInfo(pid, getData().getName()));
-    														countingRm.done();
-    													}
-    												});
-    									}
+										// Re-use the counting monitor and trigger it right away.
+										// No need to call done() in this case.
+										countingRm.setDoneCount(0);
     								} else {
-    									countingRm.setDoneCount(1);
-    									countingRm.done();
+    									// The list of running processes does not contain the names, so
+    									// we must obtain it individually
+
+    									// For each process, obtain its name
+    									// Once all the names are obtained, prompt the user for the pid to use
+
+    									// New cycle, look for service again
+    									final IProcesses procService = fTracker.getService(IProcesses.class);
+
+    									if (procService != null) {
+    										countingRm.setDoneCount(getData().length);
+
+    										for (IProcessDMContext processCtx : getData()) {
+    											procService.getExecutionData(
+    													processCtx,
+    													new DataRequestMonitor<IThreadDMData> (fExecutor, countingRm) {
+    														@Override
+    														protected void handleSuccess() {
+    															int pid = 0;
+    															try {
+    																pid = Integer.parseInt(getData().getId());
+    															} catch (NumberFormatException e) {
+    															}
+    															procInfoList.add(new ProcessInfo(pid, getData().getName()));
+    															countingRm.done();
+    														}
+    													});
+    										}
+    									} else {
+    										// Trigger right away.  No need to call done() in this case.
+    										countingRm.setDoneCount(0);
+    									}
     								}
     							}
     						});

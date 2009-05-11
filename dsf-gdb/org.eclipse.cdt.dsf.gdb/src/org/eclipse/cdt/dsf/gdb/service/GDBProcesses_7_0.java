@@ -148,11 +148,11 @@ public class GDBProcesses_7_0 extends AbstractDsfService
 
 		@Override
 		public boolean equals(Object obj) {
-			return super.baseEquals(obj) && ((MIExecutionDMC)obj).fThreadId.equals(fThreadId);
+			return baseEquals(obj) && ((MIExecutionDMC)obj).fThreadId.equals(fThreadId);
 		}
 
 		@Override
-		public int hashCode() { return super.baseHashCode() ^ fThreadId.hashCode(); }
+		public int hashCode() { return baseHashCode() ^ fThreadId.hashCode(); }
 	}
 
 	/**
@@ -191,12 +191,12 @@ public class GDBProcesses_7_0 extends AbstractDsfService
 
 		@Override
 		public boolean equals(Object obj) {
-			return super.baseEquals(obj) && 
+			return baseEquals(obj) && 
 			       (((MIContainerDMC)obj).fId == null ? fId == null : ((MIContainerDMC)obj).fId.equals(fId));
 		}
 
 		@Override
-		public int hashCode() { return super.baseHashCode() ^ (fId == null ? 0 : fId.hashCode()); }
+		public int hashCode() { return baseHashCode() ^ (fId == null ? 0 : fId.hashCode()); }
 	}
 
 	private class GDBContainerDMC extends MIContainerDMC 
@@ -245,12 +245,12 @@ public class GDBProcesses_7_0 extends AbstractDsfService
 
 		@Override
 		public boolean equals(Object obj) {
-			return super.baseEquals(obj) && 
+			return baseEquals(obj) && 
 			       (((MIThreadDMC)obj).fId == null ? fId == null : ((MIThreadDMC)obj).fId.equals(fId));
 		}
 
 		@Override
-		public int hashCode() { return super.baseHashCode() ^ (fId == null ? 0 : fId.hashCode()); }
+		public int hashCode() { return baseHashCode() ^ (fId == null ? 0 : fId.hashCode()); }
     }
 
     @Immutable
@@ -284,12 +284,12 @@ public class GDBProcesses_7_0 extends AbstractDsfService
 
 		@Override
 		public boolean equals(Object obj) {
-			return super.baseEquals(obj) && 
+			return baseEquals(obj) && 
 			       (((MIProcessDMC)obj).fId == null ? fId == null : ((MIProcessDMC)obj).fId.equals(fId));
 		}
 
 		@Override
-		public int hashCode() { return super.baseHashCode() ^ (fId == null ? 0 : fId.hashCode()); }
+		public int hashCode() { return baseHashCode() ^ (fId == null ? 0 : fId.hashCode()); }
     }
     
     /**
@@ -310,6 +310,34 @@ public class GDBProcesses_7_0 extends AbstractDsfService
 		public boolean isDebuggerAttached() {
 			return true;
 		}
+    }
+    
+    @Immutable
+    private static class MIProcessDMCAndData extends MIProcessDMC implements IThreadDMData {
+    	final String fName;
+    	
+    	public MIProcessDMCAndData(String sessionId, ICommandControlDMContext controlDmc, String id, String name) {
+    		super(sessionId, controlDmc, id);
+    		fName = name;
+    	}
+
+		public String getId() { return getProcId(); }
+		public String getName() { return fName; }
+		public boolean isDebuggerAttached() {
+			return true;
+		}
+
+		@Override
+    	public String toString() { return baseToString() + ".proc[" + getId() + "," + getName() + "]"; }  //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+
+		@Override
+		public boolean equals(Object obj) {
+			return super.equals(obj) &&
+			       (((MIProcessDMCAndData)obj).fName == null ? fName == null : ((MIProcessDMCAndData)obj).fName.equals(fName));
+		}
+
+		@Override
+		public int hashCode() { return super.hashCode() ^ (fName == null ? 0 : fName.hashCode()); }
     }
     
     /**
@@ -358,8 +386,11 @@ public class GDBProcesses_7_0 extends AbstractDsfService
 	// overlapping situations.
 	private CommandCache fListThreadGroupsAvailableCache;
 
-    // A map of process id to process names.  It is filled when we get all the processes that are running
-    private Map<String, String> fProcessNames = new HashMap<String, String>();
+    // A map of process id to process names.  A name is fetched whenever we start
+	// debugging a process, and removed when we stop.
+	// This allows us to make sure that if a pid is re-used, we will not use an
+	// old name for it.  Bug 275497
+    private Map<String, String> fDebuggedProcessNames = new HashMap<String, String>();
 	
     private static final String FAKE_THREAD_ID = "0"; //$NON-NLS-1$
 
@@ -501,59 +532,29 @@ public class GDBProcesses_7_0 extends AbstractDsfService
 
 	public void getExecutionData(IThreadDMContext dmc, final DataRequestMonitor<IThreadDMData> rm) {
 		if (dmc instanceof IMIProcessDMContext) {
-			if (fBackend.getSessionType() == SessionType.CORE) {
+			String id = ((IMIProcessDMContext)dmc).getProcId();
+			String name = null;
+			if (fBackend.getSessionType() == SessionType.CORE || "42000".equals(id)) { //$NON-NLS-1$
 				// For the Core session, the process is no longer running.
-				// Therefore, we cannot get its name with the -list-thread-groups command
-				// Instead, we take it from the binary we are using.
-				String name = fBackend.getProgramPath().lastSegment();
-				// Also, the pid we get from GDB is 1, which is not correct.
+				// Therefore, we cannot get its name with the -list-thread-groups command.
+				// As for id 42000, it is a special id used by GDB to indicate the real proc
+				// id is not known.  This will happen in a Remote session, when we use
+				// -target-select remote instead of -target-select extended-remote.
+				//
+				// So, we take the name from the binary we are using.
+				name = fBackend.getProgramPath().lastSegment();
+				// Also, the pid we get from GDB is 1 or 42000, which is not correct.
 				// I haven't found a good way to get the pid yet, so let's not show it.
-				rm.setData(new MIThreadDMData(name, null));
-				rm.done();
+				id = null;
 			} else {
-				final String id = ((IMIProcessDMContext)dmc).getProcId();
-				String name = fProcessNames.get(id);
+				name = fDebuggedProcessNames.get(id);
 				if (name == null) {
-					// We don't have the name yet.  Maybe we didn't fetch names yet,
-					// or maybe this is a new process
-					// This is not very efficient, but GDB does not provide a way to get the name
-					// of a single process.
-					ICommandControlDMContext controlDmc = DMContexts.getAncestorOfType(dmc, ICommandControlDMContext.class);
-					fListThreadGroupsAvailableCache.execute(
-							new MIListThreadGroups(controlDmc, true),
-							new DataRequestMonitor<MIListThreadGroupsInfo>(getExecutor(), rm) {
-								@Override
-								protected void handleCompleted() {
-									// We cannot actually cache this command since the process
-									// list may change.  But this cache allows to avoid overlapping
-									// sending of this command.
-									fListThreadGroupsAvailableCache.reset();
-
-									String name = null;
-									if (isSuccess()) {
-										for (IThreadGroupInfo groupInfo : getData().getGroupList()) {
-											fProcessNames.put(groupInfo.getPid(), groupInfo.getName());
-											if (groupInfo.getPid().equals(id)) {
-												name = groupInfo.getName();
-											}
-										}
-									}
-
-									if (name == null) {
-										// We still don't have the name... weird.
-										// Don't go into an infinite loop by trying again, just give up
-										name = "Unknown name"; //$NON-NLS-1$
-									}
-									rm.setData(new MIThreadDMData(name, id));
-									rm.done();	
-								}
-							});
-
-				} else {
-					rm.setData(new MIThreadDMData(name, id));
-					rm.done();
+					// We don't have the name in our map.  Should not happen.
+					name = "Unknown name"; //$NON-NLS-1$
 				}
 			}
+			rm.setData(new MIThreadDMData(name, id));
+			rm.done();	
 		} else if (dmc instanceof MIThreadDMC) {
 			final MIThreadDMC threadDmc = (MIThreadDMC)dmc;
 			
@@ -741,10 +742,8 @@ public class GDBProcesses_7_0 extends AbstractDsfService
 	}
 	
 	private IMIContainerDMContext[] makeContainerDMCs(ICommandControlDMContext controlDmc, IThreadGroupInfo[] groups) {
-		IProcessDMContext[] procDmcs = makeProcessDMCs(controlDmc, groups);
-		
 		IMIContainerDMContext[] containerDmcs = new IMIContainerDMContext[groups.length];
-		for (int i = 0; i < procDmcs.length; i++) {
+		for (int i = 0; i < groups.length; i++) {
 			String groupId = groups[i].getGroupId();
 			IProcessDMContext procDmc = createProcessContext(controlDmc, groupId); 
 			containerDmcs[i] = createContainerContext(procDmc, groupId);
@@ -768,10 +767,7 @@ public class GDBProcesses_7_0 extends AbstractDsfService
 						fListThreadGroupsAvailableCache.reset();
 						
 						if (isSuccess()) {
-							for (IThreadGroupInfo groupInfo : getData().getGroupList()) {
-								fProcessNames.put(groupInfo.getPid(), groupInfo.getName());
-							}
-							rm.setData(makeProcessDMCs(controlDmc, getData().getGroupList()));
+							rm.setData(makeProcessDMCAndData(controlDmc, getData().getGroupList()));
 						} else {
 							rm.setData(new IProcessDMContext[0]);
 						}
@@ -785,10 +781,13 @@ public class GDBProcesses_7_0 extends AbstractDsfService
 
 	}
 
-	private IProcessDMContext[] makeProcessDMCs(ICommandControlDMContext controlDmc, IThreadGroupInfo[] processes) {
-		IProcessDMContext[] procDmcs = new IMIProcessDMContext[processes.length];
+	private MIProcessDMCAndData[] makeProcessDMCAndData(ICommandControlDMContext controlDmc, IThreadGroupInfo[] processes) {
+		MIProcessDMCAndData[] procDmcs = new MIProcessDMCAndData[processes.length];
 		for (int i=0; i<procDmcs.length; i++) {
-			procDmcs[i] = createProcessContext(controlDmc, processes[i].getGroupId()); 
+			procDmcs[i] = new MIProcessDMCAndData(controlDmc.getSessionId(),
+					                              controlDmc, 
+					                              processes[i].getGroupId(),
+					                              processes[i].getName());
 		}
 		return procDmcs;
 	}
@@ -928,7 +927,29 @@ public class GDBProcesses_7_0 extends AbstractDsfService
     				}
 
     				if (groupId != null) {
-    					if ("thread-group-exited".equals(miEvent)) { //$NON-NLS-1$
+    					if ("thread-group-created".equals(miEvent)) { //$NON-NLS-1$
+    						// GDB is debugging a new process.  Let's fetch its name and remember it.
+        					final String finalGroupId = groupId;
+    						fListThreadGroupsAvailableCache.execute(
+    								new MIListThreadGroups(fCommandControl.getContext(), true),
+    								new DataRequestMonitor<MIListThreadGroupsInfo>(getExecutor(), null) {
+    									@Override
+    									protected void handleCompleted() {
+    										// We cannot actually cache this command since the process
+    										// list may change.  But this cache allows to avoid overlapping
+    										// sending of this command.
+    										fListThreadGroupsAvailableCache.reset();
+
+    										if (isSuccess()) {
+    											for (IThreadGroupInfo groupInfo : getData().getGroupList()) {
+    												if (groupInfo.getPid().equals(finalGroupId)) {
+    													fDebuggedProcessNames.put(groupInfo.getPid(), groupInfo.getName());
+    												}
+    											}
+    										}
+    									}
+    								});
+    					} else if ("thread-group-exited".equals(miEvent)) { //$NON-NLS-1$
     						// Remove any entries for that group from our thread to group map
     						// When detaching from a group, we won't have received any thread-exited event
     						// but we don't want to keep those entries.
@@ -940,6 +961,9 @@ public class GDBProcesses_7_0 extends AbstractDsfService
     								}
     							}
     						}
+    						
+    						// GDB is no longer debugging this process.  Remove its name.
+    						fDebuggedProcessNames.remove(groupId);
     					}
     				}
     			}

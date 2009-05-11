@@ -2506,10 +2506,10 @@ public class CPPSemantics {
 	        LookupData data = createLookupData(name, false);
 			try {
 	            lookup(data, name);
-	        } catch (DOMException e1) {
+	        } catch (DOMException e) {
 	            return null;
 	        }
-		    final boolean isIndexBased= data.tu == null ? false : data.tu.getIndex() != null;
+		    final boolean isIndexBased= data.tu != null && data.tu.getIndex() != null;
 	        if (data.hasResults()) {
 	            Object[] items = (Object[]) data.foundItems;
 	            IBinding temp = null;

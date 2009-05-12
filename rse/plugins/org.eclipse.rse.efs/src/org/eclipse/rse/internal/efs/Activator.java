@@ -1,5 +1,5 @@
 /********************************************************************************
- * Copyright (c) 2006, 2007 IBM Corporation and others. All rights reserved.
+ * Copyright (c) 2006, 2009 IBM Corporation and others. All rights reserved.
  * This program and the accompanying materials are made available under the terms
  * of the Eclipse Public License v1.0 which accompanies this distribution, and is 
  * available at http://www.eclipse.org/legal/epl-v10.html
@@ -17,11 +17,20 @@
  *    - Improve performance by RSEFileStore instance factory and caching IRemoteFile.
  *    - Also remove unnecessary class RSEFileCache and obsolete branding files.
  * Martin Oberhuber (Wind River) - [188360] renamed from plugin org.eclipse.rse.eclipse.filesystem
+ * David McKnight      (IBM) -[241315] [efs] Cannot restore editors for RSE/EFS-backed resources
  ********************************************************************************/
 
 package org.eclipse.rse.internal.efs;
 
+import org.eclipse.core.resources.IResourceChangeEvent;
+import org.eclipse.core.resources.ResourcesPlugin;
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Plugin;
+import org.eclipse.core.runtime.Status;
+import org.eclipse.core.runtime.jobs.Job;
+import org.eclipse.ui.IWorkbench;
+import org.eclipse.ui.PlatformUI;
 import org.osgi.framework.BundleContext;
 
 /**
@@ -32,6 +41,9 @@ public class Activator extends Plugin {
 	//The shared instance.
 	private static Activator plugin;
 	
+	public static final String PLUGIN_ID = "org.eclipse.rse.efs"; //$NON-NLS-1$
+
+	
 	/**
 	 * The constructor.
 	 */
@@ -39,25 +51,41 @@ public class Activator extends Plugin {
 		plugin = this;
 	}
 
-	/**
-	 * This method is called upon plug-in activation
-	 */
+
 	public void start(BundleContext context) throws Exception {
 		super.start(context);
-		////We must not activate RSE plugins prematurely, since we are being 
-		////activated VERY early while the Resources plugin is not yet fully up
-		//RSECorePlugin.getDefault();
-		//RSEUIPlugin.getDefault();
+		final RemoteEditorManager mgr = RemoteEditorManager.getDefault();
+		ResourcesPlugin.getWorkspace().addSaveParticipant(this, mgr);
+		ResourcesPlugin.getWorkspace().addResourceChangeListener(mgr, IResourceChangeEvent.POST_CHANGE);
+		
+		Job job = new Job("Add Listener"){					 //$NON-NLS-1$
+			protected IStatus run(IProgressMonitor monitor) {
+				
+				while (!PlatformUI.isWorkbenchRunning()){
+					try {
+						//Checks in the loop are fast enough so we can poll often
+						Thread.sleep(100);
+					}
+					catch (InterruptedException e){}
+				}
+				IWorkbench wb = PlatformUI.getWorkbench();				
+				wb.addWorkbenchListener(mgr);	
+				return Status.OK_STATUS;
+			}			
+		};
+		job.schedule();
+		
 	}
 
-	/**
-	 * This method is called when the plug-in is stopped
-	 */
 	public void stop(BundleContext context) throws Exception {
-		super.stop(context);
+		try {
+			ResourcesPlugin.getWorkspace().removeSaveParticipant(this);
+			ResourcesPlugin.getWorkspace().removeResourceChangeListener(RemoteEditorManager.getDefault());
+		} finally {
+			super.stop(context);
+		}
 		plugin = null;
 	}
-
 	/**
 	 * Returns the shared instance.
 	 *
@@ -65,6 +93,10 @@ public class Activator extends Plugin {
 	 */
 	public static Activator getDefault() {
 		return plugin;
+	}
+	
+	public static IStatus errorStatus(Throwable e) {
+		return new Status(IStatus.ERROR, PLUGIN_ID, e.getMessage(), e);
 	}
 
 }

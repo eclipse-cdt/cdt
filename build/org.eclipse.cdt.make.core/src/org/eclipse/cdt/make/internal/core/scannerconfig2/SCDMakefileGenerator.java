@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2007 IBM Corporation and others.
+ * Copyright (c) 2004, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -36,7 +36,7 @@ import org.eclipse.core.runtime.Path;
 public class SCDMakefileGenerator extends DefaultRunSIProvider {
     private static final String ENDL = System.getProperty("line.separator"); //$NON-NLS-1$
     private static final String DENDL = ENDL+ENDL;
-    private String fMakeCommand = "-f ${project_name}_scd.mk ";
+    private String fMakeCommand = "-f ${project_name}_scd.mk "; //$NON-NLS-1$
     
     /* (non-Javadoc)
      * @see org.eclipse.cdt.make.internal.core.scannerconfig2.DefaultRunSIProvider#initialize()
@@ -44,7 +44,7 @@ public class SCDMakefileGenerator extends DefaultRunSIProvider {
     protected boolean initialize() {
     	String args = buildInfo.getProviderRunArguments(providerId);
     	if (null == args)
-    		args = " -E -P -v -dD ";
+    		args = " -E -P -v -dD "; //$NON-NLS-1$
     	else {
 	        int nPos = args.indexOf('|');
 	        if(nPos > 0) {
@@ -106,7 +106,7 @@ public class SCDMakefileGenerator extends DefaultRunSIProvider {
                     buffer.append(DENDL);
                 }
                 
-                File makefile = new File(fWorkingDirectory.toFile(), getMakeFileName(projectName)); //$NON-NLS-1$
+                File makefile = new File(fWorkingDirectory.toFile(), getMakeFileName(projectName));
                 try {
                     PrintStream ps = new PrintStream(new FileOutputStream(makefile));
                     ps.println(buffer.toString());
@@ -128,10 +128,10 @@ public class SCDMakefileGenerator extends DefaultRunSIProvider {
         for(String arg : makeArgs) { 
         	if(found)
         		return arg;
-        	if(arg.equals("-f"))
+        	if(arg.equals("-f")) //$NON-NLS-1$
         		found = true;
         }
-        return projectName+"_scd.mk";
+        return projectName+"_scd.mk"; //$NON-NLS-1$
     }
     
 
@@ -143,18 +143,18 @@ public class SCDMakefileGenerator extends DefaultRunSIProvider {
                 resource.getProject().getName());
         string = string.replaceAll("\\$\\{plugin_state_location\\}",    //$NON-NLS-1$ 
                 MakeCorePlugin.getWorkingDirectory().toString());
-        string = string.replaceAll("\\$\\{specs_file\\}", 
-        		GCCScannerConfigUtil.C_SPECS_FILE );  //$NON-NLS-1$
+        string = string.replaceAll("\\$\\{specs_file\\}",  //$NON-NLS-1$
+        		GCCScannerConfigUtil.C_SPECS_FILE );
         return string;
     }
 
 	@Override
 	protected String[] getCommandLineOptions() {
-		return ScannerConfigUtil.tokenizeStringWithQuotes(fMakeCommand, "\"");		
+		return ScannerConfigUtil.tokenizeStringWithQuotes(fMakeCommand, "\"");		 //$NON-NLS-1$
 	}
 
 	@Override
 	protected IPath getCommandToLaunch() {
-		return new Path("make");	
+		return new Path("make");	 //$NON-NLS-1$
 	}
 }

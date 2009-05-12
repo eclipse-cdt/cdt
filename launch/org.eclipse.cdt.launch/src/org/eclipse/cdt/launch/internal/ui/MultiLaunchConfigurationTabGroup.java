@@ -5,6 +5,7 @@ import java.util.Iterator;
 
 import org.eclipse.cdt.launch.internal.MultiLaunchConfigurationDelegate;
 import org.eclipse.cdt.launch.internal.MultiLaunchConfigurationDelegate.LaunchElement;
+import org.eclipse.cdt.launch.ui.CommonTabLite;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
@@ -387,7 +388,8 @@ public class MultiLaunchConfigurationTabGroup extends AbstractLaunchConfiguratio
 
 	public void createTabs(ILaunchConfigurationDialog dialog, String mode) {
 		ILaunchConfigurationTab[] tabs = new ILaunchConfigurationTab[] {//
-		new GroupLaunchTab(mode) //
+				new GroupLaunchTab(mode), //
+				new CommonTabLite() //
 		};
 		setTabs(tabs);
 	}

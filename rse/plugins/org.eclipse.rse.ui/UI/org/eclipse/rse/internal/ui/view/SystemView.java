@@ -68,6 +68,7 @@
  * David McKnight   (IBM)        - [251625] Widget disposed exception when renaming/pasting a folder
  * David McKnight   (IBM)        - [257721] Doubleclick doing special handling and expanding
  * David McKnight   (IBM)        - [190805] [performance][dstore] Right-click > Disconnect on a dstore connection is slow and spawns many Jobs
+ * David McKnight   (IBM)        - [190001] [refresh] Avoid unnecessary duplicate queries during drag&drop to filter
  ********************************************************************************/
 
 package org.eclipse.rse.internal.ui.view;
@@ -2649,7 +2650,11 @@ public class SystemView extends SafeTreeViewer
 						if (selectedFilters == null) selectedFilters = new ArrayList();
 						selectedFilters.add(filterItem);
 					}
-					smartRefresh(new TreeItem[] { filterItem }, null, true);
+					
+					Object filterRef = filterItem.getData();
+					if (filterRef != remoteResourceParent){ // don't refresh it here if the filter reference is the object to refresh anyway
+						smartRefresh(new TreeItem[] { filterItem }, null, true);
+					}
 				}
 			}
 			// now, refresh all occurrences of the remote parent object.

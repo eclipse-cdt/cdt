@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2009 IBM Corporation and others.
+ * Copyright (c) 2004, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -17,16 +17,10 @@ import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.IMarkerGenerator;
 import org.eclipse.cdt.core.ProblemMarkerInfo;
 import org.eclipse.cdt.core.model.ICModelMarker;
-import org.eclipse.cdt.make.core.MakeCorePlugin;
-import org.eclipse.cdt.make.core.messages.Messages;
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.Status;
-import org.eclipse.core.runtime.jobs.Job;
 
 /**
  * Scanner config discovery related marker generator
@@ -55,7 +49,7 @@ public class SCMarkerGenerator implements IMarkerGenerator {
     /* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.IMarkerGenerator#addMarker(org.eclipse.cdt.core.ProblemMarkerInfo)
 	 */
-	public void addMarker(final ProblemMarkerInfo problemMarkerInfo) {
+	public void addMarker(ProblemMarkerInfo problemMarkerInfo) {
         try {
             IMarker[] cur = problemMarkerInfo.file.findMarkers(ICModelMarker.C_MODEL_PROBLEM_MARKER, false, IResource.DEPTH_ONE);
             /*
@@ -71,41 +65,19 @@ public class SCMarkerGenerator implements IMarkerGenerator {
                     }
                 }
             }
-            
-            // we have to add the marker in the job or we can deadlock other
-            // threads that are responding to a resource delta by doing something
-            // that accesses the project description
-            Job markerJob = new Job(Messages.SCMarkerGenerator_0) {
 
-				@Override
-				protected IStatus run(IProgressMonitor monitor) {
-					IMarker marker;
-					try {
-						marker = problemMarkerInfo.file.createMarker(ICModelMarker.C_MODEL_PROBLEM_MARKER);
-						marker.setAttribute(IMarker.MESSAGE, problemMarkerInfo.description);
-			            marker.setAttribute(IMarker.SEVERITY, mapMarkerSeverity(problemMarkerInfo.severity));
-			            marker.setAttribute(IMarker.LINE_NUMBER, problemMarkerInfo.lineNumber);
-			            marker.setAttribute(IMarker.CHAR_START, -1);
-			            marker.setAttribute(IMarker.CHAR_END, -1);
-			            
-			            if (problemMarkerInfo.variableName != null) {
-			                marker.setAttribute(ICModelMarker.C_MODEL_MARKER_VARIABLE, problemMarkerInfo.variableName);
-			            }
-			            if (problemMarkerInfo.externalPath != null) {
-			                marker.setAttribute(ICModelMarker.C_MODEL_MARKER_EXTERNAL_LOCATION, problemMarkerInfo.externalPath.toOSString());
-			            }
-					} catch (CoreException e) {
-						return new Status(Status.ERROR, MakeCorePlugin.getUniqueIdentifier(), Messages.SCMarkerGenerator_1, e);
-					}
-		            
-					return Status.OK_STATUS;
-				}
-            	
-            };
-
-            markerJob.setRule(problemMarkerInfo.file);
-            markerJob.schedule();
-            
+            IMarker marker = problemMarkerInfo.file.createMarker(ICModelMarker.C_MODEL_PROBLEM_MARKER);
+            marker.setAttribute(IMarker.MESSAGE, problemMarkerInfo.description);
+            marker.setAttribute(IMarker.SEVERITY, mapMarkerSeverity(problemMarkerInfo.severity));
+            marker.setAttribute(IMarker.LINE_NUMBER, problemMarkerInfo.lineNumber);
+            marker.setAttribute(IMarker.CHAR_START, -1);
+            marker.setAttribute(IMarker.CHAR_END, -1);
+            if (problemMarkerInfo.variableName != null) {
+                marker.setAttribute(ICModelMarker.C_MODEL_MARKER_VARIABLE, problemMarkerInfo.variableName);
+            }
+            if (problemMarkerInfo.externalPath != null) {
+                marker.setAttribute(ICModelMarker.C_MODEL_MARKER_EXTERNAL_LOCATION, problemMarkerInfo.externalPath.toOSString());
+            }
         }
         catch (CoreException e) {
             CCorePlugin.log(e.getStatus());

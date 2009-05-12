@@ -6,6 +6,7 @@
 	
 	<target name="build" depends="zips,test"/>
 	<target name="nightly" depends="tag,zips,sign,test,update_index,copy"/>
+	<target name="nightly2" depends="tag,zips,sign,update_index,copy"/>
 	<target name="testbuild" depends="zips,test,copy"/>
 	<target name="buildcopy" depends="zips,copy"/>
 	<target name="buildsigncopy" depends="tag,zips,sign,copy"/>

@@ -81,7 +81,7 @@ import org.eclipse.ui.dialogs.ContainerSelectionDialog;
  * Clients may instantiate this class.
  * </p>
  * 
- * @since 2.0
+ * @since 6.0
  * @noextend This class is not intended to be subclassed by clients.
  */
 public class CommonTabLite extends AbstractLaunchConfigurationTab {

@@ -29,7 +29,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPMethod;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPScope;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateArgument;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateDefinition;
-import org.eclipse.cdt.core.parser.util.ObjectMap;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateParameter;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTName;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPTemplateParameterMap;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPDeferredClassInstance;
@@ -202,12 +202,18 @@ class PDOMCPPDeferredClassInstance extends PDOMCPPSpecialization implements ICPP
 	}
 	
 	@Override
-	public ObjectMap getArgumentMap() {
-		return ObjectMap.EMPTY_MAP;
-	}
-	
-	@Override
 	public CPPTemplateParameterMap getTemplateParameterMap() {
+		try {
+			ICPPTemplateParameter[] params = getClassTemplate().getTemplateParameters();
+			ICPPTemplateArgument[] args = getTemplateArguments();
+			int size = Math.min(args.length, params.length);
+			CPPTemplateParameterMap map = new CPPTemplateParameterMap(size);
+			for (int i = 0; i < size; i++) {
+				map.put(params[i], args[i]);
+			}
+			return map;
+		} catch (DOMException e) {
+		}
 		return CPPTemplateParameterMap.EMPTY;
 	}
 	

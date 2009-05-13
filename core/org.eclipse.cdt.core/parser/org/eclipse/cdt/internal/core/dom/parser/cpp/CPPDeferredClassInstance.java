@@ -22,6 +22,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassTemplate;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPScope;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateArgument;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateDefinition;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateParameter;
 import org.eclipse.cdt.core.parser.util.ObjectMap;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPTemplates;
 
@@ -98,6 +99,16 @@ public class CPPDeferredClassInstance extends CPPUnknownClass implements ICPPDef
 	}
 	
 	public CPPTemplateParameterMap getTemplateParameterMap() {
+		try {
+			ICPPTemplateParameter[] params = fClassTemplate.getTemplateParameters();
+			int size = Math.min(fArguments.length, params.length);
+			CPPTemplateParameterMap map = new CPPTemplateParameterMap(size);
+			for (int i = 0; i < size; i++) {
+				map.put(params[i], fArguments[i]);
+			}
+			return map;
+		} catch (DOMException e) {
+		}
 		return CPPTemplateParameterMap.EMPTY;
 	}
 

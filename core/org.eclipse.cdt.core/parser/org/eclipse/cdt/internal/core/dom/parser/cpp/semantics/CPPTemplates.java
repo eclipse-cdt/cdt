@@ -1661,7 +1661,7 @@ public class CPPTemplates {
 						pArg= tpars[i].getDefaultValue();
 						if (pArg == null) 
 							return false;
-						pArg= instantiateArgument(pArg, map, null);
+						pArg= instantiateArgument(pArg, pInst.getTemplateParameterMap(), null);
 					}
 					if (!deduceTemplateParameterMap(pArg, aArgs[i], map))
 						return false;

@@ -217,31 +217,34 @@ public class CMainTab extends CLaunchConfigurationTab {
 	 * @since 6.0
 	 */
 	protected void updateBuildConfigCombo(String selectedConfigID) {
-		fBuildConfigCombo.removeAll();
-		fBuildConfigCombo.add(LaunchMessages.getString("CMainTab.Use_Active")); //$NON-NLS-1$
-		fBuildConfigCombo.setData("0", EMPTY_STRING); //$NON-NLS-1$
-		fBuildConfigCombo.select(0);
-		ICProject cproject = getCProject();
-		if (cproject != null){
+		if (fBuildConfigCombo != null)
+		{
+			fBuildConfigCombo.removeAll();
+			fBuildConfigCombo.add(LaunchMessages.getString("CMainTab.Use_Active")); //$NON-NLS-1$
+			fBuildConfigCombo.setData("0", EMPTY_STRING); //$NON-NLS-1$
+			fBuildConfigCombo.select(0);
+			ICProject cproject = getCProject();
+			if (cproject != null){
 
-			ICProjectDescription projDes = CDTPropertyManager.getProjectDescription(cproject.getProject());
-			if (projDes != null)
-			{
-				int selIndex = 0;
-				ICConfigurationDescription[] configurations = projDes.getConfigurations();
-				ICConfigurationDescription selectedConfig = projDes.getConfigurationById(selectedConfigID);
-				for (int i = 0; i < configurations.length; i++) {
-					String configName = configurations[i].getName();
-					fBuildConfigCombo.add(configName);
-					fBuildConfigCombo.setData(Integer.toString(i + 1), configurations[i].getId());
-					if (selectedConfig != null && selectedConfigID.equals(configurations[i].getId()))
-						selIndex = i + 1;
+				ICProjectDescription projDes = CDTPropertyManager.getProjectDescription(cproject.getProject());
+				if (projDes != null)
+				{
+					int selIndex = 0;
+					ICConfigurationDescription[] configurations = projDes.getConfigurations();
+					ICConfigurationDescription selectedConfig = projDes.getConfigurationById(selectedConfigID);
+					for (int i = 0; i < configurations.length; i++) {
+						String configName = configurations[i].getName();
+						fBuildConfigCombo.add(configName);
+						fBuildConfigCombo.setData(Integer.toString(i + 1), configurations[i].getId());
+						if (selectedConfig != null && selectedConfigID.equals(configurations[i].getId()))
+							selIndex = i + 1;
+					}
+					fBuildConfigCombo.select(selIndex);
 				}
-				fBuildConfigCombo.select(selIndex);
-			}
 
-		}
-		
+			}
+			
+		}	
 	}
 
 	/**

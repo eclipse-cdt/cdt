@@ -16,7 +16,7 @@ import java.util.List;
 
 import org.eclipse.cdt.debug.core.model.CVariableFormat;
 import org.eclipse.cdt.debug.core.model.ICVariable;
-import org.eclipse.cdt.debug.internal.core.model.CValue;
+import org.eclipse.cdt.debug.internal.core.model.AbstractCValue;
 import org.eclipse.cdt.debug.ui.CDebugUIPlugin;
 import org.eclipse.core.runtime.MultiStatus;
 import org.eclipse.debug.core.DebugException;
@@ -98,8 +98,8 @@ public class VariableFormatActionDelegate implements IObjectActionDelegate {
 				} else if (o instanceof IWatchExpression) {
 					IWatchExpression expr = (IWatchExpression) o;
 					IValue value = expr.getValue();
-					if (value instanceof CValue) {
-						ICVariable parent = ((CValue) value).getParentVariable();
+					if (value instanceof AbstractCValue) {
+						ICVariable parent = ((AbstractCValue) value).getParentVariable();
 						if (parent != null) {
 							list.add(parent);
 						}

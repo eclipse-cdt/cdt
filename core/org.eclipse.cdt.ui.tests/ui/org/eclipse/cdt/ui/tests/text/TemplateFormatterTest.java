@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008 Wind River Systems, Inc. and others.
+ * Copyright (c) 2008, 2009 Wind River Systems, Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -57,6 +57,7 @@ public class TemplateFormatterTest extends BaseUITestCase {
 	private String fSelection;
 	private HashMap fDefaultOptions;
 
+	@Override
 	protected void setUp() throws Exception {
 		super.setUp();
 		fTemplateContextType= new TestTemplateContextType();
@@ -64,6 +65,7 @@ public class TemplateFormatterTest extends BaseUITestCase {
 		fDefaultOptions= CCorePlugin.getDefaultOptions();
 	}
 
+	@Override
 	protected void tearDown() throws Exception {
 		CCorePlugin.setOptions(fDefaultOptions);
 		super.tearDown();
@@ -76,6 +78,9 @@ public class TemplateFormatterTest extends BaseUITestCase {
 	}
 
 	protected void assertFormatterResult() throws Exception {
+		assertFormatterResult(false);
+	}
+	protected void assertFormatterResult(boolean useFormatter) throws Exception {
 		StringBuffer[] contents= getContentsForTest(2);
 		String before= contents[0].toString().replaceAll("\\r\\n", "\n");
 		String expected= contents[1].toString();
@@ -84,12 +89,11 @@ public class TemplateFormatterTest extends BaseUITestCase {
 		context.setVariable(GlobalTemplateVariables.SELECTION, fSelection);
 		Template template= new Template("test", "descr", fTemplateContextType.getId(), before, false);
 		TemplateBuffer buffer= context.evaluate(template);
-		CFormatter formatter= new CFormatter("\n", 0, false, null);
+		CFormatter formatter= new CFormatter("\n", 0, useFormatter, null);
 		formatter.format(buffer, context);
 		assertEquals(expected, buffer.getString());
 	}
 	
-
 	//for(int var=0; var<max; var++) {
 	//	${cursor}
 	//}
@@ -141,5 +145,20 @@ public class TemplateFormatterTest extends BaseUITestCase {
 		setOption(DefaultCodeFormatterConstants.FORMATTER_TAB_SIZE, Integer.toString(8));
 		fSelection= "while (true) {\n    doSomething();\n}";
 		assertFormatterResult();
+	}
+	
+	///*!
+	// * \brief ShortFunctionDescription${cursor}.
+	// *
+	// * \return ReturnedValueDescription.
+	// */
+
+	///*!
+	// * \brief ShortFunctionDescription.
+	// *
+	// * \return ReturnedValueDescription.
+	// */
+	public void _testIndentationProblemWithBackslashInComment_Bug274973() throws Exception {
+		assertFormatterResult(true);
 	}
 }

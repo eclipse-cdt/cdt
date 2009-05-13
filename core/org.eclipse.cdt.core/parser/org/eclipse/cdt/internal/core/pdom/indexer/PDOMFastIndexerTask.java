@@ -12,8 +12,8 @@
 
 package org.eclipse.cdt.internal.core.pdom.indexer;
 
-import org.eclipse.cdt.core.dom.ICodeReaderFactory;
 import org.eclipse.cdt.core.model.ITranslationUnit;
+import org.eclipse.cdt.internal.core.dom.AbstractCodeReaderFactory;
 import org.eclipse.cdt.internal.core.dom.IIncludeFileResolutionHeuristics;
 
 /**
@@ -26,7 +26,7 @@ class PDOMFastIndexerTask extends PDOMIndexerTask {
 	}
 
 	@Override
-	protected ICodeReaderFactory createReaderFactory() {
+	protected AbstractCodeReaderFactory createReaderFactory() {
 		return null;
 	}
 

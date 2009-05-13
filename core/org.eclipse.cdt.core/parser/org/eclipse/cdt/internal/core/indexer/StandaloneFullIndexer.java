@@ -17,10 +17,10 @@ import java.io.File;
 import java.util.List;
 import java.util.Map;
 
-import org.eclipse.cdt.core.dom.ICodeReaderFactory;
 import org.eclipse.cdt.core.index.IIndexLocationConverter;
 import org.eclipse.cdt.core.parser.IParserLogService;
 import org.eclipse.cdt.core.parser.IScannerInfo;
+import org.eclipse.cdt.internal.core.dom.AbstractCodeReaderFactory;
 import org.eclipse.cdt.internal.core.index.IIndexFragment;
 import org.eclipse.cdt.internal.core.index.WritableCIndex;
 import org.eclipse.cdt.internal.core.pdom.WritablePDOM;
@@ -42,7 +42,7 @@ import org.eclipse.core.runtime.CoreException;
  */
 public class StandaloneFullIndexer extends StandaloneIndexer{
 	
-	private ICodeReaderFactory fCodeReaderFactory;
+	private AbstractCodeReaderFactory fCodeReaderFactory;
 	
 	/**
 	 * Create a full indexer.
@@ -59,7 +59,7 @@ public class StandaloneFullIndexer extends StandaloneIndexer{
 	 */
 	@Deprecated
 	public StandaloneFullIndexer(File writableIndexFile, IIndexLocationConverter converter, Map<String, IPDOMLinkageFactory> linkageFactoryMappings,
-			IScannerInfo scanner, ILanguageMapper mapper, IParserLogService log, ICodeReaderFactory codeReaderFactory) throws CoreException {
+			IScannerInfo scanner, ILanguageMapper mapper, IParserLogService log, AbstractCodeReaderFactory codeReaderFactory) throws CoreException {
 		super(new WritableCIndex(new WritablePDOM(writableIndexFile, converter, linkageFactoryMappings),new IIndexFragment[0]), 
 				false, mapper, log, scanner);
 		fCodeReaderFactory = codeReaderFactory;
@@ -78,7 +78,7 @@ public class StandaloneFullIndexer extends StandaloneIndexer{
 	 * @throws CoreException
 	 */
 	public StandaloneFullIndexer(File writableIndexFile, IIndexLocationConverter converter, Map<String, IPDOMLinkageFactory> linkageFactoryMappings,
-			IStandaloneScannerInfoProvider scannerProvider, ILanguageMapper mapper, IParserLogService log, ICodeReaderFactory codeReaderFactory) throws CoreException {
+			IStandaloneScannerInfoProvider scannerProvider, ILanguageMapper mapper, IParserLogService log, AbstractCodeReaderFactory codeReaderFactory) throws CoreException {
 		super(new WritableCIndex(new WritablePDOM(writableIndexFile, converter, linkageFactoryMappings),new IIndexFragment[0]), 
 				false, mapper, log, scannerProvider);
 		fCodeReaderFactory = codeReaderFactory;
@@ -89,7 +89,7 @@ public class StandaloneFullIndexer extends StandaloneIndexer{
 	 * Returns the factory that provides CodeReaders for files included
 	 * by the source code being parsed.
 	 */
-	public ICodeReaderFactory getCodeReaderFactory() {
+	public AbstractCodeReaderFactory getCodeReaderFactory() {
 		return fCodeReaderFactory;
 	}
 	

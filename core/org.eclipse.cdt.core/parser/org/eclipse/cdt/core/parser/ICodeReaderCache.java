@@ -10,6 +10,11 @@
  *******************************************************************************/
 package org.eclipse.cdt.core.parser;
 
+import java.io.IOException;
+
+import org.eclipse.cdt.core.index.IIndexFileLocation;
+import org.eclipse.core.runtime.CoreException;
+
 /**
  * This is the interface to a cache for CodeReaders.
  * 
@@ -31,6 +36,20 @@ public interface ICodeReaderCache {
 	 */
 	public CodeReader get(String key);
 	
+	/**
+	 * Retrieves the CodeReader corresponding to the key specified that represents the 
+	 * path for that CodeReader.  If no CodeReader is found in the cache then a new CodeReader
+	 * is created for the ifl and then returned.
+	 * 
+	 * @param key the path corresponding to the CodeReader, generally: 
+	 * fileToParse.getLocation().toOSString()
+	 * @return the CodeReader corresponding to the path specified by the key
+	 * @throws IOException 
+	 * @throws CoreException 
+	 * @since 5.1
+	 */
+	public CodeReader get(String key, IIndexFileLocation ifl) throws CoreException, IOException;
+
 	/**
 	 * Used to remove the CodeReader corresponding to the path specified by key from the cache.
 	 * 

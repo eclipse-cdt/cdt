@@ -14,9 +14,11 @@ package org.eclipse.cdt.internal.core.indexer;
 import java.io.File;
 import java.io.IOException;
 
-import org.eclipse.cdt.core.dom.ICodeReaderFactory;
+import org.eclipse.cdt.core.index.IIndexFileLocation;
 import org.eclipse.cdt.core.parser.CodeReader;
 import org.eclipse.cdt.core.parser.ICodeReaderCache;
+import org.eclipse.cdt.internal.core.dom.AbstractCodeReaderFactory;
+import org.eclipse.core.runtime.CoreException;
 
 /**
  * A factory for CodeReaders construction.
@@ -30,7 +32,11 @@ import org.eclipse.cdt.core.parser.ICodeReaderCache;
  * 
  * @since 4.0
  */
-public class StandaloneIndexerFallbackReaderFactory implements ICodeReaderFactory {
+public class StandaloneIndexerFallbackReaderFactory extends AbstractCodeReaderFactory {
+
+	public StandaloneIndexerFallbackReaderFactory() {
+		super(null);
+	}
 
 	public CodeReader createCodeReaderForInclusion(String path) {
 		try {
@@ -58,5 +64,10 @@ public class StandaloneIndexerFallbackReaderFactory implements ICodeReaderFactor
 
 	public int getUniqueIdentifier() {
 		return 0;
+	}
+
+	@Override
+	public CodeReader createCodeReaderForInclusion(IIndexFileLocation ifl, String astPath) throws CoreException, IOException {
+		return createCodeReaderForInclusion(astPath);
 	}
 }

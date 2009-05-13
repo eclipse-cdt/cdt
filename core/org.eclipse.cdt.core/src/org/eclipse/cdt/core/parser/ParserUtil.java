@@ -74,9 +74,9 @@ public class ParserUtil
 					if (buffer != null)
 						return new CodeReader(InternalParserUtil.normalizePath(path, (IFile) file), buffer);
 				}
-				return InternalParserUtil.createWorkspaceFileReader(path, (IFile) file);
+				return InternalParserUtil.createWorkspaceFileReader(path, (IFile) file, null);
 			}
-			return InternalParserUtil.createExternalFileReader(path);
+			return InternalParserUtil.createExternalFileReader(path, null);
 		} catch (CoreException ce) {
 		} catch (IOException e) {
 		} catch (IllegalStateException e) {

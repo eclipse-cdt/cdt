@@ -27,7 +27,6 @@ import java.util.List;
 import java.util.Map;
 
 import org.eclipse.cdt.core.CCorePlugin;
-import org.eclipse.cdt.core.dom.ICodeReaderFactory;
 import org.eclipse.cdt.core.dom.ILinkage;
 import org.eclipse.cdt.core.dom.ast.IASTCompletionNode;
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
@@ -66,6 +65,7 @@ import org.eclipse.cdt.core.parser.ParserUtil;
 import org.eclipse.cdt.core.parser.ScannerInfo;
 import org.eclipse.cdt.core.settings.model.ICConfigurationDescription;
 import org.eclipse.cdt.core.settings.model.ICProjectDescription;
+import org.eclipse.cdt.internal.core.dom.AbstractCodeReaderFactory;
 import org.eclipse.cdt.internal.core.dom.NullCodeReaderFactory;
 import org.eclipse.cdt.internal.core.dom.SavedCodeReaderFactory;
 import org.eclipse.cdt.internal.core.index.IndexBasedCodeReaderFactory;
@@ -826,7 +826,7 @@ public class TranslationUnit extends Openable implements ITranslationUnit {
 			ILanguage language= configureWith.getLanguage();
 			fLanguageOfContext= language;
 			if (language != null) {
-				ICodeReaderFactory crf= getCodeReaderFactory(style, index, language.getLinkageID());
+				AbstractCodeReaderFactory crf= getCodeReaderFactory(style, index, language.getLinkageID());
 				int options= 0;
 				if ((style & AST_SKIP_FUNCTION_BODIES) != 0) {
 					options |= ILanguage.OPTION_SKIP_FUNCTION_BODIES;
@@ -852,11 +852,11 @@ public class TranslationUnit extends Openable implements ITranslationUnit {
 		return null;
 	}
 
-	private ICodeReaderFactory getCodeReaderFactory(int style, IIndex index, int linkageID) {
+	private AbstractCodeReaderFactory getCodeReaderFactory(int style, IIndex index, int linkageID) {
 		final ICProject cprj= getCProject();
 		final ProjectIndexerInputAdapter pathResolver = new ProjectIndexerInputAdapter(cprj);
 		final ProjectIndexerIncludeResolutionHeuristics heuristics = new ProjectIndexerIncludeResolutionHeuristics(cprj.getProject(), pathResolver);
-		ICodeReaderFactory codeReaderFactory;
+		AbstractCodeReaderFactory codeReaderFactory;
 		if ((style & AST_SKIP_NONINDEXED_HEADERS) != 0) {
 			codeReaderFactory= NullCodeReaderFactory.getInstance();
 		} else {
@@ -935,7 +935,7 @@ public class TranslationUnit extends Openable implements ITranslationUnit {
 		ILanguage language= configureWith.getLanguage();
 		fLanguageOfContext= language;
 		if (language != null) {
-			ICodeReaderFactory crf= getCodeReaderFactory(style, index, language.getLinkageID());
+			AbstractCodeReaderFactory crf= getCodeReaderFactory(style, index, language.getLinkageID());
 			return language.getCompletionNode(reader, scanInfo, crf, index, ParserUtil.getParserLogService(), offset);
 		}
 		return null;
@@ -952,9 +952,9 @@ public class TranslationUnit extends Openable implements ITranslationUnit {
 		IResource res= getResource();
 		try {
 			if (res instanceof IFile)
-				return InternalParserUtil.createWorkspaceFileReader(location.toOSString(), (IFile) res);
+				return InternalParserUtil.createWorkspaceFileReader(location.toOSString(), (IFile) res, null);
 			else 
-				return InternalParserUtil.createExternalFileReader(location.toOSString());
+				return InternalParserUtil.createExternalFileReader(location.toOSString(), null);
 		} catch (CoreException e) {
 			CCorePlugin.log(e);
 		} catch (IOException e) {

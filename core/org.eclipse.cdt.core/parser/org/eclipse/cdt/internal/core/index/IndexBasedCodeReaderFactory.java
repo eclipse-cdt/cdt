@@ -22,7 +22,6 @@ import java.util.List;
 import java.util.Set;
 
 import org.eclipse.cdt.core.CCorePlugin;
-import org.eclipse.cdt.core.dom.ICodeReaderFactory;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPUsingDirective;
 import org.eclipse.cdt.core.index.IIndex;
 import org.eclipse.cdt.core.index.IIndexFile;
@@ -55,19 +54,19 @@ public final class IndexBasedCodeReaderFactory extends AbstractCodeReaderFactory
 	private int fLinkage;
 	private Set<IIndexFileLocation> fIncludedFiles= new HashSet<IIndexFileLocation>();
 	/** The fall-back code reader factory used in case a header file is not indexed */
-	private final ICodeReaderFactory fFallBackFactory;
+	private final AbstractCodeReaderFactory fFallBackFactory;
 	private final ASTFilePathResolver fPathResolver;
 	private final AbstractIndexerTask fRelatedIndexerTask;
 	private boolean fSupportFillGapFromContextToHeader= false;
 	
 	public IndexBasedCodeReaderFactory(IIndex index, IIncludeFileResolutionHeuristics heuristics,
-			ASTFilePathResolver pathResolver, int linkage, ICodeReaderFactory fallbackFactory) {
+			ASTFilePathResolver pathResolver, int linkage, AbstractCodeReaderFactory fallbackFactory) {
 		this(index, heuristics, pathResolver, linkage, fallbackFactory, null);
 	}
 
 	public IndexBasedCodeReaderFactory(IIndex index, IIncludeFileResolutionHeuristics heuristics,
 			ASTFilePathResolver pathResolver, int linkage,
-			ICodeReaderFactory fallbackFactory, AbstractIndexerTask relatedIndexerTask) {
+			AbstractCodeReaderFactory fallbackFactory, AbstractIndexerTask relatedIndexerTask) {
 		super(heuristics);
 		fIndex= index;
 		fFallBackFactory= fallbackFactory;
@@ -103,6 +102,15 @@ public final class IndexBasedCodeReaderFactory extends AbstractCodeReaderFactory
 		return ParserUtil.createReader(path, null);
 	}
 
+	@Override
+	public CodeReader createCodeReaderForInclusion(IIndexFileLocation ifl, String astPath) throws CoreException, IOException {
+		if (fFallBackFactory != null) {
+			return fFallBackFactory.createCodeReaderForInclusion(ifl, astPath);
+		}
+		return InternalParserUtil.createCodeReader(ifl, null);
+	}
+	
+	@Deprecated
 	public CodeReader createCodeReaderForInclusion(String path) {
 		if (fFallBackFactory != null) {
 			return fFallBackFactory.createCodeReaderForInclusion(path);
@@ -157,7 +165,7 @@ public final class IndexBasedCodeReaderFactory extends AbstractCodeReaderFactory
 		}
 
 		try {
-			CodeReader codeReader= InternalParserUtil.createCodeReader(ifl);
+			CodeReader codeReader= createCodeReaderForInclusion(ifl, path);
 			if (codeReader != null) {
 				IncludeFileContent ifc= new IncludeFileContent(codeReader);
 				ifc.setIsSource(fPathResolver.isSource(path));

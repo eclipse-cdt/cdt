@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2008 Wind River Systems, Inc. and others.
+ * Copyright (c) 2007, 2009 Wind River Systems, Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,7 +10,7 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.dom;
 
-import org.eclipse.cdt.core.dom.ICodeReaderFactory;
+import org.eclipse.cdt.core.index.IIndexFileLocation;
 import org.eclipse.cdt.core.parser.CodeReader;
 import org.eclipse.cdt.core.parser.ICodeReaderCache;
 
@@ -22,9 +22,9 @@ import org.eclipse.cdt.core.parser.ICodeReaderCache;
 public class NullCodeReaderFactory extends AbstractCodeReaderFactory {
 
 	private static final char[] EMPTY_CHARS = new char[0];
-	private static final ICodeReaderFactory INSTANCE= new NullCodeReaderFactory();
+	private static final NullCodeReaderFactory INSTANCE= new NullCodeReaderFactory();
 
-	public static ICodeReaderFactory getInstance() {
+	public static NullCodeReaderFactory getInstance() {
 		return INSTANCE;
 	}
 
@@ -37,6 +37,12 @@ public class NullCodeReaderFactory extends AbstractCodeReaderFactory {
 	 */
 	public CodeReader createCodeReaderForInclusion(String path) {
 		return new CodeReader(path, EMPTY_CHARS);
+	}
+
+	
+	@Override
+	public CodeReader createCodeReaderForInclusion(IIndexFileLocation ifl, String astPath) {
+		return new CodeReader(astPath, EMPTY_CHARS);
 	}
 
 	/*

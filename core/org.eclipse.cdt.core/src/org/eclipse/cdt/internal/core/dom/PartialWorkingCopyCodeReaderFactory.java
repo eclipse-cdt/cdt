@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2008 IBM Corporation and others.
+ * Copyright (c) 2004, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,10 +10,12 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.dom;
 
+import java.io.IOException;
 import java.util.Arrays;
 import java.util.Iterator;
 
 import org.eclipse.cdt.core.dom.CDOM;
+import org.eclipse.cdt.core.index.IIndexFileLocation;
 import org.eclipse.cdt.core.model.ITranslationUnit;
 import org.eclipse.cdt.core.model.IWorkingCopy;
 import org.eclipse.cdt.core.model.IWorkingCopyProvider;
@@ -21,6 +23,7 @@ import org.eclipse.cdt.core.parser.CodeReader;
 import org.eclipse.cdt.core.parser.ICodeReaderCache;
 import org.eclipse.cdt.core.parser.ParserUtil;
 import org.eclipse.cdt.internal.core.parser.EmptyIterator;
+import org.eclipse.core.runtime.CoreException;
 
 /**
  * @author jcamelon
@@ -70,6 +73,13 @@ public class PartialWorkingCopyCodeReaderFactory extends AbstractCodeReaderFacto
     public CodeReader createCodeReaderForInclusion(String path) {
         return cache.get( path );
     }
+
+    
+	@Override
+	public CodeReader createCodeReaderForInclusion(IIndexFileLocation ifl, String astPath)
+			throws CoreException, IOException {
+		return cache.get(astPath, ifl);
+	}
 
 	protected Iterator<IWorkingCopy> createWorkingCopyIterator() {
         if( provider == null ) return EmptyIterator.empty();

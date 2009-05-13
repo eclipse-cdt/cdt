@@ -22,7 +22,6 @@ import java.util.Map;
 import java.util.Map.Entry;
 
 import org.eclipse.cdt.core.CCorePlugin;
-import org.eclipse.cdt.core.dom.ICodeReaderFactory;
 import org.eclipse.cdt.core.dom.ast.IASTPreprocessorIncludeStatement;
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit.IDependencyTree;
@@ -42,6 +41,7 @@ import org.eclipse.cdt.core.parser.IParserLogService;
 import org.eclipse.cdt.core.parser.IScannerInfo;
 import org.eclipse.cdt.core.parser.ParserUtil;
 import org.eclipse.cdt.core.parser.ScannerInfo;
+import org.eclipse.cdt.internal.core.dom.AbstractCodeReaderFactory;
 import org.eclipse.cdt.internal.core.dom.IIncludeFileResolutionHeuristics;
 import org.eclipse.cdt.internal.core.index.IIndexFragmentFile;
 import org.eclipse.cdt.internal.core.index.IWritableIndex;
@@ -174,7 +174,7 @@ public abstract class AbstractIndexerTask extends PDOMWriter {
 	protected IWritableIndex fIndex;
 	private ITodoTaskUpdater fTodoTaskUpdater;
 	private final boolean fIsFastIndexer;
-	private ICodeReaderFactory fCodeReaderFactory;
+	private AbstractCodeReaderFactory fCodeReaderFactory;
 
 	public AbstractIndexerTask(Object[] filesToUpdate, Object[] filesToRemove, IndexerInputAdapter resolver, boolean fastIndexer) {
 		super(resolver);
@@ -208,7 +208,7 @@ public abstract class AbstractIndexerTask extends PDOMWriter {
 
 	protected abstract IWritableIndex createIndex();
 	protected abstract IIncludeFileResolutionHeuristics createIncludeHeuristics();
-	protected abstract ICodeReaderFactory createReaderFactory();
+	protected abstract AbstractCodeReaderFactory createReaderFactory();
 	protected abstract AbstractLanguage[] getLanguages(String fileName);
 
 	protected ITodoTaskUpdater createTodoTaskUpdater() {

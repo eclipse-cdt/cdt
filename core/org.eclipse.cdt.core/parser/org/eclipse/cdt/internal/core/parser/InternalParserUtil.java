@@ -44,15 +44,22 @@ public class InternalParserUtil extends ParserFactory {
 
 	/**
 	 * Creates a code reader for an external location, normalizing path to 
-	 * canonical path.
+	 * canonical path. The cache is consulted after the path has been normalized.
 	 */
-	public static CodeReader createExternalFileReader(String externalLocation) throws IOException {
+	public static CodeReader createExternalFileReader(String externalLocation, CodeReaderLRUCache cache) throws IOException {
 		File includeFile = new File(externalLocation);
 		if (includeFile.isFile()) {
 			    //use the canonical path so that in case of non-case-sensitive OSs
 			    //the CodeReader always has the same name as the file on disk with
 			    //no differences in case.
-			return new CodeReader(includeFile.getCanonicalPath());
+			final String path = includeFile.getCanonicalPath();
+			if (cache != null) {
+				CodeReader result= cache.get(path);
+				if (result != null)
+					return result;
+			}
+
+			return new CodeReader(path);
 		}
 		return null;
 	}
@@ -61,8 +68,14 @@ public class InternalParserUtil extends ParserFactory {
 	 * Creates a code reader for an external location, normalizing path to 
 	 * canonical path.
 	 */
-	public static CodeReader createWorkspaceFileReader(String path, IFile file) throws CoreException, IOException{
+	public static CodeReader createWorkspaceFileReader(String path, IFile file, CodeReaderLRUCache cache) throws CoreException, IOException{
 		path = normalizePath(path, file);
+		if (cache != null) {
+			CodeReader result= cache.get(path);
+			if (result != null)
+				return result;
+		}
+		
 		InputStream in;
 		try {
 			in= file.getContents(true);
@@ -86,13 +99,13 @@ public class InternalParserUtil extends ParserFactory {
 		}
 	}
 
-	public static CodeReader createCodeReader(IIndexFileLocation ifl) throws CoreException, IOException {
+	public static CodeReader createCodeReader(IIndexFileLocation ifl, CodeReaderLRUCache cache) throws CoreException, IOException {
 		String fullPath= ifl.getFullPath();
 		if (fullPath != null) {
 			IResource res= ResourcesPlugin.getWorkspace().getRoot().findMember(new Path(fullPath));
 			if (res instanceof IFile)
-				return createWorkspaceFileReader(ifl.getURI().getPath(), (IFile) res);
+				return createWorkspaceFileReader(ifl.getURI().getPath(), (IFile) res, cache);
 		}
-		return createExternalFileReader(ifl.getURI().getPath());
+		return createExternalFileReader(ifl.getURI().getPath(), cache);
 	}
 }

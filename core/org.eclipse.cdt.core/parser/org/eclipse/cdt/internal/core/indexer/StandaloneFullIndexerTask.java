@@ -15,7 +15,7 @@ package org.eclipse.cdt.internal.core.indexer;
 
 import java.util.List;
 
-import org.eclipse.cdt.core.dom.ICodeReaderFactory;
+import org.eclipse.cdt.internal.core.dom.AbstractCodeReaderFactory;
 import org.eclipse.cdt.internal.core.dom.IIncludeFileResolutionHeuristics;
 
 /**
@@ -37,7 +37,7 @@ public class StandaloneFullIndexerTask extends StandaloneIndexerTask {
 	}
 
 	@Override
-	protected ICodeReaderFactory createReaderFactory() {
+	protected AbstractCodeReaderFactory createReaderFactory() {
 		return ((StandaloneFullIndexer)fIndexer).getCodeReaderFactory();
 	}
 

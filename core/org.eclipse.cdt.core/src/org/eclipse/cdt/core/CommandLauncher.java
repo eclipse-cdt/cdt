@@ -115,7 +115,7 @@ public class CommandLauncher implements ICommandLauncher {
 	 * @since 5.1
 	 */
 	@Deprecated
-	public Process execute(IPath commandPath, String[] args, String[] env, IPath changeToDirectory) throws CoreException {
+	public Process execute(IPath commandPath, String[] args, String[] env, IPath changeToDirectory) {
 		try {
 			// add platform specific arguments (shell invocation)
 			fCommandArgs = constructCommandArray(commandPath.toOSString(), args);

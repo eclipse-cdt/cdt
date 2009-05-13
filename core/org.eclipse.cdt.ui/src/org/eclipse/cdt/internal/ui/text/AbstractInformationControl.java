@@ -54,6 +54,7 @@ import org.eclipse.ui.IEditorPart;
 
 import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.core.model.IParent;
+import org.eclipse.cdt.core.parser.Keywords;
 import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.cdt.ui.actions.CustomFiltersActionGroup;
 
@@ -72,6 +73,7 @@ public abstract class AbstractInformationControl extends PopupDialog implements 
 	 * match the given string patterns.
 	 */
 	protected class NamePatternFilter extends ViewerFilter {
+		private final String COLON_COLON = String.valueOf(Keywords.cpCOLONCOLON);
 
 		public NamePatternFilter() {
 		}
@@ -87,8 +89,14 @@ public abstract class AbstractInformationControl extends PopupDialog implements 
 			TreeViewer treeViewer= (TreeViewer) viewer;
 
 			String matchName= ((ILabelProvider) treeViewer.getLabelProvider()).getText(element);
-			if (matchName != null && matcher.match(matchName))
-				return true;
+			if (matchName != null) {
+				if (matcher.match(matchName))
+					return true;
+				// check for qualified name
+				int idx= matchName.lastIndexOf(COLON_COLON);
+				if (idx >= 0 && matcher.match(matchName.substring(idx+COLON_COLON.length())))
+					return true;
+			}
 
 			return hasUnfilteredChild(treeViewer, element);
 		}

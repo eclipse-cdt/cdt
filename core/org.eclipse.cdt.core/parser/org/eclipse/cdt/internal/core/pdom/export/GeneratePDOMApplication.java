@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2008 Symbian Software Systems and others.
+ * Copyright (c) 2007, 2009 Symbian Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,15 +7,17 @@
  *
  * Contributors:
  * Andrew Ferguson (Symbian) - Initial implementation
+ * Anna Dushistova (MontaVista) - bug [247087] 
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.pdom.export;
 
 import java.io.File;
 import java.io.PrintStream;
-import com.ibm.icu.text.MessageFormat;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import com.ibm.icu.text.MessageFormat;
 
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.dom.IPDOMIndexerTask;
@@ -122,7 +124,10 @@ public class GeneratePDOMApplication implements IApplication {
 
 			GeneratePDOM generate = new GeneratePDOM(pprovider,	appArgs, targetLocation, indexerID);
 			output(Messages.GeneratePDOMApplication_GenerationStarts);
-			generate.run(); // CoreException handled in start method
+			IStatus status = generate.run(); // CoreException handled in start method
+			if(!status.isOK()){
+				output(status.getMessage());
+			}
 			output(Messages.GeneratePDOMApplication_GenerationEnds);
 		} finally {
 			if (oldvals != null) {

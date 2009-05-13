@@ -1,16 +1,16 @@
 /********************************************************************************
  * Copyright (c) 2009 IBM Corporation. All rights reserved.
  * This program and the accompanying materials are made available under the terms
- * of the Eclipse Public License v1.0 which accompanies this distribution, and is 
+ * of the Eclipse Public License v1.0 which accompanies this distribution, and is
  * available at http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Initial Contributors:
  * The following IBM employees contributed to the Remote System Explorer
  * component that contains this file: David McKnight, Mike Kucera.
- * 
+ *
  * Contributors:
- * Mike Kucera         (IBM) - [241315] [efs] Cannot restore editors for RSE/EFS-backed resources
- * David McKnight      (IBM) - [241315] [efs] Cannot restore editors for RSE/EFS-backed resources
+ * Mike Kucera         (IBM) - [241316] [efs] Cannot restore editors for RSE/EFS-backed resources
+ * David McKnight      (IBM) - [241316] [efs] Cannot restore editors for RSE/EFS-backed resources
  ********************************************************************************/
 package org.eclipse.rse.internal.efs;
 
@@ -53,20 +53,20 @@ import org.eclipse.ui.progress.UIJob;
 
 public class RemoteEditorManager implements ISaveParticipant, IResourceChangeListener, IWorkbenchListener {
 	public static final String PREFERENCE_EDITOR_LIST = "org.eclipse.rse.internal.efs.EditorSaver.preferenceEditorList"; //$NON-NLS-1$
-	
+
 	private static RemoteEditorManager defaultInstance;
-	
+
 	private Map projectNameToUriMap = null;
-	
+
 	private RemoteEditorManager() {}
-	
+
 	public static synchronized RemoteEditorManager getDefault() {
 		if(defaultInstance == null)
 			defaultInstance = new RemoteEditorManager();
 		return defaultInstance;
 	}
 
-	
+
 	/**
 	 * Restores remote editors when a remote project is opened.
 	 */
@@ -75,11 +75,11 @@ public class RemoteEditorManager implements ISaveParticipant, IResourceChangeLis
 		Map projectNameToUriMap = getProjectNameToUriMap(pref);
 		if(projectNameToUriMap.isEmpty())
 			return;
-		
+
 		IResourceDelta[] children = event.getDelta().getAffectedChildren();
 		for(int i = 0; i < children.length; i++) {
 			IResourceDelta delta = children[i];
-			
+
 			// if a project has just been opened
 			if((delta.getFlags() & IResourceDelta.OPEN) != 0) {
 				IProject project = delta.getResource().getProject();
@@ -90,14 +90,14 @@ public class RemoteEditorManager implements ISaveParticipant, IResourceChangeLis
 					if(uris != null) {
 						for(Iterator iter = uris.iterator(); iter.hasNext();) {
 							final String uriString = (String) iter.next();
-							
+
 							Job job = new UIJob("Restore Remote Editor") { //$NON-NLS-1$
 								public IStatus runInUIThread(IProgressMonitor monitor) {
 									if(monitor.isCanceled())
 										return Status.OK_STATUS;
-										
+
 									try {
-										// got this code from http://wiki.eclipse.org/FAQ_How_do_I_open_an_editor_programmatically%3F 
+										// got this code from http://wiki.eclipse.org/FAQ_How_do_I_open_an_editor_programmatically%3F
 										IWorkbenchPage page = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage();
 										IFileStore fileStore = EFS.getStore(new URI(uriString));
 										IDE.openEditorOnFileStore(page, fileStore);
@@ -112,15 +112,15 @@ public class RemoteEditorManager implements ISaveParticipant, IResourceChangeLis
 								}
 							};
 							job.schedule();
-							
+
 						}
 					}
 				}
 			}
 		}
-		
+
 	}
-	
+
 	/**
 	 * Saves the URIs of remote resources that are open in editors into the
 	 * plugin's preference store.
@@ -134,11 +134,11 @@ public class RemoteEditorManager implements ISaveParticipant, IResourceChangeLis
 		}
 		projectNameToUriMap = null;
 	}
-	
+
 	private Map getProjectNameToUriMap(String raw) {
 		if(projectNameToUriMap == null) {
 			projectNameToUriMap = new HashMap();
-			
+
 			if(raw == null || raw.length() == 0)
 				return projectNameToUriMap;
 
@@ -152,7 +152,7 @@ public class RemoteEditorManager implements ISaveParticipant, IResourceChangeLis
 				if(i < 0) break;
 				String uriString = raw.substring(index, i);
 				index = i + 1;
-				
+
 				List uris = (List) projectNameToUriMap.get(projectName);
 				if(uris == null) {
 					uris = new LinkedList();
@@ -163,11 +163,11 @@ public class RemoteEditorManager implements ISaveParticipant, IResourceChangeLis
 		}
 		return projectNameToUriMap;
 	}
-	
-	
+
+
 	private String generateEditorList() {
 		final StringBuffer sb = new StringBuffer();
-		
+
 		forEachOpenRemoteEditor(new IEditorCallback() {
 			public void apply(IWorkbenchPage page, IEditorPart editor, IFile file) {
 				IProject project = file.getProject();
@@ -178,15 +178,15 @@ public class RemoteEditorManager implements ISaveParticipant, IResourceChangeLis
 				sb.append(' '); // not allowed in URIs
 			}
 		});
-		
+
 		return sb.toString();
 	}
-	
-	
+
+
 	private static interface IEditorCallback {
 		public void apply(IWorkbenchPage page, IEditorPart editor, IFile file);
 	}
-	
+
 	private static void forEachOpenRemoteEditor(IEditorCallback callback) {
 		IWorkbench wb = PlatformUI.getWorkbench();
 		IWorkbenchWindow[] windows = wb.getWorkbenchWindows();
@@ -198,7 +198,7 @@ public class RemoteEditorManager implements ISaveParticipant, IResourceChangeLis
 				IEditorReference[] activeReferences = page.getEditorReferences();
 				for (int er = 0; er < activeReferences.length; er++){
 					IEditorReference editorReference = activeReferences[er];
-					
+
 					try {
 						IEditorInput input = editorReference.getEditorInput();
 						if (input instanceof FileEditorInput){
@@ -206,7 +206,7 @@ public class RemoteEditorManager implements ISaveParticipant, IResourceChangeLis
 							URI uri = file.getLocationURI();
 							if ("rse".equals(uri.getScheme())) { //$NON-NLS-1$
 								IEditorPart editor = editorReference.getEditor(false);
-								callback.apply(page, editor, file);																
+								callback.apply(page, editor, file);
 							}
 						}
 					} catch (PartInitException e){
@@ -216,7 +216,7 @@ public class RemoteEditorManager implements ISaveParticipant, IResourceChangeLis
 			}
 		}
 	}
-	
+
 	/**
 	 * Close each editor that is open for any file that uses "rse" as it's uri scheme
 	 * @return true if successful, false otherwise
@@ -233,17 +233,17 @@ public class RemoteEditorManager implements ISaveParticipant, IResourceChangeLis
 				IEditorReference[] activeReferences = page.getEditorReferences();
 				for (int er = 0; er < activeReferences.length; er++){
 					IEditorReference editorReference = activeReferences[er];
-					
+
 					try {
 						IEditorInput input = editorReference.getEditorInput();
 						if (input instanceof FileEditorInput){
 							IFile file = ((FileEditorInput)input).getFile();
 							URI uri = file.getLocationURI();
 							if ("rse".equals(uri.getScheme())) { //$NON-NLS-1$
-								IEditorPart editor = editorReference.getEditor(false);			
-								
+								IEditorPart editor = editorReference.getEditor(false);
+
 								// close the editor
-								result = page.closeEditor(editor, true);															
+								result = page.closeEditor(editor, true);
 							}
 						}
 					} catch (PartInitException e){
@@ -255,12 +255,12 @@ public class RemoteEditorManager implements ISaveParticipant, IResourceChangeLis
 		return result;
 	}
 
-	
+
 	public void saving(ISaveContext context) throws CoreException {
 		saveRemoteEditors();
 	}
-	
-	
+
+
 	public void doneSaving(ISaveContext context) {
 	}
 
@@ -269,16 +269,16 @@ public class RemoteEditorManager implements ISaveParticipant, IResourceChangeLis
 
 	public void rollback(ISaveContext context) {
 	}
-	
-	
+
+
 	// for IWorkbenchListener
 	public void postShutdown(IWorkbench workbench) {
 	}
 
 	// for IWorkbenchListener
-	public boolean preShutdown(IWorkbench workbench, boolean forced) {	
+	public boolean preShutdown(IWorkbench workbench, boolean forced) {
 		saveRemoteEditors();
 		return closeRemoteEditors();
 	}
-	
+
 }

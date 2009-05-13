@@ -18,6 +18,7 @@
  * Noriaki Takatsu (IBM)  - [239419] [multithread] Dynamically change the level of logging
  * David McKnight  (IBM)  - [244876] [dstore] make DEBUG a non-final variable of the ServerLogger class
  * David McKnight  (IBM)  - [271914] [dstore] Setting debug on/off dynamically
+ * David McKnight  (IBM)  - [269908] [dstore] rsecomm.log file management
  ********************************************************************************/
 
 package org.eclipse.dstore.core.server;
@@ -93,12 +94,7 @@ public class ServerLogger implements IServerLogger
 		if (_logFileStream == null) {
 			if (logToFile) {
 				try {
-			  		File _logFile = new File(logPathName, "rsecomm.log"); //$NON-NLS-1$
-
-	 	 			if (!_logFile.exists()) {
-	  					_logFile.createNewFile();
-	  				}
-
+			  		File _logFile = getLogFile("rsecomm"); //$NON-NLS-1$
 	  				_logFileStream = new PrintWriter(new FileOutputStream(_logFile));
 
 				} catch (IOException e) {
@@ -108,6 +104,49 @@ public class ServerLogger implements IServerLogger
 		}
 	}
 
+	private File getLogFile(String preferredName){
+		String ext = ".log"; //$NON-NLS-1$
+		boolean found = false;
+		long logFileMax = 1000000;
+		String logFileMaxStr = System.getProperty("RSECOMM_LOGFILE_MAX"); //$NON-NLS-1$
+		if (logFileMaxStr != null && logFileMaxStr.length() > 0){
+			try {
+				logFileMax = Integer.parseInt(logFileMaxStr);
+			}
+			catch (NumberFormatException e){
+				System.err.println("ServerLogger: "+e.toString()); //$NON-NLS-1$
+			}
+		}
+		
+		File logFile = null;
+		String name = null;
+		int suffix = 0;
+		while (!found) {
+			name = (suffix == 0) ? preferredName + ext: preferredName + suffix + ext;
+			logFile = new File(logPathName, name);
+
+			if (!logFile.exists()) {
+				try {
+					logFile.createNewFile();
+					found = true;
+				}
+				catch (IOException e){}
+			}
+			else {
+				// if the file exists, check it's size
+				long fileSize = logFile.length();
+				if  (fileSize > logFileMax){
+					// file too big, need a new one				
+					suffix++;
+				}
+				else {
+					found = true;
+				}
+			}	
+		}
+		return logFile;
+	}
+	
 
 	/**
 	 * Logs an informational message

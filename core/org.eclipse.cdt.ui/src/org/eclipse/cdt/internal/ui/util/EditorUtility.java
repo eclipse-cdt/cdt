@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2008 QNX Software Systems and others.
+ * Copyright (c) 2000, 2009 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -824,10 +824,11 @@ public class EditorUtility {
 					//     forAll r1,r2 element differences: r1.rightStart() < r2.rightStart() -> r1.rightEnd() < r2.rightStart
 
 					List<IRegion> regions= new ArrayList<IRegion>();
+					final int numberOfLines= currentDocument.getNumberOfLines();
 					for (int i= 0; i < differences.length; i++) {
 						RangeDifference curr= differences[i];
 						if (curr.kind() == RangeDifference.CHANGE) {
-							int startLine= curr.rightStart();
+							int startLine= Math.min(curr.rightStart(), numberOfLines - 1);
 							int endLine= curr.rightEnd() - 1;
 
 							IRegion startLineRegion;

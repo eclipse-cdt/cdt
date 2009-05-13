@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2008 IBM Corporation and others.
+ * Copyright (c) 2004, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -274,18 +274,24 @@ public class ClassTypeHelper {
 			while (decl instanceof ICPPASTTemplateDeclaration)
 				decl = ((ICPPASTTemplateDeclaration)decl).getDeclaration();
 			if (decl instanceof IASTSimpleDeclaration) {
-				IASTDeclarator[] dtors = ((IASTSimpleDeclaration)decl).getDeclarators();
-				for (IASTDeclarator dtor : dtors) {
-					binding = ASTQueries.findInnermostDeclarator(dtor).getName().resolveBinding();
-					if (binding instanceof ICPPMethod)
-						result = (ICPPMethod[]) ArrayUtil.append(ICPPMethod.class, result, binding);
+				final IASTSimpleDeclaration sdecl = (IASTSimpleDeclaration)decl;
+				if (!((ICPPASTDeclSpecifier) sdecl.getDeclSpecifier()).isFriend()) {
+					IASTDeclarator[] dtors = sdecl.getDeclarators();
+					for (IASTDeclarator dtor : dtors) {
+						binding = ASTQueries.findInnermostDeclarator(dtor).getName().resolveBinding();
+						if (binding instanceof ICPPMethod)
+							result = (ICPPMethod[]) ArrayUtil.append(ICPPMethod.class, result, binding);
+					}
 				}
 			} else if (decl instanceof IASTFunctionDefinition) {
-				IASTDeclarator dtor = ((IASTFunctionDefinition)decl).getDeclarator();
-				dtor = ASTQueries.findInnermostDeclarator(dtor);
-				binding = dtor.getName().resolveBinding();
-				if (binding instanceof ICPPMethod) {
-					result = (ICPPMethod[]) ArrayUtil.append(ICPPMethod.class, result, binding);
+				final IASTFunctionDefinition fdef = (IASTFunctionDefinition)decl;
+				if (!((ICPPASTDeclSpecifier) fdef.getDeclSpecifier()).isFriend()) {
+					IASTDeclarator dtor = fdef.getDeclarator();
+					dtor = ASTQueries.findInnermostDeclarator(dtor);
+					binding = dtor.getName().resolveBinding();
+					if (binding instanceof ICPPMethod) {
+						result = (ICPPMethod[]) ArrayUtil.append(ICPPMethod.class, result, binding);
+					}
 				}
 			} else if (decl instanceof ICPPASTUsingDeclaration) {
 				IASTName n = ((ICPPASTUsingDeclaration)decl).getName();

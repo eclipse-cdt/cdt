@@ -2126,7 +2126,31 @@ public class AST2CPPTests extends AST2BaseTest {
 		assertSame(friends[0], set);
 		assertSame(friends[1], B);
 	}
-	
+
+	// class Other {
+	//    void m();
+	// class A {                       
+	//    friend void set();           
+	//    friend void Other::m();             
+	// };                              
+	public void testFriend_Bug275358() throws Exception {
+		final String code = getAboveComment();
+		BindingAssertionHelper bh= new BindingAssertionHelper(code, true);
+		ICPPClassType A = bh.assertNonProblem("A", 1);
+		IFunction set = bh.assertNonProblem("set()", 3);
+		IFunction m = bh.assertNonProblem("Other::m()", 8);
+		
+		IBinding[] friends = A.getFriends();
+		assertEquals(2, friends.length);
+		assertSame(friends[0], set);
+		assertSame(friends[1], m);
+		
+		IBinding[] declaredMethods= A.getAllDeclaredMethods();
+		assertEquals(0, declaredMethods.length);
+		declaredMethods= A.getDeclaredMethods();
+		assertEquals(0, declaredMethods.length);
+	}
+
 	// class A { friend class B; friend class B; }; 
 	// class B{};                                   
 	public void testBug59149() throws Exception {

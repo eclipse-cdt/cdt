@@ -42,7 +42,7 @@ import org.eclipse.ui.ISharedImages;
 import org.eclipse.ui.PlatformUI;
 
 /**
- * Tab group for Launch Group. Only one tab.
+ * Tab group for Launch Group.
  */
 public class MultiLaunchConfigurationTabGroup extends AbstractLaunchConfigurationTabGroup {
 	static class ContentProvider implements IStructuredContentProvider, ITreeContentProvider {

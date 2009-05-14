@@ -13,9 +13,12 @@
  * Contributors:
  * Martin Oberhuber (Wind River) - [168975] Move RSE Events API to Core
  * David Dykstal (IBM) - [226561] Add API markup to RSE javadocs for extend / implement
+ * David McKnight   (IBM)        - [276194] cannot open file with '...' in pathname
  ********************************************************************************/
 
 package org.eclipse.rse.core.model;
+
+import java.io.File;
 
 /**
  * This is a utility class used in the construction of file names.
@@ -27,6 +30,7 @@ public class SystemEscapeCharHelper {
 	
 	private char changedChars[];
 	private int escapeStringLength;
+	private boolean isWindows;
 
 	/**
 	 * Constructor.
@@ -34,6 +38,7 @@ public class SystemEscapeCharHelper {
 	 */
 	public SystemEscapeCharHelper (char[] chars)
 	{
+		isWindows = System.getProperty("os.name").toLowerCase().startsWith("win");  //$NON-NLS-1$//$NON-NLS-2$
 		changedChars = new char[chars.length+1];
 
 		for (int i = 0; i < chars.length; i++)
@@ -53,11 +58,13 @@ public class SystemEscapeCharHelper {
 		String fileName = name;
 
 		int i = 0;
+
 		while (i < fileName.length())
-		{
+		{			
+			char currentChar = fileName.charAt(i);
 			for (int j = 0; j < changedChars.length; j++)
-			{
-				if (fileName.charAt(i) == changedChars[j])
+			{				
+				if (currentChar == changedChars[j])
 				{
 					if ((fileName.length()-1) >= i)
 					{
@@ -68,6 +75,14 @@ public class SystemEscapeCharHelper {
 						fileName = fileName.substring(0, i) + escapeString(changedChars[j]);
 					}
 					i = i + escapeStringLength-1;
+				}
+				else if (currentChar == '.' && isWindows){ // special case for bug 276194
+					if (fileName.length() > i + 1){
+						char nextChar = fileName.charAt(i + 1);
+						if (nextChar == '.' || nextChar == File.separatorChar){
+							fileName = fileName.substring(0, i) + escapeString(currentChar) + fileName.substring(i+1);
+						}
+					}
 				}
 			}
          i++;

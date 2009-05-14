@@ -1,27 +1,28 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
-Copyright (c) 2006, 2007 IBM Corporation and others. All rights reserved.
-This program and the accompanying materials are made available under the terms
-of the Eclipse Public License v1.0 which accompanies this distribution, and is 
-available at http://www.eclipse.org/legal/epl-v10.html
+     Copyright (c) 2006, 2009 IBM Corporation and others.
+     All rights reserved. This program and the accompanying materials
+     are made available under the terms of the Eclipse Public License v1.0
+     which accompanies this distribution, and is available at
+     http://www.eclipse.org/legal/epl-v10.html
+    
+     Initial Contributors:
+     The following IBM employees contributed to the Remote System Explorer
+     component that contains this file: David McKnight, Kushal Munir, 
+     Michael Berger, David Dykstal, Phil Coulthard, Don Yantzi, Eric Simpson, 
+     Emily Bruner, Mazen Faraj, Adrian Storisteanu, Li Ding, and Kent Hawley.
 
-Initial Contributors:
-The following IBM employees contributed to the Remote System Explorer
-component that contains this file: David McKnight, Kushal Munir, 
-Michael Berger, David Dykstal, Phil Coulthard, Don Yantzi, Eric Simpson, 
-Emily Bruner, Mazen Faraj, Adrian Storisteanu, Li Ding, and Kent Hawley.
-
-Contributors:
-Javier Montalvo Orus (Symbian) - add Windows to list of valid FTP systems
-Martin Oberhuber (Wind River) - add FTP Only system type
-Javier Montalvo Orus (Symbian) - [plan] Improve Discovery and Autodetect in RSE
-Javier Montalvo Orus (Symbian) - Fixing 176216 - [api] FTP sould provide API to allow clients register their own FTPListingParser
-Martin Oberhuber (Wind River) - [186523] Move subsystemConfigurations from UI to core
-Javier Montalvo Orus (Symbian) - improved autodetection of FTPListingParser
-Martin Oberhuber (Wind River) - [198692] Use FTP LIST -a to list UNIX hidden files
-Javier Montalvo Orus (Symbian) - [225821] [ftp] opening "/home" fails on OS/400 IFS
-Martin Oberhuber (Wind River) - [214141] Avoid NPE if missing SYST command
--->
+     Contributors:
+     Javier Montalvo Orus (Symbian) - add Windows to list of valid FTP systems
+     Martin Oberhuber (Wind River) - add FTP Only system type
+     Javier Montalvo Orus (Symbian) - [plan] Improve Discovery and Autodetect in RSE
+     Javier Montalvo Orus (Symbian) - Fixing 176216 - [api] FTP sould provide API to allow clients register their own FTPListingParser
+     Martin Oberhuber (Wind River) - [186523] Move subsystemConfigurations from UI to core
+     Javier Montalvo Orus (Symbian) - improved autodetection of FTPListingParser
+     Martin Oberhuber (Wind River) - [198692] Use FTP LIST -a to list UNIX hidden files
+     Javier Montalvo Orus (Symbian) - [225821] [ftp] opening "/home" fails on OS/400 IFS
+     Martin Oberhuber (Wind River) - [214141] Avoid NPE if missing SYST command
+ -->
 <?eclipse version="3.1"?>
 <plugin>
 	<extension point="org.eclipse.rse.core.systemTypes">

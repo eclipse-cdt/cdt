@@ -1,21 +1,22 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
-Copyright (c) 2006, 2008 IBM Corporation and others. All rights reserved.
-This program and the accompanying materials are made available under the terms
-of the Eclipse Public License v1.0 which accompanies this distribution, and is 
-available at http://www.eclipse.org/legal/epl-v10.html
+     Copyright (c) 2006, 2009 IBM Corporation and others.
+     All rights reserved. This program and the accompanying materials
+     are made available under the terms of the Eclipse Public License v1.0
+     which accompanies this distribution, and is available at
+     http://www.eclipse.org/legal/epl-v10.html
+    
+     Initial Contributors:
+     The following IBM employees contributed to the Remote System Explorer
+     component that contains this file: David McKnight, Kushal Munir, 
+     Michael Berger, David Dykstal, Phil Coulthard, Don Yantzi, Eric Simpson, 
+     Emily Bruner, Mazen Faraj, Adrian Storisteanu, Li Ding, and Kent Hawley.
 
-Initial Contributors:
-The following IBM employees contributed to the Remote System Explorer
-component that contains this file: David McKnight, Kushal Munir, 
-Michael Berger, David Dykstal, Phil Coulthard, Don Yantzi, Eric Simpson, 
-Emily Bruner, Mazen Faraj, Adrian Storisteanu, Li Ding, and Kent Hawley.
-
-Contributors:
-Kushal Munir (IBM) - Changed paths to reflect internal packages
-Martin Oberhuber (Wind River) - [188360] renamed from plugin org.eclipse.rse.eclipse.filesystem
-Martin Oberhuber (Wind River) - [235145] Add comments how to hide "Create Remote Project" action by means of Activity 
--->
+     Contributors:
+     Kushal Munir (IBM) - Changed paths to reflect internal packages
+     Martin Oberhuber (Wind River) - [188360] renamed from plugin org.eclipse.rse.eclipse.filesystem
+     Martin Oberhuber (Wind River) - [235145] Add comments how to hide "Create Remote Project" action by means of Activity 
+ -->
 <?eclipse version="3.0"?>
 <plugin>
    <extension

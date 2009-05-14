@@ -854,7 +854,7 @@ abstract_declarator  -- a declarator that does not include an identifier
       | <openscope-ast> pointer_seq
           /. $Build  consumeDeclaratorWithPointer(false);  $EndBuild ./
       | <openscope-ast> pointer_seq direct_abstract_declarator
-          /. $Build  consumeDeclaratorWithPointer(false);  $EndBuild ./
+          /. $Build  consumeDeclaratorWithPointer(true);  $EndBuild ./
 
 
 direct_abstract_declarator

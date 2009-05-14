@@ -1096,7 +1096,7 @@ private  GNUBuildASTParserAction  gnuAction;
             //
             // Rule 269:  abstract_declarator ::= <openscope-ast> pointer_seq direct_abstract_declarator
             //
-            case 269: { action.   consumeDeclaratorWithPointer(false);             break;
+            case 269: { action.   consumeDeclaratorWithPointer(true);             break;
             }  
   
             //

@@ -92,4 +92,11 @@ public class LRCSpecTests extends AST2CSpecTest {
 //	}
 	
 	
+	public void testBug276360() throws Exception {
+		String code =
+			"int foo(int*[]) {}	";
+		
+		parseCandCPP(code, false, 0);
+	}
+	
 }

@@ -38,6 +38,8 @@ public class UPCLanguage extends BaseExtensibleLanguage {
 	
 	public static final String ID = "org.eclipse.cdt.core.parser.upc.upc"; //$NON-NLS-1$ 
 	
+	public static final String UPC_CONTENT_TYPE_ID = "org.eclipse.cdt.core.parser.upc.upcSource"; //$NON-NLS-1$
+	
 	private static final UPCLanguage myDefault  = new UPCLanguage();
 
 	public static UPCLanguage getDefault() {

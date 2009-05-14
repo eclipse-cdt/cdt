@@ -1,5 +1,5 @@
 /*******************************************************************************
-* Copyright (c) 2006, 2008 IBM Corporation and others.
+* Copyright (c) 2006, 2009 IBM Corporation and others.
 * All rights reserved. This program and the accompanying materials
 * are made available under the terms of the Eclipse Public License v1.0
 * which accompanies this distribution, and is available at
@@ -1112,7 +1112,7 @@ public UPCExpressionParser(ITokenStream stream, Map<String,String> properties) {
             //
             // Rule 269:  abstract_declarator ::= <openscope-ast> pointer_seq direct_abstract_declarator
             //
-            case 269: { action.   consumeDeclaratorWithPointer(false);             break;
+            case 269: { action.   consumeDeclaratorWithPointer(true);             break;
             }  
   
             //

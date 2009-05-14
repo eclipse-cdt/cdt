@@ -118,4 +118,8 @@ public class ComboControlledStackComposite extends Composite {
 		layout.topControl = (Control) tabMap.get(label);
 		getStackParent().layout();
 	}
+	
+	public Control getTopControl() {
+		return layout != null ? layout.topControl : null; 
+	}
 }

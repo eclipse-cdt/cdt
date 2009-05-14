@@ -24,6 +24,7 @@ import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.StructuredSelection;
+import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.viewers.ViewerFilter;
 import org.eclipse.swt.SWT;
@@ -38,6 +39,8 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
+import org.eclipse.swt.widgets.Tree;
+import org.eclipse.ui.dialogs.FilteredTree;
 import org.eclipse.ui.dialogs.PatternFilter;
 
 
@@ -54,6 +57,7 @@ public class MultiLaunchConfigurationSelectionDialog extends TitleAreaDialog imp
 	private boolean isDefaultMode;
 	private ViewerFilter emptyTypeFilter;
 	private IStructuredSelection fInitialSelection;
+	private ComboControlledStackComposite fStackComposite;
 
 	public MultiLaunchConfigurationSelectionDialog(Shell shell, String title, String initMode) {
 		super(shell);
@@ -93,21 +97,20 @@ public class MultiLaunchConfigurationSelectionDialog extends TitleAreaDialog imp
 		setTitle(LaunchMessages.getString("MultiLaunchConfigurationSelectionDialog.1")); //$NON-NLS-1$
 		//setMessage("Select a Launch Configuration and a Launch Mode");
 		Composite comp = (Composite) super.createDialogArea(parent2);
-		ComboControlledStackComposite scomp = new ComboControlledStackComposite(comp, SWT.NONE);
-		HashMap modes = new HashMap();
-		for (int i = 0; i < launchGroups.length; i++) {
-			ILaunchGroup g = launchGroups[i];
-			if (!modes.containsKey(g.getMode())) {
-				modes.put(g.getMode(), g);
+		fStackComposite = new ComboControlledStackComposite(comp, SWT.NONE);
+		HashMap<String, ILaunchGroup> modes = new HashMap<String, ILaunchGroup>();
+		for (ILaunchGroup launchGroup : launchGroups) {
+			if (!modes.containsKey(launchGroup.getMode())) {
+				modes.put(launchGroup.getMode(), launchGroup);
 			}
 		}
-		if (this.mode.equals(MultiLaunchConfigurationDelegate.DEFAULT_MODE)) { //$NON-NLS-1$
+		if (this.mode.equals(MultiLaunchConfigurationDelegate.DEFAULT_MODE)) {
 			try {
 				this.mode = "run"; //$NON-NLS-1$
 				ILaunchConfiguration sel = getSelectedLaunchConfiguration();
 				if (sel != null)
-					for (Iterator iterator = modes.keySet().iterator(); iterator.hasNext();) {
-						String mode = (String) iterator.next();
+					for (Iterator<String> iterator = modes.keySet().iterator(); iterator.hasNext();) {
+						String mode = iterator.next();
 						if (sel.supportsMode(mode)) {
 							this.mode = mode;
 							break;
@@ -116,49 +119,51 @@ public class MultiLaunchConfigurationSelectionDialog extends TitleAreaDialog imp
 			} catch (Exception e) {
 			}
 		} 
-		for (Iterator iterator = modes.keySet().iterator(); iterator.hasNext();) {
-			String mode = (String) iterator.next();
-			ILaunchGroup g = (ILaunchGroup) modes.get(mode);
-			LaunchConfigurationFilteredTree fTree = new LaunchConfigurationFilteredTree(scomp.getStackParent(), SWT.MULTI
-			        | SWT.H_SCROLL | SWT.V_SCROLL | SWT.BORDER, new PatternFilter(), g, fFilters);
+		for (Iterator<String> iterator = modes.keySet().iterator(); iterator.hasNext();) {
+			String mode = iterator.next();
+			ILaunchGroup launchGroup = modes.get(mode);
+			LaunchConfigurationFilteredTree fTree = new LaunchConfigurationFilteredTree(fStackComposite.getStackParent(), SWT.MULTI
+			        | SWT.H_SCROLL | SWT.V_SCROLL | SWT.BORDER, new PatternFilter(), launchGroup, fFilters);
 			String label = mode;
-			scomp.addItem(label, fTree);
+			fStackComposite.addItem(label, fTree);
 			fTree.createViewControl();
 			ViewerFilter[] filters = fTree.getViewer().getFilters();
-			for (int i = 0; i < filters.length; i++) {
-				ViewerFilter viewerFilter = filters[i];
+			for (ViewerFilter viewerFilter : filters) {
 				if (viewerFilter instanceof LaunchGroupFilter) {
 					fTree.getViewer().removeFilter(viewerFilter);
 				}
 			}
 			fTree.getViewer().addFilter(emptyTypeFilter);
 			fTree.getViewer().addSelectionChangedListener(this);
-			if (g.getMode().equals(this.mode)) {
-				scomp.setSelection(label);
+			if (launchGroup.getMode().equals(this.mode)) {
+				fStackComposite.setSelection(label);
 			}
 			if (fInitialSelection!=null) {
 				
 				fTree.getViewer().setSelection(fInitialSelection, true);
 			}
 		}
-		scomp.setLabelText(LaunchMessages.getString("MultiLaunchConfigurationSelectionDialog.4")); //$NON-NLS-1$
-		scomp.pack();
-		Rectangle bounds = scomp.getBounds();
+		fStackComposite.setLabelText(LaunchMessages.getString("MultiLaunchConfigurationSelectionDialog.4")); //$NON-NLS-1$
+		fStackComposite.pack();
+		Rectangle bounds = fStackComposite.getBounds();
 		// adjust size
-		GridData data = ((GridData) scomp.getLayoutData());
+		GridData data = ((GridData) fStackComposite.getLayoutData());
 		if (data == null) {
 			data = new GridData(GridData.FILL_BOTH);
-			scomp.setLayoutData(data);
+			fStackComposite.setLayoutData(data);
 		}
 		data.heightHint = Math.max(convertHeightInCharsToPixels(15), bounds.height);
 		data.widthHint = Math.max(convertWidthInCharsToPixels(40), bounds.width);
-		scomp.getCombo().addSelectionListener(new SelectionAdapter() {
+		fStackComposite.getCombo().addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
 				mode = ((Combo) e.widget).getText();
 			}
 		});
-		// Use default checkbox
-		Button checkBox = new Button(comp, SWT.CHECK);
+		// "Use default mode" checkbox. Use a parent composite to provide consistent left-side padding
+		Composite checkboxComp = new Composite(comp, SWT.NONE);
+		checkboxComp.setLayout(new GridLayout(1, false));
+		checkboxComp.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+		Button checkBox = new Button(checkboxComp, SWT.CHECK);
 		checkBox.setText(LaunchMessages.getString("MultiLaunchConfigurationSelectionDialog.5")); //$NON-NLS-1$
 		checkBox.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
@@ -176,7 +181,7 @@ public class MultiLaunchConfigurationSelectionDialog extends TitleAreaDialog imp
 		comp.setLayout(new GridLayout(2, false));
 		comp.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		Label label = new Label(comp, SWT.NONE);
-		label.setText("Post launch action:");
+		label.setText(LaunchMessages.getString("MultiLaunchConfigurationSelectionDialog.8")); //$NON-NLS-1$
 		Combo combo = new Combo(comp, SWT.READ_ONLY);
 		combo.add(LaunchElement.POST_LAUNCH_CONTINUE);
 		combo.add(LaunchElement.POST_LAUNCH_WAIT_FOR_TERM);
@@ -199,10 +204,7 @@ public class MultiLaunchConfigurationSelectionDialog extends TitleAreaDialog imp
 	}
 
 	public String getMode() {
-		if (isDefaultMode)
-			return MultiLaunchConfigurationDelegate.DEFAULT_MODE; //$NON-NLS-1$
-		else
-			return mode;
+		return isDefaultMode ? MultiLaunchConfigurationDelegate.DEFAULT_MODE : mode;
 	}
 	
 	public String getAction(){
@@ -213,9 +215,46 @@ public class MultiLaunchConfigurationSelectionDialog extends TitleAreaDialog imp
 		return new MultiLaunchConfigurationSelectionDialog(shell, title, groupId);
 	}
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.jface.viewers.ISelectionChangedListener#selectionChanged(org.eclipse.jface.viewers.SelectionChangedEvent)
+	 */
 	public void selectionChanged(SelectionChangedEvent event) {
-		fSelection = event.getSelection();
 		
+		// This listener gets called for a selection change in the launch
+		// configuration viewer embedded in the dialog. Problem is, there are
+		// numerous viewers--one for each platform debug ILaunchGroup (run,
+		// debug, profile). These viewers are stacked, so only one is ever
+		// visible to the user. During initialization, we get a selection change
+		// notification for every viewer. We need to ignore all but the one that
+		// matters--the visible one.
+		
+		Tree topTree = null;
+		final Control topControl = fStackComposite.getTopControl();
+		if (topControl instanceof FilteredTree) {
+			final TreeViewer viewer = ((FilteredTree)topControl).getViewer();
+			if (viewer != null) {
+				topTree = viewer.getTree();
+			}
+		}
+		if (topTree == null) {
+			return;
+		}
+		
+		boolean selectionIsForVisibleViewer = false;
+		final Object src = event.getSource();
+		if (src instanceof Viewer) {
+			final Viewer viewer = (Viewer)src;
+			final Control viewerControl = viewer.getControl();
+			if (viewerControl == topTree) {
+				selectionIsForVisibleViewer = true;
+			}
+		}
+		
+		if (!selectionIsForVisibleViewer) {
+			return;
+		}
+		
+		fSelection = event.getSelection();
 		validate();
 	}
 

@@ -236,6 +236,7 @@ public class MultiLaunchConfigurationTabGroup extends AbstractLaunchConfiguratio
 						el.setName(conf.getName());
 						el.setData(conf);
 						el.setMode(dialog.getMode());
+						el.setAction(dialog.getAction());
 						treeViewer.refresh(true);
 						treeViewer.setChecked(el, el.isEnabled());
 						updateWidgetEnablement();

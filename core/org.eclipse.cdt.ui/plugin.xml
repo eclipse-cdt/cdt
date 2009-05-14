@@ -2662,16 +2662,6 @@
        <commonSorter
              class="org.eclipse.cdt.ui.CElementSorter"
              id="org.eclipse.cdt.ui.commonSorter">
-          <parentExpression>
-             <or>
-	             <instanceof value="org.eclipse.cdt.core.model.ICElement"/>
-	             <instanceof value="org.eclipse.cdt.ui.CElementGrouping"/>
-		         <and>
-		             <instanceof value="org.eclipse.core.resources.IResource"/>
-		             <test property="org.eclipse.core.resources.projectNature" value="org.eclipse.cdt.core.cnature"/>
-		         </and>
-             </or>
-          </parentExpression>
        </commonSorter>
        <actionProvider
              class="org.eclipse.cdt.internal.ui.navigator.CNavigatorOpenActionProvider"

@@ -299,9 +299,11 @@ public class AddIncludeOnSelectionAction extends TextEditorAction {
 		if (!isSource(getPath(file)) || index.findIncludedBy(file, 0).length > 0) {
 			IIndexFile representativeFile = getRepresentativeFile(file, index);
 			IRequiredInclude include = getRequiredInclude(representativeFile, index);
-			IncludeCandidate candidate = new IncludeCandidate(binding, include);
-			if (!candidates.containsKey(candidate.toString())) {
-				candidates.put(candidate.toString(), candidate);
+			if (include != null) {
+				IncludeCandidate candidate = new IncludeCandidate(binding, include);
+				if (!candidates.containsKey(candidate.toString())) {
+					candidates.put(candidate.toString(), candidate);
+				}
 			}
 		}
 	}
@@ -519,21 +521,25 @@ public class AddIncludeOnSelectionAction extends TextEditorAction {
 			// has to be resolvable in the context of the current translation unit.
 			int systemIncludeVotes = 0;
 			String[] ballotBox = new String[includes.length];
+			int k = 0;
 			for (int i = 0; i < includes.length; i++) {
 				IIndexInclude include = includes[i];
 				if (isResolvable(include)) {
-					ballotBox[i] = include.getFullName();
+					ballotBox[k++] = include.getFullName();
 					if (include.isSystemInclude()) {
 						systemIncludeVotes++;
 					}
 				}
 			}
-			Arrays.sort(ballotBox);
+			if (k == 0) {
+				return null;
+			}
+			Arrays.sort(ballotBox, 0, k);
 			String contender = ballotBox[0];
 			int votes = 1;
 			String winner = contender;
 			int winnerVotes = votes;
-			for (int i = 1; i < ballotBox.length; i++) {
+			for (int i = 1; i < k; i++) {
 				if (!ballotBox[i].equals(contender)) {
 					contender = ballotBox[i]; 
 					votes = 1;
@@ -544,7 +550,7 @@ public class AddIncludeOnSelectionAction extends TextEditorAction {
 					winnerVotes = votes;
 				}
 			}
-			return new RequiredInclude(winner, systemIncludeVotes * 2 >= includes.length);
+			return new RequiredInclude(winner, systemIncludeVotes * 2 >= k);
 		}
 
 		// The file has never been included before.

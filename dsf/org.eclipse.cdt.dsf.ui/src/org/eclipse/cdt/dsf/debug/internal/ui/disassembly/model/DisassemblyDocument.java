@@ -576,11 +576,9 @@ public class DisassemblyDocument extends REDDocument {
 				return new Position(offset, lineLength);
 			}
 		} catch (BadLocationException exc) {
-			// TLETODO Auto-generated catch block
-			exc.printStackTrace();
+			internalError(exc);
 		} catch (BadPositionCategoryException exc) {
-			// TLETODO Auto-generated catch block
-			exc.printStackTrace();
+			internalError(exc);
 		}
 		return null;
 	}

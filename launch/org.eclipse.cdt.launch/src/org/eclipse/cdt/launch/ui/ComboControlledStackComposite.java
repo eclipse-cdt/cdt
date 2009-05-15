@@ -21,13 +21,13 @@ import org.eclipse.swt.widgets.Label;
 public class ComboControlledStackComposite extends Composite {
 	private Composite fArea;
 	private Combo fCombo;
-	private Map tabMap;
+	private Map<String, Composite> tabMap; // label ==> tab 
 	private StackLayout layout;
 	private Label fLabel;
 
 	public ComboControlledStackComposite(Composite parent, int style) {
 		super(parent, style);
-		tabMap = new LinkedHashMap();
+		tabMap = new LinkedHashMap<String, Composite>();
 		setLayout(new GridLayout(2, false));
 		createContents(this);
 	}
@@ -48,7 +48,7 @@ public class ComboControlledStackComposite extends Composite {
 		if (fCombo.getText().equals(label)) {
 			setSelection(fCombo.getItem(0));
 		}
-		Composite tab = (Composite) tabMap.get(label);
+		Composite tab = tabMap.get(label);
 		if (tab != null) {
 			tab.dispose();
 			tabMap.remove(label);
@@ -102,6 +102,7 @@ public class ComboControlledStackComposite extends Composite {
 	protected Combo createCombo(Composite parent) {
 		Combo box = new Combo(parent, SWT.READ_ONLY);
 		box.addSelectionListener(new SelectionAdapter() {
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				String name = fCombo.getText();
 				comboSelected(name);
@@ -115,7 +116,7 @@ public class ComboControlledStackComposite extends Composite {
 	}
 
 	protected void setPage(String label) {
-		layout.topControl = (Control) tabMap.get(label);
+		layout.topControl = tabMap.get(label);
 		getStackParent().layout();
 	}
 	

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2008 IBM Corporation and others.
+ * Copyright (c) 2005, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -256,6 +256,7 @@ public class DOMAST extends ViewPart {
 		/* (non-Javadoc)
 		 * @see org.eclipse.core.runtime.jobs.Job#run(org.eclipse.core.runtime.IProgressMonitor)
 		 */
+		@Override
 		protected IStatus run(IProgressMonitor monitor) {
 		    job.schedule();
 	      	
@@ -342,7 +343,8 @@ public class DOMAST extends ViewPart {
 		/* (non-Javadoc)
 		 * @see org.eclipse.jface.operation.IRunnableWithProgress#run(org.eclipse.core.runtime.IProgressMonitor)
 		 */
-    	protected IStatus run(IProgressMonitor monitor) {
+    	@Override
+		protected IStatus run(IProgressMonitor monitor) {
     		long start=0;
 			long overallStart=System.currentTimeMillis();
 			
@@ -463,6 +465,8 @@ public class DOMAST extends ViewPart {
 			 */
 			public void run() {
 				if (view == null) return;
+				if (view.getTree().isDisposed())
+					return;
 				view.refresh();
 				
 				if (view.getTree().getItems().length > 0) {
@@ -552,12 +556,14 @@ public class DOMAST extends ViewPart {
 
       private static final String BLANK_STRING = ""; //$NON-NLS-1$
 
-    public String getText(Object obj) {
+    @Override
+	public String getText(Object obj) {
 		  if (obj == null) return BLANK_STRING;
          return obj.toString();
       }
 
-      public Image getImage(Object obj) {
+      @Override
+	public Image getImage(Object obj) {
          String imageKey = DOMASTPluginImages.IMG_DEFAULT;
 
          IASTNode node = null;
@@ -630,7 +636,8 @@ public class DOMAST extends ViewPart {
     * This is a callback that will allow us to create the viewer and initialize
     * it.
     */
-   public void createPartControl(Composite parent) {
+   @Override
+public void createPartControl(Composite parent) {
 
       if (part == null) {
          part = getActiveEditor();
@@ -804,7 +811,8 @@ public class DOMAST extends ViewPart {
 
    private void makeActions() {
 	   loadActiveEditorAction = new Action() {
-		   public void run() {
+		   @Override
+		public void run() {
 			   // first make sure there is an open editor
 			   IEditorPart editor = getActiveEditor();
 			   if (editor != null) {
@@ -817,7 +825,8 @@ public class DOMAST extends ViewPart {
 	   loadActiveEditorAction.setImageDescriptor(DOMASTPluginImages.DESC_RELOAD_VIEW);
 	   
 	   refreshAction = new Action() {
-		   public void run() {
+		   @Override
+		public void run() {
 			   // take a snapshot of the tree expansion
 			   Object[] expanded = viewer.getExpandedElements();
 			   
@@ -830,7 +839,8 @@ public class DOMAST extends ViewPart {
 	   refreshAction.setImageDescriptor(DOMASTPluginImages.DESC_REFRESH_VIEW);
 	   
 	   expandAllAction = new Action() {
-		   public void run() {
+		   @Override
+		public void run() {
 			   viewer.expandAll();
 		   }
 	   };
@@ -839,7 +849,8 @@ public class DOMAST extends ViewPart {
 	   expandAllAction.setImageDescriptor(DOMASTPluginImages.DESC_EXPAND_ALL);
 	   
 	   collapseAllAction = new Action() {
-		   public void run() {
+		   @Override
+		public void run() {
 			   viewer.collapseAll();
 		   }
 	   };
@@ -848,7 +859,8 @@ public class DOMAST extends ViewPart {
 	   collapseAllAction.setImageDescriptor(DOMASTPluginImages.DESC_COLLAPSE_ALL);
 	   
 	   clearAction = new Action() {
-		   public void run() {
+		   @Override
+		public void run() {
 			   viewer.setContentProvider(new ViewContentProvider(null));
 			   viewer.refresh();
 		   }
@@ -867,7 +879,8 @@ public class DOMAST extends ViewPart {
 			   dialog.open();
 		   }
 		   
-		   public void run() {
+		   @Override
+		public void run() {
 			   performSearch();
 		   }
 	   };
@@ -876,7 +889,8 @@ public class DOMAST extends ViewPart {
 	   searchNamesAction.setImageDescriptor(DOMASTPluginImages.DESC_SEARCH_NAMES);
 	   
 	   displayNodeTypeAction = new Action() { 
-		   public void run() {
+		   @Override
+		public void run() {
 			   ISelection selection = viewer.getSelection();
 			   if (selection instanceof IStructuredSelection &&
 					   ((IStructuredSelection)selection).getFirstElement() instanceof DOMASTNodeLeaf &&
@@ -889,7 +903,8 @@ public class DOMAST extends ViewPart {
 			   .getImageDescriptor(ISharedImages.IMG_OBJS_INFO_TSK));
 	   
 	   displayNodeSignatureAction = new Action() { 
-		   public void run() {
+		   @Override
+		public void run() {
 			   ISelection selection = viewer.getSelection();
 			   if (selection instanceof IStructuredSelection &&
 					   ((IStructuredSelection)selection).getFirstElement() instanceof DOMASTNodeLeaf &&
@@ -902,7 +917,8 @@ public class DOMAST extends ViewPart {
 			   .getImageDescriptor(ISharedImages.IMG_OBJS_INFO_TSK));
 	   
 	   displayExpressionAction = new Action() { 
-		   public void run() {
+		   @Override
+		public void run() {
 			   ISelection selection = viewer.getSelection();
 			   if (selection instanceof IStructuredSelection &&
 					   ((IStructuredSelection)selection).getFirstElement() instanceof DOMASTNodeLeaf &&
@@ -915,7 +931,8 @@ public class DOMAST extends ViewPart {
 			   .getImageDescriptor(ISharedImages.IMG_OBJS_INFO_TSK));
 	   
 	   displayInitializerAction = new Action() { 
-		   public void run() {
+		   @Override
+		public void run() {
 			   ISelection selection = viewer.getSelection();
 			   if (selection instanceof IStructuredSelection &&
 					   ((IStructuredSelection)selection).getFirstElement() instanceof DOMASTNodeLeaf &&
@@ -970,7 +987,8 @@ public class DOMAST extends ViewPart {
          return true;
       }
 
-      public void run() {
+      @Override
+	public void run() {
           ISelection selection = viewer.getSelection();
           Object obj = ((IStructuredSelection) selection).getFirstElement();
           if (obj instanceof DOMASTNodeLeaf) {
@@ -1034,7 +1052,8 @@ public class DOMAST extends ViewPart {
    /**
     * Passing the focus request to the viewer's control.
     */
-   public void setFocus() {
+   @Override
+public void setFocus() {
        if (viewer==null) return;
       viewer.getControl().setFocus();
 	  
@@ -1072,6 +1091,7 @@ public class DOMAST extends ViewPart {
 	/* (non-Javadoc)
 	 * @see org.eclipse.core.runtime.jobs.Job#run(org.eclipse.core.runtime.IProgressMonitor)
 	 */
+	@Override
 	protected IStatus run(IProgressMonitor monitor) {
 		try {
 			initializeASTViewJob.join();

@@ -1,13 +1,13 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2008 Wind River Systems, Inc. and others.
+ * Copyright (c) 2004, 2009 Wind River Systems, Inc. and others.
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Eclipse Public License v1.0 
  * which accompanies this distribution, and is available at 
  * http://www.eclipse.org/legal/epl-v10.html  
  * 
  * Contributors: 
- * Markus Schorn - initial API and implementation 
- * Emanuel Graf (Institute for Software, HSR Hochschule fuer Technik)
+ *    Markus Schorn - initial API and implementation 
+ *    Emanuel Graf (Institute for Software, HSR Hochschule fuer Technik)
  ******************************************************************************/ 
 package org.eclipse.cdt.internal.ui.refactoring.rename;
 
@@ -44,6 +44,7 @@ public class CRenameRefactoringInputPage extends UserInputWizardPage {
 
     public static final String PAGE_NAME = "RenameRefactoringPage"; //$NON-NLS-1$
     
+    private static final String KEY_IGNORE_VIRTUAL = "ignoreVirtual"; //$NON-NLS-1$
     private static final String KEY_REFERENCES_INV = "references_inv"; //$NON-NLS-1$
     private static final String KEY_COMMENT = "comment"; //$NON-NLS-1$
     private static final String KEY_STRING = "string"; //$NON-NLS-1$
@@ -62,6 +63,7 @@ public class CRenameRefactoringInputPage extends UserInputWizardPage {
     private int fEnableScopeOptions;
 
     private Text fNewName;
+	private Button fDoVirtual;
     private Button fWorkspace;
     private Button fDependent;
     private Button fInComment;
@@ -106,7 +108,7 @@ public class CRenameRefactoringInputPage extends UserInputWizardPage {
 
         // new name
         Composite group= top;
-        GridData gd;
+        GridData gd; GridLayout gl;
 
         Label l= new Label(group, SWT.NONE);
         l.setText(Messages.getString("CRenameRefactoringInputPage.newIdentifier.label")); //$NON-NLS-1$
@@ -114,33 +116,42 @@ public class CRenameRefactoringInputPage extends UserInputWizardPage {
         fNewName.setText(fSearchString);
         fNewName.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));        
         fNewName.selectAll();
+        
+        if (hasOption(CRefactory.OPTION_DO_VIRTUAL)) {
+        	fDoVirtual= new Button(group, SWT.CHECK);
+        	fDoVirtual.setText(Messages.getString("CRenameRefactoringInputPage.renameBaseAndDerivedMethods")); //$NON-NLS-1$
+        	fDoVirtual.setLayoutData(gd= new GridData());
+        	gd.horizontalSpan= 2;
+        }
 
-        boolean skippedLine= false;
         // specify the scope
         if (hasOption(CRefactory.OPTION_ASK_SCOPE)) {          
             skipLine(top);
             new Label(top, SWT.NONE).setText(Messages.getString("CRenameRefactoringInputPage.label.scope")); //$NON-NLS-1$
-            skippedLine= true;
             
             group= new Composite(top, SWT.NONE);
             group.setLayoutData(gd= new GridData(GridData.FILL_HORIZONTAL));
             gd.horizontalSpan= 2;
-            group.setLayout(new GridLayout(3, false));
+            group.setLayout(gl= new GridLayout(3, false));
+            gl.marginHeight= 0;
 
             fWorkspace= new Button(group, SWT.RADIO);
             fWorkspace.setText(Messages.getString("CRenameRefactoringInputPage.button.scope.workspace")); //$NON-NLS-1$
             fWorkspace.setLayoutData(gd= new GridData());
-            gd.horizontalSpan= 3;
             
             fDependent= new Button(group, SWT.RADIO);
             fDependent.setText(Messages.getString("CRenameRefactoringInputPage.button.scope.releatedprojects"));         //$NON-NLS-1$
             fDependent.setLayoutData(gd= new GridData());
-            gd.horizontalSpan= 3;
 
             fSingle= new Button(group, SWT.RADIO);
             fSingle.setText(Messages.getString("CRenameRefactoringInputPage.button.singleProject"));       //$NON-NLS-1$
             fSingle.setLayoutData(gd= new GridData());
-            gd.horizontalSpan= 3;
+
+            group= new Composite(top, SWT.NONE);
+            group.setLayoutData(gd= new GridData(GridData.FILL_HORIZONTAL));
+            gd.horizontalSpan= 2;
+            group.setLayout(gl= new GridLayout(3, false));
+            gl.marginHeight= 0;
 
             fWorkingSet= new Button(group, SWT.RADIO);
             fWorkingSet.setText(Messages.getString("CRenameRefactoringInputPage.button.workingSet")); //$NON-NLS-1$
@@ -152,6 +163,7 @@ public class CRenameRefactoringInputPage extends UserInputWizardPage {
             setButtonLayoutData(fWorkingSetButton);
         }
 
+        boolean skippedLine= false;
         group= null;
         if (hasOption(CRefactory.OPTION_IN_CODE)) {
             group= createLabelAndGroup(group, skippedLine, top);
@@ -245,6 +257,7 @@ public class CRenameRefactoringInputPage extends UserInputWizardPage {
                 onSelectOption();
             }
         };
+        registerOptionListener(fDoVirtual, listenOption);
         registerOptionListener(fReferences, listenOption);
         registerOptionListener(fInComment, listenOption);
         registerOptionListener(fInInactiveCode, listenOption);
@@ -331,6 +344,10 @@ public class CRenameRefactoringInputPage extends UserInputWizardPage {
             processor.setWorkingSet(workingSet);
         }
         
+        if (fDoVirtual != null) {
+            boolean val= !fDialogSettings.getBoolean(KEY_IGNORE_VIRTUAL);
+            fDoVirtual.setSelection(val);
+        }
         if (fReferences != null) {
             boolean val= !fDialogSettings.getBoolean(KEY_REFERENCES_INV);
             fReferences.setSelection(val);
@@ -345,6 +362,7 @@ public class CRenameRefactoringInputPage extends UserInputWizardPage {
 
     private int computeSelectedOptions() {
         int options= 0;
+        options |= computeOption(fDoVirtual, CRefactory.OPTION_DO_VIRTUAL);
         options |= computeOption(fReferences, CRefactory.OPTION_IN_CODE);
         options |= computeOption(fInComment, CRefactory.OPTION_IN_COMMENT);
         options |= computeOption(fInString, CRefactory.OPTION_IN_STRING_LITERAL);
@@ -394,6 +412,9 @@ public class CRenameRefactoringInputPage extends UserInputWizardPage {
             }
             fDialogSettings.put(KEY_SCOPE, choice);
             fDialogSettings.put(KEY_WORKING_SET_NAME, fWorkingSetSpec.getText());
+        }
+        if (fDoVirtual != null) {
+            fDialogSettings.put(KEY_IGNORE_VIRTUAL, !fDoVirtual.getSelection());
         }
         if (fReferences != null) {
             fDialogSettings.put(KEY_REFERENCES_INV, !fReferences.getSelection());

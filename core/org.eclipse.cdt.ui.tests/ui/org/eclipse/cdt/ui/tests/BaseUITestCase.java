@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2008 Wind River Systems, Inc. and others.
+ * Copyright (c) 2006, 2009 Wind River Systems, Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -72,6 +72,11 @@ public class BaseUITestCase extends BaseTestCase {
 	@Override
 	protected void setUp() throws Exception {
 		super.setUp();
+		final IWorkbenchPage activePage = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage();
+		IViewPart view= activePage.findView("org.eclipse.cdt.ui.tests.DOMAST.DOMAST");
+		if (view != null) {
+			activePage.hideView(view);
+		}
 	}
 
 	/* (non-Javadoc)

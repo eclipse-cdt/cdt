@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2008 Wind River Systems, Inc. and others.
+ * Copyright (c) 2004, 2009 Wind River Systems, Inc. and others.
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Eclipse Public License v1.0 
  * which accompanies this distribution, and is available at 
@@ -43,6 +43,7 @@ public class CRefactory {
     public static final int OPTION_IN_PREPROCESSOR_DIRECTIVE 	= 0x20;
     public static final int OPTION_IN_INACTIVE_CODE 			= 0x40;
     public static final int OPTION_IN_CODE 						= 0x80;
+    public static final int OPTION_DO_VIRTUAL					= 0x100;
 
     public static final int ARGUMENT_UNKNOWN				=  0;
     public static final int ARGUMENT_LOCAL_VAR				=  1;

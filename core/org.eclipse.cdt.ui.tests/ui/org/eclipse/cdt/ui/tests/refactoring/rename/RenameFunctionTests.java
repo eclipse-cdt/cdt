@@ -1,14 +1,13 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2007 Wind River Systems, Inc.
+ * Copyright (c) 2005, 2009 Wind River Systems, Inc.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- * Markus Schorn - initial API and implementation 
+ *    Markus Schorn - initial API and implementation 
  *******************************************************************************/
-
 package org.eclipse.cdt.ui.tests.refactoring.rename;
 
 import java.io.StringWriter;
@@ -20,9 +19,6 @@ import org.eclipse.core.resources.IFile;
 import org.eclipse.ltk.core.refactoring.Change;
 import org.eclipse.ltk.core.refactoring.RefactoringStatus;
 
-/**
- * @author markus.schorn@windriver.com
- */
 public class RenameFunctionTests extends RenameTests {
 
     public RenameFunctionTests(String name) {
@@ -813,7 +809,7 @@ public class RenameFunctionTests extends RenameTests {
         IFile cpp= importFile("test.cpp", contents ); //$NON-NLS-1$
         int offset =  contents.indexOf("mthd") ; //$NON-NLS-1$
         offset=  contents.indexOf("mthd", offset+1) ; //$NON-NLS-1$        
-        RefactoringStatus status= checkConditions(cpp, offset, "xxx"); //$NON-NLS-1$
-        assertRefactoringWarning(status, "Renaming a virtual method. Consider renaming the base and derived class methods (if any)."); //$NON-NLS-1$
+        Change changes = getRefactorChanges(cpp, offset, "z"); //$NON-NLS-1$
+        assertTotalChanges( 2, changes );
     }
 }

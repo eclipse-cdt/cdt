@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2008 Wind River Systems, Inc. and others.
+ * Copyright (c) 2004, 2009 Wind River Systems, Inc. and others.
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Eclipse Public License v1.0 
  * which accompanies this distribution, and is available at 
@@ -11,7 +11,6 @@
  ******************************************************************************/ 
 package org.eclipse.cdt.internal.ui.refactoring.rename;
 
-import com.ibm.icu.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -35,7 +34,10 @@ import org.eclipse.text.edits.MultiTextEdit;
 import org.eclipse.text.edits.ReplaceEdit;
 import org.eclipse.text.edits.TextEditGroup;
 
+import com.ibm.icu.text.MessageFormat;
+
 import org.eclipse.cdt.core.dom.ast.IBinding;
+import org.eclipse.cdt.core.index.IIndex;
 import org.eclipse.cdt.ui.refactoring.CTextFileChange;
 
 
@@ -89,6 +91,9 @@ public abstract class CRenameProcessorDelegate {
     }
     final public ASTManager getAstManager() {
         return fTopProcessor.getAstManager();
+    }
+    final public IIndex getIndex() {
+    	return fTopProcessor.getIndex();
     }
     final public String getProcessorName() {
         String identifier= getArgument().getName();

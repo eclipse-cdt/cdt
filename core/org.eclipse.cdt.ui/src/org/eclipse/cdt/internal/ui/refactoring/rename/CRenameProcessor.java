@@ -1,16 +1,15 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2008 Wind River Systems, Inc. and others.
+ * Copyright (c) 2004, 2009 Wind River Systems, Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- * Markus Schorn - initial API and implementation 
+ *    Markus Schorn - initial API and implementation 
  *******************************************************************************/
 package org.eclipse.cdt.internal.ui.refactoring.rename;
 
-import com.ibm.icu.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -31,8 +30,11 @@ import org.eclipse.ltk.core.refactoring.participants.RenameParticipant;
 import org.eclipse.ltk.core.refactoring.participants.RenameProcessor;
 import org.eclipse.ltk.core.refactoring.participants.SharableParticipants;
 
+import com.ibm.icu.text.MessageFormat;
+
 import org.eclipse.cdt.core.CCProjectNature;
 import org.eclipse.cdt.core.CCorePlugin;
+import org.eclipse.cdt.core.CProjectNature;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.index.IIndex;
 import org.eclipse.cdt.core.model.CoreModel;
@@ -159,9 +161,9 @@ public class CRenameProcessor extends RenameProcessor {
         	case CRefactory.ARGUMENT_GLOBAL_FUNCTION:
                 return new CRenameGlobalProcessor(this, Messages.getString("CRenameTopProcessor.globalFunction")); //$NON-NLS-1$
         	case CRefactory.ARGUMENT_VIRTUAL_METHOD:
-                return new CRenameMethodProcessor(this, Messages.getString("CRenameTopProcessor.virtualMethod")); //$NON-NLS-1$
+                return new CRenameMethodProcessor(this, Messages.getString("CRenameTopProcessor.virtualMethod"), true); //$NON-NLS-1$
         	case CRefactory.ARGUMENT_NON_VIRTUAL_METHOD:
-                return new CRenameMethodProcessor(this, Messages.getString("CRenameTopProcessor.method")); //$NON-NLS-1$
+                return new CRenameMethodProcessor(this, Messages.getString("CRenameTopProcessor.method"), false); //$NON-NLS-1$
             case CRefactory.ARGUMENT_CLASS_TYPE:                
                 return new CRenameClassProcessor(this, Messages.getString("CRenameTopProcessor.type")); //$NON-NLS-1$
             case CRefactory.ARGUMENT_NAMESPACE:
@@ -198,7 +200,7 @@ public class CRenameProcessor extends RenameProcessor {
             SharableParticipants sharedParticipants) throws CoreException {
         RenameArguments arguments= new RenameArguments(getReplacementText(), 
                 true);
-        final String[] natures= {CCProjectNature.CC_NATURE_ID, CCProjectNature.C_NATURE_ID};
+        final String[] natures= {CCProjectNature.CC_NATURE_ID, CProjectNature.C_NATURE_ID};
         List<RenameParticipant> result= new ArrayList<RenameParticipant>();
         IBinding binding= getArgument().getBinding();
         if (binding != null) {

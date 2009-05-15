@@ -1,12 +1,12 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2008 IBM Corporation and others.
+ * Copyright (c) 2004, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *     IBM Corporation - initial API and implementation
+ *     Andrew Niefer (IBM Corporation) - initial API and implementation
  *     Wind River Systems Inc. - ported for new rename implementation
  *******************************************************************************/
 package org.eclipse.cdt.ui.tests.refactoring.rename;
@@ -25,9 +25,6 @@ import org.eclipse.ltk.core.refactoring.participants.RenameArguments;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.tests.FailingTest;
 
-/**
- * @author aniefer
- */
 public class RenameRegressionTests extends RenameTests {
 
     public RenameRegressionTests() {
@@ -607,10 +604,11 @@ public class RenameRegressionTests extends RenameTests {
     IFile file = importFile( "t.cpp", contents ); //$NON-NLS-1$
     //vp1 implicit virtual method
     int offset =  contents.indexOf( "v/*vp1*/" ) ; //$NON-NLS-1$
-    String[] messages= getRefactorMessages( file, offset, "v2" ); //$NON-NLS-1$
-    assertEquals(1, messages.length);
-    assertEquals("Renaming a virtual method. Consider renaming the base and derived class methods (if any).", messages[0] );   //$NON-NLS-1$
-       
+    Change changes = getRefactorChanges(file, offset, "v1" ); //$NON-NLS-1$
+    assertTotalChanges( 3, changes );
+    assertChange( changes, file, contents.indexOf("v()"), 1, "v1" );  //$NON-NLS-1$//$NON-NLS-2$
+    assertChange( changes, file, contents.indexOf("v/*vp1*/"), 1, "v1" );  //$NON-NLS-1$//$NON-NLS-2$
+    assertChange( changes, file, contents.indexOf("v(){"), 1, "v1" );  //$NON-NLS-1$//$NON-NLS-2$       
 }
    public void testMethod_45() throws Exception {
         StringWriter writer = new StringWriter();
@@ -627,15 +625,18 @@ public class RenameRegressionTests extends RenameTests {
         writer.write( "};                       \n" ); //$NON-NLS-1$
         String contents = writer.toString();
         IFile file = importFile( "t.cpp", contents ); //$NON-NLS-1$
+        waitForIndexer();
         //vp1 implicit virtual method
         int offset =  contents.indexOf( "v/*vp1*/" ) ; //$NON-NLS-1$
-        String[] messages= getRefactorMessages( file, offset, "v2" ); //$NON-NLS-1$
-        assertEquals(1, messages.length);
-        assertEquals("Renaming a virtual method. Consider renaming the base and derived class methods (if any).", messages[0] );   //$NON-NLS-1$
-      
-    
+        Change changes = getRefactorChanges(file, offset, "v1" ); //$NON-NLS-1$
+        assertTotalChanges( 4, changes );
+        assertChange( changes, file, contents.indexOf("v()"), 1, "v1" );  //$NON-NLS-1$//$NON-NLS-2$
+        assertChange( changes, file, contents.indexOf("v(){}"), 1, "v1" );  //$NON-NLS-1$//$NON-NLS-2$
+        assertChange( changes, file, contents.indexOf("v/*vp1*/"), 1, "v1" );  //$NON-NLS-1$//$NON-NLS-2$
+        assertChange( changes, file, contents.indexOf("v(){i"), 1, "v1" );  //$NON-NLS-1$//$NON-NLS-2$       
     }
-    public void testStruct_46() throws Exception {
+
+   public void testStruct_46() throws Exception {
         StringWriter writer = new StringWriter();
         writer.write( "struct st1/*vp1*/{};             \n" ); //$NON-NLS-1$
         writer.write( "class c1/*vp1*/{                 \n" ); //$NON-NLS-1$

@@ -167,6 +167,7 @@ import org.eclipse.swt.widgets.Menu;
 import org.eclipse.ui.IActionBars;
 import org.eclipse.ui.IPartListener2;
 import org.eclipse.ui.IWorkbenchActionConstants;
+import org.eclipse.ui.IWorkbenchCommandConstants;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.IWorkbenchPartReference;
 import org.eclipse.ui.IWorkbenchPartSite;
@@ -185,7 +186,6 @@ import org.eclipse.ui.texteditor.ChainedPreferenceStore;
 import org.eclipse.ui.texteditor.DefaultMarkerAnnotationAccess;
 import org.eclipse.ui.texteditor.ITextEditorActionConstants;
 import org.eclipse.ui.texteditor.IUpdate;
-import org.eclipse.ui.texteditor.IWorkbenchActionDefinitionIds;
 import org.eclipse.ui.texteditor.MarkerAnnotationPreferences;
 import org.eclipse.ui.texteditor.SimpleMarkerAnnotation;
 import org.eclipse.ui.texteditor.SourceViewerDecorationSupport;
@@ -1366,17 +1366,17 @@ public abstract class DisassemblyPart extends WorkbenchPart implements IDisassem
 		action.setText(DisassemblyMessages.Disassembly_action_Copy_label);
 		action.setImageDescriptor(DisassemblyImageRegistry.getImageDescriptor(DisassemblyImageRegistry.ICON_Copy_enabled));
 		action.setDisabledImageDescriptor(DisassemblyImageRegistry.getImageDescriptor(DisassemblyImageRegistry.ICON_Copy_disabled));
-		action.setActionDefinitionId(IWorkbenchActionDefinitionIds.COPY);
+		action.setActionDefinitionId(IWorkbenchCommandConstants.EDIT_COPY);
 		fGlobalActions.put(ITextEditorActionConstants.COPY, action);
 		fSelectionActions.add(action);
 
 		action= new TextOperationAction(fViewer, ITextOperationTarget.SELECT_ALL);
 		action.setText(DisassemblyMessages.Disassembly_action_SelectAll_label);
-		action.setActionDefinitionId(IWorkbenchActionDefinitionIds.SELECT_ALL);
+		action.setActionDefinitionId(IWorkbenchCommandConstants.EDIT_SELECT_ALL);
 		fGlobalActions.put(ITextEditorActionConstants.SELECT_ALL, action);
 
 		action= new TextOperationAction(fViewer, ITextOperationTarget.PRINT);
-		action.setActionDefinitionId(IWorkbenchActionDefinitionIds.PRINT);
+		action.setActionDefinitionId(IWorkbenchCommandConstants.FILE_PRINT);
 		fGlobalActions.put(ITextEditorActionConstants.PRINT, action);
 
 		fActionGotoPC = new ActionGotoProgramCounter(this);
@@ -3357,7 +3357,7 @@ public abstract class DisassemblyPart extends WorkbenchPart implements IDisassem
             if (pos instanceof DisassemblyPosition) {
             	srcLine = ((DisassemblyPosition)pos).getLine();
             }
-            bp= CDIDebugModel.createLineBreakpoint(filePath, resource, srcLine + 1, ICBreakpointType.REGULAR, true, 0, "", true); //$NON-NLS-1$
+            bp= CDIDebugModel.createLineBreakpoint(filePath, resource, ICBreakpointType.REGULAR, srcLine + 1, true, 0, "", true); //$NON-NLS-1$
     	} else {
     		resource = ResourcesPlugin.getWorkspace().getRoot();
     		BigInteger address = getAddressOfLine(line);

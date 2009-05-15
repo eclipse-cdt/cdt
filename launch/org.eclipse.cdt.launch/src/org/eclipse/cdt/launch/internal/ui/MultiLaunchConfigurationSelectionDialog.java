@@ -6,6 +6,7 @@ import java.util.Iterator;
 
 import org.eclipse.cdt.launch.internal.MultiLaunchConfigurationDelegate;
 import org.eclipse.cdt.launch.internal.MultiLaunchConfigurationDelegate.LaunchElement;
+import org.eclipse.cdt.launch.internal.MultiLaunchConfigurationDelegate.LaunchElement.EPostLaunchAction;
 import org.eclipse.cdt.launch.ui.ComboControlledStackComposite;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.debug.core.DebugPlugin;
@@ -28,6 +29,8 @@ import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.viewers.ViewerFilter;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.ModifyEvent;
+import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.Rectangle;
@@ -39,6 +42,7 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
+import org.eclipse.swt.widgets.Text;
 import org.eclipse.swt.widgets.Tree;
 import org.eclipse.ui.dialogs.FilteredTree;
 import org.eclipse.ui.dialogs.PatternFilter;
@@ -53,12 +57,15 @@ public class MultiLaunchConfigurationSelectionDialog extends TitleAreaDialog imp
 	private ISelection fSelection;
 	private ILaunchGroup[] launchGroups;
 	private String mode;
-	private String action;
+	private EPostLaunchAction action = EPostLaunchAction.NONE;
+	private Object actionParam;
 	private boolean isDefaultMode;
 	private ViewerFilter emptyTypeFilter;
 	private IStructuredSelection fInitialSelection;
 	private ComboControlledStackComposite fStackComposite;
-
+	private Label fDelayAmountLabel;
+	private Text fDelayAmountWidget; // in seconds
+	
 	public MultiLaunchConfigurationSelectionDialog(Shell shell, String title, String initMode) {
 		super(shell);
 		LaunchConfigurationManager manager = DebugUIPlugin.getDefault().getLaunchConfigurationManager();
@@ -178,20 +185,54 @@ public class MultiLaunchConfigurationSelectionDialog extends TitleAreaDialog imp
 
 	private void createPostLaunchControl(Composite parent) {
 		Composite comp = new Composite(parent, SWT.NONE);
-		comp.setLayout(new GridLayout(2, false));
+		comp.setLayout(new GridLayout(4, false));
 		comp.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		Label label = new Label(comp, SWT.NONE);
 		label.setText(LaunchMessages.getString("MultiLaunchConfigurationSelectionDialog.8")); //$NON-NLS-1$
 		Combo combo = new Combo(comp, SWT.READ_ONLY);
-		combo.add(LaunchElement.POST_LAUNCH_CONTINUE);
-		combo.add(LaunchElement.POST_LAUNCH_WAIT_FOR_TERM);
-		combo.add(LaunchElement.POST_LAUNCH_DELAY_3_SEC);
+		combo.add(LaunchElement.actionEnumToStr(EPostLaunchAction.NONE));
+		combo.add(LaunchElement.actionEnumToStr(EPostLaunchAction.WAIT_FOR_TERMINATION));
+		combo.add(LaunchElement.actionEnumToStr(EPostLaunchAction.DELAY));
 		combo.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
-				action = ((Combo) e.widget).getText();
+				final String actionStr = ((Combo) e.widget).getText();
+				action = MultiLaunchConfigurationDelegate.LaunchElement.strToActionEnum(actionStr);
+				showHideDelayAmountWidgets();
+				validate();
 			}
 		});
-		combo.setText(action==null?LaunchElement.POST_LAUNCH_CONTINUE:action);
+		combo.setText(MultiLaunchConfigurationDelegate.LaunchElement.actionEnumToStr(action));
+		
+		fDelayAmountLabel = new Label(comp, SWT.NONE);
+		fDelayAmountLabel.setText(LaunchMessages.getString("MultiLaunchConfigurationSelectionDialog.9")); //$NON-NLS-1$
+		
+		fDelayAmountWidget = new Text(comp, SWT.SINGLE | SWT.BORDER);
+		GridData gridData = new GridData();
+		gridData.widthHint = convertWidthInCharsToPixels(8);
+		fDelayAmountWidget.setLayoutData(gridData);
+		fDelayAmountWidget.addModifyListener(new ModifyListener(){
+			public void modifyText(ModifyEvent e) {
+				String text = ((Text)e.widget).getText();
+				try {
+					actionParam = new Integer(Integer.parseInt(text));
+				}
+				catch (NumberFormatException exc) {
+					actionParam = null;
+				}
+				validate();
+			}
+		});
+		if (actionParam instanceof Integer) {
+			fDelayAmountWidget.setText(((Integer)actionParam).toString());	
+		}
+		
+		showHideDelayAmountWidgets();
+	}
+
+	private void showHideDelayAmountWidgets() {
+		final boolean visible = action == EPostLaunchAction.DELAY;
+		fDelayAmountLabel.setVisible(visible);
+		fDelayAmountWidget.setVisible(visible);
 	}
 
 	public ILaunchConfiguration getSelectedLaunchConfiguration() {
@@ -207,8 +248,12 @@ public class MultiLaunchConfigurationSelectionDialog extends TitleAreaDialog imp
 		return isDefaultMode ? MultiLaunchConfigurationDelegate.DEFAULT_MODE : mode;
 	}
 	
-	public String getAction(){
+	public EPostLaunchAction getAction(){
 		return action;
+	}
+
+	public Object getActionParam(){
+		return actionParam;
 	}
 
 	public static MultiLaunchConfigurationSelectionDialog createDialog(Shell shell, String title, String groupId) {
@@ -243,8 +288,7 @@ public class MultiLaunchConfigurationSelectionDialog extends TitleAreaDialog imp
 		boolean selectionIsForVisibleViewer = false;
 		final Object src = event.getSource();
 		if (src instanceof Viewer) {
-			final Viewer viewer = (Viewer)src;
-			final Control viewerControl = viewer.getControl();
+			final Control viewerControl = ((Viewer)src).getControl();
 			if (viewerControl == topTree) {
 				selectionIsForVisibleViewer = true;
 			}
@@ -260,17 +304,28 @@ public class MultiLaunchConfigurationSelectionDialog extends TitleAreaDialog imp
 
 	protected void validate() {
 		Button ok_button = getButton(IDialogConstants.OK_ID);
+		boolean isValid = true;
 		if (getSelectedLaunchConfiguration() == null) {
 			setErrorMessage(LaunchMessages.getString("MultiLaunchConfigurationSelectionDialog.7")); //$NON-NLS-1$
-			if (ok_button!=null) ok_button.setEnabled(false);
+			isValid = false;
 		} else {
 			setErrorMessage(null);
-			if (ok_button!=null) ok_button.setEnabled(true);
 		}
+
+		if (isValid) {
+			if (action == EPostLaunchAction.DELAY) {
+				isValid = (actionParam instanceof Integer) && ((Integer)actionParam > 0);
+				setErrorMessage(isValid ? null : LaunchMessages.getString("MultiLaunchConfigurationSelectionDialog.10")); //$NON-NLS-1$
+			}
+		}
+		
+		if (ok_button != null) 
+			ok_button.setEnabled(isValid);
 	}
 
 	public void setInitialSelection(LaunchElement el) {
 		action = el.getAction();
+		actionParam = el.getActionParam();
 		isDefaultMode = el.getMode().equals(MultiLaunchConfigurationDelegate.DEFAULT_MODE);
 	    fInitialSelection = new StructuredSelection(el.getData());   
 	    fSelection = fInitialSelection;

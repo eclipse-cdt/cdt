@@ -5,6 +5,7 @@ import java.util.Iterator;
 
 import org.eclipse.cdt.launch.internal.MultiLaunchConfigurationDelegate;
 import org.eclipse.cdt.launch.internal.MultiLaunchConfigurationDelegate.LaunchElement;
+import org.eclipse.cdt.launch.internal.MultiLaunchConfigurationDelegate.LaunchElement.EPostLaunchAction;
 import org.eclipse.cdt.launch.ui.CommonTabLite;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.debug.core.ILaunchConfiguration;
@@ -56,9 +57,10 @@ public class MultiLaunchConfigurationTabGroup extends AbstractLaunchConfiguratio
 			input = null;
 		}
 
+		@SuppressWarnings("unchecked") // nothing we can do about this
 		public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
-			if (newInput instanceof ArrayList)
-				input = (ArrayList) newInput;
+			if (newInput instanceof ArrayList<?>)
+				input = (ArrayList<LaunchElement>) newInput;
 		}
 
 		public Object[] getChildren(Object parentElement) {
@@ -106,16 +108,37 @@ public class MultiLaunchConfigurationTabGroup extends AbstractLaunchConfiguratio
 			if (!(element instanceof MultiLaunchConfigurationDelegate.LaunchElement))
 				return null;
 			MultiLaunchConfigurationDelegate.LaunchElement el = (MultiLaunchConfigurationDelegate.LaunchElement) element;
-			if (columnIndex == 0)
+			
+			// launch name
+			if (columnIndex == 0) {
 				try {
 					return (el.getData() != null) ? el.getData().getType().getName() + "::" + el.getName() : el.getName(); //$NON-NLS-1$
 				} catch (CoreException e) {
 					return el.getName();
 				}
+			}
+
+			// launch mode 
 			if (columnIndex == 1)
 				return el.getMode();
-			if (columnIndex == 2)
-				return el.getAction();
+			
+			// launch post action
+			if (columnIndex == 2) {
+				EPostLaunchAction action = el.getAction();
+				switch (action) {
+				case NONE:
+					return ""; //$NON-NLS-1$
+				case WAIT_FOR_TERMINATION:
+					return LaunchMessages.getString("MultiLaunchConfigurationDelegate.Action.WaitUntilTerminated"); //$NON-NLS-1$
+				case DELAY:
+					final Object actionParam = el.getActionParam();
+					return LaunchMessages.getFormattedString("MultiLaunchConfigurationTabGroup.13", //$NON-NLS-1$
+							actionParam instanceof Integer ? Integer.toString((Integer)actionParam) : "?"); //$NON-NLS-1$
+				default:
+					assert false : "new post launch action missing logic here"; //$NON-NLS-1$
+					return ""; //$NON-NLS-1$
+				}
+			}
 			return null;
 		}
 	}
@@ -190,7 +213,7 @@ public class MultiLaunchConfigurationTabGroup extends AbstractLaunchConfiguratio
 	}
 	static class GroupLaunchTab extends AbstractLaunchConfigurationTab {
 		protected CheckboxTreeViewer treeViewer;
-		protected ArrayList input = new ArrayList();
+		protected ArrayList<LaunchElement> input = new ArrayList<LaunchElement>();
 		private String mode;
 
 		public GroupLaunchTab(String mode) {
@@ -216,7 +239,7 @@ public class MultiLaunchConfigurationTabGroup extends AbstractLaunchConfiguratio
 			col2.setText(LaunchMessages.getString("MultiLaunchConfigurationTabGroup.7")); //$NON-NLS-1$
 			col2.setWidth(100);
 			TreeColumn col3 = new TreeColumn(table, SWT.NONE);
-			col3.setText("Action");
+			col3.setText(LaunchMessages.getString("MultiLaunchConfigurationTabGroup.12")); //$NON-NLS-1$
 			col3.setWidth(100);
 		
 			treeViewer.setInput(input);
@@ -236,7 +259,7 @@ public class MultiLaunchConfigurationTabGroup extends AbstractLaunchConfiguratio
 						el.setName(conf.getName());
 						el.setData(conf);
 						el.setMode(dialog.getMode());
-						el.setAction(dialog.getAction());
+						el.setAction(dialog.getAction(), dialog.getActionParam());
 						treeViewer.refresh(true);
 						treeViewer.setChecked(el, el.isEnabled());
 						updateWidgetEnablement();
@@ -256,8 +279,7 @@ public class MultiLaunchConfigurationTabGroup extends AbstractLaunchConfiguratio
 					int index = getSelIndex();
 					if (index < 0)
 						return;
-					MultiLaunchConfigurationDelegate.LaunchElement el = (MultiLaunchConfigurationDelegate.LaunchElement) input
-					        .get(index);
+					MultiLaunchConfigurationDelegate.LaunchElement el = input.get(index);
 					MultiLaunchConfigurationSelectionDialog dialog = MultiLaunchConfigurationSelectionDialog.createDialog(treeViewer
 					        .getControl().getShell(), LaunchMessages.getString("MultiLaunchConfigurationTabGroup.9"),  //$NON-NLS-1$
 					        el.getMode()
@@ -269,7 +291,7 @@ public class MultiLaunchConfigurationTabGroup extends AbstractLaunchConfiguratio
 						el.setName(conf.getName());
 						el.setData(conf);
 						el.setMode(dialog.getMode());
-						el.setAction(dialog.getAction());
+						el.setAction(dialog.getAction(), dialog.getActionParam());
 						treeViewer.refresh(true);
 						updateWidgetEnablement();
 						updateLaunchConfigurationDialog();
@@ -298,8 +320,7 @@ public class MultiLaunchConfigurationTabGroup extends AbstractLaunchConfiguratio
 					if (!isDownEnabled()) return;
 					int index = getSelIndex();
 					
-					MultiLaunchConfigurationDelegate.LaunchElement x = (MultiLaunchConfigurationDelegate.LaunchElement) input
-					        .get(index);
+					MultiLaunchConfigurationDelegate.LaunchElement x = input.get(index);
 					input.set(index, input.get(index + 1));
 					input.set(index + 1, x);
 					treeViewer.refresh(true);
@@ -324,8 +345,7 @@ public class MultiLaunchConfigurationTabGroup extends AbstractLaunchConfiguratio
 				protected void upPressed() {
 					if (!isUpEnabled()) return;
 					int index = getSelIndex();
-					MultiLaunchConfigurationDelegate.LaunchElement x = (MultiLaunchConfigurationDelegate.LaunchElement) input
-					        .get(index);
+					MultiLaunchConfigurationDelegate.LaunchElement x = input.get(index);
 					input.set(index, input.get(index - 1));
 					input.set(index - 1, x);
 					treeViewer.refresh(true);
@@ -365,9 +385,8 @@ public class MultiLaunchConfigurationTabGroup extends AbstractLaunchConfiguratio
 		public void initializeFrom(ILaunchConfiguration configuration) {
 			MultiLaunchConfigurationDelegate.createLaunchElements(configuration, input);
 			if (treeViewer != null) {
-				for (Iterator iterator = input.iterator(); iterator.hasNext();) {
-					MultiLaunchConfigurationDelegate.LaunchElement el = (MultiLaunchConfigurationDelegate.LaunchElement) iterator
-					        .next();
+				for (Iterator<LaunchElement> iterator = input.iterator(); iterator.hasNext();) {
+					MultiLaunchConfigurationDelegate.LaunchElement el = iterator.next();
 					treeViewer.setChecked(el, el.isEnabled());
 				}
 				treeViewer.refresh(true);

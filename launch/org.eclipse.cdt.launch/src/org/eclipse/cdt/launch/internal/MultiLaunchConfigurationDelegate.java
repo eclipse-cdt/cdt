@@ -5,6 +5,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 
+import org.eclipse.cdt.launch.internal.MultiLaunchConfigurationDelegate.LaunchElement.EPostLaunchAction;
 import org.eclipse.cdt.launch.internal.ui.LaunchMessages;
 import org.eclipse.cdt.launch.internal.ui.LaunchUIPlugin;
 import org.eclipse.core.resources.IProject;
@@ -36,18 +37,56 @@ public class MultiLaunchConfigurationDelegate extends LaunchConfigurationDelegat
 	private static final String NAME_PROP = "name"; //$NON-NLS-1$
 	private static final String ENABLED_PROP = "enabled"; //$NON-NLS-1$
 	private static final String MODE_PROP = "mode"; //$NON-NLS-1$
-	private static final String ACTION_PROP = "action"; //$NON-NLS-1$
+	private static final String ACTION_PROP = "action"; //$NON-NLS-1$ 
+	private static final String ACTION_PARAM_PROP = "actionParam"; //$NON-NLS-1$
 	public static String MULTI_LAUNCH_CONSTANTS_PREFIX = "org.eclipse.cdt.launch.launchGroup"; //$NON-NLS-1$
 
 	public static class LaunchElement {
-		public static final String POST_LAUNCH_WAIT_FOR_TERM = "wait";
-		public static final String POST_LAUNCH_CONTINUE = "";
-		public static final String POST_LAUNCH_DELAY_3_SEC = "delay 3s";
-		public static final String POST_LAUNCH_DELAY_PREFIX = "delay";
+		public static enum EPostLaunchAction {
+			NONE,
+			WAIT_FOR_TERMINATION,
+			DELAY
+		};
+		/**
+		 * Allows us decouple the enum identifier in the code from its textual representation in the GUI
+		 */
+		public static String actionEnumToStr(EPostLaunchAction action) {
+			switch (action) {
+			case NONE:
+				return LaunchMessages.getString("MultiLaunchConfigurationDelegate.Action.None"); //$NON-NLS-1$
+			case WAIT_FOR_TERMINATION:
+				return LaunchMessages.getString("MultiLaunchConfigurationDelegate.Action.WaitUntilTerminated"); //$NON-NLS-1$
+			case DELAY:
+				return LaunchMessages.getString("MultiLaunchConfigurationDelegate.Action.Delay"); //$NON-NLS-1$
+			default:
+				assert false : "new post launch action type is missing logic"; //$NON-NLS-1$
+				return LaunchMessages.getString("MultiLaunchConfigurationDelegate.Action.None"); //$NON-NLS-1$
+			}
+		}
+		/**
+		 * Allows us decouple the enum identifier in the code from its textual representation in the GUI
+		 */
+		public static EPostLaunchAction strToActionEnum(String str) {
+			if (str.equals(LaunchMessages.getString("MultiLaunchConfigurationDelegate.Action.None"))) { //$NON-NLS-1$
+				return EPostLaunchAction.NONE;
+			}
+			else if (str.equals(LaunchMessages.getString("MultiLaunchConfigurationDelegate.Action.WaitUntilTerminated"))) { //$NON-NLS-1$
+				return EPostLaunchAction.WAIT_FOR_TERMINATION;
+			}
+			else if (str.equals(LaunchMessages.getString("MultiLaunchConfigurationDelegate.Action.Delay"))) { //$NON-NLS-1$
+				return EPostLaunchAction.DELAY;
+			}
+			else {
+				assert false : "new post launch action type is missing logic"; //$NON-NLS-1$
+				return EPostLaunchAction.NONE;
+			}
+		}
+		
 		private int index;
 		private boolean enabled;
 		private String mode;
-		private String action;
+		private EPostLaunchAction action;
+		private Object actionParam;
 		private String name;
 		private ILaunchConfiguration data;
 		public void setName(String name) {
@@ -56,11 +95,15 @@ public class MultiLaunchConfigurationDelegate extends LaunchConfigurationDelegat
 		public String getName() {
 			return name;
 		}
-		public void setAction(String action) {
+		public void setAction(EPostLaunchAction action, Object actionParam) {
 			this.action = action;
+			this.actionParam = actionParam;
 		}
-		public String getAction() {
+		public EPostLaunchAction getAction() {
 			return action;
+		}
+		public Object getActionParam() {
+			return actionParam;
 		}
 		public void setMode(String mode) {
 			this.mode = mode;
@@ -218,7 +261,8 @@ public class MultiLaunchConfigurationDelegate extends LaunchConfigurationDelegat
 					// So, fake another event now.
 					listener.launchChanged(subLaunch);
 
-					postLaunchAction(subLaunch, le.getAction(), monitor);
+					postLaunchAction(subLaunch, le.getAction(), le.getActionParam(), monitor);
+					
 
 				} catch (StackOverflowError e) {
 					PlatformUI.getWorkbench().getDisplay().asyncExec(new Runnable() {
@@ -241,10 +285,13 @@ public class MultiLaunchConfigurationDelegate extends LaunchConfigurationDelegat
 		}
 	}
 
-	private void postLaunchAction(ILaunch subLaunch, String action, IProgressMonitor monitor) {
-		if (action==null) return;
-		if (LaunchElement.POST_LAUNCH_WAIT_FOR_TERM.equals(action)) {
-			monitor.subTask("Waiting for termination of "+subLaunch.getLaunchConfiguration().getName());
+	private void postLaunchAction(ILaunch subLaunch, EPostLaunchAction action, Object actionParam, IProgressMonitor monitor) {
+		switch (action) {
+		case NONE:
+			return;
+		case WAIT_FOR_TERMINATION:
+			
+			monitor.subTask(LaunchMessages.getString("MultiLaunchConfigurationDelegate.Action.WaitingForTermination") + " " + subLaunch.getLaunchConfiguration().getName()); //$NON-NLS-1$ //$NON-NLS-2$
 			while (!subLaunch.isTerminated() && !monitor.isCanceled()) {
 				try {
 					Thread.sleep(1000);
@@ -252,29 +299,23 @@ public class MultiLaunchConfigurationDelegate extends LaunchConfigurationDelegat
 					break;
 				}
 			}
-			monitor.subTask("");
-		} else
-		if (action.startsWith(LaunchElement.POST_LAUNCH_DELAY_PREFIX)) {
-			String num = action.substring(LaunchElement.POST_LAUNCH_DELAY_PREFIX.length()).trim();
-			int k = 1000;
-			if (num.endsWith("ms")) {
-				num = num.substring(0,num.length()-2);
-				k = 1;
-			} else if (num.endsWith("s")) {
-				num = num.substring(0,num.length()-1);
+			monitor.subTask(""); //$NON-NLS-1$
+			break;
+		case DELAY:
+			Integer waitSecs = (Integer)actionParam;
+			if (waitSecs != null) {
+				monitor.subTask(LaunchMessages.getFormattedString("MultiLaunchConfigurationDelegate.Action.Delaying", //$NON-NLS-1$ 
+						waitSecs.toString()));			
+				try {
+					Thread.sleep(waitSecs * 1000);	// param is milliseconds
+				} catch (InterruptedException e) {
+					// ok
+				}
 			}
-			int parseInt;
-			try {
-				parseInt = Integer.parseInt(num);
-			} catch (NumberFormatException e) {
-				parseInt = 3;
-				k = 1000;
-			}
-			try {
-				Thread.sleep(parseInt * k);
-			} catch (InterruptedException e) {
-				// ok
-			}
+			break;
+			
+		default:
+			assert false : "new post launch action type is missing logic"; //$NON-NLS-1$
 		}
 	}
 
@@ -302,8 +343,8 @@ public class MultiLaunchConfigurationDelegate extends LaunchConfigurationDelegat
 	public static ArrayList<LaunchElement> createLaunchElements(ILaunchConfiguration configuration,
 			ArrayList<MultiLaunchConfigurationDelegate.LaunchElement> input) {
 		try {
-			Map attrs = configuration.getAttributes();
-			for (Iterator iterator = attrs.keySet().iterator(); iterator.hasNext();) {
+			Map<?,?> attrs = configuration.getAttributes();
+			for (Iterator<?> iterator = attrs.keySet().iterator(); iterator.hasNext();) {
 				String attr = (String) iterator.next();
 				try {
 					if (attr.startsWith(MultiLaunchConfigurationDelegate.MULTI_LAUNCH_CONSTANTS_PREFIX)) {
@@ -317,7 +358,18 @@ public class MultiLaunchConfigurationDelegate extends LaunchConfigurationDelegat
 							MultiLaunchConfigurationDelegate.LaunchElement el = new MultiLaunchConfigurationDelegate.LaunchElement();
 							el.setIndex(index);
 							el.setName((String) attrs.get(attr));
-							el.setAction((String) attrs.get(getProp(index, ACTION_PROP)));
+							
+							Object actionParam = null;
+							final EPostLaunchAction action = EPostLaunchAction.valueOf((String)attrs.get(getProp(index, ACTION_PROP)));
+							if (action == EPostLaunchAction.DELAY) {
+								try {
+									actionParam = Integer.parseInt((String)attrs.get(getProp(index, ACTION_PARAM_PROP)));
+								}
+								catch (NumberFormatException exc) {
+									LaunchUIPlugin.log(exc);
+								}  
+							}
+							el.setAction(action, actionParam);
 							el.setMode((String) attrs.get(getProp(index, MODE_PROP)));
 							el.setEnabled("true".equals(attrs.get(getProp(index, ENABLED_PROP)))); //$NON-NLS-1$
 							try {
@@ -349,7 +401,9 @@ public class MultiLaunchConfigurationDelegate extends LaunchConfigurationDelegat
 			MultiLaunchConfigurationDelegate.LaunchElement el = iterator.next();
 			if (el == null) continue;
 			configuration.setAttribute(MultiLaunchConfigurationDelegate.getProp(i, NAME_PROP), el.getName());
-			configuration.setAttribute(MultiLaunchConfigurationDelegate.getProp(i, ACTION_PROP), el.getAction());
+			configuration.setAttribute(MultiLaunchConfigurationDelegate.getProp(i, ACTION_PROP), el.getAction().toString());
+			// note: the saving of the action param will need to be enhanced if ever an action type is introduced that uses something that can't be reconstructed from its toString()
+			configuration.setAttribute(MultiLaunchConfigurationDelegate.getProp(i, ACTION_PARAM_PROP), el.getActionParam() != null ? el.getActionParam().toString() : null);
 			configuration.setAttribute(MultiLaunchConfigurationDelegate.getProp(i, MODE_PROP), el.getMode());
 			configuration.setAttribute(MultiLaunchConfigurationDelegate.getProp(i, ENABLED_PROP), el.isEnabled() + ""); //$NON-NLS-1$
 			i++;
@@ -358,8 +412,8 @@ public class MultiLaunchConfigurationDelegate extends LaunchConfigurationDelegat
 
 	public static void removeLaunchElements(ILaunchConfigurationWorkingCopy configuration) {
 		try {
-			Map attrs = configuration.getAttributes();
-			for (Iterator iterator = attrs.keySet().iterator(); iterator.hasNext();) {
+			Map<?,?> attrs = configuration.getAttributes();
+			for (Iterator<?> iterator = attrs.keySet().iterator(); iterator.hasNext();) {
 				String attr = (String) iterator.next();
 				try {
 					if (attr.startsWith(MultiLaunchConfigurationDelegate.MULTI_LAUNCH_CONSTANTS_PREFIX)) {

@@ -2,6 +2,7 @@ package org.eclipse.cdt.launch.internal.ui;
 
 import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.List;
 
 import org.eclipse.cdt.launch.internal.MultiLaunchConfigurationDelegate;
 import org.eclipse.cdt.launch.internal.MultiLaunchConfigurationDelegate.LaunchElement;
@@ -47,7 +48,7 @@ import org.eclipse.ui.PlatformUI;
  */
 public class MultiLaunchConfigurationTabGroup extends AbstractLaunchConfigurationTabGroup {
 	static class ContentProvider implements IStructuredContentProvider, ITreeContentProvider {
-		protected ArrayList<LaunchElement> input;
+		protected List<LaunchElement> input;
 
 		public Object[] getElements(Object inputElement) {
 			return getChildren(inputElement);
@@ -59,27 +60,20 @@ public class MultiLaunchConfigurationTabGroup extends AbstractLaunchConfiguratio
 
 		@SuppressWarnings("unchecked") // nothing we can do about this
 		public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
-			if (newInput instanceof ArrayList<?>)
-				input = (ArrayList<LaunchElement>) newInput;
+			if (newInput instanceof List<?>)
+				input = (List<LaunchElement>) newInput;
 		}
 
 		public Object[] getChildren(Object parentElement) {
-			if (parentElement == input)
-				return input.toArray();
-			else
-				return null;
+			return (parentElement == input) ? input.toArray() : null;
 		}
 
 		public Object getParent(Object element) {
-			if (element == input)
-				return null;
-			return input;
+			return (element == input) ? null : input;
 		}
 
 		public boolean hasChildren(Object element) {
-			if (element == input)
-				return input.size() > 0;
-			return false;
+			return (element == input) ? (input.size() > 0) : false;
 		}
 	}
 	static class LabelProvider extends BaseLabelProvider implements ITableLabelProvider {
@@ -213,7 +207,7 @@ public class MultiLaunchConfigurationTabGroup extends AbstractLaunchConfiguratio
 	}
 	static class GroupLaunchTab extends AbstractLaunchConfigurationTab {
 		protected CheckboxTreeViewer treeViewer;
-		protected ArrayList<LaunchElement> input = new ArrayList<LaunchElement>();
+		protected List<LaunchElement> input = new ArrayList<LaunchElement>();
 		private String mode;
 
 		public GroupLaunchTab(String mode) {
@@ -245,23 +239,25 @@ public class MultiLaunchConfigurationTabGroup extends AbstractLaunchConfiguratio
 			treeViewer.setInput(input);
 			final ButtonComposite buts = new ButtonComposite(comp, SWT.NONE) {
 				protected void addPressed() {
-					MultiLaunchConfigurationSelectionDialog dialog = MultiLaunchConfigurationSelectionDialog.createDialog(treeViewer
-					        .getControl().getShell(), LaunchMessages.getString("MultiLaunchConfigurationTabGroup.8"),  //$NON-NLS-1$
-					        mode
-					        );
+					MultiLaunchConfigurationSelectionDialog dialog = 
+						MultiLaunchConfigurationSelectionDialog.createDialog(
+								treeViewer.getControl().getShell(), mode, false);
 					if (dialog.open() == Dialog.OK) {
-						ILaunchConfiguration conf = dialog.getSelectedLaunchConfiguration();
-						if (conf==null) return;
-						MultiLaunchConfigurationDelegate.LaunchElement el = new MultiLaunchConfigurationDelegate.LaunchElement();
-						input.add(el);
-						el.setIndex(input.size() - 1);
-						el.setEnabled(true);
-						el.setName(conf.getName());
-						el.setData(conf);
-						el.setMode(dialog.getMode());
-						el.setAction(dialog.getAction(), dialog.getActionParam());
-						treeViewer.refresh(true);
-						treeViewer.setChecked(el, el.isEnabled());
+						ILaunchConfiguration[] configs = dialog.getSelectedLaunchConfigurations();
+						if (configs.length < 1) 
+							return;
+						for (ILaunchConfiguration config : configs) {
+							MultiLaunchConfigurationDelegate.LaunchElement el = new MultiLaunchConfigurationDelegate.LaunchElement();
+							input.add(el);
+							el.setIndex(input.size() - 1);
+							el.setEnabled(true);
+							el.setName(config.getName());
+							el.setData(config);
+							el.setMode(dialog.getMode());
+							el.setAction(dialog.getAction(), dialog.getActionParam());
+							treeViewer.refresh(true);
+							treeViewer.setChecked(el, el.isEnabled());
+						}
 						updateWidgetEnablement();
 						updateLaunchConfigurationDialog();
 					}
@@ -269,27 +265,29 @@ public class MultiLaunchConfigurationTabGroup extends AbstractLaunchConfiguratio
 				protected void updateWidgetEnablement(){
 					downButton.setEnabled(isDownEnabled());
 					upButton.setEnabled(isUpEnabled());
-					int index = getSelIndex();
-					deleteButton.setEnabled(index>=0);
-					editButton.setEnabled(index>=0);
+
+					int selectionCount = getSelectionCount();
+					editButton.setEnabled(selectionCount == 1);
+					deleteButton.setEnabled(selectionCount > 0);
 				}
 				
 
 				protected void editPressed() {
-					int index = getSelIndex();
+					int index = getSingleSelectionIndex();
 					if (index < 0)
 						return;
 					MultiLaunchConfigurationDelegate.LaunchElement el = input.get(index);
-					MultiLaunchConfigurationSelectionDialog dialog = MultiLaunchConfigurationSelectionDialog.createDialog(treeViewer
-					        .getControl().getShell(), LaunchMessages.getString("MultiLaunchConfigurationTabGroup.9"),  //$NON-NLS-1$
-					        el.getMode()
-					        );
+					MultiLaunchConfigurationSelectionDialog dialog = 
+						MultiLaunchConfigurationSelectionDialog.createDialog(
+								treeViewer.getControl().getShell(), el.getMode(), true);
 					dialog.setInitialSelection(el);
 					if (dialog.open() == Dialog.OK) {
-						ILaunchConfiguration conf = dialog.getSelectedLaunchConfiguration();
-						if (conf==null) return;
-						el.setName(conf.getName());
-						el.setData(conf);
+						ILaunchConfiguration[] confs = dialog.getSelectedLaunchConfigurations();
+						if (confs.length < 0) 
+							return;
+						assert confs.length == 1 : "invocation of the dialog for editing an entry sholdn't allow OK to be hit if the user chooses multiple launch configs in the dialog"; //$NON-NLS-1$
+						el.setName(confs[0].getName());
+						el.setData(confs[0]);
 						el.setMode(dialog.getMode());
 						el.setAction(dialog.getAction(), dialog.getActionParam());
 						treeViewer.refresh(true);
@@ -298,27 +296,60 @@ public class MultiLaunchConfigurationTabGroup extends AbstractLaunchConfiguratio
 					}
 				}
 				protected void deletePressed() {
-					int index = getSelIndex();
-					if (index < 0)
+					int[] indices = getMultiSelectionIndices();
+					if (indices.length < 1)
 						return;
-					input.remove(index);
+					// need to delete from high to low
+					for (int i = indices.length - 1; i >= 0; i--) {
+						input.remove(indices[i]);
+					}
 					treeViewer.refresh(true);
 					updateWidgetEnablement();
 					updateLaunchConfigurationDialog();
 				}
 
-				private int getSelIndex() {
+				/**
+				 * @return the index of the selection if a single item is
+				 *         selected. If zero or multiple are selected, -1 is
+				 *         returned
+				 */
+				private int getSingleSelectionIndex() {
 					StructuredSelection sel = (StructuredSelection) treeViewer.getSelection();
-					if (sel.isEmpty())
+					if (sel.size() != 1)
 						return -1;
 					MultiLaunchConfigurationDelegate.LaunchElement el = ((MultiLaunchConfigurationDelegate.LaunchElement) sel
 					        .getFirstElement());
 					return input.indexOf(el);
 				}
 
+				/**
+				 * @return the indices of one or more selected items. Indices
+				 *         are always returned in ascending order
+				 */
+				private int[] getMultiSelectionIndices() {
+					StructuredSelection sel = (StructuredSelection) treeViewer.getSelection();
+					List<Integer> indices = new ArrayList<Integer>();
+					
+					for (Iterator<?> iter = sel.iterator(); iter.hasNext(); ) {
+						MultiLaunchConfigurationDelegate.LaunchElement el = (MultiLaunchConfigurationDelegate.LaunchElement)iter.next();
+						indices.add(input.indexOf(el));
+						
+					}
+					int[] result = new int[indices.size()];
+					for (int i = 0; i < result.length; i++) {
+						result[i] = indices.get(i);
+					}
+					return result;
+				}
+
+				private int getSelectionCount() {
+					return ((StructuredSelection)treeViewer.getSelection()).size();
+				}
+				
+
 				protected void downPressed() {
 					if (!isDownEnabled()) return;
-					int index = getSelIndex();
+					int index = getSingleSelectionIndex();
 					
 					MultiLaunchConfigurationDelegate.LaunchElement x = input.get(index);
 					input.set(index, input.get(index + 1));
@@ -329,22 +360,17 @@ public class MultiLaunchConfigurationTabGroup extends AbstractLaunchConfiguratio
 				}
 				
 				protected boolean isDownEnabled() {
-					int index = getSelIndex();
-	                if (index < 0 || index == input.size() - 1)
-						return false;
-	                return true;
+					final int index = getSingleSelectionIndex();
+	                return (index >= 0) && (index != input.size() - 1);
                 }
 				
 				protected boolean isUpEnabled(){
-					int index = getSelIndex();
-					if (index <= 0)
-						return false;
-					return true;
+					return getSingleSelectionIndex() > 0;
 				}
 
 				protected void upPressed() {
 					if (!isUpEnabled()) return;
-					int index = getSelIndex();
+					int index = getSingleSelectionIndex();
 					MultiLaunchConfigurationDelegate.LaunchElement x = input.get(index);
 					input.set(index, input.get(index - 1));
 					input.set(index - 1, x);

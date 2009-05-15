@@ -3,6 +3,7 @@ package org.eclipse.cdt.launch.internal;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 
 import org.eclipse.cdt.launch.internal.MultiLaunchConfigurationDelegate.LaunchElement.EPostLaunchAction;
@@ -218,7 +219,7 @@ public class MultiLaunchConfigurationDelegate extends LaunchConfigurationDelegat
 			DebugUIPlugin.getDefault().getPreferenceStore().setValue(IDebugUIConstants.PREF_AUTO_REMOVE_OLD_LAUNCHES,
 					false);
 			
-			final ArrayList<LaunchElement> input = createLaunchElements(configuration, new ArrayList<LaunchElement>());
+			final List<LaunchElement> input = createLaunchElements(configuration, new ArrayList<LaunchElement>());
 			MultiLaunchListener listener = new MultiLaunchListener(launch);
 			ILaunchManager launchManager = DebugPlugin.getDefault().getLaunchManager();
 			launchManager.addLaunchListener(listener); // listener removed when launch is removed
@@ -340,8 +341,8 @@ public class MultiLaunchConfigurationDelegate extends LaunchConfigurationDelegat
 		return null;
 	}
 
-	public static ArrayList<LaunchElement> createLaunchElements(ILaunchConfiguration configuration,
-			ArrayList<MultiLaunchConfigurationDelegate.LaunchElement> input) {
+	public static List<LaunchElement> createLaunchElements(ILaunchConfiguration configuration,
+			List<MultiLaunchConfigurationDelegate.LaunchElement> input) {
 		try {
 			Map<?,?> attrs = configuration.getAttributes();
 			for (Iterator<?> iterator = attrs.keySet().iterator(); iterator.hasNext();) {
@@ -394,11 +395,10 @@ public class MultiLaunchConfigurationDelegate extends LaunchConfigurationDelegat
 		return input;
 	}
 
-	public static void storeLaunchElements(ILaunchConfigurationWorkingCopy configuration, ArrayList<LaunchElement> input) {
+	public static void storeLaunchElements(ILaunchConfigurationWorkingCopy configuration, List<LaunchElement> input) {
 		int i = 0;
 		removeLaunchElements(configuration);
-		for (Iterator<LaunchElement> iterator = input.iterator(); iterator.hasNext();) {
-			MultiLaunchConfigurationDelegate.LaunchElement el = iterator.next();
+		for (LaunchElement el : input) {
 			if (el == null) continue;
 			configuration.setAttribute(MultiLaunchConfigurationDelegate.getProp(i, NAME_PROP), el.getName());
 			configuration.setAttribute(MultiLaunchConfigurationDelegate.getProp(i, ACTION_PROP), el.getAction().toString());

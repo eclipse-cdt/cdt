@@ -1,8 +1,10 @@
 package org.eclipse.cdt.launch.internal.ui;
 
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.List;
 
 import org.eclipse.cdt.launch.internal.MultiLaunchConfigurationDelegate;
 import org.eclipse.cdt.launch.internal.MultiLaunchConfigurationDelegate.LaunchElement;
@@ -65,12 +67,14 @@ public class MultiLaunchConfigurationSelectionDialog extends TitleAreaDialog imp
 	private ComboControlledStackComposite fStackComposite;
 	private Label fDelayAmountLabel;
 	private Text fDelayAmountWidget; // in seconds
+	private boolean fForEditing; // true if dialog was opened to edit an entry, otherwise it was opened to add one
 	
-	public MultiLaunchConfigurationSelectionDialog(Shell shell, String title, String initMode) {
+	public MultiLaunchConfigurationSelectionDialog(Shell shell, String initMode, boolean forEditing) {
 		super(shell);
 		LaunchConfigurationManager manager = DebugUIPlugin.getDefault().getLaunchConfigurationManager();
 		launchGroups = manager.getLaunchGroups();
 		mode = initMode;
+		fForEditing = forEditing;
 		fFilters = null;
 		setShellStyle(getShellStyle() | SWT.RESIZE);
 		emptyTypeFilter = new ViewerFilter() {
@@ -100,10 +104,14 @@ public class MultiLaunchConfigurationSelectionDialog extends TitleAreaDialog imp
 	}
 
 	protected Control createDialogArea(Composite parent2) {
-		getShell().setText(LaunchMessages.getString("MultiLaunchConfigurationSelectionDialog.0")); //$NON-NLS-1$
-		setTitle(LaunchMessages.getString("MultiLaunchConfigurationSelectionDialog.1")); //$NON-NLS-1$
-		//setMessage("Select a Launch Configuration and a Launch Mode");
 		Composite comp = (Composite) super.createDialogArea(parent2);
+		
+		// title bar 
+		getShell().setText(fForEditing ? LaunchMessages.getString("MultiLaunchConfigurationSelectionDialog.13") : LaunchMessages.getString("MultiLaunchConfigurationSelectionDialog.12")); //$NON-NLS-1$ //$NON-NLS-2$
+		
+		// dialog message area (not title bar)
+		setTitle(fForEditing ? LaunchMessages.getString("MultiLaunchConfigurationSelectionDialog.15") : LaunchMessages.getString("MultiLaunchConfigurationSelectionDialog.14")); //$NON-NLS-1$ //$NON-NLS-2$
+		
 		fStackComposite = new ComboControlledStackComposite(comp, SWT.NONE);
 		HashMap<String, ILaunchGroup> modes = new HashMap<String, ILaunchGroup>();
 		for (ILaunchGroup launchGroup : launchGroups) {
@@ -114,15 +122,17 @@ public class MultiLaunchConfigurationSelectionDialog extends TitleAreaDialog imp
 		if (this.mode.equals(MultiLaunchConfigurationDelegate.DEFAULT_MODE)) {
 			try {
 				this.mode = "run"; //$NON-NLS-1$
-				ILaunchConfiguration sel = getSelectedLaunchConfiguration();
-				if (sel != null)
+				ILaunchConfiguration[] configs = getSelectedLaunchConfigurations();
+				if (configs.length > 0) {
+					// we care only about the first selected element
 					for (Iterator<String> iterator = modes.keySet().iterator(); iterator.hasNext();) {
 						String mode = iterator.next();
-						if (sel.supportsMode(mode)) {
+						if (configs[0].supportsMode(mode)) {
 							this.mode = mode;
 							break;
 						}
 					}
+				}
 			} catch (Exception e) {
 			}
 		} 
@@ -235,13 +245,17 @@ public class MultiLaunchConfigurationSelectionDialog extends TitleAreaDialog imp
 		fDelayAmountWidget.setVisible(visible);
 	}
 
-	public ILaunchConfiguration getSelectedLaunchConfiguration() {
+	public ILaunchConfiguration[] getSelectedLaunchConfigurations() {
+		List<ILaunchConfiguration> configs = new ArrayList<ILaunchConfiguration>(); 
 		if (fSelection != null && !fSelection.isEmpty()) {
-			Object firstElement = ((IStructuredSelection) fSelection).getFirstElement();
-			if (firstElement instanceof ILaunchConfiguration)
-				return (ILaunchConfiguration) firstElement;
+			for (Iterator<?> iter = ((IStructuredSelection)fSelection).iterator(); iter.hasNext();) {
+				Object selection = iter.next();
+				if (selection instanceof ILaunchConfiguration) {
+					configs.add((ILaunchConfiguration)selection);
+				}
+			}
 		}
-		return null;
+		return configs.toArray(new ILaunchConfiguration[configs.size()]);
 	}
 
 	public String getMode() {
@@ -256,8 +270,8 @@ public class MultiLaunchConfigurationSelectionDialog extends TitleAreaDialog imp
 		return actionParam;
 	}
 
-	public static MultiLaunchConfigurationSelectionDialog createDialog(Shell shell, String title, String groupId) {
-		return new MultiLaunchConfigurationSelectionDialog(shell, title, groupId);
+	public static MultiLaunchConfigurationSelectionDialog createDialog(Shell shell, String groupId, boolean forEditing) {
+		return new MultiLaunchConfigurationSelectionDialog(shell, groupId, forEditing);
 	}
 
 	/* (non-Javadoc)
@@ -305,11 +319,21 @@ public class MultiLaunchConfigurationSelectionDialog extends TitleAreaDialog imp
 	protected void validate() {
 		Button ok_button = getButton(IDialogConstants.OK_ID);
 		boolean isValid = true;
-		if (getSelectedLaunchConfiguration() == null) {
+		if (getSelectedLaunchConfigurations().length < 1) {
 			setErrorMessage(LaunchMessages.getString("MultiLaunchConfigurationSelectionDialog.7")); //$NON-NLS-1$
 			isValid = false;
 		} else {
 			setErrorMessage(null);
+		}
+		
+		if (isValid) {
+			if (fForEditing) {
+				// must have only one selection
+				if (getSelectedLaunchConfigurations().length > 1) {
+					setErrorMessage(LaunchMessages.getString("MultiLaunchConfigurationSelectionDialog.11")); //$NON-NLS-1$
+					isValid = false;
+				}
+			}
 		}
 
 		if (isValid) {

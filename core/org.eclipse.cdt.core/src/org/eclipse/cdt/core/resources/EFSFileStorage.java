@@ -48,14 +48,12 @@ public class EFSFileStorage extends PlatformObject implements IStorage {
 			IFileStore fileStore = EFS.getStore(locationURI);
 
 			if (fileStore != null) {
-
 				inputStream = fileStore.openInputStream(EFS.NONE,
 						new NullProgressMonitor());
 			}
 		}
 
 		return inputStream;
-
 	}
 
 	/* (non-Javadoc)
@@ -120,7 +118,7 @@ public class EFSFileStorage extends PlatformObject implements IStorage {
 	@Override
 	public boolean equals(Object obj) {
 		if (obj instanceof EFSFileStorage && locationURI != null) {
-			return locationURI.equals(((EFSFileStorage)obj).getLocationURI());
+			return locationURI.equals(((EFSFileStorage) obj).getLocationURI());
 		}
 		return false;
 	}

@@ -344,17 +344,15 @@ public class IndexTypeInfo implements ITypeInfo, IFunctionInfo {
 		String fullPath = ifl.getFullPath();
 		if (fullPath != null) {
 			IFile file = ResourcesPlugin.getWorkspace().getRoot().getFile(new Path(fullPath));
-			if(file!=null) {
-				return new IndexTypeReference(
-						binding, file, file.getProject(), indexName.getNodeOffset(), indexName.getNodeLength()
-				);
+			if (file != null) {
+				return new IndexTypeReference(binding, file, file.getProject(), indexName.getNodeOffset(),
+						indexName.getNodeLength());
 			}
 		} else {
 			IPath path = URIUtil.toPath(ifl.getURI());
-			if(path!=null) {
-				return new IndexTypeReference(
-						binding, path, null, indexName.getNodeOffset(), indexName.getNodeLength()
-				);
+			if (path != null) {
+				return new IndexTypeReference(binding, path, null, indexName.getNodeOffset(),
+						indexName.getNodeLength());
 			}
 		}
 		return null;

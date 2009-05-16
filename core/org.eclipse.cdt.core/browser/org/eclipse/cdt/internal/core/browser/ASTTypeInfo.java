@@ -192,13 +192,13 @@ public class ASTTypeInfo implements ITypeInfo, IFunctionInfo {
 			String fullPath= ifl.getFullPath();
 			if (fullPath != null) {
 				IFile file = ResourcesPlugin.getWorkspace().getRoot().getFile(new Path(fullPath));
-				if(file!=null) {
+				if (file != null) {
 					return new ASTTypeReference(ifl, name.resolveBinding(), file, 
 							floc.getNodeOffset(), floc.getNodeLength());
 				}
 			} else {
 				IPath path = URIUtil.toPath(ifl.getURI());
-				if (path!=null) {
+				if (path != null) {
 					return new ASTTypeReference(ifl, name.resolveBinding(), path,
 							floc.getNodeOffset(), floc.getNodeLength());
 				}

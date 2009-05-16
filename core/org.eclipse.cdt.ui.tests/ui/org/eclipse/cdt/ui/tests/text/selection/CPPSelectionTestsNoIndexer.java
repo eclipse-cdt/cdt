@@ -110,15 +110,15 @@ public class CPPSelectionTestsNoIndexer extends BaseUITestCase {
         //Create file manager
         fileManager = new FileManager();
     }
-    public CPPSelectionTestsNoIndexer()
-    {
+    
+    public CPPSelectionTestsNoIndexer() {
         super();
     }
+    
     /**
      * @param name
      */
-    public CPPSelectionTestsNoIndexer(String name)
-    {
+    public CPPSelectionTestsNoIndexer(String name) {
         super(name);
     }
     
@@ -147,7 +147,6 @@ public class CPPSelectionTestsNoIndexer extends BaseUITestCase {
     	super.setUp();
     	initProject();
     	OpenDeclarationsAction.sIsJUnitTest= true;
-		OpenDeclarationsAction.sAllowFallback= false;    	
     }
     
     @Override
@@ -326,7 +325,6 @@ public class CPPSelectionTestsNoIndexer extends BaseUITestCase {
         assertEquals(((IASTName)node).toString(), "operator ="); //$NON-NLS-1$
         assertEquals(((ASTNode)node).getOffset(), 121);
         assertEquals(((ASTNode)node).getLength(), 9);
-        
     }
         
     public void testBasicDefinition() throws Exception {
@@ -993,7 +991,7 @@ public class CPPSelectionTestsNoIndexer extends BaseUITestCase {
     	String appendCode= contents[1].toString();
 
     	String[] filenames= {"testBug195822.c", "testBug195822.cpp"};
-    	for (int i=0; i<2; i++) {
+    	for (int i= 0; i < 2; i++) {
     		IFile file = importFile(filenames[i], code);
     		int od1 = code.indexOf("functionPointer");
     		int or1 = code.indexOf("functionPointer", od1+1);
@@ -1023,7 +1021,7 @@ public class CPPSelectionTestsNoIndexer extends BaseUITestCase {
     public void testEmptyMacro_Bug198649() throws Exception {
     	String code= getContentsForTest(1)[0].toString();
     	String[] filenames= {"testBug198649.c", "testBug198649.cpp"};
-    	for (int i=0; i<2; i++) {
+    	for (int i= 0; i < 2; i++) {
     		IFile file = importFile(filenames[i], code);
     		int od1 = code.indexOf("EMPTY");
     		int or1 = code.indexOf("EMPTY", od1+1);
@@ -1040,8 +1038,7 @@ public class CPPSelectionTestsNoIndexer extends BaseUITestCase {
     public void testFallBackForStaticFuncs_Bug252549() throws Exception {
         String code= getContentsForTest(1)[0].toString();
     	String[] filenames= {"testBug252549.c", "testBug252549.cpp"};
-    	for (int i=0; i<2; i++) {
-    		OpenDeclarationsAction.sAllowFallback= true; 
+    	for (int i= 0; i < 2; i++) {
     		IFile file = importFile(filenames[i], code); 
     		int offset= code.indexOf("myFunc(x)");
     		IASTNode decl= testF3(file, offset);
@@ -1051,5 +1048,4 @@ public class CPPSelectionTestsNoIndexer extends BaseUITestCase {
     		assertEquals("myFunc", name.toString());
     	}
     }
-
 }

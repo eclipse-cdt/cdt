@@ -89,7 +89,7 @@ public class CSelectionTestsNoIndexer extends BaseUITestCase {
         try {
             cPrj = CProjectHelper.createCProject("CSelectionTestsNoIndexerProject", "bin", IPDOMManager.ID_NO_INDEXER); //$NON-NLS-1$ //$NON-NLS-2$
             project = cPrj.getProject();
-        } catch ( CoreException e ) {
+        } catch (CoreException e) {
             /*boo*/
         }
         if (project == null)
@@ -111,8 +111,8 @@ public class CSelectionTestsNoIndexer extends BaseUITestCase {
     }
     
     public static Test suite() {
-        TestSuite suite = new TestSuite( CSelectionTestsNoIndexer.class );
-        suite.addTest( new CSelectionTestsNoIndexer("cleanupProject") );    //$NON-NLS-1$
+        TestSuite suite = new TestSuite(CSelectionTestsNoIndexer.class);
+        suite.addTest(new CSelectionTestsNoIndexer("cleanupProject"));    //$NON-NLS-1$
         return suite;
     }
     
@@ -120,7 +120,6 @@ public class CSelectionTestsNoIndexer extends BaseUITestCase {
 	protected void setUp() throws Exception {
     	super.setUp();
     	OpenDeclarationsAction.sIsJUnitTest= true;
-		OpenDeclarationsAction.sAllowFallback= false;    	
     	initProject();
     }
     
@@ -137,35 +136,35 @@ public class CSelectionTestsNoIndexer extends BaseUITestCase {
     
     @Override
 	protected void tearDown() throws Exception {
-        if( project == null || !project.exists() )
+        if (project == null || !project.exists())
             return;
 
     	closeAllEditors();
 
         IResource [] members = project.members();
         for (IResource member : members) {
-            if( member.getName().equals( ".project" ) || member.getName().equals( ".cproject" ) ) //$NON-NLS-1$ //$NON-NLS-2$
+            if (member.getName().equals(".project") || member.getName().equals(".cproject")) //$NON-NLS-1$ //$NON-NLS-2$
                 continue;
             if (member.getName().equals(".settings"))
             	continue;
-            try{
-                member.delete( true, monitor );
-            } catch( Throwable e ){
+            try {
+                member.delete(true, monitor);
+            } catch (Throwable e) {
                 /*boo*/
             }
         }
     }
     
-    protected IFile importFile(String fileName, String contents ) throws Exception{
+    protected IFile importFile(String fileName, String contents) throws Exception{
         //Obtain file handle
         IFile file = project.getProject().getFile(fileName);
         
-        InputStream stream = new ByteArrayInputStream( contents.getBytes() );
+        InputStream stream = new ByteArrayInputStream(contents.getBytes());
         //Create file input stream
-        if( file.exists() )
-            file.setContents( stream, false, false, monitor );
+        if (file.exists())
+            file.setContents(stream, false, false, monitor);
         else
-            file.create( stream, false, monitor );
+            file.create(stream, false, monitor);
         
         fileManager.addFile(file);
         
@@ -185,19 +184,19 @@ public class CSelectionTestsNoIndexer extends BaseUITestCase {
         
         file.createLink(location, IResource.ALLOW_MISSING_LOCAL, null);
         
-        InputStream stream = new ByteArrayInputStream( contents.getBytes() );
+        InputStream stream = new ByteArrayInputStream(contents.getBytes());
         //Create file input stream
-        if( file.exists() )
-            file.setContents( stream, false, false, monitor );
+        if (file.exists())
+            file.setContents(stream, false, false, monitor);
         else
-            file.create( stream, false, monitor );
+            file.create(stream, false, monitor);
         
         fileManager.addFile(file);
         
         return file;
     }
     
-    protected IFile importFileInsideLinkedFolder(String fileName, String contents, String folderName ) throws Exception{
+    protected IFile importFileInsideLinkedFolder(String fileName, String contents, String folderName) throws Exception{
     	IFolder linkedFolder = project.getFolder(folderName);
     	IPath folderLocation = new Path(project.getLocation().toOSString() + File.separator + folderName + "_this_is_linked"); //$NON-NLS-1$
     	IFolder actualFolder = project.getFolder(folderName + "_this_is_linked"); //$NON-NLS-1$
@@ -210,12 +209,12 @@ public class CSelectionTestsNoIndexer extends BaseUITestCase {
     	
     	IFile file = linkedFolder.getFile(fileName);
     	
-        InputStream stream = new ByteArrayInputStream( contents.getBytes() );
+        InputStream stream = new ByteArrayInputStream(contents.getBytes());
         //Create file input stream
-        if( file.exists() )
-            file.setContents( stream, false, false, monitor );
+        if (file.exists())
+            file.setContents(stream, false, false, monitor);
         else
-            file.create( stream, false, monitor );
+            file.create(stream, false, monitor);
             	
         fileManager.addFile(file);
     	
@@ -238,12 +237,12 @@ public class CSelectionTestsNoIndexer extends BaseUITestCase {
         
         file.createLink(location, IResource.ALLOW_MISSING_LOCAL, null);
         
-        InputStream stream = new ByteArrayInputStream( contents.getBytes() );
+        InputStream stream = new ByteArrayInputStream(contents.getBytes());
         //Create file input stream
-        if( file.exists() )
-            file.setContents( stream, false, false, monitor );
+        if (file.exists())
+            file.setContents(stream, false, false, monitor);
         else
-            file.create( stream, false, monitor );
+            file.create(stream, false, monitor);
         
         fileManager.addFile(file);
         
@@ -254,8 +253,8 @@ public class CSelectionTestsNoIndexer extends BaseUITestCase {
     	IFolder folder = project.getProject().getFolder(folderName);
 		
 		//Create file input stream
-		if( !folder.exists() )
-			folder.create( false, false, monitor );
+		if (!folder.exists())
+			folder.create(false, false, monitor);
 		
 		return folder;
     }

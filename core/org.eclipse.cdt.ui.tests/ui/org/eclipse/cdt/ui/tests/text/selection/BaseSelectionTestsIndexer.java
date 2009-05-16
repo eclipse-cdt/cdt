@@ -80,7 +80,6 @@ public class BaseSelectionTestsIndexer extends BaseUITestCase {
 	protected void setUp() throws Exception {
 		super.setUp();
 		OpenDeclarationsAction.sIsJUnitTest= true;
-		OpenDeclarationsAction.sAllowFallback= false;
 		IWorkbenchPage page= PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage();
 		IViewReference[] refs= page.getViewReferences();
 		for (int i = 0; i < refs.length; i++) {
@@ -90,7 +89,7 @@ public class BaseSelectionTestsIndexer extends BaseUITestCase {
 	}
 	
 	public void waitForIndex(int maxSec) throws Exception {
-		assertTrue(CCorePlugin.getIndexManager().joinIndexer(maxSec*1000, new NullProgressMonitor()));
+		assertTrue(CCorePlugin.getIndexManager().joinIndexer(maxSec * 1000, new NullProgressMonitor()));
 	}
 	
 	protected String getMessage(IStatus status) {
@@ -106,16 +105,16 @@ public class BaseSelectionTestsIndexer extends BaseUITestCase {
 		return message.toString();
 	}
 
-    protected IFile importFile(String fileName, String contents ) throws Exception{
+    protected IFile importFile(String fileName, String contents) throws Exception{
         //Obtain file handle
         IFile file = fCProject.getProject().getFile(fileName);
         
-        InputStream stream = new ByteArrayInputStream( contents.getBytes() ); 
+        InputStream stream = new ByteArrayInputStream(contents.getBytes()); 
         //Create file input stream
-        if( file.exists() )
-            file.setContents( stream, false, false, monitor );
+        if (file.exists())
+            file.setContents(stream, false, false, monitor);
         else
-            file.create( stream, false, monitor );
+            file.create(stream, false, monitor);
         
         fileManager.addFile(file);
         
@@ -137,24 +136,24 @@ public class BaseSelectionTestsIndexer extends BaseUITestCase {
         
         file.createLink(location, IResource.ALLOW_MISSING_LOCAL, null);
         
-        InputStream stream = new ByteArrayInputStream( contents.getBytes() ); 
+        InputStream stream = new ByteArrayInputStream(contents.getBytes()); 
         //Create file input stream
-        if( file.exists() ) {
+        if (file.exists()) {
 			long timestamp= file.getLocalTimeStamp();
-        	file.setContents( stream, false, false, monitor );
+        	file.setContents(stream, false, false, monitor);
         	if (file.getLocalTimeStamp() == timestamp) {
         		file.setLocalTimeStamp(timestamp+1000);
         	}
-        }	
-        else
-            file.create( stream, false, monitor );
+        } else {
+            file.create(stream, false, monitor);
+        }
         
         fileManager.addFile(file);
         
         return file;
     }
     
-    protected IFile importFileInsideLinkedFolder(String fileName, String contents, String folderName ) throws Exception{
+    protected IFile importFileInsideLinkedFolder(String fileName, String contents, String folderName) throws Exception{
     	IProject project= fCProject.getProject();
     	IFolder linkedFolder = project.getFolder(folderName);
     	IPath folderLocation = new Path(project.getLocation().toOSString() + File.separator + folderName + "_this_is_linked"); //$NON-NLS-1$
@@ -168,12 +167,12 @@ public class BaseSelectionTestsIndexer extends BaseUITestCase {
     	
     	IFile file = linkedFolder.getFile(fileName);
     	
-        InputStream stream = new ByteArrayInputStream( contents.getBytes() ); 
+        InputStream stream = new ByteArrayInputStream(contents.getBytes()); 
         //Create file input stream
-        if( file.exists() )
-            file.setContents( stream, false, false, monitor );
+        if (file.exists())
+            file.setContents(stream, false, false, monitor);
         else
-            file.create( stream, false, monitor );
+            file.create(stream, false, monitor);
             	
         fileManager.addFile(file);
     	
@@ -184,17 +183,15 @@ public class BaseSelectionTestsIndexer extends BaseUITestCase {
     	IFolder folder = fCProject.getProject().getFolder(folderName);
 		
 		//Create file input stream
-		if( !folder.exists() )
-			folder.create( false, false, monitor );
+		if (!folder.exists())
+			folder.create(false, false, monitor);
 		
 		return folder;
     }
     
-    
     protected String getEditorID() {
     	return "org.eclipse.cdt.ui.editor.CEditor";
     }
-    
     
 	protected IASTNode testF3(IFile file, int offset) throws ParserException, CoreException {
 		return testF3(file, offset, 0);

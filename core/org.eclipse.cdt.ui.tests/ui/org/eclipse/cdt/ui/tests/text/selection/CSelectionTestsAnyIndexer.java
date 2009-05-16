@@ -32,8 +32,6 @@ import org.eclipse.cdt.ui.testplugin.CTestPlugin;
 
 import org.eclipse.cdt.internal.core.dom.parser.ASTNode;
 
-import org.eclipse.cdt.internal.ui.search.actions.OpenDeclarationsAction;
-
 public abstract class CSelectionTestsAnyIndexer extends BaseSelectionTestsIndexer {
 
 	private static final int MAX_WAIT_TIME = 8000;
@@ -506,8 +504,6 @@ public abstract class CSelectionTestsAnyIndexer extends BaseSelectionTestsIndexe
     
     // #define DR_ACCESS_FNS(DR)
     public void testNavigationInMacroDefinition_Bug102643() throws Exception {
-		OpenDeclarationsAction.sAllowFallback= true;
-		
         StringBuffer[] buffers= getContents(2);
         String hcode= buffers[0].toString();
         String scode= buffers[1].toString();

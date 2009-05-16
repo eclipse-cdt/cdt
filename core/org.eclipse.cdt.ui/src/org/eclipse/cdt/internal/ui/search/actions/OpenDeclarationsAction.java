@@ -10,6 +10,7 @@
  *     Markus Schorn (Wind River Systems)
  *     Ed Swartz (Nokia)
  *     Mike Kucera (IBM)
+ *     Sergey Prigogin (Google)
  *******************************************************************************/
 package org.eclipse.cdt.internal.ui.search.actions;
 
@@ -39,6 +40,7 @@ import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.dom.IName;
 import org.eclipse.cdt.core.dom.ast.ASTNameCollector;
 import org.eclipse.cdt.core.dom.ast.DOMException;
+import org.eclipse.cdt.core.dom.ast.IASTDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTFileLocation;
 import org.eclipse.cdt.core.dom.ast.IASTImplicitName;
 import org.eclipse.cdt.core.dom.ast.IASTImplicitNameOwner;
@@ -48,9 +50,12 @@ import org.eclipse.cdt.core.dom.ast.IASTNodeSelector;
 import org.eclipse.cdt.core.dom.ast.IASTPreprocessorIncludeStatement;
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
 import org.eclipse.cdt.core.dom.ast.IBinding;
+import org.eclipse.cdt.core.dom.ast.IParameter;
 import org.eclipse.cdt.core.dom.ast.IProblemBinding;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTemplateDeclaration;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPMethod;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPSpecialization;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateParameter;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPUsingDeclaration;
 import org.eclipse.cdt.core.index.IIndex;
 import org.eclipse.cdt.core.index.IIndexBinding;
@@ -69,6 +74,7 @@ import org.eclipse.cdt.core.parser.util.ArrayUtil;
 import org.eclipse.cdt.ui.CUIPlugin;
 
 import org.eclipse.cdt.internal.core.dom.parser.ASTNode;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPVisitor;
 import org.eclipse.cdt.internal.core.model.ASTCache.ASTRunnable;
 import org.eclipse.cdt.internal.core.model.ext.CElementHandleFactory;
 import org.eclipse.cdt.internal.core.model.ext.ICElementHandle;
@@ -82,7 +88,6 @@ import org.eclipse.cdt.internal.ui.viewsupport.IndexUI;
 
 public class OpenDeclarationsAction extends SelectionParseAction implements ASTRunnable {
 	public static boolean sIsJUnitTest = false;	
-	public static boolean sAllowFallback= true;
 	
 	private static final int KIND_OTHER = 0;
 	private static final int KIND_USING_DECL = 1;
@@ -163,7 +168,7 @@ public class OpenDeclarationsAction extends SelectionParseAction implements ASTR
 				if (implicits.length > 0) {
 					List<IName> allNames = new ArrayList<IName>();
 					for (IASTImplicitName name : implicits) {
-						if (((ASTNode)name).getOffset() == ((ASTNode) implicit).getOffset()) {
+						if (((ASTNode) name).getOffset() == ((ASTNode) implicit).getOffset()) {
 							IBinding binding = name.resolveBinding(); // guaranteed to resolve
 							IName[] declNames = findDeclNames(ast, KIND_OTHER, binding);
 							allNames.addAll(Arrays.asList(declNames));
@@ -181,25 +186,41 @@ public class OpenDeclarationsAction extends SelectionParseAction implements ASTR
 				return Status.OK_STATUS;
 			}
 			IBinding binding = searchName.resolveBinding();
+			int isKind= KIND_OTHER;
+			if (searchName.isDefinition()) {
+				if (binding instanceof ICPPUsingDeclaration) {
+					isKind= KIND_USING_DECL;
+				} else {
+					isKind= KIND_DEFINITION;
+				}
+			}
 			if (binding != null && !(binding instanceof IProblemBinding)) {
-				int isKind= KIND_OTHER;
-				if (searchName.isDefinition()) {
-					if (binding instanceof ICPPUsingDeclaration) {
-						isKind= KIND_USING_DECL;
-					} else {
-						isKind= KIND_DEFINITION;
+				IName[] declNames = findDeclNames(ast, isKind, binding);
+				// Exclude the current location.
+				for (int i = 0; i < declNames.length; i++) {
+					if (isSameName(declNames[i], searchName)) {
+						declNames[i] = null;
+					} else if (binding instanceof IParameter) {
+						if (!isInSameFunction(searchName, declNames[i])) {
+							declNames[i] = null;
+						}
+					} else if (binding instanceof ICPPTemplateParameter) {
+						if (!isInSameTemplate(searchName, declNames[i])) {
+							declNames[i] = null;
+						}
 					}
 				}
-				IName[] declNames = findDeclNames(ast, isKind, binding);
+				declNames = (IName[]) ArrayUtil.removeNulls(IName.class, declNames);
+
 				if (navigateViaCElements(fWorkingCopy.getCProject(), fIndex, declNames)) {
 					found= true;
 				} else {
-					// leave old method as fallback for local variables, parameters and 
+					// Leave old method as fallback for local variables, parameters and 
 					// everything else not covered by ICElementHandle.
 					found = navigateOneLocation(declNames);
 				}
 			}
-			if (!found && !navigationFallBack(ast)) {
+			if (!found && !navigationFallBack(ast, searchName, isKind)) {
 				reportSymbolLookupFailure(new String(searchName.toCharArray()));
 			}
 			return Status.OK_STATUS;
@@ -208,13 +229,40 @@ public class OpenDeclarationsAction extends SelectionParseAction implements ASTR
 		// no enclosing name, check if we're in an include statement
 		IASTNode node= nodeSelector.findEnclosingNode(selectionStart, selectionLength);
 		if (node instanceof IASTPreprocessorIncludeStatement) {
-			openInclude(((IASTPreprocessorIncludeStatement) node));
+			openInclude((IASTPreprocessorIncludeStatement) node);
 			return Status.OK_STATUS;
 		}
-		if (!navigationFallBack(ast)) {
+		if (!navigationFallBack(ast, null, KIND_OTHER)) {
 			reportSelectionMatchFailure();
 		}
 		return Status.OK_STATUS; 
+	}
+
+	private boolean isInSameFunction(IASTName name1, IName name2) {
+		IASTDeclaration decl1 = getEnclosingDeclaration(name1);
+		IASTDeclaration decl2 = name2 instanceof IASTName ? getEnclosingDeclaration((IASTName) name2) : null;
+		return decl1 != null && decl1.equals(decl2) || decl1 == null && decl2 == null;
+	}
+
+	private IASTDeclaration getEnclosingDeclaration(IASTNode node) {
+		while (node != null && !(node instanceof IASTDeclaration)) {
+			node= node.getParent();
+		}
+		return (IASTDeclaration) node;
+	}
+
+	private boolean isInSameTemplate(IASTName name1, IName name2) {
+		IASTDeclaration decl1 = getEnclosingTemplateDeclaration(name1);
+		IASTDeclaration decl2 = name2 instanceof IASTName ?
+				getEnclosingTemplateDeclaration((IASTName) name2) : null;
+		return decl1 != null && decl1.equals(decl2) || decl1 == null && decl2 == null;
+	}
+
+	private IASTDeclaration getEnclosingTemplateDeclaration(IASTNode node) {
+		while (node != null && !(node instanceof ICPPASTTemplateDeclaration)) {
+			node= node.getParent();
+		}
+		return (IASTDeclaration) node;
 	}
 
 	private IName[] findDeclNames(IASTTranslationUnit ast, int isKind, IBinding binding) throws CoreException {
@@ -244,9 +292,9 @@ public class OpenDeclarationsAction extends SelectionParseAction implements ASTR
 		return declNames;
 	}
 
-	private boolean navigationFallBack(IASTTranslationUnit ast) {
+	private boolean navigationFallBack(IASTTranslationUnit ast, IASTName sourceName, int isKind) {
 		// bug 102643, as a fall-back we look up the selected word in the index
-		if (sAllowFallback && fSelectedText != null && fSelectedText.length() > 0) {
+		if (fSelectedText != null && fSelectedText.length() > 0) {
 			try {
 				final ICProject project = fWorkingCopy.getCProject();
 				final char[] name = fSelectedText.toCharArray();
@@ -288,18 +336,46 @@ public class OpenDeclarationsAction extends SelectionParseAction implements ASTR
 						elems.add(elem);
 					}
 				}
-				
-				// convert bindings to CElements
+
+				String[] sourceQualifiedName= sourceName != null ?
+						CPPVisitor.getQualifiedName(sourceName.resolveBinding()) :
+					    new String[] { fSelectedText };
+				// Convert bindings to CElements
 				for (IBinding binding : bindings) {
-					final IName[] names = findNames(fIndex, ast, KIND_OTHER, binding);
+					String[] qualifiedName = CPPVisitor.getQualifiedName(binding);
+					if (!Arrays.equals(qualifiedName, sourceQualifiedName)) {
+						continue;
+					}
+					IName[] names = findNames(fIndex, ast, isKind, binding);
+					// Exclude the current location.
+					for (int i = 0; i < names.length; i++) {
+						if (sourceName != null && isSameName(names[i], sourceName)) {
+							names[i] = null;
+						}
+					}
+					names = (IName[]) ArrayUtil.removeNulls(IName.class, names);
 					convertToCElements(project, fIndex, names, elems);
 				}
-				return navigateCElements(elems);
+				if (navigateCElements(elems)) {
+					return true;
+				}
+				if (sourceName != null && sourceName.isDeclaration()) {
+					// Select the name at the current location as the last resort. 
+					return navigateToName(sourceName);
+				}
 			} catch (CoreException e) {
 				CUIPlugin.log(e);
 			}
 		}
 		return false;
+	}
+
+	private boolean isSameName(IName n1, IName n2) {
+		IASTFileLocation loc1 = n1.getFileLocation();
+		IASTFileLocation loc2 = n2.getFileLocation();
+		return loc1.getFileName().equals(loc2.getFileName()) &&
+				loc1.getNodeOffset() == loc2.getNodeOffset() &&
+				loc1.getNodeLength() == loc2.getNodeLength();
 	}
 
 	private void openInclude(IASTPreprocessorIncludeStatement incStmt) {
@@ -323,28 +399,34 @@ public class OpenDeclarationsAction extends SelectionParseAction implements ASTR
 		}
 	}
 
-	private boolean navigateOneLocation(IName[] declNames) {
-		for (IName declName : declNames) {
-			IASTFileLocation fileloc = declName.getFileLocation();
-			if (fileloc != null) {
-
-				final IPath path = new Path(fileloc.getFileName());
-				final int offset = fileloc.getNodeOffset();
-				final int length = fileloc.getNodeLength();
-
-				runInUIThread(new Runnable() {
-					public void run() {
-						try {
-							open(path, offset, length);
-						} catch (CoreException e) {
-							CUIPlugin.log(e);
-						}
-					}
-				});
+	private boolean navigateOneLocation(IName[] names) {
+		for (IName name : names) {
+			if (navigateToName(name)) {
 				return true;
 			}
 		}
 		return false;
+	}
+
+	private boolean navigateToName(IName name) {
+		IASTFileLocation fileloc = name.getFileLocation();
+		if (fileloc == null) {
+			return false;
+		}
+		final IPath path = new Path(fileloc.getFileName());
+		final int offset = fileloc.getNodeOffset();
+		final int length = fileloc.getNodeLength();
+
+		runInUIThread(new Runnable() {
+			public void run() {
+				try {
+					open(path, offset, length);
+				} catch (CoreException e) {
+					CUIPlugin.log(e);
+				}
+			}
+		});
+		return true;
 	}
 
 	private boolean navigateViaCElements(ICProject project, IIndex index, IName[] declNames) {

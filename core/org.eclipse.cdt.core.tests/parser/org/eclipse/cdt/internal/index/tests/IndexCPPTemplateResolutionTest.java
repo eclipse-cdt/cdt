@@ -203,7 +203,7 @@ public class IndexCPPTemplateResolutionTest extends IndexBindingResolutionTestBa
 	// void test(Vec<int>::reference p) {
 	//   f(p);
 	// }
-    public void _testRebindPattern_276610() throws Exception {
+    public void testRebindPattern_276610() throws Exception {
         getBindingFromASTName("f(p)", 1, ICPPFunction.class);
     }
 

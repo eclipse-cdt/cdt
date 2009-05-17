@@ -9,6 +9,7 @@
  *    QNX - Initial API and implementation
  *    Andrew Ferguson (Symbian)
  *    Markus Schorn (Wind River Systems)
+ *    Sergey Prigogin (Google)
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.index;
 
@@ -26,6 +27,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunctionType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPMethod;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateArgument;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateInstance;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPUnknownClassInstance;
 import org.eclipse.core.runtime.CoreException;
 
 /**
@@ -37,8 +39,8 @@ import org.eclipse.core.runtime.CoreException;
 public class IndexCPPSignatureUtil {
 	
 	/**
-	 * Returns the signature for the binding.  Returns an empty string if a
-	 * signature is not required for the binding.
+	 * Returns the signature for the binding.  Returns an empty string if
+	 * a signature is not required for the binding.
 	 * 
 	 * @param binding
 	 * @return the signature or an empty string
@@ -46,10 +48,13 @@ public class IndexCPPSignatureUtil {
 	 * @throws DOMException
 	 */
 	public static String getSignature(IBinding binding) throws CoreException, DOMException {
-		StringBuffer buffer = new StringBuffer();
+		StringBuilder buffer = new StringBuilder();
 		if (binding instanceof ICPPTemplateInstance) {
 			ICPPTemplateInstance inst = (ICPPTemplateInstance) binding;
 			buffer.append(getTemplateArgString(inst.getTemplateArguments(), true));
+		} else if (binding instanceof ICPPUnknownClassInstance) {
+			ICPPUnknownClassInstance inst = (ICPPUnknownClassInstance) binding;
+			buffer.append(getTemplateArgString(inst.getArguments(), true));
 		} else if (binding instanceof ICPPClassTemplatePartialSpecialization) {
 			ICPPClassTemplatePartialSpecialization partial = (ICPPClassTemplatePartialSpecialization) binding;
 			buffer.append(getTemplateArgString(partial.getTemplateArguments(), false));
@@ -57,7 +62,7 @@ public class IndexCPPSignatureUtil {
 		
 		if (binding instanceof IFunction) {
 			IFunction function = (IFunction) binding;
-			buffer.append(getFunctionParameterString((function.getType())));
+			buffer.append(getFunctionParameterString(function.getType()));
 		}
 		if (binding instanceof ICPPMethod && !(binding instanceof ICPPConstructor)) {
 			ICPPFunctionType ft = ((ICPPMethod) binding).getType();
@@ -74,7 +79,8 @@ public class IndexCPPSignatureUtil {
 	 * Constructs a string in the format:
 	 *   <typeName1,typeName2,...>
 	 */
-	public static String getTemplateArgString(ICPPTemplateArgument[] args, boolean qualifyTemplateParameters) throws CoreException, DOMException {
+	public static String getTemplateArgString(ICPPTemplateArgument[] args, boolean qualifyTemplateParameters)
+			throws CoreException, DOMException {
 		return ASTTypeUtil.getArgumentListString(args, true);
 	}
 	
@@ -88,17 +94,17 @@ public class IndexCPPSignatureUtil {
 	 */
 	private static String getFunctionParameterString(IFunctionType fType) throws DOMException {
 		IType[] types = fType.getParameterTypes();
-		if(types.length==1) {
-			if(types[0] instanceof IBasicType) {
-				if(((IBasicType)types[0]).getType()==IBasicType.t_void) {
+		if (types.length == 1) {
+			if (types[0] instanceof IBasicType) {
+				if (((IBasicType) types[0]).getType() == IBasicType.t_void) {
 					types = new IType[0];
 				}
 			}
 		}
-		StringBuffer result = new StringBuffer();
+		StringBuilder result = new StringBuilder();
 		result.append('(');
-		for(int i=0; i<types.length; i++) {
-			if (i>0) {
+		for (int i= 0; i < types.length; i++) {
+			if (i > 0) {
 				result.append(',');
 			}
 			result.append(ASTTypeUtil.getType(types[i]));
@@ -130,11 +136,11 @@ public class IndexCPPSignatureUtil {
 		try {
 			int siga= getSignature(a).hashCode();
 			int sigb= getSignature(b).hashCode();
-			return siga<sigb ? -1 : (siga>sigb ? 1 : 0);
-		} catch(CoreException ce) {
-			CCorePlugin.log(ce);
-		} catch(DOMException de) {
-			CCorePlugin.log(de);
+			return siga < sigb ? -1 : siga > sigb ? 1 : 0;
+		} catch (CoreException e) {
+			CCorePlugin.log(e);
+		} catch (DOMException e) {
+			CCorePlugin.log(e);
 		}
 		return 0;
 	}

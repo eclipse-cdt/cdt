@@ -2120,7 +2120,8 @@ public class CPPTemplates {
 	/**
 	 * Attempts to (partially) resolve an unknown binding with the given arguments.
 	 */
-	private static IBinding resolveUnknown(ICPPUnknownBinding unknown, ICPPTemplateParameterMap tpMap, ICPPClassSpecialization within) throws DOMException {
+	private static IBinding resolveUnknown(ICPPUnknownBinding unknown, ICPPTemplateParameterMap tpMap,
+			ICPPClassSpecialization within) throws DOMException {
         if (unknown instanceof ICPPDeferredClassInstance) {
         	return resolveDeferredClassInstance((ICPPDeferredClassInstance) unknown, tpMap, within);
         }
@@ -2155,7 +2156,8 @@ public class CPPTemplates {
 	            if (s != null) {
 	            	result= CPPSemantics.resolveUnknownName(s, unknown);
 	            	if (unknown instanceof ICPPUnknownClassInstance && result instanceof ICPPTemplateDefinition) {
-	            		ICPPTemplateArgument[] newArgs = CPPTemplates.instantiateArguments(((ICPPUnknownClassInstance) unknown).getArguments(), tpMap, within);
+	            		ICPPTemplateArgument[] newArgs = CPPTemplates.instantiateArguments(
+	            				((ICPPUnknownClassInstance) unknown).getArguments(), tpMap, within);
 	            		if (result instanceof ICPPClassTemplate) {
 	            			result = instantiate((ICPPClassTemplate) result, newArgs);
 	            		}
@@ -2167,7 +2169,8 @@ public class CPPTemplates {
         return result;
 	}
 
-	private static IBinding resolveDeferredClassInstance(ICPPDeferredClassInstance dci, ICPPTemplateParameterMap tpMap, ICPPClassSpecialization within) {
+	private static IBinding resolveDeferredClassInstance(ICPPDeferredClassInstance dci,
+			ICPPTemplateParameterMap tpMap, ICPPClassSpecialization within) {
 		ICPPTemplateArgument[] arguments = dci.getTemplateArguments();
 		ICPPTemplateArgument[] newArgs = CPPTemplates.instantiateArguments(arguments, tpMap, within);
 

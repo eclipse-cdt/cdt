@@ -37,7 +37,8 @@ class PDOMCPPUnknownClassInstance extends PDOMCPPUnknownClassType implements ICP
 	// Cached values.
 	ICPPTemplateArgument[] arguments;
 
-	public PDOMCPPUnknownClassInstance(PDOMLinkage linkage, PDOMNode parent, ICPPUnknownClassInstance classInstance)	throws CoreException {
+	public PDOMCPPUnknownClassInstance(PDOMLinkage linkage, PDOMNode parent, ICPPUnknownClassInstance classInstance)
+			throws CoreException {
 		super(linkage, parent, classInstance);
 		
 		int rec= PDOMCPPArgumentList.putArguments(this, classInstance.getArguments());
@@ -105,7 +106,7 @@ class PDOMCPPUnknownClassInstance extends PDOMCPPUnknownClassType implements ICP
 					final IBinding lhsContainer= getOwner();
 					final IBinding rhsContainer= rhs.getOwner();
 					if (lhsContainer instanceof IType && rhsContainer instanceof IType) {
-						 return (((IType)lhsContainer).isSameType((IType) rhsContainer));
+						 return (((IType) lhsContainer).isSameType((IType) rhsContainer));
 					}
 				} catch (DOMException e) {
 				}

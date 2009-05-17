@@ -86,8 +86,7 @@ public class IndexCPPTemplateResolutionTest extends IndexBindingResolutionTestBa
 	}
 	
     // template<typename _TpAllocator>
-    // class Allocator {
-    // public:
+    // struct Allocator {
     //   typedef _TpAllocator& alloc_reference;
     //   template<typename _TpRebind>
     //   struct rebind {
@@ -96,8 +95,7 @@ public class IndexCPPTemplateResolutionTest extends IndexBindingResolutionTestBa
     // };
     //
     // template<typename _Tp, typename _Alloc = Allocator<_Tp> >
-    // class Vec {
-    // public:
+    // struct Vec {
     //   typedef typename _Alloc::template rebind<_Tp>::other::alloc_reference reference;
     // };
 
@@ -112,8 +110,7 @@ public class IndexCPPTemplateResolutionTest extends IndexBindingResolutionTestBa
     }
 
     // template<typename _TpAllocator>
-    // class Allocator {
-    // public:
+    // struct Allocator {
     //   typedef _TpAllocator& alloc_reference;
     //   template<typename _TpRebind>
     //   struct rebind {
@@ -122,14 +119,12 @@ public class IndexCPPTemplateResolutionTest extends IndexBindingResolutionTestBa
     // };
     //
     // template<typename _TpBase, typename _AllocBase>
-    // class VecBase {
-    // public:
+    // struct VecBase {
     //   typedef typename _AllocBase::template rebind<_TpBase>::other _Tp_alloc_type;
     // };
     //
     // template<typename _Tp, typename _Alloc = Allocator<_Tp> >
-    // class Vec : protected VecBase<_Tp, _Alloc> {
-    // public:
+    // struct Vec : public VecBase<_Tp, _Alloc> {
     //   typedef typename VecBase<_Tp, _Alloc>::_Tp_alloc_type::alloc_reference reference;
     // };
 
@@ -147,8 +142,7 @@ public class IndexCPPTemplateResolutionTest extends IndexBindingResolutionTestBa
     // class Allocator;
     //
 	// template<>
-	// class Allocator<void> {
-	// public:
+	// struct Allocator<void> {
 	//   template<typename _TpRebind>
 	//   struct rebind {
 	//	   typedef Allocator<_TpRebind> other;
@@ -156,8 +150,7 @@ public class IndexCPPTemplateResolutionTest extends IndexBindingResolutionTestBa
 	// };
     //
     // template<typename _TpAllocator>
-    // class Allocator {
-    // public:
+    // struct Allocator {
     //   typedef _TpAllocator& alloc_reference;
     //   template<typename _TpRebind>
     //   struct rebind {
@@ -166,14 +159,12 @@ public class IndexCPPTemplateResolutionTest extends IndexBindingResolutionTestBa
     // };
     //
     // template<typename _TpBase, typename _AllocBase>
-    // class VecBase {
-    // public:
+    // struct VecBase {
     //   typedef typename _AllocBase::template rebind<_TpBase>::other _Tp_alloc_type;
     // };
     //
     // template<typename _Tp, typename _Alloc = Allocator<_Tp> >
-    // class Vec : protected VecBase<_Tp, _Alloc> {
-    // public:
+    // struct Vec : public VecBase<_Tp, _Alloc> {
     //   typedef typename VecBase<_Tp, _Alloc>::_Tp_alloc_type::alloc_reference reference;
     // };
 
@@ -185,6 +176,35 @@ public class IndexCPPTemplateResolutionTest extends IndexBindingResolutionTestBa
 		type = SemanticUtil.getUltimateType(type, false);
 		assertInstance(type, IBasicType.class);
 		assertEquals("int", ASTTypeUtil.getType(type));
+    }
+
+    // template<typename _TpAllocator>
+    // struct Allocator {
+    //   typedef _TpAllocator& alloc_reference;
+    //   template<typename _TpRebind>
+    //   struct rebind {
+    //     typedef Allocator<_TpRebind> other;
+    //   };
+    // };
+    //
+    // template<typename _TpBase, typename _AllocBase>
+    // struct VecBase {
+    //   typedef typename _AllocBase::template rebind<_TpBase*>::other unreferenced;
+    //   typedef typename _AllocBase::template rebind<_TpBase>::other _Tp_alloc_type;
+    // };
+    //
+    // template<typename _Tp, typename _Alloc = Allocator<_Tp> >
+    // struct Vec : public VecBase<_Tp, _Alloc> {
+    //   typedef typename VecBase<_Tp, _Alloc>::_Tp_alloc_type::alloc_reference reference;
+    // };
+
+	// void f(int s);
+	//
+	// void test(Vec<int>::reference p) {
+	//   f(p);
+	// }
+    public void _testRebindPattern_276610() throws Exception {
+        getBindingFromASTName("f(p)", 1, ICPPFunction.class);
     }
 
     //	class Str1 {

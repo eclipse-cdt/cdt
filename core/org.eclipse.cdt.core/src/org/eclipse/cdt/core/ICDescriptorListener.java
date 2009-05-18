@@ -10,6 +10,13 @@
  *******************************************************************************/
 package org.eclipse.cdt.core;
 
+import org.eclipse.cdt.core.settings.model.CProjectDescriptionEvent;
+import org.eclipse.cdt.core.settings.model.ICProjectDescriptionListener;
+
+/**
+ * @deprecated register {@link ICProjectDescriptionListener} for {@link CProjectDescriptionEvent}
+ */
+@Deprecated
 public interface ICDescriptorListener {
 	public void descriptorChanged(CDescriptorEvent event);
 }

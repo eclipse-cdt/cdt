@@ -15,7 +15,9 @@ import org.eclipse.core.runtime.CoreException;
 /**
  * @noextend This interface is not intended to be extended by clients.
  * @noimplement This interface is not intended to be implemented by clients.
+ * @deprecated
  */
+@Deprecated
 public interface ICOwner {
 	public void configure(ICDescriptor cproject) throws CoreException;
 	public void update(ICDescriptor cproject, String extensionID) throws CoreException;

@@ -11,6 +11,7 @@
 package org.eclipse.cdt.core;
 
 import org.eclipse.cdt.core.settings.model.ICConfigExtensionReference;
+import org.eclipse.cdt.core.settings.model.ICConfigurationDescription;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
 
@@ -27,7 +28,9 @@ import org.eclipse.core.runtime.IConfigurationElement;
  * 
  * @noextend This interface is not intended to be extended by clients.
  * @noimplement This interface is not intended to be implemented by clients.
+ * @deprecated replaced with {@link ICConfigExtensionReference} obtained from an {@link ICConfigurationDescription}
  */
+@Deprecated
 public interface ICExtensionReference {
 
     /**

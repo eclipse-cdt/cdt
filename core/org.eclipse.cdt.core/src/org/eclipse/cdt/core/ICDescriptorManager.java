@@ -12,6 +12,7 @@
 package org.eclipse.cdt.core;
 
 import org.eclipse.cdt.core.settings.model.ICProjectDescription;
+import org.eclipse.cdt.core.settings.model.ICProjectDescriptionManager;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -19,7 +20,9 @@ import org.eclipse.core.runtime.IProgressMonitor;
 /**
  * @noextend This interface is not intended to be extended by clients.
  * @noimplement This interface is not intended to be implemented by clients.
+ * @deprecated replace with {@link ICProjectDescriptionManager} & {@link ICProjectDescription}
  */
+@Deprecated
 public interface ICDescriptorManager {
 
 	public void configure(IProject project, String id) throws CoreException;

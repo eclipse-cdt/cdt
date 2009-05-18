@@ -610,7 +610,7 @@ public class CCorePlugin extends Plugin {
 	}
 
 	/**
-	 * @deprecated use getCProjetDescription(IProject project, boolean create)
+	 * @deprecated use {@link #getProjectDescription(IProject, boolean)} instead
 	 */
 	@Deprecated
 	public ICDescriptor getCProjectDescription(IProject project) throws CoreException {
@@ -618,14 +618,19 @@ public class CCorePlugin extends Plugin {
 	}
 
 	/**
-	 * Get the ICDescriptor for the given project, if <b>create</b> is <b>true</b> then a descriptor will be created
-	 * if one does not exist.
-	 * 
+	 * Please use {@link #getProjectDescription(IProject, boolean)} to fetch the
+	 * ICProjectDescription for the project. And use {@link ICProjectDescription#getConfigurations()} 
+	 * to get an array of ICConfigurationDescriptions, which have similar API to ICDescriptor,
+	 * allowing you to store settings and configure extensions at the Configuration level
+	 * rather than at the project level.
+	 *
 	 * @param project
 	 * @param create
 	 * @return ICDescriptor or <b>null</b> if <b>create</b> is <b>false</b> and no .cdtproject file exists on disk.
 	 * @throws CoreException
+	 * @deprecated
 	 */
+	@Deprecated
 	public ICDescriptor getCProjectDescription(IProject project, boolean create) throws CoreException {
 		return fNewCProjectDescriptionManager.getDescriptorManager().getDescriptor(project, create);
 	}
@@ -642,6 +647,16 @@ public class CCorePlugin extends Plugin {
 		}
 	}
 
+	/**
+	 * @deprecated Settings should be set per ICConfigurationDescription rather than
+	 * global to the project.  Please use {@link #getProjectDescription(IProject, boolean)} 
+	 * to fetch the ICProjectDescription for the project. And use 
+	 * {@link ICProjectDescription#getConfigurations()} to get an array of 
+	 * ICConfigurationDescriptions, which have similar API to ICDescriptor,
+	 * allowing you to store settings and configure extensions at the Configuration level
+	 * rather than at the project level.
+	 */
+	@Deprecated
 	public ICDescriptorManager getCDescriptorManager() {
 		return fNewCProjectDescriptionManager.getDescriptorManager();
 	}

@@ -30,7 +30,11 @@ import org.w3c.dom.Element;
  * 
  * @noextend This interface is not intended to be extended by clients.
  * @noimplement This interface is not intended to be implemented by clients.
+ * @deprecated as this API is not configuration aware. Replaced by 
+ * {@link ICConfigurationDescription} which can be fetched with 
+ * {@link ICProjectDescription#getConfigurations()}
  */
+@Deprecated
 public interface ICDescriptor {
 	public ICOwnerInfo getProjectOwner();
 	public String getPlatform();

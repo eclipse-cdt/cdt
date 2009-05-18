@@ -12,10 +12,15 @@ package org.eclipse.cdt.core;
 
 import java.util.EventObject;
 
+import org.eclipse.cdt.core.settings.model.CProjectDescriptionEvent;
+import org.eclipse.cdt.core.settings.model.ICProjectDescriptionListener;
+
 /**
  * @noextend This class is not intended to be subclassed by clients.
  * @noinstantiate This class is not intended to be instantiated by clients.
+ * @deprecated register {@link ICProjectDescriptionListener} for {@link CProjectDescriptionEvent}
  */
+@Deprecated
 public class CDescriptorEvent extends EventObject {
 
 	/**

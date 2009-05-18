@@ -156,7 +156,6 @@ public class DwarfReader extends Dwarf implements ISymbolReader {
 					str = readString(data);
 					if (str.length() == 0)
 						break;
-					dirList.add(str);
 					// If the directory is relative, append it to the CU dir
 					IPath dir = new Path(str);
 					if(!dir.isAbsolute())

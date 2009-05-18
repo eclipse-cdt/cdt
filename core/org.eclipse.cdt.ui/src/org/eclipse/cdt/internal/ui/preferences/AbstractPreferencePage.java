@@ -141,7 +141,7 @@ public abstract class AbstractPreferencePage extends PreferencePage implements I
 		return checkBox;
 	}
 
-	protected Group addGroupBox(Composite parent, String label, int nColumns ){
+	protected Group addGroupBox(Composite parent, String label, int nColumns) {
 		Group group = new Group(parent, SWT.NONE);
 		group.setText(label);
 		GridLayout layout = new GridLayout();
@@ -153,8 +153,8 @@ public abstract class AbstractPreferencePage extends PreferencePage implements I
 		return group;
 	}
 
-	protected Control addTextField(Composite composite, String label, String key, int textLimit, int indentation, boolean isNumber) {
-
+	protected Control addTextField(Composite composite, String label, String key, int textLimit,
+			int indentation, boolean isNumber) {
 		Label labelControl = new Label(composite, SWT.NONE);
 		labelControl.setText(label);
 		GridData gd = new GridData(GridData.HORIZONTAL_ALIGN_BEGINNING);
@@ -177,8 +177,8 @@ public abstract class AbstractPreferencePage extends PreferencePage implements I
 		return textControl;
 	}
 
-	protected void addComboBox(Composite composite, String label, String key, int textLimit, int indentation) {
-
+	protected void addComboBox(Composite composite, String label, String key, int textLimit,
+			int indentation) {
 		Label labelControl = new Label(composite, SWT.NONE);
 		labelControl.setText(label);
 		GridData gd = new GridData(GridData.HORIZONTAL_ALIGN_BEGINNING);
@@ -194,7 +194,6 @@ public abstract class AbstractPreferencePage extends PreferencePage implements I
 		comboControl.setLayoutData(gd);
 		fComboBoxes.put(comboControl, key);
 		comboControl.addModifyListener(fComboBoxListener);  // TODO: When will the listener be removed? 
-
 	}
 
 	protected void addFiller(Composite composite) {
@@ -298,9 +297,6 @@ public abstract class AbstractPreferencePage extends PreferencePage implements I
 		return composite;
 	}
 
-	/**
-	 * 
-	 */
 	public AbstractPreferencePage() {
 		super();		
 		setPreferenceStore(PreferenceConstants.getPreferenceStore());
@@ -310,7 +306,6 @@ public abstract class AbstractPreferencePage extends PreferencePage implements I
 	protected abstract OverlayPreferenceStore.OverlayKey[] createOverlayStoreKeys();
 	
 	protected void initializeFields() {
-
 		Iterator<Object> e = fColorButtons.keySet().iterator();
 		while (e.hasNext()) {
 			ColorSelector c = (ColorSelector) e.next();
@@ -342,8 +337,6 @@ public abstract class AbstractPreferencePage extends PreferencePage implements I
 			ProposalFilterPreferencesUtil.restoreComboFromString(c, state);
 		}
 	}
-
-
 
 	/*
 	 * (non-Javadoc)
@@ -384,5 +377,4 @@ public abstract class AbstractPreferencePage extends PreferencePage implements I
 		}
 		super.dispose();
 	}
-
 }

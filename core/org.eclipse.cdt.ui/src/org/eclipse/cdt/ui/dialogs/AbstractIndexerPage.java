@@ -28,7 +28,6 @@ import org.eclipse.cdt.utils.ui.controls.ControlFactory;
 import org.eclipse.cdt.internal.core.model.CProject;
 import org.eclipse.cdt.internal.core.pdom.indexer.IndexerPreferences;
 
-
 /**
  * @author Bogdan Gheorghe
  */
@@ -198,15 +197,6 @@ public abstract class AbstractIndexerPage extends AbstractCOptionPage {
 				fSkipMacroReferences.setEnabled(!skipReferences);
 			}
 		}
-		if (fAllSources != null) {
-			final boolean all= fAllSources.getSelection();
-			if (fAllHeadersDefault != null) {
-				fAllHeadersDefault.setEnabled(all);
-			}
-			if (fAllHeadersAlt != null) {
-				fAllHeadersAlt.setEnabled(all);
-			}
-		}
 	}
 	
 	private String getNotNull(Properties properties, String key) {
@@ -219,7 +209,7 @@ public abstract class AbstractIndexerPage extends AbstractCOptionPage {
 
 	private Text createParseUpFrontTextField(Composite page) {
 		Label l= ControlFactory.createLabel(page, DialogsMessages.AbstractIndexerPage_indexUpFront);
-		((GridData) l.getLayoutData()).verticalIndent=5;
+		((GridData) l.getLayoutData()).verticalIndent= 5;
 		return ControlFactory.createTextField(page);
 	} 
 

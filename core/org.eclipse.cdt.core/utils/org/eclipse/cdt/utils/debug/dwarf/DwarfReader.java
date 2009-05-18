@@ -157,6 +157,11 @@ public class DwarfReader extends Dwarf implements ISymbolReader {
 					if (str.length() == 0)
 						break;
 					dirList.add(str);
+					// If the directory is relative, append it to the CU dir
+					IPath dir = new Path(str);
+					if(!dir.isAbsolute())
+						dir = new Path(cuCompDir).append(str);
+					dirList.add(dir.toString());
 				}
 				
 				// Read file names
@@ -369,7 +374,10 @@ public class DwarfReader extends Dwarf implements ISymbolReader {
 		// Combine dir & name if needed.
 		if (!pa.isAbsolute() && dir.length() > 0)
 			pa = dirPa.append(pa);
-		
+
+		// Fix cygwin style paths
+		pa = new Path(fixUpPath(pa.toString()));
+
 		// For win32 only.
 		// On Windows, there are cases where the source file itself has the full path
 		// except the drive letter.
@@ -394,6 +402,42 @@ public class DwarfReader extends Dwarf implements ISymbolReader {
 			m_fileCollection.add(fullName);					
 	}
 	
+
+	private String fixUpPath(String path) {
+		// some compilers generate extra back slashes
+		path = path.replaceAll("\\\\\\\\", "\\\\"); //$NON-NLS-1$//$NON-NLS-2$
+
+		// translate any cygwin drive paths, e.g. //G/System/main.cpp or /cygdrive/c/system/main.c
+		if (path.startsWith("/cygdrive/") && ('/' == path.charAt(11))) { //$NON-NLS-1$
+			char driveLetter = path.charAt(10);
+			driveLetter = (Character.isLowerCase(driveLetter)) ? Character.toUpperCase(driveLetter)
+					: driveLetter;
+
+			StringBuffer buf = new StringBuffer(path);
+			buf.delete(0, 11);
+			buf.insert(0, driveLetter);
+			buf.insert(1, ':');
+
+			path = buf.toString();
+		}
+
+		// translate any cygwin drive paths, e.g. //G/System/main.cpp or /cygdrive/c/system/main.c
+		if (path.startsWith("//") && ('/' == path.charAt(3))) { //$NON-NLS-1$
+			char driveLetter = path.charAt(2);
+			driveLetter = (Character.isLowerCase(driveLetter)) ? Character.toUpperCase(driveLetter)
+					: driveLetter;
+
+			StringBuffer buf = new StringBuffer(path);
+			buf.delete(0, 3);
+			buf.insert(0, driveLetter);
+			buf.insert(1, ':');
+
+			path = buf.toString();
+		}
+
+		return path;
+	}		
+
 	/**
 	 * Read a null-ended string from the given "data" stream.
 	 * data	:  IN, byte buffer

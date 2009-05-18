@@ -27,11 +27,13 @@ import org.eclipse.core.resources.IResourceDelta;
 import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.jface.viewers.AbstractTreeViewer;
 import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.jface.viewers.StructuredViewer;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Display;
 
 public class MakeContentProvider implements ITreeContentProvider, IMakeTargetListener, IResourceChangeListener {
 	protected boolean bFlatten;
@@ -57,7 +59,7 @@ public class MakeContentProvider implements ITreeContentProvider, IMakeTargetLis
 				// ignore
 			}
 		} else if (obj instanceof IContainer) {
-			ArrayList children = new ArrayList();
+			ArrayList<IAdaptable> children = new ArrayList<IAdaptable>();
 			try {
 				IResource[] resource = ((IContainer)obj).members();
 				for (int i = 0; i < resource.length; i++) {
@@ -89,7 +91,7 @@ public class MakeContentProvider implements ITreeContentProvider, IMakeTargetLis
 
 	public Object[] getElements(Object obj) {
 		if (bFlatten) {
-			List list = new ArrayList();
+			List<Object> list = new ArrayList<Object>();
 			Object[] children = getChildren(obj);
 			for (int i = 0; i < children.length; i++) {
 				list.add(children[i]);
@@ -139,7 +141,7 @@ public class MakeContentProvider implements ITreeContentProvider, IMakeTargetLis
 			switch (event.getType()) {
 				case MakeTargetEvent.PROJECT_ADDED :
 				case MakeTargetEvent.PROJECT_REMOVED :
-					ctrl.getDisplay().syncExec(new Runnable() {
+					ctrl.getDisplay().asyncExec(new Runnable() {
 
 						public void run() {
 							if (ctrl != null && !ctrl.isDisposed()) {
@@ -151,7 +153,7 @@ public class MakeContentProvider implements ITreeContentProvider, IMakeTargetLis
 				case MakeTargetEvent.TARGET_ADD :
 				case MakeTargetEvent.TARGET_CHANGED :
 				case MakeTargetEvent.TARGET_REMOVED :
-					ctrl.getDisplay().syncExec(new Runnable() {
+					ctrl.getDisplay().asyncExec(new Runnable() {
 
 						public void run() {
 							if (ctrl != null && !ctrl.isDisposed()) {
@@ -199,41 +201,53 @@ public class MakeContentProvider implements ITreeContentProvider, IMakeTargetLis
 		}
 
 		// Get the affected resource
-		IResource resource = delta.getResource();
+		final IResource resource = delta.getResource();
 
 		// Handle removed children. Issue one update for all removals.
 		affectedChildren = delta.getAffectedChildren(IResourceDelta.REMOVED);
 		if (affectedChildren.length > 0) {
-			ArrayList affected = new ArrayList(affectedChildren.length);
+			final ArrayList<IResource> affected = new ArrayList<IResource>(affectedChildren.length);
 			for (int i = 0; i < affectedChildren.length; i++) {
 				if (affectedChildren[i].getResource().getType() == IResource.FOLDER) {
 					affected.add(affectedChildren[i].getResource());
 				}
 			}
-			if (affected.size() != 0) {
-				if (viewer instanceof AbstractTreeViewer) {
-					((AbstractTreeViewer) viewer).remove(affected.toArray());
-				} else {
-					viewer.refresh(resource);
-				}
+			if (!affected.isEmpty()) {
+				Display.getDefault().asyncExec(new Runnable() {
+					public void run() {
+						if (viewer == null || viewer.getControl() == null || viewer.getControl().isDisposed())
+							return;
+						if (viewer instanceof AbstractTreeViewer) {
+							((AbstractTreeViewer) viewer).remove(affected.toArray());
+						} else {
+							viewer.refresh(resource);
+						}
+					}
+				});
 			}
 		}
 
 		// Handle added children. Issue one update for all insertions.
 		affectedChildren = delta.getAffectedChildren(IResourceDelta.ADDED);
 		if (affectedChildren.length > 0) {
-			ArrayList affected = new ArrayList(affectedChildren.length);
+			final ArrayList<IResource> affected = new ArrayList<IResource>(affectedChildren.length);
 			for (int i = 0; i < affectedChildren.length; i++) {
 				if (affectedChildren[i].getResource().getType() == IResource.FOLDER) {
 					affected.add(affectedChildren[i].getResource());
 				}
 			}
-			if (affected.size() != 0) {
-				if (viewer instanceof AbstractTreeViewer) {
-					((AbstractTreeViewer) viewer).add(resource, affected.toArray());
-				} else {
-					viewer.refresh(resource);
-				}
+			if (!affected.isEmpty()) {
+				Display.getDefault().asyncExec(new Runnable() {
+					public void run() {
+						if (viewer == null || viewer.getControl() == null || viewer.getControl().isDisposed())
+							return;
+						if (viewer instanceof AbstractTreeViewer) {
+							((AbstractTreeViewer) viewer).add(resource, affected.toArray());
+						} else {
+							viewer.refresh(resource);
+						}
+					}
+				});
 			}
 		}
 	}
@@ -241,15 +255,7 @@ public class MakeContentProvider implements ITreeContentProvider, IMakeTargetLis
 	public void resourceChanged(IResourceChangeEvent event) {
 		final IResourceDelta delta = event.getDelta();
 		Control ctrl = viewer.getControl();
-		if (ctrl != null && !ctrl.isDisposed()) {
-			// Do a sync exec, not an async exec, since the resource delta
-			// must be traversed in this method. It is destroyed
-			// when this method returns.
-			ctrl.getDisplay().syncExec(new Runnable() {
-				public void run() {
-					processDelta(delta);
-				}
-			});
-		}
+		if (ctrl != null && !ctrl.isDisposed())
+			processDelta(delta);
 	}
 }

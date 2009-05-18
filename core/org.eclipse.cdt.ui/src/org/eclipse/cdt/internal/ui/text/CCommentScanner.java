@@ -21,7 +21,6 @@ import org.eclipse.jface.text.rules.IRule;
 import org.eclipse.cdt.ui.PreferenceConstants;
 import org.eclipse.cdt.ui.text.AbstractCScanner;
 import org.eclipse.cdt.ui.text.ITokenStoreFactory;
-import org.eclipse.cdt.ui.text.TaskTagRule;
 
 /**
  * Default token-scanner used for plain (non-documentation-comment) single and multi-line comments, with awareness of
@@ -42,9 +41,8 @@ public class CCommentScanner extends AbstractCScanner {
 	 protected List<IRule> createRules(String defaultTokenProperty) {
 		 setDefaultReturnToken(getToken(defaultTokenProperty));
 		 IPreferenceStore store= fTokenStore.getPreferenceStore();
-		 String taskWords= TaskTagRule.getTaskWords(store, null);
-		 TaskTagRule taskTagRule= new TaskTagRule(getToken(TASK_TAG_KEY), taskWords);
+		 TaskTagRule taskTagRule= new TaskTagRule(getToken(TASK_TAG_KEY), fDefaultReturnToken, store, null);
 		 addPropertyChangeParticipant(taskTagRule);
-		 return Collections.singletonList((IRule)taskTagRule);
+		 return Collections.singletonList((IRule) taskTagRule);
 	 }
 }

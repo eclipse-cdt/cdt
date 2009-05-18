@@ -26,11 +26,12 @@ import org.eclipse.cdt.ui.PreferenceConstants;
 import org.eclipse.cdt.ui.text.ICTokenScanner;
 import org.eclipse.cdt.ui.text.ITokenStore;
 import org.eclipse.cdt.ui.text.ITokenStoreFactory;
-import org.eclipse.cdt.ui.text.TaskTagRule;
+
+import org.eclipse.cdt.internal.ui.text.TaskTagRule;
 
 /**
- * ICTokenScanner which recognizes a specified set of tags, starting with a specified name. It is assumed this will be
- * used within a single-line or multi-line comment context.
+ * ICTokenScanner which recognizes a specified set of tags, starting with a specified name.
+ * It is assumed this will be used within a single-line or multi-line comment context.
  * @since 5.0
  * @noextend This class is not intended to be subclassed by clients.
  */
@@ -82,8 +83,8 @@ public class GenericTagCommentScanner extends BufferedRuleBasedScanner implement
 
 		class TagDetector implements IWordDetector {
 			public boolean isWordStart(char c) {
-				for(int i=0; i<fTagMarkers.length; i++)
-					if(fTagMarkers[i] == c)
+				for (int i= 0; i < fTagMarkers.length; i++)
+					if (fTagMarkers[i] == c)
 						return true;
 				return false;
 			}
@@ -92,21 +93,20 @@ public class GenericTagCommentScanner extends BufferedRuleBasedScanner implement
 			}
 		}
 
-		WordRule wr= new WordRule(new TagDetector(), fTokenStore.getToken(fDefaultTokenProperty));
-		for(int i=0; i<fTags.length; i++) {
+		setDefaultReturnToken(fTokenStore.getToken(fDefaultTokenProperty));
+		WordRule wr= new WordRule(new TagDetector(), fDefaultReturnToken);
+		for (int i= 0; i < fTags.length; i++) {
 			String wd= fTags[i].getTagName();
-			for(int j=0; j<fTagMarkers.length; j++) {
-				wr.addWord(fTagMarkers[j]+wd, fTokenStore.getToken(fTagToken));
+			for (int j= 0; j < fTagMarkers.length; j++) {
+				wr.addWord(fTagMarkers[j] + wd, fTokenStore.getToken(fTagToken));
 			}
 		}
 		result.add(wr);
 
 		// Add rule for Task Tags.
-		String taskWords= TaskTagRule.getTaskWords(fTokenStore.getPreferenceStore(), fCorePreferenceStore);
-		fTaskTagRule= new TaskTagRule(fTokenStore.getToken(PreferenceConstants.EDITOR_TASK_TAG_COLOR), taskWords);
+		fTaskTagRule= new TaskTagRule(fTokenStore.getToken(PreferenceConstants.EDITOR_TASK_TAG_COLOR),
+				fDefaultReturnToken, fTokenStore.getPreferenceStore(), fCorePreferenceStore);
 		result.add(fTaskTagRule);
-
-		setDefaultReturnToken(fTokenStore.getToken(fDefaultTokenProperty));
 
 		return result.toArray(new IRule[result.size()]);
 	}

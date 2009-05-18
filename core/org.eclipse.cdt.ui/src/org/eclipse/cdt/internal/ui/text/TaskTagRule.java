@@ -32,9 +32,6 @@ import org.eclipse.cdt.ui.IPropertyChangeParticipant;
 /**
  * Which words should be recognized as task tags is specified under {@link CCorePreferenceConstants#TODO_TASK_TAGS} as a
  * comma delimited list.
- * <p>
- * Clients may instantiate and subclass.
- * </p>
  * 
  * @see CCorePreferenceConstants#TODO_TASK_TAGS
  * @since 5.0
@@ -46,6 +43,7 @@ public final class TaskTagRule extends CombinedWordRule implements IPropertyChan
 		}
 
 		public boolean isWordPart(char c) {
+			// Allow task tags like "todo(myname):" 
 			return c == '.' || c == '(' || c == ')' || c == ':' || Character.isJavaIdentifierPart(c);
 		}
 	}

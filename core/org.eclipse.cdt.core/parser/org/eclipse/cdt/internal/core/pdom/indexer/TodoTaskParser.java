@@ -145,10 +145,12 @@ public class TodoTaskParser {
     			}
     		}
     		// Trim the message
-    		while (msgStart < end && CharOperation.isWhitespace(comment[end - 1]))
+    		while (msgStart < end && CharOperation.isWhitespace(comment[end - 1])) {
     			end--;
-    		while (msgStart < end && CharOperation.isWhitespace(comment[msgStart]))
+    		}
+    		while (msgStart < end && (CharOperation.isWhitespace(comment[msgStart]) || comment[msgStart] == ':')) {
     			msgStart++;
+    		}
     		if (msgStart == end) {
     			// If the description is empty, we might want to see if two tags
     			// are not sharing the same message.

@@ -43,8 +43,7 @@ public final class TaskTagRule extends CombinedWordRule implements IPropertyChan
 		}
 
 		public boolean isWordPart(char c) {
-			// Allow task tags like "todo(myname):" 
-			return c == '.' || c == '(' || c == ')' || c == ':' || Character.isJavaIdentifierPart(c);
+			return c == '.' || Character.isJavaIdentifierPart(c);
 		}
 	}
 

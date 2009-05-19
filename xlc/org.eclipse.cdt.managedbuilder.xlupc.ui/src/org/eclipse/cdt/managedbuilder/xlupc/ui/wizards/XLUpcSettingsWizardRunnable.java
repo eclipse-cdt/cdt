@@ -43,7 +43,6 @@ public class XLUpcSettingsWizardRunnable extends XLCSettingsWizardRunnable {
 
 	public void run(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
 		super.run(monitor);
-
 		// get a handle to the wizard
 		IWizardPage[] pages = MBSCustomPageManager.getPages();
 

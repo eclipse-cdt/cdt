@@ -15,7 +15,9 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
+import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.CProjectNature;
+import org.eclipse.cdt.core.dom.upc.UPCLanguage;
 import org.eclipse.cdt.managedbuilder.xlupc.ui.Messages;
 import org.eclipse.cdt.ui.wizards.CDTCommonProjectWizard;
 import org.eclipse.cdt.ui.wizards.CDTMainWizardPage;
@@ -92,4 +94,8 @@ public class UpcProjectWizard extends CDTCommonProjectWizard {
 		return new String[] { CProjectNature.C_NATURE_ID/*, CCProjectNature.CC_NATURE_ID, RemoteNature.REMOTE_NATURE_ID*/};
 	}
 
+	@Override
+	public String[] getContentTypeIDs() {
+		return new String[] { CCorePlugin.CONTENT_TYPE_CSOURCE, CCorePlugin.CONTENT_TYPE_CHEADER, UPCLanguage.UPC_CONTENT_TYPE_ID };
+	}
 }

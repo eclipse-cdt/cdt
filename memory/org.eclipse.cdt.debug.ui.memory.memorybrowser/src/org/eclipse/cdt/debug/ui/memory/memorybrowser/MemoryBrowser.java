@@ -226,16 +226,18 @@ public class MemoryBrowser extends ViewPart implements IDebugContextListener, IL
 			handleDebugContextChanged(((StructuredSelection) selection).getFirstElement());
 	}
 
-	private boolean isBug145635Patched() {
-	    Type[] managerTypes = DebugUITools.getDebugContextManager().getClass().getGenericInterfaces();
-	    for (int i = 0; i < managerTypes.length; i++) {
-	        
-	        if ("org.eclipse.debug.ui.contexts.IBug145635Marker".equals(managerTypes[i].getClass().getName()) ) {
-	            return true;
-	        }
-	    }
-	    return false;
-	}
+    private boolean isBug145635Patched() {
+        Type[] managerTypes = DebugUITools.getDebugContextManager().getClass().getGenericInterfaces();
+        for (int i = 0; i < managerTypes.length; i++) {
+            if (managerTypes[i] instanceof Class) {
+                Class clazz = (Class)managerTypes[i];
+                if ("org.eclipse.debug.ui.contexts.IBug145635Marker".equals(clazz.getName()) ) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
 	
 	/**
      * Returns the presentation context id for this view.  Used to support the 

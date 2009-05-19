@@ -12,6 +12,7 @@
 package org.eclipse.cdt.debug.ui.memory.memorybrowser;
 
 import java.lang.reflect.Method;
+import java.lang.reflect.Type;
 import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -37,6 +38,7 @@ import org.eclipse.debug.internal.ui.memory.MemoryRenderingManager;
 import org.eclipse.debug.ui.DebugUITools;
 import org.eclipse.debug.ui.contexts.DebugContextEvent;
 import org.eclipse.debug.ui.contexts.IDebugContextListener;
+import org.eclipse.debug.ui.contexts.IDebugContextService;
 import org.eclipse.debug.ui.memory.IMemoryRendering;
 import org.eclipse.debug.ui.memory.IMemoryRenderingContainer;
 import org.eclipse.debug.ui.memory.IMemoryRenderingSite;
@@ -82,6 +84,7 @@ import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.ui.IActionBars;
+import org.eclipse.ui.IViewSite;
 import org.eclipse.ui.IWorkbenchActionConstants;
 import org.eclipse.ui.IWorkbenchPreferenceConstants;
 import org.eclipse.ui.PlatformUI;
@@ -205,21 +208,56 @@ public class MemoryBrowser extends ViewPart implements IDebugContextListener, IL
 		hookContextMenu();
 		contributeToActionBars();
 		
-		DebugUITools.getDebugContextManager().getContextService(getSite().getWorkbenchWindow())
-			.addDebugContextListener(this);
+		Object selection = null;
+        IDebugContextService contextService = 
+            DebugUITools.getDebugContextManager().getContextService(getSite().getWorkbenchWindow()); 
+		if (isBug145635Patched()) {
+		    String presentationContextId = getPresentationContextId();
+            contextService.addDebugContextListener(this, presentationContextId); 
+            selection = contextService.getActiveContext(presentationContextId);
+		} else {
+		    contextService.addDebugContextListener(this); 
+            selection = contextService.getActiveContext();
+		}
 		
 		DebugPlugin.getDefault().getLaunchManager().addLaunchListener(this);
 		
-		Object selection = DebugUITools.getDebugContextManager()
-			.getContextService(getSite().getWorkbenchWindow()).getActiveContext();
 		if(selection instanceof StructuredSelection)
 			handleDebugContextChanged(((StructuredSelection) selection).getFirstElement());
 	}
+
+	private boolean isBug145635Patched() {
+	    Type[] managerTypes = DebugUITools.getDebugContextManager().getClass().getGenericInterfaces();
+	    for (int i = 0; i < managerTypes.length; i++) {
+	        
+	        if ("org.eclipse.debug.ui.contexts.IBug145635Marker".equals(managerTypes[i].getClass().getName()) ) {
+	            return true;
+	        }
+	    }
+	    return false;
+	}
+	
+	/**
+     * Returns the presentation context id for this view.  Used to support the 
+     * pin and clone feature patch from bug 145635. 
+     * 
+     * @return context id
+     */
+    private String getPresentationContextId() {
+        IViewSite site = (IViewSite)getSite(); 
+        return site.getId() + (site.getSecondaryId() != null ? (":" + site.getSecondaryId()) : "");
+    }
 	
 	public void dispose() {
 		DebugPlugin.getDefault().getLaunchManager().removeLaunchListener(this);
-		DebugUITools.getDebugContextManager().getContextService(getSite().getWorkbenchWindow())
-			.removeDebugContextListener(this);
+        IDebugContextService contextService = 
+            DebugUITools.getDebugContextManager().getContextService(getSite().getWorkbenchWindow()); 
+        if (isBug145635Patched()) {
+            String presentationContextId = getPresentationContextId();
+            contextService.removeDebugContextListener(this, presentationContextId); 
+        } else {
+            contextService.removeDebugContextListener(this); 
+        }
 		super.dispose();
 	}
 	

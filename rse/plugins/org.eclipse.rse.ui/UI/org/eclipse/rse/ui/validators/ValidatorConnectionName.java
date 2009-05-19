@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2002, 2008 IBM Corporation and others.
+ * Copyright (c) 2002, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -13,6 +13,7 @@
  * 
  * Contributors:
  * Martin Oberhuber (Wind River) - [cleanup] Avoid using SystemStartHere in production code
+ * David McKnight   (IBM)        - [275970] Subsystems were created but not the containing connection
  *******************************************************************************/
 
 package org.eclipse.rse.ui.validators;
@@ -44,11 +45,11 @@ public class ValidatorConnectionName extends ValidatorUniqueString implements IS
 	 */
 	public ValidatorConnectionName(Collection existingNameList)
 	{
-		super(existingNameList, CASE_SENSITIVE);
+		super(existingNameList, false); // connections should always be case-insensitive
 		setErrorMessages(
 				RSEUIPlugin.getPluginMessage(ISystemMessages.MSG_VALIDATE_CONNECTIONNAME_EMPTY),
 				RSEUIPlugin.getPluginMessage(ISystemMessages.MSG_VALIDATE_CONNECTIONNAME_NOTUNIQUE)
-				);  
+				);  		
 	}
 	
 	/**
@@ -85,11 +86,13 @@ public class ValidatorConnectionName extends ValidatorUniqueString implements IS
 		return (msg==null);
 	}
 
+	
     // ---------------------------
     // ISystemValidator methods...
     // ---------------------------
-    
-    /**
+
+
+	/**
      * Return the max length for connections: 100
      */
     public int getMaximumNameLength()

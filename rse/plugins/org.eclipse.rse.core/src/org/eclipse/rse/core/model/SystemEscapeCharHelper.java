@@ -1,5 +1,5 @@
 /********************************************************************************
- * Copyright (c) 2002, 2008 IBM Corporation and others. All rights reserved.
+ * Copyright (c) 2002, 2009 IBM Corporation and others. All rights reserved.
  * This program and the accompanying materials are made available under the terms
  * of the Eclipse Public License v1.0 which accompanies this distribution, and is 
  * available at http://www.eclipse.org/legal/epl-v10.html
@@ -30,7 +30,6 @@ public class SystemEscapeCharHelper {
 	
 	private char changedChars[];
 	private int escapeStringLength;
-	private boolean isWindows;
 
 	/**
 	 * Constructor.
@@ -38,7 +37,6 @@ public class SystemEscapeCharHelper {
 	 */
 	public SystemEscapeCharHelper (char[] chars)
 	{
-		isWindows = System.getProperty("os.name").toLowerCase().startsWith("win");  //$NON-NLS-1$//$NON-NLS-2$
 		changedChars = new char[chars.length+1];
 
 		for (int i = 0; i < chars.length; i++)
@@ -76,7 +74,7 @@ public class SystemEscapeCharHelper {
 					}
 					i = i + escapeStringLength-1;
 				}
-				else if (currentChar == '.' && isWindows){ // special case for bug 276194
+				else if (currentChar == '.'){ // special case for bug 276194
 					if (fileName.length() > i + 1){
 						char nextChar = fileName.charAt(i + 1);
 						if (nextChar == '.' || nextChar == File.separatorChar){

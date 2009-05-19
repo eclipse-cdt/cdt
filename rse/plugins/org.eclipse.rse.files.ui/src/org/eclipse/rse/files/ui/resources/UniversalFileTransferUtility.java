@@ -54,6 +54,8 @@
  * David McKnight     (IBM)      - [262092] Special characters are missing when pasting a file on a different connection
  * David McKnight     (IBM)      - [271831] Set the readonly file attribute when download the file
  * David McKnight     (IBM)      - [251136] Error copying local file to remote system when temp file is readonly
+ * David McKnight   (IBM)        - [276103] Files with names in different cases are not handled properly
+ * David McKnight     (IBM)      - [276534] Cache Conflict After Synchronization when Browsing Remote System with Case-Differentiated-Only Filenames
  *******************************************************************************/
 
 package org.eclipse.rse.files.ui.resources;
@@ -197,6 +199,15 @@ public class UniversalFileTransferUtility {
 		if (tempFile.exists() && ((Resource)tempFile).getPropertyManager() != null)
 		{
 			SystemIFileProperties properties = new SystemIFileProperties(tempFile);
+			
+			String replicaRemoteFilePath = properties.getRemoteFilePath();
+			String remoteFilePath = remoteFile.getAbsolutePath();
+			
+			if (!replicaRemoteFilePath.equals(remoteFilePath)){
+				// this temp file is for a file of different case
+				return false;								
+			}
+		
 
 			long storedModifiedStamp = properties.getRemoteFileTimeStamp();
 
@@ -1825,6 +1836,17 @@ public class UniversalFileTransferUtility {
 
 							if (targetFS instanceof FileServiceSubSystem)
 							{
+								/*
+								OutputStream outStream = targetFS.getOutputStream(targetFolder.getAbsolutePath(), name, IFileService.NONE, monitor);
+			
+								byte[] buffer = new byte[1024];
+								int readCount;
+								while( (readCount = inStream.read(buffer)) > 0)
+								{
+									outStream.write(buffer, 0, readCount);
+								}
+								outStream.close();
+								*/							
 								IFileService fileService = ((FileServiceSubSystem)targetFS).getFileService();
 
 								// for bug 236723, getting remote encoding for target instead of default for target fs
@@ -2568,6 +2590,22 @@ public class UniversalFileTransferUtility {
 			}
 
 			String fileName = expectedPath.segment(expectedPath.segmentCount() - 1);
+			try {
+				IResource[] resources = container.members();
+				boolean found = false;
+				for (int r = 0; r < resources.length && !found; r++){
+					IResource resource = resources[r];
+					if (resource instanceof IFile){
+						String resourceName = resource.getName();
+						if (resourceName.toLowerCase().equals(fileName.toLowerCase())){
+							found = true;
+							fileName = resourceName;
+						}
+					}
+				}
+			}
+			catch (CoreException e){}
+			
 			actualPath = container.getLocation().append(fileName);
 			return actualPath;
 		}

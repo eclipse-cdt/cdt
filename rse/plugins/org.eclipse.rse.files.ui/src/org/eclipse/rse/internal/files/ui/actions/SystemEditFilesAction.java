@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2002, 2008 IBM Corporation and others.
+ * Copyright (c) 2002, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -16,6 +16,7 @@
  * David McKnight   (IBM)        - [209660] check for changed encoding before using cached file
  * David McKnight   (IBM)        - [189873] DownloadJob changed to DownloadAndOpenJob
  * David McKnight   (IBM)        - [224377] "open with" menu does not have "other" option
+ * David McKnight   (IBM)        - [276103] Files with names in different cases are not handled properly
  *******************************************************************************/
 
 package org.eclipse.rse.internal.files.ui.actions;
@@ -23,6 +24,7 @@ package org.eclipse.rse.internal.files.ui.actions;
 import java.util.Iterator;
 
 import org.eclipse.core.resources.IFile;
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.rse.files.ui.resources.SystemEditableRemoteFile;
@@ -31,10 +33,12 @@ import org.eclipse.rse.internal.files.ui.view.DownloadAndOpenJob;
 import org.eclipse.rse.subsystems.files.core.SystemIFileProperties;
 import org.eclipse.rse.subsystems.files.core.subsystems.IRemoteFile;
 import org.eclipse.rse.subsystems.files.core.subsystems.IRemoteFileSubSystem;
+import org.eclipse.rse.subsystems.files.core.subsystems.RemoteFile;
 import org.eclipse.rse.ui.actions.SystemBaseAction;
 import org.eclipse.rse.ui.view.ISystemEditableRemoteObject;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IEditorDescriptor;
+import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IEditorRegistry;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.ide.IDE;
@@ -174,7 +178,12 @@ public class SystemEditFilesAction extends SystemBaseAction {
 			editorId = "org.eclipse.ui.DefaultTextEditor"; //$NON-NLS-1$
 		}
 		
-		SystemEditableRemoteFile editable = new SystemEditableRemoteFile(remoteFile, des);
+		SystemEditableRemoteFile editable = getEditableRemoteObject(remoteFile, des);
+		if (editable == null){
+			// case for cancelled operation when user was prompted to save file of different case
+			return;
+		}
+		else
 		{
 			try
 			{
@@ -201,6 +210,75 @@ public class SystemEditFilesAction extends SystemBaseAction {
 			}
 					
 		}
+	}
+
+
+
+	private SystemEditableRemoteFile getEditableRemoteObject(Object element, IEditorDescriptor descriptor)
+	{
+		SystemEditableRemoteFile editable = null;
+		RemoteFile remoteFile = (RemoteFile) element;
+		if (remoteFile.isFile())
+		{
+			try
+			{
+				IFile file = (IFile)UniversalFileTransferUtility.getTempFileFor(remoteFile);
+				if (file != null)
+				{
+					SystemIFileProperties properties = new SystemIFileProperties(file);
+					
+					Object obj = properties.getRemoteFileObject();
+					if (obj != null && obj instanceof SystemEditableRemoteFile)
+					{
+						editable = (SystemEditableRemoteFile) obj;
+						
+						String remotePath = remoteFile.getAbsolutePath();
+						String replicaRemotePath = editable.getAbsolutePath();
+						// first make sure that the correct remote file is referenced (might be difference because of different case)
+						if (!replicaRemotePath.equals(remotePath)){ // for bug 276103
+							
+							IEditorPart editor = editable.getEditorPart();
+							boolean editorWasClosed = false;
+							if (editor.isDirty()){
+								editorWasClosed = editor.getEditorSite().getPage().closeEditor(editor, true);
+								if (editorWasClosed)
+									editable.doImmediateSaveAndUpload();								
+							}
+							else {
+								editorWasClosed = editor.getEditorSite().getPage().closeEditor(editor, true);
+							}
+							
+							if (!editorWasClosed){
+								// use cancelled operation so we need to get out of here
+								return null;
+							}
+							
+							try {
+								IFile originalFile = editable.getLocalResource();
+								originalFile.delete(true, new NullProgressMonitor());												
+							}
+							catch (CoreException e){
+							}
+							// fall through and let the new editable get created
+						}
+						else {					
+							return editable;
+						}
+					}
+				}
+				
+				if (descriptor != null){
+					editable = new SystemEditableRemoteFile(remoteFile, descriptor);
+				}
+				else {
+					editable = new SystemEditableRemoteFile(remoteFile);
+				}
+			}
+			catch (Exception e)
+			{
+			}
+		}
+		return editable;
 	}
 
 }

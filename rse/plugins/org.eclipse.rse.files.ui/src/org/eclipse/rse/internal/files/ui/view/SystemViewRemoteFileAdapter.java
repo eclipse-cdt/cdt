@@ -61,6 +61,7 @@
  * David McKnight   (IBM)        - [261019] New File/Folder actions available in Work Offline mode
  * David McKnight   (IBM)        - [254769] Don't get latest file when opening a file always
  * David McKnight   (IBM)        - [264607] Unable to delete a broken symlink
+ * David McKnight   (IBM)        - [276103] Files with names in different cases are not handled properly
  *******************************************************************************/
 
 package org.eclipse.rse.internal.files.ui.view;
@@ -75,6 +76,7 @@ import java.util.StringTokenizer;
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResource;
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -185,6 +187,7 @@ import org.eclipse.rse.ui.view.ISystemViewElementAdapter;
 import org.eclipse.swt.dnd.Clipboard;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
+import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IEditorRegistry;
 import org.eclipse.ui.ISharedImages;
 import org.eclipse.ui.IWorkbench;
@@ -3288,9 +3291,41 @@ public class SystemViewRemoteFileAdapter
 			}
 			
 			// only handle double click if object is a file
-			ISystemEditableRemoteObject editable = getEditableRemoteObject(remoteFile);
+			ISystemEditableRemoteObject editable = getEditableRemoteObject(remoteFile);	
 			if (editable != null)
 			{
+				String remotePath = remoteFile.getAbsolutePath();
+				String replicaRemotePath = editable.getAbsolutePath();
+				// first make sure that the correct remote file is referenced (might be difference because of different case)
+				if (!replicaRemotePath.equals(remotePath)){ // for bug 276103
+					
+					IEditorPart editor = editable.getEditorPart();
+					boolean editorWasClosed = false;
+					if (editor.isDirty()){
+						editorWasClosed = editor.getEditorSite().getPage().closeEditor(editor, true);
+						if (editorWasClosed)
+							editable.doImmediateSaveAndUpload();								
+					}
+					else {
+						editorWasClosed = editor.getEditorSite().getPage().closeEditor(editor, true);
+					}
+					
+					if (!editorWasClosed){
+						// use cancelled operation so we need to get out of here
+						return false;
+					}
+					
+					try {
+						IFile file = editable.getLocalResource();
+						file.delete(true, new NullProgressMonitor());												
+					}
+					catch (CoreException e){
+					}
+					
+					// open new editor for correct replica
+					editable = getEditableRemoteObject(remoteFile);
+				}											
+				
 				try
 				{
 					boolean isOpen = editable.checkOpenInEditor() != ISystemEditableRemoteObject.NOT_OPEN;
@@ -3406,10 +3441,11 @@ public class SystemViewRemoteFileAdapter
 		{
 			try
 			{
-				IFile file = getCachedCopy(remoteFile);
+				IFile file = getCachedCopy(remoteFile); // Note that this is a case-sensitive check
 				if (file != null)
 				{
 					SystemIFileProperties properties = new SystemIFileProperties(file);
+					
 					Object obj = properties.getRemoteFileObject();
 					if (obj != null && obj instanceof ISystemEditableRemoteObject)
 					{
@@ -3419,10 +3455,10 @@ public class SystemViewRemoteFileAdapter
 						{
 							//((IRemoteFile)rmtFile).markStale(true);
 						}
+						
 						return rmtObj;
 					}
 				}
-
 				return new SystemEditableRemoteFile(remoteFile);
 			}
 			catch (Exception e)
@@ -3438,7 +3474,7 @@ public class SystemViewRemoteFileAdapter
 		{
 			IResource replica = UniversalFileTransferUtility.getTempFileFor(remoteFile);
 			if (replica != null && replica.exists())
-			{
+			{					
 				return (IFile)replica;
 			}
 		}

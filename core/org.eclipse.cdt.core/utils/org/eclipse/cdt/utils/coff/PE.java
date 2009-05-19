@@ -24,6 +24,7 @@ import org.eclipse.cdt.utils.coff.Coff.OptionalHeader;
 import org.eclipse.cdt.utils.coff.Coff.SectionHeader;
 import org.eclipse.cdt.utils.coff.Coff.Symbol;
 import org.eclipse.cdt.utils.coff.Exe.ExeHeader;
+import org.eclipse.cdt.utils.debug.dwarf.DwarfReader;
 import org.eclipse.cdt.utils.debug.stabs.StabsReader;
 
 /**
@@ -65,6 +66,7 @@ import org.eclipse.cdt.utils.debug.stabs.StabsReader;
  */
 public class PE {
 
+	
 	public static final String NL = System.getProperty("line.separator", "\n"); //$NON-NLS-1$ //$NON-NLS-2$
 	RandomAccessFile rfile;
 	String filename;
@@ -840,6 +842,40 @@ public class PE {
 		if (reader == null) {
 			reader = createCodeViewReader();
 		}
+		if (reader == null) {
+			reader = createDwarfReader();
+		}
 		return reader;
+	}
+
+	private ISymbolReader createDwarfReader() {
+		DwarfReader reader = null;
+		// Check if Dwarf data exists
+		try {
+			reader = new DwarfReader(this);
+		} catch (IOException e) {
+			// No Dwarf data in the Elf.
+		}
+		return reader;
+	}
+
+	/**
+	 * @since 5.1
+	 */
+	public String getStringTableEntry(int offset) throws IOException
+	{
+		byte[] bytes = getStringTable();
+		offset = offset - 4;
+		for (int i = offset; i < bytes.length; i++) {
+			if (bytes[i] == 0) {
+				return new String(bytes, offset, i - offset);
+			}
+		}
+		
+		return new String();
+	}
+
+	public String getFilename() {
+		return filename;
 	}
 }

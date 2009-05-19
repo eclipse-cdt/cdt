@@ -13,12 +13,15 @@ package org.eclipse.cdt.utils.coff;
 import java.io.EOFException;
 import java.io.IOException;
 import java.io.RandomAccessFile;
-import com.ibm.icu.text.DateFormat;
+import java.nio.ByteBuffer;
+import java.nio.channels.FileChannel.MapMode;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
 import org.eclipse.cdt.core.CCorePlugin;
+
+import com.ibm.icu.text.DateFormat;
 
 public class Coff {
 
@@ -308,6 +311,13 @@ public class Coff {
 //*/
 			return buffer.toString();
 		}
+
+		/**
+		 * @since 5.1
+		 */
+		public ByteBuffer mapSectionData() throws IOException {
+			return sfile.getChannel().map(MapMode.READ_ONLY, s_scnptr, s_paddr).load().asReadOnlyBuffer();
+		}
 	}
 
 	public static class Reloc {
@@ -563,7 +573,7 @@ public class Coff {
 //		}
 		return buffer.toString();
 	}
-
+	
 	public static String[] getStringTable(byte[] bytes) {
 		List<String> aList = new ArrayList<String>();
 		int offset = 0;

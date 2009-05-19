@@ -21,6 +21,8 @@ import java.util.List;
 
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.ISymbolReader;
+import org.eclipse.cdt.utils.coff.PE;
+import org.eclipse.cdt.utils.coff.Coff.SectionHeader;
 import org.eclipse.cdt.utils.debug.IDebugEntryRequestor;
 import org.eclipse.cdt.utils.elf.Elf;
 import org.eclipse.cdt.utils.elf.Elf.Section;
@@ -33,6 +35,11 @@ import org.eclipse.core.runtime.Path;
  */
 public class DwarfReader extends Dwarf implements ISymbolReader {
 
+	private static boolean isWindows() {
+		String os = System.getProperty("os.name"); //$NON-NLS-1$
+		return (os != null && os.toLowerCase().startsWith("win")); //$NON-NLS-1$
+	}
+
 	// These are sections that need be parsed to get the source file list.
 	final static String[] DWARF_SectionsToParse =
 		{
@@ -42,12 +49,12 @@ public class DwarfReader extends Dwarf implements ISymbolReader {
 			DWARF_DEBUG_STR		// this is optional. Some compilers don't generate it.
 		};
 
-	private Collection<String>	m_fileCollection = new ArrayList<String>();
+	private final Collection<String>	m_fileCollection = new ArrayList<String>();
 	private String[] 	m_fileNames = null;
 	private String		m_exeFileWin32Drive; // Win32 drive of the exe file.
 	private boolean		m_onWindows;
 	private boolean		m_parsed = false;
-	private ArrayList<Integer>	m_parsedLineTableOffsets = new ArrayList<Integer>();
+	private final ArrayList<Integer>	m_parsedLineTableOffsets = new ArrayList<Integer>();
 	private int			m_parsedLineTableSize = 0;
 		
 	public DwarfReader(String file) throws IOException {
@@ -55,6 +62,13 @@ public class DwarfReader extends Dwarf implements ISymbolReader {
 	}
 
 	public DwarfReader(Elf exe) throws IOException {
+		super(exe);
+	}
+
+	/**
+	 * @since 5.1
+	 */
+	public DwarfReader(PE exe) throws IOException  {
 		super(exe);
 	}
 
@@ -80,7 +94,6 @@ public class DwarfReader extends Dwarf implements ISymbolReader {
 					try {
 						dwarfSections.put(element, section.mapSectionData());
 					} catch (Exception e) {
-						e.printStackTrace();
 						CCorePlugin.log(e);
 					}
 				}
@@ -89,12 +102,44 @@ public class DwarfReader extends Dwarf implements ISymbolReader {
 		
 		// Don't print during parsing.
 		printEnabled = false;
-
 		m_parsed = false;
 		
 		Path pa = new Path(exe.getFilename());
 		m_exeFileWin32Drive = pa.getDevice(); 
 		
+		m_onWindows = isWindows();
+	}
+
+	@Override
+	public void init(PE exe) throws IOException {
+
+		isLE = true;
+		SectionHeader[] sections = exe.getSectionHeaders();
+
+		for (int i = 0; i < sections.length; i++) {
+			String name = new String(sections[i].s_name).trim();
+			if (name.startsWith("/")) //$NON-NLS-1$
+			{
+				int stringTableOffset = Integer.parseInt(name.substring(1));
+				name = exe.getStringTableEntry(stringTableOffset);
+			}
+			for (String element : Dwarf.DWARF_SCNNAMES) {
+				if (name.equals(element)) {
+					try {
+						dwarfSections.put(element, sections[i].mapSectionData());
+					} catch (Exception e) {
+						CCorePlugin.log(e);
+					}
+				}
+			}
+		}
+		// Don't print during parsing.
+		printEnabled = false;
+		m_parsed = false;
+
+		Path pa = new Path(exe.getFilename());
+		m_exeFileWin32Drive = pa.getDevice();
+
 		m_onWindows = (File.separatorChar == '\\');
 	}
 

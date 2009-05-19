@@ -20,6 +20,8 @@ import java.util.List;
 import java.util.Map;
 
 import org.eclipse.cdt.core.CCorePlugin;
+import org.eclipse.cdt.utils.coff.PE;
+import org.eclipse.cdt.utils.coff.Coff.SectionHeader;
 import org.eclipse.cdt.utils.debug.DebugUnknownType;
 import org.eclipse.cdt.utils.debug.IDebugEntryRequestor;
 import org.eclipse.cdt.utils.debug.tools.DebugSym;
@@ -178,6 +180,13 @@ public class Dwarf {
 		init(exe);
 	}
 
+	/**
+	 * @since 5.1
+	 */
+	public Dwarf(PE exe) throws IOException {
+		init(exe);
+	}
+
 	public void init(Elf exe) throws IOException {
 		Elf.ELFhdr header = exe.getELFhdr();
 		isLE = header.e_ident[Elf.ELFhdr.EI_DATA] == Elf.ELFhdr.ELFDATA2LSB;
@@ -196,6 +205,36 @@ public class Dwarf {
 				}
 			}
 		}
+	}
+
+	/**
+	 * @since 5.1
+	 */
+	public void init(PE exe) throws IOException {
+		
+		isLE = true;
+		SectionHeader[] sections = exe.getSectionHeaders();
+
+
+		for (int i = 0; i < sections.length; i++) {
+			String name = new String(sections[i].s_name).trim();
+			if (name.startsWith("/")) //$NON-NLS-1$
+			{
+				int stringTableOffset = Integer.parseInt(name.substring(1));
+				name = exe.getStringTableEntry(stringTableOffset);
+			}
+			for (String element : Dwarf.DWARF_SCNNAMES) {
+				if (name.equals(element)) {
+					try {
+						dwarfSections.put(element, sections[i].mapSectionData());
+					} catch (Exception e) {
+						e.printStackTrace();
+						CCorePlugin.log(e);
+					}
+				}
+			}
+			}
+
 	}
 
 	int read_4_bytes(ByteBuffer in) throws IOException {

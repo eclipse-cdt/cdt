@@ -81,16 +81,16 @@ public class Executable extends PlatformObject {
 		return super.equals(arg0);
 	}
 
-	private IPath path;
-	private IProject project;
-	private String name;
-	private IResource resource;
-	private Map<ITranslationUnit, String> remappedPaths;
-	private ArrayList<ITranslationUnit> sourceFiles;
+	private final IPath executablePath;
+	private final IProject project;
+	private final String name;
+	private final IResource resource;
+	private final Map<ITranslationUnit, String> remappedPaths;
+	private final ArrayList<ITranslationUnit> sourceFiles;
 	private boolean refreshSourceFiles;
 
 	public IPath getPath() {
-		return path;
+		return executablePath;
 	}
 
 	public IProject getProject() {
@@ -98,7 +98,7 @@ public class Executable extends PlatformObject {
 	}
 
 	public Executable(IPath path, IProject project, IResource resource) {
-		this.path = path;
+		this.executablePath = path;
 		this.project = project;
 		this.name = new File(path.toOSString()).getName();
 		this.resource = resource;
@@ -113,7 +113,7 @@ public class Executable extends PlatformObject {
 
 	@Override
 	public String toString() {
-		return path.toString();
+		return executablePath.toString();
 	}
 
 	public String getName() {
@@ -173,33 +173,38 @@ public class Executable extends PlatformObject {
 				// resolve
 				// them relative to the executable.
 
+				boolean fileExists = false;
+
 				try {
 					File file = new File(filename);
-					if (file.exists()) {
+					fileExists = file.exists();
+					if (fileExists) {
 						filename = file.getCanonicalPath();
 					} else if (filename.startsWith(".")) { //$NON-NLS-1$
-						file = new File(path.removeLastSegments(1).toOSString(), filename);
+						file = new File(executablePath.removeLastSegments(1).toOSString(), filename);
 						filename = file.getCanonicalPath();
 					}
 				} catch (IOException e) { // Do nothing.
 				}
 
-				// See if this source file is already in the project.
-				// We check this to determine if we should create a
-				// TranslationUnit or ExternalTranslationUnit
-				IFile sourceFile = getProject().getFile(filename);
-				IPath path = new Path(filename);
-
 				IFile wkspFile = null;
-				if (sourceFile.exists())
-					wkspFile = sourceFile;
-				else {
-					IFile[] filesInWP = ResourcesPlugin.getWorkspace().getRoot().findFilesForLocation(path);
+				IFile sourceFile = getProject().getFile(filename);
+				IPath sourcePath = new Path(filename);
+				if (fileExists) {
+					// See if this source file is already in the project.
+					// We check this to determine if we should create a
+					// TranslationUnit or ExternalTranslationUnit
 
-					for (int j = 0; j < filesInWP.length; j++) {
-						if (filesInWP[j].isAccessible()) {
-							wkspFile = filesInWP[j];
-							break;
+					if (sourceFile.exists())
+						wkspFile = sourceFile;
+					else {
+						IFile[] filesInWP = ResourcesPlugin.getWorkspace().getRoot().findFilesForLocation(sourcePath);
+
+						for (int j = 0; j < filesInWP.length; j++) {
+							if (filesInWP[j].isAccessible()) {
+								wkspFile = filesInWP[j];
+								break;
+							}
 						}
 					}
 				}
@@ -214,7 +219,7 @@ public class Executable extends PlatformObject {
 					if (wkspFile != null)
 						tu = new TranslationUnit(cproject, wkspFile, id);
 					else
-						tu = new ExternalTranslationUnit(cproject, URIUtil.toURI(path), id);
+						tu = new ExternalTranslationUnit(cproject, URIUtil.toURI(sourcePath), id);
 
 					sourceFiles.add(tu);
 

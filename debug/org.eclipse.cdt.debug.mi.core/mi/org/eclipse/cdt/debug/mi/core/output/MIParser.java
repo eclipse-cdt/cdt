@@ -237,11 +237,7 @@ public class MIParser {
 					stream = new MILogStreamOutput();
 					break;
 			}
-			// translateCString() assumes that the leading " is deleted
-			if (buffer.length() > 0 && buffer.charAt(0) == '"') {
-				buffer.deleteCharAt(0);
-			}
-			stream.setCString(translateCString(new FSB(buffer)));
+			stream.setCString(removeSurroundingDoubleQuotes(buffer.toString()));
 			oob = stream;
 		} else {
 			// Badly format MI line, just pass it to the user as target stream
@@ -252,9 +248,22 @@ public class MIParser {
 		return oob;
 	}
 
+	private String removeSurroundingDoubleQuotes(String str) {
+		String s  = str;
+		// remove leading double quote
+		if (s.startsWith("\"")) { //$NON-NLS-1$
+			s = s.substring(1);
+		}
+		// remove trailing double quote
+		if (s.endsWith("\"")) { //$NON-NLS-1$ 
+			s = s.substring(0, s.length() - 1); 
+		} 
+		return s;
+	}
+
 	/**
 	 * Assuming that the usual leading comma was consumed.
-	 * Extract the MI Result comma seperated responses.
+	 * Extract the MI Result comma separated responses.
 	 */
 	private MIResult[] processMIResults(FSB buffer) {
 		List aList = new ArrayList();
@@ -389,12 +398,12 @@ public class MIParser {
 	}
 
 	/*
-	 * MI C-String rather MICOnst values are enclose in double quotes
+	 * MI C-String rather MIConst values are enclose in double quotes
 	 * and any double quotes or backslash in the string are escaped.
 	 * Assuming the starting double quote was removed.
 	 * This method will stop at the closing double quote remove the extra
-	 * backslach escaping and return the string __without__ the enclosing double quotes
-	 * The orignal StringBuffer will move forward.
+	 * backslash escaping and return the string __without__ the enclosing double quotes
+	 * The original StringBuffer will move forward.
 	 */
 	private String translateCString(FSB buffer) {
 		boolean escape = false;

@@ -12,6 +12,7 @@
  * David McKnight   (IBM)        - [223204] [cleanup] fix broken nls strings in files.ui and others
  * David McKnight     (IBM)      - [229610] [api] File transfers should use workspace text file encoding
  * David McKnight   (IBM)        - [272708] [import/export] fix various bugs with the synchronization support
+ * David McKnight   (IBM)        - [276535] File Conflict when Importing Remote Folder with Case-Differentiated-Only Filenames into Project
  *******************************************************************************/
 package org.eclipse.rse.internal.importexport.files;
 
@@ -472,6 +473,18 @@ public class RemoteFileImportOperation extends WorkspaceModifyOperation {
 			{
 				encoding = "Cp" + encoding.substring(2); //$NON-NLS-1$
 			}
+			
+			// check for existing resource		
+			try {
+				org.eclipse.core.internal.resources.File targetFile = (org.eclipse.core.internal.resources.File)targetResource;
+				targetFile.checkDoesNotExist(targetFile.getFlags(targetFile.getResourceInfo(false, false)), false);
+			}
+			catch (CoreException e){
+				errorTable.add(e.getStatus());
+				return;
+			}
+
+			
 			rfss.download(((UniFilePlus) fileObject).remoteFile, targetResource.getLocation().makeAbsolute().toOSString(), encoding, null);
 			try {
 				// refresh workspace with just added resource

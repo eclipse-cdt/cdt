@@ -16,6 +16,7 @@
  * David McKnight   (IBM)        - [219792][importexport][ftp] RSE hangs on FTP import
  * Takuya Miyamoto - [185925] Integrate Platform/Team Synchronization
  * David McKnight   (IBM)        - [272708] [import/export] fix various bugs with the synchronization support
+ * David McKnight   (IBM)        - [276535] File Conflict when Importing Remote Folder with Case-Differentiated-Only Filenames into Project
  *******************************************************************************/
 package org.eclipse.rse.internal.importexport.files;
 
@@ -38,6 +39,7 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.MultiStatus;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
@@ -600,7 +602,12 @@ class RemoteImportWizardPage1 extends WizardResourceImportPage implements Listen
 		}
 		IStatus status = op.getStatus();
 		if (!status.isOK()) {
-			String msgTxt = NLS.bind(RemoteImportExportResources.FILEMSG_IMPORT_FAILED, status);
+			if (status.isMultiStatus()){
+				if (((MultiStatus)status).getChildren().length > 0){
+					status = ((MultiStatus)status).getChildren()[0];
+				}
+			}			
+			String msgTxt = NLS.bind(RemoteImportExportResources.MSG_IMPORT_EXPORT_UNEXPECTED_EXCEPTION, status.getMessage());
 
 			SystemMessage msg = null;
 			if (status.getException() != null){

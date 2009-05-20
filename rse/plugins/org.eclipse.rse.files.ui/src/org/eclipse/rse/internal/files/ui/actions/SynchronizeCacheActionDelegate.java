@@ -11,6 +11,7 @@
  * Contributors:
  * {Name} (company) - description of contribution.
  * David McKnight    (IBM)    [143503] [updating] need a synchronize cache operation
+ * David McKnight     (IBM)      - [276534] Cache Conflict After Synchronization when Browsing Remote System with Case-Differentiated-Only Filenames
  ********************************************************************************/
 package org.eclipse.rse.internal.files.ui.actions;
 
@@ -34,11 +35,15 @@ import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.StructuredSelection;
+import org.eclipse.rse.core.model.ISystemResourceSet;
 import org.eclipse.rse.core.model.SystemRemoteResourceSet;
 import org.eclipse.rse.internal.files.ui.Activator;
 import org.eclipse.rse.internal.files.ui.FileResources;
+import org.eclipse.rse.services.clientserver.messages.SystemMessage;
+import org.eclipse.rse.services.clientserver.messages.SystemMessageException;
 import org.eclipse.rse.subsystems.files.core.subsystems.IRemoteFile;
 import org.eclipse.rse.subsystems.files.core.subsystems.IRemoteFileSubSystem;
+import org.eclipse.rse.ui.messages.SystemMessageDialog;
 import org.eclipse.rse.ui.view.ISystemViewElementAdapter;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
@@ -55,12 +60,14 @@ public class SynchronizeCacheActionDelegate implements IActionDelegate {
 
 	protected IStructuredSelection fSelection;
 	private IStatus errorStatus;
+	private SystemMessage systemMessage;
 	
 	public SynchronizeCacheActionDelegate() {
 	}
 
 	public void run(IAction action) {
 		errorStatus = null;
+		systemMessage = null;
 
 		IRemoteFile[] files = getRemoteFiles(fSelection);
 		boolean completed = performCacheRemoteFiles(files);
@@ -74,14 +81,21 @@ public class SynchronizeCacheActionDelegate implements IActionDelegate {
             ErrorDialog.openError(getShell(), FileResources.MESSAGE_ERROR_CACHING_REMOTE_FILES, null, errorStatus);
             errorStatus = null;
         }
+        else if (systemMessage != null){
+        	SystemMessageDialog dlg = new SystemMessageDialog(getShell(), systemMessage);
+        	dlg.open();
+        	systemMessage = null;
+        }
 	}
 
-	private void cacheRemoteFiles(IRemoteFile[] files, IProgressMonitor monitor)
+	private void cacheRemoteFiles(IRemoteFile[] files, IProgressMonitor monitor) throws SystemMessageException
 	{
 		SystemRemoteResourceSet[] sets = getResourceSetsFor(files);
 		for (int i = 0; i < sets.length; i++){
 			SystemRemoteResourceSet set = sets[i];
-			set.getAdapter().doDrag(set, monitor);
+			ISystemResourceSet resultSet = set.getAdapter().doDrag(set, monitor);
+			
+			systemMessage = resultSet.getMessage();
 		}
 	}
 	
@@ -120,7 +134,8 @@ public class SynchronizeCacheActionDelegate implements IActionDelegate {
 				catch (Exception e) {
 					if (e.getCause() instanceof CoreException) {
 						recordError((CoreException)e.getCause());
-					} else {
+					} 
+					else {
 						Activator.getDefault().getLog().log(new Status(IStatus.ERROR,
 								Activator.getDefault().getBundle().getSymbolicName(),
 								-1, e.getMessage(), e));
@@ -162,6 +177,7 @@ public class SynchronizeCacheActionDelegate implements IActionDelegate {
 	void displayError(String message) {
 		MessageDialog.openError(getShell(), FileResources.MESSAGE_ERROR_CACHING_REMOTE_FILES, message);
 	}
+
 	
 	/**
 	 * Records the core exception to be displayed to the user once the action is

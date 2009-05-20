@@ -62,6 +62,7 @@
  * David McKnight   (IBM)        - [254769] Don't get latest file when opening a file always
  * David McKnight   (IBM)        - [264607] Unable to delete a broken symlink
  * David McKnight   (IBM)        - [276103] Files with names in different cases are not handled properly
+ * David McKnight     (IBM)      - [276534] Cache Conflict After Synchronization when Browsing Remote System with Case-Differentiated-Only Filenames
  *******************************************************************************/
 
 package org.eclipse.rse.internal.files.ui.view;
@@ -3447,16 +3448,12 @@ public class SystemViewRemoteFileAdapter
 					SystemIFileProperties properties = new SystemIFileProperties(file);
 					
 					Object obj = properties.getRemoteFileObject();
-					if (obj != null && obj instanceof ISystemEditableRemoteObject)
+					if (obj != null && obj instanceof SystemEditableRemoteFile)
 					{
-						ISystemEditableRemoteObject rmtObj = (ISystemEditableRemoteObject) obj;
-						IAdaptable rmtFile = rmtObj.getRemoteObject();
-						if (rmtFile instanceof IRemoteFile)
-						{
-							//((IRemoteFile)rmtFile).markStale(true);
+						SystemEditableRemoteFile rmtObj = (SystemEditableRemoteFile) obj;
+						if (rmtObj.checkOpenInEditor() != ISystemEditableRemoteObject.NOT_OPEN){ // if this is open									
+							return rmtObj;
 						}
-						
-						return rmtObj;
 					}
 				}
 				return new SystemEditableRemoteFile(remoteFile);

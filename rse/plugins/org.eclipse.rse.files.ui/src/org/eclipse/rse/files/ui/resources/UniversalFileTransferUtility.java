@@ -128,6 +128,7 @@ import org.eclipse.rse.ui.RSEUIPlugin;
 import org.eclipse.rse.ui.SystemBasePlugin;
 import org.eclipse.rse.ui.dialogs.SystemRenameSingleDialog;
 import org.eclipse.rse.ui.messages.SystemMessageDialog;
+import org.eclipse.rse.ui.view.ISystemEditableRemoteObject;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.PlatformUI;
 
@@ -193,7 +194,7 @@ public class UniversalFileTransferUtility {
 		}
 	}
 
-	private static boolean tempFileAvailable(IFile tempFile, IRemoteFile remoteFile)
+	private static boolean tempFileAvailable(IFile tempFile, IRemoteFile remoteFile) throws RemoteFileIOException
 	{
 		// before we make the transfer to the temp file check whether a temp file already exists
 		if (tempFile.exists() && ((Resource)tempFile).getPropertyManager() != null)
@@ -203,9 +204,10 @@ public class UniversalFileTransferUtility {
 			String replicaRemoteFilePath = properties.getRemoteFilePath();
 			String remoteFilePath = remoteFile.getAbsolutePath();
 			
-			if (!replicaRemoteFilePath.equals(remoteFilePath)){
-				// this temp file is for a file of different case
-				return false;								
+			if (!remoteFilePath.equals(replicaRemoteFilePath)){
+				// this temp file is for a file of different case		
+				Exception e = new Exception(FileResources.FILEMSG_CREATE_FILE_FAILED_EXIST);
+				throw new RemoteFileIOException(e);
 			}
 		
 
@@ -251,7 +253,54 @@ public class UniversalFileTransferUtility {
 
 		IFile tempFile = (IFile) tempResource;
 
-		boolean available = tempFileAvailable(tempFile, srcFileOrFolder);
+		boolean available = true;
+		try {
+			tempFileAvailable(tempFile, srcFileOrFolder);
+		}
+		catch (RemoteFileIOException e){
+			// this is the case where a temp file exists for a file of a different case
+			// bug 276534
+			SystemIFileProperties properties = new SystemIFileProperties(tempFile);
+
+			Object obj = properties.getRemoteFileObject();
+			if (obj != null && obj instanceof SystemEditableRemoteFile)
+			{
+				SystemEditableRemoteFile editable = (SystemEditableRemoteFile) obj;
+				if (editable.checkOpenInEditor() != ISystemEditableRemoteObject.NOT_OPEN){								
+					// editor open for this file
+					// for now, best we may be able to do is just keep this one and warn
+					String remotePath = editable.getAbsolutePath();
+					String msgTxt = NLS.bind(FileResources.FILEMSG_COPY_FILE_FAILED, remotePath);
+					String msgDetails = FileResources.FILEMSG_COPY_FILE_FAILED_DETAILS;
+
+					final SystemMessage message = new SimpleSystemMessage(Activator.PLUGIN_ID,
+							ISystemFileConstants.MSG_DOWNLOAD_ALREADY_OPEN_IN_EDITOR,
+							IStatus.WARNING, msgTxt, msgDetails);
+
+					runInDisplayThread(new Runnable() {
+						public void run() {
+							SystemMessageDialog dlg = new SystemMessageDialog(SystemBasePlugin.getActiveWorkbenchShell(), message);
+							dlg.open();
+						}});
+					return null;
+				}
+				else {
+					// get rid of the current temp file
+					try {
+						tempFile.delete(true, monitor);
+					}
+					catch (CoreException ex){}
+					tempResource = getTempFileFor(srcFileOrFolder);
+					tempFile = (IFile) tempResource;
+					
+					available = false;				
+				}
+			}	
+			else {
+				// file not being edited, so overwrite it
+				available = false;
+			}
+		}
 		if (available){
 			return tempFile;
 		}
@@ -465,11 +514,54 @@ public class UniversalFileTransferUtility {
 
 					IFile tempFile = (IFile) tempResource;
 
-					boolean available = tempFileAvailable(tempFile, srcFileOrFolder);
+					boolean problem = false;
+					boolean available = true;
+					try {		
+						available =	tempFileAvailable(tempFile, srcFileOrFolder);
+					}
+					catch (RemoteFileIOException e){
+						// this is the case where a temp file exists for a file of a different case
+						// bug 276534
+						SystemIFileProperties properties = new SystemIFileProperties(tempFile);
+
+						Object obj = properties.getRemoteFileObject();
+						if (obj != null && obj instanceof SystemEditableRemoteFile)
+						{
+							SystemEditableRemoteFile editable = (SystemEditableRemoteFile) obj;
+							if (editable.checkOpenInEditor() != ISystemEditableRemoteObject.NOT_OPEN){								
+								// editor open for this file
+								// for now, best we may be able to do is just keep this one and warn
+								String remotePath = srcFileOrFolder.getAbsolutePath();
+								String msgTxt = NLS.bind(FileResources.FILEMSG_COPY_FILE_FAILED, remotePath);
+								String msgDetails = FileResources.FILEMSG_COPY_FILE_FAILED_DETAILS;
+								SystemMessage message = new SimpleSystemMessage(Activator.PLUGIN_ID,
+										ISystemFileConstants.MSG_DOWNLOAD_ALREADY_OPEN_IN_EDITOR,
+										IStatus.WARNING, msgTxt, msgDetails);
+	
+								resultSet.setMessage(message);
+								problem = true;
+							}
+							else {
+								// get rid of the current temp file
+								try {
+									tempFile.delete(true, monitor);
+								}
+								catch (CoreException ex){}
+								tempResource = getTempFileFor(srcFileOrFolder);
+								tempFile = (IFile) tempResource;
+							}
+							available = false;
+						}	
+						else {
+							// file not being edited, so overwrite it
+							available = false;
+						}
+					}
+					
 					if (available){
 						resultSet.addResource(tempFile);
 					}
-					else {
+					else if (!problem){
 						listener.addIgnoreFile(tempFile);
 
 						remoteFilesForDownload.add(srcFileOrFolder);

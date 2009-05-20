@@ -34,6 +34,7 @@ import org.eclipse.cdt.managedbuilder.core.IProjectType;
 import org.eclipse.cdt.managedbuilder.core.ITool;
 import org.eclipse.cdt.managedbuilder.core.IToolChain;
 import org.eclipse.cdt.managedbuilder.core.ManagedBuildManager;
+import org.eclipse.cdt.managedbuilder.core.ManagedBuilderCorePlugin;
 import org.eclipse.cdt.managedbuilder.core.ManagedOptionValueHandler;
 import org.eclipse.cdt.managedbuilder.core.OptionStringValue;
 import org.eclipse.cdt.managedbuilder.internal.enablement.OptionEnablementExpression;
@@ -1027,6 +1028,7 @@ public class Option extends BuildObject implements IOption, IBuildPropertiesRest
 						applicabilityCalculator = (IOptionApplicability) applicabilityCalculatorElement
 							.createExecutableExtension(APPLICABILITY_CALCULATOR);
 				} catch (CoreException e) {
+					ManagedBuilderCorePlugin.log(e);
 				}
 			}
 			else if(superClass != null)

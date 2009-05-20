@@ -33,6 +33,7 @@ import org.eclipse.cdt.ui.IPropertyChangeParticipant;
  * @deprecated This class doesn't properly implement parsing of task tags
  * (see https://bugs.eclipse.org/bugs/show_bug.cgi?id=246846). It will be removed.
  */
+@Deprecated
 public final class TaskTagRule extends WordRule implements IPropertyChangeParticipant {	
 	private static class TaskTagDetector implements IWordDetector {
 		public boolean isWordStart(char c) {

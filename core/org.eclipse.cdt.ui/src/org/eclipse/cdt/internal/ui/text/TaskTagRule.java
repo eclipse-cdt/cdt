@@ -15,7 +15,6 @@ package org.eclipse.cdt.internal.ui.text;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.StringTokenizer;
 
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.Preferences;
@@ -83,16 +82,6 @@ public final class TaskTagRule extends CombinedWordRule implements IPropertyChan
 					addWord(tag, fToken);
 				}
 			}
-		}
-
-		private String[] split(String value, String delimiters) {
-			StringTokenizer tokenizer= new StringTokenizer(value, delimiters);
-			int size= tokenizer.countTokens();
-			String[] tokens= new String[size];
-			int i= 0;
-			while (i < size)
-				tokens[i++]= tokenizer.nextToken();
-			return tokens;
 		}
 
 		/*

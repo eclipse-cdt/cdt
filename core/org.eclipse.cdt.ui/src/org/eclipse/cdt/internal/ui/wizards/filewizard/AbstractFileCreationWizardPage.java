@@ -121,7 +121,7 @@ public abstract class AbstractFileCreationWizardPage extends NewElementWizardPag
 
 		fTemplates= getApplicableTemplates();
 		if (fTemplates != null && fTemplates.length > 0) {
-			fTemplateDialogField= new ComboDialogField(SWT.NONE);
+			fTemplateDialogField= new ComboDialogField(SWT.READ_ONLY);
 			fTemplateDialogField.setLabelText(NewFileWizardMessages.AbstractFileCreationWizardPage_template_label);
 		}
 

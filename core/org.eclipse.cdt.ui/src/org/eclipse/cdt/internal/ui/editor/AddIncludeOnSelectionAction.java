@@ -54,6 +54,7 @@ import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.ICompositeType;
 import org.eclipse.cdt.core.dom.ast.IEnumeration;
 import org.eclipse.cdt.core.dom.ast.IFunction;
+import org.eclipse.cdt.core.dom.ast.IProblemBinding;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.ITypedef;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTQualifiedName;
@@ -216,7 +217,8 @@ public class AddIncludeOnSelectionAction extends TextEditorAction {
 				type = SemanticUtil.getNestedType(type,
 						SemanticUtil.CVQ | SemanticUtil.PTR | SemanticUtil.ARRAY | SemanticUtil.REF);
 				if (type instanceof IBinding) {
-					nameChars = ((IBinding) type).getNameCharArray();
+					binding = (IBinding) type;
+					nameChars = binding.getNameCharArray();
 				}
 			}
 		} catch (DOMException e) {
@@ -226,10 +228,14 @@ public class AddIncludeOnSelectionAction extends TextEditorAction {
 			return;
 		}
 
+		final Map<String, IncludeCandidate> candidatesMap= new HashMap<String, IncludeCandidate>();
 		IIndex index = ast.getIndex();
 		final IndexFilter filter = IndexFilter.getDeclaredBindingFilter(ast.getLinkage().getLinkageID(), false);
-		IIndexBinding[] bindings= index.findBindings(nameChars, false, filter, new NullProgressMonitor());
-		final Map<String, IncludeCandidate> candidatesMap= new HashMap<String, IncludeCandidate>();
+		IIndexBinding[] bindings =
+				binding instanceof IIndexBinding && !(binding instanceof IProblemBinding) ?
+						new IIndexBinding[] { (IIndexBinding) binding } :
+						index.findBindings(nameChars, false, filter, new NullProgressMonitor());
+
 		for (IIndexBinding indexBinding : bindings) {
 			IIndexName[] definitions= null;
 			// class, struct, union, enum
@@ -570,6 +576,10 @@ public class AddIncludeOnSelectionAction extends TextEditorAction {
         		path = targetLocation.removeFirstSegments(sourceDirectory.segmentCount());
         	} else {
         		path = targetLocation;
+        	}
+        	if (targetLocation.getDevice() != null &&
+        			targetLocation.getDevice().equalsIgnoreCase(sourceDirectory.getDevice())) {
+        		path = path.setDevice(null);
         	}
         }
     	return new RequiredInclude(path.toString(), isSystemIncludePath);

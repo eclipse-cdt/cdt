@@ -111,13 +111,18 @@ public class AddIncludeTest extends TestCase {
 		fSourceViewer.setSelectedRange(offset, name.length());
 	}
 
-	public void testVariableType() throws Exception {
-		select("a_");
+	public void testOverloadedFunction() throws Exception {
+		select("func");
 		assertAddIncludeResult();
 	}
 
-	public void testOverloadedFunction() throws Exception {
-		select("func");
+	public void testResolvedName() throws Exception {
+		select("A");
+		assertAddIncludeResult();
+	}
+
+	public void testVariableType() throws Exception {
+		select("a_");
 		assertAddIncludeResult();
 	}
 

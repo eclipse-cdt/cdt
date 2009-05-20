@@ -43,10 +43,10 @@ import org.eclipse.cdt.dsf.mi.service.IMIBackend.BackendStateChangedEvent;
 import org.eclipse.cdt.dsf.mi.service.command.AbstractCLIProcess;
 import org.eclipse.cdt.dsf.mi.service.command.AbstractMIControl;
 import org.eclipse.cdt.dsf.mi.service.command.CLIEventProcessor_7_0;
-import org.eclipse.cdt.dsf.mi.service.command.MIBackendCLIProcess;
 import org.eclipse.cdt.dsf.mi.service.command.MIControlDMContext;
 import org.eclipse.cdt.dsf.mi.service.command.MIInferiorProcess;
 import org.eclipse.cdt.dsf.mi.service.command.MIRunControlEventProcessor_7_0;
+import org.eclipse.cdt.dsf.mi.service.command.MIInferiorProcess.State;
 import org.eclipse.cdt.dsf.mi.service.command.commands.MIBreakInsert;
 import org.eclipse.cdt.dsf.mi.service.command.commands.MICommand;
 import org.eclipse.cdt.dsf.mi.service.command.commands.MIExecContinue;
@@ -178,10 +178,18 @@ public class GDBControl_7_0 extends AbstractMIControl implements IGDBControl {
     }
     
     public void terminate(final RequestMonitor rm) {
+    	// To fix bug 234467:
+    	// Interrupt GDB in case the inferior is running.
+    	// That way, the inferior will also be killed when we exit GDB.
+    	//
+    	if (fInferiorProcess.getState() == State.RUNNING) {
+    		fMIBackend.interrupt();
+    	}
+
         // Schedule a runnable to be executed 2 seconds from now.
         // If we don't get a response to the quit command, this 
         // runnable will kill the task.
-        final Future<?> quitTimeoutFuture = getExecutor().schedule(
+        final Future<?> forceQuitTask = getExecutor().schedule(
             new DsfRunnable() {
                 public void run() {
                     fMIBackend.destroy();
@@ -200,13 +208,14 @@ public class GDBControl_7_0 extends AbstractMIControl implements IGDBControl {
             new DataRequestMonitor<MIInfo>(getExecutor(), rm) { 
                 @Override
                 public void handleCompleted() {
-                    // Cancel the time out runnable (if it hasn't run yet).
-                    if (quitTimeoutFuture.cancel(false)) {
-                        if (!isSuccess()) {
-                        	fMIBackend.destroy();
-                        }
+                    if (isSuccess()) {
+                        // Cancel the time out runnable (if it hasn't run yet).
+                        forceQuitTask.cancel(false);
                         rm.done();
                     }
+                    // else: the forceQuitTask has or will handle it.
+                    // It is good to wait for the forceQuitTask to trigger
+                    // to leave enough time for the interrupt() to complete.
                 }
             }
         );
@@ -601,7 +610,7 @@ public class GDBControl_7_0 extends AbstractMIControl implements IGDBControl {
         @Override
         public void initialize(final RequestMonitor requestMonitor) {
             try {
-                fCLIProcess = new MIBackendCLIProcess(GDBControl_7_0.this, fMIBackend);
+                fCLIProcess = new GDBBackendCLIProcess(GDBControl_7_0.this, fMIBackend);
             }
             catch(IOException e) {
                 requestMonitor.setStatus(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, IDsfStatusConstants.REQUEST_FAILED, "Failed to create CLI Process", e)); //$NON-NLS-1$

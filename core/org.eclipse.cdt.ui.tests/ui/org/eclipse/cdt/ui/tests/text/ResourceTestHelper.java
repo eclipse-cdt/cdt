@@ -126,12 +126,12 @@ public class ResourceTestHelper {
 	}
 
 	public static IFile[] findFiles(String prefix, String suffix, int i, int n) {
-		List files= new ArrayList(n);
+		List<IFile> files= new ArrayList<IFile>(n);
 		for (int j= i; j < i + n; j++) {
 			String path= prefix + j + suffix;
 			files.add(findFile(path));
 		}
-		return (IFile[]) files.toArray(new IFile[files.size()]);
+		return files.toArray(new IFile[files.size()]);
 	}
 
 	public static StringBuffer read(String src) throws IOException, CoreException {
@@ -151,7 +151,7 @@ public class ResourceTestHelper {
 
 	public static void replicate(String src, String destPrefix, String destSuffix, int n, String srcName, String destNamePrefix, int ifExists) throws IOException, CoreException {
 		StringBuffer s= read(src);
-		List positions= identifierPositions(s, srcName);
+		List<Integer> positions= identifierPositions(s, srcName);
 		for (int j= 0; j < n; j++) {
 			String dest= destPrefix + j + destSuffix;
 			if (handleExisting(dest, ifExists)) {
@@ -165,23 +165,23 @@ public class ResourceTestHelper {
 	public static void copy(String src, String dest, String srcName, String destName, int ifExists) throws IOException, CoreException {
 		if (handleExisting(dest, ifExists)) {
 			StringBuffer buf= read(src);
-			List positions= identifierPositions(buf, srcName);
+			List<Integer> positions= identifierPositions(buf, srcName);
 			replacePositions(buf, srcName.length(), destName, positions);
 			write(dest, buf.toString());
 		}
 	}
 
-	private static void replacePositions(StringBuffer c, int origLength, String string, List positions) {
+	private static void replacePositions(StringBuffer c, int origLength, String string, List<Integer> positions) {
 		int offset= 0;
-		for (Iterator iter= positions.iterator(); iter.hasNext();) {
-			int position= ((Integer) iter.next()).intValue();
+		for (Iterator<Integer> iter= positions.iterator(); iter.hasNext();) {
+			int position= iter.next().intValue();
 			c.replace(offset + position, offset + position + origLength, string);
 			offset += string.length() - origLength;
 		}
 	}
 
-	private static List identifierPositions(StringBuffer buffer, String identifier) {
-		List positions= new ArrayList();
+	private static List<Integer> identifierPositions(StringBuffer buffer, String identifier) {
+		List<Integer> positions= new ArrayList<Integer>();
 		int i= -1;
 		while (true) {
 			i= buffer.indexOf(identifier, i + 1);

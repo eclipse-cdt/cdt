@@ -1,10 +1,8 @@
 #include "A.h"
 #include "OverloadedFunction.h"
 
-namespace ns3 {
+using ns3::func;
 
 void test() {
   func(0);
-}
-
 }

@@ -1,0 +1,9 @@
+#include "ResolvedName.h"
+#include "UnresolvedName.h"
+
+using ns4::A;
+using ns5::B;
+
+void test() {
+	B b;
+}

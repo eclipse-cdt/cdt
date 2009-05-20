@@ -121,6 +121,11 @@ public class AddIncludeTest extends TestCase {
 		assertAddIncludeResult();
 	}
 
+	public void testUnresolvedName() throws Exception {
+		select("B");
+		assertAddIncludeResult();
+	}
+
 	public void testVariableType() throws Exception {
 		select("a_");
 		assertAddIncludeResult();

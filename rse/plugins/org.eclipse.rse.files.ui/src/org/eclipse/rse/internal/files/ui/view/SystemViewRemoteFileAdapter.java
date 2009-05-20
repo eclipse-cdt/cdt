@@ -3450,10 +3450,8 @@ public class SystemViewRemoteFileAdapter
 					Object obj = properties.getRemoteFileObject();
 					if (obj != null && obj instanceof SystemEditableRemoteFile)
 					{
-						SystemEditableRemoteFile rmtObj = (SystemEditableRemoteFile) obj;
-						if (rmtObj.checkOpenInEditor() != ISystemEditableRemoteObject.NOT_OPEN){ // if this is open									
-							return rmtObj;
-						}
+						SystemEditableRemoteFile rmtObj = (SystemEditableRemoteFile) obj;					
+						return rmtObj; // return regardless of whehter it's open - open handling is taken care of after
 					}
 				}
 				return new SystemEditableRemoteFile(remoteFile);

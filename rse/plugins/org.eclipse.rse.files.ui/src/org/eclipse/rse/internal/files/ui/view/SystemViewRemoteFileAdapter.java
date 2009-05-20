@@ -3302,7 +3302,10 @@ public class SystemViewRemoteFileAdapter
 					
 					IEditorPart editor = editable.getEditorPart();
 					boolean editorWasClosed = false;
-					if (editor.isDirty()){
+					if (editor == null){
+						editorWasClosed = true;
+					}
+					else if (editor.isDirty()){
 						editorWasClosed = editor.getEditorSite().getPage().closeEditor(editor, true);
 						if (editorWasClosed)
 							editable.doImmediateSaveAndUpload();								

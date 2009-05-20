@@ -116,9 +116,11 @@ public class GDBJtagDebuggerTab extends AbstractLaunchConfigurationTab {
 	}
 	
 	private void variablesButtonSelected(Text text) {
-		StringVariableSelectionDialog dialog = new StringVariableSelectionDialog(getShell());
-		dialog.open();
-		text.append(dialog.getVariableExpression());
+		StringVariableSelectionDialog dialog = new StringVariableSelectionDialog(
+				getShell());
+		if (dialog.open() == StringVariableSelectionDialog.OK) {
+			text.append(dialog.getVariableExpression());
+		}
 	}
 	
 	private void createCommandControl(Composite parent) {

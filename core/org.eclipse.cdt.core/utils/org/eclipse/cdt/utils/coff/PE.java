@@ -875,6 +875,9 @@ public class PE {
 		return new String();
 	}
 
+	/**
+	 * @since 5.1
+	 */
 	public String getFilename() {
 		return filename;
 	}

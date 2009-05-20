@@ -77,7 +77,7 @@ public class MakeView extends ViewPart {
 	private BuildTargetAction buildTargetAction;
 	private EditTargetAction editTargetAction;
 	private DeleteTargetAction deleteTargetAction;
-	private AddTargetAction addTargetAction;
+	private AddTargetAction newTargetAction;
 	private CopyTargetAction copyTargetAction;
 	private PasteTargetAction pasteTargetAction;
 	private TreeViewer fViewer;
@@ -285,7 +285,7 @@ public class MakeView extends ViewPart {
 		clipboard = new Clipboard(shell.getDisplay());
 
 		buildTargetAction = new BuildTargetAction(shell);
-		addTargetAction = new AddTargetAction(shell);
+		newTargetAction = new AddTargetAction(shell);
 		copyTargetAction = new CopyTargetAction(shell, clipboard, pasteTargetAction);
 		pasteTargetAction = new PasteTargetAction(shell, clipboard);
 		deleteTargetAction = new DeleteTargetAction(shell);
@@ -304,8 +304,10 @@ public class MakeView extends ViewPart {
 	}
 
 	private void fillLocalToolBar(IToolBarManager toolBar) {
-		drillDownAdapter.addNavigationActions(toolBar);
+		toolBar.add(newTargetAction);
 		toolBar.add(buildTargetAction);
+		toolBar.add(new Separator());
+		drillDownAdapter.addNavigationActions(toolBar);
 		toolBar.add(trimEmptyFolderAction);
 	}
 
@@ -328,14 +330,16 @@ public class MakeView extends ViewPart {
 	}
 
 	protected void fillContextMenu(IMenuManager manager) {
-		manager.add(buildTargetAction);
-		manager.add(addTargetAction);
-		manager.add(copyTargetAction);
-		manager.add(pasteTargetAction);
-		manager.add(deleteTargetAction);
+		manager.add(newTargetAction);
 		manager.add(editTargetAction);
 		manager.add(new Separator());
 		drillDownAdapter.addNavigationActions(manager);
+		manager.add(new Separator());
+		manager.add(copyTargetAction);
+		manager.add(pasteTargetAction);
+		manager.add(deleteTargetAction);
+		manager.add(new Separator());
+		manager.add(buildTargetAction);
 
 		// Other plug-ins can contribute there actions here
 		// manager.add(new Separator(IWorkbenchActionConstants.MB_ADDITIONS));
@@ -355,7 +359,7 @@ public class MakeView extends ViewPart {
 	}
 
 	void updateActions(IStructuredSelection sel) {
-		addTargetAction.selectionChanged(sel);
+		newTargetAction.selectionChanged(sel);
 		buildTargetAction.selectionChanged(sel);
 		deleteTargetAction.selectionChanged(sel);
 		editTargetAction.selectionChanged(sel);

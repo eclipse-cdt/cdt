@@ -363,9 +363,9 @@ public class MakeTargetDialog extends Dialog {
 	@Override
 	protected void createButtonsForButtonBar(Composite parent) {
 		if (fTarget == null || !MakeCorePlugin.getDefault().getTargetManager().targetExists(fTarget)) {
-			createButton(parent, IDialogConstants.OK_ID, MakeUIPlugin.getResourceString("MakeTargetDialog.button.create"), true); //$NON-NLS-1$
+			createButton(parent, IDialogConstants.OK_ID, IDialogConstants.OK_LABEL, true);
 		} else {
-			createButton(parent, IDialogConstants.OK_ID, MakeUIPlugin.getResourceString("MakeTargetDialog.button.update"), true); //$NON-NLS-1$
+			createButton(parent, IDialogConstants.OK_ID, IDialogConstants.OK_LABEL, true);
 		}
 		createButton(parent, IDialogConstants.CANCEL_ID, IDialogConstants.CANCEL_LABEL, false);
 		//do this here because setting the text will set enablement on the ok

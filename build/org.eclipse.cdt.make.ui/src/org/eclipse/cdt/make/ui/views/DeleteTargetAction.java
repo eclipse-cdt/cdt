@@ -11,19 +11,21 @@
 package org.eclipse.cdt.make.ui.views;
 
 
-import com.ibm.icu.text.MessageFormat;
 import java.util.List;
 
 import org.eclipse.cdt.make.core.IMakeTarget;
 import org.eclipse.cdt.make.core.IMakeTargetManager;
 import org.eclipse.cdt.make.core.MakeCorePlugin;
-import org.eclipse.cdt.make.internal.ui.MakeUIImages;
 import org.eclipse.cdt.make.internal.ui.MakeUIPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.swt.widgets.Shell;
+import org.eclipse.ui.ISharedImages;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.actions.SelectionListenerAction;
+
+import com.ibm.icu.text.MessageFormat;
 
 public class DeleteTargetAction extends SelectionListenerAction {
 	private final Shell shell;
@@ -33,7 +35,10 @@ public class DeleteTargetAction extends SelectionListenerAction {
 		this.shell = shell;
 
 		setToolTipText(MakeUIPlugin.getResourceString("DeleteTargetAction.tooltip")); //$NON-NLS-1$
-		MakeUIImages.setImageDescriptors(this, "tool16", MakeUIImages.IMG_TOOLS_MAKE_TARGET_DELETE); //$NON-NLS-1$
+
+		ISharedImages images = PlatformUI.getWorkbench().getSharedImages();
+		setImageDescriptor(images.getImageDescriptor(ISharedImages.IMG_TOOL_DELETE));
+		setDisabledImageDescriptor(images.getImageDescriptor(ISharedImages.IMG_TOOL_DELETE_DISABLED));
 	}
 
 	/**

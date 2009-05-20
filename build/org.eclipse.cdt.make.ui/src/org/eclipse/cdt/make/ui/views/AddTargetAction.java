@@ -32,6 +32,7 @@ public class AddTargetAction extends SelectionListenerAction {
 
 		setToolTipText(MakeUIPlugin.getResourceString("AddTargetAction.tooltip")); //$NON-NLS-1$
 		MakeUIImages.setImageDescriptors(this, "tool16", MakeUIImages.IMG_TOOLS_MAKE_TARGET_ADD); //$NON-NLS-1$
+		setEnabled(false);
 	}
 
 	@Override

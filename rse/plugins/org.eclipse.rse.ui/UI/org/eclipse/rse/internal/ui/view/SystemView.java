@@ -70,6 +70,7 @@
  * David McKnight   (IBM)        - [190805] [performance][dstore] Right-click > Disconnect on a dstore connection is slow and spawns many Jobs
  * David McKnight   (IBM)        - [190001] [refresh] Avoid unnecessary duplicate queries during drag&drop to filter
  * Martin Oberhuber (Wind River) - [276195] Avoid unnecessary selectionChanged when restoring connections
+ * David McKnight   (IBM)        - [277328] Unhandled Event Loop Exception When Right-Clicking on "Pending..." Message
  ********************************************************************************/
 
 package org.eclipse.rse.internal.ui.view;
@@ -984,6 +985,12 @@ public class SystemView extends SafeTreeViewer
 			if (!selectionFlagsUpdated) // might already be called by the global delete action wh
 				scanSelections("fillContextMenu"); //$NON-NLS-1$
 
+			
+			Object selectedObject = selection.getFirstElement();
+			if (selectedObject instanceof PendingUpdateAdapter){
+				return; // no menu for "Pending..."
+			}
+			
 			// ADD COMMON ACTIONS...
 
 			// COMMON REFRESH ACTION...
@@ -1022,8 +1029,9 @@ public class SystemView extends SafeTreeViewer
 			// OPEN IN NEW WINDOW ACTION...
 			if (fromSystemViewPart) {
 
-				Object selectedObject = selection.getFirstElement();
+				
 				ISystemViewElementAdapter adapter = getViewAdapter(selectedObject);
+
 				boolean hasChildren = adapter.hasChildren((IAdaptable)selectedObject);
 				if (!selectionIsRemoteObject)
 				{
@@ -1055,7 +1063,6 @@ public class SystemView extends SafeTreeViewer
 					SystemShowInMonitorAction showInMonitorAction = getShowInMonitorAction();
 					showInMonitorAction.setSelection(selection);
 					menu.appendToGroup(getOpenToPerspectiveAction().getContextMenuGroup(), showInMonitorAction);
-
 				}
 			}
 

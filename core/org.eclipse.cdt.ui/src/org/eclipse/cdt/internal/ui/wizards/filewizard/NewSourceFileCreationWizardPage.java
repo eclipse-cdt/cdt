@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2007 QNX Software Systems and others.
+ * Copyright (c) 2004, 2009 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -9,6 +9,7 @@
  *     QNX Software Systems - initial API and implementation
  *     Anton Leherbauer (Wind River Systems)
  *     Sergey Prigogin (Google)
+ *     IBM Corporation
  *******************************************************************************/
 package org.eclipse.cdt.internal.ui.wizards.filewizard;
 
@@ -25,6 +26,7 @@ import org.eclipse.jface.text.templates.Template;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Text;
+import org.eclipse.ui.PlatformUI;
 
 import org.eclipse.cdt.core.CConventions;
 import org.eclipse.cdt.core.CCorePlugin;
@@ -35,6 +37,7 @@ import org.eclipse.cdt.ui.CodeGeneration;
 import org.eclipse.cdt.internal.core.model.CProject;
 import org.eclipse.cdt.internal.corext.codemanipulation.StubUtility;
 
+import org.eclipse.cdt.internal.ui.ICHelpContextIds;
 import org.eclipse.cdt.internal.ui.dialogs.StatusInfo;
 import org.eclipse.cdt.internal.ui.wizards.dialogfields.DialogField;
 import org.eclipse.cdt.internal.ui.wizards.dialogfields.IDialogFieldListener;
@@ -81,6 +84,7 @@ public class NewSourceFileCreationWizardPage extends AbstractFileCreationWizardP
 		Text textControl = fNewFileDialogField.getTextControl(null);
 		LayoutUtil.setWidthHint(textControl, getMaxFieldWidth());
 		textControl.addFocusListener(new StatusFocusListener(NEW_FILE_ID));
+		PlatformUI.getWorkbench().getHelpSystem().setHelp(parent.getParent(), ICHelpContextIds.NEW_C_FILE_WIZARD_PAGE);
 	}
 	
 	@Override

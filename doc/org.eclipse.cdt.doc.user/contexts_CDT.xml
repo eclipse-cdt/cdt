@@ -519,4 +519,11 @@
     <description>This view displays include file relationships.</description>
     <topic label="Include Browser view" href="reference/cdt_u_include_browser_view.htm"/>
 </context>
+<context id="cdt_t_conv_proj_context" title="Converting a C or C++ nature for a project">
+   <description>This wizard converts a project to a C/C++ project.</description>
+   <topic href="tasks/cdt_t_conv_proj.htm" label="Converting a C or C++ nature for a project"/>
+</context>
+<context id="cdt_creating_cpp_file_context" title="Creating your C++ file">
+   <topic href="getting_started/cdt_w_creating_cpp_file.html" label="Creating your C++ file"/>
+</context>
 </contexts>

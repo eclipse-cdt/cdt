@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2008 IBM Corporation and others.
+ * Copyright (c) 2006, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -31,7 +31,8 @@ public interface ICHelpContextIds {
 	public static final String NEW_SRCFLDER_WIZARD_PAGE = PREFIX + "new_srcfldr_wizard_page_context"; //$NON-NLS-1$
 	public static final String OPEN_CLASS_WIZARD_ACTION = PREFIX + "open_class_wizard_action"; //$NON-NLS-1$
 	public static final String OPEN_PROJECT_WIZARD_ACTION = PREFIX + "open_project_wizard_action"; //$NON-NLS-1$
-
+	public static final String CONVERT_TO_CCPP_WIZARD_PAGE = PREFIX + "cdt_t_conv_proj_context"; //$NON-NLS-1$
+	public static final String NEW_C_FILE_WIZARD_PAGE = PREFIX + "cdt_creating_cpp_file_context"; //$NON-NLS-1$
 	// Actions
 
 	public static final String ADD_INCLUDE_ON_SELECTION_ACTION = PREFIX + "add_includes_on_selection_action_context"; //$NON-NLS-1$;

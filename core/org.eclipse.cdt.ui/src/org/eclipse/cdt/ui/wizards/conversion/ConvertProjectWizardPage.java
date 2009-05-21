@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2008 QNX Software Systems and others.
+ * Copyright (c) 2000, 2009 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -46,6 +46,7 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Listener;
+import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.ide.IDE;
@@ -54,9 +55,11 @@ import org.eclipse.cdt.core.CCProjectNature;
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.CProjectNature;
 import org.eclipse.cdt.ui.CUIPlugin;
+import org.eclipse.cdt.ui.newui.CDTHelpContextIds;
 import org.eclipse.cdt.utils.ui.controls.ControlFactory;
 
 import org.eclipse.cdt.internal.ui.CUIMessages;
+import org.eclipse.cdt.internal.ui.ICHelpContextIds;
 import org.eclipse.cdt.internal.ui.util.SWTUtil;
 
 
@@ -89,7 +92,7 @@ public abstract class ConvertProjectWizardPage
     protected Button cRadioButton;
     protected Button ccRadioButton;
    
-    // The Main widget containing the table and its list of condidate open projects
+    // The Main widget containing the table and its list of candidate open projects
     protected CheckboxTableViewer tableViewer;
     
     protected Button selectAllButton;
@@ -141,6 +144,7 @@ public abstract class ConvertProjectWizardPage
         addToMainPage(container);      
         // will default to false until a selection is made
         setPageComplete(validatePage());
+        PlatformUI.getWorkbench().getHelpSystem().setHelp(getControl(), ICHelpContextIds.CONVERT_TO_CCPP_WIZARD_PAGE);
     }
     
     /**

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2008 Wind River Systems, Inc. and others.
+ * Copyright (c) 2005, 2009 Wind River Systems, Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -12,6 +12,7 @@
  * Michael Scharf (Wind River) - split into core, view and connector plugins 
  * Martin Oberhuber (Wind River) - fixed copyright headers and beautified
  * Michael Scharf (Wind River) - [209665] Add ability to log byte streams from terminal
+ * Michael Scharf (Wind River) - [277061]  TelnetConnection.isConnected() should check if socket was not closed
  *******************************************************************************/
 package org.eclipse.tm.internal.terminal.telnet;
 
@@ -237,7 +238,7 @@ public class TelnetConnection extends Thread implements TelnetCodes {
 	 * connected, false otherwise.
 	 */
 	public boolean isConnected() {
-		return socket != null && socket.isConnected();
+		return socket != null && socket.isConnected() && !socket.isClosed();
 	}
 
 	/**

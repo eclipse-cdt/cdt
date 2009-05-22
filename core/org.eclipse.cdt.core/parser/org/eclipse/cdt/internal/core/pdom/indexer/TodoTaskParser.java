@@ -83,7 +83,7 @@ public class TodoTaskParser {
 				if (tagLength == 0 || i + tagLength > commentLength)
 					continue nextTag;
 	
-				// Ensure tag is not leaded with letter if tag starts with a letter
+				// Ensure tag is not leaded by a letter if the tag starts with a letter.
 				if (isIdentifierStart(tag[0]) && isIdentifierPart(previous)) {
 					continue nextTag;
 				}
@@ -100,10 +100,10 @@ public class TodoTaskParser {
 						}
 					}
 				}
-				// Ensure tag is not followed with letter if tag finishes with a letter
-				if (i + tagLength < commentLength && isIdentifierPart(comment[i + tagLength - 1])) {
-					if (isIdentifierPart(comment[i + tagLength]))
-						continue nextTag;
+				// Ensure tag is not followed by a letter if the tag ends with a letter.
+				if (i + tagLength < commentLength && isIdentifierPart(comment[i + tagLength - 1]) &&
+						isIdentifierPart(comment[i + tagLength])) {
+					continue nextTag;
 				}
 				
 				Task task = new Task(filename, i, i + tagLength, lineNumber,

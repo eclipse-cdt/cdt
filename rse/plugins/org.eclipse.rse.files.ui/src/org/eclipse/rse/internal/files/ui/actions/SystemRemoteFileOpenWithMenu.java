@@ -16,7 +16,7 @@
  * Martin Oberhuber (Wind River) - [189130] Move SystemIFileProperties from UI to Core
  * David McKnight   (IBM)        - [189873] DownloadJob changed to DownloadAndOpenJob
  * David McKnight   (IBM)        - [224377] "open with" menu does not have "other" option
- * 
+ * David McKnight   (IBM)        - [277141] System Editor Passed Incorrect Cache Information in Presence of Case-Differentiated-Only filenames
  *******************************************************************************/
 
 package org.eclipse.rse.internal.files.ui.actions;
@@ -247,15 +247,20 @@ private SystemEditableRemoteFile getEditableRemoteObject(Object element, IEditor
 					// first make sure that the correct remote file is referenced (might be difference because of different case)
 					if (!replicaRemotePath.equals(remotePath)){ // for bug 276103
 						
-						IEditorPart editor = editable.getEditorPart();
+						IEditorPart editor = editable.getEditorPart();						
 						boolean editorWasClosed = false;
-						if (editor.isDirty()){
-							editorWasClosed = editor.getEditorSite().getPage().closeEditor(editor, true);
-							if (editorWasClosed)
-								editable.doImmediateSaveAndUpload();								
+						if (editor != null){
+							if (editor.isDirty()){
+								editorWasClosed = editor.getEditorSite().getPage().closeEditor(editor, true);
+								if (editorWasClosed)
+									editable.doImmediateSaveAndUpload();								
+							}
+							else {
+								editorWasClosed = editor.getEditorSite().getPage().closeEditor(editor, true);
+							}
 						}
 						else {
-							editorWasClosed = editor.getEditorSite().getPage().closeEditor(editor, true);
+							editorWasClosed = true;
 						}
 						
 						if (!editorWasClosed){
@@ -286,6 +291,7 @@ private SystemEditableRemoteFile getEditableRemoteObject(Object element, IEditor
 		}
 		catch (Exception e)
 		{
+			e.printStackTrace();
 		}
 	}
 	return editable;

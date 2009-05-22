@@ -52,6 +52,7 @@ import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.IParameter;
 import org.eclipse.cdt.core.dom.ast.IProblemBinding;
+import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTemplateDeclaration;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPMethod;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPSpecialization;
@@ -75,6 +76,7 @@ import org.eclipse.cdt.ui.CUIPlugin;
 
 import org.eclipse.cdt.internal.core.dom.parser.ASTNode;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPVisitor;
+import org.eclipse.cdt.internal.core.index.IIndexFragmentName;
 import org.eclipse.cdt.internal.core.model.ASTCache.ASTRunnable;
 import org.eclipse.cdt.internal.core.model.ext.CElementHandleFactory;
 import org.eclipse.cdt.internal.core.model.ext.ICElementHandle;
@@ -88,10 +90,8 @@ import org.eclipse.cdt.internal.ui.viewsupport.IndexUI;
 
 public class OpenDeclarationsAction extends SelectionParseAction implements ASTRunnable {
 	public static boolean sIsJUnitTest = false;	
-	
-	private static final int KIND_OTHER = 0;
-	private static final int KIND_USING_DECL = 1;
-	private static final int KIND_DEFINITION = 2;
+
+	private enum NameKind { REFERENCE, DECLARATION, USING_DECL, DEFINITION }
 
 	private class WrapperJob extends Job {
 		WrapperJob() {
@@ -158,19 +158,19 @@ public class OpenDeclarationsAction extends SelectionParseAction implements ASTR
 
 		final IASTNodeSelector nodeSelector = ast.getNodeSelector(null);
 		
-		IASTName searchName= nodeSelector.findEnclosingName(selectionStart, selectionLength);
-		if (searchName == null) {
+		IASTName sourceName= nodeSelector.findEnclosingName(selectionStart, selectionLength);
+		if (sourceName == null) {
 			IASTName implicit = nodeSelector.findEnclosingImplicitName(selectionStart, selectionLength);
 			if (implicit != null) {
 				IASTImplicitNameOwner owner = (IASTImplicitNameOwner) implicit.getParent();
 				IASTImplicitName[] implicits = owner.getImplicitNames();
-				// there may be more than one name in the same spot
+				// There may be more than one name in the same spot
 				if (implicits.length > 0) {
 					List<IName> allNames = new ArrayList<IName>();
 					for (IASTImplicitName name : implicits) {
 						if (((ASTNode) name).getOffset() == ((ASTNode) implicit).getOffset()) {
 							IBinding binding = name.resolveBinding(); // guaranteed to resolve
-							IName[] declNames = findDeclNames(ast, KIND_OTHER, binding);
+							IName[] declNames = findDeclNames(ast, NameKind.REFERENCE, binding);
 							allNames.addAll(Arrays.asList(declNames));
 						}
 					}
@@ -180,32 +180,31 @@ public class OpenDeclarationsAction extends SelectionParseAction implements ASTR
 			}
 		} else {
 			boolean found= false;
-			final IASTNode parent = searchName.getParent();
+			final IASTNode parent = sourceName.getParent();
 			if (parent instanceof IASTPreprocessorIncludeStatement) {
 				openInclude(((IASTPreprocessorIncludeStatement) parent));
 				return Status.OK_STATUS;
 			}
-			IBinding binding = searchName.resolveBinding();
-			int isKind= KIND_OTHER;
-			if (searchName.isDefinition()) {
-				if (binding instanceof ICPPUsingDeclaration) {
-					isKind= KIND_USING_DECL;
-				} else {
-					isKind= KIND_DEFINITION;
-				}
-			}
+			IBinding binding = sourceName.resolveBinding();
+			NameKind kind = getNameKind(sourceName);
 			if (binding != null && !(binding instanceof IProblemBinding)) {
-				IName[] declNames = findDeclNames(ast, isKind, binding);
+				if (kind == NameKind.DEFINITION && binding instanceof IType) {
+					// Don't navigate away from a type definition.
+					// Select the name at the current location instead.
+					navigateToName(sourceName);
+					return Status.OK_STATUS;
+				}
+				IName[] declNames = findDeclNames(ast, kind, binding);
 				// Exclude the current location.
 				for (int i = 0; i < declNames.length; i++) {
-					if (isSameName(declNames[i], searchName)) {
+					if (isSameName(declNames[i], sourceName)) {
 						declNames[i] = null;
 					} else if (binding instanceof IParameter) {
-						if (!isInSameFunction(searchName, declNames[i])) {
+						if (!isInSameFunction(sourceName, declNames[i])) {
 							declNames[i] = null;
 						}
 					} else if (binding instanceof ICPPTemplateParameter) {
-						if (!isInSameTemplate(searchName, declNames[i])) {
+						if (!isInSameTemplate(sourceName, declNames[i])) {
 							declNames[i] = null;
 						}
 					}
@@ -220,59 +219,85 @@ public class OpenDeclarationsAction extends SelectionParseAction implements ASTR
 					found = navigateOneLocation(declNames);
 				}
 			}
-			if (!found && !navigationFallBack(ast, searchName, isKind)) {
-				reportSymbolLookupFailure(new String(searchName.toCharArray()));
+			if (!found && !navigationFallBack(ast, sourceName, kind)) {
+				reportSymbolLookupFailure(new String(sourceName.toCharArray()));
 			}
 			return Status.OK_STATUS;
 		} 
 
-		// no enclosing name, check if we're in an include statement
+		// No enclosing name, check if we're in an include statement
 		IASTNode node= nodeSelector.findEnclosingNode(selectionStart, selectionLength);
 		if (node instanceof IASTPreprocessorIncludeStatement) {
 			openInclude((IASTPreprocessorIncludeStatement) node);
 			return Status.OK_STATUS;
 		}
-		if (!navigationFallBack(ast, null, KIND_OTHER)) {
+		if (!navigationFallBack(ast, null, NameKind.REFERENCE)) {
 			reportSelectionMatchFailure();
 		}
 		return Status.OK_STATUS; 
 	}
 
-	private boolean isInSameFunction(IASTName name1, IName name2) {
+	private static NameKind getNameKind(IName name) {
+		if (name.isDefinition()) {
+			if (getBinding(name) instanceof ICPPUsingDeclaration) {
+				return NameKind.USING_DECL;
+			} else {
+				return NameKind.DEFINITION;
+			}
+		} else if (name.isDeclaration()) {
+			return NameKind.DECLARATION;
+		}
+		return NameKind.REFERENCE;
+	}
+
+	private static IBinding getBinding(IName name) {
+		if (name instanceof IASTName) {
+			return ((IASTName) name).resolveBinding();
+		} else if (name instanceof IIndexFragmentName) {
+			try {
+				return ((IIndexFragmentName) name).getBinding();
+			} catch (CoreException e) {
+				// Fall through to return null.
+			}
+		}
+		return null;
+	}
+	
+	private static boolean isInSameFunction(IASTName name1, IName name2) {
 		IASTDeclaration decl1 = getEnclosingDeclaration(name1);
 		IASTDeclaration decl2 = name2 instanceof IASTName ? getEnclosingDeclaration((IASTName) name2) : null;
 		return decl1 != null && decl1.equals(decl2) || decl1 == null && decl2 == null;
 	}
 
-	private IASTDeclaration getEnclosingDeclaration(IASTNode node) {
+	private static IASTDeclaration getEnclosingDeclaration(IASTNode node) {
 		while (node != null && !(node instanceof IASTDeclaration)) {
 			node= node.getParent();
 		}
 		return (IASTDeclaration) node;
 	}
 
-	private boolean isInSameTemplate(IASTName name1, IName name2) {
+	private static boolean isInSameTemplate(IASTName name1, IName name2) {
 		IASTDeclaration decl1 = getEnclosingTemplateDeclaration(name1);
 		IASTDeclaration decl2 = name2 instanceof IASTName ?
 				getEnclosingTemplateDeclaration((IASTName) name2) : null;
 		return decl1 != null && decl1.equals(decl2) || decl1 == null && decl2 == null;
 	}
 
-	private IASTDeclaration getEnclosingTemplateDeclaration(IASTNode node) {
+	private static IASTDeclaration getEnclosingTemplateDeclaration(IASTNode node) {
 		while (node != null && !(node instanceof ICPPASTTemplateDeclaration)) {
 			node= node.getParent();
 		}
 		return (IASTDeclaration) node;
 	}
 
-	private IName[] findDeclNames(IASTTranslationUnit ast, int isKind, IBinding binding) throws CoreException {
-		IName[] declNames = findNames(fIndex, ast, isKind, binding);
+	private IName[] findDeclNames(IASTTranslationUnit ast, NameKind kind, IBinding binding) throws CoreException {
+		IName[] declNames = findNames(fIndex, ast, kind, binding);
 		if (declNames.length == 0) {
 			if (binding instanceof ICPPSpecialization) {
 				// bug 207320, handle template instances
 				IBinding specialized= ((ICPPSpecialization) binding).getSpecializedBinding();
 				if (specialized != null && !(specialized instanceof IProblemBinding)) {
-					declNames = findNames(fIndex, ast, KIND_DEFINITION, specialized);
+					declNames = findNames(fIndex, ast, NameKind.DEFINITION, specialized);
 				}
 			} else if (binding instanceof ICPPMethod) {
 				// bug 86829, handle implicit methods.
@@ -281,7 +306,7 @@ public class OpenDeclarationsAction extends SelectionParseAction implements ASTR
 					try {
 						IBinding clsBinding= method.getClassOwner();
 						if (clsBinding != null && !(clsBinding instanceof IProblemBinding)) {
-							declNames= findNames(fIndex, ast, KIND_OTHER, clsBinding);
+							declNames= findNames(fIndex, ast, NameKind.REFERENCE, clsBinding);
 						}
 					} catch (DOMException e) {
 						// don't log problem bindings.
@@ -292,7 +317,7 @@ public class OpenDeclarationsAction extends SelectionParseAction implements ASTR
 		return declNames;
 	}
 
-	private boolean navigationFallBack(IASTTranslationUnit ast, IASTName sourceName, int isKind) {
+	private boolean navigationFallBack(IASTTranslationUnit ast, IASTName sourceName, NameKind kind) {
 		// bug 102643, as a fall-back we look up the selected word in the index
 		if (fSelectedText != null && fSelectedText.length() > 0) {
 			try {
@@ -319,7 +344,7 @@ public class OpenDeclarationsAction extends SelectionParseAction implements ASTR
 					}
 				}
 				
-				// search the index, also
+				// Search the index, also
 				final IndexFilter filter = IndexFilter.getDeclaredBindingFilter(ast.getLinkage().getLinkageID(), false);
 				final IIndexBinding[] idxBindings = fIndex.findBindings(name, false, filter, fMonitor);
 				for (IIndexBinding idxBinding : idxBindings) {
@@ -328,7 +353,7 @@ public class OpenDeclarationsAction extends SelectionParseAction implements ASTR
 					}
 				}
 				
-				// search for a macro in the index
+				// Search for a macro in the index
 				IIndexMacro[] macros= fIndex.findMacros(name, filter, fMonitor);
 				for (IIndexMacro macro : macros) {
 					ICElement elem= IndexUI.getCElementForMacro(project, fIndex, macro);
@@ -346,11 +371,11 @@ public class OpenDeclarationsAction extends SelectionParseAction implements ASTR
 					if (!Arrays.equals(qualifiedName, sourceQualifiedName)) {
 						continue;
 					}
-					IName[] names = findNames(fIndex, ast, isKind, binding);
+					IName[] names = findNames(fIndex, ast, kind, binding);
 					// Exclude the current location.
 					for (int i = 0; i < names.length; i++) {
-						if (sourceName != null && isSameName(names[i], sourceName)) {
-							names[i] = null;
+						if (getNameKind(names[i]) == kind) {
+							names[i] = null;  // Don' navigate to a name of the same kind.
 						}
 					}
 					names = (IName[]) ArrayUtil.removeNulls(IName.class, names);
@@ -505,17 +530,17 @@ public class OpenDeclarationsAction extends SelectionParseAction implements ASTR
 		return null;
 	}
 
-	private IName[] findNames(IIndex index, IASTTranslationUnit ast, int isKind, IBinding binding) throws CoreException {
+	private IName[] findNames(IIndex index, IASTTranslationUnit ast, NameKind kind, IBinding binding) throws CoreException {
 		IName[] declNames;
-		if (isKind == KIND_DEFINITION) {
+		if (kind == NameKind.DEFINITION) {
 			declNames= findDeclarations(index, ast, binding);
 		} else {
-			declNames= findDefinitions(index, ast, isKind, binding);
+			declNames= findDefinitions(index, ast, kind, binding);
 		}
 
 		if (declNames.length == 0) {
-			if (isKind == KIND_DEFINITION) {
-				declNames= findDefinitions(index, ast, isKind, binding);
+			if (kind == NameKind.DEFINITION) {
+				declNames= findDefinitions(index, ast, kind, binding);
 			} else {
 				declNames= findDeclarations(index, ast, binding);
 			}
@@ -523,7 +548,7 @@ public class OpenDeclarationsAction extends SelectionParseAction implements ASTR
 		return declNames;
 	}
 
-	private IName[] findDefinitions(IIndex index, IASTTranslationUnit ast, int isKind, IBinding binding) throws CoreException {
+	private IName[] findDefinitions(IIndex index, IASTTranslationUnit ast, NameKind kind, IBinding binding) throws CoreException {
 		List<IASTName> declNames= new ArrayList<IASTName>();
 		declNames.addAll(Arrays.asList(ast.getDefinitionsInAST(binding)));
 		for (Iterator<IASTName> i = declNames.iterator(); i.hasNext();) {

@@ -326,12 +326,12 @@ public class CSelectionTestsNoIndexer extends BaseUITestCase {
         IASTNode decl = testF3(file, defOffset);
         assertTrue(def instanceof IASTName);
         assertTrue(decl instanceof IASTName);
-        assertEquals(((IASTName)decl).toString(), "MyInt"); //$NON-NLS-1$
-        assertEquals(((ASTNode)decl).getOffset(), 11);
-        assertEquals(((ASTNode)decl).getLength(), 5);
-        assertEquals(((IASTName)def).toString(), "MyInt"); //$NON-NLS-1$
-        assertEquals(((ASTNode)def).getOffset(), 330);
-        assertEquals(((ASTNode)def).getLength(), 5);
+        assertEquals("MyInt", ((IASTName) decl).toString()); //$NON-NLS-1$
+        assertEquals(11, ((ASTNode) decl).getOffset());
+        assertEquals(5, ((ASTNode) decl).getLength());
+        assertEquals("MyInt", ((IASTName) def).toString()); //$NON-NLS-1$
+        assertEquals(330, ((ASTNode) def).getOffset());
+        assertEquals(5, ((ASTNode) def).getLength());
         
         offset= code.indexOf("MyConst") + 2;
         defOffset= code.indexOf("MyConst", offset) + 2;
@@ -339,12 +339,12 @@ public class CSelectionTestsNoIndexer extends BaseUITestCase {
         decl = testF3(file, defOffset);
         assertTrue(def instanceof IASTName);
         assertTrue(decl instanceof IASTName);
-        assertEquals(((IASTName)decl).toString(), "MyConst"); //$NON-NLS-1$
-        assertEquals(((ASTNode)decl).getOffset(), 69);
-        assertEquals(((ASTNode)decl).getLength(), 7);
-        assertEquals(((IASTName)def).toString(), "MyConst"); //$NON-NLS-1$
-        assertEquals(((ASTNode)def).getOffset(), 354);
-        assertEquals(((ASTNode)def).getLength(), 7);
+        assertEquals("MyConst", ((IASTName) decl).toString()); //$NON-NLS-1$
+        assertEquals(69, ((ASTNode) decl).getOffset());
+        assertEquals(7, ((ASTNode) decl).getLength());
+        assertEquals("MyConst", ((IASTName) def).toString()); //$NON-NLS-1$
+        assertEquals(354, ((ASTNode) def).getOffset());
+        assertEquals(7, ((ASTNode) def).getLength());
         
         offset= code.indexOf("MyFunc") + 2;
         defOffset= code.indexOf("MyFunc", offset) + 2;
@@ -352,12 +352,12 @@ public class CSelectionTestsNoIndexer extends BaseUITestCase {
         decl = testF3(file, defOffset);
         assertTrue(def instanceof IASTName);
         assertTrue(decl instanceof IASTName);
-        assertEquals(((IASTName)decl).toString(), "MyFunc"); //$NON-NLS-1$
-        assertEquals(((ASTNode)decl).getOffset(), 115);
-        assertEquals(((ASTNode)decl).getLength(), 6);
-        assertEquals(((IASTName)def).toString(), "MyFunc"); //$NON-NLS-1$
-        assertEquals(((ASTNode)def).getOffset(), 373);
-        assertEquals(((ASTNode)def).getLength(), 6);
+        assertEquals("MyFunc", ((IASTName) decl).toString()); //$NON-NLS-1$
+        assertEquals(115, ((ASTNode) decl).getOffset());
+        assertEquals(6, ((ASTNode) decl).getLength());
+        assertEquals("MyFunc", ((IASTName) def).toString()); //$NON-NLS-1$
+        assertEquals(373, ((ASTNode) def).getOffset());
+        assertEquals(6, ((ASTNode) def).getLength());
         
         offset= code.indexOf("MyStruct") + 2;
         defOffset= code.indexOf("MyStruct", offset) + 2;
@@ -365,12 +365,12 @@ public class CSelectionTestsNoIndexer extends BaseUITestCase {
         decl = testF3(file, defOffset);
         assertTrue(def instanceof IASTName);
         assertTrue(decl instanceof IASTName);
-        assertEquals(((IASTName)decl).toString(), "MyStruct"); //$NON-NLS-1$
-        assertEquals(((ASTNode)decl).getOffset(), 171);
-        assertEquals(((ASTNode)decl).getLength(), 8);
-        assertEquals(((IASTName)def).toString(), "MyStruct"); //$NON-NLS-1$
-        assertEquals(((ASTNode)def).getOffset(), 417);
-        assertEquals(((ASTNode)def).getLength(), 8);
+        assertEquals("MyStruct", ((IASTName) decl).toString()); //$NON-NLS-1$
+        assertEquals(417, ((ASTNode) decl).getOffset());
+        assertEquals(8, ((ASTNode) decl).getLength());
+        assertEquals("MyStruct", ((IASTName) def).toString()); //$NON-NLS-1$
+        assertEquals(417, ((ASTNode) def).getOffset());
+        assertEquals(8, ((ASTNode) def).getLength());
     }
     
 	// taken from C++ spec 3.1-3:
@@ -422,164 +422,164 @@ public class CSelectionTestsNoIndexer extends BaseUITestCase {
         int offset = code.indexOf("a; // defines a"); //$NON-NLS-1$
         IASTNode decl = testF3(file, offset);
         assertTrue(decl instanceof IASTName);
-        assertEquals(((IASTName)decl).toString(), "a"); //$NON-NLS-1$
-        assertEquals(((ASTNode)decl).getOffset(), 512);
-        assertEquals(((ASTNode)decl).getLength(), 1);
+        assertEquals("a", ((IASTName) decl).toString()); //$NON-NLS-1$
+        assertEquals(512, ((ASTNode) decl).getOffset());
+        assertEquals(1, ((ASTNode) decl).getLength());
 		
 		offset = code.indexOf("c = 1; // defines c"); //$NON-NLS-1$
         decl = testF3(file, offset);
         assertTrue(decl instanceof IASTName);
-        assertEquals(((IASTName)decl).toString(), "c"); //$NON-NLS-1$
-        assertEquals(((ASTNode)decl).getOffset(), 546);
-        assertEquals(((ASTNode)decl).getLength(), 1);
+        assertEquals("c", ((IASTName) decl).toString()); //$NON-NLS-1$
+        assertEquals(546, ((ASTNode) decl).getOffset());
+        assertEquals(1, ((ASTNode) decl).getLength());
 		
 		offset = code.indexOf("f(int x) { return x+a; } // defines f and defines x"); //$NON-NLS-1$
         decl = testF3(file, offset);
         assertTrue(decl instanceof IASTName);
-        assertEquals(((IASTName)decl).toString(), "f"); //$NON-NLS-1$
-        assertEquals(((ASTNode)decl).getOffset(), 567);
-        assertEquals(((ASTNode)decl).getLength(), 1);
+        assertEquals("f", ((IASTName) decl).toString()); //$NON-NLS-1$
+        assertEquals(567, ((ASTNode) decl).getOffset());
+        assertEquals(1, ((ASTNode) decl).getLength());
 		
 		offset = code.indexOf("x) { return x+a; } // defines f and defines x"); //$NON-NLS-1$
         decl = testF3(file, offset);
         assertTrue(decl instanceof IASTName);
-        assertEquals(((IASTName)decl).toString(), "x"); //$NON-NLS-1$
-        assertEquals(((ASTNode)decl).getOffset(), 67);
-        assertEquals(((ASTNode)decl).getLength(), 1);
+        assertEquals("x", ((IASTName) decl).toString()); //$NON-NLS-1$
+        assertEquals(67, ((ASTNode) decl).getOffset());
+        assertEquals(1, ((ASTNode) decl).getLength());
 		
 		offset = code.indexOf("x+a; } // defines f and defines x"); //$NON-NLS-1$
         decl = testF3(file, offset);
         assertTrue(decl instanceof IASTName);
-        assertEquals(((IASTName)decl).toString(), "x"); //$NON-NLS-1$
-        assertEquals(((ASTNode)decl).getOffset(), 67);
-        assertEquals(((ASTNode)decl).getLength(), 1);
+        assertEquals("x", ((IASTName) decl).toString()); //$NON-NLS-1$
+        assertEquals(67, ((ASTNode) decl).getOffset());
+        assertEquals(1, ((ASTNode) decl).getLength());
 		
 		offset = code.indexOf("x+a; } // defines f and defines x"); //$NON-NLS-1$
         decl = testF3(file, offset);
         assertTrue(decl instanceof IASTName);
-        assertEquals(((IASTName)decl).toString(), "x"); //$NON-NLS-1$
-        assertEquals(((ASTNode)decl).getOffset(), 67);
-        assertEquals(((ASTNode)decl).getLength(), 1);
+        assertEquals("x", ((IASTName) decl).toString()); //$NON-NLS-1$
+        assertEquals(67, ((ASTNode) decl).getOffset());
+        assertEquals(1, ((ASTNode) decl).getLength());
 		
 		offset = code.indexOf("a; } // defines f and defines x"); //$NON-NLS-1$
         decl = testF3(file, offset);
         assertTrue(decl instanceof IASTName);
-        assertEquals(((IASTName)decl).toString(), "a"); //$NON-NLS-1$
-        assertEquals(((ASTNode)decl).getOffset(), 4);
-        assertEquals(((ASTNode)decl).getLength(), 1);
+        assertEquals("a", ((IASTName) decl).toString()); //$NON-NLS-1$
+        assertEquals(4, ((ASTNode) decl).getOffset());
+        assertEquals(1, ((ASTNode) decl).getLength());
 		
 		offset = code.indexOf("S { int a; int b; }; // defines S, S::a, and S::b"); //$NON-NLS-1$
         decl = testF3(file, offset);
         assertTrue(decl instanceof IASTName);
-        assertEquals(((IASTName)decl).toString(), "S"); //$NON-NLS-1$
-        assertEquals(((ASTNode)decl).getOffset(), 596);
-        assertEquals(((ASTNode)decl).getLength(), 1);
+        assertEquals("S", ((IASTName) decl).toString()); //$NON-NLS-1$
+        assertEquals(120, ((ASTNode) decl).getOffset());
+        assertEquals(1, ((ASTNode) decl).getLength());
 		
 		offset = code.indexOf("a; int b; }; // defines S, S::a, and S::b"); //$NON-NLS-1$
         decl = testF3(file, offset);
         assertTrue(decl instanceof IASTName);
-        assertEquals(((IASTName)decl).toString(), "a"); //$NON-NLS-1$
-        assertEquals(((ASTNode)decl).getOffset(), 128);
-        assertEquals(((ASTNode)decl).getLength(), 1);
+        assertEquals("a", ((IASTName) decl).toString()); //$NON-NLS-1$
+        assertEquals(128, ((ASTNode) decl).getOffset());
+        assertEquals(1, ((ASTNode) decl).getLength());
 		
 		offset = code.indexOf("b; }; // defines S, S::a, and S::b"); //$NON-NLS-1$
         decl = testF3(file, offset);
         assertTrue(decl instanceof IASTName);
-        assertEquals(((IASTName)decl).toString(), "b"); //$NON-NLS-1$
-        assertEquals(((ASTNode)decl).getOffset(), 135);
-        assertEquals(((ASTNode)decl).getLength(), 1);
+        assertEquals("b", ((IASTName) decl).toString()); //$NON-NLS-1$
+        assertEquals(135, ((ASTNode) decl).getOffset());
+        assertEquals(1, ((ASTNode) decl).getLength());
 		
 		offset = code.indexOf("X { // defines X"); //$NON-NLS-1$
         decl = testF3(file, offset);
         assertTrue(decl instanceof IASTName);
-        assertEquals(((IASTName)decl).toString(), "X"); //$NON-NLS-1$
-        assertEquals(((ASTNode)decl).getOffset(), 177);
-        assertEquals(((ASTNode)decl).getLength(), 1);
+        assertEquals("X", ((IASTName) decl).toString()); //$NON-NLS-1$
+        assertEquals(177, ((ASTNode) decl).getOffset());
+        assertEquals(1, ((ASTNode) decl).getLength());
 		
 		offset = code.indexOf("x; // defines nonstatic data member x"); //$NON-NLS-1$
         decl = testF3(file, offset);
         assertTrue(decl instanceof IASTName);
-        assertEquals(((IASTName)decl).toString(), "x"); //$NON-NLS-1$
-        assertEquals(((ASTNode)decl).getOffset(), 198);
-        assertEquals(((ASTNode)decl).getLength(), 1);
+        assertEquals("x", ((IASTName) decl).toString()); //$NON-NLS-1$
+        assertEquals(198, ((ASTNode) decl).getOffset());
+        assertEquals(1, ((ASTNode) decl).getLength());
         
 		offset = code.indexOf("up, down }; // defines up and down"); //$NON-NLS-1$
         decl = testF3(file, offset);
         assertTrue(decl instanceof IASTName);
-        assertEquals(((IASTName)decl).toString(), "up"); //$NON-NLS-1$
-        assertEquals(((ASTNode)decl).getOffset(), 367);
-        assertEquals(((ASTNode)decl).getLength(), 2);
+        assertEquals("up", ((IASTName) decl).toString()); //$NON-NLS-1$
+        assertEquals(367, ((ASTNode) decl).getOffset());
+        assertEquals(2, ((ASTNode) decl).getLength());
 		
 		offset = code.indexOf("down }; // defines up and down"); //$NON-NLS-1$
         decl = testF3(file, offset);
         assertTrue(decl instanceof IASTName);
-        assertEquals(((IASTName)decl).toString(), "down"); //$NON-NLS-1$
-        assertEquals(((ASTNode)decl).getOffset(), 371);
-        assertEquals(((ASTNode)decl).getLength(), 4);
+        assertEquals("down", ((IASTName) decl).toString()); //$NON-NLS-1$
+        assertEquals(371, ((ASTNode) decl).getOffset());
+        assertEquals(4, ((ASTNode) decl).getLength());
 				
         IASTNode def;
 		offset = code.indexOf("X anX; // defines anX"); //$NON-NLS-1$
         def = testF3(file, offset);
         assertTrue(def instanceof IASTName);
-        assertEquals(((IASTName)def).toString(), "X"); //$NON-NLS-1$
-        assertEquals(((ASTNode)def).getOffset(), 177);
-        assertEquals(((ASTNode)def).getLength(), 1);
+        assertEquals("X", ((IASTName) def).toString()); //$NON-NLS-1$
+        assertEquals(177, ((ASTNode) def).getOffset());
+        assertEquals(1, ((ASTNode) def).getLength());
 		
 		offset = code.indexOf("anX; // defines anX"); //$NON-NLS-1$
         decl = testF3(file, offset);
         assertTrue(decl instanceof IASTName);
-        assertEquals(((IASTName)decl).toString(), "anX"); //$NON-NLS-1$
-        assertEquals(((ASTNode)decl).getOffset(), 481);
-        assertEquals(((ASTNode)decl).getLength(), 3);
+        assertEquals("anX", ((IASTName) decl).toString()); //$NON-NLS-1$
+        assertEquals(481, ((ASTNode) decl).getOffset());
+        assertEquals(3, ((ASTNode) decl).getLength());
 		
 		offset = code.indexOf("a; // declares a"); //$NON-NLS-1$
         def = testF3(file, offset);
         assertTrue(def instanceof IASTName);
-        assertEquals(((IASTName)def).toString(), "a"); //$NON-NLS-1$
-        assertEquals(((ASTNode)def).getOffset(), 4);
-        assertEquals(((ASTNode)def).getLength(), 1);
+        assertEquals("a", ((IASTName) def).toString()); //$NON-NLS-1$
+        assertEquals(4, ((ASTNode) def).getOffset());
+        assertEquals(1, ((ASTNode) def).getLength());
 		
 		offset = code.indexOf("c; // declares c"); //$NON-NLS-1$
         def = testF3(file, offset);
         assertTrue(def instanceof IASTName);
-        assertEquals(((IASTName)def).toString(), "c"); //$NON-NLS-1$
-        assertEquals(((ASTNode)def).getOffset(), 37);
-        assertEquals(((ASTNode)def).getLength(), 1);
+        assertEquals("c", ((IASTName) def).toString()); //$NON-NLS-1$
+        assertEquals(37, ((ASTNode) def).getOffset());
+        assertEquals(1, ((ASTNode) def).getLength());
 		
 		offset = code.indexOf("f(int y); // declar f"); //$NON-NLS-1$
         def = testF3(file, offset);
         assertTrue(def instanceof IASTName);
-        assertEquals(((IASTName)def).toString(), "f"); //$NON-NLS-1$
-        assertEquals(((ASTNode)def).getOffset(), 61);
-        assertEquals(((ASTNode)def).getLength(), 1);
+        assertEquals("f", ((IASTName) def).toString()); //$NON-NLS-1$
+        assertEquals(61, ((ASTNode) def).getOffset());
+        assertEquals(1, ((ASTNode) def).getLength());
 		
 		offset = code.indexOf("S; // declares S"); //$NON-NLS-1$
         def = testF3(file, offset);
         assertTrue(def instanceof IASTName);
-        assertEquals(((IASTName)def).toString(), "S"); //$NON-NLS-1$
-        assertEquals(((ASTNode)def).getOffset(), 120);
-        assertEquals(((ASTNode)def).getLength(), 1);
+        assertEquals("S", ((IASTName) def).toString()); //$NON-NLS-1$
+        assertEquals(120, ((ASTNode) def).getOffset());
+        assertEquals(1, ((ASTNode) def).getLength());
 		
 		offset = code.indexOf("Int; // declares Int"); //$NON-NLS-1$
         decl = testF3(file, offset);
         assertTrue(decl instanceof IASTName);
-        assertEquals(((IASTName)decl).toString(), "Int"); //$NON-NLS-1$
-        assertEquals(((ASTNode)decl).getOffset(), 625);
-        assertEquals(((ASTNode)decl).getLength(), 3);
+        assertEquals("Int", ((IASTName) decl).toString()); //$NON-NLS-1$
+        assertEquals(625, ((ASTNode) decl).getOffset());
+        assertEquals(3, ((ASTNode) decl).getLength());
         
 		offset = code.indexOf("X anotherX; // declares anotherX"); //$NON-NLS-1$
         def = testF3(file, offset);
         assertTrue(def instanceof IASTName);
-        assertEquals(((IASTName)def).toString(), "X"); //$NON-NLS-1$
-        assertEquals(((ASTNode)def).getOffset(), 177);
-        assertEquals(((ASTNode)def).getLength(), 1);
+        assertEquals("X", ((IASTName) def).toString()); //$NON-NLS-1$
+        assertEquals(177, ((ASTNode) def).getOffset());
+        assertEquals(1, ((ASTNode) def).getLength());
 		
 		offset = code.indexOf("anotherX; // declares anotherX"); //$NON-NLS-1$
         decl = testF3(file, offset);
         assertTrue(decl instanceof IASTName);
-        assertEquals(((IASTName)decl).toString(), "anotherX"); //$NON-NLS-1$
-        assertEquals(((ASTNode)decl).getOffset(), 662);
-        assertEquals(((ASTNode)decl).getLength(), 8);
+        assertEquals("anotherX", ((IASTName) decl).toString()); //$NON-NLS-1$
+        assertEquals(662, ((ASTNode) decl).getOffset());
+        assertEquals(8, ((ASTNode) decl).getLength());
   	}
 	
 	public void testNoDefinitions() throws Exception {
@@ -596,37 +596,37 @@ public class CSelectionTestsNoIndexer extends BaseUITestCase {
         int offset = code.indexOf("a1; // declares a"); //$NON-NLS-1$
         IASTNode decl = testF3(file, offset);
         assertTrue(decl instanceof IASTName);
-        assertEquals(((IASTName)decl).toString(), "a1"); //$NON-NLS-1$
-        assertEquals(((ASTNode)decl).getOffset(), 11);
-        assertEquals(((ASTNode)decl).getLength(), 2);
+        assertEquals("a1", ((IASTName) decl).toString()); //$NON-NLS-1$
+        assertEquals(11, ((ASTNode) decl).getOffset());
+        assertEquals(2, ((ASTNode) decl).getLength());
 		
 		offset = code.indexOf("c1; // declares c"); //$NON-NLS-1$
         decl = testF3(file, offset);
         assertTrue(decl instanceof IASTName);
-        assertEquals(((IASTName)decl).toString(), "c1"); //$NON-NLS-1$
-        assertEquals(((ASTNode)decl).getOffset(), 46);
-        assertEquals(((ASTNode)decl).getLength(), 2);
+        assertEquals("c1", ((IASTName) decl).toString()); //$NON-NLS-1$
+        assertEquals(46, ((ASTNode) decl).getOffset());
+        assertEquals(2, ((ASTNode) decl).getLength());
 		
 		offset = code.indexOf("f1(int); // declares f"); //$NON-NLS-1$
         decl = testF3(file, offset);
         assertTrue(decl instanceof IASTName);
-        assertEquals(((IASTName)decl).toString(), "f1"); //$NON-NLS-1$
-        assertEquals(((ASTNode)decl).getOffset(), 68);
-        assertEquals(((ASTNode)decl).getLength(), 2);
+        assertEquals("f1", ((IASTName) decl).toString()); //$NON-NLS-1$
+        assertEquals(68, ((ASTNode) decl).getOffset());
+        assertEquals(2, ((ASTNode) decl).getLength());
 		
 		offset = code.indexOf("S1; // declares S"); //$NON-NLS-1$
         decl = testF3(file, offset);
         assertTrue(decl instanceof IASTName);
-        assertEquals(((IASTName)decl).toString(), "S1"); //$NON-NLS-1$
-        assertEquals(((ASTNode)decl).getOffset(), 98);
-        assertEquals(((ASTNode)decl).getLength(), 2);
+        assertEquals("S1", ((IASTName) decl).toString()); //$NON-NLS-1$
+        assertEquals(98, ((ASTNode) decl).getOffset());
+        assertEquals(2, ((ASTNode) decl).getLength());
 		
 		offset = code.indexOf("Int; // declares Int"); //$NON-NLS-1$
         decl = testF3(file, offset);
         assertTrue(decl instanceof IASTName);
-        assertEquals(((IASTName)decl).toString(), "Int"); //$NON-NLS-1$
-        assertEquals(((ASTNode)decl).getOffset(), 128);
-        assertEquals(((ASTNode)decl).getLength(), 3);
+        assertEquals("Int", ((IASTName) decl).toString()); //$NON-NLS-1$
+        assertEquals(128, ((ASTNode) decl).getOffset());
+        assertEquals(3, ((ASTNode) decl).getLength());
 	}
 	
     public void testBug103697() throws Exception {
@@ -642,9 +642,9 @@ public class CSelectionTestsNoIndexer extends BaseUITestCase {
         int offset = code.indexOf("return x;\n") + "return ".length(); //$NON-NLS-1$ //$NON-NLS-2$
         IASTNode decl = testF3(file, offset);
         assertTrue(decl instanceof IASTName);
-        assertEquals(((IASTName)decl).toString(), "x"); //$NON-NLS-1$
-        assertEquals(((ASTNode)decl).getOffset(), 4);
-        assertEquals(((ASTNode)decl).getLength(), 1);
+        assertEquals("x", ((IASTName) decl).toString()); //$NON-NLS-1$
+        assertEquals(4, ((ASTNode) decl).getOffset());
+        assertEquals(1, ((ASTNode) decl).getLength());
     }
     
     public void testBug76043() throws Exception {
@@ -662,9 +662,9 @@ public class CSelectionTestsNoIndexer extends BaseUITestCase {
         int offset = code.indexOf("return x;\n") + "return ".length(); //$NON-NLS-1$ //$NON-NLS-2$
         IASTNode decl = testF3(file, offset);
         assertTrue(decl instanceof IASTName);
-        assertEquals(((IASTName)decl).toString(), "x"); //$NON-NLS-1$
-        assertEquals(((ASTNode)decl).getOffset(), 4);
-        assertEquals(((ASTNode)decl).getLength(), 1);
+        assertEquals("x", ((IASTName) decl).toString()); //$NON-NLS-1$
+        assertEquals(4, ((ASTNode) decl).getOffset());
+        assertEquals(1, ((ASTNode) decl).getLength());
     }
     
     public void testBug78354() throws Exception {
@@ -684,9 +684,9 @@ public class CSelectionTestsNoIndexer extends BaseUITestCase {
         int offset = code.indexOf("TestTypeOne myFirstLink = 5;"); //$NON-NLS-1$
         IASTNode decl = testF3(file, offset);
         assertTrue(decl instanceof IASTName);
-        assertEquals(((IASTName)decl).toString(), "TestTypeOne"); //$NON-NLS-1$
-        assertEquals(((ASTNode)decl).getOffset(), 12);
-        assertEquals(((ASTNode)decl).getLength(), 11);
+        assertEquals("TestTypeOne", ((IASTName) decl).toString()); //$NON-NLS-1$
+        assertEquals(12, ((ASTNode) decl).getOffset());
+        assertEquals(11, ((ASTNode) decl).getLength());
     }
 
     // int myFunc(var) 

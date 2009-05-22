@@ -75,7 +75,7 @@ public abstract class CSelectionTestsAnyIndexer extends BaseSelectionTestsIndexe
 
 	private void assertNode(String name, int offset, IASTNode node) {
 		assertNotNull(node);
-		assertEquals(name, node.toString());
+		assertEquals(node.toString(), name);
 		IASTFileLocation loc= node.getFileLocation();
 		assertEquals(offset, loc.getNodeOffset());
 		assertEquals(name.length(), loc.getNodeLength());
@@ -107,12 +107,12 @@ public abstract class CSelectionTestsAnyIndexer extends BaseSelectionTestsIndexe
         IASTNode def = testF3(hfile, hoffset+2);
         assertTrue(def instanceof IASTName);
         assertTrue(decl instanceof IASTName);
-        assertEquals(((IASTName)decl).toString(), "MyInt"); //$NON-NLS-1$
-        assertEquals(((ASTNode)decl).getOffset(), hoffset);
-        assertEquals(((ASTNode)decl).getLength(), 5);
-        assertEquals(((IASTName)def).toString(), "MyInt"); //$NON-NLS-1$
+        assertEquals("MyInt", ((IASTName) decl).toString()); //$NON-NLS-1$
+        assertEquals(hoffset, ((ASTNode) decl).getOffset());
+        assertEquals(5, ((ASTNode) decl).getLength());
+        assertEquals("MyInt", ((IASTName) def).toString()); //$NON-NLS-1$
         assertEquals(soffset, def.getFileLocation().getNodeOffset());
-        assertEquals(((ASTNode)def).getLength(), 5);
+        assertEquals(5, ((ASTNode) def).getLength());
         
         hoffset= hcode.indexOf("MyConst"); 
         soffset = scode.indexOf("MyConst"); 
@@ -120,12 +120,12 @@ public abstract class CSelectionTestsAnyIndexer extends BaseSelectionTestsIndexe
         def = testF3(hfile, hoffset+2);
         assertTrue(def instanceof IASTName);
         assertTrue(decl instanceof IASTName);
-        assertEquals(((IASTName)decl).toString(), "MyConst"); //$NON-NLS-1$
-        assertEquals(hoffset, ((ASTNode)decl).getOffset());
-        assertEquals(((ASTNode)decl).getLength(), 7);
-        assertEquals(((IASTName)def).toString(), "MyConst"); //$NON-NLS-1$
+        assertEquals("MyConst", ((IASTName) decl).toString()); //$NON-NLS-1$
+        assertEquals(hoffset, ((ASTNode) decl).getOffset());
+        assertEquals(7, ((ASTNode) decl).getLength());
+        assertEquals("MyConst", ((IASTName) def).toString()); //$NON-NLS-1$
         assertEquals(soffset, def.getFileLocation().getNodeOffset());
-        assertEquals(((ASTNode)def).getLength(), 7);
+        assertEquals(7, ((ASTNode) def).getLength());
         
         hoffset= hcode.indexOf("MyFunc"); 
         soffset = scode.indexOf("MyFunc"); 
@@ -133,12 +133,12 @@ public abstract class CSelectionTestsAnyIndexer extends BaseSelectionTestsIndexe
         def = testF3(hfile, hoffset+2);
         assertTrue(def instanceof IASTName);
         assertTrue(decl instanceof IASTName);
-        assertEquals(((IASTName)decl).toString(), "MyFunc"); //$NON-NLS-1$
-        assertEquals(hoffset, ((ASTNode)decl).getOffset());
-        assertEquals(((ASTNode)decl).getLength(), 6);
-        assertEquals(((IASTName)def).toString(), "MyFunc"); //$NON-NLS-1$
+        assertEquals("MyFunc", ((IASTName) decl).toString()); //$NON-NLS-1$
+        assertEquals(hoffset, ((ASTNode) decl).getOffset());
+        assertEquals(6, ((ASTNode) decl).getLength());
+        assertEquals("MyFunc", ((IASTName) def).toString()); //$NON-NLS-1$
         assertEquals(soffset, def.getFileLocation().getNodeOffset());
-        assertEquals(((ASTNode)def).getLength(), 6);
+        assertEquals(6, ((ASTNode) def).getLength());
         
         hoffset= hcode.indexOf("MyStruct"); 
         soffset = scode.indexOf("MyStruct"); 
@@ -146,12 +146,12 @@ public abstract class CSelectionTestsAnyIndexer extends BaseSelectionTestsIndexe
         def = testF3(hfile, hoffset+2);
         assertTrue(def instanceof IASTName);
         assertTrue(decl instanceof IASTName);
-        assertEquals(((IASTName)decl).toString(), "MyStruct"); //$NON-NLS-1$
-        assertEquals(hoffset, ((ASTNode)decl).getOffset());
-        assertEquals(((ASTNode)decl).getLength(), 8);
-        assertEquals(((IASTName)def).toString(), "MyStruct"); //$NON-NLS-1$
-        assertEquals(soffset, def.getFileLocation().getNodeOffset());
-        assertEquals(((ASTNode)def).getLength(), 8);
+        assertEquals("MyStruct", ((IASTName) decl).toString()); //$NON-NLS-1$
+        assertEquals(hoffset, ((ASTNode) decl).getOffset());
+        assertEquals(8, ((ASTNode) decl).getLength());
+        assertEquals("MyStruct", ((IASTName) def).toString()); //$NON-NLS-1$
+        assertEquals(hoffset, def.getFileLocation().getNodeOffset());
+        assertEquals(8, ((ASTNode) def).getLength());
     }
 	
     
@@ -221,7 +221,7 @@ public abstract class CSelectionTestsAnyIndexer extends BaseSelectionTestsIndexe
         offset1= scode.indexOf("S;"); 
         int offset2= scode.indexOf("S", offset1); 
         decl= testF3(hfile, offset0);
-        assertNode("S", offset1, decl);
+        assertNode("S", offset0, decl);
         decl= testF3(file, offset1);
         assertNode("S", offset0, decl);
         decl= testF3(file, offset2);
@@ -497,7 +497,7 @@ public abstract class CSelectionTestsAnyIndexer extends BaseSelectionTestsIndexe
         testF3(file, offset1);
         IEditorPart part = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage().getActiveEditor(); 
         IEditorInput input = part.getEditorInput();
-        assertEquals("aheader.h", ((FileEditorInput)input).getFile().getName());
+        assertEquals("aheader.h", ((FileEditorInput) input).getFile().getName());
     }
     
     // #define DR_NUM_DIMENSIONS(DR) VEC_length (tree, DR_ACCESS_FNS (DR))
@@ -517,7 +517,7 @@ public abstract class CSelectionTestsAnyIndexer extends BaseSelectionTestsIndexe
         testF3(hfile, offset1);
         IEditorPart part = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage().getActiveEditor(); 
         IEditorInput input = part.getEditorInput();
-        assertEquals("source.c", ((FileEditorInput)input).getFile().getName());
+        assertEquals("source.c", ((FileEditorInput) input).getFile().getName());
     }    
     
     // int myFunc();
@@ -547,5 +547,4 @@ public abstract class CSelectionTestsAnyIndexer extends BaseSelectionTestsIndexe
 		assertTrue(name.isDefinition());
         assertEquals("myFunc", name.toString());
     }
-
 }

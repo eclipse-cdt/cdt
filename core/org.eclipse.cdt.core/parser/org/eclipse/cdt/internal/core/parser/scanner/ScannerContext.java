@@ -214,7 +214,7 @@ final class ScannerContext {
 	 */
 	public CodeState setBranchEndState(Conditional cond, boolean withinExpansion, int offset) {
 		// implicit state change
-		CodeState newState = cond.fInitialState;
+		CodeState newState = cond != null ? cond.fInitialState : CodeState.eActive;
 		changeState(newState, BranchKind.eEnd, withinExpansion, offset);
 		return newState;
 	}

@@ -128,7 +128,7 @@ public class TestSourceReader {
 			int c= 0;
 			int offset= 0;
 			StringBuffer buf= new StringBuffer();
-			while ( (c=reader.read()) >= 0) {
+			while ((c = reader.read()) >= 0) {
 				buf.append((char) c);
 				if (c == '\n') {
 					int idx= buf.indexOf(lookfor);
@@ -144,8 +144,7 @@ public class TestSourceReader {
 				return idx+offset;
 			}
 			return -1;
-		}
-		finally {
+		} finally {
 			reader.close();
 		}
 	}
@@ -162,8 +161,7 @@ public class TestSourceReader {
 					line++;
 			}
 			return line;
-		}
-		finally {
+		} finally {
 			reader.close();
 		}
 	}
@@ -189,8 +187,7 @@ public class TestSourceReader {
 	                if (found) {
 	                    content.append(line);
 	                    content.append('\n');
-	                }
-	                else {
+	                } else {
 	                    line= line.trim();
 	                    if (line.startsWith("{" + tag)) {
 	                        if (line.length() == tag.length()+1 ||
@@ -199,8 +196,7 @@ public class TestSourceReader {
 	                        }
 	                    }
 	                }
-	            }
-	            else if (found) {
+	            } else if (found) {
 	                break;
 	            }
 	            line= reader.readLine();
@@ -240,8 +236,7 @@ public class TestSourceReader {
 					if (file.getLocalTimeStamp() == timestamp) {
 						file.setLocalTimeStamp(timestamp+1000);
 					}
-				}
-				else {
+				} else {
 					createFolders(file);
 					file.create(stream, true, new NullProgressMonitor());
 				}
@@ -297,13 +292,12 @@ public class TestSourceReader {
 				if (pfile != null && pfile.getTimestamp() >= file.getLocalTimeStamp()) {
 					return;
 				}
-			}
-			finally {
+			} finally {
 				index.releaseReadLock();
 			}
 			
 			Thread.sleep(50);
-			timeLeft= (int) (endTime-System.currentTimeMillis());
+			timeLeft= (int) (endTime - System.currentTimeMillis());
 		}
 		Assert.fail("Indexing " + file.getFullPath() + " did not complete in time!");
 	}
@@ -312,9 +306,7 @@ public class TestSourceReader {
     	ICElement elem= project.findElement(file.getFullPath());
     	if (elem instanceof ITranslationUnit) {
     		ITranslationUnit tu= (ITranslationUnit) elem;
-    		if (tu != null) {
-    			return tu.getAST(index, ITranslationUnit.AST_SKIP_INDEXED_HEADERS);
-    		}
+   			return tu.getAST(index, ITranslationUnit.AST_SKIP_INDEXED_HEADERS);
     	}
     	Assert.fail("Could not create ast for " + file.getFullPath());
     	return null;

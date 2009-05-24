@@ -23,9 +23,7 @@ import org.eclipse.core.runtime.Plugin;
 import org.eclipse.swt.widgets.Display;
 
 
-
 public class CTestPlugin extends Plugin {
-	
 	public static String PLUGIN_ID = "org.eclipse.cdt.ui.tests"; //$NON-NLS-1$
 	private static CTestPlugin fgDefault;
 	
@@ -69,5 +67,4 @@ public class CTestPlugin extends Plugin {
 		}
 		return display;		
 	}
-
 }

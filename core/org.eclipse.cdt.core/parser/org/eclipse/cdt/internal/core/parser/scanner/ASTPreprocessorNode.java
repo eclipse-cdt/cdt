@@ -92,8 +92,12 @@ abstract class ASTPreprocessorNode extends ASTNode {
 	public IToken getTrailingSyntax() {
 		throw new UnsupportedOperationException();
 	}
+	
+	@Override
+	public String toString() {
+		return String.valueOf(getSource(getOffset(), getLength()));
+	}
 }
-
 
 
 class ASTComment extends ASTPreprocessorNode implements IASTComment {

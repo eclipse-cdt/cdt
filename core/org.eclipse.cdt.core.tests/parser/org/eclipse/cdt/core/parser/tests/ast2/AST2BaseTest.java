@@ -104,7 +104,6 @@ public class AST2BaseTest extends BaseTestCase {
     	super(name);
     }
     
-    
     @Override
 	protected void setUp() throws Exception {
     	sValidateCopy= true;
@@ -453,7 +452,7 @@ public class AST2BaseTest extends BaseTestCase {
 			throw new AssertionFailedError("This test must be run as a JUnit plugin test");
 		return TestSourceReader.getContentsForTest(plugin.getBundle(), "parser", getClass(), getName(), sections);
 	}
-	
+
 	protected static <T> T assertInstance(Object o, Class<T> clazz, Class... cs) {
 		assertNotNull("Expected object of "+clazz.getName()+" but got a null value", o);
 		assertTrue("Expected "+clazz.getName()+" but got "+o.getClass().getName(), clazz.isInstance(o));
@@ -506,7 +505,7 @@ public class AST2BaseTest extends BaseTestCase {
     	}
 
     	public void assertNoName(String section, int len) {
-			IASTName name= findName(section,len,false);
+			IASTName name= findName(section, len);
 			if (name != null) {
 				String selection = section.substring(0, len);
 				fail("Found unexpected \""+selection+"\": " + name.resolveBinding());
@@ -518,7 +517,7 @@ public class AST2BaseTest extends BaseTestCase {
     	 * it resolves to the given type of binding.
     	 */
     	public IASTImplicitName assertImplicitName(String section, int len, Class<?> bindingClass) {
-    		IASTName name = findName(section,len,true);
+    		IASTName name = findImplicitName(section, len);
     		final String selection = section.substring(0, len);
 			assertNotNull("did not find \""+selection+"\"", name);
 			
@@ -527,10 +526,10 @@ public class AST2BaseTest extends BaseTestCase {
 			IASTImplicitName[] implicits = owner.getImplicitNames();
 			assertNotNull(implicits);
 			
-			if(implicits.length > 1) {
+			if (implicits.length > 1) {
 				boolean found = false;
-				for(IASTImplicitName n : implicits) {
-					if(((ASTNode)n).getOffset() == ((ASTNode)name).getOffset()) {
+				for (IASTImplicitName n : implicits) {
+					if (((ASTNode) n).getOffset() == ((ASTNode)name).getOffset()) {
 						assertFalse(found);
 						found = true;
 					}
@@ -546,23 +545,30 @@ public class AST2BaseTest extends BaseTestCase {
     	}
     	
     	public void assertNoImplicitName(String section, int len) {
-    		IASTName name = findName(section,len,true);
+    		IASTName name = findImplicitName(section, len);
     		final String selection = section.substring(0, len);
     		assertNull("found name \""+selection+"\"", name);
     	}
     	
     	public IASTImplicitName[] getImplicitNames(String section, int len) {
-    		IASTName name = findName(section,len,true);
+    		IASTName name = findImplicitName(section, len);
     		IASTImplicitNameOwner owner = (IASTImplicitNameOwner) name.getParent();
 			IASTImplicitName[] implicits = owner.getImplicitNames();
 			return implicits;
     	}
     	
-    	private IASTName findName(String section, int len, boolean implicit) {
+    	public IASTName findName(String section, int len) {
     		final int offset = contents.indexOf(section);
     		assertTrue(offset >= 0);
     		IASTNodeSelector selector = tu.getNodeSelector(null);
-    		return implicit ? selector.findImplicitName(offset, len) : selector.findName(offset, len);
+    		return selector.findName(offset, len);
+    	}
+ 
+    	public IASTName findImplicitName(String section, int len) {
+    		final int offset = contents.indexOf(section);
+    		assertTrue(offset >= 0);
+    		IASTNodeSelector selector = tu.getNodeSelector(null);
+    		return selector.findImplicitName(offset, len);
     	}
 
     	private String renderProblemID(int i) {
@@ -595,7 +601,7 @@ public class AST2BaseTest extends BaseTestCase {
     	}
     	
     	private IBinding binding(String section, int len) {
-    		IASTName name = findName(section, len,false);
+    		IASTName name = findName(section, len);
     		final String selection = section.substring(0, len);
 			assertNotNull("did not find \""+selection+"\"", name);
     		assertEquals(selection, name.getRawSignature());

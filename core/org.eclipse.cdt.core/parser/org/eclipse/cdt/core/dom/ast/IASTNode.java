@@ -22,7 +22,7 @@ import org.eclipse.cdt.core.parser.IToken;
  */
 public interface IASTNode {
 	
-	public static final IASTNode [] EMPTY_NODE_ARRAY = new IASTNode[0];
+	public static final IASTNode[] EMPTY_NODE_ARRAY = new IASTNode[0];
 	
 	/**
 	 * Get the translation unit (master) node that is the ancestor of all nodes
@@ -34,15 +34,15 @@ public interface IASTNode {
 
 	/**
 	 * Get the location of this node. In cases not involving macro expansions,
-	 * the IASTNodeLocation [] result will only have one element in it, and it
+	 * the IASTNodeLocation[] result will only have one element in it, and it
 	 * will be an IASTFileLocation.
 	 * 
 	 * Where the node is completely generated within a macro expansion,
-	 * IASTNodeLocation [] result will have one element in it, and it will be an
+	 * IASTNodeLocation[] result will have one element in it, and it will be an
 	 * {@link IASTMacroExpansionLocation}.
 	 * 
 	 * Nodes that span file context into a macro expansion (and potentially out
-	 * of the macro expansion again) result in an IASTNodeLocation [] result
+	 * of the macro expansion again) result in an IASTNodeLocation[] result
 	 * that is of length > 1.
 	 * 
 	 * We do not provide meaningful node locations for nested macro references

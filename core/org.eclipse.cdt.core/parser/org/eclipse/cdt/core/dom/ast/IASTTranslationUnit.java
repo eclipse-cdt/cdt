@@ -55,7 +55,7 @@ public interface IASTTranslationUnit extends IASTNode, IASTDeclarationListOwner,
 	public IASTDeclaration[] getDeclarations();
 
 	/**
-	 * Add declaration to translation unit. 
+	 * Adds declaration to translation unit. 
 	 * 
 	 * @param declaration <code>IASTDeclaration</code>
 	 */
@@ -137,7 +137,7 @@ public interface IASTTranslationUnit extends IASTNode, IASTDeclarationListOwner,
 	public IASTNode selectNodeForLocation(String path, int offset, int length);
 
 	/**
-	 * Get the macro definitions encountered in parsing this translation unit. The result will not contain
+	 * Returns the macro definitions encountered in parsing this translation unit. The result will not contain
 	 * definitions for built-in macros.
 	 * <p>
 	 * In case the information for a header-file is pulled in from the index,
@@ -146,13 +146,13 @@ public interface IASTTranslationUnit extends IASTNode, IASTDeclarationListOwner,
 	public IASTPreprocessorMacroDefinition[] getMacroDefinitions();
 
 	/**
-	 * Get built-in macro definitions used when parsing this translation unit.
+	 * Returns built-in macro definitions used when parsing this translation unit.
 	 * This includes macros obtained from the index. 
 	 */
 	public IASTPreprocessorMacroDefinition[] getBuiltinMacroDefinitions();
 
 	/**
-	 * Get the include directives encountered in parsing this translation unit. This will also contain directives
+	 * Returns the include directives encountered in parsing this translation unit. This will also contain directives
 	 * used for handling the gcc-options -imacros and -include.
 	 * <p>
 	 * In case the information for a header-file is pulled in from the index,
@@ -161,7 +161,7 @@ public interface IASTTranslationUnit extends IASTNode, IASTDeclarationListOwner,
 	public IASTPreprocessorIncludeStatement[] getIncludeDirectives();
 
 	/**
-	 * Get all preprocessor statements. 
+	 * Returns all preprocessor statements. 
 	 * In case the information for a header-file is pulled in from the index,
 	 * preprocessing statements contained therein are not returned.
 	 */
@@ -173,7 +173,7 @@ public interface IASTTranslationUnit extends IASTNode, IASTDeclarationListOwner,
 	public IASTPreprocessorMacroExpansion[] getMacroExpansions();
 	
 	/**
-	 * Get all preprocessor and scanner problems.
+	 * Returns all preprocessor and scanner problems.
 	 * @return <code>IASTProblem[]</code>
 	 */
 	public IASTProblem[] getPreprocessorProblems();
@@ -184,45 +184,42 @@ public interface IASTTranslationUnit extends IASTNode, IASTDeclarationListOwner,
 	public int getPreprocessorProblemsCount();
 
 	/**
-	 * Get the translation unit's full path.  
+	 * Returns the translation unit's full path.  
 	 * @return String representation of path.
 	 */
 	public String getFilePath();
     
     /**
-     * Flatten the node locations provided into a single file location.  
+     * Flattens the node locations provided into a single file location.  
      * 
      * @param nodeLocations <code>IASTNodeLocation</code>s to flatten
      * @return null if not possible, otherwise, a file location representing where the macros are. 
      */
-    public IASTFileLocation flattenLocationsToFile( IASTNodeLocation [] nodeLocations );
+    public IASTFileLocation flattenLocationsToFile(IASTNodeLocation[] nodeLocations);
     
     /**
      * @deprecated names for macro expansions are nested inside of {@link IASTPreprocessorMacroExpansion}.
      */
     @Deprecated
 	public static final ASTNodeProperty EXPANSION_NAME = new ASTNodeProperty(
-    "IASTTranslationUnit.EXPANSION_NAME - IASTName generated for macro expansions."); //$NON-NLS-1$
+    		"IASTTranslationUnit.EXPANSION_NAME - IASTName generated for macro expansions."); //$NON-NLS-1$
 
     public static final ASTNodeProperty MACRO_EXPANSION = new ASTNodeProperty(
-    "IASTTranslationUnit.MACRO_EXPANSION - IASTPreprocessorMacroExpansion node for macro expansions."); //$NON-NLS-1$
+    		"IASTTranslationUnit.MACRO_EXPANSION - IASTPreprocessorMacroExpansion node for macro expansions."); //$NON-NLS-1$
 
-    
-    public static interface IDependencyTree
-    {
+    public static interface IDependencyTree {
         public String getTranslationUnitPath();
         
-        public static interface IASTInclusionNode
-        {
+        public static interface IASTInclusionNode {
             public IASTPreprocessorIncludeStatement getIncludeDirective();
-            public IASTInclusionNode [] getNestedInclusions();
+            public IASTInclusionNode[] getNestedInclusions();
         }
         
-        public IASTInclusionNode [] getInclusions();
+        public IASTInclusionNode[] getInclusions();
     }
     
     /**
-     * Return the dependency tree for the translation unit. 
+     * Returns the dependency tree for the translation unit. 
 	 * <p>
 	 * In case the information for a header-file is pulled in from the index,
 	 * dependencies contained therein are not part of the dependency tree.
@@ -234,13 +231,12 @@ public interface IASTTranslationUnit extends IASTNode, IASTDeclarationListOwner,
 	 */
 	public String getContainingFilename(int offset);
     
-
     public ParserLanguage getParserLanguage();
     
     /**
-     * Return the Index associated with this translation unit.
+     * Returns the Index associated with this translation unit.
      * 
-     * @return the Index for this translation unit
+     * @return the Index for this translation unit.
      */
     public IIndex getIndex();
     
@@ -254,7 +250,7 @@ public interface IASTTranslationUnit extends IASTNode, IASTDeclarationListOwner,
     IIndexFileSet getIndexFileSet();
     
 	/**
-	 * In case the ast was created in a way that supports comment parsing,
+	 * In case the AST was created in a way that supports comment parsing,
 	 * all comments of the translation unit are returned. Otherwise an
 	 * empty array will be supplied.
 	 * 
@@ -263,14 +259,13 @@ public interface IASTTranslationUnit extends IASTNode, IASTDeclarationListOwner,
 	 */
 	public IASTComment[] getComments();
 	
-	
 	/**
-	 * Returns the linkage this ast was parsed in
+	 * Returns the linkage this AST was parsed in.
 	 */
 	public ILinkage getLinkage();
 	
 	/**
-	 * Returns whether this ast represents a header file.
+	 * Returns whether this AST represents a header file.
 	 */
 	public boolean isHeaderUnit();
 
@@ -283,17 +278,17 @@ public interface IASTTranslationUnit extends IASTNode, IASTDeclarationListOwner,
 	public INodeFactory getASTNodeFactory();
 
     /**
-     * Set the Index to be used for this translation unit.
+     * Sets the Index to be used for this translation unit.
      * @noreference This method is not intended to be referenced by clients.
      */
     public void setIndex(IIndex index);
 
 	/**
-	 * Sets whether this ast represents a header file.
+	 * Sets whether this AST represents a header file.
 	 * @noreference This method is not intended to be referenced by clients.
 	 */
 	public void setIsHeaderUnit(boolean headerUnit);
-	
+
 	/**
 	 * Causes this node and all the nodes rooted at this node to become immutable. 
 	 * Once the AST is frozen any calls to set or add methods on any of the nodes 
@@ -303,8 +298,7 @@ public interface IASTTranslationUnit extends IASTNode, IASTDeclarationListOwner,
 	 * @since 5.1
 	 */
 	public void freeze();
-	
-	
+
 	/**
 	 * Returns a copy of the AST, however the ILocationResolver 
 	 * and the preprocessor nodes are not copied.

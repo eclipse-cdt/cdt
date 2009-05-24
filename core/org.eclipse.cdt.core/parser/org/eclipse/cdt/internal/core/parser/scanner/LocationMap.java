@@ -160,7 +160,6 @@ public class LocationMap implements ILocationResolver {
 		return new ASTMacroReferenceName(null, IASTPreprocessorStatement.MACRO_NAME, startNumber, endNumber, macro, null);
 	}
 	
-	
 	/**
 	 * Creates a new context for the result of a (recursive) macro-expansion.
 	 * @param nameOffset offset within the current context where the name for the macro-expansion starts.

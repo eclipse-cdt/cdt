@@ -43,22 +43,22 @@ public interface ILocationResolver {
 	/**
 	 * @see IASTTranslationUnit#getAllPreprocessorStatements()
 	 */
-	IASTPreprocessorStatement [] getAllPreprocessorStatements();
+	IASTPreprocessorStatement[] getAllPreprocessorStatements();
 
 	/**
 	 * @see IASTTranslationUnit#getMacroDefinitions()
 	 */
-	IASTPreprocessorMacroDefinition [] getMacroDefinitions();
+	IASTPreprocessorMacroDefinition[] getMacroDefinitions();
 
 	/**
 	 * @see IASTTranslationUnit#getBuiltinMacroDefinitions()
 	 */
-	IASTPreprocessorMacroDefinition [] getBuiltinMacroDefinitions();
+	IASTPreprocessorMacroDefinition[] getBuiltinMacroDefinitions();
 
 	/**
 	 * @see IASTTranslationUnit#getIncludeDirectives()
 	 */
-	IASTPreprocessorIncludeStatement [] getIncludeDirectives();
+	IASTPreprocessorIncludeStatement[] getIncludeDirectives();
 
 	/**
 	 * @see IASTTranslationUnit#getPreprocessorProblems()

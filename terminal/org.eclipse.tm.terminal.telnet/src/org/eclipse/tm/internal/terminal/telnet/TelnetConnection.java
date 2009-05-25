@@ -6,13 +6,13 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- * Fran Litterio (Wind River) - initial API and implementation 
- * Helmut Haigermoser (Wind River) - repackaged 
- * Ted Williams (Wind River) - repackaged into org.eclipse namespace 
- * Michael Scharf (Wind River) - split into core, view and connector plugins 
+ * Fran Litterio (Wind River) - initial API and implementation
+ * Helmut Haigermoser (Wind River) - repackaged
+ * Ted Williams (Wind River) - repackaged into org.eclipse namespace
+ * Michael Scharf (Wind River) - split into core, view and connector plugins
  * Martin Oberhuber (Wind River) - fixed copyright headers and beautified
  * Michael Scharf (Wind River) - [209665] Add ability to log byte streams from terminal
- * Michael Scharf (Wind River) - [277061]  TelnetConnection.isConnected() should check if socket was not closed
+ * Alex Panchenko (Xored) - [277061]  TelnetConnection.isConnected() should check if socket was not closed
  *******************************************************************************/
 package org.eclipse.tm.internal.terminal.telnet;
 
@@ -32,13 +32,13 @@ import org.eclipse.tm.internal.terminal.provisional.api.TerminalState;
  * also manages two sets of TelnetOption objects: one for the local endpoint and
  * one for the remote endpoint.
  * <p>
- * 
+ *
  * IMPORTANT: Understanding this code requires understanding the TELNET protocol
  * and TELNET option processing, as defined in the RFCs listed below.
  * <p>
- * 
+ *
  * @author Fran Litterio (francis.litterio@windriver.com)
- * 
+ *
  * @see <a href="ftp://ftp.rfc-editor.org/in-notes/rfc854.txt">RFC 854</a>
  * @see <a href="ftp://ftp.rfc-editor.org/in-notes/rfc855.txt">RFC 855</a>
  * @see <a href="ftp://ftp.rfc-editor.org/in-notes/rfc856.txt">RFC 856</a>
@@ -132,11 +132,11 @@ public class TelnetConnection extends Thread implements TelnetCodes {
 	 * allows us to successfully connect to a TELNET server listening on a port
 	 * other than 23.
 	 * <p>
-	 * 
+	 *
 	 * When this field first changes from false to true, we send all WILL or DO
 	 * commands to the remote endpoint.
 	 * <p>
-	 * 
+	 *
 	 * @see #telnetServerDetected()
 	 */
 	protected boolean remoteIsTelnetServer = false;
@@ -173,7 +173,7 @@ public class TelnetConnection extends Thread implements TelnetCodes {
 	/**
 	 * This field is true if an error occurs while processing a subnegotiation
 	 * command.
-	 * 
+	 *
 	 * @see #processTelnetProtocol(int)
 	 */
 	protected boolean ignoreSubnegotiation = false;
@@ -285,7 +285,7 @@ public class TelnetConnection extends Thread implements TelnetCodes {
 	private void displayTextInTerminal(String string) {
 		terminalControl.displayTextInTerminal(string);
 	}
-	
+
 	/**
 	 * This method runs in its own thread. It reads raw bytes from the TELNET
 	 * connection socket, processes any TELNET protocol bytes (and removes
@@ -392,7 +392,7 @@ public class TelnetConnection extends Thread implements TelnetCodes {
 	 * calls to this function. The state is preserved in field <i>telnetState</i>.
 	 * This function implements an FSA that recognizes TELNET option codes.
 	 * TELNET option sub-negotiation is delegated to instances of TelnetOption.
-	 * 
+	 *
 	 * @return The number of bytes remaining in the buffer after removing all
 	 *         TELNET protocol bytes.
 	 */
@@ -654,7 +654,7 @@ public class TelnetConnection extends Thread implements TelnetCodes {
 	 * from the remote endpoint. When it is called for the first time for this
 	 * connection, we negotiate all options that we desire to be enabled.
 	 * <p>
-	 * 
+	 *
 	 * This method does not negotiate options that we do not desire to be
 	 * enabled, because all options are initially disabled.
 	 * <p>

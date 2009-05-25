@@ -36,9 +36,8 @@ import org.eclipse.cdt.internal.ui.text.CIndenter;
  * @since 4.0
  */
 public class CIndenterTest extends BaseUITestCase {
-
-	private HashMap fOptions;
-	private Map fDefaultOptions;
+	private HashMap<String, String> fOptions;
+	private Map<String, String> fDefaultOptions;
 
 	public static TestSuite suite() {
 		return suite(CIndenterTest.class, "_");
@@ -47,11 +46,11 @@ public class CIndenterTest extends BaseUITestCase {
 	protected void setUp() throws Exception {
 		super.setUp();
 		fDefaultOptions= DefaultCodeFormatterOptions.getDefaultSettings().getMap();
-		fOptions= new HashMap();
+		fOptions= new HashMap<String, String>();
 	}
 
 	protected void tearDown() throws Exception {
-		CCorePlugin.setOptions(new HashMap(fDefaultOptions));
+		CCorePlugin.setOptions(new HashMap<String, String>(fDefaultOptions));
 		super.tearDown();
 	}
 
@@ -345,7 +344,34 @@ public class CIndenterTest extends BaseUITestCase {
 		fOptions.put(DefaultCodeFormatterConstants.FORMATTER_BRACE_POSITION_FOR_TYPE_DECLARATION, 
 				DefaultCodeFormatterConstants.NEXT_LINE_SHIFTED);
 		assertIndenterResult();
-	}	
+	}
+
+	//x =
+	//0;
+	
+	//x =
+	//		0;
+	public void _testWrappedAssignment_277624_1() throws Exception {
+		assertIndenterResult();
+	}
+
+	//x = 2 +
+	//2;
+	
+	//x = 2 +
+	//		2;
+	public void _testWrappedAssignment_277624_2() throws Exception {
+		assertIndenterResult();
+	}
+
+	//for (int i = 0;
+	//i < 2; i++)
+	
+	//for (int i = 0;
+	//		i < 2; i++)
+	public void _testWrappedFor_277625() throws Exception {
+		assertIndenterResult();
+	}
 
 	//class A
 	//{
@@ -458,5 +484,4 @@ public class CIndenterTest extends BaseUITestCase {
 		fOptions.put(DefaultCodeFormatterConstants.FORMATTER_TAB_CHAR, CCorePlugin.TAB);
 		assertIndenterResult();
 	}
-
 }

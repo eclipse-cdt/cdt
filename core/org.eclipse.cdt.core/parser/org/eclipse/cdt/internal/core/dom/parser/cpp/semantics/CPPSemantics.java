@@ -2046,7 +2046,8 @@ public class CPPSemantics {
 						functions[i]= null;
 					} else {
 						for (int j = numArgs; j < numPars; j++) {
-							if (!((ICPPParameter) params[j]).hasDefaultValue()) {
+							final ICPPParameter param = (ICPPParameter) params[j];
+							if (param == null || !param.hasDefaultValue()) {
 								functions[i] = null;
 								break;
 							}

@@ -10,3 +10,7 @@ namespace nsTest {
    void nsTest::inlined2() {};  // wrong label in outline: nsTest::inlined(): void
    void nsTest::decl2();        // label in outline (ok):  decl(): void
 }
+class Bug274490 {
+    virtual int m();
+    inline const char* m2() const;
+};

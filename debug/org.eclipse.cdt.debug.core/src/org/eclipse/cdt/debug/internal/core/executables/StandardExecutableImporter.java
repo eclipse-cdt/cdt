@@ -63,6 +63,7 @@ public class StandardExecutableImporter implements IExecutableImporter {
 
 		IProject exeProject = null;
 		boolean checkProject = false;
+		boolean handled = false;
 		// Weed out existing ones
 		for (String path : fileNames) {
 
@@ -120,6 +121,7 @@ public class StandardExecutableImporter implements IExecutableImporter {
 				}
 
 				importExecutable(exeProject, path);
+				handled = true;
 			}
 			monitor.worked(1);
 			if (monitor.isCanceled()) {
@@ -127,7 +129,7 @@ public class StandardExecutableImporter implements IExecutableImporter {
 			}
 		}
 		monitor.done();
-		return true;
+		return handled;
 	}
 
 	public boolean AllowImport(IPath path) {

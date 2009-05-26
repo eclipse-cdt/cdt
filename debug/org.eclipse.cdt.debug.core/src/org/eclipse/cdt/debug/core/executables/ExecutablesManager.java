@@ -45,16 +45,16 @@ import org.eclipse.debug.core.DebugPlugin;
  */
 public class ExecutablesManager extends PlatformObject {
 
-	private HashMap<String, Executable> executables = new HashMap<String, Executable>();
-	private List<IExecutablesChangeListener> changeListeners = Collections.synchronizedList(new ArrayList<IExecutablesChangeListener>());
-	private List<ISourceFileRemapping> sourceFileRemappings = Collections.synchronizedList(new ArrayList<ISourceFileRemapping>());
-	private List<IExecutableProvider> executableProviders = Collections.synchronizedList(new ArrayList<IExecutableProvider>());
-	private List<ISourceFilesProvider> sourceFileProviders = Collections.synchronizedList(new ArrayList<ISourceFilesProvider>());
-	private List<IExecutableImporter> executableImporters = Collections.synchronizedList(new ArrayList<IExecutableImporter>());
+	private final HashMap<String, Executable> executables = new HashMap<String, Executable>();
+	private final List<IExecutablesChangeListener> changeListeners = Collections.synchronizedList(new ArrayList<IExecutablesChangeListener>());
+	private final List<ISourceFileRemapping> sourceFileRemappings = Collections.synchronizedList(new ArrayList<ISourceFileRemapping>());
+	private final List<IExecutableProvider> executableProviders = Collections.synchronizedList(new ArrayList<IExecutableProvider>());
+	private final List<ISourceFilesProvider> sourceFileProviders = Collections.synchronizedList(new ArrayList<ISourceFilesProvider>());
+	private final List<IExecutableImporter> executableImporters = Collections.synchronizedList(new ArrayList<IExecutableImporter>());
 	private boolean refreshNeeded = true;
 	private boolean tempDisableRefresh = false;
 	
-	private Job refreshJob = new Job("Get Executables") {
+	private final Job refreshJob = new Job("Get Executables") {
 
 		@Override
 		public IStatus run(IProgressMonitor monitor) {
@@ -204,6 +204,7 @@ public class ExecutablesManager extends PlatformObject {
 	}
 
 	public void importExecutables(final String[] fileNames, IProgressMonitor monitor) {
+		boolean handled = false;
 		try {
 			
 			tempDisableRefresh = true;
@@ -222,7 +223,7 @@ public class ExecutablesManager extends PlatformObject {
 					}});
 
 				for (IExecutableImporter importer : executableImporters) {
-					boolean handled = importer.importExecutables(fileNames, new SubProgressMonitor(monitor, 1));
+					handled = importer.importExecutables(fileNames, new SubProgressMonitor(monitor, 1));
 					if (handled || monitor.isCanceled()) {
 						break;
 					}
@@ -233,7 +234,8 @@ public class ExecutablesManager extends PlatformObject {
 			tempDisableRefresh = false;
 		}
 		
-		refreshExecutables(monitor);
+		if (handled)
+			refreshExecutables(monitor);
 		monitor.done();
 	}
 

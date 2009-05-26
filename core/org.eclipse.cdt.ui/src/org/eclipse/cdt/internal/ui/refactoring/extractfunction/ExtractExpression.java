@@ -26,6 +26,7 @@ import org.eclipse.cdt.core.dom.ast.IASTLiteralExpression;
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IASTSimpleDeclSpecifier;
+import org.eclipse.cdt.core.dom.ast.IBasicType;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTBinaryExpression;
@@ -111,6 +112,14 @@ public class ExtractExpression extends ExtractedFunctionConstructionHelper {
 		}
 		
 		if(declSpecifier == null) {
+			if(extractedNode instanceof IASTExpression) {
+				IType type = ((IASTExpression)extractedNode).getExpressionType();
+				if(type instanceof IBasicType) {
+					try {
+						return createSimpleDeclSpecifier(((IBasicType)type).getType());
+					} catch (DOMException e) {} //make it void
+				}
+			}
 			return createSimpleDeclSpecifier(IASTSimpleDeclSpecifier.t_void);
 		}
 		

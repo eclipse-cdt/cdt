@@ -31,6 +31,7 @@ import org.eclipse.cdt.core.dom.ast.IASTDeclarationStatement;
 import org.eclipse.cdt.core.dom.ast.IASTDeclarator;
 import org.eclipse.cdt.core.dom.ast.IASTExpression;
 import org.eclipse.cdt.core.dom.ast.IASTFileLocation;
+import org.eclipse.cdt.core.dom.ast.IASTForStatement;
 import org.eclipse.cdt.core.dom.ast.IASTFunctionDefinition;
 import org.eclipse.cdt.core.dom.ast.IASTInitializerExpression;
 import org.eclipse.cdt.core.dom.ast.IASTLiteralExpression;
@@ -259,7 +260,7 @@ public class ExtractLocalVariableRefactoring extends CRefactoring {
 
 	private IASTStatement getParentStatement(IASTNode node) {
 		while (node != null) {
-			if (node instanceof IASTStatement)
+			if (node instanceof IASTStatement && !(node.getParent() instanceof IASTForStatement))
 				return (IASTStatement) node;
 			node = node.getParent();
 		}

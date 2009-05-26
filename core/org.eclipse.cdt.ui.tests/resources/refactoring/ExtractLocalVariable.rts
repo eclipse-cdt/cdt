@@ -315,3 +315,16 @@ int A::foo()
     return i * 15;
 }
 
+//!Bug #277065 extract local variable fails to extract from for loop
+//#org.eclipse.cdt.ui.tests.refactoring.extractlocalvariable.ExtractLocalVariableRefactoringTest
+//@A.cpp
+void foo(){
+	for(int n = /*$*/5 + 2/*$$*/; n < 10; ++n);
+}
+
+//=
+void foo(){
+    int i = 5 + 2;
+    for(int n = i; n < 10; ++n);
+}
+

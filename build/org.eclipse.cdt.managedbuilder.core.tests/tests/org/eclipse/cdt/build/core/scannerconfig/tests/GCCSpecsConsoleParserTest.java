@@ -1,6 +1,5 @@
 package org.eclipse.cdt.build.core.scannerconfig.tests;
 
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -57,7 +56,6 @@ public class GCCSpecsConsoleParserTest extends TestCase {
 	public void testProcessLine_NoArgs() {
 		enterLine("#define __MY_MACRO__ __MY_VALUE__");
 		checkMacro("__MY_MACRO__", "__MY_VALUE__");
-
 	}
 	public void testProcessLine_Const() {
 		enterLine("#define A (3)");

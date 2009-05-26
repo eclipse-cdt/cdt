@@ -100,6 +100,7 @@ public class Tool extends HoldsOptions implements ITool, IOptionCategory, IMatch
 	//private static final IOptionCategory[] EMPTY_CATEGORIES = new IOptionCategory[0];
 	//private static final IOption[] EMPTY_OPTIONS = new IOption[0];
 	private static final String EMPTY_STRING = new String();
+	private static final String EMPTY_QUOTED_STRING = "\"\""; //$NON-NLS-1$
 	private static final String[] EMPTY_STRING_ARRAY = new String[0];
 	private static final String DEFAULT_ANNOUNCEMENT_PREFIX = "Tool.default.announcement";	//$NON-NLS-1$
 	private static final String WHITESPACE = " ";	//$NON-NLS-1$
@@ -2603,7 +2604,7 @@ public class Tool extends HoldsOptions implements ITool, IOptionCategory, IMatch
 						if(paths != null){
 							for (int j = 0; j < paths.length; j++) {
 								String temp = paths[j];
-								if(temp.length() > 0)
+								if(temp.length() > 0 && !temp.equals(EMPTY_QUOTED_STRING))
 									sb.append( evaluateCommand( incCmd, temp ) + WHITE_SPACE);
 							}
 						}

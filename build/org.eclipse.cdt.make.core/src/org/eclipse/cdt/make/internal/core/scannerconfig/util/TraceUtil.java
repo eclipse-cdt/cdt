@@ -29,7 +29,8 @@ public class TraceUtil {
 	private static LogWriter logger = null;
 	
 	static {
-		logger = new LogWriter(MakeCorePlugin.getDefault().getStateLocation().append(".log").toFile()); //$NON-NLS-1$
+		if (MakeCorePlugin.getDefault()!=null) // in case of running simple junit tests
+			logger = new LogWriter(MakeCorePlugin.getDefault().getStateLocation().append(".log").toFile()); //$NON-NLS-1$
 	}
 	/* (non-Javadoc)
 	 * @see java.lang.Object#finalize()

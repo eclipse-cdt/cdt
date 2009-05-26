@@ -74,9 +74,9 @@ public class GCCSpecsConsoleParser implements IScannerInfoConsoleParser {
                     // i now marks the space between the name and definition
 					if (i > 0) {
 						int start = line.indexOf(defineParts[1]); // start of definition
-						defineParts[1] = line.substring(start, i);
+						defineParts[1] = line.substring(start, i + 1);
 						if (defineParts.length > 2) {
-							defineParts[2] = line.substring(i + 1);
+							defineParts[2] = line.substring(i + 1).trim();
 						}
 					} else {
 						MakeCorePlugin.log(new Exception("GCCSpecsConsoleParser ERROR: Unmatched brackets: ["+ line+ "]")); //$NON-NLS-1$ //$NON-NLS-2$

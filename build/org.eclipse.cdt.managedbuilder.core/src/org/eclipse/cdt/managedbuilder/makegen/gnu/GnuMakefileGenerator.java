@@ -13,7 +13,6 @@
 package org.eclipse.cdt.managedbuilder.makegen.gnu;
 
 import java.io.ByteArrayInputStream;
-import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -71,8 +70,6 @@ import org.eclipse.cdt.managedbuilder.makegen.IManagedDependencyGenerator2;
 import org.eclipse.cdt.managedbuilder.makegen.IManagedDependencyGeneratorType;
 import org.eclipse.cdt.managedbuilder.makegen.IManagedDependencyInfo;
 import org.eclipse.cdt.managedbuilder.makegen.IManagedDependencyPreBuild;
-import org.eclipse.core.filesystem.EFS;
-import org.eclipse.core.filesystem.IFileStore;
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IFolder;
@@ -2421,35 +2418,6 @@ public class GnuMakefileGenerator implements IManagedBuilderMakefileGenerator2 {
 			otherPrimaryOutputs += WHITESPACE + escapeWhitespaces(((IPath)enumeratedPrimaryOutputs.get(i)).toString());
 		}
 		
-		// Figure out the path to the input resource		
-		/*
-		 * fix for PR 70491
-		 * We need to check if the current resource is LINKED, because
-		 * the default CDT doesn't handle this properly.  If it IS linked,
-		 * then we must get the actual location of the resource, rather
-		 * than the relative path.
-		 */
-		String projectLocation = null;
-		
-		// is the project local?  if so we might have to convert the paths to local format
-		try {
-			IFileStore fileStore = EFS.getStore(project.getLocationURI());
-			File localFile = fileStore.toLocalFile(EFS.NONE, null);
-			
-			if(localFile != null) {
-				// it's a local file... use project location for proper path formatting
-				projectLocation = project.getLocation().addTrailingSeparator().toString();
-			}
-			else {
-				// remote... get the path from the URI
-				projectLocation = project.getLocationURI().getPath().toString();
-				
-			}
-		} catch (CoreException e1) {
-			// TODO Auto-generated catch block
-			e1.printStackTrace();
-		}
-
 		// Output file location needed for the file-specific build macros
 		IPath outputLocation = Path.fromOSString(primaryOutputName);
 		if (!outputLocation.isAbsolute()) {
@@ -2519,8 +2487,7 @@ public class GnuMakefileGenerator implements IManagedBuilderMakefileGenerator2 {
 		String resourcePath = null;
 		boolean patternRule = true;
 		boolean isItLinked = false;
-		//if (resource.isLinked()) {   NOTE: we don't use this since children of linked resources return false
-		if(!sourceLocation.toString().startsWith(projectLocation)) {
+		if(resource.isLinked(IResource.CHECK_ANCESTORS)) {
 			// it IS linked, so use the actual location
 			isItLinked = true;
 			resourcePath = sourceLocation.toString();

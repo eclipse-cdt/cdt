@@ -487,10 +487,32 @@ public class GDBRunControl_7_0_NS extends AbstractDsfService implements IMIRunCo
 		return false;
 	}
 
-	public void canStep(IExecutionDMContext context, StepType stepType, DataRequestMonitor<Boolean> rm) {
+	public void canStep(final IExecutionDMContext context, StepType stepType, final DataRequestMonitor<Boolean> rm) {
 
 		// If it's a thread, just look it up
 		if (context instanceof IMIExecutionDMContext) {
+	    	if (stepType == StepType.STEP_RETURN) {
+	    		// A step return will always be done in the top stack frame.
+	    		// If the top stack frame is the only stack frame, it does not make sense
+	    		// to do a step return since GDB will reject it.
+	            MIStack stackService = getServicesTracker().getService(MIStack.class);
+	            if (stackService != null) {
+	            	// Check that the stack is at least two deep.
+	            	stackService.getStackDepth(context, 2, new DataRequestMonitor<Integer>(getExecutor(), rm) {
+	            		@Override
+	            		public void handleCompleted() {
+	            			if (isSuccess() && getData() == 1) {
+	            				rm.setData(false);
+	            				rm.done();
+	            			} else {
+	            	    		canResume(context, rm);
+	            			}
+	            		}
+	            	});
+	            	return;
+	            }
+	    	}
+
 			canResume(context, rm);
 			return;
 		}

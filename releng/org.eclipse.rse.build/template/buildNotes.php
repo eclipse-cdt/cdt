@@ -28,27 +28,20 @@
   RSE runs on Java 1.4.
   Platform Runtime is the minimum requirement for core RSE and Terminal.
   Discovery needs EMF.</li>
-<li>Important Bug Fixes, Enhancements and API changes:<ul>
-  <li>For <b>IService.initService()</b> there was an API specification update 
-    (see below).</li>
-  <li>The <b>Remote CDT Launcher Plug-in</b> has been moved into the CDT
-    [<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=267065">267065</a>].</li>
-  <li><b>RSE FTP and Telnet</b> now ship with Apache Commons Net version 2.0.
-    As a prerequisite of Commons Net 2.0, Java5 is now required for these connection types.
-    Besides bug fixes in Commons Net, one new feature due to the change is that RSE now 
-    supports Telnet window size notifications in the RSE Terminal.
-    [<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=267473">267473</a>]
-    [<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=267474">267474</a>].</li>
-  <li><b>DStore remote search</b> now also works case insensitive
-    [<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=243495">243495</a>].</li>
-  </ul></li>
-<li>At least 32 bugs were fixed: Use 
-  <!-- <a href="https://bugs.eclipse.org/bugs/buglist.cgi?query_format=advanced&classification=DSDP&product=Target+Management&component=Core&component=RSE&component=Terminal&bug_status=RESOLVED&bug_status=VERIFIED&bug_status=CLOSED&resolution=FIXED&resolution=WONTFIX&resolution=WORKSFORME&chfieldfrom=2009-03-19&chfieldto=2009-05-10&chfield=resolution&cmdtype=doit&negate0=1&field0-0-0=target_milestone&type0-0-0=regexp&value0-0-0=%5B23%5D.0&field0-0-1=target_milestone&type0-0-1=regexp&value0-0-1=3.1%20M%5B23456%5D"> -->
-  <a href="https://bugs.eclipse.org/bugs/buglist.cgi?query_format=advanced&classification=DSDP&product=Target+Management&component=Core&component=RSE&component=Terminal&target_milestone=3.1+M7&bug_status=RESOLVED&bug_status=VERIFIED&bug_status=CLOSED&resolution=FIXED&resolution=WONTFIX&resolution=WORKSFORME&cmdtype=doit">
+<li>Important Bug Fixes, Enhancements and API changes:
+<!--
+  <ul>
+  <li>See bugzilla</li>
+  </ul>
+ -->
+ </li>
+<li>At least 11 bugs were fixed: Use 
+  <!-- <a href="https://bugs.eclipse.org/bugs/buglist.cgi?query_format=advanced&classification=DSDP&product=Target+Management&component=Core&component=RSE&component=Terminal&bug_status=RESOLVED&bug_status=VERIFIED&bug_status=CLOSED&resolution=FIXED&resolution=WONTFIX&resolution=WORKSFORME&chfieldfrom=2009-05-04&chfieldto=2009-05-28&chfield=resolution&cmdtype=doit&negate0=1&field0-0-0=target_milestone&type0-0-0=regexp&value0-0-0=%5B23%5D.0&field0-0-1=target_milestone&type0-0-1=regexp&value0-0-1=3.1%20M%5B234567%5D"> -->
+  <a href="https://bugs.eclipse.org/bugs/buglist.cgi?query_format=advanced&classification=DSDP&product=Target+Management&component=Core&component=RSE&component=Terminal&target_milestone=3.1+RC1&target_milestone=3.1+RC2&bug_status=RESOLVED&bug_status=VERIFIED&bug_status=CLOSED&resolution=FIXED&resolution=WONTFIX&resolution=WORKSFORME&cmdtype=doit">
   this query</a> to show the list of bugs fixed since
-  <a href="http://download.eclipse.org/dsdp/tm/downloads/drops/S-3.1M6-200903192015/">
-  TM 3.1M6</a>
-  [<a href="http://download.eclipse.org/dsdp/tm/downloads/drops/S-3.1M6-200903192015/buildNotes.php">build notes</a>].</li>
+  <a href="http://download.eclipse.org/dsdp/tm/downloads/drops/S-3.1M7-200905051815/">
+  TM 3.1M7</a>
+  [<a href="http://download.eclipse.org/dsdp/tm/downloads/drops/S-3.1M7-200905051815/buildNotes.php">build notes</a>].</li>
 <li>For details on checkins, see
   <a href="http://dsdp.eclipse.org/dsdp/tm/searchcvs.php">TM SearchCVS</a>, the
   <a href="http://download.eclipse.org/dsdp/tm/downloads/drops/N-changelog/index.html">
@@ -115,7 +108,7 @@ and may require changes in client code even though they are binary compatible.
 More information can be found in the associated bugzilla items.
 
 <ul>
-<li>TM @buildId@ API Specification Updates
+<li>TM 3.1M7 API Specification Updates
 <ul><li>Methods <code><a href="http://dsdp.eclipse.org/help/latest/topic/org.eclipse.rse.doc.isv/reference/api/org/eclipse/rse/services/IService.html#initService(org.eclipse.core.runtime.IProgressMonitor)">IService.initService()</a></code>
   and <code><a href="http://dsdp.eclipse.org/help/latest/topic/org.eclipse.rse.doc.isv/reference/api/org/eclipse/rse/core/subsystems/ISubSystem.html#initializeSubSystem(org.eclipse.core.runtime.IProgressMonitor)">ISubSystem.initializeSubSystem</a></code>
   can now throw a <code>SystemMessageException</code> on error. As per the 

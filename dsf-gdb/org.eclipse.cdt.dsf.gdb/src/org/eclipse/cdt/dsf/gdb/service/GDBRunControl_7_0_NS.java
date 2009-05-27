@@ -39,6 +39,7 @@ import org.eclipse.cdt.dsf.mi.service.MIRunControl;
 import org.eclipse.cdt.dsf.mi.service.MIStack;
 import org.eclipse.cdt.dsf.mi.service.command.commands.MIBreakDelete;
 import org.eclipse.cdt.dsf.mi.service.command.commands.MIBreakInsert;
+import org.eclipse.cdt.dsf.mi.service.command.commands.MICommand;
 import org.eclipse.cdt.dsf.mi.service.command.commands.MIExecContinue;
 import org.eclipse.cdt.dsf.mi.service.command.commands.MIExecFinish;
 import org.eclipse.cdt.dsf.mi.service.command.commands.MIExecInterrupt;
@@ -446,17 +447,23 @@ public class GDBRunControl_7_0_NS extends AbstractDsfService implements IMIRunCo
 			return;
 		}
 
-		MIThreadRunState threadState = fThreadRunStates.get(context);
+		final MIThreadRunState threadState = fThreadRunStates.get(context);
 		if (threadState == null) {
 			rm.setStatus(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, INVALID_STATE,
 				"Given context: " + context + " is not an MI execution context.", null)); //$NON-NLS-1$ //$NON-NLS-2$
 			rm.done();
 			return;
 		}
+		
 		threadState.fResumePending = true;
-
 		MIExecContinue cmd = new MIExecContinue(context);
-		fConnection.queueCommand(cmd, new DataRequestMonitor<MIInfo>(getExecutor(), rm));
+		fConnection.queueCommand(cmd, new DataRequestMonitor<MIInfo>(getExecutor(), rm) {
+			@Override
+			protected void handleFailure() {
+				threadState.fResumePending = false;
+				super.handleFailure();
+			}
+		});
 	}
 
 	private void doResumeContainer(IContainerDMContext context, final RequestMonitor rm) {
@@ -512,7 +519,7 @@ public class GDBRunControl_7_0_NS extends AbstractDsfService implements IMIRunCo
 			return;
 		}
 
-		MIThreadRunState threadState = fThreadRunStates.get(context);
+		final MIThreadRunState threadState = fThreadRunStates.get(context);
 		if (threadState == null) {
 			rm.setStatus(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, INVALID_STATE,
 				"Given context: " + context + " can't be found.", null)); //$NON-NLS-1$ //$NON-NLS-2$
@@ -520,17 +527,13 @@ public class GDBRunControl_7_0_NS extends AbstractDsfService implements IMIRunCo
 			return;
 		}
 
-		threadState.fResumePending = true;
-		threadState.fStepping = true;
-
+		MICommand<MIInfo> cmd = null;
 		switch (stepType) {
 		case STEP_INTO:
-			fConnection.queueCommand(new MIExecStep(dmc),
-					new DataRequestMonitor<MIInfo>(getExecutor(), rm));
+			cmd = new MIExecStep(dmc);
 			break;
 		case STEP_OVER:
-			fConnection.queueCommand(new MIExecNext(dmc),
-					new DataRequestMonitor<MIInfo>(getExecutor(), rm));
+			cmd = new MIExecNext(dmc);
 			break;
 		case STEP_RETURN:
 			// The -exec-finish command operates on the selected stack frame, but here we always
@@ -542,27 +545,38 @@ public class GDBRunControl_7_0_NS extends AbstractDsfService implements IMIRunCo
 			MIStack stackService = getServicesTracker().getService(MIStack.class);
 			if (stackService != null) {
 				IFrameDMContext topFrameDmc = stackService.createFrameDMContext(dmc, 0);
-				fConnection.queueCommand(new MIExecFinish(topFrameDmc),
-						new DataRequestMonitor<MIInfo>(getExecutor(), rm));
+				cmd = new MIExecFinish(topFrameDmc);
 			} else {
 				rm.setStatus(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, NOT_SUPPORTED,
 						"Cannot create context for command, stack service not available.", null)); //$NON-NLS-1$
 				rm.done();
+				return;
 			}
 			break;
 		case INSTRUCTION_STEP_INTO:
-			fConnection.queueCommand(new MIExecStepInstruction(dmc),
-					new DataRequestMonitor<MIInfo>(getExecutor(), rm));
+			cmd = new MIExecStepInstruction(dmc);
 			break;
 		case INSTRUCTION_STEP_OVER:
-			fConnection.queueCommand(new MIExecNextInstruction(dmc),
-					new DataRequestMonitor<MIInfo>(getExecutor(), rm));
+			cmd = new MIExecNextInstruction(dmc);
 			break;
 		default:
 			rm.setStatus(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID,
 					INTERNAL_ERROR, "Given step type not supported", null)); //$NON-NLS-1$
 			rm.done();
+			return;
 		}
+		
+		threadState.fResumePending = true;
+		threadState.fStepping = true;
+		fConnection.queueCommand(cmd, new DataRequestMonitor<MIInfo>(getExecutor(), rm) {
+			@Override
+			public void handleFailure() {
+				threadState.fResumePending = false;
+				threadState.fStepping = false;
+
+				super.handleFailure();
+			}   
+		});
 	}
 
 	// ------------------------------------------------------------------------

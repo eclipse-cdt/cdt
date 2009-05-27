@@ -11,6 +11,7 @@
  *
  * Contributors:
  * David McKnight  (IBM)  - [261644] [dstore] remote search improvements
+ * David McKnight  (IBM)  - [277764] [dstore][regression] IllegalAccessException thrown when connecting to a running server
  ********************************************************************************/
 
 package org.eclipse.dstore.internal.core.util;
@@ -57,13 +58,15 @@ public class MemoryManager {
 				Object mbObj = list.get(i);
 				Class mbClass = mbObj.getClass();
 
+				
 				Method getSupportedMethod = mbClass.getDeclaredMethod("isUsageThresholdSupported", new Class[0]);  //$NON-NLS-1$
-
+				getSupportedMethod.setAccessible(true);
 				Boolean usageThresholdSupported = (Boolean)getSupportedMethod.invoke(mbObj, null);
 				if (usageThresholdSupported.booleanValue()){
 
 					Method getTypeMethod = mbClass.getDeclaredMethod("getType", new Class[0]);  //$NON-NLS-1$
 
+					getTypeMethod.setAccessible(true);
 					Object typeObj = getTypeMethod.invoke(mbObj, null);
 					Class memoryType = Class.forName("java.lang.management.MemoryType");  //$NON-NLS-1$
 					Field field = memoryType.getField("HEAP");  //$NON-NLS-1$
@@ -71,16 +74,19 @@ public class MemoryManager {
 
 					if (fieldObj.equals(typeObj)){
 						Method getUsageMethod = mbClass.getDeclaredMethod("getUsage", new Class[0]);  //$NON-NLS-1$
+						getUsageMethod.setAccessible(true);
 						Object usageObj = getUsageMethod.invoke(mbObj, null);
 
 						Class usageClass = usageObj.getClass();
 						Method getMaxMethod = usageClass.getDeclaredMethod("getMax", new Class[0]);  //$NON-NLS-1$
+						getMaxMethod.setAccessible(true);
 						Long maxObj = (Long)getMaxMethod.invoke(usageObj, null);
 
 						Method setThresholdMethod = mbClass.getDeclaredMethod("setUsageThreshold", new Class[] { long.class });  //$NON-NLS-1$
 						Object[] args = new Object[1];
 						args[0] = new Long((long)(maxObj.longValue() * threshold));
 
+						setThresholdMethod.setAccessible(true);
 						setThresholdMethod.invoke(mbObj, args);
 						mbean = mbObj;
 						break;

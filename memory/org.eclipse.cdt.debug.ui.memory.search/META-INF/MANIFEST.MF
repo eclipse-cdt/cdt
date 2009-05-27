@@ -1,6 +1,6 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
-Bundle-Name: Memory Search
+Bundle-Name: %pluginName
 Bundle-SymbolicName: org.eclipse.cdt.debug.ui.memory.search;singleton:=true
 Bundle-Version: 1.2.0.qualifier
 Bundle-Localization: plugin
@@ -13,5 +13,5 @@ Require-Bundle: org.eclipse.debug.core,
  org.eclipse.search;bundle-version="3.4.0"
 Eclipse-LazyStart: true
 Bundle-Activator: org.eclipse.cdt.debug.ui.memory.search.MemorySearchPlugin
-Bundle-Vendor: Eclipse.org
+Bundle-Vendor: %providerName
 Import-Package: org.eclipse.debug.ui.memory

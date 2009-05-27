@@ -15,7 +15,7 @@
    <extension
          point="org.eclipse.ui.views">
       <view
-            name="Memory Browser"
+            name="%view.name.0"
             icon="icons/memorybrowser_view.gif"
             category="org.eclipse.debug.ui"
             class="org.eclipse.cdt.debug.ui.memory.memorybrowser.MemoryBrowser"

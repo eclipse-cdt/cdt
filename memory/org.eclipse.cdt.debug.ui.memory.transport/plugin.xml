@@ -1,41 +1,41 @@
 <?eclipse version="3.0"?>
 <plugin>
-   <extension-point id="memoryTransport" name="memoryTransport" schema="schema/MemoryTransport.exsd"/>
+   <extension-point id="memoryTransport" name="%extension-point.name.0" schema="schema/MemoryTransport.exsd"/>
 	
 	<extension
 	      id="org.eclipse.cdt.debug.ui.memory.transport.dd"
-	      name="org.eclipse.cdt.debug.ui.memory.transport.dd"
+	      name="%extension.name.0"
 	      point="org.eclipse.cdt.debug.ui.memory.transport.memoryTransport">
 	      
 	    <importer 
-	        name="SRecordImporter"
+	        name="%importer.name.0"
 	        id="org.eclipse.cdt.debug.ui.memory.transport.SRecordImporter"
 	        class="org.eclipse.cdt.debug.ui.memory.transport.SRecordImporter">
 	    </importer>
 	    <exporter 
-	        name="SRecordExporter"
+	        name="%exporter.name.0"
 	        id="org.eclipse.cdt.debug.ui.memory.transport.SRecordExporter"
 	        class="org.eclipse.cdt.debug.ui.memory.transport.SRecordExporter">
 	    </exporter>
 	    
 	    <importer 
-	        name="PlainTextImporter"
+	        name="%importer.name.1"
 	        id="org.eclipse.cdt.debug.ui.memory.transport.PlainTextImporter"
 	        class="org.eclipse.cdt.debug.ui.memory.transport.PlainTextImporter">
 	    </importer>
 	    <exporter 
-	        name="PlainTextExporter"
+	        name="%exporter.name.1"
 	        id="org.eclipse.cdt.debug.ui.memory.transport.PlainTextExporter"
 	        class="org.eclipse.cdt.debug.ui.memory.transport.PlainTextExporter">
 	    </exporter>
 	    
 	    <importer 
-	        name="RAWBinaryImporter"
+	        name="%importer.name.2"
 	        id="org.eclipse.cdt.debug.ui.memory.transport.RAWBinaryImporter"
 	        class="org.eclipse.cdt.debug.ui.memory.transport.RAWBinaryImporter">
 	    </importer>
 	    <exporter 
-	        name="RAWBInaryExporter"
+	        name="%exporter.name.2"
 	        id="org.eclipse.cdt.debug.ui.memory.transport.RAWBinaryExporter"
 	        class="org.eclipse.cdt.debug.ui.memory.transport.RAWBinaryExporter">
 	    </exporter>

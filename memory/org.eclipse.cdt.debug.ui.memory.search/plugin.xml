@@ -9,7 +9,7 @@
           class="org.eclipse.cdt.debug.ui.memory.search.FindAction"
           enablesFor="1"
           id="org.eclipse.cdt.debug.ui.memory.search.FindAction"
-          label="Find Next"
+          label="%action.label.0"
           menubarPath="additions">
     </action>
  </viewContribution>
@@ -20,7 +20,7 @@
           class="org.eclipse.cdt.debug.ui.memory.search.FindAction"
           enablesFor="1"
           id="org.eclipse.cdt.debug.ui.memory.search.FindAction"
-          label="Find/Replace..."
+          label="%action.label.1"
           menubarPath="additions">
     </action>
  </viewContribution>
@@ -32,7 +32,7 @@
           class="org.eclipse.cdt.debug.ui.memory.search.FindAction"
           enablesFor="1"
           id="org.eclipse.cdt.debug.ui.memory.search.FindAction"
-          label="Find Next"
+          label="%action.label.2"
           menubarPath="additions">
     </action>
  </viewContribution>
@@ -43,7 +43,7 @@
           class="org.eclipse.cdt.debug.ui.memory.search.FindAction"
           enablesFor="1"
           id="org.eclipse.cdt.debug.ui.memory.search.FindAction"
-          label="Find/Replace..."
+          label="%action.label.3"
           menubarPath="additions">
     </action>
  </viewContribution>

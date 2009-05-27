@@ -3,7 +3,7 @@
  
 <extension point="org.eclipse.debug.ui.memoryRenderings">
     <renderingType 
-        name="Traditional"
+        name="%renderingType.name"
         id="org.eclipse.cdt.debug.ui.memory.traditional.TraditionalRendering"
         class="org.eclipse.cdt.debug.ui.memory.traditional.TraditionalRenderingTypeDelegate">
     </renderingType>
@@ -23,7 +23,7 @@
          class="org.eclipse.cdt.debug.ui.memory.traditional.TraditionalRenderingPreferencePage"
          id="org.eclipse.cdt.debug.ui.memory.traditional.TraditionalRenderingPreferencePage"
          helpContextId="TraditionalRenderingPreferencePage_context"
-         name="Traditional Memory Rendering"/>
+         name="%page.name"/>
 </extension>
 <extension
       point="org.eclipse.core.runtime.preferences">

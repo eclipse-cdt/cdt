@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2008 Wind River Systems, Inc. and others.
+ * Copyright (c) 2006, 2009 Wind River Systems, Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -2133,7 +2133,7 @@ public class CodeFormatterVisitor extends CPPASTVisitor {
 
 	private int visit(IASTLiteralExpression node) {
 		if (node.getKind() == IASTLiteralExpression.lk_string_literal) {
-			// handle concatentation of string literals
+			// handle concatenation of string literals
 			int token;
 			boolean needSpace= false;
 			final int line= scribe.line;

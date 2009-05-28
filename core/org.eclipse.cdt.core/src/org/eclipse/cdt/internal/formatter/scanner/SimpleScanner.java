@@ -314,7 +314,10 @@ public class SimpleScanner {
 
 	            if (!hex) {
 	            	if (c == '*') {
-	            		return newToken(Token.tDOTSTAR);
+	            		if (floatingPoint && digits == 0) {
+	            			// encountered .*
+	            			return newToken(Token.tDOTSTAR);
+	            		}
 	            	} else if (c == '.') {
 	            		if (floatingPoint && digits == 0) {
 	            			// encountered ..

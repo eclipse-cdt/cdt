@@ -7,7 +7,7 @@
  * 
  *  Contributors:
  *     IBM Corporation - initial API and implementation
- *     Sergey Prigogin, Google
+ *     Sergey Prigogin (Google)
  *     Anton Leherbauer (Wind River Systems)
  *******************************************************************************/
 package org.eclipse.cdt.internal.ui.text;
@@ -23,14 +23,13 @@ import org.eclipse.cdt.core.model.ICProject;
 
 import org.eclipse.cdt.internal.corext.util.CodeFormatterUtil;
 
-
 /**
  * Uses the {@link org.eclipse.cdt.internal.ui.text.CHeuristicScanner} to
  * get the indentation level for a certain position in a document.
  *
  * <p>
  * An instance holds some internal position in the document and is therefore
- * not threadsafe.
+ * not thread-safe.
  * </p>
  */
 public final class CIndenter {
@@ -510,15 +509,15 @@ public final class CIndenter {
 		for (int i= 0; i < indent.length(); i++) {
 			char ch= indent.charAt(i);
 			switch (ch) {
-				case '\t':
-					if (tabSize > 0) {
-						int reminder= length % tabSize;
-						length += tabSize - reminder;
-					}
-					break;
-				case ' ':
-					length++;
-					break;
+			case '\t':
+				if (tabSize > 0) {
+					int reminder= length % tabSize;
+					length += tabSize - reminder;
+				}
+				break;
+			case ' ':
+				length++;
+				break;
 			}
 		}
 		return length;
@@ -540,15 +539,15 @@ public final class CIndenter {
 		for (; measured < indentLength && i < chars; i++) {
 			char ch= reference.charAt(i);
 			switch (ch) {
-				case '\t':
-					if (tabSize > 0) {
-						int reminder= measured % tabSize;
-						measured += tabSize - reminder;
-					}
-					break;
-				case ' ':
-					measured++;
-					break;
+			case '\t':
+				if (tabSize > 0) {
+					int reminder= measured % tabSize;
+					measured += tabSize - reminder;
+				}
+				break;
+			case ' ':
+				measured++;
+				break;
 			}
 		}
 		int deleteFrom= measured > indentLength ? i - 1 : i;
@@ -739,11 +738,10 @@ public final class CIndenter {
 		boolean matchCase= false;
 		boolean matchAccessSpecifier= false;
 
-		// account for un-indentation characters already typed in, but after position
-		// if they are on a line by themselves, the indentation gets adjusted
-		// accordingly
+		// Account for un-indentation characters already typed in, but after position.
+		// If they are on a line by themselves, the indentation gets adjusted accordingly.
 		//
-		// also account for a dangling else
+		// Also account for a dangling else.
 		if (offset < fDocument.getLength()) {
 			try {
 				IRegion line= fDocument.getLineInformationOfOffset(offset);
@@ -754,45 +752,45 @@ public final class CIndenter {
 				boolean bracelessBlockStart= fScanner.isBracelessBlockStart(prevPos, CHeuristicScanner.UNBOUND);
 
 				switch (nextToken) {
-					case Symbols.TokenELSE:
-						danglingElse= true;
-						break;
-						
-					case Symbols.TokenCASE:
-					case Symbols.TokenDEFAULT:
-						if (isFirstTokenOnLine)
-							matchCase= true;
-						break;
-						
-					case Symbols.TokenPUBLIC:
-					case Symbols.TokenPROTECTED:
-					case Symbols.TokenPRIVATE:
-						if (isFirstTokenOnLine)
-							matchAccessSpecifier= true;
-						break;
-						
-					case Symbols.TokenLBRACE: // for opening-brace-on-new-line style
-						if (bracelessBlockStart)
-							unindent= !fPrefs.prefIndentBracesForBlocks;
-						else if (prevToken == Symbols.TokenCOLON && !fPrefs.prefIndentBracesForBlocks)
-							unindent= true;
-						else if ((prevToken == Symbols.TokenEQUAL || prevToken == Symbols.TokenRBRACKET) && !fPrefs.prefIndentBracesForArrays)
-							unindent= true;
-						else if (prevToken == Symbols.TokenRPAREN && fPrefs.prefIndentBracesForMethods)
-							indent= true;
-						else if (prevToken == Symbols.TokenIDENT && fPrefs.prefIndentBracesForTypes)
-							indent= true;
-						break;
-						
-					case Symbols.TokenRBRACE: // closing braces get unindented
-						if (isFirstTokenOnLine)
-							matchBrace= true;
-						break;
-						
-					case Symbols.TokenRPAREN:
-						if (isFirstTokenOnLine)
-							matchParen= true;
-						break;
+				case Symbols.TokenELSE:
+					danglingElse= true;
+					break;
+					
+				case Symbols.TokenCASE:
+				case Symbols.TokenDEFAULT:
+					if (isFirstTokenOnLine)
+						matchCase= true;
+					break;
+					
+				case Symbols.TokenPUBLIC:
+				case Symbols.TokenPROTECTED:
+				case Symbols.TokenPRIVATE:
+					if (isFirstTokenOnLine)
+						matchAccessSpecifier= true;
+					break;
+					
+				case Symbols.TokenLBRACE: // for opening-brace-on-new-line style
+					if (bracelessBlockStart)
+						unindent= !fPrefs.prefIndentBracesForBlocks;
+					else if (prevToken == Symbols.TokenCOLON && !fPrefs.prefIndentBracesForBlocks)
+						unindent= true;
+					else if ((prevToken == Symbols.TokenEQUAL || prevToken == Symbols.TokenRBRACKET) && !fPrefs.prefIndentBracesForArrays)
+						unindent= true;
+					else if (prevToken == Symbols.TokenRPAREN && fPrefs.prefIndentBracesForMethods)
+						indent= true;
+					else if (prevToken == Symbols.TokenIDENT && fPrefs.prefIndentBracesForTypes)
+						indent= true;
+					break;
+					
+				case Symbols.TokenRBRACE: // closing braces get unindented
+					if (isFirstTokenOnLine)
+						matchBrace= true;
+					break;
+					
+				case Symbols.TokenRPAREN:
+					if (isFirstTokenOnLine)
+						matchParen= true;
+					break;
 				}
 			} catch (BadLocationException e) {
 			}
@@ -842,168 +840,172 @@ public final class CIndenter {
 		fPosition= offset;
 
 		// forward cases
-		// an unindentation happens sometimes if the next token is special, namely on braces, parens and case labels
-		// align braces, but handle the case where we align with the method declaration start instead of
-		// the opening brace.
+		// An unindentation happens sometimes if the next token is special, namely on braces, parens and case
+		// labels align braces, but handle the case where we align with the method declaration start instead
+		// of the opening brace.
 		if (matchBrace) {
 			if (skipScope(Symbols.TokenLBRACE, Symbols.TokenRBRACE)) {
 				try {
-					// align with the opening brace that is on a line by its own
+					// Align with the opening brace that is on a line by its own
 					int lineOffset= fDocument.getLineOffset(fLine);
 					if (lineOffset <= fPosition && fDocument.get(lineOffset, fPosition - lineOffset).trim().length() == 0)
 						return fPosition;
 				} catch (BadLocationException e) {
-					// concurrent modification - walk default path
+					// Concurrent modification - walk default path
 				}
-				// if the opening brace is not on the start of the line, skip to the start
+				// If the opening brace is not on the start of the line, skip to the start
 				int pos= skipToStatementStart(true, true);
 				fIndent= 0; // indent is aligned with reference position
 				return pos;
 			} else {
-				// if we can't find the matching brace, the heuristic is to unindent
+				// If we can't find the matching brace, the heuristic is to unindent
 				// by one against the normal position
-				int pos= findReferencePosition(offset, danglingElse, false, matchParen, matchCase, matchAccessSpecifier);
+				int pos= findReferencePosition(offset, danglingElse, false, matchParen, matchCase,
+						matchAccessSpecifier);
 				fIndent--;
 				return pos;
 			}
 		}
 
-		// align parenthesis'
+		// Align parentheses
 		if (matchParen) {
 			if (skipScope(Symbols.TokenLPAREN, Symbols.TokenRPAREN))
 				return fPosition;
 			else {
 				// if we can't find the matching paren, the heuristic is to unindent
 				// by one against the normal position
-				int pos= findReferencePosition(offset, danglingElse, matchBrace, false, matchCase, matchAccessSpecifier);
+				int pos= findReferencePosition(offset, danglingElse, matchBrace, false, matchCase,
+						matchAccessSpecifier);
 				fIndent--;
 				return pos;
 			}
 		}
 
-		// the only reliable way to get case labels aligned (due to many different styles of using braces in a block)
-		// is to go for another case statement, or the scope opening brace
+		// The only reliable way to get case labels aligned (due to many different styles of using braces in
+		// a block) is to go for another case statement, or the scope opening brace.
 		if (matchCase) {
 			return matchCaseAlignment();
 		}
 
-		// the only reliable way to get access specifiers aligned (due to many different styles of using braces in a block)
-		// is to go for another access specifier, or the scope opening brace
+		// the only reliable way to get access specifiers aligned (due to many different styles of using
+		// braces in a block) is to go for another access specifier, or the scope opening brace.
 		if (matchAccessSpecifier) {
 			return matchAccessSpecifierAlignment();
 		}
 		
 		nextToken();
 		switch (fToken) {
-			case Symbols.TokenGREATERTHAN:
-			case Symbols.TokenRBRACE:
-				// skip the block and fall through
-				// if we can't complete the scope, reset the scan position
-				int pos= fPosition;
-				if (!skipScope())
-					fPosition= pos;
-				return skipToStatementStart(danglingElse, false);
-			case Symbols.TokenSEMICOLON:
-				// this is the 90% case: after a statement block
-				// the end of the previous statement / block previous.end
-				// search to the end of the statement / block before the previous; the token just after that is previous.start
-				return skipToStatementStart(danglingElse, false);
+		case Symbols.TokenGREATERTHAN:
+		case Symbols.TokenRBRACE:
+			// skip the block and fall through
+			// if we can't complete the scope, reset the scan position
+			int pos= fPosition;
+			if (!skipScope())
+				fPosition= pos;
+			return skipToStatementStart(danglingElse, false);
+		case Symbols.TokenSEMICOLON:
+			// this is the 90% case: after a statement block
+			// the end of the previous statement / block previous.end
+			// search to the end of the statement / block before the previous;
+			// the token just after that is previous.start
+			return skipToStatementStart(danglingElse, false);
 
-			// scope introduction: special treat who special is
-			case Symbols.TokenLPAREN:
-			case Symbols.TokenLBRACE:
-			case Symbols.TokenLBRACKET:
-				return handleScopeIntroduction(Math.min(offset + 1, fDocument.getLength()));
+		// scope introduction: special treat who special is
+		case Symbols.TokenLPAREN:
+		case Symbols.TokenLBRACE:
+		case Symbols.TokenLBRACKET:
+			return handleScopeIntroduction(Math.min(offset + 1, fDocument.getLength()));
 
-			case Symbols.TokenEOF:
-				// trap when hitting start of document
-				return CHeuristicScanner.NOT_FOUND;
+		case Symbols.TokenEOF:
+			// trap when hitting start of document
+			return CHeuristicScanner.NOT_FOUND;
 
-			case Symbols.TokenEQUAL:
-				// indent assignments
-				fIndent= fPrefs.prefAssignmentIndent;
+		case Symbols.TokenEQUAL:
+			// indent assignments
+			fIndent= fPrefs.prefAssignmentIndent;
+			return fPosition;
+
+		case Symbols.TokenCOLON:
+			pos= fPosition;
+			if (isAccessSpecifier()) {
+				fIndent= fPrefs.prefTypeIndent;
+				return pos;
+			}
+			fPosition= pos;
+			if (looksLikeCaseStatement()) {
+				fIndent= fPrefs.prefCaseBlockIndent;
+				return pos;
+			}
+			fPosition= pos;
+			if (looksLikeTypeInheritanceDecl()) {
+				fIndent= fPrefs.prefBlockIndent;
+				return pos;
+			}
+			// TODO handle ternary deep indentation
+			fPosition= pos;
+			return skipToStatementStart(danglingElse, false);
+
+		case Symbols.TokenQUESTIONMARK:
+			if (fPrefs.prefTernaryDeepAlign) {
+				setFirstElementAlignment(fPosition, offset + 1);
 				return fPosition;
-
-			case Symbols.TokenCOLON:
-				pos= fPosition;
-				if (isAccessSpecifier()) {
-					fIndent= fPrefs.prefTypeIndent;
-					return pos;
-				}
-				fPosition= pos;
-				if (looksLikeCaseStatement()) {
-					fIndent= fPrefs.prefCaseBlockIndent;
-					return pos;
-				}
-				fPosition= pos;
-				if (looksLikeTypeInheritanceDecl()) {
-					fIndent= fPrefs.prefBlockIndent;
-					return pos;
-				}
-				// TODO handle ternary deep indentation
-				fPosition= pos;
-				return skipToStatementStart(danglingElse, false);
-
-			case Symbols.TokenQUESTIONMARK:
-				if (fPrefs.prefTernaryDeepAlign) {
-					setFirstElementAlignment(fPosition, offset + 1);
-					return fPosition;
-				} else {
-					fIndent= fPrefs.prefTernaryIndent;
-					return fPosition;
-				}
-
-			// indentation for blockless introducers:
-			case Symbols.TokenDO:
-			case Symbols.TokenWHILE:
-			case Symbols.TokenELSE:
-				fIndent= fPrefs.prefSimpleIndent;
+			} else {
+				fIndent= fPrefs.prefTernaryIndent;
 				return fPosition;
+			}
 
-			case Symbols.TokenTRY:
-				return skipToStatementStart(danglingElse, false);
+		// indentation for blockless introducers:
+		case Symbols.TokenDO:
+		case Symbols.TokenWHILE:
+		case Symbols.TokenELSE:
+			fIndent= fPrefs.prefSimpleIndent;
+			return fPosition;
 
-			case Symbols.TokenRPAREN:
-				int line= fLine;
-				if (skipScope(Symbols.TokenLPAREN, Symbols.TokenRPAREN)) {
-					int scope= fPosition;
-					nextToken();
-					if (fToken == Symbols.TokenIF || fToken == Symbols.TokenWHILE || fToken == Symbols.TokenFOR) {
-						fIndent= fPrefs.prefSimpleIndent;
-						return fPosition;
-					}
-					if (fToken == Symbols.TokenSWITCH) {
-						return fPosition;
-					}
-					fPosition= scope;
-					if (looksLikeMethodDecl()) {
-						return skipToStatementStart(danglingElse, false);
-					}
-					if (fToken == Symbols.TokenCATCH) {
-						return skipToStatementStart(danglingElse, false);
-					}
-					fPosition= scope;
-					if (looksLikeAnonymousTypeDecl()) {
-						return skipToStatementStart(danglingElse, false);
-					}
+		case Symbols.TokenTRY:
+			return skipToStatementStart(danglingElse, false);
+
+		case Symbols.TokenRPAREN:
+			int line= fLine;
+			if (skipScope(Symbols.TokenLPAREN, Symbols.TokenRPAREN)) {
+				int scope= fPosition;
+				nextToken();
+				if (fToken == Symbols.TokenIF || fToken == Symbols.TokenWHILE || fToken == Symbols.TokenFOR) {
+					fIndent= fPrefs.prefSimpleIndent;
+					return fPosition;
 				}
-				// restore
-				fPosition= offset;
-				fLine= line;
-				// else: fall through to default
-				return skipToPreviousListItemOrListStart();
+				if (fToken == Symbols.TokenSWITCH) {
+					return fPosition;
+				}
+				fPosition= scope;
+				if (looksLikeMethodDecl()) {
+					return skipToStatementStart(danglingElse, false);
+				}
+				if (fToken == Symbols.TokenCATCH) {
+					return skipToStatementStart(danglingElse, false);
+				}
+				fPosition= scope;
+				if (looksLikeAnonymousTypeDecl()) {
+					return skipToStatementStart(danglingElse, false);
+				}
+			}
+			// restore
+			fPosition= offset;
+			fLine= line;
+			// else: fall through to default
+			return skipToPreviousListItemOrListStart();
 
-			case Symbols.TokenCOMMA:
-				// inside a list of some type
-				// easy if there is already a list item before with its own indentation - we just align
-				// if not: take the start of the list ( LPAREN, LBRACE, LBRACKET ) and either align or
-				// indent by list-indent
-				return skipToPreviousListItemOrListStart();
-			default:
-				// inside whatever we don't know about: similar to the list case:
-				// if we are inside a continued expression, then either align with a previous line that has indentation
-				// or indent from the expression start line (either a scope introducer or the start of the expr).
-				return skipToPreviousListItemOrListStart();
+		case Symbols.TokenCOMMA:
+			// inside a list of some type
+			// easy if there is already a list item before with its own indentation - we just align
+			// if not: take the start of the list ( LPAREN, LBRACE, LBRACKET ) and either align or
+			// indent by list-indent
+			return skipToPreviousListItemOrListStart();
+		default:
+			// inside whatever we don't know about: similar to the list case:
+			// if we are inside a continued expression, then either align with a previous line that
+			// has indentation or indent from the expression start line (either a scope introducer
+			// or the start of the expression).
+			return skipToPreviousListItemOrListStart();
 		}
 	}
 
@@ -1026,7 +1028,7 @@ public final class CIndenter {
 					|| fToken == Symbols.TokenPRIVATE) {
 				continue;
 			}
-			else if (fToken == Symbols.TokenCLASS
+			if (fToken == Symbols.TokenCLASS
 					|| fToken == Symbols.TokenSTRUCT
 					|| fToken == Symbols.TokenUNION
 					|| fToken == Symbols.TokenENUM) {
@@ -1039,9 +1041,9 @@ public final class CIndenter {
 				} else {
 					return CHeuristicScanner.NOT_FOUND;
 				}
-			}
-			else
+			} else {
 				return CHeuristicScanner.NOT_FOUND;
+			}
 		}
 	}
 
@@ -1061,15 +1063,13 @@ public final class CIndenter {
 			while (skipQualifiers()) {
 				nextToken();
 			}
-			switch (fToken) {
-			case Symbols.TokenCASE:
+			if (fToken == Symbols.TokenCASE) {
 				return true;
 			}
 			break;
 		case Symbols.TokenOTHER:
 			nextToken();
-			switch (fToken) {
-			case Symbols.TokenCASE:
+			if (fToken == Symbols.TokenCASE) {
 				return true;
 			}
 			break;
@@ -1128,7 +1128,8 @@ public final class CIndenter {
 	 * Skips to the start of a statement that ends at the current position.
 	 *
 	 * @param danglingElse whether to indent aligned with the last <code>if</code>
-	 * @param isInBlock whether the current position is inside a block, which limits the search scope to the next scope introducer
+	 * @param isInBlock whether the current position is inside a block, which limits the search scope to
+	 *   the next scope introducer
 	 * @return the reference offset of the start of the statement
 	 */
 	private int skipToStatementStart(boolean danglingElse, boolean isInBlock) {
@@ -1143,123 +1144,123 @@ public final class CIndenter {
 
 			if (isInBlock) {
 				switch (fToken) {
-					// exit on all block introducers
-					case Symbols.TokenIF:
-					case Symbols.TokenELSE:
-					case Symbols.TokenCATCH:
-					case Symbols.TokenDO:
-					case Symbols.TokenWHILE:
-					case Symbols.TokenFOR:
-					case Symbols.TokenTRY:
-						return fPosition;
+				// exit on all block introducers
+				case Symbols.TokenIF:
+				case Symbols.TokenELSE:
+				case Symbols.TokenCATCH:
+				case Symbols.TokenDO:
+				case Symbols.TokenWHILE:
+				case Symbols.TokenFOR:
+				case Symbols.TokenTRY:
+					return fPosition;
 
-					case Symbols.TokenCLASS:
-					case Symbols.TokenENUM:
-					case Symbols.TokenSTRUCT:
-					case Symbols.TokenUNION:
-						isTypeBody= true;
-						break;
+				case Symbols.TokenCLASS:
+				case Symbols.TokenENUM:
+				case Symbols.TokenSTRUCT:
+				case Symbols.TokenUNION:
+					isTypeBody= true;
+					break;
 
-					case Symbols.TokenSWITCH:
-						fIndent= fPrefs.prefCaseIndent;
-						return fPosition;
+				case Symbols.TokenSWITCH:
+					fIndent= fPrefs.prefCaseIndent;
+					return fPosition;
 				}
 			}
 
 			switch (fToken) {
-				// scope introduction through: LPAREN, LBRACE, LBRACKET
-				// search stop on SEMICOLON, RBRACE, COLON, EOF
-				// -> the next token is the start of the statement (i.e. previousPos when backward scanning)
-				case Symbols.TokenLPAREN:
-				case Symbols.TokenLBRACE:
-				case Symbols.TokenLBRACKET:
-				case Symbols.TokenSEMICOLON:
-				case Symbols.TokenEOF:
-					if (isInBlock)
-						fIndent= getBlockIndent(mayBeMethodBody == READ_IDENT, isTypeBody);
-					// else: fIndent set by previous calls
-					return fPreviousPos;
+			// scope introduction through: LPAREN, LBRACE, LBRACKET
+			// search stop on SEMICOLON, RBRACE, COLON, EOF
+			// -> the next token is the start of the statement (i.e. previousPos when backward scanning)
+			case Symbols.TokenLPAREN:
+			case Symbols.TokenLBRACE:
+			case Symbols.TokenLBRACKET:
+			case Symbols.TokenSEMICOLON:
+			case Symbols.TokenEOF:
+				if (isInBlock)
+					fIndent= getBlockIndent(mayBeMethodBody == READ_IDENT, isTypeBody);
+				// else: fIndent set by previous calls
+				return fPreviousPos;
 
-				case Symbols.TokenCOLON:
-					int pos= fPreviousPos;
-					if (!isConditional())
-						return pos;
-					break;
+			case Symbols.TokenCOLON:
+				int pos= fPreviousPos;
+				if (!isConditional())
+					return pos;
+				break;
 
-				case Symbols.TokenRBRACE:
-					// RBRACE is a little tricky: it can be the end of an array definition, but
-					// usually it is the end of a previous block
-					pos= fPreviousPos; // store state
-					if (skipScope()) {
-						if (looksLikeArrayInitializerIntro()) {
-							continue; // it's an array
-						}
-						if (prevToken == Symbols.TokenSEMICOLON) {
-							// end of type def
-							continue;
-						}
+			case Symbols.TokenRBRACE:
+				// RBRACE is a little tricky: it can be the end of an array definition, but
+				// usually it is the end of a previous block
+				pos= fPreviousPos; // store state
+				if (skipScope()) {
+					if (looksLikeArrayInitializerIntro()) {
+						continue; // it's an array
 					}
-					if (isInBlock)
-						fIndent= getBlockIndent(mayBeMethodBody == READ_IDENT, isTypeBody);
-					return pos; // it's not - do as with all the above
+					if (prevToken == Symbols.TokenSEMICOLON) {
+						// end of type def
+						continue;
+					}
+				}
+				if (isInBlock)
+					fIndent= getBlockIndent(mayBeMethodBody == READ_IDENT, isTypeBody);
+				return pos; // it's not - do as with all the above
 
-				// scopes: skip them
-				case Symbols.TokenRPAREN:
-					if (isInBlock)
-						mayBeMethodBody= READ_PARENS;
-					// fall thru
-					pos= fPreviousPos;
-					if (skipScope())
-						break;
-					else
-						return pos;
-				case Symbols.TokenRBRACKET:
-				case Symbols.TokenGREATERTHAN:
-					pos= fPreviousPos;
-					if (skipScope())
-						break;
-					else
-						return pos;
+			// scopes: skip them
+			case Symbols.TokenRPAREN:
+				if (isInBlock)
+					mayBeMethodBody= READ_PARENS;
+				// fall thru
+				pos= fPreviousPos;
+				if (skipScope())
+					break;
+				else
+					return pos;
+			case Symbols.TokenRBRACKET:
+			case Symbols.TokenGREATERTHAN:
+				pos= fPreviousPos;
+				if (skipScope())
+					break;
+				else
+					return pos;
 
-				// IF / ELSE: align the position after the conditional block with the if
-				// so we are ready for an else, except if danglingElse is false
-				// in order for this to work, we must skip an else to its if
-				case Symbols.TokenIF:
-					if (danglingElse)
-						return fPosition;
-					else
-						break;
-				case Symbols.TokenELSE:
-					// skip behind the next if, as we have that one covered
-					pos= fPosition;
-					if (skipNextIF())
-						break;
-					else
-						return pos;
-
-				case Symbols.TokenDO:
-					// align the WHILE position with its do
+			// IF / ELSE: align the position after the conditional block with the if
+			// so we are ready for an else, except if danglingElse is false
+			// in order for this to work, we must skip an else to its if
+			case Symbols.TokenIF:
+				if (danglingElse)
 					return fPosition;
-
-				case Symbols.TokenWHILE:
-					// this one is tricky: while can be the start of a while loop
-					// or the end of a do - while
-					pos= fPosition;
-					if (hasMatchingDo()) {
-						// continue searching from the DO on
-						break;
-					} else {
-						// continue searching from the WHILE on
-						fPosition= pos;
-						break;
-					}
-				case Symbols.TokenIDENT:
-					if (mayBeMethodBody == READ_PARENS)
-						mayBeMethodBody= READ_IDENT;
+				else
 					break;
+			case Symbols.TokenELSE:
+				// skip behind the next if, as we have that one covered
+				pos= fPosition;
+				if (skipNextIF())
+					break;
+				else
+					return pos;
 
-				default:
-					// keep searching
+			case Symbols.TokenDO:
+				// align the WHILE position with its do
+				return fPosition;
+
+			case Symbols.TokenWHILE:
+				// this one is tricky: while can be the start of a while loop
+				// or the end of a do - while
+				pos= fPosition;
+				if (hasMatchingDo()) {
+					// continue searching from the DO on
+					break;
+				} else {
+					// continue searching from the WHILE on
+					fPosition= pos;
+					break;
+				}
+			case Symbols.TokenIDENT:
+				if (mayBeMethodBody == READ_PARENS)
+					mayBeMethodBody= READ_IDENT;
+				break;
+
+			default:
+				// keep searching
 			}
 		}
 	}
@@ -1274,45 +1275,45 @@ public final class CIndenter {
 	}
 
 	/**
-	 * Returns true if the colon at the current position is part of a conditional
-	 * (ternary) expression, false otherwise.
+	 * Returns <code>true</code> if the colon at the current position is part of a conditional
+	 * (ternary) expression, <code>false</code> otherwise.
 	 *
-	 * @return true if the colon at the current position is part of a conditional
+	 * @return <code>true</code> if the colon at the current position is part of a conditional
 	 */
 	private boolean isConditional() {
 		while (true) {
 			int previous= fToken;
 			nextToken();
 			switch (fToken) {
-				// search for case labels, which consist of (possibly qualified) identifiers or numbers
-				case Symbols.TokenIDENT:
-					if (previous == Symbols.TokenIDENT) {
-						return false;
-					}
-					// fall thru
-					continue;
-				case Symbols.TokenDOUBLECOLON:
-				case Symbols.TokenOTHER:
-					continue;
-					
-				case Symbols.TokenQUESTIONMARK:
-					return true;
-					
-				case Symbols.TokenSEMICOLON:
-				case Symbols.TokenLBRACE:
-				case Symbols.TokenRBRACE:
-				case Symbols.TokenCASE:
-				case Symbols.TokenDEFAULT:
-				case Symbols.TokenPUBLIC:
-				case Symbols.TokenPROTECTED:
-				case Symbols.TokenPRIVATE:
-				case Symbols.TokenCLASS:
-				case Symbols.TokenSTRUCT:
-				case Symbols.TokenUNION:
+			// search for case labels, which consist of (possibly qualified) identifiers or numbers
+			case Symbols.TokenIDENT:
+				if (previous == Symbols.TokenIDENT) {
 					return false;
+				}
+				// fall thru
+				continue;
+			case Symbols.TokenDOUBLECOLON:
+			case Symbols.TokenOTHER:
+				continue;
+				
+			case Symbols.TokenQUESTIONMARK:
+				return true;
+				
+			case Symbols.TokenSEMICOLON:
+			case Symbols.TokenLBRACE:
+			case Symbols.TokenRBRACE:
+			case Symbols.TokenCASE:
+			case Symbols.TokenDEFAULT:
+			case Symbols.TokenPUBLIC:
+			case Symbols.TokenPROTECTED:
+			case Symbols.TokenPRIVATE:
+			case Symbols.TokenCLASS:
+			case Symbols.TokenSTRUCT:
+			case Symbols.TokenUNION:
+				return false;
 
-				default:
-					return true;
+			default:
+				return true;
 			}
 		}
 	}
@@ -1329,35 +1330,35 @@ public final class CIndenter {
 		while (true) {
 			nextToken();
 			switch (fToken) {
-				// invalid cases: another case label or an LBRACE must come before a case
-				// -> bail out with the current position
-				case Symbols.TokenLPAREN:
-				case Symbols.TokenLBRACKET:
-				case Symbols.TokenEOF:
-					return fPosition;
-					
-				case Symbols.TokenSWITCH:
-					// start of switch statement
-					fIndent= fPrefs.prefCaseIndent;
-					return fPosition;
-					
-				case Symbols.TokenCASE:
-				case Symbols.TokenDEFAULT:
-					// align with previous label
-					fIndent= 0;
-					return fPosition;
+			// invalid cases: another case label or an LBRACE must come before a case
+			// -> bail out with the current position
+			case Symbols.TokenLPAREN:
+			case Symbols.TokenLBRACKET:
+			case Symbols.TokenEOF:
+				return fPosition;
+				
+			case Symbols.TokenSWITCH:
+				// start of switch statement
+				fIndent= fPrefs.prefCaseIndent;
+				return fPosition;
+				
+			case Symbols.TokenCASE:
+			case Symbols.TokenDEFAULT:
+				// align with previous label
+				fIndent= 0;
+				return fPosition;
 
-				// scopes: skip them
-				case Symbols.TokenRPAREN:
-				case Symbols.TokenRBRACKET:
-				case Symbols.TokenRBRACE:
-				case Symbols.TokenGREATERTHAN:
-					skipScope();
-					break;
+			// scopes: skip them
+			case Symbols.TokenRPAREN:
+			case Symbols.TokenRBRACKET:
+			case Symbols.TokenRBRACE:
+			case Symbols.TokenGREATERTHAN:
+				skipScope();
+				break;
 
-				default:
-					// keep searching
-					continue;
+			default:
+				// keep searching
+				continue;
 			}
 		}
 	}
@@ -1375,40 +1376,40 @@ public final class CIndenter {
 		while (true) {
 			nextToken();
 			switch (fToken) {
-				// invalid cases: another access specifier or an LBRACE must come before an access specifier
-				// -> bail out with the current position
-				case Symbols.TokenLPAREN:
-				case Symbols.TokenLBRACKET:
-				case Symbols.TokenEOF:
-					return fPosition;
-					
-				case Symbols.TokenLBRACE:
-					// opening brace of class body
-					int pos= fPosition;
-					int typeDeclPos= matchTypeDeclaration();
-					fIndent= fPrefs.prefAccessSpecifierIndent;
-					if (typeDeclPos != CHeuristicScanner.NOT_FOUND) {
-						return typeDeclPos;
-					}
-					return pos;
-				case Symbols.TokenPUBLIC:
-				case Symbols.TokenPROTECTED:
-				case Symbols.TokenPRIVATE:
-					// align with previous access specifier
-					fIndent= 0;
-					return fPosition;
+			// invalid cases: another access specifier or an LBRACE must come before an access specifier
+			// -> bail out with the current position
+			case Symbols.TokenLPAREN:
+			case Symbols.TokenLBRACKET:
+			case Symbols.TokenEOF:
+				return fPosition;
+				
+			case Symbols.TokenLBRACE:
+				// opening brace of class body
+				int pos= fPosition;
+				int typeDeclPos= matchTypeDeclaration();
+				fIndent= fPrefs.prefAccessSpecifierIndent;
+				if (typeDeclPos != CHeuristicScanner.NOT_FOUND) {
+					return typeDeclPos;
+				}
+				return pos;
+			case Symbols.TokenPUBLIC:
+			case Symbols.TokenPROTECTED:
+			case Symbols.TokenPRIVATE:
+				// align with previous access specifier
+				fIndent= 0;
+				return fPosition;
 
-				// scopes: skip them
-				case Symbols.TokenRPAREN:
-				case Symbols.TokenRBRACKET:
-				case Symbols.TokenRBRACE:
-				case Symbols.TokenGREATERTHAN:
-					skipScope();
-					break;
+			// scopes: skip them
+			case Symbols.TokenRPAREN:
+			case Symbols.TokenRBRACKET:
+			case Symbols.TokenRBRACE:
+			case Symbols.TokenGREATERTHAN:
+				skipScope();
+				break;
 
-				default:
-					// keep searching
-					continue;
+			default:
+				// keep searching
+				continue;
 			}
 		}
 	}
@@ -1420,7 +1421,6 @@ public final class CIndenter {
 	 * The indentation will either match the list scope introducer (e.g. for
 	 * method declarations), so called deep indents, or simply increase the
 	 * indentation by a number of standard indents. See also {@link #handleScopeIntroduction(int)}.
-	 *
 	 * @return the reference position for a list item: either a previous list item
 	 * that has its own indentation, or the list introduction start.
 	 */
@@ -1443,33 +1443,33 @@ public final class CIndenter {
 			}
 
 			switch (fToken) {
-				// scopes: skip them
-				case Symbols.TokenRPAREN:
-				case Symbols.TokenRBRACKET:
-				case Symbols.TokenRBRACE:
-				case Symbols.TokenGREATERTHAN:
-					skipScope();
-					break;
+			// scopes: skip them
+			case Symbols.TokenRPAREN:
+			case Symbols.TokenRBRACKET:
+			case Symbols.TokenRBRACE:
+			case Symbols.TokenGREATERTHAN:
+				skipScope();
+				break;
 
-				// scope introduction: special treat who special is
-				case Symbols.TokenLPAREN:
-				case Symbols.TokenLBRACE:
-				case Symbols.TokenLBRACKET:
-					return handleScopeIntroduction(startPosition + 1);
+			// scope introduction: special treat who special is
+			case Symbols.TokenLPAREN:
+			case Symbols.TokenLBRACE:
+			case Symbols.TokenLBRACKET:
+				return handleScopeIntroduction(startPosition + 1);
 
-				case Symbols.TokenSEMICOLON:
-					return fPosition;
-				case Symbols.TokenQUESTIONMARK:
-					if (fPrefs.prefTernaryDeepAlign) {
-						setFirstElementAlignment(fPosition - 1, fPosition + 1);
-						return fPosition;
-					} else {
-						fIndent= fPrefs.prefTernaryIndent;
-						return fPosition;
-					}
-				case Symbols.TokenEOF:
-					return 0;
+			case Symbols.TokenSEMICOLON:
+				return fPosition;
 
+			case Symbols.TokenQUESTIONMARK:
+				if (fPrefs.prefTernaryDeepAlign) {
+					setFirstElementAlignment(fPosition - 1, fPosition + 1);
+				} else {
+					fIndent= fPrefs.prefTernaryIndent;
+				}
+				return fPosition;
+
+			case Symbols.TokenEOF:
+				return 0;
 			}
 		}
 	}
@@ -1485,41 +1485,41 @@ public final class CIndenter {
 	 */
 	private boolean skipScope() {
 		switch (fToken) {
-			case Symbols.TokenRPAREN:
-				return skipScope(Symbols.TokenLPAREN, Symbols.TokenRPAREN);
-			case Symbols.TokenRBRACKET:
-				return skipScope(Symbols.TokenLBRACKET, Symbols.TokenRBRACKET);
-			case Symbols.TokenRBRACE:
-				return skipScope(Symbols.TokenLBRACE, Symbols.TokenRBRACE);
-			case Symbols.TokenGREATERTHAN:
-				if (!fPrefs.prefHasGenerics)
-					return false;
-				int storedPosition= fPosition;
-				int storedToken= fToken;
-				nextToken();
-				switch (fToken) {
-					case Symbols.TokenIDENT:
-						if (!isGenericStarter(getTokenContent()))
-							break;
-						// fall thru
-						if (skipScope(Symbols.TokenLESSTHAN, Symbols.TokenGREATERTHAN))
-							return true;
-						break;
-					case Symbols.TokenQUESTIONMARK:
-					case Symbols.TokenGREATERTHAN:
-						if (skipScope(Symbols.TokenLESSTHAN, Symbols.TokenGREATERTHAN))
-							return true;
-						break;
-				}
-				// <> are harder to detect - restore the position if we fail
-				fPosition= storedPosition;
-				fToken= storedToken;
+		case Symbols.TokenRPAREN:
+			return skipScope(Symbols.TokenLPAREN, Symbols.TokenRPAREN);
+		case Symbols.TokenRBRACKET:
+			return skipScope(Symbols.TokenLBRACKET, Symbols.TokenRBRACKET);
+		case Symbols.TokenRBRACE:
+			return skipScope(Symbols.TokenLBRACE, Symbols.TokenRBRACE);
+		case Symbols.TokenGREATERTHAN:
+			if (!fPrefs.prefHasGenerics)
 				return false;
+			int storedPosition= fPosition;
+			int storedToken= fToken;
+			nextToken();
+			switch (fToken) {
+				case Symbols.TokenIDENT:
+					if (!isGenericStarter(getTokenContent()))
+						break;
+					// fall thru
+					if (skipScope(Symbols.TokenLESSTHAN, Symbols.TokenGREATERTHAN))
+						return true;
+					break;
+				case Symbols.TokenQUESTIONMARK:
+				case Symbols.TokenGREATERTHAN:
+					if (skipScope(Symbols.TokenLESSTHAN, Symbols.TokenGREATERTHAN))
+						return true;
+					break;
+			}
+			// <> are harder to detect - restore the position if we fail
+			fPosition= storedPosition;
+			fToken= storedToken;
+			return false;
 
-			default:
-				 // programming error
-				Assert.isTrue(false);
-				return false;
+		default:
+			 // programming error
+			Assert.isTrue(false);
+			return false;
 		}
 	}
 
@@ -1581,76 +1581,77 @@ public final class CIndenter {
 	 */
 	private int handleScopeIntroduction(int bound) {
 		switch (fToken) {
-			// scope introduction: special treat who special is
-			case Symbols.TokenLPAREN:
-				int pos= fPosition; // store
+		// scope introduction: special treat who special is
+		case Symbols.TokenLPAREN:
+			int pos= fPosition; // store
 
-				// special: method declaration deep indentation
-				if (looksLikeMethodDecl()) {
-					if (fPrefs.prefMethodDeclDeepIndent)
-						return setFirstElementAlignment(pos, bound);
-					else {
-						fIndent= fPrefs.prefMethodDeclIndent;
-						return pos;
-					}
+			// special: method declaration deep indentation
+			if (looksLikeMethodDecl()) {
+				if (fPrefs.prefMethodDeclDeepIndent) {
+					return setFirstElementAlignment(pos, bound);
 				} else {
-					fPosition= pos;
-					if (looksLikeMethodCall()) {
-						if (fPrefs.prefMethodCallDeepIndent)
-							return setFirstElementAlignment(pos, bound);
-						else {
-							fIndent= fPrefs.prefMethodCallIndent;
-							return pos;
-						}
-					} else if (fPrefs.prefParenthesisDeepIndent)
-						return setFirstElementAlignment(pos, bound);
-				}
-
-				// normal: return the parenthesis as reference
-				fIndent= fPrefs.prefParenthesisIndent;
-				return pos;
-
-			case Symbols.TokenLBRACE:
-				pos= fPosition; // store
-				
-				final boolean looksLikeArrayInitializerIntro= looksLikeArrayInitializerIntro();
-				// special: array initializer
-				if (looksLikeArrayInitializerIntro) {
-					if (fPrefs.prefArrayDeepIndent)
-						return setFirstElementAlignment(pos, bound);
-					else
-						fIndent= fPrefs.prefArrayIndent;
-				} else if (isNamespace()) {
-					fIndent= fPrefs.prefNamespaceBodyIndent;
-				} else {
-					fIndent= fPrefs.prefBlockIndent;
-				}
-
-				// normal: skip to the statement start before the scope introducer
-				// opening braces are often on differently ending indents than e.g. a method definition
-				if (!looksLikeArrayInitializerIntro && !fPrefs.prefIndentBracesForBlocks) {
-					fPosition= pos; // restore
-					return skipToStatementStart(true, true); // set to true to match the first if
-				} else {
+					fIndent= fPrefs.prefMethodDeclIndent;
 					return pos;
 				}
-
-			case Symbols.TokenLBRACKET:
-				pos= fPosition; // store
-
-				// special: method declaration deep indentation
-				if (fPrefs.prefArrayDimensionsDeepIndent) {
+			} else {
+				fPosition= pos;
+				if (looksLikeMethodCall()) {
+					if (fPrefs.prefMethodCallDeepIndent) {
+						return setFirstElementAlignment(pos, bound);
+					} else {
+						fIndent= fPrefs.prefMethodCallIndent;
+						return pos;
+					}
+				} else if (fPrefs.prefParenthesisDeepIndent) {
 					return setFirstElementAlignment(pos, bound);
 				}
+			}
 
-				// normal: return the bracket as reference
-				fIndent= fPrefs.prefBracketIndent;
-				return pos; // restore
+			// normal: return the parenthesis as reference
+			fIndent= fPrefs.prefParenthesisIndent;
+			return pos;
 
-			default:
-				 // programming error
-				Assert.isTrue(false);
-				return -1; // dummy
+		case Symbols.TokenLBRACE:
+			pos= fPosition; // store
+			
+			final boolean looksLikeArrayInitializerIntro= looksLikeArrayInitializerIntro();
+			// special: array initializer
+			if (looksLikeArrayInitializerIntro) {
+				if (fPrefs.prefArrayDeepIndent)
+					return setFirstElementAlignment(pos, bound);
+				else
+					fIndent= fPrefs.prefArrayIndent;
+			} else if (isNamespace()) {
+				fIndent= fPrefs.prefNamespaceBodyIndent;
+			} else {
+				fIndent= fPrefs.prefBlockIndent;
+			}
+
+			// normal: skip to the statement start before the scope introducer
+			// opening braces are often on differently ending indents than e.g. a method definition
+			if (!looksLikeArrayInitializerIntro && !fPrefs.prefIndentBracesForBlocks) {
+				fPosition= pos; // restore
+				return skipToStatementStart(true, true); // set to true to match the first if
+			} else {
+				return pos;
+			}
+
+		case Symbols.TokenLBRACKET:
+			pos= fPosition; // store
+
+			// special: method declaration deep indentation
+			if (fPrefs.prefArrayDimensionsDeepIndent) {
+				return setFirstElementAlignment(pos, bound);
+			}
+
+			// normal: return the bracket as reference
+			fIndent= fPrefs.prefBracketIndent;
+			return pos; // restore
+
+		default:
+			// programming error
+			Assert.isTrue(false);
+			return -1; // dummy
 		}
 	}
 
@@ -1671,7 +1672,6 @@ public final class CIndenter {
 			fAlign= firstPossible;
 		return fAlign;
 	}
-
 
 	/**
 	 * Returns <code>true</code> if the next token received after calling
@@ -1734,32 +1734,31 @@ public final class CIndenter {
 		while (true) {
 			nextToken();
 			switch (fToken) {
-				// scopes: skip them
-				case Symbols.TokenRPAREN:
-				case Symbols.TokenRBRACKET:
-				case Symbols.TokenRBRACE:
-				case Symbols.TokenGREATERTHAN:
-					skipScope();
-					break;
+			// scopes: skip them
+			case Symbols.TokenRPAREN:
+			case Symbols.TokenRBRACKET:
+			case Symbols.TokenRBRACE:
+			case Symbols.TokenGREATERTHAN:
+				skipScope();
+				break;
 
-				case Symbols.TokenIF:
-					// found it, return
-					return true;
-				case Symbols.TokenELSE:
-					// recursively skip else-if blocks
-					skipNextIF();
-					break;
+			case Symbols.TokenIF:
+				// found it, return
+				return true;
+			case Symbols.TokenELSE:
+				// recursively skip else-if blocks
+				skipNextIF();
+				break;
 
-				// shortcut scope starts
-				case Symbols.TokenLPAREN:
-				case Symbols.TokenLBRACE:
-				case Symbols.TokenLBRACKET:
-				case Symbols.TokenEOF:
-					return false;
-				}
+			// shortcut scope starts
+			case Symbols.TokenLPAREN:
+			case Symbols.TokenLBRACE:
+			case Symbols.TokenLBRACKET:
+			case Symbols.TokenEOF:
+				return false;
+			}
 		}
 	}
-
 
 	/**
 	 * while(condition); is ambiguous when parsed backwardly, as it is a valid
@@ -1774,17 +1773,17 @@ public final class CIndenter {
 		Assert.isTrue(fToken == Symbols.TokenWHILE);
 		nextToken();
 		switch (fToken) {
-			case Symbols.TokenRBRACE:
-				skipScope(); // and fall thru
-				skipToStatementStart(false, false);
-				return fToken == Symbols.TokenDO;
-			case Symbols.TokenSEMICOLON:
-				skipToStatementStart(false, false);
-				return fToken == Symbols.TokenDO;
+		case Symbols.TokenRBRACE:
+			skipScope(); // and fall thru
+			skipToStatementStart(false, false);
+			return fToken == Symbols.TokenDO;
+
+		case Symbols.TokenSEMICOLON:
+			skipToStatementStart(false, false);
+			return fToken == Symbols.TokenDO;
 		}
 		return false;
 	}
-
 
 	/**
 	 * Skips pointer operators if the current token is a pointer operator.
@@ -2010,7 +2009,6 @@ public final class CIndenter {
 	 *         otherwise
 	 */
 	private boolean skipScope(int openToken, int closeToken) {
-
 		int depth= 1;
 
 		while (true) {

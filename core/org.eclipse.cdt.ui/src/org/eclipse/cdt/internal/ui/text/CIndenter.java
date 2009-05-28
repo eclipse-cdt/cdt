@@ -869,9 +869,9 @@ public final class CIndenter {
 
 		// Align parentheses
 		if (matchParen) {
-			if (skipScope(Symbols.TokenLPAREN, Symbols.TokenRPAREN))
+			if (skipScope(Symbols.TokenLPAREN, Symbols.TokenRPAREN)) {
 				return fPosition;
-			else {
+			} else {
 				// if we can't find the matching paren, the heuristic is to unindent
 				// by one against the normal position
 				int pos= findReferencePosition(offset, danglingElse, matchBrace, false, matchCase,
@@ -2021,7 +2021,7 @@ public final class CIndenter {
 				if (depth == 0)
 					return true;
 			} else if (fToken == Symbols.TokenEOF) {
-					return false;
+				return false;
 			}
 		}
 	}

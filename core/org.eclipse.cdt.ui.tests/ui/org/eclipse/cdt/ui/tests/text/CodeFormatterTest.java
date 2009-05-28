@@ -1112,6 +1112,31 @@ public class CodeFormatterTest extends BaseUITestCase {
 		assertFormatterResult();
 	}
 
+	//void f() {
+	//  Canvas1->MoveTo((50 + (24* 20 ) +xoff) *Scale,(200+yoff)*ScaleY);
+	//  Canvas1->LineTo((67+(24*20) +xoff)*Scale,(200+yoff)*ScaleY);
+	//  Canvas1->MoveTo((50+(24*20) +xoff)*Scale,((200+yoff)*ScaleY)-1);
+	//  Canvas1->LineTo((67+(24*20) +xoff)*Scale,((200+yoff)*ScaleY)-1);
+	//  Canvas1->MoveTo((50+(24*20) +xoff)*Scale,((200+yoff)*ScaleY)+1);
+	//  Canvas1->LineTo((67+(24*20) +xoff)*Scale,((200+yoff)*ScaleY)+1);
+	//}
+
+	//void f() {
+	//	Canvas1->MoveTo((50 + (24 * 20) + xoff) * Scale, (200 + yoff) * ScaleY);
+	//	Canvas1->LineTo((67 + (24 * 20) + xoff) * Scale, (200 + yoff) * ScaleY);
+	//	Canvas1->MoveTo((50 + (24 * 20) + xoff) * Scale, ((200 + yoff) * ScaleY)
+	//			- 1);
+	//	Canvas1->LineTo((67 + (24 * 20) + xoff) * Scale, ((200 + yoff) * ScaleY)
+	//			- 1);
+	//	Canvas1->MoveTo((50 + (24 * 20) + xoff) * Scale, ((200 + yoff) * ScaleY)
+	//			+ 1);
+	//	Canvas1->LineTo((67 + (24 * 20) + xoff) * Scale, ((200 + yoff) * ScaleY)
+	//			+ 1);
+	//}
+	public void testScannerErrorWithIntegerFollowedByStar_Bug278118() throws Exception {
+		assertFormatterResult();
+	}
+
 	//inline   typename A foo();
 	//void   bar(const typename A x)  ;
 	//static   typename A x  ;

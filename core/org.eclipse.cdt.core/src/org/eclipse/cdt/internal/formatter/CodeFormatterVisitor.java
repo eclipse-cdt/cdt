@@ -2139,7 +2139,7 @@ public class CodeFormatterVisitor extends CPPASTVisitor {
 
 	private int visit(IASTLiteralExpression node) {
 		if (node.getKind() == IASTLiteralExpression.lk_string_literal) {
-			// handle concatentation of string literals
+			// handle concatenation of string literals
 			int token;
 			boolean needSpace= false;
 			final int line= scribe.line;

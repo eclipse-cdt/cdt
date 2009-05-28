@@ -94,8 +94,12 @@ public class TemplateInstanceUtil {
 		if (arg.isNonTypeValue()) {
 			return arg;
 		}
-		IType t= cf.getCompositeType((IIndexType) arg.getTypeValue());
-		return new CPPTemplateArgument(t);
+		final IType typeValue = arg.getTypeValue();
+		if (typeValue instanceof IIndexType) {
+			IType t= cf.getCompositeType((IIndexType) typeValue);
+			return new CPPTemplateArgument(t);
+		}
+		return arg;
 	}
 	
 	@Deprecated

@@ -590,7 +590,8 @@ public final class IndentUtil {
 	 * @return the indent, or <code>null</code> if not computable
 	 * @throws BadLocationException
 	 */
-	public static String computePreprocessorIndent(IDocument document, int line, ITypedRegion partition) throws BadLocationException {
+	public static String computePreprocessorIndent(IDocument document, int line, ITypedRegion partition)
+			throws BadLocationException {
 		int ppFirstLine= document.getLineOfOffset(partition.getOffset());
 		if (line == ppFirstLine) {
 			return ""; //$NON-NLS-1$
@@ -598,7 +599,7 @@ public final class IndentUtil {
 		CHeuristicScanner ppScanner= new CHeuristicScanner(document, ICPartitions.C_PARTITIONING, partition.getType());
 		CIndenter ppIndenter= new CIndenter(document, ppScanner);
 		if (line == ppFirstLine + 1) {
-			return ppIndenter.createReusingIndent(new StringBuilder(), 1).toString();
+			return ppIndenter.createReusingIndent(new StringBuilder(), ppIndenter.getContinuationLineIndent()).toString();
 		}
 		StringBuilder computed= ppIndenter.computeIndentation(document.getLineOffset(line), false);
 		if (computed != null) {

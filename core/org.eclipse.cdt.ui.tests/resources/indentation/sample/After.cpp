@@ -10,11 +10,10 @@ const SimpleStruct simpleStruct =
 #define SIZEOF( A, B ) sizeof( A.B )
 
 #define FOREVER \
-	for(;;)\
-	{\
-		\
-	}
-}
+		for(;;)\
+		{\
+			\
+		}
 
 const OtherStruct array[] =
 {

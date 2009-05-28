@@ -64,9 +64,8 @@ public class IndentActionTest extends TestCase {
 		}
 	}
 	
-	private static final Class THIS= IndentActionTest.class;
 	public static Test suite() {
-		return new IndentTestSetup(new TestSuite(THIS));
+		return new IndentTestSetup(new TestSuite(IndentActionTest.class));
 	}
 
 	private CEditor fEditor;

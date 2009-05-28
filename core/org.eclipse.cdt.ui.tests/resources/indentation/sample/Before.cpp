@@ -14,7 +14,6 @@ const SimpleStruct simpleStruct =
 {\
         \
                 }
-    }
 
 const OtherStruct array[] =
 {

@@ -177,24 +177,24 @@ public class CAutoIndentTest extends AbstractAutoEditTest {
 
 	public void testDefaultAutoIndent() throws BadLocationException {
 		AutoEditTester tester = createAutoEditTester(); //$NON-NLS-1$
-		tester.type("   initial indent=3\n"); //$NON-NLS-1$
+		tester.type("   initial indent=5\n"); //$NON-NLS-1$
 		assertEquals(1, tester.getCaretLine());
-		assertEquals(3, tester.getCaretColumn());
-		tester.type("indent=3\n"); //$NON-NLS-1$
+		assertEquals(5, tester.getCaretColumn());
+		tester.type("indent=5\n"); //$NON-NLS-1$
 		assertEquals(2, tester.getCaretLine());
-		assertEquals(3, tester.getCaretColumn());
+		assertEquals(5, tester.getCaretColumn());
+		tester.backspace();
+		tester.type("indent=4\n"); //$NON-NLS-1$
+		assertEquals(3, tester.getCaretLine());
+		assertEquals(4, tester.getCaretColumn());
+		tester.backspace();
 		tester.backspace();
 		tester.type("indent=2\n"); //$NON-NLS-1$
-		assertEquals(3, tester.getCaretLine());
-		assertEquals(2, tester.getCaretColumn());
-		tester.backspace();
-		tester.backspace();
-		tester.type("indent=0\n"); //$NON-NLS-1$
 		assertEquals(4, tester.getCaretLine());
-		assertEquals(0, tester.getCaretColumn());
+		assertEquals(2, tester.getCaretColumn());
 		tester.type("\n"); //$NON-NLS-1$
 		assertEquals(5, tester.getCaretLine());
-		assertEquals(0, tester.getCaretColumn());
+		assertEquals(2, tester.getCaretColumn());
 	}
 
 	public void testCCommentAutoIndent() throws BadLocationException {

@@ -27,8 +27,6 @@ import org.eclipse.cdt.internal.formatter.DefaultCodeFormatterOptions;
 
 import org.eclipse.cdt.internal.ui.editor.CDocumentSetupParticipant;
 import org.eclipse.cdt.internal.ui.editor.IndentUtil;
-import org.eclipse.cdt.internal.ui.text.CHeuristicScanner;
-import org.eclipse.cdt.internal.ui.text.CIndenter;
 
 /**
  * Tests for the CIndenter.
@@ -61,8 +59,11 @@ public class CIndenterTest extends BaseUITestCase {
 		IDocument document= new Document(before);
 		String expected= contents[1].toString();
 		new CDocumentSetupParticipant().setup(document);
-		CIndenter indenter= new CIndenter(document, new CHeuristicScanner(document));
-		IndentUtil.indentLines(document, new LineRange(0, document.getNumberOfLines()), null, null);
+		int numLines = document.getNumberOfLines();
+		if (document.getLineLength(numLines - 1) == 0) {
+			numLines--;  // Exclude an empty line at the end.
+		}
+		IndentUtil.indentLines(document, new LineRange(0, numLines), null, null);
 		assertEquals(expected, document.get());
 	}
 	
@@ -300,7 +301,7 @@ public class CIndenterTest extends BaseUITestCase {
 				DefaultCodeFormatterConstants.NEXT_LINE_SHIFTED);
 		assertIndenterResult();
 	}
-	
+
 	//// a comment
 	//class MyClass : public Base
 	//{
@@ -351,25 +352,124 @@ public class CIndenterTest extends BaseUITestCase {
 	
 	//x =
 	//		0;
-	public void _testWrappedAssignment_277624_1() throws Exception {
+	public void testWrappedAssignment_277624_1() throws Exception {
 		assertIndenterResult();
 	}
 
+	//{
+	//a = 0;
 	//x = 2 +
+	//2 +
 	//2;
-	
-	//x = 2 +
-	//		2;
-	public void _testWrappedAssignment_277624_2() throws Exception {
+
+	//{
+	//	a = 0;
+	//	x = 2 +
+	//			2 +
+	//			2;
+	public void testWrappedAssignment_277624_2() throws Exception {
 		assertIndenterResult();
 	}
 
+	//if (1 > 0) {
+	//double d = a * b /
+	//c;
+	
+	//if (1 > 0) {
+	//	double d = a * b /
+	//			c;
+	public void testWrappedAssignment_277624_3() throws Exception {
+		assertIndenterResult();
+	}
+	
 	//for (int i = 0;
 	//i < 2; i++)
 	
 	//for (int i = 0;
 	//		i < 2; i++)
-	public void _testWrappedFor_277625() throws Exception {
+	public void testWrappedFor_277625_1() throws Exception {
+		assertIndenterResult();
+	}
+
+	//for (int i = 0; i < 2;
+	//i++)
+	
+	//for (int i = 0; i < 2;
+	//		i++)
+	public void testWrappedFor_277625_2() throws Exception {
+		assertIndenterResult();
+	}
+
+	//for (int i = 0;
+	//i < 2;
+	//i++)
+	//{
+	
+	//for (int i = 0;
+	//		i < 2;
+	//		i++)
+	//{
+	public void testWrappedFor_277625_3() throws Exception {
+		assertIndenterResult();
+	}
+
+	//;
+	//for (hash_map<Node*, double>::const_iterator it = container_.begin();
+	//it != container_.end(); ++it) {
+
+	//;
+	//for (hash_map<Node*, double>::const_iterator it = container_.begin();
+	//		it != container_.end(); ++it) {
+	public void testWrappedFor_277625_4() throws Exception {
+		assertIndenterResult();
+	}
+
+	///* comment */
+	//#define MACRO(a, b) \
+	//value
+
+	///* comment */
+	//#define MACRO(a, b) \
+	//		value
+	public void testWrappedDefine() throws Exception {
+		assertIndenterResult();
+	}
+
+	//std::string
+	//	func();
+
+	//std::string
+	//func();
+	public void testFunctionDeclaration_1() throws Exception {
+		assertIndenterResult();
+	}
+
+	//;
+	//std::string
+	//	func();
+
+	//;
+	//std::string
+	//func();
+	public void testFunctionDeclaration_2() throws Exception {
+		assertIndenterResult();
+	}
+
+	//map<int, char*>::iterator
+	//	func();
+
+	//map<int, char*>::iterator
+	//func();
+	public void testFunctionDeclaration_3() throws Exception {
+		assertIndenterResult();
+	}
+
+	//template <class T, class U = A<T> >
+	//	class B {
+
+	//template <class T, class U = A<T> >
+	//class B {
+	public void testTemplateClass() throws Exception {
 		assertIndenterResult();
 	}
 

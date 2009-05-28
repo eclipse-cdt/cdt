@@ -1,11 +1,11 @@
 /*******************************************************************************
- *  Copyright (c) 2000, 2009 IBM Corporation and others.
- *  All rights reserved. This program and the accompanying materials
- *  are made available under the terms of the Eclipse Public License v1.0
- *  which accompanies this distribution, and is available at
- *  http://www.eclipse.org/legal/epl-v10.html
- * 
- *  Contributors:
+ * Copyright (c) 2000, 2009 IBM Corporation and others.
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Sergey Prigogin (Google)
  *     Anton Leherbauer (Wind River Systems)
@@ -67,7 +67,7 @@ public final class CIndenter {
 		final boolean prefIndentBracesForMethods;
 		final boolean prefIndentBracesForTypes;
 		final int prefContinuationIndent;
-		final boolean prefHasGenerics;
+		final boolean prefHasTemplates;
 		final String prefTabChar;
 		
 		private final ICProject fProject;
@@ -115,7 +115,7 @@ public final class CIndenter {
 			prefIndentBracesForArrays= prefIndentBracesForArrays();
 			prefIndentBracesForMethods= prefIndentBracesForMethods();
 			prefIndentBracesForTypes= prefIndentBracesForTypes();
-			prefHasGenerics= hasGenerics();
+			prefHasTemplates= hasTemplates();
 			prefTabChar= getCoreFormatterOption(DefaultCodeFormatterConstants.FORMATTER_TAB_CHAR);
 		}
 		
@@ -197,7 +197,7 @@ public final class CIndenter {
 		}
 
 		private int prefAssignmentIndent() {
-			return prefBlockIndent();
+			return prefContinuationIndent();
 		}
 
 		private int prefSimpleIndent() {
@@ -337,7 +337,7 @@ public final class CIndenter {
 			return 2; // sensible default
 		}
 		
-		private boolean hasGenerics() {
+		private boolean hasTemplates() {
 			return true;
 		}
 	}
@@ -670,6 +670,14 @@ public final class CIndenter {
 	}
 
 	/**
+	 * Returns relative indent of continuation lines.
+	 * @return a number of indentation units.
+	 */
+	public int getContinuationLineIndent() {
+		return fPrefs.prefContinuationIndent;
+	}
+
+	/**
 	 * Returns the reference position regarding to indentation for <code>offset</code>,
 	 * or <code>NOT_FOUND</code>. This method calls
 	 * {@link #findReferencePosition(int, int) findReferencePosition(offset, nextChar)} where
@@ -731,8 +739,8 @@ public final class CIndenter {
 	 */
 	public int findReferencePosition(int offset, int nextToken) {
 		boolean danglingElse= false;
-		boolean unindent= false;
-		boolean indent= false;
+		boolean cancelIndent= false; // If set to true, fIndent is ignored.
+		int extraIndent= 0; // Can be either positive or negative.
 		boolean matchBrace= false;
 		boolean matchParen= false;
 		boolean matchCase= false;
@@ -770,16 +778,18 @@ public final class CIndenter {
 					break;
 					
 				case Symbols.TokenLBRACE: // for opening-brace-on-new-line style
-					if (bracelessBlockStart)
-						unindent= !fPrefs.prefIndentBracesForBlocks;
-					else if (prevToken == Symbols.TokenCOLON && !fPrefs.prefIndentBracesForBlocks)
-						unindent= true;
-					else if ((prevToken == Symbols.TokenEQUAL || prevToken == Symbols.TokenRBRACKET) && !fPrefs.prefIndentBracesForArrays)
-						unindent= true;
-					else if (prevToken == Symbols.TokenRPAREN && fPrefs.prefIndentBracesForMethods)
-						indent= true;
-					else if (prevToken == Symbols.TokenIDENT && fPrefs.prefIndentBracesForTypes)
-						indent= true;
+					if (bracelessBlockStart) {
+						extraIndent= fPrefs.prefIndentBracesForBlocks ? 0 : -1;
+					} else if (prevToken == Symbols.TokenCOLON && !fPrefs.prefIndentBracesForBlocks) {
+						extraIndent= -1;
+					} else if ((prevToken == Symbols.TokenEQUAL || prevToken == Symbols.TokenRBRACKET) &&
+							!fPrefs.prefIndentBracesForArrays) {
+						cancelIndent= true;
+					} else if (prevToken == Symbols.TokenRPAREN && fPrefs.prefIndentBracesForMethods) {
+						extraIndent= 1;
+					} else if (prevToken == Symbols.TokenIDENT && fPrefs.prefIndentBracesForTypes) {
+						extraIndent= 1;
+					}
 					break;
 					
 				case Symbols.TokenRBRACE: // closing braces get unindented
@@ -799,12 +809,15 @@ public final class CIndenter {
 			danglingElse= false;
 		}
 
-		int ref= findReferencePosition(offset, danglingElse, matchBrace, matchParen, matchCase, matchAccessSpecifier);
-		if (unindent)
-			fIndent--;
-		if (indent) {
+		int ref= findReferencePosition(offset, danglingElse, matchBrace, matchParen, matchCase,
+				matchAccessSpecifier);
+		if (cancelIndent) {
+			fIndent = 0;
+		} else if (extraIndent > 0) {
 			fAlign= CHeuristicScanner.NOT_FOUND;
-			fIndent++;
+			fIndent += extraIndent;
+		} else {
+			fIndent += extraIndent;
 		}
 		return ref;
 	}
@@ -1138,6 +1151,7 @@ public final class CIndenter {
 		final int READ_IDENT= 2;
 		int mayBeMethodBody= NOTHING;
 		boolean isTypeBody= false;
+		int startLine = fLine;
 		while (true) {
 			int prevToken= fToken;
 			nextToken();
@@ -1167,11 +1181,23 @@ public final class CIndenter {
 				}
 			}
 
+			if (fToken == Symbols.TokenSEMICOLON && fLine == startLine) {
+				// Skip semicolons on the same line. Otherwise we may never reach beginning of a 'for'
+				// statement.
+				continue;
+			}
+
 			switch (fToken) {
 			// scope introduction through: LPAREN, LBRACE, LBRACKET
 			// search stop on SEMICOLON, RBRACE, COLON, EOF
 			// -> the next token is the start of the statement (i.e. previousPos when backward scanning)
 			case Symbols.TokenLPAREN:
+				if (peekToken() == Symbols.TokenFOR) {
+					nextToken();  // Consume 'for'
+					fIndent = fPrefs.prefContinuationIndent;
+					return fPosition;
+				}
+				//$FALL-THROUGH$
 			case Symbols.TokenLBRACE:
 			case Symbols.TokenLBRACKET:
 			case Symbols.TokenSEMICOLON:
@@ -1215,7 +1241,6 @@ public final class CIndenter {
 				else
 					return pos;
 			case Symbols.TokenRBRACKET:
-			case Symbols.TokenGREATERTHAN:
 				pos= fPreviousPos;
 				if (skipScope())
 					break;
@@ -1352,7 +1377,6 @@ public final class CIndenter {
 			case Symbols.TokenRPAREN:
 			case Symbols.TokenRBRACKET:
 			case Symbols.TokenRBRACE:
-			case Symbols.TokenGREATERTHAN:
 				skipScope();
 				break;
 
@@ -1403,7 +1427,6 @@ public final class CIndenter {
 			case Symbols.TokenRPAREN:
 			case Symbols.TokenRBRACKET:
 			case Symbols.TokenRBRACE:
-			case Symbols.TokenGREATERTHAN:
 				skipScope();
 				break;
 
@@ -1427,6 +1450,7 @@ public final class CIndenter {
 	private int skipToPreviousListItemOrListStart() {
 		int startLine= fLine;
 		int startPosition= fPosition;
+		boolean seenEqual = fToken == Symbols.TokenEQUAL;
 		while (true) {
 			nextToken();
 
@@ -1435,7 +1459,12 @@ public final class CIndenter {
 				try {
 					int lineOffset= fDocument.getLineOffset(startLine);
 					int bound= Math.min(fDocument.getLength(), startPosition + 1);
-					fAlign= fScanner.findNonWhitespaceForwardInAnyPartition(lineOffset, bound);
+					if ((fToken == Symbols.TokenSEMICOLON || fToken == Symbols.TokenRBRACE ||
+							fToken == Symbols.TokenLBRACE) && seenEqual) {
+						fIndent = fPrefs.prefContinuationIndent;
+					} else {
+						fAlign= fScanner.findNonWhitespaceForwardInAnyPartition(lineOffset, bound);
+					}
 				} catch (BadLocationException e) {
 					// ignore and return just the position
 				}
@@ -1447,7 +1476,6 @@ public final class CIndenter {
 			case Symbols.TokenRPAREN:
 			case Symbols.TokenRBRACKET:
 			case Symbols.TokenRBRACE:
-			case Symbols.TokenGREATERTHAN:
 				skipScope();
 				break;
 
@@ -1468,7 +1496,14 @@ public final class CIndenter {
 				}
 				return fPosition;
 
+			case Symbols.TokenEQUAL:
+				seenEqual = true;
+				break;
+
 			case Symbols.TokenEOF:
+				if (seenEqual) {
+					fIndent = fPrefs.prefContinuationIndent;
+				}
 				return 0;
 			}
 		}
@@ -1492,16 +1527,13 @@ public final class CIndenter {
 		case Symbols.TokenRBRACE:
 			return skipScope(Symbols.TokenLBRACE, Symbols.TokenRBRACE);
 		case Symbols.TokenGREATERTHAN:
-			if (!fPrefs.prefHasGenerics)
+			if (!fPrefs.prefHasTemplates)
 				return false;
 			int storedPosition= fPosition;
 			int storedToken= fToken;
 			nextToken();
 			switch (fToken) {
 				case Symbols.TokenIDENT:
-					if (!isGenericStarter(getTokenContent()))
-						break;
-					// fall thru
 					if (skipScope(Symbols.TokenLESSTHAN, Symbols.TokenGREATERTHAN))
 						return true;
 					break;
@@ -1530,36 +1562,6 @@ public final class CIndenter {
 	 */
 	private CharSequence getTokenContent() {
 		return new DocumentCharacterIterator(fDocument, fPosition, fPreviousPos);
-	}
-
-	/**
-	 * Returns <code>true</code> if <code>identifier</code> is probably a
-	 * type variable or type name, <code>false</code> if it is rather not.
-	 * This is a heuristic.
-	 *
-	 * @param identifier the identifier to check
-	 * @return <code>true</code> if <code>identifier</code> is probably a
-	 *         type variable or type name, <code>false</code> if not
-	 */
-	private boolean isGenericStarter(CharSequence identifier) {
-		/* This heuristic allows any identifiers if they start with an upper
-		 * case. This will fail when a comparison is made with constants:
-		 *
-		 * if (MAX > foo)
-		 *
-		 * will try to find the matching '<' which will never come
-		 *
-		 * Also, it will fail on lower case types and type variables
-		 */
-		int length= identifier.length();
-		if (length > 0 && Character.isUpperCase(identifier.charAt(0))) {
-			for (int i= 0; i < length; i++) {
-				if (identifier.charAt(i) == '_')
-					return false;
-			}
-			return true;
-		}
-		return false;
 	}
 
 	/**
@@ -1738,7 +1740,6 @@ public final class CIndenter {
 			case Symbols.TokenRPAREN:
 			case Symbols.TokenRBRACKET:
 			case Symbols.TokenRBRACE:
-			case Symbols.TokenGREATERTHAN:
 				skipScope();
 				break;
 
@@ -1864,6 +1865,14 @@ public final class CIndenter {
 	}
 
 	/**
+	 * Reads the next token in backward direction from the heuristic scanner
+	 * and returns that token without changing the current position.
+	 */
+	private int peekToken() {
+		return fScanner.previousToken(fPosition - 1, CHeuristicScanner.UNBOUND);
+	}
+
+	/**
 	 * Returns <code>true</code> if the current tokens look like a method
 	 * declaration header (i.e. only the return type and method name). The
 	 * heuristic calls <code>nextToken</code> and expects an identifier
@@ -1905,8 +1914,6 @@ public final class CIndenter {
 					return true;
 				}
 				break;
-			case Symbols.TokenGREATERTHAN:
-				return skipScope();
 			case Symbols.TokenCOLON:
 				nextToken();
 				switch (fToken) {

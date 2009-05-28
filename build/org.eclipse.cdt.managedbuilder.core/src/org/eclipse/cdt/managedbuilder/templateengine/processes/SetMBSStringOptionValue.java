@@ -112,9 +112,11 @@ public class SetMBSStringOptionValue extends ProcessRunner {
 	private boolean setOptionForResourceConfig(String id, String value, IResourceConfiguration resourceConfig, IOption[] options, IHoldsOptions optionHolder) throws BuildException {
 		boolean modified = false;
 		String lowerId = id.toLowerCase();
+		int optionType;
 		for (int i = 0; i < options.length; i++) {
 			if (options[i].getId().toLowerCase().matches(lowerId)) {
-				if (options[i].getValueType() == IOption.STRING) {
+				optionType = options[i].getValueType();
+				if ((optionType == IOption.STRING) || (optionType == IOption.ENUMERATED)) {
 					IOption setOption = ManagedBuildManager.setOption(resourceConfig, optionHolder, options[i], value);
 					if (setOption == null) {
 						setOption = options[i];
@@ -129,9 +131,11 @@ public class SetMBSStringOptionValue extends ProcessRunner {
 	private boolean setOptionForConfig(String id, String value, IConfiguration config, IOption[] options, IHoldsOptions optionHolder) throws BuildException {
 		boolean modified = false;
 		String lowerId = id.toLowerCase();
+		int optionType;
 		for (int i = 0; i < options.length; i++) {
 			if (options[i].getId().toLowerCase().matches(lowerId)) {
-				if (options[i].getValueType() == IOption.STRING) {
+				optionType = options[i].getValueType();
+				if ((optionType == IOption.STRING) || (optionType == IOption.ENUMERATED)) {
 					IOption setOption = ManagedBuildManager.setOption(config, optionHolder, options[i], value);
 					if (setOption == null) {
 						setOption = options[i];

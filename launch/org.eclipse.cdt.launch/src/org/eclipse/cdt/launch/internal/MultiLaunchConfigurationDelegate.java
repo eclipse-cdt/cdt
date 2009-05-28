@@ -34,9 +34,7 @@ import org.eclipse.debug.core.model.ILaunchConfigurationDelegate;
 import org.eclipse.debug.core.model.IProcess;
 import org.eclipse.debug.core.model.LaunchConfigurationDelegate;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
-import org.eclipse.debug.ui.DebugUITools;
 import org.eclipse.debug.ui.IDebugUIConstants;
-import org.eclipse.debug.ui.ILaunchGroup;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.ui.PlatformUI;
 
@@ -249,8 +247,8 @@ public class MultiLaunchConfigurationDelegate extends LaunchConfigurationDelegat
 				} else {
 					localMode = mode;
 				}
-				ILaunchGroup launchGroup = DebugUITools.getLaunchGroup(conf, localMode);
-				if (launchGroup == null) {
+
+				if (!conf.supportsMode(localMode)) {
 					PlatformUI.getWorkbench().getDisplay().asyncExec(new Runnable() {
 						public void run() {
 							MessageDialog.openError(PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell(),

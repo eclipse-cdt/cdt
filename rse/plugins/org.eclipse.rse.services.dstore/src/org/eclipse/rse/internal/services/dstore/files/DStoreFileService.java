@@ -55,6 +55,7 @@
  * David McKnight   (IBM)        - [256609] [dstore] need to make sure element is resolved properly before finding it's command descriptors
  * David McKnight   (IBM)        - [270468] [dstore] FileServiceSubSystem.list() returns folders when only FILE_TYPE_FILES is requested
  * David McKnight   (IBM)        - [272335] [dstore] not handling case where upload fails
+ * David McKnight   (IBM)        - [278411] [dstore] upload status needs to be created in standard form when using windows server
  *******************************************************************************/
 
 package org.eclipse.rse.internal.services.dstore.files;
@@ -493,10 +494,13 @@ public class DStoreFileService extends AbstractDStoreService implements IFileSer
 		String remotePath = remoteParent + getSeparator(remoteParent) + remoteFile;
 		
 		DataStore ds = getDataStore();
-		DataElement result = ds.find(uploadLog, DE.A_NAME, remotePath,1);
+		
+		// use standard remote path
+		String stdRemotePath = new String(remotePath.replace('\\', '/'));
+		DataElement result = ds.find(uploadLog, DE.A_NAME, stdRemotePath,1);
 		if (result == null) 
 		{
-			result = ds.createObject(uploadLog, "uploadstatus", remotePath);
+			result = ds.createObject(uploadLog, "uploadstatus", stdRemotePath);
 			result.setAttribute(DE.A_SOURCE, "running");
 			result.setAttribute(DE.A_VALUE, "");
 			

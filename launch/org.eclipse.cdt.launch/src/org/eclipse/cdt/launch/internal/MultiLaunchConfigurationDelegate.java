@@ -370,7 +370,14 @@ public class MultiLaunchConfigurationDelegate extends LaunchConfigurationDelegat
 							el.setName((String) attrs.get(attr));
 							
 							Object actionParam = null;
-							final EPostLaunchAction action = EPostLaunchAction.valueOf((String)attrs.get(getProp(index, ACTION_PROP)));
+							String actionStr = (String)attrs.get(getProp(index, ACTION_PROP));
+
+							EPostLaunchAction action;
+							try {
+								action = EPostLaunchAction.valueOf(actionStr);
+							} catch (Exception e) {
+								action = EPostLaunchAction.NONE;
+							}
 							if (action == EPostLaunchAction.DELAY) {
 								try {
 									actionParam = Integer.parseInt((String)attrs.get(getProp(index, ACTION_PARAM_PROP)));

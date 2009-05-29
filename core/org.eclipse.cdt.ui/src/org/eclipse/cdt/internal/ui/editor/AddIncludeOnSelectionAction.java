@@ -299,6 +299,9 @@ public class AddIncludeOnSelectionAction extends TextEditorAction {
 	 */
 	private void considerForInclusion(IIndexName definition, IIndexBinding binding,
 			IIndex index, Map<String, IncludeCandidate> candidates) throws CoreException {
+		if (definition == null) {
+			return;
+		}
 		IIndexFile file = definition.getFile();
 		// Consider the file for inclusion only if it is not a source file,
 		// or a source file that was already included by some other file. 

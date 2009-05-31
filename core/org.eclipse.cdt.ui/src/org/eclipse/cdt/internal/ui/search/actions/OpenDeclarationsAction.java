@@ -88,6 +88,9 @@ import org.eclipse.cdt.internal.ui.editor.CEditorMessages;
 import org.eclipse.cdt.internal.ui.text.CWordFinder;
 import org.eclipse.cdt.internal.ui.viewsupport.IndexUI;
 
+/**
+ * Navigates to the definition of a name, or to the declaration if invoked on the definition.
+ */
 public class OpenDeclarationsAction extends SelectionParseAction implements ASTRunnable {
 	public static boolean sIsJUnitTest = false;	
 
@@ -185,38 +188,46 @@ public class OpenDeclarationsAction extends SelectionParseAction implements ASTR
 				openInclude(((IASTPreprocessorIncludeStatement) parent));
 				return Status.OK_STATUS;
 			}
-			IBinding binding = sourceName.resolveBinding();
 			NameKind kind = getNameKind(sourceName);
-			if (binding != null && !(binding instanceof IProblemBinding)) {
-				if (kind == NameKind.DEFINITION && binding instanceof IType) {
-					// Don't navigate away from a type definition.
-					// Select the name at the current location instead.
-					navigateToName(sourceName);
-					return Status.OK_STATUS;
+			IBinding b = sourceName.resolveBinding();
+			IBinding[] bindings = new IBinding[] { b };
+			if (b instanceof IProblemBinding) {
+				IBinding[] candidateBindings = ((IProblemBinding) b).getCandidateBindings();
+				if (candidateBindings.length != 0) {
+					bindings = candidateBindings;
 				}
-				IName[] declNames = findDeclNames(ast, kind, binding);
-				// Exclude the current location.
-				for (int i = 0; i < declNames.length; i++) {
-					if (isSameName(declNames[i], sourceName)) {
-						declNames[i] = null;
-					} else if (binding instanceof IParameter) {
-						if (!isInSameFunction(sourceName, declNames[i])) {
+			} else if (kind == NameKind.DEFINITION && b instanceof IType) {
+				// Don't navigate away from a type definition.
+				// Select the name at the current location instead.
+				navigateToName(sourceName);
+				return Status.OK_STATUS;
+			}
+			for (IBinding binding : bindings) {
+				if (binding != null && !(binding instanceof IProblemBinding)) {
+					IName[] declNames = findDeclNames(ast, kind, binding);
+					// Exclude the current location.
+					for (int i = 0; i < declNames.length; i++) {
+						if (isSameName(declNames[i], sourceName)) {
 							declNames[i] = null;
-						}
-					} else if (binding instanceof ICPPTemplateParameter) {
-						if (!isInSameTemplate(sourceName, declNames[i])) {
-							declNames[i] = null;
+						} else if (binding instanceof IParameter) {
+							if (!isInSameFunction(sourceName, declNames[i])) {
+								declNames[i] = null;
+							}
+						} else if (binding instanceof ICPPTemplateParameter) {
+							if (!isInSameTemplate(sourceName, declNames[i])) {
+								declNames[i] = null;
+							}
 						}
 					}
-				}
-				declNames = (IName[]) ArrayUtil.removeNulls(IName.class, declNames);
+					declNames = (IName[]) ArrayUtil.removeNulls(IName.class, declNames);
 
-				if (navigateViaCElements(fWorkingCopy.getCProject(), fIndex, declNames)) {
-					found= true;
-				} else {
-					// Leave old method as fallback for local variables, parameters and 
-					// everything else not covered by ICElementHandle.
-					found = navigateOneLocation(declNames);
+					if (navigateViaCElements(fWorkingCopy.getCProject(), fIndex, declNames)) {
+						found= true;
+					} else {
+						// Leave old method as fallback for local variables, parameters and 
+						// everything else not covered by ICElementHandle.
+						found = navigateOneLocation(declNames);
+					}
 				}
 			}
 			if (!found && !navigationFallBack(ast, sourceName, kind)) {
@@ -372,10 +383,10 @@ public class OpenDeclarationsAction extends SelectionParseAction implements ASTR
 						continue;
 					}
 					IName[] names = findNames(fIndex, ast, kind, binding);
-					// Exclude the current location.
+					// Exclude names of the same kind.
 					for (int i = 0; i < names.length; i++) {
 						if (getNameKind(names[i]) == kind) {
-							names[i] = null;  // Don' navigate to a name of the same kind.
+							names[i] = null;
 						}
 					}
 					names = (IName[]) ArrayUtil.removeNulls(IName.class, names);

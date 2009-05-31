@@ -837,9 +837,10 @@ public class CVisitor extends ASTQueries {
 		} else if (node instanceof IASTIdExpression) {
 			IScope scope = getContainingScope(node);
 			try {
-				IBinding binding = lookup(scope, ((IASTIdExpression)node).getName());
+				IBinding binding = lookup(scope, ((IASTIdExpression) node).getName());
 				if (binding instanceof IType && !(binding instanceof IProblemBinding) ) {
-					return new ProblemBinding(node, IProblemBinding.SEMANTIC_INVALID_TYPE, binding.getNameCharArray());
+					return new ProblemBinding(node, IProblemBinding.SEMANTIC_INVALID_TYPE,
+							binding.getNameCharArray(), new IBinding[] { binding });
 				}
                 return binding; 
             } catch (DOMException e) {
@@ -848,20 +849,21 @@ public class CVisitor extends ASTQueries {
 		} else if (node instanceof ICASTTypedefNameSpecifier) {
 			IScope scope = getContainingScope(node);
 			try {
-				IASTName name= ((ICASTTypedefNameSpecifier)node).getName();
+				IASTName name= ((ICASTTypedefNameSpecifier) node).getName();
 				IBinding binding = lookup(scope, name);
                 if (binding == null)
                 	return new ProblemBinding(node, IProblemBinding.SEMANTIC_NAME_NOT_FOUND, name.toCharArray());
 				if (binding instanceof IType)
 					return binding;
-				return new ProblemBinding(node, IProblemBinding.SEMANTIC_INVALID_TYPE, binding.getNameCharArray());
+				return new ProblemBinding(node, IProblemBinding.SEMANTIC_INVALID_TYPE, binding.getNameCharArray(),
+						new IBinding[] { binding });
             } catch (DOMException e) {
                 return null;
             }
 		} else if (node instanceof ICASTElaboratedTypeSpecifier) {
 			IScope scope = getContainingScope(node);
 			try {
-                return lookup(scope, ((ICASTElaboratedTypeSpecifier)node).getName());
+                return lookup(scope, ((ICASTElaboratedTypeSpecifier) node).getName());
             } catch (DOMException e) {
                 return null;
             }
@@ -885,10 +887,12 @@ public class CVisitor extends ASTQueries {
 			}
 			if (name != null) {
 				IBinding binding = name.resolveBinding();
-				if (binding instanceof IType)
+				if (binding instanceof IType) {
 					return binding;
-                else if (binding != null)
-					return new ProblemBinding(node, IProblemBinding.SEMANTIC_INVALID_TYPE, binding.getNameCharArray());
+				} else if (binding != null) {
+					return new ProblemBinding(node, IProblemBinding.SEMANTIC_INVALID_TYPE,
+							binding.getNameCharArray(), new IBinding[] { binding });
+                }
 				return null;
 			}
 		} else if (node instanceof ICASTFieldDesignator) {

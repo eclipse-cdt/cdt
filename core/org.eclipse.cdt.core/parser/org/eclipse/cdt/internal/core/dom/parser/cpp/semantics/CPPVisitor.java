@@ -631,8 +631,8 @@ public class CPPVisitor extends ASTQueries {
                         ASTInternal.addDeclaration(binding, name);
                         return binding;
                     }
-                } catch (DOMException e1) {
-                	return e1.getProblem();
+                } catch (DOMException e) {
+                	return e.getProblem();
                 }
                 return new ProblemBinding(name, IProblemBinding.SEMANTIC_INVALID_REDECLARATION);
 		    }
@@ -654,7 +654,7 @@ public class CPPVisitor extends ASTQueries {
 			        } else {
 		                IASTNode def = internal.getDefinition();
 		                if (def instanceof IASTDeclarator)
-		                    def = ((IASTDeclarator)def).getName();
+		                    def = ((IASTDeclarator) def).getName();
 		                if (def != name) {
 		                    return new ProblemBinding(name, IProblemBinding.SEMANTIC_INVALID_REDEFINITION);
 		                }

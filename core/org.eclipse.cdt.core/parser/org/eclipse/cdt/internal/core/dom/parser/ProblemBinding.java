@@ -40,16 +40,26 @@ public class ProblemBinding extends PlatformObject implements IProblemBinding, I
     protected final int id;
     protected char[] arg;
     protected IASTNode node;
-    private String message = null;
+    private final String message = null;
+	private final IBinding[] candidateBindings;
     
     public ProblemBinding(IASTName name, int id) {
-    	this(name, id, null);
+    	this(name, id, null, null);
     }
- 
+
+    public ProblemBinding(IASTName name, int id, IBinding[] candidateBindings) {
+    	this(name, id, null, candidateBindings);
+    }
+
     public ProblemBinding(IASTNode node, int id, char[] arg) {
+    	this(node, id, arg, null);
+    }
+
+    public ProblemBinding(IASTNode node, int id, char[] arg, IBinding[] candidateBindings) {
         this.id = id;
         this.arg = arg;
         this.node = node;
+		this.candidateBindings = candidateBindings;
     }
     
 	public EScopeKind getKind() {
@@ -59,7 +69,11 @@ public class ProblemBinding extends PlatformObject implements IProblemBinding, I
     public IASTNode getASTNode() {
         return node;
     }
-    
+
+	public IBinding[] getCandidateBindings() {
+		return candidateBindings != null ? candidateBindings : IBinding.EMPTY_BINDING_ARRAY;
+	}
+
     protected static final String[] errorMessages;
     static {
         errorMessages = new String[IProblemBinding.SEMANTIC_INVALID_TEMPLATE_ARGUMENTS];
@@ -134,6 +148,7 @@ public class ProblemBinding extends PlatformObject implements IProblemBinding, I
         return getASTNode();
     }
 
+    
     @Override
 	public Object clone() {
     	// Don't clone problems

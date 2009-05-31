@@ -66,9 +66,11 @@ import org.eclipse.cdt.internal.ui.editor.ASTProvider;
 import org.eclipse.cdt.internal.ui.search.actions.OpenDeclarationsAction;
 
 /**
- * It is required to test the selection performance independent of the indexer to make sure that the DOM is functioning properly.
+ * It is required to test the selection performance independent of the indexer to make sure that the DOM
+ * is functioning properly.
  * 
- * Indexer bugs can drastically influence the correctness of these tests so the indexer has to be off when performing them.
+ * Indexer bugs can drastically influence the correctness of these tests so the indexer has to be off when
+ * performing them.
  * 
  * @author dsteffle
  */
@@ -101,7 +103,7 @@ public class CPPSelectionTestsNoIndexer extends BaseUITestCase {
 			File indexFile = new File(pathLoc.append(INDEX_FILE_ID + ".index").toOSString()); //$NON-NLS-1$
 			if (indexFile.exists())
 				indexFile.delete();
-        } catch ( CoreException e ) {
+        } catch (CoreException e) {
             /*boo*/
         }
         if (project == null)
@@ -124,17 +126,17 @@ public class CPPSelectionTestsNoIndexer extends BaseUITestCase {
     
     public static Test suite() {
         TestSuite suite= suite(CPPSelectionTestsNoIndexer.class, "_");
-        suite.addTest( new CPPSelectionTestsNoIndexer("cleanupProject") );    //$NON-NLS-1$
+        suite.addTest(new CPPSelectionTestsNoIndexer("cleanupProject"));    //$NON-NLS-1$
         return suite;
     }
     
     public void cleanupProject() throws Exception {
     	closeAllEditors();
-        try{
-            project.delete( true, false, monitor );
-        } catch( CoreException e ){
+        try {
+            project.delete(true, false, monitor);
+        } catch (CoreException e) {
         	try {
-        		project.delete( true, false, monitor );
+        		project.delete(true, false, monitor);
         	}
         	catch (CoreException e1) {}
         } finally {
@@ -151,35 +153,35 @@ public class CPPSelectionTestsNoIndexer extends BaseUITestCase {
     
     @Override
 	protected void tearDown() throws Exception {
-        if( project == null || !project.exists() )
+        if (project == null || !project.exists())
             return;
         
         closeAllEditors();
 
-        IResource [] members = project.members();
+        IResource[] members = project.members();
         for (IResource member : members) {
-            if( member.getName().equals( ".project" ) || member.getName().equals( ".cproject" ) ) //$NON-NLS-1$ //$NON-NLS-2$
+            if (member.getName().equals(".project") || member.getName().equals(".cproject")) //$NON-NLS-1$ //$NON-NLS-2$
                 continue;
             if (member.getName().equals(".settings"))
             	continue;
-            try{
-                member.delete( false, monitor );
-            } catch( Throwable e ){
+            try {
+                member.delete(false, monitor);
+            } catch (Throwable e) {
                 /*boo*/
             }
         }
     }
     
-    protected IFile importFile(String fileName, String contents ) throws Exception{
+    protected IFile importFile(String fileName, String contents) throws Exception{
         //Obtain file handle
         IFile file = project.getProject().getFile(fileName);
         
-        InputStream stream = new ByteArrayInputStream( contents.getBytes() );
+        InputStream stream = new ByteArrayInputStream(contents.getBytes());
         //Create file input stream
-        if( file.exists() )
-            file.setContents( stream, false, false, monitor );
+        if (file.exists())
+            file.setContents(stream, false, false, monitor);
         else
-            file.create( stream, false, monitor );
+            file.create(stream, false, monitor);
         
         fileManager.addFile(file);
         
@@ -199,19 +201,19 @@ public class CPPSelectionTestsNoIndexer extends BaseUITestCase {
         
         file.createLink(location, IResource.ALLOW_MISSING_LOCAL, null);
         
-        InputStream stream = new ByteArrayInputStream( contents.getBytes() );
+        InputStream stream = new ByteArrayInputStream(contents.getBytes());
         //Create file input stream
-        if( file.exists() )
-            file.setContents( stream, false, false, monitor );
+        if (file.exists())
+            file.setContents(stream, false, false, monitor);
         else
-            file.create( stream, false, monitor );
+            file.create(stream, false, monitor);
         
         fileManager.addFile(file);
         
         return file;
     }
     
-    protected IFile importFileInsideLinkedFolder(String fileName, String contents, String folderName ) throws Exception{
+    protected IFile importFileInsideLinkedFolder(String fileName, String contents, String folderName) throws Exception{
     	IFolder linkedFolder = project.getFolder(folderName);
     	IPath folderLocation = new Path(project.getLocation().toOSString() + File.separator + folderName + "_this_is_linked"); //$NON-NLS-1$
     	IFolder actualFolder = project.getFolder(folderName + "_this_is_linked"); //$NON-NLS-1$
@@ -224,12 +226,12 @@ public class CPPSelectionTestsNoIndexer extends BaseUITestCase {
     	
     	IFile file = linkedFolder.getFile(fileName);
     	
-        InputStream stream = new ByteArrayInputStream( contents.getBytes() );
+        InputStream stream = new ByteArrayInputStream(contents.getBytes());
         //Create file input stream
-        if( file.exists() )
-            file.setContents( stream, false, false, monitor );
+        if (file.exists())
+            file.setContents(stream, false, false, monitor);
         else
-            file.create( stream, false, monitor );
+            file.create(stream, false, monitor);
             	
         fileManager.addFile(file);
     	
@@ -263,7 +265,7 @@ public class CPPSelectionTestsNoIndexer extends BaseUITestCase {
             // the action above should highlight the declaration, so now retrieve it and use that selection to get the IASTName selected on the TU
             ISelection sel = ((AbstractTextEditor)part).getSelectionProvider().getSelection();
             
-            final IASTName[] result= {null};
+            final IASTName[] result= { null };
             if (sel instanceof ITextSelection) {
             	final ITextSelection textSel = (ITextSelection)sel;
             	ITranslationUnit tu= CUIPlugin.getDefault().getWorkingCopyManager().getWorkingCopy(editor.getEditorInput());
@@ -280,7 +282,11 @@ public class CPPSelectionTestsNoIndexer extends BaseUITestCase {
         
         return null;
     }
-    	
+
+	private void assertContents(String code, int offset, String expected) {
+		assertEquals(expected, code.substring(offset, offset + expected.length()));
+	}
+
     public void testBug93281() throws Exception {
         StringBuffer buffer = new StringBuffer();
         buffer.append("class Point{                         \n"); //$NON-NLS-1$
@@ -412,11 +418,11 @@ public class CPPSelectionTestsNoIndexer extends BaseUITestCase {
     
 	public void testBug95224() throws Exception{
 	    Writer writer = new StringWriter();
-	    writer.write( "class A{\n"); //$NON-NLS-1$
-	    writer.write( "A();\n"); //$NON-NLS-1$
-	    writer.write( "A(const A&); // open definition on A finds class A\n"); //$NON-NLS-1$
-	    writer.write( "~A(); // open definition on A finds nothing\n"); //$NON-NLS-1$
-	    writer.write( "};\n"); //$NON-NLS-1$
+	    writer.write("class A{\n"); //$NON-NLS-1$
+	    writer.write("A();\n"); //$NON-NLS-1$
+	    writer.write("A(const A&); // open definition on A finds class A\n"); //$NON-NLS-1$
+	    writer.write("~A(); // open definition on A finds nothing\n"); //$NON-NLS-1$
+	    writer.write("};\n"); //$NON-NLS-1$
 		
 		String code = writer.toString();
 		IFile file = importFile("testBug95224.cpp", code); //$NON-NLS-1$
@@ -431,10 +437,10 @@ public class CPPSelectionTestsNoIndexer extends BaseUITestCase {
 	
 	public void testBasicTemplateInstance() throws Exception{
 	    Writer writer = new StringWriter();
-	    writer.write( "namespace N{                               \n"); //$NON-NLS-1$
-	    writer.write( "   template < class T > class AAA { T _t; };\n"); //$NON-NLS-1$
-	    writer.write( "};                                         \n"); //$NON-NLS-1$
-	    writer.write( "N::AAA<int> a;                             \n"); //$NON-NLS-1$
+	    writer.write("namespace N{                               \n"); //$NON-NLS-1$
+	    writer.write("   template < class T > class AAA { T _t; };\n"); //$NON-NLS-1$
+	    writer.write("};                                         \n"); //$NON-NLS-1$
+	    writer.write("N::AAA<int> a;                             \n"); //$NON-NLS-1$
 	    
 		String code = writer.toString();
 		IFile file = importFile("testBasicTemplateInstance.cpp", code); //$NON-NLS-1$
@@ -1047,5 +1053,42 @@ public class CPPSelectionTestsNoIndexer extends BaseUITestCase {
     		assertTrue(name.isDefinition());
     		assertEquals("myFunc", name.toString());
     	}
+    }
+
+	// struct A {
+	//   void method(int p) {}
+	// };
+	//
+	// void test(A* a) {
+	//   a->method();
+    //   a.method(0);
+	// }
+    // void A::method(int a, int b) {}
+    // void B::method(int b) {}
+    public void testUnresolvedMethod_278337() throws Exception {
+        String code= getContentsForTest(1)[0].toString();
+		IFile file = importFile("testBug278337.cpp", code); 
+		IASTNode node= testF3(file, code.indexOf("method();"));
+		assertContents(code, node.getFileLocation().getNodeOffset(), "method(int p)");
+		node= testF3(file, code.indexOf("method(0);"));
+		assertNull(node);
+		node= testF3(file, code.indexOf("method(int a, int b)"));
+		assertContents(code, node.getFileLocation().getNodeOffset(), "method(int p)");
+		node= testF3(file, code.indexOf("method(int b)"));
+		// Should not navigate away since there is no good candidate.
+		assertContents(code, node.getFileLocation().getNodeOffset(), "method(int b)");
+    }
+
+	// class A {
+    //   class B {};
+	// };
+	//
+    // B b;
+    public void testUnresolvedType() throws Exception {
+        String code= getContentsForTest(1)[0].toString();
+		IFile file = importFile("testUndefinedType.cpp", code); 
+		int offset= code.indexOf("B b;");
+		IASTNode node= testF3(file, offset);
+		assertNull(node);
     }
 }

@@ -201,7 +201,8 @@ public class CPPASTFunctionCallExpression extends ASTNode implements
     				if (owner instanceof ICPPClassType) {
     					return (ICPPClassType) owner;
     				}
-    				return new ProblemBinding(this, IProblemBinding.SEMANTIC_BAD_SCOPE, binding.getName().toCharArray());
+    				return new ProblemBinding(this, IProblemBinding.SEMANTIC_BAD_SCOPE,
+    						binding.getName().toCharArray());
     			} else if (binding instanceof IFunction) {
     				t = ((IFunction) binding).getType();
     			} else if (binding instanceof IVariable) {

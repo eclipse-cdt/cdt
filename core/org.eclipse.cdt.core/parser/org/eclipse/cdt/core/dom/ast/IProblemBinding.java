@@ -47,8 +47,19 @@ public interface IProblemBinding extends IBinding, IScope, IType {
 	 * returns the line number for this problem if known
 	 */
 	public int getLineNumber();
-	
-    /*
+
+    /**
+     * Returns bindings that were considered when resolving the node corresponding
+     * to this problem binding, but rejected for some reason.
+     * @return an array of candidate bindings.
+     * 
+	 * This method is experimental.  Clients calling this method should expect
+	 * possible changes.
+     * @since 5.1 experimental
+     */
+	public IBinding[] getCandidateBindings();
+
+	/*
      * Parser Semantic Problems
      * All Semantic problems take a char[] as an argument
      */

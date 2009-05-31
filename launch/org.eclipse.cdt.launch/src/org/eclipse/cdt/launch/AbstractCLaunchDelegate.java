@@ -81,7 +81,7 @@ abstract public class AbstractCLaunchDelegate extends LaunchConfigurationDelegat
 	 */
     public class CLaunch extends Launch {
 
-        private AtomicBoolean fRefreshDone;
+        private final AtomicBoolean fRefreshDone;
         
         public CLaunch(ILaunchConfiguration launchConfiguration, String mode, ISourceLocator locator) {
             super(launchConfiguration, mode, locator);
@@ -229,6 +229,7 @@ abstract public class AbstractCLaunchDelegate extends LaunchConfigurationDelegat
     /**
      * @deprecated Use {@link org.eclipse.cdt.debug.core.CDebugUtils} instead.
      */
+	@Deprecated
 	public static ICProject getCProject(ILaunchConfiguration configuration) throws CoreException {
 	    return CDebugUtils.getCProject(configuration);
 	}
@@ -236,6 +237,7 @@ abstract public class AbstractCLaunchDelegate extends LaunchConfigurationDelegat
     /**
      * @deprecated Use {@link org.eclipse.cdt.debug.core.CDebugUtils} instead.
      */
+	@Deprecated
 	public static String getProjectName(ILaunchConfiguration configuration) throws CoreException {
         return CDebugUtils.getProjectName(configuration);
 	}
@@ -243,6 +245,7 @@ abstract public class AbstractCLaunchDelegate extends LaunchConfigurationDelegat
     /**
      * @deprecated Use {@link org.eclipse.cdt.debug.core.CDebugUtils} instead.
      */
+	@Deprecated
 	public static String getProgramName(ILaunchConfiguration configuration) throws CoreException {
         return CDebugUtils.getProgramName(configuration);
 	}
@@ -250,6 +253,7 @@ abstract public class AbstractCLaunchDelegate extends LaunchConfigurationDelegat
     /**
      * @deprecated Use {@link org.eclipse.cdt.debug.core.CDebugUtils} instead.
      */
+	@Deprecated
 	public static IPath getProgramPath(ILaunchConfiguration configuration) throws CoreException {
         return CDebugUtils.getProgramPath(configuration);
 	}
@@ -744,7 +748,8 @@ abstract public class AbstractCLaunchDelegate extends LaunchConfigurationDelegat
 
 		if (markers.length > 0) {
 			for (int j = 0; j < markers.length; j++) {
-				if ( ((Integer)markers[j].getAttribute(IMarker.SEVERITY)).intValue() == IMarker.SEVERITY_ERROR) {
+				Object severityAttribute = markers[j].getAttribute(IMarker.SEVERITY);
+				if (severityAttribute != null && ((Integer) severityAttribute).intValue() == IMarker.SEVERITY_ERROR) {
 					return true;
 				}
 			}

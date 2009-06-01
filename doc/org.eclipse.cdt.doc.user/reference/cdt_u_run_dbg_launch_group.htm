@@ -11,25 +11,25 @@
 </head>
 <body>
 
-<h1>Group Launch Configuration</h1>
+<h1>Launch Group</h1>
 
-<p>Group Launch Configuration lets you run multiple applications 
-at the same time or in sequential order.</p>
+<p>The user can launch multiple applications at the same time or in sequential order. This is made possible by the launch configuration type: <i>Launch Group</i>.</p>
 
 <h2>Launches tab</h2>
 <p>
-Launches tab lets you add and delete launch configurations involved in launch group.
-It also allows to temporary disable, re-order and edit properties of selected launch
-configurations. 
+
+The <i>Launches</i> tab lets you add and delete launch configurations to the group.
+It also allows you to temporarily disable, re-order and edit properties of the elements in the group.
+
 </p>
 <img src="../images/run_debug_launch_group.png">
 <p></p>
 <dl>
 <table width="580" fgcolor="#DDD" border="1" cellpadding="2" cellspacing="0" >
 <tr ><th>Component</th><th>Description</th></tr>
-<tr><td width="30%"><dt>Name</dt></td><td>Displays the name of the launch configuration and check status (enabled or disabled in the given run).</td></tr>
-<tr><td><dt>Mode</dt></td><td>Displays the mode in which given configuration would run when Group configuration is launched.</td></tr>
-<tr><td><dt>Action</dt></td><td>Post launch action for given configuration.</td></tr>
+<tr><td width="30%"><dt>Name</dt></td><td>Displays the name of the launch configuration and a checkbox for enabling or disabling the configuration.</td></tr>
+<tr><td><dt>Mode</dt></td><td>Displays the mode the configuration will run in when the group is launched.</td></tr>
+<tr><td><dt>Action</dt></td><td>Displays the optional action that will be carried after the configuration is launched.</td></tr>
 <tr><td><dt>Up</dt></td><td>Move selected configuration(s) up</td></tr>
 <tr><td><dt>Down</dt></td><td>Move selected configuration(s) down</td></tr>
 <tr><td><dt>Add...</dt></td><td>Opens a dialog to add a new configuration.</td></tr>
@@ -41,7 +41,7 @@ configurations.
 
 <h2>Common tab</h2>
 
-Common tab lets you select where configuration is stored, see <a href="cdt_u_run_dbg_comm.htm">Common tab reference</a> page for details.
+The <i>Common</i> tab lets you select where the configuration is stored, see <a href="cdt_u_run_dbg_comm.htm">Common tab reference</a> page for details.
 
 <h2>Add and Edit launch configuration Dialog</h2>
 <p>
@@ -55,7 +55,7 @@ Common tab lets you select where configuration is stored, see <a href="cdt_u_run
    1. It dictates the desired mode for the launch configuration being added,
 and <br>
    2. It establishes a 'mode' filter for the launch configurations that are
-exposed to the user (for selection) in the area below the combobox<br> 
+exposed to the user (for selection) in the area below the combobox<br>
 <p/>
 For example, when the 'debug' mode is selected, (1) only launch configurations
 that support being invoked in 'debug' mode appear. Also, (2) when the launch
@@ -63,7 +63,7 @@ group is invoked, that particular child launch configuration will be invoked in
 'debug' mode.
   </td></tr>
 <tr><td><dt>Filter input</dt></td><td>Type in filter input to filter list of configurations by name</td></tr>
-<tr><td><dt>Configurations tree</dt></td><td>List all available launch configuration for given Launch Mode, filtered by filter inout.</td></tr>
+<tr><td><dt>Configurations tree</dt></td><td>Lists all available launch configurations for the selected Launch Mode, filtered by <i>Filter input<i>.</td></tr>
 <tr><td><dt>Use default mode when launching</dt></td>
   <td>
 This checkbox acts as a sort of override to whatever mode is set in the Launch Mode
@@ -84,9 +84,9 @@ selected cannot be launched in the mode dictated by launch group mode.
   </td></tr>
 <tr><td><dt>Post launch action</dt></td><td>
 There are several actions available that control what should be done after each launch:
-<li>Delay - Waits for given amount of second before launching next configuration from the group</li>
+<li>Delay - Waits a specified number of second before launching the next configuration in the group</li>
 <li>Wait until terminated - Waits until current launch is terminated</li>
-<li>None - Proceeds to launch next one immediately</li>
+<li>None - Proceeds to launch next configuration immediately</li>
 </td></tr>
 
 </table>
@@ -109,7 +109,7 @@ There are several actions available that control what should be done after each 
 <p><img border="0" src="../images/ngref.gif" ALT="Related reference" width="143" height="21">
 <br>
 <a href="cdt_o_run_dbg_pages.htm">Run and Debug dialog box</a></p>
-<img src="../images/ng00_04a.gif" ALT="IBM Copyright Statement" > 
+<img src="../images/ng00_04a.gif" ALT="IBM Copyright Statement" >
 
 </body>
 

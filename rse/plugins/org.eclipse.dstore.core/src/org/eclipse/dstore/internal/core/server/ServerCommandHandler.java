@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2002, 2008 IBM Corporation and others.
+ * Copyright (c) 2002, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -14,6 +14,7 @@
  * Contributors:
  *  David McKnight     (IBM)   [224906] [dstore] changes for getting properties and doing exit due to single-process capability
  *  David McKnight   (IBM) - [244388] [dstore] Connection hangs when a miner not installed
+ *  David McKnight   (IBM) - [278341] [dstore] Disconnect on idle causes the client hang
  *******************************************************************************/
 
 package org.eclipse.dstore.internal.core.server;
@@ -59,15 +60,19 @@ public class ServerCommandHandler extends CommandHandler
 			}
 			if (_serverTimedOut)
 			{
-				
+				System.out.println("server timed out");
 				_dataStore.getCommandHandler().finish();
 				_dataStore.getUpdateHandler().finish();
 				_dataStore.finish();
 				System.out.println(ServerReturnCodes.RC_FINISHED);
 				
 				// only exit if there's no service manager
-				if (SystemServiceManager.getInstance().getSystemService() == null)
+				if (SystemServiceManager.getInstance().getSystemService() == null){
 					System.exit(0);
+				}
+				else {
+					_dataStore.getClient().disconnectServerReceiver();
+				}
 			}
 		}
 		
@@ -83,7 +88,6 @@ public class ServerCommandHandler extends CommandHandler
 				// if we do timeout then it's time to shutdown the server
 				return;
 			}
-			System.out.println("server timed out!"); //$NON-NLS-1$
 			_serverTimedOut = true;
 		}
 		

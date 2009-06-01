@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2002, 2008 IBM Corporation and others.
+ * Copyright (c) 2002, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -16,6 +16,7 @@
  * David McKnight   (IBM)        - [225902] [dstore] use C_NOTIFICATION command to wake up the server
  * David McKnight   (IBM)        - [229947] [dstore] interruption to Thread.sleep()  should not stop waitForUpdate()
  * David McKnight   (IBM)        - [231126] [dstore] status monitor needs to reset WaitThreshold on nudge
+ * David McKnight   (IBM)        - [278341] [dstore] Disconnect on idle causes the client hang
  *******************************************************************************/
 
 package org.eclipse.rse.connectorservice.dstore.util;
@@ -346,7 +347,7 @@ public class StatusMonitor implements IDomainListener, ICommunicationsListener
                 	nudges++;
                 	WaitThreshold = initialWaitThreshold;
 				    }
-                    else if (_networkDown)
+                    else if (_networkDown ||  !_dataStore.isConnected())
                     {
                         dispose();
     					throw new InterruptedException();

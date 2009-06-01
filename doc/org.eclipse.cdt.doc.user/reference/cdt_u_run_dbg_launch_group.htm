@@ -13,9 +13,15 @@
 
 <h1>Group Launch Configuration</h1>
 
-<p>Group Launch Configuration let's you run multiple applications 
+<p>Group Launch Configuration lets you run multiple applications 
 at the same time or in sequential order.</p>
 
+<h2>Launches tab</h2>
+<p>
+Launches tab lets you add and delete launch configurations involved in launch group.
+It also allows to temporary disable, re-order and edit properties of selected launch
+configurations. 
+</p>
 <img src="../images/run_debug_launch_group.png">
 <p></p>
 <dl>
@@ -32,6 +38,66 @@ at the same time or in sequential order.</p>
 
 </table>
 </dl>
+
+<h2>Common tab</h2>
+
+Common tab lets you select where configuration is stored, see <a href="cdt_u_run_dbg_comm.htm">Common tab reference</a> page for details.
+
+<h2>Add and Edit launch configuration Dialog</h2>
+<p>
+<img src="../images/run_debug_launch_group_edit.png">
+</p>
+<dl>
+<table width="580" fgcolor="#DDD" border="1" cellpadding="2" cellspacing="0" >
+<tr ><th>Component</th><th>Description</th></tr>
+<tr><td width="30%"><dt>Launch Mode</dt></td>
+  <td>The Launch Mode combobox at the top of the dialog serves a dual purpose.<br>
+   1. It dictates the desired mode for the launch configuration being added,
+and <br>
+   2. It establishes a 'mode' filter for the launch configurations that are
+exposed to the user (for selection) in the area below the combobox<br> 
+<p/>
+For example, when the 'debug' mode is selected, (1) only launch configurations
+that support being invoked in 'debug' mode appear. Also, (2) when the launch
+group is invoked, that particular child launch configuration will be invoked in
+'debug' mode.
+  </td></tr>
+<tr><td><dt>Filter input</dt></td><td>Type in filter input to filter list of configurations by name</td></tr>
+<tr><td><dt>Configurations tree</dt></td><td>List all available launch configuration for given Launch Mode, filtered by filter inout.</td></tr>
+<tr><td><dt>Use default mode when launching</dt></td>
+  <td>
+This checkbox acts as a sort of override to whatever mode is set in the Launch Mode
+combobox. Checking this option indicates that the child launch configuration
+should be launched in the mode used to initiate the launch group launch. This
+needs some clarification. First, realize that a launch configuration can be
+invoked from either the 'Debug' or the 'Run' actions (and some comparable
+'profile' action in certain Eclipse configurations/products). That means, the
+launch group itself can be launched either in debug or run mode. When you check
+the "Use default..." checkbox, you're saying: "launch this particular child
+configuration in the mode that the parent (launch group) is launched with." If
+you do not have that checkbox checked, then the child configurations will be
+invoked in whatever mode each individual child is configured with.
+<p/>
+Note that "Use default..." control can allow you to create a launch group
+that will not be successful. For example when one or more launch configurations
+selected cannot be launched in the mode dictated by launch group mode.
+  </td></tr>
+<tr><td><dt>Post launch action</dt></td><td>
+There are several actions available that control what should be done after each launch:
+<li>Delay - Waits for given amount of second before launching next configuration from the group</li>
+<li>Wait until terminated - Waits until current launch is terminated</li>
+<li>None - Proceeds to launch next one immediately</li>
+</td></tr>
+
+</table>
+</dl>
+
+
+<p/>
+
+
+
+
 
 <p><img border="0" src="../images/ngconcepts.gif" ALT="Related concepts" width="143" height="21">
 <br>

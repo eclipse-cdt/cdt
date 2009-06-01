@@ -612,7 +612,7 @@
          </action>
          <action
                label="%SignalPropertiesAction.label"
-               style="pulldown"
+               style="push"
                helpContextId="signal_properties_action_context"
                class="org.eclipse.cdt.debug.internal.ui.actions.SignalPropertiesActionDelegate"
                tooltip="%SignalPropertiesAction.tooltip"

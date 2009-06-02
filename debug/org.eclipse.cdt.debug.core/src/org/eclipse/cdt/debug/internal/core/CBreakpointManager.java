@@ -1257,7 +1257,9 @@ public class CBreakpointManager implements IBreakpointsListener, IBreakpointMana
 					return ((CSourceLookupDirector)sl).contains( project );
 			}
 		}
-		return false;
+		// Allow unclassified breakpoints i.e. those which aren't project scoped,
+		// or not resource related (e.g. watchpoints)
+		return true;
 	}
 
 	public boolean supportsBreakpoint( ICBreakpoint breakpoint ) {

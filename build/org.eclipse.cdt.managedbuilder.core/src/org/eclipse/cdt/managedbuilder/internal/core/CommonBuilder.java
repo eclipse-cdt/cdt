@@ -13,6 +13,7 @@ package org.eclipse.cdt.managedbuilder.internal.core;
 
 import java.io.IOException;
 import java.io.OutputStream;
+import java.net.URI;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -1011,7 +1012,7 @@ public class CommonBuilder extends ACBuilder {
 				
 				// Hook up an error parser manager
 				String[] errorParsers = builder.getErrorParsers(); 
-				ErrorParserManager epm = new ErrorParserManager(currentProject, des.getDefaultBuildDirLocation(), this, errorParsers);
+				ErrorParserManager epm = new ErrorParserManager(currentProject, des.getDefaultBuildDirLocationURI(), this, errorParsers);
 				epm.setOutputStream(consoleOutStream);
 				// This variable is necessary to ensure that the EPM stream stay open
 				// until we explicitly close it. See bug#123302.
@@ -1227,7 +1228,7 @@ public class CommonBuilder extends ACBuilder {
 			
 			// Hook up an error parser manager
 			String[] errorParsers = cfg.getErrorParserList(); 
-			ErrorParserManager epm = new ErrorParserManager(currentProject, des.getDefaultBuildDirLocation(), this, errorParsers);
+			ErrorParserManager epm = new ErrorParserManager(currentProject, des.getDefaultBuildDirLocationURI(), this, errorParsers);
 			epm.setOutputStream(consoleOutStream);
 			// This variable is necessary to ensure that the EPM stream stay open
 			// until we explicitly close it. See bug#123302.
@@ -1928,6 +1929,7 @@ public class CommonBuilder extends ACBuilder {
 				removeAllMarkers(currProject);
 
 				IPath workingDirectory = ManagedBuildManager.getBuildLocation(cfg, builder);
+				URI workingDirectoryURI = ManagedBuildManager.getBuildLocationURI(cfg, builder);				
 
 				String[] targets = getTargets(kind, builder);
 				if (targets.length != 0 && targets[targets.length - 1].equals(builder.getCleanBuildTarget())) //$NON-NLS-1$
@@ -1957,7 +1959,7 @@ public class CommonBuilder extends ACBuilder {
 					last = new Integer(100);
 				}
 				StreamMonitor streamMon = new StreamMonitor(new SubProgressMonitor(monitor, 100), cos, last.intValue());
-				ErrorParserManager epm = new ErrorParserManager(currProject, workingDirectory, this, builder.getErrorParsers());
+				ErrorParserManager epm = new ErrorParserManager(currProject, workingDirectoryURI, this, builder.getErrorParsers());
 				epm.setOutputStream(streamMon);
 				OutputStream stdout = epm.getOutputStream();
 				OutputStream stderr = epm.getOutputStream();

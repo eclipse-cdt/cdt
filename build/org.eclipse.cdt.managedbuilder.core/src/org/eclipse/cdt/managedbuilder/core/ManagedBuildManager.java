@@ -16,6 +16,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.URI;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -126,6 +127,7 @@ import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.PluginVersionIdentifier;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.SubProgressMonitor;
+import org.eclipse.core.runtime.URIUtil;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.swt.widgets.Shell;
@@ -4103,7 +4105,34 @@ public class ManagedBuildManager extends AbstractCExtension {
 		}
 		return buildDirectory;
 	}
-	
+
+	/**
+	 * Return the Build Location URI or null if one couldn't be found
+	 * @param cfg
+	 * @param builder
+	 * @return build location URI or null if one couldn't be found
+	 * @since 6.0
+	 */
+	public static URI getBuildLocationURI(IConfiguration cfg, IBuilder builder) {
+		if(cfg.getOwner() == null)
+			return null;
+
+		IProject project = cfg.getOwner().getProject();
+		IPath buildDirectory = builder.getBuildLocation();
+		if (buildDirectory != null && !buildDirectory.isEmpty()) {
+			IResource res = project.getParent().findMember(buildDirectory);
+			if (res instanceof IContainer && res.exists()) {
+				return res.getLocationURI();
+			}
+		} else {
+			URI uri = project.getLocationURI();
+			if (buildDirectory != null && builder.isManagedBuildOn())
+				return URIUtil.append(uri, cfg.getName());
+			return uri;
+		}
+		return org.eclipse.core.filesystem.URIUtil.toURI(buildDirectory);
+	}
+
 	private static IPath getPathForResource(IResource resource) {
 		return new Path(resource.getLocationURI().getPath());
 	}

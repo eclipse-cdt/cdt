@@ -12,6 +12,7 @@ package org.eclipse.cdt.managedbuilder.internal.core;
 
 import java.io.IOException;
 import java.io.OutputStream;
+import java.net.URI;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
@@ -64,6 +65,7 @@ import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.OperationCanceledException;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.SubProgressMonitor;
+import org.eclipse.core.runtime.URIUtil;
 
 /**
  * This is the incremental builder associated with a managed build project. It dynamically 
@@ -874,6 +876,8 @@ public class GeneratedMakefileBuilder extends ACBuilder {
 		try {
 			// Figure out the working directory for the build and make sure there is a makefile there 
 			IPath workingDirectory = getWorkingDirectory().append(buildDir);
+			final URI workingDirectoryURI = URIUtil.append(getProject().getLocationURI(), buildDir.toOSString());
+
 			IWorkspace workspace = currentProject.getWorkspace();
 			if (workspace == null) {
 				return;
@@ -964,7 +968,7 @@ public class GeneratedMakefileBuilder extends ACBuilder {
 			
 				// Hook up an error parser manager
 				String[] errorParsers = info.getDefaultConfiguration().getErrorParserList(); 
-				ErrorParserManager epm = new ErrorParserManager(getProject(), workingDirectory, this, errorParsers);
+				ErrorParserManager epm = new ErrorParserManager(getProject(), workingDirectoryURI, this, errorParsers);
 				epm.setOutputStream(consoleOutStream);
 				// This variable is necessary to ensure that the EPM stream stay open
 				// until we explicitly close it. See bug#123302.
@@ -1262,7 +1266,7 @@ public class GeneratedMakefileBuilder extends ACBuilder {
 				
 				// Hook up an error parser manager
 				String[] errorParsers = cfg.getErrorParserList(); 
-				ErrorParserManager epm = new ErrorParserManager(getProject(), des.getDefaultBuildDirLocation(), this, errorParsers);
+				ErrorParserManager epm = new ErrorParserManager(getProject(), des.getDefaultBuildDirLocationURI(), this, errorParsers);
 				epm.setOutputStream(consoleOutStream);
 				// This variable is necessary to ensure that the EPM stream stay open
 				// until we explicitly close it. See bug#123302.
@@ -1455,7 +1459,7 @@ public class GeneratedMakefileBuilder extends ACBuilder {
 			
 			// Hook up an error parser manager
 			String[] errorParsers = cfg.getErrorParserList(); 
-			ErrorParserManager epm = new ErrorParserManager(currentProject, des.getDefaultBuildDirLocation(), this, errorParsers);
+			ErrorParserManager epm = new ErrorParserManager(currentProject, des.getDefaultBuildDirLocationURI(), this, errorParsers);
 			epm.setOutputStream(consoleOutStream);
 			// This variable is necessary to ensure that the EPM stream stay open
 			// until we explicitly close it. See bug#123302.

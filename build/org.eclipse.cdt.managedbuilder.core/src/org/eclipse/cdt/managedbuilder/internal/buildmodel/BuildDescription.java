@@ -1013,7 +1013,12 @@ public class BuildDescription implements IBuildDescription {
 		IPath projLocation = getProjectLocation();
 		return projLocation.append(getTopBuildDirFullPath().removeFirstSegments(1));
 	}
-	
+
+	private URI getTopBuildDirLocationURI(){
+		return org.eclipse.core.runtime.URIUtil.makeAbsolute(URIUtil.toURI(getTopBuildDirFullPath().removeFirstSegments(1)), 
+															fProject.getLocationURI());
+	}
+
 	private IPath getProjectLocation() {
 		return new Path(fProject.getLocationURI().getPath());
 	}
@@ -2223,6 +2228,10 @@ public class BuildDescription implements IBuildDescription {
 	 */
 	public IPath getDefaultBuildDirLocation() {
 		return getTopBuildDirLocation();
+	}
+
+	public URI getDefaultBuildDirLocationURI() {
+		return getTopBuildDirLocationURI();
 	}
 
 	public IPath getDefaultBuildDirFullPath() {

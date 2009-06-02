@@ -10,6 +10,8 @@
  *******************************************************************************/
 package org.eclipse.cdt.managedbuilder.buildmodel;
 
+import java.net.URI;
+
 import org.eclipse.cdt.managedbuilder.core.IConfiguration;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IPath;
@@ -77,10 +79,20 @@ public interface IBuildDescription {
 	
 	/**
 	 * Returns the default build directory location
-	 * 
 	 * @return IPath
 	 */
 	IPath getDefaultBuildDirLocation();
 
+	/**
+	 * Returns the default build directory location URI
+	 * @return URI build dir location or null if one couldn't be found
+	 * @since 6.0
+	 */
+	URI getDefaultBuildDirLocationURI();
+
+	/**
+	 * The Workspace FullPath of the build directory
+	 * @return
+	 */
 	IPath getDefaultBuildDirFullPath();
 }

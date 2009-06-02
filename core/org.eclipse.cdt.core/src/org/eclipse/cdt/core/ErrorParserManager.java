@@ -15,6 +15,8 @@ package org.eclipse.cdt.core;
 
 import java.io.IOException;
 import java.io.OutputStream;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -32,6 +34,7 @@ import org.eclipse.core.resources.IResourceProxyVisitor;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
+import org.eclipse.core.runtime.URIUtil;
 
 /**
  * The purpose of ErrorParserManager is to delegate the work of error parsing 
@@ -53,8 +56,8 @@ public class ErrorParserManager extends OutputStream {
 	private Map<String, IErrorParser[]> fErrorParsers;
 	private ArrayList<ProblemMarkerInfo> fErrors;
 
-	private Vector<IPath> fDirectoryStack;
-	private final IPath fBaseDirectory;
+	private Vector<URI> fDirectoryStack;
+	private final URI fBaseDirectoryURI;
 
 	private String previousLine;
 	private OutputStream outputStream;
@@ -65,7 +68,7 @@ public class ErrorParserManager extends OutputStream {
 	private boolean hasErrors = false;
 
 	private String cachedFileName = null;
-	private IPath cachedWorkingDirectory = null;
+	private URI cachedWorkingDirectory = null;
 	private IFile cachedFile = null;
 
 	private static boolean isCygwin = true;
@@ -97,25 +100,44 @@ public class ErrorParserManager extends OutputStream {
 	 * @param parsersIDs - array of error parsers' IDs.
 	 */
 	public ErrorParserManager(IProject project, IMarkerGenerator markerGenerator, String[] parsersIDs) {
-		this(project, project.getLocation(), markerGenerator, parsersIDs);
+		this(project, project.getLocationURI(), markerGenerator, parsersIDs);
 	}
 
 	/**
 	 * Constructor.
 	 * 
 	 * @param project - project being built.
-	 * @param workingDirectory - working directory of where the build is performed. 
+	 * @param workingDirectory - IPath location of the working directory of where the build is performed. 
 	 * @param markerGenerator - marker generator able to create markers.
 	 * @param parsersIDs - array of error parsers' IDs.
+	 * @deprecated use {@link #ErrorParserManager(IProject, URI, IMarkerGenerator, String[])} instead
 	 */
+	@Deprecated
 	public ErrorParserManager(IProject project, IPath workingDirectory, IMarkerGenerator markerGenerator, String[] parsersIDs) {
+		this(project, (workingDirectory == null || workingDirectory.isEmpty()) ? null : org.eclipse.core.filesystem.URIUtil.toURI(workingDirectory), 
+				markerGenerator, parsersIDs);
+	}
+
+	/**
+	 * URI based constructor.
+	 * 
+	 * @param project - project being built.
+	 * @param baseDirectoryURI - absolute location URI of working directory of where the build is performed. 
+	 * @param markerGenerator - marker generator able to create markers.
+	 * @param parsersIDs - array of error parsers' IDs.
+	 * @since 5.1
+	 */
+	public ErrorParserManager(IProject project, URI baseDirectoryURI, IMarkerGenerator markerGenerator, String[] parsersIDs) {
 		fProject = project;
 		fMarkerGenerator = markerGenerator;
-		fDirectoryStack = new Vector<IPath>();
+		fDirectoryStack = new Vector<URI>();
 		fErrors = new ArrayList<ProblemMarkerInfo>();
 		enableErrorParsers(parsersIDs);
 
-		fBaseDirectory = (workingDirectory == null || workingDirectory.isEmpty()) ? fProject.getLocation() : workingDirectory;
+		if (baseDirectoryURI != null)
+			fBaseDirectoryURI = baseDirectoryURI;
+		else
+			fBaseDirectoryURI = project.getLocationURI();
 	}
 
 	private void enableErrorParsers(String[] parsersIDs) {
@@ -137,47 +159,94 @@ public class ErrorParserManager extends OutputStream {
 	}
 
 	/**
-	 * @return current working directory where build is being performed.
+	 * @return current working directory location where build is being performed.
+	 * @deprecated use {@link #getWorkingDirectoryURI()} instead
 	 */
+	@Deprecated
 	public IPath getWorkingDirectory() {
-		if (fDirectoryStack.size() != 0) {
+		return org.eclipse.core.filesystem.URIUtil.toPath(getWorkingDirectoryURI());
+	}
+
+	/**
+	 * Return the current URI location where the build is being performed
+	 * @since 5.1
+	 */
+	public URI getWorkingDirectoryURI() {
+		if (!fDirectoryStack.isEmpty())
 			return fDirectoryStack.lastElement();
-		}
-		// Fall back to the Project Location
-		return fBaseDirectory;
+
+		// Fall back to the Project Location / Build directory
+		return fBaseDirectoryURI;
 	}
 
 	/**
 	 * {@link #pushDirectory} and {@link #popDirectory} are used to change working directory
 	 * from where file name is searched (see {@link #findFileInWorkspace}).
-	 * The intention is to handle make output of commands "cd dir" and "cd ..".
+	 * The intention is to handle make output of commands "pushd dir" and "popd".
 	 * 
-	 * @param dir - another directory level to keep in stack.
+	 * @param dir - another directory level to keep in stack -- corresponding to 'pushd'.
 	 */
 	public void pushDirectory(IPath dir) {
+		if (dir != null) {
+			URI uri;
+			URI workingDirectoryURI = getWorkingDirectoryURI();
+			if (!dir.isAbsolute())
+				uri = URIUtil.append(workingDirectoryURI, dir.toString());
+			else {
+				uri = toURI(dir);
+				if (uri == null) // Shouldn't happen; error logged
+					return;
+			}
+			pushDirectoryURI(uri);
+		}
+	}
+
+	/**
+	 * {@link #pushDirectoryURI} and {@link #popDirectoryURI} are used to change working directory
+	 * from where file name is searched (see {@link #findFileInWorkspace}).
+	 * The intention is to handle make output of commands "pushd dir" and "popd".
+	 * 
+	 * @param dir - another directory level to keep in stack -- corresponding to 'pushd'.
+	 * @since 5.1
+	 */
+	public void pushDirectoryURI(URI dir) {
 		if (dir != null) {
 			if (dir.isAbsolute())
 				fDirectoryStack.addElement(dir);
 			else
-				fDirectoryStack.addElement(getWorkingDirectory().append(dir));
+				fDirectoryStack.addElement(URIUtil.makeAbsolute(dir, getWorkingDirectoryURI()));
 		}
 	}
 
 	/**
 	 * {@link #pushDirectory} and {@link #popDirectory} are used to change working directory
 	 * from where file name is searched (see {@link #findFileInWorkspace}).
-	 * The intention is to handle make output of commands "cd dir" and "cd ..".
+	 * The intention is to handle make output of commands "pushd" and "popd".
 	 * 
-	 * @return previous build directory corresponding "cd .." command.
+	 * @return previous build directory location corresponding 'popd' command.
+	 * @deprecated use {@link #popDirectoryURI()} instead
 	 */
+	@Deprecated
 	public IPath popDirectory() {
+		return org.eclipse.core.filesystem.URIUtil.toPath(popDirectoryURI());
+	}
+
+	/**
+	 * {@link #pushDirectoryURI(URI)} and {@link #popDirectoryURI()} are used to change working directory
+	 * from where file name is searched (see {@link #findFileInWorkspace(IPath)}).
+	 * The intention is to handle make output of commands "pushd" and "popd".
+	 * 
+	 * @return previous build directory location corresponding 'popd' command.
+	 * @since 5.1
+	 */
+	public URI popDirectoryURI() {
 		int i = fDirectoryStack.size();
 		if (i != 0) {
-			IPath dir = fDirectoryStack.lastElement();
+			URI dir = fDirectoryStack.lastElement();
 			fDirectoryStack.removeElementAt(i - 1);
 			return dir;
 		}
-		return new Path(""); //$NON-NLS-1$
+		return fBaseDirectoryURI;
 	}
 
 	/**
@@ -263,7 +332,8 @@ public class ErrorParserManager extends OutputStream {
 	 * @return - file in the workspace or {@code null}.
 	 */
 	public IFile findFileName(String fileName) {
-		if (fileName.equals(cachedFileName) && getWorkingDirectory().equals(cachedWorkingDirectory))
+		if (fileName.equals(cachedFileName) && cachedWorkingDirectory != null && 
+				org.eclipse.core.filesystem.URIUtil.equals(getWorkingDirectoryURI(), cachedWorkingDirectory))
 			return cachedFile;
 
 		IPath path = new Path(fileName);
@@ -287,7 +357,7 @@ public class ErrorParserManager extends OutputStream {
 		}
 
 		cachedFileName = fileName;
-		cachedWorkingDirectory = getWorkingDirectory();
+		cachedWorkingDirectory = getWorkingDirectoryURI();
 		cachedFile = file;
 		return file;
 	}
@@ -299,10 +369,29 @@ public class ErrorParserManager extends OutputStream {
 	 * @return - file in the workspace or {@code null} if such a file doesn't exist
 	 */
 	protected IFile findFileInWorkspace(IPath path) {
-		if (!path.isAbsolute()) {
-			path = getWorkingDirectory().append(path);
+		URI uri;
+		if (!path.isAbsolute())
+			uri = URIUtil.append(getWorkingDirectoryURI(), path.toString());
+		else {
+			uri = toURI(path);
+			if (uri == null) // Shouldn't happen; error logged
+				return null;
 		}
-		IFile f = ResourceLookup.selectFileForLocation(path, fProject);
+		return findFileInWorkspace(uri);
+	}
+
+	/**
+	 * Find exact match in the workspace. If path is not absolute search is done in the current working directory.
+	 * 
+	 * @param uri - absolute or relative URI to resolve.
+	 * @return - file in the workspace or {@code null} if such a file doesn't exist
+	 * @since 5.1
+	 */
+	protected IFile findFileInWorkspace(URI uri) {
+		if (!uri.isAbsolute())
+			uri = URIUtil.makeAbsolute(uri, getWorkingDirectoryURI());
+
+		IFile f = ResourceLookup.selectFileForLocationURI(uri, fProject);
 		if (f != null && f.isAccessible())
 			return f;
 		return null;
@@ -515,6 +604,37 @@ public class ErrorParserManager extends OutputStream {
 			fErrors.clear();
 		}
 		return reset;
+	}
+
+	/**
+     * Converts a location {@link IPath} to an {@link URI}. Contrary to
+     * {@link URIUtil#toURI(IPath)} this method does not assume that the path belongs
+     * to local file system.
+     *
+     * The returned URI uses the scheme and authority of the current working directory
+     * as returned by {@link #getWorkingDirectoryURI()}
+     *
+	 * @param path - the path to convert to URI.
+	 * @return URI
+	 * @since 5.1
+	 */
+	private URI toURI(IPath path) {
+		try {
+			URI baseURI = getWorkingDirectoryURI();
+			String uriString = path.toString();
+
+			// On Windows "C:/folder/" -> "/C:/folder/"
+			if (path.isAbsolute() && uriString.charAt(0) != IPath.SEPARATOR)
+			    uriString = IPath.SEPARATOR + uriString;
+
+			return new URI(baseURI.getScheme(), baseURI.getUserInfo(),
+					       baseURI.getHost(), baseURI.getPort(),
+					       uriString, null, null);
+		} catch (URISyntaxException e) {
+			String message = "Problem converting path to URI [" + path.toString() + "]";  //$NON-NLS-1$//$NON-NLS-2$
+			CCorePlugin.log(message, e);
+		}
+		return null;
 	}
 
 	/**

@@ -507,7 +507,7 @@ public class DefaultCodeFormatterConstants {
 	public static final String FORMATTER_CONTINUATION_INDENTATION_FOR_INITIALIZER_LIST = CCorePlugin.PLUGIN_ID + ".formatter.continuation_indentation_for_array_initializer"; //$NON-NLS-1$
 	/**
 	 * <pre>
-	 * FORMATTER / Option to indent body declarations compare to its enclosing type header
+	 * FORMATTER / Option to indent 'public:', 'protected:', 'private:' access specifiers relative to class declaration.
 	 *     - option id:         "org.eclipse.cdt.core.formatter.indent_access_specifier_compare_to_type_header"
 	 *     - possible values:   { TRUE, FALSE }
 	 *     - default:           FALSE
@@ -515,7 +515,7 @@ public class DefaultCodeFormatterConstants {
 	 * @see #TRUE
 	 * @see #FALSE
 	 */
-  public static final String FORMATTER_INDENT_ACCESS_SPECIFIER_COMPARE_TO_TYPE_HEADER = CCorePlugin.PLUGIN_ID + ".formatter.indent_access_specifier_compare_to_type_header";  //$NON-NLS-1$
+	public static final String FORMATTER_INDENT_ACCESS_SPECIFIER_COMPARE_TO_TYPE_HEADER = CCorePlugin.PLUGIN_ID + ".formatter.indent_access_specifier_compare_to_type_header";  //$NON-NLS-1$
 	/**
 	 * <pre>
 	 * FORMATTER / Option to indent body declarations compare to access specifiers (visibility labels)

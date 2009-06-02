@@ -12,6 +12,7 @@
 package org.eclipse.cdt.core.internal.errorparsers.tests;
 
 import java.io.ByteArrayInputStream;
+import java.net.URI;
 import java.util.ArrayList;
 
 import junit.framework.Assert;
@@ -27,6 +28,7 @@ import org.eclipse.cdt.core.errorparsers.AbstractErrorParser;
 import org.eclipse.cdt.core.errorparsers.ErrorPattern;
 import org.eclipse.cdt.core.testplugin.CTestPlugin;
 import org.eclipse.core.internal.registry.ExtensionRegistry;
+import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.ContributorFactoryOSGi;
@@ -40,11 +42,13 @@ import org.eclipse.core.runtime.Platform;
  * properly locate and resolve filenames found in build output in case of EFS files/folders.
  */
 public class ErrorParserEfsFileMatchingTest extends TestCase {
+	private static final String MAKE_ERRORPARSER_ID = "org.eclipse.cdt.core.MakeErrorParser";
+	private String mockErrorParserId = null;
+
 	private final static String testName = "FindMatchingFilesEfsTest";
 
 	// Default project gets created once then used by all test cases.
 	private IProject fProject = null;
-	private String mockErrorParserId = null;
 	private ArrayList<ProblemMarkerInfo> errorList;
 
 	private final IMarkerGenerator markerGenerator = new IMarkerGenerator() {
@@ -142,13 +146,31 @@ public class ErrorParserEfsFileMatchingTest extends TestCase {
 	 *
 	 * @param project - for which project to parse output.
 	 * @param buildDir - location of build for {@link ErrorParserManager}.
+	 * @param errorParsers - error parsers used.
 	 * @param line - one line of output.
 	 * @throws Exception
 	 */
-	private void parseOutput(IProject project, IPath buildDir, String line) throws Exception {
-		ErrorParserManager epManager = new ErrorParserManager(project, buildDir, markerGenerator,
-			new String[] { mockErrorParserId });
+	private void parseOutput(IProject project, URI buildDirURI, String[] errorParsers, String line) throws Exception {
+		ErrorParserManager epManager = new ErrorParserManager(project, buildDirURI, markerGenerator, errorParsers);
+		line = line + '\n';
+		epManager.write(line.getBytes(), 0, line.length());
+		epManager.close();
+		epManager.reportProblems();
+	}
 
+	/**
+	 * Convenience method to let {@link ErrorParserManager} parse one line of output.
+	 * This method goes through the whole working cycle every time creating
+	 * new {@link ErrorParserManager}.
+	 *
+	 * @param project - for which project to parse output.
+	 * @param buildDir - location of build for {@link ErrorParserManager}.
+	 * @param errorParsers - error parsers used.
+	 * @param line - one line of output.
+	 * @throws Exception
+	 */
+	private void parseOutput(IProject project, IPath buildDir, String[] errorParsers, String line) throws Exception {
+		ErrorParserManager epManager = new ErrorParserManager(project, buildDir, markerGenerator, errorParsers);
 		line = line + '\n';
 		epManager.write(line.getBytes(), 0, line.length());
 		epManager.close();
@@ -159,23 +181,23 @@ public class ErrorParserEfsFileMatchingTest extends TestCase {
 	 * Convenience method to parse one line of output.
 	 */
 	private void parseOutput(IProject project, String buildDir, String line) throws Exception {
-		parseOutput(project, new Path(buildDir), line);
+		parseOutput(project, new Path(buildDir), new String[] {mockErrorParserId}, line);
 	}
 
-//	/**
-//	 * Convenience method to parse one line of output.
-//	 *  Search is done in project location.
-//	 */
-//	private void parseOutput(IProject project, String line) throws Exception {
-//		parseOutput(project, project.getLocation(), line);
-//	}
+	/**
+	 * Convenience method to parse one line of output.
+	 *  Search is done in project location.
+	 */
+	private void parseOutput(IProject project, String line) throws Exception {
+		parseOutput(project, project.getLocation(), new String[] {mockErrorParserId}, line);
+	}
 
 	/**
 	 * Convenience method to parse one line of output.
 	 * Search is done for current project in default location.
 	 */
 	private void parseOutput(String line) throws Exception {
-		parseOutput(fProject, fProject.getLocation(), line);
+		parseOutput(fProject, fProject.getLocation(), new String[] {mockErrorParserId}, line);
 	}
 
 	/**
@@ -423,4 +445,75 @@ public class ErrorParserEfsFileMatchingTest extends TestCase {
 		assertEquals("error",problemMarkerInfo.description);
 	}
 
+	/**
+	 * Checks if a file from error output can be found.
+	 * @throws Exception...
+	 */
+	public void testEfsProject() throws Exception {
+		IFile efsSmokeTest = ResourceHelper.createEfsFile(fProject, "efsSmokeTest.c", "mem:/efsSmokeTest.c");
+		Assert.assertTrue(efsSmokeTest.exists());
+
+		IProject efsProject = ResourceHelper.createCDTProject("EfsProject", new URI("mem:/EfsProject"));
+		ResourceHelper.createFolder(efsProject, "Folder");
+		ResourceHelper.createFile(efsProject, "Folder/testEfsProject.c");
+
+		parseOutput(efsProject, "testEfsProject.c:1:error");
+		assertEquals(1, errorList.size());
+
+		ProblemMarkerInfo problemMarkerInfo = errorList.get(0);
+		assertEquals("L/EfsProject/Folder/testEfsProject.c",problemMarkerInfo.file.toString());
+		assertEquals("error",problemMarkerInfo.description);
+	}
+
+	/**
+	 * Checks if a file from error output can be found.
+	 * @throws Exception...
+	 */
+	public void testEfsProjectBuildDirURI() throws Exception {
+		String fileName = "testEfsProjectBuildDirURI.c";
+
+		IProject efsProject = ResourceHelper.createCDTProject("EfsProject", new URI("mem:/EfsProject"));
+		ResourceHelper.createFolder(efsProject, "Folder");
+		ResourceHelper.createFile(efsProject, "Folder/" + fileName);
+		ResourceHelper.createFolder(efsProject, "BuildDir");
+		ResourceHelper.createFile(efsProject, "BuildDir/" + fileName);
+
+		URI buildDirURI = new URI("mem:/EfsProject/BuildDir/");
+		parseOutput(efsProject, buildDirURI, new String[] {mockErrorParserId}, fileName+":1:error");
+		assertEquals(1, errorList.size());
+
+		ProblemMarkerInfo problemMarkerInfo = errorList.get(0);
+		assertEquals("L/EfsProject/BuildDir/"+fileName,problemMarkerInfo.file.toString());
+		assertEquals("error",problemMarkerInfo.description);
+	}
+
+	/**
+	 * Checks if a file from error output can be found.
+	 *
+	 * @throws Exception...
+	 */
+	public void testEfsProjectPushPopDirectory() throws Exception {
+		String fileName = "testEfsProjectPushPopDirectory.c";
+
+		IProject efsProject = ResourceHelper.createCDTProject("EfsProject", new URI("mem:/ProjectPushPopDirectory"));
+		ResourceHelper.createFolder(efsProject, "Folder");
+		ResourceHelper.createFolder(efsProject, "Folder/SubFolder");
+		ResourceHelper.createFile(efsProject, fileName);
+		ResourceHelper.createFile(efsProject, "Folder/"+fileName);
+		ResourceHelper.createFile(efsProject, "Folder/SubFolder/"+fileName);
+
+		String lines = "make[1]: Entering directory `Folder'\n"
+			+ "make[2]: Entering directory `SubFolder'\n"
+			+ "make[2]: Leaving directory `SubFolder'\n"
+			+ fileName+":1:error\n";
+
+		String[] errorParsers = {MAKE_ERRORPARSER_ID, mockErrorParserId };
+		parseOutput(efsProject, efsProject.getLocation(), errorParsers, lines);
+		assertEquals(1, errorList.size());
+
+		ProblemMarkerInfo problemMarkerInfo = errorList.get(0);
+		assertEquals("L/EfsProject/Folder/"+fileName,problemMarkerInfo.file.toString());
+		assertEquals(1,problemMarkerInfo.lineNumber);
+		assertEquals("error",problemMarkerInfo.description);
+	}
 }

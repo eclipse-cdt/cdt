@@ -150,4 +150,13 @@
             class="org.eclipse.cdt.core.internal.index.provider.test.Providers$Dummy5">
       </ReadOnlyPDOMProvider>
    </extension>
+   <extension
+         point="org.eclipse.core.filesystem.filesystems">
+      <filesystem
+            scheme="mem">
+         <run
+               class="org.eclipse.cdt.core.internal.tests.filesystem.ram.MemoryFileSystem">
+         </run>
+      </filesystem>
+   </extension>
 </plugin>

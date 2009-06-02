@@ -28,7 +28,6 @@ public class ProblemProfile implements IProblemProfile, Cloneable {
 	 * org.eclipse.cdt.codan.core.model.IProblemProfile#getProblem(java.lang
 	 * .String)
 	 */
-	@Override
 	public IProblem findProblem(String id) {
 		return getRoot().findProblem(id);
 	}
@@ -38,7 +37,6 @@ public class ProblemProfile implements IProblemProfile, Cloneable {
 	 * 
 	 * @see org.eclipse.cdt.codan.core.model.IProblemProfile#getProblems()
 	 */
-	@Override
 	public IProblem[] getProblems() {
 		Collection<IProblem> problems = new ArrayList<IProblem>();
 		collectProblems(getRoot(), problems);
@@ -62,12 +60,6 @@ public class ProblemProfile implements IProblemProfile, Cloneable {
 		}
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.cdt.codan.core.model.IProblemProfile#getRoot()
-	 */
-	@Override
 	public IProblemCategory getRoot() {
 		return rootCategory;
 	}

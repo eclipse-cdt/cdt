@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007 Wind River Systems, Inc. and others.
+ * Copyright (c) 2007, 2009 Wind River Systems, Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     Anton Leherbauer (Wind River Systems) - initial API and implementation
+ *     Sergey Prigogin (Google)
  *******************************************************************************/
 package org.eclipse.cdt.ui.tests.text;
 
@@ -280,7 +281,64 @@ public class CIndenterTest extends BaseUITestCase {
 	public void testIndentationOfNestedInitializerLists_Bug194585() throws Exception {
 		assertIndenterResult();
 	}
-	
+
+	//class MyClass {
+	//typedef int MyType;
+	//public:
+	//int getA() {
+	//return a;
+	//}
+	//MyClass();
+	//protected:
+	//private:
+	//int a;
+	//};
+
+	//class MyClass {
+	//		typedef int MyType;
+	//	public:
+	//		int getA() {
+	//			return a;
+	//		}
+	//		MyClass();
+	//	protected:
+	//	private:
+	//		int a;
+	//};
+	public void testClassDeclaration_278713() throws Exception {
+		fOptions.put(DefaultCodeFormatterConstants.FORMATTER_INDENT_ACCESS_SPECIFIER_COMPARE_TO_TYPE_HEADER, 
+				DefaultCodeFormatterConstants.TRUE);
+		fOptions.put(DefaultCodeFormatterConstants.FORMATTER_INDENT_BODY_DECLARATIONS_COMPARE_TO_ACCESS_SPECIFIER, 
+				DefaultCodeFormatterConstants.TRUE);
+		assertIndenterResult();
+	}
+
+	//namespace ns {
+	//class A;
+	//}
+
+	//namespace ns {
+	//	class A;
+	//}
+	public void testNamespace_1() throws Exception {
+		fOptions.put(DefaultCodeFormatterConstants.FORMATTER_INDENT_BODY_DECLARATIONS_COMPARE_TO_NAMESPACE_HEADER, 
+				DefaultCodeFormatterConstants.TRUE);
+		assertIndenterResult();
+	}
+
+	//namespace ns {
+	//class A;
+	//}
+
+	//namespace ns {
+	//class A;
+	//}
+	public void testNamespace_2() throws Exception {
+		fOptions.put(DefaultCodeFormatterConstants.FORMATTER_INDENT_BODY_DECLARATIONS_COMPARE_TO_NAMESPACE_HEADER, 
+				DefaultCodeFormatterConstants.FALSE);
+		assertIndenterResult();
+	}
+
 	//// a comment
 	//class MyClass
 	//{

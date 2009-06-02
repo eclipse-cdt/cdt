@@ -13,6 +13,8 @@
 package org.eclipse.cdt.internal.ui.text;
 
 import org.eclipse.core.runtime.Assert;
+import org.eclipse.core.runtime.Platform;
+import org.eclipse.core.runtime.preferences.IPreferencesService;
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.IRegion;
@@ -61,6 +63,7 @@ public final class CIndenter {
 		final int prefMethodBodyIndent;
 		final int prefTypeIndent;
 		final int prefAccessSpecifierIndent;
+		final int prefAccessSpecifierExtraSpaces;
 		final int prefNamespaceBodyIndent;
 		final boolean prefIndentBracesForBlocks;
 		final boolean prefIndentBracesForArrays;
@@ -111,6 +114,7 @@ public final class CIndenter {
 			prefMethodBodyIndent= prefMethodBodyIndent();
 			prefTypeIndent= prefTypeIndent();
 			prefAccessSpecifierIndent= prefAccessSpecifierIndent();
+			prefAccessSpecifierExtraSpaces= prefAccessSpecifierExtraSpaces();
 			prefNamespaceBodyIndent= prefNamespaceBodyIndent();
 			prefIndentBracesForArrays= prefIndentBracesForArrays();
 			prefIndentBracesForMethods= prefIndentBracesForMethods();
@@ -203,7 +207,8 @@ public final class CIndenter {
 		private int prefSimpleIndent() {
 			if (prefIndentBracesForBlocks() && prefBlockIndent() == 0)
 				return 1;
-			else return prefBlockIndent();
+			else
+				return prefBlockIndent();
 		}
 
 		private int prefBracketIndent() {
@@ -304,6 +309,12 @@ public final class CIndenter {
 				return 0;
 		}
 
+		private int prefAccessSpecifierExtraSpaces() {
+			// Hidden option that enables fractional indent of access specifiers.
+			IPreferencesService prefs = Platform.getPreferencesService();
+			return prefs.getInt(CCorePlugin.PLUGIN_ID, CCorePlugin.PLUGIN_ID + ".formatter.indent_access_specifier_extra_spaces", 0, null); //$NON-NLS-1$
+		}
+
 		private int prefNamespaceBodyIndent() {
 			if (DefaultCodeFormatterConstants.TRUE.equals(getCoreFormatterOption(DefaultCodeFormatterConstants.FORMATTER_INDENT_BODY_DECLARATIONS_COMPARE_TO_NAMESPACE_HEADER)))
 				return prefBlockIndent();
@@ -346,6 +357,8 @@ public final class CIndenter {
 	private final IDocument fDocument;
 	/** The indentation accumulated by <code>findReferencePosition</code>. */
 	private int fIndent;
+	/** Extra spaces to add on top of fIndent */
+	private int fExtraSpaces;
 	/**
 	 * The absolute (character-counted) indentation offset for special cases
 	 * (method defs, array initializers)
@@ -473,7 +486,7 @@ public final class CIndenter {
 			return null;
 
 		// Add additional indent
-		return createReusingIndent(reference, fIndent);
+		return createReusingIndent(reference, fIndent, fExtraSpaces);
 	}
 
 	/**
@@ -492,7 +505,7 @@ public final class CIndenter {
 		if (string.trim().length() == 0)
 			return reference;
 		// Add additional indent
-		return createReusingIndent(reference, fPrefs.prefContinuationIndent);
+		return createReusingIndent(reference, fPrefs.prefContinuationIndent, 0);
 	}
 	
 	/**
@@ -637,12 +650,13 @@ public final class CIndenter {
 	 * @param buffer the original indent to reuse if possible
 	 * @param additional the additional indentation units to add or subtract to
 	 *        reference
+	 * @param extraSpaces additional spaces to add to indentation.
 	 * @return the modified <code>buffer</code> reflecting the indentation
 	 *         adapted to <code>additional</code>
 	 */
-	public StringBuilder createReusingIndent(StringBuilder buffer, int additional) {
+	public StringBuilder createReusingIndent(StringBuilder buffer, int additional, int extraSpaces) {
 		int refLength= computeVisualLength(buffer);
-		int addLength= fPrefs.prefIndentationSize * additional; // may be < 0
+		int addLength= fPrefs.prefIndentationSize * additional + extraSpaces; // may be < 0
 		int totalLength= Math.max(0, refLength + addLength);
 
 		// copy the reference indentation for the indent up to the last tab
@@ -907,6 +921,11 @@ public final class CIndenter {
 		}
 		
 		nextToken();
+		// Skip access specifiers
+		while (fToken == Symbols.TokenCOLON && isAccessSpecifier()) {
+			nextToken();
+		}
+
 		switch (fToken) {
 		case Symbols.TokenGREATERTHAN:
 		case Symbols.TokenRBRACE:
@@ -940,11 +959,6 @@ public final class CIndenter {
 
 		case Symbols.TokenCOLON:
 			pos= fPosition;
-			if (isAccessSpecifier()) {
-				fIndent= fPrefs.prefTypeIndent;
-				return pos;
-			}
-			fPosition= pos;
 			if (looksLikeCaseStatement()) {
 				fIndent= fPrefs.prefCaseBlockIndent;
 				return pos;
@@ -1127,6 +1141,8 @@ public final class CIndenter {
 	 * @return <code>true</code> if current position marks an access specifier
 	 */
 	private boolean isAccessSpecifier() {
+		int pos= fPosition;
+		int token = fToken;
 		nextToken();
 		switch (fToken) {
 		case Symbols.TokenPUBLIC:
@@ -1134,6 +1150,8 @@ public final class CIndenter {
 		case Symbols.TokenPRIVATE:
 			return true;
 		}
+		fToken = token;
+		fPosition= pos;
 		return false;
 	}
 
@@ -1291,12 +1309,13 @@ public final class CIndenter {
 	}
 
 	private int getBlockIndent(boolean isMethodBody, boolean isTypeBody) {
-		if (isTypeBody)
-			return fPrefs.prefTypeIndent + (fPrefs.prefIndentBracesForTypes ? 1 : 0);
-		else if (isMethodBody)
+		if (isTypeBody) {
+			return fPrefs.prefTypeIndent + fPrefs.prefAccessSpecifierIndent;
+		} else if (isMethodBody) {
 			return fPrefs.prefMethodBodyIndent + (fPrefs.prefIndentBracesForMethods ? 1 : 0);
-		else
+		} else {
 			return fIndent;
+		}
 	}
 
 	/**
@@ -1412,6 +1431,7 @@ public final class CIndenter {
 				int pos= fPosition;
 				int typeDeclPos= matchTypeDeclaration();
 				fIndent= fPrefs.prefAccessSpecifierIndent;
+				fExtraSpaces = fPrefs.prefAccessSpecifierExtraSpaces;
 				if (typeDeclPos != CHeuristicScanner.NOT_FOUND) {
 					return typeDeclPos;
 				}
@@ -1582,11 +1602,11 @@ public final class CIndenter {
 	 * @return the indent
 	 */
 	private int handleScopeIntroduction(int bound) {
+		int pos= fPosition; // store
+
 		switch (fToken) {
 		// scope introduction: special treat who special is
 		case Symbols.TokenLPAREN:
-			int pos= fPosition; // store
-
 			// special: method declaration deep indentation
 			if (looksLikeMethodDecl()) {
 				if (fPrefs.prefMethodDeclDeepIndent) {
@@ -1614,8 +1634,6 @@ public final class CIndenter {
 			return pos;
 
 		case Symbols.TokenLBRACE:
-			pos= fPosition; // store
-			
 			final boolean looksLikeArrayInitializerIntro= looksLikeArrayInitializerIntro();
 			// special: array initializer
 			if (looksLikeArrayInitializerIntro) {
@@ -1626,12 +1644,17 @@ public final class CIndenter {
 			} else if (isNamespace()) {
 				fIndent= fPrefs.prefNamespaceBodyIndent;
 			} else {
-				fIndent= fPrefs.prefBlockIndent;
+				int typeDeclPos = matchTypeDeclaration();
+				if (typeDeclPos == CHeuristicScanner.NOT_FOUND) {
+					fIndent= fPrefs.prefBlockIndent;
+				} else {
+					fIndent= fPrefs.prefAccessSpecifierIndent + fPrefs.prefTypeIndent;
+				}
 			}
 
 			// normal: skip to the statement start before the scope introducer
 			// opening braces are often on differently ending indents than e.g. a method definition
-			if (!looksLikeArrayInitializerIntro && !fPrefs.prefIndentBracesForBlocks) {
+			if (!looksLikeArrayInitializerIntro) {
 				fPosition= pos; // restore
 				return skipToStatementStart(true, true); // set to true to match the first if
 			} else {
@@ -1639,8 +1662,6 @@ public final class CIndenter {
 			}
 
 		case Symbols.TokenLBRACKET:
-			pos= fPosition; // store
-
 			// special: method declaration deep indentation
 			if (fPrefs.prefArrayDimensionsDeepIndent) {
 				return setFirstElementAlignment(pos, bound);
@@ -1710,6 +1731,7 @@ public final class CIndenter {
 	 * @return <code>true</code> if the next elements look like the start of a namespace declaration.
 	 */
 	private boolean isNamespace() {
+		int pos = fPosition;
 		if (fToken == Symbols.TokenNAMESPACE) {
 			return true;		// Anonymous namespace
 		} else if (fToken == Symbols.TokenIDENT) {
@@ -1718,6 +1740,7 @@ public final class CIndenter {
 				return true;	// Named namespace
 			}
 		}
+		fPosition = pos;
 		return false;
 	}
 

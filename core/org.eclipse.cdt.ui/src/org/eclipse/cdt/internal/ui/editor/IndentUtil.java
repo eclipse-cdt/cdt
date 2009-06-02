@@ -433,7 +433,9 @@ public final class IndentUtil {
 	 *         <code>false</code> if not
 	 * @throws BadLocationException if the document got changed concurrently
 	 */
-	private static boolean indentLine(IDocument document, int line, CIndenter indenter, CHeuristicScanner scanner, boolean[] commentLines, int lineIndex, int tabSize, boolean indentInsideLineComments) throws BadLocationException {
+	private static boolean indentLine(IDocument document, int line, CIndenter indenter,
+			CHeuristicScanner scanner, boolean[] commentLines, int lineIndex, int tabSize,
+			boolean indentInsideLineComments) throws BadLocationException {
 		IRegion currentLine= document.getLineInformation(line);
 		final int offset= currentLine.getOffset();
 		int wsStart= offset; // where we start searching for non-WS; after the "//" in single line comments
@@ -599,7 +601,7 @@ public final class IndentUtil {
 		CHeuristicScanner ppScanner= new CHeuristicScanner(document, ICPartitions.C_PARTITIONING, partition.getType());
 		CIndenter ppIndenter= new CIndenter(document, ppScanner);
 		if (line == ppFirstLine + 1) {
-			return ppIndenter.createReusingIndent(new StringBuilder(), ppIndenter.getContinuationLineIndent()).toString();
+			return ppIndenter.createReusingIndent(new StringBuilder(), ppIndenter.getContinuationLineIndent(), 0).toString();
 		}
 		StringBuilder computed= ppIndenter.computeIndentation(document.getLineOffset(line), false);
 		if (computed != null) {

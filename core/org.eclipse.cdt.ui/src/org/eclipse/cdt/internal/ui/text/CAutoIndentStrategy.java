@@ -280,7 +280,7 @@ public class CAutoIndentStrategy extends DefaultIndentLineAutoEditStrategy {
 				indent= new StringBuilder();
 			}
 			if (addIndent > 0 && indent.length() == 0) {
-				indent= indenter.createReusingIndent(indent, addIndent);
+				indent= indenter.createReusingIndent(indent, addIndent, 0);
 			}
 
 			StringBuilder buf = new StringBuilder(c.text + indent);
@@ -1078,10 +1078,11 @@ public class CAutoIndentStrategy extends DefaultIndentLineAutoEditStrategy {
 				String indent;
 				if (nextToken == Symbols.TokenCASE || nextToken == Symbols.TokenDEFAULT ||
 						nextToken == Symbols.TokenPUBLIC || nextToken == Symbols.TokenPROTECTED ||
-						nextToken == Symbols.TokenPRIVATE)
+						nextToken == Symbols.TokenPRIVATE) {
 					indent = getIndentOfLine(doc, refLine);
-				else // at the brace of the switch or the class
+				} else { // at the brace of the switch or the class
 					indent = indenter.computeIndentation(p).toString();
+				}
 
 				if (indent != null) {
 					c.text = indent.toString() + doc.get(p, offset - p) + c.text;
@@ -1101,7 +1102,7 @@ public class CAutoIndentStrategy extends DefaultIndentLineAutoEditStrategy {
 			ITypedRegion partition= TextUtilities.getPartition(doc, fPartitioning, c.offset, false);
 			if (IDocument.DEFAULT_CONTENT_TYPE.equals(partition.getType())) {
 				IRegion startLine= doc.getLineInformationOfOffset(c.offset);
-				String indent= (doc.get(startLine.getOffset(), c.offset - startLine.getOffset()));
+				String indent= doc.get(startLine.getOffset(), c.offset - startLine.getOffset());
 				if (indent.trim().length() == 0) {
 					c.offset -= indent.length();
 					c.length += indent.length();

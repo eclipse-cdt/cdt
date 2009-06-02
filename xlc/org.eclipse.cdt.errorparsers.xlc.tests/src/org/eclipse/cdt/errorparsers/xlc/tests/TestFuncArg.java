@@ -11,9 +11,9 @@
 
 package org.eclipse.cdt.errorparsers.xlc.tests;
 
-import org.eclipse.cdt.errorparsers.xlc.XlcErrorParser;
-
 import junit.framework.TestCase;
+
+import org.eclipse.cdt.core.IMarkerGenerator;
 
 public class TestFuncArg extends TestCase {
 	String err_msg;
@@ -25,11 +25,11 @@ public class TestFuncArg extends TestCase {
 	 */
 	public void testparseLine()
 	{
-		XlcErrorParser aix = new XlcErrorParser();
+		XlcErrorParserTester aix = new XlcErrorParserTester();
 		aix.parseLine(err_msg);
 		assertEquals("temp9.c", aix.getFileName());
 		assertEquals(12, aix.getLineNumber());
-		assertEquals("S", aix.getSeverity());
+		assertEquals(IMarkerGenerator.SEVERITY_ERROR_RESOURCE, aix.getSeverity());
 		assertEquals(" Function argument assignment between types " +
 				"\"int\" and \"char*\" is not allowed.",
 					aix.getMessage());

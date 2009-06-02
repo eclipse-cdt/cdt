@@ -30,6 +30,14 @@ public class AllXlcErrorParserTests {
 		suite.addTestSuite(TestConditional.class);
 		suite.addTestSuite(TestSyntaxError.class);
 		suite.addTestSuite(TestNoFuncProto.class);
+		suite.addTestSuite(TestCompatibility.class);
+		suite.addTestSuite(TestUnrecoverableError.class);
+		suite.addTestSuite(TestMacroRedefinition.class);
+		suite.addTestSuite(TestLinkerUndefinedSymbol.class);
+		suite.addTestSuite(TestLinkerDuplicateSymbol.class);
+		suite.addTestSuite(TestLinkerSevereError.class);
+		suite.addTestSuite(TestLinkerErrorWhileReading.class);
+		suite.addTestSuite(TestLinkerInfo.class);
 		//$JUnit-END$
 		return suite;
 	}

@@ -10,9 +10,9 @@
  *******************************************************************************/
 package org.eclipse.cdt.errorparsers.xlc.tests;
 
-import org.eclipse.cdt.errorparsers.xlc.XlcErrorParser;
-
 import junit.framework.TestCase;
+
+import org.eclipse.cdt.core.IMarkerGenerator;
 
 public class TestSyntaxError extends TestCase {
 	String err_msg;
@@ -24,11 +24,11 @@ public class TestSyntaxError extends TestCase {
 	 */
 	public void testparseLine()
 	{
-		XlcErrorParser aix = new XlcErrorParser();
+		XlcErrorParserTester aix = new XlcErrorParserTester();
 		aix.parseLine(err_msg);
 		assertEquals("temp1.c", aix.getFileName());
 		assertEquals(5, aix.getLineNumber());
-		assertEquals("S", aix.getSeverity());
+		assertEquals(IMarkerGenerator.SEVERITY_ERROR_RESOURCE, aix.getSeverity());
 		assertEquals(" Syntax error: possible missing ')'?",aix.getMessage());
 	}
 	public TestSyntaxError( String name)

@@ -11,9 +11,9 @@
 
 package org.eclipse.cdt.errorparsers.xlc.tests;
 
-import org.eclipse.cdt.errorparsers.xlc.XlcErrorParser;
-
 import junit.framework.TestCase;
+
+import org.eclipse.cdt.core.IMarkerGenerator;
 
 
 public class TestConditional extends TestCase {
@@ -25,11 +25,11 @@ public class TestConditional extends TestCase {
 	 */
 	public void testparseLine()
 	{
-		XlcErrorParser aix = new XlcErrorParser();
+		XlcErrorParserTester aix = new XlcErrorParserTester();
 		aix.parseLine(err_msg);
 		assertEquals("temp8.c", aix.getFileName());
 		assertEquals(12, aix.getLineNumber());
-		assertEquals("I", aix.getSeverity());
+		assertEquals(IMarkerGenerator.SEVERITY_INFO, aix.getSeverity());
 		assertEquals(" The then branch of conditional is an empty statement.",aix.getMessage());
 	}
 	public TestConditional( String name)

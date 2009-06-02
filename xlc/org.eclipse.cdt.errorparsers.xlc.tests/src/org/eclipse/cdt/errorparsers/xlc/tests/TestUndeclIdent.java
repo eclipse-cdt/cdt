@@ -11,9 +11,9 @@
 
 package org.eclipse.cdt.errorparsers.xlc.tests;
 
-import org.eclipse.cdt.errorparsers.xlc.XlcErrorParser;
-
 import junit.framework.TestCase;
+
+import org.eclipse.cdt.core.IMarkerGenerator;
 
 public class TestUndeclIdent extends TestCase {
 	String err_msg;
@@ -25,11 +25,11 @@ public class TestUndeclIdent extends TestCase {
 	 */
 	public void testparseLine()
 	{
-		XlcErrorParser aix = new XlcErrorParser();
+		XlcErrorParserTester aix = new XlcErrorParserTester();
 		aix.parseLine(err_msg);
 		assertEquals("temp5.c", aix.getFileName());
 		assertEquals(5, aix.getLineNumber());
-		assertEquals("S", aix.getSeverity());
+		assertEquals(IMarkerGenerator.SEVERITY_ERROR_RESOURCE, aix.getSeverity());
 		assertEquals(" Undeclared identifier y.",aix.getMessage());
 	}
 	public TestUndeclIdent( String name)

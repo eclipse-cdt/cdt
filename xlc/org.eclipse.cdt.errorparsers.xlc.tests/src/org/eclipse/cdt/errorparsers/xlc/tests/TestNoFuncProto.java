@@ -10,9 +10,9 @@
  *******************************************************************************/
 package org.eclipse.cdt.errorparsers.xlc.tests;
 
-import org.eclipse.cdt.errorparsers.xlc.XlcErrorParser;
-
 import junit.framework.TestCase;
+
+import org.eclipse.cdt.core.IMarkerGenerator;
 
 public class TestNoFuncProto extends TestCase {
 	String err_msg;
@@ -23,11 +23,11 @@ public class TestNoFuncProto extends TestCase {
 	 */
 	public void testparseLine()
 	{
-		XlcErrorParser aix = new XlcErrorParser();
+		XlcErrorParserTester aix = new XlcErrorParserTester();
 		aix.parseLine(err_msg);
 		assertEquals("temp1.c", aix.getFileName());
 		assertEquals(5, aix.getLineNumber());
-		assertEquals("W", aix.getSeverity());
+		assertEquals(IMarkerGenerator.SEVERITY_WARNING, aix.getSeverity());
 		assertEquals(" No function prototype given for \"printf\".",aix.getMessage());
 	}
 	public TestNoFuncProto( String name)

@@ -6,6 +6,8 @@ Bundle-Version: 1.0.0
 Bundle-Activator: org.eclipse.cdt.errorparsers.xlc.tests.TestsPlugin
 Require-Bundle: org.eclipse.ui,
  org.eclipse.core.runtime,
+ org.eclipse.core.resources,
+ org.eclipse.cdt.core,
  org.eclipse.cdt.errorparsers.xlc,
  org.junit
 Bundle-ActivationPolicy: lazy

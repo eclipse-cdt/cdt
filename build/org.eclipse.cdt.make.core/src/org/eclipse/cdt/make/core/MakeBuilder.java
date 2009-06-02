@@ -13,6 +13,7 @@ package org.eclipse.cdt.make.core;
 
 import java.io.IOException;
 import java.io.OutputStream;
+import java.net.URI;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -148,6 +149,7 @@ public class MakeBuilder extends ACBuilder {
 				removeAllMarkers(currProject);
 
 				IPath workingDirectory = MakeBuilderUtil.getBuildDirectory(currProject, info);
+				URI workingDirectoryURI = MakeBuilderUtil.getBuildDirectoryURI(currProject, info);
 
 				String[] targets = getTargets(kind, info);
 				if (targets.length != 0 && targets[targets.length - 1].equals(info.getCleanBuildTarget()))
@@ -200,7 +202,7 @@ public class MakeBuilder extends ACBuilder {
 					last = new Integer(100);
 				}
 				StreamMonitor streamMon = new StreamMonitor(new SubProgressMonitor(monitor, 100), cos, last.intValue());
-				ErrorParserManager epm = new ErrorParserManager(getProject(), workingDirectory, this, info.getErrorParsers());
+				ErrorParserManager epm = new ErrorParserManager(getProject(), workingDirectoryURI, this, info.getErrorParsers());
 				epm.setOutputStream(streamMon);
 				OutputStream stdout = epm.getOutputStream();
 				OutputStream stderr = epm.getOutputStream();

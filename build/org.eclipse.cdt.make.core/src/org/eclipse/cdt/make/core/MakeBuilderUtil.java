@@ -11,6 +11,8 @@
  *******************************************************************************/
 package org.eclipse.cdt.make.core;
 
+import java.net.URI;
+
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
@@ -45,5 +47,23 @@ public class MakeBuilderUtil {
 			buildDirectory = project.getLocation();
 		}
 		return buildDirectory;
+	}
+
+	/**
+	 * Return the URI of the build directory for a prject and IMakeBuilderInfo
+	 * @param project
+	 * @param info
+	 * @return URI of the build directory, or the Project's URI if one couldn't be found
+	 * @since 6.0
+	 */
+	public static URI getBuildDirectoryURI(IProject project, IMakeBuilderInfo info) {
+		IPath buildDirectory = info.getBuildLocation();
+		if (!buildDirectory.isEmpty()) {
+			IResource res = project.getParent().findMember(buildDirectory);
+			if (res instanceof IContainer && res.exists()) {
+				return res.getLocationURI();
+			}
+		}
+		return project.getLocationURI();
 	}
 }

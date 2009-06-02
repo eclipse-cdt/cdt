@@ -774,6 +774,7 @@ public class BreakpointManager extends Manager {
 		boolean access = watchpoint.isReadType() && watchpoint.isWriteType();
 		boolean read = ! watchpoint.isWriteType() && watchpoint.isReadType();
 		String expression = watchpoint.getDerivedExpression();
+		boolean enable = watchpoint.isEnabled();
 
 		MISession miSession = target.getMISession();
 		CommandFactory factory = miSession.getCommandFactory();
@@ -819,6 +820,20 @@ public class BreakpointManager extends Manager {
 				if (info == null) {
 					throw new CDIException(CdiResources.getString("cdi.Common.No_answer")); //$NON-NLS-1$
 				}				
+			}
+			if (!enable) {
+				int[] numbers = new int[1];
+				numbers[0] = no;
+				MIBreakDisable breakDisable = factory.createMIBreakDisable(numbers);
+				try {
+					miSession.postCommand(breakDisable);
+					MIInfo disableInfo = breakDisable.getMIInfo();
+					if (disableInfo == null) {
+						throw new CDIException(CdiResources.getString("cdi.Common.No_answer")); //$NON-NLS-1$
+					}
+				} catch (MIException e) {
+					throw new MI2CDIException(e);
+				}
 			}
 			// how to deal with threads ???
 		} catch (MIException e) {

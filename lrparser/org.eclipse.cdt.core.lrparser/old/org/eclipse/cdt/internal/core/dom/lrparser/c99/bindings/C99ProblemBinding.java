@@ -18,7 +18,7 @@ public class C99ProblemBinding extends ProblemBinding implements IProblemBinding
 
 
 	public C99ProblemBinding(int messageId) {
-		super(null, messageId, null);
+		super(null, messageId);
 	}
 	
 	public C99ProblemBinding(int messageId, String arg) {

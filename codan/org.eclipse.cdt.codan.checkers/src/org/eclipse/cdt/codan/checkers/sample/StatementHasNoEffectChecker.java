@@ -38,7 +38,6 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTBinaryExpression;
 public class StatementHasNoEffectChecker extends AbstractIndexAstChecker {
 	private static final String ER_ID = "org.eclipse.cdt.codan.checkers.sample.StatementHasNoEffectProblem";
 
-	@Override
 	public void processAst(IASTTranslationUnit ast) {
 		// traverse the ast using the visitor pattern.
 		ast.accept(new CheckStmpVisitor());

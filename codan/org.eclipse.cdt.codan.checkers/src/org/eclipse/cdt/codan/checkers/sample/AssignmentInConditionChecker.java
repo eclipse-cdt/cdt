@@ -22,7 +22,6 @@ import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
 public class AssignmentInConditionChecker extends AbstractIndexAstChecker {
 	private static final String ER_ID = "org.eclipse.cdt.codan.checkers.sample.AssignmentInConditionProblem";
 
-	@Override
 	public void processAst(IASTTranslationUnit ast) {
 		// traverse the ast using the visitor pattern.
 		ast.accept(new CheckCodeVisitor());

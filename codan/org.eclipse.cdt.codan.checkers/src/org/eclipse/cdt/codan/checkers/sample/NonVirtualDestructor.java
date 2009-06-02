@@ -36,7 +36,6 @@ import org.eclipse.core.resources.IFile;
 public class NonVirtualDestructor extends AbstractIndexAstChecker {
 	private static final String ER_ID = "org.eclipse.cdt.codan.checkers.sample.NonVirtualDestructorProblem";
 
-	@Override
 	public void processAst(IASTTranslationUnit ast) {
 		// traverse the ast using the visitor pattern.
 		ast.accept(new OnEachClass());

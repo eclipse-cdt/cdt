@@ -21,8 +21,6 @@ import org.eclipse.core.filebuffers.ITextFileBuffer;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IResource;
-import org.eclipse.core.resources.IResourceRuleFactory;
-import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IPath;
@@ -1019,10 +1017,7 @@ public class CDocumentProvider extends TextFileDocumentProvider {
 				public ISchedulingRule getSchedulingRule() {
 					if (info.fElement instanceof IFileEditorInput) {
 						IFile file= ((IFileEditorInput) info.fElement).getFile();
-						IResourceRuleFactory ruleFactory= ResourcesPlugin.getWorkspace().getRuleFactory();
-						if (file == null || !file.exists())
-							return ruleFactory.createRule(file);
-						return ruleFactory.modifyRule(file);
+						return computeSchedulingRule(file);
 					}
 					return null;
 				}

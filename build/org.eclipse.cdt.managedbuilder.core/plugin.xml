@@ -582,5 +582,18 @@
          <simple name="projectName"/>
       </processType>
    </extension>
+   <extension
+         id="headlessbuild"
+         name="CDT Headless Build"
+         point="org.eclipse.core.runtime.applications">
+      <application
+            cardinality="singleton-global"
+            thread="main"
+            visible="true">
+         <run
+               class="org.eclipse.cdt.managedbuilder.internal.core.HeadlessBuilder">
+         </run>
+      </application>
+   </extension>
 
 </plugin>

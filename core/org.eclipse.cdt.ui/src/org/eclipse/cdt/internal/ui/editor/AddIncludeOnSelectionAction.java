@@ -14,6 +14,7 @@
 package org.eclipse.cdt.internal.ui.editor;
 
 import java.io.File;
+import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.net.URI;
 import java.util.ArrayList;
@@ -563,13 +564,13 @@ public class AddIncludeOnSelectionAction extends TextEditorAction {
 		}
 
 		// The file has never been included before.
-        IPath targetLocation = PathUtil.getCanonicalPath(new Path(file.getLocation().getURI().getPath()));
+		URI targetUri = file.getLocation().getURI();
+        IPath targetLocation = PathUtil.getCanonicalPath(new Path(targetUri.getPath()));
     	IPath sourceLocation = PathUtil.getCanonicalPath(fTu.getResource().getLocation());
         boolean isSystemIncludePath = false;
 
         IPath path = PathUtil.makeRelativePathToIncludes(targetLocation, fIncludePath);
-        if (path != null &&
-        		ResourceLookup.findFilesForLocationURI(URI.create(targetLocation.toString())).length == 0) {
+        if (path != null && ResourceLookup.findFilesForLocationURI(targetUri).length == 0) {
         	// A header file in the include path but outside the workspace is included with angle brackets.
             isSystemIncludePath = true;
         }
@@ -583,6 +584,11 @@ public class AddIncludeOnSelectionAction extends TextEditorAction {
         	if (targetLocation.getDevice() != null &&
         			targetLocation.getDevice().equalsIgnoreCase(sourceDirectory.getDevice())) {
         		path = path.setDevice(null);
+        	}
+        	if (path.isAbsolute() && path.getDevice() == null &&
+        			ResourceLookup.findFilesForLocationURI(targetUri).length != 0) {
+        		// The file is inside workspace. Include with a relative path.
+        		path = PathUtil.makeRelativePath(path, sourceDirectory);
         	}
         }
     	return new RequiredInclude(path.toString(), isSystemIncludePath);
@@ -604,8 +610,12 @@ public class AddIncludeOnSelectionAction extends TextEditorAction {
 			if (include.isSystemInclude()) {
 				return false;
 			}
-			return target.equals(new File(new File(fTu.getLocationURI().getPath()).getParent(), includeName));
+			String directory = new File(fTu.getLocationURI().getPath()).getParent();
+			return target.equals(new File(directory, includeName).getCanonicalFile());
 		} catch (CoreException e) {
+			CUIPlugin.log(e);
+			return false;
+		} catch (IOException e) {
 			CUIPlugin.log(e);
 			return false;
 		}

@@ -21,22 +21,19 @@
 package org.eclipse.rse.internal.files.ui.actions;
 
 import org.eclipse.core.resources.IFile;
-import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.rse.files.ui.resources.SystemEditableRemoteFile;
-import org.eclipse.rse.files.ui.resources.UniversalFileTransferUtility;
+import org.eclipse.rse.internal.files.ui.resources.SystemRemoteEditManager;
 import org.eclipse.rse.internal.files.ui.view.DownloadAndOpenJob;
 import org.eclipse.rse.subsystems.files.core.SystemIFileProperties;
 import org.eclipse.rse.subsystems.files.core.subsystems.IRemoteFile;
 import org.eclipse.rse.subsystems.files.core.subsystems.IRemoteFileSubSystem;
-import org.eclipse.rse.subsystems.files.core.subsystems.RemoteFile;
 import org.eclipse.rse.ui.actions.SystemBaseAction;
 import org.eclipse.rse.ui.view.ISystemEditableRemoteObject;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IEditorDescriptor;
-import org.eclipse.ui.IEditorPart;
 
 
 
@@ -144,74 +141,13 @@ public class SystemEditFileAction extends SystemBaseAction {
 		return false;
 	}
 	
-	private SystemEditableRemoteFile getEditableRemoteObject(Object element)
-	{
-		SystemEditableRemoteFile editable = null;
-		RemoteFile remoteFile = (RemoteFile) element;
-		if (remoteFile.isFile())
-		{
-			try
-			{
-				IFile file = (IFile)UniversalFileTransferUtility.getTempFileFor(remoteFile);
-				if (file != null)
-				{
-					SystemIFileProperties properties = new SystemIFileProperties(file);
-					
-					Object obj = properties.getRemoteFileObject();
-					if (obj != null && obj instanceof SystemEditableRemoteFile)
-					{
-						editable = (SystemEditableRemoteFile) obj;
-						
-						String remotePath = remoteFile.getAbsolutePath();
-						String replicaRemotePath = editable.getAbsolutePath();
-						// first make sure that the correct remote file is referenced (might be difference because of different case)
-						if (!replicaRemotePath.equals(remotePath)){ // for bug 276103
-							
-							IEditorPart editor = editable.getEditorPart();
-							boolean editorWasClosed = false;
-							if (editor.isDirty()){
-								editorWasClosed = editor.getEditorSite().getPage().closeEditor(editor, true);
-								if (editorWasClosed)
-									editable.doImmediateSaveAndUpload();								
-							}
-							else {
-								editorWasClosed = editor.getEditorSite().getPage().closeEditor(editor, true);
-							}
-							
-							if (!editorWasClosed){
-								// use cancelled operation so we need to get out of here
-								return null;
-							}
-							
-							try {
-								IFile originalFile = editable.getLocalResource();
-								originalFile.delete(true, new NullProgressMonitor());												
-							}
-							catch (CoreException e){
-							}
-							// fall through and let the new editable get created
-						}
-						else {					
-							return editable;
-						}
-					}
-				}
-				
-				editable = new SystemEditableRemoteFile(remoteFile);			
-			}
-			catch (Exception e)
-			{
-			}
-		}
-		return editable;
-	}
 	
 	/**
 	 * Process the object: download file, open in editor, etc.
 	 */
 	protected void process(IRemoteFile remoteFile) {
 		
-		SystemEditableRemoteFile editable = getEditableRemoteObject(remoteFile);
+		SystemEditableRemoteFile editable = SystemRemoteEditManager.getEditableRemoteObject(remoteFile, null);
 		if (editable == null){
 			// case for cancelled operation when user was prompted to save file of different case
 			return;

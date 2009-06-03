@@ -28,7 +28,6 @@ import java.util.Comparator;
 import java.util.Hashtable;
 
 import org.eclipse.core.resources.IFile;
-import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.jface.action.ContributionItem;
 import org.eclipse.jface.resource.ImageDescriptor;
@@ -38,11 +37,11 @@ import org.eclipse.osgi.util.NLS;
 import org.eclipse.rse.files.ui.resources.SystemEditableRemoteFile;
 import org.eclipse.rse.files.ui.resources.UniversalFileTransferUtility;
 import org.eclipse.rse.internal.files.ui.FileResources;
+import org.eclipse.rse.internal.files.ui.resources.SystemRemoteEditManager;
 import org.eclipse.rse.internal.files.ui.view.DownloadAndOpenJob;
 import org.eclipse.rse.subsystems.files.core.SystemIFileProperties;
 import org.eclipse.rse.subsystems.files.core.subsystems.IRemoteFile;
 import org.eclipse.rse.subsystems.files.core.subsystems.IRemoteFileSubSystem;
-import org.eclipse.rse.subsystems.files.core.subsystems.RemoteFile;
 import org.eclipse.rse.ui.RSEUIPlugin;
 import org.eclipse.rse.ui.SystemBasePlugin;
 import org.eclipse.rse.ui.view.ISystemEditableRemoteObject;
@@ -53,7 +52,6 @@ import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.MenuItem;
 import org.eclipse.ui.IEditorDescriptor;
-import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IEditorRegistry;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.PartInitException;
@@ -224,82 +222,9 @@ private void createOtherMenuItem(final Menu menu, final IRemoteFile remoteFile) 
 }
 
 
-private SystemEditableRemoteFile getEditableRemoteObject(Object element, IEditorDescriptor descriptor)
-{
-	SystemEditableRemoteFile editable = null;
-	RemoteFile remoteFile = (RemoteFile) element;
-	if (remoteFile.isFile())
-	{
-		try
-		{
-			IFile file = (IFile)UniversalFileTransferUtility.getTempFileFor(remoteFile);
-			if (file != null)
-			{
-				SystemIFileProperties properties = new SystemIFileProperties(file);
-				
-				Object obj = properties.getRemoteFileObject();
-				if (obj != null && obj instanceof SystemEditableRemoteFile)
-				{
-					editable = (SystemEditableRemoteFile) obj;
-					
-					String remotePath = remoteFile.getAbsolutePath();
-					String replicaRemotePath = editable.getAbsolutePath();
-					// first make sure that the correct remote file is referenced (might be difference because of different case)
-					if (!replicaRemotePath.equals(remotePath)){ // for bug 276103
-						
-						IEditorPart editor = editable.getEditorPart();						
-						boolean editorWasClosed = false;
-						if (editor != null){
-							if (editor.isDirty()){
-								editorWasClosed = editor.getEditorSite().getPage().closeEditor(editor, true);
-								if (editorWasClosed)
-									editable.doImmediateSaveAndUpload();								
-							}
-							else {
-								editorWasClosed = editor.getEditorSite().getPage().closeEditor(editor, true);
-							}
-						}
-						else {
-							editorWasClosed = true;
-						}
-						
-						if (!editorWasClosed){
-							// use cancelled operation so we need to get out of here
-							return null;
-						}
-						
-						try {
-							IFile originalFile = editable.getLocalResource();
-							originalFile.delete(true, new NullProgressMonitor());												
-						}
-						catch (CoreException e){
-						}
-						// fall through and let the new editable get created
-					}
-					else {					
-						return editable;
-					}
-				}
-			}
-			
-			if (descriptor != null){
-				editable = new SystemEditableRemoteFile(remoteFile, descriptor);
-			}
-			else {
-				editable = new SystemEditableRemoteFile(remoteFile);
-			}
-		}
-		catch (Exception e)
-		{
-			e.printStackTrace();
-		}
-	}
-	return editable;
-}
-
 protected void openEditor(IRemoteFile remoteFile, IEditorDescriptor descriptor) {
 	
-	SystemEditableRemoteFile editable = getEditableRemoteObject(remoteFile, descriptor);
+	SystemEditableRemoteFile editable = SystemRemoteEditManager.getEditableRemoteObject(remoteFile, descriptor);
 	if (editable == null){
 		// case for cancelled operation when user was prompted to save file of different case
 		return;

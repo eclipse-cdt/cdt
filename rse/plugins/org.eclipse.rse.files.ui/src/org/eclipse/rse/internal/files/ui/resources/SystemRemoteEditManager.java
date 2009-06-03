@@ -19,6 +19,7 @@
  * David McKnight   (IBM)        - [228343] RSE unable to recover after RemoteSystemsTempfiles deletion
  * David McKnight   (IBM)        - [253262] Cache Cleanup is removing .settings directory
  * David McKnight   (IBM)        - [245260] Different user's connections on a single host are mapped to the same temp files cache
+ * David McKnight   (IBM)        - [276103] Files with names in different cases are not handled properly
  *******************************************************************************/
 
 package org.eclipse.rse.internal.files.ui.resources;
@@ -46,14 +47,18 @@ import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.rse.core.RSECorePlugin;
 import org.eclipse.rse.core.subsystems.ISubSystem;
 import org.eclipse.rse.files.ui.resources.ISystemMountPathMapper;
+import org.eclipse.rse.files.ui.resources.SystemEditableRemoteFile;
+import org.eclipse.rse.files.ui.resources.UniversalFileTransferUtility;
 import org.eclipse.rse.internal.subsystems.files.core.ISystemFilePreferencesConstants;
 import org.eclipse.rse.subsystems.files.core.SystemIFileProperties;
 import org.eclipse.rse.subsystems.files.core.subsystems.IRemoteFileSubSystem;
+import org.eclipse.rse.subsystems.files.core.subsystems.RemoteFile;
 import org.eclipse.rse.ui.RSEUIPlugin;
 import org.eclipse.rse.ui.SystemBasePlugin;
 import org.eclipse.rse.ui.view.ISystemEditableRemoteObject;
 import org.eclipse.rse.ui.view.ISystemRemoteElementAdapter;
 import org.eclipse.swt.widgets.Display;
+import org.eclipse.ui.IEditorDescriptor;
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IEditorReference;
@@ -817,4 +822,73 @@ public class SystemRemoteEditManager
 			SystemBasePlugin.logError("Error refreshing remote edit project", e); //$NON-NLS-1$
 		}
 	}
+	
+	
+	public static SystemEditableRemoteFile getEditableRemoteObject(Object element, IEditorDescriptor descriptor)
+	{
+		SystemEditableRemoteFile editable = null;
+		RemoteFile remoteFile = (RemoteFile) element;
+		if (remoteFile.isFile())
+		{
+			try
+			{
+				IFile file = (IFile)UniversalFileTransferUtility.getTempFileFor(remoteFile);
+				if (file != null)
+				{
+					SystemIFileProperties properties = new SystemIFileProperties(file);
+					
+					Object obj = properties.getRemoteFileObject();
+					if (obj != null && obj instanceof SystemEditableRemoteFile)
+					{
+						editable = (SystemEditableRemoteFile) obj;
+						
+						String remotePath = remoteFile.getAbsolutePath();
+						String replicaRemotePath = editable.getAbsolutePath();
+						// first make sure that the correct remote file is referenced (might be difference because of different case)
+						if (!replicaRemotePath.equals(remotePath)){ // for bug 276103
+							
+							IEditorPart editor = editable.getEditorPart();
+							boolean editorWasClosed = false;
+							if (editor.isDirty()){
+								editorWasClosed = editor.getEditorSite().getPage().closeEditor(editor, true);
+								if (editorWasClosed)
+									editable.doImmediateSaveAndUpload();								
+							}
+							else {
+								editorWasClosed = editor.getEditorSite().getPage().closeEditor(editor, true);
+							}
+							
+							if (!editorWasClosed){
+								// use cancelled operation so we need to get out of here
+								return null;
+							}
+							
+							try {
+								IFile originalFile = editable.getLocalResource();
+								originalFile.delete(true, new NullProgressMonitor());												
+							}
+							catch (CoreException e){
+							}
+							// fall through and let the new editable get created
+						}
+						else {					
+							return editable;
+						}
+					}
+				}
+				
+				if (descriptor != null){
+					editable = new SystemEditableRemoteFile(remoteFile, descriptor);
+				}
+				else {
+					editable = new SystemEditableRemoteFile(remoteFile);
+				}
+			}
+			catch (Exception e)
+			{
+			}
+		}
+		return editable;
+	}
+
 }

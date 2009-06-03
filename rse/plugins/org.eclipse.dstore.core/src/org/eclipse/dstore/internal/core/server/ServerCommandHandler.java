@@ -60,7 +60,6 @@ public class ServerCommandHandler extends CommandHandler
 			}
 			if (_serverTimedOut)
 			{
-				System.out.println("server timed out");
 				_dataStore.getCommandHandler().finish();
 				_dataStore.getUpdateHandler().finish();
 				_dataStore.finish();

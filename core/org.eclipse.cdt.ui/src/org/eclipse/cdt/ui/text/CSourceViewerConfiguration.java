@@ -957,7 +957,9 @@ public class CSourceViewerConfiguration extends TextSourceViewerConfiguration {
 				ILocationProvider locationProvider = (ILocationProvider)input.getAdapter(ILocationProvider.class);
 				if (locationProvider != null) {
 					IPath path = locationProvider.getPath(input);
-					contentType = CCorePlugin.getContentType(path.lastSegment());
+					if (path != null) {
+						contentType = CCorePlugin.getContentType(path.lastSegment());
+					}
 				}
 			}
 			if (contentType != null) {

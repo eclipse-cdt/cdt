@@ -496,7 +496,7 @@ public class DStoreFileService extends AbstractDStoreService implements IFileSer
 		DataStore ds = getDataStore();
 		
 		// use standard remote path
-		String stdRemotePath = new String(remotePath.replace('\\', '/'));
+		String stdRemotePath = remotePath.replace('\\', '/');
 		DataElement result = ds.find(uploadLog, DE.A_NAME, stdRemotePath,1);
 		if (result == null) 
 		{

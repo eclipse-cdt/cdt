@@ -1239,4 +1239,23 @@ public class ErrorParserFileMatchingTest extends TestCase {
 		}
 	}
 
+	/**
+	 * Checks if a file from error output can be found.
+	 *
+	 * @throws Exception...
+	 */
+	public void testMappedRemoteAbsolutePath_Bug264704() throws Exception {
+		ResourceHelper.createFolder(fProject, "Folder");
+		ResourceHelper.createFolder(fProject, "Folder/AbsoluteRemoteFolder");
+		IFile file = ResourceHelper.createFile(fProject, "Folder/AbsoluteRemoteFolder/testMappedRemoteAbsolutePath.h");
+		
+		parseOutput("/AbsoluteRemoteFolder/testMappedRemoteAbsolutePath.h:1:error");
+		assertEquals(1, errorList.size());
+		
+		ProblemMarkerInfo problemMarkerInfo = errorList.get(0);
+		assertEquals("L/FindMatchingFilesTest/Folder/AbsoluteRemoteFolder/testMappedRemoteAbsolutePath.h",problemMarkerInfo.file.toString());
+		assertEquals(1,problemMarkerInfo.lineNumber);
+		assertEquals("error",problemMarkerInfo.description);
+	}
+
 }

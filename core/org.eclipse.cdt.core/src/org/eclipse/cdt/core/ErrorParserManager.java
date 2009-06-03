@@ -31,6 +31,7 @@ import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IResourceProxy;
 import org.eclipse.core.resources.IResourceProxyVisitor;
+import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
@@ -342,11 +343,17 @@ public class ErrorParserManager extends OutputStream {
 		IFile file = findFileInWorkspace(path);
 
 		// Try to find best match considering known partial path
-		if (file==null && !path.isAbsolute()) {
+		if (file==null) {
 			IProject[] prjs = new IProject[] { fProject };
 			IFile[] files = ResourceLookup.findFilesByName(path, prjs, false);
 			if (files.length == 0)
 				files = ResourceLookup.findFilesByName(path, prjs, /* ignoreCase */ true);
+			if (files.length == 0) {
+				prjs = ResourcesPlugin.getWorkspace().getRoot().getProjects();
+				files = ResourceLookup.findFilesByName(path, prjs, false);
+				if (files.length == 0)
+					files = ResourceLookup.findFilesByName(path, prjs, /* ignoreCase */ true);
+			}
 			if (files.length == 1)
 				file = files[0];
 		}

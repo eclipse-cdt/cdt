@@ -40,6 +40,7 @@ import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.SubProgressMonitor;
 import org.eclipse.osgi.util.NLS;
+import org.eclipse.rse.internal.files.ui.FileResources;
 import org.eclipse.rse.internal.importexport.RemoteImportExportPlugin;
 import org.eclipse.rse.internal.importexport.RemoteImportExportResources;
 import org.eclipse.rse.internal.importexport.RemoteImportExportUtil;
@@ -426,6 +427,29 @@ public class RemoteFileImportOperation extends WorkspaceModifyOperation {
 		return new MultiStatus(RemoteImportExportPlugin.getDefault().getBundle().getSymbolicName(), IStatus.OK, errors, msg, null);
 	}
 
+	private IFile existingFileInDifferentCase(IFile file) throws CoreException {
+
+		boolean isWindows = System.getProperty("os.name").toLowerCase().startsWith("win");  //$NON-NLS-1$//$NON-NLS-2$		
+		if (!isWindows) // if the system is case sensitive then we're good
+			return null;
+		
+		String newName = file.getName();
+		
+		//now look for a matching case variant in the tree
+		IContainer parent = file.getParent();
+		IResource[] members  = parent.members();
+		for (int i = 0; i < members.length; i++){
+			IResource member = members[i];
+			if (member instanceof IFile){
+				String memberName = member.getName();
+				if (newName.equalsIgnoreCase(memberName)){
+					return (IFile)member;
+				}
+			}
+		}
+		return null;
+	}
+	
 	/**
 	 * Imports the specified file system object into the workspace.
 	 * If the import fails, adds a status object to the list to be returned by
@@ -475,15 +499,13 @@ public class RemoteFileImportOperation extends WorkspaceModifyOperation {
 			}
 			
 			// check for existing resource		
-			try {
-				org.eclipse.core.internal.resources.File targetFile = (org.eclipse.core.internal.resources.File)targetResource;
-				targetFile.checkDoesNotExist(targetFile.getFlags(targetFile.getResourceInfo(false, false)), false);
+			IFile existingFile = existingFileInDifferentCase(targetResource);
+			if (existingFile != null){
+				String msgDetails = NLS.bind(FileResources.FILEMSG_CREATE_FILE_FAILED_EXIST_DETAILS, existingFile.getFullPath());			
+				errorTable.add(new Status(IStatus.ERROR, RemoteImportExportPlugin.getDefault().getBundle().getSymbolicName(),msgDetails));
+				return;			
 			}
-			catch (CoreException e){
-				errorTable.add(e.getStatus());
-				return;
-			}
-
+			
 			
 			rfss.download(((UniFilePlus) fileObject).remoteFile, targetResource.getLocation().makeAbsolute().toOSString(), encoding, null);
 			try {

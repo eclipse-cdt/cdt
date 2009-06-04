@@ -326,18 +326,27 @@ public class ErrorParserManager extends OutputStream {
 	}
 
 	/**
-	 * Returns the file with the given name if that file can be uniquely identified.
+	 * Returns the file with the given (partial) location if that file can be uniquely identified.
 	 * Otherwise returns {@code null}.
+	 * <br><br>
+	 * The passed in String 'partialLoc' is treated as a partial filesystem location for the
+	 * resource. Resolution is attempted with the following precedence:<br>
+	 *           If partialLoc is an absolute fs location:<br>
+	 *            - Resolve it to an IFile in the Project<br>
+	 *            - Resolve it to an IFile in the Workspace<br>
+	 *           If partialLoc is a relative path:<br>
+	 *            - Resolve it relative to the Current Working Directory<br>
+	 *            - Resolve just the segments provided<br>
 	 *
-	 * @param fileName - file name could be plain file name, absolute path or partial path
+	 * @param partialLoc - file name could be plain file name, absolute path or partial path
 	 * @return - file in the workspace or {@code null}.
 	 */
-	public IFile findFileName(String fileName) {
-		if (fileName.equals(cachedFileName) && cachedWorkingDirectory != null && 
+	public IFile findFileName(String partialLoc) {
+		if (partialLoc.equals(cachedFileName) && cachedWorkingDirectory != null && 
 				org.eclipse.core.filesystem.URIUtil.equals(getWorkingDirectoryURI(), cachedWorkingDirectory))
 			return cachedFile;
 
-		IPath path = new Path(fileName);
+		IPath path = new Path(partialLoc);
 
 		// Try to find exact match. If path is not absolute - searching in working directory.
 		IFile file = findFileInWorkspace(path);
@@ -360,10 +369,10 @@ public class ErrorParserManager extends OutputStream {
 
 		// Could be cygwin path
 		if (file==null && isCygwin && path.isAbsolute()) {
-			file = findCygwinFile(fileName);
+			file = findCygwinFile(partialLoc);
 		}
 
-		cachedFileName = fileName;
+		cachedFileName = partialLoc;
 		cachedWorkingDirectory = getWorkingDirectoryURI();
 		cachedFile = file;
 		return file;

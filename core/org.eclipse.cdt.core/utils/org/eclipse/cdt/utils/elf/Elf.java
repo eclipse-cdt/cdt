@@ -49,6 +49,7 @@ public class Elf {
 	private Section symtab_sym;
 	private Symbol[] dynsym_symbols;
 	private Section dynsym_sym;
+	private boolean sections_mapped; // Have sections been mapped? Used to clean up properly in Elf.Dispose.
 
 	protected String EMPTY_STRING = ""; //$NON-NLS-1$
 
@@ -339,6 +340,7 @@ public class Elf {
 		 * @since 5.1
 		 */
 		public ByteBuffer mapSectionData() throws IOException {
+			sections_mapped = true;
 			return efile.getChannel().map(MapMode.READ_ONLY, sh_offset, sh_size).load().asReadOnlyBuffer();
 		}
 
@@ -437,7 +439,7 @@ public class Elf {
 
 		private String name = null;
 
-		private Section sym_section;
+		private final Section sym_section;
 
 		public Symbol(Section section) {
 			sym_section = section;
@@ -606,7 +608,7 @@ public class Elf {
 		public final static int DT_RPATH = 15;
 		public long d_tag;
 		public long d_val;
-		private Section section;
+		private final Section section;
 		private String name;
 
 		protected Dynamic(Section section) {
@@ -954,7 +956,8 @@ public class Elf {
 				efile = null;
 				
 				// ensure the mappings get cleaned up
-				System.gc();
+				if (sections_mapped)
+					System.gc();
 			}
 		} catch (IOException e) {
 		}

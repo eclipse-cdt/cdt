@@ -30,12 +30,14 @@ import org.eclipse.cdt.dsf.debug.service.IRunControl.IContainerDMContext;
 import org.eclipse.cdt.dsf.debug.service.command.ICommandControl;
 import org.eclipse.cdt.dsf.debug.service.command.ICommandControlService;
 import org.eclipse.cdt.dsf.gdb.IGDBLaunchConfigurationConstants;
+import org.eclipse.cdt.dsf.gdb.IGdbDebugConstants;
 import org.eclipse.cdt.dsf.gdb.internal.GdbPlugin;
 import org.eclipse.cdt.dsf.gdb.launching.GdbLaunch;
 import org.eclipse.cdt.dsf.gdb.service.GDBRunControl_7_0;
 import org.eclipse.cdt.dsf.gdb.service.IGDBBackend;
 import org.eclipse.cdt.dsf.gdb.service.IReverseRunControl;
 import org.eclipse.cdt.dsf.gdb.service.SessionType;
+import org.eclipse.cdt.dsf.gdb.service.GDBProcesses_7_0.ContainerExitedDMEvent;
 import org.eclipse.cdt.dsf.mi.service.IMIBackend;
 import org.eclipse.cdt.dsf.mi.service.IMIProcesses;
 import org.eclipse.cdt.dsf.mi.service.MIProcesses;
@@ -61,6 +63,7 @@ import org.eclipse.cdt.dsf.service.DsfSession;
 import org.eclipse.cdt.utils.pty.PTY;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.ILaunchConfiguration;
@@ -542,6 +545,21 @@ public class GDBControl_7_0 extends AbstractMIControl implements IGDBControl {
         }
     }
  
+    /** @since 2.0 */
+    @DsfServiceEventHandler 
+    public void eventDispatched(ContainerExitedDMEvent e) {
+    	if (Platform.getPreferencesService().getBoolean("org.eclipse.cdt.dsf.gdb.ui",  //$NON-NLS-1$
+    													IGdbDebugConstants.PREF_AUTO_TERMINATE_GDB,
+    													true, null)) {
+    		if (!isConnected() && !fMIBackend.getIsAttachSession()) {
+    			// If the last process we are debugging finishes, let's terminate GDB
+    			// but not for an attach session, since we could request to attach
+    			// to another process
+    			terminate(new RequestMonitor(getExecutor(), null));
+    		}
+    	}
+    }
+    
     public static class InitializationShutdownStep extends Sequence.Step {
         public enum Direction { INITIALIZING, SHUTTING_DOWN }
         

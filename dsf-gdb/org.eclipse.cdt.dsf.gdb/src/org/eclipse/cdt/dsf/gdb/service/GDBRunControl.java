@@ -189,6 +189,9 @@ public class GDBRunControl extends MIRunControl {
 		}
 	}
 	
+	/**
+	 * @since 2.0
+	 */
     @Override
 	public void canResume(IExecutionDMContext context, DataRequestMonitor<Boolean> rm) {
     	if (fGdb.getSessionType() == SessionType.CORE) {
@@ -199,6 +202,9 @@ public class GDBRunControl extends MIRunControl {
     	super.canResume(context, rm);
     }
     
+	/**
+	 * @since 2.0
+	 */
     @Override
 	public void canSuspend(IExecutionDMContext context, DataRequestMonitor<Boolean> rm) {
     	if (fGdb.getSessionType() == SessionType.CORE) {
@@ -209,6 +215,9 @@ public class GDBRunControl extends MIRunControl {
     	super.canSuspend(context, rm);
     }
 
+	/**
+	 * @since 2.0
+	 */
     @Override
 	public void canStep(final IExecutionDMContext context, StepType stepType, final DataRequestMonitor<Boolean> rm) {
     	if (fGdb.getSessionType() == SessionType.CORE) {

@@ -174,6 +174,9 @@ public class GDBRunControl_7_0 extends MIRunControl implements IReverseRunContro
 				});
     }
 
+	/**
+	 * @since 2.0
+	 */
 	@Override
 	public void canResume(IExecutionDMContext context, DataRequestMonitor<Boolean> rm) {
 		if (fGdb.getSessionType() == SessionType.CORE) {
@@ -184,6 +187,9 @@ public class GDBRunControl_7_0 extends MIRunControl implements IReverseRunContro
 		super.canResume(context, rm);
 	}
 
+	/**
+	 * @since 2.0
+	 */
 	@Override
 	public void canSuspend(IExecutionDMContext context, DataRequestMonitor<Boolean> rm) {
 		if (fGdb.getSessionType() == SessionType.CORE) {
@@ -194,6 +200,9 @@ public class GDBRunControl_7_0 extends MIRunControl implements IReverseRunContro
 		super.canSuspend(context, rm);
 	}
 
+	/**
+	 * @since 2.0
+	 */
 	@Override
 	public void canStep(final IExecutionDMContext context, StepType stepType, final DataRequestMonitor<Boolean> rm) {
 		if (fGdb.getSessionType() == SessionType.CORE) {

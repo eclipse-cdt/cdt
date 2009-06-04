@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008 Wind River Systems, Inc. and others.
+ * Copyright (c) 2008, 2009 Wind River Systems, Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -35,7 +35,7 @@ import org.eclipse.cdt.internal.ui.editor.ASTProvider;
 public abstract class SharedASTJob extends Job {
 
 	/**
-	 * The translation unit to for which to access the AST.
+	 * The translation unit for which to access the AST.
 	 */
 	protected final ITranslationUnit fUnit;
 

@@ -6300,4 +6300,18 @@ public class AST2Tests extends AST2BaseTest {
 		assertTrue(e instanceof IASTLiteralExpression);
 	}
 
+	//	enum myenum { value1, value2, value3 };
+	//
+	//	void test() {
+	//	        (int) value1;
+	//	}
+	public void testBug278797() throws Exception {
+		IASTTranslationUnit tu = parseAndCheckBindings(getAboveComment(), ParserLanguage.C);
+		IASTFunctionDefinition func = (IASTFunctionDefinition)tu.getDeclarations()[1];
+		IASTExpressionStatement stmt = ((IASTExpressionStatement)((IASTCompoundStatement)func.getBody()).getStatements()[0]);
+		IType t = ((IASTCastExpression)stmt.getExpression()).getOperand().getExpressionType();
+		assertNotNull(t);
+		assertTrue(t instanceof IEnumeration);
+	}
+	
 }

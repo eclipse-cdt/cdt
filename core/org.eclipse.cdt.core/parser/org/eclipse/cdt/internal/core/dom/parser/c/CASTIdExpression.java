@@ -21,7 +21,9 @@ import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.ICompositeType;
 import org.eclipse.cdt.core.dom.ast.IEnumeration;
+import org.eclipse.cdt.core.dom.ast.IEnumerator;
 import org.eclipse.cdt.core.dom.ast.IFunction;
+import org.eclipse.cdt.core.dom.ast.IProblemBinding;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.IVariable;
 import org.eclipse.cdt.core.parser.util.ArrayUtil;
@@ -96,6 +98,12 @@ public class CASTIdExpression extends ASTNode implements IASTIdExpression, IASTC
 			} 
 			if (binding instanceof IFunction) {
 				return ((IFunction)binding).getType();
+			}
+			if (binding instanceof IEnumerator) {
+				return ((IEnumerator)binding).getType();
+			}
+			if (binding instanceof IProblemBinding) {
+				return (IProblemBinding)binding;
 			}
 		} catch (DOMException e) {
 			return e.getProblem();

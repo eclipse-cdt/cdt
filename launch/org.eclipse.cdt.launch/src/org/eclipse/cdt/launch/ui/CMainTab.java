@@ -13,8 +13,10 @@
 package org.eclipse.cdt.launch.ui;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.ICDescriptor;
@@ -127,6 +129,8 @@ public class CMainTab extends CLaunchConfigurationTab {
 	public static final int DONT_CHECK_PROGRAM = 2;
 	/** @since 6.0 */
 	public static final int SPECIFY_CORE_FILE = 4;
+
+	private final Map<IPath, Boolean> fBinaryExeCache = new HashMap<IPath, Boolean>();
 
 	
 	public CMainTab() {
@@ -790,8 +794,14 @@ public class CMainTab extends CLaunchConfigurationTab {
 	 */
 	protected boolean isBinary(IProject project, IPath exePath) throws CoreException {
 		try {
-			IBinaryObject exe = LaunchUtils.getBinary(project, exePath);
-			return exe != null;
+			Boolean binValue = fBinaryExeCache.get(exePath);
+			if (binValue == null)
+			{
+				IBinaryObject exe = LaunchUtils.getBinary(project, exePath);
+				binValue = exe != null;
+				fBinaryExeCache.put(exePath, binValue);				
+			}
+			return binValue;
 		} catch (ClassCastException e) {
 		}
 		return false;

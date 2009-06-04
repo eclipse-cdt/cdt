@@ -124,6 +124,9 @@ public class FormatterProfileManager extends ProfileManager {
      */
     @Override
 	public Profile getDefaultProfile() {
+    	Profile p = super.getDefaultProfile();
+    	if (p != null)
+    		return p;
 	    return getProfile(DEFAULT_PROFILE);
     }
     

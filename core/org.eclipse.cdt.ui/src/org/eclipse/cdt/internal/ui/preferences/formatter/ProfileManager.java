@@ -798,7 +798,12 @@ public abstract class ProfileManager extends Observable {
 		}
 	}
 
-    public abstract Profile getDefaultProfile();
+	/**
+	 * @return Default scoped profile or null
+	 */
+    public Profile getDefaultProfile() {
+		return getProfile(fPreferencesAccess.getDefaultScope().getNode(CUIPlugin.PLUGIN_ID).get(fProfileKey, "")); //$NON-NLS-1$
+    }
 
 	public IProfileVersioner getProfileVersioner() {
     	return fProfileVersioner;

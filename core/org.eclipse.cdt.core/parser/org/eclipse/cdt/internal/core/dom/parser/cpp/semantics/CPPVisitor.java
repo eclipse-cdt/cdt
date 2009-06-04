@@ -1606,7 +1606,8 @@ public class CPPVisitor extends ASTQueries {
 
 	private static IType getArrayTypes(IType type, IASTArrayDeclarator declarator) {
 	    IASTArrayModifier[] mods = declarator.getArrayModifiers();
-	    for (IASTArrayModifier mod : mods) {
+	    for (int i = mods.length -1; i >= 0; i--) {
+	    	IASTArrayModifier mod = mods[i];
 	        type = new CPPArrayType(type, mod.getConstantExpression());
 	    }
 	    return type;

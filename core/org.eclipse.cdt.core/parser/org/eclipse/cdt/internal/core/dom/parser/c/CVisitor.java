@@ -1438,10 +1438,10 @@ public class CVisitor extends ASTQueries {
 	private static IType setupArrayChain(IASTDeclarator decl, IType lastType) {
 		if (decl instanceof IASTArrayDeclarator) {
 			IASTArrayModifier[] mods = ((IASTArrayDeclarator)decl).getArrayModifiers();
-			for (IASTArrayModifier mod : mods) {
+			for (int i = mods.length - 1; i >= 0; i--) {
 				CArrayType arrayType = new CArrayType(lastType);
-				if (mod instanceof ICASTArrayModifier) {
-					arrayType.setModifier((ICASTArrayModifier)mod);
+				if (mods[i] instanceof ICASTArrayModifier) {
+					arrayType.setModifier((ICASTArrayModifier)mods[i]);
 				}
 				lastType= arrayType;
 			}

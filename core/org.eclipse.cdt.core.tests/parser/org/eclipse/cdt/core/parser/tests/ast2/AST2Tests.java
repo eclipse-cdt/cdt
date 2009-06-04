@@ -6314,4 +6314,48 @@ public class AST2Tests extends AST2BaseTest {
 		assertTrue(t instanceof IEnumeration);
 	}
 	
+	
+	// /*Check that sizes are stored correctly in chains of IArrayType*/
+	//int a[2][3] = {{1,2,3},{4,5,6}};
+	//int b[3][2] = {{1,2},{3,4},{5,6}};
+	//
+	public void testBug277458() throws Exception {
+		for(ParserLanguage lang : ParserLanguage.values()) {
+			IASTTranslationUnit tu = parseAndCheckBindings(getAboveComment(), lang);
+			assertTrue(tu.isFrozen());
+			//int a[2][3] = {{1,2,3},{4,5,6}};
+			{
+				IASTDeclaration d = tu.getDeclarations()[0];
+				IBinding b = ((IASTSimpleDeclaration)d).getDeclarators()[0].getName().resolveBinding();
+				IType t = ((IVariable)b).getType();
+				assertTrue(t instanceof IArrayType);
+				IArrayType at1 = (IArrayType)t;
+				IASTExpression size1 = at1.getArraySizeExpression();
+				assertTrue(at1.getType() instanceof IArrayType);
+				IArrayType at2 = (IArrayType) at1.getType();
+				IASTExpression size2 = at2.getArraySizeExpression();
+				assertTrue(size1 instanceof IASTLiteralExpression);
+				assertEquals(((IASTLiteralExpression)size1).getValue()[0], '2');
+				assertTrue(size2 instanceof IASTLiteralExpression);
+				assertEquals(((IASTLiteralExpression)size2).getValue()[0], '3');
+			}
+			//int b[3][2] = {{1,2},{3,4},{5,6}};
+			{
+				IASTDeclaration d = tu.getDeclarations()[1];
+				IBinding b = ((IASTSimpleDeclaration)d).getDeclarators()[0].getName().resolveBinding();
+				IType t = ((IVariable)b).getType();
+				assertTrue(t instanceof IArrayType);
+				IArrayType at1 = (IArrayType)t;
+				IASTExpression size1 = at1.getArraySizeExpression();
+				assertTrue(at1.getType() instanceof IArrayType);
+				IArrayType at2 = (IArrayType) at1.getType();
+				IASTExpression size2 = at2.getArraySizeExpression();
+				assertTrue(size1 instanceof IASTLiteralExpression);
+				assertEquals(((IASTLiteralExpression)size1).getValue()[0], '3');
+				assertTrue(size2 instanceof IASTLiteralExpression);
+				assertEquals(((IASTLiteralExpression)size2).getValue()[0], '2');
+			}
+		}
+	}
+
 }

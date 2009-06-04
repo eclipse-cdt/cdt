@@ -1,21 +1,20 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<?eclipse version="3.0"?>
-<!--
-Copyright (c) 2006, 2009 IBM Corporation and others. All rights reserved.
-This program and the accompanying materials are made available under the terms
-of the Eclipse Public License v1.0 which accompanies this distribution, and is 
-available at http://www.eclipse.org/legal/epl-v10.html
+<?eclipse version="3.0"?><!--
+    Copyright (c) 2002, 2009 IBM Corporation and others. All rights reserved.
+    This program and the accompanying materials are made available under the terms
+    of the Eclipse Public License v1.0 which accompanies this distribution, and is 
+    available at http://www.eclipse.org/legal/epl-v10.html
+    
+    Initial Contributors:
+    The following IBM employees contributed to the Remote System Explorer
+    component that contains this file: David McKnight, Kushal Munir, 
+    Michael Berger, David Dykstal, Phil Coulthard, Don Yantzi, Eric Simpson, 
+    Emily Bruner, Mazen Faraj, Adrian Storisteanu, Li Ding, and Kent Hawley.
+    
+    Contributors:
+    Anna Dushistova (MontaVista) - [227535] Avoid dependency on files.core
+ -->
 
-Initial Contributors:
-The following IBM employees contributed to the Remote System Explorer
-component that contains this file: David McKnight, Kushal Munir, 
-Michael Berger, David Dykstal, Phil Coulthard, Don Yantzi, Eric Simpson, 
-Emily Bruner, Mazen Faraj, Adrian Storisteanu, Li Ding, and Kent Hawley.
-
-Contributors:
-Anna Dushistova (MontaVista) - [227535] Avoid dependency on files.core
-David McKnight   (IBM)  - [189353] More file patterns should transfer in text mode by default
--->
 <plugin>
 <!-- ================================================================= -->
 <!-- 		Define Remote File Types extension point                   -->
@@ -37,51 +36,29 @@ David McKnight   (IBM)  - [189353] More file patterns should transfer in text mo
   <remoteFileTypes extension="com" type="binary"/>
   <remoteFileTypes extension="cpp" type="text"/>
   <remoteFileTypes extension="cvv" type="text"/>
-  <remoteFileTypes extension="cvsignore" type="text"/>
   <remoteFileTypes extension="dll" type="binary"/>
   <remoteFileTypes extension="doc" type="binary"/>
-  <remoteFileTypes extension="emof" type="text"/>
   <remoteFileTypes extension="exe" type="binary"/>
   <remoteFileTypes extension="gif" type="binary"/>
   <remoteFileTypes extension="h" type="text"/>
   <remoteFileTypes extension="hh" type="text"/>
-  <remoteFileTypes extension="history" type="text"/>
   <remoteFileTypes extension="hpp" type="text"/>
   <remoteFileTypes extension="ico" type="binary"/>
-  <remoteFileTypes extension="index" type="text"/>
   <remoteFileTypes extension="ini" type="text"/>
   <remoteFileTypes extension="jar" type="binary"/>
   <remoteFileTypes extension="java" type="text"/>
-  <remoteFileTypes extension="jpage" type="text"/>
   <remoteFileTypes extension="jpeg" type="binary"/>
-  <remoteFileTypes extension="jpg" type="binary"/>  
-  <remoteFileTypes extension="MF" type="text"/>
-  <remoteFileTypes extension="mxsd" type="text"/>
-  <remoteFileTypes extension="options" type="text"/>
+  <remoteFileTypes extension="jpg" type="binary"/>
   <remoteFileTypes extension="pdf" type="binary"/>
-  <remoteFileTypes extension="png" type="binary"/>
   <remoteFileTypes extension="ppt" type="binary"/>
-  <remoteFileTypes extension="prefs" type="text"/>
-  <remoteFileTypes extension="properties" type="text"/>
   <remoteFileTypes extension="so" type="binary"/>
-  <remoteFileTypes extension="sh" type="text"/>
   <remoteFileTypes extension="tif" type="binary"/>
   <remoteFileTypes extension="txt" type="text"/>
   <remoteFileTypes extension="xls" type="binary"/>
-  <remoteFileTypes extension="xsl" type="binary"/>
-  <remoteFileTypes extension="zip" type="binary"/>
-
-  <!-- special handling for XML -->
-  <remoteFileTypes extension="classpath" type="binary"/>  
-  <remoteFileTypes extension="ecore" type="binary"/>
-  <remoteFileTypes extension="exsd" type="binary"/>
-  <remoteFileTypes extension="jardesc" type="binary"/>
-  <remoteFileTypes extension="launch" type="binary"/> 
-  <remoteFileTypes extension="product" type="binary"/>
-  <remoteFileTypes extension="project" type="binary"/>
   <remoteFileTypes extension="xmi" type="binary"/>
   <remoteFileTypes extension="xml" type="binary"/>
-  <!-- end of special handling for XML -->
+  <remoteFileTypes extension="zip" type="binary"/>
+
 </extension>
 
 <!-- ================================================================= -->

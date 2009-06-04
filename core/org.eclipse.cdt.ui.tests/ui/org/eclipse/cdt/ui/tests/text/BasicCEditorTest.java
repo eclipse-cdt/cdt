@@ -12,12 +12,16 @@
 package org.eclipse.cdt.ui.tests.text;
 
 import java.io.File;
+import java.net.URI;
+import java.net.URISyntaxException;
 
 import junit.framework.Test;
 import junit.framework.TestSuite;
 
 import org.eclipse.core.filesystem.EFS;
+import org.eclipse.core.filesystem.IFileStore;
 import org.eclipse.core.filesystem.URIUtil;
+import org.eclipse.core.filesystem.provider.FileSystem;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
@@ -34,6 +38,7 @@ import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.RGB;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.ui.IEditorPart;
+import org.eclipse.ui.IEditorRegistry;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
@@ -70,6 +75,32 @@ public class BasicCEditorTest extends BaseUITestCase {
 
 		public void documentChanged(DocumentEvent event) {
 			fDocChanged= true;
+		}
+	}
+
+	public static class Bug278632FileSystem extends FileSystem {
+		public Bug278632FileSystem() {
+			getClass();
+		}
+
+		@Override
+		public IFileStore getStore(URI uri) {
+			try {
+				// For the test case, this just return the FS implementation
+				// used for the null filesystem.
+				// In a real application this would be a real implementation,
+				// however for the purposes
+				// of exposing the bug, any non-file:// scheme will do.
+				return EFS.getStore(new URI(
+						EFS.getNullFileSystem().getScheme(), uri
+								.getSchemeSpecificPart(), null));
+			} catch (URISyntaxException e) {
+				e.printStackTrace();
+				return null;
+			} catch (CoreException e) {
+				e.printStackTrace();
+				return null;
+			}
 		}
 	}
 
@@ -377,6 +408,33 @@ public class BasicCEditorTest extends BaseUITestCase {
 		int includeIdx= content.indexOf(include);
 		StyleRange style= fTextWidget.getStyleRangeAtOffset(includeIdx);
 		assertSame(style.foreground, ppDirectiveColor);
+	}
+
+	public void testNonFileEFSResource_Bug278632() {
+		IWorkbenchPage page = PlatformUI.getWorkbench()
+				.getActiveWorkbenchWindow().getActivePage();
+		assertNotNull(page);
+
+		IEditorRegistry reg = page.getWorkbenchWindow().getWorkbench()
+				.getEditorRegistry();
+		String editorID = reg.getDefaultEditor(".c").getId();
+
+		URI uri = null;
+		try {
+			uri = new URI("bug278632", "/folder/file", null);
+		} catch (URISyntaxException e) {
+			e.printStackTrace();
+		}
+		assertNotNull(uri);
+
+		IEditorPart part = null;
+		try {
+			part = IDE.openEditor(page, uri, editorID, true);
+		} catch (PartInitException e) {
+			e.printStackTrace();
+		}
+		assertNotNull(part);
+		assertTrue(part instanceof CEditor);
 	}
 
 	/**

@@ -220,4 +220,12 @@
           </enablement>
        </renameParticipant>
    	</extension>    
+
+    <extension point="org.eclipse.core.filesystem.filesystems">
+        <filesystem
+            scheme="bug278632">
+            <run class="org.eclipse.cdt.ui.tests.text.BasicCEditorTest$Bug278632FileSystem"/>
+        </filesystem>
+    </extension>
+
 </plugin>

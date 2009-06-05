@@ -111,6 +111,7 @@ public class ResourceHelper {
 		IWorkspace workspace = ResourcesPlugin.getWorkspace();
 		IWorkspaceRoot root = workspace.getRoot();
 		IProject project = root.getProject(projectName);
+		resourcesCreated.add(project);
 		IProjectDescription description = workspace.newProjectDescription(projectName);
 		description.setLocationURI(locationURI);
 		project = CCorePlugin.getDefault().createCDTProject(description, project, NULL_MONITOR);

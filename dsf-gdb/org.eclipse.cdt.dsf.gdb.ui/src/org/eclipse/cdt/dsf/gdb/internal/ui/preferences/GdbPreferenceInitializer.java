@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.cdt.dsf.gdb.internal.ui.preferences;
 
+import org.eclipse.cdt.dsf.gdb.IGdbDebugPreferenceConstants;
 import org.eclipse.cdt.dsf.gdb.internal.ui.GdbUIPlugin;
 import org.eclipse.core.runtime.preferences.AbstractPreferenceInitializer;
 import org.eclipse.jface.preference.IPreferenceStore;
@@ -22,5 +23,6 @@ public class GdbPreferenceInitializer extends AbstractPreferenceInitializer {
 	public void initializeDefaultPreferences() {
 		IPreferenceStore store = GdbUIPlugin.getDefault().getPreferenceStore();
 		store.setDefault(IGdbDebugPreferenceConstants.PREF_TRACES_ENABLE, true);
+		store.setDefault(IGdbDebugPreferenceConstants.PREF_AUTO_TERMINATE_GDB, true);
 	}
 }

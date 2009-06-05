@@ -21,6 +21,8 @@ class MessagesForPreferences extends NLS {
 	public static String GdbDebugPreferencePage_description;
 	public static String GdbDebugPreferencePage_traces_label;
 	public static String GdbDebugPreferencePage_enableTraces_label;
+	public static String GdbDebugPreferencePage_termination_label;
+	public static String GdbDebugPreferencePage_autoTerminateGdb_label;
 
 	static {
 		// initialize resource bundle

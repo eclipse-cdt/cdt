@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.cdt.dsf.gdb.internal.ui.preferences;
 
+import org.eclipse.cdt.dsf.gdb.IGdbDebugPreferenceConstants;
 import org.eclipse.cdt.dsf.gdb.internal.ui.GdbUIPlugin;
 import org.eclipse.jface.preference.BooleanFieldEditor;
 import org.eclipse.jface.preference.FieldEditorPreferencePage;
@@ -51,22 +52,38 @@ public class GdbDebugPreferencePage extends FieldEditorPreferencePage implements
 		layout.marginWidth= 0;
 		parent.setLayout(layout);
 		
-		Group tracesGroup= new Group(parent, SWT.NONE);
-		tracesGroup.setText(MessagesForPreferences.GdbDebugPreferencePage_traces_label);
+		Group group= new Group(parent, SWT.NONE);
+		group.setText(MessagesForPreferences.GdbDebugPreferencePage_traces_label);
 		GridLayout groupLayout= new GridLayout(3, false);
-		tracesGroup.setLayout(groupLayout);
-		tracesGroup.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+		group.setLayout(groupLayout);
+		group.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 
-		BooleanFieldEditor traces= new BooleanFieldEditor(
+		BooleanFieldEditor boolField= new BooleanFieldEditor(
 				IGdbDebugPreferenceConstants.PREF_TRACES_ENABLE,
 				MessagesForPreferences.GdbDebugPreferencePage_enableTraces_label,
-				tracesGroup);
+				group);
 
-		traces.fillIntoGrid(tracesGroup, 3);
-		addField(traces);
-
+		boolField.fillIntoGrid(group, 3);
+		addField(boolField);
 		// need to set layout again
-		tracesGroup.setLayout(groupLayout);
+		group.setLayout(groupLayout);
+		
+		group= new Group(parent, SWT.NONE);
+		group.setText(MessagesForPreferences.GdbDebugPreferencePage_termination_label);
+		groupLayout= new GridLayout(3, false);
+		group.setLayout(groupLayout);
+		group.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+
+		boolField= new BooleanFieldEditor(
+				IGdbDebugPreferenceConstants.PREF_AUTO_TERMINATE_GDB,
+				MessagesForPreferences.GdbDebugPreferencePage_autoTerminateGdb_label,
+				group);
+
+		boolField.fillIntoGrid(group, 3);
+		addField(boolField);
+		// need to set layout again
+		group.setLayout(groupLayout);
+
 	}
 
 	@Override

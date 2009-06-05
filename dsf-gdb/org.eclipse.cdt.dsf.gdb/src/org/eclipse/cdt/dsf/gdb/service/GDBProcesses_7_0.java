@@ -850,9 +850,6 @@ public class GDBProcesses_7_0 extends AbstractDsfService
     @DsfServiceEventHandler
     public void eventDispatched(IStartedDMEvent e) {
     	if (e instanceof ContainerStartedDMEvent) {
-			// This will increment the connect count
-			fCommandControl.setConnected(true);
-
     		fContainerCommandCache.reset();
     	} else {
     		fThreadCommandCache.reset();
@@ -863,9 +860,6 @@ public class GDBProcesses_7_0 extends AbstractDsfService
     @DsfServiceEventHandler
     public void eventDispatched(IExitedDMEvent e) {
     	if (e instanceof ContainerExitedDMEvent) {
-			// This will decrement the connect count
-			fCommandControl.setConnected(false);
-
     		fContainerCommandCache.reset();
     	} else {
     		fThreadCommandCache.reset();

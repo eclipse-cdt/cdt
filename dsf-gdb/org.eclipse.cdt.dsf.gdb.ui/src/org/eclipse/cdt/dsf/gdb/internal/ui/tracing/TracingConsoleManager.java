@@ -10,8 +10,8 @@
  *******************************************************************************/
 package org.eclipse.cdt.dsf.gdb.internal.ui.tracing;
 
+import org.eclipse.cdt.dsf.gdb.IGdbDebugPreferenceConstants;
 import org.eclipse.cdt.dsf.gdb.internal.ui.GdbUIPlugin;
-import org.eclipse.cdt.dsf.gdb.internal.ui.preferences.IGdbDebugPreferenceConstants;
 import org.eclipse.cdt.dsf.gdb.launching.ITracedLaunch;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.ILaunch;

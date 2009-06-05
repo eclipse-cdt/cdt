@@ -16,7 +16,9 @@ import org.eclipse.debug.ui.IDebugUIConstants;
 /**
  * @noimplement This interface is not intended to be implemented by clients.
  * @since 2.0
+ * @deprecated Has been replaced with org.eclipse.cdt.dsf.gdb.IGdbDebugPreferenceConstants
  */
+@Deprecated
 public interface IGdbDebugPreferenceConstants {
 
 	/**

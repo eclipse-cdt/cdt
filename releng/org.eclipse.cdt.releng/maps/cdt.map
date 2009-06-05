@@ -83,7 +83,7 @@ plugin@org.eclipse.cdt.managedbuilder.xlupc.ui=@cdtTag@,:pserver:anonymous@dev.e
 plugin@org.eclipse.cdt.core.lrparser=@cdtTag@,:pserver:anonymous@dev.eclipse.org:/cvsroot/tools,,org.eclipse.cdt/lrparser/org.eclipse.cdt.core.lrparser
 plugin@org.eclipse.cdt.core.lrparser.tests=@cdtTag@,:pserver:anonymous@dev.eclipse.org:/cvsroot/tools,,org.eclipse.cdt/lrparser/org.eclipse.cdt.core.lrparser.tests
 ! newly signed LPG runtime
-plugin@net.sourceforge.lpg.lpgjavaruntime,1.1.0=GET,http://download.eclipse.org/tools/orbit/downloads/drops/S20090307012903/bundles/net.sourceforge.lpg.lpgjavaruntime_1.1.0.v200803061910.jar
+plugin@net.sourceforge.lpg.lpgjavaruntime,1.1.0=GET,http://download.eclipse.org/tools/orbit/downloads/drops/R20090529135407/bundles/net.sourceforge.lpg.lpgjavaruntime_1.1.0.v200803061910.jar
 feature@org.eclipse.cdt.core.lrparser.feature=@cdtTag@,:pserver:anonymous@dev.eclipse.org:/cvsroot/tools,,org.eclipse.cdt/lrparser/org.eclipse.cdt.core.lrparser.feature
 feature@org.eclipse.cdt.core.lrparser.sdk=@cdtTag@,:pserver:anonymous@dev.eclipse.org:/cvsroot/tools,,org.eclipse.cdt/lrparser/org.eclipse.cdt.core.lrparser.sdk.feature
 

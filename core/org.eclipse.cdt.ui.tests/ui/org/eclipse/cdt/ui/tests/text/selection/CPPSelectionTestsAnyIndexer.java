@@ -1145,8 +1145,7 @@ public abstract class CPPSelectionTestsAnyIndexer extends BaseSelectionTestsInde
         decl = testF3(file, offset2);
         assertNode("~X", offset1, decl);
     }
-    
-    
+
 	// template<typename T>
 	// class C {
 	// public:

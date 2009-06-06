@@ -259,7 +259,7 @@ public class CPPSelectionTestsNoIndexer extends BaseUITestCase {
         	ITextEditor editor= (ITextEditor) part;
             editor.getSelectionProvider().setSelection(new TextSelection(offset,length));
             
-            final OpenDeclarationsAction action = (OpenDeclarationsAction) ((AbstractTextEditor)part).getAction("OpenDeclarations"); //$NON-NLS-1$
+            final OpenDeclarationsAction action = (OpenDeclarationsAction) ((AbstractTextEditor) part).getAction("OpenDeclarations"); //$NON-NLS-1$
             action.runSync();
         
             // the action above should highlight the declaration, so now retrieve it and use that selection to get the IASTName selected on the TU
@@ -1090,5 +1090,24 @@ public class CPPSelectionTestsNoIndexer extends BaseUITestCase {
 		int offset= code.indexOf("B b;");
 		IASTNode node= testF3(file, offset);
 		assertNull(node);
+    }
+
+	// void func(int a);
+	// void func(float a);
+	// void func(int* a);
+	// void test() {
+	//   func();
+	// }
+    public void testUnresolvedOverloadedFunction() throws Exception {
+        String code= getContentsForTest(1)[0].toString();
+		IFile file = importFile("testUnresolvedOverloadFunction.cpp", code); 
+		int offset= code.indexOf("func();");
+		try {
+			IASTNode node= testF3(file, offset);
+		} catch (RuntimeException e) {
+			assertEquals("ambiguous input: 3", e.getMessage());
+			return;
+		}
+		fail("Expected exception not caught");
     }
 }

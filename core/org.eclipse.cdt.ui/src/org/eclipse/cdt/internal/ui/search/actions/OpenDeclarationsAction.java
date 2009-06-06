@@ -202,33 +202,45 @@ public class OpenDeclarationsAction extends SelectionParseAction implements ASTR
 				navigateToName(sourceName);
 				return Status.OK_STATUS;
 			}
+			IName[] declNames = null;
+			String filename = ast.getFilePath();
 			for (IBinding binding : bindings) {
 				if (binding != null && !(binding instanceof IProblemBinding)) {
-					IName[] declNames = findDeclNames(ast, kind, binding);
-					// Exclude the current location.
-					for (int i = 0; i < declNames.length; i++) {
-						if (isSameName(declNames[i], sourceName)) {
-							declNames[i] = null;
+					IName[] names = findDeclNames(ast, kind, binding);
+					for (int i = 0; i < names.length; i++) {
+						if (names[i] instanceof IIndexName &&
+								filename.equals(((IIndexName) names[i]).getFileLocation().getFileName())) {
+							// Exclude index names from the current file.
+							names[i] = null;
+						} else if (isSameName(names[i], sourceName)) {
+							// Exclude the current location.
+							names[i] = null;
 						} else if (binding instanceof IParameter) {
-							if (!isInSameFunction(sourceName, declNames[i])) {
-								declNames[i] = null;
+							if (!isInSameFunction(sourceName, names[i])) {
+								names[i] = null;
 							}
 						} else if (binding instanceof ICPPTemplateParameter) {
-							if (!isInSameTemplate(sourceName, declNames[i])) {
-								declNames[i] = null;
+							if (!isInSameTemplate(sourceName, names[i])) {
+								names[i] = null;
 							}
 						}
 					}
-					declNames = (IName[]) ArrayUtil.removeNulls(IName.class, declNames);
-
-					if (navigateViaCElements(fWorkingCopy.getCProject(), fIndex, declNames)) {
-						found= true;
+					compact(names);
+					if (declNames == null) {
+						declNames = names;
 					} else {
-						// Leave old method as fallback for local variables, parameters and 
-						// everything else not covered by ICElementHandle.
-						found = navigateOneLocation(declNames);
+						declNames = (IName[]) ArrayUtil.addAll(IName.class, declNames, names);
 					}
 				}
+			}
+			declNames = (IName[]) ArrayUtil.removeNulls(IName.class, declNames);
+
+			if (navigateViaCElements(fWorkingCopy.getCProject(), fIndex, declNames)) {
+				found= true;
+			} else {
+				// Leave old method as fallback for local variables, parameters and 
+				// everything else not covered by ICElementHandle.
+				found = navigateOneLocation(declNames);
 			}
 			if (!found && !navigationFallBack(ast, sourceName, kind)) {
 				reportSymbolLookupFailure(new String(sourceName.toCharArray()));
@@ -246,6 +258,21 @@ public class OpenDeclarationsAction extends SelectionParseAction implements ASTR
 			reportSelectionMatchFailure();
 		}
 		return Status.OK_STATUS; 
+	}
+
+	/**
+	 * Compacts an array by moving all <code>null</code> elements to the end.
+	 * @param array
+	 */
+	private void compact(Object[] array) {
+		for (int i = 0, j = 0; i < array.length; i++) {
+			if (array[i] != null) {
+				if (i != j) {
+					array[j] = array[i];
+				}
+				j++;
+			}
+		}
 	}
 
 	private static NameKind getNameKind(IName name) {
@@ -496,7 +523,7 @@ public class OpenDeclarationsAction extends SelectionParseAction implements ASTR
 					target= (ISourceReference) elements.get(0);
 				} else {
 					if (sIsJUnitTest) {
-						throw new RuntimeException("ambiguous input"); //$NON-NLS-1$
+						throw new RuntimeException("ambiguous input: " + elements.size()); //$NON-NLS-1$
 					}
 					ICElement[] elemArray= elements.toArray(new ICElement[elements.size()]);
 					target = (ISourceReference) OpenActionUtil.selectCElement(elemArray, getSite().getShell(),

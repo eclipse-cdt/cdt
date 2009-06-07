@@ -269,6 +269,7 @@ public class OpenDeclarationsAction extends SelectionParseAction implements ASTR
 			if (array[i] != null) {
 				if (i != j) {
 					array[j] = array[i];
+					array[i] = null;
 				}
 				j++;
 			}

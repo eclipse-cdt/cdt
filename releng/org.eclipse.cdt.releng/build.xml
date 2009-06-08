@@ -14,9 +14,9 @@
 	<target name="init">
 		<touch file="${user.home}/.cvspass" />
 		<tstamp/>
-		<property name="eclipseDist" value="/home/data/httpd/download.eclipse.org/eclipse/downloads/drops/S-3.5RC3-200905282000/eclipse-SDK-3.5RC3-linux-gtk-ppc.tar.gz"/>
+		<property name="eclipseDist" value="/home/data/httpd/download.eclipse.org/eclipse/downloads/drops/S-3.5RC4-200906051444/eclipse-SDK-3.5RC4-linux-gtk-ppc.tar.gz"/>
 		<property name="mylynDist" value="/home/data/httpd/download.eclipse.org/tools/mylyn/update/galileo/mylyn-3.2.0.I20090520-2300-e3.4.zip"/>
-		<property name="rseDist" value="/home/data/httpd/download.eclipse.org/dsdp/tm/downloads/drops/S-3.1RC2-200905271930/RSE-SDK-3.1RC2.zip"/>
+		<property name="rseDist" value="/home/data/httpd/download.eclipse.org/dsdp/tm/downloads/drops/S-3.1RC3-200906032248/RSE-SDK-3.1RC3.zip"/>
 		<property name="branchVersion" value="6.0.0"/>
 		<property name="timestamp" value="${DSTAMP}${TSTAMP}" />
 		<property name="forceContextQualifier" value="${timestamp}"/>

@@ -20,6 +20,7 @@
  * David McKnight   (IBM)        - [216252] [api][nls] Resource Strings specific to subsystems should be moved from rse.ui into files.ui / shells.ui / processes.ui where possible
  * David McKnight   (IBM)        - [220547] [api][breaking] SimpleSystemMessage needs to specify a message id and some messages should be shared
  * David McKnight  (IBM)  - [243495] [api] New: Allow file name search in Remote Search to not be case sensitive
+ * David McKnight  (IBM)         - [279307] NPE when select a filter remove search dialog
  *******************************************************************************/
 
 package org.eclipse.rse.internal.files.ui.search;
@@ -42,9 +43,11 @@ import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.rse.core.IRSESystemType;
 import org.eclipse.rse.core.RSECorePlugin;
+import org.eclipse.rse.core.filters.ISystemFilterReference;
 import org.eclipse.rse.core.model.IHost;
 import org.eclipse.rse.core.model.ISystemProfile;
 import org.eclipse.rse.core.model.ISystemRegistry;
+import org.eclipse.rse.core.subsystems.ISubSystem;
 import org.eclipse.rse.internal.files.ui.Activator;
 import org.eclipse.rse.internal.files.ui.FileResources;
 import org.eclipse.rse.internal.files.ui.ISystemFileConstants;
@@ -69,6 +72,7 @@ import org.eclipse.rse.ui.RSEUIPlugin;
 import org.eclipse.rse.ui.SystemBasePlugin;
 import org.eclipse.rse.ui.SystemWidgetHelpers;
 import org.eclipse.rse.ui.messages.SystemMessageDialog;
+import org.eclipse.rse.ui.view.ISystemViewElementAdapter;
 import org.eclipse.search.internal.ui.SearchMessages;
 import org.eclipse.search.ui.ISearchPage;
 import org.eclipse.search.ui.ISearchPageContainer;
@@ -453,6 +457,21 @@ public class SystemSearchPage extends DialogPage implements ISearchPage {
 			if (!selectFolderAction.wasCancelled()) {
 				// store remote path
 				IRemoteFile remoteFile = selectFolderAction.getSelectedFolder();
+				if (remoteFile == null){
+					// could have selected a filter reference
+					Object value = selectFolderAction.getValue();
+					if (value instanceof ISystemFilterReference){
+						ISystemFilterReference fref = (ISystemFilterReference)value;
+						ISubSystem ss = fref.getSubSystem();
+					
+						// target for filter should give the most relevant folder
+						Object target = ss.getTargetForFilter(fref);
+						if (target instanceof IRemoteFile){
+							remoteFile = (IRemoteFile)target;
+						}
+					}
+					
+				}
 				String folderPath = remoteFile.getAbsolutePath();
 				
 				// store connection and profile

@@ -1,10 +1,11 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
-Bundle-Name: CDT P2 customizations for SDKs
+Bundle-Name: %Bundle-Name
 Bundle-SymbolicName: org.eclipse.cdt.p2;singleton:=true
 Bundle-Version: 1.0.0.qualifier
 Bundle-Activator: org.eclipse.cdt.internal.p2.Activator
-Bundle-Vendor: Eclipse.org
+Bundle-Vendor: %Bundle-Vendor
+Bundle-Localization: plugin
 Require-Bundle: org.eclipse.core.runtime,
  org.eclipse.equinox.p2.artifact.repository;bundle-version="1.0.2",
  org.eclipse.equinox.p2.core;bundle-version="1.0.0",

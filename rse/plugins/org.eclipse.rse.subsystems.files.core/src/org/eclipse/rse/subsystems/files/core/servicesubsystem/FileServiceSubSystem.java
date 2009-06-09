@@ -44,6 +44,7 @@
  * Martin Oberhuber (Wind River) - [240704] Protect against illegal API use of getRemoteFileObject() with relative path as name
  * Martin Oberhuber (Wind River) - [234026] Clarify IFileService#createFolder() Javadocs
  * David McKnight   (IBM)        - [272882] [api] Handle exceptions in IService.initService()
+ * David McKnight   (IBM)        - [244041] [files] Renaming a file looses Encoding property
  *******************************************************************************/
 
 package org.eclipse.rse.subsystems.files.core.servicesubsystem;
@@ -91,6 +92,7 @@ import org.eclipse.rse.subsystems.files.core.subsystems.IRemoteFile;
 import org.eclipse.rse.subsystems.files.core.subsystems.IRemoteFileContext;
 import org.eclipse.rse.subsystems.files.core.subsystems.IRemoteFileSubSystem;
 import org.eclipse.rse.subsystems.files.core.subsystems.RemoteFileContext;
+import org.eclipse.rse.subsystems.files.core.subsystems.RemoteFileEncodingManager;
 import org.eclipse.rse.subsystems.files.core.subsystems.RemoteFileSubSystem;
 import org.eclipse.rse.ui.SystemBasePlugin;
 
@@ -1008,8 +1010,21 @@ public class FileServiceSubSystem extends RemoteFileSubSystem implements IFileSe
 		String srcParent = folderOrFile.getParentPath();
 		String oldName = folderOrFile.getName();
 		String newPath = srcParent + folderOrFile.getSeparator() + newName;
+
+		String originalEncoding = folderOrFile.getEncoding();
+		
 		service.rename(srcParent, oldName, newName, monitor);
 		folderOrFile.getHostFile().renameTo(newPath);
+		
+		// for bug 244041 - need to set encoding to be the same as the original file
+		RemoteFileEncodingManager mgr = RemoteFileEncodingManager.getInstance();
+		String renamedEncoding = folderOrFile.getEncoding();
+		if (!renamedEncoding.equals(originalEncoding)){
+			 mgr.setEncoding(getHostName(), newPath, originalEncoding);
+		}					
+		
+		
+		
 	}
 
 	/**
@@ -1023,12 +1038,23 @@ public class FileServiceSubSystem extends RemoteFileSubSystem implements IFileSe
 		String srcName = sourceFolderOrFile.getName();
 		String tgtParent = targetFolder.getAbsolutePath();
 		removeCachedRemoteFile(sourceFolderOrFile);
+
+		String newPath = tgtParent + targetFolder.getSeparator() + newName;				
+		String originalEncoding = sourceFolderOrFile.getEncoding();
+		
 		try {
 			service.move(srcParent, srcName, tgtParent, newName, monitor);
 		} finally {
 			sourceFolderOrFile.markStale(true);
 			targetFolder.markStale(true);
 		}
+		
+		// for bug 244041 - need to set encoding to be the same as the original file
+		RemoteFileEncodingManager mgr = RemoteFileEncodingManager.getInstance();
+		IRemoteFile movedFile = getRemoteFileObject(targetFolder, newName, monitor);	
+		if (movedFile != null && !movedFile.getEncoding().equals(originalEncoding)){			
+			 mgr.setEncoding(getHostName(), newPath, originalEncoding);
+		}	
 	}
 
 	/**

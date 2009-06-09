@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2008 IBM Corporation and others.
+ * Copyright (c) 2007, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,6 +8,7 @@
  * Contributors:
  * Kushal Munir IBM - Initial creation of this file.
  * David McKnight  (IBM)             [209660] delete encoding mapping when null is specified
+ * David McKnight   (IBM)          - [244041] [files] Renaming a file looses Encoding property
  *******************************************************************************/
 
 package org.eclipse.rse.subsystems.files.core.subsystems;
@@ -139,6 +140,7 @@ public class RemoteFileEncodingManager {
 					props.setProperty(remotePath, encoding);
 					hostMap.put(hostname, props);
 				}
+				save(); // this wasn't being saved persistently before
 			}
 		}
 	}

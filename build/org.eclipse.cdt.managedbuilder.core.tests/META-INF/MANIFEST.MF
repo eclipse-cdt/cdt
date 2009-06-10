@@ -4,7 +4,7 @@ Bundle-Name: Tests
 Bundle-SymbolicName: org.eclipse.cdt.managedbuilder.core.tests; singleton:=true
 Bundle-Version: 5.0.100.qualifier
 Bundle-Activator: org.eclipse.cdt.managedbuilder.testplugin.CTestPlugin
-Bundle-Vendor: Eclipse.org
+Bundle-Vendor: Eclipse CDT
 Bundle-Localization: plugin
 Export-Package: org.eclipse.cdt.managedbuilder.core.tests,
  org.eclipse.cdt.managedbuilder.templateengine.tests,

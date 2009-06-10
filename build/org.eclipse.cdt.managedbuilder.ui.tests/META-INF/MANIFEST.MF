@@ -4,7 +4,7 @@ Bundle-Name: Managed Build UI Tests Plug-in
 Bundle-SymbolicName: org.eclipse.cdt.managedbuilder.ui.tests; singleton:=true
 Bundle-Version: 5.0.100.qualifier
 Bundle-Activator: org.eclipse.cdt.managedbuilder.ui.tests.testplugin.TestsPlugin
-Bundle-Vendor: Eclipse.org
+Bundle-Vendor: Eclipse CDT
 Bundle-Localization: plugin
 Require-Bundle: org.eclipse.ui,
  org.eclipse.core.runtime,

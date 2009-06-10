@@ -56,6 +56,7 @@
  * David McKnight   (IBM)        - [270468] [dstore] FileServiceSubSystem.list() returns folders when only FILE_TYPE_FILES is requested
  * David McKnight   (IBM)        - [272335] [dstore] not handling case where upload fails
  * David McKnight   (IBM)        - [278411] [dstore] upload status needs to be created in standard form when using windows server
+ * David McKnight   (IBM)        - [279014] [dstore][encoding] text file corruption can occur when downloading from UTF8 to cp1252
  *******************************************************************************/
 
 package org.eclipse.rse.internal.services.dstore.files;
@@ -87,6 +88,7 @@ import org.eclipse.dstore.core.model.IDataStoreProvider;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.rse.dstore.universal.miners.IUniversalDataStoreConstants;
 import org.eclipse.rse.dstore.universal.miners.UniversalByteStreamHandler;
+import org.eclipse.rse.internal.services.RSEServicesMessages;
 import org.eclipse.rse.internal.services.dstore.Activator;
 import org.eclipse.rse.internal.services.dstore.IDStoreMessageIds;
 import org.eclipse.rse.internal.services.dstore.ServiceResources;
@@ -822,7 +824,25 @@ public class DStoreFileService extends AbstractDStoreService implements IFileSer
 
 					IFileServiceCodePageConverter codePageConverter = CodePageConverterManager.getCodePageConverter(encoding, this);
 
-					codePageConverter.convertFileFromRemoteEncoding(remotePath, localFile, encoding, localEncoding, this);
+					try {
+						codePageConverter.convertFileFromRemoteEncoding(remotePath, localFile, encoding, localEncoding, this);
+					}
+					catch (RuntimeException e){
+						Throwable ex = e.getCause();
+						StringBuffer msgTxtBuffer = new StringBuffer(RSEServicesMessages.FILEMSG_OPERATION_FAILED);
+						msgTxtBuffer.append('\n');
+						msgTxtBuffer.append('\n');
+						msgTxtBuffer.append(remotePath);
+						msgTxtBuffer.append('\n');						
+						msgTxtBuffer.append(encoding);
+						msgTxtBuffer.append(" -> ");
+						msgTxtBuffer.append(localEncoding);
+						
+						SystemMessage msg = new SimpleSystemMessage(Activator.PLUGIN_ID,
+								IDStoreMessageIds.FILEMSG_IO_ERROR,
+								IStatus.ERROR, msgTxtBuffer.toString(), ex);
+						throw new SystemMessageException(msg);
+					}
 				}
 			}
 			else if (resultChild.getType().equals(IUniversalDataStoreConstants.DOWNLOAD_RESULT_FILE_NOT_FOUND_EXCEPTION))
@@ -1051,7 +1071,25 @@ public class DStoreFileService extends AbstractDStoreService implements IFileSer
 							String localEncoding = SystemEncodingUtil.getInstance().getLocalDefaultEncoding();
 							IFileServiceCodePageConverter codePageConverter = CodePageConverterManager.getCodePageConverter(hostEncodings[i], this);
 
-							codePageConverter.convertFileFromRemoteEncoding(remoteElement.getName(), localFile, hostEncodings[i], localEncoding, this);
+							try {
+								codePageConverter.convertFileFromRemoteEncoding(remoteElement.getName(), localFile, hostEncodings[i], localEncoding, this);
+							}
+							catch (RuntimeException e){
+								Throwable ex = e.getCause();
+								StringBuffer msgTxtBuffer = new StringBuffer(RSEServicesMessages.FILEMSG_OPERATION_FAILED);
+								msgTxtBuffer.append('\n');
+								msgTxtBuffer.append('\n');
+								msgTxtBuffer.append(remoteFiles[i]);
+								msgTxtBuffer.append('\n');						
+								msgTxtBuffer.append(hostEncodings[i]);
+								msgTxtBuffer.append(" -> ");
+								msgTxtBuffer.append(localEncoding);
+								
+								SystemMessage msg = new SimpleSystemMessage(Activator.PLUGIN_ID,
+										IDStoreMessageIds.FILEMSG_IO_ERROR,
+										IStatus.ERROR, msgTxtBuffer.toString(), ex);
+								throw new SystemMessageException(msg);
+							}
 						}
 					}
 					else if (resultChild.getType().equals(IUniversalDataStoreConstants.DOWNLOAD_RESULT_FILE_NOT_FOUND_EXCEPTION))

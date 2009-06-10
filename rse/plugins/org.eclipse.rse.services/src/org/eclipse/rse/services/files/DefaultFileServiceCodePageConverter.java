@@ -1,5 +1,5 @@
 /********************************************************************************
- * Copyright (c) 2007, 2008 IBM Corporation. All rights reserved.
+ * Copyright (c) 2007, 2009 IBM Corporation. All rights reserved.
  * This program and the accompanying materials are made available under the terms
  * of the Eclipse Public License v1.0 which accompanies this distribution, and is
  * available at http://www.eclipse.org/legal/epl-v10.html
@@ -12,6 +12,7 @@
  * David McKnight    (IBM)  -[209704] [api][dstore] Ability to override default encoding conversion needed.
  * David McKnight    (IBM)  -[220379] [api] Provide a means for contributing custom BIDI encodings
  * David McKnight    (IBM)  -[246857] Rename problem when a file is opened in the editor
+ * David McKnight    (IBM)  -[279014] [dstore][encoding] text file corruption can occur when downloading from UTF8 to cp1252
  ********************************************************************************/
 package org.eclipse.rse.services.files;
 
@@ -20,6 +21,11 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.nio.ByteBuffer;
+import java.nio.CharBuffer;
+import java.nio.charset.Charset;
+import java.nio.charset.CharsetDecoder;
+import java.nio.charset.CharsetEncoder;
 
 /**
  * @since 3.0
@@ -51,30 +57,43 @@ public class DefaultFileServiceCodePageConverter implements
 				inputStream = new FileInputStream(file);
 				BufferedInputStream bufInputStream = new BufferedInputStream(inputStream, fileLength);
 				byte[] buffer = new byte[fileLength];
-				int bytesRead = bufInputStream.read(buffer, 0, fileLength);
+				bufInputStream.read(buffer, 0, fileLength);
 				bufInputStream.close();
-				inputStream.close();
-	
-				byte[] localBuffer = new String(buffer, 0, bytesRead, remoteEncoding).getBytes(localEncoding);
-	
+				ByteBuffer rmtBuf = ByteBuffer.wrap(buffer, 0, fileLength);
+
+				// decoder to go from remote encoding to UTF8
+				Charset rmtCharset = Charset.forName(remoteEncoding);
+				CharsetDecoder rmtDecoder = rmtCharset.newDecoder();
+
+				// convert from the remote encoding
+				CharBuffer decodedBuf = null;
+				decodedBuf = rmtDecoder.decode(rmtBuf);
+				// for conversion to the local encoding
+				Charset charset = Charset.forName(localEncoding);
+				CharsetEncoder encoder = charset.newEncoder();
+				byte[] localBuffer = null;
+				// convert to the specified local encoding
+				ByteBuffer lclBuf = encoder.encode(decodedBuf);
+				localBuffer = lclBuf.array();
 				outStream = new FileOutputStream(file);
 				outStream.write(localBuffer, 0, localBuffer.length);
-				outStream.close();
 			}
-		}
-		catch (Exception e)
-		{
-			try {
-				if (inputStream != null){
+		} catch (Exception e) {
+			// outstream could not be written properly: report
+			throw new RuntimeException(e);
+		} finally {
+			if (inputStream != null) {
+				try {
 					inputStream.close();
-				}	
-				if (outStream != null){
-					outStream.close();
+				} catch (IOException ioe) {
 				}
 			}
-			catch (IOException ioe){			
+			if (outStream != null) {
+				try {
+					outStream.close();
+				} catch (IOException ioe) {
+				}
 			}
-			
 		}
 	}
 

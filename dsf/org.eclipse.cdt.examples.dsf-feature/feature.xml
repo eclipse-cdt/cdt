@@ -3,7 +3,8 @@
       id="org.eclipse.cdt.examples.dsf"
       label="%featureName"
       version="2.0.0.qualifier"
-      provider-name="%providerName">
+      provider-name="%providerName"
+      plugin="org.eclipse.cdt.examples.dsf">
 
    <description>
       %description

@@ -5,23 +5,39 @@
   <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
   <title>Building your project</title>
   <link rel="stylesheet" type="text/css" href="../help.css">
+  <script language="JavaScript">
+function newWin(url) {
+	window.open(url, 'install_cdt', 'width=750, height=700, menubar=no, toolbar=no, status=no, resizable=yes, location=no, scrollbars=yes');
+}
+</script>
 </head>
 <body>
 <h1>Building a project</h1>
+
 <p>The make output and build progress information displays in the
 Console view. The Make Targets view displays makefile actions, and the
 Tasks view displays compile warnings or errors.</p>
 <p>To build a project:</p>
 <ol>
-  <li>In the <b>C/C++ Projects</b> view, select your project. For the tutorial, you can to select the <b>Hello World</b> project you created earlier. <p><br></p></li>
-  <li>Click <b>Project &gt; Build Project</b>.</li>
-  <p>If you see the error message:</p>
-  <br>
-  <p><samp>Exec error:Launching failed</samp></p>
-  <br>
+  <li>In the <b>Project Explorer</b> view, select your project. For the tutorial, you can   select the <b>HelloWorld</b> project you created earlier. <p><br></p></li>
+  <li>Click <b>Project &gt; Build Project</b>.
+  <br>You can also hit the hammer icon <img src="../images/hammer-icon.png"> on the toolbar.
+  </li>
+  <p>If you see an error message, such as:</p>
+   <p><samp>&nbsp;&nbsp;&nbsp;(Cannot run program "make": Launching failed)</samp></p>
   <p>then CDT cannot locate the build command, usually <samp>make</samp>.
 Either your path is not configured correctly, or you do not have <samp>make</samp>
 installed on your system.</p>
+<li>You can see the output and results of the build command in the <b>Console</b> view.
+Click on its tab to bring the view forward if it is not currently visible.
+If for some reason it's not present, you can open it by selecting Window > Show View > Console.
+<p> <br> 
+<a href="javascript:void(0)" onClick="newWin('../images/cdt_w_newmake03.png')">Click here to see an illustration (displayed in a separate window)
+</a>.</p> 
+
+
+
+</li>
 </ol>
 <p><img border="0" src="../images/ngconcepts.gif" alt="Related concepts"
  width="143" height="21">

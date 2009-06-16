@@ -37,7 +37,9 @@ may contain other information.
 			<td>
 			<p align="right"><b>Rename in File</b></p>
 			</td>
-			<td>The rename refactoring now works interactively in the editor. 
+			<td>To make rename refactoring  work interactively in the editor,
+			position the cursor on an identifier in the editor and hit Cntl-1
+			(the hotfix key).  Choose "Rename in file."
 			Changing an identifier simultaneously changes all other references to that identifier.
 			<p><img src="../images/60/RenameInFile.png" alt="Rename in File">
 			</td>
@@ -173,21 +175,39 @@ may contain other information.
 				<p>&nbsp;</p>
 				</li>
 			</ul>
+			</td>
+		</tr>
+		<tr>
+		<td>
+			<p align="right"><b>System Includes</b></p>
+			</td>
+			 
+		 
+			<td>
 			<ul>
-				<li>Heuristics to pick up otherwise unresolved include files from the project 
+				<li>Heuristics to pick up otherwise unresolved include files from the project
 				<p>In older versions of CDT the user was forced to manually set up all include paths that were not discovered by
 				the build system. Now CDT is capable of automatically finding any header file that is located within the project
 				without manual setup.
-				<p>(See <a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=213562">Bug 213562</a>)
-				</p><p>&nbsp;</p>
+				<p>(See <a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=213562">Bug 213562</a>)</p>
+				<p>&nbsp;</p>
 				</li>
-				<li>Rework of template instantiation
+				</ul>
+				</td>
+				</tr>
+		
+		<td>
+			<p align="right"><b>Indexer Accuracy</b></p>
+			</td>
+			<td>
+			<ul>
+			<li>Rework of template instantiation
 				<p>
 				There have been significant improvements to the CDT editor for supporting C++ templates. Content assist now works
 				much better within code that makes heavy use of templates.</p>
 				<p>&nbsp;</p>
-				</li>
-				<li>There have been numerous improvements to the performance and accuracy of the CDT parser and indexer.</li>
+				 <li>
+				There have been numerous improvements to the performance and accuracy of the CDT parser and indexer.</li>
 			</ul>
 			</td>
 		</tr>
@@ -236,7 +256,7 @@ may contain other information.
 				<ul>
 					<li>Updated Manage Working Set Configurations dialog for simpler workflows</li>
 					<li>Quick access to configurations via a property page for Working Sets
-					<img src="../images/60/New_cdtwsconfig_wsProperties.png" alt="New working set configuration dialog">
+					<br></br><img src="../images/60/New_cdtwsconfig_wsProperties.png" alt="New working set configuration dialog">
 					<p>&nbsp;</p>
 					
 					</li>

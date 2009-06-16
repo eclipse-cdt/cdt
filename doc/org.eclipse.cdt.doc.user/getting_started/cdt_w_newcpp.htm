@@ -14,7 +14,7 @@
 
 <p>You can begin coding your HelloWorld program. The .cpp file that you  
 create will be saved in the project folder you just created
-<a href="cdt_w_newproj.htm">Creating a project</a>.</p>
+<a href="cdt_w_newproj.htm">Creating a Makefile project</a>.</p>
 
 <p>Files are edited in the  C/C++ editor located to the  right of 
 the C/C++ Projects view. The left margin of the C/C++ editor, called the marker 
@@ -22,58 +22,50 @@ bar, displays icons for items such  as bookmarks, breakpoints, and compiler erro
 
 <p>For more information about:</p>
 <ul>
-  <li>The marker bar, see <b>Workbench User Guide &gt; Reference &gt; User interface 
-  information &gt; Icons and buttons &gt; Editor area marker bar</b></li>
-  <li>The editor area, see <b>Workbench User Guide &gt; Reference &gt; User interface 
+
+  <li>The editor area and marker bar, see <b>Workbench User Guide &gt; Reference &gt; User interface 
   information &gt; Views and editors &gt; Editor area</b></li>
+    <li>The marker bar icons, see <b>Workbench User Guide &gt; Reference &gt; User interface 
+  information &gt; Icons and buttons &gt; Editor area marker bar</b></li>
 </ul>
 <p>To create a C++ file:</p>
 <ol>
-  <li>In the <b>C++ Projects</b> view, right-click the <b>HelloWorld</b> project 
-  folder, and select <b>New &gt; File</b>.</li>
-  <li>In the <b>File name</b> field, type <b>main.cpp</b>.</li>
+  <li>In the <b>Project Explorer</b> view, right-click the <b>HelloWorld</b> project 
+  folder, and select <b>New &gt; Source File</b>.</li>
+  <li>In the <b>Source file: </b> field, type <b>main.cpp</b>.
+  <br>By default the source folder should be your project folder. 
+  <br>The template selected is probably "Default C/C++ Source Template." 
+  </li>
   <li>Click <b>Finish</b>.</li>
-  <li>Type the code, exactly as it appears below, in the editor. Lines are indented with tab 
-  characters, not with spaces.</li>
+  <li>A Comment template probably appears at the top of an otherwise empty file.
+  Type the code, exactly as it appears below, in the editor. 
+  Or you can paste it in from this help file.
+</li>
+<pre>
+#include &lt;iostream&gt;
+using namespace std;
 
-<blockquote>
-  <p>#include &lt;iostream&gt;<br>
-  using namespace std;<br>
-  <br>
-  int main () {<br>
-  &nbsp;&nbsp;&nbsp;
-  // Say Hello five times<br>
-  &nbsp;&nbsp;&nbsp;
-  for (int index = 0; index &lt; 5; ++index) <br>
-  &nbsp;&nbsp;&nbsp;
-  cout &lt;&lt; &quot;HelloWorld!&quot; &lt;&lt; endl;<br>
-  <br>
-  &nbsp;&nbsp;&nbsp;
-  char input = 'i';<br>
-  <br>
-  &nbsp;&nbsp;&nbsp;
-  cout &lt;&lt; &quot;To exit, press 'm'&quot; &lt;&lt; endl;<br>
-  <br>
-  &nbsp;&nbsp;&nbsp;
-  while(input != 'm') {<br>
-  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-  cin&nbsp; &gt;&gt; input;<br>
-  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-  cout &lt;&lt; &quot;You just entered &quot; &lt;&lt; input <br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;&lt; &quot; you need to enter m to exit.&quot; &lt;&lt; endl;<br>
-  &nbsp;&nbsp;&nbsp;
-  }<br>
-  <br>
-  &nbsp;&nbsp;&nbsp;
-  exit(0);<br>
-  }</p>
-</blockquote>
+int main () {
+    // Say Hello five times
+    for (int index = 0; index < 5; ++index)
+      cout << "HelloWorld!" << endl;
+    char input = 'i';
+    cout << "To exit, press 'm'" << endl;
+    while(input != 'm') {
+        cin  >> input;
+        cout << "You just entered " << input
+             << " you need to enter m to exit." << endl;
+    }
+    exit(0);
+}
+</pre>
+
+
   <li>Click <b>File &gt; 
   Save</b>.</li>
 </ol>
 
-<p>Your new .cpp file is displayed in the C/C++ Projects 
-view and in the Navigator view. Your project now contains main.cpp. Before you 
+<p>Your new .cpp file is displayed in the <b>Project Explorer</b> view. Your project now contains main.cpp. Before you 
 can build your HelloWorld project, you must create a makefile.</p>
 
 <p>

@@ -13,8 +13,10 @@ function newWin(url) {
 </head>
 <body> 
 
-<h1>Creating a project</h1>  
+<h1>Creating a Makefile project</h1>  
 
+<p>
+This tutorial describes the process of creating a new C++ project that includes a makefile, and debugging the program.</p>
 <p>You need to create a project to contain your source code and related files. A  project has an associated builder
 that can incrementally compile source files as  they are changed.</p> 
 
@@ -23,7 +25,7 @@ that can incrementally compile source files as  they are changed.</p>
 <ol>
 	<li>Select <b>File &gt; New &gt; Project</b>.
 <p><br>When you create a new project, you are required to specify the project type. This project type will determine the toolchain, data, and tabs that the CDT uses/displays.</p><br>
-<li>Select the type of project to create. For this tutorial, expand the <b>C++</b> folder and select <b>C++ Project</b>.
+<li>Select the type of project to create. For this tutorial, expand the <b>C/C++</b> folder and select <b>C++ Project</b>.
 	<br><p>The <b>C++ Project</b> wizard opens. <a href="javascript:void(0)" onClick="newWin('../images/cdt_w_basic19.png')">Click here to see an illustration.</a></p><br>
 <p>By default, the CDT filters the <b>Toolchain</b> and <b>Project types</b> that currently display in those lists are based on the language support for the C++ Project wizard you selected for this tutorial.</p><br>
 <li>In the <b>Project name</b> field, type HelloWorld.
@@ -33,10 +35,13 @@ that can incrementally compile source files as  they are changed.</p>
 	<li><b>Executable</b> - Provides an executable application. This project type folder contains three templates.</p>
 	<ul>
 	<li><b>Hello World C++ Example</b> provides a simple C++ Hello World application with main().
-	<li><b>Hello World ANSI C Example</b> provides a simple C Hello World application with main().<li><b>Empty Project</b> provides a single source project folder that contains no files.
-</ul>
-
-<p>After you select a template, the result is a project with only the meta-data files required for the project type. You are expected to modify these source files, as required, and provide source files for the project's target.</p><p>The makefile for the <b>Executable</b> project type is automatically created by the CDT.</p>
+	<li><b>Hello World ANSI C Example</b> provides a simple C Hello World application with main().
+	<li><b>Empty Project</b> provides a single source project folder that contains no files.
+	<p>After you select this template, the result is a project with only the meta-data files required for the project type. 
+	You are expected to  provide source files for the project's target.</p>
+	</ul>
+	<p>The makefile for the <b>Executable</b> project type is automatically created by the CDT.</p>
+<p>&nbsp;</p>
 		<li><b>Shared Library</b> - An executable module that is compiled and linked separately. When you create a project that uses a shared library (libxx.so), you define your shared library's project as a Project Reference for your application. For this project type, the CDT combines object files together and joins them so they're relocatable and can be shared by many processes. Shared libraries are named using the format
  libxx.so.<var>version</var>, where
 <var>version</var> is a number with a default of 1. The
@@ -47,41 +52,52 @@ into an archive (*.a) that is directly linked into an
 executable. The makefile for this project type is automatically created by the CDT.
 		<li><b>Makefile Project</b> - Creates an empty project without the meta-data files. This selection is useful for importing and modifying existing makefile-based projects; a new makefile is not created for this project type. 
 	</ul> 
+	
 <p>By default, the CDT filters the <b>Toolchain</b> and <b>Project types</b> that currently display in those lists  based on the language support for the C++ Project wizard you selected for this tutorial.
-<li>From the <b>Project types</b> list, expand <b>Executable</b> and select <b>Hello World C++ Example</b>. This project type provides a simple Hello World application in C++, and the makefile is automatically created by the CDT.
+<p>&nbsp;</p>
+<li>From the <b>Project types</b> list, expand <b>Makefile project</b> and select <b>Empty Project</b>. 
+This project lets you enter the source file and the makefile yourself.
 
 <li>Select a required toolchain from the <b>Toolchain</b> list. 
 <p>A toolchain is a set of tools (such as a compiler, linker, and assembler) intended to build your project.
 Additional tools, such as a debugger, can be associated with a toolchain.<br>
 There can be several toolchains available, depending on the compilers installed on your system.
 </p>
- 
+
 </li>
-<li>Click <b>Next</b>.</li>
-<li>Click <b>Advanced Settings</b>.
-<li>Click the <b>Binary Parser</b> tab.
+<li>Click <b>Next</b>.
+<li>(Optional) On the <b>Select Configurations</b> page, Click <b>Advanced Settings</b>.
+<ul> 
+<li>Expand <b>C/C++Build > Settings</b>. Click the <b>Binary Parsers</b> tab.
 <p><br><a href="javascript:void(0)" onClick="newWin('../images/cdt_w_binparser01.png')">Click here to see an illustration.</a></p><br>
 </p>
 </li>
-<li>In the <b>Binary Parser</b> list, select <b>PE Windows Parser</b>.</li>
+<li>In the <b>Binary Parser</b> list, select the error parser that is appropriate for your platform.
+Other project settings can be modified here as well.  The default selection is probably OK.
+
+</li>
 <p>To ensure the accuracy of the C/C++  Projects view and the ability to successfully
 run and debug your programs, selecting the correct parser is important. After
 you select the correct parser for your development environment and build your
  project, you can view the components of the .o file in the C/C++ Projects
 view. You can also view the contents of the .o file in the C/C++ editor.
+<p></p>Click <b>OK</b> to close the Project Properties window.
+</ul>
 </p>
 <li>Click <b>Finish</b>.</li>
 <li>If a message box prompts you to change perspectives, click <b>Yes</b>.
 </li>
 </ol>  
 
-<p>Your new project displays in the C/C++ Projects view, and in
-the Navigator view. Your project is empty because you have not yet created
-files for your project. You can now start writing the code for your HelloWorld
+<p>Your new project displays in the Project Explorer view. 
+Your project is empty because you have not yet created
+files for your project. 
+You may see an error since there is nothing to build yet for your project.
+You can now start writing the code for your HelloWorld
 program.</p>  
 
 <p><b>Tip:</b> You can view and modify the properties of your
-HelloWorld project by right-clicking on the project in the C/C++ Projects
+HelloWorld project at any time by right-clicking on the project in the <b>Project Explorer</b> 
 view and clicking Properties.</p>  <p><a style="text-decoration: none" href="cdt_w_newcpp.htm"><img
 src="../images/ngnext.gif" height="16" width="16" border="0" alt="Next Icon"></a> <a href="cdt_w_newcpp.htm"><b>
 Next: Creating your C++ file</b></a></p>  <p align="left">For more information

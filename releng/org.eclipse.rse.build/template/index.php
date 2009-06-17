@@ -18,16 +18,16 @@
 		User Agreement</a>.</p>
 		
 		<p><font size="+1"><strong>
-		  <a href="buildNotes.php">New and Noteworthy / Build Notes</a>
 <!--
-		  <p><a href="http://www.eclipse.org/dsdp/tm/development/relnotes/3.0/tm-news-3.0.html">New and Noteworthy</a></p>
-		  <p><a href="http://www.eclipse.org/dsdp/tm/development/relnotes/3.0/readme_tm_3.0.html">TM 3.0 Readme / Release Notes</a></p>
-		  <p><a href="buildNotes.php">Build Notes</a></p>
+		  <a href="buildNotes.php">New and Noteworthy / Build Notes</a>
 -->
+<!-- -->
+		  <p><a href="http://www.eclipse.org/dsdp/tm/development/relnotes/3.1/tm-news-3.1.html">New and Noteworthy</a></p>
+		  <p><a href="http://www.eclipse.org/dsdp/tm/development/relnotes/3.1/readme_tm_3.1.html">TM 3.1 Readme / Release Notes</a></p>
+		  <p><a href="buildNotes.php">Build Notes</a></p>
+<!-- -->
 		</strong></font></p>
 		
-		<!-- <p>To get started, see the <a href="buildNotes.php">build notes</a>.<br>
-		-->
 		To view the map file entries for this build, click
 		<a href="directory.txt">here</a>.<br>
 		To view the compile logs for this build, click 
@@ -54,19 +54,13 @@
   <tbody>
     <tr><td><b>TM @buildId@ requires 
     	<a href="http://archive.eclipse.org/eclipse/downloads/">
-         Eclipse 3.3</a> or later for the SSH component;</b> the SSH encoding fix
-         (<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=224799">bug 224799</a>)
-         requires <a href="http://download.eclipse.org/eclipse/downloads/">Eclipse 3.4</a>
-         or later.
+         Eclipse 3.4</a> or later</b> although some components may run with earlier versions.
          <b>RSE Import/Export as well as FTP and Telnet</b> require <b>Java 1.5</b>
          or higher, the rest of RSE works with Java 1.4.
     </b></td></tr>
     <tr><td>
-      Other components may work with earlier Eclipse versions, but these have not been tested.<br/>
-      For core RSE and TM-Terminal, the
-        <a href="http://archive.eclipse.org/eclipse/downloads/drops/R-3.3-200706251500/index.php#PlatformRuntime">
-        Eclipse Platform Runtime Binary</a> is sufficient. Of course you can also use the popular
-        <a href="http://archive.eclipse.org/eclipse/downloads/drops/R-3.3-200706251500/index.php#EclipseSDK">SDK</a>. 
+      For core RSE and TM-Terminal, the Eclipse <b>Platform Runtime Binary</b> is sufficient.
+      Of course you can also use the popular <b>SDK</b> or one of the <b>Packages</b>. 
     </td></tr> 
     <tr><td>
       Prerequisites for the discovery add-on (EMF) can be retrieved from the
@@ -75,11 +69,6 @@
       <a href="http://download.eclipse.org/releases/galileo/">Galileo</a>
       Discovery Sites</a>.
     </td></tr> 
-<!--
-    <tr><td>
-      Earlier versions (e.g. Eclipse 3.2.x, Eclipse 3.3M5) will <b>not</b> work!
-    </td></tr>
---> 
   </tbody>
 </table>
 </table>

@@ -29,9 +29,12 @@
 		</strong></font></p>
 		
 		To view the map file entries for this build, click
-		<a href="directory.txt">here</a>.<br>
+		<a href="directory.txt">here</a>.<br/>
 		To view the compile logs for this build, click 
-		<a href="compilelog.txt">here</a>.</p>
+		<a href="compilelog.txt">here</a>.<br/>
+		For getting started, consider the <a href="http://www.eclipse.org/dsdp/tm/tutorial/index.php">TM Tutorials</a>
+		and the <a href="http://wiki.eclipse.org/TM_and_RSE_FAQ">TM and RSE FAQ</a>.
+		</p>
 <!--
 		<p>To view the build notes for this build click <a
  href="buildNotes.php">here</a>.<br>
@@ -61,8 +64,6 @@
     <tr><td>
       For core RSE and TM-Terminal, the Eclipse <b>Platform Runtime Binary</b> is sufficient.
       Of course you can also use the popular <b>SDK</b> or one of the <b>Packages</b>. 
-    </td></tr> 
-    <tr><td>
       Prerequisites for the discovery add-on (EMF) can be retrieved from the
       <a href="http://download.eclipse.org/releases/europa/">Europa</a>, 
       <a href="http://download.eclipse.org/releases/ganymede/">Ganymede</a> or

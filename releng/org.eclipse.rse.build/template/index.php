@@ -56,7 +56,7 @@
 <table>
   <tbody>
     <tr><td><b>TM @buildId@ requires 
-    	<a href="http://archive.eclipse.org/eclipse/downloads/">
+    	<a href="http://download.eclipse.org/eclipse/downloads/">
          Eclipse 3.4</a> or later</b> although some components may run with earlier versions.
          <b>RSE Import/Export as well as FTP and Telnet</b> require <b>Java 1.5</b>
          or higher, the rest of RSE works with Java 1.4.

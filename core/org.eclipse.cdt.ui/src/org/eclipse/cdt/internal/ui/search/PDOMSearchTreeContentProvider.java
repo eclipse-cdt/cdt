@@ -49,6 +49,11 @@ public class PDOMSearchTreeContentProvider implements ITreeContentProvider, IPDO
 	private TreeViewer viewer;
 	private PDOMSearchResult result;
 	private Map<Object, Set<Object>> tree = new HashMap<Object, Set<Object>>();
+	private final PDOMSearchViewPage fPage;
+
+	PDOMSearchTreeContentProvider(PDOMSearchViewPage page) {
+		fPage= page;
+	}
 
 	public Object[] getChildren(Object parentElement) {
 		Set<Object> children = tree.get(parentElement);
@@ -170,7 +175,7 @@ public class PDOMSearchTreeContentProvider implements ITreeContentProvider, IPDO
 		if (elements != null) {
 			for (int i = 0; i < elements.length; ++i) {
 				PDOMSearchElement element = (PDOMSearchElement)elements[i];
-				if (result.getMatchCount(element) > 0) {
+				if (fPage.getDisplayedMatchCount(element) > 0) {
 					insertSearchElement(element);
 				} else {
 					boolean remove = true;
@@ -217,7 +222,9 @@ public class PDOMSearchTreeContentProvider implements ITreeContentProvider, IPDO
 			
 			Object[] elements = result.getElements();
 			for (int i = 0; i < elements.length; ++i) {
-				insertSearchElement((PDOMSearchElement)elements[i]);
+				final PDOMSearchElement element = (PDOMSearchElement)elements[i];
+				if (fPage.getDisplayedMatchCount(element) > 0)
+					insertSearchElement(element);
 			}
 
 			// add all the projects which have no results

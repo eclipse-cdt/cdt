@@ -125,7 +125,7 @@ public class PDOMSearchViewPage extends AbstractTextSearchViewPage {
 	
 	@Override
 	protected void configureTreeViewer(TreeViewer viewer) {
-		contentProvider = new PDOMSearchTreeContentProvider();
+		contentProvider = new PDOMSearchTreeContentProvider(this);
 		viewer.setComparator(new SearchViewerComparator());
 		viewer.setContentProvider((PDOMSearchTreeContentProvider)contentProvider);
 		viewer.setLabelProvider(new PDOMSearchTreeLabelProvider(this));
@@ -133,7 +133,7 @@ public class PDOMSearchViewPage extends AbstractTextSearchViewPage {
 
 	@Override
 	protected void configureTableViewer(TableViewer viewer) {
-		contentProvider = new PDOMSearchListContentProvider();
+		contentProvider = new PDOMSearchListContentProvider(this);
 		viewer.setComparator(new SearchViewerComparator());
 		viewer.setContentProvider((PDOMSearchListContentProvider)contentProvider);
 		viewer.setLabelProvider(new PDOMSearchListLabelProvider(this));

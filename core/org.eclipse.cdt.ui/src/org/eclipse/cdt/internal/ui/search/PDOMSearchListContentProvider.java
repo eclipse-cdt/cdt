@@ -13,7 +13,6 @@
 package org.eclipse.cdt.internal.ui.search;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -40,20 +39,20 @@ public class PDOMSearchListContentProvider implements
 
 	private TableViewer viewer;
 	private PDOMSearchResult result;
-	
+	private final PDOMSearchViewPage fPage;
+
+	PDOMSearchListContentProvider(PDOMSearchViewPage page) {
+		fPage= page;
+	}
+
 	public Object[] getElements(Object inputElement) {
 		Set<String> uncoveredProjects = new HashSet<String>(); 
 		
 		PDOMSearchResult result = (PDOMSearchResult) inputElement;
 		
 		Object[] results = result.getElements();
-		List<Object> resultList = new ArrayList<Object>(Arrays.asList(results));
-		
-		// see if indexer was busy
-		if (result.wasIndexerBusy()) {
-			resultList.add(IPDOMSearchContentProvider.INCOMPLETE_RESULTS_NODE);
-		}
-		
+		List<Object> resultList = new ArrayList<Object>();
+	
 		// see which projects returned results
 		for (int i = 0; i < results.length; i++) {
 			if (results[i] instanceof PDOMSearchElement) {
@@ -62,9 +61,17 @@ public class PDOMSearchListContentProvider implements
 				if (path != null) {
 					uncoveredProjects.add(new Path(path).segment(0));
 				}
+				if (fPage.getDisplayedMatchCount(searchElement) > 0) {
+					resultList.add(searchElement);
+				}
 			}
 		}
-		
+
+		// see if indexer was busy
+		if (result.wasIndexerBusy()) {
+			resultList.add(IPDOMSearchContentProvider.INCOMPLETE_RESULTS_NODE);
+		}
+
 		// add message for all the projects which have no results
 		ICProject[] projects = ((PDOMSearchQuery)result.getQuery()).getProjects();
 		for (int i = 0; i < projects.length; ++i) {
@@ -112,7 +119,7 @@ public class PDOMSearchListContentProvider implements
 			return;
 		
 		for (int i= 0; i < elements.length; i++) {
-			if (result.getMatchCount(elements[i]) > 0) {
+			if (fPage.getDisplayedMatchCount(elements[i]) > 0) {
 				if (viewer.testFindItem(elements[i]) != null)
 					viewer.refresh(elements[i]);
 				else

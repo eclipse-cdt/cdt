@@ -27,6 +27,7 @@ import org.eclipse.search.ui.text.AbstractTextSearchResult;
 import org.eclipse.search.ui.text.IEditorMatchAdapter;
 import org.eclipse.search.ui.text.IFileMatchAdapter;
 import org.eclipse.search.ui.text.Match;
+import org.eclipse.search.ui.text.MatchFilter;
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IPathEditorInput;
@@ -47,6 +48,9 @@ import org.eclipse.cdt.internal.ui.util.Messages;
  *
  */
 public class PDOMSearchResult extends AbstractTextSearchResult implements IEditorMatchAdapter, IFileMatchAdapter {
+	private static final String KEY_SHOW_POLYMORPHIC_CALLS = "ShowPolymorphicCalls"; //$NON-NLS-1$
+	final static MatchFilter[] ALL_FILTERS = new MatchFilter[] {HidePolymorphicCalls.FILTER};
+	final static MatchFilter[] NO_FILTERS = {};
 
 	private PDOMSearchQuery query;
 	private boolean indexerBusy;
@@ -190,4 +194,32 @@ public class PDOMSearchResult extends AbstractTextSearchResult implements IEdito
 		return indexerBusy;
 	}
 
+	@Override
+	public MatchFilter[] getAllMatchFilters() {
+		return ALL_FILTERS;
+	}
+
+	@Override
+	public MatchFilter[] getActiveMatchFilters() {	
+		MatchFilter[] result = super.getActiveMatchFilters();
+		if (result == null) {
+			if (CUIPlugin.getDefault().getDialogSettings().getBoolean(KEY_SHOW_POLYMORPHIC_CALLS)) {
+				return ALL_FILTERS;
+			}
+			return NO_FILTERS;
+		}
+		return result;
+	}
+
+	@Override
+	public void setActiveMatchFilters(MatchFilter[] filters) {
+		boolean showPoly= false;
+		for (int i = 0; i < filters.length; i++) {
+			if (filters[i] == HidePolymorphicCalls.FILTER) {
+				showPoly= true;
+			}
+		}
+		CUIPlugin.getDefault().getDialogSettings().put(KEY_SHOW_POLYMORPHIC_CALLS, showPoly);
+		super.setActiveMatchFilters(filters);
+	}
 }

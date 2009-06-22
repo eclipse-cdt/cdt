@@ -319,23 +319,28 @@ public abstract class ASTNode implements IASTNode {
     	char[] txt= lr.getUnpreprocessedSignature(total);
     	Lexer lex= new Lexer(txt, (LexerOptions) tu.getAdapter(LexerOptions.class), ILexerLog.NULL, null);
     	try {
-			Token result= lex.nextToken();
-			if (result.getType() == IToken.tEND_OF_INPUT)
-				return null;
-			
-			Token last= result;
-			for(;;) {
-				int offset= last.getOffset() + adjustment;
-				int endOffset= last.getEndOffset() + adjustment;
-				last.setOffset(offset, endOffset);
-				
+			Token result= null;	
+			Token last= null;
+			for(;;) {				
 				Token t= lex.nextToken();
-				if (t.getType() == IToken.tEND_OF_INPUT)
+				switch (t.getType()) {
+				case IToken.tEND_OF_INPUT:
+					return result;
+				case Lexer.tNEWLINE:
 					break;
-				last.setNext(t);
-				last= t;
+				default:
+					int offset= t.getOffset() + adjustment;
+					int endOffset= t.getEndOffset() + adjustment;
+					t.setOffset(offset, endOffset);
+					if (last == null) {
+						result= last= t;
+					} else {
+						last.setNext(t);
+						last= t;
+					}
+					break;
+				}
 			}
-			return result;
 		} catch (OffsetLimitReachedException e) {
 			// does not happen without using content assist limit
 		}

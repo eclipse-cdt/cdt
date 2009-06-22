@@ -11,7 +11,6 @@
  ******************************************************************************/ 
 package org.eclipse.cdt.internal.ui.refactoring.rename;
 
-import com.ibm.icu.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -30,6 +29,8 @@ import org.eclipse.core.runtime.OperationCanceledException;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.ltk.core.refactoring.RefactoringStatus;
 import org.eclipse.ltk.core.refactoring.RefactoringStatusEntry;
+
+import com.ibm.icu.text.MessageFormat;
 
 import org.eclipse.cdt.core.dom.ast.ASTVisitor;
 import org.eclipse.cdt.core.dom.ast.DOMException;
@@ -76,6 +77,7 @@ import org.eclipse.cdt.core.dom.ast.c.ICFunctionPrototypeScope;
 import org.eclipse.cdt.core.dom.ast.c.ICFunctionScope;
 import org.eclipse.cdt.core.dom.ast.c.ICScope;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTDeclSpecifier;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTNamespaceDefinition;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTQualifiedName;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTranslationUnit;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPBase;
@@ -630,6 +632,9 @@ public class ASTManager {
         }
         if (node instanceof IASTCompositeTypeSpecifier) {
             return getSimpleName(((IASTCompositeTypeSpecifier) node).getName()).toString();
+        }
+        if (node instanceof ICPPASTNamespaceDefinition) {
+        	return getSimpleName(((ICPPASTNamespaceDefinition) node).getName()).toString();
         }
         if (node instanceof IASTTranslationUnit) {
             return ((IASTTranslationUnit) node).getFilePath();

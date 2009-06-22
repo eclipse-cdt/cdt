@@ -604,13 +604,11 @@ public class Database {
 	private void flushAndUnlockChunks(final ArrayList<Chunk> dirtyChunks, boolean isComplete) throws CoreException {
 		assert !Thread.holdsLock(fCache);
 		synchronized(fHeaderChunk) {
-			if (!fHeaderChunk.fDirty) {
-				if (!(isComplete && fIsMarkedIncomplete)) {
-					return;
-				}
-			}
-			if (!dirtyChunks.isEmpty()) {
+			final boolean haveDirtyChunks = !dirtyChunks.isEmpty();
+			if (haveDirtyChunks || fHeaderChunk.fDirty) {
 				markFileIncomplete();
+			}
+			if (haveDirtyChunks) {
 				for (Chunk chunk : dirtyChunks) {
 					if (chunk.fDirty) {
 						chunk.flush();

@@ -51,7 +51,7 @@ public class CompletionTestBase extends BaseTestCase {
     private static final IParserLogService NULL_LOG = new NullLogService();
 
 	protected IASTCompletionNode getCompletionNode(String code, ParserLanguage lang, boolean useGNUExtensions) throws ParserException {
-        CodeReader codeReader = new CodeReader(code.toCharArray());
+        CodeReader codeReader = new CodeReader(code.trim().toCharArray());
         ScannerInfo scannerInfo = new ScannerInfo();
         IScanner scanner= AST2BaseTest.createScanner(codeReader, lang, ParserMode.COMPLETE_PARSE, scannerInfo);
         
@@ -91,6 +91,18 @@ public class CompletionTestBase extends BaseTestCase {
 	
 	protected IASTCompletionNode getGCCCompletionNode(String code) throws ParserException {
 		return getCompletionNode(code, ParserLanguage.C, true);
+	}
+	
+	protected void checkCompletion(String code, boolean isCpp, String[] expected) throws ParserException {
+		IASTCompletionNode node = isCpp ? getGPPCompletionNode(code) : getGCCCompletionNode(code);
+		assertNotNull(node);
+		List<IBinding> bindings= proposeBindings(node);
+		String[] names= getSortedNames(bindings);
+		int len= Math.min(expected.length, names.length);
+		for (int i = 0; i < len; i++) {
+			assertEquals(expected[i], names[i]);
+		}
+		assertEquals(expected.length, names.length);
 	}
 	
 	private static class BindingsComparator implements Comparator {

@@ -11,8 +11,6 @@
  *******************************************************************************/
 package org.eclipse.cdt.core.parser.tests.prefix;
 
-import java.util.List;
-
 import org.eclipse.cdt.core.dom.ast.IASTCompletionNode;
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IBinding;
@@ -137,11 +135,31 @@ public class BasicCompletionTest extends CompletionTestBase {
 	//	   b.
 	public void testBug267911() throws Exception {
 		String code = getAboveComment();
-		IASTCompletionNode node = getGPPCompletionNode(code);
-		assertNotNull(node);
-		List<IBinding> bindings= proposeBindings(node);
-		String[] names= getSortedNames(bindings);
-		assertEquals("B", names[0]);
-		assertEquals("doit", names[1]);
+		String[] expected= {"B", "doit"};
+		checkCompletion(code, true, expected);
 	}
+	
+	//	typedef struct MyType {
+	//		int aField;
+	//	} MyType;
+	//  M
+	public void testBug279931() throws Exception {
+		String code = getAboveComment();
+		String[] expected= {"MyType", "MyType"};
+		checkCompletion(code, true, expected);
+		expected= new String[] {"MyType"};
+		checkCompletion(code, false, expected);
+	}
+
+	//	typedef struct MyType {
+	//		int aField;
+	//	} MyType;
+	//  struct M
+	public void testBug279931a() throws Exception {
+		String code = getAboveComment();
+		String[] expected= {"MyType"};
+		checkCompletion(code, true, expected);
+		checkCompletion(code, false, expected);
+	}
+
 }

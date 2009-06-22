@@ -79,6 +79,9 @@ public final class CSearchMessages extends NLS {
 	public static String PDOMSearchListContentProvider_IndexerNotEnabledMessageFormat;
 	public static String PDOMSearchListContentProvider_ProjectClosedMessageFormat;
 	public static String CSearchMessages_IndexRunningIncompleteWarning;
+	public static String HidePolymorphicCalls_actionLabel;
+	public static String HidePolymorphicCalls_description;
+	public static String HidePolymorphicCalls_name;
 	public static String PDOMSearchTreeContentProvider_IndexerNotEnabledWarning;
 	public static String PDOMSearchTreeContentProvider_ProjectClosedWarning;
 	public static String PDOMSearchUnresolvedIncludesQuery_title;

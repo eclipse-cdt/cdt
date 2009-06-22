@@ -20,6 +20,8 @@ import org.eclipse.cdt.core.index.IIndexFileLocation;
  */
 public class PDOMSearchMatch extends Match {
 
+	private boolean fIsPolymorphicCall;
+
 	public PDOMSearchMatch(PDOMSearchElement elem, int offset, int length) {
 		super(elem, offset, length);
 	}
@@ -38,5 +40,13 @@ public class PDOMSearchMatch extends Match {
 		return getElement().equals(other.getElement())
 			&& getOffset() == other.getOffset()
 			&& getLength() == other.getLength();
+	}
+
+	public void setIsPolymorphicCall() {
+		fIsPolymorphicCall= true;
+	}
+	
+	public boolean isPolymorphicCall() {
+		return fIsPolymorphicCall;
 	}
 }

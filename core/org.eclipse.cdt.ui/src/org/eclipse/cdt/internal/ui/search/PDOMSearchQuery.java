@@ -28,10 +28,12 @@ import org.eclipse.search.ui.ISearchResult;
 
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.browser.ITypeReference;
+import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IASTFileLocation;
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
 import org.eclipse.cdt.core.dom.ast.IBinding;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPMethod;
 import org.eclipse.cdt.core.index.IIndex;
 import org.eclipse.cdt.core.index.IIndexBinding;
 import org.eclipse.cdt.core.index.IIndexName;
@@ -42,6 +44,7 @@ import org.eclipse.cdt.core.parser.util.ArrayUtil;
 import org.eclipse.cdt.ui.CUIPlugin;
 
 import org.eclipse.cdt.internal.core.browser.ASTTypeInfo;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.ClassTypeHelper;
 
 
 /**
@@ -49,9 +52,9 @@ import org.eclipse.cdt.internal.core.browser.ASTTypeInfo;
  *
  */
 public abstract class PDOMSearchQuery implements ISearchQuery {
-	public static final int FIND_DECLARATIONS = 0x1;
-	public static final int FIND_DEFINITIONS = 0x2;
-	public static final int FIND_REFERENCES = 0x4;
+	public static final int FIND_DECLARATIONS = IIndex.FIND_DECLARATIONS;
+	public static final int FIND_DEFINITIONS = IIndex.FIND_DEFINITIONS;
+	public static final int FIND_REFERENCES = IIndex.FIND_REFERENCES;
 	public static final int FIND_DECLARATIONS_DEFINITIONS = FIND_DECLARATIONS | FIND_DEFINITIONS;
 	public static final int FIND_ALL_OCCURANCES = FIND_DECLARATIONS | FIND_DEFINITIONS | FIND_REFERENCES;
 	
@@ -127,14 +130,20 @@ public abstract class PDOMSearchQuery implements ISearchQuery {
 		return false; // i.e. keep it
 	}
 	
-	private void collectNames(IIndex index, IIndexName[] names) throws CoreException {
+	private void collectNames(IIndex index, IIndexName[] names, boolean polymorphicCallsOnly) throws CoreException {
 		for (IIndexName name : names) {
 			if (!filterName(name)) {
-				IASTFileLocation loc = name.getFileLocation();
-				IIndexBinding binding= index.findBinding(name);
-				result.addMatch(new PDOMSearchMatch(
-						new TypeInfoSearchElement(index, name, binding), 
-						loc.getNodeOffset(), loc.getNodeLength()));
+				if (!polymorphicCallsOnly || name.couldBePolymorphicMethodCall()) {
+					IASTFileLocation loc = name.getFileLocation();
+					IIndexBinding binding= index.findBinding(name);
+					final PDOMSearchMatch match = new PDOMSearchMatch(
+							new TypeInfoSearchElement(index, name, binding), 
+							loc.getNodeOffset(), loc.getNodeLength());
+					if (polymorphicCallsOnly)
+						match.setIsPolymorphicCall();
+					
+					result.addMatch(match);
+				}
 			}
 		}
 	}
@@ -142,7 +151,21 @@ public abstract class PDOMSearchQuery implements ISearchQuery {
 	protected void createMatches(IIndex index, IBinding binding) throws CoreException {
 		if (binding != null) {
 			IIndexName[] names= index.findNames(binding, flags);
-			collectNames(index, names);
+			collectNames(index, names, false);
+			if ((flags & FIND_REFERENCES) != 0) {
+				if (binding instanceof ICPPMethod) {
+					ICPPMethod m= (ICPPMethod) binding;
+					try {
+						ICPPMethod[] msInBases = ClassTypeHelper.findOverridden(m);
+						for (ICPPMethod mInBase : msInBases) {
+							names= index.findNames(mInBase, FIND_REFERENCES);
+							collectNames(index, names, true);
+						}
+					} catch (DOMException e) {
+						CUIPlugin.log(e);
+					}
+				}
+			}
 		}
 	}
 

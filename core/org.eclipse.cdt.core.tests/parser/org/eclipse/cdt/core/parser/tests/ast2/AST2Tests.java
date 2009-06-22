@@ -5780,6 +5780,40 @@ public class AST2Tests extends AST2BaseTest {
 		assertEquals(image.length(), token.getLength());		
 	}
 	
+	//	void test() {
+	//	   int x,y;
+	//	   x
+	//     << 
+	//     y;
+	// }
+	public void testSyntaxWithNL_Bug280175() throws Exception {
+		String code= getAboveComment();
+		int offsetX= code.indexOf('x', code.indexOf('x')+1);
+		int offsetShift= code.indexOf('<');
+		int offsetY= code.indexOf('y', offsetX);
+		
+		IASTTranslationUnit tu= parseAndCheckBindings(code);
+		IASTFunctionDefinition f= getDeclaration(tu, 0);
+		IASTExpressionStatement i = getStatement(f, 1);
+		final IASTBinaryExpression expr = (IASTBinaryExpression) i.getExpression();
+		IASTExpression x= expr.getOperand1();
+		IASTExpression y= expr.getOperand2();
+		
+		IToken syntax= x.getTrailingSyntax();
+		checkToken(syntax, "<<", offsetShift-offsetX-1); syntax= syntax.getNext();
+		assertNull(syntax);
+
+		syntax= y.getLeadingSyntax();
+		checkToken(syntax, "<<", offsetShift - offsetY); syntax= syntax.getNext();
+		assertNull(syntax);
+
+		syntax= expr.getSyntax();
+		checkToken(syntax, "x", 0); syntax= syntax.getNext();
+		checkToken(syntax, "<<", offsetShift-offsetX); syntax= syntax.getNext();
+		checkToken(syntax, "y", offsetY-offsetX); syntax= syntax.getNext();
+		assertNull(syntax);
+	}
+
 	// int a= 1+2-3*4+10/2; // -4
 	// int b= a+4;
 	// int* c= &b;
@@ -6357,5 +6391,5 @@ public class AST2Tests extends AST2BaseTest {
 			}
 		}
 	}
-
+	
 }

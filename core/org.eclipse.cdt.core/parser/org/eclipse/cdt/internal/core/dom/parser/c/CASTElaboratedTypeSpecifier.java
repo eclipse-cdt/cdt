@@ -23,6 +23,7 @@ import org.eclipse.cdt.core.dom.ast.IASTSimpleDeclaration;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.ICompositeType;
 import org.eclipse.cdt.core.dom.ast.IEnumeration;
+import org.eclipse.cdt.core.dom.ast.ITypedef;
 import org.eclipse.cdt.core.dom.ast.c.ICASTElaboratedTypeSpecifier;
 
 /**
@@ -138,6 +139,8 @@ public class CASTElaboratedTypeSpecifier extends CASTBaseDeclSpecifier implement
 			} else if (b instanceof IEnumeration) {
 				if (getKind() != k_enum)
 					b= null;
+			} else if (b instanceof ITypedef) {
+				b= null;
 			}
 			if (b != null) {
 				result[nextPos++]= b;

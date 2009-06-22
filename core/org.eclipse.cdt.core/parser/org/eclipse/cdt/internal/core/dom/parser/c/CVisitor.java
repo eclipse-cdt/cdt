@@ -85,7 +85,7 @@ import org.eclipse.cdt.core.dom.ast.gnu.c.IGCCASTSimpleDeclSpecifier;
 import org.eclipse.cdt.core.index.IIndexBinding;
 import org.eclipse.cdt.core.index.IIndexFileSet;
 import org.eclipse.cdt.core.parser.util.ArrayUtil;
-import org.eclipse.cdt.core.parser.util.CharArrayObjectMap;
+import org.eclipse.cdt.core.parser.util.CharArraySet;
 import org.eclipse.cdt.core.parser.util.CharArrayUtils;
 import org.eclipse.cdt.internal.core.dom.parser.ASTInternal;
 import org.eclipse.cdt.internal.core.dom.parser.ASTNode;
@@ -1123,16 +1123,23 @@ public class CVisitor extends ASTQueries {
 			}
 		}
 		
-		CharArrayObjectMap prefixMap = new CharArrayObjectMap(2);
+		IBinding[] result = null;
+		CharArraySet handled= new CharArraySet(1);
 		while (scope != null) {
 			try {
 				if (!(scope instanceof ICCompositeTypeScope)) {
 					IBinding[] bindings= scope.getBindings(name, true, true, fileSet);
 					for (IBinding b : bindings) {
 						final char[] n= b.getNameCharArray();
-						if (!prefixMap.containsKey(n)) {
-							prefixMap.put(n, b);
+						// consider binding only if no binding with the same name was found in another scope.
+						if (!handled.containsKey(n)) {
+							result= (IBinding[]) ArrayUtil.append(IBinding.class, result, b);
 						}
+					}
+					// store names of bindings
+					for (IBinding b : bindings) {
+						final char[] n= b.getNameCharArray();
+						handled.put(n);
 					}
 				}
 			} catch (DOMException e) {
@@ -1140,11 +1147,6 @@ public class CVisitor extends ASTQueries {
 			scope= scope.getParent();
 		}
 		
-		IBinding[] result = null;
-		Object[] vals = prefixMap.valueArray();
-		for (Object val : vals) {
-			result = (IBinding[]) ArrayUtil.append(IBinding.class, result, val);
-		}
 		return (IBinding[]) ArrayUtil.trim(IBinding.class, result);
 	}
 

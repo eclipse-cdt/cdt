@@ -161,5 +161,11 @@ public class BasicCompletionTest extends CompletionTestBase {
 		checkCompletion(code, true, expected);
 		checkCompletion(code, false, expected);
 	}
-
+	
+	// template <t
+	public void testBug280934() throws Exception {
+		String code = getAboveComment();
+		String[] expected= {};
+		checkCompletion(code, true, expected);
+	}
 }

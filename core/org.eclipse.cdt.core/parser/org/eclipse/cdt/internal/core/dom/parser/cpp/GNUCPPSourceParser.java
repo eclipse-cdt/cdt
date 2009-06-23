@@ -1471,12 +1471,13 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
         List<ICPPASTTemplateParameter> returnValue = new ArrayList<ICPPASTTemplateParameter>(DEFAULT_PARM_LIST_SIZE);
 
         for (;;) {
-            if (LT(1) == IToken.tGT)
+        	final int lt1= LT(1);
+            if (lt1 == IToken.tGT || lt1 == IToken.tEOC)
                 return returnValue;
-            if (LT(1) == IToken.t_class || LT(1) == IToken.t_typename) {
+            if (lt1 == IToken.t_class || lt1 == IToken.t_typename) {
                 IToken startingToken = LA(1);
                 int lastOffset = 0;
-                int type = (LT(1) == IToken.t_class ? ICPPASTSimpleTypeTemplateParameter.st_class
+                int type = (lt1 == IToken.t_class ? ICPPASTSimpleTypeTemplateParameter.st_class
                         : ICPPASTSimpleTypeTemplateParameter.st_typename);
                 lastOffset = consume().getEndOffset();
                 IASTName identifierName = null;
@@ -1500,7 +1501,7 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
                 ((ASTNode) parm).setOffsetAndLength(startingToken.getOffset(), lastOffset - startingToken.getOffset());
                 returnValue.add(parm);
 
-            } else if (LT(1) == IToken.t_template) {
+            } else if (lt1 == IToken.t_template) {
                 IToken firstToken = consume();
                 consume(IToken.tLT);
 
@@ -1530,7 +1531,7 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
                 }
                 returnValue.add(parm);
 
-            } else if (LT(1) == IToken.tCOMMA) {
+            } else if (lt1 == IToken.tCOMMA) {
                 consume();
                 continue;
             } else {

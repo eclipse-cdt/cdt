@@ -21,7 +21,7 @@ import org.eclipse.cdt.core.model.ICElementDelta;
 import org.eclipse.cdt.core.model.IParent;
 
 /**
- * A C element delta biulder creates a C element delta on a C element between
+ * A C element delta builder creates a C element delta on a C element between
  * the version of the C element at the time the comparator was created and the
  * current version of the C element.
  *
@@ -390,6 +390,14 @@ private void trimDelta(CElementDelta delta) {
 			trimDelta((CElementDelta)children[i]);
 		}
 	}
+}
+
+/**
+ * Get the change delta built by the builder.
+ * @return the change delta built by the builder.
+ */
+public CElementDelta getDelta() {
+	return delta;
 }
 	
 }

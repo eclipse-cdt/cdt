@@ -1981,8 +1981,8 @@ public class CPPTemplates {
 					ab= aParam instanceof ICPPTemplateNonTypeParameter;
 					if (pb != ab)
 						return null;
-					assert pParam instanceof ICPPTemplateTemplateParameter; // no other choice left
-					assert aParam instanceof ICPPTemplateTemplateParameter; // no other choice left
+					assert pb || pParam instanceof ICPPTemplateTemplateParameter; // no other choice left
+					assert ab || aParam instanceof ICPPTemplateTemplateParameter; // no other choice left
 				}
 			}
 

@@ -526,7 +526,7 @@ public class CPPVisitor extends ASTQueries {
 
 		// function type for non-type template parameter
 		ASTNodeProperty prop = parent.getPropertyInParent();
-		if (prop == ICPPASTTemplateDeclaration.PARAMETER) {
+		if (prop == ICPPASTTemplateDeclaration.PARAMETER || prop == ICPPASTTemplatedTypeTemplateParameter.PARAMETER) {
 			return CPPTemplates.createBinding((ICPPASTTemplateParameter) parent);
 		}
 

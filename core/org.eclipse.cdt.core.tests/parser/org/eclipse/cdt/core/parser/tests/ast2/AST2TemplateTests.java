@@ -4051,4 +4051,12 @@ public class AST2TemplateTests extends AST2BaseTest {
 		final String code = getAboveComment();
 		parseAndCheckBindings(code, ParserLanguage.CPP);
 	}
+	
+	//	template<unsigned int> struct ST{};
+	//	template<template<unsigned int> class T> class CT {};
+	//	typedef CT<ST> TDef;
+	public void testUsingTemplateTemplateParameter_279619() throws Exception {
+		final String code = getAboveComment();
+		parseAndCheckBindings(code, ParserLanguage.CPP);
+	}
 }

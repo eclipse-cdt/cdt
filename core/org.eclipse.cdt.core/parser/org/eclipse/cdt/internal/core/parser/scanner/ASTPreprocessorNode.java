@@ -275,7 +275,7 @@ class ASTInclusionStatement extends ASTPreprocessorNode implements IASTPreproces
 
 class ASTMacroDefinition extends ASTPreprocessorNode implements IASTPreprocessorObjectStyleMacroDefinition {
 	private final ASTPreprocessorName fName;
-	private final int fExpansionNumber;
+	protected final int fExpansionNumber;
 	private final int fExpansionOffset;
 	private final boolean fActive;
 	
@@ -404,8 +404,27 @@ class ASTFunctionStyleMacroDefinition extends ASTMacroDefinition implements IAST
     	IMacroBinding macro= getMacro();
     	char[][] paramList= macro.getParameterList();
     	IASTFunctionStyleMacroParameter[] result= new IASTFunctionStyleMacroParameter[paramList.length];
+    	char[] image= getRawSignatureChars();
+    	int idx= 0;
+    	int defOffset = getOffset();
+		int endIdx= Math.min(fExpansionNumber - defOffset, image.length);
+    	char start= '(';
     	for (int i = 0; i < result.length; i++) {
-			result[i]= new ASTMacroParameter(this, paramList[i], -1, -1);
+        	while(idx < endIdx && image[idx] != start) 
+        		idx++;
+        	idx++;
+        	while(idx < endIdx && Character.isWhitespace(image[idx]))
+        		idx++;
+        	start= ',';
+        	
+			char[] param = paramList[i];
+			int poffset= -1;
+			int pendOffset= -1;
+        	if (idx + param.length <= endIdx) {
+        		poffset= defOffset+idx;
+        		pendOffset= poffset+param.length;
+        	}
+			result[i]= new ASTMacroParameter(this, param, poffset, pendOffset);
 		}
         return result;
     }

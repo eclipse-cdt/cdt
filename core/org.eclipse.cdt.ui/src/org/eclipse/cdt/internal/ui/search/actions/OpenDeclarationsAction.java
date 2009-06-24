@@ -42,11 +42,13 @@ import org.eclipse.cdt.core.dom.ast.ASTNameCollector;
 import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IASTDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTFileLocation;
+import org.eclipse.cdt.core.dom.ast.IASTFunctionStyleMacroParameter;
 import org.eclipse.cdt.core.dom.ast.IASTImplicitName;
 import org.eclipse.cdt.core.dom.ast.IASTImplicitNameOwner;
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IASTNodeSelector;
+import org.eclipse.cdt.core.dom.ast.IASTPreprocessorFunctionStyleMacroDefinition;
 import org.eclipse.cdt.core.dom.ast.IASTPreprocessorIncludeStatement;
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
 import org.eclipse.cdt.core.dom.ast.IBinding;
@@ -253,6 +255,16 @@ public class OpenDeclarationsAction extends SelectionParseAction implements ASTR
 		if (node instanceof IASTPreprocessorIncludeStatement) {
 			openInclude((IASTPreprocessorIncludeStatement) node);
 			return Status.OK_STATUS;
+		} else if (node instanceof IASTPreprocessorFunctionStyleMacroDefinition) {
+			IASTPreprocessorFunctionStyleMacroDefinition mdef= (IASTPreprocessorFunctionStyleMacroDefinition) node;
+			for (IASTFunctionStyleMacroParameter par: mdef.getParameters()) {
+				String parName= par.getParameter();
+				if (parName.equals(fSelectedText)) {
+					if (navigateToLocation(par.getFileLocation())) {
+						return Status.OK_STATUS;
+					}
+				}
+			}
 		}
 		if (!navigationFallBack(ast, null, NameKind.REFERENCE)) {
 			reportSelectionMatchFailure();
@@ -473,7 +485,10 @@ public class OpenDeclarationsAction extends SelectionParseAction implements ASTR
 	}
 
 	private boolean navigateToName(IName name) {
-		IASTFileLocation fileloc = name.getFileLocation();
+		return navigateToLocation(name.getFileLocation());
+	}
+	
+	private boolean navigateToLocation(IASTFileLocation fileloc) {
 		if (fileloc == null) {
 			return false;
 		}

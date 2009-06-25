@@ -336,6 +336,14 @@ public class DefaultVMModelProxyStrategy implements IVMModelProxy {
             });
     }
 
+    /** 
+     * Base implementation that handles calling child nodes to build 
+     * the model delta.  This method delegates to two other methods:
+     * {@link #buildChildDeltasForEventContext(IVMContext[], IVMNode, Object, VMDelta, int, RequestMonitor)} 
+     * and {@link #buildChildDeltasForAllContexts(IVMNode, Object, VMDelta, int, RequestMonitor)}, 
+     * depending on the result of calling{@link IVMNode#getContextsForEvent(VMDelta, Object, DataRequestMonitor)}.
+     * @see IVMNode#buildDelta(Object, ModelDelta, int, RequestMonitor)
+     */
     protected void buildChildDeltas(final IVMNode node, final Object event, final VMDelta parentDelta, 
         final int nodeOffset, final RequestMonitor rm) 
     {
@@ -345,14 +353,19 @@ public class DefaultVMModelProxyStrategy implements IVMModelProxy {
             new DataRequestMonitor<IVMContext[]>(getVMProvider().getExecutor(), rm) {
                 @Override
                 protected void handleCompleted() {
-                    if (isSuccess()) {
-                        assert getData() != null;
-                        buildChildDeltasForEventContext(getData(), node, event, parentDelta, nodeOffset, rm);
-                    } else if (getStatus().getCode() == IDsfStatusConstants.NOT_SUPPORTED) {
-                        // The DMC for this node was not found in the event.  Call the 
-                        // super-class to resort to the default behavior which may add a 
-                        // delta for every element in this node.
-                        buildChildDeltasForAllContexts(node, event, parentDelta, nodeOffset, rm);
+                    if (isSuccess() || getStatus().getCode() == IDsfStatusConstants.NOT_SUPPORTED) {
+                        
+                        if (isSuccess()) {
+                            assert getData() != null;
+                            buildChildDeltasForEventContext(
+                                getData(), node, event, parentDelta, nodeOffset, rm);
+                        } else  {
+                            // The DMC for this node was not found in the event.  Call the 
+                            // super-class to resort to the default behavior which will add a 
+                            // delta for every element in this node.
+                            buildChildDeltasForAllContexts(
+                                node, event, parentDelta, nodeOffset, rm);
+                        }
                     } else {
                         super.handleCompleted();
                     }
@@ -360,22 +373,28 @@ public class DefaultVMModelProxyStrategy implements IVMModelProxy {
             });
     }
     
+    /** 
+     * Base implementation that handles calling child nodes to build 
+     * the model delta.  This method is called with the context obtained  
+     * by calling{@link IVMNode#getContextsForEvent(VMDelta, Object, DataRequestMonitor)}.
+     * @see IVMNode#buildDelta(Object, ModelDelta, int, RequestMonitor)
+     */
     protected void buildChildDeltasForEventContext(final IVMContext[] vmcs, final IVMNode node, final Object event, 
-        final VMDelta parentDelta, final int nodeOffset, final RequestMonitor requestMonitor) 
+        final VMDelta parentDelta, final int nodeOffset, final RequestMonitor rm) 
     {
-        final Map<IVMNode,Integer> childNodeDeltas = getChildNodesWithDeltaFlags(node, parentDelta, event);
-        if (childNodeDeltas.size() == 0) {
+        final Map<IVMNode,Integer> childNodesWithDeltaFlags = getChildNodesWithDeltaFlags(node, parentDelta, event);
+        if (childNodesWithDeltaFlags.size() == 0) {
             // There are no child nodes with deltas, just return to parent.
-            requestMonitor.done();
+            rm.done();
             return;
         }            
-
+        
         // Check if any of the child nodes are will generate IModelDelta.SELECT  or 
         // IModelDelta.EXPAND flags.  If so, we must calculate the index for this 
         // VMC.
         boolean calculateIndex = false;
         if (nodeOffset >= 0) {
-            for (int childDelta : childNodeDeltas.values()) {
+            for (int childDelta : childNodesWithDeltaFlags.values()) {
                 if ( (childDelta & (IModelDelta.SELECT | IModelDelta.EXPAND)) != 0 ) {
                     calculateIndex = true;
                     break;
@@ -390,19 +409,19 @@ public class DefaultVMModelProxyStrategy implements IVMModelProxy {
                 node, 
                 new VMChildrenUpdate(
                     parentDelta, getVMProvider().getPresentationContext(), -1, -1,
-                    new DataRequestMonitor<List<Object>>(getVMProvider().getExecutor(), requestMonitor) {
+                    new DataRequestMonitor<List<Object>>(getVMProvider().getExecutor(), rm) {
                         @Override
                         protected void handleSuccess() {
                             // Check for an empty list of elements.  If it's empty then we 
                             // don't have to call the children nodes, so return here.
                             // No need to propagate error, there's no means or need to display it.
                             if (getData().isEmpty()) {
-                                requestMonitor.done();
+                                rm.done();
                                 return;
                             }
 
                             CountingRequestMonitor countingRm = 
-                                new CountingRequestMonitor(getVMProvider().getExecutor(), requestMonitor);
+                                new CountingRequestMonitor(getVMProvider().getExecutor(), rm);
                             
                             int count = 0;
                             for (IVMContext vmc : vmcs) {
@@ -424,7 +443,8 @@ public class DefaultVMModelProxyStrategy implements IVMModelProxy {
                                     delta = parentDelta.addNode(vmc, elementIndex, IModelDelta.NO_CHANGE);
                                 }
                                 
-                                callChildNodesToBuildDelta(node, childNodeDeltas, delta, event, countingRm);
+                                callChildNodesToBuildDelta(
+                                    node, childNodesWithDeltaFlags, delta, event, countingRm);
                                 count++;
                             }
                             countingRm.setDoneCount(count);
@@ -432,7 +452,7 @@ public class DefaultVMModelProxyStrategy implements IVMModelProxy {
                     }));
         } else {
             CountingRequestMonitor countingRm = 
-                new CountingRequestMonitor(getVMProvider().getExecutor(), requestMonitor);
+                new CountingRequestMonitor(getVMProvider().getExecutor(), rm);
             int count = 0;
             for (IVMContext vmc : vmcs) {
                 // Optimization: Try to find a delta with a matching element, if found use it.  
@@ -441,47 +461,57 @@ public class DefaultVMModelProxyStrategy implements IVMModelProxy {
                 if (delta == null) {
                     delta = parentDelta.addNode(vmc, IModelDelta.NO_CHANGE);
                 }
-                callChildNodesToBuildDelta(node, childNodeDeltas, delta, event, requestMonitor);
+                callChildNodesToBuildDelta(node, childNodesWithDeltaFlags, delta, event, rm);
                 count++;
             }
             countingRm.setDoneCount(count);
         }            
     }
-    
+
     /** 
      * Base implementation that handles calling child nodes to build 
      * the model delta.  The child nodes are called with all the elements 
-     * in this node, which could be very inefficient.  In order to build delta
-     * only for specific elements in this node, the class extending 
-     * <code>AbstractVMNode</code> should override this method. 
+     * in this node, which could be very inefficient.  This method is only 
+     * called if {@link IVMNode#getContextsForEvent(VMDelta, Object, DataRequestMonitor)}
+     * is not supported by the node for the given element.
      * @see IVMNode#buildDelta(Object, ModelDelta, int, RequestMonitor)
      */
     protected void buildChildDeltasForAllContexts(final IVMNode node, final Object event, final VMDelta parentDelta,
-        final int nodeOffset, final RequestMonitor requestMonitor) 
+        final int nodeOffset, final RequestMonitor rm) 
     {
-        // Find the child nodes that have deltas for the given event. 
         final Map<IVMNode,Integer> childNodesWithDeltaFlags = getChildNodesWithDeltaFlags(node, parentDelta, event);
-
-        // If no child nodes have deltas we can stop here. 
         if (childNodesWithDeltaFlags.size() == 0) {
-            requestMonitor.done();
+            // There are no child nodes with deltas, just return to parent.
+            rm.done();
             return;
         }            
-        
+
         // Check if the child delta only has an IModelDelta.STATE flag.  
         // If that's the case, we can skip creating a delta for this node, 
         // because the TreeUpdatePolicy does not use the full path from the 
         // delta to handle these flags. Similarly, the index argument is 
         // not necessary either.
         boolean mustGetElements = false;
+        boolean _updateFlagsOnly = true;
         for (int childDelta : childNodesWithDeltaFlags.values()) {
             if ((childDelta & ~IModelDelta.STATE) != 0) {
                 mustGetElements = true;
             }
+            if ((childDelta & ~(IModelDelta.STATE | IModelDelta.CONTENT)) != 0) {
+                _updateFlagsOnly = false;
+            }
         }
+        final boolean updateFlagsOnly = _updateFlagsOnly; 
 
         if (!mustGetElements) {
-            callChildNodesToBuildDelta(node, childNodesWithDeltaFlags, parentDelta, event, requestMonitor);
+            callChildNodesToBuildDelta(
+                node, childNodesWithDeltaFlags, parentDelta, event, 
+                new RequestMonitor(getVMProvider().getExecutor(), rm) {
+                    @Override
+                    protected void handleError() {
+                        super.handleError();
+                    }
+                });
         } else {
             // The given child nodes have deltas potentially for all elements
             // from this node.  Retrieve all elements and call the child nodes with
@@ -490,44 +520,51 @@ public class DefaultVMModelProxyStrategy implements IVMModelProxy {
                 node, 
                 new VMChildrenUpdate(
                     parentDelta, getVMProvider().getPresentationContext(), -1, -1,
-                    new DataRequestMonitor<List<Object>>(getVMProvider().getExecutor(), requestMonitor) {
+                    new DataRequestMonitor<List<Object>>(getVMProvider().getExecutor(), rm) {
                         @Override
-                        protected void handleSuccess() {
+                        protected void handleCompleted() {
                             if (fDisposed) return;
                             
-                            // Check for an empty list of elements.  If it's empty then we 
-                            // don't have to call the children nodes, so return here.
-                            if (getData().size() == 0) {
-                                requestMonitor.done();
-                                return;
-                            }
-                            
-                            final MultiRequestMonitor<RequestMonitor> elementsDeltasMultiRequestMon = 
-                                new MultiRequestMonitor<RequestMonitor>(getVMProvider().getExecutor(), requestMonitor);
-    
-                            // For each element from this node, create a new delta, 
-                            // and then call all the child nodes to build their delta. 
-                            for (int i = 0; i < getData().size(); i++) {
-                                int elementIndex = nodeOffset >= 0 ? nodeOffset + i : -1;
-                                VMDelta delta= parentDelta.getChildDelta(getData().get(i));
-                                if (delta == null) {
-                                    delta= parentDelta.addNode(getData().get(i), elementIndex, IModelDelta.NO_CHANGE);
+                            // Check for an empty list of elements.  If the list of elements is empty
+                            // still call the child nodes using the parent delta only.  Do this only if
+                            // an optimization was used to build the delta, so that the child node can  
+                            // adds the optimized delta flags without the full delta (bug 280770).
+                            if (getData() == null || getData().size() == 0) {
+                                if (updateFlagsOnly) {
+                                    callChildNodesToBuildDelta(
+                                        node, childNodesWithDeltaFlags, parentDelta, event, rm);
+                                } else {
+                                    rm.done();
+                                    return;
                                 }
-                                callChildNodesToBuildDelta(
-                                    node, childNodesWithDeltaFlags, delta, event, 
-                                    elementsDeltasMultiRequestMon.add(new RequestMonitor(getVMProvider().getExecutor(), null) { 
-                                        @Override
-                                        protected void handleCompleted() {
-                                            elementsDeltasMultiRequestMon.requestMonitorDone(this);
-                                        }
-                                    }));
+                            } else {
+                                final MultiRequestMonitor<RequestMonitor> elementsDeltasMultiRequestMon = 
+                                    new MultiRequestMonitor<RequestMonitor>(getVMProvider().getExecutor(), rm);
+        
+                                // For each element from this node, create a new delta, 
+                                // and then call all the child nodes to build their delta. 
+                                for (int i = 0; i < getData().size(); i++) {
+                                    int elementIndex = nodeOffset >= 0 ? nodeOffset + i : -1;
+                                    VMDelta delta= parentDelta.getChildDelta(getData().get(i));
+                                    if (delta == null) {
+                                        delta= parentDelta.addNode(getData().get(i), elementIndex, IModelDelta.NO_CHANGE);
+                                    }
+                                    callChildNodesToBuildDelta(
+                                        node, childNodesWithDeltaFlags, delta, event, 
+                                        elementsDeltasMultiRequestMon.add(new RequestMonitor(getVMProvider().getExecutor(), null) { 
+                                            @Override
+                                            protected void handleCompleted() {
+                                                elementsDeltasMultiRequestMon.requestMonitorDone(this);
+                                            }
+                                        }));
+                                }
                             }
                         }
                     })
                 );
         }
     }
-    
+
     /**
      * Calls the specified child nodes to build the delta for the given event.
      * @param childNodes Map of nodes to be invoked, and the corresponding delta 
@@ -537,9 +574,11 @@ public class DefaultVMModelProxyStrategy implements IVMModelProxy {
      * generated by this node, unless the full delta path is not being calculated
      * due to an optimization.
      * @param event The event object that the delta is being built for.
-     * @param requestMonitor The result token to invoke when the delta is completed.
+     * @param rm The result token to invoke when the delta is completed.
      */
-    protected void callChildNodesToBuildDelta(final IVMNode node, final Map<IVMNode,Integer> childNodes, final VMDelta delta, final Object event, final RequestMonitor requestMonitor) {
+    protected void callChildNodesToBuildDelta(final IVMNode node, final Map<IVMNode,Integer> childNodes, final VMDelta delta, 
+        final Object event, final RequestMonitor rm) 
+    {
         assert childNodes.size() != 0;
 
         // Check if any of the child nodes are will generate IModelDelta.SELECT  or 
@@ -555,10 +594,10 @@ public class DefaultVMModelProxyStrategy implements IVMModelProxy {
 
         getChildNodesElementOffsets(
             node, delta, calculateOffsets, 
-            new DataRequestMonitor<Map<IVMNode, Integer>>(getVMProvider().getExecutor(), requestMonitor) {
+            new DataRequestMonitor<Map<IVMNode, Integer>>(getVMProvider().getExecutor(), rm) {
                 @Override
                 protected void handleSuccess() {
-                    final CountingRequestMonitor multiRm = new CountingRequestMonitor(getVMProvider().getExecutor(), requestMonitor);
+                    final CountingRequestMonitor multiRm = new CountingRequestMonitor(getVMProvider().getExecutor(), rm);
                     int multiRmCount = 0;
                     
                     // Set the total count of number of children in the parent delta.
@@ -574,8 +613,9 @@ public class DefaultVMModelProxyStrategy implements IVMModelProxy {
                             new RequestMonitor(getVMProvider().getExecutor(), multiRm) {
                                 @Override
                                 protected void handleSuccess() {
-                                    buildChildDeltas(
-                                        childNode, event, delta, nodeOffset, new RequestMonitor(getVMProvider().getExecutor(), multiRm));
+                                    buildChildDeltas( 
+                                        childNode, event, delta, nodeOffset, 
+                                        new RequestMonitor(getVMProvider().getExecutor(), multiRm) );
                                 }
                             });
                         multiRmCount++;

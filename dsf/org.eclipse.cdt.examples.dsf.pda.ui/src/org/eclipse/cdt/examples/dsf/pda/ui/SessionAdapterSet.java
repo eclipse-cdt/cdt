@@ -41,7 +41,6 @@ import org.eclipse.debug.internal.ui.viewers.model.provisional.IModelSelectionPo
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IPresentationContext;
 import org.eclipse.debug.ui.IDebugUIConstants;
 import org.eclipse.debug.ui.sourcelookup.ISourceDisplay;
-import org.eclipse.debug.ui.targets.ITargetsUIConstants;
 
 /**
  * Contains the set of adapters that are created for each session instance.

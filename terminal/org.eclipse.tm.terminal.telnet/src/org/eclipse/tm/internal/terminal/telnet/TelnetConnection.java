@@ -13,6 +13,7 @@
  * Martin Oberhuber (Wind River) - fixed copyright headers and beautified
  * Michael Scharf (Wind River) - [209665] Add ability to log byte streams from terminal
  * Alex Panchenko (Xored) - [277061]  TelnetConnection.isConnected() should check if socket was not closed
+ * Uwe Stieber (Wind River) - [281329] Telnet connection not handling "SocketException: Connection reset" correct
  *******************************************************************************/
 package org.eclipse.tm.internal.terminal.telnet;
 
@@ -330,10 +331,14 @@ public class TelnetConnection extends Thread implements TelnetCodes {
 			// A "socket closed" exception is normal here. It's caused by the
 			// user clicking the disconnect button on the Terminal view toolbar.
 
-			if (message != null && !message.equals("socket closed")) //$NON-NLS-1$
+			if (message != null && !message.equals("socket closed") && !message.equalsIgnoreCase("Connection reset")) //$NON-NLS-1$ //$NON-NLS-2$
 			{
 				Logger.logException(ex);
 			}
+
+			// Tell the ITerminalControl object that the connection is
+			// closed.
+			terminalControl.setState(TerminalState.CLOSED);
 		} catch (Exception ex) {
 			Logger.logException(ex);
 		}

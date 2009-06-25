@@ -21,6 +21,7 @@ import org.eclipse.cdt.core.parser.CodeReader;
 import org.eclipse.cdt.core.parser.IScannerInfo;
 import org.eclipse.cdt.internal.core.index.IndexFileLocation;
 import org.eclipse.cdt.internal.core.pdom.IndexerInputAdapter;
+import org.eclipse.cdt.internal.core.pdom.indexer.FileExistsCache;
 import org.eclipse.core.filesystem.URIUtil;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
@@ -30,8 +31,9 @@ import org.eclipse.core.runtime.Path;
  * @since 5.0
  */
 public class StandaloneIndexerInputAdapter extends IndexerInputAdapter {
-	private HashMap<String, IIndexFileLocation> fIflCache= new HashMap<String, IIndexFileLocation>();
-
+	private final HashMap<String, IIndexFileLocation> fIflCache= new HashMap<String, IIndexFileLocation>();
+	private final FileExistsCache fExistsCache = new FileExistsCache();
+	
 	private final StandaloneIndexer fIndexer;
 
 	public StandaloneIndexerInputAdapter(StandaloneIndexer indexer) {
@@ -82,11 +84,14 @@ public class StandaloneIndexerInputAdapter extends IndexerInputAdapter {
 	
 	@Override
 	public boolean doesIncludeFileExist(String includePath) {
-		return new File(includePath).isFile();
+		return fExistsCache.isFile(includePath);
 	}
 
 	@Override
 	public IIndexFileLocation resolveIncludeFile(String includePath) {		
+		if (!fExistsCache.isFile(includePath)) {
+			return null;
+		}
 		IIndexFileLocation result= fIflCache.get(includePath);
 		if (result == null) {
 			File file= new File(includePath);

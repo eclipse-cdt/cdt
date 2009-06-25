@@ -68,6 +68,7 @@ import org.eclipse.cdt.core.dom.ast.IProblemBinding;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.ITypedef;
 import org.eclipse.cdt.core.dom.ast.IVariable;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPSpecialization;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateDefinition;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateParameter;
 import org.eclipse.cdt.core.dom.ast.gnu.c.ICASTKnRFunctionDeclarator;
@@ -239,9 +240,15 @@ public class CSourceHover extends AbstractCEditorTextHover {
 		 * @throws DOMException  if there was an internal problem with the DOM
 		 */
 		private String computeSourceForBinding(IASTTranslationUnit ast, IBinding binding) throws CoreException, DOMException {
-			IName[] names= findDefinitions(ast, binding);
-			if (names.length == 0) {
-				names= findDeclarations(ast, binding);
+			IName[] names = findDefsOrDecls(ast, binding);
+			
+			// in case the binding is a non-explicit specialization we need
+			// to consider the original binding (bug 281396)
+			if (names.length == 0 && binding instanceof ICPPSpecialization) {
+				binding= ((ICPPSpecialization) binding).getSpecializedBinding();
+				if (!(binding instanceof IProblemBinding)) {
+					names= findDefsOrDecls(ast, binding);
+				}
 			}
 			if (names.length > 0) {
 				for (IName name : names) {
@@ -252,6 +259,14 @@ public class CSourceHover extends AbstractCEditorTextHover {
 				}
 			}
 			return null;
+		}
+
+		private IName[] findDefsOrDecls(IASTTranslationUnit ast, IBinding binding) throws CoreException {
+			IName[] names= findDefinitions(ast, binding);
+			if (names.length == 0) {
+				names= findDeclarations(ast, binding);
+			}
+			return names;
 		}
 
 		/**

@@ -8,6 +8,7 @@
  * Contributors:
  * Michael Scharf (Wind River) - initial API and implementation
  * Michael Scharf (Wind River) - [240098] The cursor should not blink when the terminal is disconnected
+ * Uwe Stieber (Wind River) - [281238] The very first few characters might be missing in the terminal control if opened and connected programmatically
  *******************************************************************************/
 package org.eclipse.tm.internal.terminal.textcanvas;
 
@@ -177,14 +178,14 @@ public class TextCanvas extends GridCanvas {
 		fMinLines = minLines;
 	}
 
-	protected void onResize() {
+	protected void onResize(boolean init) {
 		if(fResizeListener!=null) {
 			Rectangle bonds=getClientArea();
 			int lines=bonds.height/getCellHeight();
 			int columns=bonds.width/getCellWidth();
 			// when the view is minimised, its size is set to 0
 			// we don't sent this to the terminal!
-			if(lines>0 && columns>0) {
+			if(lines>0 && columns>0 || init) {
 				if(columns<fMinColumns) {
 					if(!isHorizontalBarVisble()) {
 						setHorizontalBarVisible(true);
@@ -206,6 +207,10 @@ public class TextCanvas extends GridCanvas {
 		}
 		super.onResize();
 		calculateGrid();
+	}
+
+	protected void onResize() {
+		onResize(false);
 	}
 
 	private void calculateGrid() {
@@ -294,6 +299,14 @@ public class TextCanvas extends GridCanvas {
 		if(fResizeListener!=null)
 			throw new IllegalArgumentException("There can be at most one listener at the moment!"); //$NON-NLS-1$
 		fResizeListener=listener;
+
+		// Bug 281238: [terminal] The very first few characters might be missing in
+		//             the terminal control if opened and connected programmatically
+		//
+		// In case the terminal had not been visible yet or is to small (less than one
+		// line visible), the terminal should have a minimum size to avoid RuntimeExceptions.
+		setMinColumns(80); setMinLines(24);
+		onResize(true);
 	}
 
 	public void onFontChange() {
@@ -323,7 +336,7 @@ public class TextCanvas extends GridCanvas {
 			fCursorEnabled=enabled;
 			fCellCanvasModel.setCursorEnabled(fCursorEnabled);
 		}
-		
+
 	}
 
 }

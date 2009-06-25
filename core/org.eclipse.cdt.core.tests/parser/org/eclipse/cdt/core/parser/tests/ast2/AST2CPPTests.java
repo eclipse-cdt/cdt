@@ -1089,7 +1089,7 @@ public class AST2CPPTests extends AST2BaseTest {
 		IFunction g = (IFunction) collector.getName(8).resolveBinding();
 		isTypeEqual(g.getType(), "void (char *)");
 		IFunction h = (IFunction) collector.getName(12).resolveBinding();
-		isTypeEqual(h.getType(), "void (int () *)");
+		isTypeEqual(h.getType(), "void (int (*)())");
 		
 		assertInstances(collector, f, 3);
 		assertInstances(collector, g, 2);
@@ -5746,10 +5746,10 @@ public class AST2CPPTests extends AST2BaseTest {
 		checkNewExpression(fdef, 10, IASTIdExpression.class, "int", IASTExpressionList.class);
 		checkNewExpression(fdef, 11, IASTIdExpression.class, "int", IASTIdExpression.class);
 
-		checkNewExpression(fdef, 12, null, "int [] []", null);
-		checkNewExpression(fdef, 13, IASTIdExpression.class, "int [] []", null);
-		checkNewExpression(fdef, 14, null, "int [] []", null);
-		checkNewExpression(fdef, 15, IASTIdExpression.class, "int [] []", null);
+		checkNewExpression(fdef, 12, null, "int [][]", null);
+		checkNewExpression(fdef, 13, IASTIdExpression.class, "int [][]", null);
+		checkNewExpression(fdef, 14, null, "int [][]", null);
+		checkNewExpression(fdef, 15, IASTIdExpression.class, "int [][]", null);
 	}
 
 	private void checkNewExpression(IASTFunctionDefinition fdef, int i_expr, Class<?> placement, String type, Class<?> init) {

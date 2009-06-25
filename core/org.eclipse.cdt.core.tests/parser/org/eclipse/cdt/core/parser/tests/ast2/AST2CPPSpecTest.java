@@ -797,7 +797,7 @@ public class AST2CPPSpecTest extends AST2SpecBaseTest {
 		assertNull(newExpr.getNewPlacement());
 		assertNull(newExpr.getNewInitializer());
 		IASTTypeId typeid= newExpr.getTypeId();
-		isTypeEqual(CPPVisitor.createType(typeid), "int () * []");
+		isTypeEqual(CPPVisitor.createType(typeid), "int (* [])()");
 	}
 
 	// typedef int T;
@@ -1858,7 +1858,7 @@ public class AST2CPPSpecTest extends AST2SpecBaseTest {
 		
 		BindingAssertionHelper ba= new BindingAssertionHelper(code, true);
 		IFunction f= ba.assertNonProblem("f", 1, IFunction.class);
-		isTypeEqual(f.getType(), "void (int (C) *)");
+		isTypeEqual(f.getType(), "void (int (*)(C))");
 	}
 
 	// class C { };
@@ -1869,7 +1869,7 @@ public class AST2CPPSpecTest extends AST2SpecBaseTest {
 		parse(code, ParserLanguage.CPP, true, 0);
 		BindingAssertionHelper ba= new BindingAssertionHelper(code, true);
 		IFunction f= ba.assertNonProblem("h", 1, IFunction.class);
-		isTypeEqual(f.getType(), "void (int * (C *) *)");
+		isTypeEqual(f.getType(), "void (int * (*)(C *))");
 	}
 
 	// namespace A {

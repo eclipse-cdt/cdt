@@ -4008,7 +4008,7 @@ public class AST2Tests extends AST2BaseTest {
 				// for plain C this is actually not a problem, the second J has to be interpreted as a (useless) 
 				// parameter name.
 				assertInstance(typedef, ITypedef.class);
-				isTypeEqual(((ITypedef) typedef).getType(), "int (int) *");
+				isTypeEqual(((ITypedef) typedef).getType(), "int (*)(int)");
 			}
 		}
 	}
@@ -5123,19 +5123,19 @@ public class AST2Tests extends AST2BaseTest {
         	BindingAssertionHelper ba= new BindingAssertionHelper(comment, isCpp);
 
         	IFunction f= ba.assertNonProblem("f1", 2, IFunction.class);
-        	isTypeEqual(f.getType(), "int (int (int) *)");
+        	isTypeEqual(f.getType(), "int (int (*)(int))");
 
         	f= ba.assertNonProblem("f2", 2, IFunction.class);
-        	isTypeEqual(f.getType(), "int (int (int) *)");
+        	isTypeEqual(f.getType(), "int (int (*)(int))");
 
         	f= ba.assertNonProblem("f3", 2, IFunction.class);
-        	isTypeEqual(f.getType(), "int (int (int) *)");
+        	isTypeEqual(f.getType(), "int (int (*)(int))");
 
         	f= ba.assertNonProblem("f4", 2, IFunction.class);
         	isTypeEqual(f.getType(), "int (int)");
         	
         	f= ba.assertNonProblem("f5", 2, IFunction.class);
-        	isTypeEqual(f.getType(), "int (int * (int *) *)");
+        	isTypeEqual(f.getType(), "int (int * (*)(int *))");
     	}
     }
 
@@ -5145,7 +5145,7 @@ public class AST2Tests extends AST2BaseTest {
     	BindingAssertionHelper ba= new BindingAssertionHelper(getAboveComment(), true);
 
     	IFunction f= ba.assertNonProblem("f1", 2, IFunction.class);
-    	isTypeEqual(f.getType(), "void (int (C) *)");
+    	isTypeEqual(f.getType(), "void (int (*)(C))");
     }
 
     // int (*f1(int par))[5] {};
@@ -5157,10 +5157,10 @@ public class AST2Tests extends AST2BaseTest {
     		BindingAssertionHelper ba= new BindingAssertionHelper(getAboveComment(), isCpp);
 
     		IFunction f= ba.assertNonProblem("f1", 2, IFunction.class);
-    		isTypeEqual(f.getType(), "int [] * (int)");
+    		isTypeEqual(f.getType(), "int (* (int))[]");
     		
     		f= ba.assertNonProblem("f1 ", 2, IFunction.class);
-    		isTypeEqual(f.getType(), "int [] * (int)");
+    		isTypeEqual(f.getType(), "int (* (int))[]");
     	}
     }
     

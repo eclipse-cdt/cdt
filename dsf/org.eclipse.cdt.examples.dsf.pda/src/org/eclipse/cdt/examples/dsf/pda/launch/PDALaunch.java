@@ -24,6 +24,7 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.MultiStatus;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.debug.core.DebugException;
+import org.eclipse.debug.core.ILaunch;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.Launch;
 import org.eclipse.debug.core.model.ISourceLocator;
@@ -73,6 +74,11 @@ implements ITerminate
         dsfExecutor.prestartCoreThread();
         fExecutor = dsfExecutor;
         fSession = DsfSession.startSession(fExecutor, PDAPlugin.ID_PDA_DEBUG_MODEL);
+
+        // Register the launch as an adapter This ensures that the launch,
+        // and debug model ID will be associated with all DMContexts from this
+        // session.
+        fSession.registerModelAdapter(ILaunch.class, this);
     }
 
     /**

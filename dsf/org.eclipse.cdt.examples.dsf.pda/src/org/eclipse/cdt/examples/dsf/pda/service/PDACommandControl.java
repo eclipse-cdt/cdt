@@ -155,7 +155,11 @@ public class PDACommandControl extends AbstractDsfService implements ICommandCon
         // Register the service with OSGi as the last step in initialization of 
         // the service.
         register(
-            new String[]{ ICommandControl.class.getName(), PDACommandControl.class.getName() }, 
+            new String[] { 
+                ICommandControl.class.getName(), 
+                ICommandControlService.class.getName(), 
+                PDACommandControl.class.getName() 
+            }, 
             new Hashtable<String,String>());
 
         rm.done();

@@ -250,7 +250,11 @@ public class IndexTypeInfo implements ITypeInfo, IFunctionInfo {
 			}
 			try {
 				index.acquireReadLock();
-
+			} catch (InterruptedException ie) {
+				Thread.currentThread().interrupt();
+				return null;
+			}
+			try {
 				IIndexBinding[] ibs = findBindings();
 				if(ibs.length>0) {
 					IIndexName[] names;
@@ -267,8 +271,6 @@ public class IndexTypeInfo implements ITypeInfo, IFunctionInfo {
 				}
 			} catch(CoreException ce) {
 				CCorePlugin.log(ce);				
-			} catch (InterruptedException ie) {
-				CCorePlugin.log(ie);
 			} finally {
 				index.releaseReadLock();
 			}
@@ -319,7 +321,11 @@ public class IndexTypeInfo implements ITypeInfo, IFunctionInfo {
 	private ITypeReference createMacroReference() {
 		try {
 			index.acquireReadLock();
-
+		} catch (InterruptedException ie) {
+			Thread.currentThread().interrupt();
+			return null;
+		}
+		try {
 			IIndexMacro[] macros = index.findMacros(fqn[0].toCharArray(), IndexFilter.ALL_DECLARED, new NullProgressMonitor());
 			if(macros.length>0) {
 				for (IIndexMacro macro : macros) {
@@ -331,9 +337,7 @@ public class IndexTypeInfo implements ITypeInfo, IFunctionInfo {
 			}
 		} catch(CoreException ce) {
 			CCorePlugin.log(ce);				
-		} catch (InterruptedException ie) {
-			Thread.currentThread().interrupt();
-		} finally {
+		}  finally {
 			index.releaseReadLock();
 		}
 		return reference;
@@ -374,6 +378,11 @@ public class IndexTypeInfo implements ITypeInfo, IFunctionInfo {
 		List<IndexTypeReference> references= new ArrayList<IndexTypeReference>();
 		try {
 			index.acquireReadLock();
+		} catch (InterruptedException ie) {
+			Thread.currentThread().interrupt();
+			return new ITypeReference[0];
+		}
+		try {
 			IIndexBinding[] ibs= findBindings();
 			HashMap<IIndexFileLocation, IIndexFile> iflMap= new HashMap<IIndexFileLocation, IIndexFile>();
 			for (IIndexBinding binding : ibs) {
@@ -392,9 +401,7 @@ public class IndexTypeInfo implements ITypeInfo, IFunctionInfo {
 				}
 			}
 		} catch(CoreException ce) {
-			CCorePlugin.log(ce);				
-		} catch (InterruptedException ie) {
-			CCorePlugin.log(ie);
+			CCorePlugin.log(ce);	
 		} finally {
 			index.releaseReadLock();
 		}
@@ -406,7 +413,11 @@ public class IndexTypeInfo implements ITypeInfo, IFunctionInfo {
 		List<IndexTypeReference> references= new ArrayList<IndexTypeReference>();
 		try {
 			index.acquireReadLock();
-
+		} catch (InterruptedException e) {
+			Thread.currentThread().interrupt();
+			return new ITypeReference[0];
+		}
+		try {
 			char[] cfn= fqn[0].toCharArray();
 			IIndexMacro[] ibs = index.findMacros(cfn, IndexFilter.ALL_DECLARED, new NullProgressMonitor());
 			// in case a file is represented multiple times in the index then we take references from
@@ -424,8 +435,6 @@ public class IndexTypeInfo implements ITypeInfo, IFunctionInfo {
 			}
 		} catch(CoreException ce) {
 			CCorePlugin.log(ce);				
-		} catch (InterruptedException ie) {
-			CCorePlugin.log(ie);
 		} finally {
 			index.releaseReadLock();
 		}

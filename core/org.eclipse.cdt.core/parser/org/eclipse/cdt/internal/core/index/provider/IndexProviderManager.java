@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2008 Symbian Software Systems and others.
+ * Copyright (c) 2007, 2009 Symbian Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -11,7 +11,6 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.index.provider;
 
-import com.ibm.icu.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -19,6 +18,8 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+
+import com.ibm.icu.text.MessageFormat;
 
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.index.provider.IIndexProvider;
@@ -202,8 +203,8 @@ public final class IndexProviderManager implements IElementChangedListener {
 	 */
 	private void processCandidate(Map<String, IIndexFragment> id2fragment, IIndexFragment candidate) throws InterruptedException, CoreException {
 		String cid= null, csver= null, cformatID= null;
+		candidate.acquireReadLock();
 		try {
-			candidate.acquireReadLock();
 			cid= candidate.getProperty(IIndexFragment.PROPERTY_FRAGMENT_ID);
 			csver= candidate.getProperty(IIndexFragment.PROPERTY_FRAGMENT_FORMAT_VERSION);
 			cformatID= candidate.getProperty(IIndexFragment.PROPERTY_FRAGMENT_FORMAT_ID);							
@@ -218,8 +219,8 @@ public final class IndexProviderManager implements IElementChangedListener {
 		if(getCurrentlySupportedVersionRangeForFormat(cformatID).isIncluded(cver)) {
 			if(existing != null) {
 				String esver= null, eformatID= null;
+				existing.acquireReadLock();
 				try {
-					existing.acquireReadLock();
 					esver= existing.getProperty(IIndexFragment.PROPERTY_FRAGMENT_FORMAT_VERSION);
 					eformatID= existing.getProperty(IIndexFragment.PROPERTY_FRAGMENT_FORMAT_ID);
 				} finally {

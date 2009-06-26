@@ -51,7 +51,12 @@ public class AllTypesCache {
 		
 		try {
 			index.acquireReadLock();
-			
+		} catch (InterruptedException e) {
+			Thread.currentThread().interrupt();
+			return new ITypeInfo[0];
+		}
+		
+		try {
 			long start = System.currentTimeMillis();
 			
 			IIndexBinding[] all =
@@ -80,12 +85,9 @@ public class AllTypesCache {
 			}
 			
 			return result;
-		} catch(InterruptedException ie) {
-			ie.printStackTrace();
 		} finally {
 			index.releaseReadLock();
 		}
-		return new ITypeInfo[0];
 	}
 
 	/**

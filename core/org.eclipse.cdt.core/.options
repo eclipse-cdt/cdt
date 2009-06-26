@@ -24,6 +24,9 @@ org.eclipse.cdt.core/debug/deltaprocessor=false
 # Reports file type resolver activity
 org.eclipse.cdt.core/debug/typeresolver=false
 
+# Reports issues with locking the index
+org.eclipse.cdt.core/debug/index/locks=false
+
 # Reports sequence of files indexed
 org.eclipse.cdt.core/debug/indexer/activity=false
 

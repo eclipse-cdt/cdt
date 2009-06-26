@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2008 Wind River Systems, Inc. and others.
+ * Copyright (c) 2007, 2009 Wind River Systems, Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,8 +10,10 @@
  *******************************************************************************/ 
 package org.eclipse.cdt.internal.core.pdom;
 
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.Map;
 import java.util.Set;
 import java.util.regex.Pattern;
 
@@ -41,12 +43,21 @@ public class PDOMProxy implements IPDOM {
 	private PDOM fDelegate;
 	private int fReadLockCount;
 	private Set<IListener> fListeners= new HashSet<IListener>();
+	private Map<Thread, int[]> fLockDebugging;
 
+	public PDOMProxy() {
+		if (PDOM.sDEBUG_LOCKS) {
+			fLockDebugging= new HashMap<Thread, int[]>();
+		}
+	}
 	public synchronized void acquireReadLock() throws InterruptedException {
 		if (fDelegate != null)
 			fDelegate.acquireReadLock();
 		else {
 			fReadLockCount++;
+			if (PDOM.sDEBUG_LOCKS) {
+				PDOM.incReadLock(fLockDebugging);
+			}
 		}
 	}
 
@@ -166,10 +177,13 @@ public class PDOMProxy implements IPDOM {
 	}
 
 	public synchronized void releaseReadLock() {
-		if (fDelegate != null)
-			fDelegate.releaseReadLock();
-		else {
+		// read-locks not forwarded to delegate need to be released here
+		if (fReadLockCount > 0) {
 			fReadLockCount--;
+			if (PDOM.sDEBUG_LOCKS)
+				PDOM.decReadLock(fLockDebugging);
+		} else if (fDelegate != null) {
+			fDelegate.releaseReadLock();
 		}
 	}
 
@@ -212,16 +226,19 @@ public class PDOMProxy implements IPDOM {
 	public synchronized void setDelegate(WritablePDOM pdom) {
 		fDelegate= pdom;
 		try {
-			while (fReadLockCount-- > 0) {
+			while (fReadLockCount > 0) {
 				pdom.acquireReadLock();
+				fReadLockCount--;
+				if (PDOM.sDEBUG_LOCKS) {
+					pdom.adjustThreadForReadLock(fLockDebugging);
+				}
 			} 
-			for (Iterator<IListener> iterator = fListeners.iterator(); iterator.hasNext();) {
-				IListener listener = iterator.next();
-				pdom.addListener(listener);
-			}
-		}
-		catch (InterruptedException e) {
+		} catch (InterruptedException e) {
 			Thread.currentThread().interrupt();
+		}
+		for (Iterator<IListener> iterator = fListeners.iterator(); iterator.hasNext();) {
+			IListener listener = iterator.next();
+			pdom.addListener(listener);
 		}
 		ChangeEvent event= new ChangeEvent();
 		event.fReloaded= true;

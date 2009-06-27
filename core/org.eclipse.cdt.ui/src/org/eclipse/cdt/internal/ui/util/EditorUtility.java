@@ -316,8 +316,12 @@ public class EditorUtility {
 	 * @throws PartInitException
 	 */
 	public static IEditorPart openInEditor(IPath location, ICElement element) throws PartInitException {
+		return openInEditor(location, element, true);
+	}
+
+	public static IEditorPart openInEditor(IPath location, ICElement element, boolean activate) throws PartInitException {
 		IEditorInput input= getEditorInputForLocation(location, element);
-		return EditorUtility.openInEditor(input, getEditorID(input, element), true);
+		return EditorUtility.openInEditor(input, getEditorID(input, element), activate);
 	}
 	
 	public static IEditorPart openInEditor(URI locationURI, ICElement element) throws PartInitException {

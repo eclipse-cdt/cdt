@@ -126,6 +126,7 @@ public class PDOMSearchPatternQuery extends PDOMSearchQuery {
 		try {
 			IndexFilter filter= IndexFilter.ALL;
 			IIndexBinding[] bindings = index.findBindings(pattern, false, filter, monitor);
+			ArrayList<IIndexBinding> matchedBindings = new ArrayList<IIndexBinding>();
 			for (int i = 0; i < bindings.length; ++i) {
 				IIndexBinding pdomBinding = bindings[i];
 
@@ -175,15 +176,16 @@ public class PDOMSearchPatternQuery extends PDOMSearchQuery {
 					matches= (flags & FIND_TYPEDEF) != 0;
 				}
 				if (matches) {
-					createMatches(index, pdomBinding);
+					matchedBindings.add(pdomBinding);
 				}
 			}
 			if ((flags & FIND_MACRO) != 0 && pattern.length == 1) {
 				bindings = index.findMacroContainers(pattern[0], filter, monitor);
 				for (IIndexBinding indexBinding : bindings) {
-					createMatches(index, indexBinding);
+					matchedBindings.add(indexBinding);
 				}
 			}
+			createMatches(index, matchedBindings.toArray(new IIndexBinding[matchedBindings.size()]));
 		} catch (CoreException e) {
 			return e.getStatus();
 		} catch (DOMException e) {

@@ -32,6 +32,7 @@ import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.ui.CUIPlugin;
 
 import org.eclipse.cdt.internal.ui.util.EditorUtility;
+import org.eclipse.cdt.internal.ui.viewsupport.ColoringLabelProvider;
 
 /**
  * Implementation of the search view page for index based searches.
@@ -82,6 +83,26 @@ public class PDOMSearchViewPage extends AbstractTextSearchViewPage {
 	 */
 	private class SearchViewerComparator extends ViewerComparator {
 		/* (non-Javadoc)
+		 * @see org.eclipse.jface.viewers.ViewerComparator#compare(org.eclipse.jface.viewers.Viewer, java.lang.Object, java.lang.Object)
+		 */
+		@Override
+		public int compare(Viewer viewer, Object e1, Object e2) {
+			if (e1 instanceof LineSearchElement && e2 instanceof LineSearchElement) {
+				LineSearchElement l1 = (LineSearchElement) e1;
+				LineSearchElement l2 = (LineSearchElement) e2;
+				if (viewer instanceof TableViewer) {
+					String p1 = l1.getLocation().getURI().getPath();
+					String p2 = l2.getLocation().getURI().getPath();
+					int cmp = p1.compareTo(p2);
+					if (cmp != 0)
+						return cmp;
+				}
+				return l1.getLineNumber() - l2.getLineNumber();
+			}
+			return super.compare(viewer, e1, e2);
+		}
+		
+		/* (non-Javadoc)
 		 * @see org.eclipse.jface.viewers.ViewerComparator#category(java.lang.Object)
 		 */
 		@Override
@@ -128,7 +149,9 @@ public class PDOMSearchViewPage extends AbstractTextSearchViewPage {
 		contentProvider = new PDOMSearchTreeContentProvider(this);
 		viewer.setComparator(new SearchViewerComparator());
 		viewer.setContentProvider((PDOMSearchTreeContentProvider)contentProvider);
-		viewer.setLabelProvider(new PDOMSearchTreeLabelProvider(this));
+		PDOMSearchTreeLabelProvider innerLabelProvider = new PDOMSearchTreeLabelProvider(this);
+		ColoringLabelProvider labelProvider = new ColoringLabelProvider(innerLabelProvider);
+		viewer.setLabelProvider(labelProvider);
 	}
 
 	@Override
@@ -136,7 +159,9 @@ public class PDOMSearchViewPage extends AbstractTextSearchViewPage {
 		contentProvider = new PDOMSearchListContentProvider(this);
 		viewer.setComparator(new SearchViewerComparator());
 		viewer.setContentProvider((PDOMSearchListContentProvider)contentProvider);
-		viewer.setLabelProvider(new PDOMSearchListLabelProvider(this));
+		PDOMSearchListLabelProvider innerLabelProvider = new PDOMSearchListLabelProvider(this);
+		ColoringLabelProvider labelProvider = new ColoringLabelProvider(innerLabelProvider);
+		viewer.setLabelProvider(labelProvider);
 	}
 
 	@Override
@@ -148,7 +173,7 @@ public class PDOMSearchViewPage extends AbstractTextSearchViewPage {
 			Object element= ((PDOMSearchMatch)match).getElement();
 			IIndexFileLocation ifl= ((PDOMSearchElement)element).getLocation();
 			IPath path = IndexLocationFactory.getPath(ifl);
-			IEditorPart editor = EditorUtility.openInEditor(path, null);
+			IEditorPart editor = EditorUtility.openInEditor(path, null, activate);
 			if (editor instanceof ITextEditor) {
 				ITextEditor textEditor = (ITextEditor)editor;
 				textEditor.selectAndReveal(currentOffset, currentLength);

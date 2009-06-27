@@ -13,6 +13,7 @@
 package org.eclipse.cdt.internal.ui.search;
 
 import org.eclipse.core.runtime.IPath;
+import org.eclipse.jface.viewers.StyledString;
 import org.eclipse.search.ui.text.AbstractTextSearchViewPage;
 
 import org.eclipse.cdt.core.index.IIndexFileLocation;
@@ -53,5 +54,17 @@ public class PDOMSearchListLabelProvider extends PDOMSearchLabelProvider {
 		}
 		
 		return text;
+	}
+	
+	@Override
+	public StyledString getStyledText(Object element) {
+		if (!(element instanceof LineSearchElement))
+			return new StyledString(getText(element));
+		LineSearchElement lineElement = (LineSearchElement) element;
+		int lineNumber = lineElement.getLineNumber();
+		final String filename = " - " + IndexLocationFactory.getPath(lineElement.getLocation()); //$NON-NLS-1$
+		final String lineNumberString = " (" + lineNumber + ")"; //$NON-NLS-1$ //$NON-NLS-2$
+		StyledString styled = super.getStyledText(element);
+		return styled.append(filename + lineNumberString, StyledString.QUALIFIER_STYLER);
 	}
 }

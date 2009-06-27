@@ -156,6 +156,12 @@ public class PDOMSearchResult extends AbstractTextSearchResult implements IEdito
 					return ResourcesPlugin.getWorkspace().getRoot().getFile(new Path(location.getFullPath()));
 				}
 			} catch(CoreException ce) { /* fall-through to return null */ }
+		} else if (element instanceof PDOMSearchElement) {
+			PDOMSearchElement searchElement = (PDOMSearchElement)element;
+			IIndexFileLocation location = searchElement.getLocation();
+			if(location.getFullPath()!=null) {
+				return ResourcesPlugin.getWorkspace().getRoot().getFile(new Path(location.getFullPath()));
+			}
 		}
 		return null;
 	}

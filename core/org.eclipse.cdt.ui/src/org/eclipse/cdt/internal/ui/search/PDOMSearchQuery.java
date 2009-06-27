@@ -17,16 +17,26 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
+import java.util.Map.Entry;
 
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.OperationCanceledException;
 import org.eclipse.core.runtime.Status;
+import org.eclipse.jface.text.IDocument;
+import org.eclipse.jface.text.IRegion;
+import org.eclipse.jface.text.Region;
 import org.eclipse.search.ui.ISearchQuery;
 import org.eclipse.search.ui.ISearchResult;
+import org.eclipse.ui.IEditorInput;
+import org.eclipse.ui.IEditorPart;
+import org.eclipse.ui.IPathEditorInput;
+import org.eclipse.ui.texteditor.ITextEditor;
 
 import org.eclipse.cdt.core.CCorePlugin;
+import org.eclipse.cdt.core.IPositionConverter;
 import org.eclipse.cdt.core.browser.ITypeReference;
 import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IASTFileLocation;
@@ -35,8 +45,10 @@ import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPMethod;
 import org.eclipse.cdt.core.index.IIndex;
-import org.eclipse.cdt.core.index.IIndexBinding;
+import org.eclipse.cdt.core.index.IIndexFile;
+import org.eclipse.cdt.core.index.IIndexFileLocation;
 import org.eclipse.cdt.core.index.IIndexName;
+import org.eclipse.cdt.core.index.IndexLocationFactory;
 import org.eclipse.cdt.core.model.CoreModel;
 import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.core.model.ICProject;
@@ -45,6 +57,8 @@ import org.eclipse.cdt.ui.CUIPlugin;
 
 import org.eclipse.cdt.internal.core.browser.ASTTypeInfo;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ClassTypeHelper;
+
+import org.eclipse.cdt.internal.ui.search.LineSearchElement.Match;
 
 
 /**
@@ -130,18 +144,92 @@ public abstract class PDOMSearchQuery implements ISearchQuery {
 		return false; // i.e. keep it
 	}
 	
-	private void collectNames(IIndex index, IIndexName[] names, boolean polymorphicCallsOnly) throws CoreException {
+	private void createMatchesFromNames(Map<IIndexFile, Set<Match>> fileMatches, IIndexName[] names, boolean isPolymorphicOnly)
+			throws CoreException {
+		if (names == null)
+			return;
 		for (IIndexName name : names) {
 			if (!filterName(name)) {
-				if (!polymorphicCallsOnly || name.couldBePolymorphicMethodCall()) {
+				if (!isPolymorphicOnly || name.couldBePolymorphicMethodCall()) {
 					IASTFileLocation loc = name.getFileLocation();
-					IIndexBinding binding= index.findBinding(name);
-					final PDOMSearchMatch match = new PDOMSearchMatch(
-							new TypeInfoSearchElement(index, name, binding), 
-							loc.getNodeOffset(), loc.getNodeLength());
-					if (polymorphicCallsOnly)
+					IIndexFile file = name.getFile();
+					Set<Match> matches = fileMatches.get(file);
+					if (matches == null) {
+						matches = new HashSet<Match>();
+						fileMatches.put(file, matches);
+					}
+					matches.add(new Match(loc.getNodeOffset(), loc.getNodeLength(), isPolymorphicOnly));
+				}
+			}
+
+		}
+	}
+
+	private Set<Match> convertMatchesPositions(IIndexFile file, Set<Match> matches) throws CoreException {
+		IPath path = IndexLocationFactory.getPath(file.getLocation());
+		long timestamp = file.getTimestamp();
+		IPositionConverter converter = CCorePlugin.getPositionTrackerManager().findPositionConverter(path, timestamp);
+		if (converter != null) {
+			Set<Match> convertedMatches = new HashSet<Match>();
+			for (Match match : matches) {
+				IRegion region = new Region(match.getOffset(), match.getLength());
+				region = converter.historicToActual(region);
+				int offset = region.getOffset();
+				int length = region.getLength();
+				boolean isPolymorphicCall = match.isPolymorphicCall();
+				convertedMatches.add(new Match(offset, length, isPolymorphicCall));
+			}
+			matches = convertedMatches;
+		}
+		return matches;
+	}
+
+	private void collectNames(IIndex index, IIndexName[] names, IIndexName[] polymorphicNames) throws CoreException {
+		// group all matched names by files
+		Map<IIndexFile, Set<Match>> fileMatches = new HashMap<IIndexFile, Set<Match>>();
+		createMatchesFromNames(fileMatches, names, false);
+		createMatchesFromNames(fileMatches, polymorphicNames, true);
+		// compute mapping from paths to dirty text editors
+		IEditorPart[] dirtyEditors = CUIPlugin.getDirtyEditors();
+		Map<IPath, ITextEditor> pathsDirtyEditors = new HashMap<IPath, ITextEditor>();
+		for (IEditorPart editorPart : dirtyEditors) {
+			if (editorPart instanceof ITextEditor) {
+				ITextEditor textEditor = (ITextEditor)editorPart;
+				IEditorInput editorInput = editorPart.getEditorInput();
+				if (editorInput instanceof IPathEditorInput) {
+					IPathEditorInput pathEditorInput = (IPathEditorInput)editorInput;
+					pathsDirtyEditors.put(pathEditorInput.getPath(), textEditor);
+				}
+			}
+		}
+		// for each file with matches create line elements with matches
+		for (Entry<IIndexFile, Set<Match>> entry : fileMatches.entrySet()) {
+			IIndexFile file = entry.getKey();
+			Set<Match> matches = entry.getValue();
+			LineSearchElement[] lineElements = {};
+			// check if there is dirty text editor corresponding to file and convert matches
+			IPath absolutePath = IndexLocationFactory.getAbsolutePath(file.getLocation());
+			if (pathsDirtyEditors.containsKey(absolutePath)) {
+				matches = convertMatchesPositions(file, matches);
+				// scan dirty editor and group matches by line elements
+				ITextEditor textEditor = pathsDirtyEditors.get(absolutePath);
+				IEditorInput input = textEditor.getEditorInput(); 
+				IDocument document = textEditor.getDocumentProvider().getDocument(input);
+				Match[] matchesArray = matches.toArray(new Match[matches.size()]);
+				lineElements = LineSearchElement.createElements(file.getLocation(), matchesArray, document);
+			} else {
+				// scan file and group matches by line elements
+				Match[] matchesArray = matches.toArray(new Match[matches.size()]);
+				lineElements = LineSearchElement.createElements(file.getLocation(), matchesArray);
+			}
+			// create real PDOMSearchMatch with corresponding line elements 
+			for (LineSearchElement searchElement : lineElements) {
+				for (Match lineMatch : searchElement.getMatches()) {
+					int offset = lineMatch.getOffset();
+					int length = lineMatch.getLength();
+					PDOMSearchMatch match = new PDOMSearchMatch(searchElement, offset, length);
+					if (lineMatch.isPolymorphicCall())
 						match.setIsPolymorphicCall();
-					
 					result.addMatch(match);
 				}
 			}
@@ -149,23 +237,44 @@ public abstract class PDOMSearchQuery implements ISearchQuery {
 	}
 
 	protected void createMatches(IIndex index, IBinding binding) throws CoreException {
-		if (binding != null) {
-			IIndexName[] names= index.findNames(binding, flags);
-			collectNames(index, names, false);
-			if ((flags & FIND_REFERENCES) != 0) {
-				if (binding instanceof ICPPMethod) {
-					ICPPMethod m= (ICPPMethod) binding;
-					try {
-						ICPPMethod[] msInBases = ClassTypeHelper.findOverridden(m);
-						for (ICPPMethod mInBase : msInBases) {
-							names= index.findNames(mInBase, FIND_REFERENCES);
-							collectNames(index, names, true);
+		createMatches(index, new IBinding[] { binding });
+	}
+	
+	protected void createMatches(IIndex index, IBinding[] bindings) throws CoreException {
+		if (bindings == null)
+			return;
+		IIndexName[] names= null;
+		IIndexName[] polymorphicNames= null;
+		for (IBinding binding : bindings) {
+			if (binding != null) {
+				IIndexName[] bindingNames= index.findNames(binding, flags);
+				if (names == null) {
+					names = bindingNames;
+				} else {
+					names= (IIndexName[]) ArrayUtil.addAll(IIndexName.class, names, bindingNames);
+				}
+				if ((flags & FIND_REFERENCES) != 0) {
+					if (binding instanceof ICPPMethod) {
+						ICPPMethod m= (ICPPMethod) binding;
+						try {
+							ICPPMethod[] msInBases = ClassTypeHelper.findOverridden(m);
+							for (ICPPMethod mInBase : msInBases) {
+								bindingNames= index.findNames(mInBase, FIND_REFERENCES);
+								if (polymorphicNames == null) {
+									polymorphicNames = bindingNames;
+								} else {
+									polymorphicNames= (IIndexName[]) ArrayUtil.addAll(IIndexName.class, names, bindingNames);
+								}
+							}
+						} catch (DOMException e) {
+							CUIPlugin.log(e);
 						}
-					} catch (DOMException e) {
-						CUIPlugin.log(e);
 					}
 				}
 			}
+		}
+		if (names != null) {
+			collectNames(index, names, polymorphicNames);
 		}
 	}
 
@@ -175,7 +284,9 @@ public abstract class PDOMSearchQuery implements ISearchQuery {
 			names.addAll(Arrays.asList(ast.getDeclarationsInAST(binding)));
 			names.addAll(Arrays.asList(ast.getDefinitionsInAST(binding)));
 			names.addAll(Arrays.asList(ast.getReferences(binding)));
-
+			// collect local matches from AST
+			IIndexFileLocation fileLocation = null; 
+			Set<Match> localMatches = new HashSet<Match>();
 			for (IASTName name : names) {
 				if (((flags & FIND_DECLARATIONS) != 0 && name.isDeclaration()) ||
 						((flags & FIND_DEFINITIONS) != 0 && name.isDefinition()) ||
@@ -184,10 +295,46 @@ public abstract class PDOMSearchQuery implements ISearchQuery {
 					if (typeInfo != null) {
 						ITypeReference ref= typeInfo.getResolvedReference();
 						if (ref != null) {
-							result.addMatch(new PDOMSearchMatch(
-									new TypeInfoSearchElement(typeInfo), ref.getOffset(), ref.getLength()));
+							localMatches.add(new Match(ref.getOffset(), ref.getLength(), false));
+							fileLocation = typeInfo.getIFL();
 						}
 					}
+				}
+			}
+			// search for dirty editor
+			ITextEditor dirtyTextEditor = null; 
+			String fullPath = ast.getFilePath();
+			for (IEditorPart editorPart : CUIPlugin.getDirtyEditors()) {
+				if (editorPart instanceof ITextEditor) {
+					ITextEditor textEditor = (ITextEditor)editorPart;
+					IEditorInput editorInput = editorPart.getEditorInput();
+					if (editorInput instanceof IPathEditorInput) {
+						IPathEditorInput pathEditorInput = (IPathEditorInput)editorInput;
+						IPath path = pathEditorInput.getPath();
+						if (fullPath.equals(path.toOSString())) {
+							dirtyTextEditor = textEditor;
+							break;
+						}
+					}
+				}
+			}
+			// create line search elements
+			Match[] matchesArray = localMatches.toArray(new Match[localMatches.size()]);
+			LineSearchElement[] lineElements;
+			if (dirtyTextEditor != null) {
+				IEditorInput input = dirtyTextEditor.getEditorInput();
+				IDocument document = dirtyTextEditor.getDocumentProvider().getDocument(input);
+				lineElements = LineSearchElement.createElements(fileLocation, matchesArray, document);
+			} else {
+				lineElements = LineSearchElement.createElements(fileLocation, matchesArray);
+			}
+			// create real PDOMSearchMatch with corresponding line elements 
+			for (LineSearchElement searchElement : lineElements) {
+				for (Match lineMatch : searchElement.getMatches()) {
+					int offset = lineMatch.getOffset();
+					int length = lineMatch.getLength();
+					PDOMSearchMatch match = new PDOMSearchMatch(searchElement, offset, length);
+					result.addMatch(match);
 				}
 			}
 		}

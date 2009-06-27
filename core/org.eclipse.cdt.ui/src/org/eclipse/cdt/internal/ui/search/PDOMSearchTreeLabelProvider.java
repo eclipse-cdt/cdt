@@ -12,7 +12,10 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.ui.search;
 
+import org.eclipse.jface.viewers.StyledString;
 import org.eclipse.search.ui.text.AbstractTextSearchViewPage;
+
+import org.eclipse.cdt.internal.core.model.TranslationUnit;
 
 import org.eclipse.cdt.internal.ui.util.Messages;
 
@@ -35,5 +38,27 @@ public class PDOMSearchTreeLabelProvider extends PDOMSearchLabelProvider {
 		}
 		return text + " " //$NON-NLS-1$
 				+ Messages.format(CSearchMessages.CSearchResultCollector_matches, new Integer(count)); 
+	}
+	
+	@Override
+	public StyledString getStyledText(Object element) {
+		if (element instanceof TranslationUnit) {
+			StyledString styled = new StyledString(super.getText(element));
+			final int count= getMatchCount(element);
+			if (count > 1) {
+				final String matchesCount = " " //$NON-NLS-1$
+					+ Messages.format(CSearchMessages.CSearchResultCollector_matches, new Integer(count));
+				styled.append(matchesCount, StyledString.COUNTER_STYLER);
+				return styled;
+			}
+		}
+		if (element instanceof LineSearchElement) {
+			LineSearchElement lineElement = (LineSearchElement) element;
+			int lineNumber = lineElement.getLineNumber();
+			String lineNumberString = Messages.format("{0}: ", Integer.valueOf(lineNumber)); //$NON-NLS-1$
+			StyledString styled = new StyledString(lineNumberString, StyledString.QUALIFIER_STYLER);
+			return styled.append(super.getStyledText(element));
+		}
+		return new StyledString(getText(element));
 	}
 }

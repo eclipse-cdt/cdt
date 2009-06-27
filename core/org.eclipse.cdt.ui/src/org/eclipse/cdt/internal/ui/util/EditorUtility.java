@@ -243,7 +243,6 @@ public class EditorUtility {
 		String desc= CUIPlugin.getResourceString("Editorutility.closedproject.description"); //$NON-NLS-1$
 		errorMsg.setMessage(MessageFormat.format(desc, new Object[]{project.getName()}));
 		errorMsg.open();
-
 	}
 
 	private static IEditorPart openInEditor(IEditorInput input, String editorID, boolean activate) throws PartInitException {
@@ -316,8 +315,12 @@ public class EditorUtility {
 	 * @throws PartInitException
 	 */
 	public static IEditorPart openInEditor(IPath location, ICElement element) throws PartInitException {
+		return openInEditor(location, element, true);
+	}
+
+	public static IEditorPart openInEditor(IPath location, ICElement element, boolean activate) throws PartInitException {
 		IEditorInput input= getEditorInputForLocation(location, element);
-		return EditorUtility.openInEditor(input, getEditorID(input, element), true);
+		return EditorUtility.openInEditor(input, getEditorID(input, element), activate);
 	}
 	
 	public static IEditorPart openInEditor(URI locationURI, ICElement element) throws PartInitException {

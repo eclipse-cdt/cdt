@@ -548,6 +548,12 @@
          label="%Dummy.label"
          value="0,0,0">
       </colorDefinition>
+      <colorDefinition
+            id="org.eclipse.cdt.ui.ColoredLabels.match_highlight"
+            isEditable="false"
+            label="%Dummy.label"
+            value="206, 204, 247">
+      </colorDefinition>
       <theme
          id="org.eclipse.ui.ide.systemDefault">
          <colorOverride

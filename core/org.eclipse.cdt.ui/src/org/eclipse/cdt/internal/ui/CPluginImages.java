@@ -303,6 +303,7 @@ public class CPluginImages {
 	//for search
 	public static final String IMG_OBJS_SEARCH_REF  = NAME_PREFIX + "search_ref_obj.gif"; //$NON-NLS-1$
 	public static final String IMG_OBJS_SEARCH_DECL = NAME_PREFIX + "search_decl_obj.gif"; //$NON-NLS-1$
+	public static final String IMG_OBJS_SEARCH_LINE = NAME_PREFIX + "searchm_obj.gif"; //$NON-NLS-1$
 	public static final String IMG_OBJS_CSEARCH     = NAME_PREFIX + "csearch_obj.gif"; //$NON-NLS-1$
 	
 	public static final String IMG_OBJS_SEARCHFOLDER = NAME_PREFIX + "fldr_obj.gif";  //$NON-NLS-1$
@@ -310,6 +311,7 @@ public class CPluginImages {
 	
 	public static final ImageDescriptor DESC_OBJS_SEARCH_DECL = createManaged(T_OBJ, IMG_OBJS_SEARCH_DECL);
 	public static final ImageDescriptor DESC_OBJS_SEARCH_REF  = createManaged(T_OBJ, IMG_OBJS_SEARCH_REF);
+	public static final ImageDescriptor DESC_OBJS_SEARCH_LINE = createManaged(T_OBJ, IMG_OBJS_SEARCH_LINE);
 	public static final ImageDescriptor DESC_OBJS_CSEARCH     = createManaged(T_OBJ, IMG_OBJS_CSEARCH);
 	
 	public static final ImageDescriptor DESC_OBJS_SEARCHHIERPROJECT = createManaged(T_OBJ,IMG_OBJS_SEARCHPROJECT);

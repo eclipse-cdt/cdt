@@ -16,6 +16,9 @@ import java.net.URI;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.jface.viewers.LabelProvider;
+import org.eclipse.jface.viewers.StyledString;
+import org.eclipse.jface.viewers.DelegatingStyledCellLabelProvider.IStyledLabelProvider;
+import org.eclipse.search.ui.text.AbstractTextSearchResult;
 import org.eclipse.search.ui.text.AbstractTextSearchViewPage;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.ui.ISharedImages;
@@ -26,9 +29,13 @@ import org.eclipse.cdt.core.index.IIndexFileLocation;
 import org.eclipse.cdt.core.index.IndexLocationFactory;
 import org.eclipse.cdt.ui.browser.typeinfo.TypeInfoLabelProvider;
 
+import org.eclipse.cdt.internal.core.model.TranslationUnit;
+
 import org.eclipse.cdt.internal.ui.CPluginImages;
+import org.eclipse.cdt.internal.ui.search.LineSearchElement.Match;
 import org.eclipse.cdt.internal.ui.viewsupport.CElementImageProvider;
 import org.eclipse.cdt.internal.ui.viewsupport.CUILabelProvider;
+import org.eclipse.cdt.internal.ui.viewsupport.ColoringLabelProvider;
 
 /**
  * The content in the tree and list views may be either:
@@ -43,7 +50,7 @@ import org.eclipse.cdt.internal.ui.viewsupport.CUILabelProvider;
  * @author Ed Swartz
  *
  */
-public class PDOMSearchLabelProvider extends LabelProvider {
+public class PDOMSearchLabelProvider extends LabelProvider implements IStyledLabelProvider {
 
 	private final AbstractTextSearchViewPage fPage;
 	private final TypeInfoLabelProvider fTypeInfoLabelProvider;
@@ -57,6 +64,9 @@ public class PDOMSearchLabelProvider extends LabelProvider {
 	
 	@Override
 	public Image getImage(Object element) {
+		if (element instanceof LineSearchElement)
+			return CPluginImages.get(CPluginImages.IMG_OBJS_SEARCH_LINE);
+		
 		if (element instanceof TypeInfoSearchElement)
 			return fTypeInfoLabelProvider.getImage(((TypeInfoSearchElement)element).getTypeInfo());
 
@@ -96,6 +106,10 @@ public class PDOMSearchLabelProvider extends LabelProvider {
 
 	@Override
 	public String getText(Object element) {
+		if (element instanceof LineSearchElement) {
+			return element.toString();
+		}
+
 		if (element instanceof TypeInfoSearchElement) {
 			return fTypeInfoLabelProvider.getText(((TypeInfoSearchElement)element).getTypeInfo());
 		}
@@ -128,6 +142,29 @@ public class PDOMSearchLabelProvider extends LabelProvider {
 	}
 	
 	protected int getMatchCount(Object element) {
+		if (element instanceof TranslationUnit) {
+			TranslationUnit translationUnit = (TranslationUnit) element;
+			AbstractTextSearchResult searchResult = fPage.getInput();
+			if (searchResult instanceof PDOMSearchResult) {
+				PDOMSearchResult pdomSearchResult = (PDOMSearchResult)searchResult;
+				return pdomSearchResult.computeContainedMatches(searchResult, translationUnit.getFile()).length;
+			}
+		}
 		return fPage.getInput().getMatchCount(element);
+	}
+
+	public StyledString getStyledText(Object element) {
+		if (!(element instanceof LineSearchElement))
+			return new StyledString(getText(element));
+		LineSearchElement lineElement = (LineSearchElement) element;
+		int lineOffset = lineElement.getOffset();
+		String lineContent = lineElement.getContent();
+		StyledString styled = new StyledString(lineContent);
+		for (Match match : lineElement.getMatches()) {
+			int offset = match.getOffset();
+			int length = Math.min(match.getLength(), lineContent.length() - (offset - lineOffset));
+			styled.setStyle(offset - lineOffset, length, ColoringLabelProvider.HIGHLIGHT_STYLE);
+		}
+		return styled;
 	}
 }

@@ -123,4 +123,17 @@ public class LinkedNamesFinderTest extends AST2BaseTest {
 		IRegion[] regions3 = getLinkedRegions(code, "~A();", 2, true);
 		assertTrue(Arrays.equals(regions3, regions));
 	}
+
+	//	#ifndef GUARD //1
+	//	#define GUARD //2
+	//	// This is a GUARD test
+	//	#endif // GUARD
+	public void testIncludeGuards() throws Exception {
+		String code = getAboveComment();
+		IRegion[] regions = getLinkedRegions(code, "GUARD //1", 5, true);
+		assertEquals(3, regions.length);
+		assertContents(code, regions[0].getOffset(), "GUARD //1");
+		assertContents(code, regions[1].getOffset(), "GUARD //2");
+		assertContents(code, regions[2].getOffset() - 3, "// GUARD");
+	}
 }

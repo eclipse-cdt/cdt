@@ -1313,6 +1313,9 @@ public class CPreprocessor implements ILexerLog, IScanner, IAdaptable {
 	    		final char[] namechars= name.getCharImage();
 	    		macro= fMacroDictionary.get(namechars);
 	    		isActive= (macro == null) == isIfndef;
+	    		if (macro == null) {
+	    			macro = new UndefinedMacro(namechars);
+	    		}
 	    	}
 		}
 		

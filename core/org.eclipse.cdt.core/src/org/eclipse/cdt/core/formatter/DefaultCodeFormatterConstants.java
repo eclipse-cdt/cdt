@@ -2198,35 +2198,35 @@ public class DefaultCodeFormatterConstants {
 	 * @param wrapStyle the given wrapping style
 	 * @param indentStyle the given indent style
 	 * 
-	 * @return the new alignement value
+	 * @return the new alignment value
 	 */
 	public static String createAlignmentValue(boolean forceSplit, int wrapStyle, int indentStyle) {
 		int alignmentValue = 0; 
-		switch(wrapStyle) {
-			case WRAP_COMPACT :
+		switch (wrapStyle) {
+			case WRAP_COMPACT:
 				alignmentValue |= Alignment.M_COMPACT_SPLIT;
 				break;
-			case WRAP_COMPACT_FIRST_BREAK :
+			case WRAP_COMPACT_FIRST_BREAK:
 				alignmentValue |= Alignment.M_COMPACT_FIRST_BREAK_SPLIT;
 				break;
-			case WRAP_NEXT_PER_LINE :
+			case WRAP_NEXT_PER_LINE:
 				alignmentValue |= Alignment.M_NEXT_PER_LINE_SPLIT;
 				break;
-			case WRAP_NEXT_SHIFTED :
+			case WRAP_NEXT_SHIFTED:
 				alignmentValue |= Alignment.M_NEXT_SHIFTED_SPLIT;
 				break;
-			case WRAP_ONE_PER_LINE :
+			case WRAP_ONE_PER_LINE:
 				alignmentValue |= Alignment.M_ONE_PER_LINE_SPLIT;
 				break;
 		}		
 		if (forceSplit) {
 			alignmentValue |= Alignment.M_FORCE;
 		}
-		switch(indentStyle) {
-			case INDENT_BY_ONE :
+		switch (indentStyle) {
+			case INDENT_BY_ONE:
 				alignmentValue |= Alignment.M_INDENT_BY_ONE;
 				break;
-			case INDENT_ON_COLUMN :
+			case INDENT_ON_COLUMN:
 				alignmentValue |= Alignment.M_INDENT_ON_COLUMN;
 		}
 		return String.valueOf(alignmentValue);
@@ -2350,15 +2350,15 @@ public class DefaultCodeFormatterConstants {
 		try {
 			int existingValue = Integer.parseInt(value) & Alignment.SPLIT_MASK;
 			switch(existingValue) {
-				case Alignment.M_COMPACT_SPLIT :
+				case Alignment.M_COMPACT_SPLIT:
 					return WRAP_COMPACT;
-				case Alignment.M_COMPACT_FIRST_BREAK_SPLIT :
+				case Alignment.M_COMPACT_FIRST_BREAK_SPLIT:
 					return WRAP_COMPACT_FIRST_BREAK;
-				case Alignment.M_NEXT_PER_LINE_SPLIT :
+				case Alignment.M_NEXT_PER_LINE_SPLIT:
 					return WRAP_NEXT_PER_LINE;
-				case Alignment.M_NEXT_SHIFTED_SPLIT :
+				case Alignment.M_NEXT_SHIFTED_SPLIT:
 					return WRAP_NEXT_SHIFTED;
-				case Alignment.M_ONE_PER_LINE_SPLIT :
+				case Alignment.M_ONE_PER_LINE_SPLIT:
 					return WRAP_ONE_PER_LINE;
 				default:
 					return WRAP_NO_SPLIT;
@@ -2419,11 +2419,11 @@ public class DefaultCodeFormatterConstants {
 			throw WRONG_ARGUMENT;
 		}
 		switch(indentStyle) {
-			case INDENT_BY_ONE :
-			case INDENT_DEFAULT :
-			case INDENT_ON_COLUMN :
+			case INDENT_BY_ONE:
+			case INDENT_DEFAULT:
+			case INDENT_ON_COLUMN:
 				break;
-			default :
+			default:
 				throw WRONG_ARGUMENT;
 		}
 		try {
@@ -2431,10 +2431,10 @@ public class DefaultCodeFormatterConstants {
 			// clear existing indent bits
 			existingValue &= ~(Alignment.M_INDENT_BY_ONE | Alignment.M_INDENT_ON_COLUMN);
 			switch(indentStyle) {
-				case INDENT_BY_ONE :
+				case INDENT_BY_ONE:
 					existingValue |= Alignment.M_INDENT_BY_ONE;
 					break;
-				case INDENT_ON_COLUMN :
+				case INDENT_ON_COLUMN:
 					existingValue |= Alignment.M_INDENT_ON_COLUMN;
 			}
 			return String.valueOf(existingValue);
@@ -2466,13 +2466,13 @@ public class DefaultCodeFormatterConstants {
 		if (value == null) {
 			throw WRONG_ARGUMENT;
 		}
-		switch(wrappingStyle) {
-			case WRAP_COMPACT :
-			case WRAP_COMPACT_FIRST_BREAK :
-			case WRAP_NEXT_PER_LINE :
-			case WRAP_NEXT_SHIFTED :
-			case WRAP_NO_SPLIT :
-			case WRAP_ONE_PER_LINE :
+		switch (wrappingStyle) {
+			case WRAP_COMPACT:
+			case WRAP_COMPACT_FIRST_BREAK:
+			case WRAP_NEXT_PER_LINE:
+			case WRAP_NEXT_SHIFTED:
+			case WRAP_NO_SPLIT:
+			case WRAP_ONE_PER_LINE:
 				break;
 			default:
 				throw WRONG_ARGUMENT;
@@ -2481,20 +2481,20 @@ public class DefaultCodeFormatterConstants {
 			int existingValue = Integer.parseInt(value);
 			// clear existing split bits
 			existingValue &= ~(Alignment.SPLIT_MASK);
-			switch(wrappingStyle) {
-				case WRAP_COMPACT :
+			switch (wrappingStyle) {
+				case WRAP_COMPACT:
 					existingValue |= Alignment.M_COMPACT_SPLIT;
 					break;
-				case WRAP_COMPACT_FIRST_BREAK :
+				case WRAP_COMPACT_FIRST_BREAK:
 					existingValue |= Alignment.M_COMPACT_FIRST_BREAK_SPLIT;
 					break;
-				case WRAP_NEXT_PER_LINE :
+				case WRAP_NEXT_PER_LINE:
 					existingValue |= Alignment.M_NEXT_PER_LINE_SPLIT;
 					break;
-				case WRAP_NEXT_SHIFTED :
+				case WRAP_NEXT_SHIFTED:
 					existingValue |= Alignment.M_NEXT_SHIFTED_SPLIT;
 					break;
-				case WRAP_ONE_PER_LINE :
+				case WRAP_ONE_PER_LINE:
 					existingValue |= Alignment.M_ONE_PER_LINE_SPLIT;
 					break;
 			}

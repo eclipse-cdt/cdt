@@ -88,7 +88,7 @@ abstract class PreprocessorMacro implements IMacroBinding {
 		buf.append(getNameCharArray());
 		buf.append('(');
 		for (int i = 0; i < p.length; i++) {
-			if (i>0) {
+			if (i > 0) {
 				buf.append(',');
 			}
 			buf.append(p[i]);
@@ -271,6 +271,29 @@ class FunctionStyleMacro extends ObjectStyleMacro {
 	}
 }
 
+final class UndefinedMacro extends PreprocessorMacro {
+	public UndefinedMacro(char[] name) {
+		super(name);
+	}
+
+	@Override
+	public TokenList getTokens(MacroDefinitionParser parser, LexerOptions lexOptions, MacroExpander expander) {
+		return null;
+	}
+
+	public char[] getExpansion() {
+		return null;
+	}
+
+	public char[] getExpansionImage() {
+		return null;
+	}
+
+	public boolean isDynamic() {
+		return false;
+	}
+}
+
 abstract class DynamicMacro extends PreprocessorMacro {
 
 	public DynamicMacro(char[] name) {
@@ -351,11 +374,13 @@ final class LineMacro extends DynamicMacro {
 	LineMacro(char[] name) {
 		super(name);
 	}
+
 	@Override
 	public Token execute(MacroExpander expander) {
     	int lineNumber= expander.getCurrentLineNumber();
         return new TokenWithImage(IToken.tINTEGER, null, 0, 0, Long.toString(lineNumber).toCharArray());
     }
+
 	public char[] getExpansionImage() {
 		return new char[] {'1'};
 	}
@@ -387,4 +412,3 @@ final class TimeMacro extends DynamicMacro {
 		return createDate();
 	}
 }
-

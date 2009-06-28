@@ -304,14 +304,14 @@ public abstract class PDOMSearchQuery implements ISearchQuery {
 			if (localMatches.isEmpty())
 				return;
 			// Search for dirty editor
-			ITextEditor dirtyTextEditor = null; 
+			ITextEditor dirtyTextEditor = null;
 			String fullPath = ast.getFilePath();
 			for (IEditorPart editorPart : CUIPlugin.getDirtyEditors()) {
 				if (editorPart instanceof ITextEditor) {
-					ITextEditor textEditor = (ITextEditor)editorPart;
+					ITextEditor textEditor = (ITextEditor) editorPart;
 					IEditorInput editorInput = editorPart.getEditorInput();
 					if (editorInput instanceof IPathEditorInput) {
-						IPathEditorInput pathEditorInput = (IPathEditorInput)editorInput;
+						IPathEditorInput pathEditorInput = (IPathEditorInput) editorInput;
 						IPath path = pathEditorInput.getPath();
 						if (fullPath.equals(path.toOSString())) {
 							dirtyTextEditor = textEditor;

@@ -55,6 +55,7 @@ import org.eclipse.cdt.debug.internal.ui.sourcelookup.CSourceNotFoundEditorInput
 import org.eclipse.cdt.debug.ui.CDebugUIPlugin;
 import org.eclipse.cdt.debug.ui.ICDebugUIConstants;
 import org.eclipse.cdt.internal.core.model.ExternalTranslationUnit;
+import org.eclipse.cdt.internal.core.resources.ResourceLookup;
 import org.eclipse.cdt.internal.ui.util.ExternalEditorInput;
 import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.core.filesystem.URIUtil;
@@ -63,7 +64,6 @@ import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IStorage;
-import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
@@ -150,33 +150,24 @@ public class CDebugModelPresentation extends LabelProvider implements IDebugMode
 		}
 		if ( element instanceof ICBreakpoint ) {
 			ICBreakpoint b = (ICBreakpoint)element;
-			IFile file = null;
-			try {
-				String handle = b.getSourceHandle();
-				if ( handle != null ) {
-					IPath path = new Path( handle );
-					if ( path.isValidPath( handle ) ) {
-						IFile[] files = ResourcesPlugin.getWorkspace().getRoot().findFilesForLocation( path );
-						if ( files.length > 0 ) {
-							// default to the first file found in the workspace
-							file = files[0];
-							
-							// now try to match any finding to the project in the breakpoint
-							IProject project = b.getMarker().getResource().getProject();
-							for (IFile f : files) {
-								if (f.getProject().equals(project)) {
-									file = f;
-									break;
-								}
-							}
-						}
-						else {
+			// If the BP's marker is on an IFile, job done
+			IFile file = (IFile)b.getMarker().getResource().getAdapter(IFile.class);
+			if (file == null) {
+				try {
+					// Not backed by an IFile, try its source handle (may be workspace / project based)
+					String handle = b.getSourceHandle();
+					if (handle != null && Path.ROOT.isValidPath(handle)) {
+						Path path = new Path(handle);
+						IProject project = b.getMarker().getResource().getProject();
+						// Select the most 'relevant' IFile for an external location
+						file = ResourceLookup.selectFileForLocation(path, project);
+						if (file == null) {
+							// Try resolving the path to a real io.File
 							File fsfile = new File( handle );
 							if ( fsfile.isFile() && fsfile.exists() ) {
 								// create an ExternalEditorInput with an external tu so when you
 								// open the file from the breakpoints view it opens in the
 								// proper editor.
-								IProject project = b.getMarker().getResource().getProject();
 								if (project != null) {
 									ICProject cproject = CoreModel.getDefault().create(project);
 									String id = CoreModel.getRegistedContentTypeId(project, path.lastSegment());
@@ -189,12 +180,10 @@ public class CDebugModelPresentation extends LabelProvider implements IDebugMode
 							}
 						}
 					}
+				} catch(CoreException e) {
+					CDebugCorePlugin.log(e);
 				}
 			}
-			catch( CoreException e ) {
-			}
-			if ( file == null )
-				file = (IFile)b.getMarker().getResource().getAdapter( IFile.class );
 			if ( file != null )
 				return new FileEditorInput( file );
 		}

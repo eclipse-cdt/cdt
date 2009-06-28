@@ -2204,6 +2204,7 @@ public class AST2TemplateTests extends AST2BaseTest {
 		bh.assertNonProblem("make_pair(1", 9, ICPPFunction.class);
     }
 
+    
 	//	template<class T>
 	//	struct A {};
 	//
@@ -2268,6 +2269,24 @@ public class AST2TemplateTests extends AST2BaseTest {
 	public void testFunctionTemplate_272848_2() throws Exception {
 		final String code = getAboveComment();
 		parseAndCheckBindings(code, ParserLanguage.CPP);		
+	}
+
+	//	template <class T>
+	//	class A {};
+	//
+	//	class B {};
+	//
+	//	template <class U>
+	//	void f1(const A<U>& a, void (*f)(const U&));
+	//
+	//	void f2(const B& b);
+	//
+	//	void test(A<B> x) {
+	//	  f1(x, &f2);
+	//	}
+	public void _testFunctionTemplateWithFunctionPointer_281783() throws Exception {
+    	BindingAssertionHelper bh= new BindingAssertionHelper(getAboveComment(), true);
+    	bh.assertNonProblem("f1(x, &f2);", 2, ICPPFunction.class);
 	}
 
 	// // Brian W.'s example from bugzilla#167098

@@ -81,7 +81,7 @@ public class BasicSearchTest extends BaseUITestCase {
 
 	@Override
 	protected void tearDown() throws Exception {
-		if(fCProject != null) {
+		if (fCProject != null) {
 			fCProject.getProject().delete(true, NPM);
 		}
 		super.tearDown();
@@ -334,14 +334,16 @@ public class BasicSearchTest extends BaseUITestCase {
 		IFile file = fCProject.getProject().getFile(new Path("references.cpp"));
 		file.setContents(new ByteArrayInputStream(newContent.getBytes()), IResource.FORCE, NPM);
 		runEventQueue(1000);
-		assertTrue(CCorePlugin.getIndexManager().joinIndexer(360000, new NullProgressMonitor()));
+		IIndexManager indexManager = CCorePlugin.getIndexManager();
+		indexManager.update(new ICElement[] {fCProject}, IIndexManager.UPDATE_ALL);
+		assertTrue(indexManager.joinIndexer(360000, new NullProgressMonitor()));
 
 		assertOccurences(query, 2);
 		
 		String newContent2= "void bar() {foo(); foo();}";
 		file.setContents(new ByteArrayInputStream(newContent2.getBytes()), IResource.FORCE, NPM);
 		Job.getJobManager().join(ResourcesPlugin.FAMILY_AUTO_REFRESH, null);
-		assertTrue(CCorePlugin.getIndexManager().joinIndexer(360000, new NullProgressMonitor()));
+		assertTrue(indexManager.joinIndexer(360000, new NullProgressMonitor()));
 
 		assertOccurences(query, 3);
 	}

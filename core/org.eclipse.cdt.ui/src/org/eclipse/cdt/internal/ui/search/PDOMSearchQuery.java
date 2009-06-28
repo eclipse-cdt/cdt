@@ -284,7 +284,7 @@ public abstract class PDOMSearchQuery implements ISearchQuery {
 			names.addAll(Arrays.asList(ast.getDeclarationsInAST(binding)));
 			names.addAll(Arrays.asList(ast.getDefinitionsInAST(binding)));
 			names.addAll(Arrays.asList(ast.getReferences(binding)));
-			// collect local matches from AST
+			// Collect local matches from AST
 			IIndexFileLocation fileLocation = null; 
 			Set<Match> localMatches = new HashSet<Match>();
 			for (IASTName name : names) {
@@ -301,7 +301,9 @@ public abstract class PDOMSearchQuery implements ISearchQuery {
 					}
 				}
 			}
-			// search for dirty editor
+			if (localMatches.isEmpty())
+				return;
+			// Search for dirty editor
 			ITextEditor dirtyTextEditor = null; 
 			String fullPath = ast.getFilePath();
 			for (IEditorPart editorPart : CUIPlugin.getDirtyEditors()) {
@@ -318,7 +320,7 @@ public abstract class PDOMSearchQuery implements ISearchQuery {
 					}
 				}
 			}
-			// create line search elements
+			// Create line search elements
 			Match[] matchesArray = localMatches.toArray(new Match[localMatches.size()]);
 			LineSearchElement[] lineElements;
 			if (dirtyTextEditor != null) {
@@ -328,7 +330,7 @@ public abstract class PDOMSearchQuery implements ISearchQuery {
 			} else {
 				lineElements = LineSearchElement.createElements(fileLocation, matchesArray);
 			}
-			// create real PDOMSearchMatch with corresponding line elements 
+			// Create real PDOMSearchMatch with corresponding line elements 
 			for (LineSearchElement searchElement : lineElements) {
 				for (Match lineMatch : searchElement.getMatches()) {
 					int offset = lineMatch.getOffset();

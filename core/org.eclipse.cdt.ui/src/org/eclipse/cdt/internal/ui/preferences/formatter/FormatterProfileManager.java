@@ -13,9 +13,11 @@ package org.eclipse.cdt.internal.ui.preferences.formatter;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.preferences.DefaultScope;
 import org.eclipse.core.runtime.preferences.IScopeContext;
 
@@ -58,6 +60,25 @@ public class FormatterProfileManager extends ProfileManager {
 		profiles.add(gnuProfile);
 		final Profile whitesmithsProfile= new BuiltInProfile(WHITESMITHS_PROFILE, FormatterMessages.ProfileManager_whitesmiths_profile_name, getWhitesmithsSettings(), 2, profileVersioner.getCurrentVersion(), profileVersioner.getProfileKind()); 
 		profiles.add(whitesmithsProfile);
+
+		// Add the Profiles which are at default scope and hence are contributed by a product.
+    	try {
+    	    List<Profile> defaultProfiles= new FormatterProfileStore(profileVersioner).readProfiles(new DefaultScope());
+    	    if (defaultProfiles != null) {
+    	    	Map<String, Profile> profMap= new LinkedHashMap<String, Profile>();
+    	    	// Add the already loaded / created profiles to a map 
+    	    	for (Profile p : profiles)
+    	    		profMap.put(p.getID(), p);
+
+    	    	// Default profiles override any colliding profiles already in the list
+    			for (Profile p : defaultProfiles)
+    				profMap.put(p.getID(), new BuiltInProfile(p.getName(), p.getName(), p.getSettings(), 2, profileVersioner.getCurrentVersion(), profileVersioner.getProfileKind()));
+    			profiles= new ArrayList<Profile>(profMap.values());
+    	    }
+    	} catch (CoreException e) {
+    		CUIPlugin.log(e);
+    	}
+
 		return profiles;
 	}
 	

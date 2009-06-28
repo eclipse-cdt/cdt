@@ -21,7 +21,6 @@ import java.util.Observer;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.ProjectScope;
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.preferences.DefaultScope;
 import org.eclipse.core.runtime.preferences.IScopeContext;
 import org.eclipse.core.runtime.preferences.IEclipsePreferences.IPreferenceChangeListener;
 import org.eclipse.core.runtime.preferences.IEclipsePreferences.PreferenceChangeEvent;
@@ -280,14 +279,6 @@ public abstract class ProfileConfigurationBlock {
             profiles= fProfileStore.readProfiles(fInstanceScope);
         } catch (CoreException e) {
         	CUIPlugin.log(e);
-        }
-        if (profiles == null) {
-        	try {
-        		// bug 129427
-        	    profiles= fProfileStore.readProfiles(new DefaultScope());
-        	} catch (CoreException e) {
-        		CUIPlugin.log(e);
-        	}
         }
         
         if (profiles == null) 

@@ -1577,11 +1577,11 @@ public class IndexBugsTests extends BaseTestCase {
 		}
 	}
 
-	// #undef YYY
+	// #undef BBB
 	
-	// #define YYY
+	// #define BBB
 	// #include "header.h"
-	// #ifdef YYY
+	// #ifdef BBB
 	//    int bug227088;
 	// #else
 	//    int ok;
@@ -1975,17 +1975,54 @@ public class IndexBugsTests extends BaseTestCase {
 			index.releaseReadLock();
 		}
 	}
-	
+
+	//  // header.h
+	//	template<class T>
+	//	struct A {
+	//	  void m(const T& p);
+	//	};
+
+	//  #include "header.h"
+	//	namespace {
+	//	enum E { e1 };
+	//	}
+	//
+	//	void test() {
+	//	  A<E> a;
+	//	  a.m(e1);
+	//	}
+
+	//	enum E { e2	};
+	public void _testDisambiguationByReachability_281782() throws Exception {
+		waitForIndexer();
+
+		String[] testData = getContentsForTest(3);
+		TestSourceReader.createFile(fCProject.getProject(), "header.h", testData[0]);
+		IFile test= TestSourceReader.createFile(fCProject.getProject(), "test.cpp", testData[1]);
+		TestSourceReader.createFile(fCProject.getProject(), "unrelated.cpp", testData[2]);
+		final IIndexManager indexManager = CCorePlugin.getIndexManager();
+		indexManager.reindex(fCProject);
+		waitForIndexer();
+		IIndex index= indexManager.getIndex(fCProject);
+		index.acquireReadLock();
+		try {
+			IASTTranslationUnit ast = TestSourceReader.createIndexBasedAST(index, fCProject, test);
+			getBindingFromASTName(ast, testData[1], "m(e1)", 1, ICPPMethod.class);
+		} finally {
+			index.releaseReadLock();
+		}
+	}
+
 	//  // a.h
-	//	#undef XXX
+	//	#undef AAA
 	
 	//  // b.h
 	//  #include "a.h"
-	//	#define XXX
+	//	#define AAA
 
 	//  // source.c
 	//	#include "b.h"
-	//  #ifdef XXX
+	//  #ifdef AAA
 	//  int ok;
 	//  #endif
 	public void testPreprocessingStatementOrder_270806_1() throws Exception {
@@ -2011,15 +2048,15 @@ public class IndexBugsTests extends BaseTestCase {
 	}
 
 	//  // a.h
-	//	#undef XXX
+	//	#undef AAA
 	
 	//  // b.h
-	//	#define XXX
+	//	#define AAA
 	//  #include "a.h"
 
 	//  // source.c
 	//	#include "b.h"
-	//  #ifdef XXX
+	//  #ifdef AAA
 	//  int bug;
 	//  #endif
 	public void testPreprocessingStatementOrder_270806_2() throws Exception {
@@ -2046,8 +2083,8 @@ public class IndexBugsTests extends BaseTestCase {
 
 	//	namespace X {}
 	//	namespace Y {}
-	//	#define XXX
-	//	#define YYY
+	//	#define AAA
+	//	#define BBB
 	//  #include "inc.h"
 	//  #include <inc.h>
 	//  using namespace X;
@@ -2070,8 +2107,8 @@ public class IndexBugsTests extends BaseTestCase {
 			// check order of macros
 			IIndexMacro[] macros = file.getMacros();
 			assertEquals(2, macros.length);
-			assertEquals("XXX", macros[0].getName());
-			assertEquals("YYY", macros[1].getName());
+			assertEquals("AAA", macros[0].getName());
+			assertEquals("BBB", macros[1].getName());
 			// check order of using directives
 			ICPPUsingDirective[] uds = file.getUsingDirectives();
 			assertEquals(2, uds.length);

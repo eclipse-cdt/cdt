@@ -2270,6 +2270,24 @@ public class AST2TemplateTests extends AST2BaseTest {
 		parseAndCheckBindings(code, ParserLanguage.CPP);		
 	}
 
+	//	template <class T>
+	//	class A {};
+	//
+	//	class B {};
+	//
+	//	template <class U>
+	//	void f1(const A<U>& a, void (*f)(const U&));
+	//
+	//	void f2(const B& b);
+	//
+	//	void test(A<B> x) {
+	//	  f1(x, &f2);
+	//	}
+	public void _testFunctionTemplateWithFunctionPointer_281783() throws Exception {
+    	BindingAssertionHelper bh= new BindingAssertionHelper(getAboveComment(), true);
+    	bh.assertNonProblem("f1(x, &f2);", 2, ICPPFunction.class);
+	}
+
 	// // Brian W.'s example from bugzilla#167098
 	//    template<class K>
 	//    class D { //CPPClassTemplate

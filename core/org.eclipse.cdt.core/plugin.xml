@@ -18,7 +18,7 @@
 <!-- =================================================================================== -->
 <!-- Extension Point: IErrorParser, error parsers use when building                      -->
 <!-- =================================================================================== -->
-   <extension-point id="ErrorParser" name="%ErrorParser.name"/>
+   <extension-point id="ErrorParser" name="%ErrorParser.name" schema="schema/ErrorParser.exsd"/>
 <!-- =================================================================================== -->
 <!-- Extension Point: IBinaryParser, use to detect wheter an IFile is a binary           -->
 <!-- =================================================================================== -->

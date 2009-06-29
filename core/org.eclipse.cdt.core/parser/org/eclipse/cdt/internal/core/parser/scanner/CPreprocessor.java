@@ -579,7 +579,10 @@ public class CPreprocessor implements ILexerLog, IScanner, IAdaptable {
     				appendStringContent(buf, t2);
     				endOffset= t2.getEndOffset();
     				continue loop;
-    				
+    		    case IToken.tINACTIVE_CODE_START:
+    		    	// no support for inactive code after a string literal
+    		    	skipInactiveCode();
+    		    	continue loop;
     			default:
     				break loop;
     			}

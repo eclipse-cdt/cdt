@@ -846,7 +846,7 @@ public class CppTypeHierarchyTest extends TypeHierarchyBaseTest {
 	//    T field1;
 	//    T method1();
 	// };
-	public void _testTemplatesNoInheritance() throws Exception {
+	public void testTemplatesNoInheritance() throws Exception {
 		String content= getContentsForTest(1)[0].toString();
 		IFile file= createFile(getProject(), "simpleTemplate.cpp", content);
 		waitForIndexer(fIndex, file, INDEXER_WAIT_TIME);

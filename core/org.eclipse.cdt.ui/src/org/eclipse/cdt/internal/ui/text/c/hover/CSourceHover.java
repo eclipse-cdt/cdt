@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2002, 2008 QNX Software Systems and others.
+ * Copyright (c) 2002, 2009 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -75,10 +75,7 @@ import org.eclipse.cdt.core.dom.ast.gnu.c.ICASTKnRFunctionDeclarator;
 import org.eclipse.cdt.core.index.IIndex;
 import org.eclipse.cdt.core.index.IIndexName;
 import org.eclipse.cdt.core.model.CModelException;
-import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.core.model.ILanguage;
-import org.eclipse.cdt.core.model.ISourceRange;
-import org.eclipse.cdt.core.model.ISourceReference;
 import org.eclipse.cdt.core.model.ITranslationUnit;
 import org.eclipse.cdt.core.model.IWorkingCopy;
 import org.eclipse.cdt.core.parser.KeywordSetKey;
@@ -645,13 +642,6 @@ public class CSourceHover extends AbstractCEditorTextHover {
 				// Try with the indexer
 				source= searchInIndex(copy, hoverRegion);
 
-				if (source == null) {
-					// Try with CModel
-					ICElement curr = copy.getElement(expression);
-					if (curr != null) {
-						source= getSourceForCElement(textViewer.getDocument(), curr);
-					}
-				}
 				if (source == null || source.trim().length() == 0)
 					return null;
 
@@ -673,53 +663,9 @@ public class CSourceHover extends AbstractCEditorTextHover {
 				return source;
 
 			} catch (BadLocationException e) {
-			} catch (CModelException e) {
 			}
 		}
 		return null;
-	}
-
-	/**
-	 * Return the source for the given element including the preceding comment.
-	 * 
-	 * @param doc  the document of the current editor
-	 * @param cElement  the element to compute the source from
-	 * @return  the source or <code>null</code>
-	 * @throws CModelException 
-	 * @throws BadLocationException 
-	 */
-	private static String getSourceForCElement(IDocument doc, ICElement cElement) throws CModelException, BadLocationException {
-		if (!(cElement instanceof ISourceReference)) {
-			return null;
-		}
-		ISourceRange sourceRange= ((ISourceReference)cElement).getSourceRange();
-		int sourceStart= sourceRange.getStartPos();
-		int sourceEnd= sourceStart + sourceRange.getLength();
-		CHeuristicScanner scanner= new CHeuristicScanner(doc);
-		int commentBound= scanner.scanBackward(sourceStart, CHeuristicScanner.UNBOUND, new char[] { '{', '}', ';' });
-		if (commentBound == CHeuristicScanner.NOT_FOUND) {
-			commentBound= -1;
-		}
-		int commentStart= searchCommentBackward(doc, sourceStart, commentBound);
-		if (commentStart >= 0) {
-			sourceStart= commentStart;
-		} else {
-			sourceStart= doc.getLineInformationOfOffset(sourceStart).getOffset();
-		}
-		// expand region to include whole line if rest is comment
-		IRegion lineRegion= doc.getLineInformationOfOffset(sourceEnd);
-		int lineEnd= lineRegion.getOffset() + lineRegion.getLength();
-		int nextNonWS= scanner.findNonWhitespaceForwardInAnyPartition(sourceEnd + 1, lineEnd);
-		if (nextNonWS != CHeuristicScanner.NOT_FOUND) {
-			String contentType= TextUtilities.getContentType(doc, ICPartitions.C_PARTITIONING, nextNonWS, false);
-			if (ICPartitions.C_MULTI_LINE_COMMENT.equals(contentType)
-					|| ICPartitions.C_MULTI_LINE_DOC_COMMENT.equals(contentType) 
-					|| ICPartitions.C_SINGLE_LINE_COMMENT.equals(contentType)
-					|| ICPartitions.C_SINGLE_LINE_DOC_COMMENT.equals(contentType)) {
-				sourceEnd= lineEnd;
-			}
-		}
-		return doc.get(sourceStart, sourceEnd - sourceStart);
 	}
 
 	/**

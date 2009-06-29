@@ -254,4 +254,25 @@ public class InactiveCodeTests extends PreprocessorTestsBase {
 		validateEOF();
 		validateProblemCount(0);
 	}
+	
+	//	"part1"
+	//	#ifdef SOME_OPTION
+	//	   "part2"
+	//	#else
+	//	   "part3"
+	//	#endif
+	//
+	//	"part4"
+	//	#ifndef SOME_OPTION
+	//	   "part5"
+	//	#else
+	//	   "part6"
+	//	#endif
+	public void testStringLiteralConcatenation_281745() throws Exception {
+		initializeScanner();
+		validateString("part1part3part4part5");
+		validateEOF();
+		validateProblemCount(0);
+	}
+
 }

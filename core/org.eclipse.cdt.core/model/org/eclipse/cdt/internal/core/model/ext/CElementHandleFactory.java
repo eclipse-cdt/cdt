@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2008 Wind River Systems, Inc. and others.
+ * Copyright (c) 2006, 2009 Wind River Systems, Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,8 +10,8 @@
  *******************************************************************************/ 
 package org.eclipse.cdt.internal.core.model.ext;
 
-import org.eclipse.cdt.core.dom.IName;
 import org.eclipse.cdt.core.dom.ast.DOMException;
+import org.eclipse.cdt.core.dom.ast.EScopeKind;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.ICompositeType;
 import org.eclipse.cdt.core.dom.ast.IEnumeration;
@@ -22,15 +22,9 @@ import org.eclipse.cdt.core.dom.ast.IParameter;
 import org.eclipse.cdt.core.dom.ast.IScope;
 import org.eclipse.cdt.core.dom.ast.ITypedef;
 import org.eclipse.cdt.core.dom.ast.IVariable;
-import org.eclipse.cdt.core.dom.ast.c.ICCompositeTypeScope;
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPBlockScope;
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassScope;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassTemplate;
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPMethod;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPNamespace;
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPNamespaceScope;
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateScope;
 import org.eclipse.cdt.core.index.IIndexMacro;
 import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.core.model.ITranslationUnit;
@@ -69,7 +63,7 @@ public class CElementHandleFactory {
 	public static ICElementHandle internalCreate(ITranslationUnit tu, IBinding binding, boolean definition,
 			IRegion region, long timestamp) throws CoreException, DOMException {	
 
-		ICElement parentElement= create(tu, binding.getScope());
+		ICElement parentElement= createParent(tu, binding);
 		if (parentElement == null) {
 			return null;
 		}
@@ -120,42 +114,31 @@ public class CElementHandleFactory {
 		return element;
 	}
 
-	private static ICElement create(ITranslationUnit tu, IScope scope) throws DOMException {
-		if (scope == null) {
+	private static ICElement createParent(ITranslationUnit tu, IBinding binding) throws DOMException {
+		IBinding parentBinding= binding.getOwner();
+		if (parentBinding == null) {
+			IScope scope= binding.getScope();
+			if (scope != null && scope.getKind() == EScopeKind.eLocal) {
+				return null;
+			}
 			return tu;
 		}
-		
-		IName scopeName= scope.getScopeName();
-		if (scopeName == null) {
-			if (scope.getParent() == null) {
-				return tu;
-			} 
-			if (scope instanceof ICPPTemplateScope) {
-				return create(tu, scope.getParent());
+
+		if (parentBinding instanceof ICPPNamespace) {
+			char[] scopeName= parentBinding.getNameCharArray();
+			if (scopeName.length != 0) {
+				// named namespace
+				ICElement grandParent= createParent(tu, parentBinding);
+				if (grandParent != null) {
+					return new NamespaceHandle(grandParent, (ICPPNamespace) parentBinding);
+				}
 			}
-			return null; // unnamed namespace
+		} else if (parentBinding instanceof ICompositeType) {
+			ICElement grandParent= createParent(tu, parentBinding);
+			if (grandParent != null) {
+				return new StructureHandle(grandParent, (ICompositeType) parentBinding);
+			}
 		}
-
-		ICElement parentElement= create(tu, scope.getParent());
-		if (parentElement == null) {
-			return null;
-		}
-
-		CElementHandle element= null;
-		if (scope instanceof ICPPClassScope) {
-			ICPPClassType type= ((ICPPClassScope) scope).getClassType();
-			element= new StructureHandle(parentElement, type);
-		}
-		else if (scope instanceof ICCompositeTypeScope) {
-			ICompositeType type= ((ICCompositeTypeScope) scope).getCompositeType();
-			element= new StructureHandle(parentElement, type);
-		}
-		else if (scope instanceof ICPPBlockScope) {
-			return null;
-		}
-		else if (scope instanceof ICPPNamespaceScope) {
-			element= new NamespaceHandle(parentElement, new String(scopeName.getSimpleID()));
-		}		
-		return element;
+		return null;
 	}
 }

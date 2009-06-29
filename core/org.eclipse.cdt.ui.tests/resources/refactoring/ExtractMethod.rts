@@ -2706,3 +2706,49 @@ int Test::calculateStuff() {
 	return result;
 }
 
+//!Bug#281564 Extract Function fails when catching an unnamed exception
+//#org.eclipse.cdt.ui.tests.refactoring.extractfunction.ExtractFunctionRefactoringTest
+//@.config
+filename=main.cpp
+methodname=exp
+//@main.cpp
+
+int myFunc() {
+return 5;
+}
+
+int main() {
+
+int a = 0;
+/*$*/try {
+        a = myFunc();
+    }
+    catch(const int & ){
+        a = 3;
+    }/*$$*/
+    return a;
+}
+
+//=
+
+int myFunc() {
+return 5;
+}
+
+void exp(int & a)
+{
+    try {
+        a = myFunc();
+    }
+    catch(const int & ){
+        a = 3;
+    }
+}
+
+int main() {
+
+int a = 0;
+    exp(a);
+    return a;
+}
+

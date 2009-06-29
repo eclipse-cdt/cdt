@@ -1110,4 +1110,19 @@ public class CPPSelectionTestsNoIndexer extends BaseUITestCase {
 		}
 		fail("Expected exception not caught");
     }
+    
+    // namespace nm {
+    //   template<typename T> void func(T a, T b){}
+    // }
+    // template<typename Tmp> void testFunc() {
+    //   Tmp val;
+    //   nm::func(val, val);
+    // }
+    public void testDependentNameInNamespace_281736() throws Exception {
+    	String code= getContentsForTest(1)[0].toString();
+    	IFile file = importFile("testDependentNameInNamespace.cpp", code); 
+    	int offset= code.indexOf("func(val, val);");
+    	IASTNode node= testF3(file, offset);
+    	assertContents(code, node.getFileLocation().getNodeOffset(), "func(T a, T b)");
+    }
 }

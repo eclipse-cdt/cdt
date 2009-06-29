@@ -207,9 +207,12 @@ public class NodeContainer {
 		}
 
 		public boolean isDeclarationInScope() {
-			int declOffset = declaration.getFileLocation().getNodeOffset();
-			return declOffset >= getStartOffset()
-					&& declOffset <= getEndOffset();
+			if(declaration.toCharArray().length > 0) {
+				int declOffset = declaration.getFileLocation().getNodeOffset();
+				return declOffset >= getStartOffset()
+				&& declOffset <= getEndOffset();
+			}
+			return true;
 		}
 
 		@Override

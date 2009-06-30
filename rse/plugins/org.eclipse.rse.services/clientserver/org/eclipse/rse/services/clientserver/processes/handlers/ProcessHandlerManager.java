@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2007 IBM Corporation and others.
+ * Copyright (c) 2006, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -12,7 +12,7 @@
  * Emily Bruner, Mazen Faraj, Adrian Storisteanu, Li Ding, and Kent Hawley.
  * 
  * Contributors:
- * {Name} (company) - description of contribution.
+ * David McKnight      (IBM) - [175293] [dstore] Processes do not work on Dstore-UNIX connection to Solaris
  *******************************************************************************/
 
 package org.eclipse.rse.services.clientserver.processes.handlers;
@@ -40,10 +40,13 @@ public class ProcessHandlerManager
 	public ProcessHandler getNewProcessHandler()
 	{
 		String osName = System.getProperty("os.name").toLowerCase(); //$NON-NLS-1$
+
 		if (osName.startsWith("linux")) return new UniversalLinuxProcessHandler(); //$NON-NLS-1$
 		else if (osName.startsWith("aix")) return new UniversalAIXProcessHandler(); //$NON-NLS-1$
 		else if (osName.startsWith("z/os")) return new UniversalZOSProcessHandler(); //$NON-NLS-1$
 		else if (osName.startsWith("mac os x")) return new UniversalMacOSXProcessHandler(); //$NON-NLS-1$
-		else return null;
+		else if (osName.startsWith("sun")) return new UniversalSolarisProcessHandler(); //$NON-NLS-1$
+		return null;
+		
 	}
 }

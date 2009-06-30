@@ -1,5 +1,5 @@
 /********************************************************************************
- * Copyright (c) 2002, 2008 IBM Corporation and others. All rights reserved.
+ * Copyright (c) 2002, 2009 IBM Corporation and others. All rights reserved.
  * This program and the accompanying materials are made available under the terms
  * of the Eclipse Public License v1.0 which accompanies this distribution, and is 
  * available at http://www.eclipse.org/legal/epl-v10.html
@@ -19,6 +19,7 @@
  * Martin Oberhuber (Wind River) - [188360] renamed from plugin org.eclipse.rse.eclipse.filesystem
  * Martin Oberhuber (Wind River) - [189441] fix EFS operations on Windows (Local) systems
  * David Dykstal (IBM) - [235840] externalizing dialog title
+ * David McKnight  (IBM)         - [280763] [efs] Cannot pick a file when linking a resource (only folders)
  ********************************************************************************/
 
 
@@ -33,7 +34,7 @@ import org.eclipse.rse.core.filters.ISystemFilterReference;
 import org.eclipse.rse.core.model.IHost;
 import org.eclipse.rse.core.subsystems.ISubSystem;
 import org.eclipse.rse.core.subsystems.ISubSystemConfiguration;
-import org.eclipse.rse.files.ui.dialogs.SystemRemoteFolderDialog;
+import org.eclipse.rse.files.ui.dialogs.SystemRemoteFileDialog;
 import org.eclipse.rse.internal.efs.RSEFileStoreImpl;
 import org.eclipse.rse.services.clientserver.PathUtility;
 import org.eclipse.rse.subsystems.files.core.subsystems.IRemoteFile;
@@ -46,8 +47,9 @@ public class RSEFileSystemContributor extends FileSystemContributor {
 
 
 	public URI browseFileSystem(String initialPath, Shell shell) {
-		
-		SystemRemoteFolderDialog dlg = new SystemRemoteFolderDialog(shell);
+
+		SystemRemoteFileDialog dlg = new SystemRemoteFileDialog(shell);
+
 		
 		if (!initialPath.equals("")) { //$NON-NLS-1$
 			

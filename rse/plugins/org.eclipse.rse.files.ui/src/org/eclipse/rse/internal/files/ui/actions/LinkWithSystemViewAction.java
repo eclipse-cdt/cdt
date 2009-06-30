@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2008 IBM Corporation and others.
+ * Copyright (c) 2007, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -12,6 +12,7 @@
  * Contributors:
  * David McKnight   (IBM)   - [187711] Link with Editor action for System View
  * David McKnight   (IBM)   - [238294] ClassCastException using Link With Editor
+ * David McKnight   (IBM)   - [281309] RSE Explorer View is not able to be sync with Editor in next Eclipse launched
  *******************************************************************************/
 package org.eclipse.rse.internal.files.ui.actions;
 
@@ -403,7 +404,7 @@ public class LinkWithSystemViewAction implements IViewActionDelegate {
 							{
 								IEditorReference editorRef = editorRefs[i];
 							
-								IEditorPart editor = editorRef.getEditor(false);
+								IEditorPart editor = editorRef.getEditor(true);
 								if (editor != null)
 								{
 									IEditorInput input = editor.getEditorInput();
@@ -501,6 +502,13 @@ public class LinkWithSystemViewAction implements IViewActionDelegate {
 	public void init(IViewPart view) {
 		_systemViewPart = (SystemViewPart)view;
 		_linker = new ViewLinker();
+				
+		boolean isLinkingEnabled = _systemViewPart.isLinkingEnabled();
+		if (isLinkingEnabled){
+			// set it here by default to true so that we have a _linker at the start
+			// and restore from memento will be able to use the linker
+			_systemViewPart.setLinkingEnabled(isLinkingEnabled, _linker); 
+		}
 	}
 
 	public void run(IAction action) {

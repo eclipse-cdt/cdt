@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2008 IBM Corporation and others.
+ * Copyright (c) 2005, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -46,14 +46,19 @@ public class CPPTemplateTypeParameter extends CPPTemplateParameter implements
 	}
 
 	public IType getDefault() {
-		IASTNode[] nds = getDeclarations();
+		IASTName[] nds = getDeclarations();
 		if (nds == null || nds.length == 0)
 		    return null;
-		IASTName name = (IASTName) nds[0];
-		ICPPASTSimpleTypeTemplateParameter simple = (ICPPASTSimpleTypeTemplateParameter) name.getParent();
-		IASTTypeId typeId = simple.getDefaultType();
-		if (typeId != null)
-		    return CPPVisitor.createType(typeId);
+		for (IASTName nd : nds) {
+			IASTNode parent = nd.getParent();
+			assert parent instanceof ICPPASTSimpleTypeTemplateParameter;
+			if (parent instanceof ICPPASTSimpleTypeTemplateParameter) {
+				ICPPASTSimpleTypeTemplateParameter simple = (ICPPASTSimpleTypeTemplateParameter) parent;
+				IASTTypeId typeId = simple.getDefaultType();
+				if (typeId != null)
+					return CPPVisitor.createType(typeId);
+			}
+		}
 		return null;
 	}
 	

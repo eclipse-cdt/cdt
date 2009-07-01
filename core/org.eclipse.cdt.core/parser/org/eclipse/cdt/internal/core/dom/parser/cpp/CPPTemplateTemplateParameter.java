@@ -91,14 +91,19 @@ public class CPPTemplateTemplateParameter extends CPPTemplateParameter implement
 	}
 
 	public IType getDefault() {
-		IASTNode[] nds = getDeclarations();
+		IASTName[] nds = getDeclarations();
 		if (nds == null || nds.length == 0)
 		    return null;
-		IASTName name = (IASTName) nds[0];
-		ICPPASTTemplatedTypeTemplateParameter param = (ICPPASTTemplatedTypeTemplateParameter) name.getParent();
-		IASTExpression defaultValue = param.getDefaultValue();
-		if (defaultValue != null)
-		    return CPPVisitor.createType(defaultValue);
+		for (IASTName nd : nds) {
+			IASTNode parent = nd.getParent();
+			assert parent instanceof ICPPASTTemplatedTypeTemplateParameter;
+			if (parent instanceof ICPPASTTemplatedTypeTemplateParameter) {
+				ICPPASTTemplatedTypeTemplateParameter param = (ICPPASTTemplatedTypeTemplateParameter) parent;
+				IASTExpression value = param.getDefaultValue();
+				if (value != null)
+					return CPPVisitor.createType(value);
+			}
+		}
 		return null;
 	}
 	

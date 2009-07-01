@@ -2573,14 +2573,19 @@ public class AST2TemplateTests extends AST2BaseTest {
 	}
 
 	//	template<class T, class U> class A;
+	//  template<class T, int U> class AI;
+	//  template<class T, template<typename V1, typename V2> class U> class AT;
 	//
 	//	class B {};
 	//
-	//	template<class T, class U = B>
-	//	class A {};
+	//	template<class T, class U = B> class A {};
+	//  template<class T, int U=1> class AI {};
+	//  template<class T, template<typename V1, typename V2> class U=A> class AT {};
 	//
 	//	A<char> x;
-	public void _testDefaultTemplateParameter_281781() throws Exception {
+	//  AI<char> y;
+	//  AT<char> z;
+	public void testDefaultTemplateParameter_281781() throws Exception {
 		final String code = getAboveComment();
 		parseAndCheckBindings(code, ParserLanguage.CPP);
 	}

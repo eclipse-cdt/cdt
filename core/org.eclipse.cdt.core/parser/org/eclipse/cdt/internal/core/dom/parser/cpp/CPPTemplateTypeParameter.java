@@ -50,13 +50,15 @@ public class CPPTemplateTypeParameter extends CPPTemplateParameter implements
 		if (nds == null || nds.length == 0)
 		    return null;
 		for (IASTName nd : nds) {
-			IASTNode parent = nd.getParent();
-			assert parent instanceof ICPPASTSimpleTypeTemplateParameter;
-			if (parent instanceof ICPPASTSimpleTypeTemplateParameter) {
-				ICPPASTSimpleTypeTemplateParameter simple = (ICPPASTSimpleTypeTemplateParameter) parent;
-				IASTTypeId typeId = simple.getDefaultType();
-				if (typeId != null)
-					return CPPVisitor.createType(typeId);
+			if (nd != null) {
+				IASTNode parent = nd.getParent();
+				assert parent instanceof ICPPASTSimpleTypeTemplateParameter;
+				if (parent instanceof ICPPASTSimpleTypeTemplateParameter) {
+					ICPPASTSimpleTypeTemplateParameter simple = (ICPPASTSimpleTypeTemplateParameter) parent;
+					IASTTypeId typeId = simple.getDefaultType();
+					if (typeId != null)
+						return CPPVisitor.createType(typeId);
+				}
 			}
 		}
 		return null;

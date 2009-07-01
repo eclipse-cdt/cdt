@@ -33,6 +33,7 @@ import org.eclipse.cdt.core.dom.ast.IASTPointerOperator;
 import org.eclipse.cdt.core.dom.ast.IASTSimpleDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
 import org.eclipse.cdt.core.dom.ast.IBinding;
+import org.eclipse.cdt.core.dom.ast.IVariable;
 import org.eclipse.cdt.core.dom.ast.cpp.CPPASTVisitor;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTParameterDeclaration;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTReferenceOperator;
@@ -326,6 +327,16 @@ public class NodeContainer {
 											.getMessage(), e);
 							logger.log(status);
 						}
+					}else if(bind instanceof IVariable) {
+						NameInformation nameInformation = new NameInformation(
+								name);
+
+						IASTName[] refs = name.getTranslationUnit()
+								.getReferences(bind);
+						for (IASTName ref : refs) {
+							nameInformation.addReference(ref);
+						}
+						names.add(nameInformation);
 					}
 					return super.visit(name);
 				}

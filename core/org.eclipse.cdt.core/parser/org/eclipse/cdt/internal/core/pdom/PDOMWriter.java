@@ -212,7 +212,7 @@ abstract public class PDOMWriter {
 						th= e;
 					}
 					if (th != null) {
-						stati.add(createStatus(NLS.bind(Messages.PDOMWriter_errorWhileParsing, ifl.getURI().getPath(), th)));
+						stati.add(createStatus(NLS.bind(Messages.PDOMWriter_errorWhileParsing, ifl.getURI().getPath()), th));
 					}
 					if (i<ifls.length-1) {
 						updateFileCount(0, 0, 1); // update header count

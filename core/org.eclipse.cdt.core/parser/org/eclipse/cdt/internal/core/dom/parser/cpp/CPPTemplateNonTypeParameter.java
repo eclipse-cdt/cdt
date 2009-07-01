@@ -43,13 +43,15 @@ public class CPPTemplateNonTypeParameter extends CPPTemplateParameter implements
 		    return null;
 		
 		for (IASTName name : nds) {
-			IASTNode parent = name.getParent();
-			assert parent instanceof IASTDeclarator;
-			if (parent instanceof IASTDeclarator) {
-				IASTDeclarator dtor = (IASTDeclarator) parent;
-				IASTInitializer initializer = dtor.getInitializer();
-				if (initializer instanceof IASTInitializerExpression)
-					return ((IASTInitializerExpression) initializer).getExpression();
+			if (name != null) {
+				IASTNode parent = name.getParent();
+				assert parent instanceof IASTDeclarator;
+				if (parent instanceof IASTDeclarator) {
+					IASTDeclarator dtor = (IASTDeclarator) parent;
+					IASTInitializer initializer = dtor.getInitializer();
+					if (initializer instanceof IASTInitializerExpression)
+						return ((IASTInitializerExpression) initializer).getExpression();
+				}
 			}
 		}
 		return null;

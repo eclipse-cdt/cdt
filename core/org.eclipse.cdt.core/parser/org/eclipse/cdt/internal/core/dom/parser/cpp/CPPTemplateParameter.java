@@ -158,7 +158,7 @@ public abstract class CPPTemplateParameter extends PlatformObject
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPInternalBinding#getDeclarations()
 	 */
-	public IASTNode[] getDeclarations() {
+	public IASTName[] getDeclarations() {
 		return declarations;
 	}
 

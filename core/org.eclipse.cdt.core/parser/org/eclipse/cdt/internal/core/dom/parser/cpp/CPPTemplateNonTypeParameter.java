@@ -17,6 +17,7 @@ import org.eclipse.cdt.core.dom.ast.IASTExpression;
 import org.eclipse.cdt.core.dom.ast.IASTInitializer;
 import org.eclipse.cdt.core.dom.ast.IASTInitializerExpression;
 import org.eclipse.cdt.core.dom.ast.IASTName;
+import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.IValue;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateArgument;
@@ -37,12 +38,20 @@ public class CPPTemplateNonTypeParameter extends CPPTemplateParameter implements
 	}
 
 	public IASTExpression getDefault() {
-		IASTName name = getPrimaryDeclaration();
-		IASTDeclarator dtor = (IASTDeclarator) name.getParent();
-		IASTInitializer initializer = dtor.getInitializer();
-		if( initializer instanceof IASTInitializerExpression )
-			return ((IASTInitializerExpression) initializer).getExpression();
-
+		IASTName[] nds = getDeclarations();
+		if (nds == null || nds.length == 0)
+		    return null;
+		
+		for (IASTName name : nds) {
+			IASTNode parent = name.getParent();
+			assert parent instanceof IASTDeclarator;
+			if (parent instanceof IASTDeclarator) {
+				IASTDeclarator dtor = (IASTDeclarator) parent;
+				IASTInitializer initializer = dtor.getInitializer();
+				if (initializer instanceof IASTInitializerExpression)
+					return ((IASTInitializerExpression) initializer).getExpression();
+			}
+		}
 		return null;
 	}
 	

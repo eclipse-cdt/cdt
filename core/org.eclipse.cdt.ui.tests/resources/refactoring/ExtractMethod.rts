@@ -2752,3 +2752,29 @@ int a = 0;
     return a;
 }
 
+//!Bug#282004 Refactor->Extract Function in C Project (not C++) won't extract parameters
+//#org.eclipse.cdt.ui.tests.refactoring.extractfunction.ExtractFunctionRefactoringTest
+//@.config
+filename=main.c
+methodname=exp
+//@main.c
+int main()
+{
+    int a,b;
+    /*$*/b=a*2;/*$$*/
+    return a;
+}
+
+//=
+void exp(int b, int & a)
+{
+    b = a * 2;
+}
+
+int main()
+{
+    int a,b;
+    exp(b, a);
+    return a;
+}
+

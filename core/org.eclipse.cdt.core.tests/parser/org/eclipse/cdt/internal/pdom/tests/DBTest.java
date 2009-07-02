@@ -68,12 +68,12 @@ public class DBTest extends BaseTestCase {
 		final int blocksize = deltas * Database.BLOCK_SIZE_DELTA;
 		final int freeDeltas= Database.CHUNK_SIZE/Database.BLOCK_SIZE_DELTA-deltas;
 		
-		int mem = db.malloc(realsize);
+		long mem = db.malloc(realsize);
 		assertEquals(-blocksize, db.getShort(mem - Database.BLOCK_HEADER_SIZE));
 		db.free(mem);
 		assertEquals(blocksize, db.getShort(mem - Database.BLOCK_HEADER_SIZE));
-		assertEquals(mem - Database.BLOCK_HEADER_SIZE, db.getInt((deltas-Database.MIN_BLOCK_DELTAS+1) * Database.INT_SIZE));
-		assertEquals(mem - Database.BLOCK_HEADER_SIZE + blocksize, db.getInt((freeDeltas-Database.MIN_BLOCK_DELTAS+1) * Database.INT_SIZE));
+		assertEquals(mem - Database.BLOCK_HEADER_SIZE, db.getRecPtr((deltas-Database.MIN_BLOCK_DELTAS+1) * Database.INT_SIZE));
+		assertEquals(mem - Database.BLOCK_HEADER_SIZE + blocksize, db.getRecPtr((freeDeltas-Database.MIN_BLOCK_DELTAS+1) * Database.INT_SIZE));
 	}
 
 	public void testBug192437() throws IOException {
@@ -106,44 +106,44 @@ public class DBTest extends BaseTestCase {
 		final int blocksize = deltas * Database.BLOCK_SIZE_DELTA;
 		final int freeDeltas= Database.MIN_BLOCK_DELTAS-deltas;
 
-		int mem1 = db.malloc(realsize);
-		int mem2 = db.malloc(realsize);
+		long mem1 = db.malloc(realsize);
+		long mem2 = db.malloc(realsize);
 		db.free(mem1);
 		db.free(mem2);
-		assertEquals(mem2 - Database.BLOCK_HEADER_SIZE, db.getInt((deltas-Database.MIN_BLOCK_DELTAS+1) * Database.INT_SIZE));
-		assertEquals(0, db.getInt(mem2));
-		assertEquals(mem1 - Database.BLOCK_HEADER_SIZE, db.getInt(mem2 + Database.INT_SIZE));
-		assertEquals(mem2 - Database.BLOCK_HEADER_SIZE, db.getInt(mem1));
-		assertEquals(0, db.getInt(mem1 + Database.INT_SIZE));
+		assertEquals(mem2 - Database.BLOCK_HEADER_SIZE, db.getRecPtr((deltas-Database.MIN_BLOCK_DELTAS+1) * Database.INT_SIZE));
+		assertEquals(0, db.getRecPtr(mem2));
+		assertEquals(mem1 - Database.BLOCK_HEADER_SIZE, db.getRecPtr(mem2 + Database.INT_SIZE));
+		assertEquals(mem2 - Database.BLOCK_HEADER_SIZE, db.getRecPtr(mem1));
+		assertEquals(0, db.getRecPtr(mem1 + Database.INT_SIZE));
 	}
 	
 	public void testSimpleAllocationLifecycle() throws Exception {	
-		int mem1 = db.malloc(42);
+		long mem1 = db.malloc(42);
 		db.free(mem1);
-		int mem2 = db.malloc(42);
+		long mem2 = db.malloc(42);
 		assertEquals(mem2, mem1);
 	}
 	
 	private static class FindVisitor implements IBTreeVisitor {
 		private Database db;
 		private String key;
-		private int record;
+		private long record;
 		
 		public FindVisitor(Database db, String key) {
 			this.db = db;
 			this.key = key;
 		}
 
-		public int compare(int record) throws CoreException {
-			return db.getString(db.getInt(record + 4)).compare(key, true);
+		public int compare(long record) throws CoreException {
+			return db.getString(db.getRecPtr(record + 4)).compare(key, true);
 		}
 		
-		public boolean visit(int record) throws CoreException {
+		public boolean visit(long record) throws CoreException {
 			this.record = record;
 			return false;
 		}
 		
-		public int getRecord() {
+		public long getRecord() {
 			return record;
 		}
 		
@@ -183,19 +183,19 @@ public class DBTest extends BaseTestCase {
 		};
 		
 		IBTreeComparator comparator = new IBTreeComparator() {
-			public int compare(int record1, int record2) throws CoreException {
-				IString string1 = db.getString(db.getInt(record1 + 4));
-				IString string2 = db.getString(db.getInt(record2 + 4));
+			public int compare(long record1, long record2) throws CoreException {
+				IString string1 = db.getString(db.getRecPtr(record1 + 4));
+				IString string2 = db.getString(db.getRecPtr(record2 + 4));
 				return string1.compare(string2, true);
 			}
 		};
 		BTree btree = new BTree(db, Database.DATA_AREA, comparator);
 		for (int i = 0; i < names.length; ++i) {
 			String name = names[i];
-			int record = db.malloc(8);
+			long record = db.malloc(8);
 			db.putInt(record + 0, i);
 			IString string = db.newString(name);
-			db.putInt(record + 4, string.getRecord());
+			db.putRecPtr(record + 4, string.getRecord());
 			btree.insert(record);
 		}
 		
@@ -203,10 +203,10 @@ public class DBTest extends BaseTestCase {
 			String name = names[i];
 			FindVisitor finder = new FindVisitor(db, name);
 			btree.accept(finder);
-			int record = finder.getRecord();
+			long record = finder.getRecord();
 			assertTrue(record != 0);
 			assertEquals(i, db.getInt(record));
-			IString rname = db.getString(db.getInt(record + 4));
+			IString rname = db.getString(db.getRecPtr(record + 4));
 			assertTrue(rname.equals(name));
 		}
 	}

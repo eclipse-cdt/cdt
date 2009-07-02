@@ -37,7 +37,7 @@ class PDOMCPPReferenceType extends PDOMNode implements ICPPReferenceType, ITypeC
 
 	private IType targetType;
 	
-	public PDOMCPPReferenceType(PDOMLinkage linkage, int record) {
+	public PDOMCPPReferenceType(PDOMLinkage linkage, long record) {
 		super(linkage, record);
 	}
 
@@ -48,14 +48,14 @@ class PDOMCPPReferenceType extends PDOMNode implements ICPPReferenceType, ITypeC
 		
 		try {
 			// type
-			int typeRec = 0;
+			long typeRec = 0;
 			if (type != null) {
 				IType targetType = type.getType();
 				PDOMNode targetTypeNode = getLinkage().addType(this, targetType);
 				if (targetTypeNode != null)
 					typeRec = targetTypeNode.getRecord();
 			}
-			db.putInt(record + TYPE, typeRec);
+			db.putRecPtr(record + TYPE, typeRec);
 		} catch (DOMException e) {
 			throw new CoreException(Util.createStatus(e));
 		}
@@ -80,7 +80,7 @@ class PDOMCPPReferenceType extends PDOMNode implements ICPPReferenceType, ITypeC
 
 	private IType readType() {
 		try {
-			PDOMNode node = getLinkage().getNode(getDB().getInt(record + TYPE));
+			PDOMNode node = getLinkage().getNode(getDB().getRecPtr(record + TYPE));
 			return node instanceof IType ? (IType)node : null;
 		} catch (CoreException e) {
 			CCorePlugin.log(e);

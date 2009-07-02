@@ -54,7 +54,7 @@ class PDOMCPPTypedefSpecialization extends PDOMCPPSpecialization
 			// We protect against infinite recursion using a counter inside typedef.
 			PDOMNode typeNode = parent.getLinkage().addType(this, type);
 			if (typeNode != null)
-				getDB().putInt(record + TYPE, typeNode.getRecord());
+				getDB().putRecPtr(record + TYPE, typeNode.getRecord());
 		} catch (DOMException e) {
 			throw new CoreException(Util.createStatus(e));
 		} finally {
@@ -64,7 +64,7 @@ class PDOMCPPTypedefSpecialization extends PDOMCPPSpecialization
 		}
 	}
 
-	public PDOMCPPTypedefSpecialization(PDOMLinkage linkage, int record) {
+	public PDOMCPPTypedefSpecialization(PDOMLinkage linkage, long record) {
 		super(linkage, record);
 	}
 
@@ -80,7 +80,7 @@ class PDOMCPPTypedefSpecialization extends PDOMCPPSpecialization
 
 	public IType getType() throws DOMException {
 		try {
-			PDOMNode node = getLinkage().getNode(getDB().getInt(record + TYPE));
+			PDOMNode node = getLinkage().getNode(getDB().getRecPtr(record + TYPE));
 			return node instanceof IType ? (IType)node : null;
 		} catch (CoreException e) {
 			CCorePlugin.log(e);

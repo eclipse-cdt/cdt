@@ -25,7 +25,7 @@ public class DBProperties {
 	
 	protected BTree index;
 	protected Database db;
-	protected int record;
+	protected long record;
 	
 	/**
 	 * Allocate storage for a new DBProperties record in the specified database
@@ -44,7 +44,7 @@ public class DBProperties {
 	 * @param record
 	 * @throws CoreException
 	 */
-	public DBProperties(Database db, int record) throws CoreException {
+	public DBProperties(Database db, long record) throws CoreException {
 		this.record= record;
 		this.index= new BTree(db, record + PROP_INDEX, DBProperty.getComparator(db));
 		this.db= db;
@@ -127,10 +127,10 @@ public class DBProperties {
 	 */
 	public void clear() throws CoreException {
 		index.accept(new IBTreeVisitor(){
-			public int compare(int record) throws CoreException {
+			public int compare(long record) throws CoreException {
 				return 0;
 			}
-			public boolean visit(int record) throws CoreException {
+			public boolean visit(long record) throws CoreException {
 				new DBProperty(db, record).delete();
 				return false; // there should never be duplicates
 			}
@@ -148,7 +148,7 @@ public class DBProperties {
 		db.free(record);
 	}
 
-	public int getRecord() {
+	public long getRecord() {
 		return record;
 	}
 	
@@ -159,9 +159,9 @@ public class DBProperties {
 		static final int RECORD_SIZE = 8;
 		
 		Database db;
-		int record;
+		long record;
 		
-		public int getRecord() {
+		public long getRecord() {
 			return record;
 		}
 		
@@ -178,8 +178,8 @@ public class DBProperties {
 			IString dbkey= db.newString(key);
 			IString dbvalue= db.newString(value);
 			this.record= db.malloc(RECORD_SIZE);
-			db.putInt(record + KEY, dbkey.getRecord());
-			db.putInt(record + VALUE, dbvalue.getRecord());
+			db.putRecPtr(record + KEY, dbkey.getRecord());
+			db.putRecPtr(record + VALUE, dbvalue.getRecord());
 			this.db= db;
 		}
 		
@@ -189,24 +189,24 @@ public class DBProperties {
 		 * @param db
 		 * @param record
 		 */
-		DBProperty(Database db, int record) {
+		DBProperty(Database db, long record) {
 			this.record= record;
 			this.db= db;
 		}
 		
 		public IString getKey() throws CoreException {
-			return db.getString(db.getInt(record + KEY));
+			return db.getString(db.getRecPtr(record + KEY));
 		}
 		
 		public IString getValue() throws CoreException {
-			return db.getString(db.getInt(record + VALUE));
+			return db.getString(db.getRecPtr(record + VALUE));
 		}
 		
 		public static IBTreeComparator getComparator(final Database db) {
 			return new IBTreeComparator() {
-				public int compare(int record1, int record2) throws CoreException {
-					IString left= db.getString(db.getInt(record1 + KEY));
-					IString right= db.getString(db.getInt(record2 + KEY));
+				public int compare(long record1, long record2) throws CoreException {
+					IString left= db.getString(db.getRecPtr(record1 + KEY));
+					IString right= db.getString(db.getRecPtr(record2 + KEY));
 					return left.compare(right, true);
 				}
 			};
@@ -215,10 +215,10 @@ public class DBProperties {
 		public static DBProperty search(final Database db, final BTree index, final String key) throws CoreException {
 			final DBProperty[] result= new DBProperty[1];
 			index.accept(new IBTreeVisitor(){
-				public int compare(int record) throws CoreException {
-					return db.getString(db.getInt(record + KEY)).compare(key, true);
+				public int compare(long record) throws CoreException {
+					return db.getString(db.getRecPtr(record + KEY)).compare(key, true);
 				}
-				public boolean visit(int record) throws CoreException {
+				public boolean visit(long record) throws CoreException {
 					result[0] = new DBProperty(db, record);
 					return false; // there should never be duplicates
 				}
@@ -229,10 +229,10 @@ public class DBProperties {
 		public static Set<String> getKeySet(final Database db, final BTree index) throws CoreException {
 			final Set<String> result= new HashSet<String>();
 			index.accept(new IBTreeVisitor(){
-				public int compare(int record) throws CoreException {
+				public int compare(long record) throws CoreException {
 					return 0;
 				}
-				public boolean visit(int record) throws CoreException {
+				public boolean visit(long record) throws CoreException {
 					result.add(new DBProperty(db, record).getKey().getString());
 					return true; // there should never be duplicates
 				}
@@ -241,8 +241,8 @@ public class DBProperties {
 		}
 		
 		public void delete() throws CoreException {
-			db.getString(db.getInt(record + KEY)).delete();
-			db.getString(db.getInt(record + VALUE)).delete();
+			db.getString(db.getRecPtr(record + KEY)).delete();
+			db.getString(db.getRecPtr(record + VALUE)).delete();
 			db.free(record);
 		}
 	}

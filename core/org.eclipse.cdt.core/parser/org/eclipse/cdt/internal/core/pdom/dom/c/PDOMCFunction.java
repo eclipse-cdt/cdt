@@ -63,7 +63,7 @@ class PDOMCFunction extends PDOMBinding implements IFunction {
 	@SuppressWarnings("hiding")
 	public static final int RECORD_SIZE = PDOMBinding.RECORD_SIZE + 13;
 	
-	public PDOMCFunction(PDOMLinkage linkage, int record) {
+	public PDOMCFunction(PDOMLinkage linkage, long record) {
 		super(linkage, record);
 	}
 
@@ -115,34 +115,34 @@ class PDOMCFunction extends PDOMBinding implements IFunction {
 	}
 
 	private void setType(PDOMLinkage linkage, IFunctionType ft) throws CoreException {
-		int rec= 0;
+		long rec= 0;
 		if (ft != null) {
 			PDOMNode typeNode = linkage.addType(this, ft);
 			if (typeNode != null) {
 				rec= typeNode.getRecord();
 			}
 		}
-		getDB().putInt(record + FUNCTION_TYPE, rec);
+		getDB().putRecPtr(record + FUNCTION_TYPE, rec);
 	}
 
 	private void setParameters(IParameter[] params) throws CoreException {
 		getDB().putInt(record + NUM_PARAMS, params.length);
-		getDB().putInt(record + FIRST_PARAM, 0);
+		getDB().putRecPtr(record + FIRST_PARAM, 0);
 		for (int i = 0; i < params.length; ++i) {
 			setFirstParameter(new PDOMCParameter(getLinkage(), this, params[i]));
 		}
 	}
 	
 	public PDOMCParameter getFirstParameter() throws CoreException {
-		int rec = getDB().getInt(record + FIRST_PARAM);
+		long rec = getDB().getRecPtr(record + FIRST_PARAM);
 		return rec != 0 ? new PDOMCParameter(getLinkage(), rec) : null;
 	}
 	
 	public void setFirstParameter(PDOMCParameter param) throws CoreException {
 		if (param != null)
 			param.setNextParameter(getFirstParameter());
-		int rec = param != null ? param.getRecord() :  0;
-		getDB().putInt(record + FIRST_PARAM, rec);
+		long rec = param != null ? param.getRecord() :  0;
+		getDB().putRecPtr(record + FIRST_PARAM, rec);
 	}
 
 	
@@ -165,7 +165,7 @@ class PDOMCFunction extends PDOMBinding implements IFunction {
 		 * both the IType and IBinding interfaces. 
 		 */
 		try {
-			int offset= getDB().getInt(record + FUNCTION_TYPE);
+			long offset= getDB().getRecPtr(record + FUNCTION_TYPE);
 			return offset==0 ? null : new PDOMCFunctionType(getLinkage(), offset); 
 		} catch(CoreException ce) {
 			CCorePlugin.log(ce);

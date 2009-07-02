@@ -28,7 +28,7 @@ public class ApplyVisitor implements IBTreeVisitor, IPDOMVisitor {
 		this.visitor= visitor;
 	}
 	
-	public int compare(int record) throws CoreException {
+	public int compare(long record) throws CoreException {
 		return 0; // visit all nodes in a b-tree
 	}
 	
@@ -40,7 +40,7 @@ public class ApplyVisitor implements IBTreeVisitor, IPDOMVisitor {
 		return false; // don't visit children of the node
 	}
 	
-	public boolean visit(int record) throws CoreException {
+	public boolean visit(long record) throws CoreException {
 		if (record == 0)
 			return true;
 		PDOMNode node= linkage.getNode(record);

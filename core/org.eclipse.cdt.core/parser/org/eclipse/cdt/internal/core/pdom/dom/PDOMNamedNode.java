@@ -42,7 +42,7 @@ public abstract class PDOMNamedNode extends PDOMNode {
 
 	private char[] fName;
 	
-	public PDOMNamedNode(PDOMLinkage linkage, int record) {
+	public PDOMNamedNode(PDOMLinkage linkage, long record) {
 		super(linkage, record);
 	}
 
@@ -51,7 +51,7 @@ public abstract class PDOMNamedNode extends PDOMNode {
 		
 		fName= name;
 		final Database db = linkage.getDB();
-		db.putInt(record + NAME, name != null ? db.newString(name).getRecord() : 0);
+		db.putRecPtr(record + NAME, name != null ? db.newString(name).getRecord() : 0);
 	}
 
 	/**
@@ -60,7 +60,7 @@ public abstract class PDOMNamedNode extends PDOMNode {
 	protected PDOMNamedNode(Database db, char[] name) throws CoreException {
 		super(db);
 		fName= name;
-		db.putInt(record + NAME, name != null ? db.newString(name).getRecord() : 0);
+		db.putRecPtr(record + NAME, name != null ? db.newString(name).getRecord() : 0);
 	}
 	
 	@Override
@@ -70,8 +70,8 @@ public abstract class PDOMNamedNode extends PDOMNode {
 		return getDBName(getDB(), record);
 	}
 	
-	public static IString getDBName(Database db, int record) throws CoreException {
-		int namerec = db.getInt(record + NAME);
+	public static IString getDBName(Database db, long record) throws CoreException {
+		long namerec = db.getRecPtr(record + NAME);
 		return db.getString(namerec);
 	}
 	
@@ -101,7 +101,7 @@ public abstract class PDOMNamedNode extends PDOMNode {
 		if (!name.equals(nameCharArray)) {
 			name.delete();
 			final Database db= getDB();
-			db.putInt(record + NAME, db.newString(nameCharArray).getRecord());
+			db.putRecPtr(record + NAME, db.newString(nameCharArray).getRecord());
 		}
 		fName= nameCharArray;
 	}
@@ -110,7 +110,7 @@ public abstract class PDOMNamedNode extends PDOMNode {
 	@Override
 	public void delete(PDOMLinkage linkage) throws CoreException {
 		final Database db = getDB();
-		final int namerec= db.getInt(record + NAME);
+		final long namerec= db.getRecPtr(record + NAME);
 		if (namerec != 0) {
 			db.free(namerec);
 		}

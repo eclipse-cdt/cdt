@@ -44,7 +44,7 @@ class PDOMCEnumeration extends PDOMBinding implements IEnumeration, IIndexType {
 		super(linkage, parent, enumeration.getNameCharArray());
 	}
 
-	public PDOMCEnumeration(PDOMLinkage linkage, int record) {
+	public PDOMCEnumeration(PDOMLinkage linkage, long record) {
 		super(linkage, record);
 	}
 
@@ -77,14 +77,14 @@ class PDOMCEnumeration extends PDOMBinding implements IEnumeration, IIndexType {
 	}
 
 	private PDOMCEnumerator getFirstEnumerator() throws CoreException {
-		int value = getDB().getInt(record + FIRST_ENUMERATOR);
+		long value = getDB().getRecPtr(record + FIRST_ENUMERATOR);
 		return value != 0 ? new PDOMCEnumerator(getLinkage(), value) : null;
 	}
 	
 	public void addEnumerator(PDOMCEnumerator enumerator) throws CoreException {
 		PDOMCEnumerator first = getFirstEnumerator();
 		enumerator.setNextEnumerator(first);
-		getDB().putInt(record + FIRST_ENUMERATOR, enumerator.getRecord());
+		getDB().putRecPtr(record + FIRST_ENUMERATOR, enumerator.getRecord());
 	}
 	
 	public boolean isSameType(IType type) {

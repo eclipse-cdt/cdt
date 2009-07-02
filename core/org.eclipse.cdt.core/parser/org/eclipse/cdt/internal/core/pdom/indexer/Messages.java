@@ -22,6 +22,13 @@ public class Messages extends NLS {
 	public static String TodoTaskUpdater_DeleteJob;
 	public static String TodoTaskUpdater_taskFormat;
 	public static String TodoTaskUpdater_UpdateJob;
+	public static String PDOMImportTask_readingIndexJob_Name;
+	public static String PDOMImportTask_readingChecksumsJob_Name;
+	public static String PDOMImportTask_checkingFilesJob_Name;
+	public static String PDOMImportTask_verifyingChecksumsJob_Name;
+	public static String PDOMImportTask_updatingFileListJob_Name;
+	public static String PDOMImportTask_importIndexJob_Name;
+	public static String PDOMRebuildTask_0;
 
 	static {
 		// initialize resource bundle

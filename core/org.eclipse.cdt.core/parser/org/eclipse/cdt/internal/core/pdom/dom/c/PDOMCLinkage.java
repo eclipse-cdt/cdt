@@ -47,7 +47,7 @@ import org.eclipse.core.runtime.CoreException;
  */
 class PDOMCLinkage extends PDOMLinkage implements IIndexCBindingConstants {
 
-	public PDOMCLinkage(PDOM pdom, int record) {
+	public PDOMCLinkage(PDOM pdom, long record) {
 		super(pdom, record);
 	}
 
@@ -85,7 +85,7 @@ class PDOMCLinkage extends PDOMLinkage implements IIndexCBindingConstants {
 			if (parent == null)
 				return null;
 		
-			int[] localToFileHolder= {0};
+			long[] localToFileHolder= {0};
 			pdomBinding = adaptBinding(parent, binding, localToFileHolder);
 			if (pdomBinding == null) {
 				pdomBinding = createBinding(parent, binding, localToFileHolder[0]);
@@ -104,7 +104,7 @@ class PDOMCLinkage extends PDOMLinkage implements IIndexCBindingConstants {
 		return pdomBinding;
 	}
 	
-	private PDOMBinding createBinding(PDOMNode parent, IBinding binding, int localToFile) throws CoreException {
+	private PDOMBinding createBinding(PDOMNode parent, IBinding binding, long localToFile) throws CoreException {
 		PDOMBinding pdomBinding= null;
 
 		if (binding instanceof IField) { // must be before IVariable
@@ -230,7 +230,7 @@ class PDOMCLinkage extends PDOMLinkage implements IIndexCBindingConstants {
 		return adaptBinding(null, inputBinding, FILE_LOCAL_REC_DUMMY);
 	}
 	
-	private final PDOMBinding adaptBinding(final PDOMNode parent, IBinding inputBinding, int[] localToFileHolder) throws CoreException {
+	private final PDOMBinding adaptBinding(final PDOMNode parent, IBinding inputBinding, long[] localToFileHolder) throws CoreException {
 		if (inputBinding instanceof CompositeIndexBinding) {
 			inputBinding= ((CompositeIndexBinding) inputBinding).getRawBinding();
 		}
@@ -256,7 +256,7 @@ class PDOMCLinkage extends PDOMLinkage implements IIndexCBindingConstants {
 		return result;
 	}
 
-	private final PDOMBinding doAdaptBinding(PDOMNode parent, final IBinding binding, int[] localToFileHolder) throws CoreException {
+	private final PDOMBinding doAdaptBinding(PDOMNode parent, final IBinding binding, long[] localToFileHolder) throws CoreException {
 		if (parent == null) {
 			parent= getAdaptedParent(binding);
 		}
@@ -276,7 +276,7 @@ class PDOMCLinkage extends PDOMLinkage implements IIndexCBindingConstants {
 			final int[] bindingTypes = new int[] {getBindingType(binding)};
 			final char[] nameChars = binding.getNameCharArray();
 			PDOMBinding nonLocal= FindBinding.findBinding(getIndex(), this, nameChars, bindingTypes, 0);
-			int localToFileRec= getLocalToFileRec(inheritFileLocal, binding, nonLocal);
+			long localToFileRec= getLocalToFileRec(inheritFileLocal, binding, nonLocal);
 			if (localToFileRec == 0)
 				return nonLocal;
 			localToFileHolder[0]= localToFileRec;
@@ -286,7 +286,7 @@ class PDOMCLinkage extends PDOMLinkage implements IIndexCBindingConstants {
 			final int[] bindingTypes = new int[] {getBindingType(binding)};
 			final char[] nameChars = binding.getNameCharArray();
 			PDOMBinding nonLocal= FindBinding.findBinding(parent, this, nameChars, bindingTypes, 0);
-			int localToFileRec= getLocalToFileRec(inheritFileLocal, binding, nonLocal);
+			long localToFileRec= getLocalToFileRec(inheritFileLocal, binding, nonLocal);
 			if (localToFileRec == 0)
 				return nonLocal;
 			localToFileHolder[0]= localToFileRec;
@@ -296,7 +296,7 @@ class PDOMCLinkage extends PDOMLinkage implements IIndexCBindingConstants {
 	}
 
 	@Override
-	public PDOMNode getNode(int record) throws CoreException {
+	public PDOMNode getNode(long record) throws CoreException {
 		if (record == 0)
 			return null;
 

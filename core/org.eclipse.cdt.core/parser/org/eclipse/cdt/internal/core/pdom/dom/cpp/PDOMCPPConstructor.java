@@ -25,7 +25,7 @@ class PDOMCPPConstructor extends PDOMCPPMethod implements ICPPConstructor {
 		super(linkage, parent, method);
 	}
 
-	public PDOMCPPConstructor(PDOMLinkage linkage, int record) {
+	public PDOMCPPConstructor(PDOMLinkage linkage, long record) {
 		super(linkage, record);
 	}
 

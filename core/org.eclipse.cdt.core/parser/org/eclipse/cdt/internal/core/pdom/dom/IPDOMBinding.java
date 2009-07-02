@@ -28,7 +28,7 @@ public interface IPDOMBinding extends IPDOMNode, IIndexFragmentBinding {
 	/**
 	 * Returns the database record for this binding.
 	 */
-	int getRecord();
+	long getRecord();
 	
 	/**
 	 * Returns the linkage of the binding.

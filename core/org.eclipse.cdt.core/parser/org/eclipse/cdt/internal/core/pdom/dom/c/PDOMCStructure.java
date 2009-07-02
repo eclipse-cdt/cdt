@@ -63,7 +63,7 @@ public class PDOMCStructure extends PDOMBinding implements ICompositeType, ICCom
 		// linked list is initialized by malloc zeroing allocated storage
 	}
 
-	public PDOMCStructure(PDOMLinkage linkage, int record) {
+	public PDOMCStructure(PDOMLinkage linkage, long record) {
 		super(linkage, record);
 	}
 	

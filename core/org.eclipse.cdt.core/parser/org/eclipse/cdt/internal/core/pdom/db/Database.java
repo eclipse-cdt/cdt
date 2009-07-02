@@ -24,9 +24,11 @@ import java.nio.channels.FileChannel;
 import java.util.ArrayList;
 
 import org.eclipse.cdt.core.CCorePlugin;
+import org.eclipse.cdt.internal.core.pdom.PDOM;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
+import org.eclipse.osgi.util.NLS;
 
 
 /**
@@ -38,7 +40,7 @@ import org.eclipse.core.runtime.Status;
 /* 
  * The file encapsulated is divided into Chunks of size CHUNK_SIZE, and a table of contents
  * mapping chunk index to chunk address is maintained. Chunk structure exists only conceptually -
- * its not a structure that appears in the file.
+ * it is not a structure that appears in the file.
  * 
  * ===== The first chunk is used by Database itself for house-keeping purposes and has structure
  * 
@@ -56,9 +58,9 @@ import org.eclipse.core.runtime.Status;
  * 
  * offset            content
  * 	                 _____________________________
- * 0                | size of block (negative indicates in use, positive unused)
- * PREV_OFFSET      | pointer to prev block (of same size)
- * NEXT_OFFSET      | pointer to next block (of same size)
+ * 0                | size of block (negative indicates in use, positive unused) (2 bytes)
+ * PREV_OFFSET      | pointer to prev block (of same size) (only in free blocks)
+ * NEXT_OFFSET      | pointer to next block (of same size) (only in free blocks)
  * 
  */
 public class Database {
@@ -67,7 +69,8 @@ public class Database {
 	public static final int CHUNK_SIZE = 1024 * 4;
 	public static final int OFFSET_IN_CHUNK_MASK= CHUNK_SIZE-1;
 	public static final int BLOCK_HEADER_SIZE= 2;
-	public static final int BLOCK_SIZE_DELTA= 8;
+	public static final int BLOCK_SIZE_DELTA_BITS = 3;
+	public static final int BLOCK_SIZE_DELTA= 1 << BLOCK_SIZE_DELTA_BITS;
 	public static final int MIN_BLOCK_DELTAS = 2;	// a block must at least be 2 + 2*4 bytes to link the free blocks.
 	public static final int MAX_BLOCK_DELTAS = CHUNK_SIZE/BLOCK_SIZE_DELTA;	
 	public static final int MAX_MALLOC_SIZE = MAX_BLOCK_DELTAS*BLOCK_SIZE_DELTA - BLOCK_HEADER_SIZE;  
@@ -88,6 +91,8 @@ public class Database {
 	private int fVersion;
 	private final Chunk fHeaderChunk;
 	private Chunk[] fChunks;
+	private int fChunksUsed;
+	private int fChunksAllocated;
 	private ChunkCache fCache;
 	
 	private long malloced;
@@ -116,11 +121,13 @@ public class Database {
 			if (nChunksOnDisk <= 0) {
 				fVersion= version;
 				fChunks= new Chunk[1];
+				fChunksUsed = fChunksAllocated = fChunks.length;
 			}
 			else {
 				fHeaderChunk.read();
 				fVersion= fHeaderChunk.getInt(VERSION_OFFSET);
 				fChunks = new Chunk[nChunksOnDisk];	// chunk[0] is unused.
+				fChunksUsed = fChunksAllocated = nChunksOnDisk;
 			}
 		} catch (IOException e) {
 			throw new CoreException(new DBStatus(e));
@@ -131,11 +138,11 @@ public class Database {
 		fFile = new RandomAccessFile(fLocation, fReadOnly ? "r" : "rw"); //$NON-NLS-1$ //$NON-NLS-2$
 	}
 
-	void read(ByteBuffer buf, int i) throws IOException {
+	void read(ByteBuffer buf, long position) throws IOException {
 		int retries= 0;
 		do {
 			try {
-				fFile.getChannel().read(buf, i);
+				fFile.getChannel().read(buf, position);
 				return;
 			}
 			catch (ClosedChannelException e) {
@@ -145,11 +152,11 @@ public class Database {
 		} while (true);
 	}
 
-	void write(ByteBuffer buf, int i) throws IOException {
+	void write(ByteBuffer buf, long position) throws IOException {
 		int retries= 0;
 		do {
 			try {
-				fFile.getChannel().write(buf, i);
+				fFile.getChannel().write(buf, position);
 				return;
 			}
 			catch (ClosedChannelException e) {
@@ -184,7 +191,7 @@ public class Database {
         }
 	}
 	
-	public int getVersion() throws CoreException {
+	public int getVersion() {
 		return fVersion;
 	}
 	
@@ -207,6 +214,7 @@ public class Database {
 		fHeaderChunk.clear(0, CHUNK_SIZE);
 		// chunks have been removed from the cache, so we may just reset the array of chunks.
 		fChunks = new Chunk[] {null};
+		fChunksUsed = fChunksAllocated = fChunks.length;
 		try {
 			fHeaderChunk.flush();	// zero out header chunk
 			fFile.getChannel().truncate(CHUNK_SIZE);	// truncate database
@@ -215,6 +223,21 @@ public class Database {
 			CCorePlugin.log(e);
 		}
 		malloced = freed = 0;
+		/*
+		 * This is for debugging purposes in order to simulate having a very large PDOM database. 
+		 * This will set aside the specified number of chunks.
+		 * Nothing uses these chunks so subsequent allocations come after these fillers.
+		 * The special function createNewChunks allocates all of these chunks at once.
+		 * 524288 for a file starting at 2G
+		 * 8388608 for a file starting at 32G
+		 * 
+		 */
+		long setasideChunks = Long.getLong("org.eclipse.cdt.core.parser.pdom.dense.recptr.setaside.chunks", 0 ); //$NON-NLS-1$
+		if( setasideChunks != 0 ) {
+			setVersion( getVersion() );
+			createNewChunks( (int) setasideChunks );
+			flush();
+		}
 	}
 
 	private void removeChunksFromCache() {
@@ -234,13 +257,16 @@ public class Database {
 	 * Return the Chunk that contains the given offset.
 	 * @throws CoreException 
 	 */
-	public Chunk getChunk(int offset) throws CoreException {
+	public Chunk getChunk(long offset) throws CoreException {
 		if (offset < CHUNK_SIZE) {
 			return fHeaderChunk;
 		}
+		long long_index = offset / CHUNK_SIZE;
+		assert long_index < Integer.MAX_VALUE; 
+
 		synchronized(fCache) {
 			assert fLocked;
-			final int index = offset / CHUNK_SIZE;
+			final int index = (int)long_index;
 			Chunk chunk= fChunks[index];
 			if (chunk == null) {
 				cacheMisses++;
@@ -258,20 +284,17 @@ public class Database {
 	/**
 	 * Allocate a block out of the database.
 	 */ 
-	public int malloc(final int datasize) throws CoreException {
+	public long malloc(final int datasize) throws CoreException {
 		assert fExclusiveLock;
-		if (datasize < 0 || datasize > MAX_MALLOC_SIZE)
-			// Too Big
-			throw new CoreException(new Status(IStatus.ERROR, CCorePlugin.PLUGIN_ID, 0,
-					CCorePlugin.getResourceString("pdom.requestTooLarge"), new IllegalArgumentException())); //$NON-NLS-1$
-		
+		assert datasize >=0 && datasize <= MAX_MALLOC_SIZE;
+					
 		int needDeltas= (datasize + BLOCK_HEADER_SIZE + BLOCK_SIZE_DELTA - 1) / BLOCK_SIZE_DELTA;
 		if (needDeltas < MIN_BLOCK_DELTAS) {
 			needDeltas= MIN_BLOCK_DELTAS;
 		}
 
 		// Which block size
-		int freeblock = 0;
+		long freeblock = 0;
 		int useDeltas;
 		for (useDeltas= needDeltas; useDeltas <= MAX_BLOCK_DELTAS; useDeltas++) {
 			freeblock = getFirstBlock(useDeltas*BLOCK_SIZE_DELTA);
@@ -309,56 +332,114 @@ public class Database {
 		return freeblock + BLOCK_HEADER_SIZE;
 	}
 	
-	private int createNewChunk() throws CoreException {
+	private long createNewChunk() throws CoreException {
+		assert fExclusiveLock;
+		synchronized (fCache) {
+			final int newChunkIndex = fChunksUsed; // fChunks.length;
+
+			final Chunk chunk = new Chunk(this, newChunkIndex);
+			chunk.fDirty = true;
+
+			if (newChunkIndex >= fChunksAllocated) {
+				int increment = Math.max(1024, fChunksAllocated/20);
+				Chunk[] newchunks = new Chunk[fChunksAllocated + increment];
+				System.arraycopy(fChunks, 0, newchunks, 0, fChunksAllocated);
+
+				fChunks = newchunks;
+				fChunksAllocated += increment;
+			}
+			fChunksUsed += 1;
+			fChunks[newChunkIndex] = chunk;
+
+			fCache.add(chunk, true);
+			long address = (long) newChunkIndex * CHUNK_SIZE;
+
+			/*
+			 * non-dense pointers are at most 31 bits dense pointers are at most 35 bits Check the sizes here
+			 * and throw an exception if the address is too large. By throwing the CoreException with the
+			 * special status, the indexing operation should be stopped. This is desired since generally, once
+			 * the max size is exceeded, there are lots of errors.
+			 */
+			long max_size;
+			if (usesDensePointers()) {
+				max_size = ((long) 1 << (Integer.SIZE + BLOCK_SIZE_DELTA_BITS));
+			} else {
+				max_size = ((long) 1 << (Integer.SIZE - 1));
+			}
+			if (address >= max_size) {
+				Object bindings[] = { this.getLocation().getAbsolutePath(), max_size };
+				throw new CoreException(new Status(IStatus.ERROR, CCorePlugin.PLUGIN_ID,
+						CCorePlugin.STATUS_PDOM_TOO_LARGE, NLS.bind(CCorePlugin
+								.getResourceString("pdom.DatabaseTooLarge"), bindings), null)); //$NON-NLS-1$
+			}
+			return address;
+		}
+	}
+
+	/**
+	 * Returns whether this database uses dense pointers.
+	 */
+	boolean usesDensePointers() {
+		return getVersion() >= PDOM.DENSE_RECPTR_VERSION;
+	}
+
+	/**
+	 * for testing purposes, only.
+	 */
+	private long createNewChunks(int numChunks) throws CoreException {
 		assert fExclusiveLock;
 		synchronized (fCache) {
 			final int oldLen= fChunks.length;
-			final Chunk chunk= new Chunk(this, oldLen);
-			chunk.fDirty= true;
-
-			Chunk[] newchunks = new Chunk[oldLen+1];
+			Chunk[] newchunks = new Chunk[oldLen+numChunks];
 			System.arraycopy(fChunks, 0, newchunks, 0, oldLen);
-			newchunks[oldLen]= chunk;
+			for( int i = oldLen; i < oldLen + numChunks; i++ ) {
+				newchunks[i]= null;
+			}
+			final Chunk chunk= new Chunk(this, oldLen + numChunks - 1);
+			chunk.fDirty= true;
+			newchunks[ oldLen + numChunks - 1 ] = chunk;
 			fChunks= newchunks;
 			fCache.add(chunk, true);
-			return oldLen * CHUNK_SIZE;
+			fChunksAllocated=oldLen+numChunks;
+			fChunksUsed=oldLen+numChunks;
+			return (long)(oldLen + numChunks - 1) * CHUNK_SIZE;
 		}
 	}
 	
-	private int getFirstBlock(int blocksize) throws CoreException {
+	private long getFirstBlock(int blocksize) throws CoreException {
 		assert fLocked;
-		return fHeaderChunk.getInt((blocksize/BLOCK_SIZE_DELTA - MIN_BLOCK_DELTAS + 1) * INT_SIZE);
+		return fHeaderChunk.getFreeRecPtr((blocksize/BLOCK_SIZE_DELTA - MIN_BLOCK_DELTAS + 1) * INT_SIZE);
 	}
 	
-	private void setFirstBlock(int blocksize, int block) throws CoreException {
+	private void setFirstBlock(int blocksize, long block) throws CoreException {
 		assert fExclusiveLock;
-		fHeaderChunk.putInt((blocksize/BLOCK_SIZE_DELTA - MIN_BLOCK_DELTAS + 1) * INT_SIZE, block);
+		fHeaderChunk.putFreeRecPtr((blocksize/BLOCK_SIZE_DELTA - MIN_BLOCK_DELTAS + 1) * INT_SIZE, block);
 	}
 	
-	private void removeBlock(Chunk chunk, int blocksize, int block) throws CoreException {
+	private void removeBlock(Chunk chunk, int blocksize, long block) throws CoreException {
 		assert fExclusiveLock;
-		int prevblock = chunk.getInt(block + BLOCK_PREV_OFFSET);
-		int nextblock = chunk.getInt(block + BLOCK_NEXT_OFFSET);
+		long prevblock = chunk.getFreeRecPtr(block + BLOCK_PREV_OFFSET);
+		long nextblock = chunk.getFreeRecPtr(block + BLOCK_NEXT_OFFSET);
 		if (prevblock != 0)
-			putInt(prevblock + BLOCK_NEXT_OFFSET, nextblock);
+			putFreeRecPtr(prevblock + BLOCK_NEXT_OFFSET, nextblock);
 		else // we were the head
 			setFirstBlock(blocksize, nextblock);
 			
 		if (nextblock != 0)
-			putInt(nextblock + BLOCK_PREV_OFFSET, prevblock);
+			putFreeRecPtr(nextblock + BLOCK_PREV_OFFSET, prevblock);
 	}
 	
-	private void addBlock(Chunk chunk, int blocksize, int block) throws CoreException {
+	private void addBlock(Chunk chunk, int blocksize, long block) throws CoreException {
 		assert fExclusiveLock;
 		// Mark our size
 		chunk.putShort(block, (short) blocksize);
 
 		// Add us to the head of the list
-		int prevfirst = getFirstBlock(blocksize);
-		chunk.putInt(block + BLOCK_PREV_OFFSET, 0);
-		chunk.putInt(block + BLOCK_NEXT_OFFSET, prevfirst);
+		long prevfirst = getFirstBlock(blocksize);
+		chunk.putFreeRecPtr(block + BLOCK_PREV_OFFSET, 0);
+		chunk.putFreeRecPtr(block + BLOCK_NEXT_OFFSET, prevfirst);
 		if (prevfirst != 0)
-			putInt(prevfirst + BLOCK_PREV_OFFSET, block);
+			putFreeRecPtr(prevfirst + BLOCK_PREV_OFFSET, block);
 		setFirstBlock(blocksize, block);
 	}
 	
@@ -367,10 +448,10 @@ public class Database {
 	 * 
 	 * @param offset
 	 */
-	public void free(int offset) throws CoreException {
+	public void free(long offset) throws CoreException {
 		assert fExclusiveLock;
 		// TODO - look for opportunities to merge blocks
-		int block = offset - BLOCK_HEADER_SIZE;
+		long block = offset - BLOCK_HEADER_SIZE;
 		Chunk chunk = getChunk(block);
 		int blocksize = - chunk.getShort(block);
 		if (blocksize < 0)
@@ -380,51 +461,67 @@ public class Database {
 		freed += blocksize;
 	}
 
-	public void putByte(int offset, byte value) throws CoreException {
+	public void putByte(long offset, byte value) throws CoreException {
 		getChunk(offset).putByte(offset, value);
 	}
 	
-	public byte getByte(int offset) throws CoreException {
+	public byte getByte(long offset) throws CoreException {
 		return getChunk(offset).getByte(offset);
 	}
 	
-	public void putInt(int offset, int value) throws CoreException {
+	public void putInt(long offset, int value) throws CoreException {
 		getChunk(offset).putInt(offset, value);
 	}
 	
-	public int getInt(int offset) throws CoreException {
+	public int getInt(long offset) throws CoreException {
 		return getChunk(offset).getInt(offset);
 	}
+	
+	public void putRecPtr(long offset, long value) throws CoreException {
+		getChunk(offset).putRecPtr(offset, value);
+	}
+	
+	public long getRecPtr(long offset) throws CoreException {
+		return getChunk(offset).getRecPtr(offset);
+	}
+	
+	private void putFreeRecPtr(long offset, long value) throws CoreException {
+		getChunk(offset).putFreeRecPtr(offset, value);
+	}
+	
+	private long getFreeRecPtr(long offset) throws CoreException {
+		return getChunk(offset).getFreeRecPtr(offset);
+	}
 
-	public void put3ByteUnsignedInt(int offset, int value) throws CoreException {
+	public void put3ByteUnsignedInt(long offset, int value) throws CoreException {
 		getChunk(offset).put3ByteUnsignedInt(offset, value);
 	}
 	
-	public int get3ByteUnsignedInt(int offset) throws CoreException {
+	public int get3ByteUnsignedInt(long offset) throws CoreException {
 		return getChunk(offset).get3ByteUnsignedInt(offset);
 	}
 	
-	public void putShort(int offset, short value) throws CoreException {
+	public void putShort(long offset, short value) throws CoreException {
 		getChunk(offset).putShort(offset, value);
 	}
 	
-	public short getShort(int offset) throws CoreException {
+	public short getShort(long offset) throws CoreException {
 		return getChunk(offset).getShort(offset);
 	}
 
-	public void putLong(int offset, long value) throws CoreException {
+	public void putLong(long offset, long value) throws CoreException {
 		getChunk(offset).putLong(offset, value);
 	}
 	
-	public long getLong(int offset) throws CoreException {
+	public long getLong(long offset) throws CoreException {
 		return getChunk(offset).getLong(offset);
 	}
 
-	public void putChar(int offset, char value) throws CoreException {
+	public void putChar(long offset, char value) throws CoreException {
 		getChunk(offset).putChar(offset, value);
 	}
 
-	public char getChar(int offset) throws CoreException {
+	public char getChar(long offset) throws CoreException {
 		return getChunk(offset).getChar(offset);
 	}
 	
@@ -442,7 +539,7 @@ public class Database {
 			return new ShortString(this, chars);
 	}
 
-	public IString getString(int offset) throws CoreException {
+	public IString getString(long offset) throws CoreException {
 		int length = getInt(offset);
 		if (length > ShortString.MAX_LENGTH)
 			return new LongString(this, offset);
@@ -454,17 +551,17 @@ public class Database {
 	 * For debugging purposes, only.
 	 */
 	public void reportFreeBlocks() throws CoreException {
-		System.out.println("Allocated size: " + fChunks.length * CHUNK_SIZE); //$NON-NLS-1$
+		System.out.println("Allocated size: " + fChunksUsed * CHUNK_SIZE); //$NON-NLS-1$
 		System.out.println("malloc'ed: " + malloced); //$NON-NLS-1$
 		System.out.println("free'd: " + freed); //$NON-NLS-1$
-		System.out.println("wasted: " + (fChunks.length * CHUNK_SIZE - (malloced - freed))); //$NON-NLS-1$
+		System.out.println("wasted: " + (fChunksUsed * CHUNK_SIZE - (malloced - freed))); //$NON-NLS-1$
 		System.out.println("Free blocks"); //$NON-NLS-1$
 		for (int bs = MIN_BLOCK_DELTAS*BLOCK_SIZE_DELTA; bs <= CHUNK_SIZE; bs += BLOCK_SIZE_DELTA) {
 			int count = 0;
-			int block = getFirstBlock(bs);
+			long block = getFirstBlock(bs);
 			while (block != 0) {
 				++count;
-				block = getInt(block + BLOCK_NEXT_OFFSET);
+				block = getFreeRecPtr(block + BLOCK_NEXT_OFFSET);
 			}
 			if (count != 0)
 				System.out.println("Block size: " + bs + "=" + count); //$NON-NLS-1$ //$NON-NLS-2$
@@ -486,6 +583,7 @@ public class Database {
 		fHeaderChunk.clear(0, CHUNK_SIZE);
 		fHeaderChunk.fDirty= false;
 		fChunks= new Chunk[] {null};
+		fChunksUsed = fChunksAllocated = fChunks.length;
 		try {
 			fFile.close();
 		} catch (IOException e) {
@@ -535,7 +633,7 @@ public class Database {
 			try {
 				ArrayList<Chunk> dirtyChunks= new ArrayList<Chunk>();
 				synchronized (fCache) {
-					for (int i= 1; i < fChunks.length; i++) {
+					for (int i= 1; i < fChunksUsed; i++) {
 						Chunk chunk= fChunks[i];
 						if (chunk != null) {
 							if (chunk.fCacheIndex < 0) { 	
@@ -589,7 +687,7 @@ public class Database {
 		// be careful as other readers may access chunks concurrently
 		ArrayList<Chunk> dirtyChunks= new ArrayList<Chunk>();
 		synchronized (fCache) {
-			for (int i= 1; i < fChunks.length ; i++) {
+			for (int i= 1; i < fChunksUsed ; i++) {
 				Chunk chunk= fChunks[i];
 				if (chunk != null && chunk.fDirty) {
 					dirtyChunks.add(chunk);
@@ -667,4 +765,5 @@ public class Database {
 		}
 		return 0;
 	}
+
 }

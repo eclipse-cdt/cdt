@@ -80,7 +80,9 @@ public final class IndexProviderManager implements IElementChangedListener {
 	 * <b>Note: This method should not be called by clients for purposes other than testing</b>
 	 */
 	public void reset() {
-		reset(new VersionRange(new Version(PDOM.MAJOR_VERSION,0, 0), true, new Version(PDOM.MAJOR_VERSION+1, 0, 0), false));
+		Version minVersion= Version.parseVersion(PDOM.versionString(PDOM.getMinSupportedVersion()));
+		Version maxVersion= Version.parseVersion(PDOM.versionString(PDOM.getMaxSupportedVersion()));
+		reset(new VersionRange(minVersion, true, maxVersion, true));
 	}
 	
 	/**

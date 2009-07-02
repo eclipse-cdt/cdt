@@ -75,7 +75,7 @@ public class PDOMRebuildTask implements IPDOMIndexerTask {
 				// remove task-tags.
 				TodoTaskUpdater.removeTasksFor(project);
 			} catch (CoreException e) {
-				CCorePlugin.log(e);
+				CCorePlugin.log(NLS.bind(Messages.PDOMRebuildTask_0, cproject.getElementName() ), e);
 			} catch (InterruptedException e) {
 			}
 		}

@@ -39,7 +39,7 @@ public class PDOMMacroContainer extends PDOMNamedNode implements IIndexMacroCont
 		super(linkage, linkage, name);
 	}
 	
-	PDOMMacroContainer(PDOMLinkage linkage, int record) {
+	PDOMMacroContainer(PDOMLinkage linkage, long record) {
 		super(linkage, record);
 	}
 		
@@ -55,8 +55,8 @@ public class PDOMMacroContainer extends PDOMNamedNode implements IIndexMacroCont
 	
 	public boolean isOrphaned() throws CoreException {
 		Database db = getDB();
-		return db.getInt(record + FIRST_DEF_OFFSET) == 0
-			&& db.getInt(record + FIRST_REF_OFFSET) == 0;
+		return db.getRecPtr(record + FIRST_DEF_OFFSET) == 0
+			&& db.getRecPtr(record + FIRST_REF_OFFSET) == 0;
 	}
 
 	public void addDefinition(PDOMMacro name) throws CoreException {
@@ -78,23 +78,23 @@ public class PDOMMacroContainer extends PDOMNamedNode implements IIndexMacroCont
 	}
 	
 	public PDOMMacro getFirstDefinition() throws CoreException {
-		int namerec = getDB().getInt(record + FIRST_DEF_OFFSET);
+		long namerec = getDB().getRecPtr(record + FIRST_DEF_OFFSET);
 		return namerec != 0 ? new PDOMMacro(getLinkage(), namerec) : null;
 	}
 	
 	void setFirstDefinition(PDOMMacro macro) throws CoreException {
-		int namerec = macro != null ? macro.getRecord() : 0;
-		getDB().putInt(record + FIRST_DEF_OFFSET, namerec);
+		long namerec = macro != null ? macro.getRecord() : 0;
+		getDB().putRecPtr(record + FIRST_DEF_OFFSET, namerec);
 	}
 	
 	public PDOMMacroReferenceName getFirstReference() throws CoreException {
-		int namerec = getDB().getInt(record + FIRST_REF_OFFSET);
+		long namerec = getDB().getRecPtr(record + FIRST_REF_OFFSET);
 		return namerec != 0 ? new PDOMMacroReferenceName(getLinkage(), namerec) : null;
 	}
 	
 	void setFirstReference(PDOMMacroReferenceName nextName) throws CoreException {
-		int namerec = nextName != null ? nextName.getRecord() : 0;
-		getDB().putInt(record + FIRST_REF_OFFSET, namerec);
+		long namerec = nextName != null ? nextName.getRecord() : 0;
+		getDB().putRecPtr(record + FIRST_REF_OFFSET, namerec);
 	}
 
 	public IIndexMacro[] getDefinitions() throws CoreException {
@@ -134,7 +134,7 @@ public class PDOMMacroContainer extends PDOMNamedNode implements IIndexMacroCont
 	}
 
 	public boolean hasDefinition() throws CoreException {
-		return getDB().getInt(record + FIRST_DEF_OFFSET) != 0;
+		return getDB().getRecPtr(record + FIRST_DEF_OFFSET) != 0;
 	}
 
 	public IIndexFile getLocalToFile() throws CoreException {

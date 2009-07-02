@@ -64,7 +64,7 @@ public abstract class PDOMLinkage extends PDOMNamedNode implements IIndexLinkage
 
 	@SuppressWarnings("hiding")
 	protected static final int RECORD_SIZE = PDOMNamedNode.RECORD_SIZE + 20;
-	protected static final int[] FILE_LOCAL_REC_DUMMY = new int[]{0};
+	protected static final long[] FILE_LOCAL_REC_DUMMY = new long[]{0};
 
 	// node types
 	protected static final int LINKAGE= 0; // special one for myself
@@ -73,7 +73,7 @@ public abstract class PDOMLinkage extends PDOMNamedNode implements IIndexLinkage
 	private final PDOM fPDOM;
 	private final Database fDatabase;
 
-	public PDOMLinkage(PDOM pdom, int record) {
+	public PDOMLinkage(PDOM pdom, long record) {
 		super(null, record);
 		fPDOM= pdom;
 		fDatabase= pdom.getDB();
@@ -85,7 +85,7 @@ public abstract class PDOMLinkage extends PDOMNamedNode implements IIndexLinkage
 
 		fPDOM= pdom;
 		fDatabase= db;
-		db.putInt(record + ID_OFFSET, db.newString(languageId).getRecord());
+		db.putRecPtr(record + ID_OFFSET, db.newString(languageId).getRecord());
 		pdom.insertLinkage(this);
 	}
 	
@@ -114,18 +114,18 @@ public abstract class PDOMLinkage extends PDOMNamedNode implements IIndexLinkage
 		return LINKAGE;
 	}
 
-	public static IString getLinkageID(PDOM pdom, int record) throws CoreException {
+	public static IString getLinkageID(PDOM pdom, long record) throws CoreException {
 		Database db = pdom.getDB();
-		int namerec = db.getInt(record + ID_OFFSET);
+		long namerec = db.getRecPtr(record + ID_OFFSET);
 		return db.getString(namerec);
 	}
 
-	public static int getNextLinkageRecord(PDOM pdom, int record) throws CoreException {
-		return pdom.getDB().getInt(record + NEXT_OFFSET);
+	public static long getNextLinkageRecord(PDOM pdom, long record) throws CoreException {
+		return pdom.getDB().getRecPtr(record + NEXT_OFFSET);
 	}
 
-	public void setNext(int nextrec) throws CoreException {
-		getDB().putInt(record + NEXT_OFFSET, nextrec);
+	public void setNext(long nextrec) throws CoreException {
+		getDB().putRecPtr(record + NEXT_OFFSET, nextrec);
 	}
 
 	public BTree getIndex() throws CoreException {
@@ -146,10 +146,10 @@ public abstract class PDOMLinkage extends PDOMNamedNode implements IIndexLinkage
 			getIndex().accept((IBTreeVisitor) visitor);
 		} else {
 			getIndex().accept(new IBTreeVisitor() {
-				public int compare(int record) throws CoreException {
+				public int compare(long record) throws CoreException {
 					return 0;
 				}
-				public boolean visit(int record) throws CoreException {
+				public boolean visit(long record) throws CoreException {
 					PDOMNode node= getNode(record);
 					if (node != null) {
 						if (visitor.visit(node))
@@ -168,14 +168,14 @@ public abstract class PDOMLinkage extends PDOMNamedNode implements IIndexLinkage
 		getIndex().insert(child.getRecord());
 	}
 	
-	public final PDOMBinding getBinding(int record) throws CoreException {
+	public final PDOMBinding getBinding(long record) throws CoreException {
 		final PDOMNode node= getNode(record);
 		if (node instanceof PDOMBinding)
 			return (PDOMBinding) node;
 		return null;
 	}
 
-	public PDOMNode getNode(int record) throws CoreException {
+	public PDOMNode getNode(long record) throws CoreException {
 		switch (PDOMNode.getNodeType(fDatabase, record)) {
 		case POINTER_TYPE:
 			return new PDOMPointerType(this, record);
@@ -230,8 +230,8 @@ public abstract class PDOMLinkage extends PDOMNamedNode implements IIndexLinkage
 	public abstract PDOMBinding adaptBinding(IBinding binding) throws CoreException;
 	public abstract PDOMBinding addBinding(IASTName name) throws CoreException;
 
-	final protected int getLocalToFileRec(PDOMNode parent, IBinding binding, PDOMBinding glob) throws CoreException {
-		int rec= 0;
+	final protected long getLocalToFileRec(PDOMNode parent, IBinding binding, PDOMBinding glob) throws CoreException {
+		long rec= 0;
 		if (parent instanceof PDOMBinding) {
 			rec= ((PDOMBinding) parent).getLocalToFileRec();
 		}
@@ -334,7 +334,7 @@ public abstract class PDOMLinkage extends PDOMNamedNode implements IIndexLinkage
 		}
 	}
 
-	public void deleteType(IType type, int ownerRec) throws CoreException {
+	public void deleteType(IType type, long ownerRec) throws CoreException {
 		if (type instanceof PDOMNode) {
 			PDOMNode node= (PDOMNode) type;
 			// at this point only delete types that are actually owned by the requesting party.
@@ -442,7 +442,7 @@ public abstract class PDOMLinkage extends PDOMNamedNode implements IIndexLinkage
 	}
 	
 	private CharArrayMap<PDOMBinding[]> getBindingMap() {
-		final Integer key= getRecord();
+		final Long key= getRecord();
 		final PDOM pdom = getPDOM();
 		@SuppressWarnings("unchecked")
 		Reference<CharArrayMap<PDOMBinding[]>> cached= (Reference<CharArrayMap<PDOMBinding[]>>) pdom.getCachedResult(key);

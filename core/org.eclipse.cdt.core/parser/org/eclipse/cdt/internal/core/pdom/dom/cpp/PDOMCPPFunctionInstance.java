@@ -44,19 +44,19 @@ class PDOMCPPFunctionInstance extends PDOMCPPFunctionSpecialization implements I
 		super(linkage, parent, function, orig);
 
 		final ICPPTemplateInstance asInstance= (ICPPTemplateInstance) function;
-		final int argListRec= PDOMCPPArgumentList.putArguments(this, asInstance.getTemplateArguments());
+		final long argListRec= PDOMCPPArgumentList.putArguments(this, asInstance.getTemplateArguments());
 		final Database db = getDB();
-		db.putInt(record+ARGUMENTS, argListRec);
+		db.putRecPtr(record+ARGUMENTS, argListRec);
 		
 		try {
-			int exceptSpecRec = PDOMCPPTypeList.putTypes(this, function.getExceptionSpecification());
-			db.putInt(record+EXCEPTION_SPEC, exceptSpecRec);
+			long exceptSpecRec = PDOMCPPTypeList.putTypes(this, function.getExceptionSpecification());
+			db.putRecPtr(record+EXCEPTION_SPEC, exceptSpecRec);
 		} catch (DOMException e) {
 			// ignore problems in the exception specification
 		}
 	}
 
-	public PDOMCPPFunctionInstance(PDOMLinkage linkage, int bindingRecord) {
+	public PDOMCPPFunctionInstance(PDOMLinkage linkage, long bindingRecord) {
 		super(linkage, bindingRecord);
 	}
 
@@ -77,7 +77,7 @@ class PDOMCPPFunctionInstance extends PDOMCPPFunctionSpecialization implements I
 	
 	public ICPPTemplateArgument[] getTemplateArguments() {
 		try {
-			final int rec= getPDOM().getDB().getInt(record+ARGUMENTS);
+			final long rec= getPDOM().getDB().getRecPtr(record+ARGUMENTS);
 			return PDOMCPPArgumentList.getArguments(this, rec);
 		} catch (CoreException e) {
 			CCorePlugin.log(e);
@@ -88,7 +88,7 @@ class PDOMCPPFunctionInstance extends PDOMCPPFunctionSpecialization implements I
 	@Override
 	public IType[] getExceptionSpecification() throws DOMException {
 		try {
-			final int rec = getPDOM().getDB().getInt(record+EXCEPTION_SPEC);
+			final long rec = getPDOM().getDB().getRecPtr(record+EXCEPTION_SPEC);
 			return PDOMCPPTypeList.getTypes(this, rec);
 		} catch (CoreException e) {
 			CCorePlugin.log(e);

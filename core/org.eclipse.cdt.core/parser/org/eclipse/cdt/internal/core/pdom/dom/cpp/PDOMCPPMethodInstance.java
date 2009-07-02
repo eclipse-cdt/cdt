@@ -37,7 +37,7 @@ class PDOMCPPMethodInstance extends PDOMCPPFunctionInstance implements ICPPMetho
 		super(linkage, parent, method, instantiated);
 	}
 	
-	public PDOMCPPMethodInstance(PDOMLinkage linkage, int bindingRecord) {
+	public PDOMCPPMethodInstance(PDOMLinkage linkage, long bindingRecord) {
 		super(linkage, bindingRecord);
 	}
 

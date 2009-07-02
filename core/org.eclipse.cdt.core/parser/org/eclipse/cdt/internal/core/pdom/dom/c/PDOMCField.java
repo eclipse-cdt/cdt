@@ -31,7 +31,7 @@ class PDOMCField extends PDOMCVariable implements IField {
 		super(linkage, (PDOMNode) parent, field);
 	}
 
-	public PDOMCField(PDOMLinkage linkage, int record) {
+	public PDOMCField(PDOMLinkage linkage, long record) {
 		super(linkage, record);
 	}
 

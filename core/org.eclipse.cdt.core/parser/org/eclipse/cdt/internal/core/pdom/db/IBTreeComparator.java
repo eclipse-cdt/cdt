@@ -21,6 +21,6 @@ public interface IBTreeComparator {
 	/**
 	 * Compare two records. Used for insert.
 	 */
-	public abstract int compare(int record1, int record2) throws CoreException;
+	public abstract int compare(long record1, long record2) throws CoreException;
 	
 }

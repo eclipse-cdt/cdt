@@ -35,7 +35,7 @@ class PDOMCPPConstructorSpecialization extends
 		super(linkage, parent, constructor, specialized);
 	}
 
-	public PDOMCPPConstructorSpecialization(PDOMLinkage linkage, int bindingRecord) {
+	public PDOMCPPConstructorSpecialization(PDOMLinkage linkage, long bindingRecord) {
 		super(linkage, bindingRecord);
 	}
 	

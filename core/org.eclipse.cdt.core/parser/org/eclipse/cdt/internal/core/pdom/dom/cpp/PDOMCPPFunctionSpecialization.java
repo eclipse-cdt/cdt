@@ -80,7 +80,7 @@ class PDOMCPPFunctionSpecialization extends PDOMCPPSpecialization implements ICP
 			if (ft != null) {
 				PDOMNode typeNode = getLinkage().addType(this, ft);
 				if (typeNode != null) {
-					db.putInt(record + FUNCTION_TYPE, typeNode.getRecord());
+					db.putRecPtr(record + FUNCTION_TYPE, typeNode.getRecord());
 				}
 			}
 
@@ -95,7 +95,7 @@ class PDOMCPPFunctionSpecialization extends PDOMCPPSpecialization implements ICP
 			final int length= Math.min(sParams.length, params.length);
 			db.putInt(record + NUM_PARAMS, length);
 			for (int i=0; i<length; ++i) {
-				int typeRecord= i<paramTypes.length && paramTypes[i]!=null ? ((PDOMNode)paramTypes[i]).getRecord() : 0;
+				long typeRecord= i<paramTypes.length && paramTypes[i]!=null ? ((PDOMNode)paramTypes[i]).getRecord() : 0;
 				//TODO shouldn't need to make new parameter (find old one)
 				final IType type= i<sParamTypes.length ? sParamTypes[i] : null;
 				PDOMCPPParameter sParam = new PDOMCPPParameter(getLinkage(), this, sParams[i], type);
@@ -106,20 +106,20 @@ class PDOMCPPFunctionSpecialization extends PDOMCPPSpecialization implements ICP
 			throw new CoreException(Util.createStatus(e));
 		}
 		try {
-			int typelist= 0;
+			long typelist= 0;
 			if (function instanceof ICPPMethod && ((ICPPMethod) function).isImplicit()) {
 				// don't store the exception specification, computed it on demand.
 			} else {
 				typelist = PDOMCPPTypeList.putTypes(this, function.getExceptionSpecification());
 			}
-			db.putInt(record + EXCEPTION_SPEC, typelist);
+			db.putRecPtr(record + EXCEPTION_SPEC, typelist);
 		} catch (DOMException e) {
 			// ignore problems in the exception specification
 		}
 
 	}
 
-	public PDOMCPPFunctionSpecialization(PDOMLinkage linkage, int bindingRecord) {
+	public PDOMCPPFunctionSpecialization(PDOMLinkage linkage, long bindingRecord) {
 		super(linkage, bindingRecord);
 	}
 	
@@ -134,15 +134,15 @@ class PDOMCPPFunctionSpecialization extends PDOMCPPSpecialization implements ICP
 	}
 
 	public PDOMCPPParameterSpecialization getFirstParameter() throws CoreException {
-		int rec = getDB().getInt(record + FIRST_PARAM);
+		long rec = getDB().getRecPtr(record + FIRST_PARAM);
 		return rec != 0 ? new PDOMCPPParameterSpecialization(getLinkage(), rec) : null;
 	}
 
 	public void setFirstParameter(PDOMCPPParameterSpecialization param) throws CoreException {
 		if (param != null)
 			param.setNextParameter(getFirstParameter());
-		int rec = param != null ? param.getRecord() :  0;
-		getDB().putInt(record + FIRST_PARAM, rec);
+		long rec = param != null ? param.getRecord() :  0;
+		getDB().putRecPtr(record + FIRST_PARAM, rec);
 	}
 	
 	public boolean isInline() throws DOMException {
@@ -175,7 +175,7 @@ class PDOMCPPFunctionSpecialization extends PDOMCPPSpecialization implements ICP
 
 	public ICPPFunctionType getType() throws DOMException {		
 		try {
-			int offset= getDB().getInt(record + FUNCTION_TYPE);
+			long offset= getDB().getRecPtr(record + FUNCTION_TYPE);
 			return offset==0 ? null : new PDOMCPPFunctionType(getLinkage(), offset); 
 		} catch(CoreException ce) {
 			CCorePlugin.log(ce);
@@ -229,7 +229,7 @@ class PDOMCPPFunctionSpecialization extends PDOMCPPSpecialization implements ICP
 
 	public IType[] getExceptionSpecification() throws DOMException {
 		try {
-			final int rec = getPDOM().getDB().getInt(record+EXCEPTION_SPEC);
+			final long rec = getPDOM().getDB().getRecPtr(record+EXCEPTION_SPEC);
 			return PDOMCPPTypeList.getTypes(this, rec);
 		} catch (CoreException e) {
 			CCorePlugin.log(e);

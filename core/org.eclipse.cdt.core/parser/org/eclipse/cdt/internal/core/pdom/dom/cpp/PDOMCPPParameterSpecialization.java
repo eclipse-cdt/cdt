@@ -46,12 +46,12 @@ class PDOMCPPParameterSpecialization extends PDOMCPPSpecialization implements IC
 	@SuppressWarnings("hiding")
 	protected static final int RECORD_SIZE = PDOMCPPSpecialization.RECORD_SIZE + 8;
 
-	public PDOMCPPParameterSpecialization(PDOMLinkage linkage, PDOMNode parent, ICPPParameter param, PDOMCPPParameter specialized, int typeRecord)
+	public PDOMCPPParameterSpecialization(PDOMLinkage linkage, PDOMNode parent, ICPPParameter param, PDOMCPPParameter specialized, long typeRecord)
 	throws CoreException {
 		super(linkage, parent, (ICPPSpecialization) param, specialized);
 		Database db = getDB();
-		db.putInt(record + NEXT_PARAM, 0);
-		db.putInt(record + TYPE, typeRecord);
+		db.putRecPtr(record + NEXT_PARAM, 0);
+		db.putRecPtr(record + TYPE, typeRecord);
 	}
 
 	public PDOMCPPParameterSpecialization(PDOMLinkage linkage, PDOMNode parent, ICPPParameter param, PDOMCPPParameter specialized, IType type)
@@ -60,21 +60,21 @@ class PDOMCPPParameterSpecialization extends PDOMCPPSpecialization implements IC
 		
 		Database db = getDB();
 
-		db.putInt(record + NEXT_PARAM, 0);
+		db.putRecPtr(record + NEXT_PARAM, 0);
 		
 		try {
 			if (type == null) 
 				type= param.getType();
 			if (type != null) {
 				PDOMNode typeNode = getLinkage().addType(this, type);
-				db.putInt(record + TYPE, typeNode != null ? typeNode.getRecord() : 0);
+				db.putRecPtr(record + TYPE, typeNode != null ? typeNode.getRecord() : 0);
 			}
 		} catch (DOMException e) {
 			throw new CoreException(Util.createStatus(e));
 		}
 	}
 	
-	public PDOMCPPParameterSpecialization(PDOMLinkage linkage, int record) {
+	public PDOMCPPParameterSpecialization(PDOMLinkage linkage, long record) {
 		super(linkage, record);
 	}
 	
@@ -89,18 +89,18 @@ class PDOMCPPParameterSpecialization extends PDOMCPPSpecialization implements IC
 	}
 
 	public void setNextParameter(PDOMCPPParameterSpecialization nextParam) throws CoreException {
-		int rec = nextParam != null ? nextParam.getRecord() : 0;
-		getDB().putInt(record + NEXT_PARAM, rec);
+		long rec = nextParam != null ? nextParam.getRecord() : 0;
+		getDB().putRecPtr(record + NEXT_PARAM, rec);
 	}
 
 	public PDOMCPPParameterSpecialization getNextParameter() throws CoreException {
-		int rec = getDB().getInt(record + NEXT_PARAM);
+		long rec = getDB().getRecPtr(record + NEXT_PARAM);
 		return rec != 0 ? new PDOMCPPParameterSpecialization(getLinkage(), rec) : null;
 	}
 	
 	public IType getType() throws DOMException {
 		try {
-			PDOMNode node = getLinkage().getNode(getDB().getInt(record + TYPE));
+			PDOMNode node = getLinkage().getNode(getDB().getRecPtr(record + TYPE));
 			return node instanceof IType ? (IType)node : null;
 		} catch (CoreException e) {
 			CCorePlugin.log(e);

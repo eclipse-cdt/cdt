@@ -26,14 +26,14 @@ public class PDOMValue {
 	 * Stores a value and returns the offset of where it was stored.
 	 * @throws CoreException 
 	 */
-	public static int store(Database db, PDOMLinkage linkage, IValue val) throws CoreException {
+	public static long store(Database db, PDOMLinkage linkage, IValue val) throws CoreException {
 		if (val == null)
 			return 0;
 		
 		final IBinding[] unknown= val.getUnknownBindings();
-		int[] unknownRecs= {};
+		long[] unknownRecs= {};
 		if (unknown.length != 0) {
-			unknownRecs= new int[unknown.length];
+			unknownRecs= new long[unknown.length];
 			for (int i = 0; i < unknown.length; i++) {
 				PDOMNode node= linkage.addUnknownValue(unknown[i]);
 				if (node == null) {
@@ -44,15 +44,15 @@ public class PDOMValue {
 		}
 		
 		final short len= (short) Math.min(unknown.length, (Database.MAX_MALLOC_SIZE-6)/4); 
-		final int block= db.malloc(6+4*len);
-		final int repRec= db.newString(val.getInternalExpression()).getRecord();
+		final long block= db.malloc(6+4*len);
+		final long repRec= db.newString(val.getInternalExpression()).getRecord();
 		
 		db.putShort(block, len);
-		db.putInt(block+2, repRec);
+		db.putRecPtr(block+2, repRec);
 		
-		int p= block+6;
+		long p= block+6;
 		for (int i = 0; i < len; i++) {
-			db.putInt(p, unknownRecs[i]);
+			db.putRecPtr(p, unknownRecs[i]);
 			p+= 4;
 		}
 		return block;
@@ -62,21 +62,21 @@ public class PDOMValue {
 	 * Restores a value from the given record
 	 * @throws CoreException 
 	 */
-	public static IValue restore(Database db, PDOMLinkage linkage, int valRec) throws CoreException {
+	public static IValue restore(Database db, PDOMLinkage linkage, long valRec) throws CoreException {
 		if (valRec == 0)
 			return null;
 		
 		final int len= db.getShort(valRec);
-		final int repRec = db.getInt(valRec+2);
+		final long repRec = db.getRecPtr(valRec+2);
 		final char[] rep= db.getString(repRec).getChars();
 		
 		if (len == 0)
 			return Value.fromInternalRepresentation(rep, ICPPUnknownBinding.EMPTY_UNKNOWN_BINDING_ARRAY);
 		
 		ICPPUnknownBinding[] unknown= new ICPPUnknownBinding[len];
-		int p= valRec+6;
+		long p= valRec+6;
 		for (int i = 0; i < unknown.length; i++) {
-			int rec= db.getInt(p);
+			long rec= db.getRecPtr(p);
 			PDOMNode node= linkage.getNode(rec);
 			if (node instanceof ICPPUnknownBinding) {
 				unknown[i]= (ICPPUnknownBinding) node;
@@ -92,10 +92,10 @@ public class PDOMValue {
 	/**
 	 * Deletes a value stored at the given record.
 	 */
-	public static void delete(Database db, int valueRec) throws CoreException {
+	public static void delete(Database db, long valueRec) throws CoreException {
 		if (valueRec == 0)
 			return;
-		final int repRec = db.getInt(valueRec+2);
+		final long repRec = db.getRecPtr(valueRec+2);
 		db.getString(repRec).delete();
 		db.free(valueRec);
 	}

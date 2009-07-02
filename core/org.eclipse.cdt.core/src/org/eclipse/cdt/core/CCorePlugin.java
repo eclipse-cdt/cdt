@@ -24,6 +24,8 @@ import java.util.Map;
 import java.util.MissingResourceException;
 import java.util.ResourceBundle;
 
+import com.ibm.icu.text.MessageFormat;
+
 import org.eclipse.cdt.core.cdtvariables.ICdtVariableManager;
 import org.eclipse.cdt.core.cdtvariables.IUserVarSupplier;
 import org.eclipse.cdt.core.dom.CDOM;
@@ -81,8 +83,6 @@ import org.eclipse.core.runtime.content.IContentType;
 import org.eclipse.core.runtime.jobs.Job;
 import org.osgi.framework.BundleContext;
 
-import com.ibm.icu.text.MessageFormat;
-
 /**
  * CCorePlugin is the life-cycle owner of the core plug-in, and starting point for access to many core APIs.
  * 
@@ -94,7 +94,11 @@ public class CCorePlugin extends Plugin {
 	public static final int STATUS_CDTPROJECT_EXISTS = 1;
 	public static final int STATUS_CDTPROJECT_MISMATCH = 2;
 	public static final int CDT_PROJECT_NATURE_ID_MISMATCH = 3;
-
+	/**
+	 * Will be public and final in the next CDT version.
+	 * @noreference
+	 */
+	public static int STATUS_PDOM_TOO_LARGE = 4;
 	public static final String PLUGIN_ID = "org.eclipse.cdt.core"; //$NON-NLS-1$
 
 	public static final String BUILDER_MODEL_ID = PLUGIN_ID + ".CBuildModel"; //$NON-NLS-1$

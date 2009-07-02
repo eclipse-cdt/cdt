@@ -45,7 +45,7 @@ class PDOMCBasicType extends PDOMNode implements ICBasicType, IIndexType {
 	public static final int IS_IMAGINARY = 0x20;
 	public static final int IS_COMPLEX = 0x40;
 	
-	public PDOMCBasicType(PDOMLinkage linkage, int record) {
+	public PDOMCBasicType(PDOMLinkage linkage, long record) {
 		super(linkage, record);
 	}
 

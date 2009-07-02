@@ -72,7 +72,7 @@ class PDOMCPPClassType extends PDOMCPPBinding implements IPDOMCPPClassType, IPDO
 		// linked list is initialized by storage being zero'd by malloc
 	}
 
-	public PDOMCPPClassType(PDOMLinkage linkage, int bindingRecord) {
+	public PDOMCPPClassType(PDOMLinkage linkage, long bindingRecord) {
 		super(linkage, bindingRecord);
 	}
 
@@ -139,13 +139,13 @@ class PDOMCPPClassType extends PDOMCPPBinding implements IPDOMCPPClassType, IPDO
 	}
 
 	private PDOMCPPBase getFirstBase() throws CoreException {
-		int rec = getDB().getInt(record + FIRSTBASE);
+		long rec = getDB().getRecPtr(record + FIRSTBASE);
 		return rec != 0 ? new PDOMCPPBase(getLinkage(), rec) : null;
 	}
 
 	private void setFirstBase(PDOMCPPBase base) throws CoreException {
-		int rec = base != null ? base.getRecord() : 0;
-		getDB().putInt(record + FIRSTBASE, rec);
+		long rec = base != null ? base.getRecord() : 0;
+		getDB().putRecPtr(record + FIRSTBASE, rec);
 	}
 
 	public void addBase(PDOMCPPBase base) throws CoreException {
@@ -160,7 +160,7 @@ class PDOMCPPClassType extends PDOMCPPBinding implements IPDOMCPPClassType, IPDO
 
 		PDOMCPPBase base= getFirstBase();
 		PDOMCPPBase predecessor= null;
-		int nameRec= pdomName.getRecord();
+		long nameRec= pdomName.getRecord();
 		while (base != null) {
 			PDOMName name = base.getBaseClassSpecifierName();
 			if (name != null && name.getRecord() == nameRec) {
@@ -187,19 +187,19 @@ class PDOMCPPClassType extends PDOMCPPBinding implements IPDOMCPPClassType, IPDO
 	}
 
 	private PDOMCPPFriend getFirstFriend() throws CoreException {
-		int rec = getDB().getInt(record + FIRSTFRIEND);
+		long rec = getDB().getRecPtr(record + FIRSTFRIEND);
 		return rec != 0 ? new PDOMCPPFriend(getLinkage(), rec) : null;
 	}
 
 	private void setFirstFriend(PDOMCPPFriend friend) throws CoreException {
-		int rec = friend != null ? friend.getRecord() : 0;
-		getDB().putInt(record + FIRSTFRIEND, rec);
+		long rec = friend != null ? friend.getRecord() : 0;
+		getDB().putRecPtr(record + FIRSTFRIEND, rec);
 	}
 
 	public void removeFriend(PDOMName pdomName) throws CoreException {
 		PDOMCPPFriend friend = getFirstFriend();
 		PDOMCPPFriend predecessor= null;
-		int nameRec= pdomName.getRecord();
+		long nameRec= pdomName.getRecord();
 		while (friend != null) {
 			PDOMName name = friend.getSpecifierName();
 			if (name != null && name.getRecord() == nameRec) {
@@ -277,7 +277,7 @@ class PDOMCPPClassType extends PDOMCPPBinding implements IPDOMCPPClassType, IPDO
 	}
 
 	public ICPPBase[] getBases() throws DOMException {
-		Integer key= record + PDOMCPPLinkage.CACHE_BASES;
+		Long key= record + PDOMCPPLinkage.CACHE_BASES;
 		ICPPBase[] bases= (ICPPBase[]) getPDOM().getCachedResult(key);
 		if (bases != null) 
 			return bases;

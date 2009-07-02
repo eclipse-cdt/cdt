@@ -22,7 +22,7 @@ import org.eclipse.core.runtime.CoreException;
  */
 public class PDOMCPPLinkageFactory implements IPDOMLinkageFactory {
 
-	public PDOMLinkage getLinkage(PDOM pdom, int record) {
+	public PDOMLinkage getLinkage(PDOM pdom, long record) {
 		return new PDOMCPPLinkage(pdom, record);
 	}
 

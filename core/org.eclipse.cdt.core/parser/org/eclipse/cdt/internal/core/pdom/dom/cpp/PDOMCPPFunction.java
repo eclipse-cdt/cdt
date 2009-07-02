@@ -134,7 +134,7 @@ class PDOMCPPFunction extends PDOMCPPBinding implements ICPPFunction, IPDOMOverl
 			db.putByte(record + ANNOTATION, newAnnotation);
 			annotation= newAnnotation;
 			
-			int oldRec = db.getInt(record+EXCEPTION_SPEC);
+			long oldRec = db.getRecPtr(record+EXCEPTION_SPEC);
 			storeExceptionSpec(db, func);
 			if (oldRec != 0) {
 				PDOMCPPTypeList.clearTypes(this, oldRec);
@@ -143,7 +143,7 @@ class PDOMCPPFunction extends PDOMCPPBinding implements ICPPFunction, IPDOMOverl
 	}
 
 	private void storeExceptionSpec(final Database db, ICPPFunction binding) throws CoreException {
-		int typelist= 0;
+		long typelist= 0;
 		try {
 			if (binding instanceof ICPPMethod && ((ICPPMethod) binding).isImplicit()) {
 				// don't store the exception specification, computed it on demand.
@@ -153,23 +153,23 @@ class PDOMCPPFunction extends PDOMCPPBinding implements ICPPFunction, IPDOMOverl
 		} catch (DOMException e) {
 			// ignore problems in the exception specification.
 		}
-		db.putInt(record + EXCEPTION_SPEC, typelist);
+		db.putRecPtr(record + EXCEPTION_SPEC, typelist);
 	}
 
 	private void setParameters(PDOMCPPFunctionType pft, IParameter[] params) throws CoreException {
 		final Database db= getDB();
 		db.putInt(record + NUM_PARAMS, params.length);
-		db.putInt(record + FIRST_PARAM, 0);
+		db.putRecPtr(record + FIRST_PARAM, 0);
 		IType[] paramTypes= pft.getParameterTypes();
 		for (int i= 0; i < params.length; ++i) {
-			int ptRecord= i < paramTypes.length && paramTypes[i] != null ? ((PDOMNode) paramTypes[i]).getRecord() : 0;
+			long ptRecord= i < paramTypes.length && paramTypes[i] != null ? ((PDOMNode) paramTypes[i]).getRecord() : 0;
 			setFirstParameter(new PDOMCPPParameter(getLinkage(), this, params[i], ptRecord));
 		}
 	}
 
 	private PDOMCPPFunctionType setType(ICPPFunctionType ft) throws CoreException {
 		PDOMCPPFunctionType pft = (PDOMCPPFunctionType) getLinkage().addType(this, ft);
-		getDB().putInt(record + FUNCTION_TYPE, pft.getRecord());
+		getDB().putRecPtr(record + FUNCTION_TYPE, pft.getRecord());
 		getPDOM().putCachedResult(record, pft, true);
 		return pft;
 	}
@@ -178,11 +178,11 @@ class PDOMCPPFunction extends PDOMCPPBinding implements ICPPFunction, IPDOMOverl
 		return getDB().getInt(record + SIGNATURE_HASH);
 	}
 	
-	public static int getSignatureHash(PDOMLinkage linkage, int record) throws CoreException {
+	public static int getSignatureHash(PDOMLinkage linkage, long record) throws CoreException {
 		return linkage.getDB().getInt(record + SIGNATURE_HASH);
 	}
 	
-	public PDOMCPPFunction(PDOMLinkage linkage, int bindingRecord) {
+	public PDOMCPPFunction(PDOMLinkage linkage, long bindingRecord) {
 		super(linkage, bindingRecord);
 	}
 	
@@ -197,15 +197,15 @@ class PDOMCPPFunction extends PDOMCPPBinding implements ICPPFunction, IPDOMOverl
 	}
 	
 	private PDOMCPPParameter getFirstParameter() throws CoreException {
-		int rec = getDB().getInt(record + FIRST_PARAM);
+		long rec = getDB().getRecPtr(record + FIRST_PARAM);
 		return rec != 0 ? new PDOMCPPParameter(getLinkage(), rec) : null;
 	}
 
 	private void setFirstParameter(PDOMCPPParameter param) throws CoreException {
 		if (param != null)
 			param.setNextParameter(getFirstParameter());
-		int rec = param != null ? param.getRecord() :  0;
-		getDB().putInt(record + FIRST_PARAM, rec);
+		long rec = param != null ? param.getRecord() :  0;
+		getDB().putRecPtr(record + FIRST_PARAM, rec);
 	}
 	
 	public boolean isInline() throws DOMException {
@@ -258,7 +258,7 @@ class PDOMCPPFunction extends PDOMCPPBinding implements ICPPFunction, IPDOMOverl
 	
 	private final ICPPFunctionType readFunctionType() {
 		try {
-			int offset= getDB().getInt(record + FUNCTION_TYPE);
+			long offset= getDB().getRecPtr(record + FUNCTION_TYPE);
 			return offset==0 ? null : new PDOMCPPFunctionType(getLinkage(), offset); 
 		} catch(CoreException ce) {
 			CCorePlugin.log(ce);
@@ -317,7 +317,7 @@ class PDOMCPPFunction extends PDOMCPPBinding implements ICPPFunction, IPDOMOverl
 
 	public IType[] getExceptionSpecification() throws DOMException {
 		try {
-			final int rec = getPDOM().getDB().getInt(record+EXCEPTION_SPEC);
+			final long rec = getPDOM().getDB().getRecPtr(record+EXCEPTION_SPEC);
 			return PDOMCPPTypeList.getTypes(this, rec);
 		} catch (CoreException e) {
 			CCorePlugin.log(e);

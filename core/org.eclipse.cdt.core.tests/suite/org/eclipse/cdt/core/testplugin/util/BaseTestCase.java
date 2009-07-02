@@ -170,6 +170,7 @@ public class BaseTestCase extends TestCase {
 						}
 					}
 				}
+				cause= (cause==null) ? testThrowable : cause;
 				AssertionFailedError afe= new AssertionFailedError(msg.toString());
 				afe.initCause(cause);
 				throw afe;

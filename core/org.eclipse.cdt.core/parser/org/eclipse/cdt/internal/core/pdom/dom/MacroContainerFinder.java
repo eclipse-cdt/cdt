@@ -31,7 +31,7 @@ public final class MacroContainerFinder implements IBTreeVisitor {
 		fLinkage= linkage;
 	}
 		
-	final public int compare(int record) throws CoreException {
+	final public int compare(long record) throws CoreException {
 		IString name= PDOMNamedNode.getDBName(fLinkage.getDB(), record);
 		return compare(name);
 	}
@@ -40,7 +40,7 @@ public final class MacroContainerFinder implements IBTreeVisitor {
 		return rhsName.compareCompatibleWithIgnoreCase(fName);
 	}
 	
-	final public boolean visit(int record) throws CoreException {
+	final public boolean visit(long record) throws CoreException {
 		if (record == 0)
 			return true;
 		fMacroContainer= new PDOMMacroContainer(fLinkage, record);

@@ -25,7 +25,7 @@ public interface IString {
 	/**
 	 * Get the offset of this IString record in the PDOM
 	 */
-	public int getRecord();
+	public long getRecord();
 	
 	// strcmp equivalents
 	/**

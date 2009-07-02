@@ -37,7 +37,7 @@ public class PDOMCPPConstructorInstance extends PDOMCPPMethodInstance implements
 		super(linkage, parent, method, instantiated);
 	}
 	
-	public PDOMCPPConstructorInstance(PDOMLinkage linkage, int bindingRecord) {
+	public PDOMCPPConstructorInstance(PDOMLinkage linkage, long bindingRecord) {
 		super(linkage, bindingRecord);
 	}
 

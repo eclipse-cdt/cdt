@@ -41,12 +41,12 @@ class PDOMCEnumerator extends PDOMBinding implements IEnumerator {
 		super(linkage, parent, enumerator.getNameCharArray());
 		
 		final Database db = getDB();
-		db.putInt(record + ENUMERATION, enumeration.getRecord());
+		db.putRecPtr(record + ENUMERATION, enumeration.getRecord());
 		storeValue(db, enumerator);
 		enumeration.addEnumerator(this);
 	}
 
-	public PDOMCEnumerator(PDOMLinkage linkage, int record) {
+	public PDOMCEnumerator(PDOMLinkage linkage, long record) {
 		super(linkage, record);
 	}
 
@@ -76,18 +76,18 @@ class PDOMCEnumerator extends PDOMBinding implements IEnumerator {
 
 
 	public PDOMCEnumerator getNextEnumerator() throws CoreException {
-		int value = getDB().getInt(record + NEXT_ENUMERATOR);
+		long value = getDB().getRecPtr(record + NEXT_ENUMERATOR);
 		return value != 0 ? new PDOMCEnumerator(getLinkage(), value) : null;
 	}
 	
 	public void setNextEnumerator(PDOMCEnumerator enumerator) throws CoreException {
-		int value = enumerator != null ? enumerator.getRecord() : 0;
-		getDB().putInt(record + NEXT_ENUMERATOR, value);
+		long value = enumerator != null ? enumerator.getRecord() : 0;
+		getDB().putRecPtr(record + NEXT_ENUMERATOR, value);
 	}
 	
 	public IType getType() throws DOMException {
 		try {
-			return new PDOMCEnumeration(getLinkage(), getDB().getInt(record + ENUMERATION));
+			return new PDOMCEnumeration(getLinkage(), getDB().getRecPtr(record + ENUMERATION));
 		} catch (CoreException e) {
 			CCorePlugin.log(e);
 			return null;

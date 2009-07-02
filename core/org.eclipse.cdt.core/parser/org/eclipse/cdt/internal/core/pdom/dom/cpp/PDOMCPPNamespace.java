@@ -58,7 +58,7 @@ class PDOMCPPNamespace extends PDOMCPPBinding
 		super(linkage, parent, namespace.getNameCharArray());
 	}
 
-	public PDOMCPPNamespace(PDOMLinkage linkage, int record) throws CoreException {
+	public PDOMCPPNamespace(PDOMLinkage linkage, long record) throws CoreException {
 		super(linkage, record);
 	}
 
@@ -86,10 +86,10 @@ class PDOMCPPNamespace extends PDOMCPPBinding
 			getIndex().accept((IBTreeVisitor) visitor);
 		} else {
 			getIndex().accept(new IBTreeVisitor() {
-				public int compare(int record) throws CoreException {
+				public int compare(long record) throws CoreException {
 					return 0;
 				}
-				public boolean visit(int record) throws CoreException {
+				public boolean visit(long record) throws CoreException {
 					PDOMBinding binding = getLinkage().getBinding(record);
 					if (binding != null) {
 						if (visitor.visit(binding))
@@ -188,10 +188,10 @@ class PDOMCPPNamespace extends PDOMCPPBinding
 		final List<PDOMNode> preresult = new ArrayList<PDOMNode>();
 		try {
 			getIndex().accept(new IBTreeVisitor() {
-				public int compare(int record) throws CoreException {
+				public int compare(long record) throws CoreException {
 					return 0;
 				}
-				public boolean visit(int record) throws CoreException {
+				public boolean visit(long record) throws CoreException {
 					preresult.add(getLinkage().getNode(record));
 					return true;
 				}

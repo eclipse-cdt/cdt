@@ -65,7 +65,7 @@ class PDOMCPPMethodSpecialization extends PDOMCPPFunctionSpecialization
 		}
 	}
 
-	public PDOMCPPMethodSpecialization(PDOMLinkage linkage, int bindingRecord) {
+	public PDOMCPPMethodSpecialization(PDOMLinkage linkage, long bindingRecord) {
 		super(linkage, bindingRecord);
 	}
 	

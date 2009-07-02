@@ -41,11 +41,11 @@ class PDOMCPPUnknownClassInstance extends PDOMCPPUnknownClassType implements ICP
 			throws CoreException {
 		super(linkage, parent, classInstance);
 		
-		int rec= PDOMCPPArgumentList.putArguments(this, classInstance.getArguments());
-		getDB().putInt(record + ARGUMENTS, rec);
+		long rec= PDOMCPPArgumentList.putArguments(this, classInstance.getArguments());
+		getDB().putRecPtr(record + ARGUMENTS, rec);
 	}
 
-	public PDOMCPPUnknownClassInstance(PDOMLinkage linkage, int bindingRecord) {
+	public PDOMCPPUnknownClassInstance(PDOMLinkage linkage, long bindingRecord) {
 		super(linkage, bindingRecord);
 	}
 
@@ -62,7 +62,7 @@ class PDOMCPPUnknownClassInstance extends PDOMCPPUnknownClassType implements ICP
 	public ICPPTemplateArgument[] getArguments() {
 		if (arguments == null) {
 			try {
-				final int rec= getPDOM().getDB().getInt(record+ARGUMENTS);
+				final long rec= getPDOM().getDB().getRecPtr(record+ARGUMENTS);
 				arguments= PDOMCPPArgumentList.getArguments(this, rec);
 			} catch (CoreException e) {
 				CCorePlugin.log(e);

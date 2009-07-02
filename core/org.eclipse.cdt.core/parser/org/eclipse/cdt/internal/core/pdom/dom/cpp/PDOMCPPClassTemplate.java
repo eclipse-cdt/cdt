@@ -66,13 +66,13 @@ public class PDOMCPPClassTemplate extends PDOMCPPClassType
 		final Database db = getDB();
 		final ICPPTemplateParameter[] origParams= template.getTemplateParameters();
 		final IPDOMCPPTemplateParameter[] params = PDOMTemplateParameterArray.createPDOMTemplateParameters(linkage, this, origParams);
-		int rec= PDOMTemplateParameterArray.putArray(db, params);
-		db.putInt(record + PARAMETERS, rec);
+		long rec= PDOMTemplateParameterArray.putArray(db, params);
+		db.putRecPtr(record + PARAMETERS, rec);
 		db.putShort(record + RELEVANT_PARAMETERS, (short) params.length);
 		linkage.new ConfigureTemplateParameters(origParams, params);
 	}
 
-	public PDOMCPPClassTemplate(PDOMLinkage linkage, int bindingRecord) {
+	public PDOMCPPClassTemplate(PDOMLinkage linkage, long bindingRecord) {
 		super(linkage, bindingRecord);
 	}
 
@@ -90,7 +90,7 @@ public class PDOMCPPClassTemplate extends PDOMCPPClassType
 		if (params == null) {
 			try {
 				final Database db = getDB();
-				int rec= db.getInt(record + PARAMETERS);
+				long rec= db.getRecPtr(record + PARAMETERS);
 				int count= Math.max(0, db.getShort(record + RELEVANT_PARAMETERS));
 				if (rec == 0 || count == 0) {
 					params= ICPPTemplateParameter.EMPTY_TEMPLATE_PARAMETER_ARRAY;
@@ -127,7 +127,7 @@ public class PDOMCPPClassTemplate extends PDOMCPPClassType
 
 	private void updateTemplateParameters(PDOMLinkage linkage, ICPPTemplateParameter[] newParams) throws CoreException, DOMException {
 		final Database db = getDB();
-		int rec= db.getInt(record + PARAMETERS);
+		long rec= db.getRecPtr(record + PARAMETERS);
 		IPDOMCPPTemplateParameter[] allParams;
 		if (rec == 0) {
 			allParams= IPDOMCPPTemplateParameter.EMPTY_ARRAY;
@@ -184,7 +184,7 @@ public class PDOMCPPClassTemplate extends PDOMCPPClassType
 			if (rec != 0)
 				db.free(rec);
 			rec= PDOMTemplateParameterArray.putArray(db, newAllParams);
-			db.putInt(record + PARAMETERS, rec);
+			db.putRecPtr(record + PARAMETERS, rec);
 		}
 		db.putShort(record + RELEVANT_PARAMETERS, (short) newParamLength);
 	}
@@ -199,14 +199,14 @@ public class PDOMCPPClassTemplate extends PDOMCPPClassType
 	}
 
 	private PDOMCPPClassTemplatePartialSpecialization getFirstPartial() throws CoreException {
-		int value = getDB().getInt(record + FIRST_PARTIAL);
+		long value = getDB().getRecPtr(record + FIRST_PARTIAL);
 		return value != 0 ? new PDOMCPPClassTemplatePartialSpecialization(getLinkage(), value) : null;
 	}
 	
 	public void addPartial(PDOMCPPClassTemplatePartialSpecialization partial) throws CoreException {
 		PDOMCPPClassTemplatePartialSpecialization first = getFirstPartial();
 		partial.setNextPartial(first);
-		getDB().putInt(record + FIRST_PARTIAL, partial.getRecord());
+		getDB().putRecPtr(record + FIRST_PARTIAL, partial.getRecord());
 	}
 		
 	public ICPPClassTemplatePartialSpecialization[] getPartialSpecializations() throws DOMException {

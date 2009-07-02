@@ -26,15 +26,15 @@ class PDOMCPPFriend extends PDOMNode {
 	@SuppressWarnings("hiding")
 	protected static final int RECORD_SIZE = PDOMNode.RECORD_SIZE + 8;
 
-	public PDOMCPPFriend(PDOMLinkage linkage, int record) {
+	public PDOMCPPFriend(PDOMLinkage linkage, long record) {
 		super(linkage, record);
 	}
 	
 	public PDOMCPPFriend(PDOMLinkage linkage, PDOMName friendSpec) throws CoreException {
 		super(linkage, null);
 
-		int friendrec = friendSpec != null ? friendSpec.getRecord() : 0;
-		linkage.getDB().putInt(record + FRIEND_SPECIFIER, friendrec);
+		long friendrec = friendSpec != null ? friendSpec.getRecord() : 0;
+		linkage.getDB().putRecPtr(record + FRIEND_SPECIFIER, friendrec);
 	}
 
 	@Override
@@ -48,7 +48,7 @@ class PDOMCPPFriend extends PDOMNode {
 	}
 
 	public PDOMName getSpecifierName() throws CoreException {
-		int rec = getDB().getInt(record + FRIEND_SPECIFIER);
+		long rec = getDB().getRecPtr(record + FRIEND_SPECIFIER);
 		if (rec != 0) return new PDOMName(getLinkage(), rec);
 		return null;
 	}
@@ -67,12 +67,12 @@ class PDOMCPPFriend extends PDOMNode {
 	}
 	
 	public void setNextFriend(PDOMCPPFriend nextFriend) throws CoreException {
-		int rec = nextFriend != null ? nextFriend.getRecord() : 0;
-		getDB().putInt(record + NEXT_FRIEND, rec);
+		long rec = nextFriend != null ? nextFriend.getRecord() : 0;
+		getDB().putRecPtr(record + NEXT_FRIEND, rec);
 	}
 	
 	public PDOMCPPFriend getNextFriend() throws CoreException {
-		int rec = getDB().getInt(record + NEXT_FRIEND);
+		long rec = getDB().getRecPtr(record + NEXT_FRIEND);
 		return rec != 0 ? new PDOMCPPFriend(getLinkage(), rec) : null;
 	}
 

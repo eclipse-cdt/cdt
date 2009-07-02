@@ -96,11 +96,11 @@ public class PDOMPrettyPrinter implements IPDOMVisitor {
 			final PDOMLinkage linkage = pdom.getLinkage(linkageID);
 			if (linkage != null) {
 				linkage.getIndex().accept(new IBTreeVisitor() {
-					public int compare(int record) throws CoreException {
+					public int compare(long record) throws CoreException {
 						return 0;
 					}
 
-					public boolean visit(int record) throws CoreException {
+					public boolean visit(long record) throws CoreException {
 						if (record == 0)
 							return false;
 						PDOMNode node = linkage.getNode(record);

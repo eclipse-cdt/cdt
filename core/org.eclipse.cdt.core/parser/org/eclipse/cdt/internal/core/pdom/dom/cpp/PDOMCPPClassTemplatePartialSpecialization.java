@@ -57,7 +57,7 @@ class PDOMCPPClassTemplatePartialSpecialization extends	PDOMCPPClassTemplate
 			ICPPClassTemplatePartialSpecialization partial, PDOMCPPClassTemplate primary) 
 			throws CoreException, DOMException {
 		super(linkage, parent, partial);
-		getDB().putInt(record + PRIMARY, primary.getRecord());
+		getDB().putRecPtr(record + PRIMARY, primary.getRecord());
 		primary.addPartial(this);
 		
 		try {
@@ -70,7 +70,7 @@ class PDOMCPPClassTemplatePartialSpecialization extends	PDOMCPPClassTemplate
 	}
 	
 	public PDOMCPPClassTemplatePartialSpecialization(PDOMLinkage linkage,
-			int bindingRecord) {
+			long bindingRecord) {
 		super(linkage, bindingRecord);
 	}
 	
@@ -89,18 +89,18 @@ class PDOMCPPClassTemplatePartialSpecialization extends	PDOMCPPClassTemplate
 	}
 
 	public PDOMCPPClassTemplatePartialSpecialization getNextPartial() throws CoreException {
-		int value = getDB().getInt(record + NEXT_PARTIAL);
+		long value = getDB().getRecPtr(record + NEXT_PARTIAL);
 		return value != 0 ? new PDOMCPPClassTemplatePartialSpecialization(getLinkage(), value) : null;
 	}
 	
 	public void setNextPartial(PDOMCPPClassTemplatePartialSpecialization partial) throws CoreException {
-		int value = partial != null ? partial.getRecord() : 0;
-		getDB().putInt(record + NEXT_PARTIAL, value);
+		long value = partial != null ? partial.getRecord() : 0;
+		getDB().putRecPtr(record + NEXT_PARTIAL, value);
 	}
 	
 	public ICPPClassTemplate getPrimaryClassTemplate() {
 		try {
-			return new PDOMCPPClassTemplate(getLinkage(), getDB().getInt(record + PRIMARY));
+			return new PDOMCPPClassTemplate(getLinkage(), getDB().getRecPtr(record + PRIMARY));
 		} catch (CoreException e) {
 			CCorePlugin.log(e);
 			return null;
@@ -113,9 +113,9 @@ class PDOMCPPClassTemplatePartialSpecialization extends	PDOMCPPClassTemplate
 	
 	public void setArguments(ICPPTemplateArgument[] templateArguments) throws CoreException {
 		final Database db = getPDOM().getDB();
-		int oldRec = db.getInt(record+ARGUMENTS);
-		int rec= PDOMCPPArgumentList.putArguments(this, templateArguments);
-		db.putInt(record+ARGUMENTS, rec);
+		long oldRec = db.getRecPtr(record+ARGUMENTS);
+		long rec= PDOMCPPArgumentList.putArguments(this, templateArguments);
+		db.putRecPtr(record+ARGUMENTS, rec);
 		if (oldRec != 0) {
 			PDOMCPPArgumentList.clearArguments(this, oldRec);
 		}
@@ -123,7 +123,7 @@ class PDOMCPPClassTemplatePartialSpecialization extends	PDOMCPPClassTemplate
 
 	public ICPPTemplateArgument[] getTemplateArguments() {
 		try {
-			final int rec= getPDOM().getDB().getInt(record+ARGUMENTS);
+			final long rec= getPDOM().getDB().getRecPtr(record+ARGUMENTS);
 			return PDOMCPPArgumentList.getArguments(this, rec);
 		} catch (CoreException e) {
 			CCorePlugin.log(e);

@@ -66,7 +66,7 @@ class PDOMCPPMethodTemplate extends PDOMCPPFunctionTemplate implements ICPPMetho
 		}
 	}
 	
-	public PDOMCPPMethodTemplate(PDOMLinkage linkage, int bindingRecord) {
+	public PDOMCPPMethodTemplate(PDOMLinkage linkage, long bindingRecord) {
 		super(linkage, bindingRecord);
 	}
 

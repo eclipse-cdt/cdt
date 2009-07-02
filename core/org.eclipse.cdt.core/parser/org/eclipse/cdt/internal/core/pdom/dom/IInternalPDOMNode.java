@@ -16,5 +16,5 @@ import org.eclipse.cdt.core.dom.IPDOMNode;
  * Common, but internal methods for all pdom nodes.
  */
 public interface IInternalPDOMNode extends IPDOMNode {
-	public int getRecord();
+	public long getRecord();
 }

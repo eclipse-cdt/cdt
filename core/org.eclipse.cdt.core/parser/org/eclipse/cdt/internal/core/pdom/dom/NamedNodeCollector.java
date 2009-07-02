@@ -61,7 +61,7 @@ public class NamedNodeCollector implements IBTreeVisitor, IPDOMVisitor {
 		monitor= pm;
 	}
 		
-	final public int compare(int record) throws CoreException {
+	final public int compare(long record) throws CoreException {
 		if (monitor != null)
 			checkCancelled();
 		IString rhsName= PDOMNamedNode.getDBName(linkage.getDB(), record);
@@ -87,7 +87,7 @@ public class NamedNodeCollector implements IBTreeVisitor, IPDOMVisitor {
 		return cmp;
 	}
 	
-	final public boolean visit(int record) throws CoreException {
+	final public boolean visit(long record) throws CoreException {
 		if (monitor != null)
 			checkCancelled();
 

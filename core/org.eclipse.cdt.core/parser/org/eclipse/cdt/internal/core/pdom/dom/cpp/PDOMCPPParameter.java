@@ -73,7 +73,7 @@ class PDOMCPPParameter extends PDOMNamedNode implements ICPPParameter, IPDOMBind
 
 	private static final byte FLAG_DEFAULT_VALUE = 0x1;
 
-	public PDOMCPPParameter(PDOMLinkage linkage, int record) {
+	public PDOMCPPParameter(PDOMLinkage linkage, long record) {
 		super(linkage, record);
 	}
 
@@ -83,7 +83,7 @@ class PDOMCPPParameter extends PDOMNamedNode implements ICPPParameter, IPDOMBind
 
 		Database db = getDB();
 
-		db.putInt(record + NEXT_PARAM, 0);
+		db.putRecPtr(record + NEXT_PARAM, 0);
 		byte flags= encodeFlags(param);
 		db.putByte(record + FLAGS, flags);
 		
@@ -92,7 +92,7 @@ class PDOMCPPParameter extends PDOMNamedNode implements ICPPParameter, IPDOMBind
 				type= param.getType();
 			if (type != null) {
 				PDOMNode typeNode = getLinkage().addType(this, type);
-				db.putInt(record + TYPE, typeNode != null ? typeNode.getRecord() : 0);
+				db.putRecPtr(record + TYPE, typeNode != null ? typeNode.getRecord() : 0);
 			}
 			byte annotations = PDOMCPPAnnotation.encodeAnnotation(param);
 			db.putByte(record + ANNOTATIONS, annotations);
@@ -101,17 +101,17 @@ class PDOMCPPParameter extends PDOMNamedNode implements ICPPParameter, IPDOMBind
 		}
 	}
 	
-	public PDOMCPPParameter(PDOMLinkage linkage, PDOMNode parent, IParameter param, int typeRecord)
+	public PDOMCPPParameter(PDOMLinkage linkage, PDOMNode parent, IParameter param, long typeRecord)
 			throws CoreException {
 		super(linkage, parent, param.getNameCharArray());
 		
 		Database db = getDB();
 
-		db.putInt(record + NEXT_PARAM, 0);
+		db.putRecPtr(record + NEXT_PARAM, 0);
 		byte flags= encodeFlags(param);
 		db.putByte(record + FLAGS, flags);
 		
-		db.putInt(record + TYPE, typeRecord);
+		db.putRecPtr(record + TYPE, typeRecord);
 		
 		try {
 			byte annotations = PDOMCPPAnnotation.encodeAnnotation(param);
@@ -142,12 +142,12 @@ class PDOMCPPParameter extends PDOMNamedNode implements ICPPParameter, IPDOMBind
 	}
 	
 	public void setNextParameter(PDOMCPPParameter nextParam) throws CoreException {
-		int rec = nextParam != null ? nextParam.getRecord() : 0;
-		getDB().putInt(record + NEXT_PARAM, rec);
+		long rec = nextParam != null ? nextParam.getRecord() : 0;
+		getDB().putRecPtr(record + NEXT_PARAM, rec);
 	}
 
 	public PDOMCPPParameter getNextParameter() throws CoreException {
-		int rec = getDB().getInt(record + NEXT_PARAM);
+		long rec = getDB().getRecPtr(record + NEXT_PARAM);
 		return rec != 0 ? new PDOMCPPParameter(getLinkage(), rec) : null;
 	}
 	
@@ -170,7 +170,7 @@ class PDOMCPPParameter extends PDOMNamedNode implements ICPPParameter, IPDOMBind
 
 	public IType getType() {
 		try {
-			PDOMNode node = getLinkage().getNode(getDB().getInt(record + TYPE));
+			PDOMNode node = getLinkage().getNode(getDB().getRecPtr(record + TYPE));
 			return node instanceof IType ? (IType)node : null;
 		} catch (CoreException e) {
 			CCorePlugin.log(e);

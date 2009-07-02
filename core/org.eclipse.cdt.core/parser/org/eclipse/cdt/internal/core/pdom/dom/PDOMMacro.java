@@ -59,14 +59,14 @@ public class PDOMMacro implements IIndexMacro, IPDOMBinding, IASTFileLocation {
 	private static final char[]   UNINITIALIZED1= {};
 
 	private final PDOMLinkage fLinkage;
-	private final int fRecord;
+	private final long fRecord;
 
 	private char[][] fParameterList= UNINITIALIZED;
 	private char[] fExpansion= UNINITIALIZED1;
 	private PDOMMacroContainer fContainer;
 	private PDOMMacroDefinitionName fDefinition;
 
-	public PDOMMacro(PDOMLinkage linkage, int record) {
+	public PDOMMacro(PDOMLinkage linkage, long record) {
 		fLinkage = linkage;
 		fRecord = record;
 	}
@@ -80,14 +80,14 @@ public class PDOMMacro implements IIndexMacro, IPDOMBinding, IASTFileLocation {
 		final char[][] params= binding.getParameterList();
 		
 		final Database db= linkage.getDB();
-		db.putInt(fRecord + EXPANSION, db.newString(binding.getExpansionImage()).getRecord());		
+		db.putRecPtr(fRecord + EXPANSION, db.newString(binding.getExpansionImage()).getRecord());		
 		if (params != null) {
 			StringBuilder buf= new StringBuilder();
 			for (char[] param : params) {
 				buf.append(param);
 				buf.append(',');
 			}
-			db.putInt(fRecord + PARAMETERS, db.newString(buf.toString().toCharArray()).getRecord());
+			db.putRecPtr(fRecord + PARAMETERS, db.newString(buf.toString().toCharArray()).getRecord());
 		}
 	}
 	
@@ -104,8 +104,8 @@ public class PDOMMacro implements IIndexMacro, IPDOMBinding, IASTFileLocation {
 		fContainer= container;
 
 		final IASTFileLocation fileloc = name.getFileLocation();
-		db.putInt(fRecord + CONTAINER, container.getRecord());
-		db.putInt(fRecord + FILE, file.getRecord());
+		db.putRecPtr(fRecord + CONTAINER, container.getRecord());
+		db.putRecPtr(fRecord + FILE, file.getRecord());
 		db.putInt(fRecord + NAME_OFFSET, fileloc.getNodeOffset());
 		db.putShort(fRecord + NAME_LENGTH, (short) fileloc.getNodeLength());
 
@@ -116,7 +116,7 @@ public class PDOMMacro implements IIndexMacro, IPDOMBinding, IASTFileLocation {
 		return fLinkage.getPDOM();
 	}
 	
-	public int getRecord() {
+	public long getRecord() {
 		return fRecord;
 	}
 	
@@ -149,25 +149,25 @@ public class PDOMMacro implements IIndexMacro, IPDOMBinding, IASTFileLocation {
 	
 	public PDOMMacroContainer getContainer() throws CoreException {
 		if (fContainer == null) {
-			fContainer= new PDOMMacroContainer(fLinkage, fLinkage.getDB().getInt(fRecord + CONTAINER));
+			fContainer= new PDOMMacroContainer(fLinkage, fLinkage.getDB().getRecPtr(fRecord + CONTAINER));
 		}
 		return fContainer;
 	}
 		
 	private IString getExpansionInDB() throws CoreException {
 		Database db = fLinkage.getDB();
-		int rec = db.getInt(fRecord + EXPANSION);
+		long rec = db.getRecPtr(fRecord + EXPANSION);
 		return rec == 0 ? null : db.getString(rec);
 	}
 
 	private IString getParamListInDB() throws CoreException {
 		Database db = fLinkage.getDB();
-		int rec = db.getInt(fRecord + PARAMETERS);
+		long rec = db.getRecPtr(fRecord + PARAMETERS);
 		return rec == 0 ? null : db.getString(rec);
 	}
 
 	public PDOMMacro getNextMacro() throws CoreException {
-		int rec = fLinkage.getDB().getInt(fRecord + NEXT_IN_FILE);
+		long rec = fLinkage.getDB().getRecPtr(fRecord + NEXT_IN_FILE);
 		return rec != 0 ? new PDOMMacro(fLinkage, rec) : null;
 	}
 	
@@ -175,8 +175,8 @@ public class PDOMMacro implements IIndexMacro, IPDOMBinding, IASTFileLocation {
 		setNextMacro(macro != null ? macro.getRecord() : 0);
 	}
 
-	private void setNextMacro(int rec) throws CoreException {
-		fLinkage.getDB().putInt(fRecord + NEXT_IN_FILE, rec);
+	private void setNextMacro(long rec) throws CoreException {
+		fLinkage.getDB().putRecPtr(fRecord + NEXT_IN_FILE, rec);
 	}
 				
 	private PDOMMacro getPrevInContainer() throws CoreException {
@@ -196,12 +196,12 @@ public class PDOMMacro implements IIndexMacro, IPDOMBinding, IASTFileLocation {
 	}
 
 	private void setMacroField(int offset, PDOMMacro macro) throws CoreException {
-		int namerec = macro != null ? macro.getRecord() : 0;
-		fLinkage.getDB().putInt(fRecord + offset, namerec);
+		long namerec = macro != null ? macro.getRecord() : 0;
+		fLinkage.getDB().putRecPtr(fRecord + offset, namerec);
 	}
 	
 	private PDOMMacro getMacroField(int offset) throws CoreException {
-		int namerec= fLinkage.getDB().getInt(fRecord + offset);
+		long namerec= fLinkage.getDB().getRecPtr(fRecord + offset);
 		return namerec != 0 ? new PDOMMacro(fLinkage, namerec) : null;
 	}
 
@@ -232,7 +232,7 @@ public class PDOMMacro implements IIndexMacro, IPDOMBinding, IASTFileLocation {
 
 	public boolean isMacroDefinition() throws CoreException {
 		if (fExpansion == UNINITIALIZED1) {
-			return fLinkage.getDB().getInt(fRecord + EXPANSION) != 0;
+			return fLinkage.getDB().getRecPtr(fRecord + EXPANSION) != 0;
 		}
 		return fExpansion != null;
 	}
@@ -264,7 +264,7 @@ public class PDOMMacro implements IIndexMacro, IPDOMBinding, IASTFileLocation {
 	}
 	
 	public PDOMFile getFile() throws CoreException {
-		int filerec = fLinkage.getDB().getInt(fRecord + FILE);
+		long filerec = fLinkage.getDB().getRecPtr(fRecord + FILE);
 		return filerec != 0 ? new PDOMFile(fLinkage, filerec) : null;
 	}
 
@@ -408,7 +408,7 @@ public class PDOMMacro implements IIndexMacro, IPDOMBinding, IASTFileLocation {
 	public void accept(IPDOMVisitor visitor) {
 	}
 
-	public int getBindingID() {
+	public long getBindingID() {
 		return fRecord;
 	}
 }

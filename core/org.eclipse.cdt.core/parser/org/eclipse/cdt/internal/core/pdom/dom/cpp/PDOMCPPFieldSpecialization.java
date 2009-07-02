@@ -58,17 +58,17 @@ class PDOMCPPFieldSpecialization extends PDOMCPPSpecialization implements
 			IType type = field.getType();
 			PDOMNode typeNode = linkage.addType(this, type);
 			if (typeNode != null) {
-				db.putInt(record + TYPE, typeNode.getRecord());
+				db.putRecPtr(record + TYPE, typeNode.getRecord());
 			}
 			IValue val= field.getInitialValue();
-			int rec= PDOMValue.store(db, linkage, val);
-			db.putInt(record + VALUE_OFFSET, rec);
+			long rec= PDOMValue.store(db, linkage, val);
+			db.putRecPtr(record + VALUE_OFFSET, rec);
 		} catch (DOMException e) {
 			throw new CoreException(Util.createStatus(e));
 		}
 	}
 
-	public PDOMCPPFieldSpecialization(PDOMLinkage linkage, int bindingRecord) {
+	public PDOMCPPFieldSpecialization(PDOMLinkage linkage, long bindingRecord) {
 		super(linkage, bindingRecord);
 	}
 	
@@ -92,7 +92,7 @@ class PDOMCPPFieldSpecialization extends PDOMCPPSpecialization implements
 
 	public IType getType() throws DOMException {
 		try {
-			PDOMNode node = getLinkage().getNode(getDB().getInt(record + TYPE));
+			PDOMNode node = getLinkage().getNode(getDB().getRecPtr(record + TYPE));
 			if (node instanceof IType) {
 				return (IType) node;
 			}
@@ -105,7 +105,7 @@ class PDOMCPPFieldSpecialization extends PDOMCPPSpecialization implements
 	public IValue getInitialValue() {
 		try {
 			final Database db = getDB();
-			int valRec = db.getInt(record + VALUE_OFFSET);
+			long valRec = db.getRecPtr(record + VALUE_OFFSET);
 			return PDOMValue.restore(db, getLinkage(), valRec);
 		} catch (CoreException e) {
 			CCorePlugin.log(e);

@@ -117,10 +117,10 @@ public class WritablePDOM extends PDOM implements IWritableIndexFragment {
 	public void rewriteLocations(final IIndexLocationConverter newConverter) throws CoreException {
 		final List<PDOMFile> pdomfiles = new ArrayList<PDOMFile>();
 		getFileIndex().accept(new IBTreeVisitor(){
-			public int compare(int record) throws CoreException {
+			public int compare(long record) throws CoreException {
 				return 0;
 			}
-			public boolean visit(int record) throws CoreException {
+			public boolean visit(long record) throws CoreException {
 				PDOMFile file = PDOMFile.recreateFile(WritablePDOM.this, record);
 				pdomfiles.add(file);
 				return true;

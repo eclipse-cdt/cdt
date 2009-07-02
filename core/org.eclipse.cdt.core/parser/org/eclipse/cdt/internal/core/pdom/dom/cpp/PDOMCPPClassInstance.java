@@ -45,11 +45,11 @@ class PDOMCPPClassInstance extends PDOMCPPClassSpecialization implements ICPPTem
 			throws CoreException {
 		super(linkage, parent, classType, orig);
 		final ICPPTemplateInstance asInstance= (ICPPTemplateInstance) classType;
-		final int argListRec= PDOMCPPArgumentList.putArguments(this, asInstance.getTemplateArguments());
-		getDB().putInt(record + ARGUMENTS, argListRec);
+		final long argListRec= PDOMCPPArgumentList.putArguments(this, asInstance.getTemplateArguments());
+		getDB().putRecPtr(record + ARGUMENTS, argListRec);
 	}
 	
-	public PDOMCPPClassInstance(PDOMLinkage linkage, int bindingRecord) {
+	public PDOMCPPClassInstance(PDOMLinkage linkage, long bindingRecord) {
 		super(linkage, bindingRecord);
 	}
 	
@@ -69,7 +69,7 @@ class PDOMCPPClassInstance extends PDOMCPPClassSpecialization implements ICPPTem
 		
 	public ICPPTemplateArgument[] getTemplateArguments() {
 		try {
-			final int rec= getPDOM().getDB().getInt(record + ARGUMENTS);
+			final long rec= getPDOM().getDB().getRecPtr(record + ARGUMENTS);
 			return PDOMCPPArgumentList.getArguments(this, rec);
 		} catch (CoreException e) {
 			CCorePlugin.log(e);

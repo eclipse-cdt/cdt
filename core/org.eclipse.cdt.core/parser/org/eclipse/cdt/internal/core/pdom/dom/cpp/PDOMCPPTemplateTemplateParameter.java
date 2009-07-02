@@ -74,11 +74,11 @@ public class PDOMCPPTemplateTemplateParameter extends PDOMCPPBinding
 		db.putInt(record + PARAMETERID, param.getParameterID());
 		final ICPPTemplateParameter[] origParams= param.getTemplateParameters();
 		final IPDOMCPPTemplateParameter[] params = PDOMTemplateParameterArray.createPDOMTemplateParameters(linkage, this, origParams);
-		int rec= PDOMTemplateParameterArray.putArray(db, params);
-		getDB().putInt(record + PARAMETERS, rec);
+		long rec= PDOMTemplateParameterArray.putArray(db, params);
+		getDB().putRecPtr(record + PARAMETERS, rec);
 	}
 
-	public PDOMCPPTemplateTemplateParameter(PDOMLinkage linkage, int bindingRecord) {
+	public PDOMCPPTemplateTemplateParameter(PDOMLinkage linkage, long bindingRecord) {
 		super(linkage, bindingRecord);
 	}
 
@@ -144,7 +144,7 @@ public class PDOMCPPTemplateTemplateParameter extends PDOMCPPBinding
 
 	public IType getDefault() {
 		try {
-			PDOMNode node = getLinkage().getNode(getDB().getInt(record + DEFAULT_TYPE));
+			PDOMNode node = getLinkage().getNode(getDB().getRecPtr(record + DEFAULT_TYPE));
 			if (node instanceof IType) {
 				return (IType) node;
 			}
@@ -186,7 +186,7 @@ public class PDOMCPPTemplateTemplateParameter extends PDOMCPPBinding
 					final Database db= getPDOM().getDB();
 					PDOMNode typeNode = getLinkage().addType(this, dflt);
 					if (typeNode != null) {
-						db.putInt(record + DEFAULT_TYPE, typeNode.getRecord());
+						db.putRecPtr(record + DEFAULT_TYPE, typeNode.getRecord());
 					}
 				}
 			}
@@ -211,17 +211,17 @@ public class PDOMCPPTemplateTemplateParameter extends PDOMCPPBinding
 				IType mytype= getDefault();
 				PDOMNode typeNode = getLinkage().addType(this, newDefault);
 				if (typeNode != null) {
-					db.putInt(record + DEFAULT_TYPE, typeNode.getRecord());
+					db.putRecPtr(record + DEFAULT_TYPE, typeNode.getRecord());
 					if (mytype != null) 
 						linkage.deleteType(mytype, record);
 				}
 			}
-			int oldRec= db.getInt(record + PARAMETERS);
+			long oldRec= db.getRecPtr(record + PARAMETERS);
 			IPDOMCPPTemplateParameter[] oldParams= getTemplateParameters();
 			try {
 				params= PDOMTemplateParameterArray.createPDOMTemplateParameters(getLinkage(), this, ttp.getTemplateParameters());
-				int newRec= PDOMTemplateParameterArray.putArray(db, params);
-				db.putInt(record + PARAMETERS, newRec);
+				long newRec= PDOMTemplateParameterArray.putArray(db, params);
+				db.putRecPtr(record + PARAMETERS, newRec);
 				if (oldRec != 0)
 					db.free(oldRec);
 				for (IPDOMCPPTemplateParameter opar : oldParams) {
@@ -239,11 +239,11 @@ public class PDOMCPPTemplateTemplateParameter extends PDOMCPPBinding
 			((PDOMNode) type).delete(linkage);
 		}
 		Database db= getDB();
-		int valueRec= db.getInt(record + DEFAULT_TYPE);
+		long valueRec= db.getRecPtr(record + DEFAULT_TYPE);
 		if (valueRec != 0)
 			db.getString(valueRec).delete();
 
-		int oldRec= db.getInt(record + PARAMETERS);
+		long oldRec= db.getRecPtr(record + PARAMETERS);
 		IPDOMCPPTemplateParameter[] oldParams= getTemplateParameters();
 		if (oldRec != 0)
 			db.free(oldRec);
@@ -255,7 +255,7 @@ public class PDOMCPPTemplateTemplateParameter extends PDOMCPPBinding
 	public IPDOMCPPTemplateParameter[] getTemplateParameters() {
 		if (params == null) {
 			try {
-				int rec= getDB().getInt(record + PARAMETERS);
+				long rec= getDB().getRecPtr(record + PARAMETERS);
 				if (rec == 0) {
 					params= IPDOMCPPTemplateParameter.EMPTY_ARRAY;
 				} else {

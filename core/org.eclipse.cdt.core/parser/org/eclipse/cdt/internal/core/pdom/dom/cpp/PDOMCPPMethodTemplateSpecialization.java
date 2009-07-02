@@ -34,7 +34,7 @@ class PDOMCPPMethodTemplateSpecialization extends
 		super(linkage, parent, (ICPPFunctionTemplate) method, specialized);
 	}
 
-	public PDOMCPPMethodTemplateSpecialization(PDOMLinkage linkage, int bindingRecord) {
+	public PDOMCPPMethodTemplateSpecialization(PDOMLinkage linkage, long bindingRecord) {
 		super(linkage, bindingRecord);
 	}
 	

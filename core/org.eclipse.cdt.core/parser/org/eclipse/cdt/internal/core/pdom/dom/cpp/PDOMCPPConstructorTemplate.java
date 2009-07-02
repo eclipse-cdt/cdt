@@ -29,7 +29,7 @@ class PDOMCPPConstructorTemplate extends PDOMCPPMethodTemplate implements
 		super(linkage, parent, method);
 	}
 
-	public PDOMCPPConstructorTemplate(PDOMLinkage linkage, int record) {
+	public PDOMCPPConstructorTemplate(PDOMLinkage linkage, long record) {
 		super(linkage, record);
 	}
 

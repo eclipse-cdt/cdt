@@ -85,11 +85,11 @@ public class CountNodeAction extends IndexAction {
 				pdom.acquireReadLock();
 				try {
 					pdom.getFileIndex().accept(new IBTreeVisitor() {
-						public int compare(int record) throws CoreException {
+						public int compare(long record) throws CoreException {
 							return 0;
 						}
 
-						public boolean visit(int record) throws CoreException {
+						public boolean visit(long record) throws CoreException {
 							if (record != 0) {
 								PDOMFile file = PDOMFile.recreateFile(pdom, record);
 								++count[FILES];

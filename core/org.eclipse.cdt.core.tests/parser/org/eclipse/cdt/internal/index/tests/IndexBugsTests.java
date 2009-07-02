@@ -1993,7 +1993,7 @@ public class IndexBugsTests extends BaseTestCase {
 	//	}
 
 	//	enum E { e2	};
-	public void _testDisambiguationByReachability_281782() throws Exception {
+	public void testDisambiguationByReachability_281782() throws Exception {
 		waitForIndexer();
 
 		String[] testData = getContentsForTest(3);

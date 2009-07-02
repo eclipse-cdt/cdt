@@ -1599,6 +1599,12 @@ public class CPPTemplates {
 				}
 				p = ((IPointerType) p).getType();
 				a = ((IPointerType) a).getType();
+			} else if (p instanceof ICPPReferenceType) {
+				if (!(a instanceof ICPPReferenceType)) {
+					return false;
+				}
+				p = ((ICPPReferenceType) p).getType();
+				a = ((ICPPReferenceType) a).getType();
 			} else if (p instanceof IQualifierType) {
 				if (a instanceof IQualifierType) {
 					a = ((IQualifierType) a).getType(); //TODO a = strip qualifiers from p out of a

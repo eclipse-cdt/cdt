@@ -2270,6 +2270,17 @@ public class AST2TemplateTests extends AST2BaseTest {
 		parseAndCheckBindings(code, ParserLanguage.CPP);		
 	}
 
+	
+	//	template<class U> void f1(void(*f)(const U&)) {}
+	//	void f2(const int& b){}
+	//	void test() {
+	//	  f1(&f2); // problem on f1
+	//	}
+	public void testSimplifiedFunctionTemplateWithFunctionPointer_281783() throws Exception {
+		final String code = getAboveComment();
+		parseAndCheckBindings(code, ParserLanguage.CPP);		
+	}
+
 	//	template <class T>
 	//	class A {};
 	//
@@ -2283,7 +2294,7 @@ public class AST2TemplateTests extends AST2BaseTest {
 	//	void test(A<B> x) {
 	//	  f1(x, &f2);
 	//	}
-	public void _testFunctionTemplateWithFunctionPointer_281783() throws Exception {
+	public void testFunctionTemplateWithFunctionPointer_281783() throws Exception {
     	BindingAssertionHelper bh= new BindingAssertionHelper(getAboveComment(), true);
     	bh.assertNonProblem("f1(x, &f2);", 2, ICPPFunction.class);
 	}

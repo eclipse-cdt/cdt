@@ -47,7 +47,7 @@ public class PDOMQualifierType extends PDOMNode implements IQualifierType, ICQua
 	private byte flags= -1;
 	private IType targetType;
 	
-	public PDOMQualifierType(PDOMLinkage linkage, int record) {
+	public PDOMQualifierType(PDOMLinkage linkage, long record) {
 		super(linkage, record);
 	}
 
@@ -62,7 +62,7 @@ public class PDOMQualifierType extends PDOMNode implements IQualifierType, ICQua
 				IType targetType = type.getType();
 				PDOMNode targetTypeNode = getLinkage().addType(this, targetType);
 				if (targetTypeNode != null) {
-					db.putInt(record + TYPE, targetTypeNode.getRecord());
+					db.putRecPtr(record + TYPE, targetTypeNode.getRecord());
 				}
 				// flags
 				byte flags = 0;
@@ -98,7 +98,7 @@ public class PDOMQualifierType extends PDOMNode implements IQualifierType, ICQua
 
 	private IType readType() {
 		try {
-			PDOMNode node = getLinkage().getNode(getDB().getInt(record + TYPE));
+			PDOMNode node = getLinkage().getNode(getDB().getRecPtr(record + TYPE));
 			return node instanceof IType ? (IType)node : null;
 		} catch (CoreException e) {
 			CCorePlugin.log(e);

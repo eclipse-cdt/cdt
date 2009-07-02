@@ -174,10 +174,10 @@ public class BTreeTests extends BaseTestCase {
 		final Iterator i = expected.iterator();
 		btree.accept(new IBTreeVisitor(){
 			int k;
-			public int compare(int record) throws CoreException {
+			public int compare(long record) throws CoreException {
 				return 0;
 			}
-			public boolean visit(int record) throws CoreException {
+			public boolean visit(long record) throws CoreException {
 				if(record!=0) {
 					BTMockRecord btValue = new BTMockRecord(record, db);
 					if(i.hasNext()) {
@@ -197,7 +197,7 @@ public class BTreeTests extends BaseTestCase {
 	private static class BTMockRecord {
 		public static final int VALUE_PTR = 0; 
 		public static final int RECORD_SIZE = Database.INT_SIZE;
-		int record;
+		long record;
 		Database db;
 
 		/**
@@ -212,7 +212,7 @@ public class BTreeTests extends BaseTestCase {
 		/**
 		 * Get an existing record
 		 */
-		public BTMockRecord(int record, Database db) {
+		public BTMockRecord(long record, Database db) {
 			this.db = db;
 			this.record = record;
 		}
@@ -221,13 +221,13 @@ public class BTreeTests extends BaseTestCase {
 			return db.getInt(record);
 		}
 
-		public int getRecord() {
+		public long getRecord() {
 			return record;
 		}
 	}
 
 	private class BTMockRecordComparator implements IBTreeComparator {
-		public int compare(int record1, int record2) throws CoreException {
+		public int compare(long record1, long record2) throws CoreException {
 			return db.getInt(record1) - db.getInt(record2); 
 		}
 	}

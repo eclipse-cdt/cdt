@@ -48,7 +48,7 @@ public class PDOMPointerType extends PDOMNode implements IPointerType,
 	private byte flags= -1;
 	private IType targetType;
 	
-	public PDOMPointerType(PDOMLinkage linkage, int record) {
+	public PDOMPointerType(PDOMLinkage linkage, long record) {
 		super(linkage, record);
 	}
 
@@ -59,7 +59,7 @@ public class PDOMPointerType extends PDOMNode implements IPointerType,
 		
 		try {
 			// type
-			int typeRec = 0;
+			long typeRec = 0;
 			byte flags = 0;
 			if (type != null) {
 				IType targetType= type.getType();
@@ -71,7 +71,7 @@ public class PDOMPointerType extends PDOMNode implements IPointerType,
 				if (type.isVolatile())
 					flags |= VOLATILE;
 			}
-			db.putInt(record + TYPE, typeRec);
+			db.putRecPtr(record + TYPE, typeRec);
 			db.putByte(record + FLAGS, flags);
 		} catch (DOMException e) {
 			throw new CoreException(Util.createStatus(e));
@@ -104,7 +104,7 @@ public class PDOMPointerType extends PDOMNode implements IPointerType,
 
 	private IType readType() {
 		try {
-			PDOMNode node = getLinkage().getNode(getDB().getInt(record + TYPE));
+			PDOMNode node = getLinkage().getNode(getDB().getRecPtr(record + TYPE));
 			return node instanceof IType ? (IType)node : null;
 		} catch (CoreException e) {
 			CCorePlugin.log(e);

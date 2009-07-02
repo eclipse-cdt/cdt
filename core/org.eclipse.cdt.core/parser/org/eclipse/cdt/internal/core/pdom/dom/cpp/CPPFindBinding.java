@@ -35,7 +35,7 @@ public class CPPFindBinding extends FindBinding {
 			super(linkage);
 		}
 		@Override
-		public int compare(int record1, int record2) throws CoreException {
+		public int compare(long record1, long record2) throws CoreException {
 			int cmp = super.compare(record1, record2);
 			if (cmp == 0) {
 				PDOMBinding binding1 = linkage.getBinding(record1);
@@ -53,14 +53,14 @@ public class CPPFindBinding extends FindBinding {
 	public static class CPPFindBindingVisitor extends FindBinding.DefaultFindBindingVisitor {
 		private final int fConstant;
 		private final int fSigHash;
-		public CPPFindBindingVisitor(PDOMLinkage linkage, char[] name, int constant, int hash, int localToFile) {
+		public CPPFindBindingVisitor(PDOMLinkage linkage, char[] name, int constant, int hash, long localToFile) {
 			super(linkage, name, new int[] {constant}, localToFile);
 			fConstant= constant;
 			fSigHash= hash;
 		}
 		
 		@Override
-		public int compare(int record) throws CoreException {
+		public int compare(long record) throws CoreException {
 			int cmp= super.compare(record);
 			if (cmp == 0) {
 				int c1 = PDOMNode.getNodeType(fLinkage.getDB(), record);
@@ -78,7 +78,7 @@ public class CPPFindBinding extends FindBinding {
 		}
 
 		@Override
-		public boolean visit(int record) throws CoreException {
+		public boolean visit(long record) throws CoreException {
 			fResult= fLinkage.getBinding(record);
 			return false;
 		}
@@ -96,14 +96,14 @@ public class CPPFindBinding extends FindBinding {
 	}
 
 	public static PDOMBinding findBinding(BTree btree, final PDOMLinkage linkage, final char[] name,
-			final int c2, final int ty2, int localToFileRec) throws CoreException {
+			final int c2, final int ty2, long localToFileRec) throws CoreException {
 		CPPFindBindingVisitor visitor= new CPPFindBindingVisitor(linkage, name, c2, ty2, localToFileRec);
 		btree.accept(visitor);
 		return visitor.getResult();
 	}
 
 	public static PDOMBinding findBinding(PDOMNode node, PDOMLinkage linkage, char[] name, int constant,
-			int sigHash, int localToFileRec) throws CoreException {
+			int sigHash, long localToFileRec) throws CoreException {
 		CPPFindBindingVisitor visitor= new CPPFindBindingVisitor(linkage, name, constant, sigHash,
 				localToFileRec);
 		try {
@@ -114,7 +114,7 @@ public class CPPFindBinding extends FindBinding {
 	}
 
 	public static PDOMBinding findBinding(BTree btree, PDOMLinkage linkage, IBinding binding,
-			int localToFileRec) throws CoreException {	
+			long localToFileRec) throws CoreException {	
 		Integer hash= 0;
 		try {
 			hash = IndexCPPSignatureUtil.getSignatureHash(binding);
@@ -129,7 +129,7 @@ public class CPPFindBinding extends FindBinding {
 	}
 
 	public static PDOMBinding findBinding(PDOMNode node, PDOMLinkage linkage, IBinding binding,
-			int localToFileRec) throws CoreException {
+			long localToFileRec) throws CoreException {
 		Integer hash = null;
 		try {
 			hash = IndexCPPSignatureUtil.getSignatureHash(binding);

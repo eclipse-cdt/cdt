@@ -32,7 +32,7 @@ class PDOMCPPPointerToMemberType extends PDOMPointerType implements ICPPPointerT
 	@SuppressWarnings("hiding")
 	private static final int RECORD_SIZE= TYPE + 4;
 
-	public PDOMCPPPointerToMemberType(PDOMLinkage linkage, int record) {
+	public PDOMCPPPointerToMemberType(PDOMLinkage linkage, long record) {
 		super(linkage, record);
 	}
 
@@ -42,13 +42,13 @@ class PDOMCPPPointerToMemberType extends PDOMPointerType implements ICPPPointerT
 		
 		// type
 		IType ct = type.getMemberOfClass();
-		int typeRec = 0;
+		long typeRec = 0;
 		if (ct != null) {
 			PDOMNode targetTypeNode = getLinkage().addType(this, ct);
 			if (targetTypeNode != null)
 				typeRec = targetTypeNode.getRecord();
 		}
-		db.putInt(record + TYPE, typeRec);
+		db.putRecPtr(record + TYPE, typeRec);
 	}
 
 	@Override
@@ -63,7 +63,7 @@ class PDOMCPPPointerToMemberType extends PDOMPointerType implements ICPPPointerT
 
 	public IType getMemberOfClass() {
 		try {
-			int rec = getDB().getInt(record + TYPE);
+			long rec = getDB().getRecPtr(record + TYPE);
 			return (IType) getLinkage().getNode(rec);
 		} catch (CoreException e) {
 			CCorePlugin.log(e);

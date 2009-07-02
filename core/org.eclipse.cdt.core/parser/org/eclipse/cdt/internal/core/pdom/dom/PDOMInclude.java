@@ -38,7 +38,7 @@ public class PDOMInclude implements IIndexFragmentInclude {
 	// we store the length of the name instead of the name itself, and indicate that
 	// by turning on FLAG_DEDUCIBLE_NAME flag. Notice that the length of include name
 	// can be different from the node length, if the name is defined by a macro. 
-	private static final int INCLUDE_NAME_OR_LENGTH = 20;
+	private static final int INCLUDE_NAME_OR_LENGTH = 20; // TODO: assumes that int and stored pointers are the same size
 	private static final int NODE_OFFSET  			= 24; // 3-byte unsigned int (sufficient for files <= 16mb)
 	private static final int NODE_LENGTH  			= 27; // short (sufficient for names <= 32k)
 	private static final int FLAGS		 			= 29;
@@ -50,12 +50,12 @@ public class PDOMInclude implements IIndexFragmentInclude {
 	private static final int FLAG_DEDUCIBLE_NAME		= 0x08;
 	
 	private final PDOMLinkage linkage;
-	private final int record;
+	private final long record;
 
 	// Cached fields
 	private String fName;
 
-	public PDOMInclude(PDOMLinkage pdom, int record) {
+	public PDOMInclude(PDOMLinkage pdom, long record) {
 		this.linkage = pdom;
 		this.record = record;
 	}
@@ -75,13 +75,16 @@ public class PDOMInclude implements IIndexFragmentInclude {
 
 		final Database db = linkage.getDB();
 		if (targetFile != null) {
-			db.putInt(record + INCLUDED_FILE, targetFile.getRecord());
+			db.putRecPtr(record + INCLUDED_FILE, targetFile.getRecord());
 		}
 		boolean deducible_name = isDeducibleName(targetFile, nameChars);
 		// If the name is the same as an end part of the path of the included file,
 		// store the length of the name instead of the name itself.
-		int rec= deducible_name ? nameChars.length : db.newString(nameChars).getRecord();
-		db.putInt(record + INCLUDE_NAME_OR_LENGTH, rec);
+		if( deducible_name ) {
+			db.putInt( record + INCLUDE_NAME_OR_LENGTH, nameChars.length );
+		} else {
+			db.putRecPtr( record + INCLUDE_NAME_OR_LENGTH, db.newString(nameChars).getRecord() );
+		}
 		setFlag(encodeFlags(include, deducible_name));
 		setIncludedBy(containerFile);
 	}
@@ -102,7 +105,7 @@ public class PDOMInclude implements IIndexFragmentInclude {
 		return flags;
 	}
 
-	public int getRecord() {
+	public long getRecord() {
 		return record;
 	}
 
@@ -113,7 +116,7 @@ public class PDOMInclude implements IIndexFragmentInclude {
 		}
 		final Database db = linkage.getDB();
 		if ((getFlag() & FLAG_DEDUCIBLE_NAME) == 0) {
-			int rec = db.getInt(record + INCLUDE_NAME_OR_LENGTH);
+			long rec = db.getRecPtr(record + INCLUDE_NAME_OR_LENGTH);
 			db.getString(rec).delete();
 		}
 		// Delete our record
@@ -134,7 +137,7 @@ public class PDOMInclude implements IIndexFragmentInclude {
 	}
 
 	public IIndexFragmentFile getIncludes() throws CoreException {
-		int rec = linkage.getDB().getInt(record + INCLUDED_FILE);
+		long rec = linkage.getDB().getRecPtr(record + INCLUDED_FILE);
 		return rec != 0 ? new PDOMFile(linkage, rec) : null;
 	}
 
@@ -159,47 +162,47 @@ public class PDOMInclude implements IIndexFragmentInclude {
 	}
 
 	public IIndexFile getIncludedBy() throws CoreException {
-		int rec = linkage.getDB().getInt(record + INCLUDED_BY);
+		long rec = linkage.getDB().getRecPtr(record + INCLUDED_BY);
 		return rec != 0 ? new PDOMFile(linkage, rec) : null;
 	}
 
 	private void setIncludedBy(PDOMFile includedBy) throws CoreException {
-		int rec = includedBy != null ? includedBy.getRecord() : 0;
-		linkage.getDB().putInt(record + INCLUDED_BY, rec);
+		long rec = includedBy != null ? includedBy.getRecord() : 0;
+		linkage.getDB().putRecPtr(record + INCLUDED_BY, rec);
 	}
 
 	public PDOMInclude getNextInIncludes() throws CoreException {
-		int rec = linkage.getDB().getInt(record + INCLUDES_NEXT);
+		long rec = linkage.getDB().getRecPtr(record + INCLUDES_NEXT);
 		return rec != 0 ? new PDOMInclude(linkage, rec) : null;
 	}
 
 	public void setNextInIncludes(PDOMInclude include) throws CoreException {
-		int rec = include != null ? include.getRecord() : 0;
-		linkage.getDB().putInt(record + INCLUDES_NEXT, rec);
+		long rec = include != null ? include.getRecord() : 0;
+		linkage.getDB().putRecPtr(record + INCLUDES_NEXT, rec);
 	}
 
 	public PDOMInclude getNextInIncludedBy() throws CoreException {
-		int rec = linkage.getDB().getInt(record + INCLUDED_BY_NEXT);
+		long rec = linkage.getDB().getRecPtr(record + INCLUDED_BY_NEXT);
 		return rec != 0 ? new PDOMInclude(linkage, rec) : null;
 	}
 
 	public void setNextInIncludedBy(PDOMInclude include) throws CoreException {
-		int rec = include != null ? include.getRecord() : 0;
-		linkage.getDB().putInt(record + INCLUDED_BY_NEXT, rec);
+		long rec = include != null ? include.getRecord() : 0;
+		linkage.getDB().putRecPtr(record + INCLUDED_BY_NEXT, rec);
 	}
 
 	public PDOMInclude getPrevInIncludedBy() throws CoreException {
-		int rec = getPrevInIncludedByRecord();
+		long rec = getPrevInIncludedByRecord();
 		return rec != 0 ? new PDOMInclude(linkage, rec) : null;
 	}
 
-	int getPrevInIncludedByRecord() throws CoreException {
-		return linkage.getDB().getInt(record + INCLUDED_BY_PREV);
+	long getPrevInIncludedByRecord() throws CoreException {
+		return linkage.getDB().getRecPtr(record + INCLUDED_BY_PREV);
 	}
 
 	public void setPrevInIncludedBy(PDOMInclude include) throws CoreException {
-		int rec = include != null ? include.getRecord() : 0;
-		linkage.getDB().putInt(record + INCLUDED_BY_PREV, rec);
+		long rec = include != null ? include.getRecord() : 0;
+		linkage.getDB().putRecPtr(record + INCLUDED_BY_PREV, rec);
 	}
 
 	public IIndexFileLocation getIncludedByLocation() throws CoreException {
@@ -232,7 +235,7 @@ public class PDOMInclude implements IIndexFragmentInclude {
 	}
 
 	public boolean isResolved() throws CoreException {
-		return linkage.getDB().getInt(record + INCLUDED_FILE) != 0;
+		return linkage.getDB().getRecPtr(record + INCLUDED_FILE) != 0;
 	}
 
 	public boolean isResolvedByHeuristics() throws CoreException {
@@ -253,7 +256,7 @@ public class PDOMInclude implements IIndexFragmentInclude {
 			// The include name is either stored explicitly, or can be deduced from the path
 			// of the included file.
 			if ((getFlag() & FLAG_DEDUCIBLE_NAME) == 0) {
-				int rec = db.getInt(record + INCLUDE_NAME_OR_LENGTH);
+				long rec = db.getRecPtr(record + INCLUDE_NAME_OR_LENGTH);
 				fName = db.getString(rec).getString();
 			} else {
 				String path = getIncludes().getLocation().getURI().getPath();
@@ -276,11 +279,11 @@ public class PDOMInclude implements IIndexFragmentInclude {
 			int flag = getFlag();
 			// Since included file is going away, the name is no longer deducible.
 			if ((flag & FLAG_DEDUCIBLE_NAME) != 0) {
-				int rec= db.newString(getFullName()).getRecord();
-				db.putInt(record + INCLUDE_NAME_OR_LENGTH, rec);
+				long rec= db.newString(getFullName()).getRecord();
+				db.putRecPtr(record + INCLUDE_NAME_OR_LENGTH, rec);
 				setFlag((byte) (flag & ~FLAG_DEDUCIBLE_NAME));
 			}
-			db.putInt(record + INCLUDED_FILE, 0);
+			db.putRecPtr(record + INCLUDED_FILE, 0);
 		}
 	}
 }

@@ -52,12 +52,12 @@ class PDOMCPPFunctionTemplate extends PDOMCPPFunction
 		final ICPPTemplateParameter[] origParams= template.getTemplateParameters();
 		params = PDOMTemplateParameterArray.createPDOMTemplateParameters(linkage, this, origParams);
 		final Database db = getDB();
-		int rec= PDOMTemplateParameterArray.putArray(db, params);
-		db.putInt(record + TEMPLATE_PARAMS, rec);
+		long rec= PDOMTemplateParameterArray.putArray(db, params);
+		db.putRecPtr(record + TEMPLATE_PARAMS, rec);
 		linkage.new ConfigureFunctionTemplate(template, this);
 	}
 
-	public PDOMCPPFunctionTemplate(PDOMLinkage linkage, int bindingRecord) {
+	public PDOMCPPFunctionTemplate(PDOMLinkage linkage, long bindingRecord) {
 		super(linkage, bindingRecord);
 	}
 
@@ -79,7 +79,7 @@ class PDOMCPPFunctionTemplate extends PDOMCPPFunction
 	public IPDOMCPPTemplateParameter[] getTemplateParameters() {
 		if (params == null) {
 			try {
-				int rec= getDB().getInt(record + TEMPLATE_PARAMS);
+				long rec= getDB().getRecPtr(record + TEMPLATE_PARAMS);
 				if (rec == 0) {
 					params= IPDOMCPPTemplateParameter.EMPTY_ARRAY;
 				} else {

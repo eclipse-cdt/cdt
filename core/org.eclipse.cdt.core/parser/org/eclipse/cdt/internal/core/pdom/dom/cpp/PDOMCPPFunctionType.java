@@ -67,7 +67,7 @@ public class PDOMCPPFunctionType extends PDOMCFunctionType implements ICPPFuncti
 	IPointerType thisType;  // Cached value
 	int cvq= -1; // Cached value
 	
-	protected PDOMCPPFunctionType(PDOMLinkage linkage, int offset) {
+	protected PDOMCPPFunctionType(PDOMLinkage linkage, long offset) {
 		super(linkage, offset);
 	}
 	

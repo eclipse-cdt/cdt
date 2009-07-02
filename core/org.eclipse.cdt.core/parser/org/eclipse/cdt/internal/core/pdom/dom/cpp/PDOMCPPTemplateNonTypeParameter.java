@@ -57,7 +57,7 @@ class PDOMCPPTemplateNonTypeParameter extends PDOMCPPBinding implements IPDOMMem
 		db.putInt(record + PARAMETERID, param.getParameterID());
 	}
 
-	public PDOMCPPTemplateNonTypeParameter(PDOMLinkage linkage, int bindingRecord) {
+	public PDOMCPPTemplateNonTypeParameter(PDOMLinkage linkage, long bindingRecord) {
 		super(linkage, bindingRecord);
 	}
 
@@ -74,7 +74,7 @@ class PDOMCPPTemplateNonTypeParameter extends PDOMCPPBinding implements IPDOMMem
 	public ICPPTemplateArgument getDefaultValue() {
 		try {
 			final Database db = getDB();
-			int rec= db.getInt(record + DEFAULTVAL);
+			long rec= db.getRecPtr(record + DEFAULTVAL);
 			IValue val= PDOMValue.restore(db, getLinkage(), rec);
 			if (val == null) 
 				return null;
@@ -92,7 +92,7 @@ class PDOMCPPTemplateNonTypeParameter extends PDOMCPPBinding implements IPDOMMem
 			updateName(newBinding.getNameCharArray());
 			final Database db = getDB();
 			IType mytype= getType();
-			int valueRec= db.getInt(record + DEFAULTVAL);
+			long valueRec= db.getRecPtr(record + DEFAULTVAL);
 			try {
 				IType newType= ntp.getType();
 				setType(linkage, newType);
@@ -114,7 +114,7 @@ class PDOMCPPTemplateNonTypeParameter extends PDOMCPPBinding implements IPDOMMem
 			((PDOMNode) type).delete(linkage);
 		}
 		Database db= getDB();
-		int valueRec= db.getInt(record + DEFAULTVAL);
+		long valueRec= db.getRecPtr(record + DEFAULTVAL);
 		PDOMValue.delete(db, valueRec);
 	}
 
@@ -147,7 +147,7 @@ class PDOMCPPTemplateNonTypeParameter extends PDOMCPPBinding implements IPDOMMem
 	
 	private void setType(final PDOMLinkage linkage, IType newType) throws CoreException, DOMException {
 		PDOMNode typeNode = linkage.addType(this, newType);
-		getDB().putInt(record + TYPE_OFFSET, typeNode != null ? typeNode.getRecord() : 0);
+		getDB().putRecPtr(record + TYPE_OFFSET, typeNode != null ? typeNode.getRecord() : 0);
 	}
 
 	public void configure(ICPPTemplateParameter param) {
@@ -170,8 +170,8 @@ class PDOMCPPTemplateNonTypeParameter extends PDOMCPPBinding implements IPDOMMem
 		if (val != null) {
 			IValue sval= val.getNonTypeValue();
 			if (sval != null) {
-				int valueRec= PDOMValue.store(db, getLinkage(), sval);
-				db.putInt(record + DEFAULTVAL, valueRec);
+				long valueRec= PDOMValue.store(db, getLinkage(), sval);
+				db.putRecPtr(record + DEFAULTVAL, valueRec);
 				return true;
 			}
 		}
@@ -180,7 +180,7 @@ class PDOMCPPTemplateNonTypeParameter extends PDOMCPPBinding implements IPDOMMem
 
 	public IType getType() {
 		try {
-			int typeRec = getDB().getInt(record + TYPE_OFFSET);
+			long typeRec = getDB().getRecPtr(record + TYPE_OFFSET);
 			return (IType)getLinkage().getNode(typeRec);
 		} catch (CoreException e) {
 			CCorePlugin.log(e);

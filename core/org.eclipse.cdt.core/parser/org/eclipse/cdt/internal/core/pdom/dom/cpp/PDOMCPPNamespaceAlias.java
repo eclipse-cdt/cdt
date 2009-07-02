@@ -40,7 +40,7 @@ class PDOMCPPNamespaceAlias extends PDOMCPPBinding implements ICPPNamespaceAlias
 		setTargetBinding(parent.getLinkage(), alias.getBinding());
 	}
 
-	public PDOMCPPNamespaceAlias(PDOMLinkage linkage, int record) {
+	public PDOMCPPNamespaceAlias(PDOMLinkage linkage, long record) {
 		super(linkage, record);
 	}
 
@@ -59,7 +59,7 @@ class PDOMCPPNamespaceAlias extends PDOMCPPBinding implements ICPPNamespaceAlias
 	
 	private void setTargetBinding(PDOMLinkage linkage, IBinding target) throws CoreException {
 		PDOMBinding namespace = getLinkage().adaptBinding(target);
-		getDB().putInt(record + NAMESPACE_BINDING, 
+		getDB().putRecPtr(record + NAMESPACE_BINDING, 
 				namespace != null ? namespace.getRecord() : 0);
 	}
 
@@ -98,7 +98,7 @@ class PDOMCPPNamespaceAlias extends PDOMCPPBinding implements ICPPNamespaceAlias
 
 	public IBinding getBinding() {
 		try {
-			return (IBinding) getLinkage().getNode(getPDOM().getDB().getInt(record + NAMESPACE_BINDING));
+			return (IBinding) getLinkage().getNode(getPDOM().getDB().getRecPtr(record + NAMESPACE_BINDING));
 		} catch(CoreException ce) {
 			CCorePlugin.log(ce);
 		}

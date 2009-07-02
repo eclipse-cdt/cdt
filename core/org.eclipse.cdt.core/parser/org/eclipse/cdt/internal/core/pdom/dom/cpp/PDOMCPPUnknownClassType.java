@@ -65,7 +65,7 @@ class PDOMCPPUnknownClassType extends PDOMCPPBinding implements ICPPClassScope, 
 		// linked list is initialized by storage being zero'd by malloc
 	}
 
-	public PDOMCPPUnknownClassType(PDOMLinkage linkage, int bindingRecord) {
+	public PDOMCPPUnknownClassType(PDOMLinkage linkage, long bindingRecord) {
 		super(linkage, bindingRecord);
 	}
 

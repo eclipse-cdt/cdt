@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2006 QNX Software Systems and others.
+ * Copyright (c) 2005, 2009 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -29,7 +29,7 @@ public interface IBTreeVisitor {
 	 * @return -1 if record < key, 0 if record == key, 1 if record > key
 	 * @throws CoreException
 	 */
-	public abstract int compare(int record) throws CoreException;
+	public abstract int compare(long record) throws CoreException;
 
 	/**
 	 * Visit a given record and return whether to continue or not.
@@ -37,6 +37,6 @@ public interface IBTreeVisitor {
 	 * @return <code>true</code> to continue the visit, <code>false</code> to abort it.
 	 * @throws CoreException
 	 */
-	public abstract boolean visit(int record) throws CoreException;
+	public abstract boolean visit(long record) throws CoreException;
 	
 }

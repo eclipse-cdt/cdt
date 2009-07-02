@@ -220,7 +220,7 @@ public class CreateParserLogAction implements IObjectActionDelegate {
 		ast.accept(visitor);
 		
 		out.println("Project:              " + projectName); 
-		out.println("Index Version:        " + PDOM.CURRENT_VERSION); 
+		out.println("Index Version:        " + PDOM.getDefaultVersion()); 
 		out.println("Build Configuration:  " + getBuildConfig(cproject));
 		out.println("File:      " + tu.getLocationURI()); 
 		out.println("Context:   " + ctx.getLocationURI()); 

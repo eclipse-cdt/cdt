@@ -31,7 +31,7 @@ class PDOMCPPField extends PDOMCPPVariable implements ICPPField {
 		super(linkage, parent, field);
 	}		
 
-	public PDOMCPPField(PDOMLinkage linkage, int bindingRecord) {
+	public PDOMCPPField(PDOMLinkage linkage, long bindingRecord) {
 		super(linkage, bindingRecord);
 	}
 

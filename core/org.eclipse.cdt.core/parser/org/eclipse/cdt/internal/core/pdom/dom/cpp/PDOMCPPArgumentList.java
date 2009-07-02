@@ -30,12 +30,12 @@ public class PDOMCPPArgumentList {
 	 * Stores the given template arguments in the database.
 	 * @return the record by which the arguments can be referenced.
 	 */
-	public static int putArguments(PDOMNode parent, ICPPTemplateArgument[] templateArguments) throws CoreException {
+	public static long putArguments(PDOMNode parent, ICPPTemplateArgument[] templateArguments) throws CoreException {
 		final PDOMLinkage linkage= parent.getLinkage();
 		final Database db= linkage.getDB();
 		final short len= (short) Math.min(templateArguments.length, (Database.MAX_MALLOC_SIZE-2)/8); 
-		final int block= db.malloc(2+8*len);
-		int p= block;
+		final long block= db.malloc(2+8*len);
+		long p= block;
 
 		db.putShort(p, len); p+=2;
 		for (int i=0; i<len; i++, p+=8) {
@@ -44,13 +44,13 @@ public class PDOMCPPArgumentList {
 			if (isNonType) {
 				final PDOMNode type= linkage.addType(parent, arg.getTypeOfNonTypeValue());
 				// type can be null, if it is a local type
-				db.putInt(p, type == null ? 0 : type.getRecord()); 
-				int valueRec= PDOMValue.store(db, linkage, arg.getNonTypeValue());
-				db.putInt(p+4, valueRec); 
+				db.putRecPtr(p, type == null ? 0 : type.getRecord()); 
+				long valueRec= PDOMValue.store(db, linkage, arg.getNonTypeValue());
+				db.putRecPtr(p+4, valueRec); 
 			} else {
 				final PDOMNode type= linkage.addType(parent, arg.getTypeValue());
 				// type can be null, if it is a local type.
-				db.putInt(p, type == null ? 0 : type.getRecord()); 
+				db.putRecPtr(p, type == null ? 0 : type.getRecord()); 
 			}
 		}
 		return block;
@@ -60,20 +60,20 @@ public class PDOMCPPArgumentList {
 	/**
 	 * Restores an array of template arguments from the database.
 	 */
-	public static void clearArguments(PDOMNode parent, final int record) throws CoreException {
+	public static void clearArguments(PDOMNode parent, final long record) throws CoreException {
 		final PDOMLinkage linkage= parent.getLinkage();
 		final Database db= linkage.getDB();
 		final short len= db.getShort(record);
 		
 		Assert.isTrue(len >= 0 && len <= (Database.MAX_MALLOC_SIZE-2)/8);
-		int p= record+2;
+		long p= record+2;
 		for (int i=0; i<len; i++) {
-			final int typeRec= db.getInt(p);
+			final long typeRec= db.getRecPtr(p);
 			if (typeRec != 0) {
 				final IType t= (IType) linkage.getNode(typeRec);
 				linkage.deleteType(t, parent.getRecord());
 			}			
-			final int nonTypeValueRec= db.getInt(p+4);
+			final long nonTypeValueRec= db.getRecPtr(p+4);
 			PDOMValue.delete(db, nonTypeValueRec);
 			p+= 8;
 		}
@@ -83,7 +83,7 @@ public class PDOMCPPArgumentList {
 	/**
 	 * Restores an array of template arguments from the database.
 	 */
-	public static ICPPTemplateArgument[] getArguments(PDOMNode parent, int rec) throws CoreException {
+	public static ICPPTemplateArgument[] getArguments(PDOMNode parent, long rec) throws CoreException {
 		final PDOMLinkage linkage= parent.getLinkage();
 		final Database db= linkage.getDB();
 		final short len= db.getShort(rec);
@@ -96,9 +96,9 @@ public class PDOMCPPArgumentList {
 		rec+=2;
 		ICPPTemplateArgument[] result= new ICPPTemplateArgument[len];
 		for (int i=0; i<len; i++) {
-			final int typeRec= db.getInt(rec);
+			final long typeRec= db.getRecPtr(rec);
 			final IType type= typeRec == 0 ? new CPPBasicType(-1,0) : (IType) linkage.getNode(typeRec);
-			final int nonTypeValRec= db.getInt(rec+4); 
+			final long nonTypeValRec= db.getRecPtr(rec+4); 
 			if (nonTypeValRec != 0) {
 				final IValue val= PDOMValue.restore(db, linkage, nonTypeValRec);
 				result[i]= new CPPTemplateArgument(val, type);

@@ -20,7 +20,7 @@ import org.eclipse.core.runtime.CoreException;
  */
 public interface IPDOMLinkageFactory {
 
-	public PDOMLinkage getLinkage(PDOM pdom, int record);
+	public PDOMLinkage getLinkage(PDOM pdom, long record);
 	
 	public PDOMLinkage createLinkage(PDOM pdom) throws CoreException;
 	

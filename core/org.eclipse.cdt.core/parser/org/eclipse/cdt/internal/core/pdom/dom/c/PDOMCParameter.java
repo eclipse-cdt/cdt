@@ -48,7 +48,7 @@ class PDOMCParameter extends PDOMNamedNode implements IParameter, IPDOMBinding {
 		assert RECORD_SIZE <= 22; // 23 would yield a 32-byte block
 	}
 	
-	public PDOMCParameter(PDOMLinkage linkage, int record) {
+	public PDOMCParameter(PDOMLinkage linkage, long record) {
 		super(linkage, record);
 	}
 
@@ -58,13 +58,13 @@ class PDOMCParameter extends PDOMNamedNode implements IParameter, IPDOMBinding {
 		
 		Database db = getDB();
 
-		db.putInt(record + NEXT_PARAM, 0);
+		db.putRecPtr(record + NEXT_PARAM, 0);
 		try {
 			if(!(param instanceof IProblemBinding)) {
 				IType type = param.getType();
 				if (type != null) {
 					PDOMNode typeNode = getLinkage().addType(this, type);
-					db.putInt(record + TYPE, typeNode != null ? typeNode.getRecord() : 0);
+					db.putRecPtr(record + TYPE, typeNode != null ? typeNode.getRecord() : 0);
 				}
 				byte flags = encodeFlags(param);
 				db.putByte(record + FLAGS, flags);
@@ -85,12 +85,12 @@ class PDOMCParameter extends PDOMNamedNode implements IParameter, IPDOMBinding {
 	}
 	
 	public void setNextParameter(PDOMCParameter nextParam) throws CoreException {
-		int rec = nextParam != null ? nextParam.getRecord() : 0;
-		getDB().putInt(record + NEXT_PARAM, rec);
+		long rec = nextParam != null ? nextParam.getRecord() : 0;
+		getDB().putRecPtr(record + NEXT_PARAM, rec);
 	}
 
 	public PDOMCParameter getNextParameter() throws CoreException {
-		int rec = getDB().getInt(record + NEXT_PARAM);
+		long rec = getDB().getRecPtr(record + NEXT_PARAM);
 		return rec != 0 ? new PDOMCParameter(getLinkage(), rec) : null;
 	}
 	
@@ -102,7 +102,7 @@ class PDOMCParameter extends PDOMNamedNode implements IParameter, IPDOMBinding {
 	public IType getType() {
 		try {
 			PDOMLinkage linkage = getLinkage(); 
-			PDOMNode node = linkage.getNode(getDB().getInt(record + TYPE));
+			PDOMNode node = linkage.getNode(getDB().getRecPtr(record + TYPE));
 			return node instanceof IType ? (IType)node : null;
 		} catch (CoreException e) {
 			CCorePlugin.log(e);

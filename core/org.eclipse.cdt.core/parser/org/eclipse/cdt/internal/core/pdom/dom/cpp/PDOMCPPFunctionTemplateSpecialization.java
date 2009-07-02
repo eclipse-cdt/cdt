@@ -36,7 +36,7 @@ class PDOMCPPFunctionTemplateSpecialization extends	PDOMCPPFunctionSpecializatio
 		super(linkage, parent, template, specialized);
 	}
 
-	public PDOMCPPFunctionTemplateSpecialization(PDOMLinkage linkage, int bindingRecord) {
+	public PDOMCPPFunctionTemplateSpecialization(PDOMLinkage linkage, long bindingRecord) {
 		super(linkage, bindingRecord);
 	}
 	

@@ -50,7 +50,7 @@ class PDOMCTypedef extends PDOMBinding implements ITypedef, ITypeContainer, IInd
 		}
 	}
 
-	public PDOMCTypedef(PDOMLinkage linkage, int record) {
+	public PDOMCTypedef(PDOMLinkage linkage, long record) {
 		super(linkage, record);
 	}
 
@@ -77,7 +77,7 @@ class PDOMCTypedef extends PDOMBinding implements ITypedef, ITypeContainer, IInd
 			linkage.deleteType((IType) typeNode, record);
 			typeNode= null;
 		}
-		getDB().putInt(record + TYPE, typeNode != null ? typeNode.getRecord() : 0);
+		getDB().putRecPtr(record + TYPE, typeNode != null ? typeNode.getRecord() : 0);
 	}
 
 	private boolean introducesRecursion(IType type, char[] tdname) throws DOMException {
@@ -122,7 +122,7 @@ class PDOMCTypedef extends PDOMBinding implements ITypedef, ITypeContainer, IInd
 
 	public IType getType() {
 		try {
-			int typeRec = getDB().getInt(record + TYPE);
+			long typeRec = getDB().getRecPtr(record + TYPE);
 			return (IType)getLinkage().getNode(typeRec);
 		} catch (CoreException e) {
 			CCorePlugin.log(e);

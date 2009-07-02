@@ -528,7 +528,7 @@ class MockStateIndexFragmentProvider extends MockStateIndexProvider implements I
 
 		fragments = new IIndexFragment[MockState.states.size()];
 		for(int i=0; i<MockState.states.size(); i++) {
-			fragments[i] = new MockPDOM("mock.test.index."+System.identityHashCode(this)+"."+i, PDOM.versionString(PDOM.CURRENT_VERSION));
+			fragments[i] = new MockPDOM("mock.test.index."+System.identityHashCode(this)+"."+i, PDOM.versionString(PDOM.getDefaultVersion()));
 		}
 	}
 

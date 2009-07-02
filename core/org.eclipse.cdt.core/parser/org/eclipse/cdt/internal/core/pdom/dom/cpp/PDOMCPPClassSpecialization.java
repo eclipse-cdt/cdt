@@ -72,7 +72,7 @@ class PDOMCPPClassSpecialization extends PDOMCPPSpecialization implements
 		super(linkage, parent, (ICPPSpecialization) classType, specialized);
 	}
 
-	public PDOMCPPClassSpecialization(PDOMLinkage linkage, int bindingRecord) {
+	public PDOMCPPClassSpecialization(PDOMLinkage linkage, long bindingRecord) {
 		super(linkage, bindingRecord);
 	}
 	
@@ -93,7 +93,7 @@ class PDOMCPPClassSpecialization extends PDOMCPPSpecialization implements
 	
 	public IBinding specializeMember(IBinding original) {	
 		if (specializationMap == null) {
-			final Integer key= record+PDOMCPPLinkage.CACHE_INSTANCE_SCOPE;
+			final Long key= record+PDOMCPPLinkage.CACHE_INSTANCE_SCOPE;
 			Object cached= getPDOM().getCachedResult(key);
 			if (cached != null) {
 				specializationMap= (ObjectMap) cached;
@@ -145,13 +145,13 @@ class PDOMCPPClassSpecialization extends PDOMCPPSpecialization implements
 	}
 
 	public PDOMCPPBase getFirstBase() throws CoreException {
-		int rec = getDB().getInt(record + FIRSTBASE);
+		long rec = getDB().getRecPtr(record + FIRSTBASE);
 		return rec != 0 ? new PDOMCPPBase(getLinkage(), rec) : null;
 	}
 
 	private void setFirstBase(PDOMCPPBase base) throws CoreException {
-		int rec = base != null ? base.getRecord() : 0;
-		getDB().putInt(record + FIRSTBASE, rec);
+		long rec = base != null ? base.getRecord() : 0;
+		getDB().putRecPtr(record + FIRSTBASE, rec);
 	}
 	
 	public void addBase(PDOMCPPBase base) throws CoreException {
@@ -163,7 +163,7 @@ class PDOMCPPClassSpecialization extends PDOMCPPSpecialization implements
 	public void removeBase(PDOMName pdomName) throws CoreException {
 		PDOMCPPBase base= getFirstBase();
 		PDOMCPPBase predecessor= null;
-		int nameRec= pdomName.getRecord();
+		long nameRec= pdomName.getRecord();
 		while (base != null) {
 			PDOMName name = base.getBaseClassSpecifierName();
 			if (name != null && name.getRecord() == nameRec) {
@@ -191,7 +191,7 @@ class PDOMCPPClassSpecialization extends PDOMCPPSpecialization implements
 		} 
 		
 		// this is an explicit specialization
-		Integer key= record + PDOMCPPLinkage.CACHE_BASES;
+		Long key= record + PDOMCPPLinkage.CACHE_BASES;
 		ICPPBase[] bases= (ICPPBase[]) getPDOM().getCachedResult(key);
 		if (bases != null) 
 			return bases;

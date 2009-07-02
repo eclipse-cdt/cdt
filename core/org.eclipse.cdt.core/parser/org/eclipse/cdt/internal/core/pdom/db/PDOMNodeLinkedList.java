@@ -24,14 +24,14 @@ import org.eclipse.core.runtime.CoreException;
  *
  */
 public class PDOMNodeLinkedList {
-	private int offset;
+	private long offset;
 	private PDOMLinkage linkage;
 	private boolean allowsNull;
 	
 	private static final int FIRST_MEMBER = 0;
 	protected static final int RECORD_SIZE = 4;
 
-	public PDOMNodeLinkedList(PDOMLinkage linkage, int offset, boolean allowsNulls) {
+	public PDOMNodeLinkedList(PDOMLinkage linkage, long offset, boolean allowsNulls) {
 		this.offset = offset;
 		this.linkage = linkage;
 		this.allowsNull = allowsNulls;
@@ -43,7 +43,7 @@ public class PDOMNodeLinkedList {
 	 * @param linkage
 	 * @param offset
 	 */
-	public PDOMNodeLinkedList(PDOMLinkage linkage, int offset) {
+	public PDOMNodeLinkedList(PDOMLinkage linkage, long offset) {
 		this(linkage, offset, false);
 	}
 
@@ -53,14 +53,14 @@ public class PDOMNodeLinkedList {
 	
 	public void accept(IPDOMVisitor visitor) throws CoreException {
 		Database db = linkage.getDB();
-		int firstItem = db.getInt(offset + FIRST_MEMBER);
+		long firstItem = db.getRecPtr(offset + FIRST_MEMBER);
 		if (firstItem == 0)
 			return;
 		
-		int item = firstItem;
+		long item = firstItem;
 		do {
 			PDOMNode node;
-			final int record= db.getInt(item + ListItem.ITEM);
+			final long record= db.getRecPtr(item + ListItem.ITEM);
 			if (record == 0) {
 				if (!allowsNull) {
 					throw new NullPointerException();
@@ -73,12 +73,12 @@ public class PDOMNodeLinkedList {
 				node.accept(visitor);
 			}
 			visitor.leave(node);
-		} while ((item = db.getInt(item + ListItem.NEXT)) != firstItem);
+		} while ((item = db.getRecPtr(item + ListItem.NEXT)) != firstItem);
 	}
 	
 	private ListItem getFirstMemberItem() throws CoreException {
 		Database db = linkage.getDB();
-		int item = db.getInt(offset + FIRST_MEMBER);
+		long item = db.getRecPtr(offset + FIRST_MEMBER);
 		return item != 0 ? new ListItem(db, item) : null;
 	}
 
@@ -90,14 +90,14 @@ public class PDOMNodeLinkedList {
 	 */
 	public PDOMNode getNodeAt(int pos) throws CoreException {
 		Database db = linkage.getDB();
-		int firstItem = db.getInt(offset + FIRST_MEMBER);
+		long firstItem = db.getRecPtr(offset + FIRST_MEMBER);
 		if (firstItem == 0) {
 			return null;
 		}
-		int item = firstItem;
+		long item = firstItem;
 		do {
 			if (--pos < 0) {
-				int record = db.getInt(item + ListItem.ITEM);
+				long record = db.getRecPtr(item + ListItem.ITEM);
 				if (record == 0) {
 					if (!allowsNull) {
 						throw new NullPointerException();
@@ -107,7 +107,7 @@ public class PDOMNodeLinkedList {
 					return linkage.getNode(record);
 				}
 			}
-		} while ((item = db.getInt(item + ListItem.NEXT)) != firstItem);
+		} while ((item = db.getRecPtr(item + ListItem.NEXT)) != firstItem);
 		return null;
 	}
 
@@ -115,7 +115,7 @@ public class PDOMNodeLinkedList {
 		addMember(allowsNull && member==null ? 0 : member.getRecord());
 	}
 	
-	protected void addMember(int record) throws CoreException {
+	protected void addMember(long record) throws CoreException {
 		Database db = linkage.getDB();
 		ListItem firstMember = getFirstMemberItem();
 		if (firstMember == null) {
@@ -123,7 +123,7 @@ public class PDOMNodeLinkedList {
 			firstMember.setItem(record);
 			firstMember.setNext(firstMember);
 			firstMember.setPrev(firstMember);
-			db.putInt(offset + FIRST_MEMBER, firstMember.getRecord());
+			db.putRecPtr(offset + FIRST_MEMBER, firstMember.getRecord());
 		} else {
 			ListItem newMember = new ListItem(db);
 			newMember.setItem(record);
@@ -138,7 +138,7 @@ public class PDOMNodeLinkedList {
 	public void deleteListItems() throws CoreException {
 		ListItem item = getFirstMemberItem();
 		if (item != null) {
-			int firstRec= item.record;
+			long firstRec= item.record;
 
 			do {
 				ListItem nextItem= item.getNext();

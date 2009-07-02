@@ -64,7 +64,7 @@ class PDOMCPPTemplateTypeParameter extends PDOMCPPBinding implements IPDOMMember
 		db.putInt(record + PARAMETERID, param.getParameterID());
 	}
 
-	public PDOMCPPTemplateTypeParameter(PDOMLinkage linkage, int bindingRecord) {
+	public PDOMCPPTemplateTypeParameter(PDOMLinkage linkage, long bindingRecord) {
 		super(linkage, bindingRecord);
 	}
 
@@ -130,7 +130,7 @@ class PDOMCPPTemplateTypeParameter extends PDOMCPPBinding implements IPDOMMember
 
 	public IType getDefault() {
 		try {
-			PDOMNode node = getLinkage().getNode(getDB().getInt(record + DEFAULT_TYPE));
+			PDOMNode node = getLinkage().getNode(getDB().getRecPtr(record + DEFAULT_TYPE));
 			if (node instanceof IType) {
 				return (IType) node;
 			}
@@ -172,7 +172,7 @@ class PDOMCPPTemplateTypeParameter extends PDOMCPPBinding implements IPDOMMember
 					final Database db= getPDOM().getDB();
 					PDOMNode typeNode = getLinkage().addType(this, dflt);
 					if (typeNode != null) {
-						db.putInt(record + DEFAULT_TYPE, typeNode.getRecord());
+						db.putRecPtr(record + DEFAULT_TYPE, typeNode.getRecord());
 					}
 				}
 			}
@@ -197,7 +197,7 @@ class PDOMCPPTemplateTypeParameter extends PDOMCPPBinding implements IPDOMMember
 				IType mytype= getDefault();
 				PDOMNode typeNode = getLinkage().addType(this, newDefault);
 				if (typeNode != null) {
-					db.putInt(record + DEFAULT_TYPE, typeNode.getRecord());
+					db.putRecPtr(record + DEFAULT_TYPE, typeNode.getRecord());
 					if (mytype != null) 
 						linkage.deleteType(mytype, record);
 				}

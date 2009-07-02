@@ -31,7 +31,7 @@ import org.eclipse.core.runtime.IPath;
  */
 public final class PDOMName implements IIndexFragmentName, IASTFileLocation {
 	private final PDOMLinkage linkage;
-	private final int record;
+	private final long record;
 	
 	private static final int FILE_REC_OFFSET     = 0;
 	private static final int FILE_NEXT_OFFSET	 = 4;
@@ -81,11 +81,11 @@ public final class PDOMName implements IIndexFragmentName, IASTFileLocation {
 			break;
 		}
 
-		db.putInt(record + BINDING_REC_OFFSET, binding.getRecord());
+		db.putRecPtr(record + BINDING_REC_OFFSET, binding.getRecord());
 		
-		db.putInt(record + FILE_REC_OFFSET, file.getRecord());
+		db.putRecPtr(record + FILE_REC_OFFSET, file.getRecord());
 		if (caller != null) {
-			db.putInt(record + CALLER_REC_OFFSET, caller.getRecord());
+			db.putRecPtr(record + CALLER_REC_OFFSET, caller.getRecord());
 		}
 
 		// Record our location in the file
@@ -104,40 +104,40 @@ public final class PDOMName implements IIndexFragmentName, IASTFileLocation {
 		return IS_REFERENCE;
 	}
 	
-	public PDOMName(PDOMLinkage linkage, int nameRecord) {
+	public PDOMName(PDOMLinkage linkage, long nameRecord) {
 		this.linkage = linkage;
 		this.record = nameRecord;
 	}
 	
-	public int getRecord() {
+	public long getRecord() {
 		return record;
 	}
 
-	private int getRecField(int offset) throws CoreException {
-		return linkage.getDB().getInt(record + offset);
+	private long getRecField(int offset) throws CoreException {
+		return linkage.getDB().getRecPtr(record + offset);
 	}
 
-	private void setRecField(int offset, int fieldrec) throws CoreException {
-		linkage.getDB().putInt(record + offset, fieldrec);
+	private void setRecField(int offset, long fieldrec) throws CoreException {
+		linkage.getDB().putRecPtr(record + offset, fieldrec);
 	}
 
 	public PDOMBinding getBinding() throws CoreException {
-		int bindingrec = getRecField(BINDING_REC_OFFSET);
+		long bindingrec = getRecField(BINDING_REC_OFFSET);
 		return linkage.getBinding(bindingrec);
 	}
 
 	public void setBinding(PDOMBinding binding) throws CoreException {
-		int bindingrec = binding != null ? binding.getRecord() : 0;
+		long bindingrec = binding != null ? binding.getRecord() : 0;
 		setRecField(BINDING_REC_OFFSET, bindingrec);
 	}
 
 	private PDOMName getNameField(int offset) throws CoreException {
-		int namerec = getRecField(offset);
+		long namerec = getRecField(offset);
 		return namerec != 0 ? new PDOMName(linkage, namerec) : null;
 	}
 
 	private void setNameField(int offset, PDOMName name) throws CoreException {
-		int namerec = name != null ? name.getRecord() : 0;
+		long namerec = name != null ? name.getRecord() : 0;
 		setRecField(offset, namerec);
 	}
 
@@ -158,17 +158,17 @@ public final class PDOMName implements IIndexFragmentName, IASTFileLocation {
 	}
 	
 	public PDOMFile getFile() throws CoreException {
-		int filerec = linkage.getDB().getInt(record + FILE_REC_OFFSET);
+		long filerec = linkage.getDB().getRecPtr(record + FILE_REC_OFFSET);
 		return filerec != 0 ? new PDOMFile(linkage, filerec) : null;
 	}
 
 	public IIndexName getEnclosingDefinition() throws CoreException {
-		int namerec = getEnclosingDefinitionRecord();
+		long namerec = getEnclosingDefinitionRecord();
 		return namerec != 0 ? new PDOMName(linkage, namerec) : null;
 	}
 
-	int getEnclosingDefinitionRecord() throws CoreException {
-		return linkage.getDB().getInt(record + CALLER_REC_OFFSET);
+	long getEnclosingDefinitionRecord() throws CoreException {
+		return linkage.getDB().getRecPtr(record + CALLER_REC_OFFSET);
 	}
 	
 	public PDOMName getNextInFile() throws CoreException {
@@ -190,7 +190,7 @@ public final class PDOMName implements IIndexFragmentName, IASTFileLocation {
 	public char[] getSimpleID() {
 		try {
 			Database db = linkage.getDB();
-			int bindingRec = db.getInt(record + BINDING_REC_OFFSET);
+			long bindingRec = db.getRecPtr(record + BINDING_REC_OFFSET);
 			PDOMBinding binding = linkage.getBinding(bindingRec);
 			return binding != null ? binding.getNameCharArray() : null;
 		} catch (CoreException e) {

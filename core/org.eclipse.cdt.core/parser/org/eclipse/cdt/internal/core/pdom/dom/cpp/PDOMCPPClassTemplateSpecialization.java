@@ -54,7 +54,7 @@ class PDOMCPPClassTemplateSpecialization extends PDOMCPPClassSpecialization
 		super(linkage, parent, template, specialized);
 	}
 
-	public PDOMCPPClassTemplateSpecialization(PDOMLinkage linkage, int bindingRecord) {
+	public PDOMCPPClassTemplateSpecialization(PDOMLinkage linkage, long bindingRecord) {
 		super(linkage, bindingRecord);
 	}
 	
@@ -162,14 +162,14 @@ class PDOMCPPClassTemplateSpecialization extends PDOMCPPClassSpecialization
 	}
 	
 	private PDOMCPPClassTemplatePartialSpecializationSpecialization getFirstPartial() throws CoreException {
-		int value = getDB().getInt(record + FIRST_PARTIAL);
+		long value = getDB().getRecPtr(record + FIRST_PARTIAL);
 		return value != 0 ? new PDOMCPPClassTemplatePartialSpecializationSpecialization(getLinkage(), value) : null;
 	}
 	
 	public void addPartial(PDOMCPPClassTemplatePartialSpecializationSpecialization pspecspec) throws CoreException {
 		PDOMCPPClassTemplatePartialSpecializationSpecialization first = getFirstPartial();
 		pspecspec.setNextPartial(first);
-		getDB().putInt(record + FIRST_PARTIAL, pspecspec.getRecord());
+		getDB().putRecPtr(record + FIRST_PARTIAL, pspecspec.getRecord());
 	}
 		
 	public ICPPClassTemplatePartialSpecialization[] getPartialSpecializations() throws DOMException {

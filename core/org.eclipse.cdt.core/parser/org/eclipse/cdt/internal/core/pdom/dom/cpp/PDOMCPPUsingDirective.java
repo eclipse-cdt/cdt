@@ -39,24 +39,24 @@ public class PDOMCPPUsingDirective implements ICPPUsingDirective, IPDOMNode {
 	private static final int RECORD_SIZE 			= 16;
 
 	private final PDOMCPPLinkage fLinkage;
-	private final int fRecord;
+	private final long fRecord;
 
-	PDOMCPPUsingDirective(PDOMCPPLinkage pdom, int record) {
+	PDOMCPPUsingDirective(PDOMCPPLinkage pdom, long record) {
 		fLinkage= pdom;
 		fRecord= record;
 	}
 
-	public PDOMCPPUsingDirective(PDOMCPPLinkage linkage, int prevRecInFile, PDOMCPPNamespace containerNS, 
+	public PDOMCPPUsingDirective(PDOMCPPLinkage linkage, long prevRecInFile, PDOMCPPNamespace containerNS, 
 			PDOMBinding nominated, int fileOffset) throws CoreException {
 		final Database db= linkage.getDB();
-		final int containerRec= containerNS == null ? 0 : containerNS.getRecord();
-		final int nominatedRec= nominated.getRecord();
+		final long containerRec= containerNS == null ? 0 : containerNS.getRecord();
+		final long nominatedRec= nominated.getRecord();
 		
 		fLinkage= linkage;
 		fRecord= db.malloc(RECORD_SIZE);
-		db.putInt(fRecord + CONTAINER_NAMESPACE, containerRec);
-		db.putInt(fRecord + NOMINATED_NAMESPACE, nominatedRec);
-		db.putInt(fRecord + PREV_DIRECTIVE_OF_FILE, prevRecInFile);
+		db.putRecPtr(fRecord + CONTAINER_NAMESPACE, containerRec);
+		db.putRecPtr(fRecord + NOMINATED_NAMESPACE, nominatedRec);
+		db.putRecPtr(fRecord + PREV_DIRECTIVE_OF_FILE, prevRecInFile);
 		db.putInt(fRecord + FILE_OFFSET, fileOffset);
 	}
 
@@ -65,7 +65,7 @@ public class PDOMCPPUsingDirective implements ICPPUsingDirective, IPDOMNode {
 	 */
 	public ICPPNamespaceScope getNominatedScope() {
 		try {
-			int rec = fLinkage.getDB().getInt(fRecord + NOMINATED_NAMESPACE);
+			long rec = fLinkage.getDB().getRecPtr(fRecord + NOMINATED_NAMESPACE);
 			PDOMNode node= fLinkage.getNode(rec);
 			if (node instanceof ICPPNamespace) {
 				return ((ICPPNamespace) node).getNamespaceScope();
@@ -83,7 +83,7 @@ public class PDOMCPPUsingDirective implements ICPPUsingDirective, IPDOMNode {
 	 */
 	public IScope getContainingScope() {
 		try {
-			int rec = fLinkage.getDB().getInt(fRecord + CONTAINER_NAMESPACE);
+			long rec = fLinkage.getDB().getRecPtr(fRecord + CONTAINER_NAMESPACE);
 			if (rec != 0) {
 				PDOMNode node= fLinkage.getNode(rec);
 				if (node instanceof PDOMCPPNamespace) {
@@ -108,13 +108,13 @@ public class PDOMCPPUsingDirective implements ICPPUsingDirective, IPDOMNode {
 		}
 	}
 
-	public int getRecord() {
+	public long getRecord() {
 		return fRecord;
 	}
 
-	public int getPreviousRec() throws CoreException {
+	public long getPreviousRec() throws CoreException {
 		final Database db= fLinkage.getDB();
-		return db.getInt(fRecord + PREV_DIRECTIVE_OF_FILE);
+		return db.getRecPtr(fRecord + PREV_DIRECTIVE_OF_FILE);
 	}
 
 	/* (non-Javadoc)

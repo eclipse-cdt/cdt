@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2007 QNX Software Systems and others.
+ * Copyright (c) 2006, 2009 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -24,7 +24,7 @@ import org.eclipse.core.runtime.CoreException;
 public class ShortString implements IString {
 	
 	private final Database db;
-	private final int record;
+	private final long record;
 	private int hash;
 	
 	private static final int LENGTH = 0;
@@ -32,7 +32,7 @@ public class ShortString implements IString {
 	
 	public static final int MAX_LENGTH = (Database.MAX_MALLOC_SIZE - CHARS) / 2;
 	
-	public ShortString(Database db, int offset) {
+	public ShortString(Database db, long offset) {
 		this.db = db;
 		this.record = offset;
 	}
@@ -44,7 +44,7 @@ public class ShortString implements IString {
 		Chunk chunk = db.getChunk(record);
 		chunk.putInt(record + LENGTH, (char)chars.length);
 		int n = chars.length;
-		int p = record + CHARS;
+		long p = record + CHARS;
 		for (int i = 0; i < n; ++i) {
 			chunk.putChar(p, chars[i]);
 			p += 2;
@@ -58,14 +58,14 @@ public class ShortString implements IString {
 		Chunk chunk = db.getChunk(record);
 		chunk.putInt(record + LENGTH, string.length());
 		int n = string.length();
-		int p = record + CHARS;
+		long p = record + CHARS;
 		for (int i = 0; i < n; ++i) {
 			chunk.putChar(p, string.charAt(i));
 			p += 2;
 		}
 	}
 	
-	public int getRecord() {
+	public long getRecord() {
 		return record;
 	}
 	
@@ -99,13 +99,13 @@ public class ShortString implements IString {
 				Chunk chunk1 = db.getChunk(record);
 				Chunk chunk2 = string.db.getChunk(string.record);
 				
-				int n1 = chunk1.getInt(record);
+				int n1 = chunk1.getInt(record); 
 				int n2 = chunk2.getInt(string.record);
 				if (n1 != n2)
 					return false;
 				
-				int p1 = record + CHARS;
-				int p2 = string.record + CHARS;
+				long p1 = record + CHARS;
+				long p2 = string.record + CHARS;
 				for (int i = 0; i < n1; ++i) {
 					if (chunk1.getChar(p1) != chunk2.getChar(p2))
 						return false;
@@ -123,7 +123,7 @@ public class ShortString implements IString {
 					return false;
 				
 				// Check each character
-				int p = record + CHARS;
+				long p = record + CHARS;
 				for (int i = 0; i < n; ++i) {
 					if (chunk.getChar(p) != chars[i])
 						return false;
@@ -140,7 +140,7 @@ public class ShortString implements IString {
 					return false;
 				
 				// Check each character
-				int p = record + CHARS;
+				long p = record + CHARS;
 				for (int i = 0; i < n; ++i) {
 					if (chunk.getChar(p) != string.charAt(i))
 						return false;
@@ -178,9 +178,9 @@ public class ShortString implements IString {
 	public int compare(char[] other, boolean caseSensitive) throws CoreException {
 		Chunk chunk = db.getChunk(record);
 		
-		int i1 = record + CHARS;
+		long i1 = record + CHARS;
 		int i2 = 0;
-		int n1 = i1 + chunk.getInt(record + LENGTH) * 2;
+		long n1 = i1 + chunk.getInt(record + LENGTH) * 2;
 		int n2 = other.length;
 		
 		while (i1 < n1 && i2 < n2) {
@@ -213,10 +213,10 @@ public class ShortString implements IString {
 		Chunk chunk1 = db.getChunk(record);
 		Chunk chunk2 = other.db.getChunk(other.record);
 
-		int i1 = record + CHARS;
-		int i2 = other.record + CHARS;
-		int n1 = i1 + chunk1.getInt(record + LENGTH) * 2;
-		int n2 = i2 + chunk2.getInt(other.record + LENGTH) * 2;
+		long i1 = record + CHARS;
+		long i2 = other.record + CHARS;
+		long n1 = i1 + chunk1.getInt(record + LENGTH) * 2;
+		long n2 = i2 + chunk2.getInt(other.record + LENGTH) * 2;
 		
 		while (i1 < n1 && i2 < n2) {
 			int cmp= compareChars(chunk1.getChar(i1), chunk2.getChar(i2), caseSensitive);
@@ -238,9 +238,9 @@ public class ShortString implements IString {
 	public int compare(String other, boolean caseSensitive) throws CoreException {
 		Chunk chunk = db.getChunk(record);
 		
-		int i1 = record + CHARS;
+		long i1 = record + CHARS;
 		int i2 = 0;
-		int n1 = i1 + chunk.getInt(record + LENGTH) * 2;
+		long n1 = i1 + chunk.getInt(record + LENGTH) * 2;
 		int n2 = other.length();
 		
 		while (i1 < n1 && i2 < n2) {
@@ -275,10 +275,10 @@ public class ShortString implements IString {
 		Chunk chunk1 = db.getChunk(record);
 		Chunk chunk2 = other.db.getChunk(other.record);
 
-		int i1 = record + CHARS;
-		int i2 = other.record + CHARS;
-		int n1 = i1 + chunk1.getInt(record + LENGTH) * 2;
-		int n2 = i2 + chunk2.getInt(other.record + LENGTH) * 2;
+		long i1 = record + CHARS;
+		long i2 = other.record + CHARS;
+		long n1 = i1 + chunk1.getInt(record + LENGTH) * 2;
+		long n2 = i2 + chunk2.getInt(other.record + LENGTH) * 2;
 		int sensitiveCmp= 0;
 		while (i1 < n1 && i2 < n2) {
 			final char c1= chunk1.getChar(i1);
@@ -313,9 +313,9 @@ public class ShortString implements IString {
 	public int compareCompatibleWithIgnoreCase(char[] chars) throws CoreException {
 		Chunk chunk1 = db.getChunk(record);
 
-		int i1 = record + CHARS;
+		long i1 = record + CHARS;
 		int i2 = 0;
-		int n1 = i1 + chunk1.getInt(record + LENGTH) * 2;
+		long n1 = i1 + chunk1.getInt(record + LENGTH) * 2;
 		int n2 = chars.length;
 		int sensitiveCmp= 0;
 		while (i1 < n1 && i2 < n2) {
@@ -351,9 +351,9 @@ public class ShortString implements IString {
 	public int comparePrefix(char[] other, boolean caseSensitive) throws CoreException {
 		Chunk chunk = db.getChunk(record);
 		
-		int i1 = record + CHARS;
+		long i1 = record + CHARS;
 		int i2 = 0;
-		int n1 = i1 + chunk.getInt(record + LENGTH) * 2;
+		long n1 = i1 + chunk.getInt(record + LENGTH) * 2;
 		int n2 = other.length;
 		
 		while (i1 < n1 && i2 < n2) {
@@ -372,7 +372,7 @@ public class ShortString implements IString {
 	}
 	
 	public char charAt(int i) throws CoreException {
-		int ptr = record + CHARS + (i*2);
+		long ptr = record + CHARS + (i*2);
 		return db.getChar(ptr);
 	}
 	

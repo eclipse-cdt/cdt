@@ -21,7 +21,7 @@ import org.eclipse.core.runtime.CoreException;
 
 class PDOMGPPBasicType extends PDOMCPPBasicType implements IGPPBasicType {
 
-	public PDOMGPPBasicType(PDOMLinkage linkage, int record) {
+	public PDOMGPPBasicType(PDOMLinkage linkage, long record) {
 		super(linkage, record);
 	}
 

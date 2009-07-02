@@ -74,7 +74,7 @@ class PDOMCPPMethod extends PDOMCPPFunction implements ICPPMethod {
 		}
 	}
 
-	public PDOMCPPMethod(PDOMLinkage linkage, int record) {
+	public PDOMCPPMethod(PDOMLinkage linkage, long record) {
 		super(linkage, record);
 	}
 

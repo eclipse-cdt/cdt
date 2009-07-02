@@ -36,11 +36,11 @@ class PDOMCPPBase implements ICPPBase, ICPPInternalBase {
 	protected static final int RECORD_SIZE = 9;
 	
 	private final PDOMLinkage linkage;
-	private final int record;
+	private final long record;
 	
 	private PDOMBinding fCachedBaseClass;
 	
-	public PDOMCPPBase(PDOMLinkage linkage, int record) {
+	public PDOMCPPBase(PDOMLinkage linkage, long record) {
 		this.linkage = linkage;
 		this.record = record;
 	}
@@ -50,8 +50,8 @@ class PDOMCPPBase implements ICPPBase, ICPPInternalBase {
 		Database db = getDB();
 		this.record = db.malloc(RECORD_SIZE);
 		
-		int baserec = baseClassSpec != null ? baseClassSpec.getRecord() : 0;
-		db.putInt(record + BASECLASS_SPECIFIER, baserec);
+		long baserec = baseClassSpec != null ? baseClassSpec.getRecord() : 0;
+		db.putRecPtr(record + BASECLASS_SPECIFIER, baserec);
 		
 		byte flags = (byte)(visibility | (isVirtual ? 4 : 0));
 		db.putByte(record + FLAGS, flags);
@@ -61,17 +61,17 @@ class PDOMCPPBase implements ICPPBase, ICPPInternalBase {
 		return linkage.getDB();
 	}
 
-	public int getRecord() {
+	public long getRecord() {
 		return record;
 	}
 	
 	public void setNextBase(PDOMCPPBase nextBase) throws CoreException {
-		int rec = nextBase != null ? nextBase.getRecord() : 0;
-		getDB().putInt(record + NEXTBASE, rec);
+		long rec = nextBase != null ? nextBase.getRecord() : 0;
+		getDB().putRecPtr(record + NEXTBASE, rec);
 	}
 	
 	public PDOMCPPBase getNextBase() throws CoreException {
-		int rec = getDB().getInt(record + NEXTBASE);
+		long rec = getDB().getRecPtr(record + NEXTBASE);
 		return rec != 0 ? new PDOMCPPBase(linkage, rec) : null;
 	}
 	
@@ -81,7 +81,7 @@ class PDOMCPPBase implements ICPPBase, ICPPInternalBase {
 
 	public PDOMName getBaseClassSpecifierName() {
 		try {
-			int rec = getDB().getInt(record + BASECLASS_SPECIFIER);
+			long rec = getDB().getRecPtr(record + BASECLASS_SPECIFIER);
 			if (rec != 0) {
 				return new PDOMName(linkage, rec);
 			}

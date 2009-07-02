@@ -98,7 +98,7 @@ class PDOMCPPLinkage extends PDOMLinkage implements IIndexCPPBindingConstants {
 
 	private LinkedList<Runnable> postProcesses = new LinkedList<Runnable>();
 	
-	public PDOMCPPLinkage(PDOM pdom, int record) {
+	public PDOMCPPLinkage(PDOM pdom, long record) {
 		super(pdom, record);
 	}
 
@@ -247,7 +247,7 @@ class PDOMCPPLinkage extends PDOMLinkage implements IIndexCPPBindingConstants {
 			if (parent == null)
 				return null;
 		
-			int fileLocalRec[]= {0};
+			long fileLocalRec[]= {0};
 			pdomBinding = adaptBinding(parent, binding, fileLocalRec);
 			if (pdomBinding != null) {
 				getPDOM().putCachedResult(inputBinding, pdomBinding);
@@ -295,7 +295,7 @@ class PDOMCPPLinkage extends PDOMLinkage implements IIndexCPPBindingConstants {
 		return false;
 	}
 
-	PDOMBinding createBinding(PDOMNode parent, IBinding binding, int fileLocalRec) throws CoreException, DOMException {
+	PDOMBinding createBinding(PDOMNode parent, IBinding binding, long fileLocalRec) throws CoreException, DOMException {
 		PDOMBinding pdomBinding= null;
 
 		// template parameters are created directly by their owners.
@@ -425,7 +425,7 @@ class PDOMCPPLinkage extends PDOMLinkage implements IIndexCPPBindingConstants {
 	
 	private void addImplicitMethods(PDOMBinding type, ICPPClassType binding) throws CoreException {
 		try {
-			final int fileLocalRec= type.getLocalToFileRec();
+			final long fileLocalRec= type.getLocalToFileRec();
 			IScope scope = binding.getCompositeScope();
 			if (scope instanceof ICPPClassScope) {
 				ICPPMethod[] implicit= ((ICPPClassScope) scope).getImplicitMethods();
@@ -553,7 +553,7 @@ class PDOMCPPLinkage extends PDOMLinkage implements IIndexCPPBindingConstants {
 		return adaptBinding(null, inputBinding, FILE_LOCAL_REC_DUMMY);
 	}
 
-	private final PDOMBinding adaptBinding(final PDOMNode parent, IBinding inputBinding, int[] fileLocalRecHolder) throws CoreException {
+	private final PDOMBinding adaptBinding(final PDOMNode parent, IBinding inputBinding, long[] fileLocalRecHolder) throws CoreException {
 		if (cannotAdapt(inputBinding)) {
 			return null;
 		}
@@ -579,7 +579,7 @@ class PDOMCPPLinkage extends PDOMLinkage implements IIndexCPPBindingConstants {
 	/**
 	 * Find the equivalent binding, or binding place holder within this PDOM
 	 */
-	private final PDOMBinding doAdaptBinding(PDOMNode parent, IBinding binding, int[] fileLocalRecHolder) throws CoreException {
+	private final PDOMBinding doAdaptBinding(PDOMNode parent, IBinding binding, long[] fileLocalRecHolder) throws CoreException {
 		if (parent == null) {
 			parent= adaptOrAddParent(false, binding);
 		}
@@ -597,7 +597,7 @@ class PDOMCPPLinkage extends PDOMLinkage implements IIndexCPPBindingConstants {
 
 		if (parent == this) {
 			PDOMBinding glob= CPPFindBinding.findBinding(getIndex(), this, binding, 0);
-			final int loc= getLocalToFileRec(inheritFileLocal, binding, glob);
+			final long loc= getLocalToFileRec(inheritFileLocal, binding, glob);
 			if (loc == 0) 
 				return glob;
 			fileLocalRecHolder[0]= loc;
@@ -606,7 +606,7 @@ class PDOMCPPLinkage extends PDOMLinkage implements IIndexCPPBindingConstants {
 		if (parent instanceof PDOMCPPNamespace) {
 			final BTree btree = ((PDOMCPPNamespace) parent).getIndex();
 			PDOMBinding glob= CPPFindBinding.findBinding(btree, this, binding, 0);
-			final int loc= getLocalToFileRec(inheritFileLocal, binding, glob);
+			final long loc= getLocalToFileRec(inheritFileLocal, binding, glob);
 			if (loc == 0) 
 				return glob;
 			fileLocalRecHolder[0]= loc;
@@ -618,7 +618,7 @@ class PDOMCPPLinkage extends PDOMLinkage implements IIndexCPPBindingConstants {
 		}
 		if (parent instanceof IPDOMMemberOwner) {
 			PDOMBinding glob= CPPFindBinding.findBinding(parent, this, binding, 0);
-			final int loc= getLocalToFileRec(inheritFileLocal, binding, glob);
+			final long loc= getLocalToFileRec(inheritFileLocal, binding, glob);
 			if (loc == 0) 
 				return glob;
 			fileLocalRecHolder[0]= loc;
@@ -731,7 +731,7 @@ class PDOMCPPLinkage extends PDOMLinkage implements IIndexCPPBindingConstants {
 	}
 	
 	@Override
-	public PDOMNode getNode(int record) throws CoreException {
+	public PDOMNode getNode(long record) throws CoreException {
 		if (record == 0)
 			return null;
 
@@ -891,7 +891,7 @@ class PDOMCPPLinkage extends PDOMLinkage implements IIndexCPPBindingConstants {
 					}
 				}
 				if (doit) {
-					int rec= file.getLastUsingDirectiveRec();
+					long rec= file.getLastUsingDirectiveRec();
 					PDOMCPPUsingDirective ud= new PDOMCPPUsingDirective(this, rec, containerNS,
 							pdomName.getBinding(), pdomName.getFileLocation().getNodeOffset());
 					file.setFirstUsingDirectiveRec(ud.getRecord());
@@ -931,7 +931,7 @@ class PDOMCPPLinkage extends PDOMLinkage implements IIndexCPPBindingConstants {
 	 */
 	@Override
 	public ICPPUsingDirective[] getUsingDirectives(PDOMFile file) throws CoreException {
-		int rec= file.getLastUsingDirectiveRec();
+		long rec= file.getLastUsingDirectiveRec();
 		if (rec == 0) {
 			return ICPPUsingDirective.EMPTY_ARRAY;
 		}

@@ -95,11 +95,7 @@ import org.eclipse.core.runtime.Status;
  * Database for storing semantic information for one project.
  */
 public class PDOM extends PlatformObject implements IPDOM {
-	/**
-	 * mstodo
-	 */
 	private static final int BLOCKED_WRITELOCK_OUTPUT_INTERVAL = 30000;
-
 	static boolean sDEBUG_LOCKS= "true".equals(Platform.getDebugOption(CCorePlugin.PLUGIN_ID + "/debug/index/locks"));  //$NON-NLS-1$//$NON-NLS-2$
 
 	/**
@@ -167,6 +163,7 @@ public class PDOM extends PlatformObject implements IPDOM {
 	 *  60.0 - store integral values with basic types (bug 207871)
 	 *  #61.0# - properly insert macro undef statements into macro-containers (bug 234591) - <<CDT 5.0>>
 	 *  
+	 *  CDT 6.0 development
 	 *  70.0 - cleaned up templates, fixes bug 236197
 	 *  71.0 - proper support for anonymous unions, bug 206450
 	 *  72.0 - store project-relative paths for resources that belong to the project, bug 239472
@@ -181,18 +178,43 @@ public class PDOM extends PlatformObject implements IPDOM {
 	 *  80.0 - support for specializations of partial specializations, bug 259872
 	 *  81.0 - change to c++ function types, bug 264479
 	 *  82.0 - offsets for using directives, bug 270806
-	 *  83.0 - unconditionally store name in PROMInclude, bug 272815
+	 *  #83.0# - unconditionally store name in PDOMInclude, bug 272815 - <<CDT 6.0>>
+	 *  84.0 - storing free record pointers as (ptr>>3) and allocated pointers as (ptr-2)>>3 RECPTR_DENSE_VERSION
+	 *  
+	 *  CDT 7.0 development (versions not supported on the 6.0.x branch)
+	 *  next: 90.0
 	 */
-	private static int version(int major, int minor) {
-		return major << 16 + minor;
-	}
-	public static final int MAJOR_VERSION = 83; 
-	public static final int MINOR_VERSION = 0;	// minor versions must be compatible	
+	private static final int MIN_SUPPORTED_VERSION= version(83, 0);
+	private static final int MAX_SUPPORTED_VERSION= version(84, Short.MAX_VALUE);
+	private static int DEFAULT_VERSION = version(84, 0);
+	public static final int DENSE_RECPTR_VERSION = version(84, 0);
 	
-	public static final int CURRENT_VERSION=       version(MAJOR_VERSION, MINOR_VERSION);
-	public static final int MIN_SUPPORTED_VERSION= version(MAJOR_VERSION, 0);
-	public static final int MAX_SUPPORTED_VERSION= version(MAJOR_VERSION+1, 0)-1;
+	static {
+		if (System.getProperty("org.eclipse.cdt.core.parser.pdom.useDensePointers", "false").equals("true")) { //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+			DEFAULT_VERSION= DENSE_RECPTR_VERSION;
+		}
+	}
+	
+	private static int version(int major, int minor) {
+		return (major << 16) + minor;
+	}
 
+	/**
+	 * Returns the version that shall be used when creating new databases
+	 */
+	public static int getDefaultVersion() {
+		return DEFAULT_VERSION;
+	}
+	
+	public static boolean isSupportedVersion(int vers) {
+		return vers >= MIN_SUPPORTED_VERSION && vers <= MAX_SUPPORTED_VERSION;
+	}
+	public static int getMinSupportedVersion() {
+		return MIN_SUPPORTED_VERSION;
+	}
+	public static int getMaxSupportedVersion() {
+		return MAX_SUPPORTED_VERSION;
+	}
 	public static String versionString(int version) {
 		final int major= version >> 16;
 		final int minor= version & 0xffff;
@@ -268,7 +290,7 @@ public class PDOM extends PlatformObject implements IPDOM {
 		final boolean lockDB= db == null || lockCount != 0;
 		
 		clearCaches();
-		db = new Database(fPath, cache, CURRENT_VERSION, isPermanentlyReadOnly());
+		db = new Database(fPath, cache, getDefaultVersion(), isPermanentlyReadOnly());
 		
 		db.setLocked(lockDB);
 		if (isSupportedVersion()) {
@@ -287,7 +309,7 @@ public class PDOM extends PlatformObject implements IPDOM {
 	}
 
 	private void readLinkages() throws CoreException {
-		int record= getFirstLinkageRecord();
+		long record= getFirstLinkageRecord();
 		while (record != 0) {
 			String linkageID= PDOMLinkage.getLinkageID(this, record).getString();
 			IPDOMLinkageFactory factory= fPDOMLinkageFactoryCache.get(linkageID);
@@ -373,10 +395,10 @@ public class PDOM extends PlatformObject implements IPDOM {
 	public IIndexFragmentFile[] getAllFiles() throws CoreException {
 		final List<PDOMFile> locations = new ArrayList<PDOMFile>();
 		getFileIndex().accept(new IBTreeVisitor(){
-			public int compare(int record) throws CoreException {
+			public int compare(long record) throws CoreException {
 				return 0;
 			}
-			public boolean visit(int record) throws CoreException {
+			public boolean visit(long record) throws CoreException {
 				PDOMFile file = PDOMFile.recreateFile(PDOM.this, record);
 				locations.add(file);
 				return true;
@@ -397,7 +419,7 @@ public class PDOM extends PlatformObject implements IPDOM {
 	}
 
 	protected void clearFileIndex() throws CoreException {
-		db.putInt(FILE_INDEX, 0);
+		db.putRecPtr(FILE_INDEX, 0);
 		fileIndex = null;	
 	}
 	
@@ -405,7 +427,8 @@ public class PDOM extends PlatformObject implements IPDOM {
 		assert lockCount < 0; // needs write-lock.
 		
 		// Clear out the database, everything is set to zero.
-		db.clear(CURRENT_VERSION);
+		int vers = getDefaultVersion();
+		db.clear(vers);
 		clearCaches();
 		fEvent.setCleared();
 	}
@@ -647,8 +670,8 @@ public class PDOM extends PlatformObject implements IPDOM {
 	}
 
 	
-	private int getFirstLinkageRecord() throws CoreException {
-		return db.getInt(LINKAGES);
+	private long getFirstLinkageRecord() throws CoreException {
+		return db.getRecPtr(LINKAGES);
 	}
 
 	public IIndexLinkage[] getLinkages() {
@@ -662,8 +685,8 @@ public class PDOM extends PlatformObject implements IPDOM {
 	}
 
 	public void insertLinkage(PDOMLinkage linkage) throws CoreException {
-		linkage.setNext(db.getInt(LINKAGES));
-		db.putInt(LINKAGES, linkage.getRecord());
+		linkage.setNext(db.getRecPtr(LINKAGES));
+		db.putRecPtr(LINKAGES, linkage.getRecord());
 		fLinkageIDCache.put(linkage.getLinkageID(), linkage);
 	}
 
@@ -996,10 +1019,18 @@ public class PDOM extends PlatformObject implements IPDOM {
 		if(IIndexFragment.PROPERTY_FRAGMENT_FORMAT_ID.equals(propertyName)) {
 			return FRAGMENT_PROPERTY_VALUE_FORMAT_ID;
 		}
+		int version = db.getVersion();
 		if(IIndexFragment.PROPERTY_FRAGMENT_FORMAT_VERSION.equals(propertyName)) {
-			return PDOM.versionString(db.getVersion());
+			return PDOM.versionString(version);
 		}
-		return new DBProperties(db, PROPERTIES).getProperty(propertyName);
+		// play it safe, properties are accessed before version checks.
+		if (PDOM.isSupportedVersion(version)) {
+			return new DBProperties(db, PROPERTIES).getProperty(propertyName);
+		}
+		if (IIndexFragment.PROPERTY_FRAGMENT_ID.equals(propertyName)) {
+			return "Unknown"; //$NON-NLS-1$
+		}
+		return null;
 	}
 
 	public void close() throws CoreException {
@@ -1062,7 +1093,7 @@ public class PDOM extends PlatformObject implements IPDOM {
 		}
 	}		
 
-	public String createKeyForCache(int record, char[] name) {
+	public String createKeyForCache(long record, char[] name) {
 		return new StringBuilder(name.length+2).append((char) (record >> 16)).append((char) record).append(name).toString();
 	}
 	

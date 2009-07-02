@@ -36,7 +36,7 @@ abstract class PDOMCPPBinding extends PDOMBinding implements ICPPBinding {
 	@SuppressWarnings("hiding")
 	protected static final int RECORD_SIZE= PDOMBinding.RECORD_SIZE + 0;
 	
-	public PDOMCPPBinding(PDOMLinkage linkage, int record) {
+	public PDOMCPPBinding(PDOMLinkage linkage, long record) {
 		super(linkage, record);
 	}
 	public PDOMCPPBinding(PDOMLinkage linkage, PDOMNode parent, char[] name) throws CoreException {

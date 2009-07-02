@@ -41,7 +41,7 @@ class PDOMCPPBasicType extends PDOMNode implements ICPPBasicType, IIndexType {
 	protected short fFlags= -1;
 	protected short fType= -1;
 
-	public PDOMCPPBasicType(PDOMLinkage linkage, int record) {
+	public PDOMCPPBasicType(PDOMLinkage linkage, long record) {
 		super(linkage, record);
 	}
 

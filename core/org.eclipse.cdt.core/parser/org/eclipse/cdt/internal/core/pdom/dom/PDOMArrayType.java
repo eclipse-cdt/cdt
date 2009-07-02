@@ -29,7 +29,7 @@ public class PDOMArrayType extends PDOMNode implements IIndexType, IArrayType, I
 	@SuppressWarnings("hiding")
 	private static final int RECORD_SIZE= TYPE+4;
 
-	public PDOMArrayType(PDOMLinkage linkage, int record) {
+	public PDOMArrayType(PDOMLinkage linkage, long record) {
 		super(linkage, record);
 	}
 
@@ -38,8 +38,8 @@ public class PDOMArrayType extends PDOMNode implements IIndexType, IArrayType, I
 		try {
 			PDOMNode targetTypeNode = getLinkage().addType(this, type.getType());
 			if (targetTypeNode != null) {
-				int typeRec = targetTypeNode.getRecord();
-				getDB().putInt(record + TYPE, typeRec);
+				long typeRec = targetTypeNode.getRecord();
+				getDB().putRecPtr(record + TYPE, typeRec);
 			}
 		} catch (DOMException e) {
 			CCorePlugin.log(e);
@@ -62,7 +62,7 @@ public class PDOMArrayType extends PDOMNode implements IIndexType, IArrayType, I
 
 	public IType getType() {
 		try {
-			PDOMNode node = getLinkage().getNode(getDB().getInt(record + TYPE));
+			PDOMNode node = getLinkage().getNode(getDB().getRecPtr(record + TYPE));
 			return node instanceof IType ? (IType)node : null;
 		} catch (CoreException e) {
 			CCorePlugin.log(e);

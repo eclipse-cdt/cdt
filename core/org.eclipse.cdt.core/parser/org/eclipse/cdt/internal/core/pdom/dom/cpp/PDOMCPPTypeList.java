@@ -27,32 +27,32 @@ class PDOMCPPTypeList {
 	 * Stores the given types in the database. 
 	 * @return the record by which the types can be referenced.
 	 */
-	public static int putTypes(PDOMNode parent, IType[] types) throws CoreException {
+	public static long putTypes(PDOMNode parent, IType[] types) throws CoreException {
 		if (types == null)
 			return 0;
 		
 		final PDOMLinkage linkage= parent.getLinkage();
 		final Database db= linkage.getDB();
 		final short len = (short)Math.min(types.length, (Database.MAX_MALLOC_SIZE-2)/NODE_SIZE); 
-		final int block = db.malloc(2+ NODE_SIZE*len);
-		int p = block;
+		final long block = db.malloc(2+ NODE_SIZE*len);
+		long p = block;
 
 		db.putShort(p, len); p+=2;
 		for (int i=0; i<len; i++, p+=NODE_SIZE) {
 			final IType type = types[i];
-			int rec= 0;
+			long rec= 0;
 			if (type != null) {
 				final PDOMNode pdomType = linkage.addType(parent, type);
 				if (pdomType != null) {
 					rec= pdomType.getRecord();
 				} 
 			}
-			db.putInt(p, rec);
+			db.putRecPtr(p, rec);
 		}
 		return block;
 	}
 	
-	public static IType[] getTypes(PDOMNode parent, int rec) throws CoreException {
+	public static IType[] getTypes(PDOMNode parent, long rec) throws CoreException {
 		if (rec == 0)
 			return null;
 		
@@ -67,7 +67,7 @@ class PDOMCPPTypeList {
 		rec+=2;
 		IType[] result= new IType[len];
 		for (int i=0; i<len; i++, rec+=NODE_SIZE) {
-			final int typeRec= db.getInt(rec);
+			final long typeRec= db.getRecPtr(rec);
 			if (typeRec != 0)
 				result[i]= (IType)linkage.getNode(typeRec);
 		}
@@ -77,7 +77,7 @@ class PDOMCPPTypeList {
 	/**
 	 * Restores an array of template arguments from the database.
 	 */
-	public static void clearTypes(PDOMNode parent, final int record) throws CoreException {
+	public static void clearTypes(PDOMNode parent, final long record) throws CoreException {
 		if (record == 0)
 			return;
 		
@@ -86,9 +86,9 @@ class PDOMCPPTypeList {
 		final short len= db.getShort(record);
 		
 		Assert.isTrue(len >= 0 && len <= (Database.MAX_MALLOC_SIZE-2)/NODE_SIZE);
-		int p= record+2;
+		long p= record+2;
 		for (int i=0; i<len; i++, p+=NODE_SIZE) {
-			final int typeRec= db.getInt(p);
+			final long typeRec= db.getRecPtr(p);
 			final IType t= (IType) linkage.getNode(typeRec);
 			linkage.deleteType(t, parent.getRecord());
 		}

@@ -54,7 +54,7 @@ public class PDOMCFunctionType extends PDOMNode implements IIndexType, IFunction
 
 	private IType[] parameterTypes;
 
-	public PDOMCFunctionType(PDOMLinkage linkage, int record) {
+	public PDOMCFunctionType(PDOMLinkage linkage, long record) {
 		super(linkage, record);
 	}
 	
@@ -177,7 +177,7 @@ public class PDOMCFunctionType extends PDOMNode implements IIndexType, IFunction
 
 	public IType getReturnType() {
 		try {
-			PDOMNode node = getLinkage().getNode(getDB().getInt(record + RETURN_TYPE));
+			PDOMNode node = getLinkage().getNode(getDB().getRecPtr(record + RETURN_TYPE));
 			if (node instanceof IType) {
 				return (IType) node;
 			}
@@ -190,7 +190,7 @@ public class PDOMCFunctionType extends PDOMNode implements IIndexType, IFunction
 	public void setReturnType(IType type) throws CoreException {
 		PDOMNode typeNode = getLinkage().addType(this, type);
 		if (typeNode != null) {
-			getDB().putInt(record + RETURN_TYPE, typeNode.getRecord());
+			getDB().putRecPtr(record + RETURN_TYPE, typeNode.getRecord());
 		}
 	}
 

@@ -75,8 +75,8 @@ class PDOMCVariable extends PDOMBinding implements IVariable {
 
 	private void setValue(final Database db, IVariable variable) throws CoreException {
 		IValue val= variable.getInitialValue();
-		int valrec= PDOMValue.store(db, getLinkage(), val);
-		db.putInt(record + VALUE_OFFSET, valrec);
+		long valrec= PDOMValue.store(db, getLinkage(), val);
+		db.putRecPtr(record + VALUE_OFFSET, valrec);
 	}
 	
 	@Override
@@ -85,7 +85,7 @@ class PDOMCVariable extends PDOMBinding implements IVariable {
 			final Database db = getDB();
 			IVariable var= (IVariable) newBinding;
 			IType mytype= getType();
-			int valueRec= db.getInt(record + VALUE_OFFSET);
+			long valueRec= db.getRecPtr(record + VALUE_OFFSET);
 			try {
 				IType newType= var.getType();
 				setType(linkage, newType);
@@ -103,10 +103,10 @@ class PDOMCVariable extends PDOMBinding implements IVariable {
 
 	private void setType(final PDOMLinkage linkage, final IType type) throws CoreException {
 		final PDOMNode typeNode = linkage.addType(this, type);
-		getDB().putInt(record + TYPE_OFFSET, typeNode != null ? typeNode.getRecord() : 0);
+		getDB().putRecPtr(record + TYPE_OFFSET, typeNode != null ? typeNode.getRecord() : 0);
 	}
 
-	public PDOMCVariable(PDOMLinkage linkage, int record) {
+	public PDOMCVariable(PDOMLinkage linkage, long record) {
 		super(linkage, record);
 	}
 
@@ -122,7 +122,7 @@ class PDOMCVariable extends PDOMBinding implements IVariable {
 	
 	public IType getType() {
 		try {
-			int typeRec = getDB().getInt(record + TYPE_OFFSET);
+			long typeRec = getDB().getRecPtr(record + TYPE_OFFSET);
 			return (IType)getLinkage().getNode(typeRec);
 		} catch (CoreException e) {
 			CCorePlugin.log(e);
@@ -133,7 +133,7 @@ class PDOMCVariable extends PDOMBinding implements IVariable {
 	public IValue getInitialValue() {
 		try {
 			final Database db = getDB();
-			int valRec = db.getInt(record + VALUE_OFFSET);
+			long valRec = db.getRecPtr(record + VALUE_OFFSET);
 			return PDOMValue.restore(db, getLinkage(), valRec);
 		} catch (CoreException e) {
 			CCorePlugin.log(e);

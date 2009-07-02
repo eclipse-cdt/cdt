@@ -63,11 +63,11 @@ class PDOMCPPDeferredClassInstance extends PDOMCPPSpecialization implements ICPP
 			throws CoreException {
 		super(linkage, parent, classType, instantiated);
 
-		final int argListRec= PDOMCPPArgumentList.putArguments(this, classType.getTemplateArguments());
-		getDB().putInt(record+ARGUMENTS, argListRec);
+		final long argListRec= PDOMCPPArgumentList.putArguments(this, classType.getTemplateArguments());
+		getDB().putRecPtr(record+ARGUMENTS, argListRec);
 	}
 
-	public PDOMCPPDeferredClassInstance(PDOMLinkage linkage, int bindingRecord) {
+	public PDOMCPPDeferredClassInstance(PDOMLinkage linkage, long bindingRecord) {
 		super(linkage, bindingRecord);
 	}
 	
@@ -189,7 +189,7 @@ class PDOMCPPDeferredClassInstance extends PDOMCPPSpecialization implements ICPP
 	
 	public ICPPTemplateArgument[] getTemplateArguments() {
 		try {
-			final int rec= getPDOM().getDB().getInt(record+ARGUMENTS);
+			final long rec= getPDOM().getDB().getRecPtr(record+ARGUMENTS);
 			return PDOMCPPArgumentList.getArguments(this, rec);
 		} catch (CoreException e) {
 			CCorePlugin.log(e);

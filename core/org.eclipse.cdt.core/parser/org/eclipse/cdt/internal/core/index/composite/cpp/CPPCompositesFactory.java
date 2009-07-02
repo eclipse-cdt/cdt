@@ -303,8 +303,8 @@ public class CPPCompositesFactory extends AbstractCompositeFactory {
 	private static class Key {
 		final long i;
 		final int j;
-		final int k;
-		public Key(long id1, int id2, int id3) {
+		final long k;
+		public Key(long id1, int id2, long id3) {
 			i= id1;
 			j= id2;
 			k= id3;
@@ -315,7 +315,7 @@ public class CPPCompositesFactory extends AbstractCompositeFactory {
 			int result = 1;
 			result = prime * result + (int) (i ^ (i >>> 32));
 			result = prime * result + j;
-			result = prime * result + k;
+			result = prime * result + (int)k;
 			return result;
 		}
 		@Override

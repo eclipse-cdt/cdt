@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2007 QNX Software Systems and others.
+ * Copyright (c) 2006, 2009 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -28,7 +28,7 @@ import org.eclipse.core.runtime.CoreException;
 public class LongString implements IString {
 
 	private final Database db;
-	private final int record;
+	private final long record;
 	private int hash;
 
 	// Additional fields of first record
@@ -44,28 +44,28 @@ public class LongString implements IString {
 	
 	private static final int NUM_CHARSN = (Database.MAX_MALLOC_SIZE - CHARSN) / 2;
 	
-	public LongString(Database db, int record) {
+	public LongString(Database db, long record) {
 		this.db = db;
 		this.record = record;
 	}
 	
 	private interface IWriter {
-		public void writeChars(int start, int length, int p) throws CoreException;
+		public void writeChars(int start, int length, long p) throws CoreException;
 	}
 
-	private int createString(int length, IWriter writer) throws CoreException {
+	private long createString(int length, IWriter writer) throws CoreException {
 		// write the first record
-		int firstRecord = db.malloc(Database.MAX_MALLOC_SIZE);
+		long firstRecord = db.malloc(Database.MAX_MALLOC_SIZE);
 		int start = 0;
 		db.putInt(firstRecord, length);
 		writer.writeChars(start, NUM_CHARS1, firstRecord + CHARS1);
 		
 		// write the subsequent records
-		int lastNext = firstRecord + NEXT1;
+		long lastNext = firstRecord + NEXT1;
 		start += NUM_CHARS1;
 		while (length - start > NUM_CHARSN) {
-			int nextRecord = db.malloc(Database.MAX_MALLOC_SIZE);
-			db.putInt(lastNext, nextRecord);
+			long nextRecord = db.malloc(Database.MAX_MALLOC_SIZE);
+			db.putRecPtr(lastNext, nextRecord);
 			writer.writeChars(start, NUM_CHARSN, nextRecord + CHARSN);
 			start += NUM_CHARSN;
 			lastNext = nextRecord + NEXTN;
@@ -73,8 +73,8 @@ public class LongString implements IString {
 		
 		// Write the final record
 		length -= start;
-		int finalRecord = db.malloc(CHARSN + (length) * 2);
-		db.putInt(lastNext, finalRecord);
+		long finalRecord = db.malloc(CHARSN + (length) * 2);
+		db.putRecPtr(lastNext, finalRecord);
 		writer.writeChars(start, length, finalRecord + CHARSN);
 		
 		return firstRecord;
@@ -83,7 +83,7 @@ public class LongString implements IString {
 	public LongString(Database db, final String string) throws CoreException {
 		this.db = db;
 		this.record = createString(string.length(), new IWriter() {
-			public void writeChars(int start, int length, int p) throws CoreException {
+			public void writeChars(int start, int length, long p) throws CoreException {
 				for (int i = start; i < start + length; ++i) {
 					LongString.this.db.putChar(p, string.charAt(i));
 					p += 2;
@@ -95,7 +95,7 @@ public class LongString implements IString {
 	public LongString(Database db, final char[] chars) throws CoreException {
 		this.db = db;
 		this.record = createString(chars.length, new IWriter() {
-			public void writeChars(int start, int length, int p) throws CoreException {
+			public void writeChars(int start, int length, long p) throws CoreException {
 				for (int i = start; i < start + length; ++i) {
 					LongString.this.db.putChar(p, chars[i]);
 					p += 2;
@@ -104,19 +104,19 @@ public class LongString implements IString {
 		});
 	}
 	
-	public int getRecord() {
+	public long getRecord() {
 		return record;
 	}
 
 	public void delete() throws CoreException {
 		int length = db.getInt(record + LENGTH) - NUM_CHARS1;
-		int nextRecord = db.getInt(record + NEXT1);
+		long nextRecord = db.getRecPtr(record + NEXT1);
 		db.free(record);
 		
 		// Middle records
 		while (length > NUM_CHARSN) {
 			length -= NUM_CHARSN;
-			int nextnext = db.getInt(nextRecord + NEXTN);
+			long nextnext = db.getRecPtr(nextRecord + NEXTN);
 			db.free(nextRecord);
 			nextRecord = nextnext;
 		}
@@ -295,13 +295,13 @@ public class LongString implements IString {
 	
 	private void readChars(int length, IReader reader) throws CoreException {
 		// First record
-		int p = record + CHARS1;
+		long p = record + CHARS1;
 		for (int i = 0; i < NUM_CHARS1; ++i) {
 			reader.appendChar(db.getChar(p));
 			p += 2;
 		}
 		length -= NUM_CHARS1;
-		int nextRecord = db.getInt(record + NEXT1);
+		long nextRecord = db.getRecPtr(record + NEXT1);
 		
 		// Middle records
 		while (length > NUM_CHARSN) {
@@ -311,7 +311,7 @@ public class LongString implements IString {
 				p += 2;
 			}
 			length -= NUM_CHARSN;
-			nextRecord = db.getInt(nextRecord + NEXTN);
+			nextRecord = db.getRecPtr(nextRecord + NEXTN);
 		}
 		
 		// Last record
@@ -326,7 +326,7 @@ public class LongString implements IString {
      * Convenience class for sequential access to LongString characters
      */
 	private class CharIterator {
-		int p;
+		long p;
 		int count;
 		int length;
 		
@@ -343,10 +343,10 @@ public class LongString implements IString {
 				throw new NoSuchElementException();
 			}
 			if(count == NUM_CHARS1) {
-				p = db.getInt(record + NEXT1) + CHARSN;
+				p = db.getRecPtr(record + NEXT1) + CHARSN;
 			}
 			if(count > NUM_CHARS1 && ((count-NUM_CHARS1) % NUM_CHARSN)==0) {
-				p = db.getInt(p-(NUM_CHARSN*2)-4) + CHARSN;
+				p = db.getRecPtr(p-(NUM_CHARSN*2)-4) + CHARSN;
 			}
 			return result;
 		}

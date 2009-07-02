@@ -172,7 +172,7 @@ class PDOMCPPClassScope implements ICPPClassScope, IIndexScope {
 	 * Visit bindings via the cache.
 	 */
 	public static void acceptViaCache(IPDOMCPPClassType ct, IPDOMVisitor visitor, boolean includeNestedInAnonymous) throws CoreException {
-		final int record= ct.getRecord();
+		final long record= ct.getRecord();
 		CharArrayMap<List<PDOMBinding>> map= getBindingMap(ct);
 		for (List<PDOMBinding> list : map.values()) {
 			for (PDOMBinding node : list) {
@@ -187,7 +187,7 @@ class PDOMCPPClassScope implements ICPPClassScope, IIndexScope {
 	}
 
 	public static CharArrayMap<List<PDOMBinding>> getBindingMap(IPDOMCPPClassType ct) throws CoreException {
-		final Integer key= ct.getRecord() + PDOMCPPLinkage.CACHE_MEMBERS;
+		final Long key= ct.getRecord() + PDOMCPPLinkage.CACHE_MEMBERS;
 		final PDOM pdom = ct.getPDOM();
 		@SuppressWarnings("unchecked")
 		Reference<CharArrayMap<List<PDOMBinding>>> cached= (Reference<CharArrayMap<List<PDOMBinding>>>) pdom.getCachedResult(key);

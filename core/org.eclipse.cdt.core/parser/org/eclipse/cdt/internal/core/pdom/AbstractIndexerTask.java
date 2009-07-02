@@ -784,6 +784,16 @@ public abstract class AbstractIndexerTask extends PDOMWriter {
 
 	private void swallowError(IPath file, Throwable e) throws CoreException {
 		IStatus s;
+		/*
+		 * If the thrown CoreException is for a STATUS_PDOM_TOO_LARGE, we don't want to
+		 * swallow this one.
+		 */
+		if (e instanceof CoreException) {
+			s=((CoreException)e).getStatus();
+			if( s != null && s.getCode() == CCorePlugin.STATUS_PDOM_TOO_LARGE ) {
+				throw (CoreException)e;
+			}
+		}
 		if (e instanceof CoreException) {
 			s= ((CoreException) e).getStatus();
 			if (s.getException() == null) {

@@ -785,7 +785,7 @@ public class IndexUpdateTests extends IndexTestBase {
 		ICPPClassTemplate binding;
 		ICompositeType ct;
 		fIndex.acquireReadLock();
-		int pdomid;
+		long pdomid;
 		try {
 			binding = (ICPPClassTemplate) findBinding("CT");
 			assertEquals(ICPPClassType.k_class , binding.getKey());

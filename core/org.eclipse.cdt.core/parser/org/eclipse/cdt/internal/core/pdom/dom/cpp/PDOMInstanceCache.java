@@ -29,8 +29,8 @@ public class PDOMInstanceCache {
 	
 	public static PDOMInstanceCache getCache(PDOMBinding binding) {
 		final PDOM pdom= binding.getPDOM();
-		final int record= binding.getRecord();
-		final Integer key = record+PDOMCPPLinkage.CACHE_INSTANCES;
+		final long record= binding.getRecord();
+		final Long key = record+PDOMCPPLinkage.CACHE_INSTANCES;
 		Object cache= pdom.getCachedResult(key);
 		if (cache instanceof PDOMInstanceCache) {
 			return (PDOMInstanceCache) cache;

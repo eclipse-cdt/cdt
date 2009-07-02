@@ -62,5 +62,5 @@ public interface IIndexFragmentBinding extends IIndexBinding {
 	 * Returns a unique id for the binding within the fragment
 	 * @since 5.1
 	 */
-	int getBindingID();
+	long getBindingID();
 }

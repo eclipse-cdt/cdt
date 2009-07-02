@@ -30,7 +30,7 @@ import org.eclipse.core.runtime.IPath;
  */
 public final class PDOMMacroReferenceName implements IIndexFragmentName, IASTFileLocation {
 	private final PDOMLinkage linkage;
-	private final int record;
+	private final long record;
 	
 	private static final int FILE_REC_OFFSET     = 0;
 	private static final int FILE_NEXT_OFFSET	 = 4;
@@ -48,8 +48,8 @@ public final class PDOMMacroReferenceName implements IIndexFragmentName, IASTFil
 		Database db = linkage.getDB();
 		record = db.malloc(RECORD_SIZE);
 		
-		db.putInt(record + CONTAINER_REC_OFFSET, container.getRecord());
-		db.putInt(record + FILE_REC_OFFSET, file.getRecord());
+		db.putRecPtr(record + CONTAINER_REC_OFFSET, container.getRecord());
+		db.putRecPtr(record + FILE_REC_OFFSET, file.getRecord());
 
 		// Record our location in the file
 		IASTFileLocation fileloc = name.getFileLocation();
@@ -58,35 +58,35 @@ public final class PDOMMacroReferenceName implements IIndexFragmentName, IASTFil
 		container.addReference(this);
 	}
 
-	public PDOMMacroReferenceName(PDOMLinkage linkage, int nameRecord) {
+	public PDOMMacroReferenceName(PDOMLinkage linkage, long nameRecord) {
 		this.linkage = linkage;
 		this.record = nameRecord;
 	}
 	
-	public int getRecord() {
+	public long getRecord() {
 		return record;
 	}
 
-	private int getRecField(int offset) throws CoreException {
-		return linkage.getDB().getInt(record + offset);
+	private long getRecField(int offset) throws CoreException {
+		return linkage.getDB().getRecPtr(record + offset);
 	}
 
-	private void setRecField(int offset, int fieldrec) throws CoreException {
-		linkage.getDB().putInt(record + offset, fieldrec);
+	private void setRecField(int offset, long fieldrec) throws CoreException {
+		linkage.getDB().putRecPtr(record + offset, fieldrec);
 	}
 
 	public PDOMMacroContainer getContainer() throws CoreException {
-		int bindingrec = getRecField(CONTAINER_REC_OFFSET);
+		long bindingrec = getRecField(CONTAINER_REC_OFFSET);
 		return new PDOMMacroContainer(linkage, bindingrec);
 	}
 
 	private PDOMMacroReferenceName getNameField(int offset) throws CoreException {
-		int namerec = getRecField(offset);
+		long namerec = getRecField(offset);
 		return namerec != 0 ? new PDOMMacroReferenceName(linkage, namerec) : null;
 	}
 
 	private void setNameField(int offset, PDOMMacroReferenceName name) throws CoreException {
-		int namerec = name != null ? name.getRecord() : 0;
+		long namerec = name != null ? name.getRecord() : 0;
 		setRecField(offset, namerec);
 	}
 
@@ -107,7 +107,7 @@ public final class PDOMMacroReferenceName implements IIndexFragmentName, IASTFil
 	}
 	
 	public PDOMFile getFile() throws CoreException {
-		int filerec = linkage.getDB().getInt(record + FILE_REC_OFFSET);
+		long filerec = linkage.getDB().getRecPtr(record + FILE_REC_OFFSET);
 		return filerec != 0 ? new PDOMFile(linkage, filerec) : null;
 	}
 	

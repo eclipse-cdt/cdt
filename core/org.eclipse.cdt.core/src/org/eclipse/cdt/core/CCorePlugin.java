@@ -94,6 +94,7 @@ public class CCorePlugin extends Plugin {
 	public static final int STATUS_CDTPROJECT_EXISTS = 1;
 	public static final int STATUS_CDTPROJECT_MISMATCH = 2;
 	public static final int CDT_PROJECT_NATURE_ID_MISMATCH = 3;
+	public static final int STATUS_PDOM_TOO_LARGE = 4;
 
 	public static final String PLUGIN_ID = "org.eclipse.cdt.core"; //$NON-NLS-1$
 

@@ -47,12 +47,12 @@ abstract class PDOMCPPSpecialization extends PDOMCPPBinding implements ICPPSpeci
 	public PDOMCPPSpecialization(PDOMLinkage linkage, PDOMNode parent, ICPPSpecialization spec, IPDOMBinding specialized)
 	throws CoreException {
 		super(linkage, parent, spec.getNameCharArray());
-		getDB().putInt(record + SPECIALIZED, specialized.getRecord());
+		getDB().putRecPtr(record + SPECIALIZED, specialized.getRecord());
 
 		// specializations that are not instances have the same map as their owner.
 		if (this instanceof ICPPTemplateInstance) {
-			int rec= PDOMCPPTemplateParameterMap.putMap(this, spec.getTemplateParameterMap());
-			getDB().putInt(record + ARGMAP, rec);
+			long rec= PDOMCPPTemplateParameterMap.putMap(this, spec.getTemplateParameterMap());
+			getDB().putRecPtr(record + ARGMAP, rec);
 		}
 		try {
 			Integer sigHash = IndexCPPSignatureUtil.getSignatureHash(spec);
@@ -61,14 +61,14 @@ abstract class PDOMCPPSpecialization extends PDOMCPPBinding implements ICPPSpeci
 		}
 	}
 
-	public PDOMCPPSpecialization(PDOMLinkage linkage, int bindingRecord) {
+	public PDOMCPPSpecialization(PDOMLinkage linkage, long bindingRecord) {
 		super(linkage, bindingRecord);
 	}
 
 	public IBinding getSpecializedBinding() {
 		if (fSpecializedCache == null) {
 			try {
-				int specializedRec = getDB().getInt(record + SPECIALIZED);
+				long specializedRec = getDB().getRecPtr(record + SPECIALIZED);
 				fSpecializedCache= (IPDOMBinding) getLinkage().getNode(specializedRec);
 			} catch (CoreException e) {
 				CCorePlugin.log(e);
@@ -86,7 +86,7 @@ abstract class PDOMCPPSpecialization extends PDOMCPPBinding implements ICPPSpeci
 		if (fArgMap == null) {
 			try {
 				if (this instanceof ICPPTemplateInstance) {
-					fArgMap= PDOMCPPTemplateParameterMap.getMap(this, getDB().getInt(record + ARGMAP));
+					fArgMap= PDOMCPPTemplateParameterMap.getMap(this, getDB().getRecPtr(record + ARGMAP));
 				} else {
 					// specializations that are no instances have the same argmap as their owner.
 					IBinding owner= getOwner();

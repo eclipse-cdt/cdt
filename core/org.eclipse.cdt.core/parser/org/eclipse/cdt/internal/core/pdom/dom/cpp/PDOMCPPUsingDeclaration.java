@@ -44,17 +44,17 @@ class PDOMCPPUsingDeclaration extends PDOMCPPBinding implements	ICPPUsingDeclara
 			throws CoreException {
 		super(linkage, parent, using.getNameCharArray());
 		IBinding[] delegates= using.getDelegates();
-		int nextRecord = 0;
+		long nextRecord = 0;
 		for (int i = delegates.length; --i >= 0;) {
 			PDOMCPPUsingDeclaration simpleUsing = i > 0 ?
 					new PDOMCPPUsingDeclaration(linkage, parent, getNameCharArray()) : this;
 			simpleUsing.setTargetBinding(parent.getLinkage(), delegates[i]);
-			getDB().putInt(record + NEXT_DELEGATE, nextRecord); 
+			getDB().putRecPtr(record + NEXT_DELEGATE, nextRecord); 
 			nextRecord = simpleUsing.getRecord();
 		}
 	}
 
-	public PDOMCPPUsingDeclaration(PDOMLinkage linkage, int record) {
+	public PDOMCPPUsingDeclaration(PDOMLinkage linkage, long record) {
 		super(linkage, record);
 	}
 
@@ -64,7 +64,7 @@ class PDOMCPPUsingDeclaration extends PDOMCPPBinding implements	ICPPUsingDeclara
 
 	private void setTargetBinding(PDOMLinkage linkage, IBinding delegate) throws CoreException {
 		PDOMBinding target = getLinkage().adaptBinding(delegate);
-		getDB().putInt(record + TARGET_BINDING, target != null ? target.getRecord() : 0);
+		getDB().putRecPtr(record + TARGET_BINDING, target != null ? target.getRecord() : 0);
 	}
 
 	@Override
@@ -98,14 +98,14 @@ class PDOMCPPUsingDeclaration extends PDOMCPPBinding implements	ICPPUsingDeclara
 	}
 
 	private PDOMCPPUsingDeclaration getNext() throws CoreException {
-		int nextRecord = getDB().getInt(record + NEXT_DELEGATE);
+		long nextRecord = getDB().getRecPtr(record + NEXT_DELEGATE);
 		return nextRecord != 0 ? new PDOMCPPUsingDeclaration(getLinkage(), nextRecord) : null;
 	}
 
 	private IBinding getBinding() {
 		try {
 			return (IBinding) getLinkage().getNode(
-					getPDOM().getDB().getInt(record + TARGET_BINDING));
+					getPDOM().getDB().getRecPtr(record + TARGET_BINDING));
 		} catch (CoreException e) {
 			CCorePlugin.log(e);
 		}

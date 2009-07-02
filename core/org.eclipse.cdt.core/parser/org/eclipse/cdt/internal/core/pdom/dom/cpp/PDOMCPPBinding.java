@@ -44,41 +44,37 @@ abstract class PDOMCPPBinding extends PDOMBinding implements ICPPBinding {
 	}
 			
 	protected boolean isSameOwner(IBinding owner1, IBinding owner2) {
-		if (owner1 == null)
-			return owner2 == null;
-		if (owner2 == null)
-			return false;
-		
-		if (owner1 instanceof IType) {
-			if (owner2 instanceof IType) {
-				return ((IType) owner1).isSameType((IType) owner2);
-			}
-			return false;
-		}
 		try {
-			while(owner1 instanceof ICPPNamespace && owner2 instanceof ICPPNamespace) {
-				final char[] n1 = owner1.getNameCharArray();
-				// ignore unknown namespaces
-				if (n1.length == 0) {
-					owner1= owner1.getOwner();
-					continue;
-				} 
-				final char[] n2= owner2.getNameCharArray();
-				if (n2.length == 0) {
-					owner2= owner2.getOwner();
-					continue;
-				} 
-				if (!CharArrayUtils.equals(n1, n2)) 
-					return false;
-				
+			// ignore unnamed namespaces
+			while(owner1 instanceof ICPPNamespace && owner1.getNameCharArray().length == 0)
 				owner1= owner1.getOwner();
+			// ignore unnamed namespaces
+			while(owner2 instanceof ICPPNamespace && owner2.getNameCharArray().length == 0)
 				owner2= owner2.getOwner();
+
+			if (owner1 == null)
+				return owner2 == null;
+			if (owner2 == null)
+				return false;
+
+			if (owner1 instanceof IType) {
+				if (owner2 instanceof IType) {
+					return ((IType) owner1).isSameType((IType) owner2);
+				}
+				return false;
+			}
+			if (owner1 instanceof ICPPNamespace) {
+				if (owner2 instanceof ICPPNamespace) {
+					if (!CharArrayUtils.equals(owner1.getNameCharArray(), owner2.getNameCharArray())) 
+						return false;
+					return isSameOwner(owner1.getOwner(), owner2.getOwner());
+				}
+				return false;
 			}
 		} catch (DOMException e) {
 			CCorePlugin.log(e);
-			return false;
 		}
-		return owner1 == null && owner2 == null;
+		return false;
 	}
 
 	final public char[][] getQualifiedNameCharArray() throws DOMException {

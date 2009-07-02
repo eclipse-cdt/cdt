@@ -772,13 +772,15 @@ public class CModelBuilder2 implements IContributedModelBuilder {
 			// field
 			Field newElement= new Field(parent, variableName);
 			setIndex(newElement);
+			final FieldInfo fieldInfo= (FieldInfo)getElementInfo(newElement);
 			if (specifier instanceof ICPPASTDeclSpecifier) {
 				final ICPPASTDeclSpecifier cppSpecifier= (ICPPASTDeclSpecifier)specifier;
-				newElement.setMutable(cppSpecifier.getStorageClass() == ICPPASTDeclSpecifier.sc_mutable);
+				fieldInfo.setMutable(cppSpecifier.getStorageClass() == ICPPASTDeclSpecifier.sc_mutable);
 			}
-			final FieldInfo fieldInfo= (FieldInfo)getElementInfo(newElement);
 			fieldInfo.setTypeName(ASTStringUtil.getSignatureString(specifier, declarator));
 			fieldInfo.setVisibility(getCurrentVisibility());
+			fieldInfo.setConst(specifier.isConst());
+			fieldInfo.setVolatile(specifier.isVolatile());
 			element= newElement;
 			info= fieldInfo;
 		} else {
@@ -800,11 +802,11 @@ public class CModelBuilder2 implements IContributedModelBuilder {
 			setIndex(element);
 			VariableInfo varInfo= (VariableInfo) getElementInfo(element);
 			varInfo.setTypeName(ASTStringUtil.getSignatureString(specifier, declarator));
+			varInfo.setConst(specifier.isConst());
+			varInfo.setVolatile(specifier.isVolatile());
 			info= varInfo;
 		}
 		element.setActive(declarator.isActive());
-		element.setConst(specifier.isConst());
-		element.setVolatile(specifier.isVolatile());
 		// TODO [cmodel] correctly resolve isStatic
 		element.setStatic(specifier.getStorageClass() == IASTDeclSpecifier.sc_static);
 		// add to parent

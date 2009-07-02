@@ -651,18 +651,22 @@ public class CModelManager implements IResourceChangeListener, ICDescriptorListe
 			}
 		}
 		
+		URI fileUri = file.getLocationURI();
 		//Avoid name special devices, empty files and the like
-		if (! Util.isNonZeroLengthFile(file.getLocationURI())) {
+		if (! Util.isNonZeroLengthFile(fileUri)) {
 			// PR:xxx the EFS does not seem to work for newly created file
 			// so before bailing out give another try?
 			//Avoid name special devices, empty files and the like
-			File f = new File(file.getLocationURI());
-			if (f.length() == 0) {
-				return null;
+			if("file".equals(fileUri.getScheme())) { //$NON-NLS-1$
+				File f = new File(fileUri);
+				if (f.length() == 0) {
+					return null;
+				}
 			}
 			//return null;
 		}
 
+		
 		int hints = 0;
 		
 		for (BinaryParserConfig parser2 : parsers) {

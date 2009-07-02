@@ -200,11 +200,12 @@ public class SourceManipulation extends Parent implements ISourceManipulation, I
 			return;
 		}
 		
+		newElements.put(this, info);
+
 		CElementInfo openableParentInfo = (CElementInfo) CModelManager.getDefault().getInfo(openableParent);
 		if (openableParentInfo == null) {
 			openableParent.generateInfos(openableParent.createElementInfo(), newElements, pm);
 		}
-		newElements.put(this, info);
 	}
 
 	public void setPos(int startPos, int length) {

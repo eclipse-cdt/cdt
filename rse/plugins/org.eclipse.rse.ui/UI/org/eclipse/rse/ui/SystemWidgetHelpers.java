@@ -1,5 +1,5 @@
 /********************************************************************************
- * Copyright (c) 2002, 2008 IBM Corporation and others. All rights reserved.
+ * Copyright (c) 2002, 2009 IBM Corporation and others. All rights reserved.
  * This program and the accompanying materials are made available under the terms
  * of the Eclipse Public License v1.0 which accompanies this distribution, and is 
  * available at http://www.eclipse.org/legal/epl-v10.html
@@ -17,6 +17,7 @@
  * Martin Oberhuber (Wind River) - [186773] split ISystemRegistryUI from ISystemRegistry
  * Martin Oberhuber (Wind River) - [181939] avoid subsystem plugin activation just for enablement checking
  * David Dykstal (IBM) - [231666] special colon processing for french locales
+ * Zhou Renjian     (Kortide)    - [282242] "LOCALHOST" as host name for first time connection creation
  ********************************************************************************/
 
 package org.eclipse.rse.ui;
@@ -1207,8 +1208,14 @@ public class SystemWidgetHelpers {
 	public static Combo createHostNameCombo(Composite parent, Listener listener, IRSESystemType systemType) {
 		//System.out.println("TipId: " + ISystemConstants.RESID_HOSTNAME_TIP);		
 		Combo combo = createCombo(parent, listener, SystemResources.RESID_CONNECTION_HOSTNAME_TIP);
+
+		// Fix bug#282242: No default host names if no connection has been created.
+		String[] hostNames = RSECorePlugin.getTheSystemRegistry().getHostNames(systemType);
+		if (hostNames.length == 0) {
+			hostNames = new String[] { "LOCALHOST" }; //$NON-NLS-1$
+		}
+		combo.setItems(hostNames);
 		//System.out.println("Tip  : " + combo.getToolTipText());
-		combo.setItems(RSECorePlugin.getTheSystemRegistry().getHostNames(systemType));
 		combo.select(0);
 		return combo;
 	}

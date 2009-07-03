@@ -25,9 +25,10 @@
  * David McKnight   (IBM)        - [189873] Improve remote shell editor open action with background jobs
  * David McKnight   (IBM)        - [216252] [nls] Resource Strings specific to subsystems should be moved from rse.ui into files.ui / shells.ui / processes.ui where possible
  * Xuan Chen        (IBM)        - [223126] [api][breaking] Remove API related to User Actions in RSE Core/UI
- * Yu-Fen Kuo      (MontaVista)  - Adopted from SystemViewRemoteOutputAdapter
- * Anna Dushistova (MontaVista)  - Adopted from SystemViewRemoteOutputAdapter
- * Yu-Fen Kuo      (MontaVista)  - [227572] RSE Terminal doesn't reset the "connected" state when the shell exits
+ * Yu-Fen Kuo       (MontaVista) - Adopted from SystemViewRemoteOutputAdapter
+ * Anna Dushistova  (MontaVista) - Adopted from SystemViewRemoteOutputAdapter
+ * Yu-Fen Kuo       (MontaVista) - [227572] RSE Terminal doesn't reset the "connected" state when the shell exits
+ * Zhou Renjian     (Kortide)    - [282256] "null:..." status message for launched terminal
  *******************************************************************************/
 package org.eclipse.rse.internal.terminals.ui.views;
 
@@ -39,6 +40,7 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.rse.internal.terminals.ui.Activator;
+import org.eclipse.rse.internal.terminals.ui.TerminalUIResources;
 import org.eclipse.rse.internal.terminals.ui.actions.RemoveTerminalAction;
 import org.eclipse.rse.internal.terminals.ui.actions.ShowInTerminalViewAction;
 import org.eclipse.rse.services.terminals.ITerminalShell;
@@ -121,8 +123,7 @@ public class TerminalViewElementAdapter extends AbstractSystemViewAdapter
     }
 
     public String getType(Object element) {
-        // TODO Auto-generated method stub
-        return null;
+        return TerminalUIResources.TerminalViewElementAdapter_type;
     }
 
     public boolean hasChildren(IAdaptable element) {

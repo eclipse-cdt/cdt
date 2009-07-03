@@ -8,6 +8,7 @@
  * Contributors:
  * Martin Oberhuber (Wind River) - [235626] initial API and implementation
  * Anna Dushistova  (MontaVista) - [238257] Request a help text when no tab is open in "Remote Shell", "Remote Monitor" and "Terminals" views
+ * Zhou Renjian     (Kortide)    - [282256] "null:..." status message for launched terminal
  *******************************************************************************/
 
 package org.eclipse.rse.internal.terminals.ui;
@@ -25,6 +26,8 @@ public class TerminalUIResources extends NLS {
 	public static String TerminalsUI_cannotOpenView_error;
 
 	public static String TerminalViewer_text;
+	
+	public static String TerminalViewElementAdapter_type;
 
 	static {
 		NLS.initializeMessages(BUNDLE_NAME, TerminalUIResources.class);

@@ -59,6 +59,7 @@
  * David McKnight   (IBM)        - [249247] Expand New Connections
  * David McKnight   (IBM)        - [254590] When disconnecting a subsystem with COLLAPSE option, subsystems of other connector services also get collapsed
  * Martin Oberhuber (Wind River) - [245154][api] add getSubSystemConfigurationProxiesBySystemType()
+ * Zhou Renjian     (Kortide)    - [282238] NPE when copying host and overwrite itself
  ********************************************************************************/
 
 package org.eclipse.rse.internal.core.model;
@@ -2097,6 +2098,10 @@ public class SystemRegistry implements ISystemRegistry
 		{
 			// STEP 1: COPY CONNECTION ITSELF, MINUS ITS SUBSYSTEMS...
 			newConn = oldPool.cloneHost(targetPool, conn, newName);
+			// Fix bug#282238: NPE when copying host and overwrite itself
+			if (newConn == null) {
+				return null;
+			}
 
 			// STEP 2: COPY ALL SUBSYSTEMS FOR THE COPIED CONNECTION
 			msg = RSECoreMessages.MSG_COPYSUBSYSTEMS_PROGRESS;

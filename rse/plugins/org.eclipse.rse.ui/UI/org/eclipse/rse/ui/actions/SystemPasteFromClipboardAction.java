@@ -14,6 +14,7 @@
  * Martin Oberhuber (Wind River) - [168975] Move RSE Events API to Core
  * Martin Oberhuber (Wind River) - [186773] split ISystemRegistryUI from ISystemRegistry
  * Kenya Ishimoto   (IBM)        - [241197] Paste action causes IllegalArgumentException at Resource.copy
+ * Zhou Renjian     (Kortide)    - [282241] "Paste" is enabled on file system when text is in clipboard
  ********************************************************************************/
 
 package org.eclipse.rse.ui.actions;
@@ -259,6 +260,12 @@ public class SystemPasteFromClipboardAction extends SystemBaseAction implements 
 					if (va != null)
 					{
 						enable = va.canDrop(selectedObject);
+						
+						// Fix bug#282241: Copy anything, for example, text string, will enable "Paste" menu item					
+						if (enable) {
+							enable = _srcType != SystemDNDTransferRunnable.SRC_TYPE_TEXT && _srcType != SystemDNDTransferRunnable.SRC_TYPE_UNKNOWN;	
+						}
+						
 						/* to allow disable of paste
 						 * not sure if this is a performance hit or not
 						if (enable)

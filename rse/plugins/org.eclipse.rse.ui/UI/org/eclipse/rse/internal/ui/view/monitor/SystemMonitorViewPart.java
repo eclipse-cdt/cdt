@@ -1,5 +1,5 @@
 /********************************************************************************
- * Copyright (c) 2002, 2008 IBM Corporation and others. All rights reserved.
+ * Copyright (c) 2002, 2009 IBM Corporation and others. All rights reserved.
  * This program and the accompanying materials are made available under the terms
  * of the Eclipse Public License v1.0 which accompanies this distribution, and is 
  * available at http://www.eclipse.org/legal/epl-v10.html
@@ -20,6 +20,7 @@
  * Kevin Doyle		(IBM)		 - [212940] Duplicate Help Context Identifiers
  * David McKnight   (IBM)        - [223103] [cleanup] fix broken externalized strings
  * David McKnight   (IBM)        - [225506] [api][breaking] RSE UI leaks non-API types
+ * Zhou Renjian     (Kortide)    - [282239] Monitor view does not update icon according to connection status
  ********************************************************************************/
 
 package org.eclipse.rse.internal.ui.view.monitor;
@@ -896,6 +897,13 @@ class SubSetAction extends BrowseAction
 			{						
 				_folder.removeDisconnected();
 				updateActionStates();
+			}
+			break;
+
+			// Fix bug#282239: Monitor view does not update icon according to connection status 
+			case ISystemResourceChangeEvents.EVENT_ICON_CHANGE:
+			{						
+				_folder.updateTitleIcon((IAdaptable)child);
 			}
 			break;
 			case ISystemResourceChangeEvents.EVENT_RENAME:

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2002, 2008 IBM Corporation and others.
+ * Copyright (c) 2002, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -15,6 +15,7 @@
  * {Name} (company) - description of contribution.
  * Kevin Doyle (IBM) - [177587] createTabItem sets the wrapped selection provider
  * Kevin Doyle 		(IBM)		 - [242431] Register a new unique context menu id, so contributions can be made to all our views
+ * Zhou Renjian     (Kortide)    - [282239] Monitor view does not update icon according to connection status
  *******************************************************************************/
 
 package org.eclipse.rse.internal.ui.view.monitor;
@@ -277,6 +278,24 @@ public class MonitorViewWorkbook extends Composite
 				if (page != null)
 				{
 					page.updateActionStates();
+				}
+			}
+		}
+	}
+	
+	// Fix bug#282239: Monitor view does not update icon according to connection status 
+	public void updateTitleIcon(IAdaptable root)
+	{
+		for (int i = 0; i < _folder.getItemCount(); i++)
+		{
+			CTabItem item = _folder.getItem(i);
+			if (!item.isDisposed())
+			{
+				MonitorViewPage page = (MonitorViewPage) item.getData();
+				if (page != null && page.getInput() == root)
+				{
+					setTabTitle(root, item);
+					break;
 				}
 			}
 		}

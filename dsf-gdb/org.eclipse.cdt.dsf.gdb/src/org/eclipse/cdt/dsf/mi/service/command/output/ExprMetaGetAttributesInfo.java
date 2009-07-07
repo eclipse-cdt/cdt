@@ -26,4 +26,9 @@ public class ExprMetaGetAttributesInfo implements ICommandResult {
 	public <V extends ICommandResult> V getSubsetResult(ICommand<V> command) {
 		return null;
 	}
+
+	@Override
+	public String toString() {
+		return getClass().getSimpleName() + " (" + getEditable() + ")"; //$NON-NLS-1$ //$NON-NLS-2$
+	}
 }

@@ -1,3 +1,4 @@
 org.eclipse.cdt.dsf/debug = false
 org.eclipse.cdt.dsf/debug/executor = false
 org.eclipse.cdt.dsf/debug/executorName = 
+org.eclipse.cdt.dsf/debugCache = false

@@ -10,6 +10,8 @@
  *******************************************************************************/
 package org.eclipse.cdt.dsf.mi.service.command.commands;
 
+import org.eclipse.cdt.dsf.datamodel.DMContexts;
+import org.eclipse.cdt.dsf.debug.service.IExpressions.IExpressionDMContext;
 import org.eclipse.cdt.dsf.debug.service.IFormattedValues.FormattedValueDMContext;
 import org.eclipse.cdt.dsf.mi.service.command.output.ExprMetaGetValueInfo;
 
@@ -18,4 +20,16 @@ public class ExprMetaGetValue extends ExprMetaCommand<ExprMetaGetValueInfo> {
 	public ExprMetaGetValue(FormattedValueDMContext ctx) {
 		super(ctx);
 	}
+	
+    @Override
+    public String toString() {
+    	IExpressionDMContext exprDmc = DMContexts.getAncestorOfType(getContext(), IExpressionDMContext.class);
+    	if (exprDmc != null) {
+    		return getClass().getSimpleName() + "(\"" + //$NON-NLS-1$
+    				exprDmc.getExpression() + "\", " + //$NON-NLS-1$
+    				((FormattedValueDMContext)getContext()).getFormatID() + ")"; //$NON-NLS-1$
+    	} else {
+    		return super.toString();
+    	}
+    }
 }

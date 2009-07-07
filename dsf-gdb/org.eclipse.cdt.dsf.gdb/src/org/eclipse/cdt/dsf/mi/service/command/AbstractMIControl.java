@@ -67,6 +67,8 @@ import org.eclipse.core.runtime.Status;
 public abstract class AbstractMIControl extends AbstractDsfService
     implements ICommandControlService
 {
+	private static final String MI_TRACE_IDENTIFIER = " [MI]  "; //$NON-NLS-1$
+	
     /*
 	 *  Thread control variables for the transmit and receive threads.
 	 */
@@ -549,7 +551,7 @@ public abstract class AbstractMIControl extends AbstractDsfService
                         fOutputStream.write(str.getBytes());
                         fOutputStream.flush();
 
-                        GdbPlugin.debug(GdbPlugin.getDebugTime() + " " + str); //$NON-NLS-1$
+                        GdbPlugin.debug(GdbPlugin.getDebugTime() + MI_TRACE_IDENTIFIER + str);
                         getExecutor().execute(new DsfRunnable() {
                         	public void run() {
                         		if (getMITracingStream() != null) {
@@ -601,7 +603,7 @@ public abstract class AbstractMIControl extends AbstractDsfService
                 String line;
                 while ((line = reader.readLine()) != null) {
                     if (line.length() != 0) {
-                        GdbPlugin.debug(GdbPlugin.getDebugTime() + " " + line +"\n"); //$NON-NLS-1$ //$NON-NLS-2$
+                        GdbPlugin.debug(GdbPlugin.getDebugTime() + MI_TRACE_IDENTIFIER + line + "\n"); //$NON-NLS-1$
                         
                         final String finalLine = line;
                         getExecutor().execute(new DsfRunnable() {

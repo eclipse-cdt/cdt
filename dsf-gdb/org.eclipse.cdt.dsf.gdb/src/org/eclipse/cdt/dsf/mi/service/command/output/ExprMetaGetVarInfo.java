@@ -35,4 +35,11 @@ public class ExprMetaGetVarInfo implements ICommandResult {
 	public <V extends ICommandResult> V getSubsetResult(ICommand<V> command) {
 		return null;
 	}
+
+	@Override
+	public String toString() {
+		return getClass().getSimpleName() + " (" + //$NON-NLS-1$ 
+				getExpr() + ", " + getNumChildren() + ", " +  //$NON-NLS-1$ //$NON-NLS-2$
+				getType() + ", " + getEditable() + ")"; //$NON-NLS-1$ //$NON-NLS-2$
+	}
 }

@@ -26,4 +26,9 @@ public class ExprMetaGetChildCountInfo implements ICommandResult {
 	public <V extends ICommandResult> V getSubsetResult(ICommand<V> command) {
 		return null;
 	}
+	
+	@Override
+	public String toString() {
+		return getClass().getSimpleName() + " (" + getChildNum() + ")"; //$NON-NLS-1$ //$NON-NLS-2$
+	}
 }

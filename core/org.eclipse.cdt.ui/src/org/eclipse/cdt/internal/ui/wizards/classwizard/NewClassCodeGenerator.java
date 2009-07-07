@@ -502,8 +502,8 @@ public class NewClassCodeGenerator {
         
         ICProject cProject = headerTU.getCProject();
         IProject project = cProject.getProject();
-        IPath projectLocation = project.getLocation();
-        IPath headerLocation = headerTU.getResource().getLocation();
+        IPath projectLocation = new Path(project.getLocationURI().getPath());
+        IPath headerLocation = new Path(headerTU.getResource().getLocationURI().getPath());
         
         List<IPath> includePaths = getIncludePaths(headerTU);
         List<IPath> baseClassPaths = getBaseClassPaths(verifyBaseClasses());
@@ -610,7 +610,7 @@ public class NewClassCodeGenerator {
                 ICProject includeProject = PathUtil.getEnclosingProject(folderToAdd);
                 if (includeProject != null) {
                     // make sure that the include is made the same way that build properties for projects makes them, so .contains below is a valid check
-                    IIncludeEntry entry = CoreModel.newIncludeEntry(addToResourcePath, null, includeProject.getProject().getLocation(), true);
+                    IIncludeEntry entry = CoreModel.newIncludeEntry(addToResourcePath, null, new Path(includeProject.getProject().getLocationURI().getPath()), true);
                     
                     if (!checkEntryList.contains(entry)) // if the path already exists in the #includes then don't add it
                     	pathEntryList.add(entry);
@@ -803,9 +803,10 @@ public class NewClassCodeGenerator {
     
     private String getHeaderIncludeString(ITranslationUnit sourceTU, ITranslationUnit headerTU, StringBuffer text, IProgressMonitor monitor) {
         IProject project = headerTU.getCProject().getProject();
-        IPath projectLocation = project.getLocation();
-        IPath headerLocation = headerTU.getResource().getLocation();
-        IPath sourceLocation = sourceTU.getResource().getLocation();
+        
+        IPath projectLocation = new Path(project.getLocationURI().getPath());
+        IPath headerLocation = new Path(headerTU.getResource().getLocationURI().getPath());
+        IPath sourceLocation = new Path(sourceTU.getResource().getLocationURI().getPath());
 
         IPath includePath = PathUtil.makeRelativePathToProjectIncludes(headerLocation, project);
         boolean isSystemIncludePath = false;

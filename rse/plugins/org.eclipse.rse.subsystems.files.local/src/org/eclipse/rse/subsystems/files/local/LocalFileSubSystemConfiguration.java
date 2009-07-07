@@ -1,5 +1,5 @@
 /********************************************************************************
- * Copyright (c) 2006, 2008 IBM Corporation and others. All rights reserved.
+ * Copyright (c) 2006, 2009 IBM Corporation and others. All rights reserved.
  * This program and the accompanying materials are made available under the terms
  * of the Eclipse Public License v1.0 which accompanies this distribution, and is 
  * available at http://www.eclipse.org/legal/epl-v10.html
@@ -16,6 +16,7 @@
  * Kevin Doyle (IBM) - [199871] LocalFileService needs to implement getMessage()
  * Martin Oberhuber (Wind River) - [220020][api][breaking] SystemFileTransferModeRegistry should be internal
  * David Dykstal (IBM) - [222270] clean up interfaces in org.eclipse.rse.core.filters
+ * David McKnight (IBM) - [280605] SystemTextEditor.isLocal() returns false for LocalFileSubSystemConfiguration
  ********************************************************************************/
 
 package org.eclipse.rse.subsystems.files.local;
@@ -257,4 +258,10 @@ public class LocalFileSubSystemConfiguration extends FileServiceSubSystemConfigu
 	{
 		return ILocalService.class;
 	}
+	
+    public String getEditorProfileID()
+    {
+    	return "universallocal"; //$NON-NLS-1$
+    }
+
 }

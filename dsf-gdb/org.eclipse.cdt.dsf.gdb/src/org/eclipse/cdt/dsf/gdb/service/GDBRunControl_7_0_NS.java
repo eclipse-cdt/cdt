@@ -32,6 +32,7 @@ import org.eclipse.cdt.dsf.debug.service.IStack.IFrameDMContext;
 import org.eclipse.cdt.dsf.debug.service.command.ICommandControlService;
 import org.eclipse.cdt.dsf.debug.service.command.ICommandControlService.ICommandControlShutdownDMEvent;
 import org.eclipse.cdt.dsf.gdb.internal.GdbPlugin;
+import org.eclipse.cdt.dsf.mi.service.IMIContainerDMContext;
 import org.eclipse.cdt.dsf.mi.service.IMIExecutionDMContext;
 import org.eclipse.cdt.dsf.mi.service.IMIProcesses;
 import org.eclipse.cdt.dsf.mi.service.IMIRunControl;
@@ -350,7 +351,7 @@ public class GDBRunControl_7_0_NS extends AbstractDsfService implements IMIRunCo
 		}
 
 		// Container case
-		IContainerDMContext container = DMContexts.getAncestorOfType(context, IContainerDMContext.class);
+		IMIContainerDMContext container = DMContexts.getAncestorOfType(context, IMIContainerDMContext.class);
 		if (container != null) {
 			doSuspendContainer(container, rm);
 			return;
@@ -374,8 +375,9 @@ public class GDBRunControl_7_0_NS extends AbstractDsfService implements IMIRunCo
 		fConnection.queueCommand(cmd, new DataRequestMonitor<MIInfo>(getExecutor(), rm));
 	}
 
-	private void doSuspendContainer(IContainerDMContext context, final RequestMonitor rm) {
-		MIExecInterrupt cmd = new MIExecInterrupt(context, true);
+	private void doSuspendContainer(IMIContainerDMContext context, final RequestMonitor rm) {
+		String groupId = context.getGroupId();
+		MIExecInterrupt cmd = new MIExecInterrupt(context, groupId);
 		fConnection.queueCommand(cmd, new DataRequestMonitor<MIInfo>(getExecutor(), rm));
 	}
 
@@ -427,7 +429,7 @@ public class GDBRunControl_7_0_NS extends AbstractDsfService implements IMIRunCo
 		}
 
 		// Container case
-		IContainerDMContext container = DMContexts.getAncestorOfType(context, IContainerDMContext.class);
+		IMIContainerDMContext container = DMContexts.getAncestorOfType(context, IMIContainerDMContext.class);
 		if (container != null) {
 			doResumeContainer(container, rm);
 			return;
@@ -466,8 +468,9 @@ public class GDBRunControl_7_0_NS extends AbstractDsfService implements IMIRunCo
 		});
 	}
 
-	private void doResumeContainer(IContainerDMContext context, final RequestMonitor rm) {
-		MIExecContinue cmd = new MIExecContinue(context, true);
+	private void doResumeContainer(IMIContainerDMContext context, final RequestMonitor rm) {
+		String groupId = context.getGroupId();
+		MIExecContinue cmd = new MIExecContinue(context, groupId);
 		fConnection.queueCommand(cmd, new DataRequestMonitor<MIInfo>(getExecutor(), rm));
 	}
 

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2008 Wind River Systems, Inc. and others.
+ * Copyright (c) 2006, 2009 Wind River Systems, Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -50,6 +50,8 @@ import org.eclipse.cdt.core.model.ITranslationUnit;
 import org.eclipse.cdt.core.model.IWorkingCopy;
 import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.cdt.ui.IWorkingCopyManager;
+
+import org.eclipse.cdt.internal.core.index.IndexChangeEvent;
 
 /**
  * A single strategy C reconciler.
@@ -265,8 +267,11 @@ public class CReconciler extends MonoReconciler {
 		 * @see org.eclipse.cdt.core.index.IIndexChangeListener#indexChanged(org.eclipse.cdt.core.index.IIndexChangeEvent)
 		 */
 		public void indexChanged(IIndexChangeEvent event) {
-			if (!fIndexChanged && !fIgnoreChanges && isRelevantProject(event.getAffectedProject())) {
-				fIndexChanged= true;
+			if (!fIndexChanged && isRelevantProject(event.getAffectedProject())) {
+				if (!fIgnoreChanges || event.isCleared() || event.isReloaded() || 
+						((event instanceof IndexChangeEvent) && ((IndexChangeEvent)event).hasNewFile())) {
+					fIndexChanged= true;
+				}
 			}
 		}
 		

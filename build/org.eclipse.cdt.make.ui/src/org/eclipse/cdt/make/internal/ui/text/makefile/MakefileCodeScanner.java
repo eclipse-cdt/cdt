@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2008 QNX Software Systems and others.
+ * Copyright (c) 2000, 2009 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -14,9 +14,12 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.eclipse.cdt.make.internal.ui.text.ColorManager;
+import org.eclipse.jface.text.rules.IRule;
 import org.eclipse.jface.text.rules.IToken;
 import org.eclipse.jface.text.rules.IWhitespaceDetector;
+import org.eclipse.jface.text.rules.IWordDetector;
 import org.eclipse.jface.text.rules.MultiLineRule;
+import org.eclipse.jface.text.rules.Token;
 import org.eclipse.jface.text.rules.WhitespaceRule;
 import org.eclipse.jface.text.rules.WordRule;
 
@@ -52,39 +55,52 @@ public class MakefileCodeScanner extends AbstractMakefileCodeScanner {
 		initialize();
 	}
 	
-	protected List createRules() {
+	@Override
+	protected List<IRule> createRules() {
 		IToken keyword = getToken(ColorManager.MAKE_KEYWORD_COLOR);
 		IToken function = getToken(ColorManager.MAKE_FUNCTION_COLOR);
 		IToken macroRef = getToken(ColorManager.MAKE_MACRO_REF_COLOR);
 		IToken macroDef = getToken(ColorManager.MAKE_MACRO_DEF_COLOR);
 		IToken other = getToken(ColorManager.MAKE_DEFAULT_COLOR);
 
-		List rules = new ArrayList();
+		List<IRule> rules = new ArrayList<IRule>();
 
 		// Add generic whitespace rule.
 		rules.add(new WhitespaceRule(new IWhitespaceDetector() {
 			public boolean isWhitespace(char character) {
 				return Character.isWhitespace(character);
 			}
-		}));
+		}, other));
 
 		// Put before the the word rules
 		MultiLineRule defineRule = new MultiLineRule("define", "endef", macroDef); //$NON-NLS-1$ //$NON-NLS-2$
 		defineRule.setColumnConstraint(0);
 		rules.add(defineRule);
 
-//		rules.add(new MacroDefinitionRule(macroDef, other));
+		rules.add(new MacroDefinitionRule(macroDef, Token.UNDEFINED));
 
 		// Add word rule for keywords, types, and constants.
-		// We restring the detection of the keywords to be the first column to be valid.
-		WordRule keyWordRule = new WordRule(new MakefileWordDetector(), other);
+		// We restrict the detection of the keywords to be the first column to be valid.
+		WordRule keyWordRule = new WordRule(new IWordDetector() {
+			public boolean isWordPart(char c) {
+				return Character.isLetterOrDigit(c) || c == '_';
+			}
+			public boolean isWordStart(char c) {
+				return Character.isLetterOrDigit(c) || c == '_' || c == '-';
+			}}, other);
 		for (int i = 0; i < keywords.length; i++) {
 			keyWordRule.addWord(keywords[i], keyword);
 		}
 		keyWordRule.setColumnConstraint(0);
 		rules.add(keyWordRule);
 
-		WordRule functionRule = new WordRule(new MakefileWordDetector(), other);
+		WordRule functionRule = new WordRule(new IWordDetector() {
+			public boolean isWordPart(char c) {
+				return Character.isLetterOrDigit(c) || c == '_';
+			}
+			public boolean isWordStart(char c) {
+				return Character.isLetterOrDigit(c) || c == '_';
+			}}, other);
 		for (int i = 0; i < functions.length; i++)
 			functionRule.addWord(functions[i], function);
 		rules.add(functionRule);
@@ -100,6 +116,7 @@ public class MakefileCodeScanner extends AbstractMakefileCodeScanner {
 	/*
 	 * @see AbstractMakefileCodeScanner#getTokenProperties()
 	 */
+	@Override
 	protected String[] getTokenProperties() {
 		return fTokenProperties;
 	}

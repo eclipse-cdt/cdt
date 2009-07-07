@@ -25,8 +25,10 @@ import org.eclipse.cdt.dsf.debug.service.command.ICommandToken;
 import org.eclipse.cdt.dsf.debug.service.command.IEventListener;
 import org.eclipse.cdt.dsf.debug.service.command.ICommandControlService.ICommandControlDMContext;
 import org.eclipse.cdt.dsf.gdb.internal.GdbPlugin;
+import org.eclipse.cdt.dsf.gdb.service.IGDBBackend;
 import org.eclipse.cdt.dsf.mi.service.IMIProcesses;
 import org.eclipse.cdt.dsf.mi.service.MIProcesses;
+import org.eclipse.cdt.dsf.mi.service.MIProcesses.ContainerStartedDMEvent;
 import org.eclipse.cdt.dsf.mi.service.command.commands.MIExecContinue;
 import org.eclipse.cdt.dsf.mi.service.command.commands.MIExecFinish;
 import org.eclipse.cdt.dsf.mi.service.command.commands.MIExecNext;
@@ -258,6 +260,28 @@ public class MIRunControlEventProcessor
                 // No need to do anything, terminate() will.
                 // Send exited?
             } else if ("connected".equals(state)) { //$NON-NLS-1$
+            	// This will happen for a CORE or REMOTE session.
+            	// For a CORE session this is the only indication
+            	// that the inferior has 'started'.  So we use
+            	// it to trigger the ContainerStarted event.
+            	// In the case of a REMOTE session, it is a proper
+            	// indicator as well but not if it is a remote attach.
+            	// For an attach session, it only indicates
+            	// that we are connected to a remote node but we still
+            	// need to wait until we are attached to the process before
+            	// sending the event, which will happen in the attaching code.
+                IGDBBackend backendService = fServicesTracker.getService(IGDBBackend.class);
+                if (backendService != null && backendService.getIsAttachSession() == false) {
+                	IMIProcesses procService = fServicesTracker.getService(IMIProcesses.class);
+                	if (procService != null) {
+                		String groupId = MIProcesses.UNIQUE_GROUP_ID;
+                		IProcessDMContext procDmc = procService.createProcessContext(fControlDmc, groupId);
+                		IContainerDMContext processContainerDmc = procService.createContainerContext(procDmc, groupId);
+
+                		fCommandControl.getSession().dispatchEvent(
+                				new ContainerStartedDMEvent(processContainerDmc), fCommandControl.getProperties());
+                	}
+                }            	
             } else if ("error".equals(state)) { //$NON-NLS-1$
             } 
         }

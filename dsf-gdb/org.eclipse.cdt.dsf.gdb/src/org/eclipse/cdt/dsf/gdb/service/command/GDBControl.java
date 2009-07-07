@@ -327,7 +327,12 @@ public class GDBControl extends AbstractMIControl implements IGDBControl {
     	final DataRequestMonitor<MIInfo> execMonitor = new DataRequestMonitor<MIInfo>(getExecutor(), requestMonitor) {
     		@Override
     		protected void handleSuccess() {
-    			getSession().dispatchEvent(new ContainerStartedDMEvent(containerDmc), getProperties());
+    	    	if (fMIBackend.getSessionType() != SessionType.REMOTE) {
+    	    		// Don't send the ContainerStarted event for a remote session because
+    	    		// it has already been done by MIRunControlEventProcessor when receiving
+    	    		// the ^connect
+    	    		getSession().dispatchEvent(new ContainerStartedDMEvent(containerDmc), getProperties());
+    	    	}
     			super.handleSuccess();
     		}
     	};

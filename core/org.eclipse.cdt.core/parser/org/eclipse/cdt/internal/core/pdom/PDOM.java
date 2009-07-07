@@ -232,20 +232,47 @@ public class PDOM extends PlatformObject implements IPDOM {
 	public static class ChangeEvent {
 		public Set<IIndexFileLocation> fClearedFiles= new HashSet<IIndexFileLocation>();
 		public Set<IIndexFileLocation> fFilesWritten= new HashSet<IIndexFileLocation>();
-		public boolean fCleared= false;
-		public boolean fReloaded= false;
+		private boolean fCleared= false;
+		private boolean fReloaded= false;
+		private boolean fNewFiles= false;
 
-		private void setCleared() {
+		public void clear() {
 			fReloaded= false;
-			fCleared= true;
+			fCleared= false;
+			fNewFiles= false;
+			
 			fClearedFiles.clear();
 			fFilesWritten.clear();
 		}
 
-		public void clear() {
-			fReloaded= fCleared= false;
+		private void setCleared() {
+			fCleared= true;
+			fReloaded= false;
+			fNewFiles= false;
+
 			fClearedFiles.clear();
 			fFilesWritten.clear();
+		}
+
+
+		public boolean isCleared() {
+			return fCleared;
+		}
+
+		public void setReloaded() {
+			fReloaded= true;
+		}
+
+		public boolean isReloaded() {
+			return fReloaded;
+		}
+
+		public void setHasNewFiles() {
+			fNewFiles = true;
+		}
+
+		public boolean hasNewFiles() {
+			return fNewFiles;
 		}
 	}
 	public static interface IListener {
@@ -414,6 +441,7 @@ public class PDOM extends PlatformObject implements IPDOM {
 			PDOMFile pdomFile = new PDOMFile(linkage, location, linkageID);
 			getFileIndex().insert(pdomFile.getRecord());
 			file= pdomFile;
+			fEvent.setHasNewFiles();
 		}
 		return file;		
 	}

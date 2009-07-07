@@ -24,14 +24,16 @@ import java.util.Map;
 import java.util.MissingResourceException;
 import java.util.ResourceBundle;
 
+import com.ibm.icu.text.MessageFormat;
+
 import org.eclipse.cdt.core.cdtvariables.ICdtVariableManager;
 import org.eclipse.cdt.core.cdtvariables.IUserVarSupplier;
-import org.eclipse.cdt.core.dom.CDOM;
 import org.eclipse.cdt.core.dom.IPDOMManager;
 import org.eclipse.cdt.core.envvar.IEnvironmentVariableManager;
 import org.eclipse.cdt.core.index.IIndexManager;
 import org.eclipse.cdt.core.model.CModelException;
 import org.eclipse.cdt.core.model.CoreModel;
+import org.eclipse.cdt.core.model.ILanguage;
 import org.eclipse.cdt.core.model.ITranslationUnit;
 import org.eclipse.cdt.core.model.IWorkingCopy;
 import org.eclipse.cdt.core.parser.IScannerInfoProvider;
@@ -81,8 +83,6 @@ import org.eclipse.core.runtime.content.IContentType;
 import org.eclipse.core.runtime.jobs.Job;
 import org.osgi.framework.BundleContext;
 
-import com.ibm.icu.text.MessageFormat;
-
 /**
  * CCorePlugin is the life-cycle owner of the core plug-in, and starting point for access to many core APIs.
  * 
@@ -94,6 +94,10 @@ public class CCorePlugin extends Plugin {
 	public static final int STATUS_CDTPROJECT_EXISTS = 1;
 	public static final int STATUS_CDTPROJECT_MISMATCH = 2;
 	public static final int CDT_PROJECT_NATURE_ID_MISMATCH = 3;
+	/**
+	 * Status code for core exception that is thrown if a pdom grew larger than the supported limit.
+	 * @since 5.2
+	 */
 	public static final int STATUS_PDOM_TOO_LARGE = 4;
 
 	public static final String PLUGIN_ID = "org.eclipse.cdt.core"; //$NON-NLS-1$
@@ -1004,8 +1008,12 @@ public class CCorePlugin extends Plugin {
 		return getPluginPreferences().getBoolean(PREF_USE_STRUCTURAL_PARSE_MODE);
 	}
 	
-	public CDOM getDOM() {
-	    return CDOM.getInstance();
+	/**
+	 * @deprecated use {@link ITranslationUnit} or {@link ILanguage} to construct ASTs, instead.
+	 */
+	@Deprecated
+	public org.eclipse.cdt.core.dom.CDOM getDOM() {
+	    return org.eclipse.cdt.core.dom.CDOM.getInstance();
 	}
 
 	public ICdtVariableManager getCdtVariableManager(){

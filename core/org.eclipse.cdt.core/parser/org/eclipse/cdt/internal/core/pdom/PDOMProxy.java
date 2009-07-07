@@ -241,7 +241,7 @@ public class PDOMProxy implements IPDOM {
 			pdom.addListener(listener);
 		}
 		ChangeEvent event= new ChangeEvent();
-		event.fReloaded= true;
+		event.setReloaded();
 		for (Iterator<IListener> iterator = fListeners.iterator(); iterator.hasNext();) {
 			IListener listener = iterator.next();
 			listener.handleChange(fDelegate, event);

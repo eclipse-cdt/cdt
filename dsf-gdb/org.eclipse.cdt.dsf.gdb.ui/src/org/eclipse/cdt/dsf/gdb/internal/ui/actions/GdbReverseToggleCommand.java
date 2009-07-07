@@ -18,6 +18,8 @@ import org.eclipse.cdt.dsf.concurrent.DsfExecutor;
 import org.eclipse.cdt.dsf.concurrent.Immutable;
 import org.eclipse.cdt.dsf.concurrent.Query;
 import org.eclipse.cdt.dsf.datamodel.DMContexts;
+import org.eclipse.cdt.dsf.debug.service.IRunControl;
+import org.eclipse.cdt.dsf.debug.service.IRunControl.IExecutionDMContext;
 import org.eclipse.cdt.dsf.debug.service.command.ICommandControlService.ICommandControlDMContext;
 import org.eclipse.cdt.dsf.gdb.actions.IReverseToggleHandler;
 import org.eclipse.cdt.dsf.gdb.internal.ui.GdbUIPlugin;
@@ -47,9 +49,10 @@ public class GdbReverseToggleCommand implements IReverseToggleHandler {
     }
 
 	public boolean canToggleReverse(ISelection debugContext) {
-        final ICommandControlDMContext dmc = getContext(debugContext);
-        
-        if (dmc == null) {
+        final ICommandControlDMContext controlDmc = getCommandControlContext(debugContext);
+        final IExecutionDMContext execDmc = getExecutionContext(debugContext);
+
+        if (controlDmc == null && execDmc == null) {
         	return false;
         }
 
@@ -58,8 +61,12 @@ public class GdbReverseToggleCommand implements IReverseToggleHandler {
         	public void execute(DataRequestMonitor<Boolean> rm) {
         		IReverseRunControl runControl = fTracker.getService(IReverseRunControl.class);
 
-        		if (runControl != null) {
-        			runControl.canEnableReverseMode(dmc, rm);
+        		// Only allow to toggle reverse if the program is suspended.
+        		// When the program is running, GDB will not answer our command
+        		// in toggleReverse() and since it is blocking, it will hang the entire UI! 
+        		if (runControl != null && 
+        			runControl instanceof IRunControl && ((IRunControl)runControl).isSuspended(execDmc)) {
+        			runControl.canEnableReverseMode(controlDmc, rm);
         		} else {
         			rm.setData(false);
         			rm.done();
@@ -79,7 +86,7 @@ public class GdbReverseToggleCommand implements IReverseToggleHandler {
     }
     
 	public void toggleReverse(ISelection debugContext) {
-        final ICommandControlDMContext dmc = getContext(debugContext);
+        final ICommandControlDMContext dmc = getCommandControlContext(debugContext);
         
         if (dmc == null) {
         	return;
@@ -114,7 +121,7 @@ public class GdbReverseToggleCommand implements IReverseToggleHandler {
         }
     }
 	
-	private ICommandControlDMContext getContext(ISelection debugContext) {
+	private ICommandControlDMContext getCommandControlContext(ISelection debugContext) {
         if (debugContext instanceof IStructuredSelection) {
             IStructuredSelection ss = (IStructuredSelection) debugContext;
             if (!ss.isEmpty()) {
@@ -128,8 +135,22 @@ public class GdbReverseToggleCommand implements IReverseToggleHandler {
         return null;
 	}
 
+	private IExecutionDMContext getExecutionContext(ISelection debugContext) {
+        if (debugContext instanceof IStructuredSelection) {
+            IStructuredSelection ss = (IStructuredSelection) debugContext;
+            if (!ss.isEmpty()) {
+                Object object = ss.getFirstElement();
+                if (object instanceof IDMVMContext) {
+                	return DMContexts.getAncestorOfType(((IDMVMContext)object).getDMContext(), IExecutionDMContext.class);
+                }
+            }
+        }
+        
+        return null;
+	}
+	
 	public boolean isReverseToggled(ISelection debugContext) {
-        final ICommandControlDMContext dmc = getContext(debugContext);
+        final ICommandControlDMContext dmc = getCommandControlContext(debugContext);
         return isReverseToggled(dmc);
 	}
 	

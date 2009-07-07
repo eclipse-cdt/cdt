@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2008 QNX Software Systems and others.
+ * Copyright (c) 2000, 2009 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -61,6 +61,7 @@ public class MakefileSourceConfiguration extends TextSourceViewerConfiguration {
 		/*
 		 * @see org.eclipse.cdt.make.internal.ui.text.makefile.AbstractMakefileCodeScanner#createRules()
 		 */
+		@Override
 		protected List createRules() {
 			setDefaultReturnToken(getToken(fProperties[0]));
 			return null;
@@ -69,6 +70,7 @@ public class MakefileSourceConfiguration extends TextSourceViewerConfiguration {
 		/*
 		 * @see org.eclipse.cdt.make.internal.ui.text.makefile.AbstractMakefileCodeScanner#getTokenProperties()
 		 */
+		@Override
 		protected String[] getTokenProperties() {
 			return fProperties;
 		}
@@ -86,31 +88,22 @@ public class MakefileSourceConfiguration extends TextSourceViewerConfiguration {
 	/**
 	 * @see SourceViewerConfiguration#getConfiguredContentTypes(ISourceViewer)
 	 */
+	@Override
 	public String[] getConfiguredContentTypes(ISourceViewer v) {
-		return new String[] {
-			IDocument.DEFAULT_CONTENT_TYPE,
-			MakefilePartitionScanner.MAKEFILE_COMMENT_PARTITION,
-			MakefilePartitionScanner.MAKEFILE_IF_BLOCK_PARTITION,
-			MakefilePartitionScanner.MAKEFILE_DEF_BLOCK_PARTITION,
-			MakefilePartitionScanner.MAKEFILE_INCLUDE_BLOCK_PARTITION,
-			MakefilePartitionScanner.MAKEFILE_MACRO_ASSIGNEMENT_PARTITION,
-		};
+		return MakefilePartitionScanner.MAKE_PARTITIONS;
 
 	}
 
 	/**
 	 * @see org.eclipse.jface.text.source.SourceViewerConfiguration#getContentAssistant(ISourceViewer)
 	 */
+	@Override
 	public IContentAssistant getContentAssistant(ISourceViewer sourceViewer) {
 		if (fEditor != null && fEditor.isEditable()) {
 			ContentAssistant assistant = new ContentAssistant();
 			assistant.setDocumentPartitioning(getConfiguredDocumentPartitioning(sourceViewer));
 			assistant.setContentAssistProcessor(new MakefileCompletionProcessor(fEditor), IDocument.DEFAULT_CONTENT_TYPE);
 			assistant.setContentAssistProcessor(new MakefileCompletionProcessor(fEditor), MakefilePartitionScanner.MAKEFILE_COMMENT_PARTITION);
-			assistant.setContentAssistProcessor(new MakefileCompletionProcessor(fEditor), MakefilePartitionScanner.MAKEFILE_DEF_BLOCK_PARTITION);
-			assistant.setContentAssistProcessor(new MakefileCompletionProcessor(fEditor), MakefilePartitionScanner.MAKEFILE_IF_BLOCK_PARTITION);
-			assistant.setContentAssistProcessor(new MakefileCompletionProcessor(fEditor), MakefilePartitionScanner.MAKEFILE_INCLUDE_BLOCK_PARTITION);
-			assistant.setContentAssistProcessor(new MakefileCompletionProcessor(fEditor), MakefilePartitionScanner.MAKEFILE_MACRO_ASSIGNEMENT_PARTITION);
 	
 			assistant.enableAutoActivation(true);
 			assistant.setAutoActivationDelay(500);
@@ -137,6 +130,7 @@ public class MakefileSourceConfiguration extends TextSourceViewerConfiguration {
 		return fCommentScanner;
 	}
 
+	@Override
 	public IPresentationReconciler getPresentationReconciler(ISourceViewer v) {
 
 		PresentationReconciler reconciler = new PresentationReconciler();
@@ -149,32 +143,13 @@ public class MakefileSourceConfiguration extends TextSourceViewerConfiguration {
 		dr = new DefaultDamagerRepairer(getCommentScanner());
 		reconciler.setDamager(dr, MakefilePartitionScanner.MAKEFILE_COMMENT_PARTITION);
 		reconciler.setRepairer(dr, MakefilePartitionScanner.MAKEFILE_COMMENT_PARTITION);
-
-		dr = new DefaultDamagerRepairer(getCodeScanner());
-		reconciler.setDamager(dr, MakefilePartitionScanner.MAKEFILE_MACRO_ASSIGNEMENT_PARTITION);
-		reconciler.setRepairer(dr, MakefilePartitionScanner.MAKEFILE_MACRO_ASSIGNEMENT_PARTITION);
-
-		dr = new DefaultDamagerRepairer(getCodeScanner());
-		reconciler.setDamager(dr, MakefilePartitionScanner.MAKEFILE_INCLUDE_BLOCK_PARTITION);
-		reconciler.setRepairer(dr, MakefilePartitionScanner.MAKEFILE_INCLUDE_BLOCK_PARTITION);
-
-		dr = new DefaultDamagerRepairer(getCodeScanner());
-		reconciler.setDamager(dr, MakefilePartitionScanner.MAKEFILE_IF_BLOCK_PARTITION);
-		reconciler.setRepairer(dr, MakefilePartitionScanner.MAKEFILE_IF_BLOCK_PARTITION);
-
-		dr = new DefaultDamagerRepairer(getCodeScanner());
-		reconciler.setDamager(dr, MakefilePartitionScanner.MAKEFILE_DEF_BLOCK_PARTITION);
-		reconciler.setRepairer(dr, MakefilePartitionScanner.MAKEFILE_DEF_BLOCK_PARTITION);
-
-		dr = new DefaultDamagerRepairer(getCodeScanner());
-		reconciler.setDamager(dr, MakefilePartitionScanner.MAKEFILE_OTHER_PARTITION);
-		reconciler.setRepairer(dr, MakefilePartitionScanner.MAKEFILE_OTHER_PARTITION);
 		return reconciler;
 	}
 
 	/*
 	 * @see org.eclipse.jface.text.source.SourceViewerConfiguration#getConfiguredDocumentPartitioning(org.eclipse.jface.text.source.ISourceViewer)
 	 */
+	@Override
 	public String getConfiguredDocumentPartitioning(ISourceViewer sourceViewer) {
 		return MakefileDocumentSetupParticipant.MAKEFILE_PARTITIONING;
 	}
@@ -182,6 +157,7 @@ public class MakefileSourceConfiguration extends TextSourceViewerConfiguration {
 	/**
 	 * @see SourceViewerConfiguration#getReconciler(ISourceViewer)
 	 */
+	@Override
 	public IReconciler getReconciler(ISourceViewer sourceViewer) {
 		if (fEditor != null && fEditor.isEditable()) {
 			MonoReconciler reconciler= new MonoReconciler(new MakefileReconcilingStrategy(fEditor), false);
@@ -195,6 +171,7 @@ public class MakefileSourceConfiguration extends TextSourceViewerConfiguration {
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.text.source.SourceViewerConfiguration#getDefaultPrefixes(org.eclipse.jface.text.source.ISourceViewer, java.lang.String)
 	 */
+	@Override
 	public String[] getDefaultPrefixes(ISourceViewer sourceViewer, String contentType) {
 		return new String[]{"#"}; //$NON-NLS-1$
 	}
@@ -202,6 +179,7 @@ public class MakefileSourceConfiguration extends TextSourceViewerConfiguration {
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.text.source.SourceViewerConfiguration#getTextHover(org.eclipse.jface.text.source.ISourceViewer, java.lang.String)
 	 */
+	@Override
 	public ITextHover getTextHover(ISourceViewer sourceViewer, String contentType) {
 		if (fEditor != null) {
 			return new MakefileTextHover(fEditor);
@@ -211,6 +189,7 @@ public class MakefileSourceConfiguration extends TextSourceViewerConfiguration {
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.text.source.SourceViewerConfiguration#getAnnotationHover(org.eclipse.jface.text.source.ISourceViewer)
 	 */
+	@Override
 	public IAnnotationHover getAnnotationHover(ISourceViewer sourceViewer) {
 		if (fEditor != null) {
 			return new MakefileAnnotationHover(fEditor);
@@ -220,7 +199,7 @@ public class MakefileSourceConfiguration extends TextSourceViewerConfiguration {
 
 	/**
 	 * @param event
-	 * @return
+	 * @return <code>true</code> if the given property change event affects the code coloring
 	 */
 	public boolean affectsBehavior(PropertyChangeEvent event) {
 		if (fCodeScanner != null && fCodeScanner.affectsBehavior(event)) {

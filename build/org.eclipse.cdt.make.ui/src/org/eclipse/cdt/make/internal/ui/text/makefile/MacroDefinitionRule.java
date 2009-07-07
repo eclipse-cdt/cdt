@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2002, 2008 QNX Software Systems and others.
+ * Copyright (c) 2002, 2009 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -14,7 +14,6 @@ package org.eclipse.cdt.make.internal.ui.text.makefile;
 import org.eclipse.jface.text.rules.ICharacterScanner;
 import org.eclipse.jface.text.rules.IPredicateRule;
 import org.eclipse.jface.text.rules.IToken;
-import org.eclipse.jface.text.rules.Token;
 
 class MacroDefinitionRule implements IPredicateRule {
 	private static final int INIT_STATE = 0;
@@ -60,6 +59,7 @@ class MacroDefinitionRule implements IPredicateRule {
 					if (isValidCharacter(c)) {
 						break;
 					}
+				//$FALL-THROUGH$
 				case END_VAR_STATE :
 					if (c != '\n' && Character.isWhitespace((char) c)) {
 						state = END_VAR_STATE;
@@ -68,9 +68,6 @@ class MacroDefinitionRule implements IPredicateRule {
 					} else if (c == '=') {
 						state = FINISH_STATE;
 					} else {
-						if (state == END_VAR_STATE) {
-							scanner.unread(); // Return back to the space
-						}
 						state = ERROR_STATE;
 					}
 					break;
@@ -102,7 +99,7 @@ class MacroDefinitionRule implements IPredicateRule {
 		if (defaultToken.isUndefined())
 			unreadBuffer(scanner);
 
-		return Token.UNDEFINED;
+		return defaultToken;
 
 	}
 
@@ -121,6 +118,7 @@ class MacroDefinitionRule implements IPredicateRule {
 		}
 	}
 
+	@SuppressWarnings("unused")
 	private void scanToEndOfLine(ICharacterScanner scanner) {
 		int c;
 		char[][] delimiters = scanner.getLegalLineDelimiters();

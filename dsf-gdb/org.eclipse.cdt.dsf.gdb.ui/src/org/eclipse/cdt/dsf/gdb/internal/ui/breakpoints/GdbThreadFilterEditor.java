@@ -11,6 +11,7 @@
 package org.eclipse.cdt.dsf.gdb.internal.ui.breakpoints;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.RejectedExecutionException;
@@ -21,9 +22,9 @@ import org.eclipse.cdt.dsf.concurrent.IDsfStatusConstants;
 import org.eclipse.cdt.dsf.concurrent.ImmediateExecutor;
 import org.eclipse.cdt.dsf.concurrent.Query;
 import org.eclipse.cdt.dsf.datamodel.DMContexts;
+import org.eclipse.cdt.dsf.datamodel.IDMContext;
 import org.eclipse.cdt.dsf.debug.service.IProcesses;
 import org.eclipse.cdt.dsf.debug.service.IRunControl;
-import org.eclipse.cdt.dsf.debug.service.IProcesses.IProcessDMContext;
 import org.eclipse.cdt.dsf.debug.service.IProcesses.IThreadDMContext;
 import org.eclipse.cdt.dsf.debug.service.IProcesses.IThreadDMData;
 import org.eclipse.cdt.dsf.debug.service.IRunControl.IContainerDMContext;
@@ -35,7 +36,7 @@ import org.eclipse.cdt.dsf.gdb.launching.GdbLaunch;
 import org.eclipse.cdt.dsf.gdb.service.IGDBBackend;
 import org.eclipse.cdt.dsf.mi.service.IMIExecutionDMContext;
 import org.eclipse.cdt.dsf.mi.service.IMIProcesses;
-import org.eclipse.cdt.dsf.mi.service.MIProcesses;
+import org.eclipse.cdt.dsf.service.DsfServicesTracker;
 import org.eclipse.cdt.dsf.service.DsfSession;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IStatus;
@@ -57,7 +58,6 @@ import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
-import org.osgi.util.tracker.ServiceTracker;
 
 public class GdbThreadFilterEditor {
 
@@ -147,13 +147,11 @@ public class GdbThreadFilterEditor {
             if (parent instanceof ILaunchManager) {
                 List<Object> children = new ArrayList<Object>();
                 ILaunch[] launches = ((ILaunchManager) parent).getLaunches();
-                IContainerDMContext target;
+                IContainerDMContext[] targetArray;
                 for (int i = 0; i < launches.length; i++) {
                     if (launches[i] instanceof GdbLaunch) {
-                        target = syncGetContainer((GdbLaunch) launches[i]);
-                        if (target != null) {
-                            children.add(target);
-                        }
+                        targetArray = syncGetContainers((GdbLaunch) launches[i]);
+                        children.addAll(Arrays.asList(targetArray));
                     }
                 }
                 return children.toArray();
@@ -283,13 +281,11 @@ public class GdbThreadFilterEditor {
         }
         List<Object> targets = new ArrayList<Object>();
         ILaunch[] launches = ((ILaunchManager) input).getLaunches();
-        IContainerDMContext target;
+        IContainerDMContext[] targetArray;
         for (int i = 0; i < launches.length; i++) {
             if (launches[i] instanceof GdbLaunch) {
-                target = syncGetContainer((GdbLaunch) launches[i]);
-                if (target != null) {
-                    targets.add(target);
-                }
+                targetArray = syncGetContainers((GdbLaunch) launches[i]);
+                targets.addAll(Arrays.asList(targetArray));
             }
         }
         return targets.toArray(new IContainerDMContext[targets.size()]);
@@ -366,39 +362,42 @@ public class GdbThreadFilterEditor {
         return list.toArray(new IExecutionDMContext[list.size()]);
     }
 
-    private IContainerDMContext syncGetContainer(final GdbLaunch launch) {
+    private IContainerDMContext[] syncGetContainers(final GdbLaunch launch) {
         final DsfSession session = launch.getSession();
 
-        class ContainerQuery extends Query<IContainerDMContext> {
+        class ContainerQuery extends Query<IContainerDMContext[]> {
             @Override
-            protected void execute(DataRequestMonitor<IContainerDMContext> rm) {
+            protected void execute(final DataRequestMonitor<IContainerDMContext[]> rm) {
                 if (!session.isActive()) {
                     rm.setStatus(getFailStatus(IDsfStatusConstants.INVALID_STATE, "Launch's session not active.")); //$NON-NLS-1$
                     rm.done();
                     return;
                 }
 
-                ServiceTracker tracker1 = new ServiceTracker(GdbUIPlugin.getBundleContext(), ICommandControlService.class
-                    .getName(), null);
-                tracker1.open();
-
-                ICommandControlService commandControl = (ICommandControlService) tracker1.getService();
-                ServiceTracker tracker2 = new ServiceTracker(GdbUIPlugin.getBundleContext(), IMIProcesses.class
-                    .getName(), null);
-                tracker2.open();
-                IMIProcesses procService = (IMIProcesses) tracker2.getService();
+                DsfServicesTracker tracker = new DsfServicesTracker(GdbUIPlugin.getBundleContext(), session.getId());
+                ICommandControlService commandControl = tracker.getService(ICommandControlService.class);
+                IMIProcesses procService = tracker.getService(IMIProcesses.class);
                 
                 if (commandControl != null && procService != null) {
-               		IProcessDMContext procDmc = procService.createProcessContext(commandControl.getContext(), MIProcesses.UNIQUE_GROUP_ID);
-               		IContainerDMContext containerDmc = procService.createContainerContext(procDmc, MIProcesses.UNIQUE_GROUP_ID);
-
-                    rm.setData(containerDmc);
+                	procService.getProcessesBeingDebugged(
+            				commandControl.getContext(),
+            				new DataRequestMonitor<IDMContext[]>(session.getExecutor(), rm) {
+            					@Override
+            					protected void handleSuccess() {
+            						if (getData() instanceof IContainerDMContext[]) {
+            							IContainerDMContext[] containerDmcs = (IContainerDMContext[])getData();
+            							rm.setData(containerDmcs);
+            						} else {
+            		                    rm.setStatus(getFailStatus(IDsfStatusConstants.INVALID_STATE, "Wront type of container contexts.")); //$NON-NLS-1$
+            						}
+            						rm.done();
+            					}
+            				});
                 } else {
                     rm.setStatus(getFailStatus(IDsfStatusConstants.INVALID_STATE, "GDB Control or Process service not accessible.")); //$NON-NLS-1$
+                    rm.done();
                 }
-                rm.done();
-                tracker1.close();
-                tracker2.close();
+                tracker.dispose();
             }
         }
 
@@ -428,17 +427,15 @@ public class GdbThreadFilterEditor {
                     return;
                 }
 
-                ServiceTracker tracker = new ServiceTracker(GdbUIPlugin.getBundleContext(), IRunControl.class
-                    .getName(), null);
-                tracker.open();
-                IRunControl runControl = (IRunControl) tracker.getService();
+                DsfServicesTracker tracker = new DsfServicesTracker(GdbUIPlugin.getBundleContext(), session.getId());
+                IRunControl runControl = tracker.getService(IRunControl.class);
                 if (runControl != null) {
                     runControl.getExecutionContexts(container, rm);
                 } else {
                     rm.setStatus(getFailStatus(IDsfStatusConstants.INVALID_STATE, "GDB Control not accessible.")); //$NON-NLS-1$
                     rm.done();
                 }
-                tracker.close();
+                tracker.dispose();
             }
         }
 
@@ -468,17 +465,15 @@ public class GdbThreadFilterEditor {
                     return;
                 }
 
-                ServiceTracker tracker = new ServiceTracker(GdbUIPlugin.getBundleContext(), IGDBBackend.class
-                    .getName(), null);
-                tracker.open();
-                IGDBBackend backend = (IGDBBackend) tracker.getService();
+                DsfServicesTracker tracker = new DsfServicesTracker(GdbUIPlugin.getBundleContext(), session.getId());
+                IGDBBackend backend = tracker.getService(IGDBBackend.class);
                 if (backend != null) {
                     rm.setData(backend.getProgramPath().toOSString());
                 } else {
                     rm.setStatus(getFailStatus(IDsfStatusConstants.INVALID_STATE, "GDB Backend not accessible.")); //$NON-NLS-1$
                 }
                 rm.done();
-                tracker.close();
+                tracker.dispose();
             }
         }
 
@@ -508,10 +503,8 @@ public class GdbThreadFilterEditor {
                     return;
                 }
 
-                ServiceTracker tracker = new ServiceTracker(GdbUIPlugin.getBundleContext(), IProcesses.class
-                    .getName(), null);
-                tracker.open();
-                IProcesses procService = (IProcesses) tracker.getService();
+                DsfServicesTracker tracker = new DsfServicesTracker(GdbUIPlugin.getBundleContext(), session.getId());
+                IProcesses procService = tracker.getService(IProcesses.class);
                 if (procService != null) {
                     IThreadDMContext threadDmc = DMContexts.getAncestorOfType(thread, IThreadDMContext.class);
                 	procService.getExecutionData(threadDmc, new DataRequestMonitor<IThreadDMData>(
@@ -532,7 +525,7 @@ public class GdbThreadFilterEditor {
                     rm.setStatus(getFailStatus(IDsfStatusConstants.INVALID_STATE, "IProcesses service not accessible.")); //$NON-NLS-1$
                     rm.done();
                 }
-                tracker.close();
+                tracker.dispose();
             }
         }
 

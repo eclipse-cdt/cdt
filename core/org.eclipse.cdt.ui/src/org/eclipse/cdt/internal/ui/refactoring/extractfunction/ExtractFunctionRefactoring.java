@@ -47,7 +47,6 @@ import org.eclipse.cdt.core.dom.ast.IASTFunctionDeclarator;
 import org.eclipse.cdt.core.dom.ast.IASTFunctionDefinition;
 import org.eclipse.cdt.core.dom.ast.IASTIdExpression;
 import org.eclipse.cdt.core.dom.ast.IASTInitializerExpression;
-import org.eclipse.cdt.core.dom.ast.IASTLiteralExpression;
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IASTParameterDeclaration;
@@ -84,7 +83,6 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTFunctionCallExpression
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTFunctionDefinition;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTIdExpression;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTInitializerExpression;
-import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTLiteralExpression;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTName;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTQualifiedName;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTReturnStatement;
@@ -345,14 +343,12 @@ public class ExtractFunctionRefactoring extends CRefactoring {
 			IASTExpression leftSubTree = parent.getOperand1();
 			int op = parent.getOperator();
 			IASTBinaryExpression newParentNode = new CPPASTBinaryExpression();
-			CPPASTLiteralExpression placeholder = new CPPASTLiteralExpression(IASTLiteralExpression.lk_integer_constant, ZERO);
 			IASTBinaryExpression rootBinExp = getRootBinExp(parent, list);
 			newParentNode.setParent(rootBinExp.getParent());
-			newParentNode.setOperand1(placeholder);
+			newParentNode.setOperand1(leftSubTree.copy());
 			newParentNode.setOperator(op);
-			newParentNode.setOperand2((IASTExpression) methodCall); // TODO check
-			ASTRewrite callRewrite = rewriter.replace(rootBinExp, newParentNode, editGroup);
-			callRewrite.replace(placeholder, leftSubTree, editGroup);
+			newParentNode.setOperand2((IASTExpression) methodCall);
+			rewriter.replace(rootBinExp, newParentNode, editGroup);
 		}else {
 			rewriter.replace(firstNode, methodCall, editGroup);
 		}

@@ -1837,10 +1837,10 @@ public abstract class DisassemblyPart extends WorkbenchPart implements IDisassem
 			return;
 		}
 		if (DEBUG) System.out.println("retrieveDisassembly "+getAddressText(startAddress)+" "+lines+" lines"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-		retrieveDisassembly(startAddress, endAddress, lines, true);
+		retrieveDisassembly(startAddress, endAddress, lines, true, false);
 	}
 
-	private void retrieveDisassembly(final BigInteger startAddress, BigInteger endAddress, final int linesHint, boolean mixed) {
+	private void retrieveDisassembly(final BigInteger startAddress, BigInteger endAddress, final int linesHint, boolean mixed, boolean ignoreFile) {
 		assert !fUpdatePending;
 		fUpdatePending = true;
 		final int lines= linesHint + 2;
@@ -1851,7 +1851,7 @@ public abstract class DisassemblyPart extends WorkbenchPart implements IDisassem
 		boolean insideActiveFrame= startAddress.equals(fFrameAddress);
 		String file= null;
 		int lineNumber= -1;
-		if (insideActiveFrame && fTargetFrameData != null) {
+		if (!ignoreFile && insideActiveFrame && fTargetFrameData != null) {
 			file= fTargetFrameData.getFile();
 			if (file != null && file.trim().length() == 0) {
 				file= null;
@@ -1875,20 +1875,28 @@ public abstract class DisassemblyPart extends WorkbenchPart implements IDisassem
 							public void run() {
 								if (!insertDisassembly(startAddress, data)) {
 									// retry in non-mixed mode
-									retrieveDisassembly(startAddress, finalEndAddress, linesHint, false);
+									retrieveDisassembly(startAddress, finalEndAddress, linesHint, false, false);
 								}
 							}});
 					} else {
 						final IStatus status= getStatus();
 						if (status != null && !status.isOK()) {
-							asyncExec(new Runnable() {
-								public void run() {
-									doScrollLocked(new Runnable() {
-										public void run() {
-											insertError(startAddress, status.getMessage());
-										}
-									});
-								}});
+							if( finalFile != null )	{
+								asyncExec(new Runnable() {
+									public void run() {
+										retrieveDisassembly(startAddress, finalEndAddress, linesHint, true, true);
+									}});
+							}
+							else {
+								asyncExec(new Runnable() {
+									public void run() {
+										doScrollLocked(new Runnable() {
+											public void run() {
+												insertError(startAddress, status.getMessage());
+											}
+										});
+									}});
+							}
 						}
 						fUpdatePending= false;
 					}

@@ -18,7 +18,7 @@ import org.eclipse.cdt.dsf.mi.service.command.output.MIInfo;
 
 /**
  * 
- *      -exec-interrupt [--all]
+ *      -exec-interrupt [--all | --thread-group ID]
  *
  *  Asynchronous command.  Interrupts the background execution of the
  *  target.  Note how the token associated with the stop message is the one
@@ -38,9 +38,27 @@ public class MIExecInterrupt extends MICommand<MIInfo>
      * @since 1.1
      */
     public MIExecInterrupt(IExecutionDMContext dmc, boolean allThreads) {
+        this(dmc, allThreads, null);
+    }
+    
+    /**
+	 * @since 2.0
+	 */
+    public MIExecInterrupt(IExecutionDMContext dmc, String groupId) {
+    	this(dmc, false, groupId);
+    }
+    
+    /*
+     * The parameters allThreads and groupId are mutually exclusive.  allThreads must be false
+     * if we are to use groupId.  The value of this method is to only have one place
+     * where we use the hard-coded strings.
+     */
+    private MIExecInterrupt(IExecutionDMContext dmc, boolean allThreads, String groupId) {
         super(dmc, "-exec-interrupt"); //$NON-NLS-1$
         if (allThreads) {
         	setParameters(new String[] { "--all" }); //$NON-NLS-1$
+        } else if (groupId != null) {
+        	setParameters(new String[] { "--thread-group", groupId }); //$NON-NLS-1$
         }
     }
 }

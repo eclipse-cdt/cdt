@@ -142,7 +142,8 @@ public class UISelectWidget extends InputUIElement {
 	@Override
 	public boolean isValid() {
 		boolean retVal = true;
-		if(Boolean.parseBoolean(uiAttributes.get(InputUIElement.MANDATORY))) {
+		if(Boolean.parseBoolean(uiAttributes.get(InputUIElement.MANDATORY))
+				&& ! InputUIElement.SELECTTYPE.equals(uiAttributes.get(InputUIElement.TYPE)) ) {
 			retVal= currentValue!= null && currentValue.trim().length()>0;
 		}
 		return retVal;

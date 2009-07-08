@@ -1279,5 +1279,25 @@ public class ErrorParserFileMatchingTest extends TestCase {
 		assertEquals(1,problemMarkerInfo.lineNumber);
 		assertEquals("error",problemMarkerInfo.description);
 	}
+	
+	/**
+	 * Checks if a file from error output can be found.
+	 *
+	 * @throws Exception...
+	 */
+	public void testWindowsPathOnLinux_Bug263977() throws Exception {
+		String fileName = "testWindowsPathOnLinux_Bug263977.c";
+
+		ResourceHelper.createFolder(fProject, "Folder/Subfolder");
+		ResourceHelper.createFile(fProject, "Folder/Subfolder/"+fileName);
+
+		// Note that main intention of this test is to run on *Linux*, see bug 263977
+		parseOutput("W:\\Folder\\Subfolder\\"+fileName+":1:error");
+		assertEquals(1, errorList.size());
+
+		ProblemMarkerInfo problemMarkerInfo = errorList.get(0);
+		assertEquals("L/FindMatchingFilesTest/Folder/Subfolder/"+fileName,problemMarkerInfo.file.toString());
+		assertEquals("error",problemMarkerInfo.description);
+	}
 
 }

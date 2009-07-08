@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2008 IBM Corporation and others.
+ * Copyright (c) 2006, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -15,6 +15,7 @@
  * David McKnight   (IBM)        - [207178] changing list APIs for file service and subsystems
  * David McKnight   (IBM)        - [243699] [dstore] Loop in OutputHandler
  * David McKnight     (IBM)   [249715] [dstore][shells] Unix shell does not echo command
+ * David McKnight   (IBM)        - [282919] [dstore] server shutdown results in exception in shell io reading
  *******************************************************************************/
 
 package org.eclipse.rse.internal.dstore.universal.miners.command;
@@ -165,7 +166,14 @@ public class OutputHandler extends Handler {
 
 			// re-determine available if none available now
 			if (available == 0) {	
-				lookahead = _reader.read();
+				try {
+					lookahead = _reader.read();
+				}
+				catch  (IOException e){
+					// pipe closed
+					return null;
+				}
+				
 				if (lookahead == -1) {
 					return null;
 				} else {

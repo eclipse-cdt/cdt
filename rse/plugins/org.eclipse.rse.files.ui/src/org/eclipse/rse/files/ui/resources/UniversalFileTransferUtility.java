@@ -56,6 +56,7 @@
  * David McKnight     (IBM)      - [251136] Error copying local file to remote system when temp file is readonly
  * David McKnight   (IBM)        - [276103] Files with names in different cases are not handled properly
  * David McKnight     (IBM)      - [276534] Cache Conflict After Synchronization when Browsing Remote System with Case-Differentiated-Only Filenames
+ * David McKnight     (IBM)      - [281712] [dstore] Warning message is needed when disk is full
  *******************************************************************************/
 
 package org.eclipse.rse.files.ui.resources;
@@ -255,7 +256,7 @@ public class UniversalFileTransferUtility {
 
 		boolean available = true;
 		try {
-			tempFileAvailable(tempFile, srcFileOrFolder);
+			available = tempFileAvailable(tempFile, srcFileOrFolder);
 		}
 		catch (RemoteFileIOException e){
 			// this is the case where a temp file exists for a file of a different case
@@ -1990,10 +1991,12 @@ public class UniversalFileTransferUtility {
 
 			catch (RemoteFileIOException e)
 			{
+				SystemMessageDialog.displayMessage(e);
 				return e.getSystemMessage();
 			}
 			catch (SystemMessageException e)
 			{
+				SystemMessageDialog.displayMessage(e);
 				return e.getSystemMessage();
 			}
 		}

@@ -58,6 +58,7 @@
  * David McKnight   (IBM)        - [278411] [dstore] upload status needs to be created in standard form when using windows server
  * David McKnight   (IBM)        - [279014] [dstore][encoding] text file corruption can occur when downloading from UTF8 to cp1252
  * David McKnight   (IBM)        - [279695] [dstore] Connection file encoding is not refreshed from the host
+ * David McKnight   (IBM)        - [281712] [dstore] Warning message is needed when disk is full
  *******************************************************************************/
 
 package org.eclipse.rse.internal.services.dstore.files;
@@ -562,6 +563,7 @@ public class DStoreFileService extends AbstractDStoreService implements IFileSer
 			// upload bytes while available
 			while (available > 0 && !isCancelled)
 			{
+				result.setAttribute(DE.A_SOURCE, "working"); //$NON-NLS-1$
 
 				numToRead = (available < buffer_size) ? available : buffer_size;
 

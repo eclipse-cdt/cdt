@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2002, 2008 IBM Corporation and others.
+ * Copyright (c) 2002, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -15,6 +15,7 @@
  * Martin Oberhuber (Wind River) - [186128] Move IProgressMonitor last in all API
  * David McKnight   (IBM)        - [216161] table view needs to handle context when filter reference is input
  * David McKnight   (IBM)        - [225506] [api][breaking] RSE UI leaks non-API types
+ * David McKnight   (IBM)        - [278848] NPE in Remote System Details view
  *******************************************************************************/
 
 package org.eclipse.rse.ui.view;
@@ -37,6 +38,7 @@ import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.rse.core.filters.ISystemFilterReference;
 import org.eclipse.rse.core.model.ISystemContainer;
+import org.eclipse.rse.core.model.ISystemViewInputProvider;
 import org.eclipse.rse.core.subsystems.ISubSystem;
 import org.eclipse.rse.internal.ui.view.SystemViewPromptableAdapter;
 import org.eclipse.rse.internal.ui.view.SystemViewRootInputAdapter;
@@ -146,6 +148,14 @@ public class SystemTableViewProvider implements ILabelProvider, ITableLabelProvi
 	    }
 	    if (result != null)
 	    	result.setPropertySourceInput(object);
+	    
+	    // for bug 278848
+	  	if (_viewer.getInput() instanceof ISystemViewInputProvider)
+	  	{
+	    	ISystemViewInputProvider inputProvider = (ISystemViewInputProvider)_viewer.getInput();
+	    	result.setInput(inputProvider);
+	  	}
+	  	
         return result;
 	}
 

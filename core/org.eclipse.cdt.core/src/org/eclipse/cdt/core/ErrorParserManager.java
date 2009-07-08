@@ -346,13 +346,15 @@ public class ErrorParserManager extends OutputStream {
 				org.eclipse.core.filesystem.URIUtil.equals(getWorkingDirectoryURI(), cachedWorkingDirectory))
 			return cachedFile;
 
-		IPath path = new Path(partialLoc);
+		// To be able to parse Windows paths on Linux systems, see bug 263977
+		IPath path = new Path(partialLoc.replace('\\', IPath.SEPARATOR));
 
 		// Try to find exact match. If path is not absolute - searching in working directory.
 		IFile file = findFileInWorkspace(path);
 
 		// Try to find best match considering known partial path
 		if (file==null) {
+			path = path.setDevice(null);
 			IProject[] prjs = new IProject[] { fProject };
 			IFile[] files = ResourceLookup.findFilesByName(path, prjs, false);
 			if (files.length == 0)

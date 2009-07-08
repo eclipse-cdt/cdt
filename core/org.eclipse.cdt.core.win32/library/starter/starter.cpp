@@ -357,7 +357,7 @@ int main() {
 				if (isCygwin(h[1])) {
 					// Need to issue a kill command
 					wchar_t kill[1024];
-					swprintf(kill, L"kill -SIG%s %d", signal, pi.dwProcessId);
+					swprintf(kill, L"kill -%s %d", signal, pi.dwProcessId);
 					if (!runCygwinCommand(kill)) {
 						// fall back to console event
 						GenerateConsoleCtrlEvent(CTRL_C_EVENT, 0);

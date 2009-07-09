@@ -699,7 +699,23 @@ public class StackFramesVMNode extends AbstractDMVMNode
 
     private void buildDeltaForExpandStackEvent(IExecutionDMContext execDmc, final VMDelta parentDelta, final RequestMonitor rm) {
     	parentDelta.setFlags(parentDelta.getFlags() | IModelDelta.CONTENT);
-        rm.done();
+        // Retrieve the list of new stack frames, and mark the first frame to be selected.
+        final int offset = getStackFrameLimit(execDmc) / 2;
+		getVMProvider().updateNode(
+            this,
+            new VMChildrenUpdate(
+                parentDelta, getVMProvider().getPresentationContext(), offset, offset,
+                new DataRequestMonitor<List<Object>>(getExecutor(), rm) {
+                    @Override
+                    public void handleCompleted() {
+                        final List<Object> data= getData();
+						if (data != null && data.size() != 0) {
+							parentDelta.addNode(data.get(0), offset, IModelDelta.SELECT);
+                        }
+                        rm.done();
+                    }
+                })
+            );
     }
 
 

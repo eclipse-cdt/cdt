@@ -221,7 +221,7 @@ JNIEXPORT jint JNICALL Java_org_eclipse_cdt_utils_spawner_Spawner_exec0
 	swprintf(eventTerminateName, L"SATerm%p", pCurProcInfo);
 	swprintf(eventKillName, L"SAKill%p", pCurProcInfo);
 
-	pCurProcInfo->eventBreak     = CreateEventW(NULL, TRUE,  FALSE, eventBreakName);
+	pCurProcInfo->eventBreak     = CreateEventW(NULL, FALSE, FALSE, eventBreakName);
 	pCurProcInfo->eventWait      = CreateEventW(NULL, TRUE,  FALSE, eventWaitName);
 	pCurProcInfo->eventTerminate = CreateEventW(NULL, FALSE, FALSE, eventTerminateName);
 	pCurProcInfo->eventKill      = CreateEventW(NULL, FALSE, FALSE, eventKillName);
@@ -696,7 +696,7 @@ JNIEXPORT jint JNICALL Java_org_eclipse_cdt_utils_spawner_Spawner_raise
 			break;
 		case SIG_INT:
 		    ResetEvent(pCurProcInfo -> eventWait);
-			PulseEvent(pCurProcInfo -> eventBreak);
+			SetEvent(pCurProcInfo -> eventBreak);
 			ret = (WaitForSingleObject(pCurProcInfo -> eventWait, 100) == WAIT_OBJECT_0);
 			break;
 		default:

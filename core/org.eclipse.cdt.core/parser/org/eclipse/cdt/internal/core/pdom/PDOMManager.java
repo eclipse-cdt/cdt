@@ -189,6 +189,7 @@ public class PDOMManager implements IWritableIndexManager, IListener {
 	private int fLastNotifiedState= IndexerStateEvent.STATE_IDLE;
     
 	public PDOMManager() {
+		PDOM.sDEBUG_LOCKS= "true".equals(Platform.getDebugOption(CCorePlugin.PLUGIN_ID + "/debug/index/locks"));  //$NON-NLS-1$//$NON-NLS-2$
 		fProjectDescriptionListener= new CProjectDescriptionListener(this);
 		fJobChangeListener= new JobChangeListener(this);
 		fPreferenceChangeListener= new IPreferenceChangeListener() {

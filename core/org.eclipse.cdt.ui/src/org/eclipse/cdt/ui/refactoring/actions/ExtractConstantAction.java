@@ -41,7 +41,7 @@ public class ExtractConstantAction extends RefactoringAction {
 	public void run(IShellProvider shellProvider, IWorkingCopy wc, ITextSelection selection) {
 		IResource res= wc.getResource();
 		if (res instanceof IFile) {
-			new ExtractConstantRefactoringRunner((IFile) res, selection, shellProvider).run();
+			new ExtractConstantRefactoringRunner((IFile) res, selection, shellProvider, wc.getCProject()).run();
 		}
 	}
 

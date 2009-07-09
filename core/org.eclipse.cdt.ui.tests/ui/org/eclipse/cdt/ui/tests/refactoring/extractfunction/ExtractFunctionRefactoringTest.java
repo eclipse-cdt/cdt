@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008 Institute for Software, HSR Hochschule fuer Technik  
+ * Copyright (c) 2008, 2009 Institute for Software, HSR Hochschule fuer Technik  
  * Rapperswil, University of applied sciences and others
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Eclipse Public License v1.0 
@@ -40,6 +40,7 @@ public class ExtractFunctionRefactoringTest extends RefactoringTest {
 	protected int returnParameterIndex;
 	protected boolean fatalError;
 	private VisibilityEnum visibility;
+	private static int nr = 1;
 
 	/**
 	 * @param name
@@ -53,7 +54,7 @@ public class ExtractFunctionRefactoringTest extends RefactoringTest {
 	protected void runTest() throws Throwable {
 		IFile refFile = project.getFile(fileName);
 		ExtractFunctionInformation info = new ExtractFunctionInformation();
-		CRefactoring refactoring = new ExtractFunctionRefactoring( refFile, selection, info);
+		CRefactoring refactoring = new ExtractFunctionRefactoring( refFile, selection, info, cproject);
 		RefactoringStatus checkInitialConditions = refactoring.checkInitialConditions(NULL_PROGRESS_MONITOR);
 		
 		if(fatalError){
@@ -62,18 +63,28 @@ public class ExtractFunctionRefactoringTest extends RefactoringTest {
 		}
 		else{
 			assertConditionsOk(checkInitialConditions);
-			executeRefactoring(info, refactoring);
+			setValues(info);
+			executeRefactoring(refactoring);
 		}
 		
 		
 	}
 
-	private void executeRefactoring(ExtractFunctionInformation info, CRefactoring refactoring) throws CoreException, Exception {
+	protected void executeRefactoring(CRefactoring refactoring) throws CoreException, Exception {
+		RefactoringStatus finalConditions = refactoring.checkFinalConditions(NULL_PROGRESS_MONITOR);
+		assertConditionsOk(finalConditions);
+		Change createChange = refactoring.createChange(NULL_PROGRESS_MONITOR);
+		createChange.perform(NULL_PROGRESS_MONITOR);
+		compareFiles(fileMap);
+	}
+
+	private void setValues(ExtractFunctionInformation info) {
 		info.setMethodName(methodName);
 		info.setReplaceDuplicates(replaceDuplicates);
 		if(info.getInScopeDeclaredVariable() == null){
 			if(returnValue) {
 				info.setReturnVariable(info.getAllAfterUsedNames().get(returnParameterIndex));
+				info.getAllAfterUsedNames().get(returnParameterIndex).setUserSetIsReference(false);
 			}
 		} else {
 			info.setReturnVariable( info.getInScopeDeclaredVariable() );
@@ -85,13 +96,6 @@ public class ExtractFunctionRefactoringTest extends RefactoringTest {
 				name.setUserSetIsReference(name.isReference());
 			}
 		}
-		
-		Change createChange = refactoring.createChange(NULL_PROGRESS_MONITOR);
-		RefactoringStatus finalConditions = refactoring.checkFinalConditions(NULL_PROGRESS_MONITOR);
-		assertConditionsOk(finalConditions);
-		createChange.perform(NULL_PROGRESS_MONITOR);
-		
-		compareFiles(fileMap);
 	}
 
 	

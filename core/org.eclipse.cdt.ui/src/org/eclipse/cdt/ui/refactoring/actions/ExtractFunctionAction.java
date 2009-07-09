@@ -45,7 +45,7 @@ public class ExtractFunctionAction extends RefactoringAction {
 		IResource res = wc.getResource();
 		if (res instanceof IFile) {
 			final ISelection selection = fEditor.getSelectionProvider().getSelection();
-			new ExtractFunctionRefactoringRunner((IFile) res, selection, fEditor.getSite()).run();
+			new ExtractFunctionRefactoringRunner((IFile) res, selection, fEditor.getSite(), wc.getCProject()).run();
 		}
 	}
 

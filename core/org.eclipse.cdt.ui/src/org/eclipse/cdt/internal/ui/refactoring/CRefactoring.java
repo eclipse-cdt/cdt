@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008 Institute for Software, HSR Hochschule fuer Technik  
+ * Copyright (c) 2008, 2009 Institute for Software, HSR Hochschule fuer Technik  
  * Rapperswil, University of applied sciences and others
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Eclipse Public License v1.0 
@@ -23,6 +23,8 @@ import org.eclipse.jface.text.Region;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.ltk.core.refactoring.Change;
 import org.eclipse.ltk.core.refactoring.Refactoring;
+import org.eclipse.ltk.core.refactoring.RefactoringChangeDescriptor;
+import org.eclipse.ltk.core.refactoring.RefactoringDescriptor;
 import org.eclipse.ltk.core.refactoring.RefactoringStatus;
 
 import org.eclipse.cdt.core.CCorePlugin;
@@ -68,7 +70,10 @@ public abstract class CRefactoring extends Refactoring {
 	protected IASTTranslationUnit unit;
 	private IIndex fIndex;
 
-	public CRefactoring(IFile file, ISelection selection, ICElement element) {
+	protected ICProject project;
+
+	public CRefactoring(IFile file, ISelection selection, ICElement element, ICProject proj) {
+		project = proj;
 		if (element instanceof ISourceReference) {
 			ISourceReference sourceRef= (ISourceReference) element;
 			ITranslationUnit tu= sourceRef.getTranslationUnit();
@@ -207,9 +212,13 @@ public abstract class CRefactoring extends Refactoring {
 	public Change createChange(IProgressMonitor pm) throws CoreException, OperationCanceledException {
 		ModificationCollector collector = new ModificationCollector();
 		collectModifications(pm, collector);
-		return collector.createFinalChange();
+		CCompositeChange finalChange = collector.createFinalChange();
+		finalChange.setDescription(new RefactoringChangeDescriptor(getRefactoringDescriptor()));
+		return finalChange;
 	}
 	
+	abstract protected RefactoringDescriptor getRefactoringDescriptor();
+
 	abstract protected void collectModifications(IProgressMonitor pm, ModificationCollector collector)
 		throws CoreException, OperationCanceledException;
 

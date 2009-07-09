@@ -21,6 +21,7 @@ import org.eclipse.core.runtime.OperationCanceledException;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.SubMonitor;
 import org.eclipse.jface.viewers.ISelection;
+import org.eclipse.ltk.core.refactoring.RefactoringDescriptor;
 import org.eclipse.ltk.core.refactoring.RefactoringStatus;
 
 import org.eclipse.cdt.core.dom.ast.ASTVisitor;
@@ -40,6 +41,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTemplateDeclaration;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTemplateParameter;
 import org.eclipse.cdt.core.dom.rewrite.ASTRewrite;
 import org.eclipse.cdt.core.model.ICElement;
+import org.eclipse.cdt.core.model.ICProject;
 
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTCompoundStatement;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTFunctionDeclarator;
@@ -66,8 +68,8 @@ public class ImplementMethodRefactoring extends CRefactoring {
 	private CPPASTFunctionDeclarator createdMethodDeclarator;
 	private ImplementMethodData data;
 	
-	public ImplementMethodRefactoring(IFile file, ISelection selection, ICElement element) {
-		super(file, selection, element);
+	public ImplementMethodRefactoring(IFile file, ISelection selection, ICElement element, ICProject project) {
+		super(file, selection, element, project);
 		data = new ImplementMethodData();
 	}
 	
@@ -245,5 +247,11 @@ public class ImplementMethodRefactoring extends CRefactoring {
 	
 	public ImplementMethodData getRefactoringData() {
 		return data;
+	}
+
+	@Override
+	protected RefactoringDescriptor getRefactoringDescriptor() {
+		// TODO egraf add Descriptor
+		return null;
 	}
 }

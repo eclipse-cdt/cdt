@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008 Google and others. All rights reserved. This program and
+ * Copyright (c) 2008, 2009 Google and others. All rights reserved. This program and
  * the accompanying materials are made available under the terms of the Eclipse
  * Public License v1.0 which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
@@ -11,7 +11,9 @@
 package org.eclipse.cdt.internal.ui.refactoring.extractlocalvariable;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.CoreException;
@@ -20,6 +22,7 @@ import org.eclipse.core.runtime.OperationCanceledException;
 import org.eclipse.core.runtime.SubMonitor;
 import org.eclipse.jface.text.Region;
 import org.eclipse.jface.viewers.ISelection;
+import org.eclipse.ltk.core.refactoring.RefactoringDescriptor;
 import org.eclipse.ltk.core.refactoring.RefactoringStatus;
 import org.eclipse.text.edits.TextEditGroup;
 
@@ -45,6 +48,7 @@ import org.eclipse.cdt.core.dom.ast.IScope;
 import org.eclipse.cdt.core.dom.ast.cpp.CPPASTVisitor;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCompositeTypeSpecifier;
 import org.eclipse.cdt.core.dom.rewrite.ASTRewrite;
+import org.eclipse.cdt.core.model.ICProject;
 
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTDeclarationStatement;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTDeclarator;
@@ -56,6 +60,7 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTSimpleDeclaration;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPFunction;
 
 import org.eclipse.cdt.internal.ui.refactoring.CRefactoring;
+import org.eclipse.cdt.internal.ui.refactoring.CRefactoringDescription;
 import org.eclipse.cdt.internal.ui.refactoring.ModificationCollector;
 import org.eclipse.cdt.internal.ui.refactoring.NameNVisibilityInformation;
 import org.eclipse.cdt.internal.ui.refactoring.NodeContainer;
@@ -71,61 +76,73 @@ import org.eclipse.cdt.internal.ui.refactoring.utils.SelectionHelper;
  * @author Tom Ball
  */
 public class ExtractLocalVariableRefactoring extends CRefactoring {
+	
+	public static final String ID = "org.eclipse.cdt.internal.ui.refactoring.extractlocalvariable.ExtractLocalVariableRefactoring"; //$NON-NLS-1$
+	
 	private IASTExpression target = null;
 	private final NameNVisibilityInformation info;
 	private NodeContainer container;
 
 	public ExtractLocalVariableRefactoring(IFile file, ISelection selection,
-			NameNVisibilityInformation info) {
-		super(file, selection, null);
+			NameNVisibilityInformation info, ICProject project) {
+		super(file, selection, null, project);
 		this.info = info;
 		name = Messages.ExtractLocalVariable;
 	}
 
 	@Override
 	public RefactoringStatus checkInitialConditions(IProgressMonitor pm)
-			throws CoreException, OperationCanceledException {
+	throws CoreException, OperationCanceledException {
 		SubMonitor sm = SubMonitor.convert(pm, 9);
-		super.checkInitialConditions(sm.newChild(6));
+		try {
+			lockIndex();
+			try {
+				super.checkInitialConditions(sm.newChild(6));
 
-		container = findAllExpressions();
-		if (container.size() < 1) {
-			initStatus.addFatalError(Messages.ExpressionMustBeSelected);
-			return initStatus;
-		}
+				container = findAllExpressions();
+				if (container.size() < 1) {
+					initStatus.addFatalError(Messages.ExpressionMustBeSelected);
+					return initStatus;
+				}
 
-		sm.worked(1);
-		if (isProgressMonitorCanceld(sm, initStatus))
-			return initStatus;
+				sm.worked(1);
+				if (isProgressMonitorCanceld(sm, initStatus))
+					return initStatus;
 
-		boolean oneMarked = region != null
+				boolean oneMarked = region != null
 				&& isOneMarked(container.getNodesToWrite(), region);
-		if (!oneMarked) {
-			if (target == null) {
-				initStatus.addFatalError(Messages.NoExpressionSelected);
-			} else {
-				initStatus.addFatalError(Messages.TooManyExpressionsSelected);
+				if (!oneMarked) {
+					if (target == null) {
+						initStatus.addFatalError(Messages.NoExpressionSelected);
+					} else {
+						initStatus.addFatalError(Messages.TooManyExpressionsSelected);
+					}
+					return initStatus;
+				}
+				sm.worked(1);
+
+				if (isProgressMonitorCanceld(sm, initStatus))
+					return initStatus;
+
+				container.findAllNames();
+				sm.worked(1);
+
+				container.getAllAfterUsedNames();
+				info.addNamesToUsedNames(findAllDeclaredNames());
+				sm.worked(1);
+
+				NodeHelper.findMethodContext(container.getNodesToWrite().get(0),
+						getIndex());
+				sm.worked(1);
+
+				info.setName(guessTempName());
+				sm.done();
+			}finally {
+				unlockIndex();
 			}
-			return initStatus;
+		} catch (InterruptedException e) {
+			Thread.currentThread().interrupt();
 		}
-		sm.worked(1);
-
-		if (isProgressMonitorCanceld(sm, initStatus))
-			return initStatus;
-
-		container.findAllNames();
-		sm.worked(1);
-
-		container.getAllAfterUsedNames();
-		info.addNamesToUsedNames(findAllDeclaredNames());
-		sm.worked(1);
-
-		NodeHelper.findMethodContext(container.getNodesToWrite().get(0),
-				getIndex());
-		sm.worked(1);
-
-		info.setName(guessTempName());
-		sm.done();
 		return initStatus;
 	}
 
@@ -240,22 +257,31 @@ public class ExtractLocalVariableRefactoring extends CRefactoring {
 	protected void collectModifications(IProgressMonitor pm,
 			ModificationCollector collector) throws CoreException,
 			OperationCanceledException {
-		String variableName = info.getName();
-		TextEditGroup editGroup = new TextEditGroup(
-				Messages.CreateLocalVariable);
+		try {
+			lockIndex();
+			try {
+				String variableName = info.getName();
+				TextEditGroup editGroup = new TextEditGroup(
+						Messages.CreateLocalVariable);
 
-		// Define temporary variable declaration and insert it
-		IASTStatement declInsertPoint = getParentStatement(target);
-		IASTDeclarationStatement declaration = getVariableNodes(variableName);
-		declaration.setParent(declInsertPoint.getParent());
-		ASTRewrite rewriter = collector.rewriterForTranslationUnit(unit);
-		rewriter.insertBefore(declInsertPoint.getParent(), declInsertPoint,
-				declaration, editGroup);
+				// Define temporary variable declaration and insert it
+				IASTStatement declInsertPoint = getParentStatement(target);
+				IASTDeclarationStatement declaration = getVariableNodes(variableName);
+				declaration.setParent(declInsertPoint.getParent());
+				ASTRewrite rewriter = collector.rewriterForTranslationUnit(unit);
+				rewriter.insertBefore(declInsertPoint.getParent(), declInsertPoint,
+						declaration, editGroup);
 
-		// Replace target with reference to temporary variable
-		CPPASTIdExpression idExpression = new CPPASTIdExpression(
-				new CPPASTName(variableName.toCharArray()));
-		rewriter.replace(target, idExpression, editGroup);
+				// Replace target with reference to temporary variable
+				CPPASTIdExpression idExpression = new CPPASTIdExpression(
+						new CPPASTName(variableName.toCharArray()));
+				rewriter.replace(target, idExpression, editGroup);
+			}finally {
+				unlockIndex();
+			}
+		} catch (InterruptedException e) {
+			Thread.currentThread().interrupt();
+		}
 	}
 
 	private IASTStatement getParentStatement(IASTNode node) {
@@ -429,5 +455,20 @@ public class ExtractLocalVariableRefactoring extends CRefactoring {
 			}
 		}
 		return null;
+	}
+
+	@Override
+	protected RefactoringDescriptor getRefactoringDescriptor() {
+		Map<String, String> arguments = getArgumentMap();
+		RefactoringDescriptor desc = new ExtractLocalVariableRefactoringDescription(project.getProject().getName(), "Extract Local Variable Refactoring", "Extract " + target.getRawSignature(), arguments);  //$NON-NLS-1$//$NON-NLS-2$
+		return desc;
+	}
+
+	private Map<String, String> getArgumentMap() {
+		Map<String, String> arguments = new HashMap<String, String>();
+		arguments.put(CRefactoringDescription.FILE_NAME, file.getLocationURI().toString());
+		arguments.put(CRefactoringDescription.SELECTION, region.getOffset() + "," + region.getLength()); //$NON-NLS-1$
+		arguments.put(ExtractLocalVariableRefactoringDescription.NAME, info.getName());
+		return arguments;
 	}
 }

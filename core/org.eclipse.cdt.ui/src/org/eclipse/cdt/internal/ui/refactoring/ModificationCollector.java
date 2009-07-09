@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008 Institute for Software, HSR Hochschule fuer Technik  
+ * Copyright (c) 2008, 2009 Institute for Software, HSR Hochschule fuer Technik  
  * Rapperswil, University of applied sciences and others
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Eclipse Public License v1.0 
@@ -18,7 +18,6 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.eclipse.ltk.core.refactoring.Change;
-import org.eclipse.ltk.core.refactoring.CompositeChange;
 
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
 import org.eclipse.cdt.core.dom.rewrite.ASTRewrite;
@@ -52,9 +51,9 @@ public class ModificationCollector {
 		changes.add(change);
 	}
 	
-	public CompositeChange createFinalChange() {
+	public CCompositeChange createFinalChange() {
 		// Synthetic changes aren't displayed and therefore don't need a name
-		CompositeChange result = new CompositeChange(""); //$NON-NLS-1$
+		CCompositeChange result = new CCompositeChange(""); //$NON-NLS-1$
 		result.markAsSynthetic();
 		
 		if(changes != null)

@@ -1,0 +1,232 @@
+//!ExtractConstantInt
+//#org.eclipse.cdt.ui.tests.refactoring.RefactoringHistoryTest
+//@A.h
+#ifndef A_H_
+#define A_H_
+
+class A
+{
+public:
+	A();
+	virtual ~A();
+	int foo();
+	void bar();
+};
+
+#endif /*A_H_*/
+
+//=
+#ifndef A_H_
+#define A_H_
+
+class A
+{
+public:
+	A();
+	virtual ~A();
+	int foo();
+	void bar();
+    static const int theAnswer = 42;
+};
+
+#endif /*A_H_*/
+
+//@A.cpp
+#include "A.h"
+
+A::A()
+{
+}
+
+A::~A()
+{
+}
+
+int A::foo()
+{
+	return 42; //Hallo
+}
+
+void A::bar()
+{
+	int a = 42;
+	int b = 42;
+}
+
+//=
+#include "A.h"
+
+A::A()
+{
+}
+
+A::~A()
+{
+}
+
+int A::foo()
+{
+	return theAnswer; //Hallo
+}
+
+void A::bar()
+{
+	int a = theAnswer;
+	int b = theAnswer;
+}
+
+//@refScript.xml
+<?xml version="1.0" encoding="UTF-8"?>
+<session version="1.0">
+<refactoring comment="Create constant for 42" description="Extract Constant Refactoring" 
+fileName="file:$$projectPath$$/A.cpp" flags="4" 
+id="org.eclipse.cdt.ui.refactoring.extractconstant.ExtractConstantRefactoring" name="theAnswer" 
+project="RegressionTestProject" selection="64,2" visibility="public"/>
+</session>
+
+
+//!replaceNumberProtected
+//#org.eclipse.cdt.ui.tests.refactoring.RefactoringHistoryTest
+//@A.h
+#ifndef A_H_
+#define A_H_
+
+class A
+{
+public:
+	A();
+	virtual ~A();
+	int foo();
+};
+
+#endif /*A_H_*/
+
+//=
+#ifndef A_H_
+#define A_H_
+
+class A
+{
+public:
+	A();
+	virtual ~A();
+	int foo();
+protected:
+    static const int theAnswer = 42;
+};
+
+#endif /*A_H_*/
+
+//@A.cpp
+#include "A.h"
+
+A::A()
+{
+}
+
+A::~A()
+{
+}
+
+int A::foo()
+{
+	return 42;
+}
+
+//=
+#include "A.h"
+
+A::A()
+{
+}
+
+A::~A()
+{
+}
+
+int A::foo()
+{
+	return theAnswer;
+}
+
+//@refScript.xml
+<?xml version="1.0" encoding="UTF-8"?>
+<session version="1.0">
+<refactoring comment="Create constant for 42" description="Extract Constant Refactoring" 
+fileName="file:$$projectPath$$/A.cpp" flags="4" 
+id="org.eclipse.cdt.ui.refactoring.extractconstant.ExtractConstantRefactoring" name="theAnswer" 
+project="RegressionTestProject" selection="64,2" visibility="protected"/>
+</session>
+
+//!replaceNumberPrivate
+//#org.eclipse.cdt.ui.tests.refactoring.RefactoringHistoryTest
+//@A.h
+#ifndef A_H_
+#define A_H_
+
+class A
+{
+public:
+	A();
+	virtual ~A();
+	int foo();
+};
+
+#endif /*A_H_*/
+
+//=
+#ifndef A_H_
+#define A_H_
+
+class A
+{
+public:
+	A();
+	virtual ~A();
+	int foo();
+private:
+    static const int theAnswer = 42;
+};
+
+#endif /*A_H_*/
+
+//@A.cpp
+#include "A.h"
+
+A::A()
+{
+}
+
+A::~A()
+{
+}
+
+int A::foo()
+{
+	return 42;
+}
+
+//=
+#include "A.h"
+
+A::A()
+{
+}
+
+A::~A()
+{
+}
+
+int A::foo()
+{
+	return theAnswer;
+}
+
+//@refScript.xml
+<?xml version="1.0" encoding="UTF-8"?>
+<session version="1.0">
+<refactoring comment="Create constant for 42" description="Extract Constant Refactoring" 
+fileName="file:$$projectPath$$/A.cpp" flags="4" 
+id="org.eclipse.cdt.ui.refactoring.extractconstant.ExtractConstantRefactoring" name="theAnswer" 
+project="RegressionTestProject" selection="64,2" visibility="private"/>
+</session>

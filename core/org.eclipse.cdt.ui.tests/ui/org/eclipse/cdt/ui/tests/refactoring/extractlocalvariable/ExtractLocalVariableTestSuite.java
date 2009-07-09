@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008 Institute for Software, HSR Hochschule fuer Technik  
+ * Copyright (c) 2008, 2009 Institute for Software, HSR Hochschule fuer Technik  
  * Rapperswil, University of applied sciences and others
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Eclipse Public License v1.0 
@@ -28,6 +28,8 @@ public class ExtractLocalVariableTestSuite extends TestSuite {
 		TestSuite suite = new ExtractLocalVariableTestSuite();
 		suite.addTest(RefactoringTester.suite("ExtractLocalVariableRefactoringTests", 
 				"resources/refactoring/ExtractLocalVariable.rts"));
+		suite.addTest(RefactoringTester.suite("ExtractLocalVariableRefactoringHistoryTests", 
+		"resources/refactoring/ExtractLocalVariableHistory.rts"));
 		return suite;
 	}
 }

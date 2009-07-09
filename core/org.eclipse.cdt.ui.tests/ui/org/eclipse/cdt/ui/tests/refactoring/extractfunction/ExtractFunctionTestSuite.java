@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008 Institute for Software, HSR Hochschule fuer Technik  
+ * Copyright (c) 2008, 2009 Institute for Software, HSR Hochschule fuer Technik  
  * Rapperswil, University of applied sciences and others
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Eclipse Public License v1.0 
@@ -29,6 +29,7 @@ public class ExtractFunctionTestSuite extends TestSuite {
 		suite.addTest(RefactoringTester.suite("Extract Expression", "resources/refactoring/ExtractExpression.rts"));
 		suite.addTest(RefactoringTester.suite("ExtractMethodPreprocessorRefactoringTests", "resources/refactoring/ExtractMethodPreprocessor.rts"));
 		suite.addTest(RefactoringTester.suite("Extract Function Templates Tests", "resources/refactoring/ExtractFunctionTemplates.rts"));
+		suite.addTest(RefactoringTester.suite("Extract Method History Test", "resources/refactoring/ExtractMethodHistory.rts"));
 		return suite;
 	}
 

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008 Institute for Software, HSR Hochschule fuer Technik  
+ * Copyright (c) 2008, 2009 Institute for Software, HSR Hochschule fuer Technik  
  * Rapperswil, University of applied sciences and others
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Eclipse Public License v1.0 
@@ -40,9 +40,7 @@ public class HideMethodRefactoringTest extends RefactoringTest {
 	protected void runTest() throws Throwable {
 
 		IFile refFile = project.getFile(fileWithSelection);
-		CRefactoring refactoring = new HideMethodRefactoring(refFile,selection, null);
-		try {
-		refactoring.lockIndex();
+		CRefactoring refactoring = new HideMethodRefactoring(refFile,selection, null, cproject);
 		RefactoringStatus checkInitialConditions = refactoring.checkInitialConditions(NULL_PROGRESS_MONITOR);
 		if(errors > 0) {
 			assertConditionsError(checkInitialConditions, errors);
@@ -52,7 +50,7 @@ public class HideMethodRefactoringTest extends RefactoringTest {
 		}else {
 			assertConditionsOk(checkInitialConditions);
 		}
-		
+
 		Change createChange = refactoring.createChange(NULL_PROGRESS_MONITOR);
 		RefactoringStatus finalConditions = refactoring.checkFinalConditions(NULL_PROGRESS_MONITOR);
 		if(warnings > 0){
@@ -63,10 +61,6 @@ public class HideMethodRefactoringTest extends RefactoringTest {
 		createChange.perform(NULL_PROGRESS_MONITOR);
 
 		compareFiles(fileMap);
-		}
-		finally {
-			refactoring.unlockIndex();
-		}
 	}
 
 	@Override

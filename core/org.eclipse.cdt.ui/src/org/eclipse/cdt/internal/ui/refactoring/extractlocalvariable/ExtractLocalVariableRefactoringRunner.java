@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008 Institute for Software, HSR Hochschule fuer Technik  
+ * Copyright (c) 2008, 2009 Institute for Software, HSR Hochschule fuer Technik  
  * Rapperswil, University of applied sciences and others
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Eclipse Public License v1.0 
@@ -16,6 +16,8 @@ import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.window.IShellProvider;
 import org.eclipse.ltk.ui.refactoring.RefactoringWizardOpenOperation;
 
+import org.eclipse.cdt.core.model.ICProject;
+
 import org.eclipse.cdt.internal.ui.refactoring.CRefactoring;
 import org.eclipse.cdt.internal.ui.refactoring.NameNVisibilityInformation;
 import org.eclipse.cdt.internal.ui.refactoring.RefactoringRunner;
@@ -28,15 +30,15 @@ import org.eclipse.cdt.internal.ui.refactoring.RefactoringRunner;
 public class ExtractLocalVariableRefactoringRunner extends RefactoringRunner {
 
 	public ExtractLocalVariableRefactoringRunner(IFile file,
-			ISelection selection, IShellProvider shellProvider) {
-		super(file, selection, null, shellProvider);
+			ISelection selection, IShellProvider shellProvider, ICProject cProject) {
+		super(file, selection, null, shellProvider, cProject);
 	}
 
 	@Override
 	public void run() {
 		NameNVisibilityInformation info = new NameNVisibilityInformation();
 		CRefactoring refactoring = new ExtractLocalVariableRefactoring(file,
-				selection, info);
+				selection, info, project);
 		ExtractLocalVariableRefactoringWizard wizard = new ExtractLocalVariableRefactoringWizard(
 				refactoring, info);
 		RefactoringWizardOpenOperation operator = new RefactoringWizardOpenOperation(wizard);

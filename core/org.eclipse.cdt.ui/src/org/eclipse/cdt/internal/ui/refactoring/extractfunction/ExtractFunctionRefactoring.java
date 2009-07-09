@@ -30,6 +30,7 @@ import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.SubMonitor;
 import org.eclipse.jface.viewers.ISelection;
+import org.eclipse.ltk.core.refactoring.RefactoringDescriptor;
 import org.eclipse.ltk.core.refactoring.RefactoringStatus;
 import org.eclipse.text.edits.TextEditGroup;
 
@@ -70,6 +71,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTemplateParameter;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPMethod;
 import org.eclipse.cdt.core.dom.rewrite.ASTRewrite;
+import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.ui.CUIPlugin;
 
 import org.eclipse.cdt.internal.core.dom.parser.c.CASTBinaryExpression;
@@ -95,6 +97,7 @@ import org.eclipse.cdt.internal.core.pdom.dom.PDOMName;
 
 import org.eclipse.cdt.internal.ui.refactoring.AddDeclarationNodeToClassChange;
 import org.eclipse.cdt.internal.ui.refactoring.CRefactoring;
+import org.eclipse.cdt.internal.ui.refactoring.CRefactoringDescription;
 import org.eclipse.cdt.internal.ui.refactoring.Container;
 import org.eclipse.cdt.internal.ui.refactoring.MethodContext;
 import org.eclipse.cdt.internal.ui.refactoring.ModificationCollector;
@@ -106,6 +109,8 @@ import org.eclipse.cdt.internal.ui.refactoring.utils.NodeHelper;
 import org.eclipse.cdt.internal.ui.refactoring.utils.SelectionHelper;
 
 public class ExtractFunctionRefactoring extends CRefactoring {
+	
+	public static final String ID = "org.eclipse.cdt.internal.ui.refactoring.extractfunction.ExtractFunctionRefactoring"; //$NON-NLS-1$
 
 	static final Integer NULL_INTEGER = Integer.valueOf(0);
 	static final char[] ZERO= "0".toCharArray(); //$NON-NLS-1$
@@ -127,8 +132,8 @@ public class ExtractFunctionRefactoring extends CRefactoring {
 	private INodeFactory factory = CPPNodeFactory.getDefault();
 
 	public ExtractFunctionRefactoring(IFile file, ISelection selection,
-			ExtractFunctionInformation info) {
-		super(file, selection, null);
+			ExtractFunctionInformation info, ICProject project) {
+		super(file, selection, null, project);
 		this.info = info;
 		name = Messages.ExtractFunctionRefactoring_ExtractFunction;
 		names = new HashMap<String, Integer>();
@@ -166,15 +171,13 @@ public class ExtractFunctionRefactoring extends CRefactoring {
 		info.setAllUsedNames(container.getUsedNamesUnique());
 
 		if (container.size() < 1) {
-			status
-					.addFatalError(Messages.ExtractFunctionRefactoring_NoStmtSelected);
+			status.addFatalError(Messages.ExtractFunctionRefactoring_NoStmtSelected);
 			sm.done();
 			return status;
 		}
 
 		if (container.getAllDeclaredInScope().size() > 1) {
-			status
-					.addFatalError(Messages.ExtractFunctionRefactoring_TooManySelected);
+			status.addFatalError(Messages.ExtractFunctionRefactoring_TooManySelected);
 		} else if (container.getAllDeclaredInScope().size() == 1) {
 			info.setInScopeDeclaredVariable(container.getAllDeclaredInScope().get(0));
 		}
@@ -188,6 +191,19 @@ public class ExtractFunctionRefactoring extends CRefactoring {
 		info.setDeclarator(getDeclaration(container.getNodesToWrite().get(0)));
 		MethodContext context = NodeHelper.findMethodContext(container.getNodesToWrite().get(0), getIndex());
 		info.setMethodContext(context);
+		
+		if (info.getInScopeDeclaredVariable() != null) {
+			info.getInScopeDeclaredVariable().setUserSetIsReturnValue(true);
+		}
+		for (int i = 0; i < info.getAllUsedNames().size(); i++) {
+			if (!info.getAllUsedNames().get(i).isDeclarationInScope()) {
+				NameInformation name = info.getAllUsedNames().get(i);
+				if(!name.isReturnValue()) {
+					name.setUserSetIsReference(name.isReference());
+				}
+			}
+		}
+		
 		sm.done();
 		return status;
 	}
@@ -212,12 +228,10 @@ public class ExtractFunctionRefactoring extends CRefactoring {
 		for (IASTNode node : cont.getNodesToWrite()) {
 			node.accept(vis);
 			if (vis.containsContinue()) {
-				initStatus
-						.addFatalError(Messages.ExtractFunctionRefactoring_Error_Continue);
+				initStatus.addFatalError(Messages.ExtractFunctionRefactoring_Error_Continue);
 				break;
 			} else if (vis.containsBreak()) {
-				initStatus
-						.addFatalError(Messages.ExtractFunctionRefactoring_Error_Break);
+				initStatus.addFatalError(Messages.ExtractFunctionRefactoring_Error_Break);
 				break;
 			}
 		}
@@ -226,8 +240,7 @@ public class ExtractFunctionRefactoring extends CRefactoring {
 		for (IASTNode node : cont.getNodesToWrite()) {
 			node.accept(rFinder);
 			if (rFinder.containsReturn()) {
-				initStatus
-						.addFatalError(Messages.ExtractFunctionRefactoring_Error_Return);
+				initStatus.addFatalError(Messages.ExtractFunctionRefactoring_Error_Return);
 				break;
 			}
 		}
@@ -749,6 +762,22 @@ public class ExtractFunctionRefactoring extends CRefactoring {
 				paramList.addExpression(expression);
 			}
 		}
+	}
+
+	@Override
+	protected RefactoringDescriptor getRefactoringDescriptor() {
+		Map<String, String> arguments = getArgumentMap();
+		RefactoringDescriptor desc = new ExtractFunctionRefactoringDescription( project.getProject().getName(), "Extract Method Refactoring", "Create method " + info.getMethodName(), arguments);  //$NON-NLS-1$//$NON-NLS-2$
+		return desc;
+	}
+
+	private Map<String, String> getArgumentMap() {
+		Map<String, String> arguments = new HashMap<String, String>();
+		arguments.put(CRefactoringDescription.FILE_NAME, file.getLocationURI().toString());
+		arguments.put(CRefactoringDescription.SELECTION, region.getOffset() + "," + region.getLength()); //$NON-NLS-1$
+		arguments.put(ExtractFunctionRefactoringDescription.NAME, info.getMethodName());
+		arguments.put(ExtractFunctionRefactoringDescription.VISIBILITY, info.getVisibility().toString());
+		return arguments;
 	}
 
 }

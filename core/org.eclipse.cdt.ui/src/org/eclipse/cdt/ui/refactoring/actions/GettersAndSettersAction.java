@@ -45,14 +45,14 @@ public class GettersAndSettersAction extends RefactoringAction {
 
 	@Override
 	public void run(IShellProvider shellProvider, ICElement elem) {
-		new GenerateGettersAndSettersRefactoringRunner(null, null, elem, shellProvider).run();
+		new GenerateGettersAndSettersRefactoringRunner(null, null, elem, shellProvider, elem.getCProject()).run();
 	}
 
 	@Override
 	public void run(IShellProvider shellProvider, IWorkingCopy wc, ITextSelection s) {
 		IResource res= wc.getResource();
 		if (res instanceof IFile) {
-			new GenerateGettersAndSettersRefactoringRunner((IFile) res, s, null, shellProvider).run();
+			new GenerateGettersAndSettersRefactoringRunner((IFile) res, s, null, shellProvider, wc.getCProject()).run();
 		}
 	}
 

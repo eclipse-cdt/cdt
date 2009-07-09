@@ -40,7 +40,7 @@ public class ExtractLocalVariableAction extends RefactoringAction {
 	public void run(IShellProvider shellProvider, IWorkingCopy wc, ITextSelection selection) {
 		IResource res= wc.getResource();
 		if (res instanceof IFile) {
-			new ExtractLocalVariableRefactoringRunner((IFile) res, selection, shellProvider).run();
+			new ExtractLocalVariableRefactoringRunner((IFile) res, selection, shellProvider, wc.getCProject()).run();
 		}
 	}
 

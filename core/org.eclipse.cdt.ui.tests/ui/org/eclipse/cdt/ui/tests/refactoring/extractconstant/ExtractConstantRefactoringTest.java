@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008 Institute for Software, HSR Hochschule fuer Technik  
+ * Copyright (c) 2008, 2009 Institute for Software, HSR Hochschule fuer Technik  
  * Rapperswil, University of applied sciences and others
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Eclipse Public License v1.0 
@@ -21,6 +21,7 @@ import org.eclipse.ltk.core.refactoring.RefactoringStatus;
 import org.eclipse.cdt.ui.tests.refactoring.RefactoringTest;
 import org.eclipse.cdt.ui.tests.refactoring.TestSourceFile;
 
+import org.eclipse.cdt.internal.ui.refactoring.CRefactoring;
 import org.eclipse.cdt.internal.ui.refactoring.extractconstant.ExtractConstantInfo;
 import org.eclipse.cdt.internal.ui.refactoring.extractconstant.ExtractConstantRefactoring;
 import org.eclipse.cdt.internal.ui.refactoring.utils.VisibilityEnum;
@@ -41,22 +42,16 @@ public class ExtractConstantRefactoringTest extends RefactoringTest {
 	protected void runTest() throws Throwable {
 		IFile refFile = project.getFile(fileName);
 		ExtractConstantInfo info = new ExtractConstantInfo();
-		ExtractConstantRefactoring refactoring = new ExtractConstantRefactoring( refFile, selection, info);
-		try {
-			refactoring.lockIndex();
-			RefactoringStatus checkInitialConditions = refactoring.checkInitialConditions(NULL_PROGRESS_MONITOR);
-			assertConditionsOk(checkInitialConditions);
-			info.setName("theAnswer"); //$NON-NLS-1$
-			info.setVisibility(visibility);
-			Change createChange = refactoring.createChange(NULL_PROGRESS_MONITOR);
-			RefactoringStatus finalConditions = refactoring.checkFinalConditions(NULL_PROGRESS_MONITOR);
-			assertConditionsOk(finalConditions);
-			createChange.perform(NULL_PROGRESS_MONITOR);
-		}finally {
-			refactoring.unlockIndex();
-		}
+		CRefactoring refactoring = new ExtractConstantRefactoring(refFile, selection, info, cproject);
+		RefactoringStatus checkInitialConditions = refactoring.checkInitialConditions(NULL_PROGRESS_MONITOR);
+		assertConditionsOk(checkInitialConditions);
+		info.setName("theAnswer"); //$NON-NLS-1$
+		info.setVisibility(visibility);
+		Change createChange = refactoring.createChange(NULL_PROGRESS_MONITOR);
+		RefactoringStatus finalConditions = refactoring.checkFinalConditions(NULL_PROGRESS_MONITOR);
+		assertConditionsOk(finalConditions);
+		createChange.perform(NULL_PROGRESS_MONITOR);
 		compareFiles(fileMap);
-
 	}
 
 	@Override

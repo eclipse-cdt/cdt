@@ -1221,7 +1221,10 @@
             <separator name="typeGroup"/>
             <separator name="typeGroup2"/>
             <separator name="codingGroup2"/>
-            <separator name="typeGroup3"/>            
+            <separator name="typeGroup3"/>
+            <separator
+                  name="historyGroup">
+            </separator>            
          </menu>
          <!-- reorg group  -->
          <action
@@ -1272,6 +1275,30 @@
                menubarPath="org.eclipse.jdt.ui.source.menu/generateGroup"
                id="org.eclipse.cdt.ui.actions.ImplementMethod"
                retarget="true">
+         </action>
+         <action
+               class="org.eclipse.ltk.ui.refactoring.actions.ShowRefactoringHistoryAction"
+               definitionId="org.eclipse.ltk.ui.refactor.show.refactoring.history"
+               id="org.eclipse.cdt.ui.actions.RefactoringHistory"
+               label="History..."
+               menubarPath="org.eclipse.jdt.ui.refactoring.menu/historyGroup"
+               retarget="false">
+         </action>
+         <action
+               class="org.eclipse.ltk.ui.refactoring.actions.CreateRefactoringScriptAction"
+               definitionId="org.eclipse.ltk.ui.refactor.create.refactoring.script"
+               id="org.eclipse.cdt.ui.actions.createRefactoringScript"
+               label="Create Script..."
+               menubarPath="org.eclipse.jdt.ui.refactoring.menu/historyGroup"
+               retarget="false">
+         </action>
+         <action
+               class="org.eclipse.ltk.ui.refactoring.actions.ApplyRefactoringScriptAction"
+               definitionId="org.eclipse.ltk.ui.refactor.apply.refactoring.script"
+               id="org.eclipse.cdt.ui.actions.applyRefactoringScript"
+               label="Apply Script..."
+               menubarPath="org.eclipse.jdt.ui.refactoring.menu/historyGroup"
+               retarget="false">
          </action>
          <menu
                id="org.eclipse.jdt.ui.source.menu"
@@ -3162,5 +3189,24 @@
 		     </adapt>         
          </enabledWhen>
       </page>
+   </extension>
+   <extension
+         point="org.eclipse.ltk.core.refactoring.refactoringContributions">
+      <contribution
+            class="org.eclipse.cdt.internal.ui.refactoring.extractconstant.ExtractConstantRefactoringContribution"
+            id="org.eclipse.cdt.ui.refactoring.extractconstant.ExtractConstantRefactoring">
+      </contribution>
+      <contribution
+            class="org.eclipse.cdt.internal.ui.refactoring.extractlocalvariable.ExtractLocalVariableRefactoringContribution"
+            id="org.eclipse.cdt.internal.ui.refactoring.extractlocalvariable.ExtractLocalVariableRefactoring">
+      </contribution>
+      <contribution
+            class="org.eclipse.cdt.internal.ui.refactoring.hidemethod.HideMethodRefactoringContribution"
+            id="org.eclipse.cdt.internal.ui.refactoring.hidemethod.HideMethodRefactoring">
+      </contribution>
+      <contribution
+            class="org.eclipse.cdt.internal.ui.refactoring.extractfunction.ExtractFunctionRefactoringContribution"
+            id="org.eclipse.cdt.internal.ui.refactoring.extractfunction.ExtractFunctionRefactoring">
+      </contribution>
    </extension>
 </plugin>

@@ -48,14 +48,14 @@ public class ImplementMethodAction extends RefactoringAction {
 
 	@Override
 	public void run(IShellProvider shellProvider, ICElement elem) {
-		new ImplementMethodRefactoringRunner(null, null, elem, shellProvider).run();
+		new ImplementMethodRefactoringRunner(null, null, elem, shellProvider, elem.getCProject()).run();
 	}
 
 	@Override
 	public void run(IShellProvider shellProvider, IWorkingCopy wc, ITextSelection selection) {
 		IResource res = wc.getResource();
 		if (res instanceof IFile) {
-			new ImplementMethodRefactoringRunner((IFile) res, selection, null, shellProvider).run();
+			new ImplementMethodRefactoringRunner((IFile) res, selection, null, shellProvider, wc.getCProject()).run();
 		}
 	}
 

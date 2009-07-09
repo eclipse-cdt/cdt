@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008 Institute for Software, HSR Hochschule fuer Technik  
+ * Copyright (c) 2008, 2009 Institute for Software, HSR Hochschule fuer Technik  
  * Rapperswil, University of applied sciences
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Eclipse Public License v1.0 
@@ -52,7 +52,7 @@ public class GenerateGettersAndSettersTest extends RefactoringTest {
 	@Override
 	protected void runTest() throws Throwable {
 		IFile refFile = project.getFile(fileName);
-		refactoring = new GenerateGettersAndSettersRefactoring(refFile, selection, null);
+		refactoring = new GenerateGettersAndSettersRefactoring(refFile, selection, null, cproject);
 		RefactoringStatus initialConditions = refactoring.checkInitialConditions(NULL_PROGRESS_MONITOR);
 		
 

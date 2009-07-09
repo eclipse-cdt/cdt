@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008 Institute for Software, HSR Hochschule fuer Technik  
+ * Copyright (c) 2008, 2009 Institute for Software, HSR Hochschule fuer Technik  
  * Rapperswil, University of applied sciences and others
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Eclipse Public License v1.0 
@@ -20,6 +20,7 @@ import org.eclipse.core.runtime.OperationCanceledException;
 import org.eclipse.core.runtime.SubMonitor;
 import org.eclipse.jface.text.Region;
 import org.eclipse.jface.viewers.ISelection;
+import org.eclipse.ltk.core.refactoring.RefactoringDescriptor;
 import org.eclipse.ltk.core.refactoring.RefactoringStatus;
 
 import org.eclipse.cdt.core.dom.ast.ASTNodeProperty;
@@ -37,6 +38,7 @@ import org.eclipse.cdt.core.dom.ast.IASTSimpleDeclaration;
 import org.eclipse.cdt.core.dom.ast.cpp.CPPASTVisitor;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCompositeTypeSpecifier;
 import org.eclipse.cdt.core.model.ICElement;
+import org.eclipse.cdt.core.model.ICProject;
 
 import org.eclipse.cdt.internal.ui.refactoring.AddDeclarationNodeToClassChange;
 import org.eclipse.cdt.internal.ui.refactoring.CRefactoring;
@@ -81,8 +83,8 @@ public class GenerateGettersAndSettersRefactoring extends CRefactoring {
 	private static final String MEMBER_DECLARATION = "MEMBER_DECLARATION"; //$NON-NLS-1$
 	private final GetterAndSetterContext context = new GetterAndSetterContext();	
 	
-	public GenerateGettersAndSettersRefactoring(IFile file, ISelection selection, ICElement element) {
-		super(file, selection, element);
+	public GenerateGettersAndSettersRefactoring(IFile file, ISelection selection, ICElement element, ICProject project) {
+		super(file, selection, element, project);
 	}
 	
 	@Override
@@ -195,5 +197,11 @@ public class GenerateGettersAndSettersRefactoring extends CRefactoring {
 	
 	public Region getRegion() {
 		return region;
+	}
+
+	@Override
+	protected RefactoringDescriptor getRefactoringDescriptor() {
+		// TODO egraf add Descriptor
+		return null;
 	}	
 }

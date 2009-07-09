@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2008 Wind River Systems, Inc. and others.
+ * Copyright (c) 2007, 2009 Wind River Systems, Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -9,6 +9,7 @@
  * Michael Scharf (Wind River) - initial API and implementation
  * Martin Oberhuber (Wind River) - [225853][api] Provide more default functionality in TerminalConnectorImpl
  * Martin Oberhuber (Wind River) - [204796] Terminal should allow setting the encoding to use
+ * Uwe Stieber (Wind River) - [282996] [terminal][api] Add "hidden" attribute to terminal connector extension point
  *******************************************************************************/
 package org.eclipse.tm.internal.terminal.connector;
 
@@ -139,27 +140,27 @@ public class TerminalConnectorTest extends TestCase {
 		}
 	}
 	public void testGetInitializationErrorMessage() {
-		TerminalConnector c=new TerminalConnector(new SimpleFactory(new ConnectorMock()),"xID","xName");
+		TerminalConnector c=new TerminalConnector(new SimpleFactory(new ConnectorMock()),"xID","xName", false);
 		c.connect(new TerminalControlMock());
 		assertNull(c.getInitializationErrorMessage());
 
 		c=new TerminalConnector(new SimpleFactory(new ConnectorMock(){
 			public void initialize() throws Exception {
 				throw new Exception("FAILED");
-			}}),"xID","xName");
+			}}),"xID","xName", false);
 		c.connect(new TerminalControlMock());
 		assertEquals("FAILED",c.getInitializationErrorMessage());
 
 	}
 
 	public void testGetIdAndName() {
-		TerminalConnector c=new TerminalConnector(new SimpleFactory(new ConnectorMock()),"xID","xName");
+		TerminalConnector c=new TerminalConnector(new SimpleFactory(new ConnectorMock()),"xID","xName", false);
 		assertEquals("xID", c.getId());
 		assertEquals("xName", c.getName());
 	}
 
 	public void testConnect() {
-		TerminalConnector c=new TerminalConnector(new SimpleFactory(new ConnectorMock()),"xID","xName");
+		TerminalConnector c=new TerminalConnector(new SimpleFactory(new ConnectorMock()),"xID","xName", false);
 		assertFalse(c.isInitialized());
 		c.connect(new TerminalControlMock());
 		assertTrue(c.isInitialized());
@@ -168,7 +169,7 @@ public class TerminalConnectorTest extends TestCase {
 
 	public void testDisconnect() {
 		ConnectorMock mock=new ConnectorMock();
-		TerminalConnector c=new TerminalConnector(new SimpleFactory(mock),"xID","xName");
+		TerminalConnector c=new TerminalConnector(new SimpleFactory(mock),"xID","xName", false);
 		TerminalControlMock control=new TerminalControlMock();
 		c.connect(control);
 		c.disconnect();
@@ -177,14 +178,14 @@ public class TerminalConnectorTest extends TestCase {
 
 	public void testGetTerminalToRemoteStream() {
 		ConnectorMock mock=new ConnectorMock();
-		TerminalConnector c=new TerminalConnector(new SimpleFactory(mock),"xID","xName");
+		TerminalConnector c=new TerminalConnector(new SimpleFactory(mock),"xID","xName", false);
 		TerminalControlMock control=new TerminalControlMock();
 		c.connect(control);
 		assertSame(mock.fControl,control);
 	}
 
 	public void testGetSettingsSummary() {
-		TerminalConnector c=new TerminalConnector(new SimpleFactory(new ConnectorMock()),"xID","xName");
+		TerminalConnector c=new TerminalConnector(new SimpleFactory(new ConnectorMock()),"xID","xName", false);
 		assertEquals("Not Initialized", c.getSettingsSummary());
 		c.connect(new TerminalControlMock());
 		assertEquals("Summary", c.getSettingsSummary());
@@ -192,7 +193,7 @@ public class TerminalConnectorTest extends TestCase {
 
 	public void testIsLocalEcho() {
 		ConnectorMock mock=new ConnectorMock();
-		TerminalConnector c=new TerminalConnector(new SimpleFactory(mock),"xID","xName");
+		TerminalConnector c=new TerminalConnector(new SimpleFactory(mock),"xID","xName", false);
 		assertFalse(c.isLocalEcho());
 		mock.fEcho=true;
 		assertTrue(c.isLocalEcho());
@@ -200,7 +201,7 @@ public class TerminalConnectorTest extends TestCase {
 
 	public void testLoad() {
 		ConnectorMock mock=new ConnectorMock();
-		TerminalConnector c=new TerminalConnector(new SimpleFactory(mock),"xID","xName");
+		TerminalConnector c=new TerminalConnector(new SimpleFactory(mock),"xID","xName", false);
 		ISettingsStore s=new SettingsMock();
 		c.load(s);
 		// the load is called after the connect...
@@ -211,7 +212,7 @@ public class TerminalConnectorTest extends TestCase {
 
 	public void testSave() {
 		ConnectorMock mock=new ConnectorMock();
-		TerminalConnector c=new TerminalConnector(new SimpleFactory(mock),"xID","xName");
+		TerminalConnector c=new TerminalConnector(new SimpleFactory(mock),"xID","xName", false);
 		ISettingsStore s=new SettingsMock();
 		c.save(s);
 		assertNull(mock.fSaveStore);
@@ -222,13 +223,13 @@ public class TerminalConnectorTest extends TestCase {
 
 	public void testMakeSettingsPage() {
 		ConnectorMock mock=new ConnectorMock();
-		TerminalConnector c=new TerminalConnector(new SimpleFactory(mock),"xID","xName");
+		TerminalConnector c=new TerminalConnector(new SimpleFactory(mock),"xID","xName", false);
 		assertNotNull(c.makeSettingsPage());
 	}
 
 	public void testSetTerminalSize() {
 		ConnectorMock mock=new ConnectorMock();
-		TerminalConnector c=new TerminalConnector(new SimpleFactory(mock),"xID","xName");
+		TerminalConnector c=new TerminalConnector(new SimpleFactory(mock),"xID","xName", false);
 		c.setTerminalSize(100, 200);
 
 	}

@@ -9,6 +9,7 @@
  * Michael Scharf (Wind River) - initial API and implementation
  * Martin Oberhuber (Wind River) - [225853][api] Provide more default functionality in TerminalConnectorImpl
  * Martin Oberhuber (Wind River) - [204796] Terminal should allow setting the encoding to use
+ * Uwe Stieber (Wind River) - [282996] [terminal][api] Add "hidden" attribute to terminal connector extension point
  *******************************************************************************/
 package org.eclipse.tm.internal.terminal.connector;
 
@@ -137,7 +138,7 @@ public class TerminalConnectorFactoryTest extends TestCase {
 			public TerminalConnectorImpl makeConnector() throws Exception {
 				return mock;
 			}
-		},"xID","xName");
+		},"xID","xName", false);
 		return c;
 	}
 

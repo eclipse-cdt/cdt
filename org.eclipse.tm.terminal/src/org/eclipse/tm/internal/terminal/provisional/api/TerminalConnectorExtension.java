@@ -8,6 +8,7 @@
  * Contributors:
  * Michael Scharf (Wind River) - initial API and implementation
  * Martin Oberhuber (Wind River) - fixed copyright headers and beautified
+ * Uwe Stieber (Wind River) - [282996] [terminal][api] Add "hidden" attribute to terminal connector extension point
  *******************************************************************************/
 package org.eclipse.tm.internal.terminal.provisional.api;
 
@@ -44,11 +45,13 @@ public class TerminalConnectorExtension {
 		if(name==null || name.length()==0) {
 			name=id;
 		}
+		String hidden = config.getAttribute("hidden"); //$NON-NLS-1$
+		boolean isHidden = hidden != null ? Boolean.parseBoolean(hidden) : false;
 		TerminalConnector.Factory factory=new TerminalConnector.Factory(){
 			public TerminalConnectorImpl makeConnector() throws Exception {
 				return (TerminalConnectorImpl)config.createExecutableExtension("class"); //$NON-NLS-1$
 			}};
-		return new TerminalConnector(factory,id,name);
+		return new TerminalConnector(factory,id,name, isHidden);
 	}
 
 	/**

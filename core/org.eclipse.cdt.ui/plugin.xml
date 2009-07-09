@@ -1280,7 +1280,7 @@
                class="org.eclipse.ltk.ui.refactoring.actions.ShowRefactoringHistoryAction"
                definitionId="org.eclipse.ltk.ui.refactor.show.refactoring.history"
                id="org.eclipse.cdt.ui.actions.RefactoringHistory"
-               label="History..."
+               label="%historyAction.label"
                menubarPath="org.eclipse.jdt.ui.refactoring.menu/historyGroup"
                retarget="false">
          </action>
@@ -1288,7 +1288,7 @@
                class="org.eclipse.ltk.ui.refactoring.actions.CreateRefactoringScriptAction"
                definitionId="org.eclipse.ltk.ui.refactor.create.refactoring.script"
                id="org.eclipse.cdt.ui.actions.createRefactoringScript"
-               label="Create Script..."
+               label="%createScriptAction.label"
                menubarPath="org.eclipse.jdt.ui.refactoring.menu/historyGroup"
                retarget="false">
          </action>
@@ -1296,7 +1296,7 @@
                class="org.eclipse.ltk.ui.refactoring.actions.ApplyRefactoringScriptAction"
                definitionId="org.eclipse.ltk.ui.refactor.apply.refactoring.script"
                id="org.eclipse.cdt.ui.actions.applyRefactoringScript"
-               label="Apply Script..."
+               label="%applyScriptAction.label"
                menubarPath="org.eclipse.jdt.ui.refactoring.menu/historyGroup"
                retarget="false">
          </action>

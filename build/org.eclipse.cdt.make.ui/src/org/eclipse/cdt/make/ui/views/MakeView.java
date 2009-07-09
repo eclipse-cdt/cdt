@@ -59,8 +59,6 @@ import org.eclipse.swt.dnd.DND;
 import org.eclipse.swt.dnd.FileTransfer;
 import org.eclipse.swt.dnd.TextTransfer;
 import org.eclipse.swt.dnd.Transfer;
-import org.eclipse.swt.events.KeyAdapter;
-import org.eclipse.swt.events.KeyEvent;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.Shell;
@@ -126,18 +124,7 @@ public class MakeView extends ViewPart {
 				handleSelectionChanged(event);
 			}
 		});
-		fViewer.getControl().addKeyListener(new KeyAdapter() {
 
-			@Override
-			public void keyPressed(KeyEvent event) {
-				if (event.character == SWT.DEL && event.stateMask == 0) {
-					handleDeleteKeyPressed();
-				}
-			}
-		});
-
-		fViewer.setContentProvider(new MakeContentProvider());
-		fViewer.setLabelProvider(new MakeLabelProvider());
 		fViewer.setSorter(new ViewerSorter() {
 
 			@Override
@@ -343,10 +330,6 @@ public class MakeView extends ViewPart {
 
 		// Other plug-ins can contribute there actions here
 		// manager.add(new Separator(IWorkbenchActionConstants.MB_ADDITIONS));
-	}
-
-	protected void handleDeleteKeyPressed() {
-		deleteTargetAction.run();
 	}
 
 	protected void handleDoubleClick(DoubleClickEvent event) {

@@ -2,15 +2,20 @@
 <!-- Schema file written by PDE -->
 <schema targetNamespace="org.eclipse.tm.terminal" xmlns="http://www.w3.org/2001/XMLSchema">
 <annotation>
-      <appinfo>
+      <appInfo>
          <meta.schema plugin="org.eclipse.tm.terminal" id="terminalConnectors" name="Terminal Connectors"/>
-      </appinfo>
+      </appInfo>
       <documentation>
          
       </documentation>
    </annotation>
 
    <element name="extension">
+      <annotation>
+         <appInfo>
+            <meta.element />
+         </appInfo>
+      </annotation>
       <complexType>
          <sequence minOccurs="1" maxOccurs="unbounded">
             <element ref="connector"/>
@@ -34,9 +39,9 @@
                <documentation>
                   
                </documentation>
-               <appinfo>
+               <appInfo>
                   <meta.attribute translatable="true"/>
-               </appinfo>
+               </appInfo>
             </annotation>
          </attribute>
       </complexType>
@@ -49,9 +54,9 @@
                <documentation>
                   A class extending TerminalConnectorImpl
                </documentation>
-               <appinfo>
+               <appInfo>
                   <meta.attribute kind="java" basedOn="org.eclipse.tm.internal.terminal.provisional.api.provider.TerminalConnectorImpl:"/>
-               </appinfo>
+               </appInfo>
             </annotation>
          </attribute>
          <attribute name="id" type="string" use="required">
@@ -66,9 +71,16 @@
                <documentation>
                   The name of the connection (used in the UI)
                </documentation>
-               <appinfo>
+               <appInfo>
                   <meta.attribute translatable="true"/>
-               </appinfo>
+               </appInfo>
+            </annotation>
+         </attribute>
+         <attribute name="hidden" type="boolean">
+            <annotation>
+               <documentation>
+                  When set to &quot;true&quot;, the terminal connector will not be visible to the user in connector selections.
+               </documentation>
             </annotation>
          </attribute>
       </complexType>
@@ -79,9 +91,9 @@
 
 
    <annotation>
-      <appinfo>
+      <appInfo>
          <meta.section type="copyright"/>
-      </appinfo>
+      </appInfo>
       <documentation>
          Copyright (c) 2006, 2008 Wind River Systems, Inc. and others.
 All rights reserved. This program and the accompanying materials 
@@ -92,6 +104,7 @@ http://www.eclipse.org/legal/epl-v10.html
 Contributors: 
 Michael Scharf (Wind River) - initial API and implementation
 Martin Oberhuber (Wind River) - fixed copyright headers and beautified
+Uwe Stieber (Wind River) - [282996] [terminal][api] Add "hidden" attribute to terminal connector extension point
       </documentation>
    </annotation>
 

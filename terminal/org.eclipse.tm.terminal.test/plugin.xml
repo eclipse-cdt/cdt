@@ -10,12 +10,14 @@
 # Contributors:
 # Michael Scharf (Wind River) - initial API and implementation 
 # Martin Oberhuber (Wind River) - fixed copyright headers and beautified
+# Uwe Stieber (Wind River) - [282996] [terminal][api] Add "hidden" attribute to terminal connector extension point
 -->
 <plugin>
    <extension
          point="org.eclipse.tm.terminal.terminalConnectors">
-      <connector name="Speed Test" 
-      id="org.eclipse.tm.internal.terminal.speedtest.SpeedTestConnector"
-      class="org.eclipse.tm.internal.terminal.speedtest.SpeedTestConnector"/>
+      <connector
+            class="org.eclipse.tm.internal.terminal.speedtest.SpeedTestConnector"
+            id="org.eclipse.tm.internal.terminal.speedtest.SpeedTestConnector"
+            name="Speed Test"/>
    </extension>
 </plugin>

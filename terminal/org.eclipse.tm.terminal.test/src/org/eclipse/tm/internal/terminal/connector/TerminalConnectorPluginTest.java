@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008 Wind River Systems, Inc. and others.
+ * Copyright (c) 2008, 2009 Wind River Systems, Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  * Martin Oberhuber (Wind River) - initial API and implementation
+ * Uwe Stieber (Wind River) - [282996] [terminal][api] Add "hidden" attribute to terminal connector extension point
  *******************************************************************************/
 
 package org.eclipse.tm.internal.terminal.connector;
@@ -26,11 +27,13 @@ public class TerminalConnectorPluginTest extends TestCase {
 	public void testIsInitialized() {
 		if (!Platform.isRunning())
 			return;
-		TerminalConnector c = new TerminalConnector(new SimpleFactory(new ConnectorMock()), "xID", "xName");
+		TerminalConnector c = new TerminalConnector(new SimpleFactory(new ConnectorMock()), "xID", "xName", false);
 		assertFalse(c.isInitialized());
 		c.getId();
 		assertFalse(c.isInitialized());
 		c.getName();
+		assertFalse(c.isInitialized());
+		c.isHidden();
 		assertFalse(c.isInitialized());
 		c.getSettingsSummary();
 		assertFalse(c.isInitialized());
@@ -48,7 +51,7 @@ public class TerminalConnectorPluginTest extends TestCase {
 		if (!Platform.isRunning())
 			return;
 		ConnectorMock mock = new ConnectorMock();
-		TerminalConnector c = new TerminalConnector(new SimpleFactory(mock), "xID", "xName");
+		TerminalConnector c = new TerminalConnector(new SimpleFactory(mock), "xID", "xName", false);
 		assertNull(c.getAdapter(ConnectorMock.class));
 		// the load is called after the connect...
 		c.connect(new TerminalControlMock());

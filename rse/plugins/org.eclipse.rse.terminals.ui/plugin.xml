@@ -20,6 +20,7 @@ Anna Dushistova  (MontaVista) - [235934] Launch Shell/Terminal commands enabled 
 Anna Dushistova  (MontaVista) - [251492] Launch Shell Action is enabled in Offline mode
 Kevin Doyle		 (IBM)		  - [249320] Launch Shell action not available in Remote System Details/Monitor views
 Anna Dushistova  (MontaVista) - [257638] [rseterminal] Terminal subsystem doesn't have service properties
+Uwe Stieber      (Wind River) - [282996] [terminal][api] Add "hidden" attribute to terminal connector extension point
 -->
 <?eclipse version="3.2"?>
 <plugin>

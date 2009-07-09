@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2008 Wind River Systems, Inc. and others.
+ * Copyright (c) 2007, 2009 Wind River Systems, Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -9,6 +9,7 @@
  * Michael Scharf (Wind River) - initial API and implementation
  * Michael Scharf (Wind River) - [200541] Extract from TerminalConnectorExtension.TerminalConnectorProxy
  * Martin Oberhuber (Wind River) - [225853][api] Provide more default functionality in TerminalConnectorImpl 
+ * Uwe Stieber (Wind River) - [282996] [terminal][api] Add "hidden" attribute to terminal connector extension point
  *******************************************************************************/
 package org.eclipse.tm.internal.terminal.connector;
 
@@ -76,6 +77,10 @@ public class TerminalConnector implements ITerminalConnector {
 	 */
 	private final String fId;
 	/**
+	 * Flag to mark the connector as hidden.
+	 */
+	private final boolean fHidden;
+	/**
 	 * The connector
 	 */
 	private TerminalConnectorImpl fConnector;
@@ -98,10 +103,11 @@ public class TerminalConnector implements ITerminalConnector {
 	 *            this ID.
 	 * @param name translatable name to display the connector in the UI.
 	 */
-	public TerminalConnector(TerminalConnector.Factory terminalConnectorFactory, String id, String name) {
+	public TerminalConnector(TerminalConnector.Factory terminalConnectorFactory, String id, String name, boolean hidden) {
 		fTerminalConnectorFactory = terminalConnectorFactory;
 		fId = id;
 		fName = name;
+		fHidden = hidden;
 	}
 	public String getInitializationErrorMessage() {
 		getConnectorImpl();
@@ -114,6 +120,9 @@ public class TerminalConnector implements ITerminalConnector {
 	}
 	public String getName() {
 		return fName;
+	}
+	public boolean isHidden() {
+		return fHidden;
 	}
 	private TerminalConnectorImpl getConnectorImpl() {
 		if(!isInitialized()) {

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2003, 2008 Wind River Systems, Inc. and others.
+ * Copyright (c) 2003, 2009 Wind River Systems, Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -18,6 +18,7 @@
  * Michael Scharf (Wind River) - [196454] Initial connection settings dialog should not be blank
  * Michael Scharf (Wind River) - [240023] Get rid of the terminal's "Pin" button
  * Martin Oberhuber (Wind River) - [206917] Add validation for Terminal Settings
+ * Uwe Stieber (Wind River) - [282996] [terminal][api] Add "hidden" attribute to terminal connector extension point
  *******************************************************************************/
 package org.eclipse.tm.internal.terminal.view;
 
@@ -87,7 +88,7 @@ class TerminalSettingsDlg extends Dialog {
 		List list=new ArrayList(Arrays.asList(connectors));
 		for (Iterator iterator = list.iterator(); iterator.hasNext();) {
 			ITerminalConnector info = (ITerminalConnector) iterator.next();
-			if(info.isInitialized() && info.getInitializationErrorMessage()!=null)
+			if(info.isInitialized() && info.getInitializationErrorMessage()!=null || info.isHidden())
 				iterator.remove();
 		}
 		connectors=(ITerminalConnector[]) list.toArray(new ITerminalConnector[list.size()]);

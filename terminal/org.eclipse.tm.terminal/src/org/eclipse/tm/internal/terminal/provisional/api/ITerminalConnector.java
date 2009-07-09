@@ -9,6 +9,7 @@
  * Michael Scharf (Wind River) - initial API and implementation
  * Martin Oberhuber (Wind River) - fixed copyright headers and beautified
  * Martin Oberhuber (Wind River) - [261486][api][cleanup] Mark @noimplement interfaces as @noextend
+ * Uwe Stieber (Wind River) - [282996] [terminal][api] Add "hidden" attribute to terminal connector extension point
  *******************************************************************************/
 package org.eclipse.tm.internal.terminal.provisional.api;
 
@@ -59,6 +60,12 @@ public interface ITerminalConnector extends IAdaptable {
 	 * @since org.eclipse.tm.terminal 2.0
 	 */
 	String getName();
+	
+	/**
+	 * @return <code>True</code> if the connector is not visible in user selections.
+	 * @since org.eclipse.tm.terminal 3.1
+	 */
+	boolean isHidden();
 
 	/**
 	 * @return true if the {@link TerminalConnectorImpl} has been initialized.

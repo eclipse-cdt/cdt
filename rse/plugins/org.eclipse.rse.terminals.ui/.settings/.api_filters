@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<component id="org.eclipse.rse.terminals.ui" version="2">
+    <resource path="src/org/eclipse/rse/internal/terminals/ui/views/RSETerminalConnector.java" type="org.eclipse.rse.internal.terminals.ui.views.RSETerminalConnector">
+        <filter id="574619656">
+            <message_arguments>
+                <message_argument value="ITerminalConnector"/>
+                <message_argument value="RSETerminalConnector"/>
+            </message_arguments>
+        </filter>
+    </resource>
+</component>

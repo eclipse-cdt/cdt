@@ -13,7 +13,7 @@
 <feature
       id="org.eclipse.tm.terminal.view"
       label="%featureName"
-      version="2.1.0.qualifier"
+      version="2.0.101.qualifier"
       provider-name="%providerName">
 
    <description>
@@ -36,7 +36,7 @@
    <requires>
       <import plugin="org.eclipse.ui"/>
       <import plugin="org.eclipse.core.runtime"/>
-      <import plugin="org.eclipse.tm.terminal" version="3.1.0" match="equivalent"/>
+      <import plugin="org.eclipse.tm.terminal" version="3.0.1" match="equivalent"/>
    </requires>
 
    <plugin

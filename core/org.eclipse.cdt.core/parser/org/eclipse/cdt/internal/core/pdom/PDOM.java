@@ -87,7 +87,6 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.OperationCanceledException;
-import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.PlatformObject;
 import org.eclipse.core.runtime.Status;
 
@@ -96,7 +95,7 @@ import org.eclipse.core.runtime.Status;
  */
 public class PDOM extends PlatformObject implements IPDOM {
 	private static final int BLOCKED_WRITELOCK_OUTPUT_INTERVAL = 30000;
-	static boolean sDEBUG_LOCKS= "true".equals(Platform.getDebugOption(CCorePlugin.PLUGIN_ID + "/debug/index/locks"));  //$NON-NLS-1$//$NON-NLS-2$
+	static boolean sDEBUG_LOCKS= false; // initialized in the PDOMManager, because IBM needs PDOM independent of runtime plugin.
 
 	/**
 	 * Identifier for PDOM format

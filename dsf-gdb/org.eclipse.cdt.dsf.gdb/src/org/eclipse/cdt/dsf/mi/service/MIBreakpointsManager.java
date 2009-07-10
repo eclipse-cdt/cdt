@@ -418,7 +418,7 @@ public class MIBreakpointsManager extends AbstractDsfService implements IBreakpo
                 	// Install only if the breakpoint is enabled at startup (Bug261082)
                 	boolean bpEnabled = attributes.get(ICBreakpoint.ENABLED).equals(true) && fBreakpointManager.isEnabled();
                 	if (bpEnabled)
-                		installBreakpoint(dmc, breakpoint, attributes, new RequestMonitor(getExecutor(), countingRm));
+                		installBreakpoint(dmc, breakpoint, attributes, countingRm);
                 	else
                 		countingRm.done();
                 }
@@ -1058,7 +1058,7 @@ public class MIBreakpointsManager extends AbstractDsfService implements IBreakpo
                                     @Override
                                     protected void handleSuccess() {
                                         installBreakpoint(dmc, (ICBreakpoint) breakpoint,
-                                            attrs, new RequestMonitor(getExecutor(), countingRm));
+                                            attrs, countingRm);
                                     }
                                 });
                         }
@@ -1665,14 +1665,14 @@ public class MIBreakpointsManager extends AbstractDsfService implements IBreakpo
             return false;
 
         // Check the "critical" attributes
-        if (delta.containsKey(ATTR_DEBUGGER_PATH)           // File name
-        ||  delta.containsKey(IMarker.LINE_NUMBER)          // Line number
-        ||  delta.containsKey(ICLineBreakpoint.FUNCTION)    // Function name
-        ||  delta.containsKey(ICLineBreakpoint.ADDRESS)     // Absolute address
-        ||  delta.containsKey(ATTR_THREAD_FILTER)           // Thread ID
-        ||  delta.containsKey(ICWatchpoint.EXPRESSION)      // Watchpoint expression
-        ||  delta.containsKey(ICWatchpoint.READ)            // Watchpoint type
-        ||  delta.containsKey(ICWatchpoint.WRITE)) {        // Watchpoint type
+        if (delta.containsKey(ATTR_DEBUGGER_PATH)            // File name
+        ||  delta.containsKey(MIBreakpoints.LINE_NUMBER)     // Line number
+        ||  delta.containsKey(MIBreakpoints.FUNCTION)        // Function name
+        ||  delta.containsKey(MIBreakpoints.ADDRESS)         // Absolute address
+        ||  delta.containsKey(ATTR_THREAD_FILTER)            // Thread ID
+        ||  delta.containsKey(MIBreakpoints.EXPRESSION)      // Watchpoint expression
+        ||  delta.containsKey(MIBreakpoints.READ)            // Watchpoint type
+        ||  delta.containsKey(MIBreakpoints.WRITE)) {        // Watchpoint type
             return true;
         }
 

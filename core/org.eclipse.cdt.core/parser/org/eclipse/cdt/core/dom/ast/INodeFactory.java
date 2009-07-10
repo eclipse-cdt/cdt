@@ -13,6 +13,7 @@ package org.eclipse.cdt.core.dom.ast;
 import org.eclipse.cdt.core.dom.ast.IASTEnumerationSpecifier.IASTEnumerator;
 import org.eclipse.cdt.core.dom.ast.gnu.IGNUASTCompoundStatementExpression;
 import org.eclipse.cdt.core.parser.IScanner;
+import org.eclipse.cdt.core.parser.IToken;
 
 
 /**
@@ -166,4 +167,39 @@ public interface INodeFactory {
 	
 	public IASTCompositeTypeSpecifier newCompositeTypeSpecifier(int key, IASTName name);
 
+	/**
+	 * Provides the offsets for a node. The offsets are artificial numbers that identify the
+	 * position of a node in the translation unit. They are not file-offsets. You can obtain
+	 * valid offsets via {@link IToken#getOffset()} or {@link IToken#getEndOffset()} from tokens
+	 * provided by the scanner for this translation unit.
+	 * <par> May throw an exception when the node provided was not created by this factory.
+	 * @param node a node created by this factory
+	 * @offset the offset (inclusive) for the node
+	 * @param endOffset the end offset (exclusive) for the node
+	 * @see #newTranslationUnit(IScanner)
+	 * @since 5.2
+	 */
+	public void setOffsets(IASTNode node, int offset, int endOffset);
+
+	/**
+	 * Provides the end offset for a node. The offset is an artificial numbers that identifies the
+	 * position of a node in the translation unit. It is not a file-offset. You can obtain a
+	 * valid offset via {@link IToken#getEndOffset()} from a token provided by the scanner for 
+	 * this translation unit.
+	 * <par> May throw an exception when the node provided was not created by this factory.
+	 * @param node a node created by this factory
+	 * @param endOffset the end offset (exclusive) for the node
+	 * @see #newTranslationUnit(IScanner)
+	 * @since 5.2
+	 */
+	void setEndOffset(IASTNode node, int endOffset);   
+	
+	/**
+	 * Adjusts the end-offset of a node to be the same as the end-offset of a given node.
+	 * <par> May throw an exception when either one of the nodes provided was not created by this factory.
+	 * @param node a node created by this factory
+	 * @param endNode a node created by this factory defining the end for the other node.
+	 * @since 5.2
+	 */
+	void setEndOffset(IASTNode node, IASTNode endNode);
 }

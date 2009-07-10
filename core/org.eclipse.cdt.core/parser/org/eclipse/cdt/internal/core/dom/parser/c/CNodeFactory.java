@@ -6,7 +6,8 @@
  *  http://www.eclipse.org/legal/epl-v10.html
  * 
  *  Contributors:
- *     IBM Corporation - initial API and implementation
+ *     Mike Kucera (IBM Corporation) - initial API and implementation
+ *     Markus Schorn (Wind River Systems)
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.dom.parser.c;
 
@@ -78,15 +79,14 @@ import org.eclipse.cdt.core.dom.ast.gnu.c.ICASTKnRFunctionDeclarator;
 import org.eclipse.cdt.core.dom.ast.gnu.c.IGCCASTArrayRangeDesignator;
 import org.eclipse.cdt.core.dom.ast.gnu.c.IGCCASTSimpleDeclSpecifier;
 import org.eclipse.cdt.core.parser.IScanner;
+import org.eclipse.cdt.internal.core.dom.parser.NodeFactory;
 
 /**
  * Abstract factory implementation that creates AST nodes for C99.
  * These can be overridden in subclasses to change the 
  * implementations of the nodes.
- * 
- * @author Mike Kucera
  */
-public class CNodeFactory implements ICNodeFactory {
+public class CNodeFactory extends NodeFactory implements ICNodeFactory {
 
 	private static final CNodeFactory DEFAULT_INSTANCE = new CNodeFactory();
 	

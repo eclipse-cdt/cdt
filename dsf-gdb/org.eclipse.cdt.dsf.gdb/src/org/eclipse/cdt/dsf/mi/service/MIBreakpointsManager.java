@@ -578,6 +578,9 @@ public class MIBreakpointsManager extends AbstractDsfService implements IBreakpo
                         // Reset the thread (is it necessary?)
                         attributes.put(ATTR_THREAD_ID, NULL_STRING);
 
+                        // Remove breakpoint problem marker (if any)
+                        removeBreakpointProblemMarker(breakpoint);
+
                         // Finally, update the platform breakpoint
                         try {
 							breakpoint.incrementInstallCount();
@@ -777,6 +780,8 @@ public class MIBreakpointsManager extends AbstractDsfService implements IBreakpo
         }
 
         // Check if the breakpoint is installed: it might not have been if it wasn't enabled at startup (Bug261082)
+        // Or the installation might have failed; in this case, we still try to install it again because
+        // some attribute might have changed which will make the install succeed.
         if (!breakpointIDs.containsKey(breakpoint) && !targetBPs.containsValue(breakpoint)) {
         	// Install only if the breakpoint is enabled
         	boolean bpEnabled = attributes.get(ICBreakpoint.ENABLED).equals(true) && fBreakpointManager.isEnabled();
@@ -787,7 +792,7 @@ public class MIBreakpointsManager extends AbstractDsfService implements IBreakpo
                 determineDebuggerPath(dmc, attributes, new RequestMonitor(getExecutor(), rm) {
                     @Override
                     protected void handleSuccess() {
-                      	installBreakpoint(dmc, breakpoint, attributes, new RequestMonitor(getExecutor(), rm));
+                      	installBreakpoint(dmc, breakpoint, attributes, rm);
                     }
                 });
         	}
@@ -1282,7 +1287,7 @@ public class MIBreakpointsManager extends AbstractDsfService implements IBreakpo
     	// Reset the breakpoint install count
     	for (IBreakpointsTargetDMContext ctx : fPlatformBPs.keySet()) {
     		Map<ICBreakpoint, Map<String, Object>> breakpoints = fPlatformBPs.get(ctx);
-            clearBreakpointStatus(breakpoints.keySet().toArray(new ICBreakpoint[breakpoints.size()]));
+            clearBreakpointStatus(breakpoints.keySet().toArray(new ICBreakpoint[breakpoints.size()]), ctx);
     	}
     	// This will prevent Shutdown() from trying to remove bps from a
     	// backend that has already shutdown
@@ -1296,15 +1301,23 @@ public class MIBreakpointsManager extends AbstractDsfService implements IBreakpo
     /**
      * @param bps
      */
-    private void clearBreakpointStatus(final ICBreakpoint[] bps)
+    private void clearBreakpointStatus(final ICBreakpoint[] bps, final IBreakpointsTargetDMContext ctx)
     {
         new Job("Clear Breakpoints Status") { //$NON-NLS-1$
             @Override
             protected IStatus run(IProgressMonitor monitor) {
                 IWorkspaceRunnable wr = new IWorkspaceRunnable() {
                     public void run(IProgressMonitor monitor) throws CoreException {
-                        for (ICBreakpoint breakpoint : bps) {
-                        	breakpoint.resetInstallCount();
+                    	// For every platform breakpoint that has at least one target breakpoint installed
+                    	// we must decrement the install count, for every target breakpoint.
+                    	// Note that we cannot simply call resetInstallCount() because another
+                    	// launch may be using the same platform breakpoint.
+                    	Map<ICBreakpoint, Vector<IBreakpointDMContext>> breakpoints = fBreakpointIDs.get(ctx);
+                    	for (ICBreakpoint breakpoint : breakpoints.keySet()) {
+                    		Vector<IBreakpointDMContext> targetBps = breakpoints.get(breakpoint);
+                    		for (int i=0; i<targetBps.size(); i++) {
+                    			breakpoint.decrementInstallCount();
+                    		}
                         }
                     }
                 };

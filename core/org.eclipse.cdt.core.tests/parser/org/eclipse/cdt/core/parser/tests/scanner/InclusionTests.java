@@ -81,7 +81,7 @@ public class InclusionTests extends PreprocessorTestsBase {
     // #include "one.h"
     // #include "f1/two.h"
     // #include "f1/f2/three.h"
-    public void testIncludeVariables() throws Exception	{    
+    public void testIncludeVariables_69529() throws Exception	{    
     	String content= getAboveComment();
 
     	IFolder f0 = importFolder(".framework"); 
@@ -232,4 +232,22 @@ public class InclusionTests extends PreprocessorTestsBase {
     	validateEOF();
     }
     
+    // #include <inc/test.h>
+    public void testRelativeIncludes_243170() throws Exception	{    
+    	String content= getAboveComment();
+
+    	IFolder f0 = importFolder("f1"); 
+    	importFolder("f1/f2"); 
+    	importFolder("f1/f2/inc"); 
+    	importFile("f1/f2/inc/test.h", "1"); 
+    	IFile base = importFile("f1/base.cpp", getAboveComment()); 
+
+    	String[] path = {"f2"};  // relative include
+    	IScannerInfo scannerInfo = new ExtendedScannerInfo(Collections.EMPTY_MAP, path, new String[]{}, null);
+    	CodeReader reader= new CodeReader(base.getLocation().toString());
+    	initializeScanner(reader, ParserLanguage.C, ParserMode.COMPLETE_PARSE, scannerInfo);
+
+    	validateInteger("1");
+    	validateEOF();
+    }
 }

@@ -203,7 +203,6 @@ public class CPreprocessor implements ILexerLog, IScanner, IAdaptable {
         fKeywords= new CharArrayIntMap(40, -1);
         fPPKeywords= new CharArrayIntMap(40, -1);
         configureKeywords(language, configuration);
-        configureIncludeSearchPath(info);
 
         fExpressionEvaluator= new ExpressionEvaluator();
         fMacroDefinitionParser= new MacroDefinitionParser();
@@ -213,9 +212,10 @@ public class CPreprocessor implements ILexerLog, IScanner, IAdaptable {
         	fIncludeFileResolutionHeuristics= (IIncludeFileResolutionHeuristics) ((IAdaptable) readerFactory).getAdapter(IIncludeFileResolutionHeuristics.class);
         }
 
+        final String filePath= new String(reader.filename);
+        configureIncludeSearchPath(new File(filePath).getParentFile(), info);
         setupMacroDictionary(configuration, info, language);		
                 
-        final String filePath= new String(reader.filename);
         fAllIncludedFiles.add(filePath);
         ILocationCtx ctx= fLocationMap.pushTranslationUnit(filePath, reader.buffer);
         fCodeReaderFactory.reportTranslationUnitFile(filePath);
@@ -313,7 +313,7 @@ public class CPreprocessor implements ILexerLog, IScanner, IAdaptable {
 		return array == null ? EMPTY_CHAR_ARRAY : array;
 	}
 
-    private void configureIncludeSearchPath(IScannerInfo info) {
+    private void configureIncludeSearchPath(File directory, IScannerInfo info) {
     	String[] searchPath= info.getIncludePaths();
     	int idx= 0;
         if (info instanceof IExtendedScannerInfo) {
@@ -322,7 +322,7 @@ public class CPreprocessor implements ILexerLog, IScanner, IAdaptable {
             if (quoteIncludeSearchPath != null && quoteIncludeSearchPath.length > 0) {
             	fIncludeSearchPath= new IncludeSearchPathElement[quoteIncludeSearchPath.length + searchPath.length];
             	for (String qip : quoteIncludeSearchPath) {
-					fIncludeSearchPath[idx++]= new IncludeSearchPathElement(qip, true);
+					fIncludeSearchPath[idx++]= new IncludeSearchPathElement(makeAbsolute(directory, qip), true);
 				}
             } 
         }
@@ -330,11 +330,18 @@ public class CPreprocessor implements ILexerLog, IScanner, IAdaptable {
         	fIncludeSearchPath= new IncludeSearchPathElement[searchPath.length];
         }
         for (String path : searchPath) {
-			fIncludeSearchPath[idx++]= new IncludeSearchPathElement(path, false);
+			fIncludeSearchPath[idx++]= new IncludeSearchPathElement(makeAbsolute(directory, path), false);
 		}
 	}
 
-    private void setupMacroDictionary(IScannerExtensionConfiguration config, IScannerInfo info, ParserLanguage lang) {
+	private String makeAbsolute(File directory, String inlcudePath) {
+		if (directory == null || new File(inlcudePath).isAbsolute()) {
+			return inlcudePath;
+		}
+		return ScannerUtility.createReconciledPath(directory.getAbsolutePath(), inlcudePath);
+	}
+
+	private void setupMacroDictionary(IScannerExtensionConfiguration config, IScannerInfo info, ParserLanguage lang) {
     	// built in macros
     	fMacroDictionary.put(__CDT_PARSER__.getNameCharArray(), __CDT_PARSER__);
         fMacroDictionary.put(__STDC__.getNameCharArray(), __STDC__);

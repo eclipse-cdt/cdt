@@ -33,6 +33,19 @@ public class CodanProblemReporter {
 			if (problem.isEnabled() == false)
 				return; // skip
 			int severity = problem.getSeverity().intValue();
+			// Do not put in duplicates
+			IMarker[] cur = file.findMarkers(GENERIC_CODE_ANALYSIS_MARKER_TYPE, false, IResource.DEPTH_ZERO);
+			if (cur != null) {
+				for (IMarker element : cur) {
+					int line = ((Integer) element.getAttribute(IMarker.LINE_NUMBER)).intValue();
+					if (line==lineNumber) {
+						String mesg = (String) element.getAttribute(IMarker.MESSAGE);
+						int sev = ((Integer) element.getAttribute(IMarker.SEVERITY)).intValue();
+						if (sev == severity && mesg.equals(message))
+							return;
+					}
+				}
+			}
 			IMarker marker = file
 					.createMarker(GENERIC_CODE_ANALYSIS_MARKER_TYPE);
 			marker.setAttribute(IMarker.MESSAGE, message);

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2008 Wind River Systems, Inc. and others.
+ * Copyright (c) 2006, 2009 Wind River Systems, Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -22,12 +22,12 @@ import org.eclipse.tm.internal.terminal.provisional.api.provider.TerminalConnect
 
 /**
  * A factory to get {@link ITerminalConnector} instances.
- * 
+ *
  * @author Michael Scharf
  *
  * @noextend This class is not intended to be subclassed by clients.
  * @noinstantiate This class is not intended to be instantiated by clients.
- * 
+ *
  * <p>
  * <strong>EXPERIMENTAL</strong>. This class or interface has been added as
  * part of a work in progress. There is no guarantee that this API will work or
@@ -46,7 +46,7 @@ public class TerminalConnectorExtension {
 			name=id;
 		}
 		String hidden = config.getAttribute("hidden"); //$NON-NLS-1$
-		boolean isHidden = hidden != null ? Boolean.parseBoolean(hidden) : false;
+		boolean isHidden = hidden != null ? new Boolean(hidden).booleanValue() : false;
 		TerminalConnector.Factory factory=new TerminalConnector.Factory(){
 			public TerminalConnectorImpl makeConnector() throws Exception {
 				return (TerminalConnectorImpl)config.createExecutableExtension("class"); //$NON-NLS-1$

@@ -103,6 +103,7 @@ import org.eclipse.cdt.core.dom.ast.gnu.cpp.IGPPASTExplicitTemplateInstantiation
 import org.eclipse.cdt.core.dom.ast.gnu.cpp.IGPPASTPointer;
 import org.eclipse.cdt.core.dom.ast.gnu.cpp.IGPPASTPointerToMember;
 import org.eclipse.cdt.core.dom.ast.gnu.cpp.IGPPASTSimpleDeclSpecifier;
+import org.eclipse.cdt.core.parser.IScanner;
 
 
 /**
@@ -116,9 +117,16 @@ public class CPPNodeFactory implements ICPPNodeFactory {
 		return DEFAULT_INSTANCE;
 	}
 	
-	
 	public ICPPASTTranslationUnit newTranslationUnit() {
+		return newTranslationUnit(null);
+	}
+	
+	public ICPPASTTranslationUnit newTranslationUnit(IScanner scanner) {
 		CPPASTTranslationUnit tu = new CPPASTTranslationUnit();
+		
+		if (scanner != null) {
+			tu.setLocationResolver(scanner.getLocationResolver());
+		}
 		tu.setASTNodeFactory(this);
 		return tu;
 	}

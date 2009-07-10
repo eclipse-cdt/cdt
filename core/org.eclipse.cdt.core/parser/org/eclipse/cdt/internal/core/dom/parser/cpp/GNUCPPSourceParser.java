@@ -127,7 +127,6 @@ import org.eclipse.cdt.core.parser.util.CharArrayUtils;
 import org.eclipse.cdt.internal.core.dom.parser.ASTInternal;
 import org.eclipse.cdt.internal.core.dom.parser.ASTNode;
 import org.eclipse.cdt.internal.core.dom.parser.ASTQueries;
-import org.eclipse.cdt.internal.core.dom.parser.ASTTranslationUnit;
 import org.eclipse.cdt.internal.core.dom.parser.AbstractGNUSourceCodeParser;
 import org.eclipse.cdt.internal.core.dom.parser.BacktrackException;
 import org.eclipse.cdt.internal.core.dom.parser.DeclarationOptions;
@@ -3390,7 +3389,7 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
 
 	@Override
 	protected void setupTranslationUnit() throws DOMException {
-		translationUnit = nodeFactory.newTranslationUnit();
+		translationUnit = nodeFactory.newTranslationUnit(scanner);
 		translationUnit.setIndex(index);
 
 		// add built-in names to the scope
@@ -3403,8 +3402,6 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
 				ASTInternal.addBinding(tuScope, binding);
 			}
 		}
-		if(translationUnit instanceof ASTTranslationUnit)
-			((ASTTranslationUnit)translationUnit).setLocationResolver(scanner.getLocationResolver());
 	}
 
 

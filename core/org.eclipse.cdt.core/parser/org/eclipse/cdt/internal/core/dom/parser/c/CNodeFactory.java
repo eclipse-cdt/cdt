@@ -77,6 +77,7 @@ import org.eclipse.cdt.core.dom.ast.gnu.IGNUASTCompoundStatementExpression;
 import org.eclipse.cdt.core.dom.ast.gnu.c.ICASTKnRFunctionDeclarator;
 import org.eclipse.cdt.core.dom.ast.gnu.c.IGCCASTArrayRangeDesignator;
 import org.eclipse.cdt.core.dom.ast.gnu.c.IGCCASTSimpleDeclSpecifier;
+import org.eclipse.cdt.core.parser.IScanner;
 
 /**
  * Abstract factory implementation that creates AST nodes for C99.
@@ -93,9 +94,16 @@ public class CNodeFactory implements ICNodeFactory {
 		return DEFAULT_INSTANCE;
 	}
 	
-	
 	public IASTTranslationUnit newTranslationUnit() {
+		return newTranslationUnit(null);
+	}
+	
+	public IASTTranslationUnit newTranslationUnit(IScanner scanner) {
 		CASTTranslationUnit tu = new CASTTranslationUnit();
+		
+		if (scanner != null) {
+			tu.setLocationResolver(scanner.getLocationResolver());
+		}
 		tu.setASTNodeFactory(this);
 		return tu;
 	}

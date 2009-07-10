@@ -271,9 +271,7 @@ public interface IASTTranslationUnit extends IASTNode, IASTDeclarationListOwner,
 
 	/**
 	 * Returns the node factory that was used to build the AST.
-	 * 
-	 * @noreference This method is not intended to be referenced by clients.
-	 * @since 5.1
+	 * @since 5.2
 	 */
 	public INodeFactory getASTNodeFactory();
 

@@ -12,6 +12,7 @@ package org.eclipse.cdt.core.dom.ast;
 
 import org.eclipse.cdt.core.dom.ast.IASTEnumerationSpecifier.IASTEnumerator;
 import org.eclipse.cdt.core.dom.ast.gnu.IGNUASTCompoundStatementExpression;
+import org.eclipse.cdt.core.parser.IScanner;
 
 
 /**
@@ -46,11 +47,18 @@ public interface INodeFactory {
 	public IASTName newName(char[] name);
 	
 	/**
-	 * Calling the method getASTNodeFactory() on the translation unit returned by this
-	 * method will return the node factory that was used to create the IASTTranslationUnit.
+	 * @deprecated use {@link #newTranslationUnit(IScanner)}, instead.
 	 */
+	@Deprecated
 	public IASTTranslationUnit newTranslationUnit();
-	
+
+	/**
+	 * Creates a new translation unit that cooperates with the given scanner in order
+	 * to track macro-expansions and location information.
+	 * @scanner the preprocessor the translation unit interacts with.
+	 * @since 5.2
+	 */
+	public IASTTranslationUnit newTranslationUnit(IScanner scanner);
 
 	public IASTLiteralExpression newLiteralExpression(int kind, String rep);
 	

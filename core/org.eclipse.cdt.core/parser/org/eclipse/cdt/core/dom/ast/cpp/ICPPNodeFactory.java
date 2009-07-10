@@ -26,6 +26,7 @@ import org.eclipse.cdt.core.dom.ast.gnu.cpp.IGPPASTExplicitTemplateInstantiation
 import org.eclipse.cdt.core.dom.ast.gnu.cpp.IGPPASTPointer;
 import org.eclipse.cdt.core.dom.ast.gnu.cpp.IGPPASTPointerToMember;
 import org.eclipse.cdt.core.dom.ast.gnu.cpp.IGPPASTSimpleDeclSpecifier;
+import org.eclipse.cdt.core.parser.IScanner;
 
 /**
  * Factory for AST nodes for the C++ programming language.
@@ -37,7 +38,19 @@ import org.eclipse.cdt.core.dom.ast.gnu.cpp.IGPPASTSimpleDeclSpecifier;
  */
 public interface ICPPNodeFactory extends INodeFactory {
 	
+	/**
+	 * @deprecated use {@link #newTranslationUnit(IScanner)}, instead.
+	 */
+	@Deprecated
 	public ICPPASTTranslationUnit newTranslationUnit();
+
+	/**
+	 * Creates a new translation unit that cooperates with the given scanner in order
+	 * to track macro-expansions and location information.
+	 * @scanner the preprocessor the translation unit interacts with.
+	 * @since 5.2
+	 */
+	public ICPPASTTranslationUnit newTranslationUnit(IScanner scanner);
 	
 	public ICPPASTLiteralExpression newLiteralExpression(int kind, String rep);
 	

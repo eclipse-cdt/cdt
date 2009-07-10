@@ -607,6 +607,16 @@ public class MIBreakpointsManager extends AbstractDsfService implements IBreakpo
             protected IStatus run(IProgressMonitor monitor) {
                 
                 if (breakpoint instanceof ICLineBreakpoint) {
+                	// If we have already have a problem marker on this breakpoint
+                	// we should remove it first.
+                    IMarker marker = fBreakpointMarkerProblems.remove(breakpoint);
+                    if (marker != null) {
+                        try {
+                            marker.delete();
+                        } catch (CoreException e) {
+                        }
+                	}
+
                     ICLineBreakpoint lineBreakpoint = (ICLineBreakpoint) breakpoint;
                     try {
                         // Locate the workspace resource via the breakpoint marker
@@ -1274,6 +1284,8 @@ public class MIBreakpointsManager extends AbstractDsfService implements IBreakpo
     		Map<ICBreakpoint, Map<String, Object>> breakpoints = fPlatformBPs.get(ctx);
             clearBreakpointStatus(breakpoints.keySet().toArray(new ICBreakpoint[breakpoints.size()]));
     	}
+    	// This will prevent Shutdown() from trying to remove bps from a
+    	// backend that has already shutdown
         fPlatformBPs.clear();
     }
 
@@ -1297,6 +1309,17 @@ public class MIBreakpointsManager extends AbstractDsfService implements IBreakpo
                     }
                 };
 
+                // First clear any problem markers
+                for (IMarker marker : fBreakpointMarkerProblems.values()) {
+                	if (marker != null) {
+                		try {
+							marker.delete();
+						} catch (CoreException e) {
+						}
+                	}
+                }
+                fBreakpointMarkerProblems.clear();
+                
                 // Create the scheduling rule to clear all bp planted.
                 ISchedulingRule rule = null;
                 List<ISchedulingRule> markerRules = new ArrayList<ISchedulingRule>();

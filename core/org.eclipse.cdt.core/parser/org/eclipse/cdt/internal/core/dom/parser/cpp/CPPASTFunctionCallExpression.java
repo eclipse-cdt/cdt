@@ -222,7 +222,9 @@ public class CPPASTFunctionCallExpression extends ASTNode implements
     		} else if (t instanceof ICPPClassType) {
     			ICPPFunction op = CPPSemantics.findOverloadedOperator(this, (ICPPClassType)t);
     			if (op != null) {
-    				if(overload != null)
+    				// overload can be a surrogate function call, which consists of a conversion and a call to
+    				// a dynamically computed function pointer.
+    				if(overload != null && !(op instanceof CPPImplicitFunction))
     					overload[0] = op;
     				return op.getType().getReturnType();
     			}

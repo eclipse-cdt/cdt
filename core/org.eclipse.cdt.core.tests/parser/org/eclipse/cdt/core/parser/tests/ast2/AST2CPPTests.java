@@ -6,7 +6,7 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *     IBM Corporation - initial API and implementation
+ *     Andrew Niefer (IBM Corporation) - initial API and implementation
  *     Ed Swartz (Nokia)
  *     Markus Schorn (Wind River Systems)
  *     Andrew Ferguson (Symbian)
@@ -121,9 +121,6 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPSemantics;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPVisitor;
 import org.eclipse.cdt.internal.core.parser.ParserException;
 
-/**
- * @author aniefer
- */
 public class AST2CPPTests extends AST2BaseTest {
 	
 	public AST2CPPTests() {
@@ -7182,5 +7179,20 @@ public class AST2CPPTests extends AST2BaseTest {
 
     	parseAndCheckBindings(code, ParserLanguage.CPP);
 	}
+	
+	//	int foo(int x);
+	//	int bar(int x);
+	//
+	//	typedef int (*fp)(int);
+	//	struct A {
+	//	        operator fp() { return foo; }
+	//	} a;
+	//
+	//	int i = bar(a(1));  // problem on bar
+	public void testCallToObjectOfClassType_267389() throws Exception {
+		final String code = getAboveComment();
+		parseAndCheckBindings(code, ParserLanguage.CPP);
+	}
+
 
 }

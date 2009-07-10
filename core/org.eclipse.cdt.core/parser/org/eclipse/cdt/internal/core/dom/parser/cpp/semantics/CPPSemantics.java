@@ -147,6 +147,7 @@ import org.eclipse.cdt.internal.core.dom.parser.ASTQueries;
 import org.eclipse.cdt.internal.core.dom.parser.IASTAmbiguousDeclarator;
 import org.eclipse.cdt.internal.core.dom.parser.IASTInternalScope;
 import org.eclipse.cdt.internal.core.dom.parser.ProblemBinding;
+import org.eclipse.cdt.internal.core.dom.parser.GCCBuiltinSymbolProvider.CPPBuiltinParameter;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTFieldReference;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTIdExpression;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTLiteralExpression;
@@ -157,6 +158,8 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTTypeIdExpression;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTUnaryExpression;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPBasicType;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPCompositeBinding;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPFunctionType;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPImplicitFunction;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPNamespace;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPReferenceType;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPScope;
@@ -183,6 +186,7 @@ import org.eclipse.cdt.internal.core.index.IIndexScope;
  * Name resolution
  */
 public class CPPSemantics {
+
 	/**
 	 * The maximum depth to search ancestors before assuming infinite looping.
 	 */
@@ -192,6 +196,7 @@ public class CPPSemantics {
     		new ASTNodeProperty("CPPSemantics.STRING_LOOKUP_PROPERTY - STRING_LOOKUP"); //$NON-NLS-1$
 	public static final String EMPTY_NAME = ""; //$NON-NLS-1$
 	public static final char[] OPERATOR_ = new char[] {'o','p','e','r','a','t','o','r',' '};  
+	private static final char[] CALL_FUNCTION = "call-function".toCharArray(); //$NON-NLS-1$
 	public static final IType VOID_TYPE = new CPPBasicType(IBasicType.t_void, 0);
 
 	// Set to true for debugging.
@@ -2591,7 +2596,7 @@ public class CPPSemantics {
     		return type;
     	
     	char[] operatorName = OverloadableOperator.ARROW.toCharArray();
-		IASTExpression[] args = {null};
+		IASTExpression[] args = {owner};
 		
     	// bug 205964: as long as the type is a class type, recurse. 
     	// Be defensive and allow a max of 10 levels.
@@ -2653,7 +2658,7 @@ public class CPPSemantics {
     
     public static ICPPFunction findOverloadedOperator(IASTArraySubscriptExpression exp) {
     	char[] name = OverloadableOperator.BRACKET.toCharArray();
-    	IASTExpression[] args = { null, exp.getSubscriptExpression() };
+    	IASTExpression[] args = {exp.getArrayExpression(), exp.getSubscriptExpression()};
     	IType type1 = exp.getArrayExpression().getExpressionType();
     	IType ultimateType1 = SemanticUtil.getUltimateTypeUptoPointers(type1);
     	return findOverloadedOperator(exp, args, ultimateType1, name, false);
@@ -2667,15 +2672,15 @@ public class CPPSemantics {
     	if (param instanceof IASTExpressionList) {
     		IASTExpression[] actualArgs = ((IASTExpressionList)param).getExpressions();
     		ArrayList<IASTExpression> argsToPass = new ArrayList<IASTExpression>(actualArgs.length + 1);
-    		argsToPass.add(null);
+    		argsToPass.add(exp.getFunctionNameExpression());
     		for (IASTExpression e : actualArgs) {
 				argsToPass.add(e);
     		}
     		args = argsToPass.toArray(new IASTExpression[argsToPass.size()]);
     	} else if (param != null) {
-    		args = new IASTExpression[] { null, param };
+    		args = new IASTExpression[] { exp.getFunctionNameExpression(), param };
     	} else {
-    		args = new IASTExpression[] { null };
+    		args = new IASTExpression[] { exp.getFunctionNameExpression() };
     	}
     	
     	return findOverloadedOperator(exp, args, type, name, false);
@@ -2828,13 +2833,17 @@ public class CPPSemantics {
     }
 
     private static ICPPFunction findOverloadedOperator(IASTExpression parent, IASTExpression[] args, IType methodLookupType, char[] operatorName, boolean lookupNonMember) {
+    	ICPPClassType callToObjectOfClassType= null;
+    	
     	// Find a method
     	LookupData methodData = null;
     	CPPASTName methodName = null;
     	if (methodLookupType instanceof IProblemBinding)
     		return null;
     	if (methodLookupType instanceof ICPPClassType) {
-    		methodName = new CPPASTName(operatorName);
+			ICPPClassType classType = (ICPPClassType)methodLookupType;
+
+			methodName = new CPPASTName(operatorName);
         	methodName.setParent(parent);
         	methodName.setPropertyInParent(STRING_LOOKUP_PROPERTY);
     	    methodData = new LookupData(methodName);
@@ -2842,10 +2851,14 @@ public class CPPSemantics {
     	    methodData.forceQualified = true; // (13.3.1.2.3)
     	    
 			try {
-				IScope scope = ((ICPPClassType)methodLookupType).getCompositeScope();
+				IScope scope = classType.getCompositeScope();
 				if (scope == null)
 					return null;
 				lookup(methodData, scope);
+			
+				if (parent instanceof IASTFunctionCallExpression) {
+					callToObjectOfClassType= classType;
+				}
 			} catch (DOMException e) {
 				return null;
 			}
@@ -2854,7 +2867,7 @@ public class CPPSemantics {
 		// Find a function
     	LookupData funcData = null;
     	CPPASTName funcName = null;
-    	if (lookupNonMember) {
+    	if (lookupNonMember || callToObjectOfClassType != null) {
     		funcName = new CPPASTName(operatorName);
     	    funcName.setParent(parent);
     	    funcName.setPropertyInParent(STRING_LOOKUP_PROPERTY);
@@ -2863,16 +2876,35 @@ public class CPPSemantics {
         	funcData.ignoreMembers = true; // (13.3.1.2.3)
     	    
 			try {
-				IScope scope = CPPVisitor.getContainingScope(parent);
-				if (scope == null)
-					return null;
-				lookup(funcData, scope);
+				if (lookupNonMember) {
+					IScope scope = CPPVisitor.getContainingScope(parent);
+					if (scope == null)
+						return null;
+					lookup(funcData, scope);
+				}
+				if (callToObjectOfClassType != null) {	
+					// 13.3.1.1.2 call to object of class type
+					ICPPMethod[] ops = SemanticUtil.getConversionOperators(callToObjectOfClassType);
+					for (ICPPMethod op : ops) {
+						IFunctionType ft= op.getType();
+						if (ft != null) {
+							IType rt= SemanticUtil.getNestedType(ft.getReturnType(), SemanticUtil.TDEF);
+							if (rt instanceof IPointerType) {
+								IType ptt= SemanticUtil.getNestedType(((IPointerType)rt).getType(), SemanticUtil.TDEF);
+								if (ptt instanceof IFunctionType) {
+									IFunctionType ft2= (IFunctionType) ptt;
+									IBinding sf= createSurrogateCallFunction(parent.getTranslationUnit().getScope(), ft2.getReturnType(), rt, ft2.getParameterTypes());
+									mergeResults(funcData, sf, false);
+								}
+							}
+						}
+					}
+				}
 			} catch (DOMException e) {
 				return null;
 			}
     	}
 		
-		// Resolve ambiguities
     	try {
     		IBinding binding = null;
     		if (methodData != null && funcData != null) {
@@ -2894,7 +2926,22 @@ public class CPPSemantics {
 		return null;
     }
     
-    private static boolean isUserDefined(IType type) {
+	private static IBinding createSurrogateCallFunction(IScope scope, IType returnType, IType rt, IType[] parameterTypes) {
+		IType[] parms = new IType[parameterTypes.length+1];
+		IParameter[] theParms = new IParameter[parms.length];
+
+		parms[0] = rt;
+		theParms[0]= new CPPBuiltinParameter(rt);
+		for (int i = 1; i < parms.length; i++) {
+			IType t = parameterTypes[i-1];
+			parms[i]= t;
+			theParms[i]= new CPPBuiltinParameter(t);
+		}
+		ICPPFunctionType functionType = new CPPFunctionType(returnType, parms);
+		return new CPPImplicitFunction(CALL_FUNCTION, scope, functionType, theParms, false);
+	}
+
+	private static boolean isUserDefined(IType type) {
     	return type instanceof ICPPClassType || type instanceof IEnumeration;
     }
     

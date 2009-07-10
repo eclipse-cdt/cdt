@@ -502,16 +502,17 @@ public class DStoreFileService extends AbstractDStoreService implements IFileSer
 		
 		// use standard remote path
 		String stdRemotePath = remotePath.replace('\\', '/');
-		DataElement result = ds.find(uploadLog, DE.A_NAME, stdRemotePath,1);
+		int numTransfers = 0;
+		DataElement result = ds.find(uploadLog, DE.A_NAME, stdRemotePath,1);		
 		if (result == null) 
 		{
-			result = ds.createObject(uploadLog, "uploadstatus", stdRemotePath);
-			result.setAttribute(DE.A_SOURCE, "running");
-			result.setAttribute(DE.A_VALUE, "");
+			result = ds.createObject(uploadLog, "uploadstatus", stdRemotePath); //$NON-NLS-1$
+			result.setAttribute(DE.A_SOURCE, "running"); //$NON-NLS-1$
+			result.setAttribute(DE.A_VALUE, ""); //$NON-NLS-1$
 			
 			DataElement cmd = getDataStore().findCommandDescriptor(DataStoreSchema.C_SET);
 			
-			DataElement setstatus = ds.command(cmd, uploadLog, true);
+			ds.command(cmd, uploadLog, true);
 		}
 
 		try
@@ -560,11 +561,11 @@ public class DStoreFileService extends AbstractDStoreService implements IFileSer
 
 			IFileServiceCodePageConverter codePageConverter = CodePageConverterManager.getCodePageConverter(hostEncoding, this);
 
+			
 			// upload bytes while available
 			while (available > 0 && !isCancelled)
 			{
-				result.setAttribute(DE.A_SOURCE, "working"); //$NON-NLS-1$
-
+				numTransfers++;
 				numToRead = (available < buffer_size) ? available : buffer_size;
 
 				int bytesRead = bufInputStream.read(buffer, 0, numToRead);
@@ -693,19 +694,29 @@ public class DStoreFileService extends AbstractDStoreService implements IFileSer
 			if (totalBytes > 0)
 			{
 			    if (transferSuccessful)
-			    {
-			    	String resultStr = result.getSource();
-			    	while (!resultStr.equals("success"))
+			    {			    	
+			    	if (numTransfers > 1){
+			    		// forced sleep to make sure we get the latest status
+			    		try {
+			    			Thread.sleep(200);
+			    		}	
+			    		catch (InterruptedException e){			    			
+			    		}
+			    	}
+			    	
+		    		String resultStr = result.getSource();
+			    	while (!resultStr.equals("success")) //$NON-NLS-1$
 			    	{
-
 			    		// sleep until the upload is complete
 			    		try {
 			    			Thread.sleep(200);
 			    		}
 			    		catch (InterruptedException e){			    			
 			    		}
-			    		resultStr = result.getSource();
-			    		if (resultStr.equals("failed")){
+			    		
+			    		resultStr = result.getSource();		    		
+			    		
+			    		if (resultStr.equals("failed") || monitor.isCanceled()){ //$NON-NLS-1$
 			    			String msgTxt = NLS.bind(ServiceResources.FILEMSG_COPY_FILE_FAILED, remotePath);
 			    			SystemMessage msg = new SimpleSystemMessage(Activator.PLUGIN_ID, IStatus.ERROR, msgTxt);
 			    			throw new SystemMessageException(msg);

@@ -60,10 +60,11 @@ public interface ITerminalConnector extends IAdaptable {
 	 * @since org.eclipse.tm.terminal 2.0
 	 */
 	String getName();
-	
+
 	/**
-	 * @return <code>True</code> if the connector is not visible in user selections.
-	 * @since org.eclipse.tm.terminal 3.1
+	 * @return <code>True</code> if the connector is not visible in user
+	 *         selections.
+	 * @since org.eclipse.tm.terminal 3.0.1
 	 */
 	boolean isHidden();
 

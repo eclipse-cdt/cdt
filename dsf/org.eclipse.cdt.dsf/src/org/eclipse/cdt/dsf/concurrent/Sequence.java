@@ -40,13 +40,13 @@ import org.eclipse.core.runtime.SubProgressMonitor;
  * <br> 2. the method is executed by a subsystem
  * <br> 3. when the method is finished it calls another method and passes 
  * the original callback to it
- * <br> 4. steps 2-3 are repeated number of times
+ * <br> 4. steps 2-3 are repeated a number of times
  * <br> 5. when the last method in a chain is executed, it submits the original
  * RequestMonitor callback
  * </li>
  * <p>
  * This pattern is very useful in itself, but it proves very difficult to follow
- * because the methods can be scattered accross many classes and systems.  Also
+ * because the methods can be scattered across many classes and systems.  Also
  * if progress reporting, cancellability, and roll-back ability is required, it
  * has to be re-implemented every time.  The Sequence class tries to address
  * this problem by containing this pattern in a single class. 

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2002, 2008 IBM Corporation and others.
+ * Copyright (c) 2002, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -30,6 +30,15 @@ public interface IScannerInfo {
 	/**
 	 * Returns an array of paths that are searched when processing an include directive.
 	 * see {@link IExtendedScannerInfo#getLocalIncludePath()}
+	 * 
+	 * In order to handle framework includes used on Apple Computers you can make use of
+	 * the two variables: '__framework__' and '__filename__'. 
+	 * <br> E.g.:  /System/Library/Frameworks/__framework__.framework/Headers/__filename__,
+	 * /System/Library/Frameworks/__framework__.framework/PrivateHeaders/__filename__
+	 * would handle the framework search for '/System/Library/Frameworks'
+	 * 
+	 * The variables are handled only, if a search path element makes use of both of the variables. 
+	 * Such a search path element is not used for directives that are not of the form 'folder/name'.
 	 */
 	public String[] getIncludePaths();
 }

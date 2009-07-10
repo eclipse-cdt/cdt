@@ -46,6 +46,7 @@ public class IncludeFileContent {
 	private boolean fHeuristic;
 	private boolean fIsSource= false;
 	private List<IIndexFile> fFiles;
+	private IncludeSearchPathElement fFoundOnPath;
 	
 	/**
 	 * For skipping include files.
@@ -164,5 +165,13 @@ public class IncludeFileContent {
 
 	public void setIsSource(boolean isSource) {
 		fIsSource= isSource;
+	}
+
+	public IncludeSearchPathElement getFoundOnPath() {
+		return fFoundOnPath;
+	}
+
+	public void setFoundOnPath(IncludeSearchPathElement isp) {
+		fFoundOnPath= isp;
 	}
 }

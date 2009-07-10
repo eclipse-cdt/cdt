@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2008 Wind River Systems, Inc. and others.
+ * Copyright (c) 2007, 2009 Wind River Systems, Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -88,9 +88,17 @@ public abstract class PreprocessorTestsBase extends BaseTestCase {
 	}
 
 	protected void initializeScanner() throws Exception {
+		initializeScanner(getAboveComment());
+	}
+
+	protected StringBuffer[] getTestContent(int sections) throws IOException {
 		StringBuffer[] input= TestSourceReader.getContentsForTest(
-				CTestPlugin.getDefault().getBundle(), "parser", getClass(), getName(), 1);
-		initializeScanner(input[0].toString());
+				CTestPlugin.getDefault().getBundle(), "parser", getClass(), getName(), sections);
+		return input;
+	}
+
+	protected String getAboveComment() throws IOException {
+		return getTestContent(1)[0].toString();
 	}
 
 	protected void fullyTokenize() throws Exception {

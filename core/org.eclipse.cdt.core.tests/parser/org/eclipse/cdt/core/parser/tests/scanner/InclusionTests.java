@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2008 IBM Corporation and others.
+ * Copyright (c) 2004, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -49,6 +49,7 @@ public class InclusionTests extends PreprocessorTestsBase {
 		super(name);
 	}
 
+	@Override
 	protected void tearDown() throws Exception {
 		if (fProject != null) {
 			CProjectHelper.delete(fProject);
@@ -76,6 +77,36 @@ public class InclusionTests extends PreprocessorTestsBase {
     	}
     	return folder;
 	}
+
+    // #include "one.h"
+    // #include "f1/two.h"
+    // #include "f1/f2/three.h"
+    public void testIncludeVariables() throws Exception	{    
+    	String content= getAboveComment();
+
+    	IFolder f0 = importFolder(".framework"); 
+    	importFolder("f1.framework"); 
+    	importFolder("f1"); 
+    	importFolder("f1/f2.framework"); 
+    	importFolder("f3"); 
+    	IFile base = importFile("base.cpp", content); 
+    	
+    	importFile(".framework/one.h", "1"); 
+    	importFile("f1.framework/two.h", "2"); 
+    	importFile("f1/f2.framework/three.h", "3"); 
+
+    	String[] path = {
+    			f0.getLocation().removeLastSegments(1) + "/__framework__.framework/__filename__"
+    	};
+    	IScannerInfo scannerInfo = new ExtendedScannerInfo(Collections.EMPTY_MAP, path, new String[]{}, null);
+    	CodeReader reader= new CodeReader(base.getLocation().toString());
+    	initializeScanner(reader, ParserLanguage.C, ParserMode.COMPLETE_PARSE, scannerInfo);
+
+    	// first file is not picked up (no framework)
+    	validateInteger("2");
+    	// third file is not picked up (framework must be a single folder)
+    	validateEOF();
+    }
 
     public void testIncludeNext() throws Exception	{    	
     	String baseFile = "int zero; \n#include \"foo.h\""; //$NON-NLS-1$

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2008 Wind River Systems and others.
+ * Copyright (c) 2006, 2009 Wind River Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -25,7 +25,7 @@ import org.eclipse.core.runtime.Status;
  */
 public class ServicesShutdownSequence extends Sequence {
 
-    // Session to that the services are running in.
+    // Session that the services are running in.
     final private DsfSession fSession;
     
     // DSF Services is created as the first step of the sequence.  It 

@@ -88,7 +88,7 @@ public class CIndenterTest extends BaseUITestCase {
 
 	//foo(arg,
 	//		"string");
-	public void testIndentationOfStringLiteralAsLastArgument1_Bug192412() throws Exception {
+	public void testStringLiteralAsLastArgument_Bug192412_1() throws Exception {
 		assertIndenterResult();
 	}
 
@@ -97,7 +97,7 @@ public class CIndenterTest extends BaseUITestCase {
 
 	//a::foo(arg,
 	//		"string");
-	public void testIndentationOfStringLiteralAsLastArgument2_Bug192412() throws Exception {
+	public void testStringLiteralAsLastArgument_Bug192412_2() throws Exception {
 		assertIndenterResult();
 	}
 
@@ -106,7 +106,7 @@ public class CIndenterTest extends BaseUITestCase {
 
 	//a::foo(arg,
 	//		"string");
-	public void testIndentationOfStringLiteralAsLastArgument3_Bug192412() throws Exception {
+	public void testStringLiteralAsLastArgument_Bug192412_3() throws Exception {
 		assertIndenterResult();
 	}
 
@@ -117,7 +117,7 @@ public class CIndenterTest extends BaseUITestCase {
 	//if (1)
 	//	foo->bar();
 	//dontIndent();
-	public void testIndentationAfterArrowOperator_Bug192412() throws Exception {
+	public void testIndentationAfterArrowOperator_Bug192412_4() throws Exception {
 		assertIndenterResult();
 	}
 
@@ -128,7 +128,7 @@ public class CIndenterTest extends BaseUITestCase {
 	//if (1)
 	//	foo>>bar;
 	//dontIndent();
-	public void testIndentationAfterShiftRight_Bug192412() throws Exception {
+	public void testIndentationAfterShiftRight_Bug192412_5() throws Exception {
 		assertIndenterResult();
 	}
 
@@ -139,7 +139,7 @@ public class CIndenterTest extends BaseUITestCase {
 	//if (1)
 	//	foo >= bar();
 	//dontIndent();
-	public void testIndentationAfterGreaterOrEquals_Bug192412() throws Exception {
+	public void testIndentationAfterGreaterOrEquals_Bug192412_6() throws Exception {
 		assertIndenterResult();
 	}
 
@@ -152,7 +152,7 @@ public class CIndenterTest extends BaseUITestCase {
 	//		const BinFileParser::Exception& exp)
 	//{
 	//}
-	public void testIndentationOfOperatorMethodBody_Bug192412_1() throws Exception {
+	public void testOperatorMethodBody_Bug192412_7() throws Exception {
 		assertIndenterResult();
 	}
 
@@ -165,7 +165,7 @@ public class CIndenterTest extends BaseUITestCase {
 	//                         const BinFileParser::Exception& exp)
 	//{
 	//}
-	public void testIndentationOfOperatorMethodBody_Bug192412_2() throws Exception {
+	public void testOperatorMethodBody_Bug192412_8() throws Exception {
 		fOptions.put(DefaultCodeFormatterConstants.FORMATTER_TAB_CHAR, CCorePlugin.SPACE);
 		fOptions.put(DefaultCodeFormatterConstants.FORMATTER_ALIGNMENT_FOR_PARAMETERS_IN_METHOD_DECLARATION, 
 				DefaultCodeFormatterConstants.createAlignmentValue(false, DefaultCodeFormatterConstants.WRAP_COMPACT,
@@ -264,7 +264,7 @@ public class CIndenterTest extends BaseUITestCase {
 	//	int f2 : 1;
 	//	int f3 : 1;
 	//}
-	public void testIndentationOfBitFields_Bug193298() throws Exception {
+	public void testBitFields_Bug193298() throws Exception {
 		assertIndenterResult();
 	}
 
@@ -281,7 +281,7 @@ public class CIndenterTest extends BaseUITestCase {
 	//	{
 	//	}
 	//};
-	public void testIndentationOfConstructorBody_Bug194586() throws Exception {
+	public void testConstructorBody_Bug194586() throws Exception {
 		assertIndenterResult();
 	}
 
@@ -300,7 +300,7 @@ public class CIndenterTest extends BaseUITestCase {
 	//	{
 	//	}
 	//};
-	public void testIndentationOfConstructorBodyWithThrow_Bug194586() throws Exception {
+	public void testConstructorBodyWithThrow_Bug194586() throws Exception {
 		assertIndenterResult();
 	}
 
@@ -319,7 +319,7 @@ public class CIndenterTest extends BaseUITestCase {
 	//	{
 	//	}
 	//};
-	public void testIndentationOfConstructorBodyWithInitializer_Bug194586() throws Exception {
+	public void testConstructorBodyWithInitializer_Bug194586() throws Exception {
 		assertIndenterResult();
 	}
 
@@ -344,7 +344,7 @@ public class CIndenterTest extends BaseUITestCase {
 	//	}
 	//	}
 	//}
-	public void testIndentationOfCaseBlockAfterCharLiteral_Bug194710() throws Exception {
+	public void testCaseBlockAfterCharLiteral_Bug194710() throws Exception {
 		assertIndenterResult();
 	}
 
@@ -359,7 +359,7 @@ public class CIndenterTest extends BaseUITestCase {
 	//		1,
 	//		2
 	//};
-	public void testIndentationOfInitializerLists_Bug194585() throws Exception {
+	public void testInitializerLists_Bug194585() throws Exception {
 		assertIndenterResult();
 	}
 
@@ -390,7 +390,7 @@ public class CIndenterTest extends BaseUITestCase {
 	//				{ 1,2,3 }
 	//		}
 	//};
-	public void testIndentationOfNestedInitializerLists_Bug194585() throws Exception {
+	public void testNestedInitializerLists_Bug194585() throws Exception {
 		assertIndenterResult();
 	}
 
@@ -466,7 +466,7 @@ public class CIndenterTest extends BaseUITestCase {
 	//union DisUnion 
 	//	{ 
 	//	};
-	public void testIndentedClassIndentation_Bug210417() throws Exception {
+	public void testIndentedClass_Bug210417() throws Exception {
 		fOptions.put(DefaultCodeFormatterConstants.FORMATTER_BRACE_POSITION_FOR_TYPE_DECLARATION, 
 				DefaultCodeFormatterConstants.NEXT_LINE_SHIFTED);
 		assertIndenterResult();
@@ -481,7 +481,7 @@ public class CIndenterTest extends BaseUITestCase {
 	//class MyClass : public Base
 	//	{
 	//	};
-	public void testIndentedClassIndentation_Bug210417_2() throws Exception {
+	public void testIndentedClass_Bug210417_2() throws Exception {
 		fOptions.put(DefaultCodeFormatterConstants.FORMATTER_BRACE_POSITION_FOR_TYPE_DECLARATION, 
 				DefaultCodeFormatterConstants.NEXT_LINE_SHIFTED);
 		assertIndenterResult();
@@ -496,7 +496,7 @@ public class CIndenterTest extends BaseUITestCase {
 	//class MyClass : public Base, public OtherBase
 	//	{
 	//	};
-	public void testIndentedClassIndentation_Bug210417_3() throws Exception {
+	public void testIndentedClass_Bug210417_3() throws Exception {
 		fOptions.put(DefaultCodeFormatterConstants.FORMATTER_BRACE_POSITION_FOR_TYPE_DECLARATION, 
 				DefaultCodeFormatterConstants.NEXT_LINE_SHIFTED);
 		assertIndenterResult();
@@ -511,7 +511,7 @@ public class CIndenterTest extends BaseUITestCase {
 	//class MyClass : public Base, public OtherBase
 	//	{
 	//	};
-	public void testIndentedClassIndentation_Bug210417_4() throws Exception {
+	public void testIndentedClass_Bug210417_4() throws Exception {
 		fOptions.put(DefaultCodeFormatterConstants.FORMATTER_BRACE_POSITION_FOR_TYPE_DECLARATION, 
 				DefaultCodeFormatterConstants.NEXT_LINE_SHIFTED);
 		assertIndenterResult();
@@ -663,7 +663,7 @@ public class CIndenterTest extends BaseUITestCase {
 	//public:
 	//    A();
 	//    };
-	public void testWhiteSmithsAccessSpecifierIndentation1_Bug204575() throws Exception {
+	public void testWhiteSmithsAccessSpecifier_Bug204575_1() throws Exception {
 		fOptions.putAll(DefaultCodeFormatterOptions.getWhitesmithsSettings().getMap());
 		fOptions.put(DefaultCodeFormatterConstants.FORMATTER_INDENT_ACCESS_SPECIFIER_COMPARE_TO_TYPE_HEADER, DefaultCodeFormatterConstants.FALSE);
 		fOptions.put(DefaultCodeFormatterConstants.FORMATTER_INDENT_BODY_DECLARATIONS_COMPARE_TO_ACCESS_SPECIFIER, DefaultCodeFormatterConstants.TRUE);
@@ -681,7 +681,7 @@ public class CIndenterTest extends BaseUITestCase {
 	//    public:
 	//    A();
 	//    };
-	public void testWhiteSmithsAccessSpecifierIndentation2_Bug204575() throws Exception {
+	public void testWhiteSmithsAccessSpecifier_Bug204575_2() throws Exception {
 		fOptions.putAll(DefaultCodeFormatterOptions.getWhitesmithsSettings().getMap());
 		fOptions.put(DefaultCodeFormatterConstants.FORMATTER_INDENT_ACCESS_SPECIFIER_COMPARE_TO_TYPE_HEADER, DefaultCodeFormatterConstants.TRUE);
 		fOptions.put(DefaultCodeFormatterConstants.FORMATTER_INDENT_BODY_DECLARATIONS_COMPARE_TO_ACCESS_SPECIFIER, DefaultCodeFormatterConstants.FALSE);
@@ -699,7 +699,7 @@ public class CIndenterTest extends BaseUITestCase {
 	//    public:
 	//	A();
 	//    };
-	public void testWhiteSmithsAccessSpecifierIndentation3_Bug204575() throws Exception {
+	public void testWhiteSmithsAccessSpecifier_Bug204575_3() throws Exception {
 		fOptions.putAll(DefaultCodeFormatterOptions.getWhitesmithsSettings().getMap());
 		fOptions.put(DefaultCodeFormatterConstants.FORMATTER_INDENT_ACCESS_SPECIFIER_COMPARE_TO_TYPE_HEADER, DefaultCodeFormatterConstants.TRUE);
 		fOptions.put(DefaultCodeFormatterConstants.FORMATTER_INDENT_BODY_DECLARATIONS_COMPARE_TO_ACCESS_SPECIFIER, DefaultCodeFormatterConstants.TRUE);
@@ -727,7 +727,7 @@ public class CIndenterTest extends BaseUITestCase {
 	//	doOther();
 	//	}
 	//    }
-	public void testWhiteSmithsSwitchIndentation1() throws Exception {
+	public void testWhiteSmithsSwitch1() throws Exception {
 		fOptions.putAll(DefaultCodeFormatterOptions.getWhitesmithsSettings().getMap());
 		fOptions.put(DefaultCodeFormatterConstants.FORMATTER_INDENT_SWITCHSTATEMENTS_COMPARE_TO_CASES, DefaultCodeFormatterConstants.TRUE);
 		fOptions.put(DefaultCodeFormatterConstants.FORMATTER_INDENT_SWITCHSTATEMENTS_COMPARE_TO_SWITCH, DefaultCodeFormatterConstants.FALSE);
@@ -756,7 +756,7 @@ public class CIndenterTest extends BaseUITestCase {
 	//		doOther();
 	//		}
 	//	}
-	public void testWhiteSmithsSwitchIndentation2() throws Exception {
+	public void testWhiteSmithsSwitch2() throws Exception {
 		fOptions.putAll(DefaultCodeFormatterOptions.getWhitesmithsSettings().getMap());
 		fOptions.put(DefaultCodeFormatterConstants.FORMATTER_INDENT_SWITCHSTATEMENTS_COMPARE_TO_CASES, DefaultCodeFormatterConstants.FALSE);
 		fOptions.put(DefaultCodeFormatterConstants.FORMATTER_INDENT_SWITCHSTATEMENTS_COMPARE_TO_SWITCH, DefaultCodeFormatterConstants.TRUE);

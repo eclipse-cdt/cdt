@@ -842,7 +842,7 @@ public final class CIndenter {
 					break;
 					
 				case Symbols.TokenRBRACE: // closing braces get unindented
-					if (isFirstTokenOnLine)
+					if (isFirstTokenOnLine || prevToken != Symbols.TokenLBRACE)
 						matchBrace= true;
 					break;
 					

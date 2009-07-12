@@ -239,7 +239,6 @@ public class CAutoIndentStrategy extends DefaultIndentLineAutoEditStrategy {
 					c.offset = lineOffset;
 				}
 			}
-
 		} catch (BadLocationException e) {
 			CUIPlugin.log(e);
 		}

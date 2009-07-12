@@ -54,8 +54,10 @@ public final class CIndenter {
 		final int prefSimpleIndent;
 		final int prefBracketIndent;
 		final boolean prefMethodDeclDeepIndent;
+		final boolean prefMethodDeclFirstParameterDeepIndent;
 		final int prefMethodDeclIndent;
 		final boolean prefMethodCallDeepIndent;
+		final boolean prefMethodCallFirstParameterDeepIndent;
 		final int prefMethodCallIndent;
 		final boolean prefParenthesisDeepIndent;
 		final int prefParenthesisIndent;
@@ -106,8 +108,10 @@ public final class CIndenter {
 			prefSimpleIndent= prefSimpleIndent();
 			prefBracketIndent= prefBracketIndent();
 			prefMethodDeclDeepIndent= prefMethodDeclDeepIndent();
+			prefMethodDeclFirstParameterDeepIndent= prefMethodDeclFirstParameterDeepIndent();
 			prefMethodDeclIndent= prefMethodDeclIndent();
 			prefMethodCallDeepIndent= prefMethodCallDeepIndent();
+			prefMethodCallFirstParameterDeepIndent= prefMethodCallFirstParameterDeepIndent();
 			prefMethodCallIndent= prefMethodCallIndent();
 			prefParenthesisDeepIndent= prefParenthesisDeepIndent();
 			prefParenthesisIndent= prefParenthesisIndent();
@@ -218,7 +222,23 @@ public final class CIndenter {
 		private boolean prefMethodDeclDeepIndent() {
 			String option= getCoreFormatterOption(DefaultCodeFormatterConstants.FORMATTER_ALIGNMENT_FOR_PARAMETERS_IN_METHOD_DECLARATION);
 			try {
-				return DefaultCodeFormatterConstants.getIndentStyle(option) == DefaultCodeFormatterConstants.INDENT_ON_COLUMN;
+				int indentStyle = DefaultCodeFormatterConstants.getIndentStyle(option);
+				return indentStyle == DefaultCodeFormatterConstants.INDENT_ON_COLUMN;
+			} catch (IllegalArgumentException e) {
+				// ignore and return default
+			}
+
+			return false;
+		}
+
+		private boolean prefMethodDeclFirstParameterDeepIndent() {
+			String option= getCoreFormatterOption(DefaultCodeFormatterConstants.FORMATTER_ALIGNMENT_FOR_PARAMETERS_IN_METHOD_DECLARATION);
+			try {
+				int indentStyle = DefaultCodeFormatterConstants.getIndentStyle(option);
+				int wrappingStyle = DefaultCodeFormatterConstants.getWrappingStyle(option);
+				return indentStyle == DefaultCodeFormatterConstants.INDENT_ON_COLUMN &&
+				    	(wrappingStyle == DefaultCodeFormatterConstants.WRAP_COMPACT_FIRST_BREAK ||
+				    	wrappingStyle == DefaultCodeFormatterConstants.WRAP_ONE_PER_LINE);
 			} catch (IllegalArgumentException e) {
 				// ignore and return default
 			}
@@ -242,7 +262,22 @@ public final class CIndenter {
 		private boolean prefMethodCallDeepIndent() {
 			String option= getCoreFormatterOption(DefaultCodeFormatterConstants.FORMATTER_ALIGNMENT_FOR_ARGUMENTS_IN_METHOD_INVOCATION);
 			try {
-				return DefaultCodeFormatterConstants.getIndentStyle(option) == DefaultCodeFormatterConstants.INDENT_ON_COLUMN;
+				int indentStyle = DefaultCodeFormatterConstants.getIndentStyle(option);
+				return indentStyle == DefaultCodeFormatterConstants.INDENT_ON_COLUMN;
+			} catch (IllegalArgumentException e) {
+				// ignore and return default
+			}
+			return false; // sensible default
+		}
+
+		private boolean prefMethodCallFirstParameterDeepIndent() {
+			String option= getCoreFormatterOption(DefaultCodeFormatterConstants.FORMATTER_ALIGNMENT_FOR_ARGUMENTS_IN_METHOD_INVOCATION);
+			try {
+				int indentStyle = DefaultCodeFormatterConstants.getIndentStyle(option);
+				int wrappingStyle = DefaultCodeFormatterConstants.getWrappingStyle(option);
+				return indentStyle == DefaultCodeFormatterConstants.INDENT_ON_COLUMN &&
+				    	(wrappingStyle == DefaultCodeFormatterConstants.WRAP_COMPACT_FIRST_BREAK ||
+				        wrappingStyle == DefaultCodeFormatterConstants.WRAP_ONE_PER_LINE);
 			} catch (IllegalArgumentException e) {
 				// ignore and return default
 			}
@@ -861,7 +896,7 @@ public final class CIndenter {
 	 *         should be indented, or {@link CHeuristicScanner#NOT_FOUND}
 	 */
 	public int findReferencePosition(int offset, boolean danglingElse, boolean matchBrace, boolean matchParen,
-			                         boolean matchCase, boolean matchAccessSpecifier) {
+			boolean matchCase, boolean matchAccessSpecifier) {
 		fIndent= 0; // the indentation modification
 		fAlign= CHeuristicScanner.NOT_FOUND;
 		fPosition= offset;
@@ -946,7 +981,7 @@ public final class CIndenter {
 		case Symbols.TokenLPAREN:
 		case Symbols.TokenLBRACE:
 		case Symbols.TokenLBRACKET:
-			return handleScopeIntroduction(Math.min(offset + 1, fDocument.getLength()));
+			return handleScopeIntroduction(Math.min(offset + 1, fDocument.getLength()), true);
 
 		case Symbols.TokenEOF:
 			// trap when hitting start of document
@@ -1463,7 +1498,7 @@ public final class CIndenter {
 	 * the reference position returned is determined depending on the type of list:
 	 * The indentation will either match the list scope introducer (e.g. for
 	 * method declarations), so called deep indents, or simply increase the
-	 * indentation by a number of standard indents. See also {@link #handleScopeIntroduction(int)}.
+	 * indentation by a number of standard indents. See also {@link #handleScopeIntroduction(int, boolean)}.
 	 * @return the reference position for a list item: either a previous list item
 	 * that has its own indentation, or the list introduction start.
 	 */
@@ -1471,6 +1506,8 @@ public final class CIndenter {
 		int startLine= fLine;
 		int startPosition= fPosition;
 		boolean seenEqual = fToken == Symbols.TokenEQUAL;
+		boolean seenShiftLeft = fToken == Symbols.TokenSHIFTLEFT;
+		boolean seenRightParen = fToken == Symbols.TokenRPAREN;
 		while (true) {
 			nextToken();
 
@@ -1480,7 +1517,8 @@ public final class CIndenter {
 					int lineOffset= fDocument.getLineOffset(startLine);
 					int bound= Math.min(fDocument.getLength(), startPosition + 1);
 					if ((fToken == Symbols.TokenSEMICOLON || fToken == Symbols.TokenRBRACE ||
-							fToken == Symbols.TokenLBRACE) && seenEqual) {
+							fToken == Symbols.TokenLBRACE && !looksLikeArrayInitializerIntro()) &&
+							(seenEqual || seenShiftLeft || seenRightParen)) {
 						fIndent = fPrefs.prefContinuationIndent;
 					} else {
 						fAlign= fScanner.findNonWhitespaceForwardInAnyPartition(lineOffset, bound);
@@ -1494,6 +1532,8 @@ public final class CIndenter {
 			switch (fToken) {
 			// scopes: skip them
 			case Symbols.TokenRPAREN:
+				seenRightParen = true;
+				//$FALL-THROUGH$
 			case Symbols.TokenRBRACKET:
 			case Symbols.TokenRBRACE:
 				skipScope();
@@ -1503,7 +1543,7 @@ public final class CIndenter {
 			case Symbols.TokenLPAREN:
 			case Symbols.TokenLBRACE:
 			case Symbols.TokenLBRACKET:
-				return handleScopeIntroduction(startPosition + 1);
+				return handleScopeIntroduction(startPosition + 1, false);
 
 			case Symbols.TokenSEMICOLON:
 				return fPosition;
@@ -1520,8 +1560,12 @@ public final class CIndenter {
 				seenEqual = true;
 				break;
 
+			case Symbols.TokenSHIFTLEFT:
+				seenShiftLeft = true;
+				break;
+
 			case Symbols.TokenEOF:
-				if (seenEqual) {
+				if (seenEqual || seenShiftLeft || seenRightParen) {
 					fIndent = fPrefs.prefContinuationIndent;
 				}
 				return 0;
@@ -1599,9 +1643,11 @@ public final class CIndenter {
 	 *
 	 * @param bound the bound for the search for the first token after the scope
 	 * introduction.
+	 * @param firstToken <code>true</code> if we are dealing with the first token after
+	 * the opening parenthesis.
 	 * @return the indent
 	 */
-	private int handleScopeIntroduction(int bound) {
+	private int handleScopeIntroduction(int bound, boolean firstToken) {
 		int pos= fPosition; // store
 
 		switch (fToken) {
@@ -1609,7 +1655,7 @@ public final class CIndenter {
 		case Symbols.TokenLPAREN:
 			// special: method declaration deep indentation
 			if (looksLikeMethodDecl()) {
-				if (fPrefs.prefMethodDeclDeepIndent) {
+				if (firstToken ? fPrefs.prefMethodDeclFirstParameterDeepIndent : fPrefs.prefMethodDeclDeepIndent) {
 					return setFirstElementAlignment(pos, bound);
 				} else {
 					fIndent= fPrefs.prefMethodDeclIndent;
@@ -1618,7 +1664,7 @@ public final class CIndenter {
 			} else {
 				fPosition= pos;
 				if (looksLikeMethodCall()) {
-					if (fPrefs.prefMethodCallDeepIndent) {
+					if (firstToken ? fPrefs.prefMethodCallFirstParameterDeepIndent : fPrefs.prefMethodCallDeepIndent) {
 						return setFirstElementAlignment(pos, bound);
 					} else {
 						fIndent= fPrefs.prefMethodCallIndent;
@@ -1691,8 +1737,18 @@ public final class CIndenter {
 	private int setFirstElementAlignment(int scopeIntroducerOffset, int bound) {
 		int firstPossible= scopeIntroducerOffset + 1; // align with the first position after the scope intro
 		fAlign= fScanner.findNonWhitespaceForwardInAnyPartition(firstPossible, bound);
-		if (fAlign == CHeuristicScanner.NOT_FOUND)
+		if (fAlign == CHeuristicScanner.NOT_FOUND) {
 			fAlign= firstPossible;
+		} else {
+			try {
+				IRegion lineRegion = fDocument.getLineInformationOfOffset(scopeIntroducerOffset);
+				if (fAlign > lineRegion.getOffset() + lineRegion.getLength()) {
+					fAlign= firstPossible; 
+				}
+			} catch (BadLocationException e) {
+				// Ignore.
+			}
+		}
 		return fAlign;
 	}
 

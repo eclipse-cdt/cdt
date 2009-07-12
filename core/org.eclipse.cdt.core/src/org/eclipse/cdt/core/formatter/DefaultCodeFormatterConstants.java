@@ -2349,7 +2349,7 @@ public class DefaultCodeFormatterConstants {
 		}
 		try {
 			int existingValue = Integer.parseInt(value) & Alignment.SPLIT_MASK;
-			switch(existingValue) {
+			switch (existingValue) {
 				case Alignment.M_COMPACT_SPLIT:
 					return WRAP_COMPACT;
 				case Alignment.M_COMPACT_FIRST_BREAK_SPLIT:

@@ -460,7 +460,7 @@ public final class IndentUtil {
 			if (computed != null)
 				indent= computed.toString();
 			else
-				indent= new String();
+				indent= ""; //$NON-NLS-1$
 		}
 		
 		// change document:

@@ -67,10 +67,25 @@ public class CIndenterTest extends BaseUITestCase {
 		IndentUtil.indentLines(document, new LineRange(0, numLines), null, null);
 		assertEquals(expected, document.get());
 	}
-	
+
+	//int array[] =
+	//{
+	//	  sizeof(x)
+	//	  , 1
+	//};
+
+	//int array[] =
+	//{
+	//		sizeof(x)
+	//		, 1
+	//};
+	public void testArrayInitializer() throws Exception {
+		assertIndenterResult();
+	}
+
 	//foo(arg,
 	//"string");
-	
+
 	//foo(arg,
 	//		"string");
 	public void testIndentationOfStringLiteralAsLastArgument1_Bug192412() throws Exception {
@@ -79,7 +94,7 @@ public class CIndenterTest extends BaseUITestCase {
 
 	//a::foo(arg,
 	//"string");
-	
+
 	//a::foo(arg,
 	//		"string");
 	public void testIndentationOfStringLiteralAsLastArgument2_Bug192412() throws Exception {
@@ -88,7 +103,7 @@ public class CIndenterTest extends BaseUITestCase {
 
 	//a::foo(arg,
 	//		"string");
-	
+
 	//a::foo(arg,
 	//		"string");
 	public void testIndentationOfStringLiteralAsLastArgument3_Bug192412() throws Exception {
@@ -137,7 +152,104 @@ public class CIndenterTest extends BaseUITestCase {
 	//		const BinFileParser::Exception& exp)
 	//{
 	//}
-	public void testIndentationOfOperatorMethodBody_Bug192412() throws Exception {
+	public void testIndentationOfOperatorMethodBody_Bug192412_1() throws Exception {
+		assertIndenterResult();
+	}
+
+	//std::ostream& operator<<(std::ostream& stream,
+	//const BinFileParser::Exception& exp)
+	//{
+	//}
+	
+	//std::ostream& operator<<(std::ostream& stream,
+	//                         const BinFileParser::Exception& exp)
+	//{
+	//}
+	public void testIndentationOfOperatorMethodBody_Bug192412_2() throws Exception {
+		fOptions.put(DefaultCodeFormatterConstants.FORMATTER_TAB_CHAR, CCorePlugin.SPACE);
+		fOptions.put(DefaultCodeFormatterConstants.FORMATTER_ALIGNMENT_FOR_PARAMETERS_IN_METHOD_DECLARATION, 
+				DefaultCodeFormatterConstants.createAlignmentValue(false, DefaultCodeFormatterConstants.WRAP_COMPACT,
+						DefaultCodeFormatterConstants.INDENT_ON_COLUMN));
+		assertIndenterResult();
+	}
+
+	//void func(std::vector<int>* v,
+	//const std::string& s)
+	//{
+	//}
+	
+	//void func(std::vector<int>* v,
+	//    const std::string& s)
+	//{
+	//}
+	public void testFunctionParameters_1() throws Exception {
+		fOptions.put(DefaultCodeFormatterConstants.FORMATTER_TAB_CHAR, CCorePlugin.SPACE);
+		fOptions.put(DefaultCodeFormatterConstants.FORMATTER_TAB_SIZE, "2");
+		fOptions.put(DefaultCodeFormatterConstants.FORMATTER_INDENTATION_SIZE, "2");
+		fOptions.put(DefaultCodeFormatterConstants.FORMATTER_ALIGNMENT_FOR_PARAMETERS_IN_METHOD_DECLARATION, 
+				DefaultCodeFormatterConstants.createAlignmentValue(false, DefaultCodeFormatterConstants.WRAP_COMPACT,
+						DefaultCodeFormatterConstants.INDENT_DEFAULT));
+		assertIndenterResult();
+	}
+
+	//void func(std::vector<int>* v,
+	//const std::string& s)
+	//{
+	//}
+	
+	//void func(std::vector<int>* v,
+	//          const std::string& s)
+	//{
+	//}
+	public void testFunctionParameters_2() throws Exception {
+		fOptions.put(DefaultCodeFormatterConstants.FORMATTER_TAB_CHAR, CCorePlugin.SPACE);
+		fOptions.put(DefaultCodeFormatterConstants.FORMATTER_TAB_SIZE, "2");
+		fOptions.put(DefaultCodeFormatterConstants.FORMATTER_INDENTATION_SIZE, "2");
+		fOptions.put(DefaultCodeFormatterConstants.FORMATTER_ALIGNMENT_FOR_PARAMETERS_IN_METHOD_DECLARATION, 
+				DefaultCodeFormatterConstants.createAlignmentValue(false, DefaultCodeFormatterConstants.WRAP_COMPACT,
+						DefaultCodeFormatterConstants.INDENT_ON_COLUMN));
+		assertIndenterResult();
+	}
+
+	//void func(
+	//std::vector<int>* v,
+	//const std::string& s)
+	//{
+	//}
+
+	//void func(
+	//    std::vector<int>* v,
+	//    const std::string& s)
+	//{
+	//}
+	public void testFunctionParameters_3() throws Exception {
+		fOptions.put(DefaultCodeFormatterConstants.FORMATTER_TAB_CHAR, CCorePlugin.SPACE);
+		fOptions.put(DefaultCodeFormatterConstants.FORMATTER_TAB_SIZE, "2");
+		fOptions.put(DefaultCodeFormatterConstants.FORMATTER_INDENTATION_SIZE, "2");
+		fOptions.put(DefaultCodeFormatterConstants.FORMATTER_ALIGNMENT_FOR_PARAMETERS_IN_METHOD_DECLARATION, 
+				DefaultCodeFormatterConstants.createAlignmentValue(false, DefaultCodeFormatterConstants.WRAP_COMPACT,
+						DefaultCodeFormatterConstants.INDENT_ON_COLUMN));
+		assertIndenterResult();
+	}
+
+	//void func(
+	//std::vector<int>* v,
+	//const std::string& s)
+	//{
+	//}
+
+	//void func(
+	//          std::vector<int>* v,
+	//          const std::string& s)
+	//{
+	//}
+	public void testFunctionParameters_4() throws Exception {
+		fOptions.put(DefaultCodeFormatterConstants.FORMATTER_TAB_CHAR, CCorePlugin.SPACE);
+		fOptions.put(DefaultCodeFormatterConstants.FORMATTER_TAB_SIZE, "2");
+		fOptions.put(DefaultCodeFormatterConstants.FORMATTER_INDENTATION_SIZE, "2");
+		fOptions.put(DefaultCodeFormatterConstants.FORMATTER_ALIGNMENT_FOR_PARAMETERS_IN_METHOD_DECLARATION, 
+				DefaultCodeFormatterConstants.createAlignmentValue(false, DefaultCodeFormatterConstants.WRAP_ONE_PER_LINE,
+						DefaultCodeFormatterConstants.INDENT_ON_COLUMN));
 		assertIndenterResult();
 	}
 
@@ -479,6 +591,15 @@ public class CIndenterTest extends BaseUITestCase {
 	//for (hash_map<Node*, double>::const_iterator it = container_.begin();
 	//		it != container_.end(); ++it) {
 	public void testWrappedFor_277625_4() throws Exception {
+		assertIndenterResult();
+	}
+
+	//cout << "long text"
+	//<< " more text";
+
+	//cout << "long text"
+	//		<< " more text";
+	public void testWrappedOutputStream() throws Exception {
 		assertIndenterResult();
 	}
 

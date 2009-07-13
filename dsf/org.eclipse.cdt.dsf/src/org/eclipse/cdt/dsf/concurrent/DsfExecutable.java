@@ -26,7 +26,7 @@ import org.eclipse.core.runtime.Platform;
  * 
  * @since 1.0
  */
-@Immutable
+@ThreadSafe
 public class DsfExecutable {
     /** 
      * Flag indicating that tracing of the DSF executor is enabled.  It enables

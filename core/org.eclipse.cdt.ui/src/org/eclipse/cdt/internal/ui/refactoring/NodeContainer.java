@@ -152,7 +152,7 @@ public class NodeContainer {
 						.getArrayModifiers();
 				for (IASTArrayModifier arrayModifier : arrayModifiers) {
 					((IASTArrayDeclarator) declarator)
-							.addArrayModifier(arrayModifier);
+							.addArrayModifier(arrayModifier.copy());
 				}
 
 			} else {

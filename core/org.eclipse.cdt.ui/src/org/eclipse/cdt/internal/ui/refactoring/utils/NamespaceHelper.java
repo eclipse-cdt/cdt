@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008 Institute for Software, HSR Hochschule fuer Technik  
+ * Copyright (c) 2008, 2009 Institute for Software, HSR Hochschule fuer Technik  
  * Rapperswil, University of applied sciences and others
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Eclipse Public License v1.0 
@@ -74,7 +74,7 @@ public class NamespaceHelper {
 	private static boolean checkFileNameAndLocation(final IFile insertFile, final int offset, IASTNode namespace) {
 		return namespace.getFileLocation().getFileName().endsWith(insertFile.getFullPath().toOSString())
 		&& offset >= namespace.getNodeLocations()[0].getNodeOffset()
-		&& offset <= namespace.getNodeLocations()[0].getNodeOffset() + namespace.getNodeLocations()[0].getNodeLength();
+		&& offset < namespace.getNodeLocations()[0].getNodeOffset() + namespace.getNodeLocations()[0].getNodeLength();
 	}
 	
 	private static IASTName createNameWithTemplates(IASTNode declarationParent) {

@@ -713,3 +713,37 @@ void Test::doNothing(void)
 
 
 
+//! Bug 282989 Refactor->Implement method option doesn't qualify the name in the method definition with a fully qualified container class name
+//#org.eclipse.cdt.ui.tests.refactoring.implementmethod.ImplementMethodRefactoringTest
+//@.config
+filename=TestClass.h
+//@TestClass.h
+#ifndef TESTCLASS_H_
+#define TESTCLASS_H_
+
+namespace nspace{
+class TestClass {
+void /*$*/testMethod()/*$$*/;
+};
+}
+
+#endif /* TESTCLASS_H_ */
+
+//=
+#ifndef TESTCLASS_H_
+#define TESTCLASS_H_
+
+namespace nspace{
+class TestClass {
+void testMethod();
+};
+}
+
+inline void nspace::TestClass::testMethod()
+{
+}
+
+
+
+#endif /* TESTCLASS_H_ */
+

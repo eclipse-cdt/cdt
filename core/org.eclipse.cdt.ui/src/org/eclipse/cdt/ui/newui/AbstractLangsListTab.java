@@ -472,8 +472,9 @@ public abstract class AbstractLangsListTab extends AbstractCPropertyTab {
 				performMulti(ent, old);
 			} else {
 				ICLanguageSettingEntry[] del = null;  
-				if (! ent.getName().equals(old.getName()))
-					del = new ICLanguageSettingEntry[] {old};
+				if (!ent.getName().equals(old.getName()) || ent.getFlags() != old.getFlags()) {
+					del = new ICLanguageSettingEntry[] { old };
+				}
 				changeIt(ent, del);
 			}
 			update();

@@ -87,16 +87,16 @@ public class InclusionTests extends PreprocessorTestsBase {
     	IFolder f0 = importFolder(".framework"); 
     	importFolder("f1.framework"); 
     	importFolder("f1"); 
-    	importFolder("f1/f2.framework"); 
+    	importFolder("f1.framework/f2"); 
     	importFolder("f3"); 
     	IFile base = importFile("base.cpp", content); 
     	
     	importFile(".framework/one.h", "1"); 
     	importFile("f1.framework/two.h", "2"); 
-    	importFile("f1/f2.framework/three.h", "3"); 
+    	importFile("f1.framework/f2/three.h", "3"); 
 
     	String[] path = {
-    			f0.getLocation().removeLastSegments(1) + "/__framework__.framework/__filename__"
+    			f0.getLocation().removeLastSegments(1) + "/__framework__.framework/__header__"
     	};
     	IScannerInfo scannerInfo = new ExtendedScannerInfo(Collections.EMPTY_MAP, path, new String[]{}, null);
     	CodeReader reader= new CodeReader(base.getLocation().toString());
@@ -104,7 +104,7 @@ public class InclusionTests extends PreprocessorTestsBase {
 
     	// first file is not picked up (no framework)
     	validateInteger("2");
-    	// third file is not picked up (framework must be a single folder)
+    	validateInteger("3");
     	validateEOF();
     }
 
@@ -210,8 +210,8 @@ public class InclusionTests extends PreprocessorTestsBase {
 
     	CodeReader reader= new CodeReader(base.getLocation().toString());
     	ParserLanguage lang[]= {ParserLanguage.C, ParserLanguage.CPP};
-    	for (int i = 0; i < lang.length; i++) {
-    		initializeScanner(reader, lang[i], ParserMode.COMPLETE_PARSE, new ScannerInfo());
+    	for (ParserLanguage element : lang) {
+    		initializeScanner(reader, element, ParserMode.COMPLETE_PARSE, new ScannerInfo());
     		validateToken(IToken.t_int);
     		validateIdentifier("var");
     		validateToken(IToken.tASSIGN);

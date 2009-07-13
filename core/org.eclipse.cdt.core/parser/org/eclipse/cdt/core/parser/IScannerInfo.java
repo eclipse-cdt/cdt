@@ -30,15 +30,15 @@ public interface IScannerInfo {
 	/**
 	 * Returns an array of paths that are searched when processing an include directive.
 	 * see {@link IExtendedScannerInfo#getLocalIncludePath()}
-	 * 
+	 * <p>
 	 * In order to handle framework includes used on Apple Computers you can make use of
-	 * the two variables: '__framework__' and '__filename__'. 
-	 * <br> E.g.:  /System/Library/Frameworks/__framework__.framework/Headers/__filename__,
-	 * /System/Library/Frameworks/__framework__.framework/PrivateHeaders/__filename__
+	 * the two variables: '__framework__' and '__header__'. 
+	 * <br> E.g.:  /System/Library/Frameworks/__framework__.framework/Headers/__header__,
+	 * /System/Library/Frameworks/__framework__.framework/PrivateHeaders/__header__
 	 * would handle the framework search for '/System/Library/Frameworks'
-	 * 
-	 * The variables are handled only, if a search path element makes use of both of the variables. 
-	 * Such a search path element is not used for directives that are not of the form 'folder/name'.
+	 * <br> The variables are handled only, if a search path element makes use of both of the variables. 
+	 * The __framework__ variable will receive the first segment of the include, the __header__ variable
+	 * the rest. Such a search path element is not used for directives with a single segment (e.g. 'header.h')
 	 */
 	public String[] getIncludePaths();
 }

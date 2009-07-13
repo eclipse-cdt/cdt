@@ -18,7 +18,7 @@ import java.io.File;
 final class IncludeSearchPathElement {
 	private static final boolean NON_SLASH_SEPARATOR = File.separatorChar != '/';
 	public static final String FRAMEWORK_VAR = "__framework__"; //$NON-NLS-1$
-	public static final String FILE_VAR = "__filename__"; //$NON-NLS-1$
+	public static final String FILE_VAR = "__header__"; //$NON-NLS-1$
 
 
 	private final String fPath;
@@ -42,39 +42,35 @@ final class IncludeSearchPathElement {
 
 	public String getLocation(String includeDirective) {
 		if (fIsFrameworkDirectory) {
-			int lastSep = lastSeparator(includeDirective);
-			if (lastSep < 0) {
+			int firstSep = firstSeparator(includeDirective);
+			if (firstSep < 1) {
 				return null;
 			}
-			String framework = includeDirective.substring(0, lastSep);
-			if (lastSeparator(framework) != -1 || framework.length() == 0) {
-				return null;
-			}
-			
-			String file= includeDirective.substring(lastSep+1);
+			String framework = includeDirective.substring(0, firstSep);
+			String file= includeDirective.substring(firstSep+1);
 			if (file.length() == 0)
 				return null;
 			
 			StringBuilder buf= new StringBuilder(fPath);
-			replaceAll(buf, FRAMEWORK_VAR, framework);
-			replaceAll(buf, FILE_VAR, file);
+			replace(buf, FRAMEWORK_VAR, framework);
+			replace(buf, FILE_VAR, file);
 			return ScannerUtility.reconcilePath(buf.toString());
 		}
 		return ScannerUtility.createReconciledPath(fPath, includeDirective);
 	}
 
-	private int lastSeparator(String path) {
-		int lastSep= path.lastIndexOf('/');
+	private int firstSeparator(String path) {
+		int firstSep= path.indexOf('/');
 		if (NON_SLASH_SEPARATOR) {
-			lastSep= Math.max(lastSep, path.lastIndexOf(File.separatorChar));
+			firstSep= Math.max(firstSep, path.indexOf(File.separatorChar));
 		}
-		return lastSep;
+		return firstSep;
 	}
 
-	private void replaceAll(StringBuilder buf, String find, final String replace) {
-		for (int idx= buf.indexOf(find); idx > 0; idx= buf.indexOf(find, idx)) {
+	private void replace(StringBuilder buf, String find, final String replace) {
+		int idx= buf.indexOf(find);
+		if (idx >= 0) {
 			buf.replace(idx, idx+find.length(), replace);
-			idx+= replace.length();
 		}
 	}
 }

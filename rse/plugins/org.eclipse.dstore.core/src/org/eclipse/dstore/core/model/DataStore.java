@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2002, 2008 IBM Corporation and others.
+ * Copyright (c) 2002, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -26,6 +26,7 @@
  * David McKnight   (IBM) - [231639] [dstore] in single-process multi-client mode tracing shouldn't start until the client is set
  * Noriaki Takatsu  (IBM) - [239073] [dstore] [multithread] In multithread, the cache jar should be assigned after the client is set
  * Noriaki Takatsu  (IBM) - [245069] [dstore] dstoreTrace has no timestamp
+ * David McKnight   (IBM) - [282634] [dstore] IndexOutOfBoundsException on Disconnect
  *******************************************************************************/
 
 package org.eclipse.dstore.core.model;
@@ -2154,9 +2155,11 @@ public final class DataStore
 		}
 
 		// notify that preferences have changed
-		for (int i = 0; i < _dataStorePreferenceListeners.size(); i++){
-			IDataStorePreferenceListener listener = (IDataStorePreferenceListener)_dataStorePreferenceListeners.get(i);
-			listener.preferenceChanged(property, value);
+		synchronized (_dataStorePreferenceListeners){
+			for (int i = 0; i < _dataStorePreferenceListeners.size(); i++){
+				IDataStorePreferenceListener listener = (IDataStorePreferenceListener)_dataStorePreferenceListeners.get(i);
+				listener.preferenceChanged(property, value);
+			}
 		}
 	}
 
@@ -2172,7 +2175,9 @@ public final class DataStore
 	 * @since 3.0
 	 */
 	public void addDataStorePreferenceListener(IDataStorePreferenceListener listener){
-		_dataStorePreferenceListeners.add(listener);
+		synchronized (_dataStorePreferenceListeners){	
+			_dataStorePreferenceListeners.add(listener);
+		}
 	}
 
 	/**
@@ -2181,8 +2186,10 @@ public final class DataStore
 	 * @param listener the listener to remove
 	 * @since 3.0
 	 */
-	public void removeDataStorePreferenceListener(IDataStorePreferenceListener listener){
-		_dataStorePreferenceListeners.remove(listener);
+	public void removeDataStorePreferenceListener(IDataStorePreferenceListener listener){		
+		synchronized (_dataStorePreferenceListeners){	
+			_dataStorePreferenceListeners.remove(listener);	
+		}
 	}
 
 	/**
@@ -2190,7 +2197,9 @@ public final class DataStore
 	 * @since 3.0
 	 */
 	public void removeAllDataStorePreferenceListeners(){
-		_dataStorePreferenceListeners.clear();
+		synchronized (_dataStorePreferenceListeners){
+			_dataStorePreferenceListeners.clear();
+		}
 	}
 
 	/**

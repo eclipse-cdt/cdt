@@ -261,3 +261,102 @@ int main(){
  flags="4" id="org.eclipse.cdt.internal.ui.refactoring.extractfunction.ExtractFunctionRefactoring"
  name="exp" project="RegressionTestProject" selection="23,5" visibility="private"/>
 </session>
+
+//!ExtractFunctionRefactoringTest duplicates with different Names History Test
+//#org.eclipse.cdt.ui.tests.refactoring.RefactoringHistoryTest
+//@A.h
+#ifndef A_H_
+#define A_H_
+
+class A
+{
+public:
+	A();
+	virtual ~A();
+	int foo();
+	
+private:
+	int help();
+};
+
+#endif /*A_H_*/
+
+//=
+#ifndef A_H_
+#define A_H_
+
+class A
+{
+public:
+	A();
+	virtual ~A();
+	int foo();
+	
+private:
+	int help();
+    void exp(int & i);
+};
+
+#endif /*A_H_*/
+
+//@A.cpp
+#include "A.h"
+
+A::A()
+{
+}
+
+A::~A()
+{
+	int oo = 99;
+	++oo;
+	help();
+}int A::foo()
+{
+	int i = 2;
+	++i;
+	help();
+	return i;
+}
+
+int A::help()
+{
+	return 42;
+}	
+
+//=
+#include "A.h"
+
+A::A()
+{
+}
+
+A::~A()
+{
+	int oo = 99;
+    exp(oo);
+}void A::exp(int & i)
+{
+    ++i;
+    help();
+}
+
+int A::foo()
+{
+	int i = 2;
+    exp(i);
+	return i;
+}
+
+int A::help()
+{
+	return 42;
+}	
+
+//@refScript.xml
+<?xml version="1.0" encoding="UTF-8"?>
+<session version="1.0">
+<refactoring comment="Create method exp" description="Extract Method Refactoring" 
+ fileName="file:$$projectPath$$/A.cpp" flags="4" id="org.eclipse.cdt.internal.ui.refactoring.extractfunction.ExtractFunctionRefactoring"
+ name="exp" project="RegressionTestProject" replaceDuplicates="true" selection="97,13" visibility="private"/>
+</session>

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008 Institute for Software, HSR Hochschule fuer Technik  
+ * Copyright (c) 2008, 2009 Institute for Software, HSR Hochschule fuer Technik  
  * Rapperswil, University of applied sciences and others
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Eclipse Public License v1.0 
@@ -17,6 +17,8 @@ import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.events.MouseAdapter;
 import org.eclipse.swt.events.MouseEvent;
+import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
@@ -65,9 +67,7 @@ public class ExtractFunctionInputPage extends UserInputWizardPage {
 			});
 		}
 		
-		/* Disable until it works again.
-		 * 
-		 * comp.getReplaceSimilarButton().addSelectionListener(new SelectionListener(){
+		comp.getReplaceSimilarButton().addSelectionListener(new SelectionListener(){
 
 			public void widgetDefaultSelected(SelectionEvent e) {
 				info.setReplaceDuplicates(comp.getReplaceSimilarButton().isEnabled());	
@@ -77,7 +77,7 @@ public class ExtractFunctionInputPage extends UserInputWizardPage {
 				widgetDefaultSelected(e);		
 			}
 			
-		});*/
+		});
 		
 		setControl(comp);
 		

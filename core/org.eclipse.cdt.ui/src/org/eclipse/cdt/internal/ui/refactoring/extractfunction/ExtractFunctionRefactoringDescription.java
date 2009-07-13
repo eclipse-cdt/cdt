@@ -32,6 +32,7 @@ import org.eclipse.cdt.internal.ui.refactoring.utils.VisibilityEnum;
 public class ExtractFunctionRefactoringDescription extends CRefactoringDescription {
 	protected static final String NAME = "name"; //$NON-NLS-1$
 	protected static final String VISIBILITY = "visibility"; //$NON-NLS-1$
+	protected static final String REPLACE_DUBLICATES = "replaceDuplicates"; //$NON-NLS-1$
 
 	public ExtractFunctionRefactoringDescription(String project, String description,
 			String comment, Map<String, String> arguments) {
@@ -46,6 +47,7 @@ public class ExtractFunctionRefactoringDescription extends CRefactoringDescripti
 		
 		info.setMethodName(arguments.get(NAME));
 		info.setVisibility(VisibilityEnum.getEnumForStringRepresentation(arguments.get(VISIBILITY)));
+		info.setReplaceDuplicates(Boolean.parseBoolean(arguments.get(REPLACE_DUBLICATES)));
 		
 		proj = getCProject();
 		file = getFile();

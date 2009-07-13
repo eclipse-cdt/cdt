@@ -13,6 +13,7 @@ package org.eclipse.cdt.internal.ui.refactoring.extractfunction;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Vector;
@@ -36,6 +37,7 @@ import org.eclipse.text.edits.TextEditGroup;
 
 import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IASTBinaryExpression;
+import org.eclipse.cdt.core.dom.ast.IASTComment;
 import org.eclipse.cdt.core.dom.ast.IASTCompoundStatement;
 import org.eclipse.cdt.core.dom.ast.IASTDeclSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTDeclaration;
@@ -49,6 +51,7 @@ import org.eclipse.cdt.core.dom.ast.IASTFunctionDefinition;
 import org.eclipse.cdt.core.dom.ast.IASTIdExpression;
 import org.eclipse.cdt.core.dom.ast.IASTInitializerExpression;
 import org.eclipse.cdt.core.dom.ast.IASTName;
+import org.eclipse.cdt.core.dom.ast.IASTNamedTypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IASTParameterDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTPointerOperator;
@@ -63,11 +66,15 @@ import org.eclipse.cdt.core.dom.ast.INodeFactory;
 import org.eclipse.cdt.core.dom.ast.IParameter;
 import org.eclipse.cdt.core.dom.ast.cpp.CPPASTVisitor;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCompositeTypeSpecifier;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTConversionName;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTFunctionDeclarator;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTOperatorName;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTQualifiedName;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTSimpleDeclSpecifier;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTemplateDeclaration;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTemplateId;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTemplateParameter;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPBinding;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPMethod;
 import org.eclipse.cdt.core.dom.rewrite.ASTRewrite;
@@ -105,6 +112,7 @@ import org.eclipse.cdt.internal.ui.refactoring.NodeContainer;
 import org.eclipse.cdt.internal.ui.refactoring.MethodContext.ContextType;
 import org.eclipse.cdt.internal.ui.refactoring.NodeContainer.NameInformation;
 import org.eclipse.cdt.internal.ui.refactoring.utils.ASTHelper;
+import org.eclipse.cdt.internal.ui.refactoring.utils.CPPASTAllVisitor;
 import org.eclipse.cdt.internal.ui.refactoring.utils.NodeHelper;
 import org.eclipse.cdt.internal.ui.refactoring.utils.SelectionHelper;
 
@@ -129,7 +137,7 @@ public class ExtractFunctionRefactoring extends CRefactoring {
 	HashMap<String, Integer> nameTrail;
 
 	private ExtractedFunctionConstructionHelper extractedFunctionConstructionHelper;
-	private INodeFactory factory = CPPNodeFactory.getDefault();
+	private final INodeFactory factory = CPPNodeFactory.getDefault();
 
 	public ExtractFunctionRefactoring(IFile file, ISelection selection,
 			ExtractFunctionInformation info, ICProject project) {
@@ -340,6 +348,11 @@ public class ExtractFunctionRefactoring extends CRefactoring {
 			methodCall = declarationStatement;
 		}
 		insertCallintoTree(methodCall, container.getNodesToWrite(), rewriter, editGroup);
+
+		if (info.isReplaceDuplicates()) {
+			replaceSimilar(collector, astMethodName, implementationFile, context.getType());
+		}
+
 		for (IASTNode node : container.getNodesToWrite()) {
 			if (node != firstNodeToWrite) {
 				rewriter.remove(node, editGroup);
@@ -402,6 +415,158 @@ public class ExtractFunctionRefactoring extends CRefactoring {
 		AddDeclarationNodeToClassChange.createChange(classDeclaration, info
 				.getVisibility(), methodDeclaration, false, collector);
 
+	}
+
+	private void replaceSimilar(ModificationCollector collector, final IASTName astMethodName,
+			final IFile implementationFile,
+			final ContextType contextType) {
+		// Find similar code
+		final List<IASTNode> nodesToRewriteWithoutComments = new LinkedList<IASTNode>();
+
+		for (IASTNode node : container.getNodesToWrite()) {
+			if (!(node instanceof IASTComment)) {
+				nodesToRewriteWithoutComments.add(node);
+			}
+		}
+
+		final Vector<IASTNode> initTrail = getTrail(nodesToRewriteWithoutComments);
+		final String title;
+		if (contextType == MethodContext.ContextType.METHOD) {
+			title = Messages.ExtractFunctionRefactoring_CreateMethodCall;
+		} else {
+			title = Messages.ExtractFunctionRefactoring_CreateFunctionCall;
+		}
+
+		if (!hasNameResolvingForSimilarError) {
+			unit.accept(new SimilarFinderVisitor(this, collector, initTrail, implementationFile,
+					astMethodName, nodesToRewriteWithoutComments, title));
+		}
+	}
+
+	protected Vector<IASTNode> getTrail(List<IASTNode> stmts) {
+		final Vector<IASTNode> trail = new Vector<IASTNode>();
+
+		nameTrail = new HashMap<String, Integer>();
+		final Container<Integer> trailCounter = new Container<Integer>(NULL_INTEGER);
+
+		for (IASTNode node : stmts) {
+			node.accept(new CPPASTAllVisitor() {
+				@Override
+				public int visitAll(IASTNode node) {
+
+					if (node instanceof IASTComment) {
+						// Visit Comment, but don't add them to the trail
+						return super.visitAll(node);
+					} else if (node instanceof IASTNamedTypeSpecifier) {
+						// Skip if somewhere is a named Type Specifier
+						trail.add(node);
+						return PROCESS_SKIP;
+					} else if (node instanceof IASTName) {
+						if (node instanceof ICPPASTConversionName && node instanceof ICPPASTOperatorName
+								&& node instanceof ICPPASTTemplateId) {
+							trail.add(node);
+							return super.visitAll(node);
+						} else {
+							// Save Name Sequenz Number
+							IASTName name = (IASTName) node;
+							TrailName trailName = new TrailName();
+							int actCount = trailCounter.getObject().intValue();
+							if (nameTrail.containsKey(name.getRawSignature())) {
+								Integer value = nameTrail.get(name.getRawSignature());
+								actCount = value.intValue();
+							} else {
+								trailCounter.setObject(Integer.valueOf(++actCount));
+								nameTrail.put(name.getRawSignature(), trailCounter.getObject());
+							}
+							trailName.setNameNumber(actCount);
+							trailName.setRealName(name);
+
+							if (info.getReturnVariable() != null
+									&& info.getReturnVariable().getName().getRawSignature().equals(
+											name.getRawSignature())) {
+								returnNumber.setObject(Integer.valueOf(actCount));
+							}
+
+							// Save type informations for the name
+							IBinding bind = name.resolveBinding();
+							IASTName[] declNames = name.getTranslationUnit().getDeclarationsInAST(bind);
+							if (declNames.length > 0) {
+								IASTNode tmpNode = ASTHelper.getDeclarationForNode(declNames[0]);
+
+								IBinding declbind = declNames[0].resolveBinding();
+								if (declbind instanceof ICPPBinding) {
+									ICPPBinding cppBind = (ICPPBinding) declbind;
+									try {
+										trailName.setGloballyQualified(cppBind.isGloballyQualified());
+									} catch (DOMException e) {
+										ILog logger = CUIPlugin.getDefault().getLog();
+										IStatus status = new Status(IStatus.WARNING, CUIPlugin.PLUGIN_ID,
+												IStatus.OK, e.getMessage(), e);
+
+										logger.log(status);
+									}
+								}
+
+								if (tmpNode != null) {
+									trailName.setDeclaration(tmpNode);
+								} else {
+									hasNameResolvingForSimilarError = true;
+								}
+							}
+
+							trail.add(trailName);
+							return PROCESS_SKIP;
+						}
+					} else {
+						trail.add(node);
+						return super.visitAll(node);
+					}
+				}
+			});
+
+		}
+
+		return trail;
+	}
+
+	protected boolean isStatementInTrail(IASTStatement stmt, final Vector<IASTNode> trail) {
+		final Container<Boolean> same = new Container<Boolean>(Boolean.TRUE);
+		final TrailNodeEqualityChecker equalityChecker = new TrailNodeEqualityChecker(names, namesCounter);
+
+		stmt.accept(new CPPASTAllVisitor() {
+			@Override
+			public int visitAll(IASTNode node) {
+
+				int pos = trailPos.getObject().intValue();
+
+				if (trail.size() <= 0 || pos >= trail.size()) {
+					same.setObject(Boolean.FALSE);
+					return PROCESS_ABORT;
+				}
+
+				if (node instanceof IASTComment) {
+					// Visit Comment, but they are not in the trail
+					return super.visitAll(node);
+				}
+
+				IASTNode trailNode = trail.get(pos);
+				trailPos.setObject(Integer.valueOf(pos + 1));
+
+				if (equalityChecker.isEquals(trailNode, node)) {
+					if (node instanceof ICPPASTQualifiedName || node instanceof IASTNamedTypeSpecifier) {
+						return PROCESS_SKIP;
+					} else {
+						return super.visitAll(node);
+					}
+
+				} else {
+					same.setObject(new Boolean(false));
+					return PROCESS_ABORT;
+				}
+			}
+		});
+
+		return same.getObject().booleanValue();
 	}
 
 	private boolean isMethodAllreadyDefined(
@@ -777,6 +942,7 @@ public class ExtractFunctionRefactoring extends CRefactoring {
 		arguments.put(CRefactoringDescription.SELECTION, region.getOffset() + "," + region.getLength()); //$NON-NLS-1$
 		arguments.put(ExtractFunctionRefactoringDescription.NAME, info.getMethodName());
 		arguments.put(ExtractFunctionRefactoringDescription.VISIBILITY, info.getVisibility().toString());
+		arguments.put(ExtractFunctionRefactoringDescription.REPLACE_DUBLICATES, Boolean.toString(info.isReplaceDuplicates()));
 		return arguments;
 	}
 

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008 Institute for Software, HSR Hochschule fuer Technik  
+ * Copyright (c) 2008, 2009 Institute for Software, HSR Hochschule fuer Technik  
  * Rapperswil, University of applied sciences and others
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Eclipse Public License v1.0 
@@ -40,15 +40,13 @@ public class ExtractFunctionComposite extends Composite {
 		Group returnGroup = createReturnGroup(nameVisiComp);
 		createReturnValueChooser(returnGroup, info, ip);		
 
-		// Disabled for now
-		//createReplaceCheckBox(nameVisiComp);
+		createReplaceCheckBox(nameVisiComp);
 		
 		if (info.getMethodContext().getType() == MethodContext.ContextType.METHOD) {
 			visibilityPanelSetVisible(true);
 		}else {
 			visibilityPanelSetVisible(false);
 		}
-		
 		layout();
 	}
 
@@ -106,13 +104,13 @@ public class ExtractFunctionComposite extends Composite {
 	}
 
 	
-//	private void createReplaceCheckBox(Composite parent) {
-//		replaceSimilar = new Button(parent, SWT.CHECK | SWT.LEFT);
-//		GridData buttonLayoutData = new GridData(SWT.None);
-//		buttonLayoutData.verticalIndent = 5;
-//		replaceSimilar.setLayoutData(buttonLayoutData);
-//		replaceSimilar.setText(Messages.ExtractFunctionComposite_ReplaceDuplicates); 
-//	}
+	private void createReplaceCheckBox(Composite parent) {
+		replaceSimilar = new Button(parent, SWT.CHECK | SWT.LEFT);
+		GridData buttonLayoutData = new GridData(SWT.None);
+		buttonLayoutData.verticalIndent = 5;
+		replaceSimilar.setLayoutData(buttonLayoutData);
+		replaceSimilar.setText(Messages.ExtractFunctionComposite_ReplaceDuplicates);
+	}
 
 	
 	public ChooserComposite getReturnChooser() {

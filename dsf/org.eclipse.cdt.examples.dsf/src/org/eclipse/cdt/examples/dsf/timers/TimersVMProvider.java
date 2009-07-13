@@ -42,10 +42,53 @@ public class TimersVMProvider extends AbstractDMVMProvider {
     /** Enumeration of possible layouts for the timers view model */
     public enum ViewLayout { TRIGGERS_AT_TOP, TIMERS_AT_TOP }
     
+    /** Have we registered ourselves as a listener for DM events? */  
+    private boolean fRegisteredEventListener;
+    
     public TimersVMProvider(AbstractVMAdapter adapter, IPresentationContext presentationContext, DsfSession session) {
         super(adapter, presentationContext, session);
+        
+        // Add ourselves as listener for DM events events.
+        try {
+            session.getExecutor().execute(new Runnable() {
+                public void run() {
+                    if (DsfSession.isSessionActive(getSession().getId())) {
+                        getSession().addServiceEventListener(TimersVMProvider.this, null);
+                        fRegisteredEventListener = true;
+                    }
+                }
+            });
+        } catch (RejectedExecutionException e) {
+            // Session shut down, not much we can do but wait to be disposed.
+        }
+        
         // Set the initial view layout.
         setViewLayout(ViewLayout.TIMERS_AT_TOP);   
+    }
+    
+    /* (non-Javadoc)
+     * @see org.eclipse.cdt.dsf.ui.viewmodel.AbstractVMProvider#dispose()
+     */
+    @Override
+	public void dispose() {
+		// Remove ourselves as listener for DM events events. In practice, we
+		// get called after the session has shut down, so we'll end up with a
+		// RejectedExecutionException. We put this here all the same for
+		// completeness sake.
+        try {
+            getSession().getExecutor().execute(new Runnable() {
+                public void run() {
+                    if (fRegisteredEventListener && DsfSession.isSessionActive(getSession().getId())) {
+                        getSession().removeServiceEventListener(TimersVMProvider.this);
+                        fRegisteredEventListener = false;
+                    }
+                }
+            });
+        } catch (RejectedExecutionException e) {
+            // Session shut down, not much we can do but wait to be disposed.
+        }
+        
+        super.dispose();
     }
     
     /** 

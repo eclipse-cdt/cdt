@@ -236,8 +236,8 @@ public class PDOMManager implements IWritableIndexManager, IListener {
 
 		try {
 			ICProject[] projects= model.getCModel().getCProjects();
-			for (int i = 0; i < projects.length; i++) {
-				addProject(projects[i]);
+			for (ICProject project : projects) {
+				addProject(project);
 			}
 		} catch (CModelException e) {
 			CCorePlugin.log(e);
@@ -517,7 +517,7 @@ public class PDOMManager implements IWritableIndexManager, IListener {
 		return null;
 	}
 
-	private void createIndexer(ICProject project, IProgressMonitor pm) {
+	private void createIndexer(ICProject project, IProgressMonitor pm) throws InterruptedException {
 		assert !Thread.holdsLock(fProjectToPDOM);
 		IProject prj= project.getProject();
 		try {
@@ -540,12 +540,23 @@ public class PDOMManager implements IWritableIndexManager, IListener {
 				}
 				if (!rebuild) {
 					registerIndexer(project, indexer);
-					IPDOMIndexerTask task= createPolicy(project).createTask();
+					IPDOMIndexerTask task= policy.createTask();
 					if (task != null) {
 						enqueue(task);
-					}
-					else {
+					} else {
 						enqueue(new TriggerNotificationTask(this, pdom));
+					}
+					if (policy.isAutomatic()) {
+						boolean resume= false;
+						pdom.acquireReadLock();
+						try {
+							resume= "true".equals(pdom.getProperty(IIndexFragment.PROPERTY_RESUME_INDEXER)); //$NON-NLS-1$
+						} finally {
+							pdom.releaseReadLock();
+						}
+						if (resume) {
+							enqueue(new PDOMUpdateTask(indexer, IIndexManager.UPDATE_CHECK_TIMESTAMPS));
+						}
 					}
 					return;
 				}
@@ -612,8 +623,7 @@ public class PDOMManager implements IWritableIndexManager, IListener {
 		}
     	synchronized (fTaskQueue) {
     		int i=0;
-    		for (Iterator<IPDOMIndexerTask> it = fTaskQueue.iterator(); it.hasNext();) {
-				final IPDOMIndexerTask task= it.next();
+    		for (IPDOMIndexerTask task : fTaskQueue) {
 				final IPDOMIndexer ti = task.getIndexer();
 				if (ti != null && referencing.contains(ti.getProject().getProject())) {
 					fTaskQueue.add(i, subjob);
@@ -695,7 +705,12 @@ public class PDOMManager implements IWritableIndexManager, IListener {
 				if (project.isOpen() && !postponeSetup(cproject)) {
 					syncronizeProjectSettings(project, new SubProgressMonitor(monitor, 1));
 					if (getIndexer(cproject) == null) {
-						createIndexer(cproject, new SubProgressMonitor(monitor, 99));
+						try {
+							createIndexer(cproject, new SubProgressMonitor(monitor, 99));
+						} catch (InterruptedException e) {
+							Thread.currentThread().interrupt();
+							return Status.CANCEL_STATUS;
+						}
 					}
 				}
 				return Status.OK_STATUS;
@@ -891,8 +906,7 @@ public class PDOMManager implements IWritableIndexManager, IListener {
 		ICProject[] cProjects;
 		try {
 			cProjects = CoreModel.getDefault().getCModel().getCProjects();
-			for (int i = 0; i < cProjects.length; i++) {
-				ICProject project = cProjects[i];
+			for (ICProject project : cProjects) {
 				reindex(project);
 			}
 		} catch (CModelException e) {
@@ -964,8 +978,8 @@ public class PDOMManager implements IWritableIndexManager, IListener {
     				fIndexerStateEvent.setState(state);
     				Object[] listeners= fStateListeners.getListeners();
     				monitor.beginTask(Messages.PDOMManager_notifyTask_message, listeners.length);
-    				for (int i = 0; i < listeners.length; i++) {
-    					final IIndexerStateListener listener = (IIndexerStateListener) listeners[i];
+    				for (Object listener2 : listeners) {
+    					final IIndexerStateListener listener = (IIndexerStateListener) listener2;
     					SafeRunner.run(new ISafeRunnable(){
     						public void handleException(Throwable exception) {
     							CCorePlugin.log(exception);
@@ -1003,8 +1017,8 @@ public class PDOMManager implements IWritableIndexManager, IListener {
 					fIndexChangeEvent.setAffectedProject(finalProject, e);
 					Object[] listeners= fChangeListeners.getListeners();
 					monitor.beginTask(Messages.PDOMManager_notifyTask_message, listeners.length);
-					for (int i = 0; i < listeners.length; i++) {
-						final IIndexChangeListener listener = (IIndexChangeListener) listeners[i];
+					for (Object listener2 : listeners) {
+						final IIndexChangeListener listener = (IIndexChangeListener) listener2;
 						SafeRunner.run(new ISafeRunnable(){
 							public void handleException(Throwable exception) {
 								CCorePlugin.log(exception);
@@ -1326,8 +1340,7 @@ public class PDOMManager implements IWritableIndexManager, IListener {
 	void handlePostBuildEvent() {
 		assert !Thread.holdsLock(fProjectToPDOM);
 		synchronized (fUpdatePolicies) {
-			for (Iterator<IndexUpdatePolicy> i = fUpdatePolicies.values().iterator(); i.hasNext();) {
-				IndexUpdatePolicy policy= i.next();
+			for (IndexUpdatePolicy policy : fUpdatePolicies.values()) {
 				IPDOMIndexerTask task= policy.createTask();
 				if (task != null) {
 					enqueue(task);

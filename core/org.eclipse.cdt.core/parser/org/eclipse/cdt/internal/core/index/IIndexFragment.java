@@ -79,6 +79,11 @@ public interface IIndexFragment {
 	public static final String PROPERTY_FRAGMENT_FORMAT_VERSION= "org.eclipse.cdt.internal.core.index.fragment.format.version"; //$NON-NLS-1$
 	
 	/**
+	 * Property key for storing whether indexer has to resume or not.
+	 */
+	public static final String PROPERTY_RESUME_INDEXER= "org.eclipse.cdt.internal.core.index.resume"; //$NON-NLS-1$
+		
+	/**
 	 * Returns the file for the given location and linkage. 
 	 * May return <code>null</code>, if no such file exists.
 	 * This method may only return files that are actually managed by this fragment.

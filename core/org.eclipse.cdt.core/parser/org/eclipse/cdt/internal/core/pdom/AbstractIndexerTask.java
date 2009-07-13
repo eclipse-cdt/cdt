@@ -43,6 +43,7 @@ import org.eclipse.cdt.core.parser.ParserUtil;
 import org.eclipse.cdt.core.parser.ScannerInfo;
 import org.eclipse.cdt.internal.core.dom.AbstractCodeReaderFactory;
 import org.eclipse.cdt.internal.core.dom.IIncludeFileResolutionHeuristics;
+import org.eclipse.cdt.internal.core.index.IIndexFragment;
 import org.eclipse.cdt.internal.core.index.IIndexFragmentFile;
 import org.eclipse.cdt.internal.core.index.IWritableIndex;
 import org.eclipse.cdt.internal.core.index.IndexBasedCodeReaderFactory;
@@ -306,12 +307,17 @@ public abstract class AbstractIndexerTask extends PDOMWriter {
 				final ArrayList<IIndexFragmentFile> ifilesToRemove= new ArrayList<IIndexFragmentFile>();
 				extractFiles(files, ifilesToRemove, monitor);
 
+				setResume(true); 
+
 				// remove files from index
 				removeFilesInIndex(fFilesToRemove, ifilesToRemove, monitor);
 
 				parseFilesUpFront(monitor);
 				for (int linkageID : getLinkagesToParse()) {
 					parseLinkage(linkageID, files, monitor);
+				}
+				if (!monitor.isCanceled()) {
+					setResume(false);
 				}
 			} finally {
 				fIndex.flush();
@@ -320,6 +326,15 @@ public abstract class AbstractIndexerTask extends PDOMWriter {
 			logException(e);
 		} finally {
 			fIndex.releaseReadLock();
+		}
+	}
+
+	private void setResume(boolean value) throws InterruptedException, CoreException {
+		fIndex.acquireWriteLock(1);
+		try {
+			fIndex.getWritableFragment().setProperty(IIndexFragment.PROPERTY_RESUME_INDEXER, String.valueOf(value)); 
+		} finally {
+			fIndex.releaseWriteLock(1);
 		}
 	}
 

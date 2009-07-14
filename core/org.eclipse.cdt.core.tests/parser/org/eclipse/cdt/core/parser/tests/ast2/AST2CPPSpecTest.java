@@ -2054,7 +2054,7 @@ public class AST2CPPSpecTest extends AST2SpecBaseTest {
 	// *pi,
 	// f(),
 	// *fpi(int),
-	// (*pif)(const char*, const char*);
+	// (*pif)(const char*, const char*),
 	// (*fpif(int))(int);
 	public void test8_3_5s9a() throws Exception {
 		parse(getAboveComment(), ParserLanguage.CPP, true, 0);

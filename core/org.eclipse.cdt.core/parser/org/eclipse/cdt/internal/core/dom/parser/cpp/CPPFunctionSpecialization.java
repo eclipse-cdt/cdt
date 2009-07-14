@@ -32,6 +32,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPParameter;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateParameterMap;
 import org.eclipse.cdt.core.index.IIndexBinding;
 import org.eclipse.cdt.internal.core.dom.parser.ASTInternal;
+import org.eclipse.cdt.internal.core.dom.parser.ASTQueries;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPVisitor;
 
 /**
@@ -192,26 +193,34 @@ public class CPPFunctionSpecialization extends CPPSpecialization implements ICPP
         return null;
     }
     
+	private ICPPASTFunctionDeclarator extractFunctionDtor(IASTNode node) {
+		if (node instanceof IASTName)
+			node = node.getParent();
+		if (node instanceof IASTDeclarator == false)
+			return null;
+		node= ASTQueries.findTypeRelevantDeclarator((IASTDeclarator) node);
+		if (node instanceof ICPPASTFunctionDeclarator == false)
+			return null;
+		
+		return (ICPPASTFunctionDeclarator) node;
+	}
+
     @Override
 	public void addDefinition(IASTNode node) {
-        IASTNode n = node;
-		while (n instanceof IASTName)
-			n = n.getParent();
-		if (!(n instanceof ICPPASTFunctionDeclarator))
-			return;
-	    updateParameterBindings((ICPPASTFunctionDeclarator) n);
-        super.addDefinition(n);
+		ICPPASTFunctionDeclarator dtor = extractFunctionDtor(node);
+		if (dtor != null) {
+			updateParameterBindings(dtor);
+	        super.addDefinition(dtor);
+		}
 	}
 
 	@Override
 	public void addDeclaration(IASTNode node) {
-	    IASTNode n = node;
-		while (n instanceof IASTName)
-			n = n.getParent();
-		if (!(n instanceof ICPPASTFunctionDeclarator))
-			return;
-	    updateParameterBindings((ICPPASTFunctionDeclarator) n);
-        super.addDeclaration(n);
+		ICPPASTFunctionDeclarator dtor = extractFunctionDtor(node);
+		if (dtor != null) {
+			updateParameterBindings(dtor);
+	        super.addDeclaration(dtor);
+		}
 	}
 
     protected void updateParameterBindings(ICPPASTFunctionDeclarator fdtor) {

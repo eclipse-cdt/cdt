@@ -646,6 +646,10 @@ public class CPPVisitor extends ASTQueries {
 			if (binding instanceof ICPPInternalBinding && binding instanceof IFunction && name.isActive()) {
 			    IFunction function = (IFunction) binding;
 			    if (CPPSemantics.isSameFunction(function, funcDeclarator)) {
+			    	binding= CPPSemantics.checkDeclSpecifier(binding, name, parent);
+			    	if (binding instanceof IProblemBinding)
+			    		return binding;
+
 			        ICPPInternalBinding internal = (ICPPInternalBinding) function;
 			        if (parent instanceof IASTSimpleDeclaration) {
 			            ASTInternal.addDeclaration(internal, name);
@@ -676,6 +680,7 @@ public class CPPVisitor extends ASTQueries {
 				binding = template ? (ICPPFunction) new CPPFunctionTemplate(name)
 								   : new CPPFunction((ICPPASTFunctionDeclarator) funcDeclarator);
 			}
+			binding= CPPSemantics.checkDeclSpecifier(binding, name, parent);
 		} else if (simpleDecl != null) {
     	    IType t1 = null, t2 = null;
 		    if (binding != null && binding instanceof IVariable && !(binding instanceof IIndexBinding)) {
@@ -2094,6 +2099,24 @@ public class CPPVisitor extends ASTQueries {
 				if (dtors.length == 1 && findTypeRelevantDeclarator(dtors[0]) instanceof IASTFunctionDeclarator) {
 					return true;
 				}
+			}
+		}
+		return false;
+	}
+
+	public static boolean doesNotSpecifyType(IASTDeclSpecifier declspec) {
+		if (declspec instanceof ICPPASTSimpleDeclSpecifier) {
+			ICPPASTSimpleDeclSpecifier ds= (ICPPASTSimpleDeclSpecifier) declspec;
+			if (ds.getType() == IASTSimpleDeclSpecifier.t_unspecified) {
+				if (ds instanceof IGPPASTSimpleDeclSpecifier) {
+					final IGPPASTSimpleDeclSpecifier gds = (IGPPASTSimpleDeclSpecifier) ds;
+					if (gds.isLongLong() || gds.getTypeofExpression() != null)
+						return false;
+				}
+				if (ds.isShort() || ds.isLong() || ds.isSigned() || ds.isUnsigned())
+					return false;
+
+				return true;
 			}
 		}
 		return false;

@@ -33,6 +33,7 @@ import org.eclipse.cdt.core.dom.ast.IASTDeclarationStatement;
 import org.eclipse.cdt.core.dom.ast.IASTDeclarator;
 import org.eclipse.cdt.core.dom.ast.IASTDefaultStatement;
 import org.eclipse.cdt.core.dom.ast.IASTDoStatement;
+import org.eclipse.cdt.core.dom.ast.IASTElaboratedTypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTEnumerationSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTExpression;
 import org.eclipse.cdt.core.dom.ast.IASTExpressionList;
@@ -93,21 +94,35 @@ public abstract class AbstractGNUSourceCodeParser implements ISourceCodeParser {
 			fDeclarator= d;
 		}
 	}
-    protected static class FoundDeclaratorException extends Exception {
-    	private static final long serialVersionUID = 0;
+	
+    protected static class Decl extends Exception {
+    	public Decl() {
+    	}
     	
-        public IASTDeclSpecifier declSpec;
-        public IASTDeclarator declarator;
+        public IASTDeclSpecifier fDeclSpec1;
+		public IASTDeclSpecifier fDeclSpec2;
 
-		public IASTDeclSpecifier altSpec;
-		public IASTDeclarator altDeclarator;
-        
-        public IToken currToken;
+		public IASTDeclarator fDtor1;
+		public IASTDeclarator fDtor2;
+        public IToken fDtorToken1;
 
-        public FoundDeclaratorException(IASTDeclarator d, IToken t) {
-            this.declarator = d;
-            this.currToken =t;
-        }
+        public Decl set(IASTDeclSpecifier declspec, IASTDeclarator dtor, IToken dtorToken) {
+        	fDeclSpec1= declspec;
+        	fDtor1= dtor;
+        	fDtorToken1= dtorToken;
+        	fDeclSpec2= null;
+        	fDtor2= null;
+			return this;
+		}
+
+		public Decl set(IASTDeclSpecifier declspec1, IASTDeclarator dtor1, IASTDeclSpecifier declspec2,	IASTDeclarator dtor2) {
+			fDeclSpec1= declspec1;
+			fDtor1= dtor1;
+			fDtorToken1= null;
+			fDeclSpec2= declspec2;
+			fDtor2= dtor2;
+			return this;
+		}
     }
     
 	private static final ASTVisitor MARK_INACTIVE = new ASTGenericVisitor(true) {
@@ -1384,36 +1399,9 @@ public abstract class AbstractGNUSourceCodeParser implements ISourceCodeParser {
         return compoundStatement();
     }
 
-    protected abstract IASTDeclarator initDeclarator(DeclarationOptions option) 
+    protected abstract IASTDeclarator initDeclarator(IASTDeclSpecifier declSpec, DeclarationOptions option) 
     		throws EndOfFileException, BacktrackException, FoundAggregateInitializer;
 
-    /**
-     * @param option the options with which to parse the declaration
-     * @throws FoundDeclaratorException encountered EOF while looking ahead
-     * @throws FoundAggregateInitializer found aggregate initializer, needs special treatment
-     *   because of scalability.
-     */
-    protected void lookAheadForDeclarator(final DeclarationOptions option) 
-    		throws FoundDeclaratorException, FoundAggregateInitializer {
-        IToken mark = null;
-        try {
-            mark = mark();
-            final IASTDeclarator dtor= initDeclarator(option);
-            final IToken la = LA(1);
-            if (la == null || la == mark)
-            	return;
-
-            if (verifyLookaheadDeclarator(option, dtor, la))
-            	throw new FoundDeclaratorException(dtor, la);
-        } catch (BacktrackException bte) {
-        } catch (EndOfFileException e) {
-        } finally {
-        	if (mark != null)
-        		backup(mark);
-        }
-    }
-
-	protected abstract boolean verifyLookaheadDeclarator(DeclarationOptions option, IASTDeclarator d, IToken nextToken);
     
     /**
      * Parse an enumeration specifier, as according to the ANSI specs in C &
@@ -1530,7 +1518,98 @@ public abstract class AbstractGNUSourceCodeParser implements ISourceCodeParser {
 
 
     protected abstract IASTDeclaration declaration(DeclarationOptions option) throws BacktrackException, EndOfFileException;
-    protected abstract IASTDeclSpecifier declSpecifierSeq(DeclarationOptions option) throws BacktrackException, EndOfFileException, FoundDeclaratorException, FoundAggregateInitializer;
+    
+    /**
+     * Parses for two alternatives of a declspec sequence. If there is a second alternative the token after the second alternative
+     * is returned, such that the parser can continue after both variants.
+     */
+    protected abstract Decl declSpecifierSeq(DeclarationOptions option) throws BacktrackException, EndOfFileException;
+    
+    /**
+     * Parses for two alternatives of a declspec sequence followed by a initDeclarator. 
+     * A second alternative is accepted only, if it ends at the same point of the first alternative. Otherwise the
+     * longer alternative is selected.
+     */
+    protected Decl declSpecifierSequence_initDeclarator(final DeclarationOptions option, boolean acceptCompoundWithoutDtor) throws EndOfFileException, FoundAggregateInitializer, BacktrackException {
+    	Decl result= declSpecifierSeq(option);
+
+		final int lt1 = LTcatchEOF(1);
+		if (lt1 == IToken.tEOC)
+			return result;
+		
+    	// support simple declarations without declarators
+    	final boolean acceptEmpty = acceptCompoundWithoutDtor && specifiesCompound(result.fDeclSpec1);
+		if (acceptEmpty) {
+			switch(lt1) {
+			case 0:
+			case IToken.tEOC:
+			case IToken.tSEMI:
+				return result;
+			}
+		}
+		
+		final IToken dtorMark1= mark();
+		final IToken dtorMark2= result.fDtorToken1;
+		final IASTDeclSpecifier declspec1= result.fDeclSpec1;
+		final IASTDeclSpecifier declspec2= result.fDeclSpec2;
+		IASTDeclarator dtor1, dtor2;
+		try {
+			// declarator for first variant
+			dtor1= initDeclarator(declspec1, option);
+    	} catch (FoundAggregateInitializer e) {
+    		e.fDeclSpec= declspec1;
+    		throw e;
+		} catch (BacktrackException e) {
+			if (acceptEmpty) {
+				backup(dtorMark1);
+				return result.set(declspec1, null, null);
+			}
+
+			// try second variant, if possible
+			if (dtorMark2 == null)
+				throw e;
+
+			backup(dtorMark2);
+			dtor2= initDeclarator(declspec2, option);
+			return result.set(declspec2, dtor2, dtorMark2);
+		}
+    	
+    	// first variant was a success. If possible, try second one.
+		if (dtorMark2 == null) {
+			return result.set(declspec1, dtor1, dtorMark1);
+		}
+
+		final IToken end1= mark();
+    	backup(dtorMark2);
+    	try {
+    		dtor2= initDeclarator(declspec2, option);
+    	} catch (BacktrackException e) {
+    		backup(end1);
+    		return result.set(declspec1, dtor1, dtorMark1);
+    	}
+    	
+    	final IToken end2= mark();
+    	if (end1 == end2) {
+			return result.set(declspec1, dtor1, declspec2, dtor2);
+		}
+		if (end1.getEndOffset() > end2.getEndOffset()) {
+    		backup(end1);
+    		return result.set(declspec1, dtor1, dtorMark1);
+		}
+		
+		return result.set(declspec2, dtor2, dtorMark2);
+    }
+    
+	protected boolean specifiesCompound(IASTDeclSpecifier declSpec) {
+		if (declSpec instanceof IASTCompositeTypeSpecifier)
+			return true;
+		if (declSpec instanceof IASTElaboratedTypeSpecifier)
+			return true;
+		if (declSpec instanceof IASTEnumerationSpecifier)
+			return true;
+		
+		return false;
+	}
 
     protected IASTDeclaration[] problemDeclaration(int offset, BacktrackException bt, DeclarationOptions option) {
     	failParse();
@@ -1614,25 +1693,15 @@ public abstract class AbstractGNUSourceCodeParser implements ISourceCodeParser {
 
 	
 	protected IASTDeclaration functionStyleAsmDeclaration() throws BacktrackException, EndOfFileException {
-
 		final int offset= LA(1).getOffset();
-		IASTDeclSpecifier declSpec= null;
+		IASTDeclSpecifier declSpec;
 		IASTDeclarator dtor;
     	try {
-			declSpec = declSpecifierSeq(DeclarationOptions.FUNCTION_STYLE_ASM);
-    		dtor = initDeclarator(DeclarationOptions.FUNCTION_STYLE_ASM);
-    	} catch (FoundDeclaratorException e) {
-        	if (e.altSpec != null) {
-        		declSpec= e.altSpec;
-        		dtor= e.altDeclarator;
-        	} else {
-        		declSpec = e.declSpec;
-        		dtor= e.declarator;
-        	}
-            backup( e.currToken );
-        } catch (FoundAggregateInitializer lie) {
-        	if (declSpec == null)
-        		declSpec= lie.fDeclSpec;
+    		Decl decl= declSpecifierSequence_initDeclarator(DeclarationOptions.FUNCTION_STYLE_ASM, false);
+    		declSpec= decl.fDeclSpec1;
+    		dtor= decl.fDtor1;
+    	} catch (FoundAggregateInitializer lie) {
+    		declSpec= lie.fDeclSpec;
         	dtor= addInitializer(lie, DeclarationOptions.FUNCTION_STYLE_ASM);
     	}
 
@@ -1640,7 +1709,7 @@ public abstract class AbstractGNUSourceCodeParser implements ISourceCodeParser {
     		throwBacktrack(LA(1));
 
     	final IASTDeclarator fdtor= ASTQueries.findTypeRelevantDeclarator(dtor);
-    	if (dtor instanceof IASTFunctionDeclarator == false)
+    	if (!(fdtor instanceof IASTFunctionDeclarator))
     		throwBacktrack(offset, LA(1).getEndOffset() - offset);
 
     	final int compoundOffset= LA(1).getOffset();

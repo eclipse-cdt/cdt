@@ -194,7 +194,7 @@ public class CPPFunction extends PlatformObject implements ICPPFunction, ICPPInt
 	}
 
 	private ICPPASTFunctionDeclarator extractFunctionDtor(IASTNode node) {
-		if (node instanceof IASTName)
+		while (node instanceof IASTName)
 			node = node.getParent();
 		if (node instanceof IASTDeclarator == false)
 			return null;

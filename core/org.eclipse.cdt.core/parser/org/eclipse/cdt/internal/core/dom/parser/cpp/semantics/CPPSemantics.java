@@ -87,6 +87,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTDeleteExpression;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTFieldReference;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTForStatement;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTFunctionDeclarator;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTFunctionDefinition;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTIfStatement;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTLinkageSpecification;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTNamedTypeSpecifier;
@@ -141,6 +142,7 @@ import org.eclipse.cdt.core.parser.util.CharArrayObjectMap;
 import org.eclipse.cdt.core.parser.util.CharArrayUtils;
 import org.eclipse.cdt.core.parser.util.DebugUtil;
 import org.eclipse.cdt.core.parser.util.ObjectSet;
+import org.eclipse.cdt.internal.core.dom.parser.ASTAmbiguousNode;
 import org.eclipse.cdt.internal.core.dom.parser.ASTInternal;
 import org.eclipse.cdt.internal.core.dom.parser.ASTNode;
 import org.eclipse.cdt.internal.core.dom.parser.ASTQueries;
@@ -445,17 +447,25 @@ public class CPPSemantics {
 	        }
         }
         
+        // explicit function specializations are found via name resolution, need to
+        // add name as definition and check the declaration specifier.
 		if (binding instanceof IFunction && !(binding instanceof IProblemBinding)) {
 			if (data.forFunctionDeclaration()) {
-				IASTNode node = data.astName.getParent();
-				if (node instanceof ICPPASTQualifiedName)
-					node = node.getParent();
-				if (node instanceof ICPPASTFunctionDeclarator
-						&& node.getParent() instanceof IASTFunctionDefinition) {
-					ASTInternal.addDefinition(binding, node);
+				IASTNode declaration= data.astName;
+				while (declaration instanceof IASTName)
+					declaration= declaration.getParent();
+				while (declaration instanceof IASTDeclarator)
+					declaration= declaration.getParent();
+
+				binding= checkDeclSpecifier(binding, data.astName, declaration);
+				if (!(binding instanceof IProblemBinding)) {
+					if (declaration instanceof ICPPASTFunctionDefinition) {
+						ASTInternal.addDefinition(binding, data.astName);
+					}
 				}
 			}
 		}
+		
 		// If we're still null...
 		if (binding == null) {
 			if (name instanceof ICPPASTQualifiedName && data.forFunctionDeclaration()) {
@@ -468,8 +478,37 @@ public class CPPSemantics {
 		}
         return binding;
     }
+       
+	static IBinding checkDeclSpecifier(IBinding binding, IASTName name, IASTNode decl) {
+		// check for empty declaration specifiers
+		if (!isCTorOrConversionOperator(binding)) {
+			IASTDeclSpecifier declspec= null;
+			if (decl instanceof IASTSimpleDeclaration) {
+				declspec= ((IASTSimpleDeclaration) decl).getDeclSpecifier();
+			} else if (decl instanceof IASTFunctionDefinition) {
+				declspec= ((IASTFunctionDefinition) decl).getDeclSpecifier();
+			}
+			if (declspec != null && CPPVisitor.doesNotSpecifyType(declspec)) {
+				binding= new ProblemBinding(name, IProblemBinding.SEMANTIC_INVALID_TYPE);
+			}
+		}
+		return binding;
+	}
 
-    private static LookupData createLookupData(IASTName name, boolean considerAssociatedScopes) {
+	private static boolean isCTorOrConversionOperator(IBinding binding) {
+		if (binding instanceof ICPPConstructor)
+			return true;
+		
+		if (binding instanceof ICPPMethod) {
+			ICPPMethod m= (ICPPMethod) binding;
+			if (m.isDestructor())
+				return true;
+			return isConversionOperator(m);
+		}
+		return false;
+	}
+
+	private static LookupData createLookupData(IASTName name, boolean considerAssociatedScopes) {
 		LookupData data = new LookupData(name);
 		IASTNode parent = name.getParent();
 		
@@ -1466,9 +1505,10 @@ public class CPPSemantics {
 			ASTInternal.addName(scope, name);
 			return;
 		}
-		if (declaration == null)
+		if (declaration == null || declaration instanceof ASTAmbiguousNode) {
 			return;
-		
+		}
+
 		if (declaration instanceof IASTSimpleDeclaration) {
 			IASTSimpleDeclaration simpleDeclaration = (IASTSimpleDeclaration) declaration;
 			ICPPASTDeclSpecifier declSpec = (ICPPASTDeclSpecifier) simpleDeclaration.getDeclSpecifier();
@@ -3056,7 +3096,7 @@ public class CPPSemantics {
 		ICPPASTTemplateDeclaration templateDecl = CPPTemplates.getTemplateDeclaration(name);
 		if (templateDecl != null) {
 			if (templateDecl instanceof ICPPASTTemplateSpecialization) {
-				if (!(function instanceof ICPPTemplateInstance))
+				if (!(function instanceof ICPPSpecialization))
 					return false;
 			} else {
 				if (!(function instanceof ICPPTemplateDefinition))

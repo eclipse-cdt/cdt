@@ -7195,4 +7195,46 @@ public class AST2CPPTests extends AST2BaseTest {
 	}
 
 
+	// typedef int T;
+	// class C {
+	//    C(T);  // ctor
+	//    C(s);  // instance s;
+    // };
+	public void testDeclarationAmbiguity_Bug269953() throws Exception {
+		final String code = getAboveComment();
+		IASTTranslationUnit tu= parseAndCheckBindings(code, ParserLanguage.CPP);
+		ICPPASTCompositeTypeSpecifier ct= getCompositeType(tu, 1);
+		ICPPClassType c= (ICPPClassType) ct.getName().resolveBinding();
+
+		ICPPMethod[] methods= c.getDeclaredMethods();
+		assertEquals(1, methods.length);
+		assertEquals("C", methods[0].getName());
+
+		ICPPField[] fields= c.getDeclaredFields();
+		assertEquals(1, fields.length);
+		assertEquals("s", fields[0].getName());
+	}	
+	
+	//	class C3 {
+	//		C3(int);
+	//	};
+	//	typedef C3 T3;
+	//	T3::C3(int) {
+	//	}
+	public void testCTorWithTypedef_Bug269953() throws Exception {
+		final String code = getAboveComment();
+		parseAndCheckBindings(code, ParserLanguage.CPP);
+	}
+	
+	//	template<class T> class Compare {
+	//	    Compare();
+	//	    ~Compare();
+	//	    bool check;
+	//	};
+	//	typedef Compare<int> MY_COMPARE;
+	//	template<> MY_COMPARE::Compare() {}
+	public void testTemplateCTorWithTypedef_Bug269953() throws Exception {
+		final String code = getAboveComment();
+		parseAndCheckBindings(code, ParserLanguage.CPP);
+	}
 }

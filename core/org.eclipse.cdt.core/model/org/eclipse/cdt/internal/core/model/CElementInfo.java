@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 QNX Software Systems and others.
+ * Copyright (c) 2000, 2009 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -22,7 +22,7 @@ import org.eclipse.core.resources.IResource;
  * Holds cached structure and properties for a C element.
  * Subclassed to carry properties for specific kinds of elements.
  */
-class CElementInfo {
+public class CElementInfo {
 	/**
 	 * Shared empty collection used for efficiency.
 	 */

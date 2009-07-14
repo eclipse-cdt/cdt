@@ -63,6 +63,7 @@
  * David McKnight   (IBM)        - [264607] Unable to delete a broken symlink
  * David McKnight   (IBM)        - [276103] Files with names in different cases are not handled properly
  * David McKnight     (IBM)      - [276534] Cache Conflict After Synchronization when Browsing Remote System with Case-Differentiated-Only Filenames
+ * David McKnight   (IBM)        - [280466] File download keeps running in case sensitive case
  *******************************************************************************/
 
 package org.eclipse.rse.internal.files.ui.view;
@@ -2781,39 +2782,16 @@ public class SystemViewRemoteFileAdapter
 				try
 				{
 					tmp.delete(false, null);
+					
+					// get rid of associated editable if there was one before
+					SystemIFileProperties properties = new SystemIFileProperties(tmp);
+					properties.setRemoteFileObject(null);					
 				}
 				catch (Exception e)
 				{
 				}
 			}
 
-			/*
-
-			ISystemEditableRemoteObject editable = getEditableRemoteObject(file);
-			if (editable != null)
-			{
-				try
-				{
-					if (editable.checkOpenInEditor() == ISystemEditableRemoteObject.OPEN_IN_SAME_PERSPECTIVE)
-					{
-						// for now, leave this
-					}
-					else
-					{
-						IFile localfile = editable.getLocalResource();
-						if (localfile != null)
-						{
-							// delete this too
-							localfile.delete(true, null);
-						}
-					}
-				}
-				catch (Exception e)
-				{
-
-				}
-			}
-			*/
 			ss.delete(file, monitor);
 			ok = true;
 			file.markStale(true);
@@ -2941,9 +2919,13 @@ public class SystemViewRemoteFileAdapter
 				if (editableObj != null)
 				{
 					SystemEditableRemoteFile editable = (SystemEditableRemoteFile)editableObj;
-					// there's an in-memory editable, so change the associated remote file
-					IRemoteFile newRemoteFile = ss.getRemoteFileObject(remotePath, new NullProgressMonitor());
-					editable.setRemoteFile(newRemoteFile);
+					
+					// is this open?
+					if (editable.checkOpenInEditor() != ISystemEditableRemoteObject.NOT_OPEN){					
+						// there's an in-memory editable, so change the associated remote file
+						IRemoteFile newRemoteFile = ss.getRemoteFileObject(remotePath, new NullProgressMonitor());
+						editable.setRemoteFile(newRemoteFile);
+					}
 				}
 			}
 			catch (Exception e)

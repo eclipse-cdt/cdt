@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2002, 2008 IBM Corporation and others.
+ * Copyright (c) 2002, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -12,7 +12,7 @@
  * Emily Bruner, Mazen Faraj, Adrian Storisteanu, Li Ding, and Kent Hawley.
  * 
  * Contributors:
- * {Name} (company) - description of contribution.
+ * David McKnight   (IBM) - [282634] [dstore] IndexOutOfBoundsException on Disconnect
  *******************************************************************************/
 
 package org.eclipse.dstore.internal.extra;
@@ -51,9 +51,11 @@ public class DomainNotifier implements IDomainNotifier
 
 	public void addDomainListener(IDomainListener listener)
 	{
-		if (!_listeners.contains(listener))
-		{
-			_listeners.add(listener);
+		synchronized (_listeners){
+			if (!_listeners.contains(listener))
+			{
+				_listeners.add(listener);
+			}
 		}
 	}
 
@@ -62,24 +64,34 @@ public class DomainNotifier implements IDomainNotifier
 	{
 		if (_enabled)
 		{
-			for (int i = 0; i < _listeners.size(); i++)
+			Object[] listeners = null;
+			
+			synchronized (_listeners){
+				listeners = _listeners.toArray();
+			}
+			
+			for (int i = 0; i < listeners.length; i++)
 			{
-				IDomainListener listener = (IDomainListener) _listeners.get(i);
+				IDomainListener listener = (IDomainListener)listeners[i];
 				if ((listener != null) && listener.listeningTo(event))
 				{
 					listener.domainChanged(event);
 				}
-			}
+			}	
 		}
 	}
 
 	public boolean hasDomainListener(IDomainListener listener)
 	{
-		return _listeners.contains(listener);
+		synchronized (_listeners){
+			return _listeners.contains(listener);
+		}
 	}
 
 	public void removeDomainListener(IDomainListener listener)
 	{
-		_listeners.remove(listener);
+		synchronized (_listeners){
+			_listeners.remove(listener);
+		}
 	}
 }

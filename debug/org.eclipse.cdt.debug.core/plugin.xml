@@ -5,6 +5,7 @@
      <extension-point id="CDebugger" name="%CDebugger.name" schema="schema/CDebugger.exsd"/>
      <extension-point id="BreakpointActionType" name="%BreakpointAction" schema="schema/BreakpointAction.exsd"/>
      <extension-point id="BreakpointExtension" name="%BreakpointAction" schema="schema/BreakpointExtension.exsd"/>
+     <extension-point id="supportedSourceContainerTypes" name="%SupportedSourceContainerTypes.name" schema="schema/SupportedSourceContainerTypes.exsd"/>
 
     <extension
          point="org.eclipse.debug.core.launchConfigurationTypes">
@@ -255,6 +256,21 @@
             id="org.eclipse.cdt.debug.core.filter"
             markerType="org.eclipse.cdt.debug.core.cBreakpointMarker">
       </breakpointExtension>
+   </extension>
+   <extension
+         point="org.eclipse.cdt.debug.core.supportedSourceContainerTypes">
+      <sourceContainer
+            id="org.eclipse.cdt.debug.core.containerType.absolutePath"/>
+      <sourceContainer
+            id="org.eclipse.cdt.debug.core.containerType.mapping"/>
+      <sourceContainer
+            id="org.eclipse.debug.core.containerType.folder"/>
+      <sourceContainer
+            id="org.eclipse.debug.core.containerType.workspace"/>
+      <sourceContainer
+            id="org.eclipse.debug.core.containerType.directory"/>
+      <sourceContainer
+      		id="org.eclipse.debug.core.containerType.project"/>
    </extension>
  
 </plugin>

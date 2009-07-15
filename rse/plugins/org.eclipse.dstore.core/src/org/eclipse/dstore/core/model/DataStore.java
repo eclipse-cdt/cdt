@@ -27,6 +27,7 @@
  * Noriaki Takatsu  (IBM) - [239073] [dstore] [multithread] In multithread, the cache jar should be assigned after the client is set
  * Noriaki Takatsu  (IBM) - [245069] [dstore] dstoreTrace has no timestamp
  * David McKnight   (IBM) - [282634] [dstore] IndexOutOfBoundsException on Disconnect
+ * David McKnight   (IBM) - [282599] [dstore] log folder that is not a hidden one
  *******************************************************************************/
 
 package org.eclipse.dstore.core.model;
@@ -3577,8 +3578,14 @@ public final class DataStore
 				_userPreferencesDirectory = _userPreferencesDirectory + File.separator;
 		    }
 
-  			_userPreferencesDirectory = _userPreferencesDirectory + ".eclipse" + File.separator +  //$NON-NLS-1$
-  			         												"RSE" + File.separator + clientUserID; //$NON-NLS-1$
+  			// for bug 282599, log directory allows customization of log location relative to user dir
+  			String logDirectory = System.getProperty("DSTORE_LOG_DIRECTORY"); //$NON-NLS-1$
+  			if (logDirectory == null){
+  				logDirectory = ".eclipse" + File.separator + "RSE" + File.separator;  //$NON-NLS-1$//$NON-NLS-2$
+  			}
+  			  			
+  			_userPreferencesDirectory = _userPreferencesDirectory + logDirectory + clientUserID;  			
+  			
 	  		File dirFile = new File(_userPreferencesDirectory);
 	  		if (!dirFile.exists()) {
 	 	 		dirFile.mkdirs();

@@ -235,15 +235,6 @@ public class PDOM extends PlatformObject implements IPDOM {
 		private boolean fReloaded= false;
 		private boolean fNewFiles= false;
 
-		public void clear() {
-			fReloaded= false;
-			fCleared= false;
-			fNewFiles= false;
-			
-			fClearedFiles.clear();
-			fFilesWritten.clear();
-		}
-
 		private void setCleared() {
 			fCleared= true;
 			fReloaded= false;
@@ -272,6 +263,10 @@ public class PDOM extends PlatformObject implements IPDOM {
 
 		public boolean hasNewFiles() {
 			return fNewFiles;
+		}
+
+		public boolean isTrivial() {
+			return !fCleared && !fReloaded && !fNewFiles && fClearedFiles.isEmpty() && fFilesWritten.isEmpty();
 		}
 	}
 	public static interface IListener {
@@ -386,8 +381,9 @@ public class PDOM extends PlatformObject implements IPDOM {
 	}
 
 	private void fireChange(ChangeEvent event) {
-		if (listeners == null)
+		if (listeners == null || event.isTrivial())
 			return;
+		
 		Iterator<IListener> i = listeners.iterator();
 		while (i.hasNext())
 			i.next().handleChange(this, event);

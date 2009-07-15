@@ -105,7 +105,7 @@ final class SimilarFinderVisitor extends CPPASTVisitor {
 							this.refactoring.container, similarContainer);
 					ASTRewrite rewrite = collector.rewriterForTranslationUnit(stmtToReplace.get(0)
 							.getTranslationUnit());
-					TextEditGroup editGroup = new TextEditGroup("Replace Dublicated Code");
+					TextEditGroup editGroup = new TextEditGroup(Messages.SimilarFinderVisitor_replaceDuplicateCode);
 					rewrite.replace(stmtToReplace.get(0), call, editGroup);
 					if (stmtToReplace.size() > 1) {
 						for (int i = 1; i < stmtToReplace.size(); ++i) {

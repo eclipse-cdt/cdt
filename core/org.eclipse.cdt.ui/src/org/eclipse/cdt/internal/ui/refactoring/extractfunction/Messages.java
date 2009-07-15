@@ -46,6 +46,7 @@ public final class Messages extends NLS {
 	public static String ExtractFunctionRefactoring_Error_Return;
 	public static String ExtractFunctionRefactoring_Error_Continue;
 	public static String ExtractFunctionRefactoring_Error_Break;
+	public static String SimilarFinderVisitor_replaceDuplicateCode;
 
 	static {
 		NLS.initializeMessages(BUNDLE_NAME, Messages.class);

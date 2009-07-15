@@ -56,7 +56,7 @@ public interface INodeFactory {
 	/**
 	 * Creates a new translation unit that cooperates with the given scanner in order
 	 * to track macro-expansions and location information.
-	 * @scanner the preprocessor the translation unit interacts with.
+	 * @param scanner the preprocessor the translation unit interacts with.
 	 * @since 5.2
 	 */
 	public IASTTranslationUnit newTranslationUnit(IScanner scanner);
@@ -174,7 +174,7 @@ public interface INodeFactory {
 	 * provided by the scanner for this translation unit.
 	 * <par> May throw an exception when the node provided was not created by this factory.
 	 * @param node a node created by this factory
-	 * @offset the offset (inclusive) for the node
+	 * @param offset the offset (inclusive) for the node
 	 * @param endOffset the end offset (exclusive) for the node
 	 * @see #newTranslationUnit(IScanner)
 	 * @since 5.2

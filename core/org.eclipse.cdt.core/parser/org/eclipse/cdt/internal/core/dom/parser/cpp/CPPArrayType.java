@@ -6,25 +6,18 @@
  *  http://www.eclipse.org/legal/epl-v10.html
  * 
  *  Contributors:
- *     IBM Corporation - initial API and implementation
+ *     Andrew Niefer (IBM Corporation) - initial API and implementation
+ *     Markus Schorn (Wind River Systems)
  *******************************************************************************/
-
-/*
- * Created on Dec 13, 2004
- */
 package org.eclipse.cdt.internal.core.dom.parser.cpp;
 
 import org.eclipse.cdt.core.dom.ast.ASTTypeUtil;
-import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IASTExpression;
 import org.eclipse.cdt.core.dom.ast.IArrayType;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.ITypedef;
 import org.eclipse.cdt.internal.core.dom.parser.ITypeContainer;
 
-/**
- * @author aniefer
- */
 public class CPPArrayType implements IArrayType, ITypeContainer {
     private IType type;
     private IASTExpression sizeExpression;
@@ -53,13 +46,9 @@ public class CPPArrayType implements IArrayType, ITypeContainer {
             return ((ITypedef) obj).isSameType(this);
         
         if (obj instanceof IArrayType) {
-            try {
-            	IType objType = ((IArrayType) obj).getType();
-            	if (objType != null)
-            		return objType.isSameType(type);
-            } catch (DOMException e) {
-                return false;
-            }
+            IType objType = ((IArrayType) obj).getType();
+			if (objType != null)
+				return objType.isSameType(type);
         }
     	return false;
     }

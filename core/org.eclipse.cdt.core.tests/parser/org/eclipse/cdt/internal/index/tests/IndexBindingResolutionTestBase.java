@@ -224,17 +224,13 @@ public abstract class IndexBindingResolutionTestBase extends BaseTestCase {
 	}
 	
 	protected static void assertTypeContainer(IType conType, String expQN, Class containerType, Class expContainedType, String expContainedTypeQN) {
-		try {
-			assertInstance(conType, ITypeContainer.class);
-			assertInstance(conType, containerType);
-			IType containedType= ((ITypeContainer)conType).getType();
-			assertInstance(containedType, expContainedType);
-			if (expContainedTypeQN != null) {
-				assertInstance(containedType, IBinding.class);
-				assertQNEquals(expContainedTypeQN, (IBinding) containedType);
-			}
-		} catch (DOMException de) {
-			fail(de.getMessage());
+		assertInstance(conType, ITypeContainer.class);
+		assertInstance(conType, containerType);
+		IType containedType= ((ITypeContainer)conType).getType();
+		assertInstance(containedType, expContainedType);
+		if (expContainedTypeQN != null) {
+			assertInstance(containedType, IBinding.class);
+			assertQNEquals(expContainedTypeQN, (IBinding) containedType);
 		}
 	}
 

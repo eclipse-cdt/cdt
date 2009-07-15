@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2008 Symbian Software Systems and others.
+ * Copyright (c) 2007, 2009 Symbian Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,7 +10,6 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.index.composite;
 
-import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.index.IIndexBinding;
@@ -26,7 +25,7 @@ public interface ICompositesFactory {
 	 * Returns a composite (in the sense of potentially spanning multiple index fragments - i.e. not to be confused
 	 * with ICompositeType) type for the specified type.
 	 */
-	public IType getCompositeType(IIndexType rtype) throws DOMException;
+	public IType getCompositeType(IIndexType rtype);
 
 	/**
 	 * Returns a composite (index context carrying) binding for the specified binding. It does not

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007 Symbian Software Systems and others.
+ * Copyright (c) 2007, 2009 Symbian Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,7 +10,6 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.index.composite;
 
-import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IFunctionType;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.internal.core.index.IIndexType;
@@ -21,7 +20,7 @@ public class CompositeFunctionType extends CompositeType implements IFunctionTyp
 		super(rtype, cf);
 	}
 
-	public IType[] getParameterTypes() throws DOMException {
+	public IType[] getParameterTypes() {
 		IType[] result = ((IFunctionType) type).getParameterTypes();
 		for (int i = 0; i < result.length; i++) {
 			result[i] = cf.getCompositeType((IIndexType)result[i]);
@@ -29,7 +28,7 @@ public class CompositeFunctionType extends CompositeType implements IFunctionTyp
 		return result;
 	}
 
-	public IType getReturnType() throws DOMException {
+	public IType getReturnType() {
 		return cf.getCompositeType((IIndexType) ((IFunctionType) type).getReturnType());
 	}
 

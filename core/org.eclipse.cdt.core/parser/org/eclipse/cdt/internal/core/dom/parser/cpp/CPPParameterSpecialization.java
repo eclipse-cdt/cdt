@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2008 IBM Corporation and others.
+ * Copyright (c) 2005, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -45,12 +45,15 @@ public class CPPParameterSpecialization extends CPPSpecialization implements ICP
 	}
 	
 	@Override
-	public IType specializeType(IType type) throws DOMException {
+	public IType specializeType(IType type) {
 		IBinding owner= getOwner();
 		if (owner != null) {
-			owner= owner.getOwner();
-			if (owner instanceof ICPPClassSpecialization) {
-				return CPPTemplates.instantiateType(type, getTemplateParameterMap(), (ICPPClassSpecialization) owner);
+			try {
+				owner= owner.getOwner();
+				if (owner instanceof ICPPClassSpecialization) {
+					return CPPTemplates.instantiateType(type, getTemplateParameterMap(), (ICPPClassSpecialization) owner);
+				}
+			} catch (DOMException e) {
 			}
 		}
 		return CPPTemplates.instantiateType(type, getTemplateParameterMap(), null);

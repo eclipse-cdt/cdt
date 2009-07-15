@@ -15,12 +15,10 @@ package org.eclipse.cdt.internal.core.pdom.dom;
 
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.dom.ast.ASTTypeUtil;
-import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IPointerType;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.ITypedef;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPPointerToMemberType;
-import org.eclipse.cdt.internal.core.Util;
 import org.eclipse.cdt.internal.core.dom.parser.ITypeContainer;
 import org.eclipse.cdt.internal.core.index.IIndexBindingConstants;
 import org.eclipse.cdt.internal.core.index.IIndexType;
@@ -57,25 +55,21 @@ public class PDOMPointerType extends PDOMNode implements IPointerType,
 		
 		Database db = getDB();
 		
-		try {
-			// type
-			long typeRec = 0;
-			byte flags = 0;
-			if (type != null) {
-				IType targetType= type.getType();
-				PDOMNode targetTypeNode = getLinkage().addType(this, targetType);
-				if (targetTypeNode != null)
-					typeRec = targetTypeNode.getRecord();
-				if (type.isConst())
-					flags |= CONST;
-				if (type.isVolatile())
-					flags |= VOLATILE;
-			}
-			db.putRecPtr(record + TYPE, typeRec);
-			db.putByte(record + FLAGS, flags);
-		} catch (DOMException e) {
-			throw new CoreException(Util.createStatus(e));
+		// type
+		long typeRec = 0;
+		byte flags = 0;
+		if (type != null) {
+			IType targetType= type.getType();
+			PDOMNode targetTypeNode = getLinkage().addType(this, targetType);
+			if (targetTypeNode != null)
+				typeRec = targetTypeNode.getRecord();
+			if (type.isConst())
+				flags |= CONST;
+			if (type.isVolatile())
+				flags |= VOLATILE;
 		}
+		db.putRecPtr(record + TYPE, typeRec);
+		db.putByte(record + FLAGS, flags);
 	}
 
 	@Override
@@ -141,14 +135,11 @@ public class PDOMPointerType extends PDOMNode implements IPointerType,
 	        return false;
 
 		IPointerType rhs = (IPointerType) type;
-		try {
-			if (isConst() == rhs.isConst() && isVolatile() == rhs.isVolatile()) {
-				IType type1= getType();
-				if (type1 != null) {
-					return type1.isSameType(rhs.getType());
-				}
+		if (isConst() == rhs.isConst() && isVolatile() == rhs.isVolatile()) {
+			IType type1= getType();
+			if (type1 != null) {
+				return type1.isSameType(rhs.getType());
 			}
-		} catch (DOMException e) {
 		}
 		return false;
 	}

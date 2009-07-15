@@ -602,11 +602,7 @@ public class CVisitor extends ASTQueries {
 		
 		IType type = fieldOwner.getExpressionType();
 	    while (type != null && type instanceof ITypeContainer) {
-    		try {
-                type = ((ITypeContainer)type).getType();
-            } catch (DOMException e) {
-                return e.getProblem();
-            }
+    		type = ((ITypeContainer)type).getType();
 	    }
 		
 		if (type != null && type instanceof ICompositeType) {
@@ -925,14 +921,10 @@ public class CVisitor extends ASTQueries {
                         }
 					} else if (struct instanceof ITypeContainer) {
 						IType type;
-                        try {
-                            type = ((ITypeContainer)struct).getType();
-                            while (type instanceof ITypeContainer && !(type instanceof CStructure)) {
-    							type = ((ITypeContainer)type).getType();
-    						}
-                        } catch (DOMException e) {
-                            return e.getProblem();
-                        }
+                        type = ((ITypeContainer)struct).getType();
+						while (type instanceof ITypeContainer && !(type instanceof CStructure)) {
+							type = ((ITypeContainer)type).getType();
+						}
                         
 						
 						if (type instanceof CStructure)

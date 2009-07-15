@@ -17,9 +17,8 @@ package org.eclipse.cdt.core.dom.ast;
 public interface IArrayType extends IType {
     /**
      * get the type that this is an array of
-     * @throws DOMException
      */
-    IType getType() throws DOMException;
+    IType getType();
     
     /**
      * get the expression that represents the size of this array

@@ -2497,11 +2497,7 @@ public class CPPSemantics {
                 IType[] result = null;
                 for (int i = 0; i < types.length && types[i] != null; i++) {
                     IType[] pts = null;
-                    try {
-                        pts = types[i].getParameterTypes();
-                    } catch (DOMException e) {
-                        continue;
-                    }
+                    pts = types[i].getParameterTypes();
                     if (pts.length > idx)
                         result = (IType[]) ArrayUtil.append(IType.class, result, pts[idx]);
                 }
@@ -2732,11 +2728,7 @@ public class CPPSemantics {
 		IType type = exp.getExpressionType();
 		if (type instanceof IProblem)
 			return null;
-		try {
-			type = ((IPointerType)type).getType();
-		} catch (DOMException e) {
-			return null;
-		}
+		type = ((IPointerType)type).getType();
 		
 		IASTTypeId typeId = exp.getTypeId().copy();
     	IASTExpression sizeExpression = new CPPASTTypeIdExpression(IASTTypeIdExpression.op_sizeof, typeId);
@@ -2767,13 +2759,9 @@ public class CPPSemantics {
     	IType type1 = exp.getOperand().getExpressionType();
     	IType ultimateType1 = SemanticUtil.getUltimateTypeUptoPointers(type1);
     	if (ultimateType1 instanceof IPointerType) {
-    		try {
-				IType classType = ((IPointerType)ultimateType1).getType();
-				if (classType instanceof ICPPClassType)
-					return (ICPPClassType) classType;
-			} catch (DOMException e) {
-				return null;
-			}
+    		IType classType = ((IPointerType)ultimateType1).getType();
+			if (classType instanceof ICPPClassType)
+				return (ICPPClassType) classType;
     	}
 		return null;
     }

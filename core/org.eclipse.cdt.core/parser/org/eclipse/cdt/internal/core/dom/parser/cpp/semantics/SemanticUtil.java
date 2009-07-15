@@ -189,53 +189,49 @@ public class SemanticUtil {
 		boolean ptr= (options & PTR) != 0;
 		boolean mptr= (options & MPTR) != 0;
 		assert !(ptrcvq && (ptr || mptr));
-		try {
-			while (true) {
-				IType t= null;
-				if (type instanceof IPointerType) {
-					final boolean isMbrPtr = type instanceof ICPPPointerToMemberType;
-					if ((ptr && !isMbrPtr) || (mptr && isMbrPtr)) {
-						t= ((IPointerType) type).getType();
-					} else if (ptrcvq) {
-						if (type instanceof CPPPointerType) {
-							return ((CPPPointerType) type).stripQualifiers();
-						}
-						IPointerType p= (IPointerType) type;
-						if (p.isConst() || p.isVolatile()) {
-							if (p instanceof ICPPPointerToMemberType) {
-								final IType memberOfClass = ((ICPPPointerToMemberType) p).getMemberOfClass();
-								if (memberOfClass instanceof ICPPClassType)
-									return new CPPPointerToMemberType(p.getType(), memberOfClass, false, false);
-							} else {
-								return new CPPPointerType(p.getType(), false, false);
-							}
+		while (true) {
+			IType t= null;
+			if (type instanceof IPointerType) {
+				final boolean isMbrPtr = type instanceof ICPPPointerToMemberType;
+				if ((ptr && !isMbrPtr) || (mptr && isMbrPtr)) {
+					t= ((IPointerType) type).getType();
+				} else if (ptrcvq) {
+					if (type instanceof CPPPointerType) {
+						return ((CPPPointerType) type).stripQualifiers();
+					}
+					IPointerType p= (IPointerType) type;
+					if (p.isConst() || p.isVolatile()) {
+						if (p instanceof ICPPPointerToMemberType) {
+							final IType memberOfClass = ((ICPPPointerToMemberType) p).getMemberOfClass();
+							if (memberOfClass instanceof ICPPClassType)
+								return new CPPPointerToMemberType(p.getType(), memberOfClass, false, false);
+						} else {
+							return new CPPPointerType(p.getType(), false, false);
 						}
 					}
-				} else if (tdef && type instanceof ITypedef) {
-					t= ((ITypedef) type).getType();
-				} else if (type instanceof IQualifierType) {
-					final IQualifierType qt = (IQualifierType) type;
-					if (((options & CVQ) != 0)) {
-						t= qt.getType();
-					} else if (tdef) {
-						IType temp= qt.getType();
-						if (temp instanceof ITypedef) {
-							temp= getNestedType(temp, TDEF);
-							return addQualifiers(temp, qt.isConst(), qt.isVolatile());
-						}
-					}
-				} else if ((options & ARRAY) != 0 && type instanceof IArrayType) {
-					t= ((IArrayType) type).getType();
-				} else if ((options & REF) != 0 && type instanceof ICPPReferenceType) {
-					t= ((ICPPReferenceType) type).getType();
 				}
-				if (t == null)
-					return type;
-				
-				type= t;
+			} else if (tdef && type instanceof ITypedef) {
+				t= ((ITypedef) type).getType();
+			} else if (type instanceof IQualifierType) {
+				final IQualifierType qt = (IQualifierType) type;
+				if (((options & CVQ) != 0)) {
+					t= qt.getType();
+				} else if (tdef) {
+					IType temp= qt.getType();
+					if (temp instanceof ITypedef) {
+						temp= getNestedType(temp, TDEF);
+						return addQualifiers(temp, qt.isConst(), qt.isVolatile());
+					}
+				}
+			} else if ((options & ARRAY) != 0 && type instanceof IArrayType) {
+				t= ((IArrayType) type).getType();
+			} else if ((options & REF) != 0 && type instanceof ICPPReferenceType) {
+				t= ((ICPPReferenceType) type).getType();
 			}
-		} catch (DOMException e) {
-			return e.getProblem();
+			if (t == null)
+				return type;
+			
+			type= t;
 		}
 	}
 
@@ -353,13 +349,9 @@ public class SemanticUtil {
 	public static IType adjustParameterType(final IType pt, boolean forFunctionType) {
 		// bug 239975
 		IType t= SemanticUtil.getNestedType(pt, TDEF);
-		try {
-			if (t instanceof IArrayType) {
-				IArrayType at = (IArrayType) t;
-				return new CPPPointerType(at.getType());
-			}
-		} catch (DOMException e) {
-			return e.getProblem();
+		if (t instanceof IArrayType) {
+			IArrayType at = (IArrayType) t;
+			return new CPPPointerType(at.getType());
 		}
 		if (t instanceof IFunctionType) {
 			return new CPPPointerType(pt);
@@ -375,28 +367,25 @@ public class SemanticUtil {
 	
 	public static IType addQualifiers(IType baseType, boolean cnst, boolean vol) {
 		if (cnst || vol) {
-			try {
-				if (baseType instanceof IQualifierType) {
-					IQualifierType qt= (IQualifierType) baseType;
-					if ((cnst && !qt.isConst()) || (vol && !qt.isVolatile())) {
-						return new CPPQualifierType(qt.getType(), cnst || qt.isConst(), vol || qt.isVolatile());
-					}
-					return baseType;
-				} else if (baseType instanceof ICPPPointerToMemberType) {
-					ICPPPointerToMemberType pt= (ICPPPointerToMemberType) baseType;
-					if ((cnst && !pt.isConst()) || (vol && !pt.isVolatile())) {
-						return new CPPPointerToMemberType(pt.getType(), pt.getMemberOfClass(), cnst
-								|| pt.isConst(), vol || pt.isVolatile());
-					}
-					return baseType;
-				} else if (baseType instanceof IPointerType) {
-					IPointerType pt= (IPointerType) baseType;
-					if ((cnst && !pt.isConst()) || (vol && !pt.isVolatile())) {
-						return new CPPPointerType(pt.getType(), cnst || pt.isConst(), vol || pt.isVolatile());
-					}
-					return baseType;
+			if (baseType instanceof IQualifierType) {
+				IQualifierType qt= (IQualifierType) baseType;
+				if ((cnst && !qt.isConst()) || (vol && !qt.isVolatile())) {
+					return new CPPQualifierType(qt.getType(), cnst || qt.isConst(), vol || qt.isVolatile());
 				}
-			} catch (DOMException e) {
+				return baseType;
+			} else if (baseType instanceof ICPPPointerToMemberType) {
+				ICPPPointerToMemberType pt= (ICPPPointerToMemberType) baseType;
+				if ((cnst && !pt.isConst()) || (vol && !pt.isVolatile())) {
+					return new CPPPointerToMemberType(pt.getType(), pt.getMemberOfClass(), cnst
+							|| pt.isConst(), vol || pt.isVolatile());
+				}
+				return baseType;
+			} else if (baseType instanceof IPointerType) {
+				IPointerType pt= (IPointerType) baseType;
+				if ((cnst && !pt.isConst()) || (vol && !pt.isVolatile())) {
+					return new CPPPointerType(pt.getType(), cnst || pt.isConst(), vol || pt.isVolatile());
+				}
+				return baseType;
 			} 
 			
 			return new CPPQualifierType(baseType, cnst, vol);

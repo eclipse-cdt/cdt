@@ -13,7 +13,6 @@
 package org.eclipse.cdt.internal.core.dom.parser.c;
 
 import org.eclipse.cdt.core.dom.ast.ASTVisitor;
-import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IASTArraySubscriptExpression;
 import org.eclipse.cdt.core.dom.ast.IASTExpression;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
@@ -114,14 +113,10 @@ public class CASTArraySubscriptExpression extends ASTNode implements
     
     public IType getExpressionType() {
 		IType t = getArrayExpression().getExpressionType();
-		try {
-			if (t instanceof IPointerType)
-				return ((IPointerType)t).getType();
-			else if (t instanceof IArrayType)
-				return ((IArrayType)t).getType();
-		} catch (DOMException e) {
-			return e.getProblem();
-		}
+		if (t instanceof IPointerType)
+			return ((IPointerType)t).getType();
+		else if (t instanceof IArrayType)
+			return ((IArrayType)t).getType();
 		return t;
     }
 }

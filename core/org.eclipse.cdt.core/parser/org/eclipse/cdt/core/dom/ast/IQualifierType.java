@@ -30,7 +30,6 @@ public interface IQualifierType extends IType {
     
     /** 
      * get the type that this is qualifying
-     * @throws DOMException
      */
-    public IType getType() throws DOMException;
+    public IType getType();
 }

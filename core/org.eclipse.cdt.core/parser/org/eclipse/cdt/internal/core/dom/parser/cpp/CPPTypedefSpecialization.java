@@ -33,7 +33,7 @@ public class CPPTypedefSpecialization extends CPPSpecialization implements IType
 	final static class RecursionResolvingBinding extends ProblemBinding {
 		public RecursionResolvingBinding(IASTNode node, char[] arg) {
 			super(node, IProblemBinding.SEMANTIC_RECURSION_IN_LOOKUP, arg);
-			Assert.isTrue(CPPASTName.sAllowRecursionBindings, getMessage());
+			Assert.isTrue(CPPASTNameBase.sAllowRecursionBindings, getMessage());
 		}
 	}
 	
@@ -54,7 +54,7 @@ public class CPPTypedefSpecialization extends CPPSpecialization implements IType
     /* (non-Javadoc)
      * @see org.eclipse.cdt.core.dom.ast.ITypedef#getType()
      */
-    public IType getType() throws DOMException {
+    public IType getType() {
         if (type == null) {
         	try {
 	        	if (++fResolutionDepth > MAX_RESOLUTION_DEPTH) {
@@ -66,7 +66,11 @@ public class CPPTypedefSpecialization extends CPPSpecialization implements IType
 		            if (type instanceof ITypedef && type instanceof ICPPSpecialization) {
 		            	ITypedef td= (ITypedef) type;
 		            	if (CharArrayUtils.equals(td.getNameCharArray(), getNameCharArray())) {
-			            	IBinding owner= ((ICPPSpecialization) type).getOwner();
+			            	IBinding owner= getOwner();
+							try {
+								owner = ((ICPPSpecialization) type).getOwner();
+							} catch (DOMException e) {
+							}
 			            	if (owner instanceof IType) {
 			            		if (((IType) owner).isSameType((ICPPClassType) getOwner())) {
 					        		type = new RecursionResolvingBinding(getDefinition(), getNameCharArray());
@@ -108,23 +112,15 @@ public class CPPTypedefSpecialization extends CPPSpecialization implements IType
         if (o == this)
             return true;
 	    if (o instanceof ITypedef) {
-            try {
-                IType t = getType();
-                if (t != null)
-                    return t.isSameType(((ITypedef) o).getType());
-                return false;
-            } catch (DOMException e) {
-                return false;
-            }
+            IType t = getType();
+			if (t != null)
+			    return t.isSameType(((ITypedef) o).getType());
+			return false;
 	    }
 	        
-        try {
-		    IType t = getType();
-		    if (t != null)
-		        return t.isSameType(o);
-        } catch (DOMException e) {
-            return false;
-        }
+        IType t = getType();
+		if (t != null)
+		    return t.isSameType(o);
 	    return false;
     }
 

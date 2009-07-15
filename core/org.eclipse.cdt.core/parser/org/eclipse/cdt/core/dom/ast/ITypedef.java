@@ -19,6 +19,6 @@ public interface ITypedef extends IBinding, IType {
 	/**
 	 * Returns the type that this thing is a typedef of
 	 */
-	public IType getType() throws DOMException;
+	public IType getType();
 	
 }

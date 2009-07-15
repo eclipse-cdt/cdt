@@ -11,7 +11,6 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.dom.parser.cpp;
 
-import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IScope;
 import org.eclipse.cdt.core.dom.ast.IType;
@@ -57,23 +56,21 @@ public class CPPImplicitTypedef extends CPPTypedef {
     
     @Override
 	public boolean isSameType(IType t) {
-        if( t == this )
-            return true;
-        if( t instanceof ITypedef ) {
-            IType temp = getType();
-            if( temp != null )
-                try {
-                    return temp.isSameType( ((ITypedef)t).getType());
-                } catch (DOMException e) {}
-            return false;
-        }
-            
-        IType temp;
-        temp = getType();
-        if( temp != null )
-            return temp.isSameType( t );
-        return false;
-    }
+		if (t == this)
+			return true;
+		if (t instanceof ITypedef) {
+			IType temp = getType();
+			if (temp != null)
+				return temp.isSameType(((ITypedef) t).getType());
+			return false;
+		}
+
+		IType temp;
+		temp = getType();
+		if (temp != null)
+			return temp.isSameType(t);
+		return false;
+	}
     
     @Override
 	public Object clone(){

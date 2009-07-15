@@ -1,24 +1,20 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2008 IBM Corporation and others.
+ * Copyright (c) 2005, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- * IBM Rational Software - Initial API and implementation 
+ *    Devin Steffler (IBM Rational Software) - Initial API and implementation 
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.dom.parser.c;
 
-import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.ITypedef;
 import org.eclipse.cdt.core.dom.ast.c.ICPointerType;
 import org.eclipse.cdt.internal.core.dom.parser.ITypeContainer;
 
-/**
- * @author dsteffle
- */
 public class CPointerType implements ICPointerType, ITypeContainer {
 	static public final int IS_CONST       = 1;
 	static public final int IS_RESTRICT    = 1 << 1;
@@ -42,15 +38,11 @@ public class CPointerType implements ICPointerType, ITypeContainer {
 	    
 	    if( obj instanceof ICPointerType ){
 	        ICPointerType pt = (ICPointerType) obj;
-            try {
-		        if( isConst() != pt.isConst() ) return false;
-		        if( isRestrict() != pt.isRestrict() ) return false;
-		        if( isVolatile() != pt.isVolatile() ) return false;
-            
-                return pt.getType().isSameType( nextType );
-            } catch ( DOMException e ) {
-                return false;
-            }
+            if( isConst() != pt.isConst() ) return false;
+			if( isRestrict() != pt.isRestrict() ) return false;
+			if( isVolatile() != pt.isVolatile() ) return false;
+         
+			return pt.getType().isSameType( nextType );
         }
     	return false;
 	}

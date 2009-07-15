@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2008 Symbian Software Systems and others.
+ * Copyright (c) 2007, 2009 Symbian Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -1456,18 +1456,14 @@ public abstract class IndexCPPBindingResolutionTest extends IndexBindingResoluti
  	 * @param qn may be null
  	 */
 	static protected void assertPTM(IType type, String cqn, String qn) {
-		try {
-			assertTrue(type instanceof ICPPPointerToMemberType);
-			ICPPPointerToMemberType ptmt = (ICPPPointerToMemberType) type;
-			ICPPClassType classType = (ICPPClassType) ptmt.getMemberOfClass();
-			assertQNEquals(cqn, classType);
-			if(qn!=null) {
-				assert(ptmt.getType() instanceof ICPPBinding);
-				ICPPBinding tyBinding = (ICPPBinding) ptmt.getType();
-				assertQNEquals(qn, tyBinding);
-			}
-		} catch(DOMException de) {
-			fail(de.getMessage());
+		assertTrue(type instanceof ICPPPointerToMemberType);
+		ICPPPointerToMemberType ptmt = (ICPPPointerToMemberType) type;
+		ICPPClassType classType = (ICPPClassType) ptmt.getMemberOfClass();
+		assertQNEquals(cqn, classType);
+		if(qn!=null) {
+			assert(ptmt.getType() instanceof ICPPBinding);
+			ICPPBinding tyBinding = (ICPPBinding) ptmt.getType();
+			assertQNEquals(qn, tyBinding);
 		}
 	}
 }

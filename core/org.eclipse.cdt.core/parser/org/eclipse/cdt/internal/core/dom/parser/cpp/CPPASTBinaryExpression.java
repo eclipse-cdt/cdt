@@ -224,11 +224,7 @@ public class CPPASTBinaryExpression extends ASTNode implements ICPPASTBinaryExpr
         case ICPPASTBinaryExpression.op_pmarrow:
         case ICPPASTBinaryExpression.op_pmdot:
         	if (type2 instanceof ICPPPointerToMemberType) {
-        		try {
-        			return ((ICPPPointerToMemberType) type2).getType();
-        		} catch (DOMException e) {
-        			return e.getProblem();
-        		}
+        		return ((ICPPPointerToMemberType) type2).getType();
         	} 
         	return new ProblemBinding(this, IProblemBinding.SEMANTIC_INVALID_TYPE, getRawSignature().toCharArray()); 
         }

@@ -51,20 +51,12 @@ public class CPPFunctionType implements ICPPFunctionType {
         if (o instanceof ICPPFunctionType) {
             ICPPFunctionType ft = (ICPPFunctionType) o;
             IType[] fps;
-            try {
-                fps = ft.getParameterTypes();
-            } catch (DOMException e) {
-                return false;
-            }
-			try {
-                //constructors & destructors have null return type
-                if ((returnType == null) ^ (ft.getReturnType() == null))
-                    return false;
-                else if (returnType != null && ! returnType.isSameType(ft.getReturnType()))
-                    return false;
-            } catch (DOMException e1) {
-                return false;
-            }
+            fps = ft.getParameterTypes();
+			//constructors & destructors have null return type
+			if ((returnType == null) ^ (ft.getReturnType() == null))
+			    return false;
+			else if (returnType != null && ! returnType.isSameType(ft.getReturnType()))
+			    return false;
 			
 			try {
 				if (parameters.length == 1 && fps.length == 0) {

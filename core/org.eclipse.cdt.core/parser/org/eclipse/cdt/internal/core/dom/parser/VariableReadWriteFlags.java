@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007 Wind River Systems, Inc. and others.
+ * Copyright (c) 2007, 2009 Wind River Systems, Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -162,19 +162,15 @@ public abstract class VariableReadWriteFlags {
 	}
 
 	protected int rwArgumentForFunctionCall(final IASTFunctionCallExpression func, int parameterIdx, int indirection) {
-		try {
-			final IASTExpression functionNameExpression = func.getFunctionNameExpression();
-			if (functionNameExpression != null) {
-				final IType type= functionNameExpression.getExpressionType();
-				if (type instanceof IFunctionType) {
-					IType[] ptypes= ((IFunctionType) type).getParameterTypes();
-					if (ptypes != null && ptypes.length > parameterIdx) {
-						return rwAssignmentToType(ptypes[parameterIdx], indirection);
-					}
+		final IASTExpression functionNameExpression = func.getFunctionNameExpression();
+		if (functionNameExpression != null) {
+			final IType type= functionNameExpression.getExpressionType();
+			if (type instanceof IFunctionType) {
+				IType[] ptypes= ((IFunctionType) type).getParameterTypes();
+				if (ptypes != null && ptypes.length > parameterIdx) {
+					return rwAssignmentToType(ptypes[parameterIdx], indirection);
 				}
 			}
-		}
-		catch (DOMException e) {
 		}
 		return READ | WRITE; // fallback
 	}

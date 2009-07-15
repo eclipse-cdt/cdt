@@ -12,7 +12,6 @@
 package org.eclipse.cdt.internal.core.pdom.dom.cpp;
 
 import org.eclipse.cdt.core.dom.ast.ASTTypeUtil;
-import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IBasicType;
 import org.eclipse.cdt.core.dom.ast.IPointerType;
 import org.eclipse.cdt.core.dom.ast.IType;
@@ -37,10 +36,10 @@ public class PDOMCPPFunctionType extends PDOMCFunctionType implements ICPPFuncti
 		public boolean isVolatile() {
 			return false;
 		}
-		public IType[] getParameterTypes() throws DOMException {
+		public IType[] getParameterTypes() {
 			return IType.EMPTY_TYPE_ARRAY;
 		}
-		public IType getReturnType() throws DOMException {
+		public IType getReturnType() {
 			return FALLBACK_RETURN_TYPE;
 		}
 		public boolean isSameType(IType type) {

@@ -1,24 +1,21 @@
 /*******************************************************************************
- * Copyright (c) 2007 QNX Software Systems and others.
+ * Copyright (c) 2007, 2009 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- * QNX - Initial API and implementation
+ *    Bryan Wilkinson (QNX) - Initial API and implementation
+ *    Markus Schorn (Wind River Systems)
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.index;
 
-import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IQualifierType;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.ITypedef;
 import org.eclipse.cdt.internal.core.dom.parser.ITypeContainer;
 
-/**
- * @author Bryan Wilkinson
- */
 public class QualifierTypeClone implements IQualifierType, ITypeContainer, IIndexType {
 	private final IQualifierType delegate;
 	private IType type;
@@ -27,7 +24,7 @@ public class QualifierTypeClone implements IQualifierType, ITypeContainer, IInde
 		this.delegate = qualifier;
 	}
 
-	public IType getType() throws DOMException {
+	public IType getType() {
 		if (type == null) {
 			return delegate.getType();
 		}
@@ -49,12 +46,9 @@ public class QualifierTypeClone implements IQualifierType, ITypeContainer, IInde
 			return false;
 
 		IQualifierType pt = (IQualifierType) type;
-		try {
-			if (isConst() == pt.isConst() && isVolatile() == pt.isVolatile()) {
-				IType myType= getType();
-				return myType != null && myType.isSameType(pt.getType());
-			}
-		} catch (DOMException e) {
+		if (isConst() == pt.isConst() && isVolatile() == pt.isVolatile()) {
+			IType myType= getType();
+			return myType != null && myType.isSameType(pt.getType());
 		}
 		return false;
 	}

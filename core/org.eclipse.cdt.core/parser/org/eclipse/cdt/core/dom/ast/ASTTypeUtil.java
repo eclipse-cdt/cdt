@@ -58,7 +58,6 @@ public class ASTTypeUtil {
 	private static final String COMMA_SPACE = ", "; //$NON-NLS-1$
 	private static final String EMPTY_STRING = ""; //$NON-NLS-1$
 	private static final String SPACE = " "; //$NON-NLS-1$
-	private static final String[] EMPTY_STRING_ARRAY = new String[0];
 	private static final int DEAULT_ITYPE_SIZE = 2;
 
 	/**
@@ -183,13 +182,7 @@ public class ASTTypeUtil {
 	 * @see #getType(IType, boolean)
 	 */
 	public static String[] getParameterTypeStringArray(IFunctionType type) {
-		IType[] parms = null;
-		try {
-			parms = type.getParameterTypes();
-		} catch (DOMException e) {
-			return EMPTY_STRING_ARRAY;
-		}
-		
+		IType[] parms = type.getParameterTypes();
 		String[] result = new String[parms.length];
 		
 		for (int i = 0; i < parms.length; i++) {
@@ -503,17 +496,9 @@ public class ASTTypeUtil {
 				}
 			}
 			if (type instanceof ITypeContainer) {
-				try {
-					type = ((ITypeContainer) type).getType();
-				} catch (DOMException e) {
-					type= null;
-				}
+				type = ((ITypeContainer) type).getType();
 			} else if (type instanceof IFunctionType) {
-				try {
-					type= ((IFunctionType) type).getReturnType();
-				} catch (DOMException e) {
-					type= null;
-				}
+				type= ((IFunctionType) type).getReturnType();
 			} else {
 				type= null;
 			}
@@ -663,54 +648,24 @@ public class ASTTypeUtil {
 	}
 	
 	/**
-	 * This can be used to invoke the IType's isConst() if it has an isConst() method.
-     * This returns the result of that invoked isConst() method.
-     * It is a convenience function so that the structure of IType does not need
-	 * to be known to determine if the IType is const or not.
-     *
-     * Note:  false is returned if no isConst() method is found
-     * 
-	 * @param type
+	 * @deprecated don't use it does something strange
 	 */
+	@Deprecated
 	public static boolean isConst(IType type) {
 		if (type instanceof IQualifierType) {
 			return ((IQualifierType) type).isConst();
 		} else if (type instanceof ITypeContainer) {
-			try {
-				return isConst(((ITypeContainer) type).getType());
-			} catch (DOMException e) {
-				return false;
-			}
+			return isConst(((ITypeContainer) type).getType());
 		} else if (type instanceof IArrayType) {
-			try {
-				return isConst(((IArrayType) type).getType());
-			} catch (DOMException e) {
-				return false;
-			}
+			return isConst(((IArrayType) type).getType());
 		} else if (type instanceof ICPPReferenceType) {
-			try {
-				return isConst(((ICPPReferenceType) type).getType());
-			} catch (DOMException e) {
-				return false;
-			}
+			return isConst(((ICPPReferenceType) type).getType());
 		} else if (type instanceof IFunctionType) {
-			try {
-				return isConst(((IFunctionType) type).getReturnType());
-			} catch (DOMException e) {
-				return false;
-			}
+			return isConst(((IFunctionType) type).getReturnType());
 		} else if (type instanceof IPointerType) {
-			try {
-				return isConst(((IPointerType) type).getType());
-			} catch (DOMException e) {
-				return false;
-			}
+			return isConst(((IPointerType) type).getType());
 		} else if (type instanceof ITypedef) {
-			try {
-				return isConst(((ITypedef) type).getType());
-			} catch (DOMException e) {
-				return false;
-			}
+			return isConst(((ITypedef) type).getType());
 		} else {
 			return false;
 		}

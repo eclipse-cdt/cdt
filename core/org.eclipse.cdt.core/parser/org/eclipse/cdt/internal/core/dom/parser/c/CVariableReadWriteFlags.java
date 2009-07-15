@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007 Wind River Systems, Inc. and others.
+ * Copyright (c) 2007, 2009 Wind River Systems, Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,7 +10,6 @@
  *******************************************************************************/ 
 package org.eclipse.cdt.internal.core.dom.parser.c;
 
-import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IASTExpression;
 import org.eclipse.cdt.core.dom.ast.IASTExpressionList;
 import org.eclipse.cdt.core.dom.ast.IASTFunctionCallExpression;
@@ -82,21 +81,17 @@ public final class CVariableReadWriteFlags extends VariableReadWriteFlags {
 		if (indirection == 0) {
 			return READ;
 		}
-		try {
-			while(indirection > 0 && (type instanceof IPointerType)) {
-				type= ((IPointerType) type).getType();
-				indirection--;
-			}
-			if (indirection == 0) {
-				if (type instanceof IQualifierType) {
-					return ((IQualifierType) type).isConst() ? READ : READ | WRITE;
-				}
-				else if (type instanceof IPointerType) {
-					return ((IPointerType) type).isConst() ? READ : READ | WRITE;
-				}
-			}
+		while(indirection > 0 && (type instanceof IPointerType)) {
+			type= ((IPointerType) type).getType();
+			indirection--;
 		}
-		catch (DOMException e) {
+		if (indirection == 0) {
+			if (type instanceof IQualifierType) {
+				return ((IQualifierType) type).isConst() ? READ : READ | WRITE;
+			}
+			else if (type instanceof IPointerType) {
+				return ((IPointerType) type).isConst() ? READ : READ | WRITE;
+			}
 		}
 		return READ | WRITE;	// fallback
 	}

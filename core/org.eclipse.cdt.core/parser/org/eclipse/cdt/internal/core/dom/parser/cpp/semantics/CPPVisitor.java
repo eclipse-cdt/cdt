@@ -624,16 +624,12 @@ public class CPPVisitor extends ASTQueries {
 		} else if (simpleDecl != null &&
 				simpleDecl.getDeclSpecifier().getStorageClass() == IASTDeclSpecifier.sc_typedef) {
 		    if (binding instanceof ICPPInternalBinding && binding instanceof ITypedef && name.isActive()) {
-		        try {
-                    IType t1 = ((ITypedef) binding).getType();
-                    IType t2 = createType(declarator);
-                    if (t1 != null && t2 != null && t1.isSameType(t2)) {
-                        ASTInternal.addDeclaration(binding, name);
-                        return binding;
-                    }
-                } catch (DOMException e) {
-                	return e.getProblem();
-                }
+		        IType t1 = ((ITypedef) binding).getType();
+				IType t2 = createType(declarator);
+				if (t1 != null && t2 != null && t1.isSameType(t2)) {
+				    ASTInternal.addDeclaration(binding, name);
+				    return binding;
+				}
                 return new ProblemBinding(name, IProblemBinding.SEMANTIC_INVALID_REDECLARATION);
 		    }
 		    // if we don't resolve the target type first, we get a problem binding in case the typedef

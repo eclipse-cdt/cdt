@@ -51,7 +51,7 @@ public abstract class CPPSpecialization extends PlatformObject implements ICPPSp
 		this.argumentMap = argumentMap;
 	}
 
-	public IType specializeType(IType type) throws DOMException {
+	public IType specializeType(IType type) {
 		if (owner instanceof ICPPClassSpecialization) {
 			return CPPTemplates.instantiateType(type, getTemplateParameterMap(), (ICPPClassSpecialization) owner);
 		} else {

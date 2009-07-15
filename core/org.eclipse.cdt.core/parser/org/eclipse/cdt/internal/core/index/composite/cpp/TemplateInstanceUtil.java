@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2008 Symbian Software Systems and others.
+ * Copyright (c) 2007, 2009 Symbian Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -41,9 +41,9 @@ public class TemplateInstanceUtil {
 		CPPTemplateParameterMap result= new CPPTemplateParameterMap(keys.length);
 		
 		try {
-			for(int i = 0; i < keys.length; i++) {
-				ICPPTemplateArgument arg= preresult.getArgument(keys[i]);
-				result.put(keys[i], convert(cf, arg));
+			for (Integer key : keys) {
+				ICPPTemplateArgument arg= preresult.getArgument(key);
+				result.put(key, convert(cf, arg));
 			}
 		} catch(DOMException de) {
 			CCorePlugin.log(de);
@@ -148,12 +148,8 @@ public class TemplateInstanceUtil {
 	
 	@Deprecated
 	private static IType[] getArguments(ICompositesFactory cf, IType[] result) {
-		try {
-			for(int i=0; i<result.length; i++) {
-				result[i] = cf.getCompositeType((IIndexType)result[i]);
-			}
-		} catch(DOMException de) {
-			CCorePlugin.log(de);
+		for(int i=0; i<result.length; i++) {
+			result[i] = cf.getCompositeType((IIndexType)result[i]);
 		}
 		return result;
 	}

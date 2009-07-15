@@ -13,11 +13,9 @@ package org.eclipse.cdt.internal.core.pdom.dom.cpp;
 
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.dom.ast.ASTTypeUtil;
-import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.ITypedef;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPReferenceType;
-import org.eclipse.cdt.internal.core.Util;
 import org.eclipse.cdt.internal.core.dom.parser.ITypeContainer;
 import org.eclipse.cdt.internal.core.index.CPPReferenceTypeClone;
 import org.eclipse.cdt.internal.core.index.IIndexCPPBindingConstants;
@@ -46,19 +44,15 @@ class PDOMCPPReferenceType extends PDOMNode implements ICPPReferenceType, ITypeC
 		
 		Database db = getDB();
 		
-		try {
-			// type
-			long typeRec = 0;
-			if (type != null) {
-				IType targetType = type.getType();
-				PDOMNode targetTypeNode = getLinkage().addType(this, targetType);
-				if (targetTypeNode != null)
-					typeRec = targetTypeNode.getRecord();
-			}
-			db.putRecPtr(record + TYPE, typeRec);
-		} catch (DOMException e) {
-			throw new CoreException(Util.createStatus(e));
+		// type
+		long typeRec = 0;
+		if (type != null) {
+			IType targetType = type.getType();
+			PDOMNode targetTypeNode = getLinkage().addType(this, targetType);
+			if (targetTypeNode != null)
+				typeRec = targetTypeNode.getRecord();
 		}
+		db.putRecPtr(record + TYPE, typeRec);
 	}
 
 	@Override
@@ -96,12 +90,9 @@ class PDOMCPPReferenceType extends PDOMNode implements ICPPReferenceType, ITypeC
 		    return false;
 		
 		ICPPReferenceType rhs = (ICPPReferenceType) type;
-		try {
-			IType type1= getType();
-			if (type1 != null) {
-				return type1.isSameType(rhs.getType());
-			}
-		} catch (DOMException e) {
+		IType type1= getType();
+		if (type1 != null) {
+			return type1.isSameType(rhs.getType());
 		}
 		return false;
 	}

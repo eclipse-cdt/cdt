@@ -35,14 +35,10 @@ public class PDOMArrayType extends PDOMNode implements IIndexType, IArrayType, I
 
 	public PDOMArrayType(PDOMLinkage linkage, PDOMNode parent, IArrayType type) throws CoreException {
 		super(linkage, parent);
-		try {
-			PDOMNode targetTypeNode = getLinkage().addType(this, type.getType());
-			if (targetTypeNode != null) {
-				long typeRec = targetTypeNode.getRecord();
-				getDB().putRecPtr(record + TYPE, typeRec);
-			}
-		} catch (DOMException e) {
-			CCorePlugin.log(e);
+		PDOMNode targetTypeNode = getLinkage().addType(this, type.getType());
+		if (targetTypeNode != null) {
+			long typeRec = targetTypeNode.getRecord();
+			getDB().putRecPtr(record + TYPE, typeRec);
 		}
 	}
 
@@ -77,16 +73,12 @@ public class PDOMArrayType extends PDOMNode implements IIndexType, IArrayType, I
 		if( !( type instanceof IArrayType )) 
 		    return false;
 		
-		try {
-			IType type1= this.getType();
-			if( type1 == null )
-			    return false;
-			
-			IArrayType rhs = (IArrayType) type;
-			return type1.isSameType( rhs.getType() );
-		} catch (DOMException e) {
-		}
-		return false;
+		IType type1= this.getType();
+		if( type1 == null )
+		    return false;
+		
+		IArrayType rhs = (IArrayType) type;
+		return type1.isSameType( rhs.getType() );
 	}
 
 	public void setType(IType type) {

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2008 IBM Corporation and others.
+ * Copyright (c) 2005, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -86,15 +86,12 @@ public class CTypedef extends PlatformObject implements ITypedef, ITypeContainer
     public boolean isSameType( IType t ) {
         if( t == this )
             return true;
-	    if( t instanceof ITypedef )
-            try {
-                IType temp = getType();
-                if( temp != null )
-                    return temp.isSameType( ((ITypedef)t).getType());
-                return false;
-            } catch ( DOMException e ) {
-                return false;
-            }
+	    if( t instanceof ITypedef ) {
+			IType temp = getType();
+			if( temp != null )
+			    return temp.isSameType( ((ITypedef)t).getType());
+			return false;
+		}
 	        
 	    IType temp = getType();
 	    if( temp != null )

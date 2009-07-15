@@ -18,14 +18,12 @@ public interface IFunctionType extends IType {
 	
     /**
      * get the return type of this function type
-     * @throws DOMException
      */
-    public IType getReturnType() throws DOMException;
+    public IType getReturnType();
     
     /**
      * get the adjusted parameter types
      * ISO C99 6.7.5.3, ISO C++98 8.3.4-3 
-     * @throws DOMException
      */
-    public IType[] getParameterTypes() throws DOMException;
+    public IType[] getParameterTypes();
 }

@@ -126,14 +126,17 @@ public class CElementHandleFactory {
 
 		if (parentBinding instanceof ICPPNamespace) {
 			char[] scopeName= parentBinding.getNameCharArray();
-			if (scopeName.length != 0) {
-				// named namespace
-				ICElement grandParent= createParent(tu, parentBinding);
-				if (grandParent != null) {
-					return new NamespaceHandle(grandParent, (ICPPNamespace) parentBinding);
-				}
-			}
-		} else if (parentBinding instanceof ICompositeType) {
+			// skip unnamed namespace
+			if (scopeName.length == 0) {
+				return createParent(tu, parentBinding);
+			} 
+			ICElement grandParent= createParent(tu, parentBinding);
+			if (grandParent == null) 
+				return null;
+			return new NamespaceHandle(grandParent, (ICPPNamespace) parentBinding);
+		} 
+		
+		if (parentBinding instanceof ICompositeType) {
 			ICElement grandParent= createParent(tu, parentBinding);
 			if (grandParent != null) {
 				return new StructureHandle(grandParent, (ICompositeType) parentBinding);

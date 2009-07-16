@@ -14,11 +14,11 @@
  *******************************************************************************/
 package org.eclipse.tm.internal.terminal.control;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
+import java.util.StringTokenizer;
 
 import org.eclipse.jface.fieldassist.IContentProposal;
 import org.eclipse.jface.fieldassist.IContentProposalProvider;
@@ -146,11 +146,11 @@ public class CommandInputFieldWithHistory implements ICommandInputField {
 		if(history==null)
 			return;
 		// add history entries separated by '\n'
-		fHistory.addAll(Arrays.asList(history.split("\n"))); //$NON-NLS-1$
+		// fHistory.addAll(Arrays.asList(history.split("\n"))); //$NON-NLS-1$
 		//<J2ME CDC-1.1 Foundation-1.1 variant>
-		//StringTokenizer tok=new StringTokenizer(history,"\n"); //$NON-NLS-1$
-		// while(tok.hasMoreElements())
-		// fHistory.add(tok.nextElement());
+		StringTokenizer tok=new StringTokenizer(history,"\n"); //$NON-NLS-1$
+		while(tok.hasMoreElements())
+			fHistory.add(tok.nextElement());
 		//</J2ME CDC-1.1 Foundation-1.1 variant>
 	}
 	/**

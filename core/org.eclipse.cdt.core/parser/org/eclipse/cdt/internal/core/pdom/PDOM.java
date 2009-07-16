@@ -285,7 +285,6 @@ public class PDOM extends PlatformObject implements IPDOM {
 	private HashMap<Object, Object> fResultCache= new HashMap<Object, Object>();
 	private List<IListener> listeners;
 	protected ChangeEvent fEvent= new ChangeEvent();
-	private Map<Thread, int[]> fLockDebugging;
 
 	public PDOM(File dbPath, IIndexLocationConverter locationConverter, Map<String, IPDOMLinkageFactory> linkageFactoryMappings) throws CoreException {
 		this(dbPath, locationConverter, ChunkCache.getSharedInstance(), linkageFactoryMappings);
@@ -296,7 +295,7 @@ public class PDOM extends PlatformObject implements IPDOM {
 		loadDatabase(dbPath, cache);
 		this.locationConverter = locationConverter;
 		if (sDEBUG_LOCKS) {
-			fLockDebugging= new HashMap<Thread, int[]>();
+			fLockDebugging= new HashMap<Thread, DebugLockInfo>();
 			System.out.println("Debugging PDOM Locks"); //$NON-NLS-1$
 		}
 	}
@@ -1278,65 +1277,97 @@ public class PDOM extends PlatformObject implements IPDOM {
 		return new PDOMFileSet();
 	}
 	
-
 	// For debugging lock issues
-	private static int[] getLockCounter(Map<Thread, int[]> lockDebugging) {
+	static class DebugLockInfo {
+		int fReadLocks;
+		int fWriteLocks;
+		List<StackTraceElement[]> fTraces= new ArrayList<StackTraceElement[]>();
+		public int addTrace() {
+			fTraces.add(Thread.currentThread().getStackTrace());
+			return fTraces.size();
+		}
+		@SuppressWarnings("nls")
+		public void write(String threadName) {
+			System.out.println("Thread: '" + threadName + "': " + fReadLocks + " readlocks, " + fWriteLocks + " writelocks");
+			for (StackTraceElement[] trace : fTraces) {
+				System.out.println("  Stacktrace:");
+				for (StackTraceElement ste : trace) {
+					System.out.println("    " + ste); 
+				}
+			}
+		}
+		public void inc(DebugLockInfo val) {
+			fReadLocks+= val.fReadLocks;
+			fWriteLocks+= val.fWriteLocks;
+			fTraces.addAll(val.fTraces);
+		}
+	}
+	// For debugging lock issues
+	private Map<Thread, DebugLockInfo> fLockDebugging;
+	
+	// For debugging lock issues
+	private static DebugLockInfo getLockInfo(Map<Thread, DebugLockInfo> lockDebugging) {
 		assert sDEBUG_LOCKS;
 		
 		Thread key = Thread.currentThread();
-		int[] result= lockDebugging.get(key);
+		DebugLockInfo result= lockDebugging.get(key);
 		if (result == null) {
-			result= new int[]{0,0};
+			result= new DebugLockInfo();
 			lockDebugging.put(key, result);
 		}
 		return result;
 	}
 
 	// For debugging lock issues
-	static void incReadLock(Map<Thread, int[]> lockDebugging) {
-		int[] lockCounter = getLockCounter(lockDebugging);
-		lockCounter[0]++;
+	static void incReadLock(Map<Thread, DebugLockInfo> lockDebugging) {
+		DebugLockInfo info = getLockInfo(lockDebugging);
+		info.fReadLocks++;
+		if (info.addTrace() > 10) {
+			outputReadLocks(lockDebugging);
+		}
 	}
 	
 	// For debugging lock issues
 	@SuppressWarnings("nls")
-	static void decReadLock(Map<Thread, int[]> lockDebugging) throws AssertionError {
-		int[] counter= getLockCounter(lockDebugging);
-		if (counter[0] <= 0) {
+	static void decReadLock(Map<Thread, DebugLockInfo> lockDebugging) throws AssertionError {
+		DebugLockInfo info = getLockInfo(lockDebugging);
+		if (info.fReadLocks <= 0) {
 			outputReadLocks(lockDebugging);
 			throw new AssertionError("Superfluous releaseReadLock");
 		}
-		if (counter[1] != 0) {
+		if (info.fWriteLocks != 0) {
 			outputReadLocks(lockDebugging);
 			throw new AssertionError("Releasing readlock while holding write lock");
 		}
-		if (--counter[0] == 0) {
+		if (--info.fReadLocks == 0) {
 			lockDebugging.remove(Thread.currentThread());
+		} else {
+			info.addTrace();
 		}
 	}
 
 	// For debugging lock issues
 	@SuppressWarnings("nls")
 	private void incWriteLock(int giveupReadLocks) throws AssertionError {
-		int[] counter= getLockCounter(fLockDebugging);
-		if (counter[0] != giveupReadLocks) {
+		DebugLockInfo info = getLockInfo(fLockDebugging);
+		if (info.fReadLocks != giveupReadLocks) {
 			outputReadLocks(fLockDebugging);
-			throw new AssertionError("write lock with " + giveupReadLocks + " readlocks, expected " + counter[0]);
+			throw new AssertionError("write lock with " + giveupReadLocks + " readlocks, expected " + info.fReadLocks);
 		}
-		if (counter[1] != 0)
+		if (info.fWriteLocks != 0)
 			throw new AssertionError("Duplicate write lock"); 
-		counter[1]++;
+		info.fWriteLocks++;
 	}
 
 	// For debugging lock issues
 	private void decWriteLock(int establishReadLocks) throws AssertionError {
-		int[] counter= getLockCounter(fLockDebugging);
-		if (counter[0] != establishReadLocks)
-			throw new AssertionError("release write lock with " + establishReadLocks + " readlocks, expected " + counter[0]); //$NON-NLS-1$ //$NON-NLS-2$
-		if (counter[1] != 1)
+		DebugLockInfo info = getLockInfo(fLockDebugging);
+		if (info.fReadLocks != establishReadLocks)
+			throw new AssertionError("release write lock with " + establishReadLocks + " readlocks, expected " + info.fReadLocks); //$NON-NLS-1$ //$NON-NLS-2$
+		if (info.fWriteLocks != 1)
 			throw new AssertionError("Wrong release write lock"); //$NON-NLS-1$
-		counter[1]= 0;
-		if (counter[0] == 0) {
+		info.fWriteLocks= 0;
+		if (info.fReadLocks == 0) {
 			fLockDebugging.remove(Thread.currentThread());
 		}
 	}
@@ -1357,29 +1388,29 @@ public class PDOM extends PlatformObject implements IPDOM {
 
 	// For debugging lock issues
 	@SuppressWarnings("nls")
-	private static void outputReadLocks(Map<Thread, int[]> lockDebugging) {
+	private static void outputReadLocks(Map<Thread, DebugLockInfo> lockDebugging) {
+		System.out.println("---------------------  Lock Debugging -------------------------");
 		for (Thread th: lockDebugging.keySet()) {
-			int[] counts = lockDebugging.get(th);
-			System.out.println(th.getName() + ":" + counts[0] + "," + counts[1]); 
-			for (StackTraceElement ste : th.getStackTrace()) {
-				System.out.println("  " + ste); 
-			}
+			DebugLockInfo info = lockDebugging.get(th);
+			info.write(th.getName());
 		}
+		System.out.println("---------------------------------------------------------------");
 	}
 	
 	// For debugging lock issues
-	public void adjustThreadForReadLock(Map<Thread, int[]> lockDebugging) {
+	public void adjustThreadForReadLock(Map<Thread, DebugLockInfo> lockDebugging) {
 		for (Thread th : lockDebugging.keySet()) {
-			int[] val= lockDebugging.get(th);
-			if (val[0] > 0) {
-				int[] myval= fLockDebugging.get(th);
+			DebugLockInfo val= lockDebugging.get(th);
+			if (val.fReadLocks > 0) {
+				DebugLockInfo myval= fLockDebugging.get(th);
 				if (myval == null) {
-					myval= new int[] {0,0};
+					myval= new DebugLockInfo();
 					fLockDebugging.put(th, myval);
 				}
-				myval[0]++;
-				decReadLock(fLockDebugging);
-				break;
+				myval.inc(val);
+				for (int i = 0; i < val.fReadLocks; i++) {
+					decReadLock(fLockDebugging);
+				}
 			}
 		}
 	}

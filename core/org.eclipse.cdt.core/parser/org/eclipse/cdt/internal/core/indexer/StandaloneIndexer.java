@@ -210,6 +210,13 @@ public abstract class StandaloneIndexer {
 	}
 	
 	/**
+	 * If true then all files will be indexed.
+	 */
+	public void setIndexAllFiles(boolean indexAllFiles) {
+		fIndexAllFiles = indexAllFiles;
+	}
+	
+	/**
 	 * Returns the collection of valid file extensions for C/C++ source.
 	 */
 	public Set<String> getValidSourceUnitNames() {
@@ -373,6 +380,7 @@ public abstract class StandaloneIndexer {
 			clearIndex();
 			fDelegate= createTask(getFilesAdded(tus), NO_TUS, NO_TUS);
 			fDelegate.setUpdateFlags(fUpdateOptions);
+			fDelegate.setParseUpFront();
 			
 			if (fDelegate != null) {
 				fDelegate.run(monitor);

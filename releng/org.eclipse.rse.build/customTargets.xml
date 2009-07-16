@@ -356,7 +356,7 @@
 		<copy todir="${packageDirectory}/${dropDir}" file="${buildDirectory}/directory.txt"/>
 		<!-- Create and analyze the compilelog.txt file -->
 		<concat destfile="${packageDirectory}/${dropDir}/compilelog.txt">
-			<fileset dir="${buildDirectory}/plugins" includes="**/*.bin.log"/>
+			<fileset dir="${buildDirectory}/plugins" includes="**/*.log"/>
 		</concat>
 		<loadfile property="compileLog" srcFile="${packageDirectory}/${dropDir}/compilelog.txt"/>
 		<condition property="hasErrors">

@@ -21,6 +21,7 @@ import org.eclipse.cdt.core.dom.ILinkage;
 import org.eclipse.cdt.core.model.AbstractLanguage;
 import org.eclipse.cdt.core.model.ILanguage;
 import org.eclipse.cdt.core.parser.IParserLogService;
+import org.eclipse.cdt.core.parser.IScannerInfo;
 import org.eclipse.cdt.internal.core.index.IWritableIndex;
 import org.eclipse.cdt.internal.core.pdom.AbstractIndexerTask;
 import org.eclipse.cdt.internal.core.pdom.IndexerProgress;
@@ -224,6 +225,20 @@ public abstract class StandaloneIndexerTask extends AbstractIndexerTask {
 		getLogService().traceLog(s.getMessage());
 	}
 
+	@SuppressWarnings("deprecation")
+	@Override
+	protected IScannerInfo createDefaultScannerConfig(int linkageID) {
+		IStandaloneScannerInfoProvider provider = fIndexer.getScannerInfoProvider();
+		if(provider != null)
+			return provider.getDefaultScannerInformation(linkageID);
+		
+		IScannerInfo scannerInfo = fIndexer.getScannerInfo();
+		if(scannerInfo != null)
+			return scannerInfo;
+		
+		return super.createDefaultScannerConfig(linkageID);
+	}
+	
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.internal.core.pdom.AbstractIndexerTask#getLinkagesToParse()
 	 */

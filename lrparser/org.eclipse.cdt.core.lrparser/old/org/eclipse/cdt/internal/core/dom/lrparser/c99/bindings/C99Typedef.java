@@ -69,13 +69,10 @@ public class C99Typedef extends PlatformObject implements IC99Binding, ITypedef,
 		if(t == this)
 			return true;
 		
-		try {
-			if(t instanceof ITypedef)
-				return type.isSameType(((ITypedef)t).getType());
-			return type.isSameType(t);
-		} catch(DOMException _) {
-			return false;
-		}
+		if(t instanceof ITypedef)
+			return type.isSameType(((ITypedef)t).getType());
+		return type.isSameType(t);
+
 	}
 
 	@Override

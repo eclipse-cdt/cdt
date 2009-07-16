@@ -1362,9 +1362,8 @@ import org.eclipse.cdt.internal.core.dom.parser.ITypeContainer;
 		if(identifierType instanceof IFunctionType) {
 			// TODO: check the parameter types
 			IFunctionType functionType = (IFunctionType)identifierType;
-			try {
-				resultType = functionType.getReturnType();
-			} catch (DOMException e) { } // do nothing, the problem binding is fine
+			resultType = functionType.getReturnType();
+
 		}
 
 		exprTypeStack.push(resultType);
@@ -1391,9 +1390,8 @@ import org.eclipse.cdt.internal.core.dom.parser.ITypeContainer;
 		IType resultType = C99ProblemBinding.badType();
 		if(exprType instanceof IArrayType) {
 			IArrayType arrType = (IArrayType) exprType;
-			try {
-				resultType = arrType.getType(); // strip off the array type
-			} catch (DOMException e) { }
+			resultType = arrType.getType(); // strip off the array type
+
 		}
 		
 		exprTypeStack.push(resultType);

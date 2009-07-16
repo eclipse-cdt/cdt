@@ -71,14 +71,13 @@ public class C99PointerType implements ITypeContainer, ICPointerType {
 			return true;
 		
 		if (t instanceof ICPointerType) {
-			try {
-				ICPointerType pointerType = (ICPointerType) t;
-				if(pointerType.isConst() == isConst &&
-				   pointerType.isRestrict() == isRestrict &&
-				   pointerType.isVolatile() == isVolatile) {
-					return type.isSameType(pointerType.getType());
-				}
-			} catch(DOMException _) { }
+			ICPointerType pointerType = (ICPointerType) t;
+			if(pointerType.isConst() == isConst &&
+			   pointerType.isRestrict() == isRestrict &&
+			   pointerType.isVolatile() == isVolatile) {
+				return type.isSameType(pointerType.getType());
+			}
+
 		}
 		return false;
 	}

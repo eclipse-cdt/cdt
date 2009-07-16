@@ -76,14 +76,14 @@ public class C99QualifierType implements ICQualifierType, ITypeContainer {
 			return true;
 		
 		if (t instanceof ICQualifierType) {
-			try {
-				ICQualifierType pointerType = (ICQualifierType) t;
-				if(pointerType.isConst() == isConst &&
-				   pointerType.isRestrict() == isRestrict &&
-				   pointerType.isVolatile() == isVolatile) {
-					return type.isSameType(pointerType.getType());
-				}
-			} catch(DOMException _) { }
+
+			ICQualifierType pointerType = (ICQualifierType) t;
+			if(pointerType.isConst() == isConst &&
+			   pointerType.isRestrict() == isRestrict &&
+			   pointerType.isVolatile() == isVolatile) {
+				return type.isSameType(pointerType.getType());
+			}
+
 		}
 		return false;
 	}

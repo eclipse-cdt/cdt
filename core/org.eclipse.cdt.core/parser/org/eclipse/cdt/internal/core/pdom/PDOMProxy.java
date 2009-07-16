@@ -12,7 +12,6 @@ package org.eclipse.cdt.internal.core.pdom;
 
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
 import java.util.regex.Pattern;
@@ -29,6 +28,7 @@ import org.eclipse.cdt.internal.core.index.IIndexFragmentFileSet;
 import org.eclipse.cdt.internal.core.index.IIndexFragmentInclude;
 import org.eclipse.cdt.internal.core.index.IIndexFragmentName;
 import org.eclipse.cdt.internal.core.pdom.PDOM.ChangeEvent;
+import org.eclipse.cdt.internal.core.pdom.PDOM.DebugLockInfo;
 import org.eclipse.cdt.internal.core.pdom.PDOM.IListener;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMLinkage;
 import org.eclipse.core.runtime.CoreException;
@@ -43,11 +43,11 @@ public class PDOMProxy implements IPDOM {
 	private PDOM fDelegate;
 	private int fReadLockCount;
 	private Set<IListener> fListeners= new HashSet<IListener>();
-	private Map<Thread, int[]> fLockDebugging;
+	private Map<Thread, DebugLockInfo> fLockDebugging;
 
 	public PDOMProxy() {
 		if (PDOM.sDEBUG_LOCKS) {
-			fLockDebugging= new HashMap<Thread, int[]>();
+			fLockDebugging= new HashMap<Thread, DebugLockInfo>();
 		}
 	}
 	public synchronized void acquireReadLock() throws InterruptedException {
@@ -229,21 +229,19 @@ public class PDOMProxy implements IPDOM {
 			while (fReadLockCount > 0) {
 				pdom.acquireReadLock();
 				fReadLockCount--;
-				if (PDOM.sDEBUG_LOCKS) {
-					pdom.adjustThreadForReadLock(fLockDebugging);
-				}
 			} 
+			if (PDOM.sDEBUG_LOCKS) {
+				pdom.adjustThreadForReadLock(fLockDebugging);
+			}
 		} catch (InterruptedException e) {
 			Thread.currentThread().interrupt();
 		}
-		for (Iterator<IListener> iterator = fListeners.iterator(); iterator.hasNext();) {
-			IListener listener = iterator.next();
+		for (IListener listener : fListeners) {
 			pdom.addListener(listener);
 		}
 		ChangeEvent event= new ChangeEvent();
 		event.setReloaded();
-		for (Iterator<IListener> iterator = fListeners.iterator(); iterator.hasNext();) {
-			IListener listener = iterator.next();
+		for (IListener listener : fListeners) {
 			listener.handleChange(fDelegate, event);
 		}
 	}

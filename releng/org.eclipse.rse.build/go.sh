@@ -1,6 +1,6 @@
 #!/bin/sh
 #*******************************************************************************
-# Copyright (c) 2006, 2007 Wind River Systems, Inc.
+# Copyright (c) 2006, 2009 Wind River Systems, Inc.
 # All rights reserved. This program and the accompanying materials 
 # are made available under the terms of the Eclipse Public License v1.0 
 # which accompanies this distribution, and is available at 
@@ -42,6 +42,14 @@ timestamp="${mydstamp}-${mytstamp}"
 buildId="${buildType}${timestamp}"
 rm -rf "${buildDirectory}"
 
+# default value of the bootclasspath attribute used in ant javac calls.
+# these pathes are valid on build.eclipse.org  
+bootclasspath="/shared/dsdp/JDKs/win32/j2sdk1.4.2_19/jre/lib/rt.jar:/shared/dsdp/JDKs/win32/j2sdk1.4.2_19/jre/lib/jsse.jar"
+bootclasspath_15="/shared/common/jdk-1.5.0_16/jre/lib/rt.jar"
+#bootclasspath_16="$builderDir/jdk/win32_16/jdk6/jre/lib/rt.jar"
+#bootclasspath_foundation="/shared/common/Java_ME_platform_SDK_3.0_EA/runtimes/cdc-hi/lib/rt.jar"
+bootclasspath_foundation11="/shared/dsdp/JDKs/win32/j9_cdc11/lib/jclFoundation11/classes.zip"
+
 command="java -cp ${basebuilder}/plugins/org.eclipse.equinox.launcher.jar org.eclipse.core.launcher.Main "
 command="$command -application org.eclipse.ant.core.antRunner "
 command="$command -buildfile ${pdeBuild}/scripts/build.xml "
@@ -59,6 +67,10 @@ command="$command -DfetchTag=HEAD "
 command="$command -DskipFetch "
 command="$command -Dmydstamp=${mydstamp} "
 command="$command -Dmytstamp=${mytstamp} "
+#command="$command -Dbootclasspath=${bootclasspath} "
+#command="$command -DJ2SE-1.4=${bootclasspath} "
+#command="$command -DJ2SE-1.5=${bootclasspath_15} "
+#command="$command -DCDC-1.1/Foundation-1.1=${bootclasspath_foundation11} "
 #command="$command -DJ2SE-1.2=../jres/1.2.2/lib/rt.jar "
 #command="$command postBuild "
 

@@ -1,6 +1,6 @@
 #!/usr/bin/perl
 #*******************************************************************************
-# Copyright (c) 2006, 2007 IBM Corporation and others.
+# Copyright (c) 2006, 2009 IBM Corporation and others.
 # All rights reserved. This program and the accompanying materials
 # are made available under the terms of the Eclipse Public License v1.0
 # which accompanies this distribution, and is available at
@@ -87,6 +87,14 @@ $timeStamp = "${mydstamp}-${mytstamp}";
 $buildId = $buildType . $timeStamp;
 $buildId = ask("Enter the build id", $buildType . $timeStamp);
 
+# default value of the bootclasspath attribute used in ant javac calls.
+# these pathes are valid on build.eclipse.org  
+$bootclasspath = "/shared/dsdp/JDKs/win32/j2sdk1.4.2_19/jre/lib/rt.jar:/shared/dsdp/JDKs/win32/j2sdk1.4.2_19/jre/lib/jsse.jar";
+$bootclasspath_15 = "/shared/common/jdk-1.5.0_16/jre/lib/rt.jar";
+#$bootclasspath_16 = "$builderDir/jdk/win32_16/jdk6/jre/lib/rt.jar";
+#$bootclasspath_foundation = "/shared/common/Java_ME_platform_SDK_3.0_EA/runtimes/cdc-hi/lib/rt.jar";
+$bootclasspath_foundation11 = "/shared/dsdp/JDKs/win32/j9_cdc11/lib/jclFoundation11/classes.zip";
+
 $incantation = "java -cp ${basebuilder}/plugins/org.eclipse.equinox.launcher.jar org.eclipse.core.launcher.Main ";
 $incantation .= "-application org.eclipse.ant.core.antRunner ";
 $incantation .= "-buildfile ${pdeBuild}/scripts/build.xml ";
@@ -104,6 +112,13 @@ if ($buildType =~ "N") {
 	$incantation .= "-DforceContextQualifier=${buildId} ";
 	$incantation .= "-DfetchTag=HEAD ";
 }
+$incantation .= "-DdoPublish=true ";
+$incantation .= "-Dbootclasspath=${bootclasspath} ";
+$incantation .= "-DJ2SE-1.4=${bootclasspath} ";
+$incantation .= "-DJ2SE-1.5=${bootclasspath_15} ";
+$incantation .= "-DCDC-1.1/Foundation-1.1=${bootclasspath_foundation11} ";
+#$incantation .= "postBuild ";
+
 
 print("${incantation}\n");
 

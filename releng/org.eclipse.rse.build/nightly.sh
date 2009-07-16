@@ -1,6 +1,6 @@
 #!/bin/sh
 #*******************************************************************************
-# Copyright (c) 2006, 2007 Wind River Systems, Inc.
+# Copyright (c) 2006, 2009 Wind River Systems, Inc.
 # All rights reserved. This program and the accompanying materials 
 # are made available under the terms of the Eclipse Public License v1.0 
 # which accompanies this distribution, and is available at 
@@ -59,8 +59,8 @@ if [ "$3" != "" ]; then
 fi
 rm -rf "${buildDirectory}"
 
-#default value of the bootclasspath attribute used in ant javac calls.
-#these pathes are valid on build.eclipse.org  
+# default value of the bootclasspath attribute used in ant javac calls.
+# these pathes are valid on build.eclipse.org  
 bootclasspath="/shared/dsdp/JDKs/win32/j2sdk1.4.2_19/jre/lib/rt.jar:/shared/dsdp/JDKs/win32/j2sdk1.4.2_19/jre/lib/jsse.jar"
 bootclasspath_15="/shared/common/jdk-1.5.0_16/jre/lib/rt.jar"
 #bootclasspath_16="$builderDir/jdk/win32_16/jdk6/jre/lib/rt.jar"

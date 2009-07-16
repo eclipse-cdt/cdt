@@ -40,6 +40,7 @@
  * David McKnight  (IBM)  - [250168] handleCommand should not blindly set the status to "done"
  * David McKnight  (IBM)  - [251729][dstore] problems querying symbolic link folder
  * David McKnight  (IBM)  - [243495] [api] New: Allow file name search in Remote Search to not be case sensitive
+ * David McKnight  (IBM)  - [283617] [dstore] UniversalFileSystemMiner.handleQueryGetRemoteObject does not return correct result when the queried file does not exist.
  *******************************************************************************/
 
 package org.eclipse.rse.dstore.universal.miners;
@@ -1097,6 +1098,13 @@ public class UniversalFileSystemMiner extends Miner {
 			// change the file type
 			subject.setAttribute(DE.A_TYPE, IUniversalDataStoreConstants.UNIVERSAL_FILTER_DESCRIPTOR);
 			subject.setAttribute(DE.A_SOURCE, setProperties(fileobj));
+			
+			if (!subject.getName().equals(subject.getValue())){
+				// need to change this back into full path format
+				subject.setAttribute(DE.A_NAME, fileobj.getAbsolutePath());
+				subject.setAttribute(DE.A_VALUE, subject.getAttribute(DE.A_NAME));
+			}
+			
 			status.setAttribute(DE.A_SOURCE, IServiceConstants.FAILED_WITH_DOES_NOT_EXIST);
 		}
 

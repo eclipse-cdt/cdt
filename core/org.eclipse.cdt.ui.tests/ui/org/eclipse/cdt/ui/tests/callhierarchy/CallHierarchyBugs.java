@@ -414,4 +414,33 @@ public class CallHierarchyBugs extends CallHierarchyBaseTest {
 		TreeItem ti= checkTreeNode(chTree, 0, 0, "call()");
 		checkTreeNode(chTree, 0, 1, null);
 	}
+	
+	//	namespace {
+	//		void doNothing()
+	//		{
+	//		}
+	//	}
+	//	int main() {
+	//      doNothing();
+	//		return 0;
+	//	}
+	public void testUnnamedNamespace_283679() throws Exception {
+		final StringBuffer[] contents = getContentsForTest(1);
+		final String content = contents[0].toString();
+		IFile f2= createFile(getProject(), "testUnnamedNamespace_283679.cpp", content);
+		waitForIndexer(fIndex, f2, CallHierarchyBaseTest.INDEXER_WAIT_TIME);
+
+		final CHViewPart ch= (CHViewPart) activateView(CUIPlugin.ID_CALL_HIERARCHY);
+
+		// open editor, check outline
+		CEditor editor= openEditor(f2);
+		int idx = content.indexOf("doNothing()");
+		editor.selectAndReveal(idx, 0);
+		openCallHierarchy(editor, true);
+
+		Tree chTree= checkTreeNode(ch, 0, "doNothing()").getParent();
+		TreeItem ti= checkTreeNode(chTree, 0, 0, "main()");
+		checkTreeNode(chTree, 0, 1, null);
+	}
+
 }

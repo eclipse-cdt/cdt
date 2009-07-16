@@ -28,20 +28,19 @@
   RSE runs on Java 1.4.
   Platform Runtime is the minimum requirement for core RSE and Terminal.
   Discovery needs EMF.</li>
-<li>Important Bug Fixes, Enhancements and API changes:
-<!--
-  <ul>
-  <li>See bugzilla</li>
-  </ul>
- -->
- </li>
-<li>At least 19 bugs were fixed: Use 
-  <!-- <a href="https://bugs.eclipse.org/bugs/buglist.cgi?query_format=advanced&classification=DSDP&product=Target+Management&component=Core&component=RSE&component=Terminal&bug_status=RESOLVED&bug_status=VERIFIED&bug_status=CLOSED&resolution=FIXED&resolution=WONTFIX&resolution=WORKSFORME&chfieldfrom=2009-05-04&chfieldto=2009-06-12&chfield=resolution&cmdtype=doit&negate0=1&field0-0-0=target_milestone&type0-0-0=regexp&value0-0-0=%5B23%5D.0&field0-0-1=target_milestone&type0-0-1=regexp&value0-0-1=3.1%20M%5B234567%5D"> -->
-  <a href="https://bugs.eclipse.org/bugs/buglist.cgi?query_format=advanced&classification=DSDP&product=Target+Management&component=Core&component=RSE&component=Terminal&target_milestone=3.1+RC1&target_milestone=3.1+RC2&target_milestone=3.1+RC3&target_milestone=3.1+RC4&bug_status=RESOLVED&bug_status=VERIFIED&bug_status=CLOSED&resolution=FIXED&resolution=WONTFIX&resolution=WORKSFORME&cmdtype=doit">
+<li>Highlights of Bugs fixed since <a href="http://download.eclipse.org/dsdp/tm/downloads/drops/R-3.0.2-200812050230/buildNotes.php">TM 3.0.2</a>:
+<ul>
+  <li>A build problem was fixed which prevented the Team/Synchronize feature of importexport to run from downloaded drops
+      [<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=283482">283482</a>].</li>
+</ul>
+</li>
+<li>At least 23 bugs were resolved: Use 
+  <!-- <a href="https://bugs.eclipse.org/bugs/buglist.cgi?query_format=advanced&classification=DSDP&product=Target+Management&component=Core&component=RSE&component=Terminal&bug_status=RESOLVED&bug_status=VERIFIED&bug_status=CLOSED&resolution=FIXED&resolution=WONTFIX&resolution=WORKSFORME&chfieldfrom=2009-06-23&chfieldto=2009-09-25&chfield=resolution&cmdtype=doit&negate0=1&field0-0-0=target_milestone&type0-0-0=regexp&value0-0-0=%5B23%5D.0&field0-0-1=target_milestone&type0-0-1=regexp&value0-0-1=3.1%20M%5B234567%5D"> -->
+  <a href="https://bugs.eclipse.org/bugs/buglist.cgi?query_format=advanced&classification=DSDP&product=Target+Management&component=Core&component=RSE&component=Terminal&target_milestone=3.1.1&bug_status=RESOLVED&bug_status=VERIFIED&bug_status=CLOSED&resolution=FIXED&resolution=WONTFIX&resolution=WORKSFORME&cmdtype=doit">
   this query</a> to show the list of bugs fixed since
-  <a href="http://download.eclipse.org/dsdp/tm/downloads/drops/S-3.1M7-200905051815/">
-  TM 3.1M7</a>
-  [<a href="http://download.eclipse.org/dsdp/tm/downloads/drops/S-3.1M7-200905051815/buildNotes.php">build notes</a>].</li>
+  <a href="http://download.eclipse.org/dsdp/tm/downloads/drops/R-3.1-200906171400/">
+  TM 3.1</a>
+  [<a href="http://download.eclipse.org/dsdp/tm/downloads/drops/R-3.1-200906171400/buildNotes.php">build notes</a>].</li>
 <li>For details on checkins, see
   <a href="http://dsdp.eclipse.org/dsdp/tm/searchcvs.php">TM SearchCVS</a>, the
   <a href="http://download.eclipse.org/dsdp/tm/downloads/drops/N-changelog/index.html">
@@ -85,7 +84,14 @@ are the best places for you to get started.
 	</tr>
 </table>
 <table><tbody><tr><td>
-<p>For the upcoming TM 3.1 release, only backward compatible API changes
+<p>No API changes are allowed in the TM 3.1.x maintenance stream.
+Therefore, <b>TM 3.1.x is fully upward and backward compatible with TM 3.1</b>,
+and can be fully exchanged for TM 3.1 in any product based on it.
+Take care of API specification updates though, where the TM 3.1.x API Docs
+have been updated to add clarifications or missing information compared
+to 3.1.</p>
+
+<p>For the upcoming TM 3.2 release, only backward compatible API changes
 are planned, especially in order to support improved componentization
 and UI/Non-UI splitting.
 In the interest of improving the code base, though, please 
@@ -108,50 +114,20 @@ and may require changes in client code even though they are binary compatible.
 More information can be found in the associated bugzilla items.
 
 <ul>
-<li>TM 3.1M7 API Specification Updates
-<ul><li>Methods <code><a href="http://dsdp.eclipse.org/help/latest/topic/org.eclipse.rse.doc.isv/reference/api/org/eclipse/rse/services/IService.html#initService(org.eclipse.core.runtime.IProgressMonitor)">IService.initService()</a></code>
-  and <code><a href="http://dsdp.eclipse.org/help/latest/topic/org.eclipse.rse.doc.isv/reference/api/org/eclipse/rse/core/subsystems/ISubSystem.html#initializeSubSystem(org.eclipse.core.runtime.IProgressMonitor)">ISubSystem.initializeSubSystem</a></code>
-  can now throw a <code>SystemMessageException</code> on error. As per the 
-  <a href="http://wiki.eclipse.org/Evolving_Java-based_APIs_2#Evolving_API_interfaces_-_API_methods">Java API compatibility guide</a>,
-  this is not strictly a change breaking binary compatibility, but it does break source compatibility.
-  In other words, you'll need to update your sources when you recompile, though old compiled bundles
-  will continue to run
-  [<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=272882">272882</a>].</li>
-</ul></li>
-<li>TM 3.1M6 API Specification Updates
-<ul><li>None.</li>
-</ul></li>
-<li>TM 3.1M5 API Specification Updates
+<li>TM @buildId@ API Specification Updates
 <ul>
-<li>The <b>TerminalState.OPENED</b> state has been removed. This was provisional "internal" API,
-  so this change does not constitute an official API change. Still, in order to properly
-  support all update scenarios for consumers of the previous provisional API, the bundle
-  <b>version of org.eclipse.tm.terminal has been moved up to 3.0.0</b>
-  [<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=262996">262996</a>].</li>
-<li>The <b>SshShellService, SshHostShell, TelnetShellService, TelnetHostShell</b> and related 
-  classes have been removed and replaced by a generic Terminal-to-HostShell adapter which can 
-  re-use the functionality across the Telnet and SSH plugins.
-  In order to ensure proper version computing on update, the following plugin versinos were changed:
-  <ul>
-    <li><b>org.eclipse.rse.services.ssh</b> changed from 2.1.0 to 3.0.0</li>
-    <li><b>org.eclipse.rse.services.telnet</b> changed from 1.1.0 to 2.0.0</li>
-  </ul>
-  These changes do not indicate breaking public API since the removed classes were
-  actually never API, but consumers should be aware of the probably unexpected
-  major version bump, which was required due to the internal version dependency
-  structure
-  [<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=261478">261478</a>].</li>
-  </li>
+  <li>None.</li>
+</ul></li>
 </ul>
 </li>
 </ul>
 
 Use 
   <!-- 
-  <a href="https://bugs.eclipse.org/bugs/buglist.cgi?query_format=advanced&short_desc_type=allwordssubstr&short_desc=%5Bapi&classification=DSDP&product=Target+Management&component=Core&component=RSE&component=Terminal&bug_status=RESOLVED&bug_status=VERIFIED&bug_status=CLOSED&resolution=FIXED&resolution=WORKSFORME&chfieldfrom=2008-06-20&chfieldto=2008-10-03&chfield=resolution&cmdtype=doit">
+  <a href="https://bugs.eclipse.org/bugs/buglist.cgi?query_format=advanced&short_desc_type=allwordssubstr&short_desc=%5Bapi&classification=DSDP&product=Target+Management&component=Core&component=RSE&component=Terminal&bug_status=RESOLVED&bug_status=VERIFIED&bug_status=CLOSED&resolution=FIXED&resolution=WORKSFORME&chfieldfrom=2009-06-20&chfieldto=2009-09-25&chfield=resolution&cmdtype=doit">
    -->
-  <a href="https://bugs.eclipse.org/bugs/buglist.cgi?query_format=advanced&short_desc_type=allwordssubstr&short_desc=%5Bapi&classification=DSDP&product=Target+Management&component=Core&component=RSE&component=Terminal&bug_status=RESOLVED&bug_status=VERIFIED&bug_status=CLOSED&resolution=FIXED&resolution=WORKSFORME&target_milestone=3.1+M2&target_milestone=3.1+M3&target_milestone=3.1+M4&target_milestone=3.1+M5&target_milestone=3.1+M6&target_milestone=3.1+M7&cmdtype=doit">
-  this query</a> to show the full list of API related updates since TM 3.0
+  <a href="https://bugs.eclipse.org/bugs/buglist.cgi?query_format=advanced&short_desc_type=allwordssubstr&short_desc=%5Bapi&classification=DSDP&product=Target+Management&component=Core&component=RSE&component=Terminal&bug_status=RESOLVED&bug_status=VERIFIED&bug_status=CLOSED&resolution=FIXED&resolution=WORKSFORME&target_milestone=3.1.1&cmdtype=doit">
+  this query</a> to show the full list of API related updates since TM 3.1
   <!--
   , and
   <a href="https://bugs.eclipse.org/bugs/buglist.cgi?query_format=advanced&short_desc_type=allwordssubstr&short_desc=%5Bapi%5D&classification=DSDP&product=Target+Management&bug_status=NEW&bug_status=ASSIGNED&bug_status=REOPENED&cmdtype=doit">

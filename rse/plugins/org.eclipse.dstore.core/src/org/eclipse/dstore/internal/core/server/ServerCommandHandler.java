@@ -15,6 +15,7 @@
  *  David McKnight     (IBM)   [224906] [dstore] changes for getting properties and doing exit due to single-process capability
  *  David McKnight   (IBM) - [244388] [dstore] Connection hangs when a miner not installed
  *  David McKnight   (IBM) - [278341] [dstore] Disconnect on idle causes the client hang
+ *  Noriaki Takatsu  (IBM) - [283656] [dstore][multithread] Serviceability issue
  *******************************************************************************/
 
 package org.eclipse.dstore.internal.core.server;
@@ -64,6 +65,9 @@ public class ServerCommandHandler extends CommandHandler
 				_dataStore.getUpdateHandler().finish();
 				_dataStore.finish();
 				System.out.println(ServerReturnCodes.RC_FINISHED);
+				if (_dataStore.getClient() != null) {
+					_dataStore.getClient().getLogger().logInfo(this.getClass().toString(), "Server timeout");
+				}
 				
 				// only exit if there's no service manager
 				if (SystemServiceManager.getInstance().getSystemService() == null){

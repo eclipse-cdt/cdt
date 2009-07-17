@@ -17,6 +17,7 @@
  * David McKnight   (IBM) - [226561] [apidoc] Add API markup to RSE Javadocs where extend / implement is allowed
  * Noriaki Takatsu  (IBM) - [257666] [multithread] TCP/IP socket connection is not closed
  * David McKnight   (IBM) - [257666] modified original patch to simplify
+ * Noriaki Takatsu  (IBM) - [283656] [dstore][multithread] Serviceability issue
  *******************************************************************************/
 
 package org.eclipse.dstore.core.server;
@@ -90,6 +91,9 @@ public class ServerReceiver extends Receiver
 	    	socket().close();
 	    }
 	    catch (IOException e){
+	    	if (_dataStore.getClient() != null) {
+				_dataStore.getClient().getLogger().logError(this.getClass().toString(), e.toString(), e);
+			}
 	    	System.out.println(e);
 	    }
 	}
@@ -99,6 +103,9 @@ public class ServerReceiver extends Receiver
 	 */
 	public void handleError(Throwable e)
 	{
+		if (_dataStore.getClient() != null) {
+			_dataStore.getClient().getLogger().logError(this.getClass().toString(), e.toString(), e);
+		}
 		System.out.println("RECEIVER ERROR"); //$NON-NLS-1$
 		e.printStackTrace();
 		System.out.println(e);

@@ -13,6 +13,7 @@
  *
  * Contributors:
  *   Noriaki Takatsu    (IBM)   [220126] [dstore][api][breaking] Single process server for multiple clients
+ *   Noriaki Takatsu    (IBM)   [283656] [dstore][multithread] Serviceability issue   
  *******************************************************************************/
 
 package org.eclipse.dstore.core.miners;
@@ -64,6 +65,9 @@ public abstract class MinerThread extends SecuredThread
 			}
 			catch (Exception e)
 			{
+				if (_dataStore.getClient() != null) {
+					_dataStore.getClient().getLogger().logError(this.getClass().toString(), e.toString(), e);
+				}
 				System.out.println(e);
 			}
 
@@ -93,6 +97,9 @@ public abstract class MinerThread extends SecuredThread
 			}
 			catch (InterruptedException e)
 			{
+				if (_dataStore.getClient() != null) {
+					_dataStore.getClient().getLogger().logError(this.getClass().toString(), e.toString(), e);
+				}
 				System.out.println(e);
 			}
 
@@ -105,6 +112,9 @@ public abstract class MinerThread extends SecuredThread
 				}
 				catch (Exception e)
 				{
+					if (_dataStore.getClient() != null) {
+						_dataStore.getClient().getLogger().logError(this.getClass().toString(), e.toString(), e);
+					}
 					System.out.println(e);
 				}
 			}

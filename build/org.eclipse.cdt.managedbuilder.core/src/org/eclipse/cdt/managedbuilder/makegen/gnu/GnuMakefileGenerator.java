@@ -4691,8 +4691,11 @@ public class GnuMakefileGenerator implements IManagedBuilderMakefileGenerator2 {
 					" ", //$NON-NLS-1$
 					IBuildMacroProvider.CONTEXT_CONFIGURATION,
 					builder);
-			if((resolved = resolved.trim()).length() > 0)
-				buildTargetName = resolved;
+			if (resolved!=null) {
+				resolved = resolved.trim();
+				if(resolved.length() > 0)
+					buildTargetName = resolved;
+			}
 		} catch (BuildMacroException e){
 		}
 

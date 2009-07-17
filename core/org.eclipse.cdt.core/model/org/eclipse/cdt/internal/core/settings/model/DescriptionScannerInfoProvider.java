@@ -234,17 +234,19 @@ public class DescriptionScannerInfoProvider implements IScannerInfoProvider, ICP
 			if(p == null)
 				continue;
 			//TODO: obtain location from pathEntries when entries are resolved
-			path = new Path(p);//pathEntries[i].getLocation();
+			path = new Path(p);//p.getLocation();
 			if(pathEntry.isValueWorkspacePath()){
 				IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
 				IResource rc = root.findMember(path);
 				if(rc != null){
 					path = rc.getLocation(); 
 				}
-			} 
-			// do not make paths absolute, that's the preprocessor's job and is done differently
-			// depending on the entry
-			if(path != null) 
+			} else if (!path.isAbsolute()) {
+				IPath projLocation = fProject != null ? fProject.getLocation() : null;
+				if(projLocation != null)
+					path = projLocation.append(path);
+			}
+			if(path != null)
 				values[num++] = path.toOSString();
 		}
 

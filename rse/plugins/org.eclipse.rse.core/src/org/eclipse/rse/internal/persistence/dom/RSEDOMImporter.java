@@ -26,6 +26,7 @@
  * David McKnight (IBM) - [245198] [dstore] ServerLauncherProperties not restored
  * David McKnight (IBM) - [267052] need to be able to create subsystems-after-the-fact
  * David McKnight (IBM) - [271243] [files] Switching service type brings up TWO file subsystems after restart
+ * Uwe Stieber (Wind River) - [283844] NPE on restoring property set if persistent data is corrupted
  ********************************************************************************/
 
 package org.eclipse.rse.internal.persistence.dom;
@@ -559,8 +560,13 @@ public class RSEDOMImporter {
 				set.setDescription(attribute.getValue());
 			} else {
 				String typeStr = attribute.getType();
-				IPropertyType type = PropertyType.fromString(typeStr);
-				set.addProperty(attribute.getKey(), attribute.getValue(), type);
+				// We keep getting reports throwing NPE in PropertyType.fromString(...).
+				// If the data is corrupted and the type cannot be determined, it is better
+				// to just drop the single property than the whole property set
+				if (typeStr != null) {
+					IPropertyType type = PropertyType.fromString(typeStr);
+					set.addProperty(attribute.getKey(), attribute.getValue(), type);
+				}
 			}
 		}
 		// properties are now stored as children, get those next

@@ -24,6 +24,7 @@ import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.ICompositeType;
 import org.eclipse.cdt.core.dom.ast.IEnumeration;
 import org.eclipse.cdt.core.dom.ast.IEnumerator;
+import org.eclipse.cdt.core.dom.ast.IFunction;
 import org.eclipse.cdt.core.dom.ast.IPointerType;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.IValue;
@@ -1362,6 +1363,19 @@ public abstract class IndexCPPBindingResolutionTest extends IndexBindingResoluti
 		final Long numericalValue = initialValue.numericalValue();
 		assertNotNull(numericalValue);
 		assertEquals(i, numericalValue.intValue());
+	}
+	
+	// void f(int (&v)[1]);
+	// void f(int (&v)[2]);
+	
+	// void test() {
+	//   int a[1], b[2];
+	//   f(a); f(b);
+	// }
+	public void testArrayTypeWithSize_269926() throws Exception {
+    	IFunction f1= getBindingFromASTName("f(a)", 1, IFunction.class);
+    	IFunction f2= getBindingFromASTName("f(b)", 1, IFunction.class);
+    	assertFalse(f1.equals(f2));
 	}
 
 	/* CPP assertion helpers */

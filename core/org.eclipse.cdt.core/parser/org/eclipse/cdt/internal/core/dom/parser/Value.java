@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008 Wind River Systems, Inc. and others.
+ * Copyright (c) 2008, 2009 Wind River Systems, Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -45,6 +45,7 @@ import org.eclipse.cdt.internal.core.parser.scanner.ExpressionEvaluator.EvalExce
 public class Value implements IValue {
 	public static final int MAX_RECURSION_DEPTH = 25;
 	public final static IValue UNKNOWN= new Value("<unknown>".toCharArray(), ICPPUnknownBinding.EMPTY_UNKNOWN_BINDING_ARRAY); //$NON-NLS-1$
+	public final static IValue NOT_INITIALIZED= new Value("<__>".toCharArray(), ICPPUnknownBinding.EMPTY_UNKNOWN_BINDING_ARRAY); //$NON-NLS-1$
 	
 	private static final String SCOPE_OP = "::"; //$NON-NLS-1$
 	private static final char UNIQUE_CHAR = '_';
@@ -225,8 +226,8 @@ public class Value implements IValue {
 	 */
 	public static boolean referencesTemplateParameter(IValue tval) {
 		final char[] rep= tval.getInternalExpression();
-		for (int i = 0; i < rep.length; i++) {
-			if (rep[i] == TEMPLATE_PARAM_CHAR)
+		for (char element : rep) {
+			if (element == TEMPLATE_PARAM_CHAR)
 				return true;
 		}
 		return false;
@@ -237,8 +238,7 @@ public class Value implements IValue {
 	 */
 	public static boolean isDependentValue(IValue nonTypeValue) {
 		final char[] rep= nonTypeValue.getInternalExpression();
-		for (int i = 0; i < rep.length; i++) {
-			final char c = rep[i];
+		for (final char c : rep) {
 			if (c == REFERENCE_CHAR || c == TEMPLATE_PARAM_CHAR)
 				return true;
 		}

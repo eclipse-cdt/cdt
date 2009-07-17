@@ -181,18 +181,11 @@ public class PDOM extends PlatformObject implements IPDOM {
 	 *  84.0 - storing free record pointers as (ptr>>3) and allocated pointers as (ptr-2)>>3 RECPTR_DENSE_VERSION
 	 *  
 	 *  CDT 7.0 development (versions not supported on the 6.0.x branch)
-	 *  next: 90.0
+	 *  90.0 - support for array sizes, bug 269926
 	 */
-	private static final int MIN_SUPPORTED_VERSION= version(83, 0);
-	private static final int MAX_SUPPORTED_VERSION= version(84, Short.MAX_VALUE);
-	private static int DEFAULT_VERSION = version(84, 0);
-	public static final int DENSE_RECPTR_VERSION = version(84, 0);
-	
-	static {
-		if (System.getProperty("org.eclipse.cdt.core.parser.pdom.useDensePointers", "false").equals("true")) { //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-			DEFAULT_VERSION= DENSE_RECPTR_VERSION;
-		}
-	}
+	private static final int MIN_SUPPORTED_VERSION= version(90, 0);
+	private static final int MAX_SUPPORTED_VERSION= version(90, Short.MAX_VALUE);
+	private static final int DEFAULT_VERSION = version(90, 0);
 	
 	private static int version(int major, int minor) {
 		return (major << 16) + minor;

@@ -164,18 +164,18 @@ public class CPPFunction extends PlatformObject implements ICPPFunction, ICPPInt
         return definition;
     }
     
-	public void addDefinition(IASTNode node) {
+	public final void addDefinition(IASTNode node) {
 		ICPPASTFunctionDeclarator dtor = extractFunctionDtor(node);
 		if (dtor != null) {
-			updateParameterBindings(dtor);
+			updateFunctionParameterBindings(dtor);
 			definition = dtor;
 		}
 	}
 	
-	public void addDeclaration(IASTNode node) {
+	public final void addDeclaration(IASTNode node) {
 		ICPPASTFunctionDeclarator dtor = extractFunctionDtor(node);
 		if (dtor != null) {
-			updateParameterBindings(dtor);
+			updateFunctionParameterBindings(dtor);
 
 			if (declarations == null) {
 				declarations = new ICPPASTFunctionDeclarator[] { dtor };
@@ -213,7 +213,7 @@ public class CPPFunction extends PlatformObject implements ICPPFunction, ICPPInt
 		if (size > 0) {
 			for (int i = 0; i < size; i++) {
 				IASTParameterDeclaration p = params[i];
-				final IASTName name = ASTQueries.findInnermostDeclarator(p.getDeclarator()).getName();
+				final IASTName name = getParamName(p);
 				final IBinding binding= name.resolveBinding();
 				if (binding instanceof IParameter) {
 					result[i]= (IParameter) binding;
@@ -287,67 +287,60 @@ public class CPPFunction extends PlatformObject implements ICPPFunction, ICPPInt
         return type;
     }
 
-    public IBinding resolveParameter(IASTParameterDeclaration param) {
-        IASTDeclarator dtor = param.getDeclarator();
-        while (dtor.getNestedDeclarator() != null)
-            dtor = dtor.getNestedDeclarator();
-    	IASTName name = dtor.getName();
-    	IBinding binding = name.getBinding();
-    	if (binding != null)
-    		return binding;
+    public IBinding resolveParameter(CPPParameter param) {
+		int pos= param.getParameterPosition();
 		
-    	IASTStandardFunctionDeclarator fdtor = (IASTStandardFunctionDeclarator) param.getParent();
-    	IASTParameterDeclaration[] ps = fdtor.getParameters();
-    	int i = 0;
-    	for (; i < ps.length; i++) {
-    		if (param == ps[i])
-    			break;
-    	}
-    	
-    	//create a new binding and set it for the corresponding parameter in all known defns and decls
-    	binding = new CPPParameter(name);
-    	IASTParameterDeclaration temp = null;
-    	if (definition != null) {
-    		IASTParameterDeclaration[] paramDecls = definition.getParameters();
-    		if (paramDecls.length > i) { // This will be less than i if we have a void parameter
-	    		temp = paramDecls[i];
-	    		IASTName n = ASTQueries.findInnermostDeclarator(temp.getDeclarator()).getName();
-	    		if (n != name) {
-	    		    n.setBinding(binding);
-	    		    ASTInternal.addDeclaration(binding, n);
-	    		}
+    	int tdeclLen= declarations == null ? 0 : declarations.length;
+    	for (int i= -1; i < tdeclLen; i++) {
+    		ICPPASTFunctionDeclarator tdecl;
+    		if (i == -1) {
+    			tdecl= definition;
+    			if (tdecl == null)
+    				continue;
+    		} else {
+    			tdecl= declarations[i];
+    			if (tdecl == null)
+    				break;
+    		}
+    		
+    		IASTParameterDeclaration[] params = tdecl.getParameters();
+    		if (pos < params.length) {
+				final IASTName oName = getParamName(params[pos]);
+    			return oName.resolvePreBinding();
     		}
     	}
-    	if (declarations != null) {
-    		for (int j = 0; j < declarations.length && declarations[j] != null; j++) {
-    			IASTParameterDeclaration[] paramDecls = declarations[j].getParameters();
-    			if (paramDecls.length > i) {
-	    			temp = paramDecls[i];
-	        		IASTName n = ASTQueries.findInnermostDeclarator(temp.getDeclarator()).getName();
-	        		if (n != name) {
-	        		    n.setBinding(binding);
-	        		    ASTInternal.addDeclaration(binding, n);
-	        		}
-    			}
-    		}
-    	}
-    	return binding;
+    	return param;
     }
+
+	private IASTName getParamName(final IASTParameterDeclaration paramDecl) {
+		return ASTQueries.findInnermostDeclarator(paramDecl.getDeclarator()).getName();
+	}
     
-    protected void updateParameterBindings(ICPPASTFunctionDeclarator fdtor) {
-    	ICPPASTFunctionDeclarator orig = definition != null ? definition : declarations[0];
-    	IASTParameterDeclaration[] ops = orig.getParameters();
-    	IASTParameterDeclaration[] nps = fdtor.getParameters();
-    	CPPParameter temp = null;
-    	for (int i = 0; i < ops.length; i++) {
-    		temp = (CPPParameter) ASTQueries.findInnermostDeclarator(ops[i].getDeclarator()).getName().getBinding();
-    		if (temp != null && nps.length > i) {		//length could be different, ie 0 or 1 with void
-    		    IASTDeclarator dtor = nps[i].getDeclarator();
-    		    while (dtor.getNestedDeclarator() != null)
-    		        dtor = dtor.getNestedDeclarator();
-    		    IASTName name = dtor.getName();
-    			name.setBinding(temp);
-    			ASTInternal.addDeclaration(temp, name);
+    protected final void updateFunctionParameterBindings(ICPPASTFunctionDeclarator fdtor) {
+		IASTParameterDeclaration[] updateParams = fdtor.getParameters();
+
+    	int k= 0;
+    	int tdeclLen= declarations == null ? 0 : declarations.length;
+    	for (int i= -1; i < tdeclLen && k < updateParams.length; i++) {
+    		ICPPASTFunctionDeclarator tdecl;
+    		if (i == -1) {
+    			tdecl= definition;
+    			if (tdecl == null)
+    				continue;
+    		} else {
+    			tdecl= declarations[i];
+    			if (tdecl == null)
+    				break;
+    		}
+    		
+    		IASTParameterDeclaration[] params = tdecl.getParameters();
+    		int end= Math.min(params.length, updateParams.length);
+    		for (; k < end; k++) {
+    			final IASTName oName = getParamName(params[k]);
+    			IBinding b= oName.resolvePreBinding();
+    			IASTName n = getParamName(updateParams[k]);
+    			n.setBinding(b);
+    			ASTInternal.addDeclaration(b, n);
     		}
     	}
     }

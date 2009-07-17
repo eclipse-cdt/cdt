@@ -96,6 +96,7 @@ import org.eclipse.cdt.internal.core.dom.parser.ITypeContainer;
 import org.eclipse.cdt.internal.core.dom.parser.ProblemBinding;
 import org.eclipse.cdt.internal.core.dom.parser.Value;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTName;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPArrayType;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPBasicType;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPClassInstance;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPClassSpecialization;
@@ -842,11 +843,11 @@ public class CPPTemplates {
 			}		
 
 			if (type instanceof ITypeContainer) {
-				final ITypeContainer tc = (ITypeContainer) type;
-				IType nestedType = tc.getType();
+				final ITypeContainer typeContainer = (ITypeContainer) type;
+				IType nestedType = typeContainer.getType();
 				IType newNestedType = instantiateType(nestedType, tpMap, within);
-				if (type instanceof ICPPPointerToMemberType) {
-					ICPPPointerToMemberType ptm = (ICPPPointerToMemberType) type;
+				if (typeContainer instanceof ICPPPointerToMemberType) {
+					ICPPPointerToMemberType ptm = (ICPPPointerToMemberType) typeContainer;
 					IType memberOfClass = ptm.getMemberOfClass();
 					IType newMemberOfClass = instantiateType(memberOfClass, tpMap, within);
 					if (newNestedType != nestedType || newMemberOfClass != memberOfClass) {
@@ -854,13 +855,22 @@ public class CPPTemplates {
 							return new CPPPointerToMemberType(newNestedType, newMemberOfClass,
 								ptm.isConst(), ptm.isVolatile());
 						}
-						return type;
+						return typeContainer;
+					}
+				} else if (typeContainer instanceof IArrayType) {
+					IArrayType at= (IArrayType) typeContainer;
+					IValue asize= at.getSize();
+					if (asize != null) {
+						IValue newSize= instantiateValue(asize, tpMap, within, Value.MAX_RECURSION_DEPTH);
+						if (newSize != asize) {
+							return new CPPArrayType(newNestedType, newSize);
+						}
 					}
 				}
 				if (newNestedType != nestedType) {
-					return SemanticUtil.replaceNestedType(tc, newNestedType);
+					return SemanticUtil.replaceNestedType(typeContainer, newNestedType);
 				} 
-				return type;
+				return typeContainer;
 			} 
 
 			return type;
@@ -1595,6 +1605,32 @@ public class CPPTemplates {
 				}
 				p = ((ICPPReferenceType) p).getType();
 				a = ((ICPPReferenceType) a).getType();
+			} else if (p instanceof IArrayType) {
+				if (!(a instanceof IArrayType)) {
+					return false;
+				}
+				IArrayType aa= (IArrayType) a;
+				IArrayType pa= (IArrayType) p;
+				IValue as= aa.getSize();
+				IValue ps= pa.getSize();
+				if (as != ps) {
+					if (as == null || ps == null)
+						return false;
+					
+					int parPos= Value.isTemplateParameter(ps);
+					if (parPos >= 0) { 
+						ICPPTemplateArgument old= map.getArgument(parPos);
+						if (old == null) {
+							map.put(parPos, new CPPTemplateArgument(ps, new CPPBasicType(IBasicType.t_int, 0)));
+						} else if (!ps.equals(old.getNonTypeValue())) {
+							return false;
+						}
+					} else if (!ps.equals(as)) {
+						return false;
+					}
+				}
+				p = pa.getType();
+				a = aa.getType();
 			} else if (p instanceof IQualifierType) {
 				if (a instanceof IQualifierType) {
 					a = ((IQualifierType) a).getType(); //TODO a = strip qualifiers from p out of a
@@ -1915,7 +1951,7 @@ public class CPPTemplates {
 			if (!(paramType instanceof IType))
 				return null;
 
-			IParameter[] functionParameters = new IParameter[] { new CPPParameter((IType) paramType) };
+			IParameter[] functionParameters = new IParameter[] { new CPPParameter((IType) paramType, 0) };
 
 			return new CPPImplicitFunctionTemplate(specialization.getTemplateParameters(), functionParameters);
 		} catch (DOMException e) {
@@ -2085,6 +2121,11 @@ public class CPPTemplates {
 					return true;
 				t= ptmt.getType();
 			} else if (t instanceof ITypeContainer) {
+				if (t instanceof IArrayType) {
+					IValue asize= ((IArrayType) t).getSize();
+					if (asize != null && Value.isDependentValue(asize))
+						return true;
+				}
 				t= ((ITypeContainer) t).getType();
 			} else {
 				return false;

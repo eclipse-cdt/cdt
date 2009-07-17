@@ -16,6 +16,7 @@ import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IASTDeclSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTDeclarator;
+import org.eclipse.cdt.core.dom.ast.IASTFunctionDeclarator;
 import org.eclipse.cdt.core.dom.ast.IASTFunctionDefinition;
 import org.eclipse.cdt.core.dom.ast.IASTInitializer;
 import org.eclipse.cdt.core.dom.ast.IASTName;
@@ -30,6 +31,7 @@ import org.eclipse.cdt.core.parser.util.ArrayUtil;
 import org.eclipse.cdt.core.parser.util.CharArrayUtils;
 import org.eclipse.cdt.internal.core.dom.Linkage;
 import org.eclipse.cdt.internal.core.dom.parser.ASTNode;
+import org.eclipse.cdt.internal.core.dom.parser.ASTQueries;
 import org.eclipse.cdt.internal.core.dom.parser.ProblemBinding;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPVisitor;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.SemanticUtil;
@@ -38,7 +40,7 @@ import org.eclipse.core.runtime.PlatformObject;
 /**
  * Binding for a c++ function parameter
  */
-public class CPPParameter extends PlatformObject implements ICPPParameter, ICPPInternalBinding {
+public class CPPParameter extends PlatformObject implements ICPPParameter, ICPPInternalBinding, ICPPTwoPhaseBinding {
     public static class CPPParameterProblem extends ProblemBinding implements ICPPParameter {
         public CPPParameterProblem(IASTNode node, int id, char[] arg) {
             super(node, id, arg);
@@ -83,14 +85,17 @@ public class CPPParameter extends PlatformObject implements ICPPParameter, ICPPI
 
 	private IType type = null;
 	private IASTName[] declarations = null;
+	private int fPosition;
 	
 	
-	public CPPParameter(IASTName name) {
+	public CPPParameter(IASTName name, int pos) {
 		this.declarations = new IASTName[] { name };
+		fPosition= pos;
 	}
 	
-	public CPPParameter(IType type) {
+	public CPPParameter(IType type, int pos) {
 	    this.type = type;
+	    fPosition= pos;
 	}
 	
     /* (non-Javadoc)
@@ -300,5 +305,29 @@ public class CPPParameter extends PlatformObject implements ICPPParameter, ICPPI
 
 	public IValue getInitialValue() {
 		return null;
+	}
+
+	public IBinding resolveFinalBinding(CPPASTNameBase name) {
+		// check if the binding has been updated.
+		IBinding current= name.getPreBinding();
+		if (current != this)
+			return current;
+		
+		IASTNode node= getPrimaryDeclaration();
+		while (node != null && !(node instanceof IASTFunctionDeclarator)) {
+			node= node.getParent();
+		}
+		if (node instanceof IASTFunctionDeclarator) {
+			IASTName funcName= ASTQueries.findInnermostDeclarator((IASTFunctionDeclarator) node).getName();
+			IBinding b= funcName.resolvePreBinding();
+			if (b instanceof ICPPInternalFunction) {
+				return ((ICPPInternalFunction) b).resolveParameter(this);
+			}
+		}
+		return this;
+	}
+
+	public int getParameterPosition() {
+		return fPosition;
 	}
 }

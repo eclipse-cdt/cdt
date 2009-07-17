@@ -1971,8 +1971,7 @@ public class AST2TemplateTests extends AST2BaseTest {
 		ICPPSpecialization spec = (ICPPSpecialization) col.getName(9).resolveBinding();
 		assertSame(spec.getSpecializedBinding(), ctor);
 		
-		ICPPSpecialization c = (ICPPSpecialization) col.getName(10).resolveBinding();
-		assertSame(c.getSpecializedBinding(), g);
+		ICPPParameter c = (ICPPParameter) col.getName(10).resolveBinding();
 		
 		assertSame(blah, col.getName(11).resolveBinding());
 		assertSame(c, col.getName(12).resolveBinding());
@@ -1980,8 +1979,7 @@ public class AST2TemplateTests extends AST2BaseTest {
 		ICPPSpecialization spec2 = (ICPPSpecialization) col.getName(13).resolveBinding();
 		assertSame(spec.getSpecializedBinding(), ctor);
 		
-		ICPPSpecialization c2 = (ICPPSpecialization) col.getName(14).resolveBinding();
-		assertSame(c2.getSpecializedBinding(), g);
+		ICPPParameter c2 = (ICPPParameter) col.getName(14).resolveBinding();
 		
 		assertSame(blah, col.getName(15).resolveBinding());
 		assertSame(c2, col.getName(16).resolveBinding());
@@ -4056,7 +4054,7 @@ public class AST2TemplateTests extends AST2BaseTest {
 	//	void test() {
 	//	  S(a);
 	//	}
-	public void _testFunctionTemplateWithArrayReferenceParameter_269926() throws Exception {
+	public void testFunctionTemplateWithArrayReferenceParameter_269926() throws Exception {
 		final String code = getAboveComment();
 		parseAndCheckBindings(code, ParserLanguage.CPP);		
 	}
@@ -4104,6 +4102,16 @@ public class AST2TemplateTests extends AST2BaseTest {
 	//	typedef CT<ST> TDef;
 	public void testUsingTemplateTemplateParameter_279619() throws Exception {
 		final String code = getAboveComment();
+		parseAndCheckBindings(code, ParserLanguage.CPP);
+	}
+	
+	//	template <int N> void T(int (&array)[N]) {};
+	//	void test() {
+	//	  int a[2];
+	//	  T<2>(a); 
+	//	}
+	public void testInstantiationOfArraySize_269926() throws Exception {
+		final String code= getAboveComment();
 		parseAndCheckBindings(code, ParserLanguage.CPP);
 	}
 }

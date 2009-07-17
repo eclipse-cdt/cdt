@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2008 IBM Corporation and others.
+ * Copyright (c) 2005, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -1203,8 +1203,10 @@ public class AST2CSpecTest extends AST2SpecBaseTest {
 		buffer.append("for (int j = 0, k = n*m+300; j < k; j++)\n"); //$NON-NLS-1$
 		buffer.append("// a is a pointer to a VLA with n*m+300 elements\n"); //$NON-NLS-1$
 		buffer.append("a[i][j] += x;\n"); //$NON-NLS-1$
-		buffer.append("}\n"); //$NON-NLS-1$
-		parseCandCPP(buffer.toString(), true, 0);
+		buffer.append("}\n");
+		String code = buffer.toString(); //$NON-NLS-1$
+		// no valid c++ code
+		parse(code, ParserLanguage.C, true, 0);
 	}
 	
 	/**

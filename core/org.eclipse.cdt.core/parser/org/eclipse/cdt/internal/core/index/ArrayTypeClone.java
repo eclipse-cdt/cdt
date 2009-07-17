@@ -15,6 +15,8 @@ import org.eclipse.cdt.core.dom.ast.IASTExpression;
 import org.eclipse.cdt.core.dom.ast.IArrayType;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.ITypedef;
+import org.eclipse.cdt.core.dom.ast.IValue;
+import org.eclipse.cdt.core.parser.util.CharArrayUtils;
 import org.eclipse.cdt.internal.core.dom.parser.ITypeContainer;
 
 public class ArrayTypeClone implements IIndexType, IArrayType, ITypeContainer {
@@ -37,9 +39,23 @@ public class ArrayTypeClone implements IIndexType, IArrayType, ITypeContainer {
 			return false;
 
 		IArrayType rhs = (IArrayType) type;
-		return type1.isSameType(rhs.getType());
+		if (type1.isSameType(rhs.getType())) {
+			IValue s1= getSize();
+			IValue s2= rhs.getSize();
+			if (s1 == s2)
+				return true;
+			if (s1 == null || s2 == null)
+				return false;
+			return CharArrayUtils.equals(s1.getSignature(), s2.getSignature());
+		}
+		return false;
 	}
 
+	public IValue getSize() {
+		return delegate.getSize();
+	}
+	
+	@Deprecated
 	public IASTExpression getArraySizeExpression() throws DOMException {
 		return delegate.getArraySizeExpression();
 	}

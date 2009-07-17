@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2008 QNX Software Systems
+ * Copyright (c) 2005, 2009 QNX Software Systems
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -33,6 +33,7 @@ import org.eclipse.core.runtime.IPath;
 public class DBTest extends BaseTestCase {
 	protected Database db;
 	
+	@Override
 	protected void setUp() throws Exception {
 		super.setUp();
 		db = new Database(getTestDir().append(getName()+System.currentTimeMillis()+".dat").toFile(),
@@ -52,6 +53,7 @@ public class DBTest extends BaseTestCase {
 		return path;
 	}
 	
+	@Override
 	protected void tearDown() throws Exception {
 		db.close();
 		if(!db.getLocation().delete()) {
@@ -72,8 +74,8 @@ public class DBTest extends BaseTestCase {
 		assertEquals(-blocksize, db.getShort(mem - Database.BLOCK_HEADER_SIZE));
 		db.free(mem);
 		assertEquals(blocksize, db.getShort(mem - Database.BLOCK_HEADER_SIZE));
-		assertEquals(mem - Database.BLOCK_HEADER_SIZE, db.getRecPtr((deltas-Database.MIN_BLOCK_DELTAS+1) * Database.INT_SIZE));
-		assertEquals(mem - Database.BLOCK_HEADER_SIZE + blocksize, db.getRecPtr((freeDeltas-Database.MIN_BLOCK_DELTAS+1) * Database.INT_SIZE));
+		assertEquals(mem, db.getRecPtr((deltas-Database.MIN_BLOCK_DELTAS+1) * Database.INT_SIZE));
+		assertEquals(mem + blocksize, db.getRecPtr((freeDeltas-Database.MIN_BLOCK_DELTAS+1) * Database.INT_SIZE));
 	}
 
 	public void testBug192437() throws IOException {
@@ -110,10 +112,10 @@ public class DBTest extends BaseTestCase {
 		long mem2 = db.malloc(realsize);
 		db.free(mem1);
 		db.free(mem2);
-		assertEquals(mem2 - Database.BLOCK_HEADER_SIZE, db.getRecPtr((deltas-Database.MIN_BLOCK_DELTAS+1) * Database.INT_SIZE));
+		assertEquals(mem2, db.getRecPtr((deltas-Database.MIN_BLOCK_DELTAS+1) * Database.INT_SIZE));
 		assertEquals(0, db.getRecPtr(mem2));
-		assertEquals(mem1 - Database.BLOCK_HEADER_SIZE, db.getRecPtr(mem2 + Database.INT_SIZE));
-		assertEquals(mem2 - Database.BLOCK_HEADER_SIZE, db.getRecPtr(mem1));
+		assertEquals(mem1, db.getRecPtr(mem2 + Database.INT_SIZE));
+		assertEquals(mem2, db.getRecPtr(mem1));
 		assertEquals(0, db.getRecPtr(mem1 + Database.INT_SIZE));
 	}
 	

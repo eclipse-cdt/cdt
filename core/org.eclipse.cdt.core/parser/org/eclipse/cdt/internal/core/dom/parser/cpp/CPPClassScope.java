@@ -99,9 +99,9 @@ public class CPPClassScope extends CPPScope implements ICPPClassScope {
         }
         char[] className = name.getLookupKey();
 
-		IParameter[] voidPs = new IParameter[] { new CPPParameter(CPPSemantics.VOID_TYPE) };
+		IParameter[] voidPs = new IParameter[] { new CPPParameter(CPPSemantics.VOID_TYPE, 0) };
 		IType pType = new CPPReferenceType(SemanticUtil.addQualifiers(clsType, true, false));
-		IParameter[] ps = new IParameter[] { new CPPParameter(pType) };
+		IParameter[] ps = new IParameter[] { new CPPParameter(pType, 0) };
 
 		int i= 0;
 		ImplicitsAnalysis ia= new ImplicitsAnalysis(compTypeSpec);

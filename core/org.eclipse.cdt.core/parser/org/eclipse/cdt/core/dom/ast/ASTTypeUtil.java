@@ -39,6 +39,7 @@ import org.eclipse.cdt.core.parser.GCCKeywords;
 import org.eclipse.cdt.core.parser.Keywords;
 import org.eclipse.cdt.core.parser.util.ArrayUtil;
 import org.eclipse.cdt.internal.core.dom.parser.ITypeContainer;
+import org.eclipse.cdt.internal.core.dom.parser.Value;
 import org.eclipse.cdt.internal.core.dom.parser.c.CASTTypeId;
 import org.eclipse.cdt.internal.core.dom.parser.c.CVisitor;
 import org.eclipse.cdt.internal.core.dom.parser.c.ICInternalBinding;
@@ -202,28 +203,46 @@ public class ASTTypeUtil {
 			result.append(Keywords.cpLBRACKET);
 			if (type instanceof ICArrayType) {
 				try {
-					if (((ICArrayType) type).isConst()) {
+					final ICArrayType catype = (ICArrayType) type;
+					if (catype.isConst()) {
 						result.append(Keywords.CONST); needSpace = true;
 					}
-					if (((ICArrayType) type).isRestrict()) {
+					if (catype.isRestrict()) {
 						if (needSpace) {
 							result.append(SPACE); needSpace = false;
 						}
 						result.append(Keywords.RESTRICT); needSpace = true;
 					}
-					if (((ICArrayType) type).isStatic()) {
+					if (catype.isStatic()) {
 						if (needSpace) {
 							result.append(SPACE); needSpace = false;
 						}
 						result.append(Keywords.STATIC); needSpace = true;
 					}
-					if (((ICArrayType) type).isVolatile()) {
+					if (catype.isVolatile()) {
 						if (needSpace) {
 							result.append(SPACE); needSpace = false;
 						}
 						result.append(Keywords.VOLATILE);
 					}
 				} catch (DOMException e) {
+				}
+			} 
+			IValue val= ((IArrayType) type).getSize();
+			if (val != null && val != Value.UNKNOWN) {
+				if (normalize) {
+					if (needSpace) {
+						result.append(SPACE); needSpace = false;
+					}
+					result.append(val.getSignature());
+				} else {
+					Long v= val.numericalValue();
+					if (v != null) {
+						if (needSpace) {
+							result.append(SPACE); needSpace = false;
+						}
+						result.append(v.longValue());
+					}
 				}
 			}
 			result.append(Keywords.cpRBRACKET);

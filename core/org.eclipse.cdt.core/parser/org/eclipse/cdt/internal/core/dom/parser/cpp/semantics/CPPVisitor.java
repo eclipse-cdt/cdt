@@ -166,7 +166,6 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.GPPBasicType;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.GPPPointerToMemberType;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.GPPPointerType;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPInternalBinding;
-import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPInternalFunction;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPUnknownBinding;
 import org.eclipse.cdt.internal.core.index.IIndexScope;
 
@@ -454,6 +453,7 @@ public class CPPVisitor extends ASTQueries {
         }
 		return binding;
 	}
+	
 	private static IBinding createBinding(IASTDeclaration declaration) {
 		if (declaration instanceof ICPPASTNamespaceDefinition) {
 			ICPPASTNamespaceDefinition namespaceDef = (ICPPASTNamespaceDefinition) declaration;
@@ -499,6 +499,7 @@ public class CPPVisitor extends ASTQueries {
 
 		return null;
 	}
+	
 	private static IBinding createBinding(IASTDeclarator declarator) {
 		IASTNode parent = findOutermostDeclarator(declarator).getParent();
 		declarator= findInnermostDeclarator(declarator);
@@ -556,16 +557,13 @@ public class CPPVisitor extends ASTQueries {
 				if (!(findOutermostDeclarator(fdtor).getParent() instanceof IASTDeclaration) ||
 						findTypeRelevantDeclarator(fdtor) != fdtor)
 					return null;
-				IBinding temp = findInnermostDeclarator(fdtor).getName().resolveBinding();
-				if (temp instanceof ICPPInternalFunction) {
-					return ((ICPPInternalFunction) temp).resolveParameter(param);
-				} else if (temp instanceof IProblemBinding) {
-				    //problems with the function, still create binding for the parameter
-				    return new CPPParameter(name);
-				} else if (temp instanceof IIndexBinding) {
-					return new CPPParameter(name);
+				IASTParameterDeclaration[] params = fdtor.getParameters();
+				int i=0;
+				for(;i<params.length; i++) {
+					if (params[i] == param)
+						break;
 				}
-				return null;
+				return new CPPParameter(name, i);
 			} else if (parent instanceof ICPPASTTemplateDeclaration) {
 				return CPPTemplates.createBinding(param);
 			}
@@ -600,28 +598,7 @@ public class CPPVisitor extends ASTQueries {
         
         IASTSimpleDeclaration simpleDecl = (parent instanceof IASTSimpleDeclaration) ?
         		(IASTSimpleDeclaration) parent : null;
-        if (parent instanceof ICPPASTParameterDeclaration) {
-			ICPPASTParameterDeclaration param = (ICPPASTParameterDeclaration) parent;
-			parent = param.getParent();
-			if (parent instanceof IASTStandardFunctionDeclarator) {
-				IASTStandardFunctionDeclarator fdtor = (IASTStandardFunctionDeclarator) param.getParent();
-				// if the fdtor does not declare a function we don't create a binding for the parameter.
-				if (!(findOutermostDeclarator(fdtor).getParent() instanceof IASTDeclaration) ||
-						findTypeRelevantDeclarator(fdtor) != fdtor)
-					return null;
-				IBinding temp = findInnermostDeclarator(fdtor).getName().resolveBinding();
-				if (temp instanceof ICPPInternalFunction) {
-					binding = ((ICPPInternalFunction) temp).resolveParameter(param);
-				} else if (temp instanceof IProblemBinding) {
-				    //problems with the function, still create binding for the parameter
-				    binding = new CPPParameter(name);
-				} else if (temp instanceof IIndexBinding) {
-					binding= new CPPParameter(name);
-				}
-			} else if (parent instanceof ICPPASTTemplateDeclaration) {
-				return CPPTemplates.createBinding(param);
-			}
-		} else if (simpleDecl != null &&
+        if (simpleDecl != null &&
 				simpleDecl.getDeclSpecifier().getStorageClass() == IASTDeclSpecifier.sc_typedef) {
 		    if (binding instanceof ICPPInternalBinding && binding instanceof ITypedef && name.isActive()) {
 		        IType t1 = ((ITypedef) binding).getType();
@@ -687,7 +664,7 @@ public class CPPVisitor extends ASTQueries {
                 }
 		    }
 		    if (t1 != null && t2 != null) {
-		    	if (t1.isSameType(t2)) {
+				if (t1.isSameType(t2) || isCompatibleArray(t1, t2) != null) {
 		    		ASTInternal.addDeclaration(binding, name);
 		    	} else {
 		    		binding = new ProblemBinding(name, IProblemBinding.SEMANTIC_INVALID_REDECLARATION);
@@ -700,6 +677,24 @@ public class CPPVisitor extends ASTQueries {
 		} 
 
 		return binding;
+	}
+
+	private static IType isCompatibleArray(IType t1, IType t2) {
+		if (t1 instanceof IArrayType && t2 instanceof IArrayType) {
+			IArrayType a1 = (IArrayType) t1;
+			IArrayType a2 = (IArrayType) t2;
+			if (!isSameType(a1.getType(), a2.getType())) {
+				return null;
+			}
+			if (a1.getSize() == null) {
+				if (a2.getSize() != null) {
+					return a2;
+				}
+			} else if (a2.getSize() == null) {
+				return a1;
+			}
+		}
+		return null;
 	}
 
 	public static boolean isConstructor(IScope containingScope, IASTDeclarator declarator) {

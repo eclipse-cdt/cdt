@@ -158,41 +158,70 @@ public class CPPFunctionSpecialization extends CPPSpecialization implements ICPP
         return false;
 	}
 
-    /* (non-Javadoc)
-     * @see org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPInternalFunction#resolveParameter(org.eclipse.cdt.core.dom.ast.IASTParameterDeclaration)
-     */
-    public IBinding resolveParameter(IASTParameterDeclaration param) {
-        IASTDeclarator dtor = param.getDeclarator();
-        while (dtor.getNestedDeclarator() != null)
-            dtor = dtor.getNestedDeclarator();
-        IASTName name = dtor.getName();
-    	IBinding binding = name.getBinding();
-    	if (binding != null)
-    		return binding;
+    public IBinding resolveParameter(CPPParameter param) {
+		int pos= param.getParameterPosition();
 		
-    	ICPPASTFunctionDeclarator fdtor = (ICPPASTFunctionDeclarator) param.getParent();
-    	IASTParameterDeclaration[] ps = fdtor.getParameters();
-    	int i = 0;
-    	for (; i < ps.length; i++) {
-    		if (param == ps[i])
+    	final IASTNode[] decls= getDeclarations();
+		int tdeclLen= decls == null ? 0 : decls.length;
+    	for (int i= -1; i < tdeclLen; i++) {
+    		ICPPASTFunctionDeclarator tdecl;
+    		if (i == -1) {
+    			tdecl= (ICPPASTFunctionDeclarator) getDefinition();
+    			if (tdecl == null)
+    				continue;
+    		} else if (decls != null){
+    			tdecl= (ICPPASTFunctionDeclarator) decls[i];
+    			if (tdecl == null)
+    				break;
+    		} else {
     			break;
+    		}
+    		
+    		IASTParameterDeclaration[] params = tdecl.getParameters();
+    		if (pos < params.length) {
+    			final IASTName oName = getParamName(params[pos]);
+    			return oName.resolvePreBinding();
+    		}
     	}
-    	
-        try {
-            IParameter[] params = getParameters();
-            if (i < params.length) {
-        	    final IParameter myParam = params[i];
-				name.setBinding(myParam);
-        	    ASTInternal.addDeclaration(myParam, name);
-        	    return myParam;
-        	}
-
-        } catch (DOMException e) {
-            return e.getProblem();
-        }
-        return null;
+    	return param;
     }
     
+    protected void updateFunctionParameterBindings(ICPPASTFunctionDeclarator fdtor) {
+		IASTParameterDeclaration[] updateParams = fdtor.getParameters();
+
+    	int k= 0;
+    	final IASTNode[] decls= getDeclarations();
+    	int tdeclLen= decls == null ? 0 : decls.length;
+    	for (int i= -1; i < tdeclLen && k < updateParams.length; i++) {
+    		ICPPASTFunctionDeclarator tdecl;
+    		if (i == -1) {
+    			tdecl= (ICPPASTFunctionDeclarator) getDefinition();
+    			if (tdecl == null)
+    				continue;
+    		} else if (decls != null) {
+    			tdecl= (ICPPASTFunctionDeclarator) decls[i];
+    			if (tdecl == null)
+    				break;
+    		} else {
+    			break;
+    		}
+    		
+    		IASTParameterDeclaration[] params = tdecl.getParameters();
+    		int end= Math.min(params.length, updateParams.length);
+    		for (; k < end; k++) {
+    			final IASTName oName = getParamName(params[k]);
+    			IBinding b= oName.resolvePreBinding();
+    			IASTName n = getParamName(updateParams[k]);
+    			n.setBinding(b);
+    			ASTInternal.addDeclaration(b, n);
+    		}
+    	}
+    }
+
+	private IASTName getParamName(final IASTParameterDeclaration paramDecl) {
+		return ASTQueries.findInnermostDeclarator(paramDecl.getDeclarator()).getName();
+	}
+
 	private ICPPASTFunctionDeclarator extractFunctionDtor(IASTNode node) {
 		if (node instanceof IASTName)
 			node = node.getParent();
@@ -209,7 +238,7 @@ public class CPPFunctionSpecialization extends CPPSpecialization implements ICPP
 	public void addDefinition(IASTNode node) {
 		ICPPASTFunctionDeclarator dtor = extractFunctionDtor(node);
 		if (dtor != null) {
-			updateParameterBindings(dtor);
+			updateFunctionParameterBindings(dtor);
 	        super.addDefinition(dtor);
 		}
 	}
@@ -218,31 +247,10 @@ public class CPPFunctionSpecialization extends CPPSpecialization implements ICPP
 	public void addDeclaration(IASTNode node) {
 		ICPPASTFunctionDeclarator dtor = extractFunctionDtor(node);
 		if (dtor != null) {
-			updateParameterBindings(dtor);
+			updateFunctionParameterBindings(dtor);
 	        super.addDeclaration(dtor);
 		}
 	}
-
-    protected void updateParameterBindings(ICPPASTFunctionDeclarator fdtor) {
-        IParameter[] params = null;
-        try {
-            params = getParameters();
-        } catch (DOMException e) {
-            return;
-        }
-        IASTParameterDeclaration[] nps = fdtor.getParameters();
-    	for (int i = 0; i < nps.length; i++) {
-    		final IParameter param = params[i];
-			if (param != null) {
-    		    IASTDeclarator dtor = nps[i].getDeclarator();
-    		    while (dtor.getNestedDeclarator() != null)
-    		        dtor = dtor.getNestedDeclarator();
-    		    IASTName name = dtor.getName();
-    			name.setBinding(param);
-    			ASTInternal.addDeclaration(param, name);
-    		}
-    	}
-    }
 
 	@Override
 	public String toString() {

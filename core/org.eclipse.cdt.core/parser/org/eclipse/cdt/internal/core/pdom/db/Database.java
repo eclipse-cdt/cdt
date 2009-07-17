@@ -24,7 +24,6 @@ import java.nio.channels.FileChannel;
 import java.util.ArrayList;
 
 import org.eclipse.cdt.core.CCorePlugin;
-import org.eclipse.cdt.internal.core.pdom.PDOM;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
@@ -74,6 +73,9 @@ public class Database {
 	public static final int MIN_BLOCK_DELTAS = 2;	// a block must at least be 2 + 2*4 bytes to link the free blocks.
 	public static final int MAX_BLOCK_DELTAS = CHUNK_SIZE/BLOCK_SIZE_DELTA;	
 	public static final int MAX_MALLOC_SIZE = MAX_BLOCK_DELTAS*BLOCK_SIZE_DELTA - BLOCK_HEADER_SIZE;  
+	public static final int PTR_SIZE = 4;  // size of a pointer in the database in bytes  
+	public static final long MAX_DB_SIZE= ((long) 1 << (Integer.SIZE + BLOCK_SIZE_DELTA_BITS));
+
 
 	public static final int VERSION_OFFSET = 0;
 	public static final int DATA_AREA = (CHUNK_SIZE / BLOCK_SIZE_DELTA - MIN_BLOCK_DELTAS + 2) * INT_SIZE;
@@ -360,27 +362,14 @@ public class Database {
 			 * special status, the indexing operation should be stopped. This is desired since generally, once
 			 * the max size is exceeded, there are lots of errors.
 			 */
-			long max_size;
-			if (usesDensePointers()) {
-				max_size = ((long) 1 << (Integer.SIZE + BLOCK_SIZE_DELTA_BITS));
-			} else {
-				max_size = ((long) 1 << (Integer.SIZE - 1));
-			}
-			if (address >= max_size) {
-				Object bindings[] = { this.getLocation().getAbsolutePath(), max_size };
+			if (address >= MAX_DB_SIZE) {
+				Object bindings[] = { this.getLocation().getAbsolutePath(), MAX_DB_SIZE };
 				throw new CoreException(new Status(IStatus.ERROR, CCorePlugin.PLUGIN_ID,
 						CCorePlugin.STATUS_PDOM_TOO_LARGE, NLS.bind(CCorePlugin
 								.getResourceString("pdom.DatabaseTooLarge"), bindings), null)); //$NON-NLS-1$
 			}
 			return address;
 		}
-	}
-
-	/**
-	 * Returns whether this database uses dense pointers.
-	 */
-	boolean usesDensePointers() {
-		return getVersion() >= PDOM.DENSE_RECPTR_VERSION;
 	}
 
 	/**

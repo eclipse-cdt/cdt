@@ -6,7 +6,7 @@
  *  http://www.eclipse.org/legal/epl-v10.html
  * 
  *  Contributors:
- *     IBM Corporation - initial API and implementation
+ *     Devin Steffler (IBM Corporation) - initial API and implementation
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.dom.parser.c;
 
@@ -16,14 +16,14 @@ import org.eclipse.cdt.core.dom.ast.IASTExpression;
 import org.eclipse.cdt.core.dom.ast.IArrayType;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.ITypedef;
+import org.eclipse.cdt.core.dom.ast.IValue;
 import org.eclipse.cdt.core.dom.ast.c.ICASTArrayModifier;
 import org.eclipse.cdt.core.dom.ast.c.ICArrayType;
+import org.eclipse.cdt.core.parser.util.CharArrayUtils;
 import org.eclipse.cdt.internal.core.dom.parser.ITypeContainer;
+import org.eclipse.cdt.internal.core.dom.parser.Value;
 import org.eclipse.cdt.internal.core.index.IIndexType;
 
-/**
- * @author dsteffle
- */
 public class CArrayType implements ICArrayType, ITypeContainer {
 	IType type;
 	ICASTArrayModifier mod;
@@ -35,7 +35,7 @@ public class CArrayType implements ICArrayType, ITypeContainer {
     public boolean isSameType(IType obj) {
         if (obj == this)
             return true;
-        if (obj instanceof ITypedef)
+        if (obj instanceof ITypedef || obj instanceof IIndexType)
             return obj.isSameType(this);
         if (obj instanceof ICArrayType) {
         	ICArrayType at = (ICArrayType) obj;
@@ -46,18 +46,24 @@ public class CArrayType implements ICArrayType, ITypeContainer {
         		if (isVolatile() != at.isVolatile()) return false;
         		if (isVariableLength() != at.isVariableLength()) return false;
 
-        		return at.getType().isSameType(type);
+        		return at.getType().isSameType(type) && hasSameSize(at);
         	} catch (DOMException e) {
         		return false;
         	}
         }
-        // Workaround for bug 182976, no PDOMCArrayType.
-        else if (obj instanceof IArrayType && obj instanceof IIndexType) {
-        	return obj.isSameType(this);
-        }
     	return false;
     }
     
+	private boolean hasSameSize(IArrayType rhs) {
+		IValue s1 = getSize();
+		IValue s2 = rhs.getSize();
+		if (s1 == s2)
+			return true;
+		if (s1 == null || s2 == null)
+			return false;
+		return CharArrayUtils.equals(s1.getSignature(), s2.getSignature());
+	}
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.dom.ast.IArrayType#getType()
 	 */
@@ -117,9 +123,17 @@ public class CArrayType implements ICArrayType, ITypeContainer {
         return mod;
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.cdt.core.dom.ast.IArrayType#getArraySizeExpression()
-     */
+    public IValue getSize() {
+    	if (mod != null) {
+    		IASTExpression sizeExpression = mod.getConstantExpression();
+    		if (sizeExpression != null) {
+    			return Value.create(sizeExpression, Value.MAX_RECURSION_DEPTH);
+    		}
+    	}
+    	return null;
+    }
+
+	@Deprecated
     public IASTExpression getArraySizeExpression() {
         if (mod != null)
             return mod.getConstantExpression();

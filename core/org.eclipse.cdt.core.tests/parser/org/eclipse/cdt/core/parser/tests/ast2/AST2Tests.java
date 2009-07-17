@@ -5157,10 +5157,10 @@ public class AST2Tests extends AST2BaseTest {
     		BindingAssertionHelper ba= new BindingAssertionHelper(getAboveComment(), isCpp);
 
     		IFunction f= ba.assertNonProblem("f1", 2, IFunction.class);
-    		isTypeEqual(f.getType(), "int (* (int))[]");
+    		isTypeEqual(f.getType(), "int (* (int))[5]");
     		
     		f= ba.assertNonProblem("f1 ", 2, IFunction.class);
-    		isTypeEqual(f.getType(), "int (* (int))[]");
+    		isTypeEqual(f.getType(), "int (* (int))[5]");
     	}
     }
     

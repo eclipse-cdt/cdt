@@ -193,7 +193,6 @@ public class ListDialogField<T> extends DialogField {
 	}
 	
 	
-	
 	// ------ adapter communication
 	
 	private void buttonPressed(int index) {
@@ -239,7 +238,7 @@ public class ListDialogField<T> extends DialogField {
 		Control list= getListControl(parent);
 		gd= new GridData();
 		gd.horizontalAlignment= GridData.FILL;
-		gd.grabExcessHorizontalSpace= false;
+		gd.grabExcessHorizontalSpace= true;
 		gd.verticalAlignment= GridData.FILL;
 		gd.grabExcessVerticalSpace= true;
 		gd.horizontalSpan= nColumns - 2;
@@ -645,7 +644,6 @@ public class ListDialogField<T> extends DialogField {
 		dialogFieldChanged();
 	}	
 
-
 	/**
 	 * Adds an element at a position.
 	 */	
@@ -692,7 +690,6 @@ public class ListDialogField<T> extends DialogField {
 	public int getSize() {
 		return fElements.size();
 	}
-	
 
 	public void selectElements(ISelection selection) {
 		fSelectionWhenEnabled= selection;
@@ -718,7 +715,6 @@ public class ListDialogField<T> extends DialogField {
 			selectElements(new StructuredSelection(element));
 		}
 	}
-	
 		
 	public void postSetSelection(final ISelection selection) {
 		if (isOkToUse(fTableControl)) {
@@ -786,7 +782,6 @@ public class ListDialogField<T> extends DialogField {
 		}
 		return reverse;
 	}
-	
 	
 	private void remove() {
 		removeElements(getSelectedElements());
@@ -872,9 +867,7 @@ public class ListDialogField<T> extends DialogField {
 		public void doubleClick(DoubleClickEvent event) {
 			doDoubleClick(event);
 		}
-
 	}
-	
 	
 	protected void doListSelected(SelectionChangedEvent event) {
 		updateButtonState();
@@ -888,7 +881,4 @@ public class ListDialogField<T> extends DialogField {
 			fListAdapter.doubleClicked(this);
 		}
 	}	
-
-
-
 }

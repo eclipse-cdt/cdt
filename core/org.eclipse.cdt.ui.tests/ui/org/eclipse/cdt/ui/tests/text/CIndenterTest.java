@@ -307,16 +307,16 @@ public class CIndenterTest extends BaseUITestCase {
 	//class A {
 	//A(int a,
 	//int b)
-	//:f(0)
-	//{
+	//: f(0),
+	//g(0) {
 	//}
 	//};
 	
 	//class A {
 	//	A(int a,
 	//			int b)
-	//	:f(0)
-	//	{
+	//	: f(0),
+	//	  g(0) {
 	//	}
 	//};
 	public void testConstructorBodyWithInitializer_Bug194586() throws Exception {

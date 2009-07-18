@@ -671,7 +671,6 @@ public final class CIndenter {
 			// remainder
 			while (spaces-- > 0)
 				ret.append(' ');
-
 		} catch (BadLocationException e) {
 		}
 
@@ -1511,7 +1510,7 @@ public final class CIndenter {
 		while (true) {
 			nextToken();
 
-			// if any line item comes with its own indentation, adapt to it
+			// If any line item comes with its own indentation, adapt to it
 			if (fLine < startLine) {
 				try {
 					int lineOffset= fDocument.getLineOffset(startLine);
@@ -1522,9 +1521,13 @@ public final class CIndenter {
 						fIndent = fPrefs.prefContinuationIndent;
 					} else {
 						fAlign= fScanner.findNonWhitespaceForwardInAnyPartition(lineOffset, bound);
+						// If the reference line starts with a colon, skip the colon.  
+						if (peekToken(fAlign) == Symbols.TokenCOLON) {
+							fAlign= fScanner.findNonWhitespaceForwardInAnyPartition(fAlign + 1, bound);
+						}
 					}
 				} catch (BadLocationException e) {
-					// ignore and return just the position
+					// Ignore and return just the position
 				}
 				return startPosition;
 			}
@@ -1955,7 +1958,7 @@ public final class CIndenter {
 	 * Returns <code>true</code> if the current tokens look like a method
 	 * declaration header (i.e. only the return type and method name). The
 	 * heuristic calls <code>nextToken</code> and expects an identifier
-	 * (method name) and an optional retrun type declaration.
+	 * (method name) and an optional return type declaration.
 	 *
 	 * @return <code>true</code> if the current position looks like a method
 	 *         declaration header.

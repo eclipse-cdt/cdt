@@ -154,6 +154,5 @@ public abstract class StatusDialog extends Dialog {
 		if ((shell != null) && !shell.isDisposed())
 			shell.setImage(fImage);
 	}	
-	
 }
 

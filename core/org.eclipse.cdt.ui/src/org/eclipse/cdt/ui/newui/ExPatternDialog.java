@@ -29,6 +29,8 @@ import org.eclipse.jface.window.Window;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Image;
+import org.eclipse.swt.layout.FillLayout;
+import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
@@ -58,21 +60,6 @@ import org.eclipse.cdt.internal.ui.wizards.dialogfields.ListDialogField;
  */
 public class ExPatternDialog extends StatusDialog {
 	
-	private static class ExPatternLabelProvider extends LabelProvider {
-				
-		@Override
-		public Image getImage(Object element) {
-			ImageDescriptorRegistry registry= CUIPlugin.getImageDescriptorRegistry();
-			return registry.get(CPluginImages.DESC_OBJS_EXCLUSION_FILTER_ATTRIB);
-		}
-
-		@Override
-		public String getText(Object element) {
-			return (String) element;
-		}
-
-	}
-	
 	private ListDialogField<String> fExclusionPatternList;
 	private IProject fCurrProject;
 	private IPath[] pattern;
@@ -83,7 +70,6 @@ public class ExPatternDialog extends StatusDialog {
 	private static final int IDX_ADD_MULTIPLE= 1;
 	private static final int IDX_EDIT= 2;
 	private static final int IDX_REMOVE= 4;
-	
 		
 	public ExPatternDialog(Shell parent, IPath[] _data, IPath _path, IProject proj) {
 		super(parent);
@@ -92,7 +78,8 @@ public class ExPatternDialog extends StatusDialog {
 		path = _path;
 		setTitle(CPathEntryMessages.ExclusionPatternDialog_title); 
 
-		String label= NLS.bind(CPathEntryMessages.ExclusionPatternDialog_pattern_label, path.makeRelative().toString()); 
+		String label= NLS.bind(CPathEntryMessages.ExclusionPatternDialog_pattern_label,
+				path.makeRelative().toString()); 
 		
 		String[] buttonLabels= new String[] {
 			CPathEntryMessages.ExclusionPatternDialog_pattern_add, 
@@ -123,17 +110,16 @@ public class ExPatternDialog extends StatusDialog {
 		fExclusionPatternList.selectFirstElement();
 		fExclusionPatternList.enableButton(IDX_ADD_MULTIPLE, fCurrSourceFolder != null);
 	}
-	
-	
+
 	@Override
 	protected Control createDialogArea(Composite parent) {
-		Composite composite= (Composite)super.createDialogArea(parent);
+		Composite composite= (Composite) super.createDialogArea(parent);
 
 		Composite inner= new Composite(composite, SWT.NONE);
-		GridLayout layout= new GridLayout();
+		inner.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
+		GridLayout layout= new GridLayout(2, false);
 		layout.marginHeight= 0;
 		layout.marginWidth= 0;
-		layout.numColumns= 2;
 		inner.setLayout(layout);
 		
 		fExclusionPatternList.doFillIntoGrid(inner, 3);
@@ -187,35 +173,12 @@ public class ExPatternDialog extends StatusDialog {
 			fExclusionPatternList.addElement(dialog.getExclusionPattern());
 		}
 	}	
-	
-	
 		
-	// -------- ExclusionPatternAdapter --------
-
-	private class ExclusionPatternAdapter implements IListAdapter<String>, IDialogFieldListener {
-		public void customButtonPressed(ListDialogField<String> field, int index) {
-			doCustomButtonPressed(field, index);
-		}
-
-		public void selectionChanged(ListDialogField<String> field) {
-			doSelectionChanged(field);
-		}
-
-		public void doubleClicked(ListDialogField<String> field) {
-			doDoubleClicked(field);
-		}
-
-		public void dialogFieldChanged(DialogField field) {
-		}
-		
-	}
-	
 	protected void doStatusLineUpdate() {
 	}		
 	
 	protected void checkIfPatternValid() {
 	}
-	
 		
 	public IPath[] getExclusionPattern() {
 		IPath[] res= new IPath[fExclusionPatternList.getSize()];
@@ -234,7 +197,12 @@ public class ExPatternDialog extends StatusDialog {
 		super.configureShell(newShell);
 //		WorkbenchHelp.setHelp(newShell, ICHelpContextIds.EXCLUSION_PATTERN_DIALOG);
 	}
-	
+
+    @Override
+	protected boolean isResizable() {
+    	return true;
+    }
+
 	private void addMultipleEntries() {
 		Class<?>[] acceptedClasses= new Class<?>[] { IFolder.class, IFile.class };
 		ISelectionStatusValidator validator= new TypedElementSelectionValidator(acceptedClasses, true);
@@ -272,4 +240,34 @@ public class ExPatternDialog extends StatusDialog {
 		}
 	}	
 	
+	private static class ExPatternLabelProvider extends LabelProvider {
+		
+		@Override
+		public Image getImage(Object element) {
+			ImageDescriptorRegistry registry= CUIPlugin.getImageDescriptorRegistry();
+			return registry.get(CPluginImages.DESC_OBJS_EXCLUSION_FILTER_ATTRIB);
+		}
+
+		@Override
+		public String getText(Object element) {
+			return (String) element;
+		}
+	}
+	
+	private class ExclusionPatternAdapter implements IListAdapter<String>, IDialogFieldListener {
+		public void customButtonPressed(ListDialogField<String> field, int index) {
+			doCustomButtonPressed(field, index);
+		}
+
+		public void selectionChanged(ListDialogField<String> field) {
+			doSelectionChanged(field);
+		}
+
+		public void doubleClicked(ListDialogField<String> field) {
+			doDoubleClicked(field);
+		}
+
+		public void dialogFieldChanged(DialogField field) {
+		}
+	}
 }

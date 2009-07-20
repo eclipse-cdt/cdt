@@ -1883,17 +1883,24 @@ public class CPPSemantics {
 	        }
 	    }
 	    if (data.forUsingDeclaration()) {
-	        IBinding[] bindings = null;
+        	int cmp= -1;
 	        if (obj != null) {
+	        	cmp= 1;
 	            if (fns.size() > 0) {
-	            	return new ProblemBinding(data.astName, IProblemBinding.SEMANTIC_AMBIGUOUS_LOOKUP,
-	            			data.getFoundBindings());
+		    		IFunction[] fnArray= fns.keyArray(IFunction.class);
+					cmp= compareByRelevance(data, obj, fnArray);
+					if (cmp == 0) {
+						return new ProblemBinding(data.astName, IProblemBinding.SEMANTIC_AMBIGUOUS_LOOKUP,
+								data.getFoundBindings());
+					} 
 	            }
-//          	if (type == null) return obj;
+	        }
+
+	        IBinding[] bindings = null;
+	        if (cmp > 0) {
 	            bindings = (IBinding[]) ArrayUtil.append(IBinding.class, bindings, obj);
 	            bindings = (IBinding[]) ArrayUtil.append(IBinding.class, bindings, type);
 	        } else {
-//	            if (fns == null) return type;
 	            bindings = (IBinding[]) ArrayUtil.append(IBinding.class, bindings, type);
 	            bindings = (IBinding[]) ArrayUtil.addAll(IBinding.class, bindings, fns.keyArray());
 	        }
@@ -1910,13 +1917,18 @@ public class CPPSemantics {
 	    	return null;
 	    }
 	    
-		int numFns = fns.size();
-	    if (numFns > 0) {
+		if (fns.size() > 0) {
+	    	final IFunction[] fnArray = fns.keyArray(IFunction.class);
 	    	if (obj != null) {
-	    		return new ProblemBinding(data.astName, IProblemBinding.SEMANTIC_AMBIGUOUS_LOOKUP,
-	    				data.getFoundBindings());
+	    		int cmp= compareByRelevance(data, obj, fnArray);
+	    		if (cmp == 0) {
+	    			return new ProblemBinding(data.astName, IProblemBinding.SEMANTIC_AMBIGUOUS_LOOKUP,
+	    					data.getFoundBindings());
+	    		}
+	    		if (cmp > 0)
+	    			return obj;
 	    	}
-	    	return resolveFunction(data, fns.keyArray(IFunction.class), true);
+			return resolveFunction(data, fnArray, true);
 	    }
 	    
 	    if (obj != null) {
@@ -1955,6 +1967,44 @@ public class CPPSemantics {
 		return 0;
 	}
 
+	/**
+	 * Compares a binding with a list of function candidates for relevance in the context of an AST. AST bindings are
+	 * considered more relevant than index ones since the index may be out of date,
+	 * built for a different configuration, etc. Index bindings reachable through includes
+	 * are more relevant than unreachable ones.
+	 * @return 1 if binding <code>obj</code> is more relevant than the function candidates; 0 if
+	 * the they have the same relevance; -1 if <code>obj</code> is less relevant than
+	 * the function candidates.
+	 */
+	static int compareByRelevance(LookupData data, IBinding obj, IFunction[] fns) {
+		if (isFromIndex(obj)) {
+    		for (int i = 0; i < fns.length; i++) {
+    			if (!isFromIndex(fns[i])) {
+    				return -1;	// function from ast
+    			}
+    		}
+    		// everything is from the index
+    		if (!isReachableFromAst(data.tu, obj)) {
+    			return -1; // obj not reachable
+    		} 
+
+    		for (IFunction fn : fns) {
+    			if (isReachableFromAst(data.tu, fn)) {
+    				return 0; // obj reachable, 1 function reachable
+    			}
+    		}
+    		return 1;  // no function is reachable
+		} 
+		
+		// obj is not from the index
+		for (int i = 0; i < fns.length; i++) {
+			if (!isFromIndex(fns[i])) {
+				return 0; // obj and function from ast
+			}
+		}
+    	return 1; // only obj is from ast.
+	}
+	
 	private static boolean isFromIndex(IBinding binding) {
 		if (binding instanceof IIndexBinding) {
 			return true;

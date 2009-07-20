@@ -960,6 +960,7 @@ public final class CIndenter {
 			nextToken();
 		}
 
+		int line= fLine;
 		switch (fToken) {
 		case Symbols.TokenGREATERTHAN:
 		case Symbols.TokenRBRACE:
@@ -1002,18 +1003,27 @@ public final class CIndenter {
 				fIndent= fPrefs.prefBlockIndent;
 				return pos;
 			}
-			// TODO handle ternary deep indentation
+			fPosition= pos;
+			if (looksLikeConstructorInitializer()) {
+				fIndent= fPrefs.prefBlockIndent;
+				return pos;
+			}
+			fPosition= pos;
+			if (isConditional()) {
+				fPosition= offset;
+				fLine= line;
+				return skipToPreviousListItemOrListStart();
+			}
 			fPosition= pos;
 			return skipToStatementStart(danglingElse, false);
 
 		case Symbols.TokenQUESTIONMARK:
 			if (fPrefs.prefTernaryDeepAlign) {
 				setFirstElementAlignment(fPosition, offset + 1);
-				return fPosition;
 			} else {
 				fIndent= fPrefs.prefTernaryIndent;
-				return fPosition;
 			}
+			return fPosition;
 
 		// indentation for blockless introducers:
 		case Symbols.TokenDO:
@@ -1026,7 +1036,6 @@ public final class CIndenter {
 			return skipToStatementStart(danglingElse, false);
 
 		case Symbols.TokenRPAREN:
-			int line= fLine;
 			if (skipScope(Symbols.TokenLPAREN, Symbols.TokenRPAREN)) {
 				int scope= fPosition;
 				nextToken();
@@ -1143,7 +1152,7 @@ public final class CIndenter {
 	/**
 	 * Test whether the colon at the current position marks a type inheritance decl.
 	 * 
-	 * @return <code>true</code> if this looks like a a type inheritance decl
+	 * @return <code>true</code> if this looks like a type inheritance decl.
 	 */
 	private boolean looksLikeTypeInheritanceDecl() {
 		nextToken();
@@ -1160,10 +1169,53 @@ public final class CIndenter {
 				return true;
 			}
 			break;
-		case Symbols.TokenRPAREN: // constructor initializer
-		case Symbols.TokenPUBLIC:
-		case Symbols.TokenPROTECTED:
-		case Symbols.TokenPRIVATE:
+		}
+		return false;
+	}
+
+	/**
+	 * Test whether the colon at the current position marks a constructor initializer list.
+	 * 
+	 * @return <code>true</code> if this looks like a constructor initializer list.
+	 */
+	private boolean looksLikeConstructorInitializer() {
+		nextToken();
+		if (fToken != Symbols.TokenRPAREN) {
+			return false;
+		}
+		if (!skipScope()) {
+			return false;
+		}
+		nextToken();
+		if (fToken == Symbols.TokenTHROW) {
+			nextToken();
+			if (fToken != Symbols.TokenRPAREN) {
+				return false;
+			}
+			if (!skipScope()) {
+				return false;
+			}
+			nextToken();
+		}
+		if (fToken != Symbols.TokenIDENT) {
+			return false;
+		}
+		nextToken();
+		switch (fToken) {
+		case Symbols.TokenCOLON:
+			nextToken();
+			switch (fToken) {
+			case Symbols.TokenCOLON:  // A::A() :
+			case Symbols.TokenPUBLIC:  // public: A() :
+			case Symbols.TokenPROTECTED:
+			case Symbols.TokenPRIVATE:
+				return true;
+			}
+			return false;
+			
+		case Symbols.TokenLBRACE:  // class A { A() :
+		case Symbols.TokenRBRACE:
+		case Symbols.TokenSEMICOLON:
 			return true;
 		}
 		return false;
@@ -1249,9 +1301,9 @@ public final class CIndenter {
 					fIndent = fPrefs.prefContinuationIndent;
 					return fPosition;
 				}
-				//$FALL-THROUGH$
+				break;
+
 			case Symbols.TokenLBRACE:
-			case Symbols.TokenLBRACKET:
 			case Symbols.TokenSEMICOLON:
 			case Symbols.TokenEOF:
 				if (isInBlock)

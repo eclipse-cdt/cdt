@@ -671,7 +671,6 @@ public final class CIndenter {
 			// remainder
 			while (spaces-- > 0)
 				ret.append(' ');
-
 		} catch (BadLocationException e) {
 		}
 
@@ -961,6 +960,7 @@ public final class CIndenter {
 			nextToken();
 		}
 
+		int line= fLine;
 		switch (fToken) {
 		case Symbols.TokenGREATERTHAN:
 		case Symbols.TokenRBRACE:
@@ -1003,18 +1003,27 @@ public final class CIndenter {
 				fIndent= fPrefs.prefBlockIndent;
 				return pos;
 			}
-			// TODO handle ternary deep indentation
+			fPosition= pos;
+			if (looksLikeConstructorInitializer()) {
+				fIndent= fPrefs.prefBlockIndent;
+				return pos;
+			}
+			fPosition= pos;
+			if (isConditional()) {
+				fPosition= offset;
+				fLine= line;
+				return skipToPreviousListItemOrListStart();
+			}
 			fPosition= pos;
 			return skipToStatementStart(danglingElse, false);
 
 		case Symbols.TokenQUESTIONMARK:
 			if (fPrefs.prefTernaryDeepAlign) {
 				setFirstElementAlignment(fPosition, offset + 1);
-				return fPosition;
 			} else {
 				fIndent= fPrefs.prefTernaryIndent;
-				return fPosition;
 			}
+			return fPosition;
 
 		// indentation for blockless introducers:
 		case Symbols.TokenDO:
@@ -1027,7 +1036,6 @@ public final class CIndenter {
 			return skipToStatementStart(danglingElse, false);
 
 		case Symbols.TokenRPAREN:
-			int line= fLine;
 			if (skipScope(Symbols.TokenLPAREN, Symbols.TokenRPAREN)) {
 				int scope= fPosition;
 				nextToken();
@@ -1144,7 +1152,7 @@ public final class CIndenter {
 	/**
 	 * Test whether the colon at the current position marks a type inheritance decl.
 	 * 
-	 * @return <code>true</code> if this looks like a a type inheritance decl
+	 * @return <code>true</code> if this looks like a type inheritance decl.
 	 */
 	private boolean looksLikeTypeInheritanceDecl() {
 		nextToken();
@@ -1161,10 +1169,53 @@ public final class CIndenter {
 				return true;
 			}
 			break;
-		case Symbols.TokenRPAREN: // constructor initializer
-		case Symbols.TokenPUBLIC:
-		case Symbols.TokenPROTECTED:
-		case Symbols.TokenPRIVATE:
+		}
+		return false;
+	}
+
+	/**
+	 * Test whether the colon at the current position marks a constructor initializer list.
+	 * 
+	 * @return <code>true</code> if this looks like a constructor initializer list.
+	 */
+	private boolean looksLikeConstructorInitializer() {
+		nextToken();
+		if (fToken != Symbols.TokenRPAREN) {
+			return false;
+		}
+		if (!skipScope()) {
+			return false;
+		}
+		nextToken();
+		if (fToken == Symbols.TokenTHROW) {
+			nextToken();
+			if (fToken != Symbols.TokenRPAREN) {
+				return false;
+			}
+			if (!skipScope()) {
+				return false;
+			}
+			nextToken();
+		}
+		if (fToken != Symbols.TokenIDENT) {
+			return false;
+		}
+		nextToken();
+		switch (fToken) {
+		case Symbols.TokenCOLON:
+			nextToken();
+			switch (fToken) {
+			case Symbols.TokenCOLON:  // A::A() :
+			case Symbols.TokenPUBLIC:  // public: A() :
+			case Symbols.TokenPROTECTED:
+			case Symbols.TokenPRIVATE:
+				return true;
+			}
+			return false;
+			
+		case Symbols.TokenLBRACE:  // class A { A() :
+		case Symbols.TokenRBRACE:
+		case Symbols.TokenSEMICOLON:
 			return true;
 		}
 		return false;
@@ -1250,9 +1301,9 @@ public final class CIndenter {
 					fIndent = fPrefs.prefContinuationIndent;
 					return fPosition;
 				}
-				//$FALL-THROUGH$
+				break;
+
 			case Symbols.TokenLBRACE:
-			case Symbols.TokenLBRACKET:
 			case Symbols.TokenSEMICOLON:
 			case Symbols.TokenEOF:
 				if (isInBlock)
@@ -1511,7 +1562,7 @@ public final class CIndenter {
 		while (true) {
 			nextToken();
 
-			// if any line item comes with its own indentation, adapt to it
+			// If any line item comes with its own indentation, adapt to it
 			if (fLine < startLine) {
 				try {
 					int lineOffset= fDocument.getLineOffset(startLine);
@@ -1522,9 +1573,13 @@ public final class CIndenter {
 						fIndent = fPrefs.prefContinuationIndent;
 					} else {
 						fAlign= fScanner.findNonWhitespaceForwardInAnyPartition(lineOffset, bound);
+						// If the reference line starts with a colon, skip the colon.  
+						if (peekToken(fAlign) == Symbols.TokenCOLON) {
+							fAlign= fScanner.findNonWhitespaceForwardInAnyPartition(fAlign + 1, bound);
+						}
 					}
 				} catch (BadLocationException e) {
-					// ignore and return just the position
+					// Ignore and return just the position
 				}
 				return startPosition;
 			}
@@ -1955,7 +2010,7 @@ public final class CIndenter {
 	 * Returns <code>true</code> if the current tokens look like a method
 	 * declaration header (i.e. only the return type and method name). The
 	 * heuristic calls <code>nextToken</code> and expects an identifier
-	 * (method name) and an optional retrun type declaration.
+	 * (method name) and an optional return type declaration.
 	 *
 	 * @return <code>true</code> if the current position looks like a method
 	 *         declaration header.

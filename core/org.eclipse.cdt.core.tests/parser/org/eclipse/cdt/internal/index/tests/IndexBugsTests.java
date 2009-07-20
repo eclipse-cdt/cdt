@@ -1866,8 +1866,7 @@ public class IndexBugsTests extends BaseTestCase {
 			IName[] decls= ast.getDeclarations(var);
 			assertEquals(2, decls.length);
 			int check= 0;
-			for (int i = 0; i < decls.length; i++) {
-				IName name = decls[i];
+			for (IName name : decls) {
 				assert name instanceof IIndexName;
 				IIndexName iName= (IIndexName) name;
 				if (iName.getFileLocation().getFileName().endsWith("a.h")) {
@@ -1971,6 +1970,40 @@ public class IndexBugsTests extends BaseTestCase {
 			BindingAssertionHelper bHelper = new BindingAssertionHelper(b, testData[3], index);
 			IEnumerator e2 = bHelper.assertNonProblem("e;", 1, IEnumerator.class);
 			assertEquals(2, e2.getValue().numericalValue().longValue());
+		} finally {
+			index.releaseReadLock();
+		}
+	}
+
+	//  // a.h
+	//  int xx;
+
+	//  #include "a.h"
+	//  int yy= xx;
+
+	//  // b.h
+	//  int xx();
+
+	//	#include "b.h"
+	//	void test() {
+	//	  xx();
+	//	}
+	public void testDisambiguationByReachability_268704_3() throws Exception {
+		String[] testData = getContentsForTest(4);
+		TestSourceReader.createFile(fCProject.getProject(), "a.h", testData[0]);
+		IFile a = TestSourceReader.createFile(fCProject.getProject(), "a.cpp", testData[1]);
+		TestSourceReader.createFile(fCProject.getProject(), "b.h", testData[2]);
+		IFile b = TestSourceReader.createFile(fCProject.getProject(), "b.cpp", testData[3]);
+		final IIndexManager indexManager = CCorePlugin.getIndexManager();
+		indexManager.reindex(fCProject);
+		waitForIndexer();
+		IIndex index= indexManager.getIndex(fCProject);
+		index.acquireReadLock();
+		try {
+			BindingAssertionHelper aHelper = new BindingAssertionHelper(a, testData[1], index);
+			IVariable b1 = aHelper.assertNonProblem("xx;", 2, IVariable.class);
+			BindingAssertionHelper bHelper = new BindingAssertionHelper(b, testData[3], index);
+			IFunction f = bHelper.assertNonProblem("xx();", 2, IFunction.class);
 		} finally {
 			index.releaseReadLock();
 		}

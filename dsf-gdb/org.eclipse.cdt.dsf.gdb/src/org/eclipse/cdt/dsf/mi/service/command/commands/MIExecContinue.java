@@ -37,7 +37,7 @@ public class MIExecContinue extends MICommand<MIInfo>
     }
 
     /**
-	 * @since 2.0
+	 * @since 2.1
 	 */
     public MIExecContinue(IExecutionDMContext dmc, String groupId) {
     	this(dmc, false, groupId);

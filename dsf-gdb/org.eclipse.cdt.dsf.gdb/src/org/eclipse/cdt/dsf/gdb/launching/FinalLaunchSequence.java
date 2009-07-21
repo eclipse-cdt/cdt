@@ -38,10 +38,11 @@ import org.eclipse.cdt.dsf.mi.service.command.commands.MIFileExecAndSymbols;
 import org.eclipse.cdt.dsf.mi.service.command.commands.MIGDBSetArgs;
 import org.eclipse.cdt.dsf.mi.service.command.commands.MIGDBSetAutoSolib;
 import org.eclipse.cdt.dsf.mi.service.command.commands.MIGDBSetNonStop;
+import org.eclipse.cdt.dsf.mi.service.command.commands.MIGDBSetPagination;
 import org.eclipse.cdt.dsf.mi.service.command.commands.MIGDBSetSolibSearchPath;
+import org.eclipse.cdt.dsf.mi.service.command.commands.MIGDBSetTargetAsync;
 import org.eclipse.cdt.dsf.mi.service.command.commands.MITargetSelect;
 import org.eclipse.cdt.dsf.mi.service.command.commands.MITargetSelectCore;
-import org.eclipse.cdt.dsf.mi.service.command.commands.RawCommand;
 import org.eclipse.cdt.dsf.mi.service.command.output.MIInfo;
 import org.eclipse.cdt.dsf.service.DsfServicesTracker;
 import org.eclipse.core.runtime.CoreException;
@@ -221,12 +222,12 @@ public class FinalLaunchSequence extends Sequence {
         	if (isNonStop) {
         		// The raw commands should not be necessary in the official GDB release
         		fCommandControl.queueCommand(
-       				new RawCommand(fCommandControl.getContext(), "set target-async on"), //$NON-NLS-1$
+       				new MIGDBSetTargetAsync(fCommandControl.getContext(), true),
        				new DataRequestMonitor<MIInfo>(getExecutor(), requestMonitor) {
        					@Override
        					protected void handleSuccess() {
        						fCommandControl.queueCommand(
-   								new RawCommand(fCommandControl.getContext(), "set pagination off"),  //$NON-NLS-1$ 
+   								new MIGDBSetPagination(fCommandControl.getContext(), false), 
    								new DataRequestMonitor<MIInfo>(getExecutor(), requestMonitor) {
    									@Override
    									protected void handleSuccess() {

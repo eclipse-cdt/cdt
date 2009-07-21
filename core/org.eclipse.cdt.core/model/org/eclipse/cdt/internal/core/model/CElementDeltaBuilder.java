@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2002, 2008 IBM Corporation and others.
+ * Copyright (c) 2002, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -21,7 +21,7 @@ import org.eclipse.cdt.core.model.ICElementDelta;
 import org.eclipse.cdt.core.model.IParent;
 
 /**
- * A C element delta biulder creates a C element delta on a C element between
+ * A C element delta builder creates a C element delta on a C element between
  * the version of the C element at the time the comparator was created and the
  * current version of the C element.
  *
@@ -390,6 +390,14 @@ private void trimDelta(CElementDelta delta) {
 			trimDelta((CElementDelta)children[i]);
 		}
 	}
+}
+
+/**
+ * Get the change delta built by the builder.
+ * @return the change delta built by the builder.
+ */
+public CElementDelta getDelta() {
+	return delta;
 }
 	
 }

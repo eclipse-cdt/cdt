@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007 Wind River Systems, Inc. and others.
+ * Copyright (c) 2007, 2009 Wind River Systems, Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -25,6 +25,7 @@ import org.eclipse.cdt.core.parser.IParserLogService;
 import org.eclipse.cdt.core.parser.IScannerInfo;
 import org.eclipse.cdt.internal.core.index.IWritableIndex;
 import org.eclipse.cdt.internal.core.pdom.IndexerProgress;
+import org.eclipse.cdt.internal.core.pdom.PDOMWriter;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 
@@ -47,17 +48,17 @@ public abstract class StandaloneIndexer {
 	/**
 	 * Parser should not skip any references.
 	 */
-	public static final int SKIP_NO_REFERENCES= 0;
+	public static final int SKIP_NO_REFERENCES = PDOMWriter.SKIP_NO_REFERENCES;
 	
 	/**
 	 * Parser to skip all references.
 	 */
-	public static final int SKIP_ALL_REFERENCES= 1; 
+	public static final int SKIP_ALL_REFERENCES = PDOMWriter.SKIP_ALL_REFERENCES; 
 	
 	/**
-	 * Parser to skp type references.
+	 * Parser to skip type references.
 	 */
-	public static final int SKIP_TYPE_REFERENCES= 2;
+	public static final int SKIP_TYPE_REFERENCES = PDOMWriter.SKIP_TYPE_REFERENCES;
 	
 	/**
 	 * Constant for indicating to update all translation units.
@@ -98,6 +99,7 @@ public abstract class StandaloneIndexer {
 	 * be provided, but not both. If a single IScannerInfo object is provided
 	 * it will always be used. Otherwise the provider will be used.
 	 */
+	@Deprecated
 	protected IScannerInfo fScanner;
 	
 	/**
@@ -158,6 +160,10 @@ public abstract class StandaloneIndexer {
 		}
 	};
 	
+	/**
+	 * @deprecated Its better to provide a scanner info provider instead.
+	 */
+	@Deprecated
 	public StandaloneIndexer(IWritableIndex index, boolean indexAllFiles,  
 			                 ILanguageMapper mapper, IParserLogService log, IScannerInfo scanner) {
 		fIndex = index;
@@ -202,6 +208,13 @@ public abstract class StandaloneIndexer {
 	}
 	
 	/**
+	 * If true then all files will be indexed.
+	 */
+	public void setIndexAllFiles(boolean indexAllFiles) {
+		fIndexAllFiles = indexAllFiles;
+	}
+	
+	/**
 	 * Returns the collection of valid file extensions for C/C++ source.
 	 */
 	public Set<String> getValidSourceUnitNames() {
@@ -217,7 +230,10 @@ public abstract class StandaloneIndexer {
 	
 	/**
 	 * Returns the IScannerInfo that provides include paths and defined symbols.
+	 * @deprecated Should probably be using a IStandaloneScannerInfoProvider instead and
+	 * calling getScannerInfo(String).
 	 */
+	@Deprecated
 	public IScannerInfo getScannerInfo() {
 		return fScanner;
 	}
@@ -235,13 +251,25 @@ public abstract class StandaloneIndexer {
 		
 		return fScannerInfoProvider.getScannerInformation(path);
 	}
-	
+
+
+	/**
+	 * Returns the IStandaloneScannerInfoProvider or null if one was not provided.
+	 */
+	public IStandaloneScannerInfoProvider getScannerInfoProvider() {
+		return fScannerInfoProvider;
+	}
 	
 	/**
 	 * Returns the ILanguageMapper that determines the ILanguage for a file.
 	 */
 	public ILanguageMapper getLanguageMapper() {
 		return fMapper;
+	}
+	
+	
+	public void setLanguageMapper(ILanguageMapper mapper) {
+		fMapper = mapper;
 	}
 	
 	/**
@@ -350,6 +378,7 @@ public abstract class StandaloneIndexer {
 			clearIndex();
 			fDelegate= createTask(getFilesAdded(tus), NO_TUS, NO_TUS);
 			fDelegate.setUpdateFlags(fUpdateOptions);
+			fDelegate.setParseUpFront();
 			
 			if (fDelegate != null) {
 				fDelegate.run(monitor);

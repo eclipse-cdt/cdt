@@ -624,7 +624,7 @@ public class RenameRegressionTests extends RenameTests {
         writer.write( "  void v(){i++;}         \n" ); //$NON-NLS-1$
         writer.write( "};                       \n" ); //$NON-NLS-1$
         String contents = writer.toString();
-        IFile file = importFile( "t.cpp", contents ); //$NON-NLS-1$
+        IFile file = importFile( "t45.cpp", contents ); //$NON-NLS-1$
         waitForIndexer();
         //vp1 implicit virtual method
         int offset =  contents.indexOf( "v/*vp1*/" ) ; //$NON-NLS-1$

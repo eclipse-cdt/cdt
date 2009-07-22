@@ -146,25 +146,35 @@ public class CStructure extends PlatformObject implements ICompositeType, ICInte
 			};
 		}
 	    ICASTCompositeTypeSpecifier compSpec = (ICASTCompositeTypeSpecifier) definition.getParent();
+		IField[] fields = collectFields(compSpec, null);
+		return (IField[]) ArrayUtil.trim( IField.class, fields );
+	}
+
+	private IField[] collectFields(ICASTCompositeTypeSpecifier compSpec, IField[] fields) {
 		IASTDeclaration[] members = compSpec.getMembers();
-		int size = members.length;
-		IField[] fields = new IField[ size ];
-		if (size > 0) {
-			for (int i = 0; i < size; i++) {
-				IASTNode node = members[i];
+		if (members.length > 0) {
+			if (fields == null)
+				fields = new IField[members.length];
+			for (IASTDeclaration node : members) {
 				if (node instanceof IASTSimpleDeclaration) {
 					IASTDeclarator[] declarators = ((IASTSimpleDeclaration) node).getDeclarators();
-					for (int j = 0; j < declarators.length; j++) {
-						IASTDeclarator declarator = declarators[j];
-						IASTName name = declarator.getName();
-						IBinding binding = name.resolveBinding();
-						if (binding != null)
-							fields = (IField[]) ArrayUtil.append(IField.class, fields, binding);
+					if (declarators.length == 0) {
+						IASTDeclSpecifier declspec = ((IASTSimpleDeclaration) node).getDeclSpecifier();
+						if (declspec instanceof ICASTCompositeTypeSpecifier) {
+							fields= collectFields((ICASTCompositeTypeSpecifier) declspec, fields);
+						}
+					} else {
+						for (IASTDeclarator declarator : declarators) {
+							IASTName name = declarator.getName();
+							IBinding binding = name.resolveBinding();
+							if (binding != null)
+								fields = (IField[]) ArrayUtil.append(IField.class, fields, binding);
+						}
 					}
 				}
 			}
 		}
-		return (IField[]) ArrayUtil.trim( IField.class, fields );
+		return fields;
 	}
 
 	public IField findField(String name) throws DOMException {

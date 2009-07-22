@@ -6392,4 +6392,19 @@ public class AST2Tests extends AST2BaseTest {
 		}
 	}
 	
+	
+	// /* Check that a parameter declared as a typedef'd array 
+	//  * is treated as a pointer
+	//  */
+	//typedef int my_buf[16];
+	//void goo(my_buf in);
+	//
+	public void testBug284248() throws Exception {
+	    for(ParserLanguage lang : ParserLanguage.values()) {
+            IASTTranslationUnit tu = parseAndCheckBindings(getAboveComment(), lang);
+            assertTrue(tu.isFrozen());
+            IASTName n = ((IASTSimpleDeclaration)tu.getDeclarations()[1]).getDeclarators()[0].getName();
+            assertTrue(((IFunction)n.resolveBinding()).getType().getParameterTypes()[0] instanceof IPointerType);
+	    }
+	}
 }

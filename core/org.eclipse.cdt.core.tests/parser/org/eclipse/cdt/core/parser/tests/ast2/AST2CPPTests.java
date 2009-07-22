@@ -7055,6 +7055,25 @@ public class AST2CPPTests extends AST2BaseTest {
 		parseAndCheckBindings(code, ParserLanguage.CPP);
 	}
 	
+	//	class C {
+	//		C& operator()() {return *this;}
+	//	};
+	//	void test() {
+	//		C c;
+	//		c()()()()()()()()()()()()()();
+	//	}
+	public void testNestedOverloadedFunctionCalls_Bug283324() throws Exception {
+		final String code = getAboveComment();
+		IASTTranslationUnit tu= parseAndCheckBindings(code, ParserLanguage.CPP);
+		IASTFunctionDefinition test= getDeclaration(tu, 1);
+		IASTExpressionStatement stmt= getStatement(test, 1);
+		long now= System.currentTimeMillis();
+		IType t= stmt.getExpression().getExpressionType();
+		assertInstance(t, ICPPReferenceType.class);
+		final long time = System.currentTimeMillis() - now;
+		assertTrue("Lasted " + time + "ms", time < 5000);
+	}
+	
 	
 	//	struct A { int a; };
 	//	struct B { int b; };

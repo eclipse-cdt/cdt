@@ -45,11 +45,10 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.SemanticUtil;
  * Unary expression in c++
  */
 public class CPPASTUnaryExpression extends ASTNode implements ICPPASTUnaryExpression, IASTAmbiguityParent {
-	private static final ICPPFunction UNINITIALIZED = new CPPFunction(null);
     private int op;
     private IASTExpression operand;
     
-    private ICPPFunction overload = UNINITIALIZED;
+    private ICPPFunction overload = UNINITIALIZED_FUNCTION;
     private IASTImplicitName[] implicitNames = null;
     
     public CPPASTUnaryExpression() {
@@ -156,7 +155,7 @@ public class CPPASTUnaryExpression extends ASTNode implements ICPPASTUnaryExpres
     
     
     public ICPPFunction getOverload() {
-    	if (overload != UNINITIALIZED)
+    	if (overload != UNINITIALIZED_FUNCTION)
     		return overload;
     	
     	overload = CPPSemantics.findOverloadedOperator(this);

@@ -33,12 +33,11 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.SemanticUtil;
 
 
 public class CPPASTBinaryExpression extends ASTNode implements ICPPASTBinaryExpression, IASTAmbiguityParent {
-	private static final ICPPFunction UNINITIALIZED = new CPPFunction(null);
 	private int op;
     private IASTExpression operand1;
     private IASTExpression operand2;
     private IType type;
-    private ICPPFunction overload= UNINITIALIZED;
+    private ICPPFunction overload= UNINITIALIZED_FUNCTION;
     private IASTImplicitName[] implicitNames = null;
     
     
@@ -166,7 +165,7 @@ public class CPPASTBinaryExpression extends ASTNode implements ICPPASTBinaryExpr
     }
 
     public ICPPFunction getOverload() {
-    	if (overload != UNINITIALIZED)
+    	if (overload != UNINITIALIZED_FUNCTION)
     		return overload;
     	
     	return overload = CPPSemantics.findOverloadedOperator(this);

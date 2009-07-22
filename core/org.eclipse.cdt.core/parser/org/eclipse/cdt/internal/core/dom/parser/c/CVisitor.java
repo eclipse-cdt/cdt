@@ -51,6 +51,7 @@ import org.eclipse.cdt.core.dom.ast.IASTStandardFunctionDeclarator;
 import org.eclipse.cdt.core.dom.ast.IASTStatement;
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
 import org.eclipse.cdt.core.dom.ast.IASTTypeId;
+import org.eclipse.cdt.core.dom.ast.IArrayType;
 import org.eclipse.cdt.core.dom.ast.IBasicType;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.ICompositeType;
@@ -1273,22 +1274,31 @@ public class CVisitor extends ASTQueries {
 		
 		
         if (isParameter) {
+        	IType paramType = type;
+        	// Remove typedefs ready for subsequent processing.
+        	while (paramType instanceof ITypedef) {
+        		paramType = ((ITypedef)paramType).getType();
+        	}
+        	        	
             //C99: 6.7.5.3-7 a declaration of a parameter as "array of type" shall be adjusted to "qualified pointer to type", where the
     		//type qualifiers (if any) are those specified within the[and] of the array type derivation
-            if (type instanceof ICArrayType) {
-	            ICArrayType at = (ICArrayType) type;
-	    		try {
-					int q= 0;
-					if (at.isConst()) q |= CPointerType.IS_CONST;
-					if (at.isVolatile()) q |= CPointerType.IS_VOLATILE;
-					if (at.isRestrict()) q |= CPointerType.IS_RESTRICT;
-					type = new CPointerType(at.getType(), q);
-				} catch (DOMException e) {
-					// stick to the array
+            if (paramType instanceof IArrayType) { // the index does not yet return ICArrayTypes
+	            IArrayType at = (IArrayType) paramType;
+				int q= 0;
+				if (at instanceof ICArrayType) {
+					ICArrayType cat= (ICArrayType) at;
+					try {
+						if (cat.isConst()) q |= CPointerType.IS_CONST;
+						if (cat.isVolatile()) q |= CPointerType.IS_VOLATILE;
+						if (cat.isRestrict()) q |= CPointerType.IS_RESTRICT;
+					} catch (DOMException e) {
+						// ignore the qualifiers
+					}
 				}
-	        } else if (type instanceof IFunctionType) {
+				type = new CPointerType(at.getType(), q);
+	        } else if (paramType instanceof IFunctionType) {
 	            //-8 A declaration of a parameter as "function returning type" shall be adjusted to "pointer to function returning type"
-	            type = new CPointerType(type, 0);
+	            type = new CPointerType(paramType, 0);
 	        }
         }
         

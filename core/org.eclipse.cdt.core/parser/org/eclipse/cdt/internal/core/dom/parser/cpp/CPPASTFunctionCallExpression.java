@@ -44,6 +44,8 @@ public class CPPASTFunctionCallExpression extends ASTNode implements
     private IASTExpression parameter;
 
     private IASTImplicitName[] implicitNames = null;
+    private IType type; // cached type of expression
+    private ICPPFunction overload= UNINITIALIZED_FUNCTION;
     
     
     public CPPASTFunctionCallExpression() {
@@ -182,16 +184,23 @@ public class CPPASTFunctionCallExpression extends ASTNode implements
     }
     
     public ICPPFunction getOperator() {
-    	ICPPFunction[] overload = new ICPPFunction[] {null};
-    	getExpressionType(overload);
-    	return overload[0];
+    	if (overload == UNINITIALIZED_FUNCTION) {
+    		overload= null;
+    		// as a side effect this computes the overload
+    		getExpressionType();
+    	}
+    	return overload;
     }
     
     public IType getExpressionType() {
-    	return getExpressionType(null);
+    	if (type == null) {
+    		type= computeExpressionType();
+    	}
+    	return type;
     }
     
-    private IType getExpressionType(ICPPFunction[] overload) {
+    private IType computeExpressionType() {
+    	overload= null;
     	try {
     		IType t= null;
     		if (functionName instanceof IASTIdExpression) {
@@ -224,8 +233,8 @@ public class CPPASTFunctionCallExpression extends ASTNode implements
     			if (op != null) {
     				// overload can be a surrogate function call, which consists of a conversion and a call to
     				// a dynamically computed function pointer.
-    				if(overload != null && !(op instanceof CPPImplicitFunction))
-    					overload[0] = op;
+    				if(!(op instanceof CPPImplicitFunction))
+    					overload = op;
     				return op.getType().getReturnType();
     			}
     		} else if (t instanceof IPointerType) {

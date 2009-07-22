@@ -8,6 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Bryan Wilkinson (QNX)
+ *     Markus Schorn (Wind River Systems)
  *******************************************************************************/
 package org.eclipse.cdt.core.parser.tests.prefix;
 
@@ -167,5 +168,27 @@ public class BasicCompletionTest extends CompletionTestBase {
 		String code = getAboveComment();
 		String[] expected= {};
 		checkCompletion(code, true, expected);
+	}
+	
+	//	struct s1 {
+	//		struct {
+	//			int a1;
+	//			int a2;
+	//		};
+	//		union {
+	//			int u1;
+	//			char u2;
+	//		};
+	//		int b;
+	//	};
+	//	int test() {
+	//		struct s1 s;
+	//		s.
+	public void testBug284245() throws Exception {
+		String code = getAboveComment();
+		String[] expectedCpp= {"a1", "a2", "b", "s1", "u1", "u2"};
+		String[] expectedC= {"a1", "a2", "b", "u1", "u2"};
+		checkCompletion(code, true, expectedCpp);
+		checkCompletion(code, false, expectedC);
 	}
 }

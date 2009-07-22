@@ -7237,4 +7237,34 @@ public class AST2CPPTests extends AST2BaseTest {
 		final String code = getAboveComment();
 		parseAndCheckBindings(code, ParserLanguage.CPP);
 	}
+	
+	//	class IBase {
+	//		public:
+	//			virtual void base() = 0;
+	//	};
+	//
+	//	class IDerived : virtual public IBase {
+	//		public:
+	//			virtual void derived() = 0;
+	//	};
+	//
+	//	class BaseImplHelper : virtual public IBase {
+	//		public:
+	//			virtual void base() {}
+	//	};
+	//
+	//	class Derived : virtual public IDerived, public BaseImplHelper {
+	//		public:
+	//			virtual void derived() {}
+	//	};
+	//
+	//	int main() {
+	//		Derived d;
+	//		d.base(); // Parser log reports ambiguity on 'base'
+	//		return 0;
+	//	}
+	public void testHiddenVirtualBase_Bug282993() throws Exception {
+		final String code = getAboveComment();
+		parseAndCheckBindings(code, ParserLanguage.CPP);
+	}
 }

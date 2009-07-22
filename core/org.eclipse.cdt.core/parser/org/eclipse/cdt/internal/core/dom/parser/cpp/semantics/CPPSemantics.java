@@ -176,7 +176,6 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPASTInternalScope;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPClassSpecializationScope;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPDeferredClassInstance;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPInternalBinding;
-import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPInternalUnknownScope;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPUnknownBinding;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPUnknownType;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.OverloadableOperator;
@@ -192,7 +191,7 @@ public class CPPSemantics {
 	/**
 	 * The maximum depth to search ancestors before assuming infinite looping.
 	 */
-	public static final int MAX_INHERITANCE_DEPTH= 10;
+	public static final int MAX_INHERITANCE_DEPTH= 16;
 	
     public static final ASTNodeProperty STRING_LOOKUP_PROPERTY =
     		new ASTNodeProperty("CPPSemantics.STRING_LOOKUP_PROPERTY - STRING_LOOKUP"); //$NON-NLS-1$
@@ -207,8 +206,6 @@ public class CPPSemantics {
 	
 	// special return value for costForFunctionCall
 	private static final FunctionCost CONTAINS_DEPENDENT_TYPES = new FunctionCost(null, 0);
-
-	
 	static protected IBinding resolveBinding(IASTName name) {
 		if (traceBindingResolution) {
 			for (int i = 0; i < traceIndent; i++) 
@@ -681,7 +678,7 @@ public class CPPSemantics {
 	 * @param scoped
 	 * @return
 	 */
-	private static CharArrayObjectMap mergePrefixResults(CharArrayObjectMap dest, Object source, boolean scoped) {
+	static CharArrayObjectMap mergePrefixResults(CharArrayObjectMap dest, Object source, boolean scoped) {
 		if (source == null) return dest; 
         CharArrayObjectMap resultMap = (dest != null) ? dest : new CharArrayObjectMap(2);
         
@@ -848,7 +845,7 @@ public class CPPSemantics {
 			}
 			
 			if (!data.usingDirectivesOnly && scope instanceof ICPPClassScope) {
-				mergeResults(data, lookupInParents(data, scope, ((ICPPClassScope) scope).getClassType(), fileSet), true);
+				BaseClassLookup.lookupInBaseClasses(data, (ICPPClassScope) scope, fileSet);
 			}
 			
 			if (!data.contentAssist && (data.problem != null || data.hasResults()))
@@ -968,7 +965,7 @@ public class CPPSemantics {
 		return result[0];
    }
 
-   private static IBinding[] getBindingsFromScope(ICPPScope scope, final IIndexFileSet fileSet, LookupData data) throws DOMException {
+   static IBinding[] getBindingsFromScope(ICPPScope scope, final IIndexFileSet fileSet, LookupData data) throws DOMException {
 		IBinding[] bindings;
 		if (scope instanceof ICPPASTInternalScope) {
 			bindings= ((ICPPASTInternalScope) scope).getBindings(data.astName, true, data.prefixLookup, fileSet, data.checkPointOfDecl);
@@ -978,7 +975,7 @@ public class CPPSemantics {
 		return bindings;
 	}
 
-	private static void removeObjects(final IBinding[] bindings) {
+	static void removeObjects(final IBinding[] bindings) {
 		final int length = bindings.length;
 		int pos= 0;
 		for (int i = 0; i < length; i++) {
@@ -1033,230 +1030,6 @@ public class CPPSemantics {
 		return (ICPPScope) parentScope;
 	}
 
-	private static Object lookupInParents(LookupData data, ICPPScope lookIn, ICPPClassType overallScope, IIndexFileSet fileSet) {
-		if (lookIn instanceof ICPPClassScope == false)
-			return null;
-		
-		final ICPPClassType classType= ((ICPPClassScope)lookIn).getClassType();
-		if (classType == null) 
-			return null;
-		
-		ICPPBase[] bases= null;
-		try {
-			 bases= classType.getBases();
-		} catch (DOMException e) {
-			// assume that there are no bases
-			return null;
-		}
-		if (bases == null || bases.length == 0)
-			return null;
-	
-		Object inherited = null;
-		Object result = null;
-		
-		//use data to detect circular inheritance
-		if (data.inheritanceChain == null)
-			data.inheritanceChain = new ObjectSet<IScope>(2);
-		
-		data.inheritanceChain.put(lookIn);
-
-		// workaround to fix 185828 
-		if (data.inheritanceChain.size() > CPPSemantics.MAX_INHERITANCE_DEPTH) { 
-			return null;
-		}
-
-		HashSet<IBinding> baseBindings= bases.length > 1 ? new HashSet<IBinding>() : null;
-		for (ICPPBase base : bases) {
-			if (base instanceof IProblemBinding)
-				continue;
-			
-			try {
-				IBinding b = base.getBaseClass();
-				if (!(b instanceof ICPPClassType)) {
-					// 14.6.2.3 scope is not examined 
-					if (b instanceof ICPPUnknownBinding) {
-						if (data.skippedScope == null)
-							data.skippedScope= overallScope;
-					}
-					continue;
-				}
-
-				final ICPPClassType cls = (ICPPClassType) b;
-				if (baseBindings != null && !baseBindings.add(cls))
-					continue;
-				
-				inherited = null;
-				final ICPPScope classScope = (ICPPScope) cls.getCompositeScope();
-				if (classScope == null || classScope instanceof ICPPInternalUnknownScope) {
-					// 14.6.2.3 scope is not examined 
-					if (data.skippedScope == null)
-						data.skippedScope= overallScope;
-					continue;
-				}
-				if (!base.isVirtual() || !data.visited.containsKey(classScope)) {
-					if (base.isVirtual()) {
-						data.visited.put(classScope);
-					}
-
-					// if the inheritanceChain already contains the parent, then that 
-					// is circular inheritance
-					if (!data.inheritanceChain.containsKey(classScope)) {
-						//is this name define in this scope?
-						IBinding[] inCurrentScope= getBindingsFromScope(classScope, fileSet, data);
-						if (data.typesOnly) {
-							removeObjects(inCurrentScope);
-						}
-						final boolean isEmpty= inCurrentScope.length == 0 || inCurrentScope[0] == null;
-						if (data.contentAssist) {
-							Object temp = lookupInParents(data, classScope, overallScope, fileSet);
-							if (!isEmpty) {
-								inherited = mergePrefixResults(null, inCurrentScope, true);
-								inherited = mergePrefixResults((CharArrayObjectMap) inherited,
-										(CharArrayObjectMap) temp, true);
-							} else {
-								inherited= temp;
-							}
-						} else if (isEmpty) {
-							inherited= lookupInParents(data, classScope, overallScope, fileSet);
-						} else {
-							inherited= inCurrentScope;
-							visitVirtualBaseClasses(data, cls);
-						}
-					} else {
-					    data.problem = new ProblemBinding(null, IProblemBinding.SEMANTIC_CIRCULAR_INHERITANCE,
-					    		cls.getNameCharArray(), data.getFoundBindings());
-					    return null;
-					}
-				}	
-				
-				if (inherited != null) {
-					if (result == null) {
-						result = inherited;
-					} else if (!data.contentAssist) {
-						if (result instanceof Object[]) {
-							Object[] r = (Object[]) result;
-							for (int j = 0; j < r.length && r[j] != null; j++) {
-								if (checkForAmbiguity(data, r[j], inherited)) {
-								    data.problem = new ProblemBinding(data.astName,
-								    		IProblemBinding.SEMANTIC_AMBIGUOUS_LOOKUP, data.getFoundBindings()); 
-								    return null;
-								}
-							}
-						} else {
-							if (checkForAmbiguity(data, result, inherited)) {
-							    data.problem = new ProblemBinding(data.astName,
-							    		IProblemBinding.SEMANTIC_AMBIGUOUS_LOOKUP, data.getFoundBindings()); 
-							    return null;
-							}
-						}
-					} else {
-						CharArrayObjectMap temp = (CharArrayObjectMap) inherited;
-						CharArrayObjectMap r = (CharArrayObjectMap) result;
-						char[] key = null;
-						int tempSize = temp.size();
-						for (int ii = 0; ii < tempSize; ii++) {
-						    key = temp.keyAt(ii);
-							if (!r.containsKey(key)) {
-								r.put(key, temp.get(key));
-							} else {
-								//TODO: prefixLookup ambiguity checking
-							}
-						}
-					}
-				}
-			} catch (DOMException e) {
-				// assume that the base has not been specified
-			}
-		}
-	
-		data.inheritanceChain.remove(lookIn);
-	
-		return result;	
-	}
-
-	public static void visitVirtualBaseClasses(LookupData data, ICPPClassType cls) throws DOMException {		
-		if (data.inheritanceChain == null)
-			data.inheritanceChain = new ObjectSet<IScope>(2);
-		
-		IScope scope = cls.getCompositeScope();
-		if (scope != null)
-			data.inheritanceChain.put(scope);
-		
-	    ICPPBase[] bases = cls.getBases();
-
-        for (ICPPBase base : bases) {
-            IBinding b = base.getBaseClass();
-            if (b instanceof ICPPClassType) {
-            	IScope bScope = ((ICPPClassType)b).getCompositeScope();
-            	if (base.isVirtual()) {
-            		if (bScope != null)
-            			data.visited.put(bScope);
-            	} else if (bScope != null) {
-            		if (!data.inheritanceChain.containsKey(bScope))
-            			visitVirtualBaseClasses(data, (ICPPClassType) b);
-            		else
-            			data.problem = new ProblemBinding(null, IProblemBinding.SEMANTIC_CIRCULAR_INHERITANCE, cls.getNameCharArray());
-            	}
-            }
-        }
-        
-        if (scope != null)
-        	data.inheritanceChain.remove(scope);
-	}
-	
-	private static boolean checkForAmbiguity(LookupData data, Object n, Object names) throws DOMException {
-		if (names instanceof Object[]) {
-		    names = ArrayUtil.trim(Object.class, (Object[]) names);
-		    if (((Object[])names).length == 0)
-		        return false;
-		}
-
-	    IBinding binding= (n instanceof IBinding) ? (IBinding) n : ((IASTName) n).resolveBinding();
-
-	    int idx= 0;
-	    Object[] objs= null;
-	    Object o= names;
-	    if (names instanceof Object[]) {
-	    	objs= (Object[]) names;
-	    	o= objs[0];
-	    	idx= 1;
-	    }
-	    
-	    while (o != null) {       
-	        IBinding b = (o instanceof IBinding) ? (IBinding) o : ((IASTName)o).resolveBinding();
-	        
-	        if (b instanceof ICPPUsingDeclaration) {
-	        	objs = ArrayUtil.append(Object.class, objs, ((ICPPUsingDeclaration)b).getDelegates());
-	        } else {
-		        if (binding != b)
-		            return true;
-				
-				boolean ok = false;
-				// 3.4.5-4 if the id-expression in a class member access is a qualified id... the result 
-				// is not required to be a unique base class...
-				if (binding instanceof ICPPClassType) {
-					IASTNode parent = data.astName.getParent();
-					if (parent instanceof ICPPASTQualifiedName && 
-							parent.getPropertyInParent() == IASTFieldReference.FIELD_NAME) {
-						ok = true;
-					}
-				}
-			    // it is not ambiguous if they are the same thing and it is static or an enumerator
-		        if (binding instanceof IEnumerator ||
-		        		(binding instanceof IFunction && ASTInternal.isStatic((IFunction) binding, false)) ||
-		        		(binding instanceof IVariable && ((IVariable)binding).isStatic())) {
-		        	ok = true;
-		        }
-		        if (!ok)
-					return true;
-	        }
-	        if (objs != null && idx < objs.length)
-	        	o = objs[idx++];
-	        else
-	        	o = null;
-	    }
-		return false;
-	}
 
 	/**
 	 * Stores the using directive with the scope where the members of the nominated namespace will appear.

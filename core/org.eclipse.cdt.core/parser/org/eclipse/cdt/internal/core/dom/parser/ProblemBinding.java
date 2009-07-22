@@ -41,7 +41,7 @@ public class ProblemBinding extends PlatformObject implements IProblemBinding, I
     protected char[] arg;
     protected IASTNode node;
     private final String message = null;
-	private final IBinding[] candidateBindings;
+	private IBinding[] candidateBindings;
     
     public ProblemBinding(IASTName name, int id) {
     	this(name, id, null, null);
@@ -72,6 +72,10 @@ public class ProblemBinding extends PlatformObject implements IProblemBinding, I
 
 	public IBinding[] getCandidateBindings() {
 		return candidateBindings != null ? candidateBindings : IBinding.EMPTY_BINDING_ARRAY;
+	}
+	
+	public void setCandidateBindings(IBinding[] foundBindings) {
+		candidateBindings= foundBindings;
 	}
 
     protected static final String[] errorMessages;

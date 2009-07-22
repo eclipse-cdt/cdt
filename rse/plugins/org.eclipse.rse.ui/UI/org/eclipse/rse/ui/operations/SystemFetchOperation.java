@@ -24,6 +24,7 @@
  * David McKnight   (IBM)        - [233160] [dstore] SSL/non-SSL alert are not appropriate
  * David McKnight   (IBM)        - [243263] NPE on expanding a filter
  * David McKnight   (IBM)        - [260777] [ssh] Deadlock when changing selection after multiple hibernate/resume cycles
+ * David McKnight   (IBM)        - [283793] [dstore] Expansion indicator(+) does not reset after no connect
  *******************************************************************************/
 
 package org.eclipse.rse.ui.operations;
@@ -361,14 +362,17 @@ public class SystemFetchOperation extends JobChangeAdapter implements IRunnableW
 			}
 		}
 		
+		Object[] children = null;
 		if (!isPromptable){
 			if (!ensureConnected(ss, monitor)){
+				children = new Object[0];
+				_collector.add(children, monitor);
 				return;
 			}
 		}
 
 		
-		Object[] children = null;
+	
   	  	// we first test to see if this is an expand-to filter in effect for this
   	  	//  object, and if so use it...
   	  	if ((_part==null || _part instanceof SystemViewPart) && _adapter instanceof ISystemRemoteElementAdapter)

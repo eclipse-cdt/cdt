@@ -59,6 +59,8 @@
  * David McKnight   (IBM)        - [279014] [dstore][encoding] text file corruption can occur when downloading from UTF8 to cp1252
  * David McKnight   (IBM)        - [279695] [dstore] Connection file encoding is not refreshed from the host
  * David McKnight   (IBM)        - [281712] [dstore] Warning message is needed when disk is full
+ * David McKnight   (IBM)        - [284056] Sychronize Cache causes the UI to hang with no way out
+ * David McKnight   (IBM)        - [284420] nullprogressmonitor is needed
  *******************************************************************************/
 
 package org.eclipse.rse.internal.services.dstore.files;
@@ -716,7 +718,7 @@ public class DStoreFileService extends AbstractDStoreService implements IFileSer
 			    		
 			    		resultStr = result.getSource();		    		
 			    		
-			    		if (resultStr.equals("failed") || monitor.isCanceled()){ //$NON-NLS-1$
+			    		if (resultStr.equals("failed") || (monitor != null && monitor.isCanceled())){ //$NON-NLS-1$
 			    			String msgTxt = NLS.bind(ServiceResources.FILEMSG_COPY_FILE_FAILED, remotePath);
 			    			SystemMessage msg = new SimpleSystemMessage(Activator.PLUGIN_ID, IStatus.ERROR, msgTxt);
 			    			throw new SystemMessageException(msg);
@@ -1040,6 +1042,9 @@ public class DStoreFileService extends AbstractDStoreService implements IFileSer
 
 						//InterruptedException is used to report user cancellation, so no need to log
 						//This should be reviewed (use OperationCanceledException) with bug #190750
+					}
+					if (monitor.isCanceled()){
+						return;
 					}
 				}
 			}

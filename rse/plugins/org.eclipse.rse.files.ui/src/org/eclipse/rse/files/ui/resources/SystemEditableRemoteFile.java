@@ -37,6 +37,7 @@
  * David McKnight   (IBM)        - [249544] Save conflict dialog appears when saving files in the editor
  * David McKnight   (IBM)        - [267247] Wrong encoding
  * David McKnight   (IBM)        - [272772] Exception handling in SystemEditableRemoteFile
+ * David McKnight   (IBM)        - [284420] nullprogressmonitor is needed
  *******************************************************************************/
 
 package org.eclipse.rse.files.ui.resources;
@@ -723,7 +724,7 @@ public class SystemEditableRemoteFile implements ISystemEditableRemoteObject, IP
 	/**
 	 * Upload the file
 	 */
-	private void upload() throws Exception
+	private void upload(IProgressMonitor monitor) throws Exception
 	{
 
 		if (!subsystem.isConnected())
@@ -738,13 +739,13 @@ public class SystemEditableRemoteFile implements ISystemEditableRemoteObject, IP
 		IFile file = getLocalResource();
 		String srcEncoding = RemoteFileUtility.getSourceEncoding(file);
 			
-		subsystem.upload(localPath, remoteFile, srcEncoding, null);
+		subsystem.upload(localPath, remoteFile, srcEncoding, monitor);
 
 		// update timestamp
 		SystemIFileProperties properties = new SystemIFileProperties(file);
 
 		//DKM- saveAS fix
-		remoteFile = subsystem.getRemoteFileObject(remoteFile.getAbsolutePath(), new NullProgressMonitor());
+		remoteFile = subsystem.getRemoteFileObject(remoteFile.getAbsolutePath(), monitor);
 		properties.setRemoteFileTimeStamp(remoteFile.getLastModified());
 	}
 
@@ -1810,7 +1811,7 @@ public class SystemEditableRemoteFile implements ISystemEditableRemoteObject, IP
 
 			if (resource.getLocation().equals(getLocalResource().getLocation()))
 			{
-				upload();
+				upload(new NullProgressMonitor());
 			}
 		}
 		catch (Exception e)
@@ -1924,7 +1925,7 @@ public class SystemEditableRemoteFile implements ISystemEditableRemoteObject, IP
 					try
 					{
 						this.setLocalResourceProperties();
-						this.upload();
+						this.upload(progressMonitor);
 					} catch (SystemMessageException e) {
 						SystemMessageDialog dialog = new SystemMessageDialog(SystemBasePlugin.getActiveWorkbenchShell(), e.getSystemMessage());
 						dialog.open();

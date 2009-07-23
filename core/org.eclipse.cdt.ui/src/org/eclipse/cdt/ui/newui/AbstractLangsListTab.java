@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2008 Intel Corporation and others.
+ * Copyright (c) 2007, 2009 Intel Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -374,10 +374,10 @@ public abstract class AbstractLangsListTab extends AbstractCPropertyTab {
 		ls = getLangSetting(cfg);
 		if (ls != null) {
 			Arrays.sort(ls, CDTListComparator.getInstance());
-			for (int i=0; i<ls.length; i++) {
-				if ((ls[i].getSupportedEntryKinds() & getKind()) != 0) {
+			for (ICLanguageSetting element : ls) {
+				if ((element.getSupportedEntryKinds() & getKind()) != 0) {
 					TreeItem t = new TreeItem(langTree, SWT.NONE);
-					String s = ls[i].getLanguageId();
+					String s = element.getLanguageId();
 					if (s != null && !s.equals(EMPTY_STR)) {
 						// Bug #178033: get language name via LangManager.
 						ILanguageDescriptor ld = LanguageManager.getInstance().getLanguageDescriptor(s);
@@ -387,12 +387,12 @@ public abstract class AbstractLangsListTab extends AbstractCPropertyTab {
 							s = ld.getName();
 					}
 					if (s == null || s.equals(EMPTY_STR))
-						s = ls[i].getName();
+						s = element.getName();
 					t.setText(0, s);
-					t.setData(ls[i]);
+					t.setData(element);
 					if (firstItem == null) { 
 						firstItem = t;
-						lang = ls[i];
+						lang = element;
 					}
 				}
 			}
@@ -574,8 +574,8 @@ public abstract class AbstractLangsListTab extends AbstractCPropertyTab {
 		ICConfigurationDescription cfg = getResDesc().getConfiguration();
 		ICExternalSetting[] vals = cfg.getExternalSettings();
 		if (!(vals == null || vals.length == 0)) {
-			for (int i=0; i<vals.length; i++) {
-				ICSettingEntry[] ents = vals[i].getEntries(getKind());
+			for (ICExternalSetting val : vals) {
+				ICSettingEntry[] ents = val.getEntries(getKind());
 				if (ents == null || ents.length == 0) continue;
 				for (int j=0; j<ents.length; j++) {
 					if (ents[j].equalsByName(ent)) {
@@ -583,10 +583,10 @@ public abstract class AbstractLangsListTab extends AbstractCPropertyTab {
 						int index = 0;
 						for (int k=0; k<ents.length; k++) 
 							if (k != j) arr[index++] = ents[k];
-						cfg.removeExternalSetting(vals[i]);
-						cfg.createExternalSetting(vals[i].getCompatibleLanguageIds(), 
-								vals[i].getCompatibleContentTypeIds(),
-								vals[i].getCompatibleExtensions(),
+						cfg.removeExternalSetting(val);
+						cfg.createExternalSetting(val.getCompatibleLanguageIds(), 
+								val.getCompatibleContentTypeIds(),
+								val.getCompatibleExtensions(),
 								arr);
 						return;
 					}
@@ -604,8 +604,8 @@ public abstract class AbstractLangsListTab extends AbstractCPropertyTab {
 		ICConfigurationDescription[] cfgs = page.getCfgsEditable();
 		ICResourceDescription cur_cfg = page.getResDesc();
 		String id = lang.getName(); // getLanguageId() sometimes returns null.
-		for (int i = 0; i < cfgs.length; i++) {
-			ICResourceDescription rcfg = page.getResDesc(cfgs[i]); 
+		for (ICConfigurationDescription cfg : cfgs) {
+			ICResourceDescription rcfg = page.getResDesc(cfg); 
 			if (rcfg == null) 
 				continue;
 			if (!toAllCfgs && !(cur_cfg.equals(rcfg)))
@@ -654,8 +654,8 @@ public abstract class AbstractLangsListTab extends AbstractCPropertyTab {
 	protected void performDefaults() {
 		fHadSomeModification= true;
 		TreeItem[] tis = langTree.getItems();
-		for (int i=0; i<tis.length; i++) {
-			Object ob = tis[i].getData();
+		for (TreeItem ti : tis) {
+			Object ob = ti.getData();
 			if (ob != null && ob instanceof ICLanguageSetting) {
 				((ICLanguageSetting)ob).setSettingEntries(getKind(), (List<ICLanguageSettingEntry>)null);
 			}
@@ -740,10 +740,10 @@ public abstract class AbstractLangsListTab extends AbstractCPropertyTab {
 		lsets = new ICLanguageSetting[fs.length];
 		for (int i=0; i<fs.length; i++) {
 			ArrayList<ICLanguageSetting> list = new ArrayList<ICLanguageSetting>(ls.length);
-			for (int j=0; j<ls.length; j++) {
-				int x = Arrays.binarySearch(ls[j], fs[i], comp);
+			for (ICLanguageSetting[] element : ls) {
+				int x = Arrays.binarySearch(element, fs[i], comp);
 				if (x >= 0)
-					list.add(ls[j][x]);
+					list.add(element[x]);
 			}
 			if (list.size() == 1)
 				lsets[i] = list.get(0);
@@ -759,8 +759,8 @@ public abstract class AbstractLangsListTab extends AbstractCPropertyTab {
 		if (getResDesc() == null) return true;
 		ICLanguageSetting [] ls = getLangSetting(getResDesc());
 		if (ls == null) return false;
-		for (int i=0; i<ls.length; i++) {
-			if ((ls[i].getSupportedEntryKinds() & getKind()) != 0)
+		for (ICLanguageSetting element : ls) {
+			if ((element.getSupportedEntryKinds() & getKind()) != 0)
 				return true;
 		}
 		return false;
@@ -805,5 +805,20 @@ public abstract class AbstractLangsListTab extends AbstractCPropertyTab {
 	 */
 	protected final boolean hadSomeModification() {
 		return fHadSomeModification;
+	}
+	
+	@Override
+	protected final boolean isIndexerAffected() {
+		switch(getKind()) {
+		case ICSettingEntry.INCLUDE_PATH:
+		case ICSettingEntry.MACRO:
+		case ICSettingEntry.INCLUDE_FILE:
+		case ICSettingEntry.MACRO_FILE:
+			if (hadSomeModification()) {
+				return true;
+			}
+			break;
+		}
+		return false;
 	}
 }

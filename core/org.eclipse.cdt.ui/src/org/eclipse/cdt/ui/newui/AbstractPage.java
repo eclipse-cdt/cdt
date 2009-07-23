@@ -86,7 +86,6 @@ import org.eclipse.cdt.core.settings.model.ICFolderDescription;
 import org.eclipse.cdt.core.settings.model.ICMultiItemsHolder;
 import org.eclipse.cdt.core.settings.model.ICProjectDescription;
 import org.eclipse.cdt.core.settings.model.ICResourceDescription;
-import org.eclipse.cdt.core.settings.model.ICSettingEntry;
 import org.eclipse.cdt.core.settings.model.MultiItemsHolder;
 import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.cdt.ui.PreferenceConstants;
@@ -677,18 +676,8 @@ implements
 			InternalTab tab = it.next();
 			if (tab != null) {
 				ICPropertyTab tabtab = tab.tab;
-				if (tabtab instanceof AbstractLangsListTab) {
-					final AbstractLangsListTab langListTab = (AbstractLangsListTab) tabtab;
-					switch(langListTab.getKind()) {
-					case ICSettingEntry.INCLUDE_PATH:
-					case ICSettingEntry.MACRO:
-					case ICSettingEntry.INCLUDE_FILE:
-					case ICSettingEntry.MACRO_FILE:
-						if (langListTab.hadSomeModification()) {
-							return true;
-						}
-						break;
-					}
+				if (tabtab instanceof AbstractCPropertyTab && ((AbstractCPropertyTab)tabtab).isIndexerAffected()) {
+					return true;
 				}
 			}
 		}

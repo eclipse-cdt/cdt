@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2008 Intel Corporation and others.
+ * Copyright (c) 2007, 2009 Intel Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -699,5 +699,15 @@ public abstract class AbstractCPropertyTab implements ICPropertyTab {
 	
 	public void setHelpContextId(String id) {
 		helpId = PREFIX + id;
+	}
+
+	/** 
+	 * Allows subclasses to inform the container about changes relevant to the indexer.
+	 * The tab will be asked before the apply is performed. As a consequence of returning
+	 * <code>true</code> the user will be asked whether she wants to rebuild the index.
+	 * @since 5.2
+	 */
+	protected boolean isIndexerAffected() {
+		return false;
 	}
 }

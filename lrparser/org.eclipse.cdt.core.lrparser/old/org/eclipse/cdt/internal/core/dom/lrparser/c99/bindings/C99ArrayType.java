@@ -14,6 +14,7 @@ import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IASTExpression;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.ITypedef;
+import org.eclipse.cdt.core.dom.ast.IValue;
 import org.eclipse.cdt.core.dom.ast.c.ICArrayType;
 import org.eclipse.cdt.internal.core.dom.parser.ITypeContainer;
 
@@ -119,6 +120,11 @@ public class C99ArrayType implements ICArrayType, ITypeContainer {
 			assert false; // not going to happen
 		}
 		return clone;
+	}
+
+	public IValue getSize() {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 }

@@ -20,6 +20,7 @@
  *  David McKnight     (IBM)   [250203] [dstore][shells]%var% is substituted to null in Unix shell
  *  David McKnight     (IBM)   [249715] [dstore][shells] Unix shell does not echo command
  *  David McKnight     (IBM)   [153275] [dstore-shells] Ctrl+C does not break remote program
+ *  Chris Recoskie     (IBM)   [284179] [dstore] commands have a hard coded line length limit of 100 characters
  *******************************************************************************/
 
 package org.eclipse.rse.internal.dstore.universal.miners.command;
@@ -1003,8 +1004,27 @@ public class CommandMinerThread extends MinerThread
 	
 	
 	public void interpretLine(String line, boolean stdError)
-	{
-		int maxLine = 100;
+	{	
+		// Line wrapping here is due to the fix for an internal IBM bug:
+		//  https://cs.opensource.ibm.com/tracker/index.php?func=detail&aid=65874&group_id=1196&atid=1622
+		// 
+		// Here is the description written by Song Wu: 
+		//       
+		// In the command shell, the message displayed might be too long to be displayed on one line. It's truncated currently.
+		// Hover over doesn't help. The message needs to be wrapped.
+		// --------------------------------------------------------
+		//
+		// The problem was resolved by forcing lines to be wrapped (in this case using 100 as the max line length):
+		// int maxLine = 100;		
+	    // 
+		// I think this was really just a workaround for the real problem - where the Windows table column imposes a 
+		// limit on the number of chars displayed.
+		//
+		// The problem with the forced line wrapping fix is that it introduces bug 284179.  I think bug 284179 is a
+		// worse problem and therefore I'm in favour of increasing the max line to 4096 as suggested by Chris Recoskie.		
+		// crecoskie longer maxLine
+		int maxLine = 4096; 
+		
 		int num = line.length();
 		String[] lines = new String[num/maxLine+1];
 		if(lines.length>1)

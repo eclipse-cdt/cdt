@@ -1125,4 +1125,19 @@ public class CPPSelectionTestsNoIndexer extends BaseUITestCase {
     	IASTNode node= testF3(file, offset);
     	assertContents(code, node.getFileLocation().getNodeOffset(), "func(T a, T b)");
     }
+
+    //    template<typename T>  void func(T a){}
+    //    template<typename T>  void func(T a, T b){}
+    //
+    //    template<typename Tmp> void testFunc() {
+    //      Tmp val;
+    //      func(val, val);  // F3 could know that 'func(T a)' cannot be a correct match.
+    //    }
+    public void testDependentNameTwoChoices_281736() throws Exception {
+    	String code= getContentsForTest(1)[0].toString();
+    	IFile file = importFile("testDependentNameTwoChoices_281736.cpp", code); 
+    	int offset= code.indexOf("func(val, val);");
+    	IASTNode node= testF3(file, offset);
+    	assertContents(code, node.getFileLocation().getNodeOffset(), "func(T a, T b)");
+    }
 }

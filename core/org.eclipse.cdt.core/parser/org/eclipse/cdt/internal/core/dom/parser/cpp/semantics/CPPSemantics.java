@@ -505,7 +505,7 @@ public class CPPSemantics {
 		return false;
 	}
 
-	private static LookupData createLookupData(IASTName name, boolean considerAssociatedScopes) {
+	public static LookupData createLookupData(IASTName name, boolean considerAssociatedScopes) {
 		LookupData data = new LookupData(name);
 		IASTNode parent = name.getParent();
 		

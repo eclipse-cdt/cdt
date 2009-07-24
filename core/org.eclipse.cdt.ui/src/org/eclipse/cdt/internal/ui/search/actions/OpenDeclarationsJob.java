@@ -12,6 +12,7 @@ package org.eclipse.cdt.internal.ui.search.actions;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
@@ -49,7 +50,9 @@ import org.eclipse.cdt.core.dom.ast.IParameter;
 import org.eclipse.cdt.core.dom.ast.IProblemBinding;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTemplateDeclaration;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunction;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPMethod;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPParameter;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPSpecialization;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateParameter;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPUsingDeclaration;
@@ -70,7 +73,10 @@ import org.eclipse.cdt.core.parser.util.ArrayUtil;
 import org.eclipse.cdt.ui.CUIPlugin;
 
 import org.eclipse.cdt.internal.core.dom.parser.ASTNode;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPUnknownBinding;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPSemantics;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPVisitor;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.LookupData;
 import org.eclipse.cdt.internal.core.index.IIndexFragmentName;
 import org.eclipse.cdt.internal.core.model.ASTCache.ASTRunnable;
 import org.eclipse.cdt.internal.core.model.ext.CElementHandleFactory;
@@ -551,7 +557,7 @@ class OpenDeclarationsJob extends Job implements ASTRunnable {
 				List<ICElement> elems= new ArrayList<ICElement>();
 								
 				// bug 252549, search for names in the AST first
-				Set<IBinding> bindings= new HashSet<IBinding>();
+				Set<IBinding> primaryBindings= new HashSet<IBinding>();
 				Set<IBinding> ignoreIndexBindings= new HashSet<IBinding>();
 				ASTNameCollector nc= new ASTNameCollector(fSelectedText);
 				ast.accept(nc);
@@ -560,7 +566,7 @@ class OpenDeclarationsJob extends Job implements ASTRunnable {
 					try {
 						IBinding b= astName.resolveBinding();
 						if (b != null && !(b instanceof IProblemBinding)) {
-							if (bindings.add(b)) {
+							if (primaryBindings.add(b)) {
 								ignoreIndexBindings.add(fIndex.adaptBinding(b));
 							}
 						}
@@ -574,7 +580,7 @@ class OpenDeclarationsJob extends Job implements ASTRunnable {
 				final IIndexBinding[] idxBindings = fIndex.findBindings(name, false, filter, fMonitor);
 				for (IIndexBinding idxBinding : idxBindings) {
 					if (!ignoreIndexBindings.contains(idxBinding)) {
-						bindings.add(idxBinding);
+						primaryBindings.add(idxBinding);
 					}
 				}
 				
@@ -587,25 +593,26 @@ class OpenDeclarationsJob extends Job implements ASTRunnable {
 					}
 				}
 
-				String[] sourceQualifiedName= sourceName != null ?
-						CPPVisitor.getQualifiedName(sourceName.resolveBinding()) :
-					    new String[] { fSelectedText };
+				Collection<IBinding> secondaryBindings= removeSecondaryBindings(primaryBindings, sourceName);
 				// Convert bindings to CElements
-				for (IBinding binding : bindings) {
-					String[] qualifiedName = CPPVisitor.getQualifiedName(binding);
-					if (!Arrays.equals(qualifiedName, sourceQualifiedName)) {
-						continue;
-					}
-					IName[] names = findNames(fIndex, ast, kind, binding);
-					// Exclude names of the same kind.
-					for (int i = 0; i < names.length; i++) {
-						if (getNameKind(names[i]) == kind) {
-							names[i] = null;
+				Collection<IBinding> bs= primaryBindings;
+				for (int k=0; k<2; k++) {
+					for (IBinding binding : bs) {
+						IName[] names = findNames(fIndex, ast, kind, binding);
+						// Exclude names of the same kind.
+						for (int i = 0; i < names.length; i++) {
+							if (getNameKind(names[i]) == kind) {
+								names[i] = null;
+							}
 						}
+						names = (IName[]) ArrayUtil.removeNulls(IName.class, names);
+						convertToCElements(project, fIndex, names, elems);
 					}
-					names = (IName[]) ArrayUtil.removeNulls(IName.class, names);
-					convertToCElements(project, fIndex, names, elems);
-				}
+					// in case we did not find anything, consider the secondary bindings
+					if (!elems.isEmpty())
+						break;
+					bs= secondaryBindings;
+				} 
 				if (navigateCElements(elems)) {
 					return true;
 				}
@@ -618,5 +625,59 @@ class OpenDeclarationsJob extends Job implements ASTRunnable {
 			}
 		}
 		return false;
+	}
+
+	private Collection<IBinding> removeSecondaryBindings(Set<IBinding> primaryBindings, IASTName sourceName) {
+		List<IBinding> result= new ArrayList<IBinding>();
+		String[] sourceQualifiedName= null;
+		int funcArgCount= -1;
+		if (sourceName != null) {
+			sourceQualifiedName= CPPVisitor.getQualifiedName(sourceName.resolveBinding());
+			if (sourceName.resolveBinding() instanceof ICPPUnknownBinding) {
+				LookupData data= CPPSemantics.createLookupData(sourceName, false);
+				if (data.functionCall()) {
+					funcArgCount= data.getFunctionArgumentCount();
+				}
+			}
+		}
+
+		for (Iterator<IBinding> iterator = primaryBindings.iterator(); iterator.hasNext();) {
+			IBinding binding = iterator.next();
+			if (sourceQualifiedName != null) {
+				String[] qualifiedName = CPPVisitor.getQualifiedName(binding);
+				if (!Arrays.equals(qualifiedName, sourceQualifiedName)) {
+					iterator.remove();
+					continue;
+				}
+			}
+			if (funcArgCount != -1) {
+				// for c++ we can check the number of parameters
+				if (binding instanceof ICPPFunction) {
+					ICPPFunction f= (ICPPFunction) binding;
+					try {
+						IParameter[] pars= f.getParameters();
+						if (pars.length < funcArgCount) {
+							if (!f.takesVarArgs()) {
+								iterator.remove();
+								result.add(binding);
+								continue;
+							}
+						} else if (pars.length > funcArgCount) {
+							IParameter p= pars[funcArgCount];
+							if (!(p instanceof ICPPParameter) || !((ICPPParameter) p).hasDefaultValue()) {
+								iterator.remove();
+								result.add(binding);
+								continue;
+							}
+						}
+					} catch (DOMException e) {
+						// ignore problem bindings
+						continue;
+					}
+				}
+			}
+		}
+		
+		return result;
 	}
 }

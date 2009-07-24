@@ -20,7 +20,7 @@
  *  David McKnight     (IBM)   [250203] [dstore][shells]%var% is substituted to null in Unix shell
  *  David McKnight     (IBM)   [249715] [dstore][shells] Unix shell does not echo command
  *  David McKnight     (IBM)   [153275] [dstore-shells] Ctrl+C does not break remote program
- *  Chris Recoskie     (IBM)   [284179] [dstore] commands have a hard coded line length limit of 100 characters
+ *  David McKnight     (IBM)   [284179] [dstore] commands have a hard coded line length limit of 100 characters
  *******************************************************************************/
 
 package org.eclipse.rse.internal.dstore.universal.miners.command;
@@ -79,6 +79,9 @@ public class CommandMinerThread extends MinerThread
 	private boolean _isTTY;
 	private boolean _didInitialCWDQuery = false;
 	
+	private int _maxLineLength = 4096;
+	
+	
 	private CommandMiner.CommandMinerDescriptors _descriptors;
 	
 	// default
@@ -95,6 +98,17 @@ public class CommandMinerThread extends MinerThread
 		_descriptors = descriptors;
 		
 		_subject = theElement;
+		
+		String maxLineLengthStr = System.getProperty("DSTORE_SHELL_MAX_LINE"); //$NON-NLS-1$
+		if (maxLineLengthStr != null)
+		{
+			try {
+				_maxLineLength = Integer.parseInt(maxLineLengthStr);
+			}
+			catch (NumberFormatException e)
+			{}
+		}
+		
 		String theOS = System.getProperty("os.name"); //$NON-NLS-1$
 		
 		_invocation = invocation.trim();
@@ -1022,15 +1036,16 @@ public class CommandMinerThread extends MinerThread
 		//
 		// The problem with the forced line wrapping fix is that it introduces bug 284179.  I think bug 284179 is a
 		// worse problem and therefore I'm in favour of increasing the max line to 4096 as suggested by Chris Recoskie.		
-		// crecoskie longer maxLine
-		int maxLine = 4096; 
-		
+		//
+		// A new property, DSTORE_SHELL_MAX_LINE allows for the customization of this value now.  The default
+		// is 4096.
+		//
 		int num = line.length();
-		String[] lines = new String[num/maxLine+1];
+		String[] lines = new String[num/_maxLineLength+1];
 		if(lines.length>1)
 		{
 			int beg=0;
-			int end=maxLine;
+			int end=_maxLineLength;
 			for(int i=0;i<lines.length;i++)
 			{
 				//try/catch put in for testing purposes
@@ -1045,7 +1060,7 @@ public class CommandMinerThread extends MinerThread
 						lines[i]=line.substring(beg,end);
 					}
 					beg=end;
-					end=end+maxLine;
+					end=end+_maxLineLength;
 				//}
 				//catch(Exception e)
 				//{

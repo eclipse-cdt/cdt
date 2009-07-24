@@ -17,6 +17,7 @@
  * David McKnight   (IBM)        - [189873] DownloadJob changed to DownloadAndOpenJob
  * David McKnight   (IBM)        - [224377] "open with" menu does not have "other" option
  * David McKnight   (IBM)        - [277141] System Editor Passed Incorrect Cache Information in Presence of Case-Differentiated-Only filenames
+ * David McKnight   (IBM)        - [284596] [regression] Open with-> problem when descriptor doesn't match previous
  *******************************************************************************/
 
 package org.eclipse.rse.internal.files.ui.actions;
@@ -28,6 +29,7 @@ import java.util.Comparator;
 import java.util.Hashtable;
 
 import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.ResourceAttributes;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.jface.action.ContributionItem;
 import org.eclipse.jface.resource.ImageDescriptor;
@@ -44,6 +46,7 @@ import org.eclipse.rse.subsystems.files.core.subsystems.IRemoteFile;
 import org.eclipse.rse.subsystems.files.core.subsystems.IRemoteFileSubSystem;
 import org.eclipse.rse.ui.RSEUIPlugin;
 import org.eclipse.rse.ui.SystemBasePlugin;
+import org.eclipse.rse.ui.messages.SystemMessageDialog;
 import org.eclipse.rse.ui.view.ISystemEditableRemoteObject;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Image;
@@ -52,12 +55,16 @@ import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.MenuItem;
 import org.eclipse.ui.IEditorDescriptor;
+import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IEditorRegistry;
+import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.dialogs.EditorSelectionDialog;
 import org.eclipse.ui.ide.IDE;
+import org.eclipse.ui.internal.WorkbenchPage;
+import org.eclipse.ui.part.FileEditorInput;
 
 
 /**
@@ -238,8 +245,13 @@ protected void openEditor(IRemoteFile remoteFile, IEditorDescriptor descriptor) 
 			if (systemEditor) {
 				editable.openSystemEditor();
 			}
-			else {
-				editable.openEditor();
+			else {		
+				if (descriptor != null){
+					hackOpenEditor(editable, descriptor);
+				}
+				else {
+					editable.openEditor();
+				}
 			}
 		}
 		catch (Exception e) {}
@@ -248,6 +260,66 @@ protected void openEditor(IRemoteFile remoteFile, IEditorDescriptor descriptor) 
 		DownloadAndOpenJob oJob = new DownloadAndOpenJob(editable, systemEditor);
 		oJob.schedule();
 	}
+}
+
+/**
+ * This method is a hack to deal with bug 284596 while no API exists to set the editor descriptor for a
+ * given SystemEditableRemoteFile.  The code here is essentially a modified version of
+ * SystemEditableRemoteFile.openEditor()  
+ */
+private void hackOpenEditor(SystemEditableRemoteFile editable, IEditorDescriptor descriptor) throws PartInitException
+{
+	IWorkbenchPage activePage = this.page;
+	IWorkbench wb = PlatformUI.getWorkbench();
+	if (activePage == null)
+	{
+		activePage = wb.getActiveWorkbenchWindow().getActivePage();
+	}
+	IFile file = editable.getLocalResource();
+
+	IRemoteFile remoteFile = editable.getRemoteFile();
+	// get fresh remote file object
+	remoteFile.markStale(true); // make sure we get the latest remote file (with proper permissions and all)
+	IRemoteFileSubSystem ss = remoteFile.getParentRemoteFileSubSystem();
+	if (!remoteFile.getParentRemoteFileSubSystem().isOffline()){
+		try{
+			remoteFile = ss.getRemoteFileObject(remoteFile.getAbsolutePath(), new NullProgressMonitor());
+		}
+		catch (Exception e){
+			SystemMessageDialog.displayExceptionMessage(SystemMessageDialog.getDefaultShell(), e);
+			return;
+		}
+	}
+	editable.setRemoteFile(remoteFile);
+	
+	boolean readOnly = !remoteFile.canWrite();
+	ResourceAttributes attr = file.getResourceAttributes();
+	if (attr!=null) {
+		attr.setReadOnly(readOnly);
+		try	{
+			file.setResourceAttributes(attr);
+		}
+		catch (Exception e)
+		{}
+	}
+
+	// set editor as preferred editor for this file
+	String editorId = descriptor.getId();
+	IDE.setDefaultEditor(file, editorId);
+
+	FileEditorInput finput = new FileEditorInput(file);
+
+	IEditorPart editor = null;
+	if (descriptor.isOpenExternal()){
+		editor = ((WorkbenchPage)activePage).openEditorFromDescriptor(new FileEditorInput(file), descriptor, true, null);
+	}
+	else {
+		editor =  activePage.openEditor(finput, descriptor.getId());
+	}
+	editable.setEditor(editor);
+	
+	SystemIFileProperties properties = new SystemIFileProperties(file);
+	properties.setRemoteFileObject(this);
 }
 
 private boolean isFileCached(ISystemEditableRemoteObject editable, IRemoteFile remoteFile)

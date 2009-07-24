@@ -15,6 +15,7 @@ package org.eclipse.cdt.ui.newui;
 
 import java.io.File;
 import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
@@ -688,6 +689,24 @@ implements
 							return true;
 						}
 						break;
+					}
+				} else if (tabtab instanceof AbstractCPropertyTab){
+					// attempt to access API that will be introduced in CDT 6.1 (bug 144085)
+					try {
+						Class<?> clazz= tabtab.getClass();
+						Method meth = clazz.getDeclaredMethod("isIndexerAffected"); //$NON-NLS-1$
+						if (meth != null) {
+							Object result = meth.invoke(tabtab);
+							if (result instanceof Boolean && ((Boolean) result).booleanValue())
+								return true;
+						}
+					} catch (SecurityException e) {
+					} catch (NoSuchMethodException e) {
+					} catch (IllegalArgumentException e) {
+					} catch (IllegalAccessException e) {
+					} catch (InvocationTargetException e) {
+						// the method was called and has thrown an exception.
+						CUIPlugin.log(e);
 					}
 				}
 			}

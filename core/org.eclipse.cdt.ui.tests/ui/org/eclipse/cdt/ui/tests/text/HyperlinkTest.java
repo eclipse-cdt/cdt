@@ -36,7 +36,6 @@ import org.eclipse.cdt.internal.ui.editor.CElementHyperlinkDetector;
  * @author Mike Kucera
  */
 public class HyperlinkTest extends TestCase {
-	
 
 	private static final String CPP_FILE_NAME = "hyperlink_test_cpp.cpp";
 	private static final String CPP_CODE = 
@@ -59,13 +58,11 @@ public class HyperlinkTest extends TestCase {
 		"    p + p;" +
 		"} \n";
 	
-	
 	private static final String C_FILE_NAME_1 = "hyperlink_test_c_1.c";
 	private static final String C_CODE_1 = 
 		"int main() { \n" +
 		"    int class = 99; \n" +
 		"}";
-	
 	
 	private static final String C_FILE_NAME_2 = "hyperlink_test_c_2.c";
 	private static final String C_CODE_2 = 
@@ -74,16 +71,14 @@ public class HyperlinkTest extends TestCase {
 		"#else\n" +
 		"    int itworks = 100; \n" +
 		"#endif\n";
-	
-	
+
 	private ICProject project;
 	private CEditor editor;
-	
+
 	
 	public static TestSuite suite() {
 		return new TestSuite(HyperlinkTest.class);
 	}
-	
 	
 	private void setUpEditor(String fileName, String code) throws Exception {
 		super.setUp();
@@ -158,7 +153,7 @@ public class HyperlinkTest extends TestCase {
 		// no hyperlinks for punctuation
 		assertNotHyperlink(CPP_CODE.indexOf("{"));
 		assertNotHyperlink(CPP_CODE.indexOf("}"));
-		assertNotHyperlink(CPP_CODE.indexOf("("));
+		assertNotHyperlink(CPP_CODE.indexOf("(" + 1));
 		assertNotHyperlink(CPP_CODE.indexOf(")"));
 		assertNotHyperlink(CPP_CODE.indexOf(":"));
 		assertNotHyperlink(CPP_CODE.indexOf(";"));
@@ -178,8 +173,7 @@ public class HyperlinkTest extends TestCase {
 		// hyperlinks for overloaded operators
 		assertHyperlink(CPP_CODE.indexOf("+ p"), CPP_CODE.indexOf("+ p"), 1);
 	}
-	
-	
+
 	public void testHyperlinksCKeywords() throws Exception {
 		setUpEditor(C_FILE_NAME_1, C_CODE_1);
 		
@@ -189,8 +183,7 @@ public class HyperlinkTest extends TestCase {
 		// no hyperlinks for numeric literals
 		assertNotHyperlink(C_CODE_1.indexOf("99") + 1);
 	}
-	
-	
+
 	public void testHyperlinksInactiveCode() throws Exception {
 		setUpEditor(C_FILE_NAME_2, C_CODE_2);
 		
@@ -202,7 +195,4 @@ public class HyperlinkTest extends TestCase {
 //		assertNotHyperlink(C_CODE_2.indexOf("nothere") + 1);
 		assertHyperlink(C_CODE_2.indexOf("itworks") + 1, C_CODE_2.indexOf("itworks"), "itworks".length());
 	}
-	
-	
-	
 }

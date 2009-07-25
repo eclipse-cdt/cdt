@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     Anton Leherbauer (Wind River Systems) - initial API and implementation
+ *     Sergey Prigogin (Google)
  *******************************************************************************/
 
 package org.eclipse.cdt.ui.tests.text;
@@ -37,6 +38,32 @@ public class CWordFinderTest extends BaseUITestCase {
 
 	protected void tearDown() throws Exception {
 		super.tearDown();
+	}
+
+	public void testBasic() {
+		IDocument doc= new Document(" func(int a, int b);");
+		IRegion region = CWordFinder.findWord(doc, 1);
+		assertEquals(1, region.getOffset());
+		assertEquals(4, region.getLength());
+		region = CWordFinder.findWord(doc, 4);
+		assertEquals(1, region.getOffset());
+		assertEquals(4, region.getLength());
+		region = CWordFinder.findWord(doc, 5);
+		assertEquals(1, region.getOffset());
+		assertEquals(4, region.getLength());
+		region = CWordFinder.findWord(doc, 6);
+		assertEquals(6, region.getOffset());
+		assertEquals(3, region.getLength());
+		region = CWordFinder.findWord(doc, 12);
+		assertEquals(12, region.getOffset());
+		assertEquals(0, region.getLength());
+		doc= new Document("func();");
+		region = CWordFinder.findWord(doc, 0);
+		assertEquals(0, region.getOffset());
+		assertEquals(4, region.getLength());
+		region = CWordFinder.findWord(doc, 5);
+		assertEquals(5, region.getOffset());
+		assertEquals(0, region.getLength());
 	}
 
 	public void testFindWord() throws BadLocationException {

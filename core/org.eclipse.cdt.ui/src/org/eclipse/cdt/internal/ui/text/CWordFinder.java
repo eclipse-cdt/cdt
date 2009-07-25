@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     QNX Software Systems - Initial API and implementation
+ *     Sergey Prigogin (Google)
  *******************************************************************************/
 package org.eclipse.cdt.internal.ui.text;
 
@@ -25,25 +26,30 @@ public class CWordFinder {
 	
 	private static final char CBRACE_L = '{';
 	private static final char CBRACE_R = '}';
-	private static final char  BRACE_R = ')';
+	private static final char PAREN_R  = ')';
 	
 	/**
 	 * This method determines for a given offset into a given document what the
-	 * region is which defines the current word. A word is defined as the set of
-	 * non "C" identifiers. So assuming that ! indicated the current cursor
-	 * postion: !afunction(int a, int b) --> word = length 0 afunc!tion(int a,
-	 * int b) --> word = afunction afunction!(int a, int b) --> word = afunction
-	 * afunction(!int a, int b) --> word = length 0 afunction(int a,! int b) -->
-	 * word = length 0 afunction(!) --> word = length 0
+	 * region is which defines the current word. A word is defined as a contiguous
+	 * sequence of C-identifier characters. So assuming that | indicates the current
+	 * cursor position:
+	 * <pre>
+	 *   |afunction(int a, int b) --> word = afunction
+	 *   afunc|tion(int a, int b) --> word = afunction
+	 *   afunction|(int a, int b) --> word = afunction
+	 *   afunction(|int a, int b) --> word = int
+	 *   afunction(int a,| int b) --> word = length 0
+	 *   afunction(|)             --> word = length 0
+	 * </pre>
 	 * 
 	 * @param document
 	 *            The document to be examined
 	 * @param offset
 	 *            The offset into the document where a word should be
-	 *            idendified.
+	 *            identified.
 	 * @return The region defining the current word, which may be a region of
 	 *         length 0 if the offset is not in a word, or null if there is an
-	 *         error accessing the docment data.
+	 *         error accessing the document data.
 	 */
 	public static IRegion findWord(IDocument document, int offset) {
 		int start = -2;
@@ -53,11 +59,11 @@ public class CWordFinder {
 			int pos = offset;
 			char c;
 
-			while (pos >= 0) {
+			while (--pos >= 0) {
 				c = document.getChar(pos);
-				if (!Character.isJavaIdentifierPart(c))
+				if (!Character.isJavaIdentifierPart(c)) {
 					break;
-				--pos;
+				}
 			}
 
 			start = pos;
@@ -73,7 +79,6 @@ public class CWordFinder {
 			}
 
 			end = pos;
-
 		} catch (BadLocationException x) {
 		}
 
@@ -97,10 +102,10 @@ public class CWordFinder {
 	 *            The document to be examined
 	 * @param offset
 	 *            The offset into the document where a word should be
-	 *            idendified.
+	 *            identified.
 	 * @return The region defining the current word, which may be a region of
 	 *         length 0 if the offset is not in a function, or null if there is
-	 *         an error accessing the docment data.
+	 *         an error accessing the document data.
 	 */
 	public static IRegion findFunction(IDocument document, int offset) {
 		int leftbracket = -1;
@@ -144,7 +149,7 @@ public class CWordFinder {
 				return new Region(offset, 0);
 			}
 
-			//Now backtrack our way from the rightbracket to the left
+			// Now backtrack our way from the right bracket to the left
 			pos = rightbracket;
 			rightbracketcount = leftbracketcount = 0;
 			while (pos >= 0) {
@@ -173,7 +178,7 @@ public class CWordFinder {
 				return new Region(offset, 0);
 			}
 
-			//Now work our way to the function name
+			// Now work our way to the function name
 			pos = leftbracket - 1;
 			while (pos >= 0) {
 				c = document.getChar(pos);
@@ -222,7 +227,7 @@ public class CWordFinder {
 			int bracketcount = 0;
 			char c;
 
-			//Find left curled bracket from our position
+			// Find left curled brace from our position
 			while (pos > 0) {
 				c = document.getChar(pos--);
 
@@ -232,18 +237,19 @@ public class CWordFinder {
 					if (bracketcount-- == 0) {
 						do {
 							c = document.getChar(pos--);
-							if (c == BRACE_R) return false;
+							if (c == PAREN_R)
+								return false;
 						} while (Character.isWhitespace(c));
-						// container block seems to be not a function or statement body
+						// Container block seems to be not a function or statement body
 						pos++;             // step back one symbol
 						bracketcount = 0;  // let's search for upper block
 					}
 				}
 			}
-			
-		} catch (BadLocationException x) { /* Ignore */	}
-		// return true in case of unknown result or exception 
-		return true;
+		} catch (BadLocationException x) {
+			// Ignore
+		}
+		return true;  // return true in case of unknown result or exception 
 	}
 	
 	/**
@@ -258,14 +264,16 @@ public class CWordFinder {
 		int counter = 0;
 		char lf = 0;
 		char c;
-		for (int i=0; i<s.length(); i++) {
+		for (int i= 0; i < s.length(); i++) {
 			c = s.charAt(i);
 			if (lf == 0) {
 				if (c == '\n' || c == '\r') {
 					lf = c;
 					counter++;
 				}
-			} else if (lf == c) counter++;
+			} else if (lf == c) {
+				counter++;
+			}
 		}
 		return counter;
 	}
@@ -283,4 +291,3 @@ public class CWordFinder {
 		return false;
 	}
 }
-

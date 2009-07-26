@@ -1596,7 +1596,7 @@ public class IndexCPPTemplateResolutionTest extends IndexBindingResolutionTestBa
 	public void testDefaultTemplateArgInHeader_264988() throws Exception { 
 		ICPPTemplateInstance ti= getBindingFromASTName("XT<>", 4, ICPPTemplateInstance.class);
 	}
-	
+
 	// typedef int TInt;
 	// template <typename T> class XT {
 	//    void m();
@@ -1607,5 +1607,75 @@ public class IndexCPPTemplateResolutionTest extends IndexBindingResolutionTestBa
 	// }
 	public void testParentScopeOfSpecialization_267013() throws Exception { 
 		ITypedef ti= getBindingFromASTName("TInt", 4, ITypedef.class);
+	}
+
+	//	struct __true_type {};
+	//	struct __false_type {};
+	//
+	//	template<typename, typename>
+	//	struct __are_same {
+	//	  enum { __value = 0 };
+	//	  typedef __false_type __type;
+	//	};
+	//
+	//	template<typename _Tp>
+	//	struct __are_same<_Tp, _Tp> {
+	//	  enum { __value = 1 };
+	//	  typedef __true_type __type;
+	//	};
+	//
+	//	template<bool, typename>
+	//	struct __enable_if {};
+	//
+	//	template<typename _Tp>
+	//	struct __enable_if<true, _Tp> {
+	//	  typedef _Tp __type;
+	//	};
+	//
+	//	template<typename _Iterator, typename _Container>
+	//	struct __normal_iterator {
+	//	  template<typename _Iter>
+	//	    __normal_iterator(
+	//	        const __normal_iterator<
+	//	            _Iter,
+	//	            typename __enable_if<
+	//	                __are_same<_Iter, typename _Container::pointer>::__value,
+	//	                _Container
+	//	            >::__type
+	//	        >& __i);
+	//	};
+	//
+	//	template<typename _Tp>
+	//	struct allocator {
+	//	  typedef _Tp* pointer;
+	//	  typedef const _Tp* const_pointer;
+	//
+	//	  template<typename _Tp1>
+	//	  struct rebind
+	//	  { typedef allocator<_Tp1> other; };
+	//	};
+	//
+	//	template<typename _Tp, typename _Alloc = allocator<_Tp> >
+	//	struct vector {
+	//	  typedef vector<_Tp, _Alloc> vector_type;
+	//	  typedef typename _Alloc::template rebind<_Tp>::other _Tp_alloc_type;
+	//
+	//	  typedef typename _Tp_alloc_type::pointer pointer;
+	//	  typedef typename _Tp_alloc_type::const_pointer const_pointer;
+	//	  typedef __normal_iterator<pointer, vector_type> iterator;
+	//	  typedef __normal_iterator<const_pointer, vector_type> const_iterator;
+	//
+	//	  iterator begin();
+	//	  const_iterator begin() const;
+	//	};
+
+	//	void f(vector<int>::const_iterator p);
+	//
+	//	void test() {
+	//	  vector<int> v;
+	//	  f(v.begin());
+	//	}
+	public void _testTemplateMetaprogramming_284686() throws Exception { 
+		getBindingFromASTName("f(v.begin())", 1, ICPPFunction.class);
 	}
 }

@@ -7286,4 +7286,16 @@ public class AST2CPPTests extends AST2BaseTest {
 		final long time = System.currentTimeMillis() - now;
 		assertTrue("Lasted " + time + "ms", time < 5000);
 	}
+
+	//	class A {
+	//	  friend inline void m(A p1, A p2) {}
+	//	};
+	//
+	//	void test(A a1, A a2) {
+	//	  m(a1, a2);  // problem on m
+	//	}
+	public void _testInlineFriendFunction_284690() throws Exception {
+		final String code = getAboveComment();
+		parseAndCheckBindings(code, ParserLanguage.CPP);
+	}
 }

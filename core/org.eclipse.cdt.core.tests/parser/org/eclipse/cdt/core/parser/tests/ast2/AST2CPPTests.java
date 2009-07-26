@@ -7292,7 +7292,7 @@ public class AST2CPPTests extends AST2BaseTest {
 	//	};
 	//
 	//	void test(A a1, A a2) {
-	//	  m(a1, a2);  // problem on m
+	//	  m(a1, a2);
 	//	}
 	public void _testInlineFriendFunction_284690() throws Exception {
 		final String code = getAboveComment();

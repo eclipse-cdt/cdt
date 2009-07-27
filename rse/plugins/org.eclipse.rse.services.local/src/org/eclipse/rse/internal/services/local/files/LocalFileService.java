@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2008 IBM Corporation and others.
+ * Copyright (c) 2006, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -41,6 +41,7 @@
  * Martin Oberhuber (Wind River) - [233993] Improve EFS error reporting
  * Martin Oberhuber (Wind River) - [235360][ftp][ssh][local] Return proper "Root" IHostFile
  * David McKnight   (IBM)        - [238367] [regression] Error when deleting Archive Files
+ * David McKnight   (IBM)        - [280899] RSE can't open files in some directory, which give the RSEG1067 error me
  *******************************************************************************/
 
 package org.eclipse.rse.internal.services.local.files;
@@ -397,7 +398,8 @@ public class LocalFileService extends AbstractFileService implements ILocalServi
 				parentDir.mkdirs();
 			}
 			// encoding conversion required if it a text file but not an xml file
-			boolean isEncodingConversionRequired = !isBinary;
+			String systemEncoding = SystemEncodingUtil.getInstance().getEnvironmentEncoding();
+			boolean isEncodingConversionRequired = !isBinary && !systemEncoding.equals(hostEncoding); // should not convert if both encodings are the same
 
 			inputStream = new FileInputStream(file);
 			bufInputStream = new BufferedInputStream(inputStream);

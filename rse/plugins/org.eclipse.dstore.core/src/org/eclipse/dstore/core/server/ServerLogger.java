@@ -19,6 +19,7 @@
  * David McKnight  (IBM)  - [244876] [dstore] make DEBUG a non-final variable of the ServerLogger class
  * David McKnight  (IBM)  - [271914] [dstore] Setting debug on/off dynamically
  * David McKnight  (IBM)  - [269908] [dstore] rsecomm.log file management
+ * David McKnight  (IBM)  - [284787] [dstore] ability to disable RSECOMM_LOGFILE_MAX option
  ********************************************************************************/
 
 package org.eclipse.dstore.core.server;
@@ -135,7 +136,7 @@ public class ServerLogger implements IServerLogger
 			else {
 				// if the file exists, check it's size
 				long fileSize = logFile.length();
-				if  (fileSize > logFileMax){
+				if  (logFileMax > 0 && fileSize > logFileMax){ // if logFileMax is 0 or less, than always use the same file					
 					// file too big, need a new one				
 					suffix++;
 				}

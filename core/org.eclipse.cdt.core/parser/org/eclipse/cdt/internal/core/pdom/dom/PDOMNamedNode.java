@@ -17,7 +17,6 @@ package org.eclipse.cdt.internal.core.pdom.dom;
 import java.util.Arrays;
 
 import org.eclipse.cdt.core.CCorePlugin;
-import org.eclipse.cdt.core.index.IIndexBinding;
 import org.eclipse.cdt.core.parser.util.CharArrayUtils;
 import org.eclipse.cdt.internal.core.index.IIndexFragmentBinding;
 import org.eclipse.cdt.internal.core.pdom.db.Database;
@@ -123,7 +122,7 @@ public abstract class PDOMNamedNode extends PDOMNode {
 	
 	public IIndexFragmentBinding getParentBinding() throws CoreException {
 		PDOMNode parent= getParentNode();
-		if (parent instanceof IIndexBinding) {
+		if (parent instanceof IIndexFragmentBinding) {
 			return (IIndexFragmentBinding) parent;
 		}
 		return null;

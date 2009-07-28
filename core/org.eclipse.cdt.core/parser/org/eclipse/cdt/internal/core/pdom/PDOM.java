@@ -182,10 +182,11 @@ public class PDOM extends PlatformObject implements IPDOM {
 	 *  
 	 *  CDT 7.0 development (versions not supported on the 6.0.x branch)
 	 *  90.0 - support for array sizes, bug 269926
+	 *  91.0 - storing unknown bindings other than unknown class types, bug 284686.
 	 */
-	private static final int MIN_SUPPORTED_VERSION= version(90, 0);
-	private static final int MAX_SUPPORTED_VERSION= version(90, Short.MAX_VALUE);
-	private static final int DEFAULT_VERSION = version(90, 0);
+	private static final int MIN_SUPPORTED_VERSION= version(91, 0);
+	private static final int MAX_SUPPORTED_VERSION= version(91, Short.MAX_VALUE);
+	private static final int DEFAULT_VERSION = version(91, 0);
 	
 	private static int version(int major, int minor) {
 		return (major << 16) + minor;

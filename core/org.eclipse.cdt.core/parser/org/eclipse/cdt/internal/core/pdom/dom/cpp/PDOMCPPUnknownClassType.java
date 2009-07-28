@@ -31,7 +31,6 @@ import org.eclipse.cdt.core.index.IIndexBinding;
 import org.eclipse.cdt.core.index.IIndexFileSet;
 import org.eclipse.cdt.core.parser.util.CharArrayUtils;
 import org.eclipse.cdt.internal.core.Util;
-import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTName;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPDeferredClassInstance;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPUnknownClassInstance;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPUnknownClassType;
@@ -48,18 +47,18 @@ import org.eclipse.core.runtime.CoreException;
 /**
  * @author Sergey Prigogin
  */
-class PDOMCPPUnknownClassType extends PDOMCPPBinding implements ICPPClassScope, ICPPUnknownClassType,
+class PDOMCPPUnknownClassType extends PDOMCPPUnknownBinding implements ICPPClassScope, ICPPUnknownClassType,
 		IPDOMMemberOwner, IIndexType, IIndexScope {
 
 	private static final int KEY = PDOMCPPBinding.RECORD_SIZE + 0; // byte
 	private static final int MEMBERLIST = PDOMCPPBinding.RECORD_SIZE + 4;
 	@SuppressWarnings("hiding")
-	protected static final int RECORD_SIZE = PDOMCPPBinding.RECORD_SIZE + 8;
+	protected static final int RECORD_SIZE = PDOMCPPUnknownBinding.RECORD_SIZE + 8;
 	
 	private ICPPScope unknownScope;
 
 	public PDOMCPPUnknownClassType(PDOMLinkage linkage, PDOMNode parent, ICPPUnknownClassType classType) throws CoreException {
-		super(linkage, parent, classType.getNameCharArray());
+		super(linkage, parent, classType);
 
 		setKind(classType);
 		// linked list is initialized by storage being zero'd by malloc
@@ -121,7 +120,8 @@ class PDOMCPPUnknownClassType extends PDOMCPPBinding implements ICPPClassScope, 
 		return this;
 	}
 
-    public ICPPScope asScope() {
+    @Override
+	public ICPPScope asScope() {
     	if (unknownScope == null) {
     		unknownScope= new PDOMCPPUnknownScope(this, getUnknownName());
     	}
@@ -262,10 +262,6 @@ class PDOMCPPUnknownClassType extends PDOMCPPBinding implements ICPPClassScope, 
 		return ICPPClassType.EMPTY_CLASS_ARRAY;
 	}
 	
-	public IASTName getUnknownName() {
-		return new CPPASTName(getNameCharArray());
-	}
-
 	public boolean isAnonymous() {
 		return false;
 	}

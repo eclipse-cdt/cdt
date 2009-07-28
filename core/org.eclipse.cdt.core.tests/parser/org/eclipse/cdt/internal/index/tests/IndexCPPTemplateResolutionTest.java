@@ -1676,7 +1676,7 @@ public class IndexCPPTemplateResolutionTest extends IndexBindingResolutionTestBa
 	//	  vector<int> v;
 	//	  f(v.begin());
 	//	}
-	public void _testTemplateMetaprogramming_284686() throws Exception { 
+	public void testTemplateMetaprogramming_284686() throws Exception { 
 		getBindingFromASTName("f(v.begin())", 1, ICPPFunction.class);
 	}
 	

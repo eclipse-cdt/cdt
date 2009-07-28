@@ -313,6 +313,18 @@ class PDOMCPPLinkage extends PDOMLinkage implements IIndexCPPBindingConstants {
 			if (parent instanceof PDOMCPPClassType || parent instanceof PDOMCPPClassSpecialization) {
 				pdomBinding = new PDOMCPPField(this, parent, (ICPPField) binding);
 			}
+		} else if (binding instanceof ICPPClassTemplate) {
+			pdomBinding= new PDOMCPPClassTemplate(this, parent, (ICPPClassTemplate) binding);
+		} else if (binding instanceof ICPPClassType) {
+			if (binding instanceof ICPPUnknownClassInstance) {
+				pdomBinding= new PDOMCPPUnknownClassInstance(this, parent, (ICPPUnknownClassInstance) binding);
+			} else if (binding instanceof ICPPUnknownClassType) {
+				pdomBinding= new PDOMCPPUnknownClassType(this, parent, (ICPPUnknownClassType) binding);
+			} else {
+				pdomBinding= new PDOMCPPClassType(this, parent, (ICPPClassType) binding);
+			}
+		} else if (binding instanceof ICPPUnknownBinding) {
+			pdomBinding= new PDOMCPPUnknownBinding(this, parent, (ICPPUnknownBinding) binding);
 		} else if (binding instanceof ICPPVariable) {
 			ICPPVariable var= (ICPPVariable) binding;
 			pdomBinding = new PDOMCPPVariable(this, parent, var);
@@ -334,16 +346,6 @@ class PDOMCPPLinkage extends PDOMLinkage implements IIndexCPPBindingConstants {
 			}
 		} else if (binding instanceof ICPPFunction) {
 			pdomBinding = new PDOMCPPFunction(this, parent, (ICPPFunction) binding, true);
-		} else if (binding instanceof ICPPClassTemplate) {
-			pdomBinding= new PDOMCPPClassTemplate(this, parent, (ICPPClassTemplate) binding);
-		} else if (binding instanceof ICPPClassType) {
-			if (binding instanceof ICPPUnknownClassInstance) {
-				pdomBinding= new PDOMCPPUnknownClassInstance(this, parent, (ICPPUnknownClassInstance) binding);
-			} else if (binding instanceof ICPPUnknownClassType) {
-				pdomBinding= new PDOMCPPUnknownClassType(this, parent, (ICPPUnknownClassType) binding);
-			} else {
-				pdomBinding= new PDOMCPPClassType(this, parent, (ICPPClassType) binding);
-			}
 		} else if (binding instanceof ICPPNamespaceAlias) {
 			pdomBinding = new PDOMCPPNamespaceAlias(this, parent, (ICPPNamespaceAlias) binding);
 		} else if (binding instanceof ICPPNamespace) {
@@ -731,11 +733,8 @@ class PDOMCPPLinkage extends PDOMLinkage implements IIndexCPPBindingConstants {
 	}
 	
 	@Override
-	public PDOMNode getNode(long record) throws CoreException {
-		if (record == 0)
-			return null;
-
-		switch (PDOMNode.getNodeType(getDB(), record)) {
+	public PDOMNode getNode(long record, int nodeType) throws CoreException {
+		switch (nodeType) {
 		case CPPVARIABLE:
 			return new PDOMCPPVariable(this, record);
 		case CPPFUNCTION:
@@ -792,6 +791,8 @@ class PDOMCPPLinkage extends PDOMLinkage implements IIndexCPPBindingConstants {
 			return new PDOMCPPClassInstance(this, record);
 		case CPP_DEFERRED_CLASS_INSTANCE:
 			return new PDOMCPPDeferredClassInstance(this, record);
+		case CPP_UNKNOWN_BINDING:
+			return new PDOMCPPUnknownBinding(this, record);
 		case CPP_UNKNOWN_CLASS_TYPE:
 			return new PDOMCPPUnknownClassType(this, record);
 		case CPP_UNKNOWN_CLASS_INSTANCE:
@@ -826,9 +827,9 @@ class PDOMCPPLinkage extends PDOMLinkage implements IIndexCPPBindingConstants {
 			return new PDOMCPPFunctionType(this, record);
 		case CPP_PARAMETER_SPECIALIZATION:
 			return new PDOMCPPParameterSpecialization(this, record);
-		default:
-			return super.getNode(record);
 		}
+		assert false : "nodeid= " + nodeType; //$NON-NLS-1$
+		return null;
 	}
 
 	@Override

@@ -30,6 +30,7 @@ import org.eclipse.cdt.core.dom.ast.ITypedef;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPBase;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPBasicType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassScope;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassSpecialization;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassTemplate;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassTemplatePartialSpecialization;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType;
@@ -1677,5 +1678,25 @@ public class IndexCPPTemplateResolutionTest extends IndexBindingResolutionTestBa
 	//	}
 	public void _testTemplateMetaprogramming_284686() throws Exception { 
 		getBindingFromASTName("f(v.begin())", 1, ICPPFunction.class);
+	}
+	
+	//	template<typename T> class op {
+	//  public:
+	//		inline static int DO(T key, T key2) {
+	//			return false;
+	//	    }
+	//	};
+	//
+	//	template<typename T, int KVT_KeyCompareProc(T key, T key2)=op<T>::DO> class Noder1 {};
+
+	//	template<typename T, int KVT_KeyCompareProc(T key, T key2)=op<T>::DO> class Noder2 {};
+	//
+	//	void test() {
+	//		Noder1<int> f;
+	//		Noder2<int> g;
+	//	}
+	public void testInstantiationOfValue_284683() throws Exception { 
+		getBindingFromASTName("Noder1<int>", 11, ICPPClassSpecialization.class);
+		getBindingFromASTName("Noder2<int>", 11, ICPPClassSpecialization.class);
 	}
 }

@@ -63,7 +63,7 @@ public class CPPTemplateNonTypeParameter extends CPPTemplateParameter implements
 			return null;
 		
 		IValue val= Value.create(d, Value.MAX_RECURSION_DEPTH);
-		IType t= CPPVisitor.createType(d);
+		IType t= getType();
 		return new CPPTemplateArgument(val, t);
 	}
 

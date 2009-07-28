@@ -920,11 +920,13 @@ public class CPPTemplates {
 	private static ICPPTemplateArgument instantiateArgument(ICPPTemplateArgument arg,
 			ICPPTemplateParameterMap tpMap, ICPPClassSpecialization within) {
 		if (arg.isNonTypeValue()) {
-			final IValue orig= arg.getNonTypeValue();
-			final IValue inst= instantiateValue(orig, tpMap, within, Value.MAX_RECURSION_DEPTH);
-			if (orig == inst)
+			final IValue origValue= arg.getNonTypeValue();
+			final IType origType= arg.getTypeOfNonTypeValue();
+			final IValue instValue= instantiateValue(origValue, tpMap, within, Value.MAX_RECURSION_DEPTH);
+			final IType instType= instantiateType(origType, tpMap, within);
+			if (origType == instType && origValue == instValue)
 				return arg;
-			return new CPPTemplateArgument(inst, arg.getTypeOfNonTypeValue());
+			return new CPPTemplateArgument(instValue, instType);
 		}
 		
 		final IType orig= arg.getTypeValue();

@@ -57,6 +57,7 @@
  * David McKnight   (IBM)        - [276103] Files with names in different cases are not handled properly
  * David McKnight     (IBM)      - [276534] Cache Conflict After Synchronization when Browsing Remote System with Case-Differentiated-Only Filenames
  * David McKnight     (IBM)      - [281712] [dstore] Warning message is needed when disk is full
+ * David McKnight     (IBM)      - [234258] [dnd] Drag&Drop a folder silently ignores elements without permissions
  *******************************************************************************/
 
 package org.eclipse.rse.files.ui.resources;
@@ -608,7 +609,8 @@ public class UniversalFileTransferUtility {
 					}
 					catch (SystemMessageException e)
 					{
-						e.printStackTrace();
+						SystemBasePlugin.logError(e.getMessage(), e);
+						SystemMessageDialog.displayMessage(e);
 					}
 				}
 			}
@@ -883,7 +885,8 @@ public class UniversalFileTransferUtility {
 						}
 						catch (SystemMessageException e)
 						{
-							e.printStackTrace();
+							SystemBasePlugin.logError(e.getMessage(), e);
+							SystemMessageDialog.displayMessage(e);
 						}
 					}
 				}
@@ -1386,7 +1389,8 @@ public class UniversalFileTransferUtility {
 				}
 				catch (SystemMessageException e)
 				{
-					e.printStackTrace();
+					SystemBasePlugin.logError(e.getMessage(), e);
+					SystemMessageDialog.displayMessage(e);
 				}
 				IResource[] childResources = null;
 

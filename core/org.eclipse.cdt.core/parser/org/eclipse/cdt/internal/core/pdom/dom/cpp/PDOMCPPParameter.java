@@ -19,7 +19,6 @@ import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.IValue;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPParameter;
 import org.eclipse.cdt.core.index.IIndexFile;
-import org.eclipse.cdt.internal.core.Util;
 import org.eclipse.cdt.internal.core.index.IIndexCPPBindingConstants;
 import org.eclipse.cdt.internal.core.index.IIndexFragment;
 import org.eclipse.cdt.internal.core.index.IIndexScope;
@@ -77,30 +76,6 @@ class PDOMCPPParameter extends PDOMNamedNode implements ICPPParameter, IPDOMBind
 		super(linkage, record);
 	}
 
-	public PDOMCPPParameter(PDOMLinkage linkage, PDOMNode parent, IParameter param, IType type)
-	throws CoreException {
-		super(linkage, parent, param.getNameCharArray());
-
-		Database db = getDB();
-
-		db.putRecPtr(record + NEXT_PARAM, 0);
-		byte flags= encodeFlags(param);
-		db.putByte(record + FLAGS, flags);
-		
-		try {
-			if (type == null) 
-				type= param.getType();
-			if (type != null) {
-				PDOMNode typeNode = getLinkage().addType(this, type);
-				db.putRecPtr(record + TYPE, typeNode != null ? typeNode.getRecord() : 0);
-			}
-			byte annotations = PDOMCPPAnnotation.encodeAnnotation(param);
-			db.putByte(record + ANNOTATIONS, annotations);
-		} catch (DOMException e) {
-			throw new CoreException(Util.createStatus(e));
-		}
-	}
-	
 	public PDOMCPPParameter(PDOMLinkage linkage, PDOMNode parent, IParameter param, long typeRecord)
 			throws CoreException {
 		super(linkage, parent, param.getNameCharArray());
@@ -265,7 +240,7 @@ class PDOMCPPParameter extends PDOMNamedNode implements ICPPParameter, IPDOMBind
 
 	@Override
 	public void delete(PDOMLinkage linkage) throws CoreException {
-		linkage.deleteType(getType(), record);
+		// the parameter reuses the type from the function type, so do not delete it.
 		PDOMCPPParameter next= getNextParameter();
 		if (next != null) {
 			next.delete(linkage);

@@ -76,18 +76,17 @@ class PDOMCPPFunctionSpecialization extends PDOMCPPSpecialization implements ICP
 		
 		Database db = getDB();
 		try {
+			IParameter[] params= function.getParameters();
+			IType[] paramTypes= IType.EMPTY_TYPE_ARRAY;
 			IFunctionType ft= function.getType();
 			if (ft != null) {
 				PDOMNode typeNode = getLinkage().addType(this, ft);
 				if (typeNode != null) {
 					db.putRecPtr(record + FUNCTION_TYPE, typeNode.getRecord());
+					paramTypes= ((IFunctionType) typeNode).getParameterTypes();
 				}
 			}
 
-			ft= getType();
-			IParameter[] params= function.getParameters();
-			IType[] paramTypes= ft.getParameterTypes();
-			
 			ICPPFunction sFunc= (ICPPFunction) ((ICPPSpecialization)function).getSpecializedBinding();
 			IParameter[] sParams= sFunc.getParameters();
 			IType[] sParamTypes= sFunc.getType().getParameterTypes();
@@ -95,11 +94,13 @@ class PDOMCPPFunctionSpecialization extends PDOMCPPSpecialization implements ICP
 			final int length= Math.min(sParams.length, params.length);
 			db.putInt(record + NUM_PARAMS, length);
 			for (int i=0; i<length; ++i) {
+				final PDOMNode stype= linkage.addType(this, i<sParamTypes.length ? sParamTypes[i] : null);
+				final long stypeRec= stype == null ? 0 : stype.getRecord();
+				PDOMCPPParameter sParam = new PDOMCPPParameter(getLinkage(), this, sParams[i], stypeRec);
+
 				long typeRecord= i<paramTypes.length && paramTypes[i]!=null ? ((PDOMNode)paramTypes[i]).getRecord() : 0;
-				//TODO shouldn't need to make new parameter (find old one)
-				final IType type= i<sParamTypes.length ? sParamTypes[i] : null;
-				PDOMCPPParameter sParam = new PDOMCPPParameter(getLinkage(), this, sParams[i], type);
-				setFirstParameter(new PDOMCPPParameterSpecialization(getLinkage(), this, (ICPPParameter) params[i], sParam, typeRecord));
+				final ICPPParameter param = (ICPPParameter) params[i];
+				setFirstParameter(new PDOMCPPParameterSpecialization(getLinkage(), this, param, sParam, typeRecord));
 			}
 			db.putByte(record + ANNOTATION, PDOMCPPAnnotation.encodeAnnotation(function));			
 		} catch (DOMException e) {

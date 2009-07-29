@@ -15,6 +15,7 @@
  * Martin Oberhuber (Wind River) - [168975] Move RSE Events API to Core
  * Martin Oberhuber (Wind River) - [186773] split ISystemRegistryUI from ISystemRegistry
  * Martin Oberhuber (Wind River) - [188160] avoid parent refresh if not doing deferred queries
+ * Patrick Tasse (Ericsson) - [285047] SystemRefreshAction not disabled when showRefresh returns false
  ********************************************************************************/
 
 package org.eclipse.rse.ui.actions;
@@ -70,6 +71,14 @@ public class SystemRefreshAction extends SystemBaseAction
 	{
 		boolean enable = true;
 		_selection = selection;
+		Iterator iter = _selection.iterator();
+		while (enable && iter.hasNext()) {
+			Object obj = iter.next();
+			ISystemViewElementAdapter adapter = getViewAdapter(obj);
+			if (adapter != null && !adapter.showRefresh(obj)) {
+				enable = false;
+			}
+		}
 		return enable;
 	}
 

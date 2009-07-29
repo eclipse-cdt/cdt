@@ -47,14 +47,14 @@ using namespace std;
 
 int main () {
     // Say Hello five times
-    for (int index = 0; index < 5; ++index)
-      cout << "HelloWorld!" << endl;
+    for (int index = 0; index &lt; 5; ++index)
+      cout &lt;&lt; "HelloWorld!" &lt;&lt; endl;
     char input = 'i';
-    cout << "To exit, press 'm'" << endl;
+    cout &lt;&lt; "To exit, press 'm'" &lt;&lt; endl;
     while(input != 'm') {
         cin  >> input;
-        cout << "You just entered " << input
-             << " you need to enter m to exit." << endl;
+        cout &lt;&lt; "You just entered " &lt;&lt; input
+             &lt;&lt; " you need to enter m to exit." &lt;&lt; endl;
     }
     exit(0);
 }

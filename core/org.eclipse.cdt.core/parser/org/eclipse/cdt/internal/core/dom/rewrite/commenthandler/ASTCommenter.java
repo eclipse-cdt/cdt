@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008 Institute for Software, HSR Hochschule fuer Technik  
+ * Copyright (c) 2008, 2009 Institute for Software, HSR Hochschule fuer Technik  
  * Rapperswil, University of applied sciences and others
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Eclipse Public License v1.0 
@@ -15,11 +15,28 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.TreeMap;
 
+import org.eclipse.cdt.core.dom.ast.ASTVisitor;
+import org.eclipse.cdt.core.dom.ast.IASTArrayModifier;
 import org.eclipse.cdt.core.dom.ast.IASTComment;
+import org.eclipse.cdt.core.dom.ast.IASTDeclSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTDeclaration;
+import org.eclipse.cdt.core.dom.ast.IASTDeclarator;
+import org.eclipse.cdt.core.dom.ast.IASTExpression;
+import org.eclipse.cdt.core.dom.ast.IASTInitializer;
+import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
+import org.eclipse.cdt.core.dom.ast.IASTParameterDeclaration;
+import org.eclipse.cdt.core.dom.ast.IASTPointerOperator;
 import org.eclipse.cdt.core.dom.ast.IASTPreprocessorStatement;
+import org.eclipse.cdt.core.dom.ast.IASTStatement;
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
+import org.eclipse.cdt.core.dom.ast.IASTTypeId;
+import org.eclipse.cdt.core.dom.ast.IASTEnumerationSpecifier.IASTEnumerator;
+import org.eclipse.cdt.core.dom.ast.cpp.CPPASTVisitor;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTNamespaceDefinition;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTemplateParameter;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCompositeTypeSpecifier.ICPPASTBaseSpecifier;
+import org.eclipse.cdt.internal.core.dom.parser.ASTNode;
 import org.eclipse.cdt.internal.core.dom.rewrite.util.OffsetHelper;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.ResourcesPlugin;
@@ -39,6 +56,116 @@ import org.eclipse.core.runtime.Path;
  */
 public class ASTCommenter {
 	
+	private static final class PPRangeChecker extends CPPASTVisitor {
+		
+		int ppOffset;
+		int commentOffset;
+		boolean isPrePPComment = true;
+		
+		private PPRangeChecker(boolean visitNodes, int nextPPOfset, int commentNodeOffset) {
+			super(visitNodes);
+			ppOffset = nextPPOfset;
+			commentOffset = commentNodeOffset;
+		}
+
+		private int checkOffsets(IASTNode node) {
+			int offset = ((ASTNode)node).getOffset();
+			int status = ASTVisitor.PROCESS_CONTINUE;
+			
+			if(offset > commentOffset && offset < ppOffset) {
+				isPrePPComment = false;
+				status = ASTVisitor.PROCESS_ABORT;
+			}else if ((offset + ((ASTNode)node).getLength() < commentOffset)) {
+				status = ASTVisitor.PROCESS_SKIP;
+			}else if(offset > ppOffset) {
+				status = ASTVisitor.PROCESS_ABORT;
+			}
+			
+			return status;
+		}
+
+		@Override
+		public int visit(ICPPASTBaseSpecifier baseSpecifier) {
+			return checkOffsets(baseSpecifier);
+		}
+		
+		@Override
+		public int visit(ICPPASTNamespaceDefinition namespaceDefinition) {
+			return checkOffsets(namespaceDefinition);
+		}
+
+		@Override
+		public int visit(ICPPASTTemplateParameter templateParameter) {
+			return checkOffsets(templateParameter);
+		}
+
+		@Override
+		public int visit(IASTArrayModifier arrayModifier) {
+			return checkOffsets(arrayModifier);
+		}
+
+		@Override
+		public int visit(IASTDeclaration declaration) {
+			return checkOffsets(declaration);
+		}
+
+		@Override
+		public int visit(IASTDeclarator declarator) {
+			return checkOffsets(declarator);
+		}
+
+		@Override
+		public int visit(IASTDeclSpecifier declSpec) {
+			return checkOffsets(declSpec);
+		}
+
+		@Override
+		public int visit(IASTEnumerator enumerator) {
+			return checkOffsets(enumerator);
+		}
+
+		@Override
+		public int visit(IASTExpression expression) {
+			return checkOffsets(expression);
+		}
+
+		@Override
+		public int visit(IASTInitializer initializer) {
+			return checkOffsets(initializer);
+		}
+
+		@Override
+		public int visit(IASTName name) {
+			return checkOffsets(name);
+		}
+
+		@Override
+		public int visit(IASTParameterDeclaration parameterDeclaration) {
+			return checkOffsets(parameterDeclaration);
+		}
+
+		@Override
+		public int visit(IASTPointerOperator ptrOperator) {
+			return checkOffsets(ptrOperator);
+		}
+
+		@Override
+		public int visit(IASTStatement statement) {
+			return checkOffsets(statement);
+		}
+
+		@Override
+		public int visit(IASTTranslationUnit tu) {
+			return checkOffsets(tu);
+		}
+
+		@Override
+		public int visit(IASTTypeId typeId) {
+			return checkOffsets(typeId);
+		}
+	}
+
+
 	/**
 	 * Creates a NodeCommentMap for the given TranslationUnit. This is the only way
 	 * to get a NodeCommentMap which contains all the comments mapped against nodes.
@@ -96,7 +223,7 @@ public class ASTCommenter {
 					offsetList = new ArrayList<Integer>();
 					ppOffsetForFiles.put(fileName, offsetList);
 				}
-				offsetList.add(statement.getFileLocation().getNodeOffset());
+				offsetList.add(((ASTNode)statement).getOffset());
 			}
 		}
 
@@ -109,7 +236,7 @@ public class ASTCommenter {
 					)) {
 					continue;
 			}
-			if(commentIsAtTheBeginningBeforePreprocessorStatements(comment, ppOffsetForFiles.get(fileName))) {
+			if(commentIsAtTheBeginningBeforePreprocessorStatements(comment, ppOffsetForFiles.get(fileName), tu)) {
 				continue;
 			}
 			commentsInCode.add(comment);
@@ -119,7 +246,7 @@ public class ASTCommenter {
 
 	private static boolean commentIsAtTheBeginningBeforePreprocessorStatements(
 			IASTComment comment, 
-			ArrayList<Integer> listOfPreProcessorOffset) {
+			ArrayList<Integer> listOfPreProcessorOffset, IASTTranslationUnit tu) {
 		if(listOfPreProcessorOffset == null) {
 			return false;
 		}
@@ -128,25 +255,27 @@ public class ASTCommenter {
 			return true;
 		}
 		IASTDeclaration decl = comment.getTranslationUnit().getDeclarations()[0];
-		boolean sameFile = decl.getFileLocation().getFileName().equals(comment.getFileLocation().getFileName());
+		String commentFileName = comment.getFileLocation().getFileName();
+		boolean sameFile = decl.getFileLocation().getFileName().equals(commentFileName);
+		int commentNodeOffset = ((ASTNode)comment).getOffset();
 		if(sameFile) {
-			if(decl.getFileLocation().getNodeOffset() < comment.getFileLocation().getNodeOffset()) {
+			if(decl.getFileLocation().getNodeOffset() < commentNodeOffset) {
 				return false;
 			}
 		}
 		Collections.sort(listOfPreProcessorOffset);
-		if(listOfPreProcessorOffset.get(0) < comment.getFileLocation().getNodeOffset()) {
-			return false;
-		}
-		
-		if(sameFile) {
-			if(listOfPreProcessorOffset.get(0) < decl.getFileLocation().getNodeOffset()) {
-				return true;
+		int nextPPOfset = -1;
+		for (Integer integer : listOfPreProcessorOffset) {
+			if(integer > commentNodeOffset) {
+				nextPPOfset = integer;
+				PPRangeChecker visti = new PPRangeChecker(true, nextPPOfset, commentNodeOffset);
+				tu.accept(visti);
+				if(visti.isPrePPComment) {
+					return true;
+				}
 			}
-		}else {
-			return true; 
 		}
-
+			
 		return false;
 	}
 

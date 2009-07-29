@@ -33,6 +33,7 @@ import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.ltk.core.refactoring.RefactoringStatus;
 import org.eclipse.text.edits.TextEditGroup;
 
+import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IASTBinaryExpression;
 import org.eclipse.cdt.core.dom.ast.IASTCompoundStatement;
@@ -71,6 +72,8 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTemplateParameter;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPMethod;
 import org.eclipse.cdt.core.dom.rewrite.ASTRewrite;
+import org.eclipse.cdt.core.index.IIndex;
+import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.ui.CUIPlugin;
 
 import org.eclipse.cdt.internal.core.dom.parser.c.CASTBinaryExpression;
@@ -122,6 +125,7 @@ public class ExtractFunctionRefactoring extends CRefactoring {
 	private final Container<Integer> returnNumber;
 
 	protected boolean hasNameResolvingForSimilarError = false;
+	protected ICProject project;
 
 	HashMap<String, Integer> nameTrail;
 
@@ -129,9 +133,10 @@ public class ExtractFunctionRefactoring extends CRefactoring {
 	private INodeFactory factory = CPPNodeFactory.getDefault();
 
 	public ExtractFunctionRefactoring(IFile file, ISelection selection,
-			ExtractFunctionInformation info) {
+			ExtractFunctionInformation info, ICProject project) {
 		super(file, selection, null);
 		this.info = info;
+		this.project = project;
 		name = Messages.ExtractFunctionRefactoring_ExtractFunction;
 		names = new HashMap<String, Integer>();
 		namesCounter = new Container<Integer>(NULL_INTEGER);
@@ -190,6 +195,12 @@ public class ExtractFunctionRefactoring extends CRefactoring {
 		info.setDeclarator(getDeclaration(container.getNodesToWrite().get(0)));
 		MethodContext context = NodeHelper.findMethodContext(container.getNodesToWrite().get(0), getIndex());
 		info.setMethodContext(context);
+		
+		if(unit != null) {
+			IIndex index = CCorePlugin.getIndexManager().getIndex(project);
+			unit.setIndex(index);
+		}
+		
 		sm.done();
 		return status;
 	}

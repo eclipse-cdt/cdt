@@ -16,6 +16,7 @@
  * David McKnight   (IBM)        - [216161] table view needs to handle context when filter reference is input
  * David McKnight   (IBM)        - [225506] [api][breaking] RSE UI leaks non-API types
  * David McKnight   (IBM)        - [278848] NPE in Remote System Details view
+ * David McKnight   (IBM)        - [284917] Deleting a folder in a fresh workspace throws NPE
  *******************************************************************************/
 
 package org.eclipse.rse.ui.view;
@@ -150,7 +151,7 @@ public class SystemTableViewProvider implements ILabelProvider, ITableLabelProvi
 	    	result.setPropertySourceInput(object);
 	    
 	    // for bug 278848
-	  	if (_viewer.getInput() instanceof ISystemViewInputProvider)
+	  	if (_viewer != null && _viewer.getInput() instanceof ISystemViewInputProvider)
 	  	{
 	    	ISystemViewInputProvider inputProvider = (ISystemViewInputProvider)_viewer.getInput();
 	    	result.setInput(inputProvider);

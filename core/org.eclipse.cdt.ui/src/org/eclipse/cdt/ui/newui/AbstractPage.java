@@ -406,7 +406,7 @@ implements
 				boolean enterMultiCfgsDialog = (multiCfgs == null)
 						|| (multiCfgs == cfgDescs) || !areCfgsStillThere(multiCfgs);
 				if (enterMultiCfgsDialog) {
-					ICConfigurationDescription[] mcfgs = ConfigMultiSelectionDialog.select(cfgDescs);
+					ICConfigurationDescription[] mcfgs = ConfigMultiSelectionDialog.select(cfgDescs, parentComposite.getShell());
 					if (mcfgs == null || mcfgs.length == 0) {
 						// return back to previous selection
 						int cfgIndex = -1;

@@ -45,9 +45,12 @@ public class ConfigMultiSelectionDialog extends Dialog {
 	private Label message;
 	private static ICConfigurationDescription[] result = null;
 	
-	public static ICConfigurationDescription[] select(ICConfigurationDescription[] _cfgds) {
+	/**
+	 * @since 5.2
+	 */
+	public static ICConfigurationDescription[] select(ICConfigurationDescription[] _cfgds, Shell parentShell) {
 		cfgds = _cfgds;
-		ConfigMultiSelectionDialog d = new ConfigMultiSelectionDialog(CUIPlugin.getActiveWorkbenchShell());
+		ConfigMultiSelectionDialog d = new ConfigMultiSelectionDialog(parentShell);
 		if (d.open() == OK)	
 			return result;
 		return null;
@@ -133,7 +136,22 @@ public class ConfigMultiSelectionDialog extends Dialog {
 			}});
 		tv.setInput(cfgds);
 		table.setFocus();
-    	return composite;
+		return composite;
 	}
-	
+
+	/**
+	 * @deprecated (in org.eclipse.cdt.ui 5.2.0)
+	 * 
+	 * This call is deprecated in plugin org.eclipse.cdt.ui 5.2.0 and intended to be removed
+	 * on occasion when the plugin increases major version (Bug 285033).
+	 * Use {@link #select(ICConfigurationDescription[], Shell)} to properly set focus.
+	 */
+	@Deprecated
+	public static ICConfigurationDescription[] select(ICConfigurationDescription[] _cfgds) {
+		cfgds = _cfgds;
+		ConfigMultiSelectionDialog d = new ConfigMultiSelectionDialog(CUIPlugin.getActiveWorkbenchShell());
+		if (d.open() == OK)	
+			return result;
+		return null;
+	}
 }

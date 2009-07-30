@@ -32,6 +32,8 @@
 <ul>
   <li>A build problem was fixed which prevented the Team/Synchronize feature of importexport to run from downloaded drops
       [<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=283482">283482</a>].</li>
+  <li>The dstore processes subsystem now also works on Solaris
+      [<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=175293">175293</a>].</li>
 </ul>
 </li>
 <li>At least 38 bugs were resolved: Use 

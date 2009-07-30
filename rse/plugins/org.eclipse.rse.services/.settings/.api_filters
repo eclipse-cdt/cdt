@@ -1,17 +1,57 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <component id="org.eclipse.rse.services" version="2">
-    <resource path="META-INF/MANIFEST.MF" type="org.eclipse.rse.internal.services.terminals.ITerminalShell">
-        <filter id="305324134">
-            <message_arguments>
-                <message_argument value="org.eclipse.rse.internal.services.terminals.ITerminalShell"/>
-                <message_argument value="org.eclipse.rse.services_3.1.0"/>
-            </message_arguments>
-        </filter>
-    </resource>
     <resource path="META-INF/MANIFEST.MF" type="org.eclipse.rse.internal.services.terminals.AbstractTerminalService">
         <filter id="305324134">
             <message_arguments>
                 <message_argument value="org.eclipse.rse.internal.services.terminals.AbstractTerminalService"/>
+                <message_argument value="org.eclipse.rse.services_3.1.0"/>
+            </message_arguments>
+        </filter>
+        <filter id="305324134">
+            <message_arguments>
+                <message_argument value="org.eclipse.rse.internal.services.terminals.AbstractTerminalService"/>
+                <message_argument value="org.eclipse.rse.services_3.1.1"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="META-INF/MANIFEST.MF" type="org.eclipse.rse.internal.services.terminals.AbstractTerminalShell">
+        <filter id="305324134">
+            <message_arguments>
+                <message_argument value="org.eclipse.rse.internal.services.terminals.AbstractTerminalShell"/>
+                <message_argument value="org.eclipse.rse.services_3.1.0"/>
+            </message_arguments>
+        </filter>
+        <filter id="305324134">
+            <message_arguments>
+                <message_argument value="org.eclipse.rse.internal.services.terminals.AbstractTerminalShell"/>
+                <message_argument value="org.eclipse.rse.services_3.1.1"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="META-INF/MANIFEST.MF" type="org.eclipse.rse.internal.services.terminals.BaseShellDecorator">
+        <filter id="305324134">
+            <message_arguments>
+                <message_argument value="org.eclipse.rse.internal.services.terminals.BaseShellDecorator"/>
+                <message_argument value="org.eclipse.rse.services_3.1.1"/>
+            </message_arguments>
+        </filter>
+        <filter id="305324134">
+            <message_arguments>
+                <message_argument value="org.eclipse.rse.internal.services.terminals.BaseShellDecorator"/>
+                <message_argument value="org.eclipse.rse.services_3.1.0"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="META-INF/MANIFEST.MF" type="org.eclipse.rse.internal.services.terminals.IBaseShell">
+        <filter id="305324134">
+            <message_arguments>
+                <message_argument value="org.eclipse.rse.internal.services.terminals.IBaseShell"/>
+                <message_argument value="org.eclipse.rse.services_3.1.1"/>
+            </message_arguments>
+        </filter>
+        <filter id="305324134">
+            <message_arguments>
+                <message_argument value="org.eclipse.rse.internal.services.terminals.IBaseShell"/>
                 <message_argument value="org.eclipse.rse.services_3.1.0"/>
             </message_arguments>
         </filter>
@@ -23,20 +63,24 @@
                 <message_argument value="org.eclipse.rse.services_3.1.0"/>
             </message_arguments>
         </filter>
-    </resource>
-    <resource path="META-INF/MANIFEST.MF" type="org.eclipse.rse.internal.services.terminals.AbstractTerminalShell">
         <filter id="305324134">
             <message_arguments>
-                <message_argument value="org.eclipse.rse.internal.services.terminals.AbstractTerminalShell"/>
-                <message_argument value="org.eclipse.rse.services_3.1.0"/>
+                <message_argument value="org.eclipse.rse.internal.services.terminals.ITerminalService"/>
+                <message_argument value="org.eclipse.rse.services_3.1.1"/>
             </message_arguments>
         </filter>
     </resource>
-    <resource path="META-INF/MANIFEST.MF" type="org.eclipse.rse.internal.services.terminals.BaseShellDecorator">
+    <resource path="META-INF/MANIFEST.MF" type="org.eclipse.rse.internal.services.terminals.ITerminalShell">
         <filter id="305324134">
             <message_arguments>
-                <message_argument value="org.eclipse.rse.internal.services.terminals.BaseShellDecorator"/>
+                <message_argument value="org.eclipse.rse.internal.services.terminals.ITerminalShell"/>
                 <message_argument value="org.eclipse.rse.services_3.1.0"/>
+            </message_arguments>
+        </filter>
+        <filter id="305324134">
+            <message_arguments>
+                <message_argument value="org.eclipse.rse.internal.services.terminals.ITerminalShell"/>
+                <message_argument value="org.eclipse.rse.services_3.1.1"/>
             </message_arguments>
         </filter>
     </resource>
@@ -44,19 +88,23 @@
         <filter id="305324134">
             <message_arguments>
                 <message_argument value="org.eclipse.rse.internal.services.terminals.TerminalShellDecorator"/>
-                <message_argument value="org.eclipse.rse.services_3.1.0"/>
+                <message_argument value="org.eclipse.rse.services_3.1.1"/>
             </message_arguments>
         </filter>
-    </resource>
-    <resource path="META-INF/MANIFEST.MF" type="org.eclipse.rse.internal.services.terminals.IBaseShell">
         <filter id="305324134">
             <message_arguments>
-                <message_argument value="org.eclipse.rse.internal.services.terminals.IBaseShell"/>
+                <message_argument value="org.eclipse.rse.internal.services.terminals.TerminalShellDecorator"/>
                 <message_argument value="org.eclipse.rse.services_3.1.0"/>
             </message_arguments>
         </filter>
     </resource>
     <resource path="src/org/eclipse/rse/internal/services/terminals/ProcessBaseShell.java" type="org.eclipse.rse.internal.services.terminals.ProcessBaseShell">
+        <filter id="305365105">
+            <message_arguments>
+                <message_argument value="org.eclipse.rse.internal.services.terminals.ProcessBaseShell"/>
+                <message_argument value="org.eclipse.rse.services_3.1.1"/>
+            </message_arguments>
+        </filter>
         <filter id="305365105">
             <message_arguments>
                 <message_argument value="org.eclipse.rse.internal.services.terminals.ProcessBaseShell"/>

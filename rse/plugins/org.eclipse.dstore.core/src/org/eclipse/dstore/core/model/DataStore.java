@@ -28,6 +28,7 @@
  * Noriaki Takatsu  (IBM) - [245069] [dstore] dstoreTrace has no timestamp
  * David McKnight   (IBM) - [282634] [dstore] IndexOutOfBoundsException on Disconnect
  * David McKnight   (IBM) - [282599] [dstore] log folder that is not a hidden one
+ * David McKnight   (IBM) - [285151] [dstore] Potential threading problem in DataStore (open call)
  *******************************************************************************/
 
 package org.eclipse.dstore.core.model;
@@ -2156,11 +2157,14 @@ public final class DataStore
 		}
 
 		// notify that preferences have changed
+		IDataStorePreferenceListener[] listeners = null;
 		synchronized (_dataStorePreferenceListeners){
-			for (int i = 0; i < _dataStorePreferenceListeners.size(); i++){
-				IDataStorePreferenceListener listener = (IDataStorePreferenceListener)_dataStorePreferenceListeners.get(i);
-				listener.preferenceChanged(property, value);
-			}
+			listeners = (IDataStorePreferenceListener[])_dataStorePreferenceListeners.toArray(new IDataStorePreferenceListener[_dataStorePreferenceListeners.size()]);
+		}
+			
+		for (int i = 0; i < listeners.length; i++){
+			IDataStorePreferenceListener listener = listeners[i];
+			listener.preferenceChanged(property, value);
 		}
 	}
 

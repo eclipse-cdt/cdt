@@ -1375,7 +1375,8 @@ public class GnuMakefileGenerator implements IManagedBuilderMakefileGenerator2 {
 		if (targetTool != null) { 		
 			outputPrefix = targetTool.getOutputPrefix();
 		}
-		buffer.append(defaultTarget + WHITESPACE + outputPrefix + buildTargetName);
+		buffer.append(defaultTarget + WHITESPACE + outputPrefix 
+				+ ensurePathIsGNUMakeTargetRuleCompatibleSyntax(buildTargetName));
 		if (buildTargetExt.length() > 0) {
 			buffer.append(DOT + buildTargetExt);
 		}
@@ -1539,7 +1540,11 @@ public class GnuMakefileGenerator implements IManagedBuilderMakefileGenerator2 {
 		boolean[] buildToolsUsed = h.buildToolsUsed;
 		//  Get the target tool and generate the rule
 		if (targetTool != null) { 		
-			if (addRuleForTool(targetTool, buffer, true, buildTargetName, buildTargetExt, 
+			// Note that the name of the target we pass to addRuleForTool does not
+			// appear to be used there (and tool outputs are consulted directly), but
+			// we quote it anyway just in case it starts to use it in future.
+			if (addRuleForTool(targetTool, buffer, true, 
+					ensurePathIsGNUMakeTargetRuleCompatibleSyntax(buildTargetName), buildTargetExt, 
 					outputVarsAdditionsList, managedProjectOutputs, postbuildStep)) {
 				//  Mark the target tool as processed
 				for (int i=0; i<buildTools.length; i++) {
@@ -1585,9 +1590,14 @@ public class GnuMakefileGenerator implements IManagedBuilderMakefileGenerator2 {
 		if (targetTool != null) { 		
 			outputPrefix = targetTool.getOutputPrefix();
 		}
-		buffer.append(WHITESPACE + outputPrefix + buildTargetName); //$NON-NLS-1$
+		String completeBuildTargetName = outputPrefix + buildTargetName;
 		if (buildTargetExt.length() > 0) {
-			buffer.append(DOT + buildTargetExt);
+			completeBuildTargetName = completeBuildTargetName + DOT + buildTargetExt;
+		}
+		if (completeBuildTargetName.contains(" ")) {
+			buffer.append(WHITESPACE + "\"" + completeBuildTargetName + "\"");
+		} else {
+			buffer.append(WHITESPACE + completeBuildTargetName);
 		}
 		buffer.append(NEWLINE);
 		buffer.append(TAB + DASH + AT + ECHO_BLANK_LINE + NEWLINE);
@@ -1640,15 +1650,20 @@ public class GnuMakefileGenerator implements IManagedBuilderMakefileGenerator2 {
 		String outflag = tool.getOutputFlag();
 		
 		String primaryOutputs = EMPTY_STRING;
+		String primaryOutputsQuoted = EMPTY_STRING;
 		boolean first = true;
 		for (int i=0; i<enumeratedPrimaryOutputs.size(); i++) {
 			String output = (String)enumeratedPrimaryOutputs.get(i);
-			if (!first) primaryOutputs += WHITESPACE;
+			if (!first) {
+				primaryOutputs += WHITESPACE;
+				primaryOutputsQuoted += WHITESPACE;
+			}
 			first = false;
 			primaryOutputs += output;
+			primaryOutputsQuoted += ensurePathIsGNUMakeTargetRuleCompatibleSyntax(output);
 		}
 
-		buildRule += (primaryOutputs + COLON + WHITESPACE);
+		buildRule += (primaryOutputsQuoted + COLON + WHITESPACE);
 		
 		first = true;
 		String calculatedDependencies = EMPTY_STRING;

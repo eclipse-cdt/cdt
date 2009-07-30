@@ -23,8 +23,8 @@
 </table>
 <table><tbody><tr><td>
 <ul>
-<li>TM @buildId@ <b>requires Eclipse 3.4 or later</b>, although parts of it will likely run
-  with earlier versions. <b>Import/Export, Telnet and FTP require Java 1.5</b>, the rest of
+<li>TM @buildId@ <b>requires Eclipse 3.4 or later</b>.
+  <b>Import/Export, Telnet and FTP require Java 1.5</b>, the rest of
   RSE runs on Java 1.4.
   Platform Runtime is the minimum requirement for core RSE and Terminal.
   Discovery needs EMF.</li>

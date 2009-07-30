@@ -27,8 +27,8 @@ import org.eclipse.rse.services.clientserver.processes.IHostProcessFilter;
  * implementation, and should not be used by clients directly. Use
  * {@link ProcessHandlerManager#getNewProcessHandler()} on a Solaris system
  * instead.
- * 
- * @since 3.1.1
+ *
+ * @since 3.1 (actually 3.1.1)
  * @noextend This class is not intended to be subclassed by clients.
  * @noinstantiate This class is not intended to be instantiated by clients.
  */

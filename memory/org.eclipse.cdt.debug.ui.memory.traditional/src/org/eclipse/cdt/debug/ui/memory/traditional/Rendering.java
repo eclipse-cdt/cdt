@@ -70,7 +70,7 @@ public class Rendering extends Composite implements IDebugEventSetListener
 
     private GoToAddressComposite fAddressBar;
     
-    private Control fAddressBarControl; // FIXME why isn't there a getControl() ?
+    private Control fAddressBarControl;
 
     private Selection fSelection = new Selection();
 
@@ -215,83 +215,9 @@ public class Rendering extends Composite implements IDebugEventSetListener
     	
         this.fAddressBarControl.setVisible(false);
 
-        getHorizontalBar().addSelectionListener(new SelectionListener()
-        {
-        	public void widgetSelected(SelectionEvent se)
-            {
-        		Rendering.this.layout();
-            }
-        	
-        	public void widgetDefaultSelected(SelectionEvent se)
-            {
-                // do nothing
-            }
-        });
+        getHorizontalBar().addSelectionListener(createHorizontalBarSelectionListener());
         
-        getVerticalBar().addSelectionListener(
-        	new SelectionListener()
-        {
-            public void widgetSelected(SelectionEvent se)
-            {
-            	int addressableSize = getAddressableSize();
-            	
-                switch(se.detail)
-                {
-                    case SWT.ARROW_DOWN:
-                    	handleDownArrow();
-                        break;
-                    case SWT.PAGE_DOWN:
-                    	handlePageDown();
-                        break;
-                    case SWT.ARROW_UP:
-                    	handleUpArrow();
-                        break;
-                    case SWT.PAGE_UP:
-                    	handlePageUp();
-                        break;
-                    case SWT.SCROLL_LINE:
-                    // See: BUG 203068 selection event details broken on GTK < 2.6 
-                    default:
-                    	if(getVerticalBar().getSelection() == getVerticalBar().getMinimum())
-                    	{
-                    		// Set view port start address to the start address of the Memory Block
-                    		fViewportAddress = Rendering.this.getMemoryBlockStartAddress();
-                    	}
-                    	else if(getVerticalBar().getSelection() == getVerticalBar().getMaximum())
-                    	{
-                    		// The view port end address should be less or equal to the the end address of the Memory Block
-                    		// Set view port address to be bigger than the end address of the Memory Block for now
-                    		// and let ensureViewportAddressDisplayable() to figure out the correct view port start address
-                    		fViewportAddress = Rendering.this.getMemoryBlockEndAddress();
-                    	}
-                    	else
-                    	{
-                            // Figure out the delta
-                        	int delta = getVerticalBar().getSelection() - fCurrentScrollSelection;
-                    		fViewportAddress = fViewportAddress.add(BigInteger.valueOf(
-                    				getAddressableCellsPerRow() * delta));
-                    	}
-                        ensureViewportAddressDisplayable();
-                        // Update tooltip
-                        // FIXME conversion from slider to scrollbar
-                        // getVerticalBar().setToolTipText(Rendering.this.getAddressString(fViewportAddress));
-                        
-                        // Update the addresses on the Address pane. 
-                        if(fAddressPane.isPaneVisible())
-                        {
-                            fAddressPane.redraw();
-                        }                        
-                        redrawPanes();
-                    	break;
-                }
-
-            }
-
-            public void widgetDefaultSelected(SelectionEvent se)
-            {
-                // do nothing
-            }
-        });
+        getVerticalBar().addSelectionListener(createVerticalBarSelectinListener());
 
         this.addPaintListener(new PaintListener()
         {
@@ -426,6 +352,88 @@ public class Rendering extends Composite implements IDebugEventSetListener
                     * (Rendering.this.getRowCount() - 1)));
             ensureViewportAddressDisplayable();
             redrawPanes();    	
+    }
+    protected SelectionListener createHorizontalBarSelectionListener()
+    {
+    	return new SelectionListener()
+        {
+        	public void widgetSelected(SelectionEvent se)
+            {
+        		Rendering.this.layout();
+            }
+        	
+        	public void widgetDefaultSelected(SelectionEvent se)
+            {
+                // do nothing
+            }
+        };
+    }
+    
+    protected SelectionListener createVerticalBarSelectinListener()
+    {
+    	return new SelectionListener()
+        {
+            public void widgetSelected(SelectionEvent se)
+            {
+            	int addressableSize = getAddressableSize();
+            	
+                switch(se.detail)
+                {
+                    case SWT.ARROW_DOWN:
+                    	handleDownArrow();
+                        break;
+                    case SWT.PAGE_DOWN:
+                    	handlePageDown();
+                        break;
+                    case SWT.ARROW_UP:
+                    	handleUpArrow();
+                        break;
+                    case SWT.PAGE_UP:
+                    	handlePageUp();
+                        break;
+                    case SWT.SCROLL_LINE:
+                    // See: BUG 203068 selection event details broken on GTK < 2.6 
+                    default:
+                    	if(getVerticalBar().getSelection() == getVerticalBar().getMinimum())
+                    	{
+                    		// Set view port start address to the start address of the Memory Block
+                    		fViewportAddress = Rendering.this.getMemoryBlockStartAddress();
+                    	}
+                    	else if(getVerticalBar().getSelection() == getVerticalBar().getMaximum())
+                    	{
+                    		// The view port end address should be less or equal to the the end address of the Memory Block
+                    		// Set view port address to be bigger than the end address of the Memory Block for now
+                    		// and let ensureViewportAddressDisplayable() to figure out the correct view port start address
+                    		fViewportAddress = Rendering.this.getMemoryBlockEndAddress();
+                    	}
+                    	else
+                    	{
+                            // Figure out the delta
+                        	int delta = getVerticalBar().getSelection() - fCurrentScrollSelection;
+                    		fViewportAddress = fViewportAddress.add(BigInteger.valueOf(
+                    				getAddressableCellsPerRow() * delta));
+                    	}
+                        ensureViewportAddressDisplayable();
+                        // Update tooltip
+                        // FIXME conversion from slider to scrollbar
+                        // getVerticalBar().setToolTipText(Rendering.this.getAddressString(fViewportAddress));
+                        
+                        // Update the addresses on the Address pane. 
+                        if(fAddressPane.isPaneVisible())
+                        {
+                            fAddressPane.redraw();
+                        }                        
+                        redrawPanes();
+                    	break;
+                }
+
+            }
+
+            public void widgetDefaultSelected(SelectionEvent se)
+            {
+                // do nothing
+            }
+        };
     }
     
     protected AddressPane createAddressPane()
@@ -1497,6 +1505,11 @@ public class Rendering extends Composite implements IDebugEventSetListener
     {
         return fParent.getAddressSize();
     }
+    
+    public Control getAddressBarControl()
+    {
+    	return fAddressBarControl;
+    }
 
     public int getColumnCount()
     {
@@ -1508,6 +1521,16 @@ public class Rendering extends Composite implements IDebugEventSetListener
 		return fColumnsSetting;
 	}
 
+    protected void setBytesPerRow(int count)
+    {
+        fBytesPerRow = count;
+    }
+
+    protected void setColumnCount(int count)
+    {
+        fColumnCount = count;
+    }
+    
 	public void setColumnsSetting(int columns) 
 	{
 		if(fColumnsSetting != columns)

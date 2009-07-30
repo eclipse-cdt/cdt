@@ -203,7 +203,7 @@
 		<replace file="${copyToDir}/index.html">
 			<replacetoken><![CDATA[  <!-- add here -->]]></replacetoken>
 			<replacevalue><![CDATA[  <li><a href="@buildType@.@buildId@/index.html">@buildId@</a></li>
-  				<!-- add here -->]]>
+  <!-- add here -->]]>
 			</replacevalue>
 		</replace>
 		<replace file="${copyToDir}/index.html">

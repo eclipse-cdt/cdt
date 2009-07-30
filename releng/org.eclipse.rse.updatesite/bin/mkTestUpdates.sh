@@ -70,7 +70,7 @@ if [ ${TYPE} = test ]; then
     # Update of "qualifier" requires also updating "micro"
     echo "VERIFYING VERSION CORRECTNESS: Features"
     ls features/*.jar | sed -e 's,^.*features/,,' | sort > f1.$$.txt
-    ls ../updates/3.0/features/*.jar | sed -e 's,^.*features/,,' | sort > f2.$$.txt
+    ls ../updates/3.1/features/*.jar | sed -e 's,^.*features/,,' | sort > f2.$$.txt
     diff f2.$$.txt f1.$$.txt | grep '^[>]' \
        | sed -e 's,[>] \(.*_[0-9][0-9]*\.[0-9][0-9]*\.[0-9][0-9]*\)\..*,\1,' > f_new.txt
     for f in `cat f_new.txt`; do
@@ -86,7 +86,7 @@ if [ ${TYPE} = test ]; then
     done
     echo "VERIFYING VERSION CORRECTNESS: Plugins"
     ls plugins/*.jar | sed -e 's,^.*plugins/,,' | sort > p1.$$.txt
-    ls ../updates/3.0/plugins/*.jar | sed -e 's,^.*plugins/,,' | sort > p2.$$.txt
+    ls ../updates/3.1/plugins/*.jar | sed -e 's,^.*plugins/,,' | sort > p2.$$.txt
     diff p2.$$.txt p1.$$.txt | grep '^[>]' \
        | sed -e 's,[>] \(.*_[0-9][0-9]*\.[0-9][0-9]*\.[0-9][0-9]*\)\..*,\1,' > p_new.txt
     for p in `cat p_new.txt`; do

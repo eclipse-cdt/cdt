@@ -578,16 +578,16 @@
    </category-def>
 <!-- END_3_1 -->
 <!-- BEGIN_3_1_1 -->
-   <feature url="features/org.eclipse.rse.core_3.1.0.qualifier.jar" id="org.eclipse.rse.core" version="3.1.0.qualifier">
+   <feature url="features/org.eclipse.rse.core_3.1.1.qualifier.jar" id="org.eclipse.rse.core" version="3.1.1.qualifier">
       <category name="TM and RSE 3.1.1"/>
    </feature>
-   <feature url="features/org.eclipse.rse.dstore_3.1.0.qualifier.jar" id="org.eclipse.rse.dstore" version="3.1.0.qualifier">
+   <feature url="features/org.eclipse.rse.dstore_3.1.1.qualifier.jar" id="org.eclipse.rse.dstore" version="3.1.1.qualifier">
       <category name="TM and RSE 3.1.1"/>
    </feature>
    <feature url="features/org.eclipse.rse.ftp_3.0.100.qualifier.jar" id="org.eclipse.rse.ftp" version="3.0.100.qualifier">
       <category name="TM and RSE 3.1.1"/>
    </feature>
-   <feature url="features/org.eclipse.rse.local_2.1.100.qualifier.jar" id="org.eclipse.rse.local" version="2.1.100.qualifier">
+   <feature url="features/org.eclipse.rse.local_2.1.101.qualifier.jar" id="org.eclipse.rse.local" version="2.1.101.qualifier">
       <category name="TM and RSE 3.1.1"/>
    </feature>
    <feature url="features/org.eclipse.rse_3.1.1.qualifier.jar" id="org.eclipse.rse" version="3.1.1.qualifier">

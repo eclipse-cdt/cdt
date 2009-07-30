@@ -113,6 +113,9 @@ public class CodanBuilder extends IncrementalProjectBuilder {
 	}
 
 	public void reconcileAst(IASTTranslationUnit ast, IProgressMonitor monitor) {
+		if (ast == null)
+			return;
+
 		String filePath = ast.getFilePath();
 		IWorkspace workspace = ResourcesPlugin.getWorkspace();
 		IWorkspaceRoot root = workspace.getRoot();

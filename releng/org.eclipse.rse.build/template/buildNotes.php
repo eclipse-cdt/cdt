@@ -28,14 +28,14 @@
   RSE runs on Java 1.4.
   Platform Runtime is the minimum requirement for core RSE and Terminal.
   Discovery needs EMF.</li>
-<li>Highlights of Bugs fixed since <a href="http://download.eclipse.org/dsdp/tm/downloads/drops/R-3.0.2-200812050230/buildNotes.php">TM 3.0.2</a>:
+<li>Highlights of Bugs fixed since <a href="http://download.eclipse.org/dsdp/tm/downloads/drops/R-3.1-200906171400/buildNotes.php">TM 3.1</a>:
 <ul>
   <li>A build problem was fixed which prevented the Team/Synchronize feature of importexport to run from downloaded drops
       [<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=283482">283482</a>].</li>
 </ul>
 </li>
-<li>At least 23 bugs were resolved: Use 
-  <!-- <a href="https://bugs.eclipse.org/bugs/buglist.cgi?query_format=advanced&classification=DSDP&product=Target+Management&component=Core&component=RSE&component=Terminal&bug_status=RESOLVED&bug_status=VERIFIED&bug_status=CLOSED&resolution=FIXED&resolution=WONTFIX&resolution=WORKSFORME&chfieldfrom=2009-06-23&chfieldto=2009-09-25&chfield=resolution&cmdtype=doit&negate0=1&field0-0-0=target_milestone&type0-0-0=regexp&value0-0-0=%5B23%5D.0&field0-0-1=target_milestone&type0-0-1=regexp&value0-0-1=3.1%20M%5B234567%5D"> -->
+<li>At least 38 bugs were resolved: Use 
+  <!-- <a href="https://bugs.eclipse.org/bugs/buglist.cgi?query_format=advanced&classification=DSDP&product=Target+Management&component=Core&component=RSE&component=Terminal&bug_status=RESOLVED&bug_status=VERIFIED&bug_status=CLOSED&resolution=FIXED&resolution=WONTFIX&resolution=WORKSFORME&chfieldfrom=2009-06-23&chfieldto=2009-09-25&chfield=resolution&cmdtype=doit&negate0=1&field0-0-0=target_milestone&type0-0-0=regexp&value0-0-0=%5B23%5D.0&field0-0-1=target_milestone&type0-0-1=regexp&value0-0-1=3.1%20M%5B234567%5D&field0-0-2=target_milestone&type0-0-2=equals&value0-0-2=3.1"> -->
   <a href="https://bugs.eclipse.org/bugs/buglist.cgi?query_format=advanced&classification=DSDP&product=Target+Management&component=Core&component=RSE&component=Terminal&target_milestone=3.1.1&bug_status=RESOLVED&bug_status=VERIFIED&bug_status=CLOSED&resolution=FIXED&resolution=WONTFIX&resolution=WORKSFORME&cmdtype=doit">
   this query</a> to show the list of bugs fixed since
   <a href="http://download.eclipse.org/dsdp/tm/downloads/drops/R-3.1-200906171400/">

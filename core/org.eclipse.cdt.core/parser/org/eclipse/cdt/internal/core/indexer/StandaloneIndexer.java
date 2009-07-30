@@ -24,8 +24,10 @@ import java.util.Set;
 import org.eclipse.cdt.core.parser.IParserLogService;
 import org.eclipse.cdt.core.parser.IScannerInfo;
 import org.eclipse.cdt.internal.core.index.IWritableIndex;
+import org.eclipse.cdt.internal.core.index.IWritableIndexFragment;
 import org.eclipse.cdt.internal.core.pdom.IndexerProgress;
 import org.eclipse.cdt.internal.core.pdom.PDOMWriter;
+import org.eclipse.cdt.internal.core.pdom.WritablePDOM;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 
@@ -172,6 +174,8 @@ public abstract class StandaloneIndexer {
 		fLog = log;	
 		fScanner = scanner;
 		fScannerInfoProvider = null;
+		
+		setupASTFilePathResolver();
 	}
 	
 	
@@ -183,9 +187,19 @@ public abstract class StandaloneIndexer {
 		fLog = log;	
 		fScanner = null;
 		fScannerInfoProvider = scannerProvider;
+		
+		setupASTFilePathResolver();
 	}
 	
-
+	
+	private void setupASTFilePathResolver() {
+		IWritableIndexFragment fragment = getIndex().getWritableFragment();
+		if(fragment instanceof WritablePDOM) {
+			WritablePDOM pdom = (WritablePDOM)fragment;
+			pdom.setASTFilePathResolver(new StandaloneIndexerInputAdapter(this));
+		}
+	}
+	
 	public void setScannerInfoProvider(IStandaloneScannerInfoProvider provider) {
 		fScannerInfoProvider = provider;
 		fScanner = null;

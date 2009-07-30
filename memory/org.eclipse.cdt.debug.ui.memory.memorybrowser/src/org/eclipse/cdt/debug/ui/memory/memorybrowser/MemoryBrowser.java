@@ -114,11 +114,14 @@ public class MemoryBrowser extends ViewPart implements IDebugContextListener, IL
 	private Control fGotoAddressBarControl;
 	private Label fUnsupportedLabel;
 	private Composite fMainComposite;
-	private String defaultRenderingTypeId = null; //$NON-NLS-1$
+	private String defaultRenderingTypeId = null;
+	
+	private ArrayList<IMemoryRenderingContainer> fCurrentContainers = new ArrayList<IMemoryRenderingContainer>();
 	
 	private final static String KEY_RENDERING = "RENDERING"; //$NON-NLS-1$
-	private final static String KEY_CONTEXT = "CONTEXT"; //$NON-NLS-1$
+	private final static String KEY_CONTEXT   = "CONTEXT";   //$NON-NLS-1$
 	private final static String KEY_RETRIEVAL = "RETRIEVAL"; //$NON-NLS-1$
+	private final static String KEY_CONTAINER = "CONTAINER"; //$NON-NLS-1$
 
 	public MemoryBrowser() {
 	}
@@ -277,48 +280,13 @@ public class MemoryBrowser extends ViewPart implements IDebugContextListener, IL
 	}
 
 	public IMemoryRenderingContainer[] getMemoryRenderingContainers() {
-		return new IMemoryRenderingContainer[] {
-			new IMemoryRenderingContainer()
-			{
-
-				public void addMemoryRendering(IMemoryRendering rendering) {
-					
-				}
-
-				public IMemoryRendering getActiveRendering() {
-					if(fStackLayout.topControl instanceof CTabFolder)
-					{
-						CTabFolder activeFolder = (CTabFolder) fStackLayout.topControl;
-						if(activeFolder.getSelection() != null)
-							return (IMemoryRendering) activeFolder.getSelection().getData(KEY_RENDERING);
-					}
-					return null;
-				}
-
-				public String getId() {
-					return null;
-				}
-
-				public String getLabel() {
-					return null;
-				}
-
-				public IMemoryRenderingSite getMemoryRenderingSite() {
-					return MemoryBrowser.this;
-				}
-
-				public IMemoryRendering[] getRenderings() {
-					return null;
-				}
-
-				public void removeMemoryRendering(IMemoryRendering rendering) {
-					
-				}
-				
-			}
-		};
+		IMemoryRenderingContainer[] containerList = new IMemoryRenderingContainer[fCurrentContainers.size()];
+		for ( int idx = 0 ; idx < fCurrentContainers.size() ; idx ++ ) {
+			containerList[ idx ] = fCurrentContainers.get( idx );
+		}
+		return containerList;
 	}
-
+	
 	public IMemoryRenderingSynchronizationService getSynchronizationService() {
 		return null;
 	}
@@ -411,6 +379,9 @@ public class MemoryBrowser extends ViewPart implements IDebugContextListener, IL
 		folder.addCTabFolder2Listener(new CTabFolder2Adapter() {
 			public void close(CTabFolderEvent event) {
 				event.doit = false;
+				CTabItem item = (CTabItem) event.item;
+				IMemoryRenderingContainer container = (IMemoryRenderingContainer) item.getData(KEY_CONTAINER);
+				fCurrentContainers.remove( container );
 			}
 		});
 		return folder;
@@ -448,7 +419,7 @@ public class MemoryBrowser extends ViewPart implements IDebugContextListener, IL
 		for(final IMemoryRenderingType type : getRenderingTypes())
 		{
 			final Action action = new Action(
-				type.getLabel(), IAction.AS_CHECK_BOX)
+				type.getLabel(), IAction.AS_RADIO_BUTTON)
 	        {
 	            public void run()
 	            {
@@ -537,6 +508,9 @@ public class MemoryBrowser extends ViewPart implements IDebugContextListener, IL
 					newFolder.addCTabFolder2Listener(new CTabFolder2Adapter() {
 						public void close(CTabFolderEvent event) {
 							event.doit = true;
+							CTabItem item = (CTabItem) event.item;
+							IMemoryRenderingContainer container = (IMemoryRenderingContainer) item.getData(KEY_CONTAINER);
+							fCurrentContainers.remove( container );
 						}
 					});
 					newFolder.addSelectionListener(new SelectionListener()
@@ -581,6 +555,7 @@ public class MemoryBrowser extends ViewPart implements IDebugContextListener, IL
 		IMemoryRenderingType type = DebugUITools.getMemoryRenderingManager().getRenderingType(getDefaultRenderingTypeId());
 		try {
 			final IMemoryRendering rendering = type.createRendering();
+
 			IMemoryRenderingContainer container = new IMemoryRenderingContainer()
 			{
 				public void addMemoryRendering(IMemoryRendering rendering) {}
@@ -602,14 +577,14 @@ public class MemoryBrowser extends ViewPart implements IDebugContextListener, IL
 				}
 
 				public IMemoryRendering[] getRenderings() {
-					return null;
+					return new IMemoryRendering[] { rendering };
 				}
 
 				public void removeMemoryRendering(IMemoryRendering rendering) {}
 				
 			};
 			
-			IMemoryBlock block = null;
+			IMemoryBlock block = retrieval.getMemoryBlock(0, 1024) ;
 			if(retrieval instanceof IAdaptable)
 			{
 				IMemoryBlockRetrievalExtension retrievalExtension = (IMemoryBlockRetrievalExtension) 
@@ -618,11 +593,13 @@ public class MemoryBrowser extends ViewPart implements IDebugContextListener, IL
 					block = retrievalExtension.getExtendedMemoryBlock("0", context); //$NON-NLS-1$
 			}
 			
+			fCurrentContainers.add(container);
 			rendering.init(container, block);
 			rendering.createControl(tab.getParent());
 			tab.setControl(rendering.getControl());
 			tab.getParent().setSelection(0);
 			tab.setData(KEY_RENDERING, rendering);
+			tab.setData(KEY_CONTAINER, container);
 			getSite().getSelectionProvider().setSelection(new StructuredSelection(tab.getData(KEY_RENDERING)));
 			updateLabel(tab, rendering);
 			
@@ -664,8 +641,11 @@ public class MemoryBrowser extends ViewPart implements IDebugContextListener, IL
 		final CTabFolder folder = getTabFolder(context);
 		if(folder != null)
 		{
-			for(CTabItem tab : folder.getItems())
+			for(CTabItem tab : folder.getItems()) {
+				IMemoryRenderingContainer container = (IMemoryRenderingContainer) tab.getData(KEY_CONTAINER);
+				fCurrentContainers.remove( container );
 				tab.dispose();
+			}
 		}
 		fContextFolders.remove(context);
 	}

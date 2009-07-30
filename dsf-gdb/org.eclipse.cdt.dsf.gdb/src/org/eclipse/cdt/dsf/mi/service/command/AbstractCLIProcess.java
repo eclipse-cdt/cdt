@@ -228,6 +228,9 @@ public abstract class AbstractCLIProcess extends Process
     }
 
     public void commandDone(ICommandToken token, ICommandResult result) {
+    	// Whenever we get a command that is completed, we know we must be in the primary prompt
+    	fPrompt = 1;
+    	
         ICommand<?> command = token.getCommand();
     	if (token.getCommand() instanceof CLICommand<?> &&
     			!(command instanceof ProcessCLICommand || command instanceof ProcessMIInterpreterExecConsole)) 
@@ -237,14 +240,12 @@ public abstract class AbstractCLIProcess extends Process
      }
 
     void setPrompt(String line) {
-        fPrompt = 0;
+        fPrompt = 1;
         // See https://bugs.eclipse.org/bugs/show_bug.cgi?id=109733
         if (line == null)
             return;
         line = line.trim();
-        if (line.equals(PRIMARY_PROMPT)) {
-            fPrompt = 1;
-        } else if (line.equals(SECONDARY_PROMPT)) {
+        if (line.equals(SECONDARY_PROMPT)) {
             fPrompt = 2;
         }
     }

@@ -214,6 +214,10 @@ public abstract class AbstractCLIProcess extends Process
     }
 
     public void commandSent(ICommandToken token) {
+    	// Bug 285170
+    	// Don't reset the fPrompt here, in case we are
+    	// dealing with the missing secondary prompt.
+    	
         ICommand<?> command = token.getCommand();
         // Check if the command is a CLI command and if it did not originate from this class.
         if (command instanceof CLICommand<?> &&
@@ -221,8 +225,49 @@ public abstract class AbstractCLIProcess extends Process
         {
             fSuppressConsoleOutputCounter++;
         }
+        
+    	// Bug 285170
+        // Deal with missing secondary prompt, if needed.
+       	checkMissingSecondaryPrompt(command);
+    }
+    
+    private void checkMissingSecondaryPrompt(ICommand<?> command) {                          
+        // If the command send is one of ours, check if it is one that is missing a secondary prompt
+    	if (command instanceof ProcessMIInterpreterExecConsole) {
+    		String[] operations = ((ProcessMIInterpreterExecConsole)command).getParameters();                                                         
+    		if (operations != null && operations.length > 0) {                                                     
+    			// Get the command name.                                                                           
+    			String operation = operations[0];                                                                   
+    			int indx = operation.indexOf(' ');                                                                 
+    			if (indx != -1) {                                                                                  
+    				operation = operation.substring(0, indx).trim();                                               
+    			} else {                                                                                           
+    				operation = operation.trim();                                                                  
+    			}                                                                                                  
+
+    			if (isMissingSecondaryPromptCommand(operation)) {                             
+    				// For such commands, the backend does not send the secondary prompt                             
+    				// so we set it manually.  We'll remain in this state until we get 
+    				// a commandDone() call.
+    				// This logic will still work when a new version of the backend
+    				// fixes this lack of secondary prompt.
+    				fPrompt = 2;                                                                                   
+    			}                                                                                                   
+    		}
+    	}
     }
 
+    /**                                                                                                        
+     * Check to see if the user typed a command that we know the backend
+     * does not send the secondary prompt for, but should.                                                   
+     * If so, we'll need to pretend we are receiving the secondary prompt.
+     *                                     
+     * @since 2.1
+     */                                                                                                        
+    protected boolean isMissingSecondaryPromptCommand(String operation) {
+    	return false;
+    }
+    
     public void commandRemoved(ICommandToken token) {
             // Ignore
     }

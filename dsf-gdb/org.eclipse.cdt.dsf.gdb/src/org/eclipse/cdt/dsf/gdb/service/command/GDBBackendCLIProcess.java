@@ -57,4 +57,16 @@ public class GDBBackendCLIProcess extends MIBackendCLIProcess {
            // Session disposed.
        }                                                                                            
    }
+   
+   /**
+    * @since 2.1
+    */
+   @Override
+   protected boolean isMissingSecondaryPromptCommand(String operation) {
+	   // The 'actions' command does not get a secondary prompt!
+	   if (operation.startsWith("ac") && "actions".indexOf(operation) != -1) { //$NON-NLS-1$ //$NON-NLS-2$
+		   return true;                                                                                    
+	   }                                                                                                  
+	   return false;                                                                                                                                                                                   
+   }
 }

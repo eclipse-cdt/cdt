@@ -1,5 +1,5 @@
 /********************************************************************************
- * Copyright (c) 2000, 2008 IBM Corporation. All rights reserved.
+ * Copyright (c) 2000, 2009 IBM Corporation. All rights reserved.
  * This program and the accompanying materials are made available under the terms
  * of the Eclipse Public License v1.0 which accompanies this distribution, and is
  * available at http://www.eclipse.org/legal/epl-v10.html
@@ -18,17 +18,14 @@
  * David McKnight   (IBM)        - [237300] Problem with setDefaultHistory for SystemHistoryCombo.
  * David McKnight   (IBM)        - [240991] RSE startup creates display on worker thread before workbench.
  * David McKnight   (IBM)        - [240991] Avoiding calling SystemBasePluging.getWorkbench()
+ * Martin Oberhuber (Wind River) - [246406] Timeout waiting when loading RSE
  ********************************************************************************/
 package org.eclipse.rse.ui;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Preferences;
-import org.eclipse.core.runtime.Status;
-import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.rse.core.IRSEPreferenceNames;
 import org.eclipse.rse.core.RSECorePlugin;
 import org.eclipse.rse.core.events.ISystemModelChangeEvent;
@@ -39,8 +36,10 @@ import org.eclipse.rse.core.events.ISystemResourceChangeEvents;
 import org.eclipse.rse.core.events.ISystemResourceChangeListener;
 import org.eclipse.rse.core.model.IHost;
 import org.eclipse.rse.core.model.ISystemRegistry;
-import org.eclipse.ui.IWorkbench;
-import org.eclipse.ui.PlatformUI;
+import org.osgi.framework.Bundle;
+import org.osgi.framework.BundleContext;
+import org.osgi.framework.BundleEvent;
+import org.osgi.framework.BundleListener;
 
 /**
  * A utility class that encapsulates all global preferences for the remote system framework
@@ -493,28 +492,26 @@ public class SystemPreferencesManager {
 
 		if (!alreadyListening) {
 			// FIXME bug 240991: With the current workaround, we might miss events
-			// Instead of adding the listener deferred in a job, the SystemRegistry
+			// Instead of adding the listener deferred, the SystemRegistry
 			// should send events via the IRSEInteractionProvider
-			Job addListenerJob = new Job("Add Listener"){ //$NON-NLS-1$
-				public IStatus run(IProgressMonitor monitor){
-					while (!PlatformUI.isWorkbenchRunning()){
-						try {
-							//Checks in the loop are fast enough so we can poll often
-							Thread.sleep(100);
+			Bundle bnd = RSEUIPlugin.getDefault().getBundle();
+			if (bnd.getState() == Bundle.ACTIVE) {
+				// addListenerJob.schedule();
+				fModelChangeListener = new ModelChangeListener();
+				RSECorePlugin.getTheSystemRegistry().addSystemModelChangeListener(fModelChangeListener);
+			} else {
+				final BundleContext ctx = bnd.getBundleContext();
+				ctx.addBundleListener(new BundleListener() {
+					public void bundleChanged(BundleEvent event) {
+						if (event.getType() == BundleEvent.STARTED) {
+							// addListenerJob.schedule();
+							fModelChangeListener = new ModelChangeListener();
+							RSECorePlugin.getTheSystemRegistry().addSystemModelChangeListener(fModelChangeListener);
+							ctx.removeBundleListener(this);
 						}
-						catch (InterruptedException e){}
 					}
-						
-					IWorkbench wb = PlatformUI.getWorkbench();
-					if (!wb.isClosing()) {
-						fModelChangeListener = new ModelChangeListener();
-						RSECorePlugin.getTheSystemRegistry().addSystemModelChangeListener(fModelChangeListener);
-					}
-					return Status.OK_STATUS;
-				}
-			};
-			addListenerJob.setSystem(true);
-			addListenerJob.schedule();
+				});
+			}
 		}
 	}
 

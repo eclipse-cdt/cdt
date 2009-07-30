@@ -1,5 +1,5 @@
 /********************************************************************************
- * Copyright (c) 2002, 2008 IBM Corporation and others. All rights reserved.
+ * Copyright (c) 2002, 2009 IBM Corporation and others. All rights reserved.
  * This program and the accompanying materials are made available under the terms
  * of the Eclipse Public License v1.0 which accompanies this distribution, and is
  * available at http://www.eclipse.org/legal/epl-v10.html
@@ -16,6 +16,7 @@
  * David McKnight   (IBM)        - [243263] NPE on expanding a filter
  * David McKnight   (IBM)        - [244454] SystemBasePlugin.getWorkBench() incorrectly returns null when called during Eclipse startup
  * David McKnight   (IBM)  [246406] [performance] Timeout waiting when loading SystemPreferencesManager$ModelChangeListener during startup
+ * Martin Oberhuber (Wind River) - [246406] Timeout waiting when loading RSE
  ********************************************************************************/
 
 package org.eclipse.rse.ui;
@@ -58,9 +59,13 @@ public abstract class SystemBasePlugin extends AbstractUIPlugin
 	// static variables
     private static SystemBasePlugin baseInst = null;
 
-    /**
-     * Logger object for logging messages for servicing purposes.
-     */
+	/**
+	 * Logger object for logging messages for servicing purposes.
+	 *
+	 * @deprecated do not use use this directly, use {@link #getLogger()}
+	 *             instead for lazy loading of the Logger. We do not guarantee
+	 *             that this variable is ever initialized.
+	 */
 	protected static Logger log = null;
 
 	/**
@@ -343,7 +348,7 @@ public abstract class SystemBasePlugin extends AbstractUIPlugin
 		boolean ok = false;
 		try {
 			URL url = bundle.getEntry("/"+fileName); //$NON-NLS-1$
-			if (url != null) { 
+			if (url != null) {
 				mf = SystemUIMessageFile.getMessageFile(fileName, url);
 				ok = true;
 			}
@@ -459,19 +464,19 @@ public abstract class SystemBasePlugin extends AbstractUIPlugin
 		switch (type)
 		{
 			case SystemMessage.ERROR:
-				log.logError(message.toString(), ex);
+			getBaseDefault().getLogger().logError(message.toString(), ex);
 				break;
 			case SystemMessage.WARNING:
-				log.logWarning(message.toString(), ex);
+			getBaseDefault().getLogger().logWarning(message.toString(), ex);
 				break;
 			case SystemMessage.INFORMATION:
 			case SystemMessage.COMPLETION:
-				log.logInfo(message.toString(), ex);
+			getBaseDefault().getLogger().logInfo(message.toString(), ex);
 				break;
 			case SystemMessage.INQUIRY:
 			case SystemMessage.UNEXPECTED:
 			default:
-				log.logInfo(message.toString(), ex);
+			getBaseDefault().getLogger().logInfo(message.toString(), ex);
 				break;
 		}
 	}
@@ -488,7 +493,7 @@ public abstract class SystemBasePlugin extends AbstractUIPlugin
 	 */
 	public static void logInfo(String message)
 	{
-		log.logInfo(message);
+		getBaseDefault().getLogger().logInfo(message);
 	}
 
 	// -----------------
@@ -508,7 +513,7 @@ public abstract class SystemBasePlugin extends AbstractUIPlugin
 	 */
 	public static void logWarning(String message)
 	{
-		log.logWarning(message);
+		getBaseDefault().getLogger().logWarning(message);
 	}
 
 	/**
@@ -523,7 +528,7 @@ public abstract class SystemBasePlugin extends AbstractUIPlugin
 	 */
 	public static void logError(String message)
 	{
-		log.logError(message, null);
+		getBaseDefault().getLogger().logError(message, null);
 	}
 
 	/**
@@ -541,7 +546,7 @@ public abstract class SystemBasePlugin extends AbstractUIPlugin
 	 */
 	public static void logError(String message, Throwable exception)
 	{
-		log.logError(message, exception);
+		getBaseDefault().getLogger().logError(message, exception);
 	}
 
 	/**
@@ -556,7 +561,7 @@ public abstract class SystemBasePlugin extends AbstractUIPlugin
 	 */
 	public static void logDebugMessage(String prefix, String message)
 	{
-		log.logDebugMessage(prefix, message);
+		getBaseDefault().getLogger().logDebugMessage(prefix, message);
 	}
 
 	/**
@@ -609,11 +614,8 @@ public abstract class SystemBasePlugin extends AbstractUIPlugin
 
         super.start(context);
 
-		// logger
-	    if (log == null) {
-	    	log = LoggerFactory.getLogger(this);
-	    	log.logInfo("Loading " + this.getClass()); //$NON-NLS-1$
-	    }
+		// // bug 246406: initialize the logger lazily
+		// getLogger();
 
 	    addWindowListener();
     }
@@ -622,7 +624,9 @@ public abstract class SystemBasePlugin extends AbstractUIPlugin
      * @see org.osgi.framework.BundleActivator#stop(org.osgi.framework.BundleContext)
      */
     public void stop(BundleContext context) throws Exception {
-    	logDebugMessage(this.getClass().getName(), "SHUTDOWN"); //$NON-NLS-1$
+		if (Logger.DEBUG) {
+			logDebugMessage(this.getClass().getName(), "SHUTDOWN"); //$NON-NLS-1$
+		}
    	    LoggerFactory.freeLogger(this);
         super.stop(context);
     }
@@ -739,12 +743,16 @@ public abstract class SystemBasePlugin extends AbstractUIPlugin
 	}
 
 	/**
-	 * Returns an image descriptor from the base IDE. Looks only in the "icons/full/" directories.
+	 * Returns an image descriptor from the base IDE. Looks only in the
+	 * "icons/full/" directories.
 	 *
-	 * @see org.eclipse.ui.views.navigator.ResourceNavigatorActionGroup#getImageDescriptor(java.lang.String)
+	 * @deprecated use {@link org.eclipse.ui.ISharedImages} via
+	 *             PlatformUI.getWorkbench().getSharedImages()
 	 */
 	public ImageDescriptor getImageDescriptorFromIDE(String relativePath)
 	{
+		// This code is from
+		// org.eclipse.ui.views.navigator.ResourceNavigatorActionGroup#getImageDescriptor(java.lang.String)
 		Hashtable registry = getImageDescriptorRegistry();
 		ImageDescriptor descriptor = (ImageDescriptor)registry.get(relativePath);
 		if (descriptor == null) {
@@ -778,6 +786,11 @@ public abstract class SystemBasePlugin extends AbstractUIPlugin
      */
     public Logger getLogger()
     {
+		// logger
+		if (log == null) {
+			log = LoggerFactory.getLogger(this);
+			log.logInfo("Loading " + this.getClass()); //$NON-NLS-1$
+		}
     	return log;
     }
 

@@ -15,9 +15,9 @@ import org.eclipse.cdt.dsf.debug.internal.provisional.model.IMemoryBlockUpdatePo
 import org.eclipse.debug.core.DebugEvent;
 import org.eclipse.debug.core.IDebugEventSetListener;
 import org.eclipse.debug.core.model.IMemoryBlock;
-import org.eclipse.debug.internal.ui.views.memory.MemoryView;
 import org.eclipse.debug.ui.memory.IMemoryRendering;
 import org.eclipse.debug.ui.memory.IMemoryRenderingContainer;
+import org.eclipse.debug.ui.memory.IMemoryRenderingSite;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
@@ -33,10 +33,10 @@ public class RefreshAction implements IViewActionDelegate {
 
 	private IMemoryBlock fMemoryBlock = null;
 	
-	private MemoryView fView;
+	private IMemoryRenderingSite fsite;
 	
 	public void init(IViewPart view) {
-		fView = (MemoryView) view;
+		fsite = (IMemoryRenderingSite) view;
 	}
 
 	public void run(IAction action) {
@@ -44,7 +44,7 @@ public class RefreshAction implements IViewActionDelegate {
 		if(fMemoryBlock instanceof IMemoryBlockUpdatePolicyProvider)
 		{
 			((IMemoryBlockUpdatePolicyProvider) fMemoryBlock).clearCache();
-			IMemoryRenderingContainer containers[] = fView.getMemoryRenderingContainers();
+			IMemoryRenderingContainer containers[] = fsite.getMemoryRenderingContainers();
 			for(int i = 0; i < containers.length; i++)
 			{
 				IMemoryRendering renderings[] = containers[i].getRenderings();

@@ -17,15 +17,14 @@ import org.eclipse.cdt.codan.core.model.AbstractIndexAstChecker;
 import org.eclipse.cdt.core.dom.ast.ASTVisitor;
 import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IASTDeclSpecifier;
-import org.eclipse.cdt.core.dom.ast.IASTFileLocation;
 import org.eclipse.cdt.core.dom.ast.IASTName;
+import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCompositeTypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPMethod;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPInternalBinding;
-import org.eclipse.core.resources.IFile;
 
 /**
  * Checker to find that class has virtual method and non virtual destructor
@@ -59,20 +58,17 @@ public class NonVirtualDestructor extends AbstractIndexAstChecker {
 						String mess;
 						String clazz = className.toString();
 						String method = virMethodName.getName();
-						int line = 1;
-						IFile file = getFile();
+						IASTNode ast = decl;
 						if (destName != null) {
 							if (destName instanceof ICPPInternalBinding) {
 								ICPPInternalBinding bin = (ICPPInternalBinding) destName;
-								IASTFileLocation fileLocation = bin
-										.getDeclarations()[0].getFileLocation();
-								line = fileLocation.getStartingLineNumber();
+								ast = bin.getDeclarations()[0];
 							}
 							mess = MessageFormat
 									.format(
 											"Class ''{0}'' has virtual method ''{1}'' but non-virtual destructor ''{2}''",
 											clazz, method, destName.getName());
-							reportProblem(ER_ID, file, line, mess);
+							reportProblem(ER_ID, ast, mess);
 						}
 					}
 				} catch (DOMException e) {

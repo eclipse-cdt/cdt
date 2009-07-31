@@ -12,6 +12,8 @@ package org.eclipse.cdt.codan.core.model;
 
 import org.eclipse.cdt.codan.core.CodanCorePlugin;
 import org.eclipse.cdt.core.CCorePlugin;
+import org.eclipse.cdt.core.dom.ast.IASTFileLocation;
+import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
 import org.eclipse.cdt.core.index.IIndex;
 import org.eclipse.cdt.core.model.CoreModel;
@@ -19,7 +21,10 @@ import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.core.model.ITranslationUnit;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResource;
+import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.Path;
 
 /**
  * @author Alena
@@ -29,12 +34,11 @@ public abstract class AbstractIndexAstChecker extends AbstractChecker implements
 		ICAstChecker {
 	private IFile file;
 
-	public IFile getFile() {
+	protected IFile getFile() {
 		return file;
 	}
 
 	void processFile(IFile file) throws CoreException, InterruptedException {
-		this.file = file;
 		// create translation unit and access index
 		ICElement model = CoreModel.getDefault().create(file);
 		if (!(model instanceof ITranslationUnit))
@@ -50,8 +54,10 @@ public abstract class AbstractIndexAstChecker extends AbstractChecker implements
 			IASTTranslationUnit ast = tu.getAST(index,
 					ITranslationUnit.AST_SKIP_INDEXED_HEADERS);
 			// traverse the ast using the visitor pattern.
+			this.file = file;
 			processAst(ast);
 		} finally {
+			this.file = null;
 			index.releaseReadLock();
 		}
 	}
@@ -69,5 +75,17 @@ public abstract class AbstractIndexAstChecker extends AbstractChecker implements
 			return false;
 		}
 		return true;
+	}
+
+	public void reportProblem(String id, IASTNode astNode, String message) {
+		IASTFileLocation astLocation = astNode.getFileLocation();
+		IFile astFile = file;
+		if (astFile == null) {
+			IPath location = new Path(astLocation.getFileName());
+			astFile = ResourcesPlugin.getWorkspace().getRoot().getFileForLocation(location);
+		}
+
+		CodanRuntime.getInstance().getProblemReporter().reportProblem(id,
+				astFile, astLocation.getStartingLineNumber(), message);
 	}
 }

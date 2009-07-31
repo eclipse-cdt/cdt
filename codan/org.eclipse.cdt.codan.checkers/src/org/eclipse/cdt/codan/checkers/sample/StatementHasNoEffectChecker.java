@@ -52,8 +52,7 @@ public class StatementHasNoEffectChecker extends AbstractIndexAstChecker {
 			if (stmt instanceof IASTExpressionStatement) {
 				if (hasNoEffect(((IASTExpressionStatement) stmt)
 						.getExpression())) {
-					reportProblem(ER_ID, getFile(), stmt.getFileLocation()
-							.getStartingLineNumber(), "Statement has no effect");
+					reportProblem(ER_ID, stmt, "Statement has no effect");
 				}
 				return PROCESS_SKIP;
 			}

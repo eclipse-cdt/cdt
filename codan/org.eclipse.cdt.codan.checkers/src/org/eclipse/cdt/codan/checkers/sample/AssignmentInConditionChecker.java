@@ -35,9 +35,7 @@ public class AssignmentInConditionChecker extends AbstractIndexAstChecker {
 		public int visit(IASTExpression expression) {
 			if (isAssignmentExpression(expression)
 					&& isUsedAsCondition(expression)) {
-				reportProblem(ER_ID, getFile(), expression.getFileLocation()
-						.getStartingLineNumber(),
-						"Possible assignment in condition");
+				reportProblem(ER_ID, expression, "Possible assignment in condition");
 			}
 			return PROCESS_CONTINUE;
 		}

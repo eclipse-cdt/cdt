@@ -29,6 +29,7 @@
  * David McKnight   (IBM) - [282634] [dstore] IndexOutOfBoundsException on Disconnect
  * David McKnight   (IBM) - [282599] [dstore] log folder that is not a hidden one
  * David McKnight   (IBM) - [285151] [dstore] Potential threading problem in DataStore (open call)
+ * David McKnight   (IBM) - [285301] [dstore] 100% CPU if user does not  have write access to $HOME
  *******************************************************************************/
 
 package org.eclipse.dstore.core.model;
@@ -4353,7 +4354,11 @@ public final class DataStore
 				return;
 			}
 		}
+
 		_cacheJar = cacheJar;
+		if (!_cacheJar.canWrite()){ // can't write this..don't bother with cache
+			_cacheJar = null;	
+		}	
 	}
 
 	protected String getCacheDirectory()

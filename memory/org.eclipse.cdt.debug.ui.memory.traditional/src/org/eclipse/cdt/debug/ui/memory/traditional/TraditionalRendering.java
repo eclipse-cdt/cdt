@@ -1274,59 +1274,6 @@ public class TraditionalRendering extends AbstractMemoryRendering implements IRe
 	}
 }
 
-
-class TraditionalMemoryByte extends MemoryByte implements IMemoryByte
-{
-	private boolean isEdited = false;
-	
-	private boolean[] changeHistory = new boolean[0];
-	
-	public TraditionalMemoryByte()
-	{
-		super();
-	}
-	
-	public TraditionalMemoryByte(byte byteValue)
-	{
-		super(byteValue);
-	}
-	
-	public TraditionalMemoryByte(byte byteValue, byte byteFlags)
-	{
-		super(byteValue, byteFlags);
-	}
-	
-	public boolean isEdited()
-	{
-		return isEdited;
-	}
-	
-	public void setEdited(boolean edited)
-	{
-		isEdited = edited;
-	}
-	
-	public boolean isChanged(int historyDepth)
-	{
-		return changeHistory.length > historyDepth && changeHistory[historyDepth];
-	}
-	
-	public void setChanged(int historyDepth, boolean changed)
-	{
-		if(historyDepth >= changeHistory.length)
-		{
-			boolean newChangeHistory[] = new boolean[historyDepth + 1];
-			System.arraycopy(changeHistory, 0, newChangeHistory, 0, changeHistory.length);
-			changeHistory = newChangeHistory;
-		}
-		
-		changeHistory[historyDepth] = changed;
-		
-		if(historyDepth == 0)
-			this.setChanged(changed);
-	}
-}
-
 class CopyAction extends Action
 {
     // TODO for the sake of large copies, this action should probably read in

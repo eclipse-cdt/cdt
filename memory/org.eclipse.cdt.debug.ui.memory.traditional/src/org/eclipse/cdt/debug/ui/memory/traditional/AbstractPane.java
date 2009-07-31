@@ -135,6 +135,31 @@ public abstract class AbstractPane extends Canvas
         }
     }
     
+    class AbstractPaneFocusListener implements FocusListener
+    {
+        public void focusLost(FocusEvent fe)
+        {
+        	IPreferenceStore store = TraditionalRenderingPlugin.getDefault().getPreferenceStore();
+        	if(TraditionalRenderingPreferenceConstants.MEM_EDIT_BUFFER_SAVE_ON_ENTER_ONLY
+        			.equals(store.getString(TraditionalRenderingPreferenceConstants.MEM_EDIT_BUFFER_SAVE)))
+			{
+        		fRendering.getViewportCache().clearEditBuffer(); 
+			}
+        	else
+        	{
+        		fRendering.getViewportCache().writeEditBuffer();
+        	}
+            
+            // clear the pane local selection start
+            AbstractPane.this.fSelectionStartAddress = null;
+        }
+
+        public void focusGained(FocusEvent fe)
+        {
+        }
+    	
+    }
+
     class AbstractPaneKeyListener implements KeyListener
     {
         public void keyPressed(KeyEvent ke)
@@ -272,29 +297,7 @@ public abstract class AbstractPane extends Canvas
 
         this.addKeyListener(createKeyListener());
 
-        this.addFocusListener(new FocusListener()
-        {
-            public void focusLost(FocusEvent fe)
-            {
-            	IPreferenceStore store = TraditionalRenderingPlugin.getDefault().getPreferenceStore();
-            	if(TraditionalRenderingPreferenceConstants.MEM_EDIT_BUFFER_SAVE_ON_ENTER_ONLY
-            			.equals(store.getString(TraditionalRenderingPreferenceConstants.MEM_EDIT_BUFFER_SAVE)))
-    			{
-            		fRendering.getViewportCache().clearEditBuffer(); 
-    			}
-            	else
-            	{
-            		fRendering.getViewportCache().writeEditBuffer();
-            	}
-                
-                // clear the pane local selection start
-                AbstractPane.this.fSelectionStartAddress = null;
-            }
-
-            public void focusGained(FocusEvent fe)
-            {
-            }
-        });
+        this.addFocusListener(createFocusListener());
     }
     
     protected MouseListener createMouseListener(){
@@ -303,6 +306,10 @@ public abstract class AbstractPane extends Canvas
     
     protected MouseMoveListener createMouseMoveListener(){
     	return new AbstractPaneMouseMoveListener();
+    }
+    
+    protected FocusListener createFocusListener() {
+    	return new AbstractPaneFocusListener();
     }
 
     protected KeyListener createKeyListener(){
@@ -549,16 +556,7 @@ public abstract class AbstractPane extends Canvas
 
     protected void advanceCursor()
     {
-        fSubCellCaretPosition++;
-        if(fSubCellCaretPosition >= getCellCharacterCount())
-        {
-            fSubCellCaretPosition = 0;
-            fCaretAddress = fCaretAddress.add(BigInteger
-                .valueOf(getNumberOfBytesRepresentedByColumn() / fRendering.getAddressableSize()));
-
-        }
-        updateCaret();
-        ensureCaretWithinViewport();
+    	handleRightArrowKey();
     }
 
     protected void positionCaret(int x, int y)

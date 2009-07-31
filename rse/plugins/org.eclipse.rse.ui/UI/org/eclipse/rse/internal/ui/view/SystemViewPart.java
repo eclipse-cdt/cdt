@@ -37,6 +37,7 @@
  * Kevin Doyle 		(IBM)		 - [242431] Register a new unique context menu id, so contributions can be made to all our views
  * Li Ding          (IBM)        - [256135] Subsystem not restored in system view tree if subsystem configuration does not support filter
  * David McKnight   (IBM)        - [257721] Doubleclick doing special handling and expanding
+ * David McKnight   (IBM)        - [250417] Restore from memento flag set to false during restore on startup
  *******************************************************************************/
 
 package org.eclipse.rse.internal.ui.view;
@@ -1506,14 +1507,12 @@ public class SystemViewPart
 	protected class RestoreRemoteObjects extends Job
 	{
 		private Vector _remoteObjectsToRestore;
-		private List _cacheSubSystemList;
 		private Vector _remoteObjectsToSelect;
 
-		public RestoreRemoteObjects(Vector remoteObjects, List cacheSubSystemList, Vector remoteObjectsToSelect)
+		public RestoreRemoteObjects(Vector remoteObjects, Vector remoteObjectsToSelect)
 		{
 			super("Restore Remote Objects"); //$NON-NLS-1$
 			_remoteObjectsToRestore = remoteObjects;
-			_cacheSubSystemList = cacheSubSystemList;
 			_remoteObjectsToSelect = remoteObjectsToSelect;
 		}
 
@@ -1548,6 +1547,8 @@ public class SystemViewPart
 
 		protected IStatus doRestore(IProgressMonitor monitor)
 		{
+			boolean restoreFromCache = RSEUIPlugin.getDefault().getPreferenceStore().getBoolean(ISystemPreferencesConstants.RESTORE_STATE_FROM_CACHE);
+
 			for (int i = 0; i < _remoteObjectsToRestore.size(); i++){
 
 				if (monitor.isCanceled()){
@@ -1563,8 +1564,7 @@ public class SystemViewPart
 
 					// yantzi: artemis 6.0:  notify subsystems that this is a restore from memento so they
 					// can optionally use the cache if desired
-					if (ss != null && ss.supportsCaching())
-					{
+					if (ss != null && restoreFromCache && ss.supportsCaching()){
 						ss.getCacheManager().setRestoreFromMemento(true);
 					}
 
@@ -1592,17 +1592,15 @@ public class SystemViewPart
 							}
 
 						}
-						catch (Exception e)
-						{
+						catch (Exception e){
 							// unexpected
 						}
-
-						// yantzi: artemis 6.0:  reset restore from memento flag
-						if (ss != null && ss.supportsCaching())
-						{
-							ss.getCacheManager().setRestoreFromMemento(false);
-						}
 					}
+
+					// yantzi: artemis 6.0:  reset restore from memento flag
+					if (ss != null && restoreFromCache && ss.supportsCaching()){
+						ss.getCacheManager().setRestoreFromMemento(false);
+					}				
 				}
 				else if (object instanceof ISystemFilterReference)
 				{
@@ -1610,6 +1608,11 @@ public class SystemViewPart
 					ISystemFilterReference fref = (ISystemFilterReference)object;
 					ISubSystem ss = fref.getSubSystem();
 					
+					// yantzi: artemis 6.0:  notify subsystems that this is a restore from memento so they
+					// can optionally use the cache if desired
+					if (ss != null && restoreFromCache && ss.supportsCaching()){
+						ss.getCacheManager().setRestoreFromMemento(true);
+					}
 					boolean isRestoringCache = ss.getCacheManager() != null && ss.getCacheManager().isRestoreFromMemento();
 					
 					if (!ss.isOffline()){
@@ -1637,17 +1640,14 @@ public class SystemViewPart
 							Display.getDefault().asyncExec(showRunnable);
 						}
 					}
+					
+					// yantzi: artemis 6.0:  reset restore from memento flag
+					if (ss != null && restoreFromCache && ss.supportsCaching()){
+						ss.getCacheManager().setRestoreFromMemento(false);
+					}	
 				}
 			}
-			boolean restoreFromCache = RSEUIPlugin.getDefault().getPreferenceStore().getBoolean(ISystemPreferencesConstants.RESTORE_STATE_FROM_CACHE);
-			// yantzi: artemis 6.0, restore memento flag for affected subsystems
-			if (restoreFromCache)
-			{
-				for (int i = 0; i < _cacheSubSystemList.size(); i++)
-				{
-					((ISubSystem) _cacheSubSystemList.get(i)).getCacheManager().setRestoreFromMemento(false);
-				}
-			}
+
 
 			return Status.OK_STATUS;
 		}
@@ -1833,7 +1833,7 @@ public class SystemViewPart
 
 			if (remoteElementsToRestore.size() > 0)
 			{
-				RestoreRemoteObjects restoreRemoteJob = new RestoreRemoteObjects(remoteElementsToRestore, cacheSubSystemList, remoteElementsToSelect);
+				RestoreRemoteObjects restoreRemoteJob = new RestoreRemoteObjects(remoteElementsToRestore, remoteElementsToSelect);
 				restoreRemoteJob.schedule();
 			}
 

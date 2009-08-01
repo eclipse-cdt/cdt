@@ -559,7 +559,8 @@ public class CEditor extends TextEditor implements ISelectionChangedListener, IC
 			return identifier.length() > 0
 				&& (Character.isUpperCase(identifier.charAt(0))
 					|| angularIntroducers.contains(identifier)
-					|| identifier.endsWith("_ptr")); //$NON-NLS-1$
+					|| identifier.endsWith("_ptr") //$NON-NLS-1$
+					|| identifier.endsWith("_cast")); //$NON-NLS-1$
 		}
 
 		/*

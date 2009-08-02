@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2008 Wind River Systems, Inc. and others.
+ * Copyright (c) 2006, 2009 Wind River Systems, Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -20,6 +20,7 @@
  * David McKnight   (IBM)        - [216252] [api][nls] Resource Strings specific to subsystems should be moved from rse.ui into files.ui / shells.ui / processes.ui where possible
  * David McKnight   (IBM)        - [220547] [api][breaking] SimpleSystemMessage needs to specify a message id and some messages should be shared
  * Anna Dushistova  (MontaVista) - [240523] [rseterminals] Provide a generic adapter factory that adapts any ITerminalService to an IShellService
+ * Anna Dushistova  (MontaVista) - [198819] [telnet] TelnetConnectorService does not send CommunicationsEvent.BEFORE_CONNECT
  *******************************************************************************/
 package org.eclipse.rse.internal.connectorservice.telnet;
 
@@ -122,6 +123,8 @@ public class TelnetConnectorService extends StandardConnectorService implements
 
 	protected void internalConnect(IProgressMonitor monitor) throws Exception {
 		try {
+			// Fire comm event to signal state about to change
+			fireCommunicationsEvent(CommunicationsEvent.BEFORE_CONNECT);
 			TelnetClient client = makeNewTelnetClient(monitor);
 			if( client != null ) {
 				synchronized(this) {

@@ -7144,7 +7144,7 @@ public class AST2CPPTests extends AST2BaseTest {
 	//		foo(L'a');
 	//	}
 	public void testWideCharacterLiteralTypes_Bug270892() throws Exception {
-		IASTTranslationUnit tu = parse( getAboveComment(), ParserLanguage.CPP ); 
+		IASTTranslationUnit tu = parse(getAboveComment(), ParserLanguage.CPP); 
 		CPPNameCollector col = new CPPNameCollector();
 		tu.accept(col);
 		
@@ -7202,4 +7202,47 @@ public class AST2CPPTests extends AST2BaseTest {
     	parseAndCheckBindings(code, ParserLanguage.CPP);
 	}
 
+	//	class A {
+	//	  friend inline void m(A p) {}
+	//	};
+	//
+	//	void test(A a) {
+	//	  m(a);
+	//	}
+	public void _testInlineFriendFunction_284690() throws Exception {
+		final String code = getAboveComment();
+		parseAndCheckBindings(code, ParserLanguage.CPP);
+	}
+
+	//	void f(int t);
+	//	void f(unsigned int t);
+	//	void f(long t);
+	//
+	//	enum IntEnum { i1 };
+	//	enum UnsignedEnum { u1 = 0x7FFFFFFF, u2 };
+	//	enum LongEnum { l1 = -1, l2 = 0x7FFFFFFF, l3 };
+	//
+	//	void test() {
+	//	  f(i1);
+	//	  f(u1);
+	//	  f(l1);
+	//	}
+	public void testEnumToIntConversion_285368() throws Exception {
+		BindingAssertionHelper ba= new BindingAssertionHelper(getAboveComment(), true);
+    	ICPPFunction f1 = ba.assertNonProblem("f(i1)", 1, ICPPFunction.class);
+    	IType t1 = f1.getType().getParameterTypes()[0];
+    	assertTrue(t1 instanceof ICPPBasicType);
+    	assertEquals(IBasicType.t_int, ((ICPPBasicType) t1).getType());
+    	assertEquals(0, ((ICPPBasicType) t1).getQualifierBits());
+    	ICPPFunction f2 = ba.assertNonProblem("f(u1)", 1, ICPPFunction.class);
+    	IType t2 = f2.getType().getParameterTypes()[0];
+    	assertTrue(t2 instanceof ICPPBasicType);
+    	assertEquals(IBasicType.t_int, ((ICPPBasicType) t2).getType());
+    	assertEquals(ICPPBasicType.IS_UNSIGNED, ((ICPPBasicType) t2).getQualifierBits());
+    	ICPPFunction f3 = ba.assertNonProblem("f(l1)", 1, ICPPFunction.class);
+    	IType t3 = f3.getType().getParameterTypes()[0];
+    	assertTrue(t3 instanceof ICPPBasicType);
+    	assertEquals(IBasicType.t_int, ((ICPPBasicType) t3).getType());
+    	assertEquals(ICPPBasicType.IS_LONG, ((ICPPBasicType) t3).getQualifierBits());
+	}
 }

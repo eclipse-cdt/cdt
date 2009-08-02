@@ -46,6 +46,7 @@ public class CEnumerator extends PlatformObject implements IEnumerator {
     }
 
     private final IASTName enumeratorName;
+
     public CEnumerator( IASTEnumerator enumtor ){
 		this.enumeratorName = enumtor.getName();
 		enumeratorName.setBinding( this );
@@ -95,5 +96,10 @@ public class CEnumerator extends PlatformObject implements IEnumerator {
 			return ((ASTEnumerator) parent).getIntegralValue();
 		
 		return Value.UNKNOWN;
+	}
+
+	@Override
+	public String toString() {
+		return getName();
 	}
 }

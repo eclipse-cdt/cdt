@@ -181,4 +181,9 @@ public class CEnumeration extends PlatformObject implements IEnumeration, ICInte
 		// either local or global, never part of structs
 		return CVisitor.findEnclosingFunction(node);
 	}
+
+	@Override
+	public String toString() {
+		return getName();
+	}
 }

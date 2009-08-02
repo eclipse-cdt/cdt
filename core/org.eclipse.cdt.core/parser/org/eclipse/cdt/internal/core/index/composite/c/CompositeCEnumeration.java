@@ -25,7 +25,7 @@ class CompositeCEnumeration extends CompositeCBinding implements IEnumeration, I
 
 	public IEnumerator[] getEnumerators() throws DOMException {
 		IEnumerator[] result = ((IEnumeration)rbinding).getEnumerators();
-		for(int i=0; i<result.length; i++)
+		for (int i= 0; i < result.length; i++)
 			result[i] = (IEnumerator) cf.getCompositeBinding((IIndexFragmentBinding) result[i]);
 		return result;
 	}
@@ -35,5 +35,10 @@ class CompositeCEnumeration extends CompositeCBinding implements IEnumeration, I
 	}
 
 	@Override
-	public Object clone() {fail(); return null;}
+	public Object clone() { fail(); return null; }
+
+	@Override
+	public String toString() {
+		return getName();
+	}
 }

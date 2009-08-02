@@ -144,4 +144,9 @@ public class CPPEnumerator extends PlatformObject implements IEnumerator, ICPPIn
 		
 		return Value.UNKNOWN;
 	}
+
+	@Override
+	public String toString() {
+		return getName();
+	}
 }

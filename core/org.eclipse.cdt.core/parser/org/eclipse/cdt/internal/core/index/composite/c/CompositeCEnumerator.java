@@ -24,10 +24,15 @@ class CompositeCEnumerator extends CompositeCBinding implements IEnumerator {
 	}
 
 	public IType getType() throws DOMException {
-		return cf.getCompositeType((IIndexType)((IEnumerator)rbinding).getType());
+		return cf.getCompositeType((IIndexType) ((IEnumerator) rbinding).getType());
 	}
 
 	public IValue getValue() {
-		return ((IEnumerator)rbinding).getValue();
+		return ((IEnumerator) rbinding).getValue();
+	}
+
+	@Override
+	public String toString() {
+		return getName();
 	}
 }

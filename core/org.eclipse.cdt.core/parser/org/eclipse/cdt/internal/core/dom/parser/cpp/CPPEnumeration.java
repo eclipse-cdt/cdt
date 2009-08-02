@@ -35,9 +35,9 @@ import org.eclipse.core.runtime.PlatformObject;
 public class CPPEnumeration extends PlatformObject implements IEnumeration, ICPPInternalBinding {
     private IASTName enumName;
 
-    public CPPEnumeration( IASTName name ) {
+    public CPPEnumeration(IASTName name) {
         this.enumName = name;
-        name.setBinding( this );
+        name.setBinding(this);
     }
 
     public IASTNode[] getDeclarations() {
@@ -57,7 +57,7 @@ public class CPPEnumeration extends PlatformObject implements IEnumeration, ICPP
     }
 
     public IScope getScope() {
-        return CPPVisitor.getContainingScope( enumName );
+        return CPPVisitor.getContainingScope(enumName);
     }
 
     public IASTNode getPhysicalNode() {
@@ -65,38 +65,39 @@ public class CPPEnumeration extends PlatformObject implements IEnumeration, ICPP
     }
     
     @Override
-	public Object clone(){
+	public Object clone() {
         IType t = null;
    		try {
             t = (IType) super.clone();
-        } catch ( CloneNotSupportedException e ) {
+        } catch (CloneNotSupportedException e) {
             //not going to happen
         }
         return t;
     }
 
     public IEnumerator[] getEnumerators() {
-        IASTEnumerationSpecifier.IASTEnumerator[] enums = ((IASTEnumerationSpecifier)enumName.getParent()).getEnumerators();
-        IEnumerator [] bindings = new IEnumerator [ enums.length ];
+        IASTEnumerationSpecifier.IASTEnumerator[] enums = 
+        		((IASTEnumerationSpecifier) enumName.getParent()).getEnumerators();
+        IEnumerator[] bindings = new IEnumerator[enums.length];
         
-        for( int i = 0; i < enums.length; i++ ){
+        for (int i = 0; i < enums.length; i++) {
             bindings[i] = (IEnumerator) enums[i].getName().resolveBinding();
         }
         return bindings;
     }
 
     public String[] getQualifiedName() {
-        return CPPVisitor.getQualifiedName( this );
+        return CPPVisitor.getQualifiedName(this);
     }
 
     public char[][] getQualifiedNameCharArray() {
-        return CPPVisitor.getQualifiedNameCharArray( this );
+        return CPPVisitor.getQualifiedNameCharArray(this);
     }
 
     public boolean isGloballyQualified() throws DOMException {
         IScope scope = getScope();
-        while( scope != null ){
-            if( scope instanceof ICPPBlockScope )
+        while (scope != null) {
+            if (scope instanceof ICPPBlockScope)
                 return false;
             scope = scope.getParent();
         }
@@ -109,11 +110,11 @@ public class CPPEnumeration extends PlatformObject implements IEnumeration, ICPP
 	public void addDeclaration(IASTNode node) {
 	}
 	
-    public boolean isSameType( IType type ) {
-        if( type == this )
+    public boolean isSameType(IType type) {
+        if (type == this)
             return true;
-        if( type instanceof ITypedef || type instanceof IIndexType)
-            return type.isSameType( this );
+        if (type instanceof ITypedef || type instanceof IIndexType)
+            return type.isSameType(this);
         return false;
     }
     
@@ -123,5 +124,10 @@ public class CPPEnumeration extends PlatformObject implements IEnumeration, ICPP
 
 	public IBinding getOwner() throws DOMException {
 		return CPPVisitor.findDeclarationOwner(enumName, true);
+	}
+
+	@Override
+	public String toString() {
+		return getName();
 	}
 }

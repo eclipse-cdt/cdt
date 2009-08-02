@@ -7288,13 +7288,26 @@ public class AST2CPPTests extends AST2BaseTest {
 	}
 
 	//	class A {
-	//	  friend inline void m(A p1, A p2) {}
+	//	  friend inline void m(A p) {}
 	//	};
 	//
-	//	void test(A a1, A a2) {
-	//	  m(a1, a2);
+	//	void test(A a) {
+	//	  m(a);
 	//	}
 	public void _testInlineFriendFunction_284690() throws Exception {
+		final String code = getAboveComment();
+		parseAndCheckBindings(code, ParserLanguage.CPP);
+	}
+
+	//	void f(int t);
+	//	void f(unsigned int t);
+	//
+	//	enum E { e1 };
+	//
+	//	void test() {
+	//	  f(e1);  // problem on f
+	//	}
+	public void _testEnumToIntConversion_285368() throws Exception {
 		final String code = getAboveComment();
 		parseAndCheckBindings(code, ParserLanguage.CPP);
 	}

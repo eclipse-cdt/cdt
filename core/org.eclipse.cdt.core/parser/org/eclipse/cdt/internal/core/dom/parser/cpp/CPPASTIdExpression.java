@@ -34,7 +34,6 @@ public class CPPASTIdExpression extends ASTNode implements IASTIdExpression, IAS
 
 	private IASTName name;
 
-
     public CPPASTIdExpression() {
 	}
 
@@ -47,7 +46,7 @@ public class CPPASTIdExpression extends ASTNode implements IASTIdExpression, IAS
 		copy.setOffsetAndLength(this);
 		return copy;
 	}
-	
+
 	public IASTName getName() {
         return name;
     }
@@ -62,21 +61,21 @@ public class CPPASTIdExpression extends ASTNode implements IASTIdExpression, IAS
     }
 
     @Override
-	public boolean accept( ASTVisitor action ){
-        if( action.shouldVisitExpressions ){
-		    switch( action.visit( this ) ){
-	            case ASTVisitor.PROCESS_ABORT : return false;
-	            case ASTVisitor.PROCESS_SKIP  : return true;
+	public boolean accept(ASTVisitor action) {
+        if (action.shouldVisitExpressions) {
+		    switch (action.visit(this)) {
+	            case ASTVisitor.PROCESS_ABORT: return false;
+	            case ASTVisitor.PROCESS_SKIP:  return true;
 	            default : break;
 	        }
 		}
-      
-        if( name != null ) if( !name.accept( action ) ) return false;
 
-        if( action.shouldVisitExpressions ){
-		    switch( action.leave( this ) ){
-	            case ASTVisitor.PROCESS_ABORT : return false;
-	            case ASTVisitor.PROCESS_SKIP  : return true;
+        if (name != null && !name.accept(action)) return false;
+
+        if (action.shouldVisitExpressions) {
+		    switch (action.leave(this)) {
+	            case ASTVisitor.PROCESS_ABORT: return false;
+	            case ASTVisitor.PROCESS_SKIP:  return true;
 	            default : break;
 	        }
 		}
@@ -84,10 +83,10 @@ public class CPPASTIdExpression extends ASTNode implements IASTIdExpression, IAS
     }
 
 	public int getRoleForName(IASTName n) {
-		if( name == n )return r_reference;
+		if (name == n) return r_reference;
 		return r_unclear;
 	}
-	
+
 	public IType getExpressionType() {
         IBinding binding = name.resolvePreBinding();
         try {
@@ -111,8 +110,13 @@ public class CPPASTIdExpression extends ASTNode implements IASTIdExpression, IAS
 		}
 		return null;
 	}
-	
+
 	public IBinding[] findBindings(IASTName n, boolean isPrefix) {
 		return CPPSemantics.findBindingsForContentAssist(n, isPrefix);
+	}
+
+	@Override
+	public String toString() {
+		return name != null ? name.toString() : "<unnamed>"; //$NON-NLS-1$
 	}
 }

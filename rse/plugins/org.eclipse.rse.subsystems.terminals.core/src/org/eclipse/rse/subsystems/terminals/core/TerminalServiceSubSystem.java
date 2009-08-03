@@ -13,6 +13,7 @@
  * Anna Dushistova  (MontaVista) - [227569] [rseterminal][api] Provide a "generic" Terminal subsystem
  * Anna Dushistova  (MontaVista) - [257638] [rseterminal] Terminal subsystem doesn't have service properties
  * David McKnight   (IBM)        - [272882] [api] Handle exceptions in IService.initService()
+ * Anna Dushistova  (MontaVista) - [240530][rseterminal][apidoc] Add terminals.rse Javadoc into org.eclipse.rse.doc.isv
  ********************************************************************************/
 
 package org.eclipse.rse.subsystems.terminals.core;
@@ -39,13 +40,8 @@ import org.eclipse.swt.widgets.Display;
 /**
  * A Subsystem that has terminal instances as children.
  *
- * <p>
- * <strong>EXPERIMENTAL</strong>. This class or interface has been added as part
- * of a work in progress. There is no guarantee that this API will work or that
- * it will remain the same. Please do not use this API without consulting with
- * the <a href="http://www.eclipse.org/dsdp/tm/">Target Management</a> team.
- * </p>
  */
+
 public class TerminalServiceSubSystem extends SubSystem implements
 		ITerminalServiceSubSystem, ICommunicationsListener {
 

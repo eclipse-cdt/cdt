@@ -7,6 +7,7 @@
  * Contributors:
  * Yu-Fen Kuo       (MontaVista) - initial API and implementation
  * Anna Dushistova  (MontaVista) - [227569] [rseterminal][api] Provide a "generic" Terminal subsystem
+ * Anna Dushistova  (MontaVista) - [240530] [rseterminal][apidoc] Add terminals.rse Javadoc into org.eclipse.rse.doc.isv
  ********************************************************************************/
 
 package org.eclipse.rse.subsystems.terminals.core;
@@ -23,13 +24,7 @@ import org.eclipse.rse.services.terminals.ITerminalService;
  * The implementation of the ITerminalServiceSubSystemConfiguration interface
  * contains information about what features the subsystem supports, and creates
  * TerminalServiceSubSystem instances.
- *
- * <p>
- * <strong>EXPERIMENTAL</strong>. This class or interface has been added as part
- * of a work in progress. There is no guarantee that this API will work or that
- * it will remain the same. Please do not use this API without consulting with
- * the <a href="http://www.eclipse.org/dsdp/tm/">Target Management</a> team.
- * </p>
+ * 
  */
 public abstract class TerminalServiceSubSystemConfiguration extends
 		SubSystemConfiguration implements

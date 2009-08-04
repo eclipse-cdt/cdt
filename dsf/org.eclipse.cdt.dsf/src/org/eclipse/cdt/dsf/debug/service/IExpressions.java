@@ -158,8 +158,8 @@ public interface IExpressions extends IFormattedValues {
      *                
      * @param expression: The expression to evaluate.
      * 
-     * @return  An expression data model context object that must be passed to 
-     * getModelData() to obtain the value of the expression. 
+     * @return  An expression data model context object that must be passed to the appropriate
+     *          data retrieval routine to obtain the value of the expression.
      */
     IExpressionDMContext createExpression(IDMContext ctx, String expression);
 

@@ -452,28 +452,6 @@ public class PDARegisters extends AbstractDsfService
         PDAPlugin.failRequest(rm, NOT_SUPPORTED, "Finding context not supported"); //$NON-NLS-1$
     }
     
-    @SuppressWarnings("unchecked")
-    public void getModelData(IDMContext dmc, DataRequestMonitor<?> rm) {
-        /*
-         * This is the method which is called when actual results need to be returned.  We
-         * can be called either with a service DMC for which we return ourselves or we can
-         * be called with the DMC's we have handed out. If the latter is the case then  we
-         * data mine by talking to the Debug Engine.
-         */
-        
-        if (dmc instanceof RegisterGroupDMContext) {
-            getRegisterGroupData((RegisterGroupDMContext)dmc, (DataRequestMonitor<IRegisterGroupDMData>)rm);
-        } else if (dmc instanceof RegisterDMContext) {
-            getRegisterData((RegisterDMContext)dmc, (DataRequestMonitor<IRegisterDMData>)rm);
-        } else if (dmc instanceof BitFieldDMContext) {
-            getBitFieldData((BitFieldDMContext) dmc, (DataRequestMonitor<IBitFieldDMData>)rm);
-        } else if (dmc instanceof FormattedValueDMContext) {
-            getFormattedExpressionValue((FormattedValueDMContext)dmc, (DataRequestMonitor<FormattedValueDMData>)rm);
-        } else {
-            PDAPlugin.failRequest(rm, INVALID_HANDLE, "Unknown DMC type");  //$NON-NLS-1$
-        }
-    }
-
     public void getFormattedExpressionValue(FormattedValueDMContext dmc, DataRequestMonitor<FormattedValueDMData> rm) {
         fExpressions.getFormattedExpressionValue(dmc, rm);
     }

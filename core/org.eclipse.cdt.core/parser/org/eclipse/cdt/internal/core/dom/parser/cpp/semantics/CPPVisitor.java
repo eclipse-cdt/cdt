@@ -367,9 +367,11 @@ public class CPPVisitor extends ASTQueries {
 		
 		// 7.1.5.3-2 ... If name lookup does not find a declaration for the name, the elaborated-type-specifier is ill-formed
 		// unless it is of the simple form class-key identifier
-	    if (mustBeSimple && elabType.getName() instanceof ICPPASTQualifiedName)
+	    if (mustBeSimple && 
+	    		(elabType.getName() instanceof ICPPASTQualifiedName || elabType.getKind() == IASTElaboratedTypeSpecifier.k_enum)) {
 	    	return binding;
-	    
+	    }
+
         try {
         	boolean template = false;
         	ICPPScope scope = (ICPPScope) getContainingScope(name);

@@ -7201,6 +7201,12 @@ public class AST2CPPTests extends AST2BaseTest {
 
     	parseAndCheckBindings(code, ParserLanguage.CPP);
 	}
+	
+	// typedef enum enum_name enum_name;
+	public void testTypedefRecursion_285457() throws Exception {
+		BindingAssertionHelper ba= new BindingAssertionHelper(getAboveComment(), true);
+		ba.assertProblem("enum_name", 9);
+	}
 
 	//	class A {
 	//	  friend inline void m(A p) {}

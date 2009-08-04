@@ -17,6 +17,7 @@
  * Kevin Doyle 		(IBM)		 - [242431] Register a new unique context menu id, so contributions can be made to all our views
  * David McKnight   (IBM)        - [250169] Problems with extending the menu's of results in Remote Search View
  * David McKnight   (IBM)        - [214395] Properties View not updated when clicking on Search Results
+ * David McKnight   (IBM)        - [190015] [performance] Remove All Match's from Search Results Takes a while
  *******************************************************************************/
 
 package org.eclipse.rse.internal.ui.view.search;
@@ -888,7 +889,8 @@ public class SystemSearchViewPart extends ViewPart
 			// but flush cache of the provider first for an accurate refresh
 			SystemTableTreeViewProvider provider = (SystemTableTreeViewProvider)(tableView.getContentProvider());
 			provider.flushCache();
-			tableView.refresh();
+			Tree tree = tableView.getTree();
+			tree.removeAll();
 		}
 		// other search
 		else if (currentViewer instanceof TreeViewer){

@@ -7330,4 +7330,10 @@ public class AST2CPPTests extends AST2BaseTest {
     	assertEquals(IBasicType.t_int, ((ICPPBasicType) t3).getType());
     	assertEquals(ICPPBasicType.IS_LONG, ((ICPPBasicType) t3).getQualifierBits());
 	}
+	
+	// typedef enum enum_name enum_name;
+	public void testTypedefRecursion_285457() throws Exception {
+		BindingAssertionHelper ba= new BindingAssertionHelper(getAboveComment(), true);
+		ba.assertProblem("enum_name", 9);
+	}
 }

@@ -21,6 +21,7 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.dialogs.ProgressMonitorDialog;
 import org.eclipse.jface.operation.IRunnableContext;
 import org.eclipse.jface.operation.IRunnableWithProgress;
+import org.eclipse.jface.util.LocalSelectionTransfer;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.StructuredViewer;
@@ -28,7 +29,6 @@ import org.eclipse.swt.dnd.DND;
 import org.eclipse.swt.dnd.DropTargetEvent;
 import org.eclipse.swt.dnd.Transfer;
 import org.eclipse.swt.widgets.Shell;
-import org.eclipse.ui.views.navigator.LocalSelectionTransfer;
 
 import org.eclipse.cdt.core.model.CModelException;
 import org.eclipse.cdt.core.model.CoreModel;
@@ -55,7 +55,7 @@ public class SelectionTransferDropAdapter extends CDTViewerDropAdapter implement
 	//---- TransferDropTargetListener interface ---------------------------------------
 	
 	public Transfer getTransfer() {
-		return LocalSelectionTransfer.getInstance();
+		return LocalSelectionTransfer.getTransfer();
 	}
 	
 	public boolean isEnabled(DropTargetEvent event) {
@@ -121,7 +121,7 @@ public class SelectionTransferDropAdapter extends CDTViewerDropAdapter implement
 		if (fElements != null) {
 			return;
 		}
-		ISelection s= LocalSelectionTransfer.getInstance().getSelection();
+		ISelection s= LocalSelectionTransfer.getTransfer().getSelection();
 		if (!(s instanceof IStructuredSelection)) {
 			return;
 		}
@@ -129,7 +129,7 @@ public class SelectionTransferDropAdapter extends CDTViewerDropAdapter implement
 	}
 	
 	private boolean tooFast(DropTargetEvent event) {
-		return Math.abs(LocalSelectionTransfer.getInstance().getSelectionSetTime() - (event.time & 0xFFFFFFFFL)) < DROP_TIME_DIFF_TRESHOLD;
+		return Math.abs(LocalSelectionTransfer.getTransfer().getSelectionSetTime() - (event.time & 0xFFFFFFFFL)) < DROP_TIME_DIFF_TRESHOLD;
 	}	
 
 	@Override

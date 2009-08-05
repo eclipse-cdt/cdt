@@ -25,6 +25,7 @@ import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.util.IPropertyChangeListener;
+import org.eclipse.jface.util.LocalSelectionTransfer;
 import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.jface.viewers.AbstractTreeViewer;
 import org.eclipse.jface.viewers.DoubleClickEvent;
@@ -80,7 +81,6 @@ import org.eclipse.ui.part.ResourceTransfer;
 import org.eclipse.ui.part.ShowInContext;
 import org.eclipse.ui.part.ViewPart;
 import org.eclipse.ui.views.framelist.FrameList;
-import org.eclipse.ui.views.navigator.LocalSelectionTransfer;
 
 import org.eclipse.cdt.core.model.CoreModel;
 import org.eclipse.cdt.core.model.IArchive;
@@ -381,7 +381,7 @@ public class CView extends ViewPart implements ISetSelectionTarget, IPropertyCha
 	private void initDrag() {
 		int ops= DND.DROP_COPY | DND.DROP_MOVE | DND.DROP_LINK;
 		Transfer[] transfers= new Transfer[] {
-				LocalSelectionTransfer.getInstance(),
+				LocalSelectionTransfer.getTransfer(),
 				ResourceTransfer.getInstance(),
 				FileTransfer.getInstance(),
 		};
@@ -396,7 +396,7 @@ public class CView extends ViewPart implements ISetSelectionTarget, IPropertyCha
 	private void initDrop() {
 		int ops= DND.DROP_COPY | DND.DROP_MOVE | DND.DROP_LINK | DND.DROP_DEFAULT;
 		Transfer[] transfers= new Transfer[] {
-			LocalSelectionTransfer.getInstance(),
+			LocalSelectionTransfer.getTransfer(),
 			ResourceTransfer.getInstance(),
 			FileTransfer.getInstance(),
 			PluginTransfer.getInstance()

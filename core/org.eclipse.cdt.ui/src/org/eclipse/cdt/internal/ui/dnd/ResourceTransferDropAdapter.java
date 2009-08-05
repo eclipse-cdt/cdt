@@ -18,6 +18,7 @@ import java.util.Iterator;
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IAdaptable;
+import org.eclipse.jface.util.LocalSelectionTransfer;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.StructuredViewer;
@@ -29,7 +30,6 @@ import org.eclipse.ui.actions.CopyFilesAndFoldersOperation;
 import org.eclipse.ui.actions.MoveFilesAndFoldersOperation;
 import org.eclipse.ui.actions.ReadOnlyStateChecker;
 import org.eclipse.ui.part.ResourceTransfer;
-import org.eclipse.ui.views.navigator.LocalSelectionTransfer;
 
 import org.eclipse.cdt.core.model.ICElement;
 
@@ -133,7 +133,7 @@ public class ResourceTransferDropAdapter extends CDTViewerDropAdapter implements
 	private IResource[] getSelectedResources() {
 		ArrayList<IResource> selectedResources = new ArrayList<IResource>();
 		
-		ISelection selection = LocalSelectionTransfer.getInstance()
+		ISelection selection = LocalSelectionTransfer.getTransfer()
 		.getSelection();
 		if (selection instanceof IStructuredSelection) {
 			IStructuredSelection ssel = (IStructuredSelection) selection;

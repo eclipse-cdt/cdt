@@ -144,7 +144,7 @@ public class MakeContentProvider implements ITreeContentProvider, IMakeTargetLis
 					ctrl.getDisplay().asyncExec(new Runnable() {
 
 						public void run() {
-							if (ctrl != null && !ctrl.isDisposed()) {
+							if (!ctrl.isDisposed()) {
 								viewer.refresh();
 							}
 						}
@@ -156,7 +156,7 @@ public class MakeContentProvider implements ITreeContentProvider, IMakeTargetLis
 					ctrl.getDisplay().asyncExec(new Runnable() {
 
 						public void run() {
-							if (ctrl != null && !ctrl.isDisposed()) {
+							if (!ctrl.isDisposed()) {
 								if (bFlatten) {
 									viewer.refresh();
 								} else {

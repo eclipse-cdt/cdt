@@ -29,6 +29,7 @@ public class MakeStartup extends Job {
 		setSystem(true);
 	}
 
+	@Override
 	protected IStatus run(IProgressMonitor monitor) {
         final IProject[] oldProject = UpdateMakeProjectAction.getOldProjects();
         if (oldProject.length > 0) {

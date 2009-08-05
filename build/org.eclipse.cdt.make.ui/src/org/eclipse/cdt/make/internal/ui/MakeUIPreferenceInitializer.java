@@ -22,6 +22,7 @@ public class MakeUIPreferenceInitializer extends AbstractPreferenceInitializer {
 	/* (non-Javadoc)
 	 * @see org.eclipse.core.runtime.preferences.AbstractPreferenceInitializer#initializeDefaultPreferences()
 	 */
+	@Override
 	public void initializeDefaultPreferences() {
 		IPreferenceStore store = MakeUIPlugin.getDefault().getPreferenceStore();
 		MakePreferencePage.initDefaults(store);

@@ -269,6 +269,7 @@ public class MakeUIPlugin extends AbstractUIPlugin {
 	}
 
 	
+	@Override
 	public void start(BundleContext context) throws Exception {
 		super.start(context);
 		new MakeStartup().schedule();
@@ -277,6 +278,7 @@ public class MakeUIPlugin extends AbstractUIPlugin {
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.plugin.AbstractUIPlugin#stop(org.osgi.framework.BundleContext)
 	 */
+	@Override
 	public void stop(BundleContext context) throws Exception {
 		if (fWorkingCopyManager != null) {
 			fWorkingCopyManager.shutdown();

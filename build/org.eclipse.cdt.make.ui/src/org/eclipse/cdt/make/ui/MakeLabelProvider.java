@@ -15,6 +15,7 @@ import org.eclipse.cdt.make.core.IMakeTarget;
 import org.eclipse.cdt.make.internal.ui.MakeUIImages;
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.runtime.IPath;
+import org.eclipse.jface.viewers.ILabelProvider;
 import org.eclipse.jface.viewers.ITableLabelProvider;
 import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.swt.graphics.Image;
@@ -35,6 +36,7 @@ public class MakeLabelProvider extends LabelProvider implements ITableLabelProvi
 	/**
 	 * @see ILabelProvider#getImage(Object)
 	 */
+	@Override
 	public Image getImage(Object obj) {
 		Image image = null;
 		if (obj instanceof IMakeTarget) {
@@ -48,6 +50,7 @@ public class MakeLabelProvider extends LabelProvider implements ITableLabelProvi
 	/**
 	 * @see ILabelProvider#getText(Object)
 	 */
+	@Override
 	public String getText(Object obj) {
 		if (obj instanceof IMakeTarget) {
 			return ((IMakeTarget) obj).getName();
@@ -57,6 +60,7 @@ public class MakeLabelProvider extends LabelProvider implements ITableLabelProvi
 		return ""; //$NON-NLS-1$
 	}
 
+	@Override
 	public void dispose() {
 		super.dispose();
 		fLableProvider.dispose();

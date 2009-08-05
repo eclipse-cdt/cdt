@@ -52,6 +52,7 @@ public class TargetListViewerPart extends StructuredViewerPart {
         fContainer = container;
     }
 
+    @Override
     protected StructuredViewer createStructuredViewer(Composite parent,
             int style) {
         tableViewer = new TableViewer(parent, SWT.SINGLE | SWT.BORDER);
@@ -81,6 +82,7 @@ public class TargetListViewerPart extends StructuredViewerPart {
         tableViewer.setContentProvider(new MakeContentProvider(true));
         tableViewer.addFilter(new ViewerFilter() {
 
+            @Override
             public boolean select(Viewer viewer, Object parentElement,
                     Object element) {
                 return (element instanceof IMakeTarget);
@@ -93,6 +95,7 @@ public class TargetListViewerPart extends StructuredViewerPart {
         return tableViewer;
     }
 
+    @Override
     protected void buttonSelected(Button button, int index) {
         try {
             switch (index) {
@@ -155,6 +158,7 @@ public class TargetListViewerPart extends StructuredViewerPart {
      * 
      * @see org.eclipse.cdt.make.internal.ui.part.SharedPart#updateEnabledState()
      */
+    @Override
     protected void updateEnabledState() {
         super.updateEnabledState();
         setButtonEnabled(REMOVE_TARGET, fSelectedTarget != null && isEnabled());
@@ -167,6 +171,7 @@ public class TargetListViewerPart extends StructuredViewerPart {
      * @see org.eclipse.cdt.make.internal.ui.part.SharedPart#createControl(org.eclipse.swt.widgets.Composite,
      *      int, int)
      */
+    @Override
     public void createControl(Composite parent, int style, int span) {
         super.createControl(parent, style, span);
         updateEnabledState();

@@ -16,7 +16,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.eclipse.cdt.make.core.IMakeTarget;
-import org.eclipse.cdt.make.internal.core.MakeTargetManager;
 import org.eclipse.cdt.make.internal.ui.MakeUIPlugin;
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.runtime.CoreException;
@@ -103,8 +102,7 @@ public class FileTransferDropTargetListener extends AbstractContainerAreaDropAda
 
 	/**
 	 * Creates make targets array from filenames array. These will be loose
-	 * targets not connected to global make target list managed by
-	 * {@link MakeTargetManager}.
+	 * targets not connected to global make target list managed by MakeTargetManager
 	 *
 	 * @param filenames - array of filenames. Each filename expected to be an
 	 *        actual file otherwise a user gets a warning popup.

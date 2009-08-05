@@ -599,7 +599,7 @@
    <feature url="features/org.eclipse.rse.ssh_3.0.0.qualifier.jar" id="org.eclipse.rse.ssh" version="3.0.0.qualifier">
       <category name="TM and RSE 3.1.1"/>
    </feature>
-   <feature url="features/org.eclipse.rse.telnet_2.2.0.qualifier.jar" id="org.eclipse.rse.telnet" version="2.2.0.qualifier">
+   <feature url="features/org.eclipse.rse.telnet_2.2.1.qualifier.jar" id="org.eclipse.rse.telnet" version="2.2.1.qualifier">
       <category name="TM and RSE 3.1.1"/>
    </feature>
    <feature url="features/org.eclipse.rse.examples_3.1.0.qualifier.jar" id="org.eclipse.rse.examples" version="3.1.0.qualifier">

@@ -11,10 +11,10 @@
 
 package org.eclipse.cdt.make.internal.ui.dnd;
 
+import org.eclipse.jface.util.LocalSelectionTransfer;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.ISelectionProvider;
 import org.eclipse.swt.dnd.Transfer;
-import org.eclipse.ui.views.navigator.LocalSelectionTransfer;
 
 /**
  * {@code LocalTransferDragSourceListener} supports dragging of selected objects from
@@ -39,7 +39,7 @@ public class LocalTransferDragSourceListener extends AbstractSelectionDragAdapte
 	 * drop operation for.
 	 */
 	public Transfer getTransfer() {
-		return LocalSelectionTransfer.getInstance();
+		return LocalSelectionTransfer.getTransfer();
 	}
 
 	/**
@@ -60,7 +60,7 @@ public class LocalTransferDragSourceListener extends AbstractSelectionDragAdapte
 	 */
 	@Override
 	public void dragInit(ISelection selection) {
-		LocalSelectionTransfer.getInstance().setSelection(selection);
+		LocalSelectionTransfer.getTransfer().setSelection(selection);
 	}
 
 	/**
@@ -71,7 +71,7 @@ public class LocalTransferDragSourceListener extends AbstractSelectionDragAdapte
 	 */
 	@Override
 	public Object prepareDataForTransfer(ISelection selection) {
-		return LocalSelectionTransfer.getInstance().getSelection();
+		return LocalSelectionTransfer.getTransfer().getSelection();
 	}
 
 	/**
@@ -79,7 +79,7 @@ public class LocalTransferDragSourceListener extends AbstractSelectionDragAdapte
 	 */
 	@Override
 	public void dragDone() {
-		LocalSelectionTransfer.getInstance().setSelection(null);
-		LocalSelectionTransfer.getInstance().setSelectionSetTime(0);
+		LocalSelectionTransfer.getTransfer().setSelection(null);
+		LocalSelectionTransfer.getTransfer().setSelectionSetTime(0);
 	}
 }

@@ -44,6 +44,7 @@ import org.eclipse.jface.action.Separator;
 import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.util.DelegatingDragAdapter;
 import org.eclipse.jface.util.DelegatingDropAdapter;
+import org.eclipse.jface.util.LocalSelectionTransfer;
 import org.eclipse.jface.viewers.DoubleClickEvent;
 import org.eclipse.jface.viewers.IDoubleClickListener;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
@@ -66,7 +67,6 @@ import org.eclipse.ui.IActionBars;
 import org.eclipse.ui.actions.TextActionHandler;
 import org.eclipse.ui.part.DrillDownAdapter;
 import org.eclipse.ui.part.ViewPart;
-import org.eclipse.ui.views.navigator.LocalSelectionTransfer;
 
 public class MakeView extends ViewPart {
 
@@ -152,7 +152,7 @@ public class MakeView extends ViewPart {
 		// LocalSelectionTransfer is used inside Make Target View
 		// TextTransfer is used to drag outside the View or eclipse
 		Transfer[] dragTransfers= {
-			LocalSelectionTransfer.getInstance(),
+			LocalSelectionTransfer.getTransfer(),
 			MakeTargetTransfer.getInstance(),
 			TextTransfer.getInstance(),
 		};
@@ -169,7 +169,7 @@ public class MakeView extends ViewPart {
 		fViewer.addDragSupport(opers, dragTransfers, delegatingDragAdapter);
 
 		Transfer[] dropTransfers= {
-			LocalSelectionTransfer.getInstance(),
+			LocalSelectionTransfer.getTransfer(),
 			MakeTargetTransfer.getInstance(),
 			FileTransfer.getInstance(),
 			TextTransfer.getInstance(),

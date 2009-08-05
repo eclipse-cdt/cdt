@@ -20,12 +20,12 @@ import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IAdaptable;
+import org.eclipse.jface.util.LocalSelectionTransfer;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.swt.dnd.DND;
 import org.eclipse.swt.dnd.Transfer;
-import org.eclipse.ui.views.navigator.LocalSelectionTransfer;
 
 /**
  * {@code LocalTransferDropTargetListener} supports dropping of dragged selection to
@@ -53,7 +53,7 @@ public class LocalTransferDropTargetListener extends AbstractContainerAreaDropAd
 	 * drop operation for.
 	 */
 	public Transfer getTransfer() {
-		return LocalSelectionTransfer.getInstance();
+		return LocalSelectionTransfer.getTransfer();
 	}
 
 	/**
@@ -62,7 +62,7 @@ public class LocalTransferDropTargetListener extends AbstractContainerAreaDropAd
 	 * @return selection as {@link IStructuredSelection}.
 	 */
 	private IStructuredSelection getSelection() {
-		ISelection selection = LocalSelectionTransfer.getInstance().getSelection();
+		ISelection selection = LocalSelectionTransfer.getTransfer().getSelection();
 		if (selection instanceof IStructuredSelection) {
 			return (IStructuredSelection) selection;
 		}

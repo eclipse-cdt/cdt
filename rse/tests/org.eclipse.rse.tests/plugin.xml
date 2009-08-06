@@ -108,10 +108,17 @@
     </systemType>
       <systemType
        description="Linux without shells subsystem"
-            id="org.eclipse.rse.tests.sshTerminal"
+            id="org.eclipse.rse.tests.systemType.sshTerminal"
             label="Ssh without shells"
             name="Ssh without shells"
             subsystemConfigurationIds="ssh.terminals;ssh.files;processes.shell.linux">
+      </systemType>
+      <systemType
+       description="FTP with SSH Shell"
+            id="org.eclipse.rse.tests.systemType.ftpSsh"
+            label="FTP with SSH shell"
+            name="FTP with SSH shell"
+            subsystemConfigurationIds="ssh.shells;ftp.files">
       </systemType>
  </extension>
  

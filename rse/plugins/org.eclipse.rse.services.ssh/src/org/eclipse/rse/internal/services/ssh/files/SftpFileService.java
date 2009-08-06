@@ -39,6 +39,7 @@
  * David McKnight   (IBM)        - [271244] [sftp files] "My Home" filter not working
  * David McKnight   (IBM)        - [272882] [api] Handle exceptions in IService.initService()
  * Martin Oberhuber (Wind River) - [274568] Dont use SftpMonitor for Streams transfer
+ * Patrick Tassé    (Ericsson)   - [285226] Empty directory shown as an error message
  *******************************************************************************/
 
 package org.eclipse.rse.internal.services.ssh.files;
@@ -87,6 +88,7 @@ import org.eclipse.rse.services.clientserver.messages.SystemMessage;
 import org.eclipse.rse.services.clientserver.messages.SystemMessageException;
 import org.eclipse.rse.services.clientserver.messages.SystemOperationCancelledException;
 import org.eclipse.rse.services.clientserver.messages.SystemOperationFailedException;
+import org.eclipse.rse.services.clientserver.messages.SystemRemoteSecurityException;
 import org.eclipse.rse.services.clientserver.messages.SystemUnexpectedErrorException;
 import org.eclipse.rse.services.files.AbstractFileService;
 import org.eclipse.rse.services.files.HostFilePermissions;
@@ -95,8 +97,8 @@ import org.eclipse.rse.services.files.IFileService;
 import org.eclipse.rse.services.files.IHostFile;
 import org.eclipse.rse.services.files.IHostFilePermissions;
 import org.eclipse.rse.services.files.IHostFilePermissionsContainer;
+import org.eclipse.rse.services.files.RemoteFileException;
 import org.eclipse.rse.services.files.RemoteFileIOException;
-import org.eclipse.rse.services.files.RemoteFileSecurityException;
 public class SftpFileService extends AbstractFileService implements ISshService, IFilePermissionsService
 {
 
@@ -438,7 +440,7 @@ public class SftpFileService extends AbstractFileService implements ISshService,
 			SystemMessageException messageException;
 			SftpException sftpe = (SftpException)e;
 			if (sftpe.id == ChannelSftp.SSH_FX_PERMISSION_DENIED) {
-				messageException = new RemoteFileSecurityException(e);
+				messageException = new SystemRemoteSecurityException(Activator.PLUGIN_ID, e.getLocalizedMessage(), e);
 			} else if (sftpe.id == ChannelSftp.SSH_FX_NO_SUCH_FILE) {
 				//TODO better throw SENFE at the place where we know what element and operation is done
 				messageException = new SystemElementNotFoundException("", ""); //$NON-NLS-1$ //$NON-NLS-2$
@@ -548,6 +550,15 @@ public class SftpFileService extends AbstractFileService implements ISshService,
 							//don't show the trivial names
 							continue;
 						}
+						if (vv.size() == 1 && fileName.equals(parentPath.substring(parentPath.lastIndexOf('/') + 1))) {
+							//If there is only one entry and it has the same name as the parent path, the parentPath could be a file.
+							//Check if the parentPath is a directory.
+							SftpATTRS attrs = getChannel("SftpFileService.internalFetch: " + parentPath).stat(parentPath); //$NON-NLS-1$
+							if (!attrs.isDir()) {
+								// parent was a file and not a folder
+								throw new RemoteFileException("Not a folder: " + parentPath); //$NON-NLS-1$
+							}
+						}
 						if (filematcher.matches(fileName) || (lsEntry.getAttrs().isDir() && fileType!=IFileService.FILE_TYPE_FOLDERS)) {
 							//get ALL directory names (unless looking for folders only)
 							SftpHostFile node = makeHostFile(parentPath, fileName, lsEntry.getAttrs());
@@ -560,6 +571,22 @@ public class SftpFileService extends AbstractFileService implements ISshService,
 				}
 				Activator.trace("SftpFileService.internalFetch <--"); //$NON-NLS-1$
 			} catch(Exception e) {
+				if ( (e instanceof SftpException) && ((SftpException)e).id==ChannelSftp.SSH_FX_NO_SUCH_FILE) {
+					//We can get a "2: No such file" exception when the directory is empty.
+					try {
+						// Check if the parentPath exists and is a folder
+						SftpATTRS attrs = getChannel("SftpFileService.internalFetch: " + parentPath).stat(parentPath); //$NON-NLS-1$
+						if (attrs.isDir()) {
+							// We MUST NOT throw an exception here. Just return
+							// an empty IHostFile array.
+							return new IHostFile[0];
+						}
+						// else, fall through to exception handling -- will send
+						// SystemRemoteFileIOException
+					} catch (Exception ee) {
+						//Can't get the folder attributes so let the first exception be handled.
+					}
+				}
 				//TODO throw new SystemMessageException.
 				//We get a "2: No such file" exception when we try to get contents
 				//of a symbolic link that turns out to point to a file rather than
@@ -881,7 +908,7 @@ public class SftpFileService extends AbstractFileService implements ISshService,
 	public IHostFile[] getRoots(IProgressMonitor monitor) {
 		IHostFile root = null;
 		try {
-				root = getFile(null, "/", monitor);
+			root = getFile(null, "/", monitor); //$NON-NLS-1$
 		}
 		catch (SystemMessageException e){
 		}
@@ -957,7 +984,7 @@ public class SftpFileService extends AbstractFileService implements ISshService,
 						try {
 							getChannel("SftpFileService.delete.rm").rm(fullPathRecoded); //$NON-NLS-1$
 						} catch (Exception e2) {
-							throw new SystemElementNotFoundException(Activator.PLUGIN_ID, fullPath, "delete");
+							throw new SystemElementNotFoundException(Activator.PLUGIN_ID, fullPath, "delete"); //$NON-NLS-1$
 						}
 					} else {
 						//Security exception, or similar: will be wrapped in makeSystemMessageException()
@@ -1184,7 +1211,7 @@ public class SftpFileService extends AbstractFileService implements ISshService,
 			} catch (Exception e) {
 				Activator.trace("SftpFileService.setReadOnly "+path+" failed: "+e.toString()); //$NON-NLS-1$ //$NON-NLS-2$
 				if ((e instanceof SftpException) && ((SftpException) e).id == ChannelSftp.SSH_FX_NO_SUCH_FILE) {
-					throw new SystemElementNotFoundException(Activator.PLUGIN_ID, path, "setReadOnly");
+					throw new SystemElementNotFoundException(Activator.PLUGIN_ID, path, "setReadOnly"); //$NON-NLS-1$
 				}
 				throw makeSystemMessageException(e);
 			} finally {
@@ -1298,7 +1325,7 @@ public class SftpFileService extends AbstractFileService implements ISshService,
 			} catch (Exception e) {
 				Activator.trace("SftpFileService.setFilePermissions " + path + " failed: " + e.toString()); //$NON-NLS-1$ //$NON-NLS-2$
 				if ((e instanceof SftpException) && ((SftpException) e).id == ChannelSftp.SSH_FX_NO_SUCH_FILE) {
-					throw new SystemElementNotFoundException(Activator.PLUGIN_ID, path, "setFilePermissions");
+					throw new SystemElementNotFoundException(Activator.PLUGIN_ID, path, "setFilePermissions"); //$NON-NLS-1$
 				}
 				throw makeSystemMessageException(e);
 			} finally {

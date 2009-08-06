@@ -38,6 +38,7 @@
  * Martin Oberhuber (Wind River) - [227135] Cryptic exception when sftp-server is missing
  * David McKnight   (IBM)        - [271244] [sftp files] "My Home" filter not working
  * David McKnight   (IBM)        - [272882] [api] Handle exceptions in IService.initService()
+ * Martin Oberhuber (Wind River) - [274568] Dont use SftpMonitor for Streams transfer
  *******************************************************************************/
 
 package org.eclipse.rse.internal.services.ssh.files;
@@ -1247,7 +1248,6 @@ public class SftpFileService extends AbstractFileService implements ISshService,
 		}
 
 		try {
-			SftpProgressMonitor sftpMonitor = new MyProgressMonitor(monitor);
 			int mode;
 			if ((options & IFileService.APPEND) == 0) {
 				mode = ChannelSftp.OVERWRITE;
@@ -1257,7 +1257,7 @@ public class SftpFileService extends AbstractFileService implements ISshService,
 			getChannel("SftpFileService.getOutputStream " + remoteFile); //check the session is healthy //$NON-NLS-1$
 			ChannelSftp channel = (ChannelSftp)fSessionProvider.getSession().openChannel("sftp"); //$NON-NLS-1$
 			channel.connect();
-			stream = new SftpBufferedOutputStream(channel.put(recodeSafeForJsch(dst), sftpMonitor, mode), channel);
+			stream = new SftpBufferedOutputStream(channel.put(recodeSafeForJsch(dst), mode), channel);
 			Activator.trace("SftpFileService.getOutputStream " + remoteFile + " ok"); //$NON-NLS-1$ //$NON-NLS-2$
 		}
 		catch (Exception e) {

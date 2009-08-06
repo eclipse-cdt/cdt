@@ -28,6 +28,7 @@
  * Radoslav Gerganov (ProSyst) - [230919] IFileService.delete() should not return a boolean
  * Martin Oberhuber (Wind River) - [234026] Clarify IFileService#createFolder() Javadocs
  * Martin Oberhuber (Wind River) - [274568] Dont use SftpMonitor for Streams transfer
+ * Martin Oberhuber (Wind River) - [285942][api] Throw exception if list() on a non-folder
  *******************************************************************************/
 
 package org.eclipse.rse.services.files;
@@ -262,7 +263,6 @@ public interface IFileService extends IService
 	 */
 	public IHostFile getFile(String remoteParent, String name, IProgressMonitor monitor) throws SystemMessageException;
 
-
 	/**
 	 * List the contents of a remote folder.
 	 *
@@ -276,7 +276,9 @@ public interface IFileService extends IService
 	 * @param monitor the monitor for this potentially long running operation
 	 * @return the list of host files.
 	 * @throws SystemMessageException if an error occurs. Typically this would
-	 *             be one of those in the RemoteFileException family.
+	 *             be one of those in the RemoteFileException family. Exceptions
+	 *             are particularly expected when the remoteParent does not
+	 *             exist, or is not a folder.
 	 *
 	 * @since org.eclipse.rse.services 3.0
 	 */
@@ -304,9 +306,11 @@ public interface IFileService extends IService
 	/**
 	 * List the contents of multiple remote folders.
 	 * <p>
-	 * If an error occurs during the retrieval of the contents of a folder, this operation stops on that folder and a {@link SystemMessageException} is thrown.
-	 * Items retrieved before that folder will be returned. Items in folders after that folder will not be retrieved.
-	 * The items in the folder on which the error occurs will not be returned.
+	 * If an error occurs during the retrieval of the contents of a folder, this
+	 * operation stops on that folder and a {@link SystemMessageException} is
+	 * thrown. Items retrieved before that folder will be returned. Items in
+	 * folders after that folder will not be retrieved. The items in the folder
+	 * on which the error occurs will not be returned.
 	 *
 	 * @param remoteParents - the names of the parent directories on the remote
 	 *            file system from which to retrieve the collective child list.
@@ -319,10 +323,13 @@ public interface IFileService extends IService
 	 *            some other type. For each remoteParent, there must be a
 	 *            corresponding fileType. For the default list of available file
 	 *            types see <code>IFileServiceContants</code>
-	 * @param hostFiles a list to which the found {@link IHostFile} objects will be appended
+	 * @param hostFiles a list to which the found {@link IHostFile} objects will
+	 *            be appended
 	 * @param monitor the monitor for this potentially long running operation
 	 * @throws SystemMessageException if an error occurs. Typically this would
-	 *             be one of those in the RemoteFileException family.
+	 *             be one of those in the RemoteFileException family. Exceptions
+	 *             are particularly expected when a remoteParent does not exist,
+	 *             or is not a folder.
 	 *
 	 * @since org.eclipse.rse.services 3.0
 	 */
@@ -331,10 +338,12 @@ public interface IFileService extends IService
 	/**
 	 * List the contents of multiple remote folders.
 	 * <p>
-	 * If an error occurs during the retrieval of the contents of a folder, this operation stops on that folder and a {@link SystemMessageException} is thrown.
-	 * Items retrieved before that folder will be returned. Items in folders after that folder will not be retrieved.
-	 * The items in the folder on which the error occurs will not be returned.
-	 *
+	 * If an error occurs during the retrieval of the contents of a folder, this
+	 * operation stops on that folder and a {@link SystemMessageException} is
+	 * thrown. Items retrieved before that folder will be returned. Items in
+	 * folders after that folder will not be retrieved. The items in the folder
+	 * on which the error occurs will not be returned.
+	 * 
 	 * @param remoteParents - the names of the parent directories on the remote
 	 *            file system from which to retrieve the collective child list.
 	 * @param fileFilters - a set of strings that can be used to filter the
@@ -346,11 +355,14 @@ public interface IFileService extends IService
 	 *            other type. All results will be of the specified type. For the
 	 *            default list of available file types see
 	 *            <code>IFileServiceContants</code>
-	 * @param hostFiles a list to which the found {@link IHostFile} objects will be appended
+	 * @param hostFiles a list to which the found {@link IHostFile} objects will
+	 *            be appended
 	 * @param monitor the monitor for this potentially long running operation
 	 * @throws SystemMessageException if an error occurs. Typically this would
-	 *             be one of those in the RemoteFileException family.
-	 *
+	 *             be one of those in the RemoteFileException family. Exceptions
+	 *             are particularly expected when a remoteParent does not exist,
+	 *             or is not a folder.
+	 * 
 	 * @since org.eclipse.rse.services 3.0
 	 */
 	public void listMultiple(String[] remoteParents, String[] fileFilters, int fileType, List hostFiles, IProgressMonitor monitor) throws SystemMessageException;

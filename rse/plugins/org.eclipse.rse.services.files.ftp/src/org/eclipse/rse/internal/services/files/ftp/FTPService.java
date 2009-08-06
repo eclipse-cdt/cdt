@@ -81,6 +81,7 @@
  * Martin Oberhuber (Wind River) - [240738][ftp] Incorrect behavior on getFile for non-existing folder
  * David McKnight   (IBM)        - [243921] FTP subsystem timeout causes error when expanding folders
  * Martin Oberhuber (Wind River) - [217472][ftp] Error copying files with very short filenames
+ * Martin Oberhuber (Wind River) - [285942] Throw exception when listing a non-folder
  ********************************************************************************/
 
 package org.eclipse.rse.internal.services.files.ftp;
@@ -127,6 +128,7 @@ import org.eclipse.rse.services.clientserver.messages.SystemElementNotFoundExcep
 import org.eclipse.rse.services.clientserver.messages.SystemLockTimeoutException;
 import org.eclipse.rse.services.clientserver.messages.SystemMessage;
 import org.eclipse.rse.services.clientserver.messages.SystemMessageException;
+import org.eclipse.rse.services.clientserver.messages.SystemNetworkIOException;
 import org.eclipse.rse.services.clientserver.messages.SystemOperationCancelledException;
 import org.eclipse.rse.services.clientserver.messages.SystemUnsupportedOperationException;
 import org.eclipse.rse.services.files.AbstractFileService;
@@ -358,6 +360,16 @@ public class FTPService extends AbstractFileService implements IFTPService, IFil
 		}
 	}
 
+	private SystemMessageException makeSystemMessageException(Exception e) {
+		if (e instanceof SystemMessageException) {
+			// dont wrap SystemMessageException again
+			return (SystemMessageException) e;
+		} else if (e instanceof IOException) {
+			return new SystemNetworkIOException(e);
+		}
+		return new RemoteFileIOException(e);
+	}
+
 	public void connect() throws RemoteFileSecurityException,IOException
 	{
 
@@ -494,6 +506,24 @@ public class FTPService extends AbstractFileService implements IFTPService, IFil
 			_ftpClient = null;
 		}
 
+	}
+
+	private void chdir(FTPClient ftpClient, String remoteFolder) throws SystemMessageException {
+		// try to retrieve the file
+		try {
+			if (!ftpClient.changeWorkingDirectory(remoteFolder)) {
+				String reply = ftpClient.getReplyString();
+				if (reply != null && reply.startsWith("550")) { //$NON-NLS-1$
+					if (!reply.trim().endsWith("Not a directory.")) { //$NON-NLS-1$
+						// No such file or directory
+						throw new SystemElementNotFoundException(remoteFolder, "chdir"); //$NON-NLS-1$
+					}
+				}
+				throw new RemoteFileIOException(new Exception(reply + " (" + remoteFolder + ")")); //$NON-NLS-1$ //$NON-NLS-2$
+			}
+		} catch (IOException e) {
+			throw new SystemNetworkIOException(e);
+		}
 	}
 
 	/**
@@ -639,18 +669,7 @@ public class FTPService extends AbstractFileService implements IFTPService, IFil
 			try {
 				//try to retrieve the file
 				_ftpClient = getFTPClient();
-
-				if(!_ftpClient.changeWorkingDirectory(remoteParent))
-				{
-					String reply = _ftpClient.getReplyString();
-					if (reply != null && reply.startsWith("550")) { //$NON-NLS-1$
-						// No such file or directory
-						throw new SystemElementNotFoundException(remoteParent, "chdir"); //$NON-NLS-1$
-					} else {
-						throw new RemoteFileIOException(new Exception(reply));
-					}
-				}
-
+				chdir(_ftpClient, remoteParent);
 				if(!listFiles(monitor))
 				{
 					throw new SystemOperationCancelledException();
@@ -684,7 +703,7 @@ public class FTPService extends AbstractFileService implements IFTPService, IFil
 				// Return non-existing file
 				file = new FTPHostFile(remoteParent, fileName, false, false, 0, 0, false);
 			} catch (Exception e) {
-				throw new RemoteFileIOException(e);
+				throw makeSystemMessageException(e);
 			} finally {
 				_commandMutex.release();
 		    }
@@ -749,11 +768,7 @@ public class FTPService extends AbstractFileService implements IFTPService, IFil
 				}
 
 				_ftpClient = getFTPClient();
-				if(!_ftpClient.changeWorkingDirectory(parentPath))
-				{
-					throw new RemoteFileIOException(new Exception(_ftpClient.getReplyString()));
-				}
-
+				chdir(_ftpClient, parentPath);
 				if(!listFiles(monitor))
 				{
 					throw new SystemOperationCancelledException();
@@ -794,7 +809,7 @@ public class FTPService extends AbstractFileService implements IFTPService, IFil
 			}
 			catch (Exception e)
 			{
-				throw new RemoteFileIOException(e);
+				throw makeSystemMessageException(e);
 			} finally {
 				_commandMutex.release();
 		    }
@@ -900,7 +915,7 @@ public class FTPService extends AbstractFileService implements IFTPService, IFil
 
 		try{
 			clearCache(remoteParent);
-			ftpClient.changeWorkingDirectory(remoteParent);
+			chdir(ftpClient, remoteParent);
 			setFileType(isBinary);
 
 			input =  new FileInputStream(localFile);
@@ -988,7 +1003,7 @@ public class FTPService extends AbstractFileService implements IFTPService, IFil
 		try{
 
 			FTPClient ftpClient = getFTPClient();
-			ftpClient.changeWorkingDirectory(remoteParent);
+			chdir(ftpClient, remoteParent);
 			setFileType(isBinary);
 
 			input = ftpClient.retrieveFileStream(remoteFile);
@@ -1149,7 +1164,11 @@ public class FTPService extends AbstractFileService implements IFTPService, IFil
 			{
 				String newParentPath = concat(parentPath,fileName);
 
-				ftpClient.changeWorkingDirectory(newParentPath);
+				try {
+					chdir(ftpClient, newParentPath);
+				} catch (SystemElementNotFoundException e) {
+					/* nothing to do since dir does not exist */
+				}
 				FTPFile[] fileNames = ftpClient.listFiles();
 
 				for (int i = 0; i < fileNames.length; i++) {
@@ -1161,7 +1180,7 @@ public class FTPService extends AbstractFileService implements IFTPService, IFil
 				}
 
 				//remove empty folder
-				ftpClient.changeWorkingDirectory(parentPath);
+				chdir(ftpClient, parentPath);
 				hasSucceeded = ftpClient.removeDirectory(fileName);
 				if (!hasSucceeded)
 				{
@@ -1185,12 +1204,7 @@ public class FTPService extends AbstractFileService implements IFTPService, IFil
 			try {
 				FTPClient ftpClient = getFTPClient();
 				clearCache(remoteParent);
-
-				if(!ftpClient.changeWorkingDirectory(remoteParent))
-				{
-					throw new RemoteFileIOException(new Exception(ftpClient.getReplyString()));
-				}
-
+				chdir(ftpClient, remoteParent);
 				boolean success = ftpClient.rename(oldName, newName);
 
 				if(!success)
@@ -1199,7 +1213,7 @@ public class FTPService extends AbstractFileService implements IFTPService, IFil
 				}
 
 			} catch (Exception e) {
-				throw new RemoteFileIOException(e);
+				throw makeSystemMessageException(e);
 			}finally {
 				_commandMutex.release();
 			}
@@ -1264,11 +1278,7 @@ public class FTPService extends AbstractFileService implements IFTPService, IFil
 			{
 				FTPClient ftpClient = getFTPClient();
 				clearCache(remoteParent);
-				if(!ftpClient.changeWorkingDirectory(remoteParent))
-				{
-					throw new Exception(ftpClient.getReplyString()+" ("+remoteParent+")");  //$NON-NLS-1$  //$NON-NLS-2$
-				}
-
+				chdir(ftpClient, remoteParent);
 				if(!ftpClient.makeDirectory(folderName))
 				{
 					throw new RemoteFileIOException(new Exception(ftpClient.getReplyString()+" ("+folderName+")"));  //$NON-NLS-1$  //$NON-NLS-2$
@@ -1276,7 +1286,7 @@ public class FTPService extends AbstractFileService implements IFTPService, IFil
 
 			}
 			catch (Exception e)	{
-				throw new RemoteFileSecurityException(e);
+				throw makeSystemMessageException(e);
 			}finally {
 				_commandMutex.release();
 			}
@@ -1367,7 +1377,7 @@ public class FTPService extends AbstractFileService implements IFTPService, IFil
     		String newSrcParentPath = concat(srcParent,srcName);
     		String newTgtParentPath = concat(tgtParent,tgtName);
 
-			ftpClient.changeWorkingDirectory(newSrcParentPath);
+			chdir(ftpClient, newSrcParentPath);
 			FTPFile[] fileNames = ftpClient.listFiles();
 
 			for (int i = 0; i < fileNames.length; i++) {
@@ -1385,7 +1395,7 @@ public class FTPService extends AbstractFileService implements IFTPService, IFil
 			File tempFile = null;
 
 			try {
-				tempFile = File.createTempFile("ftpcp" + String.valueOf(srcParent.hashCode()), "temp");
+				tempFile = File.createTempFile("ftpcp" + String.valueOf(srcParent.hashCode()), "temp"); //$NON-NLS-1$ //$NON-NLS-2$
 				tempFile.deleteOnExit();
 			} catch (IOException e) {
 				throw new RemoteFileIOException(e);
@@ -1655,11 +1665,11 @@ public class FTPService extends AbstractFileService implements IFTPService, IFil
 
 		try {
 			FTPClient ftpClient = cloneFTPClient(isBinary);
-			ftpClient.changeWorkingDirectory(remoteParent);
+			chdir(ftpClient, remoteParent);
 			stream = new FTPBufferedInputStream(ftpClient.retrieveFileStream(remoteFile), ftpClient);
 		}
 		catch (Exception e) {
-			throw new RemoteFileIOException(e);
+			throw makeSystemMessageException(e);
 		}
 
 		return stream;
@@ -1692,7 +1702,7 @@ public class FTPService extends AbstractFileService implements IFTPService, IFil
 			boolean isBinary = (options & IFileService.TEXT_MODE) == 0 ? true : false;
 			FTPClient ftpClient = cloneFTPClient(isBinary);
 			clearCache(remoteParent);
-			ftpClient.changeWorkingDirectory(remoteParent);
+			chdir(ftpClient, remoteParent);
 			if ((options & IFileService.APPEND) == 0){
 				stream = new FTPBufferedOutputStream(ftpClient.storeFileStream(remoteFile), ftpClient);
 			} else {
@@ -1700,7 +1710,7 @@ public class FTPService extends AbstractFileService implements IFTPService, IFil
 			}
 		}
 		catch (Exception e) {
-			throw new RemoteFileIOException(e);
+			throw makeSystemMessageException(e);
 		}
 
 		return stream;

@@ -183,7 +183,7 @@ then
 	java14_home=/shared/webtools/apps/IBMJava2-ppc-142
     javadoc="-Djavadoc15=$java15_home/bin/javadoc"
     PATH=$java15_home/jre/bin:$PATH;export PATH
-elif [ "$HOSTNAME" == "parser.takefive.co.at" ]
+elif [ "$HOSTNAME" == "parser.wrs.com" ]
 then
 	#Running on parser
 	java15_home=/opt/jdk1.5.0_06

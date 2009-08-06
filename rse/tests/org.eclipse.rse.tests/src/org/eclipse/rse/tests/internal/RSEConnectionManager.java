@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2008 IBM Corporation and others.
+ * Copyright (c) 2006, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -16,6 +16,7 @@
  * David Dykstal (IBM) - [217556] remove service subsystem types
  * Martin Oberhuber (Wind River) - [219086] flush event queue to shield tests from each other
  * David Dykstal (IBM) - [210474] Deny save password function missing
+ * Martin Oberhuber (Wind River) - Support REXEC launch type for dstore
  *******************************************************************************/
 package org.eclipse.rse.tests.internal;
 
@@ -32,7 +33,6 @@ import junit.framework.Assert;
 import org.eclipse.core.runtime.FileLocator;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
-import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.rse.core.IRSESystemType;
 import org.eclipse.rse.core.IRSEUserIdConstants;
 import org.eclipse.rse.core.PasswordPersistenceManager;
@@ -47,6 +47,7 @@ import org.eclipse.rse.core.subsystems.IRemoteServerLauncher;
 import org.eclipse.rse.core.subsystems.IServerLauncherProperties;
 import org.eclipse.rse.core.subsystems.ISubSystem;
 import org.eclipse.rse.core.subsystems.ISubSystemConfiguration;
+import org.eclipse.rse.core.subsystems.ServerLaunchType;
 import org.eclipse.rse.subsystems.files.core.model.RemoteFileUtility;
 import org.eclipse.rse.subsystems.files.core.servicesubsystem.FileServiceSubSystem;
 import org.eclipse.rse.subsystems.shells.core.subsystems.servicesubsystem.IShellServiceSubSystem;
@@ -54,8 +55,6 @@ import org.eclipse.rse.tests.RSETestsPlugin;
 import org.eclipse.rse.tests.core.connection.IRSEConnectionManager;
 import org.eclipse.rse.tests.core.connection.IRSEConnectionProperties;
 import org.eclipse.rse.tests.testsubsystem.interfaces.ITestSubSystem;
-import org.eclipse.rse.ui.ISystemPreferencesConstants;
-import org.eclipse.rse.ui.RSEUIPlugin;
 import org.eclipse.swt.widgets.Display;
 import org.osgi.framework.Bundle;
 
@@ -82,13 +81,13 @@ public class RSEConnectionManager implements IRSEConnectionManager {
 			}
 		}
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.rse.tests.core.connection.IRSEConnectionManager#loadConnectionProperties(org.eclipse.core.runtime.IPath, boolean)
 	 */
 	public IRSEConnectionProperties loadConnectionProperties(IPath path, boolean allowDefaults) {
 		assert path != null;
-		
+
 		Properties defaults = null;
 		if (allowDefaults && connectionDefaultsLocation != null
 				&& connectionDefaultsLocation.toFile().isFile()
@@ -105,11 +104,11 @@ public class RSEConnectionManager implements IRSEConnectionManager {
 				try { if (stream != null) stream.close(); } catch (IOException e) { /* ignored */ }
 			}
 		}
-		
-		
+
+
 		Properties properties = null;
 		if (path.toFile().isFile() && path.toFile().canRead()) {
-			InputStream stream = null; 
+			InputStream stream = null;
 			try {
 				stream = new FileInputStream(path.toFile());
 				properties = defaults != null ? new Properties(defaults) : new Properties();
@@ -122,7 +121,7 @@ public class RSEConnectionManager implements IRSEConnectionManager {
 				try { if (stream != null) stream.close(); } catch (IOException e) { /* ignored */ }
 			}
 		}
-		
+
 		return properties != null ? new RSEConnectionProperties(properties) : (IRSEConnectionProperties)null;
 	}
 
@@ -131,7 +130,7 @@ public class RSEConnectionManager implements IRSEConnectionManager {
 	 */
 	public IRSEConnectionProperties loadConnectionProperties(Properties properties, boolean allowDefaults) {
 		assert properties != null;
-		
+
 		Properties defaults = null;
 		if (allowDefaults && connectionDefaultsLocation != null
 				&& connectionDefaultsLocation.toFile().isFile()
@@ -148,7 +147,7 @@ public class RSEConnectionManager implements IRSEConnectionManager {
 				try { if (stream != null) stream.close(); } catch (IOException e) { /* ignored */ }
 			}
 		}
-		
+
 		// Unfortunately, we cannot use the given properties directly (as
 		// we cannot associate the defaults). We must copy everything from
 		// the given properties object.
@@ -177,10 +176,10 @@ public class RSEConnectionManager implements IRSEConnectionManager {
 	 */
 	public void removeConnection(String profileName, String name) {
 		assert profileName != null && name != null;
-		
+
 		ISystemRegistry systemRegistry = RSECorePlugin.getTheSystemRegistry();
 		Assert.assertNotNull("FAILED(findOrCreateConnection): RSE system registry unavailable!", systemRegistry); //$NON-NLS-1$
-		
+
 		ISystemProfile profile = systemRegistry.getSystemProfile(profileName);
 		if (profile != null) {
 			IHost connection = systemRegistry.getHost(profile, name);
@@ -196,7 +195,7 @@ public class RSEConnectionManager implements IRSEConnectionManager {
 	 */
 	public IHost findOrCreateConnection(IRSEConnectionProperties properties) {
 		assert properties != null;
-		
+
 		IHost connection = null;
 
 		ISystemRegistry systemRegistry = RSECorePlugin.getTheSystemRegistry();
@@ -204,7 +203,7 @@ public class RSEConnectionManager implements IRSEConnectionManager {
 
 		Exception exception = null;
 		String cause = null;
-		
+
 		// First lookup and create the profile
 		String profileName = properties.getProperty(IRSEConnectionProperties.ATTR_PROFILE_NAME);
 		//Assert.assertNotSame("FAILED(findOrCreateConnection): Invalid system profile name!", "unknown", profileName); //$NON-NLS-1$ //$NON-NLS-2$
@@ -220,47 +219,64 @@ public class RSEConnectionManager implements IRSEConnectionManager {
 		}
 		profileName = profile.getName();
 		Assert.assertNotNull("FAILED(findOrCreateConnection): Failed to find and/or create system profile '" + profileName + "'!", profile); //$NON-NLS-1$ //$NON-NLS-2$
-		
+
 		String name = properties.getProperty(IRSEConnectionProperties.ATTR_NAME);
 		Assert.assertFalse("FAILED(findOrCreateConnection): Invalid host name!", "unknown".equals(name)); //$NON-NLS-1$ //$NON-NLS-2$
 		connection = systemRegistry.getHost(profile, name);
 		if (connection == null) {
-				String userId = properties.getProperty(IRSEConnectionProperties.ATTR_USERID);
-				Assert.assertFalse("FAILED(findOrCreateConnection): Invalid user id name!", "unknown".equals(userId)); //$NON-NLS-1$ //$NON-NLS-2$
-				String password = properties.getProperty(IRSEConnectionProperties.ATTR_PASSWORD);
-				Assert.assertFalse("FAILED(findOrCreateConnection): Invalid user password name!", "unknown".equals(password)); //$NON-NLS-1$ //$NON-NLS-2$
-				String address = properties.getProperty(IRSEConnectionProperties.ATTR_ADDRESS);
-				Assert.assertFalse("FAILED(findOrCreateConnection): Invalid remote system ip address or dns name!", "unknown".equals(address)); //$NON-NLS-1$ //$NON-NLS-2$
-				String systemTypeId = properties.getProperty(IRSEConnectionProperties.ATTR_SYSTEM_TYPE_ID);
-				Assert.assertFalse("FAILED(findOrCreateConnection): Invalid system type!", "unknown".equals(systemTypeId)); //$NON-NLS-1$ //$NON-NLS-2$
-				IRSESystemType systemType = RSECorePlugin.getTheCoreRegistry().getSystemTypeById(systemTypeId);
-				String daemonPort = properties.getProperty(IRSEConnectionProperties.ATTR_DAEMON_PORT);
-				Assert.assertFalse("FAILED(findOrCreateConnection): Invalid port!", "unknown".equals(daemonPort)); //$NON-NLS-1$ //$NON-NLS-2$
-				
-				exception = null;
-				cause = null;
-				
-				try {
-					connection = systemRegistry.createHost(profileName, systemType, name, address, null, userId, IRSEUserIdConstants.USERID_LOCATION_HOST, null);
-				} catch(Exception e) {
-					exception = e;
-					cause = e.getLocalizedMessage();
-				}
-				Assert.assertNull("FAILED(findOrCreateConnection): Failed to create connection IHost object! Possible cause: " + cause, exception); //$NON-NLS-1$
+			String userId = properties.getProperty(IRSEConnectionProperties.ATTR_USERID);
+			Assert.assertFalse("FAILED(findOrCreateConnection): Invalid user id name!", "unknown".equals(userId)); //$NON-NLS-1$ //$NON-NLS-2$
+			String password = properties.getProperty(IRSEConnectionProperties.ATTR_PASSWORD);
+			Assert.assertFalse("FAILED(findOrCreateConnection): Invalid user password name!", "unknown".equals(password)); //$NON-NLS-1$ //$NON-NLS-2$
+			String address = properties.getProperty(IRSEConnectionProperties.ATTR_ADDRESS);
+			Assert.assertFalse("FAILED(findOrCreateConnection): Invalid remote system ip address or dns name!", "unknown".equals(address)); //$NON-NLS-1$ //$NON-NLS-2$
+			String systemTypeId = properties.getProperty(IRSEConnectionProperties.ATTR_SYSTEM_TYPE_ID);
+			Assert.assertFalse("FAILED(findOrCreateConnection): Invalid system type!", "unknown".equals(systemTypeId)); //$NON-NLS-1$ //$NON-NLS-2$
+			IRSESystemType systemType = RSECorePlugin.getTheCoreRegistry().getSystemTypeById(systemTypeId);
+			String daemonPort = properties.getProperty(IRSEConnectionProperties.ATTR_DAEMON_PORT);
+			Assert.assertFalse("FAILED(findOrCreateConnection): Invalid port!", "unknown".equals(daemonPort)); //$NON-NLS-1$ //$NON-NLS-2$
+			String rexecPort = properties.getProperty(IRSEConnectionProperties.ATTR_REXEC_PORT);
+			String serverLaunchType = properties.getProperty(IRSEConnectionProperties.ATTR_SERVER_LAUNCH_TYPE);
+			String serverPath = properties.getProperty(IRSEConnectionProperties.ATTR_SERVER_PATH);
+			String serverScript = properties.getProperty(IRSEConnectionProperties.ATTR_SERVER_SCRIPT);
 
-				if (userId != null && password != null) {
-					SystemSignonInformation info = new SystemSignonInformation(address, userId, password, systemType);
-					PasswordPersistenceManager.getInstance().add(info, true, false);
-				}
-				
+			exception = null;
+			cause = null;
+
+			try {
+				connection = systemRegistry.createHost(profileName, systemType, name, address, null, userId, IRSEUserIdConstants.USERID_LOCATION_HOST, null);
+			} catch (Exception e) {
+				exception = e;
+				cause = e.getLocalizedMessage();
+			}
+			Assert.assertNull("FAILED(findOrCreateConnection): Failed to create connection IHost object! Possible cause: " + cause, exception); //$NON-NLS-1$
+
+			if (userId != null && password != null) {
+				SystemSignonInformation info = new SystemSignonInformation(address, userId, password, systemType);
+				PasswordPersistenceManager.getInstance().add(info, true, false);
+			}
+
+			IServerLauncherProperties connProperties = connection.getConnectorServices()[0].getRemoteServerLauncherProperties();
+			if (connProperties instanceof IRemoteServerLauncher) {
+				IRemoteServerLauncher launcher = (IRemoteServerLauncher) connProperties;
 				if (daemonPort != null) {
 					int daemonPortNum = Integer.parseInt(daemonPort);
-					IServerLauncherProperties connProperties = connection.getConnectorServices()[0].getRemoteServerLauncherProperties();
-					if (connProperties instanceof IRemoteServerLauncher) {
-						IRemoteServerLauncher launcher = (IRemoteServerLauncher) connProperties;
-						launcher.setDaemonPort(daemonPortNum);
-					}
+					launcher.setDaemonPort(daemonPortNum);
 				}
+				if (serverLaunchType != null) {
+					launcher.setServerLaunchType(ServerLaunchType.get(serverLaunchType));
+				}
+				if (rexecPort != null) {
+					int rexecPortNum = Integer.parseInt(rexecPort);
+					launcher.setRexecPort(rexecPortNum);
+				}
+				if (serverPath != null) {
+					launcher.setServerPath(serverPath);
+				}
+				if (serverScript != null) {
+					launcher.setServerScript(serverScript);
+				}
+			}
 		}
 		Assert.assertNotNull("FAILED(findOrCreateConnection): Failed to find and/or create connection IHost object!", connection); //$NON-NLS-1$
 		final Display display = Display.getCurrent();
@@ -269,7 +285,7 @@ public class RSEConnectionManager implements IRSEConnectionManager {
 				//running on main thread: wait until all async events are fired
 			}
 		}
-		
+
 		return connection;
 	}
 

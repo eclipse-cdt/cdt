@@ -42,6 +42,7 @@
  * Martin Oberhuber (Wind River) - [235360][ftp][ssh][local] Return proper "Root" IHostFile
  * David McKnight   (IBM)        - [238367] [regression] Error when deleting Archive Files
  * David McKnight   (IBM)        - [280899] RSE can't open files in some directory, which give the RSEG1067 error me
+ * Martin Oberhuber (Wind River) - [285942] Throw exception when listing a non-folder
  *******************************************************************************/
 
 package org.eclipse.rse.internal.services.local.files;
@@ -737,9 +738,12 @@ public class LocalFileService extends AbstractFileService implements ILocalServi
 			*/
 			if (localParent.exists()) {
 				File[] files = localParent.listFiles(fFilter);
+				if (files == null) {
+					throw new RemoteFileException("Error listing: " + localParent.getAbsolutePath());
+				}
 				return convertToHostFiles(files, type);
 			} else {
-				return new IHostFile[0];
+				throw new SystemElementNotFoundException(localParent.getAbsolutePath(), "list");
 			}
 		}
 	}

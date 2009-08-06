@@ -26,11 +26,18 @@ public class TerminalUIResources extends NLS {
 	public static String TerminalsUI_cannotOpenView_error;
 
 	public static String TerminalViewer_text;
-	
+
 	public static String TerminalViewElementAdapter_type;
 
 	static {
 		NLS.initializeMessages(BUNDLE_NAME, TerminalUIResources.class);
+		// FIXME Workaround for NLS added in TM 3.1.1 where some translations
+		// may no longer be possible. Fallback to hardcoded text in case the NLS
+		// can not be found.
+		// May be removed in TM 3.2 when a new NLS translation cycle starts.
+		if (TerminalViewElementAdapter_type.startsWith("NLS missing message: ")) { //$NON-NLS-1$
+			TerminalViewElementAdapter_type = "Terminal"; //$NON-NLS-1$
+		}
 	}
 
 }

@@ -1,5 +1,5 @@
 /********************************************************************************
- * Copyright (c) 2006, 2008 IBM Corporation and others. All rights reserved.
+ * Copyright (c) 2006, 2009 IBM Corporation and others. All rights reserved.
  * This program and the accompanying materials are made available under the terms
  * of the Eclipse Public License v1.0 which accompanies this distribution, and is
  * available at http://www.eclipse.org/legal/epl-v10.html
@@ -18,6 +18,7 @@
  * Martin Oberhuber (Wind River) - Fix 183991 - handle windows C:/ paths for FTP
  * Martin Oberhuber (Wind River) - [246710] Fix quoting backslashes in UNIX shells
  * Martin Oberhuber (Wind River) - [164110] Fix quoting single-quotes in UNIX shells
+ * Martin Oberhuber (Wind River) - [285945] Fix quoting ! and " characters
  ********************************************************************************/
 
 package org.eclipse.rse.services.clientserver;
@@ -229,6 +230,7 @@ public class PathUtility
 				case '\\':
 				case '\'':
 				case '`':
+				case '"':
 					//Need to treat specially to work in both bash and tcsh:
 					//close the quote, insert quoted $, reopen the quote
 					buf.append('"');
@@ -236,8 +238,8 @@ public class PathUtility
 					buf.append(c);
 					buf.append('"');
 					break;
-				case '"':
 				case '\n':
+				case '!':
 					//just quote it. The newline will work in tcsh only -
 					//bash replaces it by the empty string. But newlines
 					//in filenames are an academic issue, hopefully.

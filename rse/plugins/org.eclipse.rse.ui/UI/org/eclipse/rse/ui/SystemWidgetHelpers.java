@@ -1,17 +1,17 @@
 /********************************************************************************
  * Copyright (c) 2002, 2009 IBM Corporation and others. All rights reserved.
  * This program and the accompanying materials are made available under the terms
- * of the Eclipse Public License v1.0 which accompanies this distribution, and is 
+ * of the Eclipse Public License v1.0 which accompanies this distribution, and is
  * available at http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Initial Contributors:
  * The following IBM employees contributed to the Remote System Explorer
- * component that contains this file: David McKnight, Kushal Munir, 
- * Michael Berger, David Dykstal, Phil Coulthard, Don Yantzi, Eric Simpson, 
+ * component that contains this file: David McKnight, Kushal Munir,
+ * Michael Berger, David Dykstal, Phil Coulthard, Don Yantzi, Eric Simpson,
  * Emily Bruner, Mazen Faraj, Adrian Storisteanu, Li Ding, and Kent Hawley.
- * 
+ *
  * Contributors:
- * Javier Montalvo OrÃºs (Symbian) - Bug 149151: New Connection first page should use a Listbox for systemtype
+ * Javier Montalvo Orús (Symbian) - Bug 149151: New Connection first page should use a Listbox for systemtype
  * Martin Oberhuber (Wind River) - [184095] Replace systemTypeName by IRSESystemType
  * Martin Oberhuber (Wind River) - [177523] Unify singleton getter methods
  * Martin Oberhuber (Wind River) - [186773] split ISystemRegistryUI from ISystemRegistry
@@ -140,8 +140,8 @@ public class SystemWidgetHelpers {
 
 	/**
 	 * Creates composite control and sets the default layout data.
-	 * @param parent GridLayout composite to put the new group composite into.     
-	 * @param numColumns Number of columns the new group will contain.     
+	 * @param parent GridLayout composite to put the new group composite into.
+	 * @param numColumns Number of columns the new group will contain.
 	 */
 	public static Composite createComposite(Composite parent, int numColumns) {
 		boolean testing = false; //true;
@@ -154,7 +154,7 @@ public class SystemWidgetHelpers {
 	/**
 	 * Creates group composite control and sets the default layout data.
 	 * Group composites show a visible border line and optional text in it.
-	 * @param parent GridLayout composite to put the new group composite into.     
+	 * @param parent GridLayout composite to put the new group composite into.
 	 * @param numColumns Number of columns the new group will contain.
 	 * @param label Text to display in the group border. Can be null.
 	 */
@@ -165,8 +165,8 @@ public class SystemWidgetHelpers {
 	/**
 	 * Creates "tight" composite control and sets the default layout data.
 	 * A tight composite is one with no vertical or horizontal spacing, or margin spacing.
-	 * @param parent GridLayout composite to put the new group composite into.     
-	 * @param numColumns Number of columns the new group will contain.     
+	 * @param parent GridLayout composite to put the new group composite into.
+	 * @param numColumns Number of columns the new group will contain.
 	 */
 	public static Composite createTightComposite(Composite parent, int numColumns) {
 		return createComposite(parent, 1, numColumns, false, null, 0, 0);
@@ -175,8 +175,8 @@ public class SystemWidgetHelpers {
 	/**
 	 * Creates "flush" composite control and sets the default layout data.
 	 * A flush composite is one with no margin spacing but normal inter-component spacing
-	 * @param parent GridLayout composite to put the new group composite into.     
-	 * @param numColumns Number of columns the new group will contain.     
+	 * @param parent GridLayout composite to put the new group composite into.
+	 * @param numColumns Number of columns the new group will contain.
 	 */
 	public static Composite createFlushComposite(Composite parent, int numColumns) {
 		return createComposite(parent, 1, numColumns, false, null, 0, -1);
@@ -208,7 +208,7 @@ public class SystemWidgetHelpers {
 	/**
 	 * Creates a label instance and inserts it into a given GridLayout.
 	 * @param parent GridLayout composite to put the field into.
-	 * @param text Text to display in the label.     
+	 * @param text Text to display in the label.
 	 */
 	public static Label createLabel(Composite parent, String text) {
 		return createLabel(parent, text, 1);
@@ -217,7 +217,7 @@ public class SystemWidgetHelpers {
 	/**
 	 * Creates a label instance and inserts it into a given GridLayout.
 	 * @param parent Composite to put the field into.
-	 * @param text Text to display in the label.     
+	 * @param text Text to display in the label.
 	 * @param span Horizontal span
 	 */
 	public static Label createLabel(Composite parent, String text, int span) {
@@ -228,7 +228,7 @@ public class SystemWidgetHelpers {
 	 * Creates a label instance and inserts it into a given GridLayout, optionally
 	 *  with a border style
 	 * @param parent Composite to put the field into.
-	 * @param text Text to display in the label.     
+	 * @param text Text to display in the label.
 	 * @param span Horizontal span
 	 * @param wantBorder true to place border around the label
 	 */
@@ -254,7 +254,7 @@ public class SystemWidgetHelpers {
 	 * @param text
 	 * @param tooltip
 	 */
-	public static Label createLabel(Composite parent, String text, String tooltip) 
+	public static Label createLabel(Composite parent, String text, String tooltip)
 	{
 		Label label = createLabel(parent, text);
 		setToolTipText(label, tooltip);
@@ -269,7 +269,7 @@ public class SystemWidgetHelpers {
 	 * @param span Horizontal span
 	 * @param wantBorder true to place border around the label
 	 */
-	public static Label createLabel(Composite parent, String text, String tooltip, int span, boolean wantBorder) 
+	public static Label createLabel(Composite parent, String text, String tooltip, int span, boolean wantBorder)
 	{
 		Label label = createLabel(parent, text, span, wantBorder);
 		setToolTipText(label, tooltip);
@@ -281,12 +281,12 @@ public class SystemWidgetHelpers {
 	 *  is appended to the text of the first label. The text value of the second will be set to "".
 	 * <p>
 	 * The first label is set to not grab excess horizontal space, while the second one is, since
-	 *   its contents are variable. 
+	 *   its contents are variable.
 	 * <p>
 	 * To help with initial sizing, the widthHint of the second is set to 100.
 	 * <p>
 	 * If you need a handle to the prompting label, immediately call {@link #getLastLabel()}
-	 * 
+	 *
 	 * @param parent composite to put the fields into. Will be added sequentially
 	 * @param label
 	 * @param tooltip
@@ -331,7 +331,7 @@ public class SystemWidgetHelpers {
 		label.setLayoutData(data);
 	}
 
-	
+
 
 	/**
 	 * Creates a widget for displaying text verbiage that spans multiple lines. Takes resolved text vs resource bundle id.
@@ -387,7 +387,7 @@ public class SystemWidgetHelpers {
 
 	/**
 	 * Create a label to show a command string as it is being built-up in a dialog.
-	 * This version allows you specify how tall to make it, in terms of normal line height. 
+	 * This version allows you specify how tall to make it, in terms of normal line height.
 	 */
 	public static Label createCommandStatusLine(Composite parent, int horizontalSpan, int heightInLines) {
 		Label commandSoFar = new Label(parent, SWT.LEFT | SWT.WRAP);
@@ -395,7 +395,7 @@ public class SystemWidgetHelpers {
 		//System.out.println("Default label height = " + dx); ALWAYS 0!
 		if (dx == 0)
 			//dx = 12; // what else?
-			dx = 15; // d47377   
+			dx = 15; // d47377
 		GridData data = new GridData();
 		data.horizontalSpan = horizontalSpan;
 		data.horizontalAlignment = GridData.FILL;
@@ -469,7 +469,7 @@ public class SystemWidgetHelpers {
 		GridData data = new GridData();
 		data.horizontalAlignment = GridData.FILL;
 		data.grabExcessHorizontalSpace = true;
-		data.widthHint = 150; // defect 45789      
+		data.widthHint = 150; // defect 45789
 		data.verticalAlignment = GridData.CENTER;
 		data.grabExcessVerticalSpace = false;
 		text.setLayoutData(data);
@@ -482,7 +482,7 @@ public class SystemWidgetHelpers {
 	 * @param parent composite to put the field into.
 	 * @param toolTip
 	 */
-	public static Text createReadonlyTextField(Composite parent, String toolTip) 
+	public static Text createReadonlyTextField(Composite parent, String toolTip)
 	{
 		Text text = createReadonlyTextField(parent);
 		setToolTipText(text, toolTip);
@@ -551,7 +551,7 @@ public class SystemWidgetHelpers {
 	 * Assign the listener to the passed in implementer of Listener.
 	 * @param group composite to put the checkbox into.
 	 * @param label to display in the checkbox.
-	 * @param listener object to listen for events. Can be null.     
+	 * @param listener object to listen for events. Can be null.
 	 */
 	public static Button createCheckBox(Composite group, String label, Listener listener) {
 		return createCheckBox(group, 1, label, listener);
@@ -564,7 +564,7 @@ public class SystemWidgetHelpers {
 	 * @param group composite to put the checkbox into.
 	 * @param horizontalSpan number of columns this checkbox is to span.
 	 * @param label to display in the checkbox.
-	 * @param listener object to listen for events. Can be null.     
+	 * @param listener object to listen for events. Can be null.
 	 */
 	public static Button createCheckBox(Composite group, int horizontalSpan, String label, Listener listener) {
 		Button button = new Button(group, SWT.CHECK | SWT.LEFT);
@@ -584,11 +584,11 @@ public class SystemWidgetHelpers {
 	 * layout data, and sets the tooltip text.
 	 * Assign the listener to the passed in implementer of Listener.
 	 * @param group composite to put the checkbox into.
-	 * @param listener object to listen for events. Can be null.     
+	 * @param listener object to listen for events. Can be null.
 	 * @param label the label
 	 * @param tooltip the tooltip
 	 */
-	public static Button createCheckBox(Composite group, Listener listener, String label, String tooltip) 
+	public static Button createCheckBox(Composite group, Listener listener, String label, String tooltip)
 	{
 		Button button = createCheckBox(group, label, listener);
 		setToolTipText(button, tooltip);
@@ -600,12 +600,12 @@ public class SystemWidgetHelpers {
 	 * layout data, and sets the tooltip text.
 	 * Assign the listener to the passed in implementer of Listener.
 	 * @param group composite to put the checkbox into.
-	 * @param horizontalSpan number of columns to span. 
-	 * @param listener object to listen for events. Can be null.     
+	 * @param horizontalSpan number of columns to span.
+	 * @param listener object to listen for events. Can be null.
 	 * @param label the label
 	 * @param tooltip the tooltip
 	 */
-	public static Button createCheckBox(Composite group, int horizontalSpan, Listener listener, String label, String tooltip) 
+	public static Button createCheckBox(Composite group, int horizontalSpan, Listener listener, String label, String tooltip)
 	{
 		Button button = createCheckBox(group, horizontalSpan, label, listener);
 		setToolTipText(button, tooltip);
@@ -618,7 +618,7 @@ public class SystemWidgetHelpers {
 	 * Assign the listener to the passed in implementer of Listener.
 	 * @param group composite to put the button into.
 	 * @param label to display in the button
-	 * @param listener object to listen for events. Can be null.          
+	 * @param listener object to listen for events. Can be null.
 	 */
 	public static Button createRadioButton(Composite group, String label, Listener listener) {
 		Button button = new Button(group, SWT.RADIO | SWT.LEFT);
@@ -638,26 +638,26 @@ public class SystemWidgetHelpers {
 	 * layout data, and assigns tooltip text.
 	 * Assign the listener to the passed in implementer of Listener.
 	 * @param group composite to put the button into.
-	 * @param listener object to listen for events. Can be null.          
+	 * @param listener object to listen for events. Can be null.
 	 * @param label the label
 	 * @param tooltip the tooltip
 	 */
-	public static Button createRadioButton(Composite group, Listener listener, String label, String tooltip) 
+	public static Button createRadioButton(Composite group, Listener listener, String label, String tooltip)
 	{
 		Button button = createRadioButton(group, label, listener);
 		setToolTipText(button, tooltip);
 		return button;
 	}
-	
+
 	/**
 	 * Creates a new radiobutton instance and sets the default
 	 * layout data, and assigns tooltip text.
 	 * Assign the listener to the passed in implementer of Listener.
 	 * @param group composite to put the button into.
-	 * @param listener object to listen for events. Can be null.          
+	 * @param listener object to listen for events. Can be null.
 	 * @param label the label
 	 */
-	public static Button createRadioButton(Composite group, Listener listener, String label) 
+	public static Button createRadioButton(Composite group, Listener listener, String label)
 	{
 		Button button = createRadioButton(group, label, listener);
 		return button;
@@ -669,7 +669,7 @@ public class SystemWidgetHelpers {
 	 * Assign the listener to the passed in implementer of Listener.
 	 * @param group The composite to put the button into.
 	 * @param image The image to display in the button
-	 * @param listener The object to listen for events. Can be null.               
+	 * @param listener The object to listen for events. Can be null.
 	 */
 	public static Button createImageButton(Composite group, Image image, Listener listener) {
 		Button button = new Button(group, SWT.PUSH);
@@ -689,7 +689,7 @@ public class SystemWidgetHelpers {
 	 * Assign the listener to the passed in implementer of Listener.
 	 * @param group composite to put the button into.
 	 * @param label to display in the button
-	 * @param listener object to listen for events. Can be null.               
+	 * @param listener object to listen for events. Can be null.
 	 */
 	public static Button createPushButton(Composite group, String label, Listener listener) {
 		Button button = new Button(group, SWT.PUSH);
@@ -709,7 +709,7 @@ public class SystemWidgetHelpers {
 	 * Assign the listener to the passed in implementer of Listener.
 	 * @param group composite to put the button into.
 	 * @param label to display in the button
-	 * @param listener object to listen for events. Can be null.               
+	 * @param listener object to listen for events. Can be null.
 	 * @param tooltip the tooltip
 	 */
 	public static Button createPushButton(Composite group, String label, Listener listener, String tooltip) {
@@ -719,14 +719,14 @@ public class SystemWidgetHelpers {
 	}
 
 	/**
-	 * This one takes the resource bundle key and appends "label" and "tooltip" to it to 
+	 * This one takes the resource bundle key and appends "label" and "tooltip" to it to
 	 *  get the label and tooltip text.
 	 * @param group composite to put the button into.
-	 * @param listener object to listen for events. Can be null.               
+	 * @param listener object to listen for events. Can be null.
 	 * @param label the label
 	 * @param tooltip the tooltip
 	 */
-	public static Button createPushButton(Composite group, Listener listener, String label, String tooltip) 
+	public static Button createPushButton(Composite group, Listener listener, String label, String tooltip)
 	{
 		Button button = createPushButton(group, label, listener);
 		setToolTipText(button, tooltip);
@@ -738,9 +738,9 @@ public class SystemWidgetHelpers {
 	 * layout data.
 	 * Assign the listener to the passed in implementer of Listener.
 	 * @param group composite to put the button into.
-	 * @param listener object to listen for events. Can be null.               
+	 * @param listener object to listen for events. Can be null.
 	 */
-	public static Button createBrowseButton(Composite group, Listener listener) 
+	public static Button createBrowseButton(Composite group, Listener listener)
 	{
 		String label = SystemResources.BUTTON_BROWSE;
 		return createPushButton(group, label, listener);
@@ -750,8 +750,8 @@ public class SystemWidgetHelpers {
 	 * layout data, with tooltip text.
 	 * Assign the listener to the passed in implementer of Listener.
 	 * @param group composite to put the button into.
-	 * @param listener object to listen for events. Can be null.               
-	 * @param tooltip the tooltip text 
+	 * @param listener object to listen for events. Can be null.
+	 * @param tooltip the tooltip text
 	 * @deprecated
 	 */
 	public static Button createBrowseButton(Composite group, Listener listener, String tooltip) {
@@ -759,14 +759,14 @@ public class SystemWidgetHelpers {
 		return createPushButton(group, label, listener, tooltip);
 	}
 
-	
+
 	/**
 	 * Creates a new listbox instance and sets the default
 	 * layout data.
 	 * Assign the listener to the passed in implementer of Listener.
 	 * @param group composite to put the button into.
 	 * @param label to display above the list box (can be null).
-	 * @param listener object to listen for events. Can be null.               
+	 * @param listener object to listen for events. Can be null.
 	 * @param multiSelect true if this is to be a multiple selection list. False for single selection.
 	 */
 	public static List createListBox(Composite group, String label, Listener listener, boolean multiSelect) {
@@ -779,7 +779,7 @@ public class SystemWidgetHelpers {
 	 * Assign the listener to the passed in implementer of Listener.
 	 * @param group composite to put the button into.
 	 * @param label to display above the list box (can be null).
-	 * @param listener object to listen for events. Can be null.               
+	 * @param listener object to listen for events. Can be null.
 	 * @param multiSelect true if this is to be a multiple selection list. False for single selection.
 	 * @param columnSpan number of columns this should span
 	 */
@@ -818,7 +818,7 @@ public class SystemWidgetHelpers {
 	 * Assign the listener to the passed in implementer of Listener.
 	 * @param group composite to put the button into.
 	 * @param label to display above the list box (can be null).
-	 * @param listener object to listen for events. Can be null.               
+	 * @param listener object to listen for events. Can be null.
 	 * @param multiSelect true if this is to be a multiple selection list. False for single selection.
 	 * @param tooltip the tooltip
 	 */
@@ -833,7 +833,7 @@ public class SystemWidgetHelpers {
 	 * layout data.
 	 * Assign the listener to the passed in implementer of Listener.
 	 * @param group composite to put the button into.
-	 * @param listener object to listen for events. Can be null.               
+	 * @param listener object to listen for events. Can be null.
 	 * @param multiSelect true if this is to be a multiple selection list. False for single selection.
 	 * @param label the label
 	 * @param tooltip the tooltip
@@ -849,7 +849,7 @@ public class SystemWidgetHelpers {
 	 * layout data.
 	 * Assign the listener to the passed in implementer of Listener.
 	 * @param parent composite to put the button into.
-	 * @param listener object to listen for selection events. Can be null.          
+	 * @param listener object to listen for selection events. Can be null.
 	 *   If you want to listen for modify events, call addListener(SWT.Modify,this) on your own.
 	 */
 	public static Combo createCombo(Composite parent, Listener listener) {
@@ -879,11 +879,11 @@ public class SystemWidgetHelpers {
 	 * layout data, with tooltip text.
 	 * Assign the listener to the passed in implementer of Listener.
 	 * @param parent composite to put the combo into.
-	 * @param listener object to listen for selection events. Can be null.          
+	 * @param listener object to listen for selection events. Can be null.
 	 *   If you want to listen for modify events, call addListener(SWT.Modify,this) on your own.
-	 * @param toolTip tooltip text 
+	 * @param toolTip tooltip text
 	 */
-	public static Combo createCombo(Composite parent, Listener listener, String toolTip) 
+	public static Combo createCombo(Composite parent, Listener listener, String toolTip)
 	{
 		Combo combo = createCombo(parent, listener);
 		setToolTipText(combo, toolTip);
@@ -897,13 +897,13 @@ public class SystemWidgetHelpers {
 	 * If you need a handle to the prompting label, immediately call {@link #getLastLabel()}
 	 *
 	 * @param parent composite to put the field into.
-	 * @param listener object to listen for selection events. Can be null.          
+	 * @param listener object to listen for selection events. Can be null.
 	 *   If you want to listen for modify events, call addListener(SWT.Modify,this) on your own.
 	 * @param label the label text
 	 * @param tooltip the tooltip for the combo field
 	 * @return Combo created.
 	 */
-	public static Combo createLabeledCombo(Composite parent, Listener listener, String label, String tooltip) 
+	public static Combo createLabeledCombo(Composite parent, Listener listener, String label, String tooltip)
 	{
 		previousLabel = createLabel(parent, appendColon(label));
 		Combo entry = createCombo(parent, listener, tooltip);
@@ -916,7 +916,7 @@ public class SystemWidgetHelpers {
 	 * layout data.
 	 * Assign the listener to the passed in implementer of Listener.
 	 * @param parent composite to put the button into.
-	 * @param listener object to listen for selection events. Can be null.          
+	 * @param listener object to listen for selection events. Can be null.
 	 *   If you want to listen for modify events, call addListener(SWT.Modify,this) on your own.
 	 */
 	public static Combo createReadonlyCombo(Composite parent, Listener listener) {
@@ -931,11 +931,11 @@ public class SystemWidgetHelpers {
 	 * layout data, with tooltip text.
 	 * Assign the listener to the passed in implementer of Listener.
 	 * @param parent composite to put the button into.
-	 * @param listener object to listen for selection events. Can be null.          
+	 * @param listener object to listen for selection events. Can be null.
 	 *   If you want to listen for modify events, call addListener(SWT.Modify,this) on your own.
 	 * @param tooltip
 	 */
-	public static Combo createReadonlyCombo(Composite parent, Listener listener, String tooltip) 
+	public static Combo createReadonlyCombo(Composite parent, Listener listener, String tooltip)
 	{
 		Combo combo = createReadonlyCombo(parent, listener);
 		setToolTipText(combo, tooltip);
@@ -949,13 +949,13 @@ public class SystemWidgetHelpers {
 	 * If you need a handle to the prompting label, immediately call {@link #getLastLabel()}
 	 *
 	 * @param parent composite to put the field into.
-	 * @param listener object to listen for selection events. Can be null.          
+	 * @param listener object to listen for selection events. Can be null.
 	 *   If you want to listen for modify events, call addListener(SWT.Modify,this) on your own.
 	 * @param labelText the label
 	 * @param tooltip the tooltip
 	 * @return Combo created.
 	 */
-	public static Combo createLabeledReadonlyCombo(Composite parent, Listener listener, String labelText, String tooltip) 
+	public static Combo createLabeledReadonlyCombo(Composite parent, Listener listener, String labelText, String tooltip)
 	{
 		labelText = appendColon(labelText);
 		previousLabel = createLabel(parent, labelText);
@@ -974,13 +974,13 @@ public class SystemWidgetHelpers {
 	 *  of that persistence is handled for you!.
 	 * <p>
 	 * @param parent composite to put the combo into.
-	 * @param listener object to listen for selection events. Can be null.          
+	 * @param listener object to listen for selection events. Can be null.
 	 *   If you want to listen for modify events, call addListener(SWT.Modify,this) on your own.
 	 * @param historyKey the preferences key (any unique string) to use to persist this combo's history
 	 * @param readonly true if this combo is to be readonly, forcing user to select from the history
 	 * @param tooltip the tooltip
 	 */
-	public static SystemHistoryCombo createHistoryCombo(Composite parent, SelectionListener listener, String historyKey, boolean readonly, String tooltip) 
+	public static SystemHistoryCombo createHistoryCombo(Composite parent, SelectionListener listener, String historyKey, boolean readonly, String tooltip)
 	{
 		SystemHistoryCombo combo = new SystemHistoryCombo(parent, SWT.NULL, historyKey, readonly);
 		if (listener != null)
@@ -1019,21 +1019,21 @@ public class SystemWidgetHelpers {
 	 * It has a "Connection:" prompt in front of it and optionally a "New..." button beside it.
 	 * <p>
 	 * @param parent composite to put the combo into.
-	 * @param listener object to listen for selection events. Can be null.          
+	 * @param listener object to listen for selection events. Can be null.
 	 *   If you want to listen for modify events, call addSelectionListener(...) on your own.
-	 * @param systemTypes array of system types to subset connection list by. Specify a single entry of '*' for 
-	 *   all system types. Specify this <i>OR</i> specify factory <i>OR</i> specify factoryCategory 
+	 * @param systemTypes array of system types to subset connection list by. Specify a single entry of '*' for
+	 *   all system types. Specify this <i>OR</i> specify factory <i>OR</i> specify factoryCategory
 	 *   <i>OR</i> specify factory Id
 	 * @param factory the subsystem factory to subset connection list by. Only connections with a subsystem
 	 *   owned by this factory are listed. Specify this <i>OR</i> specify systemTypes <i>OR</i> specify factoryCategory
 	 *   <i>OR</i> specify factory Id
 	 * @param factoryId the subsystem factory id to subset connection list by. Only connections with a
 	 *   subsystem owned by this factory are listed, where id is a string specified in the
-	 *   plugin.xml file for the subsystem factory extension point definition. 
+	 *   plugin.xml file for the subsystem factory extension point definition.
 	 *   Specify this <i>OR</i> specify factory <i>OR</i> specify systemTypes <i>OR</i> specify factory category
 	 * @param factoryCategory the subsystem factory category to subset connection list by. Only connections with a
 	 *   subsystem owned by a factory of this category are listed, where category is a string specified in the
-	 *   plugin.xml file for the subsystem factory extension point definition. 
+	 *   plugin.xml file for the subsystem factory extension point definition.
 	 *   Specify this <i>OR</i> specify factory <i>OR</i> specify factory Id <i>OR</i> specify systemTypes
 	 * @param defaultConnection the connection to pre-select. Can be null.
 	 * @param horizontalSpan number of columns this should span
@@ -1051,7 +1051,7 @@ public class SystemWidgetHelpers {
 			combo = new SystemHostCombo(parent, SWT.NULL, defaultConnection, newButton, factoryCategory);
 		if (listener != null && combo != null)
 			combo.addSelectionListener(listener);
-		
+
 		boolean hasGridData = false;
 		if (combo != null)
 			hasGridData = (combo.getLayoutData() != null) && (combo.getLayoutData() instanceof GridData);
@@ -1083,13 +1083,13 @@ public class SystemWidgetHelpers {
 
 	/**
 	 * Return the list of all registered valid system types.
-	 * 
+	 *
 	 * A system type is considered valid, if at least one subsystem
 	 * configuration is registered against it, and the system type
 	 * is enabled in the Preferences.
 	 * The list is ordered alphabetically by system type label
 	 * according to international unicode rules, in the current Locale.
-	 * 
+	 *
 	 * @param restrictIds An array of system type IDs to restrict the
 	 *    returned list of valid system types to only those requested,
 	 *    or <code>null</code> to return all valid system types.
@@ -1143,12 +1143,12 @@ public class SystemWidgetHelpers {
 	/**
 	 * Sorts the given array of systemTypes in ascending order by system
 	 * type label.
-	 *  
-	 * Note that this method sorts the array in place, so clients are 
-	 * responsible for creating a copy of the array when needed. 
+	 *
+	 * Note that this method sorts the array in place, so clients are
+	 * responsible for creating a copy of the array when needed.
 	 * Labels are sorted with a Collator according to international
 	 * unicode rules, in the current Locale.
-	 * 
+	 *
 	 * @param systemTypes list of system types to sort
 	 */
 	public static void sortSystemTypesByLabel(IRSESystemType[] systemTypes) {
@@ -1161,7 +1161,7 @@ public class SystemWidgetHelpers {
 			}
 		});
 	}
-	
+
 	/**
 	 * Return the labels for the given list of system types.
 	 * @param systemTypes an array of system types
@@ -1174,21 +1174,21 @@ public class SystemWidgetHelpers {
 		}
 		return labels;
 	}
-	
+
 	/**
 	 * Creates a readonly system type combination box with the given system types.
-	 * 
+	 *
 	 * Does NOT create the leading prompt or anything except the combo.
-	 * In order to find out what system type was selected, clients need to 
+	 * In order to find out what system type was selected, clients need to
 	 * use {@link Combo#getSelectionIndex()} and use the return value as
 	 * an index into the array of system types they provided.
-	 * 
+	 *
 	 * @param parent the parent composite to embed this widget in.
 	 * @param listener a listener for selection events.
 	 * @param systemTypes an array of system types to show in this Combo.
 	 *     Must not be <code>null</code>.
 	 *     Fill this with the result of {@link #getValidSystemTypes(String[])}
-	 *     with a null argument in order to get a combo box with all valid 
+	 *     with a null argument in order to get a combo box with all valid
 	 *     system types.
 	 * @return a Combo box displaying the given system types.
 	 */
@@ -1206,7 +1206,7 @@ public class SystemWidgetHelpers {
 	 * Does NOT create the leading prompt or anything except the combo.
 	 */
 	public static Combo createHostNameCombo(Composite parent, Listener listener, IRSESystemType systemType) {
-		//System.out.println("TipId: " + ISystemConstants.RESID_HOSTNAME_TIP);		
+		//System.out.println("TipId: " + ISystemConstants.RESID_HOSTNAME_TIP);
 		Combo combo = createCombo(parent, listener, SystemResources.RESID_CONNECTION_HOSTNAME_TIP);
 
 		// Fix bug#282242: No default host names if no connection has been created.
@@ -1229,7 +1229,7 @@ public class SystemWidgetHelpers {
 	 * @param entryToolTip text for the entry field. Can be null
 	 * @return The text field widget
 	 */
-	public static InheritableEntryField createInheritableTextField(Composite parent, String toggleToolTip, String entryToolTip) 
+	public static InheritableEntryField createInheritableTextField(Composite parent, String toggleToolTip, String entryToolTip)
 	{
 		InheritableEntryField entryField = new InheritableEntryField(parent, SWT.NULL);
 		if (toggleToolTip != null)
@@ -1240,7 +1240,7 @@ public class SystemWidgetHelpers {
 	}
 
 	/**
-	 * Helper method to line up the leading prompts in a composite, taking 
+	 * Helper method to line up the leading prompts in a composite, taking
 	 * into account composite prompts nested within.
 	 */
 	public static void lineUpPrompts(Composite composite) {
@@ -1278,7 +1278,7 @@ public class SystemWidgetHelpers {
 			columnOneWidth = firstLabel.getSize().x;
 		if (maxNestedLabelWidth > columnOneWidth)
 			columnOneWidth = maxNestedLabelWidth;
-		//System.out.println("Calculated column one width = " + columnOneWidth);    	  
+		//System.out.println("Calculated column one width = " + columnOneWidth);
 		// APPLY NEW WIDTH TO FIRST COLUMN ONE LABEL
 		if (firstLabel != null)
 			 ((GridData) firstLabel.getLayoutData()).widthHint = columnOneWidth;
@@ -1331,11 +1331,11 @@ public class SystemWidgetHelpers {
 	}
 
 	/**
-	 * Given a Composite, this method walks all the children recursively and 
-	 *  and sets the mnemonics uniquely for each child control where a 
+	 * Given a Composite, this method walks all the children recursively and
+	 *  and sets the mnemonics uniquely for each child control where a
 	 *  mnemonic makes sense (eg, buttons).
-	 *  The letter/digit chosen for the mnemonic is unique for this Composite, 
-	 *  so you should call this on as high a level of a composite as possible 
+	 *  The letter/digit chosen for the mnemonic is unique for this Composite,
+	 *  so you should call this on as high a level of a composite as possible
 	 *  per Window.
 	 * Call this after populating your controls.
 	 * @return mnemonics object used for recording used-mnemonics. Use this
@@ -1346,7 +1346,7 @@ public class SystemWidgetHelpers {
 		mnemonics.setMnemonics(parent);
 		return mnemonics;
 	}
-	
+
 	/**
 	 * Same as above but also whether to apply mnemonics to labels preceding text fields, combos and inheritable entry fields.
 	 */
@@ -1366,7 +1366,7 @@ public class SystemWidgetHelpers {
 		mnemonics.setMnemonics(parent);
 		return mnemonics;
 	}
-	
+
 	/**
 	 * Same as above but also whether to apply mnemonics to labels preceding text fields, combos and inheritable entry fields.
 	 */
@@ -1387,7 +1387,7 @@ public class SystemWidgetHelpers {
 		mnemonics.setMnemonics(parent);
 		return mnemonics;
 	}
-	
+
 	/**
 	 * Same as above but also whether to apply mnemonics to labels preceding text fields, combos and inheritable entry fields.
 	 */
@@ -1409,7 +1409,7 @@ public class SystemWidgetHelpers {
 	}
 	/**
 	 * Given an SWT Menu, "walk it" and automatically assign unique
-	 * mnemonics for every menu item in it, and then for each 
+	 * mnemonics for every menu item in it, and then for each
 	 * submenu, do so for it too.
 	 * @param menu the menubar to add mnemonics for
 	 */
@@ -1429,8 +1429,8 @@ public class SystemWidgetHelpers {
 	} // end addMnemonicsForMenuBar
 
 	/**
-	 * Given a Composite, this method walks all the children recursively and 
-	 *  and sets the infopop help id for each child control where help 
+	 * Given a Composite, this method walks all the children recursively and
+	 *  and sets the infopop help id for each child control where help
 	 *  makes sense (eg, buttons, combos, entry fields, lists, trees).
 	 * <p>
 	 * Call this after populating your controls.
@@ -1474,7 +1474,7 @@ public class SystemWidgetHelpers {
 		String[] ids = new String[1];
 		ids[0] = id;
 		PlatformUI.getWorkbench().getHelpSystem().setHelp(c, id);
-		//setHelp(c, ids);		
+		//setHelp(c, ids);
 	}
 
 	private final static char STANDARD_COLON = ':';

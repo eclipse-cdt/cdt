@@ -82,6 +82,7 @@
  * David McKnight   (IBM)        - [243921] FTP subsystem timeout causes error when expanding folders
  * Martin Oberhuber (Wind River) - [217472][ftp] Error copying files with very short filenames
  * Martin Oberhuber (Wind River) - [285942] Throw exception when listing a non-folder
+ * Martin Oberhuber (Wind River) - [285948] Avoid recursive deletion over symbolic links
  ********************************************************************************/
 
 package org.eclipse.rse.internal.services.files.ftp;
@@ -1176,7 +1177,7 @@ public class FTPService extends AbstractFileService implements IFTPService, IFil
 					if (curName == null || curName.equals(".") || curName.equals("..")) { //$NON-NLS-1$ //$NON-NLS-2$
 						continue;
 					}
-					internalDelete(ftpClient, newParentPath, curName, fileNames[i].isFile(), monitor);
+					internalDelete(ftpClient, newParentPath, curName, fileNames[i].isFile() || fileNames[i].isSymbolicLink(), monitor);
 				}
 
 				//remove empty folder

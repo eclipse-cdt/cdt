@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2008 IBM Corporation and others.
+ * Copyright (c) 2006, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -27,6 +27,7 @@
  * David Dykstal (IBM) - [221211] fix IFileService API for batch operations
  * Radoslav Gerganov (ProSyst) - [230919] IFileService.delete() should not return a boolean
  * Martin Oberhuber (Wind River) - [234026] Clarify IFileService#createFolder() Javadocs
+ * Martin Oberhuber (Wind River) - [274568] Dont use SftpMonitor for Streams transfer
  *******************************************************************************/
 
 package org.eclipse.rse.services.files;
@@ -583,7 +584,9 @@ public interface IFileService extends IService
 	 * @param remoteFile the name of the remote file.
 	 * @param isBinary <code>true</code> if the file is a binary file,
 	 *            <code>false</code> otherwise.
-	 * @param monitor the progress monitor.
+	 * @param monitor the progress monitor. Only used for the process of opening
+	 *            the Stream. Implementations are not expected to use or update
+	 *            the monitor for actual Stream transfer operations.
 	 * @return the input stream to access the contents of the remote file.
 	 * @throws SystemMessageException if an error occurs.
 	 * @since org.eclipse.rse.services 2.0
@@ -598,7 +601,9 @@ public interface IFileService extends IService
 	 * @param remoteFile the name of the remote file.
 	 * @param isBinary <code>true</code> if the file is a binary file,
 	 *            <code>false</code> otherwise.
-	 * @param monitor the progress monitor.
+	 * @param monitor the progress monitor. Only used for the process of opening
+	 *            the Stream. Implementations are not expected to use or update
+	 *            the monitor for actual Stream transfer operations.
 	 * @return the input stream to access the contents of the remote file.
 	 * @throws SystemMessageException if an error occurs.
 	 * @since org.eclipse.rse.services 2.0
@@ -617,7 +622,9 @@ public interface IFileService extends IService
 	 * @param options bit wise or of option constants. Valid constants are
 	 *            {@link IFileService#APPEND}, {@link IFileService#TEXT_MODE},
 	 *            and {@link IFileService#NONE}
-	 * @param monitor the progress monitor.
+	 * @param monitor the progress monitor. Only used for the process of opening
+	 *            the Stream. Implementations are not expected to use or update
+	 *            the monitor for actual Stream transfer operations.
 	 * @return the input stream to access the contents of the remote file.
 	 * @throws SystemMessageException if an error occurs.
 	 * @since org.eclipse.rse.services 3.0

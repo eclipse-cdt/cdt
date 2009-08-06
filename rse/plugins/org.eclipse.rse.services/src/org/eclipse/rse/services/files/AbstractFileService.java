@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2008 IBM Corporation and others.
+ * Copyright (c) 2006, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -27,6 +27,7 @@
  * Martin Oberhuber (Wind River) - [226262] Make IService IAdaptable and add Javadoc
  * David Dykstal (IBM) - [221211] fix IFileService API for batch operations
  * Martin Oberhuber (Wind River) - [221211] Fix progress monitor and cancellation for multi operations
+ * Martin Oberhuber (Wind River) - [274568] Dont use SftpMonitor for Streams transfer
  *******************************************************************************/
 
 package org.eclipse.rse.services.files;
@@ -254,17 +255,19 @@ public abstract class AbstractFileService extends AbstractService implements IFi
 	}
 
 	/**
-	 * The default implementation returns <code>null</code>. Clients can override to return an input stream to the file.
-	 * @see org.eclipse.rse.services.files.IFileService#getInputStream(String, String, boolean, IProgressMonitor)
+	 * {@inheritDoc} The default implementation returns <code>null</code>.
+	 * Clients can override to return an input stream to the file.
+	 *
+	 * @see org.eclipse.rse.services.files.IFileService#getInputStream(String,
+	 *      String, boolean, IProgressMonitor)
 	 */
 	public InputStream getInputStream(String remoteParent, String remoteFile, boolean isBinary, IProgressMonitor monitor) throws SystemMessageException {
 		return null;
 	}
 
 	/**
-	 * Gets the output stream to write/append to a remote file. The default
-	 * implementation returns <code>null</code>. Clients can override to
-	 * return an output stream to the file.
+	 * {@inheritDoc} The default implementation returns <code>null</code>.
+	 * Clients can override to return an output stream to the file.
 	 *
 	 * @deprecated use
 	 *             {@link #getOutputStream(String, String, int, IProgressMonitor)}
@@ -275,9 +278,8 @@ public abstract class AbstractFileService extends AbstractService implements IFi
 	}
 
 	/**
-	 * Gets the output stream to write/append to a remote file. The default
-	 * implementation returns <code>null</code>. Clients can override to return
-	 * an output stream to the file.
+	 * {@inheritDoc} The default implementation returns <code>null</code>.
+	 * Clients can override to return an output stream to the file.
 	 *
 	 * @see org.eclipse.rse.services.files.IFileService#getOutputStream(String,
 	 *      String, int, IProgressMonitor)

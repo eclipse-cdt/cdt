@@ -1,6 +1,7 @@
-#Wed Mar 14 18:02:32 EDT 2007
+#Thu Aug 06 17:22:00 CEST 2009
 eclipse.preferences.version=1
 encoding//GVT/chs/test.txt=MS936
 encoding//GVT/cht/test.txt=MS950
 encoding//GVT/jpn/test.txt=MS932
 encoding//GVT/kor/test.txt=MS949
+encoding/<project>=ISO-8859-1

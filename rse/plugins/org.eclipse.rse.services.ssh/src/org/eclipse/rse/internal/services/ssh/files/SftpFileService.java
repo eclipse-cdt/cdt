@@ -88,7 +88,6 @@ import org.eclipse.rse.services.clientserver.messages.SystemMessage;
 import org.eclipse.rse.services.clientserver.messages.SystemMessageException;
 import org.eclipse.rse.services.clientserver.messages.SystemOperationCancelledException;
 import org.eclipse.rse.services.clientserver.messages.SystemOperationFailedException;
-import org.eclipse.rse.services.clientserver.messages.SystemRemoteSecurityException;
 import org.eclipse.rse.services.clientserver.messages.SystemUnexpectedErrorException;
 import org.eclipse.rse.services.files.AbstractFileService;
 import org.eclipse.rse.services.files.HostFilePermissions;
@@ -99,6 +98,7 @@ import org.eclipse.rse.services.files.IHostFilePermissions;
 import org.eclipse.rse.services.files.IHostFilePermissionsContainer;
 import org.eclipse.rse.services.files.RemoteFileException;
 import org.eclipse.rse.services.files.RemoteFileIOException;
+import org.eclipse.rse.services.files.RemoteFileSecurityException;
 public class SftpFileService extends AbstractFileService implements ISshService, IFilePermissionsService
 {
 
@@ -440,7 +440,7 @@ public class SftpFileService extends AbstractFileService implements ISshService,
 			SystemMessageException messageException;
 			SftpException sftpe = (SftpException)e;
 			if (sftpe.id == ChannelSftp.SSH_FX_PERMISSION_DENIED) {
-				messageException = new SystemRemoteSecurityException(Activator.PLUGIN_ID, e.getLocalizedMessage(), e);
+				messageException = new RemoteFileSecurityException(e);
 			} else if (sftpe.id == ChannelSftp.SSH_FX_NO_SUCH_FILE) {
 				//TODO better throw SENFE at the place where we know what element and operation is done
 				messageException = new SystemElementNotFoundException("", ""); //$NON-NLS-1$ //$NON-NLS-2$

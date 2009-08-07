@@ -131,7 +131,6 @@ import org.eclipse.rse.services.clientserver.messages.SystemMessage;
 import org.eclipse.rse.services.clientserver.messages.SystemMessageException;
 import org.eclipse.rse.services.clientserver.messages.SystemNetworkIOException;
 import org.eclipse.rse.services.clientserver.messages.SystemOperationCancelledException;
-import org.eclipse.rse.services.clientserver.messages.SystemRemoteSecurityException;
 import org.eclipse.rse.services.clientserver.messages.SystemUnsupportedOperationException;
 import org.eclipse.rse.services.files.AbstractFileService;
 import org.eclipse.rse.services.files.IFilePermissionsService;
@@ -140,6 +139,7 @@ import org.eclipse.rse.services.files.IHostFile;
 import org.eclipse.rse.services.files.IHostFilePermissions;
 import org.eclipse.rse.services.files.IHostFilePermissionsContainer;
 import org.eclipse.rse.services.files.RemoteFileIOException;
+import org.eclipse.rse.services.files.RemoteFileSecurityException;
 
 public class FTPService extends AbstractFileService implements IFTPService, IFilePermissionsService
 {
@@ -371,7 +371,7 @@ public class FTPService extends AbstractFileService implements IFTPService, IFil
 		return new RemoteFileIOException(e);
 	}
 
-	public void connect() throws SystemRemoteSecurityException, IOException
+	public void connect() throws RemoteFileSecurityException,IOException
 	{
 
 		if (_ftpClient == null)
@@ -429,14 +429,14 @@ public class FTPService extends AbstractFileService implements IFTPService, IFil
 			{
 				String lastMessage = _ftpClient.getReplyString();
 				disconnect();
-				throw new SystemRemoteSecurityException(Activator.PLUGIN_ID, "connect", new Exception(lastMessage)); //$NON-NLS-1$
+				throw new RemoteFileSecurityException(new Exception(lastMessage));
 			}
 		}
 		else if(!FTPReply.isPositiveCompletion(userReply))
 		{
 			String lastMessage = _ftpClient.getReplyString();
 			disconnect();
-			throw new SystemRemoteSecurityException(Activator.PLUGIN_ID, "connect", new Exception(lastMessage)); //$NON-NLS-1$
+			throw new RemoteFileSecurityException(new Exception(lastMessage));
 		}
 
 		//System parser
@@ -1314,7 +1314,7 @@ public class FTPService extends AbstractFileService implements IFTPService, IFil
 			}
 		}
 		catch (Exception e) {
-			throw new SystemRemoteSecurityException(Activator.PLUGIN_ID, "createFile", e); //$NON-NLS-1$
+			throw new RemoteFileSecurityException(e);
 		}
 
 		return getFile(remoteParent, fileName, monitor);
@@ -1638,7 +1638,7 @@ public class FTPService extends AbstractFileService implements IFTPService, IFil
 				clearCache(parent);
 				if (!_ftpClient.sendSiteCommand("CHMOD " + newPermissions + " " + file.getAbsolutePath())) { //$NON-NLS-1$ //$NON-NLS-2$
 					String lastMessage = _ftpClient.getReplyString();
-					throw new SystemRemoteSecurityException(Activator.PLUGIN_ID, "setReadOnly", new Exception(lastMessage)); //$NON-NLS-1$
+					throw new RemoteFileSecurityException(new Exception(lastMessage));
 				}
 			} catch (IOException e) {
 				String pluginId = Activator.getDefault().getBundle().getSymbolicName();
@@ -1784,7 +1784,7 @@ public class FTPService extends AbstractFileService implements IFTPService, IFil
 				clearCache(inFile.getParentPath());
 				if (!_ftpClient.sendSiteCommand("CHMOD " + s + " " + inFile.getAbsolutePath())) { //$NON-NLS-1$ //$NON-NLS-2$
 					String lastMessage = _ftpClient.getReplyString();
-					throw new SystemRemoteSecurityException(Activator.PLUGIN_ID, "setFilePermissions", new Exception(lastMessage)); //$NON-NLS-1$
+					throw new RemoteFileSecurityException(new Exception(lastMessage));
 				}
 			} catch (IOException e) {
 				String pluginId = Activator.getDefault().getBundle().getSymbolicName();

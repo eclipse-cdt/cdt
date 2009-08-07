@@ -88,14 +88,18 @@ public class AbsolutePathSourceContainer extends AbstractSourceContainer {
 	 * @return IProject or null
 	 */
 	private IProject getProject() {
-		ILaunchConfiguration config = getDirector().getLaunchConfiguration();
-		if (config != null) {
-			try {
-				String name = config.getAttribute(ICDTLaunchConfigurationConstants.ATTR_PROJECT_NAME, "");
-				if (name.length() > 0)
-					return ResourcesPlugin.getWorkspace().getRoot().getProject(name);
-			} catch (CoreException e) {
-				// Don't care carry on search using other heuristics
+		ISourceLookupDirector director = getDirector();
+		if (director != null)
+		{
+			ILaunchConfiguration config = director.getLaunchConfiguration();
+			if (config != null) {
+				try {
+					String name = config.getAttribute(ICDTLaunchConfigurationConstants.ATTR_PROJECT_NAME, ""); //$NON-NLS-1$
+					if (name.length() > 0)
+						return ResourcesPlugin.getWorkspace().getRoot().getProject(name);
+				} catch (CoreException e) {
+					// Don't care carry on search using other heuristics
+				}
 			}
 		}
 		return null;

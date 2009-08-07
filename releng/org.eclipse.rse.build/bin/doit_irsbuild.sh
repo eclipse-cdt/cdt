@@ -66,6 +66,12 @@ fi
 echo "Updating builder from CVS..."
 cd org.eclipse.rse.build
 stamp=`date +'%Y%m%d-%H%M'`
+CHANGES=`cvs -nq update -r ${mapTag} | head -1`
+if [ "${CHANGES}" = "" ]; then
+  echo "Build ${buildType}${buildId} : ${mapTag} : ${stamp}"
+  echo "Build canceled, no mapfile or config changed in org.eclipse.rse.build."
+  exit 0
+fi
 log=$HOME/ws2/log-${buildType}$stamp.txt
 touch $log
 #cvs -q update -RPd >> $log 2>&1

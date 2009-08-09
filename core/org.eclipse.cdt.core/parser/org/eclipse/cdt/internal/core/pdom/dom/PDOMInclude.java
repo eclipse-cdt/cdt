@@ -80,10 +80,10 @@ public class PDOMInclude implements IIndexFragmentInclude {
 		boolean deducible_name = isDeducibleName(targetFile, nameChars);
 		// If the name is the same as an end part of the path of the included file,
 		// store the length of the name instead of the name itself.
-		if( deducible_name ) {
-			db.putInt( record + INCLUDE_NAME_OR_LENGTH, nameChars.length );
+		if (deducible_name) {
+			db.putInt(record + INCLUDE_NAME_OR_LENGTH, nameChars.length);
 		} else {
-			db.putRecPtr( record + INCLUDE_NAME_OR_LENGTH, db.newString(nameChars).getRecord() );
+			db.putRecPtr(record + INCLUDE_NAME_OR_LENGTH, db.newString(nameChars).getRecord());
 		}
 		setFlag(encodeFlags(include, deducible_name));
 		setIncludedBy(containerFile);

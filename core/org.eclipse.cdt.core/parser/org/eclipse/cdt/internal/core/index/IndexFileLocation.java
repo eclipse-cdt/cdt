@@ -22,7 +22,7 @@ public class IndexFileLocation implements IIndexFileLocation {
 	private final String fullPath;
 	
 	public IndexFileLocation(URI uri, String fullPath) {
-		if(uri==null)
+		if (uri == null)
 			throw new IllegalArgumentException();
 		this.uri = uri;
 		this.fullPath = fullPath;
@@ -50,8 +50,8 @@ public class IndexFileLocation implements IIndexFileLocation {
 	 */
 	@Override
 	public boolean equals(Object obj) {
-		if(obj instanceof IIndexFileLocation) {
-			return uri.equals(((IIndexFileLocation)obj).getURI());
+		if (obj instanceof IIndexFileLocation) {
+			return uri.equals(((IIndexFileLocation) obj).getURI());
 		}
 		return false;
 	}

@@ -1357,6 +1357,17 @@ public abstract class IndexCPPBindingResolutionTest extends IndexBindingResoluti
     	getBindingFromASTName("A a", 1, ICPPClassType.class);
 	}
 
+	//	class A {
+	//	  friend inline void m(A p) {}
+	//	};
+
+	//	void test(A a) {
+	//	  m(a);
+	//	}
+	public void testInlineFriendFunction_284690() throws Exception {
+    	getBindingFromASTName("m(a)", 1, ICPPFunction.class);
+	}
+
 	private void checkValue(IValue initialValue, int i) {
 		assertNotNull(initialValue);
 		final Long numericalValue = initialValue.numericalValue();

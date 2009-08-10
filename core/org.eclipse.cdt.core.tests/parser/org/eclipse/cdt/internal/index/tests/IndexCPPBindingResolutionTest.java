@@ -1329,22 +1329,22 @@ public abstract class IndexCPPBindingResolutionTest extends IndexBindingResoluti
     // }
 	public void testValues() throws Exception {
 		IVariable v= (IVariable) getBindingFromASTName("a;", 1);
-		checkValue(v.getInitialValue(), -4);
+		asserValueEquals(v.getInitialValue(), -4);
 		v= (IVariable) getBindingFromASTName("b;", 1);
-		checkValue(v.getInitialValue(), 0);
+		asserValueEquals(v.getInitialValue(), 0);
 		v= (IVariable) getBindingFromASTName("c;", 1);
 		assertNull(v.getInitialValue().numericalValue());
 
 		IEnumerator e= (IEnumerator) getBindingFromASTName("e0", 2);
-		checkValue(e.getValue(), 0);
+		asserValueEquals(e.getValue(), 0);
 		e= (IEnumerator) getBindingFromASTName("e2", 2);
-		checkValue(e.getValue(), 2);
+		asserValueEquals(e.getValue(), 2);
 		e= (IEnumerator) getBindingFromASTName("e3", 2);
-		checkValue(e.getValue(), 3);
+		asserValueEquals(e.getValue(), 3);
 		e= (IEnumerator) getBindingFromASTName("e4", 2);
-		checkValue(e.getValue(), 4);
+		asserValueEquals(e.getValue(), 4);
 		e= (IEnumerator) getBindingFromASTName("e5", 2);
-		checkValue(e.getValue(), 5);
+		asserValueEquals(e.getValue(), 5);
 	}
 
 	//	namespace ns1 { namespace ns2 {
@@ -1378,7 +1378,7 @@ public abstract class IndexCPPBindingResolutionTest extends IndexBindingResoluti
 	//	void test(A a) {
 	//	  m(a);
 	//	}
-	public void _testInlineFriendFunction_284690() throws Exception {
+	public void testInlineFriendFunction_284690() throws Exception {
     	getBindingFromASTName("m(a)", 1, IFunction.class);
 	}
 
@@ -1484,10 +1484,10 @@ public abstract class IndexCPPBindingResolutionTest extends IndexBindingResoluti
 		}
 	}
 
-	private void checkValue(IValue initialValue, int i) {
+	private void asserValueEquals(IValue initialValue, long i) {
 		assertNotNull(initialValue);
 		final Long numericalValue = initialValue.numericalValue();
 		assertNotNull(numericalValue);
-		assertEquals(i, numericalValue.intValue());
+		assertEquals(i, numericalValue.longValue());
 	}
 }

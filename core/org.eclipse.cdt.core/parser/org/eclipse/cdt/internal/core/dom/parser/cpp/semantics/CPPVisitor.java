@@ -2048,6 +2048,12 @@ public class CPPVisitor extends ASTQueries {
 			if (declSpec.isFriend()) {
 				isFriend= true;
 			}
+		} else if (node instanceof IASTFunctionDefinition) {
+			IASTFunctionDefinition funcDefinition = (IASTFunctionDefinition) node;
+			ICPPASTDeclSpecifier declSpec = (ICPPASTDeclSpecifier) funcDefinition.getDeclSpecifier();
+			if (declSpec.isFriend()) {
+				isFriend= true;
+			}
 		}
 		
 		// Search for enclosing binding

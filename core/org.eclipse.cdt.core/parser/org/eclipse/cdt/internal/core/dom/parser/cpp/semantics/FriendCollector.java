@@ -7,12 +7,15 @@
  *
  * Contributors:
  *    Markus Schorn - initial API and implementation
+ *    Sergey Prigogin (Google)
  *******************************************************************************/ 
 package org.eclipse.cdt.internal.core.dom.parser.cpp.semantics;
 
 import org.eclipse.cdt.core.dom.ast.ASTVisitor;
 import org.eclipse.cdt.core.dom.ast.IASTDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTDeclarator;
+import org.eclipse.cdt.core.dom.ast.IASTFunctionDeclarator;
+import org.eclipse.cdt.core.dom.ast.IASTFunctionDefinition;
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTSimpleDeclaration;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCompositeTypeSpecifier;
@@ -60,6 +63,13 @@ class FriendCollector extends ASTVisitor {
 	
 			if (declSpec instanceof ICPPASTCompositeTypeSpecifier) {
 				return PROCESS_CONTINUE;
+			}
+		} else if (declaration instanceof IASTFunctionDefinition) {
+			IASTFunctionDefinition funcDefinition = (IASTFunctionDefinition) declaration;
+			ICPPASTDeclSpecifier declSpec = (ICPPASTDeclSpecifier) funcDefinition.getDeclSpecifier();
+			if (declSpec.isFriend()) {
+				IASTFunctionDeclarator declarator = funcDefinition.getDeclarator();
+				ASTInternal.addName(fScope,  declarator.getName());
 			}
 		}
 		return PROCESS_SKIP;

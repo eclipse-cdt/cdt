@@ -7294,7 +7294,7 @@ public class AST2CPPTests extends AST2BaseTest {
 	//	void test(A a) {
 	//	  m(a);
 	//	}
-	public void _testInlineFriendFunction_284690() throws Exception {
+	public void testInlineFriendFunction_284690() throws Exception {
 		final String code = getAboveComment();
 		parseAndCheckBindings(code, ParserLanguage.CPP);
 	}
@@ -7330,7 +7330,7 @@ public class AST2CPPTests extends AST2BaseTest {
     	assertEquals(IBasicType.t_int, ((ICPPBasicType) t3).getType());
     	assertEquals(ICPPBasicType.IS_LONG, ((ICPPBasicType) t3).getQualifierBits());
 	}
-	
+
 	// typedef enum enum_name enum_name;
 	public void testTypedefRecursion_285457() throws Exception {
 		BindingAssertionHelper ba= new BindingAssertionHelper(getAboveComment(), true);

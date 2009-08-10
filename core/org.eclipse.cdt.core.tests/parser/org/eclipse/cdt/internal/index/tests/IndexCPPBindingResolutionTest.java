@@ -1323,7 +1323,7 @@ public abstract class IndexCPPBindingResolutionTest extends IndexBindingResoluti
 	// int b= a+4;
 	// int* c= &b;
 	// enum X {e0, e4=4, e5, e2=2, e3};
-    
+
     // void ref() {
     // a; b; c; e0; e2; e3; e4; e5;
     // }
@@ -1358,13 +1358,6 @@ public abstract class IndexCPPBindingResolutionTest extends IndexBindingResoluti
     	getBindingFromASTName("A a", 1, ICPPClassType.class);
 	}
 
-	private void checkValue(IValue initialValue, int i) {
-		assertNotNull(initialValue);
-		final Long numericalValue = initialValue.numericalValue();
-		assertNotNull(numericalValue);
-		assertEquals(i, numericalValue.intValue());
-	}
-	
 	// void f(int (&v)[1]);
 	// void f(int (&v)[2]);
 	
@@ -1402,12 +1395,12 @@ public abstract class IndexCPPBindingResolutionTest extends IndexBindingResoluti
 			ICPPField field = (ICPPField) binding;
 			assertQNEquals(qn, field);
 			assertTrue(expType.isInstance(field.getType()));
-			if(expTypeQN!=null) {
+			if (expTypeQN != null) {
 				assert(field.getType() instanceof ICPPBinding);
 				ICPPBinding tyBinding = (ICPPBinding) field.getType();
 				assertQNEquals(expTypeQN, tyBinding);
 			}
-		} catch(DOMException de) {
+		} catch (DOMException de) {
 			fail(de.getMessage());
 		}
 	}
@@ -1425,7 +1418,8 @@ public abstract class IndexCPPBindingResolutionTest extends IndexBindingResoluti
 			int constructors,
 			int nestedClasses) {
 		assertTrue(binding instanceof ICPPClassType);
-		assertClassType(((ICPPClassType) binding), qn, key, bases, fields, declaredFields, methods, declaredMethods, allDeclaredMethods, friends, constructors, nestedClasses);
+		assertClassType((ICPPClassType) binding, qn, key, bases, fields, declaredFields, methods,
+				declaredMethods, allDeclaredMethods, friends, constructors, nestedClasses);
 	}
 
 	static protected void assertClassType(
@@ -1455,7 +1449,7 @@ public abstract class IndexCPPBindingResolutionTest extends IndexBindingResoluti
 			// assertEquals(friends, classType.getFriends().length); (PDOMNotImplementedError)
 			assertEquals(constructors, classType.getConstructors().length);
 			assertEquals(nestedClasses, classType.getNestedClasses().length);
-		} catch(DOMException de) {
+		} catch (DOMException de) {
 			fail(de.getMessage());
 		}
 	}
@@ -1483,10 +1477,17 @@ public abstract class IndexCPPBindingResolutionTest extends IndexBindingResoluti
 		ICPPPointerToMemberType ptmt = (ICPPPointerToMemberType) type;
 		ICPPClassType classType = (ICPPClassType) ptmt.getMemberOfClass();
 		assertQNEquals(cqn, classType);
-		if(qn!=null) {
+		if (qn != null) {
 			assert(ptmt.getType() instanceof ICPPBinding);
 			ICPPBinding tyBinding = (ICPPBinding) ptmt.getType();
 			assertQNEquals(qn, tyBinding);
 		}
+	}
+
+	private void checkValue(IValue initialValue, int i) {
+		assertNotNull(initialValue);
+		final Long numericalValue = initialValue.numericalValue();
+		assertNotNull(numericalValue);
+		assertEquals(i, numericalValue.intValue());
 	}
 }

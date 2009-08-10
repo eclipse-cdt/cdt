@@ -300,8 +300,9 @@
 		<property name="copyToDir" value="/home/www/tools/cdt/builds/${branchVersion}"/>
 		<replace file="${copyToDir}/index.html">
 			<replacetoken><![CDATA[  <!-- add here -->]]></replacetoken>
-			<replacevalue><![CDATA[  <li><a href="@buildType@.@buildId@/index.html">@buildId@</a></li>
-  <!-- add here -->]]></replacevalue>
+			<replacevalue><![CDATA[  <!-- add here -->
+<li><a href="@buildType@.@buildId@/index.html">@buildId@</a></li>]]>
+			</replacevalue>
 		</replace>
 		<replace file="${copyToDir}/index.html">
 			<replacefilter token="@buildType@" value="${buildType}"/>

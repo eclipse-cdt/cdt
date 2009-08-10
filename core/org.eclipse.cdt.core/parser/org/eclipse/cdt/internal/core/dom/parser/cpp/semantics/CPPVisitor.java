@@ -763,7 +763,7 @@ public class CPPVisitor extends ASTQueries {
 		while (node != null) {
 		    if (node instanceof IASTName && !(node instanceof ICPPASTQualifiedName)) {
 				return getContainingScope((IASTName) node);
-			} 
+			}
 		    if (node instanceof IASTDeclaration) {
 				IASTNode parent = node.getParent();
 				if (parent instanceof IASTTranslationUnit) {
@@ -773,6 +773,10 @@ public class CPPVisitor extends ASTQueries {
 				} else if (parent instanceof IASTForStatement) {
 				    return ((IASTForStatement) parent).getScope();
 				} else if (parent instanceof IASTCompositeTypeSpecifier) {
+				    if (node instanceof IASTFunctionDefinition &&
+				    		((ICPPASTDeclSpecifier) ((IASTFunctionDefinition) node).getDeclSpecifier()).isFriend()) {
+						return getContainingScope(parent);
+				    }
 				    return ((IASTCompositeTypeSpecifier) parent).getScope();
 				} else if (parent instanceof ICPPASTNamespaceDefinition) {
 					return ((ICPPASTNamespaceDefinition) parent).getScope();

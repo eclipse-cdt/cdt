@@ -10,14 +10,10 @@
  *******************************************************************************/
 package org.eclipse.cdt.make.internal.core.makefile.gnu;
 
-import java.io.File;
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.Reader;
 import java.net.URI;
-import java.net.URISyntaxException;
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -38,7 +34,6 @@ import org.eclipse.cdt.make.internal.core.makefile.Directive;
 import org.eclipse.cdt.make.internal.core.makefile.EmptyLine;
 import org.eclipse.cdt.make.internal.core.makefile.IgnoreRule;
 import org.eclipse.cdt.make.internal.core.makefile.InferenceRule;
-import org.eclipse.cdt.make.internal.core.makefile.MacroDefinition;
 import org.eclipse.cdt.make.internal.core.makefile.MakeFileConstants;
 import org.eclipse.cdt.make.internal.core.makefile.MakefileReader;
 import org.eclipse.cdt.make.internal.core.makefile.PosixRule;
@@ -55,8 +50,6 @@ import org.eclipse.cdt.make.internal.core.makefile.posix.PosixMakefileUtil;
 import org.eclipse.core.filesystem.EFS;
 import org.eclipse.core.filesystem.URIUtil;
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.FileLocator;
-import org.eclipse.core.runtime.Path;
 
 /**
  * Makefile : ( statement ) *
@@ -80,7 +73,7 @@ public class GNUMakefile extends AbstractMakefile implements IGNUMakefile {
 	public static String FILE_SEPARATOR = System.getProperty("file.separator", "/"); //$NON-NLS-1$ //$NON-NLS-2$
 
 	String[] includeDirectories = new String[0];
-	IDirective[] builtins = null;
+	IDirective[] builtins = new IDirective[0];
 	private IMakefileReaderProvider makefileReaderProvider;
 
 	public GNUMakefile() {
@@ -818,30 +811,6 @@ public class GNUMakefile extends AbstractMakefile implements IGNUMakefile {
 	 * @see org.eclipse.cdt.make.internal.core.makefile.AbstractMakefile#getBuiltins()
 	 */
 	public IDirective[] getBuiltins() {
-		if (builtins == null) {
-			String location =  "builtin" + File.separator + "gnu.mk"; //$NON-NLS-1$ //$NON-NLS-2$
-			if (MakeCorePlugin.getDefault() != null) {
-				try {
-					InputStream stream = FileLocator.openStream(MakeCorePlugin.getDefault().getBundle(), new Path(location), false);
-					GNUMakefile gnu = new GNUMakefile();
-					URL url = FileLocator.find(MakeCorePlugin.getDefault().getBundle(), new Path(location), null);
-					gnu.parse(url.toURI(), new InputStreamReader(stream));
-					builtins = gnu.getDirectives();
-					for (int i = 0; i < builtins.length; i++) {
-						if (builtins[i] instanceof MacroDefinition) {
-							((MacroDefinition) builtins[i]).setFromDefault(true);
-						}
-					}
-				} catch (IOException e) {
-					MakeCorePlugin.log(e);
-				} catch (URISyntaxException e) {
-					MakeCorePlugin.log(e);
-	            }
-			}
-			if (builtins == null) {
-				builtins = new IDirective[0];
-			}
-		}
 		return builtins;
 	}
 

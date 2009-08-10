@@ -10,14 +10,10 @@
  *******************************************************************************/
 package org.eclipse.cdt.make.internal.core.makefile.posix;
 
-import java.io.File;
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.Reader;
 import java.net.URI;
-import java.net.URISyntaxException;
-import java.net.URL;
 
 import org.eclipse.cdt.make.core.MakeCorePlugin;
 import org.eclipse.cdt.make.core.makefile.IDirective;
@@ -47,8 +43,6 @@ import org.eclipse.cdt.make.internal.core.makefile.Util;
 import org.eclipse.core.filesystem.EFS;
 import org.eclipse.core.filesystem.URIUtil;
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.FileLocator;
-import org.eclipse.core.runtime.Path;
 
 /**
  * Makefile : ( statement ) *
@@ -69,7 +63,7 @@ import org.eclipse.core.runtime.Path;
 
 public class PosixMakefile extends AbstractMakefile {
 
-	IDirective[] builtins = null;
+	IDirective[] builtins = new IDirective[0];
 	private IMakefileReaderProvider makefileReaderProvider;
 
 	public PosixMakefile() {
@@ -234,28 +228,6 @@ public class PosixMakefile extends AbstractMakefile {
 	 * @see org.eclipse.cdt.make.internal.core.makefile.AbstractMakefile#getBuiltins()
 	 */
 	public IDirective[] getBuiltins() {
-		if (builtins == null) {
-			String location =  "builtin" + File.separator + "posix.mk"; //$NON-NLS-1$ //$NON-NLS-2$
-			try {
-				InputStream stream = FileLocator.openStream(MakeCorePlugin.getDefault().getBundle(), new Path(location), false);
-				PosixMakefile posix = new PosixMakefile();
-				URL url = FileLocator.find(MakeCorePlugin.getDefault().getBundle(), new Path(location), null);
-				posix.parse(url.toURI(), new InputStreamReader(stream));
-				builtins = posix.getDirectives();
-				for (int i = 0; i < builtins.length; i++) {
-					if (builtins[i] instanceof MacroDefinition) {
-						((MacroDefinition)builtins[i]).setFromDefault(true);
-					}
-				}
-			} catch (IOException e) {
-				MakeCorePlugin.log(e);
-			} catch (URISyntaxException e) {
-				MakeCorePlugin.log(e);
-            }
-			if (builtins == null) {
-				builtins = new IDirective[0];
-			}
-		}
 		return builtins;
 	}
 

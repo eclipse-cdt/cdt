@@ -65,8 +65,7 @@ public class WritablePDOM extends PDOM implements IWritableIndexFragment {
 		fPathResolver= pathResolver;
 		try {
 			pdomFile.addNames(names);
-		}
-		finally {
+		} finally {
 			fPathResolver= origResolver;
 		}
 		
@@ -97,8 +96,8 @@ public class WritablePDOM extends PDOM implements IWritableIndexFragment {
 	 * @see org.eclipse.cdt.internal.core.index.IWritableIndexFragment#setProperty(java.lang.String, java.lang.String)
 	 */
 	public void setProperty(String propertyName, String value) throws CoreException {
-		if(IIndexFragment.PROPERTY_FRAGMENT_FORMAT_ID.equals(propertyName) 
-		|| IIndexFragment.PROPERTY_FRAGMENT_FORMAT_VERSION.equals(propertyName)) {
+		if (IIndexFragment.PROPERTY_FRAGMENT_FORMAT_ID.equals(propertyName) 
+				|| IIndexFragment.PROPERTY_FRAGMENT_FORMAT_VERSION.equals(propertyName)) {
 			throw new IllegalArgumentException("Property "+value+" may not be written to"); //$NON-NLS-1$ //$NON-NLS-2$
 		}
 		new DBProperties(db, PROPERTIES).setProperty(propertyName, value);
@@ -116,7 +115,7 @@ public class WritablePDOM extends PDOM implements IWritableIndexFragment {
 	 */
 	public void rewriteLocations(final IIndexLocationConverter newConverter) throws CoreException {
 		final List<PDOMFile> pdomfiles = new ArrayList<PDOMFile>();
-		getFileIndex().accept(new IBTreeVisitor(){
+		getFileIndex().accept(new IBTreeVisitor() {
 			public int compare(long record) throws CoreException {
 				return 0;
 			}
@@ -131,14 +130,13 @@ public class WritablePDOM extends PDOM implements IWritableIndexFragment {
 		final List<PDOMFile> notConverted = new ArrayList<PDOMFile>();
 		for (PDOMFile file : pdomfiles) {
 			String internalFormat = newConverter.toInternalFormat(file.getLocation());
-			if(internalFormat!=null) {
+			if (internalFormat != null) {
 				file.setInternalLocation(internalFormat);
 				getFileIndex().insert(file.getRecord());
 			} else {
 				notConverted.add(file);
 			}
 		}
-
 
 		// remove content where converter returns null
 		for (PDOMFile file : notConverted) {
@@ -169,10 +167,8 @@ public class WritablePDOM extends PDOM implements IWritableIndexFragment {
 	}
 
 	public PDOMFile getFileForASTPath(int linkageID, String astPath) throws CoreException {
-		if (fPathResolver != null) {
-			if (astPath != null) {
-				return getFile(linkageID, fPathResolver.resolveASTPath(astPath));
-			}
+		if (fPathResolver != null && astPath != null) {
+			return getFile(linkageID, fPathResolver.resolveASTPath(astPath));
 		}
 		return null;
 	}

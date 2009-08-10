@@ -38,6 +38,7 @@
  * Li Ding          (IBM)        - [256135] Subsystem not restored in system view tree if subsystem configuration does not support filter
  * David McKnight   (IBM)        - [257721] Doubleclick doing special handling and expanding
  * David McKnight   (IBM)        - [250417] Restore from memento flag set to false during restore on startup
+ * Martin Oberhuber (Wind River) - [286122] Avoid NPE when restoring memento
  *******************************************************************************/
 
 package org.eclipse.rse.internal.ui.view;
@@ -1299,12 +1300,12 @@ public class SystemViewPart
 					break;
 					// filter pool or filter (depends on showFilterPools)
 				case 3 :
-					
+
 					if (subsystem != null && !(subsystem.getSubSystemConfiguration().supportsFilters())) {
 						remoteObject = new RemoteObject(token, subsystem, null, null);
 						break;
 					}
-					
+
 					if (showFilterPools)
 					{
 						if (subsystem != null)
@@ -1349,12 +1350,12 @@ public class SystemViewPart
 					break;
 					// filter or filter string (depends on showFilterPools) or remote object (depends on showFilterStrings)
 				case 4 :
-					
-					if (!(subsystem.getSubSystemConfiguration().supportsFilters())) {
+
+					if (subsystem != null && !(subsystem.getSubSystemConfiguration().supportsFilters())) {
 						remoteObject = new RemoteObject(token, subsystem, null, null);
 						break;
 					}
-					
+
 					if (showFilterPools) // definitely a filter
 					{
 						index = token.indexOf('=');
@@ -1391,12 +1392,12 @@ public class SystemViewPart
 					break;
 					// filter string (depends on showFilterStrings) or remote object
 				case 5 :
-					
-					if (!(subsystem.getSubSystemConfiguration().supportsFilters())) {
+
+					if (subsystem!=null && !(subsystem.getSubSystemConfiguration().supportsFilters())) {
 						remoteObject = new RemoteObject(token, subsystem, null, null);
 						break;
 					}
-					
+
 					if (showFilterPools && showFilterStrings) // definitely a filter string
 					{
 						// at this point we know the parent filter reference as that was parsed in case 4
@@ -1417,12 +1418,12 @@ public class SystemViewPart
 
 					break;
 				default : // definitely a remote object
-					
-					if (!(subsystem.getSubSystemConfiguration().supportsFilters())) {
+
+					if (subsystem!=null && !(subsystem.getSubSystemConfiguration().supportsFilters())) {
 						remoteObject = new RemoteObject(token, subsystem, null, null);
 						break;
 					}
-				
+
 					if ((subsystem != null) && (fRef != null))
 						remoteObject = new RemoteObject(token, subsystem, fRef, fsRef);
 			}
@@ -1600,21 +1601,21 @@ public class SystemViewPart
 					// yantzi: artemis 6.0:  reset restore from memento flag
 					if (ss != null && restoreFromCache && ss.supportsCaching()){
 						ss.getCacheManager().setRestoreFromMemento(false);
-					}				
+					}
 				}
 				else if (object instanceof ISystemFilterReference)
 				{
-			
+
 					ISystemFilterReference fref = (ISystemFilterReference)object;
 					ISubSystem ss = fref.getSubSystem();
-					
+
 					// yantzi: artemis 6.0:  notify subsystems that this is a restore from memento so they
 					// can optionally use the cache if desired
 					if (ss != null && restoreFromCache && ss.supportsCaching()){
 						ss.getCacheManager().setRestoreFromMemento(true);
 					}
 					boolean isRestoringCache = ss.getCacheManager() != null && ss.getCacheManager().isRestoreFromMemento();
-					
+
 					if (!ss.isOffline()){
 						if (!ss.isConnected() && !isRestoringCache){
 							try
@@ -1640,11 +1641,11 @@ public class SystemViewPart
 							Display.getDefault().asyncExec(showRunnable);
 						}
 					}
-					
+
 					// yantzi: artemis 6.0:  reset restore from memento flag
 					if (ss != null && restoreFromCache && ss.supportsCaching()){
 						ss.getCacheManager().setRestoreFromMemento(false);
-					}	
+					}
 				}
 			}
 

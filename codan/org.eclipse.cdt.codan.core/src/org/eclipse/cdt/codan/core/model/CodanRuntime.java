@@ -22,6 +22,10 @@ public class CodanRuntime {
 		return problemReporter;
 	}
 
+	public void setProblemReporter(CodanProblemReporter reporter) {
+		problemReporter = reporter;
+	}
+
 	public static CodanRuntime getInstance() {
 		return instance;
 	}

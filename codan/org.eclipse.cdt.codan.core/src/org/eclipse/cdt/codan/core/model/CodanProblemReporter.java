@@ -34,13 +34,17 @@ public class CodanProblemReporter {
 				return; // skip
 			int severity = problem.getSeverity().intValue();
 			// Do not put in duplicates
-			IMarker[] cur = file.findMarkers(GENERIC_CODE_ANALYSIS_MARKER_TYPE, false, IResource.DEPTH_ZERO);
+			IMarker[] cur = file.findMarkers(GENERIC_CODE_ANALYSIS_MARKER_TYPE,
+					false, IResource.DEPTH_ZERO);
 			if (cur != null) {
 				for (IMarker element : cur) {
-					int line = ((Integer) element.getAttribute(IMarker.LINE_NUMBER)).intValue();
-					if (line==lineNumber) {
-						String mesg = (String) element.getAttribute(IMarker.MESSAGE);
-						int sev = ((Integer) element.getAttribute(IMarker.SEVERITY)).intValue();
+					int line = ((Integer) element
+							.getAttribute(IMarker.LINE_NUMBER)).intValue();
+					if (line == lineNumber) {
+						String mesg = (String) element
+								.getAttribute(IMarker.MESSAGE);
+						int sev = ((Integer) element
+								.getAttribute(IMarker.SEVERITY)).intValue();
 						if (sev == severity && mesg.equals(message))
 							return;
 					}
@@ -64,6 +68,7 @@ public class CodanProblemReporter {
 			file.deleteMarkers(GENERIC_CODE_ANALYSIS_MARKER_TYPE, false,
 					IResource.DEPTH_ZERO);
 		} catch (CoreException ce) {
+			ce.printStackTrace();
 		}
 	}
 

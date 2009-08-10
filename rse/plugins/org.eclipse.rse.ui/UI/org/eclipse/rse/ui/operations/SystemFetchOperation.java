@@ -80,28 +80,28 @@ import org.eclipse.ui.progress.IElementCollector;
 public class SystemFetchOperation extends JobChangeAdapter implements IRunnableWithProgress
 {
 	private static class ConnectorServicePool {
-		
+
 		private static List _connectingConnectorServices = new ArrayList();
-		
+
 		public synchronized void add(IConnectorService cs) {
 			_connectingConnectorServices.add(cs);
 		}
-		
+
 		public synchronized void remove(IConnectorService cs) {
 			_connectingConnectorServices.remove(cs);
 			notifyAll();
 		}
-		
+
 		public synchronized boolean contains(IConnectorService cs) {
 			return _connectingConnectorServices.contains(cs);
 		}
-		
+
 		public synchronized void waitUntilNotContained(IConnectorService cs) {
 			while (contains(cs)){ // wait until the connector service is no longer in the list
-				try {				
-						wait();			
+				try {
+						wait();
 				}
-				catch (InterruptedException e){			
+				catch (InterruptedException e){
 					e.printStackTrace();
 				}
 				catch (Exception e){
@@ -110,7 +110,7 @@ public class SystemFetchOperation extends JobChangeAdapter implements IRunnableW
 			}
 		}
 	}
-	
+
     protected IWorkbenchPart _part;
     protected Object _remoteObject;
     protected IElementCollector _collector;
@@ -118,7 +118,7 @@ public class SystemFetchOperation extends JobChangeAdapter implements IRunnableW
     protected ISystemViewElementAdapter _adapter;
     protected boolean _canRunAsJob;
     protected InvocationTargetException _exc;
-    
+
     private static ConnectorServicePool _connectorServicePool = new ConnectorServicePool();
 
     /**
@@ -267,19 +267,19 @@ public class SystemFetchOperation extends JobChangeAdapter implements IRunnableW
 			registry.connectedStatusChange(_ss, true, false);
 		}
 	}
-	
-	
+
+
 	private boolean ensureConnected(SubSystem ss, IProgressMonitor monitor) throws InterruptedException {
-		if (!ss.isConnected() && 
+		if (!ss.isConnected() &&
 				!ss.isOffline()) // skip the connect if offline, but still follow through because we need to follow through in the subsystem
 		{
 			IConnectorService connectorService = ss.getConnectorService();
-			
+
 			boolean alreadyConnecting = false;
-			
-			// is this connector service already connecting?	
+
+			// is this connector service already connecting?
 			alreadyConnecting = _connectorServicePool.contains(connectorService);
-			
+
 			if (alreadyConnecting){
 				// connector service already attempting connect
 				// need to wait for it to complete
@@ -287,20 +287,19 @@ public class SystemFetchOperation extends JobChangeAdapter implements IRunnableW
 				_connectorServicePool.waitUntilNotContained(connectorService);
 			}
 			else {
+				final Display dis = Display.getDefault();
 				_connectorServicePool.add(connectorService);
-				
-				Display dis = Display.getDefault();
-				PromptForPassword prompter = new PromptForPassword(ss);
-				dis.syncExec(prompter);
-				if (prompter.isCancelled()) {
-					SystemMessage cancelledMessage = RSEUIPlugin.getPluginMessage(ISystemMessages.MSG_EXPAND_CANCELLED);
-					SystemMessageObject cancelledMessageObject = new SystemMessageObject(cancelledMessage, ISystemMessageObject.MSGTYPE_CANCEL, _remoteObject);
-					_collector.add(cancelledMessageObject, monitor);
-					_connectorServicePool.remove(connectorService);				
-					throw new InterruptedException();
-				}
 				try
 				{
+					PromptForPassword prompter = new PromptForPassword(ss);
+					dis.syncExec(prompter);
+					if (prompter.isCancelled()) {
+						SystemMessage cancelledMessage = RSEUIPlugin.getPluginMessage(ISystemMessages.MSG_EXPAND_CANCELLED);
+						SystemMessageObject cancelledMessageObject = new SystemMessageObject(cancelledMessage, ISystemMessageObject.MSGTYPE_CANCEL,
+								_remoteObject);
+						_collector.add(cancelledMessageObject, monitor);
+						throw new InterruptedException();
+					}
 					connectorService.connect(monitor);
 					if (_exc != null)
 					{
@@ -309,25 +308,23 @@ public class SystemFetchOperation extends JobChangeAdapter implements IRunnableW
 				}
 				catch (InvocationTargetException exc)
 				{
-	          	  	showOperationErrorMessage(null, exc, ss);	          	  	
-					_connectorServicePool.remove(connectorService);
-	          	  	return false;
+	          	  	showOperationErrorMessage(null, exc, ss);
+					return false;
 				}
 				catch (Exception e)
 				{
 					showOperationErrorMessage(null, e, ss);
-					_connectorServicePool.remove(connectorService);
 					return false;
 				}
 				finally {
 					_connectorServicePool.remove(connectorService);
 				}
 
-				dis.asyncExec(new UpdateRegistry(ss));			
+				dis.asyncExec(new UpdateRegistry(ss));
 			}
 		}
 		return ss.isConnected();
-		
+
 	}
 
 	/**
@@ -352,7 +349,7 @@ public class SystemFetchOperation extends JobChangeAdapter implements IRunnableW
 			ss = (SubSystem)_adapter.getSubSystem(_remoteObject);
 		}
 
-		
+
 		boolean isPromptable = false;
 
 		if (actualRemoteObj instanceof IAdaptable){
@@ -361,7 +358,7 @@ public class SystemFetchOperation extends JobChangeAdapter implements IRunnableW
 				isPromptable = adapter.isPromptable(actualRemoteObj);
 			}
 		}
-		
+
 		Object[] children = null;
 		if (!isPromptable){
 			if (!ensureConnected(ss, monitor)){
@@ -371,8 +368,8 @@ public class SystemFetchOperation extends JobChangeAdapter implements IRunnableW
 			}
 		}
 
-		
-	
+
+
   	  	// we first test to see if this is an expand-to filter in effect for this
   	  	//  object, and if so use it...
   	  	if ((_part==null || _part instanceof SystemViewPart) && _adapter instanceof ISystemRemoteElementAdapter)
@@ -397,7 +394,7 @@ public class SystemFetchOperation extends JobChangeAdapter implements IRunnableW
   		  					}
 	  	  				}
   	  				}
-  	  				
+
   	  				if (activePart instanceof SystemViewPart){
   	  					SystemView viewer = ((SystemViewPart)activePart).getSystemView();
   	  					if (_remoteObject instanceof IContextObject){
@@ -408,18 +405,18 @@ public class SystemFetchOperation extends JobChangeAdapter implements IRunnableW
   	  					}
   	  				}
   	  			}
-  	  			
+
   	  			public String getExpandToFilter()
   	  			{
   	  				return expandToFilter;
   	  			}
   	  		}
-  	  		
+
   	  		Display dis = Display.getDefault();
   	  		GetExpandToFilter getExpandTo = new GetExpandToFilter();
   	  		dis.syncExec(getExpandTo);
   	  		String expandToFilter = getExpandTo.getExpandToFilter();
-  	  		
+
   	  		if (expandToFilter != null){
   	  			if (_remoteObject instanceof IContextObject){
   	  				children = _adapter.getChildrenUsingExpandToFilter(((IContextObject)_remoteObject).getModelObject(), expandToFilter);
@@ -429,7 +426,7 @@ public class SystemFetchOperation extends JobChangeAdapter implements IRunnableW
   	  			}
   	  		}
   	  	}
-  	  	if (children == null){		
+  	  	if (children == null){
   	  		if (_remoteObject instanceof IContextObject)
   	  		{
   	  			children = _adapter.getChildren((IContextObject)_remoteObject, monitor);
@@ -470,7 +467,9 @@ public class SystemFetchOperation extends JobChangeAdapter implements IRunnableW
     	{
     	  String excMsg = exc.getMessage();
     	  if ((excMsg == null) || (excMsg.length()==0))
-    	    excMsg = "Exception " + exc.getClass().getName(); //$NON-NLS-1$
+				exc.getClass().getName();
+			else
+				excMsg = exc.getClass().getName() + ": " + excMsg; //$NON-NLS-1$
           sysMsg = RSEUIPlugin.getPluginMessage(ISystemMessages.MSG_OPERATION_FAILED);
           sysMsg.makeSubstitution(excMsg);
 

@@ -21,6 +21,7 @@ import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
+import org.eclipse.jface.dialogs.StatusDialog;
 import org.eclipse.jface.viewers.ILabelProvider;
 import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.jface.viewers.LabelProvider;
@@ -29,7 +30,6 @@ import org.eclipse.jface.window.Window;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Image;
-import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
@@ -44,7 +44,6 @@ import org.eclipse.ui.views.navigator.ResourceComparator;
 import org.eclipse.cdt.ui.CUIPlugin;
 
 import org.eclipse.cdt.internal.ui.CPluginImages;
-import org.eclipse.cdt.internal.ui.dialogs.StatusDialog;
 import org.eclipse.cdt.internal.ui.dialogs.TypedElementSelectionValidator;
 import org.eclipse.cdt.internal.ui.dialogs.TypedViewerFilter;
 import org.eclipse.cdt.internal.ui.dialogs.cpaths.CPathEntryMessages;
@@ -109,6 +108,8 @@ public class ExPatternDialog extends StatusDialog {
 		fExclusionPatternList.setElements(elements);
 		fExclusionPatternList.selectFirstElement();
 		fExclusionPatternList.enableButton(IDX_ADD_MULTIPLE, fCurrSourceFolder != null);
+
+		setHelpAvailable(false);
 	}
 
 	@Override

@@ -19,6 +19,7 @@ import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
+import org.eclipse.jface.dialogs.StatusDialog;
 import org.eclipse.jface.viewers.ILabelProvider;
 import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.jface.viewers.ViewerFilter;
@@ -37,7 +38,6 @@ import org.eclipse.ui.model.WorkbenchContentProvider;
 import org.eclipse.ui.model.WorkbenchLabelProvider;
 import org.eclipse.ui.views.navigator.ResourceComparator;
 
-import org.eclipse.cdt.internal.ui.dialogs.StatusDialog;
 import org.eclipse.cdt.internal.ui.dialogs.StatusInfo;
 import org.eclipse.cdt.internal.ui.dialogs.TypedElementSelectionValidator;
 import org.eclipse.cdt.internal.ui.dialogs.TypedViewerFilter;
@@ -89,6 +89,8 @@ public class ExclusionPatternEntryDialog extends StatusDialog {
 		} else {
 			fExclusionPatternDialog.setText(patternToEdit.toString());
 		}
+
+		setHelpAvailable(false);
 	}
 
 	@Override

@@ -18,6 +18,7 @@ import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IStatus;
+import org.eclipse.jface.dialogs.StatusDialog;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
@@ -26,7 +27,6 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Shell;
 
-import org.eclipse.cdt.internal.ui.dialogs.StatusDialog;
 import org.eclipse.cdt.internal.ui.dialogs.StatusInfo;
 import org.eclipse.cdt.internal.ui.wizards.dialogfields.DialogField;
 import org.eclipse.cdt.internal.ui.wizards.dialogfields.IDialogFieldListener;
@@ -81,6 +81,8 @@ public class NewSourceFolderDialog extends StatusDialog {
 		}
 		fUseFolderButton.setSelection(useFolders);
 		fUseProjectButton.setSelection(!useFolders);
+
+		setHelpAvailable(false);
 	}
 
 	public void setMessage(String message) {

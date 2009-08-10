@@ -1378,6 +1378,17 @@ public abstract class IndexCPPBindingResolutionTest extends IndexBindingResoluti
     	assertFalse(f1.equals(f2));
 	}
 
+	//	class A {
+	//	  friend inline void m(A p) {}
+	//	};
+
+	//	void test(A a) {
+	//	  m(a);
+	//	}
+	public void _testInlineFriendFunction_284690() throws Exception {
+    	getBindingFromASTName("m(a)", 1, IFunction.class);
+	}
+
 	/* CPP assertion helpers */
 	/* ##################################################################### */
 
@@ -1385,8 +1396,7 @@ public abstract class IndexCPPBindingResolutionTest extends IndexBindingResoluti
 			IBinding binding,
 			String qn,
 			Class expType,
-			String expTypeQN
-	) {
+			String expTypeQN) {
 		try {
 			assertTrue(binding instanceof ICPPField);
 			ICPPField field = (ICPPField) binding;
@@ -1430,8 +1440,7 @@ public abstract class IndexCPPBindingResolutionTest extends IndexBindingResoluti
 			int allDeclaredMethods,
 			int friends,
 			int constructors,
-			int nestedClasses
-	) {
+			int nestedClasses) {
 		try {
 			assertTrue(type instanceof ICPPClassType);
 			ICPPClassType classType = (ICPPClassType) type;

@@ -346,10 +346,7 @@ public class NewClassWizardUtil {
      */
     public static boolean isTypeReachable(ITypeInfo type, ICProject project, String[] includePaths) {
         ICProject baseProject = type.getEnclosingProject();
-        if (baseProject == null)
-        	return false;
-        
-        if (baseProject.equals(project)) {
+        if (baseProject != null && baseProject.equals(project)) {
             return true;
         }
         
@@ -359,7 +356,10 @@ public class NewClassWizardUtil {
         boolean isTypeLocation= true;
         if (location == null) {
         	isTypeLocation= false;
-            location = baseProject.getProject().getLocation();
+        	
+        	if (baseProject != null) {
+                location = baseProject.getProject().getLocation();
+        	}
             if (location == null)
             	return false;
         }

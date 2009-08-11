@@ -584,13 +584,18 @@ public class MemoryBrowser extends ViewPart implements IDebugContextListener, IL
 				
 			};
 			
-			IMemoryBlock block = retrieval.getMemoryBlock(0, 1024) ;
+			IMemoryBlock block = null;
 			if(retrieval instanceof IAdaptable)
 			{
 				IMemoryBlockRetrievalExtension retrievalExtension = (IMemoryBlockRetrievalExtension) 
 					((IAdaptable) retrieval).getAdapter(IMemoryBlockRetrievalExtension.class);
 				if(retrievalExtension != null)
 					block = retrievalExtension.getExtendedMemoryBlock("0", context); //$NON-NLS-1$
+			}
+			
+			if ( block == null ) {
+				MemoryBrowserPlugin.getDefault().getLog().log(new Status(Status.ERROR, MemoryBrowserPlugin.PLUGIN_ID, "Extended Memory Block could not be obtained")); //$NON-NLS-1$
+				return;
 			}
 			
 			fCurrentContainers.add(container);

@@ -23,7 +23,6 @@ import org.eclipse.cdt.managedbuilder.core.IConfiguration;
 import org.eclipse.cdt.managedbuilder.core.IMultiConfiguration;
 import org.eclipse.cdt.managedbuilder.core.ITool;
 import org.eclipse.cdt.managedbuilder.core.ManagedBuildManager;
-import org.eclipse.cdt.ui.wizards.CWizardHandler;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.ModifyEvent;
@@ -170,7 +169,7 @@ public class ArtifactTab extends AbstractCBuildPropertyTab {
 		String s = fCfg.getArtifactName();
 		if (! page.isMultiCfg() && (s == null || s.trim().length() == 0)) {
 			s = getResDesc().getConfiguration().getProjectDescription().getName();
-			getCfg().setArtifactName(CWizardHandler.removeSpaces(s));
+			getCfg().setArtifactName(s);
 		}
 		
 		canModify = false;

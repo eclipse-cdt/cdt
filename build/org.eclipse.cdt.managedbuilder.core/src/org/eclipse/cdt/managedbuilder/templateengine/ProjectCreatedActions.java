@@ -135,7 +135,7 @@ public class ProjectCreatedActions {
 				}
 
 				configuration.setName(config.getName());
-				configuration.setArtifactName(project.getName());
+				configuration.setArtifactName(newManagedProject.getDefaultArtifactName());
 
 				IBuildProperty buildProperty = configuration.getBuildProperties().getProperty(PROPERTY);
 				if (buildProperty != null && buildProperty.getValue() != null && PROP_VAL.equals(buildProperty.getValue().getId())) {

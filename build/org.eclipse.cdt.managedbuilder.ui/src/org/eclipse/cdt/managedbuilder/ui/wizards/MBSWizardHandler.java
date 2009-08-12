@@ -579,7 +579,7 @@ public class MBSWizardHandler extends CWizardHandler {
 	    	if (bld != null) { 	bld.setManagedBuildOn(true); }
 	    	
 	    	config.setName(cfgs[i].getName());
-	    	config.setArtifactName(removeSpaces(project.getName()));
+	    	config.setArtifactName(mProj.getDefaultArtifactName());
 	    	
 	    	IBuildProperty b = config.getBuildProperties().getProperty(PROPERTY);
 	    	if (cfgDebug == null && b != null && b.getValue() != null && PROP_VAL.equals(b.getValue().getId()))

@@ -253,6 +253,10 @@ public class CWizardHandler implements Cloneable {
 		} catch (CloneNotSupportedException e) { return null; }
 	}
 	
+	/**
+	 * @deprecated since CDT 6.1.
+	 */
+	@Deprecated
 	public static String removeSpaces(String s) {
 		char[] cs = s.toCharArray();
 		StringBuffer sb = new StringBuffer();

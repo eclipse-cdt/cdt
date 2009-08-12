@@ -417,13 +417,7 @@ public class ManagedProject extends BuildObject implements IManagedProject, IBui
 	 * @see org.eclipse.cdt.managedbuilder.core.IManagedProject#(getDefaultArtifactName)
 	 */
 	public String getDefaultArtifactName(){
-		String name = new String();
-		// Check for spaces
-		String[] tokens = getOwner().getName().split("\\s");	//$NON-NLS-1$
-		for (int index = 0; index < tokens.length; ++index) {
-			name += tokens[index];
-		}
-		return name;
+		return "${ProjName}"; //$NON-NLS-1$
 	}
 	
 	/* (non-Javadoc)

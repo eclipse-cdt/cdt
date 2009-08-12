@@ -126,7 +126,7 @@
    <extension
          point="org.eclipse.ui.intro.configExtension">
       <configExtension
-            content="intro/cdtIntro.xml"
+            content="$nl$/intro/cdtIntro.xml"
             configId="org.eclipse.ui.intro.universalConfig">
       </configExtension>
    </extension>
@@ -134,14 +134,14 @@
          point="org.eclipse.ui.intro.configExtension">
       <configExtension
             configId="org.eclipse.ui.intro.universalConfig"
-            content="intro/cdtTutorial.xml">
+            content="$nl$/intro/cdtTutorial.xml">
       </configExtension>
    </extension>
    <extension
          point="org.eclipse.ui.intro.configExtension">
       <configExtension
             configId="org.eclipse.ui.intro.universalConfig"
-            content="intro/cdtWhatsnew.xml">
+            content="$nl$/intro/cdtWhatsnew.xml">
       </configExtension>
    </extension>
 

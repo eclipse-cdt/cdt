@@ -14,7 +14,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -138,8 +137,7 @@ public class ManagedProject extends BuildObject implements IManagedProject, IBui
 				// Load children
 				StorableCdtVariables vars = null;
 				ICStorageElement configElements[] = element.getChildren();
-				for (int i = 0; i < configElements.length; ++i) {
-					ICStorageElement configElement = configElements[i];
+				for (ICStorageElement configElement : configElements) {
 					if (configElement.getName().equals(IConfiguration.CONFIGURATION_ELEMENT_NAME)) {
 						Configuration config = new Configuration(this, configElement, managedBuildRevision, false);
 					} else if (configElement.getName().equals("macros")) {	//$NON-NLS-1$
@@ -288,7 +286,7 @@ public class ManagedProject extends BuildObject implements IManagedProject, IBui
 	public IConfiguration createConfiguration(IConfiguration parent, String id) {
 		Configuration config = new Configuration(this, (Configuration)parent, id, false, false, false);
 		ManagedBuildManager.performValueHandlerEvent(config, IManagedOptionValueHandler.EVENT_OPEN);
-		return (IConfiguration)config;
+		return config;
 	}
 
 	/* (non-Javadoc)
@@ -298,7 +296,7 @@ public class ManagedProject extends BuildObject implements IManagedProject, IBui
 		Configuration config = new Configuration(this, (Configuration)parent, id, true, false, false);
 		// Inform all options in the configuration and all its resource configurations
 		ManagedBuildManager.performValueHandlerEvent(config, IManagedOptionValueHandler.EVENT_OPEN);
-		return (IConfiguration)config;
+		return config;
 	}
 
 	/* (non-Javadoc)
@@ -495,6 +493,7 @@ public class ManagedProject extends BuildObject implements IManagedProject, IBui
 	/**
 	 * @return Returns the version.
 	 */
+	@Override
 	public PluginVersionIdentifier getVersion() {
 			if (version == null) {
 				if ( getProjectType() != null) {
@@ -504,6 +503,7 @@ public class ManagedProject extends BuildObject implements IManagedProject, IBui
 			return version;
 	}
 	
+	@Override
 	public void setVersion(PluginVersionIdentifier version) {
 		// Do nothing
 	}
@@ -529,10 +529,10 @@ public class ManagedProject extends BuildObject implements IManagedProject, IBui
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.managedbuilder.internal.core.BuildObject#updateManagedBuildRevision(java.lang.String)
 	 */
+	@Override
 	public void updateManagedBuildRevision(String revision){
 		super.updateManagedBuildRevision(revision);
-		for(Iterator iter = getConfigurationCollection().iterator(); iter.hasNext();){
-			Configuration cfg = (Configuration)iter.next();
+		for (Configuration cfg : getConfigurationCollection()) {
 			cfg.updateManagedBuildRevision(revision);
 		}
 	}
@@ -575,8 +575,8 @@ public class ManagedProject extends BuildObject implements IManagedProject, IBui
 
 	public void propertiesChanged() {
 		IConfiguration cfgs[] = getConfigurations();
-		for(int i = 0; i < cfgs.length; i++){
-			((Configuration)cfgs[i]).propertiesChanged();
+		for (IConfiguration cfg : cfgs) {
+			((Configuration)cfg).propertiesChanged();
 		}
 	}
 
@@ -591,8 +591,8 @@ public class ManagedProject extends BuildObject implements IManagedProject, IBui
 
 	public boolean supportsType(String typeId) {
 		IConfiguration cfgs[] = getConfigurations();
-		for(int i = 0; i < cfgs.length; i++){
-			if(((Configuration)cfgs[i]).supportsType(typeId))
+		for (IConfiguration cfg : cfgs) {
+			if(((Configuration)cfg).supportsType(typeId))
 				return true;
 		}
 		return false;
@@ -600,8 +600,8 @@ public class ManagedProject extends BuildObject implements IManagedProject, IBui
 
 	public boolean supportsValue(String typeId, String valueId) {
 		IConfiguration cfgs[] = getConfigurations();
-		for(int i = 0; i < cfgs.length; i++){
-			if(((Configuration)cfgs[i]).supportsValue(typeId, valueId))
+		for (IConfiguration cfg : cfgs) {
+			if(((Configuration)cfg).supportsValue(typeId, valueId))
 				return true;
 		}
 		return false;
@@ -610,8 +610,8 @@ public class ManagedProject extends BuildObject implements IManagedProject, IBui
 	public String[] getRequiredTypeIds() {
 		List<String> result = new ArrayList<String>();
 		IConfiguration cfgs[] = getConfigurations();
-		for(int i = 0; i < cfgs.length; i++){
-			result.addAll(Arrays.asList(((Configuration)cfgs[i]).getRequiredTypeIds()));
+		for (IConfiguration cfg : cfgs) {
+			result.addAll(Arrays.asList(((Configuration)cfg).getRequiredTypeIds()));
 		}
 		return result.toArray(new String[result.size()]);
 	}
@@ -619,8 +619,8 @@ public class ManagedProject extends BuildObject implements IManagedProject, IBui
 	public String[] getSupportedTypeIds() {
 		List<String> result = new ArrayList<String>();
 		IConfiguration cfgs[] = getConfigurations();
-		for(int i = 0; i < cfgs.length; i++){
-			result.addAll(Arrays.asList(((Configuration)cfgs[i]).getSupportedTypeIds()));
+		for (IConfiguration cfg : cfgs) {
+			result.addAll(Arrays.asList(((Configuration)cfg).getSupportedTypeIds()));
 		}
 		return result.toArray(new String[result.size()]);
 	}
@@ -628,16 +628,16 @@ public class ManagedProject extends BuildObject implements IManagedProject, IBui
 	public String[] getSupportedValueIds(String typeId) {
 		List<String> result = new ArrayList<String>();
 		IConfiguration cfgs[] = getConfigurations();
-		for(int i = 0; i < cfgs.length; i++){
-			result.addAll(Arrays.asList(((Configuration)cfgs[i]).getSupportedValueIds(typeId)));
+		for (IConfiguration cfg : cfgs) {
+			result.addAll(Arrays.asList(((Configuration)cfg).getSupportedValueIds(typeId)));
 		}
 		return result.toArray(new String[result.size()]);
 	}
 
 	public boolean requiresType(String typeId) {
 		IConfiguration cfgs[] = getConfigurations();
-		for(int i = 0; i < cfgs.length; i++){
-			if(((Configuration)cfgs[i]).requiresType(typeId))
+		for (IConfiguration cfg : cfgs) {
+			if(((Configuration)cfg).requiresType(typeId))
 				return true;
 		}
 		return false;

@@ -171,24 +171,22 @@ public class MBSWizardHandler extends CWizardHandler {
 						String[] langIDs = wz.getLanguageIDs();
 						if(langIDs.length > 0) {
 							List<Template> lstTemplates = new ArrayList<Template>();
-							for(int i = 0; i < langIDs.length; ++i) {
+							for (String id : langIDs) {
 								lstTemplates.addAll(Arrays.asList(TemplateEngineUI.getDefault().
-									getTemplates(projectTypeId, null, langIDs[i])));
+									getTemplates(projectTypeId, null, id)));
 							} 
 							templates = lstTemplates.toArray(new Template[lstTemplates.size()]);
 						}
 					} 
 					if(null == templates) {
-						 templates = 
-							TemplateEngineUI.getDefault().
-								getTemplates(projectTypeId);
+						 templates = TemplateEngineUI.getDefault().getTemplates(projectTypeId);
 					}
 					if((null == templates) || (templates.length == 0))
 						break;
 					
-					for(int i = 0; i < templates.length; i++){
-						if(templates[i].getTemplateId().equals(templateId)){
-							template = templates[i];
+					for (Template t : templates) {
+						if(t.getTemplateId().equals(templateId)){
+							template = t;
 							break;
 						}
 					}
@@ -211,8 +209,7 @@ public class MBSWizardHandler extends CWizardHandler {
 			if(template != null){
 				Map<String, String> valueStore = template.getValueStore();
 //				valueStore.clear();
-				for(int i=0; i < templatePages.length; i++) {
-					IWizardPage page = templatePages[i];
+				for (IWizardPage page : templatePages) {
 					if (page instanceof UIWizardPage)
 						valueStore.putAll(((UIWizardPage)page).getPageData());
 					if (page instanceof IWizardDataPage)
@@ -280,8 +277,8 @@ public class MBSWizardHandler extends CWizardHandler {
 			if (template == null || template.getTemplateInfo() == null) 
 				return true;
 			
-			String[] ss = template.getTemplateInfo().getToolChainIds();
-			if (ss == null || ss.length == 0) 
+			String[] toolChainIds = template.getTemplateInfo().getToolChainIds();
+			if (toolChainIds == null || toolChainIds.length == 0) 
 				return true;
 			
 			Object ob = tcs.get(tcId);
@@ -294,9 +291,9 @@ public class MBSWizardHandler extends CWizardHandler {
 			IToolChain sup = ((IToolChain)ob).getSuperClass();
 			String id2 = sup == null ? null : sup.getId();
 			
-			for (int i=0; i<ss.length; i++) {
-				if ((ss[i] != null && ss[i].equals(id1)) ||
-					(ss[i] != null && ss[i].equals(id2)))
+			for (String id : toolChainIds) {
+				if ((id != null && id.equals(id1)) ||
+					(id != null && id.equals(id2)))
 					return true;
 			}
 			return false;
@@ -365,19 +362,20 @@ public class MBSWizardHandler extends CWizardHandler {
 		return baseName;
 	}
 	
+	@Override
 	public void handleSelection() {
 		List<String> preferred = CDTPrefUtil.getPreferredTCs();
 		
 		if (table == null) {
 			table = new Table(parent, SWT.MULTI | SWT.V_SCROLL | SWT.BORDER);
 			table.getAccessible().addAccessibleListener(
-					 new AccessibleAdapter() {                       
-		                 public void getName(AccessibleEvent e) {
-		                	 if (e.result == null)
-		                		 e.result = head;
-		                 }
-		             }
-				 );
+					new AccessibleAdapter() {
+						@Override
+						public void getName(AccessibleEvent e) {
+							if (e.result == null)
+								e.result = head;
+						}
+					});
 			table.setToolTipText(tooltip);
 			if (entryInfo != null) {
 				int counter = 0;
@@ -402,9 +400,11 @@ public class MBSWizardHandler extends CWizardHandler {
 				if (counter > 0) table.select(position);
 			}			
 			table.addSelectionListener(new SelectionAdapter() {
+				@Override
 				public void widgetSelected(SelectionEvent e) {
 					handleToolChainSelection();
-				}});
+				}
+			});
 		}
 		updatePreferred(preferred);
 		loadCustomPages();
@@ -441,8 +441,8 @@ public class MBSWizardHandler extends CWizardHandler {
 			if (customPages == null) 
 				customPages = new IWizardPage[0];
 			
-			for (int k = 0; k < customPages.length; k++) 
-				customPages[k].setWizard(wz);
+			for (IWizardPage customPage : customPages)
+				customPage.setWizard(wz);
 		}
 		setCustomPagesFilter(wz);
 	}
@@ -455,7 +455,8 @@ public class MBSWizardHandler extends CWizardHandler {
 			MBSCustomPageManager.addPageProperty(MBSCustomPageManager.PAGE_ID, MBSCustomPageManager.NATURE, natures[0]);
 		else {
 			TreeSet<String> x = new TreeSet<String>();
-			for (int i=0; i<natures.length; i++) x.add(natures[i]);
+			for (String nature : natures)
+				x.add(nature);
 			MBSCustomPageManager.addPageProperty(MBSCustomPageManager.PAGE_ID, MBSCustomPageManager.NATURE, x);
 		}
 		// Project type can be obtained either from Handler (for old-style projects),
@@ -469,20 +470,22 @@ public class MBSWizardHandler extends CWizardHandler {
 				);
 
 		IToolChain[] tcs = getSelectedToolChains();
-		int n = (tcs == null) ? 0 : tcs.length;
 		ArrayList<IToolChain> x = new ArrayList<IToolChain>();			
-		TreeSet<String> y = new TreeSet<String>();	
-		for (int i=0; i<n; i++) {
-			if (tcs[i] == null) // --- NO TOOLCHAIN ---
-				continue;       // has no custom pages.
-			x.add(tcs[i]);
-
-			IConfiguration cfg = tcs[i].getParent();
-			if (cfg == null)
-				continue;
-			IProjectType pt = cfg.getProjectType();
-			if (pt != null)
-				y.add(pt.getId());
+		TreeSet<String> y = new TreeSet<String>();
+		if (tcs!=null) {
+			int n = tcs.length;
+			for (int i=0; i<n; i++) {
+				if (tcs[i] == null) // --- NO TOOLCHAIN ---
+					continue;       // has no custom pages.
+				x.add(tcs[i]);
+	
+				IConfiguration cfg = tcs[i].getParent();
+				if (cfg == null)
+					continue;
+				IProjectType pt = cfg.getProjectType();
+				if (pt != null)
+					y.add(pt.getId());
+			}
 		}
 		MBSCustomPageManager.addPageProperty(
 				MBSCustomPageManager.PAGE_ID, 
@@ -503,6 +506,7 @@ public class MBSWizardHandler extends CWizardHandler {
 		}
 	}
 	
+	@Override
 	public void handleUnSelection() {
 		if (table != null) {
 			table.setVisible(false);
@@ -524,6 +528,7 @@ public class MBSWizardHandler extends CWizardHandler {
 		full_tcs.put(tc.getUniqueRealName(), tc);
 	}
 		
+	@Override
 	public void createProject(IProject project, boolean defaults, boolean onFinish, IProgressMonitor monitor) throws CoreException {
 		try {
 			monitor.beginTask("", 100); //$NON-NLS-1$
@@ -536,61 +541,63 @@ public class MBSWizardHandler extends CWizardHandler {
 		}
 	}
 
+	@Override
 	public void convertProject(IProject proj, IProgressMonitor monitor) throws CoreException {
-	    setProjectDescription(proj, true, true, monitor);
+		setProjectDescription(proj, true, true, monitor);
 	}
 	
 	private void setProjectDescription(IProject project, boolean defaults, boolean onFinish, IProgressMonitor monitor) throws CoreException {
-	    ICProjectDescriptionManager mngr = CoreModel.getDefault().getProjectDescriptionManager();
-	    ICProjectDescription des = mngr.createProjectDescription(project, false, !onFinish);
-	    ManagedBuildInfo info = ManagedBuildManager.createBuildInfo(project);
-	    monitor.worked(10);
-	    cfgs = getCfgItems(false);
-	    if (cfgs == null || cfgs.length == 0) 
-	    	cfgs = CDTConfigWizardPage.getDefaultCfgs(this);
-	    
-	    if (cfgs == null || cfgs.length == 0 || cfgs[0].getConfiguration() == null) {
-	    	throw new CoreException(new Status(IStatus.ERROR, 
-	    			ManagedBuilderUIPlugin.getUniqueIdentifier(),
-	    			Messages.getString("CWizardHandler.6"))); //$NON-NLS-1$
-	    }
-	    Configuration cf = (Configuration)cfgs[0].getConfiguration();
-	    ManagedProject mProj = new ManagedProject(project, cf.getProjectType());
-	    info.setManagedProject(mProj);
-	    monitor.worked(10);
-	    cfgs = CfgHolder.unique(cfgs);
-	    cfgs = CfgHolder.reorder(cfgs);
-	    
-	    ICConfigurationDescription cfgDebug = null;
-	    ICConfigurationDescription cfgFirst = null;
-	    
-	    int work = 50/cfgs.length;
-	    
-	    for(int i = 0; i < cfgs.length; i++){
-	    	cf = (Configuration)cfgs[i].getConfiguration();
-	    	String id = ManagedBuildManager.calculateChildId(cf.getId(), null);
-	    	Configuration config = new Configuration(mProj, cf, id, false, true);
-	    	CConfigurationData data = config.getConfigurationData();
-	    	ICConfigurationDescription cfgDes = des.createConfiguration(ManagedBuildManager.CFG_DATA_PROVIDER_ID, data);
-	    	config.setConfigurationDescription(cfgDes);
-	    	config.exportArtifactInfo();
+		ICProjectDescriptionManager mngr = CoreModel.getDefault().getProjectDescriptionManager();
+		ICProjectDescription des = mngr.createProjectDescription(project, false, !onFinish);
+		ManagedBuildInfo info = ManagedBuildManager.createBuildInfo(project);
+		monitor.worked(10);
+		cfgs = getCfgItems(false);
+		if (cfgs == null || cfgs.length == 0) 
+			cfgs = CDTConfigWizardPage.getDefaultCfgs(this);
+		
+		if (cfgs == null || cfgs.length == 0 || cfgs[0].getConfiguration() == null) {
+			throw new CoreException(new Status(IStatus.ERROR, 
+					ManagedBuilderUIPlugin.getUniqueIdentifier(),
+					Messages.getString("CWizardHandler.6"))); //$NON-NLS-1$
+		}
+		Configuration cf = (Configuration)cfgs[0].getConfiguration();
+		ManagedProject mProj = new ManagedProject(project, cf.getProjectType());
+		info.setManagedProject(mProj);
+		monitor.worked(10);
+		cfgs = CfgHolder.unique(cfgs);
+		cfgs = CfgHolder.reorder(cfgs);
+		
+		ICConfigurationDescription cfgDebug = null;
+		ICConfigurationDescription cfgFirst = null;
+		
+		int work = 50/cfgs.length;
+		
+		for (CfgHolder cfg : cfgs) {
+			cf = (Configuration)cfg.getConfiguration();
+			String id = ManagedBuildManager.calculateChildId(cf.getId(), null);
+			Configuration config = new Configuration(mProj, cf, id, false, true);
+			CConfigurationData data = config.getConfigurationData();
+			ICConfigurationDescription cfgDes = des.createConfiguration(ManagedBuildManager.CFG_DATA_PROVIDER_ID, data);
+			config.setConfigurationDescription(cfgDes);
+			config.exportArtifactInfo();
 
-	    	IBuilder bld = config.getEditableBuilder();
-	    	if (bld != null) { 	bld.setManagedBuildOn(true); }
-	    	
-	    	config.setName(cfgs[i].getName());
-	    	config.setArtifactName(mProj.getDefaultArtifactName());
-	    	
-	    	IBuildProperty b = config.getBuildProperties().getProperty(PROPERTY);
-	    	if (cfgDebug == null && b != null && b.getValue() != null && PROP_VAL.equals(b.getValue().getId()))
-	    		cfgDebug = cfgDes;
-	    	if (cfgFirst == null) // select at least first configuration 
-	    		cfgFirst = cfgDes; 
-	    	monitor.worked(work);
-	    }
-	    mngr.setProjectDescription(project, des);
-    }
+			IBuilder bld = config.getEditableBuilder();
+			if (bld != null) { 	bld.setManagedBuildOn(true); }
+			
+			config.setName(cfg.getName());
+			config.setArtifactName(mProj.getDefaultArtifactName());
+			
+			IBuildProperty b = config.getBuildProperties().getProperty(PROPERTY);
+			if (cfgDebug == null && b != null && b.getValue() != null && PROP_VAL.equals(b.getValue().getId()))
+				cfgDebug = cfgDes;
+			if (cfgFirst == null) // select at least first configuration 
+				cfgFirst = cfgDes; 
+			monitor.worked(work);
+		}
+		mngr.setProjectDescription(project, des);
+	}
 	
+	@Override
 	protected void doTemplatesPostProcess(IProject prj) {
 		if(entryInfo == null)
 			return;
@@ -600,15 +607,15 @@ public class MBSWizardHandler extends CWizardHandler {
 			return;
 
 		List<IConfiguration> configs = new ArrayList<IConfiguration>();
-		for(int i = 0; i < cfgs.length; i++){
-			configs.add((IConfiguration)cfgs[i].getConfiguration());
+		for (CfgHolder cfg : cfgs) {
+			configs.add((IConfiguration)cfg.getConfiguration());
 		}
 		template.getTemplateInfo().setConfigurations(configs);
 
 		IStatus[] statuses = template.executeTemplateProcesses(null, false);
-	    if (statuses.length == 1 && statuses[0].getException() instanceof ProcessFailureException) {
-	    	TemplateEngineUIUtil.showError(statuses[0].getMessage(), statuses[0].getException());
-	    }
+		if (statuses.length == 1 && statuses[0].getException() instanceof ProcessFailureException) {
+			TemplateEngineUIUtil.showError(statuses[0].getMessage(), statuses[0].getException());
+		}
 	}
 	
 	protected CDTConfigWizardPage getConfigPage() {
@@ -618,6 +625,7 @@ public class MBSWizardHandler extends CWizardHandler {
 		return fConfigPage;
 	}
 	
+	@Override
 	public IWizardPage getSpecificPage() {
 		return entryInfo.getNextPage(getStartingPage(), getConfigPage());
 	}
@@ -627,19 +635,19 @@ public class MBSWizardHandler extends CWizardHandler {
 	 * @
 	 */
 	
+	@Override
 	public void updatePreferred(List<String> prefs) {
 		preferredTCs.clear();
 		int x = table.getItemCount();
 		for (int i=0; i<x; i++) {
 			TableItem ti = table.getItem(i);
 			IToolChain tc = (IToolChain)ti.getData();
-			String id = (tc == null) ? CDTPrefUtil.NULL : tc.getId();
-			if (prefs.contains(id)) {
+			if (tc!=null && prefs.contains(tc.getId())) {
 				ti.setImage(IMG1);
 				preferredTCs.add(tc.getName());
-			}
-			else
+			} else {
 				ti.setImage(IMG0);
+			}
 		}
 	}
 	
@@ -647,28 +655,34 @@ public class MBSWizardHandler extends CWizardHandler {
 		return preferredTCs;
 	}
 	
+	@Override
 	public String getHeader() { return head; }
 	public boolean isDummy() { return false; }
+	@Override
 	public boolean supportsPreferred() { return true; }
 
+	@Override
 	public boolean isChanged() { 
 		if (savedToolChains == null)
 			return true;
 		IToolChain[] tcs = getSelectedToolChains();
 		if (savedToolChains.length != tcs.length) 
 			return true;
-		for (int i=0; i<savedToolChains.length; i++) {
+		for (IToolChain savedToolChain : savedToolChains) {
 			boolean found = false;
-			for (int j=0; j<tcs.length; j++) {
-				if (savedToolChains[i] == tcs[j]) {
-					found = true; break;
+			for (IToolChain tc : tcs) {
+				if (savedToolChain == tc) {
+					found = true;
+					break;
 				}
 			}
-			if (!found) return true;
+			if (!found)
+				return true;
 		}
 		return false;
 	}
 	
+	@Override
 	public void saveState() {
 		savedToolChains = getSelectedToolChains();
 	}
@@ -704,6 +718,7 @@ public class MBSWizardHandler extends CWizardHandler {
 		getConfigPage(); // ensure that page is created
 		return fConfigPage.getCfgItems(defaults);
 	}
+	@Override
 	public String getErrorMessage() { 
 		TableItem[] tis = table.getSelection();
 		if (tis == null || tis.length == 0)
@@ -711,12 +726,13 @@ public class MBSWizardHandler extends CWizardHandler {
 		return null;
 	}
 	
+	@Override
 	protected void doCustom(IProject newProject) {
 		IRunnableWithProgress[] operations = MBSCustomPageManager.getOperations();
 		if(operations != null)
-			for(int k = 0; k < operations.length; k++)
+			for (IRunnableWithProgress op: operations)
 				try {
-					wizard.getContainer().run(false, true, operations[k]);
+					wizard.getContainer().run(false, true, op);
 				} catch (InvocationTargetException e) {
 					ManagedBuilderUIPlugin.log(e);
 				} catch (InterruptedException e) {
@@ -724,6 +740,7 @@ public class MBSWizardHandler extends CWizardHandler {
 				}
 	}
 	
+	@Override
 	public void postProcess(IProject newProject, boolean created) {
 		deleteExtraConfigs(newProject);
 		// calls are required only if the project was
@@ -750,16 +767,17 @@ public class MBSWizardHandler extends CWizardHandler {
 		if (all == null) return;
 		CfgHolder[] req = getCfgItems(false);
 		boolean modified = false;
-		for (int i=0; i<all.length; i++) {
+		for (ICConfigurationDescription cfgDes : all) {
 			boolean found = false;
-			for (int j=0; j<req.length; j++) {
-				if (all[i].getName().equals(req[j].getName())) {
-					found = true; break;
+			for (CfgHolder cfgh : req) {
+				if (cfgDes.getName().equals(cfgh.getName())) {
+					found = true;
+					break;
 				}
 			}
 			if (!found) {
 				modified = true;
-				prjd.removeConfiguration(all[i]);
+				prjd.removeConfiguration(cfgDes);
 			}
 		}
 		if (modified) try {
@@ -767,11 +785,13 @@ public class MBSWizardHandler extends CWizardHandler {
 		} catch (CoreException e) {}
 	}
 	
+	@Override
 	public boolean isApplicable(EntryDescriptor data) { 
 		EntryInfo info = new EntryInfo(data, full_tcs, wizard);
 		return info.isValid() && (info.getToolChainsCount() > 0);
 	}
 	
+	@Override
 	public void initialize(EntryDescriptor data) throws CoreException {
 		EntryInfo info = new EntryInfo(data, full_tcs, wizard);
 		if(!info.isValid())
@@ -783,6 +803,7 @@ public class MBSWizardHandler extends CWizardHandler {
 	/**
 	 * Clones itself.
 	 */
+	@Override
 	public Object clone() {
 		MBSWizardHandler clone = (MBSWizardHandler)super.clone();
 		if (clone != null) {
@@ -797,6 +818,7 @@ public class MBSWizardHandler extends CWizardHandler {
 		return clone;
 	}
 
+	@Override
 	public boolean canFinish() {
 		if(entryInfo == null)
 			return false;

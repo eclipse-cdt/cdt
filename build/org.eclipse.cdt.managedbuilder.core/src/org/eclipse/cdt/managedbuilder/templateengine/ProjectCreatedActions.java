@@ -13,7 +13,6 @@ package org.eclipse.cdt.managedbuilder.templateengine;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
 
@@ -63,7 +62,7 @@ public class ProjectCreatedActions {
 	 */
 	public ProjectCreatedActions() {}
 
-	Map/*<IConfiguration, IConfiguration>*/ original2newConfigs;
+	Map<IConfiguration, IConfiguration> original2newConfigs;
 	
 	/**
 	 * Utility method that
@@ -115,26 +114,25 @@ public class ProjectCreatedActions {
 		ManagedProject newManagedProject = new ManagedProject(project, configs[0].getProjectType());
 		info.setManagedProject(newManagedProject);
 
-		original2newConfigs = new HashMap/*<IConfiguration,IConfiguration>*/();
+		original2newConfigs = new HashMap<IConfiguration,IConfiguration>();
 		ICConfigurationDescription active = null;
-		for(int i=0; i < configs.length; i++) {
-			IConfiguration config = configs[i];
-			if (config != null) {
-				String id = ManagedBuildManager.calculateChildId(config.getId(), null);
-				Configuration configuration = new Configuration(newManagedProject, (Configuration)config, id, false, true);
+		for (IConfiguration cfg : configs) {
+			if (cfg != null) {
+				String id = ManagedBuildManager.calculateChildId(cfg.getId(), null);
+				Configuration configuration = new Configuration(newManagedProject, (Configuration)cfg, id, false, true);
 				CConfigurationData data = configuration.getConfigurationData();
 				ICConfigurationDescription cfgDes = des.createConfiguration(ManagedBuildManager.CFG_DATA_PROVIDER_ID, data);
 				configuration.setConfigurationDescription(cfgDes);
 				configuration.exportArtifactInfo();
 				configuration.setArtifactExtension(artifactExtension);
-				original2newConfigs.put(config, (IConfiguration)configuration);
+				original2newConfigs.put(cfg, configuration);
 
 				IBuilder builder = configuration.getEditableBuilder();
 				if (builder != null) {
 					builder.setManagedBuildOn(builder.isManagedBuildOn()); 
 				}
 
-				configuration.setName(config.getName());
+				configuration.setName(cfg.getName());
 				configuration.setArtifactName(newManagedProject.getDefaultArtifactName());
 
 				IBuildProperty buildProperty = configuration.getBuildProperties().getProperty(PROPERTY);
@@ -172,13 +170,13 @@ public class ProjectCreatedActions {
 	}
 	
 	public IConfiguration getNewConfiguration(IConfiguration original) {
-		return (IConfiguration) original2newConfigs.get(original);
+		return original2newConfigs.get(original);
 	}
 	
-	public Set/*<IConfiguration>*/ getNewConfigurations(Collection/*<IConfiguration>*/ originalConfigs) {
-		Set/*<IConfiguration>*/ result = new HashSet/*<IConfiguration>*/();
-		for(Iterator i = originalConfigs.iterator(); i.hasNext(); ) {
-			result.add(getNewConfiguration((IConfiguration)i.next()));
+	public Set<IConfiguration> getNewConfigurations(Collection<IConfiguration> originalConfigs) {
+		Set<IConfiguration> result = new HashSet<IConfiguration>();
+		for (IConfiguration cfg : originalConfigs) {
+			result.add(getNewConfiguration(cfg));
 		}
 		return result;
 	}

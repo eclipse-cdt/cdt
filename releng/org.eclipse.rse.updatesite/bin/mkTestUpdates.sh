@@ -40,6 +40,7 @@ fi
 
 # get newest plugins and features: to be done manually on real update site
 TPVERSION="Target Management"
+VERSION=3.1.1
 TYPE=none
 SITEDIR=`basename ${SITE}`
 case ${SITEDIR} in
@@ -49,9 +50,12 @@ case ${SITEDIR} in
   *interim)       TYPE=interim ;;
   *)              TYPE=unknown ;;
 esac
+case ${SITEDIR} in
+  3.2*)  VERSION=3.2 ;;
+esac
 if [ ${TYPE} = test ]; then
     echo "Working on test update site"
-    TPTYPE="3.1.1 Test"
+    TPTYPE="${VERSION} Test"
     TPVERSION="${TPVERSION} ${TPTYPE}"
     REL=`ls $HOME/ws2/working/package | sort | tail -1`
     if [ "$REL" != "" ]; then
@@ -134,7 +138,7 @@ if [ ${TYPE} = test ]; then
 	#	-outputDir $SITE -processAll -repack $SITE
 elif [ ${TYPE} = testSigned ]; then
     echo "Working on signed update site"
-    TPTYPE="3.1.1 Signed Test"
+    TPTYPE="${VERSION} Signed Test"
     TPVERSION="${TPVERSION} ${TPTYPE}"
     echo "Signing jars from test update site (expecting conditioned jars)..."
     STAGING=/home/data/httpd/download-staging.priv/dsdp/tm
@@ -255,7 +259,7 @@ elif [ ${TYPE} = testSigned ]; then
     mv -f web/site.xsl.new web/site.xsl
 elif [ ${TYPE} = milestone ]; then
     echo "Working on milestone update site"
-    TPTYPE="3.1.1 Milestone"
+    TPTYPE="${VERSION} Milestone"
     TPVERSION="${TPVERSION} ${TPTYPE}"
     echo "Expect that you copied your features and plugins yourself"
     stamp=`date +'%Y%m%d-%H%M'`
@@ -281,7 +285,7 @@ being contributed to the Galileo coordinated release train (Eclipse 3.5.x).' \
     mv -f web/site.xsl.new web/site.xsl
 elif [ ${TYPE} = interim ]; then
     echo "Working on interim update site"
-    TPTYPE="3.1.1 Interim"
+    TPTYPE="${VERSION} Interim"
     TPVERSION="${TPVERSION} ${TPTYPE}"
     echo "Expect that you copied your features and plugins yourself"
     stamp=`date +'%Y%m%d-%H%M'`

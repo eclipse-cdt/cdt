@@ -253,6 +253,16 @@ public abstract class Variable extends VariableDescriptor implements ICDIVariabl
 					// so it is pretty safe without to do without any other type checks
 					childFake = true;
 					// fn remains unchanged otherwise it would be like x->public
+				} else if (cpp && childName.equals(vars[i].getType())) {
+					// it is a base class (which is returned by GDB as a field)
+					// (type of a child is the name of a child)
+					if (t instanceof ICDIPointerType) {
+						// fn -> casting to pointer base class
+						fn = "(" + childName + "*)" + fn;//$NON-NLS-1$ //$NON-NLS-2$
+					} else {
+						// fn -> casting to base class
+						fn = "(" + childName + ")" + fn;//$NON-NLS-1$ //$NON-NLS-2$
+					}
 				} else if (t instanceof ICDIArrayType) {
 					// For Array gdb varobj only return the index, override here.
 					int index = castingIndex + i;

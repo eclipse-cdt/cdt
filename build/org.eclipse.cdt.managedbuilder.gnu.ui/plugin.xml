@@ -205,19 +205,19 @@
 			  </enablement>
 		 </outputType>
          <option
-               applicabilityCalculator="org.eclipse.cdt.managedbuilder.gnu.ui.GprofAppCalculator"
-               command="-pg"
-               defaultValue="false"
-               id="gnu.c.link.option.debugging.gprof"
-               name="%Option.Posix.Debug.gprof"
-               valueType="boolean">
-         </option>
-         <option
                applicabilityCalculator="org.eclipse.cdt.managedbuilder.gnu.ui.ProfAppCalculator"
                command="-p"
                defaultValue="false"
                id="gnu.c.link.option.debugging.prof"
                name="%Option.Posix.Debug.prof"
+               valueType="boolean">
+         </option>
+         <option
+               applicabilityCalculator="org.eclipse.cdt.managedbuilder.gnu.ui.GprofAppCalculator"
+               command="-pg"
+               defaultValue="false"
+               id="gnu.c.link.option.debugging.gprof"
+               name="%Option.Posix.Debug.gprof"
                valueType="boolean">
          </option>
       </tool>
@@ -406,19 +406,19 @@
 			  </enablement>
          </outputType>
          <option
-               applicabilityCalculator="org.eclipse.cdt.managedbuilder.gnu.ui.GprofAppCalculator"
-               command="-pg"
-               defaultValue="false"
-               id="gnu.cpp.link.option.debugging.gprof"
-               name="%Option.Posix.Debug.gprof"
-               valueType="boolean">
-         </option>
-         <option
                applicabilityCalculator="org.eclipse.cdt.managedbuilder.gnu.ui.ProfAppCalculator"
                command="-p"
                defaultValue="false"
                id="gnu.cpp.link.option.debugging.prof"
                name="%Option.Posix.Debug.prof"
+               valueType="boolean">
+         </option>
+         <option
+               applicabilityCalculator="org.eclipse.cdt.managedbuilder.gnu.ui.GprofAppCalculator"
+               command="-pg"
+               defaultValue="false"
+               id="gnu.cpp.link.option.debugging.gprof"
+               name="%Option.Posix.Debug.gprof"
                valueType="boolean">
          </option>
       </tool>
@@ -1129,18 +1129,18 @@
 		  </option>
 		  <option
 			  defaultValue="false"
-			  name="%Option.Posix.Debug.gprof"
-			  category="gnu.c.compiler.category.debug"
-			  command="-pg"
-			  id="gnu.c.compiler.option.debugging.gprof"
-			  valueType="boolean">
-		  </option>
-		  <option
-			  defaultValue="false"
 			  name="%Option.Posix.Debug.prof"
 			  category="gnu.c.compiler.category.debug"
 			  command="-p"
 			  id="gnu.c.compiler.option.debugging.prof"
+			  valueType="boolean">
+		  </option>
+		  <option
+			  defaultValue="false"
+			  name="%Option.Posix.Debug.gprof"
+			  category="gnu.c.compiler.category.debug"
+			  command="-pg"
+			  id="gnu.c.compiler.option.debugging.gprof"
 			  valueType="boolean">
 		  </option>
 		  <optionCategory

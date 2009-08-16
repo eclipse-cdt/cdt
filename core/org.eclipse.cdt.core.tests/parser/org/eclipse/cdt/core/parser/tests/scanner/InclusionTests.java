@@ -60,14 +60,14 @@ public class InclusionTests extends PreprocessorTestsBase {
 	
 	public final static int SIZEOF_TRUTHTABLE = 10;
 
-	private IFile importFile(String fileName, String contents ) throws Exception{
+	private IFile importFile(String fileName, String contents) throws Exception {
     	if (fProject == null) {
     		fProject= CProjectHelper.createCProject(getClass().getName(), null, PDOMNullIndexer.ID);
     	}
     	return TestSourceReader.createFile(fProject.getProject(), fileName, contents);
 	}
 
-    private IFolder importFolder(String name) throws Exception{
+    private IFolder importFolder(String name) throws Exception {
     	if (fProject == null) {
     		fProject= CProjectHelper.createCProject(getClass().getName(), null, PDOMNullIndexer.ID);
     	}
@@ -81,7 +81,7 @@ public class InclusionTests extends PreprocessorTestsBase {
     // #include "one.h"
     // #include "f1/two.h"
     // #include "f1/f2/three.h"
-    public void testIncludeVariables_69529() throws Exception	{    
+    public void testIncludeVariables_69529() throws Exception {    
     	String content= getAboveComment();
 
     	IFolder f0 = importFolder(".framework"); 
@@ -108,7 +108,7 @@ public class InclusionTests extends PreprocessorTestsBase {
     	validateEOF();
     }
 
-    public void testIncludeNext() throws Exception	{    	
+    public void testIncludeNext() throws Exception {    	
     	String baseFile = "int zero; \n#include \"foo.h\""; //$NON-NLS-1$
     	String i1Next = "int one; \n#include_next <bar/foo.h>"; //$NON-NLS-1$
     	String i2Next = "int two; \n#include_next \"bar/foo.h\""; //$NON-NLS-1$
@@ -152,8 +152,7 @@ public class InclusionTests extends PreprocessorTestsBase {
     	validateEOF();
 	}
 
-    public void testIncludePathOrdering() throws Exception
-	{    	
+    public void testIncludePathOrdering() throws Exception {    	
     	// create directory structure:
     	//  project/base.cpp
     	//  project/foo.h
@@ -233,7 +232,7 @@ public class InclusionTests extends PreprocessorTestsBase {
     }
     
     // #include <inc/test.h>
-    public void testRelativeIncludes_243170() throws Exception	{    
+    public void testRelativeIncludes_243170() throws Exception {    
     	String content= getAboveComment();
 
     	IFolder f0 = importFolder("f1"); 

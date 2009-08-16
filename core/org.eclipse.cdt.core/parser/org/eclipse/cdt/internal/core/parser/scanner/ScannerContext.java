@@ -57,7 +57,7 @@ final class ScannerContext {
 	}
 	
 	public ScannerContext(ILocationCtx ctx, ScannerContext parent, TokenList tokens) {
-		this (ctx, parent, (Lexer) null);
+		this(ctx, parent, (Lexer) null);
 		fTokens= tokens.first();
 		fInactiveState= CodeState.eSkipInactive;  // no branches in result of macro expansion
 	}
@@ -169,7 +169,7 @@ final class ScannerContext {
 	}
 
 	private int getOldNestingLevel(BranchKind kind, int nesting) {
-		switch(kind) {
+		switch (kind) {
 		case eIf:
 			return nesting-1;
 		case eElif:

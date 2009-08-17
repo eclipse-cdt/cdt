@@ -810,10 +810,19 @@ public class CPPVisitor extends ASTQueries {
 						while (parent.getParent() instanceof IASTDeclarator)
 						    parent = parent.getParent();
 						ASTNodeProperty prop = parent.getPropertyInParent();
-						if (prop == IASTSimpleDeclaration.DECLARATOR)
+						if (prop == IASTSimpleDeclaration.DECLARATOR) {
 						    return dtor.getFunctionScope();
-						else if (prop == IASTFunctionDefinition.DECLARATOR)
-						    return ((IASTCompoundStatement) ((IASTFunctionDefinition) parent.getParent()).getBody()).getScope();
+						} else if (prop == IASTFunctionDefinition.DECLARATOR) {
+							IASTFunctionDefinition funcDef = (IASTFunctionDefinition) parent.getParent();
+							ICPPASTDeclSpecifier declSpec = (ICPPASTDeclSpecifier) funcDef.getDeclSpecifier();
+							if (declSpec.isFriend()) {
+								parent = funcDef.getParent();
+								if (parent instanceof IASTCompositeTypeSpecifier) {
+									return ((IASTCompositeTypeSpecifier) parent).getScope();
+								}
+							}
+						    return ((IASTCompoundStatement) funcDef.getBody()).getScope();
+						}
 					}
 			    } else if (parent instanceof ICPPASTTemplateDeclaration) {
 			    	return CPPTemplates.getContainingScope(node);

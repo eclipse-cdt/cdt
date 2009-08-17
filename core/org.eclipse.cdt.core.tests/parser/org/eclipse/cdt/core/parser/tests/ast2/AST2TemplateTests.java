@@ -4114,4 +4114,18 @@ public class AST2TemplateTests extends AST2BaseTest {
 		final String code= getAboveComment();
 		parseAndCheckBindings(code, ParserLanguage.CPP);
 	}
+
+	//	template <typename T>
+	//	struct A {
+	//	  typedef A<T> Self;
+	//	  friend Self f(Self p) { return Self(); }
+	//	};
+	//
+	//	void test(A<int> x) {
+	//	  f(x);
+	//	}
+	public void testInlineFriendFunction_286741() throws Exception {
+		final String code = getAboveComment();
+		parseAndCheckBindings(code, ParserLanguage.CPP);
+	}
 }

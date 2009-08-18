@@ -91,12 +91,14 @@ public class GenerateGettersAndSettersRefactoring extends CRefactoring {
 
 		super.checkInitialConditions(sm.newChild(6));
 
-		initRefactoring(pm);		
-		
-		if(context.existingFields.size() == 0) {
-			initStatus.addFatalError(Messages.GenerateGettersAndSettersRefactoring_NoFields);
-		}
-		
+		if(!initStatus.hasFatalError()) {
+
+			initRefactoring(pm);		
+
+			if(context.existingFields.size() == 0) {
+				initStatus.addFatalError(Messages.GenerateGettersAndSettersRefactoring_NoFields);
+			}
+		}		
 		return initStatus;
 	}
 

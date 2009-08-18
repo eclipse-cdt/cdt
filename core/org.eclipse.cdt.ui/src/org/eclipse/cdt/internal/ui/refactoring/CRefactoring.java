@@ -24,6 +24,7 @@ import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.ltk.core.refactoring.Change;
 import org.eclipse.ltk.core.refactoring.Refactoring;
 import org.eclipse.ltk.core.refactoring.RefactoringStatus;
+import org.eclipse.osgi.util.NLS;
 
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.dom.ast.ASTVisitor;
@@ -179,6 +180,7 @@ public abstract class CRefactoring extends Refactoring {
 		}
 		if(!loadTranslationUnit(initStatus, sm.newChild(8))){
 			initStatus.addError(Messages.Refactoring_CantLoadTU);  
+			return initStatus;
 		}
 		if(isProgressMonitorCanceld(sm, initStatus)) {
 			return initStatus;
@@ -225,6 +227,10 @@ public abstract class CRefactoring extends Refactoring {
 			try {
 				subMonitor.subTask(Messages.Refactoring_PM_ParseTU);
 				unit = loadTranslationUnit(file);
+				if(unit == null) {
+					subMonitor.done();
+					return false;
+				}
 				subMonitor.worked(2);
 				if(isProgressMonitorCanceld(subMonitor, initStatus)) {
 					return true;
@@ -249,6 +255,10 @@ public abstract class CRefactoring extends Refactoring {
 
 	protected IASTTranslationUnit loadTranslationUnit(IFile file) throws CoreException {
 		ITranslationUnit tu = (ITranslationUnit) CCorePlugin.getDefault().getCoreModel().create(file);
+		if(tu == null){
+			initStatus.addFatalError(NLS.bind(Messages.CRefactoring_FileNotFound, file.getName()));
+			return null;
+		}
 		return tu.getAST(fIndex, AST_STYLE);
 	}
 

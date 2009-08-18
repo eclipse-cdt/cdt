@@ -35,6 +35,7 @@ public final class Messages extends NLS {
 	public static String CreateFileChange_CreateFile;
 	public static String CreateFileChange_UnknownLoc;
 	public static String CreateFileChange_FileExists;
+	public static String CRefactoring_FileNotFound;
 	public static String Refactoring_SelectionNotValid;
 	public static String Refactoring_CantLoadTU;
 	public static String Refactoring_Ambiguity;

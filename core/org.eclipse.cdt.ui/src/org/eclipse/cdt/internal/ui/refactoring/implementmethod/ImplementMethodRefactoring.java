@@ -76,19 +76,21 @@ public class ImplementMethodRefactoring extends CRefactoring {
 		SubMonitor sm = SubMonitor.convert(pm, 10);
 		super.checkInitialConditions(sm.newChild(6));
 
-		data.setMethodDeclarations(findUnimplementedMethodDeclarations(unit));
+		if(!initStatus.hasFatalError()) {
 
-		if(region.getLength()>0) {
-			IASTSimpleDeclaration methodDeclaration = SelectionHelper.findFirstSelectedDeclaration(region, unit);
-			if (NodeHelper.isMethodDeclaration(methodDeclaration)) {
-				for (MethodToImplementConfig config : data.getMethodDeclarations()) {
-					if(config.getDeclaration() == methodDeclaration) {
-						config.setChecked(true);
+			data.setMethodDeclarations(findUnimplementedMethodDeclarations(unit));
+
+			if(region.getLength()>0) {
+				IASTSimpleDeclaration methodDeclaration = SelectionHelper.findFirstSelectedDeclaration(region, unit);
+				if (NodeHelper.isMethodDeclaration(methodDeclaration)) {
+					for (MethodToImplementConfig config : data.getMethodDeclarations()) {
+						if(config.getDeclaration() == methodDeclaration) {
+							config.setChecked(true);
+						}
 					}
 				}
 			}
 		}
-		
 		sm.done();
 		return initStatus;
 	}

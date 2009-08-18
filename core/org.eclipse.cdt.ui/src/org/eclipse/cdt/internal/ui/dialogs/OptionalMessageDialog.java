@@ -34,9 +34,6 @@ import org.eclipse.cdt.internal.ui.CUIMessages;
  * to choose that the dialog isn't shown again the next time.
  */ 
 public class OptionalMessageDialog extends MessageDialog {
-	// String constants for widgets
-	private static final String CHECKBOX_TEXT= CUIMessages.OptionalMessageDialog_dontShowAgain;  
-
 	// Dialog store id constants
 	private static final String STORE_ID= "OptionalMessageDialog.hide."; //$NON-NLS-1$
 	private static final String KEY_DETAIL = ".detail"; //$NON-NLS-1$
@@ -46,9 +43,10 @@ public class OptionalMessageDialog extends MessageDialog {
 	
 	private Button fHideDialogCheckBox;
 	private String fId;
+	private String fHideMessage;
 
 	/**
-	 * Opens the dialog but only if the user hasn't choosen to hide it.
+	 * Opens the dialog but only if the user hasn't chosen to hide it.
 	 * Returns <code>NOT_SHOWN</code> if the dialog was not shown.
 	 */
 	public static int open(String id, Shell parent, String title, Image titleImage, String message, int dialogType, String[] buttonLabels, int defaultButtonIndex) {
@@ -62,6 +60,14 @@ public class OptionalMessageDialog extends MessageDialog {
 	protected OptionalMessageDialog(String id, Shell parent, String title, Image titleImage, String message, int dialogType, String[] buttonLabels, int defaultButtonIndex) {
 		super(parent, title, titleImage, message, dialogType, buttonLabels, defaultButtonIndex);
 		fId= id;
+		switch(dialogType) {
+		case QUESTION:
+        case QUESTION_WITH_CANCEL:
+        	fHideMessage= CUIMessages.OptionalMessageDialog_rememberDecision;
+        	break;
+        default:
+        	fHideMessage= CUIMessages.OptionalMessageDialog_dontShowAgain;
+		}
 	}
 
 	@Override
@@ -75,7 +81,7 @@ public class OptionalMessageDialog extends MessageDialog {
 		composite.setLayoutData(new GridData(GridData.FILL_BOTH));
 		
 		fHideDialogCheckBox= new Button(composite, SWT.CHECK | SWT.LEFT);
-		fHideDialogCheckBox.setText(CHECKBOX_TEXT);
+		fHideDialogCheckBox.setText(fHideMessage);
 		fHideDialogCheckBox.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {

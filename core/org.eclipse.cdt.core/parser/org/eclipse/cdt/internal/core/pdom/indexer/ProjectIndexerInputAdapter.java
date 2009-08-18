@@ -7,11 +7,11 @@
  *
  * Contributors:
  *    Markus Schorn - initial API and implementation
+ *    Sergey Prigogin (Google)
  *******************************************************************************/ 
 package org.eclipse.cdt.internal.core.pdom.indexer;
 
 import java.io.File;
-import java.io.IOException;
 import java.util.HashMap;
 
 import org.eclipse.cdt.core.CCorePlugin;
@@ -29,6 +29,7 @@ import org.eclipse.cdt.core.parser.CodeReader;
 import org.eclipse.cdt.core.parser.IScannerInfo;
 import org.eclipse.cdt.core.parser.ScannerInfo;
 import org.eclipse.cdt.internal.core.pdom.IndexerInputAdapter;
+import org.eclipse.cdt.internal.core.resources.PathCanonicalizationStrategy;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
@@ -99,16 +100,11 @@ public class ProjectIndexerInputAdapter extends IndexerInputAdapter {
 		if (result == null) {
 			result = doResolveASTPath(includePath);
 			if (result.getFullPath() == null) {
-				try {
-					File location= new File(includePath);
-					String canonicalPath= location.getCanonicalPath();
-					if (!includePath.equals(canonicalPath)) {
-						result= IndexLocationFactory.getExternalIFL(canonicalPath);
-						fIflCache.put(canonicalPath, result);
-					}
-				}
-				catch (IOException e) {
-					// just use the original
+				File location= new File(includePath);
+				String canonicalPath= PathCanonicalizationStrategy.getCanonicalPath(location);
+				if (!includePath.equals(canonicalPath)) {
+					result= IndexLocationFactory.getExternalIFL(canonicalPath);
+					fIflCache.put(canonicalPath, result);
 				}
 			}
 			fIflCache.put(includePath, result);

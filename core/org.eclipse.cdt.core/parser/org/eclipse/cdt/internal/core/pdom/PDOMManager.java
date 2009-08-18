@@ -82,6 +82,7 @@ import org.eclipse.cdt.internal.core.pdom.indexer.PDOMUpdateTask;
 import org.eclipse.cdt.internal.core.pdom.indexer.ProjectIndexerInputAdapter;
 import org.eclipse.cdt.internal.core.pdom.indexer.TranslationUnitCollector;
 import org.eclipse.cdt.internal.core.pdom.indexer.TriggerNotificationTask;
+import org.eclipse.cdt.internal.core.resources.PathCanonicalizationStrategy;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IProject;
@@ -150,6 +151,14 @@ public class PDOMManager implements IWritableIndexManager, IListener {
 	};
 
 	/**
+	 * Boolean preference controlling whether paths to non-workspace files are stored in canonical
+	 * form or not. 
+	 */
+	// TODO(sprigogin): Move to CPreferencesConstants and add UI support.
+	public static final String PREFERENCES_CONSTANT_PATH_CANONICALIZATION =
+		CCorePlugin.PLUGIN_ID + ".path_canonicalization"; //$NON-NLS-1$
+
+	/**
 	 * Protects fIndexerJob, fCurrentTask and fTaskQueue.
 	 */
 	private final LinkedList<IPDOMIndexerTask> fTaskQueue = new LinkedList<IPDOMIndexerTask>();
@@ -158,7 +167,7 @@ public class PDOMManager implements IWritableIndexManager, IListener {
 	private int fSourceCount, fHeaderCount, fTickCount;
 	
     /**
-     * Stores mapping from pdom to project, used to serialize\ creation of new pdoms.
+     * Stores mapping from pdom to project, used to serialize creation of new pdoms.
      */
     private Map<IProject, IPDOM> fProjectToPDOM= new HashMap<IProject, IPDOM>();
     private Map<File, ICProject> fFileToProject= new HashMap<File, ICProject>();
@@ -187,6 +196,7 @@ public class PDOMManager implements IWritableIndexManager, IListener {
 	private ArrayList<IndexerSetupParticipant> fSetupParticipants= new ArrayList<IndexerSetupParticipant>();
 	private HashSet<ICProject> fPostponedProjects= new HashSet<ICProject>();
 	private int fLastNotifiedState= IndexerStateEvent.STATE_IDLE;
+	private PathCanonicalizationStrategy fPathCanonicalizationStrategy;
     
 	public PDOMManager() {
 		PDOM.sDEBUG_LOCKS= "true".equals(Platform.getDebugOption(CCorePlugin.PLUGIN_ID + "/debug/index/locks"));  //$NON-NLS-1$//$NON-NLS-2$
@@ -225,6 +235,7 @@ public class PDOMManager implements IWritableIndexManager, IListener {
 		new InstanceScope().getNode(CCorePlugin.PLUGIN_ID).addPreferenceChangeListener(fPreferenceChangeListener);
 		Job.getJobManager().addJobChangeListener(fJobChangeListener);
 		adjustCacheSize();
+		updatePathCanonicalizationStrategy();
 		fIndexProviderManager.startup();
 		
 		final CoreModel model = CoreModel.getDefault();
@@ -273,6 +284,9 @@ public class PDOMManager implements IWritableIndexManager, IListener {
 				prop.equals(CCorePreferenceConstants.TODO_TASK_PRIORITIES) ||
 				prop.equals(CCorePreferenceConstants.TODO_TASK_CASE_SENSITIVE)) {
 			reindexAll();
+		} else if (prop.equals(PREFERENCES_CONSTANT_PATH_CANONICALIZATION)) {
+			updatePathCanonicalizationStrategy();
+			reindexAll();
 		}
 	}
 	
@@ -285,6 +299,18 @@ public class PDOMManager implements IWritableIndexManager, IListener {
 		long m1= Runtime.getRuntime().maxMemory()/100L * cachePct;
 		long m2= Math.min(m1, cacheMax * 1024L * 1024L);
 		ChunkCache.getSharedInstance().setMaxSize(m2);
+	}
+
+	private void updatePathCanonicalizationStrategy() {
+		IPreferencesService prefs = Platform.getPreferencesService();
+		boolean canonicalize = prefs.getBoolean(CCorePlugin.PLUGIN_ID, PREFERENCES_CONSTANT_PATH_CANONICALIZATION, true, null);
+		synchronized (this) {
+			fPathCanonicalizationStrategy = PathCanonicalizationStrategy.getStrategy(canonicalize);
+		}
+	}
+	
+	public synchronized PathCanonicalizationStrategy getPathCanonicalizationStrategy() {
+		return fPathCanonicalizationStrategy;
 	}
 
 	public IndexProviderManager getIndexProviderManager() {

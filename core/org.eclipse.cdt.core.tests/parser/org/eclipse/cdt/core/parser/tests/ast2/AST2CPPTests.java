@@ -7251,4 +7251,14 @@ public class AST2CPPTests extends AST2BaseTest {
 		BindingAssertionHelper ba= new BindingAssertionHelper(getAboveComment(), true);
 		ba.assertProblem("enum_name", 9);
 	}
+	
+	//	class CL {
+	//		typedef int x;
+	//		friend void test() {
+	//			x a;  // problem on x
+	//		}
+	//	};
+	public void testLookupFromInlineFriend_284690() throws Exception {
+		parseAndCheckBindings(getAboveComment(), ParserLanguage.CPP);
+	}
 }

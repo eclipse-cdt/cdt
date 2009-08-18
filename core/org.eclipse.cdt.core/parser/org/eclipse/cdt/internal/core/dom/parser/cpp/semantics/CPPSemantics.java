@@ -1470,9 +1470,8 @@ public class CPPSemantics {
 			IASTDeclarator[] declarators = simpleDeclaration.getDeclarators();
 			IScope dtorScope= scope;
 			if (declSpec.isFriend()) {
-				// Friends are added to an enclosing scope. They have to be added such that they are
-				// picked up when this scope is re-populated during ambiguity resolution, while the
-				// enclosing scope is left as it is.
+				// Friends are added to an enclosing scope. Here we have to do that, because when this scope is re-populated 
+				// during ambiguity resolution, the enclosing scope is otherwise left as it is (without the friend).
 				try {
 					while (dtorScope != null && dtorScope.getKind() == EScopeKind.eClassType)
 						dtorScope= dtorScope.getParent();

@@ -7,11 +7,10 @@
  *
  * Contributors:
  *    Markus Schorn - initial API and implementation
+ *    Sergey Prigogin (Google)
  *******************************************************************************/ 
 package org.eclipse.cdt.internal.core.resources;
 
-import java.io.File;
-import java.io.IOException;
 import java.net.URI;
 
 import org.eclipse.core.filesystem.URIUtil;
@@ -47,13 +46,7 @@ abstract class LocationAdapter<T> {
 
 		@Override
 		public String getCanonicalPath(IPath location) {
-			final File file= location.toFile();
-			try {
-				return file.getCanonicalPath();
-			} catch (IOException e) {
-				// use non-canonical version
-				return file.getAbsolutePath();
-			}
+			return PathCanonicalizationStrategy.getCanonicalPath(location.toFile());
 		}
 
 		@Override
@@ -67,7 +60,7 @@ abstract class LocationAdapter<T> {
 		public String extractName(URI location) {
 			String path= location.getPath();
 			int idx= path.lastIndexOf('/');
-			return path.substring(idx+1);
+			return path.substring(idx + 1);
 		}
 
 		@Override
@@ -77,16 +70,11 @@ abstract class LocationAdapter<T> {
 
 		@Override
 		public String getCanonicalPath(URI location) {
-			if (!"file".equals(location.getScheme()))  //$NON-NLS-1$
+			IPath path = URIUtil.toPath(location);
+			if (path == null) {
 				return null;
-
-			String path= location.getPath();
-			try {
-				return new File(path).getCanonicalPath();
-			} catch (IOException e) {
-				// use non-canonical version
-				return path;
 			}
+			return PathCanonicalizationStrategy.getCanonicalPath(path.toFile());
 		}
 
 		@Override

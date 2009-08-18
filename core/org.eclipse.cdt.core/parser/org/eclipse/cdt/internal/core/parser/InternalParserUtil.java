@@ -18,6 +18,7 @@ import java.io.InputStream;
 import org.eclipse.cdt.core.index.IIndexFileLocation;
 import org.eclipse.cdt.core.parser.CodeReader;
 import org.eclipse.cdt.core.parser.ParserFactory;
+import org.eclipse.cdt.internal.core.resources.PathCanonicalizationStrategy;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IResourceStatus;
@@ -49,10 +50,10 @@ public class InternalParserUtil extends ParserFactory {
 	public static CodeReader createExternalFileReader(String externalLocation, CodeReaderLRUCache cache) throws IOException {
 		File includeFile = new File(externalLocation);
 		if (includeFile.isFile()) {
-			    //use the canonical path so that in case of non-case-sensitive OSs
-			    //the CodeReader always has the same name as the file on disk with
-			    //no differences in case.
-			final String path = includeFile.getCanonicalPath();
+		    // Use the canonical path so that in case of non-case-sensitive OSs
+		    // the CodeReader always has the same name as the file on disk with
+		    // no differences in case.
+			final String path = PathCanonicalizationStrategy.getCanonicalPath(includeFile);
 			if (cache != null) {
 				CodeReader result= cache.get(path);
 				if (result != null)

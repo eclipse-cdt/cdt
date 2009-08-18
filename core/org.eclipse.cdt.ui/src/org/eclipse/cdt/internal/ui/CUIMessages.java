@@ -65,6 +65,7 @@ public final class CUIMessages extends NLS {
 	public static String TextEditorDropAdapter_unreadableFile;
 	public static String TextEditorDropAdapter_noFile;
 	public static String OptionalMessageDialog_dontShowAgain;
+	public static String OptionalMessageDialog_rememberDecision;
 	public static String CStructureCreatorVisitor_translationUnitName;
 	public static String FileTransferDragAdapter_refreshing;
 	public static String FileTransferDragAdapter_problem;

@@ -6,18 +6,17 @@ Bundle-SymbolicName: org.eclipse.cdt.dsf.ui;singleton:=true
 Bundle-Version: 2.0.1.qualifier
 Bundle-Activator: org.eclipse.cdt.dsf.internal.ui.DsfUIPlugin
 Bundle-Localization: plugin
-Require-Bundle: org.eclipse.ui,
- org.eclipse.core.runtime,
- org.eclipse.core.variables,
- org.eclipse.debug.ui,
- org.eclipse.cdt.dsf,
- org.eclipse.cdt.core,
- org.eclipse.cdt.debug.core,
- org.eclipse.cdt.debug.ui,
+Require-Bundle: org.eclipse.ui;bundle-version="3.5.0",
+ org.eclipse.core.runtime;bundle-version="3.5.0",
+ org.eclipse.debug.ui;bundle-version="3.5.0",
+ org.eclipse.cdt.dsf;bundle-version="2.0.0",
+ org.eclipse.cdt.core;bundle-version="5.1.0",
+ org.eclipse.cdt.debug.core;bundle-version="6.0.0",
+ org.eclipse.cdt.debug.ui;bundle-version="6.0.0",
  org.eclipse.jface.text;bundle-version="3.4.0",
  org.eclipse.ui.editors;bundle-version="3.4.0",
  org.eclipse.ui.workbench.texteditor;bundle-version="3.4.0",
- org.eclipse.ui.ide;bundle-version="3.4.0",
+ org.eclipse.ui.ide;bundle-version="3.5.0",
  org.eclipse.cdt.ui;bundle-version="5.1.0",
  org.eclipse.core.expressions;bundle-version="3.4.0",
  org.eclipse.core.filesystem;bundle-version="1.2.0"

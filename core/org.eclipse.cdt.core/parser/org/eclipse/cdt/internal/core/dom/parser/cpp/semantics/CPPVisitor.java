@@ -578,10 +578,15 @@ public class CPPVisitor extends ASTQueries {
 		boolean isFriendDecl= false;
 		ICPPScope scope = (ICPPScope) getContainingNonTemplateScope(name);
 		try {
-			if (parent instanceof IASTSimpleDeclaration && scope instanceof ICPPClassScope) {
-				ICPPASTDeclSpecifier declSpec = (ICPPASTDeclSpecifier) ((IASTSimpleDeclaration) parent).getDeclSpecifier();
-				if (declSpec.isFriend()) {
-					isFriendDecl= true;
+			if (scope instanceof ICPPClassScope) {
+				if (parent instanceof IASTSimpleDeclaration) {
+					ICPPASTDeclSpecifier declSpec = (ICPPASTDeclSpecifier) ((IASTSimpleDeclaration) parent).getDeclSpecifier();
+					isFriendDecl= declSpec.isFriend();
+				} else if (parent instanceof IASTFunctionDefinition) {
+					ICPPASTDeclSpecifier declSpec = (ICPPASTDeclSpecifier) ((IASTFunctionDefinition) parent).getDeclSpecifier();
+					isFriendDecl= declSpec.isFriend();
+				}
+				if (isFriendDecl) {
 					try {
 						while (scope.getKind() == EScopeKind.eClassType) {
 							scope = (ICPPScope) getParentScope(scope, name.getTranslationUnit());
@@ -769,10 +774,6 @@ public class CPPVisitor extends ASTQueries {
 				} else if (parent instanceof IASTForStatement) {
 				    return ((IASTForStatement) parent).getScope();
 				} else if (parent instanceof IASTCompositeTypeSpecifier) {
-				    if (node instanceof IASTFunctionDefinition &&
-				    		((ICPPASTDeclSpecifier) ((IASTFunctionDefinition) node).getDeclSpecifier()).isFriend()) {
-						return getContainingScope(parent);
-				    }
 				    return ((IASTCompositeTypeSpecifier) parent).getScope();
 				} else if (parent instanceof ICPPASTNamespaceDefinition) {
 					return ((ICPPASTNamespaceDefinition) parent).getScope();
@@ -806,19 +807,10 @@ public class CPPVisitor extends ASTQueries {
 						while (parent.getParent() instanceof IASTDeclarator)
 						    parent = parent.getParent();
 						ASTNodeProperty prop = parent.getPropertyInParent();
-						if (prop == IASTSimpleDeclaration.DECLARATOR) {
+						if (prop == IASTSimpleDeclaration.DECLARATOR)
 						    return dtor.getFunctionScope();
-						} else if (prop == IASTFunctionDefinition.DECLARATOR) {
-							IASTFunctionDefinition funcDef = (IASTFunctionDefinition) parent.getParent();
-							ICPPASTDeclSpecifier declSpec = (ICPPASTDeclSpecifier) funcDef.getDeclSpecifier();
-							if (declSpec.isFriend()) {
-								parent = funcDef.getParent();
-								if (parent instanceof IASTCompositeTypeSpecifier) {
-									return ((IASTCompositeTypeSpecifier) parent).getScope();
-								}
-							}
-						    return ((IASTCompoundStatement) funcDef.getBody()).getScope();
-						}
+						else if (prop == IASTFunctionDefinition.DECLARATOR)
+						    return ((IASTCompoundStatement) ((IASTFunctionDefinition) parent.getParent()).getBody()).getScope();
 					}
 			    } else if (parent instanceof ICPPASTTemplateDeclaration) {
 			    	return CPPTemplates.getContainingScope(node);

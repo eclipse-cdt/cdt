@@ -2,15 +2,14 @@
 <?eclipse version="3.0"?>
 <plugin>
 
-    <!-- TODO: externalize the strings.  For some reason strings from plugin.properties are not working -->
     <extension point="org.eclipse.debug.core.launchDelegates">
       <launchDelegate
             id="org.eclipse.cdt.dsf.gdb.launch.localCLaunch"
             type="org.eclipse.cdt.launch.applicationLaunchType"
             modes="debug"
             delegate="org.eclipse.cdt.dsf.gdb.launching.GdbLaunchDelegate"
-            name="GDB (DSF) Create Process"
-            delegateDescription="Start new application under control of GDB debugger integrated using the Debugger Services Framework (DSF)."
+            name="%launchDelegate.localApplication.name"
+            delegateDescription="%launchDelegate.localApplication.description"
             sourceLocatorId="org.eclipse.cdt.debug.core.sourceLocator"
             sourcePathComputerId="org.eclipse.cdt.debug.core.sourcePathComputer">
       </launchDelegate>
@@ -19,8 +18,8 @@
             type="org.eclipse.cdt.launch.applicationLaunchType"
             modes="debug"
             delegate="org.eclipse.cdt.dsf.gdb.launching.GdbLaunchDelegate"
-            name="GDB (DSF) Remote System Process"
-            delegateDescription="Start new application on a remote system under control of GDB debugger integrated using the Debugger Services Framework (DSF)"
+            name="%launchDelegate.remoteApplication.name"
+            delegateDescription="%launchDelegate.remoteApplication.description"
             sourceLocatorId="org.eclipse.cdt.debug.core.sourceLocator"
             sourcePathComputerId="org.eclipse.cdt.debug.core.sourcePathComputer">
       </launchDelegate>
@@ -29,8 +28,8 @@
             type="org.eclipse.cdt.launch.attachLaunchType"
             modes="debug"
             delegate="org.eclipse.cdt.dsf.gdb.launching.GdbLaunchDelegate"
-            name="GDB (DSF) Attach to Process"
-            delegateDescription="Attach the GDB debugger, integrated using the Debugger Services Framework (DSF), to a running program."
+            name="%launchDelegate.attach.name"
+            delegateDescription="%launchDelegate.attach.description"
             sourceLocatorId="org.eclipse.cdt.debug.core.sourceLocator"
             sourcePathComputerId="org.eclipse.cdt.debug.core.sourcePathComputer">
       </launchDelegate>
@@ -39,8 +38,8 @@
             type="org.eclipse.cdt.launch.postmortemLaunchType"
             modes="debug"
             delegate="org.eclipse.cdt.dsf.gdb.launching.GdbLaunchDelegate"
-            name="GDB (DSF) Postmortem Debugger"
-            delegateDescription="Load an application dump under into the GDB debugger integrated using the Debugger Services Framework (DSF)."
+            name="%launchDelegate.postmortem.name"
+            delegateDescription="%launchDelegate.postmortem.description"
             sourceLocatorId="org.eclipse.cdt.debug.core.sourceLocator"
             sourcePathComputerId="org.eclipse.cdt.debug.core.sourcePathComputer">
       </launchDelegate>

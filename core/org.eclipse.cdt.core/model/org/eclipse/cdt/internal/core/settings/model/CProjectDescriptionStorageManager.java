@@ -16,11 +16,11 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URI;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -87,7 +87,7 @@ public class CProjectDescriptionStorageManager {
 	/** Map of StorageType ID -> List of StorageTypes */
 	private volatile Map<String, List<CProjectDescriptionStorageTypeProxy>> storageTypeMap;
 	/** Map from IProject -> AbstractCProjectDescriptionStorage which is responsible for (de)serializing the project */
-	private Map<IProject, AbstractCProjectDescriptionStorage> fDescriptionStorageMap = Collections.synchronizedMap(new HashMap<IProject, AbstractCProjectDescriptionStorage>());
+	private ConcurrentHashMap<IProject, AbstractCProjectDescriptionStorage> fDescriptionStorageMap = new ConcurrentHashMap<IProject, AbstractCProjectDescriptionStorage>();
 
 
 	private volatile static CProjectDescriptionStorageManager instance;
@@ -115,9 +115,9 @@ public class CProjectDescriptionStorageManager {
 		AbstractCProjectDescriptionStorage projStorage = fDescriptionStorageMap.get(project);
 		if (projStorage == null) {
 			projStorage = loadProjectStorage(project);
-			fDescriptionStorageMap.put(project, projStorage);
+			fDescriptionStorageMap.putIfAbsent(project, projStorage);
 		}
-		return projStorage;
+		return fDescriptionStorageMap.get(project);
 	}
 
 	/**

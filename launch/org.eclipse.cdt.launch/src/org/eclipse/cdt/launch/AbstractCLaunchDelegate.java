@@ -136,6 +136,11 @@ abstract public class AbstractCLaunchDelegate extends LaunchConfigurationDelegat
 	private List orderedProjects;
 	private String preLaunchBuildConfiguration;
 
+	/**
+	 * Used in conjunction with build before launch settings in the main tab.
+	 */
+	private boolean workspaceBuildBeforeLaunch;
+	
 	abstract public void launch(ILaunchConfiguration configuration, String mode, ILaunch launch, IProgressMonitor monitor)
 			throws CoreException;
 
@@ -591,11 +596,24 @@ abstract public class AbstractCLaunchDelegate extends LaunchConfigurationDelegat
 	 * @return whether the debug platform should perform an incremental
 	 *         workspace build before the launch
 	 * @throws CoreException
-	 *             if an exception occurrs while building
+	 *             if an exception occurs while building
 	 */
 	@Override
 	public boolean buildForLaunch(ILaunchConfiguration configuration, String mode, IProgressMonitor monitor) throws CoreException {
-		//This matches the old code, but I don't know that it is the right behaviour.
+
+		workspaceBuildBeforeLaunch = true;
+		
+		// check the build before launch setting and honor it
+		int buildBeforeLaunchValue = configuration.getAttribute(ICDTLaunchConfigurationConstants.ATTR_BUILD_BEFORE_LAUNCH,
+				ICDTLaunchConfigurationConstants.BUILD_BEFORE_LAUNCH_USE_WORKSPACE_SETTING);
+
+		// we shouldn't be getting called if the workspace setting is disabled, so assume we need to
+		// build unless the user explicitly disabled it in the main tab of the launch.
+		if (buildBeforeLaunchValue == ICDTLaunchConfigurationConstants.BUILD_BEFORE_LAUNCH_DISABLED) {
+			return false;
+		}
+		
+		//This matches the old code, but I don't know that it is the right behavior.
 		//We should be building the local project as well, not just the ordered projects
 		if(orderedProjects == null) {		
 			return false;
@@ -666,6 +684,26 @@ abstract public class AbstractCLaunchDelegate extends LaunchConfigurationDelegat
 	 */
 	@Override
 	public boolean finalLaunchCheck(ILaunchConfiguration configuration, String mode, IProgressMonitor monitor) throws CoreException {
+		
+		if (!workspaceBuildBeforeLaunch) {
+			// buildForLaunch was not called which means that the workspace pref is disabled.  see if the user enabled the
+			// launch specific setting in the main tab.  if so, we do call buildBeforeLaunch here.
+			if (ICDTLaunchConfigurationConstants.BUILD_BEFORE_LAUNCH_ENABLED == configuration.getAttribute(ICDTLaunchConfigurationConstants.ATTR_BUILD_BEFORE_LAUNCH,
+					ICDTLaunchConfigurationConstants.BUILD_BEFORE_LAUNCH_USE_WORKSPACE_SETTING)) {
+				
+				IProgressMonitor buildMonitor = new SubProgressMonitor(monitor, 10, SubProgressMonitor.PREPEND_MAIN_LABEL_TO_SUBTASK);
+				buildMonitor.beginTask(LaunchMessages.getString("AbstractCLaunchDelegate.BuildBeforeLaunch"), 10); //$NON-NLS-1$	
+				buildMonitor.subTask(LaunchMessages.getString("AbstractCLaunchDelegate.PerformingBuild")); //$NON-NLS-1$
+				if (buildForLaunch(configuration, mode, new SubProgressMonitor(buildMonitor, 7))) {
+					buildMonitor.subTask(LaunchMessages.getString("AbstractCLaunchDelegate.PerformingIncrementalBuild")); //$NON-NLS-1$
+					ResourcesPlugin.getWorkspace().build(IncrementalProjectBuilder.INCREMENTAL_BUILD, new SubProgressMonitor(buildMonitor, 3));				
+				}
+				else {
+					buildMonitor.worked(3); /* No incremental build required */
+				}
+			}
+		}
+
 		boolean continueLaunch = true;
 		if(orderedProjects == null) {
 			return continueLaunch;
@@ -769,6 +807,8 @@ abstract public class AbstractCLaunchDelegate extends LaunchConfigurationDelegat
 		if(monitor == null) {
 			monitor = new NullProgressMonitor();
 		}
+
+		workspaceBuildBeforeLaunch = false;
 
 		int scale = 1000;
 		int totalWork = 2 * scale;

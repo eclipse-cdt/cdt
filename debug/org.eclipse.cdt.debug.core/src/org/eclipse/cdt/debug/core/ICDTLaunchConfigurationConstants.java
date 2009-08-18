@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 QNX Software Systems and others.
+ * Copyright (c) 2000, 2009 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -12,6 +12,12 @@
  *******************************************************************************/
 package org.eclipse.cdt.debug.core;
 
+/**
+ * Constants used for attributes in CDT launch configurations.
+ *
+ * @noimplement This interface is not intended to be implemented by clients.
+ * @noextend This interface is not intended to be extended by clients.
+ */
 public interface ICDTLaunchConfigurationConstants {
 
 	public static final String CDT_LAUNCH_ID = "org.eclipse.cdt.launch"; //$NON-NLS-1$
@@ -48,6 +54,22 @@ public interface ICDTLaunchConfigurationConstants {
 	 * project associated with a C/C++ launch configuration.
 	 */
 	public static final String ATTR_PROJECT_NAME = CDT_LAUNCH_ID + ".PROJECT_ATTR"; //$NON-NLS-1$
+
+	/**
+	 * Launch configuration attribute value constants for build before launch.
+	 * @since 6.1 */
+	public static final int BUILD_BEFORE_LAUNCH_DISABLED = 0;
+	/** @since 6.1 */
+	public static final int BUILD_BEFORE_LAUNCH_ENABLED = 1;
+	/** @since 6.1 */
+	public static final int BUILD_BEFORE_LAUNCH_USE_WORKSPACE_SETTING = 2;
+
+	/**
+	 * Launch configuration attribute key. The value is the ID of the project's
+	 * build configuration that should be used when a build is required before launch.
+	 */
+	/** @since 6.1 */
+	public static final String ATTR_BUILD_BEFORE_LAUNCH = CDT_LAUNCH_ID + ".ATTR_BUILD_BEFORE_LAUNCH_ATTR"; //$NON-NLS-1$
 
 	/**
 	 * Launch configuration attribute key. The value is the ID of the project's

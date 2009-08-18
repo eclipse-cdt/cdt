@@ -33,6 +33,9 @@ import org.eclipse.cdt.dsf.debug.ui.viewmodel.IDebugVMConstants;
 import org.eclipse.cdt.dsf.debug.ui.viewmodel.numberformat.FormattedValueVMUtil;
 import org.eclipse.cdt.dsf.internal.ui.DsfUIPlugin;
 import org.eclipse.cdt.dsf.ui.concurrent.SimpleDisplayExecutor;
+import org.eclipse.cdt.dsf.ui.viewmodel.IVMNode;
+import org.eclipse.cdt.dsf.ui.viewmodel.IVMProvider;
+import org.eclipse.cdt.dsf.ui.viewmodel.datamodel.IDMVMContext;
 import org.eclipse.cdt.dsf.ui.viewmodel.properties.IElementPropertiesProvider;
 import org.eclipse.cdt.dsf.ui.viewmodel.properties.IPropertiesUpdate;
 import org.eclipse.cdt.dsf.ui.viewmodel.properties.VMPropertiesUpdate;
@@ -49,7 +52,7 @@ import org.eclipse.debug.internal.ui.viewers.model.provisional.TreeModelViewer;
 import org.eclipse.debug.ui.IDebugModelPresentation;
 import org.eclipse.debug.ui.IDebugUIConstants;
 import org.eclipse.debug.ui.IDebugView;
-import org.eclipse.debug.ui.IDetailPane;
+import org.eclipse.debug.ui.IDetailPane2;
 import org.eclipse.debug.ui.IValueDetailListener;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.action.IMenuListener;
@@ -69,6 +72,7 @@ import org.eclipse.jface.text.TextViewer;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
+import org.eclipse.jface.viewers.ISelectionProvider;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.ITreeSelection;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
@@ -80,18 +84,19 @@ import org.eclipse.swt.events.FocusEvent;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.ui.IViewSite;
 import org.eclipse.ui.IWorkbenchActionConstants;
+import org.eclipse.ui.IWorkbenchCommandConstants;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.IWorkbenchPartSite;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.actions.ActionFactory;
 import org.eclipse.ui.progress.WorkbenchJob;
 import org.eclipse.ui.texteditor.IUpdate;
-import org.eclipse.ui.texteditor.IWorkbenchActionDefinitionIds;
 
-public class NumberFormatDetailPane implements IDetailPane, IAdaptable, IPropertyChangeListener {
+public class NumberFormatDetailPane implements IDetailPane2, IAdaptable, IPropertyChangeListener {
 
     /**
      * The <code>IWorkbenchPartSite</code> that the details area (and the 
@@ -258,7 +263,6 @@ public class NumberFormatDetailPane implements IDetailPane, IAdaptable, IPropert
         private ITreeSelection fElements;
         private boolean fFirst = true;
         private IProgressMonitor fMonitor;
-        private boolean fComputed = false;
         
         public DetailJob(IPresentationContext context, Object viewerInput, ITreeSelection elements, 
                         IDebugModelPresentation model) 
@@ -290,8 +294,13 @@ public class NumberFormatDetailPane implements IDetailPane, IAdaptable, IPropert
                 final IElementPropertiesProvider propertiesProvider = 
                     (IElementPropertiesProvider)DebugPlugin.getAdapter(element, IElementPropertiesProvider.class);
                 
-                final Executor executor = SimpleDisplayExecutor.getSimpleDisplayExecutor(
-                    fWorkbenchPartSite.getShell().getDisplay());
+                Display display;
+                if (fWorkbenchPartSite != null) {
+                	display = fWorkbenchPartSite.getShell().getDisplay();
+                } else {
+                	display = PlatformUI.getWorkbench().getDisplay();
+                }
+				final Executor executor = SimpleDisplayExecutor.getSimpleDisplayExecutor(display);
                 Set<String> properties = new HashSet<String>(1);
                 properties.add(IDebugVMConstants.PROP_FORMATTED_VALUE_AVAILABLE_FORMATS);
                 propertiesProvider.update(new IPropertiesUpdate[] { new VMPropertiesUpdate(
@@ -364,7 +373,6 @@ public class NumberFormatDetailPane implements IDetailPane, IAdaptable, IPropert
          */
         public void detailComputed(IValue value, final String result) {
         	synchronized (this) {
-				fComputed = true;
 			}
             if (!fMonitor.isCanceled()) {
                 WorkbenchJob append = new WorkbenchJob("append details") { //$NON-NLS-1$
@@ -491,8 +499,6 @@ public class NumberFormatDetailPane implements IDetailPane, IAdaptable, IPropert
             @Override
             public void focusGained(FocusEvent e) {
                 
-                getViewSite().setSelectionProvider(fTextViewer.getSelectionProvider());
-                
                 setGlobalAction(IDebugView.SELECT_ALL_ACTION, getAction(DETAIL_SELECT_ALL_ACTION));
                 setGlobalAction(IDebugView.COPY_ACTION, getAction(DETAIL_COPY_ACTION));
                 
@@ -501,8 +507,6 @@ public class NumberFormatDetailPane implements IDetailPane, IAdaptable, IPropert
             
             @Override
             public void focusLost(FocusEvent e) {
-                
-                getViewSite().setSelectionProvider(null);
                 
                 setGlobalAction(IDebugView.SELECT_ALL_ACTION, null);
                 setGlobalAction(IDebugView.COPY_ACTION, null);
@@ -522,13 +526,13 @@ public class NumberFormatDetailPane implements IDetailPane, IAdaptable, IPropert
        
         TextViewerAction textAction= new TextViewerAction(fTextViewer, ITextOperationTarget.SELECT_ALL);
         textAction.configureAction(MessagesForDetailPane.DetailPane_Select_All, "", ""); //$NON-NLS-1$ //$NON-NLS-2$ 
-        textAction.setActionDefinitionId(IWorkbenchActionDefinitionIds.SELECT_ALL);
+        textAction.setActionDefinitionId(IWorkbenchCommandConstants.EDIT_SELECT_ALL);
         PlatformUI.getWorkbench().getHelpSystem().setHelp(textAction, IDsfDebugHelpContextIds.DETAIL_PANE_SELECT_ALL_ACTION);
         setAction(DETAIL_SELECT_ALL_ACTION, textAction);
         
         textAction= new TextViewerAction(fTextViewer, ITextOperationTarget.COPY);
         textAction.configureAction(MessagesForDetailPane.DetailPane_Copy, "", "");  //$NON-NLS-1$ //$NON-NLS-2$
-        textAction.setActionDefinitionId(IWorkbenchActionDefinitionIds.COPY);
+        textAction.setActionDefinitionId(IWorkbenchCommandConstants.EDIT_COPY);
         PlatformUI.getWorkbench().getHelpSystem().setHelp(textAction, IDsfDebugHelpContextIds.DETAIL_PANE_COPY_ACTION);
         setAction(DETAIL_COPY_ACTION, textAction);
         
@@ -614,16 +618,26 @@ public class NumberFormatDetailPane implements IDetailPane, IAdaptable, IPropert
             if (fDetailJob != null) {
                 fDetailJob.cancel();
             }
-            IWorkbenchPart part = fWorkbenchPartSite.getPart(); 
-            if (part instanceof IDebugView) {
-                Viewer viewer = ((IDebugView)part).getViewer();
-                Object input = viewer.getInput();
-                if (input != null && viewer instanceof TreeModelViewer) {
-                    TreeModelViewer treeModelViewer = (TreeModelViewer)viewer;
-                    fDetailJob = new DetailJob(treeModelViewer.getPresentationContext(), input, 
-                        (ITreeSelection)selection, null);
-                    fDetailJob.schedule();
-                }
+            if (fWorkbenchPartSite != null) {
+	            IWorkbenchPart part = fWorkbenchPartSite.getPart(); 
+	            if (part instanceof IDebugView) {
+	                Viewer viewer = ((IDebugView)part).getViewer();
+	                Object input = viewer.getInput();
+	                if (input != null && viewer instanceof TreeModelViewer) {
+	                    TreeModelViewer treeModelViewer = (TreeModelViewer)viewer;
+	                    fDetailJob = new DetailJob(treeModelViewer.getPresentationContext(), input, 
+	                        (ITreeSelection)selection, null);
+	                    fDetailJob.schedule();
+	                }
+	            }
+            } else if (firstElement instanceof IDMVMContext) {
+            	IVMNode vmNode = ((IDMVMContext) firstElement).getVMNode();
+            	if (vmNode != null) {
+	            	IVMProvider vmProvider = vmNode.getVMProvider();
+	                fDetailJob = new DetailJob(vmProvider.getPresentationContext(), firstElement, 
+	                        (ITreeSelection)selection, null);
+	                    fDetailJob.schedule();
+            	}
             }
         }
     }
@@ -648,7 +662,10 @@ public class NumberFormatDetailPane implements IDetailPane, IAdaptable, IPropert
         
         if (fDetailJob != null) fDetailJob.cancel();
         fDebugModelIdentifier = null; // Setting this to null makes sure the text viewer is reconfigured with the model presentation after disposal
-        if (fTextViewer != null && fTextViewer.getControl() != null) fTextViewer.getControl().dispose();
+        if (fTextViewer != null && fTextViewer.getControl() != null) {
+        	fTextViewer.getControl().dispose();
+        	fTextViewer = null;
+        }
         
         if (isInView()){
             DsfUIPlugin.getDefault().getPreferenceStore().removePropertyChangeListener(this);
@@ -759,4 +776,14 @@ public class NumberFormatDetailPane implements IDetailPane, IAdaptable, IPropert
             getAction(DETAIL_WORD_WRAP_ACTION).setChecked(DsfUIPlugin.getDefault().getPreferenceStore().getBoolean(IInternalDsfDebugUIConstants.PREF_DETAIL_PANE_WORD_WRAP));    
         }
     }
+
+	/*
+	 * @see org.eclipse.debug.ui.IDetailPane2#getSelectionProvider()
+	 */
+	public ISelectionProvider getSelectionProvider() {
+		if (fTextViewer != null) {
+			return fTextViewer.getSelectionProvider();
+		}
+		return null;
+	}
 }

@@ -24,9 +24,11 @@ import org.eclipse.cdt.core.dom.ast.IASTParameterDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTPointerOperator;
 import org.eclipse.cdt.core.dom.ast.IASTSimpleDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTTypeId;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassScope;
 import org.eclipse.cdt.core.parser.util.ArrayUtil;
 import org.eclipse.cdt.internal.core.dom.parser.ASTNode;
 import org.eclipse.cdt.internal.core.dom.parser.ASTQueries;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPVisitor;
 
 /**
  * C++ specific declarator.
@@ -169,15 +171,22 @@ public class CPPASTDeclarator extends ASTNode implements IASTDeclarator {
         if (getParent instanceof IASTDeclaration) {
             if (getParent instanceof IASTFunctionDefinition)
                 return r_definition;
-            if (getParent instanceof IASTSimpleDeclaration) {
-                final int storage = ((IASTSimpleDeclaration) getParent).getDeclSpecifier().getStorageClass(); 
-                if (getInitializer() != null || storage == IASTDeclSpecifier.sc_typedef)
-                    return r_definition;
-                
-                if (storage == IASTDeclSpecifier.sc_extern || storage == IASTDeclSpecifier.sc_static) {
-                    return r_declaration;
-                }
-            }
+			if (getParent instanceof IASTSimpleDeclaration) {
+				final int storage = ((IASTSimpleDeclaration) getParent).getDeclSpecifier().getStorageClass();
+				
+				if (getInitializer() != null || storage == IASTDeclSpecifier.sc_typedef)
+					return r_definition;
+				if (storage == IASTDeclSpecifier.sc_extern) {
+					return r_declaration;
+				}
+
+				// static member variables without initializer are declarations
+				if (!fnDtor && storage == IASTDeclSpecifier.sc_static) {
+					if (CPPVisitor.getContainingScope(getParent) instanceof ICPPClassScope) {
+						return r_declaration;
+					}
+				}
+			}
             return fnDtor ? r_declaration : r_definition;
         }
         if (getParent instanceof IASTTypeId)

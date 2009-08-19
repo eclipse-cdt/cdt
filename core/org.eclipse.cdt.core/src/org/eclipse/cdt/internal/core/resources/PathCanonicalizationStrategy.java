@@ -13,20 +13,34 @@ package org.eclipse.cdt.internal.core.resources;
 import java.io.File;
 import java.io.IOException;
 
-import org.eclipse.cdt.core.CCorePlugin;
-import org.eclipse.cdt.internal.core.pdom.PDOMManager;
-
+/**
+ * Configurable strategy for canonicalizing file paths. File paths can be canonicalized by calling
+ * either File.getCanonicalPath or File.getAbsolutePath. File.getCanonicalPath resolves symbolic
+ * links and guarantees path uniqueness. File.getAbsolutePath can be used when resolution of
+ * symbolic links is undesirable. The default is to use File.getCanonicalPath.  
+ */
 public abstract class PathCanonicalizationStrategy {
+	private static PathCanonicalizationStrategy instance;
 
-	public static String getCanonicalPath(File file) {
-		PathCanonicalizationStrategy strategy =
-			((PDOMManager) CCorePlugin.getIndexManager()).getPathCanonicalizationStrategy();
-		return strategy.getCanonicalPathInternal(file);
+	static {
+		setPathCanonicalization(true);
 	}
 
-	public static PathCanonicalizationStrategy getStrategy(boolean canonicalize) {
+	public static String getCanonicalPath(File file) {
+		return getInstance().getCanonicalPathInternal(file);
+	}
+
+	/**
+	 * Sets path canonicalization strategy. If <code>canonicalize</code> is <code>true</code>,
+	 * file paths will be canonicalized by calling File.getCanonicalPath, otherwise
+	 * File.getAbsolutePath is used.
+	 * 
+	 * @param canonicalize <code>true</code> to use File.getCanonicalPath, <code>false</code>
+	 * to use File.getAbsolutePath.
+	 */
+	public static synchronized void setPathCanonicalization(boolean canonicalize) {
 		if (canonicalize) {
-			return new PathCanonicalizationStrategy() {
+			instance = new PathCanonicalizationStrategy() {
 				@Override
 				protected String getCanonicalPathInternal(File file) {
 					try {
@@ -37,13 +51,17 @@ public abstract class PathCanonicalizationStrategy {
 				}
 			};
 		} else {
-			return new PathCanonicalizationStrategy() {
+			instance = new PathCanonicalizationStrategy() {
 				@Override
 				protected String getCanonicalPathInternal(File file) {
 					return file.getAbsolutePath();
 				}
 			};
 		}
+	}
+
+	private static synchronized PathCanonicalizationStrategy getInstance() {
+		return instance;
 	}
 
 	protected abstract String getCanonicalPathInternal(File file);

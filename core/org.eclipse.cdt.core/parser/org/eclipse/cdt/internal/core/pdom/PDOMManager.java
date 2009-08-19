@@ -196,7 +196,6 @@ public class PDOMManager implements IWritableIndexManager, IListener {
 	private ArrayList<IndexerSetupParticipant> fSetupParticipants= new ArrayList<IndexerSetupParticipant>();
 	private HashSet<ICProject> fPostponedProjects= new HashSet<ICProject>();
 	private int fLastNotifiedState= IndexerStateEvent.STATE_IDLE;
-	private PathCanonicalizationStrategy fPathCanonicalizationStrategy;
     
 	public PDOMManager() {
 		PDOM.sDEBUG_LOCKS= "true".equals(Platform.getDebugOption(CCorePlugin.PLUGIN_ID + "/debug/index/locks"));  //$NON-NLS-1$//$NON-NLS-2$
@@ -304,13 +303,7 @@ public class PDOMManager implements IWritableIndexManager, IListener {
 	private void updatePathCanonicalizationStrategy() {
 		IPreferencesService prefs = Platform.getPreferencesService();
 		boolean canonicalize = prefs.getBoolean(CCorePlugin.PLUGIN_ID, PREFERENCES_CONSTANT_PATH_CANONICALIZATION, true, null);
-		synchronized (this) {
-			fPathCanonicalizationStrategy = PathCanonicalizationStrategy.getStrategy(canonicalize);
-		}
-	}
-	
-	public synchronized PathCanonicalizationStrategy getPathCanonicalizationStrategy() {
-		return fPathCanonicalizationStrategy;
+		PathCanonicalizationStrategy.setPathCanonicalization(canonicalize);
 	}
 
 	public IndexProviderManager getIndexProviderManager() {

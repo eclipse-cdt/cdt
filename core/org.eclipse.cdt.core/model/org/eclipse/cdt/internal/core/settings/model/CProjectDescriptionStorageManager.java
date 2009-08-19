@@ -37,6 +37,7 @@ import javax.xml.transform.stream.StreamResult;
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.settings.model.ICProjectDescription;
 import org.eclipse.cdt.internal.core.CConfigBasedDescriptorManager;
+import org.eclipse.cdt.internal.core.XmlUtil;
 import org.eclipse.cdt.internal.core.settings.model.ICProjectDescriptionStorageType.CProjectDescriptionStorageTypeProxy;
 import org.eclipse.cdt.internal.core.settings.model.xml.XmlProjectDescriptionStorage;
 import org.eclipse.cdt.internal.core.settings.model.xml2.XmlProjectDescriptionStorage2;
@@ -160,6 +161,7 @@ public class CProjectDescriptionStorageManager {
 			Element el = doc.createElement(ICProjectDescriptionStorageType.STORAGE_ROOT_ELEMENT_NAME);
 			el.setAttribute(ICProjectDescriptionStorageType.STORAGE_TYPE_ATTRIBUTE, type.id);
 			doc.appendChild(el);
+			XmlUtil.prettyFormat(doc);
 
 			ByteArrayOutputStream stream = new ByteArrayOutputStream();
 			Transformer transformer = TransformerFactory.newInstance().newTransformer();

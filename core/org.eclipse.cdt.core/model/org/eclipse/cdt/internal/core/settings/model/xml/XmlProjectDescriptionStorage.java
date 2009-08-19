@@ -40,6 +40,7 @@ import org.eclipse.cdt.core.settings.model.ICSettingsStorage;
 import org.eclipse.cdt.core.settings.model.ICStorageElement;
 import org.eclipse.cdt.core.settings.model.extension.ICProjectConverter;
 import org.eclipse.cdt.core.settings.model.util.CDataUtil;
+import org.eclipse.cdt.internal.core.XmlUtil;
 import org.eclipse.cdt.internal.core.envvar.ContributedEnvironment;
 import org.eclipse.cdt.internal.core.settings.model.AbstractCProjectDescriptionStorage;
 import org.eclipse.cdt.internal.core.settings.model.CProjectDescription;
@@ -463,6 +464,7 @@ public class XmlProjectDescriptionStorage extends AbstractCProjectDescriptionSto
 	 */
 	private ByteArrayOutputStream write(ICStorageElement element) throws CoreException {
 		Document doc = ((InternalXmlStorageElement) element).fElement.getOwnerDocument();
+		XmlUtil.prettyFormat(doc);
 
 		ByteArrayOutputStream stream = new ByteArrayOutputStream();
 		try {

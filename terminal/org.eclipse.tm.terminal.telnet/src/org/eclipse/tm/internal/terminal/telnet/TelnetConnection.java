@@ -331,7 +331,7 @@ public class TelnetConnection extends Thread implements TelnetCodes {
 			// A "socket closed" exception is normal here. It's caused by the
 			// user clicking the disconnect button on the Terminal view toolbar.
 
-			if (message != null && !message.equals("socket closed") && !message.equalsIgnoreCase("Connection reset")) //$NON-NLS-1$ //$NON-NLS-2$
+			if (message != null && !message.equalsIgnoreCase("Socket closed") && !message.equalsIgnoreCase("Connection reset")) //$NON-NLS-1$ //$NON-NLS-2$
 			{
 				Logger.logException(ex);
 			}

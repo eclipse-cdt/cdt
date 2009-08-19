@@ -7346,4 +7346,21 @@ public class AST2CPPTests extends AST2BaseTest {
 	public void testLookupFromInlineFriend_284690() throws Exception {
 		parseAndCheckBindings(getAboveComment(), ParserLanguage.CPP);
 	}
+	
+	//	class XInterface {};
+	//	class OWeakObject : public XInterface{};
+	//	class XTypeProvider : public XInterface{};
+	//	class WeakImplHelper1 : public OWeakObject, public XTypeProvider {};
+	//	class PropertyValueList : public WeakImplHelper1 {
+	//	public:
+	//	  void hello();
+	//	};
+	//
+	//	XInterface temp; // No problem
+	//	void  PropertyValueList::hello() {
+	//	  XInterface temp; // Name resolution problem on XInterface
+	//	}
+	public void testTypeLookupWithMultipleInheritance_286213() throws Exception {
+		parseAndCheckBindings(getAboveComment(), ParserLanguage.CPP);
+	}
 }

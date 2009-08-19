@@ -55,7 +55,7 @@ public abstract class ACBuilder extends IncrementalProjectBuilder implements IMa
 			 * Try to find matching markers and don't put in duplicates
 			 */
 			String externalLocation = null;
-			if (problemMarkerInfo.externalPath != null) {
+			if (problemMarkerInfo.externalPath != null && ! problemMarkerInfo.externalPath.isEmpty()) {
 				externalLocation = problemMarkerInfo.externalPath.toOSString();
 			}
 			if ((cur != null) && (cur.length > 0)) {
@@ -86,6 +86,8 @@ public abstract class ACBuilder extends IncrementalProjectBuilder implements IMa
 				String locationText = NLS.bind(CCorePlugin.getResourceString("ACBuilder.ProblemsView.Location"), //$NON-NLS-1$
 						problemMarkerInfo.lineNumber, externalLocation);
 				marker.setAttribute(IMarker.LOCATION, locationText);
+			} else if (problemMarkerInfo.lineNumber==0){
+				marker.setAttribute(IMarker.LOCATION, " "); //$NON-NLS-1$
 			}
 		}
 		catch (CoreException e) {

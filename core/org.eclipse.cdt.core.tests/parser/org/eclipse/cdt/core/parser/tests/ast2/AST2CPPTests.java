@@ -45,6 +45,7 @@ import org.eclipse.cdt.core.dom.ast.IASTInitializerExpression;
 import org.eclipse.cdt.core.dom.ast.IASTLabelStatement;
 import org.eclipse.cdt.core.dom.ast.IASTLiteralExpression;
 import org.eclipse.cdt.core.dom.ast.IASTName;
+import org.eclipse.cdt.core.dom.ast.IASTNameOwner;
 import org.eclipse.cdt.core.dom.ast.IASTNamedTypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTProblemDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTReturnStatement;
@@ -7260,5 +7261,52 @@ public class AST2CPPTests extends AST2BaseTest {
 	//	};
 	public void testLookupFromInlineFriend_284690() throws Exception {
 		parseAndCheckBindings(getAboveComment(), ParserLanguage.CPP);
+	}
+	
+	//	int v1;
+	//	static int v2;
+	//	extern int v3;
+	//	int v4= 12;
+	//	static int v5= 1;
+	//	class X {
+	//		int v6;
+	//		static const int v7;
+	//		static const int v8= 1;
+	//	};
+	//	const int X::v7= 1;
+	public void testVariableDefVsDecl_286259() throws Exception {
+		String[] declNames= {"v3"};
+		String[] defNames=  {"v1", "v2", "v4", "v5", "X::v7"};
+		IASTTranslationUnit tu= parseAndCheckBindings(getAboveComment(), ParserLanguage.CPP);
+		checkDeclDef(declNames, defNames, tu.getDeclarations());
+
+		declNames= new String[] {"v7"};
+		defNames=  new String[] {"v6", "v8"};
+		IASTCompositeTypeSpecifier cls= getCompositeType(tu, 5);
+		checkDeclDef(declNames, defNames, cls.getMembers());
+	}
+
+	private void checkDeclDef(String[] declNames, String[] defNames, IASTDeclaration[] decls) {
+		int i=0, j=0; 
+		for (IASTDeclaration decl : decls) {
+			final IASTDeclarator[] dtors = ((IASTSimpleDeclaration) decl).getDeclarators();
+			for (IASTDeclarator dtor : dtors) {
+				final String name = dtor.getName().toString();
+				switch (dtor.getRoleForName(dtor.getName())) {
+				case IASTNameOwner.r_declaration:
+					assertTrue("Unexpected decl " + name, i < declNames.length);
+					assertEquals(declNames[i++], name);
+					break;
+				case IASTNameOwner.r_definition:
+					assertTrue("Unexpected decl " + name, i < defNames.length);
+					assertEquals(defNames[j++], name);
+					break;
+				default:
+					assertTrue(name, false);
+				}
+			}
+		}
+		assertEquals(declNames.length, i);
+		assertEquals(defNames.length, j);
 	}
 }

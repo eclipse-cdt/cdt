@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2008 Wind River Systems and others.
+ * Copyright (c) 2006, 2009 Wind River Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,6 +8,7 @@
  * Contributors:
  *     Wind River Systems - initial API and implementation
  *     Nokia 			  - created GDBBackend service. Sep. 2008
+ *     IBM Corporation 
  *******************************************************************************/
 package org.eclipse.cdt.dsf.gdb.launching;
 
@@ -120,7 +121,7 @@ public class ServicesLaunchSequence extends Sequence {
     CSourceLookup fSourceLookup;
     
     public ServicesLaunchSequence(DsfSession session, GdbLaunch launch, IProgressMonitor pm) {
-        super(session.getExecutor(), pm, "Initializing debugger services", "Aborting debugger services initialization");  
+        super(session.getExecutor(), pm, LaunchMessages.getString("ServicesLaunchSequence_0"), LaunchMessages.getString("ServicesLaunchSequence_1"));   //$NON-NLS-1$ //$NON-NLS-2$
         fSession = session;
         fLaunch = launch;
     }

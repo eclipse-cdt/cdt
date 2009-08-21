@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008 Ericsson and others.
+ * Copyright (c) 2008, 2009 Ericsson and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,6 +8,7 @@
  * Contributors:
  *     Ericsson - initial API and implementation          
  *     Nokia - create and use backend service. 
+ *     IBM Corporation 
  *******************************************************************************/
 package org.eclipse.cdt.dsf.gdb.launching;
 
@@ -574,7 +575,7 @@ public class FinalLaunchSequence extends Sequence {
     DsfServicesTracker fTracker;
         
     public FinalLaunchSequence(DsfExecutor executor, GdbLaunch launch, SessionType sessionType, boolean attach, IProgressMonitor pm) {
-        super(executor, pm, "Configuring GDB", "Aborting configuring GDB");    
+        super(executor, pm, LaunchMessages.getString("FinalLaunchSequence.0"), LaunchMessages.getString("FinalLaunchSequence.1"));     //$NON-NLS-1$ //$NON-NLS-2$
         fLaunch = launch;
         fSessionType = sessionType;
         fAttach = attach;

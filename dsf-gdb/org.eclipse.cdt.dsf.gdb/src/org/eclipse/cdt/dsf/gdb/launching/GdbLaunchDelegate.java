@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008  QNX Software Systems and others.
+ * Copyright (c) 2008, 2009  QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,6 +8,7 @@
  * Contributors:
  * QNX Software Systems   - Initial API and implementation
  * Windriver and Ericsson - Updated for DSF
+ * IBM Corporation 
  *******************************************************************************/
 package org.eclipse.cdt.dsf.gdb.launching; 
 
@@ -73,7 +74,7 @@ public class GdbLaunchDelegate extends LaunchConfigurationDelegate
 	}
 
 	private void launchDebugger( ILaunchConfiguration config, ILaunch launch, IProgressMonitor monitor ) throws CoreException {
-		monitor.beginTask("Launching debugger session", 10); 
+		monitor.beginTask(LaunchMessages.getString("GdbLaunchDelegate.0"), 10);  //$NON-NLS-1$
 		if ( monitor.isCanceled() ) {
 			return;
 		}
@@ -97,11 +98,11 @@ public class GdbLaunchDelegate extends LaunchConfigurationDelegate
         final GdbLaunch launch = (GdbLaunch)l;
 
         if (sessionType == SessionType.REMOTE) {
-            monitor.subTask( "Debugging remote C/C++ application" );     	
+            monitor.subTask( LaunchMessages.getString("GdbLaunchDelegate.1") );  //$NON-NLS-1$
         } else if (sessionType == SessionType.CORE) {
-            monitor.subTask( "Post Mortem Debugging of C/C++ application" ); 
+            monitor.subTask( LaunchMessages.getString("GdbLaunchDelegate.2") );  //$NON-NLS-1$
         } else {
-            monitor.subTask( "Debugging local C/C++ application" ); 
+            monitor.subTask( LaunchMessages.getString("GdbLaunchDelegate.3") );  //$NON-NLS-1$
         }
         
         IPath exePath = new Path(""); //$NON-NLS-1$

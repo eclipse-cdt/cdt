@@ -6407,4 +6407,12 @@ public class AST2Tests extends AST2BaseTest {
             assertTrue(((IFunction)n.resolveBinding()).getType().getParameterTypes()[0] instanceof IPointerType);
 	    }
 	}
+	
+	//	extern int a[];
+	//	int a[1];
+	public void testIncompleteArrays_269926() throws Exception {
+		final String code = getAboveComment();
+		parseAndCheckBindings(code, ParserLanguage.C);
+		parseAndCheckBindings(code, ParserLanguage.CPP);
+	}
 }

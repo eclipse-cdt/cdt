@@ -780,7 +780,8 @@ public class CVisitor extends ASTQueries {
 	                        t2 = ((IVariable)binding).getType();
 	                    } catch (DOMException e1) {
 	                    }
-	                    if (t1 != null && t2 != null && t1.isSameType(t2)) {
+	                    if (t1 != null && t2 != null && (
+	                    		t1.isSameType(t2) || isCompatibleArray(t1, t2) != null)) {
 	    			        if (binding instanceof CVariable)
 	    			            ((CVariable)binding).addDeclaration(name);
 	    			    } else {

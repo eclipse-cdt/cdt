@@ -686,24 +686,6 @@ public class CPPVisitor extends ASTQueries {
 		return binding;
 	}
 
-	private static IType isCompatibleArray(IType t1, IType t2) {
-		if (t1 instanceof IArrayType && t2 instanceof IArrayType) {
-			IArrayType a1 = (IArrayType) t1;
-			IArrayType a2 = (IArrayType) t2;
-			if (!isSameType(a1.getType(), a2.getType())) {
-				return null;
-			}
-			if (a1.getSize() == null) {
-				if (a2.getSize() != null) {
-					return a2;
-				}
-			} else if (a2.getSize() == null) {
-				return a1;
-			}
-		}
-		return null;
-	}
-
 	public static boolean isConstructor(IScope containingScope, IASTDeclarator declarator) {
 	    if (containingScope == null || !(containingScope instanceof ICPPClassScope))
 	        return false;

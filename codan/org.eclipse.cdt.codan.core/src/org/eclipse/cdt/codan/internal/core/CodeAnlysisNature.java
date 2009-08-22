@@ -8,7 +8,7 @@
  * Contributors:
  *    Alena Laskavaia  - initial API and implementation
  *******************************************************************************/
-package org.eclipse.cdt.codan.core.builder;
+package org.eclipse.cdt.codan.internal.core;
 
 import org.eclipse.core.resources.ICommand;
 import org.eclipse.core.resources.IProject;

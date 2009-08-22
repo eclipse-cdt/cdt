@@ -11,7 +11,8 @@
 package org.eclipse.cdt.codan.internal.ui.preferences;
 
 import org.eclipse.cdt.codan.core.CodanCorePlugin;
-import org.eclipse.cdt.codan.core.model.CheckersRegisry;
+import org.eclipse.cdt.codan.core.CodanRuntime;
+import org.eclipse.cdt.codan.core.model.ICheckersRegistry;
 import org.eclipse.cdt.codan.core.model.IProblemProfile;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.preferences.InstanceScope;
@@ -50,12 +51,19 @@ public class CodanPreferencePage extends FieldEditorOverlayPage implements
 	 * editor knows how to save and restore itself.
 	 */
 	public void createFieldEditors() {
-		profile = isPropertyPage() ? CheckersRegisry.getInstance()
+		profile = isPropertyPage() ? getRegistry()
 				.getResourceProfileWorkingCopy((IResource) getElement())
-				: CheckersRegisry.getInstance().getWorkspaceProfile();
+				: getRegistry().getWorkspaceProfile();
 		CheckedTreeEditor checkedTreeEditor = new ProblemsTreeEditor(
 				getFieldEditorParent(), profile);
 		addField(checkedTreeEditor);
+	}
+
+	/**
+	 * @return
+	 */
+	protected ICheckersRegistry getRegistry() {
+		return CodanRuntime.getInstance().getChechersRegistry();
 	}
 
 	/*
@@ -66,8 +74,7 @@ public class CodanPreferencePage extends FieldEditorOverlayPage implements
 	@Override
 	public boolean performOk() {
 		if (isPropertyPage())
-			CheckersRegisry.getInstance().updateProfile(
-					(IResource) getElement(), null);
+			getRegistry().updateProfile((IResource) getElement(), null);
 		return super.performOk();
 	}
 

@@ -12,9 +12,13 @@ package org.eclipse.cdt.codan.ui.actions;
 
 import java.util.Iterator;
 
-import org.eclipse.cdt.codan.core.builder.CodanBuilder;
+import org.eclipse.cdt.codan.core.CodanRuntime;
 import org.eclipse.core.resources.IResource;
-import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
+import org.eclipse.core.runtime.SubProgressMonitor;
+import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
@@ -25,23 +29,38 @@ public class RunCodeAnalysis implements IObjectActionDelegate {
 	private ISelection sel;
 
 	public void setActivePart(IAction action, IWorkbenchPart targetPart) {
-		// TODO Auto-generated method stub
+		// nothing
 	}
 
 	public void run(IAction action) {
-		for (Iterator iterator = ((IStructuredSelection) sel).iterator(); iterator
-				.hasNext();) {
-			Object o = iterator.next();
-			if (o instanceof IResource) {
-				IResource res = (IResource) o;
-				try {
-					res.accept(new CodanBuilder().new CodanResourceVisitor());
-				} catch (CoreException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
+		Job job = new Job("Running Code Analysis") {
+			@SuppressWarnings("unchecked")
+			@Override
+			protected IStatus run(final IProgressMonitor monitor) {
+				IStructuredSelection ss = (IStructuredSelection) sel;
+				int count = ss.size();
+				monitor.beginTask(getName(), count * 100);
+				if (monitor.isCanceled())
+					return Status.CANCEL_STATUS;
+				for (Iterator iterator = ss.iterator(); iterator.hasNext();) {
+					Object o = iterator.next();
+					if (o instanceof IResource) {
+						IResource res = (IResource) o;
+						SubProgressMonitor subMon = new SubProgressMonitor(
+								monitor, 100);
+						CodanRuntime.getInstance().getBuilder()
+								.processResource(res, subMon);
+						if (subMon.isCanceled())
+							return Status.CANCEL_STATUS;
+					}
+					if (monitor.isCanceled())
+						return Status.CANCEL_STATUS;
 				}
+				return Status.OK_STATUS;
 			}
-		}
+		};
+		job.setUser(true);
+		job.schedule();
 	}
 
 	public void selectionChanged(IAction action, ISelection selection) {

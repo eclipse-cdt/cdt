@@ -8,17 +8,20 @@
  * Contributors:
  *    Alena Laskavaia  - initial API and implementation
  *******************************************************************************/
-package org.eclipse.cdt.codan.core.builder;
+package org.eclipse.cdt.codan.internal.core;
 
 import java.io.File;
 import java.net.URI;
 import java.util.Map;
 
 import org.eclipse.cdt.codan.core.CodanCorePlugin;
-import org.eclipse.cdt.codan.core.model.CheckersRegisry;
-import org.eclipse.cdt.codan.core.model.CodanRuntime;
+import org.eclipse.cdt.codan.core.CodanRuntime;
 import org.eclipse.cdt.codan.core.model.ICAstChecker;
 import org.eclipse.cdt.codan.core.model.IChecker;
+import org.eclipse.cdt.codan.core.model.ICodanAstReconciler;
+import org.eclipse.cdt.codan.core.model.ICodanBuilder;
+import org.eclipse.cdt.codan.core.model.IProblemReporter;
+import org.eclipse.cdt.codan.internal.core.model.CodanMarkerProblemReporter;
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
@@ -32,8 +35,10 @@ import org.eclipse.core.resources.IncrementalProjectBuilder;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.NullProgressMonitor;
 
-public class CodanBuilder extends IncrementalProjectBuilder {
+public class CodanBuilder extends IncrementalProjectBuilder implements
+		ICodanBuilder, ICodanAstReconciler {
 	public static final String BUILDER_ID = "org.eclipse.cdt.codan.core.codanBuilder";
 
 	public class CodanDeltaVisitor implements IResourceDeltaVisitor {
@@ -44,19 +49,26 @@ public class CodanBuilder extends IncrementalProjectBuilder {
 		 * org.eclipse.core.resources.IResourceDeltaVisitor#visit(org.eclipse
 		 * .core.resources.IResourceDelta)
 		 */
+		/*
+		 * (non-Javadoc)
+		 * 
+		 * @see
+		 * org.eclipse.cdt.codan.internal.core.ICodanBuilder#visit(org.eclipse
+		 * .core.resources.IResourceDelta)
+		 */
 		public boolean visit(IResourceDelta delta) throws CoreException {
 			IResource resource = delta.getResource();
 			switch (delta.getKind()) {
 			case IResourceDelta.ADDED:
 				// handle added resource
-				processResource(resource);
+				processResource(resource, new NullProgressMonitor());
 				break;
 			case IResourceDelta.REMOVED:
 				// handle removed resource
 				break;
 			case IResourceDelta.CHANGED:
 				// handle changed resource
-				processResource(resource);
+				processResource(resource, new NullProgressMonitor());
 				break;
 			}
 			// return true to continue visiting children.
@@ -66,7 +78,8 @@ public class CodanBuilder extends IncrementalProjectBuilder {
 
 	public class CodanResourceVisitor implements IResourceVisitor {
 		public boolean visit(IResource resource) {
-			processResource(resource);
+			if (!(resource instanceof IProject))
+				processResource(resource, new NullProgressMonitor());
 			// return true to continue visiting children.
 			return true;
 		}
@@ -93,12 +106,17 @@ public class CodanBuilder extends IncrementalProjectBuilder {
 		return null;
 	}
 
-	public void processResource(IResource resource) {
+	public void processResource(IResource resource, IProgressMonitor monitor) {
 		// String string = Platform.getPreferencesService().getString(
 		// CodanCorePlugin.PLUGIN_ID, "problems", "", null);
 		// System.err.println("set = " + string);
 		// delete general markers
-		CodanRuntime.getInstance().getProblemReporter().deleteMarkers(resource);
+		IProblemReporter problemReporter = CodanRuntime.getInstance()
+				.getProblemReporter();
+		if (problemReporter instanceof CodanMarkerProblemReporter) {
+			((CodanMarkerProblemReporter) problemReporter)
+					.deleteMarkers(resource);
+		}
 		for (IChecker checker : CheckersRegisry.getInstance()) {
 			try {
 				boolean run = false;
@@ -110,12 +128,18 @@ public class CodanBuilder extends IncrementalProjectBuilder {
 				CodanCorePlugin.log(e);
 			}
 		}
+		if (resource instanceof IProject) {
+			try {
+				resource.accept(getResourceVisitor());
+			} catch (CoreException e) {
+				CodanCorePlugin.log(e);
+			}
+		}
 	}
 
 	public void reconcileAst(IASTTranslationUnit ast, IProgressMonitor monitor) {
 		if (ast == null)
 			return;
-
 		String filePath = ast.getFilePath();
 		IWorkspace workspace = ResourcesPlugin.getWorkspace();
 		IWorkspaceRoot root = workspace.getRoot();
@@ -124,8 +148,12 @@ public class CodanBuilder extends IncrementalProjectBuilder {
 		resources = root.findFilesForLocationURI(uri);
 		if (resources != null && resources.length > 0) {
 			IFile resource = resources[0];
-			CodanRuntime.getInstance().getProblemReporter().deleteMarkers(
-					resource);
+			IProblemReporter problemReporter = CodanRuntime.getInstance()
+					.getProblemReporter();
+			if (problemReporter instanceof CodanMarkerProblemReporter) {
+				((CodanMarkerProblemReporter) problemReporter)
+						.deleteMarkers(resource);
+			}
 			for (IChecker checker : CheckersRegisry.getInstance()) {
 				try {
 					boolean run = false;
@@ -152,5 +180,14 @@ public class CodanBuilder extends IncrementalProjectBuilder {
 			IProgressMonitor monitor) throws CoreException {
 		// the visitor does the work.
 		delta.accept(new CodanDeltaVisitor());
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.cdt.codan.core.model.ICodanBuilder#getResourceVisitor()
+	 */
+	public CodanResourceVisitor getResourceVisitor() {
+		return new CodanResourceVisitor();
 	}
 }

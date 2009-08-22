@@ -79,13 +79,15 @@ public abstract class AbstractIndexAstChecker extends AbstractChecker implements
 
 	public void reportProblem(String id, IASTNode astNode, String message) {
 		IASTFileLocation astLocation = astNode.getFileLocation();
-		IFile astFile = file;
+		IPath location = new Path(astLocation.getFileName());
+		IFile astFile = ResourcesPlugin.getWorkspace().getRoot()
+				.getFileForLocation(location);
 		if (astFile == null) {
-			IPath location = new Path(astLocation.getFileName());
-			astFile = ResourcesPlugin.getWorkspace().getRoot().getFileForLocation(location);
+			astFile = file;
 		}
-
-		CodanRuntime.getInstance().getProblemReporter().reportProblem(id,
-				astFile, astLocation.getStartingLineNumber(), message);
+		getProblemReporter().reportProblem(
+				id,
+				new ProblemLocation(astFile, astLocation
+						.getStartingLineNumber()), message);
 	}
 }

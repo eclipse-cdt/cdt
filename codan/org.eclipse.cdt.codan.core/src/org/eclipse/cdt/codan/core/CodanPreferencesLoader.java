@@ -8,12 +8,12 @@
  * Contributors:
  *    Alena Laskavaia  - initial API and implementation
  *******************************************************************************/
-package org.eclipse.cdt.codan.core.builder;
+package org.eclipse.cdt.codan.core;
 
-import org.eclipse.cdt.codan.core.model.CodanProblem;
 import org.eclipse.cdt.codan.core.model.CodanSeverity;
 import org.eclipse.cdt.codan.core.model.IProblem;
 import org.eclipse.cdt.codan.core.model.IProblemProfile;
+import org.eclipse.cdt.codan.internal.core.model.CodanProblem;
 import org.eclipse.core.runtime.preferences.IEclipsePreferences;
 
 /**

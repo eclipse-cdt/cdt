@@ -10,7 +10,7 @@
  *******************************************************************************/
 package org.eclipse.cdt.codan.ui;
 
-import org.eclipse.cdt.codan.core.builder.CodanBuilder;
+import org.eclipse.cdt.codan.core.CodanRuntime;
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
 import org.eclipse.cdt.internal.ui.editor.CEditor;
 import org.eclipse.cdt.internal.ui.text.ICReconcilingListener;
@@ -64,7 +64,8 @@ public class CodanCReconciler implements ICReconcilingListener {
 	 */
 	public void reconciled(IASTTranslationUnit ast, boolean force,
 			IProgressMonitor progressMonitor) {
-		new CodanBuilder().reconcileAst(ast, progressMonitor);
+		CodanRuntime.getInstance().getAstQuickBuilder().reconcileAst(ast,
+				progressMonitor);
 		// System.err.println("ast reconsiled");
 	}
 }

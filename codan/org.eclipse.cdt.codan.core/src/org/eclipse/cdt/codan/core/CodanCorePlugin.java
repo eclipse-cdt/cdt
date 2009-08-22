@@ -1,5 +1,6 @@
 package org.eclipse.cdt.codan.core;
 
+import org.eclipse.cdt.codan.internal.core.CodeAnlysisNature;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Plugin;
 import org.eclipse.core.runtime.Status;
@@ -13,6 +14,7 @@ import org.osgi.framework.BundleContext;
 public class CodanCorePlugin extends Plugin {
 	// The plug-in ID
 	public static final String PLUGIN_ID = "org.eclipse.cdt.codan.core";
+	public static final String NATURE_ID = CodeAnlysisNature.NATURE_ID;
 	// The shared instance
 	private static CodanCorePlugin plugin;
 

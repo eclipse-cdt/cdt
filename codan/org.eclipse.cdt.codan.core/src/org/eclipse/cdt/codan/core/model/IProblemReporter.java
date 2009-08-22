@@ -10,28 +10,19 @@
  *******************************************************************************/
 package org.eclipse.cdt.codan.core.model;
 
-import java.util.Collection;
 
-public interface IProblem extends IProblemElement {
-	String getName();
-
-	String getId();
-
-	boolean isEnabled();
-
-	CodanSeverity getSeverity();
-
-	String getMessagePattern();
-
-	void setSeverity(CodanSeverity sev);
-
-	void setEnabled(boolean checked);
-
-	void setMessagePattern(String message);
-
-	public void setProperty(Object key, Object value);
-
-	public Object getProperty(Object key);
-
-	public Collection<Object> getPropertyKeys();
+/**
+ * IProblemReporter - interface to report problems
+ *
+ */
+public interface IProblemReporter {
+	/**
+	 * Report a problem with "problemId" id on location determined by "loc", 
+	 * using problem specific error message customised by args.
+	 * @param problemId - id of the problem registers with checker
+	 * @param loc - location object
+	 * @param args - custom args, can be null, in this case default message is reported
+	 */
+	public void reportProblem(String problemId,  IProblemLocation loc,
+			Object ... args);
 }

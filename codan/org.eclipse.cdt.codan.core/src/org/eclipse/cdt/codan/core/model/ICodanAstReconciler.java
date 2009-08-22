@@ -10,23 +10,13 @@
  *******************************************************************************/
 package org.eclipse.cdt.codan.core.model;
 
+import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
+import org.eclipse.core.runtime.IProgressMonitor;
+
 /**
- * Runtime singleton class to get access to Codan framework parts
+ * @author Alena
  * 
  */
-public class CodanRuntime {
-	private static CodanRuntime instance = new CodanRuntime();
-	private CodanProblemReporter problemReporter = new CodanProblemReporter();
-
-	public CodanProblemReporter getProblemReporter() {
-		return problemReporter;
-	}
-
-	public void setProblemReporter(CodanProblemReporter reporter) {
-		problemReporter = reporter;
-	}
-
-	public static CodanRuntime getInstance() {
-		return instance;
-	}
+public interface ICodanAstReconciler {
+	public void reconcileAst(IASTTranslationUnit ast, IProgressMonitor monitor);
 }

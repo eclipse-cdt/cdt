@@ -10,7 +10,7 @@
       <builder
             hasNature="true">
          <run
-               class="org.eclipse.cdt.codan.core.builder.CodanBuilder">
+               class="org.eclipse.cdt.codan.internal.core.CodanBuilder">
          </run>
       </builder>
    </extension>
@@ -20,7 +20,7 @@
          point="org.eclipse.core.resources.natures">
       <runtime>
          <run
-               class="org.eclipse.cdt.codan.core.builder.CodeAnlysisNature">
+               class="org.eclipse.cdt.codan.internal.core.CodeAnlysisNature">
          </run>
       </runtime>
       <builder

@@ -10,28 +10,13 @@
  *******************************************************************************/
 package org.eclipse.cdt.codan.core.model;
 
-import java.util.Collection;
+import org.eclipse.core.resources.IResource;
+import org.eclipse.core.runtime.IProgressMonitor;
 
-public interface IProblem extends IProblemElement {
-	String getName();
-
-	String getId();
-
-	boolean isEnabled();
-
-	CodanSeverity getSeverity();
-
-	String getMessagePattern();
-
-	void setSeverity(CodanSeverity sev);
-
-	void setEnabled(boolean checked);
-
-	void setMessagePattern(String message);
-
-	public void setProperty(Object key, Object value);
-
-	public Object getProperty(Object key);
-
-	public Collection<Object> getPropertyKeys();
+/**
+ * @author Alena
+ * 
+ */
+public interface ICodanBuilder {
+	public void processResource(IResource resource, IProgressMonitor monitor);
 }

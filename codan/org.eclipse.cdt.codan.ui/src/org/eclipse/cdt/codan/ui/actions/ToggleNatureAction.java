@@ -12,7 +12,7 @@ package org.eclipse.cdt.codan.ui.actions;
 
 import java.util.Iterator;
 
-import org.eclipse.cdt.codan.core.builder.CodeAnlysisNature;
+import org.eclipse.cdt.codan.core.CodanCorePlugin;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IProjectDescription;
 import org.eclipse.core.runtime.CoreException;
@@ -77,7 +77,7 @@ public class ToggleNatureAction implements IObjectActionDelegate {
 			description = project.getDescription();
 			String[] natures = description.getNatureIds();
 			for (int i = 0; i < natures.length; ++i) {
-				if (CodeAnlysisNature.NATURE_ID.equals(natures[i])) {
+				if (CodanCorePlugin.NATURE_ID.equals(natures[i])) {
 					return true;
 				}
 			}
@@ -99,7 +99,7 @@ public class ToggleNatureAction implements IObjectActionDelegate {
 			IProjectDescription description = project.getDescription();
 			String[] natures = description.getNatureIds();
 			for (int i = 0; i < natures.length; ++i) {
-				if (CodeAnlysisNature.NATURE_ID.equals(natures[i])) {
+				if (CodanCorePlugin.NATURE_ID.equals(natures[i])) {
 					if (add == false) {
 						// Remove the nature
 						String[] newNatures = new String[natures.length - 1];
@@ -120,7 +120,7 @@ public class ToggleNatureAction implements IObjectActionDelegate {
 				// Add the nature
 				String[] newNatures = new String[natures.length + 1];
 				System.arraycopy(natures, 0, newNatures, 0, natures.length);
-				newNatures[natures.length] = CodeAnlysisNature.NATURE_ID;
+				newNatures[natures.length] = CodanCorePlugin.NATURE_ID;
 				description.setNatureIds(newNatures);
 				project.setDescription(description, null);
 			}

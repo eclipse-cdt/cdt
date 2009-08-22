@@ -11,5 +11,4 @@ Require-Bundle: org.eclipse.core.runtime,
 Bundle-ActivationPolicy: lazy
 Bundle-RequiredExecutionEnvironment: J2SE-1.5
 Export-Package: org.eclipse.cdt.codan.core,
- org.eclipse.cdt.codan.core.builder,
  org.eclipse.cdt.codan.core.model

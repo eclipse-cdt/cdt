@@ -8,21 +8,30 @@
  * Contributors:
  *    Alena Laskavaia  - initial API and implementation
  *******************************************************************************/
-package org.eclipse.cdt.codan.core.model;
+package org.eclipse.cdt.codan.internal.core.model;
+
+import java.util.Collection;
+import java.util.HashMap;
+
+import org.eclipse.cdt.codan.core.model.CodanSeverity;
+import org.eclipse.cdt.codan.core.model.IProblem;
+import org.eclipse.cdt.codan.core.model.IProblemCategory;
 
 public class CodanProblem implements IProblem {
 	private String id;
 	private String name;
+	private String message;
 	private CodanSeverity severity = CodanSeverity.Warning;
 	private boolean enabled = true;
+	private HashMap<Object, Object> properties = new HashMap<Object, Object>(0);
 
 	public CodanSeverity getSeverity() {
 		return severity;
 	}
 
-	public CodanProblem(String id2, String name2) {
-		this.id = id2;
-		this.name = name2;
+	public CodanProblem(String problemId, String name) {
+		this.id = problemId;
+		this.name = name;
 	}
 
 	public String getName() {
@@ -65,5 +74,33 @@ public class CodanProblem implements IProblem {
 	@Override
 	public Object clone() throws CloneNotSupportedException {
 		return super.clone();
+	}
+
+	public void setProperty(Object key, Object value) {
+		properties.put(key, value);
+	}
+
+	public Object getProperty(Object key) {
+		return properties.get(key);
+	};
+
+	public Collection<Object> getPropertyKeys() {
+		return properties.keySet();
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.cdt.codan.core.model.IProblem#getMessagePattern()
+	 */
+	public String getMessagePattern() {
+		return message;
+	}
+
+	/**
+	 * @param message the message to set
+	 */
+	public void setMessagePattern(String message) {
+		this.message = message;
 	}
 }

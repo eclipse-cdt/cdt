@@ -8,10 +8,14 @@
  * Contributors:
  *    Alena Laskavaia  - initial API and implementation
  *******************************************************************************/
-package org.eclipse.cdt.codan.core.model;
+package org.eclipse.cdt.codan.internal.core.model;
 
 import java.util.ArrayList;
 import java.util.Iterator;
+
+import org.eclipse.cdt.codan.core.model.IProblem;
+import org.eclipse.cdt.codan.core.model.IProblemCategory;
+import org.eclipse.cdt.codan.core.model.IProblemElement;
 
 public class CodanProblemCategory implements IProblemCategory, Cloneable {
 	private String id;

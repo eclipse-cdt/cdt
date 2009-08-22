@@ -3,9 +3,8 @@ package org.eclipse.cdt.codan.core;
 import java.util.ArrayList;
 import java.util.Collection;
 
-import org.eclipse.cdt.codan.core.builder.CodanBuilder;
-import org.eclipse.cdt.codan.core.model.CodanProblemReporter;
-import org.eclipse.cdt.codan.core.model.CodanRuntime;
+import org.eclipse.cdt.codan.internal.core.CodanBuilder;
+import org.eclipse.cdt.codan.internal.core.model.CodanMarkerProblemReporter;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IWorkspaceRoot;
@@ -28,10 +27,10 @@ public class CodanApplication implements IApplication {
 		extractArguments(args);
 		CodanBuilder codanBuilder = new CodanBuilder();
 		CodanRuntime runtime = CodanRuntime.getInstance();
-		runtime.setProblemReporter(new CodanProblemReporter() {
+		runtime.setProblemReporter(new CodanMarkerProblemReporter() {
 			@Override
-			public void reportProblem(String id, IFile file, int lineNumber,
-					String message) {
+			public void reportProblem(String id, int severity, IFile file,
+					int lineNumber, int startChar, int endChar, String message) {
 				System.out.println(file.getLocation() + ":" + lineNumber + ": "
 						+ message);
 			}

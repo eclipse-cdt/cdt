@@ -13,6 +13,8 @@ package org.eclipse.cdt.codan.core.model;
 import java.util.ArrayList;
 import java.util.Collection;
 
+import org.eclipse.cdt.codan.internal.core.model.CodanProblemCategory;
+
 /**
  * @author Alena
  * 

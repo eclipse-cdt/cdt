@@ -10,9 +10,8 @@
  *******************************************************************************/
 package org.eclipse.cdt.codan.internal.ui.preferences;
 
+import org.eclipse.cdt.codan.core.CodanPreferencesLoader;
 import org.eclipse.cdt.codan.core.PreferenceConstants;
-import org.eclipse.cdt.codan.core.builder.CodanPreferencesLoader;
-import org.eclipse.cdt.codan.core.model.CodanProblem;
 import org.eclipse.cdt.codan.core.model.CodanSeverity;
 import org.eclipse.cdt.codan.core.model.IProblem;
 import org.eclipse.cdt.codan.core.model.IProblemCategory;
@@ -139,8 +138,8 @@ public class ProblemsTreeEditor extends CheckedTreeEditor {
 
 	public void checkStateChanged(CheckStateChangedEvent event) {
 		Object element = event.getElement();
-		if (element instanceof CodanProblem) {
-			((CodanProblem) element).setEnabled(event.getChecked());
+		if (element instanceof IProblem) {
+			((IProblem) element).setEnabled(event.getChecked());
 		}
 	}
 
@@ -209,7 +208,7 @@ public class ProblemsTreeEditor extends CheckedTreeEditor {
 		});
 		column2.setEditingSupport(new EditingSupport(getTreeViewer()) {
 			protected boolean canEdit(Object element) {
-				return element instanceof CodanProblem;
+				return element instanceof IProblem;
 			}
 
 			protected CellEditor getCellEditor(Object element) {
@@ -218,13 +217,13 @@ public class ProblemsTreeEditor extends CheckedTreeEditor {
 			}
 
 			protected Object getValue(Object element) {
-				return ((CodanProblem) element).getSeverity().intValue();
+				return ((IProblem) element).getSeverity().intValue();
 			}
 
 			protected void setValue(Object element, Object value) {
 				int index = ((Integer) value).intValue();
 				CodanSeverity val = CodanSeverity.values()[index];
-				((CodanProblem) element).setSeverity(val);
+				((IProblem) element).setSeverity(val);
 				getTreeViewer().update(element, null);
 			}
 		});

@@ -150,6 +150,8 @@ public class CodanBuilder extends IncrementalProjectBuilder implements
 			IFile resource = resources[0];
 			IProblemReporter problemReporter = CodanRuntime.getInstance()
 					.getProblemReporter();
+			// TODO: this is wrong - should not delete all markers -
+			// only those that contributed by the checker that we run now
 			if (problemReporter instanceof CodanMarkerProblemReporter) {
 				((CodanMarkerProblemReporter) problemReporter)
 						.deleteMarkers(resource);
@@ -159,7 +161,8 @@ public class CodanBuilder extends IncrementalProjectBuilder implements
 					boolean run = false;
 					if (checker.enabledInContext(resource))
 						run = true;
-					if (run && checker instanceof ICAstChecker)
+					if (run && checker instanceof ICAstChecker
+							&& checker.runInEditor())
 						((ICAstChecker) checker).processAst(ast);
 				} catch (Throwable e) {
 					CodanCorePlugin.log(e);

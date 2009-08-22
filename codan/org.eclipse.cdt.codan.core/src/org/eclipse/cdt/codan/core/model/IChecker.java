@@ -16,4 +16,13 @@ public interface IChecker {
 	public boolean processResource(IResource resource);
 
 	boolean enabledInContext(IResource resource);
+
+	/**
+	 * Checker must implement this method to determine if it can run in editor
+	 * "as you type", checker must be really light weight to run in this mode
+	 * 
+	 * @return true if need to be run in editor as user types, and false
+	 *         otherwise
+	 */
+	boolean runInEditor();
 }

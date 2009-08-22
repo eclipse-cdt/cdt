@@ -21,8 +21,8 @@ public abstract class AbstractChecker implements IChecker {
 	}
 
 	/**
-	 * @return true if checker is enabled in context of resource, if returns false checker's "processResource"  
-	 * method won't be called
+	 * @return true if checker is enabled in context of resource, if returns
+	 *         false checker's "processResource" method won't be called
 	 */
 	public boolean enabledInContext(IResource res) {
 		return true;
@@ -30,34 +30,47 @@ public abstract class AbstractChecker implements IChecker {
 
 	/**
 	 * Reports a simple problem for given file and line
-	 * @param id - problem id
-	 * @param file - file
-	 * @param lineNumber - line
-	 * @param arg - problem argument, if problem does not define error message it will be error message 
-	 * (not recommended because of internationalization)
+	 * 
+	 * @param id
+	 *            - problem id
+	 * @param file
+	 *            - file
+	 * @param lineNumber
+	 *            - line
+	 * @param arg
+	 *            - problem argument, if problem does not define error message
+	 *            it will be error message (not recommended because of
+	 *            internationalization)
 	 */
-	public void reportProblem(String id, IFile file, int lineNumber,
-			String arg) {
-		getProblemReporter().reportProblem(id, new ProblemLocation(file,
-				lineNumber), arg);
+	public void reportProblem(String id, IFile file, int lineNumber, String arg) {
+		getProblemReporter().reportProblem(id,
+				new ProblemLocation(file, lineNumber), arg);
 	}
 
-	
 	/**
-	 * Reports a simple problem for given file and line, error message comes from problem definition 
-	 * @param id - problem id
-	 * @param file - file
-	 * @param lineNumber - line
+	 * Reports a simple problem for given file and line, error message comes
+	 * from problem definition
+	 * 
+	 * @param id
+	 *            - problem id
+	 * @param file
+	 *            - file
+	 * @param lineNumber
+	 *            - line
 	 */
 	public void reportProblem(String id, IFile file, int lineNumber) {
-		getProblemReporter().reportProblem(id, new ProblemLocation(file,
-				lineNumber), new Object[]{});
+		getProblemReporter().reportProblem(id,
+				new ProblemLocation(file, lineNumber), new Object[] {});
 	}
-	
+
 	/**
 	 * @return problem reporter for given checker
 	 */
 	protected IProblemReporter getProblemReporter() {
 		return CodanRuntime.getInstance().getProblemReporter();
+	}
+
+	public boolean runInEditor() {
+		return false;
 	}
 }

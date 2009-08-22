@@ -90,4 +90,8 @@ public abstract class AbstractIndexAstChecker extends AbstractChecker implements
 				new ProblemLocation(astFile, astLocation
 						.getStartingLineNumber()), message);
 	}
+
+	public boolean runInEditor() {
+		return true;
+	}
 }

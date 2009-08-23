@@ -6,8 +6,9 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *    QNX - Initial API and implementation
- *    Markus Schorn (Wind River Systems)
+ *     QNX - Initial API and implementation
+ *     Markus Schorn (Wind River Systems)
+ *     Sergey Prigogin (Google)
  *******************************************************************************/
 
 package org.eclipse.cdt.internal.ui.indexview;
@@ -61,7 +62,7 @@ public class IndexViewSearchQuery extends PDOMSearchQuery {
 	}
 
 	@Override
-	public String getLabel() {
-		return super.getLabel() + " " + fName; //$NON-NLS-1$
+	public String getResultLabel(int numMatches) {
+		return super.getResultLabel(fName, numMatches);
 	}
 }

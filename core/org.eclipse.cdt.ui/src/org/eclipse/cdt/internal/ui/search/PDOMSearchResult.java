@@ -6,9 +6,10 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *    QNX - Initial API and implementation
- *    Markus Schorn (Wind River Systems)
- *    Ed Swartz (Nokia)
+ *     QNX - Initial API and implementation
+ *     Markus Schorn (Wind River Systems)
+ *     Ed Swartz (Nokia)
+ *     Sergey Prigogin (Google)
  *******************************************************************************/
 package org.eclipse.cdt.internal.ui.search;
 
@@ -41,11 +42,9 @@ import org.eclipse.cdt.core.index.IndexLocationFactory;
 import org.eclipse.cdt.ui.CUIPlugin;
 
 import org.eclipse.cdt.internal.ui.util.ExternalEditorInput;
-import org.eclipse.cdt.internal.ui.util.Messages;
 
 /**
  * @author Doug Schaefer
- *
  */
 public class PDOMSearchResult extends AbstractTextSearchResult implements IEditorMatchAdapter, IFileMatchAdapter {
 	private static final String KEY_SHOW_POLYMORPHIC_CALLS = "ShowPolymorphicCalls"; //$NON-NLS-1$
@@ -167,10 +166,8 @@ public class PDOMSearchResult extends AbstractTextSearchResult implements IEdito
 	}
 
 	public String getLabel() {
-		// report pattern and number of matches
-		String label = query.getLabel();
-		String countLabel = Messages.format(CSearchMessages.CSearchResultCollector_matches, new Integer(getMatchCount()));
-		return label + " " + countLabel; //$NON-NLS-1$
+		// Report pattern and number of matches
+		return query.getResultLabel(getMatchCount());
 	}
 
 	public String getTooltip() {

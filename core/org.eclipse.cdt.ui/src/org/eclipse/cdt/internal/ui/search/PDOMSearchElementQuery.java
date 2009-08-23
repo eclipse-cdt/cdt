@@ -6,8 +6,9 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- * QNX - Initial API and implementation
- * Markus Schorn (Wind River Systems)
+ *     QNX - Initial API and implementation
+ *     Markus Schorn (Wind River Systems)
+ *     Sergey Prigogin (Google)
  *******************************************************************************/
 
 package org.eclipse.cdt.internal.ui.search;
@@ -27,7 +28,6 @@ import org.eclipse.cdt.internal.ui.viewsupport.IndexUI;
 
 /**
  * @author Doug Schaefer
- *
  */
 public class PDOMSearchElementQuery extends PDOMSearchQuery {
 
@@ -54,9 +54,9 @@ public class PDOMSearchElementQuery extends PDOMSearchQuery {
 	}
 
 	@Override
-	public String getLabel() {
-		if (element instanceof ICElement)
-			return super.getLabel() + " " + ((ICElement)element).getElementName(); //$NON-NLS-1$
-		return super.getLabel() + " something."; //$NON-NLS-1$
+	public String getResultLabel(int numMatches) {
+		String pattern = (element instanceof ICElement) ?
+				((ICElement) element).getElementName() : CSearchMessages.PDOMSearchElementQuery_something;
+		return getResultLabel(pattern, numMatches);
 	}
 }

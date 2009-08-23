@@ -22,6 +22,8 @@ import org.eclipse.cdt.core.index.IIndexInclude;
 import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.core.parser.IProblem;
 
+import org.eclipse.cdt.internal.ui.util.Messages;
+
 /**
  * Query for searching unresolved includes in projects.
  * Could be extended to search resources selections.
@@ -54,5 +56,11 @@ public class PDOMSearchUnresolvedIncludesQuery extends PDOMSearchQuery {
 	@Override
 	public String getLabel() {
 		return NLS.bind(CSearchMessages.PDOMSearchUnresolvedIncludesQuery_title, getScopeDescription());
+	}
+
+	@Override
+	public String getResultLabel(int matchCount) {
+		String countLabel = Messages.format(CSearchMessages.CSearchResultCollector_matches, new Integer(matchCount));
+		return getLabel() + " " + countLabel; //$NON-NLS-1$
 	}
 }

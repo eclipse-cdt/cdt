@@ -7,7 +7,6 @@
  *
  * Contributors:
  *     Andrey Eremchenko, kamre@ngs.ru - 222495 C/C++ search should show line matches and line numbers	
- * 
  *******************************************************************************/
 package org.eclipse.cdt.internal.ui.search;
 
@@ -21,23 +20,25 @@ import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.IDocument;
 
 import org.eclipse.cdt.core.index.IIndexFileLocation;
+import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.core.parser.CodeReader;
 import org.eclipse.cdt.ui.CUIPlugin;
 
 /**
  * Element representing a line with one ore more matches.
- * 
  */
 public class LineSearchElement extends PDOMSearchElement {
 	public static final class Match {
 		private final int fOffset;
 		private final int fLength;
 		private final boolean fIsPolymorphicCall;
+		private final ICElement fEnclosingElement;
 
-		public Match(int offset, int length, boolean isPolymorphicCall) {
+		public Match(int offset, int length, boolean isPolymorphicCall, ICElement enclosingElement) {
 			fOffset = offset;
 			fLength = length;
 			fIsPolymorphicCall = isPolymorphicCall;
+			fEnclosingElement = enclosingElement;
 		}
 
 		public int getOffset() {
@@ -52,6 +53,10 @@ public class LineSearchElement extends PDOMSearchElement {
 			return fIsPolymorphicCall;
 		}
 		
+		public ICElement getEnclosingElement() {
+			return fEnclosingElement;
+		}
+
 		@Override
 		public boolean equals(Object obj) {
 			if (!(obj instanceof Match))
@@ -87,7 +92,7 @@ public class LineSearchElement extends PDOMSearchElement {
 		int length = content.length();
 		int firstMatchOffset = matches[0].getOffset();
 		while (offset < firstMatchOffset && length > 0) {
-			if (content.charAt(index) != ' ')
+			if (!Character.isWhitespace(content.charAt(index)))
 				break;
 			index++;
 			offset++;

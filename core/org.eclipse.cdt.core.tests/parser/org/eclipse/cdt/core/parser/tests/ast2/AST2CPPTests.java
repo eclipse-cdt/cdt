@@ -7389,7 +7389,7 @@ public class AST2CPPTests extends AST2BaseTest {
 	}
 
 	private void checkDeclDef(String[] declNames, String[] defNames, IASTDeclaration[] decls) {
-		int i=0, j=0; 
+		int i= 0, j= 0; 
 		for (IASTDeclaration decl : decls) {
 			final IASTDeclarator[] dtors = ((IASTSimpleDeclaration) decl).getDeclarators();
 			for (IASTDeclarator dtor : dtors) {

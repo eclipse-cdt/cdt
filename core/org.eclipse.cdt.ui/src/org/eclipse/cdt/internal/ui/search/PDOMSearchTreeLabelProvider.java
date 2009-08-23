@@ -1,31 +1,29 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2008 QNX Software Systems and others.
+ * Copyright (c) 2006, 2009 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *    QNX - Initial API and implementation
- *    Markus Schorn (Wind River Systems)
- *    Ed Swartz (Nokia)
+ *     Doug Schaefer (QNX) - Initial API and implementation
+ *     Markus Schorn (Wind River Systems)
+ *     Ed Swartz (Nokia)
+ *     Andrey Eremchenko (LEDAS)
  *******************************************************************************/
 package org.eclipse.cdt.internal.ui.search;
 
 import org.eclipse.jface.viewers.StyledString;
-import org.eclipse.search.ui.text.AbstractTextSearchViewPage;
+
+import org.eclipse.cdt.core.model.ICElement;
 
 import org.eclipse.cdt.internal.core.model.TranslationUnit;
 
 import org.eclipse.cdt.internal.ui.util.Messages;
 
-/**
- * @author Doug Schaefer
- *
- */
 public class PDOMSearchTreeLabelProvider extends PDOMSearchLabelProvider {
 	
-	public PDOMSearchTreeLabelProvider(AbstractTextSearchViewPage page) {
+	public PDOMSearchTreeLabelProvider(PDOMSearchViewPage page) {
 		super(page);
 	}
 	
@@ -52,13 +50,19 @@ public class PDOMSearchTreeLabelProvider extends PDOMSearchLabelProvider {
 				return styled;
 			}
 		}
-		if (element instanceof LineSearchElement) {
-			LineSearchElement lineElement = (LineSearchElement) element;
-			int lineNumber = lineElement.getLineNumber();
-			String lineNumberString = Messages.format("{0}: ", Integer.valueOf(lineNumber)); //$NON-NLS-1$
-			StyledString styled = new StyledString(lineNumberString, StyledString.QUALIFIER_STYLER);
-			return styled.append(super.getStyledText(element));
+		if (!(element instanceof LineSearchElement))
+			return new StyledString(getText(element));
+		LineSearchElement lineElement = (LineSearchElement) element;
+		String enclosingName = ""; //$NON-NLS-1$
+		ICElement enclosingElement = lineElement.getMatches()[0].getEnclosingElement();
+		if (fPage.isShowEnclosingDefinitions() && enclosingElement != null) {
+			enclosingName = enclosingElement.getElementName() + ", "; //$NON-NLS-1$
 		}
-		return new StyledString(getText(element));
+		Integer lineNumber = lineElement.getLineNumber();
+		String prefix = Messages.format(CSearchMessages.CSearchResultCollector_line, enclosingName, lineNumber);
+		prefix += ":  "; //$NON-NLS-1$
+		StyledString location = new StyledString(prefix, StyledString.QUALIFIER_STYLER);
+		return location.append(super.getStyledText(element));
 	}
+
 }

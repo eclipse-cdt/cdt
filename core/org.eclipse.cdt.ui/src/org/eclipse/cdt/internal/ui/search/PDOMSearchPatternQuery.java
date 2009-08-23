@@ -6,9 +6,10 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *    QNX - Initial API and implementation
- *    IBM Corporation
- *    Markus Schorn (Wind River Systems)
+ *     QNX - Initial API and implementation
+ *     IBM Corporation
+ *     Markus Schorn (Wind River Systems)
+ *     Sergey Prigogin (Google)
  *******************************************************************************/
 package org.eclipse.cdt.internal.ui.search;
 
@@ -42,11 +43,9 @@ import org.eclipse.cdt.core.model.ICElement;
 
 import org.eclipse.cdt.internal.core.Util;
 
-import org.eclipse.cdt.internal.ui.util.Messages;
 
 /**
  * @author Doug Schaefer
- *
  */
 public class PDOMSearchPatternQuery extends PDOMSearchQuery {
 
@@ -196,7 +195,9 @@ public class PDOMSearchPatternQuery extends PDOMSearchQuery {
 	}
 
 	@Override
-	public String getLabel() {
-		return Messages.format(CSearchMessages.PDOMSearchPatternQuery_PatternQuery_labelPatternInScope, super.getLabel(), patternStr, scopeDesc); 
+	public String getResultLabel(int numMatches) {
+		String patternInScope = CSearchMessages.bind(
+				CSearchMessages.PDOMSearchPatternQuery_PatternQuery_labelPatternInScope, patternStr, scopeDesc);
+		return getResultLabel(patternInScope, numMatches); 
 	}
 }

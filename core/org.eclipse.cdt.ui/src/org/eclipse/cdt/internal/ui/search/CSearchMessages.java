@@ -8,6 +8,7 @@
  * Contributors:
  *     IBM Corp. - Rational Software - initial implementation
  *     Anton Leherbauer (Wind River Systems)
+ *     Andrey Eremchenko (LEDAS)
  *******************************************************************************/
 package org.eclipse.cdt.internal.ui.search;
 
@@ -24,6 +25,8 @@ public final class CSearchMessages extends NLS {
 	public static String group_declarations;
 	public static String group_references;
 	public static String CSearchResultCollector_matches;
+	public static String CSearchResultCollector_line;
+	public static String CSearchResultCollector_location;
 	public static String CSearchPage_searchFor_label;
 	public static String CSearchPage_searchFor_namespace;
 	public static String CSearchPage_searchFor_method;
@@ -59,9 +62,13 @@ public final class CSearchMessages extends NLS {
 	public static String WorkingSetScope;
 	public static String SelectionScope;
 	public static String ProjectScope;
-	public static String PDOMSearch_query_refs_label;
-	public static String PDOMSearch_query_defs_label;
-	public static String PDOMSearch_query_decls_label;
+	public static String PDOMSearchQuery_refs_label;
+	public static String PDOMSearchQuery_defs_label;
+	public static String PDOMSearchQuery_decls_label;
+	public static String PDOMSearchQuery_refs_result_label;
+	public static String PDOMSearchQuery_defs_result_label;
+	public static String PDOMSearchQuery_decls_result_label;
+	public static String PDOMSearchElementQuery_something;
 	public static String PDOMSearchPatternQuery_PatternQuery_labelPatternInScope;
 	public static String PDOMSearch_query_pattern_error;
 	public static String SelectionParseAction_FileOpenFailure_format;
@@ -82,6 +89,11 @@ public final class CSearchMessages extends NLS {
 	public static String HidePolymorphicCalls_actionLabel;
 	public static String HidePolymorphicCalls_description;
 	public static String HidePolymorphicCalls_name;
+	public static String PDOMSearchViewPage_ShowEnclosingDefinitions_actionLabel;
+	public static String PDOMSearchViewPage_ShowEnclosingDefinitions_description;
+	public static String PDOMSearchViewPageLocationColumn_label;
+	public static String PDOMSearchViewPageDefinitionColumn_label;
+	public static String PDOMSearchViewPageMatchColumn_label;
 	public static String PDOMSearchTreeContentProvider_IndexerNotEnabledWarning;
 	public static String PDOMSearchTreeContentProvider_ProjectClosedWarning;
 	public static String PDOMSearchUnresolvedIncludesQuery_title;

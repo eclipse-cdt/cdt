@@ -7,10 +7,14 @@
  *
  * Contributors:
  *     IBM Corp. - Rational Software - initial implementation
+ *     Sergey Prigogin (Google)
  *******************************************************************************/
 package org.eclipse.cdt.internal.ui.search.actions;
 
+import org.eclipse.jface.text.IDocument;
+import org.eclipse.jface.text.IRegion;
 import org.eclipse.jface.text.ITextSelection;
+import org.eclipse.jface.text.TextSelection;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.search.ui.ISearchQuery;
@@ -26,15 +30,16 @@ import org.eclipse.cdt.internal.ui.search.CSearchMessages;
 import org.eclipse.cdt.internal.ui.search.PDOMSearchElementQuery;
 import org.eclipse.cdt.internal.ui.search.PDOMSearchQuery;
 import org.eclipse.cdt.internal.ui.search.PDOMSearchTextSelectionQuery;
+import org.eclipse.cdt.internal.ui.text.CWordFinder;
 
 
 public abstract class FindAction extends SelectionParseAction {
 	public FindAction(CEditor editor){
-		super( editor );
+		super(editor);
 	}
 	
 	public FindAction(IWorkbenchSite site){
-		super( site );
+		super(site);
 	}
 	
 	@Override
@@ -43,15 +48,20 @@ public abstract class FindAction extends SelectionParseAction {
 
 		ISelection selection = getSelection();
 	 	if (selection instanceof IStructuredSelection) {
-	 		Object object = ((IStructuredSelection)selection).getFirstElement();
+	 		Object object = ((IStructuredSelection) selection).getFirstElement();
 	 		if (object instanceof ISourceReference)
 	 			searchJob = createQuery((ISourceReference) object);
 		} else if (selection instanceof ITextSelection) {
-			ITextSelection selNode = (ITextSelection)selection;
+			ITextSelection selNode = (ITextSelection) selection;
 			ICElement element = fEditor.getInputCElement();
 			while (element != null && !(element instanceof ITranslationUnit))
 				element = element.getParent();
 			if (element != null) {
+				if (selNode.getLength() == 0) {
+					IDocument document= fEditor.getDocumentProvider().getDocument(fEditor.getEditorInput());
+					IRegion reg= CWordFinder.findWord(document, selNode.getOffset());
+					selNode = new TextSelection(document, reg.getOffset(), reg.getLength());
+				}
 				searchJob = createQuery(element, selNode);
 			}
 		} 
@@ -62,9 +72,7 @@ public abstract class FindAction extends SelectionParseAction {
 	 	}
 
         clearStatusLine();
-		
 		NewSearchUI.activateSearchResultView();
-		
 		NewSearchUI.runQueryInBackground(searchJob);
 	}
 
@@ -82,5 +90,4 @@ public abstract class FindAction extends SelectionParseAction {
 	abstract protected ICElement[] getScope();
 	
 	abstract protected int getLimitTo();
-    
 }

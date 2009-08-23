@@ -6,8 +6,9 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *    Markus Schorn - initial API and implementation
- *    Ed Swartz (Nokia)
+ *     Markus Schorn - initial API and implementation
+ *     Ed Swartz (Nokia)
+ *     Andrey Eremchenko (LEDAS)
  *******************************************************************************/ 
 package org.eclipse.cdt.internal.ui.search;
 
@@ -19,7 +20,6 @@ import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.jface.viewers.StyledString;
 import org.eclipse.jface.viewers.DelegatingStyledCellLabelProvider.IStyledLabelProvider;
 import org.eclipse.search.ui.text.AbstractTextSearchResult;
-import org.eclipse.search.ui.text.AbstractTextSearchViewPage;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.ui.ISharedImages;
 import org.eclipse.ui.PlatformUI;
@@ -27,6 +27,7 @@ import org.eclipse.ui.PlatformUI;
 import org.eclipse.cdt.core.dom.ast.ASTSignatureUtil;
 import org.eclipse.cdt.core.index.IIndexFileLocation;
 import org.eclipse.cdt.core.index.IndexLocationFactory;
+import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.ui.browser.typeinfo.TypeInfoLabelProvider;
 
 import org.eclipse.cdt.internal.core.model.TranslationUnit;
@@ -52,11 +53,11 @@ import org.eclipse.cdt.internal.ui.viewsupport.ColoringLabelProvider;
  */
 public class PDOMSearchLabelProvider extends LabelProvider implements IStyledLabelProvider {
 
-	private final AbstractTextSearchViewPage fPage;
+	protected final PDOMSearchViewPage fPage;
 	private final TypeInfoLabelProvider fTypeInfoLabelProvider;
 	private final CUILabelProvider fCElementLabelProvider;
 	
-	public PDOMSearchLabelProvider(AbstractTextSearchViewPage page) {
+	public PDOMSearchLabelProvider(PDOMSearchViewPage page) {
 		fTypeInfoLabelProvider= new TypeInfoLabelProvider(TypeInfoLabelProvider.SHOW_FULLY_QUALIFIED | TypeInfoLabelProvider.SHOW_PARAMETERS);
 		fCElementLabelProvider= new CUILabelProvider(0, CElementImageProvider.SMALL_ICONS);
 		fPage= page;
@@ -64,8 +65,13 @@ public class PDOMSearchLabelProvider extends LabelProvider implements IStyledLab
 	
 	@Override
 	public Image getImage(Object element) {
-		if (element instanceof LineSearchElement)
-			return CPluginImages.get(CPluginImages.IMG_OBJS_SEARCH_LINE);
+		if (element instanceof LineSearchElement) {
+			LineSearchElement lineSearchElement = (LineSearchElement) element;
+			ICElement enclosingElement = lineSearchElement.getMatches()[0].getEnclosingElement();
+			if (!fPage.isShowEnclosingDefinitions() || enclosingElement == null)
+				return CPluginImages.get(CPluginImages.IMG_OBJS_SEARCH_LINE);
+			element = enclosingElement;
+		}
 		
 		if (element instanceof TypeInfoSearchElement)
 			return fTypeInfoLabelProvider.getImage(((TypeInfoSearchElement)element).getTypeInfo());
@@ -161,9 +167,9 @@ public class PDOMSearchLabelProvider extends LabelProvider implements IStyledLab
 		String lineContent = lineElement.getContent();
 		StyledString styled = new StyledString(lineContent);
 		for (Match match : lineElement.getMatches()) {
-			int offset = match.getOffset();
-			int length = Math.min(match.getLength(), lineContent.length() - (offset - lineOffset));
-			styled.setStyle(offset - lineOffset, length, ColoringLabelProvider.HIGHLIGHT_STYLE);
+			int offset = Math.max(0, match.getOffset() - lineOffset);
+			int length = Math.min(match.getLength(), lineContent.length() - offset);
+			styled.setStyle(offset, length, ColoringLabelProvider.HIGHLIGHT_STYLE);
 		}
 		return styled;
 	}

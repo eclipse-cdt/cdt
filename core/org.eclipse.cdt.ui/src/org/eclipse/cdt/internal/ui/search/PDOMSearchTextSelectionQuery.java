@@ -6,8 +6,9 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *    QNX - Initial API and implementation
- *    Markus Schorn (Wind River Systems)
+ *     QNX - Initial API and implementation
+ *     Markus Schorn (Wind River Systems)
+ *     Sergey Prigogin (Google)
  *******************************************************************************/
 package org.eclipse.cdt.internal.ui.search;
 
@@ -84,7 +85,7 @@ public class PDOMSearchTextSelectionQuery extends PDOMSearchQuery {
 	}
 
 	@Override
-	public String getLabel() {
-		return super.getLabel() + " " + searchText; //$NON-NLS-1$
+	public String getResultLabel(int numMatches) {
+		return getResultLabel(searchText, numMatches);
 	}
 }

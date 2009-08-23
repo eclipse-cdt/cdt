@@ -6,65 +6,67 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *    QNX - Initial API and implementation
- *    Markus Schorn (Wind River Systems)
- *    Ed Swartz (Nokia)
+ *     QNX - Initial API and implementation
+ *     Markus Schorn (Wind River Systems)
+ *     Ed Swartz (Nokia)
+ *     Andrey Eremchenko (LEDAS)
  *******************************************************************************/
 package org.eclipse.cdt.internal.ui.search;
 
-import org.eclipse.core.runtime.IPath;
-import org.eclipse.jface.viewers.StyledString;
-import org.eclipse.search.ui.text.AbstractTextSearchViewPage;
+import org.eclipse.jface.viewers.ViewerCell;
 
-import org.eclipse.cdt.core.index.IIndexFileLocation;
 import org.eclipse.cdt.core.index.IndexLocationFactory;
+import org.eclipse.cdt.core.model.ICElement;
 
+import org.eclipse.cdt.internal.ui.CPluginImages;
 import org.eclipse.cdt.internal.ui.util.Messages;
+import org.eclipse.cdt.internal.ui.viewsupport.ColoringLabelProvider;
 
 /**
  * @author Doug Schaefer
- *
  */
-public class PDOMSearchListLabelProvider extends PDOMSearchLabelProvider {
-
-	public PDOMSearchListLabelProvider(AbstractTextSearchViewPage page) {
-		super(page);
+public class PDOMSearchListLabelProvider extends ColoringLabelProvider {
+	private final PDOMSearchViewPage fPage;
+	private final int fColumnIndex;
+	
+	public PDOMSearchListLabelProvider(PDOMSearchViewPage page, int columnIndex) {
+		super(new PDOMSearchLabelProvider(page));
+		fPage = page;
+		fColumnIndex = columnIndex;
 	}
 	
 	@Override
-	public String getText(Object element) {
-		final String text= super.getText(element);
-		
-		if (element instanceof PDOMSearchElement) {
-			PDOMSearchElement searchElement = (PDOMSearchElement)element;
-			final int count= getMatchCount(element);
-			final String filename = " - " + IndexLocationFactory.getPath(searchElement.getLocation()); //$NON-NLS-1$
-			if (count == 1) {
-				return text+filename;
+	public void update(ViewerCell cell) {
+		Object element = cell.getElement();
+		switch (fColumnIndex) {
+		case PDOMSearchViewPage.LOCATION_COLUMN_INDEX:
+			if (element instanceof LineSearchElement) {
+				LineSearchElement lineElement = (LineSearchElement) element;
+				String location = IndexLocationFactory.getPath(lineElement.getLocation()).toString();
+				int lineNumber = lineElement.getLineNumber();
+				cell.setText(Messages.format(CSearchMessages.CSearchResultCollector_location, location, lineNumber));
+				cell.setImage(CPluginImages.get(CPluginImages.IMG_OBJS_SEARCH_LINE));
 			}
-			return text + filename + " " //$NON-NLS-1$
-				+ Messages.format(CSearchMessages.CSearchResultCollector_matches, new Integer(count)); 
-		} 
-		
-		if (element instanceof IIndexFileLocation) {
-			IPath path= IndexLocationFactory.getPath((IIndexFileLocation)element); 
-			if(path!=null) {
-				return path.toString();
+			break;
+		case PDOMSearchViewPage.DEFINITION_COLUMN_INDEX:
+			if (element instanceof LineSearchElement) {
+				LineSearchElement lineElement = (LineSearchElement) element;
+				ICElement enclosingElement = lineElement.getMatches()[0].getEnclosingElement();
+				if (fPage.isShowEnclosingDefinitions() && enclosingElement != null) {
+					cell.setText(enclosingElement.getElementName());
+					cell.setImage(getImage(element));
+				} else {
+					cell.setText(""); //$NON-NLS-1$
+				}
 			}
+			break;
+		case PDOMSearchViewPage.MATCH_COLUMN_INDEX:
+			super.update(cell);
+			cell.setImage(null);
+			break;
+		default:
+			cell.setText(""); //$NON-NLS-1$
+			break;
 		}
-		
-		return text;
-	}
-	
-	@Override
-	public StyledString getStyledText(Object element) {
-		if (!(element instanceof LineSearchElement))
-			return new StyledString(getText(element));
-		LineSearchElement lineElement = (LineSearchElement) element;
-		int lineNumber = lineElement.getLineNumber();
-		final String filename = " - " + IndexLocationFactory.getPath(lineElement.getLocation()); //$NON-NLS-1$
-		final String lineNumberString = " (" + lineNumber + ")"; //$NON-NLS-1$ //$NON-NLS-2$
-		StyledString styled = super.getStyledText(element);
-		return styled.append(filename + lineNumberString, StyledString.QUALIFIER_STYLER);
 	}
 }

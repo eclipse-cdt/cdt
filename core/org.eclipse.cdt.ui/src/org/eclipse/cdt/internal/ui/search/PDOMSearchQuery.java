@@ -1,14 +1,16 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2008 QNX Software Systems and others.
+ * Copyright (c) 2006, 2009 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *    QNX - Initial API and implementation
- *    Markus Schorn (Wind River Systems)
- *    Ed Swartz (Nokia)
+ *     Doug Schaefer (QNX) - Initial API and implementation
+ *     Markus Schorn (Wind River Systems)
+ *     Ed Swartz (Nokia)
+ *     Andrey Eremchenko (LEDAS)
+ *     Sergey Prigogin (Google)
  *******************************************************************************/
 package org.eclipse.cdt.internal.ui.search;
 
@@ -59,12 +61,10 @@ import org.eclipse.cdt.internal.core.browser.ASTTypeInfo;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ClassTypeHelper;
 
 import org.eclipse.cdt.internal.ui.search.LineSearchElement.Match;
+import org.eclipse.cdt.internal.ui.util.Messages;
+import org.eclipse.cdt.internal.ui.viewsupport.IndexUI;
 
 
-/**
- * @author Doug Schaefer
- *
- */
 public abstract class PDOMSearchQuery implements ISearchQuery {
 	public static final int FIND_DECLARATIONS = IIndex.FIND_DECLARATIONS;
 	public static final int FIND_DEFINITIONS = IIndex.FIND_DEFINITIONS;
@@ -114,12 +114,27 @@ public abstract class PDOMSearchQuery implements ISearchQuery {
 	public String getLabel() {
 		String type;
 		if ((flags & FIND_REFERENCES) != 0)
-			type = CSearchMessages.PDOMSearch_query_refs_label; 
+			type = CSearchMessages.PDOMSearchQuery_refs_label; 
 		else if ((flags & FIND_DECLARATIONS) != 0)
-			type = CSearchMessages.PDOMSearch_query_decls_label; 
+			type = CSearchMessages.PDOMSearchQuery_decls_label; 
 		else
- 			type = CSearchMessages.PDOMSearch_query_defs_label; 
+ 			type = CSearchMessages.PDOMSearchQuery_defs_label; 
 		return type;
+	}
+
+	public abstract String getResultLabel(int matchCount);
+	
+	public String getResultLabel(String pattern, int matchCount) {
+		// Report pattern and number of matches
+		String label;
+		if ((flags & FIND_REFERENCES) != 0)
+			label = CSearchMessages.bind(CSearchMessages.PDOMSearchQuery_refs_result_label, pattern); 
+		else if ((flags & FIND_DECLARATIONS) != 0)
+			label =CSearchMessages.bind(CSearchMessages.PDOMSearchQuery_decls_result_label, pattern); 
+		else
+ 			label = CSearchMessages.bind(CSearchMessages.PDOMSearchQuery_defs_result_label, pattern); 
+		String countLabel = Messages.format(CSearchMessages.CSearchResultCollector_matches, new Integer(matchCount));
+		return label + " " + countLabel; //$NON-NLS-1$
 	}
 
 	public boolean canRerun() {
@@ -143,11 +158,16 @@ public abstract class PDOMSearchQuery implements ISearchQuery {
 	protected boolean filterName(IIndexName name) {
 		return false; // i.e. keep it
 	}
-	
-	private void createMatchesFromNames(Map<IIndexFile, Set<Match>> fileMatches, IIndexName[] names, boolean isPolymorphicOnly)
+
+	private void createMatchesFromNames(IIndex index, Map<IIndexFile, Set<Match>> fileMatches, IIndexName[] names, boolean isPolymorphicOnly)
 			throws CoreException {
 		if (names == null)
 			return;
+
+		ICProject preferred= null;
+		if (projects != null && projects.length == 1) {
+			preferred= projects[0];
+		}
 		for (IIndexName name : names) {
 			if (!filterName(name)) {
 				if (!isPolymorphicOnly || name.couldBePolymorphicMethodCall()) {
@@ -158,7 +178,14 @@ public abstract class PDOMSearchQuery implements ISearchQuery {
 						matches = new HashSet<Match>();
 						fileMatches.put(file, matches);
 					}
-					matches.add(new Match(loc.getNodeOffset(), loc.getNodeLength(), isPolymorphicOnly));
+					int nodeOffset = loc.getNodeOffset();
+					int nodeLength = loc.getNodeLength();
+					ICElement enclosingElement = null;
+					IIndexName enclosingDefinition = name.getEnclosingDefinition();
+					if (enclosingDefinition != null) {
+						enclosingElement = IndexUI.getCElementForName(preferred, index, enclosingDefinition);
+					}
+					matches.add(new Match(nodeOffset, nodeLength, isPolymorphicOnly, enclosingElement));
 				}
 			}
 
@@ -177,7 +204,8 @@ public abstract class PDOMSearchQuery implements ISearchQuery {
 				int offset = region.getOffset();
 				int length = region.getLength();
 				boolean isPolymorphicCall = match.isPolymorphicCall();
-				convertedMatches.add(new Match(offset, length, isPolymorphicCall));
+				ICElement enclosingElement = match.getEnclosingElement();
+				convertedMatches.add(new Match(offset, length, isPolymorphicCall, enclosingElement));
 			}
 			matches = convertedMatches;
 		}
@@ -187,8 +215,8 @@ public abstract class PDOMSearchQuery implements ISearchQuery {
 	private void collectNames(IIndex index, IIndexName[] names, IIndexName[] polymorphicNames) throws CoreException {
 		// group all matched names by files
 		Map<IIndexFile, Set<Match>> fileMatches = new HashMap<IIndexFile, Set<Match>>();
-		createMatchesFromNames(fileMatches, names, false);
-		createMatchesFromNames(fileMatches, polymorphicNames, true);
+		createMatchesFromNames(index, fileMatches, names, false);
+		createMatchesFromNames(index, fileMatches, polymorphicNames, true);
 		// compute mapping from paths to dirty text editors
 		IEditorPart[] dirtyEditors = CUIPlugin.getDirtyEditors();
 		Map<IPath, ITextEditor> pathsDirtyEditors = new HashMap<IPath, ITextEditor>();
@@ -295,7 +323,7 @@ public abstract class PDOMSearchQuery implements ISearchQuery {
 					if (typeInfo != null) {
 						ITypeReference ref= typeInfo.getResolvedReference();
 						if (ref != null) {
-							localMatches.add(new Match(ref.getOffset(), ref.getLength(), false));
+							localMatches.add(new Match(ref.getOffset(), ref.getLength(), false, null));
 							fileLocation = typeInfo.getIFL();
 						}
 					}

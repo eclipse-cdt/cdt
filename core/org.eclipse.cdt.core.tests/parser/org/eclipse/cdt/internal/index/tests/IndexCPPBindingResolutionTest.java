@@ -42,6 +42,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPNamespaceScope;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPPointerToMemberType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPVariable;
 import org.eclipse.cdt.core.index.IIndex;
+import org.eclipse.cdt.core.index.IIndexBinding;
 import org.eclipse.core.runtime.CoreException;
 
 /**
@@ -1369,6 +1370,16 @@ public abstract class IndexCPPBindingResolutionTest extends IndexBindingResoluti
     	IFunction f1= getBindingFromASTName("f(a)", 1, IFunction.class);
     	IFunction f2= getBindingFromASTName("f(b)", 1, IFunction.class);
     	assertFalse(f1.equals(f2));
+	}
+
+	//	class A {
+	//	  class B;
+	//	};
+
+	//	class A::B {};
+	public void _testNestedClass_284665() throws Exception {
+    	ICPPClassType b = getBindingFromASTName("B {}", 1, ICPPClassType.class);
+    	assertFalse(b instanceof IIndexBinding);
 	}
 
 	//	class A {

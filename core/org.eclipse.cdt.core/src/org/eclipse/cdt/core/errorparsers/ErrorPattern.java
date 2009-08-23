@@ -27,7 +27,7 @@ import org.eclipse.core.runtime.Path;
  * Error Pattern - used by Error Parser to convert build output to problem markers
  * @since 5.1
  * 
- * @noextend This class is not intended to be subclassed by clients.
+ * Clients may extend this class.
  */
 public class ErrorPattern {
 	private final Pattern pattern;

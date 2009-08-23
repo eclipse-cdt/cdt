@@ -27,19 +27,20 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPConstructor;
 public class CPPConstructor extends CPPMethod implements ICPPConstructor {
 
     static public class CPPConstructorProblem extends CPPMethod.CPPMethodProblem implements ICPPConstructor {
-        public CPPConstructorProblem( IASTNode node, int id, char[] arg ) {
-            super( node, id, arg );
+        public CPPConstructorProblem(IASTNode node, int id, char[] arg) {
+            super(node, id, arg);
         }
 
         public boolean isExplicit() throws DOMException{
             throw new DOMException( this );
         }
     }
+
 	/**
 	 * @param declarator
 	 */
 	public CPPConstructor(ICPPASTFunctionDeclarator declarator) {
-		super( declarator );
+		super(declarator);
 	}
 
     /* (non-Javadoc)
@@ -55,5 +56,4 @@ public class CPPConstructor extends CPPMethod implements ICPPConstructor {
     	}
         return false;
     }
-
 }

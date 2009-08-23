@@ -182,7 +182,7 @@ public class CPPClassType extends PlatformObject implements ICPPInternalClassTyp
 			name = ns[ns.length - 1];
 		}
 		IASTNode parent = name.getParent();
-		while(parent instanceof IASTName)
+		while (parent instanceof IASTName)
 			parent = parent.getParent();
 
 		if (parent instanceof IASTCompositeTypeSpecifier)

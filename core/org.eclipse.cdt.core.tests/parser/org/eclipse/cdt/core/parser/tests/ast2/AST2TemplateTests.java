@@ -4124,8 +4124,29 @@ public class AST2TemplateTests extends AST2BaseTest {
 	//	void test(A<int> x) {
 	//	  f(x);
 	//	}
-	public void testInlineFriendFunction_286741() throws Exception {
+	public void testInlineFriendFunction_284690_1() throws Exception {
 		final String code = getAboveComment();
 		parseAndCheckBindings(code, ParserLanguage.CPP);
+	}
+	
+	//	template <typename T>
+	//	struct A {
+	//	  typedef A<T> Self;
+	//	  friend void f(Self p) {}
+	//	};
+	//	template <typename U>
+	//	struct B {
+	//	  typedef B<U> Self;
+	//	  friend void f(Self p) {}
+	//	};
+	//
+	//	void test(A<int> x) {
+	//	  f(x);
+	//	}
+	public void _testInlineFriendFunction_284690_2() throws Exception {
+		final String code = getAboveComment();
+		BindingAssertionHelper bh= new BindingAssertionHelper(code, true);
+    	ICPPFunction func= bh.assertNonProblem("f(x)", 1, ICPPFunction.class);
+    	assertFalse(func instanceof ICPPUnknownBinding);
 	}
 }

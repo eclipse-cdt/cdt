@@ -352,7 +352,11 @@ public class CPPSemantics {
 		
 		if (data.considerConstructors) {
 			if (binding instanceof ICPPClassType) {
+			    if (binding instanceof IIndexBinding) {
+			    	binding= data.tu.mapToAST((ICPPClassType) binding);
+			    }
 				ICPPClassType cls= (ICPPClassType) binding;
+
 				try {
 					if (data.astName instanceof ICPPASTTemplateId && cls instanceof ICPPClassTemplate) {
 						if (data.tu != null) {

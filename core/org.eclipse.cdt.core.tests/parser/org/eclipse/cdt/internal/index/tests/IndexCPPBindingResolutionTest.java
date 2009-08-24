@@ -33,6 +33,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPBasicType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPBinding;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassScope;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPConstructor;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPField;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunction;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunctionType;
@@ -1374,12 +1375,28 @@ public abstract class IndexCPPBindingResolutionTest extends IndexBindingResoluti
 
 	//	class A {
 	//	  class B;
+	//	  void method();
 	//	};
 
-	//	class A::B {};
-	public void _testNestedClass_284665() throws Exception {
-    	ICPPClassType b = getBindingFromASTName("B {}", 1, ICPPClassType.class);
-    	assertFalse(b instanceof IIndexBinding);
+	//	class A::B {
+	//	  B(int x);
+	//    static void m(int p);
+	//	};
+	//
+	//	void A::method() {
+	//	  new B(0);
+	//    B::m(0);
+	//	}
+	public void testNestedClass_284665() throws Exception {
+    	ICPPClassType b0 = getBindingFromASTName("B {", 1, ICPPClassType.class);
+    	assertFalse(b0 instanceof IIndexBinding);
+    	ICPPConstructor b1 = getBindingFromASTName("B(int x)", 1, ICPPConstructor.class);
+    	assertFalse(b1 instanceof IIndexBinding);
+    	ICPPConstructor b2 = getBindingFromASTName("B(0)", 1, ICPPConstructor.class);
+    	assertFalse(b2 instanceof IIndexBinding);
+    	assertEquals(b1, b2);
+    	ICPPMethod b3 = getBindingFromASTName("m(0)", 1, ICPPMethod.class);
+    	assertFalse(b3 instanceof IIndexBinding);
 	}
 
 	//	class A {
@@ -1479,7 +1496,7 @@ public abstract class IndexCPPBindingResolutionTest extends IndexBindingResoluti
  	}
 
 	/**
- 	 * @param binding
+ 	 * @param type
  	 * @param cqn
  	 * @param qn may be null
  	 */

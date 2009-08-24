@@ -71,6 +71,7 @@
  * David McKnight   (IBM)        - [190001] [refresh] Avoid unnecessary duplicate queries during drag&drop to filter
  * Martin Oberhuber (Wind River) - [276195] Avoid unnecessary selectionChanged when restoring connections
  * David McKnight   (IBM)        - [277328] Unhandled Event Loop Exception When Right-Clicking on "Pending..." Message
+ * David McKnight   (IBM)        - [283793] [dstore] Expansion indicator(+) does not reset after no connect
  ********************************************************************************/
 
 package org.eclipse.rse.internal.ui.view;
@@ -6286,9 +6287,9 @@ public class SystemView extends SafeTreeViewer
 		}
 
 
-	public void add(Object parentElementOrTreePath, Object[] childElements) {
-
+	public void add(Object parentElementOrTreePath, Object[] childElements) {		
 		assertElementsNotNull(childElements);
+
 		IContextObject contextObject = null;
 		ISystemFilterReference originalFilter = null;
 		if (parentElementOrTreePath instanceof IContextObject)
@@ -6299,6 +6300,7 @@ public class SystemView extends SafeTreeViewer
 
 		}
 
+		
 		List matches = new Vector();
 		findAllRemoteItemReferences(parentElementOrTreePath, parentElementOrTreePath, matches);
 
@@ -6309,33 +6311,57 @@ public class SystemView extends SafeTreeViewer
 			ISystemViewElementAdapter adapter = (ISystemViewElementAdapter)((IAdaptable)parentElementOrTreePath).getAdapter(ISystemViewElementAdapter.class);
 			if (adapter != null)
 			{
-				IHost parentHost = adapter.getSubSystem(parentElementOrTreePath).getHost();
+				ISubSystem subSystem = adapter.getSubSystem(parentElementOrTreePath);
+
+				boolean unexpandContainer = false;
+				// if the subsystem is not connected, then need to keep the widget expandable
+				if (childElements.length == 0 && !subSystem.isConnected()){
+					unexpandContainer = true;
+				}		
+				
+				
+				IHost parentHost = subSystem.getHost();
 				for (int i = 0; i < matches.size(); i++)
 				{
 					Widget match = (Widget) matches.get(i);
-					Object data = null;
-					try {
-						data = match.getData();
+					
+					// for bug 283793
+					if (match instanceof TreeItem && unexpandContainer){
+						TreeItem titem = ((TreeItem)match);
+						if (titem.getExpanded()){
+							setExpanded(titem, false);
+						}
 					}
-					catch (SWTException e){
-						// not sure why this occurs -logging it for now
-						// this is reported in bug 251625
-						SystemBasePlugin.logError("Exception in SystemView.add() with " + match); //$NON-NLS-1$
-						SystemBasePlugin.logError(e.getMessage());
-					}
-
-					if (data instanceof IAdaptable)
-					{
-						ISystemViewElementAdapter madapter = (ISystemViewElementAdapter)((IAdaptable)data).getAdapter(ISystemViewElementAdapter.class);
-						if (madapter != null)
+					else {
+						Object data = null;
+						try {
+							data = match.getData();
+						}
+						catch (SWTException e){
+							// not sure why this occurs -logging it for now
+							// this is reported in bug 251625
+							SystemBasePlugin.logError("Exception in SystemView.add() with " + match); //$NON-NLS-1$
+							SystemBasePlugin.logError(e.getMessage());
+						}
+	
+						if (data instanceof IAdaptable)
 						{
-							IHost mHost = madapter.getSubSystem(data).getHost();
-							if (mHost != parentHost)
+							ISystemViewElementAdapter madapter = (ISystemViewElementAdapter)((IAdaptable)data).getAdapter(ISystemViewElementAdapter.class);
+							if (madapter != null)
 							{
-								invalidMatches.add(match);
+								IHost mHost = madapter.getSubSystem(data).getHost();
+								if (mHost != parentHost)
+								{
+									invalidMatches.add(match);
+								}
 							}
 						}
 					}
+				}
+				if (unexpandContainer){
+					// brings back the + icon
+					refresh(parentElementOrTreePath);
+					return;
 				}
 			}
 
@@ -6379,7 +6405,7 @@ public class SystemView extends SafeTreeViewer
 				}
 			}
 			else
-			{
+			{							
 				internalAdd(match, parentElementOrTreePath, childElements);
 
 				// refresh parent in this case because the parentElementOrTreePath may no longer exist

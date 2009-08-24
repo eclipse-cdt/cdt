@@ -219,11 +219,15 @@ public class CPPVisitor extends ASTQueries {
 				        return binding;
 				}
 			} else {
-				return binding;
+				if (binding instanceof ICPPClassType && binding instanceof IIndexBinding && name.isDefinition()) {
+					parent= parent.getParent(); // need to create an ast binding.
+				} else {
+					return binding;
+				}
 			}
 		} else if (parent instanceof ICPPASTTemplateId) {
 			final ICPPASTTemplateId id = (ICPPASTTemplateId) parent;
-			if (CPPTemplates.isClassTemplate(id)) 
+			if (CPPTemplates.isClassTemplate(id))
 				return CPPSemantics.resolveBinding(name); 
 			
 			// function templates/instances/specializations must be resolved via the id

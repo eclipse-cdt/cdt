@@ -39,6 +39,7 @@
  * David McKnight   (IBM)        - [257721] Doubleclick doing special handling and expanding
  * David McKnight   (IBM)        - [250417] Restore from memento flag set to false during restore on startup
  * Martin Oberhuber (Wind River) - [286122] Avoid NPE when restoring memento
+ * David McKnight   (IBM)        - [286670] TVT35:TCT586: CHS: English Strings Found
  *******************************************************************************/
 
 package org.eclipse.rse.internal.ui.view;
@@ -1513,6 +1514,7 @@ public class SystemViewPart
 		public RestoreRemoteObjects(Vector remoteObjects, Vector remoteObjectsToSelect)
 		{
 			super("Restore Remote Objects"); //$NON-NLS-1$
+			setSystem(true);
 			_remoteObjectsToRestore = remoteObjects;
 			_remoteObjectsToSelect = remoteObjectsToSelect;
 		}

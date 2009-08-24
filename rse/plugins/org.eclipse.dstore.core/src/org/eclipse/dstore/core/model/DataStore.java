@@ -30,6 +30,7 @@
  * David McKnight   (IBM) - [282599] [dstore] log folder that is not a hidden one
  * David McKnight   (IBM) - [285151] [dstore] Potential threading problem in DataStore (open call)
  * David McKnight   (IBM) - [285301] [dstore] 100% CPU if user does not  have write access to $HOME
+ * David McKnight   (IBM) - [287457] [dstore] problems with disconnect when readonly trace file
  *******************************************************************************/
 
 package org.eclipse.dstore.core.model;
@@ -3956,7 +3957,7 @@ public final class DataStore
 				_hashMap.remove(id);
 			}
 
-			if (!isConnected())
+			if (!isConnected() && from != null)
 			{
 				from.removeNestedData(toDelete);
 			}
@@ -4138,16 +4139,19 @@ public final class DataStore
 		// which causes havoc for iSeries caching when switching between offline / online
 		//if (isVirtual())
 		//	flush();
-		if (_deRemover != null)
+		if (_deRemover != null){
 			_deRemover.finish();
+		}
 
 		if (_tracingOn)
 		{
 			try
 			{
-				_traceFile.writeBytes("Finished Tracing"); //$NON-NLS-1$
-				_traceFile.writeBytes(System.getProperty("line.separator")); //$NON-NLS-1$
-				_traceFile.close();
+				if (_traceFile != null){
+					_traceFile.writeBytes("Finished Tracing"); //$NON-NLS-1$
+					_traceFile.writeBytes(System.getProperty("line.separator")); //$NON-NLS-1$
+					_traceFile.close();
+				}
 			}
 			catch (IOException e)
 			{

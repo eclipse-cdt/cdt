@@ -55,6 +55,7 @@ import org.eclipse.ui.IEditorPart;
 import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.core.model.IParent;
 import org.eclipse.cdt.core.parser.Keywords;
+import org.eclipse.cdt.ui.CElementGrouping;
 import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.cdt.ui.actions.CustomFiltersActionGroup;
 
@@ -102,7 +103,7 @@ public abstract class AbstractInformationControl extends PopupDialog implements 
 		}
 
 		private boolean hasUnfilteredChild(TreeViewer viewer, Object element) {
-			if (element instanceof IParent) {
+			if (element instanceof IParent || element instanceof CElementGrouping) {
 				Object[] children=  ((ITreeContentProvider) viewer.getContentProvider()).getChildren(element);
 				for (Object element2 : children)
 					if (select(viewer, element, element2))

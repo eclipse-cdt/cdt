@@ -93,7 +93,7 @@ public abstract class AbstractCModelOutlinePage extends Page implements IContent
 	/**
 	 * The default label provider for the outline.
 	 */
-	protected static class COutlineLabelProvider extends AppearanceAwareLabelProvider {
+	public static class COutlineLabelProvider extends AppearanceAwareLabelProvider {
 
 		/**
 		 * Flag whether to show member definitions with qualified or simple names.

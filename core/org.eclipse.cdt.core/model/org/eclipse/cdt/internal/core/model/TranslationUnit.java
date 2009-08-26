@@ -1016,13 +1016,16 @@ public class TranslationUnit extends Openable implements ITranslationUnit {
 			final String elementName;
 			if (token.charAt(0) != CEM_ELEMENTTYPE) {
 				elementName= token;
+				if (!memento.hasMoreTokens()) return null;
 				token= memento.nextToken();
 			} else {
 				// anonymous
 				elementName= ""; //$NON-NLS-1$
 			}
 			// element type
-			assert token.charAt(0) == CEM_ELEMENTTYPE;
+			if (token.charAt(0) != CEM_ELEMENTTYPE || !memento.hasMoreTokens()) {
+				return null;
+			}
 			String typeString= memento.nextToken();
 			int elementType;
 			try {
@@ -1039,6 +1042,11 @@ public class TranslationUnit extends Openable implements ITranslationUnit {
 				do {
 					token= memento.nextToken();
 					if (token.charAt(0) != CEM_PARAMETER) {
+						break;
+					}
+					if (!memento.hasMoreTokens()) {
+						params.add(""); //$NON-NLS-1$
+						token= null;
 						break;
 					}
 					params.add(memento.nextToken());

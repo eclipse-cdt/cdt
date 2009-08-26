@@ -39,6 +39,8 @@ import org.eclipse.jface.viewers.CellEditor;
 import org.eclipse.jface.viewers.ICellModifier;
 import org.eclipse.jface.viewers.TextCellEditor;
 import org.eclipse.jface.viewers.TreePath;
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.graphics.FontData;
 import org.eclipse.swt.widgets.Composite;
 
 /**
@@ -212,8 +214,10 @@ public class ExpressionManagerVMNode extends AbstractVMNode
             
         for (int i = 0; i < columnIds.length; i++) {
             if (IDebugVMConstants.COLUMN_ID__EXPRESSION.equals(columnIds[i])) {
-                update.setLabel(MessagesForExpressionVM.ExpressionManagerLayoutNode__newExpression_label, i);
-                update.setFontData(JFaceResources.getFontDescriptor(IDebugUIConstants.PREF_VARIABLE_TEXT_FONT).getFontData()[0], i);            
+                update.setLabel(MessagesForExpressionVM.ExpressionManagerLayoutNode__newExpression_label, i);                
+                FontData fontData = JFaceResources.getFontDescriptor(IDebugUIConstants.PREF_VARIABLE_TEXT_FONT).getFontData()[0];
+                fontData.setStyle(SWT.ITALIC);  // Bugzilla 287598: Distinguish 'Add new expression' entry from actual expressions                
+                update.setFontData(fontData, i);
             } else {
                 update.setLabel("", i); //$NON-NLS-1$
             }

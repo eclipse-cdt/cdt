@@ -25,7 +25,6 @@
                   targetTool="cdt.managedbuild.tool.linker.xlupc.exe.debug">
                <targetPlatform
                      archList="all"
-                     binaryParser="org.eclipse.cdt.core.XCOFF32"
                      id="cdt.managedbuild.targetplatform.xlupc.exe.debug"
                      name="%PlatformName.Dbg"
                      osList="all">
@@ -73,7 +72,6 @@
                   targetTool="cdt.managedbuild.tool.linker.xlupc.exe.release">
                <targetPlatform
                      archList="all"
-                     binaryParser="org.eclipse.cdt.core.XCOFF32"
                      id="cdt.managedbuild.targetplatform.xlupc.exe.release"
                      name="%PlatformName.Rel"
                      osList="all">
@@ -126,7 +124,6 @@
                   targetTool="cdt.managedbuild.tool.linker.xlupc.so.debug">
                <targetPlatform
                      archList="all"
-                     binaryParser="org.eclipse.cdt.core.XCOFF32"
                      id="cdt.managedbuild.targetplatform.xlupc.so.debug"
                      name="%PlatformName.Dbg"
                      osList="all">
@@ -171,7 +168,6 @@
                   targetTool="cdt.managedbuild.tool.linker.xlupc.so.release">
                <targetPlatform
                      archList="all"
-                     binaryParser="org.eclipse.cdt.core.XCOFF32"
                      id="cdt.managedbuild.targetplatform.xlupc.so.release"
                      name="%PlatformName.Rel"
                      osList="all">
@@ -224,7 +220,6 @@
                   targetTool="cdt.managedbuild.tool.archiver.xlupc.lib.debug">
                <targetPlatform
                      archList="all"
-                     binaryParser="org.eclipse.cdt.core.XCOFF32"
                      id="cdt.managedbuild.targetplatform.xlupc.lib.debug"
                      name="%PlatformName.Dbg"
                      osList="all">
@@ -269,7 +264,6 @@
                   targetTool="cdt.managedbuild.tool.archiver.xlupc.lib.release">
                <targetPlatform
                      archList="all"
-                     binaryParser="org.eclipse.cdt.core.XCOFF32"
                      id="cdt.managedbuild.targetplatform.xlupc.lib.release"
                      name="%PlatformName.Rel"
                      osList="all">

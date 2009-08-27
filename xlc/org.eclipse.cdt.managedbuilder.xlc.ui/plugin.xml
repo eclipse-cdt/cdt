@@ -457,8 +457,7 @@
                      id="cdt.managedbuild.toolchain.xlc.exe.debug">
 			      <targetPlatform
 					  id="cdt.managedbuild.target.xlc.platform.exe.debug"
-				 	  name="%PlatformName.Dbg"
-                      binaryParser="org.eclipse.cdt.core.XCOFF32"            					  
+				 	  name="%PlatformName.Dbg"            					  
 					  osList="all"					  
 					  archList="all">
 				  </targetPlatform>
@@ -523,7 +522,6 @@
 		          <targetPlatform
 		              id="cdt.managedbuild.target.xlc.platform.exe.release"
 		              name="%PlatformName.Rel"		             
-		              binaryParser="org.eclipse.cdt.core.XCOFF32"
 		              osList="all"
 		              archList="all">		              
 		          </targetPlatform>
@@ -594,8 +592,7 @@
                      id="cdt.managedbuild.toolchain.xlc.so.debug">
 		          <targetPlatform
 		              id="cdt.managedbuild.target.xlc.platform.so.debug"
-		              name="%PlatformName.Dbg"
-		              binaryParser="org.eclipse.cdt.core.XCOFF32"		            
+		              name="%PlatformName.Dbg"		            
 		              osList="all"
 		              archList="all">
 		          </targetPlatform>
@@ -657,8 +654,7 @@
                      id="cdt.managedbuild.toolchain.xlc.so.release">
 		          <targetPlatform
 		              id="cdt.managedbuild.target.xlc.platform.so.release"
-		              name="%PlatformName.Rel"
-		              binaryParser="org.eclipse.cdt.core.XCOFF32"		            
+		              name="%PlatformName.Rel"	            
 		              osList="all"
 		              archList="all">
 		          </targetPlatform>
@@ -729,8 +725,7 @@
                      id="cdt.managedbuild.toolchain.xlc.lib.debug">
 				  <targetPlatform
 					  id="cdt.managedbuild.target.xlc.platform.lib.debug"
-				 	  name="%PlatformName.Dbg"
-					  binaryParser="org.eclipse.cdt.core.XCOFF32"		            
+				 	  name="%PlatformName.Dbg"		            
 					  osList="all"
 					  archList="all">
 				  </targetPlatform>
@@ -788,8 +783,7 @@
                      id="cdt.managedbuild.toolchain.xlc.lib.release">
 		          <targetPlatform
 		              id="cdt.managedbuild.target.xlc.platform.lib.release"
-		              name="%PlatformName.Rel"
-		              binaryParser="org.eclipse.cdt.core.XCOFF32"		            
+		              name="%PlatformName.Rel"		            
 		              osList="all"
 		              archList="all">
 		          </targetPlatform>

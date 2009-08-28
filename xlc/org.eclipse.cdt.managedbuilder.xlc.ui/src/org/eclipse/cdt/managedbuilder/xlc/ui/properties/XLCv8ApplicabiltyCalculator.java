@@ -53,7 +53,7 @@ public class XLCv8ApplicabiltyCalculator implements IOptionApplicability {
 				currentVersion = prefStore.getString(PreferenceConstants.P_XLC_COMPILER_VERSION);
 			}
 			
-		  if(currentVersion.equals(PreferenceConstants.P_XL_COMPILER_VERSION_8_NAME))
+		  if(currentVersion.equals(PreferenceConstants.P_XL_COMPILER_VERSION_8))
 			  return true;
 		}
 		
@@ -81,7 +81,7 @@ public class XLCv8ApplicabiltyCalculator implements IOptionApplicability {
 				currentVersion = prefStore.getString(PreferenceConstants.P_XLC_COMPILER_VERSION);
 			}
 			
-		  if(currentVersion.equals(PreferenceConstants.P_XL_COMPILER_VERSION_8_NAME))
+		  if(currentVersion.equals(PreferenceConstants.P_XL_COMPILER_VERSION_8))
 			  return true;
 			
 		}

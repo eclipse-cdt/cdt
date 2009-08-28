@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007 IBM Corporation and others.
+ * Copyright (c) 2007, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -29,7 +29,7 @@ public class PreferenceInitializer extends AbstractPreferenceInitializer {
 	public void initializeDefaultPreferences() {
 		IPreferenceStore store = XLCUIPlugin.getDefault().getPreferenceStore();
 		store.setDefault(PreferenceConstants.P_XL_COMPILER_ROOT, "/opt/ibmcmp");  //$NON-NLS-1$
-		store.setDefault(PreferenceConstants.P_XLC_COMPILER_VERSION, PreferenceConstants.P_XL_COMPILER_VERSION_8_NAME);
+		store.setDefault(PreferenceConstants.P_XLC_COMPILER_VERSION, PreferenceConstants.P_XL_COMPILER_VERSION_8);
 	}
 
 }

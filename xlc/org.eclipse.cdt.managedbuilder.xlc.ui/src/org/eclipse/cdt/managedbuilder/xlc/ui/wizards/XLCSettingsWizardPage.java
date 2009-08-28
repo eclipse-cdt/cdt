@@ -176,16 +176,16 @@ public class XLCSettingsWizardPage extends MBSCustomPage {
 		
 		// set the default based on the workbench preference
 		String compilerVersion = prefStore.getString(PreferenceConstants.P_XLC_COMPILER_VERSION);
-		fVersionCombo.setText(compilerVersion);
+		fVersionCombo.setText(PreferenceConstants.getVersionLabel(compilerVersion));
 		
 		// update the page manager with the setting
-		MBSCustomPageManager.addPageProperty(pageID, PreferenceConstants.P_XLC_COMPILER_VERSION, fVersionCombo.getText());
+		MBSCustomPageManager.addPageProperty(pageID, PreferenceConstants.P_XLC_COMPILER_VERSION, PreferenceConstants.getVersion(fVersionCombo.getText()));
 		
 		fVersionCombo.addModifyListener(new ModifyListener() {
 
 			public void modifyText(ModifyEvent e) {
 				// update the page manager with the setting
-				MBSCustomPageManager.addPageProperty(pageID, PreferenceConstants.P_XLC_COMPILER_VERSION, fVersionCombo.getText());
+				MBSCustomPageManager.addPageProperty(pageID, PreferenceConstants.P_XLC_COMPILER_VERSION, PreferenceConstants.getVersion(fVersionCombo.getText()));
 				
 			}
 			

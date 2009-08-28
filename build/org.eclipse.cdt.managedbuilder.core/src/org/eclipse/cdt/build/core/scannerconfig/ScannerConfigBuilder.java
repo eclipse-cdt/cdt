@@ -10,9 +10,9 @@
  *******************************************************************************/
 package org.eclipse.cdt.build.core.scannerconfig;
 
-import java.util.Iterator;
 import java.util.Map;
 import java.util.Properties;
+import java.util.Map.Entry;
 
 import org.eclipse.cdt.build.internal.core.scannerconfig.CfgDiscoveredPathManager;
 import org.eclipse.cdt.build.internal.core.scannerconfig.jobs.CfgSCJobsUtil;
@@ -126,16 +126,15 @@ public class ScannerConfigBuilder extends ACBuilder {
 			//            }
 						ICfgScannerConfigBuilderInfo2Set info = CfgScannerConfigProfileManager.getCfgScannerConfigBuildInfo(cfg);
 						IProject project = cfg.getOwner().getProject();
-						Map infoMap = info.getInfoMap();
+						Map<CfgInfoContext, IScannerConfigBuilderInfo2> infoMap = info.getInfoMap();
 						int num = infoMap.size();
 						if(num != 0){
 							Properties envProps = calcEnvironment(cfg);
 							monitor.beginTask(MakeMessages.getString("ScannerConfigBuilder.Invoking_Builder"), num); //$NON-NLS-1$
-							for(Iterator iter = infoMap.entrySet().iterator(); iter.hasNext();){
+							for (Entry<CfgInfoContext, IScannerConfigBuilderInfo2> entry : infoMap.entrySet()) {
 								try {
-									Map.Entry entry = (Map.Entry)iter.next();
-									CfgInfoContext c = (CfgInfoContext)entry.getKey();
-									IScannerConfigBuilderInfo2 buildInfo2 = (IScannerConfigBuilderInfo2)entry.getValue();
+									CfgInfoContext c = entry.getKey();
+									IScannerConfigBuilderInfo2 buildInfo2 = entry.getValue();
 									build(c, buildInfo2, (flags & (~PERFORM_CORE_UPDATE)), envProps, new SubProgressMonitor(monitor, 1));
 								} catch (CoreException e){
 									// builder not installed or disabled

@@ -56,14 +56,14 @@ import org.eclipse.swt.widgets.Label;
 public class DiscoveryOptionsBlock extends AbstractDiscoveryOptionsBlock {
     private static final String MISSING_BUILDER_MSG = "ScannerConfigOptionsDialog.label.missingBuilderInformation"; //$NON-NLS-1$
 
-    private static final String DIALOG_TITLE = PREFIX + ".title"; //$NON-NLS-1$
-    private static final String DIALOG_DESCRIPTION = PREFIX + ".description"; //$NON-NLS-1$
-    private static final String SC_GROUP_LABEL = PREFIX + ".scGroup.label"; //$NON-NLS-1$
-    private static final String SC_ENABLED_BUTTON = PREFIX + ".scGroup.enabled.button"; //$NON-NLS-1$
-    private static final String SC_PROBLEM_REPORTING_ENABLED_BUTTON = PREFIX + ".scGroup.problemReporting.enabled.button"; //$NON-NLS-1$
-    private static final String SC_SELECTED_PROFILE_COMBO = PREFIX + ".scGroup.selectedProfile.combo"; //$NON-NLS-1$
-//    private static final String BO_PROVIDER_GROUP_LABEL = PREFIX + ".boProvider.group.label"; //$NON-NLS-1$
-    private static final String SC_APPLY_PROGRESS_MESSAGE = PREFIX + ".apply.progressMessage"; //$NON-NLS-1$ 
+    private static final String DIALOG_TITLE = "ScannerConfigOptionsDialog.title"; //$NON-NLS-1$
+    private static final String DIALOG_DESCRIPTION = "ScannerConfigOptionsDialog.description"; //$NON-NLS-1$
+    private static final String SC_GROUP_LABEL = "ScannerConfigOptionsDialog.scGroup.label"; //$NON-NLS-1$
+    private static final String SC_ENABLED_BUTTON = "ScannerConfigOptionsDialog.scGroup.enabled.button"; //$NON-NLS-1$
+    private static final String SC_PROBLEM_REPORTING_ENABLED_BUTTON = "ScannerConfigOptionsDialog.scGroup.problemReporting.enabled.button"; //$NON-NLS-1$
+    private static final String SC_SELECTED_PROFILE_COMBO = "ScannerConfigOptionsDialog.scGroup.selectedProfile.combo"; //$NON-NLS-1$
+//    private static final String BO_PROVIDER_GROUP_LABEL = "ScannerConfigOptionsDialog.boProvider.group.label"; //$NON-NLS-1$
+    private static final String SC_APPLY_PROGRESS_MESSAGE = "ScannerConfigOptionsDialog.apply.progressMessage"; //$NON-NLS-1$ 
     
     private Button scEnabledButton;
     private Button scProblemReportingEnabledButton;

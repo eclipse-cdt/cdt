@@ -61,12 +61,16 @@ import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableItem;
 
 public class DiscoveryTab extends AbstractCBuildPropertyTab implements IBuildInfoContainer {
-
+    /**
+     * @deprecated since CDT 6.1
+     */
+    @Deprecated
     protected static final String PREFIX = "ScannerConfigOptionsDialog"; //$NON-NLS-1$
-    private static final String SC_GROUP_LABEL = PREFIX + ".scGroup.label"; //$NON-NLS-1$
-    private static final String SC_ENABLED_BUTTON = PREFIX + ".scGroup.enabled.button"; //$NON-NLS-1$
-    private static final String SC_PROBLEM_REPORTING_ENABLED_BUTTON = PREFIX + ".scGroup.problemReporting.enabled.button"; //$NON-NLS-1$
-    private static final String SC_SELECTED_PROFILE_COMBO = PREFIX + ".scGroup.selectedProfile.combo"; //$NON-NLS-1$
+
+    private static final String SC_GROUP_LABEL = "ScannerConfigOptionsDialog.scGroup.label"; //$NON-NLS-1$
+    private static final String SC_ENABLED_BUTTON = "ScannerConfigOptionsDialog.scGroup.enabled.button"; //$NON-NLS-1$
+    private static final String SC_PROBLEM_REPORTING_ENABLED_BUTTON = "ScannerConfigOptionsDialog.scGroup.problemReporting.enabled.button"; //$NON-NLS-1$
+    private static final String SC_SELECTED_PROFILE_COMBO = "ScannerConfigOptionsDialog.scGroup.selectedProfile.combo"; //$NON-NLS-1$
     private static final String NAMESPACE = "org.eclipse.cdt.make.ui"; //$NON-NLS-1$
     private static final String POINT = "DiscoveryProfilePage"; //$NON-NLS-1$
     private static final String PROFILE_PAGE = "profilePage"; //$NON-NLS-1$

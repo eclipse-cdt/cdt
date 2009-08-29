@@ -43,13 +43,18 @@ import org.eclipse.swt.widgets.Composite;
  * @author vhirsl
  */
 public abstract class AbstractDiscoveryOptionsBlock extends AbstractCOptionPage {
+    /**
+     * @deprecated since CDT 6.1
+     */
+    @Deprecated
     protected static final String PREFIX = "ScannerConfigOptionsDialog"; //$NON-NLS-1$
-    private static final String UNSAVEDCHANGES_TITLE = PREFIX + ".unsavedchanges.title"; //$NON-NLS-1$
-    private static final String UNSAVEDCHANGES_MESSAGE = PREFIX + ".unsavedchanges.message"; //$NON-NLS-1$
-    private static final String UNSAVEDCHANGES_BSAVE = PREFIX + ".unsavedchanges.button.save"; //$NON-NLS-1$
-    private static final String UNSAVEDCHANGES_BCANCEL = PREFIX + ".unsavedchanges.button.cancel"; //$NON-NLS-1$
-    private static final String ERROR_TITLE = PREFIX + ".error.title"; //$NON-NLS-1$
-    private static final String ERROR_MESSAGE = PREFIX + ".error.message"; //$NON-NLS-1$
+
+    private static final String UNSAVEDCHANGES_TITLE = "ScannerConfigOptionsDialog.unsavedchanges.title"; //$NON-NLS-1$
+    private static final String UNSAVEDCHANGES_MESSAGE = "ScannerConfigOptionsDialog.unsavedchanges.message"; //$NON-NLS-1$
+    private static final String UNSAVEDCHANGES_BSAVE = "ScannerConfigOptionsDialog.unsavedchanges.button.save"; //$NON-NLS-1$
+    private static final String UNSAVEDCHANGES_BCANCEL = "ScannerConfigOptionsDialog.unsavedchanges.button.cancel"; //$NON-NLS-1$
+    private static final String ERROR_TITLE = "ScannerConfigOptionsDialog.error.title"; //$NON-NLS-1$
+    private static final String ERROR_MESSAGE = "ScannerConfigOptionsDialog.error.message"; //$NON-NLS-1$
     private static final String PROFILE_PAGE = "profilePage"; //$NON-NLS-1$
     private static final String PROFILE_ID = "profileId"; //$NON-NLS-1$
     

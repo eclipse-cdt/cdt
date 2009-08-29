@@ -530,9 +530,12 @@ public class CMainTab extends CLaunchConfigurationTab {
 			LaunchUIPlugin.log(e);
 		}
 
-		fDisableBuildButton.setSelection(buildBeforeLaunchValue == ICDTLaunchConfigurationConstants.BUILD_BEFORE_LAUNCH_DISABLED);
-		fEnableBuildButton.setSelection(buildBeforeLaunchValue == ICDTLaunchConfigurationConstants.BUILD_BEFORE_LAUNCH_ENABLED);
-		fWorkspaceSettingsButton.setSelection(buildBeforeLaunchValue == ICDTLaunchConfigurationConstants.BUILD_BEFORE_LAUNCH_USE_WORKSPACE_SETTING);
+		if (fDisableBuildButton != null)
+			fDisableBuildButton.setSelection(buildBeforeLaunchValue == ICDTLaunchConfigurationConstants.BUILD_BEFORE_LAUNCH_DISABLED);
+		if (fEnableBuildButton != null)
+			fEnableBuildButton.setSelection(buildBeforeLaunchValue == ICDTLaunchConfigurationConstants.BUILD_BEFORE_LAUNCH_ENABLED);
+		if (fWorkspaceSettingsButton != null)
+			fWorkspaceSettingsButton.setSelection(buildBeforeLaunchValue == ICDTLaunchConfigurationConstants.BUILD_BEFORE_LAUNCH_USE_WORKSPACE_SETTING);
 	}
 
 	/*

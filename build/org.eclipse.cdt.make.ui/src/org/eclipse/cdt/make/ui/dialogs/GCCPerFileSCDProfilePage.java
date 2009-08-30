@@ -65,7 +65,7 @@ public class GCCPerFileSCDProfilePage extends AbstractDiscoveryPage {
 
         // Add the profile UI contribution.
         Group profileGroup = ControlFactory.createGroup(page,
-                MakeUIPlugin.getResourceString(PROFILE_GROUP_LABEL), 3);
+                MakeUIPlugin.getResourceString("ScannerConfigOptionsDialog.profile.group.label"), 3); //$NON-NLS-1$
         
         GridData gd = (GridData) profileGroup.getLayoutData();
         gd.grabExcessHorizontalSpace = true;
@@ -80,7 +80,8 @@ public class GCCPerFileSCDProfilePage extends AbstractDiscoveryPage {
         ((GridData)bopEnabledButton.getLayoutData()).grabExcessHorizontalSpace = true;
         bopEnabledButton.addSelectionListener(new SelectionAdapter() {
             
-            public void widgetSelected(SelectionEvent e) {
+            @Override
+			public void widgetSelected(SelectionEvent e) {
                 handleModifyOpenFileText();
             }
             
@@ -95,7 +96,8 @@ public class GCCPerFileSCDProfilePage extends AbstractDiscoveryPage {
         ((GridData) bopLoadButton.getLayoutData()).minimumWidth = 120;
         bopLoadButton.addSelectionListener(new SelectionAdapter() {
             
-            public void widgetSelected(SelectionEvent event) {
+            @Override
+			public void widgetSelected(SelectionEvent event) {
                 handleBOPLoadFileButtonSelected();
             }
 
@@ -118,7 +120,8 @@ public class GCCPerFileSCDProfilePage extends AbstractDiscoveryPage {
         ((GridData) browseButton.getLayoutData()).minimumWidth = 120; 
         browseButton.addSelectionListener(new SelectionAdapter() {
 
-            public void widgetSelected(SelectionEvent event) {
+            @Override
+			public void widgetSelected(SelectionEvent event) {
                 handleBOPBrowseButtonSelected();
             }
 
@@ -216,7 +219,8 @@ public class GCCPerFileSCDProfilePage extends AbstractDiscoveryPage {
         readerJob.setPriority(Job.LONG);
         readerJob.addJobChangeListener(new JobChangeAdapter() {
             
-            public void done(IJobChangeEvent event) {
+            @Override
+			public void done(IJobChangeEvent event) {
                 //lock.acquire();
                 synchronized (lock) {
                     if (!instance.shell.isDisposed()) {
@@ -248,14 +252,16 @@ public class GCCPerFileSCDProfilePage extends AbstractDiscoveryPage {
     /* (non-Javadoc)
      * @see org.eclipse.cdt.make.ui.dialogs.AbstractDiscoveryPage#isValid()
      */
-    protected boolean isValid() {
+    @Override
+	protected boolean isValid() {
         return true;
     }
 
     /* (non-Javadoc)
      * @see org.eclipse.cdt.make.ui.dialogs.AbstractDiscoveryPage#populateBuildInfo(org.eclipse.cdt.make.core.scannerconfig.IScannerConfigBuilderInfo2)
      */
-    protected void populateBuildInfo(IScannerConfigBuilderInfo2 buildInfo) {
+    @Override
+	protected void populateBuildInfo(IScannerConfigBuilderInfo2 buildInfo) {
         if (buildInfo != null) {
             buildInfo.setBuildOutputFileActionEnabled(true);
             buildInfo.setBuildOutputFilePath(getBopOpenFileText());
@@ -267,7 +273,8 @@ public class GCCPerFileSCDProfilePage extends AbstractDiscoveryPage {
     /* (non-Javadoc)
      * @see org.eclipse.cdt.make.ui.dialogs.AbstractDiscoveryPage#restoreFromBuildinfo(org.eclipse.cdt.make.core.scannerconfig.IScannerConfigBuilderInfo2)
      */
-    protected void restoreFromBuildinfo(IScannerConfigBuilderInfo2 buildInfo) {
+    @Override
+	protected void restoreFromBuildinfo(IScannerConfigBuilderInfo2 buildInfo) {
         if (buildInfo != null) {
             setBopOpenFileText(buildInfo.getBuildOutputFilePath());
             bopEnabledButton.setSelection(buildInfo.isBuildOutputParserEnabled());
@@ -277,10 +284,10 @@ public class GCCPerFileSCDProfilePage extends AbstractDiscoveryPage {
     private String getProviderIDForSelectedProfile() {
     	IScannerConfigBuilderInfo2 builderInfo = getContainer().getBuildInfo();
     	// Provider IDs for selected profile
-    	List providerIDs = builderInfo.getProviderIdList(); 
+    	List<String> providerIDs = builderInfo.getProviderIdList(); 
     	if(providerIDs.size() == 0)
-    		return "";
-    	return (String)providerIDs.iterator().next(); 
+    		return ""; //$NON-NLS-1$
+    	return providerIDs.iterator().next(); 
     }
 
 }

@@ -34,12 +34,14 @@ public class GCCScannerInfoConsoleParserTests extends BaseBOPConsoleParserTests 
 		super(name);
 	}
 
+	@Override
 	protected void setUp() throws Exception {
 		super.setUp();
 		fOutputParser= new GCCScannerInfoConsoleParser();
 		fOutputParser.startup(null, null, fCollector, null);
 	}
 
+	@Override
 	protected void tearDown() throws Exception {
 		super.tearDown();
 		fOutputParser.shutdown();

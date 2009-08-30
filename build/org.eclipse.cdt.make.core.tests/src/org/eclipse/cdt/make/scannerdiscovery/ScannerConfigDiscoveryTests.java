@@ -46,6 +46,7 @@ public class ScannerConfigDiscoveryTests extends BaseTestCase {
 		super(name);
 	}
 
+	@Override
 	protected void setUp() throws Exception {
 		fMonitor = new NullProgressMonitor();
 		
@@ -56,6 +57,7 @@ public class ScannerConfigDiscoveryTests extends BaseTestCase {
 		}
 	}
 
+	@Override
 	protected void tearDown() throws Exception {
 		StandardBuildTestHelper.removeProject("SCDC");
 	}

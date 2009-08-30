@@ -31,6 +31,7 @@ public class ScannerConfigProfileTests extends BaseTestCase {
 	private IProject fCProject = null;
 	private IFile fCFile = null;
 
+	@Override
 	protected void setUp() throws Exception {
 		fCProject = StandardBuildTestHelper.createProject("SCD", (IPath)null, MakeCorePlugin.MAKE_PROJECT_ID);
 		fCFile = fCProject.getProject().getFile("main.c");
@@ -39,6 +40,7 @@ public class ScannerConfigProfileTests extends BaseTestCase {
 		}
 	}
 
+	@Override
 	protected void tearDown() throws Exception {
 		StandardBuildTestHelper.removeProject("SCDC");
 	}

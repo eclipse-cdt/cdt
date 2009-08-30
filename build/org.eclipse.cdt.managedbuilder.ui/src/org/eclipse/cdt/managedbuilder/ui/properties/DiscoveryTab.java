@@ -75,13 +75,13 @@ public class DiscoveryTab extends AbstractCBuildPropertyTab implements IBuildInf
 	private static final int DEFAULT_HEIGHT = 110;
 	private static final int[] DEFAULT_SASH_WEIGHTS = new int[] { 10, 20 };
 	private Label fTableDefinition;
-	private Table resTable;
-	private Button scEnabledButton;
-	private Button scProblemReportingEnabledButton;
-	private Combo profileComboBox;
 	private Combo scopeComboBox;
-	private Composite profileComp;
-	private Group scGroup;
+	private Table resTable;
+	private Group autoDiscoveryGroup;
+	private Button autoDiscoveryCheckBox;
+	private Button reportProblemsCheckBox;
+	private Combo profileComboBox;
+	private Composite profileOptionsComposite;
 
 	private ICfgScannerConfigBuilderInfo2Set cbi;
 	private Map<InfoContext, Object> baseInfoMap;
@@ -102,20 +102,22 @@ public class DiscoveryTab extends AbstractCBuildPropertyTab implements IBuildInf
 	 * org.eclipse.jface.dialogs.IDialogPage#createControl(org.eclipse.swt.widgets
 	 * .Composite)
 	 */
+	@Override
 	public void createControls(Composite parent) {
 		super.createControls(parent);
 		wrapper = new DiscoveryPageWrapper(this.page, this);
 		usercomp.setLayout(new GridLayout(1, false));
 
 		if (page.isForProject() || page.isForPrefs()) {
-			Group scopeGroup = setupGroup(usercomp, Messages.getString("DiscoveryTab.0"),
-					1, GridData.FILL_HORIZONTAL); //$NON-NLS-1$
+			Group scopeGroup = setupGroup(usercomp, Messages.getString("DiscoveryTab.0"), //$NON-NLS-1$
+					1, GridData.FILL_HORIZONTAL);
 			scopeGroup.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 			scopeComboBox = new Combo(scopeGroup, SWT.DROP_DOWN | SWT.READ_ONLY | SWT.BORDER);
 			scopeComboBox.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 			scopeComboBox.add(Messages.getString("DiscoveryTab.1")); //$NON-NLS-1$
 			scopeComboBox.add(Messages.getString("DiscoveryTab.2")); //$NON-NLS-1$
 			scopeComboBox.addSelectionListener(new SelectionAdapter() {
+				@Override
 				public void widgetSelected(SelectionEvent e) {
 					if (cbi == null)
 						return;
@@ -142,6 +144,7 @@ public class DiscoveryTab extends AbstractCBuildPropertyTab implements IBuildInf
 		gd.widthHint = 150;
 		resTable.setLayoutData(gd);
 		resTable.addSelectionListener(new SelectionAdapter() {
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				handleToolSelected();
 			}
@@ -154,43 +157,47 @@ public class DiscoveryTab extends AbstractCBuildPropertyTab implements IBuildInf
 
 		createScannerConfigControls(c);
 
-		profileComp = new Composite(c, SWT.NONE);
+		profileOptionsComposite = new Composite(c, SWT.NONE);
 		gd = new GridData(GridData.FILL, GridData.FILL, true, true);
 		gd.heightHint = Dialog.convertVerticalDLUsToPixels(getFontMetrics(parent), DEFAULT_HEIGHT);
-		profileComp.setLayoutData(gd);
-		profileComp.setLayout(new TabFolderLayout());
+		profileOptionsComposite.setLayoutData(gd);
+		profileOptionsComposite.setLayout(new TabFolderLayout());
 
 		sashForm.setWeights(DEFAULT_SASH_WEIGHTS);
 	}
 
 	private void createScannerConfigControls(Composite parent) {
-		scGroup = setupGroup(parent, UIMessages.getString("ScannerConfigOptionsDialog.scGroup.label"),
+		autoDiscoveryGroup = setupGroup(parent, UIMessages.getString("ScannerConfigOptionsDialog.scGroup.label"), //$NON-NLS-1$
 				2, GridData.FILL_HORIZONTAL);
 
-		scEnabledButton = setupCheck(scGroup, UIMessages.getString("ScannerConfigOptionsDialog.scGroup.enabled.button"),
+		autoDiscoveryCheckBox = setupCheck(autoDiscoveryGroup, UIMessages.getString("ScannerConfigOptionsDialog.scGroup.enabled.button"), //$NON-NLS-1$
 				2, GridData.FILL_HORIZONTAL);
-		scEnabledButton.addSelectionListener(new SelectionAdapter() {
+		autoDiscoveryCheckBox.addSelectionListener(new SelectionAdapter() {
+			@Override
 			public void widgetSelected(SelectionEvent e) {
-				buildInfo.setAutoDiscoveryEnabled(scEnabledButton.getSelection());
+				buildInfo.setAutoDiscoveryEnabled(autoDiscoveryCheckBox.getSelection());
 				enableAllControls();
-				if (scEnabledButton.getSelection())
+				if (autoDiscoveryCheckBox.getSelection())
 					handleDiscoveryProfileChanged();
 			}
 		});
-		scProblemReportingEnabledButton = setupCheck(scGroup, UIMessages.getString("ScannerConfigOptionsDialog.scGroup.problemReporting.enabled.button"),
+		reportProblemsCheckBox = setupCheck(autoDiscoveryGroup,
+				UIMessages.getString("ScannerConfigOptionsDialog.scGroup.problemReporting.enabled.button"), //$NON-NLS-1$
 				2, GridData.FILL_HORIZONTAL);
-		scProblemReportingEnabledButton.addSelectionListener(new SelectionAdapter() {
+		reportProblemsCheckBox.addSelectionListener(new SelectionAdapter() {
+			@Override
 			public void widgetSelected(SelectionEvent e) {
-				buildInfo.setProblemReportingEnabled(scProblemReportingEnabledButton.getSelection());
+				buildInfo.setProblemReportingEnabled(reportProblemsCheckBox.getSelection());
 			}
 		});
 
 		// Add profile combo box
-		setupLabel(scGroup, UIMessages.getString("ScannerConfigOptionsDialog.scGroup.selectedProfile.combo"),
+		setupLabel(autoDiscoveryGroup, UIMessages.getString("ScannerConfigOptionsDialog.scGroup.selectedProfile.combo"), //$NON-NLS-1$
 				1, GridData.BEGINNING);
-		profileComboBox = new Combo(scGroup, SWT.DROP_DOWN | SWT.READ_ONLY | SWT.BORDER);
+		profileComboBox = new Combo(autoDiscoveryGroup, SWT.DROP_DOWN | SWT.READ_ONLY | SWT.BORDER);
 		profileComboBox.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		profileComboBox.addSelectionListener(new SelectionAdapter() {
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				int x = profileComboBox.getSelectionIndex();
 				String s = visibleProfilesList.get(x);
@@ -201,12 +208,13 @@ public class DiscoveryTab extends AbstractCBuildPropertyTab implements IBuildInf
 	}
 
 	private void enableAllControls() {
-		boolean isSCDEnabled = scEnabledButton.getSelection();
-		scProblemReportingEnabledButton.setEnabled(isSCDEnabled);
+		boolean isSCDEnabled = autoDiscoveryCheckBox.getSelection();
+		reportProblemsCheckBox.setEnabled(isSCDEnabled);
 		profileComboBox.setEnabled(isSCDEnabled);
-		profileComp.setVisible(isSCDEnabled);
+		profileOptionsComposite.setVisible(isSCDEnabled);
 	}
 
+	@Override
 	public void updateData(ICResourceDescription rcfg) {
 		if (page.isMultiCfg()) {
 			setAllVisible(false, null);
@@ -278,13 +286,13 @@ public class DiscoveryTab extends AbstractCBuildPropertyTab implements IBuildInf
 	}
 
 	private void setVisibility(String errMsg) {
-		scGroup.setVisible(errMsg == null);
-		profileComp.setVisible(errMsg == null);
+		autoDiscoveryGroup.setVisible(errMsg == null);
+		profileOptionsComposite.setVisible(errMsg == null);
 		resTable.setEnabled(errMsg == null);
 		if (errMsg != null) {
 			String[] ss = errMsg.split("\n"); //$NON-NLS-1$
-			for (int i = 0; i < ss.length; i++)
-				new TableItem(resTable, SWT.NONE).setText(ss[i]);
+			for (String line : ss)
+				new TableItem(resTable, SWT.NONE).setText(line);
 		}
 	}
 
@@ -302,8 +310,8 @@ public class DiscoveryTab extends AbstractCBuildPropertyTab implements IBuildInf
 		TableItem ti = resTable.getSelection()[0];
 		buildInfo = (IScannerConfigBuilderInfo2) ti.getData("info"); //$NON-NLS-1$
 		iContext = (CfgInfoContext) ti.getData("cont"); //$NON-NLS-1$
-		scEnabledButton.setSelection(buildInfo.isAutoDiscoveryEnabled());
-		scProblemReportingEnabledButton.setSelection(buildInfo.isProblemReportingEnabled());
+		autoDiscoveryCheckBox.setSelection(buildInfo.isAutoDiscoveryEnabled());
+		reportProblemsCheckBox.setSelection(buildInfo.isProblemReportingEnabled());
 
 		profileComboBox.removeAll();
 		List<String> profilesList = buildInfo.getProfileIdList();
@@ -311,10 +319,10 @@ public class DiscoveryTab extends AbstractCBuildPropertyTab implements IBuildInf
 		visibleProfilesList = new ArrayList<String>(profilesList.size());
 
 		if (realPages != null && realPages.length > 0) {
-			for (int i = 0; i < realPages.length; i++) {
-				if (realPages[i] != null) {
-					realPages[i].setVisible(false);
-					realPages[i].dispose();
+			for (AbstractDiscoveryPage realPage : realPages) {
+				if (realPage != null) {
+					realPage.setVisible(false);
+					realPage.dispose();
 				}
 			}
 		}
@@ -343,11 +351,11 @@ public class DiscoveryTab extends AbstractCBuildPropertyTab implements IBuildInf
 		for (String profileId : profilesList) {
 			if (tools != null) {
 				boolean ok = false;
-				for (int i = 0; i < tools.length; ++i) {
-					IInputType[] inputTypes = ((Tool) tools[i]).getAllInputTypes();
+				for (ITool tool : tools) {
+					IInputType[] inputTypes = ((Tool) tool).getAllInputTypes();
 					if (null != inputTypes) {
 						for (IInputType it : inputTypes) {
-							String[] requiedProfiles = getDiscoveryProfileIds(tools[i], it);
+							String[] requiedProfiles = getDiscoveryProfileIds(tool, it);
 							if (null != requiedProfiles) {
 								for (String requiredProfile : requiedProfiles) {
 									if (profileId.equals(requiredProfile)) {
@@ -381,8 +389,8 @@ public class DiscoveryTab extends AbstractCBuildPropertyTab implements IBuildInf
 						if (s != null && s.length() > 0)
 							labels[counter] = s;
 						pg.setContainer(wrapper);
-						pg.createControl(profileComp);
-						profileComp.layout(true);
+						pg.createControl(profileOptionsComposite);
+						profileOptionsComposite.layout(true);
 						break;
 					}
 				}
@@ -404,8 +412,8 @@ public class DiscoveryTab extends AbstractCBuildPropertyTab implements IBuildInf
 			return new String[0];
 		// FIXME: temporary; we should add new method to IInputType instead of
 		// that
-		String[] profileIds = attribute.split("\\|");
-		for (int i = 0; i < profileIds.length; ++i)
+		String[] profileIds = attribute.split("\\|"); //$NON-NLS-1$
+		for (int i = 0; i < profileIds.length; i++)
 			profileIds[i] = profileIds[i].trim();
 		return profileIds;
 	}
@@ -478,17 +486,17 @@ public class DiscoveryTab extends AbstractCBuildPropertyTab implements IBuildInf
 	}
 
 	/**
-     * 
-     */
+	 * 
+	 */
 	private void initializeProfilePageMap() {
 		pagesList = new ArrayList<DiscoveryProfilePageConfiguration>(5);
 		IExtensionPoint point = Platform.getExtensionRegistry().getExtensionPoint(NAMESPACE, POINT);
 		if (point == null)
 			return;
 		IConfigurationElement[] infos = point.getConfigurationElements();
-		for (int i = 0; i < infos.length; i++) {
-			if (infos[i].getName().equals(PROFILE_PAGE)) {
-				pagesList.add(new DiscoveryProfilePageConfiguration(infos[i]));
+		for (IConfigurationElement info : infos) {
+			if (info.getName().equals(PROFILE_PAGE)) {
+				pagesList.add(new DiscoveryProfilePageConfiguration(info));
 			}
 		}
 	}
@@ -522,6 +530,7 @@ public class DiscoveryTab extends AbstractCBuildPropertyTab implements IBuildInf
 		}
 	}
 
+	@Override
 	public void performApply(ICResourceDescription src,
 			ICResourceDescription dst) {
 		if (page.isMultiCfg())
@@ -548,6 +557,7 @@ public class DiscoveryTab extends AbstractCBuildPropertyTab implements IBuildInf
 		clearChangedDiscoveredInfos();
 	}
 
+	@Override
 	protected void performOK() {
 		performOK(true);
 	}
@@ -573,10 +583,9 @@ public class DiscoveryTab extends AbstractCBuildPropertyTab implements IBuildInf
 	}
 
 	private void clearChangedDiscoveredInfos() {
-		List<CfgInfoContext> changedContexts = checkChanges();
 		IProject project = getProject();
-		for (int i = 0; i < changedContexts.size(); i++) {
-			CfgInfoContext c = changedContexts.get(i);
+		List<CfgInfoContext> changedContexts = checkChanges();
+		for (CfgInfoContext c : changedContexts) {
 			CfgDiscoveredPathManager.getInstance().removeDiscoveredInfo(project, c);
 			// MakeCorePlugin.getDefault().getDiscoveryManager().removeDiscoveredInfo(c.getProject(), c);
 		}
@@ -657,6 +666,7 @@ public class DiscoveryTab extends AbstractCBuildPropertyTab implements IBuildInf
 		return true;
 	}
 
+	@Override
 	public boolean canBeVisible() {
 		if (page.isMultiCfg()) {
 			setAllVisible(false, null);
@@ -691,6 +701,7 @@ public class DiscoveryTab extends AbstractCBuildPropertyTab implements IBuildInf
 		return getResDesc().getConfiguration();
 	}
 
+	@Override
 	protected void performDefaults() {
 		if (page.isMultiCfg())
 			return;
@@ -704,6 +715,7 @@ public class DiscoveryTab extends AbstractCBuildPropertyTab implements IBuildInf
 		updateData();
 	}
 
+	@Override
 	protected void updateButtons() {
 		// Do nothing. No buttons to update.
 	}

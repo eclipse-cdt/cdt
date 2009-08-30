@@ -49,7 +49,7 @@ public class MBSPerProjectSCDProfilePage extends AbstractDiscoveryPage {
         
         // Add the profile UI contribution.
         Group profileGroup = ControlFactory.createGroup(page,
-                MakeUIPlugin.getResourceString(PROFILE_GROUP_LABEL), 3);
+                MakeUIPlugin.getResourceString("ScannerConfigOptionsDialog.profile.group.label"), 3); //$NON-NLS-1$
         
         GridData gd = (GridData) profileGroup.getLayoutData();
         gd.grabExcessHorizontalSpace = true;
@@ -61,7 +61,8 @@ public class MBSPerProjectSCDProfilePage extends AbstractDiscoveryPage {
         ((GridData)sipEnabledButton.getLayoutData()).horizontalSpan = 3;
         ((GridData)sipEnabledButton.getLayoutData()).grabExcessHorizontalSpace = true;
         sipEnabledButton.addSelectionListener(new SelectionAdapter() {
-            public void widgetSelected(SelectionEvent e) {         
+            @Override
+			public void widgetSelected(SelectionEvent e) {         
             }
         });
         
@@ -83,7 +84,8 @@ public class MBSPerProjectSCDProfilePage extends AbstractDiscoveryPage {
         ((GridData) siBrowseButton.getLayoutData()).minimumWidth = 120;
         siBrowseButton.addSelectionListener(new SelectionAdapter() {
 
-            public void widgetSelected(SelectionEvent event) {
+            @Override
+			public void widgetSelected(SelectionEvent event) {
                 handleSIPBrowseButtonSelected();
             }
 
@@ -120,21 +122,24 @@ public class MBSPerProjectSCDProfilePage extends AbstractDiscoveryPage {
     /* (non-Javadoc)
      * @see org.eclipse.cdt.ui.dialogs.ICOptionPage#isValid()
      */
-    public boolean isValid() {
+    @Override
+	public boolean isValid() {
         return isValid;
     }
     
     /* (non-Javadoc)
      * @see org.eclipse.jface.dialogs.IDialogPage#getErrorMessage()
      */
-    public String getErrorMessage() {
+    @Override
+	public String getErrorMessage() {
         return (isValid) ? null : SI_ERROR;
     }
     
     /* (non-Javadoc)
      * @see org.eclipse.cdt.make.ui.dialogs.AbstractDiscoveryPage#populateBuildInfo(org.eclipse.cdt.make.core.scannerconfig.IScannerConfigBuilderInfo2)
      */
-    protected void populateBuildInfo(IScannerConfigBuilderInfo2 buildInfo) {
+    @Override
+	protected void populateBuildInfo(IScannerConfigBuilderInfo2 buildInfo) {
         if (buildInfo != null) {
             buildInfo.setBuildOutputFileActionEnabled(true);
             buildInfo.setProviderOutputParserEnabled(providerId, sipEnabledButton.getSelection());
@@ -145,7 +150,8 @@ public class MBSPerProjectSCDProfilePage extends AbstractDiscoveryPage {
     /* (non-Javadoc)
      * @see org.eclipse.cdt.make.ui.dialogs.AbstractDiscoveryPage#restoreFromBuildinfo(org.eclipse.cdt.make.core.scannerconfig.IScannerConfigBuilderInfo2)
      */
-    protected void restoreFromBuildinfo(IScannerConfigBuilderInfo2 buildInfo) {
+    @Override
+	protected void restoreFromBuildinfo(IScannerConfigBuilderInfo2 buildInfo) {
         if (buildInfo != null) {
             sipEnabledButton.setSelection(buildInfo.isProviderOutputParserEnabled(providerId));
             sipRunCommandText.setText(buildInfo.getProviderRunCommand(providerId));

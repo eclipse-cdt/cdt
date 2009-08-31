@@ -30,33 +30,26 @@ import org.eclipse.swt.widgets.Text;
  * @author vhirsl
  */
 public abstract class AbstractDiscoveryPage extends DialogPage {
+    /**
+     * @deprecated since CDT 6.1
+     */
+    @Deprecated
     protected static final String PREFIX = "ScannerConfigOptionsDialog"; //$NON-NLS-1$
-    protected static final String PROFILE_GROUP_LABEL = PREFIX + ".profile.group.label"; //$NON-NLS-1$
-    private static final String VARIABLES_BUTTON = PREFIX + ".common.variables.button"; //$NON-NLS-1$
+
+    protected static final String PROFILE_GROUP_LABEL = "ScannerConfigOptionsDialog.profile.group.label"; //$NON-NLS-1$
  
-    private static final String BO_PROVIDER_PARSER_ENABLED_BUTTON = PREFIX + ".boProvider.parser.enabled.button"; //$NON-NLS-1$
-    private static final String BO_PROVIDER_OPEN_LABEL = PREFIX + ".boProvider.open.label"; //$NON-NLS-1$
-    private static final String BO_PROVIDER_BROWSE_BUTTON = PREFIX + ".boProvider.browse.button"; //$NON-NLS-1$
-    private static final String BO_PROVIDER_OPEN_FILE_DIALOG = PREFIX + ".boProvider.browse.openFileDialog"; //$NON-NLS-1$
-    private static final String BO_PROVIDER_LOAD_BUTTON = PREFIX + ".boProvider.load.button"; //$NON-NLS-1$
+    protected static final String B_ENABLE = MakeUIPlugin.getResourceString("ScannerConfigOptionsDialog.boProvider.parser.enabled.button"); //$NON-NLS-1$
+    protected static final String L_OPEN = MakeUIPlugin.getResourceString("ScannerConfigOptionsDialog.boProvider.open.label"); //$NON-NLS-1$
+    protected static final String B_BROWSE = MakeUIPlugin.getResourceString("ScannerConfigOptionsDialog.boProvider.browse.button"); //$NON-NLS-1$
+    protected static final String F_OPEN = MakeUIPlugin.getResourceString("ScannerConfigOptionsDialog.boProvider.browse.openFileDialog"); //$NON-NLS-1$
+    protected static final String B_LOAD = MakeUIPlugin.getResourceString("ScannerConfigOptionsDialog.boProvider.load.button"); //$NON-NLS-1$
     
-    private static final String SI_PROVIDER_PARSER_ENABLED_BUTTON = PREFIX + ".siProvider.parser.enabled.button"; //$NON-NLS-1$
-    private static final String SI_PROVIDER_COMMAND_LABEL = PREFIX + ".siProvider.command.label"; //$NON-NLS-1$
-    private static final String SI_PROVIDER_BROWSE_BUTTON = PREFIX + ".siProvider.browse.button"; //$NON-NLS-1$
-    private static final String SI_PROVIDER_COMMAND_DIALOG = PREFIX + ".siProvider.browse.runCommandDialog"; //$NON-NLS-1$
-    private static final String SI_PROVIDER_COMMAND_ERROR_MESSAGE= PREFIX + ".siProvider.command.errorMessage"; //$NON-NLS-1$
-    
-    protected static final String B_ENABLE = MakeUIPlugin.getResourceString(BO_PROVIDER_PARSER_ENABLED_BUTTON);
-    protected static final String L_OPEN = MakeUIPlugin.getResourceString(BO_PROVIDER_OPEN_LABEL);
-    protected static final String B_BROWSE = MakeUIPlugin.getResourceString(BO_PROVIDER_BROWSE_BUTTON);
-    protected static final String F_OPEN = MakeUIPlugin.getResourceString(BO_PROVIDER_OPEN_FILE_DIALOG);
-    protected static final String B_LOAD = MakeUIPlugin.getResourceString(BO_PROVIDER_LOAD_BUTTON);
-    
-    protected static final String SI_ENABLE = MakeUIPlugin.getResourceString(SI_PROVIDER_PARSER_ENABLED_BUTTON);
-    protected static final String SI_COMMAND = MakeUIPlugin.getResourceString(SI_PROVIDER_COMMAND_LABEL);
-    protected static final String SI_BROWSE = MakeUIPlugin.getResourceString(SI_PROVIDER_BROWSE_BUTTON);
-    protected static final String SI_DIALOG = MakeUIPlugin.getResourceString(SI_PROVIDER_COMMAND_DIALOG);
-    protected static final String SI_ERROR  = MakeUIPlugin.getResourceString(SI_PROVIDER_COMMAND_ERROR_MESSAGE);
+    protected static final String SI_ENABLE = MakeUIPlugin.getResourceString("ScannerConfigOptionsDialog.siProvider.parser.enabled.button"); //$NON-NLS-1$
+    protected static final String SI_COMMAND = MakeUIPlugin.getResourceString("ScannerConfigOptionsDialog.siProvider.command.label"); //$NON-NLS-1$
+    protected static final String SI_ARGS = MakeUIPlugin.getResourceString("ScannerConfigOptionsDialog.siProvider.args.label"); //$NON-NLS-1$
+    protected static final String SI_BROWSE = MakeUIPlugin.getResourceString("ScannerConfigOptionsDialog.siProvider.browse.button"); //$NON-NLS-1$
+    protected static final String SI_DIALOG = MakeUIPlugin.getResourceString("ScannerConfigOptionsDialog.siProvider.browse.runCommandDialog"); //$NON-NLS-1$
+    protected static final String SI_ERROR  = MakeUIPlugin.getResourceString("ScannerConfigOptionsDialog.siProvider.command.errorMessage"); //$NON-NLS-1$
     
     protected AbstractDiscoveryOptionsBlock fContainer; // parent
     
@@ -96,7 +89,7 @@ public abstract class AbstractDiscoveryPage extends DialogPage {
 
     protected Button addVariablesButton(Composite parent, final Text control) {
         Button variablesButton = ControlFactory.createPushButton(parent,
-                MakeUIPlugin.getResourceString(VARIABLES_BUTTON));
+                MakeUIPlugin.getResourceString("ScannerConfigOptionsDialog.common.variables.button")); //$NON-NLS-1$
         ((GridData) variablesButton.getLayoutData()).widthHint = 
                 SWTUtil.getButtonWidthHint(variablesButton);
         
@@ -106,7 +99,8 @@ public abstract class AbstractDiscoveryPage extends DialogPage {
              * 
              * @see org.eclipse.swt.events.SelectionAdapter#widgetSelected(org.eclipse.swt.events.SelectionEvent)
              */
-            public void widgetSelected(SelectionEvent arg0) {
+            @Override
+			public void widgetSelected(SelectionEvent arg0) {
                 handleVariablesButtonSelected(control);
             }
         });

@@ -82,7 +82,7 @@ public class GCCPerProjectSCDProfilePage extends AbstractDiscoveryPage {
         ((GridData)bopEnabledButton.getLayoutData()).grabExcessHorizontalSpace = true;
         bopEnabledButton.addSelectionListener(new SelectionAdapter() {
             @Override
-			public void widgetSelected(SelectionEvent e) {
+            public void widgetSelected(SelectionEvent e) {
                 handleModifyOpenFileText();
             }
         });
@@ -96,7 +96,7 @@ public class GCCPerProjectSCDProfilePage extends AbstractDiscoveryPage {
         ((GridData) bopLoadButton.getLayoutData()).minimumWidth = 120;
         bopLoadButton.addSelectionListener(new SelectionAdapter() {
             @Override
-			public void widgetSelected(SelectionEvent event) {
+            public void widgetSelected(SelectionEvent event) {
                 handleBOPLoadFileButtonSelected();
             }
         });
@@ -119,7 +119,7 @@ public class GCCPerProjectSCDProfilePage extends AbstractDiscoveryPage {
         browseButton.addSelectionListener(new SelectionAdapter() {
 
             @Override
-			public void widgetSelected(SelectionEvent event) {
+            public void widgetSelected(SelectionEvent event) {
                 handleBOPBrowseButtonSelected();
             }
 
@@ -129,7 +129,7 @@ public class GCCPerProjectSCDProfilePage extends AbstractDiscoveryPage {
                 String fileName = getBopOpenFileText();
                 IPath filterPath;
                 if (fileName.length() == 0 && getContainer().getProject() != null) {
-                	filterPath = getContainer().getProject().getLocation();
+                    filterPath = getContainer().getProject().getLocation();
                 }
                 else {
                     IPath filePath = new Path(fileName);
@@ -154,8 +154,8 @@ public class GCCPerProjectSCDProfilePage extends AbstractDiscoveryPage {
         ((GridData)sipEnabledButton.getLayoutData()).grabExcessHorizontalSpace = true;
         sipEnabledButton.addSelectionListener(new SelectionAdapter() {
             @Override
-			public void widgetSelected(SelectionEvent e) {
-//                bopLoadButton.setEnabled(sipEnabledButton.getSelection());
+            public void widgetSelected(SelectionEvent e) {
+                handleSIPEnabledButtonSelected();
             }
         });
         
@@ -177,7 +177,7 @@ public class GCCPerProjectSCDProfilePage extends AbstractDiscoveryPage {
         siBrowseButton.addSelectionListener(new SelectionAdapter() {
 
             @Override
-			public void widgetSelected(SelectionEvent event) {
+            public void widgetSelected(SelectionEvent event) {
                 handleSIPBrowseButtonSelected();
             }
 
@@ -218,6 +218,8 @@ public class GCCPerProjectSCDProfilePage extends AbstractDiscoveryPage {
             instance = this;
         }
         initializeValues();
+
+        handleSIPEnabledButtonSelected();
     }
 
     protected boolean handleModifyOpenFileText() {
@@ -236,7 +238,12 @@ public class GCCPerProjectSCDProfilePage extends AbstractDiscoveryPage {
     }
 
     protected void handleModifyRunArgsText() {
-    	getContainer().updateContainer();
+        getContainer().updateContainer();
+    }
+    
+    protected void handleSIPEnabledButtonSelected() {
+        sipRunCommandText.setEnabled(sipEnabledButton.getSelection());
+        sipRunArgsText.setEnabled(sipEnabledButton.getSelection());
     }
     
     private String getBopOpenFileText() {
@@ -274,10 +281,10 @@ public class GCCPerProjectSCDProfilePage extends AbstractDiscoveryPage {
     }
     
     private void initializeValues() {
-    	IScannerConfigBuilderInfo2 builderInfo = getContainer().getBuildInfo();
-    	String providerId = getProviderIDForSelectedProfile(); 
-    	
-    	bopEnabledButton.setSelection(builderInfo.isBuildOutputParserEnabled());
+        IScannerConfigBuilderInfo2 builderInfo = getContainer().getBuildInfo();
+        String providerId = getProviderIDForSelectedProfile(); 
+        
+        bopEnabledButton.setSelection(builderInfo.isBuildOutputParserEnabled());
         setBopOpenFileText(builderInfo.getBuildOutputFilePath());
         sipEnabledButton.setSelection(builderInfo.isProviderOutputParserEnabled(providerId));
         sipRunCommandText.setText(builderInfo.getProviderRunCommand(providerId));
@@ -285,12 +292,12 @@ public class GCCPerProjectSCDProfilePage extends AbstractDiscoveryPage {
     }
     
     private String getProviderIDForSelectedProfile() {
-    	IScannerConfigBuilderInfo2 builderInfo = getContainer().getBuildInfo();
-    	// Provider IDs for selected profile
-    	List<String> providerIDs = builderInfo.getProviderIdList(); 
-    	if(providerIDs.size() == 0)
-    		return ""; //$NON-NLS-1$
-    	return providerIDs.iterator().next(); 
+        IScannerConfigBuilderInfo2 builderInfo = getContainer().getBuildInfo();
+        // Provider IDs for selected profile
+        List<String> providerIDs = builderInfo.getProviderIdList(); 
+        if(providerIDs.size() == 0)
+            return ""; //$NON-NLS-1$
+        return providerIDs.iterator().next(); 
     }
 
     private void handleBOPLoadFileButtonSelected() {
@@ -306,7 +313,7 @@ public class GCCPerProjectSCDProfilePage extends AbstractDiscoveryPage {
         readerJob.addJobChangeListener(new JobChangeAdapter() {
             
             @Override
-			public void done(IJobChangeEvent event) {
+            public void done(IJobChangeEvent event) {
                 synchronized (lock) {
                     if (!instance.shell.isDisposed()) {
                         instance.shell.getDisplay().asyncExec(new Runnable() {
@@ -337,7 +344,7 @@ public class GCCPerProjectSCDProfilePage extends AbstractDiscoveryPage {
      * @see org.eclipse.cdt.ui.dialogs.ICOptionPage#isValid()
      */
     @Override
-	public boolean isValid() {
+    public boolean isValid() {
         return isValid;
     }
     
@@ -345,7 +352,7 @@ public class GCCPerProjectSCDProfilePage extends AbstractDiscoveryPage {
      * @see org.eclipse.jface.dialogs.IDialogPage#getErrorMessage()
      */
     @Override
-	public String getErrorMessage() {
+    public String getErrorMessage() {
         return (isValid) ? null : SI_ERROR;
     }
     
@@ -353,7 +360,7 @@ public class GCCPerProjectSCDProfilePage extends AbstractDiscoveryPage {
      * @see org.eclipse.cdt.make.ui.dialogs.AbstractDiscoveryPage#populateBuildInfo(org.eclipse.cdt.make.core.scannerconfig.IScannerConfigBuilderInfo2)
      */
     @Override
-	protected void populateBuildInfo(IScannerConfigBuilderInfo2 buildInfo) {
+    protected void populateBuildInfo(IScannerConfigBuilderInfo2 buildInfo) {
         if (buildInfo != null) {
             buildInfo.setBuildOutputFileActionEnabled(true);
             buildInfo.setBuildOutputFilePath(getBopOpenFileText());
@@ -369,7 +376,7 @@ public class GCCPerProjectSCDProfilePage extends AbstractDiscoveryPage {
      * @see org.eclipse.cdt.make.ui.dialogs.AbstractDiscoveryPage#restoreFromBuildinfo(org.eclipse.cdt.make.core.scannerconfig.IScannerConfigBuilderInfo2)
      */
     @Override
-	protected void restoreFromBuildinfo(IScannerConfigBuilderInfo2 buildInfo) {
+    protected void restoreFromBuildinfo(IScannerConfigBuilderInfo2 buildInfo) {
         if (buildInfo != null) {
             setBopOpenFileText(buildInfo.getBuildOutputFilePath());
             bopEnabledButton.setSelection(buildInfo.isBuildOutputParserEnabled());

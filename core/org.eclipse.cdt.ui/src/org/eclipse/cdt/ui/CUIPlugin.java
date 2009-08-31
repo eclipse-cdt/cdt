@@ -346,7 +346,7 @@ public class CUIPlugin extends AbstractUIPlugin {
 	*/
 	public static void errorDialog(Shell shell, String title, String message, Throwable t, boolean logError) {
 		if (logError)
-		    log(t);	
+			log(message, t);
 		
 		IStatus status;
 		if (t instanceof CoreException) {

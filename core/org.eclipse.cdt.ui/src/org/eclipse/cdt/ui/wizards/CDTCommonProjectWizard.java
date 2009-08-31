@@ -176,7 +176,7 @@ implements IExecutableExtension, IWizardWithMemory
 		try {
 			getContainer().run(true, true, op);
 		} catch (InvocationTargetException e) {
-			CUIPlugin.errorDialog(getShell(), title, message, e.getTargetException(), false);
+			CUIPlugin.errorDialog(getShell(), title, message, e.getTargetException(), true);
 			clearProject();
 			return false;
 		} catch  (InterruptedException e) {

@@ -40,7 +40,7 @@ public class CfgHolder {
 			if (tc == null)
 				name = UIMessages.getString("StdProjectTypeHandler.2"); //$NON-NLS-1$
 			else	
-				name = tc.getName(); 
+				name = tc.getParent().getName();  
 		} else		
 			name = cfg.getName();
 	}

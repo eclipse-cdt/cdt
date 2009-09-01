@@ -32,7 +32,6 @@ import org.eclipse.cdt.managedbuilder.core.ITool;
 import org.eclipse.cdt.managedbuilder.core.ManagedBuildManager;
 import org.eclipse.cdt.managedbuilder.internal.core.MultiConfiguration;
 import org.eclipse.cdt.managedbuilder.internal.macros.BuildMacroProvider;
-import org.eclipse.cdt.ui.newui.AbstractPage;
 import org.eclipse.cdt.ui.newui.PageLayout;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.jface.preference.IPreferencePageContainer;
@@ -122,7 +121,7 @@ public class ToolSettingsTab extends AbstractCBuildPropertyTab implements IPrefe
 		private int calcExtra() {
 			int x = optionList.getTree().getBorderWidth() * 2;
 			ScrollBar sb = optionList.getTree().getVerticalBar();
-			if (sb != null) x += sb.getSize().x;
+			if (sb != null && sb.isVisible()) x += sb.getSize().x;
 			return x;
 		}
 		
@@ -391,13 +390,6 @@ public class ToolSettingsTab extends AbstractCBuildPropertyTab implements IPrefe
 					displayOptionsForCategory(toolListElement);
 				} else {
 					displayOptionsForTool(toolListElement);
-				}
-				
-				ScrollBar sb = containerSC.getHorizontalBar();
-				if (sb != null && sb.isVisible()) {
-					settingsPageContainer.pack(true);
-					containerSC.setMinSize(settingsPageContainer.getSize());
-					((AbstractPage)page).resize();
 				}
 			}
 		}

@@ -37,10 +37,10 @@ public class CfgHolder {
 		tc = _tc;
 		cfg = _cfg;
 		if (cfg == null) {
-			if (tc == null)
+			if (tc == null || tc.getParent() == null)
 				name = UIMessages.getString("StdProjectTypeHandler.2"); //$NON-NLS-1$
-			else	
-				name = tc.getParent().getName(); 
+			else
+				name = tc.getParent().getName();
 		} else		
 			name = cfg.getName();
 	}

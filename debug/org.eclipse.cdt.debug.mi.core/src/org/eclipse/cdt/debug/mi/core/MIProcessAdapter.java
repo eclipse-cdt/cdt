@@ -11,12 +11,9 @@
 
 package org.eclipse.cdt.debug.mi.core;
 
-import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.io.OutputStream;
-import java.io.Reader;
 
 import org.eclipse.cdt.utils.spawner.ProcessFactory;
 import org.eclipse.cdt.utils.spawner.Spawner;
@@ -50,38 +47,16 @@ public class MIProcessAdapter implements MIProcess {
 	 */
 	protected Process getGDBProcess(String[] args, int launchTimeout, IProgressMonitor monitor) throws IOException {
 		final Process pgdb = ProcessFactory.getFactory().exec(args);
-		Thread syncStartup = new Thread("GDB Start") { //$NON-NLS-1$
-			public void run() {
-				try {
-					String line;
-					InputStream stream = pgdb.getInputStream();
-					Reader r = new InputStreamReader(stream);
-					BufferedReader reader = new BufferedReader(r);
-					while ((line = reader.readLine()) != null) {
-						line = line.trim();
-						//System.out.println("GDB " + line);
-						if (line.endsWith("(gdb)")) { //$NON-NLS-1$
-							break;
-						}
-					}
-				} catch (Exception e) {
-					// Do nothing, ignore the errors
-				}
-			}
-		};
-		syncStartup.start();
 
 		int timepass = 0;
 		if (launchTimeout <= 0) {
 			// Simulate we are waiting forever.
 			launchTimeout = Integer.MAX_VALUE;
 		}
-
-		// To respect the IProgressMonitor we can not use wait/notify
-		// instead we have to loop and check for the monitor to allow to cancel the thread.
-		// The monitor is check every 1 second delay;
+		
+		InputStream stream = pgdb.getInputStream();
 		for (timepass = 0; timepass < launchTimeout; timepass += ONE_SECOND) {
-			if (syncStartup.isAlive() && !monitor.isCanceled()) {
+			if (stream.available()<=0 && !monitor.isCanceled()) {
 				try {
 					Thread.sleep(ONE_SECOND);
 				} catch (InterruptedException e) {
@@ -91,12 +66,7 @@ public class MIProcessAdapter implements MIProcess {
 				break;
 			}
 		}
-		try {
-			syncStartup.interrupt();
-			syncStartup.join(ONE_SECOND);
-		} catch (InterruptedException e) {
-			// ignore
-		}
+		
 		if (monitor.isCanceled()) {
 			pgdb.destroy();
 			throw new OperationCanceledException();

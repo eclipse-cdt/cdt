@@ -12,9 +12,11 @@
  * David McKnight   (IBM)        - [216252] MessageFormat.format -> NLS.bind
  * David McKnight   (IBM)        - [220547] [api][breaking] SimpleSystemMessage needs to specify a message id and some messages should be shared
  * Takuya Miyamoto - [185925] Integrate Platform/Team Synchronization
+ * David McKnight   (IBM)        - [287946] Export, save in rexpfd does not work any more
  *******************************************************************************/
 package org.eclipse.rse.internal.importexport.files;
 
+import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -26,6 +28,7 @@ import org.eclipse.core.runtime.MultiStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.osgi.util.NLS;
+import org.eclipse.rse.internal.importexport.IRemoteImportExportConstants;
 import org.eclipse.rse.internal.importexport.RemoteImportExportPlugin;
 import org.eclipse.rse.internal.importexport.RemoteImportExportProblemDialog;
 import org.eclipse.rse.internal.importexport.RemoteImportExportResources;
@@ -33,6 +36,11 @@ import org.eclipse.rse.internal.synchronize.SynchronizeData;
 import org.eclipse.rse.internal.synchronize.provisional.ISynchronizeOperation;
 import org.eclipse.rse.internal.synchronize.provisional.SynchronizeOperation;
 import org.eclipse.rse.internal.synchronize.provisional.Synchronizer;
+import org.eclipse.rse.services.clientserver.messages.SimpleSystemMessage;
+import org.eclipse.rse.services.clientserver.messages.SystemMessage;
+import org.eclipse.rse.ui.SystemBasePlugin;
+import org.eclipse.rse.ui.messages.SystemMessageDialog;
+import org.eclipse.ui.PlatformUI;
 
 /**
  * This class is a remote file export action.
@@ -125,38 +133,40 @@ public class RemoteFileExportActionDelegate extends RemoteFileImportExportAction
 	}
 
 	private IStatus export(RemoteFileExportData[] exportDatas) {
-//		IStatus status = null;
-//		for (int i = 0; i < exportDatas.length; i++) {
-//			RemoteFileExportOperation op = new RemoteFileExportOperation(exportDatas[i], new RemoteFileOverwriteQuery());
-//			try {
-//				PlatformUI.getWorkbench().getProgressService().run(true, true, op);
-//				status = op.getStatus();
-//			} catch (InvocationTargetException e) {
-//				SystemBasePlugin.logError("Error occured trying to export", e); //$NON-NLS-1$
-//				status = new Status(IStatus.ERROR, RemoteImportExportPlugin.getDefault().getBundle().getSymbolicName(), 0, "", e); //$NON-NLS-1$
-//			} catch (InterruptedException e) {
-//				SystemBasePlugin.logError("Error occured trying to export", e); //$NON-NLS-1$
-//				status = new Status(IStatus.OK, RemoteImportExportPlugin.getDefault().getBundle().getSymbolicName(), 0, "", e); //$NON-NLS-1$
-//			}
-//			if (!status.isOK()) {
-//				String msgTxt = NLS.bind(RemoteImportExportResources.FILEMSG_EXPORT_FAILED, status);
-//
-//				SystemMessage msg = new SimpleSystemMessage(RemoteImportExportPlugin.PLUGIN_ID,
-//						IRemoteImportExportConstants.FILEMSG_EXPORT_FAILED,
-//						IStatus.ERROR, msgTxt);
-//
-//				SystemMessageDialog dlg = new SystemMessageDialog(getShell(), msg);
-//				dlg.openWithDetails();
-//				return null;
-//			}
-//		}
-//		return null;
-
 		// Add re-running synchronize operation
-		for (int i = 0; i < exportDatas.length; i++) {
-			SynchronizeData data = new SynchronizeData(exportDatas[i]);
-			data.setSynchronizeType(ISynchronizeOperation.SYNC_MODE_UI_REVIEW);
-			new Synchronizer(data).run(new SynchronizeOperation());
+		for (int i = 0; i < exportDatas.length; i++) {			
+			RemoteFileExportData exportData = exportDatas[i];
+			if (exportData.isReviewSynchronize()){
+			
+				SynchronizeData data = new SynchronizeData(exportData);
+				data.setSynchronizeType(ISynchronizeOperation.SYNC_MODE_UI_REVIEW);
+				new Synchronizer(data).run(new SynchronizeOperation());
+			}
+			else {
+				IStatus status = null;
+				RemoteFileExportOperation op = new RemoteFileExportOperation(exportDatas[i], new RemoteFileOverwriteQuery());
+				try {
+					PlatformUI.getWorkbench().getProgressService().run(true, true, op);
+					status = op.getStatus();
+				} catch (InvocationTargetException e) {
+					SystemBasePlugin.logError("Error occured trying to export", e); //$NON-NLS-1$
+					status = new Status(IStatus.ERROR, RemoteImportExportPlugin.getDefault().getBundle().getSymbolicName(), 0, "", e); //$NON-NLS-1$
+				} catch (InterruptedException e) {
+					SystemBasePlugin.logError("Error occured trying to export", e); //$NON-NLS-1$
+					status = new Status(IStatus.OK, RemoteImportExportPlugin.getDefault().getBundle().getSymbolicName(), 0, "", e); //$NON-NLS-1$
+				}
+				if (!status.isOK()) {
+					String msgTxt = NLS.bind(RemoteImportExportResources.FILEMSG_EXPORT_FAILED, status);
+	
+					SystemMessage msg = new SimpleSystemMessage(RemoteImportExportPlugin.PLUGIN_ID,
+							IRemoteImportExportConstants.FILEMSG_EXPORT_FAILED,
+							IStatus.ERROR, msgTxt);
+	
+					SystemMessageDialog dlg = new SystemMessageDialog(getShell(), msg);
+					dlg.openWithDetails();
+					return null;
+				}
+			}
 		}
 		return null;
 	}

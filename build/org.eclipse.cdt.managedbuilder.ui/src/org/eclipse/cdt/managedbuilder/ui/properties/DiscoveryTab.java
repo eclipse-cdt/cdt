@@ -301,6 +301,24 @@ public class DiscoveryTab extends AbstractCBuildPropertyTab implements IBuildInf
 		return (x == -1) ? id : id.substring(x + 1);
 	}
 
+	private boolean toolContainsProfile(ITool tool, String profileId) {
+		IInputType[] inputTypes = ((Tool) tool).getAllInputTypes();
+		if (inputTypes == null)
+			return false;
+		
+		for (IInputType inputType : inputTypes) {
+			String[] requiedProfiles = getDiscoveryProfileIds(tool, inputType);
+			if (requiedProfiles != null) {
+				for (String requiredProfile : requiedProfiles) {
+					if (profileId.equals(requiredProfile)) {
+						return true;
+					}
+				}
+			}
+		}
+		return false;
+	}
+	
 	private void handleToolSelected() {
 		if (resTable.getSelectionCount() == 0)
 			return;
@@ -332,7 +350,7 @@ public class DiscoveryTab extends AbstractCBuildPropertyTab implements IBuildInf
 		String[] profiles = new String[profilesList.size()];
 		int counter = 0;
 		int pos = 0;
-		String savedId = buildInfo.getSelectedProfileId();
+		String selectedProfileId = buildInfo.getSelectedProfileId();
 		ITool[] tools = null;
 		boolean needPerRcProfile = cbi.isPerRcTypeDiscovery();
 		if (!page.isForPrefs()) {
@@ -349,35 +367,28 @@ public class DiscoveryTab extends AbstractCBuildPropertyTab implements IBuildInf
 			}
 		}
 		for (String profileId : profilesList) {
-			if (tools != null) {
-				boolean ok = false;
-				for (ITool tool : tools) {
-					IInputType[] inputTypes = ((Tool) tool).getAllInputTypes();
-					if (null != inputTypes) {
-						for (IInputType it : inputTypes) {
-							String[] requiedProfiles = getDiscoveryProfileIds(tool, it);
-							if (null != requiedProfiles) {
-								for (String requiredProfile : requiedProfiles) {
-									if (profileId.equals(requiredProfile)) {
-										ok = true;
-										break;
-									}
-								}
-							}
-						}
+			
+			// do not check selected profile id in tool-chain because
+			// for Makefile project tool-chain does not contain profile,
+			// instead default one is loaded from preferences to selectedProfileId
+			if (!profileId.equals(selectedProfileId)) {
+				if (tools != null) {
+					boolean foundProfile = false;
+					for (ITool tool : tools) {
+						foundProfile = toolContainsProfile(tool, profileId);
+						if (foundProfile)
+							break;
 					}
-					if (ok)
-						break;
+					if (!foundProfile)
+						continue;
 				}
-				if (!ok)
-					continue;
 			}
 			if (needPerRcProfile && !CfgScannerConfigProfileManager.isPerFileProfile(profileId))
 				continue;
 
 			visibleProfilesList.add(profileId);
 			labels[counter] = profiles[counter] = getProfileName(profileId);
-			if (profileId.equals(savedId))
+			if (profileId.equals(selectedProfileId))
 				pos = counter;
 			buildInfo.setSelectedProfileId(profileId); // needs to create page
 			for (DiscoveryProfilePageConfiguration p : pagesList) {
@@ -399,7 +410,7 @@ public class DiscoveryTab extends AbstractCBuildPropertyTab implements IBuildInf
 		}
 		profileComboBox.setItems(normalize(labels, profiles, counter));
 
-		buildInfo.setSelectedProfileId(savedId);
+		buildInfo.setSelectedProfileId(selectedProfileId);
 		if (profileComboBox.getItemCount() > 0)
 			profileComboBox.select(pos);
 		enableAllControls();

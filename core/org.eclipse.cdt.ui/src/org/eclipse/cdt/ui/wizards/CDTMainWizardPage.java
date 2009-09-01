@@ -211,10 +211,10 @@ import org.eclipse.cdt.internal.ui.CPluginImages;
 		        	if (f.exists()) {
 		        		if (f.isDirectory()) {
 		        			setMessage(UIMessages.getString("CMainWizardPage.7"), IMessageProvider.WARNING); //$NON-NLS-1$
-			        		return true;
+		        		} else {
+		        			setErrorMessage(UIMessages.getString("CMainWizardPage.6")); //$NON-NLS-1$
+		        			return false;
 		        		}
-						setErrorMessage(UIMessages.getString("CMainWizardPage.6")); //$NON-NLS-1$
-						return false;
 		        	}
 	        	} catch (CoreException e) {
 	        		CUIPlugin.log(e.getStatus());

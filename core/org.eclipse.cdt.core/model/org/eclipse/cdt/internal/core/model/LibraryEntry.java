@@ -90,6 +90,16 @@ public class LibraryEntry extends APathEntry implements ILibraryEntry {
 		return sourceAttachmentPrefixMapping;
 	}
 
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = super.hashCode();
+		result = prime * result + ((libraryPath == null) ? 0 : libraryPath.hashCode());
+		result = prime * result + ((sourceAttachmentPath == null) ? 0 : sourceAttachmentPath.hashCode());
+		result = prime * result
+				+ ((sourceAttachmentRootPath == null) ? 0 : sourceAttachmentRootPath.hashCode());
+		return result;
+	}
 
 	@Override
 	public boolean equals(Object obj) {

@@ -81,6 +81,16 @@ public abstract class APathEntry extends PathEntry {
 	}
 
 	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = super.hashCode();
+		result = prime * result + ((basePath == null) ? 0 : basePath.hashCode());
+		result = prime * result + ((baseRef == null) ? 0 : baseRef.hashCode());
+		result = prime * result + Arrays.hashCode(exclusionPatterns);
+		return result;
+	}
+
+	@Override
 	public boolean equals(Object obj) {
 		if (obj instanceof APathEntry) {
 			APathEntry otherEntry = (APathEntry)obj;
@@ -125,16 +135,6 @@ public abstract class APathEntry extends PathEntry {
 		return super.equals(obj);
 	}
 	
-	@Override
-	public int hashCode() {
-		int hashCode = Arrays.hashCode(exclusionPatterns);
-		if (basePath != null)
-			hashCode += basePath.hashCode();
-		if (baseRef != null)
-			hashCode += baseRef.hashCode();
-		return hashCode + super.hashCode();
-	}
-
 	/* (non-Javadoc)
 	 * @see java.lang.Object#toString()
 	 */
@@ -150,4 +150,5 @@ public abstract class APathEntry extends PathEntry {
 		}
 		return sb.toString();
 	}
+
 }

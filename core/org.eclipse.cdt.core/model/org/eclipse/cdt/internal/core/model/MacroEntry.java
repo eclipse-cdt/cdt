@@ -45,6 +45,17 @@ public class MacroEntry extends APathEntry implements IMacroEntry {
 	}
 
 	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = super.hashCode();
+		result = prime * result
+				+ ((macroName == null) ? 0 : macroName.hashCode());
+		result = prime * result
+				+ ((macroValue == null) ? 0 : macroValue.hashCode());
+		return result;
+	}
+
+	@Override
 	public boolean equals(Object obj) {
 		if (obj instanceof IMacroEntry) {
 			IMacroEntry otherEntry = (IMacroEntry)obj;
@@ -74,11 +85,6 @@ public class MacroEntry extends APathEntry implements IMacroEntry {
 		return super.equals(obj);
 	}
 	
-	@Override
-	public int hashCode() {
-		return macroName.hashCode() + macroValue.hashCode() + super.hashCode();
-	}
-
 	/* (non-Javadoc)
 	 * @see java.lang.Object#toString()
 	 */

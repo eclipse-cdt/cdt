@@ -294,6 +294,8 @@ public class LaunchUtils {
     			return SessionType.REMOTE;
     		} else if (debugMode.equals(IGDBLaunchConfigurationConstants.DEBUGGER_MODE_REMOTE_ATTACH)) {
     		    return SessionType.REMOTE;
+    	    } else {
+    	    	assert false : "Unexpected session-type attribute in launch config: " + debugMode;  //$NON-NLS-1$
     	    }
     	} catch (CoreException e) {    		
     	}

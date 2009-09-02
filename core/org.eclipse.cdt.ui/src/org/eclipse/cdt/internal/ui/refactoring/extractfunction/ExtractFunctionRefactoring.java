@@ -68,6 +68,7 @@ import org.eclipse.cdt.core.dom.ast.IParameter;
 import org.eclipse.cdt.core.dom.ast.cpp.CPPASTVisitor;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCompositeTypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTConversionName;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTDeclSpecifier;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTFunctionDeclarator;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTOperatorName;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTQualifiedName;
@@ -875,8 +876,11 @@ public class ExtractFunctionRefactoring extends CRefactoring {
 	private IASTSimpleDeclaration getDeclaration(ModificationCollector collector,IASTName name) {
 		IASTDeclSpecifier declSpec = getReturnType();
 		IASTSimpleDeclaration simpleDecl = factory.newSimpleDeclaration(declSpec);
+		if(info.isVirtual() && declSpec instanceof ICPPASTDeclSpecifier) {
+			((ICPPASTDeclSpecifier)declSpec).setVirtual(true);
+		}
 		simpleDecl.setParent(unit);
-		IASTStandardFunctionDeclarator declarator = extractedFunctionConstructionHelper
+		ICPPASTFunctionDeclarator declarator = extractedFunctionConstructionHelper
 				.createFunctionDeclarator(name, info.getDeclarator(), info
 						.getReturnVariable(), container.getNodesToWrite(), info
 						.getAllUsedNames());

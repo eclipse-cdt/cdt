@@ -40,6 +40,7 @@ public class ExtractFunctionRefactoringTest extends RefactoringTest {
 	protected int returnParameterIndex;
 	protected boolean fatalError;
 	private VisibilityEnum visibility;
+	private boolean virtual;
 	private static int nr = 1;
 
 	/**
@@ -90,6 +91,7 @@ public class ExtractFunctionRefactoringTest extends RefactoringTest {
 			info.setReturnVariable( info.getInScopeDeclaredVariable() );
 		}
 		info.setVisibility(visibility);
+		info.setVirtual(virtual);
 		
 		for (NameInformation name : info.getAllAfterUsedNames()) {
 			if(!name.isUserSetIsReturnValue()){
@@ -107,6 +109,7 @@ public class ExtractFunctionRefactoringTest extends RefactoringTest {
 		returnParameterIndex = new Integer(refactoringProperties.getProperty("returnparameterindex", "0")).intValue(); //$NON-NLS-1$ //$NON-NLS-2$
 		fatalError = Boolean.valueOf(refactoringProperties.getProperty("fatalerror", "false")).booleanValue(); //$NON-NLS-1$ //$NON-NLS-2$
 		visibility = VisibilityEnum.getEnumForStringRepresentation(refactoringProperties.getProperty("visibility", VisibilityEnum.v_private.toString())); //$NON-NLS-1$
+		virtual = Boolean.valueOf(refactoringProperties.getProperty("virtual", "false")).booleanValue(); //$NON-NLS-1$ //$NON-NLS-2$
 	}
 
 }

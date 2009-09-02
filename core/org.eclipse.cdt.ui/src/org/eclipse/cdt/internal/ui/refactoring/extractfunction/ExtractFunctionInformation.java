@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008 Institute for Software, HSR Hochschule fuer Technik  
+ * Copyright (c) 2008, 2009 Institute for Software, HSR Hochschule fuer Technik  
  * Rapperswil, University of applied sciences and others
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Eclipse Public License v1.0 
@@ -36,6 +36,7 @@ public class ExtractFunctionInformation {
 	private ICPPASTFunctionDeclarator declarator;
 	private MethodContext context;
 	private boolean isExtractExpression;
+	private boolean virtual;
 
 	/**
 	 * Returns the function declarator of the method / function from were the statements
@@ -132,5 +133,13 @@ public class ExtractFunctionInformation {
 
 	public void setExtractExpression(boolean isExtractExpression) {
 		this.isExtractExpression = isExtractExpression;
+	}
+
+	public boolean isVirtual() {
+		return virtual;
+	}
+
+	public void setVirtual(boolean isVirtual) {
+		this.virtual = isVirtual;
 	}
 }

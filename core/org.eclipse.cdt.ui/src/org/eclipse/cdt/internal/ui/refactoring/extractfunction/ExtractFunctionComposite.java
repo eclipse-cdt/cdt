@@ -12,6 +12,8 @@
 package org.eclipse.cdt.internal.ui.refactoring.extractfunction;
 
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.SelectionAdapter;
+import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
@@ -100,7 +102,17 @@ public class ExtractFunctionComposite extends Composite {
 		GridData gridData = new GridData();
 		gridData.horizontalAlignment = GridData.FILL;
 		gridData.grabExcessHorizontalSpace = true;
-		nameVisiComp.setLayoutData(gridData);	
+		nameVisiComp.setLayoutData(gridData);
+		final Button virtual = new Button(nameVisiComp, SWT.CHECK);
+		virtual.setText(Messages.ExtractFunctionComposite_Virtual);
+		virtual.addSelectionListener(new SelectionAdapter() {
+
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				info.setVirtual(virtual.getSelection());
+			}
+			
+		});
 	}
 
 	

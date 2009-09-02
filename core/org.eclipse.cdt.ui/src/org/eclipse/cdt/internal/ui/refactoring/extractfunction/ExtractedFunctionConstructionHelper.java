@@ -25,7 +25,6 @@ import org.eclipse.cdt.core.dom.ast.IASTExpressionStatement;
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IASTPointerOperator;
-import org.eclipse.cdt.core.dom.ast.IASTStandardFunctionDeclarator;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTFunctionDeclarator;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTParameterDeclaration;
 import org.eclipse.cdt.core.dom.rewrite.ASTRewrite;
@@ -59,7 +58,7 @@ public abstract class ExtractedFunctionConstructionHelper {
 		return false;
 	}
 
-	IASTStandardFunctionDeclarator createFunctionDeclarator(IASTName name, ICPPASTFunctionDeclarator functionDeclarator, NameInformation returnVariable, List<IASTNode> nodesToWrite, Collection<NameInformation> allUsedNames) {
+	ICPPASTFunctionDeclarator createFunctionDeclarator(IASTName name, ICPPASTFunctionDeclarator functionDeclarator, NameInformation returnVariable, List<IASTNode> nodesToWrite, Collection<NameInformation> allUsedNames) {
 		ICPPASTFunctionDeclarator declarator = new CPPASTFunctionDeclarator();
 		declarator.setName(name);
 	

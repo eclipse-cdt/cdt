@@ -35,6 +35,7 @@ public final class Messages extends NLS {
 	public static String ExtractFunctionRefactoring_CreateMethodDef;
 	public static String ExtractFunctionRefactoring_CreateFunctionDef;
 	public static String ExtractFunctionComposite_ReplaceDuplicates;
+	public static String ExtractFunctionComposite_Virtual;
 	public static String ExtractFunctionRefactoring_CreateMethodCall;
 	public static String ExtractFunctionRefactoring_CreateFunctionCall;
 	public static String ChooserComposite_Return;

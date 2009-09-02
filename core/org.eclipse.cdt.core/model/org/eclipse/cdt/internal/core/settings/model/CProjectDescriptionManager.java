@@ -1793,14 +1793,15 @@ public class CProjectDescriptionManager implements ICProjectDescriptionManager {
 			newEntries = EMPTY_LANGUAGE_SETTINGS_ENTRIES_ARRAY;
 		}
 
+		Set<ICLanguageSettingEntry> newEntrySet = new HashSet<ICLanguageSettingEntry>(Arrays.asList(newEntries));
+		Set<ICLanguageSettingEntry> oldEntrySet = new HashSet<ICLanguageSettingEntry>(Arrays.asList(oldEntries));
+
 		// Check the removed entries.
-		for (int i = 0; i < oldEntries.length; i++) {
+		for (ICLanguageSettingEntry oldEntry : oldEntries) {
 			boolean found = false;
-			for (int j = 0; j < newEntries.length; j++) {
-				if (oldEntries[i].equals(newEntries[j])) {
-					found = true;
-					break;
-				}
+			if (newEntrySet.contains(oldEntry)) {
+				found = true;
+				break;
 			}
 			if(!found){
 				result[1] = true;
@@ -1809,13 +1810,11 @@ public class CProjectDescriptionManager implements ICProjectDescriptionManager {
 		}
 
 		// Check the new entries.
-		for (int i = 0; i < newEntries.length; i++) {
+		for (ICLanguageSettingEntry newEntry : newEntries) {
 			boolean found = false;
-			for (int j = 0; j < oldEntries.length; j++) {
-				if (newEntries[i].equals(oldEntries[j])) {
-					found = true;
-					break;
-				}
+			if (oldEntrySet.contains(newEntry)) {
+				found = true;
+				break;
 			}
 			if(!found){
 				result[0] = true;

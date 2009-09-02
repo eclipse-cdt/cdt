@@ -102,6 +102,7 @@ public class GdbLaunchDelegate extends LaunchConfigurationDelegate
         } else if (sessionType == SessionType.CORE) {
             monitor.subTask( LaunchMessages.getString("GdbLaunchDelegate.2") );  //$NON-NLS-1$
         } else {
+        	assert sessionType == SessionType.LOCAL : "Unexpected session type: " + sessionType.toString(); //$NON-NLS-1$
             monitor.subTask( LaunchMessages.getString("GdbLaunchDelegate.3") );  //$NON-NLS-1$
         }
         
@@ -157,7 +158,7 @@ public class GdbLaunchDelegate extends LaunchConfigurationDelegate
         	return;
         
         // The initializeControl method should be called after the ICommandControlService
-        // be initialized in the ServicesLaunchSequence above.  This is because it is that
+        // is initialized in the ServicesLaunchSequence above.  This is because it is that
         // service that will trigger the launch cleanup (if we need it during this launch)
         // through an ICommandControlShutdownDMEvent
         launch.initializeControl();

@@ -182,7 +182,7 @@ public interface ICDTLaunchConfigurationConstants {
 
 	/**
 	 * Launch configuration attribute key. The value is the startup mode for the
-	 * debugger.
+	 * debugger (a ICDTLaunchConfigurationConstants.DEBUGGER_MODE_XXXXX constant)
 	 */
 	public static final String ATTR_DEBUGGER_START_MODE = CDT_LAUNCH_ID + ".DEBUGGER_START_MODE"; //$NON-NLS-1$
 

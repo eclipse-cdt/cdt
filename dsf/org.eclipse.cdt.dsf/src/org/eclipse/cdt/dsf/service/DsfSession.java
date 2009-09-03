@@ -226,8 +226,7 @@ public class DsfSession
      * IModelContext.getAdapter() method.
      * @see org.eclipse.cdt.dsf.datamodel.AbstractDMContext#getAdapter 
      */
-    @SuppressWarnings("unchecked") 
-    private Map<Class,Object> fAdapters = Collections.synchronizedMap(new HashMap<Class,Object>());
+    private Map<Class<?>,Object> fAdapters = Collections.synchronizedMap(new HashMap<Class<?>,Object>());
 
     /** Returns the owner ID of this session */
     public String getOwnerId() { return fOwnerId; }    
@@ -278,8 +277,7 @@ public class DsfSession
      * @param serviceProperties properties of the service requesting the event to be dispatched
      */
     @ThreadSafe
-    @SuppressWarnings("unchecked")
-    public void dispatchEvent(final Object event, final Dictionary serviceProperties) {
+    public void dispatchEvent(final Object event, final Dictionary<?,?> serviceProperties) {
         getExecutor().submit(new DsfRunnable() { 
             public void run() { doDispatchEvent(event, serviceProperties);}
             @Override
@@ -294,8 +292,7 @@ public class DsfSession
      * @see org.eclipse.dsdp.model.AbstractDMContext#getAdapter
      */
     @ThreadSafe
-    @SuppressWarnings("unchecked") 
-    public void registerModelAdapter(Class adapterType, Object adapter) {
+    public void registerModelAdapter(Class<?> adapterType, Object adapter) {
         fAdapters.put(adapterType, adapter);
     }
     
@@ -305,8 +302,7 @@ public class DsfSession
      * @see org.eclipse.dsdp.model.AbstractDMContext#getAdapter
      */
     @ThreadSafe
-    @SuppressWarnings("unchecked")
-    public void unregisterModelAdapter(Class adapterType) {
+    public void unregisterModelAdapter(Class<?> adapterType) {
         fAdapters.remove(adapterType);
     }
     
@@ -317,8 +313,7 @@ public class DsfSession
      * @see org.eclipse.dsdp.model.AbstractDMContext#getAdapter
      */
     @ThreadSafe
-    @SuppressWarnings("unchecked") 
-    public Object getModelAdapter(Class adapterType) {
+    public Object getModelAdapter(Class<?> adapterType) {
         return fAdapters.get(adapterType);
     }
     
@@ -332,8 +327,7 @@ public class DsfSession
     @ThreadSafe
     public int hashCode() { return fId.hashCode(); }
 
-    @SuppressWarnings("unchecked") 
-    private void doDispatchEvent(Object event, Dictionary serviceProperties) {
+    private void doDispatchEvent(Object event, Dictionary<?,?> serviceProperties) {
         // Build a list of listeners;
         SortedMap<ListenerEntry,List<Method>> listeners = new TreeMap<ListenerEntry,List<Method>>(new Comparator<ListenerEntry>() {
                 public int compare(ListenerEntry o1, ListenerEntry o2) {
@@ -429,5 +423,4 @@ public class DsfSession
         fOwnerId = ownerId;
         fExecutor = executor;
     }
-    
 }

@@ -242,7 +242,11 @@ public class MIParser {
 		} else {
 			// Badly format MI line, just pass it to the user as target stream
 			MIStreamRecord stream = new MITargetStreamOutput();
-			stream.setCString(buffer.toString() + "\n"); //$NON-NLS-1$
+			String res = buffer.toString();
+			// this awfull expression just mean to replace \ with \\. This is needed because otherwise escaping is lost.
+			// this is to fix bug 255946 without breaking other stuff 286785
+			res = res.replaceAll("\\Q\\", "\\\\\\\\");  //$NON-NLS-1$//$NON-NLS-2$
+			stream.setCString(res + "\n"); //$NON-NLS-1$
 			oob = stream;
 		}
 		return oob;

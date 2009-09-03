@@ -60,6 +60,7 @@ public class ModificationCollector {
 			result.addAll(changes.toArray(new Change[changes.size()]));
 		
 		for (ASTRewrite each : rewriters.values()) {
+			
 			result.add(each.rewriteAST());
 		}
 		

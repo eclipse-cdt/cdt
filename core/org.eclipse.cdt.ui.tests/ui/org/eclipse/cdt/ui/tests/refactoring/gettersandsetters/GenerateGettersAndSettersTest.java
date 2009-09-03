@@ -39,6 +39,8 @@ public class GenerateGettersAndSettersTest extends RefactoringTest {
 	private ArrayList<String> selectedGetters;
 	private ArrayList<String> selectedSetters;
 	private GenerateGettersAndSettersRefactoring refactoring;
+	private boolean keepInHeader;
+	private int infos;
 
 
 	/**
@@ -70,13 +72,14 @@ public class GenerateGettersAndSettersTest extends RefactoringTest {
 
 	private void executeRefactoring() throws CoreException, Exception {
 
-		RefactoringStatus initialConditions = refactoring.checkInitialConditions(NULL_PROGRESS_MONITOR);
-		assertConditionsOk(initialConditions);
 		selectFields();
-		Change createChange = refactoring.createChange(NULL_PROGRESS_MONITOR);
+		refactoring.getContext().setImplementationInHeader(keepInHeader);
 		RefactoringStatus finalConditions = refactoring.checkFinalConditions(NULL_PROGRESS_MONITOR);
+		Change createChange = refactoring.createChange(NULL_PROGRESS_MONITOR);
 		if(warnings > 0){
 			assertConditionsWarning(finalConditions, warnings);
+		}else if(infos >0) {
+			assertConditionsInfo(finalConditions, infos);
 		}
 		else{
 			assertConditionsOk(finalConditions);
@@ -109,8 +112,10 @@ public class GenerateGettersAndSettersTest extends RefactoringTest {
 	protected void configureRefactoring(Properties refactoringProperties) {
 		fatalError = Boolean.valueOf(refactoringProperties.getProperty("fatalerror", "false")).booleanValue();  //$NON-NLS-1$//$NON-NLS-2$
 		warnings = new Integer(refactoringProperties.getProperty("warnings", "0")).intValue();  //$NON-NLS-1$//$NON-NLS-2$
+		infos = new Integer(refactoringProperties.getProperty("infos", "0"));
 		String getters = refactoringProperties.getProperty("getters", ""); //$NON-NLS-1$ //$NON-NLS-2$
 		String setters = refactoringProperties.getProperty("setters", ""); //$NON-NLS-1$ //$NON-NLS-2$
+		keepInHeader = Boolean.valueOf(refactoringProperties.getProperty("inHeader", "false"));
 		
 		selectedGetters = new ArrayList<String>();	
 		for(String getterName : getters.split(",")){ //$NON-NLS-1$

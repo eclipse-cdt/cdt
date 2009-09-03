@@ -3,6 +3,7 @@
 //@.config
 filename=C.h
 getters=name
+inHeader=true
 //@C.cpp
 #include "C.h"
 
@@ -116,6 +117,7 @@ int gooo = 1;
 //@.config
 filename=C.h
 getters=name
+inHeader=true
 //@C.cpp
 #include "C.h"
 
@@ -235,6 +237,7 @@ int gooo = 1;
 //@.config
 filename=C.h
 setters=name
+inHeader=true
 //@C.cpp
 #include "C.h"
 
@@ -351,6 +354,7 @@ int gooo = 1;
 filename=C.h
 setters=name
 getters=name
+inHeader=true
 //@C.cpp
 #include "C.h"
 
@@ -472,6 +476,7 @@ int gooo = 1;
 filename=C.h
 getters=name,systemId
 setters=name,systemId
+inHeader=true
 //@C.cpp
 #include "C.h"
 
@@ -588,6 +593,7 @@ int gooo = 1;
 filename=GaS.h
 getters=i,isOk
 setters=i,isOk
+inHeader=true
 //@GaS.cpp
 #include "Getters.h"
 
@@ -656,6 +662,7 @@ private:
 filename=C.h
 getters=id
 setters=id
+inHeader=true
 //@C.h
 #ifndef C_H_
 #define C_H_
@@ -695,6 +702,7 @@ public:
 filename=C.h
 getters=i
 setters=i
+inHeader=true
 //@C.h
 /*
  * test.h
@@ -781,4 +789,620 @@ class test
 
 #endif /* TEST_H_ */
 
+//!Generate Getters and Setters One Getter Selection Implementation in CPP
+//#org.eclipse.cdt.ui.tests.refactoring.gettersandsetters.GenerateGettersAndSettersTest
+//@.config
+filename=C.h
+getters=name
+//@C.cpp
+#include "C.h"
+
+int Person::SocSecNo(){
+	return socSecNo;
+}
+
+int main(int argc, char **argv) {
+	
+}
+
+//=
+#include "C.h"
+
+char *Person::getName() const
+{
+    return name;
+}
+
+int Person::SocSecNo(){
+	return socSecNo;
+}
+
+int main(int argc, char **argv) {
+	
+}
+
+//@C.h
+#ifndef C_H_
+#define C_H_
+
+class Person {
+
+private:
+
+  int systemId;
+
+protected:
+
+  char *name;
+
+public:
+
+  const int socSecNo;
+  
+  Person myFriend;
+
+
+  Person(int socSecNo); // contructor
+
+  ~Person(); // destructor
+
+
+	char*   Name();
+	
+	void    Print();
+	
+	int     /*$*/SocSecNo/*$$*/();
+	
+	int     GetUniqueId();
+	
+	int getSystemId();
+	
+	void setSystemId(int systemId);
+};
+
+int gooo = 1;
+
+#endif /*C_H_*/
+//=
+#ifndef C_H_
+#define C_H_
+
+class Person {
+
+private:
+
+  int systemId;
+
+protected:
+
+  char *name;
+
+public:
+
+  const int socSecNo;
+  
+  Person myFriend;
+    char *getName() const;
+
+
+  Person(int socSecNo); // contructor
+
+  ~Person(); // destructor
+
+
+	char*   Name();
+	
+	void    Print();
+	
+	int     SocSecNo();
+	
+	int     GetUniqueId();
+	
+	int getSystemId();
+	
+	void setSystemId(int systemId);
+};
+
+int gooo = 1;
+
+#endif /*C_H_*/
+//!Generate Getters and Setters One Getter Selection with Namespace Implementation in CPP
+//#org.eclipse.cdt.ui.tests.refactoring.gettersandsetters.GenerateGettersAndSettersTest
+//@.config
+filename=C.h
+getters=name
+//@C.cpp
+#include "C.h"
+
+int Person::SocSecNo(){
+	return socSecNo;
+}
+
+int main(int argc, char **argv) {
+	
+}
+
+//=
+#include "C.h"
+
+int Person::SocSecNo(){
+	return socSecNo;
+}
+
+int main(int argc, char **argv) {
+	
+}
+
+char *Person::getName() const
+{
+    return name;
+}
+
+
+
+//@C.h
+#ifndef C_H_
+#define C_H_
+
+namespace Personal {
+	class Person {
+	
+	private:
+	
+	  int systemId;
+	
+	protected:
+	
+	  char *name;
+	
+	public:
+	
+	  const int socSecNo;
+	  
+	  Person myFriend;
+	
+	
+	  Person(int socSecNo); // contructor
+	
+	  ~Person(); // destructor
+	
+	
+		char*   Name();
+		
+		void    Print();
+		
+		int     /*$*/SocSecNo/*$$*/();
+		
+		int     GetUniqueId();
+		
+		int getSystemId(){
+			return systemId;
+		}
+		
+		void setSystemId(int systemId){
+			this->systemId = systemId;
+		}
+	};
+}
+
+int gooo = 1;
+
+#endif /*C_H_*/
+
+//=
+#ifndef C_H_
+#define C_H_
+
+namespace Personal {
+	class Person {
+	
+	private:
+	
+	  int systemId;
+	
+	protected:
+	
+	  char *name;
+	
+	public:
+	
+	  const int socSecNo;
+	  
+	  Person myFriend;
+	
+	
+	  Person(int socSecNo); // contructor
+	
+	  ~Person(); // destructor
+	
+	
+		char*   Name();
+		
+		void    Print();
+		
+		int     SocSecNo();
+		
+		int     GetUniqueId();
+	    char *getName() const;
+		
+		int getSystemId(){
+			return systemId;
+		}
+		
+		void setSystemId(int systemId){
+			this->systemId = systemId;
+		}
+	};
+}
+
+int gooo = 1;
+
+#endif /*C_H_*/
+
+//!Generate Getters and Setters One Setter Selection Implementation in CPP
+//#org.eclipse.cdt.ui.tests.refactoring.gettersandsetters.GenerateGettersAndSettersTest
+//@.config
+filename=C.h
+setters=name
+//@C.cpp
+#include "C.h"
+
+int Person::SocSecNo(){
+	return socSecNo;
+}
+
+int main(int argc, char **argv) {
+	
+}
+
+
+//=
+#include "C.h"
+
+void Person::setName(char *name)
+{
+    this->name = name;
+}
+
+int Person::SocSecNo(){
+	return socSecNo;
+}
+
+int main(int argc, char **argv) {
+	
+}
+
+
+//@C.h
+#ifndef C_H_
+#define C_H_
+
+class Person {
+
+private:
+
+  int systemId;
+
+protected:
+
+  char *name;
+
+public:
+
+  const int socSecNo;
+  
+  Person myFriend;
+
+
+  Person(int socSecNo); // contructor
+
+  ~Person(); // destructor
+
+
+	char*   Name();
+	
+	void    Print();
+	
+	int     /*$*/SocSecNo/*$$*/();
+	
+	int     GetUniqueId();
+	
+	int getSystemId(){
+		return systemId;
+	}
+	
+	void setSystemId(int systemId){
+		this->systemId = systemId;
+	}
+};
+
+
+int gooo = 1;
+
+#endif /*C_H_*/
+//=
+#ifndef C_H_
+#define C_H_
+
+class Person {
+
+private:
+
+  int systemId;
+
+protected:
+
+  char *name;
+
+public:
+
+  const int socSecNo;
+  
+  Person myFriend;
+
+
+  Person(int socSecNo); // contructor
+
+  ~Person(); // destructor
+
+
+	char*   Name();
+	
+	void    Print();
+	
+	int     SocSecNo();
+	
+	int     GetUniqueId();
+    void setName(char *name);
+	
+	int getSystemId(){
+		return systemId;
+	}
+	
+	void setSystemId(int systemId){
+		this->systemId = systemId;
+	}
+};
+
+
+int gooo = 1;
+
+#endif /*C_H_*/
+//!Getter and Setter Selection Implementation in CPP
+//#org.eclipse.cdt.ui.tests.refactoring.gettersandsetters.GenerateGettersAndSettersTest
+//@.config
+filename=C.h
+setters=name
+getters=name
+//@C.cpp
+#include "C.h"
+
+int Person::SocSecNo(){
+	return socSecNo;
+}
+
+int main(int argc, char **argv) {
+	
+}
+
+//=
+#include "C.h"
+
+char *Person::getName() const
+{
+    return name;
+}
+
+void Person::setName(char *name)
+{
+    this->name = name;
+}
+
+int Person::SocSecNo(){
+	return socSecNo;
+}
+
+int main(int argc, char **argv) {
+	
+}
+
+//@C.h
+#ifndef C_H_
+#define C_H_
+
+class Person {
+
+private:
+
+  int systemId;
+
+protected:
+
+  char *name;
+
+public:
+
+  const int socSecNo;
+  
+  Person myFriend;
+
+
+  Person(int socSecNo); // contructor
+
+  ~Person(); // destructor
+
+
+	char*   Name();
+	
+	void    Print();
+	
+	int     /*$*/SocSecNo/*$$*/();
+	
+	int     GetUniqueId();
+	
+	int getSystemId(){
+		return systemId;
+	}
+	
+	void setSystemId(int systemId){
+		this->systemId = systemId;
+	}
+};
+
+
+int gooo = 1;
+
+#endif /*C_H_*/
+
+//=
+#ifndef C_H_
+#define C_H_
+
+class Person {
+
+private:
+
+  int systemId;
+
+protected:
+
+  char *name;
+
+public:
+
+  const int socSecNo;
+  
+  Person myFriend;
+
+
+  Person(int socSecNo); // contructor
+
+  ~Person(); // destructor
+
+
+	char*   Name();
+	
+	void    Print();
+	
+	int     SocSecNo();
+	
+	int     GetUniqueId();
+    char *getName() const;
+    void setName(char *name);
+	
+	int getSystemId(){
+		return systemId;
+	}
+	
+	void setSystemId(int systemId){
+		this->systemId = systemId;
+	}
+};
+
+
+int gooo = 1;
+
+#endif /*C_H_*/
+
+//!Generate Getters and Setters no Methods Implementation in CPP
+//#org.eclipse.cdt.ui.tests.refactoring.gettersandsetters.GenerateGettersAndSettersTest
+//@.config
+filename=C.h
+getters=id
+setters=id
+infos=1
+//@C.h
+#ifndef C_H_
+#define C_H_
+
+class Person {
+private:
+  int /*$*/id/*$$*/;
+};
+
+#endif /*C_H_*/
+
+//=
+#ifndef C_H_
+#define C_H_
+
+class Person {
+private:
+  int id;
+public:
+    int getId() const;
+    void setId(int id);
+};
+
+int Person::getId() const
+{
+    return id;
+}
+
+void Person::setId(int id)
+{
+    this->id = id;
+}
+
+
+
+#endif /*C_H_*/
+
+//!No Methods Implementation in CPP
+//#org.eclipse.cdt.ui.tests.refactoring.gettersandsetters.GenerateGettersAndSettersTest
+//@.config
+filename=C.h
+getters=i
+setters=i
+infos=1
+//@C.h
+/*
+ * test.h
+ */
+
+#ifndef TEST_H_
+#define TEST_H_
+
+//comment1
+class test
+{
+	int /*$*/i/*$$*/; //comment2
+	char* b;
+	//comment3
+};
+
+#endif /* TEST_H_ */
+
+//=
+/*
+ * test.h
+ */
+
+#ifndef TEST_H_
+#define TEST_H_
+
+//comment1
+class test
+{
+	int i; //comment2
+	char* b;
+public:
+    int getI() const;
+    void setI(int i);
+	//comment3
+};
+
+int test::getI() const
+{
+    return i;
+}
+
+void test::setI(int i)
+{
+    this->i = i;
+}
+
+
+
+#endif /* TEST_H_ */
 

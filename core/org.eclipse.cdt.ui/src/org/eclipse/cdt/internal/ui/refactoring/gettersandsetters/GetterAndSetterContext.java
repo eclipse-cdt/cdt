@@ -21,7 +21,6 @@ import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.cdt.core.dom.ast.IASTFunctionDefinition;
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTSimpleDeclaration;
-import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
 
 import org.eclipse.cdt.internal.ui.refactoring.gettersandsetters.GetterSetterInsertEditProvider.Type;
 import org.eclipse.cdt.internal.ui.refactoring.utils.NameHelper;
@@ -32,9 +31,9 @@ public class GetterAndSetterContext implements ITreeContentProvider{
 	public ArrayList<IASTFunctionDefinition> existingFunctionDefinitions = new ArrayList<IASTFunctionDefinition>();
 	public ArrayList<IASTSimpleDeclaration> existingFunctionDeclarations = new ArrayList<IASTSimpleDeclaration>();
 	public SortedSet<GetterSetterInsertEditProvider> selectedFunctions = new TreeSet<GetterSetterInsertEditProvider>();
-	private IASTTranslationUnit unit;
 	public IASTName selectedName;
 	private ArrayList<FieldWrapper> wrappedFields;
+	private boolean implementationInHeader = false;
 
 	public Object[] getChildren(Object parentElement) {
 
@@ -57,20 +56,15 @@ public class GetterAndSetterContext implements ITreeContentProvider{
 
 	public GetterSetterInsertEditProvider createGetterInserter(IASTSimpleDeclaration simpleDeclaration) {
 		String varName = simpleDeclaration.getDeclarators()[0].getName().toString();
-		IASTFunctionDefinition getter = FunctionFactory.createGetter(varName, simpleDeclaration);
-		getter.setParent(unit);
-		return new GetterSetterInsertEditProvider(getter, Type.getter);
+		return new GetterSetterInsertEditProvider(varName, simpleDeclaration, Type.getter);
 	}
 
 	public GetterSetterInsertEditProvider createSetterInserter(IASTSimpleDeclaration simpleDeclaration) {
 		String varName = simpleDeclaration.getDeclarators()[0].getName().toString();
-		IASTFunctionDefinition setter = FunctionFactory.createSetter(varName, simpleDeclaration);
-		setter.setParent(unit);
-		return new GetterSetterInsertEditProvider(setter, Type.setter);
+		return new GetterSetterInsertEditProvider(varName, simpleDeclaration, Type.setter);
 	}
 
 	public Object getParent(Object element) {
-		// TODO Auto-generated method stub
 		return null;
 	}
 
@@ -89,17 +83,19 @@ public class GetterAndSetterContext implements ITreeContentProvider{
 	}
 
 	public void dispose() {
-		// TODO Auto-generated method stub
 	}
 
 	public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
-		// TODO Auto-generated method stub
-	}
-		
-	public void setUnit(IASTTranslationUnit unit) {
-		this.unit = unit;
 	}
 	
+	public boolean isImplementationInHeader() {
+		return implementationInHeader;
+	}
+
+	public void setImplementationInHeader(boolean implementationInHeader) {
+		this.implementationInHeader = implementationInHeader;
+	}
+
 	private ArrayList<FieldWrapper> getWrappedFields() {
 		if(wrappedFields == null) {
 			wrappedFields = new ArrayList<FieldWrapper>();

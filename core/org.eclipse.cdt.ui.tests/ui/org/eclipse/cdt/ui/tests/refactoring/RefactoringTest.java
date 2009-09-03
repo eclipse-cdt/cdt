@@ -84,7 +84,7 @@ public abstract class RefactoringTest extends RefactoringBaseTest {
 	}
 
 	protected void assertConditionsOk(RefactoringStatus conditions) {
-		assertTrue(conditions.isOK() ? "OK" : "Error or Warning in initial Conditions: " + conditions.getEntries()[0].getMessage() //$NON-NLS-1$ //$NON-NLS-2$
+		assertTrue(conditions.isOK() ? "OK" : "Error or Warning in Conditions: " + conditions.getEntries()[0].getMessage() //$NON-NLS-1$ //$NON-NLS-2$
 		, conditions.isOK());
 	}
 

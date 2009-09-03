@@ -33,6 +33,7 @@ import org.eclipse.cdt.managedbuilder.core.IConfiguration;
 import org.eclipse.cdt.managedbuilder.core.IInputType;
 import org.eclipse.cdt.managedbuilder.core.IResourceInfo;
 import org.eclipse.cdt.managedbuilder.core.ITool;
+import org.eclipse.cdt.managedbuilder.core.IToolChain;
 import org.eclipse.cdt.managedbuilder.internal.core.InputType;
 import org.eclipse.cdt.managedbuilder.internal.core.Tool;
 import org.eclipse.cdt.ui.CUIPlugin;
@@ -67,6 +68,7 @@ public class DiscoveryTab extends AbstractCBuildPropertyTab implements IBuildInf
 	@Deprecated
 	protected static final String PREFIX = "ScannerConfigOptionsDialog"; //$NON-NLS-1$
 
+	private static final String MAKEFILE_PROJECT_TOOLCHAIN_ID = "org.eclipse.cdt.build.core.prefbase.toolchain"; //$NON-NLS-1$
 	private static final String NAMESPACE = "org.eclipse.cdt.make.ui"; //$NON-NLS-1$
 	private static final String POINT = "DiscoveryProfilePage"; //$NON-NLS-1$
 	private static final String PROFILE_PAGE = "profilePage"; //$NON-NLS-1$
@@ -175,10 +177,14 @@ public class DiscoveryTab extends AbstractCBuildPropertyTab implements IBuildInf
 		autoDiscoveryCheckBox.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
-				buildInfo.setAutoDiscoveryEnabled(autoDiscoveryCheckBox.getSelection());
 				enableAllControls();
-				if (autoDiscoveryCheckBox.getSelection())
+				boolean isSCDEnabled = autoDiscoveryCheckBox.getSelection();
+				buildInfo.setAutoDiscoveryEnabled(isSCDEnabled);
+				if (isSCDEnabled) {
+					String id = visibleProfilesList.get(profileComboBox.getSelectionIndex());
+					buildInfo.setSelectedProfileId(id);
 					handleDiscoveryProfileChanged();
+				}
 			}
 		});
 		reportProblemsCheckBox = setupCheck(autoDiscoveryGroup,
@@ -319,6 +325,16 @@ public class DiscoveryTab extends AbstractCBuildPropertyTab implements IBuildInf
 		return false;
 	}
 	
+	/**
+	 * @param toolchain to check
+	 * @return if this toolchain is a toolchain created by Makefile project "Other Toolchain".
+	 * Note that name of this toolchain set to "No ToolChain" in plugin.xml.
+	 */
+	private boolean isMakefileProjectToolChain(IToolChain toolchain) {
+		return toolchain!=null
+			&& (toolchain.getId().equals(MAKEFILE_PROJECT_TOOLCHAIN_ID) || isMakefileProjectToolChain(toolchain.getSuperClass()));
+	}
+	
 	private void handleToolSelected() {
 		if (resTable.getSelectionCount() == 0)
 			return;
@@ -327,8 +343,10 @@ public class DiscoveryTab extends AbstractCBuildPropertyTab implements IBuildInf
 
 		TableItem ti = resTable.getSelection()[0];
 		buildInfo = (IScannerConfigBuilderInfo2) ti.getData("info"); //$NON-NLS-1$
+		String selectedProfileId = buildInfo.getSelectedProfileId();
 		iContext = (CfgInfoContext) ti.getData("cont"); //$NON-NLS-1$
-		autoDiscoveryCheckBox.setSelection(buildInfo.isAutoDiscoveryEnabled());
+		autoDiscoveryCheckBox.setSelection(buildInfo.isAutoDiscoveryEnabled()
+				&& !selectedProfileId.equals(ScannerConfigProfileManager.NULL_PROFILE_ID));
 		reportProblemsCheckBox.setSelection(buildInfo.isProblemReportingEnabled());
 
 		profileComboBox.removeAll();
@@ -350,28 +368,26 @@ public class DiscoveryTab extends AbstractCBuildPropertyTab implements IBuildInf
 		String[] profiles = new String[profilesList.size()];
 		int counter = 0;
 		int pos = 0;
-		String selectedProfileId = buildInfo.getSelectedProfileId();
 		ITool[] tools = null;
+		IConfiguration conf = iContext.getConfiguration();
+		IToolChain toolchain = conf!=null ? conf.getToolChain() : null;
 		boolean needPerRcProfile = cbi.isPerRcTypeDiscovery();
 		if (!page.isForPrefs()) {
 			Tool tool = (Tool) iContext.getTool();
-			if (null == tool) {
-				IConfiguration conf = iContext.getConfiguration();
-				if (null != conf) {
-					tools = conf.getToolChain().getTools();
-				}
-				if (null == tools)
-					return;
-			} else {
+			if (tool != null) {
 				tools = new ITool[] { tool };
+			} else {
+				if (toolchain != null) {
+					tools = toolchain.getTools();
+				}
+				if (tools == null)
+					return;
 			}
 		}
 		for (String profileId : profilesList) {
 			
-			// do not check selected profile id in tool-chain because
-			// for Makefile project tool-chain does not contain profile,
-			// instead default one is loaded from preferences to selectedProfileId
-			if (!profileId.equals(selectedProfileId)) {
+			// for Makefile project with default tool-chain any profiles can be selected
+			if (!isMakefileProjectToolChain(toolchain) || needPerRcProfile) {
 				if (tools != null) {
 					boolean foundProfile = false;
 					for (ITool tool : tools) {
@@ -382,9 +398,9 @@ public class DiscoveryTab extends AbstractCBuildPropertyTab implements IBuildInf
 					if (!foundProfile)
 						continue;
 				}
+				if (needPerRcProfile && !CfgScannerConfigProfileManager.isPerFileProfile(profileId))
+					continue;
 			}
-			if (needPerRcProfile && !CfgScannerConfigProfileManager.isPerFileProfile(profileId))
-				continue;
 
 			visibleProfilesList.add(profileId);
 			labels[counter] = profiles[counter] = getProfileName(profileId);

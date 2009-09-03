@@ -29,7 +29,8 @@ public class CfgScannerConfigProfileManager {
 	
 	public static boolean isPerFileProfile(String profileId){
 		ScannerConfigProfile profile = ScannerConfigProfileManager.getInstance().getSCProfileConfiguration(profileId);
-		return profile.getProfileScope().equals(ScannerConfigScope.FILE_SCOPE);
+		ScannerConfigScope scope = profile.getProfileScope();
+		return scope!=null && scope.equals(ScannerConfigScope.FILE_SCOPE);
 	}
 	
 	public static InfoContext createDefaultContext(IProject project){

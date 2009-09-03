@@ -50,7 +50,7 @@ public class ScannerConfigProfileTests extends BaseTestCase {
 	 */
 	public void testBasicScannerConfigProfile() throws CoreException {
 		// Add a scanner config profile to the project
-		IScannerConfigBuilderInfo2 scProjInfo = ScannerConfigProfileManager.createScannerConfigBuildInfo2(fCProject, ScannerConfigProfileManager.DEFAULT_SI_PROFILE_ID);
+		IScannerConfigBuilderInfo2 scProjInfo = ScannerConfigProfileManager.createScannerConfigBuildInfo2(fCProject, ScannerConfigProfileManager.PER_PROJECT_PROFILE_ID);
 		// Save
 		scProjInfo.save();
 

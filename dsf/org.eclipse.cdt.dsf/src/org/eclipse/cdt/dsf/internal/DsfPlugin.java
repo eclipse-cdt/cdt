@@ -73,7 +73,13 @@ public class DsfPlugin extends Plugin {
     public static BundleContext getBundleContext() {
         return fgBundleContext;
     }
-    
+
+	/**
+	 * Writes [message] to stdout, but only if the top level 'debug' tracing
+	 * option for this plugin has been turned on
+	 * 
+	 * @param message
+	 */
     public static void debug(String message) {
         if (DEBUG) {
             System.out.println(message);

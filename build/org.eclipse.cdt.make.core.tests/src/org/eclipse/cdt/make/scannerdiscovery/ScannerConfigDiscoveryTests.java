@@ -69,9 +69,9 @@ public class ScannerConfigDiscoveryTests extends BaseTestCase {
 				getScannerInformation(fCFile);
 		assertNotNull(scInfo);
 		String[] includes = scInfo.getIncludePaths();
-		assertTrue(includes.length > 0);
-		Map symbols = scInfo.getDefinedSymbols();
-		assertFalse(symbols.isEmpty());
+		assertTrue(includes.length == 0);
+		Map<String, String> symbols = scInfo.getDefinedSymbols();
+		assertTrue(symbols.isEmpty());
 	}
 
 	public void testGetCCCompilerBuiltins() throws CoreException {
@@ -84,9 +84,9 @@ public class ScannerConfigDiscoveryTests extends BaseTestCase {
 				getScannerInformation(fCFile);
 		assertNotNull(scInfo);
 		String[] includes = scInfo.getIncludePaths();
-		assertTrue(includes.length > 0);
-		Map symbols = scInfo.getDefinedSymbols();
-		assertFalse(symbols.isEmpty());
+		assertTrue(includes.length == 0);
+		Map<String, String> symbols = scInfo.getDefinedSymbols();
+		assertTrue(symbols.isEmpty());
 	}
 
 }

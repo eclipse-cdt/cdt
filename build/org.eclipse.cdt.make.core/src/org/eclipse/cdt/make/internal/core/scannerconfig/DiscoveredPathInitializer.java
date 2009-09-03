@@ -30,8 +30,12 @@ public class DiscoveredPathInitializer extends PathEntryContainerInitializer {
 	public void initialize(IPath containerPath, ICProject cProject) throws CoreException {
         IProject project = cProject.getProject();
         IScannerConfigBuilderInfo2 buildInfo = ScannerConfigProfileManager.createScannerConfigBuildInfo2(project);
+        String selectedProfileId = buildInfo.getSelectedProfileId();
+        if (ScannerConfigProfileManager.NULL_PROFILE_ID.equals(selectedProfileId))
+            return;
+        
         ScannerConfigScope profileScope = ScannerConfigProfileManager.getInstance().
-                getSCProfileConfiguration(buildInfo.getSelectedProfileId()).getProfileScope();
+                getSCProfileConfiguration(selectedProfileId).getProfileScope();
         if (ScannerConfigScope.PROJECT_SCOPE.equals(profileScope)) {
             CoreModel.setPathEntryContainer(new ICProject[]{cProject}, new DiscoveredPathContainer(project), null);
         }

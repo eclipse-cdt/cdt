@@ -16,6 +16,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Dictionary;
+import java.util.Formatter;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -29,7 +30,9 @@ import org.eclipse.cdt.dsf.concurrent.DsfExecutor;
 import org.eclipse.cdt.dsf.concurrent.DsfRunnable;
 import org.eclipse.cdt.dsf.concurrent.ThreadSafe;
 import org.eclipse.cdt.dsf.internal.DsfPlugin;
+import org.eclipse.cdt.internal.core.LoggingUtils;
 import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
 import org.osgi.framework.Filter;
 
@@ -53,7 +56,40 @@ import org.osgi.framework.Filter;
  */
 @ConfinedToDsfExecutor("getExecutor") 
 public class DsfSession 
-{    
+{
+	/**
+	 * Has the "debug/session" tracing option been turned on? Requires "debug"
+	 * to also be turned on.
+	 * 
+	 * @since 2.1
+	 */
+	protected static final boolean DEBUG_SESSION;
+
+	/**
+	 * Has the "debug/session/listeners" tracing option been turned on? Requires
+	 * "debug/session" to also be turned on.
+	 * 
+	 * @since 2.1
+	 */
+    protected static final boolean DEBUG_SESSION_LISTENERS;
+
+	/**
+	 * Has the "debug/session/dispatches" tracing option been turned on? Requires
+	 * "debug/session" to also be turned on.
+	 * 
+	 * @since 2.1
+	 */
+    protected static final boolean DEBUG_SESSION_DISPATCHES;
+
+    static {
+    	DEBUG_SESSION = DsfPlugin.DEBUG && "true".equals( //$NON-NLS-1$
+                Platform.getDebugOption("org.eclipse.cdt.dsf/debug/session")); //$NON-NLS-1$
+    	DEBUG_SESSION_LISTENERS = DEBUG_SESSION && "true".equals( //$NON-NLS-1$
+            Platform.getDebugOption("org.eclipse.cdt.dsf/debug/session/listeners")); //$NON-NLS-1$
+    	DEBUG_SESSION_DISPATCHES = DEBUG_SESSION && "true".equals( //$NON-NLS-1$
+                Platform.getDebugOption("org.eclipse.cdt.dsf/debug/session/dispatches")); //$NON-NLS-1$
+    }  
+	
     /** 
      * Listener for session started events.  This listener is always going to be
      * called in the dispatch thread of the session's executor.  
@@ -248,6 +284,15 @@ public class DsfSession
     public void addServiceEventListener(Object listener, Filter filter) {
         ListenerEntry entry = new ListenerEntry(listener, filter);
         assert !fListeners.containsKey(entry);
+        if (DEBUG_SESSION_LISTENERS) {
+        	String msg = new Formatter().format(
+        			"%s added as a service listener to %s (id=%s)", //$NON-NLS-1$
+        			LoggingUtils.toString(listener),
+        			LoggingUtils.toString(this),
+        			getId()
+        			).toString();
+        	DsfPlugin.debug(msg);
+        }
         fListeners.put(entry, getEventHandlerMethods(listener));
     }
     
@@ -258,6 +303,15 @@ public class DsfSession
     public void removeServiceEventListener(Object listener) {
         ListenerEntry entry = new ListenerEntry(listener, null);
         assert fListeners.containsKey(entry);
+        if (DEBUG_SESSION_LISTENERS) {
+        	String msg = new Formatter().format(
+        			"%s removed as a service listener to %s (id=%s)", //$NON-NLS-1$
+        			LoggingUtils.toString(listener),
+        			LoggingUtils.toString(this),
+        			getId()
+        			).toString();
+        	DsfPlugin.debug(msg);
+        }
         fListeners.remove(entry);
     }
 
@@ -374,6 +428,9 @@ public class DsfSession
         for (Map.Entry<ListenerEntry,List<Method>> entry : listeners.entrySet()) {
             for (Method method : entry.getValue()) {
                 try {
+                    if (DEBUG_SESSION_DISPATCHES) {
+                    	DsfPlugin.debug("Listener " + LoggingUtils.toString(entry.getKey().fListener) + " invoked with event " + LoggingUtils.toString(event));  //$NON-NLS-1$ //$NON-NLS-2$
+                    }
                     method.invoke(entry.getKey().fListener, new Object[] { event } );
                 }
                 catch (IllegalAccessException e) {
@@ -390,6 +447,22 @@ public class DsfSession
         }
     }
 
+	/**
+	 * DSF event handlers don't implement any particular interfaces. They
+	 * declare one or more methods that are annotated with
+	 * '@DsfServiceEventHandler', and which take a single event parameter. The
+	 * type of the parameter indicates what events the handler is interested in.
+	 * Any event that can be cast to that type (and which meets the optional
+	 * filter provided when the listener is registered) will be sent to it.
+	 * 
+	 * This method returns the methods annotated as handlers. Each method is
+	 * checked to ensure it takes a single parameter; an
+	 * {@link IllegalArgumentException} is thrown otherwise.
+	 * 
+	 * @param listener
+	 *            an object which should contain handler methods
+	 * @return the collection of handler methods
+	 */
     private Method[] getEventHandlerMethods(Object listener) 
     {
         List<Method> retVal = new ArrayList<Method>();

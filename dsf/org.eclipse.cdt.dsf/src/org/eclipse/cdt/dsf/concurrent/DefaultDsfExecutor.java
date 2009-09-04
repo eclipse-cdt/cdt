@@ -241,8 +241,6 @@ public class DefaultDsfExecutor extends ScheduledThreadPoolExecutor
                     traceBuilder.append("\n                         "); //$NON-NLS-1$
                     traceBuilder.append(fSubmittedAt.fStackTraceElements[i].toString());
                 }
-                traceBuilder.append(" at "); //$NON-NLS-1$
-                traceBuilder.append(fSubmittedAt.fStackTraceElements[0].toString());
                                 
                 // Finally write out to console
                 DsfPlugin.debug(traceBuilder.toString());

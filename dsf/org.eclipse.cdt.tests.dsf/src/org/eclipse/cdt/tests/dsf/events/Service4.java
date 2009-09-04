@@ -1,12 +1,12 @@
 /*******************************************************************************
- * Copyright (c) 2006 Wind River Systems and others.
+ * Copyright (c) 2009 Freescale Semiconductor and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  * 
  * Contributors:
- *     Wind River Systems - initial API and implementation
+ *     Freescale Semiconductor - initial API and implementation
  *******************************************************************************/
 package org.eclipse.cdt.tests.dsf.events;
 
@@ -14,9 +14,17 @@ import java.util.Hashtable;
 
 import org.eclipse.cdt.dsf.concurrent.RequestMonitor;
 import org.eclipse.cdt.dsf.service.DsfSession;
+import org.junit.Assert;
+import org.osgi.framework.Filter;
+import org.osgi.framework.InvalidSyntaxException;
 
-public class Service3 extends AbstractService {
-    Service3(DsfSession session) {
+/**
+ * This service differs from the other three in that when it registers itself as
+ * an event listener with the dsf session, it specifies a services filter.
+ * 
+ */
+public class Service4 extends AbstractService {
+    Service4(DsfSession session) {
         super(session);
     }
 
@@ -33,12 +41,26 @@ public class Service3 extends AbstractService {
     private void doInitialize(RequestMonitor requestMonitor) {
         getServicesTracker().getService(Service1.class);
         getServicesTracker().getService(Service2.class);
-        register(new String[]{Service3.class.getName()}, new Hashtable<String,String>());
+        getServicesTracker().getService(Service3.class);
+        register(new String[]{Service4.class.getName()}, new Hashtable<String,String>());
         requestMonitor.done();
     }
 
     @Override public void shutdown(RequestMonitor requestMonitor) {
         unregister();
         super.shutdown(requestMonitor);
+    }
+    
+    /**
+     * We want to get events only from Service2.
+     * @see org.eclipse.cdt.tests.dsf.events.AbstractService#getEventServicesFilter()
+     */
+    @Override protected Filter getEventServicesFilter() {
+    	try {
+			return getBundleContext().createFilter("(objectClass=org.eclipse.cdt.tests.dsf.events.Service2)");
+		} catch (InvalidSyntaxException e) {
+			Assert.fail();
+			return null;
+		}
     }
 }

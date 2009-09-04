@@ -34,6 +34,9 @@ class StartupSequence extends Sequence {
         }},
         new Step() { @Override public void execute(RequestMonitor requestMonitor) {
             new Service3(fSession).initialize(requestMonitor);
+        }},
+        new Step() { @Override public void execute(RequestMonitor requestMonitor) {
+            new Service4(fSession).initialize(requestMonitor);
         }}
     };
 }

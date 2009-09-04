@@ -17,6 +17,7 @@ import org.eclipse.cdt.dsf.service.DsfServiceEventHandler;
 import org.eclipse.cdt.dsf.service.DsfSession;
 import org.eclipse.cdt.tests.dsf.DsfTestPlugin;
 import org.osgi.framework.BundleContext;
+import org.osgi.framework.Filter;
 
 /**
  * Test service class used to test event behavior.  It has three types of events
@@ -29,7 +30,7 @@ abstract public class AbstractService extends AbstractDsfService
         super(session);
     }
     
-    @Override protected BundleContext getBundleContext() {
+    @Override protected final BundleContext getBundleContext() {
         return DsfTestPlugin.getBundleContext();
     }    
 
@@ -44,7 +45,7 @@ abstract public class AbstractService extends AbstractDsfService
     }
             
     private void doInitialize(RequestMonitor requestMonitor) {
-        getSession().addServiceEventListener(this, null);
+        getSession().addServiceEventListener(this, getEventServicesFilter());
         requestMonitor.done();
     }
 
@@ -52,6 +53,12 @@ abstract public class AbstractService extends AbstractDsfService
         getSession().removeServiceEventListener(this);
         super.shutdown(requestMonitor);
     }
+
+	/**
+	 * Subclass should override this if it wants events from only certain
+	 * services.
+	 */
+    protected Filter getEventServicesFilter() { return null; }
     
     ///////////////////////////////////////////////////////////////////////////
     // Test API
@@ -66,12 +73,13 @@ abstract public class AbstractService extends AbstractDsfService
     
     /** Simple event class 1 */
     public class Event1 {
-        // 1-based counter for the recipient of the event.
+    	/** 1-based counter for the recipient of the event. That is, whenever a handler is called with this event, the handler bumps this value */ 
         int fRecipientNumberCounter = 1;
     }
 
     /** Simple event class 2.  Note it doesn't have any relation to event 1 */
     public class Event2 {
+    	/** 1-based counter for the recipient of the event. That is, whenever a handler is called with this event, the handler bumps this value */    	
         int fRecipientNumberCounter = 1;        
     }
 

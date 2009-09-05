@@ -19,6 +19,7 @@ import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.core.settings.model.ICProjectDescription;
 import org.eclipse.cdt.debug.core.ICDTLaunchConfigurationConstants;
 import org.eclipse.cdt.launch.internal.ui.LaunchUIPlugin;
+import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.ResourcesPlugin;
@@ -32,6 +33,7 @@ import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IEditorPart;
+import org.eclipse.ui.IFileEditorInput;
 import org.eclipse.ui.IWorkbenchPage;
 
 public abstract class CLaunchConfigurationTab extends AbstractLaunchConfigurationTab {
@@ -109,10 +111,24 @@ public abstract class CLaunchConfigurationTab extends AbstractLaunchConfiguratio
 				return (ICElement)obj;
 			}
 		}
-		IEditorPart part = page.getActiveEditor();
-		if (part != null) {
-			IEditorInput input = part.getEditorInput();
-			return (ICElement)input.getAdapter(ICElement.class);
+		if (page != null)
+		{
+			IEditorPart part = page.getActiveEditor();
+			if (part != null) {
+				IEditorInput input = part.getEditorInput();
+				if (input instanceof IFileEditorInput) {
+					IFile file = ((IFileEditorInput)input).getFile();
+					if (file != null)
+					{
+						ICElement ce = CoreModel.getDefault().create(file);
+						if (ce == null) {
+							IProject pro = file.getProject();
+							ce = CoreModel.getDefault().create(pro);
+						}
+						return ce;
+					}
+				}
+			}
 		}
 		return null;
 	}

@@ -458,6 +458,7 @@ public class CMainTab extends CLaunchConfigurationTab {
 	 * the specified project.
 	 */
 	protected void handleProjectButtonSelected() {
+		String currentProjectName = fProjText.getText();
 		ICProject project = chooseCProject();
 		if (project == null) {
 			return;
@@ -465,6 +466,15 @@ public class CMainTab extends CLaunchConfigurationTab {
 
 		String projectName = project.getElementName();
 		fProjText.setText(projectName);
+		if (currentProjectName.length() == 0)
+		{
+			// New project selected for the first time, set the program name default too.
+			IBinary[] bins = getBinaryFiles(project);
+			if (bins != null && bins.length == 1) {				
+				fProgText.setText(bins[0].getResource().getProjectRelativePath().toOSString());
+			}
+		
+		}
 	}
 
 	/**

@@ -11,14 +11,18 @@
  *******************************************************************************/
 package org.eclipse.cdt.ui.templateengine.uitree;
 
-import com.ibm.icu.text.MessageFormat;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
 import org.w3c.dom.Element;
 import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
+
+import com.ibm.icu.text.MessageFormat;
 
 import org.eclipse.cdt.core.templateengine.TemplateDescriptor;
 import org.eclipse.cdt.core.templateengine.TemplateEngine;
@@ -37,6 +41,7 @@ import org.eclipse.cdt.ui.templateengine.uitree.uiwidgets.UITextWidget;
  * UIElement. The UIElement can be a simple UI Widget or a group.
  */
 public class UIElementTreeBuilderHelper implements IUIElementTreeBuilderHelper {
+	private static final String TEMPLATE_ENGINE_ERROR = Messages.getString("TemplateEngineMessage.Error"); //$NON-NLS-1$
 	/**
 	 * TemplateDescriptor representing the TemplaeDescriptor XML.
 	 */
@@ -118,12 +123,14 @@ public class UIElementTreeBuilderHelper implements IUIElementTreeBuilderHelper {
 					value= item.getAttribute(InputUIElement.COMBOITEM_VALUE);
 				}
 				if(label==null || value==null) {
-					String msg= Messages.getString("UIElementTreeBuilderHelper.InvalidEmptyLabel"); //$NON-NLS-1$
-					CUIPlugin.log(MessageFormat.format(msg, new Object[] {id}), null);
+					String msg = MessageFormat.format(Messages.getString("UIElementTreeBuilderHelper.InvalidEmptyLabel"), //$NON-NLS-1$
+							new Object[] {id});
+					CUIPlugin.log(TEMPLATE_ENGINE_ERROR, new CoreException(new Status(IStatus.ERROR, CUIPlugin.PLUGIN_ID, msg)));
 				} else {
 					if(value2name.put(value, label)!=null) {
-						String msg= Messages.getString("UIElementTreeBuilderHelper.InvalidNonUniqueValue"); //$NON-NLS-1$
-						CUIPlugin.log(MessageFormat.format(msg, new Object[] {id}), null);
+						String msg = MessageFormat.format(Messages.getString("UIElementTreeBuilderHelper.InvalidNonUniqueValue"), //$NON-NLS-1$
+								new Object[] {value, id});
+						CUIPlugin.log(TEMPLATE_ENGINE_ERROR, new CoreException(new Status(IStatus.ERROR, CUIPlugin.PLUGIN_ID, msg)));
 					}
 				}
 			}
@@ -148,7 +155,7 @@ public class UIElementTreeBuilderHelper implements IUIElementTreeBuilderHelper {
 			// for generating UI pages as TABS in a single page. 
 		} else {
 			String msg= MessageFormat.format(Messages.getString("UIElementTreeBuilderHelper.UnknownWidgetType0"), new Object[] {type}); //$NON-NLS-1$
-			CUIPlugin.log(msg, null);
+			CUIPlugin.log(TEMPLATE_ENGINE_ERROR, new CoreException(new Status(IStatus.ERROR, CUIPlugin.PLUGIN_ID, msg)));
 		}
 
 		return widgetElement;

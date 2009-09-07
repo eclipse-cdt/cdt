@@ -60,4 +60,8 @@ public class PseudoNameGeneratorTest extends TestCase {
 	public void testWithNamespace() {
 		assertEquals("string", pseudoNameGenerator.generateNewName("std::string"));  //$NON-NLS-1$//$NON-NLS-2$
 	}
+	
+	public void testBug288736TemplateParam() {
+		assertEquals("tempClass", pseudoNameGenerator.generateNewName("tempClass<int>"));
+	}
 }

@@ -32,6 +32,9 @@ public class PseudoNameGenerator {
 		
 		String[] nameParts = typeName.split("::"); //$NON-NLS-1$
 		typeName = nameParts[nameParts.length - 1];
+		if(typeName.contains("<")) { //$NON-NLS-1$
+			typeName = typeName.substring(0, typeName.indexOf('<'));
+		}
 		if(typeName.length() != 0) {
 			typeName = typeName.substring(0, 1).toLowerCase() + typeName.substring(1);
 		}

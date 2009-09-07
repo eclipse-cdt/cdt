@@ -15,6 +15,9 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
+import java.util.SortedSet;
+import java.util.TreeSet;
 
 import org.eclipse.cdt.build.core.scannerconfig.CfgInfoContext;
 import org.eclipse.cdt.build.core.scannerconfig.ICfgScannerConfigBuilderInfo2Set;
@@ -24,6 +27,7 @@ import org.eclipse.cdt.core.model.util.CDTListComparator;
 import org.eclipse.cdt.core.settings.model.ICConfigurationDescription;
 import org.eclipse.cdt.core.settings.model.ICResourceDescription;
 import org.eclipse.cdt.core.settings.model.util.CDataUtil;
+import org.eclipse.cdt.make.core.MakeCorePlugin;
 import org.eclipse.cdt.make.core.scannerconfig.IScannerConfigBuilderInfo2;
 import org.eclipse.cdt.make.core.scannerconfig.IScannerConfigBuilderInfo2Set;
 import org.eclipse.cdt.make.core.scannerconfig.InfoContext;
@@ -45,7 +49,9 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExtensionPoint;
 import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Platform;
+import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.SashForm;
@@ -68,6 +74,7 @@ public class DiscoveryTab extends AbstractCBuildPropertyTab implements IBuildInf
 	@Deprecated
 	protected static final String PREFIX = "ScannerConfigOptionsDialog"; //$NON-NLS-1$
 
+	private static final String GCC_PER_PROJECT_PROFILE = MakeCorePlugin.getUniqueIdentifier() + ".GCCStandardMakePerProjectProfile"; //$NON-NLS-1$
 	private static final String MAKEFILE_PROJECT_TOOLCHAIN_ID = "org.eclipse.cdt.build.core.prefbase.toolchain"; //$NON-NLS-1$
 	private static final String NAMESPACE = "org.eclipse.cdt.make.ui"; //$NON-NLS-1$
 	private static final String POINT = "DiscoveryProfilePage"; //$NON-NLS-1$
@@ -307,24 +314,6 @@ public class DiscoveryTab extends AbstractCBuildPropertyTab implements IBuildInf
 		return (x == -1) ? id : id.substring(x + 1);
 	}
 
-	private boolean toolContainsProfile(ITool tool, String profileId) {
-		IInputType[] inputTypes = ((Tool) tool).getAllInputTypes();
-		if (inputTypes == null)
-			return false;
-		
-		for (IInputType inputType : inputTypes) {
-			String[] requiedProfiles = getDiscoveryProfileIds(tool, inputType);
-			if (requiedProfiles != null) {
-				for (String requiredProfile : requiedProfiles) {
-					if (profileId.equals(requiredProfile)) {
-						return true;
-					}
-				}
-			}
-		}
-		return false;
-	}
-	
 	/**
 	 * @param toolchain to check
 	 * @return if this toolchain is a toolchain created by Makefile project "Other Toolchain".
@@ -363,46 +352,58 @@ public class DiscoveryTab extends AbstractCBuildPropertyTab implements IBuildInf
 			}
 		}
 
-		realPages = new AbstractDiscoveryPage[profilesList.size()];
-		String[] labels = new String[profilesList.size()];
-		String[] profiles = new String[profilesList.size()];
-		int counter = 0;
-		int pos = 0;
-		ITool[] tools = null;
-		IConfiguration conf = iContext.getConfiguration();
-		IToolChain toolchain = conf!=null ? conf.getToolChain() : null;
-		boolean needPerRcProfile = cbi.isPerRcTypeDiscovery();
-		if (!page.isForPrefs()) {
-			Tool tool = (Tool) iContext.getTool();
-			if (tool != null) {
-				tools = new ITool[] { tool };
-			} else {
-				if (toolchain != null) {
-					tools = toolchain.getTools();
-				}
-				if (tools == null)
+		boolean needPerRcProfile = cbi.isPerRcTypeDiscovery(); // per file, i.e. per input type
+		Set<String> contextProfiles = null;
+		if (page.isForPrefs()) {
+			// for preference page get all profiles
+			contextProfiles = new TreeSet<String>(profilesList);
+		} else {
+			// property page
+			if (!needPerRcProfile) {
+				// configuration-wide (all in tool-chain)
+				IConfiguration conf = iContext.getConfiguration();
+				IToolChain toolchain = conf!=null ? conf.getToolChain() : null;
+				
+				if (toolchain==null) {
+					ManagedBuilderUIPlugin.log(new Status(IStatus.ERROR, ManagedBuilderUIPlugin.getUniqueIdentifier(),
+							"Toolchain=null while trying to get discovery profile per project")); //$NON-NLS-1$
 					return;
+				}
+				
+				if (isMakefileProjectToolChain(toolchain)) {
+					// for generic Makefile project let user choose any profile
+					contextProfiles = new TreeSet<String>(profilesList);
+				} else {
+					contextProfiles = getAllScannerDiscoveryProfileIds(toolchain);
+				}
+				if (contextProfiles.size()==0) {
+					// GCC profile is a sensible default for user to start with
+					visibleProfilesList.add(0,GCC_PER_PROJECT_PROFILE);
+				}
+				
+			} else {
+				// per language (i.e. input type)
+				Tool tool = (Tool) iContext.getTool();
+				if (tool==null) 
+					return;
+				
+				contextProfiles = getAllScannerDiscoveryProfileIds(tool);
 			}
 		}
-		for (String profileId : profilesList) {
-			
-			// for Makefile project with default tool-chain any profiles can be selected
-			if (!isMakefileProjectToolChain(toolchain) || needPerRcProfile) {
-				if (tools != null) {
-					boolean foundProfile = false;
-					for (ITool tool : tools) {
-						foundProfile = toolContainsProfile(tool, profileId);
-						if (foundProfile)
-							break;
-					}
-					if (!foundProfile)
-						continue;
-				}
-				if (needPerRcProfile && !CfgScannerConfigProfileManager.isPerFileProfile(profileId))
-					continue;
-			}
+		
+		for (String profileId : contextProfiles) {
+			if (profilesList.contains(profileId)
+					&& needPerRcProfile==CfgScannerConfigProfileManager.isPerFileProfile(profileId))
+				visibleProfilesList.add(profileId);
+		}
+		
+		realPages = new AbstractDiscoveryPage[visibleProfilesList.size()];
+		String[] labels = new String[visibleProfilesList.size()];
+		String[] profiles = new String[visibleProfilesList.size()];
+		int pos = 0;
+		for (int counter=0;counter<visibleProfilesList.size();counter++) {
+			String profileId = visibleProfilesList.get(counter);
 
-			visibleProfilesList.add(profileId);
 			labels[counter] = profiles[counter] = getProfileName(profileId);
 			if (profileId.equals(selectedProfileId))
 				pos = counter;
@@ -422,9 +423,8 @@ public class DiscoveryTab extends AbstractCBuildPropertyTab implements IBuildInf
 					}
 				}
 			}
-			counter++;
 		}
-		profileComboBox.setItems(normalize(labels, profiles, counter));
+		profileComboBox.setItems(normalize(labels, profiles, visibleProfilesList.size()));
 
 		buildInfo.setSelectedProfileId(selectedProfileId);
 		if (profileComboBox.getItemCount() > 0)
@@ -433,7 +433,34 @@ public class DiscoveryTab extends AbstractCBuildPropertyTab implements IBuildInf
 		handleDiscoveryProfileChanged();
 	}
 
-	private String[] getDiscoveryProfileIds(ITool iTool, IInputType it) {
+	private Set<String> getAllScannerDiscoveryProfileIds(ITool tool) {
+		SortedSet<String> profiles = new TreeSet<String>();
+		
+		for (IInputType inputType : ((Tool) tool).getAllInputTypes()) {
+			for (String profileId : getDiscoveryProfileIds(inputType)) {
+				profiles.add(profileId);
+			}
+		}
+		return profiles;
+	}
+	
+	private Set<String> getAllScannerDiscoveryProfileIds(IToolChain toolchain) {
+		SortedSet<String> profiles = new TreeSet<String>();
+		
+		if (toolchain!=null) {
+			String toolchainProfileId = toolchain.getScannerConfigDiscoveryProfileId();
+			if (toolchainProfileId!=null && toolchainProfileId.length()>0) {
+				profiles.add(toolchainProfileId);
+			}
+			ITool[] tools = toolchain.getTools();
+			for (ITool tool : tools) {
+				profiles.addAll(getAllScannerDiscoveryProfileIds(tool));
+			}
+		}
+		return profiles;
+	}
+
+	private String[] getDiscoveryProfileIds(IInputType it) {
 		String attribute = ((InputType) it).getDiscoveryProfileIdAttribute();
 		if (null == attribute)
 			return new String[0];

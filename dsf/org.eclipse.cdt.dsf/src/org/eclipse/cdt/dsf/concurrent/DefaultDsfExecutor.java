@@ -299,7 +299,8 @@ public class DefaultDsfExecutor extends ScheduledThreadPoolExecutor
         /**
          * @deprecated use constructor that takes stack trace and ignore count
          */
-        public TracingWrapperCallable(Callable<T> callable, int frameIgnoreCount) {
+        @Deprecated
+		public TracingWrapperCallable(Callable<T> callable, int frameIgnoreCount) {
             super(new StackTraceElement[0], 0);
             if (callable == null) throw new NullPointerException();
             fCallable = callable;

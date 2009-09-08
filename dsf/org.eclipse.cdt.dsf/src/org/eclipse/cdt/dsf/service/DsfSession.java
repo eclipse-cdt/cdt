@@ -473,7 +473,7 @@ public class DsfSession
             for (Method method : methods) {
                 if (method.isAnnotationPresent(DsfServiceEventHandler.class)) {
                     Class<?>[] paramTypes = method.getParameterTypes();
-                    if (paramTypes.length > 2) {
+                    if (paramTypes.length > 1) {
                         throw new IllegalArgumentException("ServiceEventHandler method has incorrect number of parameters"); //$NON-NLS-1$
                     } 
                     retVal.add(method);

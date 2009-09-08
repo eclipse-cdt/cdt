@@ -334,6 +334,18 @@ public class DsfSession
      */
     @ThreadSafe
     public void dispatchEvent(final Object event, final Dictionary<?,?> serviceProperties) {
+        if (DEBUG_SESSION_DISPATCHES) {
+        	String msg = new Formatter().format(
+        			"%s Dispatching event %s to session %s from thread \"%s\" (%d)", //$NON-NLS-1$
+        			DsfPlugin.getDebugTime(),
+        			LoggingUtils.toString(event),
+        			LoggingUtils.toString(this),
+        			Thread.currentThread().getName(),
+        			Thread.currentThread().getId()
+        			).toString();
+        	
+        	DsfPlugin.debug(msg);
+        }
         getExecutor().submit(new DsfRunnable() { 
             public void run() { doDispatchEvent(event, serviceProperties);}
             @Override

@@ -28,6 +28,7 @@ import org.eclipse.cdt.core.dom.ast.IASTPointerOperator;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTFunctionDeclarator;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTParameterDeclaration;
 import org.eclipse.cdt.core.dom.rewrite.ASTRewrite;
+import org.eclipse.cdt.core.parser.ParserLanguage;
 
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTFunctionDeclarator;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTPointer;
@@ -58,7 +59,7 @@ public abstract class ExtractedFunctionConstructionHelper {
 		return false;
 	}
 
-	ICPPASTFunctionDeclarator createFunctionDeclarator(IASTName name, ICPPASTFunctionDeclarator functionDeclarator, NameInformation returnVariable, List<IASTNode> nodesToWrite, Collection<NameInformation> allUsedNames) {
+	ICPPASTFunctionDeclarator createFunctionDeclarator(IASTName name, ICPPASTFunctionDeclarator functionDeclarator, NameInformation returnVariable, List<IASTNode> nodesToWrite, Collection<NameInformation> allUsedNames, ParserLanguage lang) {
 		ICPPASTFunctionDeclarator declarator = new CPPASTFunctionDeclarator();
 		declarator.setName(name);
 	
@@ -74,7 +75,7 @@ public abstract class ExtractedFunctionConstructionHelper {
 			}
 		}
 	
-		for (ICPPASTParameterDeclaration param : getParameterDeclarations(allUsedNames)) {
+		for (ICPPASTParameterDeclaration param : getParameterDeclarations(allUsedNames, lang)) {
 			declarator.addParameterDeclaration(param);
 		}
 		
@@ -85,11 +86,11 @@ public abstract class ExtractedFunctionConstructionHelper {
 		return declarator;
 	}
 	
-	public Collection<ICPPASTParameterDeclaration> getParameterDeclarations(Collection<NameInformation> allUsedNames) {
+	public Collection<ICPPASTParameterDeclaration> getParameterDeclarations(Collection<NameInformation> allUsedNames, ParserLanguage lang) {
 		Collection<ICPPASTParameterDeclaration> result = new ArrayList<ICPPASTParameterDeclaration>();		
 		for (NameInformation name : allUsedNames) {
 			if(!name.isDeclarationInScope()){
-				result.add(name.getICPPASTParameterDeclaration(name.isUserSetIsReference()));
+				result.add(name.getICPPASTParameterDeclaration(name.isUserSetIsReference(), lang));
 			}
 		}
 		return result;

@@ -40,8 +40,10 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTReferenceOperator;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTSimpleTypeTemplateParameter;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPBinding;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateTypeParameter;
+import org.eclipse.cdt.core.parser.ParserLanguage;
 import org.eclipse.cdt.ui.CUIPlugin;
 
+import org.eclipse.cdt.internal.core.dom.parser.c.CASTPointer;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTArrayDeclarator;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTDeclarator;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTName;
@@ -129,14 +131,14 @@ public class NodeContainer {
 		}
 
 		public ICPPASTParameterDeclaration getICPPASTParameterDeclaration(
-				boolean isReference) {
+				boolean isReference, ParserLanguage lang) {
 			ICPPASTParameterDeclaration para = new CPPASTParameterDeclaration();
 			IASTDeclarator sourceDeclarator = (IASTDeclarator) getDeclaration()
 					.getParent();
 
 			if (sourceDeclarator.getParent() instanceof IASTSimpleDeclaration) {
 				IASTSimpleDeclaration decl = (IASTSimpleDeclaration) sourceDeclarator
-						.getParent();
+						.getParent();	
 				para.setDeclSpecifier(decl.getDeclSpecifier().copy());
 			} else if (sourceDeclarator.getParent() instanceof IASTParameterDeclaration) {
 				IASTParameterDeclaration decl = (IASTParameterDeclaration) sourceDeclarator
@@ -165,7 +167,14 @@ public class NodeContainer {
 			}
 
 			if (isReference && !hasReferenceOperartor(declarator)) {
-				declarator.addPointerOperator(new CPPASTReferenceOperator());
+				switch (lang) {
+				case C:
+					declarator.addPointerOperator(new CASTPointer());
+					break;
+				case CPP:
+					declarator.addPointerOperator(new CPPASTReferenceOperator());
+					break;
+				}
 			}
 
 			declarator.setNestedDeclarator(sourceDeclarator

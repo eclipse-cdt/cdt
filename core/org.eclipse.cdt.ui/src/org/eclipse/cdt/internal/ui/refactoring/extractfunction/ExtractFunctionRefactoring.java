@@ -663,7 +663,7 @@ public class ExtractFunctionRefactoring extends CRefactoring {
 		IASTStandardFunctionDeclarator createdFunctionDeclarator = extractedFunctionConstructionHelper
 				.createFunctionDeclarator(qname, info.getDeclarator(), info
 						.getReturnVariable(), container.getNodesToWrite(), info
-						.getAllUsedNames());
+						.getAllUsedNames(), unit.getParserLanguage());
 		func.setDeclarator(createdFunctionDeclarator);
 
 		IASTCompoundStatement compound = new CPPASTCompoundStatement();
@@ -868,7 +868,7 @@ public class ExtractFunctionRefactoring extends CRefactoring {
 		IASTStandardFunctionDeclarator declarator = extractedFunctionConstructionHelper
 				.createFunctionDeclarator(name, info.getDeclarator(), info
 						.getReturnVariable(), container.getNodesToWrite(), info
-						.getAllUsedNames());
+						.getAllUsedNames(), unit.getParserLanguage());
 		simpleDecl.addDeclarator(declarator);
 		return simpleDecl;
 	}
@@ -883,7 +883,7 @@ public class ExtractFunctionRefactoring extends CRefactoring {
 		ICPPASTFunctionDeclarator declarator = extractedFunctionConstructionHelper
 				.createFunctionDeclarator(name, info.getDeclarator(), info
 						.getReturnVariable(), container.getNodesToWrite(), info
-						.getAllUsedNames());
+						.getAllUsedNames(), unit.getParserLanguage());
 		simpleDecl.addDeclarator(declarator);
 		return simpleDecl;
 	}

@@ -164,15 +164,22 @@ public class DefaultDsfExecutor extends ScheduledThreadPoolExecutor
         /** Reference to the runnable/callable that submitted this runnable/callable to the executor */
         TracingWrapper fSubmittedBy = null;
 
-        /**
-         * @param offset the number of items in the stack trace not to be printed
-         */
-        TracingWrapper(int offset) {
-            StackTraceElement[] stackTrace = Thread.currentThread().getStackTrace();
-            // guard against the offset being greater than the stack trace
-            offset = Math.min(offset, stackTrace.length);
-            fSubmittedAt = new StackTraceWrapper(new StackTraceElement[stackTrace.length - offset]); 
-            System.arraycopy(stackTrace, offset - 1, fSubmittedAt.fStackTraceElements, 0, fSubmittedAt.fStackTraceElements.length);
+		/**
+		 * @param stackTrace
+		 *            the stack trace to log
+		 * @param frameIgnoreCount
+		 *            the number of items in [stackTrace] to ignore, starting at
+		 *            the topmost frame (where the thread is currently
+		 *            executing--stackTrace[0])
+		 */
+        TracingWrapper(StackTraceElement[] stackTrace, int frameIgnoreCount) {
+        	// guard against the offset being greater than the stack trace
+        	frameIgnoreCount = Math.min(frameIgnoreCount, stackTrace.length);
+        	fSubmittedAt = new StackTraceWrapper(new StackTraceElement[stackTrace.length - frameIgnoreCount]);
+            if (fSubmittedAt.fStackTraceElements.length > 0) {
+	            System.arraycopy(stackTrace, frameIgnoreCount, fSubmittedAt.fStackTraceElements, 0, fSubmittedAt.fStackTraceElements.length);
+            }
+            
             if (isInExecutorThread() &&  fCurrentlyExecuting != null) {
                 fSubmittedBy = fCurrentlyExecuting;
             }
@@ -253,8 +260,10 @@ public class DefaultDsfExecutor extends ScheduledThreadPoolExecutor
     
     class TracingWrapperRunnable extends TracingWrapper implements Runnable {
         final Runnable fRunnable;
-        public TracingWrapperRunnable(Runnable runnable, int offset) {
-            super(offset);
+        
+        
+        public TracingWrapperRunnable(Runnable runnable, StackTraceElement[] stackTrace, int frameIgnoreCount) {
+            super(stackTrace, frameIgnoreCount);
             if (runnable == null) throw new NullPointerException();
             fRunnable = runnable;
 
@@ -286,8 +295,21 @@ public class DefaultDsfExecutor extends ScheduledThreadPoolExecutor
     
     public class TracingWrapperCallable<T> extends TracingWrapper implements Callable<T> {
         final Callable<T> fCallable;
-        public TracingWrapperCallable(Callable<T> callable, int offset) {
-            super(offset);
+        
+        /**
+         * @deprecated use constructor that takes stack trace and ignore count
+         */
+        public TracingWrapperCallable(Callable<T> callable, int frameIgnoreCount) {
+            super(new StackTraceElement[0], 0);
+            if (callable == null) throw new NullPointerException();
+            fCallable = callable;
+        }
+        
+        /**
+		 * @since 2.1
+		 */
+        public TracingWrapperCallable(Callable<T> callable, StackTraceElement[] stackTrace, int frameIgnoreCount) {
+            super(stackTrace, frameIgnoreCount);
             if (callable == null) throw new NullPointerException();
             fCallable = callable;
         }
@@ -305,11 +327,20 @@ public class DefaultDsfExecutor extends ScheduledThreadPoolExecutor
         }
     }
 
+	/**
+	 * When recording a stack crawl to trace who has called a method in this
+	 * class, we call {@link Thread#getStackTrace()} and ignore the top three
+	 * frames. The two topmost frames are ones related to the
+	 * {@link Thread#getStackTrace()} call itself, and the third is the method
+	 * in this class that's been called.
+	 */
+    private static final int TRACE_FRAME_IGNORE_COUNT = 3;
+
     @Override
     public <V> ScheduledFuture<V> schedule(Callable<V> callable, long delay, TimeUnit unit) {
         if(DEBUG_EXECUTOR || ASSERTIONS_ENABLED) {
             if ( !(callable instanceof TracingWrapper) ) {
-                callable = new TracingWrapperCallable<V>(callable, 6);
+                callable = new TracingWrapperCallable<V>(callable, Thread.currentThread().getStackTrace(), TRACE_FRAME_IGNORE_COUNT);
             }
         }
         return super.schedule(callable, delay, unit);
@@ -318,7 +349,7 @@ public class DefaultDsfExecutor extends ScheduledThreadPoolExecutor
      public ScheduledFuture<?> schedule(Runnable command, long delay, TimeUnit unit) {
          if(DEBUG_EXECUTOR || ASSERTIONS_ENABLED) {
              if ( !(command instanceof TracingWrapper) ) {
-                 command = new TracingWrapperRunnable(command, 6);
+                 command = new TracingWrapperRunnable(command, Thread.currentThread().getStackTrace(), TRACE_FRAME_IGNORE_COUNT);
              }
          }
          return super.schedule(command, delay, unit);
@@ -327,7 +358,7 @@ public class DefaultDsfExecutor extends ScheduledThreadPoolExecutor
     @Override
     public ScheduledFuture<?> scheduleAtFixedRate(Runnable command, long initialDelay, long period, TimeUnit unit) {
         if(DEBUG_EXECUTOR || ASSERTIONS_ENABLED) {
-            command = new TracingWrapperRunnable(command, 6);
+            command = new TracingWrapperRunnable(command, Thread.currentThread().getStackTrace(), TRACE_FRAME_IGNORE_COUNT);
         }
         return super.scheduleAtFixedRate(command, initialDelay, period, unit);
     }
@@ -335,15 +366,15 @@ public class DefaultDsfExecutor extends ScheduledThreadPoolExecutor
     @Override
     public ScheduledFuture<?> scheduleWithFixedDelay(Runnable command, long initialDelay, long delay, TimeUnit unit) {
         if(DEBUG_EXECUTOR || ASSERTIONS_ENABLED) {
-            command = new TracingWrapperRunnable(command, 6);
+            command = new TracingWrapperRunnable(command, Thread.currentThread().getStackTrace(), TRACE_FRAME_IGNORE_COUNT);
         }
         return super.scheduleWithFixedDelay(command, initialDelay, delay, unit);
     }
-
+    
     @Override
     public void execute(Runnable command) {
         if(DEBUG_EXECUTOR || ASSERTIONS_ENABLED) {
-            command = new TracingWrapperRunnable(command, 6);
+            command = new TracingWrapperRunnable(command, Thread.currentThread().getStackTrace(), TRACE_FRAME_IGNORE_COUNT);
         }
         super.execute(command);
     }     
@@ -351,7 +382,7 @@ public class DefaultDsfExecutor extends ScheduledThreadPoolExecutor
     @Override
     public Future<?> submit(Runnable command) {
         if(DEBUG_EXECUTOR || ASSERTIONS_ENABLED) {
-            command = new TracingWrapperRunnable(command, 6);
+            command = new TracingWrapperRunnable(command, Thread.currentThread().getStackTrace(), TRACE_FRAME_IGNORE_COUNT);
         }
         return super.submit(command);
     }
@@ -359,7 +390,7 @@ public class DefaultDsfExecutor extends ScheduledThreadPoolExecutor
     @Override
     public <T> Future<T> submit(Callable<T> callable) {
         if(DEBUG_EXECUTOR || ASSERTIONS_ENABLED) {
-            callable = new TracingWrapperCallable<T>(callable, 6);
+            callable = new TracingWrapperCallable<T>(callable, Thread.currentThread().getStackTrace(), TRACE_FRAME_IGNORE_COUNT);
         }
         return super.submit(callable);
     }
@@ -367,7 +398,7 @@ public class DefaultDsfExecutor extends ScheduledThreadPoolExecutor
     @Override
     public <T> Future<T> submit(Runnable command, T result) {
         if(DEBUG_EXECUTOR || ASSERTIONS_ENABLED) {
-            command = new TracingWrapperRunnable(command, 6);
+            command = new TracingWrapperRunnable(command, Thread.currentThread().getStackTrace(), TRACE_FRAME_IGNORE_COUNT);
         }
         return super.submit(command, result);
     }

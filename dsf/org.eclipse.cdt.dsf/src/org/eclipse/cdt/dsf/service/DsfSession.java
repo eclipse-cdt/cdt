@@ -30,7 +30,7 @@ import org.eclipse.cdt.dsf.concurrent.DsfExecutor;
 import org.eclipse.cdt.dsf.concurrent.DsfRunnable;
 import org.eclipse.cdt.dsf.concurrent.ThreadSafe;
 import org.eclipse.cdt.dsf.internal.DsfPlugin;
-import org.eclipse.cdt.internal.core.LoggingUtils;
+import org.eclipse.cdt.dsf.internal.LoggingUtils;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
@@ -63,7 +63,7 @@ public class DsfSession
 	 * 
 	 * @since 2.1
 	 */
-	protected static final boolean DEBUG_SESSION;
+	private static final boolean DEBUG_SESSION;
 
 	/**
 	 * Has the "debug/session/listeners" tracing option been turned on? Requires
@@ -71,7 +71,7 @@ public class DsfSession
 	 * 
 	 * @since 2.1
 	 */
-    protected static final boolean DEBUG_SESSION_LISTENERS;
+    private static final boolean DEBUG_SESSION_LISTENERS;
 
 	/**
 	 * Has the "debug/session/dispatches" tracing option been turned on? Requires
@@ -79,7 +79,7 @@ public class DsfSession
 	 * 
 	 * @since 2.1
 	 */
-    protected static final boolean DEBUG_SESSION_DISPATCHES;
+    private static final boolean DEBUG_SESSION_DISPATCHES;
 
     static {
     	DEBUG_SESSION = DsfPlugin.DEBUG && "true".equals( //$NON-NLS-1$
@@ -286,7 +286,8 @@ public class DsfSession
         assert !fListeners.containsKey(entry);
         if (DEBUG_SESSION_LISTENERS) {
         	String msg = new Formatter().format(
-        			"%s added as a service listener to %s (id=%s)", //$NON-NLS-1$
+        			"%s %s added as a service listener to %s (id=%s)", //$NON-NLS-1$
+        			DsfPlugin.getDebugTime(),
         			LoggingUtils.toString(listener),
         			LoggingUtils.toString(this),
         			getId()
@@ -305,7 +306,8 @@ public class DsfSession
         assert fListeners.containsKey(entry);
         if (DEBUG_SESSION_LISTENERS) {
         	String msg = new Formatter().format(
-        			"%s removed as a service listener to %s (id=%s)", //$NON-NLS-1$
+        			"%s %s removed as a service listener to %s (id=%s)", //$NON-NLS-1$
+        			DsfPlugin.getDebugTime(),
         			LoggingUtils.toString(listener),
         			LoggingUtils.toString(this),
         			getId()
@@ -429,7 +431,7 @@ public class DsfSession
             for (Method method : entry.getValue()) {
                 try {
                     if (DEBUG_SESSION_DISPATCHES) {
-                    	DsfPlugin.debug("Listener " + LoggingUtils.toString(entry.getKey().fListener) + " invoked with event " + LoggingUtils.toString(event));  //$NON-NLS-1$ //$NON-NLS-2$
+                    	DsfPlugin.debug(DsfPlugin.getDebugTime() + " Listener " + LoggingUtils.toString(entry.getKey().fListener) + " invoked with event " + LoggingUtils.toString(event));  //$NON-NLS-1$ //$NON-NLS-2$
                     }
                     method.invoke(entry.getKey().fListener, new Object[] { event } );
                 }

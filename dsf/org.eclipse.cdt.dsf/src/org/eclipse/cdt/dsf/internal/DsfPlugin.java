@@ -87,7 +87,7 @@ public class DsfPlugin extends Plugin {
     }
 
 	/**
-	 * Returns a relative timestamp in the form "<seconds>,<milliseconds>". Each
+	 * Returns a relative timestamp in the form "seconds,milliseconds". Each
 	 * segment is zero-padded to three digits, ensuring a consistent length of
 	 * seven characters. The timestamp has no absolute meaning. It is merely the
 	 * elapsed time since January 1, 1970 UT truncated at 999 seconds. Do not

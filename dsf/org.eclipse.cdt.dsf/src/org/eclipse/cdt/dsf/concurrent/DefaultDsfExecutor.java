@@ -216,22 +216,63 @@ public class DefaultDsfExecutor extends ScheduledThreadPoolExecutor
                 traceBuilder.append("\n        "); //$NON-NLS-1$
                 traceBuilder.append(getExecutable().toString());
 
-                // Append "create by" info.
+				// Determine if the created-at and submitted-at information is
+				// the same. If so, consolidate.
+                StackTraceElement[] createdAtStack = null;
+                StackTraceElement[] submittedAtStack = (fSubmittedAt == null) ? null : fSubmittedAt.fStackTraceElements;
+                int createdBySeqNum = Integer.MIN_VALUE;
+                int submittedBySeqNum = (fSubmittedBy == null) ? Integer.MIN_VALUE : fSubmittedBy.fSequenceNumber;
                 if (getExecutable() instanceof DsfExecutable) {
                     DsfExecutable dsfExecutable = (DsfExecutable)getExecutable(); 
-                    if (dsfExecutable.fCreatedAt != null || dsfExecutable.fCreatedBy != null) {
-                        traceBuilder.append("\n            created  "); //$NON-NLS-1$
-                        if (dsfExecutable.fCreatedBy != null) {
-                            traceBuilder.append(" by #"); //$NON-NLS-1$
-                            traceBuilder.append(dsfExecutable.fCreatedBy.fSequenceNumber);
+                    createdAtStack = (dsfExecutable.fCreatedAt == null) ? null : dsfExecutable.fCreatedAt.fStackTraceElements;
+                    createdBySeqNum = (dsfExecutable.fCreatedBy == null) ? Integer.MIN_VALUE : dsfExecutable.fCreatedBy.fSequenceNumber;
+                }
+
+                boolean canConsolidate = false;
+                if ((createdBySeqNum == submittedBySeqNum) && (createdAtStack != null) && (submittedAtStack != null)) {
+                	if ((createdAtStack.length == submittedAtStack.length) ||
+                		(createdAtStack.length >=3 && submittedAtStack.length >= 3)) {
+                		
+                		canConsolidate = true;
+                		int count = Math.min(createdAtStack.length, 3);
+                		for (int i = 0; i < count; i++) {
+                			if (createdAtStack[i].toString().compareTo(submittedAtStack[i].toString()) != 0) {
+                				canConsolidate = false;
+                				break;
+                			}
+                		}
+                	}
+                }
+
+                if (canConsolidate) {
+            		traceBuilder.append("\n            created and submitted"); //$NON-NLS-1$
+                    if (createdBySeqNum != Integer.MIN_VALUE) {
+                        traceBuilder.append(" by #"); //$NON-NLS-1$
+                        traceBuilder.append(createdBySeqNum);
+                    }
+                    if (createdAtStack != null) {
+                        traceBuilder.append("\n                      at "); //$NON-NLS-1$
+                        traceBuilder.append(createdAtStack[0].toString());
+                        for (int i = 1; i < createdAtStack.length && i < 3; i++) {
+                            traceBuilder.append("\n                         "); //$NON-NLS-1$
+                            traceBuilder.append(createdAtStack[i].toString());
                         }
-                        if (dsfExecutable.fCreatedAt != null) {
+                    }
+                }
+                else {
+	                // Append "create by" info.
+                    if (createdAtStack != null || createdBySeqNum != Integer.MIN_VALUE) {
+                        traceBuilder.append("\n            created  "); //$NON-NLS-1$
+                        if (createdBySeqNum != Integer.MIN_VALUE) {
+                            traceBuilder.append(" by #"); //$NON-NLS-1$
+                            traceBuilder.append(createdBySeqNum);
+                        }
+                        if (createdAtStack != null) {
                             traceBuilder.append("\n                      at "); //$NON-NLS-1$
-                            traceBuilder.append(dsfExecutable.fCreatedAt.fStackTraceElements[0].toString());
-                            for (int i = 1; i < dsfExecutable.fCreatedAt.fStackTraceElements.length && i < 3; i++) {
+                            traceBuilder.append(createdAtStack[0].toString());
+                            for (int i = 1; i < createdAtStack.length && i < 3; i++) {
                                 traceBuilder.append("\n                         "); //$NON-NLS-1$
-                                traceBuilder.append(dsfExecutable.fCreatedAt.fStackTraceElements[i].toString());
-                            }
+                                traceBuilder.append(createdAtStack[i].toString());
                         }   
                     }
                 }
@@ -247,6 +288,7 @@ public class DefaultDsfExecutor extends ScheduledThreadPoolExecutor
                 for (int i = 1; i < fSubmittedAt.fStackTraceElements.length && i < 3; i++) {
                     traceBuilder.append("\n                         "); //$NON-NLS-1$
                     traceBuilder.append(fSubmittedAt.fStackTraceElements[i].toString());
+                }
                 }
                                 
                 // Finally write out to console

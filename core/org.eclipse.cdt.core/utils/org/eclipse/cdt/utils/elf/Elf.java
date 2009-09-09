@@ -114,6 +114,10 @@ public class Elf {
 		public final static int EM_STARCORE = 58;
 		public final static int EM_X86_64 = 62;		
 		public final static int EM_ST100 = 60;
+		
+		/** @since 5.2 */
+		public final static int EM_68HC08 = 71;	/* Freescale MC68HC08 Microcontroller */
+		
 		public final static int EM_AVR = 83;
 		public final static int EM_FR30 = 84; /* Fujitsu FR30 */
 		public final static int EM_V850 = 87;
@@ -127,6 +131,10 @@ public class Elf {
 		public final static int EM_NIOSII = 113;
 		public final static int EM_C166 = 116;
 		public final static int EM_M16C = 117;
+		
+		/** @since 5.2 */
+		public final static int EM_RS08 = 132;	 /* Freescale RS08 embedded processor */
+		
 		public final static int EM_MMDSP = 160;
 		public final static int EM_NIOS = 0xFEBB;
 		public final static int EM_CYGNUS_POWERPC = 0x9025;
@@ -882,6 +890,12 @@ public class Elf {
 				break;
 			case Elf.ELFhdr.EM_MMDSP:
 				attrib.cpu = "mmdsp"; //$NON-NLS-1$
+				break;
+			case Elf.ELFhdr.EM_68HC08:
+				attrib.cpu = "hc08"; //$NON-NLS-1$
+				break;
+			case Elf.ELFhdr.EM_RS08:
+				attrib.cpu = "rs08"; //$NON-NLS-1$
 				break;
 			case Elf.ELFhdr.EM_NONE :
 			default :

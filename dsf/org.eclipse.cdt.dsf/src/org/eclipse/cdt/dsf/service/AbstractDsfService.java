@@ -195,7 +195,6 @@ abstract public class AbstractDsfService
          * registration info.  This is the best bet for getting an accurate 
          * value.
          */
-        fRegistration.getReference().getProperty(Constants.OBJECTCLASS);
         fProperties.put(Constants.OBJECTCLASS, fRegistration.getReference().getProperty(Constants.OBJECTCLASS));
         
         /*

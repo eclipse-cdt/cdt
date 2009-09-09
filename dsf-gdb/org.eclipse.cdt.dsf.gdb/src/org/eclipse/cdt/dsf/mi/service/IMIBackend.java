@@ -25,9 +25,9 @@ public interface IMIBackend extends IDsfService {
 
     public enum State { NOT_INITIALIZED, STARTED, TERMINATED };
 
-    /**
-     * Event indicating that the back end process has started.
-     */
+	/**
+	 * Event indicating that the back end process has started or terminated.
+	 */
     @Immutable
     public static class BackendStateChangedEvent {
         final private String fSessionId;

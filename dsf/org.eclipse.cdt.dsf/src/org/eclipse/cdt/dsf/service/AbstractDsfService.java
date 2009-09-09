@@ -64,6 +64,16 @@ abstract public class AbstractDsfService
 
     public DsfExecutor getExecutor() { return fSession.getExecutor(); }
 
+	/**
+	 * The the returned collection is a superset of the properties specified in
+	 * {@link #register(String[], Dictionary)}. That method can add additional
+	 * (implicit) properties. For one, it tacks on the
+	 * {@link Constants#OBJECTCLASS} property associated with the service after
+	 * it has been registered. It also adds a property that designates the dsf
+	 * session ID.
+	 * 
+	 * @see org.eclipse.cdt.dsf.service.IDsfService#getProperties()
+	 */
     @SuppressWarnings("unchecked")
     public Dictionary getProperties() { return fProperties; }
     
@@ -100,11 +110,29 @@ abstract public class AbstractDsfService
     abstract protected BundleContext getBundleContext();
     
     /**  Returns the tracker for the services that this service depends on. */
-    protected DsfServicesTracker getServicesTracker() { return fTracker; }    
-    
-    /**
-     * Registers this service.
-     */
+    protected DsfServicesTracker getServicesTracker() { return fTracker; }
+
+	/**
+	 * Registers this DSF/OSGi service.
+	 * 
+	 * @param classes
+	 *            The class names under which the service can be located. For
+	 *            convenience, [classes] need not contain {@link IDsfService} or this
+	 *            base class; they are automatically added if not present. The
+	 *            class names in this array will be stored in the service's
+	 *            properties under the key {@link Constants#OBJECTCLASS}.
+	 * @param properties
+	 *            The properties for this service. The keys in the properties
+	 *            object must all be <code>String</code> objects. See
+	 *            {@link Constants} for a list of standard service property
+	 *            keys. Changes should not be made to this object after calling
+	 *            this method. To update the service's properties the
+	 *            {@link ServiceRegistration#setProperties} method must be
+	 *            called. Caller should, at a minimum, pass an empty
+	 *            dictionary--never null. We add a property to the collection
+	 *            (we modify the caller's object), to record the id of the dsf
+	 *            session associated with the service.
+	 */
     @SuppressWarnings("unchecked")
     protected void register(String[] classes, Dictionary properties) {
     	

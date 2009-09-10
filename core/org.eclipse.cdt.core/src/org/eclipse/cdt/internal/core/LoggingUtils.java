@@ -17,12 +17,13 @@ package org.eclipse.cdt.internal.core;
  */
 public class LoggingUtils {
 	/**
-	 * Return a string that uniquely identifies a Java object reference, in the form "classname@id", where
-	 * 'classname' is the simple (unqualified) name of the object's class, and 'id' is the hash code. If the
-	 * object is of an anonymous class, classname will be "<anonymous-class>".
+	 * Return a string that uniquely identifies a Java object reference, in the
+	 * form "classname@id", where 'classname' is the simple (package
+	 * unqualified) name of the object's class, and 'id' is the hash code.
 	 * 
-	 * Why not just use obj.toString()? That method is often overriden, and so cannot be relied on for a
-	 * representation that uniquely identifies the object in the VM space.
+	 * Why not just use obj.toString()? That method is often overriden, and so
+	 * cannot be relied on for a representation that uniquely identifies the
+	 * object in the VM space.
 	 * 
 	 * @param obj
 	 *            the object reference to stringify
@@ -32,15 +33,14 @@ public class LoggingUtils {
 		if (obj == null) {
 			return "null";  //$NON-NLS-1$
 		}
-		String className = obj.getClass().getSimpleName();
-		if (className == null) {
-			className = "<anonymous-class>"; //$NON-NLS-1$
+		String className = obj.getClass().getName();
+		int lastDot = className.lastIndexOf('.');
+		if ((lastDot >= 0) && ((lastDot + 1) < className.length())) {
+			className = className.substring(lastDot + 1);
 		}
 
 		String id = Integer.toHexString(System.identityHashCode(obj));
 	
 		return className + "@" + id; //$NON-NLS-1$
 	}
-
-	
 }

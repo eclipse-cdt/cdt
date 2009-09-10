@@ -81,6 +81,14 @@ public class DsfSession
 	 */
     private static final boolean DEBUG_SESSION_DISPATCHES;
 
+	/**
+	 * Has the "debug/session/modelAdapters" tracing option been turned on? Requires
+	 * "debug/session" to also be turned on.
+	 * 
+	 * @since 2.1
+	 */
+    private static final boolean DEBUG_SESSION_MODELADAPTERS;
+
     static {
     	DEBUG_SESSION = DsfPlugin.DEBUG && "true".equals( //$NON-NLS-1$
                 Platform.getDebugOption("org.eclipse.cdt.dsf/debug/session")); //$NON-NLS-1$
@@ -88,6 +96,8 @@ public class DsfSession
             Platform.getDebugOption("org.eclipse.cdt.dsf/debug/session/listeners")); //$NON-NLS-1$
     	DEBUG_SESSION_DISPATCHES = DEBUG_SESSION && "true".equals( //$NON-NLS-1$
                 Platform.getDebugOption("org.eclipse.cdt.dsf/debug/session/dispatches")); //$NON-NLS-1$
+    	DEBUG_SESSION_MODELADAPTERS = DEBUG_SESSION && "true".equals( //$NON-NLS-1$     	
+    	        Platform.getDebugOption("org.eclipse.cdt.dsf/debug/session/modelAdapters")); //$NON-NLS-1$
     }  
 	
     /** 
@@ -361,6 +371,19 @@ public class DsfSession
      */
     @ThreadSafe
     public void registerModelAdapter(Class<?> adapterType, Object adapter) {
+        if (DEBUG_SESSION_MODELADAPTERS) {
+        	String msg = new Formatter().format(
+        			"%s Registering model adapter %s of type %s to session %s (%s)", //$NON-NLS-1$
+        			DsfPlugin.getDebugTime(),
+        			LoggingUtils.toString(adapter),
+        			adapterType.getName(),
+        			LoggingUtils.toString(this),
+        			getId()
+        			).toString();
+        	
+        	DsfPlugin.debug(msg);
+        }
+    	
         fAdapters.put(adapterType, adapter);
     }
     
@@ -371,6 +394,18 @@ public class DsfSession
      */
     @ThreadSafe
     public void unregisterModelAdapter(Class<?> adapterType) {
+        if (DEBUG_SESSION_MODELADAPTERS) {
+        	String msg = new Formatter().format(
+        			"%s Unregistering model adapter of type %s from session %s (%s)", //$NON-NLS-1$
+        			DsfPlugin.getDebugTime(),
+        			adapterType.getName(),
+        			LoggingUtils.toString(this),
+        			getId()
+        			).toString();
+        	
+        	DsfPlugin.debug(msg);
+        }
+    	
         fAdapters.remove(adapterType);
     }
     

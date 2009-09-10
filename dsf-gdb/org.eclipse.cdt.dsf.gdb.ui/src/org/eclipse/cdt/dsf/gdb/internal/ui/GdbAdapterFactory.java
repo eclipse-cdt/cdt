@@ -77,7 +77,6 @@ import org.eclipse.debug.ui.sourcelookup.ISourceDisplay;
  * IDMContext.getAdapter() methods.
  */
 @ThreadSafe
-@SuppressWarnings({"restriction"})
 public class GdbAdapterFactory
     implements IAdapterFactory, ILaunchesListener2
 {

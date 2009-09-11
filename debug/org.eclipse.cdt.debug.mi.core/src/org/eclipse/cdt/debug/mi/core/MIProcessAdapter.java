@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 QNX Software Systems and others.
+ * Copyright (c) 2000, 2009 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -46,7 +46,7 @@ public class MIProcessAdapter implements MIProcess {
 	 * @throws IOException
 	 */
 	protected Process getGDBProcess(String[] args, int launchTimeout, IProgressMonitor monitor) throws IOException {
-		final Process pgdb = ProcessFactory.getFactory().exec(args);
+		final Process pgdb = createGDBProcess(args);
 
 		int timepass = 0;
 		if (launchTimeout <= 0) {
@@ -78,6 +78,22 @@ public class MIProcessAdapter implements MIProcess {
 		return pgdb;
 	}
 
+	/**
+	 * Basic process creation hook. Subclasses may override to create the process some other way,
+	 * for example by setting the child process's environment.
+	 * 
+	 * @param args
+	 *            the <tt>gdb</tt> command-line
+	 * @return the <tt>gdb</tt> process
+	 * @throws IOException
+	 *             on failure to create the child process
+	 * 
+	 * @since 6.1
+	 */
+	protected Process createGDBProcess(String[] args) throws IOException {
+		return ProcessFactory.getFactory().exec(args);
+	}
+	
 	public boolean canInterrupt(MIInferior inferior) {
 		return fGDBProcess instanceof Spawner;
 	}

@@ -144,6 +144,8 @@
          name="%CDTGNUMakeErrorParser.name"
          point="org.eclipse.cdt.core.ErrorParser">
       <errorparser
+            id="org.eclipse.cdt.core.MakeErrorParser"
+            name="%CDTGNUMakeErrorParser.name"
             class="org.eclipse.cdt.internal.errorparsers.MakeErrorParser">
       </errorparser>
    </extension>
@@ -152,6 +154,8 @@
          name="%CDTGNUCErrorParser.name"
          point="org.eclipse.cdt.core.ErrorParser">
       <errorparser
+            id="org.eclipse.cdt.core.GCCErrorParser"
+            name="%CDTGNUCErrorParser.name"
             class="org.eclipse.cdt.internal.errorparsers.GCCErrorParser">
       </errorparser>
    </extension>
@@ -160,6 +164,8 @@
          name="%CDTGNUAssemblerErrorParser.name"
          point="org.eclipse.cdt.core.ErrorParser">
       <errorparser
+            id="org.eclipse.cdt.core.GASErrorParser"
+            name="%CDTGNUAssemblerErrorParser.name"
             class="org.eclipse.cdt.internal.errorparsers.GASErrorParser">
       </errorparser>
    </extension>
@@ -168,6 +174,8 @@
          name="%CDTGNULinkerErrorParser.name"
          point="org.eclipse.cdt.core.ErrorParser">
       <errorparser
+            id="org.eclipse.cdt.core.GLDErrorParser"
+            name="%CDTGNULinkerErrorParser.name"
             class="org.eclipse.cdt.internal.errorparsers.GLDErrorParser">
       </errorparser>
    </extension>
@@ -176,7 +184,18 @@
          name="%CDTVisualCErrorParser.name"
          point="org.eclipse.cdt.core.ErrorParser">
       <errorparser
+            id="org.eclipse.cdt.core.VCErrorParser"
+            name="%CDTVisualCErrorParser.name"
             class="org.eclipse.cdt.internal.errorparsers.VCErrorParser">
+      </errorparser>
+   </extension>
+   <extension
+         id="RegexErrorParser"
+         name="%CDTRegexErrorParser.name"
+         point="org.eclipse.cdt.core.ErrorParser">
+      <errorparser
+            id="org.eclipse.cdt.core.RegexErrorParser"
+            name="%CDTRegexErrorParser.name">
       </errorparser>
    </extension>
 <!-- =================================================================================== -->

@@ -23,8 +23,10 @@ import java.util.List;
 import java.util.Map;
 import java.util.Vector;
 
+import org.eclipse.cdt.core.errorparsers.ErrorParserNamedWrapper;
 import org.eclipse.cdt.core.resources.ACBuilder;
 import org.eclipse.cdt.internal.core.resources.ResourceLookup;
+import org.eclipse.cdt.internal.errorparsers.ErrorParserExtensionManager;
 import org.eclipse.cdt.utils.CygPath;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
@@ -36,6 +38,7 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.URIUtil;
+import org.osgi.service.prefs.BackingStoreException;
 
 /**
  * The purpose of ErrorParserManager is to delegate the work of error parsing 
@@ -46,10 +49,22 @@ import org.eclipse.core.runtime.URIUtil;
  * @noextend This class is not intended to be subclassed by clients.
  */
 public class ErrorParserManager extends OutputStream {
+	/**
+	 * The list of error parsers stored in .project for 3.X projects
+	 * as key/value pair with key="org.eclipse.cdt.core.errorOutputParser"
+	 * @deprecated since CDT 4.0.
+	 */
+	@Deprecated
+	public final static String PREF_ERROR_PARSER = CCorePlugin.PLUGIN_ID + ".errorOutputParser"; //$NON-NLS-1$
+	
+	/**
+	 * Delimiter for error parsers presented in one string.
+	 * @since 5.2
+	 */
+	public final static char ERROR_PARSER_DELIMITER = ';';
 
 	private int nOpens;
-
-	public final static String PREF_ERROR_PARSER = CCorePlugin.PLUGIN_ID + ".errorOutputParser"; //$NON-NLS-1$
+	private int lineCounter=0;
 
 	private final IProject fProject;
 	private final IMarkerGenerator fMarkerGenerator;
@@ -143,12 +158,14 @@ public class ErrorParserManager extends OutputStream {
 
 	private void enableErrorParsers(String[] parsersIDs) {
 		if (parsersIDs == null) {
-			parsersIDs = CCorePlugin.getDefault().getAllErrorParsersIDs();
+			parsersIDs = ErrorParserExtensionManager.getDefaultErrorParserIds();
 		}
 		fErrorParsers = new LinkedHashMap<String, IErrorParser[]>(parsersIDs.length);
 		for (String parsersID : parsersIDs) {
-			IErrorParser[] parsers = CCorePlugin.getDefault().getErrorParser(parsersID);
-			fErrorParsers.put(parsersID, parsers);
+			IErrorParser errorParser = ErrorParserExtensionManager.getErrorParserCopy(parsersID);
+			if (errorParser!=null) {
+				fErrorParsers.put(parsersID, new IErrorParser[] {errorParser} );
+			}
 		}
 	}
 
@@ -169,7 +186,7 @@ public class ErrorParserManager extends OutputStream {
 	}
 
 	/**
-	 * Return the current URI location where the build is being performed
+	 * @return the current URI location where the build is being performed
 	 * @since 5.1
 	 */
 	public URI getWorkingDirectoryURI() {
@@ -292,9 +309,14 @@ public class ErrorParserManager extends OutputStream {
 
 
 		String lineTrimmed = line.trim();
+		lineCounter++;
 
 		for (IErrorParser[] parsers : fErrorParsers.values()) {
-			for (IErrorParser curr : parsers) {
+			for (IErrorParser parser : parsers) {
+				IErrorParser curr = parser;
+				if (parser instanceof ErrorParserNamedWrapper) {
+					curr = ((ErrorParserNamedWrapper)parser).getErrorParser();
+				}
 				int types = IErrorParser2.NONE;
 				if (curr instanceof IErrorParser2) {
 					types = ((IErrorParser2) curr).getProcessLineBehaviour();
@@ -323,6 +345,14 @@ public class ErrorParserManager extends OutputStream {
 				}
 			}
 		}
+	}
+	
+	/**
+	 * @return counter counting processed lines of output
+	 * @since 5.2
+	 */
+	public int getLineCounter() {
+		return lineCounter;
 	}
 
 	/**
@@ -692,5 +722,79 @@ public class ErrorParserManager extends OutputStream {
 	@Deprecated
 	public boolean hasErrors() {
 		return hasErrors;
+	}
+
+	/**
+	 * Set and store in workspace area user defined error parsers.
+	 *
+	 * @param errorParsers - array of user defined error parsers
+	 * @throws CoreException in case of problems
+	 * @since 5.2
+	 */
+	public static void setUserDefinedErrorParsers(IErrorParserNamed[] errorParsers) throws CoreException {
+		ErrorParserExtensionManager.setUserDefinedErrorParsers(errorParsers);
+	}
+
+	/**
+	 * @return available error parsers IDs which include contributed through extension + user defined ones
+	 * from workspace
+	 * @since 5.2
+	 */
+	public static String[] getErrorParserAvailableIds() {
+		return ErrorParserExtensionManager.getErrorParserAvailableIds();
+	}
+
+	/**
+	 * @return IDs of error parsers contributed through error parser extension point.
+	 * @since 5.2
+	 */
+	public static String[] getErrorParserExtensionIds() {
+		return ErrorParserExtensionManager.getErrorParserExtensionIds();
+	}
+
+	/**
+	 * Set and store default error parsers IDs to be used if error parser list is empty.
+	 *
+	 * @param ids - default error parsers IDs
+	 * @throws BackingStoreException in case of problem with storing
+	 * @since 5.2
+	 */
+	public static void setDefaultErrorParserIds(String[] ids) throws BackingStoreException {
+		ErrorParserExtensionManager.setDefaultErrorParserIds(ids);
+	}
+
+	/**
+	 * @return default error parsers IDs to be used if error parser list is empty.
+	 * @since 5.2
+	 */
+	public static String[] getDefaultErrorParserIds() {
+		return ErrorParserExtensionManager.getDefaultErrorParserIds();
+	}
+
+	/**
+	 * @param id - ID of error parser
+	 * @return cloned copy of error parser. Note that {@link ErrorParserNamedWrapper} returns
+	 * shallow copy with the same instance of underlying error parser.
+	 * @since 5.2
+	 */
+	public static IErrorParserNamed getErrorParserCopy(String id) {
+		return ErrorParserExtensionManager.getErrorParserCopy(id);
+	}
+
+	/**
+	 * @param ids - array of error parser IDs
+	 * @return error parser IDs delimited with error parser delimiter ";"
+	 * @since 5.2
+	 */
+	public static String toDelimitedString(String[] ids) {
+		String result=""; //$NON-NLS-1$
+		for (String id : ids) {
+			if (result.length()==0) {
+				result = id;
+			} else {
+				result += ERROR_PARSER_DELIMITER + id;
+			}
+		}
+		return result;
 	}
 }

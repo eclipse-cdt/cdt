@@ -176,6 +176,12 @@
    <extension
          point="org.eclipse.ui.preferencePages">
       <page
+            name="%PreferenceBuildSettings.name"
+            category="org.eclipse.cdt.ui.preferences.CPluginPreferencePage"
+            class="org.eclipse.cdt.make.internal.ui.preferences.BuildSettingsPreferencePage"
+            id="org.eclipse.cdt.make.ui.preferences.BuildSettings">
+      </page>
+      <page
             name="%PreferenceMake.name"
             category="org.eclipse.cdt.ui.preferences.CPluginPreferencePage"
             class="org.eclipse.cdt.make.internal.ui.preferences.MakePreferencePage"
@@ -428,8 +434,8 @@
             profileId="org.eclipse.cdt.make.core.GCCStandardMakePerFileProfile"/>
    </extension>
 
-     <extension
-           point="org.eclipse.cdt.ui.cPropertyTab">
+   <extension
+         point="org.eclipse.cdt.ui.cPropertyTab">
 
 <!-- exported from CORE -->           
      <tab
@@ -448,7 +454,16 @@
            helpId="cdt_u_prop_pns_sym"
            parent="org.eclipse.cdt.make.internal.ui.properties.PathAndSymbolPage"
            tooltip="%Symbols.tooltip"/>
-	</extension>
+     <tab
+           class="org.eclipse.cdt.ui.newui.ErrorParsTab"
+           helpId="cdt_u_prop_build_setting_errparser"
+           icon="icons/obj16/error_obj.gif"
+           name="%ErrorParsersTab.name"
+           parent="org.eclipse.cdt.make.internal.ui.preferences.BuildSettingsPreferencePage"
+           tooltip="%ErrorParsersTab.tooltip"
+           weight="020">
+     </tab>
+   </extension>
 
      <extension
          point="org.eclipse.ui.propertyPages">

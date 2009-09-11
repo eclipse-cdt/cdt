@@ -57,6 +57,52 @@ public class DialogsMessages extends NLS {
 	public static String DocCommentOwnerBlock_SelectDocToolDescription;
 	public static String DocCommentOwnerCombo_None;
 	public static String DocCommentOwnerComposite_DocumentationToolGroupTitle;
+	/** @since 5.2 */
+	public static String RegexErrorParserOptionPage_ConsumeNo;
+	/** @since 5.2 */
+	public static String RegexErrorParserOptionPage_ConsumeYes;
+	/** @since 5.2 */
+	public static String RegexErrorParserOptionPage_DescriptionColumn;
+	/** @since 5.2 */
+	public static String RegexErrorParserOptionPage_EatColumn;
+	/** @since 5.2 */
+	public static String RegexErrorParserOptionPage_FileColumn;
+	/** @since 5.2 */
+	public static String RegexErrorParserOptionPage_LineColumn;
+	/** @since 5.2 */
+	public static String RegexErrorParserOptionPage_LinkToPreferencesMessage;
+	/** @since 5.2 */
+	public static String RegexErrorParserOptionPage_Pattern_Column;
+	/** @since 5.2 */
+	public static String RegexErrorParserOptionPage_SeverityColumn;
+	/** @since 5.2 */
+	public static String RegexErrorParserOptionPage_SeverityError;
+	/** @since 5.2 */
+	public static String RegexErrorParserOptionPage_SeverityIgnore;
+	/** @since 5.2 */
+	public static String RegexErrorParserOptionPage_SeverityInfo;
+	/** @since 5.2 */
+	public static String RegexErrorParserOptionPage_SeverityWarning;
+	/** @since 5.2 */
+	public static String RegexErrorParserOptionPage_Title;
+	/** @since 5.2 */
+	public static String RegexErrorParserOptionPage_TooltipConsume;
+	/** @since 5.2 */
+	public static String RegexErrorParserOptionPage_TooltipDescription;
+	/** @since 5.2 */
+	public static String RegexErrorParserOptionPage_TooltipFile;
+	/** @since 5.2 */
+	public static String RegexErrorParserOptionPage_TooltipLine;
+	/** @since 5.2 */
+	public static String RegexErrorParserOptionPage_TooltipPattern;
+	/** @since 5.2 */
+	public static String RegexErrorParserOptionPage_TooltipSeverity;
+	/** @since 5.2 */
+	public static String RegularExpression_EmptyPattern;
+	/** @since 5.2 */
+	public static String RegularExpression_Validate;
+	/** @since 5.2 */
+	public static String RegularExpression_Enter;
 
 	static {
 		// initialize resource bundle

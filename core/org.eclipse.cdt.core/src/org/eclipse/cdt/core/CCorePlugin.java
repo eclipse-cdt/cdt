@@ -19,7 +19,6 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Map;
 import java.util.MissingResourceException;
 import java.util.ResourceBundle;
@@ -60,6 +59,7 @@ import org.eclipse.cdt.internal.core.pdom.PDOMManager;
 import org.eclipse.cdt.internal.core.resources.ResourceLookup;
 import org.eclipse.cdt.internal.core.settings.model.CProjectDescriptionManager;
 import org.eclipse.cdt.internal.core.settings.model.ExceptionFactory;
+import org.eclipse.cdt.internal.errorparsers.ErrorParserExtensionManager;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IProjectDescription;
 import org.eclipse.core.resources.IResource;
@@ -118,7 +118,13 @@ public class CCorePlugin extends Plugin {
 	public static final String PREF_INDEXER = "indexer"; //$NON-NLS-1$
 	public static final String DEFAULT_INDEXER = IPDOMManager.ID_FAST_INDEXER;
 	
+	/**
+	 * Name of the extension point for contributing an error parser
+	 */
 	public final static String ERROR_PARSER_SIMPLE_ID = "ErrorParser"; //$NON-NLS-1$
+	/**
+	 * Full unique name of the extension point for contributing an error parser
+	 */
 	public final static String ERROR_PARSER_UNIQ_ID = PLUGIN_ID + "." + ERROR_PARSER_SIMPLE_ID; //$NON-NLS-1$
 
 	// default store for pathentry
@@ -886,41 +892,29 @@ public class CCorePlugin extends Plugin {
 	}
 	
 	/**
-	 * Array of error parsers ids.
+	 * @deprecated since CDT 6.1. Use {@link ErrorParserManager#getErrorParserAvailableIds()} instead
+	 * @return array of error parsers ids
 	 */
+	@Deprecated
 	public String[] getAllErrorParsersIDs() {
-        IExtensionPoint extension = Platform.getExtensionRegistry().getExtensionPoint(CCorePlugin.PLUGIN_ID, ERROR_PARSER_SIMPLE_ID);
-		String[] empty = new String[0];
-		if (extension != null) {
-			IExtension[] extensions = extension.getExtensions();
-			ArrayList<String> list = new ArrayList<String>(extensions.length);
-			for (IExtension e : extensions)
-				list.add(e.getUniqueIdentifier());
-			return list.toArray(empty);
-		}
-		return empty;
+		ErrorParserExtensionManager.loadErrorParserExtensions();
+		return ErrorParserExtensionManager.getErrorParserAvailableIds();
 	}
-
+	
+	/**
+	 * @deprecated since CDT 6.1. Use {@link ErrorParserManager#getErrorParserCopy(String)} instead
+	 * @param id - id of error parser
+	 * @return array of error parsers
+	 */
+	@Deprecated
 	public IErrorParser[] getErrorParser(String id) {
-		IErrorParser[] empty = new IErrorParser[0];
-		try {
-	        IExtensionPoint extension = Platform.getExtensionRegistry().getExtensionPoint(CCorePlugin.PLUGIN_ID, ERROR_PARSER_SIMPLE_ID);
-			if (extension != null) {
-				IExtension[] extensions = extension.getExtensions();
-				List<IErrorParser> list = new ArrayList<IErrorParser>(extensions.length);
-				for (IExtension e : extensions) {
-					String parserID = e.getUniqueIdentifier();
-					if ((id == null && parserID != null) || (id != null && id.equals(parserID))) {
-						for (IConfigurationElement ce : e.getConfigurationElements())
-							list.add((IErrorParser)ce.createExecutableExtension("class")); //$NON-NLS-1$
-					}
-				}
-				return list.toArray(empty);
-			}
-		} catch (CoreException e) {
-			log(e);
+		ErrorParserExtensionManager.loadErrorParserExtensions();
+		IErrorParser errorParser = ErrorParserExtensionManager.getErrorParserInternal(id);
+		if (errorParser == null) {
+			return new IErrorParser[] {};
+		} else {
+			return new IErrorParser[] { errorParser };
 		}
-		return empty;
 	}
 
 	public IScannerInfoProvider getScannerInfoProvider(IProject project) {

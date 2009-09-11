@@ -159,4 +159,21 @@
          </run>
       </filesystem>
    </extension>
+   <extension
+         id="RegexErrorParserId"
+         name="Test Plugin RegexErrorParser"
+         point="org.eclipse.cdt.core.ErrorParser">
+      <errorparser
+            id="org.eclipse.cdt.core.tests.RegexErrorParserId"
+            name="Test Plugin RegexErrorParser">
+         <pattern
+               description-expr="$3"
+               eat-processed-line="true"
+               file-expr="$1"
+               line-expr="$2"
+               regex="(.*):(.*):regex (.*)"
+               severity="Error">
+         </pattern>
+      </errorparser>
+   </extension>
 </plugin>

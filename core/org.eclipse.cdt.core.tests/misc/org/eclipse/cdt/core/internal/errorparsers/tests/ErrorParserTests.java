@@ -26,6 +26,7 @@ public class ErrorParserTests {
         suite.addTest(ErrorParserManagerTest.suite());
         suite.addTest(ErrorParserFileMatchingTest.suite());
         suite.addTest(ErrorParserEfsFileMatchingTest.suite());
+        suite.addTest(RegexErrorParserTests.suite());
         return suite;
 	}
 

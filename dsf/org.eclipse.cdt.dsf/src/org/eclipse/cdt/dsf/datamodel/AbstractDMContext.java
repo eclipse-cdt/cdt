@@ -39,7 +39,7 @@ abstract public class AbstractDMContext extends PlatformObject
     private final IDMContext[] fParents;
 
     /** 
-     * Main constructor provides all data needed to implement the IModelContext
+     * Main constructor provides all data needed to implement the <code>IDMContext</code>
      * interface.
      */
     public AbstractDMContext(String sessionId, IDMContext[] parents) {

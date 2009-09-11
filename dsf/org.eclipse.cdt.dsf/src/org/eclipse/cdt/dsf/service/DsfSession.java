@@ -268,8 +268,8 @@ public class DsfSession
     private Map<ListenerEntry,Method[]> fListeners = new HashMap<ListenerEntry,Method[]>();
     
     /** 
-     * Map of registered adapters, for implementing the 
-     * IModelContext.getAdapter() method.
+     * Map of registered adapters, for implementing the <code>IDMContext.getAdapter()</code> 
+     * method.
      * @see org.eclipse.cdt.dsf.datamodel.AbstractDMContext#getAdapter 
      */
     private Map<Class<?>,Object> fAdapters = Collections.synchronizedMap(new HashMap<Class<?>,Object>());
@@ -364,7 +364,7 @@ public class DsfSession
     }
     
     /**
-     * Registers a IModelContext adapter of given type.
+     * Registers a <code>IDMContext</code> adapter of given type.
      * @param adapterType class type to register the adapter for
      * @param adapter adapter instance to register
      * @see org.eclipse.dsdp.model.AbstractDMContext#getAdapter
@@ -388,7 +388,7 @@ public class DsfSession
     }
     
     /**
-     * Un-registers a IModelContext adapter of given type.
+     * Un-registers a <code>IDMContext</code> adapter of given type.
      * @param adapterType adapter type to unregister
      * @see org.eclipse.dsdp.model.AbstractDMContext#getAdapter
      */
@@ -410,7 +410,7 @@ public class DsfSession
     }
     
     /** 
-     * Retrieves an adapter for given type for IModelContext.
+     * Retrieves an adapter for given type for <code>IDMContext</code>.
      * @param adapterType adapter type to look fors
      * @return adapter object for given type, null if none is registered with the session
      * @see org.eclipse.dsdp.model.AbstractDMContext#getAdapter

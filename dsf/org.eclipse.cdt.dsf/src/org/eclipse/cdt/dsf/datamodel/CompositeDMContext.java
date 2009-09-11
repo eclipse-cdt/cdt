@@ -30,7 +30,7 @@ public class CompositeDMContext implements IDMContext {
     private final IDMContext[] fParents;
     
     /** 
-     * Main constructor provides all data needed to implement the IModelContext
+     * Main constructor provides all data needed to implement the <code>IDMContext</code>
      * interface.
      * @param parents Array of parent contexts that this composite context is
      * made up of.  It can be an empty array, but it cannot be null.

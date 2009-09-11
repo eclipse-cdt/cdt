@@ -59,7 +59,7 @@ public interface IInputType extends IBuildObject {
 	/**
 	 * Removes the InputOrder element specified in the argument.
 	 * 
-	 * @param path The InputOrder element
+	 * @param element The InputOrder element
 	 */
 	public void removeInputOrder(IInputOrder element);
 
@@ -241,8 +241,6 @@ public interface IInputType extends IBuildObject {
 	/**
 	 * Sets the Eclipse <code>IContentType</code> that describes the
 	 * dependency files of this input type. 
-	 * 
-	 * @return type
 	 */
 	public void setDependencyContentType(IContentType type);
 	
@@ -380,7 +378,7 @@ public interface IInputType extends IBuildObject {
 	 * Returns the name of the build variable associated this this input type's resources
 	 * The build variable used in the build file to represent the list of input files when 
 	 * multipleOfType is True.  The same variable name can be used by an outputType to 
-	 * identify a set of output files that contribute to this tool�s input 
+	 * identify a set of output files that contribute to this tool's input 
 	 * (i.e., those using the same buildVariable name).  The default name is chosen by MBS.
 	 * 
 	 * @return String
@@ -389,8 +387,6 @@ public interface IInputType extends IBuildObject {
 
 	/**
 	 * Sets the name of the build variable associated this this input type's resources
-	 * 
-	 * @return variableName
 	 */
 	public void setBuildVariable(String variableName);
 

@@ -12,7 +12,6 @@ package org.eclipse.cdt.managedbuilder.internal.core;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Iterator;
 import java.util.List;
 import java.util.StringTokenizer;
 import java.util.Vector;
@@ -53,8 +52,8 @@ public class InputType extends BuildObject implements IInputType {
 	private String superClassId;
 	//  Parent and children
 	private ITool parent;
-	private Vector inputOrderList;
-	private Vector additionalInputList;
+	private Vector<InputOrder> inputOrderList;
+	private Vector<AdditionalInput> additionalInputList;
 	//  Managed Build model attributes
 	private String[] sourceContentTypeIds;
 	private IContentType[] sourceContentTypes;
@@ -64,7 +63,7 @@ public class InputType extends BuildObject implements IInputType {
 	private String[] headerExtensions;
 	private String dependencyContentTypeId;
 	private IContentType dependencyContentType;
-	private List dependencyExtensions;
+	private List<String> dependencyExtensions;
 	private String optionId;
 	private String assignToOptionId;
 	private String buildVariable;
@@ -145,11 +144,11 @@ public class InputType extends BuildObject implements IInputType {
 	 * This constructor is called to create an InputType whose attributes and children will be
 	 * added by separate calls.
 	 *
-	 * @param Tool The parent of the an InputType
-	 * @param InputType The superClass, if any
-	 * @param String The id for the new InputType
-	 * @param String The name for the new InputType
-	 * @param boolean Indicates whether this is an extension element or a managed project element
+	 * @param parent - The parent of the an InputType
+	 * @param superClass - The superClass, if any
+	 * @param Id - The id for the new InputType
+	 * @param name - The name for the new InputType
+	 * @param isExtensionElement - Indicates whether this is an extension element or a managed project element
 	 */
 	public InputType(Tool parent, IInputType superClass, String Id, String name, boolean isExtensionElement) {
 		this.parent = parent;
@@ -246,7 +245,7 @@ public class InputType extends BuildObject implements IInputType {
 		}
 		dependencyContentType = inputType.dependencyContentType;
 		if (inputType.dependencyExtensions != null) {
-			dependencyExtensions = new ArrayList(inputType.dependencyExtensions);
+			dependencyExtensions = new ArrayList<String>(inputType.dependencyExtensions);
 		}
 		if (inputType.optionId != null) {
 			optionId = new String(inputType.optionId);
@@ -274,17 +273,13 @@ public class InputType extends BuildObject implements IInputType {
 
 		//  Clone the children
 		if (inputType.inputOrderList != null) {
-			Iterator iter = inputType.getInputOrderList().listIterator();
-			while (iter.hasNext()) {
-				InputOrder inputOrder = (InputOrder) iter.next();
+			for (InputOrder inputOrder : inputType.getInputOrderList()) {
 				InputOrder newInputOrder = new InputOrder(this, inputOrder);
 				getInputOrderList().add(newInputOrder);
 			}
 		}
 		if (inputType.additionalInputList != null) {
-			Iterator iter = inputType.getAdditionalInputList().listIterator();
-			while (iter.hasNext()) {
-				AdditionalInput additionalInput = (AdditionalInput) iter.next();
+			for (AdditionalInput additionalInput : inputType.getAdditionalInputList()) {
 				AdditionalInput newAdditionalInput = new AdditionalInput(this, additionalInput);
 				getAdditionalInputList().add(newAdditionalInput);
 			}
@@ -322,15 +317,15 @@ public class InputType extends BuildObject implements IInputType {
 		superClassId = element.getAttribute(IProjectType.SUPERCLASS);
 
 		// sourceContentType
-		List list = new ArrayList();
+		List<String> list = new ArrayList<String>();
 		String ids = element.getAttribute(IInputType.SOURCE_CONTENT_TYPE);
 		if(ids != null){
 			StringTokenizer tokenizer = new StringTokenizer(ids, DEFAULT_SEPARATOR);
 			while (tokenizer.hasMoreElements()) {
-				list.add(tokenizer.nextElement());
+				list.add(tokenizer.nextToken());
 			}
 			if(list.size() != 0){
-				sourceContentTypeIds = (String[])list.toArray(new String[list.size()]);
+				sourceContentTypeIds = list.toArray(new String[list.size()]);
 				list.clear();
 			}
 		}
@@ -340,11 +335,11 @@ public class InputType extends BuildObject implements IInputType {
 		if (inputs != null) {
 			StringTokenizer tokenizer = new StringTokenizer(inputs, DEFAULT_SEPARATOR);
 			while (tokenizer.hasMoreElements()) {
-				list.add(tokenizer.nextElement());
+				list.add(tokenizer.nextToken());
 			}
 
 			if(list.size() != 0){
-				inputExtensions = (String[])list.toArray(new String[list.size()]);
+				inputExtensions = list.toArray(new String[list.size()]);
 				list.clear();
 			}
 		}
@@ -354,10 +349,10 @@ public class InputType extends BuildObject implements IInputType {
 		if(ids != null){
 			StringTokenizer tokenizer = new StringTokenizer(ids, DEFAULT_SEPARATOR);
 			while (tokenizer.hasMoreElements()) {
-				list.add(tokenizer.nextElement());
+				list.add(tokenizer.nextToken());
 			}
 			if(list.size() != 0){
-				headerContentTypeIds = (String[])list.toArray(new String[list.size()]);
+				headerContentTypeIds = list.toArray(new String[list.size()]);
 				list.clear();
 			}
 		}
@@ -367,11 +362,11 @@ public class InputType extends BuildObject implements IInputType {
 		if (hs != null) {
 			StringTokenizer tokenizer = new StringTokenizer(hs, DEFAULT_SEPARATOR);
 			while (tokenizer.hasMoreElements()) {
-				list.add(tokenizer.nextElement());
+				list.add(tokenizer.nextToken());
 			}
 
 			if(list.size() != 0){
-				headerExtensions = (String[])list.toArray(new String[list.size()]);
+				headerExtensions = list.toArray(new String[list.size()]);
 				list.clear();
 			}
 		}
@@ -384,7 +379,7 @@ public class InputType extends BuildObject implements IInputType {
 		if (headers != null) {
 			StringTokenizer tokenizer = new StringTokenizer(headers, DEFAULT_SEPARATOR);
 			while (tokenizer.hasMoreElements()) {
-				getDependencyExtensionsList().add(tokenizer.nextElement());
+				getDependencyExtensionsList().add(tokenizer.nextToken());
 			}
 		}
 
@@ -453,30 +448,30 @@ public class InputType extends BuildObject implements IInputType {
 
 		// sourceContentType
 		IContentTypeManager manager = Platform.getContentTypeManager();
-		List list = new ArrayList();
+		List<String> list = new ArrayList<String>();
 		if (element.getAttribute(IInputType.SOURCE_CONTENT_TYPE) != null) {
 			String ids = element.getAttribute(IInputType.SOURCE_CONTENT_TYPE);
 			if (ids != null) {
 				StringTokenizer tokenizer = new StringTokenizer(ids, DEFAULT_SEPARATOR);
 				while (tokenizer.hasMoreElements()) {
-					list.add(tokenizer.nextElement());
+					list.add(tokenizer.nextToken());
 				}
 
 				if(list.size() != 0){
-					sourceContentTypeIds = (String[])list.toArray(new String[list.size()]);
+					sourceContentTypeIds = list.toArray(new String[list.size()]);
 					list.clear();
 				}
 
 				if(sourceContentTypeIds != null){
+					List<IContentType> types = new ArrayList<IContentType>();
 					for (String sourceContentTypeId : sourceContentTypeIds) {
 						IContentType type = manager.getContentType(sourceContentTypeId);
 						if(type != null)
-							list.add(type);
+							types.add(type);
 					}
 
-					if(list.size() != 0){
-						sourceContentTypes = (IContentType[])list.toArray(new IContentType[list.size()]);
-						list.clear();
+					if(types.size() != 0){
+						sourceContentTypes = types.toArray(new IContentType[types.size()]);
 					}
 				}
 			}
@@ -488,11 +483,11 @@ public class InputType extends BuildObject implements IInputType {
 			if (inputs != null) {
 				StringTokenizer tokenizer = new StringTokenizer(inputs, DEFAULT_SEPARATOR);
 				while (tokenizer.hasMoreElements()) {
-					list.add(tokenizer.nextElement());
+					list.add(tokenizer.nextToken());
 				}
 
 				if(list.size() != 0){
-					inputExtensions = (String[])list.toArray(new String[list.size()]);
+					inputExtensions = list.toArray(new String[list.size()]);
 					list.clear();
 				}
 			}
@@ -504,24 +499,24 @@ public class InputType extends BuildObject implements IInputType {
 			if (ids != null) {
 				StringTokenizer tokenizer = new StringTokenizer(ids, DEFAULT_SEPARATOR);
 				while (tokenizer.hasMoreElements()) {
-					list.add(tokenizer.nextElement());
+					list.add(tokenizer.nextToken());
 				}
 
 				if(list.size() != 0){
-					headerContentTypeIds = (String[])list.toArray(new String[list.size()]);
+					headerContentTypeIds = list.toArray(new String[list.size()]);
 					list.clear();
 				}
 
 				if(headerContentTypeIds != null){
+					List<IContentType> types = new ArrayList<IContentType>();
 					for (String headerContentTypeId : headerContentTypeIds) {
 						IContentType type = manager.getContentType(headerContentTypeId);
 						if(type != null)
-							list.add(type);
+							types.add(type);
 					}
 
-					if(list.size() != 0){
-						headerContentTypes = (IContentType[])list.toArray(new IContentType[list.size()]);
-						list.clear();
+					if(types.size() != 0){
+						headerContentTypes = types.toArray(new IContentType[types.size()]);
 					}
 				}
 			}
@@ -533,11 +528,11 @@ public class InputType extends BuildObject implements IInputType {
 			if (inputs != null) {
 				StringTokenizer tokenizer = new StringTokenizer(inputs, DEFAULT_SEPARATOR);
 				while (tokenizer.hasMoreElements()) {
-					list.add(tokenizer.nextElement());
+					list.add(tokenizer.nextToken());
 				}
 
 				if(list.size() != 0){
-					headerExtensions = (String[])list.toArray(new String[list.size()]);
+					headerExtensions = list.toArray(new String[list.size()]);
 					list.clear();
 				}
 			}
@@ -558,7 +553,7 @@ public class InputType extends BuildObject implements IInputType {
 			if (headers != null) {
 				StringTokenizer tokenizer = new StringTokenizer(headers, DEFAULT_SEPARATOR);
 				while (tokenizer.hasMoreElements()) {
-					getDependencyExtensionsList().add(tokenizer.nextElement());
+					getDependencyExtensionsList().add(tokenizer.nextToken());
 				}
 			}
 		}
@@ -625,7 +620,6 @@ public class InputType extends BuildObject implements IInputType {
 	/**
 	 * Persist the InputType to the project file.
 	 *
-	 * @param doc
 	 * @param element
 	 */
 	public void serialize(ICStorageElement element) {
@@ -669,13 +663,11 @@ public class InputType extends BuildObject implements IInputType {
 
 		// dependency (header file) extensions
 		if (getDependencyExtensionsList().size() > 0) {
-			String headers;
-			List list = getDependencyExtensionsList();
-			Iterator iter = list.listIterator();
-			headers = (String)iter.next();
-			while (iter.hasNext()) {
-				headers += DEFAULT_SEPARATOR;
-				headers += iter.next();
+			String headers=""; //$NON-NLS-1$
+			for (String header : getDependencyExtensionsList()) {
+				if (headers.length()>0)
+					headers += DEFAULT_SEPARATOR;
+				headers += header;
 			}
 			element.setAttribute(IInputType.DEPENDENCY_EXTENSIONS, headers);
 		}
@@ -716,17 +708,11 @@ public class InputType extends BuildObject implements IInputType {
 		}
 
 		// Serialize my children
-		List childElements = getInputOrderList();
-		Iterator iter = childElements.listIterator();
-		while (iter.hasNext()) {
-			InputOrder io = (InputOrder) iter.next();
+		for (InputOrder io : getInputOrderList()) {
 			ICStorageElement ioElement = element.createChild(IInputOrder.INPUT_ORDER_ELEMENT_NAME);
 			io.serialize(ioElement);
 		}
-		childElements = getAdditionalInputList();
-		iter = childElements.listIterator();
-		while (iter.hasNext()) {
-			AdditionalInput ai = (AdditionalInput) iter.next();
+		for (AdditionalInput ai : getAdditionalInputList()) {
 			ICStorageElement aiElement = element.createChild(IAdditionalInput.ADDITIONAL_INPUT_ELEMENT_NAME);
 			ai.serialize(aiElement);
 		}
@@ -761,10 +747,7 @@ public class InputType extends BuildObject implements IInputType {
 	 * @see org.eclipse.cdt.core.build.managed.IInputType#getInputOrders()
 	 */
 	public IInputOrder[] getInputOrders() {
-		IInputOrder[] orders;
-		Vector ours = getInputOrderList();
-		orders = (IInputOrder[])ours.toArray(new IInputOrder[ours.size()]);
-		return orders;
+		return getInputOrderList().toArray(new IInputOrder[0]);
 	}
 
 	/* (non-Javadoc)
@@ -772,10 +755,7 @@ public class InputType extends BuildObject implements IInputType {
 	 */
 	public IInputOrder getInputOrder(String path) {
 		// TODO Convert both paths to absolute?
-		List orders = getInputOrderList();
-		Iterator iter = orders.listIterator();
-		while (iter.hasNext()) {
-			InputOrder io = (InputOrder) iter.next();
+		for (InputOrder io : getInputOrderList()) {
 			if (path.compareToIgnoreCase(io.getPath()) != 0) {
 				return io;
 			}
@@ -821,10 +801,7 @@ public class InputType extends BuildObject implements IInputType {
 	 * @see org.eclipse.cdt.core.build.managed.IInputType#getAdditionalInputs()
 	 */
 	public IAdditionalInput[] getAdditionalInputs() {
-		IAdditionalInput[] inputs;
-		Vector ours = getAdditionalInputList();
-		inputs = (IAdditionalInput[])ours.toArray(new IAdditionalInput[ours.size()]);
-		return inputs;
+		return getAdditionalInputList().toArray(new IAdditionalInput[0]);
 	}
 
 	/* (non-Javadoc)
@@ -834,10 +811,7 @@ public class InputType extends BuildObject implements IInputType {
 		// TODO Convert both paths to absolute?
 		// Must match all strings
 		String[] inputTokens = paths.split(";"); //$NON-NLS-1$
-		List inputs = getInputOrderList();
-		Iterator iter = inputs.listIterator();
-		while (iter.hasNext()) {
-			AdditionalInput ai = (AdditionalInput) iter.next();
+		for (AdditionalInput ai : getAdditionalInputList()) {
 			boolean match = false;
 			String[] tokens = ai.getPaths();
 			if (tokens.length == inputTokens.length) {
@@ -874,14 +848,12 @@ public class InputType extends BuildObject implements IInputType {
 	 * @see org.eclipse.cdt.core.build.managed.IInputType#getAdditionalDependencies()
 	 */
 	public IPath[] getAdditionalDependencies() {
-		List deps = new ArrayList();
-		Iterator typeIter = getAdditionalInputList().iterator();
-		while (typeIter.hasNext()) {
-			AdditionalInput current = (AdditionalInput)typeIter.next();
-			int kind = current.getKind();
+		List<IPath> deps = new ArrayList<IPath>();
+		for (AdditionalInput additionalInput : getAdditionalInputList()) {
+			int kind = additionalInput.getKind();
 			if (kind == IAdditionalInput.KIND_ADDITIONAL_DEPENDENCY ||
 				kind == IAdditionalInput.KIND_ADDITIONAL_INPUT_DEPENDENCY) {
-				String[] paths = current.getPaths();
+				String[] paths = additionalInput.getPaths();
 				if (paths != null) {
 					for (String path : paths) {
 						if (path.length() > 0) {
@@ -891,21 +863,19 @@ public class InputType extends BuildObject implements IInputType {
 				}
 			}
 		}
-		return (IPath[])deps.toArray(new IPath[deps.size()]);
+		return deps.toArray(new IPath[deps.size()]);
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.build.managed.IInputType#getAdditionalResources()
 	 */
 	public IPath[] getAdditionalResources() {
-		List ins = new ArrayList();
-		Iterator typeIter = getAdditionalInputList().iterator();
-		while (typeIter.hasNext()) {
-			AdditionalInput current = (AdditionalInput)typeIter.next();
-			int kind = current.getKind();
+		List<IPath> ins = new ArrayList<IPath>();
+		for (AdditionalInput additionalInput : getAdditionalInputList()) {
+			int kind = additionalInput.getKind();
 			if (kind == IAdditionalInput.KIND_ADDITIONAL_INPUT ||
 				kind == IAdditionalInput.KIND_ADDITIONAL_INPUT_DEPENDENCY) {
-				String[] paths = current.getPaths();
+				String[] paths = additionalInput.getPaths();
 				if (paths != null) {
 					for (String path : paths) {
 						if (path.length() > 0) {
@@ -915,15 +885,15 @@ public class InputType extends BuildObject implements IInputType {
 				}
 			}
 		}
-		return (IPath[])ins.toArray(new IPath[ins.size()]);
+		return ins.toArray(new IPath[ins.size()]);
 	}
 
 	/* (non-Javadoc)
 	 * Memory-safe way to access the list of input orders
 	 */
-	private Vector getInputOrderList() {
+	private Vector<InputOrder> getInputOrderList() {
 		if (inputOrderList == null) {
-			inputOrderList = new Vector();
+			inputOrderList = new Vector<InputOrder>();
 		}
 		return inputOrderList;
 	}
@@ -931,9 +901,9 @@ public class InputType extends BuildObject implements IInputType {
 	/* (non-Javadoc)
 	 * Memory-safe way to access the list of input orders
 	 */
-	private Vector getAdditionalInputList() {
+	private Vector<AdditionalInput> getAdditionalInputList() {
 		if (additionalInputList == null) {
-			additionalInputList = new Vector();
+			additionalInputList = new Vector<AdditionalInput>();
 		}
 		return additionalInputList;
 	}
@@ -1024,12 +994,12 @@ public class InputType extends BuildObject implements IInputType {
 			if (superClass != null) {
 				return superClass.getDependencyExtensionsAttribute();
 			} else {
-			    if (dependencyExtensions == null) {
-					dependencyExtensions = new ArrayList();
-			    }
+				if (dependencyExtensions == null) {
+					dependencyExtensions = new ArrayList<String>();
+				}
 			}
 		}
-		return (String[])dependencyExtensions.toArray(new String[dependencyExtensions.size()]);
+		return dependencyExtensions.toArray(new String[dependencyExtensions.size()]);
 	}
 
 	/* (non-Javadoc)
@@ -1040,7 +1010,7 @@ public class InputType extends BuildObject implements IInputType {
 		if (extensions != null) {
 			StringTokenizer tokenizer = new StringTokenizer(extensions, DEFAULT_SEPARATOR);
 			while (tokenizer.hasMoreElements()) {
-				getDependencyExtensionsList().add(tokenizer.nextElement());
+				getDependencyExtensionsList().add(tokenizer.nextToken());
 			}
 		}
 		setDirty(true);
@@ -1092,9 +1062,9 @@ public class InputType extends BuildObject implements IInputType {
 		return false;
 	}
 
-	private List getDependencyExtensionsList() {
+	private List<String> getDependencyExtensionsList() {
 		if (dependencyExtensions == null) {
-			dependencyExtensions = new ArrayList();
+			dependencyExtensions = new ArrayList<String>();
 		}
 		return dependencyExtensions;
 	}
@@ -1422,15 +1392,13 @@ public class InputType extends BuildObject implements IInputType {
 				setRebuildState(true);
 			}
 		} else {
-			List list = new ArrayList();
-			if (extensions != null) {
-				StringTokenizer tokenizer = new StringTokenizer(extensions, DEFAULT_SEPARATOR);
-				while (tokenizer.hasMoreElements()) {
-					list.add(tokenizer.nextElement());
-				}
+			List<String> list = new ArrayList<String>();
+			StringTokenizer tokenizer = new StringTokenizer(extensions, DEFAULT_SEPARATOR);
+			while (tokenizer.hasMoreElements()) {
+				list.add(tokenizer.nextToken());
 			}
 
-			String[] newExts = (String[])list.toArray(new String[list.size()]);
+			String[] newExts = list.toArray(new String[list.size()]);
 			if(!Arrays.equals(newExts, inputExtensions)){
 				inputExtensions = newExts;
 				setDirty(true);
@@ -1462,11 +1430,11 @@ public class InputType extends BuildObject implements IInputType {
 		//  Use content type if specified and registered with Eclipse
 		IContentType types[] = getSourceContentTypes();
 		if (types.length != 0) {
-			List list = new ArrayList();
+			List<String> list = new ArrayList<String>();
 			for (IContentType type : types) {
 				list.addAll(Arrays.asList(((Tool)tool).getContentTypeFileSpecs(type, project)));
 			}
-			return (String[])list.toArray(new String[list.size()]);
+			return list.toArray(new String[list.size()]);
 		}
 		return getSourceExtensionsAttribute();
 	}
@@ -1475,11 +1443,11 @@ public class InputType extends BuildObject implements IInputType {
 	public String[] getHeaderExtensions(ITool tool) {
 		IContentType types[] = getHeaderContentTypes();
 		if (types.length != 0) {
-			List list = new ArrayList();
+			List<String> list = new ArrayList<String>();
 			for (IContentType type : types) {
 				list.addAll(Arrays.asList(((Tool)tool).getContentTypeFileSpecs(type)));
 			}
-			return (String[])list.toArray(new String[list.size()]);
+			return list.toArray(new String[list.size()]);
 		}
 		return getHeaderExtensionsAttribute();
 	}
@@ -1515,18 +1483,14 @@ public class InputType extends BuildObject implements IInputType {
 	 */
 	public boolean isDirty() {
 		// This shouldn't be called for an extension InputType
- 		if (isExtensionInputType) return false;
+		if (isExtensionInputType) return false;
 
- 		// Check my children
-		Iterator typeIter = getInputOrderList().iterator();
-		while (typeIter.hasNext()) {
-			InputOrder current = (InputOrder)typeIter.next();
-			if (current.isDirty()) return true;
+		// Check my children
+		for (InputOrder inputOrder : getInputOrderList()) {
+			if (inputOrder.isDirty()) return true;
 		}
-		typeIter = getAdditionalInputList().iterator();
-		while (typeIter.hasNext()) {
-			AdditionalInput current = (AdditionalInput)typeIter.next();
-			if (current.isDirty()) return true;
+		for (AdditionalInput additionalInput : getAdditionalInputList()) {
+			if (additionalInput.isDirty()) return true;
 		}
 
 		return isDirty;
@@ -1539,15 +1503,11 @@ public class InputType extends BuildObject implements IInputType {
 		this.isDirty = isDirty;
 		// Propagate "false" to the children
 		if (!isDirty) {
-			Iterator typeIter = getInputOrderList().iterator();
-			while (typeIter.hasNext()) {
-				InputOrder current = (InputOrder)typeIter.next();
-				current.setDirty(false);
+			for (InputOrder inputOrder : getInputOrderList()) {
+				inputOrder.setDirty(false);
 			}
-			typeIter = getAdditionalInputList().iterator();
-			while (typeIter.hasNext()) {
-				AdditionalInput current = (AdditionalInput)typeIter.next();
-				current.setDirty(false);
+			for (AdditionalInput additionalInput : getAdditionalInputList()) {
+				additionalInput.setDirty(false);
 			}
 		}
 	}
@@ -1573,7 +1533,7 @@ public class InputType extends BuildObject implements IInputType {
 
 			// Resolve content types
 			IContentTypeManager manager = Platform.getContentTypeManager();
-			List list = new ArrayList();
+			List<IContentType> list = new ArrayList<IContentType>();
 			if (sourceContentTypeIds != null) {
 				for (String sourceContentTypeId : sourceContentTypeIds) {
 					IContentType type = manager.getContentType(sourceContentTypeId);
@@ -1581,7 +1541,7 @@ public class InputType extends BuildObject implements IInputType {
 						list.add(type);
 				}
 				if(list.size() != 0){
-					sourceContentTypes = (IContentType[])list.toArray(new IContentType[list.size()]);
+					sourceContentTypes = list.toArray(new IContentType[list.size()]);
 					list.clear();
 				} else {
 					sourceContentTypes = new IContentType[0];
@@ -1595,7 +1555,7 @@ public class InputType extends BuildObject implements IInputType {
 						list.add(type);
 				}
 				if(list.size() != 0){
-					headerContentTypes = (IContentType[])list.toArray(new IContentType[list.size()]);
+					headerContentTypes = list.toArray(new IContentType[list.size()]);
 					list.clear();
 				} else {
 					headerContentTypes = new IContentType[0];
@@ -1607,15 +1567,11 @@ public class InputType extends BuildObject implements IInputType {
 			}
 
 			//  Call resolveReferences on our children
-			Iterator typeIter = getInputOrderList().iterator();
-			while (typeIter.hasNext()) {
-				InputOrder current = (InputOrder)typeIter.next();
-				current.resolveReferences();
+			for (InputOrder inputOrder : getInputOrderList()) {
+				inputOrder.resolveReferences();
 			}
-			typeIter = getAdditionalInputList().iterator();
-			while (typeIter.hasNext()) {
-				AdditionalInput current = (AdditionalInput)typeIter.next();
-				current.resolveReferences();
+			for (AdditionalInput additionalInput : getAdditionalInputList()) {
+				additionalInput.resolveReferences();
 			}
 		}
 	}
@@ -1655,15 +1611,11 @@ public class InputType extends BuildObject implements IInputType {
 		if(rebuildState)
 			return true;
 
-		Iterator typeIter = getInputOrderList().iterator();
-		while (typeIter.hasNext()) {
-			InputOrder current = (InputOrder)typeIter.next();
-			if (current.needsRebuild()) return true;
+		for (InputOrder inputOrder : getInputOrderList()) {
+			if (inputOrder.needsRebuild()) return true;
 		}
-		typeIter = getAdditionalInputList().iterator();
-		while (typeIter.hasNext()) {
-			AdditionalInput current = (AdditionalInput)typeIter.next();
-			if (current.needsRebuild()) return true;
+		for (AdditionalInput additionalInput : getAdditionalInputList()) {
+			if (additionalInput.needsRebuild()) return true;
 		}
 
 		return rebuildState;
@@ -1677,18 +1629,13 @@ public class InputType extends BuildObject implements IInputType {
 
 		// Propagate "false" to the children
 		if (!rebuild) {
-			Iterator typeIter = getInputOrderList().iterator();
-			while (typeIter.hasNext()) {
-				InputOrder current = (InputOrder)typeIter.next();
-				current.setRebuildState(false);
+			for (InputOrder inputOrder : getInputOrderList()) {
+				inputOrder.setRebuildState(false);
 			}
-			typeIter = getAdditionalInputList().iterator();
-			while (typeIter.hasNext()) {
-				AdditionalInput current = (AdditionalInput)typeIter.next();
-				current.setRebuildState(false);
+			for (AdditionalInput additionalInput : getAdditionalInputList()) {
+				additionalInput.setRebuildState(false);
 			}
 		}
-
 	}
 
 	public IResourceInfo getRcInfo(ITool tool) {

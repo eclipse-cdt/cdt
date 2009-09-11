@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2008 Wind River Systems and others.
+ * Copyright (c) 2007, 2009 Wind River Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -11,6 +11,7 @@
 package org.eclipse.cdt.dsf.ui.viewmodel.update;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -272,6 +273,14 @@ public class AbstractCachingVMProvider extends AbstractVMProvider
                 return fElementTester.getUpdateFlags(key.fViewerInput, key.fPath);
             } 
             return 0;
+        }
+        
+        Collection<String> getPropertiesToFlush(ElementDataKey key, boolean isDirty) {
+            if (fRootElement.equals(key.fRootElement) && fElementTester instanceof IElementUpdateTesterExtension) {
+                return ((IElementUpdateTesterExtension)fElementTester).
+                getPropertiesToFlush(key.fViewerInput, key.fPath, isDirty);
+            } 
+            return null;
         }
         
         @Override
@@ -702,7 +711,8 @@ public class AbstractCachingVMProvider extends AbstractVMProvider
             }
             else if (entry instanceof ElementDataEntry) {
                 ElementDataEntry elementDataEntry = (ElementDataEntry)entry;
-                int updateFlags = flushKey.getUpdateFlags((ElementDataKey)elementDataEntry.fKey);
+                ElementDataKey elementDataKey = (ElementDataKey)elementDataEntry.fKey;
+                int updateFlags = flushKey.getUpdateFlags(elementDataKey);
                 if ((updateFlags & IVMUpdatePolicy.FLUSH) != 0) {
                     if ((updateFlags & IVMUpdatePolicy.ARCHIVE) == IVMUpdatePolicy.ARCHIVE) {
                         // We are saving current data for change history, check if the data is valid.
@@ -735,6 +745,11 @@ public class AbstractCachingVMProvider extends AbstractVMProvider
                     elementDataEntry.fChildren = null;
                     elementDataEntry.fAllChildrenKnown = false;
                     elementDataEntry.fDirty = false;
+                } else if ((updateFlags & IVMUpdatePolicy.FLUSH_PARTIAL_PROPERTIES) != 0) {
+                    Collection<String> propertiesToFlush = flushKey.getPropertiesToFlush(elementDataKey, elementDataEntry.fDirty);
+                    if (propertiesToFlush != null && elementDataEntry.fProperties != null) {
+                        elementDataEntry.fProperties.keySet().removeAll(propertiesToFlush);
+                    }
                 } else if ((updateFlags & IVMUpdatePolicy.DIRTY) != 0) {
                     elementDataEntry.fDirty = true;
                     if (elementDataEntry.fProperties != null) {

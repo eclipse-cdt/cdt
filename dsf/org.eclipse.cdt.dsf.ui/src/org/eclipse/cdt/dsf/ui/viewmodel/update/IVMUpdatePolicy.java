@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2008 Wind River Systems and others.
+ * Copyright (c) 2007, 2009 Wind River Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -40,6 +40,15 @@ public interface IVMUpdatePolicy {
      * target data.
      */
     public static int DIRTY = 0x4;
+    
+    /**
+     * Flag indicating that the cache should flush only selected properties of 
+     * an element.  The list of properties to clear can be accessed using
+     * {@link IElementUpdateTesterExtension#getPropertiesToFlush(Object, org.eclipse.jface.viewers.TreePath, boolean)}.
+     * 
+     * @since 2.1
+     */
+    public static int FLUSH_PARTIAL_PROPERTIES = 0x8;
 
     /**
      * Returns unique ID of this update policy.

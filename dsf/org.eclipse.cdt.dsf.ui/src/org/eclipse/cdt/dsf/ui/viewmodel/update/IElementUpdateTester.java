@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2008 Wind River Systems and others.
+ * Copyright (c) 2007, 2009 Wind River Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -25,6 +25,9 @@ public interface IElementUpdateTester {
     /**
      * Returns the flags indicating what updates should be performed on the 
      * cache entry of the given element.
+     * 
+     * @param viewerInput The input to the viewer for the given cache entry.
+     * @param path The viewer tree path for the given cache entry.
      */
     public int getUpdateFlags(Object viewerInput, TreePath path);
 

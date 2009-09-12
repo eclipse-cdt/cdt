@@ -1819,4 +1819,14 @@ public class InputType extends BuildObject implements IInputType {
 		//TODO:
 		return false;
 	}
+	
+	/**
+	 * The intention is cosmetic - to make debugging easier.
+	 * 
+	 * @see org.eclipse.cdt.managedbuilder.internal.core.BuildObject#toString()
+	 */
+	@Override
+	public String toString() {
+		return getId();
+	}
 }

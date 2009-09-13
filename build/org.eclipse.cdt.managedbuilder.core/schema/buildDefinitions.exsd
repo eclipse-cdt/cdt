@@ -701,7 +701,7 @@ The pathConverter of a toolchain applies for all tools of the toolchain except i
                   Specifies the name of the class that implements IManagedCommandLineGenerator in order to provide custom command line generation logic.
                </documentation>
                <appInfo>
-                  <meta.attribute kind="java"/>
+                  <meta.attribute kind="java" basedOn=":org.eclipse.cdt.managedbuilder.core.IManagedCommandLineGenerator"/>
                </appInfo>
             </annotation>
          </attribute>
@@ -1340,7 +1340,7 @@ Additional special types exist to flag options of special relevance to the build
                   This field is unused in 2.0
                </documentation>
                <appInfo>
-                  <meta.attribute kind="java"/>
+                  <meta.attribute kind="java" deprecated="true"/>
                </appInfo>
             </annotation>
          </attribute>

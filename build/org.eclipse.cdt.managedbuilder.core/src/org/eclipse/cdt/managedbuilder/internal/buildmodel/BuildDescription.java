@@ -1937,6 +1937,12 @@ public class BuildDescription implements IBuildDescription {
 
 	private BuildResource addInput(String path, BuildIOType buildArg){
 		if(path.length() > 0){
+			if(path.length() >= 2){
+				// Unquote path potentially quoted by FileListControl.getNewInputObject()
+				if(path.charAt(0) == '"' && path.charAt(path.length() -1) == '"') {
+					path = path.substring(1, path.length() -1);
+				}
+			}
 			IPath pPath = Path.fromOSString(path);
 			return addInput(pPath, buildArg);
 		}

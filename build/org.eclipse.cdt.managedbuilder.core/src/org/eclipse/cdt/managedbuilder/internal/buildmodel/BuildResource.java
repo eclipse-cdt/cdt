@@ -61,6 +61,10 @@ public class BuildResource implements IBuildResource {
 	 * @see org.eclipse.cdt.managedbuilder.builddescription.IBuildResource#getLocation()
 	 */
 	public IPath getLocation() {
+		if(fFullWorkspacePath == null) {
+			return new Path(fLocationURI.getPath());
+		}
+
 		IResource resource = ResourcesPlugin.getWorkspace().getRoot().findMember(fFullWorkspacePath);
 		if(resource == null) {
 			return new Path(fLocationURI.getPath());

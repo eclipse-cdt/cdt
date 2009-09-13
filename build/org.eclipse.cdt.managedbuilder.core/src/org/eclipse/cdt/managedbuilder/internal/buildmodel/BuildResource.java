@@ -217,6 +217,7 @@ public class BuildResource implements IBuildResource {
 		return null;
 	}
 
+	@Override
 	public String toString() {
 		StringBuffer buf = new StringBuffer();
 		buf.append("BR "); //$NON-NLS-1$

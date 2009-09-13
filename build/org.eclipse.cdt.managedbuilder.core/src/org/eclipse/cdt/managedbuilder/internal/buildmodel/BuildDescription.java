@@ -15,14 +15,13 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.Vector;
+import java.util.Map.Entry;
 
 import org.eclipse.cdt.core.settings.model.CSourceEntry;
 import org.eclipse.cdt.core.settings.model.ICConfigurationDescription;
@@ -100,14 +99,14 @@ public class BuildDescription implements IBuildDescription {
 	private IResourceDelta fDelta;
 	private IConfigurationBuildState fBuildState; 
 	
-	private Map fToolToMultiStepMap = new HashMap();
+	private Map<ITool, BuildStep> fToolToMultiStepMap = new HashMap<ITool, BuildStep>();
 	private BuildStep fOrderedMultiActions[];
 
-	private Map fLocationToRcMap = new HashMap();
+	private Map<IPath, BuildResource> fLocationToRcMap = new HashMap<IPath, BuildResource>();
 	
-	private Map fVarToAddlInSetMap = new HashMap();
+	private Map<String, Set<BuildIOType>> fVarToAddlInSetMap = new HashMap<String, Set<BuildIOType>>();
 	
-	private List fStepList = new ArrayList();
+	private List<BuildStep> fStepList = new ArrayList<BuildStep>();
 	
 	private BuildStep fTargetStep;
 
@@ -121,15 +120,15 @@ public class BuildDescription implements IBuildDescription {
 	private BuildStep fInputStep;
 	private BuildStep fOutputStep;
 	
-	private Map fToolOrderMap = new HashMap();
-	private Set fToolInProcesSet = new HashSet();
+	private Map<String, ToolOrderEstimation> fToolOrderMap = new HashMap<String, ToolOrderEstimation>();
+	private Set<ITool> fToolInProcesSet = new HashSet<ITool>();
 	private ITool fOrderedTools[];
 	
 	private ICSourceEntry[] fSourceEntries;
 	
 //	private Map fExtToToolAndTypeListMap = new HashMap();
 	
-	private Map fEnvironment;
+	private Map<String, String> fEnvironment;
 	
 	private PDOMDependencyGenerator fPdomDepGen;
 	
@@ -138,8 +137,8 @@ public class BuildDescription implements IBuildDescription {
 	private BuildStep fCleanStep;
 	
 	private class ToolInfoHolder {
-		Map fExtToToolAndTypeListMap;
-		Map fInTypeToGroupMap = new HashMap();
+		Map<String, List<ToolAndType>> fExtToToolAndTypeListMap;
+		Map<String, BuildGroup> fInTypeToGroupMap = new HashMap<String, BuildGroup>();
 	}
 
 	class ToolAndType{
@@ -273,29 +272,29 @@ public class BuildDescription implements IBuildDescription {
 		return rcLocation;
 	}
 	
-	private class StepCollector implements IStepVisitor{
-		private Set fStepSet = new HashSet();
-
-		public int visit(IBuildStep action) throws CoreException {
-			if(DbgUtil.DEBUG){
-				DbgUtil.trace("StepCollector: visiting step " + DbgUtil.stepName(action));	//$NON-NLS-1$
-			}
-			fStepSet.add(action);
-			return VISIT_CONTINUE;
-		}
-		
-		public BuildStep[] getSteps(){
-			return (BuildStep[])fStepSet.toArray(new BuildStep[fStepSet.size()]);
-		}
-		
-		public Set getStepSet(){
-			return fStepSet;
-		}
-		
-		public void clear(){
-			fStepSet.clear();
-		}
-	}
+//	private class StepCollector implements IStepVisitor{
+//		private Set<IBuildStep> fStepSet = new HashSet<IBuildStep>();
+//
+//		public int visit(IBuildStep action) throws CoreException {
+//			if(DbgUtil.DEBUG){
+//				DbgUtil.trace("StepCollector: visiting step " + DbgUtil.stepName(action));	//$NON-NLS-1$
+//			}
+//			fStepSet.add(action);
+//			return VISIT_CONTINUE;
+//		}
+//		
+//		public BuildStep[] getSteps(){
+//			return (BuildStep[])fStepSet.toArray(new BuildStep[fStepSet.size()]);
+//		}
+//		
+//		public Set getStepSet(){
+//			return fStepSet;
+//		}
+//		
+//		public void clear(){
+//			fStepSet.clear();
+//		}
+//	}
 
 	private class RebuildStateSynchronizer implements IStepVisitor{
 
@@ -397,9 +396,9 @@ public class BuildDescription implements IBuildDescription {
 			fTool = tool;
 		}
 		
-		ITool getTool(){
-			return fTool;
-		}
+//		ITool getTool(){
+//			return fTool;
+//		}
 		
 		ITool[] getDeps(){
 			if(fDeps == null)
@@ -413,13 +412,13 @@ public class BuildDescription implements IBuildDescription {
 			return fConsumers;
 		}
 		
-		boolean dependsOn(ITool tool){
-			return indexOf(tool, getDeps()) != -1;
-		}
-
-		boolean hasConsumer(ITool tool){
-			return indexOf(tool, getConsumers()) != -1;
-		}
+//		boolean dependsOn(ITool tool){
+//			return indexOf(tool, getDeps()) != -1;
+//		}
+//
+//		boolean hasConsumer(ITool tool){
+//			return indexOf(tool, getConsumers()) != -1;
+//		}
 
 	}
 	
@@ -466,8 +465,8 @@ public class BuildDescription implements IBuildDescription {
 		return null;
 	}
 	
-	private Map initToolAndTypeMap(IFolderInfo foInfo){
-		Map extToToolAndTypeListMap = new HashMap();
+	private Map<String, List<ToolAndType>> initToolAndTypeMap(IFolderInfo foInfo){
+		Map<String, List<ToolAndType>> extToToolAndTypeListMap = new HashMap<String, List<ToolAndType>>();
 		ITool tools[] = foInfo.getFilteredTools();
 		for(int i = 0; i < tools.length; i++){
 			ITool tool = tools[i];
@@ -479,9 +478,9 @@ public class BuildDescription implements IBuildDescription {
 					for(int k = 0; k < exts.length; k++){
 						String ext = exts[k];
 						if(tool.buildsFileType(ext)){
-							List list = (List)extToToolAndTypeListMap.get(ext);
+							List<ToolAndType> list = extToToolAndTypeListMap.get(ext);
 							if(list == null){
-								list = new ArrayList();
+								list = new ArrayList<ToolAndType>();
 								extToToolAndTypeListMap.put(ext, list);
 							}
 							list.add(new ToolAndType(tool, type, ext));
@@ -493,9 +492,9 @@ public class BuildDescription implements IBuildDescription {
 				for(int k = 0; k < exts.length; k++){
 					String ext = exts[k];
 					if(tool.buildsFileType(ext)){
-						List list = (List)extToToolAndTypeListMap.get(ext);
+						List<ToolAndType> list = extToToolAndTypeListMap.get(ext);
 						if(list == null){
-							list = new ArrayList();
+							list = new ArrayList<ToolAndType>();
 							extToToolAndTypeListMap.put(ext, list);
 						}
 						list.add(new ToolAndType(tool, null, ext));
@@ -516,14 +515,11 @@ public class BuildDescription implements IBuildDescription {
 		BuildIOType arg = (BuildIOType)rc.getProducerIOType();
 		String linkId = (checkVar && arg != null) ? arg.getLinkId() : null;
 		
-		for(Iterator iter = h.fExtToToolAndTypeListMap.entrySet().iterator(); iter.hasNext();){
-			Map.Entry entry = (Map.Entry)iter.next();
-			String ext = (String)entry.getKey();
+		for (Entry<String, List<ToolAndType>> entry : h.fExtToToolAndTypeListMap.entrySet()) {
+			String ext = entry.getKey();
 			if(locString.endsWith("." + ext)){	//$NON-NLS-1$
-				List list = (List)entry.getValue();
-				for(Iterator itt = list.iterator(); itt.hasNext();){
-					ToolAndType tt = (ToolAndType)itt.next();
-					
+				List<ToolAndType> list = entry.getValue();
+				for (ToolAndType tt : list) {
 					if(!checkVar)
 						return tt;
 					
@@ -535,10 +531,7 @@ public class BuildDescription implements IBuildDescription {
 					if(var == null || var.length() == 0)
 						return tt;
 					
-					if(linkId == null){
-						if(var == null || var.length() == 0)
-							return tt; 
-					} else if(linkId.equals(var)){
+					if(linkId != null && linkId.equals(var)){
 						return tt;
 					}
 				}
@@ -682,7 +675,7 @@ public class BuildDescription implements IBuildDescription {
 			} else {
 
 				if(inputType != null ? inputType.getMultipleOfType() : tool == fCfg.calculateTargetTool()){	
-					BuildStep step = (BuildStep)fToolToMultiStepMap.get(tool);
+					BuildStep step = fToolToMultiStepMap.get(tool);
 
 					if(step != null){
 						BuildIOType argument = step.getIOTypeForType(inputType, true); 
@@ -692,7 +685,7 @@ public class BuildDescription implements IBuildDescription {
 						argument.addResource(rc);
 		
 						if(inputActionArg == null){
-							inputActionArg = findTypeForExtension(inputAction,false,rc.getLocation().getFileExtension());;
+							inputActionArg = findTypeForExtension(inputAction,false,rc.getLocation().getFileExtension());
 							if(inputActionArg == null)
 								inputActionArg = inputAction.createIOType(false, false, null);
 							inputActionArg.addResource(rc);
@@ -708,7 +701,7 @@ public class BuildDescription implements IBuildDescription {
 	private BuildGroup createGroup(ToolInfoHolder h, IInputType inType, String ext){
 		String key = inType != null ?
 				inType.getId() : "ext:"+ext;	//$NON-NLS-1$
-		BuildGroup group = (BuildGroup)h.fInTypeToGroupMap.get(key);
+		BuildGroup group = h.fInTypeToGroupMap.get(key);
 		if(group == null){
 			group = new BuildGroup();
 			h.fInTypeToGroupMap.put(key, group);
@@ -897,7 +890,7 @@ public class BuildDescription implements IBuildDescription {
 		ITool orderedTools[] = getOrderedTools();
 		int index = 0;
 		for(int i = 0; i < orderedTools.length; i++){
-			BuildStep action = (BuildStep)fToolToMultiStepMap.get(orderedTools[i]);
+			BuildStep action = fToolToMultiStepMap.get(orderedTools[i]);
 			if(action != null)
 				fOrderedMultiActions[index++] = action;
 		}
@@ -941,12 +934,10 @@ public class BuildDescription implements IBuildDescription {
 			}
 		}while(foundUnused);
 
-		Set set = fLocationToRcMap.entrySet();
-		List list = new ArrayList();
-		for(Iterator iter = set.iterator();iter.hasNext();){
-			Map.Entry entry = (Map.Entry)iter.next();
-			
-			BuildResource rc = (BuildResource)entry.getValue();
+		Set<Entry<IPath,BuildResource>> set = fLocationToRcMap.entrySet();
+		List<BuildResource> list = new ArrayList<BuildResource>();
+		for (Entry<IPath, BuildResource> entry : set) {
+			BuildResource rc = entry.getValue();
 			boolean doRemove = false;
 			BuildIOType producerArg = (BuildIOType)rc.getProducerIOType();
 			if(producerArg == null){
@@ -967,8 +958,8 @@ public class BuildDescription implements IBuildDescription {
 				list.add(rc);
 		}
 		
-		for(Iterator iter = list.iterator(); iter.hasNext();){
-			BuildIOType[][] types = removeResource((BuildResource)iter.next());
+		for (BuildResource buildResource : list) {
+			BuildIOType[][] types = removeResource(buildResource);
 			
 			BuildIOType producer = types[0][0];
 			if(producer != null && producer.getResources().length == 0){
@@ -1025,7 +1016,7 @@ public class BuildDescription implements IBuildDescription {
 
 	private BuildResource[] addOutputs(IPath paths[], BuildIOType buildArg, IPath outDirPath){
 		if(paths != null){
-			List list = new ArrayList();
+			List<BuildResource> list = new ArrayList<BuildResource>();
 			for(int k = 0; k < paths.length; k++){
 				IPath outFullPath = paths[k];
 				IPath outWorkspacePath = paths[k];
@@ -1059,7 +1050,7 @@ public class BuildDescription implements IBuildDescription {
 						}
 						
 						outFullPath = projLocation.append(outDirPath.removeFirstSegments(1).append(outFullPath.lastSegment()));
-						outWorkspacePath = fProject.getFullPath().append(outProjPath);;
+						outWorkspacePath = fProject.getFullPath().append(outProjPath);
 					}
 				}
 				
@@ -1068,7 +1059,7 @@ public class BuildDescription implements IBuildDescription {
 				buildArg.addResource(outRc);
 				
 			}
-			return (BuildResource[])list.toArray(new BuildResource[list.size()]);
+			return list.toArray(new BuildResource[list.size()]);
 		}
 		return null;
 	}
@@ -1194,13 +1185,11 @@ public class BuildDescription implements IBuildDescription {
                     config = (IConfiguration) toolParent;
                 else if (toolParent instanceof IToolChain) {
                     // must be a toolchain
-                    config = (IConfiguration) ((IToolChain) toolParent)
-                            .getParent();
+                    config = ((IToolChain) toolParent).getParent();
                 }
 
                 else if (toolParent instanceof IResourceConfiguration) {
-                    config = (IConfiguration) ((IResourceConfiguration) toolParent)
-                            .getParent();
+                    config = ((IResourceConfiguration) toolParent).getParent();
                 }
 
                 else {
@@ -1279,7 +1268,7 @@ public class BuildDescription implements IBuildDescription {
 								optType == IOption.UNDEF_LIBRARY_PATHS ||
 								optType == IOption.UNDEF_LIBRARY_FILES ||
 								optType == IOption.UNDEF_MACRO_FILES) {
-							List outputList = (List)option.getValue();
+							List<String> outputList = (List<String>)option.getValue();
 							// Add outputPrefix to each if necessary
 							if(outputList != null && outputList.size() > 0){
 //TODO
@@ -1287,7 +1276,7 @@ public class BuildDescription implements IBuildDescription {
 								pathStrings = ManagedBuildManager
 								.getBuildMacroProvider()
 								.resolveStringListValues(
-										(String[])outputList.toArray(new String[outputList.size()]),
+										outputList.toArray(new String[outputList.size()]),
 										"", //$NON-NLS-1$
 										" ", //$NON-NLS-1$
 										IBuildMacroProvider.CONTEXT_FILE,
@@ -1385,9 +1374,7 @@ public class BuildDescription implements IBuildDescription {
 				
 				
 				if(paths != null){
-					if(buildArg == null)
-						buildArg = action.createIOType(false, primaryOutput, type);
-
+					buildArg = action.createIOType(false, primaryOutput, type);
 					addOutputs(paths, buildArg, outDirPath);
 				}
 
@@ -1416,7 +1403,7 @@ public class BuildDescription implements IBuildDescription {
 		}
 		
 		if(checkFlags(BuildDescriptionManager.DEPFILES)){
-			if(tool != null && buildRc != null){
+			if(buildRc != null){
 				IInputType type = action.getInputType();
 				String ext = null;
 				if(type != null){
@@ -1502,36 +1489,26 @@ public class BuildDescription implements IBuildDescription {
 	}
 	
 	public IBuildResource getBuildResource(IPath location) {
-		return (BuildResource)fLocationToRcMap.get(location);
+		return fLocationToRcMap.get(location);
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.managedbuilder.builddescription.IBuildDescription#getResources()
 	 */
 	public IBuildResource[] getResources(){
-		Collection c = fLocationToRcMap.values();
-		List list = new ArrayList();
-		for(Iterator iter = c.iterator();iter.hasNext();){
-			Object obj = iter.next();
-	
-			if(obj instanceof BuildResource)
-				list.add(obj);
-			else if(obj instanceof List)
-				list.addAll((List)obj);
-		}
-		return (IBuildResource[])list.toArray(new IBuildResource[list.size()]);
+		return fLocationToRcMap.values().toArray(new IBuildResource[0]);
 	}
 	
 	public IBuildResource[] getResources(boolean generated){
 		IBuildResource[] rcs = getResources();
-		List list = new ArrayList();
+		List<IBuildResource> list = new ArrayList<IBuildResource>();
 		for(int i = 0; i < rcs.length; i++){
 			IBuildResource rc = rcs[i];
 			if(generated == (rc.getProducerStep() != fInputStep))
 				list.add(rc);
 		}
 		
-		return (IBuildResource[])list.toArray(new IBuildResource[list.size()]);
+		return list.toArray(new IBuildResource[list.size()]);
 	}
 
 	/* (non-Javadoc)
@@ -1541,15 +1518,15 @@ public class BuildDescription implements IBuildDescription {
 		return fCfg;
 	}
 	
-	public Map getEnvironment(){
+	public Map<String, String> getEnvironment(){
 		if(fEnvironment == null)
 			fEnvironment = calculateEnvironment();
 		return fEnvironment;
 	}
 	
-	protected Map calculateEnvironment(){
+	protected Map<String, String> calculateEnvironment(){
 		IBuildEnvironmentVariable variables[] = ManagedBuildManager.getEnvironmentVariableProvider().getVariables(fCfg,true,true);
-		Map map = new HashMap();
+		Map<String, String> map = new HashMap<String, String>();
 		
 		for(int i = 0; i < variables.length; i++){
 			IBuildEnvironmentVariable var = variables[i];
@@ -1577,7 +1554,6 @@ public class BuildDescription implements IBuildDescription {
 		if (inTypes != null && inTypes.length > 0) {
 			for (int i=0; i<inTypes.length; i++) {
 				IInputType type = inTypes[i];
-				String variable = type.getBuildVariable();
 				boolean primaryInput = type.getPrimaryInput();
 				IOption option = tool.getOptionBySuperClassId(type.getOptionId());
 				BuildIOType arg = step.getIOTypeForType(type, true);
@@ -1585,7 +1561,7 @@ public class BuildDescription implements IBuildDescription {
 				//  Option?
 				if (option != null) {
 					try {
-						List inputs = new ArrayList();
+						List<String> inputs = new ArrayList<String>();
 						int optType = option.getValueType();
 						if (optType == IOption.STRING) {
 							inputs.add(option.getStringValue());
@@ -1604,10 +1580,10 @@ public class BuildDescription implements IBuildDescription {
 								optType == IOption.UNDEF_LIBRARY_FILES ||
 								optType == IOption.UNDEF_MACRO_FILES
 								) {
-							inputs = (List)option.getValue();
+							inputs = (List<String>)option.getValue();
 						}
 						for (int j=0; j<inputs.size(); j++) {
-							String inputName = ((String)inputs.get(j)).trim();
+							String inputName = inputs.get(j).trim();
 							
 				
 							try {
@@ -1685,15 +1661,14 @@ public class BuildDescription implements IBuildDescription {
 												if(arg == null)
 													arg = step.createIOType(true, primaryInput, type);
 
-												Set set = (Set)fVarToAddlInSetMap.get(var);
+												Set<BuildIOType> set = fVarToAddlInSetMap.get(var);
 												if(set == null){
-													set = new HashSet();
+													set = new HashSet<BuildIOType>();
 													fVarToAddlInSetMap.put(var, set);
 												}
 												
 												if(set.add(arg)){
-													for(Iterator iter = fLocationToRcMap.values().iterator(); iter.hasNext();){
-														BuildResource rc = (BuildResource)iter.next();
+													for (BuildResource rc : fLocationToRcMap.values()) {
 														BuildIOType t = (BuildIOType)rc.getProducerIOType();
 														if(t != null && var.equals(t.getLinkId()))
 															arg.addResource(rc);
@@ -1718,7 +1693,7 @@ public class BuildDescription implements IBuildDescription {
 	
 	private void calculateDeps(BuildStep step){
 		BuildResource rcs[] = (BuildResource[])step.getInputResources();
-		Set depSet = new HashSet();
+		Set<IPath> depSet = new HashSet<IPath>();
 		
 		for(int i = 0; i < rcs.length; i++){
 			IManagedDependencyCalculator depCalc = getDependencyCalculator(step, rcs[i]);
@@ -1733,8 +1708,8 @@ public class BuildDescription implements IBuildDescription {
 		if(depSet.size() > 0){
 			BuildIOType ioType = step.createIOType(true, false, null);
 
-			for(Iterator iter = depSet.iterator(); iter.hasNext();){
-				addInput((IPath)iter.next(), ioType);
+			for (IPath path : depSet) {
+				addInput(path, ioType);
 			}
 		}
 	}
@@ -1843,7 +1818,7 @@ public class BuildDescription implements IBuildDescription {
 	}
 	
 	public String[] getLibs(BuildStep step) {
-		Vector libs = new Vector();
+		Vector<String> libs = new Vector<String>();
 		ITool tool = step.getLibTool();
 			
 		if(tool != null){
@@ -1891,11 +1866,11 @@ public class BuildDescription implements IBuildDescription {
 					}
 				}
 		}
-		return (String[])libs.toArray(new String[libs.size()]);
+		return libs.toArray(new String[libs.size()]);
 	}
 
 	public String[] getUserObjs(BuildStep step) {
-		Vector objs = new Vector();
+		Vector<String> objs = new Vector<String>();
 		ITool tool = fCfg.calculateTargetTool();
 		if(tool == null)
 			tool = step.getTool();
@@ -1932,7 +1907,7 @@ public class BuildDescription implements IBuildDescription {
 					}
 				}
 		}
-		return (String[])objs.toArray(new String[objs.size()]);
+		return objs.toArray(new String[objs.size()]);
 	}
 
 	private BuildResource addInput(String path, BuildIOType buildArg){
@@ -1970,7 +1945,6 @@ public class BuildDescription implements IBuildDescription {
 					inFullPath = fProject.getFullPath().append(inLocation.removeFirstSegments(getProjectLocation().segmentCount())); 
 				}
 			} else {
-				IPath projPath = inFullPath;
 				inFullPath = fProject.getFullPath().append(inFullPath);
 
 				IResource res = ResourcesPlugin.getWorkspace().getRoot().getFile(inFullPath);//.findMember(inFullPath);
@@ -2065,9 +2039,9 @@ public class BuildDescription implements IBuildDescription {
 		return fOrderedTools;
 	}
 
-	private int indexOf(Object obj, Object array[]){
-		return indexOf(obj, array, 0, -1);
-	}
+//	private int indexOf(Object obj, Object array[]){
+//		return indexOf(obj, array, 0, -1);
+//	}
 
 	private int indexOf(Object obj, Object array[], int start, int stop){
 		if(start < 0)
@@ -2085,7 +2059,7 @@ public class BuildDescription implements IBuildDescription {
 	}
 	
 	private ToolOrderEstimation getToolOrder(ITool tool){
-		ToolOrderEstimation order = (ToolOrderEstimation)fToolOrderMap.get(tool.getId());
+		ToolOrderEstimation order = fToolOrderMap.get(tool.getId());
 		if(order == null){
 			order = new ToolOrderEstimation(tool);
 			fToolOrderMap.put(tool.getId(), order);
@@ -2104,7 +2078,7 @@ public class BuildDescription implements IBuildDescription {
 		String exts[] = tool.getAllInputExtensions();
 		
 		ITool tools[] = fCfg.getFilteredTools();
-		Set set = new HashSet();
+		Set<ITool> set = new HashSet<ITool>();
 		for(int i = 0; i < tools.length; i++){
 			ITool t = tools[i];
 			if(t == tool)
@@ -2136,7 +2110,7 @@ public class BuildDescription implements IBuildDescription {
 		}
 
 		fToolInProcesSet.remove(tool);
-		return (ITool[])set.toArray(new ITool[set.size()]);
+		return set.toArray(new ITool[set.size()]);
 	}
 	
 	private ITool[] doCalcConsumers(ITool tool){
@@ -2150,7 +2124,7 @@ public class BuildDescription implements IBuildDescription {
 		String exts[] = tool.getAllOutputExtensions();
 		
 		ITool tools[] = fCfg.getFilteredTools();
-		Set set = new HashSet();
+		Set<ITool> set = new HashSet<ITool>();
 		for(int i = 0; i < tools.length; i++){
 			ITool t = tools[i];
 			if(t == tool)
@@ -2182,7 +2156,7 @@ public class BuildDescription implements IBuildDescription {
 		}
 
 		fToolInProcesSet.remove(tool);
-		return (ITool[])set.toArray(new ITool[set.size()]);
+		return set.toArray(new ITool[set.size()]);
 	}
 	
 	private IPath[] getGeneratedPaths(){
@@ -2250,12 +2224,9 @@ public class BuildDescription implements IBuildDescription {
 			if(var == null)
 				var = new String();
 			
-			Set set = (Set)fVarToAddlInSetMap.get(var);
-			if(set != null){
-				for(Iterator iter = set.iterator(); iter.hasNext();){
-					BuildIOType t = (BuildIOType)iter.next();
-					t.addResource(rc);
-				}
+			Set<BuildIOType> set = fVarToAddlInSetMap.get(var);
+			for (BuildIOType t : set) {
+				t.addResource(rc);
 			}
 		}
 	}
@@ -2268,7 +2239,7 @@ public class BuildDescription implements IBuildDescription {
 	 * @see org.eclipse.cdt.managedbuilder.builddescription.IBuildDescription#getSteps()
 	 */
 	public IBuildStep[] getSteps() {
-		return (BuildStep[])fStepList.toArray(new BuildStep[fStepList.size()]);
+		return fStepList.toArray(new BuildStep[fStepList.size()]);
 	}
 	
 	/* (non-Javadoc)

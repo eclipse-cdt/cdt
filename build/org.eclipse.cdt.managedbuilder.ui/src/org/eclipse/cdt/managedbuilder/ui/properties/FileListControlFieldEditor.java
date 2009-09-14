@@ -43,8 +43,8 @@ public class FileListControlFieldEditor extends FieldEditor {
 	// file list control
 	private FileListControl list;
 	private int browseType;
-	private GridLayout layout;
-	private static final String DEFAULT_SEPERATOR = ";"; //$NON-NLS-1$
+	private Composite topLayout;
+	private static final String DEFAULT_SEPARATOR = ";"; //$NON-NLS-1$
 
 	//values
 //	private String[] values = null;
@@ -92,7 +92,7 @@ public class FileListControlFieldEditor extends FieldEditor {
 	 * Sets the field editor's tool tip text to the argument, which
 	 * may be null indicating that no tool tip text should be shown.
 	 *
-	 * @param string the new tool tip text (or null)
+	 * @param tooltip the new tool tip text (or null)
 	 *
 	 * @exception SWTException <ul>
 	 *    <li>ERROR_WIDGET_DISPOSED - if the field editor has been disposed</li>
@@ -141,9 +141,10 @@ public class FileListControlFieldEditor extends FieldEditor {
 	/**
 	 * Fills this field editor's basic controls into the given parent.
 	 */
+	@Override
 	protected void doFillIntoGrid(Composite parent, int numColumns) {
-		Composite topLayout = new Composite(parent, SWT.NONE);
-		layout = new GridLayout();
+		topLayout = new Composite(parent, SWT.NONE);
+		GridLayout layout = new GridLayout();
 		layout.numColumns = numColumns;
 		layout.marginWidth = 7;
 		layout.marginHeight = 5;
@@ -185,8 +186,7 @@ public class FileListControlFieldEditor extends FieldEditor {
 	}
 
 	/**
-	 * Returns the file list control 
-	 * @return
+	 * @return the file list control 
 	 */
 	protected List getListControl() {
 		return list.getListControl();
@@ -195,6 +195,7 @@ public class FileListControlFieldEditor extends FieldEditor {
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.preference.FieldEditor#doLoad()
 	 */
+	@Override
 	protected void doLoad() {
 		if (list != null) {
 			IPreferenceStore store = getPreferenceStore(); 
@@ -233,6 +234,7 @@ public class FileListControlFieldEditor extends FieldEditor {
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.preference.FieldEditor#doLoadDefault()
 	 */
+	@Override
 	protected void doLoadDefault() {
 		if (list != null) {
 			list.removeAll();
@@ -247,6 +249,7 @@ public class FileListControlFieldEditor extends FieldEditor {
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.preference.FieldEditor#doStore()
 	 */
+	@Override
 	protected void doStore() {
 		String s = createList(list.getItems());
 		if (s != null)
@@ -262,6 +265,7 @@ public class FileListControlFieldEditor extends FieldEditor {
 	*
 	* @return the number of controls
 	*/
+	@Override
 	public int getNumberOfControls() {
 		return 1;
 	}
@@ -279,7 +283,7 @@ public class FileListControlFieldEditor extends FieldEditor {
 		for (int i = 0; i < items.length; i++) {
 			path.append(items[i]);
 			if (i < (items.length - 1)) {
-				path.append(DEFAULT_SEPERATOR);
+				path.append(DEFAULT_SEPARATOR);
 			}
 		}
 		return path.toString();
@@ -292,7 +296,7 @@ public class FileListControlFieldEditor extends FieldEditor {
 	 */
 	private String[] parseString(String stringList) {
 		StringTokenizer tokenizer =
-			new StringTokenizer(stringList, DEFAULT_SEPERATOR);
+			new StringTokenizer(stringList, DEFAULT_SEPARATOR);
 		ArrayList<String> list = new ArrayList<String>();
 		while (tokenizer.hasMoreElements()) {
 			list.add((String)tokenizer.nextElement());
@@ -304,21 +308,24 @@ public class FileListControlFieldEditor extends FieldEditor {
 	 * Set style
 	 */
 	public void setStyle() {
-		layout.marginWidth = 0;
+		((GridLayout)topLayout.getLayout()).marginWidth = 0;
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.preference.FieldEditor#adjustForNumColumns(int)
 	 */
+	@Override
 	protected void adjustForNumColumns(int numColumns) {
-
+		((GridData)topLayout.getLayoutData()).horizontalSpan = numColumns;
 	}
 	
-    public Label getLabelControl(Composite parent) {
+    @Override
+	public Label getLabelControl(Composite parent) {
     	return list.getLabelControl();
     }
     
-    public void setEnabled(boolean enabled, Composite parent) {
+    @Override
+	public void setEnabled(boolean enabled, Composite parent) {
     	list.setEnabled(enabled);
     }
 

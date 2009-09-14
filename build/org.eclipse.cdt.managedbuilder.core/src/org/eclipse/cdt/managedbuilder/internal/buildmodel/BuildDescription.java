@@ -2179,8 +2179,10 @@ public class BuildDescription implements IBuildDescription {
 				var = new String();
 
 			Set<BuildIOType> set = fVarToAddlInSetMap.get(var);
-			for (BuildIOType t : set) {
-				t.addResource(rc);
+			if(set != null){
+				for (BuildIOType t : set) {
+					t.addResource(rc);
+				}
 			}
 		}
 	}

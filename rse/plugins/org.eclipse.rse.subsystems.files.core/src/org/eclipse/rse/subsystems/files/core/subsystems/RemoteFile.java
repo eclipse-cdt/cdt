@@ -21,6 +21,7 @@
  * Martin Oberhuber (Wind River) - [219975] Fix implementations of clone()
  * David McKnight   (IBM)        - [231209] [api][breaking] IRemoteFile.getSystemConnection() should be changed to IRemoteFile.getHost()
  * David McKnight   (IBM)        - [277911] cached results of remote file query need to be sorted
+ * David McKnight   (IBM)        - [289387] Remote Search does not return line nodes in result tree
  *******************************************************************************/
 
 package org.eclipse.rse.subsystems.files.core.subsystems;
@@ -784,7 +785,13 @@ public abstract class RemoteFile implements IRemoteFile,  IAdaptable, Comparable
 			results = calculatedResults.toArray();
 		}
 
-		Arrays.sort(results);
+		if (!isFile()){
+			try { // search results aren't comparable so we need to catch exception
+				Arrays.sort(results);
+			}
+			catch (Exception e){			
+			}
+		}
 		return results;
 	}
 

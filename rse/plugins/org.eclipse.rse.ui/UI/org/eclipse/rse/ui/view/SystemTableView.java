@@ -23,6 +23,7 @@
  * Martin Oberhuber (Wind River) - [227516] [regression] Fix ArrayIndexOutOfBoundsException in TableView
  * David McKnight   (IBM)        - [187058] Incorrect Right Click Menu in Remote System Details View with no selection
  * David McKnight   (IBM)        - [260346] RSE view for jobs does not remember resized columns
+ * Martin Oberhuber (Wind River) - [289533] NPE on "Show in Table"
  ********************************************************************************/
 
 package org.eclipse.rse.ui.view;
@@ -307,11 +308,11 @@ public class SystemTableView
 
     private static final int LEFT_BUTTON = 1;
     private int mouseButtonPressed = LEFT_BUTTON;
-    
+
     // for bug 260346 - to maintain list of cached column widths
     private Map _cachedColumnWidths;
-    
-    
+
+
 	/**
 	 * Constructor for the table view
 	 *
@@ -372,7 +373,7 @@ public class SystemTableView
 
         _upI = RSEUIPlugin.getDefault().getImage(ISystemIconConstants.ICON_SYSTEM_ARROW_UP_ID);
         _downI = RSEUIPlugin.getDefault().getImage(ISystemIconConstants.ICON_SYSTEM_ARROW_DOWN_ID);
-        
+
         _cachedColumnWidths = new HashMap();
 	}
 
@@ -438,18 +439,20 @@ public class SystemTableView
 		if (newObject instanceof IAdaptable)
 		{
 			getTable().setVisible(true);
-			
+
 			// columns may change so we want to keep track of the current ones
 			int[] lastWidths = getCurrentColumnWidths();
 			if (lastWidths.length > 0){
 				ISystemViewElementAdapter contentsAdapter = getAdapterForContents();
-			
-				String adapterName = contentsAdapter.getClass().getName();
-				
-				// associate the last contents adapter with the last widths
-				_cachedColumnWidths.put(adapterName, lastWidths);
+				if (contentsAdapter != null) {
+					// no use caching anything when there were no children
+					String adapterName = contentsAdapter.getClass().getName();
+
+					// associate the last contents adapter with the last widths
+					_cachedColumnWidths.put(adapterName, lastWidths);
+				}
 			}
-				
+
 			_objectInput = newObject;
 			computeLayout();
 
@@ -784,7 +787,7 @@ public class SystemTableView
 			ISystemViewElementAdapter adapter = getAdapterForContents();
 			String adapterName = adapter.getClass().getName();
 			int[] cachedWidths = (int[])_cachedColumnWidths.get(adapterName);
-			
+
 			// if there are already cached widths, use them
 			if (cachedWidths != null){
 				setCurrentColumnWidths(cachedWidths);
@@ -1334,7 +1337,7 @@ public class SystemTableView
 			}
 
 			table.dispose();
-		}	
+		}
 	}
 
 	/*
@@ -2117,9 +2120,9 @@ public class SystemTableView
 
 	/**
 	 * Returns the column widths associated with this view.
-	 * 
+	 *
 	 * @return the map of column widths associated with this view
-	 * 
+	 *
 	 * @since 3.1
 	 */
 	public Map getCachedColumnWidths()
@@ -2129,14 +2132,14 @@ public class SystemTableView
 
 	/**
 	 * Sets the map of column widths associated with this view
-	 * 
+	 *
 	 * @param cachedColumnWidths the column widths map
-	 * 
+	 *
 	 * @since 3.1
 	 */
 	public void setCachedColumnWidths(Map cachedColumnWidths)
 	{
 		_cachedColumnWidths = cachedColumnWidths;
 	}
-	
+
 }

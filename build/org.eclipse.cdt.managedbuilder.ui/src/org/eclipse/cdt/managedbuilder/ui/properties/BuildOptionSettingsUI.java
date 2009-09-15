@@ -14,7 +14,6 @@ package org.eclipse.cdt.managedbuilder.ui.properties;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Vector;
@@ -102,7 +101,7 @@ public class BuildOptionSettingsUI extends AbstractToolSettingUI {
 				}
 			}
 
-			ohs = (IHoldsOptions[])lst.toArray(new IHoldsOptions[lst.size()]);
+			ohs = lst.toArray(new IHoldsOptions[lst.size()]);
 			for (int i=0; i<ohs.length; i++) {
 				if (ohs[i].equals(optionHolder)) {
 					curr = i;
@@ -118,6 +117,7 @@ public class BuildOptionSettingsUI extends AbstractToolSettingUI {
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.preference.IPreferencePage#computeSize()
 	 */
+	@Override
 	public Point computeSize() {
 		return super.computeSize();
 	}
@@ -125,6 +125,7 @@ public class BuildOptionSettingsUI extends AbstractToolSettingUI {
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.preference.FieldEditorPreferencePage#createFieldEditors()
 	 */
+	@Override
 	protected void createFieldEditors() {
 		// Get the preference store for the build settings
 		super.createFieldEditors();
@@ -163,7 +164,17 @@ public class BuildOptionSettingsUI extends AbstractToolSettingUI {
 								} break;
 		
 								case IOption.BROWSE_FILE: {
-									stringField = new FileFieldEditor(optId, TextProcessor.process(opt.getName()), fieldEditorParent);
+									stringField = new FileFieldEditor(optId, TextProcessor.process(opt.getName()), fieldEditorParent) {
+										/**
+										 * Do not perform validity check on the file name due to losing focus,
+										 * see http://bugs.eclipse.org/289448
+										 */
+										@Override
+										protected boolean checkState() {
+											clearErrorMessage();
+											return true;
+										}
+									};
 								} break;
 		
 								case IOption.BROWSE_NONE: {
@@ -258,9 +269,9 @@ public class BuildOptionSettingsUI extends AbstractToolSettingUI {
 	 * Answers <code>true</code> if the settings page has been created for the
 	 * option category specified in the argument.
 	 * 
-	 * @param category
-	 * @return
+	 * @see org.eclipse.cdt.managedbuilder.ui.properties.AbstractToolSettingUI#isFor(java.lang.Object, java.lang.Object)
 	 */
+	@Override
 	public boolean isFor(Object holder, Object cat) {
 		if (holder instanceof IHoldsOptions && cat != null && cat instanceof IOptionCategory) {
 			if (this.optionHolder == optionHolder && cat.equals(this.category))
@@ -272,7 +283,7 @@ public class BuildOptionSettingsUI extends AbstractToolSettingUI {
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.preference.IPreferencePage#performOk()
 	 */
-	@SuppressWarnings("unchecked")
+	@Override
 	public boolean performOk() {
 		// Write the field editor contents out to the preference store
 		boolean ok = super.performOk();
@@ -294,7 +305,6 @@ public class BuildOptionSettingsUI extends AbstractToolSettingUI {
 			IOption clonedOption = (IOption)clonedOptions[i][1];
 			
 			IHoldsOptions realHolder = clonedHolder; // buildPropPage.getRealHoldsOptions(clonedHolder);
-			if(realHolder == null) continue;
 			IOption realOption = clonedOption; // buildPropPage.getRealOption(clonedOption, clonedHolder);
 			if(realOption == null) continue;
 
@@ -349,7 +359,8 @@ public class BuildOptionSettingsUI extends AbstractToolSettingUI {
 					case IOption.UNDEF_LIBRARY_PATHS:
 					case IOption.UNDEF_LIBRARY_FILES:
 					case IOption.UNDEF_MACRO_FILES:	
-						String[] listVal = (String[])((List<String>)clonedOption.getValue()).toArray(new String[0]);
+						@SuppressWarnings("unchecked")
+						String[] listVal = ((List<String>)clonedOption.getValue()).toArray(new String[0]);
 						setOption = ManagedBuildManager.setOption(realCfg, realHolder, realOption, listVal);	
 						
 						// Reset the preference store since the Id may have changed
@@ -392,6 +403,7 @@ public class BuildOptionSettingsUI extends AbstractToolSettingUI {
 	/**
 	 * Update field editors in this page when the page is loaded.
 	 */
+	@Override
 	public void updateFields() {
 		Object[][] options = category.getOptions(fInfo, optionHolder);
 		// some option has changed on this page... update enabled/disabled state for all options
@@ -406,7 +418,7 @@ public class BuildOptionSettingsUI extends AbstractToolSettingUI {
 
 			// is the option on this page?
 			if (fieldsMap.containsKey(prefName)) {
-				FieldEditor fieldEditor = (FieldEditor) fieldsMap.get(prefName);
+				FieldEditor fieldEditor = fieldsMap.get(prefName);
 				try {
 					if ( opt.getValueType() == IOption.ENUMERATED ) {
 						updateEnumList( fieldEditor, opt, holder, fInfo );
@@ -416,16 +428,14 @@ public class BuildOptionSettingsUI extends AbstractToolSettingUI {
 				// check to see if the option has an applicability calculator
 				IOptionApplicability applicabilityCalculator = opt.getApplicabilityCalculator();
 				if (applicabilityCalculator != null) {
-					Composite parent = (Composite) fieldEditorsToParentMap.get(fieldEditor);
+					Composite parent = fieldEditorsToParentMap.get(fieldEditor);
 					setFieldEditorEnablement(holder, opt, applicabilityCalculator, fieldEditor, parent);
 				}
 			}
 		}
 		
 		Collection<FieldEditor> fieldsList = fieldsMap.values();
-		Iterator<FieldEditor> iter = fieldsList.iterator();
-		while (iter.hasNext()) {
-			FieldEditor editor = (FieldEditor) iter.next();
+		for (FieldEditor editor : fieldsList) {
 			if (editor instanceof TriStateBooleanFieldEditor)
 				((TriStateBooleanFieldEditor)editor).set3(true);
 			editor.load();
@@ -449,6 +459,7 @@ public class BuildOptionSettingsUI extends AbstractToolSettingUI {
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.util.IPropertyChangeListener#propertyChange(org.eclipse.jface.util.PropertyChangeEvent)
 	 */
+	@Override
 	public void propertyChange(PropertyChangeEvent event) {
 		// allow superclass to handle as well
 		super.propertyChange(event);
@@ -546,7 +557,7 @@ public class BuildOptionSettingsUI extends AbstractToolSettingUI {
 				// check to see if the option has an applicability calculator
 				IOptionApplicability applicabilityCalculator = opt.getApplicabilityCalculator();
 
-				FieldEditor fieldEditor = (FieldEditor) fieldsMap.get(optId);
+				FieldEditor fieldEditor = fieldsMap.get(optId);
 				try {
 					if ( opt.getValueType() == IOption.ENUMERATED ) {
 						// the item list of this enumerated option may have changed, update it
@@ -555,20 +566,20 @@ public class BuildOptionSettingsUI extends AbstractToolSettingUI {
 				} catch ( BuildException be ) {}
 				
 				if (applicabilityCalculator != null) {
-					Composite parent = (Composite) fieldEditorsToParentMap.get(fieldEditor);
+					Composite parent = fieldEditorsToParentMap.get(fieldEditor);
 					setFieldEditorEnablement(holder, opt, applicabilityCalculator, fieldEditor, parent);
 				}
 			}
 		}
 		
-		Iterator<FieldEditor> iter = fieldsMap.values().iterator();
-		while (iter.hasNext()) {
-			FieldEditor editor = (FieldEditor) iter.next();
+		Collection<FieldEditor> xxx = fieldsMap.values();
+		for (FieldEditor editor : xxx) {
 			if(id == null || !id.equals(editor.getPreferenceName()))
 				editor.load();
 		}
 	}
 	
+	@Override
 	public void setValues() {
 		updateFields();
 	}
@@ -652,17 +663,19 @@ public class BuildOptionSettingsUI extends AbstractToolSettingUI {
 			super(name, labelText, parent);
 			holders = ho; 
 			current = curr;
-			button = (Button)getChangeControl(parent);
+			button = getChangeControl(parent);
 			button.setToolTipText(tooltip);
 			if (!contextId.equals(AbstractPage.EMPTY_STR)) PlatformUI.getWorkbench().getHelpSystem().setHelp(button, contextId);
 			
 		}
+		@Override
 		protected void valueChanged(boolean oldValue, boolean newValue) {
 			// TODO: uncomment before M5
 			//if (button.getGrayed())
 			AbstractCPropertyTab.setGrayed(button, false);
 			super.valueChanged(!newValue, newValue);
 		}
+		@Override
 		protected void doLoad() {
 			if (enable3 && holders != null && button != null) {
 				String id = getPreferenceName();

@@ -55,6 +55,13 @@ public class SystemNetworkIOException extends SystemRemoteMessageException {
 		String message = remoteException.getMessage();
 		if (message == null) {
 			message = remoteException.getClass().getName();
+		} else {
+			// TODO Most remote messages like IOException don't have a message
+			// that's understandable without the class type. For full translated
+			// messages, code like in the Eclipse Team/CVS provider would need
+			// to translate into readable messages. See also
+			// o.e.tm.terminal.ssh/SshMessages#getMessageFor(Throwable).
+			message = remoteException.getClass().getName() + ": " + message; //$NON-NLS-1$
 		}
 		String msgTxt = NLS.bind(CommonMessages.MSG_COMM_NETWORK_ERROR, message);
 

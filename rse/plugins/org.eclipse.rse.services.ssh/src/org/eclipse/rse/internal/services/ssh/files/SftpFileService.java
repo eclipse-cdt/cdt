@@ -40,6 +40,7 @@
  * David McKnight   (IBM)        - [272882] [api] Handle exceptions in IService.initService()
  * Martin Oberhuber (Wind River) - [274568] Dont use SftpMonitor for Streams transfer
  * Patrick Tassé    (Ericsson)   - [285226] Empty directory shown as an error message
+ * Martin Oberhuber (Wind River) - [286129][api] RemoteFileException(String) violates API contract
  *******************************************************************************/
 
 package org.eclipse.rse.internal.services.ssh.files;
@@ -556,7 +557,8 @@ public class SftpFileService extends AbstractFileService implements ISshService,
 							SftpATTRS attrs = getChannel("SftpFileService.internalFetch: " + parentPath).stat(parentPath); //$NON-NLS-1$
 							if (!attrs.isDir()) {
 								// parent was a file and not a folder
-								throw new RemoteFileException("Not a folder: " + parentPath); //$NON-NLS-1$
+								//throw new RemoteFileException("Not a folder: " + parentPath); //$NON-NLS-1$
+								throw new RemoteFileIOException(new IOException("Not a folder: " + parentPath)); //$NON-NLS-1$
 							}
 						}
 						if (filematcher.matches(fileName) || (lsEntry.getAttrs().isDir() && fileType!=IFileService.FILE_TYPE_FOLDERS)) {

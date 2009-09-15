@@ -43,6 +43,7 @@
  * David McKnight   (IBM)        - [238367] [regression] Error when deleting Archive Files
  * David McKnight   (IBM)        - [280899] RSE can't open files in some directory, which give the RSEG1067 error me
  * Martin Oberhuber (Wind River) - [285942] Throw exception when listing a non-folder
+ * Martin Oberhuber (Wind River) - [286129][api] RemoteFileException(String) violates API contract
  *******************************************************************************/
 
 package org.eclipse.rse.internal.services.local.files;
@@ -739,7 +740,8 @@ public class LocalFileService extends AbstractFileService implements ILocalServi
 			if (localParent.exists()) {
 				File[] files = localParent.listFiles(fFilter);
 				if (files == null) {
-					throw new RemoteFileException("Error listing: " + localParent.getAbsolutePath());
+					//throw new RemoteFileException("Error listing: " + localParent.getAbsolutePath());
+					throw new RemoteFileIOException(new IOException("Error listing: " + localParent.getAbsolutePath()));
 				}
 				return convertToHostFiles(files, type);
 			} else {

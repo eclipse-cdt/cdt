@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2008 IBM Corporation and others.
+ * Copyright (c) 2000, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -13,11 +13,18 @@
  *
  * Contributors:
  * Martin Oberhuber (Wind River) - [226374] [api] Need default SystemMessageException specialisations
+ * Martin Oberhuber (Wind River) - [286129][api] RemoteFileException(String) violates API contract
  *******************************************************************************/
 
 package org.eclipse.rse.services.files;
 import java.util.ResourceBundle;
 
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.osgi.util.NLS;
+
+import org.eclipse.rse.internal.services.Activator;
+import org.eclipse.rse.internal.services.RSEServicesMessages;
+import org.eclipse.rse.services.clientserver.messages.SimpleSystemMessage;
 import org.eclipse.rse.services.clientserver.messages.SystemMessage;
 import org.eclipse.rse.services.clientserver.messages.SystemRemoteMessageException;
 
@@ -46,21 +53,32 @@ public class RemoteFileException extends SystemRemoteMessageException
 	private static final long serialVersionUID = 1L;
 
 	/**
-	 * Constructor for RemoteFileException with an error message for getMessage() to return.
+	 * Constructor for RemoteFileException with an error message for
+	 * getMessage() to return.
+	 *
 	 * @param bundle The ResourceBundle containing the error message
 	 * @param key The key to retrieve the message
+	 * @deprecated this constructor violates the contract that all
+	 *             RemoteFileException instances must have an embedded remote
+	 *             exception for {@link #getRemoteException()} to return
 	 */
 	public RemoteFileException(ResourceBundle bundle, String key)
 	{
-		this(getString(bundle,key), null);
+		this(getString(bundle, key));
 	}
+
 	/**
-	 * Constructor for RemoteFileException with an error message for getMessage() to return.
+	 * Constructor for RemoteFileException with an error message for
+	 * getMessage() to return.
+	 *
 	 * @param msg The fully resolved message
+	 * @deprecated this constructor violates the contract that all
+	 *             RemoteFileException instances must have an embedded remote
+	 *             exception for {@link #getRemoteException()} to return
 	 */
 	public RemoteFileException(String msg)
 	{
-		this(msg, null);
+		this(msg, new Exception(msg));
 	}
 	/**
 	 * Constructor for RemoteFileException with an error message for getMessage() to return,
@@ -82,15 +100,28 @@ public class RemoteFileException extends SystemRemoteMessageException
 	public RemoteFileException(String msg, Exception remoteException)
 	{
 		super(msg, remoteException);
+		String msgTxt = RSEServicesMessages.FILEMSG_OPERATION_FAILED;
+		if (remoteException != null && remoteException.getMessage() != null && !remoteException.getMessage().equals(msg)) {
+			msg = (msg == null) ? remoteException.getMessage() : msg + ": " + remoteException.getMessage();
+		}
+		String msgDetails = NLS.bind(RSEServicesMessages.FILEMSG_OPERATION_FAILED_DETAILS, msg);
+		SystemMessage myMessage = new SimpleSystemMessage(Activator.PLUGIN_ID, "RSEF1002", //$NON-NLS-1$
+				IStatus.ERROR, msgTxt, msgDetails);
+		setSystemMessage(myMessage);
 	}
 
 	/**
-	 * Constructor for RemoteFileException with an error message for getMessage() to return.
+	 * Constructor for RemoteFileException with an error message for
+	 * getMessage() to return.
+	 *
 	 * @param msg The fully resolved message
+	 * @deprecated this constructor violates the contract that all
+	 *             RemoteFileException instances must have an embedded remote
+	 *             exception for {@link #getRemoteException()} to return
 	 */
 	public RemoteFileException(SystemMessage msg)
 	{
-		this(msg, null);
+		this(msg, new Exception(msg.getLevelOneText()));
 	}
 	/**
 	 * Constructor for RemoteFileException with an error message for getMessage() to return.

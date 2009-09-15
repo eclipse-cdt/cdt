@@ -40,7 +40,7 @@
  * David Dykstal (IBM) - [230821] fix IRemoteFileSubSystem API to be consistent with IFileService
  * Martin Oberhuber (Wind River) - [234038] Mark IRemoteFile stale when changing permissions
  * Martin Oberhuber (Wind River) - [235360][ftp][ssh][local] Return proper "Root" IHostFile
- * David McKnight   (IBM)        - [223461] [Refresh][api] Refresh expanded folder under filter refreshes Filter
+ * David McKnight   (IBM)        - [233461] [Refresh][api] Refresh expanded folder under filter refreshes Filter
  * Martin Oberhuber (Wind River) - [240704] Protect against illegal API use of getRemoteFileObject() with relative path as name
  * Martin Oberhuber (Wind River) - [234026] Clarify IFileService#createFolder() Javadocs
  * David McKnight   (IBM)        - [272882] [api] Handle exceptions in IService.initService()
@@ -568,7 +568,7 @@ public class FileServiceSubSystem extends RemoteFileSubSystem implements IFileSe
 		// query children of the parent
 		IHostFile[] results = internalList(parentPath, fileNameFilter, fileType, monitor);
 
-		// update the parent with it's latest properties
+		// Bug 233461: update the parent with it's latest properties
 		// null is passed for the second argument because we currently don't get the parent in our results query
 		updateRemoteFile(parent, null, monitor);
 
@@ -1012,19 +1012,19 @@ public class FileServiceSubSystem extends RemoteFileSubSystem implements IFileSe
 		String newPath = srcParent + folderOrFile.getSeparator() + newName;
 
 		String originalEncoding = folderOrFile.getEncoding();
-		
+
 		service.rename(srcParent, oldName, newName, monitor);
 		folderOrFile.getHostFile().renameTo(newPath);
-		
+
 		// for bug 244041 - need to set encoding to be the same as the original file
 		RemoteFileEncodingManager mgr = RemoteFileEncodingManager.getInstance();
 		String renamedEncoding = folderOrFile.getEncoding();
 		if (!renamedEncoding.equals(originalEncoding)){
 			 mgr.setEncoding(getHostName(), newPath, originalEncoding);
-		}					
-		
-		
-		
+		}
+
+
+
 	}
 
 	/**
@@ -1039,22 +1039,22 @@ public class FileServiceSubSystem extends RemoteFileSubSystem implements IFileSe
 		String tgtParent = targetFolder.getAbsolutePath();
 		removeCachedRemoteFile(sourceFolderOrFile);
 
-		String newPath = tgtParent + targetFolder.getSeparator() + newName;				
+		String newPath = tgtParent + targetFolder.getSeparator() + newName;
 		String originalEncoding = sourceFolderOrFile.getEncoding();
-		
+
 		try {
 			service.move(srcParent, srcName, tgtParent, newName, monitor);
 		} finally {
 			sourceFolderOrFile.markStale(true);
 			targetFolder.markStale(true);
 		}
-		
+
 		// for bug 244041 - need to set encoding to be the same as the original file
 		RemoteFileEncodingManager mgr = RemoteFileEncodingManager.getInstance();
-		IRemoteFile movedFile = getRemoteFileObject(targetFolder, newName, monitor);	
-		if (movedFile != null && !movedFile.getEncoding().equals(originalEncoding)){			
+		IRemoteFile movedFile = getRemoteFileObject(targetFolder, newName, monitor);
+		if (movedFile != null && !movedFile.getEncoding().equals(originalEncoding)){
 			 mgr.setEncoding(getHostName(), newPath, originalEncoding);
-		}	
+		}
 	}
 
 	/**

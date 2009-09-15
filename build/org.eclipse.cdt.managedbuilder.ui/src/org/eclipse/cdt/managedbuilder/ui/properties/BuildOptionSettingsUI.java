@@ -163,7 +163,17 @@ public class BuildOptionSettingsUI extends AbstractToolSettingUI {
 								} break;
 		
 								case IOption.BROWSE_FILE: {
-									stringField = new FileFieldEditor(optId, TextProcessor.process(opt.getName()), fieldEditorParent);
+									stringField = new FileFieldEditor(optId, TextProcessor.process(opt.getName()), fieldEditorParent) {
+										/**
+										 * Do not perform validity check on the file name due to losing focus,
+										 * see http://bugs.eclipse.org/289448
+										 */
+										@Override
+										protected boolean checkState() {
+											clearErrorMessage();
+											return true;
+										}
+									};
 								} break;
 		
 								case IOption.BROWSE_NONE: {

@@ -36,7 +36,7 @@
       [<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=175293">175293</a>].</li>
 </ul>
 </li>
-<li>At least 38 bugs were resolved: Use 
+<li>At least 59 bugs were resolved: Use 
   <!-- <a href="https://bugs.eclipse.org/bugs/buglist.cgi?query_format=advanced&classification=DSDP&product=Target+Management&component=Core&component=RSE&component=Terminal&bug_status=RESOLVED&bug_status=VERIFIED&bug_status=CLOSED&resolution=FIXED&resolution=WONTFIX&resolution=WORKSFORME&chfieldfrom=2009-06-23&chfieldto=2009-09-25&chfield=resolution&cmdtype=doit&negate0=1&field0-0-0=target_milestone&type0-0-0=regexp&value0-0-0=%5B23%5D.0&field0-0-1=target_milestone&type0-0-1=regexp&value0-0-1=3.1%20M%5B234567%5D&field0-0-2=target_milestone&type0-0-2=equals&value0-0-2=3.1"> -->
   <a href="https://bugs.eclipse.org/bugs/buglist.cgi?query_format=advanced&classification=DSDP&product=Target+Management&component=Core&component=RSE&component=Terminal&target_milestone=3.1.1&bug_status=RESOLVED&bug_status=VERIFIED&bug_status=CLOSED&resolution=FIXED&resolution=WONTFIX&resolution=WORKSFORME&cmdtype=doit">
   this query</a> to show the list of bugs fixed since
@@ -107,7 +107,7 @@ Also, observe the API Tooling tags such as <b>@noextend</b> and
 <table border="0" cellspacing="5" cellpadding="2" width="100%">
 	<tr>
 		<td align="LEFT" valign="TOP" colspan="3" bgcolor="#808080"><b>
-		<font face="Arial,Helvetica" color="#FFFFFF">API Specification Updates since TM 3.0</font></b></td>
+		<font face="Arial,Helvetica" color="#FFFFFF">API Specification Updates since TM 3.1</font></b></td>
 	</tr>
 </table>
 <table><tbody><tr><td>

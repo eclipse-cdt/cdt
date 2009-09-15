@@ -79,7 +79,7 @@ public class TelnetConnector extends TerminalConnectorImpl {
 		cleanSocket();
 	}
 	public boolean isLocalEcho() {
-		if(fTelnetConnection!=null)
+		if(fTelnetConnection==null)
 			return false;
 		return fTelnetConnection.localEcho();
 	}

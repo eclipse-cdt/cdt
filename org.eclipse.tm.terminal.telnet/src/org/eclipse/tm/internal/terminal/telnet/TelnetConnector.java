@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2008 Wind River Systems, Inc. and others.
+ * Copyright (c) 2005, 2009 Wind River Systems, Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -15,6 +15,7 @@
  * Martin Oberhuber (Wind River) - fixed copyright headers and beautified
  * Martin Oberhuber (Wind River) - [225853][api] Provide more default functionality in TerminalConnectorImpl
  * Sean Adams (Cisco) - [231959][terminal][telnet] NPE in TelnetConnector.java
+ * David Sciamma (Anyware-Tech)  - [288254][telnet] local echo is always disabled
  *******************************************************************************/
 package org.eclipse.tm.internal.terminal.telnet;
 

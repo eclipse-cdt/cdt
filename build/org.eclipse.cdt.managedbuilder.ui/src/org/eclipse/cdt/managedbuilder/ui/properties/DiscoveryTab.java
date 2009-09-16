@@ -341,7 +341,6 @@ public class DiscoveryTab extends AbstractCBuildPropertyTab implements IBuildInf
 		profileComboBox.removeAll();
 		List<String> profilesList = buildInfo.getProfileIdList();
 		Collections.sort(profilesList, CDTListComparator.getInstance());
-		visibleProfilesList = new ArrayList<String>(profilesList.size());
 
 		if (realPages != null && realPages.length > 0) {
 			for (AbstractDiscoveryPage realPage : realPages) {
@@ -361,8 +360,8 @@ public class DiscoveryTab extends AbstractCBuildPropertyTab implements IBuildInf
 			// property page
 			if (!needPerRcProfile) {
 				// configuration-wide (all in tool-chain)
-				IConfiguration conf = iContext.getConfiguration();
-				IToolChain toolchain = conf!=null ? conf.getToolChain() : null;
+				IConfiguration cfg = iContext.getConfiguration();
+				IToolChain toolchain = cfg!=null ? cfg.getToolChain() : null;
 				
 				if (toolchain==null) {
 					ManagedBuilderUIPlugin.log(new Status(IStatus.ERROR, ManagedBuilderUIPlugin.getUniqueIdentifier(),
@@ -378,12 +377,12 @@ public class DiscoveryTab extends AbstractCBuildPropertyTab implements IBuildInf
 				}
 				if (contextProfiles.size()==0) {
 					// GCC profile is a sensible default for user to start with
-					visibleProfilesList.add(0,GCC_PER_PROJECT_PROFILE);
+					contextProfiles.add(GCC_PER_PROJECT_PROFILE);
 				}
 				
 			} else {
 				// per language (i.e. input type)
-				Tool tool = (Tool) iContext.getTool();
+				ITool tool = iContext.getTool();
 				if (tool==null) 
 					return;
 				
@@ -391,11 +390,7 @@ public class DiscoveryTab extends AbstractCBuildPropertyTab implements IBuildInf
 			}
 		}
 		
-		for (String profileId : contextProfiles) {
-			if (profilesList.contains(profileId)
-					&& needPerRcProfile==CfgScannerConfigProfileManager.isPerFileProfile(profileId))
-				visibleProfilesList.add(profileId);
-		}
+		visibleProfilesList = new ArrayList<String>(contextProfiles);
 		
 		realPages = new AbstractDiscoveryPage[visibleProfilesList.size()];
 		String[] labels = new String[visibleProfilesList.size()];

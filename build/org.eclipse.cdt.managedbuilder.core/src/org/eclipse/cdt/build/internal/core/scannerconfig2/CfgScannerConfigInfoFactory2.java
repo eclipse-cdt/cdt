@@ -11,8 +11,8 @@
 package org.eclipse.cdt.build.internal.core.scannerconfig2;
 
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.Map;
+import java.util.Map.Entry;
 
 import org.eclipse.cdt.build.core.scannerconfig.CfgInfoContext;
 import org.eclipse.cdt.build.core.scannerconfig.ICfgScannerConfigBuilderInfo2Set;
@@ -62,17 +62,17 @@ public class CfgScannerConfigInfoFactory2 {
 //		private HashMap map;
 		
 		CfgInfo(Configuration cfg){
-			this.cfg = (Configuration)cfg;
+			this.cfg = cfg;
 //			init();
 		}
 		
 		public CfgInfoContext[] getContexts() {
-			Map map = createMap();
-			return (CfgInfoContext[])map.keySet().toArray(new CfgInfoContext[map.size()]);
+			Map<CfgInfoContext, IScannerConfigBuilderInfo2> map = createMap();
+			return map.keySet().toArray(new CfgInfoContext[map.size()]);
 		}
 
 		public IScannerConfigBuilderInfo2 getInfo(CfgInfoContext context) {
-			return (IScannerConfigBuilderInfo2)createMap().get(context);
+			return createMap().get(context);
 //			IScannerConfigBuilderInfo2 info = null;
 //			if(!isPerRcTypeDiscovery()){
 //				info = cfg.getScannerConfigInfo();
@@ -122,13 +122,13 @@ public class CfgScannerConfigInfoFactory2 {
 			return fContainer;
 		}
 		
-		private Map createMap(){
-			HashMap map = new HashMap();
+		private Map<CfgInfoContext, IScannerConfigBuilderInfo2> createMap(){
+			HashMap<CfgInfoContext, IScannerConfigBuilderInfo2> map = new HashMap<CfgInfoContext, IScannerConfigBuilderInfo2>();
 			try{
 				IScannerConfigBuilderInfo2Set container = getContainer();
 
 				boolean isPerRcType = cfg.isPerRcTypeDiscovery();
-				Map baseMap = container.getInfoMap();
+				Map<InfoContext, IScannerConfigBuilderInfo2> baseMap = container.getInfoMap();
 				if(!isPerRcType){
 					CfgInfoContext c = new CfgInfoContext(cfg);
 					InfoContext baseContext = c.toInfoContext();
@@ -159,7 +159,7 @@ public class CfgScannerConfigInfoFactory2 {
 					}
 					map.put(new CfgInfoContext(cfg), info);				
 				} else {
-					Map configMap = getConfigInfoMap(baseMap);
+					Map<CfgInfoContext, IScannerConfigBuilderInfo2> configMap = getConfigInfoMap(baseMap);
 					
 					IResourceInfo[] rcInfos = cfg.getResourceInfos();
 					for(int i = 0; i < rcInfos.length; i++){
@@ -179,12 +179,12 @@ public class CfgScannerConfigInfoFactory2 {
 									CfgInfoContext context = new CfgInfoContext(rcInfo, tool, type);
 									context = CfgScannerConfigUtil.adjustPerRcTypeContext(context);
 									if(context != null && context.getResourceInfo() != null){
-										IScannerConfigBuilderInfo2 info = (IScannerConfigBuilderInfo2)configMap.get(context);
+										IScannerConfigBuilderInfo2 info = configMap.get(context);
 										if(info == null && !type.isExtensionElement() && type.getSuperClass() != null){
 											CfgInfoContext superContext = new CfgInfoContext(rcInfo, tool, type.getSuperClass());
 											superContext = CfgScannerConfigUtil.adjustPerRcTypeContext(superContext);
 											if(superContext != null && superContext.getResourceInfo() != null){
-												info = (IScannerConfigBuilderInfo2)configMap.get(superContext);
+												info = configMap.get(superContext);
 											}
 											String id = CfgScannerConfigUtil.getDefaultProfileId(context, true);
 											InfoContext baseContext = context.toInfoContext();
@@ -213,7 +213,7 @@ public class CfgScannerConfigInfoFactory2 {
 								CfgInfoContext context = new CfgInfoContext(rcInfo, tool, null);
 								context = CfgScannerConfigUtil.adjustPerRcTypeContext(context);
 								if(context != null && context.getResourceInfo() != null){
-									IScannerConfigBuilderInfo2 info = (IScannerConfigBuilderInfo2)configMap.get(context);
+									IScannerConfigBuilderInfo2 info = configMap.get(context);
 									if(info == null){
 										String id = CfgScannerConfigUtil.getDefaultProfileId(context, true);
 										InfoContext baseContext = context.toInfoContext();
@@ -232,11 +232,10 @@ public class CfgScannerConfigInfoFactory2 {
 					}
 					
 					if(!configMap.isEmpty()){
-						for(Iterator iter = configMap.entrySet().iterator(); iter.hasNext();){
-							Map.Entry entry = (Map.Entry)iter.next();
+						for (Entry<CfgInfoContext, IScannerConfigBuilderInfo2> entry : configMap.entrySet()) {
 							if(map.containsKey(entry.getKey()))
 								continue;
-							CfgInfoContext c = (CfgInfoContext)entry.getKey();
+							CfgInfoContext c = entry.getKey();
 							if(c.getResourceInfo() != null || c.getTool() != null || c.getInputType() != null){
 								InfoContext baseC = c.toInfoContext();
 								if(!baseC.isDefaultContext())
@@ -252,15 +251,14 @@ public class CfgScannerConfigInfoFactory2 {
 			return map;
 		}
 		
-		private Map getConfigInfoMap(Map baseMap){
-			Map map = new HashMap();
+		private Map<CfgInfoContext, IScannerConfigBuilderInfo2> getConfigInfoMap(Map<InfoContext, IScannerConfigBuilderInfo2> baseMap){
+			Map<CfgInfoContext, IScannerConfigBuilderInfo2> map = new HashMap<CfgInfoContext, IScannerConfigBuilderInfo2>();
 			
-			for(Iterator iter = baseMap.entrySet().iterator(); iter.hasNext();){
-				Map.Entry entry = (Map.Entry)iter.next();
-				InfoContext baseContext = (InfoContext)entry.getKey();
+			for (Entry<InfoContext, IScannerConfigBuilderInfo2> entry : baseMap.entrySet()) {
+				InfoContext baseContext = entry.getKey();
 				CfgInfoContext c = CfgInfoContext.fromInfoContext(cfg, baseContext);
 				if(c != null){
-					IScannerConfigBuilderInfo2 info = (IScannerConfigBuilderInfo2)entry.getValue();
+					IScannerConfigBuilderInfo2 info = entry.getValue();
 					map.put(c, info);
 				}
 			}
@@ -268,7 +266,7 @@ public class CfgScannerConfigInfoFactory2 {
 			return map;
 		}
 
-		public Map getInfoMap() {
+		public Map<CfgInfoContext,IScannerConfigBuilderInfo2> getInfoMap() {
 			return createMap();
 		}
 

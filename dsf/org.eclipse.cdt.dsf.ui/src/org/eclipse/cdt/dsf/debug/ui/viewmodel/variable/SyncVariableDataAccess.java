@@ -168,11 +168,11 @@ public class SyncVariableDataAccess {
         GetVariableValueQuery query = new GetVariableValueQuery(dmc);
         session.getExecutor().execute(query);
 
-        /*
-         * Now we have the data, go and get it. Since the call is completed now
-         * the ".get()" will not suspend it will immediately return with the
-         * data.
-         */
+		/*
+		 * This class is about synchronous access to the variable, so wait until
+		 * the query has completed on the DSF session thread and return the
+		 * result.
+		 */
         try {
             return query.get();
         } catch (InterruptedException e) {
@@ -259,11 +259,10 @@ public class SyncVariableDataAccess {
         SetVariableValueQuery query = new SetVariableValueQuery(dmc, value, formatId);
         session.getExecutor().execute(query);
 
-        /*
-         * Now we have the data, go and get it. Since the call is completed now
-         * the ".get()" will not suspend it will immediately return with the
-         * data.
-         */
+		/*
+		 * This class is about synchronous access to the variable, so wait until
+		 * the query has completed on the DSF session thread. 
+		 */
         try {
             /*
              * Return value is irrelevant, any error would come through with an

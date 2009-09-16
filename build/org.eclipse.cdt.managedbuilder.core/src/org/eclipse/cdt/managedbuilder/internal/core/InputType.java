@@ -1812,6 +1812,9 @@ public class InputType extends BuildObject implements IInputType {
 		if(getDiscoveryProfileIdAttribute() != null)
 			return true;
 
+		if (superClass!=null && superClass instanceof InputType)
+			return ((InputType)superClass).hasScannerConfigSettings();
+		
 		return false;
 	}
 

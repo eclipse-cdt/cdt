@@ -3877,7 +3877,13 @@ public class Tool extends HoldsOptions implements ITool, IOptionCategory, IMatch
 	
 	public boolean hasScannerConfigSettings(IInputType type){
 		if(type == null){
-			return hasScannerConfigSettings();
+			boolean has = hasScannerConfigSettings();
+			if (has)
+				return has;
+			ITool superClass = getSuperClass();
+			if (superClass!=null && superClass instanceof Tool)
+				return ((Tool)superClass).hasScannerConfigSettings(type);
+			return false;
 		}
 		return ((InputType)type).hasScannerConfigSettings();
 	}

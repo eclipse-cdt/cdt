@@ -10,15 +10,24 @@
  *******************************************************************************/
 package org.eclipse.cdt.build.internal.core.scannerconfig;
 
+import java.util.Set;
+import java.util.TreeSet;
+
 import org.eclipse.cdt.build.core.scannerconfig.CfgInfoContext;
 import org.eclipse.cdt.managedbuilder.core.IInputType;
 import org.eclipse.cdt.managedbuilder.core.IResourceInfo;
 import org.eclipse.cdt.managedbuilder.core.ITool;
+import org.eclipse.cdt.managedbuilder.core.IToolChain;
 import org.eclipse.cdt.managedbuilder.internal.core.Configuration;
 import org.eclipse.cdt.managedbuilder.internal.core.FolderInfo;
+import org.eclipse.cdt.managedbuilder.internal.core.InputType;
+import org.eclipse.cdt.managedbuilder.internal.core.ManagedMakeMessages;
 import org.eclipse.cdt.managedbuilder.internal.core.ResourceConfiguration;
 import org.eclipse.cdt.managedbuilder.internal.core.Tool;
 import org.eclipse.cdt.managedbuilder.internal.core.ToolChain;
+import org.eclipse.core.runtime.Assert;
+
+import com.ibm.icu.text.MessageFormat;
 
 public class CfgScannerConfigUtil {
 	public static CfgInfoContext adjustPerRcTypeContext(CfgInfoContext context){
@@ -135,5 +144,101 @@ public class CfgScannerConfigUtil {
 		}
 		
 		return id;
+	}
+
+	/**
+	 * Search for toolchain's discovery profiles. Discovery profiles could be
+	 * specified on toolchain level, input types level or in their super-classes.
+	 * 
+	 * @param toolchain - toolchain to search for scanner discovery profiles.
+	 * @return all available discovery profiles in given toolchain
+	 */
+	public static Set<String> getAllScannerDiscoveryProfileIds(IToolChain toolchain) {
+		Assert.isNotNull(toolchain);
+		
+		Set<String> profiles = new TreeSet<String>();
+		
+		if (toolchain!=null) {
+			String toolchainProfileId = toolchain.getScannerConfigDiscoveryProfileId();
+			if (toolchainProfileId!=null && toolchainProfileId.length()>0) {
+				profiles.add(toolchainProfileId);
+			}
+			ITool[] tools = toolchain.getTools();
+			for (ITool tool : tools) {
+				profiles.addAll(getAllScannerDiscoveryProfileIds(tool));
+			}
+			IToolChain superClass = toolchain.getSuperClass();
+			if (superClass!=null) {
+				profiles.addAll(getAllScannerDiscoveryProfileIds(superClass));
+			}
+		}
+		
+		return profiles;
+	}
+	
+	/**
+	 * Search for tool's discovery profiles. Discovery profiles could be retrieved
+	 * from tool/input type super-class. Input type could hold list of profiles
+	 * separated by pipe character '|'.
+	 * 
+	 * @param tool - tool to search for scanner discovery profiles
+	 * @return all available discovery profiles in given configuration
+	 */
+	public static Set<String> getAllScannerDiscoveryProfileIds(ITool tool) {
+		Assert.isNotNull(tool);
+
+		if ( ! (tool instanceof Tool) ) {
+			String msg = MessageFormat.format(ManagedMakeMessages.getString("CfgScannerConfigUtil_ErrorNotSupported"), //$NON-NLS-1$
+					new String[] { Tool.class.getName() });
+			throw new UnsupportedOperationException(msg);
+		}
+		
+		Set<String> profiles = new TreeSet<String>();
+		
+		for (IInputType inputType : ((Tool) tool).getAllInputTypes()) {
+			for (String profileId : getAllScannerDiscoveryProfileIds(inputType)) {
+				profiles.add(profileId);
+			}
+		}
+		
+		ITool superClass = tool.getSuperClass();
+		if (superClass!=null) {
+			profiles.addAll(getAllScannerDiscoveryProfileIds(superClass));
+		}
+		return profiles;
+	}
+	
+	/**
+	 * Search for input type's discovery profiles. Discovery profiles could be specified
+	 * on input type super-class. Input type could hold list of profiles
+	 * separated by pipe character '|'.
+	 * 
+	 * @param inputType - input type to search for scanner discovery profiles
+	 * @return all available discovery profiles in given configuration
+	 */
+	private static Set<String> getAllScannerDiscoveryProfileIds(IInputType inputType) {
+		Assert.isNotNull(inputType);
+		
+		if ( ! (inputType instanceof InputType) ) {
+			String msg = MessageFormat.format(ManagedMakeMessages.getString("CfgScannerConfigUtil_ErrorNotSupported"), //$NON-NLS-1$
+					new String[] { InputType.class.getName() });
+			throw new UnsupportedOperationException(msg);
+		}
+		
+		Set<String> profiles = new TreeSet<String>();
+
+		String attribute = ((InputType) inputType).getDiscoveryProfileIdAttribute();
+		if (attribute!=null) {
+			// FIXME: temporary; we should add new method to IInputType instead of that
+			for (String profileId : attribute.split("\\|")) { //$NON-NLS-1$
+				profiles.add(profileId);
+			}
+		}
+		IInputType superClass = inputType.getSuperClass();
+		if (superClass!=null) {
+			profiles.addAll(getAllScannerDiscoveryProfileIds(superClass));
+		}
+
+		return profiles;
 	}
 }

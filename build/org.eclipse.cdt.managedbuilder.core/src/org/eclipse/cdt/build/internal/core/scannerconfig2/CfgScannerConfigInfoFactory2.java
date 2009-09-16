@@ -162,26 +162,23 @@ public class CfgScannerConfigInfoFactory2 {
 					Map<CfgInfoContext, IScannerConfigBuilderInfo2> configMap = getConfigInfoMap(baseMap);
 					
 					IResourceInfo[] rcInfos = cfg.getResourceInfos();
-					for(int i = 0; i < rcInfos.length; i++){
+					for (IResourceInfo rcInfo : rcInfos) {
 						ITool tools[];
-						IResourceInfo rcInfo = rcInfos[i];
 						if(rcInfo instanceof IFolderInfo) {
 							tools = ((IFolderInfo)rcInfo).getFilteredTools();
 						} else {
 							tools = ((IFileInfo)rcInfo).getToolsToInvoke();
 						}
-						for(int k = 0; k < tools.length; k++){
-							Tool tool = (Tool)tools[k];
+						for (ITool tool : tools) {
 							IInputType types[] = tool.getInputTypes();
 							if(types.length != 0){
-								for(int t = 0; t < types.length; t++){
-									InputType type = (InputType)types[t];
-									CfgInfoContext context = new CfgInfoContext(rcInfo, tool, type);
+								for (IInputType inputType : types) {
+									CfgInfoContext context = new CfgInfoContext(rcInfo, tool, inputType);
 									context = CfgScannerConfigUtil.adjustPerRcTypeContext(context);
 									if(context != null && context.getResourceInfo() != null){
 										IScannerConfigBuilderInfo2 info = configMap.get(context);
-										if(info == null && !type.isExtensionElement() && type.getSuperClass() != null){
-											CfgInfoContext superContext = new CfgInfoContext(rcInfo, tool, type.getSuperClass());
+										if(info == null && !inputType.isExtensionElement() && inputType.getSuperClass() != null){
+											CfgInfoContext superContext = new CfgInfoContext(rcInfo, tool, inputType.getSuperClass());
 											superContext = CfgScannerConfigUtil.adjustPerRcTypeContext(superContext);
 											if(superContext != null && superContext.getResourceInfo() != null){
 												info = configMap.get(superContext);

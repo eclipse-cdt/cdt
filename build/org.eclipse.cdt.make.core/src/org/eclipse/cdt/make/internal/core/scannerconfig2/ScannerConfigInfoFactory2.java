@@ -15,11 +15,11 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.Map.Entry;
 
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.ICDescriptor;
@@ -137,10 +137,9 @@ public class ScannerConfigInfoFactory2 {
 				BuildProperty prop = (BuildProperty)fMap.get(new InfoContext(fProject));
 				prop.store(sc);
 				
-				for(Iterator iter = fMap.entrySet().iterator(); iter.hasNext();){
-					Map.Entry entry = (Map.Entry)iter.next();
+				for (Entry<InfoContext, IScannerConfigBuilderInfo2> entry : fMap.entrySet()) {
 					
-					InfoContext context = (InfoContext)entry.getKey();
+					InfoContext context = entry.getKey();
 					if(context.isDefaultContext())
 						continue;
 					
@@ -168,8 +167,8 @@ public class ScannerConfigInfoFactory2 {
 			return fProject;
 		}
 
-		protected Store doCreateStore(InfoContext context, Store base,
-				String profileId) {
+		@Override
+		protected Store doCreateStore(InfoContext context, Store base, String profileId) {
 			return new BuildProperty(this, fProject, context, base, profileId);
 		}
 	}
@@ -213,10 +212,8 @@ public class ScannerConfigInfoFactory2 {
 				Preference pref = (Preference)fMap.get(new InfoContext(null));
 				pref.store();
 				
-				for(Iterator iter = fMap.entrySet().iterator(); iter.hasNext();){
-					Map.Entry entry = (Map.Entry)iter.next();
-					
-					InfoContext context = (InfoContext)entry.getKey();
+				for (Entry<InfoContext, IScannerConfigBuilderInfo2> entry : fMap.entrySet()) {
+					InfoContext context = entry.getKey();
 					if(context.isDefaultContext())
 						continue;
 					
@@ -247,8 +244,8 @@ public class ScannerConfigInfoFactory2 {
 			return null;
 		}
 
-		protected Store doCreateStore(InfoContext context, Store base,
-				String profileId) {
+		@Override
+		protected Store doCreateStore(InfoContext context, Store base, String profileId) {
 			return new Preference(this, prefs, context, base, profileId, useDefaults);
 		}
 		
@@ -271,7 +268,7 @@ public class ScannerConfigInfoFactory2 {
 
 	
 	private static abstract class StoreSet implements IScannerConfigBuilderInfo2Set {
-		protected HashMap<InfoContext, Store> fMap = new HashMap<InfoContext, Store>();
+		protected HashMap<InfoContext, IScannerConfigBuilderInfo2> fMap = new HashMap<InfoContext, IScannerConfigBuilderInfo2>();
 		protected boolean fIsDirty;
 		
 		StoreSet(){
@@ -301,7 +298,7 @@ public class ScannerConfigInfoFactory2 {
 			return fMap.get(context);
 		}
 
-		public Map<InfoContext, Store> getInfoMap() {
+		public Map<InfoContext, IScannerConfigBuilderInfo2> getInfoMap() {
 			return Collections.unmodifiableMap(fMap);
 		}
 
@@ -319,9 +316,8 @@ public class ScannerConfigInfoFactory2 {
 		public boolean isDirty(){
 			if(fIsDirty)
 				return true;
-			for(Iterator<Store> iter = fMap.values().iterator(); iter.hasNext();){
-				Store prop = iter.next();
-				if(prop.isDirty)
+			for (IScannerConfigBuilderInfo2 prop : fMap.values()) {
+				if(((Store)prop).isDirty)
 					return true;
 			}
 			
@@ -524,7 +520,6 @@ public class ScannerConfigInfoFactory2 {
 		/* (non-Javadoc)
 		 * @see org.eclipse.cdt.make.core.scannerconfig.IScannerConfigBuilderInfo2#getSIProviderIdList()
 		 */
-		@SuppressWarnings("unchecked")
 		public List<String> getProviderIdList() {
             ProfileOptions po = profileOptionsMap.get(selectedProfile);
             return (po != null) ? new ArrayList<String>(po.providerOptionsMap.keySet()) : new ArrayList<String>(0);
@@ -687,7 +682,7 @@ public class ScannerConfigInfoFactory2 {
         protected void loadFromProfileConfiguration(ProfileOptions po, String profileId) {
             ScannerConfigProfile configuredProfile = ScannerConfigProfileManager.getInstance().
                     getSCProfileConfiguration(profileId);
-            List providerIds = configuredProfile.getSIProviderIds();
+            List<String> providerIds = configuredProfile.getSIProviderIds();
             
             po.buildOutputParserEnabled  = false;
             po.buildOutputFileActionEnabled = false;
@@ -704,7 +699,7 @@ public class ScannerConfigInfoFactory2 {
             po.providerOptionsMap = new LinkedHashMap<String, ProfileOptions.ProviderOptions>(providerIds.size());
             for (int i = 0; i < providerIds.size(); ++i) {
                 ProfileOptions.ProviderOptions ppo = new ProfileOptions.ProviderOptions();
-                String providerId = (String) providerIds.get(i);
+                String providerId = providerIds.get(i);
                 po.providerOptionsMap.put(providerId, ppo);
                 
                 ppo.providerOutputParserEnabled = (configuredProfile.getScannerInfoProviderElement(providerId) == null) ? false : true;
@@ -804,8 +799,7 @@ public class ScannerConfigInfoFactory2 {
 				}
                 if (loadedProfiles.size() < profileIds.size()) {
                     // initialize remaining profiles with default values
-                    for (Iterator i = profileIds.iterator(); i.hasNext(); ) {
-                        String profileId = (String) i.next();
+                	for (String profileId : profileIds) {
                         if (!loadedProfiles.contains(profileId)) {
                             loadDefaults(profileId);
                             loadedProfiles.add(profileId);
@@ -834,8 +828,9 @@ public class ScannerConfigInfoFactory2 {
                     getSCProfileConfiguration(profileId);
 
             po.providerOptionsMap = new LinkedHashMap<String, ProfileOptions.ProviderOptions>();
-            for (Iterator i = configuredProfile.getSIProviderIds().iterator(); i.hasNext(); ) {
-                String providerId = (String) i.next();
+            
+            List<String> providerIds = configuredProfile.getSIProviderIds();
+            for (String providerId : providerIds) {
                 ProfileOptions.ProviderOptions ppo = new ProfileOptions.ProviderOptions();
                 ScannerInfoProvider configuredProvider = configuredProfile.
                         getScannerInfoProviderElement(providerId);
@@ -986,8 +981,7 @@ public class ScannerConfigInfoFactory2 {
 				autod.setAttribute(SELECTED_PROFILE_ID, selectedProfile);
 				autod.setAttribute(PROBLEM_REPORTING_ENABLED, Boolean.toString(problemReportingEnabled));
 
-				for (Iterator<String> i = profileOptionsMap.keySet().iterator(); i.hasNext();) {
-                    String profileId = i.next();
+				for (String profileId : profileOptionsMap.keySet()) {
                     ICStorageElement profile = sc.createChild(PROFILE);
 					profile.setAttribute(ID, profileId);
 					store(profile, profileOptionsMap.get(profileId));
@@ -1133,10 +1127,9 @@ public class ScannerConfigInfoFactory2 {
                 // get the default value
                 selectedProfile = prefs.getDefaultString(prefix + SCANNER_CONFIG_SELECTED_PROFILE_ID_SUFFIX);
             }
-            List profileIds = ScannerConfigProfileManager.getInstance().getProfileIds(context);
+            List<String> profileIds = ScannerConfigProfileManager.getInstance().getProfileIds(context);
             profileOptionsMap = new LinkedHashMap<String, ProfileOptions>(profileIds.size());
-            for (Iterator I = profileIds.iterator(); I.hasNext(); ) {
-            	String profileId = (String) I.next();
+            for (String profileId : profileIds) {
 	            ProfileOptions po = new ProfileOptions();
 	            profileOptionsMap.put(profileId, po);
 	            
@@ -1152,10 +1145,9 @@ public class ScannerConfigInfoFactory2 {
 				
 				ScannerConfigProfile configuredProfile = ScannerConfigProfileManager.getInstance().
 						getSCProfileConfiguration(profileId);
-				List providerIds = configuredProfile.getSIProviderIds();
+				List<String> providerIds = configuredProfile.getSIProviderIds();
 				po.providerOptionsMap = new LinkedHashMap<String, ProfileOptions.ProviderOptions>(providerIds.size());
-				for (int i = 0; i < providerIds.size(); ++i) {
-					String providerId = (String) providerIds.get(i);
+				for (String providerId : providerIds) {
 					ProfileOptions.ProviderOptions ppo = new ProfileOptions.ProviderOptions();
 					po.providerOptionsMap.put(providerId, ppo);
                     ppo.providerKind = configuredProfile.getScannerInfoProviderElement(
@@ -1187,9 +1179,7 @@ public class ScannerConfigInfoFactory2 {
 				set(prefix + SCANNER_CONFIG_SELECTED_PROFILE_ID_SUFFIX, selectedProfile);
 				set(prefix + SCANNER_CONFIG_PROBLEM_REPORTING_ENABLED_SUFFIX, problemReportingEnabled);
 				
-				List<String> profileIds = new ArrayList<String>(profileOptionsMap.keySet());
-				for (Iterator<String> I = profileIds.iterator(); I.hasNext(); ) {
-					String profileId = I.next();
+				for (String profileId : profileOptionsMap.keySet()) {
 					ProfileOptions po = profileOptionsMap.get(profileId);
 					
                     set(SCD + prefix + profileId + DOT + ENABLED, !useDefaults);
@@ -1199,9 +1189,8 @@ public class ScannerConfigInfoFactory2 {
 	
 					ScannerConfigProfile configuredProfile = ScannerConfigProfileManager.getInstance().
 							getSCProfileConfiguration(profileId);
-					List providerIds = configuredProfile.getSIProviderIds();
-					for (int i = 0; i < providerIds.size(); ++i) {
-						String providerId = (String) providerIds.get(i);
+					List<String> providerIds = configuredProfile.getSIProviderIds();
+					for (String providerId : providerIds) {
 						ProfileOptions.ProviderOptions ppo = po.providerOptionsMap.get(providerId);
 						
 						set(SCD + prefix + profileId + DOT + providerId + SI_PROVIDER_PARSER_ENABLED,

@@ -21,7 +21,6 @@ import java.util.Map;
 import org.eclipse.cdt.core.IMarkerGenerator;
 import org.eclipse.cdt.make.core.scannerconfig.IScannerInfoCollector;
 import org.eclipse.cdt.make.core.scannerconfig.ScannerInfoTypes;
-import org.eclipse.cdt.make.internal.core.MakeMessages;
 import org.eclipse.cdt.make.internal.core.scannerconfig.util.TraceUtil;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
@@ -50,10 +49,12 @@ public class GCCScannerInfoConsoleParser extends AbstractGCCBOPConsoleParser {
     /* (non-Javadoc)
      * @see org.eclipse.cdt.make.internal.core.scannerconfig.gnu.AbstractGCCBOPConsoleParser#getUtility()
      */
+    @Override
     protected AbstractGCCBOPConsoleParserUtility getUtility() {
         return fUtil;
     }
 
+    @Override
     protected boolean processCommand(String[] tokens) {
         int compilerInvocationIdx= findCompilerInvocation(tokens);
         if (compilerInvocationIdx<0) {
@@ -65,9 +66,9 @@ public class GCCScannerInfoConsoleParser extends AbstractGCCBOPConsoleParser {
         }
 
         // Recognized gcc or g++ compiler invocation
-        List includes = new ArrayList();
-        List symbols = new ArrayList();
-        List targetSpecificOptions = new ArrayList();
+        List<String> includes = new ArrayList<String>();
+        List<String> symbols = new ArrayList<String>();
+        List<String> targetSpecificOptions = new ArrayList<String>();
 
         String fileName = null;
         for (int j= compilerInvocationIdx+1; j < tokens.length; j++) {
@@ -157,33 +158,19 @@ public class GCCScannerInfoConsoleParser extends AbstractGCCBOPConsoleParser {
         if (fileName != null && fileName.startsWith("/cygdrive/")) { //$NON-NLS-1$
         	fileName= AbstractGCCBOPConsoleParserUtility.convertCygpath(new Path(fileName)).toOSString();
         }
-        if (fileName == null) {
+        if (fileName == null || fileName.trim().length()==0) {
         	return false;  // return when no file was given (analogous to GCCPerFileBOPConsoleParser)
         }
 
         IProject project = getProject();   
         IFile file = null;
-        List translatedIncludes = includes;
+        List<String> translatedIncludes = includes;
         if (includes.size() > 0) {
-        	if (fileName != null) {
-        		if (fUtil != null) {
-        			file = fUtil.findFile(fileName);
-        			if (file != null) {
-        				project = file.getProject();
-        				translatedIncludes = fUtil.translateRelativePaths(file, fileName, includes);
-        			}
-        		}
-        	}
-        	else {
-        		StringBuffer line= new StringBuffer();
-        		for (int j = 0; j < tokens.length; j++) {
-					line.append(tokens[j]);
-					line.append(' ');
-				}
-        		final String error = MakeMessages.getString("ConsoleParser.Filename_Missing_Error_Message"); //$NON-NLS-1$ 
-        		TraceUtil.outputError(error, line.toString());
-        		if (fUtil != null) {
-        			fUtil.generateMarker(getProject(), -1, error + line.toString(), IMarkerGenerator.SEVERITY_WARNING, null);
+        	if (fUtil != null) {
+        		file = fUtil.findFile(fileName);
+        		if (file != null) {
+        			project = file.getProject();
+        			translatedIncludes = fUtil.translateRelativePaths(file, fileName, includes);
         		}
         	}
         	if (file == null && fUtil != null) {	// real world case
@@ -193,7 +180,7 @@ public class GCCScannerInfoConsoleParser extends AbstractGCCBOPConsoleParser {
         }
         // Contribute discovered includes and symbols to the ScannerInfoCollector
         if (translatedIncludes.size() > 0 || symbols.size() > 0) {
-        	Map scannerInfo = new HashMap();
+        	Map<ScannerInfoTypes, List<String>> scannerInfo = new HashMap<ScannerInfoTypes, List<String>>();
         	scannerInfo.put(ScannerInfoTypes.INCLUDE_PATHS, translatedIncludes);
         	scannerInfo.put(ScannerInfoTypes.SYMBOL_DEFINITIONS, symbols);
         	scannerInfo.put(ScannerInfoTypes.TARGET_SPECIFIC_OPTION, targetSpecificOptions);

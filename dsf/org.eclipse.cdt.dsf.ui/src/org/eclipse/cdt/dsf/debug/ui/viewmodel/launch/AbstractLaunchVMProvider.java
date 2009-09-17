@@ -231,8 +231,8 @@ public class AbstractLaunchVMProvider extends AbstractDMVMProvider
     private void handleLaunchesEvent(final LaunchesEvent event) {
         if (isDisposed()) return;
         
-        // We're in session's executor thread.  Re-dispach to VM Adapter 
-        // executor thread and then call root layout node.
+		// We're in session's executor thread. Re-dispach to our executor thread
+		// and then call root layout node.
         try {
             getExecutor().execute(new Runnable() {
                 public void run() {

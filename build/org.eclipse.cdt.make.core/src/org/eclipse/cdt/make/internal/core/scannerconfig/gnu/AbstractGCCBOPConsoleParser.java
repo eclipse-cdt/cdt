@@ -16,6 +16,7 @@ import java.util.ArrayList;
 
 import org.eclipse.cdt.make.core.scannerconfig.IScannerInfoCollector;
 import org.eclipse.cdt.make.core.scannerconfig.IScannerInfoConsoleParser;
+import org.eclipse.cdt.make.internal.core.MakeMessages;
 import org.eclipse.cdt.make.internal.core.scannerconfig.util.TraceUtil;
 import org.eclipse.cdt.make.internal.core.scannerconfig2.SCProfileInstance;
 import org.eclipse.cdt.make.internal.core.scannerconfig2.ScannerConfigProfileManager;
@@ -123,8 +124,8 @@ public abstract class AbstractGCCBOPConsoleParser implements IScannerInfoConsole
         if (firstColon != -1 && make.indexOf("make") != -1) { //$NON-NLS-1$
             boolean enter = false;
             String msg = line.substring(firstColon + 1).trim();     
-            if ((enter = msg.startsWith("Entering directory")) || //$NON-NLS-1$
-                (msg.startsWith("Leaving directory"))) { //$NON-NLS-1$
+            if ((enter = msg.startsWith(MakeMessages.getString("AbstractGCCBOPConsoleParser_EnteringDirectory"))) || //$NON-NLS-1$
+                (msg.startsWith(MakeMessages.getString("AbstractGCCBOPConsoleParser_LeavingDirectory")))) { //$NON-NLS-1$
                 int s = msg.indexOf('`');
                 int e = msg.indexOf('\'');
                 if (s != -1 && e != -1) {
@@ -174,6 +175,7 @@ public abstract class AbstractGCCBOPConsoleParser implements IScannerInfoConsole
 	 * A backslash used for escaping is removed.
 	 * Quotes other than the back-quote plus '&&', '||', ';' are removed, also.
 	 * @param line to tokenize
+	 * @param escapeInsideDoubleQuotes if quotes need to be escaped [\"] in the resulting array of commands
 	 * @return array of commands
 	 */
 	protected String[][] tokenize(String line, boolean escapeInsideDoubleQuotes) {

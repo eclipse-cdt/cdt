@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2008 Wind River Systems and others.
+ * Copyright (c) 2006, 2009 Wind River Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -98,8 +98,8 @@ public class AbstractLaunchVMProvider extends AbstractDMVMProvider
     public void handleDebugEvents(final DebugEvent[] events) {
         if (isDisposed()) return;
         
-        // We're in session's executor thread.  Re-dispach to VM Adapter 
-        // executor thread and then call root layout node.
+		// We're in session's executor thread. Re-dispatch to our executor thread
+		// and then call root layout node.
         try {
             getExecutor().execute(new Runnable() {
                 public void run() {

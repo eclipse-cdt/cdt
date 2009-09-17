@@ -1079,7 +1079,7 @@
          </action>
          <action
                class="org.eclipse.cdt.debug.internal.ui.actions.AddEventBreakpointActionDelegate"
-               icon="icons/obj16/eventbreakoint_obj.gif"
+               icon="icons/obj16/eventbreakpoint_obj.gif"
                id="org.eclipse.cdt.debug.internal.ui.actions.AddEventBreakpointActionDelegate"
                label="%AddEventBreakpoint.label"
                menubarPath="cDebugActions"

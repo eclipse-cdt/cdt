@@ -15,6 +15,7 @@ package org.eclipse.cdt.make.internal.core.scannerconfig.gnu;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -174,8 +175,15 @@ public class GCCScannerInfoConsoleParser extends AbstractGCCBOPConsoleParser {
         		}
         	}
         	if (file == null && fUtil != null) {	// real world case
-        		// remove include paths since there was no chance to translate them
-        		translatedIncludes.clear();
+        		// remove non-absolute include paths since there was no chance to translate them
+        		Iterator<String> iterator = translatedIncludes.iterator();
+        		while (iterator.hasNext()) {
+        			String include = iterator.next();
+        			IPath includePath = new Path(include);
+        			if (!includePath.isAbsolute() && !includePath.isUNC()) {	// do not translate UNC paths
+        				iterator.remove();
+        			}
+        		}
         	}
         }
         // Contribute discovered includes and symbols to the ScannerInfoCollector

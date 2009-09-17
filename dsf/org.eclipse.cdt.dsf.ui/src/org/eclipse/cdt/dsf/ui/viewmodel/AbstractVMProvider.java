@@ -271,10 +271,8 @@ abstract public class AbstractVMProvider implements IVMProvider, IVMEventListene
                 }
                 if (!fProxyEventQueues.containsKey(proxyStrategy)) {
                     fProxyEventQueues.put(proxyStrategy, new ModelProxyEventQueue());
-                    if (DEBUG_DELTA && (DEBUG_PRESENTATION_ID == null || getPresentationContext().getId().equals(DEBUG_PRESENTATION_ID))) {
-                        DsfUIPlugin.debug("eventQueued(proxyRoot = " + proxyStrategy.getRootElement() + ", event = " + event + ")" );  //$NON-NLS-1$//$NON-NLS-2$ //$NON-NLS-3$
-                    }
                 }
+                // If the event queue is empty, directly handle the new event. Otherwise queue it. 
                 final ModelProxyEventQueue queue = fProxyEventQueues.get(proxyStrategy);
                 if (queue.fCurrentEvent != null) {
                     assert queue.fCurrentRm != null;
@@ -304,6 +302,10 @@ abstract public class AbstractVMProvider implements IVMProvider, IVMEventListene
                         }
                         queue.fCurrentRm.cancel();
                     }
+
+                    if (DEBUG_DELTA && (DEBUG_PRESENTATION_ID == null || getPresentationContext().getId().equals(DEBUG_PRESENTATION_ID))) {
+                        DsfUIPlugin.debug("eventQueued(proxyRoot = " + proxyStrategy.getRootElement() + ", event = " + event + ")" );  //$NON-NLS-1$//$NON-NLS-2$ //$NON-NLS-3$
+                    }
                     queue.fEventQueue.add(new EventInfo(event, crm));
                 } else {
                     doHandleEvent(queue, proxyStrategy, new EventInfo(event, crm));
@@ -313,7 +315,7 @@ abstract public class AbstractVMProvider implements IVMProvider, IVMEventListene
             }
         }
 
-        // Clean up model proxies that were removed.
+        // Discard the event queues of proxies that have been removed
         List<IVMModelProxy> activeProxies = getActiveModelProxies();
         for (Iterator<IVMModelProxy> itr = fProxyEventQueues.keySet().iterator(); itr.hasNext();) {
             if (!activeProxies.contains(itr.next())) {

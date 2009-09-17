@@ -14,10 +14,10 @@ import java.util.HashSet;
 import java.util.Set;
 
 /**
- * An event representing a user editing of the data in the viewer.  Typically, when 
- * a viewer is configured to be in a manual update mode, if user edits a value, the 
- * viewer should still update at least the value that the user editor.  This event
- * is used to accomplish that behavior.
+ * An event that indicates the user modified data in the viewer. Even when a
+ * viewer is configured to be in a manual update mode, the modification of an
+ * element by the user should at least cause an update of the modified element.
+ * This event is used to accomplish that behavior.
  * 
  * @since 1.0
  */

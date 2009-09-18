@@ -31,6 +31,7 @@
  * David McKnight   (IBM) - [285151] [dstore] Potential threading problem in DataStore (open call)
  * David McKnight   (IBM) - [285301] [dstore] 100% CPU if user does not  have write access to $HOME
  * David McKnight   (IBM) - [287457] [dstore] problems with disconnect when readonly trace file
+ * David McKnight   (IBM) - [289891] [dstore] StringIndexOutOfBoundsException in getUserPreferencesDirectory when DSTORE_LOG_DIRECTORY is ""
  *******************************************************************************/
 
 package org.eclipse.dstore.core.model;
@@ -3590,8 +3591,10 @@ public final class DataStore
   				logDirectory = ".eclipse" + File.separator + "RSE" + File.separator;  //$NON-NLS-1$//$NON-NLS-2$
   			}
   			// append a '/' if not there
-  			if (logDirectory.charAt( logDirectory.length() -1 ) != File.separatorChar ) {
-  				logDirectory = logDirectory + File.separator;
+  			if (logDirectory.length() > 0){
+  				if (logDirectory.charAt( logDirectory.length() -1 ) != File.separatorChar ) {
+  					logDirectory = logDirectory + File.separator;
+  				}
   			}
   			
   			_userPreferencesDirectory = _userPreferencesDirectory + logDirectory + clientUserID;  			

@@ -262,8 +262,10 @@ import org.eclipse.cdt.internal.ui.CPluginImages;
 	     */
 		public static CWizardHandler updateData(Tree tree, Composite right, Button show_sup, IWizardItemsListListener ls, IWizard wizard) {
 			// remember selected item
-			TreeItem[] sel = tree.getSelection();
-			String savedStr = (sel.length > 0) ? sel[0].getText() : null; 
+			TreeItem[] selection = tree.getSelection();
+			TreeItem selectedItem = selection.length>0 ? selection[0] : null; 
+			String savedLabel = selectedItem!=null ? selectedItem.getText() : null;
+			String savedParentLabel = getParentText(selectedItem);
 			
 			tree.removeAll();
 			IExtensionPoint extensionPoint =
@@ -312,23 +314,43 @@ import org.eclipse.cdt.internal.ui.CPluginImages;
 			if (tree.getItemCount() > 0) {
 				TreeItem target = null;
 				// try to search item which was selected before
-				if (savedStr != null) {
-					TreeItem[] all = tree.getItems();
-					for (TreeItem element : all) {
-						if (savedStr.equals(element.getText())) {
-							target = element;
-							break;
-						}
-					}
+				if (savedLabel!=null) {
+					target = findItem(tree, savedLabel, savedParentLabel);
 				}
-				if (target == null)
-				{
+				if (target == null) {
 					target = tree.getItem(0);
 					if (target.getItemCount() != 0)
 						target = target.getItem(0);
 				}
 				tree.setSelection(target);
 				return (CWizardHandler)target.getData();
+			}
+			return null;
+		}
+
+		private static String getParentText(TreeItem item) {
+			if (item==null || item.getParentItem()==null)
+				return ""; //$NON-NLS-1$
+			return item.getParentItem().getText();
+		}
+
+		private static TreeItem findItem(Tree tree, String label, String parentLabel) {
+			for (TreeItem item : tree.getItems()) {
+				TreeItem foundItem = findTreeItem(item, label, parentLabel);
+				if (foundItem!=null)
+					return foundItem;
+			}
+			return null;
+		}
+
+		private static TreeItem findTreeItem(TreeItem item, String label, String parentLabel) {
+			if (item.getText().equals(label) && getParentText(item).equals(parentLabel))
+				return item;
+			
+			for (TreeItem child : item.getItems()) {
+				TreeItem foundItem = findTreeItem(child, label, parentLabel);
+				if (foundItem!=null)
+					return foundItem;
 			}
 			return null;
 		}

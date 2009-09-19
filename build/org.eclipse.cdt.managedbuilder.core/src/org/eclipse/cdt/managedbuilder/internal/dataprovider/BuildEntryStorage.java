@@ -51,6 +51,10 @@ import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
 
 public class BuildEntryStorage extends AbstractEntryStorage {
+	private static final int USER_ENTRIES_LEVEL = 0;
+	private static final int ENV_ENTRIES_LEVEL = 1;
+	private static final int DISCOVERY_ENTRIES_LEVEL = 2;
+
 	private BuildLanguageData fLangData;
 	private String fBuildDirName;
 
@@ -92,20 +96,20 @@ public class BuildEntryStorage extends AbstractEntryStorage {
 		
 		boolean override = isDiscoveredEntriesOverridable(); 
 		int readOnlyFlag = override ? 0 : ICSettingEntry.READONLY;
-		levels[0].setFlagsToClear(ICSettingEntry.READONLY | ICSettingEntry.BUILTIN);
-		levels[0].setFlagsToSet(0);
-		levels[0].setReadOnly(false);
-		levels[0].setOverrideSupported(override);
+		levels[USER_ENTRIES_LEVEL].setFlagsToClear(ICSettingEntry.READONLY | ICSettingEntry.BUILTIN);
+		levels[USER_ENTRIES_LEVEL].setFlagsToSet(0);
+		levels[USER_ENTRIES_LEVEL].setReadOnly(false);
+		levels[USER_ENTRIES_LEVEL].setOverrideSupported(override);
 
-		levels[1].setFlagsToClear(ICSettingEntry.BUILTIN);
-		levels[1].setFlagsToSet(readOnlyFlag | ICSettingEntry.RESOLVED);
-		levels[1].setReadOnly(true);
-		levels[1].setOverrideSupported(false);
+		levels[ENV_ENTRIES_LEVEL].setFlagsToClear(ICSettingEntry.BUILTIN);
+		levels[ENV_ENTRIES_LEVEL].setFlagsToSet(readOnlyFlag | ICSettingEntry.RESOLVED);
+		levels[ENV_ENTRIES_LEVEL].setReadOnly(true);
+		levels[ENV_ENTRIES_LEVEL].setOverrideSupported(false);
 
-		levels[2].setFlagsToClear(0);
-		levels[2].setFlagsToSet(readOnlyFlag | ICSettingEntry.BUILTIN | ICSettingEntry.RESOLVED);
-		levels[2].setReadOnly(true);
-		levels[2].setOverrideSupported(false);
+		levels[DISCOVERY_ENTRIES_LEVEL].setFlagsToClear(0);
+		levels[DISCOVERY_ENTRIES_LEVEL].setFlagsToSet(readOnlyFlag | ICSettingEntry.BUILTIN | ICSettingEntry.RESOLVED);
+		levels[DISCOVERY_ENTRIES_LEVEL].setReadOnly(true);
+		levels[DISCOVERY_ENTRIES_LEVEL].setOverrideSupported(false);
 
 		return settings;
 	}
@@ -123,7 +127,7 @@ public class BuildEntryStorage extends AbstractEntryStorage {
 	
 	protected void obtainEntriesFromLevel(int levelNum, SettingLevel level) {
 		switch(levelNum){
-		case 0:
+		case USER_ENTRIES_LEVEL:
 			if(level == null)
 				restoreDefaults();
 			else {
@@ -163,7 +167,7 @@ public class BuildEntryStorage extends AbstractEntryStorage {
 
 	protected void putEntriesToLevel(int levelNum, SettingLevel level) {
 		switch(levelNum){
-		case 0:
+		case USER_ENTRIES_LEVEL:
 			List emptyEntryInfos = new ArrayList();
 			UserEntryInfo[] userEntries = getUserEntries(level.getFlags(0), true, emptyEntryInfos);
 			for(int i = 0; i < userEntries.length; i++){
@@ -173,11 +177,11 @@ public class BuildEntryStorage extends AbstractEntryStorage {
 			if(emptyEntryInfos.size() != 0)
 				level.setContext(emptyEntryInfos);
 			break;
-		case 1:
+		case ENV_ENTRIES_LEVEL:
 			ICLanguageSettingEntry[] envEntries = getEnvEntries(level.getFlags(0));
 			level.addEntries(envEntries);
 			break;
-		case 2:
+		case DISCOVERY_ENTRIES_LEVEL:
 			ICLanguageSettingEntry[] discoveredEntries = getDiscoveredEntries(level.getFlags(0));
 			level.addEntries(discoveredEntries);
 			break;

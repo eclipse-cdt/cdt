@@ -18,6 +18,9 @@ import org.eclipse.cdt.core.settings.model.ICSettingEntry;
 import org.eclipse.cdt.core.settings.model.util.SettingsSet.SettingLevel;
 
 public abstract class UserAndDiscoveredEntryStorage extends AbstractEntryStorage {
+	private static final int USER_ENTRIES_LEVEL = 0;
+	private static final int DISCOVERY_ENTRIES_LEVEL = 1;
+
 	public UserAndDiscoveredEntryStorage(int kind) {
 		super(kind);
 	}
@@ -29,15 +32,15 @@ public abstract class UserAndDiscoveredEntryStorage extends AbstractEntryStorage
 		
 		boolean override = canDisableDiscoveredEntries(); 
 		int readOnlyFlag = override ? 0 : ICSettingEntry.READONLY;
-		levels[0].setFlagsToClear(ICSettingEntry.READONLY | ICSettingEntry.BUILTIN);
-		levels[0].setFlagsToSet(0);
-		levels[0].setReadOnly(false);
-		levels[0].setOverrideSupported(false);
+		levels[USER_ENTRIES_LEVEL].setFlagsToClear(ICSettingEntry.READONLY | ICSettingEntry.BUILTIN);
+		levels[USER_ENTRIES_LEVEL].setFlagsToSet(0);
+		levels[USER_ENTRIES_LEVEL].setReadOnly(false);
+		levels[USER_ENTRIES_LEVEL].setOverrideSupported(false);
 
-		levels[1].setFlagsToClear(0);
-		levels[1].setFlagsToSet(readOnlyFlag | ICSettingEntry.BUILTIN | ICSettingEntry.RESOLVED);
-		levels[1].setReadOnly(true);
-		levels[1].setOverrideSupported(override);
+		levels[DISCOVERY_ENTRIES_LEVEL].setFlagsToClear(0);
+		levels[DISCOVERY_ENTRIES_LEVEL].setFlagsToSet(readOnlyFlag | ICSettingEntry.BUILTIN | ICSettingEntry.RESOLVED);
+		levels[DISCOVERY_ENTRIES_LEVEL].setReadOnly(true);
+		levels[DISCOVERY_ENTRIES_LEVEL].setOverrideSupported(override);
 
 		return settings;
 	}
@@ -45,10 +48,10 @@ public abstract class UserAndDiscoveredEntryStorage extends AbstractEntryStorage
 	@Override
 	protected void obtainEntriesFromLevel(int levelNum, SettingLevel level) {
 		switch(levelNum){
-		case 0:
+		case USER_ENTRIES_LEVEL:
 			setUserEntries(level != null ? level.getEntries() : null);
 			break;
-		case 1:
+		case DISCOVERY_ENTRIES_LEVEL:
 			if(level != null){
 				Set set = level.getOverrideSet();
 				setDisabledDiscoveredNames(set);
@@ -61,10 +64,10 @@ public abstract class UserAndDiscoveredEntryStorage extends AbstractEntryStorage
 	@Override
 	protected void putEntriesToLevel(int levelNum, SettingLevel level) {
 		switch(levelNum){
-		case 0:
+		case USER_ENTRIES_LEVEL:
 			level.addEntries(getUserEntries());
 			break;
-		case 1:
+		case DISCOVERY_ENTRIES_LEVEL:
 			HashSet set = new HashSet();
 			ICLanguageSettingEntry[] entries = getDiscoveredEntries(set);
 			level.addEntries(entries);

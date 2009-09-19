@@ -28,15 +28,15 @@ public abstract class UserAndDiscoveredEntryStorage extends AbstractEntryStorage
 	@Override
 	protected SettingsSet createEmptySettings(){
 		SettingsSet settings = new SettingsSet(2);
-		SettingLevel levels[] = settings.getLevels();
+		SettingsSet.SettingLevel levels[] = settings.getLevels();
 		
-		boolean override = canDisableDiscoveredEntries(); 
-		int readOnlyFlag = override ? 0 : ICSettingEntry.READONLY;
 		levels[USER_ENTRIES_LEVEL].setFlagsToClear(ICSettingEntry.READONLY | ICSettingEntry.BUILTIN);
 		levels[USER_ENTRIES_LEVEL].setFlagsToSet(0);
 		levels[USER_ENTRIES_LEVEL].setReadOnly(false);
 		levels[USER_ENTRIES_LEVEL].setOverrideSupported(false);
 
+		boolean override = canDisableDiscoveredEntries(); 
+		int readOnlyFlag = override ? 0 : ICSettingEntry.READONLY;
 		levels[DISCOVERY_ENTRIES_LEVEL].setFlagsToClear(0);
 		levels[DISCOVERY_ENTRIES_LEVEL].setFlagsToSet(readOnlyFlag | ICSettingEntry.BUILTIN | ICSettingEntry.RESOLVED);
 		levels[DISCOVERY_ENTRIES_LEVEL].setReadOnly(true);

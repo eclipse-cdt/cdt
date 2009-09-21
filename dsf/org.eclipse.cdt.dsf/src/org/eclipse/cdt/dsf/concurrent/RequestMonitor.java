@@ -253,11 +253,12 @@ public class RequestMonitor extends DsfExecutable {
         return "RequestMonitor (" + super.toString() + "): " + getStatus().toString(); //$NON-NLS-1$ //$NON-NLS-2$
     }
 
-    /**
-     * Checks whether the given request monitor completed with success or 
-     * failure result.  If the request monitor was canceled it is considered
-     * that it failed, regardless of the status.
-     */
+	/**
+	 * Checks whether the given request monitor completed with success or
+	 * failure result. If the request monitor was canceled it is considered a
+	 * failure, regardless of the status. If the status has a severity higher
+	 * than INFO (i.e., WARNING, ERROR or CANCEL), it is considered a failure.
+	 */
     public boolean isSuccess() {
         return !isCanceled() && getStatus().getSeverity() <= IStatus.INFO; 
     }

@@ -17,9 +17,11 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.MultiStatus;
 
 /**
- * Utility class to collect multiple request monitor results of commands
- * that are initiated simultaneously.  The usage is as follows:
- * <code><pre>
+ * A request monitor that is used for multiple activities. We are told the
+ * number of activities that constitutes completion. When our {@link #done()} is
+ * called that many times, the request is considered complete.
+ * 
+ * The usage is as follows: <code><pre>
  *     final CountingRequestMonitor countingRm = new CountingRequestMonitor(fExecutor, null) { 
  *         public void handleCompleted() {
  *             System.out.println("All complete, errors=" + !getStatus().isOK());
@@ -86,12 +88,17 @@ public class CountingRequestMonitor extends RequestMonitor {
         }
     }
 
-    /**
-     * Called to indicate that one of the calls using this monitor is finished.
-     * Only when <code>done</done> is called the number of times corresponding to the 
-     * count, the request monitor will be considered complete.  This method can be 
-     * called before {@link #setDoneCount(int)}.
-     */
+	/**
+	 * Called to indicate that one of the calls using this monitor is finished.
+	 * Only when we've been called the number of times corresponding to the
+	 * completion count will this request monitor will be considered complete.
+	 * This method can be called before {@link #setDoneCount(int)}; in that
+	 * case, we simply bump the count that tracks the number of times we've been
+	 * called. The monitor will not move into the completed state until after
+	 * {@link #setDoneCount(int)} has been called (or during if the given
+	 * completion count is equal to the number of times {@link #done()} has
+	 * already been called.)
+	 */
     @Override
     public synchronized void done() {
         fDoneCounter--;

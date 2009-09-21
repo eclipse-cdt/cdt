@@ -89,7 +89,7 @@ public class CharArrayUtils {
 	}
 	
 	public static final boolean equals(char[] str1, int start1, int length1, char[] str2) {
-		if (length1 != str2.length || str1.length < length1 )
+		if (length1 != str2.length || str1.length < length1+start1 )
 			return false;
 		if( str1 == str2 && start1 == 0 )
 		    return true;
@@ -104,7 +104,7 @@ public class CharArrayUtils {
 	    if( !ignoreCase )
 	        return equals( str1, start1, length1, str2 );
 	    
-		if (length1 != str2.length || str1.length < length1 )
+		if (length1 != str2.length || str1.length < start1 + length1 )
 			return false;
 		
 		for (int i = 0; i < length1; ++i)

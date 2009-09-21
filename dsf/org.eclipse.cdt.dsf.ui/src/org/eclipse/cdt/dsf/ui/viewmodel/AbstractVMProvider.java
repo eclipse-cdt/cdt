@@ -366,14 +366,11 @@ abstract public class AbstractVMProvider implements IVMProvider, IVMEventListene
                 event, 
                 new DataRequestMonitor<IModelDelta>(getExecutor(), rm) {
                     @Override
-                    public void handleCompleted() {
-                        if (isSuccess()) {
-                            proxyStrategy.fireModelChanged(getData());
-                            if (DEBUG_DELTA && (DEBUG_PRESENTATION_ID == null || getPresentationContext().getId().equals(DEBUG_PRESENTATION_ID))) {
-                                DsfUIPlugin.debug("eventDeltaFired(proxyRoot = " + proxyStrategy.getRootElement() + ", event = " + event + ")" );  //$NON-NLS-1$//$NON-NLS-2$ //$NON-NLS-3$
-                            }
+                    public void handleSuccess() {
+                        proxyStrategy.fireModelChanged(getData());
+                        if (DEBUG_DELTA && (DEBUG_PRESENTATION_ID == null || getPresentationContext().getId().equals(DEBUG_PRESENTATION_ID))) {
+                            DsfUIPlugin.debug("eventDeltaFired(proxyRoot = " + proxyStrategy.getRootElement() + ", event = " + event + ")" );  //$NON-NLS-1$//$NON-NLS-2$ //$NON-NLS-3$
                         }
-                        super.handleCompleted();
                     }
                     @Override public String toString() {
                         return "Result of a delta for event: '" + event.toString() + "' in VMP: '" + this + "'" + "\n" + getData().toString();  //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$

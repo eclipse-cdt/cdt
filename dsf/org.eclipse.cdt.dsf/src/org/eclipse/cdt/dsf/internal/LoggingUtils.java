@@ -17,7 +17,7 @@ package org.eclipse.cdt.dsf.internal;
  * don't have debug in package name) to have very limited dependencies on other
  * plugins.
  * 
- * @since 5.2
+ * @since 2.1
  */
 public class LoggingUtils {
 	/**

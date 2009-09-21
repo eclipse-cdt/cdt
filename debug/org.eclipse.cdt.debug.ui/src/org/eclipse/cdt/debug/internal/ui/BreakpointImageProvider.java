@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2006 QNX Software Systems and others.
+ * Copyright (c) 2009 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -11,8 +11,9 @@
 package org.eclipse.cdt.debug.internal.ui;
 
 import org.eclipse.core.resources.IMarker;
-import org.eclipse.debug.ui.DebugUITools;
-import org.eclipse.debug.ui.IDebugModelPresentation;
+import org.eclipse.debug.core.DebugPlugin;
+import org.eclipse.debug.core.model.IBreakpoint;
+import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.text.source.Annotation;
 import org.eclipse.swt.graphics.Image;
@@ -25,17 +26,18 @@ import org.eclipse.ui.texteditor.MarkerAnnotation;
  */
 public class BreakpointImageProvider implements IAnnotationImageProvider {
 
-	private IDebugModelPresentation fPresentation;
-
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.texteditor.IAnnotationImageProvider#getManagedImage(org.eclipse.jface.text.source.Annotation)
 	 */
 	public Image getManagedImage( Annotation annotation ) {
 		if ( annotation instanceof MarkerAnnotation ) {
-			MarkerAnnotation markerAnnotation = (MarkerAnnotation)annotation;
-			IMarker marker = markerAnnotation.getMarker();
-			if ( marker != null && marker.exists() )
-				return getPresentation().getImage( marker );
+			IMarker marker = ((MarkerAnnotation)annotation).getMarker();
+			if ( marker != null && marker.exists() ) {
+				IBreakpoint breakpoint = DebugPlugin.getDefault().getBreakpointManager().getBreakpoint( marker );
+				if ( breakpoint != null ) {
+					return DebugUIPlugin.getModelPresentation().getImage( breakpoint );
+				}
+			}
 		}
 		return null;
 	}
@@ -52,11 +54,5 @@ public class BreakpointImageProvider implements IAnnotationImageProvider {
 	 */
 	public ImageDescriptor getImageDescriptor( String imageDescritporId ) {
 		return null;
-	}
-	
-	private IDebugModelPresentation getPresentation() {
-		if ( fPresentation == null )
-			fPresentation = DebugUITools.newDebugModelPresentation();
-		return fPresentation;
 	}
 }

@@ -325,19 +325,25 @@ abstract public class AbstractVMProvider implements IVMProvider, IVMEventListene
     }
 
     private void doHandleEvent(final ModelProxyEventQueue queue, final IVMModelProxy proxyStrategy, final EventInfo eventInfo) {
+        // Do handle event is a sort of a recursive asynchronous method.  It 
+        // calls the asynchronous handleEvent() to process the event from the 
+        // eventInfo argument.  When handleEvent() completes, this method 
+        // (doHandleEvent) checks whether there is any more events in the queue
+        // that should be handled.  If there are, doHandleEvent calls itself
+        // to process the next event in the queue.
         assert queue.fCurrentEvent == null && queue.fCurrentRm == null;
         
         queue.fCurrentEvent = eventInfo;
         queue.fCurrentRm = new RequestMonitor(getExecutor(), null) {
             @Override
             protected void handleCompleted() {
+                eventInfo.fClientRm.done();
                 queue.fCurrentEvent = null;
                 queue.fCurrentRm = null;
                 if (!queue.fEventQueue.isEmpty()) {
-                    EventInfo eventInfo = queue.fEventQueue.remove(0);
-                    doHandleEvent(queue, proxyStrategy, eventInfo);
+                    EventInfo nextEventInfo = queue.fEventQueue.remove(0);
+                    doHandleEvent(queue, proxyStrategy, nextEventInfo);
                 } 
-                eventInfo.fClientRm.done();
             }
         };
         handleEvent(proxyStrategy, eventInfo.fEvent, queue.fCurrentRm);

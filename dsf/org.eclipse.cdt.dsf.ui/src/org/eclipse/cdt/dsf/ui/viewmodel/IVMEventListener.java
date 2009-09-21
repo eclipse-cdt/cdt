@@ -30,11 +30,12 @@ public interface IVMEventListener {
 	 * Process the given event and indicate completion with request monitor.
 	 */
 	public void handleEvent(final Object event, RequestMonitor rm);
-	
+
 	/**
 	 * Returns whether the event handling manager should wait for this listener
-	 * to complete handling this event, or whether the event listener can process
-	 * the event asynchronously.  
+	 * to complete handling an event given to it via
+	 * {@link #handleEvent(Object, RequestMonitor)}, or whether the event
+	 * listener can process that event asynchronously.
 	 */
 	public boolean shouldWaitHandleEventToComplete();
 }

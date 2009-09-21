@@ -18,6 +18,7 @@ import org.eclipse.cdt.dsf.concurrent.DataRequestMonitor;
 import org.eclipse.cdt.dsf.concurrent.Immutable;
 import org.eclipse.cdt.dsf.concurrent.RequestMonitor;
 import org.eclipse.cdt.dsf.datamodel.IDMContext;
+import org.eclipse.cdt.dsf.datamodel.IDMData;
 import org.eclipse.cdt.dsf.datamodel.IDMEvent;
 import org.eclipse.cdt.dsf.service.IDsfService;
 
@@ -54,7 +55,7 @@ public interface IBreakpoints extends IDsfService {
     /**
      * Effective breakpoint data as held by the back-end.
      */
-    public interface IBreakpointDMData {
+    public interface IBreakpointDMData extends IDMData {
 
     	public String     getBreakpointType();
     	public String     getFileName();

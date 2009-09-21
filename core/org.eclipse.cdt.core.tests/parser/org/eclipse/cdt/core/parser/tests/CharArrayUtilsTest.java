@@ -13,6 +13,7 @@ package org.eclipse.cdt.core.parser.tests;
 import junit.framework.TestCase;
 
 import org.eclipse.cdt.core.parser.util.CharArrayObjectMap;
+import org.eclipse.cdt.core.parser.util.CharArrayUtils;
 
 /**
  * @author Doug Schaefer
@@ -38,5 +39,15 @@ public class CharArrayUtilsTest extends TestCase {
 		
 		Object ivalue4 = map.get("ikey4".toCharArray());
 		assertEquals(ivalue4, new Integer(4));
+	}
+	
+	public void testEquals_Bug289852() {
+		assertTrue(CharArrayUtils.equals("pre_abc".toCharArray(), 4, 3, "abc".toCharArray(), false));
+		assertFalse(CharArrayUtils.equals("pre_abc".toCharArray(), 4, 4, "abcd".toCharArray(), false));
+		assertTrue(CharArrayUtils.equals("pre_abc".toCharArray(), 4, 2, "ab".toCharArray(), false));
+		
+		assertTrue(CharArrayUtils.equals("pre_abc".toCharArray(), 4, 3, "ABC".toCharArray(), true));
+		assertFalse(CharArrayUtils.equals("pre_abc".toCharArray(), 4, 4, "abcd".toCharArray(), true));
+		assertTrue(CharArrayUtils.equals("pre_abc".toCharArray(), 4, 2, "AB".toCharArray(), true));
 	}
 }

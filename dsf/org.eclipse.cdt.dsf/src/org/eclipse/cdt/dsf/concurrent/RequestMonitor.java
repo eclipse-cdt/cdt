@@ -55,12 +55,12 @@ import org.eclipse.core.runtime.Status;
  * which is asynchronous (and accepts a request monitor as an argument) and which itself 
  * calls another asynchronous method to complete its operation.  For example, in the 
  * request monitor implementation below, the implementation only needs to override 
- * <code>handleOK()</code>, because the base implementation will handle notifying the 
+ * <code>handleSuccess()</code>, because the base implementation will handle notifying the 
  * parent <code>rm</code> in case the <code>getIngredients()</code> call fails. 
  * <pre>
  *     public void createCupCakes(final DataRequestMonitor<CupCake[]> rm) {
  *         getIngredients(new DataRequestMonitor<Ingredients>(fExecutor, rm) {
- *                 public void handleOK() {
+ *                 public void handleSuccess() {
  *                     rm.setData( new CupCake(getData().getFlour(), getData().getSugar(), 
  *                                             getData().getBakingPowder()));
  *                     rm.done();  

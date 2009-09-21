@@ -239,7 +239,7 @@ abstract public class AbstractVMAdapter implements IVMAdapter
 			        listenerRm = crm;
 			        count++;
 			    } else {
-			        // Create a dummy executor for the handling of this event.
+			        // Create a dummy request monitor for the handling of this event.
 			        listenerRm = new RequestMonitor(ImmediateExecutor.getInstance(), null);
 			    }
 			    final RequestMonitor finalListenerRm = listenerRm;

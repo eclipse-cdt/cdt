@@ -6,8 +6,9 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- * Andrew Ferguson (Symbian) - Initial implementation
- * IBM Corporation
+ *     Andrew Ferguson (Symbian) - Initial implementation
+ *     IBM Corporation
+ *     Johan Ekberg -  Bug 285932
  *******************************************************************************/
 package org.eclipse.cdt.internal.ui.text.doctools;
 
@@ -30,6 +31,7 @@ import org.eclipse.core.runtime.IExtensionRegistry;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
+import org.eclipse.core.runtime.preferences.DefaultScope;
 import org.eclipse.core.runtime.preferences.InstanceScope;
 import org.osgi.service.prefs.Preferences;
 
@@ -71,8 +73,12 @@ public class DocCommentOwnerManager {
 		fOwners= getCommentOwnerExtensions();
 		fListeners= new ArrayList<IDocCommentOwnershipListener>();
 
+	    Preferences defaultPrefs = new
+	    	DefaultScope().getNode(QUALIFIER).node(WORKSPACE_DOC_TOOL_NODE);
 		Preferences prefs= new InstanceScope().getNode(QUALIFIER).node(WORKSPACE_DOC_TOOL_NODE);
-		String id= prefs.get(PREFKEY_WORKSPACE_DEFAULT, NullDocCommentOwner.INSTANCE.getID());
+	    String id= prefs.get(PREFKEY_WORKSPACE_DEFAULT, defaultPrefs.get(PREFKEY_WORKSPACE_DEFAULT,
+	    		NullDocCommentOwner.INSTANCE.getID()));
+	        
 		fWorkspaceOwner= getOwner(id);
 		if(fWorkspaceOwner == null) {
 			// this could occur if a plug-in is no longer available

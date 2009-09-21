@@ -116,9 +116,12 @@ public abstract class AbstractLangsListTab extends AbstractCPropertyTab {
 
 	private static final Comparator<Object> comp = CDTListComparator.getInstance();
 
-	private final static Image IMG_FS = CPluginImages.get(CPluginImages.IMG_FILESYSTEM); 
-	private final static Image IMG_WS = CPluginImages.get(CPluginImages.IMG_WORKSPACE); 
-	private final static Image IMG_MK = CPluginImages.get(CPluginImages.IMG_OBJS_MACRO);
+	private final static Image IMG_FOLDER = CPluginImages.get(CPluginImages.IMG_OBJS_FOLDER); 
+	private final static Image IMG_INCLUDES_FOLDER = CPluginImages.get(CPluginImages.IMG_OBJS_INCLUDES_FOLDER); 
+	private final static Image IMG_BUILTIN_FOLDER = CPluginImages.get(CPluginImages.IMG_OBJS_INCLUDES_FOLDER_SYSTEM); 
+	private final static Image IMG_WORKSPACE = CPluginImages.get(CPluginImages.IMG_WORKSPACE); 
+	private final static Image IMG_INCLUDES_FOLDER_WORKSPACE = CPluginImages.get(CPluginImages.IMG_OBJS_INCLUDES_FOLDER_WORKSPACE); 
+	private final static Image IMG_MACRO = CPluginImages.get(CPluginImages.IMG_OBJS_MACRO);
 	private static final int[] DEFAULT_SASH_WEIGHTS = new int[] { 10, 30 };
 	
 	@Override
@@ -683,12 +686,25 @@ public abstract class AbstractLangsListTab extends AbstractCPropertyTab {
 		public Image getColumnImage(Object element, int columnIndex) {
 			if (columnIndex > 0) return null;
 			if (! (element instanceof ICLanguageSettingEntry)) return null;
+
 			ICLanguageSettingEntry le = (ICLanguageSettingEntry) element;
 			if (le.getKind() == ICSettingEntry.MACRO)
-				return IMG_MK;				
-			if ((le.getFlags() & ICSettingEntry.VALUE_WORKSPACE_PATH) != 0)
-				return IMG_WS;
-			return IMG_FS;
+				return IMG_MACRO;
+			if ((le.getFlags() & ICSettingEntry.BUILTIN) != 0)
+				return IMG_BUILTIN_FOLDER;
+
+			boolean isWorkspacePath = (le.getFlags() & ICSettingEntry.VALUE_WORKSPACE_PATH) != 0;
+			if (le.getKind() == ICSettingEntry.INCLUDE_PATH || le.getKind() == ICSettingEntry.INCLUDE_FILE) {
+				if (isWorkspacePath)
+					return IMG_INCLUDES_FOLDER_WORKSPACE;
+				else
+					return IMG_INCLUDES_FOLDER;
+			} else {
+				if (isWorkspacePath)
+					return IMG_WORKSPACE;
+				else
+					return IMG_FOLDER;
+			}
 		}
 		@Override
 		public String getText(Object element) {

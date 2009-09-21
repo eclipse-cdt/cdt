@@ -10,13 +10,13 @@
  *******************************************************************************/
 package org.eclipse.cdt.ui.newui;
 
-//import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
@@ -29,6 +29,8 @@ import org.eclipse.swt.widgets.Text;
 import org.eclipse.cdt.core.settings.model.ICConfigurationDescription;
 import org.eclipse.cdt.core.settings.model.ICMultiConfigDescription;
 import org.eclipse.cdt.core.settings.model.ICSettingEntry;
+
+import org.eclipse.cdt.internal.ui.CPluginImages;
 
 /**
  * @noextend This class is not intended to be subclassed by clients.
@@ -125,9 +127,9 @@ public class IncludeDialog extends AbstractPropertyDialog {
 		c_wsp.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
-				c_wsp.setImage(AbstractExportTab.getWspImage(c_wsp.getSelection()));
+				c_wsp.setImage(getWspImage(c_wsp.getSelection()));
 			}});
-		c_wsp.setImage(AbstractExportTab.getWspImage(isWsp));
+		c_wsp.setImage(getWspImage(isWsp));
 
 // Buttons		
 		Composite c2 = new Composite (c, SWT.NONE); 
@@ -187,7 +189,7 @@ public class IncludeDialog extends AbstractPropertyDialog {
 				s = strip_wsp(s);
 				text.setText(s);
 				c_wsp.setSelection(true);
-				c_wsp.setImage(AbstractExportTab.getWspImage(c_wsp.getSelection()));
+				c_wsp.setImage(getWspImage(c_wsp.getSelection()));
 			}
 		} else if (e.widget.equals(b_file)) {
 			if ((mode & DIR_MASK)== DIR_MASK)
@@ -197,11 +199,18 @@ public class IncludeDialog extends AbstractPropertyDialog {
 			if (s != null) {
 				text.setText(s);
 				c_wsp.setSelection(false);
-				c_wsp.setImage(AbstractExportTab.getWspImage(c_wsp.getSelection()));
+				c_wsp.setImage(getWspImage(c_wsp.getSelection()));
 			}
 		} else if (e.widget.equals(b_vars)) {
 			s = AbstractCPropertyTab.getVariableDialog(shell, cfgd);
 			if (s != null) text.insert(s);
 		}
 	}
+	
+	static private Image getWspImage(boolean isWsp) {
+		final Image IMG_WORKSPACE = CPluginImages.get(CPluginImages.IMG_WORKSPACE); 
+		final Image IMG_FILESYSTEM = CPluginImages.get(CPluginImages.IMG_OBJS_FOLDER); 
+		return isWsp ? IMG_WORKSPACE : IMG_FILESYSTEM;
+	}
+
 }

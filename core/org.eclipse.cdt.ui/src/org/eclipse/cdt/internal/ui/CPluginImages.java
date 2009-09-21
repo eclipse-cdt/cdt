@@ -98,6 +98,7 @@ public class CPluginImages {
 	public static final String IMG_OBJS_TUNIT_RESOURCE_H= NAME_PREFIX + "ch_resource_obj.gif"; //$NON-NLS-1$
 	public static final String IMG_OBJS_TUNIT_RESOURCE_A= NAME_PREFIX + "asm_resource_obj.gif"; //$NON-NLS-1$
 	public static final String IMG_OBJS_SOURCE_ROOT=  NAME_PREFIX + "sroot_obj.gif"; // $NON-NLS-1$  //$NON-NLS-1$
+	public static final String IMG_OBJS_FOLDER=  NAME_PREFIX + "fldr_obj.gif"; // $NON-NLS-1$  //$NON-NLS-1$
 	public static final String IMG_OBJS_CFOLDER=  NAME_PREFIX + "cfolder_obj.gif"; // $NON-NLS-1$  //$NON-NLS-1$
 	public static final String IMG_OBJS_CONFIG =  NAME_PREFIX + "config.gif"; // $NON-NLS-1$  //$NON-NLS-1$
 	public static final String IMG_OBJS_ARCHIVE= NAME_PREFIX + "ar_obj.gif"; //$NON-NLS-1$
@@ -114,6 +115,7 @@ public class CPluginImages {
 	public static final String IMG_OBJS_INCLUDES_CONTAINER = NAME_PREFIX + "includes_container.gif"; //$NON-NLS-1$
 	public static final String IMG_OBJS_INCLUDES_FOLDER = NAME_PREFIX + "hfolder_obj.gif"; //$NON-NLS-1$
 	public static final String IMG_OBJS_QUOTE_INCLUDES_FOLDER = NAME_PREFIX + "hfolder_quote_obj.gif"; //$NON-NLS-1$
+	public static final String IMG_OBJS_INCLUDES_FOLDER_SYSTEM = NAME_PREFIX + "fldr_sys_obj.gif"; //$NON-NLS-1$
 	public static final String IMG_OBJS_INCLUDES_FOLDER_WORKSPACE = NAME_PREFIX + "wsp_includefolder.gif"; //$NON-NLS-1$
 	public static final String IMG_OBJS_ORDER= NAME_PREFIX + "cp_order_obj.gif"; //$NON-NLS-1$
 	public static final String IMG_OBJS_EXCLUDSION_FILTER_ATTRIB= NAME_PREFIX + "exclusion_filter_attrib.gif"; //$NON-NLS-1$
@@ -180,6 +182,7 @@ public class CPluginImages {
 	public static final ImageDescriptor DESC_OBJS_TUNIT_RESOURCE_H= createManaged(T_OBJ, IMG_OBJS_TUNIT_RESOURCE_H);
 	public static final ImageDescriptor DESC_OBJS_TUNIT_RESOURCE_A= createManaged(T_OBJ, IMG_OBJS_TUNIT_RESOURCE_A);
 	public static final ImageDescriptor DESC_OBJS_SOURCE_ROOT= createManaged(T_OBJ, IMG_OBJS_SOURCE_ROOT);
+	public static final ImageDescriptor DESC_OBJS_FOLDER= createManaged(T_OBJ, IMG_OBJS_FOLDER);
 	public static final ImageDescriptor DESC_OBJS_CFOLDER= createManaged(T_OBJ, IMG_OBJS_CFOLDER);
 	public static final ImageDescriptor DESC_OBJS_CONFIG = createManaged(T_OBJ, IMG_OBJS_CONFIG);
 	public static final ImageDescriptor DESC_OBJS_ARCHIVE= createManaged(T_OBJ, IMG_OBJS_ARCHIVE);
@@ -197,6 +200,7 @@ public class CPluginImages {
 	public static final ImageDescriptor DESC_OBJS_INCLUDES_CONTAINER= createManaged(T_OBJ, IMG_OBJS_INCLUDES_CONTAINER);
 	public static final ImageDescriptor DESC_OBJS_INCLUDES_FOLDER= createManaged(T_OBJ, IMG_OBJS_INCLUDES_FOLDER);
 	public static final ImageDescriptor DESC_OBJS_QUOTE_INCLUDES_FOLDER= createManaged(T_OBJ, IMG_OBJS_QUOTE_INCLUDES_FOLDER);
+	public static final ImageDescriptor DESC_OBJS_INCLUDES_FOLDER_SYSTEM  = createManaged(T_OBJ, IMG_OBJS_INCLUDES_FOLDER_SYSTEM);
 	public static final ImageDescriptor DESC_OBJS_INCLUDES_FOLDER_WORKSPACE= createManaged(T_OBJ, IMG_OBJS_INCLUDES_FOLDER_WORKSPACE);
 	public static final ImageDescriptor DESC_OBJS_ORDER= createManaged(T_OBJ, IMG_OBJS_ORDER);
 	public static final ImageDescriptor DESC_OBJS_EXCLUSION_FILTER_ATTRIB = createManaged(T_OBJ, IMG_OBJS_EXCLUDSION_FILTER_ATTRIB);

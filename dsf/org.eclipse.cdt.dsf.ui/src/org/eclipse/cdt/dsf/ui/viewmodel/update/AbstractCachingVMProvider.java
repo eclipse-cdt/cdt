@@ -619,6 +619,8 @@ public class AbstractCachingVMProvider extends AbstractVMProvider
             }
             
             if (childrenMissingFromCache.size() > 0) {
+                assert !entry.fAllChildrenKnown : "If the cache says it knows all the children, how did we end up with unknown children?";  //$NON-NLS-1$
+            	
                 // Some children were not found in the cache, create separate 
                 // proxy updates for the continuous ranges of missing children.
                 List<IChildrenUpdate> partialUpdates = new ArrayList<IChildrenUpdate>(2);

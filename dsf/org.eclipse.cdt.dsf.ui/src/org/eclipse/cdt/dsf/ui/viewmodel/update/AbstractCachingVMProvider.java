@@ -668,7 +668,7 @@ public class AbstractCachingVMProvider extends AbstractVMProvider
                 }
                 multiRm.setDoneCount(partialUpdates.size());
             } else {
-                // All children were found in cache.  Compelte the update.
+                // All children were found in cache.  Complete the update.
                 update.done();
             }
         }

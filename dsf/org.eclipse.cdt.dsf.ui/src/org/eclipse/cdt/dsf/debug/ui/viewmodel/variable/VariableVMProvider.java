@@ -51,8 +51,12 @@ public class VariableVMProvider extends AbstractDMVMProvider
     };
 
     private IPropertyChangeListener fPresentationContextListener = new IPropertyChangeListener() {
-        public void propertyChange(PropertyChangeEvent event) {
-            handleEvent(event);
+        public void propertyChange(final PropertyChangeEvent event) {
+            getExecutor().execute(new DsfRunnable() {
+                public void run() {
+                    handleEvent(event);                    
+                };
+            });
         }        
     };
     

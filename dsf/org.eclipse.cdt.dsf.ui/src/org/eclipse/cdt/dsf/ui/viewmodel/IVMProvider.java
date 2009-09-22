@@ -13,6 +13,7 @@ package org.eclipse.cdt.dsf.ui.viewmodel;
 import java.util.concurrent.Executor;
 
 import org.eclipse.cdt.dsf.concurrent.ConfinedToDsfExecutor;
+import org.eclipse.cdt.dsf.concurrent.ThreadSafe;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IChildrenCountUpdate;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IChildrenUpdate;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IColumnPresentationFactory;
@@ -67,6 +68,7 @@ public interface IVMProvider
     /**
      * Returns the executor that needs to be used to access this provider. 
      */
+    @ThreadSafe
     public Executor getExecutor();
     
     /**

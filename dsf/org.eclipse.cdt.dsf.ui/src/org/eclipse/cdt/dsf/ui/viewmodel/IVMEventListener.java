@@ -12,6 +12,7 @@ package org.eclipse.cdt.dsf.ui.viewmodel;
 
 import java.util.concurrent.Executor;
 
+import org.eclipse.cdt.dsf.concurrent.ConfinedToDsfExecutor;
 import org.eclipse.cdt.dsf.concurrent.RequestMonitor;
 
 /**
@@ -19,6 +20,7 @@ import org.eclipse.cdt.dsf.concurrent.RequestMonitor;
  * 
  * @since 1.1
  */
+@ConfinedToDsfExecutor("#getExecutor()")
 public interface IVMEventListener {
 
     /**

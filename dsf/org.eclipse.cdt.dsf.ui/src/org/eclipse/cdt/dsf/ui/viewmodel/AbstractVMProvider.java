@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2008 Wind River Systems and others.
+ * Copyright (c) 2006, 2009 Wind River Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -39,8 +39,6 @@ import org.eclipse.debug.internal.ui.viewers.model.provisional.IModelProxy;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IPresentationContext;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IViewerInputProvider;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IViewerInputUpdate;
-import org.eclipse.debug.internal.ui.viewers.provisional.IAsynchronousContentAdapter;
-import org.eclipse.debug.internal.ui.viewers.provisional.IAsynchronousLabelAdapter;
 import org.eclipse.swt.widgets.Display;
 
 /**
@@ -57,14 +55,11 @@ import org.eclipse.swt.widgets.Display;
  * <p/>
  * Clients are intended to extend this class.
  * 
- * @see IAsynchronousContentAdapter
- * @see IAsynchronousLabelAdapter
  * @see IModelProxy
  * @see IVMNode
  * 
  * @since 1.0
  */
-@SuppressWarnings("restriction")
 abstract public class AbstractVMProvider implements IVMProvider, IVMEventListener
 {
     // debug flags
@@ -363,7 +358,7 @@ abstract public class AbstractVMProvider implements IVMProvider, IVMEventListene
      * @param rm Request monitor to call when processing the event is 
      * completed.
      */
-    protected void handleEvent(final IVMModelProxy proxyStrategy, final Object event,final RequestMonitor rm) {   
+    protected void handleEvent(final IVMModelProxy proxyStrategy, final Object event, RequestMonitor rm) {   
         if (!proxyStrategy.isDisposed()) {
             if (DEBUG_DELTA && (DEBUG_PRESENTATION_ID == null || getPresentationContext().getId().equals(DEBUG_PRESENTATION_ID))) {
                 DsfUIPlugin.debug("eventProcessing(proxyRoot = " + proxyStrategy.getRootElement() + ", event = " + event + ")" );  //$NON-NLS-1$//$NON-NLS-2$ //$NON-NLS-3$

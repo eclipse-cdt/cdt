@@ -363,7 +363,7 @@ abstract public class AbstractVMProvider implements IVMProvider, IVMEventListene
      * @param rm Request monitor to call when processing the event is 
      * completed.
      */
-    protected void handleEvent(final IVMModelProxy proxyStrategy, final Object event, RequestMonitor rm) {   
+    protected void handleEvent(final IVMModelProxy proxyStrategy, final Object event,final RequestMonitor rm) {   
         if (!proxyStrategy.isDisposed()) {
             if (DEBUG_DELTA && (DEBUG_PRESENTATION_ID == null || getPresentationContext().getId().equals(DEBUG_PRESENTATION_ID))) {
                 DsfUIPlugin.debug("eventProcessing(proxyRoot = " + proxyStrategy.getRootElement() + ", event = " + event + ")" );  //$NON-NLS-1$//$NON-NLS-2$ //$NON-NLS-3$
@@ -377,6 +377,7 @@ abstract public class AbstractVMProvider implements IVMProvider, IVMEventListene
                         if (DEBUG_DELTA && (DEBUG_PRESENTATION_ID == null || getPresentationContext().getId().equals(DEBUG_PRESENTATION_ID))) {
                             DsfUIPlugin.debug("eventDeltaFired(proxyRoot = " + proxyStrategy.getRootElement() + ", event = " + event + ")" );  //$NON-NLS-1$//$NON-NLS-2$ //$NON-NLS-3$
                         }
+                        rm.done();
                     }
                     @Override public String toString() {
                         return "Result of a delta for event: '" + event.toString() + "' in VMP: '" + this + "'" + "\n" + getData().toString();  //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$

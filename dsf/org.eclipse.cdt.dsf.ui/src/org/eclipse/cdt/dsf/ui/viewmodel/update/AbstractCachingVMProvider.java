@@ -206,7 +206,7 @@ public class AbstractCachingVMProvider extends AbstractVMProvider
         
         /**
          * Flag indicating that all the children of the given element are 
-         * alredy cached.
+         * already cached.
          */
         boolean fAllChildrenKnown = false;
         

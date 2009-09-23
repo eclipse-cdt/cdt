@@ -10,12 +10,12 @@
  *******************************************************************************/
 package org.eclipse.cdt.codan.internal.ui.preferences;
 
-import org.eclipse.cdt.codan.core.CodanPreferencesLoader;
 import org.eclipse.cdt.codan.core.PreferenceConstants;
 import org.eclipse.cdt.codan.core.model.CodanSeverity;
 import org.eclipse.cdt.codan.core.model.IProblem;
 import org.eclipse.cdt.codan.core.model.IProblemCategory;
 import org.eclipse.cdt.codan.core.model.IProblemProfile;
+import org.eclipse.cdt.codan.internal.core.CodanPreferencesLoader;
 import org.eclipse.jface.viewers.BaseLabelProvider;
 import org.eclipse.jface.viewers.CellEditor;
 import org.eclipse.jface.viewers.CheckStateChangedEvent;

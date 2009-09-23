@@ -10,20 +10,37 @@
  *******************************************************************************/
 package org.eclipse.cdt.codan.core.model;
 
+/**
+ * Problem category
+ *
+ */
 public interface IProblemCategory extends IProblemElement {
+	/**
+	 * Category name
+	 */
 	String getName();
 
+	/**
+	 * Unique category id
+	 * @return id
+	 */
 	String getId();
 
-	Object[] getChildren();
+	/**
+	 * Category children (other categories or problems)
+	 * @return
+	 */
+	IProblemElement[] getChildren();
 
 	/**
+	 * Find problem by id within children recursively
 	 * @param id
 	 * @return
 	 */
 	IProblem findProblem(String id);
 
 	/**
+	 * Find category by id within children recursively
 	 * @param id
 	 * @return
 	 */

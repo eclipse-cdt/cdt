@@ -11,7 +11,7 @@
 package org.eclipse.cdt.codan.core.model;
 
 /**
- * @author Alena
+ * Problem category or problem 
  * 
  */
 public interface IProblemElement extends Cloneable {

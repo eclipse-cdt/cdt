@@ -11,8 +11,10 @@
 package org.eclipse.cdt.codan.core.model;
 
 /**
- * Problem Profile contains tree of categories and problems. Profiles can have
- * different categories and different problems set, problems with the same id
+ * Problem Profile contains tree of categories and problems. For user profile is quick way
+ * to switch between problems sets depends on task he is doing (i.e. find real bugs, vs doing code style report)
+ * User can set different profiles in different projects. 
+ * Profiles can have different categories and different problems set, problems with the same id
  * can have different severities/enablement in different profiles. To obtain
  * profile use class {@link CheckersRegisry#getResourceProfile,
  * CheckersRegisry#getDefaultProfile() or CheckersRegisry#getWorkspaceProfile()}

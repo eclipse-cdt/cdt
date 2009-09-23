@@ -12,9 +12,23 @@ package org.eclipse.cdt.codan.core.model;
 
 import org.eclipse.core.resources.IResource;
 
+/**
+ * Interface that checker must implement. CDT Checker must be able to process a resource.
+ */
 public interface IChecker {
-	public boolean processResource(IResource resource);
+	/**
+	 * Main method that checker should implement that actually detects errors
+	 * @param resource - resource to run on
+	 * @return true if need to traverse children
+	 */
+	boolean processResource(IResource resource);
 
+	/**
+	 * Implement this method to trim down type of resource you are interested in,
+	 * usually it will be c/c++ files only
+	 * @param resource
+	 * @return
+	 */
 	boolean enabledInContext(IResource resource);
 
 	/**

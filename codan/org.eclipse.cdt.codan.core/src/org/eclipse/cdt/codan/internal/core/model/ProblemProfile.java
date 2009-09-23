@@ -8,12 +8,14 @@
  * Contributors:
  *    Alena Laskavaia  - initial API and implementation
  *******************************************************************************/
-package org.eclipse.cdt.codan.core.model;
+package org.eclipse.cdt.codan.internal.core.model;
 
 import java.util.ArrayList;
 import java.util.Collection;
 
-import org.eclipse.cdt.codan.internal.core.model.CodanProblemCategory;
+import org.eclipse.cdt.codan.core.model.IProblem;
+import org.eclipse.cdt.codan.core.model.IProblemCategory;
+import org.eclipse.cdt.codan.core.model.IProblemProfile;
 
 /**
  * @author Alena

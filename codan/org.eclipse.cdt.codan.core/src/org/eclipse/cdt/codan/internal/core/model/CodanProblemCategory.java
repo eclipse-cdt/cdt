@@ -40,8 +40,8 @@ public class CodanProblemCategory implements IProblemCategory, Cloneable {
 		return name;
 	}
 
-	public Object[] getChildren() {
-		return list.toArray();
+	public IProblemElement[] getChildren() {
+		return (IProblemElement[]) list.toArray(new IProblemElement[list.size()]);
 	}
 
 	public void addChild(IProblemElement p) {

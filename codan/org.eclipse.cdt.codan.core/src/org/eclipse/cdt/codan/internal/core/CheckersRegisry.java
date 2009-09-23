@@ -16,16 +16,15 @@ import java.util.HashMap;
 import java.util.Iterator;
 
 import org.eclipse.cdt.codan.core.CodanCorePlugin;
-import org.eclipse.cdt.codan.core.CodanPreferencesLoader;
 import org.eclipse.cdt.codan.core.PreferenceConstants;
 import org.eclipse.cdt.codan.core.model.IChecker;
 import org.eclipse.cdt.codan.core.model.ICheckersRegistry;
 import org.eclipse.cdt.codan.core.model.IProblem;
 import org.eclipse.cdt.codan.core.model.IProblemCategory;
 import org.eclipse.cdt.codan.core.model.IProblemProfile;
-import org.eclipse.cdt.codan.core.model.ProblemProfile;
 import org.eclipse.cdt.codan.internal.core.model.CodanProblem;
 import org.eclipse.cdt.codan.internal.core.model.CodanProblemCategory;
+import org.eclipse.cdt.codan.internal.core.model.ProblemProfile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.ProjectScope;

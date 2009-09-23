@@ -344,7 +344,7 @@ public class CPPClassType extends PlatformObject implements ICPPInternalClassTyp
 
 	public boolean isGloballyQualified() throws DOMException {
 		IScope scope = getScope();
-		while(scope != null) {
+		while (scope != null) {
 			if (scope instanceof ICPPBlockScope)
 				return false;
 			scope = scope.getParent();

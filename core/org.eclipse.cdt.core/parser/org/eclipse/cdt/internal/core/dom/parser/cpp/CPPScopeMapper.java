@@ -232,7 +232,7 @@ public class CPPScopeMapper {
 		}
 		scope= scope.getParent();
 		while (scope != null && scope != tuscope) {
-			buf.append(':');  
+			buf.append(':');
 			scopeName= scope.getScopeName();
 			if (scopeName != null) {
 				buf.append(scope.getScopeName().getSimpleID());

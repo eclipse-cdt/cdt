@@ -250,7 +250,7 @@ public class ProblemBinding extends PlatformObject implements IProblemBinding, I
 	}
 
 	public IBinding getOwner() throws DOMException {
-		return node instanceof IASTName ? CPPVisitor.findNameOwner((IASTName) node, true) : null;
+		return node instanceof IASTName ? CPPVisitor.findNameOwner(node, true) : null;
 	}
 
 	public void setASTNode(IASTName name) {

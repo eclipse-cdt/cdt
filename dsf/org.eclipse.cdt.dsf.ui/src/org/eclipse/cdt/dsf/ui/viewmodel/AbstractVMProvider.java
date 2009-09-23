@@ -526,7 +526,7 @@ abstract public class AbstractVMProvider implements IVMProvider, IVMEventListene
             }
             updateProxies[i] = new VMHasChildrenUpdate(
                 update,
-                new ViewerDataRequestMonitor<Boolean>(getExecutor(), updates[i]) {
+                new ViewerDataRequestMonitor<Boolean>(getExecutor(), update) {
                     @Override
                     protected void handleSuccess() {
                         update.setHasChilren(getData());

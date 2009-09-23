@@ -110,13 +110,20 @@ public class RequestMonitor extends DsfExecutable {
     private boolean fCanceled = false;
     private boolean fDone = false;
 
-    /**
-     * Constructor with an optional parent monitor. 
-     * @param executor This executor will be used to invoke the runnable that 
-     * will allow processing the completion code of this request monitor.
-     * @param parentRequestMonitor The optional parent request monitor to be invoked by
-     * default when this request completes.  Parameter may be null.
-     */
+	/**
+	 * Constructor with an optional parent monitor.
+	 * 
+	 * @param executor
+	 *            This executor will be used to invoke the runnable that will
+	 *            allow processing the completion code of this request monitor.
+	 *            I.e., the runnable will call {@link #handleCompleted()}.
+	 * @param parentRequestMonitor
+	 *            An optional parent request monitor. By default, our completion
+	 *            handlers invoke the parent monitor's <code>done</code> method,
+	 *            thus allowing monitors to be daisy chained. If this request is
+	 *            unsuccessful, its status is set into the parent monitor.
+	 *            Parameter may be null.
+	 */
     public RequestMonitor(Executor executor, RequestMonitor parentRequestMonitor) {
         fExecutor = executor;
         fParentRequestMonitor = parentRequestMonitor;
@@ -262,14 +269,32 @@ public class RequestMonitor extends DsfExecutable {
     public boolean isSuccess() {
         return !isCanceled() && getStatus().getSeverity() <= IStatus.INFO; 
     }
-    
-    /**
-     * Default handler for the completion of a request.  The implementation
-     * calls {@link #handleSuccess()} if the request succeeded, and calls 
-     * {@link #handleFailure()} or cancel otherwise.
-     * <br>
-     * Note: Sub-classes may override this method.
-     */
+
+	/**
+	 * First tier handler for the completion of the request. By default, the
+	 * {@link #done()} method drives this method on the executor specified at
+	 * construction time. By default, this handler merely calls a more
+	 * specialized handler, which in turn may call an even more specialized
+	 * handler, and so on, thus giving a subclass the ability to
+	 * compartmentalize its completion logic by overriding specific handlers.
+	 * All handlers are named <code>handleXxxxx</code>. More specifically, the
+	 * base implementation calls {@link #handleSuccess()} if the request
+	 * succeeded, and calls {@link #handleFailure()} otherwise. <br>
+	 * 
+	 * The complete hierarchy of handlers is as follows: <br>
+	 * <pre>
+	 * + handleCompleted 
+	 *   - handleSuccess 
+	 *   + handleFailure 
+	 *     - handleCancel
+	 *     + handleErrororWarning 
+	 *       - handleError 
+	 *       - handleWarning
+	 * </pre>
+	 * 
+	 * <p>
+	 * Note: Sub-classes may override this method.
+	 */
     @ConfinedToDsfExecutor("fExecutor")
     protected void handleCompleted() {
         if (isSuccess()) {

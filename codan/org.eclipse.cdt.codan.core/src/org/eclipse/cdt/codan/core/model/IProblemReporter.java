@@ -16,6 +16,7 @@ package org.eclipse.cdt.codan.core.model;
  *
  */
 public interface IProblemReporter {
+	public static final String GENERIC_CODE_ANALYSIS_MARKER_TYPE = "org.eclipse.cdt.codan.core.codanProblem";
 	/**
 	 * Report a problem with "problemId" id on location determined by "loc", 
 	 * using problem specific error message customised by args.

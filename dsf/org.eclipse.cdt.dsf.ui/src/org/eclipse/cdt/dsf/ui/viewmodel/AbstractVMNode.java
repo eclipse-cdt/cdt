@@ -61,10 +61,24 @@ abstract public class AbstractVMNode implements IVMNode {
     protected boolean isDisposed() { 
         return fDisposed;
     }
-    
-    /**
-     * Convenience method that returns a token value in case when the services
-     * that the layout node depends on, are not available.
+
+	/**
+	 * Checks whether there are any fundamental roadblocks which will prevent
+	 * this request from being serviced. The base implementation simply checks
+	 * to see if the request has been canceled or if this node has been
+	 * disposed. Subclasses should override this if it can do additional checks,
+	 * for example check that needed services are still available. Overrides
+	 * should probably call the base implementation first; if the base
+	 * determines the request is a no-go, there's no point in the subclass doing
+	 * any further checking.
+	 * 
+	 * <p>
+	 * If a roadblock is found, the implementation should give the update
+	 * request some appropriate default result (if applicable) and call its
+	 * <code>done</code> method.
+	 *
+     * @param update the update request
+     * @return false if a roadblock is found, otherwise true
      */
     protected boolean checkUpdate(IViewerUpdate update) {
         if (update.isCanceled()) {

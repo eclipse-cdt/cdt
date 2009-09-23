@@ -104,6 +104,14 @@ public class DefaultVMContentProviderStrategy implements IElementContentProvider
         }
     }
 
+	/**
+	 * @param node
+	 *            the type of element (thread, variable, frame, e.g,) that's in
+	 *            the update requests. All the given requests contain the same
+	 *            type of element.
+	 * @param updates
+	 *            the has-children requests
+	 */
     private void updateNode(IVMNode node, final IHasChildrenUpdate[] updates) {
         final IVMNode[] childNodes = getVMProvider().getChildVMNodes(node);
         if (childNodes.length == 0) {
@@ -119,17 +127,13 @@ public class DefaultVMContentProviderStrategy implements IElementContentProvider
             getVMProvider().updateNode(childNodes[0], updates);
         } else {
             // Create a matrix of element updates:
-            // The first dimension "i" is the list of children updates that came
-            // from the viewer.
-            // For each of these updates, there are "j" number of elment updates
-            // corresponding
-            // to the number of child nodes in this node.
-            // Each children update from the viewer is complete when all the child
-            // nodes
-            // fill in their elements update.
-            // Once the matrix is constructed, the child nodes are given the list of
-            // updates
-            // equal to the updates requested by the viewer.
+			// The first dimension "i" is the list of children updates that came
+			// from the viewer. For each of these updates, there are "j" number
+			// of element updates corresponding to the number of child nodes in
+			// this node. Each children update from the viewer is complete when
+			// all the child nodes fill in their elements update. Once the
+			// matrix is constructed, the child nodes are given the list of
+			// updates equal to the updates requested by the viewer.
             VMHasChildrenUpdate[][] elementsUpdates = new VMHasChildrenUpdate[childNodes.length][updates.length];
             for (int i = 0; i < updates.length; i++) {
                 final IHasChildrenUpdate update = updates[i];

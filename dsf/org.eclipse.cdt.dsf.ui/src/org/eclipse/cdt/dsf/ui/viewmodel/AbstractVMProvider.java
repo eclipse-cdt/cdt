@@ -516,6 +516,12 @@ abstract public class AbstractVMProvider implements IVMProvider, IVMEventListene
 	 * processing of the update. For example the AbstractCachingVMProvider
 	 * overrides this method to optionally return the results for an update from
 	 * a cache.
+	 * 
+	 * [node] represents the type of the child element, not of the parent. In
+	 * other words, the update requests are asking if one or more model elements
+	 * of a particular type (thread, e.g.) have children. But [node] does not
+	 * represent that type. It represents the type of the potential children
+	 * (frame, e.g.)
 	 */
     public void updateNode(final IVMNode node, IHasChildrenUpdate[] updates) {
         IHasChildrenUpdate[] updateProxies = new IHasChildrenUpdate[updates.length];

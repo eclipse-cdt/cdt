@@ -508,15 +508,15 @@ abstract public class AbstractVMProvider implements IVMProvider, IVMEventListene
     public void update(final IChildrenUpdate[] updates) {
         fContentStrategy.update(updates);
     }
-    
-    /**
-     * Calls the given view model node to perform the given updates.  This 
-     * method is called by view model provider and it's helper classes instead
-     * of calling the IVMNode method directly, in order to allow additional
-     * processing of the udpate.  For example the AbstractCachingVMProvider 
-     * overrides this method to optionally return the results for an update from
-     * a cache. 
-     */
+
+	/**
+	 * Calls the given view model node to perform the given updates. This method
+	 * is called by view model provider and its helper classes instead of
+	 * calling the IVMNode method directly, in order to allow additional
+	 * processing of the update. For example the AbstractCachingVMProvider
+	 * overrides this method to optionally return the results for an update from
+	 * a cache.
+	 */
     public void updateNode(final IVMNode node, IHasChildrenUpdate[] updates) {
         IHasChildrenUpdate[] updateProxies = new IHasChildrenUpdate[updates.length];
         for (int i = 0; i < updates.length; i++) {

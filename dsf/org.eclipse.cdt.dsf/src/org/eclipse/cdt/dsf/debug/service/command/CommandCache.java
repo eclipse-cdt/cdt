@@ -32,13 +32,17 @@ import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
 
 /**
- *  This is a utility class for caching results  of MI Commands.  Return MIInfo 
- *  data is retrieved  from the cache  if command was previously executed,  and 
- *  it is executed with MICommand service if it was not previously seen. 
+ * This is a utility class for caching results of commands--typically commands
+ * sent to an external engine via some protocol (GDB/MI, e.g.). Commands are
+ * sent to their intended target through the supplied {@link ICommandControl},
+ * and their results are cached so as to quickly service future identical
+ * commands.
  * 
- *  Resetting the cache has to be performed by the object owning the cache when
- *  when an event indicates that the data is obsolete (which is specific to the
- *  types of commands being cached).  
+ * The cache has to be reset by the client that owns and uses the cache. A reset
+ * should be done when an event occurs that alters the state of a context such
+ * that commands on that context may no longer yield the same outcome as they
+ * did before the event. A reset can be done on the entire cache or on a per
+ * context basis.
  * 
  * @since 1.0
  */
@@ -212,11 +216,11 @@ public class CommandCache implements ICommandListener
     public CommandCache(DsfSession session, ICommandControl control) {
         fSession = session;
         fCommandControl = control;
-        
-        /*
-         *  We listen for the notifications that the commands have been sent to the 
-         *  backend from the GDB/MI Communications engine.
-         */
+
+		/*
+		 * We listen for the notifications that the commands have been sent to
+		 * their intended target via the ICommandControl service.
+		 */
         fCommandControl.addCommandListener(this);
     }
 
@@ -528,12 +532,10 @@ public class CommandCache implements ICommandListener
         }
         return false;
     }
-    
-    
-    
-    /**
-     * Clears the cache data.
-     */
+
+	/**
+	 * Clears all the cache data. Equivalent to <code>reset(null)</code>.
+	 */
     public void reset() {
     	fCachedContexts.clear();
     }
@@ -544,9 +546,8 @@ public class CommandCache implements ICommandListener
          */
     }
     
-    /*
-     * (non-Javadoc)
-     * @see org.eclipse.cdt.dsf.mi.service.control.IDebuggerControl.ICommandListener#commandQueued(org.eclipse.cdt.dsf.mi.core.command.ICommand)
+    /* (non-Javadoc)
+     * @see org.eclipse.cdt.dsf.debug.service.command.ICommandListener#commandQueued(org.eclipse.cdt.dsf.debug.service.command.ICommandToken)
      */
     public void commandQueued(ICommandToken token) {
         /*
@@ -554,9 +555,8 @@ public class CommandCache implements ICommandListener
          */
     }
     
-    /*
-     * (non-Javadoc)
-     * @see org.eclipse.cdt.dsf.mi.service.control.IDebuggerControl.ICommandListener#commandDone(org.eclipse.cdt.dsf.mi.core.command.ICommand, org.eclipse.cdt.dsf.mi.core.command.ICommandResult)
+    /* (non-Javadoc)
+     * @see org.eclipse.cdt.dsf.debug.service.command.ICommandListener#commandDone(org.eclipse.cdt.dsf.debug.service.command.ICommandToken, org.eclipse.cdt.dsf.debug.service.command.ICommandResult)
      */
     public void commandDone(ICommandToken token, ICommandResult result) {
         /*
@@ -570,8 +570,7 @@ public class CommandCache implements ICommandListener
      * this command for possible coalescence since it has been given to the debug engine
      * and is currently being processed.
      * 
-     * (non-Javadoc)
-     * @see org.eclipse.cdt.dsf.mi.service.control.IDebuggerControl.ICommandListener#commandSent(org.eclipse.cdt.dsf.mi.core.command.ICommand)
+     * @see org.eclipse.cdt.dsf.debug.service.command.ICommandListener#commandSent(org.eclipse.cdt.dsf.debug.service.command.ICommandToken)
      */
     public void commandSent(ICommandToken token) {
         

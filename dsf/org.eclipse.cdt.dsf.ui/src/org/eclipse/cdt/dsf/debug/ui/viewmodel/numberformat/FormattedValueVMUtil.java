@@ -111,7 +111,7 @@ public class FormattedValueVMUtil {
                 !update.getProperties().contains(IDebugVMConstants.PROP_FORMATTED_VALUE_ACTIVE_FORMAT) &&
                 !update.getProperties().contains(IDebugVMConstants.PROP_FORMATTED_VALUE_ACTIVE_FORMAT_VALUE))
             {
-                // Update is not requesting any formatted value information, so just skip it.  If specitic formats were
+                // Update is not requesting any formatted value information, so just skip it.  If specific formats were
                 // requested for this update, they will still be retrieved by updateFormattedValuesWithAvailableFormats.
                 continue;
             }

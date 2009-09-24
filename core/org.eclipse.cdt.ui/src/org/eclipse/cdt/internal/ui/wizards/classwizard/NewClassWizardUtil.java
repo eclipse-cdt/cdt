@@ -418,7 +418,7 @@ public class NewClassWizardUtil {
 		try {
 			String fullyQualifiedTypeName = typeName.getFullyQualifiedName();
 			try {
-				IndexFilter filter= IndexFilter.getFilter(ILinkage.CPP_LINKAGE_ID);
+				IndexFilter filter= IndexFilter.getDeclaredBindingFilter(ILinkage.CPP_LINKAGE_ID, true);
 				//bug 165636: findBindings(char[][]...) does not find nested nodes (classes)
 				//therefore switching back to findBindings(Pattern...)
 				IBinding[] bindings = index.findBindings(typeName.getName().toCharArray(), false, filter, new NullProgressMonitor());

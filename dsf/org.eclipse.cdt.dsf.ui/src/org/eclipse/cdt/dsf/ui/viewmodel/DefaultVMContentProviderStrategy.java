@@ -77,7 +77,7 @@ public class DefaultVMContentProviderStrategy implements IElementContentProvider
         }
 
         if (allNodesTheSame) {
-            updateNode(firstNode, updates);
+            updateNodeChildren(firstNode, updates);
         } else {
             // Sort the updates by the node.
             Map<IVMNode, List<IHasChildrenUpdate>> nodeUpdatesMap = new HashMap<IVMNode, List<IHasChildrenUpdate>>();
@@ -98,7 +98,7 @@ public class DefaultVMContentProviderStrategy implements IElementContentProvider
 
             // Iterate through the nodes in the sorted map.
             for (IVMNode node : nodeUpdatesMap.keySet()) {
-                updateNode(node, nodeUpdatesMap.get(node).toArray(
+                updateNodeChildren(node, nodeUpdatesMap.get(node).toArray(
                     new IHasChildrenUpdate[nodeUpdatesMap.get(node).size()]));
             }
         }
@@ -112,7 +112,7 @@ public class DefaultVMContentProviderStrategy implements IElementContentProvider
 	 * @param updates
 	 *            the has-children requests
 	 */
-    private void updateNode(IVMNode node, final IHasChildrenUpdate[] updates) {
+    private void updateNodeChildren(IVMNode node, final IHasChildrenUpdate[] updates) {
         final IVMNode[] childNodes = getVMProvider().getChildVMNodes(node);
         if (childNodes.length == 0) {
             // If parent element's node has no children, just set the

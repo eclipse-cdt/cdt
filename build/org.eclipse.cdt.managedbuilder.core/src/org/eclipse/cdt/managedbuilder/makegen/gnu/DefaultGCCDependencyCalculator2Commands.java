@@ -137,7 +137,7 @@ public class DefaultGCCDependencyCalculator2Commands implements
 	 *            working directory for the tool. This IPath is relative to the
 	 *            project directory.
 	 *            
-	 * @see DefaultGCCDependencyCalculator2Commands(IPath source, IResource resource, IBuildObject buildContext, ITool tool, IPath topBuildDirectory)
+	 * @see #DefaultGCCDependencyCalculator2Commands(IPath source, IResource resource, IBuildObject buildContext, ITool tool, IPath topBuildDirectory)
 	 */
 	public DefaultGCCDependencyCalculator2Commands(IPath source, IBuildObject buildContext, ITool tool, IPath topBuildDirectory)
 	{
@@ -166,18 +166,23 @@ public class DefaultGCCDependencyCalculator2Commands implements
 		// -MP 
 		options[1] = "-MP";							//$NON-NLS-1$
 		// -MF$(@:%.o=%.d)
-		options[2] = "-MF\"$(@:%.o=%.d)\"";			//$NON-NLS-1$
-		//options[2] = "-MF\"${OutputDirRelPath}${OutputFileBaseName}.d\"";	//$NON-NLS-1$
+		// Due to bug in GNU make $(@:%.o=%.d) applied to "/buggy   path_with_3_spaces/f.o" 
+		// becomes "/buggy path_with_3_spaces/f.d". To avoid this we have to insert 
+		// filename explicitly instead of substitution rule
+		if ( needExplicitRuleForFile ) {			
+			IPath outPath = getDependencyFiles()[0];
+			options[2] = "-MF\"" + outPath.toString() + "\"";	//$NON-NLS-1$ //$NON-NLS-2$ 			
+		} else {
+			options[2] = "-MF\"$(@:%.o=%.d)\"";			//$NON-NLS-1$			
+		}
 		if( buildContext instanceof IResourceConfiguration || needExplicitRuleForFile ) {
 			IPath outPath = getDependencyFiles()[0];
-			// -MT"dependecy-file-name"
-			String optTxt = "-MT\"";				//$NON-NLS-1$
-			optTxt += GnuMakefileGenerator.escapeWhitespaces(outPath.toString()) + "\"";	//$NON-NLS-1$
+			// -MT"dependency-file-name"
+			String optTxt = "-MT\"" + outPath.toString() + "\"";	//$NON-NLS-1$ //$NON-NLS-2$
 			options[3] = optTxt;
 		} else {
 			// -MT"$(@:%.o=%.d) %.o"
 			options[3] = "-MT\"$(@:%.o=%.d)\"";			//$NON-NLS-1$
-			//options[3] = "-MT\"${OutputDirRelPath}${OutputFileBaseName}.d\"";	//$NON-NLS-1$
 		}
 			
 		return options;

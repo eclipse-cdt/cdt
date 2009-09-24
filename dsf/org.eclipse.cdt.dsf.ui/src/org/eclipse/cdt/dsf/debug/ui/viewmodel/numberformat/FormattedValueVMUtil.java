@@ -33,13 +33,20 @@ import org.eclipse.cdt.dsf.ui.viewmodel.properties.IPropertiesUpdate;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IPresentationContext;
 
 /**
+ * A helper class for View Model Node implementations that support elements 
+ * to be formatted using different number formats.  The various static methods in 
+ * this class handle populating the properties of an IPropertiesUpdate using data
+ * retrieved from a DSF service implementing {@link IFormattedValues} interface.
+ * 
+ * @see org.eclipse.cdt.dsf.ui.viewmodel.properties.IElementPropertiesProvider
+ * @see org.eclipse.cdt.dsf.debug.service.IFormattedValues
  * 
  * @since 2.0
  */
 public class FormattedValueVMUtil {
 
     /**
-     * Common map of user-readable labels for format IDs.  UI components for 
+     * Common map of user-readable labels for format IDs.  
      */
     private static Map<String, String> fFormatLabels = new HashMap<String, String>(8);
     
@@ -52,10 +59,20 @@ public class FormattedValueVMUtil {
         setFormatLabel(IFormattedValues.STRING_FORMAT, MessagesForNumberFormat.FormattedValueVMUtil_String_format__label);
     }
     
+    /**
+     * Adds a user-readable label for a given format ID.  If a given view model has a custom format ID, it can 
+     * add its label to the map of format IDs using this method. 
+     * 
+     * @param formatId Format ID to set the label for.
+     * @param label User-readable lable for a format.
+     */
     public static void setFormatLabel(String formatId, String label) {
         fFormatLabels.put(formatId, label);
     }
     
+    /**
+     * Returns a user readable label for a given format ID.
+     */
     public static String getFormatLabel(String formatId) {
         String label = fFormatLabels.get(formatId);
         if (label != null) {
@@ -66,6 +83,9 @@ public class FormattedValueVMUtil {
         }
     }
     
+    /**
+     * Returns an element property representing an element value in a given format.  
+     */
     public static String getPropertyForFormatId(String formatId) {
         if (formatId == null) {
             return null;
@@ -73,11 +93,19 @@ public class FormattedValueVMUtil {
         return IDebugVMConstants.PROP_FORMATTED_VALUE_BASE + "." + formatId;  //$NON-NLS-1$ 
     }    
 
+    /**
+     * Returns a format ID based on the element property representing a 
+     * formatted element value. 
+     */
     public static String getFormatFromProperty(String property) {
         return property.substring(IDebugVMConstants.PROP_FORMATTED_VALUE_BASE.length() + 1); 
     }    
 
-    
+
+    /**
+     * Returns the user-selected number format that is saved in the given 
+     * presentation context.
+     */
     public static String getPreferredFormat(IPresentationContext context) {
         Object prop = context.getProperty( IDebugVMConstants.PROP_FORMATTED_VALUE_FORMAT_PREFERENCE );
         if ( prop != null ) {
@@ -85,7 +113,23 @@ public class FormattedValueVMUtil {
         }
         return IFormattedValues.NATURAL_FORMAT;        
     }
-    
+
+    /**
+     * This method fills in the formatted value properties in the given array 
+     * of property update objects using data retrieved from the given 
+     * formatted values service.     
+     * 
+     * @param updates The array of updates to fill in information to.  This  
+     * update is used to retrieve the data model context and to write the 
+     * properties into.
+     * @param service The service to be used to retrieve the values from.
+     * @param dmcType The class type of the data model context.  Some updates
+     * can contain multiple formatted data data model contexts, and this
+     * method assures that there is no ambiguity in which context should be 
+     * used.
+     * @param monitor Request monitor that will be called when all the 
+     * updates are completed.
+     */
     @ConfinedToDsfExecutor("service.getExecutor()")
     public static void updateFormattedValues(
         final IPropertiesUpdate updates[],

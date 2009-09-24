@@ -263,6 +263,9 @@ public class MIRegisters extends AbstractDsfService implements IRegisters, ICach
                             return;
                         }
                         
+                        // the request was for only one register
+                        assert regValue.length == 1;
+                        
                         // We can determine if the register is floating point because
                         // GDB returns this additional information as part of the value.
                         MIRegisterValue reg = regValue[0];

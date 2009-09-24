@@ -12,8 +12,6 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.dom.parser;
 
-import com.ibm.icu.text.MessageFormat;
-
 import org.eclipse.cdt.core.dom.ILinkage;
 import org.eclipse.cdt.core.dom.IName;
 import org.eclipse.cdt.core.dom.ast.DOMException;
@@ -32,6 +30,8 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPSemantics;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPVisitor;
 import org.eclipse.cdt.internal.core.parser.ParserMessages;
 import org.eclipse.core.runtime.PlatformObject;
+
+import com.ibm.icu.text.MessageFormat;
 
 /**
  * Implementation of problem bindings
@@ -250,7 +250,7 @@ public class ProblemBinding extends PlatformObject implements IProblemBinding, I
 	}
 
 	public IBinding getOwner() throws DOMException {
-		return node instanceof IASTName ? CPPVisitor.findNameOwner(node, true) : null;
+		return node instanceof IASTName ? CPPVisitor.findNameOwner((IASTName) node, true) : null;
 	}
 
 	public void setASTNode(IASTName name) {

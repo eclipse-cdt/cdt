@@ -101,8 +101,8 @@ public class PropertiesBasedLabelProvider
         for (int i = 0; i < labelUpdates.length; i++) {
             final ILabelUpdate labelUpdate = labelUpdates[i];
             propertiesUpdates[i] = new VMPropertiesUpdate(
-                propertyNames, labelUpdates[i],  
-                new ViewerDataRequestMonitor<Map<String, Object>>(ImmediateExecutor.getInstance(), labelUpdates[i]) {
+                propertyNames, labelUpdate,  
+                new ViewerDataRequestMonitor<Map<String, Object>>(ImmediateExecutor.getInstance(), labelUpdate) {
                     @Override
                     protected void handleCompleted() {
                         updateLabel(labelUpdate, getStatus(), getData());

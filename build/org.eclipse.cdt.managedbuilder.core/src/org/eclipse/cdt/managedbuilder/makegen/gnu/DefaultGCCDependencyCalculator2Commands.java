@@ -137,7 +137,7 @@ public class DefaultGCCDependencyCalculator2Commands implements
 	 *            working directory for the tool. This IPath is relative to the
 	 *            project directory.
 	 *            
-	 * @see DefaultGCCDependencyCalculator2Commands(IPath source, IResource resource, IBuildObject buildContext, ITool tool, IPath topBuildDirectory)
+	 * @see #DefaultGCCDependencyCalculator2Commands(IPath source, IResource resource, IBuildObject buildContext, ITool tool, IPath topBuildDirectory)
 	 */
 	public DefaultGCCDependencyCalculator2Commands(IPath source, IBuildObject buildContext, ITool tool, IPath topBuildDirectory)
 	{
@@ -177,7 +177,7 @@ public class DefaultGCCDependencyCalculator2Commands implements
 		}
 		if( buildContext instanceof IResourceConfiguration || needExplicitRuleForFile ) {
 			IPath outPath = getDependencyFiles()[0];
-			// -MT"dependecy-file-name"
+			// -MT"dependency-file-name"
 			String optTxt = "-MT\"" + outPath.toString() + "\"";	//$NON-NLS-1$ //$NON-NLS-2$
 			options[3] = optTxt;
 		} else {

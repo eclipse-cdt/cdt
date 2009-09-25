@@ -11,6 +11,8 @@
 package org.eclipse.cdt.dsf.debug.ui.viewmodel.numberformat;
 
 import com.ibm.icu.text.MessageFormat;
+
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
@@ -140,8 +142,9 @@ public class FormattedValueVMUtil {
 		// First retrieve the available formats for each update's element (if
 		// needed). Store the result in a map (for internal use) and in the
 		// update object (if requested). After that's done, call another method
-		// to retrieve the formatted values.
-        final Map<IPropertiesUpdate, String[]> availableFormats = new HashMap<IPropertiesUpdate, String[]>(updates.length * 4/3);
+		// to retrieve the formatted values. Note that we use a synchronized map
+		// because it's updated by a request monitor with an ImmediateExecutor.
+        final Map<IPropertiesUpdate, String[]> availableFormats = Collections.synchronizedMap(new HashMap<IPropertiesUpdate, String[]>(updates.length * 4/3));
         final CountingRequestMonitor countingRm = new CountingRequestMonitor(
             service.getExecutor(), 
             new RequestMonitor(service.getExecutor(), monitor) {

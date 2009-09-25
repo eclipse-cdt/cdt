@@ -229,6 +229,13 @@ public class AbstractCachingVMProvider extends AbstractVMProvider
          */
         Map<String, Object> fArchiveProperties = null;
 
+		/**
+		 * Ensure this cache entry has a map in which to hold the children
+		 * elements. If it doesn't, create one and give it an initial capacity
+		 * of 30% more than the number of children we know the parent currently
+		 * has (give it some room to grow). If we don't know the child count,
+		 * give the map some nominal initial capacity.
+		 */
         void ensureChildrenMap() {
             if (fChildren == null) {
                 Integer childrenCount = fChildrenCount;
@@ -454,7 +461,7 @@ public class AbstractCachingVMProvider extends AbstractVMProvider
                         new ViewerDataRequestMonitor<Boolean>(getExecutor(), update) {
                             @Override
                             protected void handleCompleted() {
-                                // Update completed.  Write value to cache only if update successed 
+                                // Update completed.  Write value to cache only if update succeeded 
                                 // and the cache entry wasn't flushed in the mean time. 
                                 if(isSuccess()) {
                                     if (flushCounter == entry.fFlushCounter) {

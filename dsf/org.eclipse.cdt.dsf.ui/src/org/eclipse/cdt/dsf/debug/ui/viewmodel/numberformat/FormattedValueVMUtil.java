@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008 Wind River Systems and others.
+ * Copyright (c) 2009 Wind River Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -137,26 +137,36 @@ public class FormattedValueVMUtil {
         final Class<? extends IFormattedDataDMContext> dmcType,
         final RequestMonitor monitor)
     { 
-        // First retrieve the available formats for all the updates, and store it in a map (as well as the updates).
-        // After that is completed call another method to retrieve the formatted values.
+		// First retrieve the available formats for each update's element (if
+		// needed). Store the result in a map (for internal use) and in the
+		// update object (if requested). After that's done, call another method
+		// to retrieve the formatted values.
         final Map<IPropertiesUpdate, String[]> availableFormats = new HashMap<IPropertiesUpdate, String[]>(updates.length * 4/3);
         final CountingRequestMonitor countingRm = new CountingRequestMonitor(
             service.getExecutor(), 
             new RequestMonitor(service.getExecutor(), monitor) {
                 @Override
                 protected void handleCompleted() {
+                	// retrieve the formatted values now that we have the available formats (where needed)
                     updateFormattedValuesWithAvailableFormats(updates, service, dmcType, availableFormats, monitor); 
                 }
             });
         int count = 0;
         
+		// For each update, query the formats available for the update's
+		// element...but only if necessary. The available formats are necessary
+		// only if the update explicitly requests that information, or if the
+		// update is asking what the active format is or is asking for the value
+		// of the element in that format. The reason we need them in the last
+		// two cases is that we can't establish the 'active' format for an
+		// element without knowing its available formats. See
+		// updateFormattedValuesWithAvailableFormats(), as that's where we make
+		// that determination.
         for (final IPropertiesUpdate update : updates) {
-            if (!update.getProperties().contains(IDebugVMConstants.PROP_FORMATTED_VALUE_AVAILABLE_FORMATS) && 
+            if ((!update.getProperties().contains(IDebugVMConstants.PROP_FORMATTED_VALUE_AVAILABLE_FORMATS) && 
                 !update.getProperties().contains(IDebugVMConstants.PROP_FORMATTED_VALUE_ACTIVE_FORMAT) &&
-                !update.getProperties().contains(IDebugVMConstants.PROP_FORMATTED_VALUE_ACTIVE_FORMAT_VALUE))
+                !update.getProperties().contains(IDebugVMConstants.PROP_FORMATTED_VALUE_ACTIVE_FORMAT_VALUE)))
             {
-                // Update is not requesting any formatted value information, so just skip it.  If specific formats were
-                // requested for this update, they will still be retrieved by updateFormattedValuesWithAvailableFormats.
                 continue;
             }
             
@@ -176,7 +186,12 @@ public class FormattedValueVMUtil {
                     @Override
                     protected void handleCompleted() {
                         if (isSuccess()) {
-                            update.setProperty(IDebugVMConstants.PROP_FORMATTED_VALUE_AVAILABLE_FORMATS, getData());
+                        	// Set the result (available formats) into the update object if it was requested 
+                        	if (update.getProperties().contains(IDebugVMConstants.PROP_FORMATTED_VALUE_AVAILABLE_FORMATS)) {
+                        		update.setProperty(IDebugVMConstants.PROP_FORMATTED_VALUE_AVAILABLE_FORMATS, getData());
+                        	}
+                        	
+                        	// also add it to the map; we'll need to access it when querying the element's value.
                             availableFormats.put(update, getData());
                         } else {
                             update.setStatus(getStatus()); 
@@ -188,7 +203,17 @@ public class FormattedValueVMUtil {
         }
         countingRm.setDoneCount(count);
     }
-    
+
+	/**
+	 * @param availableFormatsMap
+	 *            prior to calling this method, the caller queries (where
+	 *            necessary) the formats supported by the element in each
+	 *            update, and it puts that information in this map. If an entry
+	 *            in [updates] does not appear in this map, it means that its
+	 *            view-model element doesn't support any formats (very
+	 *            unlikely), or that the available formats aren't necessary to
+	 *            service the properties specified in the update
+	 */
     @ConfinedToDsfExecutor("service.getExecutor()")
     private static void updateFormattedValuesWithAvailableFormats(
         IPropertiesUpdate updates[],
@@ -211,7 +236,12 @@ public class FormattedValueVMUtil {
                 continue;
             } 
             
-            // Calculate the active value format based on view preference and available formats.
+			// Determine the 'active' value format. It is the view preference if
+			// and only if the element supports it. Otherwise it is the first
+			// format supported by the element. If our caller didn't provide the
+			// available formats for an update (element), then it means the
+			// update doesn't contain any properties that requires us to
+			// determine the active format.
             String[] availableFormats = availableFormatsMap.get(update);
             String _activeFormat = null;
             if (availableFormats != null && availableFormats.length != 0) {
@@ -221,31 +251,46 @@ public class FormattedValueVMUtil {
                     _activeFormat = availableFormats[0];
                 }
             }
-            final String activeFormat = _activeFormat;
+            final String activeFormat = _activeFormat;	// null means we don't need to know what the active format is
             
-            update.setProperty(IDebugVMConstants.PROP_FORMATTED_VALUE_ACTIVE_FORMAT, activeFormat);
+            if (update.getProperties().contains(IDebugVMConstants.PROP_FORMATTED_VALUE_ACTIVE_FORMAT)) {
+            	assert activeFormat != null : "Our caller should have provided the available formats if this property was specified; given available formats, an 'active' nomination is guaranteed."; //$NON-NLS-1$
+            	update.setProperty(IDebugVMConstants.PROP_FORMATTED_VALUE_ACTIVE_FORMAT, activeFormat);
+            }
             
-            // Loop through all the requested properties and check if any of them are for the formatted value.  In the 
-            // same loop, try to see if the active format is already requested and if it's not request it at the end.
-            boolean activeFormatRequested = activeFormat == null;
-            for (Iterator<String> itr = update.getProperties().iterator(); itr.hasNext() || !activeFormatRequested;) {
+			// Service the properties that ask for the value in a specific
+			// format. If the update request contains the property
+			// PROP_FORMATTED_VALUE_ACTIVE_FORMAT_VALUE, and the active format
+			// has not been explicitly requested, then we need an additional
+			// iteration to provide it. 
+            boolean activeFormatRequested = false;	// does the update object ask for PROP_FORMATTED_VALUE_ACTIVE_FORMAT_VALUE?
+            boolean activeFormatHandled = false;	// have we come across a specific format request that is the active format?
+            for (Iterator<String> itr = update.getProperties().iterator(); itr.hasNext() || (activeFormatRequested && !activeFormatHandled);) {
                 String nextFormat;
                 if (itr.hasNext()) {
                     String propertyName = itr.next();
                     if (propertyName.startsWith(IDebugVMConstants.PROP_FORMATTED_VALUE_BASE)) {
                         nextFormat = FormattedValueVMUtil.getFormatFromProperty(propertyName);
                         if (nextFormat.equals(activeFormat)) {
-                            activeFormatRequested = true;
+                        	activeFormatHandled = true;
                         }
+                        // if we know the supported formats (we may not), then no-op if this format is unsupported
                         if (availableFormats != null && !isFormatAvailable(nextFormat, availableFormats)) {
                             continue;
                         }
-                    } else {
+                    }
+                    else if (propertyName.equals(IDebugVMConstants.PROP_FORMATTED_VALUE_ACTIVE_FORMAT_VALUE)) {
+                    	assert activeFormat != null : "Our caller should have provided the available formats if this property was specified; given available formats, an 'active' nomination is guaranteed."; //$NON-NLS-1$
+                    	activeFormatRequested = true;
+                    	continue;	// we may end up making an additional run
+                    }
+                    else {
                         continue;
                     }
                 } else {
+                	// the additional iteration to handle the active format 
                     nextFormat = activeFormat;
-                    activeFormatRequested = true;
+                    activeFormatHandled = true;
                 }
 
                 final FormattedValueDMContext formattedValueDmc = service.getFormattedValueContext(dmc, nextFormat);

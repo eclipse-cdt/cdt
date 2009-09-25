@@ -48,5 +48,25 @@ public class LoggingUtils {
 		return className + "@" + id; //$NON-NLS-1$
 	}
 
+	/**
+	 * Flatten out an array of strings into one string, in the form
+	 * "{s1, s2, s3, ...}"
+	 * 
+	 * @param strings
+	 *            the array of string
+	 * @return the flattened representation
+	 */
+	public static String toString(String[] strings) {
+		StringBuilder str = new StringBuilder("{"); //$NON-NLS-1$
+		for (String s : strings) {
+			str.append(s + ", "); //$NON-NLS-1$
+		}
+		if (strings.length > 0) {
+			str.delete(str.length()-2, Integer.MAX_VALUE); // remove the trailing comma and space
+		}
+		str.append("}"); //$NON-NLS-1$
+		return str.toString();
+	}
+
 	
 }

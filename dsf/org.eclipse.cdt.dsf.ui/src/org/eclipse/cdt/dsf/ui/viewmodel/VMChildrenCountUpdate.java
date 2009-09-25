@@ -11,12 +11,16 @@
 package org.eclipse.cdt.dsf.ui.viewmodel;
 
 import org.eclipse.cdt.dsf.concurrent.DataRequestMonitor;
+
+import org.eclipse.cdt.dsf.internal.DsfPlugin;
+import org.eclipse.cdt.dsf.internal.LoggingUtils;
+import org.eclipse.cdt.dsf.internal.ui.DsfUIPlugin;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IChildrenCountUpdate;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IModelDelta;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IPresentationContext;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IViewerUpdate;
 import org.eclipse.jface.viewers.TreePath;
-
+import org.eclipse.cdt.dsf.debug.internal.ui.viewmodel.VMViewerUpdateTracing;
 /** 
  * Helper class implementation of the {@link IChildrenCountUpdate} update object.
  * 
@@ -54,6 +58,16 @@ public class VMChildrenCountUpdate extends VMViewerUpdate implements IChildrenCo
     @Override
     public void done() {
         assert isCanceled() || fCountRequestMonitor.getData() != null || !fCountRequestMonitor.isSuccess();
+
+        // trace our result
+        if (VMViewerUpdateTracing.DEBUG_VMUPDATES && !isCanceled() && VMViewerUpdateTracing.matchesFilterRegex(this.getClass())) {
+        	final Integer data = fCountRequestMonitor.getData();
+			DsfUIPlugin.debug(DsfPlugin.getDebugTime() + " " //$NON-NLS-1$
+					+ LoggingUtils.toString(this) + " marked done; element = " //$NON-NLS-1$
+					+ LoggingUtils.toString(getElement())
+					+ "\n   child count = " + (data != null ? data : "<unset>") ); //$NON-NLS-1$ //$NON-NLS-2$ 
+        }
+        
         super.done();
     }
 

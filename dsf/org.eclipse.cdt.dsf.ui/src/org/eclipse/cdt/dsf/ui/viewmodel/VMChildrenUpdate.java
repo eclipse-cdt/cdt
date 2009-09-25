@@ -14,6 +14,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.eclipse.cdt.dsf.concurrent.DataRequestMonitor;
+import org.eclipse.cdt.dsf.debug.internal.ui.viewmodel.VMViewerUpdateTracing;
+import org.eclipse.cdt.dsf.internal.DsfPlugin;
+import org.eclipse.cdt.dsf.internal.LoggingUtils;
+import org.eclipse.cdt.dsf.internal.ui.DsfUIPlugin;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IChildrenUpdate;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IModelDelta;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IPresentationContext;
@@ -117,6 +121,20 @@ public class VMChildrenUpdate extends VMViewerUpdate implements IChildrenUpdate 
          *  do not check if any of the elements are null.
          */        
         rm.setData(fElements);
+        
+        // trace our result
+        if (VMViewerUpdateTracing.DEBUG_VMUPDATES && !isCanceled() && VMViewerUpdateTracing.matchesFilterRegex(this.getClass())) {
+        	StringBuilder str = new StringBuilder();
+        	str.append(DsfPlugin.getDebugTime() + " " + LoggingUtils.toString(this) + " marked done; element = " + LoggingUtils.toString(getElement())); //$NON-NLS-1$ //$NON-NLS-2$
+        	if (fElements != null && fElements.size() > 0) {
+	            for (Object element : fElements) {
+	                str.append("   " + LoggingUtils.toString(element) + "\n"); //$NON-NLS-1$ //$NON-NLS-2$ 
+	            }
+	            str.deleteCharAt(str.length()-1); // remove trailing \n
+        	}
+        	DsfUIPlugin.debug(str.toString());        	
+        }
+        
         super.done();
     }
     

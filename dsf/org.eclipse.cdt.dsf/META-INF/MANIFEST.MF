@@ -18,5 +18,6 @@ Export-Package: org.eclipse.cdt.dsf.concurrent,
  org.eclipse.cdt.dsf.debug.service,
  org.eclipse.cdt.dsf.debug.service.command,
  org.eclipse.cdt.dsf.debug.sourcelookup,
+ org.eclipse.cdt.dsf.internal;x-friends:="org.eclipse.cdt.dsf.ui",
  org.eclipse.cdt.dsf.service
 Bundle-RequiredExecutionEnvironment: J2SE-1.5

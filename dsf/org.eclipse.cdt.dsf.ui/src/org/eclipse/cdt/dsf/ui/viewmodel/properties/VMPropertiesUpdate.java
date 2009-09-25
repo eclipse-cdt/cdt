@@ -12,10 +12,15 @@ package org.eclipse.cdt.dsf.ui.viewmodel.properties;
 
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
 
 import org.eclipse.cdt.dsf.concurrent.DataRequestMonitor;
+import org.eclipse.cdt.dsf.debug.internal.ui.viewmodel.VMViewerUpdateTracing;
+import org.eclipse.cdt.dsf.internal.DsfPlugin;
+import org.eclipse.cdt.dsf.internal.LoggingUtils;
+import org.eclipse.cdt.dsf.internal.ui.DsfUIPlugin;
 import org.eclipse.cdt.dsf.ui.viewmodel.VMViewerUpdate;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IPresentationContext;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IViewerUpdate;
@@ -89,6 +94,26 @@ public class VMPropertiesUpdate extends VMViewerUpdate implements IPropertiesUpd
         @SuppressWarnings("unchecked")
         DataRequestMonitor<Map<String,Object>> rm = (DataRequestMonitor<Map<String,Object>>)getRequestMonitor();
         rm.setData(fValues);
+        
+        // trace our result
+        if (VMViewerUpdateTracing.DEBUG_VMUPDATES && !isCanceled() && VMViewerUpdateTracing.matchesFilterRegex(this.getClass())) {
+        	StringBuilder str = new StringBuilder();
+        	str.append(DsfPlugin.getDebugTime() + " " + LoggingUtils.toString(this) + " marked done; element = " + LoggingUtils.toString(getElement())); //$NON-NLS-1$ //$NON-NLS-2$
+        	if (fValues != null) {
+	            Iterator<String> keyIter = fValues.keySet().iterator();
+	            while (keyIter.hasNext()) {
+	            	String prop = keyIter.next();
+	            	Object val = fValues.get(prop);
+	            	if (val instanceof String[]) {
+	            		val = LoggingUtils.toString((String[])val);
+	            	}
+	                str.append("   " + prop + "=" + val + "\n"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ 
+	            }
+	            str.deleteCharAt(str.length()-1); // remove trailing linefeed
+        	}
+        	DsfUIPlugin.debug(str.toString());
+        }
+        
         super.done();
     }
     

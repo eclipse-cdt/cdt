@@ -11,6 +11,10 @@
 package org.eclipse.cdt.dsf.ui.viewmodel;
 
 import org.eclipse.cdt.dsf.concurrent.DataRequestMonitor;
+import org.eclipse.cdt.dsf.debug.internal.ui.viewmodel.VMViewerUpdateTracing;
+import org.eclipse.cdt.dsf.internal.DsfPlugin;
+import org.eclipse.cdt.dsf.internal.LoggingUtils;
+import org.eclipse.cdt.dsf.internal.ui.DsfUIPlugin;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IHasChildrenUpdate;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IModelDelta;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IPresentationContext;
@@ -55,6 +59,17 @@ public class VMHasChildrenUpdate extends VMViewerUpdate implements IHasChildrenU
     @Override
     public void done() {
         assert isCanceled() || fHasElemsRequestMonitor.getData() != null || !fHasElemsRequestMonitor.isSuccess();
+
+        // trace our result
+        if (VMViewerUpdateTracing.DEBUG_VMUPDATES && !isCanceled() && VMViewerUpdateTracing.matchesFilterRegex(this.getClass())) {
+        	final Boolean data = fHasElemsRequestMonitor.getData();
+			DsfUIPlugin.debug(DsfPlugin.getDebugTime() + " " //$NON-NLS-1$
+					+ LoggingUtils.toString(this) + " marked done; element = " //$NON-NLS-1$
+					+ LoggingUtils.toString(getElement())
+					+ "\n   has children = " //$NON-NLS-1$
+					+ (data != null ? data.toString() : "<unset>"));  //$NON-NLS-1$
+        }
+
         super.done();            
     }
 }

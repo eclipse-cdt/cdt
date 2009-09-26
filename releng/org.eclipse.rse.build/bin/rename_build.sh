@@ -7,7 +7,7 @@
 ##
 ## Creates ../R-3.1.1-200909160905 and prepares renamed build there
 #
-case X$1 in
+case x$1 in
   xR|xM|xI|xS) ;;
   *) grep '^##' $0
         exit 0

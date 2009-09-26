@@ -54,6 +54,7 @@ for x in `ls` ; do
       ;;
     package.count)
       cp ${x} ../${tgtDir}/${x}.orig
+      ;;
     *)
       cp ${x} ../${tgtDir}/${x}
       ;;

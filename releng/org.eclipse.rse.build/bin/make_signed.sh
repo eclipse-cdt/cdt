@@ -36,17 +36,17 @@ BASEBUILDER=$HOME/ws2/eclipse
 # Provision update site into SIGNED_JAR_SOURCE
 if [ ! -d "${SIGNED_JAR_SOURCE}" ]; then
   mkdir -p "${SIGNED_JAR_SOURCE}"
+  ${BASEBUILDER}/eclipse -nosplash \
+    -data install-ws -consolelog -clean \
+    -application org.eclipse.equinox.p2.repository.repo2runnable \
+    -source file:${UPDATE_SITE} \
+    -destination file:${SIGNED_JAR_SOURCE} \
+    -vmargs \
+      -Xms128M -Xmx256M -XX:PermSize=128M -XX:MaxPermSize=256M 
+  retval=$?
+  echo "result: ${retval}"
+  exit ${retval}
 fi
-${BASEBUILDER}/eclipse -nosplash \
-  -data install-ws -consolelog -clean \
-  -application org.eclipse.equinox.p2.repository.repo2runnable \
-  -source file:${UPDATE_SITE} \
-  -destination file:${SIGNED_JAR_SOURCE} \
-  -vmargs \
-    -Xms128M -Xmx256M -XX:PermSize=128M -XX:MaxPermSize=256M 
-retval=$?
-echo "result: ${retval}
-exit ${retval}
 
 if [ ! -d ${SIGNED_JAR_SOURCE}/server ]; then
   mkdir ${SIGNED_JAR_SOURCE}/server

@@ -332,7 +332,6 @@ being contributed to the Ganymede coordinated release train (Eclipse 3.4).' \
     	-e '/<!-- BEGIN_3_2 -->/,/<!-- END_3_2 -->/d' \
         site.xml > site.xml.new
     mv -f site.xml.new site.xml
-    rm site.xml.new1 site.xml.new2
     sed -e "s,Project 2.0 Update,Project ${TPTYPE} Update,g" \
     	web/site.xsl > web/site.xsl.new
     mv -f web/site.xsl.new web/site.xsl
@@ -360,7 +359,6 @@ being contributed to the Galileo coordinated release train (Eclipse 3.5).' \
         -e '/<!-- BEGIN_3_2 -->/,/<!-- END_3_2 -->/d' \
         site.xml > site.xml.new
     mv -f site.xml.new site.xml
-    rm site.xml.new1 site.xml.new2
     sed -e "s,Project 2.0 Update,Project ${TPTYPE} Update,g" \
     	web/site.xsl > web/site.xsl.new
     mv -f web/site.xsl.new web/site.xsl

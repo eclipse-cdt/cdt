@@ -578,6 +578,58 @@
    </category-def>
 <!-- END_3_1 -->
 <!-- BEGIN_3_1_1 -->
+   <feature url="features/org.eclipse.rse.core_3.1.1.v200907301400-7a7CEwFC7sRTNSwodfv_u.jar" id="org.eclipse.rse.core" version="3.1.1.v200907301400-7a7CEwFC7sRTNSwodfv_u">
+      <category name="TM and RSE 3.1.1"/>
+   </feature>
+   <feature url="features/org.eclipse.rse.dstore_3.1.1.v200907301400-7L6EsEVVFGMG4TyOVFU.jar" id="org.eclipse.rse.dstore" version="3.1.1.v200907301400-7L6EsEVVFGMG4TyOVFU">
+      <category name="TM and RSE 3.1.1"/>
+   </feature>
+   <feature url="features/org.eclipse.rse.ftp_3.0.101.v200909160005-780A89oB55W5OAP9A9I.jar" id="org.eclipse.rse.ftp" version="3.0.101.v200909160005-780A89oB55W5OAP9A9I">
+      <category name="TM and RSE 3.1.1"/>
+   </feature>
+   <feature url="features/org.eclipse.rse.local_2.1.101.v200907301400-7B4EqBgJ99r9dJ_GM9E.jar" id="org.eclipse.rse.local" version="2.1.101.v200907301400-7B4EqBgJ99r9dJ_GM9E">
+      <category name="TM and RSE 3.1.1"/>
+   </feature>
+   <feature url="features/org.eclipse.rse_3.1.1.v200907301400-7L5AE8wqaHPUdsOqKFUpxnbxGiz-.jar" id="org.eclipse.rse" version="3.1.1.v200907301400-7L5AE8wqaHPUdsOqKFUpxnbxGiz-">
+      <category name="TM and RSE 3.1.1"/>
+   </feature>
+   <feature url="features/org.eclipse.rse.sdk_3.1.1.v200907301400-7U78AFF8Wz-QWxVKUVnCs7-PcuWk.jar" id="org.eclipse.rse.sdk" version="3.1.1.v200907301400-7U78AFF8Wz-QWxVKUVnCs7-PcuWk">
+      <category name="TM and RSE 3.1.1"/>
+   </feature>
+   <feature url="features/org.eclipse.rse.ssh_3.0.1.v200909160005-7A2BhAkF77g7VEYDG7C.jar" id="org.eclipse.rse.ssh" version="3.0.1.v200909160005-7A2BhAkF77g7VEYDG7C">
+      <category name="TM and RSE 3.1.1"/>
+   </feature>
+   <feature url="features/org.eclipse.rse.telnet_2.2.1.v200908051630-7730AkF77g7UDXELEF.jar" id="org.eclipse.rse.telnet" version="2.2.1.v200908051630-7730AkF77g7UDXELEF">
+      <category name="TM and RSE 3.1.1"/>
+   </feature>
+   <feature url="features/org.eclipse.rse.examples_3.1.0.v200905272300-7B5-AkF77g7RFZFJ77.jar" id="org.eclipse.rse.examples" version="3.1.0.v200905272300-7B5-AkF77g7RFZFJ77">
+      <category name="TM and RSE 3.1.1"/>
+   </feature>
+   <feature url="features/org.eclipse.rse.terminals_1.0.1.v200907301400-77-39uC7FSAW8XBVLD3622.jar" id="org.eclipse.rse.terminals" version="1.0.1.v200907301400-77-39uC7FSAW8XBVLD3622">
+      <category name="TM and RSE 3.1.1"/>
+   </feature>
+   <feature url="features/org.eclipse.rse.tests_3.1.1.v200909160005-7H5F8PAkF77g7ZDXBD7H.jar" id="org.eclipse.rse.tests" version="3.1.1.v200909160005-7H5F8PAkF77g7ZDXBD7H">
+      <category name="TM and RSE 3.1.1"/>
+   </feature>
+   <feature url="features/org.eclipse.rse.useractions_1.1.100.v200905272300-31A78s733L3D7H7933.jar" id="org.eclipse.rse.useractions" version="1.1.100.v200905272300-31A78s733L3D7H7933">
+      <category name="TM and RSE 3.1.1"/>
+   </feature>
+   <feature url="features/org.eclipse.rse.wince_0.2.0.v200905272300-15A7AkF77g7RFZFJ77.jar" id="org.eclipse.rse.wince" version="0.2.0.v200905272300-15A7AkF77g7RFZFJ77" os="win32" arch="x86">
+      <category name="TM and RSE 3.1.1"/>
+   </feature>
+   <feature url="features/org.eclipse.tm.discovery_3.0.100.v200905272300-7d-FhJFEx2XZtYr4N3JXX.jar" id="org.eclipse.tm.discovery" version="3.0.100.v200905272300-7d-FhJFEx2XZtYr4N3JXX">
+      <category name="TM and RSE 3.1.1"/>
+   </feature>
+   <feature url="features/org.eclipse.tm.terminal.sdk_3.0.1.v200907301400-7N-FBaC5OqdP-0Zr1iqaZNOEG.jar" id="org.eclipse.tm.terminal.sdk" version="3.0.1.v200907301400-7N-FBaC5OqdP-0Zr1iqaZNOEG">
+      <category name="TM and RSE 3.1.1"/>
+   </feature>
+   <category-def name="TM and RSE 3.1.1" label="TM and RSE 3.1.1">
+      <description>
+         Features and add-ons of the 3.1.1 release of Target Management / RSE.
+      </description>
+   </category-def>
+<!-- END_3_1_1 -->
+<!-- BEGIN_3_2 -->
    <feature url="features/org.eclipse.rse.core_3.1.1.qualifier.jar" id="org.eclipse.rse.core" version="3.1.1.qualifier">
       <category name="TM and RSE 3.1.1"/>
    </feature>
@@ -628,5 +680,5 @@
          Features and add-ons of the 3.1.1 release of Target Management / RSE.
       </description>
    </category-def>
-<!-- END_3_1_1 -->
+<!-- END_3_2 -->
 </site>

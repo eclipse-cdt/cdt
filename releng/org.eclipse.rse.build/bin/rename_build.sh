@@ -49,7 +49,9 @@ for x in `ls` ; do
     index.php|buildNotes.php)
       cat ${x} | sed -e "s,/${srcVer},/${tgtDir},g" \
         -e "s,${srcVer},${tgtVer},g" \
-        -e "/Build/s,Integration|Maintenance,${tgtBuild},g" \
+        -e "/TM/s,Integration,${tgtBuild},g" \
+        -e "/TM/s,Maintenance,${tgtBuild},g" \
+        -e "/TM/s,Stable,${tgtBuild},g" \
         > ../${tgtDir}/${x}
       ;;
     package.count)

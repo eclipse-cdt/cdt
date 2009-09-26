@@ -32,8 +32,6 @@ if [ ! -f RSE-runtime-${srcVer}.zip ]; then
   exit 1
 fi
 
-for x in `ls $.zip *.tar` ; do
-done
 for x in `ls` ; do
   if [ -f ${x} ]; then
     case $x in

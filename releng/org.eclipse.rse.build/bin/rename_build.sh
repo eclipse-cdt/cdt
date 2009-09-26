@@ -8,7 +8,10 @@
 ## Creates ../R-3.1.1-200909160905 and prepares renamed build there
 #
 case x$1 in
-  xR|xM|xI|xS) ;;
+  xR) tgtBuild=Release ;;
+  xM) tgtBuild=Maintenance ;;
+  xI) tgtBuild=Integration ;;
+  xS) tgtBuild=Stable ;;
   *) grep '^##' $0
         exit 0
         ;;
@@ -31,6 +34,7 @@ if [ ! -f RSE-runtime-${srcVer}.zip ]; then
   echo ERROR: RSE-runtime-${srcVer}.zip not found, incorrect source?
   exit 1
 fi
+echo "Renameing Release: ${srcVer} --> ${tgtVer} into ../${tgtDir}"
 
 mkdir ../${tgtDir}
 for x in `ls` ; do
@@ -43,13 +47,16 @@ for x in `ls` ; do
       cp ${x} ../${tgtDir}/${y}
       ;;
     index.php|buildNotes.php)
-      cat ${x} | sed -e "s,/${srcVer},/${tgtDir}," -e "s,${srcVer},${tgtVer}," > ../${tgtDir}/${x}
+      cat ${x} | sed -e "s,/${srcVer},/${tgtDir}," \
+        -e "s,${srcVer},${tgtVer}," \
+        -e "s,Integration|Maintenance,${tgtBuild}," \
+        > ../${tgtDir}/${x}
       ;;
+    package.count)
+      cp ${x} ../${tgtDir}/${x}.orig
     *)
       cp ${x} ../${tgtDir}/${x}
       ;;
     esac
   fi
 done
-
-   

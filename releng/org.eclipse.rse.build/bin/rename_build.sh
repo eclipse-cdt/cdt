@@ -1,0 +1,54 @@
+#!/bin/sh
+#
+## Rename a build for release
+## usage:
+##     cd drops/I20090916-0905
+##     rename_build.sh R 3.1.1 200909160905
+##
+## Creates ../R-3.1.1-200909160905 and prepares renamed build there
+#
+case X$1 in
+  xR|xM|xI|xS) ;;
+  *) grep '^##' $0
+        exit 0
+        ;;
+esac
+tgtType=$1
+tgtVer=$2
+tgtDate=$3
+tgtDir=${tgtType}-${tgtVer}-${tgtDate}
+
+if [ ! -f package.count ]; then
+  echo ERROR: package.count not found. Please cd to source build before running.
+  exit 1
+fi
+if [ -d ../$tgtDir ]; then
+  echo ERROR: target dir ../$tgtDir already exists
+  exit 1
+fi
+srcVer=`ls RSE-SDK-*.zip | sed -e 's,RSE-SDK-,,' -e 's,\.zip,,'`
+if [ ! -f RSE-runtime-${srcVer}.zip ]; then
+  echo ERROR: RSE-runtime-${srcVer}.zip not found, incorrect source?
+  exit 1
+fi
+
+for x in `ls $.zip *.tar` ; do
+done
+for x in `ls` ; do
+  case $x in
+  *-signed.zip)
+    ;;
+  *.zip|*.tar)
+    y=`echo $x | sed -e "s,${src},{$tgtVer},"`
+    cp ${x} ../${tgtDir}/${y}
+    ;;
+  index.php|buildNotes.php)
+    cat ${x} | sed -e "s,/${src},/${tgtDir}," -e "s,${src},${tgtVer}," > ../${tgtDir}/${x}
+    ;;
+  *)
+    cp ${x} ../${tgtDir}/${x}
+    ;;
+  esac
+done
+
+   

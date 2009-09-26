@@ -32,13 +32,14 @@ if [ ! -f RSE-runtime-${srcVer}.zip ]; then
   exit 1
 fi
 
+mkdir ../${tgtDir}
 for x in `ls` ; do
   if [ -f ${x} ]; then
     case $x in
     *-signed.zip)
       ;;
     *.zip|*.tar)
-      y=`echo $x | sed -e "s,${src},{$tgtVer},"`
+      y=`echo $x | sed -e "s,${src},${tgtVer},"`
       cp ${x} ../${tgtDir}/${y}
       ;;
     index.php|buildNotes.php)

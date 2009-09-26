@@ -35,20 +35,22 @@ fi
 for x in `ls $.zip *.tar` ; do
 done
 for x in `ls` ; do
-  case $x in
-  *-signed.zip)
-    ;;
-  *.zip|*.tar)
-    y=`echo $x | sed -e "s,${src},{$tgtVer},"`
-    cp ${x} ../${tgtDir}/${y}
-    ;;
-  index.php|buildNotes.php)
-    cat ${x} | sed -e "s,/${src},/${tgtDir}," -e "s,${src},${tgtVer}," > ../${tgtDir}/${x}
-    ;;
-  *)
-    cp ${x} ../${tgtDir}/${x}
-    ;;
-  esac
+  if [ -f ${x} ]; then
+    case $x in
+    *-signed.zip)
+      ;;
+    *.zip|*.tar)
+      y=`echo $x | sed -e "s,${src},{$tgtVer},"`
+      cp ${x} ../${tgtDir}/${y}
+      ;;
+    index.php|buildNotes.php)
+      cat ${x} | sed -e "s,/${src},/${tgtDir}," -e "s,${src},${tgtVer}," > ../${tgtDir}/${x}
+      ;;
+    *)
+      cp ${x} ../${tgtDir}/${x}
+      ;;
+    esac
+  fi
 done
 
    

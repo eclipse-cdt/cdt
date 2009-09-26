@@ -39,11 +39,11 @@ for x in `ls` ; do
     *-signed.zip)
       ;;
     *.zip|*.tar)
-      y=`echo $x | sed -e "s,${src},${tgtVer},"`
+      y=`echo $x | sed -e "s,${srcVer},${tgtVer},"`
       cp ${x} ../${tgtDir}/${y}
       ;;
     index.php|buildNotes.php)
-      cat ${x} | sed -e "s,/${src},/${tgtDir}," -e "s,${src},${tgtVer}," > ../${tgtDir}/${x}
+      cat ${x} | sed -e "s,/${srcVer},/${tgtDir}," -e "s,${srcVer},${tgtVer}," > ../${tgtDir}/${x}
       ;;
     *)
       cp ${x} ../${tgtDir}/${x}

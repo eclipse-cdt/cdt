@@ -34,7 +34,7 @@ if [ ! -f RSE-runtime-${srcVer}.zip ]; then
   echo ERROR: RSE-runtime-${srcVer}.zip not found, incorrect source?
   exit 1
 fi
-echo "Renameing Release: ${srcVer} --> ${tgtVer} into ../${tgtDir}"
+echo "Renaming Release: ${srcVer} --> ${tgtVer} into ../${tgtDir}"
 
 mkdir ../${tgtDir}
 for x in `ls` ; do
@@ -47,9 +47,9 @@ for x in `ls` ; do
       cp ${x} ../${tgtDir}/${y}
       ;;
     index.php|buildNotes.php)
-      cat ${x} | sed -e "s,/${srcVer},/${tgtDir}," \
-        -e "s,${srcVer},${tgtVer}," \
-        -e "s,Integration|Maintenance,${tgtBuild}," \
+      cat ${x} | sed -e "s,/${srcVer},/${tgtDir},g" \
+        -e "s,${srcVer},${tgtVer},g" \
+        -e "/Build/s,Integration|Maintenance,${tgtBuild},g" \
         > ../${tgtDir}/${x}
       ;;
     package.count)

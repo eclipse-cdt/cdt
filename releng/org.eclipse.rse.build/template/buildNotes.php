@@ -169,7 +169,7 @@ Use
 for an up-to-date list of major or critical bugs.</p>
 
 <p>The 
-<a href="http://wiki.eclipse.org/TM_3.1_Known_Issues_and_Workarounds">
+<a href="http://wiki.eclipse.org/DSDP/TM/3.1_Known_Issues_and_Workarounds">
 TM 3.1 Known Issues and Workarounds</a> Wiki page gives an up-to-date list
 of the most frequent and obvious problems, and describes workarounds for them.<br/>
 If you have other questions regarding TM or RSE, please check the

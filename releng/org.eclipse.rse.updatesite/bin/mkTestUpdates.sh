@@ -329,7 +329,7 @@ being contributed to the Ganymede coordinated release train (Eclipse 3.4).' \
     sed -e "s,/dsdp/tm/updates/2.0,/dsdp/tm/updates/${SITEDIR},g" \
         -e "s,Project 2.0 Update,Project ${TPTYPE} Update,g" \
     	-e '/<!-- BEGIN_2_0 -->/,/<!-- END_2_0_4 -->/d' \
-    	-e '/<!-- BEGIN_3_1_1 -->/,/<!-- END_3_1_1 -->/d' \
+    	-e '/<!-- BEGIN_3_2 -->/,/<!-- END_3_2 -->/d' \
         site.xml > site.xml.new
     mv -f site.xml.new site.xml
     rm site.xml.new1 site.xml.new2
@@ -357,7 +357,7 @@ being contributed to the Galileo coordinated release train (Eclipse 3.5).' \
         -e "s,Project 2.0 Update,Project ${TPTYPE} Update,g" \
     	-e '/<!-- BEGIN_2_0 -->/,/<!-- END_2_0_4 -->/d' \
         -e '/<!-- BEGIN_3_0 -->/,/<!-- END_3_0_3 -->/d' \
-        -e '/<!-- BEGIN_3_1_1 -->/,/<!-- END_3_1_1 -->/d' \
+        -e '/<!-- BEGIN_3_2 -->/,/<!-- END_3_2 -->/d' \
         site.xml > site.xml.new
     mv -f site.xml.new site.xml
     rm site.xml.new1 site.xml.new2

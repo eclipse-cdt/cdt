@@ -1,5 +1,5 @@
 /********************************************************************************
- * Copyright (c) 2006, 2007 IBM Corporation and others. All rights reserved.
+ * Copyright (c) 2006, 2009 IBM Corporation and others. All rights reserved.
  * This program and the accompanying materials are made available under the terms
  * of the Eclipse Public License v1.0 which accompanies this distribution, and is 
  * available at http://www.eclipse.org/legal/epl-v10.html
@@ -19,6 +19,7 @@
  *    - Also remove unnecessary class RSEFileCache and obsolete branding files.
  * Martin Oberhuber (Wind River) - [188360] renamed from plugin org.eclipse.rse.eclipse.filesystem
  * Martin Oberhuber (Wind River) - [199587] return attributes of RSEFileSystem
+ * David McKnight   (IBM)        - [287185] EFS provider should interpret the URL host component as RSE connection name rather than a hostname
  ********************************************************************************/
 
 package org.eclipse.rse.internal.efs;
@@ -102,6 +103,27 @@ public class RSEFileSystem extends FileSystem
 		}
 		try {
 			return new URI("rse", hostNameOrAddr, absolutePath, null); //$NON-NLS-1$
+		}
+		catch (URISyntaxException e) 
+		{
+			throw new RuntimeException(e);
+		}
+	}
+	
+	/**
+	 * Return an URI uniquely naming an RSE remote resource.
+	 * @param hostNameOrAddr host name or IP address of remote system
+	 * @param absolutePath absolute path to resource as valid on the remote system
+	 * @param alias the alias name for the connection
+	 * @return an URI uniquely naming the remote resource.
+	 */
+	public static URI getURIFor(String hostNameOrAddr, String absolutePath, String alias) {
+		//FIXME backslashes are valid in UNIX file names. This is not correctly handled yet.
+		if (absolutePath.charAt(0) != '/') {
+			absolutePath = "/" + absolutePath.replace('\\', '/'); //$NON-NLS-1$
+		}
+		try {
+			return new URI("rse", hostNameOrAddr, absolutePath, alias, null); //$NON-NLS-1$
 		}
 		catch (URISyntaxException e) 
 		{

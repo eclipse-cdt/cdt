@@ -1,5 +1,5 @@
 /********************************************************************************
- * Copyright (c) 2006, 2008 IBM Corporation and others. All rights reserved.
+ * Copyright (c) 2006, 2009 IBM Corporation and others. All rights reserved.
  * This program and the accompanying materials are made available under the terms
  * of the Eclipse Public License v1.0 which accompanies this distribution, and is
  * available at http://www.eclipse.org/legal/epl-v10.html
@@ -21,6 +21,7 @@
  * Martin Oberhuber (Wind River) - [191589] fix Rename by adding putInfo() for RSE EFS, and fetch symlink info
  * Kevin Doyle 		(IBM)		 - [210673] [efs][nls] Externalize Strings in RSEFileStore and RSEFileStoreImpl
  * Timur Shipilov   (Xored)      - [224538] RSEFileStore.getParent() returns null for element which is not root of filesystem
+ * David McKnight   (IBM)        - [287185] EFS provider should interpret the URL host component as RSE connection name rather than a hostname
  ********************************************************************************/
 
 package org.eclipse.rse.internal.efs;
@@ -58,6 +59,7 @@ public class RSEFileStore extends FileStore
 	private RSEFileStore _parent;
 	private String _host;
 	private String _name;
+	private String _alias;
 	private IPath _absolutePath;
 
 	//cached IRemoteFile object: an Object to avoid early class loading
@@ -94,6 +96,27 @@ public class RSEFileStore extends FileStore
 			}
 		}
 	}
+	
+	/**
+	 * Constructor to use if the file store is a handle.
+	 * @param host the connection name for the file store.
+	 * @param absolutePath an absolute path to the file, valid on the remote file system.
+	 * @param aliasName the connection alias for the file store
+	 */
+	private RSEFileStore(String host, String absolutePath, String aliasName) {
+		_parent = null;
+		_host = host;
+		_absolutePath = new Path(absolutePath);
+		_alias = aliasName;
+		_name = _absolutePath.lastSegment();
+		if (_name == null) {
+			//Windows Root Drive has no segments but needs a name
+			_name = _absolutePath.getDevice();
+			if (_name == null) {
+				_name = ""; //$NON-NLS-1$
+			}
+		}
+	}
 
 	/**
 	 * Public factory method for obtaining RSEFileStore instances.
@@ -106,7 +129,8 @@ public class RSEFileStore extends FileStore
 			if (store==null) {
 				String path = uri.getPath();
 				String hostName = uri.getHost();
-				store = new RSEFileStore(hostName, path);
+				String aliasName = uri.getQuery();
+				store = new RSEFileStore(hostName, path, aliasName);
 				instanceMap.put(uri, store);
 			}
 			return store;
@@ -138,6 +162,10 @@ public class RSEFileStore extends FileStore
 	/*package*/ String getHost() {
 		//TODO consider computing this instead of storing it
 		return _host;
+	}
+	
+	String getAlias() {
+		return _alias;
 	}
 
 	/**

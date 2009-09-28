@@ -1,5 +1,5 @@
 /********************************************************************************
- * Copyright (c) 2000, 2008 IBM Corporation and others. All rights reserved.
+ * Copyright (c) 2000, 2009 IBM Corporation and others. All rights reserved.
  * This program and the accompanying materials are made available under the terms
  * of the Eclipse Public License v1.0 which accompanies this distribution, and is 
  * available at http://www.eclipse.org/legal/epl-v10.html
@@ -24,6 +24,7 @@
  * Remy Chi Jian Suen (IBM) - [192906][efs] No Error when trying to Create Remote Project when project with name exists
  * Martin Oberhuber (Wind River) - [182350] Support creating remote project on Windows Drive
  * Remy Chi Jian Suen (IBM) - [202098][efs][nls] Improve error message when creating a remote project with existing name
+ * David McKnight  (IBM)         - [287185] EFS provider should interpret the URL host component as RSE connection name rather than a hostname
  ********************************************************************************/
 
 package org.eclipse.rse.internal.efs.ui;
@@ -50,6 +51,7 @@ import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.osgi.util.NLS;
+import org.eclipse.rse.core.model.IHost;
 import org.eclipse.rse.internal.efs.Activator;
 import org.eclipse.rse.internal.efs.RSEFileSystem;
 import org.eclipse.rse.subsystems.files.core.subsystems.IRemoteFile;
@@ -195,9 +197,11 @@ public class CreateRemoteProjectActionDelegate implements IActionDelegate {
 			}
 	
 			IProjectDescription description = root.getWorkspace().newProjectDescription(projectName);
-			String hostNameOrAddr = directory.getParentRemoteFileSubSystem().getHost().getHostName();
+			IHost host = directory.getParentRemoteFileSubSystem().getHost();
+			String hostNameOrAddr = host.getHostName();
+			String hostAliasName = host.getAliasName();
 			String absolutePath = directory.getAbsolutePath();
-			URI location = RSEFileSystem.getURIFor(hostNameOrAddr, absolutePath);
+			URI location = RSEFileSystem.getURIFor(hostNameOrAddr, absolutePath, hostAliasName);
 			description.setLocationURI(location);
 	
 			editProject.create(description, monitor);

@@ -1,5 +1,5 @@
 /********************************************************************************
- * Copyright (c) 2006, 2008 IBM Corporation and others. All rights reserved.
+ * Copyright (c) 2006, 2009 IBM Corporation and others. All rights reserved.
  * This program and the accompanying materials are made available under the terms
  * of the Eclipse Public License v1.0 which accompanies this distribution, and is
  * available at http://www.eclipse.org/legal/epl-v10.html
@@ -31,6 +31,7 @@
  * Martin Oberhuber (Wind River) - [233993] Improve EFS error reporting
  * Martin Oberhuber (Wind River) - [220300] EFS Size Property not properly updated after saving
  * Martin Oberhuber (Wind River) - [234026] Clarify IFileService#createFolder() Javadocs
+ * David McKnight  (IBM)         - [287185] EFS provider should interpret the URL host component as RSE connection name rather than a hostname
  ********************************************************************************/
 
 package org.eclipse.rse.internal.efs;
@@ -147,13 +148,14 @@ public class RSEFileStoreImpl extends FileStore
 	}
 
 	/**
-	 * Return the best RSE connection object matching the given host name.
+	 * Return the best RSE connection object matching the given host name and/or connection alias.
 	 *
-	 * @param hostNameOrAddr IP address of requested host.
-	 * @return RSE connection object matching the given host name, or
+	 * @param hostNameOrAddr the host name IP address of requested host.
+	 * @param aliasName the connection alias of the requested host
+	 * @return RSE connection object matching the given connection alias, host name, or
 	 *     <code>null</code> if no matching connection object was found.
 	 */
-	public static IHost getConnectionFor(String hostNameOrAddr, IProgressMonitor monitor) {
+	public static IHost getConnectionFor(String hostNameOrAddr, String aliasName, IProgressMonitor monitor) {
 		if (hostNameOrAddr==null) {
 			return null;
 		}
@@ -164,18 +166,36 @@ public class RSEFileStoreImpl extends FileStore
 		IHost[] connections = sr.getHosts();
 
 		IHost unconnected = null;
-		for (int i = 0; i < connections.length; i++) {
-
-			IHost con = connections[i];
-
-			//TODO use more elaborate methods of checking whether two
-			//host names/IP addresses are the same; or, use the host alias
-			if (hostNameOrAddr.equalsIgnoreCase(con.getHostName())) {
-				IRemoteFileSubSystem fss = getRemoteFileSubSystem(con);
-				if (fss!=null && fss.isConnected()) {
-					return con;
-				} else {
-					unconnected = con;
+		
+		// first look for connection alias
+		if (aliasName != null){
+			for (int i = 0; i < connections.length; i++) {
+				IHost con = connections[i];
+	
+				if (aliasName.equalsIgnoreCase(con.getAliasName())){
+					IRemoteFileSubSystem fss = getRemoteFileSubSystem(con);
+					if (fss!=null && fss.isConnected()) {
+						return con;
+					} else {
+						unconnected = con;
+					}
+				}
+			}
+		}
+		
+		if (unconnected == null){
+			// if nothing matches the connection alias, fall back to hostname
+			for (int i = 0; i < connections.length; i++) {
+				IHost con = connections[i];	
+				//TODO use more elaborate methods of checking whether two
+				//host names/IP addresses are the same; or, use the host alias
+				if (hostNameOrAddr.equalsIgnoreCase(con.getHostName())) {
+					IRemoteFileSubSystem fss = getRemoteFileSubSystem(con);
+					if (fss!=null && fss.isConnected()) {
+						return con;
+					} else {
+						unconnected = con;
+					}
 				}
 			}
 		}
@@ -229,13 +249,14 @@ public class RSEFileStoreImpl extends FileStore
 	 * Returns the best connected file subsystem for this file store.
 	 * Never returns <code>null</code>.
 	 * @param hostNameOrAddr host name or IP address
+	 * @param aliasName the connection alias
 	 * @param monitor progress monitor
 	 * @return The best connected file subsystem for this file store.
 	 * @throws CoreException if no file subsystem could be found or connected.
 	 */
-	public static IRemoteFileSubSystem getConnectedFileSubSystem(String hostNameOrAddr, IProgressMonitor monitor) throws CoreException
+	public static IRemoteFileSubSystem getConnectedFileSubSystem(String hostNameOrAddr, String aliasName, IProgressMonitor monitor) throws CoreException
 	{
-		IHost con = RSEFileStoreImpl.getConnectionFor(hostNameOrAddr, monitor);
+		IHost con = RSEFileStoreImpl.getConnectionFor(hostNameOrAddr, aliasName, monitor);
 		if (con == null) {
 			throw new CoreException(new Status(IStatus.ERROR,
 					Activator.getDefault().getBundle().getSymbolicName(),
@@ -315,7 +336,10 @@ public class RSEFileStoreImpl extends FileStore
 			}
 		} else {
 			//Handle was created with an absolute name
-			IRemoteFileSubSystem subSys = RSEFileStoreImpl.getConnectedFileSubSystem(_store.getHost(), monitor);
+			String aliasName = _store.getAlias();
+			String hostName = _store.getHost();
+			IRemoteFileSubSystem subSys = RSEFileStoreImpl.getConnectedFileSubSystem(hostName, aliasName, monitor);
+			
 			try {
 				remoteFile = subSys.getRemoteFileObject(_store.getAbsolutePath(), monitor);
 			}

@@ -20,6 +20,7 @@
  * Martin Oberhuber (Wind River) - [189441] fix EFS operations on Windows (Local) systems
  * David Dykstal (IBM) - [235840] externalizing dialog title
  * David McKnight  (IBM)         - [280763] [efs] Cannot pick a file when linking a resource (only folders)
+ * David McKnight  (IBM)         - [287185] EFS provider should interpret the URL host component as RSE connection name rather than a hostname
  ********************************************************************************/
 
 
@@ -55,7 +56,7 @@ public class RSEFileSystemContributor extends FileSystemContributor {
 			
 			try {
 				URI uri = new URI(initialPath);
-				IHost host = RSEFileStoreImpl.getConnectionFor(uri.getHost(), null);
+				IHost host = RSEFileStoreImpl.getConnectionFor(uri.getHost(), uri.getQuery(), new NullProgressMonitor());
 				IRemoteFileSubSystem fs = RSEFileStoreImpl.getRemoteFileSubSystem(host);
 				dlg.setInputObject(fs.getRemoteFileObject(uri.getPath(), new NullProgressMonitor()));			
 			}
@@ -81,6 +82,7 @@ public class RSEFileSystemContributor extends FileSystemContributor {
 			
 			IHost host = dlg.getSelectedConnection();
 			String hostName = host.getHostName();
+			String aliasName = host.getAliasName();
 
 			IRemoteFile file = (IRemoteFile)selected;
 			String path = file.getAbsolutePath();
@@ -89,7 +91,7 @@ public class RSEFileSystemContributor extends FileSystemContributor {
 			}
 			path = fixPathForURI(path);
 			try {
-				return new URI("rse", hostName, path, null); //$NON-NLS-1$
+				return new URI("rse", hostName, path, aliasName, null); //$NON-NLS-1$
 			}
 			catch (URISyntaxException e) {
 				SystemMessageDialog.displayErrorMessage(SystemMessageDialog.getDefaultShell(), e.getLocalizedMessage());

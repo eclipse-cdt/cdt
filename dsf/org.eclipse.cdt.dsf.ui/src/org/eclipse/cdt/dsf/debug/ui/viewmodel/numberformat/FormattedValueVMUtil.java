@@ -266,16 +266,16 @@ public class FormattedValueVMUtil {
 			// PROP_FORMATTED_VALUE_ACTIVE_FORMAT_VALUE, and the active format
 			// has not been explicitly requested, then we need an additional
 			// iteration to provide it. 
-            boolean activeFormatRequested = false;	// does the update object ask for PROP_FORMATTED_VALUE_ACTIVE_FORMAT_VALUE?
-            boolean activeFormatHandled = false;	// have we come across a specific format request that is the active format?
-            for (Iterator<String> itr = update.getProperties().iterator(); itr.hasNext() || (activeFormatRequested && !activeFormatHandled);) {
+            boolean activeFormatValueRequested = false;	// does the update object ask for PROP_FORMATTED_VALUE_ACTIVE_FORMAT_VALUE?
+            boolean activeFormatValueHandled = false;	// have we come across a specific format request that is the active format?
+            for (Iterator<String> itr = update.getProperties().iterator(); itr.hasNext() || (activeFormatValueRequested && !activeFormatValueHandled);) {
                 String nextFormat;
                 if (itr.hasNext()) {
                     String propertyName = itr.next();
                     if (propertyName.startsWith(IDebugVMConstants.PROP_FORMATTED_VALUE_BASE)) {
                         nextFormat = FormattedValueVMUtil.getFormatFromProperty(propertyName);
                         if (nextFormat.equals(activeFormat)) {
-                        	activeFormatHandled = true;
+                        	activeFormatValueHandled = true;
                         }
                         // if we know the supported formats (we may not), then no-op if this format is unsupported
                         if (availableFormats != null && !isFormatAvailable(nextFormat, availableFormats)) {
@@ -284,7 +284,7 @@ public class FormattedValueVMUtil {
                     }
                     else if (propertyName.equals(IDebugVMConstants.PROP_FORMATTED_VALUE_ACTIVE_FORMAT_VALUE)) {
                     	assert activeFormat != null : "Our caller should have provided the available formats if this property was specified; given available formats, an 'active' nomination is guaranteed."; //$NON-NLS-1$
-                    	activeFormatRequested = true;
+                    	activeFormatValueRequested = true;
                     	continue;	// we may end up making an additional run
                     }
                     else {
@@ -293,9 +293,10 @@ public class FormattedValueVMUtil {
                 } else {
                 	// the additional iteration to handle the active format 
                     nextFormat = activeFormat;
-                    activeFormatHandled = true;
+                    activeFormatValueHandled = true;
                 }
 
+                final boolean _activeFormatValueRequested = activeFormatValueRequested; 
                 final FormattedValueDMContext formattedValueDmc = service.getFormattedValueContext(dmc, nextFormat);
                 service.getFormattedExpressionValue(
                     formattedValueDmc, 
@@ -309,7 +310,7 @@ public class FormattedValueVMUtil {
                                 update.setProperty(
                                     FormattedValueVMUtil.getPropertyForFormatId(format), 
                                     getData().getFormattedValue()); 
-                                if (format.equals(activeFormat)) {
+                                if (_activeFormatValueRequested && format.equals(activeFormat)) {
                                     update.setProperty(
                                         IDebugVMConstants.PROP_FORMATTED_VALUE_ACTIVE_FORMAT_VALUE, 
                                         getData().getFormattedValue());

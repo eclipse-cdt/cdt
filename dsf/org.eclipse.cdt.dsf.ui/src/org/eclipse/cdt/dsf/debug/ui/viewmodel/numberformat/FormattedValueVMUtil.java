@@ -146,14 +146,14 @@ public class FormattedValueVMUtil {
 		// because it's updated by a request monitor with an ImmediateExecutor.
         final Map<IPropertiesUpdate, String[]> availableFormats = Collections.synchronizedMap(new HashMap<IPropertiesUpdate, String[]>(updates.length * 4/3));
         final CountingRequestMonitor countingRm = new CountingRequestMonitor(
-            service.getExecutor(), 
-            new RequestMonitor(service.getExecutor(), monitor) {
+            service.getExecutor(), monitor) { 
                 @Override
                 protected void handleCompleted() {
-                	// retrieve the formatted values now that we have the available formats (where needed)
+                	// Retrieve the formatted values now that we have the available formats (where needed).
+                	// Note that we are passing off responsibility of our parent monitor  
                     updateFormattedValuesWithAvailableFormats(updates, service, dmcType, availableFormats, monitor); 
                 }
-            });
+        	};
         int count = 0;
         
 		// For each update, query the formats available for the update's

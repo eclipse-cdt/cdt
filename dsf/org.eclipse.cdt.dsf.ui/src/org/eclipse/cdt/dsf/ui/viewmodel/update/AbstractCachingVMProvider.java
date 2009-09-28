@@ -1141,7 +1141,9 @@ public class AbstractCachingVMProvider extends AbstractVMProvider
                                 }
                             } else {
                                 // We are not caching the result of this update, but we should still
-                                // return valid data to the client.
+                                // return valid data to the client.  In case the update was canceled 
+                                // we can also return valid data to the client even if the client
+                                // is likely to ignore it since the cost of doing so is relatively low.
                                 properties = new HashMap<String, Object>(getData().size() + 1 * 4/3);                                
                                 properties.put(PROP_CACHE_ENTRY_DIRTY, Boolean.TRUE);
                                 properties.putAll(getData());

@@ -7309,4 +7309,26 @@ public class AST2CPPTests extends AST2BaseTest {
 		assertEquals(declNames.length, i);
 		assertEquals(defNames.length, j);
 	}
+	
+	//	class X {
+	//	    struct S* m1;  
+	//	    struct T;
+	//	    struct T* m2;  
+	//	};
+	public void testStructOwner_290693() throws Exception {
+		final String code = getAboveComment();
+		parseAndCheckBindings(code, ParserLanguage.CPP);
+
+		BindingAssertionHelper bh= new BindingAssertionHelper(code, true);
+		ICPPClassType S= bh.assertNonProblem("S*", 1);
+		assertNull(S.getOwner());
+
+		ICPPClassType X= bh.assertNonProblem("X {", 1);
+		ICPPClassType T= bh.assertNonProblem("T;", 1);
+		assertSame(X, T.getOwner());
+
+		T= bh.assertNonProblem("T* m2", 1);
+		assertSame(X, T.getOwner());
+	}
 }
+

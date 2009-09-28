@@ -36,8 +36,8 @@ public interface ICachingVMProvider extends IVMProvider, IElementPropertiesProvi
     public static final String PROP_IS_CHANGED_PREFIX = "is_changed."; //$NON-NLS-1$
     
     /**
-     * A prefix used to create a property to indicate whether a given property
-     * is currently dirty.  The caching VM provider appends these properties to an 
+     * A property used to indicate whether a given cache entry is currently dirty.  
+     * The caching VM provider appends this property to an 
      * element's set of properties as they are retrieved through the cache.
      * 
      * @see org.eclipse.cdt.dsf.ui.viewmodel.properties.IElementPropertiesProvider

@@ -16,6 +16,7 @@
  * David McKnight   (IBM)        - [243699] [dstore] Loop in OutputHandler
  * David McKnight     (IBM)   [249715] [dstore][shells] Unix shell does not echo command
  * David McKnight   (IBM)        - [282919] [dstore] server shutdown results in exception in shell io reading
+ * David McKnight (IBM) - [286671] Dstore shell service interprets &lt; and &gt; sequences
  *******************************************************************************/
 
 package org.eclipse.rse.internal.dstore.universal.miners.command;
@@ -98,7 +99,7 @@ public class OutputHandler extends Handler {
 			 * !_isTerminal) { doPrompt(); } } else
 			 */
 			for (int i = 0; i < lines.length; i++) {
-				String line = lines[i];
+				String line = convertSpecialCharacters(lines[i]);
 				_commandThread.interpretLine(line, _isStdError);
 			}
 
@@ -111,6 +112,30 @@ public class OutputHandler extends Handler {
 			finish();
 		}
 	}
+	
+	private String convertSpecialCharacters(String input){
+		   // needed to ensure xml characters aren't converted in xml layer	
+		
+			StringBuffer output = new StringBuffer();
+
+			for (int idx = 0; idx < input.length(); idx++)
+			{
+				char currChar = input.charAt(idx);
+				switch (currChar)
+				{
+				case '&' :
+					output.append("&#38;");
+					break;
+				case ';' :
+					output.append("&#59;");
+					break;
+				default :
+					output.append(currChar);
+					break;
+				}
+			}
+			return output.toString();
+		}
 
 	private void doPrompt() {
 		try {

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2007 IBM Corporation and others.
+ * Copyright (c) 2006, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -14,6 +14,7 @@
  * Contributors:
  * {Name} (company) - description of contribution.
  * David McKnight   (IBM)        - [196624] dstore miner IDs should be String constants rather than dynamic lookup
+ * David McKnight (IBM) - [286671] Dstore shell service interprets &lt; and &gt; sequences
  *******************************************************************************/
 
 package org.eclipse.rse.internal.services.dstore.shells;
@@ -262,6 +263,7 @@ public class DStoreShellThread
 
 				if (cmd != null)
 				{	
+					cmd = convertSpecialCharacters(cmd);
 				    DataElement commandDescriptor = getSendInputDescriptor(commandElement);
 					if (commandDescriptor != null)
 					{
@@ -271,5 +273,29 @@ public class DStoreShellThread
 				}
 			}
 		}
+	}
+	
+	private String convertSpecialCharacters(String input){
+	   // needed to ensure xml characters aren't converted in xml layer	
+	
+		StringBuffer output = new StringBuffer();
+
+		for (int idx = 0; idx < input.length(); idx++)
+		{
+			char currChar = input.charAt(idx);
+			switch (currChar)
+			{
+			case '&' :
+				output.append("&#38;");
+				break;
+			case ';' :
+				output.append("&#59;");
+				break;
+			default :
+				output.append(currChar);
+				break;
+			}
+		}
+		return output.toString();
 	}
 }

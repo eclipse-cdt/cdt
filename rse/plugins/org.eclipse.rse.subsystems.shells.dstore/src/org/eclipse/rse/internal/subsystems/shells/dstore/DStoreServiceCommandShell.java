@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2008 IBM Corporation and others.
+ * Copyright (c) 2006, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -14,6 +14,7 @@
  * Contributors:
  * David McKnight (IBM) - [202822] cleanup output datalements after use
  * Martin Oberhuber (Wind River) - [225510][api] Fix OutputRefreshJob API leakage
+ * David McKnight (IBM) - [286671] Dstore shell service interprets &lt; and &gt; sequences
  *******************************************************************************/
 
 package org.eclipse.rse.internal.subsystems.shells.dstore;
@@ -139,6 +140,13 @@ public class DStoreServiceCommandShell extends ServiceCommandShell
 		return reader.getWorkingDirectory();
 	}
 
+	private String convertSpecialCharacters(String input){
+		// needed to ensure xml characters aren't converted in xml layer	
+		String converted = input.replaceAll("&#38;", "&") //$NON-NLS-1$ //$NON-NLS-2$
+			.replaceAll("&#59;", ";");  //$NON-NLS-1$//$NON-NLS-2$
+		return converted;
+	}
+	
 	public void shellOutputChanged(IHostShellChangeEvent event)
 	{
 		IHostOutput[] lines = event.getLines();
@@ -161,7 +169,8 @@ public class DStoreServiceCommandShell extends ServiceCommandShell
 				{
 					output = new RemoteOutput(this, type);
 				}
-				output.setText(line.getName());
+								
+				output.setText(convertSpecialCharacters(line.getName()));
 
 				int colonSep = src.indexOf(':');
 				// line numbers

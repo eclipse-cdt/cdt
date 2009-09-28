@@ -21,6 +21,7 @@
  *  David McKnight     (IBM)   [249715] [dstore][shells] Unix shell does not echo command
  *  David McKnight     (IBM)   [153275] [dstore-shells] Ctrl+C does not break remote program
  *  David McKnight     (IBM)   [284179] [dstore] commands have a hard coded line length limit of 100 characters
+ *  David McKnight (IBM) - [286671] Dstore shell service interprets &lt; and &gt; sequences
  *******************************************************************************/
 
 package org.eclipse.rse.internal.dstore.universal.miners.command;
@@ -570,14 +571,19 @@ public class CommandMinerThread extends MinerThread
 	}
 
 
-
-
+	private String convertSpecialCharacters(String input){
+		// needed to ensure xml characters aren't converted in xml layer	
+		String converted = input.replaceAll("&#38;", "&") //$NON-NLS-1$ //$NON-NLS-2$
+			.replaceAll("&#59;", ";");  //$NON-NLS-1$//$NON-NLS-2$
+		return converted;
+	}
+	
 	public void sendInput(String input)
 	{
 		if (!_isDone)
 		{
-
-//			byte[] intoout = input.getBytes();
+			String origInput = input;
+			input = convertSpecialCharacters(input);
 			input.getBytes();
 
 			try
@@ -626,7 +632,7 @@ public class CommandMinerThread extends MinerThread
 
 				if (!_isWindows && !_isTTY)
 				{
-					createObject("input", input); //$NON-NLS-1$
+					createObject("input", origInput); //$NON-NLS-1$
 				}
 
 				writer.write(input);

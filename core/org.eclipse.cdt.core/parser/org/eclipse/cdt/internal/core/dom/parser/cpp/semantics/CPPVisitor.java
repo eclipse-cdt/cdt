@@ -2023,18 +2023,30 @@ public class CPPVisitor extends ASTQueries {
 	 */
 	public static IBinding findDeclarationOwner(IASTNode node, boolean allowFunction) {
 		// Search for declaration
+		boolean isFriend= false;
+		boolean isNonSimpleElabDecl= false;
 		while (!(node instanceof IASTDeclaration)) {
 			if (node == null)
 				return null;
+			if (node instanceof IASTElaboratedTypeSpecifier) {
+				isNonSimpleElabDecl= true;
+				final IASTNode parent= node.getParent();
+				if (parent instanceof IASTSimpleDeclaration) {
+					final IASTSimpleDeclaration sdecl = (IASTSimpleDeclaration) parent;
+					if (sdecl.getDeclarators().length==0) {
+						isNonSimpleElabDecl= false;
+					}
+				}
+			}
 			node= node.getParent();
 		}
 
-		boolean isFriend= false;
 		if (node instanceof IASTSimpleDeclaration) {
-			ICPPASTDeclSpecifier declSpec= (ICPPASTDeclSpecifier) ((IASTSimpleDeclaration) node).getDeclSpecifier();
+			final IASTSimpleDeclaration sdecl = (IASTSimpleDeclaration) node;
+			ICPPASTDeclSpecifier declSpec= (ICPPASTDeclSpecifier) sdecl.getDeclSpecifier();
 			if (declSpec.isFriend()) {
 				isFriend= true;
-			}
+			} 
 		} else if (node instanceof IASTFunctionDefinition) {
 			IASTFunctionDefinition funcDefinition = (IASTFunctionDefinition) node;
 			ICPPASTDeclSpecifier declSpec = (ICPPASTDeclSpecifier) funcDefinition.getDeclSpecifier();
@@ -2058,7 +2070,7 @@ public class CPPVisitor extends ASTQueries {
 				break;
 			} 
 			if (node instanceof IASTCompositeTypeSpecifier) {
-				if (isFriend)
+				if (isFriend || isNonSimpleElabDecl)
 					continue;
 				name= ((IASTCompositeTypeSpecifier) node).getName();
 				break;

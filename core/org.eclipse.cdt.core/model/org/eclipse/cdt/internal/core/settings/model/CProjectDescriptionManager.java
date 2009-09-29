@@ -286,8 +286,25 @@ public class CProjectDescriptionManager implements ICProjectDescriptionManager {
 		CProjectDescriptionStorageManager.getInstance().projectClosedRemove(project);
 	}
 
-	public void projectMove(IProject from, IProject to) {
+	/**
+	 * 
+	 * @param from 	Project to move the description from
+	 * @param to	Project where the description is moved to
+	 * @return		<b>ICProjectDescription</b> - non serialized, modified, writable 
+	 * project description. To serialize, call <code>setProjectDescription()</code> 
+	 * 
+	 */
+	public ICProjectDescription projectMove(IProject from, IProject to) {
 		CProjectDescriptionStorageManager.getInstance().projectMove(from, to);
+
+		int flags = CProjectDescriptionManager.INTERNAL_GET_IGNORE_CLOSE |
+					CProjectDescriptionManager.GET_WRITABLE;
+		CProjectDescription des = (CProjectDescription)getProjectDescription(to, flags);
+		// set configuration descriptions to "writable" state
+		for (ICConfigurationDescription cfgDes : des.getConfigurations()) {
+				des.updateChild((CConfigurationDescription)cfgDes, true);
+		}
+		return des;
 	}
 
 

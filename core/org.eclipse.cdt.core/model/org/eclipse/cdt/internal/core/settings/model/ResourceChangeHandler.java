@@ -78,8 +78,10 @@ public class ResourceChangeHandler extends ResourceChangeHandlerBase implements 
 			IProject toProject = toRc.getProject();
 			switch(toRc.getType()){
 			case IResource.PROJECT:{
-				fMngr.projectMove(fromProject, toProject);
+				ICProjectDescription des = fMngr.projectMove(fromProject, toProject);
 				fRemovedProjSet.add(fromProject);
+				if(des != null)
+					fProjDesMap.put(toProject, des);
 			}
 			break;
 			case IResource.FOLDER:{

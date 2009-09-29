@@ -80,7 +80,15 @@ public class PropertiesBasedLabelProvider
     public LabelColumnInfo getColumnInfo(String columnId) {
         return fColumnInfos.get(columnId);
     }
-       
+
+	/**
+	 * In addition to guarantees on [labelUpdates] declared by
+	 * {@link IElementLabelProvider}, we further require/assume that all the
+	 * model elements referenced by [labelUpdates] adapt to the same
+	 * {@link IElementPropertiesProvider}.
+	 * 
+	 * @see org.eclipse.debug.internal.ui.viewers.model.provisional.IElementLabelProvider#update(org.eclipse.debug.internal.ui.viewers.model.provisional.ILabelUpdate[])
+	 */
     public void update(ILabelUpdate[] labelUpdates) {
         IElementPropertiesProvider propertiesProvider = getElementPropertiesProvider(labelUpdates[0].getElement());
         if (propertiesProvider == null) {
@@ -91,7 +99,11 @@ public class PropertiesBasedLabelProvider
             return;
         }
         
+		// We are guaranteed that all the provided updates are for the same
+		// presentation context. Thus we can safely assume they request the same
+		// columns
         String[] columnIds = labelUpdates[0].getColumnIds();
+        
         Set<String> propertyNames = calcPropertyNamesForColumns(columnIds);
         
         // Call the properties provider.  Create a request monitor for each label update.

@@ -1131,9 +1131,16 @@ public class AbstractCachingVMProvider extends AbstractVMProvider
                                 properties = entry.fProperties;
                                 properties.putAll(getData());
                                 
-                                // Make sure that all the properties that were requested by the user are in the 
-                                // properties map.  Otherwise, we'll never get a cache hit because the cache 
-                                // test makes sure that all keys that are requested are in the properties map.  
+								// Make sure that all the properties that were
+								// requested by the update object are in the
+								// cache entry's properties map. It's possible the
+								// ViewerDataRequestMonitor was able to provide
+								// us only a subset of the requested ones. We
+								// want to prevent that from causing future
+								// cache misses, since a cache hit requires the
+								// cache entry to contain all requested
+								// properties. Use a null value for the missing
+                                // items.
                                 for (String updateProperty : update.getProperties()) {
                                     if (!properties.containsKey(updateProperty)) {
                                         properties.put(updateProperty, null);

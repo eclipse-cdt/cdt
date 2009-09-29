@@ -2736,7 +2736,7 @@
 				id="xlc.c.ecd.genproto.none">
 			</enumeratedOptionValue>
 			<enumeratedOptionValue
-				name="%Option.genproto"
+				name="%Option.genproto.general"
 				isDefault="false"
 				command="-qgenproto"
 				id="xlc.c.ecd.genproto">

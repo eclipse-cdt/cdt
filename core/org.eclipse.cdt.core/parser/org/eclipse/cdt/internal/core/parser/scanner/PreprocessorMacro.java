@@ -10,8 +10,9 @@
  *******************************************************************************/ 
 package org.eclipse.cdt.internal.core.parser.scanner;
 
-import com.ibm.icu.text.DateFormatSymbols;
 import java.util.Calendar;
+
+import com.ibm.icu.text.DateFormatSymbols;
 
 import org.eclipse.cdt.core.dom.ILinkage;
 import org.eclipse.cdt.core.dom.ast.IBinding;
@@ -360,7 +361,7 @@ final class FileMacro extends DynamicMacro {
 	@Override
 	public Token execute(MacroExpander expander) {
         StringBuffer buffer = new StringBuffer("\""); //$NON-NLS-1$
-        buffer.append(expander.getCurrentFilename());
+        buffer.append(expander.getCurrentFilename().replace("\\", "\\\\"));  //$NON-NLS-1$//$NON-NLS-2$
         buffer.append('\"');
         return new TokenWithImage(IToken.tSTRING, null, 0, 0, buffer.toString().toCharArray());
     }

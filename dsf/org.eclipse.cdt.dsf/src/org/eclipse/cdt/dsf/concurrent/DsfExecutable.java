@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2008 Wind River Systems and others.
+ * Copyright (c) 2006, 2009 Wind River Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -17,12 +17,36 @@ import org.eclipse.cdt.dsf.internal.DsfPlugin;
 import org.eclipse.core.runtime.Platform;
 
 /**
- * Base class for DSF-instrumented alternative to the Runnable/Callable interfaces.
+ * Instrumented base class for
+ * <ul>
+ * <li>Runnable/Callable objects that are to be submitted to a DsfExecutor
+ * <li>objects that have a primary execution method (resembling
+ * <code>Runnable.run</code>) and that tend to be exercised from a DSF Executor
+ * and/or that submit work to a DSF executor.
+ * </ul>
+ * 
  * <p>
- * While it is perfectly fine for clients to call the DSF executor with
- * an object only implementing the Runnable/Callable interface, the DsfExecutable
- * contains fields and methods that used for debugging and tracing when 
- * tracing is enabled.
+ * Derivative classes benefit from additional fields that can be of help when
+ * debugging a DSF session. Derivatives that implement Runnable/Callable and are
+ * fed to DSF executors additionally benefit from tracing (when turned on by the
+ * user). A trace message is generated when the Runnable/Callable is submitted
+ * to the DsfExecutor.
+ * 
+ * <p>
+ * Note that DSF executors need not be fed instances of this type. It is
+ * perfectly fine for clients to call the DSF executor with a plain vanilla
+ * Runnable/Callable, but such objects will obviously not benefit from the
+ * instrumentation.
+ * 
+ * <p>
+ * When this base class is used to instrument a Runnable/Callable that is
+ * destined for a DSF executor, no additional work is imposed on the derived
+ * class. In all other cases, the subclass is responsible for calling
+ * {@link #setSubmitted()} from its primary execution method (e.g.,
+ * {@link RequestMonitor#done()}
+ * 
+ * All fields and methods in this class are for tracing and debugging purposes
+ * only.
  * 
  * @since 1.0
  */
@@ -45,24 +69,27 @@ public class DsfExecutable {
         assert (ASSERTIONS_ENABLED = true) == true;
         DEBUG_EXECUTOR = DsfPlugin.DEBUG && "true".equals( //$NON-NLS-1$
                 Platform.getDebugOption("org.eclipse.cdt.dsf/debug/executor")); //$NON-NLS-1$
-    }  
-    
-    /** 
-     * Field that holds the stack trace of where this executable was created.
-     * Used for tracing and debugging only.
-     */
+    }
+
+	/**
+	 * Stack trace indicating where this object was created.
+	 */
     final StackTraceWrapper fCreatedAt;
-    
-    /**
-     * Field holding the reference of the executable that created this 
-     * executable.  Used for tracing only.
-     */
+
+	/**
+	 * If this object was created by a runnable/callable that was submitted to a
+	 * DsfExecutor, this field holds a reference to its tracing wrapper.
+	 * Otherwise, this field is null.
+	 */
     final DefaultDsfExecutor.TracingWrapper fCreatedBy;
 
-    /**
-     * Flag indicating whether this executable was ever executed by an 
-     * executor.  Used for tracing only.
-     */
+	/**
+	 * If this object is a Runnable/Callable, this flag indicates whether this
+	 * object was ever submitted to a DsfExecutor for execution. If this is not
+	 * a Runnable/Callable, then this indicates whether the primary execution
+	 * method of the object was ever invoked. The subclass is required to
+	 * explicitly call this method at the start of that primary method.
+	 */
     private volatile boolean fSubmitted = false;
     
     @SuppressWarnings("unchecked")
@@ -96,30 +123,53 @@ public class DsfExecutable {
             fCreatedAt = null;
             fCreatedBy = null;
         }
-    }        
-    
+    }
+
+	/**
+	 * Was this object submitted for execution?
+	 * 
+	 * See {@link #setSubmitted()}
+	 */
     public boolean getSubmitted() {
         return fSubmitted;
     }
-    
-    /**
-     * Marks this executable to indicate that it has been executed by the 
-     * executor.  To be invoked only by DsfExecutor.
-     */
+
+	/**
+	 * Mark that this object was submitted for execution.
+	 * 
+	 * <p>
+	 * More specifically, if this object is a runnable/callable, this method is
+	 * called right before the execute/call method is invoked by a DSF executor.
+	 * If the object is not a runnable/callable, then this method is called
+	 * right before a DsfExecutor invokes a callable/runnable that will invoke
+	 * the target method of this object.
+	 */
     public void setSubmitted() {
         fSubmitted = true;
     }
-    
-    /**
-     * Returns whether the runnable/callable is expected to be always executed.  
-     * Overriding classes can implement this method and return false, to avoid
-     * unnecessary trace output. 
-     * @return true if this runnable is expected to run. 
-     */
+
+	/**
+	 * Returns whether this object is always expected to be executed.
+	 * We output a trace message if we are garbage collected without having been
+	 * executed...that is unless this method returns false. 
+	 * 
+	 * Subclasses should override this method and return false if instances of
+	 * it aren't meant to always be executed, thus avoiding unnecessary trace
+	 * output.
+	 * 
+	 * @return true if this object should always be executed
+	 */
     protected boolean isExecutionRequired() {
         return true;
     }
-    
+
+	/**
+	 * Checks to see if the object was executed before being garbage collected.
+	 * If not, and it's expected to have been, then output a trace message to
+	 * that effect.
+	 * 
+	 * @see java.lang.Object#finalize()
+	 */
     @Override
     protected void finalize() {
         if (DEBUG_EXECUTOR && !fSubmitted && isExecutionRequired()) {

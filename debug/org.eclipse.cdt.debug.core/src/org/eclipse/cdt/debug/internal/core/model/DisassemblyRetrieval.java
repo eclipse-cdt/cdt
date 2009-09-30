@@ -16,6 +16,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import org.eclipse.cdt.core.IAddress;
 import org.eclipse.cdt.core.IAddressFactory;
 import org.eclipse.cdt.debug.core.CDebugCorePlugin;
 import org.eclipse.cdt.debug.core.cdi.CDIException;
@@ -117,7 +118,8 @@ public class DisassemblyRetrieval extends CDebugElement implements ICDIEventList
         if ( input instanceof ICStackFrame ) {
             fInput = input;
             ICStackFrame frame = (ICStackFrame)input;
-            BigInteger address = frame.getAddress().getValue();
+            IAddress frameAddress = frame.getAddress();
+            BigInteger address = (frameAddress != null) ? frameAddress.getValue() : BigInteger.valueOf(0);
             if ( !containsAddress( address, fLines ) ) {
                 fCurrentOffset = 0;
                 reset();
@@ -135,7 +137,6 @@ public class DisassemblyRetrieval extends CDebugElement implements ICDIEventList
 
     public void retrieveDisassembly( Object input, Object base, int offset, int lineCount, boolean reveal, int flags ) throws DebugException {
         fFlags = flags;
-        boolean showInstructions = ( (flags & FLAGS_SHOW_INSTRUCTIONS) != 0 );
         boolean showSource = ( (flags & FLAGS_SHOW_SOURCE) != 0 );
         List<IDisassemblyLine> lines = new ArrayList<IDisassemblyLine>( lineCount );
         BigInteger startAddress = getCurrentStartAddress();
@@ -289,19 +290,6 @@ public class DisassemblyRetrieval extends CDebugElement implements ICDIEventList
         return null;
     }
 
-    private IDisassemblyInstruction getPreviousInstruction( BigInteger baseAddress ) throws DebugException {
-        BigInteger endAddress = baseAddress.add( BigInteger.valueOf( 1 ) );
-        BigInteger startAddress = baseAddress;
-        IDisassemblyLine[] lines = new IDisassemblyLine[0];
-        int index = -1;
-        while( index == -1 && startAddress.compareTo( getGlobalStartAddress() ) > 0 ) {
-            startAddress = startAddress.subtract( BigInteger.valueOf( 1 ) );
-            lines = disassemble( startAddress, endAddress, false );
-            index = getIndexForAddress( baseAddress, lines );
-        }
-        return ( index > 0 ) ? (IDisassemblyInstruction)lines[index - 1] : null;
-    }
-
     private IDisassemblyInstruction getFirstInstruction( IDisassemblyLine[] lines ) {
         for ( IDisassemblyLine l : lines ) {
             if ( l instanceof IDisassemblyInstruction )
@@ -316,10 +304,6 @@ public class DisassemblyRetrieval extends CDebugElement implements ICDIEventList
                 return (IDisassemblyInstruction)lines[i];
         }
         return null;
-    }
-
-    private BigInteger getGlobalStartAddress() {
-        return getAddressFactory().getZero().getValue();
     }
 
     private BigInteger getGlobalEndAddress() {

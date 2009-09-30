@@ -15,6 +15,7 @@ import java.util.List;
 import java.util.concurrent.RejectedExecutionException;
 import java.util.concurrent.atomic.AtomicBoolean;
 
+import org.eclipse.cdt.dsf.concurrent.DsfExecutable;
 import org.eclipse.cdt.dsf.concurrent.RequestMonitor;
 import org.eclipse.cdt.dsf.internal.ui.DsfUIPlugin;
 import org.eclipse.core.runtime.IStatus;
@@ -37,7 +38,7 @@ import org.eclipse.jface.viewers.TreePath;
  * 
  * @since 1.0
  */
-public class VMViewerUpdate implements IViewerUpdate {
+public class VMViewerUpdate extends DsfExecutable implements IViewerUpdate {
     
     /**
      * The request monitor to be called when this update is completed.
@@ -169,6 +170,7 @@ public class VMViewerUpdate implements IViewerUpdate {
     }
 
     public void done() { 
+    	setSubmitted();
         try {
             if ( isCanceled() ) {
                 fRequestMonitor.cancel();

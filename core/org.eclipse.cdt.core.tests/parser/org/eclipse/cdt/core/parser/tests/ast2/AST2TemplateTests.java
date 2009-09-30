@@ -4121,4 +4121,22 @@ public class AST2TemplateTests extends AST2BaseTest {
 		final String code = getAboveComment();
 		parseAndCheckBindings(code, ParserLanguage.CPP);
 	}
+	
+	//	class NullType {};
+	//	template <typename T, typename U> struct TypeList {
+	//	   typedef T Head;
+	//	   typedef U Tail;
+	//	};
+	//
+	//	template <typename T1 = NullType, typename T2 = NullType> struct CreateTL {
+	//	    typedef TypeList<T1, typename CreateTL<T2>::Type> Type;
+	//	};
+	//
+	//	template<> struct CreateTL<NullType, NullType> {
+	//	   typedef NullType Type;
+	//	};
+	public void testDefaultArgument_289132() throws Exception {
+		final String code= getAboveComment();
+		parseAndCheckBindings(code, ParserLanguage.CPP);
+	}
 }

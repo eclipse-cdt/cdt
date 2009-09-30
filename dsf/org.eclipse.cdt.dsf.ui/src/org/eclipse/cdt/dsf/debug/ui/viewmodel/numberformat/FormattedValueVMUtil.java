@@ -202,6 +202,11 @@ public class FormattedValueVMUtil {
                             update.setStatus(getStatus()); 
                         }
                         countingRm.done();
+
+						// Note we don't mark the update object done, and we
+						// avoid calling our base implementation so that it
+						// doesn't either. The completion of this request is
+						// just a step in servicing the update.
                     }
                 });
             count++;

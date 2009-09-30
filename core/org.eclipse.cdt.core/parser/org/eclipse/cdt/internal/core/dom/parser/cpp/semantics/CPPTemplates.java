@@ -1311,11 +1311,12 @@ public class CPPTemplates {
 	}
 
 	public static boolean areSameArguments(ICPPTemplateArgument[] args, ICPPTemplateArgument[] specArgs) {
-		if (args.length == specArgs.length) {
-			for (int i=0; i < args.length; i++) {
-				if (!specArgs[i].isSameValue(args[i])) 
-					return false;
-			}
+		if (args.length != specArgs.length) {
+			return false;
+		}
+		for (int i=0; i < args.length; i++) {
+			if (!specArgs[i].isSameValue(args[i])) 
+				return false;
 		}
 		return true;
 	}

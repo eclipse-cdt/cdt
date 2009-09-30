@@ -88,7 +88,7 @@ public class RxThread extends Thread {
 			String line;
 			while ((line = reader.readLine()) != null) {
 				// TRACING: print the output.
-				if (MIPlugin.getDefault().isDebugging()) {
+				if (MIPlugin.DEBUG) {
 					MIPlugin.getDefault().debugLog(line);
 				}
 				

@@ -123,14 +123,14 @@ public class FormattedValueVMUtil {
      * 
      * @param updates The array of updates to fill in information to.  This  
      * update is used to retrieve the data model context and to write the 
-     * properties into.
+     * properties into. Implementation will not directly mark these updates 
+     * complete, but contribute towards that end by marking [monitor] complete.
      * @param service The service to be used to retrieve the values from.
      * @param dmcType The class type of the data model context.  Some updates
      * can contain multiple formatted data data model contexts, and this
      * method assures that there is no ambiguity in which context should be 
      * used.
-     * @param monitor Request monitor that will be called when all the 
-     * updates are completed.
+     * @param monitor Request monitor used to signal completion of work
      */
     @ConfinedToDsfExecutor("service.getExecutor()")
     public static void updateFormattedValues(
@@ -152,6 +152,8 @@ public class FormattedValueVMUtil {
                 	// Retrieve the formatted values now that we have the available formats (where needed).
                 	// Note that we are passing off responsibility of our parent monitor  
                     updateFormattedValuesWithAvailableFormats(updates, service, dmcType, availableFormats, monitor); 
+                    
+                    // Note: we must not call the update's done method
                 }
         	};
         int count = 0;
@@ -208,6 +210,10 @@ public class FormattedValueVMUtil {
     }
 
 	/**
+	 * @param updates
+	 *            the update objects to act on. Implementation will not directly
+	 *            mark these complete, but contribute towards that end by
+	 *            marking [monitor] complete.
 	 * @param availableFormatsMap
 	 *            prior to calling this method, the caller queries (where
 	 *            necessary) the formats supported by the element in each
@@ -216,6 +222,8 @@ public class FormattedValueVMUtil {
 	 *            view-model element doesn't support any formats (very
 	 *            unlikely), or that the available formats aren't necessary to
 	 *            service the properties specified in the update
+	 * @param monitor
+	 *            Request monitor used to signal completion of work
 	 */
     @ConfinedToDsfExecutor("service.getExecutor()")
     private static void updateFormattedValuesWithAvailableFormats(
@@ -319,6 +327,8 @@ public class FormattedValueVMUtil {
                                 update.setStatus(getStatus());
                             }
                             countingRm.done();
+                            
+                            // Note: we must not call the update's done method
                         };
                     });
                 count++;

@@ -467,6 +467,11 @@ public class RegisterVMNode extends AbstractExpressionVMNode
     protected void updatePropertiesInSessionThread(final IPropertiesUpdate[] updates) {
         IRegisters service = getServicesTracker().getService(IRegisters.class, null);
 
+		// Create a counting request monitor to coordinate various activities
+		// on the updated objects. Though the update objects will be given to
+		// various ViewerDataRequestMonitors, such monitors must make sure to
+		// not mark the update objects complete. That needs to be left to the
+		// following monitor.
         final CountingRequestMonitor countingRm = new CountingRequestMonitor(ImmediateExecutor.getInstance(), null) {
             @Override
             protected void handleCompleted() {
@@ -512,6 +517,8 @@ public class RegisterVMNode extends AbstractExpressionVMNode
                             update.setStatus(getStatus());
                         }
                         countingRm.done();
+                        
+						// Note: we must not call the update's done method
                     }
                 });        
             count++;

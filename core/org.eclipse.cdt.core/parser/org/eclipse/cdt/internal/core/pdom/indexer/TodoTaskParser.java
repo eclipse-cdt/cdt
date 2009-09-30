@@ -12,6 +12,7 @@
 package org.eclipse.cdt.internal.core.pdom.indexer;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 
 import org.eclipse.cdt.core.dom.ast.IASTComment;
@@ -53,13 +54,19 @@ public class TodoTaskParser {
 	}
 
 	public Task[] parse(IASTComment[] comments) {
+		HashSet<String> locKeys= new HashSet<String>();
 		List<Task> tasks = new ArrayList<Task>();
-		for (int i = 0; i < comments.length; i++) {
-			IASTComment comment = comments[i];
+		for (IASTComment comment : comments) {
 			IASTFileLocation location = comment.getFileLocation();
 			if (location != null) { // be defensive, bug 213307
-				parse(comment.getComment(), location.getFileName(), location.getNodeOffset(),
-				location.getStartingLineNumber(), tasks);
+				final String fileName = location.getFileName();
+				final int nodeOffset = location.getNodeOffset();
+				final String key= fileName + ':' + nodeOffset;
+				// full indexer can yield duplicate comments, make sure to handle each comment only once (bug 287181)
+				if (locKeys.add(key)) {
+					parse(comment.getComment(), fileName, nodeOffset,
+							location.getStartingLineNumber(), tasks);
+				}
 			}
 		}
 		if (tasks.isEmpty()) {

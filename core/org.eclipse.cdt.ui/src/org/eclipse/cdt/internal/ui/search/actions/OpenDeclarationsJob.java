@@ -13,6 +13,7 @@ package org.eclipse.cdt.internal.ui.search.actions;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
@@ -50,6 +51,7 @@ import org.eclipse.cdt.core.dom.ast.IParameter;
 import org.eclipse.cdt.core.dom.ast.IProblemBinding;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTemplateDeclaration;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTranslationUnit;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunction;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPMethod;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPParameter;
@@ -593,7 +595,13 @@ class OpenDeclarationsJob extends Job implements ASTRunnable {
 					}
 				}
 
-				Collection<IBinding> secondaryBindings= removeSecondaryBindings(primaryBindings, sourceName);
+				Collection<IBinding> secondaryBindings;
+				if (ast instanceof ICPPASTTranslationUnit) {
+					secondaryBindings= cppRemoveSecondaryBindings(primaryBindings, sourceName);
+				} else {
+					secondaryBindings= Collections.emptyList();
+				}
+				
 				// Convert bindings to CElements
 				Collection<IBinding> bs= primaryBindings;
 				for (int k=0; k<2; k++) {
@@ -627,7 +635,7 @@ class OpenDeclarationsJob extends Job implements ASTRunnable {
 		return false;
 	}
 
-	private Collection<IBinding> removeSecondaryBindings(Set<IBinding> primaryBindings, IASTName sourceName) {
+	private Collection<IBinding> cppRemoveSecondaryBindings(Set<IBinding> primaryBindings, IASTName sourceName) {
 		List<IBinding> result= new ArrayList<IBinding>();
 		String[] sourceQualifiedName= null;
 		int funcArgCount= -1;

@@ -157,21 +157,29 @@ public class RequestMonitor extends DsfExecutable {
         }
         return fStatus; 
     }
-    
-    /**
-     * Sets this request monitor as canceled and calls the cancel listeners if any.
-     * <p>
-     * Note: Calling cancel() does not automatically complete the RequestMonitor.  
-     * The asynchronous call still has to call done().
-     * </p>
-     * <p>
-     * Note: logically a request should only be canceled by the client that issued 
-     * the request in the first place.  After a request is canceled, the method
-     * that is fulfilling the request may call {@link #setStatus(IStatus)} with 
-     * severity of <code>IStatus.CANCEL</code> to indicate that it recognized that
-     * the given request was canceled and it did not perform the given operation.   
-     * </p>
-     */
+
+	/**
+	 * Sets this request monitor as canceled and calls the cancel listeners if
+	 * any.
+	 * <p>
+	 * Note: Calling cancel() does not automatically complete the
+	 * RequestMonitor. The asynchronous call still has to call done().
+	 * </p>
+	 * <p>
+	 * Note: logically a request should only be canceled by the client that
+	 * issued the request in the first place. After a request is canceled, the
+	 * method that is fulfilling the request may call
+	 * {@link #setStatus(IStatus)} with severity of <code>IStatus.CANCEL</code>
+	 * to indicate that it recognized that the given request was canceled and it
+	 * did not perform the given operation.
+	 * </p>
+	 * <p>
+	 * Canceling a monitor effectively cancels all descendant monitors, by
+	 * virtue of the default implementation of {@link #isCanceled()}, which
+	 * checks not only its own state but that of its parent. However, only the
+	 * cancel listeners of the monitor directly canceled will be called.
+	 * </p>
+	 */
     public void cancel() {
         Object[] listeners = null;
         synchronized (this) {
@@ -198,6 +206,10 @@ public class RequestMonitor extends DsfExecutable {
      * canceled by the client, the implementor handling the request should 
      * still call {@link #done()} in order to complete handling 
      * of the request monitor. 
+     * 
+     * <p>
+     * A request monitor is considered canceled if either it or its parent was canceled.
+     * </p> 
      */
     public synchronized boolean isCanceled() { 
         return fCanceled || (fParentRequestMonitor != null && fParentRequestMonitor.isCanceled());
@@ -205,7 +217,7 @@ public class RequestMonitor extends DsfExecutable {
     
     /**
      * Adds the given listener to list of listeners that are notified when this 
-     * request monitor is canceled.
+     * request monitor is directly canceled.
      */
     public synchronized void addCancelListener(ICanceledListener listener) {
         if (fCancelListeners == null) {
@@ -216,7 +228,7 @@ public class RequestMonitor extends DsfExecutable {
 
     /**
      * Removes the given listener from the list of listeners that are notified 
-     * when this request monitor is canceled.
+     * when this request monitor is directly canceled.
      */
     public synchronized void removeCancelListener(ICanceledListener listener) {
         if (fCancelListeners != null) {
@@ -392,14 +404,13 @@ public class RequestMonitor extends DsfExecutable {
             fParentRequestMonitor.done();
         }        
     }
-    
-    /**
-     * Default handler for a canceled the completion of a request.  If this 
-     * monitor has a parent monitor that was configured by the constructor, that 
-     * parent monitor is notified.  Otherwise this method does nothing. 
-     * <br>
-     * Note: Sub-classes may override this method.
-     */
+
+	/**
+	 * Default completion handler for a canceled request. If this monitor was
+	 * constructed with a parent monitor, the status is propagated up to it.
+	 * Otherwise this method does nothing. <br>
+	 * Note: Sub-classes may override this method.
+	 */
     @ConfinedToDsfExecutor("fExecutor")
     protected void handleCancel() {
         if (fParentRequestMonitor != null) {

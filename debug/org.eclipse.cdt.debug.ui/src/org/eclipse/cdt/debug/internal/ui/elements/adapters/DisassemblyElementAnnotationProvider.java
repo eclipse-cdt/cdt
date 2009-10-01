@@ -13,6 +13,7 @@ package org.eclipse.cdt.debug.internal.ui.elements.adapters;
 
 import java.math.BigInteger;
 
+import org.eclipse.cdt.core.IAddress;
 import org.eclipse.cdt.debug.core.CDebugCorePlugin;
 import org.eclipse.cdt.debug.core.model.ICLineBreakpoint;
 import org.eclipse.cdt.debug.core.model.ICStackFrame;
@@ -75,8 +76,8 @@ public class DisassemblyElementAnnotationProvider implements IDocumentElementAnn
                 if ( element instanceof IDisassemblyInstruction ) {
                     BigInteger address = ((IDisassemblyInstruction)element).getAdress().getValue();
                     ICStackFrame frame = (ICStackFrame)input;
-                    BigInteger frameAddress = frame.getAddress().getValue();
-                    if ( address.equals( frameAddress ) ) {
+                    IAddress frameAddress = frame.getAddress();	// will return null if frame has been disposed
+                    if ( (frameAddress != null) && address.equals( frameAddress.getValue() ) ) {
                         IThread thread = frame.getThread();
                         boolean topFrame;
                         try {

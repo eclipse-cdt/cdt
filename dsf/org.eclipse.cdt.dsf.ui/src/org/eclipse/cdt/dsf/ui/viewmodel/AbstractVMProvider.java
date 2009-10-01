@@ -23,7 +23,6 @@ import org.eclipse.cdt.dsf.concurrent.CountingRequestMonitor;
 import org.eclipse.cdt.dsf.concurrent.DataRequestMonitor;
 import org.eclipse.cdt.dsf.concurrent.IDsfStatusConstants;
 import org.eclipse.cdt.dsf.concurrent.RequestMonitor;
-import org.eclipse.cdt.dsf.concurrent.RequestMonitor.ICanceledListener;
 import org.eclipse.cdt.dsf.internal.ui.DsfUIPlugin;
 import org.eclipse.cdt.dsf.ui.concurrent.SimpleDisplayExecutor;
 import org.eclipse.cdt.dsf.ui.concurrent.ViewerDataRequestMonitor;
@@ -328,13 +327,9 @@ abstract public class AbstractVMProvider implements IVMProvider, IVMEventListene
         // that should be handled.  If there are, doHandleEvent calls itself
         // to process the next event in the queue.
         assert queue.fCurrentEvent == null && queue.fCurrentRm == null;
-
-        // We intentionally do not give the client RM as the parent RM
-        // for the queue.fCurrentRm.  This is because fCurrentRm may get
-        // canceled if a new event comes and overrides it.  If client RM 
-        // was the parent, it would lead to the inconsistent situation where
-        // a sub-RM is canceled but the parent is not.
-        final RequestMonitor queueRm = new RequestMonitor(getExecutor(), null) {
+        
+        queue.fCurrentEvent = eventInfo;
+        queue.fCurrentRm = new RequestMonitor(getExecutor(), eventInfo.fClientRm) {
             @Override
             protected void handleCompleted() {
                 eventInfo.fClientRm.done();
@@ -346,14 +341,6 @@ abstract public class AbstractVMProvider implements IVMProvider, IVMEventListene
                 } 
             }
         };
-        eventInfo.fClientRm.addCancelListener(new ICanceledListener() {
-            public void requestCanceled(RequestMonitor rm) {
-                queueRm.cancel();
-            }
-        });
-        
-        queue.fCurrentEvent = eventInfo;
-        queue.fCurrentRm = queueRm;
         handleEvent(proxyStrategy, eventInfo.fEvent, queue.fCurrentRm);
     }
 

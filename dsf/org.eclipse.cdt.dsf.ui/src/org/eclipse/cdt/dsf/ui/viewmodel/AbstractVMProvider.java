@@ -23,6 +23,7 @@ import org.eclipse.cdt.dsf.concurrent.CountingRequestMonitor;
 import org.eclipse.cdt.dsf.concurrent.DataRequestMonitor;
 import org.eclipse.cdt.dsf.concurrent.IDsfStatusConstants;
 import org.eclipse.cdt.dsf.concurrent.RequestMonitor;
+import org.eclipse.cdt.dsf.concurrent.RequestMonitor.ICanceledListener;
 import org.eclipse.cdt.dsf.internal.ui.DsfUIPlugin;
 import org.eclipse.cdt.dsf.ui.concurrent.SimpleDisplayExecutor;
 import org.eclipse.cdt.dsf.ui.concurrent.ViewerDataRequestMonitor;
@@ -349,7 +350,7 @@ abstract public class AbstractVMProvider implements IVMProvider, IVMEventListene
             public void requestCanceled(RequestMonitor rm) {
                 queueRm.cancel();
             }
-        })
+        });
         
         queue.fCurrentEvent = eventInfo;
         queue.fCurrentRm = queueRm;

@@ -888,15 +888,15 @@ public class AbstractCachingVMProvider extends AbstractVMProvider
         
         return proxy;
     }
-    
-    /**
-     * Called when a given all cache entries for the given root element have
-     * been removed from the cache.  In order to property track changed elements, 
-     * the caching VM provider does not immediately remove entries for a given root
-     * element, when the viewer root element changes.  Instead it keeps this root 
-     * element and keeps processing deltas for that root element until the 
-     * cache entries for this element are gone. 
-     */
+
+	/**
+	 * Called when all cache entries for the given root element have been
+	 * removed from the cache. In order to properly track changed elements, the
+	 * caching VM provider does not immediately forget about the proxy for a
+	 * given root element when the viewer root element changes. Instead it holds
+	 * on to the proxy and keeps processing deltas for that root element until
+	 * the cache entries for this element are gone.
+	 */
     protected void rootElementRemovedFromCache(Object rootElement) {
         fRootMarkers.remove(rootElement);
         

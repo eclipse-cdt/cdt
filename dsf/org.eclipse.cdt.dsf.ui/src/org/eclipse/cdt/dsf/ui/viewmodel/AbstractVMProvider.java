@@ -327,9 +327,13 @@ abstract public class AbstractVMProvider implements IVMProvider, IVMEventListene
         // that should be handled.  If there are, doHandleEvent calls itself
         // to process the next event in the queue.
         assert queue.fCurrentEvent == null && queue.fCurrentRm == null;
-        
-        queue.fCurrentEvent = eventInfo;
-        queue.fCurrentRm = new RequestMonitor(getExecutor(), null) {
+
+        // We intentionally do not give the client RM as the parent RM
+        // for the queue.fCurrentRm.  This is because fCurrentRm may get
+        // canceled if a new event comes and overrides it.  If client RM 
+        // was the parent, it would lead to the inconsistent situation where
+        // a sub-RM is canceled but the parent is not.
+        final RequestMonitor queueRm = new RequestMonitor(getExecutor(), null) {
             @Override
             protected void handleCompleted() {
                 eventInfo.fClientRm.done();
@@ -341,6 +345,14 @@ abstract public class AbstractVMProvider implements IVMProvider, IVMEventListene
                 } 
             }
         };
+        eventInfo.fClientRm.addCancelListener(new ICanceledListener() {
+            public void requestCanceled(RequestMonitor rm) {
+                queueRm.cancel();
+            }
+        })
+        
+        queue.fCurrentEvent = eventInfo;
+        queue.fCurrentRm = queueRm;
         handleEvent(proxyStrategy, eventInfo.fEvent, queue.fCurrentRm);
     }
 

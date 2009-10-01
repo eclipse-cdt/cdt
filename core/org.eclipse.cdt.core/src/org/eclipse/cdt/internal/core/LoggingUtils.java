@@ -12,14 +12,12 @@ package org.eclipse.cdt.internal.core;
 
 /**
  * Some general purpose functions that can be useful for logging/tracing activities.
- * 
- * @since 5.2
  */
 public class LoggingUtils {
 	/**
 	 * Return a string that uniquely identifies a Java object reference, in the
-	 * form "classname@id", where 'classname' is the simple (package
-	 * unqualified) name of the object's class, and 'id' is the hash code.
+	 * form "classname@id", where 'classname' is the simple or package qualified
+	 * name of the object's class, and 'id' is the hash code.
 	 * 
 	 * Why not just use obj.toString()? That method is often overriden, and so
 	 * cannot be relied on for a representation that uniquely identifies the
@@ -27,20 +25,33 @@ public class LoggingUtils {
 	 * 
 	 * @param obj
 	 *            the object reference to stringify
+	 * @param simpleClassName
+	 *            if true, use the class's simple name, otherwise the package
+	 *            qualified one
+	 * 
 	 * @return the stringified representation of the object reference
 	 */
-	public static String toString(Object obj) {
+	public static String toString(Object obj, boolean simpleClassName) {
 		if (obj == null) {
 			return "null";  //$NON-NLS-1$
 		}
 		String className = obj.getClass().getName();
-		int lastDot = className.lastIndexOf('.');
-		if ((lastDot >= 0) && ((lastDot + 1) < className.length())) {
-			className = className.substring(lastDot + 1);
+		if (simpleClassName) {
+			int lastDot = className.lastIndexOf('.');
+			if ((lastDot >= 0) && ((lastDot + 1) < className.length())) {
+				className = className.substring(lastDot + 1);
+			}
 		}
 
 		String id = Integer.toHexString(System.identityHashCode(obj));
 	
 		return className + "@" + id; //$NON-NLS-1$
+	}
+	
+	/**
+	 * Equivalent to toString(obj, false)
+	 */
+	public static String toString(Object obj) {
+		return toString(obj, true);
 	}
 }

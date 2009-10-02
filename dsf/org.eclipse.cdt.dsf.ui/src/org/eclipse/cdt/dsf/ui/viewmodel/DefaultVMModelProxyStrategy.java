@@ -525,11 +525,13 @@ public class DefaultVMModelProxyStrategy implements IVMModelProxy {
                         protected void handleCompleted() {
                             if (fDisposed) return;
                             
+                            final List<Object> childElements = getData();
+                            
                             // Check for an empty list of elements.  If the list of elements is empty
                             // still call the child nodes using the parent delta only.  Do this only if
                             // an optimization was used to build the delta, so that the child node can  
                             // adds the optimized delta flags without the full delta (bug 280770).
-                            if (getData() == null || getData().size() == 0) {
+                            if (childElements == null || childElements.size() == 0) {
                                 if (updateFlagsOnly) {
                                     callChildNodesToBuildDelta(
                                         node, childNodesWithDeltaFlags, parentDelta, event, rm);
@@ -538,26 +540,21 @@ public class DefaultVMModelProxyStrategy implements IVMModelProxy {
                                     return;
                                 }
                             } else {
-                                final MultiRequestMonitor<RequestMonitor> elementsDeltasMultiRequestMon = 
-                                    new MultiRequestMonitor<RequestMonitor>(getVMProvider().getExecutor(), rm);
+                                final CountingRequestMonitor countingRM = new CountingRequestMonitor(getVMProvider().getExecutor(), rm);
+                                int rmCount = 0;
         
                                 // For each element from this node, create a new delta, 
                                 // and then call all the child nodes to build their delta. 
-                                for (int i = 0; i < getData().size(); i++) {
+                                for (int i = 0; i < childElements.size(); i++) {
                                     int elementIndex = nodeOffset >= 0 ? nodeOffset + i : -1;
-                                    VMDelta delta= parentDelta.getChildDelta(getData().get(i));
+                                    VMDelta delta= parentDelta.getChildDelta(childElements.get(i));
                                     if (delta == null) {
-                                        delta= parentDelta.addNode(getData().get(i), elementIndex, IModelDelta.NO_CHANGE);
+                                        delta= parentDelta.addNode(childElements.get(i), elementIndex, IModelDelta.NO_CHANGE);
                                     }
-                                    callChildNodesToBuildDelta(
-                                        node, childNodesWithDeltaFlags, delta, event, 
-                                        elementsDeltasMultiRequestMon.add(new RequestMonitor(getVMProvider().getExecutor(), null) { 
-                                            @Override
-                                            protected void handleCompleted() {
-                                                elementsDeltasMultiRequestMon.requestMonitorDone(this);
-                                            }
-                                        }));
+                                    callChildNodesToBuildDelta(node, childNodesWithDeltaFlags, delta, event, countingRM);
+                                    rmCount++;
                                 }
+                                countingRM.setDoneCount(rmCount);
                             }
                         }
                     })

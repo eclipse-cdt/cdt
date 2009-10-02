@@ -20,6 +20,9 @@ import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTemplateId;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPConstructor;
+import org.eclipse.cdt.core.parser.Keywords;
+import org.eclipse.cdt.core.parser.util.CharArrayUtils;
 
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPVisitor;
 
@@ -68,15 +71,34 @@ public class OccurrencesFinder implements IOccurrencesFinder {
 					addUsage(candidate, candidate.resolveBinding());
 				}
 			}
-			names= CPPVisitor.getImplicitReferences(fRoot, fTarget);
-			for (IASTName candidate : names) {
-				if (candidate.isPartOfTranslationUnitFile()) {
-					addUsage(candidate, candidate.resolveBinding());
+			if (canHaveImplicitReference(fTarget)) {
+				names= CPPVisitor.getImplicitReferences(fRoot, fTarget);
+				for (IASTName candidate : names) {
+					if (candidate.isPartOfTranslationUnitFile()) {
+						addUsage(candidate, candidate.resolveBinding());
+					}
 				}
 			}
 		}
 	}
 	
+	private boolean canHaveImplicitReference(IBinding binding) {
+		final char[] op = Keywords.cOPERATOR;
+		final char[] nameCharArray = binding.getNameCharArray();
+		if (nameCharArray.length > 0) {
+			if (nameCharArray[0] == '~') {
+				return true;
+			}
+			if (CharArrayUtils.equals(nameCharArray, 0, op.length, op)) {
+				return true;
+			}
+		}
+		if (binding instanceof ICPPConstructor)
+			return true;
+		
+		return false;
+	}
+
 	public OccurrenceLocation[] getOccurrences() {
 		performSearch();
 		if (fResult.isEmpty())

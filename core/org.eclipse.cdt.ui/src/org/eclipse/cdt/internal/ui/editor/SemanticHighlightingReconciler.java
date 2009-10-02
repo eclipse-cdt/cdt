@@ -64,7 +64,13 @@ public class SemanticHighlightingReconciler implements ICReconcilingListener {
 	 * Collects positions from the AST.
 	 */
 	private class PositionCollector extends CPPASTVisitor {
-		{
+
+		/** The semantic token */
+		private SemanticToken fToken= new SemanticToken();
+		private int fMinLocation;
+		
+		public PositionCollector(boolean visitImplicitNames) {
+			fMinLocation= -1;
 			shouldVisitTranslationUnit= true;
 			shouldVisitNames= true;
 			shouldVisitDeclarations= true;
@@ -72,16 +78,8 @@ public class SemanticHighlightingReconciler implements ICReconcilingListener {
 			shouldVisitStatements= true;
 			shouldVisitDeclarators= true;
 			shouldVisitNamespaces= true;
-			shouldVisitImplicitNames = true;
-			shouldVisitImplicitNameAlternates = true;
-		}
-
-		/** The semantic token */
-		private SemanticToken fToken= new SemanticToken();
-		private int fMinLocation;
-		
-		public PositionCollector() {
-			fMinLocation= -1;
+			shouldVisitImplicitNames = visitImplicitNames;
+			shouldVisitImplicitNameAlternates = visitImplicitNames;
 		}
 
 		/*
@@ -351,7 +349,7 @@ public class SemanticHighlightingReconciler implements ICReconcilingListener {
 			if (ast == null || fJobPresenter.isCanceled())
 				return;
 			
-			PositionCollector collector= new PositionCollector();
+			PositionCollector collector= new PositionCollector(requiresImplicitNames());
 
 			startReconcilingPositions();
 			
@@ -374,6 +372,16 @@ public class SemanticHighlightingReconciler implements ICReconcilingListener {
 				fIsReconciling= false;
 			}
 		}
+	}
+
+	private boolean requiresImplicitNames() {
+		for (int i = 0; i < fSemanticHighlightings.length; i++) {
+			SemanticHighlighting sh = fSemanticHighlightings[i];
+			if (sh.requiresImplicitNames() && fHighlightings[i].isEnabled()) {
+				return true;
+			}
+		}
+		return false;
 	}
 
 	/**

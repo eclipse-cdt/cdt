@@ -1935,6 +1935,13 @@ public class SemanticHighlightings {
 			return OVERLOADED_OPERATOR;
 		}
 
+		
+		@Override
+		public boolean requiresImplicitNames() {
+			return true;
+		}
+
+
 		/*
 		 * @see org.eclipse.cdt.internal.ui.editor.SemanticHighlighting#getDefaultTextColor()
 		 */
@@ -1964,7 +1971,7 @@ public class SemanticHighlightings {
 		 */
 		@Override
 		public boolean isEnabledByDefault() {
-			return true;
+			return false;
 		}
 
 		/*

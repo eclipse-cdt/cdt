@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 IBM Corporation and others.
+ * Copyright (c) 2000, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,6 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Anton Leherbauer (Wind River Systems) - Adapted for CDT
+ *     Markus Schorn (Wind River Systems)
  *******************************************************************************/
 
 package org.eclipse.cdt.internal.ui.editor;
@@ -72,6 +73,14 @@ public abstract class SemanticHighlighting {
 	 * @return the display name
 	 */
 	public abstract String getDisplayName();
+	
+	/**
+	 * Indicates that the highlighting needs to visit implicit names 
+	 * (e.g. overloaded operators)
+	 */
+	public boolean requiresImplicitNames() {
+		return false;
+	}
 
 	/**
 	 * Returns <code>true</code> iff the semantic highlighting consumes the semantic token.

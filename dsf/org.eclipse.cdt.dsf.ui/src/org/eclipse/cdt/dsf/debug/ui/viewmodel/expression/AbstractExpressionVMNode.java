@@ -101,6 +101,7 @@ public abstract class AbstractExpressionVMNode extends AbstractDMVMNode
                                 update.done();
                             }
                         }; 
+                        multiRm.requireDoneAdding();
                             
                         for (Object element : elements) {
                             testElementForExpression(
@@ -113,6 +114,7 @@ public abstract class AbstractExpressionVMNode extends AbstractDMVMNode
                                         }
                                     }));
                         }
+                        multiRm.doneAdding();                        
                     }
                 }
                 

@@ -154,6 +154,7 @@ public class DefaultVMContentProviderStrategy implements IElementContentProvider
                         update.done();
                     }
                 };
+                hasChildrenMultiRequestMon.requireDoneAdding();
     
                 for (int j = 0; j < childNodes.length; j++) {
                     elementsUpdates[j][i] = new VMHasChildrenUpdate(update, hasChildrenMultiRequestMon
@@ -164,6 +165,7 @@ public class DefaultVMContentProviderStrategy implements IElementContentProvider
                             }
                         }));
                 }
+                hasChildrenMultiRequestMon.doneAdding();
             }
     
             for (int j = 0; j < childNodes.length; j++) {

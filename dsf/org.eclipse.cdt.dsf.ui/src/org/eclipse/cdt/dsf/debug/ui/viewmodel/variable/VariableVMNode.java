@@ -26,7 +26,6 @@ import org.eclipse.cdt.dsf.concurrent.DsfExecutor;
 import org.eclipse.cdt.dsf.concurrent.DsfRunnable;
 import org.eclipse.cdt.dsf.concurrent.IDsfStatusConstants;
 import org.eclipse.cdt.dsf.concurrent.ImmediateExecutor;
-import org.eclipse.cdt.dsf.concurrent.MultiRequestMonitor;
 import org.eclipse.cdt.dsf.concurrent.RequestMonitor;
 import org.eclipse.cdt.dsf.datamodel.DMContexts;
 import org.eclipse.cdt.dsf.datamodel.IDMContext;
@@ -891,36 +890,36 @@ public class VariableVMNode extends AbstractExpressionVMNode
                     
                     // Create the MultiRequestMonitor to handle completion of the set of getModelData() calls.
                     
-                    final MultiRequestMonitor<DataRequestMonitor<IVariableDMData>> mrm =
-                        new MultiRequestMonitor<DataRequestMonitor<IVariableDMData>>(dsfExecutor, null) {
-                            @Override
-                            public void handleCompleted() {
-                                // Now that all the calls to getModelData() are complete, we create an
-                                // IExpressionDMContext object for each local variable name, saving them all
-                                // in an array.
+                    final CountingRequestMonitor crm = new CountingRequestMonitor(dsfExecutor, null) {
+                        @Override
+                        public void handleCompleted() {
+                            // Now that all the calls to getModelData() are complete, we create an
+                            // IExpressionDMContext object for each local variable name, saving them all
+                            // in an array.
 
-                                if (!isSuccess()) {
-                                    handleFailedUpdate(update);
-                                    return;
-                                }
-         
-                                IExpressionDMContext[] expressionDMCs = new IExpressionDMContext[localsDMData.size()];
-                                
-                                int i = 0;
-                                
-                                for (IVariableDMData localDMData : localsDMData) {
-                                    expressionDMCs[i++] = expressionService.createExpression(frameDmc, localDMData.getName());
-                                }
-
-                                // Lastly, we fill the update from the array of view model context objects
-                                // that reference the ExpressionDMC objects for the local variables.  This is
-                                // the last code to run for a given call to updateElementsInSessionThread().
-                                // We can now leave anonymous-inner-class hell.
-
-                                fillUpdateWithVMCs(update, expressionDMCs);
-                                update.done();
+                            if (!isSuccess()) {
+                                handleFailedUpdate(update);
+                                return;
                             }
+     
+                            IExpressionDMContext[] expressionDMCs = new IExpressionDMContext[localsDMData.size()];
+                            
+                            int i = 0;
+                            
+                            for (IVariableDMData localDMData : localsDMData) {
+                                expressionDMCs[i++] = expressionService.createExpression(frameDmc, localDMData.getName());
+                            }
+
+                            // Lastly, we fill the update from the array of view model context objects
+                            // that reference the ExpressionDMC objects for the local variables.  This is
+                            // the last code to run for a given call to updateElementsInSessionThread().
+                            // We can now leave anonymous-inner-class hell.
+
+                            fillUpdateWithVMCs(update, expressionDMCs);
+                            update.done();
+                        }
                     };
+                    int countRM = 0;
                     
                     // Perform a set of getModelData() calls, one for each local variable's data model
                     // context object.  In the handleCompleted() method of the DataRequestMonitor, add the
@@ -932,14 +931,14 @@ public class VariableVMNode extends AbstractExpressionVMNode
                                 @Override
                                 public void handleCompleted() {
                                     localsDMData.add(getData());
-                                    mrm.requestMonitorDone(this);
+                                    crm.done();
                                 }
                         };
                         
-                        mrm.add(rm);
-                        
                         stackFrameService.getVariableData(localDMC, rm);
+                        countRM++;
                     }
+                    crm.setDoneCount(countRM);
                 }
         };
 

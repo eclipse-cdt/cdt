@@ -20,7 +20,6 @@ import org.eclipse.cdt.dsf.concurrent.CountingRequestMonitor;
 import org.eclipse.cdt.dsf.concurrent.DataRequestMonitor;
 import org.eclipse.cdt.dsf.concurrent.DsfRunnable;
 import org.eclipse.cdt.dsf.concurrent.IDsfStatusConstants;
-import org.eclipse.cdt.dsf.concurrent.MultiRequestMonitor;
 import org.eclipse.cdt.dsf.concurrent.RequestMonitor;
 import org.eclipse.core.runtime.ISafeRunnable;
 import org.eclipse.core.runtime.ListenerList;
@@ -645,8 +644,7 @@ public class DefaultVMModelProxyStrategy implements IVMModelProxy {
         
         if (calculdateOffsets) {
             final Integer[] counts = new Integer[childNodes.length]; 
-            final MultiRequestMonitor<RequestMonitor> childrenCountMultiRequestMon = 
-                new MultiRequestMonitor<RequestMonitor>(getVMProvider().getExecutor(), rm) { 
+            final CountingRequestMonitor crm = new CountingRequestMonitor(getVMProvider().getExecutor(), rm) { 
                     @Override
                     protected void handleSuccess() {
                         Map<IVMNode, Integer> data = new HashMap<IVMNode, Integer>();
@@ -660,7 +658,8 @@ public class DefaultVMModelProxyStrategy implements IVMModelProxy {
                         rm.setData(data);
                         rm.done();
                     }
-                };
+            };
+            int countRM = 0;
             
             for (int i = 0; i < childNodes.length; i++) {
                 final int nodeIndex = i;
@@ -668,17 +667,18 @@ public class DefaultVMModelProxyStrategy implements IVMModelProxy {
                     childNodes[i], 
                     new VMChildrenCountUpdate(
                         delta, getVMProvider().getPresentationContext(),
-                        childrenCountMultiRequestMon.add(
-                            new DataRequestMonitor<Integer>(getVMProvider().getExecutor(), rm) {
+                            new DataRequestMonitor<Integer>(getVMProvider().getExecutor(), crm) {
                                 @Override
                                 protected void handleCompleted() {
                                     counts[nodeIndex] = getData();
-                                    childrenCountMultiRequestMon.requestMonitorDone(this);
+                                    crm.done();
                                 }
-                            }) 
+                            } 
                         )
                     );
+                countRM++;
             }
+            crm.setDoneCount(countRM);
         } else {
             Map<IVMNode, Integer> data = new HashMap<IVMNode, Integer>();
             for (int i = 0; i < childNodes.length; i++) {

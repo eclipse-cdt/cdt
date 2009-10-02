@@ -19,7 +19,6 @@ import org.eclipse.cdt.dsf.concurrent.ConfinedToDsfExecutor;
 import org.eclipse.cdt.dsf.concurrent.CountingRequestMonitor;
 import org.eclipse.cdt.dsf.concurrent.DataRequestMonitor;
 import org.eclipse.cdt.dsf.concurrent.MultiRequestMonitor;
-import org.eclipse.cdt.dsf.concurrent.RequestMonitor;
 import org.eclipse.cdt.dsf.ui.concurrent.ViewerCountingRequestMonitor;
 import org.eclipse.cdt.dsf.ui.concurrent.ViewerDataRequestMonitor;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IChildrenCountUpdate;
@@ -261,30 +260,32 @@ public class DefaultVMContentProviderStrategy implements IElementContentProvider
 
         // Get the mapping of all the counts.
         final Integer[] counts = new Integer[childNodes.length];
-        final MultiRequestMonitor<RequestMonitor> childrenCountMultiReqMon = new MultiRequestMonitor<RequestMonitor>(
-            getVMProvider().getExecutor(), rm) {
+        final CountingRequestMonitor crm = new CountingRequestMonitor(getVMProvider().getExecutor(), rm) {
             @Override
             protected void handleSuccess() {
                 rm.setData(counts);
                 rm.done();
             }
         };
+        int countRM = 0;
 
         for (int i = 0; i < childNodes.length; i++) {
             final int nodeIndex = i;
             getVMProvider().updateNode(
                 childNodes[i],
-                new VMChildrenCountUpdate(update, childrenCountMultiReqMon.add(new ViewerDataRequestMonitor<Integer>(
+                new VMChildrenCountUpdate(update, new ViewerDataRequestMonitor<Integer>(
                     getVMProvider().getExecutor(), update) {
                     @Override
                     protected void handleCompleted() {
                     	if (isSuccess()) {
                             counts[nodeIndex] = getData();
                     	}
-                        childrenCountMultiReqMon.requestMonitorDone(this);
+                        crm.done();
                     }
-                })));
+                }));
+            countRM++;
         }
+        crm.setDoneCount(countRM);
     }
 
     /**

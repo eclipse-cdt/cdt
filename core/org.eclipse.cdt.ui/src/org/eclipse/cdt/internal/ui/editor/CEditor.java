@@ -36,6 +36,7 @@ import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.content.IContentType;
 import org.eclipse.core.runtime.jobs.Job;
+import org.eclipse.core.runtime.preferences.InstanceScope;
 import org.eclipse.help.IContextProvider;
 import org.eclipse.jface.action.GroupMarker;
 import org.eclipse.jface.action.IAction;
@@ -137,6 +138,7 @@ import org.eclipse.ui.part.EditorActionBarContributor;
 import org.eclipse.ui.part.IShowInSource;
 import org.eclipse.ui.part.IShowInTargetList;
 import org.eclipse.ui.part.ShowInContext;
+import org.eclipse.ui.preferences.ScopedPreferenceStore;
 import org.eclipse.ui.texteditor.AbstractDecoratedTextEditorPreferenceConstants;
 import org.eclipse.ui.texteditor.AbstractMarkerAnnotationModel;
 import org.eclipse.ui.texteditor.ChainedPreferenceStore;
@@ -205,7 +207,6 @@ import org.eclipse.cdt.internal.ui.text.CWordFinder;
 import org.eclipse.cdt.internal.ui.text.CWordIterator;
 import org.eclipse.cdt.internal.ui.text.DocumentCharacterIterator;
 import org.eclipse.cdt.internal.ui.text.ICReconcilingListener;
-import org.eclipse.cdt.internal.ui.text.PreferencesAdapter;
 import org.eclipse.cdt.internal.ui.text.Symbols;
 import org.eclipse.cdt.internal.ui.text.c.hover.SourceViewerInformationControl;
 import org.eclipse.cdt.internal.ui.text.contentassist.ContentAssistPreference;
@@ -3331,7 +3332,7 @@ public class CEditor extends TextEditor implements ISelectionChangedListener, IC
 		}
 
 		stores.add(CUIPlugin.getDefault().getPreferenceStore());
-		stores.add(new PreferencesAdapter(CCorePlugin.getDefault().getPluginPreferences()));
+		stores.add(new ScopedPreferenceStore(new InstanceScope(), CCorePlugin.PLUGIN_ID));
 		stores.add(EditorsUI.getPreferenceStore());
 
 		return new ChainedPreferenceStore(stores.toArray(new IPreferenceStore[stores.size()]));

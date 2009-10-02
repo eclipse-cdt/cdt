@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2002, 2008 QNX Software Systems and others.
+ * Copyright (c) 2002, 2009 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -13,7 +13,7 @@
 package org.eclipse.cdt.make.internal.ui.preferences;
 
 import org.eclipse.cdt.make.core.MakeCorePlugin;
-import org.eclipse.cdt.make.internal.ui.text.PreferencesAdapter;
+import org.eclipse.core.runtime.preferences.InstanceScope;
 import org.eclipse.jface.preference.FieldEditorPreferencePage;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.preference.PathEditor;
@@ -21,6 +21,7 @@ import org.eclipse.jface.preference.RadioGroupFieldEditor;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPreferencePage;
+import org.eclipse.ui.preferences.ScopedPreferenceStore;
 
 /**
  * MakePreferencePage
@@ -34,13 +35,14 @@ public class MakefileSettingsPreferencePage extends FieldEditorPreferencePage im
 
 	public MakefileSettingsPreferencePage() {
 		super(GRID);
-		IPreferenceStore store = new PreferencesAdapter(MakeCorePlugin.getDefault().getPluginPreferences());
+		IPreferenceStore store = new ScopedPreferenceStore(new InstanceScope(), MakeCorePlugin.PLUGIN_ID);
 		setPreferenceStore(store);
 	}
 
 	/**
 	 * @see FieldEditorPreferencePage#createControl(Composite)
 	 */
+	@Override
 	protected void createFieldEditors() {
 		String[][] personalities = {{POSIX_MAKE_LABEL, POSIX_MAKE_VALUE}, {GNU_MAKE_LABEL, GNU_MAKE_VALUE}};
 		RadioGroupFieldEditor combo = new RadioGroupFieldEditor(MakeCorePlugin.MAKEFILE_STYLE,
@@ -59,6 +61,7 @@ public class MakefileSettingsPreferencePage extends FieldEditorPreferencePage im
 
 	/**
 	 * Initializes the default values of this page in the preference bundle.
+	 * @param prefs  preference store
 	 */
 	public static void initDefaults(IPreferenceStore prefs) {
 	}

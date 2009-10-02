@@ -36,6 +36,7 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
+import org.eclipse.core.runtime.preferences.InstanceScope;
 import org.eclipse.jface.action.GroupMarker;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.Separator;
@@ -56,6 +57,7 @@ import org.eclipse.ui.editors.text.EditorsUI;
 import org.eclipse.ui.editors.text.templates.ContributionContextTypeRegistry;
 import org.eclipse.ui.editors.text.templates.ContributionTemplateStore;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
+import org.eclipse.ui.preferences.ScopedPreferenceStore;
 import org.eclipse.ui.texteditor.ChainedPreferenceStore;
 import org.eclipse.ui.texteditor.ConfigurationElementSorter;
 import org.osgi.framework.Bundle;
@@ -90,7 +92,6 @@ import org.eclipse.cdt.internal.ui.editor.WorkingCopyManager;
 import org.eclipse.cdt.internal.ui.editor.asm.AsmTextTools;
 import org.eclipse.cdt.internal.ui.refactoring.CTextFileChangeFactory;
 import org.eclipse.cdt.internal.ui.text.CTextTools;
-import org.eclipse.cdt.internal.ui.text.PreferencesAdapter;
 import org.eclipse.cdt.internal.ui.text.c.hover.CEditorTextHoverDescriptor;
 import org.eclipse.cdt.internal.ui.text.doctools.DocCommentOwnerManager;
 import org.eclipse.cdt.internal.ui.text.doctools.EditorReopener;
@@ -122,6 +123,8 @@ public class CUIPlugin extends AbstractUIPlugin {
 	public static final String CPP_PROJECT_WIZARD_ID = PLUGIN_ID + ".wizards.StdCCWizard"; //$NON-NLS-1$
 
 	public final static String CWIZARD_CATEGORY_ID = "org.eclipse.cdt.ui.newCWizards"; //$NON-NLS-1$
+	/** @deprecated This wizard category has been merged with the {@link #CWIZARD_CATEGORY_ID c wizard category} */
+	@Deprecated
 	public final static String CCWIZARD_CATEGORY_ID = "org.eclipse.cdt.ui.newCCWizards"; //$NON-NLS-1$
 	
 	public static final String SEARCH_ACTION_SET_ID = PLUGIN_ID + ".SearchActionSet"; //$NON-NLS-1$
@@ -666,8 +669,11 @@ public class CUIPlugin extends AbstractUIPlugin {
 	 */
 	public IPreferenceStore getCombinedPreferenceStore() {
 		if (fCombinedPreferenceStore == null) {
-			IPreferenceStore generalTextStore= EditorsUI.getPreferenceStore(); 
-			fCombinedPreferenceStore= new ChainedPreferenceStore(new IPreferenceStore[] { getPreferenceStore(), new PreferencesAdapter(CCorePlugin.getDefault().getPluginPreferences()), generalTextStore });
+			fCombinedPreferenceStore= new ChainedPreferenceStore(new IPreferenceStore[] { 
+					getPreferenceStore(), 
+					new ScopedPreferenceStore(new InstanceScope(), PLUGIN_CORE_ID), 
+					EditorsUI.getPreferenceStore() 
+			});
 		}
 		return fCombinedPreferenceStore;
 	}
@@ -909,7 +915,7 @@ public class CUIPlugin extends AbstractUIPlugin {
 	 */
 	public ContextTypeRegistry getCodeTemplateContextRegistry() {
 		if (fCodeTemplateContextTypeRegistry == null) {
-			fCodeTemplateContextTypeRegistry= new ContributionContextTypeRegistry();
+			fCodeTemplateContextTypeRegistry= new ContributionContextTypeRegistry("org.eclipse.cdt.ui.codeTemplates");
 			
 			CodeTemplateContextType.registerContextTypes(fCodeTemplateContextTypeRegistry);
 			FileTemplateContextType.registerContextTypes(fCodeTemplateContextTypeRegistry);

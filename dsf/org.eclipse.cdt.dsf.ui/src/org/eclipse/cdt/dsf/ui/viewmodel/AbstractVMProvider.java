@@ -156,8 +156,17 @@ abstract public class AbstractVMProvider implements IVMProvider, IVMEventListene
     }
     
     private class ModelProxyEventQueue {
-        EventInfo fCurrentEvent = null;
-        RequestMonitor fCurrentRm = null;
+        /** The event actively being handled */
+        EventInfo fCurrentEvent;
+
+		/**
+		 * The request monitor we created to handle fCurrentEvent. It is
+		 * responsible for calling <code>done</code> on the client RM of that
+		 * event.
+		 */
+        RequestMonitor fCurrentRm;
+        
+        /** The queue */
         List<EventInfo> fEventQueue = new LinkedList<EventInfo>();
     }
     

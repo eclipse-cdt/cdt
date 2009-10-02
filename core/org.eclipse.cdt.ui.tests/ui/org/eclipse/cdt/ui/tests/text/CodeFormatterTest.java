@@ -1228,4 +1228,86 @@ public class CodeFormatterTest extends BaseUITestCase {
 		assertFormatterResult();
 	}
 
+	//#define If  if (1 == 1){
+	//#define Else } else {
+	//#define EndElse }
+	//
+	//#define Try  try{
+	//#define Catch } catch(...) {
+	//#define EndCatch }
+	//
+	//int main() {
+	//	Try
+	//		cout << "OK2" << endl;
+	//	Catch
+	//		cout << "Exception" << endl;
+	//	EndCatch
+	//	Try
+	//		cout << "OK2" << endl;
+	//	Catch
+	//		cout << "Exception" << endl;
+	//	EndCatch
+	//
+	//	If
+	//		cout << "OK" << endl;
+	//	Else
+	//		cout << "Strange" << endl;
+	//	EndElse
+	//
+	//	Try
+	//		cout << "OK2" << endl;
+	//	Catch
+	//		cout << "Exception" << endl;
+	//	EndCatch
+	//	Try
+	//		cout << "OK2" << endl;
+	//	Catch
+	//		cout << "Exception" << endl;
+	//	EndCatch
+	//
+	//	return 0;
+	//}
+
+	//#define If  if (1 == 1){
+	//#define Else } else {
+	//#define EndElse }
+	//
+	//#define Try  try{
+	//#define Catch } catch(...) {
+	//#define EndCatch }
+	//
+	//int main() {
+	//	Try
+	//		cout << "OK2" << endl;
+	//	Catch
+	//		cout << "Exception" << endl;
+	//	EndCatch
+	//	Try
+	//		cout << "OK2" << endl;
+	//	Catch
+	//		cout << "Exception" << endl;
+	//	EndCatch
+	//
+	//	If
+	//		cout << "OK" << endl;
+	//	Else
+	//		cout << "Strange" << endl;
+	//	EndElse
+	//
+	//	Try
+	//		cout << "OK2" << endl;
+	//	Catch
+	//		cout << "Exception" << endl;
+	//	EndCatch
+	//	Try
+	//		cout << "OK2" << endl;
+	//	Catch
+	//		cout << "Exception" << endl;
+	//	EndCatch
+	//
+	//	return 0;
+	//}
+public void testControlStatementsAsMacro_Bug290630() throws Exception {
+		assertFormatterResult();
+	}
 }

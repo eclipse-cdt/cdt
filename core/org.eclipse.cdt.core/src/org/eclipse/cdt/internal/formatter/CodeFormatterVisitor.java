@@ -2494,6 +2494,8 @@ public class CodeFormatterVisitor extends CPPASTVisitor {
 					if (elseStatement != null) {
 						scribe.startNewLine();
 					}
+				} else if (thenStatement instanceof IASTCompoundStatement && !enclosedInMacroExpansion(thenStatement)) {
+					thenStatement.accept(this);
 				} else {
 					scribe.printTrailingComment();
 					scribe.startNewLine();
@@ -2508,10 +2510,12 @@ public class CodeFormatterVisitor extends CPPASTVisitor {
 		}
 
 		if (elseStatement != null) {
-			if (thenStatementIsBlock) {
-				scribe.printNextToken(Token.t_else, preferences.insert_space_after_closing_brace_in_block);
-			} else {
-				scribe.printNextToken(Token.t_else, true);
+			if (!startsWithMacroExpansion(elseStatement)) {
+				if (thenStatementIsBlock) {
+					scribe.printNextToken(Token.t_else, preferences.insert_space_after_closing_brace_in_block);
+				} else {
+					scribe.printNextToken(Token.t_else, true);
+				}
 			}
 			if (elseStatement instanceof IASTCompoundStatement) {
 				elseStatement.accept(this);

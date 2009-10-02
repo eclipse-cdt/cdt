@@ -72,6 +72,7 @@ import org.eclipse.cdt.core.model.ISourceReference;
 import org.eclipse.cdt.core.model.ITranslationUnit;
 import org.eclipse.cdt.core.model.util.CElementBaseLabels;
 import org.eclipse.cdt.core.parser.util.ArrayUtil;
+import org.eclipse.cdt.core.parser.util.CharArrayUtils;
 import org.eclipse.cdt.ui.CUIPlugin;
 
 import org.eclipse.cdt.internal.core.dom.parser.ASTNode;
@@ -599,7 +600,7 @@ class OpenDeclarationsJob extends Job implements ASTRunnable {
 				if (ast instanceof ICPPASTTranslationUnit) {
 					secondaryBindings= cppRemoveSecondaryBindings(primaryBindings, sourceName);
 				} else {
-					secondaryBindings= Collections.emptyList();
+					secondaryBindings= defaultRemoveSecondaryBindings(primaryBindings, sourceName);
 				}
 				
 				// Convert bindings to CElements
@@ -633,6 +634,38 @@ class OpenDeclarationsJob extends Job implements ASTRunnable {
 			}
 		}
 		return false;
+	}
+
+	private Collection<IBinding> defaultRemoveSecondaryBindings(Set<IBinding> primaryBindings, IASTName sourceName) {
+		if (sourceName != null) {
+			IBinding b= sourceName.resolveBinding();
+			if (b != null && ! (b instanceof IProblemBinding)) {
+				try {
+					for (Iterator<IBinding> iterator = primaryBindings.iterator(); iterator.hasNext();) {
+						if (!checkOwnerNames(b, iterator.next()))
+							iterator.remove();
+					}
+				} catch (DOMException e) {
+					// ignore
+				}
+			}
+		}
+		return Collections.emptyList();
+	}
+
+	private boolean checkOwnerNames(IBinding b1, IBinding b2) throws DOMException {
+		IBinding o1 = b1.getOwner();
+		IBinding o2= b2.getOwner();
+		if (o1 == o2) 
+			return true;
+		
+		if (o1 == null || o2 == null)
+			return false;
+		
+		if (!CharArrayUtils.equals(o1.getNameCharArray(), o2.getNameCharArray())) 
+			return false;
+		
+		return checkOwnerNames(o1, o2);
 	}
 
 	private Collection<IBinding> cppRemoveSecondaryBindings(Set<IBinding> primaryBindings, IASTName sourceName) {

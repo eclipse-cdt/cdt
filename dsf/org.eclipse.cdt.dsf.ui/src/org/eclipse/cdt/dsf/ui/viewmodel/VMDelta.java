@@ -271,18 +271,22 @@ public class VMDelta extends ModelDelta {
 	
     @Override
 	public String toString() {
-		StringBuffer buf = new StringBuffer();
+		StringBuilder buf = new StringBuilder();
 		buf.append("Model Delta Start\n"); //$NON-NLS-1$
-		appendDetail(buf, this);
+		appendDetail(buf, this, 0);
 		buf.append("Model Delta End\n"); //$NON-NLS-1$
 		return buf.toString();
 	}
 	
-	private void appendDetail(StringBuffer buf, VMDelta delta) {
-        buf.append("\tElement: "); //$NON-NLS-1$
+	private void appendDetail(StringBuilder buf, VMDelta delta, int depth) {
+		String indent = new String();
+		for (int i = 0; i < depth; i++) {
+			indent += '\t';
+		}
+        buf.append(indent + "\tElement: "); //$NON-NLS-1$
         buf.append(delta.getElement());
         buf.append('\n');
-        buf.append("\t\tFlags: "); //$NON-NLS-1$
+        buf.append(indent + "\t\tFlags: "); //$NON-NLS-1$
         int flags = delta.getFlags();
         if (flags == 0) {
             buf.append("NO_CHANGE"); //$NON-NLS-1$
@@ -319,14 +323,14 @@ public class VMDelta extends ModelDelta {
             }
         }
         buf.append('\n');
-        buf.append("\t\tIndex: "); //$NON-NLS-1$
+        buf.append(indent + "\t\tIndex: "); //$NON-NLS-1$
         buf.append(delta.fIndex);
         buf.append(" Child Count: "); //$NON-NLS-1$
         buf.append(delta.fChildCount);
         buf.append('\n');
         IModelDelta[] nodes = delta.getChildDeltas();
         for (int i = 0; i < nodes.length; i++) {
-            appendDetail(buf, (VMDelta)nodes[i]);
+            appendDetail(buf, (VMDelta)nodes[i], depth+1);
         }
 	}
     

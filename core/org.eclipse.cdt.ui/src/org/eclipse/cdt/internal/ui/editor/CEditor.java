@@ -36,6 +36,7 @@ import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.content.IContentType;
 import org.eclipse.core.runtime.jobs.Job;
+import org.eclipse.help.IContext;
 import org.eclipse.help.IContextProvider;
 import org.eclipse.jface.action.GroupMarker;
 import org.eclipse.jface.action.IAction;
@@ -112,6 +113,8 @@ import org.eclipse.swt.custom.BusyIndicator;
 import org.eclipse.swt.custom.ST;
 import org.eclipse.swt.custom.StyledText;
 import org.eclipse.swt.custom.VerifyKeyListener;
+import org.eclipse.swt.events.HelpEvent;
+import org.eclipse.swt.events.HelpListener;
 import org.eclipse.swt.events.VerifyEvent;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.Point;
@@ -131,6 +134,7 @@ import org.eclipse.ui.actions.ActionContext;
 import org.eclipse.ui.actions.ActionGroup;
 import org.eclipse.ui.editors.text.EditorsUI;
 import org.eclipse.ui.editors.text.TextEditor;
+import org.eclipse.ui.help.IWorkbenchHelpSystem;
 import org.eclipse.ui.ide.IGotoMarker;
 import org.eclipse.ui.navigator.ICommonMenuConstants;
 import org.eclipse.ui.part.EditorActionBarContributor;
@@ -2321,8 +2325,21 @@ public class CEditor extends TextEditor implements ISelectionChangedListener, IC
 	public void createPartControl(Composite parent) {
 		super.createPartControl(parent);
 
-		PlatformUI.getWorkbench().getHelpSystem().setHelp(parent, ICHelpContextIds.CEDITOR_VIEW);
-
+		// bug 291008 - register custom help listener
+		final IWorkbenchHelpSystem helpSystem = PlatformUI.getWorkbench().getHelpSystem();
+		parent.addHelpListener(new HelpListener() {
+			public void helpRequested(HelpEvent e) {
+				IContextProvider provider = (IContextProvider) CEditor.this.getAdapter(IContextProvider.class);
+				if (provider != null) {
+					IContext context = provider.getContext(CEditor.this);
+					if (context != null) {
+						helpSystem.displayHelp(context);
+						return;
+					}
+				}
+				helpSystem.displayHelp(ICHelpContextIds.CEDITOR_VIEW);
+			}});
+		
 		fEditorSelectionChangedListener = new EditorSelectionChangedListener();
 		fEditorSelectionChangedListener.install(getSelectionProvider());
 

@@ -955,7 +955,6 @@ public class VariableVMNode extends AbstractExpressionVMNode
              (e instanceof PropertyChangeEvent &&
               ((PropertyChangeEvent)e).getProperty() == IDebugVMConstants.PROP_FORMATTED_VALUE_FORMAT_PREFERENCE) ) 
         {
-            // Create a delta that the whole register group has changed.
             return IModelDelta.CONTENT;
         } 
 
@@ -972,7 +971,6 @@ public class VariableVMNode extends AbstractExpressionVMNode
              (e instanceof PropertyChangeEvent &&
               ((PropertyChangeEvent)e).getProperty() == IDebugVMConstants.PROP_FORMATTED_VALUE_FORMAT_PREFERENCE) ) 
         {
-            // Create a delta that the whole register group has changed.
             parentDelta.setFlags(parentDelta.getFlags() | IModelDelta.CONTENT);
         } 
 

@@ -58,9 +58,9 @@ public class CDefaultLanguageData extends CLanguageData {
 		fLanguageId = languageId;
 		
 		if(isContentTypes)
-			fSourceContentTypeIds = (String[])ids.clone();
+			fSourceContentTypeIds = ids.clone();
 		else
-			fSourceExts = (String[])ids.clone();
+			fSourceExts = ids.clone();
 		
 		fStore = createStore();
 	}
@@ -85,10 +85,11 @@ public class CDefaultLanguageData extends CLanguageData {
 	protected EntryStore createStore(CLanguageData data){
 		EntryStore store = createStore(); 
 		int kinds[] = KindBasedStore.getLanguageEntryKinds();
-		for(int i = 0; i < kinds.length; i++){
-			ICLanguageSettingEntry entries[] = getEntriesToCopy(kinds[i], data);
+		for (int kind : kinds) {
+			ICLanguageSettingEntry entries[] = getEntriesToCopy(kind, data);
 			entries = processStoredEntries(entries, OP_COPY);
-			store.storeEntries(kinds[i], entries);
+			store.storeEntries(kind, entries);
+			
 		}
 		return store;
 	}

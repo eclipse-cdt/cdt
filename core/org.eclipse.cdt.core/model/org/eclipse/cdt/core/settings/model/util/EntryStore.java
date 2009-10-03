@@ -25,7 +25,7 @@ import org.eclipse.cdt.core.settings.model.ICMacroEntry;
 import org.eclipse.cdt.core.settings.model.ICMacroFileEntry;
 
 public class EntryStore {
-	private KindBasedStore fStore = new KindBasedStore();
+	private KindBasedStore<ArrayList<ICLanguageSettingEntry>> fStore = new KindBasedStore<ArrayList<ICLanguageSettingEntry>>();
 	private boolean fPreserveReadOnly;
 	
 	public EntryStore(){
@@ -36,21 +36,21 @@ public class EntryStore {
 		fPreserveReadOnly = preserveReadOnly;
 	}
 	
+	@SuppressWarnings("unchecked")
 	public EntryStore(EntryStore base, boolean preserveReadOnly){
 		for(int kind : KindBasedStore.getLanguageEntryKinds()){
-			ArrayList<?> list = (ArrayList<?>)fStore.get(kind);
+			ArrayList<ICLanguageSettingEntry> list = fStore.get(kind);
 			if(list != null)
-				fStore.put(kind, (ArrayList<?>)list.clone());
+				fStore.put(kind, (ArrayList<ICLanguageSettingEntry>) list.clone());
 		}
 		fPreserveReadOnly = preserveReadOnly;
 	}
 
-	@SuppressWarnings("unchecked")
 	public ICLanguageSettingEntry[] getEntries(){
 		List<ICLanguageSettingEntry> result = new ArrayList<ICLanguageSettingEntry>();
 		List<ICLanguageSettingEntry> list;
 		for(int k: KindBasedStore.getLanguageEntryKinds()){
-			list = (List<ICLanguageSettingEntry>)fStore.get(k);
+			list = fStore.get(k);
 			if(list != null)
 				result.addAll(list);
 		}
@@ -58,7 +58,7 @@ public class EntryStore {
 	}
 	
 	public boolean containsEntriesList(int kind){
-		List<?> list = getEntriesList(kind, false);
+		List<ICLanguageSettingEntry> list = getEntriesList(kind, false);
 		return list != null;
 	}
 
@@ -68,17 +68,17 @@ public class EntryStore {
 			list = new ArrayList<ICLanguageSettingEntry>(0);
 		switch(kind){
 		case ICLanguageSettingEntry.INCLUDE_PATH:
-			return (ICLanguageSettingEntry[])list.toArray(new ICIncludePathEntry[list.size()]);
+			return list.toArray(new ICIncludePathEntry[list.size()]);
 		case ICLanguageSettingEntry.INCLUDE_FILE:
-			return (ICLanguageSettingEntry[])list.toArray(new ICIncludeFileEntry[list.size()]);
+			return list.toArray(new ICIncludeFileEntry[list.size()]);
 		case ICLanguageSettingEntry.MACRO:
-			return (ICLanguageSettingEntry[])list.toArray(new ICMacroEntry[list.size()]);
+			return list.toArray(new ICMacroEntry[list.size()]);
 		case ICLanguageSettingEntry.MACRO_FILE:
-			return (ICLanguageSettingEntry[])list.toArray(new ICMacroFileEntry[list.size()]);
+			return list.toArray(new ICMacroFileEntry[list.size()]);
 		case ICLanguageSettingEntry.LIBRARY_PATH:
-			return (ICLanguageSettingEntry[])list.toArray(new ICLibraryPathEntry[list.size()]);
+			return list.toArray(new ICLibraryPathEntry[list.size()]);
 		case ICLanguageSettingEntry.LIBRARY_FILE:
-			return (ICLanguageSettingEntry[])list.toArray(new ICLibraryFileEntry[list.size()]);
+			return list.toArray(new ICLibraryFileEntry[list.size()]);
 		default:
 			throw new IllegalArgumentException();
 		}
@@ -91,13 +91,12 @@ public class EntryStore {
 		return new ArrayList<ICLanguageSettingEntry>(0);
 	}
 
-	private void setEntriesList(int kind, List<ICLanguageSettingEntry> list){
+	private void setEntriesList(int kind, ArrayList<ICLanguageSettingEntry> list){
 		fStore.put(kind, list);
 	}
 	
-	@SuppressWarnings("unchecked")
-	private List<ICLanguageSettingEntry> getEntriesList(int kind, boolean create){
-		List<ICLanguageSettingEntry> list = (List<ICLanguageSettingEntry>)fStore.get(kind);
+	private ArrayList<ICLanguageSettingEntry> getEntriesList(int kind, boolean create){
+		ArrayList<ICLanguageSettingEntry> list = fStore.get(kind);
 		if(list == null && create){
 			fStore.put(kind, list = new ArrayList<ICLanguageSettingEntry>());
 		}
@@ -130,7 +129,7 @@ public class EntryStore {
 	}
 
 	public void storeEntries(int kind, List<ICLanguageSettingEntry> list){
-		List<ICLanguageSettingEntry> newList = new ArrayList<ICLanguageSettingEntry>(list);
+		ArrayList<ICLanguageSettingEntry> newList = new ArrayList<ICLanguageSettingEntry>(list);
 //		newList.addAll(Arrays.asList(entries));
 		if(fPreserveReadOnly){
 			List<ICLanguageSettingEntry> oldList = getEntriesList(kind, false);
@@ -160,12 +159,10 @@ public class EntryStore {
 		list.add(entry);
 	}
 	
-	@SuppressWarnings("unchecked")
 	public void trimToSize(){
 		int kinds[] = KindBasedStore.getLanguageEntryKinds();
 		for(int i = 0; i < kinds.length; i++){
-			ArrayList<ICLanguageSettingEntry> list = 
-				(ArrayList<ICLanguageSettingEntry>)fStore.get(kinds[i]);
+			ArrayList<ICLanguageSettingEntry> list = fStore.get(kinds[i]);
 			if(list != null)
 				list.trimToSize();
 		}

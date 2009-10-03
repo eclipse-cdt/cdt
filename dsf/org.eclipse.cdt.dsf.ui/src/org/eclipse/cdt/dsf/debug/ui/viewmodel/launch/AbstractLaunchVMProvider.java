@@ -46,6 +46,7 @@ import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.IDebugEventSetListener;
 import org.eclipse.debug.core.ILaunch;
 import org.eclipse.debug.core.ILaunchesListener2;
+import org.eclipse.debug.internal.ui.viewers.model.provisional.IModelDelta;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IPresentationContext;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.util.IPropertyChangeListener;
@@ -239,7 +240,7 @@ public class AbstractLaunchVMProvider extends AbstractDMVMProvider
                     if (isDisposed()) return;
     
                     IRootVMNode rootLayoutNode = getRootVMNode();
-                    if (rootLayoutNode != null && rootLayoutNode.getDeltaFlags(event) != 0) {
+                    if (rootLayoutNode != null && rootLayoutNode.getDeltaFlags(event) != IModelDelta.NO_CHANGE) {
                         handleEvent(event);
                     }
                 }});

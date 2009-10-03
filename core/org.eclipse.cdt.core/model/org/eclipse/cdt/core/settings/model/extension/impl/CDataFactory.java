@@ -169,7 +169,7 @@ public class CDataFactory {
 			}
 			break;
 		case ICSettingBase.SETTING_FOLDER:
-			((CDefaultFolderData)parent).fLanguageDatas.add(child);
+			((CDefaultFolderData)parent).fLanguageDatas.add((CLanguageData)child);
 			break;
 		case ICSettingBase.SETTING_FILE:
 			((CDefaultFileData)parent).fLanguageData = (CLanguageData)child;

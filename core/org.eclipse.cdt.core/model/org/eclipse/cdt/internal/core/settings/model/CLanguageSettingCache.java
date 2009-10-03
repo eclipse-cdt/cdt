@@ -87,7 +87,7 @@ public class CLanguageSettingCache extends CDefaultLanguageData implements
 			} else {
 				exts = super.getSourceExtensions();
 				if(exts != null && exts.length != 0)
-					exts = (String[])exts.clone();
+					exts = exts.clone();
 				else
 					exts = CDefaultLanguageData.EMPTY_STRING_ARRAY;
 			}
@@ -98,7 +98,7 @@ public class CLanguageSettingCache extends CDefaultLanguageData implements
 		}
 		
 		if(fCachedExtensions.length != 0)
-			return (String[])fCachedExtensions.clone();
+			return fCachedExtensions.clone();
 		return fCachedExtensions;
 	}
 

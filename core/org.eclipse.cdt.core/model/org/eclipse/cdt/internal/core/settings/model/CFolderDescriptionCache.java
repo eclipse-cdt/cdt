@@ -44,7 +44,7 @@ public class CFolderDescriptionCache extends CDefaultFolderData implements
 	}
 
 	public ICLanguageSetting[] getLanguageSettings() {
-		return (CLanguageSettingCache[])fLanguageDatas.toArray(new CLanguageSettingCache[fLanguageDatas.size()]);
+		return fLanguageDatas.toArray(new CLanguageSettingCache[fLanguageDatas.size()]);
 	}
 
 	public ICResourceDescription getNestedResourceDescription(IPath relPath, boolean exactPath) {

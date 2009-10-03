@@ -22,7 +22,7 @@ import org.eclipse.core.runtime.IPath;
 public class CDefaultFolderData extends CFolderData {
 	protected IPath fPath;
 //	protected boolean fIsExcluded;
-	protected List fLanguageDatas = new ArrayList();
+	protected List<CLanguageData> fLanguageDatas = new ArrayList<CLanguageData>();
 	protected String fName;
 	protected String fId;
 	protected CConfigurationData fCfg;
@@ -52,8 +52,8 @@ public class CDefaultFolderData extends CFolderData {
 	protected void copyDataFrom(CFolderData base, boolean clone){
 		if(base != null){
 			CLanguageData lDatas[] = base.getLanguageDatas();
-			for(int i = 0; i < lDatas.length; i++){
-				fLanguageDatas.add(copyLanguageData(lDatas[i], clone));
+			for (CLanguageData lData : lDatas) {
+				fLanguageDatas.add(copyLanguageData(lData, clone));
 			}
 			
 //			fIsExcluded = base.isExcluded();
@@ -66,7 +66,7 @@ public class CDefaultFolderData extends CFolderData {
 	
 	@Override
 	public CLanguageData[] getLanguageDatas() {
-		return (CLanguageData[])fLanguageDatas.toArray(new CLanguageData[fLanguageDatas.size()]);
+		return fLanguageDatas.toArray(new CLanguageData[fLanguageDatas.size()]);
 	}
 
 	@Override
@@ -149,8 +149,8 @@ public class CDefaultFolderData extends CFolderData {
 			return true;
 		
 		CLanguageData lDatas[] = getLanguageDatas();
-		for(int i = 0; i < lDatas.length; i++){
-			if(fFactory.isModified(lDatas[i]))
+		for (CLanguageData lData : lDatas) {
+			if(fFactory.isModified(lData))
 				return true;
 		}
 		
@@ -162,8 +162,8 @@ public class CDefaultFolderData extends CFolderData {
 
 		if(!modified){
 			CLanguageData lDatas[] = getLanguageDatas();
-			for(int i = 0; i < lDatas.length; i++){
-				fFactory.setModified(lDatas[i], false);
+			for (CLanguageData lData : lDatas) {
+				fFactory.setModified(lData, false);
 			}
 		}
 

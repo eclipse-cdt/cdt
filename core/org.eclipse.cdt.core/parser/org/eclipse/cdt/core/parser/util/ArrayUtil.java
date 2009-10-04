@@ -99,8 +99,7 @@ public abstract class ArrayUtil {
     /**
      * Assumes that array contains nulls at the end, only. 
      * Appends element after the last non-null element. 
-     * If the array is null or not large enough, a larger one is allocated, using
-     * the given class object.
+     * If the array is null or not large enough, a larger one is allocated.
      */
     @SuppressWarnings("unchecked")
 	static public <T> T[] append(T[] array, T obj) {

@@ -99,6 +99,35 @@ public class ArrayUtil {
     }
 
     /**
+     * Assumes that array contains nulls at the end, only. 
+     * Appends element after the last non-null element. 
+     * If the array is null or not large enough, a larger one is allocated, using
+     * the given class object.
+     */
+    @SuppressWarnings("unchecked")
+	static public <T> T[] append(T[] array, T obj) {
+    	if (obj == null)
+    		return array;
+    	if (array == null || array.length == 0) {
+    		Class c = array != null ? array.getClass().getComponentType() : obj.getClass();
+    		array = (T[]) Array.newInstance(c, DEFAULT_LENGTH);
+    		array[0] = obj;
+    		return array;
+    	}
+
+    	int i= findFirstNull(array);
+    	if (i >= 0) {
+    		array[i]= obj;
+    		return array;
+    	}
+
+    	T[] temp = (T[]) Array.newInstance(array.getClass().getComponentType(), array.length * 2);
+    	System.arraycopy(array, 0, temp, 0, array.length);
+    	temp[array.length] = obj;
+    	return temp;
+    }
+
+    /**
      * Type safe version of {@link #append(Class, Object[], int, Object)}
      * @since 5.1
      */
@@ -107,10 +136,6 @@ public class ArrayUtil {
     	return (T[]) append(c, array, currentLength, obj);
     }
 
-    static public Object[] append(Object[] array, Object obj) {
-        return append(Object.class, array, obj);
-    }
-    
     /**
      * Trims the given array and returns a new array with no null entries.
      * Assumes that nulls can be found at the end, only.
@@ -128,14 +153,13 @@ public class ArrayUtil {
             return (Object[]) Array.newInstance(c, 0);
         
         int i = array.length;
-        if (i==0 || array[i-1] != null) {
+        if (i == 0 || array[i - 1] != null) {
         	if (!forceNew) {
         		return array;
         	}
-        }
-        else {
-        	i=findFirstNull(array);
-        	assert i>=0;
+        } else {
+        	i= findFirstNull(array);
+        	assert i >= 0;
         }
 
         Object[] temp = (Object[]) Array.newInstance(c, i);
@@ -143,10 +167,48 @@ public class ArrayUtil {
         return temp;
     }
 
-
     public static Object[] trim(Class<?> c, Object[] array) {
         return trim(c, array, false);
     }
+
+    /**
+     * Trims the given array and returns a new array with no null entries.
+     * Assumes that nulls can be found at the end, only.
+     * if forceNew == true, a new array will always be created.
+     * if forceNew == false, a new array will only be created if the original array
+     * contained null entries.
+     *  
+     * @param array the array to be trimmed
+     * @param forceNew
+     * @since 5.2
+     */
+    @SuppressWarnings("unchecked")
+	static public <T> T[] trim(T[] array, boolean forceNew) {
+        int i = array.length;
+        if (i == 0 || array[i - 1] != null) {
+        	if (!forceNew) {
+        		return array;
+        	}
+        } else {
+        	i= findFirstNull(array);
+        	assert i >= 0;
+        }
+
+        T[] temp = (T[]) Array.newInstance(array.getClass().getComponentType(), i);
+        System.arraycopy(array, 0, temp, 0, i);
+        return temp;
+    }
+
+    /**
+     * Trims the given array and returns a new array with no null entries.
+     * Assumes that nulls can be found at the end, only.
+     *  
+     * @param array the array to be trimmed
+     * @since 5.2
+     */
+	static public <T> T[] trim(T[] array) {
+		return trim(array, false);
+	}
 
     /**
      * Assumes that both arrays contain nulls at the end, only.

@@ -10,6 +10,7 @@
  *     Markus Schorn (Wind River Systems)
  *     Andrew Ferguson (Symbian)
  *     Mike Kucera (IBM)
+ *     Sergey Prigogin (Google)
  *******************************************************************************/
 package org.eclipse.cdt.core.parser.util;
 
@@ -17,9 +18,8 @@ import java.lang.reflect.Array;
 
 /**
  * @noextend This interface is not intended to be extended by clients.
- * @noinstantiate This class is not intended to be instantiated by clients.
  */
-public class ArrayUtil {
+public abstract class ArrayUtil {
     private static final int DEFAULT_LENGTH = 2;
     
     /**
@@ -56,18 +56,17 @@ public class ArrayUtil {
     private static int findFirstNull(Object[] array) {
     	boolean haveNull= false;
     	int left= 0;
-    	int right= array.length-1;
+    	int right= array.length - 1;
     	while (left <= right) {
-    		int mid= (left+right)/2;
+    		int mid= (left + right) / 2;
     		if (array[mid] == null) {
     			haveNull= true;
-    			right= mid-1;
-    		}
-    		else {
-    			left= mid+1;
+    			right= mid - 1;
+    		} else {
+    			left= mid + 1;
     		}
     	}
-		return haveNull ? right+1 : -1;
+		return haveNull ? right + 1 : -1;
 	}
     
 
@@ -241,6 +240,46 @@ public class ArrayUtil {
             return dest;
         }
         Object[] temp = (Object[]) Array.newInstance(c, firstFree + numToAdd);
+        System.arraycopy(dest, 0, temp, 0, firstFree);
+        System.arraycopy(source, 0, temp, firstFree, numToAdd);
+        return temp;
+    }
+
+    /**
+     * Concatenates two arrays skipping <code>null</code> elements.
+     * Assumes that both arrays contain <code>null</code>s at the end, only.
+     * @since 5.2
+     */
+    @SuppressWarnings("unchecked")
+	public static <T> T[] addAll(T[] dest, T[] source) {
+        if (source == null || source.length == 0)
+            return dest;
+        
+        int numToAdd = findFirstNull(source);
+        if (numToAdd <= 0) {
+        	if (numToAdd == 0) {
+        		return dest;
+        	}
+        	numToAdd= source.length;
+        }
+        
+        if (dest == null || dest.length == 0) {
+    		Class c = dest != null ? dest.getClass().getComponentType() : source.getClass().getComponentType();
+            dest = (T[]) Array.newInstance(c, numToAdd);
+            System.arraycopy(source, 0, dest, 0, numToAdd);
+            return dest;
+        }
+        
+        int firstFree = findFirstNull(dest);
+        if (firstFree < 0) {
+        	firstFree= dest.length;
+        }
+        
+        if (firstFree + numToAdd <= dest.length) {
+            System.arraycopy(source, 0, dest, firstFree, numToAdd);
+            return dest;
+        }
+        T[] temp = (T[]) Array.newInstance(dest.getClass().getComponentType(), firstFree + numToAdd);
         System.arraycopy(dest, 0, temp, 0, firstFree);
         System.arraycopy(source, 0, temp, firstFree, numToAdd);
         return temp;

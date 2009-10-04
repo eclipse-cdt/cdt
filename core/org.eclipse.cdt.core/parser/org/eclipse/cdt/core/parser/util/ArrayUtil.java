@@ -43,7 +43,7 @@ public abstract class ArrayUtil {
     		return array;
     	}
 
-    	Object[] temp = (Object[]) Array.newInstance(c, array.length * 2);
+    	Object[] temp = (Object[]) Array.newInstance(c, Math.max(array.length * 2, DEFAULT_LENGTH));
     	System.arraycopy(array, 0, temp, 0, array.length);
     	temp[array.length] = obj;
     	return temp;
@@ -119,7 +119,8 @@ public abstract class ArrayUtil {
     		return array;
     	}
 
-    	T[] temp = (T[]) Array.newInstance(array.getClass().getComponentType(), array.length * 2);
+    	T[] temp = (T[]) Array.newInstance(array.getClass().getComponentType(),
+    			Math.max(array.length * 2, DEFAULT_LENGTH));
     	System.arraycopy(array, 0, temp, 0, array.length);
     	temp[array.length] = obj;
     	return temp;

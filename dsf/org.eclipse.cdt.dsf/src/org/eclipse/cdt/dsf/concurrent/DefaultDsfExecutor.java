@@ -14,6 +14,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.PrintStream;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.Callable;
 import java.util.concurrent.Future;
@@ -49,11 +50,6 @@ public class DefaultDsfExecutor extends ScheduledThreadPoolExecutor
      */
     private String fName;
     
-    /**
-     * Instance number of this executor, used with the executor name.
-     */
-    private int fInstanceNumber;
-    
     /** Thread factory that creates the single thread to be used for this executor */
     static class DsfThreadFactory implements ThreadFactory {
         private String fThreadName; 
@@ -78,9 +74,8 @@ public class DefaultDsfExecutor extends ScheduledThreadPoolExecutor
      * @param name Name used to create executor's thread.
      */
     public DefaultDsfExecutor(String name) {
-        super(1, new DsfThreadFactory(name + " - " + fgInstanceCounter)); //$NON-NLS-1$
+        super(1, new DsfThreadFactory(name + " - " + fgInstanceCounter++)); //$NON-NLS-1$
         fName = name;
-        fInstanceNumber = fgInstanceCounter++;
         
         if(DEBUG_EXECUTOR || ASSERTIONS_ENABLED) {
             // If tracing, pre-start the dispatch thread, and add it to the map.
@@ -226,16 +221,13 @@ public class DefaultDsfExecutor extends ScheduledThreadPoolExecutor
                 traceBuilder.append(' ');
     
                 // Record the executor #
-                traceBuilder.append('#');
+                traceBuilder.append("DSF execution #"); //$NON-NLS-1$
                 traceBuilder.append(fSequenceNumber);
 
                 // Record the executor name
-                traceBuilder.append('(');
-                traceBuilder.append(fName);
-                traceBuilder.append(" - "); //$NON-NLS-1$
-                traceBuilder.append(fInstanceNumber);
+                traceBuilder.append(". Executor is ("); //$NON-NLS-1$
+                traceBuilder.append(((DsfThreadFactory)getThreadFactory()).fThreadName);
                 traceBuilder.append(')');
-                traceBuilder.append(' ');
 
 				// This will be a Runnable or a Callable. Hopefully it will also
 				// be a DsfExecutable and thus be instrumented with trace/debug
@@ -245,12 +237,20 @@ public class DefaultDsfExecutor extends ScheduledThreadPoolExecutor
                 
 				// Append executable class name. The anonymous inner class name
 				// name won't be very interesting; use the parent class instead.
+                traceBuilder.append("\n\tExecutable detail: \n\t\ttype = "); //$NON-NLS-1$
                 Class<? extends Object> execClass = executable.getClass();
                 traceBuilder.append(execClass.isAnonymousClass() ? execClass.getSuperclass().getName() : execClass.getName());
                 
-                // Add executable's toString().
-                traceBuilder.append("\n        "); //$NON-NLS-1$
-                traceBuilder.append(LoggingUtils.toString(executable, false));
+                // Append the executable reference
+                final String refstr = LoggingUtils.toString(executable, false);
+                String tostr = LoggingUtils.trimTrailingNewlines(executable.toString());
+                traceBuilder.append("\n\t\t"); //$NON-NLS-1$
+                traceBuilder.append("instance = " + refstr); //$NON-NLS-1$
+                if (!tostr.equals(refstr)) {
+                	traceBuilder.append(" ["); //$NON-NLS-1$
+                	traceBuilder.append(tostr);
+                	traceBuilder.append(']');                	
+                }
 
 				// Determine if the created-at and submitted-at information is
 				// the same. If so, consolidate.
@@ -281,16 +281,15 @@ public class DefaultDsfExecutor extends ScheduledThreadPoolExecutor
                 }
 
                 if (canConsolidate) {
-            		traceBuilder.append("\n            created and submitted"); //$NON-NLS-1$
+            		traceBuilder.append("\n\t\tcreated and submitted"); //$NON-NLS-1$
                     if (createdBySeqNum != Integer.MIN_VALUE) {
                         traceBuilder.append(" by #"); //$NON-NLS-1$
                         traceBuilder.append(createdBySeqNum);
                     }
                     if (createdAtStack != null) {
-                        traceBuilder.append("\n                      at "); //$NON-NLS-1$
-                        traceBuilder.append(createdAtStack[0].toString());
-                        for (int i = 1; i < createdAtStack.length && i < 3; i++) {
-                            traceBuilder.append("\n                         "); //$NON-NLS-1$
+                        traceBuilder.append(" at:"); //$NON-NLS-1$
+                        for (int i = 0; i < createdAtStack.length && i < 3; i++) {
+                            traceBuilder.append("\n\t\t\t"); //$NON-NLS-1$
                             traceBuilder.append(createdAtStack[i].toString());
                         }
                     }
@@ -298,31 +297,29 @@ public class DefaultDsfExecutor extends ScheduledThreadPoolExecutor
                 else {
 	                // Append "create by" info.
                     if (createdAtStack != null || createdBySeqNum != Integer.MIN_VALUE) {
-                        traceBuilder.append("\n            created  "); //$NON-NLS-1$
+                        traceBuilder.append("\n\t\tcreated  "); //$NON-NLS-1$
                         if (createdBySeqNum != Integer.MIN_VALUE) {
                             traceBuilder.append(" by #"); //$NON-NLS-1$
                             traceBuilder.append(createdBySeqNum);
                         }
                         if (createdAtStack != null) {
-                            traceBuilder.append("\n                      at "); //$NON-NLS-1$
-                            traceBuilder.append(createdAtStack[0].toString());
-                            for (int i = 1; i < createdAtStack.length && i < 3; i++) {
-                                traceBuilder.append("\n                         "); //$NON-NLS-1$
+                            traceBuilder.append(" at:"); //$NON-NLS-1$
+                            for (int i = 0; i < createdAtStack.length && i < 3; i++) {
+                                traceBuilder.append("\n\t\t\t"); //$NON-NLS-1$
                                 traceBuilder.append(createdAtStack[i].toString());
                         }   
                     }
                 }
     
                 // Submitted info
-                traceBuilder.append("\n            submitted"); //$NON-NLS-1$
+                traceBuilder.append("\n\t\tsubmitted"); //$NON-NLS-1$
                 if (fSubmittedBy != null) {
                     traceBuilder.append(" by #"); //$NON-NLS-1$
                     traceBuilder.append(fSubmittedBy.fSequenceNumber);
                 }
-                traceBuilder.append("\n                      at "); //$NON-NLS-1$
-                traceBuilder.append(fSubmittedAt.fStackTraceElements[0].toString());
-                for (int i = 1; i < fSubmittedAt.fStackTraceElements.length && i < 3; i++) {
-                    traceBuilder.append("\n                         "); //$NON-NLS-1$
+                traceBuilder.append(" at:"); //$NON-NLS-1$
+                for (int i = 0; i < fSubmittedAt.fStackTraceElements.length && i < 3; i++) {
+                    traceBuilder.append("\n\t\t\t"); //$NON-NLS-1$
                     traceBuilder.append(fSubmittedAt.fStackTraceElements[i].toString());
                 }
                 }
@@ -469,4 +466,22 @@ public class DefaultDsfExecutor extends ScheduledThreadPoolExecutor
         }
         return super.submit(command, result);
     }
+    
+    @Override
+	public void shutdown() {
+    	if (DEBUG_EXECUTOR && ("".equals(DEBUG_EXECUTOR_NAME) || fName.equals(DEBUG_EXECUTOR_NAME))) { //$NON-NLS-1$    		
+    		DsfPlugin.debug(DsfPlugin.getDebugTime() + " Executor (" + ((DsfThreadFactory)getThreadFactory()).fThreadName + ") is being shut down. Already submitted tasks will be executed, new ones will not.");	 //$NON-NLS-1$ //$NON-NLS-2$
+    	}
+    	super.shutdown();
+    }
+
+    @Override
+	public List<Runnable> shutdownNow() {
+    	if (DEBUG_EXECUTOR && ("".equals(DEBUG_EXECUTOR_NAME) || fName.equals(DEBUG_EXECUTOR_NAME))) { //$NON-NLS-1$
+    		DsfPlugin.debug(DsfPlugin.getDebugTime() + " Executor (" + ((DsfThreadFactory)getThreadFactory()).fThreadName + ") is being shut down. No queued or new tasks will be executed, and will attempt to cancel active ones.");	 //$NON-NLS-1$ //$NON-NLS-2$
+    	}
+    	return super.shutdownNow();
+    }
+    
+    
 }

@@ -14,6 +14,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 import org.eclipse.cdt.dsf.internal.DsfPlugin;
+import org.eclipse.cdt.dsf.internal.LoggingUtils;
 import org.eclipse.core.runtime.Platform;
 
 /**
@@ -179,10 +180,15 @@ public class DsfExecutable {
             traceBuilder.append(DsfPlugin.getDebugTime());
             traceBuilder.append(' ');
             
-            // Record the event
-            traceBuilder.append("DsfExecutable was never executed:\n        "); //$NON-NLS-1$
-            traceBuilder.append(this);
-            traceBuilder.append("\nCreated at:"); //$NON-NLS-1$
+            final String refstr = LoggingUtils.toString(this, false);
+            traceBuilder.append("DSF executable was never executed: " + refstr); //$NON-NLS-1$
+            final String tostr = LoggingUtils.trimTrailingNewlines(this.toString());
+            if (!tostr.equals(refstr)) {
+            	traceBuilder.append(" ["); //$NON-NLS-1$
+            	traceBuilder.append(tostr);
+            	traceBuilder.append(']');
+            }
+            traceBuilder.append("\nCreated at:\n"); //$NON-NLS-1$
             traceBuilder.append(fCreatedAt);
             
             DsfPlugin.debug(traceBuilder.toString());

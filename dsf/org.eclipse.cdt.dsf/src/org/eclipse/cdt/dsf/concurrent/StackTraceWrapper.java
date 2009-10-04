@@ -25,10 +25,23 @@ class StackTraceWrapper {
     
     @Override
     public String toString() {
+    	final int MAX_FRAMES = 10;
+    	final int count = Math.min(fStackTraceElements.length, MAX_FRAMES);
         StringBuilder builder = new StringBuilder(fStackTraceElements.length * 30);
-        for (int i = 0; i < fStackTraceElements.length && i < 10; i++) {
+        int i = 0;
+        while (true) {
+           	builder.append('\t');        	
             builder.append(fStackTraceElements[i]);
-            if (i < fStackTraceElements.length && i < 10) builder.append("\n       at "); //$NON-NLS-1$
+            if (++i == count) {	
+            	// last iteration
+	            if (fStackTraceElements.length > count) {
+	            	builder.append("\n\t..."); //$NON-NLS-1$
+	            }
+	            break;
+            }
+            else {
+            	builder.append('\n');
+            }
         }
         return builder.toString();
     }

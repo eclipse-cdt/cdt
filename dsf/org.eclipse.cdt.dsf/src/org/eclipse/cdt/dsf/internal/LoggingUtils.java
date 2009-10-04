@@ -82,5 +82,25 @@ public class LoggingUtils {
 		return str.toString();
 	}
 
-	
+	/**
+	 * General string utility for removing newline and space character from the
+	 * end of a string. Typically used when logging an object's toString()
+	 * 
+	 * @param str
+	 *            the string
+	 * @return the string without trailing newlines
+	 */
+	public static String trimTrailingNewlines(String str) {
+		final int strlen = str.length();
+		if (strlen == 0) {
+			return str;
+		}
+		
+		int removeCount = 0;
+		for (int i = strlen - 1; i >= 0 && Character.isWhitespace(str.charAt(i)); i--) {
+			removeCount++;
+        }
+		
+		return (removeCount == 0) ? str : str.substring(0, str.length() - removeCount); 
+	}
 }

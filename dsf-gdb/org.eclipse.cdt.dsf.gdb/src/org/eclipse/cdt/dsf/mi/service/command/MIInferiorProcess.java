@@ -21,6 +21,8 @@ import java.io.PipedOutputStream;
 import java.util.concurrent.CancellationException;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.RejectedExecutionException;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
 
 import org.eclipse.cdt.dsf.concurrent.ConfinedToDsfExecutor;
 import org.eclipse.cdt.dsf.concurrent.DataRequestMonitor;
@@ -238,9 +240,26 @@ public class MIInferiorProcess extends Process
         return exitValue();
     }
 
-    /**
-     * @see java.lang.Process#exitValue()
-     */
+	/**
+	 * Thrown by {@link MIInferiorProcess#exitValue()} when it is unable to
+	 * determine the exit value.
+	 */
+    public static class ExitValueUnavailableException extends IllegalThreadStateException {
+		private static final long serialVersionUID = 1L;
+
+		public ExitValueUnavailableException(String s) {
+    		super(s);
+    	}
+    }
+
+	/**
+	 * Will throw an {@link ExitValueUnavailableException} if the DSF session
+	 * executor is unavailable (for more than 300ms). We do not wait
+	 * indefinitely, as our caller may have a lock that the active
+	 * Runnable/Callable is waiting for, and that could cause a deadlock.
+	 * 
+	 * @see java.lang.Process#exitValue()
+	 */
     @Override
     public int exitValue() {
         if (fExitCode != null) {
@@ -280,13 +299,19 @@ public class MIInferiorProcess extends Process
                 }
             };
             fSession.getExecutor().execute(exitCodeQuery);
-            fExitCode = exitCodeQuery.get();
+
+            try {
+				// Don't wait indefinitely. See bugzilla 291342
+				fExitCode = exitCodeQuery.get(300, TimeUnit.MILLISECONDS);
+			} catch (TimeoutException e) {
+				exitCodeQuery.cancel(false);
+				throw new ExitValueUnavailableException("Timed out waiting for availability of DSF executor."); //$NON-NLS-1$
+			}
             return fExitCode;
         } catch (RejectedExecutionException e) {
         } catch (InterruptedException e) {
         } catch (CancellationException e) {
         } catch (ExecutionException e) {
-            // Che
             if (e.getCause() instanceof CoreException && 
                 ((CoreException)e.getCause()).getStatus().getException() instanceof RuntimeException ) 
             {

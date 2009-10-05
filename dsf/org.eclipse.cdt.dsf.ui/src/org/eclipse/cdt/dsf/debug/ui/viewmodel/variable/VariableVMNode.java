@@ -50,6 +50,7 @@ import org.eclipse.cdt.dsf.debug.ui.viewmodel.numberformat.FormattedValueVMUtil;
 import org.eclipse.cdt.dsf.debug.ui.viewmodel.numberformat.IFormattedValueVMContext;
 import org.eclipse.cdt.dsf.internal.ui.DsfUIPlugin;
 import org.eclipse.cdt.dsf.service.DsfSession;
+import org.eclipse.cdt.dsf.ui.concurrent.ViewerCountingRequestMonitor;
 import org.eclipse.cdt.dsf.ui.concurrent.ViewerDataRequestMonitor;
 import org.eclipse.cdt.dsf.ui.viewmodel.VMDelta;
 import org.eclipse.cdt.dsf.ui.viewmodel.datamodel.AbstractDMVMProvider;
@@ -890,7 +891,7 @@ public class VariableVMNode extends AbstractExpressionVMNode
                     
                     // Create the MultiRequestMonitor to handle completion of the set of getModelData() calls.
                     
-                    final CountingRequestMonitor crm = new CountingRequestMonitor(dsfExecutor, null) {
+                    final CountingRequestMonitor crm = new ViewerCountingRequestMonitor(dsfExecutor, update) {
                         @Override
                         public void handleCompleted() {
                             // Now that all the calls to getModelData() are complete, we create an
@@ -905,7 +906,6 @@ public class VariableVMNode extends AbstractExpressionVMNode
                             IExpressionDMContext[] expressionDMCs = new IExpressionDMContext[localsDMData.size()];
                             
                             int i = 0;
-                            
                             for (IVariableDMData localDMData : localsDMData) {
                                 expressionDMCs[i++] = expressionService.createExpression(frameDmc, localDMData.getName());
                             }
@@ -927,9 +927,9 @@ public class VariableVMNode extends AbstractExpressionVMNode
                     
                     for (IVariableDMContext localDMC : localsDMCs) {
                         DataRequestMonitor<IVariableDMData> rm =
-                            new ViewerDataRequestMonitor<IVariableDMData>(dsfExecutor, update) {
+                            new DataRequestMonitor<IVariableDMData>(dsfExecutor, crm) {
                                 @Override
-                                public void handleCompleted() {
+                                public void handleSuccess() {
                                     localsDMData.add(getData());
                                     crm.done();
                                 }

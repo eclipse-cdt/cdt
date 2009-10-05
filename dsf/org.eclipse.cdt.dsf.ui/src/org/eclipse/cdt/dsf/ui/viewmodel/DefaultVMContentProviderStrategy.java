@@ -189,22 +189,23 @@ public class DefaultVMContentProviderStrategy implements IElementContentProvider
                     // Optimization: there is only one child node, just pass on the child count to it.
                     getVMProvider().updateNode(childNodes[0], update);
                 } else {
-                    getChildrenCountsForNode(update, node, new ViewerDataRequestMonitor<Integer[]>(getVMProvider()
-                        .getExecutor(), update) {
-                        @Override
-                        protected void handleCompleted() {
-                            if (isSuccess()) {
-                                int numChildren = 0;
-                                for (Integer count : getData()) {
-                                    numChildren += count.intValue();
+                    getChildrenCountsForNode(
+                        update, node, 
+                        new ViewerDataRequestMonitor<Integer[]>(getVMProvider().getExecutor(), update) {
+                            @Override
+                            protected void handleCompleted() {
+                                if (isSuccess()) {
+                                    int numChildren = 0;
+                                    for (Integer count : getData()) {
+                                        numChildren += count.intValue();
+                                    }
+                                    update.setChildCount(numChildren);
+                                } else {
+                                    update.setChildCount(0);
                                 }
-                                update.setChildCount(numChildren);
-                            } else {
-                                update.setChildCount(0);
+                                update.done();
                             }
-                            update.done();
-                        }
-                    });
+                        });
                 }
             } else {
                 update.done();
@@ -226,18 +227,19 @@ public class DefaultVMContentProviderStrategy implements IElementContentProvider
                     // Optimization: there is only one child node, pass the updates to it.
                     getVMProvider().updateNode(childNodes[0], update);
                 } else {
-                    getChildrenCountsForNode(update, node, new ViewerDataRequestMonitor<Integer[]>(getVMProvider()
-                        .getExecutor(), update) {
-                        @Override
-                        protected void handleCompleted() {
-                            if (!isSuccess()) {
-                                update.done();
-                                return;
-                            }
+                    getChildrenCountsForNode(
+                        update, node, 
+                        new ViewerDataRequestMonitor<Integer[]>(getVMProvider().getExecutor(), update) {
+                            @Override
+                            protected void handleCompleted() {
+                                if (!isSuccess()) {
+                                    update.done();
+                                    return;
+                                }
 
-                            updateChildrenWithCounts(update, node, getData());
-                        }
-                    });
+                                updateChildrenWithCounts(update, node, getData());
+                            }
+                        });
                 }
             } else {
                 // Stale update. Just ignore.
@@ -275,13 +277,10 @@ public class DefaultVMContentProviderStrategy implements IElementContentProvider
             final int nodeIndex = i;
             getVMProvider().updateNode(
                 childNodes[i],
-                new VMChildrenCountUpdate(update, new ViewerDataRequestMonitor<Integer>(
-                    getVMProvider().getExecutor(), update) {
+                new VMChildrenCountUpdate(update, new DataRequestMonitor<Integer>(getVMProvider().getExecutor(), crm) {
                     @Override
-                    protected void handleCompleted() {
-                    	if (isSuccess()) {
-                            counts[nodeIndex] = getData();
-                    	}
+                    protected void handleSuccess() {
+                        counts[nodeIndex] = getData();
                         crm.done();
                     }
                 }));

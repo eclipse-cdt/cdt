@@ -34,13 +34,27 @@ public interface IRootVMNode extends IVMNode{
      * @return
      */
     public boolean isDeltaEvent(Object rootObject, Object event);
-    
-    /**
-     * Version of the {@link IVMNode#buildDelta(Object, ViewModelDelta, org.eclipse.cdt.dsf.concurrent.RequestMonitor)}
-     * method, which creates and returns the root node of the delta.  It does 
-     * not require a parent object for the delta, as this is the root node. 
-     * @param event Event to process.
-     * @param rm Result notification, contains the root of the delta.
-     */
-    public void createRootDelta(Object rootObject, Object event, DataRequestMonitor<VMDelta> rm);
+
+	/**
+	 * The VM proxy calls this to produce the starting point for a delta. It is
+	 * a variant of
+	 * {@link IVMNode#buildDelta(Object, ViewModelDelta, org.eclipse.cdt.dsf.concurrent.RequestMonitor)}
+	 * that does not require a parent delta object since we will return the root
+	 * portion of the delta's tree. That does not necessarily mean, though, that
+	 * the root model element in our associated viewer is of our type (IVMNode).
+	 * A VMProvider may be representing only a lower subset of the content in
+	 * the viewer (the other content may be coming from other VM Providers
+	 * and/or sources outside DSF altogether). In that case, this method should
+	 * return a chain of delta nodes that reflect the path to the VMProvider's
+	 * root element, since deltas sent to the viewer must take into account the
+	 * entire model.
+	 * 
+	 * @param rootObject
+	 *            the root model element being represented by our VMProvider
+	 * @param event
+	 *            event being processed
+	 * @param rm
+	 *            result notification, contains the root of the delta.
+	 */
+	public void createRootDelta(Object rootObject, Object event, DataRequestMonitor<VMDelta> rm);
 }

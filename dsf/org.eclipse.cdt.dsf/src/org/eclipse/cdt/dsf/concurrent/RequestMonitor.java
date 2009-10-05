@@ -252,6 +252,13 @@ public class RequestMonitor extends DsfExecutable {
             throw new IllegalStateException("RequestMonitor: " + this + ", done() method called more than once");  //$NON-NLS-1$//$NON-NLS-2$
         }
         fDone = true;
+        
+        // This RequestMonitor is done, it can no longer be canceled.
+        // We must clear the list of cancelListeners because it causes a
+        // circular reference between parent and child requestMonitor, which
+        // causes a memory leak.
+        fCancelListeners = null;
+        
         try {
             fExecutor.execute(new DsfRunnable() {
                 public void run() {

@@ -46,7 +46,6 @@ public class TimersRootVMNode extends RootDMVMNode {
 
     @Override
     public void createRootDelta(Object rootObject, Object event, final DataRequestMonitor<VMDelta> rm) {
-        rm.setData(new VMDelta(rootObject, 0, IModelDelta.NO_CHANGE));
         int flags = IModelDelta.NO_CHANGE;
         if (event instanceof TimersViewLayoutChanged) {
             flags |= IModelDelta.CONTENT;

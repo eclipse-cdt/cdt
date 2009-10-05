@@ -106,7 +106,7 @@ public abstract class ArrayUtil {
     	if (obj == null)
     		return array;
     	if (array == null || array.length == 0) {
-    		Class c = array != null ? array.getClass().getComponentType() : obj.getClass();
+    		Class c = array != null ? array.getClass().getComponentType() : Object.class;
     		array = (T[]) Array.newInstance(c, DEFAULT_LENGTH);
     		array[0] = obj;
     		return array;
@@ -534,7 +534,7 @@ public abstract class ArrayUtil {
     	if (n <= 0)
     		throw new IllegalArgumentException();
     	
-    	T[] newArgs = (T[]) Array.newInstance(args.getClass().getComponentType(), n-1);
+    	T[] newArgs = (T[]) Array.newInstance(args.getClass().getComponentType(), n - 1);
     	for (int i = 1; i < n; i++) {
     		newArgs[i - 1] = args[i];
     	}

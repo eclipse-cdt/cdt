@@ -46,7 +46,16 @@ public interface ICachingVMProvider extends IVMProvider, IElementPropertiesProvi
      * @since 2.0
      */
     public static final String PROP_CACHE_ENTRY_DIRTY = "cache_entry_dirty"; //$NON-NLS-1$
-
+    
+    /**
+     * Property name for the current update policy in view. 
+     * 
+     * @see org.eclipse.cdt.dsf.ui.viewmodel.properties.IElementPropertiesProvider
+     * 
+     * @since 2.1
+     */
+    public static final String PROP_UPDATE_POLICY_ID = "update_policy_id"; //$NON-NLS-1$
+    
     /**
      * Returns the update policies that the given provider supports.
      */

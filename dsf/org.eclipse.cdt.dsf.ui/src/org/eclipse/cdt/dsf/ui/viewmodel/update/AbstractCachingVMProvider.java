@@ -1125,8 +1125,10 @@ public class AbstractCachingVMProvider extends AbstractVMProvider
                                 // We are caching the result of this update.  Copy the properties from the update
                                 // to the cached properties map.
                                 if (entry.fProperties == null) {
-                                    entry.fProperties = new HashMap<String, Object>(getData().size() + 1 * 4/3);
-                                    entry.fProperties.put(PROP_CACHE_ENTRY_DIRTY, entry.fDirty);
+                                    entry.fProperties = new HashMap<String, Object>((getData().size() + 3) * 4/3);
+                                    if (update.getProperties().contains(PROP_CACHE_ENTRY_DIRTY)) {
+                                        entry.fProperties.put(PROP_CACHE_ENTRY_DIRTY, entry.fDirty);
+                                    }
                                 } 
                                 properties = entry.fProperties;
                                 properties.putAll(getData());
@@ -1151,11 +1153,20 @@ public class AbstractCachingVMProvider extends AbstractVMProvider
                                 // return valid data to the client.  In case the update was canceled 
                                 // we can also return valid data to the client even if the client
                                 // is likely to ignore it since the cost of doing so is relatively low.
-                                properties = new HashMap<String, Object>(getData().size() + 1 * 4/3);                                
-                                properties.put(PROP_CACHE_ENTRY_DIRTY, Boolean.TRUE);
+                                properties = new HashMap<String, Object>((getData().size() + 3) * 4/3);        
+                                if (update.getProperties().contains(PROP_CACHE_ENTRY_DIRTY)) {
+                                    properties.put(PROP_CACHE_ENTRY_DIRTY, Boolean.TRUE);
+                                }
                                 properties.putAll(getData());
                             }
                             
+                            if (update.getProperties().contains(PROP_UPDATE_POLICY_ID)) {
+                                properties.put(PROP_UPDATE_POLICY_ID, getActiveUpdatePolicy().getID());
+                            }
+                            
+                            // Save the update status result in the properties as well, it will be 
+                            // written to the client update when client updates are completed from
+                            // cache.
                             properties.put(PROP_UPDATE_STATUS, getStatus());
 
                             // If there is archive data available, calculate the requested changed value properties.

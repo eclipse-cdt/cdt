@@ -243,6 +243,7 @@ public class MIInferiorProcess extends Process
 	/**
 	 * Thrown by {@link MIInferiorProcess#exitValue()} when it is unable to
 	 * determine the exit value.
+	 * @since 2.1
 	 */
     public static class ExitValueUnavailableException extends IllegalThreadStateException {
 		private static final long serialVersionUID = 1L;

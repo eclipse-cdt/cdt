@@ -108,9 +108,10 @@ abstract public class AbstractDMVMNode extends AbstractVMNode implements IVMNode
     
     /** 
      * Concrete class type that the elements of this schema node are based on.  
-     * Even though the data model type is a parameter the DMContextVMLayoutNode, 
-     * this type is erased at runtime, so a concrete class typs of the DMC
-     * is needed for instanceof chacks.  
+     * This type is used by the standard event processing logic to find the 
+     * element in the event which is managed by this VM node.
+     * 
+     * @see #getContextsForEvent(VMDelta, Object, DataRequestMonitor)
      */
     private Class<? extends IDMContext> fDMCClassType;
 

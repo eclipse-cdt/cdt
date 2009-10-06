@@ -36,25 +36,27 @@ public interface IRootVMNode extends IVMNode{
     public boolean isDeltaEvent(Object rootObject, Object event);
 
 	/**
-	 * The VM proxy calls this to produce the starting point for a delta. It is
-	 * a variant of
+	 * The VM proxy calls this to produce the starting point for a delta, which
+	 * can be a single delta node or a chain of them. It is a variant of
 	 * {@link IVMNode#buildDelta(Object, ViewModelDelta, org.eclipse.cdt.dsf.concurrent.RequestMonitor)}
 	 * that does not require a parent delta object since we will return the root
-	 * portion of the delta's tree. That does not necessarily mean, though, that
-	 * the root model element in our associated viewer is of our type (IVMNode).
-	 * A VMProvider may be representing only a lower subset of the content in
-	 * the viewer (the other content may be coming from other VM Providers
-	 * and/or sources outside DSF altogether). In that case, this method should
-	 * return a chain of delta nodes that reflect the path to the VMProvider's
-	 * root element, since deltas sent to the viewer must take into account the
-	 * entire model.
+	 * section of the final delta's tree. The root model element in our
+	 * associated viewer is not necessarily of our type (IVMNode). A VMProvider
+	 * may be representing only a lower sub-tree of the content in the viewer
+	 * (the other content may be coming from other VM Providers and/or sources
+	 * outside DSF altogether). In that case, this method should create a chain
+	 * of delta nodes that reflect the path to the VMProvider's root element,
+	 * since deltas sent to the viewer must take into account the entire model.
+	 * However, the specific delta node returned should be the one associated
+	 * with [rootObject]--i.e., the last node in the chain. 
 	 * 
 	 * @param rootObject
 	 *            the root model element being represented by our VMProvider
 	 * @param event
 	 *            event being processed
 	 * @param rm
-	 *            result notification, contains the root of the delta.
+	 *            result notification, contains the delta for [rootObject], with
+	 *            parents if [rootObject] is not the root node of the viewer.
 	 */
 	public void createRootDelta(Object rootObject, Object event, DataRequestMonitor<VMDelta> rm);
 }

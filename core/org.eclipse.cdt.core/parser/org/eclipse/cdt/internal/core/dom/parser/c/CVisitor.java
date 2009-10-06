@@ -1645,7 +1645,7 @@ public class CVisitor extends ASTQueries {
 	 * Searches for the function enclosing the given node. May return <code>null</code>.
 	 */
 	public static IBinding findEnclosingFunction(IASTNode node) {
-		while(node != null && node instanceof IASTFunctionDefinition == false) {
+		while (node != null && !(node instanceof IASTFunctionDefinition)) {
 			node= node.getParent();
 		}
 		if (node == null)

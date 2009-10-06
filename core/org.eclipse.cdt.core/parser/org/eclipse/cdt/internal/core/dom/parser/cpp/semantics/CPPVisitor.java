@@ -873,8 +873,8 @@ public class CPPVisitor extends ASTQueries {
 	}
 	
 	/**
-	 * Searches for an enclosing function definition or declaration, returns
-	 * the name of the function. If you pass the name of a function, it will be returned.
+	 * Returns enclosing function definition, or <code>null</code> if the given node
+	 * is not part of a function definition.
 	 */
 	public static ICPPASTFunctionDefinition findEnclosingFunctionDefinition(IASTNode node) {
 		while (node != null) {
@@ -1087,7 +1087,7 @@ public class CPPVisitor extends ASTQueries {
 		}
 		return null;
 	}
-	
+
 	public static class CollectProblemsAction extends CPPASTVisitor {
 		{
 			shouldVisitDeclarations = true;
@@ -1879,8 +1879,10 @@ public class CPPVisitor extends ASTQueries {
             		break;
                 if (owner instanceof ICPPFunction) 
                     break;
-                if (owner instanceof ICPPNamespace && n.length() == 0)
+                if (owner instanceof ICPPNamespace && n.length() == 0) {
+                	// TODO(sprigogin): Do not ignore anonymous namespaces.
                 	continue;
+                }
             
                 ns = (String[]) ArrayUtil.append(String.class, ns, n);
             }
@@ -1995,12 +1997,36 @@ public class CPPVisitor extends ASTQueries {
 		return null;
 	}
 
+	/**
+	 * Searches for the function or class enclosing the given node. May return <code>null</code>.
+	 */
+	public static IBinding findEnclosingFunctionOrClass(IASTNode node) {
+		IASTName name = null;
+		for (; node != null; node= node.getParent()) {
+			if (node instanceof IASTFunctionDefinition) {
+				IASTDeclarator dtor= findInnermostDeclarator(((IASTFunctionDefinition) node).getDeclarator());
+				if (dtor != null) {
+					name= dtor.getName();
+				}
+				break;
+			} 
+			if (node instanceof IASTCompositeTypeSpecifier) {
+				name= ((IASTCompositeTypeSpecifier) node).getName();
+				break;
+			}
+		}
+		if (name == null) 
+			return null;
+		
+		return name.resolveBinding();
+	}
+
 	public static IBinding findNameOwner(IASTName name, boolean allowFunction) {
 		IASTNode node= name;
 		while (node instanceof IASTName) {
 			if (node instanceof ICPPASTQualifiedName) {
 				IASTName[] qn= ((ICPPASTQualifiedName) node).getNames();
-				int i = qn.length;
+				int i= qn.length;
 				while (--i >= 0) {
 					if (qn[i] == name) {
 						break;
@@ -2010,16 +2036,17 @@ public class CPPVisitor extends ASTQueries {
 					break;
 				return qn[i].resolveBinding();
 			}
-			name = (IASTName) node;
+			name= (IASTName) node;
 			node= node.getParent();
 		}
 		return findDeclarationOwner(node, allowFunction);
 	}
-	
+
 	/**
-	 * Searches for the first function, class or namespace enclosing the declaration the provided
-	 * node belongs to and returns the binding for it. Returns <code>null</code>, if the declaration
-	 * is not enclosed by any of the above constructs.
+	 * Searches for the first class, namespace, or function, if <code>allowFunction</code>
+	 * is <code>true</code>, enclosing the declaration the provided node belongs to and returns
+	 * the binding for it. Returns <code>null</code>, if the declaration is not enclosed by any
+	 * of the above constructs.
 	 */
 	public static IBinding findDeclarationOwner(IASTNode node, boolean allowFunction) {
 		// Search for declaration
@@ -2033,7 +2060,7 @@ public class CPPVisitor extends ASTQueries {
 				final IASTNode parent= node.getParent();
 				if (parent instanceof IASTSimpleDeclaration) {
 					final IASTSimpleDeclaration sdecl = (IASTSimpleDeclaration) parent;
-					if (sdecl.getDeclarators().length==0) {
+					if (sdecl.getDeclarators().length == 0) {
 						isNonSimpleElabDecl= false;
 					}
 				}

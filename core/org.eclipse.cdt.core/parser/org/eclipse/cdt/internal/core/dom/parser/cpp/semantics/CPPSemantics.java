@@ -25,6 +25,7 @@ import java.util.List;
 import java.util.Set;
 
 import org.eclipse.cdt.core.dom.ast.ASTNodeProperty;
+import org.eclipse.cdt.core.dom.ast.ASTTypeUtil;
 import org.eclipse.cdt.core.dom.ast.ASTVisitor;
 import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.EScopeKind;
@@ -172,6 +173,7 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPUnknownFunction;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPUsingDeclaration;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPUsingDirective;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPVariable;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.ClassTypeHelper;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPASTInternalScope;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPClassSpecializationScope;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPDeferredClassInstance;
@@ -813,6 +815,11 @@ public class CPPSemantics {
 				if (data.typesOnly) {
 					removeObjects(bindings);
 				}
+				if (data.filterByVisibility && scope instanceof ICPPClassScope) {
+					int visibility = getClassVisibility(((ICPPClassScope) scope).getClassType(),
+							data.getVisibilityContext());
+					ClassTypeHelper.filterByVisibility(bindings, visibility);
+				}
 				mergeResults(data, bindings, true);
 
 				// store using-directives found in this block or namespace for later use.
@@ -997,6 +1004,41 @@ public class CPPSemantics {
 		while (pos < length) {
 			bindings[pos++]= null;
 		}
+	}
+
+	/**
+	 * Returns visibility of a class in a given context.
+	 * @param classType a class
+	 * @param visibilityContext @see LookupData.visibilityContext
+	 * @return One of: ICPPMember.v_public, ICPPMember.v_protected, ICPPMember.v_private.
+	 */
+	static int getClassVisibility(ICPPClassType classType, IBinding[] visibilityContext) {
+		int visibility = ICPPMember.v_public;
+		try {
+			for (IBinding context : visibilityContext) {
+				if (ClassTypeHelper.isFriend(context, classType)) {
+					return ICPPMember.v_private;
+				}
+				if (visibility == ICPPMember.v_public && context instanceof ICPPClassType) {
+					ICPPClassType contextClass = (ICPPClassType) context;
+					ICPPBase[] bases = contextClass.getBases();
+					for (ICPPBase base : bases) {
+						IBinding baseClass = base.getBaseClass();
+						if (baseClass instanceof ICPPClassType) {
+							ICPPClassType[] baseClasses =
+									ClassTypeHelper.getAllBases((ICPPClassType) baseClass, ICPPMember.v_protected);
+							if (ASTTypeUtil.findType(classType, baseClasses) >= 0) {
+								visibility = ICPPMember.v_protected;
+								break;
+							}
+						}
+					}
+				}
+			}
+		} catch (DOMException e) {
+			visibility = ICPPMember.v_private; // Presume complete visibility if anything goes wrong.
+		}
+		return visibility;
 	}
 
 	private static ICPPTemplateScope enclosingTemplateScope(IASTNode node) {
@@ -1674,9 +1716,9 @@ public class CPPSemantics {
 	        	} else if (type != temp) {
 	        		int c = compareByRelevance(data, type, temp);
 	        		if (c < 0) {
-        					type= temp;
+        				type= temp;
 	        		} else if (c == 0) {
-        				if (((IType)type).isSameType((IType) temp)) {
+        				if (((IType) type).isSameType((IType) temp)) {
         					if (type instanceof ITypedef && !(temp instanceof ITypedef)) {
         						// Between same types prefer non-typedef.
         						type= temp;
@@ -1695,7 +1737,7 @@ public class CPPSemantics {
 	        	} else {
 	        		int c = compareByRelevance(data, obj, temp);
 	        		if (c < 0) {
-	        				obj= temp;
+	        			obj= temp;
 	        		} else if (c == 0) {
 	        			return new ProblemBinding(data.astName, IProblemBinding.SEMANTIC_AMBIGUOUS_LOOKUP,
 	        					data.getFoundBindings());
@@ -2829,18 +2871,19 @@ public class CPPSemantics {
 		LookupData data = createLookupData(name, true);
 		data.contentAssist = true;
 		data.prefixLookup = prefixLookup;
+		data.filterByVisibility = true;
 		data.foundItems = new CharArrayObjectMap(2);
 
 		return contentAssistLookup(data, name);
 	}
 
-    private static IBinding[] contentAssistLookup(LookupData data, Object start) {        
+	private static IBinding[] contentAssistLookup(LookupData data, Object start) {        
         try {
             lookup(data, start);
         } catch (DOMException e) {
         }
         CharArrayObjectMap map = (CharArrayObjectMap) data.foundItems;
-        IBinding[] result = null;
+        IBinding[] result = IBinding.EMPTY_BINDING_ARRAY;
         if (!map.isEmpty()) {
             char[] key = null;
             Object obj = null;
@@ -2849,28 +2892,28 @@ public class CPPSemantics {
                 key = map.keyAt(i);
                 obj = map.get(key);
                 if (obj instanceof IBinding) {
-                    result = (IBinding[]) ArrayUtil.append(IBinding.class, result, obj);
+                    result = ArrayUtil.append(result, (IBinding) obj);
                 } else if (obj instanceof IASTName) {
 					IBinding binding = ((IASTName) obj).resolveBinding();
                     if (binding != null && !(binding instanceof IProblemBinding))
-                        result = (IBinding[]) ArrayUtil.append(IBinding.class, result, binding);
+                        result = ArrayUtil.append(result, binding);
                 } else if (obj instanceof Object[]) {
 					Object[] objs = (Object[]) obj;
 					for (int j = 0; j < objs.length && objs[j] != null; j++) {
 						Object item = objs[j];
 						if (item instanceof IBinding) {
-		                    result = (IBinding[]) ArrayUtil.append(IBinding.class, result, item);
+		                    result = ArrayUtil.append(result, (IBinding) item);
 						} else if (item instanceof IASTName) {
 							IBinding binding = ((IASTName) item).resolveBinding();
 		                    if (binding != null && !(binding instanceof IProblemBinding))
-		                        result = (IBinding[]) ArrayUtil.append(IBinding.class, result, binding);
+		                        result = ArrayUtil.append(result, binding);
 		                }
 					}
                 }
             }
         }
 
-        return (IBinding[]) ArrayUtil.trim(IBinding.class, result);
+        return ArrayUtil.trim(result);
     }
 
     private static IBinding[] standardLookup(LookupData data, Object start) {
@@ -2933,7 +2976,7 @@ public class CPPSemantics {
 		return false;
 	}
 	
-	static protected IBinding resolveUnknownName(IScope scope, ICPPUnknownBinding unknown) {
+	protected static IBinding resolveUnknownName(IScope scope, ICPPUnknownBinding unknown) {
 		final IASTName unknownName = unknown.getUnknownName();
 		LookupData data = new LookupData(unknownName);
 		data.checkPointOfDecl= false;

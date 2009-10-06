@@ -7,6 +7,7 @@
  *
  * Contributors:
  *    Markus Schorn - initial API and implementation
+ *    Sergey Prigogin (Google)
  *******************************************************************************/ 
 package org.eclipse.cdt.internal.core.dom.parser.cpp.semantics;
 
@@ -30,13 +31,15 @@ import org.eclipse.cdt.core.index.IIndexFileSet;
 import org.eclipse.cdt.core.parser.util.ArrayUtil;
 import org.eclipse.cdt.core.parser.util.CharArrayObjectMap;
 import org.eclipse.cdt.internal.core.dom.parser.ProblemBinding;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.ClassTypeHelper;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPInternalUnknownScope;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPUnknownBinding;
 
 /**
- * Helper class for performing the base class lookup. First a directed graph without loops is computed to represent the base
- * class hierarchy up to those bases for which the lookup finds matches. Next, from these leaves we search for virtual bases
- * that are hidden. With this information the matches are extracted from the graph.
+ * Helper class for performing the base class lookup. First a directed graph without loops is computed
+ * to represent the base class hierarchy up to those bases for which the lookup finds matches. Next, from
+ * these leaves we search for virtual bases that are hidden. With this information the matches are extracted
+ * from the graph.
  */
 class BaseClassLookup {
 	public static void lookupInBaseClasses(LookupData data, ICPPClassScope classScope, IIndexFileSet fileSet) {
@@ -46,9 +49,10 @@ class BaseClassLookup {
 		final ICPPClassType classType= classScope.getClassType();
 		if (classType == null) 
 			return;
-		
+
 		final HashMap<IScope, BaseClassLookup> infoMap = new HashMap<IScope, BaseClassLookup>();
-		BaseClassLookup rootInfo= lookupInBaseClass(data, null, false, classType, fileSet, infoMap, 0);
+		BaseClassLookup rootInfo= lookupInBaseClass(data, null, false, classType, ICPPMember.v_public,
+				fileSet, infoMap, 0);
 		if (data.contentAssist) {
 			rootInfo.collectResultForContentAssist(data);
 		} else {
@@ -71,6 +75,7 @@ class BaseClassLookup {
 	private BaseClassLookup(ICPPClassType type) {
 		fClassType= type;
 	}
+
 	ICPPClassType getClassType() {
 		return fClassType;
 	}
@@ -78,9 +83,11 @@ class BaseClassLookup {
 	IBinding[] getResult() {
 		return fBindings;
 	}
+
 	boolean containsVirtualBase() {
-		return (fVirtual != null && fVirtual.nextSetBit(0) >= 0);
+		return fVirtual != null && fVirtual.nextSetBit(0) >= 0;
 	}
+
 	boolean hasMatches() {
 		return fBindings != null && fBindings.length > 0 && fBindings[0] != null;
 	}
@@ -104,11 +111,12 @@ class BaseClassLookup {
 	public void setHiddenAsVirtualBase() {
 		fHiddenAsVirtualBase= true;
 	}
+
 	public void propagateHiddenAsVirtual() {
 		if (fPropagationDone)
 			return;
 		fPropagationDone= true;
-		for (int i=0; i<fChildren.size(); i++) {
+		for (int i= 0; i < fChildren.size(); i++) {
 			BaseClassLookup child = fChildren.get(i);
 			if (fVirtual.get(i)) {
 				child.setHiddenAsVirtualBase();
@@ -133,16 +141,27 @@ class BaseClassLookup {
 		return false;
 	}
 	
-	static BaseClassLookup lookupInBaseClass(LookupData data, ICPPClassScope baseClassScope, boolean isVirtual, ICPPClassType root, IIndexFileSet fileSet, HashMap<IScope, BaseClassLookup> infoMap, int depth) {
+	static BaseClassLookup lookupInBaseClass(LookupData data, ICPPClassScope baseClassScope,
+			boolean isVirtual, ICPPClassType root, int minVisibility, IIndexFileSet fileSet,
+			HashMap<IScope, BaseClassLookup> infoMap, int depth) {
 		if (depth++ > CPPSemantics.MAX_INHERITANCE_DEPTH)
 			return null;
 	
+		if (data.filterByVisibility) {
+			ICPPClassType classType = baseClassScope != null ? baseClassScope.getClassType() : root;
+			int baseVisibility = CPPSemantics.getClassVisibility(classType, data.getVisibilityContext());
+			if (ClassTypeHelper.isLessVisibility(baseVisibility, minVisibility)) {
+				minVisibility = baseVisibility;
+			}
+		}
+
 		if (baseClassScope != null) {
 			BaseClassLookup info= infoMap.get(baseClassScope);
 			if (info != null) {
 				// avoid loops
 				if (info.getResult() == null) {
-				    data.problem = new ProblemBinding(null, IProblemBinding.SEMANTIC_CIRCULAR_INHERITANCE, root.getNameCharArray());
+				    data.problem = new ProblemBinding(null, IProblemBinding.SEMANTIC_CIRCULAR_INHERITANCE,
+				    		root.getNameCharArray());
 				    return null;
 				}
 				return info;
@@ -167,6 +186,10 @@ class BaseClassLookup {
 				if (data.typesOnly) {
 					CPPSemantics.removeObjects(members);
 				}
+				if (data.filterByVisibility) {
+					ClassTypeHelper.filterByVisibility(members, minVisibility);
+				}
+
 				if (members != null && members.length > 0 && members[0] != null) {
 					if (data.prefixLookup) {
 						matches= members;
@@ -180,7 +203,8 @@ class BaseClassLookup {
 			}
 		}
 		
-		// there is no result in the baseClass itself or we do content assist, we have to examine its base-classes
+		// There is no result in the baseClass itself or we do content assist, we have to examine its
+		// base-classes
 		ICPPClassType baseClass= result.getClassType();
 		if (baseClass != null) { 
 			ICPPBase[] grandBases= null;
@@ -194,8 +218,12 @@ class BaseClassLookup {
 				for (ICPPBase grandBase : grandBases) {
 					if (grandBase instanceof IProblemBinding)
 						continue;
-	
 					try {
+						if (data.filterByVisibility &&
+								ClassTypeHelper.isLessVisibility(grandBase.getVisibility(), minVisibility)) {
+							continue;
+						}
+		
 						IBinding grandBaseBinding = grandBase.getBaseClass();
 						if (!(grandBaseBinding instanceof ICPPClassType)) {
 							// 14.6.2.3 scope is not examined 
@@ -219,8 +247,11 @@ class BaseClassLookup {
 						}
 						if (!(grandBaseScope instanceof ICPPClassScope))
 							continue;
-						
-						BaseClassLookup baseInfo= lookupInBaseClass(data, (ICPPClassScope) grandBaseScope, grandBase.isVirtual(), root, fileSet, infoMap, depth);
+
+						BaseClassLookup baseInfo= lookupInBaseClass(data, (ICPPClassScope) grandBaseScope,
+								grandBase.isVirtual(), root,
+								minVisibility == ICPPMember.v_private ? ICPPMember.v_protected : minVisibility,
+								fileSet, infoMap, depth);
 						if (baseInfo != null)
 							result.addBase(grandBase.isVirtual(), baseInfo);
 					} catch (DOMException e) {
@@ -296,14 +327,14 @@ class BaseClassLookup {
 			}
 		}
 	}
+
 	public void collectResultForContentAssist(LookupData data) {
 		if (fCollected)
 			return;
 		fCollected= true;
 		
 		data.foundItems = CPPSemantics.mergePrefixResults((CharArrayObjectMap) data.foundItems, fBindings, true);
-		for (int i=0; i<fChildren.size(); i++) {
-			BaseClassLookup child = fChildren.get(i);
+		for (BaseClassLookup child : fChildren) {
 			child.collectResultForContentAssist(data);
 		}
 	}
@@ -324,7 +355,7 @@ class BaseClassLookup {
 		fCollected= true;
 		
 		result= (IBinding[]) ArrayUtil.addAll(IBinding.class, result, fBindings);
-		for (int i=0; i<fChildren.size(); i++) {
+		for (int i= 0; i < fChildren.size(); i++) {
 			BaseClassLookup child = fChildren.get(i);
 			result= child.collectResult(data, fVirtual.get(i), result);
 		}

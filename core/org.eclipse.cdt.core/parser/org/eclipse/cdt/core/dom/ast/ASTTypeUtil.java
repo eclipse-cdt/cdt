@@ -689,13 +689,29 @@ public class ASTTypeUtil {
 			return false;
 		}
 	}
-	
+
+	/**
+	 * Checks if a type is present in an array of types.
+	 * @param type a type.
+	 * @param array an array of types
+	 * @return offset of the first occurrence of type in the array, or -1 if not found.
+	 * @since 5.2
+	 */
+	public static int findType(IType type, IType[] array) {
+		for (int i = 0; i < array.length; i++) {
+			if (type.isSameType(array[i])) {
+				return i;
+			}
+		}
+		return -1;
+	}
+
 	private static String[] getQualifiedNameForAnonymous(ICPPBinding binding, boolean normalize) throws DOMException {
 		LinkedList<String> result= new LinkedList<String>();
 		result.addFirst(getNameForAnonymous(binding));
 		
 		IBinding owner= binding.getOwner();
-		while(owner instanceof ICPPNamespace || owner instanceof IType) {
+		while (owner instanceof ICPPNamespace || owner instanceof IType) {
 			char[] name= owner.getNameCharArray();
 			if (name == null || name.length == 0) {
 				if (!(binding instanceof ICPPNamespace)) {
@@ -760,7 +776,6 @@ public class ASTTypeUtil {
 		return null;
 	}
 
-	
 	private static int findFileNameStart(char[] fname) {
 		for (int i= fname.length - 2; i >= 0; i--) {
 			switch (fname[i]) {

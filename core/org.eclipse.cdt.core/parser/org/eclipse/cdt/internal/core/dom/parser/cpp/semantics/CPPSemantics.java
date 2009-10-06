@@ -2642,7 +2642,9 @@ public class CPPSemantics {
 	    
     	IType type = exp.getOperand().getExpressionType();
 		type = SemanticUtil.getNestedType(type, TDEF | REF | CVQ);
-
+		if (!isUserDefined(type))
+			return null;
+		
 		return findOverloadedOperator(exp, args, type, op.toCharArray(), true);
     }
 
@@ -2659,8 +2661,10 @@ public class CPPSemantics {
 			IType op2type = SemanticUtil.getUltimateTypeUptoPointers(exp.getOperand2().getExpressionType());
 			if (op2type instanceof IProblemBinding)
 				return null;
-			if (isUserDefined(op1type) || isUserDefined(op2type))
-				lookupNonMember = true;
+			if (!isUserDefined(op1type) && !isUserDefined(op2type))
+				return null;
+			
+			lookupNonMember= true;
 		}
 		
 		return findOverloadedOperator(exp, args, op1type, op.toCharArray(), lookupNonMember);

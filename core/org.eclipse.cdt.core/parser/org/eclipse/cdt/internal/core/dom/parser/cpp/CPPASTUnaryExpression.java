@@ -161,7 +161,7 @@ public class CPPASTUnaryExpression extends ASTNode implements ICPPASTUnaryExpres
     		return overload;
     	
     	overload = CPPSemantics.findOverloadedOperator(this);
-    	if(operand != null && op == op_amper && computePointerToMemberType() instanceof CPPPointerToMemberType)
+    	if(overload != null && op == op_amper && computePointerToMemberType() instanceof CPPPointerToMemberType)
     		overload = null;
     	
     	return overload;

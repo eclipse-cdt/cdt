@@ -75,7 +75,7 @@ public class DefaultVMModelProxyStrategy implements IVMModelProxy {
         IRootVMNode rootNode = getVMProvider().getRootVMNode();
         return rootNode != null && 
                 rootNode.isDeltaEvent(getRootElement(), event) && 
-                getDeltaFlags(rootNode, null, event) != 0; 
+                getDeltaFlags(rootNode, null, event) != IModelDelta.NO_CHANGE; 
     }
 
     
@@ -252,36 +252,51 @@ public class DefaultVMModelProxyStrategy implements IVMModelProxy {
      */
     public boolean isDisposed() {
         return fDisposed;
-    }   
+    }
 
-    /**
-     * Recursively calls the VM nodes in the hierarchy of the given node
-     * to calculate the delta flags that are 
-     * <p/> 
-     * Note: If a child node has a <code>IModelDelta.CONTENT</code> delta 
-     * flag, it means that this flag will be added to this node's element.  
-     * To allow for optimization change the child's <code>IModelDelta.CONTENT</code>
-     * flag into a <code>IModelDelta.STATE</code> flag.
-     * 
-     * @param node
-     * @param event
-     * @return
-     */
+	/**
+	 * Recursively calls the VM nodes in the hierarchy of the given node to
+	 * determine how elements of those types may be (or are) affected by
+	 * [event], the answer being a collection of IModelDelta flags.
+	 * 
+	 * Optimization 1: If the first-level child node does not have
+	 * <code>IModelDelta.CONTENT</code> but one of its descendants does, then
+	 * for optimization reasons we return <code>IModelDelta.STATE</code>
+	 * instead.
+	 * 
+	 * Optimization 2: If the parent delta contains
+	 * <code>IModelDelta.CONTENT</code>, we do not need to specify it for its
+	 * children. This can shorten delta processing considerably.
+	 * 
+	 * @param node
+	 *            the IVMNode whose delta flags (and those of its descendants)
+	 *            are being queried
+	 * @param parentDelta
+	 *            the base portion of the delta the caller is trying to
+	 *            construct; this delta node is specifically the deepest node in
+	 *            that chain (i.e., has no children, but may have ancestors)
+	 * @param event
+	 *            the event the caller is trying to produce a delta for
+	 * @return the collective set of IModelDelta flags that reflect how [node]
+	 *         and its descendants may be (or are) affected by [event]
+	 */
     protected int getDeltaFlags(IVMNode node, ModelDelta parentDelta, Object event) {
         int flags = node.getDeltaFlags(event);
         for (IVMNode childNode : getVMProvider().getChildVMNodes(node)) {
             if (!childNode.equals(node)) {
                 int childNodeDeltaFlags = getDeltaFlags(childNode, parentDelta, event);
+                
+                // optimization 1; see above
                 if ((childNodeDeltaFlags & IModelDelta.CONTENT) != 0) {
                     childNodeDeltaFlags &= ~IModelDelta.CONTENT;
                     childNodeDeltaFlags |= IModelDelta.STATE;
                 }
+                
                 flags |= childNodeDeltaFlags;
             }
         }
-        // Optimization: If the parent delta contains the "content" flag, we do 
-        // not need to add it to the child.  This can shorten delta processing 
-        // considerably so check for it.
+        
+        // optimization 2; see above
         while (parentDelta != null) {
             if ( (parentDelta.getFlags() & IModelDelta.CONTENT) != 0 ) {
                 flags = flags & ~IModelDelta.CONTENT & ~IModelDelta.STATE;
@@ -305,13 +320,13 @@ public class DefaultVMModelProxyStrategy implements IVMModelProxy {
             new DataRequestMonitor<VMDelta>(getVMProvider().getExecutor(), rm) {
                 @Override
                 protected void handleSuccess() {
-                    // Find the root delta for the whole view to use when firing the delta. 
-                    // Note: the view root is going to be different than the model root
-                    // in case when the view model provider is registered to populate only 
-                    // a sub-tree of a view.
+					// The resulting delta will have parents if our
+					// VMProvider is registered to populate only a sub-tree
+					// of the viewer. Get the root node of the chain--i.e.,
+					// the delta for the root element of the entire viewer.
                     final IModelDelta viewRootDelta = getRootDelta(getData());
                    
-                    // Find the child nodes that have deltas for the given event. 
+                    // Find the child nodes that (may) have deltas for the given event. 
                     final Map<IVMNode,Integer> childNodesWithDeltaFlags = getChildNodesWithDeltaFlags(rootNode, getData(), event);
 
                     // If no child nodes have deltas we can stop here. 
@@ -689,12 +704,11 @@ public class DefaultVMModelProxyStrategy implements IVMModelProxy {
             rm.done();
         }            
     }
-        
-    /**
-     * Convenience method that returns the child nodes which return
-     * <code>true</code> to the <code>hasDeltaFlags()</code> test for the given
-     * event.   
-     */
+
+	/**
+	 * Convenience method that returns what each of the child nodes returns from
+	 * {@link #getDeltaFlags(IVMNode, ModelDelta, Object)}.
+	 */
     protected Map<IVMNode, Integer> getChildNodesWithDeltaFlags(IVMNode node, ModelDelta parentDelta, Object e) {
         Map<IVMNode, Integer> nodes = new HashMap<IVMNode, Integer>(); 
         for (final IVMNode childNode : getVMProvider().getChildVMNodes(node)) {

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2008 Wind River Systems and others.
+ * Copyright (c) 2006, 2009 Wind River Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -31,7 +31,6 @@ import org.eclipse.cdt.dsf.service.DsfSession;
 import org.eclipse.cdt.dsf.ui.viewmodel.AbstractVMAdapter;
 import org.eclipse.cdt.dsf.ui.viewmodel.IRootVMNode;
 import org.eclipse.cdt.dsf.ui.viewmodel.IVMNode;
-import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.IDebugEventSetListener;
 import org.eclipse.debug.core.ILaunchesListener2;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IPresentationContext;
@@ -40,7 +39,6 @@ import org.eclipse.debug.internal.ui.viewers.model.provisional.IPresentationCont
 /**
  * 
  */
-@SuppressWarnings("restriction")
 public class LaunchVMProvider extends AbstractLaunchVMProvider 
     implements IDebugEventSetListener, ILaunchesListener2
 {
@@ -62,17 +60,6 @@ public class LaunchVMProvider extends AbstractLaunchVMProvider
         
         IVMNode stackFramesNode = new StackFramesVMNode(this, getSession());
         addChildNodes(threadsNode, new IVMNode[] { stackFramesNode });
-
-        
-        DebugPlugin.getDefault().addDebugEventListener(this);
-        DebugPlugin.getDefault().getLaunchManager().addLaunchListener(this);
-    }
-    
-    @Override
-    public void dispose() {
-        DebugPlugin.getDefault().removeDebugEventListener(this);
-        DebugPlugin.getDefault().getLaunchManager().removeLaunchListener(this);
-        super.dispose();
     }
     
     @Override

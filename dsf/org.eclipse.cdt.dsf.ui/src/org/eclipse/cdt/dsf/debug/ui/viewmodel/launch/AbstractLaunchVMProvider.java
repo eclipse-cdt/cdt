@@ -86,6 +86,11 @@ public class AbstractLaunchVMProvider extends AbstractDMVMProvider
 				handlePropertyChanged(store, event);
 			}};
         store.addPropertyChangeListener(fPreferencesListener);
+        
+        // Register the LaunchVM provider as a listener to debug and launch 
+        // events.  These events are used by the launch and processes nodes.
+        DebugPlugin.getDefault().addDebugEventListener(this);
+        DebugPlugin.getDefault().getLaunchManager().addLaunchListener(this);
     }
     
     @Override

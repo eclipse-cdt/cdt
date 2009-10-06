@@ -85,7 +85,7 @@ public abstract class ArrayUtil {
 
     	if (currentLength < array.length) {
     		assert array[currentLength] == null;
-    		assert currentLength == 0 || array[currentLength-1] != null;
+    		assert currentLength == 0 || array[currentLength - 1] != null;
     		array[currentLength]= obj;
     		return array;
     	}
@@ -99,7 +99,8 @@ public abstract class ArrayUtil {
     /**
      * Assumes that array contains nulls at the end, only. 
      * Appends element after the last non-null element. 
-     * If the array is null or not large enough, a larger one is allocated.
+     * If the array is not large enough, a larger one is allocated.
+     * Null <code>array</code> is supported for backward compatibility only and only when T is Object.
      */
     @SuppressWarnings("unchecked")
 	static public <T> T[] append(T[] array, T obj) {
@@ -418,7 +419,7 @@ public abstract class ArrayUtil {
 	 * The position of the last non-null element in the array must also be known. 
 	 */
 	public static Object[] removeNullsAfter(Class<?> c, Object[] array, int index) {
-        final int newLen= index+1;
+        final int newLen= index + 1;
         if (array != null && array.length == newLen)
 			return array;
 
@@ -458,7 +459,7 @@ public abstract class ArrayUtil {
 			Object[] temp = (Object[]) Array.newInstance(c, array.length * 2);
 	        System.arraycopy(array, 0, temp, 1, array.length);
 	        temp[0] = obj;
-	        array = temp;	
+	        array = temp;
 		}
 
         return array;
@@ -472,8 +473,8 @@ public abstract class ArrayUtil {
 		if (array != null) {
 			for (int i = 0; i < array.length; i++) {
 				if (element == array[i]) {
-					System.arraycopy(array, i+1, array, i, array.length-i-1);
-					array[array.length-1]= null;
+					System.arraycopy(array, i + 1, array, i, array.length - i - 1);
+					array[array.length - 1]= null;
 					return;
 				}
 			}

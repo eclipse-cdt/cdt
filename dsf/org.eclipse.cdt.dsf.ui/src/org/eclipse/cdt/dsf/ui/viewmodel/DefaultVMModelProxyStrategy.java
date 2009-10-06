@@ -262,7 +262,7 @@ public class DefaultVMModelProxyStrategy implements IVMModelProxy {
 	 * Optimization 1: If the first-level child node does not have
 	 * <code>IModelDelta.CONTENT</code> but one of its descendants does, then
 	 * for optimization reasons we return <code>IModelDelta.STATE</code>
-	 * instead.
+	 * instead. See {@link DefaultVMModelProxyStrategy#buildChildDeltasForAllContexts(IVMNode, Object, VMDelta, int, RequestMonitor)}
 	 * 
 	 * Optimization 2: If the parent delta contains
 	 * <code>IModelDelta.CONTENT</code>, we do not need to specify it for its
@@ -500,11 +500,15 @@ public class DefaultVMModelProxyStrategy implements IVMModelProxy {
             return;
         }            
 
-        // Check if the child delta only has an IModelDelta.STATE flag.  
-        // If that's the case, we can skip creating a delta for this node, 
-        // because the TreeUpdatePolicy does not use the full path from the 
-        // delta to handle these flags. Similarly, the index argument is 
-        // not necessary either.
+		// Check if the child delta only has an IModelDelta.STATE flag. If
+		// that's the case, we can skip creating a delta for this node, because
+		// the Debug Platform's handling of that flag does not require ancestor
+		// deltas (doesn't need to know the path to the element)
+        //
+		// We can skip the delta for this node even if a deeper IVMNode child
+		// calls for an IModelDelta.CONTENT flag, since what we do in that case
+		// is have the CONTENT flag applied to the first ancestor delta that has
+		// something other than IModelDelta.STATE.
         //
         // For example: suppose the model looks like:
         // A-
@@ -517,7 +521,8 @@ public class DefaultVMModelProxyStrategy implements IVMModelProxy {
         //   |-III
         //     |-d
         //
-        // And if VM Node responsible for element a, b, c, d needs a CONTENT update, then the delta may look like this:
+		// And if VM Node responsible for element a, b, c, d needs a CONTENT
+		// update, then the delta may look like this:
         //
         // Element: A
         //        Flags: CONTENT

@@ -243,7 +243,7 @@ public class CPPClassScope extends CPPScope implements ICPPClassScope {
 		}
 	    IBinding[] result = null;
 	    if ((!prefixLookup && CharArrayUtils.equals(c, compName.getLookupKey()))
-	    	|| (prefixLookup && CharArrayUtils.equals(compName.getLookupKey(), 0, c.length, c, true))) {
+	    		|| (prefixLookup && CharArrayUtils.equals(compName.getLookupKey(), 0, c.length, c, true))) {
 	        if (isConstructorReference(name)) {
 	            result = (IBinding[]) ArrayUtil.addAll(IBinding.class, result, getConstructors(name, resolve));
 	        }

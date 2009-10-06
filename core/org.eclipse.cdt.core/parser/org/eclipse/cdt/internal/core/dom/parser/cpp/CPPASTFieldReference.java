@@ -207,15 +207,15 @@ public class CPPASTFieldReference extends ASTNode implements
 	public IBinding[] findBindings(IASTName n, boolean isPrefix) {
 		IBinding[] bindings = CPPSemantics.findBindingsForContentAssist(n, isPrefix);
 		List<IBinding> filtered = new ArrayList<IBinding>();
-		
-		for (int i = 0; i < bindings.length; i++) {
-			if (bindings[i] instanceof ICPPMethod) {
-				ICPPMethod method = (ICPPMethod) bindings[i];
+
+		for (IBinding binding : bindings) {
+			if (binding instanceof ICPPMethod) {
+				ICPPMethod method = (ICPPMethod) binding;
 				if (method.isImplicit()) {
 					continue;
 				}
 			}
-			filtered.add(bindings[i]);
+			filtered.add(binding);
 		}
 		
 		return filtered.toArray(new IBinding[filtered.size()]);

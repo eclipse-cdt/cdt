@@ -99,7 +99,7 @@ public class DOMCompletionProposalComputer extends ParsingBasedProposalComputer 
 
 		List<ICompletionProposal> proposals = new ArrayList<ICompletionProposal>();
 		
-		if(inPreprocessorDirective(context)) {
+		if (inPreprocessorDirective(context)) {
 			if (!inPreprocessorKeyword(context)) {
 				// add only macros
 				if (prefix.length() == 0) {
@@ -278,12 +278,8 @@ public class DOMCompletionProposalComputer extends ParsingBasedProposalComputer 
 		}
 	}
 
-	protected void handleBinding(IBinding binding,
-			CContentAssistInvocationContext cContext,
-			String prefix, 
-			IASTCompletionContext astContext, 
-			List<ICompletionProposal> proposals) {
-
+	protected void handleBinding(IBinding binding, CContentAssistInvocationContext cContext, String prefix, 
+			IASTCompletionContext astContext, List<ICompletionProposal> proposals) {
 		if ((binding instanceof CPPImplicitFunction
 				|| binding instanceof CPPImplicitFunctionTemplate 
 				|| binding instanceof CPPImplicitTypedef

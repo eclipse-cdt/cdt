@@ -217,8 +217,7 @@ public class CPPFunction extends PlatformObject implements ICPPFunction, ICPPInt
 				final IBinding binding= name.resolveBinding();
 				if (binding instanceof IParameter) {
 					result[i]= (IParameter) binding;
-				}
-				else {
+				} else {
 					result[i] = new CPPParameter.CPPParameterProblem(p, IProblemBinding.SEMANTIC_INVALID_TYPE,
 							name.toCharArray());
 				}

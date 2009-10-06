@@ -26,20 +26,18 @@ import org.eclipse.cdt.internal.core.dom.parser.IASTAmbiguityParent;
 /**
  * @author jcamelon
  */
-public class CASTFunctionDefinition extends ASTNode implements
-        IASTFunctionDefinition, IASTAmbiguityParent {
+public class CASTFunctionDefinition extends ASTNode implements IASTFunctionDefinition, IASTAmbiguityParent {
 
     private IASTDeclSpecifier declSpecifier;
     private IASTFunctionDeclarator declarator;
     private IASTStatement bodyStatement;
     private ICFunctionScope scope;
-
     
     public CASTFunctionDefinition() {
 	}
 
-	public CASTFunctionDefinition(IASTDeclSpecifier declSpecifier,
-			IASTFunctionDeclarator declarator, IASTStatement bodyStatement) {
+	public CASTFunctionDefinition(IASTDeclSpecifier declSpecifier, IASTFunctionDeclarator declarator,
+			IASTStatement bodyStatement) {
     	setDeclSpecifier(declSpecifier);
     	setDeclarator(declarator);
     	setBody(bodyStatement);
@@ -49,10 +47,10 @@ public class CASTFunctionDefinition extends ASTNode implements
 		CASTFunctionDefinition copy = new CASTFunctionDefinition();
 		copy.setDeclSpecifier(declSpecifier == null ? null : declSpecifier.copy());
 		
-		if(declarator != null) {
+		if (declarator != null) {
 			IASTDeclarator outer = CVisitor.findOutermostDeclarator(declarator);
 			outer = outer.copy();
-			copy.setDeclarator((IASTFunctionDeclarator)CVisitor.findTypeRelevantDeclarator(outer));
+			copy.setDeclarator((IASTFunctionDeclarator) CVisitor.findTypeRelevantDeclarator(outer));
 		}	
 		
 		copy.setBody(bodyStatement == null ? null : bodyStatement.copy());
@@ -101,41 +99,40 @@ public class CASTFunctionDefinition extends ASTNode implements
     }
 
 	public IScope getScope() {
-		if( scope == null )
-			scope = new CFunctionScope( this );
+		if (scope == null)
+			scope = new CFunctionScope(this);
 		return scope;
 	}
 
     @Override
-	public boolean accept( ASTVisitor action ){
-        if( action.shouldVisitDeclarations ){
-		    switch( action.visit( this ) ){
-	            case ASTVisitor.PROCESS_ABORT : return false;
-	            case ASTVisitor.PROCESS_SKIP  : return true;
-	            default : break;
+	public boolean accept(ASTVisitor action) {
+        if (action.shouldVisitDeclarations) {
+		    switch (action.visit(this)) {
+	            case ASTVisitor.PROCESS_ABORT: return false;
+	            case ASTVisitor.PROCESS_SKIP: return true;
+	            default: break;
 	        }
 		}
         
-        if( declSpecifier != null ) if( !declSpecifier.accept( action ) ) return false;
+        if (declSpecifier != null && !declSpecifier.accept(action)) return false;
         final IASTDeclarator outerDtor= CVisitor.findOutermostDeclarator(declarator);
-        if( outerDtor != null ) if( !outerDtor.accept( action ) ) return false;
-        if( bodyStatement != null ) if( !bodyStatement.accept( action ) ) return false;
+        if (outerDtor != null && !outerDtor.accept(action)) return false;
+        if (bodyStatement != null && !bodyStatement.accept(action)) return false;
       
-        if( action.shouldVisitDeclarations ){
-		    switch( action.leave( this ) ){
-	            case ASTVisitor.PROCESS_ABORT : return false;
-	            case ASTVisitor.PROCESS_SKIP  : return true;
-	            default : break;
+        if (action.shouldVisitDeclarations) {
+		    switch (action.leave(this)) {
+	            case ASTVisitor.PROCESS_ABORT: return false;
+	            case ASTVisitor.PROCESS_SKIP: return true;
+	            default: break;
 	        }
 		}
         return true;
     }
 
     public void replace(IASTNode child, IASTNode other) {
-        if( bodyStatement == child ) 
-        {
-            other.setPropertyInParent( bodyStatement.getPropertyInParent() );
-            other.setParent( bodyStatement.getParent() );
+        if (bodyStatement == child) {
+            other.setPropertyInParent(bodyStatement.getPropertyInParent());
+            other.setParent(bodyStatement.getParent());
             bodyStatement = (IASTStatement) other;
         }
     }

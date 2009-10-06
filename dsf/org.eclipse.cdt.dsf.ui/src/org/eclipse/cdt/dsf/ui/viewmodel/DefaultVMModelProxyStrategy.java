@@ -513,7 +513,7 @@ public class DefaultVMModelProxyStrategy implements IVMModelProxy {
         // The main benefit of this optimization is that the viewer is left 
         // to retrieve the elements that need to be refreshed, rather 
         // than having this proxy do it.  Since the viewer is lazy loading
-        // it may need to retrieve as many elements in the hierarchy.
+        // it may not need to retrieve as many elements in the hierarchy.
         //
         // For example: suppose the model looks like:
         // A-

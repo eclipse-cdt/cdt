@@ -134,4 +134,12 @@ public class CFileDescription extends CDataProxyContainer implements
 		CConfigurationDescription cfg = (CConfigurationDescription)getConfiguration();
 		return cfg.canExclude(getPath(), false, exclude);
 	}
+
+	/**
+	 * For debugging purpose only
+	 */
+	@Override
+	public String toString() {
+		return getPath().toString();
+	}
 }

@@ -505,6 +505,41 @@ public class DefaultVMModelProxyStrategy implements IVMModelProxy {
         // because the TreeUpdatePolicy does not use the full path from the 
         // delta to handle these flags. Similarly, the index argument is 
         // not necessary either.
+        //
+        // For example: suppose the model looks like:
+        // A-
+        // |-1
+        //   |-I
+        //   | |-a
+        //   | |-b
+        //   |-II
+        //   | |-c
+        //   |-III
+        //     |-d
+        //
+        // And if VM Node responsible for element a, b, c, d needs a CONTENT update, then the delta may look like this:
+        //
+        // Element: A
+        //        Flags: CONTENT
+        //        Index: 0 Child Count:-1
+        //
+        // Instead of:
+        //
+        //    Element: A
+        //        Flags: NO_CHANGE
+        //        Index: 0 Child Count: 1
+        //        Element: 1
+        //            Flags: NO_CHANGE
+        //            Index: 0 Child Count: 3
+        //            Element: I
+        //                Flags: CONTENT
+        //                Index: 0 Child Count: 2
+        //            Element: II
+        //                Flags: CONTENT
+        //                Index: 1 Child Count: 1
+        //            Element: III
+        //                Flags: CONTENT
+        //                Index: 2 Child Count: 1
         boolean mustGetElements = false;
         boolean _updateFlagsOnly = true;
         for (int childDelta : childNodesWithDeltaFlags.values()) {

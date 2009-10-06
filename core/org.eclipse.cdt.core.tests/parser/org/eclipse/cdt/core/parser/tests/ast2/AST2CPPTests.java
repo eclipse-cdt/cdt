@@ -41,6 +41,7 @@ import org.eclipse.cdt.core.dom.ast.IASTFunctionCallExpression;
 import org.eclipse.cdt.core.dom.ast.IASTFunctionDeclarator;
 import org.eclipse.cdt.core.dom.ast.IASTFunctionDefinition;
 import org.eclipse.cdt.core.dom.ast.IASTIdExpression;
+import org.eclipse.cdt.core.dom.ast.IASTImplicitNameOwner;
 import org.eclipse.cdt.core.dom.ast.IASTInitializerExpression;
 import org.eclipse.cdt.core.dom.ast.IASTLabelStatement;
 import org.eclipse.cdt.core.dom.ast.IASTLiteralExpression;
@@ -7330,5 +7331,24 @@ public class AST2CPPTests extends AST2BaseTest {
 		T= bh.assertNonProblem("T* m2", 1);
 		assertSame(X, T.getOwner());
 	}
+
+	//	class ULONGLONG { 
+	//	public : 
+	//	   ULONGLONG (unsigned long long val) {}
+  	//	   friend ULONGLONG operator ~ ( const ULONGLONG & ) { return 0; }
+	//	};
+	//
+	//	int main() {
+	//	    return ~0;
+	//	}
+	public void testNonUserdefinedOperator_Bug291409_2() throws Exception {
+		final String code = getAboveComment();
+		IASTTranslationUnit tu= parseAndCheckBindings(code, ParserLanguage.CPP);
+		IASTFunctionDefinition def= getDeclaration(tu, 1);
+		IASTReturnStatement rstmt= getStatement(def, 0);
+		IASTImplicitNameOwner expr= (IASTImplicitNameOwner) rstmt.getReturnValue();
+		assertEquals(0, expr.getImplicitNames().length);
+	}
+
 }
 

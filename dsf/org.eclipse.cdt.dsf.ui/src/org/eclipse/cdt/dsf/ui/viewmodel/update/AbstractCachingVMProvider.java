@@ -419,6 +419,14 @@ public class AbstractCachingVMProvider extends AbstractVMProvider
 
     public void setActiveUpdatePolicy(IVMUpdatePolicy updatePolicy) {
         getPresentationContext().setProperty(SELECTED_UPDATE_MODE, updatePolicy.getID());
+
+        // Repaint the view to allow elements using the PROP_UPDATE_POLICY_ID 
+        // property to repaint themselves.
+        for (final IVMModelProxy proxyStrategy : getActiveModelProxies()) {
+            if (!proxyStrategy.isDisposed()) {
+                proxyStrategy.fireModelChanged(new  ModelDelta(proxyStrategy.getRootElement(), IModelDelta.CONTENT));
+            }
+        }
     }
     
     public void refresh() {
@@ -1099,6 +1107,9 @@ public class AbstractCachingVMProvider extends AbstractVMProvider
                 if (DEBUG_CACHE && (DEBUG_PRESENTATION_ID == null || getPresentationContext().getId().equals(DEBUG_PRESENTATION_ID))) {
                     DsfUIPlugin.debug("cacheHitProperties(node = " + node + ", update = " + update + ", " + entry.fProperties + ")"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
                 }
+                if (entry.fProperties.containsKey(PROP_UPDATE_POLICY_ID)) {
+                    entry.fProperties.put(PROP_UPDATE_POLICY_ID, getActiveUpdatePolicy().getID());
+                }
                 update.setAllProperties(entry.fProperties);
                 update.setStatus((IStatus)entry.fProperties.get(PROP_UPDATE_STATUS));
                 update.done();
@@ -1107,6 +1118,9 @@ public class AbstractCachingVMProvider extends AbstractVMProvider
                 // incomplete data to user.  User can refresh the view to get the complete data set.
                 if (DEBUG_CACHE && (DEBUG_PRESENTATION_ID == null || getPresentationContext().getId().equals(DEBUG_PRESENTATION_ID))) {
                     DsfUIPlugin.debug("cacheHitPropertiesPartialStaleData(node = " + node + ", update = " + update + ", " + entry.fProperties + ")"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
+                }
+                if (entry.fProperties.containsKey(PROP_UPDATE_POLICY_ID)) {
+                    entry.fProperties.put(PROP_UPDATE_POLICY_ID, getActiveUpdatePolicy().getID());
                 }
                 update.setAllProperties(entry.fProperties);
                 update.setStatus(DsfUIPlugin.newErrorStatus(IDsfStatusConstants.INVALID_STATE, "Cache contains partial stale data for this request.", null)); //$NON-NLS-1$

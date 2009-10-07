@@ -231,7 +231,7 @@ public class MIInferiorProcess extends Process
     }
 
     @ThreadSafeAndProhibitedFromDsfExecutor("fSession#getExecutor")
-    public void waitForSync() throws InterruptedException {
+    public synchronized void waitForSync() throws InterruptedException {
         assert !getSession().getExecutor().isInExecutorThread();
         
         while (getState() != State.TERMINATED) {
@@ -300,7 +300,7 @@ public class MIInferiorProcess extends Process
             synchronized(this) {
                 fExitCode = exitCode;
             }
-            return fExitCode;
+            return exitCode;
         } catch (RejectedExecutionException e) {
         } catch (InterruptedException e) {
         } catch (CancellationException e) {

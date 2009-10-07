@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2008 Wind River Systems and others.
+ * Copyright (c) 2006, 2009 Wind River Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -38,12 +38,9 @@ import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.ITreeSelection;
 import org.eclipse.jface.viewers.TreePath;
 
-
 /**
- * View model node based on a single Data Model Context type.  
- * The assumption in this implementation is that elements of this node have
- * a single IDMContext associated with them, and all of these contexts 
- * are of the same class type.   
+ * View model node based on a single Data Model Context type. All the elements
+ * created by this node are of that IDMContext type.
  * 
  * @since 1.0
  */

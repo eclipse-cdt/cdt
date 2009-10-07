@@ -371,20 +371,17 @@ public class DefaultVMModelProxyStrategy implements IVMModelProxy {
             new DataRequestMonitor<IVMContext[]>(getVMProvider().getExecutor(), rm) {
                 @Override
                 protected void handleCompleted() {
-                    if (isSuccess() || getStatus().getCode() == IDsfStatusConstants.NOT_SUPPORTED) {
-                        
-                        if (isSuccess()) {
-                            assert getData() != null;
-                            buildChildDeltasForEventContext(
-                                getData(), node, event, parentDelta, nodeOffset, rm);
-                        } else  {
-                            // The DMC for this node was not found in the event.  Call the 
-                            // super-class to resort to the default behavior which will add a 
-                            // delta for every element in this node.
-                            buildChildDeltasForAllContexts(
-                                node, event, parentDelta, nodeOffset, rm);
-                        }
-                    } else {
+                    if (isSuccess()) {
+                    	assert getData() != null;
+                    	buildChildDeltasForEventContext(getData(), node, event, parentDelta, nodeOffset, rm);
+                    } 
+                    else if (getStatus().getCode() == IDsfStatusConstants.NOT_SUPPORTED) {
+                    	// The DMC for this node was not found in the event.  Call the 
+                    	// super-class to resort to the default behavior which will add a 
+                    	// delta for every element in this node.
+                    	buildChildDeltasForAllContexts(node, event, parentDelta, nodeOffset, rm);
+                    } 
+                    else {
                         super.handleCompleted();
                     }
                 }

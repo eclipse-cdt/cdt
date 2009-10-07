@@ -121,12 +121,7 @@ public class GdbLaunchDelegate extends LaunchConfigurationDelegate
         // code that is outside the workspace.
         // See bug 244567
         if (!attach) {
-        	// First verify we are dealing with a proper project.
-        	ICProject project = LaunchUtils.verifyCProject(config);
-        	// Now verify we know the program to debug.
-        	exePath = LaunchUtils.verifyProgramPath(config, project);
-        	// Finally, make sure the program is a proper binary.
-        	LaunchUtils.verifyBinary(config, exePath);
+        	exePath = checkBinaryDetails(config);
         }
     	
         monitor.worked( 1 );
@@ -211,6 +206,20 @@ public class GdbLaunchDelegate extends LaunchConfigurationDelegate
                 }
             }        
         }
+	}
+
+	/**
+	 * Method used to check that the project, program and binary are correct.
+	 * Can be overridden to avoid checking certain things.
+	 */
+	protected IPath checkBinaryDetails(final ILaunchConfiguration config) throws CoreException {
+		// First verify we are dealing with a proper project.
+		ICProject project = LaunchUtils.verifyCProject(config);
+		// Now verify we know the program to debug.
+		IPath exePath = LaunchUtils.verifyProgramPath(config, project);
+		// Finally, make sure the program is a proper binary.
+		LaunchUtils.verifyBinary(config, exePath);
+		return exePath;
 	}
 
 	/**

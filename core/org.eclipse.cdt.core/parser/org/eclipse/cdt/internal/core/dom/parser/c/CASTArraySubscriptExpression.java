@@ -115,6 +115,7 @@ public class CASTArraySubscriptExpression extends ASTNode implements
     public IType getExpressionType() {
 		IType t = getArrayExpression().getExpressionType();
 		try {
+			t = CVisitor.unwrapTypedefs(t);
 			if (t instanceof IPointerType)
 				return ((IPointerType)t).getType();
 			else if (t instanceof IArrayType)

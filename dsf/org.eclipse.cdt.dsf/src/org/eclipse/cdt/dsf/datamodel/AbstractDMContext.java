@@ -86,11 +86,25 @@ abstract public class AbstractDMContext extends PlatformObject
         }
         return getSessionId().hashCode() + parentsHash;
     }
-    
+
+	/**
+	 * @return a stringified representation of our parent context. If we have
+	 *         more than one parent, the parents are separated by commas, and
+	 *         the entire collection is wrapped with parenthesis:
+	 *         "(p1,p2,...,pn)"
+	 */
     protected String baseToString() {
-        StringBuffer retVal = new StringBuffer(); 
+        StringBuilder retVal = new StringBuilder(); 
         for (IDMContext parent : fParents) {
             retVal.append(parent);
+            retVal.append(',');
+        }
+        if (retVal.length() > 0) {
+        	retVal.deleteCharAt(retVal.length() - 1);	// remove trailing comma
+        }
+        if (fParents.length > 1) {
+        	retVal.insert(0, '(');
+        	retVal.insert(retVal.length(), ')');
         }
         return retVal.toString(); 
     }

@@ -16,7 +16,7 @@ import org.eclipse.debug.internal.ui.viewers.model.provisional.IModelDeltaVisito
 import org.eclipse.debug.internal.ui.viewers.model.provisional.ModelDelta;
 
 /**
- * This delta class mostly just duplicates the ModelDelta implemention, but
+ * This delta class mostly just duplicates the ModelDelta implementation, but
  * it allows clients to modify the flags after the original object is 
  * constructed. 
  *

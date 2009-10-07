@@ -39,8 +39,8 @@ import org.eclipse.jface.viewers.ITreeSelection;
 import org.eclipse.jface.viewers.TreePath;
 
 /**
- * View model node based on a single Data Model Context type. All the elements
- * created by this node are of that IDMContext type.
+ * View model node based on a single IDMContext type. All the elements created
+ * by this node are of that type.
  * 
  * @since 1.0
  */

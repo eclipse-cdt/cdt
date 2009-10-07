@@ -16,6 +16,7 @@ import org.eclipse.cdt.dsf.concurrent.ImmediateExecutor;
 import org.eclipse.cdt.dsf.concurrent.RequestMonitor;
 import org.eclipse.cdt.dsf.concurrent.Sequence;
 import org.eclipse.cdt.dsf.concurrent.ThreadSafe;
+import org.eclipse.cdt.dsf.debug.model.DsfLaunch;
 import org.eclipse.cdt.dsf.service.DsfServiceEventHandler;
 import org.eclipse.cdt.dsf.service.DsfSession;
 import org.eclipse.cdt.examples.dsf.pda.PDAPlugin;
@@ -43,7 +44,7 @@ import org.eclipse.debug.core.model.ITerminate;
  * </p>
  */
 @ThreadSafe
-public class PDALaunch extends Launch
+public class PDALaunch extends DsfLaunch
 implements ITerminate
 {   
     // DSF executor and session.  Both are created and shutdown by the launch. 

@@ -21,8 +21,6 @@ import java.io.PipedOutputStream;
 import java.util.concurrent.CancellationException;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.RejectedExecutionException;
-import java.util.concurrent.TimeUnit;
-import java.util.concurrent.TimeoutException;
 
 import org.eclipse.cdt.dsf.concurrent.ConfinedToDsfExecutor;
 import org.eclipse.cdt.dsf.concurrent.DataRequestMonitor;
@@ -30,6 +28,8 @@ import org.eclipse.cdt.dsf.concurrent.DsfRunnable;
 import org.eclipse.cdt.dsf.concurrent.IDsfStatusConstants;
 import org.eclipse.cdt.dsf.concurrent.ImmediateExecutor;
 import org.eclipse.cdt.dsf.concurrent.Query;
+import org.eclipse.cdt.dsf.concurrent.ThreadSafe;
+import org.eclipse.cdt.dsf.concurrent.ThreadSafeAndProhibitedFromDsfExecutor;
 import org.eclipse.cdt.dsf.debug.service.IRunControl.IContainerDMContext;
 import org.eclipse.cdt.dsf.debug.service.IRunControl.IExecutionDMContext;
 import org.eclipse.cdt.dsf.debug.service.command.ICommandControlService;
@@ -103,10 +103,12 @@ public class MIInferiorProcess extends Process
      */
     private int fSuppressTargetOutputCounter = 0;
 
+    @ThreadSafe
     Integer fExitCode = null;
 
     private State fState = State.RUNNING;
     
+    @ConfinedToDsfExecutor("fSession#getExecutor")
     private String fInferiorPid = null;
 
     /**
@@ -199,6 +201,7 @@ public class MIInferiorProcess extends Process
         fDisposed = true;
     }
 
+    @ThreadSafe
     protected DsfSession getSession() {
         return fSession;
     }
@@ -206,8 +209,10 @@ public class MIInferiorProcess extends Process
     /**
      * @since 1.1
      */
+    @ConfinedToDsfExecutor("fSession#getExecutor")
     protected ICommandControlService getCommandControlService() { return fCommandControl; }
     
+    @ConfinedToDsfExecutor("fSession#getExecutor")
     protected boolean isDisposed() { return fDisposed; }
     
     @Override
@@ -225,7 +230,10 @@ public class MIInferiorProcess extends Process
         return fErrorStream;
     }
 
-    public synchronized void waitForSync() throws InterruptedException {
+    @ThreadSafeAndProhibitedFromDsfExecutor("fSession#getExecutor")
+    public void waitForSync() throws InterruptedException {
+        assert !getSession().getExecutor().isInExecutorThread();
+        
         while (getState() != State.TERMINATED) {
             wait(100);
         }        
@@ -234,37 +242,24 @@ public class MIInferiorProcess extends Process
     /**
      * @see java.lang.Process#waitFor()
      */
+    @ThreadSafeAndProhibitedFromDsfExecutor("fSession#getExecutor")
     @Override
     public int waitFor() throws InterruptedException {
+        assert !getSession().getExecutor().isInExecutorThread();
+        
         waitForSync();
         return exitValue();
     }
 
-	/**
-	 * Thrown by {@link MIInferiorProcess#exitValue()} when it is unable to
-	 * determine the exit value.
-	 * @since 2.1
-	 */
-    public static class ExitValueUnavailableException extends IllegalThreadStateException {
-		private static final long serialVersionUID = 1L;
-
-		public ExitValueUnavailableException(String s) {
-    		super(s);
-    	}
-    }
-
-	/**
-	 * Will throw an {@link ExitValueUnavailableException} if the DSF session
-	 * executor is unavailable (for more than 300ms). We do not wait
-	 * indefinitely, as our caller may have a lock that the active
-	 * Runnable/Callable is waiting for, and that could cause a deadlock.
-	 * 
-	 * @see java.lang.Process#exitValue()
-	 */
+    @ThreadSafeAndProhibitedFromDsfExecutor("fSession#getExecutor")
     @Override
     public int exitValue() {
-        if (fExitCode != null) {
-            return fExitCode;
+        assert !getSession().getExecutor().isInExecutorThread();
+        
+        synchronized (this) {
+            if (fExitCode != null) {
+                return fExitCode;
+            }
         }
         
         try {
@@ -301,13 +296,10 @@ public class MIInferiorProcess extends Process
             };
             fSession.getExecutor().execute(exitCodeQuery);
 
-            try {
-				// Don't wait indefinitely. See bugzilla 291342
-				fExitCode = exitCodeQuery.get(300, TimeUnit.MILLISECONDS);
-			} catch (TimeoutException e) {
-				exitCodeQuery.cancel(false);
-				throw new ExitValueUnavailableException("Timed out waiting for availability of DSF executor."); //$NON-NLS-1$
-			}
+            int exitCode = exitCodeQuery.get(); 
+            synchronized(this) {
+                fExitCode = exitCode;
+            }
             return fExitCode;
         } catch (RejectedExecutionException e) {
         } catch (InterruptedException e) {
@@ -375,10 +367,12 @@ public class MIInferiorProcess extends Process
         );         
     }
 
-    public State getState() { 
+    @ThreadSafe
+    public synchronized State getState() { 
         return fState;
     }
 
+    @ConfinedToDsfExecutor("fSession#getExecutor")
     public IExecutionDMContext getExecutionContext() {
         return fContainerDMContext;
     }
@@ -386,10 +380,12 @@ public class MIInferiorProcess extends Process
     /**
 	 * @since 1.1
 	 */
+    @ConfinedToDsfExecutor("fSession#getExecutor")
     public void setContainerContext(IContainerDMContext containerDmc) {
     	fContainerDMContext = containerDmc;
     }
     
+    @ConfinedToDsfExecutor("fSession#getExecutor")
     synchronized void setState(State state) {
         if (fState == State.TERMINATED) return;
         fState = state;
@@ -420,6 +416,7 @@ public class MIInferiorProcess extends Process
     /**
      * @since 1.1
      */
+    @ConfinedToDsfExecutor("fSession#getExecutor")
     public String getPid() { 
     	return fInferiorPid;
     }
@@ -427,6 +424,7 @@ public class MIInferiorProcess extends Process
     /**
      * @since 1.1
      */
+    @ConfinedToDsfExecutor("fSession#getExecutor")
     public void setPid(String pid) { 
     	fInferiorPid = pid;
     }

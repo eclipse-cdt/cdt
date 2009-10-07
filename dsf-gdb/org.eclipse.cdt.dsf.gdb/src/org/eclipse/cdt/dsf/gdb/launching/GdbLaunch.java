@@ -24,6 +24,7 @@ import org.eclipse.cdt.dsf.concurrent.RequestMonitor;
 import org.eclipse.cdt.dsf.concurrent.Sequence;
 import org.eclipse.cdt.dsf.concurrent.ThreadSafe;
 import org.eclipse.cdt.dsf.concurrent.ThreadSafeAndProhibitedFromDsfExecutor;
+import org.eclipse.cdt.dsf.debug.model.DsfLaunch;
 import org.eclipse.cdt.dsf.debug.model.DsfMemoryBlockRetrieval;
 import org.eclipse.cdt.dsf.debug.service.IDsfDebugServicesFactory;
 import org.eclipse.cdt.dsf.debug.service.IMemory.IMemoryDMContext;
@@ -47,7 +48,6 @@ import org.eclipse.core.runtime.Status;
 import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.ILaunchConfiguration;
-import org.eclipse.debug.core.Launch;
 import org.eclipse.debug.core.model.IDisconnect;
 import org.eclipse.debug.core.model.IMemoryBlockRetrieval;
 import org.eclipse.debug.core.model.ISourceLocator;
@@ -57,7 +57,7 @@ import org.eclipse.debug.core.model.ITerminate;
  * The only object in the model that implements the traditional interfaces.
  */
 @ThreadSafe
-public class GdbLaunch extends Launch
+public class GdbLaunch extends DsfLaunch
     implements ITerminate, IDisconnect, ITracedLaunch
 {
     private DefaultDsfExecutor fExecutor;

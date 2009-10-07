@@ -11,8 +11,11 @@
  *******************************************************************************/
 package org.eclipse.cdt.dsf.gdb.internal.ui.actions;
 
+import java.util.concurrent.RejectedExecutionException;
+
 import org.eclipse.cdt.dsf.concurrent.DsfExecutor;
 import org.eclipse.cdt.dsf.concurrent.DsfRunnable;
+import org.eclipse.cdt.dsf.concurrent.ImmediateExecutor;
 import org.eclipse.cdt.dsf.concurrent.RequestMonitor;
 import org.eclipse.cdt.dsf.datamodel.DMContexts;
 import org.eclipse.cdt.dsf.debug.service.IRunControl.IExecutionDMContext;
@@ -61,22 +64,27 @@ public class DsfTerminateCommand implements ITerminateHandler {
             return;
         }            
         
-        fExecutor.execute(
-            new DsfRunnable() { 
-                public void run() {
-                    // Get the processes service and the exec context.
-                	IGDBBackend gdbBackend = fTracker.getService(IGDBBackend.class);
-                    if (gdbBackend == null || dmc == null) {
-                        // Context or service already invalid.
-                        request.setEnabled(false);
-                        request.done();
-                    } else {
-                        // Check the terminate.
-                        request.setEnabled(gdbBackend.getState() == IMIBackend.State.STARTED);
-                        request.done();
+        try {
+            fExecutor.execute(
+                new DsfRunnable() { 
+                    public void run() {
+                        // Get the processes service and the exec context.
+                    	IGDBBackend gdbBackend = fTracker.getService(IGDBBackend.class);
+                        if (gdbBackend == null || dmc == null) {
+                            // Context or service already invalid.
+                            request.setEnabled(false);
+                            request.done();
+                        } else {
+                            // Check the terminate.
+                            request.setEnabled(gdbBackend.getState() == IMIBackend.State.STARTED);
+                            request.done();
+                        }
                     }
-                }
-            });
+                });
+        } catch (RejectedExecutionException e) {
+            request.setEnabled(false);
+            request.done();
+        }
     }
 
     public boolean execute(final IDebugCommandRequest request) {
@@ -85,14 +93,24 @@ public class DsfTerminateCommand implements ITerminateHandler {
             return false;
         }
 
-        fExecutor.submit(new DsfCommandRunnable(fTracker, request.getElements()[0], request) { 
-            @Override public void doExecute() {
-                IGDBControl gdbControl = fTracker.getService(IGDBControl.class);
-                if (gdbControl != null) {
-                    gdbControl.terminate(new RequestMonitor(fExecutor, null));
-                }
-             }
-        });
+        try {
+            fExecutor.submit(new DsfCommandRunnable(fTracker, request.getElements()[0], request) { 
+                @Override public void doExecute() {
+                    IGDBControl gdbControl = fTracker.getService(IGDBControl.class);
+                    if (gdbControl != null) {
+                        gdbControl.terminate(new RequestMonitor(ImmediateExecutor.getInstance(), null) {
+                            @Override
+                            protected void handleCompleted() {
+                                request.setStatus(getStatus());
+                                request.done();
+                            };
+                        });
+                    }
+                 }
+            });
+        } catch (RejectedExecutionException e) {
+            request.done();
+        }
         return false;
     }
     

@@ -164,24 +164,26 @@ public class AbstractLaunchVMProvider extends AbstractDMVMProvider
     			refreshStackFramesFuture.cancel(false);
     		}
 
-    		refreshStackFramesFuture = getSession().getExecutor().schedule(
-	            new DsfRunnable() { 
-	                public void run() {
-	                    if (getSession().isActive()) {
-	                        getExecutor().execute(new Runnable() {
-	                            public void run() {
-	                                // trigger full stack frame update
-	                                ScheduledFuture<?> future= fRefreshStackFramesFutures.get(exeContext);
-	                                if (future != null && !isDisposed()) {
-	                                    fRefreshStackFramesFutures.remove(exeContext);
-	                                    handleEvent(new FullStackRefreshEvent(exeContext), null);
-	                                }
-	                            }});
-	                    }
-	                }
-	            },
-			    FRAME_UPDATE_DELAY, TimeUnit.MILLISECONDS);
-			fRefreshStackFramesFutures.put(exeContext, refreshStackFramesFuture);
+    		try {
+        		refreshStackFramesFuture = getSession().getExecutor().schedule(
+    	            new DsfRunnable() { 
+    	                public void run() {
+    	                    if (getSession().isActive()) {
+    	                        getExecutor().execute(new Runnable() {
+    	                            public void run() {
+    	                                // trigger full stack frame update
+    	                                ScheduledFuture<?> future= fRefreshStackFramesFutures.get(exeContext);
+    	                                if (future != null && !isDisposed()) {
+    	                                    fRefreshStackFramesFutures.remove(exeContext);
+    	                                    handleEvent(new FullStackRefreshEvent(exeContext), null);
+    	                                }
+    	                            }});
+    	                    }
+    	                }
+    	            },
+    			    FRAME_UPDATE_DELAY, TimeUnit.MILLISECONDS);
+        		fRefreshStackFramesFutures.put(exeContext, refreshStackFramesFuture);
+    		} catch (RejectedExecutionException e) {}
     	} else if (event instanceof IRunControl.IResumedDMEvent) {
     		IExecutionDMContext exeContext= ((IRunControl.IResumedDMEvent) event).getDMContext();
     		ScheduledFuture<?> refreshStackFramesFuture= fRefreshStackFramesFutures.get(exeContext);

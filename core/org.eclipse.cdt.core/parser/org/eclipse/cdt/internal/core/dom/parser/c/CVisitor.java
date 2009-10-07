@@ -668,7 +668,7 @@ public class CVisitor extends ASTQueries {
 		return new CBasicType(IBasicType.t_int, CBasicType.IS_LONG | CBasicType.IS_UNSIGNED);
 	}
 
-	static IType unwrapTypedefs(IType type) throws DOMException {
+	static IType unwrapTypedefs(IType type) {
 		while (type instanceof ITypedef) {
 			type= ((ITypedef) type).getType();
 		}

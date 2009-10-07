@@ -6408,6 +6408,52 @@ public class AST2Tests extends AST2BaseTest {
 	    }
 	}
 	
+	
+    //	/*
+    //	 * Check that the type returned by CASTArraySubscriptExpression
+    //	 * handles typedefs correctly.
+    //	 *
+    //	 */
+    //	struct s {
+    //	    int a;
+    //	};
+    //	typedef struct s* ptr;
+    //	typedef struct s array[10];
+	//  typedef array newArray;
+    //	ptr var1;
+    //	struct s* var2;
+    //	array var3;
+    //	struct s var4[10];
+    //  newArray var5;
+    //
+    //	void foo() {
+	//      /* The type of the arraysubscript expression should be struct s 
+	//       * each of the following statements
+	//       */
+    //	    var1[1].a  = 1;
+    //	    var2[1].a  = 1;
+    //	    var3[1].a  = 1;
+    //	    var4[1].a  = 1;
+	//	    var5[1].a  = 1;
+    //	}
+	public void testArraySubscriptExpressionGetExpressionType() throws Exception {
+	    for(ParserLanguage lang : ParserLanguage.values()) {
+	        IASTTranslationUnit tu = parseAndCheckBindings(getAboveComment(), lang);
+	        assertTrue(tu.isFrozen());
+	        for (IASTDeclaration d : tu.getDeclarations()) {
+	            if (d instanceof IASTFunctionDefinition) {
+	                for (IASTStatement s : ((IASTCompoundStatement)((IASTFunctionDefinition)d).getBody()).getStatements()) {
+	                    IASTExpression op1 = ((IASTBinaryExpression)((IASTExpressionStatement)s).getExpression()).getOperand1();
+	                    IASTExpression owner = ((IASTFieldReference)op1).getFieldOwner();
+	                    IType t = owner.getExpressionType();
+	                    assertTrue( t instanceof ICompositeType );
+	                    assertEquals( "s",((ICompositeType)t).getName());
+	                }
+	            }
+	        }
+	    }
+	}
+	
 	//	extern int a[];
 	//	int a[1];
 	public void testIncompleteArrays_269926() throws Exception {

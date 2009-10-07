@@ -13,7 +13,6 @@
 package org.eclipse.cdt.internal.core.dom.parser.c;
 
 import org.eclipse.cdt.core.dom.ast.ASTVisitor;
-import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IASTBinaryExpression;
 import org.eclipse.cdt.core.dom.ast.IASTExpression;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
@@ -129,39 +128,35 @@ public class CASTBinaryExpression extends ASTNode implements
     
     public IType getExpressionType() {
         int op = getOperator();
-		try {
-			switch(op) {
-				case op_lessEqual:
-				case op_lessThan:
-				case op_greaterEqual:
-				case op_greaterThan:
-				case op_logicalAnd:
-				case op_logicalOr:
-				case op_equals:
-				case op_notequals:
-					CBasicType basicType = new CBasicType(IBasicType.t_int, 0);
-			    	basicType.setValue(this);
-			    	return basicType;
-				case IASTBinaryExpression.op_plus:
-					IType t2 = getOperand2().getExpressionType();
-					if (CVisitor.unwrapTypedefs(t2) instanceof IPointerType) {
-						return t2;
-					}
-					break;
+		switch(op) {
+			case op_lessEqual:
+			case op_lessThan:
+			case op_greaterEqual:
+			case op_greaterThan:
+			case op_logicalAnd:
+			case op_logicalOr:
+			case op_equals:
+			case op_notequals:
+				CBasicType basicType = new CBasicType(IBasicType.t_int, 0);
+		    	basicType.setValue(this);
+		    	return basicType;
+			case IASTBinaryExpression.op_plus:
+				IType t2 = getOperand2().getExpressionType();
+				if (CVisitor.unwrapTypedefs(t2) instanceof IPointerType) {
+					return t2;
+				}
+				break;
 
-				case IASTBinaryExpression.op_minus:
-					t2= getOperand2().getExpressionType();
-					if (CVisitor.unwrapTypedefs(t2) instanceof IPointerType) {
-						IType t1 = getOperand1().getExpressionType();
-						if (CVisitor.unwrapTypedefs(t1) instanceof IPointerType) {
-			    			return CVisitor.getPtrDiffType(this);
-						}
-						return t1;
+			case IASTBinaryExpression.op_minus:
+				t2= getOperand2().getExpressionType();
+				if (CVisitor.unwrapTypedefs(t2) instanceof IPointerType) {
+					IType t1 = getOperand1().getExpressionType();
+					if (CVisitor.unwrapTypedefs(t1) instanceof IPointerType) {
+		    			return CVisitor.getPtrDiffType(this);
 					}
-					break;
-			}
-		} catch (DOMException e) {
-			return e.getProblem();
+					return t1;
+				}
+				break;
 		}
 		return getOperand1().getExpressionType();
     }

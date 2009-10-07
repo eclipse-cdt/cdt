@@ -544,7 +544,7 @@ public class StackFramesVMNode extends AbstractDMVMNode
         if (e instanceof ISuspendedDMEvent) {
             return IModelDelta.CONTENT | IModelDelta.EXPAND | IModelDelta.SELECT;
         } else if (e instanceof FullStackRefreshEvent) {
-        	return IModelDelta.CONTENT | IModelDelta.EXPAND;
+        	return IModelDelta.CONTENT;
         } else if (e instanceof SteppingTimedOutEvent) {
             return IModelDelta.CONTENT;
         } else if (e instanceof ModelProxyInstalledEvent || e instanceof DataModelInitializedEvent) {

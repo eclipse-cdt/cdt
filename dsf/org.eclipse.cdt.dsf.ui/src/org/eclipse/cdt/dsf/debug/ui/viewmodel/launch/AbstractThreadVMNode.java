@@ -336,8 +336,6 @@ public abstract class AbstractThreadVMNode extends AbstractDMVMNode
             return IModelDelta.CONTENT;            
         } else if (e instanceof ISuspendedDMEvent) {
             return IModelDelta.NO_CHANGE;
-        } else if (e instanceof FullStackRefreshEvent) {
-            return IModelDelta.CONTENT;
         } else if (e instanceof SteppingTimedOutEvent) {
             return IModelDelta.CONTENT;            
         } else if (e instanceof ModelProxyInstalledEvent || e instanceof DataModelInitializedEvent) {
@@ -372,11 +370,6 @@ public abstract class AbstractThreadVMNode extends AbstractDMVMNode
             // priority in updating. The thread will update as a result of 
             // FullStackRefreshEvent. 
         	rm.done();
-        } else if (e instanceof FullStackRefreshEvent) {
-            // Full-stack refresh event is generated following a suspended event 
-            // and a fixed delay.  Refresh the whole thread upon this event.
-            parentDelta.addNode(createVMContext(dmc), IModelDelta.CONTENT);
-            rm.done();
         } else if (e instanceof SteppingTimedOutEvent) {
             // Stepping time-out indicates that a step operation is taking 
             // a long time, and the view needs to be refreshed to show 

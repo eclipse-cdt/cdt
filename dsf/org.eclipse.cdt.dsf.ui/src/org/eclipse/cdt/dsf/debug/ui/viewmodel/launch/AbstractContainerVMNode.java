@@ -271,11 +271,7 @@ public abstract class AbstractContainerVMNode extends AbstractDMVMNode
             }
         } else if (e instanceof IContainerSuspendedDMEvent) {
             return IModelDelta.NO_CHANGE;
-        } else if (e instanceof FullStackRefreshEvent) {
-            if (dmc instanceof IContainerDMContext) {
-                return IModelDelta.CONTENT;
-            }
-	    } else if (e instanceof SteppingTimedOutEvent) {
+        } else if (e instanceof SteppingTimedOutEvent) {
 	        if (dmc instanceof IContainerDMContext) 
 	        {
 	            return IModelDelta.CONTENT;
@@ -312,13 +308,6 @@ public abstract class AbstractContainerVMNode extends AbstractDMVMNode
             // Container suspended.  Do nothing here to give the stack the 
 		    // priority in updating. The container and threads will update as 
 		    // a result of FullStackRefreshEvent. 
-		} else if (e instanceof FullStackRefreshEvent) {
-		    // Full-stack refresh event is generated following a suspended event 
-		    // and a fixed delay.  If the suspended event was generated for the 
-		    // container refresh the whole container.
-		    if (dmc instanceof IContainerDMContext) {
-		        parentDelta.addNode(createVMContext(dmc), IModelDelta.CONTENT);
-		    }
 		} else if (e instanceof SteppingTimedOutEvent) {
 		    // Stepping time-out indicates that a step operation is taking 
 		    // a long time, and the view needs to be refreshed to show 

@@ -56,16 +56,18 @@ public class MIProcesses extends AbstractDsfService implements IMIProcesses, ICa
 	// MIProcesses service and the MIRunControl service for the MI 
 	// implementation of DSF:
 	//
-	//                           MIControlDMContext
+	//                        MIControlDMContext (ICommandControlDMContext)
 	//                                |
-	//                           MIProcessDMC (IProcess)
-	//    MIContainerDMC ______/      |
-	//     (IContainer)               |
-	//          |                MIThreadDMC (IThread)
-	//    MIExecutionDMC  _____/
-	//     (IExecution)
+	//                          MIProcessDMC (IProcess)
+	//                             /     \
+    //                            /       \
+	//                 MIContainerDMC     MIThreadDMC (IThread)
+	//                  (IContainer)         /
+	//                          \           /
+	//                         MIExecutionDMC
+	//                          (IExecution)
 	//
-	
+
 	/**
 	 * Context representing a thread in GDB/MI
 	 */

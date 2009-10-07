@@ -84,14 +84,16 @@ public class GDBProcesses_7_0 extends AbstractDsfService
 	// MIProcesses service and the MIRunControl service for the MI 
 	// implementation of DSF:
 	//
-	//                           MIControlDMContext
+	//                        MIControlDMContext (ICommandControlDMContext)
 	//                                |
-	//                           MIProcessDMC (IProcess)
-	//     MIContainerDMC _____/      |
-	//     (IContainer)               |
-	//          |                MIThreadDMC (IThread)
-	//    MIExecutionDMC  _____/
-	//     (IExecution)
+	//                          MIProcessDMC (IProcess)
+	//                             /     \
+    //                            /       \
+	//                 MIContainerDMC     MIThreadDMC (IThread)
+	//                  (IContainer)         /
+	//                          \           /
+	//                         MIExecutionDMC
+	//                          (IExecution)
 	//
 	
 	/**

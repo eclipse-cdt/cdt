@@ -369,7 +369,15 @@ public class ManagedBuildTestHelper {
 			Assert.fail("Test failed on saving the ICDescriptor data: " + e.getLocalizedMessage());		}
 	}
 	
+	/**
+	 * @deprecated as of CDT 6.1 - put benchmarks in Benchmarks/ folder and call the other {@link #compareBenchmarks(IProject, IPath, IPath[], IPath)}
+	 */
+	@Deprecated
 	static public boolean compareBenchmarks(final IProject project, IPath testDir, IPath[] files) {
+		return compareBenchmarks(project, testDir, files, Path.fromOSString(""));
+	}
+	
+	static public boolean compareBenchmarks(final IProject project, IPath testDir, IPath[] files, IPath benchmarkPath) {
 		IWorkspace workspace = ResourcesPlugin.getWorkspace();
 		IWorkspaceRunnable runnable = new IWorkspaceRunnable() {
 			public void run(IProgressMonitor monitor) throws CoreException {
@@ -384,7 +392,7 @@ public class ManagedBuildTestHelper {
 		}
 		for (int i=0; i<files.length; i++) {
 			IPath testFile = testDir.append(files[i]);
-			IPath benchmarkFile = Path.fromOSString("Benchmarks/" + files[i]);
+			IPath benchmarkFile = benchmarkPath.append("Benchmarks").append(files[i]);
 			StringBuffer testBuffer = readContentsStripLineEnds(project, testFile);
 			StringBuffer benchmarkBuffer = readContentsStripLineEnds(project, benchmarkFile);
 			if (!testBuffer.toString().equals(benchmarkBuffer.toString())) {
@@ -398,7 +406,9 @@ public class ManagedBuildTestHelper {
 				buffer.append("\n\n ");
 				
 				buffer.append(">>>>>>>>>>>>>>>start diff: \n");
-				String location1 = getFileLocation(project, benchmarkFile);
+				String location1 = benchmarkFile.isAbsolute()
+					? benchmarkFile.toString()
+					: getFileLocation(project, benchmarkFile);
 				String location2 = getFileLocation(project, testFile);
 				String diff = DiffUtil.getInstance().diff(location1, location2);
 				if(diff == null)
@@ -517,7 +527,10 @@ public class ManagedBuildTestHelper {
 	}
 	static public StringBuffer readContentsStripLineEnds(IProject project, IPath path) {
 		StringBuffer buff = new StringBuffer();
-		IPath fullPath = project.getLocation().append(path);
+		IPath fullPath = path;
+		if (!fullPath.isAbsolute()) {
+			fullPath = project.getLocation().append(path);
+		}
 		try {
 			FileReader input = null;
 			try {

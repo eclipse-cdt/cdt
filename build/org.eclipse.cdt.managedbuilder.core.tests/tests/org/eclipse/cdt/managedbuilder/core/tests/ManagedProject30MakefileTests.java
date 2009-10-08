@@ -52,6 +52,8 @@ public class ManagedProject30MakefileTests extends TestCase {
 
 	static boolean pathVariableCreated = false;
 	
+	private IPath resourcesLocation = new Path(CTestPlugin.getFileInPlugin(new Path("resources/test30Projects/")).getAbsolutePath());
+
 	public ManagedProject30MakefileTests(String name) {
 		super(name);
 	}
@@ -189,10 +191,12 @@ public class ManagedProject30MakefileTests extends TestCase {
 					if (i == 0) {
 						String configName = info.getDefaultConfiguration().getName();
 						IPath buildDir = Path.fromOSString(configName);
-						if (compareBenchmark)
-						    succeeded = ManagedBuildTestHelper.compareBenchmarks(curProject, buildDir, files);
-						else
+						if (compareBenchmark) {
+							IPath benchmarkPath = resourcesLocation.append(curProject.getName());
+							succeeded = ManagedBuildTestHelper.compareBenchmarks(curProject, buildDir, files, benchmarkPath);
+						} else {
 							succeeded = ManagedBuildTestHelper.verifyFilesDoNotExist(curProject, buildDir, files);
+						}
 					}
 				}
 			}

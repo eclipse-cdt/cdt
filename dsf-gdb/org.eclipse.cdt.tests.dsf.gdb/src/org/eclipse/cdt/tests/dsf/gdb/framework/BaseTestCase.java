@@ -10,6 +10,9 @@
  *******************************************************************************/
 package org.eclipse.cdt.tests.dsf.gdb.framework;
 
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
+import java.io.Reader;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -17,6 +20,8 @@ import org.eclipse.cdt.debug.core.ICDTLaunchConfigurationConstants;
 import org.eclipse.cdt.dsf.gdb.IGDBLaunchConfigurationConstants;
 import org.eclipse.cdt.dsf.gdb.launching.GdbLaunch;
 import org.eclipse.cdt.dsf.mi.service.command.events.MIStoppedEvent;
+import org.eclipse.cdt.tests.dsf.gdb.launching.TestsPlugin;
+import org.eclipse.cdt.utils.spawner.ProcessFactory;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.ILaunchConfiguration;
@@ -38,6 +43,7 @@ import org.junit.BeforeClass;
  */
 public class BaseTestCase {
 
+	public static final String ATTR_DEBUG_SERVER_NAME = TestsPlugin.PLUGIN_ID + ".DEBUG_SERVER_NAME";
 	private static final String DEFAULT_TEST_APP = "data/launch/bin/GDBMIGenericTestApp";
 	
     private static GdbLaunch fLaunch;
@@ -70,6 +76,9 @@ public class BaseTestCase {
     	System.out.println("====================================================================");
 		System.out.println("Launching test application: " + attrs.get(ICDTLaunchConfigurationConstants.ATTR_PROGRAM_NAME));
 		System.out.println("====================================================================");
+		
+ 		// First check if we should launch gdbserver in the case of a remote session
+		launchGdbServer();
 		
  		ILaunchManager launchMgr = DebugPlugin.getDefault().getLaunchManager();
  		ILaunchConfigurationType lcType = launchMgr.getLaunchConfigurationType("org.eclipse.cdt.tests.dsf.gdb.TestLaunch");
@@ -112,4 +121,36 @@ public class BaseTestCase {
  	@AfterClass
  	public static void baseAfterClassMehod() throws Exception {
  	}
+ 	
+ 	private static void launchGdbServer() {
+ 		if (attrs.get(ICDTLaunchConfigurationConstants.ATTR_DEBUGGER_START_MODE)
+ 				              .equals(IGDBLaunchConfigurationConstants.DEBUGGER_MODE_REMOTE)) {
+ 			if (attrs.get(IGDBLaunchConfigurationConstants.ATTR_REMOTE_TCP).equals(Boolean.TRUE)) {
+ 				String server = (String)attrs.get(ATTR_DEBUG_SERVER_NAME);
+ 				String host = (String)attrs.get(IGDBLaunchConfigurationConstants.ATTR_HOST);
+ 				String port = (String)attrs.get(IGDBLaunchConfigurationConstants.ATTR_PORT);
+ 				String program = (String)attrs.get(ICDTLaunchConfigurationConstants.ATTR_PROGRAM_NAME);
+ 				String commandLine = server + " " + host + ":" + port + " " + program;
+ 				try {
+                    System.out.println("Staring gdbserver with command: " + commandLine);
+
+ 					Process proc = ProcessFactory.getFactory().exec(commandLine);
+                    Reader r = new InputStreamReader(proc.getErrorStream());
+                    BufferedReader reader = new BufferedReader(r);
+                    String line;
+                    while ((line = reader.readLine()) != null) {
+                        System.out.println(line);
+                        line = line.trim();
+                        if (line.startsWith("Listening on port")) {
+                            break;
+                        }
+                    }
+ 				} catch (Exception e) {
+ 					System.out.println("Error while launching command: " + commandLine);
+ 					e.printStackTrace();
+ 					assert false;
+ 				} 				
+ 			}
+ 		}
+	}
 }

@@ -27,6 +27,7 @@ import org.eclipse.cdt.core.dom.ast.IParameter;
 import org.eclipse.cdt.core.dom.ast.IScope;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.ITypedef;
+import org.eclipse.cdt.core.dom.ast.IBasicType.Kind;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPBase;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPBasicType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassScope;
@@ -1528,8 +1529,8 @@ public class IndexCPPTemplateResolutionTest extends IndexBindingResolutionTestBa
 		IBinding inst2= CPPTemplates.instantiate(tmplDef, inst.getTemplateArguments());
 		assertSame(inst, inst2);
 		
-		IBinding charInst1= CPPTemplates.instantiate(tmplDef, new ICPPTemplateArgument[] {new CPPTemplateArgument(new CPPBasicType(IBasicType.t_char, 0))});
-		IBinding charInst2= CPPTemplates.instantiate(tmplDef, new ICPPTemplateArgument[] {new CPPTemplateArgument(new CPPBasicType(IBasicType.t_char, 0))});
+		IBinding charInst1= CPPTemplates.instantiate(tmplDef, new ICPPTemplateArgument[] {new CPPTemplateArgument(new CPPBasicType(Kind.eChar, 0))});
+		IBinding charInst2= CPPTemplates.instantiate(tmplDef, new ICPPTemplateArgument[] {new CPPTemplateArgument(new CPPBasicType(Kind.eChar, 0))});
 		assertSame(charInst1, charInst2);
 	}
 	

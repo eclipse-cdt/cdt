@@ -12,11 +12,11 @@
 package org.eclipse.cdt.internal.core.dom.parser.cpp;
 
 import org.eclipse.cdt.core.dom.ast.ASTTypeUtil;
-import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IBasicType;
 import org.eclipse.cdt.core.dom.ast.IPointerType;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.ITypedef;
+import org.eclipse.cdt.core.dom.ast.IBasicType.Kind;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunctionType;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.SemanticUtil;
 
@@ -58,25 +58,21 @@ public class CPPFunctionType implements ICPPFunctionType {
 			else if (returnType != null && ! returnType.isSameType(ft.getReturnType()))
 			    return false;
 			
-			try {
-				if (parameters.length == 1 && fps.length == 0) {
-					IType p0= SemanticUtil.getNestedType(parameters[0], SemanticUtil.TDEF);
-					if (!(p0 instanceof IBasicType) || ((IBasicType) p0).getType() != IBasicType.t_void)
-						return false;
-				} else if (fps.length == 1 && parameters.length == 0) {
-					IType p0= SemanticUtil.getNestedType(fps[0], SemanticUtil.TDEF);
-					if (!(p0 instanceof IBasicType) || ((IBasicType) p0).getType() != IBasicType.t_void)
-						return false;
-				} else if (parameters.length != fps.length) {
-	                return false;
-	            } else {
-					for (int i = 0; i < parameters.length; i++) {
-		                if (parameters[i] == null || ! parameters[i].isSameType(fps[i]))
-		                    return false;
-		            }
-	            }
-			} catch (DOMException e) {
-				return false;
+			if (parameters.length == 1 && fps.length == 0) {
+				IType p0= SemanticUtil.getNestedType(parameters[0], SemanticUtil.TDEF);
+				if (!(p0 instanceof IBasicType) || ((IBasicType) p0).getKind() != Kind.eVoid)
+					return false;
+			} else if (fps.length == 1 && parameters.length == 0) {
+				IType p0= SemanticUtil.getNestedType(fps[0], SemanticUtil.TDEF);
+				if (!(p0 instanceof IBasicType) || ((IBasicType) p0).getKind() != Kind.eVoid)
+					return false;
+			} else if (parameters.length != fps.length) {
+			    return false;
+			} else {
+				for (int i = 0; i < parameters.length; i++) {
+			        if (parameters[i] == null || ! parameters[i].isSameType(fps[i]))
+			            return false;
+			    }
 			}
            
             if (isConst() != ft.isConst() || isVolatile() != ft.isVolatile()) {

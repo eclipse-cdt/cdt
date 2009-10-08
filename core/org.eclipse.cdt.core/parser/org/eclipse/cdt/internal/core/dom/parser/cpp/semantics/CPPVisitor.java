@@ -60,7 +60,6 @@ import org.eclipse.cdt.core.dom.ast.IASTTypeId;
 import org.eclipse.cdt.core.dom.ast.IASTTypeIdInitializerExpression;
 import org.eclipse.cdt.core.dom.ast.IASTUnaryExpression;
 import org.eclipse.cdt.core.dom.ast.IArrayType;
-import org.eclipse.cdt.core.dom.ast.IBasicType;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.ICompositeType;
 import org.eclipse.cdt.core.dom.ast.IEnumeration;
@@ -76,6 +75,7 @@ import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.ITypedef;
 import org.eclipse.cdt.core.dom.ast.IVariable;
 import org.eclipse.cdt.core.dom.ast.IASTEnumerationSpecifier.IASTEnumerator;
+import org.eclipse.cdt.core.dom.ast.IBasicType.Kind;
 import org.eclipse.cdt.core.dom.ast.cpp.CPPASTVisitor;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCatchHandler;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCompositeTypeSpecifier;
@@ -162,7 +162,6 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPReferenceType;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPScope;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPTypedef;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPVariable;
-import org.eclipse.cdt.internal.core.dom.parser.cpp.GPPBasicType;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.GPPPointerToMemberType;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.GPPPointerType;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPInternalBinding;
@@ -1663,21 +1662,15 @@ public class CPPVisitor extends ASTQueries {
 			name = ((IASTEnumerationSpecifier)declSpec).getName();
 		} else if (declSpec instanceof ICPPASTSimpleDeclSpecifier) {
 			ICPPASTSimpleDeclSpecifier spec = (ICPPASTSimpleDeclSpecifier) declSpec;
-			int bits = (spec.isLong()     ? ICPPBasicType.IS_LONG  : 0) |
-					   (spec.isShort()    ? ICPPBasicType.IS_SHORT : 0) |
-					   (spec.isSigned()   ? ICPPBasicType.IS_SIGNED: 0) |
-					   (spec.isUnsigned() ? ICPPBasicType.IS_UNSIGNED : 0);
 			if (spec instanceof IGPPASTSimpleDeclSpecifier) {
 				IGPPASTSimpleDeclSpecifier gspec = (IGPPASTSimpleDeclSpecifier) spec;
 				final IASTExpression typeofExpression = gspec.getTypeofExpression();
 				if (typeofExpression != null) {
 					type = typeofExpression.getExpressionType();
-				} else {
-					bits |= (gspec.isLongLong() ? ICPPBasicType.IS_LONG_LONG : 0);
-					type = new GPPBasicType(spec.getType(), bits, null);
 				}
-			} else {
-			    type = new CPPBasicType(spec.getType(), bits);
+			}
+			if (type == null) {
+				type = new CPPBasicType(spec);
 			}
 		}
 		if (name != null) {
@@ -1770,7 +1763,7 @@ public class CPPVisitor extends ASTQueries {
 			}
 		} catch (DOMException e) {
 		}
-		basicType= new CPPBasicType(IBasicType.t_int, ICPPBasicType.IS_LONG | ICPPBasicType.IS_UNSIGNED);
+		basicType= new CPPBasicType(Kind.eInt, ICPPBasicType.IS_LONG | ICPPBasicType.IS_UNSIGNED);
 		basicType.setFromExpression(binary);
 		return basicType;
 	}
@@ -1790,7 +1783,7 @@ public class CPPVisitor extends ASTQueries {
 			}
 		} catch (DOMException e) {
 		}
-		return new CPPBasicType(IBasicType.t_int, 0);
+		return new CPPBasicType(Kind.eInt, 0);
 	}
 
 	public static IType get_SIZE_T(IASTNode sizeofExpr) {
@@ -1802,7 +1795,7 @@ public class CPPVisitor extends ASTQueries {
 			}
 		} catch (DOMException e) {
 		}
-		return new CPPBasicType(IBasicType.t_int, ICPPBasicType.IS_LONG | ICPPBasicType.IS_UNSIGNED);
+		return new CPPBasicType(Kind.eInt, ICPPBasicType.IS_LONG | ICPPBasicType.IS_UNSIGNED);
 	}
 	
 	public static IASTProblem[] getProblems(IASTTranslationUnit tu) {

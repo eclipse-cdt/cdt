@@ -1,22 +1,21 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2008 IBM Corporation and others.
+ * Copyright (c) 2005, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- * IBM Rational Software - Initial API and implementation
- * Yuan Zhang / Beth Tibbitts (IBM Research)
+ *    John Camelon (IBM Rational Software) - Initial API and implementation
+ *    Yuan Zhang / Beth Tibbitts (IBM Research)
+ *    Markus Schorn (Wind River Systems)
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.dom.parser.c;
 
 import org.eclipse.cdt.core.dom.ast.ASTVisitor;
+import org.eclipse.cdt.core.dom.ast.IBasicType.Kind;
 import org.eclipse.cdt.core.dom.ast.c.ICASTSimpleDeclSpecifier;
 
-/**
- * @author jcamelon
- */
 public class CASTSimpleDeclSpecifier extends CASTBaseDeclSpecifier implements ICASTSimpleDeclSpecifier {
     
     private int simpleType;
@@ -70,6 +69,31 @@ public class CASTSimpleDeclSpecifier extends CASTBaseDeclSpecifier implements IC
     public void setType(int type) {
         assertNotFrozen();
         simpleType = type;
+    }
+    
+    public void setType(Kind kind) {
+    	setType(getType(kind));
+    }
+    
+    private int getType(Kind kind) {
+    	switch(kind) {
+    	case eBoolean:
+    		return t_Bool;
+		case eChar:
+		case eWChar:
+			return t_char;
+		case eDouble:
+			return t_double;
+		case eFloat:
+			return t_float;
+		case eInt:
+			return t_int;
+		case eUnspecified:
+			return t_unspecified;
+		case eVoid:
+			return t_void;
+    	}
+    	return t_unspecified;
     }
     
     public void setShort(boolean value) {

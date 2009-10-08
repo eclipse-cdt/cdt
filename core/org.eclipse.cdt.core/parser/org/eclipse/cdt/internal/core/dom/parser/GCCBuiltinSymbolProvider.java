@@ -15,13 +15,13 @@ package org.eclipse.cdt.internal.core.dom.parser;
 
 import org.eclipse.cdt.core.dom.ILinkage;
 import org.eclipse.cdt.core.dom.ast.ASTNodeProperty;
-import org.eclipse.cdt.core.dom.ast.IBasicType;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.IFunctionType;
 import org.eclipse.cdt.core.dom.ast.IParameter;
 import org.eclipse.cdt.core.dom.ast.IScope;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.IValue;
+import org.eclipse.cdt.core.dom.ast.IBasicType.Kind;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPBasicType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunctionType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPParameter;
@@ -43,7 +43,6 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPImplicitFunction;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPImplicitTypedef;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPPointerType;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPQualifierType;
-import org.eclipse.cdt.internal.core.dom.parser.cpp.GPPBasicType;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.GPPPointerType;
 import org.eclipse.core.runtime.PlatformObject;
 
@@ -287,35 +286,35 @@ public class GCCBuiltinSymbolProvider implements IBuiltinBindingsProvider {
     static final private  IType cpp_FILE_p_r; // implemented as void* restrict
 
 	static {
-		c_unspecified = new CBasicType(IBasicType.t_unspecified, 0);
-		c_char = new CBasicType(IBasicType.t_char, 0);
+		c_unspecified = new CBasicType(Kind.eUnspecified, 0);
+		c_char = new CBasicType(Kind.eChar, 0);
 		c_char_p = new CPointerType(c_char, 0);
 		c_char_p_r = new CPointerType(c_char, CPointerType.IS_RESTRICT);
 		c_const_char_p = new CPointerType(new CQualifierType(c_char, true, false, false), 0);
 		c_const_char_p_r = new CPointerType(new CQualifierType(c_char, true, false, false), CPointerType.IS_RESTRICT);
 		
-		c_double = new CBasicType(IBasicType.t_double, 0);
-		c_double_complex = new CBasicType(IBasicType.t_double, CBasicType.IS_COMPLEX);
-		c_float = new CBasicType(IBasicType.t_float, 0);
-		c_float_complex = new CBasicType(IBasicType.t_float, CBasicType.IS_COMPLEX);
+		c_double = new CBasicType(Kind.eDouble, 0);
+		c_double_complex = new CBasicType(Kind.eDouble, CBasicType.IS_COMPLEX);
+		c_float = new CBasicType(Kind.eFloat, 0);
+		c_float_complex = new CBasicType(Kind.eFloat, CBasicType.IS_COMPLEX);
 		c_float_p = new CPointerType(c_float, 0);
-		c_int = new CBasicType(IBasicType.t_int, 0);
+		c_int = new CBasicType(Kind.eInt, 0);
 		c_int_p = new CPointerType(c_int, 0);
 
-		c_long_double = new CBasicType(IBasicType.t_double, CBasicType.IS_LONG);
-		c_long_double_complex = new CBasicType(IBasicType.t_double, CBasicType.IS_LONG | CBasicType.IS_COMPLEX);
+		c_long_double = new CBasicType(Kind.eDouble, CBasicType.IS_LONG);
+		c_long_double_complex = new CBasicType(Kind.eDouble, CBasicType.IS_LONG | CBasicType.IS_COMPLEX);
 		c_long_double_p = new CPointerType(c_long_double, 0);
-		c_long_int = new CBasicType(IBasicType.t_int, CBasicType.IS_LONG);
-		c_long_long_int = new CBasicType(IBasicType.t_int, CBasicType.IS_LONGLONG);
-		c_signed_long_int = new CBasicType(IBasicType.t_int, CBasicType.IS_LONG | CBasicType.IS_SIGNED);
-		c_unsigned_int = new CBasicType(IBasicType.t_int, CBasicType.IS_UNSIGNED);
-		c_unsigned_long = new CBasicType(IBasicType.t_int, CBasicType.IS_LONG | CBasicType.IS_UNSIGNED);
-		c_unsigned_long_long = new CBasicType(IBasicType.t_int, CBasicType.IS_LONGLONG | CBasicType.IS_UNSIGNED);
+		c_long_int = new CBasicType(Kind.eInt, CBasicType.IS_LONG);
+		c_long_long_int = new CBasicType(Kind.eInt, CBasicType.IS_LONGLONG);
+		c_signed_long_int = new CBasicType(Kind.eInt, CBasicType.IS_LONG | CBasicType.IS_SIGNED);
+		c_unsigned_int = new CBasicType(Kind.eInt, CBasicType.IS_UNSIGNED);
+		c_unsigned_long = new CBasicType(Kind.eInt, CBasicType.IS_LONG | CBasicType.IS_UNSIGNED);
+		c_unsigned_long_long = new CBasicType(Kind.eInt, CBasicType.IS_LONGLONG | CBasicType.IS_UNSIGNED);
 
 		c_va_list = new CFunctionType(c_char_p, new IType[0]); // assumed: char* va_list();
 		c_size_t = c_unsigned_long; // assumed unsigned long int
 		
-		c_void = new CBasicType(IBasicType.t_void, 0);
+		c_void = new CBasicType(Kind.eVoid, 0);
 		c_void_p = new CPointerType(c_void, 0);
 		c_void_p_r = new CPointerType(c_void, CPointerType.IS_RESTRICT);
 		c_const_void_p = new CPointerType(new CQualifierType(c_void, true, false, false), 0);
@@ -323,35 +322,35 @@ public class GCCBuiltinSymbolProvider implements IBuiltinBindingsProvider {
 		
 		c_FILE_p_r = c_void_p_r; // implemented as void* restrict
 		
-		cpp_unspecified = new CPPBasicType(IBasicType.t_unspecified, 0);
-		cpp_char = new CPPBasicType(IBasicType.t_char, 0);
+		cpp_unspecified = new CPPBasicType(Kind.eUnspecified, 0);
+		cpp_char = new CPPBasicType(Kind.eChar, 0);
 		cpp_char_p = new CPPPointerType(cpp_char);
 		cpp_char_p_r = new GPPPointerType(cpp_char, false, false, true);
 		cpp_const_char_p = new CPPPointerType(new CPPQualifierType(cpp_char, true, false));
 		cpp_const_char_p_r = new GPPPointerType(new CPPQualifierType(cpp_char, true, false), false, false, true);
 		
-		cpp_double = new CPPBasicType(IBasicType.t_double, 0);
-		cpp_double_complex = new GPPBasicType(IBasicType.t_double, ICPPBasicType.IS_COMPLEX, null);
-		cpp_float = new CPPBasicType(IBasicType.t_float, 0);
-		cpp_float_complex = new GPPBasicType(IBasicType.t_float, ICPPBasicType.IS_COMPLEX, null);
+		cpp_double = new CPPBasicType(Kind.eDouble, 0);
+		cpp_double_complex = new CPPBasicType(Kind.eDouble, ICPPBasicType.IS_COMPLEX, null);
+		cpp_float = new CPPBasicType(Kind.eFloat, 0);
+		cpp_float_complex = new CPPBasicType(Kind.eFloat, ICPPBasicType.IS_COMPLEX, null);
 		cpp_float_p = new CPPPointerType(cpp_float);
-		cpp_int = new CPPBasicType(IBasicType.t_int, 0);
+		cpp_int = new CPPBasicType(Kind.eInt, 0);
 		cpp_int_p = new CPPPointerType(cpp_int);
-		cpp_long_int = new CPPBasicType(IBasicType.t_int, ICPPBasicType.IS_LONG);
-		cpp_long_double = new CPPBasicType(IBasicType.t_double, ICPPBasicType.IS_LONG);
-		cpp_long_double_complex = new GPPBasicType(IBasicType.t_double, ICPPBasicType.IS_LONG | ICPPBasicType.IS_COMPLEX, null);
+		cpp_long_int = new CPPBasicType(Kind.eInt, ICPPBasicType.IS_LONG);
+		cpp_long_double = new CPPBasicType(Kind.eDouble, ICPPBasicType.IS_LONG);
+		cpp_long_double_complex = new CPPBasicType(Kind.eDouble, ICPPBasicType.IS_LONG | ICPPBasicType.IS_COMPLEX, null);
 		cpp_long_double_p = new CPPPointerType(cpp_long_double);
-		cpp_long_long_int = new GPPBasicType(IBasicType.t_int, ICPPBasicType.IS_LONG_LONG, null);
-		cpp_signed_long_int = new CPPBasicType(IBasicType.t_int, ICPPBasicType.IS_LONG | ICPPBasicType.IS_SIGNED);
+		cpp_long_long_int = new CPPBasicType(Kind.eInt, ICPPBasicType.IS_LONG_LONG, null);
+		cpp_signed_long_int = new CPPBasicType(Kind.eInt, ICPPBasicType.IS_LONG | ICPPBasicType.IS_SIGNED);
 		
-		cpp_unsigned_int = new CPPBasicType(IBasicType.t_int, ICPPBasicType.IS_UNSIGNED);
-		cpp_unsigned_long = new CPPBasicType(IBasicType.t_int, ICPPBasicType.IS_UNSIGNED | ICPPBasicType.IS_LONG);
-		cpp_unsigned_long_long = new GPPBasicType(IBasicType.t_int, ICPPBasicType.IS_UNSIGNED | ICPPBasicType.IS_LONG_LONG, null);
+		cpp_unsigned_int = new CPPBasicType(Kind.eInt, ICPPBasicType.IS_UNSIGNED);
+		cpp_unsigned_long = new CPPBasicType(Kind.eInt, ICPPBasicType.IS_UNSIGNED | ICPPBasicType.IS_LONG);
+		cpp_unsigned_long_long = new CPPBasicType(Kind.eInt, ICPPBasicType.IS_UNSIGNED | ICPPBasicType.IS_LONG_LONG, null);
 		
 		cpp_size_t = cpp_unsigned_long; // assumed unsigned long int
 		cpp_va_list = new CPPFunctionType(cpp_char_p, new IType[0]); // assumed: char* va_list();
 		
-		cpp_void = new CPPBasicType(IBasicType.t_void, 0);
+		cpp_void = new CPPBasicType(Kind.eVoid, 0);
 		cpp_void_p = new CPPPointerType(cpp_void);
 		cpp_void_p_r = new GPPPointerType(cpp_void, false, false, true);
 		cpp_const_void_p = new CPPPointerType(new CPPQualifierType(cpp_void, true, false));

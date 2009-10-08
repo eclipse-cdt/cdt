@@ -52,7 +52,6 @@ import org.eclipse.cdt.core.dom.ast.IASTStatement;
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
 import org.eclipse.cdt.core.dom.ast.IASTTypeId;
 import org.eclipse.cdt.core.dom.ast.IArrayType;
-import org.eclipse.cdt.core.dom.ast.IBasicType;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.ICompositeType;
 import org.eclipse.cdt.core.dom.ast.IEnumeration;
@@ -68,6 +67,7 @@ import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.ITypedef;
 import org.eclipse.cdt.core.dom.ast.IVariable;
 import org.eclipse.cdt.core.dom.ast.IASTEnumerationSpecifier.IASTEnumerator;
+import org.eclipse.cdt.core.dom.ast.IBasicType.Kind;
 import org.eclipse.cdt.core.dom.ast.c.CASTVisitor;
 import org.eclipse.cdt.core.dom.ast.c.ICASTArrayModifier;
 import org.eclipse.cdt.core.dom.ast.c.ICASTCompositeTypeSpecifier;
@@ -651,9 +651,7 @@ public class CVisitor extends ASTQueries {
 		} catch (DOMException e) {
 		}
 
-		CBasicType basicType = new CBasicType(IBasicType.t_int, CBasicType.IS_UNSIGNED | CBasicType.IS_LONG);
-		basicType.setValue(expr);
-		return basicType;
+		return new CBasicType(Kind.eInt, CBasicType.IS_UNSIGNED | CBasicType.IS_LONG, expr);
 	}
     
 	static IType getSize_T(IASTExpression expr) {
@@ -665,7 +663,7 @@ public class CVisitor extends ASTQueries {
 			}
 		} catch (DOMException e) {
 		}
-		return new CBasicType(IBasicType.t_int, CBasicType.IS_LONG | CBasicType.IS_UNSIGNED);
+		return new CBasicType(Kind.eInt, CBasicType.IS_LONG | CBasicType.IS_UNSIGNED);
 	}
 
 	static IType unwrapTypedefs(IType type) {

@@ -12,9 +12,9 @@
 package org.eclipse.cdt.internal.core.dom.parser.cpp;
 
 import org.eclipse.cdt.core.dom.ast.ASTVisitor;
-import org.eclipse.cdt.core.dom.ast.IBasicType;
 import org.eclipse.cdt.core.dom.ast.IScope;
 import org.eclipse.cdt.core.dom.ast.IType;
+import org.eclipse.cdt.core.dom.ast.IBasicType.Kind;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTLiteralExpression;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPBasicType;
 import org.eclipse.cdt.core.parser.util.CharArrayUtils;
@@ -96,7 +96,7 @@ public class CPPASTLiteralExpression extends ASTNode implements ICPPASTLiteralEx
     		}
     		case lk_true:
     		case lk_false:
-    			return new CPPBasicType(ICPPBasicType.t_bool, 0, this);
+    			return new CPPBasicType(Kind.eBoolean, 0, this);
     		case lk_char_constant:
     			return new CPPBasicType(getCharType(), 0, this);
     		case lk_float_constant: 
@@ -111,19 +111,19 @@ public class CPPASTLiteralExpression extends ASTNode implements ICPPASTLiteralEx
     	return null;
     }
     
-    private int getCharType() {
-    	return getValue()[0] == 'L' ? ICPPBasicType.t_wchar_t : IBasicType.t_char;
+    private Kind getCharType() {
+    	return getValue()[0] == 'L' ? Kind.eWChar : Kind.eChar;
     }
     
 	private IType classifyTypeOfFloatLiteral() {
 		final char[] lit= getValue();
 		final int len= lit.length;
-		int kind= IBasicType.t_double;
+		Kind kind= Kind.eDouble;
 		int flags= 0;
 		if (len > 0) {
 			switch (lit[len - 1]) {
 			case 'f': case 'F':
-				kind= IBasicType.t_float;
+				kind= Kind.eFloat;
 				break;
 			case 'l': case 'L':
 				flags |= ICPPBasicType.IS_LONG;
@@ -162,15 +162,10 @@ public class CPPASTLiteralExpression extends ASTNode implements ICPPASTLiteralEx
 		
 		if (makelong > 1) {
 			flags |= ICPPBasicType.IS_LONG_LONG;
-			GPPBasicType result = new GPPBasicType(IBasicType.t_int, flags, null);
-			result.setFromExpression(this);
-			return result;
-		} 
-		
-		if (makelong == 1) {
+		} else if (makelong == 1) {
 			flags |= ICPPBasicType.IS_LONG;
 		} 
-		return new CPPBasicType(IBasicType.t_int, flags, this);
+		return new CPPBasicType(Kind.eInt, flags, this);
 	}
 
     /**

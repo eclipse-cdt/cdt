@@ -47,6 +47,7 @@ import org.eclipse.cdt.core.dom.ast.IScope;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.ITypedef;
 import org.eclipse.cdt.core.dom.ast.IValue;
+import org.eclipse.cdt.core.dom.ast.IBasicType.Kind;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCompositeTypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTElaboratedTypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTExplicitTemplateInstantiation;
@@ -1624,7 +1625,7 @@ public class CPPTemplates {
 					if (parPos >= 0) { 
 						ICPPTemplateArgument old= map.getArgument(parPos);
 						if (old == null) {
-							map.put(parPos, new CPPTemplateArgument(ps, new CPPBasicType(IBasicType.t_int, 0)));
+							map.put(parPos, new CPPTemplateArgument(ps, new CPPBasicType(Kind.eInt, 0)));
 						} else if (!ps.equals(old.getNonTypeValue())) {
 							return false;
 						}
@@ -1769,7 +1770,7 @@ public class CPPTemplates {
 			if (param instanceof ICPPTemplateNonTypeParameter) {
 				args[i]= new CPPTemplateArgument(Value.unique(), ((ICPPTemplateNonTypeParameter) param).getType());
 			} else {
-				args[i] = new CPPTemplateArgument(new CPPBasicType(-1, 0));
+				args[i] = new CPPTemplateArgument(new CPPBasicType(Kind.eUnspecified, CPPBasicType.UNIQUE_TYPE_QUALIFIER));
 			}
 		}
 		return args;
@@ -1933,7 +1934,7 @@ public class CPPTemplates {
 		@Override
 		public ICPPFunctionType getType() {
 			if (type == null) {
-				type = CPPVisitor.createImplicitFunctionType(new CPPBasicType(IBasicType.t_void, 0), functionParameters, false, false);
+				type = CPPVisitor.createImplicitFunctionType(new CPPBasicType(Kind.eVoid, 0), functionParameters, false, false);
 			}
 			return type;
 		}

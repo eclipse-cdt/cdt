@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008 Institute for Software, HSR Hochschule fuer Technik  
+ * Copyright (c) 2008, 2009 Institute for Software, HSR Hochschule fuer Technik  
  * Rapperswil, University of applied sciences and others
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Eclipse Public License v1.0 
@@ -29,10 +29,10 @@ import org.eclipse.cdt.core.dom.ast.IASTSimpleDeclSpecifier;
 import org.eclipse.cdt.core.dom.ast.IBasicType;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.IType;
+import org.eclipse.cdt.core.dom.ast.IBasicType.Kind;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTBinaryExpression;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTNewExpression;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTQualifiedName;
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTSimpleDeclSpecifier;
 import org.eclipse.cdt.core.dom.rewrite.ASTRewrite;
 
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTBinaryExpression;
@@ -115,12 +115,10 @@ public class ExtractExpression extends ExtractedFunctionConstructionHelper {
 			if(extractedNode instanceof IASTExpression) {
 				IType type = ((IASTExpression)extractedNode).getExpressionType();
 				if(type instanceof IBasicType) {
-					try {
-						return createSimpleDeclSpecifier(((IBasicType)type).getType());
-					} catch (DOMException e) {} //make it void
+					return createSimpleDeclSpecifier(((IBasicType)type).getKind());
 				}
 			}
-			return createSimpleDeclSpecifier(IASTSimpleDeclSpecifier.t_void);
+			return createSimpleDeclSpecifier(Kind.eVoid);
 		}
 		
 		return declSpecifier.copy();
@@ -129,17 +127,17 @@ public class ExtractExpression extends ExtractedFunctionConstructionHelper {
 	private IASTDeclSpecifier handleLiteralExpression(IASTLiteralExpression extractedNode) {
         switch(extractedNode.getKind()){
           case IASTLiteralExpression.lk_char_constant:
-              return createSimpleDeclSpecifier(IASTSimpleDeclSpecifier.t_char);
+              return createSimpleDeclSpecifier(Kind.eChar);
           case IASTLiteralExpression.lk_float_constant:
-              return createSimpleDeclSpecifier(IASTSimpleDeclSpecifier.t_float);
+              return createSimpleDeclSpecifier(Kind.eFloat);
           case IASTLiteralExpression.lk_integer_constant:
-              return createSimpleDeclSpecifier(IASTSimpleDeclSpecifier.t_int);
+              return createSimpleDeclSpecifier(Kind.eInt);
           case IASTLiteralExpression.lk_string_literal:
-              return createSimpleDeclSpecifier(ICPPASTSimpleDeclSpecifier.t_wchar_t);
+              return createSimpleDeclSpecifier(Kind.eWChar);
           case IASTLiteralExpression.lk_false: 
               //Like lk_true a boolean type
           case IASTLiteralExpression.lk_true:
-              return createSimpleDeclSpecifier(ICPPASTSimpleDeclSpecifier.t_bool);
+              return createSimpleDeclSpecifier(Kind.eBoolean);
           default:
               return null;
           }
@@ -163,7 +161,7 @@ public class ExtractExpression extends ExtractedFunctionConstructionHelper {
 		
 			/* We assume that these operations evaluate to bool and don't 
 			 * consider overriden operators from custom types for now.*/
-			return createSimpleDeclSpecifier(ICPPASTSimpleDeclSpecifier.t_bool);
+			return createSimpleDeclSpecifier(Kind.eBoolean);
 			
 		case IASTBinaryExpression.op_plus:
 		case IASTBinaryExpression.op_plusAssign:
@@ -207,7 +205,7 @@ public class ExtractExpression extends ExtractedFunctionConstructionHelper {
 		if (expressionType instanceof CPPBasicType) {
 			
 			CPPBasicType basicType = (CPPBasicType) expressionType;
-			return createSimpleDeclSpecifier(basicType.getType());
+			return createSimpleDeclSpecifier(basicType.getKind());
 			
 		} else if (expressionType instanceof CPPTypedef) {
 			
@@ -270,7 +268,7 @@ public class ExtractExpression extends ExtractedFunctionConstructionHelper {
 		return new CPPASTNamedTypeSpecifier(name.copy());
 	}
 	
-	private static IASTDeclSpecifier createSimpleDeclSpecifier(int type) {
+	private static IASTDeclSpecifier createSimpleDeclSpecifier(IBasicType.Kind type) {
 		IASTSimpleDeclSpecifier declSpec = new CPPASTSimpleDeclSpecifier();
 		declSpec.setType(type);
 		return declSpec;

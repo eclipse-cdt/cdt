@@ -7,11 +7,14 @@
  *
  * Contributors:
  *    Doug Schaefer (IBM) - Initial API and implementation
+ *    Markus Schorn (Wind River Systems)
  *******************************************************************************/
 package org.eclipse.cdt.core.dom.ast;
 
+import org.eclipse.cdt.core.dom.ast.IBasicType.Kind;
+
 /**
- * This represents a decl specifier for a built-in type.
+ * This represents a declaration specifier for a built-in type.
  * 
  * @noextend This interface is not intended to be extended by clients.
  * @noimplement This interface is not intended to be implemented by clients.
@@ -70,6 +73,12 @@ public interface IASTSimpleDeclSpecifier extends IASTDeclSpecifier {
 	 *            (int)
 	 */
 	public void setType(int type);
+	
+	/**
+	 * Sets this declaration specifier to the type based on {@link IBasicType.Kind}.
+	 * @since 5.2
+	 */
+	public void setType(Kind kind);
 
 	/**
 	 * Is the type modified by the signed keyword?

@@ -13,12 +13,12 @@ package org.eclipse.cdt.internal.core.dom.parser.cpp;
 
 import org.eclipse.cdt.core.dom.ILinkage;
 import org.eclipse.cdt.core.dom.ast.IASTName;
-import org.eclipse.cdt.core.dom.ast.IBasicType;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.IMacroBinding;
 import org.eclipse.cdt.core.dom.ast.IParameter;
 import org.eclipse.cdt.core.dom.ast.IScope;
 import org.eclipse.cdt.core.dom.ast.IType;
+import org.eclipse.cdt.core.dom.ast.IBasicType.Kind;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTranslationUnit;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPBasicType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType;
@@ -62,11 +62,11 @@ public class CPPASTTranslationUnit extends ASTTranslationUnit implements ICPPAST
 	
 	private void addBuiltinOperators(CPPScope theScope) {
         // void
-        IType cpp_void = new CPPBasicType(IBasicType.t_void, 0);
+        IType cpp_void = new CPPBasicType(Kind.eVoid, 0);
         // void *
-        IType cpp_void_p = new GPPPointerType(new CPPQualifierType(new CPPBasicType(IBasicType.t_void, 0), false, false), new GPPASTPointer());
+        IType cpp_void_p = new GPPPointerType(new CPPQualifierType(new CPPBasicType(Kind.eVoid, 0), false, false), new GPPASTPointer());
         // size_t // assumed: unsigned long int
-        IType cpp_size_t = new CPPBasicType(IBasicType.t_int, ICPPBasicType.IS_LONG & ICPPBasicType.IS_UNSIGNED);
+        IType cpp_size_t = new CPPBasicType(Kind.eInt, ICPPBasicType.IS_LONG & ICPPBasicType.IS_UNSIGNED);
 
 		// void * operator new (std::size_t);
         IBinding temp = null;

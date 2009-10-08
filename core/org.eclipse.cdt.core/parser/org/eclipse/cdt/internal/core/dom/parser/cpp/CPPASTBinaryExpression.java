@@ -8,6 +8,7 @@
  * Contributors:
  *     John Camelon (IBM) - Initial API and implementation
  *     Mike Kucera (IBM)
+ *     Markus Schorn (Wind River Systems)
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.dom.parser.cpp;
 
@@ -20,8 +21,8 @@ import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IPointerType;
 import org.eclipse.cdt.core.dom.ast.IProblemBinding;
 import org.eclipse.cdt.core.dom.ast.IType;
+import org.eclipse.cdt.core.dom.ast.IBasicType.Kind;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTBinaryExpression;
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPBasicType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunction;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPPointerToMemberType;
 import org.eclipse.cdt.internal.core.dom.parser.ASTNode;
@@ -204,9 +205,7 @@ public class CPPASTBinaryExpression extends ASTNode implements ICPPASTBinaryExpr
         case IASTBinaryExpression.op_logicalOr:
         case IASTBinaryExpression.op_equals:
         case IASTBinaryExpression.op_notequals:
-        	CPPBasicType basicType= new CPPBasicType(ICPPBasicType.t_bool, 0);
-        	basicType.setFromExpression(this);
-        	return basicType;
+        	return new CPPBasicType(Kind.eBoolean, 0, this);
         case IASTBinaryExpression.op_plus:
         	if (ultimateType2 instanceof IPointerType) {
         		return ultimateType2;

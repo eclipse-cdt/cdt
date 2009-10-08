@@ -31,6 +31,7 @@ import org.eclipse.cdt.core.dom.ast.IProblemBinding;
 import org.eclipse.cdt.core.dom.ast.IQualifierType;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.IValue;
+import org.eclipse.cdt.core.dom.ast.IBasicType.Kind;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPBase;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPBasicType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType;
@@ -365,8 +366,7 @@ public class Conversions {
 			// Select converting constructors
 			int j= 0;
 			ICPPConstructor[] convertingCtors= new ICPPConstructor[ctors.length];
-			for (int i = 0; i < ctors.length; i++) {
-				ICPPConstructor ctor= ctors[i];
+			for (ICPPConstructor ctor : ctors) {
 				if (!(ctor instanceof IProblemBinding) && !ctor.isExplicit())
 					convertingCtors[j++]= ctor;
 			}
@@ -649,30 +649,32 @@ public class Conversions {
 		boolean canPromote= false;
 		if (trg instanceof IBasicType) {
 			IBasicType basicTgt = (IBasicType) trg;
-			final int tType = basicTgt.getType();
+			final Kind tKind = basicTgt.getKind();
 
 			if (src instanceof IBasicType) {
 				final IBasicType basicSrc = (IBasicType) src;
-				int sType = basicSrc.getType();
-				if (tType == IBasicType.t_int) {
-					switch (sType) {
-					case IBasicType.t_int: // short, and unsigned short
+				Kind sKind = basicSrc.getKind();
+				if (tKind == Kind.eInt) {
+					switch (sKind) {
+					case eInt: // short, and unsigned short
 						if (basicSrc.isShort()) {
 							canPromote= true;
 						}
 						break;
-					case IBasicType.t_char:
-					case ICPPBasicType.t_bool:
-					case ICPPBasicType.t_wchar_t:
-					case IBasicType.t_unspecified: // treat unspecified as int
+					case eChar:
+					case eBoolean:
+					case eWChar:
+					case eUnspecified: // treat unspecified as int
 						canPromote= true;
 						break;
+					default:
+						break;
 					}
-				} else if (tType == IBasicType.t_double && sType == IBasicType.t_float) {
+				} else if (tKind == Kind.eDouble && sKind == Kind.eFloat) {
 					canPromote= true;
 				}
 			} else if (src instanceof IEnumeration) {
-				if (tType == IBasicType.t_int || tType == IBasicType.t_unspecified) {
+				if (tKind == Kind.eInt || tKind == Kind.eUnspecified) {
 					if (trg instanceof ICPPBasicType) {
 						int qualifiers = getEnumIntType((IEnumeration) src);
 						if (qualifiers == ((ICPPBasicType) trg).getQualifierBits()) {
@@ -714,8 +716,8 @@ public class Conversions {
 				return true;
 			} 
 			// 4.12 pointer or pointer to member type can be converted to an rvalue of type bool
-			final int tgtType = ((IBasicType) t).getType();
-			if (tgtType == ICPPBasicType.t_bool && s instanceof IPointerType) {
+			final Kind tgtKind = ((IBasicType) t).getKind();
+			if (tgtKind == Kind.eBoolean && s instanceof IPointerType) {
 				cost.setRank(Rank.CONVERSION_PTR_BOOL);
 				return true;
 			} 
@@ -742,7 +744,7 @@ public class Conversions {
 				// 4.10-2 an rvalue of type "pointer to cv T", where T is an object type can be
 				// converted to an rvalue of type "pointer to cv void"
 				IType tgtPtrTgt= getNestedType(tgtPtr.getType(), TDEF | CVQ | REF);
-				if (tgtPtrTgt instanceof IBasicType && ((IBasicType) tgtPtrTgt).getType() == IBasicType.t_void) {
+				if (tgtPtrTgt instanceof IBasicType && ((IBasicType) tgtPtrTgt).getKind() == Kind.eVoid) {
 					cost.setRank(Rank.CONVERSION);
 					cost.setInheritanceDistance(Short.MAX_VALUE); // mstodo add distance to last base class
 					int cv= getCVQualifier(srcPtr.getType());

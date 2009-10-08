@@ -18,7 +18,6 @@ import junit.framework.TestSuite;
 
 import org.eclipse.cdt.core.dom.ast.ASTSignatureUtil;
 import org.eclipse.cdt.core.dom.ast.ASTTypeUtil;
-import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.ExpansionOverlapsBoundaryException;
 import org.eclipse.cdt.core.dom.ast.IASTArrayDeclarator;
 import org.eclipse.cdt.core.dom.ast.IASTArraySubscriptExpression;
@@ -98,14 +97,12 @@ import org.eclipse.cdt.core.dom.ast.c.ICASTFieldDesignator;
 import org.eclipse.cdt.core.dom.ast.c.ICASTPointer;
 import org.eclipse.cdt.core.dom.ast.c.ICASTSimpleDeclSpecifier;
 import org.eclipse.cdt.core.dom.ast.c.ICArrayType;
-import org.eclipse.cdt.core.dom.ast.c.ICBasicType;
 import org.eclipse.cdt.core.dom.ast.c.ICExternalBinding;
 import org.eclipse.cdt.core.dom.ast.c.ICFunctionScope;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunction;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPMethod;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPNamespace;
-import org.eclipse.cdt.core.dom.ast.gnu.cpp.IGPPBasicType;
 import org.eclipse.cdt.core.parser.IToken;
 import org.eclipse.cdt.core.parser.ParserLanguage;
 import org.eclipse.cdt.internal.core.dom.parser.ASTNode;
@@ -6281,12 +6278,9 @@ public class AST2Tests extends AST2BaseTest {
     	}
     }
 
-    boolean isLongLong(IType t) throws DOMException {
-     	if (t instanceof ICBasicType) {
-    		return ((ICBasicType) t).isLongLong();
-    	}
-    	if (t instanceof IGPPBasicType) {
-    		return ((IGPPBasicType) t).isLongLong();
+    boolean isLongLong(IType t) {
+     	if (t instanceof IBasicType) {
+    		return ((IBasicType) t).isLongLong();
     	}
     	return false;
     }

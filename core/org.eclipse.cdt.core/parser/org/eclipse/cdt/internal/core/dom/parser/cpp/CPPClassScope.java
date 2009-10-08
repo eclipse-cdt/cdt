@@ -31,12 +31,12 @@ import org.eclipse.cdt.core.dom.ast.IASTParameterDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTSimpleDeclSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTSimpleDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTTypeId;
-import org.eclipse.cdt.core.dom.ast.IBasicType;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.IParameter;
 import org.eclipse.cdt.core.dom.ast.IProblemBinding;
 import org.eclipse.cdt.core.dom.ast.IScope;
 import org.eclipse.cdt.core.dom.ast.IType;
+import org.eclipse.cdt.core.dom.ast.IBasicType.Kind;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCompositeTypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTFunctionDeclarator;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTNamedTypeSpecifier;
@@ -133,7 +133,7 @@ public class CPPClassScope extends CPPScope implements ICPPClassScope {
 
 		if (!ia.hasUserDeclaredDestructor()) {
 			//destructor: ~A()
-			ICPPFunctionType ft= CPPVisitor.createImplicitFunctionType(new CPPBasicType(IBasicType.t_unspecified, 0), voidPs, false, false);
+			ICPPFunctionType ft= CPPVisitor.createImplicitFunctionType(new CPPBasicType(Kind.eUnspecified, 0), voidPs, false, false);
 			char[] dtorName = CharArrayUtils.concat("~".toCharArray(), className);  //$NON-NLS-1$
 			ICPPMethod m = new CPPImplicitMethod(this, dtorName, ft, voidPs);
 			implicits[i++] = m;

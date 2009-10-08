@@ -24,6 +24,7 @@ import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.IFunctionType;
 import org.eclipse.cdt.core.dom.ast.IParameter;
 import org.eclipse.cdt.core.dom.ast.IType;
+import org.eclipse.cdt.core.dom.ast.IBasicType.Kind;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCompositeTypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTFunctionDeclarator;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTemplateDeclaration;
@@ -140,7 +141,7 @@ public class CPPImplicitMethod extends CPPImplicitFunction implements ICPPMethod
 							if (params.length == 1) {
 								IType t1 = params[0];
 								ok = (t1 instanceof IBasicType)
-										&& ((IBasicType) t1).getType() == IBasicType.t_void;
+										&& ((IBasicType) t1).getKind() == Kind.eVoid;
 							}
 						}
 					} else {

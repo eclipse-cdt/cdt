@@ -1,21 +1,20 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2008 IBM Corporation and others.
+ * Copyright (c) 2004, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- * IBM - Initial API and implementation
+ *    John Camelon (IBM) - Initial API and implementation
+ *    Markus Schorn (Wind River Systems)
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.dom.parser.cpp;
 
 import org.eclipse.cdt.core.dom.ast.ASTVisitor;
+import org.eclipse.cdt.core.dom.ast.IBasicType.Kind;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTSimpleDeclSpecifier;
 
-/**
- * @author jcamelon
- */
 public class CPPASTSimpleDeclSpecifier extends CPPASTBaseDeclSpecifier implements ICPPASTSimpleDeclSpecifier {
 
     private int type;
@@ -51,6 +50,32 @@ public class CPPASTSimpleDeclSpecifier extends CPPASTBaseDeclSpecifier implement
         this.type = type;
     }
 
+    public void setType(Kind kind) {
+    	setType(getType(kind));
+    }
+    
+    private int getType(Kind kind) {
+    	switch(kind) {
+    	case eBoolean:
+    		return t_bool;
+		case eChar:
+			return t_char;
+		case eWChar:
+			return t_wchar_t;
+		case eDouble:
+			return t_double;
+		case eFloat:
+			return t_float;
+		case eInt:
+			return t_int;
+		case eUnspecified:
+			return t_unspecified;
+		case eVoid:
+			return t_void;
+    	}
+    	return t_unspecified;
+    }
+    
     public boolean isSigned() {
         return isSigned;
     }

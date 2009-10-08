@@ -18,8 +18,8 @@ import java.util.BitSet;
 import java.util.LinkedList;
 import java.util.List;
 
+import org.eclipse.cdt.core.dom.ast.IBasicType.Kind;
 import org.eclipse.cdt.core.dom.ast.c.ICArrayType;
-import org.eclipse.cdt.core.dom.ast.c.ICBasicType;
 import org.eclipse.cdt.core.dom.ast.c.ICPointerType;
 import org.eclipse.cdt.core.dom.ast.c.ICQualifierType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPBasicType;
@@ -32,10 +32,8 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPReferenceType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateArgument;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateInstance;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateParameter;
-import org.eclipse.cdt.core.dom.ast.gnu.cpp.IGPPBasicType;
 import org.eclipse.cdt.core.dom.ast.gnu.cpp.IGPPPointerType;
 import org.eclipse.cdt.core.dom.ast.gnu.cpp.IGPPQualifierType;
-import org.eclipse.cdt.core.parser.GCCKeywords;
 import org.eclipse.cdt.core.parser.Keywords;
 import org.eclipse.cdt.core.parser.util.ArrayUtil;
 import org.eclipse.cdt.internal.core.dom.parser.ITypeContainer;
@@ -99,7 +97,7 @@ public class ASTTypeUtil {
 			IType ultimateType = SemanticUtil.getNestedType(parameters[0].getType(), TDEF);
 
 			if (ultimateType instanceof IBasicType) {
-				if (((IBasicType) ultimateType).getType() == IBasicType.t_void) {
+				if (((IBasicType) ultimateType).getKind() == Kind.eVoid) {
 					return false;
 				}
 			}
@@ -248,120 +246,83 @@ public class ASTTypeUtil {
 			result.append(Keywords.cpRBRACKET);
 		} else if (type instanceof IBasicType) {
 			IBasicType basicType= (IBasicType) type;
-			try {
-				if (basicType.isSigned()) {
-					// 3.9.1.2: signed integer types
-					if (!normalize || basicType.getType() == IBasicType.t_char) {
-						result.append(Keywords.SIGNED); needSpace = true;
-					}
-				} else if (basicType.isUnsigned()) {
-					if (needSpace) {
-						result.append(SPACE); needSpace = false;
-					}
-					result.append(Keywords.UNSIGNED); needSpace = true;
+			final Kind kind = basicType.getKind();
+			if (basicType.isSigned()) {
+				// 3.9.1.2: signed integer types
+				if (!normalize || kind == Kind.eChar) {
+					result.append(Keywords.SIGNED); needSpace = true;
 				}
-				if (basicType.isLong()) {
-					if (needSpace) {
-						result.append(SPACE); needSpace = false;
-					}
-					result.append(Keywords.LONG); needSpace = true;
-				} else if (basicType.isShort()) {
-					if (needSpace) {
-						result.append(SPACE); needSpace = false;
-					}
-					result.append(Keywords.SHORT); needSpace = true;
+			} else if (basicType.isUnsigned()) {
+				if (needSpace) {
+					result.append(SPACE); needSpace = false;
 				}
-			} catch (DOMException e) {
+				result.append(Keywords.UNSIGNED); needSpace = true;
 			}
-			
-			if (type instanceof IGPPBasicType) {
-				try {
-					if (((IGPPBasicType) type).isLongLong()) {
-						if (needSpace) {
-							result.append(SPACE); needSpace = false;
-						}
-						result.append(Keywords.LONG_LONG); needSpace = true;
-					}
-					if (((IGPPBasicType) type).isComplex()) {
-						if (needSpace) {
-							result.append(SPACE); needSpace = false;
-						}
-						result.append(Keywords.c_COMPLEX); needSpace = true;
-					}
-					if (((IGPPBasicType) type).isImaginary()) {
-						if (needSpace) {
-							result.append(SPACE); needSpace = false;
-						}
-						result.append(Keywords.c_IMAGINARY); needSpace = true;
-					}
+			if (basicType.isLong()) {
+				if (needSpace) {
+					result.append(SPACE); needSpace = false;
+				}
+				result.append(Keywords.LONG); needSpace = true;
+			} else if (basicType.isShort()) {
+				if (needSpace) {
+					result.append(SPACE); needSpace = false;
+				}
+				result.append(Keywords.SHORT); needSpace = true;
+			} else if (basicType.isLongLong()) {
+				if (needSpace) {
+					result.append(SPACE); needSpace = false;
+				}
+				result.append(Keywords.LONG_LONG); needSpace = true;
+			} 
 
-					switch (((IGPPBasicType) type).getType()) {
-						case IGPPBasicType.t_typeof:
-							result.append(GCCKeywords.TYPEOF);
-							break;						
-					}
-				} catch (DOMException e) {
+			if (basicType.isComplex()) {
+				if (needSpace) {
+					result.append(SPACE); needSpace = false;
 				}
-			} else if (type instanceof ICPPBasicType) {
-				try {
-					switch (((ICPPBasicType) type).getType()) {
-						case ICPPBasicType.t_bool:
-							result.append(Keywords.BOOL);
-							break;
-						case ICPPBasicType.t_wchar_t:
-							result.append(Keywords.WCHAR_T);
-							break;
-					}
-				} catch (DOMException e) {
+				result.append(Keywords.c_COMPLEX); needSpace = true;
+			}
+			if ((basicType).isImaginary()) {
+				if (needSpace) {
+					result.append(SPACE); needSpace = false;
 				}
-			} else if (type instanceof ICBasicType) {
-				try {
-					if (((ICBasicType) type).isComplex()) {
-						if (needSpace) {
-							result.append(SPACE); needSpace = false;
-						}
-						result.append(Keywords.c_COMPLEX); needSpace = true;
-					}
-					if (((ICBasicType) type).isImaginary()) {
-						if (needSpace) {
-							result.append(SPACE); needSpace = false;
-						}
-						result.append(Keywords.c_IMAGINARY); needSpace = true;
-					}
-					
-					switch (((ICBasicType) type).getType()) {
-						case ICBasicType.t_Bool:
-							result.append(Keywords.c_BOOL);
-							break;
-					}
-				} catch (DOMException e) {
-				}
+				result.append(Keywords.c_IMAGINARY); needSpace = true;
 			}
 			
-			try {
-				switch (basicType.getType()) {
-					case IBasicType.t_char:
-						if (needSpace) result.append(SPACE);
-						result.append(Keywords.CHAR);
-						break;
-					case IBasicType.t_double:
-						if (needSpace) result.append(SPACE);
-						result.append(Keywords.DOUBLE);
-						break;
-					case IBasicType.t_float:
-						if (needSpace) result.append(SPACE);
-						result.append(Keywords.FLOAT);
-						break;
-					case IBasicType.t_int:
-						if (needSpace) result.append(SPACE);
-						result.append(Keywords.INT);
-						break;
-					case IBasicType.t_void:
-						if (needSpace) result.append(SPACE);
-						result.append(Keywords.VOID);
-						break;
+			switch (kind) {
+			case eChar:
+				if (needSpace) result.append(SPACE);
+				result.append(Keywords.CHAR);
+				break;
+			case eDouble:
+				if (needSpace) result.append(SPACE);
+				result.append(Keywords.DOUBLE);
+				break;
+			case eFloat:
+				if (needSpace) result.append(SPACE);
+				result.append(Keywords.FLOAT);
+				break;
+			case eInt:
+				if (needSpace) result.append(SPACE);
+				result.append(Keywords.INT);
+				break;
+			case eVoid:
+				if (needSpace) result.append(SPACE);
+				result.append(Keywords.VOID);
+				break;
+			case eBoolean:
+				if (needSpace) result.append(SPACE);
+				if (basicType instanceof ICPPBasicType) {
+					result.append(Keywords.BOOL);
+				} else {
+					result.append(Keywords.c_BOOL);
 				}
-			} catch (DOMException e) {
+				break;
+			case eWChar:
+				if (needSpace) result.append(SPACE);
+				result.append(Keywords.WCHAR_T);
+				break;
+			case eUnspecified:
+				break;
 			}
 		} else if (type instanceof ICPPTemplateParameter) {
 			final ICPPTemplateParameter tpar = (ICPPTemplateParameter) type;

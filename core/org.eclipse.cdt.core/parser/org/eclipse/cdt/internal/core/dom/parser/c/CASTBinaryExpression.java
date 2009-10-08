@@ -16,9 +16,9 @@ import org.eclipse.cdt.core.dom.ast.ASTVisitor;
 import org.eclipse.cdt.core.dom.ast.IASTBinaryExpression;
 import org.eclipse.cdt.core.dom.ast.IASTExpression;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
-import org.eclipse.cdt.core.dom.ast.IBasicType;
 import org.eclipse.cdt.core.dom.ast.IPointerType;
 import org.eclipse.cdt.core.dom.ast.IType;
+import org.eclipse.cdt.core.dom.ast.IBasicType.Kind;
 import org.eclipse.cdt.internal.core.dom.parser.ASTNode;
 import org.eclipse.cdt.internal.core.dom.parser.IASTAmbiguityParent;
 
@@ -137,9 +137,7 @@ public class CASTBinaryExpression extends ASTNode implements
 			case op_logicalOr:
 			case op_equals:
 			case op_notequals:
-				CBasicType basicType = new CBasicType(IBasicType.t_int, 0);
-		    	basicType.setValue(this);
-		    	return basicType;
+				return new CBasicType(Kind.eInt, 0, this);
 			case IASTBinaryExpression.op_plus:
 				IType t2 = getOperand2().getExpressionType();
 				if (CVisitor.unwrapTypedefs(t2) instanceof IPointerType) {

@@ -11,9 +11,9 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.dom.parser.cpp;
 
-import org.eclipse.cdt.core.dom.ast.IBasicType;
 import org.eclipse.cdt.core.dom.ast.IParameter;
 import org.eclipse.cdt.core.dom.ast.IType;
+import org.eclipse.cdt.core.dom.ast.IBasicType.Kind;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassScope;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPConstructor;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunctionType;
@@ -29,7 +29,7 @@ public class CPPImplicitConstructor extends CPPImplicitMethod implements ICPPCon
     }
 
 	private static ICPPFunctionType createFunctionType(ICPPClassScope scope, IParameter[] params) {
-		IType returnType= new CPPBasicType(IBasicType.t_unspecified, 0);
+		IType returnType= new CPPBasicType(Kind.eUnspecified, 0);
 		return CPPVisitor.createImplicitFunctionType(returnType, params, false, false);
 	}
 

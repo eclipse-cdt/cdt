@@ -38,6 +38,7 @@ import org.eclipse.cdt.core.dom.ast.IQualifierType;
 import org.eclipse.cdt.core.dom.ast.IScope;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.ITypedef;
+import org.eclipse.cdt.core.dom.ast.IBasicType.Kind;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCompositeTypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTDeclSpecifier;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTElaboratedTypeSpecifier;
@@ -681,7 +682,7 @@ public class ClassTypeHelper {
 				return KIND_DEFAULT_CTOR;
 			if (params.length == 1) {
 				IType t= params[0];
-				if (t instanceof IBasicType && ((IBasicType) t).getType() == IBasicType.t_void)
+				if (t instanceof IBasicType && ((IBasicType) t).getKind() == Kind.eVoid)
 					return KIND_DEFAULT_CTOR;
 
 				if (isRefToConstClass(ct, t))

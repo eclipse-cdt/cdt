@@ -18,12 +18,12 @@ import java.util.List;
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.dom.IPDOMNode;
 import org.eclipse.cdt.core.dom.IPDOMVisitor;
-import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IBasicType;
 import org.eclipse.cdt.core.dom.ast.IFunctionType;
 import org.eclipse.cdt.core.dom.ast.IProblemBinding;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.ITypedef;
+import org.eclipse.cdt.core.dom.ast.IBasicType.Kind;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.SemanticUtil;
 import org.eclipse.cdt.internal.core.index.IIndexCBindingConstants;
 import org.eclipse.cdt.internal.core.index.IIndexType;
@@ -108,40 +108,36 @@ public class PDOMCFunctionType extends PDOMNode implements IIndexType, IFunction
 			return type.isSameType(this);
 		}
 
-		try {
-			if (type instanceof IFunctionType) {
-				IFunctionType ft = (IFunctionType) type;
-				IType rt1= getReturnType();
-				IType rt2= ft.getReturnType();
-				if (rt1 != rt2) {
-					if (rt1 == null || !rt1.isSameType(rt2)) {
-						return false;
-					}
-				}
-
-				IType[] params1= getParameterTypes();
-				IType[] params2= ft.getParameterTypes();
-				if (params1.length == 1 && params2.length == 0) {
-					IType p0= SemanticUtil.getNestedType(params1[0], SemanticUtil.TDEF);
-					if (!(p0 instanceof IBasicType) || ((IBasicType) p0).getType() != IBasicType.t_void)
-						return false;
-				} else if (params2.length == 1 && params1.length == 0) {
-					IType p0= SemanticUtil.getNestedType(params2[0], SemanticUtil.TDEF);
-					if (!(p0 instanceof IBasicType) || ((IBasicType) p0).getType() != IBasicType.t_void)
-						return false;
-				} else if (params1.length != params2.length) {
+		if (type instanceof IFunctionType) {
+			IFunctionType ft = (IFunctionType) type;
+			IType rt1= getReturnType();
+			IType rt2= ft.getReturnType();
+			if (rt1 != rt2) {
+				if (rt1 == null || !rt1.isSameType(rt2)) {
 					return false;
-				} else {
-					for (int i = 0; i < params1.length; i++) {
-						if (params1[i] == null || !params1[i].isSameType(params2[i]))
-							return false;
-					}
 				}
-
-				return true;
 			}
-			return false;
-		} catch (DOMException e) {
+
+			IType[] params1= getParameterTypes();
+			IType[] params2= ft.getParameterTypes();
+			if (params1.length == 1 && params2.length == 0) {
+				IType p0= SemanticUtil.getNestedType(params1[0], SemanticUtil.TDEF);
+				if (!(p0 instanceof IBasicType) || ((IBasicType) p0).getKind() != Kind.eVoid)
+					return false;
+			} else if (params2.length == 1 && params1.length == 0) {
+				IType p0= SemanticUtil.getNestedType(params2[0], SemanticUtil.TDEF);
+				if (!(p0 instanceof IBasicType) || ((IBasicType) p0).getKind() != Kind.eVoid)
+					return false;
+			} else if (params1.length != params2.length) {
+				return false;
+			} else {
+				for (int i = 0; i < params1.length; i++) {
+					if (params1[i] == null || !params1[i].isSameType(params2[i]))
+						return false;
+				}
+			}
+
+			return true;
 		}
 		return false;
 	}

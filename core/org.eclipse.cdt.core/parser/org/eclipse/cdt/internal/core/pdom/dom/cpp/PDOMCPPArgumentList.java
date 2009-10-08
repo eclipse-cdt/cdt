@@ -12,6 +12,7 @@ package org.eclipse.cdt.internal.core.pdom.dom.cpp;
 
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.IValue;
+import org.eclipse.cdt.core.dom.ast.IBasicType.Kind;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateArgument;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPBasicType;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPTemplateArgument;
@@ -97,7 +98,7 @@ public class PDOMCPPArgumentList {
 		ICPPTemplateArgument[] result= new ICPPTemplateArgument[len];
 		for (int i=0; i<len; i++) {
 			final long typeRec= db.getRecPtr(rec);
-			final IType type= typeRec == 0 ? new CPPBasicType(-1,0) : (IType) linkage.getNode(typeRec);
+			final IType type= typeRec == 0 ? new CPPBasicType(Kind.eUnspecified,CPPBasicType.UNIQUE_TYPE_QUALIFIER) : (IType) linkage.getNode(typeRec);
 			final long nonTypeValRec= db.getRecPtr(rec+4); 
 			if (nonTypeValRec != 0) {
 				final IValue val= PDOMValue.restore(db, linkage, nonTypeValRec);

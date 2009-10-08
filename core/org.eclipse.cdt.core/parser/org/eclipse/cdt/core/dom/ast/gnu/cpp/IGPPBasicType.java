@@ -17,24 +17,21 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPBasicType;
 /**
  * @noextend This interface is not intended to be extended by clients.
  * @noimplement This interface is not intended to be implemented by clients.
+ * @deprecated use {@link ICPPBasicType}, instead.
  */
+@Deprecated
 public interface IGPPBasicType extends ICPPBasicType {
 
+	
+	/**
+	 * @deprecated don't use this constant.
+	 */
+	@Deprecated
 	public static final int t_typeof = IGPPASTSimpleDeclSpecifier.t_typeof;
-	
-	/**
-	 * Is complex number? e.g. _Complex t;
-	 * @return true if it is a complex number, false otherwise
-	 */
-	public boolean isComplex();
-	
-	/**
-	 * Is imaginary number? e.g. _Imaginr
-	 * @return true if it is an imaginary number, false otherwise
-	 */
-	public boolean isImaginary();
-	
-	public boolean isLongLong() throws DOMException;
 
+	/**
+	 * @deprecated don't use this method.
+	 */
+	@Deprecated
 	public IType getTypeofType() throws DOMException;
 }

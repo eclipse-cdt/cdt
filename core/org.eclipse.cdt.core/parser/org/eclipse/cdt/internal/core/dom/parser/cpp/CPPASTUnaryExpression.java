@@ -9,6 +9,7 @@
  *    John Camelon (IBM) - Initial API and implementation
  *    Sergey Prigogin (Google)
  *    Mike Kucera (IBM)
+ *    Markus Schorn (Wind River Systems)
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.dom.parser.cpp;
 
@@ -30,9 +31,9 @@ import org.eclipse.cdt.core.dom.ast.IFunction;
 import org.eclipse.cdt.core.dom.ast.IPointerType;
 import org.eclipse.cdt.core.dom.ast.IProblemBinding;
 import org.eclipse.cdt.core.dom.ast.IType;
+import org.eclipse.cdt.core.dom.ast.IBasicType.Kind;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTQualifiedName;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTUnaryExpression;
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPBasicType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunction;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPMember;
 import org.eclipse.cdt.internal.core.dom.parser.ASTNode;
@@ -252,7 +253,7 @@ public class CPPASTUnaryExpression extends ASTNode implements ICPPASTUnaryExpres
 		}
 		
 		if(op == op_not) {
-			return new CPPBasicType(ICPPBasicType.t_bool, 0);
+			return new CPPBasicType(Kind.eBoolean, 0);
 		}
 		if (type instanceof CPPBasicType) {
 			((CPPBasicType) type).setFromExpression(this);

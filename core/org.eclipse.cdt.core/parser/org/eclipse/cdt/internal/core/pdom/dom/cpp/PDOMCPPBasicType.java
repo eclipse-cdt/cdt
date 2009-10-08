@@ -16,7 +16,6 @@ import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.dom.ast.ASTTypeUtil;
 import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IASTExpression;
-import org.eclipse.cdt.core.dom.ast.IBasicType;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.ITypedef;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPBasicType;
@@ -39,7 +38,7 @@ class PDOMCPPBasicType extends PDOMNode implements ICPPBasicType, IIndexType {
 	private static final int RECORD_SIZE = PDOMNode.RECORD_SIZE + 4;
 
 	protected short fFlags= -1;
-	protected short fType= -1;
+	private Kind fKind;
 
 	public PDOMCPPBasicType(PDOMLinkage linkage, long record) {
 		super(linkage, record);
@@ -54,32 +53,26 @@ class PDOMCPPBasicType extends PDOMNode implements ICPPBasicType, IIndexType {
 
 		fFlags= flags;
 		Database db = getDB();
-		db.putShort(record + TYPE_ID, getTypeCode(type));
+		db.putShort(record + TYPE_ID, (short) type.getKind().ordinal());
 		db.putShort(record + QUALIFIER_FLAGS, flags);
-	}
-
-	private short getTypeCode(ICPPBasicType type) {
-		short tc= IBasicType.t_unspecified;
-		try {
-			tc= (short) type.getType();
-		} catch (DOMException e) {
-		}
-		return tc;
 	}
 
 	protected static short encodeFlags(ICPPBasicType type) {
 		short flags = 0;
-		try {
-			if (type.isLong())
-				flags |= IS_LONG;
-			if (type.isShort())
-				flags |= IS_SHORT;
-			if (type.isSigned())
-				flags |= IS_SIGNED;
-			if (type.isUnsigned())
-				flags |= IS_UNSIGNED;
-		} catch (DOMException e) {
-		}
+		if (type.isLong())
+			flags |= IS_LONG;
+		if (type.isShort())
+			flags |= IS_SHORT;
+		if (type.isSigned())
+			flags |= IS_SIGNED;
+		if (type.isUnsigned())
+			flags |= IS_UNSIGNED;
+		if (type.isComplex())
+			flags |= IS_COMPLEX;
+		if (type.isImaginary())
+			flags |= IS_IMAGINARY;
+		if (type.isLongLong())
+			flags |= IS_LONG_LONG;
 		return flags;
 	}
 
@@ -93,21 +86,21 @@ class PDOMCPPBasicType extends PDOMNode implements ICPPBasicType, IIndexType {
 		return IIndexCPPBindingConstants.CPPBASICTYPE;
 	}
 
-	public int getType() {
-		if (fType == -1) {
-			try {
-				fType=  getDB().getShort(record + TYPE_ID);
-			} catch (CoreException e) {
-				CCorePlugin.log(e);
-				fType= 0;
-			}
+	public Kind getKind() {
+		if (fKind == null) {
+			fKind= readKind();
 		}
-		return fType;
+		return fKind;
 	}
 
-	@Deprecated
-	public IASTExpression getValue() throws DOMException {
-		return null;
+	private Kind readKind() {
+		try {
+			int idx= getDB().getChar(record + TYPE_ID);
+			return Kind.values()[idx];
+		} catch (CoreException e) {
+			CCorePlugin.log(e);
+			return Kind.eInt;
+		}
 	}
 
 	public int getQualifierBits() {
@@ -123,44 +116,51 @@ class PDOMCPPBasicType extends PDOMNode implements ICPPBasicType, IIndexType {
 		return fFlags;
 	}
 
-	public boolean isLong() throws DOMException {
+	public boolean isLong() {
 		return (getQualifierBits() & IS_LONG) != 0;
 	}
 
-	public boolean isShort() throws DOMException {
+	public boolean isShort() {
 		return (getQualifierBits() & IS_SHORT) != 0;
 	}
 
-	public boolean isSigned() throws DOMException {
+	public boolean isSigned() {
 		return (getQualifierBits() & IS_SIGNED) != 0;
 	}
 
-	public boolean isUnsigned() throws DOMException {
+	public boolean isUnsigned() {
 		return (getQualifierBits() & IS_UNSIGNED) != 0;
+	}
+	
+	public boolean isComplex() {
+		return (getQualifierBits() & IS_COMPLEX) != 0;
+	}
+
+	public boolean isImaginary() {
+		return (getQualifierBits() & IS_IMAGINARY) != 0;
+	}
+
+	public boolean isLongLong() {
+		return (getQualifierBits() & IS_LONG_LONG) != 0;
 	}
 
 	public boolean isSameType(IType rhs) {
-		if( rhs instanceof ITypedef )
-		    return rhs.isSameType( this );
+		if (rhs instanceof ITypedef)
+			return rhs.isSameType(this);
 
-		if( !(rhs instanceof ICPPBasicType))
+		if (!(rhs instanceof ICPPBasicType))
 			return false;
 
-		ICPPBasicType rhs1= (ICPPBasicType) rhs;
-		int type;
-		try {
-			type = this.getType();
-			if (type == -1 || type != rhs1.getType())
-				return false;
-
-			if( type == IBasicType.t_int ){
-				//signed int and int are equivalent
-				return (this.getQualifierBits() & ~ICPPBasicType.IS_SIGNED ) == (rhs1.getQualifierBits() & ~ICPPBasicType.IS_SIGNED );
-			}
-			return (this.getQualifierBits() == rhs1.getQualifierBits() );
-		} catch (DOMException e) {
+		ICPPBasicType rhs1 = (ICPPBasicType) rhs;
+		Kind kind = getKind();
+		if (kind != rhs1.getKind())
 			return false;
+
+		if (kind == Kind.eInt) {
+			// signed int and int are equivalent
+			return (this.getQualifierBits() & ~ICPPBasicType.IS_SIGNED) == (rhs1.getQualifierBits() & ~ICPPBasicType.IS_SIGNED);
 		}
+		return (this.getQualifierBits() == rhs1.getQualifierBits());
 	}
 
 	@Override
@@ -175,5 +175,34 @@ class PDOMCPPBasicType extends PDOMNode implements ICPPBasicType, IIndexType {
 	@Override
 	public String toString() {
 		return ASTTypeUtil.getType(this);
+	}
+
+	@Deprecated
+	public int getType() {
+		Kind kind= getKind();
+		switch (kind) {
+		case eBoolean:
+			return t_bool;
+		case eChar:
+			return t_char;
+		case eWChar:
+			return t_wchar_t;
+		case eDouble:
+			return t_double;
+		case eFloat:
+			return t_float;
+		case eInt:
+			return t_int;
+		case eVoid:
+			return t_void;
+		case eUnspecified:
+			return t_unspecified;
+		}
+		return t_unspecified;
+	}
+	
+	@Deprecated
+	public IASTExpression getValue() throws DOMException {
+		return null;
 	}
 }

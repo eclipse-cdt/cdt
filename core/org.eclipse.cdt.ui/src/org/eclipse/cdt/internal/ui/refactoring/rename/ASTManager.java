@@ -503,7 +503,7 @@ public class ASTManager {
             if (t2 instanceof IBasicType) {
                 IBasicType a1= (IBasicType) t1;
                 IBasicType a2= (IBasicType) t2;
-                if (getBasicType(a1.getType()) != getBasicType(a2.getType())) {
+                if (a1.getKind() != a2.getKind()) {
                     return FALSE;
                 }
                 if (getSigned(a1) != getSigned(a2) || a1.isUnsigned() != a2.isUnsigned()) {
@@ -598,19 +598,14 @@ public class ASTManager {
         if (a2.isUnsigned()) {
             return false;
         }
-        switch(a2.getType()) {
-        case IBasicType.t_int:
-        case IBasicType.t_unspecified:
+        switch(a2.getKind()) {
+        case eInt:
+        case eUnspecified:
             return true;
+        default:
+        	break;
         }
         return false;
-    }
-
-    private static int getBasicType(int bc) {
-        if (bc== IBasicType.t_unspecified) {
-            bc= IBasicType.t_int;
-        }
-        return bc;
     }
 
     private static IType getRealType(IType t) {

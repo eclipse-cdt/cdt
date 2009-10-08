@@ -63,7 +63,6 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPUsingDeclaration;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPUsingDirective;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPVariable;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCompositeTypeSpecifier.ICPPASTBaseSpecifier;
-import org.eclipse.cdt.core.dom.ast.gnu.cpp.IGPPBasicType;
 import org.eclipse.cdt.core.index.IIndexBinding;
 import org.eclipse.cdt.internal.core.Util;
 import org.eclipse.cdt.internal.core.dom.parser.ASTInternal;
@@ -686,18 +685,6 @@ class PDOMCPPLinkage extends PDOMLinkage implements IIndexCPPBindingConstants {
 		if (type instanceof IProblemBinding) {
 			return null;
 		}
-		if (type instanceof IGPPBasicType) {
-			IGPPBasicType gbt= (IGPPBasicType) type;
-			IType typeof;
-			try {
-				typeof = gbt.getTypeofType();
-				if (typeof != null) {
-					return addType(parent, typeof);
-				}
-			} catch (DOMException e) {
-			}
-			return new PDOMGPPBasicType(this, parent, gbt);
-		}
 		if (type instanceof ICPPBasicType) {
 			return new PDOMCPPBasicType(this, parent, (ICPPBasicType) type);
 		}
@@ -754,7 +741,7 @@ class PDOMCPPLinkage extends PDOMLinkage implements IIndexCPPBindingConstants {
 		case CPP_USING_DECLARATION:
 			return new PDOMCPPUsingDeclaration(this, record);
 		case GPPBASICTYPE:
-			return new PDOMGPPBasicType(this, record);
+			return new PDOMCPPBasicType(this, record);
 		case CPPBASICTYPE:
 			return new PDOMCPPBasicType(this, record);
 		case CPPPARAMETER:

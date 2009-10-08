@@ -18,7 +18,6 @@ import org.eclipse.cdt.core.dom.ast.IASTExpression;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.ITypedef;
 import org.eclipse.cdt.core.dom.ast.c.ICBasicType;
-import org.eclipse.cdt.internal.core.Util;
 import org.eclipse.cdt.internal.core.index.IIndexCBindingConstants;
 import org.eclipse.cdt.internal.core.index.IIndexType;
 import org.eclipse.cdt.internal.core.pdom.db.Database;
@@ -52,24 +51,20 @@ class PDOMCBasicType extends PDOMNode implements ICBasicType, IIndexType {
 	public PDOMCBasicType(PDOMLinkage linkage, PDOMNode parent, ICBasicType type) throws CoreException {
 		super(linkage, parent);
 
-		try {
-			Database db = getDB();
-			db.putChar(record + TYPE_ID, (char)type.getType());
+		Database db = getDB();
+		db.putChar(record + TYPE_ID, (char)type.getKind().ordinal());
 
-			char flags = 0;
-			if (type.isLong())      flags |= IS_LONG;
-			if (type.isShort())     flags |= IS_SHORT;
-			if (type.isSigned())    flags |= IS_SIGNED;
-			if (type.isUnsigned())  flags |= IS_UNSIGNED;
-			if (type.isLongLong())  flags |= IS_LONGLONG;
-			if (type.isImaginary()) flags |= IS_IMAGINARY;
-			if (type.isComplex())   flags |= IS_COMPLEX;
+		char flags = 0;
+		if (type.isLong())      flags |= IS_LONG;
+		if (type.isShort())     flags |= IS_SHORT;
+		if (type.isSigned())    flags |= IS_SIGNED;
+		if (type.isUnsigned())  flags |= IS_UNSIGNED;
+		if (type.isLongLong())  flags |= IS_LONGLONG;
+		if (type.isImaginary()) flags |= IS_IMAGINARY;
+		if (type.isComplex())   flags |= IS_COMPLEX;
 
 
-			db.putChar(record + FLAGS, flags);
-		} catch (DOMException e) {
-			throw new CoreException(Util.createStatus(e));
-		}
+		db.putChar(record + FLAGS, flags);
 	}
 	
 	@Override
@@ -82,13 +77,37 @@ class PDOMCBasicType extends PDOMNode implements ICBasicType, IIndexType {
 		return IIndexCBindingConstants.CBASICTYPE;
 	}
 
-	public int getType() {
+	public Kind getKind() {
 		try {
-			return getDB().getChar(record + TYPE_ID);
+			int idx= getDB().getChar(record + TYPE_ID);
+			return Kind.values()[idx];
 		} catch (CoreException e) {
 			CCorePlugin.log(e);
-			return 0;
+			return Kind.eInt;
 		}
+	}
+
+	@Deprecated
+	public int getType() {
+		final Kind kind = getKind();
+		switch (kind) {
+		case eBoolean:
+			return t_Bool;
+		case eChar:
+		case eWChar:
+			return t_char;
+		case eDouble:
+			return t_double;
+		case eFloat:
+			return t_float;
+		case eInt:
+			return t_int;
+		case eVoid:
+			return t_void;
+		case eUnspecified:
+			return t_unspecified;
+		}
+		return t_unspecified;
 	}
 
 	@Deprecated
@@ -96,11 +115,11 @@ class PDOMCBasicType extends PDOMNode implements ICBasicType, IIndexType {
 		return null;
 	}
 	
-	public boolean isLong() throws DOMException { return flagSet(IS_LONG); }
-	public boolean isShort() throws DOMException { return flagSet(IS_SHORT); }
-	public boolean isSigned() throws DOMException { return flagSet(IS_SIGNED); }
-	public boolean isUnsigned() throws DOMException { return flagSet(IS_UNSIGNED); }
-	public boolean isLongLong() throws DOMException { return flagSet(IS_LONGLONG); }
+	public boolean isLong()  { return flagSet(IS_LONG); }
+	public boolean isShort()  { return flagSet(IS_SHORT); }
+	public boolean isSigned() { return flagSet(IS_SIGNED); }
+	public boolean isUnsigned() { return flagSet(IS_UNSIGNED); }
+	public boolean isLongLong()  { return flagSet(IS_LONGLONG); }
 	public boolean isImaginary() { return flagSet(IS_IMAGINARY); }
 	public boolean isComplex() { return flagSet(IS_COMPLEX); }
 	
@@ -113,23 +132,14 @@ class PDOMCBasicType extends PDOMNode implements ICBasicType, IIndexType {
 			return false;
 		
 		ICBasicType rhs1= (ICBasicType) rhs;
-		int type;
-		try {
-			type = this.getType();
-			if (type == -1 || type != rhs1.getType()) 
-				return false;
-		
-			return (rhs1.getType() == this.getType()
-					&& rhs1.isLong() == this.isLong() 
-					&& rhs1.isShort() == this.isShort() 
-					&& rhs1.isSigned() == this.isSigned() 
-					&& rhs1.isUnsigned() == this.isUnsigned()
-					&& rhs1.isLongLong() == this.isLongLong()
-					&& rhs1.isComplex() == this.isComplex() 
-					&& rhs1.isImaginary() == this.isImaginary());
-		} catch (DOMException e) {
-			return false;
-		}
+		return (rhs1.getKind() == getKind()
+				&& rhs1.isLong() == this.isLong() 
+				&& rhs1.isShort() == this.isShort() 
+				&& rhs1.isSigned() == this.isSigned() 
+				&& rhs1.isUnsigned() == this.isUnsigned()
+				&& rhs1.isLongLong() == this.isLongLong()
+				&& rhs1.isComplex() == this.isComplex() 
+				&& rhs1.isImaginary() == this.isImaginary());
 	}
 
 	@Override

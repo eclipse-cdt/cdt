@@ -12,9 +12,9 @@
 package org.eclipse.cdt.internal.core.pdom.dom.cpp;
 
 import org.eclipse.cdt.core.dom.ast.ASTTypeUtil;
-import org.eclipse.cdt.core.dom.ast.IBasicType;
 import org.eclipse.cdt.core.dom.ast.IPointerType;
 import org.eclipse.cdt.core.dom.ast.IType;
+import org.eclipse.cdt.core.dom.ast.IBasicType.Kind;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunctionType;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPBasicType;
 import org.eclipse.cdt.internal.core.index.IIndexCPPBindingConstants;
@@ -24,7 +24,7 @@ import org.eclipse.cdt.internal.core.pdom.dom.c.PDOMCFunctionType;
 import org.eclipse.core.runtime.CoreException;
 
 public class PDOMCPPFunctionType extends PDOMCFunctionType implements ICPPFunctionType {
-	private static IType FALLBACK_RETURN_TYPE= new CPPBasicType(IBasicType.t_void, 0);
+	private static IType FALLBACK_RETURN_TYPE= new CPPBasicType(Kind.eVoid, 0);
 	static ICPPFunctionType FALLBACK= new ICPPFunctionType() {
 		@Deprecated
 		public IPointerType getThisType() {

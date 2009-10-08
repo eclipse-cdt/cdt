@@ -6,7 +6,7 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *    QNX - Initial API and implementation
+ *    Bryan Wilkinson (QNX) - Initial API and implementation
  *    Andrew Ferguson (Symbian)
  *    Markus Schorn (Wind River Systems)
  *    Sergey Prigogin (Google)
@@ -21,6 +21,7 @@ import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.IFunction;
 import org.eclipse.cdt.core.dom.ast.IFunctionType;
 import org.eclipse.cdt.core.dom.ast.IType;
+import org.eclipse.cdt.core.dom.ast.IBasicType.Kind;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassTemplatePartialSpecialization;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPConstructor;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunctionType;
@@ -33,8 +34,6 @@ import org.eclipse.core.runtime.CoreException;
 /**
  * Determines the signatures and signature hashes for bindings that can have
  * siblings with the same name.
- * 
- * @author Bryan Wilkinson
  */
 public class IndexCPPSignatureUtil {
 	
@@ -96,7 +95,7 @@ public class IndexCPPSignatureUtil {
 		IType[] types = fType.getParameterTypes();
 		if (types.length == 1) {
 			if (types[0] instanceof IBasicType) {
-				if (((IBasicType) types[0]).getType() == IBasicType.t_void) {
+				if (((IBasicType) types[0]).getKind() == Kind.eVoid) {
 					types = new IType[0];
 				}
 			}

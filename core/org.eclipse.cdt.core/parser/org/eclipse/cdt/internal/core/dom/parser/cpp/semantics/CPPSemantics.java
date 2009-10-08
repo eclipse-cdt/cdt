@@ -79,6 +79,7 @@ import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.ITypedef;
 import org.eclipse.cdt.core.dom.ast.IVariable;
 import org.eclipse.cdt.core.dom.ast.IASTEnumerationSpecifier.IASTEnumerator;
+import org.eclipse.cdt.core.dom.ast.IBasicType.Kind;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCatchHandler;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCompositeTypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTConstructorChainInitializer;
@@ -200,7 +201,7 @@ public class CPPSemantics {
 	public static final String EMPTY_NAME = ""; //$NON-NLS-1$
 	public static final char[] OPERATOR_ = new char[] {'o','p','e','r','a','t','o','r',' '};  
 	private static final char[] CALL_FUNCTION = "call-function".toCharArray(); //$NON-NLS-1$
-	public static final IType VOID_TYPE = new CPPBasicType(IBasicType.t_void, 0);
+	public static final IType VOID_TYPE = new CPPBasicType(Kind.eVoid, 0);
 
 	// Set to true for debugging.
 	public static boolean traceBindingResolution = false;
@@ -1918,7 +1919,7 @@ public class CPPSemantics {
 			final IType[] argTypes = data.getFunctionArgumentTypes();
 	    	if (argTypes.length == 1) {
 	    		IType t= getNestedType(argTypes[0], TDEF);
-	    		if (t instanceof IBasicType && ((IBasicType)t).getType() == IBasicType.t_void) {
+	    		if (t instanceof IBasicType && ((IBasicType)t).getKind() == Kind.eVoid) {
 	    			argumentCount= 0;
 	    		}
 	    	}
@@ -1954,7 +1955,7 @@ public class CPPSemantics {
 			if (numArgs < 2 && numPars == 1) {
 				// check for void
 			    IType t = getNestedType(parameterTypes[0], TDEF);
-			    if (t instanceof IBasicType && ((IBasicType)t).getType() == IBasicType.t_void)
+			    if (t instanceof IBasicType && ((IBasicType)t).getKind() == Kind.eVoid)
 			        numPars= 0;
 			}
 		

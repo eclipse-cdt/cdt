@@ -111,6 +111,18 @@ public class RequestMonitor extends DsfExecutable {
     private boolean fDone = false;
 
 	/**
+	 * This field is never read by any code; its purpose is strictly to assist
+	 * developers debug DPF code. Developer can select this field in the
+	 * Variables view and see a monitor backtrace in the details pane. See
+	 * {@link DsfExecutable#DEBUG_MONITORS}.
+	 * 
+	 * <p>
+	 * This field is set only when tracing is enabled.
+	 */
+	@SuppressWarnings("unused")
+	private String fMonitorBacktrace;
+
+	/**
 	 * Constructor with an optional parent monitor.
 	 * 
 	 * @param executor
@@ -138,6 +150,10 @@ public class RequestMonitor extends DsfExecutable {
                         cancel();
                     }
                 });
+        }
+        
+        if (DEBUG_MONITORS) {
+        	createMonitorBacktrace();
         }
     }
     
@@ -445,5 +461,25 @@ public class RequestMonitor extends DsfExecutable {
         } else {
             DsfPlugin.getDefault().getLog().log(logStatus);
         }
+    }
+    
+	/**
+	 * Instrument this object with a backtrace of the monitors this instance is
+	 * chained to. See {@link DsfExecutable#DEBUG_MONITORS}
+	 */
+    private void createMonitorBacktrace() {
+    	StringBuilder str = new StringBuilder();
+    	for (RequestMonitor nextrm = this; nextrm != null; nextrm = nextrm.fParentRequestMonitor) {
+    		final StackTraceElement[] stackTraceElems = (nextrm.fCreatedAt != null) ? nextrm.fCreatedAt.fStackTraceElements : null;
+	    	if (stackTraceElems != null && stackTraceElems.length > 0) 
+	    	{
+	    		str.append(stackTraceElems[0] + "\n"); //$NON-NLS-1$
+	    	}
+	    	else {
+	    		str.append("<unknown>\n"); //$NON-NLS-1$
+	    	}
+    	}
+    		
+    	fMonitorBacktrace = str.toString();
     }
 }

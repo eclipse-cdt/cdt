@@ -59,7 +59,21 @@ public class DsfExecutable {
      * runnables that have not been submitted to the executor.  
      */
     static boolean DEBUG_EXECUTOR = false;
-    
+
+	/**
+	 * Flag indicating that monitor objects should be instrumented. A monitor is
+	 * an object that is usually constructed as an anonymous inner classes and
+	 * is used when making an asynchronous call--one that needs to return some
+	 * result or at least notify its caller when it has completed. These objects
+	 * usually end up getting chained together at runtime, forming what is
+	 * effectively a very disjointed code path. When this trace option is
+	 * enabled, these objects are given a String field at construction time that
+	 * contains the instantiation backtrace. This turns out to be a fairly
+	 * dependable alternative to the standard program stack trace, which is of
+	 * virtually no help when debugging asynchronous, monitor-assisted code.
+	 */
+    static boolean DEBUG_MONITORS = false;
+
     /** 
      * Flag indicating that assertions are enabled.  It enables storing of the
      * "creator" executable for debugging purposes.
@@ -70,6 +84,9 @@ public class DsfExecutable {
         assert (ASSERTIONS_ENABLED = true) == true;
         DEBUG_EXECUTOR = DsfPlugin.DEBUG && "true".equals( //$NON-NLS-1$
                 Platform.getDebugOption("org.eclipse.cdt.dsf/debug/executor")); //$NON-NLS-1$
+        
+        DEBUG_MONITORS = DsfPlugin.DEBUG && "true".equals( //$NON-NLS-1$
+                Platform.getDebugOption("org.eclipse.cdt.dsf/debug/monitors")); //$NON-NLS-1$          
     }
 
 	/**
@@ -96,7 +113,7 @@ public class DsfExecutable {
     @SuppressWarnings("unchecked")
     public DsfExecutable() {
         // Use assertion flag (-ea) to jre to avoid affecting performance when not debugging.
-        if (ASSERTIONS_ENABLED || DEBUG_EXECUTOR) {
+        if (ASSERTIONS_ENABLED || DEBUG_EXECUTOR || DEBUG_MONITORS) {
             // Find the runnable/callable that is currently running.
             DefaultDsfExecutor executor = DefaultDsfExecutor.fThreadToExecutorMap.get(Thread.currentThread()); 
             if (executor != null) {

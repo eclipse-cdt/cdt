@@ -122,15 +122,18 @@ public class BaseTestCase {
  	public static void baseAfterClassMehod() throws Exception {
  	}
  	
+ 	/**
+ 	 * This method start gdbserver on the localhost.
+ 	 * If the user specified a different host, things won't work.
+ 	 */
  	private static void launchGdbServer() {
  		if (attrs.get(ICDTLaunchConfigurationConstants.ATTR_DEBUGGER_START_MODE)
  				              .equals(IGDBLaunchConfigurationConstants.DEBUGGER_MODE_REMOTE)) {
  			if (attrs.get(IGDBLaunchConfigurationConstants.ATTR_REMOTE_TCP).equals(Boolean.TRUE)) {
  				String server = (String)attrs.get(ATTR_DEBUG_SERVER_NAME);
- 				String host = (String)attrs.get(IGDBLaunchConfigurationConstants.ATTR_HOST);
  				String port = (String)attrs.get(IGDBLaunchConfigurationConstants.ATTR_PORT);
  				String program = (String)attrs.get(ICDTLaunchConfigurationConstants.ATTR_PROGRAM_NAME);
- 				String commandLine = server + " " + host + ":" + port + " " + program;
+ 				String commandLine = server + " :" + port + " " + program;
  				try {
                     System.out.println("Staring gdbserver with command: " + commandLine);
 

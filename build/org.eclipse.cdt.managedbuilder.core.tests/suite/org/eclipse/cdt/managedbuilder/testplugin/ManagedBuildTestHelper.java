@@ -70,7 +70,6 @@ public class ManagedBuildTestHelper {
 	private static final String rcbsToolInputTypeName = new String("Resource Custom Build Step Input Type");	//$NON-NLS-1$
 	private static final String rcbsToolOutputTypeId = new String("org.eclipse.cdt.managedbuilder.ui.rcbs.outputtype");	//$NON-NLS-1$
 	private static final String rcbsToolOutputTypeName = new String("Resource Custom Build Step Output Type");	//$NON-NLS-1$
-	private static final String PATH_SEPERATOR = ";";	//$NON-NLS-1$
 
 	
 	/* (non-Javadoc)
@@ -291,7 +290,6 @@ public class ManagedBuildTestHelper {
 				addManagedBuildNature(project);
 				
 				// Find the base project type definition
-				IProjectType[] projTypes = ManagedBuildManager.getDefinedProjectTypes();
 				IProjectType projType = ManagedBuildManager.getProjectType(projectTypeId);
 				Assert.assertNotNull(projType);
 				
@@ -301,6 +299,7 @@ public class ManagedBuildTestHelper {
 					newProject = ManagedBuildManager.createManagedProject(project, projType);
 				} catch (Exception e) {
 					Assert.fail("Failed to create managed project for: " + project.getName());
+					return;
 				}
 				Assert.assertEquals(newProject.getName(), projType.getName());
 				Assert.assertFalse(newProject.equals(projType));
@@ -344,6 +343,7 @@ public class ManagedBuildTestHelper {
 	static public void addManagedBuildNature (IProject project) {
 		// Create the buildinformation object for the project
 		IManagedBuildInfo info = ManagedBuildManager.createBuildInfo(project);
+		Assert.assertNotNull(info);
 //		info.setValid(true);
 		
 		// Add the managed build nature
@@ -362,6 +362,7 @@ public class ManagedBuildTestHelper {
 			desc.create(CCorePlugin.BUILD_SCANNER_INFO_UNIQ_ID, ManagedBuildManager.INTERFACE_IDENTITY);
 		} catch (CoreException e) {
 			Assert.fail("Test failed on adding managed builder as scanner info provider: " + e.getLocalizedMessage());
+			return;
 		}
 		try {
 			desc.saveProjectData();
@@ -537,6 +538,7 @@ public class ManagedBuildTestHelper {
 				input = new FileReader(fullPath.toFile());
 			} catch (Exception e) {
 				Assert.fail("File " + fullPath.toString() + " could not be read: " + e.getLocalizedMessage());
+				return null;
 			}
 			//InputStream input = file.getContents(true);   // A different way to read the file...
 			int c;
@@ -582,6 +584,7 @@ public class ManagedBuildTestHelper {
 							srcReader = new FileReader(srcFile.toFile());
 						} catch (Exception e) {
 							Assert.fail("File " + file.toString() + " could not be read.");
+							return null;
 						}
 						if (file.segmentCount() > 1) {
 							IPath newDir = tmpSrcDir;
@@ -598,6 +601,7 @@ public class ManagedBuildTestHelper {
 							writer = new FileWriter(destFile.toFile());
 						} catch (Exception e) {
 							Assert.fail("File " + files[i].toString() + " could not be written.");
+							return null;
 						}
 						try {
 							int c;
@@ -631,14 +635,13 @@ public class ManagedBuildTestHelper {
 				if (!tmpSrcDirFile.exists()) {
 					Assert.fail("Temporary directory " + tmpSrcDirFile.toString() + " does not exist.");				
 				} else {
-					boolean succeed;
 					for (int i=0; i<files.length; i++) {
 						// Delete the file
 						IPath thisFile = tmpSrcDir.append(files[i]);
-						succeed = thisFile.toFile().delete();
+						thisFile.toFile().delete();
 					}
 					// Delete the dir
-					succeed = tmpSrcDirFile.delete();
+					tmpSrcDirFile.delete();
 				}
 			}
 		}
@@ -683,16 +686,15 @@ public class ManagedBuildTestHelper {
 	}
 
 	static private void deleteDirectory(File dir) {
-		boolean b;
 		File[] toDelete = dir.listFiles();
 		for (int i=0; i<toDelete.length; i++) {
 			File fileToDelete = toDelete[i];
 			if (fileToDelete.isDirectory()) {
 				deleteDirectory(fileToDelete);
 			}
-			b = fileToDelete.delete();
+			fileToDelete.delete();
 		}
-		b = dir.delete();
+		dir.delete();
 	}
 	
 	public static ITool createRcbsTool(IConfiguration cfg, String file, String inputs, String outputs, String cmds){
@@ -750,7 +752,7 @@ public class ManagedBuildTestHelper {
 	}
 	
 	public static ITool[] getRcbsTools(IResourceConfiguration rcConfig){
-		List list = new ArrayList();
+		List<ITool> list = new ArrayList<ITool>();
 		ITool tools[] = rcConfig.getTools();
 		for (int i = 0; i < tools.length; i++) {
 			ITool tool = tools[i];
@@ -759,7 +761,7 @@ public class ManagedBuildTestHelper {
 			}
 		}
 		if(list.size() != 0)
-			return (ITool[])list.toArray(new ITool[list.size()]);
+			return list.toArray(new ITool[list.size()]);
 		return null;
 	}
 

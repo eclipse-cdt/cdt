@@ -27,6 +27,7 @@ import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
+import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IConfigurationElement;
@@ -35,7 +36,6 @@ import org.eclipse.core.runtime.IExtensionPoint;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.Platform;
-import org.eclipse.core.runtime.Preferences;
 import org.eclipse.core.runtime.QualifiedName;
 import org.eclipse.help.HelpSystem;
 import org.eclipse.help.IContext;
@@ -652,14 +652,17 @@ implements
 		};
 		IRunnableWithProgress op = new WorkspaceModifyDelegatingOperation(runnable);
 		try {
-			new ProgressMonitorDialog(getShell()).run(false, true, op);
+			PlatformUI.getWorkbench().getProgressService().runInUI(new ProgressMonitorDialog(getShell()), op, ResourcesPlugin.getWorkspace().getRoot());
 		} catch (InvocationTargetException e) {
 			Throwable e1 = e.getTargetException();
 			CUIPlugin.errorDialog(getShell(), 
 					UIMessages.getString("AbstractPage.8"),  //$NON-NLS-1$
 					UIMessages.getString("AbstractPage.9"), e1, true); //$NON-NLS-1$
 			return false;
-		} catch (InterruptedException e) {}
+		} catch (InterruptedException e) {
+			// IProgressService.runInUI(...) misuses this exception to signal that the operation was canceled.
+			return false;
+		}
 		
 		if (rebuildIndex)
 			rebuildIndex();
@@ -840,7 +843,11 @@ implements
 		return CUIPlugin.getDefault().getPreferenceStore();
 	}
 
-	public Preferences getPreferences()	{
+	/**
+	 * @deprecated, use {@link #getPreferenceStore()}, instead.
+	 */
+	@Deprecated
+	public org.eclipse.core.runtime.Preferences getPreferences()	{
 		return CUIPlugin.getDefault().getPluginPreferences();
 	}
 	

@@ -96,7 +96,18 @@ public class BaseTestCase {
 
  		fLaunch = (GdbLaunch)lc.launch(ILaunchManager.DEBUG_MODE, new NullProgressMonitor());
  		assert fLaunch != null;
- 		
+ 		 		
+		try {
+			// Also wait for the program to stop before allowing tests to start
+			// This should be done as soon as we have the launch, to avoid missing the Stopped
+			// event.  If we do miss it, we'll just have a 10 second delay.
+			final ServiceEventWaitor<MIStoppedEvent> eventWaitor =
+				new ServiceEventWaitor<MIStoppedEvent>(
+						fLaunch.getSession(),
+						MIStoppedEvent.class);
+			fInitialStoppedEvent = eventWaitor.waitForEvent(10000);
+		} catch (Exception e) {}
+
  		// If we started a gdbserver add it to the launch to make sure it is killed at the end
  		if (gdbserverProc != null) {
             DebugPlugin.newProcess(fLaunch, gdbserverProc, "gdbserver");
@@ -104,15 +115,6 @@ public class BaseTestCase {
  		
  		// Now initialize our SyncUtility, since we have the launcher
  		SyncUtil.initialize(fLaunch.getSession());
- 		
-		try {
-			// Also wait for the program to stop before allowing tests to start
-			final ServiceEventWaitor<MIStoppedEvent> eventWaitor =
-				new ServiceEventWaitor<MIStoppedEvent>(
-						fLaunch.getSession(),
-						MIStoppedEvent.class);
-			fInitialStoppedEvent = eventWaitor.waitForEvent(10000);
-		} catch (Exception e) {}
 
 	}
 

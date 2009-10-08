@@ -22,6 +22,7 @@
  * Kevin Doyle 		(IBM)		 - [210673] [efs][nls] Externalize Strings in RSEFileStore and RSEFileStoreImpl
  * Timur Shipilov   (Xored)      - [224538] RSEFileStore.getParent() returns null for element which is not root of filesystem
  * David McKnight   (IBM)        - [287185] EFS provider should interpret the URL host component as RSE connection name rather than a hostname
+ * David McKnight  (IBM)         - [291738] [efs] repeated queries to RSEFileStoreImpl.fetchInfo() in short time-span should be reduced
  ********************************************************************************/
 
 package org.eclipse.rse.internal.efs;
@@ -243,14 +244,13 @@ public class RSEFileStore extends FileStore
 			Bundle[] bundles = ctx.getBundles();
 			for (int i=0; i<bundles.length; i++) {
 				if ("org.eclipse.core.resources".equals(bundles[i].getSymbolicName())) { //$NON-NLS-1$
-					if (resourcesBundle==null || bundles[i].getState()==Bundle.ACTIVE) {
+					if (resourcesBundle==null && bundles[i].getState()==Bundle.ACTIVE) {
 						resourcesBundle = bundles[i];
 					}
-					//System.out.println(resourcesBundle);
 				}
 			}
 		}
-		return resourcesBundle.getState()==Bundle.ACTIVE;
+		return resourcesBundle != null && resourcesBundle.getState()==Bundle.ACTIVE;
 	}
 
 	/*

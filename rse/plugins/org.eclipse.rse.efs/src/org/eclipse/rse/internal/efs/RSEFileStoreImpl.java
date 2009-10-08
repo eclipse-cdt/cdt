@@ -32,6 +32,7 @@
  * Martin Oberhuber (Wind River) - [220300] EFS Size Property not properly updated after saving
  * Martin Oberhuber (Wind River) - [234026] Clarify IFileService#createFolder() Javadocs
  * David McKnight  (IBM)         - [287185] EFS provider should interpret the URL host component as RSE connection name rather than a hostname
+ * David McKnight  (IBM)         - [291738] [efs] repeated queries to RSEFileStoreImpl.fetchInfo() in short time-span should be reduced
  ********************************************************************************/
 
 package org.eclipse.rse.internal.efs;
@@ -79,6 +80,7 @@ import org.eclipse.rse.ui.RSEUIPlugin;
 public class RSEFileStoreImpl extends FileStore
 {
 	private RSEFileStore _store;
+	private long _lastFetch = 0;
 
 	//cached IRemoteFile object: an Object to avoid early class loading
 	private transient volatile IRemoteFile _remoteFile;
@@ -514,8 +516,14 @@ public class RSEFileStoreImpl extends FileStore
 	 * @see org.eclipse.core.filesystem.IFileStore#fetchInfo(int, org.eclipse.core.runtime.IProgressMonitor)
 	 */
 	public IFileInfo fetchInfo(int options, IProgressMonitor monitor) throws CoreException {
-		// clear cache in order to query latest info
-		cacheRemoteFile(null);
+		long curTime = System.currentTimeMillis();
+		// don't clear cache when there are several successive queries in a short time-span
+		if (_lastFetch == 0 || ((curTime - _lastFetch) < 1000)){	
+			// clear cache in order to query latest info
+			cacheRemoteFile(null);
+			_lastFetch = curTime;
+		}
+
 		// connect if needed. Will throw exception if not successful.
 		IRemoteFile remoteFile = getRemoteFileObject(monitor, false);
 		String classification = (remoteFile==null) ? null : remoteFile.getClassification();

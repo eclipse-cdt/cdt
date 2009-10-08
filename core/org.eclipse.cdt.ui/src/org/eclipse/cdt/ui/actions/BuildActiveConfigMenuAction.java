@@ -10,8 +10,6 @@
  *******************************************************************************/
 package org.eclipse.cdt.ui.actions;
 
-import java.util.Iterator;
-
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IncrementalProjectBuilder;
 import org.eclipse.jface.action.IAction;
@@ -122,19 +120,23 @@ public class BuildActiveConfigMenuAction extends ChangeBuildConfigActionBase
 	 * @param action - The build configuration menu to change the tool tip on
 	 */
 	public void updateBuildConfigMenuToolTip(IAction action){
-		String toolTipText = ActionMessages.getString("BuildActiveConfigMenuAction_defaultTooltip"); //$NON-NLS-1$
-		if (fProjects.size() == 1) {
-			Iterator<IProject> projIter = fProjects.iterator();
-			IProject prj = projIter.next();
-			if (prj != null){
-				ICProjectDescription prjd = CoreModel.getDefault().getProjectDescription(prj, false);
-				if (prjd != null) {
-					toolTipText = ActionMessages.getFormattedString(
-									"BuildActiveConfigMenuAction_buildConfigTooltip", //$NON-NLS-1$
-									new Object[] { prjd.getActiveConfiguration().getName(), prj.getName() });
+		String toolTipText = ""; //$NON-NLS-1$
+		if (fProjects.size() <= 5) {
+			StringBuilder sb = new StringBuilder();
+			for (IProject prj : fProjects) {
+				if (prj != null){
+					ICProjectDescription prjd = CoreModel.getDefault().getProjectDescription(prj, false);
+					if (prjd != null) {
+						sb.append(ActionMessages.getFormattedString(
+										"BuildActiveConfigMenuAction_buildConfigTooltip", //$NON-NLS-1$
+										new Object[] { prjd.getActiveConfiguration().getName(), prj.getName() })).append(System.getProperty("line.separator")); //$NON-NLS-1$
+					}
 				}
 			}
+			toolTipText = sb.toString().trim();
 		}
+		if (toolTipText.length() == 0)
+			toolTipText = ActionMessages.getString("BuildActiveConfigMenuAction_defaultTooltip"); //$NON-NLS-1$
 		action.setToolTipText(toolTipText);
 	}
 

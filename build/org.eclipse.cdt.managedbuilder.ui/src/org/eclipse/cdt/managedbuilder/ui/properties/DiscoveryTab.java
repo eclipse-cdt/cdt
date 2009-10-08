@@ -529,9 +529,11 @@ public class DiscoveryTab extends AbstractCBuildPropertyTab implements IBuildInf
 
 	private void handleDiscoveryProfileChanged() {
 		int pos = profileComboBox.getSelectionIndex();
-		for (int i = 0; i < realPages.length; i++)
-			if (realPages[i] != null)
-				realPages[i].setVisible(i == pos);
+		if (realPages != null) {
+			for (int i = 0; i < realPages.length; i++)
+				if (realPages[i] != null)
+					realPages[i].setVisible(i == pos);
+		}
 	}
 
 	/**
@@ -617,13 +619,15 @@ public class DiscoveryTab extends AbstractCBuildPropertyTab implements IBuildInf
 		if (buildInfo == null)
 			return;
 		String savedId = buildInfo.getSelectedProfileId();
-		for (int i = 0; i < realPages.length; i++) {
-			if (realPages != null && realPages[i] != null) {
-				String s = visibleProfilesList.get(i);
-				buildInfo.setSelectedProfileId(s);
-				realPages[i].performApply();
-				realPages[i].setVisible(false);
-			}
+		if (realPages != null) {
+			for (int i = 0; i < realPages.length; i++) {
+				if (realPages[i] != null) {
+					String s = visibleProfilesList.get(i);
+					buildInfo.setSelectedProfileId(s);
+					realPages[i].performApply();
+					realPages[i].setVisible(false);
+				}
+			} 
 		}
 		buildInfo.setSelectedProfileId(savedId);
 		handleDiscoveryProfileChanged();

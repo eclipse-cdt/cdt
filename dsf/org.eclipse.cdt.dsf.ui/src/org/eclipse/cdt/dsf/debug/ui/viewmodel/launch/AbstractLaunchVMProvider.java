@@ -35,7 +35,6 @@ import org.eclipse.cdt.dsf.internal.ui.DsfUIPlugin;
 import org.eclipse.cdt.dsf.service.DsfSession;
 import org.eclipse.cdt.dsf.ui.viewmodel.AbstractVMAdapter;
 import org.eclipse.cdt.dsf.ui.viewmodel.IRootVMNode;
-import org.eclipse.cdt.dsf.ui.viewmodel.IVMModelProxy;
 import org.eclipse.cdt.dsf.ui.viewmodel.IVMNode;
 import org.eclipse.cdt.dsf.ui.viewmodel.datamodel.AbstractDMVMProvider;
 import org.eclipse.cdt.dsf.ui.viewmodel.update.AutomaticUpdatePolicy;
@@ -147,15 +146,7 @@ public class AbstractLaunchVMProvider extends AbstractDMVMProvider
             	rm.done();
             }
             return;
-        }
-    	super.handleEvent(event, rm);
-    }
-
-    @Override
-    protected void handleEvent(IVMModelProxy proxyStrategy, final Object event, RequestMonitor rm) {
-    	super.handleEvent(proxyStrategy, event, rm);
-    	
-		if (event instanceof IRunControl.ISuspendedDMEvent) {
+        } else if (event instanceof IRunControl.ISuspendedDMEvent) {
     		final IExecutionDMContext exeContext= ((IRunControl.ISuspendedDMEvent) event).getDMContext();
     		ScheduledFuture<?> refreshStackFramesFuture = getRefreshFuture(exeContext);
     		// trigger delayed full stack frame update
@@ -193,7 +184,8 @@ public class AbstractLaunchVMProvider extends AbstractDMVMProvider
     			fRefreshStackFramesFutures.remove(exeContext);
     		}
     	}
-		
+
+    	super.handleEvent(event, rm);
     }
 
     /**

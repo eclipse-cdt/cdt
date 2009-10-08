@@ -48,6 +48,7 @@ public class BaseTestCase {
 	
     private static GdbLaunch fLaunch;
 	private static Map<String, Object> attrs = new HashMap<String, Object>();
+    private static Process gdbserverProc = null;
     
 	private MIStoppedEvent fInitialStoppedEvent = null;
 	
@@ -96,6 +97,11 @@ public class BaseTestCase {
  		fLaunch = (GdbLaunch)lc.launch(ILaunchManager.DEBUG_MODE, new NullProgressMonitor());
  		assert fLaunch != null;
  		
+ 		// If we started a gdbserver add it to the launch to make sure it is killed at the end
+ 		if (gdbserverProc != null) {
+            DebugPlugin.newProcess(fLaunch, gdbserverProc, "gdbserver");
+ 		}
+ 		
  		// Now initialize our SyncUtility, since we have the launcher
  		SyncUtil.initialize(fLaunch.getSession());
  		
@@ -137,8 +143,8 @@ public class BaseTestCase {
  				try {
                     System.out.println("Staring gdbserver with command: " + commandLine);
 
- 					Process proc = ProcessFactory.getFactory().exec(commandLine);
-                    Reader r = new InputStreamReader(proc.getErrorStream());
+ 					gdbserverProc = ProcessFactory.getFactory().exec(commandLine);
+                    Reader r = new InputStreamReader(gdbserverProc.getErrorStream());
                     BufferedReader reader = new BufferedReader(r);
                     String line;
                     while ((line = reader.readLine()) != null) {

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2008 IBM Corporation and others.
+ * Copyright (c) 2000, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -19,15 +19,19 @@ import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IncrementalProjectBuilder;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IAdaptable;
+import org.eclipse.jface.action.ActionContributionItem;
 import org.eclipse.jface.action.GroupMarker;
+import org.eclipse.jface.action.IContributionItem;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.Separator;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.ui.IActionBars;
 import org.eclipse.ui.IViewPart;
 import org.eclipse.ui.actions.BuildAction;
+import org.eclipse.ui.ide.IDEActionFactory;
 import org.eclipse.ui.navigator.ICommonMenuConstants;
 
+import org.eclipse.cdt.internal.ui.cview.BuildGroup;
 import org.eclipse.cdt.internal.ui.cview.CViewMessages;
 
 /**
@@ -40,6 +44,7 @@ import org.eclipse.cdt.internal.ui.cview.CViewMessages;
  */
 public class CNavigatorBuildActionGroup extends AbstractCNavigatorActionGroup {
 
+	private BuildAction fBuildAction;
 	private BuildAction fCleanAction;
 
 	// Menu tags for the build
@@ -56,6 +61,9 @@ public class CNavigatorBuildActionGroup extends AbstractCNavigatorActionGroup {
 
 	@Override
 	public void fillActionBars(IActionBars actionBars) {
+		// register a CDT Build project action which prevents projects with refs from being built twice
+		actionBars.setGlobalActionHandler(IDEActionFactory.BUILD_PROJECT.getId(), fBuildAction);
+		updateActionBars();
 	}
 
 	/**
@@ -67,7 +75,7 @@ public class CNavigatorBuildActionGroup extends AbstractCNavigatorActionGroup {
 	 * <p>
 	 * No disabled action should be on the context menu.
 	 * </p>
-	 * 
+	 *
 	 * @param menu
 	 *            context menu to add actions to
 	 */
@@ -112,10 +120,18 @@ public class CNavigatorBuildActionGroup extends AbstractCNavigatorActionGroup {
 		if (!selection.isEmpty() && isProjectSelection && hasBuilder) {
 			fCleanAction.selectionChanged(selection);
 			if (fCleanAction.isEnabled()) {
-				if (menu.find(BuildAction.ID_BUILD) != null) {
+				IContributionItem oldBuild = menu.find(BuildAction.ID_BUILD);
+				if (oldBuild != null) {
 					menu.insertAfter(BuildAction.ID_BUILD, fCleanAction);
+					// Replace ResourceMgmtActionProvier's build action with our own
+					if (oldBuild instanceof ActionContributionItem &&
+							((ActionContributionItem)oldBuild).getAction() instanceof BuildAction) {
+						menu.remove(oldBuild);
+						menu.insertBefore(fCleanAction.getId(), fBuildAction);
+					}
 				} else {
 					menu.insertAfter(ICommonMenuConstants.GROUP_BUILD, fCleanAction);
+					menu.insertAfter(ICommonMenuConstants.GROUP_BUILD, fBuildAction);
 				}
 			}
 		}
@@ -125,7 +141,7 @@ public class CNavigatorBuildActionGroup extends AbstractCNavigatorActionGroup {
 
 	/**
 	 * Returns whether there are builders configured on the given project.
-	 * 
+	 *
 	 * @return <code>true</code> if it has builders, <code>false</code> if
 	 *         not, or if this could not be determined
 	 */
@@ -142,11 +158,15 @@ public class CNavigatorBuildActionGroup extends AbstractCNavigatorActionGroup {
 
 	@Override
 	protected void makeActions() {
-		fCleanAction= new BuildAction(getViewPart().getSite(), IncrementalProjectBuilder.CLEAN_BUILD);
-		fCleanAction.setText(CViewMessages.CleanAction_label); 
+		fBuildAction = new BuildGroup.CDTBuildAction(getViewPart().getSite(), IncrementalProjectBuilder.INCREMENTAL_BUILD);
+		fCleanAction= new BuildGroup.CDTBuildAction(getViewPart().getSite(), IncrementalProjectBuilder.CLEAN_BUILD);
+		fCleanAction.setText(CViewMessages.CleanAction_label);
 	}
 
 	@Override
 	public void updateActionBars() {
+		IStructuredSelection selection = (IStructuredSelection) getContext().getSelection();
+		fBuildAction.selectionChanged(selection);
+		fCleanAction.selectionChanged(selection);
 	}
 }

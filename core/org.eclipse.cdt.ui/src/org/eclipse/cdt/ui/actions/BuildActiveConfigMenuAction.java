@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2008 Nokia and others.
+ * Copyright (c) 2007, 2009 Nokia and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -30,6 +30,7 @@ import org.eclipse.cdt.core.settings.model.ICProjectDescriptionListener;
 import org.eclipse.cdt.core.settings.model.ICProjectDescriptionManager;
 
 import org.eclipse.cdt.internal.ui.actions.ActionMessages;
+import org.eclipse.cdt.internal.ui.cview.BuildGroup;
 
 /**
  * Implements a toolbar button that builds the active configuration
@@ -73,7 +74,7 @@ public class BuildActiveConfigMenuAction extends ChangeBuildConfigActionBase
 	 * @see org.eclipse.ui.IWorkbenchWindowActionDelegate#init(org.eclipse.ui.IWorkbenchWindow)
 	 */
 	public void init(IWorkbenchWindow window) {
-		buildaction = new BuildAction(window, IncrementalProjectBuilder.INCREMENTAL_BUILD);
+		buildaction = new BuildGroup.CDTBuildAction(window, IncrementalProjectBuilder.INCREMENTAL_BUILD);
 		ICProjectDescriptionManager mngr = CoreModel.getDefault().getProjectDescriptionManager();
 		mngr.addCProjectDescriptionListener(this, CProjectDescriptionEvent.DATA_APPLIED);
 	}

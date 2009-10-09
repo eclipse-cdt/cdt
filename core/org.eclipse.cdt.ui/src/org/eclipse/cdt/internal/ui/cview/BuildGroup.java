@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2008 IBM Corporation and others.
+ * Copyright (c) 2000, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -29,12 +29,33 @@ import org.eclipse.ui.IWorkbenchPartSite;
 import org.eclipse.ui.actions.BuildAction;
 import org.eclipse.ui.ide.IDEActionFactory;
 
+import org.eclipse.cdt.core.CCorePlugin;
+
 /**
  * This is the action group for workspace actions such as Build
  */
 public class BuildGroup extends CViewActionGroup {
 
-	private class RebuildAction extends BuildAction {
+	/**
+	 * An internal class which overrides the 'shouldPerformResourcePruning'
+	 * method so that referenced projects aren't build twice 
+	 */
+	public static class CDTBuildAction extends BuildAction {
+	    public CDTBuildAction(IShellProvider shell, int kind) {
+	        super(shell, kind);
+	    }
+	    @Override
+	    protected boolean shouldPerformResourcePruning() {
+	    	// If the selected resources aren't new-style CDT projects, then
+	    	// fall-back to parent behaviour
+	    	for (Object res : getSelectedResources())
+	    		if (!(res instanceof IProject) || !CCorePlugin.getDefault().isNewStyleProject((IProject)res))
+	    			return super.shouldPerformResourcePruning();
+	    	return false;
+	    }
+	}
+
+	private static class RebuildAction extends CDTBuildAction {
 	    public RebuildAction(IShellProvider shell) {
 	        super(shell, IncrementalProjectBuilder.FULL_BUILD);
 	    }
@@ -157,10 +178,10 @@ public class BuildGroup extends CViewActionGroup {
 	protected void makeActions() {
 		final IWorkbenchPartSite site = getCView().getSite();
 
-		buildAction = new BuildAction(site, IncrementalProjectBuilder.INCREMENTAL_BUILD);
+		buildAction = new CDTBuildAction(site, IncrementalProjectBuilder.INCREMENTAL_BUILD);
 		buildAction.setText(CViewMessages.BuildAction_label); 
 
-		cleanAction = new BuildAction(site, IncrementalProjectBuilder.CLEAN_BUILD);
+		cleanAction = new CDTBuildAction(site, IncrementalProjectBuilder.CLEAN_BUILD);
 		cleanAction.setText(CViewMessages.CleanAction_label); 
 		
 		rebuildAction = new RebuildAction(site);

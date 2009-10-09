@@ -148,33 +148,6 @@ public class CommonBuilder extends ACBuilder {
 		}
 	}
 
-	private static class NullConsole implements IConsole { // return a null console
-		private final ConsoleOutputStream nullStream = new ConsoleOutputStream() {
-			@Override
-			public void write(byte[] b) throws IOException {
-			}
-			@Override
-			public void write(byte[] b, int off, int len) throws IOException {
-			}
-			@Override
-			public void write(int c) throws IOException {
-			}
-		};
-
-		public void start(IProject project) {
-		}
-	    // this can be a null console....
-		public ConsoleOutputStream getOutputStream() {
-			return nullStream;
-		}
-		public ConsoleOutputStream getInfoStream() {
-			return nullStream;
-		}
-		public ConsoleOutputStream getErrorStream() {
-			return nullStream;
-		}
-	}
-
 	private static class CfgBuildSet {
 		Map<IProject, Set<String>> fMap = new HashMap<IProject, Set<String>>();
 
@@ -231,7 +204,7 @@ public class CommonBuilder extends ACBuilder {
 
 		public IConsole getConsole(){
 			if(fConsole == null){
-				fConsole = fIsForeground ? CCorePlugin.getDefault().getConsole() : new NullConsole();
+				fConsole = CCorePlugin.getDefault().getConsole();
 				fConsole.start(fProject);
 			}
 			return fConsole;

@@ -15,8 +15,10 @@ package org.eclipse.cdt.debug.internal.core.model;
 import java.io.File;
 import com.ibm.icu.text.MessageFormat;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Set;
 import java.util.StringTokenizer;
 
 import org.eclipse.cdt.core.CCorePlugin;
@@ -1811,12 +1813,12 @@ public class CDebugTarget extends CDebugElement implements ICDebugTarget, ICDIEv
 	}
 
 	private void setSourceLookupPath( ISourceContainer[] containers ) {
-		ArrayList list = new ArrayList( containers.length );
-		getSourceLookupPath( list, containers );
+		ArrayList<String> list = new ArrayList<String>( containers.length );
+		getSourceLookupPath( list, containers, new HashSet<ISourceContainer>(containers.length) );
 		try {
 			final ICDITarget cdiTarget = getCDITarget();
 			if (cdiTarget != null) {
-				cdiTarget.setSourcePaths( (String[])list.toArray( new String[list.size()] ) );
+				cdiTarget.setSourcePaths( list.toArray( new String[list.size()] ) );
 			}
 		}
 		catch( CDIException e ) {
@@ -1824,28 +1826,39 @@ public class CDebugTarget extends CDebugElement implements ICDebugTarget, ICDIEv
 		}
 	}
 
-	private void getSourceLookupPath( List list, ISourceContainer[] containers ) {
-		for ( int i = 0; i < containers.length; ++i ) {
-			if ( containers[i] instanceof ProjectSourceContainer ) {
-				IProject project = ((ProjectSourceContainer)containers[i]).getProject();
+	private void getSourceLookupPath( List<String> list, ISourceContainer[] containers, Set<ISourceContainer> alreadyProcessed ) {
+		for ( ISourceContainer container : containers ) {
+			
+			// Not sure that this addresses the problem behind 291912 but it's
+			// easy enough to bullet proof the logic to prevent infinite
+			// recursion when a source-container instance appears twice in the
+			// hierarchy
+			if (alreadyProcessed.contains(container)) {
+				continue;	
+			}
+			else {
+				alreadyProcessed.add(container);
+			}
+			if ( container instanceof ProjectSourceContainer ) {
+				IProject project = ((ProjectSourceContainer)container).getProject();
 				if ( project != null && project.exists() )
 					list.add( project.getLocation().toPortableString() );
 			}
-			if ( containers[i] instanceof FolderSourceContainer ) {
-				IContainer container = ((FolderSourceContainer)containers[i]).getContainer();
-				if ( container != null && container.exists() )
-					list.add( container.getLocation().toPortableString() );
+			if ( container instanceof FolderSourceContainer ) {
+				IContainer folderContainer = ((FolderSourceContainer)container).getContainer();
+				if ( folderContainer != null && folderContainer.exists() )
+					list.add( folderContainer.getLocation().toPortableString() );
 			}
-			if ( containers[i] instanceof DirectorySourceContainer ) {
-				File dir = ((DirectorySourceContainer)containers[i]).getDirectory();
+			if ( container instanceof DirectorySourceContainer ) {
+				File dir = ((DirectorySourceContainer)container).getDirectory();
 				if ( dir != null && dir.exists() ) {
 					IPath path = new Path( dir.getAbsolutePath() );
 					list.add( path.toPortableString() );
 				}
 			}
-			if ( containers[i].isComposite() ) {
+			if ( container.isComposite() ) {
 				try {
-					getSourceLookupPath( list, containers[i].getSourceContainers() );
+					getSourceLookupPath( list, container.getSourceContainers(), alreadyProcessed );
 				}
 				catch( CoreException e ) {
 					CDebugCorePlugin.log( e.getStatus() );

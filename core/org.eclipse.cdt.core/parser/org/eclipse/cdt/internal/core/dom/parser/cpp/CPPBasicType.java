@@ -14,6 +14,7 @@ package org.eclipse.cdt.internal.core.dom.parser.cpp;
 import org.eclipse.cdt.core.dom.ast.ASTTypeUtil;
 import org.eclipse.cdt.core.dom.ast.IASTExpression;
 import org.eclipse.cdt.core.dom.ast.IASTSimpleDeclSpecifier;
+import org.eclipse.cdt.core.dom.ast.IBasicType;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.ITypedef;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTSimpleDeclSpecifier;
@@ -27,7 +28,7 @@ import org.eclipse.cdt.internal.core.index.IIndexType;
 public class CPPBasicType implements ICPPBasicType {
 	public static int UNIQUE_TYPE_QUALIFIER= -1;
 	private final Kind fKind;
-	private final int fQualifierBits;
+	private final int fModifiers;
 	private IASTExpression fExpression;
 
 	public CPPBasicType(Kind kind, int qualifiers, IASTExpression expression) {
@@ -42,7 +43,7 @@ public class CPPBasicType implements ICPPBasicType {
 		} else {
 			fKind= kind;
 		}
-		fQualifierBits= qualifiers;
+		fModifiers= qualifiers;
 		fExpression= expression;
 	}
 
@@ -51,21 +52,21 @@ public class CPPBasicType implements ICPPBasicType {
 	}
 	
 	public CPPBasicType(ICPPASTSimpleDeclSpecifier sds) {
-		this (getKind(sds), getQualifiers(sds), null);
+		this (getKind(sds), getModifiers(sds), null);
 	}
 	
-	private static int getQualifiers(ICPPASTSimpleDeclSpecifier sds) {
+	private static int getModifiers(ICPPASTSimpleDeclSpecifier sds) {
 		int qualifiers=
-			( sds.isLong()    ? ICPPBasicType.IS_LONG  : 0 ) |
-			( sds.isShort()   ? ICPPBasicType.IS_SHORT : 0 ) |
-			( sds.isSigned()  ? ICPPBasicType.IS_SIGNED: 0 ) |
-			( sds.isUnsigned()? ICPPBasicType.IS_UNSIGNED : 0 );
+			( sds.isLong()    ? IBasicType.IS_LONG  : 0 ) |
+			( sds.isShort()   ? IBasicType.IS_SHORT : 0 ) |
+			( sds.isSigned()  ? IBasicType.IS_SIGNED: 0 ) |
+			( sds.isUnsigned()? IBasicType.IS_UNSIGNED : 0 );
 		if (sds instanceof IGPPASTSimpleDeclSpecifier) {
 			IGPPASTSimpleDeclSpecifier gsds= (IGPPASTSimpleDeclSpecifier) sds;
 			qualifiers |=
-				( gsds.isLongLong()? ICPPBasicType.IS_LONG_LONG : 0 ) |
-				( gsds.isComplex() ? ICPPBasicType.IS_COMPLEX : 0 ) |
-				( gsds.isImaginary()?ICPPBasicType.IS_IMAGINARY : 0 );
+				( gsds.isLongLong()? IBasicType.IS_LONG_LONG : 0 ) |
+				( gsds.isComplex() ? IBasicType.IS_COMPLEX : 0 ) |
+				( gsds.isImaginary()?IBasicType.IS_IMAGINARY : 0 );
 		}
 		return qualifiers;
 	}
@@ -100,24 +101,24 @@ public class CPPBasicType implements ICPPBasicType {
 		if (object == this)
 			return true;
 
-		if (fQualifierBits == -1)
+		if (fModifiers == -1)
 			return false;
 
 	    if (object instanceof ITypedef || object instanceof IIndexType)
 	        return object.isSameType(this);
 
-		if (!(object instanceof CPPBasicType))
+		if (!(object instanceof ICPPBasicType))
 			return false;
 
-		CPPBasicType t = (CPPBasicType) object;
-		if (fKind != t.fKind)
+		ICPPBasicType t = (ICPPBasicType) object;
+		if (fKind != t.getKind())
 			return false;
 
 		if (fKind == Kind.eInt) {
 			//signed int and int are equivalent
-			return (fQualifierBits & ~IS_SIGNED) == (t.fQualifierBits & ~IS_SIGNED);
+			return (fModifiers & ~IS_SIGNED) == (t.getModifiers() & ~IS_SIGNED);
 		}
-		return fQualifierBits == t.fQualifierBits;
+		return fModifiers == t.getModifiers();
 	}
 
 	public Kind getKind() {
@@ -125,31 +126,31 @@ public class CPPBasicType implements ICPPBasicType {
 	}
 	
 	public boolean isSigned() {
-		return (fQualifierBits & IS_SIGNED) != 0;
+		return (fModifiers & IS_SIGNED) != 0;
 	}
 
 	public boolean isUnsigned() {
-		return (fQualifierBits & IS_UNSIGNED) != 0;
+		return (fModifiers & IS_UNSIGNED) != 0;
 	}
 
 	public boolean isShort() {
-		return (fQualifierBits & IS_SHORT) != 0;
+		return (fModifiers & IS_SHORT) != 0;
 	}
 
 	public boolean isLong() {
-		return (fQualifierBits & IS_LONG) != 0;
+		return (fModifiers & IS_LONG) != 0;
 	}
 
 	public boolean isLongLong() {
-		return (fQualifierBits & IS_LONG_LONG) != 0;
+		return (fModifiers & IS_LONG_LONG) != 0;
 	}
 
 	public boolean isComplex() {
-		return (fQualifierBits & IS_COMPLEX) != 0;
+		return (fModifiers & IS_COMPLEX) != 0;
 	}
 
 	public boolean isImaginary() {
-		return (fQualifierBits & IS_IMAGINARY) != 0;
+		return (fModifiers & IS_IMAGINARY) != 0;
 	}
 
 	@Override
@@ -174,15 +175,21 @@ public class CPPBasicType implements ICPPBasicType {
 		return fExpression;
 	}
 	
-	public int getQualifierBits() {
-		return fQualifierBits;
+	public int getModifiers() {
+		return fModifiers;
 	}
-
+	
 	@Override
 	public String toString() {
 		return ASTTypeUtil.getType(this);
 	}
-	
+
+	@Deprecated
+	public int getQualifierBits() {
+		return getModifiers();
+	}
+
+
 	@Deprecated
 	public int getType() {
 		switch (fKind) {

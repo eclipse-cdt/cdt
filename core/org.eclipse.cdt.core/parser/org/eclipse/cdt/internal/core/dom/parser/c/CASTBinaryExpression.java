@@ -127,7 +127,13 @@ public class CASTBinaryExpression extends ASTNode implements
     }
     
     public IType getExpressionType() {
-        int op = getOperator();
+        final int op = getOperator();
+        final IType t1= CVisitor.unwrapTypedefs(getOperand1().getExpressionType());
+    	final IType t2= CVisitor.unwrapTypedefs(getOperand2().getExpressionType());
+    	IType type= CArithmeticConversion.convertCOperandTypes(op, t1, t2);
+    	if (type != null) {
+    		return type;
+    	}
 		switch(op) {
 			case op_lessEqual:
 			case op_lessThan:
@@ -139,24 +145,20 @@ public class CASTBinaryExpression extends ASTNode implements
 			case op_notequals:
 				return new CBasicType(Kind.eInt, 0, this);
 			case IASTBinaryExpression.op_plus:
-				IType t2 = getOperand2().getExpressionType();
-				if (CVisitor.unwrapTypedefs(t2) instanceof IPointerType) {
+				if (t2 instanceof IPointerType) {
 					return t2;
 				}
 				break;
 
 			case IASTBinaryExpression.op_minus:
-				t2= getOperand2().getExpressionType();
-				if (CVisitor.unwrapTypedefs(t2) instanceof IPointerType) {
-					IType t1 = getOperand1().getExpressionType();
-					if (CVisitor.unwrapTypedefs(t1) instanceof IPointerType) {
+				if (t2 instanceof IPointerType) {
+					if (t1 instanceof IPointerType) {
 		    			return CVisitor.getPtrDiffType(this);
 					}
 					return t1;
 				}
 				break;
 		}
-		return getOperand1().getExpressionType();
+		return t1;
     }
-
 }

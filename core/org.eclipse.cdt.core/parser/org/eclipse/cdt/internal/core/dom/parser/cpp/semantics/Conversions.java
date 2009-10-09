@@ -24,13 +24,11 @@ import org.eclipse.cdt.core.dom.ast.IArrayType;
 import org.eclipse.cdt.core.dom.ast.IBasicType;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.IEnumeration;
-import org.eclipse.cdt.core.dom.ast.IEnumerator;
 import org.eclipse.cdt.core.dom.ast.IFunctionType;
 import org.eclipse.cdt.core.dom.ast.IPointerType;
 import org.eclipse.cdt.core.dom.ast.IProblemBinding;
 import org.eclipse.cdt.core.dom.ast.IQualifierType;
 import org.eclipse.cdt.core.dom.ast.IType;
-import org.eclipse.cdt.core.dom.ast.IValue;
 import org.eclipse.cdt.core.dom.ast.IBasicType.Kind;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPBase;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPBasicType;
@@ -41,6 +39,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPPointerToMemberType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPReferenceType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPSpecialization;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateInstance;
+import org.eclipse.cdt.internal.core.dom.parser.ArithmeticConversion;
 import org.eclipse.cdt.internal.core.dom.parser.Value;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPBasicType;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPPointerToMemberType;
@@ -55,8 +54,6 @@ import org.eclipse.core.runtime.CoreException;
  */
 public class Conversions {
 	enum UDCMode {allowUDC, noUDC, deferUDC}
-	private static final int IS_LONG = ICPPBasicType.IS_LONG;
-	private static final int IS_UNSIGNED = ICPPBasicType.IS_UNSIGNED;
 	
 	/**
 	 * Computes the cost of an implicit conversion sequence
@@ -676,8 +673,9 @@ public class Conversions {
 			} else if (src instanceof IEnumeration) {
 				if (tKind == Kind.eInt || tKind == Kind.eUnspecified) {
 					if (trg instanceof ICPPBasicType) {
-						int qualifiers = getEnumIntType((IEnumeration) src);
-						if (qualifiers == ((ICPPBasicType) trg).getQualifierBits()) {
+						int qualifiers = ArithmeticConversion.getEnumIntTypeModifiers((IEnumeration) src);
+						int targetModifiers = ((ICPPBasicType) trg).getModifiers();
+						if (qualifiers == (targetModifiers & (IBasicType.IS_LONG | IBasicType.IS_LONG_LONG | IBasicType.IS_SHORT | IBasicType.IS_UNSIGNED))) {
 							canPromote = true;
 						}
 					} else {
@@ -827,47 +825,5 @@ public class Conversions {
 		}
 		
 		return true;
-	}
-
-	/**
-	 * Returns IS_LONG, IS_UNSIGNED qualifiers of the first of the following types that can represent
-	 * all the values of an enumeration: int, unsigned int, long, or unsigned long.
-	 * @param enumeration
-	 * @return qualifiers of the corresponding integer type.
-	 */
-	private static int getEnumIntType(IEnumeration enumeration) {
-		long minValue = 0;
-		long maxValue = 0;
-		try {
-			IEnumerator[] enumerators = enumeration.getEnumerators();
-			for (IEnumerator enumerator : enumerators) {
-				IValue value = enumerator.getValue();
-				if (value != null) {
-					Long val = value.numericalValue();
-					if (val != null) {
-						long v = val.longValue();
-						if (minValue > v) {
-							minValue = v;
-						}
-						if (maxValue < v) {
-							maxValue = v;
-						}
-					}
-				}
-			}
-		} catch (DOMException e) {
-			return 0;
-		}
-		// TODO(sprigogin): Use values of __INT_MAX__ and __LONG_MAX__ macros
-		if (minValue >= Integer.MIN_VALUE && maxValue <= Integer.MAX_VALUE) {
-			return 0;
-		} else if (minValue >= 0 && maxValue <= 0xFFFFFFFFL) {
-			return IS_UNSIGNED;
-		} else if (minValue >= Long.MIN_VALUE && maxValue <= Long.MAX_VALUE) {
-			return IS_LONG;
-		} else {
-			// This branch is unreachable due to limitations of Java long type. 
-			return IS_UNSIGNED | IS_LONG;
-		}
 	}
 }

@@ -16,6 +16,7 @@ import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.dom.ast.ASTTypeUtil;
 import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IASTExpression;
+import org.eclipse.cdt.core.dom.ast.IBasicType;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.ITypedef;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPBasicType;
@@ -29,7 +30,7 @@ import org.eclipse.core.runtime.CoreException;
 /**
  * Models built-in c++ types.
  */
-class PDOMCPPBasicType extends PDOMNode implements ICPPBasicType, IIndexType {
+final class PDOMCPPBasicType extends PDOMNode implements ICPPBasicType, IIndexType {
 	
 	private static final int TYPE_ID = PDOMNode.RECORD_SIZE + 0; // short
 	private static final int QUALIFIER_FLAGS = PDOMNode.RECORD_SIZE + 2;   // short
@@ -103,7 +104,7 @@ class PDOMCPPBasicType extends PDOMNode implements ICPPBasicType, IIndexType {
 		}
 	}
 
-	public int getQualifierBits() {
+	public final int getModifiers() {
 		if (fFlags == -1) {
 			try {
 				fFlags= getDB().getShort(record + QUALIFIER_FLAGS);
@@ -115,33 +116,38 @@ class PDOMCPPBasicType extends PDOMNode implements ICPPBasicType, IIndexType {
 		}
 		return fFlags;
 	}
+	
+	@Deprecated
+	public final int getQualifierBits() {
+		return getModifiers();
+	}
 
 	public boolean isLong() {
-		return (getQualifierBits() & IS_LONG) != 0;
+		return (getModifiers() & IS_LONG) != 0;
 	}
 
 	public boolean isShort() {
-		return (getQualifierBits() & IS_SHORT) != 0;
+		return (getModifiers() & IS_SHORT) != 0;
 	}
 
 	public boolean isSigned() {
-		return (getQualifierBits() & IS_SIGNED) != 0;
+		return (getModifiers() & IS_SIGNED) != 0;
 	}
 
 	public boolean isUnsigned() {
-		return (getQualifierBits() & IS_UNSIGNED) != 0;
+		return (getModifiers() & IS_UNSIGNED) != 0;
 	}
 	
 	public boolean isComplex() {
-		return (getQualifierBits() & IS_COMPLEX) != 0;
+		return (getModifiers() & IS_COMPLEX) != 0;
 	}
 
 	public boolean isImaginary() {
-		return (getQualifierBits() & IS_IMAGINARY) != 0;
+		return (getModifiers() & IS_IMAGINARY) != 0;
 	}
 
 	public boolean isLongLong() {
-		return (getQualifierBits() & IS_LONG_LONG) != 0;
+		return (getModifiers() & IS_LONG_LONG) != 0;
 	}
 
 	public boolean isSameType(IType rhs) {
@@ -158,9 +164,9 @@ class PDOMCPPBasicType extends PDOMNode implements ICPPBasicType, IIndexType {
 
 		if (kind == Kind.eInt) {
 			// signed int and int are equivalent
-			return (this.getQualifierBits() & ~ICPPBasicType.IS_SIGNED) == (rhs1.getQualifierBits() & ~ICPPBasicType.IS_SIGNED);
+			return (getModifiers() & ~IBasicType.IS_SIGNED) == (rhs1.getModifiers() & ~IBasicType.IS_SIGNED);
 		}
-		return (this.getQualifierBits() == rhs1.getQualifierBits());
+		return getModifiers() == rhs1.getModifiers();
 	}
 
 	@Override

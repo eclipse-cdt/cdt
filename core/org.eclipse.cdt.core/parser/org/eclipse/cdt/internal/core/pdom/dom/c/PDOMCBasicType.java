@@ -36,13 +36,7 @@ class PDOMCBasicType extends PDOMNode implements ICBasicType, IIndexType {
 	@SuppressWarnings("hiding")
 	public static final int RECORD_SIZE = PDOMNode.RECORD_SIZE + 4;
 	
-	public static final int IS_LONG = 0x1;
-	public static final int IS_SHORT = 0x2;
-	public static final int IS_UNSIGNED = 0x4;
-	public static final int IS_SIGNED = 0x8;
-	public static final int IS_LONGLONG = 0x10;
-	public static final int IS_IMAGINARY = 0x20;
-	public static final int IS_COMPLEX = 0x40;
+	private int fModifiers= -1;
 	
 	public PDOMCBasicType(PDOMLinkage linkage, long record) {
 		super(linkage, record);
@@ -54,16 +48,7 @@ class PDOMCBasicType extends PDOMNode implements ICBasicType, IIndexType {
 		Database db = getDB();
 		db.putChar(record + TYPE_ID, (char)type.getKind().ordinal());
 
-		char flags = 0;
-		if (type.isLong())      flags |= IS_LONG;
-		if (type.isShort())     flags |= IS_SHORT;
-		if (type.isSigned())    flags |= IS_SIGNED;
-		if (type.isUnsigned())  flags |= IS_UNSIGNED;
-		if (type.isLongLong())  flags |= IS_LONGLONG;
-		if (type.isImaginary()) flags |= IS_IMAGINARY;
-		if (type.isComplex())   flags |= IS_COMPLEX;
-
-
+		char flags = (char) type.getModifiers();
 		db.putChar(record + FLAGS, flags);
 	}
 	
@@ -87,6 +72,60 @@ class PDOMCBasicType extends PDOMNode implements ICBasicType, IIndexType {
 		}
 	}
 
+	public boolean isLong()  { return flagSet(IS_LONG); }
+	public boolean isShort()  { return flagSet(IS_SHORT); }
+	public boolean isSigned() { return flagSet(IS_SIGNED); }
+	public boolean isUnsigned() { return flagSet(IS_UNSIGNED); }
+	public boolean isLongLong()  { return flagSet(IS_LONG_LONG); }
+	public boolean isImaginary() { return flagSet(IS_IMAGINARY); }
+	public boolean isComplex() { return flagSet(IS_COMPLEX); }
+	
+		
+	public boolean isSameType(IType rhs) {
+		if( rhs instanceof ITypedef )
+		    return rhs.isSameType( this );
+		
+		if( !(rhs instanceof ICBasicType))
+			return false;
+		
+		ICBasicType rhs1= (ICBasicType) rhs;
+		Kind kind = getKind();
+		if (kind != rhs1.getKind())
+			return false;
+				
+		if (kind == Kind.eInt) {
+			//signed int and int are equivalent
+			return (getModifiers() & ~IS_SIGNED) == (rhs1.getModifiers() & ~IS_SIGNED);
+		} else {
+			return (getModifiers() == rhs1.getModifiers());
+		}
+	}
+
+	@Override
+	public Object clone() {
+		try {
+			return super.clone();
+		} catch (CloneNotSupportedException e) {
+			return null;
+		}
+	}
+	
+	public int getModifiers() {
+		if (fModifiers == -1) {
+			try {
+				fModifiers= getDB().getChar(record + FLAGS);
+			} catch (CoreException e) {
+				CCorePlugin.log(e);
+				fModifiers= 0;
+			}
+		}
+		return fModifiers;
+	}
+	
+	private boolean flagSet(int flag) {
+		return (getModifiers() & flag) != 0;
+	}
+	
 	@Deprecated
 	public int getType() {
 		final Kind kind = getKind();
@@ -113,54 +152,5 @@ class PDOMCBasicType extends PDOMNode implements ICBasicType, IIndexType {
 	@Deprecated
 	public IASTExpression getValue() throws DOMException {
 		return null;
-	}
-	
-	public boolean isLong()  { return flagSet(IS_LONG); }
-	public boolean isShort()  { return flagSet(IS_SHORT); }
-	public boolean isSigned() { return flagSet(IS_SIGNED); }
-	public boolean isUnsigned() { return flagSet(IS_UNSIGNED); }
-	public boolean isLongLong()  { return flagSet(IS_LONGLONG); }
-	public boolean isImaginary() { return flagSet(IS_IMAGINARY); }
-	public boolean isComplex() { return flagSet(IS_COMPLEX); }
-	
-		
-	public boolean isSameType(IType rhs) {
-		if( rhs instanceof ITypedef )
-		    return rhs.isSameType( this );
-		
-		if( !(rhs instanceof ICBasicType))
-			return false;
-		
-		ICBasicType rhs1= (ICBasicType) rhs;
-		return (rhs1.getKind() == getKind()
-				&& rhs1.isLong() == this.isLong() 
-				&& rhs1.isShort() == this.isShort() 
-				&& rhs1.isSigned() == this.isSigned() 
-				&& rhs1.isUnsigned() == this.isUnsigned()
-				&& rhs1.isLongLong() == this.isLongLong()
-				&& rhs1.isComplex() == this.isComplex() 
-				&& rhs1.isImaginary() == this.isImaginary());
-	}
-
-	@Override
-	public Object clone() {
-		try {
-			return super.clone();
-		} catch (CloneNotSupportedException e) {
-			return null;
-		}
-	}
-	
-	private char getFlags() throws CoreException {
-		return getDB().getChar(record + FLAGS);
-	}
-	
-	private boolean flagSet(int flag) {
-		try {
-			return (getFlags() & flag) != 0;
-		} catch (CoreException e) {
-			CCorePlugin.log(e);
-			return false;
-		}
 	}
 }

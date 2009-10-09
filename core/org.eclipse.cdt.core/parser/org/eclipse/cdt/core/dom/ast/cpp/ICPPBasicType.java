@@ -18,19 +18,18 @@ import org.eclipse.cdt.core.dom.ast.IBasicType;
  * @noimplement This interface is not intended to be implemented by clients.
  */
 public interface ICPPBasicType extends IBasicType {
-	public static final int IS_LONG     = 1;
-	public static final int IS_SHORT    = 1 << 1;
-	public static final int IS_SIGNED   = 1 << 2;
-	public static final int IS_UNSIGNED = 1 << 3;
-	public static final int IS_COMPLEX = 1 << 4;	
-	public static final int IS_IMAGINARY = 1 << 5;  
-	public static final int IS_LONG_LONG = 1 << 6;  
+	/**
+	 * @deprecated, don't use the constant, more flags may be added for supporting future c++ standards.
+	 */
+	@Deprecated
 	public static final int LAST = IS_LONG_LONG;
 
 	/** 
 	 * @return a combination of qualifiers.
 	 * @since 4.0
+	 * @deprecated use {@link #getModifiers()}, instead.
 	 */
+	@Deprecated
 	public int getQualifierBits();
 
 	/**

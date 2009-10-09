@@ -7325,12 +7325,12 @@ public class AST2CPPTests extends AST2BaseTest {
     	IType t2 = f2.getType().getParameterTypes()[0];
     	assertTrue(t2 instanceof ICPPBasicType);
     	assertEquals(IBasicType.t_int, ((ICPPBasicType) t2).getType());
-    	assertEquals(ICPPBasicType.IS_UNSIGNED, ((ICPPBasicType) t2).getQualifierBits());
+    	assertEquals(IBasicType.IS_UNSIGNED, ((ICPPBasicType) t2).getQualifierBits());
     	ICPPFunction f3 = ba.assertNonProblem("f(l1)", 1, ICPPFunction.class);
     	IType t3 = f3.getType().getParameterTypes()[0];
     	assertTrue(t3 instanceof ICPPBasicType);
     	assertEquals(IBasicType.t_int, ((ICPPBasicType) t3).getType());
-    	assertEquals(ICPPBasicType.IS_LONG, ((ICPPBasicType) t3).getQualifierBits());
+    	assertEquals(IBasicType.IS_LONG, ((ICPPBasicType) t3).getQualifierBits());
 	}
 
 	// typedef enum enum_name enum_name;

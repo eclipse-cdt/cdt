@@ -111,7 +111,7 @@ public class CASTLiteralExpression extends ASTNode implements IASTLiteralExpress
 				kind= Kind.eFloat;
 				break;
 			case 'l': case 'L':
-				flags |= CBasicType.IS_LONG;
+				flags |= IBasicType.IS_LONG;
 				break;
 			}
 		}
@@ -143,13 +143,13 @@ public class CASTLiteralExpression extends ASTNode implements IASTLiteralExpress
 
 		int flags= 0;
 		if (unsigned) {
-			flags |= CBasicType.IS_UNSIGNED;
+			flags |= IBasicType.IS_UNSIGNED;
 		} 
 		
 		if (makelong > 1) {
-			flags |= CBasicType.IS_LONGLONG;
+			flags |= IBasicType.IS_LONG_LONG;
 		} else if (makelong == 1) {
-			flags |= CBasicType.IS_LONG;
+			flags |= IBasicType.IS_LONG;
 		} 
 		return new CBasicType(IBasicType.Kind.eInt, flags, this);
 	}

@@ -20,21 +20,13 @@ import org.eclipse.cdt.core.dom.ast.c.ICBasicType;
 import org.eclipse.cdt.internal.core.index.IIndexType;
 
 public class CBasicType implements ICBasicType {
-	public final static int IS_LONG = 1;
-	public final static int IS_LONGLONG = 1 << 1;
-	public final static int IS_SHORT    = 1 << 2;
-	public final static int IS_SIGNED   = 1 << 3;
-	public final static int IS_UNSIGNED = 1 << 4;
-	public final static int IS_COMPLEX  = 1 << 5;
-	public final static int IS_IMAGINARY= 1 << 6;
-	
 	private final Kind fKind;
-	private int qualifiers = 0;
+	private int fModifiers = 0;
 	private IASTExpression value = null;
 	
-	public CBasicType(Kind kind, int qualifiers, IASTExpression value ){
+	public CBasicType(Kind kind, int modifiers, IASTExpression value ){
 		if (kind == Kind.eUnspecified) {
-			if ( (qualifiers & (IS_COMPLEX | IS_IMAGINARY)) != 0) {
+			if ( (modifiers & (IS_COMPLEX | IS_IMAGINARY)) != 0) {
 				fKind= Kind.eFloat;
 			} else {
 				fKind= Kind.eInt;
@@ -42,12 +34,12 @@ public class CBasicType implements ICBasicType {
 		} else {
 			fKind= kind;
 		}
-		this.qualifiers = qualifiers;
+		fModifiers = modifiers;
 		this.value = value;
 	}
 
-	public CBasicType(Kind kind, int qualifiers) {
-		this(kind, qualifiers, null);
+	public CBasicType(Kind kind, int modifiers) {
+		this(kind, modifiers, null);
 	}
 	
 	public CBasicType(ICASTSimpleDeclSpecifier sds) {
@@ -55,13 +47,13 @@ public class CBasicType implements ICBasicType {
 	}
 	
 	private static int getQualifiers(ICASTSimpleDeclSpecifier sds) {
-		return ( sds.isLong()    ? CBasicType.IS_LONG  : 0 ) |
-		( sds.isShort()   ? CBasicType.IS_SHORT : 0 ) |
-		( sds.isSigned()  ? CBasicType.IS_SIGNED: 0 ) |
-		( sds.isUnsigned()? CBasicType.IS_UNSIGNED : 0 ) |
-		( sds.isLongLong()? CBasicType.IS_LONGLONG : 0 ) |
-		( sds.isComplex() ? CBasicType.IS_COMPLEX : 0 ) |
-		( sds.isImaginary()?CBasicType.IS_IMAGINARY : 0 );
+		return ( sds.isLong()    ? IS_LONG  : 0 ) |
+		( sds.isShort()   ? IS_SHORT : 0 ) |
+		( sds.isSigned()  ? IS_SIGNED: 0 ) |
+		( sds.isUnsigned()? IS_UNSIGNED : 0 ) |
+		( sds.isLongLong()? IS_LONG_LONG : 0 ) |
+		( sds.isComplex() ? IS_COMPLEX : 0 ) |
+		( sds.isImaginary()?IS_IMAGINARY : 0 );
 	}
 	
 	private static Kind getKind(ICASTSimpleDeclSpecifier sds) {
@@ -86,25 +78,29 @@ public class CBasicType implements ICBasicType {
 	public Kind getKind() {
 		return fKind;
 	}
+	
+	public int getModifiers() {
+		return fModifiers;
+	}
 
 	public boolean isSigned() {
-		return (qualifiers & IS_SIGNED) != 0;
+		return (fModifiers & IS_SIGNED) != 0;
 	}
 
 	public boolean isUnsigned() {
-		return (qualifiers & IS_UNSIGNED) != 0;
+		return (fModifiers & IS_UNSIGNED) != 0;
 	}
 
 	public boolean isShort() {
-		return (qualifiers & IS_SHORT) != 0;
+		return (fModifiers & IS_SHORT) != 0;
 	}
 
 	public boolean isLong() {
-		return (qualifiers & IS_LONG) != 0;
+		return (fModifiers & IS_LONG) != 0;
 	}
 
 	public boolean isLongLong() {
-		return (qualifiers & IS_LONGLONG) != 0;
+		return (fModifiers & IS_LONG_LONG) != 0;
 	}
 
 	public boolean isSameType(IType obj) {
@@ -113,19 +109,19 @@ public class CBasicType implements ICBasicType {
 	    if( obj instanceof ITypedef || obj instanceof IIndexType)
 	        return obj.isSameType( this );
 	    
-		if (!(obj instanceof CBasicType)) return false;
+		if (!(obj instanceof ICBasicType)) return false;
 		
-		CBasicType cObj = (CBasicType)obj;
+		ICBasicType cObj = (ICBasicType)obj;
 		
-		if (fKind != cObj.fKind) {
+		if (fKind != cObj.getKind()) {
 			return false;
 		}
 		
 		if (fKind == Kind.eInt) {
 			//signed int and int are equivalent
-			return (qualifiers & ~IS_SIGNED) == (cObj.qualifiers & ~IS_SIGNED);
+			return (fModifiers & ~IS_SIGNED) == (cObj.getModifiers() & ~IS_SIGNED);
 		} else {
-			return (qualifiers == cObj.qualifiers);
+			return (fModifiers == cObj.getModifiers());
 		}
 	}
 	
@@ -149,14 +145,14 @@ public class CBasicType implements ICBasicType {
 	 * @see org.eclipse.cdt.core.dom.ast.c.ICBasicType#isComplex()
 	 */
 	public boolean isComplex() {
-		return ( qualifiers & IS_COMPLEX) != 0;
+		return ( fModifiers & IS_COMPLEX) != 0;
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.dom.ast.c.ICBasicType#isImaginary()
 	 */
 	public boolean isImaginary() {
-		return ( qualifiers & IS_IMAGINARY) != 0;
+		return ( fModifiers & IS_IMAGINARY) != 0;
 	}
 
 	@Deprecated

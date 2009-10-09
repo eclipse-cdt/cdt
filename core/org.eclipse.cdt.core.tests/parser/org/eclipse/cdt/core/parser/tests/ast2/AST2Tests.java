@@ -89,6 +89,7 @@ import org.eclipse.cdt.core.dom.ast.ITypedef;
 import org.eclipse.cdt.core.dom.ast.IValue;
 import org.eclipse.cdt.core.dom.ast.IVariable;
 import org.eclipse.cdt.core.dom.ast.IASTEnumerationSpecifier.IASTEnumerator;
+import org.eclipse.cdt.core.dom.ast.IBasicType.Kind;
 import org.eclipse.cdt.core.dom.ast.c.ICASTArrayModifier;
 import org.eclipse.cdt.core.dom.ast.c.ICASTCompositeTypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.c.ICASTDesignatedInitializer;
@@ -6306,6 +6307,547 @@ public class AST2Tests extends AST2BaseTest {
 	//	}
 	public void testPredefinedMacroNamesC() throws Exception {
 		parseAndCheckBindings(getAboveComment(), ParserLanguage.C);
+	}
+	
+	//
+	// long double longDouble = 1.0;
+	// double _double = 1.0;
+	// float _float= 1.0;
+	// signed long long int longLongInt = 1;
+	// signed long int longInt = 1;
+	// signed int _int = 1;
+	// signed short int shortInt = 1;
+	// signed char _char = 1;
+	//
+	// float var;
+	// void test() {
+	//    /* The following should all be long double */
+	//    var = longDouble + longDouble;
+	//    var = longDouble + _double;
+	//    var = longDouble + _float;
+	//    var = longDouble + longLongInt;
+	//    var = longDouble + longInt;
+	//    var = longDouble + _int;
+	//    var = longDouble + shortInt;
+	//    var = longDouble + _char;
+	//
+	//    var = longDouble + longDouble;
+	//    var = _double + longDouble;
+	//    var = _float + longDouble;
+	//    var = longLongInt + longDouble;
+	//    var = longInt + longDouble;
+	//    var = _int + longDouble;
+	//    var = shortInt + longDouble;
+	//    var = _char + longDouble;
+	//
+	// }
+	//
+	public void testTypePromotion_long_double() throws Exception {
+		for (ParserLanguage lang : ParserLanguage.values()) {
+			IASTTranslationUnit ast = parseAndCheckBindings(getAboveComment(), lang);
+			IASTFunctionDefinition func = null;
+
+			for (IASTDeclaration d : ast.getDeclarations()) {
+				if (d instanceof IASTFunctionDefinition) {
+					func = (IASTFunctionDefinition) d;
+					break;
+				}
+			}
+			assertNotNull(func);
+
+			IASTStatement[] bodyStmts = ((IASTCompoundStatement) func.getBody()).getStatements();
+
+			for (IASTStatement stmt : bodyStmts) {
+				IASTBinaryExpression expr1 = (IASTBinaryExpression) ((IASTBinaryExpression) ((IASTExpressionStatement) stmt)
+						.getExpression()).getOperand2();
+				IType type1 = expr1.getExpressionType();
+				assertEquals(Kind.eDouble, ((IBasicType) type1).getKind());
+				assertTrue(((IBasicType) type1).isLong());
+			}
+		}
+	}
+	
+	//
+	// double _double = 1.0;
+	// float _float= 1.0;
+	// long long int longLongInt = 1;
+	// long int longInt = 1;
+	// int _int = 1;
+	// short int shortInt = 1;
+	// char _char = 1;
+	//
+	// float var;
+	// void test() {
+	//    /* The following should all be double */
+	//    var = _double + _double;
+	//    var = _double + _float;
+	//    var = _double + longLongInt;
+	//    var = _double + longInt;
+	//    var = _double + _int;
+	//    var = _double + shortInt;
+	//    var = _double + _char;
+	//
+	//    var = _float + _double;
+	//    var = longLongInt + _double;
+	//    var = longInt + _double;
+	//    var = _int + _double;
+	//    var = shortInt + _double;
+	//    var = _char + _double;
+	//
+	// }
+	//
+	public void testTypePromotion_double() throws Exception {
+		for (ParserLanguage lang : ParserLanguage.values()) {
+			IASTTranslationUnit ast = parseAndCheckBindings(getAboveComment(), lang);
+			IASTFunctionDefinition func = null;
+
+			for (IASTDeclaration d : ast.getDeclarations()) {
+				if (d instanceof IASTFunctionDefinition) {
+					func = (IASTFunctionDefinition) d;
+					break;
+				}
+			}
+			assertNotNull(func);
+
+			IASTStatement[] bodyStmts = ((IASTCompoundStatement) func.getBody()).getStatements();
+
+			for (IASTStatement stmt : bodyStmts) {
+				IASTBinaryExpression expr1 = (IASTBinaryExpression) ((IASTBinaryExpression) ((IASTExpressionStatement) stmt)
+						.getExpression()).getOperand2();
+				IType type1 = expr1.getExpressionType();
+				assertEquals(Kind.eDouble, ((IBasicType) type1).getKind());
+				assertFalse(((IBasicType) type1).isLong());
+			}
+		}
+	}
+	
+	//
+	// float _float= 1.0;
+	// long long int longLongInt = 1;
+	// long int longInt = 1;
+	// int _int = 1;
+	// short int shortInt = 1;
+	// char _char = 1;
+	//
+	// float var;
+	// void test() {
+	//    /* The following should all be float */
+	//    var = _float + longLongInt;
+	//    var = _float + longInt;
+	//    var = _float + _int;
+	//    var = _float + shortInt;
+	//    var = _float + _char;
+	//
+	//    var = longLongInt + _float;
+	//    var = longInt + _float;
+	//    var = _int + _float;
+	//    var = shortInt + _float;
+	//    var = _char + _float;
+	//
+	// }
+	//
+	public void testTypePromotion_float() throws Exception {
+		for (ParserLanguage lang : ParserLanguage.values()) {
+			IASTTranslationUnit ast = parseAndCheckBindings(getAboveComment(), lang);
+			IASTFunctionDefinition func = null;
+
+			for (IASTDeclaration d : ast.getDeclarations()) {
+				if (d instanceof IASTFunctionDefinition) {
+					func = (IASTFunctionDefinition) d;
+					break;
+				}
+			}
+			assertNotNull(func);
+
+			IASTStatement[] bodyStmts = ((IASTCompoundStatement) func.getBody()).getStatements();
+
+			for (IASTStatement stmt : bodyStmts) {
+				IASTBinaryExpression expr1 = (IASTBinaryExpression) ((IASTBinaryExpression) ((IASTExpressionStatement) stmt)
+						.getExpression()).getOperand2();
+				IType type1 = expr1.getExpressionType();
+				assertEquals(Kind.eFloat, ((IBasicType) type1).getKind());
+			}
+		}
+	}
+	
+	// long long int longLongInt = 1;
+	// long int longInt = 1;
+	// int _int = 1;
+	// short int shortInt = 1;
+	// char _char = 1;
+	//
+	// float var;
+	// void test() {
+	//    /* The following should all be long long int */
+	//    var = longLongInt + longLongInt;
+	//    var = longLongInt + longInt;
+	//    var = longLongInt + _int;
+	//    var = longLongInt + shortInt;
+	//    var = longLongInt + _char;
+	//
+	//    var = longLongInt + longLongInt;
+	//    var = longInt + longLongInt;
+	//    var = _int + longLongInt;
+	//    var = shortInt + longLongInt;
+	//    var = _char + longLongInt;
+	//
+	// }
+	//
+	public void testTypePromotion_longlongint() throws Exception {
+		for (ParserLanguage lang : ParserLanguage.values()) {
+			IASTTranslationUnit ast = parseAndCheckBindings(getAboveComment(), lang, true); // support for long long
+			IASTFunctionDefinition func = null;
+
+			for (IASTDeclaration d : ast.getDeclarations()) {
+				if (d instanceof IASTFunctionDefinition) {
+					func = (IASTFunctionDefinition) d;
+					break;
+				}
+			}
+			assertNotNull(func);
+
+			IASTStatement[] bodyStmts = ((IASTCompoundStatement) func.getBody()).getStatements();
+
+			for (IASTStatement stmt : bodyStmts) {
+				IASTBinaryExpression expr1 = (IASTBinaryExpression) ((IASTBinaryExpression) ((IASTExpressionStatement) stmt)
+						.getExpression()).getOperand2();
+				IType type1 = expr1.getExpressionType();
+				assertEquals(Kind.eInt, ((IBasicType) type1).getKind());
+				assertTrue(((IBasicType) type1).isLongLong());
+			}
+		}
+	}
+	
+	//
+	// long long int longLongInt = 1;
+	// long int longInt = 1;
+	// int _int = 1;
+	// short int shortInt = 1;
+	// char _char = 1;
+	//
+	// float var;
+	// void test() {
+	//    /* The following should all be long int */
+	//    var = longInt + longInt;
+	//    var = longInt + _int;
+	//    var = longInt + shortInt;
+	//    var = longInt + _char;
+	//
+	//    var = _int + longInt;
+	//    var = shortInt + longInt;
+	//    var = _char + longInt;
+	//
+	// }
+	//
+	public void testTypePromotion_longint() throws Exception {
+		for (ParserLanguage lang : ParserLanguage.values()) {
+			IASTTranslationUnit ast = parseAndCheckBindings(getAboveComment(), lang);
+			IASTFunctionDefinition func = null;
+
+			for (IASTDeclaration d : ast.getDeclarations()) {
+				if (d instanceof IASTFunctionDefinition) {
+					func = (IASTFunctionDefinition) d;
+					break;
+				}
+			}
+			assertNotNull(func);
+
+			IASTStatement[] bodyStmts = ((IASTCompoundStatement) func.getBody()).getStatements();
+
+			for (IASTStatement stmt : bodyStmts) {
+				IASTBinaryExpression expr1 = (IASTBinaryExpression) ((IASTBinaryExpression) ((IASTExpressionStatement) stmt)
+						.getExpression()).getOperand2();
+				IType type1 = expr1.getExpressionType();
+				assertEquals(Kind.eInt, ((IBasicType) type1).getKind());
+				assertTrue(((IBasicType) type1).isLong());
+			}
+		}
+	}
+	
+	//
+	// int _int = 1;
+	// short int shortInt = 1;
+	// char _char = 1;
+	//
+	// float var;
+	// void test() {
+	//    /* The following should all be int */
+	//    var = _int + _int;
+	//    var = _int + shortInt;
+	//    var = _int + _char;
+	//
+	//    var = shortInt + _int;
+	//    var = _char + _int;
+	//
+	// }
+	//
+	public void testTypePromotion_int() throws Exception {
+		for (ParserLanguage lang : ParserLanguage.values()) {
+			IASTTranslationUnit ast = parseAndCheckBindings(getAboveComment(), lang);
+			IASTFunctionDefinition func = null;
+
+			for (IASTDeclaration d : ast.getDeclarations()) {
+				if (d instanceof IASTFunctionDefinition) {
+					func = (IASTFunctionDefinition) d;
+					break;
+				}
+			}
+			assertNotNull(func);
+
+			IASTStatement[] bodyStmts = ((IASTCompoundStatement) func.getBody()).getStatements();
+
+			for (IASTStatement stmt : bodyStmts) {
+				IASTBinaryExpression expr1 = (IASTBinaryExpression) ((IASTBinaryExpression) ((IASTExpressionStatement) stmt)
+						.getExpression()).getOperand2();
+				IType type1 = expr1.getExpressionType();
+				assertEquals(Kind.eInt, ((IBasicType) type1).getKind());
+				assertFalse(((IBasicType) type1).isLong());
+				assertFalse(((IBasicType) type1).isShort());
+			}
+		}
+	}
+	
+	//
+	// short int shortInt = 1;
+	// char _char = 1;
+	//
+	// float var;
+	// void test() {
+	//    /* The following should all be signed int */
+	//    var = shortInt + shortInt;
+	//    var = shortInt + _char;
+	//
+	//    var = _char + shortInt;
+	//
+	// }
+	//
+	public void testTypePromotion_short_int() throws Exception {
+		for (ParserLanguage lang : ParserLanguage.values()) {
+			IASTTranslationUnit ast = parseAndCheckBindings(getAboveComment(), lang);
+			IASTFunctionDefinition func = null;
+
+			for (IASTDeclaration d : ast.getDeclarations()) {
+				if (d instanceof IASTFunctionDefinition) {
+					func = (IASTFunctionDefinition) d;
+					break;
+				}
+			}
+			assertNotNull(func);
+
+			IASTStatement[] bodyStmts = ((IASTCompoundStatement) func.getBody()).getStatements();
+
+			for (IASTStatement stmt : bodyStmts) {
+				IASTBinaryExpression expr1 = (IASTBinaryExpression) ((IASTBinaryExpression) ((IASTExpressionStatement) stmt)
+						.getExpression()).getOperand2();
+				IBasicType type1 = (IBasicType) expr1.getExpressionType();
+				assertEquals(Kind.eInt, type1.getKind());
+				assertFalse(type1.isUnsigned());
+				assertFalse(type1.isLong());
+				assertFalse(type1.isShort());
+			}
+		}
+	}
+	
+	//
+	// char _char = 1;
+	//
+	// float var;
+	// void test() {
+	//    /* The following should all be signed int */
+	//    var = _char + _char;
+	// }
+	//
+	public void testTypePromotion_char() throws Exception {
+		for (ParserLanguage lang : ParserLanguage.values()) {
+			IASTTranslationUnit ast = parseAndCheckBindings(getAboveComment(), lang);
+			IASTFunctionDefinition func = null;
+
+			for (IASTDeclaration d : ast.getDeclarations()) {
+				if (d instanceof IASTFunctionDefinition) {
+					func = (IASTFunctionDefinition) d;
+					break;
+				}
+			}
+			assertNotNull(func);
+
+			IASTStatement[] bodyStmts = ((IASTCompoundStatement) func.getBody()).getStatements();
+
+			for (IASTStatement stmt : bodyStmts) {
+				IASTBinaryExpression expr1 = (IASTBinaryExpression) ((IASTBinaryExpression) ((IASTExpressionStatement) stmt)
+						.getExpression()).getOperand2();
+				IBasicType type1 = (IBasicType) expr1.getExpressionType();
+				assertEquals(Kind.eInt, type1.getKind());
+				assertFalse(type1.isUnsigned());
+				assertFalse(type1.isLong());
+				assertFalse(type1.isShort());
+			}
+		}
+	}
+	
+	//
+	//  char _char = 1;
+	//  signed char signedChar = 1;
+	//  unsigned char unsignedChar = 1;
+	//  signed int signedInt = 1;
+	//  unsigned int unsignedInt = 1;
+	//  signed long int signedLongInt = 1;
+	//  unsigned long int unsignedLongInt = 1;
+	//  signed long long int longLongInt = 1;
+	//  unsigned long long int unsignedlongLongInt = 1;
+	//  unsigned long long var = 1;
+	//  void test() {
+	//      /* (0) Should be an signed int */
+	//      var = signedChar + unsignedChar;
+	//
+	//      /* (1) Should be an signed int */
+	//      var = unsignedChar + signedChar;
+	//
+	//      /* (2) Should be a signed int*/
+	//      var = unsignedChar + signedInt;
+	//
+	//      /* (3) Should be an unsigned int*/
+	//      var = unsignedInt + signedChar;
+	// 
+	// 	    /* (4) Should be a signed long int */
+	//      var = signedLongInt + unsignedInt;
+	//
+	//      /* (5) Should be an unsigned long int*/
+	//      var = signedLongInt + unsignedLongInt;
+	//
+	//      /* (6) Should be an unsigned long int*/
+	//      var = unsignedLongInt + signedLongInt;	
+	//  }
+	//
+	//
+	public void testTypePromotion_signedAndUnsignedInts() throws Exception {
+		for (ParserLanguage lang : ParserLanguage.values()) {
+			IASTTranslationUnit ast = parseAndCheckBindings(getAboveComment(), lang);
+			IASTFunctionDefinition func = null;
+
+			for (IASTDeclaration d : ast.getDeclarations()) {
+				if (d instanceof IASTFunctionDefinition) {
+					func = (IASTFunctionDefinition) d;
+					break;
+				}
+			}
+			assertNotNull(func);
+
+			IASTStatement[] bodyStmts = ((IASTCompoundStatement) func.getBody()).getStatements();
+
+			// /* (0) Should be an signed int */
+			// var = signedChar + unsignedChar;
+			{
+				IASTBinaryExpression expr = (IASTBinaryExpression) ((IASTBinaryExpression) ((IASTExpressionStatement) bodyStmts[0])
+						.getExpression()).getOperand2();
+				IBasicType type1 = (IBasicType) expr.getExpressionType();
+				assertEquals(Kind.eInt, type1.getKind());
+				assertFalse(type1.isUnsigned());
+				assertFalse(type1.isShort());
+				assertFalse(type1.isLong());
+			}
+
+			// /* (1) Should be an singed int */
+			// var = unsignedChar + signedChar;
+			{
+				IASTBinaryExpression expr = (IASTBinaryExpression) ((IASTBinaryExpression) ((IASTExpressionStatement) bodyStmts[1])
+						.getExpression()).getOperand2();
+				IBasicType type1 = (IBasicType) expr.getExpressionType();
+				assertEquals(Kind.eInt, type1.getKind());
+				assertFalse(type1.isUnsigned());
+				assertFalse(type1.isShort());
+				assertFalse(type1.isLong());
+			}
+
+			// /* (2) Should be a signed int*/
+			// var = unsignedChar + signedInt;
+			{
+				IASTBinaryExpression expr = (IASTBinaryExpression) ((IASTBinaryExpression) ((IASTExpressionStatement) bodyStmts[2])
+						.getExpression()).getOperand2();
+				IBasicType type1 = (IBasicType) expr.getExpressionType();
+				assertEquals(Kind.eInt, type1.getKind());
+				assertFalse(type1.isUnsigned());
+				assertFalse(type1.isShort());
+				assertFalse(type1.isLong());
+				assertFalse(type1.isLongLong());
+			}
+
+			// /* (3) Should be an unsigned int*/
+			// var = unsignedInt + signedChar;
+			{
+				IASTBinaryExpression expr = (IASTBinaryExpression) ((IASTBinaryExpression) ((IASTExpressionStatement) bodyStmts[3])
+						.getExpression()).getOperand2();
+				IBasicType type1 = (IBasicType) expr.getExpressionType();
+				assertEquals(Kind.eInt, type1.getKind());
+				assertTrue(type1.isUnsigned());
+				assertFalse(type1.isShort());
+				assertFalse(type1.isLong());
+				assertFalse(type1.isLongLong());
+			}
+
+			// /* (4) Should be a signed long int */
+			// var = signedLongInt + unsignedInt;
+			{
+				IASTBinaryExpression expr = (IASTBinaryExpression) ((IASTBinaryExpression) ((IASTExpressionStatement) bodyStmts[4])
+						.getExpression()).getOperand2();
+				IBasicType type1 = (IBasicType) expr.getExpressionType();
+				assertEquals(Kind.eInt, type1.getKind());
+				assertFalse(type1.isUnsigned());
+				assertFalse(type1.isShort());
+				assertTrue(type1.isLong());
+				assertFalse(type1.isLongLong());
+			}
+
+			// /* (5) Should be an unsigned long int*/
+			// var = signedLongInt + unsignedLongInt;
+			{
+				IASTBinaryExpression expr = (IASTBinaryExpression) ((IASTBinaryExpression) ((IASTExpressionStatement) bodyStmts[5])
+						.getExpression()).getOperand2();
+				IBasicType type1 = (IBasicType) expr.getExpressionType();
+				assertEquals(Kind.eInt, type1.getKind());
+				assertTrue(type1.isUnsigned());
+				assertFalse(type1.isShort());
+				assertTrue(type1.isLong());
+				assertFalse(type1.isLongLong());
+			}
+
+			// /* (6) Should be an unsigned long int*/
+			// var = unsignedLongInt + signedLongInt;
+			{
+				IASTBinaryExpression expr = (IASTBinaryExpression) ((IASTBinaryExpression) ((IASTExpressionStatement) bodyStmts[5])
+						.getExpression()).getOperand2();
+				IBasicType type1 = (IBasicType) expr.getExpressionType();
+				assertEquals(Kind.eInt, type1.getKind());
+				assertTrue(type1.isUnsigned());
+				assertFalse(type1.isShort());
+				assertTrue(type1.isLong());
+				assertFalse(type1.isLongLong());
+			}
+		}
+	}	
+	
+	// char c;
+	// void func() {
+	//    c;
+	//	  -c;
+	//    +c;
+	//    ~c;
+	// }
+	public void testPromotionInUnaryExpressions() throws Exception {
+		for (ParserLanguage lang : ParserLanguage.values()) {
+			IASTTranslationUnit ast = parseAndCheckBindings(getAboveComment(), lang);
+			IASTFunctionDefinition fdef= getDeclaration(ast, 1);
+			IASTExpression expr= getExpressionOfStatement(fdef, 0);
+			IBasicType t= (IBasicType) expr.getExpressionType();
+			assertEquals(Kind.eChar, t.getKind());
+			assertEquals(0, t.getModifiers());
+			
+			for (int i = 1; i < 4; i++) {
+				expr= getExpressionOfStatement(fdef, i);
+				t= (IBasicType) expr.getExpressionType();
+				assertEquals(Kind.eInt, t.getKind()); // promoted to int
+				assertEquals(0, t.getModifiers());
+			}
+		}
 	}
 	
 	//

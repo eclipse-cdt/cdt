@@ -183,19 +183,23 @@ public class CPPASTBinaryExpression extends ASTNode implements ICPPASTBinaryExpr
 			}
 		}
 		
-		IType type1 = getOperand1().getExpressionType();
-		IType ultimateType1 = SemanticUtil.getUltimateTypeUptoPointers(type1);
-		if (ultimateType1 instanceof IProblemBinding) {
+        final int op = getOperator();
+		IType type1 = SemanticUtil.getUltimateTypeUptoPointers(getOperand1().getExpressionType());
+		if (type1 instanceof IProblemBinding) {
 			return type1;
 		}
 		
-		IType type2 = getOperand2().getExpressionType();
-		IType ultimateType2 = SemanticUtil.getUltimateTypeUptoPointers(type2);
-		if (ultimateType2 instanceof IProblemBinding) {
+		IType type2 = SemanticUtil.getUltimateTypeUptoPointers(getOperand2().getExpressionType());
+		if (type2 instanceof IProblemBinding) {
 			return type2;
 		}
 		
-        final int op = getOperator();
+    	IType type= CPPArithmeticConversion.convertCppOperandTypes(op, type1, type2);
+    	if (type != null) {
+    		return type;
+    	}
+
+
         switch (op) {
         case IASTBinaryExpression.op_lessEqual:
         case IASTBinaryExpression.op_lessThan:
@@ -207,16 +211,16 @@ public class CPPASTBinaryExpression extends ASTNode implements ICPPASTBinaryExpr
         case IASTBinaryExpression.op_notequals:
         	return new CPPBasicType(Kind.eBoolean, 0, this);
         case IASTBinaryExpression.op_plus:
-        	if (ultimateType2 instanceof IPointerType) {
-        		return ultimateType2;
+        	if (type2 instanceof IPointerType) {
+        		return type2;
         	}
         	break;
         case IASTBinaryExpression.op_minus:
-        	if (ultimateType2 instanceof IPointerType) {
-        		if (ultimateType1 instanceof IPointerType) {
+        	if (type2 instanceof IPointerType) {
+        		if (type1 instanceof IPointerType) {
         			return CPPVisitor.getPointerDiffType(this);
         		}
-        		return ultimateType1;
+        		return type1;
         	}
         	break;
         case ICPPASTBinaryExpression.op_pmarrow:

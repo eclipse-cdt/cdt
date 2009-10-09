@@ -245,20 +245,30 @@ public class CPPASTUnaryExpression extends ASTNode implements ICPPASTUnaryExpres
 		} 
 		
 
-		IType type= operand.getExpressionType();
-		type = SemanticUtil.getNestedType(type, TDEF | REF);
+		IType origType= operand.getExpressionType();
+		IType type = SemanticUtil.getUltimateTypeUptoPointers(origType);
 		IType operator = findOperatorReturnType();
 		if(operator != null) {
 			return operator;
 		}
 		
-		if(op == op_not) {
+		switch (op) {
+		case op_not:
 			return new CPPBasicType(Kind.eBoolean, 0);
+		case op_minus:
+		case op_plus:
+		case op_tilde:
+			IType t= CPPArithmeticConversion.promoteCppType(type);
+			if (t != null) {
+				return t;
+			}
+			break;
 		}
-		if (type instanceof CPPBasicType) {
-			((CPPBasicType) type).setFromExpression(this);
+
+		if (origType instanceof CPPBasicType) {
+			((CPPBasicType) origType).setFromExpression(this);
 		}
-		return type;
+		return origType;
     }
     
     

@@ -131,4 +131,14 @@ public class C99BasicType implements ICBasicType {
 		}
 	}
 
+	public Kind getKind() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	public int getModifiers() {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+
 }

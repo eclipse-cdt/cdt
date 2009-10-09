@@ -13,6 +13,7 @@ package org.eclipse.cdt.internal.core.dom.parser.upc.ast;
 import org.eclipse.cdt.core.dom.ast.ASTVisitor;
 import org.eclipse.cdt.core.dom.ast.IBasicType;
 import org.eclipse.cdt.core.dom.ast.IType;
+import org.eclipse.cdt.core.dom.ast.IBasicType.Kind;
 import org.eclipse.cdt.core.dom.upc.ast.IUPCASTKeywordExpression;
 import org.eclipse.cdt.internal.core.dom.parser.ASTNode;
 import org.eclipse.cdt.internal.core.dom.parser.c.CBasicType;
@@ -46,7 +47,7 @@ public class UPCASTKeywordExpression extends ASTNode implements IUPCASTKeywordEx
 	}
 
 	public IType getExpressionType() {
-		return new CBasicType(IBasicType.t_int, 0, this);
+		return new CBasicType(Kind.eInt, 0, this);
 	}
 
 	

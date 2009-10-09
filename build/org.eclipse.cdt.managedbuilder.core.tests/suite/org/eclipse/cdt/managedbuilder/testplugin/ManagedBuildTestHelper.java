@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.cdt.managedbuilder.testplugin;
 
+import java.io.BufferedReader;
 import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileReader;
@@ -18,7 +19,9 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
+import java.util.TreeSet;
 import java.util.zip.ZipFile;
 
 import junit.framework.Assert;
@@ -375,10 +378,13 @@ public class ManagedBuildTestHelper {
 	 */
 	@Deprecated
 	static public boolean compareBenchmarks(final IProject project, IPath testDir, IPath[] files) {
-		return compareBenchmarks(project, testDir, files, Path.fromOSString(""));
+		if (!testDir.isAbsolute()) {
+			testDir = project.getLocation().append(testDir);
+		}
+		return compareBenchmarks(project, testDir, files, project.getLocation());
 	}
 	
-	static public boolean compareBenchmarks(final IProject project, IPath testDir, IPath[] files, IPath benchmarkPath) {
+	static public boolean compareBenchmarks(final IProject project, IPath testLocationBase, IPath[] files, IPath benchmarkLocationBase) {
 		IWorkspace workspace = ResourcesPlugin.getWorkspace();
 		IWorkspaceRunnable runnable = new IWorkspaceRunnable() {
 			public void run(IProgressMonitor monitor) throws CoreException {
@@ -392,13 +398,18 @@ public class ManagedBuildTestHelper {
 			Assert.fail("File " + files[0].lastSegment() + " - project refresh failed.");
 		}
 		for (int i=0; i<files.length; i++) {
-			IPath testFile = testDir.append(files[i]);
-			IPath benchmarkFile = benchmarkPath.append("Benchmarks").append(files[i]);
-			StringBuffer testBuffer = readContentsStripLineEnds(project, testFile);
-			StringBuffer benchmarkBuffer = readContentsStripLineEnds(project, benchmarkFile);
+			IPath testFileLocation = testLocationBase.append(files[i]);
+			IPath benchmarkFileLocation = benchmarkLocationBase.append("Benchmarks").append(files[i]);
+			if (isMakefile(testFileLocation)) {
+				if (compareMakefiles(testFileLocation, benchmarkFileLocation)) {
+					return true;
+				}
+			}
+			StringBuffer testBuffer = readContentsStripLineEnds(project, testFileLocation);
+			StringBuffer benchmarkBuffer = readContentsStripLineEnds(project, benchmarkFileLocation);
 			if (!testBuffer.toString().equals(benchmarkBuffer.toString())) {
 				StringBuffer buffer = new StringBuffer();
-				buffer.append("File ").append(testFile.lastSegment()).append(" does not match its benchmark.\n ");
+				buffer.append("File ").append(testFileLocation.lastSegment()).append(" does not match its benchmark.\n ");
 				buffer.append("expected:\n ");
 				buffer.append("\"").append(benchmarkBuffer).append("\"");
 				buffer.append("\n\n ");
@@ -407,10 +418,12 @@ public class ManagedBuildTestHelper {
 				buffer.append("\n\n ");
 				
 				buffer.append(">>>>>>>>>>>>>>>start diff: \n");
-				String location1 = benchmarkFile.isAbsolute()
-					? benchmarkFile.toString()
-					: getFileLocation(project, benchmarkFile);
-				String location2 = getFileLocation(project, testFile);
+				String location1 = benchmarkFileLocation.isAbsolute()
+					? benchmarkFileLocation.toString()
+					: getFileLocation(project, benchmarkFileLocation);
+				String location2 = testFileLocation.isAbsolute()
+					? testFileLocation.toString()
+					: getFileLocation(project, testFileLocation);
 				String diff = DiffUtil.getInstance().diff(location1, location2);
 				if(diff == null)
 					diff = "!diff failed!";
@@ -422,6 +435,68 @@ public class ManagedBuildTestHelper {
 			} 
 		}
 		return true;
+	}
+
+	private static boolean isMakefile(IPath file) {
+		String ext = file.getFileExtension();
+		if (ext==null) {
+			String name = file.lastSegment();
+			return name!=null && (
+					name.equals("makefile")
+					|| name.equals("Makefile")
+					|| name.equals("GNUmakefile")
+				);
+		}
+		return ext.equals("mk");
+	}
+
+	private static boolean compareMakefiles(IPath testFile, IPath benchmarkFile) {
+		ArrayList<String> testArray = getContents(testFile);
+		ArrayList<String> benchmarkArray = getContents(benchmarkFile);
+		if (testArray.size()!=benchmarkArray.size())
+			return false;
+		
+		for (int i=0;i<benchmarkArray.size();i++) {
+			String testLine = testArray.get(i);
+			String benchmarkLine = benchmarkArray.get(i);
+			if (!testLine.equals(benchmarkLine)) {
+				if (testLine.startsWith("	-$(RM) ")) {
+					final String DELIMITERS = "[ $]";
+					String[] testMacros = new TreeSet<String>(Arrays.asList(testLine.split(DELIMITERS))).toArray(new String[0]);
+					String[] benchMacros = new TreeSet<String>(Arrays.asList(benchmarkLine.split(DELIMITERS))).toArray(new String[0]);
+					if (testMacros.length!=benchMacros.length) {
+						return false;
+					}
+					for (int j=0;j<testMacros.length;j++) {
+						if (!testMacros[j].equals(benchMacros[j])) {
+							return false;
+						}
+					}
+					return true;
+				} else {
+					return false;
+				}
+			}
+		}
+
+		return true;
+	}
+
+	private static ArrayList<String> getContents(IPath fullPath) {
+		ArrayList<String> lines = new ArrayList<String>();
+		try {
+			BufferedReader in = new BufferedReader(new FileReader(fullPath.toFile()));
+			String line;
+			do {
+				line = in.readLine();
+				if (line!=null) {
+					lines.add(line);
+				}
+			} while (line !=null);
+		} catch (IOException e) {
+			Assert.fail("File " + fullPath.toString() + " could not be read: " + e.getLocalizedMessage());
+		}
+		return lines;
 	}
 
 	static public boolean compareBenchmarks(final IProject project, IPath testDir, String[] fileNames) {
@@ -465,6 +540,13 @@ public class ManagedBuildTestHelper {
 	}
 	
 	static public boolean compareBenchmarks(IFile tFile, IFile bmFile) {
+		IPath tFileLocation = new Path(tFile.toString());
+		IPath bmFileLocation = new Path(bmFile.toString());
+		if (isMakefile(tFileLocation)) {
+			if (compareMakefiles(tFileLocation, bmFileLocation)) {
+				return true;
+			}
+		}
 		StringBuffer testBuffer = readContentsStripLineEnds(tFile);
 		StringBuffer benchmarkBuffer = readContentsStripLineEnds(bmFile);
 		if (!testBuffer.toString().equals(benchmarkBuffer.toString())) {
@@ -538,7 +620,6 @@ public class ManagedBuildTestHelper {
 				input = new FileReader(fullPath.toFile());
 			} catch (Exception e) {
 				Assert.fail("File " + fullPath.toString() + " could not be read: " + e.getLocalizedMessage());
-				return null;
 			}
 			//InputStream input = file.getContents(true);   // A different way to read the file...
 			int c;

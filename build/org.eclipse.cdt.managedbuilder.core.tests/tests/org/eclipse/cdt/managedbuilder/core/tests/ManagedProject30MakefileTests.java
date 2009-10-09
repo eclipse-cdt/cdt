@@ -193,8 +193,9 @@ public class ManagedProject30MakefileTests extends TestCase {
 						String configName = info.getDefaultConfiguration().getName();
 						IPath buildDir = Path.fromOSString(configName);
 						if (compareBenchmark) {
-							IPath benchmarkPath = resourcesLocation.append(curProject.getName());
-							succeeded = ManagedBuildTestHelper.compareBenchmarks(curProject, buildDir, files, benchmarkPath);
+							IPath benchmarkLocationBase = resourcesLocation.append(curProject.getName());
+							IPath buildLocation = curProject.getLocation().append(buildDir);
+							succeeded = ManagedBuildTestHelper.compareBenchmarks(curProject, buildLocation, files, benchmarkLocationBase);
 						} else {
 							succeeded = ManagedBuildTestHelper.verifyFilesDoNotExist(curProject, buildDir, files);
 						}

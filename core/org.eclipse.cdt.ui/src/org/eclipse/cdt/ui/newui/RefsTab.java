@@ -106,15 +106,10 @@ public class RefsTab extends AbstractCPropertyTab {
 			}});
 			
 	}
-	
-	
-	
-	
+
 	// Class which represents "Active" configuration
-	class ActiveCfg {
-		IProject project;
+	private static class ActiveCfg {
 		public ActiveCfg(IProject _project) {
-			project = _project; 
 		}
 		@Override
 		public String toString() {
@@ -148,11 +143,9 @@ public class RefsTab extends AbstractCPropertyTab {
 				for (int j=0; j<cfgs.length; j++) {
 					if (cfgs[j].getChecked()) {
 						String cfgId = EMPTY_STR;
-						if (j > 0) { // cfgs[0] is "Active": has no cfg Id
-							Object ob = cfgs[j].getData();
-							if (ob instanceof ICConfigurationDescription) {
-								cfgId = ((ICConfigurationDescription)ob).getId();
-							}
+						Object ob = cfgs[j].getData();
+						if (ob instanceof ICConfigurationDescription) {
+							cfgId = ((ICConfigurationDescription)ob).getId();
 						}
 						refs.put(element.getText(), cfgId);
 						break;
@@ -166,41 +159,44 @@ public class RefsTab extends AbstractCPropertyTab {
     private void initData() {
 		tree.removeAll();
 		IProject p = page.getProject();
-		if (p == null) return;
-		IProject[] ps = p.getWorkspace().getRoot().getProjects();
+		if (p == null)
+			return;
 
 		Map<String,String> refs = getResDesc().getConfiguration().getReferenceInfo();
 
-		
-		TreeItem ti, ti1;
-		for (int i=0; i<ps.length; i++) {
-			
-			if (!p.equals(ps[i])) { 
+		for (IProject prj : p.getWorkspace().getRoot().getProjects()) {
+			ICConfigurationDescription[] cfgs = page.getCfgsReadOnly(prj);
+			if (cfgs == null || cfgs.length == 0) 
+				continue;
 
-				ICConfigurationDescription[] cfgs = page.getCfgsReadOnly(ps[i]);
-				if (cfgs == null || cfgs.length == 0) continue;
-					
-				String name = ps[i].getName();
-				String ref = null;
-				ti = new TreeItem(tree, SWT.NONE);
-				ti.setText(name);
-				ti.setData(ps[i]);
-				if (refs.containsKey(name)) {
-					ref = refs.get(name);
-					ti.setChecked(true);
-				}
+			String name = prj.getName();
+			String ref = null;
+			TreeItem ti = new TreeItem(tree, SWT.NONE);
+			ti.setText(name);
+			ti.setData(prj);
+			if (refs.containsKey(name)) {
+				ref = refs.get(name);
+				ti.setChecked(true);
+			}
+			TreeItem ti1;
+			if (!prj.equals(p)) {
+				// [ Active ] config in the tree
 				ti1 = new TreeItem(ti, SWT.NONE);
 				ti1.setText(ACTIVE);
-				ti1.setData(new ActiveCfg(ps[i]));
+				ti1.setData(new ActiveCfg(prj));
 				if (EMPTY_STR.equals(ref))
 					ti1.setChecked(true);
-				for (ICConfigurationDescription cfg : cfgs) {
-					ti1 = new TreeItem(ti, SWT.NONE);
-					ti1.setText(cfg.getName());
-					ti1.setData(cfg);
-					if (cfg.getId().equals(ref)) {
-						ti1.setChecked(true);
-					}
+			}
+			// Name configurations in the tree
+			for (ICConfigurationDescription cfg : cfgs) {
+				// Don't include self configuration
+				if (prj.equals(p) && cfg.getId().equals(page.getResDesc().getConfiguration().getId()))
+					continue;
+				ti1 = new TreeItem(ti, SWT.NONE);
+				ti1.setText(cfg.getName());
+				ti1.setData(cfg);
+				if (cfg.getId().equals(ref)) {
+					ti1.setChecked(true);
 				}
 			}
 		}

@@ -20,8 +20,6 @@ import junit.framework.TestSuite;
 
 import org.eclipse.cdt.managedbuilder.core.IManagedBuildInfo;
 import org.eclipse.cdt.managedbuilder.core.ManagedBuildManager;
-import org.eclipse.cdt.managedbuilder.core.ManagedBuilderCorePlugin;
-import org.eclipse.cdt.managedbuilder.internal.core.ManagedMakeMessages;
 import org.eclipse.cdt.managedbuilder.projectconverter.UpdateManagedProjectManager;
 import org.eclipse.cdt.managedbuilder.testplugin.CTestPlugin;
 import org.eclipse.cdt.managedbuilder.testplugin.ManagedBuildTestHelper;
@@ -81,7 +79,7 @@ public class ManagedProjectUpdateTests extends TestCase {
 			}
 		});
 		
-		ArrayList projectList = new ArrayList(projectZips.length);
+		ArrayList<IProject> projectList = new ArrayList<IProject>(projectZips.length);
 		for(int i = 0; i < projectZips.length; i++){
 			try{
 				String projectName = projectZips[i].getName();
@@ -102,7 +100,7 @@ public class ManagedProjectUpdateTests extends TestCase {
 			fail("No projects found in test project directory " + file.getName() + ".  The .zip file may be missing or corrupt.");
 			return null;
 		}
-		return (IProject[])projectList.toArray(new IProject[projectList.size()]);
+		return projectList.toArray(new IProject[projectList.size()]);
 	}
 	
 	private void doTestProjectUpdate(String version, boolean updateProject, boolean overwriteBackupFiles, 
@@ -151,6 +149,7 @@ public class ManagedProjectUpdateTests extends TestCase {
 				IWorkspace wsp = ResourcesPlugin.getWorkspace();
 				ISchedulingRule rule = wsp.getRuleFactory().buildRule();
 				Job buildJob = new Job("project build job"){ 	//$NON-NLS-1$
+					@Override
 					protected IStatus run(IProgressMonitor monitor) {
 						try {
 							curProject.build(IncrementalProjectBuilder.INCREMENTAL_BUILD,null);

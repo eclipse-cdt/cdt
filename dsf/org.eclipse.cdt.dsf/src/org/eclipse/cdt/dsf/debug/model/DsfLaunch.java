@@ -43,7 +43,7 @@ public class DsfLaunch extends Launch {
                 DsfLaunch.super.fireChanged();
                 return Status.OK_STATUS;
             }
-        };
+        }.schedule();
     }
     
     @Override
@@ -58,6 +58,6 @@ public class DsfLaunch extends Launch {
                 DsfLaunch.super.fireTerminate();
                 return Status.OK_STATUS;
             }
-        };
+        }.schedule();
     }
 }

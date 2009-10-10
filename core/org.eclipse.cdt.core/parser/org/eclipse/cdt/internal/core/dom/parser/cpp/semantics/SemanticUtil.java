@@ -13,7 +13,6 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.dom.parser.cpp.semantics;
 
-import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IArrayType;
 import org.eclipse.cdt.core.dom.ast.IBinding;
@@ -27,7 +26,6 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPBase;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunctionType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPMethod;
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPNamespace;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPPointerToMemberType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPReferenceType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateArgument;
@@ -291,6 +289,7 @@ public class SemanticUtil {
 		return type;
 	}
 
+
 	public static IType[] getSimplifiedTypes(IType[] types) {
 		// Don't create a new array until it's really needed.
 		IType[] result = types;
@@ -392,39 +391,5 @@ public class SemanticUtil {
 			return new CPPQualifierType(baseType, cnst, vol);
 		}
 		return baseType;
-	}
-
-	/**
-	 * Returns <code>true</code> if two bindings have the same owner.
-	 */
-	public static boolean isSameOwner(IBinding owner1, IBinding owner2) {
-		try {
-			// Ignore anonymous namespaces
-			while (owner1 instanceof ICPPNamespace && owner1.getNameCharArray().length == 0)
-				owner1= owner1.getOwner();
-			// Ignore anonymous namespaces
-			while (owner2 instanceof ICPPNamespace && owner2.getNameCharArray().length == 0)
-				owner2= owner2.getOwner();
-	
-			if (owner1 == null)
-				return owner2 == null;
-			if (owner2 == null)
-				return false;
-	
-			if (owner1 instanceof IType) {
-				if (owner2 instanceof IType) {
-					return ((IType) owner1).isSameType((IType) owner2);
-				}
-			} else if (owner1 instanceof ICPPNamespace) {
-				if (owner2 instanceof ICPPNamespace) {
-					if (!CharArrayUtils.equals(owner1.getNameCharArray(), owner2.getNameCharArray())) 
-						return false;
-					return isSameOwner(owner1.getOwner(), owner2.getOwner());
-				}
-			}
-		} catch (DOMException e) {
-			CCorePlugin.log(e);
-		}
-		return false;
 	}
 }

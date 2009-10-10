@@ -14,7 +14,7 @@ import junit.framework.Test;
 import junit.framework.TestSuite;
 
 /**
- * Test that anonymous types are not returned as possibilities.
+ * Test that anonymous types are not returned as possibilites
  */
 public class CompletionTest_AnonymousTypes  extends CompletionProposalsBaseTest{
 	private final String fileName = "CompletionTestStart40.cpp";

@@ -37,7 +37,6 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPDeferredClassInstance;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPDeferredClassInstance;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPInstanceCache;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPTemplates;
-import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.SemanticUtil;
 import org.eclipse.cdt.internal.core.index.IIndexCPPBindingConstants;
 import org.eclipse.cdt.internal.core.pdom.db.Database;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMLinkage;
@@ -261,7 +260,7 @@ public class PDOMCPPClassTemplate extends PDOMCPPClassType
 			if (nchars == null || !CharArrayUtils.equals(nchars, getNameCharArray()))
 				return false;
 
-			return SemanticUtil.isSameOwner(getOwner(), ctype.getOwner());
+			return isSameOwner(getOwner(), ctype.getOwner());
 		} catch (DOMException e) {
 			return false;
 		}

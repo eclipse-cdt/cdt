@@ -18,7 +18,6 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
-import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.dom.ast.ASTNodeProperty;
 import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IASTArraySubscriptExpression;
@@ -42,7 +41,6 @@ import org.eclipse.cdt.core.dom.ast.IASTTypeId;
 import org.eclipse.cdt.core.dom.ast.IASTUnaryExpression;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.IPointerType;
-import org.eclipse.cdt.core.dom.ast.IProblemBinding;
 import org.eclipse.cdt.core.dom.ast.IScope;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.c.ICASTFieldDesignator;
@@ -66,7 +64,6 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTUsingDeclaration;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTUsingDirective;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassScope;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType;
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunction;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPMethod;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPNamespaceScope;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCompositeTypeSpecifier.ICPPASTBaseSpecifier;
@@ -86,9 +83,12 @@ public class LookupData {
 	protected CPPASTTranslationUnit tu;
 	public Map<ICPPNamespaceScope, List<ICPPNamespaceScope>> usingDirectives= Collections.emptyMap();
 	
-	/** Used to ensure we don't visit things more than once. */
+	/*
+	 * Used to ensure we don't visit things more than once
+	 */
 	public ObjectSet<IScope> visited= new ObjectSet<IScope>(1);
-
+	
+	
 	@SuppressWarnings("unchecked")
 	public ObjectSet<IScope> associated = ObjectSet.EMPTY_SET;
 	
@@ -99,23 +99,17 @@ public class LookupData {
 	public boolean forAssociatedScopes = false;
 	public boolean contentAssist = false;
 	public boolean prefixLookup = false;
-	/** Don't return private/protected members that are not visible. */
-	public boolean filterByVisibility = false;
 	public boolean typesOnly = false;
 	public boolean considerConstructors = false;
-	/** For lookup of unknown bindings the point of declaration can be reversed. */
-	public boolean checkPointOfDecl= true;
-    /** For field references or qualified names, enclosing template declarations are ignored. */
-	public boolean usesEnclosingScope= true;
-    /** When computing the cost of a method call, treat the first argument as the implied method argument. */
-	public boolean firstArgIsImpliedMethodArg = false;
+	public boolean checkPointOfDecl= true; // for lookup of unknown bindings the point of declaration can be reversed.
+	public boolean usesEnclosingScope= true; // for field references or qualified names, enclosing template declarations are ignored.
+	public boolean firstArgIsImpliedMethodArg = false; // when computing the cost of a method call treat the first argument as the implied method argument
 	public boolean ignoreMembers = false;
 	
 	public ICPPClassType skippedScope;
 	public Object foundItems = null;
 	private Object[] functionArgs;
 	private IType[] functionArgTypes;
-	private IBinding[] visibilityContext;
 	public ProblemBinding problem;
 	
 	public LookupData(IASTName n) {
@@ -663,40 +657,5 @@ public class LookupData {
 			}
 		}
 		return IBinding.EMPTY_BINDING_ARRAY;
-	}
-
-	/**
-	 * Visibility context is a class or/and a function that determine visibility of private/protected
-	 * members by participating in friendship or class inheritance relationships. If both, a class and
-	 * a function are present in the context, the class has to be local to the function. 
-	 */
-	public IBinding[] getVisibilityContext() {
-		if (visibilityContext == null) {
-			visibilityContext = IBinding.EMPTY_BINDING_ARRAY;
-			try {
-				IBinding previous = null;
-				for (IBinding binding = CPPVisitor.findEnclosingFunctionOrClass(astName);
-						binding != null; binding = binding.getOwner()) {
-					if (binding instanceof ICPPMethod ||
-							// Definition of an undeclared method.
-							binding instanceof IProblemBinding &&
-							((IProblemBinding) binding).getID() == IProblemBinding.SEMANTIC_MEMBER_DECLARATION_NOT_FOUND) {
-						continue;
-					}
-					if (binding instanceof ICPPClassType && previous instanceof ICPPClassType) {
-						// Only the innermost class participates in the visibility context.
-						continue;
-					}
-					if (binding instanceof ICPPFunction || binding instanceof ICPPClassType) {
-						visibilityContext = ArrayUtil.append(visibilityContext, binding);
-						previous = binding;
-					}
-				}
-			} catch (DOMException e) {
-				CCorePlugin.log(e);
-			}
-			visibilityContext = ArrayUtil.trim(visibilityContext);
-		}
-		return visibilityContext;
 	}
 }

@@ -50,8 +50,6 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassScope;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPConstructor;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPField;
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunction;
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPMember;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPMethod;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPReferenceType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPUsingDeclaration;
@@ -67,7 +65,6 @@ import org.eclipse.cdt.internal.core.dom.parser.ProblemBinding;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPClassType.CPPClassTypeProblem;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPSemantics;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPVisitor;
-import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.SemanticUtil;
 import org.eclipse.core.runtime.CoreException;
 
 /**
@@ -123,41 +120,6 @@ public class ClassTypeHelper {
 		}
 
 		return resultSet.keyArray(IBinding.class);
-	}
-
-	/**
-	 * Checks if a binding is a friend of a class. Only classes and functions can be friends of a class.
-	 * A class is considered a friend of itself.
-	 * @param binding a binding. 
-	 * @param classType a class.
-	 * @return <code>true</code> if <code>binding</code> is a friend of <code>classType</code>.
-	 * @throws DOMException
-	 */
-	public static boolean isFriend(IBinding binding, ICPPClassType classType) throws DOMException {
-		IType type;
-		if (binding instanceof ICPPClassType) {
-			type = (IType) binding;
-			if (type.isSameType(classType)) {
-				return true;
-			}
-			for (IBinding friend : classType.getFriends()) {
-				if (friend instanceof ICPPClassType && type.isSameType((IType) friend)) {
-					return true;
-				}
-			}
-		} else if (binding instanceof ICPPFunction) {
-			type = ((ICPPFunction) binding).getType();
-			char[] name = binding.getNameCharArray();
-			for (IBinding friend : classType.getFriends()) {
-				if (friend instanceof ICPPFunction &&
-						CharArrayUtils.equals(name, friend.getNameCharArray()) &&
-						SemanticUtil.isSameOwner(binding.getOwner(), friend.getOwner()) &&
-						type.isSameType(((ICPPFunction) friend).getType())) {
-					return true;
-				}
-			}
-		}
-		return false;
 	}
 
 	/**
@@ -245,39 +207,22 @@ public class ClassTypeHelper {
 		return (ICPPField[]) ArrayUtil.trim(ICPPField.class, result);
 	}
 	
-	public static ICPPClassType[] getAllBases(ICPPClassType classType) throws DOMException {
-		return getAllBases(classType, ICPPBase.v_private);
-	}
-
-	/**
-	 * Returns all direct and indirect base classes that have at least a given visibility level. 
-	 * @param classType a class
-	 * @param minVisibility one of <code>ICPPBase.v_private</code>, <code>ICPPBase.v_protected</code>,
-	 *   or <code>ICPPBase.v_public</code>. All base classes are returned if
-	 *   <code>minVisibility == ICPPBase.v_private</code> since it is the lowest visibility level.
-	 * @return An array of visible base classes in arbitrary order.
-	 * @throws DOMException
-	 */
-	public static ICPPClassType[] getAllBases(ICPPClassType classType, int minVisibility) throws DOMException {
+	public static ICPPClassType[] getAllBases(ICPPClassType ct) throws DOMException {
 		HashSet<ICPPClassType> result= new HashSet<ICPPClassType>();
-		result.add(classType);
-		getAllBases(classType, minVisibility, result);
-		result.remove(classType);
+		result.add(ct);
+		getAllBases(ct, result);
+		result.remove(ct);
 		return result.toArray(new ICPPClassType[result.size()]);
 	}
 	
-	private static void getAllBases(ICPPClassType classType, int minVisibility, HashSet<ICPPClassType> result) throws DOMException {
-		ICPPBase[] bases= classType.getBases();
+	private static void getAllBases(ICPPClassType ct, HashSet<ICPPClassType> result) throws DOMException {
+		ICPPBase[] bases= ct.getBases();
 		for (ICPPBase base : bases) {
-			// Note that numeric visibility values are ordered backwards:
-			// ICPPBase.v_public < ICPPBase.v_protected < ICPPBase.v_private.
-			if (base.getVisibility() <= minVisibility) {
-				IBinding b= base.getBaseClass();
-				if (b instanceof ICPPClassType) {
-					final ICPPClassType baseClass = (ICPPClassType) b;
-					if (result.add(baseClass)) { 
-						getAllBases(baseClass, minVisibility, result);
-					}
+			IBinding b= base.getBaseClass();
+			if (b instanceof ICPPClassType) {
+				final ICPPClassType ctbase = (ICPPClassType) b;
+				if (result.add(ctbase)) { 
+					getAllBases(ctbase, result);
 				}
 			}
 		}
@@ -285,7 +230,7 @@ public class ClassTypeHelper {
 	
 	public static ICPPMethod[] getAllDeclaredMethods(ICPPClassType ct) throws DOMException {
 		ICPPMethod[] methods= ct.getDeclaredMethods();
-		ICPPClassType[] bases= getAllBases(ct, ICPPBase.v_private);
+		ICPPClassType[] bases= getAllBases(ct);
 		for (ICPPClassType base : bases) {
 			methods = (ICPPMethod[]) ArrayUtil.addAll(ICPPMethod.class, methods, base.getDeclaredMethods());
 		}
@@ -298,7 +243,7 @@ public class ClassTypeHelper {
 		ICPPClassScope scope= (ICPPClassScope) ct.getCompositeScope();
 		set.addAll(scope.getImplicitMethods());
 		
-		ICPPClassType[] bases= getAllBases(ct, ICPPBase.v_private);
+		ICPPClassType[] bases= getAllBases(ct);
 		for (ICPPClassType base : bases) {
 			set.addAll(base.getDeclaredMethods());
 			final IScope compositeScope = base.getCompositeScope();
@@ -419,7 +364,7 @@ public class ClassTypeHelper {
 
 	public static IField[] getFields(ICPPClassType ct) throws DOMException {
 		IField[] fields = ct.getDeclaredFields();
-		ICPPClassType[] bases = getAllBases(ct, ICPPBase.v_private);
+		ICPPClassType[] bases = getAllBases(ct);
 		for (ICPPClassType base : bases) {
 			fields = (IField[]) ArrayUtil.addAll(IField.class, fields, base.getFields());
 		}
@@ -487,7 +432,7 @@ public class ClassTypeHelper {
 		if (sourceClass == null || targetClass == null)
 			return false;
 		
-		ICPPClassType[] bases= getAllBases(sourceClass, ICPPBase.v_private);
+		ICPPClassType[] bases= getAllBases(sourceClass);
 		for (ICPPClassType base : bases) {
 			if (base.isSameType(targetClass))
 				return true;
@@ -657,7 +602,7 @@ public class ClassTypeHelper {
 			return null;
 		
 		List<IType> inheritedTypeids = new ArrayList<IType>();
-		ICPPClassType[] bases= getAllBases(owner, ICPPBase.v_private);
+		ICPPClassType[] bases= getAllBases(owner);
 		for (ICPPClassType base : bases) {
 			if (!(base instanceof ICPPDeferredClassInstance)) {
 				ICPPMethod  baseMethod= getMethodInClass(base, kind);
@@ -748,55 +693,5 @@ public class ClassTypeHelper {
 			return null;
 		}
 		return null;
-	}
-
-	/**
-	 * Compares two visibility values. ICPPBase.v_public is the highest visibility, ICPPBase.v_private is
-	 * the lowest.
-	 * @param visibility1 one of: ICPPBase.v_public, ICPPBase.v_protected, ICPPBase.v_private.
-	 * @param visibility2 one of: ICPPBase.v_public, ICPPBase.v_protected, ICPPBase.v_private.
-	 * @return <code>true</code> if <code>visibility1</code> is less than <code>visibility2</code>.
-	 */
-	public static boolean isLessVisibility(int visibility1, int visibility2) {
-		// Note that numeric visibility values are ordered backwards:
-		// ICPPBase.v_public < ICPPBase.v_protected < ICPPBase.v_private.
-		return visibility1 > visibility2;
-	}
-
-	/**
-	 * Removes bindings that are not visible at the given visibility level.
-	 * @param bindings bindings to be filtered.
-	 * @param minVisibility one of: ICPPMember.v_public, ICPPMember.v_protected, ICPPMember.v_private.
-	 */
-	public static void filterByVisibility(IBinding[] bindings, int minVisibility) {
-		final int length = bindings.length;
-		int pos = 0;
-		for (int i = 0; i < length; i++) {
-			final IBinding binding= bindings[i];
-			if (binding != null && isVisible(binding, minVisibility)) {
-				bindings[pos++]= binding;
-			} 
-		}
-		while (pos < length) {
-			bindings[pos++]= null;
-		}
-	}
-
-	/**
-	 * Checks if a binding is visible at the given visibility level.
-	 * @param binding a binding.
-	 * @param minVisibility one of: ICPPMember.v_public, ICPPMember.v_protected, ICPPMember.v_private.
-	 * @return <code>true</code> if visibility of the binding is not less than <code>minVisibility</code>. 
-	 */
-	public static boolean isVisible(IBinding binding, int minVisibility) {
-		try {
-			if (binding instanceof ICPPMember) {
-				return !isLessVisibility(((ICPPMember) binding).getVisibility(), minVisibility);
-			}
-			// TODO(sprigogin): Handle visibility of nested types
-		} catch (DOMException e) {
-			// Presume visibility if anything goes wrong.
-		}
-		return true;
 	}
 }

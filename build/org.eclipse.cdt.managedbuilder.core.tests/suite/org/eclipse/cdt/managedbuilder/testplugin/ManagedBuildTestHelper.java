@@ -21,6 +21,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Set;
 import java.util.TreeSet;
 import java.util.zip.ZipFile;
 
@@ -450,17 +451,32 @@ public class ManagedBuildTestHelper {
 		return ext.equals("mk");
 	}
 
+	/**
+	 * Compare makefiles using a bunch of heuristics to avoid ordering mismatches
+	 * 
+	 * @param testFile - location of actual makefile
+	 * @param benchmarkFile - location of the benchmark file
+	 * @return {@code true} if matches, {@code false} otherwise 
+	 */
 	private static boolean compareMakefiles(IPath testFile, IPath benchmarkFile) {
+		final String ECHO_LINKER_PATTERN = "	@echo 'Invoking: .* C\\+\\+ Linker'";
+		final String IFNEQ_PATTERN = "ifneq \\(\\$\\(strip \\$\\(.*\\)\\),\\)";
+		final String INCLUDE_PATTERN = "-include \\$\\(.*\\)";
 		ArrayList<String> testArray = getContents(testFile);
 		ArrayList<String> benchmarkArray = getContents(benchmarkFile);
-		if (testArray.size()!=benchmarkArray.size())
+		if (testArray.size()!=benchmarkArray.size()) {
+			System.out.println("testArray.size="+testArray.size()+ " while benchmarkArray.size="+benchmarkArray.size());
 			return false;
+		}
 		
+		Set<String> testNotMatchingLines = new TreeSet<String>();
+		Set<String> benchNotMatchingLines = new TreeSet<String>();
 		for (int i=0;i<benchmarkArray.size();i++) {
 			String testLine = testArray.get(i);
 			String benchmarkLine = benchmarkArray.get(i);
 			if (!testLine.equals(benchmarkLine)) {
 				if (testLine.startsWith("	-$(RM) ")) {
+					// accommodate to arbitrary order of 'rm' parameters
 					final String DELIMITERS = "[ $]";
 					String[] testMacros = new TreeSet<String>(Arrays.asList(testLine.split(DELIMITERS))).toArray(new String[0]);
 					String[] benchMacros = new TreeSet<String>(Arrays.asList(benchmarkLine.split(DELIMITERS))).toArray(new String[0]);
@@ -472,10 +488,38 @@ public class ManagedBuildTestHelper {
 							return false;
 						}
 					}
-					return true;
+				} else if (testLine.matches(ECHO_LINKER_PATTERN) && benchmarkLine.matches(ECHO_LINKER_PATTERN)) {
+					// accommodate for variable linker name (GCC vs. Cygwin)
+					continue;
+				} else if (testLine.matches(IFNEQ_PATTERN) && benchmarkLine.matches(IFNEQ_PATTERN)) {
+					// accommodate for variable order of different macro's blocks (see also INCLUDE_PATTERN)
+					// ifneq ($(strip $(CXX_DEPS)),)
+					// -include $(CXX_DEPS)
+					// endif
+					testNotMatchingLines.add(testLine);
+					benchNotMatchingLines.add(benchmarkLine);
+				} else if (testLine.matches(INCLUDE_PATTERN) && benchmarkLine.matches(INCLUDE_PATTERN)) {
+					// accommodate for variable order of different macro's blocks (see IFNEQ_PATTERN)
+					testNotMatchingLines.add(testLine);
+					benchNotMatchingLines.add(benchmarkLine);
 				} else {
+					System.out.println("Following lines do not match:");
+					System.out.println("actual  : ["+testLine+"]");
+					System.out.println("expected: ["+benchmarkLine+"]");
 					return false;
 				}
+			}
+		}
+		
+		// Check if all lines of ifneq blocks match (irrespective of order) 
+		String[] testNotMatchingLinesArray = testNotMatchingLines.toArray(new String[0]);
+		String[] benchNotMatchingLinesArray = benchNotMatchingLines.toArray(new String[0]);
+		for (int i=0;i<testNotMatchingLinesArray.length;i++) {
+			if (! testNotMatchingLinesArray[i].equals(benchNotMatchingLinesArray[i])) {
+				System.out.println("Following sorted lines do not match:");
+				System.out.println("actual  : ["+testNotMatchingLinesArray[i]+"]");
+				System.out.println("expected: ["+benchNotMatchingLinesArray[i]+"]");
+				return false;
 			}
 		}
 

@@ -37,6 +37,7 @@ import org.eclipse.core.runtime.Path;
 import org.eclipse.ui.dialogs.IOverwriteQuery;
 
 public class ManagedBuildDependencyCalculatorTests extends TestCase {
+	private IPath resourcesLocation = new Path(CTestPlugin.getFileInPlugin(new Path("resources/depCalcProjects/")).getAbsolutePath());
 	
 	public ManagedBuildDependencyCalculatorTests(String name) {
 		super(name);
@@ -52,7 +53,7 @@ public class ManagedBuildDependencyCalculatorTests extends TestCase {
 	}
 
 	private IProject[] createProject(String projName, IPath location, String projectTypeId, boolean containsZip){
-		ArrayList projectList = null;
+		ArrayList<IProject> projectList = null;
 		if (containsZip) {
 			File testDir = CTestPlugin.getFileInPlugin(new Path("resources/depCalcProjects/" + projName));
 			if(testDir == null) {
@@ -68,7 +69,7 @@ public class ManagedBuildDependencyCalculatorTests extends TestCase {
 				}
 			});
 			
-			projectList = new ArrayList(projectZips.length);
+			projectList = new ArrayList<IProject>(projectZips.length);
 			for(int i = 0; i < projectZips.length; i++){
 				try{
 					String projectName = projectZips[i].getName();
@@ -93,12 +94,12 @@ public class ManagedBuildDependencyCalculatorTests extends TestCase {
 			try{
 				IProject project = ManagedBuildTestHelper.createProject(projName, null, location, projectTypeId);
 				if(project != null)
-					projectList = new ArrayList(1);
+					projectList = new ArrayList<IProject>(1);
 					projectList.add(project);
 			} catch(Exception e){}
 		}
 		
-		return (IProject[])projectList.toArray(new IProject[projectList.size()]);
+		return projectList.toArray(new IProject[projectList.size()]);
 	}
 	
 	private IProject[] createProjects(String projName, IPath location, String projectTypeId, boolean containsZip) {
@@ -107,10 +108,6 @@ public class ManagedBuildDependencyCalculatorTests extends TestCase {
 		IOverwriteQuery queryALL = new IOverwriteQuery(){
 			public String queryOverwrite(String file) {
 				return ALL;
-			}};
-		IOverwriteQuery queryNOALL = new IOverwriteQuery(){
-			public String queryOverwrite(String file) {
-				return NO_ALL;
 			}};
 		
 		UpdateManagedProjectManager.setBackupFileOverwriteQuery(queryALL);
@@ -151,10 +148,13 @@ public class ManagedBuildDependencyCalculatorTests extends TestCase {
 					if (i == 0) {
 						String configName = info.getDefaultConfiguration().getName();
 						IPath buildDir = Path.fromOSString(configName);
-						if (compareBenchmark)
-						    succeeded = ManagedBuildTestHelper.compareBenchmarks(curProject, buildDir, files);
-						else
+						if (compareBenchmark) {
+							IPath benchmarkLocationBase = resourcesLocation.append(curProject.getName());
+							IPath buildLocation = curProject.getLocation().append(buildDir);
+							succeeded = ManagedBuildTestHelper.compareBenchmarks(curProject, buildLocation, files, benchmarkLocationBase);
+						} else {
 							succeeded = ManagedBuildTestHelper.verifyFilesDoNotExist(curProject, buildDir, files);
+						}
 					}
 				}
 			}

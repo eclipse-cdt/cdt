@@ -41,6 +41,8 @@ import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.ui.dialogs.IOverwriteQuery;
 
 public class ManagedProjectUpdateTests extends TestCase {
+	private IPath resourcesLocation = new Path(CTestPlugin.getFileInPlugin(new Path("resources/oldTypeProjects/")).getAbsolutePath());
+
 	public ManagedProjectUpdateTests(String name) {
 		super(name);
 	}
@@ -49,7 +51,7 @@ public class ManagedProjectUpdateTests extends TestCase {
 		TestSuite suite = new TestSuite(ManagedProjectUpdateTests.class.getName());
 		
 		suite.addTest(new ManagedProjectUpdateTests("testProjectUpdate12_Update"));
-//		suite.addTest(new ManagedProjectUpdateTests("testProjectUpdate20_Update"));
+		suite.addTest(new ManagedProjectUpdateTests("testProjectUpdate20_Update"));
 		suite.addTest(new ManagedProjectUpdateTests("testProjectUpdate21_Update"));
 //		suite.addTest(new ManagedProjectUpdateTests("testProjectUpdate12_NoUpdate"));
 //		suite.addTest(new ManagedProjectUpdateTests("testProjectUpdate20_NoUpdate"));
@@ -184,8 +186,9 @@ public class ManagedProjectUpdateTests extends TestCase {
 				if (files != null && files.length > 0) {
 					if (i == 0) {
 						String configName = info.getDefaultConfiguration().getName();
-						IPath buildDir = Path.fromOSString(configName);
-						ManagedBuildTestHelper.compareBenchmarks(curProject, buildDir, files);
+						IPath benchmarkLocationBase = resourcesLocation.append(version);
+						IPath buildLocation = curProject.getLocation().append(configName);
+						ManagedBuildTestHelper.compareBenchmarks(curProject, buildLocation, files, benchmarkLocationBase);
 					}
 				}
 			}

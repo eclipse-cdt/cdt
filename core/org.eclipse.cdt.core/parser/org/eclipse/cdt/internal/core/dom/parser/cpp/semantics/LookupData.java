@@ -81,9 +81,12 @@ public class LookupData {
 	public boolean prefixLookup = false;
 	public boolean typesOnly = false;
 	public boolean considerConstructors = false;
-	public boolean checkPointOfDecl= true; // for lookup of unknown bindings the point of declaration can be reversed.
-	public boolean usesEnclosingScope= true; // for field references or qualified names, enclosing template declarations are ignored.
-	public boolean firstArgIsImpliedMethodArg = false; // when computing the cost of a method call treat the first argument as the implied method argument
+	/** For lookup of unknown bindings the point of declaration can be reversed. */
+	public boolean checkPointOfDecl= true;
+    /** For field references or qualified names, enclosing template declarations are ignored. */
+	public boolean usesEnclosingScope= true;
+    /** When computing the cost of a method call, treat the first argument as the implied method argument. */
+	public boolean firstArgIsImpliedMethodArg = false;
 	public boolean ignoreMembers = false;
 	
 	public ICPPClassType skippedScope;

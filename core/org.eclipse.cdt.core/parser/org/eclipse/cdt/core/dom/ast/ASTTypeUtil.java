@@ -678,13 +678,13 @@ public class ASTTypeUtil {
 			return false;
 		}
 	}
-	
+
 	private static String[] getQualifiedNameForAnonymous(ICPPBinding binding, boolean normalize) throws DOMException {
 		LinkedList<String> result= new LinkedList<String>();
 		result.addFirst(getNameForAnonymous(binding));
 		
 		IBinding owner= binding.getOwner();
-		while(owner instanceof ICPPNamespace || owner instanceof IType) {
+		while (owner instanceof ICPPNamespace || owner instanceof IType) {
 			char[] name= owner.getNameCharArray();
 			if (name == null || name.length == 0) {
 				if (!(binding instanceof ICPPNamespace)) {
@@ -749,7 +749,6 @@ public class ASTTypeUtil {
 		return null;
 	}
 
-	
 	private static int findFileNameStart(char[] fname) {
 		for (int i= fname.length - 2; i >= 0; i--) {
 			switch (fname[i]) {

@@ -595,7 +595,7 @@ public class CPPSemantics {
         return (ICPPNamespaceScope) scope;
     }
     
-	static private ICPPScope getLookupScope(IASTName name, LookupData data) throws DOMException {
+	static ICPPScope getLookupScope(IASTName name, LookupData data) throws DOMException {
 	    IASTNode parent = name.getParent();
 	    IScope scope = null;
     	if (parent instanceof ICPPASTBaseSpecifier) {
@@ -979,7 +979,7 @@ public class CPPSemantics {
 		return ((ICPPASTTemplateDeclaration) parent).getScope();
 	}
 
-	private static ICPPScope getParentScope(IScope scope, CPPASTTranslationUnit unit) throws DOMException {
+	static ICPPScope getParentScope(IScope scope, CPPASTTranslationUnit unit) throws DOMException {
 		IScope parentScope= scope.getParent();
 		// the index cannot return the translation unit as parent scope
 		if (unit != null) {
@@ -1856,9 +1856,9 @@ public class CPPSemantics {
 	        	} else if (type != temp) {
 	        		int c = compareByRelevance(data, type, temp);
 	        		if (c < 0) {
-        					type= temp;
+        				type= temp;
 	        		} else if (c == 0) {
-        				if (((IType)type).isSameType((IType) temp)) {
+        				if (((IType) type).isSameType((IType) temp)) {
         					if (type instanceof ITypedef && !(temp instanceof ITypedef)) {
         						// Between same types prefer non-typedef.
         						type= temp;
@@ -1877,7 +1877,7 @@ public class CPPSemantics {
 	        	} else {
 	        		int c = compareByRelevance(data, obj, temp);
 	        		if (c < 0) {
-	        				obj= temp;
+	        			obj= temp;
 	        		} else if (c == 0) {
 	        			return new ProblemBinding(data.astName, IProblemBinding.SEMANTIC_AMBIGUOUS_LOOKUP,
 	        					data.getFoundBindings());
@@ -2986,7 +2986,7 @@ public class CPPSemantics {
 		return contentAssistLookup(data, name);
 	}
 
-    private static IBinding[] contentAssistLookup(LookupData data, Object start) {        
+	private static IBinding[] contentAssistLookup(LookupData data, Object start) {        
         try {
             lookup(data, start);
         } catch (DOMException e) {

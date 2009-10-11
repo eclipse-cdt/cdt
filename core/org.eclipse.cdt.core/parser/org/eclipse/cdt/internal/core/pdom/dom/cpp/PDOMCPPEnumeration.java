@@ -22,6 +22,7 @@ import org.eclipse.cdt.core.dom.ast.IEnumerator;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.ITypedef;
 import org.eclipse.cdt.core.parser.util.CharArrayUtils;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.SemanticUtil;
 import org.eclipse.cdt.internal.core.index.IIndexCPPBindingConstants;
 import org.eclipse.cdt.internal.core.index.IIndexType;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMBinding;
@@ -118,7 +119,7 @@ class PDOMCPPEnumeration extends PDOMCPPBinding implements IEnumeration, IIndexT
 				if (nchars == null || !CharArrayUtils.equals(nchars, getNameCharArray()))
 					return false;
 
-				return isSameOwner(getOwner(), etype.getOwner());
+				return SemanticUtil.isSameOwner(getOwner(), etype.getOwner());
 			}
 		} catch (DOMException e) {
 			CCorePlugin.log(e);

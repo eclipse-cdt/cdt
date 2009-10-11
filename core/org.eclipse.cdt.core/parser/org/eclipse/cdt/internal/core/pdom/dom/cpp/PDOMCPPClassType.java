@@ -36,6 +36,7 @@ import org.eclipse.cdt.core.parser.util.CharArrayUtils;
 import org.eclipse.cdt.internal.core.Util;
 import org.eclipse.cdt.internal.core.dom.parser.ProblemBinding;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ClassTypeHelper;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.SemanticUtil;
 import org.eclipse.cdt.internal.core.index.IIndexCPPBindingConstants;
 import org.eclipse.cdt.internal.core.pdom.db.PDOMNodeLinkedList;
 import org.eclipse.cdt.internal.core.pdom.dom.IPDOMMemberOwner;
@@ -268,7 +269,7 @@ class PDOMCPPClassType extends PDOMCPPBinding implements IPDOMCPPClassType, IPDO
 				if (nchars == null || !CharArrayUtils.equals(nchars, getNameCharArray()))
 					return false;
 
-				return isSameOwner(getOwner(), ctype.getOwner());
+				return SemanticUtil.isSameOwner(getOwner(), ctype.getOwner());
 			} catch (DOMException e) {
 				CCorePlugin.log(e);
 			}

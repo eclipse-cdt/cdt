@@ -20,6 +20,7 @@ import org.eclipse.cdt.build.core.scannerconfig.tests.GCCSpecsConsoleParserTest;
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.dom.IPDOMManager;
 import org.eclipse.cdt.managedbuilder.core.tests.BuildDescriptionModelTests;
+import org.eclipse.cdt.managedbuilder.core.tests.BuildSystem40Tests;
 import org.eclipse.cdt.managedbuilder.core.tests.ManagedBuildCoreTests;
 import org.eclipse.cdt.managedbuilder.core.tests.ManagedBuildCoreTests20;
 import org.eclipse.cdt.managedbuilder.core.tests.ManagedBuildCoreTests_SharedToolOptions;
@@ -65,6 +66,7 @@ public class AllManagedBuildTests {
 		suite.addTest(ResourceBuildCoreTests.suite());
 		suite.addTest(ManagedProject21MakefileTests.suite());
 		suite.addTest(ManagedProject30MakefileTests.suite());
+		suite.addTest(BuildSystem40Tests.suite());
 		suite.addTest(ManagedBuildCoreTests_SharedToolOptions.suite());
 		suite.addTest(ManagedBuildEnvironmentTests.suite());
 		suite.addTest(ManagedBuildMacrosTests.suite());

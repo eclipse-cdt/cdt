@@ -32,7 +32,7 @@ public class DiffUtil {
 	
 	private static String createCommand(String location1, String location2){
 		StringBuffer buf = new StringBuffer();
-		buf.append(DIFF_CMD).append(" ").append(location1).append(" ").append(location2);
+		buf.append(DIFF_CMD).append(" '").append(location1).append("' '").append(location2).append("'");
 		return buf.toString(); 
 	}
 	

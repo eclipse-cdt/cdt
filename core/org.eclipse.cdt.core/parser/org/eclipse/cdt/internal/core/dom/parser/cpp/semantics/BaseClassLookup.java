@@ -34,9 +34,10 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPInternalUnknownScope;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPUnknownBinding;
 
 /**
- * Helper class for performing the base class lookup. First a directed graph without loops is computed to represent the base
- * class hierarchy up to those bases for which the lookup finds matches. Next, from these leaves we search for virtual bases
- * that are hidden. With this information the matches are extracted from the graph.
+ * Helper class for performing the base class lookup. First a directed graph without loops is computed
+ * to represent the base class hierarchy up to those bases for which the lookup finds matches. Next, from
+ * these leaves we search for virtual bases that are hidden. With this information the matches are extracted
+ * from the graph.
  */
 class BaseClassLookup {
 	public static void lookupInBaseClasses(LookupData data, ICPPClassScope classScope, IIndexFileSet fileSet) {
@@ -108,7 +109,7 @@ class BaseClassLookup {
 		if (fPropagationDone)
 			return;
 		fPropagationDone= true;
-		for (int i=0; i<fChildren.size(); i++) {
+		for (int i= 0; i < fChildren.size(); i++) {
 			BaseClassLookup child = fChildren.get(i);
 			if (fVirtual.get(i)) {
 				child.setHiddenAsVirtualBase();
@@ -133,7 +134,8 @@ class BaseClassLookup {
 		return false;
 	}
 	
-	static BaseClassLookup lookupInBaseClass(LookupData data, ICPPClassScope baseClassScope, boolean isVirtual, ICPPClassType root, IIndexFileSet fileSet, HashMap<IScope, BaseClassLookup> infoMap, int depth) {
+	static BaseClassLookup lookupInBaseClass(LookupData data, ICPPClassScope baseClassScope, boolean isVirtual,
+			ICPPClassType root, IIndexFileSet fileSet, HashMap<IScope, BaseClassLookup> infoMap, int depth) {
 		if (depth++ > CPPSemantics.MAX_INHERITANCE_DEPTH)
 			return null;
 	
@@ -142,7 +144,8 @@ class BaseClassLookup {
 			if (info != null) {
 				// avoid loops
 				if (info.getResult() == null) {
-				    data.problem = new ProblemBinding(null, IProblemBinding.SEMANTIC_CIRCULAR_INHERITANCE, root.getNameCharArray());
+				    data.problem = new ProblemBinding(null, IProblemBinding.SEMANTIC_CIRCULAR_INHERITANCE,
+				    		root.getNameCharArray());
 				    return null;
 				}
 				return info;
@@ -180,7 +183,8 @@ class BaseClassLookup {
 			}
 		}
 		
-		// there is no result in the baseClass itself or we do content assist, we have to examine its base-classes
+		// There is no result in the baseClass itself or we do content assist, we have to examine its
+		// base-classes
 		ICPPClassType baseClass= result.getClassType();
 		if (baseClass != null) { 
 			ICPPBase[] grandBases= null;
@@ -220,7 +224,8 @@ class BaseClassLookup {
 						if (!(grandBaseScope instanceof ICPPClassScope))
 							continue;
 						
-						BaseClassLookup baseInfo= lookupInBaseClass(data, (ICPPClassScope) grandBaseScope, grandBase.isVirtual(), root, fileSet, infoMap, depth);
+						BaseClassLookup baseInfo= lookupInBaseClass(data, (ICPPClassScope) grandBaseScope,
+								grandBase.isVirtual(), root, fileSet, infoMap, depth);
 						if (baseInfo != null)
 							result.addBase(grandBase.isVirtual(), baseInfo);
 					} catch (DOMException e) {
@@ -232,6 +237,7 @@ class BaseClassLookup {
 		result.setResult(matches);
 		return result;	
 	}
+
 	static void hideVirtualBases(BaseClassLookup rootInfo, HashMap<IScope, BaseClassLookup> infoMap) {
 		boolean containsVirtualBase= false;
 		final BaseClassLookup[] allInfos = infoMap.values().toArray(new BaseClassLookup[infoMap.size()]);
@@ -302,7 +308,7 @@ class BaseClassLookup {
 		fCollected= true;
 		
 		data.foundItems = CPPSemantics.mergePrefixResults((CharArrayObjectMap) data.foundItems, fBindings, true);
-		for (int i=0; i<fChildren.size(); i++) {
+		for (int i= 0; i < fChildren.size(); i++) {
 			BaseClassLookup child = fChildren.get(i);
 			child.collectResultForContentAssist(data);
 		}
@@ -324,7 +330,7 @@ class BaseClassLookup {
 		fCollected= true;
 		
 		result= (IBinding[]) ArrayUtil.addAll(IBinding.class, result, fBindings);
-		for (int i=0; i<fChildren.size(); i++) {
+		for (int i= 0; i < fChildren.size(); i++) {
 			BaseClassLookup child = fChildren.get(i);
 			result= child.collectResult(data, fVirtual.get(i), result);
 		}
@@ -349,7 +355,8 @@ class BaseClassLookup {
 							if (uniqueOwner == null) {
 								uniqueOwner= classOwner;
 							} else if (!uniqueOwner.isSameType(classOwner)) {
-								data.problem= new ProblemBinding(data.astName, IProblemBinding.SEMANTIC_AMBIGUOUS_LOOKUP, bindings);
+								data.problem= new ProblemBinding(data.astName,
+										IProblemBinding.SEMANTIC_AMBIGUOUS_LOOKUP, bindings);
 								return;
 							}
 						}

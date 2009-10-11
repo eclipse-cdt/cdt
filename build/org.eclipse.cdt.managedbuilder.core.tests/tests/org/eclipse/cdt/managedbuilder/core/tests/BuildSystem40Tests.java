@@ -48,7 +48,7 @@ import org.eclipse.core.runtime.Path;
 import org.eclipse.ui.dialogs.IOverwriteQuery;
 
 public class BuildSystem40Tests  extends TestCase {
-	private IProject p1;
+	private IPath resourcesLocation = new Path(CTestPlugin.getFileInPlugin(new Path("resources/test40Projects/")).getAbsolutePath());
 
 	public static Test suite() {
 		TestSuite suite = new TestSuite(BuildSystem40Tests.class);
@@ -479,7 +479,13 @@ public class BuildSystem40Tests  extends TestCase {
 						String configName = info.getDefaultConfiguration().getName();
 						IPath buildDir = Path.fromOSString(configName);
 						if (compareBenchmark){
-						    succeeded = ManagedBuildTestHelper.compareBenchmarks(curProject, buildDir, files);
+							IPath benchmarkLocationBase = resourcesLocation.append(curProject.getName());
+							IPath buildLocationBase = curProject.getLocation();
+							IPath[] paths = new IPath[files.length];
+							for (int ii=0;ii<files.length;ii++) {
+								paths[ii] = buildDir.append(files[ii]);
+							}
+							succeeded = ManagedBuildTestHelper.compareBenchmarks(curProject, buildLocationBase, paths, benchmarkLocationBase);
 						} 
 //						else
 //							succeeded = ManagedBuildTestHelper.verifyFilesDoNotExist(curProject, buildDir, files);

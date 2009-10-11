@@ -252,7 +252,9 @@ public class ManagedProject30MakefileTests extends TestCase {
 			} else {
 				fail("could not create the link to " + name);
 			}
-		} catch (Exception e) {fail("could not create the link to " + name);}		
+		} catch (Exception e) {
+			fail("could not create the link to " + name + ": " + e);
+		}		
 	}
 	
 	/* (non-Javadoc)

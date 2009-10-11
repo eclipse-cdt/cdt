@@ -2,42 +2,42 @@
 # Automatically-generated file. Do not edit!
 ################################################################################
 
-ROOT := ..
-
--include $(ROOT)/makefile.init
+-include ../makefile.init
 
 RM := rm -rf
 
 # All of the sources participating in the build are defined here
 -include sources.mk
--include $(SUBDIRS:%=%/subdir.mk)
+-include subdir.mk
 -include objects.mk
-ifneq ($(strip $(DEPS)),)
--include $(DEPS)
+
+ifneq ($(MAKECMDGOALS),clean)
+ifneq ($(strip $(C_DEPS)),)
+-include $(C_DEPS)
+endif
 endif
 
--include $(ROOT)/makefile.defs
+-include ../makefile.defs
 
 # Add inputs and outputs from these tool invocations to the build variables 
 
 # All Target
-all: lib.a
+all: liblinkedFolder.a
 
 # Tool invocations
-lib.a: $(OBJS) $(USER_OBJS)
+liblinkedFolder.a: $(OBJS) $(USER_OBJS)
 	@echo 'Building target: $@'
 	@echo 'Invoking: archiver.gnu'
-	@echo ar -r lib.a $(OBJS) $(USER_OBJS) $(LIBS)
-	@ar -r lib.a $(OBJS) $(USER_OBJS) $(LIBS)
+	ar -r "liblinkedFolder.a" $(OBJS) $(USER_OBJS) $(LIBS)
 	@echo 'Finished building target: $@'
 	@echo ' '
 
 # Other Targets
 clean:
-	-$(RM) $(OBJS)$(DEPS) lib.a
+	-$(RM) $(OBJS)$(C_DEPS) liblinkedFolder.a
 	-@echo ' '
 
 .PHONY: all clean dependents
 .SECONDARY:
 
--include $(ROOT)/makefile.targets
+-include ../makefile.targets

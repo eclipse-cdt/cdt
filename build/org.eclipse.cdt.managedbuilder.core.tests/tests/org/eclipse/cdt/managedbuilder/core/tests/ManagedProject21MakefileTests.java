@@ -163,7 +163,7 @@ public class ManagedProject21MakefileTests extends TestCase {
 						IPath benchmarkLocationBase = resourcesLocation.append(benchmarkDir);
 						IPath buildLocation = curProject.getLocation().append(buildDir);
 						succeeded = ManagedBuildTestHelper.compareBenchmarks(curProject, buildLocation, files, benchmarkLocationBase);
-		}
+					}
 				}
 			}
 		}
@@ -313,14 +313,10 @@ public class ManagedProject21MakefileTests extends TestCase {
 			createPathVariable(tmpDir);
 			pathVariableCreated = true;
 		}
-		try {
-			IPath location = Path.fromOSString(MBS_TEMP_DIR);
-			IProject[] projects = createProjects("linkedFolder", location, "cdt.managedbuild.target.testgnu21.lib", false);
-			//  Build the project
-			succeeded = buildProjects("linkedFolder", projects, makefiles);
-		} finally {
-			if (succeeded)
-				ManagedBuildTestHelper.deleteTempDir(tmpSubDir, linkedFiles);
-		}
+		IPath location = Path.fromOSString(MBS_TEMP_DIR);
+		IProject[] projects = createProjects("linkedFolder", location, "cdt.managedbuild.target.testgnu21.lib", false);
+		//  Build the project
+		succeeded = buildProjects("linkedFolder", projects, makefiles);
+		assertTrue(succeeded);
 	}
 }

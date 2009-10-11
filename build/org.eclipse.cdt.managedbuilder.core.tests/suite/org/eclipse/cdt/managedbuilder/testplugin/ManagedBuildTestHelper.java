@@ -403,7 +403,7 @@ public class ManagedBuildTestHelper {
 			IPath benchmarkFileLocation = benchmarkLocationBase.append("Benchmarks").append(files[i]);
 			if (isMakefile(testFileLocation)) {
 				if (compareMakefiles(testFileLocation, benchmarkFileLocation)) {
-					return true;
+					continue;
 				}
 			}
 			StringBuffer testBuffer = readContentsStripLineEnds(project, testFileLocation);
@@ -584,8 +584,8 @@ public class ManagedBuildTestHelper {
 	}
 	
 	static public boolean compareBenchmarks(IFile tFile, IFile bmFile) {
-		IPath tFileLocation = new Path(tFile.toString());
-		IPath bmFileLocation = new Path(bmFile.toString());
+		IPath tFileLocation = tFile.getLocation();
+		IPath bmFileLocation = bmFile.getLocation();
 		if (isMakefile(tFileLocation)) {
 			if (compareMakefiles(tFileLocation, bmFileLocation)) {
 				return true;

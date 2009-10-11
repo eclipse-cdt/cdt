@@ -9,6 +9,7 @@
  *    QNX - Initial API and implementation
  *    Markus Schorn (Wind River Systems)
  *    Anton Leherbauer (Wind River Systems)
+ *    Sergey Prigogin (Google)
  *******************************************************************************/
 package org.eclipse.cdt.internal.ui.text.contentassist;
 
@@ -75,6 +76,7 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPBuiltinVariable;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPImplicitFunction;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPImplicitMethod;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPImplicitTypedef;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.AccessContext;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPTemplates.CPPImplicitFunctionTemplate;
 
 import org.eclipse.cdt.internal.ui.viewsupport.CElementImageProvider;
@@ -115,12 +117,12 @@ public class DOMCompletionProposalComputer extends ParsingBasedProposalComputer 
 			boolean handleMacros= false;
 			IASTName[] names = completionNode.getNames();
 
-			for (int i = 0; i < names.length; ++i) {
-				if (names[i].getTranslationUnit() == null)
+			for (IASTName name : names) {
+				if (name.getTranslationUnit() == null)
 					// The node isn't properly hooked up, must have backtracked out of this node
 					continue;
 				
-				IASTCompletionContext astContext = names[i].getCompletionContext();
+				IASTCompletionContext astContext = name.getCompletionContext();
 				if (astContext == null) {
 					continue;
 				} else if (astContext instanceof IASTIdExpression
@@ -129,12 +131,14 @@ public class DOMCompletionProposalComputer extends ParsingBasedProposalComputer 
 					handleMacros = prefix.length() > 0;
 				}
 				
-				IBinding[] bindings = astContext.findBindings(
-						names[i], !context.isContextInformationStyle());
+				IBinding[] bindings = astContext.findBindings(name, !context.isContextInformationStyle());
 				
 				if (bindings != null) {
-					for (int j = 0; j < bindings.length; ++j)
-						handleBinding(bindings[j], context, prefix, astContext, proposals);
+					AccessContext accessibilityContext = new AccessContext(name);
+					for (IBinding binding : bindings) {
+						if (accessibilityContext.isAccessible(binding))
+							handleBinding(binding, context, prefix, astContext, proposals);
+					}
 				}
 			}
 
@@ -292,7 +296,7 @@ public class DOMCompletionProposalComputer extends ParsingBasedProposalComputer 
 				&& !(binding instanceof CPPImplicitMethod)) {
 			return;
 		}
-		
+
 		if (!isAnonymousBinding(binding)) {
 			final String name = binding.getName();
 			final int baseRelevance= computeBaseRelevance(prefix, name);
@@ -340,7 +344,7 @@ public class DOMCompletionProposalComputer extends ParsingBasedProposalComputer 
 		} else {
 			int relevance= 0;
 			try {
-				switch(classType.getKey()) {
+				switch (classType.getKey()) {
 				case ICPPClassType.k_class:
 					relevance= RelevanceConstants.CLASS_TYPE_RELEVANCE;
 					break;

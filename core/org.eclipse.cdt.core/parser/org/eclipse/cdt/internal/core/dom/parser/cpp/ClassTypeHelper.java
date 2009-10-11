@@ -50,6 +50,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassScope;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPConstructor;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPField;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunction;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPMethod;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPReferenceType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPUsingDeclaration;
@@ -65,6 +66,7 @@ import org.eclipse.cdt.internal.core.dom.parser.ProblemBinding;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPClassType.CPPClassTypeProblem;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPSemantics;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPVisitor;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.SemanticUtil;
 import org.eclipse.core.runtime.CoreException;
 
 /**
@@ -120,6 +122,41 @@ public class ClassTypeHelper {
 		}
 
 		return resultSet.keyArray(IBinding.class);
+	}
+
+	/**
+	 * Checks if a binding is a friend of a class. Only classes and functions can be friends of a class.
+	 * A class is considered a friend of itself.
+	 * @param binding a binding. 
+	 * @param classType a class.
+	 * @return <code>true</code> if <code>binding</code> is a friend of <code>classType</code>.
+	 * @throws DOMException
+	 */
+	public static boolean isFriend(IBinding binding, ICPPClassType classType) throws DOMException {
+		IType type;
+		if (binding instanceof ICPPClassType) {
+			type = (IType) binding;
+			if (type.isSameType(classType)) {
+				return true;
+			}
+			for (IBinding friend : classType.getFriends()) {
+				if (friend instanceof ICPPClassType && type.isSameType((IType) friend)) {
+					return true;
+				}
+			}
+		} else if (binding instanceof ICPPFunction) {
+			type = ((ICPPFunction) binding).getType();
+			char[] name = binding.getNameCharArray();
+			for (IBinding friend : classType.getFriends()) {
+				if (friend instanceof ICPPFunction &&
+						CharArrayUtils.equals(name, friend.getNameCharArray()) &&
+						SemanticUtil.isSameOwner(binding.getOwner(), friend.getOwner()) &&
+						type.isSameType(((ICPPFunction) friend).getType())) {
+					return true;
+				}
+			}
+		}
+		return false;
 	}
 
 	/**
@@ -207,22 +244,28 @@ public class ClassTypeHelper {
 		return (ICPPField[]) ArrayUtil.trim(ICPPField.class, result);
 	}
 	
-	public static ICPPClassType[] getAllBases(ICPPClassType ct) throws DOMException {
+	/**
+	 * Returns all direct and indirect base classes that have at least a given visibility level. 
+	 * @param classType a class
+	 * @return An array of visible base classes in arbitrary order.
+	 * @throws DOMException
+	 */
+	public static ICPPClassType[] getAllBases(ICPPClassType classType) throws DOMException {
 		HashSet<ICPPClassType> result= new HashSet<ICPPClassType>();
-		result.add(ct);
-		getAllBases(ct, result);
-		result.remove(ct);
+		result.add(classType);
+		getAllBases(classType, result);
+		result.remove(classType);
 		return result.toArray(new ICPPClassType[result.size()]);
 	}
 	
-	private static void getAllBases(ICPPClassType ct, HashSet<ICPPClassType> result) throws DOMException {
-		ICPPBase[] bases= ct.getBases();
+	private static void getAllBases(ICPPClassType classType, HashSet<ICPPClassType> result) throws DOMException {
+		ICPPBase[] bases= classType.getBases();
 		for (ICPPBase base : bases) {
 			IBinding b= base.getBaseClass();
 			if (b instanceof ICPPClassType) {
-				final ICPPClassType ctbase = (ICPPClassType) b;
-				if (result.add(ctbase)) { 
-					getAllBases(ctbase, result);
+				final ICPPClassType baseClass = (ICPPClassType) b;
+				if (result.add(baseClass)) { 
+					getAllBases(baseClass, result);
 				}
 			}
 		}

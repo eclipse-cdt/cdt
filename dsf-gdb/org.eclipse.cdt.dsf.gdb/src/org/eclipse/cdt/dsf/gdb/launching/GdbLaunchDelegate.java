@@ -211,6 +211,7 @@ public class GdbLaunchDelegate extends LaunchConfigurationDelegate
 	/**
 	 * Method used to check that the project, program and binary are correct.
 	 * Can be overridden to avoid checking certain things.
+	 * @since 2.1
 	 */
 	protected IPath checkBinaryDetails(final ILaunchConfiguration config) throws CoreException {
 		// First verify we are dealing with a proper project.

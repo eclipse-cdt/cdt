@@ -13,6 +13,7 @@ package org.eclipse.cdt.dsf.debug.model;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
+import org.eclipse.core.runtime.jobs.ISchedulingRule;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.Launch;
@@ -27,6 +28,27 @@ import org.eclipse.debug.core.model.ISourceLocator;
  */
 public class DsfLaunch extends Launch {
 
+    private class EventSchedulingRule implements ISchedulingRule {
+        
+        DsfLaunch fLaunch = DsfLaunch.this;
+        
+        public boolean isConflicting(ISchedulingRule rule) {
+            if (rule instanceof EventSchedulingRule) {
+                return fLaunch.equals( ((EventSchedulingRule)rule).fLaunch );
+            }
+            return false;
+        }
+        
+        public boolean contains(ISchedulingRule rule) {
+            if (rule instanceof EventSchedulingRule) {
+                return fLaunch.equals( ((EventSchedulingRule)rule).fLaunch );
+            }
+            return false;
+        }
+    };
+    
+    private EventSchedulingRule fEventSchedulingRule = new EventSchedulingRule(); 
+    
     public DsfLaunch(ILaunchConfiguration launchConfiguration, String mode, ISourceLocator locator) {
         super(launchConfiguration, mode, locator);
     }
@@ -36,6 +58,7 @@ public class DsfLaunch extends Launch {
         new Job("Dispatch DSF Launch Changed event.") { //$NON-NLS-1$
             { 
                 setSystem(true);
+                setRule(fEventSchedulingRule);
             }
             
             @Override
@@ -43,6 +66,7 @@ public class DsfLaunch extends Launch {
                 DsfLaunch.super.fireChanged();
                 return Status.OK_STATUS;
             }
+            
         }.schedule();
     }
     
@@ -51,6 +75,7 @@ public class DsfLaunch extends Launch {
         new Job("Dispatch DSF Launch Terminate event.") { //$NON-NLS-1$
             { 
                 setSystem(true);
+                setRule(fEventSchedulingRule);
             }
             
             @Override

@@ -223,13 +223,18 @@ public class CDebugUIPlugin extends AbstractUIPlugin {
 	}
 
 	/**
-	 * Returns the active workbench shell or <code>null</code> if none
-	 * 
-	 * @return the active workbench shell or <code>null</code> if none
+	 * Returns the active workbench shell, or the shell from the first available
+	 * workbench window, or <code>null</code> if neither is available.
 	 */
 	public static Shell getActiveWorkbenchShell() {
 		IWorkbenchWindow window = getActiveWorkbenchWindow();
-		if ( window != null ) {
+		if (window == null) {
+			IWorkbenchWindow[] windows = PlatformUI.getWorkbench().getWorkbenchWindows();
+			if (windows.length > 0) {
+				return windows[0].getShell();
+			}
+		}
+		else {
 			return window.getShell();
 		}
 		return null;

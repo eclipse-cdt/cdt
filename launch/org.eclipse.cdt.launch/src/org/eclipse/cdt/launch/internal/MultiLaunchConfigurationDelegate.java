@@ -12,6 +12,7 @@
 package org.eclipse.cdt.launch.internal;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -23,26 +24,32 @@ import org.eclipse.cdt.launch.internal.ui.LaunchUIPlugin;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.MultiStatus;
 import org.eclipse.core.runtime.SubProgressMonitor;
+import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.ILaunch;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
-import org.eclipse.debug.core.ILaunchListener;
 import org.eclipse.debug.core.ILaunchManager;
-import org.eclipse.debug.core.model.ILaunchConfigurationDelegate;
+import org.eclipse.debug.core.ILaunchesListener2;
+import org.eclipse.debug.core.Launch;
+import org.eclipse.debug.core.model.ILaunchConfigurationDelegate2;
 import org.eclipse.debug.core.model.IProcess;
 import org.eclipse.debug.core.model.LaunchConfigurationDelegate;
+import org.eclipse.debug.internal.core.DebugCoreMessages;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.debug.ui.IDebugUIConstants;
 import org.eclipse.jface.dialogs.MessageDialog;
+import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.ui.PlatformUI;
 
 /**
  * Group Launch delegate. Launches each configuration in the user selected mode
  */
 public class MultiLaunchConfigurationDelegate extends LaunchConfigurationDelegate implements
-		ILaunchConfigurationDelegate {
+		ILaunchConfigurationDelegate2 {
 	public static final String DEFAULT_MODE = "default"; //$NON-NLS-1$
 	private static final String NAME_PROP = "name"; //$NON-NLS-1$
 	private static final String ENABLED_PROP = "enabled"; //$NON-NLS-1$
@@ -51,7 +58,7 @@ public class MultiLaunchConfigurationDelegate extends LaunchConfigurationDelegat
 	private static final String ACTION_PARAM_PROP = "actionParam"; //$NON-NLS-1$
 	public static String MULTI_LAUNCH_CONSTANTS_PREFIX = "org.eclipse.cdt.launch.launchGroup"; //$NON-NLS-1$
 
-	public static class LaunchElement {
+	 public static class LaunchElement {
 		public static enum EPostLaunchAction {
 			NONE,
 			WAIT_FOR_TERMINATION,
@@ -92,53 +99,13 @@ public class MultiLaunchConfigurationDelegate extends LaunchConfigurationDelegat
 			}
 		}
 		
-		private int index;
-		private boolean enabled;
-		private String mode;
-		private EPostLaunchAction action;
-		private Object actionParam;
-		private String name;
-		private ILaunchConfiguration data;
-		public void setName(String name) {
-			this.name = name;
-		}
-		public String getName() {
-			return name;
-		}
-		public void setAction(EPostLaunchAction action, Object actionParam) {
-			this.action = action;
-			this.actionParam = actionParam;
-		}
-		public EPostLaunchAction getAction() {
-			return action;
-		}
-		public Object getActionParam() {
-			return actionParam;
-		}
-		public void setMode(String mode) {
-			this.mode = mode;
-		}
-		public String getMode() {
-			return mode;
-		}
-		public void setEnabled(boolean enabled) {
-			this.enabled = enabled;
-		}
-		public boolean isEnabled() {
-			return enabled;
-		}
-		public void setIndex(int index) {
-			this.index = index;
-		}
-		public int getIndex() {
-			return index;
-		}
-		public void setData(ILaunchConfiguration data) {
-			this.data = data;
-		}
-		public ILaunchConfiguration getData() {
-			return data;
-		}
+		public int index;
+		public boolean enabled;
+		public String mode;
+		public EPostLaunchAction action;
+		public Object actionParam;
+		public String name;
+		public ILaunchConfiguration data;
 	}
 
 	public MultiLaunchConfigurationDelegate() {
@@ -146,108 +113,259 @@ public class MultiLaunchConfigurationDelegate extends LaunchConfigurationDelegat
 	}
 
 	/**
-	 * Listener for launch changes to add processes, also removes itself when parent launch is removed
-	 *
+	 * A specialization of launch to track sublaunches lifecycle, also terminates itself when all sublaunches are terminated
+	 *  
 	 */
-	private class MultiLaunchListener implements ILaunchListener {
-		private ILaunch launch;
-
-		// A map of all our sub-launches and the current processes that belong to each one.
-		private Map<ILaunch, IProcess[]> subLaunches = new HashMap<ILaunch, IProcess[]>();
-
+	private class MultiLaunch extends Launch implements ILaunchesListener2{
+	
 		/**
-		 * @param launch - parent launch
+		 * Whether this process has been terminated
 		 */
-		public MultiLaunchListener(ILaunch launch) {
-			this.launch = launch;
-		}
+		private boolean fTerminated;
+			
+		/**
+		 * A map of all our sub-launches and the current processes that belong
+		 * to each one.
+		 */
+		private Map<ILaunch, IProcess[]> subLaunches = new HashMap<ILaunch, IProcess[]>();
 		
+	
+		public MultiLaunch(ILaunchConfiguration launchConfiguration,
+				String mode) {
+			super(launchConfiguration, mode, null);
+			getLaunchManager().addLaunchListener((ILaunchesListener2)this);
+		}
+	
+		/**
+		 * Associate the launch
+		 * @param subLaunch
+		 */
 		public void addSubLaunch(ILaunch subLaunch) {
-			subLaunches.put(subLaunch, subLaunch.getProcesses());
+			subLaunches.put(subLaunch, new IProcess[]{});
 		}
-
-		public void launchChanged(ILaunch launch2) {
-			if (launch == launch2) return;
-			// add/remove processes
-			if (isChild(launch2, subLaunches)) {
-				// Remove old processes
-				IProcess[] oldProcesses = subLaunches.get(launch2);
-				for (IProcess oldProcess : oldProcesses) {
-					launch.removeProcess(oldProcess);
-				}
-				
-				// Add new processes
-				IProcess[] newProcesses = launch2.getProcesses();
-				for (IProcess newProcess : newProcesses) {
-					launch.addProcess(newProcess);
-				}
-				
-				  // Replace the processes of the changed launch
-				  subLaunches.put(launch2, newProcesses);
-			}
+	
+		private ILaunch[] getSubLaunches() {
+			return subLaunches.keySet().toArray(new ILaunch[subLaunches.keySet().size()]);
 		}
-
-		private boolean isChild(ILaunch launch, Map<ILaunch, IProcess[]> subLaunches) {
-			for (ILaunch subLaunch : subLaunches.keySet()) {
+	
+		private boolean isChild(ILaunch launch) {
+			for (ILaunch subLaunch : getSubLaunches()) {
 				if (subLaunch == launch) { return true; }
 			}
 			return false;
-		}
-
-		public void launchRemoved(ILaunch launch2) {
-			if (launch == launch2) {
-				ILaunchManager launchManager = DebugPlugin.getDefault().getLaunchManager();
-				launchManager.removeLaunchListener(this);
-			} else if (isChild(launch2, subLaunches)) {
-				// Remove old processes
-				IProcess[] oldProcesses = subLaunches.get(launch2);
-				for (IProcess oldProcess : oldProcesses) {
-					launch.removeProcess(oldProcess);
+		}		
+	
+		/**
+		 * Override default behavior by querying all sub-launches to see if they are terminated
+		 * @see org.eclipse.debug.core.Launch#isTerminated()
+		 */
+		@Override
+		public boolean isTerminated() {
+			if (fTerminated)
+				return true;
+			
+			if (subLaunches.size() == 0)
+				return false;
+			
+			for (ILaunch launch : getSubLaunches()) {
+				if (!launch.isTerminated()) {
+					return false;
 				}
+			}
+			return true;
+		}
+	
+	
+		/**
+		 * Override default behavior by querying all sub-launches if they can be terminated
+		 * @see org.eclipse.debug.core.Launch#canTerminate()
+		 */
+		@Override
+		public boolean canTerminate() {
+			if (subLaunches.size() == 0)
+				return false;
+			
+			for (ILaunch launch : getSubLaunches()) {
+				if (launch.canTerminate()) {
+					return true;
+				}
+			}
+			return false;
+		}
+	
+		/**
+		 * Override default behavior by terminating all sub-launches
+		 * @see org.eclipse.debug.core.Launch#terminate()
+		 */
+		@Override
+		public void terminate() throws DebugException {
+			MultiStatus status= 
+				new MultiStatus(DebugPlugin.getUniqueIdentifier(), DebugException.REQUEST_FAILED, DebugCoreMessages.Launch_terminate_failed, null); 
 				
-				subLaunches.remove(launch2);
+			for (ILaunch launch : getSubLaunches()) {
+				if (launch.canTerminate()) {
+					try {
+						launch.terminate();
+					} catch (DebugException e) {
+						status.merge(e.getStatus());
+					}
+				}
+			}
+			
+			if (status.isOK()) {
+				return;
+			}
+			
+			IStatus[] children= status.getChildren();
+			if (children.length == 1) {
+				throw new DebugException(children[0]);
+			}
+			
+			throw new DebugException(status);
+		}
+	
+		/**
+		 * Handle terminated sub-launch
+		 * @param launch
+		 */
+		private void launchTerminated(ILaunch launch) {
+			if (this == launch) return;
+			
+			// Remove sub launch, keeping the processes of the terminated launch to 
+			// show the association and to keep the console content accessible
+			if (subLaunches.remove(launch) != null) {
+				// terminate ourselves if this is the last sub launch 
+				if (subLaunches.size() == 0) {
+					fTerminated = true;
+					fireTerminate();
+				}
 			}
 		}
-
-		public void launchAdded(ILaunch launch2) {
-			// ignore
+	
+		/* (non-Javadoc)
+		 * @see org.eclipse.debug.core.Launch#launchChanged(org.eclipse.debug.core.ILaunch)
+		 */
+		public void launchChanged(ILaunch launch) {
+			if (this == launch) return;
+			
+			// add/remove processes
+			if (isChild(launch)) {
+				// Remove old processes
+				IProcess[] oldProcesses = subLaunches.get(launch);
+				IProcess[] newProcesses = launch.getProcesses();
+				
+				// avoid notifications when processes have not changed.
+				if (!Arrays.equals(oldProcesses, newProcesses)) {
+					for (IProcess oldProcess : oldProcesses) {
+						removeProcess(oldProcess);
+					}
+					
+					// Add new processes
+					for (IProcess newProcess : newProcesses) {
+						addProcess(newProcess);
+					}
+				
+					// Replace the processes of the changed launch
+					subLaunches.put(launch, newProcesses);
+				}
+			}
+		}
+	
+		/* (non-Javadoc)
+		 * @see org.eclipse.debug.core.Launch#launchRemoved(org.eclipse.debug.core.ILaunch)
+		 */
+		@Override
+		public void launchRemoved(ILaunch launch) {
+			if (this == launch) {
+				super.launchRemoved(launch);
+				// Remove the processes we got from the sub-launches from this launch
+				IProcess[] processes = getProcesses();				
+				for (IProcess process : processes) {
+					removeProcess(process);
+				}
+				
+				getLaunchManager().removeLaunchListener((ILaunchesListener2)this);
+			}
+		}
+	
+		/* (non-Javadoc)
+		 * @see org.eclipse.debug.core.ILaunchesListener2#launchesTerminated(org.eclipse.debug.core.ILaunch[])
+		 */
+		public void launchesTerminated(ILaunch[] launches) {
+			for (ILaunch launch : launches) {
+				launchTerminated(launch);
+			}
+		}
+	
+		/* (non-Javadoc)
+		 * @see org.eclipse.debug.core.ILaunchesListener#launchesAdded(org.eclipse.debug.core.ILaunch[])
+		 */
+		public void launchesAdded(ILaunch[] launches) {
+			for (ILaunch launch : launches) {
+				launchAdded(launch);
+			}
+		}
+	
+		/* (non-Javadoc)
+		 * @see org.eclipse.debug.core.ILaunchesListener#launchesChanged(org.eclipse.debug.core.ILaunch[])
+		 */
+		public void launchesChanged(ILaunch[] launches) {
+			for (ILaunch launch : launches) {
+				launchChanged(launch);
+			}
+		}
+	
+		/* (non-Javadoc)
+		 * @see org.eclipse.debug.core.ILaunchesListener#launchesRemoved(org.eclipse.debug.core.ILaunch[])
+		 */
+		public void launchesRemoved(ILaunch[] launches) {
+			for (ILaunch launch : launches) {
+				launchRemoved(launch);
+			}
 		}
 	}
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.debug.core.model.LaunchConfigurationDelegate#getLaunch(org.eclipse.debug.core.ILaunchConfiguration, java.lang.String)
+	 */
+	@Override
+	public ILaunch getLaunch(ILaunchConfiguration configuration, String mode)
+			throws CoreException {
+		return new MultiLaunch(configuration, mode);
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.debug.core.model.ILaunchConfigurationDelegate#launch(org.eclipse.debug.core.ILaunchConfiguration, java.lang.String, org.eclipse.debug.core.ILaunch, org.eclipse.core.runtime.IProgressMonitor)
+	 */
 	public void launch(ILaunchConfiguration configuration, String mode, final ILaunch launch, IProgressMonitor monitor)
 			throws CoreException {
-		// have to unset "remove terminated launches when new one created" 
-		// because it does not work good for multilaunch
+		
+		// Have to temporarily turn off the "remove terminated launches when new one created" 
+		// preference because it does not work well for multilaunch
 
-		boolean dstore = DebugUIPlugin.getDefault().getPreferenceStore().getBoolean(
-				IDebugUIConstants.PREF_AUTO_REMOVE_OLD_LAUNCHES);
+		final IPreferenceStore prefStore = DebugUIPlugin.getDefault().getPreferenceStore();
+		boolean dstore = prefStore.getBoolean(IDebugUIConstants.PREF_AUTO_REMOVE_OLD_LAUNCHES);
 
 		try {
-			monitor.beginTask(
-					LaunchMessages.getString("MultiLaunchConfigurationDelegate.0") + configuration.getName(), 1000); //$NON-NLS-1$
-			DebugUIPlugin.getDefault().getPreferenceStore().setValue(IDebugUIConstants.PREF_AUTO_REMOVE_OLD_LAUNCHES,
-					false);
+			monitor.beginTask(LaunchMessages.getString("MultiLaunchConfigurationDelegate.0") + configuration.getName(), 1000); //$NON-NLS-1$
 			
-			final List<LaunchElement> input = createLaunchElements(configuration, new ArrayList<LaunchElement>());
-			MultiLaunchListener listener = new MultiLaunchListener(launch);
-			ILaunchManager launchManager = DebugPlugin.getDefault().getLaunchManager();
-			launchManager.addLaunchListener(listener); // listener removed when launch is removed
-
-			for (Iterator<LaunchElement> iterator = input.iterator(); iterator.hasNext();) {
-				LaunchElement le = iterator.next();
-				if (le.isEnabled() == false) continue;
-				// find launch
-				final ILaunchConfiguration conf = findLaunch(le.getName());
-				// not found, skip (error?)
+			prefStore.setValue(IDebugUIConstants.PREF_AUTO_REMOVE_OLD_LAUNCHES,	false);
+			
+			List<LaunchElement> launches = createLaunchElements(configuration, new ArrayList<LaunchElement>());
+			for (LaunchElement le : launches) {
+				if (!le.enabled) continue;
+				
+				// find launch; if not found, skip (error?)
+				final ILaunchConfiguration conf = findLaunch(le.name);
 				if (conf == null) continue;
+				
 				// determine mode for each launch
 				final String localMode;
-				if (le.getMode() != null && !le.getMode().equals(DEFAULT_MODE)) {
-					localMode = le.getMode();
+				if (le.mode != null && !le.mode.equals(DEFAULT_MODE)) {
+					localMode = le.mode;
 				} else {
 					localMode = mode;
 				}
-
 				if (!conf.supportsMode(localMode)) {
 					PlatformUI.getWorkbench().getDisplay().asyncExec(new Runnable() {
 						public void run() {
@@ -262,16 +380,17 @@ public class MultiLaunchConfigurationDelegate extends LaunchConfigurationDelegat
 				}
 				try {
 					if (configuration.getName().equals(conf.getName())) throw new StackOverflowError();
+					
 					// LAUNCH child here
-					ILaunch subLaunch = DebugUIPlugin.buildAndLaunch(conf, localMode, new SubProgressMonitor(monitor, 1000 / input.size()));
-					listener.addSubLaunch(subLaunch);
+					ILaunch subLaunch = DebugUIPlugin.buildAndLaunch(conf, localMode, new SubProgressMonitor(monitor, 1000 / launches.size()));
+					((MultiLaunch)launch).addSubLaunch(subLaunch);
 					
 					// Now that we added the launch in our list, we have already
 					// received the real launchChanged event, and did not know it was part of our list
 					// So, fake another event now.
-					listener.launchChanged(subLaunch);
+					((MultiLaunch)launch).launchChanged(subLaunch);
 
-					postLaunchAction(subLaunch, le.getAction(), le.getActionParam(), monitor);
+					postLaunchAction(subLaunch, le.action, le.actionParam, monitor);
 					
 
 				} catch (StackOverflowError e) {
@@ -286,11 +405,10 @@ public class MultiLaunchConfigurationDelegate extends LaunchConfigurationDelegat
 				}
 			}
 			if (!launch.hasChildren()) {
-				launchManager.removeLaunch(launch);
+				DebugPlugin.getDefault().getLaunchManager().removeLaunch(launch);
 			}
 		} finally {
-			DebugUIPlugin.getDefault().getPreferenceStore().setValue(IDebugUIConstants.PREF_AUTO_REMOVE_OLD_LAUNCHES,
-					dstore);
+			prefStore.setValue(IDebugUIConstants.PREF_AUTO_REMOVE_OLD_LAUNCHES, dstore);
 			monitor.done();
 		}
 	}
@@ -329,11 +447,16 @@ public class MultiLaunchConfigurationDelegate extends LaunchConfigurationDelegat
 		}
 	}
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.debug.core.model.LaunchConfigurationDelegate#buildProjects(org.eclipse.core.resources.IProject[], org.eclipse.core.runtime.IProgressMonitor)
+	 */
 	protected void buildProjects(IProject[] projects, IProgressMonitor monitor) throws CoreException {
 		// do nothing, project can be rebuild for each launch individually
-
 	}
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.debug.core.model.LaunchConfigurationDelegate#buildForLaunch(org.eclipse.debug.core.ILaunchConfiguration, java.lang.String, org.eclipse.core.runtime.IProgressMonitor)
+	 */
 	public boolean buildForLaunch(ILaunchConfiguration configuration, String mode, IProgressMonitor monitor)
 			throws CoreException {
 		// not build for this one
@@ -366,8 +489,8 @@ public class MultiLaunchConfigurationDelegate extends LaunchConfigurationDelegat
 						String name = prop.substring(k + 1);
 						if (name.equals(NAME_PROP)) {
 							MultiLaunchConfigurationDelegate.LaunchElement el = new MultiLaunchConfigurationDelegate.LaunchElement();
-							el.setIndex(index);
-							el.setName((String) attrs.get(attr));
+							el.index = index;
+							el.name = (String) attrs.get(attr);
 							
 							Object actionParam = null;
 							String actionStr = (String)attrs.get(getProp(index, ACTION_PROP));
@@ -386,13 +509,14 @@ public class MultiLaunchConfigurationDelegate extends LaunchConfigurationDelegat
 									LaunchUIPlugin.log(exc);
 								}  
 							}
-							el.setAction(action, actionParam);
-							el.setMode((String) attrs.get(getProp(index, MODE_PROP)));
-							el.setEnabled("true".equals(attrs.get(getProp(index, ENABLED_PROP)))); //$NON-NLS-1$
+							el.action = action;
+							el.actionParam = actionParam;
+							el.mode = (String) attrs.get(getProp(index, MODE_PROP));
+							el.enabled = "true".equals(attrs.get(getProp(index, ENABLED_PROP))); //$NON-NLS-1$
 							try {
-								el.setData(findLaunch(el.getName()));
+								el.data = findLaunch(el.name);
 							} catch (Exception e) {
-								el.setData(null);
+								el.data = null;
 							}
 							while (index >= input.size()) {
 								input.add(null);
@@ -416,12 +540,12 @@ public class MultiLaunchConfigurationDelegate extends LaunchConfigurationDelegat
 		removeLaunchElements(configuration);
 		for (LaunchElement el : input) {
 			if (el == null) continue;
-			configuration.setAttribute(MultiLaunchConfigurationDelegate.getProp(i, NAME_PROP), el.getName());
-			configuration.setAttribute(MultiLaunchConfigurationDelegate.getProp(i, ACTION_PROP), el.getAction().toString());
+			configuration.setAttribute(MultiLaunchConfigurationDelegate.getProp(i, NAME_PROP), el.name);
+			configuration.setAttribute(MultiLaunchConfigurationDelegate.getProp(i, ACTION_PROP), el.action.toString());
 			// note: the saving of the action param will need to be enhanced if ever an action type is introduced that uses something that can't be reconstructed from its toString()
-			configuration.setAttribute(MultiLaunchConfigurationDelegate.getProp(i, ACTION_PARAM_PROP), el.getActionParam() != null ? el.getActionParam().toString() : null);
-			configuration.setAttribute(MultiLaunchConfigurationDelegate.getProp(i, MODE_PROP), el.getMode());
-			configuration.setAttribute(MultiLaunchConfigurationDelegate.getProp(i, ENABLED_PROP), el.isEnabled() + ""); //$NON-NLS-1$
+			configuration.setAttribute(MultiLaunchConfigurationDelegate.getProp(i, ACTION_PARAM_PROP), el.actionParam != null ? el.actionParam.toString() : null);
+			configuration.setAttribute(MultiLaunchConfigurationDelegate.getProp(i, MODE_PROP), el.mode);
+			configuration.setAttribute(MultiLaunchConfigurationDelegate.getProp(i, ENABLED_PROP), el.enabled + ""); //$NON-NLS-1$
 			i++;
 		}
 	}

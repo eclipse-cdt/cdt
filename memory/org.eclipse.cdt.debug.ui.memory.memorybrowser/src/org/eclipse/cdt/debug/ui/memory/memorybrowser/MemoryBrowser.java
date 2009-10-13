@@ -232,8 +232,8 @@ public class MemoryBrowser extends ViewPart implements IDebugContextListener, IL
     private boolean isBug145635Patched() {
         Type[] managerTypes = DebugUITools.getDebugContextManager().getClass().getGenericInterfaces();
         for (int i = 0; i < managerTypes.length; i++) {
-            if (managerTypes[i] instanceof Class) {
-                Class clazz = (Class)managerTypes[i];
+            if (managerTypes[i] instanceof Class<?>) {
+                Class<?> clazz = (Class<?>)managerTypes[i];
                 if ("org.eclipse.debug.ui.contexts.IBug145635Marker".equals(clazz.getName()) ) {
                     return true;
                 }
@@ -476,6 +476,7 @@ public class MemoryBrowser extends ViewPart implements IDebugContextListener, IL
 			public IDebugTarget getDebugTarget() { return null; }
 			public ILaunch getLaunch() { return null; }
 			public String getModelIdentifier() { return null; }
+			@SuppressWarnings("unchecked")	// one warning is enough (in the import section)
 			public Object getAdapter(Class adapter) { return null; }
 		});
 	}

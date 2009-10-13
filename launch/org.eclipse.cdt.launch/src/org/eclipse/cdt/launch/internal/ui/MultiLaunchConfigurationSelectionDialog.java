@@ -359,10 +359,10 @@ public class MultiLaunchConfigurationSelectionDialog extends TitleAreaDialog imp
 	}
 
 	public void setInitialSelection(LaunchElement el) {
-		action = el.getAction();
-		actionParam = el.getActionParam();
-		isDefaultMode = el.getMode().equals(MultiLaunchConfigurationDelegate.DEFAULT_MODE);
-	    fInitialSelection = new StructuredSelection(el.getData());   
+		action = el.action;
+		actionParam = el.actionParam;
+		isDefaultMode = el.mode.equals(MultiLaunchConfigurationDelegate.DEFAULT_MODE);
+	    fInitialSelection = new StructuredSelection(el.data);   
 	    fSelection = fInitialSelection;
     }
 }

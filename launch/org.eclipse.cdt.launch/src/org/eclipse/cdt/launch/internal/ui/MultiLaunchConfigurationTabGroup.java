@@ -93,13 +93,13 @@ public class MultiLaunchConfigurationTabGroup extends AbstractLaunchConfiguratio
 				return null;
 			if (columnIndex == 0) {
 				MultiLaunchConfigurationDelegate.LaunchElement el = (MultiLaunchConfigurationDelegate.LaunchElement) element;
-				if (el.getData() == null) {
+				if (el.data == null) {
 					Image errorImage = PlatformUI.getWorkbench().getSharedImages().getImage(ISharedImages.IMG_OBJS_ERROR_TSK);
 					return errorImage;
 				}
 				
 				try {
-	                String key = el.getData().getType().getIdentifier();
+	                String key = el.data.getType().getIdentifier();
 	                return DebugPluginImages.getImage(key);
                 } catch (CoreException e) {
                 	Image errorImage = PlatformUI.getWorkbench().getSharedImages().getImage(ISharedImages.IMG_OBJS_ERROR_TSK);
@@ -117,26 +117,26 @@ public class MultiLaunchConfigurationTabGroup extends AbstractLaunchConfiguratio
 			// launch name
 			if (columnIndex == 0) {
 				try {
-					return (el.getData() != null) ? el.getData().getType().getName() + "::" + el.getName() : el.getName(); //$NON-NLS-1$
+					return (el.data != null) ? el.data.getType().getName() + "::" + el.name : el.name; //$NON-NLS-1$
 				} catch (CoreException e) {
-					return el.getName();
+					return el.name;
 				}
 			}
 
 			// launch mode 
 			if (columnIndex == 1)
-				return el.getMode();
+				return el.mode;
 			
 			// launch post action
 			if (columnIndex == 2) {
-				EPostLaunchAction action = el.getAction();
+				EPostLaunchAction action = el.action;
 				switch (action) {
 				case NONE:
 					return ""; //$NON-NLS-1$
 				case WAIT_FOR_TERMINATION:
 					return LaunchMessages.getString("MultiLaunchConfigurationDelegate.Action.WaitUntilTerminated"); //$NON-NLS-1$
 				case DELAY:
-					final Object actionParam = el.getActionParam();
+					final Object actionParam = el.actionParam;
 					return LaunchMessages.getFormattedString("MultiLaunchConfigurationTabGroup.13", //$NON-NLS-1$
 							actionParam instanceof Integer ? Integer.toString((Integer)actionParam) : "?"); //$NON-NLS-1$
 				default:
@@ -260,14 +260,15 @@ public class MultiLaunchConfigurationTabGroup extends AbstractLaunchConfiguratio
 						for (ILaunchConfiguration config : configs) {
 							MultiLaunchConfigurationDelegate.LaunchElement el = new MultiLaunchConfigurationDelegate.LaunchElement();
 							input.add(el);
-							el.setIndex(input.size() - 1);
-							el.setEnabled(true);
-							el.setName(config.getName());
-							el.setData(config);
-							el.setMode(dialog.getMode());
-							el.setAction(dialog.getAction(), dialog.getActionParam());
+							el.index = input.size() - 1;
+							el.enabled = true;
+							el.name = config.getName();
+							el.data = config;
+							el.mode = dialog.getMode();
+							el.action = dialog.getAction();
+							el.actionParam = dialog.getActionParam();
 							treeViewer.refresh(true);
-							treeViewer.setChecked(el, el.isEnabled());
+							treeViewer.setChecked(el, el.enabled);
 						}
 						updateWidgetEnablement();
 						updateLaunchConfigurationDialog();
@@ -290,17 +291,18 @@ public class MultiLaunchConfigurationTabGroup extends AbstractLaunchConfiguratio
 					MultiLaunchConfigurationDelegate.LaunchElement el = input.get(index);
 					MultiLaunchConfigurationSelectionDialog dialog = 
 						MultiLaunchConfigurationSelectionDialog.createDialog(
-								treeViewer.getControl().getShell(), el.getMode(), true);
+								treeViewer.getControl().getShell(), el.mode, true);
 					dialog.setInitialSelection(el);
 					if (dialog.open() == Dialog.OK) {
 						ILaunchConfiguration[] confs = dialog.getSelectedLaunchConfigurations();
 						if (confs.length < 0) 
 							return;
 						assert confs.length == 1 : "invocation of the dialog for editing an entry sholdn't allow OK to be hit if the user chooses multiple launch configs in the dialog"; //$NON-NLS-1$
-						el.setName(confs[0].getName());
-						el.setData(confs[0]);
-						el.setMode(dialog.getMode());
-						el.setAction(dialog.getAction(), dialog.getActionParam());
+						el.name = confs[0].getName();
+						el.data = confs[0];
+						el.mode = dialog.getMode();
+						el.action = dialog.getAction();
+						el.actionParam = dialog.getActionParam();
 						treeViewer.refresh(true);
 						updateWidgetEnablement();
 						updateLaunchConfigurationDialog();
@@ -405,7 +407,7 @@ public class MultiLaunchConfigurationTabGroup extends AbstractLaunchConfiguratio
 			
 			treeViewer.addCheckStateListener(new ICheckStateListener(){
 				public void checkStateChanged(CheckStateChangedEvent event) {
-					((LaunchElement)event.getElement()).setEnabled(event.getChecked());
+					((LaunchElement)event.getElement()).enabled = event.getChecked();
 					updateLaunchConfigurationDialog();
 				}
 			});
@@ -424,7 +426,7 @@ public class MultiLaunchConfigurationTabGroup extends AbstractLaunchConfiguratio
 			if (treeViewer != null) {
 				for (Iterator<LaunchElement> iterator = input.iterator(); iterator.hasNext();) {
 					MultiLaunchConfigurationDelegate.LaunchElement el = iterator.next();
-					treeViewer.setChecked(el, el.isEnabled());
+					treeViewer.setChecked(el, el.enabled);
 				}
 				treeViewer.refresh(true);
 			}

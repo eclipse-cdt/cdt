@@ -170,7 +170,9 @@ public class DiscoveryOptionsBlock extends AbstractDiscoveryOptionsBlock {
         ((GridData)scEnabledButton.getLayoutData()).horizontalSpan = numColumns;
         ((GridData)scEnabledButton.getLayoutData()).grabExcessHorizontalSpace = true;
         // VMIR* old projects will have discovery disabled by default
-        scEnabledButton.setSelection(needsSCNature ? false : getBuildInfo().isAutoDiscoveryEnabled());
+        scEnabledButton.setSelection(needsSCNature ? false
+                : (getBuildInfo().isAutoDiscoveryEnabled()
+                    && !getBuildInfo().getSelectedProfileId().equals(ScannerConfigProfileManager.NULL_PROFILE_ID)));
         scEnabledButton.addSelectionListener(new SelectionAdapter() {
             public void widgetSelected(SelectionEvent e) {
                 enableAllControls();
@@ -246,9 +248,12 @@ public class DiscoveryOptionsBlock extends AbstractDiscoveryOptionsBlock {
      * @see org.eclipse.cdt.make.ui.dialogs.AbstractDiscoveryOptionsBlock#getCurrentProfileId()
      */
     protected String getCurrentProfileId() {
-        String selectedProfileName = profileComboBox.getItem(profileComboBox.getSelectionIndex());
-        String selectedProfileId = getDiscoveryProfileId(selectedProfileName);
-        return selectedProfileId;
+        int pos = profileComboBox.getSelectionIndex();
+        if (pos >= 0) {
+            String selectedProfileName = profileComboBox.getItem(pos);
+            return getDiscoveryProfileId(selectedProfileName);
+        }
+        return null;
     }
 
     /* (non-Javadoc)
@@ -369,7 +374,7 @@ public class DiscoveryOptionsBlock extends AbstractDiscoveryOptionsBlock {
 
     private void restoreFromBuildinfo(IScannerConfigBuilderInfo2 buildInfo) {
         if (buildInfo != null) {
-            scEnabledButton.setSelection(buildInfo.isAutoDiscoveryEnabled());
+            scEnabledButton.setSelection(buildInfo.isAutoDiscoveryEnabled() && !buildInfo.getSelectedProfileId().equals(ScannerConfigProfileManager.NULL_PROFILE_ID));
             String profileId = buildInfo.getSelectedProfileId();
             profileComboBox.setText(getDiscoveryProfileName(profileId));
             scProblemReportingEnabledButton.setSelection(buildInfo.isProblemReportingEnabled());

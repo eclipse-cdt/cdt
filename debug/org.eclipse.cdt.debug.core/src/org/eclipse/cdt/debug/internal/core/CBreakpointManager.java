@@ -486,25 +486,46 @@ public class CBreakpointManager implements IBreakpointsListener, IBreakpointMana
 
 	private void doHandleEventBreakpointCreatedEvent(ICDIEventBreakpoint cdiEventBkpt) {
 		ICBreakpoint breakpoint = null;
-		synchronized( getBreakpointMap() ) {
-			breakpoint = getBreakpointMap().getCBreakpoint( cdiEventBkpt );
-			if ( breakpoint == null ) {
-				try {
-					breakpoint = createEventBreakpoint( cdiEventBkpt );
-				}
-				catch( CDIException e ) {
-				}
-				catch( CoreException e ) {
-				}
+		ICBreakpoint newBreakpoint = null;
+		boolean createNewCBkpt = false;
+		final BreakpointMap bkptMap = getBreakpointMap();
+
+		synchronized( bkptMap ) {
+			createNewCBkpt = (bkptMap.getCBreakpoint( cdiEventBkpt ) == null);
+		}
+		
+		// This has to be done outside the breakpoint map lock, or a deadlock
+		// can occur (according to rev 1.71). Not certain we'll use this new CDT
+		// breakpoint; we need to check the map again.
+		if (createNewCBkpt) {
+			try {
+				newBreakpoint = createEventBreakpoint( cdiEventBkpt );
 			}
-			if ( breakpoint != null )
-				getBreakpointMap().put( breakpoint, cdiEventBkpt );
+			catch( CDIException e ) {}
+			catch( CoreException e ) {}
+		}
+
+		synchronized( bkptMap ) {
+			breakpoint = bkptMap.getCBreakpoint( cdiEventBkpt );
+			if ( breakpoint == null ) {
+				breakpoint = newBreakpoint;
+			}
+			
+			if ( breakpoint != null ) {
+				// filter must be set up prior to adding the breakpoint to the
+				// map to avoid a race condition in breakpointsChanged for the
+				// "registered && !inProgress && !install" condition
+				try {
+			    	getFilterExtension(breakpoint).setTargetFilter( getDebugTarget() );
+				}
+				catch( CoreException e ) {}
+				
+				bkptMap.put( breakpoint, cdiEventBkpt );
+			}
 		}
 
 		if ( breakpoint != null ) {
 			try {
-			    ICBreakpointFilterExtension filterExtension = getFilterExtension(breakpoint);
-			    if (filterExtension!=null) filterExtension.setTargetFilter( getDebugTarget() );
 				((CBreakpoint)breakpoint).register( true );
 			}
 			catch( CoreException e ) {
@@ -519,36 +540,42 @@ public class CBreakpointManager implements IBreakpointsListener, IBreakpointMana
 		if ( isTemporary(cdiBreakpoint) )
 			return;
 		ICBreakpoint breakpoint = null;
-		synchronized( getBreakpointMap() ) {
-			breakpoint = getBreakpointMap().getCBreakpoint( cdiBreakpoint );
+		ICBreakpoint newBreakpoint = null;
+		final BreakpointMap bkptMap = getBreakpointMap();
+		boolean createNewCBkpt = false;
+		synchronized( bkptMap ) {
+			createNewCBkpt = (bkptMap.getCBreakpoint( cdiBreakpoint ) == null);
 		}
-		if ( breakpoint == null ) {
-			breakpoint = createLocationBreakpoint( cdiBreakpoint );
+		
+		// This has to be done outside the breakpoint map lock, or a deadlock
+		// can occur (according to rev 1.71). Not certain we'll use this new CDT
+		// breakpoint; we need to check the map again.
+		if ( createNewCBkpt ) {
+			newBreakpoint = createLocationBreakpoint( cdiBreakpoint );
 		}
-		if ( breakpoint != null ) {
-			synchronized( getBreakpointMap() ) {
-				getBreakpointMap().put( breakpoint, cdiBreakpoint );
+		
+		synchronized( bkptMap ) {
+			breakpoint = bkptMap.getCBreakpoint( cdiBreakpoint );
+			if ( breakpoint == null ) {
+				breakpoint = newBreakpoint;
+			}
+
+			if ( breakpoint != null ) {
+				// filter must be set up prior to adding the breakpoint to the
+				// map to avoid a race condition in breakpointsChanged for the
+				// "registered && !inProgress && !install" condition
+				try {
+					getFilterExtension(breakpoint).setTargetFilter( getDebugTarget() );
+				}
+				catch( CoreException e ) {}
+				
+				bkptMap.put( breakpoint, cdiBreakpoint );
 			}
 		}
-
+		
 		if ( breakpoint != null ) {
-//			try {
-//				if ( breakpoint instanceof ICLineBreakpoint ) {
-//					ICDILocator locator = cdiBreakpoint.getLocator();
-//					if ( locator != null ) {
-//						IAddress address = getDebugTarget().getAddressFactory().createAddress( locator.getAddress() );
-//						if ( address != null ) {
-//							((ICLineBreakpoint)breakpoint).setAddress( address.toHexAddressString() );				
-//						}
-//					}
-//				}
-//			}
-//			catch( CoreException e1 ) {
-//			}
-			
 			try {
 				BreakpointProblems.removeProblemsForResolvedBreakpoint(breakpoint, getDebugTarget().getInternalID());
-				getFilterExtension(breakpoint).setTargetFilter( getDebugTarget() );
 				((CBreakpoint)breakpoint).register( true );
 			}
 			catch( CoreException e ) {
@@ -560,24 +587,46 @@ public class CBreakpointManager implements IBreakpointsListener, IBreakpointMana
 
 	private void doHandleWatchpointCreatedEvent( ICDIWatchpoint cdiWatchpoint ) {
 		ICBreakpoint breakpoint = null;
-		synchronized( getBreakpointMap() ) {
-			breakpoint = getBreakpointMap().getCBreakpoint( cdiWatchpoint );
-			if ( breakpoint == null ) {
-				try {
-					breakpoint = createWatchpoint( cdiWatchpoint );
-				}
-				catch( CDIException e ) {
-				}
-				catch( CoreException e ) {
-				}
+		ICBreakpoint newBreakpoint = null;
+		boolean createNewCBkpt = false;
+		final BreakpointMap bkptMap = getBreakpointMap();
+		
+		synchronized( bkptMap ) {
+			createNewCBkpt = (bkptMap.getCBreakpoint( cdiWatchpoint ) == null);
+		}
+		
+		// This has to be done outside the breakpoint map lock, or a deadlock
+		// can occur (according to rev 1.71). Not certain we'll use this new CDT
+		// breakpoint; we need to check the map again.
+		if (createNewCBkpt) {
+			try {
+				newBreakpoint = createWatchpoint( cdiWatchpoint );
 			}
-			if ( breakpoint != null )
-				getBreakpointMap().put( breakpoint, cdiWatchpoint );
+			catch( CDIException e ) {}
+			catch( CoreException e ) {}
+		}
+		
+		synchronized( bkptMap ) {
+			breakpoint = bkptMap.getCBreakpoint( cdiWatchpoint );
+			if ( breakpoint == null ) {
+				breakpoint = newBreakpoint;
+			}
+			
+			if ( breakpoint != null ) {
+				// filter must be set up prior to adding the breakpoint to the
+				// map to avoid a race condition in breakpointsChanged for the
+				// "registered && !inProgress && !install" condition
+				try {
+				    getFilterExtension(breakpoint).setTargetFilter( getDebugTarget() );
+				}
+				catch( CoreException e ) {}
+
+				bkptMap.put( breakpoint, cdiWatchpoint );
+			}
 		}
 
 		if ( breakpoint != null ) {
 			try {
-			    getFilterExtension(breakpoint).setTargetFilter( getDebugTarget() );
 				((CBreakpoint)breakpoint).register( true );
 			}
 			catch( CoreException e ) {

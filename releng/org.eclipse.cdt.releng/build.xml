@@ -142,7 +142,7 @@
 		<unzip src="${mylynDist}" dest="${testDirectory}/eclipse"/>
 		<unzip src="${zipsdir}/cdt-master-${branchVersion}-${buildId}.zip"
 			dest="${testDirectory}/eclipse"/>
-		<unzip src="${testDirectory}/eclipse/plugins/org.eclipse.cdt.testing_${branchVersion}.${timestamp}.jar"
+		<unzip src="${testDirectory}/eclipse/plugins/org.eclipse.cdt.testing_5.0.2.${timestamp}.jar"
 			dest="${testDirectory}/test/cdt"/>
 		<unzip src="${testDirectory}/eclipse/plugins/${eclipseTest}.jar"
 			dest="${testDirectory}/test/eclipse"/>		

@@ -523,6 +523,13 @@ public class CBreakpointManager implements IBreakpointsListener, IBreakpointMana
 				bkptMap.put( breakpoint, cdiEventBkpt );
 			}
 		}
+		
+		// Delete the new CDT breakpoint if we didn't end up using it
+		if (newBreakpoint != null && newBreakpoint != breakpoint) {
+			try {
+				newBreakpoint.delete();
+			} catch (CoreException e) {}
+		}
 
 		if ( breakpoint != null ) {
 			try {
@@ -571,6 +578,13 @@ public class CBreakpointManager implements IBreakpointsListener, IBreakpointMana
 				
 				bkptMap.put( breakpoint, cdiBreakpoint );
 			}
+		}
+
+		// Delete the new CDT breakpoint if we didn't end up using it
+		if (newBreakpoint != null && newBreakpoint != breakpoint) {
+			try {
+				newBreakpoint.delete();
+			} catch (CoreException e) {}
 		}
 		
 		if ( breakpoint != null ) {
@@ -624,6 +638,14 @@ public class CBreakpointManager implements IBreakpointsListener, IBreakpointMana
 				bkptMap.put( breakpoint, cdiWatchpoint );
 			}
 		}
+		
+		// Delete the new CDT breakpoint if we didn't end up using it
+		if (newBreakpoint != null && newBreakpoint != breakpoint) {
+			try {
+				newBreakpoint.delete();
+			} catch (CoreException e) {}
+		}
+		
 
 		if ( breakpoint != null ) {
 			try {

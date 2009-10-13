@@ -34,6 +34,7 @@ import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.resources.ResourcesPlugin;
+import org.eclipse.core.resources.WorkspaceJob;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -41,7 +42,6 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.MultiStatus;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Status;
-import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.core.runtime.jobs.MultiRule;
 import org.eclipse.osgi.util.NLS;
 
@@ -138,9 +138,9 @@ public class TodoTaskUpdater implements ITodoTaskUpdater {
 		
 		// run this in a job in order not to block the indexer (bug 210730).
 		if (!pathToTaskList.isEmpty()) {
-			Job job= new Job(Messages.TodoTaskUpdater_UpdateJob) {
+			WorkspaceJob job= new WorkspaceJob(Messages.TodoTaskUpdater_UpdateJob) {
 				@Override
-				protected IStatus run(IProgressMonitor monitor) {
+				public IStatus runInWorkspace(IProgressMonitor monitor) throws CoreException {
 					MultiStatus status= new MultiStatus(CCorePlugin.PLUGIN_ID, 0,
 							Messages.TodoTaskUpdater_UpdateJob, null);
 
@@ -203,9 +203,9 @@ public class TodoTaskUpdater implements ITodoTaskUpdater {
 		}
 		
 		// run this in a job in order not to block the indexer (bug 210730).
-		Job job= new Job(Messages.TodoTaskUpdater_DeleteJob) {
+		WorkspaceJob job= new WorkspaceJob(Messages.TodoTaskUpdater_DeleteJob) {
 			@Override
-			protected IStatus run(IProgressMonitor monitor) {
+			public IStatus runInWorkspace(IProgressMonitor monitor) throws CoreException {
 				try {
 					if (!resource.exists()) {
 						return Status.CANCEL_STATUS;

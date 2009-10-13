@@ -76,7 +76,7 @@ public abstract class AbstractMIControl extends AbstractDsfService
     
     // MI did not always support the --thread/--frame options
     // This boolean is used to know if we should use -thread-select and -stack-select-frame instead
-    private boolean fUseThreadAndFrameOptions;
+    private final boolean fUseThreadAndFrameOptions;
     // currentStackLevel and currentThreadId are only necessary when
     // we must use -thread-select and -stack-select-frame
     private int fCurrentStackLevel  = -1;
@@ -139,14 +139,14 @@ public abstract class AbstractMIControl extends AbstractDsfService
      * to disable tracing.
      * @since 2.0
      */
-    protected void setMITracingStream(OutputStream tracingStream) {
+    protected synchronized void setMITracingStream(OutputStream tracingStream) {
     	fTracingStream = tracingStream;
     }
 
     /**
      * Returns the MI tracing stream.
      */
-    private OutputStream getMITracingStream() {
+    private synchronized OutputStream getMITracingStream() {
     	return fTracingStream;
     }
     
@@ -550,26 +550,22 @@ public abstract class AbstractMIControl extends AbstractDsfService
                         fOutputStream.flush();
 
                         GdbPlugin.debug(GdbPlugin.getDebugTime() + " " + str); //$NON-NLS-1$
-                        getExecutor().execute(new DsfRunnable() {
-                        	public void run() {
-                        		if (getMITracingStream() != null) {
-                        			try {
-                                		String message = GdbPlugin.getDebugTime() + " " + str; //$NON-NLS-1$
-                            			while (message.length() > 100) {
-                            				String partial = message.substring(0, 100) + "\\\n"; //$NON-NLS-1$
-                            				message = message.substring(100);
-                                    		getMITracingStream().write(partial.getBytes());
-                            			}
-                            			getMITracingStream().write(message.getBytes());
-                        			} catch (IOException e) {
-                        				// The tracing stream could be closed at any time
-                        				// since the user can set a preference to turn off
-                        				// this tracing.
-                        				setMITracingStream(null);
-                        			}
+                        if (getMITracingStream() != null) {
+                        	try {
+                        		String message = GdbPlugin.getDebugTime() + " " + str; //$NON-NLS-1$
+                        		while (message.length() > 100) {
+                        			String partial = message.substring(0, 100) + "\\\n"; //$NON-NLS-1$
+                        			message = message.substring(100);
+                        			getMITracingStream().write(partial.getBytes());
                         		}
+                        		getMITracingStream().write(message.getBytes());
+                        	} catch (IOException e) {
+                        		// The tracing stream could be closed at any time
+                        		// since the user can set a preference to turn off
+                        		// this tracing.
+                        		setMITracingStream(null);
                         	}
-                        });
+                        }
                     }
                 } catch (IOException e) {
                     // Shutdown thread in case of IO error.
@@ -603,29 +599,24 @@ public abstract class AbstractMIControl extends AbstractDsfService
                     if (line.length() != 0) {
                         GdbPlugin.debug(GdbPlugin.getDebugTime() + " " + line +"\n"); //$NON-NLS-1$ //$NON-NLS-2$
                         
-                        final String finalLine = line;
-                        getExecutor().execute(new DsfRunnable() {
-                        	public void run() {
-                                if (getMITracingStream() != null) {
-                                	try {
-                                		String message = GdbPlugin.getDebugTime() + " " + finalLine + "\n"; //$NON-NLS-1$ //$NON-NLS-2$
-                            			while (message.length() > 100) {
-                            				String partial = message.substring(0, 100) + "\\\n"; //$NON-NLS-1$
-                            				message = message.substring(100);
-                                    		getMITracingStream().write(partial.getBytes());
-                            			}
-                            			getMITracingStream().write(message.getBytes());
-                                	} catch (IOException e) {
-                                		// The tracing stream could be closed at any time
-                                		// since the user can set a preference to turn off
-                                		// this tracing.
-                                		setMITracingStream(null);
-                                	}
-                                }
+                        if (getMITracingStream() != null) {
+                        	try {
+                        		String message = GdbPlugin.getDebugTime() + " " + line + "\n"; //$NON-NLS-1$ //$NON-NLS-2$
+                        		while (message.length() > 100) {
+                        			String partial = message.substring(0, 100) + "\\\n"; //$NON-NLS-1$
+                        			message = message.substring(100);
+                        			getMITracingStream().write(partial.getBytes());
+                        		}
+                        		getMITracingStream().write(message.getBytes());
+                        	} catch (IOException e) {
+                        		// The tracing stream could be closed at any time
+                        		// since the user can set a preference to turn off
+                        		// this tracing.
+                        		setMITracingStream(null);
                         	}
-                        });
-                        
-                    	processMIOutput(line);
+                        }
+
+                        processMIOutput(line);
                     }
                 }
             } catch (IOException e) {

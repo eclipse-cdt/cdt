@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<component id="org.eclipse.cdt.core" version="2">
+    <resource path="src/org/eclipse/cdt/core/IFilesystemUtility.java" type="org.eclipse.cdt.core.IFilesystemUtility">
+        <filter id="1109393411">
+            <message_arguments>
+                <message_argument value="5.0.3"/>
+                <message_argument value="org.eclipse.cdt.core.IFilesystemUtility"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="utils/org/eclipse/cdt/utils/FileSystemUtilityManager.java" type="org.eclipse.cdt.utils.FileSystemUtilityManager">
+        <filter id="1109393411">
+            <message_arguments>
+                <message_argument value="5.0.3"/>
+                <message_argument value="org.eclipse.cdt.utils.FileSystemUtilityManager"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="META-INF/MANIFEST.MF">
+        <filter id="924844039">
+            <message_arguments>
+                <message_argument value="5.0.3.qualifier"/>
+                <message_argument value="5.0.0.200806171202"/>
+            </message_arguments>
+        </filter>
+    </resource>
+</component>

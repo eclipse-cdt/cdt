@@ -7,6 +7,7 @@
  *
  * Contributors:
  *    Markus Schorn - initial API and implementation
+ *    IBM Corporation
  *******************************************************************************/ 
 package org.eclipse.cdt.internal.core.pdom;
 
@@ -46,6 +47,7 @@ import org.eclipse.cdt.internal.core.index.IIndexFragmentFile;
 import org.eclipse.cdt.internal.core.index.IWritableIndex;
 import org.eclipse.cdt.internal.core.index.IndexBasedCodeReaderFactory;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMNotImplementedError;
+import org.eclipse.cdt.utils.FileSystemUtilityManager;
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
@@ -770,7 +772,7 @@ public abstract class AbstractIndexerTask extends PDOMWriter {
 			return path;
 		}
 		URI uri= ifl.getURI();
-		return new Path(uri.getPath());
+		return new Path(FileSystemUtilityManager.getDefault().getPathFromURI(uri));
 	}
 
 	private void swallowError(IPath file, Throwable e) throws CoreException {

@@ -13,12 +13,10 @@
 package org.eclipse.cdt.debug.internal.core.model;
 
 import java.io.File;
-import com.ibm.icu.text.MessageFormat;
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.Iterator;
+import java.util.LinkedHashSet;
 import java.util.List;
-import java.util.Set;
 import java.util.StringTokenizer;
 
 import org.eclipse.cdt.core.CCorePlugin;
@@ -89,10 +87,10 @@ import org.eclipse.cdt.debug.core.model.IRegisterDescriptor;
 import org.eclipse.cdt.debug.core.sourcelookup.ICSourceLocator;
 import org.eclipse.cdt.debug.core.sourcelookup.ISourceLookupChangeListener;
 import org.eclipse.cdt.debug.internal.core.CBreakpointManager;
-import org.eclipse.cdt.debug.internal.core.CSettingsManager;
 import org.eclipse.cdt.debug.internal.core.CGlobalVariableManager;
 import org.eclipse.cdt.debug.internal.core.CMemoryBlockRetrievalExtension;
 import org.eclipse.cdt.debug.internal.core.CRegisterManager;
+import org.eclipse.cdt.debug.internal.core.CSettingsManager;
 import org.eclipse.cdt.debug.internal.core.CSignalManager;
 import org.eclipse.cdt.debug.internal.core.ICDebugInternalConstants;
 import org.eclipse.cdt.debug.internal.core.sourcelookup.CSourceLookupParticipant;
@@ -135,6 +133,8 @@ import org.eclipse.debug.core.sourcelookup.ISourceLookupParticipant;
 import org.eclipse.debug.core.sourcelookup.containers.DirectorySourceContainer;
 import org.eclipse.debug.core.sourcelookup.containers.FolderSourceContainer;
 import org.eclipse.debug.core.sourcelookup.containers.ProjectSourceContainer;
+
+import com.ibm.icu.text.MessageFormat;
 
 /**
  * Debug target for C/C++ debug model.
@@ -1813,8 +1813,11 @@ public class CDebugTarget extends CDebugElement implements ICDebugTarget, ICDIEv
 	}
 
 	private void setSourceLookupPath( ISourceContainer[] containers ) {
-		ArrayList<String> list = new ArrayList<String>( containers.length );
-		getSourceLookupPath( list, containers, new HashSet<ISourceContainer>(containers.length) );
+		// LinkedHashSet allows quick lookup and deterministic ordering. We need
+		// the former to efficiently prevent infinite recursion
+		LinkedHashSet<String> list = new LinkedHashSet<String>( containers.length );
+		
+		getSourceLookupPath( list, containers );
 		try {
 			final ICDITarget cdiTarget = getCDITarget();
 			if (cdiTarget != null) {
@@ -1826,39 +1829,41 @@ public class CDebugTarget extends CDebugElement implements ICDebugTarget, ICDIEv
 		}
 	}
 
-	private void getSourceLookupPath( List<String> list, ISourceContainer[] containers, Set<ISourceContainer> alreadyProcessed ) {
+	private void getSourceLookupPath( LinkedHashSet<String> list, ISourceContainer[] containers) {
 		for ( ISourceContainer container : containers ) {
+			String pathToAdd = null;
 			
-			// Not sure that this addresses the problem behind 291912 but it's
-			// easy enough to bullet proof the logic to prevent infinite
-			// recursion when a source-container instance appears twice in the
-			// hierarchy
-			if (alreadyProcessed.contains(container)) {
-				continue;	
-			}
-			else {
-				alreadyProcessed.add(container);
-			}
 			if ( container instanceof ProjectSourceContainer ) {
 				IProject project = ((ProjectSourceContainer)container).getProject();
 				if ( project != null && project.exists() )
-					list.add( project.getLocation().toPortableString() );
+					pathToAdd = project.getLocation().toPortableString();
 			}
 			if ( container instanceof FolderSourceContainer ) {
 				IContainer folderContainer = ((FolderSourceContainer)container).getContainer();
-				if ( folderContainer != null && folderContainer.exists() )
-					list.add( folderContainer.getLocation().toPortableString() );
+				if ( folderContainer != null && folderContainer.exists() ) {
+					pathToAdd = folderContainer.getLocation().toPortableString();
+				}
 			}
 			if ( container instanceof DirectorySourceContainer ) {
 				File dir = ((DirectorySourceContainer)container).getDirectory();
 				if ( dir != null && dir.exists() ) {
 					IPath path = new Path( dir.getAbsolutePath() );
-					list.add( path.toPortableString() );
+					pathToAdd = path.toPortableString();
 				}
 			}
+
+			if ( pathToAdd != null ) {
+				// 291912. Avoid infinite recursion
+				if ( list.contains(pathToAdd) ) {
+					continue;	
+				}
+				
+				list.add( pathToAdd );
+			}
+			
 			if ( container.isComposite() ) {
 				try {
-					getSourceLookupPath( list, container.getSourceContainers(), alreadyProcessed );
+					getSourceLookupPath( list, container.getSourceContainers() );
 				}
 				catch( CoreException e ) {
 					CDebugCorePlugin.log( e.getStatus() );

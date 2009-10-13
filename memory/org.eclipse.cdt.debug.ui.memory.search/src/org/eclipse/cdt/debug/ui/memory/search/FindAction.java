@@ -13,10 +13,9 @@ package org.eclipse.cdt.debug.ui.memory.search;
 
 import java.util.Properties;
 
+import org.eclipse.cdt.debug.ui.CDebugUIPlugin;
 import org.eclipse.debug.core.model.IMemoryBlock;
 import org.eclipse.debug.core.model.IMemoryBlockExtension;
-import org.eclipse.debug.internal.ui.DebugUIPlugin;
-import org.eclipse.debug.internal.ui.views.memory.MemoryView;
 import org.eclipse.debug.ui.memory.IMemoryRendering;
 import org.eclipse.debug.ui.memory.IMemoryRenderingSite;
 import org.eclipse.jface.action.IAction;
@@ -61,7 +60,7 @@ public class FindAction implements IViewActionDelegate {
 				memBlock = (IMemoryBlock) obj;
 			}
 			
-			Shell shell = DebugUIPlugin.getShell();
+			Shell shell = CDebugUIPlugin.getActiveWorkbenchShell();
 			FindReplaceDialog dialog = new FindReplaceDialog(shell, (IMemoryBlockExtension) memBlock, 
 				fView, (Properties) fSearchDialogProperties);
 			if(action.getText().equalsIgnoreCase("Find Next"))
@@ -75,7 +74,8 @@ public class FindAction implements IViewActionDelegate {
 			else
 			{
 				dialog.open();
-				
+
+				// TODO: finish feature?
 				Object results[] = dialog.getResult();
 			}
 		}

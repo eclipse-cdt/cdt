@@ -11,6 +11,8 @@
 package org.eclipse.cdt.debug.internal.core.model; 
 
 import java.math.BigInteger;
+import java.util.HashMap;
+import java.util.Map;
 
 import org.eclipse.cdt.core.IAddress;
 import org.eclipse.cdt.core.IAddressFactory;
@@ -36,9 +38,10 @@ public class CIndexedValue extends AbstractCValue implements IIndexedValue {
 	private ICDIArrayValue fCDIValue;
 
 	/**
-	 * List of child variables.
+	 * Child variables. Only the variables from loaded partitions will be held.
+	 * Use map instead of a java array to scale for large number of children. 
 	 */
-	private IVariable[] fVariables;
+	private Map<Integer, IVariable> fVariables;
 
 	/**
 	 * The index of the first variable contained in this value.
@@ -60,7 +63,7 @@ public class CIndexedValue extends AbstractCValue implements IIndexedValue {
 	 */
 	public CIndexedValue( AbstractCVariable parent, ICDIArrayValue cdiValue, int offset, int size ) {
 		super( parent );
-		fVariables = new IVariable[ size ];
+		fVariables = new HashMap<Integer, IVariable>(getPreferredPartitionSize());
 		fCDIValue = cdiValue;
 		fOffset = offset;
 		fSize = size;
@@ -70,10 +73,8 @@ public class CIndexedValue extends AbstractCValue implements IIndexedValue {
 	 * @see org.eclipse.cdt.debug.internal.core.model.AbstractCValue#setChanged(boolean)
 	 */
 	protected void setChanged( boolean changed ) {
-		for ( int i = 0; i < fVariables.length; ++i ) {
-			if ( fVariables[i] != null ) {
-				((AbstractCVariable)fVariables[i]).setChanged( changed );
-			}
+		for (IVariable var : fVariables.values()) {
+			((AbstractCVariable)var).setChanged( changed );
 		}
 	}
 
@@ -81,10 +82,8 @@ public class CIndexedValue extends AbstractCValue implements IIndexedValue {
 	 * @see org.eclipse.cdt.debug.internal.core.model.AbstractCValue#dispose()
 	 */
 	public void dispose() {
-		for ( int i = 0; i < fVariables.length; ++i ) {
-			if ( fVariables[i] != null ) {
-				((AbstractCVariable)fVariables[i]).dispose();
-			}
+		for (IVariable var : fVariables.values()) {
+			((AbstractCVariable)var).dispose();
 		}
 	}
 
@@ -92,10 +91,8 @@ public class CIndexedValue extends AbstractCValue implements IIndexedValue {
 	 * @see org.eclipse.cdt.debug.internal.core.model.AbstractCValue#reset()
 	 */
 	protected void reset() {
-		for ( int i = 0; i < fVariables.length; ++i ) {
-			if ( fVariables[i] != null ) {
-				((AbstractCVariable)fVariables[i]).resetValue();
-			}
+		for (IVariable var : fVariables.values()) {
+			((AbstractCVariable)var).resetValue();
 		}
 	}
 
@@ -104,10 +101,8 @@ public class CIndexedValue extends AbstractCValue implements IIndexedValue {
 	 */
 	protected void preserve() {
 		resetStatus();
-		for ( int i = 0; i < fVariables.length; ++i ) {
-			if ( fVariables[i] != null ) {
-				((AbstractCVariable)fVariables[i]).preserve();
-			}
+		for (IVariable var : fVariables.values()) {
+			((AbstractCVariable)var).preserve();
 		}
 	}
 
@@ -262,12 +257,14 @@ public class CIndexedValue extends AbstractCValue implements IIndexedValue {
 				}
 			}
 		}
-		System.arraycopy( fVariables, offset, result, 0, length );
+		for (int i = 0; i < length; i++) {
+			result[i] = fVariables.get( offset + i );
+		}
 		return result;
 	}
 
 	private boolean isPartitionLoaded( int index ) {
-		return fVariables[index * getPreferredPartitionSize()] != null;
+		return fVariables.containsKey(index * getPreferredPartitionSize());
 	}
 
 	private void loadPartition( int index ) throws DebugException {
@@ -281,7 +278,7 @@ public class CIndexedValue extends AbstractCValue implements IIndexedValue {
 			requestFailed( e.getMessage(), null );
 		}
 		for( int i = 0; i < cdiVars.length; ++i )
-			fVariables[i + index * prefSize] = CVariableFactory.createLocalVariable( this, cdiVars[i] );
+			fVariables.put(i + index * prefSize, CVariableFactory.createLocalVariable( this, cdiVars[i] ));
 	}
 
 	private int getSize0() {

@@ -426,7 +426,7 @@ public class FindReplaceDialog extends SelectionDialog
 	
 	private String[] removeNullElements(String strings[])
 	{
-		Vector nonNullStrings = new Vector<String>();
+		Vector<String> nonNullStrings = new Vector<String>();
 		for(String string : strings)
 			if(string != null)
 				nonNullStrings.addElement(string);

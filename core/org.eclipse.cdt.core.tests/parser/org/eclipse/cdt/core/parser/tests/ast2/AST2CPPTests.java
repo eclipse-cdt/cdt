@@ -7349,6 +7349,22 @@ public class AST2CPPTests extends AST2BaseTest {
 		IASTImplicitNameOwner expr= (IASTImplicitNameOwner) rstmt.getReturnValue();
 		assertEquals(0, expr.getImplicitNames().length);
 	}
+	
+	//	class Test {
+	//	   template <int T> void t() {}
+	//	   inline void t();
+	//	};
+	//
+	//	inline void Test::t() {
+	//	   t<1>();
+	//	}
+	public void testMethodTemplateWithSameName_292051() throws Exception {
+		final String code = getAboveComment();
+		parseAndCheckBindings(code, ParserLanguage.CPP);
+		BindingAssertionHelper bh= new BindingAssertionHelper(code, true);
+		ICPPMethod m= bh.assertNonProblem("t<1>", 1);
+		assertTrue(m.isInline());
+	}
 
 }
 

@@ -32,6 +32,7 @@ import org.eclipse.jface.viewers.BaseLabelProvider;
 import org.eclipse.jface.viewers.CheckStateChangedEvent;
 import org.eclipse.jface.viewers.CheckboxTreeViewer;
 import org.eclipse.jface.viewers.ICheckStateListener;
+import org.eclipse.jface.viewers.ICheckStateProvider;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.IStructuredContentProvider;
 import org.eclipse.jface.viewers.ITableLabelProvider;
@@ -147,6 +148,26 @@ public class MultiLaunchConfigurationTabGroup extends AbstractLaunchConfiguratio
 			return null;
 		}
 	}
+	
+	static class CheckStateProvider implements ICheckStateProvider {
+
+		/* (non-Javadoc)
+		 * @see org.eclipse.jface.viewers.ICheckStateProvider#isChecked(java.lang.Object)
+		 */
+		public boolean isChecked(Object element) {
+			if (element instanceof LaunchElement) {
+				return ((LaunchElement)element).enabled;
+			}
+			return false;
+		}
+
+		/* (non-Javadoc)
+		 * @see org.eclipse.jface.viewers.ICheckStateProvider#isGrayed(java.lang.Object)
+		 */
+		public boolean isGrayed(Object element) {
+			return false;
+		}
+	}
 	static abstract class ButtonComposite extends Composite implements SelectionListener {
 		Button upButton;
 		Button downButton;
@@ -235,6 +256,7 @@ public class MultiLaunchConfigurationTabGroup extends AbstractLaunchConfiguratio
 			table.setFont(parent.getFont());
 			treeViewer.setContentProvider(new ContentProvider());
 			treeViewer.setLabelProvider(new LabelProvider());
+			treeViewer.setCheckStateProvider(new CheckStateProvider());
 			table.setHeaderVisible(true);
 			table.setLayoutData(new GridData(GridData.FILL_BOTH));
 			TreeColumn col1 = new TreeColumn(table, SWT.NONE);
@@ -424,10 +446,6 @@ public class MultiLaunchConfigurationTabGroup extends AbstractLaunchConfiguratio
 		public void initializeFrom(ILaunchConfiguration configuration) {
 			MultiLaunchConfigurationDelegate.createLaunchElements(configuration, input);
 			if (treeViewer != null) {
-				for (Iterator<LaunchElement> iterator = input.iterator(); iterator.hasNext();) {
-					MultiLaunchConfigurationDelegate.LaunchElement el = iterator.next();
-					treeViewer.setChecked(el, el.enabled);
-				}
 				treeViewer.refresh(true);
 			}
 		}

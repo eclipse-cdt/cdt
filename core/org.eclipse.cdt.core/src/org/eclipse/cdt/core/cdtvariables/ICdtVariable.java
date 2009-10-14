@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2007 Intel Corporation and others.
+ * Copyright (c) 2005, 2009 Intel Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -12,11 +12,10 @@ package org.eclipse.cdt.core.cdtvariables;
 
 
 /**
- * this interface represents the given build macro
+ * This interface represents the given build macro
+ * Clients may implement or extend this interface.
+
  * @since 3.0
- * 
- * @noextend This interface is not intended to be extended by clients.
- * @noimplement This interface is not intended to be implemented by clients.
  */
 public interface ICdtVariable{
 	/**

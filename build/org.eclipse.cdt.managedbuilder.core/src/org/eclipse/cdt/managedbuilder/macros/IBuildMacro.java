@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2007 Intel Corporation and others.
+ * Copyright (c) 2005, 2009 Intel Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,24 +10,25 @@
  *******************************************************************************/
 package org.eclipse.cdt.managedbuilder.macros;
 
-import org.eclipse.cdt.core.cdtvariables.CdtVariableException;
 import org.eclipse.cdt.core.cdtvariables.ICdtVariable;
 
 
 /**
- * this interface represents the given build macro
+ * This interface represents the given build macro
+ * Clients may implement or extend this interface.
+ * 
  * @since 3.0
  */
 public interface IBuildMacro extends ICdtVariable{
 	int getMacroValueType();
 	
     /**
-     * @throws CdtVariableException if macro holds StringList-type value
+     * @throws BuildMacroException if macro holds StringList-type value
      */
     String getStringValue() throws BuildMacroException;
 
     /**
-     * @throws CdtVariableException if macro holds single String-type value
+     * @throws BuildMacroException if macro holds single String-type value
      */
     String[] getStringListValue() throws BuildMacroException;
 

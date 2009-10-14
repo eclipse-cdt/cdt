@@ -42,14 +42,14 @@ public class CPPMethodTemplate extends CPPFunctionTemplate implements ICPPMethod
 
 	public IASTDeclaration getPrimaryDeclaration() throws DOMException{
 		//first check if we already know it
-		if( declarations != null ){
+		if (declarations != null) {
 			for (IASTName declaration : declarations) {
 				IASTNode parent = declaration.getParent();
 				while (!(parent instanceof IASTDeclaration) && parent != null)
 					parent = parent.getParent();
 
 				IASTDeclaration decl = (IASTDeclaration) parent;
-				if (decl instanceof ICPPASTCompositeTypeSpecifier)
+				if (decl != null && decl.getParent() instanceof ICPPASTCompositeTypeSpecifier)
 					return decl;
 			}
 		}

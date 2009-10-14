@@ -253,13 +253,13 @@ public class DsfSession
     }
 
     /** ID (plugin ID preferably) of the owner of this session */
-    private String fOwnerId;
+    private final String fOwnerId;
     
     /** Session ID of this session. */
-    private String fId;
+    private final String fId;
     
     /** Dispatch-thread executor for this session */
-    private DsfExecutor fExecutor;
+    private final DsfExecutor fExecutor;
     
     /** Service start-up counter for this session */ 
     private int fServiceInstanceCounter;
@@ -275,14 +275,17 @@ public class DsfSession
     private Map<Class<?>,Object> fAdapters = Collections.synchronizedMap(new HashMap<Class<?>,Object>());
 
     /** Returns the owner ID of this session */
+    @ThreadSafe
     public String getOwnerId() { return fOwnerId; }    
     
     public boolean isActive() { return DsfSession.isSessionActive(fId); }
     
     /** Returns the ID of this session */
+    @ThreadSafe
     public String getId() { return fId; }
     
     /** Returns the DSF executor of this session */
+    @ThreadSafe
     public DsfExecutor getExecutor() { return fExecutor; }
  
     /**

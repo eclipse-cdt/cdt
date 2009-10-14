@@ -1,5 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <component id="org.eclipse.cdt.dsf.gdb" version="2">
+<resource path="META-INF/MANIFEST.MF">
+<filter id="924844039">
+<message_arguments>
+<message_argument value="2.0.0.qualifier"/>
+<message_argument value="2.0.0.200906161748"/>
+</message_arguments>
+</filter>
+</resource>
 <resource path="src/org/eclipse/cdt/dsf/mi/service/MIVariableManager.java" type="org.eclipse.cdt.dsf.mi.service.MIVariableManager$MIVariableObject">
 <filter id="1143996420">
 <message_arguments>

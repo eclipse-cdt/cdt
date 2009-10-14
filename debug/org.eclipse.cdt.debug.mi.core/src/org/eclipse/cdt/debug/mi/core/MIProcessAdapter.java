@@ -91,7 +91,7 @@ public class MIProcessAdapter implements MIProcess {
 		if (monitor.isCanceled()) {
 			pgdb.destroy();
 			throw new OperationCanceledException();
-		} else if (timepass > launchTimeout) {
+		} else if (timepass >= launchTimeout) {
 			pgdb.destroy();
 			String message = MIPlugin.getResourceString("src.GDBDebugger.Error_launch_timeout"); //$NON-NLS-1$
 			throw new IOException(message);

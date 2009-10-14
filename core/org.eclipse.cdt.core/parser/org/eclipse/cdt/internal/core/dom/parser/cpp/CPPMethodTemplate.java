@@ -29,7 +29,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPMethod;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateScope;
 import org.eclipse.cdt.core.parser.util.CharArrayUtils;
 import org.eclipse.cdt.internal.core.dom.parser.ASTInternal;
-import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPVisitor;
+import org.eclipse.cdt.internal.core.dom.parser.ASTQueries;
 
 /**
  * A template for a method.
@@ -44,12 +44,12 @@ public class CPPMethodTemplate extends CPPFunctionTemplate implements ICPPMethod
 		//first check if we already know it
 		if( declarations != null ){
 			for (IASTName declaration : declarations) {
-			    IASTNode parent = declaration.getParent();
-			    while( !(parent instanceof IASTDeclaration) )
-			        parent = parent.getParent();
+				IASTNode parent = declaration.getParent();
+				while (!(parent instanceof IASTDeclaration) && parent != null)
+					parent = parent.getParent();
 
-			    IASTDeclaration decl = (IASTDeclaration) parent.getParent();
-				if( decl instanceof ICPPASTCompositeTypeSpecifier )
+				IASTDeclaration decl = (IASTDeclaration) parent;
+				if (decl != null && decl.getParent() instanceof ICPPASTCompositeTypeSpecifier)
 					return decl;
 			}
 		}
@@ -67,13 +67,13 @@ public class CPPMethodTemplate extends CPPFunctionTemplate implements ICPPMethod
 				if (decl instanceof IASTSimpleDeclaration) {
 					IASTDeclarator[] dtors = ((IASTSimpleDeclaration) decl).getDeclarators();
 					for (IASTDeclarator dtor : dtors) {
-						IASTName name = CPPVisitor.findInnermostDeclarator(dtor).getName();
+						IASTName name = ASTQueries.findInnermostDeclarator(dtor).getName();
 						if (CharArrayUtils.equals(name.getLookupKey(), myName) && name.resolveBinding() == this) {
 							return member;
 						}
 					}
 				} else if (decl instanceof IASTFunctionDefinition) {
-					IASTName name = CPPVisitor.findInnermostDeclarator(((IASTFunctionDefinition) decl).getDeclarator()).getName();
+					IASTName name = ASTQueries.findInnermostDeclarator(((IASTFunctionDefinition) decl).getDeclarator()).getName();
 					if (CharArrayUtils.equals(name.getLookupKey(), myName) && name.resolveBinding() == this) {
 						return member;
 					}

@@ -3072,7 +3072,9 @@ public class CPPSemantics {
 				if (!(function instanceof ICPPTemplateDefinition))
 					return false;
 			}
-		} 
+		} else if (function instanceof ICPPTemplateDefinition) {
+			return false;
+		}
 
 		declarator= ASTQueries.findTypeRelevantDeclarator(declarator);
 		try {

@@ -146,7 +146,17 @@ public class DsfSession
         }
         return null;
     }
-    
+
+	/**
+	 * Returns the active sessions
+	 * 
+	 * @since 2.1
+	 */
+	@ThreadSafe
+	public static DsfSession[] getActiveSessions() {
+		return fgActiveSessions.toArray(new DsfSession[fgActiveSessions.size()]);
+	}
+
     /** 
      * Registers a listener for session started events.
      * Can be called on any thread. 

@@ -28,6 +28,7 @@ import org.eclipse.cdt.dsf.debug.service.IRunControl.IContainerResumedDMEvent;
 import org.eclipse.cdt.dsf.debug.service.IRunControl.IContainerSuspendedDMEvent;
 import org.eclipse.cdt.dsf.debug.service.IRunControl.IExecutionDMContext;
 import org.eclipse.cdt.dsf.debug.service.IRunControl.IExecutionDMData;
+import org.eclipse.cdt.dsf.debug.service.IRunControl.IExecutionDMData2;
 import org.eclipse.cdt.dsf.debug.service.IRunControl.IExitedDMEvent;
 import org.eclipse.cdt.dsf.debug.service.IRunControl.IStartedDMEvent;
 import org.eclipse.cdt.dsf.debug.service.IRunControl.StateChangeReason;
@@ -176,6 +177,13 @@ public abstract class AbstractContainerVMNode extends AbstractDMVMNode
         StateChangeReason reason = data.getStateChangeReason();
         if (reason != null) {
         	update.setProperty(ILaunchVMConstants.PROP_STATE_CHANGE_REASON, data.getStateChangeReason().name());
+        }
+        
+        if (data instanceof IExecutionDMData2) {
+        	String details = ((IExecutionDMData2)data).getDetails();
+        	if (details != null) {
+            	update.setProperty(ILaunchVMConstants.PROP_STATE_CHANGE_DETAILS, details);
+        	}
         }
     }
 

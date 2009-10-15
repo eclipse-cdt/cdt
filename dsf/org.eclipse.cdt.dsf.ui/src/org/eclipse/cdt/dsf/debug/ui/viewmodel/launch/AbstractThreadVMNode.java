@@ -29,6 +29,7 @@ import org.eclipse.cdt.dsf.debug.service.IRunControl.IContainerResumedDMEvent;
 import org.eclipse.cdt.dsf.debug.service.IRunControl.IContainerSuspendedDMEvent;
 import org.eclipse.cdt.dsf.debug.service.IRunControl.IExecutionDMContext;
 import org.eclipse.cdt.dsf.debug.service.IRunControl.IExecutionDMData;
+import org.eclipse.cdt.dsf.debug.service.IRunControl.IExecutionDMData2;
 import org.eclipse.cdt.dsf.debug.service.IRunControl.IResumedDMEvent;
 import org.eclipse.cdt.dsf.debug.service.IRunControl.ISuspendedDMEvent;
 import org.eclipse.cdt.dsf.debug.service.IRunControl.StateChangeReason;
@@ -107,7 +108,9 @@ public abstract class AbstractThreadVMNode extends AbstractDMVMNode
                         ILaunchVMConstants.PROP_ID, 
                         ILaunchVMConstants.PROP_IS_SUSPENDED, 
                         ExecutionContextLabelText.PROP_STATE_CHANGE_REASON_KNOWN, 
-                        ILaunchVMConstants.PROP_STATE_CHANGE_REASON }),
+                        ILaunchVMConstants.PROP_STATE_CHANGE_REASON,
+                        ExecutionContextLabelText.PROP_STATE_CHANGE_DETAILS_KNOWN, 
+                        ILaunchVMConstants.PROP_STATE_CHANGE_DETAILS }),
                 new LabelText(MessagesForLaunchVM.AbstractThreadVMNode_No_columns__Error__label, new String[0]),
                 new LabelImage(DebugUITools.getImageDescriptor(IDebugUIConstants.IMG_OBJS_THREAD_RUNNING)) {
                     { setPropertyNames(new String[] { ILaunchVMConstants.PROP_IS_SUSPENDED }); }
@@ -207,6 +210,13 @@ public abstract class AbstractThreadVMNode extends AbstractDMVMNode
         StateChangeReason reason = data.getStateChangeReason();
         if (reason != null) {
             update.setProperty(ILaunchVMConstants.PROP_STATE_CHANGE_REASON, data.getStateChangeReason().name());
+        }
+
+        if (data instanceof IExecutionDMData2) {
+        	String details = ((IExecutionDMData2)data).getDetails();
+        	if (details != null) {
+            	update.setProperty(ILaunchVMConstants.PROP_STATE_CHANGE_DETAILS, details);
+        	}
         }
     }
     

@@ -2460,6 +2460,7 @@
    <extension
          point="org.eclipse.ui.editors.templates">
       <contextTypeRegistry id="org.eclipse.cdt.ui.editor.CEditor"/>
+      <contextTypeRegistry id="org.eclipse.cdt.ui.codeTemplates"/>
       <contextType
             name="%c.contextType.name"
             class="org.eclipse.cdt.internal.corext.template.c.CContextType"

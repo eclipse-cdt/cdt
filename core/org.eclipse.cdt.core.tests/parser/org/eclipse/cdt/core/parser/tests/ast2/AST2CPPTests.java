@@ -7365,6 +7365,23 @@ public class AST2CPPTests extends AST2BaseTest {
 		ICPPMethod m= bh.assertNonProblem("t<1>", 1);
 		assertTrue(m.isInline());
 	}
-
+	
+	//	class ULONGLONG {
+	//  public :
+	//	   ULONGLONG ( unsigned long long val ) {}
+	//	   friend bool operator == ( const ULONGLONG & , const int ) { return true; }
+	//	};
+	//	enum E {A, B, C};
+	//	int main() {
+	//		return B == 23;
+	//	}
+	public void testInvalidOverload_291409() throws Exception {
+		final String code = getAboveComment();
+		IASTTranslationUnit tu= parseAndCheckBindings(code, ParserLanguage.CPP);
+		IASTFunctionDefinition fdef= getDeclaration(tu, 2);
+		IASTReturnStatement stmt= getStatement(fdef, 0);
+		IASTImplicitNameOwner no= (IASTImplicitNameOwner) stmt.getReturnValue();
+		assertEquals(0, no.getImplicitNames().length);
+	}
 }
 

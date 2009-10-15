@@ -1765,7 +1765,6 @@ public abstract class DisassemblyPart extends WorkbenchPart implements IDisassem
 		String debuggerPath= file;
 
 		// try reverse lookup
-		final ISourceLookup lookup= getService(ISourceLookup.class);
 		final ISourceLookupDMContext ctx= DMContexts.getAncestorOfType(fTargetContext, ISourceLookupDMContext.class);
 		final DsfExecutor executor= getSession().getExecutor();
 		Query<String> query= new Query<String>() {
@@ -1778,6 +1777,7 @@ public abstract class DisassemblyPart extends WorkbenchPart implements IDisassem
 						rm.done();
 					}
 				};
+				final ISourceLookup lookup= getService(ISourceLookup.class);
 				lookup.getDebuggerPath(ctx, file, request);
 			}
 		};
@@ -2361,14 +2361,22 @@ public abstract class DisassemblyPart extends WorkbenchPart implements IDisassem
 				}
 				if (fTargetContext != null) {
 			        if (fDebugSessionId != null) {
-						if (getSession() != null) {
-							getSession().removeServiceEventListener(this);
+			        	if (getSession() != null) {
+			        		// Store the values that we are going to change
+			        		final DsfSession session = getSession();
+			        		final DsfServicesTracker trackerToDispose= fServicesTracker;
+			        		session.getExecutor().execute(new DsfRunnable() {
+			        			public void run() {
+			        				session.removeServiceEventListener(DisassemblyPart.this);
+			    					if (trackerToDispose != null) {
+			    						trackerToDispose.dispose();
+			    					}
+
+			        			}
+			        		});
 						}
 			        }
 					fDebugSessionId= sessionId;
-					if (fServicesTracker != null) {
-						fServicesTracker.dispose();
-					}
 			        fServicesTracker = new DsfServicesTracker(DsfUIPlugin.getBundleContext(), sessionId);
 			        if (fViewer != null) {
 						debugContextChanged();
@@ -2389,14 +2397,22 @@ public abstract class DisassemblyPart extends WorkbenchPart implements IDisassem
 			}
 		} else if (fDebugSessionId != null) {
 			if (getSession() != null) {
-				getSession().removeServiceEventListener(this);
+        		// Store the values that we are going to change
+        		final DsfSession session = getSession();
+        		final DsfServicesTracker trackerToDispose= fServicesTracker;
+        		session.getExecutor().execute(new DsfRunnable() {
+        			public void run() {
+        				session.removeServiceEventListener(DisassemblyPart.this);
+    					if (trackerToDispose != null) {
+    						trackerToDispose.dispose();
+    					}
+
+        			}
+        		});
 			}
 			fDebugSessionId= null;
 			fTargetContext= null;
-			if (fServicesTracker != null) {
-				fServicesTracker.dispose();
-				fServicesTracker= null;
-			}
+			fServicesTracker= null;
 			if (fViewer != null) {
 				debugContextChanged();
 			}
@@ -2410,7 +2426,12 @@ public abstract class DisassemblyPart extends WorkbenchPart implements IDisassem
 		resetViewer();
 		if (fDebugSessionId != null) {
 			final DsfSession session= getSession();
-			session.addServiceEventListener(this, null);
+    		session.getExecutor().execute(new DsfRunnable() {
+    			public void run() {
+    				session.addServiceEventListener(DisassemblyPart.this, null);
+    			}
+    		});
+
 			updatePC(PC_UNKNOWN);
 
         	if (fGotoAddressPending != PC_UNKNOWN) {

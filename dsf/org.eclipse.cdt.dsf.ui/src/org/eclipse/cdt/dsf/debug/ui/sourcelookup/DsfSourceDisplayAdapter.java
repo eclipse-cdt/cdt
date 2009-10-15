@@ -591,7 +591,9 @@ public class DsfSourceDisplayAdapter implements ISourceDisplay, ISteppingControl
         final IInstructionPointerPresentation ipPresentation = (IInstructionPointerPresentation) session.getModelAdapter(IInstructionPointerPresentation.class);
 		fIPManager = new InstructionPointerManager(ipPresentation);
         
-        fSession.addServiceEventListener(this, null);
+        fExecutor.execute(new DsfRunnable() { public void run() {
+        	fSession.addServiceEventListener(DsfSourceDisplayAdapter.this, null);
+        }});
 
         fController = controller;
 		if (fController != null) {
@@ -616,8 +618,11 @@ public class DsfSourceDisplayAdapter implements ISourceDisplay, ISteppingControl
 			fController.removeSteppingControlParticipant(this);
 			fController = null;
 		}
-        fSession.removeServiceEventListener(this);
-        fServicesTracker.dispose();
+        fExecutor.execute(new DsfRunnable() { public void run() {
+            fSession.removeServiceEventListener(DsfSourceDisplayAdapter.this);
+            fServicesTracker.dispose();
+        }});
+
         fSourceLookup.removeParticipants(new ISourceLookupParticipant[] {fSourceLookupParticipant});
         
         // fSourceLookupParticipant is disposed by the source lookup director

@@ -20,6 +20,7 @@ import java.util.List;
 import java.util.ListIterator;
 import java.util.Map;
 import java.util.concurrent.ExecutionException;
+import java.util.concurrent.RejectedExecutionException;
 
 import org.eclipse.cdt.core.IAddress;
 import org.eclipse.cdt.debug.core.CDIDebugModel;
@@ -2362,21 +2363,23 @@ public abstract class DisassemblyPart extends WorkbenchPart implements IDisassem
 				if (fTargetContext != null) {
 			        if (fDebugSessionId != null) {
 			        	if (getSession() != null) {
-			        		// Store the values that we are going to change
-			        		final DsfSession session = getSession();
-			        		final DsfServicesTracker trackerToDispose= fServicesTracker;
-			        		session.getExecutor().execute(new DsfRunnable() {
-			        			public void run() {
-			        				session.removeServiceEventListener(DisassemblyPart.this);
-			    					if (trackerToDispose != null) {
-			    						trackerToDispose.dispose();
-			    					}
-
-			        			}
-			        		});
+			        		try {
+			        			// Store the values that we are going to change
+			        			final DsfSession session = getSession();
+			        			session.getExecutor().execute(new DsfRunnable() {
+			        				public void run() {
+			        					session.removeServiceEventListener(DisassemblyPart.this);
+			        				}
+			        			});
+			        		} catch (RejectedExecutionException e) {
+			                    // Session is shut down.
+			        		}
 						}
 			        }
 					fDebugSessionId= sessionId;
+					if (fServicesTracker != null) {
+						fServicesTracker.dispose();
+					}
 			        fServicesTracker = new DsfServicesTracker(DsfUIPlugin.getBundleContext(), sessionId);
 			        if (fViewer != null) {
 						debugContextChanged();
@@ -2397,22 +2400,24 @@ public abstract class DisassemblyPart extends WorkbenchPart implements IDisassem
 			}
 		} else if (fDebugSessionId != null) {
 			if (getSession() != null) {
-        		// Store the values that we are going to change
-        		final DsfSession session = getSession();
-        		final DsfServicesTracker trackerToDispose= fServicesTracker;
-        		session.getExecutor().execute(new DsfRunnable() {
-        			public void run() {
-        				session.removeServiceEventListener(DisassemblyPart.this);
-    					if (trackerToDispose != null) {
-    						trackerToDispose.dispose();
-    					}
-
-        			}
-        		});
+				try {
+					// Store the values that we are going to change
+					final DsfSession session = getSession();
+					session.getExecutor().execute(new DsfRunnable() {
+						public void run() {
+							session.removeServiceEventListener(DisassemblyPart.this);
+						}
+					});
+        		} catch (RejectedExecutionException e) {
+                    // Session is shut down.
+        		}
 			}
 			fDebugSessionId= null;
 			fTargetContext= null;
-			fServicesTracker= null;
+			if (fServicesTracker != null) {
+				fServicesTracker.dispose();				
+				fServicesTracker= null;
+			}
 			if (fViewer != null) {
 				debugContextChanged();
 			}
@@ -2425,12 +2430,16 @@ public abstract class DisassemblyPart extends WorkbenchPart implements IDisassem
 		fUpdatePending = false;
 		resetViewer();
 		if (fDebugSessionId != null) {
-			final DsfSession session= getSession();
-    		session.getExecutor().execute(new DsfRunnable() {
-    			public void run() {
-    				session.addServiceEventListener(DisassemblyPart.this, null);
-    			}
-    		});
+			try {
+				final DsfSession session= getSession();
+				session.getExecutor().execute(new DsfRunnable() {
+					public void run() {
+						session.addServiceEventListener(DisassemblyPart.this, null);
+					}
+				});
+    		} catch (RejectedExecutionException e) {
+                // Session is shut down.
+    		}
 
 			updatePC(PC_UNKNOWN);
 

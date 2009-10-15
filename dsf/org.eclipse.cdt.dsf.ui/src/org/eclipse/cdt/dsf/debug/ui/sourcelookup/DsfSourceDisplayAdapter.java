@@ -618,11 +618,16 @@ public class DsfSourceDisplayAdapter implements ISourceDisplay, ISteppingControl
 			fController.removeSteppingControlParticipant(this);
 			fController = null;
 		}
-        fExecutor.execute(new DsfRunnable() { public void run() {
-            fSession.removeServiceEventListener(DsfSourceDisplayAdapter.this);
-            fServicesTracker.dispose();
-        }});
-
+		
+		try {
+			fExecutor.execute(new DsfRunnable() { public void run() {
+				fSession.removeServiceEventListener(DsfSourceDisplayAdapter.this);
+			}});
+		} catch (RejectedExecutionException e) {
+            // Session is shut down.
+		}
+		
+        fServicesTracker.dispose();
         fSourceLookup.removeParticipants(new ISourceLookupParticipant[] {fSourceLookupParticipant});
         
         // fSourceLookupParticipant is disposed by the source lookup director

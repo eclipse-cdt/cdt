@@ -10,6 +10,8 @@
  *******************************************************************************/ 
 package org.eclipse.cdt.internal.core.dom.parser.cpp.semantics;
 
+import java.util.BitSet;
+
 import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.IFunction;
@@ -23,10 +25,12 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.Cost.Rank;
 class FunctionCost {
 	private final IFunction fFunction;
 	private final Cost[] fCosts;
+	private final BitSet fSourceIsLValue;
 	
 	public FunctionCost(IFunction fn, int paramCount) {
 		fFunction= fn;
 		fCosts= new Cost[paramCount];
+		fSourceIsLValue= new BitSet(paramCount);
 	}
 	
 	public int getLength() {
@@ -37,8 +41,9 @@ class FunctionCost {
 		return fCosts[idx];
 	}
 	
-	public void setCost(int idx, Cost cost) {
+	public void setCost(int idx, Cost cost, boolean sourceIsLValue) {
 		fCosts[idx]= cost;
+		fSourceIsLValue.set(idx, sourceIsLValue);
 	}
 
 	public IFunction getFunction() {
@@ -65,7 +70,7 @@ class FunctionCost {
 		for (int i = 0; i < fCosts.length; i++) {
 			Cost cost = fCosts[i];
 			if (cost.isDeferredUDC()) {
-				Cost udcCost= Conversions.checkUserDefinedConversionSequence(cost.source, cost.target, false);
+				Cost udcCost= Conversions.checkUserDefinedConversionSequence(fSourceIsLValue.get(i), cost.source, cost.target, false);
 				if (udcCost == null) {
 					return false;
 				}

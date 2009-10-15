@@ -4757,7 +4757,7 @@ public class AST2Tests extends AST2BaseTest {
 	//		foo(b); 
 	//		foo(c); 
 	//	}
-	public void _testBug222444_a() throws Exception {
+	public void testBug222444_a() throws Exception {
 		BindingAssertionHelper ba= new BindingAssertionHelper(getAboveComment(), true);
 		ICPPFunction foo1= ba.assertNonProblem("foo(b", 3, ICPPFunction.class);
 		ICPPFunction foo2= ba.assertNonProblem("foo(c", 3, ICPPFunction.class);
@@ -4778,7 +4778,27 @@ public class AST2Tests extends AST2BaseTest {
 	// 
 	//		foo(c);
 	//	}
-	public void _testBug222444_b() throws Exception {
+	public void testBug222444_b() throws Exception {
+		BindingAssertionHelper ba= new BindingAssertionHelper(getAboveComment(), true);
+		ICPPFunction foo2= ba.assertNonProblem("foo(c", 3, ICPPFunction.class);
+	}
+
+	//	class A {};
+	//  class B : public A {};
+	// 
+	//	class C { 
+	//	public: 
+	//		operator const B&() { return *new B();}
+	//	}; 
+	//
+	//	void foo(A a) {}
+	//
+	//	void refs() {
+	//		C c= *new C();
+	// 
+	//		foo(c);
+	//	}
+	public void testBug222444_c() throws Exception {
 		BindingAssertionHelper ba= new BindingAssertionHelper(getAboveComment(), true);
 		ICPPFunction foo2= ba.assertNonProblem("foo(c", 3, ICPPFunction.class);
 	}

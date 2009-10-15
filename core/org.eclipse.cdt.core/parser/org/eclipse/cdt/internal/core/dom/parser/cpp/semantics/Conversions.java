@@ -25,6 +25,7 @@ import org.eclipse.cdt.core.dom.ast.IBasicType;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.IEnumeration;
 import org.eclipse.cdt.core.dom.ast.IFunctionType;
+import org.eclipse.cdt.core.dom.ast.IParameter;
 import org.eclipse.cdt.core.dom.ast.IPointerType;
 import org.eclipse.cdt.core.dom.ast.IProblemBinding;
 import org.eclipse.cdt.core.dom.ast.IQualifierType;
@@ -34,7 +35,9 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPBase;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPBasicType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPConstructor;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunctionType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPMethod;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPParameter;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPPointerToMemberType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPReferenceType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPSpecialization;
@@ -58,7 +61,7 @@ public class Conversions {
 	/**
 	 * Computes the cost of an implicit conversion sequence
 	 * [over.best.ics] 13.3.3.1
-	 * @param sourceExp the expression behind the source type
+	 * @param sourceIsLValue whether the source type is an lvalue
 	 * @param source the source (argument) type
 	 * @param target the target (parameter) type
 	 * @param isImpliedObject
@@ -66,7 +69,7 @@ public class Conversions {
 	 * @return the cost of converting from source to target
 	 * @throws DOMException
 	 */
-	public static Cost checkImplicitConversionSequence(IASTExpression sourceExp, IType source,
+	public static Cost checkImplicitConversionSequence(boolean sourceIsLValue, IType source,
 			IType target, UDCMode udc, boolean isImpliedObject) throws DOMException {
 		if (isImpliedObject) {
 			udc= UDCMode.noUDC;
@@ -79,14 +82,15 @@ public class Conversions {
 			// [8.5.3-5] initialization of a reference 
 			IType cv1T1= getNestedType(target, TDEF | REF);
 			
-			boolean lvalue= sourceExp == null || !CPPVisitor.isRValue(sourceExp);	
-			if (source instanceof ICPPReferenceType) 
+			if (source instanceof ICPPReferenceType) {
+				sourceIsLValue= true;
 				source= getNestedType(source, TDEF | REF);
+			}
 			
 			IType T2= getNestedType(source, TDEF | REF | CVQ | PTR_CVQ);
 
 		    // [8.5.3-5] Is an lvalue (but is not a bit-field), and "cv1 T1" is reference-compatible with "cv2 T2," 
-			if (lvalue) {
+			if (sourceIsLValue) {
 				Cost cost= isReferenceCompatible(cv1T1, source, isImpliedObject);
 				if (cost != null) {
 					// [8.5.3-5] this is a direct reference binding
@@ -135,7 +139,7 @@ public class Conversions {
 			// [8.5.3-5] Direct binding failed  - Otherwise
 			boolean cv1isConst= getCVQualifier(cv1T1) == 1;
 			if (cv1isConst)  {
-				if (!lvalue && T2 instanceof ICPPClassType) {
+				if (!sourceIsLValue && T2 instanceof ICPPClassType) {
 					Cost cost= isReferenceCompatible(cv1T1, source, isImpliedObject);
 					if (cost != null)
 						return cost;
@@ -156,7 +160,7 @@ public class Conversions {
 
 					// We must do a non-reference initialization
 					if (!illformed) {
-						return nonReferenceConversion(source, cv1T1, udc, isImpliedObject);
+						return nonReferenceConversion(sourceIsLValue, source, cv1T1, udc, isImpliedObject);
 					}
 				}
 			}
@@ -164,31 +168,36 @@ public class Conversions {
 		} 
 		
 		// Non-reference binding
-		// [13.3.3.1-6] Subsume cv-qualifications
-		source= getNestedType(source, TDEF | REF | CVQ | PTR_CVQ);
-		target= getNestedType(target, TDEF | REF | CVQ | PTR_CVQ);
+		IType uqsource= getNestedType(source, TDEF | REF | CVQ);
+		IType uqtarget= getNestedType(target, TDEF | REF | CVQ);
 		
 		// [13.3.3.1-6] Derived to base conversion
-		if (source instanceof ICPPClassType && target instanceof ICPPClassType) {
-			int depth= calculateInheritanceDepth(CPPSemantics.MAX_INHERITANCE_DEPTH, source, target);
+		if (uqsource instanceof ICPPClassType && uqtarget instanceof ICPPClassType) {
+			int depth= calculateInheritanceDepth(CPPSemantics.MAX_INHERITANCE_DEPTH, uqsource, uqtarget);
 			if (depth > -1) {
 				if (depth == 0) {
-					return new Cost(source, target, Rank.IDENTITY);
+					return new Cost(uqsource, uqtarget, Rank.IDENTITY);
 				}
-				Cost cost= new Cost(source, target, Rank.CONVERSION);
+				Cost cost= new Cost(uqsource, uqtarget, Rank.CONVERSION);
 				cost.setInheritanceDistance(depth);
 				return cost;
 			}
 		}
-		return nonReferenceConversion(source, target, udc, isImpliedObject);
+		
+		// [13.3.3.1-6] Subsume cv-qualifications
+		if (!(uqsource instanceof ICPPClassType) && !(uqtarget instanceof ICPPClassType)) {
+			source= uqsource;
+			target= uqtarget;
+		}
+		return nonReferenceConversion(sourceIsLValue, source, target, udc, isImpliedObject);
 	}
 
-	private static Cost nonReferenceConversion(IType source, IType target, UDCMode udc, boolean isImpliedObject) throws DOMException {
+	private static Cost nonReferenceConversion(boolean sourceIsLValue, IType source, IType target, UDCMode udc, boolean isImpliedObject) throws DOMException {
 		Cost cost= checkStandardConversionSequence(source, target, isImpliedObject);
 		if (cost.getRank() != Rank.NO_MATCH || udc == UDCMode.noUDC) 
 			return cost;
 		
-		Cost temp = checkUserDefinedConversionSequence(source, target, udc == UDCMode.deferUDC);
+		Cost temp = checkUserDefinedConversionSequence(sourceIsLValue, source, target, udc == UDCMode.deferUDC);
 		if (temp != null) {
 			cost = temp;
 		}
@@ -340,10 +349,7 @@ public class Conversions {
 	 * @return
 	 * @throws DOMException
 	 */
-	static final Cost checkUserDefinedConversionSequence(IType source, IType target, boolean deferUDC) throws DOMException {
-		Cost constructorCost= null;
-		Cost operatorCost= null;
-
+	static final Cost checkUserDefinedConversionSequence(boolean sourceIsLValue, IType source, IType target, boolean deferUDC) throws DOMException {
 		IType s= getNestedType(source, TDEF | CVQ | REF);
 		IType t= getNestedType(target, TDEF | CVQ | REF);
 
@@ -352,69 +358,115 @@ public class Conversions {
 		}
 		
 		if (deferUDC) {
-			Cost c= new Cost(s, t, Rank.USER_DEFINED_CONVERSION);
+			Cost c= new Cost(source, target, Rank.USER_DEFINED_CONVERSION);
 			c.setDeferredUDC(true);
 			return c;
 		}
 		
-		// Constructors
+		// 13.3.1.4 Copy initialization of class by user-defined conversion
 		if (t instanceof ICPPClassType) {
+			Cost cost1= null;
+			Cost cost2= null;
 			ICPPConstructor[] ctors= ((ICPPClassType) t).getConstructors();
-			// Select converting constructors
-			int j= 0;
-			ICPPConstructor[] convertingCtors= new ICPPConstructor[ctors.length];
+			CPPTemplates.instantiateFunctionTemplates(ctors, new IType[]{source},  null);
+
 			for (ICPPConstructor ctor : ctors) {
-				if (!(ctor instanceof IProblemBinding) && !ctor.isExplicit())
-					convertingCtors[j++]= ctor;
-			}
-			if (j > 0) {
-				LookupData data= new LookupData();
-				data.setFunctionArgumentTypes(new IType[] { source });
-				IBinding binding = CPPSemantics.resolveFunction(data, convertingCtors, false);
-				if (binding instanceof ICPPConstructor && !(binding instanceof IProblemBinding)) {
-					constructorCost = checkStandardConversionSequence(t, target, false);
-					if (constructorCost.getRank() == Rank.NO_MATCH) {
-						constructorCost= null;
+				if (ctor != null && !(ctor instanceof IProblemBinding) && !ctor.isExplicit()) {
+					final ICPPFunctionType ft = ctor.getType();
+					final IType[] ptypes = ft.getParameterTypes();
+					Cost c1;
+					if (ptypes.length == 0) {
+						if (ctor.takesVarArgs()) {
+							c1= new Cost(source, null, Rank.ELLIPSIS_CONVERSION);
+						} else {
+							continue;
+						}
 					} else {
-						constructorCost.setUserDefinedConversion((ICPPConstructor) binding);
+						if (ptypes.length > 1) {
+							IParameter[] pars = ctor.getParameters();
+							if (pars.length < 2 || !((ICPPParameter) pars[1]).hasDefaultValue())
+								continue;
+						}
+						c1= checkImplicitConversionSequence(sourceIsLValue, source, ptypes[0], UDCMode.noUDC, false);
 					}
-				}
-			}
-		}
-		
-		// Conversion operators
-		boolean ambiguousConversionOperator= false;
-		if (s instanceof ICPPClassType) {
-			ICPPMethod[] ops = SemanticUtil.getConversionOperators((ICPPClassType) s); 
-			CPPTemplates.instantiateConversionTemplates(ops, target);
-			for (final ICPPMethod op : ops) {
-				if (op != null && !(op instanceof IProblemBinding)) {
-					Cost cost= checkStandardConversionSequence(op.getType().getReturnType(), target, false);
-					if (cost.getRank() != Rank.NO_MATCH) {
-						int cmp= cost.compareTo(operatorCost);
-						if (cmp <= 0) {
-							cost.setUserDefinedConversion(op);
-							operatorCost= cost;
-							ambiguousConversionOperator= cmp == 0;
+					int cmp= c1.compareTo(cost1);
+					if (cmp <= 0) {
+						cost1= c1;
+						cost2= new Cost(t, t, Rank.IDENTITY);
+						cost2.setUserDefinedConversion(ctor);
+						if (cmp == 0) {
+							cost2.setAmbiguousUDC(true);
 						}
 					}
 				}
 			}
+			if (s instanceof ICPPClassType) {
+				ICPPMethod[] ops = SemanticUtil.getConversionOperators((ICPPClassType) s); 
+				CPPTemplates.instantiateConversionTemplates(ops, target);
+				for (final ICPPMethod op : ops) {
+					if (op != null && !(op instanceof IProblemBinding)) {
+						final IType returnType = op.getType().getReturnType();
+						final IType uqReturnType= getNestedType(returnType, REF | TDEF | CVQ);
+						final int dist = calculateInheritanceDepth(CPPSemantics.MAX_INHERITANCE_DEPTH, uqReturnType, t);
+						if (dist >= 0) {
+							final ICPPFunctionType ft = op.getType();
+							IType implicitType= CPPSemantics.getImplicitType(op, ft.isConst(), ft.isVolatile());
+							Cost c1= checkImplicitConversionSequence(sourceIsLValue, source, implicitType, UDCMode.noUDC, false);
+							int cmp= c1.compareTo(cost1);
+							if (cmp <= 0) {
+								cost1= c1;
+								cost2= new Cost(t, t, Rank.IDENTITY);
+								if (dist > 0) {
+									cost2.setInheritanceDistance(dist);
+									cost2.setRank(Rank.CONVERSION);
+								}
+								cost2.setUserDefinedConversion(op);
+								if (cmp == 0) {
+									cost2.setAmbiguousUDC(true);
+								}
+							}
+						}
+					}
+				}
+			}
+			if (cost1 == null || cost1.getRank() == Rank.NO_MATCH)
+				return null;
+			
+			return cost2;
 		}
-
-		if (constructorCost != null) {
-			if (operatorCost != null && !ambiguousConversionOperator) {
-				// If both are valid, then the conversion is ambiguous
-				constructorCost.setAmbiguousUDC(true);
-			} 
-			return constructorCost;
-		} 
 		
-		if (operatorCost != null) {
-			operatorCost.setAmbiguousUDC(ambiguousConversionOperator);
-			return operatorCost;
+		// 13.3.1.5 Initialization by conversion function
+		if (s instanceof ICPPClassType) {
+			ICPPMethod[] ops = SemanticUtil.getConversionOperators((ICPPClassType) s); 
+			CPPTemplates.instantiateConversionTemplates(ops, target);
+			Cost cost1= null;
+			Cost cost2= null;
+			for (final ICPPMethod op : ops) {
+				if (op != null && !(op instanceof IProblemBinding)) {
+					final IType returnType = op.getType().getReturnType();
+					IType uqReturnType= getNestedType(returnType, TDEF | CVQ | PTR_CVQ);
+					Cost c2= checkImplicitConversionSequence(false, uqReturnType, target, UDCMode.noUDC, false);
+					if (c2.getRank() != Rank.NO_MATCH) {
+						ICPPFunctionType ftype = op.getType();
+						IType implicitType= CPPSemantics.getImplicitType(op, ftype.isConst(), ftype.isVolatile());
+						Cost c1= checkImplicitConversionSequence(sourceIsLValue, source, implicitType, UDCMode.noUDC, false);
+						int cmp= c1.compareTo(cost1);
+						if (cmp <= 0) {
+							cost1= c1;
+							cost2= c2;
+							cost2.setUserDefinedConversion(op);
+							if (cmp == 0) {
+								cost2.setAmbiguousUDC(true);
+							}
+						}
+					}
+				}
+			}
+			if (cost1 == null || cost1.getRank() == Rank.NO_MATCH)
+				return null;
+			
+			return cost2;
 		}
-
 		return null;
 	}
 
@@ -544,6 +596,7 @@ public class Conversions {
 
 		// This should actually be done in 'checkImplicitConversionSequence', see 13.3.3.1-6 and 8.5.14
 		// 8.5.14 cv-qualifiers can be ignored for non-class types
+		// mstodo
 		IType unqualifiedTarget= getNestedType(target, CVQ | PTR_CVQ | TDEF | REF);
 		if (!(unqualifiedTarget instanceof ICPPClassType)) {
 			IType unqualifiedSource= getNestedType(source, CVQ | PTR_CVQ | TDEF | REF);

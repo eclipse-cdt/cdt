@@ -672,7 +672,11 @@ public class CPPTemplates {
 		final int length = tmplParams.length;
 		
 		ICPPTemplateArgument[] result = new ICPPTemplateArgument[length];
-		if (!deduceTemplateParameterMap(template.getType().getReturnType(), conversionType, map)) {
+		IType a= SemanticUtil.getSimplifiedType(conversionType);
+		final boolean isReferenceType = a instanceof ICPPReferenceType;
+		final IType p= getArgumentTypeForDeduction(template.getType().getReturnType(), isReferenceType);
+		a= getParameterTypeForDeduction(a, isReferenceType);
+		if (!deduceTemplateParameterMap(p, a, map)) {
 			return null;
 		}
 
@@ -1407,10 +1411,6 @@ public class CPPTemplates {
 		}
 	}
 
-	static protected void instantiateConversionTemplates(IFunction[] functions, IType conversionType, IASTName name) {
-		instantiateConversionTemplates(functions, conversionType);
-	}
-
 	static protected void instantiateConversionTemplates(IFunction[] functions, IType conversionType) {
 		boolean checkedForDependentType= false;
 		for (int i = 0; i < functions.length; i++) {
@@ -1546,6 +1546,8 @@ public class CPPTemplates {
 	/**
 	 * 14.8.2.1-2 If P is a cv-qualified type, the top level cv-qualifiers of P's type are ignored for type
 	 * deduction.  If P is a reference type, the type referred to by P is used for Type deduction.
+	 * 
+	 * Also 14.8.2.3-2 where the same logics is used in reverse.
 	 */
 	static private IType getParameterTypeForDeduction(IType pType, boolean isReferenceType) {
 		if (isReferenceType) {
@@ -1560,9 +1562,8 @@ public class CPPTemplates {
 	 * - If A is an array type, the pointer type produced by the array-to-pointer conversion is used instead
 	 * - If A is a function type, the pointer type produced by the function-to-pointer conversion is used instead
 	 * - If A is a cv-qualified type, the top level cv-qualifiers are ignored for type deduction
-	 * @param type argument type
-	 * @param parameterIsAReferenceType indicates whether template parameter is a reference type.
-	 * @return
+	 * 
+	 * 	 Also 14.8.2.3-2 where the same logics is used in reverse.
 	 */
 	static private IType getArgumentTypeForDeduction(IType type, boolean parameterIsAReferenceType) {
 		type = SemanticUtil.getSimplifiedType(type);

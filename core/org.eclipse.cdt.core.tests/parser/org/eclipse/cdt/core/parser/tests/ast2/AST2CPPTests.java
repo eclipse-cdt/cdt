@@ -7467,6 +7467,95 @@ public class AST2CPPTests extends AST2BaseTest {
 		ICPPMethod m= bh.assertNonProblem("t<1>", 1);
 		assertTrue(m.isInline());
 	}
-
+	
+	//	class B {};
+	//	class A {
+	//	public:
+	//		A() {};
+	//		A(B c) {};
+	//	};
+	//
+	//	class C : B {
+	//	public:
+	//		operator A() {}
+	//	};
+	//	void foo(A a) {}
+	//	void test() {
+	//		C c= *new C();
+	//		foo(c);
+	//	}
+	public void testUserdefinedConversion_222444a() throws Exception {
+		final String code = getAboveComment();
+		parseAndCheckBindings(code, ParserLanguage.CPP);
+	}
+	
+	//	class From {};
+	//	class To1 {
+	//	public:
+	//		To1(...) {}
+	//	};
+	//	class To2 {
+	//	public:
+	//		To2(From f) {}
+	//	};
+	//	class To3 {
+	//	public:
+	//		To3(From f, int a=0) {}
+	//	};
+	//
+	//	void x1(To1 t) {}
+	//	void x2(To2 t) {}
+	//	void x3(To3 t) {}
+	//	void test() {
+	//		From f;
+	//		x1(f);
+	//		x2(f);
+	//		x3(f);
+	//	}
+	public void testUserdefinedConversion_222444b() throws Exception {
+		final String code = getAboveComment();
+		parseAndCheckBindings(code, ParserLanguage.CPP);
+	}
+	
+	//	class A {};
+	//	class B : public A {};
+	//
+	//	class C {
+	//	public:
+	//		operator const B() { return *new B();}
+	//	};
+	//
+	//	void foo(A a) {}
+	//
+	//	void refs() {
+	//		C c= *new C();
+	//		const C cc= *new C();
+	//		foo(c);
+	//      foo(cc);
+	//	}
+	public void testUserdefinedConversion_222444c() throws Exception {
+		final String code = getAboveComment();
+		BindingAssertionHelper bh= new BindingAssertionHelper(code, true);
+		bh.assertNonProblem("foo(c);", 3);
+		bh.assertProblem("foo(cc);", 3);
+	}
+	
+	//	class ULONGLONG {
+	//  public :
+	//	   ULONGLONG ( unsigned long long val ) {}
+	//	   friend bool operator == ( const ULONGLONG & , const int ) { return true; }
+	//	};
+	//	enum E {A, B, C};
+	//	int main() {
+	//		return B == 23;
+	//	}
+	public void testInvalidOverload_291409() throws Exception {
+		final String code = getAboveComment();
+		IASTTranslationUnit tu= parseAndCheckBindings(code, ParserLanguage.CPP);
+		IASTFunctionDefinition fdef= getDeclaration(tu, 2);
+		IASTReturnStatement stmt= getStatement(fdef, 0);
+		IASTImplicitNameOwner no= (IASTImplicitNameOwner) stmt.getReturnValue();
+		assertEquals(0, no.getImplicitNames().length);
+	}
 }
 

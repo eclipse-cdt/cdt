@@ -17,6 +17,7 @@
  * David McKnight     (IBM)   [249715] [dstore][shells] Unix shell does not echo command
  * David McKnight   (IBM)        - [282919] [dstore] server shutdown results in exception in shell io reading
  * David McKnight (IBM) - [286671] Dstore shell service interprets &lt; and &gt; sequences
+ * David McKnight     (IBM)   [287305] [dstore] Need to set proper uid for commands when using SecuredThread and single server for multiple clients[
  *******************************************************************************/
 
 package org.eclipse.rse.internal.dstore.universal.miners.command;
@@ -153,7 +154,7 @@ public class OutputHandler extends Handler {
 				}
 			}
 		} catch (IOException e) {
-			e.printStackTrace();
+			_commandThread._dataStore.trace(e);
 		}
 	}
 
@@ -317,11 +318,11 @@ public class OutputHandler extends Handler {
 						return output;
 					}
 				} catch (Exception e) {
-					e.printStackTrace();
+					_commandThread._dataStore.trace(e);
 				}
 			}
 		} catch (Exception e) {
-			e.printStackTrace();
+			_commandThread._dataStore.trace(e);
 		}
 		return output;
 	}

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2008 Wind River Systems and others.
+ * Copyright (c) 2009 Wind River Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -17,6 +17,7 @@ import java.util.concurrent.RejectedExecutionException;
 
 import org.eclipse.cdt.dsf.concurrent.ConfinedToDsfExecutor;
 import org.eclipse.cdt.dsf.concurrent.DsfRunnable;
+import org.eclipse.cdt.dsf.concurrent.ThreadSafe;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.InvalidSyntaxException;
 import org.osgi.framework.ServiceEvent;
@@ -82,13 +83,13 @@ public class DsfServicesTracker {
     }
     
     private final String fSessionId;    
-    private boolean fDisposed = false;
-    private BundleContext fBundleContext;
-    private Map<ServiceKey,ServiceReference> fServiceReferences = new HashMap<ServiceKey,ServiceReference>();
-    private Map<ServiceReference,Object> fServices = new HashMap<ServiceReference,Object>();
-    private String fServiceFilter;
+    private volatile boolean fDisposed = false;
+    private final BundleContext fBundleContext;
+    private final Map<ServiceKey,ServiceReference> fServiceReferences = new HashMap<ServiceKey,ServiceReference>();
+    private final Map<ServiceReference,Object> fServices = new HashMap<ServiceReference,Object>();
+    private final String fServiceFilter;
 
-    private ServiceListener fListner = new ServiceListener() {
+    private final ServiceListener fListner = new ServiceListener() {
         public void serviceChanged(final ServiceEvent event) {
             // Only listen to unregister events.
             if (event.getType() != ServiceEvent.UNREGISTERING) {
@@ -135,6 +136,7 @@ public class DsfServicesTracker {
      * @param bundleContext Context of the plugin that the client lives in. 
      * @param sessionId The DSF session that this tracker will be used for. 
      */
+    @ThreadSafe
     public DsfServicesTracker(BundleContext bundleContext, String sessionId) {
         fSessionId = sessionId;
         fBundleContext = bundleContext;
@@ -227,12 +229,37 @@ public class DsfServicesTracker {
     }
     
     /**
-     * Un-gets all the serferences held by this tracker.  Must be called
+     * Un-gets all the references held by this tracker.  Must be called
      * to avoid leaking OSGI service references.
      */
+    @ThreadSafe
     public void dispose() {
         assert !fDisposed;
         fDisposed = true;
+        
+        DsfSession session = DsfSession.getSession(fSessionId);
+        if (session != null) {
+            try {
+                if (!session.getExecutor().isInExecutorThread()) {
+                    session.getExecutor().execute(new DsfRunnable() {
+                        public void run() {
+                            doDispose();
+                        }
+                    });
+                    return;
+                }
+            } catch (RejectedExecutionException e) {
+            }
+        }
+        // We should get to this point if 
+        // 1) we're in session's executor thread
+        // 2) session is disposed already
+        // 3) executor rejected our runnable
+        // In all cases dispose the tracker in current thread.
+        doDispose();
+    }
+
+    private void doDispose() {
         fBundleContext.removeServiceListener(fListner);
         for (Iterator<ServiceReference> itr = fServices.keySet().iterator(); itr.hasNext();) {
             fBundleContext.ungetService(itr.next());

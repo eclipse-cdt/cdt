@@ -24,15 +24,12 @@ import org.eclipse.core.runtime.Status;
 import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.model.IMemoryBlock;
 import org.eclipse.debug.core.model.IMemoryBlockExtension;
-import org.eclipse.debug.core.model.IMemoryBlockRetrieval;
 import org.eclipse.debug.core.model.MemoryByte;
 import org.eclipse.debug.internal.ui.DebugPluginImages;
 import org.eclipse.debug.internal.ui.DebugUIMessages;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.debug.internal.ui.IInternalDebugUIConstants;
 import org.eclipse.debug.internal.ui.memory.IMemoryBlockConnection;
-import org.eclipse.debug.internal.ui.views.memory.MemoryViewUtil;
-import org.eclipse.debug.internal.ui.views.memory.renderings.GoToAddressAction;
 import org.eclipse.debug.ui.IDebugUIConstants;
 import org.eclipse.debug.ui.memory.AbstractMemoryRendering;
 import org.eclipse.debug.ui.memory.AbstractTableRendering;
@@ -178,7 +175,7 @@ public class TraditionalRendering extends AbstractMemoryRendering implements IRe
         Status status = new Status(IStatus.ERROR, getRenderingId(),
             DebugException.INTERNAL_ERROR, message, e);
 
-        DebugUIPlugin.getDefault().getLog().log(status);
+        TraditionalRenderingPlugin.getDefault().getLog().log(status);
     }
     
     private BigInteger fBigBaseAddress;
@@ -457,7 +454,7 @@ public class TraditionalRendering extends AbstractMemoryRendering implements IRe
 	    	for(int i = 0; i < panes.length; i++)
 	    		panes[i].setBackground(getColorBackground());
 	    	
-	    	setRenderingPadding(DebugUIPlugin.getDefault().getPreferenceStore().getString(IDebugUIConstants.PREF_PADDED_STR));
+	    	setRenderingPadding(TraditionalRenderingPlugin.getDefault().getPreferenceStore().getString(IDebugUIConstants.PREF_PADDED_STR));
 	    	
 	    	fRendering.redrawPanes();
     	}
@@ -573,16 +570,6 @@ public class TraditionalRendering extends AbstractMemoryRendering implements IRe
                 }
             };
 
-        // go to address
-
-        final Action gotoAddressAction = new GoToAddressAction(TraditionalRendering.this) 
-    	{
-    		public void run() {
-    			TraditionalRendering.this.fRendering
-    				.setVisibleAddressBar(true);
-    		}
-    	};
-        
         // reset to base address
         
         final Action gotoBaseAddressAction = new Action(
@@ -1201,7 +1188,11 @@ public class TraditionalRendering extends AbstractMemoryRendering implements IRe
         super.dispose();
     }
 
-    public Object getAdapter(Class adapter)
+    /* (non-Javadoc)
+     * @see org.eclipse.core.runtime.PlatformObject#getAdapter(java.lang.Class)
+     */
+    @SuppressWarnings("unchecked")
+	public Object getAdapter(Class adapter)
     {
         if(adapter == IWorkbenchAdapter.class)
         {
@@ -1287,7 +1278,8 @@ class CopyAction extends Action
     	this(rendering, DND.CLIPBOARD);
     }
     
-    public CopyAction(Rendering rendering, int clipboardType)
+    @SuppressWarnings("restriction") // using platform's labels and images; acceptable build risk
+	public CopyAction(Rendering rendering, int clipboardType)
     {
         super();
         fType = clipboardType;

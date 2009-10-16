@@ -106,4 +106,55 @@ public class AccessControlTests extends AST2BaseTest {
 		AccessAssertionHelper ah= new AccessAssertionHelper(code);
 		ah.assertNotAccessible("a = 0", 1);
 	}
+	
+	//	class A0 {
+	//		public:
+	//			enum Ex {e1};
+	//	};
+	//
+	//	class A : public A0 {
+	//		class B {
+	//			void test() {
+	//				Ex a;  // we compute 'B' as the naming type, whereas it should be 'A'
+	//			}
+	//		};
+	//	};
+	public void testEnclosingAsNamingClass_292232() throws Exception {
+		final String code = getAboveComment();
+		parseAndCheckBindings(code, ParserLanguage.CPP);
+		AccessAssertionHelper ah= new AccessAssertionHelper(code);
+		ah.assertAccessible("Ex a;", 2);
+	}
+	
+	// // Example from C++-specification 11.2-3
+	// class B { 
+	//   public:
+	//     int mi;
+	//     static int si;
+	// };
+	// class D : private B {};
+	// class DD : public D {
+	//   void f();
+	// };
+	//
+	// void DD::f() {
+	//   mi=3;  // private
+	//   si=3;  // private 
+	//   B b;
+	//   b.mi=4;
+	//   b.si=4;
+	//   B* bp;
+	//   bp->mi=5;
+	// }
+	public void testEnclosingAsNamingClass_292232a() throws Exception {
+		final String code = getAboveComment();
+		parseAndCheckBindings(code, ParserLanguage.CPP);
+		AccessAssertionHelper ah= new AccessAssertionHelper(code);
+		ah.assertNotAccessible("mi=3;", 2);
+		ah.assertNotAccessible("si=3;", 2);
+		ah.assertAccessible("mi=4;", 2);
+		ah.assertAccessible("si=4;", 2);
+		ah.assertAccessible("mi=5;", 2);
+	}
+
 }

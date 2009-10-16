@@ -55,7 +55,9 @@ public class AccessContext {
 	/**
 	 * A class through which the bindings are accessed (11.2.4).
 	 */
-	private ICPPClassType namingClass;
+	private boolean isUnqualifiedLookup;
+	private ICPPClassType namingClass;  // depends on the binding for which we check the access
+	private ICPPClassType firstCandidateForNamingClass; // the first candidate is independent of the binding for which we do the access-check
 	private DOMException initializationException;
 
 	public AccessContext(IASTName name) {
@@ -77,7 +79,8 @@ public class AccessContext {
 			if (!(owner instanceof ICPPClassType)) {
 				return true; // The binding is not a class member.
 			}
-			if (!Initialize()) {
+			ICPPClassType accessOwner= (ICPPClassType) owner;
+			if (!initialize(accessOwner)) {
 				return true; // Assume visibility if anything goes wrong.
 			}
 			if (namingClass == null) {
@@ -93,19 +96,24 @@ public class AccessContext {
 	/**
 	 * @return <code>true</code> if initialization succeeded.
 	 */
-	private boolean Initialize() {
+	private boolean initialize(ICPPClassType accessOwner) {
 		if (context == null) {
 			if (initializationException != null) {
 				return false;
 			}
 			try {
-				namingClass = getNamingClass(name);
 				context = getContext(name);
+				firstCandidateForNamingClass= getFirstCandidateForNamingClass(name);
 			} catch (DOMException e) {
 				CCorePlugin.log(e);
 				initializationException = e;
 				return false;
 			}
+		}
+		try {
+			namingClass = getNamingClass(accessOwner);
+		} catch (DOMException e) {
+			return false;
 		}
 		return true;
 	}
@@ -198,8 +206,10 @@ public class AccessContext {
 		return false;
 	}
 
-	private static ICPPClassType getNamingClass(IASTName name) throws DOMException {
+	private ICPPClassType getFirstCandidateForNamingClass(IASTName name) throws DOMException {
 		LookupData data = new LookupData(name);
+		isUnqualifiedLookup= !data.qualified();
+		
 		ICPPScope scope= CPPSemantics.getLookupScope(name, data);
 		while (scope != null && !(scope instanceof ICPPClassScope)) {
 			scope = CPPSemantics.getParentScope(scope, data.tu);
@@ -208,6 +218,45 @@ public class AccessContext {
 			return ((ICPPClassScope) scope).getClassType();
 		}
 		return null;
+	}
+
+	
+	private ICPPClassType getNamingClass(ICPPClassType accessOwner) throws DOMException {
+		ICPPClassType classType = firstCandidateForNamingClass;
+		if (classType != null && isUnqualifiedLookup) {
+			IBinding owner = classType.getOwner();
+			while (owner instanceof ICPPClassType && !derivesFrom(classType, accessOwner, CPPSemantics.MAX_INHERITANCE_DEPTH)) {
+				classType= (ICPPClassType) owner;
+				owner= classType.getOwner();
+			}
+		}
+		return classType;
+	}
+
+	private static boolean derivesFrom(ICPPClassType derived, ICPPClassType target, int maxdepth) {
+		if (derived == target || derived.isSameType(target)) {
+			return true;
+		}
+		if (maxdepth > 0) {
+			try {
+				for (ICPPBase cppBase : derived.getBases()) {
+					try {
+						IBinding base= cppBase.getBaseClass();
+						if (base instanceof ICPPClassType) {
+							ICPPClassType tbase= (ICPPClassType) base;
+							if (tbase.isSameType(target)) {
+								return true;
+							}
+							if (derivesFrom(tbase, target, maxdepth - 1))
+								return true;
+						}
+					} catch (DOMException e) {
+					}
+				}
+			} catch (DOMException e) {
+			}
+		}
+		return false;
 	}
 
 	private static IBinding[] getContext(IASTName name) throws DOMException {

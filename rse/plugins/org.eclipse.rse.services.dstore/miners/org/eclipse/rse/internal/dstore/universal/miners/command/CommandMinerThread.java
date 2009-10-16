@@ -1148,6 +1148,9 @@ public class CommandMinerThread extends MinerThread
 			{
 				// ignore this line
 			}
+			else if (line.indexOf("PS1='$PWD>';") > 0){ //$NON-NLS-1$
+				// ignore this line too
+			}
 			else
 			{
 				ParsedOutput parsedMsg = null;

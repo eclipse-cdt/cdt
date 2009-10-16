@@ -280,7 +280,7 @@ public abstract class DisassemblyPart extends WorkbenchPart implements IDisassem
 	private BigInteger fGotoAddressPending= PC_UNKNOWN;
 	private BigInteger fFocusAddress= PC_UNKNOWN;
 	private int fBufferZone;
-	private IExecutionDMContext fTargetContext;
+	private volatile IExecutionDMContext fTargetContext;
 	private String fDebugSessionId;
 	private int fTargetFrame;
 	private DisassemblyIPAnnotation fPCAnnotation;
@@ -2478,6 +2478,9 @@ public abstract class DisassemblyPart extends WorkbenchPart implements IDisassem
 
 	@DsfServiceEventHandler
 	public void handleEvent(IExitedDMEvent event) {
+		if (fTargetContext == null) {
+			return;
+		}
 		final IExecutionDMContext context= event.getDMContext();
 		if (context.equals(fTargetContext)
 				|| DMContexts.isAncestorOf(fTargetContext, context)) {
@@ -2490,6 +2493,9 @@ public abstract class DisassemblyPart extends WorkbenchPart implements IDisassem
 
 	@DsfServiceEventHandler
 	public void handleEvent(ISuspendedDMEvent event) {
+		if (fTargetContext == null) {
+			return;
+		}
 		final IExecutionDMContext context= event.getDMContext();
 		if (context.equals(fTargetContext)
 				|| DMContexts.isAncestorOf(fTargetContext, context)) {
@@ -2504,6 +2510,9 @@ public abstract class DisassemblyPart extends WorkbenchPart implements IDisassem
 
 	@DsfServiceEventHandler
 	public void handleEvent(IResumedDMEvent event) {
+		if (fTargetContext == null) {
+			return;
+		}
 		final IExecutionDMContext context= event.getDMContext();
 		if (context.equals(fTargetContext)
 				|| DMContexts.isAncestorOf(fTargetContext, context)) {

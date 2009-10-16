@@ -61,13 +61,15 @@ class SpawnerInputStream extends InputStream {
 		} else if (len == 0) {
 			return 0;
 		}
-		byte[] tmpBuf = new byte[len];
+		byte[] tmpBuf = off > 0 ? new byte[len - off] : buf;
 
 		len = read0(fd, tmpBuf, len);
 		if (len <= 0)
 			return -1;
 
-		System.arraycopy(tmpBuf, 0, buf, off, len);
+		if (tmpBuf != buf) {
+			System.arraycopy(tmpBuf, 0, buf, off, len);
+		}
 		return len;
 	}
 

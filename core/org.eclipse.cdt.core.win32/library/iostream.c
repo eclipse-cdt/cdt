@@ -145,6 +145,15 @@ JNIEXPORT jint JNICALL Java_org_eclipse_cdt_utils_spawner_SpawnerInputStream_rea
 		nBuffOffset += nNumberOfBytesRead;
 		if(nNumberOfBytesRead != nNumberOfBytesToRead)
 			break;
+		else
+			{
+			// Is there data left in the pipe?
+			DWORD bytesAvailable = 0;
+			if (!::PeekNamedPipe((HANDLE)fd, NULL, 0, NULL, &bytesAvailable, NULL)
+				|| bytesAvailable == 0)
+				// No bytes left
+				break;
+			}
 		}
 	CloseHandle(overlapped.hEvent);
 #ifdef DEBUG_MONITOR

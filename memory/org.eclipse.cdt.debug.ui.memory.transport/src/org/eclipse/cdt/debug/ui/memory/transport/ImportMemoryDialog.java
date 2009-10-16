@@ -15,7 +15,6 @@ import java.math.BigInteger;
 import java.util.Properties;
 import java.util.Vector;
 
-import org.eclipse.cdt.debug.ui.memory.transport.model.IMemoryExporter;
 import org.eclipse.cdt.debug.ui.memory.transport.model.IMemoryImporter;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExtensionPoint;
@@ -252,8 +251,8 @@ public class ImportMemoryDialog extends SelectionDialog
 	 */
 	static void initProperties(Properties properties, BigInteger addr) {
 		final String addrstr = "0x" + addr.toString(16);
-		if (!properties.containsKey(IMemoryExporter.TRANSFER_START)) {
-			properties.setProperty(IMemoryExporter.TRANSFER_START, addrstr);
+		if (!properties.containsKey(IMemoryImporter.TRANSFER_START)) {
+			properties.setProperty(IMemoryImporter.TRANSFER_START, addrstr);
 		}
 	}
 

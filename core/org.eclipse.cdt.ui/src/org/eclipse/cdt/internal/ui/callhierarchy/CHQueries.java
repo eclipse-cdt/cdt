@@ -120,19 +120,7 @@ public class CHQueries {
 				if (CallHierarchyUI.isRelevantForCallHierarchy(binding)) {
 					ICElement[] defs= null;
 					if (binding instanceof ICPPMethod) {
-						try {
-							IBinding[] virtualOverriders= ClassTypeHelper.findOverriders(index, (ICPPMethod) binding);
-							if (virtualOverriders.length > 0) {
-								ArrayList<ICElementHandle> list= new ArrayList<ICElementHandle>();
-								list.addAll(Arrays.asList(IndexUI.findRepresentative(index, binding)));
-								for (IBinding overrider : virtualOverriders) {
-									list.addAll(Arrays.asList(IndexUI.findRepresentative(index, overrider)));
-								}
-								defs= list.toArray(new ICElement[list.size()]);
-							}
-						} catch (DOMException e) {
-							// index bindings don't throw DOMExceptions
-						}
+						defs = findOverriders(index, (ICPPMethod) binding);
 					}
 					if (defs == null) {
 						defs= IndexUI.findRepresentative(index, binding);
@@ -144,5 +132,25 @@ public class CHQueries {
 			}
 		}
 		return cp.createNodes(node, result);
+	}
+
+	/**
+	 * Searches for overriders of method and converts them to ICElement, returns null, if there are none.
+	 */
+	static ICElement[] findOverriders(IIndex index, ICPPMethod binding)	throws CoreException {
+		try {
+			IBinding[] virtualOverriders= ClassTypeHelper.findOverriders(index, binding);
+			if (virtualOverriders.length > 0) {
+				ArrayList<ICElementHandle> list= new ArrayList<ICElementHandle>();
+				list.addAll(Arrays.asList(IndexUI.findRepresentative(index, binding)));
+				for (IBinding overrider : virtualOverriders) {
+					list.addAll(Arrays.asList(IndexUI.findRepresentative(index, overrider)));
+				}
+				return list.toArray(new ICElement[list.size()]);
+			}
+		} catch (DOMException e) {
+			// index bindings don't throw DOMExceptions
+		}
+		return null;
 	}
 }

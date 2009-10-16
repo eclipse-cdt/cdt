@@ -18,13 +18,16 @@ import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.swt.widgets.Display;
 
 import org.eclipse.cdt.core.CCorePlugin;
+import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.IEnumerator;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPMethod;
 import org.eclipse.cdt.core.index.IIndex;
 import org.eclipse.cdt.core.index.IIndexFile;
 import org.eclipse.cdt.core.index.IIndexName;
 import org.eclipse.cdt.core.model.CoreModel;
 import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.core.model.ICProject;
+import org.eclipse.cdt.core.model.IMethod;
 import org.eclipse.cdt.core.model.ITranslationUnit;
 import org.eclipse.cdt.core.model.IVariable;
 import org.eclipse.cdt.ui.CUIPlugin;
@@ -130,6 +133,18 @@ public class CHContentProvider extends AsyncTreeContentProvider {
 				});
 			}
 			ITranslationUnit tu= CModelUtil.getTranslationUnit(element);
+			if (!fComputeReferencedBy && element instanceof IMethod) {
+				IIndexName methodName= IndexUI.elementToName(index, element);
+				if (methodName != null) {
+					IBinding methodBinding= index.findBinding(methodName);
+					if (methodBinding instanceof ICPPMethod) {
+						ICElement[] defs= CHQueries.findOverriders(index, (ICPPMethod) methodBinding);
+						if (defs != null && defs.length > 0) {
+							return new Object[] { new CHMultiDefNode(null, tu, 0, defs, methodBinding.getLinkage().getLinkageID()) };
+						}
+					}
+				}
+			}
 			return new Object[] { new CHNode(null, tu, 0, element, -1) };
 		}
 		finally {
@@ -177,8 +192,7 @@ public class CHContentProvider extends AsyncTreeContentProvider {
 	CHNode[] createNodes(CHNode node, CalledByResult result) throws CoreException {
 		ArrayList<CHNode> nodes= new ArrayList<CHNode>();
 		ICElement[] elements= result.getElements();
-		for (int i = 0; i < elements.length; i++) {
-			ICElement element = elements[i];
+		for (ICElement element : elements) {
 			if (element != null) {
 				if (fFilter == null || fFilter.isPartOfWorkingSet(element)) {
 					IIndexName[] refs= result.getReferences(element);
@@ -201,8 +215,7 @@ public class CHContentProvider extends AsyncTreeContentProvider {
 		}
 		boolean readAccess= false;
 		boolean writeAccess= false;
-		for (int i = 0; i < refs.length; i++) {
-			IIndexName reference = refs[i];
+		for (IIndexName reference : refs) {
 			node.addReference(new CHReferenceInfo(reference.getNodeOffset(), reference.getNodeLength()));
 			readAccess= (readAccess || reference.isReadAccess());
 			writeAccess= (writeAccess || reference.isWriteAccess());
@@ -216,8 +229,8 @@ public class CHContentProvider extends AsyncTreeContentProvider {
 		ITranslationUnit tu= CModelUtil.getTranslationUnit(node.getRepresentedDeclaration());
 		ArrayList<CHNode> result= new ArrayList<CHNode>();
 		CElementSet[] elementSets= callsTo.getElementSets();
-		for (int i = 0; i < elementSets.length; i++) {
-			CElementSet set = elementSets[i];
+		for (CElementSet elementSet : elementSets) {
+			CElementSet set = elementSet;
 			if (!set.isEmpty()) {
 				IIndexName[] refs= callsTo.getReferences(set);
 				ICElement[] elements= set.getElements(fFilter);
@@ -246,8 +259,7 @@ public class CHContentProvider extends AsyncTreeContentProvider {
 		
 		boolean readAccess= false;
 		boolean writeAccess= false;
-		for (int i = 0; i < references.length; i++) {
-			IIndexName reference = references[i];
+		for (IIndexName reference : references) {
 			node.addReference(new CHReferenceInfo(reference.getNodeOffset(), reference.getNodeLength()));
 			readAccess= (readAccess || reference.isReadAccess());
 			writeAccess= (writeAccess || reference.isWriteAccess());

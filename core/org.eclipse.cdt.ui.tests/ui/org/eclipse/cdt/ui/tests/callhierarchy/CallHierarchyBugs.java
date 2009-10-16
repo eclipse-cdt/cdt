@@ -443,4 +443,39 @@ public class CallHierarchyBugs extends CallHierarchyBaseTest {
 		checkTreeNode(chTree, 0, 1, null);
 	}
 
+	
+	//	class Base {
+	//		public:
+	//			virtual void dosomething() {}
+	//	};
+	//
+	//	class Derived : public Base {
+	//		public:
+	//			void dosomething() { }
+	//	};
+	//
+	//	void test() {
+	//		Base *dbPtr = new Derived();
+	//		dbPtr->dosomething();
+	//		delete dbPtr;
+	//	}
+	public void testCallsToFromVirtualMethod_246064() throws Exception {
+		final StringBuffer[] contents = getContentsForTest(1);
+		final String content = contents[0].toString();
+		IFile f2= createFile(getProject(), "testCallsToFromVirtualMethod_246064.cpp", content);
+		waitForIndexer(fIndex, f2, CallHierarchyBaseTest.INDEXER_WAIT_TIME);
+
+		final CHViewPart ch= (CHViewPart) activateView(CUIPlugin.ID_CALL_HIERARCHY);
+
+		// open editor, check outline
+		CEditor editor= openEditor(f2);
+		int idx = content.indexOf("dosomething();");
+		editor.selectAndReveal(idx, 0);
+		openCallHierarchy(editor, false);
+
+		Tree chTree= checkTreeNode(ch, 0, "Base::dosomething()").getParent();
+		checkTreeNode(chTree, 0, 0, "Base::dosomething()");
+		checkTreeNode(chTree, 0, 1, "Derived::dosomething()");
+		checkTreeNode(chTree, 0, 2, null);
+	}
 }

@@ -22,10 +22,16 @@ public interface IMemoryImporter
 {
 	public static final String TRANSFER_FILE = "File";
 	public static final String TRANSFER_START = "Start";
-	public static final String TRANSFER_END = "End";
 	public static final String TRANSFER_CUSTOM_START_ADDRESS = "CustomStartAddress";
 	public static final String TRANSFER_SCROLL_TO_START = "ScrollToStart";
 	
+	/**
+	 * @param parent
+	 * @param memBlock
+	 * @param properties This will contain an initial values for TRANSFER_START
+	 * @param parentDialog
+	 * @return
+	 */
 	public Control createControl(Composite parent, IMemoryBlock memBlock, Properties properties, ImportMemoryDialog parentDialog);
 	
 	public void importMemory();

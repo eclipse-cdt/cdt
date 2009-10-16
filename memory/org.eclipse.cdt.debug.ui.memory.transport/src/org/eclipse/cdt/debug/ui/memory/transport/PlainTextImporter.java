@@ -144,20 +144,9 @@ public class PlainTextImporter implements IMemoryImporter {
 		fScrollToStart = new Boolean(properties.getProperty(TRANSFER_SCROLL_TO_START, "true"));
 		try
 		{
-			BigInteger startAddress = null;
-			if(fMemoryBlock instanceof IMemoryBlockExtension)
-				startAddress = ((IMemoryBlockExtension) fMemoryBlock)
-					.getBigBaseAddress(); // FIXME use selection/caret address?
-			else
-				startAddress = BigInteger.valueOf(fMemoryBlock.getStartAddress());
-			
-			if(properties.getProperty(TRANSFER_START) != null)
-				fStartText.setText(properties.getProperty(TRANSFER_START));
-			else
-				fStartText.setText("0x" + startAddress.toString(16));
-			
+			fStartText.setText(properties.getProperty(TRANSFER_START));
 		}
-		catch(Exception e)
+		catch(IllegalArgumentException e)
 		{
 			MemoryTransportPlugin.getDefault().getLog().log(new Status(IStatus.ERROR, MemoryTransportPlugin.getUniqueIdentifier(),
 		    	DebugException.INTERNAL_ERROR, "Failure", e));

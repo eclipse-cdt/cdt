@@ -24,6 +24,13 @@ public interface IMemoryExporter
 	public static final String TRANSFER_START = "Start";
 	public static final String TRANSFER_END = "End";
 	
+	/**
+	 * @param parent
+	 * @param memBlock
+	 * @param properties This will contain initial values for TRANSFER_START and TRANSFER_END. 
+	 * @param parentDialog
+	 * @return
+	 */
 	public Control createControl(Composite parent, IMemoryBlock memBlock, Properties properties, ExportMemoryDialog parentDialog);
 		
 	public void exportMemory();

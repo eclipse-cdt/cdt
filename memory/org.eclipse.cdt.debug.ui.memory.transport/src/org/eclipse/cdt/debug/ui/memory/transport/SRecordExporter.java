@@ -155,26 +155,11 @@ public class SRecordExporter implements IMemoryExporter
 		fFileText.setText(properties.getProperty(TRANSFER_FILE, ""));
 		try
 		{
-			BigInteger startAddress = null;
-			if(fMemoryBlock instanceof IMemoryBlockExtension)
-				startAddress = ((IMemoryBlockExtension) fMemoryBlock)
-					.getBigBaseAddress(); // FIXME use selection/caret address?
-			else
-				startAddress = BigInteger.valueOf(fMemoryBlock.getStartAddress());
-			
-			if(properties.getProperty(TRANSFER_START) != null)
-				fStartText.setText(properties.getProperty(TRANSFER_START));
-			else
-				fStartText.setText("0x" + startAddress.toString(16));
-			
-			if(properties.getProperty(TRANSFER_END) != null)
-				fEndText.setText(properties.getProperty(TRANSFER_END));
-			else
-				fEndText.setText("0x" + startAddress.toString(16));
-			
+			fStartText.setText(properties.getProperty(TRANSFER_START));
+			fEndText.setText(properties.getProperty(TRANSFER_END));
 			fLengthText.setText(getEndAddress().subtract(getStartAddress()).toString());
 		}
-		catch(Exception e)
+		catch(IllegalArgumentException e)
 		{
 			MemoryTransportPlugin.getDefault().getLog().log(new Status(IStatus.ERROR, MemoryTransportPlugin.getUniqueIdentifier(),
 		    	DebugException.INTERNAL_ERROR, "Failure", e));

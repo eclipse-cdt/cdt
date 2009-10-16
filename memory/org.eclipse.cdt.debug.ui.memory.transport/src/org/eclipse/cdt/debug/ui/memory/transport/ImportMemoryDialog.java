@@ -15,6 +15,7 @@ import java.math.BigInteger;
 import java.util.Properties;
 import java.util.Vector;
 
+import org.eclipse.cdt.debug.ui.memory.transport.model.IMemoryExporter;
 import org.eclipse.cdt.debug.ui.memory.transport.model.IMemoryImporter;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExtensionPoint;
@@ -62,8 +63,10 @@ public class ImportMemoryDialog extends SelectionDialog
 	private Properties fProperties = new Properties();
 	
 	private IMemoryRenderingSite fMemoryView;
+
+	private BigInteger fInitialStartAddr;
 	
-	public ImportMemoryDialog(Shell parent, IMemoryBlock memoryBlock, IMemoryRenderingSite renderingSite)
+	public ImportMemoryDialog(Shell parent, IMemoryBlock memoryBlock, BigInteger initialStartAddr, IMemoryRenderingSite renderingSite)
 	{
 		super(parent);
 		super.setTitle("Download to Memory");  
@@ -71,6 +74,7 @@ public class ImportMemoryDialog extends SelectionDialog
 		
 		fMemoryBlock = memoryBlock;
 		fMemoryView = renderingSite;
+		fInitialStartAddr = initialStartAddr;
 	}
 	
 	protected void scrollRenderings(final BigInteger address)
@@ -226,18 +230,33 @@ public class ImportMemoryDialog extends SelectionDialog
 			public void widgetSelected(SelectionEvent e) {
 				if(fCurrentControl != null)
 					fCurrentControl.dispose();
+				
+				initProperties(fProperties, fInitialStartAddr); // use utility from export code
 				fCurrentControl = fFormatImporters[fFormatCombo.getSelectionIndex()].createControl(container, 
 					fMemoryBlock, fProperties, ImportMemoryDialog.this);
 			}
 		});
 		
 		fFormatCombo.select(0);
+		
+		initProperties(fProperties, fInitialStartAddr); // use utility from export code
 		fCurrentControl = 
 			fFormatImporters[0].createControl(container,fMemoryBlock, fProperties, ImportMemoryDialog.this);
 		
 		return composite;
 	}
-	
+
+	/**
+	 * Initializes the start address properties to a particular value if
+	 * and only if we have a fresh/clean properties object.
+	 */
+	static void initProperties(Properties properties, BigInteger addr) {
+		final String addrstr = "0x" + addr.toString(16);
+		if (!properties.containsKey(IMemoryExporter.TRANSFER_START)) {
+			properties.setProperty(IMemoryExporter.TRANSFER_START, addrstr);
+		}
+	}
+
 	public void setValid(boolean isValid)
 	{
 		getButton(IDialogConstants.OK_ID).setEnabled(isValid);

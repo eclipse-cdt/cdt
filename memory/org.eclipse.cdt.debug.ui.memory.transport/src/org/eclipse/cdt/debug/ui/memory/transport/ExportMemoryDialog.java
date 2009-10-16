@@ -11,6 +11,7 @@
 
 package org.eclipse.cdt.debug.ui.memory.transport;
 
+import java.math.BigInteger;
 import java.util.Properties;
 import java.util.Vector;
 
@@ -51,14 +52,17 @@ public class ExportMemoryDialog extends SelectionDialog
 	private String fFormatNames[];
 	
 	private Properties fProperties = new Properties();
+
+	private BigInteger fInitialStartAddr;
 	
-	public ExportMemoryDialog(Shell parent, IMemoryBlock memoryBlock)
+	public ExportMemoryDialog(Shell parent, IMemoryBlock memoryBlock, BigInteger initialStartAddr)
 	{
 		super(parent);
 		super.setTitle("Export Memory"); 
 		setShellStyle(getShellStyle() | SWT.RESIZE);
 		
 		fMemoryBlock = memoryBlock;
+		fInitialStartAddr = initialStartAddr;
 	}
 	
 	/* (non-Javadoc)
@@ -181,6 +185,7 @@ public class ExportMemoryDialog extends SelectionDialog
 			public void widgetSelected(SelectionEvent e) {
 				if(fCurrentControl != null)
 					fCurrentControl.dispose();
+				initProperties(fProperties, fInitialStartAddr);
 				fCurrentControl = fFormatExporters[fFormatCombo.getSelectionIndex()].createControl(container, 
 					fMemoryBlock, fProperties, ExportMemoryDialog.this);
 			}
@@ -188,10 +193,23 @@ public class ExportMemoryDialog extends SelectionDialog
 		
 		
 		fFormatCombo.select(0);
+		initProperties(fProperties, fInitialStartAddr);		
 		fCurrentControl = fFormatExporters[0].createControl(container, 
 				fMemoryBlock, fProperties, ExportMemoryDialog.this);
 		
 		return composite;
+	}
+
+	/**
+	 * Initializes the start and end address properties to a particular value if
+	 * and only if we have a fresh/clean properties object.
+	 */
+	static void initProperties(Properties properties, BigInteger addr) {
+		final String addrstr = "0x" + addr.toString(16);
+		if (!properties.containsKey(IMemoryExporter.TRANSFER_START)) {
+			properties.setProperty(IMemoryExporter.TRANSFER_START, addrstr);
+			properties.setProperty(IMemoryExporter.TRANSFER_END, addrstr);
+		}
 	}
 
 	public void setValid(boolean isValid)

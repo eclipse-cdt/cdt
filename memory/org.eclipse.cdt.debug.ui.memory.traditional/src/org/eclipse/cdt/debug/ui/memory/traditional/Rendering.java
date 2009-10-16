@@ -90,7 +90,7 @@ public class Rendering extends Composite implements IDebugEventSetListener
     
     private int fCurrentScrollSelection = 0;	// current scroll selection;
     
-    private BigInteger fCaretAddress = BigInteger.valueOf(0); // -1 ?
+    private BigInteger fCaretAddress;
     
     // user settings
     
@@ -463,7 +463,11 @@ public class Rendering extends Composite implements IDebugEventSetListener
     
     protected BigInteger getCaretAddress()
     {
-    	return fCaretAddress;
+		// Return the caret address if it has been set, otherwise return the
+		// viewport address. When the rendering is first created, the caret is
+		// unset until the user clicks somewhere in the rendering. It also reset
+    	// (unset) when the user gives us a new viewport address
+    	return (fCaretAddress != null) ? fCaretAddress : fViewportAddress;
     }
     
     private void doGoToAddress() {
@@ -1469,7 +1473,12 @@ public class Rendering extends Composite implements IDebugEventSetListener
     		return;
     	}
     	
-        fViewportAddress = address; // TODO update fCaretAddress
+        fViewportAddress = address;
+        
+        // reset the caret and selection state (no caret and no selection)
+        fCaretAddress = null;
+        fSelection = new Selection();
+        
         redrawPanes();
     }
 

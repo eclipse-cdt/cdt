@@ -63,8 +63,6 @@ public class XLCSettingsWizardPage extends MBSCustomPage {
 		}
 	}
 	
-	private boolean fVisited = false;
-	
 	private Composite fComposite = null;
 
 	private Text fDirTextBox;
@@ -76,6 +74,7 @@ public class XLCSettingsWizardPage extends MBSCustomPage {
 	 */
 	public XLCSettingsWizardPage(String pageID) {
 		super(pageID);
+		setDefaultPreferences(pageID);
 	}
 
 	/**
@@ -83,14 +82,20 @@ public class XLCSettingsWizardPage extends MBSCustomPage {
 	 */
 	public XLCSettingsWizardPage() {
 		super(PAGE_ID);
+		setDefaultPreferences(PAGE_ID);
+	}
+	
+	private void setDefaultPreferences(String pageID) {
+		String compilerPath = XLCUIPlugin.getDefault().getPreferenceStore().getString(PreferenceConstants.P_XL_COMPILER_ROOT);
+		MBSCustomPageManager.addPageProperty(pageID, PreferenceConstants.P_XL_COMPILER_ROOT, compilerPath);
+		MBSCustomPageManager.addPageProperty(pageID, PreferenceConstants.P_XLC_COMPILER_VERSION, PreferenceConstants.P_XL_COMPILER_VERSION_8);
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.managedbuilder.ui.wizards.MBSCustomPage#isCustomPageComplete()
 	 */
 	protected boolean isCustomPageComplete() {
-		// Don't allow the user to finish without visiting the page.
-		return fVisited;
+		return true;
 	}
 
 	/* (non-Javadoc)
@@ -282,10 +287,6 @@ public class XLCSettingsWizardPage extends MBSCustomPage {
 	 */
 	public void setVisible(boolean visible) {
 		fComposite.setVisible(visible);
-		if (visible) {
-			fVisited = true;
-		}
-
 	}
 
 }

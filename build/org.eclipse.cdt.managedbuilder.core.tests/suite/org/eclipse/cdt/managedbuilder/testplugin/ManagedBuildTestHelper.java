@@ -463,16 +463,24 @@ public class ManagedBuildTestHelper {
 		final String IFNEQ_PATTERN = "ifneq \\(\\$\\(strip \\$\\(.*\\)\\),\\)";
 		final String INCLUDE_PATTERN = "-include \\$\\(.*\\)";
 		final String MACRO_PATTERN = "\\S* :=.*";
+		final String EMPTY_MACRO_PATTERN = "\\S* :=";
 		ArrayList<String> testArray = getContents(testFile);
 		ArrayList<String> benchmarkArray = getContents(benchmarkFile);
-		if (testArray.size()!=benchmarkArray.size()) {
-			System.out.println("testArray.size="+testArray.size()+ " while benchmarkArray.size="+benchmarkArray.size());
-			return false;
-		}
 		
 		Set<String> testNotMatchingLines = new TreeSet<String>();
 		Set<String> benchNotMatchingLines = new TreeSet<String>();
-		for (int i=0;i<benchmarkArray.size();i++) {
+		Set<String> extraLines = new TreeSet<String>();
+		for (int i=0;i<benchmarkArray.size() || i<testArray.size();i++) {
+			if (!(i<benchmarkArray.size())) {
+				System.out.println(testFile.lastSegment()+": extra line =["+testArray.get(i)+ "] not in benchmark. File "+testFile);
+				extraLines.add(testArray.get(i));
+				continue;
+			}
+			if (!(i<testArray.size())) {
+				System.out.println(testFile.lastSegment()+": missing line =["+benchmarkArray.get(i)+ "] comparing to benchmark. File "+testFile);
+				extraLines.add(benchmarkArray.get(i));
+				continue;
+			}
 			String testLine = testArray.get(i);
 			String benchmarkLine = benchmarkArray.get(i);
 			if (!testLine.equals(benchmarkLine)) {
@@ -513,6 +521,19 @@ public class ManagedBuildTestHelper {
 					System.out.println("expected: ["+benchmarkLine+"], file "+benchmarkFile);
 					return false;
 				}
+			}
+		}
+		if (testArray.size()!=benchmarkArray.size()) {
+			System.out.println("testArray.size="+testArray.size()+ " while benchmarkArray.size="+benchmarkArray.size());
+			// Ignore benign differences
+			for (String line : extraLines) {
+				if (line==null || line.length()==0) {
+					continue;
+				}
+				if (line.matches(EMPTY_MACRO_PATTERN)) {
+					continue;
+				}
+				return false;
 			}
 		}
 		

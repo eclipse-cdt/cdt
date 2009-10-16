@@ -442,7 +442,7 @@ public class TraditionalRendering extends AbstractMemoryRendering implements IRe
 
     public void applyPreferences()
     {
-    	if(!fRendering.isDisposed())
+    	if(fRendering != null && !fRendering.isDisposed())
     	{
     		IPreferenceStore store = TraditionalRenderingPlugin.getDefault().getPreferenceStore();
     		

@@ -62,7 +62,7 @@ public class ASTTypeUtil {
 	/**
 	 * Returns a string representation for the parameters of the given function type. The 
 	 * representation contains the comma-separated list of the normalized parameter type
-	 * representations wrapped in parenthesis. 
+	 * representations wrapped in parentheses. 
 	 */
 	public static String getParameterTypeString(IFunctionType type) {
 		StringBuilder result = new StringBuilder();

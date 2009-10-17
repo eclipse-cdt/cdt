@@ -94,7 +94,8 @@ import org.eclipse.core.runtime.Status;
  * Database for storing semantic information for one project.
  */
 public class PDOM extends PlatformObject implements IPDOM {
-	private static final int BLOCKED_WRITELOCK_OUTPUT_INTERVAL = 30000;
+	private static final int BLOCKED_WRITE_LOCK_OUTPUT_INTERVAL = 30000;
+	private static final int LONG_WRITE_LOCK_REPORT_THRESHOLD = 1000;
 	static boolean sDEBUG_LOCKS= false; // initialized in the PDOMManager, because IBM needs PDOM independent of runtime plugin.
 
 	/**
@@ -715,6 +716,7 @@ public class PDOM extends PlatformObject implements IPDOM {
 	private int waitingReaders;
 	private long lastWriteAccess= 0;
 	private long lastReadAccess= 0;
+	private long timeWriteLockAcquired;
 
 
 	public void acquireReadLock() throws InterruptedException {
@@ -793,12 +795,14 @@ public class PDOM extends PlatformObject implements IPDOM {
 			// Let the readers go first
 			long start= sDEBUG_LOCKS ? System.currentTimeMillis() : 0;
 			while (lockCount > giveupReadLocks || waitingReaders > 0) {
-				mutex.wait(BLOCKED_WRITELOCK_OUTPUT_INTERVAL);
+				mutex.wait(BLOCKED_WRITE_LOCK_OUTPUT_INTERVAL);
 				if (sDEBUG_LOCKS) {
 					start = reportBlockedWriteLock(start, giveupReadLocks);
 				}
 			}
 			lockCount= -1;
+			if (sDEBUG_LOCKS)
+				timeWriteLockAcquired = System.currentTimeMillis();
 			db.setExclusiveLock();
 		}
 	}
@@ -807,6 +811,7 @@ public class PDOM extends PlatformObject implements IPDOM {
 		releaseWriteLock(0, true);
 	}
 	
+	@SuppressWarnings("nls")
 	public void releaseWriteLock(int establishReadLocks, boolean flush) {
 		clearResultCache();
 		try {
@@ -820,6 +825,10 @@ public class PDOM extends PlatformObject implements IPDOM {
 		fEvent= new ChangeEvent();
 		synchronized (mutex) {
 			if (sDEBUG_LOCKS) {
+				long timeHeld = lastWriteAccess - timeWriteLockAcquired;
+				if (timeHeld >= LONG_WRITE_LOCK_REPORT_THRESHOLD) {
+					System.out.println("Index write lock held for " + timeHeld + " ms");
+				}
 				decWriteLock(establishReadLocks);
 			}
 
@@ -1371,7 +1380,7 @@ public class PDOM extends PlatformObject implements IPDOM {
 	@SuppressWarnings("nls")
 	private long reportBlockedWriteLock(long start, int giveupReadLocks) {
 		long now= System.currentTimeMillis();
-		if (now >= start+BLOCKED_WRITELOCK_OUTPUT_INTERVAL) {
+		if (now >= start + BLOCKED_WRITE_LOCK_OUTPUT_INTERVAL) {
 			System.out.println();
 			System.out.println("Blocked writeLock");
 			System.out.println("  lockcount= " + lockCount + ", giveupReadLocks=" + giveupReadLocks + ", waitingReaders=" + waitingReaders);

@@ -13,6 +13,7 @@ package org.eclipse.cdt.debug.ui.memory.transport;
 
 import java.io.File;
 import java.io.FileWriter;
+import java.io.IOException;
 import java.math.BigInteger;
 import java.util.Properties;
 
@@ -364,94 +365,98 @@ public class PlainTextExporter implements IMemoryExporter {
 	public void exportMemory() {
 		Job job = new Job("Memory Export to Plain Text File"){ //$NON-NLS-1$
 			public IStatus run(IProgressMonitor monitor) {
-				
 				try
-				{
-					try
-					{	
-						// FIXME 4 byte default
+				{	
+					// FIXME 4 byte default
+					
+					BigInteger CELLSIZE = BigInteger.valueOf(4);
+					
+					BigInteger COLUMNS = BigInteger.valueOf(5); // FIXME
+					
+					BigInteger DATA_PER_LINE = CELLSIZE.multiply(COLUMNS);
+					
+					BigInteger transferAddress = fStartAddress;
+					
+					FileWriter writer = new FileWriter(fOutputFile);
+					
+					BigInteger jobs = fEndAddress.subtract(transferAddress).divide(DATA_PER_LINE);
+					BigInteger factor = BigInteger.ONE;
+					if(jobs.compareTo(BigInteger.valueOf(0x7FFFFFFF)) > 0)
+					{
+						factor = jobs.divide(BigInteger.valueOf(0x7FFFFFFF));
+						jobs = jobs.divide(factor);
+					}
 						
-						BigInteger CELLSIZE = BigInteger.valueOf(4);
+					monitor.beginTask("Transferring Data", jobs.intValue());
+					
+					BigInteger jobCount = BigInteger.ZERO;
+					while(transferAddress.compareTo(fEndAddress) < 0 && !monitor.isCanceled())
+					{
+						BigInteger length = DATA_PER_LINE;
+						if(fEndAddress.subtract(transferAddress).compareTo(length) < 0)
+							length = fEndAddress.subtract(transferAddress);
 						
-						BigInteger COLUMNS = BigInteger.valueOf(5); // FIXME
+						monitor.subTask(String.format("Transfering %s bytes at address 0x%s", length.toString(10), transferAddress.toString(16)));
 						
-						BigInteger DATA_PER_LINE = CELLSIZE.multiply(COLUMNS);
+						StringBuffer buf = new StringBuffer();
 						
-						BigInteger transferAddress = fStartAddress;
-						
-						FileWriter writer = new FileWriter(fOutputFile);
-						
-						BigInteger jobs = fEndAddress.subtract(transferAddress).divide(DATA_PER_LINE);
-						BigInteger factor = BigInteger.ONE;
-						if(jobs.compareTo(BigInteger.valueOf(0x7FFFFFFF)) > 0)
-						{
-							factor = jobs.divide(BigInteger.valueOf(0x7FFFFFFF));
-							jobs = jobs.divide(factor);
-						}
-							
-						monitor.beginTask("Transferring Data", jobs.intValue());
-						
-						BigInteger jobCount = BigInteger.ZERO;
-						while(transferAddress.compareTo(fEndAddress) < 0 && !monitor.isCanceled())
-						{
-							BigInteger length = DATA_PER_LINE;
-							if(fEndAddress.subtract(transferAddress).compareTo(length) < 0)
-								length = fEndAddress.subtract(transferAddress);
-							
-							StringBuffer buf = new StringBuffer();
-							
 //							String transferAddressString = transferAddress.toString(16);
-							
-							// future option
+						
+						// future option
 //							for(int i = 0; i < 8 - transferAddressString.length(); i++)
 //								buf.append("0");
 //							buf.append(transferAddressString);
 //							buf.append(" "); // TODO tab?
-							
-							// data
-							
-							for(int i = 0; i < length.divide(CELLSIZE).intValue(); i++)
-							{
-								if(i != 0)
-									buf.append(" ");
-								MemoryByte bytes[] = ((IMemoryBlockExtension) fMemoryBlock).getBytesFromAddress(
-									transferAddress.add(CELLSIZE.multiply(BigInteger.valueOf(i))), 
-									CELLSIZE.longValue() / ((IMemoryBlockExtension) fMemoryBlock).getAddressableSize());
-								for(int byteIndex = 0; byteIndex < bytes.length; byteIndex++)
-								{
-									String bString = BigInteger.valueOf(0xFF & bytes[byteIndex].getValue()).toString(16);
-									if(bString.length() == 1)
-										buf.append("0");
-									buf.append(bString);
-								}
-							}
-							
-							writer.write(buf.toString().toUpperCase());
-							writer.write("\n");
-							
-							transferAddress = transferAddress.add(length);
-							
-							jobCount = jobCount.add(BigInteger.ONE);
-							if(jobCount.compareTo(factor) == 0)
-							{
-								jobCount = BigInteger.ZERO;
-								monitor.worked(1);
-							}
- 						}
 						
-						writer.close();
-						monitor.done();
+						// data
+						
+						for(int i = 0; i < length.divide(CELLSIZE).intValue(); i++)
+						{
+							if(i != 0)
+								buf.append(" ");
+							MemoryByte bytes[] = ((IMemoryBlockExtension) fMemoryBlock).getBytesFromAddress(
+								transferAddress.add(CELLSIZE.multiply(BigInteger.valueOf(i))), 
+								CELLSIZE.longValue() / ((IMemoryBlockExtension) fMemoryBlock).getAddressableSize());
+							for(int byteIndex = 0; byteIndex < bytes.length; byteIndex++)
+							{
+								String bString = BigInteger.valueOf(0xFF & bytes[byteIndex].getValue()).toString(16);
+								if(bString.length() == 1)
+									buf.append("0");
+								buf.append(bString);
+							}
+						}
+						
+						writer.write(buf.toString().toUpperCase());
+						writer.write("\n");
+						
+						transferAddress = transferAddress.add(length);
+						
+						jobCount = jobCount.add(BigInteger.ONE);
+						if(jobCount.compareTo(factor) == 0)
+						{
+							jobCount = BigInteger.ZERO;
+							monitor.worked(1);
+						}
 					}
-					catch(Exception e) 
-					{ 
-						MemoryTransportPlugin.getDefault().getLog().log(new Status(IStatus.ERROR, MemoryTransportPlugin.getUniqueIdentifier(),
-					    	DebugException.INTERNAL_ERROR, "Failure", e));
-					}
-				}
-				catch(Exception e) 
-				{
+					
+					writer.close();
+					monitor.done();
+				} catch (IOException ex) {
 					MemoryTransportPlugin.getDefault().getLog().log(new Status(IStatus.ERROR, MemoryTransportPlugin.getUniqueIdentifier(),
-				    	DebugException.INTERNAL_ERROR, "Failure", e));
+							DebugException.REQUEST_FAILED, "Could not write to file.", ex));
+					return new Status(IStatus.ERROR, MemoryTransportPlugin.getUniqueIdentifier(),
+					    	DebugException.REQUEST_FAILED, "Could not write to file.", ex);
+					
+				} catch (DebugException ex) {
+					MemoryTransportPlugin.getDefault().getLog().log(new Status(IStatus.ERROR, MemoryTransportPlugin.getUniqueIdentifier(),
+							DebugException.REQUEST_FAILED, "Could read from target.", ex));
+					return new Status(IStatus.ERROR, MemoryTransportPlugin.getUniqueIdentifier(),
+					    	DebugException.REQUEST_FAILED, "Could read from target.", ex);						
+				} catch (Exception ex) {
+					MemoryTransportPlugin.getDefault().getLog().log(new Status(IStatus.ERROR, MemoryTransportPlugin.getUniqueIdentifier(),
+							DebugException.INTERNAL_ERROR, "Failure exporting memory", ex));
+					return new Status(IStatus.ERROR, MemoryTransportPlugin.getUniqueIdentifier(),
+					    	DebugException.INTERNAL_ERROR, "Failure exporting memory", ex);
 				}
 				return Status.OK_STATUS;
 			}};

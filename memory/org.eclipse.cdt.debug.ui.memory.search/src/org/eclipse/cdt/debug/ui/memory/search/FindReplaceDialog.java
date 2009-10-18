@@ -75,7 +75,6 @@ public class FindReplaceDialog extends SelectionDialog
 	private Button fReplaceButton;
 	private Button fReplaceFindButton;
 	private Button fReplaceAllButton;
-	private Button fCloseButton;
 
 	private IMemoryRenderingSite fMemoryView;
 	
@@ -290,7 +289,7 @@ public class FindReplaceDialog extends SelectionDialog
 			}
 		});
 		
-		fCloseButton = createButton(parent, IDialogConstants.CANCEL_ID, Messages.getString("FindReplaceDialog.Close"), false); //$NON-NLS-1$
+		createButton(parent, IDialogConstants.CANCEL_ID, Messages.getString("FindReplaceDialog.Close"), false); //$NON-NLS-1$
 		
 		((GridLayout) parent.getLayout()).numColumns = 2;
 				
@@ -528,7 +527,7 @@ public class FindReplaceDialog extends SelectionDialog
 	 */
 	protected Control createDialogArea(Composite parent) {
 
-		PlatformUI.getWorkbench().getHelpSystem().setHelp(parent, MemorySearchPlugin.getUniqueIdentifier() + ".MemorySearchDialog_context"); //$NON-NLS-1$
+		PlatformUI.getWorkbench().getHelpSystem().setHelp(parent, MemorySearchPlugin.getUniqueIdentifier() + ".FindReplaceDialog_context"); //$NON-NLS-1$
 		Composite composite = new Composite(parent, SWT.NONE);
 		FormLayout formLayout = new FormLayout();
 		formLayout.spacing = 5;

@@ -70,8 +70,8 @@ import org.eclipse.swt.custom.CTabFolder2Adapter;
 import org.eclipse.swt.custom.CTabFolderEvent;
 import org.eclipse.swt.custom.CTabItem;
 import org.eclipse.swt.custom.StackLayout;
-import org.eclipse.swt.events.KeyEvent;
-import org.eclipse.swt.events.KeyListener;
+import org.eclipse.swt.events.DisposeEvent;
+import org.eclipse.swt.events.DisposeListener;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.graphics.Color;
@@ -103,6 +103,7 @@ import org.eclipse.ui.progress.WorkbenchJob;
  * 
  */
 
+@SuppressWarnings("restriction")
 public class MemoryBrowser extends ViewPart implements IDebugContextListener, ILaunchListener, IMemoryRenderingSite
 {
 	public static final String ID = "org.eclipse.cdt.debug.ui.memory.memorybrowser.MemoryBrowser";  //$NON-NLS-1$
@@ -118,10 +119,11 @@ public class MemoryBrowser extends ViewPart implements IDebugContextListener, IL
 	
 	private ArrayList<IMemoryRenderingContainer> fCurrentContainers = new ArrayList<IMemoryRenderingContainer>();
 	
-	private final static String KEY_RENDERING = "RENDERING"; //$NON-NLS-1$
-	private final static String KEY_CONTEXT   = "CONTEXT";   //$NON-NLS-1$
-	private final static String KEY_RETRIEVAL = "RETRIEVAL"; //$NON-NLS-1$
-	private final static String KEY_CONTAINER = "CONTAINER"; //$NON-NLS-1$
+	private final static String KEY_RENDERING    = "RENDERING"; //$NON-NLS-1$
+	private final static String KEY_CONTEXT      = "CONTEXT";   //$NON-NLS-1$
+	private final static String KEY_MEMORY_BLOCK = "MEMORY"; //$NON-NLS-1$
+	private final static String KEY_RETRIEVAL    = "RETRIEVAL"; //$NON-NLS-1$
+	private final static String KEY_CONTAINER    = "CONTAINER"; //$NON-NLS-1$
 
 	public MemoryBrowser() {
 	}
@@ -175,11 +177,10 @@ public class MemoryBrowser extends ViewPart implements IDebugContextListener, IL
 			}
 		});
 		
-		fGotoAddressBar.getExpressionWidget().addKeyListener(new KeyListener(){
-			public void keyPressed(KeyEvent e) {}
-			public void keyReleased(KeyEvent e) {
-				if(e.keyCode == SWT.CR)
-					performGo(false);
+		fGotoAddressBar.getExpressionWidget().addSelectionListener(new SelectionListener() {
+			public void widgetSelected(SelectionEvent e) {}
+			public void widgetDefaultSelected(SelectionEvent e) {
+				performGo(false);
 			}
 		});
 		
@@ -270,9 +271,12 @@ public class MemoryBrowser extends ViewPart implements IDebugContextListener, IL
 	public void launchChanged(ILaunch launch) {}
 
 	public void launchRemoved(ILaunch launch) {
-		IMemoryBlockRetrieval retrieval = ((IMemoryBlockRetrieval) launch.getAdapter(IMemoryBlockRetrieval.class));
-		if(retrieval != null)
-			releaseTabFolder(retrieval);
+		// For CDT launch is not adaptable to memory rendering, but the debug targets do.
+		for (IDebugTarget target : launch.getDebugTargets()) {
+			IMemoryBlockRetrieval retrieval = ((IMemoryBlockRetrieval) target.getAdapter(IMemoryBlockRetrieval.class));
+			if(retrieval != null)
+				releaseTabFolder(retrieval);
+		}
 	}
 	
 	public IMemoryRenderingContainer getContainer(String id) {
@@ -323,10 +327,8 @@ public class MemoryBrowser extends ViewPart implements IDebugContextListener, IL
 				{
 					public void run()
 					{
-						IMemoryBlockRetrievalExtension retrievalExtension = (IMemoryBlockRetrievalExtension) retrieval;
 						try {
-							IMemoryBlockExtension newBlock = retrievalExtension.getExtendedMemoryBlock(expression, context);
-							BigInteger newBase = newBlock.getBigBaseAddress();
+							BigInteger newBase = getExpressionAddress(retrieval, expression, context);
 							if(((IMemoryBlockExtension) rendering.getMemoryBlock()).supportBaseAddressModification())
 								((IMemoryBlockExtension) rendering.getMemoryBlock()).setBaseAddress(newBase);
 							rendering.goToAddress(newBase);
@@ -366,7 +368,7 @@ public class MemoryBrowser extends ViewPart implements IDebugContextListener, IL
 	
 	private CTabFolder createTabFolder(Composite parent)
 	{
-		CTabFolder folder = new CTabFolder(parent, SWT.NO_REDRAW_RESIZE | SWT.NO_TRIM | SWT.FLAT);
+		final CTabFolder folder = new CTabFolder(parent, SWT.NO_REDRAW_RESIZE | SWT.NO_TRIM | SWT.FLAT);
 		
 		ColorRegistry reg = JFaceResources.getColorRegistry();
 		Color c1 = reg.get("org.eclipse.ui.workbench.ACTIVE_TAB_BG_START"), //$NON-NLS-1$
@@ -376,15 +378,49 @@ public class MemoryBrowser extends ViewPart implements IDebugContextListener, IL
 		folder.setSimple(PlatformUI.getPreferenceStore().getBoolean(IWorkbenchPreferenceConstants.SHOW_TRADITIONAL_STYLE_TABS));
 		folder.setBorderVisible(true);
 		
+		// listener to dispose rendering resources for each closed tab
 		folder.addCTabFolder2Listener(new CTabFolder2Adapter() {
 			public void close(CTabFolderEvent event) {
-				event.doit = false;
+				event.doit = true;
 				CTabItem item = (CTabItem) event.item;
-				IMemoryRenderingContainer container = (IMemoryRenderingContainer) item.getData(KEY_CONTAINER);
-				fCurrentContainers.remove( container );
+				disposeTab(item);
+			}
+		});
+		
+		// listener to dispose rendering resources for all tab items when view part is closed 
+		folder.addDisposeListener(new DisposeListener() {
+			public void widgetDisposed(DisposeEvent e) {
+				for(CTabItem tab : folder.getItems()) {
+					disposeTab(tab);
+				}
+				folder.removeDisposeListener(this);
 			}
 		});
 		return folder;
+	}
+	
+	/**
+	 * dispose rendering resources associated with the tab item
+	 * @param item
+	 */
+	private void disposeTab(CTabItem item )  {
+		if (item.isDisposed())
+			return;
+		
+		IMemoryRenderingContainer container = (IMemoryRenderingContainer) item.getData(KEY_CONTAINER);
+		fCurrentContainers.remove( container );
+		IMemoryRendering rendering = (IMemoryRendering) item.getData(KEY_RENDERING);
+		// always deactivate rendering before disposing it.
+		if ( rendering != null ) {
+			rendering.deactivated();
+			rendering.dispose();
+		}
+		IMemoryBlockExtension block = (IMemoryBlockExtension) item.getData(KEY_MEMORY_BLOCK);
+		try {
+			block.dispose();
+		} catch (DebugException e) {
+			MemoryBrowserPlugin.getDefault().getLog().log(new Status(Status.ERROR, MemoryBrowserPlugin.PLUGIN_ID, "Could not dispose memory block", e)); //$NON-NLS-1$
+		}
 	}
 	
 	private CTabItem createTab(CTabFolder tabFolder, int index) {
@@ -496,42 +532,36 @@ public class MemoryBrowser extends ViewPart implements IDebugContextListener, IL
 		if(context instanceof IAdaptable)
 		{
 			IMemoryBlockRetrieval retrieval = ((IMemoryBlockRetrieval) ((IAdaptable) context).getAdapter(IMemoryBlockRetrieval.class));
+			
 			if(retrieval != null)
 			{
 				fGotoAddressBarControl.setVisible(true);
-				if(getTabFolder(retrieval) != null)
+				CTabFolder tabFolder = getTabFolder(retrieval);
+				if(tabFolder != null)
 				{
-					fStackLayout.topControl = getTabFolder(retrieval);
+					fStackLayout.topControl = tabFolder;
 				}
 				else
 				{
-					CTabFolder newFolder = this.createTabFolder(fRenderingsComposite);
-					newFolder.addCTabFolder2Listener(new CTabFolder2Adapter() {
-						public void close(CTabFolderEvent event) {
-							event.doit = true;
-							CTabItem item = (CTabItem) event.item;
-							IMemoryRenderingContainer container = (IMemoryRenderingContainer) item.getData(KEY_CONTAINER);
-							fCurrentContainers.remove( container );
-						}
-					});
-					newFolder.addSelectionListener(new SelectionListener()
+					tabFolder = this.createTabFolder(fRenderingsComposite);
+					tabFolder.addSelectionListener(new SelectionListener()
 					{
 						public void widgetDefaultSelected(SelectionEvent e) {}
-
 						public void widgetSelected(SelectionEvent e) {
 							getSite().getSelectionProvider().setSelection(new StructuredSelection(((CTabItem) e.item).getData(KEY_RENDERING)));
 						}
 					});
 					
-					newFolder.setData(KEY_CONTEXT, context);
-					newFolder.setData(KEY_RETRIEVAL, retrieval);
+					tabFolder.setData(KEY_RETRIEVAL, retrieval);
 					
-					CTabItem item = createTab(newFolder, 0);
+					CTabItem item = createTab(tabFolder, 0);
 					populateTabWithRendering(item, retrieval, context);
-					setTabFolder(retrieval, newFolder);
+					setTabFolder(retrieval, tabFolder);
 					
 					fStackLayout.topControl = getTabFolder(retrieval);
 				}
+				// update debug context to the new selection
+				tabFolder.setData(KEY_CONTEXT, context);
 			}
 			else
 			{
@@ -585,19 +615,7 @@ public class MemoryBrowser extends ViewPart implements IDebugContextListener, IL
 				
 			};
 			
-			IMemoryBlock block = null;
-			if(retrieval instanceof IAdaptable)
-			{
-				IMemoryBlockRetrievalExtension retrievalExtension = (IMemoryBlockRetrievalExtension) 
-					((IAdaptable) retrieval).getAdapter(IMemoryBlockRetrievalExtension.class);
-				if(retrievalExtension != null)
-					block = retrievalExtension.getExtendedMemoryBlock("0", context); //$NON-NLS-1$
-			}
-			
-			if ( block == null ) {
-				MemoryBrowserPlugin.getDefault().getLog().log(new Status(Status.ERROR, MemoryBrowserPlugin.PLUGIN_ID, "Extended Memory Block could not be obtained")); //$NON-NLS-1$
-				return;
-			}
+			IMemoryBlock block = createMemoryBlock(retrieval, "0", context);
 			
 			fCurrentContainers.add(container);
 			rendering.init(container, block);
@@ -606,6 +624,7 @@ public class MemoryBrowser extends ViewPart implements IDebugContextListener, IL
 			tab.getParent().setSelection(0);
 			tab.setData(KEY_RENDERING, rendering);
 			tab.setData(KEY_CONTAINER, container);
+			tab.setData(KEY_MEMORY_BLOCK, block);
 			getSite().getSelectionProvider().setSelection(new StructuredSelection(tab.getData(KEY_RENDERING)));
 			updateLabel(tab, rendering);
 			
@@ -648,12 +667,15 @@ public class MemoryBrowser extends ViewPart implements IDebugContextListener, IL
 		if(folder != null)
 		{
 			for(CTabItem tab : folder.getItems()) {
-				IMemoryRenderingContainer container = (IMemoryRenderingContainer) tab.getData(KEY_CONTAINER);
-				fCurrentContainers.remove( container );
-				tab.dispose();
+				disposeTab(tab);
 			}
 		}
 		fContextFolders.remove(context);
+		folder.dispose();
+
+		if (fStackLayout.topControl.equals(folder)) {
+			handleUnsupportedSelection();
+		}
 	}
 	
 	class SelectionProviderAdapter implements ISelectionProvider {
@@ -689,7 +711,46 @@ public class MemoryBrowser extends ViewPart implements IDebugContextListener, IL
 	            });
 			}
 	    }
-
+	}
+	
+	/**
+	 * create a memory block 
+	 * @param retrieval memory block retrieval.
+	 * @param expression expression to be evaluated to an addressL
+	 * @param context context for evaluating the expression.  This is typically
+	 *  a debug element.
+	 * @return a memory block based on the given expression and context
+	 * @throws DebugException if unable to retrieve the specified memory
+	 */
+	private IMemoryBlockExtension createMemoryBlock(IMemoryBlockRetrieval retrieval, String expression, Object context) throws DebugException {
+		IMemoryBlockExtension block = null;
+		if(retrieval instanceof IAdaptable)
+		{
+			IMemoryBlockRetrievalExtension retrievalExtension = (IMemoryBlockRetrievalExtension) 
+			((IAdaptable) retrieval).getAdapter(IMemoryBlockRetrievalExtension.class);
+			if(retrievalExtension != null)
+				block = retrievalExtension.getExtendedMemoryBlock(expression, context); //$NON-NLS-1$
+		}
+		if ( block == null ) {
+			throw new DebugException(new Status(Status.ERROR, MemoryBrowserPlugin.PLUGIN_ID, "Extended Memory Block could not be obtained")); //$NON-NLS-1$
+		}
+		return block;
+	}
+	
+	/**
+	 * Get a memory address for an expression in a given context.    
+	 * @param retrieval
+	 * @param expression
+	 * @param context
+	 * @return BigInteger address of the expression
+	 * @throws DebugException
+	 */
+	private BigInteger getExpressionAddress(IMemoryBlockRetrieval retrieval, String expression, Object context) throws DebugException {
+		// Until 257842 issue is solved this is done via IMemoryBlockRetrievalExtension API.
+		IMemoryBlockExtension newBlock = createMemoryBlock(retrieval, expression, context);
+		BigInteger address = newBlock.getBigBaseAddress();
+		newBlock.dispose();
+		return address;
 	}
 }
 

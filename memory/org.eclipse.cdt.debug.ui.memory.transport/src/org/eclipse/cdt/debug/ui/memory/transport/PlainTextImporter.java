@@ -14,6 +14,7 @@ package org.eclipse.cdt.debug.ui.memory.transport;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.IOException;
 import java.io.InputStreamReader;
 import java.math.BigInteger;
 import java.util.Properties;
@@ -276,82 +277,92 @@ public class PlainTextImporter implements IMemoryImporter {
 		Job job = new Job("Memory Import from Plain Text File"){ //$NON-NLS-1$
 			
 			public IStatus run(IProgressMonitor monitor) {
-				
 				try
-				{
-					try
-					{	
-						BufferedMemoryWriter memoryWriter = new BufferedMemoryWriter((IMemoryBlockExtension) fMemoryBlock, BUFFER_LENGTH);
+				{	
+					BufferedMemoryWriter memoryWriter = new BufferedMemoryWriter((IMemoryBlockExtension) fMemoryBlock, BUFFER_LENGTH);
+					
+					BigInteger scrollToAddress = null;
+					
+					BufferedReader reader = new BufferedReader(new InputStreamReader(new FileInputStream(fInputFile)));
+					
+					BigInteger jobs = BigInteger.valueOf(fInputFile.length());
+					BigInteger factor = BigInteger.ONE;
+					if(jobs.compareTo(BigInteger.valueOf(0x7FFFFFFF)) > 0)
+					{
+						factor = jobs.divide(BigInteger.valueOf(0x7FFFFFFF));
+						jobs = jobs.divide(factor);
+					}
 						
-						BigInteger scrollToAddress = null;
-						
-						BufferedReader reader = new BufferedReader(new InputStreamReader(new FileInputStream(fInputFile)));
-						
-						BigInteger jobs = BigInteger.valueOf(fInputFile.length());
-						BigInteger factor = BigInteger.ONE;
-						if(jobs.compareTo(BigInteger.valueOf(0x7FFFFFFF)) > 0)
+					monitor.beginTask("Transferring Data", jobs.intValue()); //$NON-NLS-1$
+					
+					BigInteger recordAddress = fStartAddress;
+					String line = reader.readLine();
+					int lineNo = 1; // line error reporting
+					while(line != null && !monitor.isCanceled())
+					{
+						StringTokenizer st = new StringTokenizer(line, " ");
+						int bytesRead = 0;
+						while(st.hasMoreElements())
 						{
-							factor = jobs.divide(BigInteger.valueOf(0x7FFFFFFF));
-							jobs = jobs.divide(factor);
-						}
-							
-						monitor.beginTask("Transferring Data", jobs.intValue()); //$NON-NLS-1$
-						
-						BigInteger jobCount = BigInteger.ZERO;
-						BigInteger recordAddress = fStartAddress;
-						String line = reader.readLine();
-						while(line != null && !monitor.isCanceled())
-						{
-							StringTokenizer st = new StringTokenizer(line, " ");
-							int bytesRead = 0;
-							while(st.hasMoreElements())
+							String valueString = (String) st.nextElement();
+							int position = 0;
+							byte data[] = new byte[valueString.length() / 2];
+							for(int i = 0; i < data.length; i++)
 							{
-								String valueString = (String) st.nextElement();
-								int position = 0;
-								byte data[] = new byte[valueString.length() / 2];
-								for(int i = 0; i < data.length; i++)
-								{
+								try {
 									data[i] = new BigInteger(valueString.substring(position++, position++ + 1), 16).byteValue();
+								} catch (NumberFormatException ex) {
+									return new Status(IStatus.ERROR, MemoryTransportPlugin.getUniqueIdentifier(),
+									    	DebugException.REQUEST_FAILED, String.format("Invalid file format. Expected integer at line %d", lineNo ), ex);
 								}
-								
-								if(scrollToAddress == null)
-									scrollToAddress = recordAddress;
-								
-								BigInteger writeAddress = 
-									
-									recordAddress.subtract(((IMemoryBlockExtension)fMemoryBlock).getBigBaseAddress()).add(BigInteger.valueOf(bytesRead));
-								
-								memoryWriter.write(writeAddress, data);
-								
-								bytesRead += data.length;
 							}
 							
-							recordAddress = recordAddress.add(BigInteger.valueOf(bytesRead));
+							if(scrollToAddress == null)
+								scrollToAddress = recordAddress;
 							
-							jobCount = jobCount.add(BigInteger.valueOf(bytesRead));
-							while(jobCount.compareTo(factor) >= 0)
-							{
-								jobCount = jobCount.subtract(factor);
-								monitor.worked(1);
-							}
+							BigInteger writeAddress = 
+								
+								recordAddress.subtract(((IMemoryBlockExtension)fMemoryBlock).getBigBaseAddress()).add(BigInteger.valueOf(bytesRead));
 							
-							line = reader.readLine();
- 						}
+							memoryWriter.write(writeAddress, data);
+							
+							bytesRead += data.length;
+						}
 						
+						recordAddress = recordAddress.add(BigInteger.valueOf(bytesRead));
+						
+						BigInteger jobCount = BigInteger.valueOf(bytesRead).divide(factor);
+						monitor.worked(jobCount.intValue());
+
+						line = reader.readLine();
+						lineNo++;
+					}
+
+					if (!monitor.isCanceled())
 						memoryWriter.flush();
-						reader.close();
-						monitor.done();
-						
-						if(fProperties.getProperty(TRANSFER_SCROLL_TO_START, "false").equals("true"))
-							fParentDialog.scrollRenderings(scrollToAddress);
-					}
-					catch(Exception e) 
-					{ 
-						MemoryTransportPlugin.getDefault().getLog().log(new Status(IStatus.ERROR, MemoryTransportPlugin.getUniqueIdentifier(),
-					    	DebugException.INTERNAL_ERROR, "Failure", e));	
-					}
+					
+					reader.close();
+					monitor.done();
+					
+					if(fProperties.getProperty(TRANSFER_SCROLL_TO_START, "false").equals("true"))
+						fParentDialog.scrollRenderings(scrollToAddress);
+				} catch (IOException ex) {
+					MemoryTransportPlugin.getDefault().getLog().log(new Status(IStatus.ERROR, MemoryTransportPlugin.getUniqueIdentifier(),
+							DebugException.REQUEST_FAILED, "Could not read from file.", ex));
+					return new Status(IStatus.ERROR, MemoryTransportPlugin.getUniqueIdentifier(),
+					    	DebugException.REQUEST_FAILED, "Could not read from file.", ex);
+					
+				} catch (DebugException ex) {
+					MemoryTransportPlugin.getDefault().getLog().log(new Status(IStatus.ERROR, MemoryTransportPlugin.getUniqueIdentifier(),
+							DebugException.REQUEST_FAILED, "Could not write to target.", ex));	
+					return new Status(IStatus.ERROR, MemoryTransportPlugin.getUniqueIdentifier(),
+					    	DebugException.REQUEST_FAILED, "Could not write to target.", ex);						
+				} catch (Exception ex) {
+					MemoryTransportPlugin.getDefault().getLog().log(new Status(IStatus.ERROR, MemoryTransportPlugin.getUniqueIdentifier(),
+							DebugException.INTERNAL_ERROR, "Failure importing from file", ex));
+					return new Status(IStatus.ERROR, MemoryTransportPlugin.getUniqueIdentifier(),
+					    	DebugException.INTERNAL_ERROR, "Failure importing from file", ex);
 				}
-				catch(Exception e) {e.printStackTrace();}
 				return Status.OK_STATUS;
 			}};
 		job.setUser(true);

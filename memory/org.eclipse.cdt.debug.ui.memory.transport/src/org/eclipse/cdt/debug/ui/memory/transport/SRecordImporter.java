@@ -14,6 +14,7 @@ package org.eclipse.cdt.debug.ui.memory.transport;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.IOException;
 import java.io.InputStreamReader;
 import java.math.BigInteger;
 import java.util.Properties;
@@ -301,126 +302,151 @@ public class SRecordImporter implements IMemoryImporter {
 			public IStatus run(IProgressMonitor monitor) {
 				
 				try
-				{
-					try
-					{	
-						BufferedMemoryWriter memoryWriter = new BufferedMemoryWriter((IMemoryBlockExtension) fMemoryBlock, BUFFER_LENGTH);
+				{	
+					BufferedMemoryWriter memoryWriter = new BufferedMemoryWriter((IMemoryBlockExtension) fMemoryBlock, BUFFER_LENGTH);
+					
+					// FIXME 4 byte default
+					
+					final int CHECKSUM_LENGTH = 1;
+					
+					BigInteger scrollToAddress = null;
+					
+					BigInteger offset = null;
+					if(!fProperties.getProperty(TRANSFER_CUSTOM_START_ADDRESS, "false").equals("true"))
+						offset = BigInteger.ZERO;
+					
+					BufferedReader reader = new BufferedReader(new InputStreamReader(new FileInputStream(fInputFile)));
+					
+					BigInteger jobs = BigInteger.valueOf(fInputFile.length());
+					BigInteger factor = BigInteger.ONE;
+					if(jobs.compareTo(BigInteger.valueOf(0x7FFFFFFF)) > 0)
+					{
+						factor = jobs.divide(BigInteger.valueOf(0x7FFFFFFF));
+						jobs = jobs.divide(factor);
+					}
 						
-						// FIXME 4 byte default
-						
-						final int CHECKSUM_LENGTH = 1;
-						
-						BigInteger scrollToAddress = null;
-						
-						BigInteger offset = null;
-						if(!fProperties.getProperty(TRANSFER_CUSTOM_START_ADDRESS, "false").equals("true"))
-							offset = BigInteger.ZERO;
-						
-						BufferedReader reader = new BufferedReader(new InputStreamReader(new FileInputStream(fInputFile)));
-						
-						BigInteger jobs = BigInteger.valueOf(fInputFile.length());
-						BigInteger factor = BigInteger.ONE;
-						if(jobs.compareTo(BigInteger.valueOf(0x7FFFFFFF)) > 0)
-						{
-							factor = jobs.divide(BigInteger.valueOf(0x7FFFFFFF));
-							jobs = jobs.divide(factor);
+					monitor.beginTask("Transferring Data", jobs.intValue()); //$NON-NLS-1$
+					
+					String line = reader.readLine();
+					int lineNo = 1; // line error reporting
+					while(line != null && !monitor.isCanceled())
+					{
+						String recordType = line.substring(0, 2);
+						int recordCount = 0;
+						try {
+							recordCount = Integer.parseInt(line.substring(2, 4), 16);
+						} catch (NumberFormatException ex) {
+							return new Status(IStatus.ERROR, MemoryTransportPlugin.getUniqueIdentifier(),
+							    	DebugException.REQUEST_FAILED, String.format("Invalid file format. Invalid line length at line %d", lineNo ), ex);
 						}
-							
-						monitor.beginTask("Transferring Data", jobs.intValue()); //$NON-NLS-1$
+
+						int bytesRead = 4 + recordCount;
+						int position = 4;
+						int addressSize = 0;
 						
-						BigInteger jobCount = BigInteger.ZERO;
-						String line = reader.readLine();
-						while(line != null && !monitor.isCanceled())
-						{
-							String recordType = line.substring(0, 2);
-							int recordCount = Integer.parseInt(line.substring(2, 4), 16);
-							int bytesRead = 4 + recordCount;
-							int position = 4;
-							int addressSize = 0;
-							
-							BigInteger recordAddress = null;
-				
-							if("S3".equals(recordType)) //$NON-NLS-1$
-								addressSize = 4;
-							else if("S1".equals(recordType)) //$NON-NLS-1$
-								addressSize = 2;
-							else if("S2".equals(recordType)) //$NON-NLS-1$
-								addressSize = 3;
-							
+						BigInteger recordAddress = null;
+			
+						if("S3".equals(recordType)) //$NON-NLS-1$
+							addressSize = 4;
+						else if("S1".equals(recordType)) //$NON-NLS-1$
+							addressSize = 2;
+						else if("S2".equals(recordType)) //$NON-NLS-1$
+							addressSize = 3;
+
+						try {
 							recordAddress = new BigInteger(line.substring(position, position + addressSize * 2), 16);
-							recordCount -= addressSize;
-							position += addressSize * 2;
-							
-							if(offset == null)
-								offset = fStartAddress.subtract(recordAddress);
-							
-							recordAddress = recordAddress.add(offset);
-							
-							byte data[] = new byte[recordCount - CHECKSUM_LENGTH];
-							for(int i = 0; i < data.length; i++)
-							{
+						} catch (NumberFormatException ex) {
+							return new Status(IStatus.ERROR, MemoryTransportPlugin.getUniqueIdentifier(),
+							    	DebugException.REQUEST_FAILED, String.format("Invalid file format. Invalid address at line %d", lineNo ), ex);
+						}
+						recordCount -= addressSize;
+						position += addressSize * 2;
+						
+						if(offset == null)
+							offset = fStartAddress.subtract(recordAddress);
+						
+						recordAddress = recordAddress.add(offset);
+						
+						byte data[] = new byte[recordCount - CHECKSUM_LENGTH];
+						for(int i = 0; i < data.length; i++)
+						{
+							try {
 								data[i] = new BigInteger(line.substring(position++, position++ + 1), 16).byteValue();
+							} catch (NumberFormatException ex) {
+								return new Status(IStatus.ERROR, MemoryTransportPlugin.getUniqueIdentifier(),
+								    	DebugException.REQUEST_FAILED, String.format("Invalid file format. Invalid data at line %d", lineNo ), ex);
 							}
+						}
 
-							/*
-							 * The least significant byte of the one's complement of the sum of the values
-	                         * represented by the pairs of characters making up the records length, address,
-	                         * and the code/data fields.
-							 */
-							StringBuffer buf = new StringBuffer(line.substring(2));
-							byte checksum = 0;
-							
-							for(int i = 0; i < buf.length(); i+=2)
-							{
-								BigInteger value = new BigInteger(buf.substring(i, i+2), 16);
-								checksum += value.byteValue();
-							}
-							
-							/*
-							 * Since we included the checksum in the checksum calculation the checksum
-							 * ( if correct ) will always be 0xFF which is -1 using the signed byte size
-							 * calculation here.
-							 */
-							if ( checksum != (byte) -1 ) {
-								reader.close();
-								monitor.done();
-								return new Status( IStatus.ERROR, MemoryTransportPlugin.getUniqueIdentifier(), "Checksum failure of line = " + line); //$NON-NLS-1$
-							}
-							
-							if(scrollToAddress == null)
-								scrollToAddress = recordAddress;
-							
-							// FIXME error on incorrect checksum
-							
-							memoryWriter.write(recordAddress.subtract(((IMemoryBlockExtension) fMemoryBlock).getBigBaseAddress()), data);
-
-							jobCount = jobCount.add(BigInteger.valueOf(bytesRead));
-							while(jobCount.compareTo(factor) >= 0)
-							{
-								jobCount = jobCount.subtract(factor);
-								monitor.worked(1);
-							}
-							
-							line = reader.readLine();
- 						}
+						/*
+						 * The least significant byte of the one's complement of the sum of the values
+                         * represented by the pairs of characters making up the records length, address,
+                         * and the code/data fields.
+						 */
+						StringBuffer buf = new StringBuffer(line.substring(2));
+						byte checksum = 0;
 						
+						for(int i = 0; i < buf.length(); i+=2)
+						{
+							BigInteger value = null;
+							try {
+								value = new BigInteger(buf.substring(i, i+2), 16);
+							} catch (NumberFormatException ex) {
+								return new Status(IStatus.ERROR, MemoryTransportPlugin.getUniqueIdentifier(),
+								    	DebugException.REQUEST_FAILED, String.format("Invalid file format. Invalid checksum format at line %d", lineNo ), ex);
+							}
+							checksum += value.byteValue();
+						}
+						
+						/*
+						 * Since we included the checksum in the checksum calculation the checksum
+						 * ( if correct ) will always be 0xFF which is -1 using the signed byte size
+						 * calculation here.
+						 */
+						if ( checksum != (byte) -1 ) {
+							reader.close();
+							monitor.done();
+							return new Status( IStatus.ERROR, MemoryTransportPlugin.getUniqueIdentifier(), "Checksum failure of line = " + line); //$NON-NLS-1$
+						}
+						
+						if(scrollToAddress == null)
+							scrollToAddress = recordAddress;
+						
+						// FIXME error on incorrect checksum
+						
+						memoryWriter.write(recordAddress.subtract(((IMemoryBlockExtension) fMemoryBlock).getBigBaseAddress()), data);
+
+						BigInteger jobCount = BigInteger.valueOf(bytesRead).divide(factor);
+						monitor.worked(jobCount.intValue());
+						
+						line = reader.readLine();
+						lineNo++;
+					}
+					
+					if (!monitor.isCanceled())
 						memoryWriter.flush();
-						reader.close();
-						monitor.done();
-						
-						if(fProperties.getProperty(TRANSFER_SCROLL_TO_START, "false").equals("true"))
-							fParentDialog.scrollRenderings(scrollToAddress);
-					}
-					catch(Exception e) 
-					{ 
-						MemoryTransportPlugin.getDefault().getLog().log(new Status(IStatus.ERROR, MemoryTransportPlugin.getUniqueIdentifier(),
-					    	DebugException.INTERNAL_ERROR, "Failure", e));
-					}
-				}
-				catch(Exception e) 
-				{
+
+					reader.close();
+					monitor.done();
+					
+					if(fProperties.getProperty(TRANSFER_SCROLL_TO_START, "false").equals("true"))
+						fParentDialog.scrollRenderings(scrollToAddress);
+				} catch (IOException ex) {
 					MemoryTransportPlugin.getDefault().getLog().log(new Status(IStatus.ERROR, MemoryTransportPlugin.getUniqueIdentifier(),
-				    	DebugException.INTERNAL_ERROR, "Failure", e));
+							DebugException.REQUEST_FAILED, "Could not read from file.", ex));
+					return new Status(IStatus.ERROR, MemoryTransportPlugin.getUniqueIdentifier(),
+					    	DebugException.REQUEST_FAILED, "Could not read from file.", ex);
+					
+				} catch (DebugException ex) {
+					MemoryTransportPlugin.getDefault().getLog().log(new Status(IStatus.ERROR, MemoryTransportPlugin.getUniqueIdentifier(),
+							DebugException.REQUEST_FAILED, "Could not write to target.", ex));	
+					return new Status(IStatus.ERROR, MemoryTransportPlugin.getUniqueIdentifier(),
+					    	DebugException.REQUEST_FAILED, "Could not write to target.", ex);						
+				} catch (Exception ex) {
+					MemoryTransportPlugin.getDefault().getLog().log(new Status(IStatus.ERROR, MemoryTransportPlugin.getUniqueIdentifier(),
+							DebugException.INTERNAL_ERROR, "Failure importing from file", ex));
+					return new Status(IStatus.ERROR, MemoryTransportPlugin.getUniqueIdentifier(),
+					    	DebugException.INTERNAL_ERROR, "Failure importing from file", ex);
 				}
 				return Status.OK_STATUS;
 			}};

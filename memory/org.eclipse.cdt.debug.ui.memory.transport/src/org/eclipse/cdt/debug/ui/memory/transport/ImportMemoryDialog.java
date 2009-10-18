@@ -47,6 +47,7 @@ import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.dialogs.SelectionDialog;
 import org.eclipse.ui.progress.UIJob;
 
+@SuppressWarnings("restriction")
 public class ImportMemoryDialog extends SelectionDialog 
 {
 
@@ -179,7 +180,7 @@ public class ImportMemoryDialog extends SelectionDialog
 		data.left = new FormAttachment(textLabel);
 		fFormatCombo.setLayoutData(data);
 		
-		Vector importers = new Vector();
+		Vector<Object> importers = new Vector<Object>();
 		
 		IExtensionRegistry registry = Platform.getExtensionRegistry();
 		IExtensionPoint extensionPoint =
@@ -194,7 +195,7 @@ public class ImportMemoryDialog extends SelectionDialog
 			{
 				try 
 				{
-					importers.addElement((IMemoryImporter) element.createExecutableExtension("class"));
+					importers.addElement(element.createExecutableExtension("class"));
 				}
 				catch(Exception e) {
 					MemoryTransportPlugin.getDefault().getLog().log(new Status(IStatus.ERROR, MemoryTransportPlugin.getUniqueIdentifier(),

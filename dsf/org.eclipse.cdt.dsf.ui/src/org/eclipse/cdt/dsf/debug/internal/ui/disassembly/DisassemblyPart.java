@@ -20,6 +20,7 @@ import java.util.List;
 import java.util.ListIterator;
 import java.util.Map;
 import java.util.concurrent.ExecutionException;
+import java.util.concurrent.RejectedExecutionException;
 
 import org.eclipse.cdt.core.IAddress;
 import org.eclipse.cdt.debug.core.CDIDebugModel;
@@ -279,7 +280,7 @@ public abstract class DisassemblyPart extends WorkbenchPart implements IDisassem
 	private BigInteger fGotoAddressPending= PC_UNKNOWN;
 	private BigInteger fFocusAddress= PC_UNKNOWN;
 	private int fBufferZone;
-	private IExecutionDMContext fTargetContext;
+	private volatile IExecutionDMContext fTargetContext;
 	private String fDebugSessionId;
 	private int fTargetFrame;
 	private DisassemblyIPAnnotation fPCAnnotation;
@@ -1765,7 +1766,6 @@ public abstract class DisassemblyPart extends WorkbenchPart implements IDisassem
 		String debuggerPath= file;
 
 		// try reverse lookup
-		final ISourceLookup lookup= getService(ISourceLookup.class);
 		final ISourceLookupDMContext ctx= DMContexts.getAncestorOfType(fTargetContext, ISourceLookupDMContext.class);
 		final DsfExecutor executor= getSession().getExecutor();
 		Query<String> query= new Query<String>() {
@@ -1778,6 +1778,7 @@ public abstract class DisassemblyPart extends WorkbenchPart implements IDisassem
 						rm.done();
 					}
 				};
+				final ISourceLookup lookup= getService(ISourceLookup.class);
 				lookup.getDebuggerPath(ctx, file, request);
 			}
 		};
@@ -2361,9 +2362,19 @@ public abstract class DisassemblyPart extends WorkbenchPart implements IDisassem
 				}
 				if (fTargetContext != null) {
 			        if (fDebugSessionId != null) {
-						if (getSession() != null) {
-							getSession().removeServiceEventListener(this);
-						}
+			        	if (getSession() != null) {
+			        		try {
+			        			// Store the values that we are going to change
+			        			final DsfSession session= getSession();
+			        			session.getExecutor().execute(new DsfRunnable() {
+			        				public void run() {
+			        					session.removeServiceEventListener(DisassemblyPart.this);
+			        				}
+			        			});
+			        		} catch (RejectedExecutionException e) {
+			        			// Session is shutdown
+			        		}
+			        	}
 			        }
 					fDebugSessionId= sessionId;
 					if (fServicesTracker != null) {
@@ -2389,8 +2400,17 @@ public abstract class DisassemblyPart extends WorkbenchPart implements IDisassem
 			}
 		} else if (fDebugSessionId != null) {
 			if (getSession() != null) {
-				getSession().removeServiceEventListener(this);
-			}
+        		try {
+        			// Store the values that we are going to change
+        			final DsfSession session= getSession();
+        			session.getExecutor().execute(new DsfRunnable() {
+        				public void run() {
+        					session.removeServiceEventListener(DisassemblyPart.this);
+        				}
+        			});
+        		} catch (RejectedExecutionException e) {
+        			// Session is shutdown
+        		}			}
 			fDebugSessionId= null;
 			fTargetContext= null;
 			if (fServicesTracker != null) {
@@ -2409,9 +2429,18 @@ public abstract class DisassemblyPart extends WorkbenchPart implements IDisassem
 		fUpdatePending = false;
 		resetViewer();
 		if (fDebugSessionId != null) {
-			final DsfSession session= getSession();
-			session.addServiceEventListener(this, null);
-			updatePC(PC_UNKNOWN);
+    		try {
+    			final DsfSession session= getSession();
+    			session.getExecutor().execute(new DsfRunnable() {
+    				public void run() {
+    					session.addServiceEventListener(DisassemblyPart.this, null);
+    				}
+    			});
+    		} catch (RejectedExecutionException e) {
+    			// Session is shutdown
+    		}
+    		
+    		updatePC(PC_UNKNOWN);
 
         	if (fGotoAddressPending != PC_UNKNOWN) {
 	        	gotoAddress(fGotoAddressPending);
@@ -2448,6 +2477,9 @@ public abstract class DisassemblyPart extends WorkbenchPart implements IDisassem
 
 	@DsfServiceEventHandler
 	public void handleEvent(IExitedDMEvent event) {
+		if (fTargetContext == null) {
+			return;
+		}
 		final IExecutionDMContext context= event.getDMContext();
 		if (context.equals(fTargetContext)
 				|| DMContexts.isAncestorOf(fTargetContext, context)) {
@@ -2460,6 +2492,9 @@ public abstract class DisassemblyPart extends WorkbenchPart implements IDisassem
 
 	@DsfServiceEventHandler
 	public void handleEvent(ISuspendedDMEvent event) {
+		if (fTargetContext == null) {
+			return;
+		}
 		final IExecutionDMContext context= event.getDMContext();
 		if (context.equals(fTargetContext)
 				|| DMContexts.isAncestorOf(fTargetContext, context)) {
@@ -2474,6 +2509,9 @@ public abstract class DisassemblyPart extends WorkbenchPart implements IDisassem
 
 	@DsfServiceEventHandler
 	public void handleEvent(IResumedDMEvent event) {
+		if (fTargetContext == null) {
+			return;
+		}
 		final IExecutionDMContext context= event.getDMContext();
 		if (context.equals(fTargetContext)
 				|| DMContexts.isAncestorOf(fTargetContext, context)) {

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008 Ericsson and others.
+ * Copyright (c) 2009 Ericsson and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -13,6 +13,7 @@ package org.eclipse.cdt.dsf.mi.service.breakpoint.actions;
 
 import org.eclipse.cdt.debug.core.breakpointactions.IResumeActionEnabler;
 import org.eclipse.cdt.dsf.concurrent.DsfExecutor;
+import org.eclipse.cdt.dsf.concurrent.DsfRunnable;
 import org.eclipse.cdt.dsf.concurrent.RequestMonitor;
 import org.eclipse.cdt.dsf.datamodel.IDMContext;
 import org.eclipse.cdt.dsf.debug.service.IRunControl;
@@ -32,10 +33,13 @@ public class MIResumeActionEnabler implements IResumeActionEnabler {
     }
 
     public void resume() throws Exception {
-        final IRunControl runControlService = fServiceTracker.getService(IRunControl.class);
-        if (runControlService != null) {
-            runControlService.resume(fContext, new RequestMonitor(fExecutor, null));
-        }
+    	fExecutor.execute(new DsfRunnable() { 
+    		public void run() {
+    			final IRunControl runControlService = fServiceTracker.getService(IRunControl.class);
+    			if (runControlService != null) {
+    				runControlService.resume(fContext, new RequestMonitor(fExecutor, null));
+    			}   
+    		}
+    	});
     }
-
 }

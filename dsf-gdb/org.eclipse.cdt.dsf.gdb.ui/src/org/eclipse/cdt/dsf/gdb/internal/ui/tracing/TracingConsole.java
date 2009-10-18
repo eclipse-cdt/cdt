@@ -65,8 +65,12 @@ public class TracingConsole extends IOConsole {
 	
     @Override
 	protected void init() {
-        super.init();
-        fSession.addServiceEventListener(this, null);
+    	super.init();
+    	fSession.getExecutor().submit(new DsfRunnable() {
+    		public void run() {
+    			fSession.addServiceEventListener(TracingConsole.this, null);
+    		}
+    	});
     }
     
 	@Override

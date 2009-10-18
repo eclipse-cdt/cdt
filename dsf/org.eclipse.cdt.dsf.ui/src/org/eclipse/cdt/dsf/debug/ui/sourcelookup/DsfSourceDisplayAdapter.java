@@ -739,11 +739,15 @@ public class DsfSourceDisplayAdapter implements ISourceDisplay, ISteppingControl
 			// indicate completion of step
         	final IExecutionDMContext dmc = DMContexts.getAncestorOfType(context, IExecutionDMContext.class);
         	if (dmc != null) {
-        	    fController.getExecutor().execute(new DsfRunnable() {
-        	        public void run() {
-                        fController.doneStepping(dmc, DsfSourceDisplayAdapter.this);
-        	        };
-        	    });
+        		try {
+        			fController.getExecutor().execute(new DsfRunnable() {
+        				public void run() {
+        					fController.doneStepping(dmc, DsfSourceDisplayAdapter.this);
+        				};
+        			});
+        		} catch (RejectedExecutionException e) {
+        			// Session is shutdown
+        		}
         	}
         }
 	}

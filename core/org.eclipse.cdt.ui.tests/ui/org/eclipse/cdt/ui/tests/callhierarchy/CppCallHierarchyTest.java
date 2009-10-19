@@ -375,4 +375,94 @@ public class CppCallHierarchyTest extends CallHierarchyBaseTest {
 		checkTreeNode(node, 0, "cfunc()");
 		checkTreeNode(node, 1, null);
 	}
+	
+	//	template<typename T> void f(T t) {}
+	//	template<> void f(int t) {}
+	//
+	//	template<typename T> class CT {
+	//	public:
+	//		void m() {};
+	//	};
+	//	template<typename T> class CT<T*> {
+	//	public:
+	//		void m() {};
+	//	};
+	//	template<> class CT<char> {
+	//	public:
+	//		void m() {}
+	//	};
+	//
+	//	void testint() {
+	//		CT<int> ci;
+	//		ci.m();
+	//		f(1);
+	//	}
+	//
+	//	void testintptr() {
+	//		CT<int*> ci;
+	//		ci.m();
+	//		int i= 1;
+	//		f(&i);
+	//	}
+	//
+	//	void testchar() {
+	//		CT<char> ci;
+	//		ci.m();
+	//		f('1');
+	//	}
+	public void testTemplates() throws Exception {
+		StringBuffer[] content= getContentsForTest(1);
+		String source = content[0].toString();
+		IFile file= createFile(getProject(), "testTemplates.cpp", source);
+		IWorkbenchPage page = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage();
+		CEditor editor= openEditor(file);
+		waitForIndexer(fIndex, file, CallHierarchyBaseTest.INDEXER_WAIT_TIME);
+		CCorePlugin.getIndexManager().joinIndexer(INDEXER_WAIT_TIME, NPM);
+		
+		int pos= source.indexOf("f(");
+		editor.selectAndReveal(pos, 1);
+		openCallHierarchy(editor, true);
+		Tree tree = getCHTreeViewer().getTree();
+
+		checkTreeNode(tree, 0, "f<T>(T)");
+		checkTreeNode(tree, 0, 0, "testintptr()");
+		checkTreeNode(tree, 0, 1, "testint()");
+		checkTreeNode(tree, 0, 2, null);
+		
+		pos= source.indexOf("f(", pos+1);
+		editor.selectAndReveal(pos, 1);
+		openCallHierarchy(editor, true);
+		tree = getCHTreeViewer().getTree();
+
+		checkTreeNode(tree, 0, "f<char>(char)");
+		checkTreeNode(tree, 0, 0, "testchar()");
+		checkTreeNode(tree, 0, 1, null);
+
+		pos= source.indexOf("m(", pos+1);
+		editor.selectAndReveal(pos, 1);
+		openCallHierarchy(editor, true);
+		tree = getCHTreeViewer().getTree();
+
+		checkTreeNode(tree, 0, "CT<T>::m()");
+		checkTreeNode(tree, 0, 0, "testint()");
+		checkTreeNode(tree, 0, 1, null);
+
+		pos= source.indexOf("m(", pos+1);
+		editor.selectAndReveal(pos, 1);
+		openCallHierarchy(editor, true);
+		tree = getCHTreeViewer().getTree();
+
+		checkTreeNode(tree, 0, "CT<T*>::m()");
+		checkTreeNode(tree, 0, 0, "testintptr()");
+		checkTreeNode(tree, 0, 1, null);
+
+		pos= source.indexOf("m(", pos+1);
+		editor.selectAndReveal(pos, 1);
+		openCallHierarchy(editor, true);
+		tree = getCHTreeViewer().getTree();
+
+		checkTreeNode(tree, 0, "CT<char>::m()");
+		checkTreeNode(tree, 0, 0, "testchar()");
+		checkTreeNode(tree, 0, 1, null);
+	}
 }

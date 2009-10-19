@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2008 Wind River Systems, Inc. and others.
+ * Copyright (c) 2006, 2009 Wind River Systems, Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -12,6 +12,8 @@ package org.eclipse.cdt.internal.ui.callhierarchy;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -20,15 +22,19 @@ import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.dom.ILinkage;
 import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IBinding;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassSpecialization;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPMethod;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateInstance;
 import org.eclipse.cdt.core.index.IIndex;
 import org.eclipse.cdt.core.index.IIndexBinding;
 import org.eclipse.cdt.core.index.IIndexName;
+import org.eclipse.cdt.core.index.IndexFilter;
 import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.core.model.ISourceReference;
 
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ClassTypeHelper;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPInstanceCache;
 import org.eclipse.cdt.internal.core.model.ext.ICElementHandle;
 
 import org.eclipse.cdt.internal.ui.viewsupport.IndexUI;
@@ -75,12 +81,12 @@ public class CHQueries {
 		final ICProject project = callee.getCProject();
 		IIndexBinding calleeBinding= IndexUI.elementToBinding(index, callee, linkageID);
 		if (calleeBinding != null) {
-			findCalledBy(index, calleeBinding, true, project, result);
+			findCalledBy1(index, calleeBinding, true, project, result);
 			if (calleeBinding instanceof ICPPMethod) {
 				try {
 					IBinding[] overriddenBindings= ClassTypeHelper.findOverridden((ICPPMethod) calleeBinding);
 					for (IBinding overriddenBinding : overriddenBindings) {
-						findCalledBy(index, overriddenBinding, false, project, result);
+						findCalledBy1(index, overriddenBinding, false, project, result);
 					}
 				} catch (DOMException e) {
 					// index bindings don't throw DOMExceptions
@@ -89,7 +95,57 @@ public class CHQueries {
 		}
 	}
 
-	private static void findCalledBy(IIndex index, IBinding callee, boolean includeOrdinaryCalls, ICProject project, CalledByResult result) 
+	private static void findCalledBy1(IIndex index, IBinding callee, boolean includeOrdinaryCalls,
+			ICProject project, CalledByResult result) throws CoreException {
+		findCalledBy2(index, callee, includeOrdinaryCalls, project, result);
+		List<? extends IBinding> specializations = findSpecializations(callee);
+		for (IBinding spec : specializations) {
+			findCalledBy2(index, spec, includeOrdinaryCalls, project, result);
+		}
+	}
+
+	private static List<? extends IBinding> findSpecializations(IBinding callee) throws CoreException {
+		try {
+			List<IBinding> result= null;
+
+			IBinding owner = callee.getOwner();
+			if (owner != null) {
+				List<? extends IBinding> specializedOwners= findSpecializations(owner);
+				if (!specializedOwners.isEmpty()) {
+					result= new ArrayList<IBinding>(specializedOwners.size());
+
+					for (IBinding specOwner : specializedOwners) {
+						if (specOwner instanceof ICPPClassSpecialization) {
+							result.add(((ICPPClassSpecialization) specOwner).specializeMember(callee));
+						}
+					}
+				}
+			}
+			
+			if (callee instanceof ICPPInstanceCache) {
+				final List<ICPPTemplateInstance> instances= Arrays.asList(((ICPPInstanceCache) callee).getAllInstances());
+				if (!instances.isEmpty()) {
+					if (result == null)
+						result= new ArrayList<IBinding>(instances.size());
+
+
+					for (ICPPTemplateInstance inst : instances) {
+						if (!IndexFilter.ALL_DECLARED.acceptBinding(inst)) {
+							result.add(inst);
+						}
+					}
+				}
+			}
+			
+			if (result != null) {
+				return result;
+			}
+		} catch (DOMException e) {
+		}
+		return Collections.emptyList();
+	}
+
+	private static void findCalledBy2(IIndex index, IBinding callee, boolean includeOrdinaryCalls, ICProject project, CalledByResult result) 
 			throws CoreException {
 		IIndexName[] names= index.findNames(callee, IIndex.FIND_REFERENCES | IIndex.SEARCH_ACROSS_LANGUAGE_BOUNDARIES);
 		for (IIndexName rname : names) {

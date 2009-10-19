@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005 QnX Software Systems and others.
+ * Copyright (c) 2005, 2009 QnX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -28,6 +28,10 @@ public class MethodTemplateDeclaration extends MethodDeclaration implements IMet
 		return fTemplate.getTemplateParameterTypes();
 	}
 
+	public String[] getTemplateArguments() {
+		return  fTemplate.getTemplateArguments();
+	}
+
 	public String getTemplateSignature() throws CModelException {
 		StringBuffer sig = new StringBuffer(fTemplate.getTemplateSignature());
 		sig.append(this.getParameterClause());
@@ -54,7 +58,7 @@ public class MethodTemplateDeclaration extends MethodDeclaration implements IMet
 	 * @param templateParameterTypes The template parameter types to set
 	 */
 	public void setTemplateParameterTypes(String[] templateParameterTypes) {
-		fTemplate.setTemplateParameterTypes(templateParameterTypes);
+		fTemplate.setTemplateInfo(templateParameterTypes, null);
 	}
 
 }

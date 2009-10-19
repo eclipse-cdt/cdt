@@ -127,6 +127,13 @@ public class CElementBaseLabels {
 	public final static int T_FULLY_QUALIFIED= 1 << 13;
 
 	/**
+	 * Instances and specializations are qualified with arguments, templates with template parameter names.
+	 * The flag overrides {@link #TEMPLATE_PARAMETERS}.
+	 * @since 5.2
+	 */
+	public final static int TEMPLATE_ARGUMENTS= 1 << 14;
+
+	/**
 	 * Append base class specifications to type names.
 	 * e.g. <code>MyClass : public BaseClass</code>
 	 */
@@ -358,7 +365,7 @@ public class CElementBaseLabels {
 		if( getFlag( flags, M_FULLY_QUALIFIED ) ){
 			ICElement parent = method.getParent();
 			if (parent != null && parent.exists() && !(parent instanceof ITranslationUnit)) {
-				getTypeLabel( parent, T_FULLY_QUALIFIED, buf );
+				getTypeLabel( parent, T_FULLY_QUALIFIED | (flags & TEMPLATE_ARGUMENTS), buf );
 				buf.append( "::" ); //$NON-NLS-1$
 			}
 		}
@@ -417,7 +424,7 @@ public class CElementBaseLabels {
 		// post qualification
 		if( getFlag(flags, M_POST_QUALIFIED)) {
 			buf.append( CONCAT_STRING );
-			getTypeLabel( method.getParent(), T_FULLY_QUALIFIED, buf );
+			getTypeLabel( method.getParent(), T_FULLY_QUALIFIED | (flags & TEMPLATE_ARGUMENTS), buf );
 		}
 		if( getFlag(flags, MF_POST_FILE_QUALIFIED)) {
 			IPath path= method.getPath();
@@ -446,19 +453,25 @@ public class CElementBaseLabels {
 	}
 
 	private static void getTemplateParameters(ITemplate template, int flags, StringBuffer buf) {
-		if (getFlag(flags, TEMPLATE_PARAMETERS)) {
-			String[] types = template.getTemplateParameterTypes();
-			buf.append('<');
-			if (types != null) {
-				for (int i= 0; i < types.length; i++) {
-					if (i > 0) {
-						buf.append( ',' );
-					}
-					buf.append( types[i] );
-				}
-			}
-			buf.append('>');
+		String[] args= null;
+		if (getFlag(flags, TEMPLATE_ARGUMENTS)) {
+			args = template.getTemplateArguments();
+		} else if (getFlag(flags, TEMPLATE_PARAMETERS)) {
+			args= template.getTemplateParameterTypes();
+		} else {
+			return;
 		}
+		
+		buf.append('<');
+		if (args != null) {
+			for (int i= 0; i < args.length; i++) {
+				if (i > 0) {
+					buf.append( ',' );
+				}
+				buf.append( args[i] );
+			}
+		}
+		buf.append('>');
 	}
 
 	/**
@@ -479,7 +492,7 @@ public class CElementBaseLabels {
 		if( getFlag( flags, F_FULLY_QUALIFIED ) ){
 			ICElement parent = field.getParent();
 			if (parent != null && parent.exists()) {
-				getTypeLabel( parent, T_FULLY_QUALIFIED, buf );
+				getTypeLabel( parent, T_FULLY_QUALIFIED | (flags & TEMPLATE_PARAMETERS), buf );
 				buf.append( "::" ); //$NON-NLS-1$
 			}
 		}
@@ -498,7 +511,7 @@ public class CElementBaseLabels {
 		// post qualification
 		if( getFlag(flags, F_POST_QUALIFIED)) {
 			buf.append( CONCAT_STRING );
-			getTypeLabel( field.getParent(), T_FULLY_QUALIFIED, buf );
+			getTypeLabel( field.getParent(), T_FULLY_QUALIFIED | (flags & TEMPLATE_PARAMETERS), buf );
 		}
 		if( getFlag(flags, MF_POST_FILE_QUALIFIED)) {
 			IPath path= field.getPath();

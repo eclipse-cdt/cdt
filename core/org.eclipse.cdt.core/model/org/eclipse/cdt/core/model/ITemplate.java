@@ -7,10 +7,13 @@
  *
  * Contributors:
  *     Rational Software - initial implementation
+ *     Markus Schorn (Wind River Systems)
  *******************************************************************************/
 package org.eclipse.cdt.core.model;
 
 /**
+ * The interface is used to model, class or function templates and their partial or
+ * explicit specializations.
  * @noextend This interface is not intended to be extended by clients.
  * @noimplement This interface is not intended to be implemented by clients.
  */
@@ -20,6 +23,13 @@ public interface ITemplate {
 	 * @return String
 	 */
 	String[] getTemplateParameterTypes();
+
+	/**
+	 * Returns the template arguments in a printable format. For templates that are no specialization, 
+	 * this will return the names of the template parameters.
+	 * @since 5.2
+	 */
+	String[] getTemplateArguments();
 
 	/**
 	 * Returns the template signature
@@ -35,7 +45,6 @@ public interface ITemplate {
 
 	/**
 	 * Returns the number of template parameters
-	 * @return int
 	 */
 	int getNumberOfTemplateParameters();
 }

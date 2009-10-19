@@ -263,7 +263,7 @@ public class CallHierarchyBugs extends CallHierarchyBaseTest {
 		int idx = content.indexOf("Foo(3)");
 		editor.selectAndReveal(idx, 0);
 		openCallHierarchy(editor, true);
-		Tree chTree= checkTreeNode(ch, 0, "CSome::Foo(const int &)").getParent();
+		Tree chTree= checkTreeNode(ch, 0, "CSome<int>::Foo(const int &)").getParent();
 		TreeItem item= checkTreeNode(chTree, 0, 0, "test()");
 		checkTreeNode(chTree, 0, 1, null);
 	}

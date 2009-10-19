@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2007 Wind River Systems, Inc. and others.
+ * Copyright (c) 2006, 2009 Wind River Systems, Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,7 +8,6 @@
  * Contributors:
  *    Markus Schorn - initial API and implementation
  *******************************************************************************/ 
-
 package org.eclipse.cdt.internal.ui.callhierarchy;
 
 import org.eclipse.core.runtime.CoreException;
@@ -30,6 +29,7 @@ import org.eclipse.cdt.core.dom.ast.IEnumerator;
 import org.eclipse.cdt.core.dom.ast.IFunction;
 import org.eclipse.cdt.core.dom.ast.IVariable;
 import org.eclipse.cdt.core.dom.ast.c.ICExternalBinding;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPSpecialization;
 import org.eclipse.cdt.core.index.IIndex;
 import org.eclipse.cdt.core.index.IIndexManager;
 import org.eclipse.cdt.core.index.IIndexName;
@@ -164,35 +164,59 @@ public class CallHierarchyUI {
 							if (elem != null) {
 								return new ICElement[]{elem};
 							}
-						}
-						else {
-							ICElement[] elems= IndexUI.findAllDefinitions(index, binding);
-							if (elems.length == 0) {
-								ICElement elem= null;
-								if (name.isDeclaration()) {
-									elem= IndexUI.getCElementForName(project, index, name);
-								}
-								else {
-									elem= IndexUI.findAnyDeclaration(index, project, binding);
-								}
-								if (elem != null) {
-									elems= new ICElement[]{elem};
-								}
-							}
+							return NO_ELEMENTS;
+						} 
+						
+						ICElement[] elems= IndexUI.findAllDefinitions(index, binding);
+						if (elems.length != 0) 
 							return elems;
+							
+						if (name.isDeclaration()) {
+							ICElementHandle elem= IndexUI.getCElementForName(project, index, name);
+							if (elem != null) {
+								return new ICElement[] {elem};
+							}
+							return NO_ELEMENTS;
 						}
+
+						ICElementHandle elem= IndexUI.findAnyDeclaration(index, project, binding);
+						if (elem != null) {
+							return new ICElement[]{elem};
+						}
+						
+						if (binding instanceof ICPPSpecialization) {
+							return findSpecializationDeclaration(binding, project, index);
+						}
+						return NO_ELEMENTS;
 					}
 				}
 			}
 			finally {
 				index.releaseReadLock();
 			}
-		}
-		catch (CoreException e) {
+		} catch (CoreException e) {
 			CUIPlugin.log(e);
-		} 
-		catch (InterruptedException e) {
+		} catch (InterruptedException e) {
 			Thread.currentThread().interrupt();
+		}
+		return NO_ELEMENTS;
+	}
+
+	private static ICElement[] findSpecializationDeclaration(IBinding binding, ICProject project,
+			IIndex index) throws CoreException {
+		while (binding instanceof ICPPSpecialization) {
+			IBinding original= ((ICPPSpecialization) binding).getSpecializedBinding();
+			ICElementHandle[] elems= IndexUI.findAllDefinitions(index, original);
+			if (elems.length == 0) {
+				ICElementHandle elem= IndexUI.findAnyDeclaration(index, project, original);
+				if (elem != null) {
+					elems= new ICElementHandle[]{elem};
+				}
+			}
+			if (elems.length > 0) {
+				return elems;
+			}
+			binding= original;
 		}
 		return NO_ELEMENTS;
 	}

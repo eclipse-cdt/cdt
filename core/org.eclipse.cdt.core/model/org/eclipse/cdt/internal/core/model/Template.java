@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005 QnX Software Systems and others.
+ * Copyright (c) 2005, 2009 QnX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,21 +7,22 @@
  *
  * Contributors:
  *     Qnx Software Systems - initial API and implementation
+ *     Markus Schorn (Wind River Systems)
  *******************************************************************************/
-
 package org.eclipse.cdt.internal.core.model;
 
 import org.eclipse.cdt.core.model.ITemplate;
 
 public class Template implements ITemplate {
-
-	protected static final String[] fgEmptyList= new String[] {};
-	protected String[] templateParameterTypes;
+	protected static final String[] fgEmptyList= {};
+	protected String[] fTemplateParameterTypes;
+	protected String[] fTemplateArgs;
 	protected String fName;
 	
 	public Template(String name) {
 		fName = name;
-		templateParameterTypes= fgEmptyList;
+		fTemplateParameterTypes= fgEmptyList;
+		fTemplateArgs= fgEmptyList;
 	}
 	/**
 	 * Returns the parameterTypes.
@@ -29,22 +30,26 @@ public class Template implements ITemplate {
 	 * @return String[]
 	 */
 	public String[] getTemplateParameterTypes() {
-		return templateParameterTypes;
+		return fTemplateParameterTypes;
+	}
+
+	public String[] getTemplateArguments() {
+		return fTemplateArgs;
 	}
 
 	/**
-	 * Sets the fParameterTypes.
-	 * @param templateParameterTypes The template parameter types to set
+	 * Sets the parameter types and template arguments.
 	 */
-	public void setTemplateParameterTypes(String[] templateParameterTypes) {
-		this.templateParameterTypes = templateParameterTypes;
+	public void setTemplateInfo(String[] templateParameterTypes, String[] args) {
+		if (templateParameterTypes != null)
+			fTemplateParameterTypes = templateParameterTypes;
+		if (args != null) {
+			fTemplateArgs= args;
+		}
 	}
 
-	/**
-	 * @see org.eclipse.cdt.core.model.ITemplate#getNumberOfTemplateParameters()
-	 */
 	public int getNumberOfTemplateParameters() {
-		return templateParameterTypes == null ? 0 : templateParameterTypes.length;
+		return fTemplateParameterTypes == null ? 0 : fTemplateParameterTypes.length;
 	}
 
 	/**
@@ -68,5 +73,4 @@ public class Template implements ITemplate {
 		}
 		return sig.toString();
 	}
-
 }

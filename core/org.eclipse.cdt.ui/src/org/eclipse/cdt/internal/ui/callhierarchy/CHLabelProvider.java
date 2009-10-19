@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2008 Wind River Systems, Inc. and others.
+ * Copyright (c) 2006, 2009 Wind River Systems, Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -11,7 +11,6 @@
 package org.eclipse.cdt.internal.ui.callhierarchy;
 
 import java.util.HashMap;
-import java.util.Iterator;
 
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.viewers.IColorProvider;
@@ -33,10 +32,11 @@ import org.eclipse.cdt.internal.ui.viewsupport.CUILabelProvider;
 import org.eclipse.cdt.internal.ui.viewsupport.ImageImageDescriptor;
 
 public class CHLabelProvider extends LabelProvider implements IColorProvider {
-	private final static int LABEL_OPTIONS_SIMPLE= CElementBaseLabels.ALL_FULLY_QUALIFIED | CElementBaseLabels.M_PARAMETER_TYPES;
+	private final static int LABEL_OPTIONS_SIMPLE = CElementBaseLabels.ALL_FULLY_QUALIFIED
+			| CElementBaseLabels.M_PARAMETER_TYPES | CElementBaseLabels.TEMPLATE_ARGUMENTS;
 	private final static int LABEL_OPTIONS_SHOW_FILES= LABEL_OPTIONS_SIMPLE | CElementBaseLabels.MF_POST_FILE_QUALIFIED;
 	
-    private CUILabelProvider fCLabelProvider= new CUILabelProvider(LABEL_OPTIONS_SIMPLE, 0);
+    private CUILabelProvider fCLabelProvider= new CUILabelProvider(LABEL_OPTIONS_SIMPLE, CElementImageProvider.OVERLAY_ICONS);
     private CHContentProvider fContentProvider;
     private HashMap<String, Image> fCachedImages= new HashMap<String, Image>();
 	private Color fColorInactive;
@@ -118,8 +118,7 @@ public class CHLabelProvider extends LabelProvider implements IColorProvider {
 	@Override
 	public void dispose() {
         fCLabelProvider.dispose();
-        for (Iterator<Image> iter = fCachedImages.values().iterator(); iter.hasNext();) {
-            Image image = iter.next();
+        for (Image image : fCachedImages.values()) {
             image.dispose();
         }
         fCachedImages.clear();

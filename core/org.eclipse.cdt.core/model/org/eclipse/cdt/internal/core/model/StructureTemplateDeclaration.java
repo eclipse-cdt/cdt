@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2008 QnX Software Systems and others.
+ * Copyright (c) 2005, 2009 QnX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -29,8 +29,12 @@ public class StructureTemplateDeclaration extends StructureDeclaration implement
 		return fTemplate.getTemplateParameterTypes();
 	}
 
+	public String[] getTemplateArguments() {
+		return  fTemplate.getTemplateArguments();
+	}
+
 	public void setTemplateParameterTypes(String[] templateParameterTypes) {
-		fTemplate.setTemplateParameterTypes(templateParameterTypes);
+		fTemplate.setTemplateInfo(templateParameterTypes, null);
 	}
 
 	public String getTemplateSignature() throws CModelException {
@@ -46,9 +50,9 @@ public class StructureTemplateDeclaration extends StructureDeclaration implement
 		super.getHandleMemento(buff);
 		if (fTemplate.getNumberOfTemplateParameters() > 0) {
 			final String[] parameterTypes= fTemplate.getTemplateParameterTypes();
-			for (int i = 0; i < parameterTypes.length; i++) {
+			for (String parameterType : parameterTypes) {
 				buff.append(CEM_PARAMETER);
-				escapeMementoName(buff, parameterTypes[i]);
+				escapeMementoName(buff, parameterType);
 			}
 		}
 	}

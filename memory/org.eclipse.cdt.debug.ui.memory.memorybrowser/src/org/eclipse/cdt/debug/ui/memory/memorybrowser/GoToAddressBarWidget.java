@@ -51,10 +51,10 @@ public class GoToAddressBarWidget {
 		fExpression.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		
 		fOKButton = new Button(fComposite, SWT.NONE);
-		fOKButton.setText("Go");
+		fOKButton.setText(Messages.getString("GoToAddressBarWidget.Go")); //$NON-NLS-1$
 		
 		fOKNewTabButton = new Button(fComposite, SWT.NONE);
-		fOKNewTabButton.setText("New Tab");
+		fOKNewTabButton.setText(Messages.getString("GoToAddressBarWidget.NewTab")); //$NON-NLS-1$
 		
 		return fComposite;
 	}

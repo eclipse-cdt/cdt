@@ -8,7 +8,7 @@
     <action
           class="org.eclipse.cdt.debug.ui.memory.search.FindAction"
           enablesFor="1"
-          id="org.eclipse.cdt.debug.ui.memory.search.FindAction"
+          id="org.eclipse.cdt.debug.ui.memory.search.FindNextAction"
           helpContextId="FindNextAction_context"
           label="%action.label.0"
           menubarPath="additions">
@@ -33,7 +33,7 @@
     <action
           class="org.eclipse.cdt.debug.ui.memory.search.FindAction"
           enablesFor="1"
-          id="org.eclipse.cdt.debug.ui.memory.search.FindAction"
+          id="org.eclipse.cdt.debug.ui.memory.search.FindNextAction"
           helpContextId="FindNextAction_context"
           label="%action.label.2"
           menubarPath="additions">

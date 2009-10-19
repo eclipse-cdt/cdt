@@ -58,7 +58,7 @@ public class ExportMemoryDialog extends SelectionDialog
 	public ExportMemoryDialog(Shell parent, IMemoryBlock memoryBlock, BigInteger initialStartAddr)
 	{
 		super(parent);
-		super.setTitle("Export Memory"); 
+		super.setTitle(Messages.getString("ExportMemoryDialog.Title"));  //$NON-NLS-1$
 		setShellStyle(getShellStyle() | SWT.RESIZE);
 		
 		fMemoryBlock = memoryBlock;
@@ -123,7 +123,7 @@ public class ExportMemoryDialog extends SelectionDialog
 		// format
 		
 		Label textLabel = new Label(composite, SWT.NONE);
-		textLabel.setText("Format: "); 
+		textLabel.setText(Messages.getString("ExportMemoryDialog.Format"));  //$NON-NLS-1$
 		
 		fFormatCombo = new Combo(composite, SWT.BORDER | SWT.READ_ONLY);
 		
@@ -135,26 +135,26 @@ public class ExportMemoryDialog extends SelectionDialog
 		data.left = new FormAttachment(textLabel);
 		fFormatCombo.setLayoutData(data);
 		
-		Vector exporters = new Vector();
+		Vector<IMemoryExporter> exporters = new Vector<IMemoryExporter>();
 		
 		IExtensionRegistry registry = Platform.getExtensionRegistry();
 		IExtensionPoint extensionPoint =
-	         registry.getExtensionPoint("org.eclipse.cdt.debug.ui.memory.transport.memoryTransport");
+	         registry.getExtensionPoint("org.eclipse.cdt.debug.ui.memory.transport.memoryTransport"); //$NON-NLS-1$
 	    IConfigurationElement points[] =
 	         extensionPoint.getConfigurationElements();
 	     
 		for (int i = 0; i < points.length; i++) 
 		{
 			IConfigurationElement element = points[i];
-			if("exporter".equals(element.getName()))
+			if("exporter".equals(element.getName())) //$NON-NLS-1$
 			{
 				try 
 				{
-					exporters.addElement((IMemoryExporter) element.createExecutableExtension("class"));
+					exporters.addElement((IMemoryExporter) element.createExecutableExtension("class")); //$NON-NLS-1$
 				}
 				catch(Exception e) {
 					MemoryTransportPlugin.getDefault().getLog().log(new Status(IStatus.ERROR, MemoryTransportPlugin.getUniqueIdentifier(),
-			    		DebugException.INTERNAL_ERROR, "Failure", e));
+			    		DebugException.INTERNAL_ERROR, "Failure", e)); //$NON-NLS-1$
 				}
 			}
 		}
@@ -205,7 +205,7 @@ public class ExportMemoryDialog extends SelectionDialog
 	 * and only if we have a fresh/clean properties object.
 	 */
 	static void initProperties(Properties properties, BigInteger addr) {
-		final String addrstr = "0x" + addr.toString(16);
+		final String addrstr = "0x" + addr.toString(16); //$NON-NLS-1$
 		if (!properties.containsKey(IMemoryExporter.TRANSFER_START)) {
 			properties.setProperty(IMemoryExporter.TRANSFER_START, addrstr);
 			properties.setProperty(IMemoryExporter.TRANSFER_END, addrstr);

@@ -332,13 +332,13 @@ public class FindReplaceDialog extends SelectionDialog
 		else if(fFormatOctalButton.getSelection())
 			fProperties.setProperty(SEARCH_FORMAT, SEARCH_FORMAT_OCTAL);
 		
-		fProperties.setProperty(SEARCH_FORMAT_FORWARD, "" + fForwardButton.getSelection());
+		fProperties.setProperty(SEARCH_FORMAT_FORWARD, Boolean.toString(fForwardButton.getSelection()));
 		
-		fProperties.setProperty(SEARCH_FORMAT_CASEINSENSTIVE, "" + fCaseInSensitiveCheckbox.getSelection());
+		fProperties.setProperty(SEARCH_FORMAT_CASEINSENSTIVE, Boolean.toString(fCaseInSensitiveCheckbox.getSelection()));
 		
-		fProperties.setProperty(SEARCH_FORMAT_WRAP, "" + fWrapCheckbox.getSelection());
+		fProperties.setProperty(SEARCH_FORMAT_WRAP, Boolean.toString(fWrapCheckbox.getSelection()));
 
-		fProperties.setProperty(SEARCH_ENABLE_FIND_NEXT, "false");
+		fProperties.setProperty(SEARCH_ENABLE_FIND_NEXT, Boolean.FALSE.toString());
 		
 		setResult(null);
 		
@@ -547,7 +547,7 @@ public class FindReplaceDialog extends SelectionDialog
 		data.left = new FormAttachment(fReplaceText, 0, SWT.LEFT);
 		data.width = 260;
 		fFindText.setLayoutData(data);
-		fFindText.setText(fProperties.getProperty(SEARCH_FIND, ""));
+		fFindText.setText(fProperties.getProperty(SEARCH_FIND, "")); //$NON-NLS-1$
 		
 		data = new FormData();
 		data.top = new FormAttachment(fFindText, 0, SWT.CENTER);
@@ -565,7 +565,7 @@ public class FindReplaceDialog extends SelectionDialog
 		data.left = new FormAttachment(replaceLabel);
 		data.width = 260;
 		fReplaceText.setLayoutData(data);
-		fReplaceText.setText(fProperties.getProperty(SEARCH_REPLACE, ""));
+		fReplaceText.setText(fProperties.getProperty(SEARCH_REPLACE, "")); //$NON-NLS-1$
 		
 		// group direction
 		
@@ -582,7 +582,7 @@ public class FindReplaceDialog extends SelectionDialog
 		fForwardButton.setText(Messages.getString("FindReplaceDialog.ButtonForward")); //$NON-NLS-1$
 		final Button backwardButton = new Button(directionGroup, SWT.RADIO);
 		backwardButton.setText(Messages.getString("FindReplaceDialog.ButtonBackward")); //$NON-NLS-1$
-		final boolean isForward = fProperties.getProperty(SEARCH_FORMAT_FORWARD, "true").equalsIgnoreCase("true");
+		final boolean isForward = Boolean.parseBoolean(fProperties.getProperty(SEARCH_FORMAT_FORWARD, Boolean.TRUE.toString()));
 		fForwardButton.setSelection(isForward);
 		backwardButton.setSelection(!isForward);
 		
@@ -824,7 +824,7 @@ public class FindReplaceDialog extends SelectionDialog
 	
 	private BigInteger parseHexBigInteger(String s)
 	{
-		if(s.toUpperCase().startsWith("0X"))
+		if(s.toUpperCase().startsWith("0X")) //$NON-NLS-1$
 			return new BigInteger(s.substring(2), 16);
 		else
 			return new BigInteger(s, 16);
@@ -836,8 +836,8 @@ public class FindReplaceDialog extends SelectionDialog
 		{
 			BigInteger start = parseHexBigInteger(fProperties.getProperty(SEARCH_LAST_FOUND));
 			BigInteger end = parseHexBigInteger(fProperties.getProperty(SEARCH_END));
-			boolean searchForward = fProperties.getProperty(SEARCH_FORMAT_FORWARD, "false").equals("true");
-			boolean caseInSensitive = fProperties.getProperty(SEARCH_FORMAT_CASEINSENSTIVE, "false").equals("true");
+			boolean searchForward = Boolean.parseBoolean(fProperties.getProperty(SEARCH_FORMAT_FORWARD, Boolean.FALSE.toString()));
+			boolean caseInSensitive = Boolean.parseBoolean(fProperties.getProperty(SEARCH_FORMAT_CASEINSENSTIVE, Boolean.FALSE.toString()));
 			if(searchForward)
 				start = start.add(BigInteger.ONE);
 			else
@@ -866,7 +866,7 @@ public class FindReplaceDialog extends SelectionDialog
 		}
 		catch(Exception e)
 		{
-			MemorySearchPlugin.logError(Messages.getString("FindReplaceDialog.MemorySearchFailure"), e);
+			MemorySearchPlugin.logError(Messages.getString("FindReplaceDialog.MemorySearchFailure"), e); //$NON-NLS-1$
 		}
 	}
 	
@@ -979,7 +979,7 @@ public class FindReplaceDialog extends SelectionDialog
 											{
 												// Temporary, until platform accepts/adds new interface for setting the selection
 												try {
-													Method m = rendering.getClass().getMethod("setSelection", new Class[] { BigInteger.class, BigInteger.class } );
+													Method m = rendering.getClass().getMethod("setSelection", new Class[] { BigInteger.class, BigInteger.class } ); //$NON-NLS-1$
 													if(m != null)
 														m.invoke(rendering, finalCurrentPosition, finalCurrentPosition.add(searchPhraseLength));
 												} catch (Exception e) {
@@ -991,8 +991,8 @@ public class FindReplaceDialog extends SelectionDialog
 									
 								});
 								
-								fProperties.setProperty(SEARCH_ENABLE_FIND_NEXT, "true");
-								fProperties.setProperty(SEARCH_LAST_FOUND, "0x" + finalCurrentPosition.toString(16));
+								fProperties.setProperty(SEARCH_ENABLE_FIND_NEXT, Boolean.TRUE.toString());
+								fProperties.setProperty(SEARCH_LAST_FOUND, "0x" + finalCurrentPosition.toString(16)); //$NON-NLS-1$
 								return Status.OK_STATUS;
 							}
 						}

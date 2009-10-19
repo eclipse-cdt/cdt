@@ -20,9 +20,9 @@ import org.eclipse.swt.widgets.Control;
 
 public interface IMemoryExporter 
 {
-	public static final String TRANSFER_FILE = "File";
-	public static final String TRANSFER_START = "Start";
-	public static final String TRANSFER_END = "End";
+	public static final String TRANSFER_FILE = "File"; //$NON-NLS-1$
+	public static final String TRANSFER_START = "Start"; //$NON-NLS-1$
+	public static final String TRANSFER_END = "End"; //$NON-NLS-1$
 	
 	/**
 	 * @param parent

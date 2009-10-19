@@ -69,7 +69,7 @@ public class ImportMemoryDialog extends SelectionDialog
 	public ImportMemoryDialog(Shell parent, IMemoryBlock memoryBlock, BigInteger initialStartAddr, IMemoryRenderingSite renderingSite)
 	{
 		super(parent);
-		super.setTitle("Download to Memory");  
+		super.setTitle(Messages.getString("ImportMemoryDialog.Title"));   //$NON-NLS-1$
 		setShellStyle(getShellStyle() | SWT.RESIZE);
 		
 		fMemoryBlock = memoryBlock;
@@ -168,7 +168,7 @@ public class ImportMemoryDialog extends SelectionDialog
 		// format
 		
 		Label textLabel = new Label(composite, SWT.NONE);
-		textLabel.setText("Format: "); 
+		textLabel.setText(Messages.getString("ImportMemoryDialog.Format"));  //$NON-NLS-1$
 	
 		fFormatCombo = new Combo(composite, SWT.BORDER | SWT.READ_ONLY);
 		
@@ -184,22 +184,22 @@ public class ImportMemoryDialog extends SelectionDialog
 		
 		IExtensionRegistry registry = Platform.getExtensionRegistry();
 		IExtensionPoint extensionPoint =
-	         registry.getExtensionPoint("org.eclipse.cdt.debug.ui.memory.transport.memoryTransport");
+	         registry.getExtensionPoint("org.eclipse.cdt.debug.ui.memory.transport.memoryTransport"); //$NON-NLS-1$
 	    IConfigurationElement points[] =
 	         extensionPoint.getConfigurationElements();
 	     
 		for (int i = 0; i < points.length; i++) 
 		{
 			IConfigurationElement element = points[i];
-			if("importer".equals(element.getName()))
+			if("importer".equals(element.getName())) //$NON-NLS-1$
 			{
 				try 
 				{
-					importers.addElement(element.createExecutableExtension("class"));
+					importers.addElement(element.createExecutableExtension("class")); //$NON-NLS-1$
 				}
 				catch(Exception e) {
 					MemoryTransportPlugin.getDefault().getLog().log(new Status(IStatus.ERROR, MemoryTransportPlugin.getUniqueIdentifier(),
-			    		DebugException.INTERNAL_ERROR, "Failure", e));
+			    		DebugException.INTERNAL_ERROR, "Failure", e)); //$NON-NLS-1$
 				}
 			}
 		}
@@ -251,7 +251,7 @@ public class ImportMemoryDialog extends SelectionDialog
 	 * and only if we have a fresh/clean properties object.
 	 */
 	static void initProperties(Properties properties, BigInteger addr) {
-		final String addrstr = "0x" + addr.toString(16);
+		final String addrstr = "0x" + addr.toString(16); //$NON-NLS-1$
 		if (!properties.containsKey(IMemoryImporter.TRANSFER_START)) {
 			properties.setProperty(IMemoryImporter.TRANSFER_START, addrstr);
 		}

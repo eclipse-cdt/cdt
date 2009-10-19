@@ -27,6 +27,8 @@ import org.eclipse.ui.IViewPart;
 
 public class FindAction implements IViewActionDelegate {
 
+	private static String FIND_NEXT_ID	= "org.eclipse.cdt.debug.ui.memory.search.FindNextAction"; //$NON-NLS-1$
+	
 	private IMemoryRenderingSite fView;
 	
 	private static Properties fSearchDialogProperties = new Properties();
@@ -63,9 +65,9 @@ public class FindAction implements IViewActionDelegate {
 			Shell shell = CDebugUIPlugin.getActiveWorkbenchShell();
 			FindReplaceDialog dialog = new FindReplaceDialog(shell, (IMemoryBlockExtension) memBlock, 
 				fView, (Properties) fSearchDialogProperties);
-			if(action.getText().equalsIgnoreCase("Find Next"))
+			if(action.getId().equals(FIND_NEXT_ID))
 			{
-				if(fSearchDialogProperties.getProperty(FindReplaceDialog.SEARCH_ENABLE_FIND_NEXT, "false").equals("true"))
+				if(Boolean.valueOf(fSearchDialogProperties.getProperty(FindReplaceDialog.SEARCH_ENABLE_FIND_NEXT, Boolean.FALSE.toString())))
 				{
 					dialog.performFindNext();
 				}
@@ -83,10 +85,9 @@ public class FindAction implements IViewActionDelegate {
 	}
 
 	public void selectionChanged(IAction action, ISelection selection) {
-		if(action.getText().equalsIgnoreCase("Find Next"))
+		if(action.getId().equals(FIND_NEXT_ID))
 		{
-			action.setEnabled(fSearchDialogProperties.getProperty(FindReplaceDialog.SEARCH_ENABLE_FIND_NEXT, "false")
-				.equals("true"));
+			action.setEnabled(Boolean.valueOf(fSearchDialogProperties.getProperty(FindReplaceDialog.SEARCH_ENABLE_FIND_NEXT, Boolean.FALSE.toString())));
 		}
 	}
 

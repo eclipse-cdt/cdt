@@ -20,10 +20,10 @@ import org.eclipse.swt.widgets.Control;
 
 public interface IMemoryImporter 
 {
-	public static final String TRANSFER_FILE = "File";
-	public static final String TRANSFER_START = "Start";
-	public static final String TRANSFER_CUSTOM_START_ADDRESS = "CustomStartAddress";
-	public static final String TRANSFER_SCROLL_TO_START = "ScrollToStart";
+	public static final String TRANSFER_FILE = "File"; //$NON-NLS-1$
+	public static final String TRANSFER_START = "Start"; //$NON-NLS-1$
+	public static final String TRANSFER_CUSTOM_START_ADDRESS = "CustomStartAddress"; //$NON-NLS-1$
+	public static final String TRANSFER_SCROLL_TO_START = "ScrollToStart"; //$NON-NLS-1$
 	
 	/**
 	 * @param parent

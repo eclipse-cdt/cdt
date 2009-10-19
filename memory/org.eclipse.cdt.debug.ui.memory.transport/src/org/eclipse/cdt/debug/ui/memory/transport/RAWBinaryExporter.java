@@ -88,7 +88,7 @@ public class RAWBinaryExporter implements IMemoryExporter
 		// start address
 		
 		Label startLabel = new Label(composite, SWT.NONE);
-		startLabel.setText("Start address: "); 
+		startLabel.setText(Messages.getString("RAWBinaryExporter.StartAddress"));  //$NON-NLS-1$
 		FormData data = new FormData();
 		startLabel.setLayoutData(data);
 		
@@ -101,7 +101,7 @@ public class RAWBinaryExporter implements IMemoryExporter
 		// end address
 		
 		Label endLabel = new Label(composite, SWT.NONE);
-		endLabel.setText("End address: "); 
+		endLabel.setText(Messages.getString("RAWBinaryExporter.EndAddress"));  //$NON-NLS-1$
 		data = new FormData();
 		data.top = new FormAttachment(fStartText, 0, SWT.CENTER);
 		data.left = new FormAttachment(fStartText);
@@ -117,7 +117,7 @@ public class RAWBinaryExporter implements IMemoryExporter
 		// length
 		
 		Label lengthLabel = new Label(composite, SWT.NONE);
-		lengthLabel.setText("Length: "); 
+		lengthLabel.setText(Messages.getString("RAWBinaryExporter.Length"));  //$NON-NLS-1$
 		data = new FormData();
 		data.top = new FormAttachment(fStartText, 0, SWT.CENTER);
 		data.left = new FormAttachment(fEndText);
@@ -136,7 +136,7 @@ public class RAWBinaryExporter implements IMemoryExporter
 		fFileText = new Text(composite, SWT.NONE);
 		Button fileButton = new Button(composite, SWT.PUSH);
 		
-		fileLabel.setText("File name: "); 
+		fileLabel.setText(Messages.getString("Exporter.FileName"));  //$NON-NLS-1$
 		data = new FormData();
 		data.top = new FormAttachment(fileButton, 0, SWT.CENTER);
 		fileLabel.setLayoutData(data);
@@ -147,13 +147,13 @@ public class RAWBinaryExporter implements IMemoryExporter
 		data.width = 300;
 		fFileText.setLayoutData(data);
 		
-		fileButton.setText("Browse...");
+		fileButton.setText(Messages.getString("Exporter.Browse")); //$NON-NLS-1$
 		data = new FormData();
 		data.top = new FormAttachment(fLengthText);
 		data.left = new FormAttachment(fFileText);
 		fileButton.setLayoutData(data);
 		
-		fFileText.setText(properties.getProperty(TRANSFER_FILE, ""));
+		fFileText.setText(properties.getProperty(TRANSFER_FILE, "")); //$NON-NLS-1$
 		try
 		{
 			fStartText.setText(properties.getProperty(TRANSFER_START));
@@ -163,7 +163,7 @@ public class RAWBinaryExporter implements IMemoryExporter
 		catch(IllegalArgumentException e)
 		{
 			MemoryTransportPlugin.getDefault().getLog().log(new Status(IStatus.ERROR, MemoryTransportPlugin.getUniqueIdentifier(),
-		    	DebugException.INTERNAL_ERROR, "Failure", e));
+		    	DebugException.INTERNAL_ERROR, "Failure", e)); //$NON-NLS-1$
 		}
 		
 		fileButton.addSelectionListener(new SelectionListener() {
@@ -173,9 +173,9 @@ public class RAWBinaryExporter implements IMemoryExporter
 
 			public void widgetSelected(SelectionEvent e) {
 				FileDialog dialog = new FileDialog(parent.getShell(), SWT.SAVE);
-				dialog.setText("Choose memory export file");
-				dialog.setFilterExtensions(new String[] { "*.*;*" } );
-				dialog.setFilterNames(new String[] { "All Files" } );
+				dialog.setText(Messages.getString("RAWBinaryExporter.ChooseFile")); //$NON-NLS-1$
+				dialog.setFilterExtensions(new String[] { "*.*;*" } ); //$NON-NLS-1$
+				dialog.setFilterNames(new String[] { Messages.getString("Exporter.AllFiles") } ); //$NON-NLS-1$
 				dialog.setFileName(fFileText.getText());
 				dialog.open();
 			
@@ -252,7 +252,7 @@ public class RAWBinaryExporter implements IMemoryExporter
 					BigInteger length = getLength();
 					fLengthText.setForeground(Display.getDefault().getSystemColor(SWT.COLOR_BLACK));
 					BigInteger startAddress = getStartAddress();
-					String endString = "0x" + startAddress.add(length).toString(16);
+					String endString = "0x" + startAddress.add(length).toString(16); //$NON-NLS-1$
 					if(!fEndText.getText().equals(endString))
 						fEndText.setText(endString);
 				}
@@ -305,7 +305,7 @@ public class RAWBinaryExporter implements IMemoryExporter
 	public BigInteger getEndAddress()
 	{
 		String text = fEndText.getText();
-		boolean hex = text.startsWith("0x");
+		boolean hex = text.startsWith("0x"); //$NON-NLS-1$
 		BigInteger endAddress = new BigInteger(hex ? text.substring(2) : text,
 			hex ? 16 : 10); 
 		
@@ -315,7 +315,7 @@ public class RAWBinaryExporter implements IMemoryExporter
 	public BigInteger getStartAddress()
 	{
 		String text = fStartText.getText();
-		boolean hex = text.startsWith("0x");
+		boolean hex = text.startsWith("0x"); //$NON-NLS-1$
 		BigInteger startAddress = new BigInteger(hex ? text.substring(2) : text,
 			hex ? 16 : 10); 
 		
@@ -325,7 +325,7 @@ public class RAWBinaryExporter implements IMemoryExporter
 	public BigInteger getLength()
 	{
 		String text = fLengthText.getText();
-		boolean hex = text.startsWith("0x");
+		boolean hex = text.startsWith("0x"); //$NON-NLS-1$
 		BigInteger lengthAddress = new BigInteger(hex ? text.substring(2) : text,
 			hex ? 16 : 10); 
 		
@@ -366,12 +366,12 @@ public class RAWBinaryExporter implements IMemoryExporter
 	
 	public String getId()
 	{
-		return "rawbinary";
+		return "rawbinary"; //$NON-NLS-1$
 	}
 	
 	public String getName()
 	{
-		return "RAW Binary";
+		return Messages.getString("RAWBinaryExporter.Name"); //$NON-NLS-1$
 	}
 	
 	public void exportMemory() 
@@ -394,7 +394,7 @@ public class RAWBinaryExporter implements IMemoryExporter
 						jobs = jobs.divide(factor);
 					}
 						
-					monitor.beginTask("Transferring Data", jobs.intValue());
+					monitor.beginTask(Messages.getString("Exporter.ProgressTitle"), jobs.intValue()); //$NON-NLS-1$
 					
 					BigInteger jobCount = BigInteger.ZERO;
 					while(transferAddress.compareTo(fEndAddress) < 0 && !monitor.isCanceled())
@@ -403,7 +403,7 @@ public class RAWBinaryExporter implements IMemoryExporter
 						if(fEndAddress.subtract(transferAddress).compareTo(length) < 0)
 							length = fEndAddress.subtract(transferAddress);
 						
-						monitor.subTask(String.format("Transfering %s bytes at address 0x%s", length.toString(10), transferAddress.toString(16)));
+						monitor.subTask(String.format(Messages.getString("Exporter.Progress"), length.toString(10), transferAddress.toString(16))); //$NON-NLS-1$
 
 						// data
 						byte[] byteValues = new byte[length.intValue()];
@@ -432,20 +432,20 @@ public class RAWBinaryExporter implements IMemoryExporter
 					monitor.done();
 				} catch (IOException ex) {
 					MemoryTransportPlugin.getDefault().getLog().log(new Status(IStatus.ERROR, MemoryTransportPlugin.getUniqueIdentifier(),
-							DebugException.REQUEST_FAILED, "Could not write to file.", ex));
+							DebugException.REQUEST_FAILED, Messages.getString("Exporter.ErrFile"), ex)); //$NON-NLS-1$
 					return new Status(IStatus.ERROR, MemoryTransportPlugin.getUniqueIdentifier(),
-					    	DebugException.REQUEST_FAILED, "Could not write to file.", ex);
+					    	DebugException.REQUEST_FAILED, Messages.getString("Exporter.ErrFile"), ex); //$NON-NLS-1$
 					
 				} catch (DebugException ex) {
 					MemoryTransportPlugin.getDefault().getLog().log(new Status(IStatus.ERROR, MemoryTransportPlugin.getUniqueIdentifier(),
-							DebugException.REQUEST_FAILED, "Could not read from target.", ex));	
+							DebugException.REQUEST_FAILED, Messages.getString("Exporter.ErrReadTarget"), ex)); //$NON-NLS-1$
 					return new Status(IStatus.ERROR, MemoryTransportPlugin.getUniqueIdentifier(),
-					    	DebugException.REQUEST_FAILED, "Could not read from target.", ex);						
-				} catch (Exception e) {
+					    	DebugException.REQUEST_FAILED, Messages.getString("Exporter.ErrReadTarget"), ex); //$NON-NLS-1$
+				} catch (Exception ex) {
 					MemoryTransportPlugin.getDefault().getLog().log(new Status(IStatus.ERROR, MemoryTransportPlugin.getUniqueIdentifier(),
-							DebugException.INTERNAL_ERROR, "Failure exporting memory", e));
+							DebugException.INTERNAL_ERROR, Messages.getString("Exporter.Falure"), ex)); //$NON-NLS-1$
 					return new Status(IStatus.ERROR, MemoryTransportPlugin.getUniqueIdentifier(),
-					    	DebugException.INTERNAL_ERROR, "Failure exporting memory", e);
+				    	DebugException.INTERNAL_ERROR, Messages.getString("Exporter.Falure"), ex); //$NON-NLS-1$
 				}
 				return Status.OK_STATUS;
 			}};

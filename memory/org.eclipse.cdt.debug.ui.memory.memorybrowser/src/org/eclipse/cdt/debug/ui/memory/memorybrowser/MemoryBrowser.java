@@ -235,7 +235,7 @@ public class MemoryBrowser extends ViewPart implements IDebugContextListener, IL
         for (int i = 0; i < managerTypes.length; i++) {
             if (managerTypes[i] instanceof Class<?>) {
                 Class<?> clazz = (Class<?>)managerTypes[i];
-                if ("org.eclipse.debug.ui.contexts.IBug145635Marker".equals(clazz.getName()) ) {
+                if ("org.eclipse.debug.ui.contexts.IBug145635Marker".equals(clazz.getName()) ) { //$NON-NLS-1$
                     return true;
                 }
             }
@@ -251,7 +251,7 @@ public class MemoryBrowser extends ViewPart implements IDebugContextListener, IL
      */
     private String getPresentationContextId() {
         IViewSite site = (IViewSite)getSite(); 
-        return site.getId() + (site.getSecondaryId() != null ? (":" + site.getSecondaryId()) : "");
+        return site.getId() + (site.getSecondaryId() != null ? (":" + site.getSecondaryId()) : ""); //$NON-NLS-1$ //$NON-NLS-2$
     }
 	
 	public void dispose() {
@@ -615,7 +615,7 @@ public class MemoryBrowser extends ViewPart implements IDebugContextListener, IL
 				
 			};
 			
-			IMemoryBlock block = createMemoryBlock(retrieval, "0", context);
+			IMemoryBlock block = createMemoryBlock(retrieval, "0", context); //$NON-NLS-1$
 			
 			fCurrentContainers.add(container);
 			rendering.init(container, block);

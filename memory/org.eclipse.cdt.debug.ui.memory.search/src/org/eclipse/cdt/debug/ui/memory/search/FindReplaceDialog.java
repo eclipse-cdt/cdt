@@ -29,6 +29,7 @@ import org.eclipse.debug.ui.memory.IMemoryRendering;
 import org.eclipse.debug.ui.memory.IMemoryRenderingContainer;
 import org.eclipse.debug.ui.memory.IMemoryRenderingSite;
 import org.eclipse.debug.ui.memory.IRepositionableMemoryRendering;
+import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.StructuredSelection;
@@ -110,7 +111,8 @@ public class FindReplaceDialog extends SelectionDialog
 	protected final static String SEARCH_FORMAT_WRAP = "SEARCH_FORMAT_WRAP"; //$NON-NLS-1$
 	protected final static String SEARCH_ENABLE_FIND_NEXT = "SEARCH_ENABLE_FIND_NEXT"; //$NON-NLS-1$
 	
-	public FindReplaceDialog(Shell parent, IMemoryBlockExtension memoryBlock, IMemoryRenderingSite memoryView, Properties properties)
+	private IAction fFindAction = null;
+	public FindReplaceDialog(Shell parent, IMemoryBlockExtension memoryBlock, IMemoryRenderingSite memoryView, Properties properties, IAction findAction)
 	{
 		super(parent);
 		super.setTitle(Messages.getString("FindReplaceDialog.Title"));  //$NON-NLS-1$
@@ -120,6 +122,7 @@ public class FindReplaceDialog extends SelectionDialog
 		fMemoryView = memoryView;
 		fProperties = properties;
 		this.setBlockOnOpen(false);
+		fFindAction = findAction;
 	}
 	
 	private BigInteger getUserStart()
@@ -993,6 +996,9 @@ public class FindReplaceDialog extends SelectionDialog
 								
 								fProperties.setProperty(SEARCH_ENABLE_FIND_NEXT, Boolean.TRUE.toString());
 								fProperties.setProperty(SEARCH_LAST_FOUND, "0x" + finalCurrentPosition.toString(16)); //$NON-NLS-1$
+								if ( fFindAction != null ) {
+									fFindAction.setEnabled(true);
+								}
 								return Status.OK_STATUS;
 							}
 						}

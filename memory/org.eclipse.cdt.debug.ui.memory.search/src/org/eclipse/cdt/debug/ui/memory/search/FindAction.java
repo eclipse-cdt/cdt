@@ -64,7 +64,7 @@ public class FindAction implements IViewActionDelegate {
 			
 			Shell shell = CDebugUIPlugin.getActiveWorkbenchShell();
 			FindReplaceDialog dialog = new FindReplaceDialog(shell, (IMemoryBlockExtension) memBlock, 
-				fView, (Properties) fSearchDialogProperties);
+				fView, (Properties) fSearchDialogProperties, fAction);
 			if(action.getId().equals(FIND_NEXT_ID))
 			{
 				if(Boolean.valueOf(fSearchDialogProperties.getProperty(FindReplaceDialog.SEARCH_ENABLE_FIND_NEXT, Boolean.FALSE.toString())))
@@ -84,9 +84,13 @@ public class FindAction implements IViewActionDelegate {
 
 	}
 
+	private static IAction fAction = null;
+	
 	public void selectionChanged(IAction action, ISelection selection) {
+		
 		if(action.getId().equals(FIND_NEXT_ID))
 		{
+			fAction = action;
 			action.setEnabled(Boolean.valueOf(fSearchDialogProperties.getProperty(FindReplaceDialog.SEARCH_ENABLE_FIND_NEXT, Boolean.FALSE.toString())));
 		}
 	}

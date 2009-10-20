@@ -27,6 +27,8 @@ public class StaleDataLabelForeground extends LabelForeground {
 
     public StaleDataLabelForeground() {
         super(null);
+        setPropertyNames(
+            new String[] { ICachingVMProvider.PROP_CACHE_ENTRY_DIRTY, ICachingVMProvider.PROP_UPDATE_POLICY_ID });        
     }
     
     @Override
@@ -37,6 +39,9 @@ public class StaleDataLabelForeground extends LabelForeground {
     
     @Override
     public boolean isEnabled(IStatus status, java.util.Map<String,Object> properties) {
-        return Boolean.TRUE.equals(properties.get(ICachingVMProvider.PROP_CACHE_ENTRY_DIRTY));
+        return 
+            Boolean.TRUE.equals(properties.get(ICachingVMProvider.PROP_CACHE_ENTRY_DIRTY)) &&
+            !AutomaticUpdatePolicy.AUTOMATIC_UPDATE_POLICY_ID.equals(
+                properties.get(ICachingVMProvider.PROP_UPDATE_POLICY_ID));
     }
 }

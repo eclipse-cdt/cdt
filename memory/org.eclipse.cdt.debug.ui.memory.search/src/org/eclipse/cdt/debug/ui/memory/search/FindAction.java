@@ -63,7 +63,7 @@ public class FindAction implements IViewActionDelegate {
 			
 			Shell shell = DebugUIPlugin.getShell();
 			FindReplaceDialog dialog = new FindReplaceDialog(shell, (IMemoryBlockExtension) memBlock, 
-				fView, (Properties) fSearchDialogProperties);
+				fView, (Properties) fSearchDialogProperties, fAction);
 			if(action.getText().equalsIgnoreCase("Find Next"))
 			{
 				if(fSearchDialogProperties.getProperty(FindReplaceDialog.SEARCH_ENABLE_FIND_NEXT, "false").equals("true"))
@@ -82,9 +82,12 @@ public class FindAction implements IViewActionDelegate {
 
 	}
 
+	private static IAction fAction = null;
+	
 	public void selectionChanged(IAction action, ISelection selection) {
 		if(action.getText().equalsIgnoreCase("Find Next"))
 		{
+			fAction = action;
 			action.setEnabled(fSearchDialogProperties.getProperty(FindReplaceDialog.SEARCH_ENABLE_FIND_NEXT, "false")
 				.equals("true"));
 		}

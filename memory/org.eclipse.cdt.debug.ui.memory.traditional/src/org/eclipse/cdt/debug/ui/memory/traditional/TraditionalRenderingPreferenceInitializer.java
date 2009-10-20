@@ -22,7 +22,6 @@ import org.eclipse.swt.widgets.Display;
  * Class used to initialize default preference values.
  */
 public class TraditionalRenderingPreferenceInitializer extends AbstractPreferenceInitializer {
-
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -36,28 +35,27 @@ public class TraditionalRenderingPreferenceInitializer extends AbstractPreferenc
 		store.setDefault(TraditionalRenderingPreferenceConstants.MEM_USE_GLOBAL_BACKGROUND, true);
 		store.setDefault(TraditionalRenderingPreferenceConstants.MEM_USE_GLOBAL_SELECTION, true);
 		
-		store.setDefault(TraditionalRenderingPreferenceConstants.MEM_COLOR_CHANGED, "255,0,0");
+		store.setDefault(TraditionalRenderingPreferenceConstants.MEM_COLOR_CHANGED, "255,0,0"); //$NON-NLS-1$
 		
 		Color systemSelection = Display.getDefault().getSystemColor(SWT.COLOR_LIST_SELECTION);
 		store.setDefault(TraditionalRenderingPreferenceConstants.MEM_COLOR_SELECTION, systemSelection.getRed()
-				+ "," + systemSelection.getGreen() + "," + systemSelection.getBlue());
+				+ "," + systemSelection.getGreen() + "," + systemSelection.getBlue()); //$NON-NLS-1$ //$NON-NLS-2$
 		
-		store.setDefault(TraditionalRenderingPreferenceConstants.MEM_LIGHTEN_DARKEN_ALTERNATE_CELLS, "5");
+		store.setDefault(TraditionalRenderingPreferenceConstants.MEM_LIGHTEN_DARKEN_ALTERNATE_CELLS, "5"); //$NON-NLS-1$
 		
-		store.setDefault(TraditionalRenderingPreferenceConstants.MEM_COLOR_EDIT, "0,255,0");
+		store.setDefault(TraditionalRenderingPreferenceConstants.MEM_COLOR_EDIT, "0,255,0"); //$NON-NLS-1$
 		
 		Color systemText = Display.getDefault().getSystemColor(SWT.COLOR_LIST_FOREGROUND);
 		store.setDefault(TraditionalRenderingPreferenceConstants.MEM_COLOR_TEXT, systemText.getRed()
-				+ "," + systemText.getGreen() + "," + systemText.getBlue());
+				+ "," + systemText.getGreen() + "," + systemText.getBlue()); //$NON-NLS-1$ //$NON-NLS-2$
 		
 		Color systemBackground = Display.getDefault().getSystemColor(SWT.COLOR_LIST_BACKGROUND);
 		store.setDefault(TraditionalRenderingPreferenceConstants.MEM_COLOR_BACKGROUND, systemBackground.getRed()
-				+ "," + systemBackground.getGreen() + "," + systemBackground.getBlue());
+				+ "," + systemBackground.getGreen() + "," + systemBackground.getBlue()); //$NON-NLS-1$ //$NON-NLS-2$
 		
 		store.setDefault(TraditionalRenderingPreferenceConstants.MEM_EDIT_BUFFER_SAVE, 
 				TraditionalRenderingPreferenceConstants.MEM_EDIT_BUFFER_SAVE_ON_ENTER_ONLY);
 		
-		store.setDefault(TraditionalRenderingPreferenceConstants.MEM_HISTORY_TRAILS_COUNT, "1");
+		store.setDefault(TraditionalRenderingPreferenceConstants.MEM_HISTORY_TRAILS_COUNT, "1"); //$NON-NLS-1$
 	}
-
 }

@@ -11,11 +11,16 @@
 
 package org.eclipse.cdt.debug.ui.memory.transport.actions;
 
+import java.math.BigInteger;
+
 import org.eclipse.cdt.debug.ui.memory.transport.ExportMemoryDialog;
 import org.eclipse.cdt.debug.ui.memory.transport.MemoryTransportPlugin;
+import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.model.IMemoryBlock;
+import org.eclipse.debug.core.model.IMemoryBlockExtension;
 import org.eclipse.debug.ui.memory.IMemoryRendering;
 import org.eclipse.debug.ui.memory.IMemoryRenderingSite;
+import org.eclipse.debug.ui.memory.IRepositionableMemoryRendering;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
@@ -34,46 +39,89 @@ public class ExportMemoryAction implements IViewActionDelegate {
 			fView = (IMemoryRenderingSite) view;
 	}
 
-	private IMemoryBlock getMemoryBlock(ISelection selection)
+
+	/**
+	 * Utility PODS to return a memory block and an address from a method
+	 */
+	static class BlockAndAddress {
+		
+		static public final BlockAndAddress EMPTY = new BlockAndAddress(null, BigInteger.valueOf(0)); 
+
+		public BlockAndAddress(IMemoryBlock block, BigInteger addr) {
+			this.block = block;
+			this.addr = addr;
+		}
+
+		public IMemoryBlock block;
+		public BigInteger addr;
+	}
+
+	/**
+	 * Returns the memory block and initial base address for the export
+	 * operation.
+	 * 
+	 * @return a result object; null is never returned
+	 */
+	static BlockAndAddress getMemoryBlockAndInitialStartAddress(ISelection selection)
 	{
+
 		IMemoryBlock memBlock = null;
+		BigInteger initialStartAddr = null;
 		
 		if (selection instanceof IStructuredSelection) {
 			IStructuredSelection strucSel = (IStructuredSelection) selection;
 
 			// return if current selection is empty
 			if (strucSel.isEmpty())
-				return null;
+				return BlockAndAddress.EMPTY;
 
 			Object obj = strucSel.getFirstElement();
 
 			if (obj == null)
-				return null;
+				return BlockAndAddress.EMPTY;
 
+			// Get the initial start address for the operation. 
 			if (obj instanceof IMemoryRendering) {
 				memBlock = ((IMemoryRendering) obj).getMemoryBlock();
+				if (obj instanceof IRepositionableMemoryRendering) {
+					initialStartAddr = ((IRepositionableMemoryRendering)obj).getSelectedAddress();
+				}
 			} else if (obj instanceof IMemoryBlock) {
 				memBlock = (IMemoryBlock) obj;
 			}
+			
+			if (initialStartAddr == null) {
+				if (memBlock instanceof IMemoryBlockExtension) {
+					try {
+						initialStartAddr = ((IMemoryBlockExtension)memBlock).getBigBaseAddress();
+					} catch (DebugException e) {
+						initialStartAddr = BigInteger.valueOf(memBlock.getStartAddress());
+					}
+				}
+				else {
+					initialStartAddr = BigInteger.valueOf(memBlock.getStartAddress());
+				}
+			}
 		}
-		return memBlock;
+		
+		return new BlockAndAddress(memBlock, initialStartAddr); 
 	}
 	
 	public void run(IAction action) {
 
 		ISelection selection = fView.getSite().getSelectionProvider()
 			.getSelection();
-		IMemoryBlock memBlock = getMemoryBlock(selection);
-		if(memBlock == null)
+		BlockAndAddress blockAndAddr = getMemoryBlockAndInitialStartAddress(selection);
+		if(blockAndAddr.block == null)
 			return;
-		ExportMemoryDialog dialog = new ExportMemoryDialog(MemoryTransportPlugin.getShell(), memBlock);
+		ExportMemoryDialog dialog = new ExportMemoryDialog(MemoryTransportPlugin.getShell(), blockAndAddr.block, blockAndAddr.addr);
 		dialog.open();
 		
 		dialog.getResult();
 	}
 	
 	public void selectionChanged(IAction action, ISelection selection) {
-		action.setEnabled(getMemoryBlock(selection) != null);
+		action.setEnabled(getMemoryBlockAndInitialStartAddress(selection).block != null);
 	}
 
 }

@@ -37,8 +37,7 @@ public class GoToAddressBarWidget {
 	public Control createControl(Composite parent)
 	{
 		fComposite = new Composite(parent, SWT.NONE);
-		PlatformUI.getWorkbench().getHelpSystem().setHelp(fComposite, // FIXME 	
-					".GoToAddressComposite_context"); //$NON-NLS-1$
+		PlatformUI.getWorkbench().getHelpSystem().setHelp(fComposite,".GoToAddressComposite_context"); //$NON-NLS-1$
 				
 		GridLayout layout = new GridLayout();
 		layout.numColumns = 6;
@@ -51,10 +50,10 @@ public class GoToAddressBarWidget {
 		fExpression.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		
 		fOKButton = new Button(fComposite, SWT.NONE);
-		fOKButton.setText("Go");
+		fOKButton.setText(Messages.getString("GoToAddressBarWidget.Go")); //$NON-NLS-1$
 		
 		fOKNewTabButton = new Button(fComposite, SWT.NONE);
-		fOKNewTabButton.setText("New Tab");
+		fOKNewTabButton.setText(Messages.getString("GoToAddressBarWidget.NewTab")); //$NON-NLS-1$
 		
 		return fComposite;
 	}

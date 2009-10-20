@@ -24,14 +24,12 @@ import org.eclipse.core.runtime.Status;
 import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.model.IMemoryBlock;
 import org.eclipse.debug.core.model.IMemoryBlockExtension;
-import org.eclipse.debug.core.model.IMemoryBlockRetrieval;
 import org.eclipse.debug.core.model.MemoryByte;
 import org.eclipse.debug.internal.ui.DebugPluginImages;
 import org.eclipse.debug.internal.ui.DebugUIMessages;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.debug.internal.ui.IInternalDebugUIConstants;
 import org.eclipse.debug.internal.ui.memory.IMemoryBlockConnection;
-import org.eclipse.debug.internal.ui.views.memory.MemoryViewUtil;
 import org.eclipse.debug.internal.ui.views.memory.renderings.GoToAddressAction;
 import org.eclipse.debug.ui.IDebugUIConstants;
 import org.eclipse.debug.ui.memory.AbstractMemoryRendering;
@@ -62,6 +60,7 @@ import org.eclipse.swt.dnd.DND;
 import org.eclipse.swt.dnd.TextTransfer;
 import org.eclipse.swt.dnd.Transfer;
 import org.eclipse.swt.graphics.Color;
+import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.graphics.RGB;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
@@ -105,12 +104,10 @@ public class TraditionalRendering extends AbstractMemoryRendering implements IRe
             {
                 public void propertyChange(PropertyChangeEvent event)
                 {
-                    if(event.getProperty().equals(
-                        IInternalDebugUIConstants.FONT_NAME))
+                    if(event.getProperty().equals(IInternalDebugUIConstants.FONT_NAME))
                     {
-                        TraditionalRendering.this.fRendering
-                            .handleFontPreferenceChange(JFaceResources
-                                .getFont(IInternalDebugUIConstants.FONT_NAME));
+                    	Font properFont = JFaceResources.getFont(IInternalDebugUIConstants.FONT_NAME);
+                        TraditionalRendering.this.fRendering.handleFontPreferenceChange(properFont);
                     }
                 }
             });
@@ -119,8 +116,7 @@ public class TraditionalRendering extends AbstractMemoryRendering implements IRe
         {
             public void propertyChange(PropertyChangeEvent event)
             {
-                IMemoryRendering sourceRendering = (IMemoryRendering) event
-                    .getSource();
+                IMemoryRendering sourceRendering = (IMemoryRendering) event.getSource();
                 if(!sourceRendering.getMemoryBlock().equals(getMemoryBlock()))
                     return;
 
@@ -130,8 +126,7 @@ public class TraditionalRendering extends AbstractMemoryRendering implements IRe
                     AbstractTableRendering.PROPERTY_SELECTED_ADDRESS)
                     && address instanceof BigInteger)
                 {
-                    TraditionalRendering.this.fRendering
-                        .ensureVisible((BigInteger) address);
+                    TraditionalRendering.this.fRendering.ensureVisible((BigInteger) address);
                 }
             }
         });
@@ -168,15 +163,15 @@ public class TraditionalRendering extends AbstractMemoryRendering implements IRe
     
     private void setRenderingPadding(String padding)
     {
-    	if(padding == null || padding.length() == 0)
+    	if(padding == null || padding.length() == 0) {
 			padding = "?";
+    	}
 		TraditionalRendering.this.fRendering.setPaddingString(padding);
     }
     
     protected void logError(String message, Exception e)
     {
-        Status status = new Status(IStatus.ERROR, getRenderingId(),
-            DebugException.INTERNAL_ERROR, message, e);
+        Status status = new Status(IStatus.ERROR, getRenderingId(), DebugException.INTERNAL_ERROR, message, e);
 
         DebugUIPlugin.getDefault().getLog().log(status);
     }
@@ -197,8 +192,7 @@ public class TraditionalRendering extends AbstractMemoryRendering implements IRe
     	}
     	catch(DebugException de)
     	{
-    		logError(TraditionalRenderingMessages
-                .getString("TraditionalRendering.FAILURE_RETRIEVE_BASE_ADDRESS"), de); //$NON-NLS-1$ // FIXME
+    		logError(TraditionalRenderingMessages.getString("TraditionalRendering.FAILURE_RETRIEVE_BASE_ADDRESS"), de); //$NON-NLS-1$ // FIXME
     	}
     	
     	try
@@ -216,8 +210,7 @@ public class TraditionalRendering extends AbstractMemoryRendering implements IRe
 		} 
     	catch (DebugException de) {
 			fStartAddress =  null;	
-			logError(TraditionalRenderingMessages
-				.getString("TraditionalRendering.FAILURE_RETRIEVE_START_ADDRESS"), de); //$NON-NLS-1$
+			logError(TraditionalRenderingMessages.getString("TraditionalRendering.FAILURE_RETRIEVE_START_ADDRESS"), de); //$NON-NLS-1$
 		}
     	
     	
@@ -234,8 +227,9 @@ public class TraditionalRendering extends AbstractMemoryRendering implements IRe
 		try 
 		{
 			endAddress = ((IMemoryBlockExtension) block).getMemoryBlockEndAddress();
-			if (endAddress != null)
+			if (endAddress != null) {
 				fEndAddress = endAddress;
+			}
 		} 
 		catch (DebugException e) 
 		{
@@ -258,8 +252,9 @@ public class TraditionalRendering extends AbstractMemoryRendering implements IRe
 		}
 		
 		// default to MAX_VALUE if we have trouble getting the end address
-		if (fEndAddress == null)
+		if (fEndAddress == null) {
 			fEndAddress = BigInteger.valueOf(Integer.MAX_VALUE);
+		}
     }
     
     public BigInteger getBigBaseAddress()
@@ -362,8 +357,7 @@ public class TraditionalRendering extends AbstractMemoryRendering implements IRe
 				
 				// update tab labels
 				String fLabel = getLabel();
-				firePropertyChangedEvent(new PropertyChangeEvent(TraditionalRendering.this, 
-						IBasicPropertyConstants.P_TEXT, null, fLabel));
+				firePropertyChangedEvent(new PropertyChangeEvent(TraditionalRendering.this,	IBasicPropertyConstants.P_TEXT, null, fLabel));
 				
 				return Status.OK_STATUS;
 			}};
@@ -404,8 +398,7 @@ public class TraditionalRendering extends AbstractMemoryRendering implements IRe
     	int green = textColor.getGreen();
     	int blue = textColor.getBlue();
     	
-    	float scale = (float) store.getInt(
-    			TraditionalRenderingPreferenceConstants.MEM_LIGHTEN_DARKEN_ALTERNATE_CELLS);
+    	float scale = (float) store.getInt(TraditionalRenderingPreferenceConstants.MEM_LIGHTEN_DARKEN_ALTERNATE_CELLS);
     	
 		red = (int) Math.min(red + ((255 - red) / 10) * scale, 255);
 		green = (int) Math.min(green + ((255 - green) / 10) * scale, 255);
@@ -416,28 +409,18 @@ public class TraditionalRendering extends AbstractMemoryRendering implements IRe
     
     public void disposeColors()
     {
-    	if(colorBackground != null)
-    		colorBackground.dispose();
-    	colorBackground = null;
+    	if( colorBackground    != null) { colorBackground.dispose();    }
+    	if( colorChanged       != null) { colorChanged.dispose();       }
+    	if( colorEdit          != null) { colorEdit.dispose();          }
+    	if( colorSelection     != null) { colorSelection.dispose();     }
+    	if( colorText          != null) { colorText.dispose();          }
+    	if( colorTextAlternate != null) { colorTextAlternate.dispose(); }
     	
-    	if(colorChanged != null)
-    		colorChanged.dispose();
-    	colorChanged = null;
-    	
-    	if(colorEdit != null)
-    		colorEdit.dispose();
-    	colorEdit = null;
-    	
-    	if(colorSelection != null)
-    		colorSelection.dispose();
-    	colorSelection = null;
-    	
-    	if(colorText != null)
-    		colorText.dispose();
-    	colorText = null;
-    	
-    	if(colorTextAlternate != null)
-    		colorTextAlternate.dispose();
+    	colorBackground    = null;
+    	colorChanged       = null;
+    	colorEdit          = null;
+    	colorSelection     = null;
+    	colorText          = null;
     	colorTextAlternate = null;
     	
     	disposeChangedColors();
@@ -445,8 +428,7 @@ public class TraditionalRendering extends AbstractMemoryRendering implements IRe
 
     public void applyPreferences()
     {
-    	if(!fRendering.isDisposed())
-    	{
+    	if(fRendering != null && !fRendering.isDisposed()) {
     		IPreferenceStore store = TraditionalRenderingPlugin.getDefault().getPreferenceStore();
     		
     		fRendering.setHistoryDepth(store.getInt(TraditionalRenderingPreferenceConstants.MEM_HISTORY_TRAILS_COUNT));
@@ -454,8 +436,9 @@ public class TraditionalRendering extends AbstractMemoryRendering implements IRe
     		fRendering.setBackground(getColorBackground());
     	
 	    	AbstractPane panes[] = fRendering.getRenderingPanes();
-	    	for(int i = 0; i < panes.length; i++)
+	    	for(int i = 0; i < panes.length; i++) {
 	    		panes[i].setBackground(getColorBackground());
+	    	}
 	    	
 	    	setRenderingPadding(DebugUIPlugin.getDefault().getPreferenceStore().getString(IDebugUIConstants.PREF_PADDED_STR));
 	    	
@@ -480,21 +463,21 @@ public class TraditionalRendering extends AbstractMemoryRendering implements IRe
     
     private void disposeChangedColors()
     {
-    	if(colorsChanged != null)
-    		for(int i = 0; i < colorsChanged.length; i++)
+    	if(colorsChanged != null) {
+    		for(int i = 0; i < colorsChanged.length; i++) {
     			colorsChanged[i].dispose();
+    		}
+    	}
 		colorsChanged = null;
     }
     
     public Color[] getColorsChanged()
     {
-    	if(colorsChanged != null && colorsChanged.length != fRendering.getHistoryDepth())
-    	{
+    	if(colorsChanged != null && colorsChanged.length != fRendering.getHistoryDepth()) {
     		disposeChangedColors();
     	}
     	
-    	if(colorsChanged == null)
-    	{
+    	if(colorsChanged == null) {
 	    	colorsChanged = new Color[fRendering.getHistoryDepth()];
 	    	colorsChanged[0] = colorChanged;
 	    	int shades = fRendering.getHistoryDepth() + 4;
@@ -503,10 +486,11 @@ public class TraditionalRendering extends AbstractMemoryRendering implements IRe
     		int blue = (255 - colorChanged.getBlue()) / shades;
 	    	for(int i = 1; i < fRendering.getHistoryDepth(); i++)
 	    	{
-	    		colorsChanged[i] = new Color(colorChanged.getDevice(), 
-	    			colorChanged.getRed() + ((shades - i) * red),
-	    			colorChanged.getGreen() + ((shades - i) * green),
-	    			colorChanged.getBlue() + ((shades - i) * blue));
+	    		colorsChanged[i] = 
+	    			new Color(colorChanged.getDevice(), 
+	    					  colorChanged.getRed() + ((shades - i) * red),
+	    				      colorChanged.getGreen() + ((shades - i) * green),
+	    					  colorChanged.getBlue() + ((shades - i) * blue));
 	    	}
     	}
     	
@@ -558,8 +542,7 @@ public class TraditionalRendering extends AbstractMemoryRendering implements IRe
         // copy address
         
         final Action copyAddressAction = new Action(
-                TraditionalRenderingMessages
-                    .getString("TraditionalRendering.COPY_ADDRESS")) //$NON-NLS-1$
+                TraditionalRenderingMessages.getString("TraditionalRendering.COPY_ADDRESS")) //$NON-NLS-1$
             {
    				public void run()
                 {
@@ -578,16 +561,14 @@ public class TraditionalRendering extends AbstractMemoryRendering implements IRe
         final Action gotoAddressAction = new GoToAddressAction(TraditionalRendering.this) 
     	{
     		public void run() {
-    			TraditionalRendering.this.fRendering
-    				.setVisibleAddressBar(true);
+    			TraditionalRendering.this.fRendering.setVisibleAddressBar(true);
     		}
     	};
         
         // reset to base address
         
         final Action gotoBaseAddressAction = new Action(
-            TraditionalRenderingMessages
-                .getString("TraditionalRendering.RESET_TO_BASE_ADDRESS")) //$NON-NLS-1$
+            TraditionalRenderingMessages.getString("TraditionalRendering.RESET_TO_BASE_ADDRESS")) //$NON-NLS-1$
         {
             public void run()
             {
@@ -595,8 +576,7 @@ public class TraditionalRendering extends AbstractMemoryRendering implements IRe
                 {
                     public void run()
                     {
-                        TraditionalRendering.this.fRendering
-                        	.gotoAddress(TraditionalRendering.this.fRendering.fBaseAddress);
+                        TraditionalRendering.this.fRendering.gotoAddress(TraditionalRendering.this.fRendering.fBaseAddress);
                     }
                 });
             }
@@ -605,9 +585,7 @@ public class TraditionalRendering extends AbstractMemoryRendering implements IRe
         
         // refresh
 
-        final Action refreshAction = new Action(
-            TraditionalRenderingMessages
-                .getString("TraditionalRendering.REFRESH")) //$NON-NLS-1$
+        final Action refreshAction = new Action(TraditionalRenderingMessages.getString("TraditionalRendering.REFRESH")) //$NON-NLS-1$
         {
             public void run()
             {
@@ -618,7 +596,7 @@ public class TraditionalRendering extends AbstractMemoryRendering implements IRe
                     	// For compatibility with DSF update modes (hopefully this will either be replaced by an enhanced
                     	// platform interface or the caching will move out of the data layer
                     	try {
-							Method m = fRendering.getMemoryBlock().getClass().getMethod("clearCache", new Class[0]);
+							Method m = fRendering.getMemoryBlock().getClass().getMethod("clearCache", new Class[0]); //$NON-NLS-1$
 							if(m != null)
 	                    		m.invoke(fRendering.getMemoryBlock(), new Object[0]);
 						} 
@@ -635,56 +613,46 @@ public class TraditionalRendering extends AbstractMemoryRendering implements IRe
         // display address
 
         final Action displayAddressPaneAction = new Action(
-            TraditionalRenderingMessages
-                .getString("TraditionalRendering.ADDRESS"), //$NON-NLS-1$
+            TraditionalRenderingMessages.getString("TraditionalRendering.ADDRESS"), //$NON-NLS-1$
             IAction.AS_CHECK_BOX)
         {
             public void run()
             {
-                TraditionalRendering.this.fRendering.setPaneVisible(
-                    Rendering.PANE_ADDRESS, isChecked());
+                TraditionalRendering.this.fRendering.setPaneVisible(Rendering.PANE_ADDRESS, isChecked());
             }
         };
-        displayAddressPaneAction.setChecked(this.fRendering
-            .getPaneVisible(Rendering.PANE_ADDRESS));
+        displayAddressPaneAction.setChecked(this.fRendering.getPaneVisible(Rendering.PANE_ADDRESS));
 
         // display hex
 
         final Action displayBinaryPaneAction = new Action(
-            TraditionalRenderingMessages
-                .getString("TraditionalRendering.BINARY"), //$NON-NLS-1$
+            TraditionalRenderingMessages.getString("TraditionalRendering.BINARY"), //$NON-NLS-1$
             IAction.AS_CHECK_BOX)
         {
             public void run()
             {
-                TraditionalRendering.this.fRendering.setPaneVisible(
-                    Rendering.PANE_BINARY, isChecked());
+                TraditionalRendering.this.fRendering.setPaneVisible(Rendering.PANE_BINARY, isChecked());
             }
         };
-        displayBinaryPaneAction.setChecked(this.fRendering
-            .getPaneVisible(Rendering.PANE_BINARY));
+        displayBinaryPaneAction.setChecked(this.fRendering.getPaneVisible(Rendering.PANE_BINARY));
 
         // display text
 
         final Action displayTextPaneAction = new Action(
-            TraditionalRenderingMessages
-                .getString("TraditionalRendering.TEXT"), //$NON-NLS-1$
+            TraditionalRenderingMessages.getString("TraditionalRendering.TEXT"), //$NON-NLS-1$
             IAction.AS_CHECK_BOX)
         {
             public void run()
             {
-                TraditionalRendering.this.fRendering.setPaneVisible(
-                    Rendering.PANE_TEXT, isChecked());
+                TraditionalRendering.this.fRendering.setPaneVisible(Rendering.PANE_TEXT, isChecked());
             }
         };
-        displayTextPaneAction.setChecked(this.fRendering
-            .getPaneVisible(Rendering.PANE_TEXT));
+        displayTextPaneAction.setChecked(this.fRendering.getPaneVisible(Rendering.PANE_TEXT));
 
         // display size
 
         final Action displaySize1BytesAction = new Action(
-            TraditionalRenderingMessages
-                .getString("TraditionalRendering.1_BYTE"), //$NON-NLS-1$
+            TraditionalRenderingMessages.getString("TraditionalRendering.1_BYTE"), //$NON-NLS-1$
             IAction.AS_RADIO_BUTTON)
         {
             public void run()
@@ -696,83 +664,68 @@ public class TraditionalRendering extends AbstractMemoryRendering implements IRe
             .setChecked(this.fRendering.getBytesPerColumn() == 1);
 
         final Action displaySize2BytesAction = new Action(
-            TraditionalRenderingMessages
-                .getString("TraditionalRendering.2_BYTES"), IAction.AS_RADIO_BUTTON) //$NON-NLS-1$
+            TraditionalRenderingMessages.getString("TraditionalRendering.2_BYTES"), IAction.AS_RADIO_BUTTON) //$NON-NLS-1$
         {
             public void run()
             {
                 TraditionalRendering.this.fRendering.setBytesPerColumn(2);
             }
         };
-        displaySize2BytesAction
-            .setChecked(this.fRendering.getBytesPerColumn() == 2);
+        displaySize2BytesAction.setChecked(this.fRendering.getBytesPerColumn() == 2);
 
         final Action displaySize4BytesAction = new Action(
-            TraditionalRenderingMessages
-                .getString("TraditionalRendering.4_BYTES"), IAction.AS_RADIO_BUTTON) //$NON-NLS-1$
+            TraditionalRenderingMessages.getString("TraditionalRendering.4_BYTES"), IAction.AS_RADIO_BUTTON) //$NON-NLS-1$
         {
             public void run()
             {
                 TraditionalRendering.this.fRendering.setBytesPerColumn(4);
             }
         };
-        displaySize4BytesAction
-            .setChecked(this.fRendering.getBytesPerColumn() == 4);
+        displaySize4BytesAction.setChecked(this.fRendering.getBytesPerColumn() == 4);
 
         final Action displaySize8BytesAction = new Action(
-            TraditionalRenderingMessages
-                .getString("TraditionalRendering.8_BYTES"), IAction.AS_RADIO_BUTTON) //$NON-NLS-1$
+            TraditionalRenderingMessages.getString("TraditionalRendering.8_BYTES"), IAction.AS_RADIO_BUTTON) //$NON-NLS-1$
         {
             public void run()
             {
                 TraditionalRendering.this.fRendering.setBytesPerColumn(8);
             }
         };
-        displaySize8BytesAction
-            .setChecked(this.fRendering.getBytesPerColumn() == 8);
+        displaySize8BytesAction.setChecked(this.fRendering.getBytesPerColumn() == 8);
 
         // text / unicode ?
 
         final Action displayCharactersISO8859Action = new Action(
-                TraditionalRenderingMessages
-                    .getString("TraditionalRendering.ISO-8859-1"), //$NON-NLS-1$
-                IAction.AS_RADIO_BUTTON)
-        {
-            public void run()
-            {
-                TraditionalRendering.this.fRendering
-                    .setTextMode(Rendering.TEXT_ISO_8859_1);
-            }
-        };
-        displayCharactersISO8859Action.setChecked(this.fRendering
-        		.getTextMode() == Rendering.TEXT_ISO_8859_1);
-        
-        final Action displayCharactersUSASCIIAction = new Action(
-            TraditionalRenderingMessages
-                .getString("TraditionalRendering.USASCII"), //$NON-NLS-1$
+            TraditionalRenderingMessages.getString("TraditionalRendering.ISO-8859-1"), //$NON-NLS-1$
             IAction.AS_RADIO_BUTTON)
         {
             public void run()
             {
-                TraditionalRendering.this.fRendering
-                    .setTextMode(Rendering.TEXT_USASCII);
+                TraditionalRendering.this.fRendering.setTextMode(Rendering.TEXT_ISO_8859_1);
             }
         };
-        displayCharactersUSASCIIAction.setChecked(this.fRendering
-        		.getTextMode() == Rendering.TEXT_USASCII);
-
-        final Action displayCharactersUTF8Action = new Action(
-            TraditionalRenderingMessages
-                .getString("TraditionalRendering.UTF8"), IAction.AS_RADIO_BUTTON) //$NON-NLS-1$
+        displayCharactersISO8859Action.setChecked(this.fRendering.getTextMode() == Rendering.TEXT_ISO_8859_1);
+        
+        final Action displayCharactersUSASCIIAction = new Action(
+            TraditionalRenderingMessages.getString("TraditionalRendering.USASCII"), //$NON-NLS-1$
+            IAction.AS_RADIO_BUTTON)
         {
             public void run()
             {
-                TraditionalRendering.this.fRendering
-                .setTextMode(Rendering.TEXT_UTF8);
+                TraditionalRendering.this.fRendering.setTextMode(Rendering.TEXT_USASCII);
             }
         };
-        displayCharactersUTF8Action.setChecked(this.fRendering
-        		.getTextMode() == Rendering.TEXT_UTF8);
+        displayCharactersUSASCIIAction.setChecked(this.fRendering.getTextMode() == Rendering.TEXT_USASCII);
+
+        final Action displayCharactersUTF8Action = new Action(
+            TraditionalRenderingMessages.getString("TraditionalRendering.UTF8"), IAction.AS_RADIO_BUTTON) //$NON-NLS-1$
+        {
+            public void run()
+            {
+                TraditionalRendering.this.fRendering.setTextMode(Rendering.TEXT_UTF8);
+            }
+        };
+        displayCharactersUTF8Action.setChecked(this.fRendering.getTextMode() == Rendering.TEXT_UTF8);
         
 //        final Action displayCharactersUTF16Action = new Action(
 //                TraditionalRenderingMessages
@@ -791,27 +744,23 @@ public class TraditionalRendering extends AbstractMemoryRendering implements IRe
         // endian
 
         displayEndianBigAction = new Action(
-            TraditionalRenderingMessages
-                .getString("TraditionalRendering.BIG"), //$NON-NLS-1$
+            TraditionalRenderingMessages.getString("TraditionalRendering.BIG"), //$NON-NLS-1$
             IAction.AS_RADIO_BUTTON)
         {
             public void run()
             {
-                TraditionalRendering.this.fRendering
-	                    .setDisplayLittleEndian(false);
+                TraditionalRendering.this.fRendering.setDisplayLittleEndian(false);
             }
         };
         displayEndianBigAction.setChecked(!this.fRendering.isTargetLittleEndian());
 
         displayEndianLittleAction = new Action(
-            TraditionalRenderingMessages
-                .getString("TraditionalRendering.LITTLE"), //$NON-NLS-1$
+            TraditionalRenderingMessages.getString("TraditionalRendering.LITTLE"), //$NON-NLS-1$
             IAction.AS_RADIO_BUTTON)
         {
             public void run()
             {
-                TraditionalRendering.this.fRendering
-                    .setDisplayLittleEndian(true);
+                TraditionalRendering.this.fRendering.setDisplayLittleEndian(true);
             }
         };
         displayEndianLittleAction.setChecked(this.fRendering.isTargetLittleEndian());
@@ -819,76 +768,64 @@ public class TraditionalRendering extends AbstractMemoryRendering implements IRe
         // radix
 
         final Action displayRadixHexAction = new Action(
-            TraditionalRenderingMessages
-                .getString("TraditionalRendering.HEX"), //$NON-NLS-1$
+            TraditionalRenderingMessages.getString("TraditionalRendering.HEX"), //$NON-NLS-1$
             IAction.AS_RADIO_BUTTON)
         {
             public void run()
             {
-                TraditionalRendering.this.fRendering
-                    .setRadix(Rendering.RADIX_HEX);
+                TraditionalRendering.this.fRendering.setRadix(Rendering.RADIX_HEX);
             }
         };
-        displayRadixHexAction
-            .setChecked(this.fRendering.getRadix() == Rendering.RADIX_HEX);
+        displayRadixHexAction.setChecked(this.fRendering.getRadix() == Rendering.RADIX_HEX);
 
         final Action displayRadixDecSignedAction = new Action(
-            TraditionalRenderingMessages
-                .getString("TraditionalRendering.DECIMAL_SIGNED"), IAction.AS_RADIO_BUTTON) //$NON-NLS-1$
+            TraditionalRenderingMessages.getString("TraditionalRendering.DECIMAL_SIGNED"), IAction.AS_RADIO_BUTTON) //$NON-NLS-1$
         {
             public void run()
             {
-                TraditionalRendering.this.fRendering
-                    .setRadix(Rendering.RADIX_DECIMAL_SIGNED);
+                TraditionalRendering.this.fRendering.setRadix(Rendering.RADIX_DECIMAL_SIGNED);
             }
         };
         displayRadixDecSignedAction
             .setChecked(this.fRendering.getRadix() == Rendering.RADIX_DECIMAL_SIGNED);
 
         final Action displayRadixDecUnsignedAction = new Action(
-            TraditionalRenderingMessages
-                .getString("TraditionalRendering.DECIMAL_UNSIGNED"), IAction.AS_RADIO_BUTTON) //$NON-NLS-1$
+            TraditionalRenderingMessages.getString("TraditionalRendering.DECIMAL_UNSIGNED"), IAction.AS_RADIO_BUTTON) //$NON-NLS-1$
         {
             public void run()
             {
-                TraditionalRendering.this.fRendering
-                    .setRadix(Rendering.RADIX_DECIMAL_UNSIGNED);
+                TraditionalRendering.this.fRendering.setRadix(Rendering.RADIX_DECIMAL_UNSIGNED);
             }
         };
         displayRadixDecUnsignedAction
             .setChecked(this.fRendering.getRadix() == Rendering.RADIX_DECIMAL_UNSIGNED);
 
         final Action displayRadixOctAction = new Action(
-            TraditionalRenderingMessages
-                .getString("TraditionalRendering.OCTAL"), //$NON-NLS-1$
+            TraditionalRenderingMessages.getString("TraditionalRendering.OCTAL"), //$NON-NLS-1$
             IAction.AS_RADIO_BUTTON)
         {
             public void run()
             {
-                TraditionalRendering.this.fRendering
-                    .setRadix(Rendering.RADIX_OCTAL);
+                TraditionalRendering.this.fRendering.setRadix(Rendering.RADIX_OCTAL);
             }
         };
         displayRadixOctAction
             .setChecked(this.fRendering.getRadix() == Rendering.RADIX_OCTAL);
 
         final Action displayRadixBinAction = new Action(
-            TraditionalRenderingMessages
-                .getString("TraditionalRendering.BINARY"), //$NON-NLS-1$
+            TraditionalRenderingMessages.getString("TraditionalRendering.BINARY"), //$NON-NLS-1$
             IAction.AS_RADIO_BUTTON)
         {
             public void run()
             {
-                TraditionalRendering.this.fRendering
-                    .setRadix(Rendering.RADIX_BINARY);
+                TraditionalRendering.this.fRendering.setRadix(Rendering.RADIX_BINARY);
             }
         };
         displayRadixBinAction
             .setChecked(this.fRendering.getRadix() == Rendering.RADIX_BINARY);
         
         final Action displayColumnCountAuto = new Action(
-            TraditionalRenderingMessages
-                .getString("TraditionalRendering.COLUMN_COUNT_AUTO"), //$NON-NLS-1$
+            TraditionalRenderingMessages.getString("TraditionalRendering.COLUMN_COUNT_AUTO"), //$NON-NLS-1$
             IAction.AS_RADIO_BUTTON)
         {
             public void run()
@@ -903,8 +840,7 @@ public class TraditionalRendering extends AbstractMemoryRendering implements IRe
         {
         	final int finali = j;
         	displayColumnCounts[i] = new Action(
-                TraditionalRenderingMessages
-                    .getString("TraditionalRendering.COLUMN_COUNT_" + finali), //$NON-NLS-1$
+                TraditionalRenderingMessages.getString("TraditionalRendering.COLUMN_COUNT_" + finali), //$NON-NLS-1$
                 IAction.AS_RADIO_BUTTON)
             {
                 public void run()
@@ -915,7 +851,7 @@ public class TraditionalRendering extends AbstractMemoryRendering implements IRe
             displayColumnCounts[i].setChecked(fRendering.getColumnsSetting() == finali);
         }
 
-        final Action displayColumnCountCustomValue = new Action("", IAction.AS_RADIO_BUTTON)
+        final Action displayColumnCountCustomValue = new Action("", IAction.AS_RADIO_BUTTON) //$NON-NLS-1$
         {
             public void run()
             {
@@ -996,8 +932,7 @@ public class TraditionalRendering extends AbstractMemoryRendering implements IRe
                 	this.setChecked(false);
 
                 	displayColumnCountCustomValue.setChecked(true);
-                	displayColumnCountCustomValue.setText(Integer.valueOf(
-                			fRendering.getColumnsSetting()).toString());
+                	displayColumnCountCustomValue.setText(Integer.valueOf(fRendering.getColumnsSetting()).toString());
                 }
             }
         }; 
@@ -1008,38 +943,34 @@ public class TraditionalRendering extends AbstractMemoryRendering implements IRe
             {
                 manager.add(new Separator());
 
-                MenuManager sub = new MenuManager(
-                    TraditionalRenderingMessages
-                        .getString("TraditionalRendering.PANES")); //$NON-NLS-1$
+                MenuManager sub;
+                
+                sub = new MenuManager(TraditionalRenderingMessages.getString("TraditionalRendering.PANES")); //$NON-NLS-1$
                 sub.add(displayAddressPaneAction);
                 sub.add(displayBinaryPaneAction);
                 sub.add(displayTextPaneAction);
                 manager.add(sub);
 
-                sub = new MenuManager(TraditionalRenderingMessages
-                    .getString("TraditionalRendering.ENDIAN")); //$NON-NLS-1$
+                sub = new MenuManager(TraditionalRenderingMessages.getString("TraditionalRendering.ENDIAN")); //$NON-NLS-1$
                 sub.add(displayEndianBigAction);
                 sub.add(displayEndianLittleAction);
                 manager.add(sub);
 
-                sub = new MenuManager(TraditionalRenderingMessages
-                    .getString("TraditionalRendering.TEXT")); //$NON-NLS-1$
+                sub = new MenuManager(TraditionalRenderingMessages.getString("TraditionalRendering.TEXT")); //$NON-NLS-1$
                 sub.add(displayCharactersISO8859Action);
                 sub.add(displayCharactersUSASCIIAction);
                 sub.add(displayCharactersUTF8Action);
                 //sub.add(displayCharactersUTF16Action);
                 manager.add(sub);
 
-                sub = new MenuManager(TraditionalRenderingMessages
-                    .getString("TraditionalRendering.CELL_SIZE")); //$NON-NLS-1$
+                sub = new MenuManager(TraditionalRenderingMessages.getString("TraditionalRendering.CELL_SIZE")); //$NON-NLS-1$
                 sub.add(displaySize1BytesAction);
                 sub.add(displaySize2BytesAction);
                 sub.add(displaySize4BytesAction);
                 sub.add(displaySize8BytesAction);
                 manager.add(sub);
 
-                sub = new MenuManager(TraditionalRenderingMessages
-                    .getString("TraditionalRendering.RADIX")); //$NON-NLS-1$
+                sub = new MenuManager(TraditionalRenderingMessages.getString("TraditionalRendering.RADIX")); //$NON-NLS-1$
                 sub.add(displayRadixHexAction);
                 sub.add(displayRadixDecSignedAction);
                 sub.add(displayRadixDecUnsignedAction);
@@ -1047,8 +978,7 @@ public class TraditionalRendering extends AbstractMemoryRendering implements IRe
                 sub.add(displayRadixBinAction);
                 manager.add(sub);
                 
-                sub = new MenuManager(TraditionalRenderingMessages
-                        .getString("TraditionalRendering.COLUMN_COUNT")); //$NON-NLS-1$
+                sub = new MenuManager(TraditionalRenderingMessages.getString("TraditionalRendering.COLUMN_COUNT")); //$NON-NLS-1$
                 sub.add(displayColumnCountAuto);
                 for(int i = 0; i < displayColumnCounts.length; i++)
                 	sub.add(displayColumnCounts[i]);
@@ -1056,8 +986,9 @@ public class TraditionalRendering extends AbstractMemoryRendering implements IRe
                 boolean currentCountIsCustom = fRendering.getColumnsSetting() != 0;
                 for(int i = 0, j = 1; i < MAX_MENU_COLUMN_COUNT && currentCountIsCustom; i++, j*=2)
                 	currentCountIsCustom = (j != fRendering.getColumnsSetting());
-                if(currentCountIsCustom)
+                if(currentCountIsCustom) {
                 	sub.add(displayColumnCountCustomValue);
+                }
                 
                 sub.add(displayColumnCountCustom);
                 manager.add(sub);
@@ -1075,8 +1006,7 @@ public class TraditionalRendering extends AbstractMemoryRendering implements IRe
                 updateAlwaysAction.setChecked(fRendering.getUpdateMode() == Rendering.UPDATE_ALWAYS);
                 
                 final Action updateOnBreakpointAction = new Action(
-                        TraditionalRenderingMessages
-                        .getString("TraditionalRendering.UPDATE_ON_BREAKPOINT"), //$NON-NLS-1$
+                        TraditionalRenderingMessages.getString("TraditionalRendering.UPDATE_ON_BREAKPOINT"), //$NON-NLS-1$
                     IAction.AS_RADIO_BUTTON)
                 {
                     public void run()
@@ -1098,8 +1028,7 @@ public class TraditionalRendering extends AbstractMemoryRendering implements IRe
                 };
                 updateManualAction.setChecked(fRendering.getUpdateMode() == Rendering.UPDATE_MANUAL);
                 
-                sub = new MenuManager(TraditionalRenderingMessages
-                    .getString("TraditionalRendering.UPDATEMODE")); //$NON-NLS-1$
+                sub = new MenuManager(TraditionalRenderingMessages.getString("TraditionalRendering.UPDATEMODE")); //$NON-NLS-1$
                 sub.add(updateAlwaysAction);
                 sub.add(updateOnBreakpointAction);
                 sub.add(updateManualAction);
@@ -1116,8 +1045,7 @@ public class TraditionalRendering extends AbstractMemoryRendering implements IRe
                 manager.add(gotoBaseAddressAction);
                 manager.add(refreshAction);
                 manager.add(new Separator());
-                manager.add(new Separator(
-                    IWorkbenchActionConstants.MB_ADDITIONS));
+                manager.add(new Separator(IWorkbenchActionConstants.MB_ADDITIONS));
             }
         });
 
@@ -1132,8 +1060,9 @@ public class TraditionalRendering extends AbstractMemoryRendering implements IRe
 	// selection is terminology for caret position
     public BigInteger getSelectedAddress() {
     	IMemorySelection selection = fRendering.getSelection();
-    	if (selection == null || selection.getStart() == null)
+    	if (selection == null || selection.getStart() == null) {
     		return fRendering.getCaretAddress();
+    	}
     	
    		return selection.getStartLow();     	
 	}
@@ -1201,7 +1130,8 @@ public class TraditionalRendering extends AbstractMemoryRendering implements IRe
         super.dispose();
     }
 
-    public Object getAdapter(Class adapter)
+    @SuppressWarnings("unchecked")
+	public Object getAdapter(Class adapter)
     {
         if(adapter == IWorkbenchAdapter.class)
         {
@@ -1221,8 +1151,7 @@ public class TraditionalRendering extends AbstractMemoryRendering implements IRe
 
                     public String getLabel(Object o)
                     {
-                        return TraditionalRenderingMessages
-                            .getString("TraditionalRendering.RENDERING_NAME"); //$NON-NLS-1$
+                        return TraditionalRenderingMessages.getString("TraditionalRendering.RENDERING_NAME"); //$NON-NLS-1$
                     }
 
                     public Object getParent(Object o)
@@ -1294,12 +1223,9 @@ class CopyAction extends Action
         fRendering = rendering;
         setText(DebugUIMessages.CopyViewToClipboardAction_title);
         setToolTipText(DebugUIMessages.CopyViewToClipboardAction_tooltip);
-        setImageDescriptor(DebugPluginImages
-            .getImageDescriptor(IInternalDebugUIConstants.IMG_ELCL_COPY_VIEW_TO_CLIPBOARD));
-        setHoverImageDescriptor(DebugPluginImages
-            .getImageDescriptor(IInternalDebugUIConstants.IMG_LCL_COPY_VIEW_TO_CLIPBOARD));
-        setDisabledImageDescriptor(DebugPluginImages
-            .getImageDescriptor(IInternalDebugUIConstants.IMG_DLCL_COPY_VIEW_TO_CLIPBOARD));
+        setImageDescriptor(DebugPluginImages.getImageDescriptor(IInternalDebugUIConstants.IMG_ELCL_COPY_VIEW_TO_CLIPBOARD));
+        setHoverImageDescriptor(DebugPluginImages.getImageDescriptor(IInternalDebugUIConstants.IMG_LCL_COPY_VIEW_TO_CLIPBOARD));
+        setDisabledImageDescriptor(DebugPluginImages.getImageDescriptor(IInternalDebugUIConstants.IMG_DLCL_COPY_VIEW_TO_CLIPBOARD));
     }
     
     public void run()
@@ -1345,8 +1271,7 @@ class CopyAction extends Action
 
             BigInteger lengthToRead = end.subtract(start);
 
-            int rows = lengthToRead.divide(
-                BigInteger.valueOf(columns * bytesPerColumn)).intValue();
+            int rows = lengthToRead.divide(BigInteger.valueOf(columns * bytesPerColumn)).intValue();
 
             if(rows * columns * bytesPerColumn < lengthToRead.intValue())
                 rows++;
@@ -1368,17 +1293,14 @@ class CopyAction extends Action
                 {
                     for(int col = 0; col < columns; col++)
                     {
-                        BigInteger cellAddress = rowAddress.add(BigInteger
-                            .valueOf(col * bytesPerColumn));
+                        BigInteger cellAddress = rowAddress.add(BigInteger.valueOf(col * bytesPerColumn));
 
                         if(cellAddress.compareTo(end) < 0)
                         {
                             try
                             {
-                                MemoryByte bytes[] = fRendering.getBytes(
-                                    cellAddress, bytesPerColumn);
-                                buffer.append(fRendering.getRadixText(bytes,
-                                    radix, isLittleEndian));
+                                MemoryByte bytes[] = fRendering.getBytes(cellAddress, bytesPerColumn);
+                                buffer.append(fRendering.getRadixText(bytes, radix, isLittleEndian));
                             }
                             catch(DebugException de)
                             {
@@ -1426,10 +1348,7 @@ class CopyAction extends Action
                             }
                             catch(DebugException de)
                             {
-                                fRendering
-                                    .logError(
-                                        TraditionalRenderingMessages
-                                            .getString("TraditionalRendering.FAILURE_COPY_OPERATION"), de); //$NON-NLS-1$
+                                fRendering.logError( TraditionalRenderingMessages.getString("TraditionalRendering.FAILURE_COPY_OPERATION"), de); //$NON-NLS-1$
                                 return;
                             }
                         }
@@ -1446,8 +1365,7 @@ class CopyAction extends Action
             if(buffer.length() > 0)
             {
                 TextTransfer plainTextTransfer = TextTransfer.getInstance();
-                clip.setContents(new Object[] { buffer.toString() },
-                    new Transfer[] { plainTextTransfer }, fType);
+                clip.setContents(new Object[] { buffer.toString() }, new Transfer[] { plainTextTransfer }, fType);
             }
         }
         finally

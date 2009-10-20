@@ -13,6 +13,7 @@ package org.eclipse.cdt.debug.ui.memory.transport;
 
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.IOException;
 import java.math.BigInteger;
 import java.util.Properties;
 
@@ -121,19 +122,9 @@ public class RAWBinaryImporter implements IMemoryImporter {
 		fScrollToStart = new Boolean(properties.getProperty(TRANSFER_SCROLL_TO_START, "true"));
 		try
 		{
-			BigInteger startAddress = null;
-			if(fMemoryBlock instanceof IMemoryBlockExtension)
-				startAddress = ((IMemoryBlockExtension) fMemoryBlock).getBigBaseAddress(); 
-			else
-				startAddress = BigInteger.valueOf(fMemoryBlock.getStartAddress());
-			
-			if(properties.getProperty(TRANSFER_START) != null)
-				fStartText.setText(properties.getProperty(TRANSFER_START));
-			else
-				fStartText.setText("0x" + startAddress.toString(16));
-			
+			fStartText.setText(properties.getProperty(TRANSFER_START));
 		}
-		catch(Exception e)
+		catch(IllegalArgumentException e)
 		{
 			MemoryTransportPlugin.getDefault().getLog().log(new Status(IStatus.ERROR, MemoryTransportPlugin.getUniqueIdentifier(),
 		    	DebugException.INTERNAL_ERROR, "Failure", e));
@@ -261,80 +252,79 @@ public class RAWBinaryImporter implements IMemoryImporter {
 		Job job = new Job("Memory Import from RAW Binary File"){ //$NON-NLS-1$
 			
 			public IStatus run(IProgressMonitor monitor) {
-				
 				try
-				{
-					try
-					{	
-						BufferedMemoryWriter memoryWriter = new BufferedMemoryWriter((IMemoryBlockExtension) fMemoryBlock, BUFFER_LENGTH);
-						
-						BigInteger scrollToAddress = null;
-						
-						FileInputStream reader = new FileInputStream(fInputFile);
-						
-						BigInteger jobs = BigInteger.valueOf(fInputFile.length());
-						BigInteger factor = BigInteger.ONE;
-						if(jobs.compareTo(BigInteger.valueOf(0x7FFFFFFF)) > 0)
+				{	
+					BufferedMemoryWriter memoryWriter = new BufferedMemoryWriter((IMemoryBlockExtension) fMemoryBlock, BUFFER_LENGTH);
+					
+					BigInteger scrollToAddress = null;
+					
+					FileInputStream reader = new FileInputStream(fInputFile);
+					
+					BigInteger jobs = BigInteger.valueOf(fInputFile.length());
+					BigInteger factor = BigInteger.ONE;
+					if(jobs.compareTo(BigInteger.valueOf(0x7FFFFFFF)) > 0)
+					{
+						factor = jobs.divide(BigInteger.valueOf(0x7FFFFFFF));
+						jobs = jobs.divide(factor);
+					}
+					
+					byte[] byteValues = new byte[1024];
+					
+					monitor.beginTask("Transferring Data", jobs.intValue()); //$NON-NLS-1$
+					
+					int actualByteCount = reader.read(byteValues);
+					BigInteger recordAddress = fStartAddress;
+					
+					while(actualByteCount != -1 && !monitor.isCanceled())
+					{
+						byte data[] = new byte[actualByteCount];
+						for(int i = 0; i < data.length; i++)
 						{
-							factor = jobs.divide(BigInteger.valueOf(0x7FFFFFFF));
-							jobs = jobs.divide(factor);
+							data[i] = byteValues[i];
 						}
-						
-						byte[] byteValues = new byte[1024];
-						
-						monitor.beginTask("Transferring Data", jobs.intValue()); //$NON-NLS-1$
-						
-						BigInteger jobCount = BigInteger.ZERO;
-						int actualByteCount = reader.read(byteValues);
-						BigInteger recordAddress = fStartAddress;
-						
-						while(actualByteCount != -1 && !monitor.isCanceled())
-						{
-							byte data[] = new byte[actualByteCount];
-							for(int i = 0; i < data.length; i++)
-							{
-								data[i] = byteValues[i];
-							}
 
-							if(scrollToAddress == null)
-								scrollToAddress = recordAddress;
-							
-							BigInteger baseAddress = null;
-							if(fMemoryBlock instanceof IMemoryBlockExtension)
-								baseAddress = ((IMemoryBlockExtension) fMemoryBlock).getBigBaseAddress(); 
-							else
-								baseAddress = BigInteger.valueOf(fMemoryBlock.getStartAddress());
-							
-							memoryWriter.write(recordAddress.subtract(baseAddress), data);
-
-							jobCount = jobCount.add(BigInteger.valueOf(actualByteCount));
-							while(jobCount.compareTo(factor) >= 0)
-							{
-								jobCount = jobCount.subtract(factor);
-								monitor.worked(1);
-							}
-							
-							recordAddress.add(BigInteger.valueOf(actualByteCount));
-							actualByteCount = reader.read(byteValues);
- 						}
+						if(scrollToAddress == null)
+							scrollToAddress = recordAddress;
 						
+						BigInteger baseAddress = null;
+						if(fMemoryBlock instanceof IMemoryBlockExtension)
+							baseAddress = ((IMemoryBlockExtension) fMemoryBlock).getBigBaseAddress(); 
+						else
+							baseAddress = BigInteger.valueOf(fMemoryBlock.getStartAddress());
+						
+						memoryWriter.write(recordAddress.subtract(baseAddress), data);
+
+						BigInteger jobCount = BigInteger.valueOf(actualByteCount).divide(factor);
+						monitor.worked(jobCount.intValue());
+						
+						recordAddress.add(BigInteger.valueOf(actualByteCount));
+						actualByteCount = reader.read(byteValues);
+					}
+					
+					if (!monitor.isCanceled())
 						memoryWriter.flush();
-						reader.close();
-						monitor.done();
-						
-						if(fProperties.getProperty(TRANSFER_SCROLL_TO_START, "false").equals("true"))
-							fParentDialog.scrollRenderings(scrollToAddress);
-					}
-					catch(Exception e) 
-					{ 
-						MemoryTransportPlugin.getDefault().getLog().log(new Status(IStatus.ERROR, MemoryTransportPlugin.getUniqueIdentifier(),
-					    	DebugException.INTERNAL_ERROR, "Failure", e));
-					}
-				}
-				catch(Exception e) 
-				{
+
+					reader.close();
+					monitor.done();
+					
+					if(fProperties.getProperty(TRANSFER_SCROLL_TO_START, "false").equals("true"))
+						fParentDialog.scrollRenderings(scrollToAddress);
+				} catch (IOException ex) {
 					MemoryTransportPlugin.getDefault().getLog().log(new Status(IStatus.ERROR, MemoryTransportPlugin.getUniqueIdentifier(),
-				    	DebugException.INTERNAL_ERROR, "Failure", e));
+							DebugException.REQUEST_FAILED, "Could not read from file.", ex));
+					return new Status(IStatus.ERROR, MemoryTransportPlugin.getUniqueIdentifier(),
+					    	DebugException.REQUEST_FAILED, "Could not read from file.", ex);
+					
+				} catch (DebugException ex) {
+					MemoryTransportPlugin.getDefault().getLog().log(new Status(IStatus.ERROR, MemoryTransportPlugin.getUniqueIdentifier(),
+							DebugException.REQUEST_FAILED, "Could not write to target.", ex));	
+					return new Status(IStatus.ERROR, MemoryTransportPlugin.getUniqueIdentifier(),
+					    	DebugException.REQUEST_FAILED, "Could not write to target.", ex);						
+				} catch (Exception ex) { 
+					MemoryTransportPlugin.getDefault().getLog().log(new Status(IStatus.ERROR, MemoryTransportPlugin.getUniqueIdentifier(),
+							DebugException.INTERNAL_ERROR, "Failure importing from file", ex));
+					return new Status(IStatus.ERROR, MemoryTransportPlugin.getUniqueIdentifier(),
+				    	DebugException.INTERNAL_ERROR, "Failure importing from file", ex);
 				}
 				return Status.OK_STATUS;
 			}};

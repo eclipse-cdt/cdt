@@ -287,11 +287,10 @@ public class TextPane extends AbstractPane
  	   // TODO consider adding finer granularity?
         boolean anyByteEditing = false;
         for(int n = 0; n < bytes.length && !anyByteEditing; n++)
-        	if(bytes[n] instanceof TraditionalMemoryByte)
-        		if(((TraditionalMemoryByte) bytes[n]).isEdited())
+        		if(bytes[n].isEdited())
         			anyByteEditing = true;
          
-         if(isOdd(col))
+        if(isOdd(col))
      		gc.setForeground(fRendering.getTraditionalRendering().getColorText());
      	else
      		gc.setForeground(fRendering.getTraditionalRendering().getColorTextAlternate());

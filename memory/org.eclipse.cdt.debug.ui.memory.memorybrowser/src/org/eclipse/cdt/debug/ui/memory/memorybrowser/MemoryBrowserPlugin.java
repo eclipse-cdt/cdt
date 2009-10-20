@@ -21,7 +21,7 @@ import org.osgi.framework.BundleContext;
 public class MemoryBrowserPlugin extends AbstractUIPlugin {
 
 	// The plug-in ID
-	public static final String PLUGIN_ID = "org.eclipse.cdt.debug.ui.memory.memorybrowser";
+	public static final String PLUGIN_ID = "org.eclipse.cdt.debug.ui.memory.memorybrowser"; //$NON-NLS-1$
 
 	// The shared instance
 	private static MemoryBrowserPlugin plugin;

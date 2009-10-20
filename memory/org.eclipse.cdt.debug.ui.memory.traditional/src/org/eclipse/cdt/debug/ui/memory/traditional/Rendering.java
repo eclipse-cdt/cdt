@@ -90,7 +90,7 @@ public class Rendering extends Composite implements IDebugEventSetListener
     
     private int fCurrentScrollSelection = 0;	// current scroll selection;
     
-    private BigInteger fCaretAddress = BigInteger.valueOf(0); // -1 ?
+    private BigInteger fCaretAddress;
     
     // user settings
     
@@ -375,8 +375,6 @@ public class Rendering extends Composite implements IDebugEventSetListener
         {
             public void widgetSelected(SelectionEvent se)
             {
-            	int addressableSize = getAddressableSize();
-            	
                 switch(se.detail)
                 {
                     case SWT.ARROW_DOWN:
@@ -463,7 +461,11 @@ public class Rendering extends Composite implements IDebugEventSetListener
     
     protected BigInteger getCaretAddress()
     {
-    	return fCaretAddress;
+		// Return the caret address if it has been set, otherwise return the
+		// viewport address. When the rendering is first created, the caret is
+		// unset until the user clicks somewhere in the rendering. It also reset
+    	// (unset) when the user gives us a new viewport address
+    	return (fCaretAddress != null) ? fCaretAddress : fViewportAddress;
     }
     
     private void doGoToAddress() {
@@ -729,13 +731,13 @@ public class Rendering extends Composite implements IDebugEventSetListener
             }
         }
 
-        private HashMap fEditBuffer = new HashMap();
+        private HashMap<BigInteger,TraditionalMemoryByte[]> fEditBuffer = new HashMap<BigInteger,TraditionalMemoryByte[]>();
 
         private boolean fDisposed = false;
         
         private Object fLastQueued = null;
 
-        private Vector fQueue = new Vector();
+        private Vector<Object> fQueue = new Vector<Object>();
 
         protected MemoryUnit fCache = null;
 
@@ -1072,14 +1074,13 @@ public class Rendering extends Composite implements IDebugEventSetListener
                 Display.getDefault().getThread()) : TraditionalRenderingMessages
                 .getString("TraditionalRendering.CALLED_ON_NON_DISPATCH_THREAD"); //$NON-NLS-1$
 
-            Set keySet = fEditBuffer.keySet();
-            Iterator iterator = keySet.iterator();
+            Set<BigInteger> keySet = fEditBuffer.keySet();
+            Iterator<BigInteger> iterator = keySet.iterator();
 
             while(iterator.hasNext())
                 {
                     BigInteger address = (BigInteger) iterator.next();
-                    TraditionalMemoryByte[] bytes = (TraditionalMemoryByte[]) fEditBuffer
-                        .get(address);
+                    TraditionalMemoryByte[] bytes = (TraditionalMemoryByte[]) fEditBuffer.get(address);
 
                     byte byteValue[] = new byte[bytes.length];
                     for(int i = 0; i < bytes.length; i++)
@@ -1469,7 +1470,12 @@ public class Rendering extends Composite implements IDebugEventSetListener
     		return;
     	}
     	
-        fViewportAddress = address; // TODO update fCaretAddress
+        fViewportAddress = address;
+        
+        // reset the caret and selection state (no caret and no selection)
+        fCaretAddress = null;
+        fSelection = new Selection();
+        
         redrawPanes();
     }
 

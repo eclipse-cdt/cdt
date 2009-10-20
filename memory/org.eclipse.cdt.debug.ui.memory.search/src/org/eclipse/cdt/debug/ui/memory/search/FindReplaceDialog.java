@@ -29,6 +29,7 @@ import org.eclipse.debug.ui.memory.IMemoryRendering;
 import org.eclipse.debug.ui.memory.IMemoryRenderingContainer;
 import org.eclipse.debug.ui.memory.IMemoryRenderingSite;
 import org.eclipse.debug.ui.memory.IRepositionableMemoryRendering;
+import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.StructuredSelection;
@@ -64,6 +65,8 @@ public class FindReplaceDialog extends SelectionDialog
 	
 	final static int preFetchSize = 10 * 1024;
 	
+	private IAction fFindAction;
+	
 	private Text fFindText;
 	private Text fReplaceText;
 	
@@ -75,7 +78,6 @@ public class FindReplaceDialog extends SelectionDialog
 	private Button fReplaceButton;
 	private Button fReplaceFindButton;
 	private Button fReplaceAllButton;
-	private Button fCloseButton;
 
 	private IMemoryRenderingSite fMemoryView;
 	
@@ -111,7 +113,7 @@ public class FindReplaceDialog extends SelectionDialog
 	protected final static String SEARCH_FORMAT_WRAP = "SEARCH_FORMAT_WRAP"; //$NON-NLS-1$
 	protected final static String SEARCH_ENABLE_FIND_NEXT = "SEARCH_ENABLE_FIND_NEXT"; //$NON-NLS-1$
 	
-	public FindReplaceDialog(Shell parent, IMemoryBlockExtension memoryBlock, IMemoryRenderingSite memoryView, Properties properties)
+	public FindReplaceDialog(Shell parent, IMemoryBlockExtension memoryBlock, IMemoryRenderingSite memoryView, Properties properties, IAction findAction)
 	{
 		super(parent);
 		super.setTitle(Messages.getString("FindReplaceDialog.Title"));  //$NON-NLS-1$
@@ -120,6 +122,7 @@ public class FindReplaceDialog extends SelectionDialog
 		fMemoryBlock = memoryBlock;
 		fMemoryView = memoryView;
 		fProperties = properties;
+		fFindAction = findAction;
 		this.setBlockOnOpen(false);
 	}
 	
@@ -290,7 +293,7 @@ public class FindReplaceDialog extends SelectionDialog
 			}
 		});
 		
-		fCloseButton = createButton(parent, IDialogConstants.CANCEL_ID, Messages.getString("FindReplaceDialog.Close"), false); //$NON-NLS-1$
+		createButton(parent, IDialogConstants.CANCEL_ID, Messages.getString("FindReplaceDialog.Close"), false); //$NON-NLS-1$
 		
 		((GridLayout) parent.getLayout()).numColumns = 2;
 				
@@ -426,7 +429,7 @@ public class FindReplaceDialog extends SelectionDialog
 	
 	private String[] removeNullElements(String strings[])
 	{
-		Vector nonNullStrings = new Vector<String>();
+		Vector<String> nonNullStrings = new Vector<String>();
 		for(String string : strings)
 			if(string != null)
 				nonNullStrings.addElement(string);
@@ -994,6 +997,9 @@ public class FindReplaceDialog extends SelectionDialog
 								
 								fProperties.setProperty(SEARCH_ENABLE_FIND_NEXT, "true");
 								fProperties.setProperty(SEARCH_LAST_FOUND, "0x" + finalCurrentPosition.toString(16));
+								if ( fFindAction != null && ! fFindAction.isEnabled() ) {
+									fFindAction.setEnabled(true);
+								}
 								return Status.OK_STATUS;
 							}
 						}

@@ -13,6 +13,7 @@ package org.eclipse.cdt.debug.ui.memory.transport;
 
 import java.io.File;
 import java.io.FileOutputStream;
+import java.io.IOException;
 import java.math.BigInteger;
 import java.util.Properties;
 
@@ -155,25 +156,11 @@ public class RAWBinaryExporter implements IMemoryExporter
 		fFileText.setText(properties.getProperty(TRANSFER_FILE, ""));
 		try
 		{
-			BigInteger startAddress = null;
-			if(fMemoryBlock instanceof IMemoryBlockExtension)
-				startAddress = ((IMemoryBlockExtension) fMemoryBlock).getBigBaseAddress(); 
-			else
-				startAddress = BigInteger.valueOf(fMemoryBlock.getStartAddress());
-			
-			if(properties.getProperty(TRANSFER_START) != null)
-				fStartText.setText(properties.getProperty(TRANSFER_START));
-			else
-				fStartText.setText("0x" + startAddress.toString(16));
-			
-			if(properties.getProperty(TRANSFER_END) != null)
-				fEndText.setText(properties.getProperty(TRANSFER_END));
-			else
-				fEndText.setText("0x" + startAddress.toString(16));
-			
+			fStartText.setText(properties.getProperty(TRANSFER_START));
+			fEndText.setText(properties.getProperty(TRANSFER_END));
 			fLengthText.setText(getEndAddress().subtract(getStartAddress()).toString());
 		}
-		catch(Exception e)
+		catch(IllegalArgumentException e)
 		{
 			MemoryTransportPlugin.getDefault().getLog().log(new Status(IStatus.ERROR, MemoryTransportPlugin.getUniqueIdentifier(),
 		    	DebugException.INTERNAL_ERROR, "Failure", e));
@@ -391,70 +378,74 @@ public class RAWBinaryExporter implements IMemoryExporter
 	{
 		Job job = new Job("Memory Export to RAW Binary File"){ //$NON-NLS-1$
 			public IStatus run(IProgressMonitor monitor) {
-				
 				try
-				{
-					try
-					{	
-						BigInteger DATA_PER_RECORD = BigInteger.valueOf(1024);
+				{	
+					BigInteger DATA_PER_RECORD = BigInteger.valueOf(1024);
+					
+					BigInteger transferAddress = fStartAddress;
+					
+					FileOutputStream writer = new FileOutputStream(fOutputFile);
+					
+					BigInteger jobs = fEndAddress.subtract(transferAddress).divide(DATA_PER_RECORD);
+					BigInteger factor = BigInteger.ONE;
+					if(jobs.compareTo(BigInteger.valueOf(0x7FFFFFFF)) > 0)
+					{
+						factor = jobs.divide(BigInteger.valueOf(0x7FFFFFFF));
+						jobs = jobs.divide(factor);
+					}
 						
-						BigInteger transferAddress = fStartAddress;
+					monitor.beginTask("Transferring Data", jobs.intValue());
+					
+					BigInteger jobCount = BigInteger.ZERO;
+					while(transferAddress.compareTo(fEndAddress) < 0 && !monitor.isCanceled())
+					{
+						BigInteger length = DATA_PER_RECORD;
+						if(fEndAddress.subtract(transferAddress).compareTo(length) < 0)
+							length = fEndAddress.subtract(transferAddress);
 						
-						FileOutputStream writer = new FileOutputStream(fOutputFile);
+						monitor.subTask(String.format("Transfering %s bytes at address 0x%s", length.toString(10), transferAddress.toString(16)));
+
+						// data
+						byte[] byteValues = new byte[length.intValue()];
 						
-						BigInteger jobs = fEndAddress.subtract(transferAddress).divide(DATA_PER_RECORD);
-						BigInteger factor = BigInteger.ONE;
-						if(jobs.compareTo(BigInteger.valueOf(0x7FFFFFFF)) > 0)
+						MemoryByte bytes[] = ((IMemoryBlockExtension) fMemoryBlock).getBytesFromAddress(transferAddress, 
+							length.longValue() / ((IMemoryBlockExtension) fMemoryBlock).getAddressableSize());
+						for(int byteIndex = 0; byteIndex < bytes.length; byteIndex++)
 						{
-							factor = jobs.divide(BigInteger.valueOf(0x7FFFFFFF));
-							jobs = jobs.divide(factor);
+							byteValues[byteIndex] = bytes[byteIndex].getValue();
 						}
-							
-						monitor.beginTask("Transferring Data", jobs.intValue());
 						
-						BigInteger jobCount = BigInteger.ZERO;
-						while(transferAddress.compareTo(fEndAddress) < 0 && !monitor.isCanceled())
+						
+						writer.write(byteValues);
+						
+						transferAddress = transferAddress.add(length);
+						
+						jobCount = jobCount.add(BigInteger.ONE);
+						if(jobCount.compareTo(factor) == 0)
 						{
-							BigInteger length = DATA_PER_RECORD;
-							if(fEndAddress.subtract(transferAddress).compareTo(length) < 0)
-								length = fEndAddress.subtract(transferAddress);
-							
-							// data
-							byte[] byteValues = new byte[length.intValue()];
-							
-							MemoryByte bytes[] = ((IMemoryBlockExtension) fMemoryBlock).getBytesFromAddress(transferAddress, 
-								length.longValue() / ((IMemoryBlockExtension) fMemoryBlock).getAddressableSize());
-							for(int byteIndex = 0; byteIndex < bytes.length; byteIndex++)
-							{
-								byteValues[byteIndex] = bytes[byteIndex].getValue();
-							}
-							
-							
-							writer.write(byteValues);
-							
-							transferAddress = transferAddress.add(length);
-							
-							jobCount = jobCount.add(BigInteger.ONE);
-							if(jobCount.compareTo(factor) == 0)
-							{
-								jobCount = BigInteger.ZERO;
-								monitor.worked(1);
-							}
- 						}
-						
-						writer.close();
-						monitor.done();
+							jobCount = BigInteger.ZERO;
+							monitor.worked(1);
+						}
 					}
-					catch(Exception e) 
-					{ 
-						MemoryTransportPlugin.getDefault().getLog().log(new Status(IStatus.ERROR, MemoryTransportPlugin.getUniqueIdentifier(),
-					    	DebugException.INTERNAL_ERROR, "Failure", e));
-					}
-				}
-				catch(Exception e) 
-				{
+					
+					writer.close();
+					monitor.done();
+				} catch (IOException ex) {
 					MemoryTransportPlugin.getDefault().getLog().log(new Status(IStatus.ERROR, MemoryTransportPlugin.getUniqueIdentifier(),
-				    	DebugException.INTERNAL_ERROR, "Failure", e));
+							DebugException.REQUEST_FAILED, "Could not write to file.", ex));
+					return new Status(IStatus.ERROR, MemoryTransportPlugin.getUniqueIdentifier(),
+					    	DebugException.REQUEST_FAILED, "Could not write to file.", ex);
+					
+				} catch (DebugException ex) {
+					MemoryTransportPlugin.getDefault().getLog().log(new Status(IStatus.ERROR, MemoryTransportPlugin.getUniqueIdentifier(),
+							DebugException.REQUEST_FAILED, "Could not read from target.", ex));	
+					return new Status(IStatus.ERROR, MemoryTransportPlugin.getUniqueIdentifier(),
+					    	DebugException.REQUEST_FAILED, "Could not read from target.", ex);						
+				} catch (Exception e) {
+					MemoryTransportPlugin.getDefault().getLog().log(new Status(IStatus.ERROR, MemoryTransportPlugin.getUniqueIdentifier(),
+							DebugException.INTERNAL_ERROR, "Failure exporting memory", e));
+					return new Status(IStatus.ERROR, MemoryTransportPlugin.getUniqueIdentifier(),
+					    	DebugException.INTERNAL_ERROR, "Failure exporting memory", e);
 				}
 				return Status.OK_STATUS;
 			}};

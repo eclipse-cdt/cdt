@@ -194,6 +194,10 @@ public class MethodContext {
 		return null;
 	}
 	
+	public boolean isInline() {
+		return qname == null;
+	}
+	
 	private static ICPPClassType getClassBinding(ICPPASTQualifiedName qname){
 		IASTName classname = qname.getNames()[qname.getNames().length - 2];
 		ICPPClassType bind = (ICPPClassType)classname.resolveBinding(); 

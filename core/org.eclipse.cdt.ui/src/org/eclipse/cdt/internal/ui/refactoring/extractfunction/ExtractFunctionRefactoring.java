@@ -57,7 +57,6 @@ import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IASTParameterDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTPointerOperator;
 import org.eclipse.cdt.core.dom.ast.IASTReturnStatement;
-import org.eclipse.cdt.core.dom.ast.IASTSimpleDeclSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTSimpleDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTStandardFunctionDeclarator;
 import org.eclipse.cdt.core.dom.ast.IASTStatement;
@@ -72,11 +71,9 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTDeclSpecifier;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTFunctionDeclarator;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTOperatorName;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTQualifiedName;
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTSimpleDeclSpecifier;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTemplateDeclaration;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTemplateId;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTemplateParameter;
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPBinding;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPMethod;
 import org.eclipse.cdt.core.dom.rewrite.ASTRewrite;
@@ -98,7 +95,6 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTInitializerExpression;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTName;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTQualifiedName;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTReturnStatement;
-import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTSimpleDeclSpecifier;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTSimpleDeclaration;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTTemplateDeclaration;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPNodeFactory;
@@ -155,72 +151,83 @@ public class ExtractFunctionRefactoring extends CRefactoring {
 
 	@Override
 	public RefactoringStatus checkInitialConditions(IProgressMonitor pm)
-			throws CoreException, OperationCanceledException {
+	throws CoreException, OperationCanceledException {
 		SubMonitor sm = SubMonitor.convert(pm, 10);
-		RefactoringStatus status = super.checkInitialConditions(sm.newChild(6));
+		try {
+			lockIndex();
 
-		container = findExtractableNodes();
-		sm.worked(1);
+			try {
+				super.checkInitialConditions(sm.newChild(6));
 
-		if (isProgressMonitorCanceld(sm, initStatus))
-			return initStatus;
+				container = findExtractableNodes();
+				sm.worked(1);
 
-		checkForNonExtractableStatements(container, status);
-		sm.worked(1);
+				if (isProgressMonitorCanceld(sm, initStatus))
+					return initStatus;
 
-		if (isProgressMonitorCanceld(sm, initStatus))
-			return initStatus;
+				checkForNonExtractableStatements(container, initStatus);
+				sm.worked(1);
 
-		container.findAllNames();
-		markWriteAccess();
-		sm.worked(1);
+				if (isProgressMonitorCanceld(sm, initStatus))
+					return initStatus;
 
-		if (isProgressMonitorCanceld(sm, initStatus))
-			return initStatus;
+				container.findAllNames();
+				markWriteAccess();
+				sm.worked(1);
 
-		container.getAllAfterUsedNames();
-		info.setAllUsedNames(container.getUsedNamesUnique());
+				if (isProgressMonitorCanceld(sm, initStatus))
+					return initStatus;
 
-		if (container.size() < 1) {
-			status.addFatalError(Messages.ExtractFunctionRefactoring_NoStmtSelected);
-			sm.done();
-			return status;
-		}
+				container.getAllAfterUsedNames();
+				info.setAllUsedNames(container.getUsedNamesUnique());
 
-		if (container.getAllDeclaredInScope().size() > 1) {
-			status.addFatalError(Messages.ExtractFunctionRefactoring_TooManySelected);
-		} else if (container.getAllDeclaredInScope().size() == 1) {
-			info.setInScopeDeclaredVariable(container.getAllDeclaredInScope().get(0));
-		}
-		
-		extractedFunctionConstructionHelper = ExtractedFunctionConstructionHelper
+				if (container.size() < 1) {
+					initStatus.addFatalError(Messages.ExtractFunctionRefactoring_NoStmtSelected);
+					sm.done();
+					return initStatus;
+				}
+
+				if (container.getAllDeclaredInScope().size() > 1) {
+					initStatus.addFatalError(Messages.ExtractFunctionRefactoring_TooManySelected);
+				} else if (container.getAllDeclaredInScope().size() == 1) {
+					info.setInScopeDeclaredVariable(container.getAllDeclaredInScope().get(0));
+				}
+
+				extractedFunctionConstructionHelper = ExtractedFunctionConstructionHelper
 				.createFor(container.getNodesToWrite());
 
-		boolean isExtractExpression = container.getNodesToWrite().get(0) instanceof IASTExpression;
-		info.setExtractExpression(isExtractExpression);
+				boolean isExtractExpression = container.getNodesToWrite().get(0) instanceof IASTExpression;
+				info.setExtractExpression(isExtractExpression);
 
-		info.setDeclarator(getDeclaration(container.getNodesToWrite().get(0)));
-		MethodContext context = NodeHelper.findMethodContext(container.getNodesToWrite().get(0), getIndex());
-		info.setMethodContext(context);
-		
-		if (info.getInScopeDeclaredVariable() != null) {
-			info.getInScopeDeclaredVariable().setUserSetIsReturnValue(true);
-		}
-		for (int i = 0; i < info.getAllUsedNames().size(); i++) {
-			if (!info.getAllUsedNames().get(i).isDeclarationInScope()) {
-				NameInformation name = info.getAllUsedNames().get(i);
-				if(!name.isReturnValue()) {
-					name.setUserSetIsReference(name.isReference());
+				info.setDeclarator(getDeclaration(container.getNodesToWrite().get(0)));
+				MethodContext context = NodeHelper.findMethodContext(container.getNodesToWrite().get(0), getIndex());
+				info.setMethodContext(context);
+
+				if (info.getInScopeDeclaredVariable() != null) {
+					info.getInScopeDeclaredVariable().setUserSetIsReturnValue(true);
 				}
+				for (int i = 0; i < info.getAllUsedNames().size(); i++) {
+					if (!info.getAllUsedNames().get(i).isDeclarationInScope()) {
+						NameInformation name = info.getAllUsedNames().get(i);
+						if(!name.isReturnValue()) {
+							name.setUserSetIsReference(name.isReference());
+						}
+					}
+				}
+				if(unit != null) {
+					IIndex index = CCorePlugin.getIndexManager().getIndex(project);
+					unit.setIndex(index);
+				}	
+
+				sm.done();
 			}
+			finally {
+				unlockIndex();
+			}
+		} catch (InterruptedException e) {
+			Thread.currentThread().interrupt();
 		}
-		if(unit != null) {
-			IIndex index = CCorePlugin.getIndexManager().getIndex(project);
-			unit.setIndex(index);
-		}	
-		
-		sm.done();
-		return status;
+		return initStatus;
 	}
 
 	private void markWriteAccess() throws CoreException {
@@ -279,56 +286,77 @@ public class ExtractFunctionRefactoring extends CRefactoring {
 
 	@Override
 	public RefactoringStatus checkFinalConditions(IProgressMonitor pm)
-			throws CoreException, OperationCanceledException {
-		RefactoringStatus status = super.checkFinalConditions(pm);
+	throws CoreException, OperationCanceledException {
+		RefactoringStatus finalConditions = null;
+		try {
+			lockIndex();
+			try {
+				finalConditions = super.checkFinalConditions(pm);
 
-		final IASTName astMethodName = new CPPASTName(info.getMethodName()
-				.toCharArray());
-		MethodContext context = NodeHelper.findMethodContext(container.getNodesToWrite().get(0), getIndex());
 
-		if (context.getType() == ContextType.METHOD) {
-			ICPPASTCompositeTypeSpecifier classDeclaration = (ICPPASTCompositeTypeSpecifier) context
+				final IASTName astMethodName = new CPPASTName(info.getMethodName()
+						.toCharArray());
+				MethodContext context = NodeHelper.findMethodContext(container.getNodesToWrite().get(0), getIndex());
+
+				if (context.getType() == ContextType.METHOD && !context.isInline()) {
+					ICPPASTCompositeTypeSpecifier classDeclaration = (ICPPASTCompositeTypeSpecifier) context
 					.getMethodDeclaration().getParent();
-			IASTSimpleDeclaration methodDeclaration = getDeclaration(astMethodName);
+					IASTSimpleDeclaration methodDeclaration = getDeclaration(astMethodName);
 
-			if (isMethodAllreadyDefined(methodDeclaration, classDeclaration)) {
-				status.addError(Messages.ExtractFunctionRefactoring_NameInUse);
-				return status;
+					if (isMethodAllreadyDefined(methodDeclaration, classDeclaration, getIndex())) {
+						finalConditions.addError(Messages.ExtractFunctionRefactoring_NameInUse);
+						return finalConditions;
+					}
+				}
+				for (NameInformation name : info.getAllUsedNames()) {
+					if (name.isUserSetIsReturnValue()) {
+						info.setReturnVariable(name);
+					}
+
+				}
 			}
-		}
-		for (NameInformation name : info.getAllUsedNames()) {
-			if (name.isUserSetIsReturnValue()) {
-				info.setReturnVariable(name);
+			finally {
+				unlockIndex();
 			}
-
+		} catch (InterruptedException e) {
+			Thread.currentThread().interrupt();
 		}
-
-		return status;
+		return finalConditions;
 	}
 
 	@Override
 	protected void collectModifications(IProgressMonitor pm,
 			ModificationCollector collector) throws CoreException,
 			OperationCanceledException {
-		final IASTName astMethodName = new CPPASTName(info.getMethodName()
-				.toCharArray());
+		try {
+			lockIndex();
+			try {
+				final IASTName astMethodName = new CPPASTName(info.getMethodName()
+						.toCharArray());
 
-		MethodContext context = NodeHelper.findMethodContext(container.getNodesToWrite().get(0), getIndex());
+				MethodContext context = NodeHelper.findMethodContext(container.getNodesToWrite().get(0), getIndex());
 
-		// Create Declaration in Class
-		if (context.getType() == ContextType.METHOD) {
-			createMethodDeclaration(astMethodName, context, collector);
-		}
-		// Create Method Definition
-		IASTNode firstNode = container.getNodesToWrite().get(0);
-		IPath implPath = new Path(firstNode.getContainingFilename());
-		final IFile implementationFile = ResourcesPlugin.getWorkspace()
+				// Create Declaration in Class
+				if (context.getType() == ContextType.METHOD && !context.isInline()) {
+					createMethodDeclaration(astMethodName, context, collector);
+				}
+				// Create Method Definition
+				IASTNode firstNode = container.getNodesToWrite().get(0);
+				IPath implPath = new Path(firstNode.getContainingFilename());
+				final IFile implementationFile = ResourcesPlugin.getWorkspace()
 				.getRoot().getFileForLocation(implPath);
 
-		createMethodDefinition(astMethodName, context, firstNode,
-				implementationFile, collector);
+				createMethodDefinition(astMethodName, context, firstNode,
+						implementationFile, collector);
 
-		createMethodCalls(astMethodName, implementationFile, context, collector);
+				createMethodCalls(astMethodName, implementationFile, context, collector);
+			}
+			finally {
+				unlockIndex();
+			}
+		} catch (InterruptedException e) {
+			Thread.currentThread().interrupt();
+		}
 
 	}
 
@@ -476,7 +504,7 @@ public class ExtractFunctionRefactoring extends CRefactoring {
 						} else {
 							// Save Name Sequenz Number
 							IASTName name = (IASTName) node;
-							TrailName trailName = new TrailName();
+							TrailName trailName = new TrailName(name);
 							int actCount = trailCounter.getObject().intValue();
 							if (nameTrail.containsKey(name.getRawSignature())) {
 								Integer value = nameTrail.get(name.getRawSignature());
@@ -486,39 +514,11 @@ public class ExtractFunctionRefactoring extends CRefactoring {
 								nameTrail.put(name.getRawSignature(), trailCounter.getObject());
 							}
 							trailName.setNameNumber(actCount);
-							trailName.setRealName(name);
 
 							if (info.getReturnVariable() != null
 									&& info.getReturnVariable().getName().getRawSignature().equals(
 											name.getRawSignature())) {
 								returnNumber.setObject(Integer.valueOf(actCount));
-							}
-
-							// Save type informations for the name
-							IBinding bind = name.resolveBinding();
-							IASTName[] declNames = name.getTranslationUnit().getDeclarationsInAST(bind);
-							if (declNames.length > 0) {
-								IASTNode tmpNode = ASTHelper.getDeclarationForNode(declNames[0]);
-
-								IBinding declbind = declNames[0].resolveBinding();
-								if (declbind instanceof ICPPBinding) {
-									ICPPBinding cppBind = (ICPPBinding) declbind;
-									try {
-										trailName.setGloballyQualified(cppBind.isGloballyQualified());
-									} catch (DOMException e) {
-										ILog logger = CUIPlugin.getDefault().getLog();
-										IStatus status = new Status(IStatus.WARNING, CUIPlugin.PLUGIN_ID,
-												IStatus.OK, e.getMessage(), e);
-
-										logger.log(status);
-									}
-								}
-
-								if (tmpNode != null) {
-									trailName.setDeclaration(tmpNode);
-								} else {
-									hasNameResolvingForSimilarError = true;
-								}
 							}
 
 							trail.add(trailName);
@@ -536,9 +536,9 @@ public class ExtractFunctionRefactoring extends CRefactoring {
 		return trail;
 	}
 
-	protected boolean isStatementInTrail(IASTStatement stmt, final Vector<IASTNode> trail) {
+	protected boolean isStatementInTrail(IASTStatement stmt, final Vector<IASTNode> trail, IIndex index) {
 		final Container<Boolean> same = new Container<Boolean>(Boolean.TRUE);
-		final TrailNodeEqualityChecker equalityChecker = new TrailNodeEqualityChecker(names, namesCounter);
+		final TrailNodeEqualityChecker equalityChecker = new TrailNodeEqualityChecker(names, namesCounter, index);
 
 		stmt.accept(new CPPASTAllVisitor() {
 			@Override
@@ -578,9 +578,9 @@ public class ExtractFunctionRefactoring extends CRefactoring {
 
 	private boolean isMethodAllreadyDefined(
 			IASTSimpleDeclaration methodDeclaration,
-			ICPPASTCompositeTypeSpecifier classDeclaration) {
+			ICPPASTCompositeTypeSpecifier classDeclaration, IIndex index) {
 		TrailNodeEqualityChecker equalityChecker = new TrailNodeEqualityChecker(
-				names, namesCounter);
+				names, namesCounter, index);
 
 		IBinding bind = classDeclaration.getName().resolveBinding();
 		IASTStandardFunctionDeclarator declarator = (IASTStandardFunctionDeclarator) methodDeclaration
@@ -647,8 +647,10 @@ public class ExtractFunctionRefactoring extends CRefactoring {
 		
 		ICPPASTQualifiedName qname = new CPPASTQualifiedName();
 		if (context.getType() == ContextType.METHOD) {
-			for (int i = 0; i < (context.getMethodQName().getNames().length - 1); i++) {
-				qname.addName(new CPPASTName(context.getMethodQName().getNames()[i].toCharArray()));
+			if(context.getMethodQName() != null) {
+				for (int i = 0; i < (context.getMethodQName().getNames().length - 1); i++) {
+					qname.addName(new CPPASTName(context.getMethodQName().getNames()[i].toCharArray()));
+				}
 			}
 		}
 		qname.addName(astMethodName);
@@ -656,9 +658,8 @@ public class ExtractFunctionRefactoring extends CRefactoring {
 		IASTFunctionDefinition func = new CPPASTFunctionDefinition();
 		func.setParent(unit);
 
-		ICPPASTSimpleDeclSpecifier dummyDeclSpecifier = new CPPASTSimpleDeclSpecifier();
-		func.setDeclSpecifier(dummyDeclSpecifier);
-		dummyDeclSpecifier.setType(IASTSimpleDeclSpecifier.t_void);
+		IASTDeclSpecifier returnType = getReturnType();
+		func.setDeclSpecifier(returnType);
 		
 		IASTStandardFunctionDeclarator createdFunctionDeclarator = extractedFunctionConstructionHelper
 				.createFunctionDeclarator(qname, info.getDeclarator(), info
@@ -687,8 +688,6 @@ public class ExtractFunctionRefactoring extends CRefactoring {
 			
 			subRW = rewriter.insertBefore(insertpoint.getParent(), insertpoint, func, group);
 		}
-		
-		subRW.replace(dummyDeclSpecifier, getReturnType(), group);
 		
 		extractedFunctionConstructionHelper.constructMethodBody(compound,
 				container.getNodesToWrite(), subRW, group);

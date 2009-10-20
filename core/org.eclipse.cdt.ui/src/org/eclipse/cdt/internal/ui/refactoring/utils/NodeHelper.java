@@ -37,7 +37,6 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTTranslationUnit;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPVisitor;
 
 import org.eclipse.cdt.internal.ui.refactoring.MethodContext;
-import org.eclipse.cdt.internal.ui.refactoring.MethodContext.ContextType;
 
 /**
  * General class for common Node operations.
@@ -150,34 +149,32 @@ public class NodeHelper {
 	private static void getMethodContexWithIndex(IIndex index,
 			IASTTranslationUnit translationUnit, MethodContext context,
 			IASTName name) throws CoreException {
-		if(name instanceof ICPPASTQualifiedName){
-			ICPPASTQualifiedName qname =( ICPPASTQualifiedName )name;
-			context.setMethodQName(qname);
-			IBinding bind = qname.resolveBinding();
-			if (bind instanceof ICPPMethod) {
-				context.setType(MethodContext.ContextType.METHOD);
-				IIndexName[] decl;
-				decl = index.findDeclarations(bind);
-				String tuFileLoc = translationUnit.getFileLocation().getFileName(); 
-				for (IIndexName tmpname : decl) {
-					IASTTranslationUnit locTu = translationUnit;
-					if(!tuFileLoc.equals(tmpname.getFileLocation().getFileName())) {
-						locTu = TranslationUnitHelper.loadTranslationUnit(tmpname.getFileLocation().getFileName(), false);
-					}
-					IASTName declName = DeclarationFinder.findDeclarationInTranslationUnit(locTu, tmpname);
-					if(declName != null) {
-						IASTNode methoddefinition = declName.getParent().getParent();
-						if (methoddefinition instanceof IASTSimpleDeclaration) {
-							context.setMethodDeclarationName(declName);
-						}
+		IBinding bind = name.resolveBinding();
+		if (bind instanceof ICPPMethod) {
+			context.setType(MethodContext.ContextType.METHOD);
+			IIndexName[] decl;
+			decl = index.findDeclarations(bind);
+			String tuFileLoc = translationUnit.getFileLocation().getFileName(); 
+			if(decl.length == 0) {
+				context.setMethodDeclarationName(name);
+			}
+			for (IIndexName tmpname : decl) {
+				IASTTranslationUnit locTu = translationUnit;
+				if(!tuFileLoc.equals(tmpname.getFileLocation().getFileName())) {
+					locTu = TranslationUnitHelper.loadTranslationUnit(tmpname.getFileLocation().getFileName(), false);
+				}
+				IASTName declName = DeclarationFinder.findDeclarationInTranslationUnit(locTu, tmpname);
+				if(declName != null) {
+					IASTNode methoddefinition = declName.getParent().getParent();
+					if (methoddefinition instanceof IASTSimpleDeclaration || methoddefinition instanceof IASTFunctionDefinition) {
+						context.setMethodDeclarationName(declName);
 					}
 				}
 			}
-		}else {
-			if (name.getParent().getParent().getParent() instanceof ICPPASTCompositeTypeSpecifier) {
-				context.setType(ContextType.METHOD);
-				context.setMethodDeclarationName(name);
-			}
+		}
+		if(name instanceof ICPPASTQualifiedName){
+			ICPPASTQualifiedName qname =( ICPPASTQualifiedName )name;
+			context.setMethodQName(qname);
 		}
 	}
 	

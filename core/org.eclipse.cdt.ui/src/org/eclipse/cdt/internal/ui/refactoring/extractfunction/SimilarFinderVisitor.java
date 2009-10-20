@@ -63,7 +63,7 @@ final class SimilarFinderVisitor extends CPPASTVisitor {
 			boolean isAllreadyInMainRefactoring = isInSelection(stmt);
 			
 			if( (!isAllreadyInMainRefactoring)
-					&& this.refactoring.isStatementInTrail(stmt, trail)){
+					&& this.refactoring.isStatementInTrail(stmt, trail, this.refactoring.getIndex())){
 				stmtToReplace.add(stmt);
 				similarContainer.add(stmt);	
 				++i;
@@ -99,24 +99,23 @@ final class SimilarFinderVisitor extends CPPASTVisitor {
 					}
 										
 					if(similarOnReturnWays){
-						System.out.println(6);
-					IASTNode call = refactoring.getMethodCall(name,
-							this.refactoring.nameTrail, this.refactoring.names,
-							this.refactoring.container, similarContainer);
-					ASTRewrite rewrite = collector.rewriterForTranslationUnit(stmtToReplace.get(0)
-							.getTranslationUnit());
-					TextEditGroup editGroup = new TextEditGroup(Messages.SimilarFinderVisitor_replaceDuplicateCode);
-					rewrite.replace(stmtToReplace.get(0), call, editGroup);
-					if (stmtToReplace.size() > 1) {
-						for (int i = 1; i < stmtToReplace.size(); ++i) {
-							rewrite.remove(stmtToReplace.get(i), editGroup);
+						IASTNode call = refactoring.getMethodCall(name,
+								this.refactoring.nameTrail, this.refactoring.names,
+								this.refactoring.container, similarContainer);
+						ASTRewrite rewrite = collector.rewriterForTranslationUnit(stmtToReplace.get(0)
+								.getTranslationUnit());
+						TextEditGroup editGroup = new TextEditGroup(Messages.SimilarFinderVisitor_replaceDuplicateCode);
+						rewrite.replace(stmtToReplace.get(0), call, editGroup);
+						if (stmtToReplace.size() > 1) {
+							for (int i = 1; i < stmtToReplace.size(); ++i) {
+								rewrite.remove(stmtToReplace.get(i), editGroup);
+							}
 						}
-					}
 					}
 
 					clear();
 				}
-				
+
 				return PROCESS_SKIP;
 			} else {
 				clear();

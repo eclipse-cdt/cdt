@@ -116,13 +116,20 @@ public class GenerateGettersAndSettersRefactoring extends CRefactoring {
 
 	@Override
 	public RefactoringStatus checkFinalConditions(IProgressMonitor pm) throws CoreException,
-			OperationCanceledException {
-		RefactoringStatus finalStatus = super.checkFinalConditions(pm);
-		if(!context.isImplementationInHeader()) {
-			definitionInsertLocation = findInsertLocation();
-			if(file.equals(definitionInsertLocation.getInsertFile())) {
-				finalStatus.addInfo(Messages.GenerateGettersAndSettersRefactoring_NoImplFile);
+	OperationCanceledException {
+		RefactoringStatus finalStatus = null;
+		try {
+			lockIndex();
+			finalStatus = super.checkFinalConditions(pm);
+			if(!context.isImplementationInHeader()) {
+				definitionInsertLocation = findInsertLocation();
+				if(file.equals(definitionInsertLocation.getInsertFile())) {
+					finalStatus.addInfo(Messages.GenerateGettersAndSettersRefactoring_NoImplFile);
+				}
 			}
+		} catch (InterruptedException e) {}
+		finally {
+			unlockIndex();
 		}
 		return finalStatus;
 	}
@@ -206,24 +213,30 @@ public class GenerateGettersAndSettersRefactoring extends CRefactoring {
 
 	@Override
 	protected void collectModifications(IProgressMonitor pm,ModificationCollector collector) throws CoreException, OperationCanceledException {
-		ArrayList<IASTNode> getterAndSetters = new ArrayList<IASTNode>();
-		ArrayList<IASTFunctionDefinition> definitions = new ArrayList<IASTFunctionDefinition>();
-		for(GetterSetterInsertEditProvider currentProvider : context.selectedFunctions){
-			if(context.isImplementationInHeader()) {
-				getterAndSetters.add(currentProvider.getFunctionDefinition(false));
-			}else {
-				getterAndSetters.add(currentProvider.getFunctionDeclaration());
-				definitions.add(currentProvider.getFunctionDefinition(true));
+		try {
+			lockIndex();
+			ArrayList<IASTNode> getterAndSetters = new ArrayList<IASTNode>();
+			ArrayList<IASTFunctionDefinition> definitions = new ArrayList<IASTFunctionDefinition>();
+			for(GetterSetterInsertEditProvider currentProvider : context.selectedFunctions){
+				if(context.isImplementationInHeader()) {
+					getterAndSetters.add(currentProvider.getFunctionDefinition(false));
+				}else {
+					getterAndSetters.add(currentProvider.getFunctionDeclaration());
+					definitions.add(currentProvider.getFunctionDefinition(true));
+				}
 			}
-		}
-		if(!context.isImplementationInHeader()) {
-			addDefinition(collector, definitions);
-		}
-		ICPPASTCompositeTypeSpecifier classDefinition = (ICPPASTCompositeTypeSpecifier) context.existingFields.get(context.existingFields.size()-1).getParent();
+			if(!context.isImplementationInHeader()) {
+				addDefinition(collector, definitions);
+			}
+			ICPPASTCompositeTypeSpecifier classDefinition = (ICPPASTCompositeTypeSpecifier) context.existingFields.get(context.existingFields.size()-1).getParent();
 
-		AddDeclarationNodeToClassChange.createChange(classDefinition, VisibilityEnum.v_public, getterAndSetters, false, collector);
-		
-		
+			AddDeclarationNodeToClassChange.createChange(classDefinition, VisibilityEnum.v_public, getterAndSetters, false, collector);
+		} catch (InterruptedException e) {}
+		finally {
+			unlockIndex();
+		}
+
+
 	}
 
 	private void addDefinition(ModificationCollector collector, ArrayList<IASTFunctionDefinition> definitions)

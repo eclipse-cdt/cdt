@@ -11,40 +11,34 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.ui.refactoring.extractfunction;
 
+import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IASTDeclSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
+import org.eclipse.cdt.core.dom.ast.IBinding;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPBinding;
 
-import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTName;
+import org.eclipse.cdt.internal.core.dom.parser.ASTNode;
 
 import org.eclipse.cdt.internal.ui.refactoring.utils.ASTHelper;
 
-class TrailName extends CPPASTName {
+class TrailName extends ASTNode{
 
 	private int nameNumber;
 	private IASTNode declaration = null;
 	private IASTName realName = null;
-	private boolean isGloballyQualified = false;
-
-	@Override
-	public String getRawSignature() {
-		return realName.getRawSignature();
-	}
 	
+	public TrailName(IASTName realName) {
+		super();
+		this.realName = realName;
+	}
+
 	public int getNameNumber() {
 		return nameNumber;
 	}
 
 	public void setNameNumber(int nameNumber) {
 		this.nameNumber = nameNumber;
-	}
-
-	public IASTNode getDeclaration() {
-		return declaration;
-	}
-
-	public void setDeclaration(IASTNode declaration) {
-		this.declaration = declaration;
 	}
 
 	public IASTDeclSpecifier getDeclSpecifier() {
@@ -55,20 +49,19 @@ class TrailName extends CPPASTName {
 		return realName;
 	}
 
-	public void setRealName(IASTName realName) {
-		this.realName = realName;
-	}
-
 	public boolean isGloballyQualified() {
-		return isGloballyQualified;
+		IBinding bind = realName.resolveBinding();
+		try {
+			if (bind instanceof ICPPBinding) {
+				ICPPBinding cppBind = (ICPPBinding) bind;
+				return cppBind.isGloballyQualified();
+			}
+		} catch (DOMException e) {
+		}			
+		return false;
 	}
 
-	public void setGloballyQualified(boolean isGloballyQualified) {
-		this.isGloballyQualified = isGloballyQualified;
-	}
-	
-	@Override
-	public char[] toCharArray() {
-		return realName.toCharArray();
+	public IASTNode copy() {
+		throw new UnsupportedOperationException();
 	}
 }

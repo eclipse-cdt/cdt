@@ -301,6 +301,12 @@ public abstract class CRefactoring extends Refactoring {
 		return fIndex;
 	}
 	
+	
+	
+	public IASTTranslationUnit getUnit() {
+		return unit;
+	}
+
 	protected ArrayList<IASTName> findAllMarkedNames() {
 		final ArrayList<IASTName> namesVector = new ArrayList<IASTName>();
 

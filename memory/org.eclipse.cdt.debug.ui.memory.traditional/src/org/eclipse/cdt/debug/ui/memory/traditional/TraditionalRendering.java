@@ -145,7 +145,7 @@ public class TraditionalRendering extends AbstractMemoryRendering implements IRe
     		});
         
         
-        TraditionalRenderingPlugin.getDefault().getPreferenceStore().addPropertyChangeListener(
+        DebugUIPlugin.getDefault().getPreferenceStore().addPropertyChangeListener(
         	new IPropertyChangeListener()
         	{
         		public void propertyChange(PropertyChangeEvent event)

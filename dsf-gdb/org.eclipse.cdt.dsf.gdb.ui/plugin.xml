@@ -186,7 +186,16 @@
             name="Filter">
          <filter name="debugModelId" value="org.eclipse.cdt.dsf.gdb"/>
          <enabledWhen>
-            <adapt type="org.eclipse.cdt.debug.core.model.ICBreakpoint"/>
+            <and>
+               <adapt
+                     type="org.eclipse.cdt.debug.core.model.ICBreakpoint">
+               </adapt>
+               <not>
+                  <adapt
+                        type="org.eclipse.cdt.debug.core.model.ICTracepoint">
+                  </adapt>
+               </not>
+            </and>
          </enabledWhen>
       </page>
    </extension>
@@ -703,5 +712,16 @@
             class="org.eclipse.cdt.dsf.gdb.internal.ui.preferences.GdbPreferenceInitializer">
       </initializer>
    </extension>
-   
+
+   <extension point="org.eclipse.debug.ui.toggleBreakpointsTargetFactories">
+      <toggleTargetFactory
+            id="org.eclipse.cdt.dsf.gdb.ui.ToggleBreakpointsTargetFactory"
+            class="org.eclipse.cdt.dsf.gdb.internal.ui.breakpoints.ToggleBreakpointsTargetFactory">
+         <enablement>
+            <!-- Enable the breakpoint toggle for DSF Disassembly -->
+            <instanceof value="org.eclipse.cdt.dsf.debug.internal.ui.disassembly.DisassemblyPart"/>
+         </enablement>
+      </toggleTargetFactory>
+   </extension>
+
 </plugin>

@@ -23,9 +23,6 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.RejectedExecutionException;
 
 import org.eclipse.cdt.core.IAddress;
-import org.eclipse.cdt.debug.core.CDIDebugModel;
-import org.eclipse.cdt.debug.core.model.ICBreakpoint;
-import org.eclipse.cdt.debug.core.model.ICBreakpointType;
 import org.eclipse.cdt.dsf.concurrent.DataRequestMonitor;
 import org.eclipse.cdt.dsf.concurrent.DsfExecutor;
 import org.eclipse.cdt.dsf.concurrent.DsfRunnable;
@@ -49,6 +46,7 @@ import org.eclipse.cdt.dsf.debug.internal.ui.disassembly.model.SourceFileInfo;
 import org.eclipse.cdt.dsf.debug.internal.ui.disassembly.model.SourcePosition;
 import org.eclipse.cdt.dsf.debug.internal.ui.disassembly.preferences.DisassemblyPreferenceConstants;
 import org.eclipse.cdt.dsf.debug.internal.ui.disassembly.presentation.DisassemblyIPAnnotation;
+import org.eclipse.cdt.dsf.debug.internal.ui.disassembly.provisional.IDisassemblyPart;
 import org.eclipse.cdt.dsf.debug.internal.ui.disassembly.util.HSL;
 import org.eclipse.cdt.dsf.debug.service.IDisassembly;
 import org.eclipse.cdt.dsf.debug.service.IExpressions;
@@ -76,15 +74,14 @@ import org.eclipse.cdt.dsf.service.DsfSession;
 import org.eclipse.cdt.dsf.service.DsfSession.SessionEndedListener;
 import org.eclipse.cdt.dsf.ui.viewmodel.datamodel.IDMVMContext;
 import org.eclipse.cdt.internal.ui.dnd.TextViewerDragAdapter;
-import org.eclipse.cdt.utils.Addr64;
+import org.eclipse.core.commands.NotEnabledException;
+import org.eclipse.core.commands.NotHandledException;
+import org.eclipse.core.commands.common.NotDefinedException;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IMarker;
-import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IStorage;
-import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IAdaptable;
-import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.ListenerList;
 import org.eclipse.core.runtime.Platform;
@@ -92,11 +89,8 @@ import org.eclipse.core.runtime.Status;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.IBreakpointManager;
 import org.eclipse.debug.core.model.IBreakpoint;
-import org.eclipse.debug.core.model.ISuspendResume;
 import org.eclipse.debug.core.sourcelookup.containers.LocalFileStorage;
 import org.eclipse.debug.ui.DebugUITools;
-import org.eclipse.debug.ui.actions.IRunToLineTarget;
-import org.eclipse.debug.ui.actions.IToggleBreakpointsTarget;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.GroupMarker;
 import org.eclipse.jface.action.IAction;
@@ -116,7 +110,6 @@ import org.eclipse.jface.text.IFindReplaceTarget;
 import org.eclipse.jface.text.IRegion;
 import org.eclipse.jface.text.ITextOperationTarget;
 import org.eclipse.jface.text.ITextPresentationListener;
-import org.eclipse.jface.text.ITextSelection;
 import org.eclipse.jface.text.ITextViewerExtension;
 import org.eclipse.jface.text.IViewportListener;
 import org.eclipse.jface.text.Position;
@@ -140,7 +133,6 @@ import org.eclipse.jface.text.source.OverviewRuler;
 import org.eclipse.jface.text.source.SourceViewerConfiguration;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
-import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.swt.SWT;
@@ -169,7 +161,6 @@ import org.eclipse.ui.IActionBars;
 import org.eclipse.ui.IPartListener2;
 import org.eclipse.ui.IWorkbenchActionConstants;
 import org.eclipse.ui.IWorkbenchCommandConstants;
-import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.IWorkbenchPartReference;
 import org.eclipse.ui.IWorkbenchPartSite;
 import org.eclipse.ui.PlatformUI;
@@ -223,7 +214,7 @@ public abstract class DisassemblyPart extends WorkbenchPart implements IDisassem
 	private static final String COMMAND_ID_GOTO_ADDRESS = "org.eclipse.cdt.dsf.debug.ui.disassembly.commands.gotoAddress"; //$NON-NLS-1$
 	private static final String COMMAND_ID_GOTO_PC = "org.eclipse.cdt.dsf.debug.ui.disassembly.commands.gotoPC"; //$NON-NLS-1$
 	private static final String COMMAND_ID_GOTO_SYMBOL = "org.eclipse.cdt.dsf.debug.ui.disassembly.commands.gotoSymbol"; //$NON-NLS-1$
-//	private static final String COMMAND_ID_TOGGLE_BREAKPOINT = "org.eclipse.debug.ui.commands.ToggleBreakpoint"; //$NON-NLS-1$
+	private static final String COMMAND_ID_TOGGLE_BREAKPOINT = "org.eclipse.cdt.dsf.debug.ui.disassembly.commands.rulerToggleBreakpoint"; //$NON-NLS-1$
 //	private static final String COMMAND_ID_RUN_TO_LINE = "org.eclipse.debug.ui.commands.RunToLine"; //$NON-NLS-1$
 //	private static final String COMMAND_ID_TOGGLE_STEPPING_MODE = "org.eclipse.cdt.dsf.debug.ui.debug.ui.menu.showDisassemblyAction"; //$NON-NLS-1$
 
@@ -234,7 +225,6 @@ public abstract class DisassemblyPart extends WorkbenchPart implements IDisassem
 	protected AbstractDisassemblyAction fActionGotoPC;
 	protected AbstractDisassemblyAction fActionGotoAddress;
 	private AbstractDisassemblyAction fActionGotoSymbol;
-	private AbstractDisassemblyAction fActionToggleBreakpoint;
 	protected AbstractDisassemblyAction fActionToggleSource;
 	private AbstractDisassemblyAction fActionToggleFunctionColumn;
 	private AbstractDisassemblyAction fActionToggleSymbols;
@@ -397,43 +387,6 @@ public abstract class DisassemblyPart extends WorkbenchPart implements IDisassem
 		}
 	}
 
-	private final class ActionToggleBreakpoint extends AbstractDisassemblyAction {
-		private IBreakpoint fBreakpoint;
-		private int fLine;
-		public ActionToggleBreakpoint() {
-			super(DisassemblyPart.this);
-			setText(DisassemblyMessages.Disassembly_action_AddBreakpoint_label);
-			setImageDescriptor(DisassemblyImageRegistry.getImageDescriptor(DisassemblyImageRegistry.ICON_ToggleBreakpoint));
-		}
-		@Override
-		public void run() {
-			try {
-				if (fBreakpoint != null) {
-					fBreakpoint.delete();
-				} else {
-					insertBreakpoint(fLine, false);
-				}
-			} catch (CoreException e) {
-				DsfUIPlugin.getDefault().getLog().log(e.getStatus());
-			}
-		}
-		@Override
-		public void update() {
-			super.update();
-			if (isEnabled()) {
-				fLine = fVerticalRuler.getLineOfLastMouseButtonActivity();
-				IBreakpoint[] bps = getBreakpointsAtLine(fLine);
-				if (bps == null) {
-					fBreakpoint = null;
-					setText(DisassemblyMessages.Disassembly_action_AddBreakpoint_label);
-				} else {
-					fBreakpoint = bps[0];
-					setText(DisassemblyMessages.Disassembly_action_RemoveBreakpoint_label);
-				}
-			}
-		}
-	}
-
 	private final class ActionToggleBreakpointEnablement extends AbstractDisassemblyAction {
 		private IBreakpoint fBreakpoint;
 		public ActionToggleBreakpointEnablement() {
@@ -586,45 +539,6 @@ public abstract class DisassemblyPart extends WorkbenchPart implements IDisassem
 			return new IGotoMarker() {
 				public void gotoMarker(IMarker marker) {
 					DisassemblyPart.this.gotoMarker(marker);
-				}};
-		} else if (IToggleBreakpointsTarget.class.equals(required)) {
-			return new IToggleBreakpointsTarget() {
-				public void toggleLineBreakpoints(IWorkbenchPart part, ISelection selection) throws CoreException {
-					ITextSelection textSelection = (ITextSelection)selection;
-					int line = textSelection.getStartLine();
-					IBreakpoint[] bp = getBreakpointsAtLine(line);
-					if (bp == null || bp.length == 0) {
-						insertBreakpoint(line, false);
-					} else {
-						for (int i = 0; i < bp.length; i++) {
-							bp[i].delete();
-						}
-					}
-				}
-				public boolean canToggleLineBreakpoints(IWorkbenchPart part, ISelection selection) {
-					return fDebugSessionId != null;
-				}
-				public void toggleMethodBreakpoints(IWorkbenchPart part, ISelection selection) throws CoreException {
-				}
-				public boolean canToggleMethodBreakpoints(IWorkbenchPart part, ISelection selection) {
-					return false;
-				}
-				public void toggleWatchpoints(IWorkbenchPart part, ISelection selection) throws CoreException {
-				}
-				public boolean canToggleWatchpoints(IWorkbenchPart part, ISelection selection) {
-					return false;
-				}};
-		} else if (IRunToLineTarget.class.equals(required)) {
-			return new IRunToLineTarget() {
-				public void runToLine(IWorkbenchPart part, ISelection selection, ISuspendResume target) throws CoreException {
-//					ITextSelection textSelection = (ITextSelection)selection;
-//					int line = textSelection.getStartLine();
-//					BigInteger address = getAddressOfLine(line);
-					// TLETODO [disassembly] run to line
-//					getRunControl().runUntil(...);
-				}
-				public boolean canRunToLine(IWorkbenchPart part, ISelection selection, ISuspendResume target) {
-					return fTargetContext != null && isSuspended(fTargetContext) ;
 				}};
 		}
 		return super.getAdapter(required);
@@ -1265,7 +1179,7 @@ public abstract class DisassemblyPart extends WorkbenchPart implements IDisassem
 
 	private void contributeToActionBars() {
 		IWorkbenchPartSite site = getSite();
-		site.setSelectionProvider(fViewer);
+		site.setSelectionProvider(new DisassemblySelectionProvider(this));
 		IContextService ctxService = (IContextService)site.getService(IContextService.class);
 		fContextActivation = ctxService.activateContext(KEY_BINDING_CONTEXT_DISASSEMBLY);
 		contributeToActionBars(getActionBars());
@@ -1315,14 +1229,12 @@ public abstract class DisassemblyPart extends WorkbenchPart implements IDisassem
 	}
 
 	protected void fillRulerContextMenu(IMenuManager manager) {
-		fActionToggleBreakpoint.update();
 		fActionToggleBreakpointEnablement.update();
 		fActionToggleAddressColumn.update();
 		fActionToggleFunctionColumn.update();
 
 		manager.add(new GroupMarker("group.top")); // ICommonMenuConstants.GROUP_TOP //$NON-NLS-1$
 		manager.add(new Separator("group.breakpoints")); //$NON-NLS-1$
-		manager.add(fActionToggleBreakpoint);
 		manager.add(fActionToggleBreakpointEnablement);
 		manager.add(new GroupMarker("debug")); //$NON-NLS-1$
 		manager.add(new Separator(IWorkbenchActionConstants.MB_ADDITIONS));
@@ -1397,15 +1309,20 @@ public abstract class DisassemblyPart extends WorkbenchPart implements IDisassem
 
 		fActionToggleSource = new ActionToggleSource();
 		fStateDependentActions.add(fActionToggleSource);
-		fActionToggleBreakpoint = new ActionToggleBreakpoint();
-//		fActionToggleBreakpoint.setActionDefinitionId(COMMAND_ID_TOGGLE_BREAKPOINT);
-//		registerWithHandlerService(fActionToggleBreakpoint);
 		fVerticalRuler.getControl().addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseDoubleClick(MouseEvent e) {
-				fActionToggleBreakpoint.update();
-				if (fActionToggleBreakpoint.isEnabled()) {
-					fActionToggleBreakpoint.run();
+				// invoke toggle breakpoint
+				IHandlerService handlerService = (IHandlerService) getSite().getService(IHandlerService.class);
+				if (handlerService != null) {
+					try {
+						handlerService.executeCommand(COMMAND_ID_TOGGLE_BREAKPOINT, null);
+					} catch (org.eclipse.core.commands.ExecutionException exc) {
+						DsfUIPlugin.log(exc);
+					} catch (NotDefinedException exc) {
+					} catch (NotEnabledException exc) {
+					} catch (NotHandledException exc) {
+					}
 				}
 			}
 		});
@@ -1413,8 +1330,6 @@ public abstract class DisassemblyPart extends WorkbenchPart implements IDisassem
 		fActionToggleAddressColumn = new ActionToggleAddressColumn();
 		fActionToggleFunctionColumn = new ActionToggleFunctionColumn();
 		fActionToggleSymbols = new ActionToggleSymbols();
-//		fActionSourceSteppingMode.setActionDefinitionId(COMMAND_ID_TOGGLE_STEPPING_MODE);
-//		registerWithHandlerService(fActionSourceSteppingMode);
 		fActionRefreshView = new ActionRefreshView();
 		fStateDependentActions.add(fActionRefreshView);
 		fGlobalActions.put(ActionFactory.REFRESH.getId(), fActionRefreshView);
@@ -3371,48 +3286,6 @@ public abstract class DisassemblyPart extends WorkbenchPart implements IDisassem
 		}
 	}
 
-
-    private IBreakpoint insertBreakpoint(int line, boolean edit) throws CoreException {
-    	SourcePosition srcPos = null;
-		try {
-			int lineOffset = fDocument.getLineOffset(line);
-			srcPos = fDocument.getSourcePosition(lineOffset);
-		} catch (BadLocationException e) {
-			// should not happen, but its safe to ignore anyway
-		}
-
-    	IResource resource;
-    	ICBreakpoint bp;
-    	
-		if (srcPos != null && srcPos.length > 0) {
-            SourceFileInfo srcInfo = srcPos.fFileInfo;
-            String filePath = null;
-            resource = (IResource)srcInfo.fFile.getAdapter(IResource.class);
-            if (resource != null) {
-            	final IPath location= resource.getLocation();
-            	if (location == null) {
-            		return null;
-            	}
-				filePath = location.toOSString();
-            } else {
-    		    resource = ResourcesPlugin.getWorkspace().getRoot();
-            	filePath = srcInfo.fFile.getFullPath().toOSString();
-            }
-            BigInteger address = srcPos.fAddressOffset;
-            AddressRangePosition pos = fDocument.getDisassemblyPosition(address);
-            int srcLine = -1;
-            if (pos instanceof DisassemblyPosition) {
-            	srcLine = ((DisassemblyPosition)pos).getLine();
-            }
-            bp= CDIDebugModel.createLineBreakpoint(filePath, resource, ICBreakpointType.REGULAR, srcLine + 1, true, 0, "", true); //$NON-NLS-1$
-    	} else {
-    		resource = ResourcesPlugin.getWorkspace().getRoot();
-    		BigInteger address = getAddressOfLine(line);
-    		bp= CDIDebugModel.createAddressBreakpoint(null, null, resource, ICBreakpointType.REGULAR, new Addr64(address), true, 0, "", true); //$NON-NLS-1$
-    	}
-
-    	return bp;
-    }
 
 	private AddressRangePosition insertSource(AddressRangePosition pos, BigInteger address, final String file, int lineNr) {
 		Object sourceElement = null;

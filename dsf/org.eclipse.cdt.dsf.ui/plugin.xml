@@ -444,6 +444,13 @@
             description="%command.gotoSymbol.description"
             id="org.eclipse.cdt.dsf.debug.ui.disassembly.commands.gotoSymbol"
             name="%command.gotoSymbol.name"/>
+      <command
+            categoryId="org.eclipse.debug.ui.category.run"
+            defaultHandler="org.eclipse.cdt.dsf.debug.internal.ui.disassembly.actions.RulerToggleBreakpointHandler"
+            description="%command.rulerToggleBreakpoint.description"
+            id="org.eclipse.cdt.dsf.debug.ui.disassembly.commands.rulerToggleBreakpoint"
+            name="%command.rulerToggleBreakpoint.name">
+      </command>
    </extension>
 
    <extension point="org.eclipse.ui.bindings">
@@ -510,6 +517,13 @@
                class="org.eclipse.cdt.dsf.debug.internal.ui.disassembly.actions.BreakpointPropertiesRulerActionDelegate"
                id="org.eclipse.cdt.dsf.debug.ui.disassembly.breakpointProperties"
                label="%action.breakpointProperties.label"
+               menubarPath="debug">
+         </action>
+         <action
+               class="org.eclipse.cdt.dsf.debug.internal.ui.disassembly.actions.RulerToggleBreakpointActionDelegate"
+               definitionId="org.eclipse.cdt.dsf.debug.ui.disassembly.commands.rulerToggleBreakpoint"
+               id="org.eclipse.debug.ui.actions.RulerToggleBreakpointAction"
+               label="%action.toggleBreakpoint.label"
                menubarPath="debug">
          </action>
       </viewerContribution>

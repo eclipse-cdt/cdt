@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008 Wind River Systems, Inc. and others.
+ * Copyright (c) 2008, 2009 Wind River Systems, Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -13,7 +13,7 @@ package org.eclipse.cdt.dsf.debug.internal.ui.disassembly.actions;
 import org.eclipse.cdt.debug.core.model.ICBreakpoint;
 import org.eclipse.cdt.debug.internal.ui.CBreakpointContext;
 import org.eclipse.cdt.dsf.debug.internal.ui.disassembly.DisassemblyMessages;
-import org.eclipse.cdt.dsf.debug.internal.ui.disassembly.IDisassemblyPart;
+import org.eclipse.cdt.dsf.debug.internal.ui.disassembly.provisional.IDisassemblyPart;
 import org.eclipse.debug.core.model.IBreakpoint;
 import org.eclipse.debug.ui.DebugUITools;
 import org.eclipse.jface.text.source.IVerticalRulerInfo;
@@ -26,6 +26,7 @@ import org.eclipse.ui.dialogs.PropertyDialogAction;
 /**
  * Ruler action to display breakpoint properties.
  */
+@SuppressWarnings("restriction")
 public class BreakpointPropertiesRulerAction extends AbstractDisassemblyBreakpointRulerAction {
 
 	private Object fContext;

@@ -1,0 +1,74 @@
+/*******************************************************************************
+ * Copyright (c) 2009 Wind River Systems, Inc. and others.
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
+ *     Wind River Systems - initial API and implementation
+ *******************************************************************************/
+package org.eclipse.cdt.dsf.gdb.internal.ui.breakpoints;
+
+import java.util.HashSet;
+import java.util.Set;
+
+import org.eclipse.cdt.debug.ui.CDebugUIPlugin;
+import org.eclipse.cdt.dsf.debug.internal.ui.disassembly.provisional.IDisassemblyPart;
+import org.eclipse.debug.ui.actions.IToggleBreakpointsTarget;
+import org.eclipse.debug.ui.actions.IToggleBreakpointsTargetFactory;
+import org.eclipse.jface.viewers.ISelection;
+import org.eclipse.ui.IWorkbenchPart;
+
+/**
+ * Toggle breakpoints target factory for disassembly parts.
+ *
+ * @since 2.1
+ */
+public class ToggleBreakpointsTargetFactory implements IToggleBreakpointsTargetFactory {
+
+	/**
+	 * Toggle breakpoint target-id for normal C breakpoints.
+	 * Note: The id must be the same as in <code>ToggleCBreakpointsTargetFactory</code>
+	 */
+	public static final String TOGGLE_C_BREAKPOINT_TARGET_ID = CDebugUIPlugin.PLUGIN_ID + ".toggleCBreakpointTarget"; //$NON-NLS-1$
+//	public static final String TOGGLE_C_TRACEPOINT_TARGET_ID = CDebugUIPlugin.PLUGIN_ID + ".toggleCTracepointTarget"; //$NON-NLS-1$
+	
+	private static final Set<String> TOGGLE_TARGET_IDS = new HashSet<String>(2);
+	static {
+		TOGGLE_TARGET_IDS.add(TOGGLE_C_BREAKPOINT_TARGET_ID);
+//		TOGGLE_TARGET_IDS.add(TOGGLE_C_TRACEPOINT_TARGET_ID);
+	}
+
+	private static final IToggleBreakpointsTarget fgDisassemblyToggleBreakpointsTarget = new DisassemblyToggleBreakpointsTarget();
+
+	public ToggleBreakpointsTargetFactory() {
+	}
+
+	public IToggleBreakpointsTarget createToggleTarget(String targetID) {
+		if (TOGGLE_C_BREAKPOINT_TARGET_ID.equals(targetID)) {
+			return fgDisassemblyToggleBreakpointsTarget;
+		}
+		return null;
+	}
+
+	public String getDefaultToggleTarget(IWorkbenchPart part, ISelection selection) {
+		if (part instanceof IDisassemblyPart) {
+			return TOGGLE_C_BREAKPOINT_TARGET_ID;
+		}
+		return null;
+	}
+
+	public String getToggleTargetDescription(String targetID) {
+		return Messages.ToggleBreakpointsTargetFactory_description;
+	}
+
+	public String getToggleTargetName(String targetID) {
+		return Messages.ToggleBreakpointsTargetFactory_name;
+	}
+
+	public Set<String> getToggleTargets(IWorkbenchPart part, ISelection selection) {
+		return TOGGLE_TARGET_IDS;
+	}
+
+}

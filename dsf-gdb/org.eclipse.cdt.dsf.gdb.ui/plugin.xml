@@ -186,16 +186,7 @@
             name="Filter">
          <filter name="debugModelId" value="org.eclipse.cdt.dsf.gdb"/>
          <enabledWhen>
-            <and>
-               <adapt
-                     type="org.eclipse.cdt.debug.core.model.ICBreakpoint">
-               </adapt>
-               <not>
-                  <adapt
-                        type="org.eclipse.cdt.debug.core.model.ICTracepoint">
-                  </adapt>
-               </not>
-            </and>
+            <adapt type="org.eclipse.cdt.debug.core.model.ICBreakpoint"/>
          </enabledWhen>
       </page>
    </extension>

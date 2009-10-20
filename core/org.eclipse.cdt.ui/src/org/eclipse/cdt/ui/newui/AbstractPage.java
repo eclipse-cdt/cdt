@@ -10,6 +10,7 @@
  *     Markus Schorn (Wind River Systems)
  *     Andrew Gvozdev
  *     QNX Software Systems - [271628] NPE in configs for project that failed to convert
+ *     James Blackburn (Broadcom Corp.)
  *******************************************************************************/
 package org.eclipse.cdt.ui.newui;
 
@@ -20,8 +21,10 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IFolder;
@@ -145,6 +148,8 @@ implements
 	
 	private static final String PREF_ASK_REINDEX = "askReindex"; //$NON-NLS-1$
 	
+	private Map<URL, Image> loadedIcons = new HashMap<URL, Image>();
+
 	private final Image IMG_WARN = CPluginImages.get(CPluginImages.IMG_OBJS_REFACTORING_WARNING);
 	/*
 	 * Dialog widgets
@@ -958,10 +963,16 @@ implements
 				ap.forEach(ICPropertyTab.UPDATE,getResDesc());
 		}
 	}
-	
+
 	@Override
 	public void dispose() {
-		if (displayedConfig) forEach(ICPropertyTab.DISPOSE);
+		// Dispose the tabs
+		if (displayedConfig)
+			forEach(ICPropertyTab.DISPOSE);
+		// Dispose any loaded images
+		for (Image img : loadedIcons.values())
+			img.dispose();
+		loadedIcons.clear();
 
 		if (!isNewOpening)
 			handleResize(false); // save page size 
@@ -1090,19 +1101,27 @@ implements
 		itabs.add(itab);
 		return false;
 	}
-	
+
 	private Image getIcon(IConfigurationElement config) {
 		ImageDescriptor idesc = null;
+		URL url = null;
 		try {
 			String iconName = config.getAttribute(IMAGE_NAME);
 			if (iconName != null) {
-				URL pluginInstallUrl = Platform.getBundle(config.getDeclaringExtension().getContributor().getName()).getEntry("/"); //$NON-NLS-1$			
-				idesc = ImageDescriptor.createFromURL(new URL(pluginInstallUrl, iconName));
+				URL pluginInstallUrl = Platform.getBundle(config.getDeclaringExtension().getContributor().getName()).getEntry("/"); //$NON-NLS-1$
+				url = new URL(pluginInstallUrl, iconName);
+				if (loadedIcons.containsKey(url))
+					return loadedIcons.get(url);
+				idesc = ImageDescriptor.createFromURL(url);
 			}
 		} catch (MalformedURLException exception) {}
-		return (idesc == null) ? null : idesc.createImage();
+		if (idesc == null)
+			return null;
+		Image img = idesc.createImage();
+		loadedIcons.put(url, img);
+		return img;
 	}
-	
+
 	public void informAll(int code, Object data) {
 		for (int i=0; i<CDTPropertyManager.getPagesCount(); i++) {
 			Object p = CDTPropertyManager.getPage(i);

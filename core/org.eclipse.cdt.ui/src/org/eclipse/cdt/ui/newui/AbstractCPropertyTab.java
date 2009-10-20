@@ -8,10 +8,10 @@
  * Contributors:
  *     Intel Corporation - initial API and implementation
  *     Markus Schorn (Wind River Systems)
+ *     James Blackburn (Broadcom Corp.)
  *******************************************************************************/
 package org.eclipse.cdt.ui.newui;
 
-import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 
 import org.eclipse.core.resources.IContainer;
@@ -533,6 +533,7 @@ public abstract class AbstractCPropertyTab implements ICPropertyTab {
 			if (canBeVisible()) configChanged((ICResourceDescription)data);
 			break;
 		case ICPropertyTab.DISPOSE:
+			dispose();
 			break;
 		case ICPropertyTab.VISIBLE:
 			if (canBeVisible()) 
@@ -599,7 +600,7 @@ public abstract class AbstractCPropertyTab implements ICPropertyTab {
 			break;
 		}
 	}
-	 
+
 	/**
 	 * This method will be simplified after M5 release,
 	 * when Button.setGrayed() method will be accessible.
@@ -607,16 +608,11 @@ public abstract class AbstractCPropertyTab implements ICPropertyTab {
 	 * 
 	 * @param b
 	 * @param value
+	 * @deprecated call {@link Button#setGrayed(boolean)} instead
 	 */
+	@Deprecated
 	public static void setGrayed(Button b, boolean value) {
-		// TODO: uncomment before M5
-		// b.setGrayed(value);
-		if (GRAY_METHOD != null)
-			try {
-				GRAY_METHOD.invoke(b, new Object[] { new Boolean(value) });
-			}
-			catch (InvocationTargetException e) {}
-			catch (IllegalAccessException e) {}
+		b.setGrayed(value);
 	}
 
 	/**

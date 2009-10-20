@@ -24,6 +24,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import org.eclipse.cdt.core.dom.IName;
 import org.eclipse.cdt.core.dom.ast.ASTNodeProperty;
 import org.eclipse.cdt.core.dom.ast.ASTVisitor;
 import org.eclipse.cdt.core.dom.ast.DOMException;
@@ -136,7 +137,9 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPUsingDirective;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPVariable;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCompositeTypeSpecifier.ICPPASTBaseSpecifier;
 import org.eclipse.cdt.core.index.IIndexBinding;
+import org.eclipse.cdt.core.index.IIndexFile;
 import org.eclipse.cdt.core.index.IIndexFileSet;
+import org.eclipse.cdt.core.index.IIndexName;
 import org.eclipse.cdt.core.parser.IProblem;
 import org.eclipse.cdt.core.parser.util.ArrayUtil;
 import org.eclipse.cdt.core.parser.util.CharArrayObjectMap;
@@ -183,6 +186,7 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.OverloadableOperator;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.Conversions.UDCMode;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.Cost.Rank;
 import org.eclipse.cdt.internal.core.index.IIndexScope;
+import org.eclipse.core.runtime.CoreException;
 
 /**
  * Name resolution
@@ -1789,6 +1793,36 @@ public class CPPSemantics {
 	}
 
 	/**
+	 * Compares two bindings for relevance in the context of an AST. AST bindings are
+	 * considered more relevant than index ones since the index may be out of date,
+	 * built for a different configuration, etc. Index bindings reachable through includes
+	 * are more relevant than unreachable ones.
+	 * @param ast
+	 * @param b1
+	 * @param b2
+	 * @return 1 if binding <code>b1</code> is more relevant than <code>b2</code>; 0 if
+	 * the two bindings have the same relevance; -1 if <code>b1</code> is less relevant than
+	 * <code>b2</code>.
+	 */
+	static int compareByRelevance(LookupData data, IName b1, IName b2) {
+		boolean b1FromIndex= (b1 instanceof IIndexName);
+		boolean b2FromIndex= (b2 instanceof IIndexName);
+		if (b1FromIndex != b2FromIndex) {
+			return !b1FromIndex ? 1 : -1;
+		} else if (b1FromIndex) {
+			// Both are from index.
+			if (data.tu != null) {
+	    		boolean b1Reachable= isReachableFromAst(data.tu, b1);
+	    		boolean b2Reachable= isReachableFromAst(data.tu, b2);
+	    		if (b1Reachable != b2Reachable) {
+	    			return b1Reachable ? 1 : -1;
+	    		}
+			}
+		}
+		return 0;
+	}
+
+	/**
 	 * Compares a binding with a list of function candidates for relevance in the context of an AST. AST bindings are
 	 * considered more relevant than index ones since the index may be out of date,
 	 * built for a different configuration, etc. Index bindings reachable through includes
@@ -1862,6 +1896,28 @@ public class CPPSemantics {
 		}
 		IIndexFileSet indexFileSet = ast.getIndexFileSet();
 		return indexFileSet != null && indexFileSet.containsDeclaration(indexBinding);
+	}
+
+	/**
+	 * Checks if a binding is an AST binding, or is reachable from the AST through includes.
+	 * The binding is assumed to belong to the AST, if it is not an IIndexBinding and not
+	 * a specialization of an IIndexBinding.
+	 * @param ast
+	 * @param binding
+	 * @return <code>true</code> if the <code>binding</code> is reachable from <code>ast</code>.
+	 */
+	private static boolean isReachableFromAst(IASTTranslationUnit ast, IName name) {
+		if (!(name instanceof IIndexName)) {
+			return true;
+		}
+		IIndexName indexName = (IIndexName) name;
+		try {
+			IIndexFile file= indexName.getFile();
+			IIndexFileSet indexFileSet = ast.getIndexFileSet();
+			return indexFileSet != null && indexFileSet.contains(file);
+		} catch (CoreException e) {
+			return false;
+		}
 	}
 
 	static private void reduceToViable(LookupData data, IBinding[] functions) throws DOMException {
@@ -2452,7 +2508,7 @@ public class CPPSemantics {
      * Also collections the function bindings if requested.
      */
     public static IType getChainedMemberAccessOperatorReturnType(ICPPASTFieldReference fieldReference, Collection<ICPPFunction> functionBindings) throws DOMException {
-    	IASTExpression owner = fieldReference.getFieldOwner();
+    	final IASTExpression owner = fieldReference.getFieldOwner();
     	if (owner == null)
     		return null;
     	
@@ -2505,7 +2561,7 @@ public class CPPSemantics {
     		if (functionBindings != null)
     			functionBindings.add(op);
     		
-    		type= op.getType().getReturnType();
+    		type= SemanticUtil.mapToAST(op.getType().getReturnType(), owner);
     		foundOperator= true;
     	}
     	

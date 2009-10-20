@@ -17,6 +17,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 
+import org.eclipse.cdt.core.dom.IName;
 import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.IProblemBinding;
@@ -194,9 +195,19 @@ class BaseClassLookup {
 				// assume that there are no bases
 			}
 			if (grandBases != null && grandBases.length > 0) {
-				HashSet<IBinding> grandBaseBindings= grandBases.length > 1 ? new HashSet<IBinding>() : null;
-				for (ICPPBase grandBase : grandBases) {
+				HashSet<IBinding> grandBaseBindings= null;
+				BitSet selectedBases= null;
+				if (grandBases.length > 1) {
+					grandBaseBindings= new HashSet<IBinding>();
+
+					// if we have reachable bases, then ignore the others
+					selectedBases = selectPreferredBases(data, grandBases);
+				}
+				for (int i = 0; i < grandBases.length; i++) {
+					ICPPBase grandBase = grandBases[i];
 					if (grandBase instanceof IProblemBinding)
+						continue;
+					if (selectedBases != null && !selectedBases.get(i))
 						continue;
 	
 					try {
@@ -236,6 +247,31 @@ class BaseClassLookup {
 		}
 		result.setResult(matches);
 		return result;	
+	}
+
+	private static BitSet selectPreferredBases(LookupData data, ICPPBase[] grandBases) {
+		if (data.contentAssist) 
+			return null;
+
+		BitSet selectedBases;
+		selectedBases= new BitSet(grandBases.length);
+		IName baseName= null;
+		for (int i = 0; i < grandBases.length; i++) {
+			ICPPBase nbase = grandBases[i];
+			if (nbase instanceof IProblemBinding) 
+				continue;
+
+			final IName nbaseName = nbase.getBaseClassSpecifierName();
+			int cmp= baseName == null ? -1 : CPPSemantics.compareByRelevance(data, baseName, nbaseName);
+			if (cmp <= 0) {
+				if (cmp < 0) {
+					selectedBases.clear();
+					baseName= nbaseName;
+				}
+				selectedBases.set(i);
+			}
+		}
+		return selectedBases;
 	}
 
 	static void hideVirtualBases(BaseClassLookup rootInfo, HashMap<IScope, BaseClassLookup> infoMap) {

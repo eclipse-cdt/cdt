@@ -64,13 +64,14 @@ public class IndexCPPBindingResolutionBugs extends IndexBindingResolutionTestBas
 		public SingleProject() {setStrategy(new SinglePDOMTestStrategy(true));}
 		public static TestSuite suite() {return suite(SingleProject.class);}
 	}
-	
+
 	public static class ProjectWithDepProj extends IndexCPPBindingResolutionBugs {
 		public ProjectWithDepProj() {setStrategy(new ReferencedProject(true));}
 		public static TestSuite suite() {return suite(ProjectWithDepProj.class);}
 	}
 	
 	public static void addTests(TestSuite suite) {		
+		suite.addTest(IndexCPPBindingResolutionBugsSingleProjectFirstAST.suite());
 		suite.addTest(SingleProject.suite());
 		suite.addTest(ProjectWithDepProj.suite());
 	}
@@ -87,6 +88,7 @@ public class IndexCPPBindingResolutionBugs extends IndexBindingResolutionTestBas
 	// #define FUNC() void bar()
 	// #define FUNC2(A) void baz()
 	
+
 	// #include "header.h"
 	//
 	// OBJ {}
@@ -1135,5 +1137,21 @@ public class IndexCPPBindingResolutionBugs extends IndexBindingResolutionTestBas
 		}
 		buf.append('}');
 		return buf.toString();
+	}
+	
+	//	class Derived;
+	//  class X {
+	//     Derived* d;
+	//  };
+	//  class Base {};
+	//  void useBase(Base* b);
+	
+	//  class Derived: Base {};
+	//	void test() {
+	//      X x;
+	//      useBase(x.d);
+	//	}
+	public void testLateDefinitionOfInheritance_Bug292749() throws Exception {
+    	getBindingFromASTName("useBase(x.d", 7, ICPPFunction.class);
 	}
 }

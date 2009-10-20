@@ -594,9 +594,8 @@ public class Conversions {
 			} 
 		}
 
-		// This should actually be done in 'checkImplicitConversionSequence', see 13.3.3.1-6 and 8.5.14
-		// 8.5.14 cv-qualifiers can be ignored for non-class types
-		// mstodo
+		// This should actually be done before the conversion is attempted, see for instance 13.3.3.1-6 and 8.5.14.
+		// However, it does not hurt to do it here either.
 		IType unqualifiedTarget= getNestedType(target, CVQ | PTR_CVQ | TDEF | REF);
 		if (!(unqualifiedTarget instanceof ICPPClassType)) {
 			IType unqualifiedSource= getNestedType(source, CVQ | PTR_CVQ | TDEF | REF);

@@ -213,9 +213,9 @@ public class CPPASTFunctionCallExpression extends ASTNode implements
     				return new ProblemBinding(this, IProblemBinding.SEMANTIC_BAD_SCOPE,
     						binding.getName().toCharArray());
     			} else if (binding instanceof IFunction) {
-    				t = ((IFunction) binding).getType();
+    				t = SemanticUtil.mapToAST(((IFunction) binding).getType(), this);
     			} else if (binding instanceof IVariable) {
-    				t = ((IVariable) binding).getType();
+    				t = SemanticUtil.mapToAST(((IVariable) binding).getType(), this);
     			} else if (binding instanceof IType) {
     				return (IType) binding;  // constructor or simple type initializer
     			} else if (binding instanceof IProblemBinding) {

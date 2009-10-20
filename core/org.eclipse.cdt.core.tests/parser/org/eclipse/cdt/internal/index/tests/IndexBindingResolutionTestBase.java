@@ -233,6 +233,72 @@ public abstract class IndexBindingResolutionTestBase extends BaseTestCase {
 			assertQNEquals(expContainedTypeQN, (IBinding) containedType);
 		}
 	}
+	
+	class SinglePDOMTestFirstASTStrategy implements ITestStrategy {
+		private IIndex index;
+		private ICProject cproject;
+		private StringBuffer[] testData;
+		private IASTTranslationUnit ast;
+		private boolean cpp;
+
+		public SinglePDOMTestFirstASTStrategy(boolean cpp) {
+			this.cpp = cpp;
+		}
+
+		public ICProject getCProject() {
+			return cproject;
+		}
+		
+		public StringBuffer[] getTestData() {
+			return testData;
+		}
+
+		public IASTTranslationUnit getAst() {
+			return ast;
+		}
+
+		public void setUp() throws Exception {
+			cproject = cpp ? CProjectHelper.createCCProject(getName()+System.currentTimeMillis(), "bin", IPDOMManager.ID_NO_INDEXER) 
+					: CProjectHelper.createCProject(getName()+System.currentTimeMillis(), "bin", IPDOMManager.ID_NO_INDEXER);
+			Bundle b = CTestPlugin.getDefault().getBundle();
+			testData = TestSourceReader.getContentsForTest(b, "parser", IndexBindingResolutionTestBase.this.getClass(), getName(), 2);
+
+			if (testData.length < 2)
+				return;
+			IFile file = TestSourceReader.createFile(cproject.getProject(), new Path("header.h"), testData[0].toString());
+			CCorePlugin.getIndexManager().setIndexerId(cproject, IPDOMManager.ID_FAST_INDEXER);
+			assertTrue(CCorePlugin.getIndexManager().joinIndexer(360000, new NullProgressMonitor()));
+
+			if (DEBUG) {
+				System.out.println("Project PDOM: "+getName());
+				((PDOM)CCoreInternals.getPDOMManager().getPDOM(cproject)).accept(new PDOMPrettyPrinter());
+			}
+
+			index= CCorePlugin.getIndexManager().getIndex(cproject);
+
+			index.acquireReadLock();
+			IFile cppfile= TestSourceReader.createFile(cproject.getProject(), new Path("references.c" + (cpp ? "pp" : "")), testData[1].toString());
+			ast = TestSourceReader.createIndexBasedAST(index, cproject, cppfile);
+		}
+
+		public void tearDown() throws Exception {
+			if (index != null) {
+				index.releaseReadLock();
+			}
+			if (cproject != null) {
+				cproject.getProject().delete(IResource.FORCE | IResource.ALWAYS_DELETE_PROJECT_CONTENT, new NullProgressMonitor());
+			}
+		}
+
+		public IIndex getIndex() {
+			return index;
+		}
+		
+		public boolean isCompositeIndex() {
+			return false;
+		}
+	}
+
 
 	class SinglePDOMTestStrategy implements ITestStrategy {
 		private IIndex index;

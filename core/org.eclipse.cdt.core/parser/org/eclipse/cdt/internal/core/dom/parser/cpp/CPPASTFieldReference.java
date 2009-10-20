@@ -35,6 +35,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPMethod;
 import org.eclipse.cdt.internal.core.dom.parser.ASTNode;
 import org.eclipse.cdt.internal.core.dom.parser.IASTAmbiguityParent;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPSemantics;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.SemanticUtil;
 
 /**
  * @author jcamelon
@@ -188,11 +189,11 @@ public class CPPASTFieldReference extends ASTNode implements
 		IBinding binding = name.resolvePreBinding();
 		try {
 			if (binding instanceof IVariable) {
-                return ((IVariable) binding).getType();
+                return SemanticUtil.mapToAST(((IVariable) binding).getType(), this);
 			} else if (binding instanceof IEnumerator) {
 				return ((IEnumerator) binding).getType();
 			} else if (binding instanceof IFunction) {
-				return ((IFunction) binding).getType();
+				return SemanticUtil.mapToAST(((IFunction) binding).getType(), this);
 			}  else if (binding instanceof ICPPUnknownBinding) {
 				return CPPUnknownClass.createUnnamedInstance();
 			} else if (binding instanceof IProblemBinding) {

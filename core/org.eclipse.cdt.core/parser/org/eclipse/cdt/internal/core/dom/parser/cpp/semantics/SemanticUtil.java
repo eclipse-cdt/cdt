@@ -15,6 +15,8 @@ package org.eclipse.cdt.internal.core.dom.parser.cpp.semantics;
 
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.dom.ast.DOMException;
+import org.eclipse.cdt.core.dom.ast.IASTNode;
+import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
 import org.eclipse.cdt.core.dom.ast.IArrayType;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.IFunctionType;
@@ -37,6 +39,7 @@ import org.eclipse.cdt.core.parser.util.CharArraySet;
 import org.eclipse.cdt.core.parser.util.CharArrayUtils;
 import org.eclipse.cdt.core.parser.util.ObjectSet;
 import org.eclipse.cdt.internal.core.dom.parser.ITypeContainer;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTTranslationUnit;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPFunctionType;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPPointerToMemberType;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPPointerType;
@@ -44,6 +47,7 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPQualifierType;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPTemplateArgument;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPDeferredClassInstance;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.OverloadableOperator;
+import org.eclipse.cdt.internal.core.index.IIndexType;
 
 /**
  *
@@ -288,6 +292,42 @@ public class SemanticUtil {
 
 		type = (ITypeContainer) type.clone();
 		type.setType(newNestedType);
+		return type;
+	}
+	
+	public static IType mapToAST(IType type, IASTNode node) {
+		if (!(type instanceof IIndexType))
+			return type;
+		
+		try {
+			if (type instanceof IFunctionType) {
+				final ICPPFunctionType ft = (ICPPFunctionType) type;
+				final IType r = ft.getReturnType();
+				final IType ret = mapToAST(r, node);
+				if (ret == r) {
+					return type;
+				}
+				return new CPPFunctionType(ret, ft.getParameterTypes(), ft.isConst(), ft.isVolatile());
+			}
+			if (type instanceof ITypeContainer) {
+				final ITypeContainer tc = (ITypeContainer) type;
+				final IType nestedType= tc.getType();
+				if (nestedType == null) 
+					return type;
+				
+				IType newType= mapToAST(nestedType, node);
+				if (newType != nestedType) {
+					return replaceNestedType(tc, newType);
+				} 
+				return type;
+			} else if (type instanceof ICPPClassType && type instanceof IIndexType) {
+				IASTTranslationUnit tu = node.getTranslationUnit();
+				if (tu instanceof CPPASTTranslationUnit) {
+					return ((CPPASTTranslationUnit) tu).mapToAST((ICPPClassType) type);
+				}
+			}
+		} catch (DOMException e) {
+		}
 		return type;
 	}
 

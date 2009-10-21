@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2008 IBM Corporation and others.
+ * Copyright (c) 2000, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -9,11 +9,14 @@
  *     IBM Corporation - initial API and implementation
  * Martin Oberhuber (Wind River) - [183824] Forward SystemMessageException from IRemoteFileSubsystem
  * David McKnight     (IBM)      - [229610] [api] File transfers should use workspace text file encoding
+ * David McKnight     (IBM)      - [191482] [importexport][efs] Export from Project on a remote EFS project Errors
  *******************************************************************************/
 package org.eclipse.rse.internal.importexport.files;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IFile;
@@ -23,6 +26,7 @@ import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.rse.core.model.IHost;
 import org.eclipse.rse.services.clientserver.messages.SystemMessageException;
+import org.eclipse.rse.services.files.IFileService;
 import org.eclipse.rse.subsystems.files.core.model.RemoteFileUtility;
 import org.eclipse.rse.subsystems.files.core.subsystems.IRemoteFileSubSystem;
 
@@ -101,7 +105,36 @@ class RemoteExporter {
 		}
 		String localEncoding = file.getCharset();
 		String hostEncoding = Utilities.getIRemoteFile(_host, dest).getEncoding();
-		rfss.upload(file.getLocation().makeAbsolute().toOSString(), localEncoding, dest, hostEncoding, new NullProgressMonitor()); //$NON-NLS-1$
+		IPath location = file.getLocation();
+		if (location != null){
+			rfss.upload(location.makeAbsolute().toOSString(), localEncoding, dest, hostEncoding, new NullProgressMonitor()); //$NON-NLS-1$
+		}
+		else {
+			// an EFS file
+			int lastSep = dest.lastIndexOf(sep);
+			String remoteParent = dest.substring(0, lastSep);
+			String remoteFile = dest.substring(lastSep +1);
+			
+			OutputStream outstream = rfss.getOutputStream(remoteParent, remoteFile, IFileService.NONE, new NullProgressMonitor());
+			
+			InputStream instream = file.getContents();
+			int length = 1000;
+			byte[] buffer = new byte[length];
+			
+			int bytesRead = 0;
+			boolean done = false;
+			while (!done){
+				bytesRead = instream.read(buffer);	
+				if (bytesRead > 0){
+					outstream.write(buffer);
+				}
+				if (bytesRead == -1){
+					done = true;
+				}
+			}
+			instream.close();
+			outstream.close();
+		}
 	}
 
 	/**

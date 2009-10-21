@@ -1,5 +1,5 @@
 <!--
- Copyright (c) 2006, 2008 IBM Corporation and others.
+ Copyright (c) 2006, 2009 IBM Corporation and others.
  All rights reserved. This program and the accompanying materials
  are made available under the terms of the Eclipse Public License v1.0
  which accompanies this distribution, and is available at
@@ -9,35 +9,25 @@
      IBM Corporation - initial API and implementation
 -->
 
-<project name="CDT Extensible LR Parser Framework" default="both" basedir=".">
+<project name="CDT Extensible LR Parser Framework" basedir=".">
     <description>Generates LPG parsers from grammar files</description>
 	
-	
-	<fail unless="lpg_exe">
-		Property $${lpg_exe} not set.
-		This property must be set to the full path to the LPG generator executable.
-	</fail>
-	
-	<fail unless="lpg_template">
-		Property $${lpg_template} not set.
-		This property must be set to the full path to the LPG templates folder.
-	</fail>
-	
-	<property name="c99_location" value="../src/org/eclipse/cdt/internal/core/dom/lrparser/c99"/>
-	<property name="cpp_location" value="../src/org/eclipse/cdt/internal/core/dom/lrparser/cpp"/>
+	<import file="generate.xml"/>
 
+	<property name="c99_location" value="../src/org/eclipse/cdt/internal/core/dom/lrparser/c99"/>
+	<property name="gcc_location" value="../src/org/eclipse/cdt/internal/core/dom/lrparser/gcc"/>
+	<property name="cpp_location" value="../src/org/eclipse/cdt/internal/core/dom/lrparser/cpp"/>
+	<property name="gpp_location" value="../src/org/eclipse/cdt/internal/core/dom/lrparser/gpp"/>
+		
+	<target name="all" depends="c99, gcc, cpp, gpp"/>
 	
 	<target name="clean_l_files">
 		<delete>
 			<fileset dir="${c99_location}" includes="**/*.l"/>
+			<fileset dir="${gcc_location}" includes="**/*.l"/>
 			<fileset dir="${cpp_location}" includes="**/*.l"/>
+			<fileset dir="${gpp_location}" includes="**/*.l"/>
 		</delete>
-	</target>
-	
-	
-	<target name="both" depends="cpp, c99">
-		<description>Generates the C99 and C++ parsers</description>	
-		<echo message="Done"/>
 	</target>
 	
 	
@@ -61,7 +51,36 @@
 		</antcall>
 	</target>
 	
+	<target name="generate_c99">
+		<antcall target="generate">
+			<param name="grammar_dir" value="c99"/>
+			<param name="output_dir" value="${c99_location}"/>
+			<param name="grammar_name" value="${grammar_name}"/>
+		</antcall>
+	</target>
+
 	
+	<target name="gcc">
+		<description>Generate the GCC parser</description>
+		<!-- Generate main parser -->
+		<antcall target="generate_gcc">
+            <param name="grammar_name" value="GCCParser"/>
+		</antcall>
+		<antcall target="generate_gcc">
+            <param name="grammar_name" value="GCCSizeofExpressionParser"/>
+		</antcall>
+	</target>
+	
+	
+	<target name="generate_gcc">
+		<antcall target="generate">
+			<param name="grammar_dir" value="gcc"/>
+			<param name="output_dir" value="${gcc_location}"/>
+			<param name="grammar_name" value="${grammar_name}"/>
+		</antcall>
+	</target>
+	
+
 	<target name="cpp">
 		<description>Generate the C++ parser</description>
 		<antcall target="generate_cpp">
@@ -89,16 +108,6 @@
 		</antcall>
 	</target>
 	
-	
-	<target name="generate_c99">
-		<antcall target="generate">
-			<param name="grammar_dir" value="c99"/>
-			<param name="output_dir" value="${c99_location}"/>
-			<param name="grammar_name" value="${grammar_name}"/>
-		</antcall>
-	</target>
-	
-	
 	<target name="generate_cpp">
 		<antcall target="generate">
 			<param name="grammar_dir" value="cpp"/>
@@ -108,23 +117,28 @@
 	</target>
 	
 	
-	<target name="generate">
-		<property name="grammar_file" value="${grammar_dir}/${grammar_name}.g"/>
-		<echo message="lpg_exe=${lpg_exe}"/>
-		<echo message="lpg_template=${lpg_template}"/>
-		<echo message="grammar_file=${grammar_file}.g"/>
-		<echo message="output_dir=${output_dir}"/>
+	<target name="gpp">
+		<description>Generate the GCC parser</description>
+		<!-- Generate main parser -->
+		<antcall target="generate_gpp">
+            <param name="grammar_name" value="GPPParser"/>
+		</antcall>
+		<antcall target="generate_gpp">
+            <param name="grammar_name" value="GPPSizeofExpressionParser"/>
+		</antcall>
+	</target>
+	
+	
+	<target name="generate_gpp">
+		<antcall target="generate">
+			<param name="grammar_dir" value="gpp"/>
+			<param name="output_dir" value="${gpp_location}"/>
+			<param name="grammar_name" value="${grammar_name}"/>
+		</antcall>
+	</target>
+	
 
-		<exec executable="${lpg_exe}">
-			<arg value="${grammar_file}"/>
-			<env key="LPG_TEMPLATE" path="${lpg_template}"/>
-		</exec>
-		
-		<move overwrite="true" toDir="${output_dir}">
-		    <fileset dir=".">
-			    <include name="${grammar_name}*.*"/>
-			</fileset>
-		</move>
-	</target> 
+	
+	
 	
 </project>  

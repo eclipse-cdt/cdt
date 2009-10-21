@@ -8,9 +8,8 @@
  ******************************************************************************/
 package org.eclipse.cdt.core.dom.lrparser;
 
-import org.eclipse.cdt.core.dom.parser.IScannerExtensionConfiguration;
+import org.eclipse.cdt.core.dom.parser.AbstractScannerExtensionConfiguration;
 import org.eclipse.cdt.core.parser.IMacro;
-import org.eclipse.cdt.core.parser.util.CharArrayIntMap;
 
 
 /**
@@ -19,34 +18,32 @@ import org.eclipse.cdt.core.parser.util.CharArrayIntMap;
  * @author Mike Kucera
  *
  */
-public class ScannerExtensionConfiguration implements IScannerExtensionConfiguration {
+@SuppressWarnings("nls")
+public class ScannerExtensionConfiguration extends AbstractScannerExtensionConfiguration {
 
-	public CharArrayIntMap getAdditionalKeywords() {
-		return null;
+	
+	private ScannerExtensionConfiguration() {
+	}
+	
+	public static ScannerExtensionConfiguration createC() {
+		return new ScannerExtensionConfiguration() {
+			@Override public IMacro[] getAdditionalMacros() {
+				return new IMacro[]	{ createMacro("__null", "(void *)0") };
+			}
+		};
+	}
+	
+	public static ScannerExtensionConfiguration createCPP() {
+		return new ScannerExtensionConfiguration() {
+			@Override public IMacro[] getAdditionalMacros() {
+				return new IMacro[]	{ createMacro("__null", "0") };
+			}
+		};
 	}
 
-	public IMacro[] getAdditionalMacros() {
-		return null;
-	}
-
-	public CharArrayIntMap getAdditionalPreprocessorKeywords() {
-		return null;
-	}
-
-	public boolean initializeMacroValuesTo1() {
-		return false;
-	}
-
+	@Override
 	public boolean support$InIdentifiers() {
 		return true;
-	}
-
-	public char[] supportAdditionalNumericLiteralSuffixes() {
-		return null;
-	}
-
-	public boolean supportMinAndMaxOperators() {
-		return false;
 	}
 
 }

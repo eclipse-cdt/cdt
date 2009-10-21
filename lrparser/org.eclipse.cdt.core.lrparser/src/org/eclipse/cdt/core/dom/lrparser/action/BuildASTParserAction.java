@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2008 IBM Corporation and others.
+ * Copyright (c) 2006, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,11 +10,17 @@
  *******************************************************************************/
 package org.eclipse.cdt.core.dom.lrparser.action;
 
+import static org.eclipse.cdt.core.dom.lrparser.action.ParserUtil.endOffset;
+import static org.eclipse.cdt.core.dom.lrparser.action.ParserUtil.length;
+import static org.eclipse.cdt.core.dom.lrparser.action.ParserUtil.offset;
+
 import java.util.List;
 
 import lpg.lpgjavaruntime.IToken;
 
 import org.eclipse.cdt.core.dom.ast.ASTVisitor;
+import org.eclipse.cdt.core.dom.ast.DOMException;
+import org.eclipse.cdt.core.dom.ast.IASTASMDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTArrayDeclarator;
 import org.eclipse.cdt.core.dom.ast.IASTArrayModifier;
 import org.eclipse.cdt.core.dom.ast.IASTArraySubscriptExpression;
@@ -22,7 +28,6 @@ import org.eclipse.cdt.core.dom.ast.IASTBinaryExpression;
 import org.eclipse.cdt.core.dom.ast.IASTBreakStatement;
 import org.eclipse.cdt.core.dom.ast.IASTCaseStatement;
 import org.eclipse.cdt.core.dom.ast.IASTCastExpression;
-import org.eclipse.cdt.core.dom.ast.IASTCompletionNode;
 import org.eclipse.cdt.core.dom.ast.IASTCompoundStatement;
 import org.eclipse.cdt.core.dom.ast.IASTConditionalExpression;
 import org.eclipse.cdt.core.dom.ast.IASTContinueStatement;
@@ -52,7 +57,6 @@ import org.eclipse.cdt.core.dom.ast.IASTNullStatement;
 import org.eclipse.cdt.core.dom.ast.IASTParameterDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTPointerOperator;
 import org.eclipse.cdt.core.dom.ast.IASTProblem;
-import org.eclipse.cdt.core.dom.ast.IASTProblemExpression;
 import org.eclipse.cdt.core.dom.ast.IASTProblemHolder;
 import org.eclipse.cdt.core.dom.ast.IASTReturnStatement;
 import org.eclipse.cdt.core.dom.ast.IASTSimpleDeclSpecifier;
@@ -62,16 +66,24 @@ import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
 import org.eclipse.cdt.core.dom.ast.IASTTypeId;
 import org.eclipse.cdt.core.dom.ast.IASTTypeIdExpression;
 import org.eclipse.cdt.core.dom.ast.IASTUnaryExpression;
+import org.eclipse.cdt.core.dom.ast.IBinding;
+import org.eclipse.cdt.core.dom.ast.IScope;
 import org.eclipse.cdt.core.dom.ast.IASTEnumerationSpecifier.IASTEnumerator;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCastExpression;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTLiteralExpression;
-import org.eclipse.cdt.core.dom.lrparser.IParser;
-import org.eclipse.cdt.core.dom.lrparser.IParserActionTokenProvider;
+import org.eclipse.cdt.core.dom.lrparser.ISecondaryParser;
+import org.eclipse.cdt.core.dom.lrparser.LRParserPlugin;
+import org.eclipse.cdt.core.dom.lrparser.LRParserProperties;
+import org.eclipse.cdt.core.dom.parser.IBuiltinBindingsProvider;
+import org.eclipse.cdt.core.index.IIndex;
 import org.eclipse.cdt.core.parser.IProblem;
-import org.eclipse.cdt.core.parser.util.DebugUtil;
+import org.eclipse.cdt.core.parser.IScanner;
+import org.eclipse.cdt.internal.core.dom.parser.ASTInternal;
 import org.eclipse.cdt.internal.core.dom.parser.ASTNode;
+import org.eclipse.cdt.internal.core.dom.parser.ASTQueries;
 import org.eclipse.cdt.internal.core.dom.parser.ASTTranslationUnit;
-
+import org.eclipse.cdt.internal.core.dom.parser.IASTAmbiguousExpression;
+import org.eclipse.cdt.internal.core.dom.parser.IASTAmbiguousStatement;
 
 /**
  * Parser semantic actions that are common to both C and C++.
@@ -79,47 +91,14 @@ import org.eclipse.cdt.internal.core.dom.parser.ASTTranslationUnit;
  * @author Mike Kucera
  */
 @SuppressWarnings("restriction")
-public abstract class BuildASTParserAction {
-
-
-	/**
-	 * Used with very simple optional rules that just say
-	 * that some particular token or keyword is optional.
-	 * The presence of the PLACE_HOLDER on the stack means that the keyword
-	 * was parsed, the presence of null means the keyword wasn't parsed. 
-	 * 
-	 * @see BuildASTParserAction#consumePlaceHolder()
-	 * @see BuildASTParserAction#consumeEmpty()
-	 */
-	protected static final Object PLACE_HOLDER = Boolean.TRUE; // any object will do
+public abstract class BuildASTParserAction extends AbstractParserAction {
 	
-	
-	// turn debug tracing on and off
-	// TODO move this into an AspectJ project
-	protected static final boolean TRACE_ACTIONS = false;
-	protected static final boolean TRACE_AST_STACK = false;
-	
-	
-	/** Stack that holds the intermediate nodes as the AST is being built */
-	protected final ScopedStack<Object> astStack = new ScopedStack<Object>();
-	
-	/** Provides an interface to the token stream */
-	protected final IParserActionTokenProvider parser;
-	
-	/** The completion node, only generated during a completion parse */
-	protected ASTCompletionNode completionNode;
-	
-	/** The root node is created outside the parser because it is also needed by the preprocessor */
-	protected final IASTTranslationUnit tu;
 
 	/** Abstract factory for creating AST node objects */
-	private final IASTNodeFactory nodeFactory;
+	private final INodeFactory nodeFactory;
 	
-	
-	/**
-	 * Completion tokens are represented by different kinds by different parsers.
-	 */
-	protected abstract boolean isCompletionToken(IToken token);
+	/** Abstract factory for creating secondary parsers */
+	private final ISecondaryParserFactory parserFactory;
 	
 	
 	/**
@@ -128,307 +107,81 @@ public abstract class BuildASTParserAction {
 	protected abstract boolean isIdentifierToken(IToken token);
 	
 	
-	/**
-	 * Get the parser that will recognize expressions.
-	 */
-	protected abstract IParser getExpressionParser();
-	
-	
-	/**
-	 * Expression parser that does not recognize cast expressions,
-	 * used to disambiguate casts. 
-	 */
-	protected abstract IParser getNoCastExpressionParser();
-	
-	
-	/**
-	 * Expression parser that treats all sizeof and typeid expressions
-	 * as unary expressions.
-	 */
-	protected abstract IParser getSizeofExpressionParser();
-	
-	
+	protected IASTTranslationUnit tu = null;
+
 	
 	/**
 	 * Create a new parser action.
 	 * @param tu Root node of the AST, its list of declarations should be empty.
 	 * @throws NullPointerException if any of the parameters are null
 	 */
-	public BuildASTParserAction(IASTNodeFactory nodeFactory, IParserActionTokenProvider parser, IASTTranslationUnit tu) {
+	public BuildASTParserAction(ITokenStream parser, ScopedStack<Object> astStack, INodeFactory nodeFactory, ISecondaryParserFactory parserFactory) {
+		super(parser, astStack);
+		
 		if(nodeFactory == null)
 			throw new NullPointerException("nodeFactory is null"); //$NON-NLS-1$
-		if(parser == null)
-			throw new NullPointerException("parser is null"); //$NON-NLS-1$
-		if(tu == null)
-			throw new NullPointerException("tu is null"); //$NON-NLS-1$
+		if(parserFactory == null)
+			throw new NullPointerException("parserFactory is null"); //$NON-NLS-1$
 		
 		this.nodeFactory = nodeFactory;
-		this.parser = parser;
-		this.tu = tu;
+		this.parserFactory = parserFactory;
 	}
-
 	
-	/**
-	 * Creates a completion node if one does not yet exist and adds the 
-	 * given name to it.
-	 */
-	protected void addNameToCompletionNode(IASTName name, String prefix) {
-		if(completionNode == null) {
-			prefix = (prefix == null || prefix.length() == 0) ? null : prefix;
-			completionNode = nodeFactory.newCompletionNode(prefix, tu);
-		}
+	
+	public void initializeTranslationUnit(IScanner scanner, IBuiltinBindingsProvider builtinBindingsProvider, IIndex index) {
+		tu = nodeFactory.newTranslationUnit();
+		tu.setIndex(index);
 		
-		completionNode.addName(name);
-	}
-	
-	
-	/**
-	 * Used to combine completion nodes from secondary parsers into
-	 * the main completion node.
-	 */
-	protected void addNameToCompletionNode(IASTCompletionNode node) {
-		if(node == null)
-			return;
-		
-		for(IASTName name : node.getNames())
-			addNameToCompletionNode(name, node.getPrefix());
-	}
-	
-	
-	/**
-	 * Returns the completion node if this is a completion parse, null otherwise.
-	 */
-	public IASTCompletionNode getASTCompletionNode() {
-		return completionNode;
-	}
-	
-	
-	/**
-	 * Used to get the result of secondary parsers.
-	 */
-	public IASTNode getSecondaryParseResult() {
-		return (IASTNode) astStack.pop();
-	}
-	
-	
-	
-	protected static int offset(IToken token) {
-		return token.getStartOffset();
-	}
-
-	protected static int offset(IASTNode node) {
-		return ((ASTNode)node).getOffset();
-	}
-
-	protected static int length(IToken token) {
-		return endOffset(token) - offset(token);
-	}
-
-	protected static int length(IASTNode node) {
-		return ((ASTNode)node).getLength();
-	}
-
-	protected static int endOffset(IASTNode node) {
-		return offset(node) + length(node);
-	}
-
-	protected static int endOffset(IToken token) {
-		return token.getEndOffset();
-	}
-
-
-	protected void setOffsetAndLength(IASTNode node) {
-		int ruleOffset = parser.getLeftIToken().getStartOffset();
-		int ruleLength = parser.getRightIToken().getEndOffset() - ruleOffset;
-		((ASTNode)node).setOffsetAndLength(ruleOffset, ruleLength < 0 ? 0 : ruleLength);
-	}
-
-	protected static void setOffsetAndLength(IASTNode node, IToken token) {
-		((ASTNode)node).setOffsetAndLength(offset(token), length(token));
-	}
-
-	protected static void setOffsetAndLength(IASTNode node, int offset, int length) {
-		((ASTNode)node).setOffsetAndLength(offset, length);
-	}
-
-	
-	/**
-	 * Creates a IASTName node from an identifier token.
-	 * If the token is a completion token then it is added to the completion node.
-	 */
-	protected IASTName createName(IToken token) {
-		IASTName name = nodeFactory.newName(token.toString().toCharArray()); // TODO, token.toCharArray();
-		setOffsetAndLength(name, token); 
-		
-		if(isCompletionToken(token))
-			addNameToCompletionNode(name, token.toString());
-		
-		return name;
-	}
-	
-	
-	/**
-	 * Runs the given parser on the given token list.
-	 * 
-	 */
-	protected IASTNode runSecondaryParser(IParser secondaryParser) {
-		return runSecondaryParser(secondaryParser, parser.getRuleTokens());
-	}
-	
-	
-	/**
-	 * Runs the given parser on the tokens that make up the current rule.
-	 */
-	protected IASTNode runSecondaryParser(IParser secondaryParser, List<IToken> tokens) { 
-		// the secondary parser will alter the token kinds, which will need to be undone
-		int[] savedKinds = new int[tokens.size()];
-		
-		int i = 0;
-		for(IToken token : tokens)
-			savedKinds[i++] = token.getKind();
-		
-		secondaryParser.setTokens(tokens);
-		
-		// need to pass tu because any new completion nodes need to be linked directly to the root
-		IASTCompletionNode compNode = secondaryParser.parse(tu);
-		addNameToCompletionNode(compNode);
-		IASTNode result = secondaryParser.getSecondaryParseResult();
-		
-		// restore the token kinds
-		i = 0;
-		for(IToken token : tokens)
-			token.setKind(savedKinds[i++]);
-		
-		return result;
-	}
-	
-	
-	
-	/**
-	 * Allows simple pattern match testing of lists of tokens.
-	 * 
-	 * TODO: need to take token mapping into account
-	 * 
-	 * @throws NullPointerException if source or pattern is null
-	 */
-	public static boolean matchTokens(List<IToken> source, ITokenMap tokenMap, Integer ... pattern) {
-		if(source.size() != pattern.length) // throws NPE if either parameter is null
-			return false;
-		
-		for(int i = 0, n = pattern.length; i < n; i++) {
-			if(tokenMap.mapKind(source.get(i).getKind()) != pattern[i].intValue())
-				return false;
-		}
-		return true;
-	}
-	
-	
-	/**
-	 * Finds the tokens in the given list that are between startOffset and endOffset.
-	 * Note, the offsets have to be exact.
-	 */
-	public static List<IToken> tokenOffsetSubList(List<IToken> tokens, int startOffset, int endOffset) {
-		int first = 0, last = 0;
-		int i = 0;
-		for(IToken t : tokens) {
-			if(offset(t) == startOffset) {
-				first = i;
+		// add built-in names to the scope
+		if (builtinBindingsProvider != null) {
+			IScope tuScope = tu.getScope();
+			IBinding[] bindings = builtinBindingsProvider.getBuiltinBindings(tuScope);
+			try {
+				for (IBinding binding : bindings) {
+					ASTInternal.addBinding(tuScope, binding);
+				}
+			} catch (DOMException e) {
+				LRParserPlugin.logError(e);
 			}
-			if(endOffset(t) == endOffset) {
-				last = i;
-				break;
-			}
-			i++;
 		}
-		return tokens.subList(first, last + 1);
-	}
-	
-	
-	/*************************************************************************************************************
-	 * Start of actions.
-	 ************************************************************************************************************/
-	
-	
-
-	/**
-	 * Method that is called by the special <openscope> production
-	 * in order to create a new scope in the AST stack.
-	 */
-	public void openASTScope() {
-		astStack.openScope();
-	}
-	
-	
-	
-	/**
-	 * Place null on the stack.
-	 * Usually called for optional element to indicate the element
-	 * was not parsed.
-	 */
-	public void consumeEmpty() {
-		astStack.push(null);
+		
+		if(tu instanceof ASTTranslationUnit) {
+			((ASTTranslationUnit)tu).setLocationResolver(scanner.getLocationResolver());
+		}
 	}
 
-	
-	/**
-	 * Place a marker on the stack.
-	 * Usually used for very simple optional elements to indicate
-	 * the element was parsed. Usually the existence of an AST node
-	 * on the stack is used instead of the marker, but for simple
-	 * cases like an optional keyword this action is useful. 
-	 */
-	public void consumePlaceHolder() {
-		if(TRACE_ACTIONS) DebugUtil.printMethodTrace();
-		astStack.push(PLACE_HOLDER);
-	}
-	
-	
-	
-	/**
-	 * Gets the current token and places it on the stack for later consumption.
-	 */
-	public void consumeDeclSpecToken() {
-		if(TRACE_ACTIONS) DebugUtil.printMethodTrace();
-		
-		astStack.push(parser.getRightIToken());
-		
-		if(TRACE_AST_STACK) System.out.println(astStack);
-	}
-	
-	
-	/**
-	 * Gets the current token and places it on the stack for later consumption.
-	 */
-	public void consumeToken() {
-		if(TRACE_ACTIONS) DebugUtil.printMethodTrace();
-		
-		astStack.push(parser.getRightIToken());
-		
-		if(TRACE_AST_STACK) System.out.println(astStack);
-	}
-	
 
-	
 	public void consumeTranslationUnit() {
-		if(TRACE_ACTIONS) DebugUtil.printMethodTrace();
+		if(tu == null)
+			tu = nodeFactory.newTranslationUnit();
 		
 		// can't close the outermost scope
-		// the outermost scope may be empty if there are no tokens in the file
 		for(Object o : astStack.topScope()) {
 			tu.addDeclaration((IASTDeclaration)o);
+		}
+		while(!astStack.isEmpty()) {
+			astStack.pop();
 		}
 
 		// this is the same way that the DOM parser computes the length
 		IASTDeclaration[] declarations = tu.getDeclarations();
-        if (declarations.length != 0) {
+        if(declarations.length != 0) {
         	IASTNode d = declarations[declarations.length-1];
-            setOffsetAndLength(tu, 0, offset(d) + length(d));
+            ParserUtil.setOffsetAndLength(tu, 0, offset(d) + length(d));
         } 
         
-        resolveAmbiguityNodes();
-
-        if(TRACE_AST_STACK) System.out.println(astStack);
+        resolveAmbiguityNodes(tu);
+        //tu.freeze();
+        
+        astStack.push(tu);
 	}
+
+	
+	@Override
+	public ASTCompletionNode newCompletionNode(String prefix) {
+		return new ASTCompletionNode(prefix, tu);
+	}
+
 
 	
 	/**
@@ -442,13 +195,12 @@ public abstract class BuildASTParserAction {
 	 * TODO Ambiguity resolution may be avoided in the case that no
 	 * ambiguity nodes were created.
 	 */
-	private void resolveAmbiguityNodes() {
+	private static void resolveAmbiguityNodes(IASTTranslationUnit tu) {
 		tu.accept(EMPTY_VISITOR);
 		if (tu instanceof ASTTranslationUnit) {
 			((ASTTranslationUnit)tu).cleanupAfterAmbiguityResolution();
 		}
 	}
-	
 	
 	/**
 	 * When applied to the AST causes ambiguity nodes to be resolved.
@@ -458,16 +210,11 @@ public abstract class BuildASTParserAction {
 	};
 	
 	
-	
   	/**
   	 * Consumes a single identifier token.
   	 */
   	public void consumeIdentifierName() {
-  		if(TRACE_ACTIONS) DebugUtil.printMethodTrace();
-  		
-  		astStack.push(createName(parser.getRightIToken()));
-  		
-  		if(TRACE_AST_STACK) System.out.println(astStack);
+  		astStack.push(createName(stream.getRightIToken()));
   	}
   	
   	
@@ -477,8 +224,6 @@ public abstract class BuildASTParserAction {
 	 * TODO, be careful where exactly in the grammar this is called, it may be called unnecessarily
 	 */
 	public void consumeStatementDeclarationWithDisambiguation() {
-		if(TRACE_ACTIONS) DebugUtil.printMethodTrace();
-		
 		IASTDeclaration decl = (IASTDeclaration) astStack.pop();
 		IASTDeclarationStatement declarationStatement = nodeFactory.newDeclarationStatement(decl);
 		setOffsetAndLength(declarationStatement);
@@ -486,51 +231,51 @@ public abstract class BuildASTParserAction {
 		// attempt to also parse the tokens as an expression
 		IASTExpressionStatement expressionStatement = null;
 		if(decl instanceof IASTSimpleDeclaration) {
-			List<IToken> expressionTokens = parser.getRuleTokens();
+			List<IToken> expressionTokens = stream.getRuleTokens();
 			expressionTokens = expressionTokens.subList(0, expressionTokens.size()-1); // remove the semicolon at the end
 			
-			IParser expressionParser = getExpressionParser();
-			IASTExpression expr = (IASTExpression) runSecondaryParser(expressionParser, expressionTokens);
+			ISecondaryParser<IASTExpression> expressionParser = parserFactory.getExpressionParser(stream, properties);
+			IASTExpression expr = runSecondaryParser(expressionParser, expressionTokens);
 			
-			if(expr != null && !(expr instanceof IASTProblemExpression)) { // the parse may fail
+			if(expr != null) { // the parse may fail
 				expressionStatement = nodeFactory.newExpressionStatement(expr);
 				setOffsetAndLength(expressionStatement);
 			}
 		}
 		
 		
-		List<IToken> tokens = parser.getRuleTokens();
+		List<IToken> tokens = stream.getRuleTokens();
 		
 		IASTNode result;
-		if(expressionStatement == null)
+		if(expressionStatement == null) 
 			result = declarationStatement;
+		else if(expressionStatement.getExpression() instanceof IASTFunctionCallExpression)
+			result = expressionStatement;
 		else if(tokens.size() == 2 && (isCompletionToken(tokens.get(0)) || isIdentifierToken(tokens.get(0)))) // identifier followed by semicolon
 			result = expressionStatement;
 		else if(isImplicitInt(decl))
 			result = expressionStatement;
 		else {
-			result = nodeFactory.newAmbiguousStatement(declarationStatement, expressionStatement);
+			result = createAmbiguousStatement(declarationStatement, expressionStatement);
 			setOffsetAndLength(result);
 		}
 			
 		astStack.push(result);
-		
-		if(TRACE_AST_STACK) System.out.println(astStack);
 	}
+	
+	
+	protected abstract IASTAmbiguousStatement createAmbiguousStatement(IASTStatement ... statements);
+	
 	
 	
 	/**
 	 * Wrap a declaration in a DeclarationStatement.
 	 */
 	public void consumeStatementDeclaration() {
-		if(TRACE_ACTIONS) DebugUtil.printMethodTrace();
-		
 		IASTDeclaration decl = (IASTDeclaration) astStack.pop();
 		IASTDeclarationStatement declarationStatement = nodeFactory.newDeclarationStatement(decl);
 		setOffsetAndLength(declarationStatement);
 		astStack.push(declarationStatement);
-		
-		if(TRACE_AST_STACK) System.out.println(astStack);
 	}
 	
 	
@@ -566,9 +311,7 @@ public abstract class BuildASTParserAction {
 	 * @see ICPPASTLiteralExpression
 	 */
 	public void consumeExpressionLiteral(int kind) {
-		if(TRACE_ACTIONS) DebugUtil.printMethodTrace();
-		
-		IToken token = parser.getRightIToken();
+		IToken token = stream.getRightIToken();
 		String rep = token.toString();
 		
 		// Strip the quotes from string literals, this is just to be consistent
@@ -579,49 +322,34 @@ public abstract class BuildASTParserAction {
 //		}
 		
 		IASTLiteralExpression expr = nodeFactory.newLiteralExpression(kind, rep);
-		setOffsetAndLength(expr, token);
+		ParserUtil.setOffsetAndLength(expr, token);
 		astStack.push(expr);
-		
-		if(TRACE_AST_STACK) System.out.println(astStack);
 	}
 	
 	
 
 	public void consumeExpressionBracketed() {
-		if(TRACE_ACTIONS) DebugUtil.printMethodTrace();
-		
 		IASTExpression operand = (IASTExpression) astStack.pop();
 		IASTUnaryExpression expr = nodeFactory.newUnaryExpression(IASTUnaryExpression.op_bracketedPrimary, operand);
         setOffsetAndLength(expr);
 		astStack.push(expr);
-		
-		if(TRACE_AST_STACK) System.out.println(astStack);
 	}
 	
 	
 
 	public void consumeExpressionID() {
-		if(TRACE_ACTIONS) DebugUtil.printMethodTrace();
-		
-		//IASTName name = createName(parser.getRightIToken());
-		IASTName name = createName(parser.getLeftIToken());
+		IASTName name = createName(stream.getLeftIToken());
 		IASTIdExpression expr = nodeFactory.newIdExpression(name);
         setOffsetAndLength(expr);
         astStack.push(expr);
-        
-        if(TRACE_AST_STACK) System.out.println(astStack);
 	}
 	
 	
 	public void consumeExpressionName() {
-		if(TRACE_ACTIONS) DebugUtil.printMethodTrace();
-		
 		IASTName name = (IASTName) astStack.pop();
 		IASTIdExpression expr = nodeFactory.newIdExpression(name);
         setOffsetAndLength(expr);
         astStack.push(expr);
-        
-        if(TRACE_AST_STACK) System.out.println(astStack);
 	}
 	
 	
@@ -629,21 +357,20 @@ public abstract class BuildASTParserAction {
 	 * expression ::= <openscope-ast> expression_list_actual
 	 */
 	public void consumeExpressionList() {
-		if(TRACE_ACTIONS) DebugUtil.printMethodTrace();
-		
 		List<Object> expressions = astStack.closeScope();
 		if(expressions.size() == 1) {
 			astStack.push(expressions.get(0));
 		}
 		else {
 			IASTExpressionList exprList = nodeFactory.newExpressionList();
+			
 			for(Object o : expressions) {
 				exprList.addExpression((IASTExpression)o);
 			}
+			
+			setOffsetAndLength(exprList);
 			astStack.push(exprList);
 		}
-		
-		if(TRACE_AST_STACK) System.out.println(astStack);
 	}
 	
 	
@@ -651,15 +378,11 @@ public abstract class BuildASTParserAction {
 	 * postfix_expression ::= postfix_expression '[' expression ']'
 	 */
 	public void consumeExpressionArraySubscript() {
-		if(TRACE_ACTIONS) DebugUtil.printMethodTrace();
-		
 		IASTExpression subscript = (IASTExpression) astStack.pop();
 		IASTExpression arrayExpr = (IASTExpression) astStack.pop();
 		IASTArraySubscriptExpression expr = nodeFactory.newArraySubscriptExpression(arrayExpr, subscript);
 		setOffsetAndLength(expr);
 		astStack.push(expr);
-		
-		if(TRACE_AST_STACK) System.out.println(astStack);
 	}
 	
 	
@@ -667,16 +390,12 @@ public abstract class BuildASTParserAction {
 	 * postfix_expression ::= postfix_expression '(' expression_list_opt ')'
 	 */
 	public void consumeExpressionFunctionCall() {
-		if(TRACE_ACTIONS) DebugUtil.printMethodTrace();
-		
 		IASTExpression argList = (IASTExpression) astStack.pop(); // may be null
 		IASTExpression idExpr  = (IASTExpression) astStack.pop();
 		
 		IASTFunctionCallExpression expr = nodeFactory.newFunctionCallExpression(idExpr, argList);
 		setOffsetAndLength(expr);
 		astStack.push(expr);
-		
-		if(TRACE_AST_STACK) System.out.println(astStack);
 	}
 
 	
@@ -684,30 +403,29 @@ public abstract class BuildASTParserAction {
 	 * @param operator constant for {@link ICPPASTCastExpression}
 	 */
 	public void consumeExpressionCast(int operator) {
-		if(TRACE_ACTIONS) DebugUtil.printMethodTrace();
-		
 		IASTExpression operand = (IASTExpression) astStack.pop();
 		IASTTypeId typeId = (IASTTypeId) astStack.pop();
 		IASTCastExpression expr = nodeFactory.newCastExpression(operator, typeId, operand);
 		setOffsetAndLength(expr);
 		
-		IASTNode alternateExpr = null;
+		IASTExpression alternateExpr = null;
 		if(operator == IASTCastExpression.op_cast) { // don't reparse for dynamic_cast etc as those are not ambiguous
 			// try parsing as non-cast to resolve ambiguities
-			IParser secondaryParser = getNoCastExpressionParser();
+			ISecondaryParser<IASTExpression> secondaryParser = parserFactory.getNoCastExpressionParser(stream, properties);
 			alternateExpr = runSecondaryParser(secondaryParser);
 		}
 		
-		if(alternateExpr == null || alternateExpr instanceof IASTProblemExpression)
+		if(alternateExpr == null)
 			astStack.push(expr);
 		else {
-			IASTNode ambiguityNode = nodeFactory.newAmbiguousExpression(expr, (IASTExpression)alternateExpr);
+			IASTNode ambiguityNode = createAmbiguousExpression(expr, alternateExpr);
 			setOffsetAndLength(ambiguityNode);
 			astStack.push(ambiguityNode);
 		}
-
-		if(TRACE_AST_STACK) System.out.println(astStack);
 	}
+	
+	
+	protected abstract IASTAmbiguousExpression createAmbiguousExpression(IASTExpression ... expressions);
 	
 	
 	/**
@@ -715,14 +433,10 @@ public abstract class BuildASTParserAction {
 	 * @param operator From IASTUnaryExpression
 	 */
 	public void consumeExpressionUnaryOperator(int operator) {
-		if(TRACE_ACTIONS) DebugUtil.printMethodTrace();
-		
 		IASTExpression operand = (IASTExpression) astStack.pop();
 		IASTUnaryExpression expr = nodeFactory.newUnaryExpression(operator, operand);
 		setOffsetAndLength(expr);
 		astStack.push(expr);
-		
-		if(TRACE_AST_STACK) System.out.println(astStack);
 	}
 	
 	
@@ -732,27 +446,33 @@ public abstract class BuildASTParserAction {
 	 * @see consumeExpressionUnaryOperator For the other use of sizeof
 	 */
 	public void consumeExpressionTypeId(int operator) {
-		if(TRACE_ACTIONS) DebugUtil.printMethodTrace();
-		
 		IASTTypeId typeId = (IASTTypeId) astStack.pop();
 		IASTTypeIdExpression expr = nodeFactory.newTypeIdExpression(operator, typeId);
 		setOffsetAndLength(expr);
 		
 		// try parsing as an expression to resolve ambiguities
-		IParser secondaryParser = getSizeofExpressionParser(); 
-		IASTNode alternateExpr = runSecondaryParser(secondaryParser);
+		ISecondaryParser<IASTExpression> secondaryParser = parserFactory.getSizeofExpressionParser(stream, properties); 
+		IASTExpression alternateExpr = runSecondaryParser(secondaryParser);
 		
-		if(alternateExpr == null || alternateExpr instanceof IASTProblemExpression)
+		if(alternateExpr == null)
 			astStack.push(expr);
+		else if(isFunctionType(expr)) // bug 252243
+			astStack.push(alternateExpr);
 		else {
-			IASTNode ambiguityNode = nodeFactory.newAmbiguousExpression(expr, (IASTExpression)alternateExpr);
+			IASTNode ambiguityNode = createAmbiguousExpression(expr, alternateExpr);
 			setOffsetAndLength(ambiguityNode);
 			astStack.push(ambiguityNode);
 		}
-		
-		if(TRACE_AST_STACK) System.out.println(astStack);
 	}
+	 
 	
+	private static boolean isFunctionType(IASTExpression expr) {
+		if(expr instanceof IASTTypeIdExpression) {
+			IASTTypeId typeId = ((IASTTypeIdExpression) expr).getTypeId();
+			return typeId.getAbstractDeclarator() instanceof IASTFunctionDeclarator;
+		}
+		return false;
+	}
 	
 	
 	/**
@@ -760,15 +480,11 @@ public abstract class BuildASTParserAction {
 	 * @param op Field from IASTBinaryExpression
 	 */
 	public void consumeExpressionBinaryOperator(int op) {
-		if(TRACE_ACTIONS) DebugUtil.printMethodTrace();
-		
 		IASTExpression expr2 = (IASTExpression) astStack.pop();
 		IASTExpression expr1 = (IASTExpression) astStack.pop();
 		IASTBinaryExpression binExpr = nodeFactory.newBinaryExpression(op, expr1, expr2);
 		setOffsetAndLength(binExpr);
 		astStack.push(binExpr);
-		
-		if(TRACE_AST_STACK) System.out.println(astStack);
 	}
 	
 	
@@ -776,16 +492,12 @@ public abstract class BuildASTParserAction {
 	 * conditional_expression ::= logical_OR_expression '?' expression ':' conditional_expression
 	 */
 	public void consumeExpressionConditional() {
-		if(TRACE_ACTIONS) DebugUtil.printMethodTrace();
-		
 		IASTExpression expr3 = (IASTExpression) astStack.pop();
 		IASTExpression expr2 = (IASTExpression) astStack.pop();
 		IASTExpression expr1 = (IASTExpression) astStack.pop();
 		IASTConditionalExpression condExpr = nodeFactory.newConditionalExpession(expr1, expr2, expr3);
 		setOffsetAndLength(condExpr);
 		astStack.push(condExpr);
-		
-		if(TRACE_AST_STACK) System.out.println(astStack);
 	}
 	
 	
@@ -793,46 +505,54 @@ public abstract class BuildASTParserAction {
 	 * labeled_statement ::= label_identifier ':' statement
 	 * label_identifier ::= identifier 
 	 */
-	public void consumeStatementLabeled(/*IBinding binding*/) {
-		if(TRACE_ACTIONS) DebugUtil.printMethodTrace();
-		
+	public void consumeStatementLabeled() {
 		IASTStatement body = (IASTStatement) astStack.pop();
-		IASTName label = createName(parser.getLeftIToken());
-		//label.setBinding(binding);
+		IASTName label = createName(stream.getLeftIToken());
+
 		IASTLabelStatement stat = nodeFactory.newLabelStatement(label, body);
 		setOffsetAndLength(stat);
 		astStack.push(stat);
-		
-		if(TRACE_AST_STACK) System.out.println(astStack);
 	}
 	
 	
 	/**
-	 * labeled_statement ::= case constant_expression ':'
+	 * labeled_statement ::= 'case' constant_expression ':' statement
 	 */
 	public void consumeStatementCase() { 
-		if(TRACE_ACTIONS) DebugUtil.printMethodTrace();
-		
+		IASTStatement body = (IASTStatement) astStack.pop();
 		IASTExpression expr = (IASTExpression) astStack.pop();
-		IASTCaseStatement caseStatement = nodeFactory.newCaseStatement(expr);
-		setOffsetAndLength(caseStatement);
-		astStack.push(caseStatement);
 		
-		if(TRACE_AST_STACK) System.out.println(astStack);
+		IASTCaseStatement caseStatement = nodeFactory.newCaseStatement(expr);		
+		setOffsetAndLength(caseStatement); // TODO this is wrong, need to adjust length to end of colon
+		
+		// this is a hackey fix because case statements are not modeled correctly in the AST
+		IASTCompoundStatement compound = nodeFactory.newCompoundStatement();
+		setOffsetAndLength(compound);
+		compound.addStatement(caseStatement);
+		compound.addStatement(body);
+		
+		astStack.push(compound);
 	}
 	
 	
 	/**
-	 * labeled_statement ::= default ':'
+	 * labeled_statement ::= 'default' ':' <openscope-ast> statement
 	 */
 	public void consumeStatementDefault() {
-		if(TRACE_ACTIONS) DebugUtil.printMethodTrace();
+		IASTStatement body = (IASTStatement) astStack.pop();
 		
 		IASTDefaultStatement stat = nodeFactory.newDefaultStatement();
-		setOffsetAndLength(stat);
-		astStack.push(stat);
+		List<IToken> tokens = stream.getRuleTokens();
+		IToken defaultToken = tokens.get(0);
+		IToken colonToken = tokens.get(1);
+		ParserUtil.setOffsetAndLength(stat, offset(defaultToken), offset(colonToken) - offset(defaultToken) + 1);
 		
-		if(TRACE_AST_STACK) System.out.println(astStack);
+		IASTCompoundStatement compound = nodeFactory.newCompoundStatement();
+		setOffsetAndLength(compound);
+		compound.addStatement(stat);
+		compound.addStatement(body);
+		
+		astStack.push(compound);
 	}
 	
 	
@@ -841,13 +561,9 @@ public abstract class BuildASTParserAction {
 	 * expression_statement ::= ';'
 	 */
 	public void consumeStatementNull() {
-		if(TRACE_ACTIONS) DebugUtil.printMethodTrace();
-		
 		IASTNullStatement stat = nodeFactory.newNullStatement();
 		setOffsetAndLength(stat);
 		astStack.push(stat);
-		
-		if(TRACE_AST_STACK) System.out.println(astStack);
 	}
 	
 	
@@ -855,14 +571,10 @@ public abstract class BuildASTParserAction {
 	 * expression_statement ::= expression ';'
 	 */
 	public void consumeStatementExpression() {
-		if(TRACE_ACTIONS) DebugUtil.printMethodTrace();
-		
 		IASTExpression expr = (IASTExpression) astStack.pop();
 		IASTExpressionStatement stat = nodeFactory.newExpressionStatement(expr);
 		setOffsetAndLength(stat);
 		astStack.push(stat);
-		
-		if(TRACE_AST_STACK) System.out.println(astStack);
 	}
 	
 	
@@ -873,8 +585,6 @@ public abstract class BuildASTParserAction {
 	 * block_item_list ::= block_item | block_item_list block_item
 	 */
 	public void consumeStatementCompoundStatement(boolean hasStatementsInBody) {
-		if(TRACE_ACTIONS) DebugUtil.printMethodTrace();
-		
 		IASTCompoundStatement block = nodeFactory.newCompoundStatement();
 		
 		if(hasStatementsInBody) {
@@ -885,8 +595,6 @@ public abstract class BuildASTParserAction {
 		
 		setOffsetAndLength(block);
 		astStack.push(block);
-		
-		if(TRACE_AST_STACK) System.out.println(astStack);
 	}
 
 	
@@ -895,15 +603,11 @@ public abstract class BuildASTParserAction {
 	 *     ::= 'do' statement 'while' '(' expression ')' ';'
 	 */
 	public void consumeStatementDoLoop() {
-		if(TRACE_ACTIONS) DebugUtil.printMethodTrace();
-		
 		IASTExpression condition = (IASTExpression) astStack.pop();
 		IASTStatement body = (IASTStatement) astStack.pop();
 		IASTDoStatement stat = nodeFactory.newDoStatement(body, condition);
 		setOffsetAndLength(stat);
 		astStack.push(stat);
-		
-		if(TRACE_AST_STACK) System.out.println(astStack);
 	}
 	
 	
@@ -911,16 +615,11 @@ public abstract class BuildASTParserAction {
 	/**
 	 * jump_statement ::= goto goto_identifier ';'
 	 */
-	public void consumeStatementGoto(/*IBinding binding*/) {
-		if(TRACE_ACTIONS) DebugUtil.printMethodTrace();
-		
-		IASTName name = createName(parser.getRuleTokens().get(1));
-		//name.setBinding(binding);
+	public void consumeStatementGoto() {
+		IASTName name = createName(stream.getRuleTokens().get(1));
 		IASTGotoStatement gotoStat = nodeFactory.newGotoStatement(name);
 		setOffsetAndLength(gotoStat);
 		astStack.push(gotoStat);
-		
-		if(TRACE_AST_STACK) System.out.println(astStack);
 	}
 	
 	
@@ -928,13 +627,9 @@ public abstract class BuildASTParserAction {
 	 * jump_statement ::= continue ';'
 	 */
 	public void consumeStatementContinue() {
-		if(TRACE_ACTIONS) DebugUtil.printMethodTrace();
-		
 		IASTContinueStatement stat = nodeFactory.newContinueStatement();
 		setOffsetAndLength(stat);
 		astStack.push(stat);
-		
-		if(TRACE_AST_STACK) System.out.println(astStack);
 	}
 	
 	
@@ -942,13 +637,9 @@ public abstract class BuildASTParserAction {
 	 * jump_statement ::= break ';'
 	 */
 	public void consumeStatementBreak() {   
-		if(TRACE_ACTIONS) DebugUtil.printMethodTrace();
-		
 		IASTBreakStatement stat = nodeFactory.newBreakStatement();
 		setOffsetAndLength(stat);
 		astStack.push(stat);
-		
-		if(TRACE_AST_STACK) System.out.println(astStack);
 	}
 	
 	
@@ -957,14 +648,10 @@ public abstract class BuildASTParserAction {
 	 * jump_statement ::= return expression ';'
 	 */
 	public void consumeStatementReturn(boolean hasExpr) {
-		if(TRACE_ACTIONS) DebugUtil.printMethodTrace();
-		
 		IASTExpression expr = hasExpr ? (IASTExpression) astStack.pop() : null;
 		IASTReturnStatement returnStat = nodeFactory.newReturnStatement(expr);
 		setOffsetAndLength(returnStat);
 		astStack.push(returnStat);
-		
-		if(TRACE_AST_STACK) System.out.println(astStack);
 	}
 
 	
@@ -975,22 +662,18 @@ public abstract class BuildASTParserAction {
      *             | specifier_qualifier_list abstract_declarator
 	 */
 	public void consumeTypeId(boolean hasDeclarator) {
-		if(TRACE_ACTIONS) DebugUtil.printMethodTrace();
-		
 		IASTDeclarator declarator;
 		if(hasDeclarator)
 			declarator = (IASTDeclarator) astStack.pop();
 		else {
 			declarator = nodeFactory.newDeclarator(nodeFactory.newName());
-			setOffsetAndLength(declarator, parser.getRightIToken().getEndOffset(), 0);
+			ParserUtil.setOffsetAndLength(declarator, stream.getRightIToken().getEndOffset(), 0);
 		}
 			
 		IASTDeclSpecifier declSpecifier = (IASTDeclSpecifier) astStack.pop();
 		IASTTypeId typeId = nodeFactory.newTypeId(declSpecifier, declarator);
 		setOffsetAndLength(typeId);
 		astStack.push(typeId);
-		
-		if(TRACE_AST_STACK) System.out.println(astStack);
 	}
 	
 	
@@ -1003,8 +686,6 @@ public abstract class BuildASTParserAction {
      *       | <openscope-ast> ptr_operator_seq direct_declarator
 	 */
 	public void consumeDeclaratorWithPointer(boolean hasDeclarator) {
-		if(TRACE_ACTIONS) DebugUtil.printMethodTrace();
-		
 		IASTDeclarator decl;
 		if(hasDeclarator)
 			decl = (IASTDeclarator) astStack.pop();
@@ -1016,8 +697,6 @@ public abstract class BuildASTParserAction {
 		
 		setOffsetAndLength(decl);
 		astStack.push(decl);
-		
-		if(TRACE_AST_STACK) System.out.println(astStack);
 	}
 	
 	
@@ -1030,8 +709,6 @@ public abstract class BuildASTParserAction {
      *        a default value without also specifying a named declarator
      */
     public void consumeDeclaratorWithInitializer(boolean hasDeclarator) {
-	   	if(TRACE_ACTIONS) DebugUtil.printMethodTrace();
-	   	 
 	   	IASTInitializer initializer = (IASTInitializer) astStack.pop();
 	   	
 	   	IASTDeclarator declarator;
@@ -1047,9 +724,20 @@ public abstract class BuildASTParserAction {
 	   	
 		declarator.setInitializer(initializer);
 		setOffsetAndLength(declarator); // adjust the length to include the initializer
-	   	 
-	   	if(TRACE_AST_STACK) System.out.println(astStack);
     }
+	
+    
+	/**
+	 * asm_definition
+     *     ::= 'asm' '(' 'stringlit' ')' ';'
+	 */
+	public void consumeDeclarationASM() {
+		String s = stream.getRuleTokens().get(2).toString();
+		IASTASMDeclaration asm = nodeFactory.newASMDeclaration(s);
+		
+		setOffsetAndLength(asm);
+		astStack.push(asm);
+	}
 	
 	
     
@@ -1058,15 +746,11 @@ public abstract class BuildASTParserAction {
      *                         | declaration_specifiers abstract_declarator
 	 */
 	public void consumeParameterDeclaration() {
-		if(TRACE_ACTIONS) DebugUtil.printMethodTrace();
-		
 		IASTDeclarator declarator  = (IASTDeclarator) astStack.pop();
 		IASTDeclSpecifier declSpec = (IASTDeclSpecifier) astStack.pop();
 		IASTParameterDeclaration declaration = nodeFactory.newParameterDeclaration(declSpec, declarator);
 		setOffsetAndLength(declaration);
 		astStack.push(declaration);
-		
-		if(TRACE_AST_STACK) System.out.println(astStack);
 	}
 	
 	
@@ -1074,25 +758,21 @@ public abstract class BuildASTParserAction {
 	 * parameter_declaration ::= declaration_specifiers   
 	 */
 	public void consumeParameterDeclarationWithoutDeclarator() {
-		if(TRACE_ACTIONS) DebugUtil.printMethodTrace();
-		
 		// offsets need to be calculated differently in this case		
-		final int endOffset = parser.getRightIToken().getEndOffset();
+		final int endOffset = stream.getRightIToken().getEndOffset();
 		
 		IASTName name = nodeFactory.newName();
-		setOffsetAndLength(name, endOffset, 0);
+		ParserUtil.setOffsetAndLength(name, endOffset, 0);
 		
 		// it appears that a declarator is always required in the AST here
 		IASTDeclarator declarator = nodeFactory.newDeclarator(name);
-		setOffsetAndLength(declarator, endOffset, 0);
+		ParserUtil.setOffsetAndLength(declarator, endOffset, 0);
 		
 		IASTDeclSpecifier declSpec = (IASTDeclSpecifier) astStack.pop();
 		IASTParameterDeclaration declaration = nodeFactory.newParameterDeclaration(declSpec, declarator);
 		
 		setOffsetAndLength(declaration);
 		astStack.push(declaration);
-		
-		if(TRACE_AST_STACK) System.out.println(astStack);
 	}
 	
 	
@@ -1146,15 +826,11 @@ public abstract class BuildASTParserAction {
 	 * direct_declarator ::= '(' declarator ')'
 	 */
 	public void consumeDirectDeclaratorBracketed() {
-		if(TRACE_ACTIONS) DebugUtil.printMethodTrace();
-		
 		IASTDeclarator nested = (IASTDeclarator) astStack.pop();
 		IASTDeclarator declarator = nodeFactory.newDeclarator(nodeFactory.newName());
 		declarator.setNestedDeclarator(nested);
 		setOffsetAndLength(declarator);
 		astStack.push(declarator);
-		
-		if(TRACE_AST_STACK) System.out.println(astStack);
 	}
 	
 	
@@ -1162,14 +838,10 @@ public abstract class BuildASTParserAction {
 	 * direct_declarator ::= declarator_id_name
 	 */
 	public void consumeDirectDeclaratorIdentifier() {
-		if(TRACE_ACTIONS) DebugUtil.printMethodTrace();
-		
 		IASTName name = (IASTName) astStack.pop();
 		IASTDeclarator declarator = nodeFactory.newDeclarator(name);
 		setOffsetAndLength(declarator);
 		astStack.push(declarator);
-		
-		if(TRACE_AST_STACK) System.out.println(astStack);
 	}
 	
 	
@@ -1179,14 +851,10 @@ public abstract class BuildASTParserAction {
      *        | '[' assignment_expression ']'
      */        
 	public void consumeDirectDeclaratorArrayModifier(boolean hasAssignmentExpr) {
-		if(TRACE_ACTIONS) DebugUtil.printMethodTrace();
-
 		IASTExpression expr = hasAssignmentExpr ? (IASTExpression)astStack.pop() : null;
 		IASTArrayModifier arrayModifier = nodeFactory.newArrayModifier(expr);
 		setOffsetAndLength(arrayModifier);
 		astStack.push(arrayModifier);
-		
-		if(TRACE_AST_STACK) System.out.println(astStack);
 	}
 	
 	
@@ -1198,8 +866,6 @@ public abstract class BuildASTParserAction {
 	 * Special care is taken for nested declarators.
 	 */
 	protected void addArrayModifier(IASTArrayModifier arrayModifier) {
-		if(TRACE_ACTIONS) DebugUtil.printMethodTrace();
-		
 		IASTDeclarator node = (IASTDeclarator) astStack.pop();
 		
 		// Its a nested declarator so create an new ArrayDeclarator
@@ -1210,7 +876,7 @@ public abstract class BuildASTParserAction {
 			
 			int offset = offset(nested);
 			int length = endOffset(arrayModifier) - offset;
-			setOffsetAndLength(declarator, offset, length);
+			ParserUtil.setOffsetAndLength(declarator, offset, length);
 			
 			declarator.addArrayModifier(arrayModifier);
 			astStack.push(declarator);
@@ -1230,13 +896,11 @@ public abstract class BuildASTParserAction {
 			
 			int offset = offset(name);
 			int length = endOffset(arrayModifier) - offset;
-			setOffsetAndLength(decl, offset, length);
+			ParserUtil.setOffsetAndLength(decl, offset, length);
 			
 			decl.addArrayModifier(arrayModifier);
 			astStack.push(decl);
 		}
-		
-		if(TRACE_AST_STACK) System.out.println(astStack);
 	}
 	
 	
@@ -1254,7 +918,7 @@ public abstract class BuildASTParserAction {
 			declarator.setNestedDeclarator(decl);
 			declarator.setName(nodeFactory.newName());
 			int offset = offset(decl);
-			setOffsetAndLength(declarator, offset, endOffset - offset);
+			ParserUtil.setOffsetAndLength(declarator, offset, endOffset - offset);
 			astStack.push(declarator);
 		}
 		else  {
@@ -1270,14 +934,12 @@ public abstract class BuildASTParserAction {
 			}
 			
 			int offset = offset(name); // TODO
-			setOffsetAndLength(declarator, offset, endOffset - offset);
+			ParserUtil.setOffsetAndLength(declarator, offset, endOffset - offset);
 			astStack.push(declarator);
 		}
-
-		
-		if(TRACE_AST_STACK) System.out.println(astStack);
 	}
 	
+	// TODO why is this here
 //	/**
 //	 * direct_declarator ::= direct_declarator array_modifier
 //	 * consume the direct_declarator part and add the array modifier
@@ -1289,14 +951,13 @@ public abstract class BuildASTParserAction {
 //		addArrayModifier(arrayModifier);
 //	}
 	
+	
 	/**
 	 * direct_abstract_declarator   
      *     ::= array_modifier
      *       | direct_abstract_declarator array_modifier
 	 */
 	public void consumeDirectDeclaratorArrayDeclarator(boolean hasDeclarator) {
-		if(TRACE_ACTIONS) DebugUtil.printMethodTrace();
-		
 		IASTArrayModifier arrayModifier = (IASTArrayModifier) astStack.pop();
 		
 		if(hasDeclarator) {
@@ -1307,8 +968,6 @@ public abstract class BuildASTParserAction {
 			decl.addArrayModifier(arrayModifier);
 			setOffsetAndLength(decl);
 			astStack.push(decl);
-			
-			if(TRACE_AST_STACK) System.out.println(astStack);
 		}
 	}
 	
@@ -1320,9 +979,7 @@ public abstract class BuildASTParserAction {
      *                  | 'enum' enum_identifier '{' <openscope> enumerator_list_opt '}'
 	 */
 	public void consumeTypeSpecifierEnumeration(boolean hasIdent) {
-		if(TRACE_ACTIONS) DebugUtil.printMethodTrace();
-		
-		IASTName name = (hasIdent) ? createName(parser.getRuleTokens().get(1)) : nodeFactory.newName();
+		IASTName name = (hasIdent) ? createName(stream.getRuleTokens().get(1)) : nodeFactory.newName();
 		
 		IASTEnumerationSpecifier enumSpec = nodeFactory.newEnumerationSpecifier(name);
 
@@ -1331,8 +988,6 @@ public abstract class BuildASTParserAction {
 
 		setOffsetAndLength(enumSpec);
 		astStack.push(enumSpec);
-		
-		if(TRACE_AST_STACK) System.out.println(astStack);
 	}
 	
 	
@@ -1341,9 +996,7 @@ public abstract class BuildASTParserAction {
      *              | enum_identifier '=' constant_expression
 	 */
 	public void consumeEnumerator(boolean hasInitializer) {
-		if(TRACE_ACTIONS) DebugUtil.printMethodTrace();
-		
-		IASTName name = createName(parser.getLeftIToken());
+		IASTName name = createName(stream.getLeftIToken());
 		
 		IASTExpression value = null;
 		if(hasInitializer)
@@ -1352,33 +1005,48 @@ public abstract class BuildASTParserAction {
 		IASTEnumerator enumerator = nodeFactory.newEnumerator(name, value);
 		setOffsetAndLength(enumerator);
 		astStack.push(enumerator);
-		
-		if(TRACE_AST_STACK) System.out.println(astStack);
 	}
 	
+	
+	private int initializerListNestingLevel = 0;
+	
+	public void initializerListStart() {
+		initializerListNestingLevel++;
+	}
+	
+	public void initializerListEnd() {
+		initializerListNestingLevel--;
+	}
 	
 	/**
 	 * initializer ::= assignment_expression
 	 */
 	public void consumeInitializer() {
-		if(TRACE_ACTIONS) DebugUtil.printMethodTrace();
-		
 		IASTExpression expr = (IASTExpression) astStack.pop();
+		if(discardInitializer(expr)) { 
+			astStack.push(null);
+			return;
+		}
+		
 		IASTInitializerExpression initializer = nodeFactory.newInitializerExpression(expr);
-        setOffsetAndLength(initializer);
-        astStack.push(initializer);
-        
-        if(TRACE_AST_STACK) System.out.println(astStack);
+		setOffsetAndLength(initializer);
+		astStack.push(initializer);
 	}
 
+	
+	private boolean discardInitializer(IASTExpression expression) {
+		return initializerListNestingLevel > 0
+		    && "true".equals(properties.get(LRParserProperties.SKIP_TRIVIAL_EXPRESSIONS_IN_AGGREGATE_INITIALIZERS)) //$NON-NLS-1$
+		    && !ASTQueries.canContainName(expression);
+	}
+	
+	
 	
 	/**
 	 * initializer ::= '{' <openscope> initializer_list '}'
      *               | '{' <openscope> initializer_list ',' '}'
 	 */
 	public void consumeInitializerList() {
-		if(TRACE_ACTIONS) DebugUtil.printMethodTrace();
-		
 		IASTInitializerList list = nodeFactory.newInitializerList();
 
 		for(Object o : astStack.closeScope())
@@ -1386,9 +1054,9 @@ public abstract class BuildASTParserAction {
 		
 		setOffsetAndLength(list);
 		astStack.push(list);
-		
-		if(TRACE_AST_STACK) System.out.println(astStack);
 	}
+	
+	
 	
 	
 	
@@ -1398,8 +1066,6 @@ public abstract class BuildASTParserAction {
      *       | declarator ':' constant_expression		
 	 */
 	public void consumeBitField(boolean hasDeclarator) {
-		if(TRACE_ACTIONS) DebugUtil.printMethodTrace();
-		
 		IASTExpression expr = (IASTExpression)astStack.pop();
 		
 		IASTName name;
@@ -1411,20 +1077,15 @@ public abstract class BuildASTParserAction {
 		IASTFieldDeclarator fieldDecl = nodeFactory.newFieldDeclarator(name, expr);
 		setOffsetAndLength(fieldDecl);
 		astStack.push(fieldDecl);
-		
-		if(TRACE_AST_STACK) System.out.println(astStack);
 	}
 	
 	
-	
-	
+
 	/**
 	 * statement ::= ERROR_TOKEN
 	 */
 	public void consumeStatementProblem() {
-		if(TRACE_ACTIONS) DebugUtil.printMethodTrace();
-		
-		consumeProblem(nodeFactory.newProblemStatement());
+		consumeProblem(nodeFactory.newProblemStatement(null));
 	}
 
 	/**
@@ -1432,18 +1093,14 @@ public abstract class BuildASTParserAction {
 	 * constant_expression ::= ERROR_TOKEN
 	 */
 	public void consumeExpressionProblem() {
-		if(TRACE_ACTIONS) DebugUtil.printMethodTrace();
-		
-		consumeProblem(nodeFactory.newProblemExpression());
+		consumeProblem(nodeFactory.newProblemExpression(null));
 	}
 
 	/**
 	 * external_declaration ::= ERROR_TOKEN
 	 */
 	public void consumeDeclarationProblem() {
-		if(TRACE_ACTIONS) DebugUtil.printMethodTrace();
-		
-		consumeProblem(nodeFactory.newProblemDeclaration());
+		consumeProblem(nodeFactory.newProblemDeclaration(null));
 	}
 
 	
@@ -1453,8 +1110,6 @@ public abstract class BuildASTParserAction {
 		setOffsetAndLength(problem);
 		setOffsetAndLength((ASTNode)problemHolder);
 		astStack.push(problemHolder);
-		
-		if(TRACE_AST_STACK) System.out.println(astStack);
 	}
 
 }

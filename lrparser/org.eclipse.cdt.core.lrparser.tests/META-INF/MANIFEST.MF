@@ -1,0 +1,15 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: %Bundle-Name.0
+Bundle-SymbolicName: org.eclipse.cdt.core.lrparser.tests
+Bundle-Version: 5.1.0.qualifier
+Require-Bundle: org.eclipse.core.runtime,
+ org.junit,
+ org.eclipse.cdt.core.tests,
+ org.eclipse.cdt.core,
+ org.eclipse.core.resources,
+ org.eclipse.cdt.core.lrparser;bundle-version="4.0.1"
+Export-Package: org.eclipse.cdt.core.lrparser.tests
+Bundle-Vendor: %Bundle-Vendor.0
+Bundle-Localization: plugin
+Bundle-RequiredExecutionEnvironment: J2SE-1.5

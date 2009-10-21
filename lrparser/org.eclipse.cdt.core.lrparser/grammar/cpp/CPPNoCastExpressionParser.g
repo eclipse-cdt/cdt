@@ -11,7 +11,7 @@
 
 %options la=2
 %options package=org.eclipse.cdt.internal.core.dom.lrparser.cpp
-%options template=FixedBtParserTemplateD.g
+%options template=LRSecondaryParserTemplate.g
 
 $Import
 	CPPGrammar.g
@@ -20,6 +20,10 @@ $DropRules
 	cast_expression
 	    ::= '(' type_id ')' cast_expression
 
+$End
+
+$Define
+    $ast_class /. IASTExpression ./
 $End
 
 $Start
@@ -31,6 +35,6 @@ $Rules
 	no_cast_start
 	    ::= expression
 	      | ERROR_TOKEN
-	          /. $Build  consumeExpressionProblem();  $EndBuild ./
+	          /. $Build  consumeEmpty();  $EndBuild ./
           
 $End

@@ -1,5 +1,5 @@
 -----------------------------------------------------------------------------------
--- Copyright (c) 2006, 2008 IBM Corporation and others.
+-- Copyright (c) 2006, 2009 IBM Corporation and others.
 -- All rights reserved. This program and the accompanying materials
 -- are made available under the terms of the Eclipse Public License v1.0
 -- which accompanies this distribution, and is available at
@@ -8,16 +8,6 @@
 -- Contributors:
 --     IBM Corporation - initial API and implementation
 -----------------------------------------------------------------------------------
-
--- TODO "complete" rules can be removed
-
--- TODO when the architecture has solidified try to move common
--- stuff between C99 and C++ into one file.
-
-$Include
-common.g
-$End
-
 
 $Terminals
 	
@@ -34,10 +24,8 @@ $Terminals
 	integer  floating  charconst  stringlit
 	
 	-- identifiers
-	-- Special token that represents identifiers that have been declared as typedefs (lexer feedback hack)
 	
 	identifier
-	--TypedefName
 
 	-- Special tokens used in content assist
 	
@@ -104,8 +92,9 @@ $End
 
 $Globals
 /.	
-	import org.eclipse.cdt.core.dom.lrparser.action.c99.C99ASTNodeFactory;
+	import org.eclipse.cdt.core.dom.lrparser.action.c99.CNodeFactory;
 	import org.eclipse.cdt.core.dom.lrparser.action.c99.C99BuildASTParserAction;
+	import org.eclipse.cdt.core.dom.lrparser.action.c99.C99SecondaryParserFactory;
 ./
 $End
 
@@ -113,7 +102,8 @@ $End
 
 $Define
 	$build_action_class /. C99BuildASTParserAction ./
-	$node_factory_create_expression /. C99ASTNodeFactory.DEFAULT_INSTANCE ./
+	$node_factory_create_expression /. CNodeFactory.getDefault() ./
+	$parser_factory_create_expression /. C99SecondaryParserFactory.getDefault() ./
 $End
 
 
@@ -121,7 +111,7 @@ $End
 $Rules
 
 -------------------------------------------------------------------------------------------
--- AST  and Symbol Table Scoping
+-- AST scopes
 -------------------------------------------------------------------------------------------
 
 
@@ -129,7 +119,11 @@ $Rules
     ::= $empty
           /. $Build  openASTScope();  $EndBuild ./ 
 
-
+<empty>
+    ::= $empty 
+          /. $Build  consumeEmpty();  $EndBuild ./ 
+          
+          
 -------------------------------------------------------------------------------------------
 -- Content assist
 -------------------------------------------------------------------------------------------
@@ -157,6 +151,10 @@ $Rules
 -- Expressions
 -------------------------------------------------------------------------------------------
 
+identifier_token
+    ::= 'identifier'
+      | 'Completion'
+      
 
 literal
     ::= 'integer'                    
@@ -177,9 +175,8 @@ primary_expression
           /. $Build  consumeExpressionBracketed();  $EndBuild ./
 
 
-primary_expression_id   -- Typedefname not allowed as a variable name.
-    ::= 'identifier'
-      | 'Completion'
+primary_expression_id
+    ::= identifier_token
 
           
 postfix_expression
@@ -196,7 +193,7 @@ postfix_expression
          /. $Build   consumeExpressionUnaryOperator(IASTUnaryExpression.op_postFixIncr);  $EndBuild ./
       | postfix_expression '--'
           /. $Build  consumeExpressionUnaryOperator(IASTUnaryExpression.op_postFixDecr);  $EndBuild ./
-      | '(' type_name ')' '{' <openscope-ast> initializer_list comma_opt '}'
+      | '(' type_id ')' initializer_list
           /. $Build  consumeExpressionTypeIdInitializer();  $EndBuild ./
  
  
@@ -205,9 +202,7 @@ comma_opt
 
 
 member_name
-    ::= 'identifier'
-    --  | 'TypedefName'
-      | 'Completion'
+    ::= identifier_token
 
 
 unary_expression
@@ -230,13 +225,13 @@ unary_expression
           /. $Build  consumeExpressionUnaryOperator(IASTUnaryExpression.op_not);  $EndBuild ./
       | 'sizeof' unary_expression
           /. $Build  consumeExpressionUnaryOperator(IASTUnaryExpression.op_sizeof);  $EndBuild ./
-      | 'sizeof' '(' type_name ')'
+      | 'sizeof' '(' type_id ')'
           /. $Build  consumeExpressionTypeId(IASTTypeIdExpression.op_sizeof);  $EndBuild ./  
           
 
 cast_expression
     ::= unary_expression
-      | '(' type_name ')' cast_expression
+      | '(' type_id ')' cast_expression
           /. $Build  consumeExpressionCast(IASTCastExpression.op_cast);  $EndBuild ./
 
 
@@ -286,40 +281,40 @@ equality_expression
           /. $Build  consumeExpressionBinaryOperator(IASTBinaryExpression.op_notequals);  $EndBuild ./
 
 
-AND_expression
+and_expression
     ::= equality_expression
-      | AND_expression '&' equality_expression
+      | and_expression '&' equality_expression
           /. $Build  consumeExpressionBinaryOperator(IASTBinaryExpression.op_binaryAnd);  $EndBuild ./
 
 
-exclusive_OR_expression
-    ::= AND_expression
-      | exclusive_OR_expression '^' AND_expression
+exclusive_or_expression
+    ::= and_expression
+      | exclusive_or_expression '^' and_expression
           /. $Build  consumeExpressionBinaryOperator(IASTBinaryExpression.op_binaryXor);  $EndBuild ./
 
 
-inclusive_OR_expression
-    ::= exclusive_OR_expression
-      | inclusive_OR_expression '|' exclusive_OR_expression
+inclusive_or_expression
+    ::= exclusive_or_expression
+      | inclusive_or_expression '|' exclusive_or_expression
           /. $Build  consumeExpressionBinaryOperator(IASTBinaryExpression.op_binaryOr);  $EndBuild ./
 
 
-logical_AND_expression
-    ::= inclusive_OR_expression
-      | logical_AND_expression '&&' inclusive_OR_expression
+logical_and_expression
+    ::= inclusive_or_expression
+      | logical_and_expression '&&' inclusive_or_expression
           /. $Build  consumeExpressionBinaryOperator(IASTBinaryExpression.op_logicalAnd);  $EndBuild ./
 
 
-logical_OR_expression
-    ::= logical_AND_expression
-      | logical_OR_expression '||' logical_AND_expression
+logical_or_expression
+    ::= logical_and_expression
+      | logical_or_expression '||' logical_and_expression
           /. $Build  consumeExpressionBinaryOperator(IASTBinaryExpression.op_logicalOr);  $EndBuild ./
 
 
 conditional_expression
-    ::= logical_OR_expression
-      | logical_OR_expression '?' expression ':' conditional_expression
-          /. $Build  consumeExpressionConditional();  $EndBuild ./
+    ::= logical_or_expression
+      | logical_or_expression '?' expression ':' assignment_expression
+           /. $Build  consumeExpressionConditional();  $EndBuild ./
 
 
 assignment_expression
@@ -395,11 +390,11 @@ statement
 
 
 labeled_statement
-    ::= identifier_or_typedefname ':' statement
+    ::= identifier_token ':' statement
     	  /. $Build  consumeStatementLabeled();  $EndBuild ./
-      | 'case' constant_expression ':'
+      | 'case' constant_expression ':' statement
           /. $Build  consumeStatementCase();  $EndBuild ./
-      | 'default' ':'
+      | 'default' ':' statement
           /. $Build  consumeStatementDefault();  $EndBuild ./
          
          
@@ -455,7 +450,7 @@ iteration_statement
           
 
 jump_statement
-    ::= 'goto' identifier_or_typedefname ';'
+    ::= 'goto' identifier_token ';'
           /. $Build  consumeStatementGoto();  $EndBuild ./
       | 'continue' ';'
           /. $Build  consumeStatementContinue();  $EndBuild ./
@@ -531,8 +526,8 @@ enum_declaration_specifiers
 
 
 typdef_name_declaration_specifiers
-    ::= typedef_name_in_declspec
-      | no_type_declaration_specifiers  typedef_name_in_declspec
+    ::= type_name_specifier
+      | no_type_declaration_specifiers  type_name_specifier
       | typdef_name_declaration_specifiers no_type_declaration_specifier
     
     
@@ -553,7 +548,7 @@ complete_declarator
 
 storage_class_specifier
     ::= storage_class_specifier_token
-          /. $Build  consumeDeclSpecToken();  $EndBuild ./
+          /. $Build  consumeToken();  $EndBuild ./
 
 
 storage_class_specifier_token 
@@ -566,7 +561,7 @@ storage_class_specifier_token
 
 simple_type_specifier
     ::= simple_type_specifier_token
-          /. $Build  consumeDeclSpecToken();  $EndBuild ./
+          /. $Build  consumeToken();  $EndBuild ./
 				
 simple_type_specifier_token
     ::= 'void'        
@@ -583,41 +578,41 @@ simple_type_specifier_token
       | '_Imaginary'
 		
 		
-typedef_name_in_declspec
-    ::= 'Completion'
-          /. $Build  consumeDeclSpecToken();  $EndBuild ./
-      | 'identifier'
-          /. $Build  consumeDeclSpecToken();  $EndBuild ./
-        -- | 'TypedefName' -- remove identifier if this is uncommented
+type_name_specifier
+    ::= identifier_token
+          /. $Build  consumeToken();  $EndBuild ./
        
-          
 
-identifier_or_typedefname
-    ::= 'identifier'
-      | 'Completion'
-      -- | 'TypedefName'
-      
       
 struct_or_union_specifier
-    ::= 'struct' '{' <openscope-ast> struct_declaration_list_opt '}'
-          /. $Build  consumeTypeSpecifierComposite(false, IASTCompositeTypeSpecifier.k_struct); $EndBuild ./           
-      | 'union' '{' <openscope-ast> struct_declaration_list_opt '}'
-          /. $Build  consumeTypeSpecifierComposite(false, IASTCompositeTypeSpecifier.k_union); $EndBuild ./  
-      | 'struct' identifier_or_typedefname '{' <openscope-ast> struct_declaration_list_opt '}'
-          /. $Build  consumeTypeSpecifierComposite(true, IASTCompositeTypeSpecifier.k_struct); $EndBuild ./ 
-      | 'union'  identifier_or_typedefname '{' <openscope-ast> struct_declaration_list_opt '}'
-          /. $Build  consumeTypeSpecifierComposite(true, IASTCompositeTypeSpecifier.k_union); $EndBuild ./
+    ::= struct_or_union struct_or_union_specifier_hook '{' <openscope-ast> struct_declaration_list_opt '}'
+          /. $Build  consumeTypeSpecifierComposite(false); $EndBuild ./           
+      | struct_or_union struct_or_union_specifier_hook identifier_token struct_or_union_specifier_suffix_hook '{' <openscope-ast> struct_declaration_list_opt '}'
+          /. $Build  consumeTypeSpecifierComposite(true); $EndBuild ./ 
           
-          
+struct_or_union_specifier_hook
+    ::= $empty
+
+struct_or_union_specifier_suffix_hook
+    ::= $empty
+
+struct_or_union
+    ::= 'struct'
+      | 'union'
+      
+      
 elaborated_specifier          
-    ::= 'struct' identifier_or_typedefname
+    ::= 'struct' elaborated_specifier_hook identifier_token
           /. $Build  consumeTypeSpecifierElaborated(IASTCompositeTypeSpecifier.k_struct); $EndBuild ./
-      | 'union'  identifier_or_typedefname
+      | 'union'  elaborated_specifier_hook identifier_token
           /. $Build  consumeTypeSpecifierElaborated(IASTCompositeTypeSpecifier.k_union); $EndBuild ./
-      | 'enum' identifier_or_typedefname
+      | 'enum' elaborated_specifier_hook identifier_token
           /. $Build  consumeTypeSpecifierElaborated(IASTElaboratedTypeSpecifier.k_enum); $EndBuild ./
           
-          
+elaborated_specifier_hook
+    ::= $empty
+    
+    
 struct_declaration_list_opt
     ::= struct_declaration_list
       | $empty
@@ -659,12 +654,15 @@ struct_declarator
 		      
             
 enum_specifier
-    ::= 'enum' '{' <openscope-ast> enumerator_list_opt comma_opt '}'
+    ::= 'enum' enum_specifier_hook '{' <openscope-ast> enumerator_list_opt comma_opt '}'
           /. $Build  consumeTypeSpecifierEnumeration(false); $EndBuild ./
-      | 'enum' identifier_or_typedefname '{' <openscope-ast> enumerator_list_opt comma_opt '}'
+      | 'enum' enum_specifier_hook identifier_token '{' <openscope-ast> enumerator_list_opt comma_opt '}'
           /. $Build  consumeTypeSpecifierEnumeration(true); $EndBuild ./
       
-      
+enum_specifier_hook
+    ::= $empty
+
+
 enumerator_list_opt
     ::= enumerator_list
       | $empty
@@ -676,15 +674,15 @@ enumerator_list
       
       
 enumerator
-    ::= identifier_or_typedefname
+    ::= identifier_token
           /. $Build  consumeEnumerator(false); $EndBuild ./
-      | identifier_or_typedefname '=' constant_expression
+      | identifier_token '=' constant_expression
           /. $Build  consumeEnumerator(true); $EndBuild ./
       
       
 type_qualifier
     ::= type_qualifier_token
-          /. $Build  consumeDeclSpecToken();  $EndBuild ./
+          /. $Build  consumeToken();  $EndBuild ./
      
      
 type_qualifier_token
@@ -695,7 +693,7 @@ type_qualifier_token
 
 function_specifier
     ::= 'inline'    
-          /. $Build  consumeDeclSpecToken();  $EndBuild ./
+          /. $Build  consumeToken();  $EndBuild ./
 
 
 declarator
@@ -798,14 +796,17 @@ array_modifier_type_qualifiers
 
 
 pointer_seq
-    ::= '*'
+    ::= pointer_hook '*' pointer_hook
           /. $Build  consumePointer();  $EndBuild ./
-      | pointer_seq '*' 
+      | pointer_seq pointer_hook '*' pointer_hook
           /. $Build  consumePointer();  $EndBuild ./
-      | '*' <openscope-ast> type_qualifier_list
+      | pointer_hook '*' pointer_hook <openscope-ast> type_qualifier_list
           /. $Build  consumePointerTypeQualifierList();  $EndBuild ./
-      | pointer_seq '*' <openscope-ast> type_qualifier_list
+      | pointer_seq pointer_hook '*' pointer_hook <openscope-ast> type_qualifier_list
           /. $Build  consumePointerTypeQualifierList();  $EndBuild ./
+
+pointer_hook
+    ::= $empty
 
 
 type_qualifier_list
@@ -841,7 +842,7 @@ complete_parameter_declarator
 
 
 -- only used in expressions, eg) sizeof, casts etc...
-type_name
+type_id
     ::= specifier_qualifier_list
           /. $Build  consumeTypeId(false);  $EndBuild ./
       | specifier_qualifier_list abstract_declarator
@@ -853,7 +854,7 @@ abstract_declarator  -- a declarator that does not include an identifier
       | <openscope-ast> pointer_seq
           /. $Build  consumeDeclaratorWithPointer(false);  $EndBuild ./
       | <openscope-ast> pointer_seq direct_abstract_declarator
-          /. $Build  consumeDeclaratorWithPointer(false);  $EndBuild ./
+          /. $Build  consumeDeclaratorWithPointer(true);  $EndBuild ./
 
 
 direct_abstract_declarator
@@ -890,15 +891,30 @@ function_direct_abstract_declarator
 initializer
     ::= assignment_expression
           /. $Build  consumeInitializer();  $EndBuild ./
-      | '{' <openscope-ast> initializer_list comma_opt '}'
+      | initializer_list  
+          
+          
+initializer_list
+    ::= start_initializer_list '{' <openscope-ast> initializer_seq comma_opt '}' end_initializer_list
+          /. $Build  consumeInitializerList();  $EndBuild ./
+      | '{' <openscope-ast> '}'
           /. $Build  consumeInitializerList();  $EndBuild ./
 
 
-initializer_list
+start_initializer_list
+    ::= $empty
+          /. $Build  initializerListStart(); $EndBuild ./
+          
+end_initializer_list
+    ::= $empty
+          /. $Build  initializerListEnd(); $EndBuild ./
+          
+          
+initializer_seq
     ::= initializer
       | designated_initializer
-      | initializer_list ',' initializer
-      | initializer_list ',' designated_initializer
+      | initializer_seq ',' initializer
+      | initializer_seq ',' designated_initializer
             
 
 designated_initializer
@@ -918,13 +934,13 @@ designator_list
 designator_base
     ::= '[' constant_expression ']'
           /. $Build  consumeDesignatorArray();  $EndBuild ./
-      | '.' identifier_or_typedefname		
+      | '.' identifier_token		
           /. $Build  consumeDesignatorField();  $EndBuild ./
 
 designator
     ::= '[' constant_expression ']'
          /. $Build  consumeDesignatorArray();  $EndBuild ./
-      | '.' identifier_or_typedefname		
+      | '.' identifier_token		
          /. $Build  consumeDesignatorField();  $EndBuild ./
 		
 		
@@ -963,15 +979,17 @@ declaration_list
 -- to avoid a shift/reduce error with the rule for declaration. 
 -- The symbol table scoped is opened in the rule for function_direct_declarator
 function_definition
-    ::= declaration_specifiers <openscope-ast>  function_declarator function_body
-          /. $Build  consumeFunctionDefinition(true);  $EndBuild ./
+    ::= normal_function_definition
          -- this rule is here as a special case (its not C99 spec) just to support implicit int in function definitions
       | <openscope-ast>  function_declarator function_body
           /. $Build  consumeFunctionDefinition(false);  $EndBuild ./
       | declaration_specifiers <openscope-ast>  knr_function_declarator <openscope-ast> declaration_list compound_statement
           /. $Build  consumeFunctionDefinitionKnR();  $EndBuild ./
 
-   
+normal_function_definition
+    ::= declaration_specifiers <openscope-ast>  function_declarator function_body
+          /. $Build  consumeFunctionDefinition(true);  $EndBuild ./
+          
 -- same syntax as compound_statement but a symbol table scope isn't opened
 function_body
     ::= '{' '}' 

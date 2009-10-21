@@ -1,11 +1,11 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2008 IBM Corporation and others.
- * All rights reserved. This program and the accompanying materials
- * are made available under the terms of the Eclipse Public License v1.0
- * which accompanies this distribution, and is available at
- * http://www.eclipse.org/legal/epl-v10.html
- *
- * Contributors:
+ *  Copyright (c) 2006, 2009 IBM Corporation and others.
+ *  All rights reserved. This program and the accompanying materials
+ *  are made available under the terms of the Eclipse Public License v1.0
+ *  which accompanies this distribution, and is available at
+ *  http://www.eclipse.org/legal/epl-v10.html
+ * 
+ *  Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 package org.eclipse.cdt.core.dom.lrparser.action;
@@ -41,22 +41,23 @@ public class ASTCompletionNode implements IASTCompletionNode {
 	private final List<IASTName> names = new LinkedList<IASTName>();
 	
 	private final String prefix;
-	private final IASTTranslationUnit tu;
+	private IASTTranslationUnit tu;
 	
 	
 	/**
 	 * Creates a completion node.
-	 * @throws NullPointerException if tu is null
-	 * @throws IllegalArgumentException if prefix is the empty string, it should be null instead
+	 * @param prefix The completion prefix, set to null if the empty string is passed.
 	 */
 	public ASTCompletionNode(String prefix, IASTTranslationUnit tu) {
 		if("".equals(prefix)) //$NON-NLS-1$
-			throw new IllegalArgumentException("prefix cannot be the empty string"); //$NON-NLS-1$
-		if(tu == null)
-			throw new NullPointerException("tu is null"); //$NON-NLS-1$
+			prefix = null;
 		
 		this.prefix = prefix;
 		this.tu = tu;
+	}
+	
+	public ASTCompletionNode(String prefix) {
+		this(prefix, null);
 	}
 
 	
@@ -87,9 +88,14 @@ public class ASTCompletionNode implements IASTCompletionNode {
 	public String getPrefix() {
 		return prefix;
 	}
+	
+	public void setTranslationUnit(IASTTranslationUnit tu) {
+		this.tu = tu;
+	}
 
 	public IASTTranslationUnit getTranslationUnit() {
 		return tu;
 	}
+	
 
 }

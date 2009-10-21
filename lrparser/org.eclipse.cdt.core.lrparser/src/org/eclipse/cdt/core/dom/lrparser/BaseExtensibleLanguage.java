@@ -1,14 +1,17 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2008 IBM Corporation and others.
- * All rights reserved. This program and the accompanying materials
- * are made available under the terms of the Eclipse Public License v1.0
- * which accompanies this distribution, and is available at
- * http://www.eclipse.org/legal/epl-v10.html
- *
- * Contributors:
+ *  Copyright (c) 2006, 2009 IBM Corporation and others.
+ *  All rights reserved. This program and the accompanying materials
+ *  are made available under the terms of the Eclipse Public License v1.0
+ *  which accompanies this distribution, and is available at
+ *  http://www.eclipse.org/legal/epl-v10.html
+ * 
+ *  Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 package org.eclipse.cdt.core.dom.lrparser;
+
+import java.util.HashMap;
+import java.util.Map;
 
 import org.eclipse.cdt.core.dom.ICodeReaderFactory;
 import org.eclipse.cdt.core.dom.ast.IASTCompletionNode;
@@ -20,7 +23,9 @@ import org.eclipse.cdt.core.dom.parser.IScannerExtensionConfiguration;
 import org.eclipse.cdt.core.index.IIndex;
 import org.eclipse.cdt.core.model.AbstractLanguage;
 import org.eclipse.cdt.core.model.ICLanguageKeywords;
+import org.eclipse.cdt.core.model.IContributedModelBuilder;
 import org.eclipse.cdt.core.model.ILanguage;
+import org.eclipse.cdt.core.model.ITranslationUnit;
 import org.eclipse.cdt.core.parser.CodeReader;
 import org.eclipse.cdt.core.parser.IParserLogService;
 import org.eclipse.cdt.core.parser.IScanner;
@@ -32,24 +37,22 @@ import org.eclipse.cdt.internal.core.dom.parser.ASTNode;
 import org.eclipse.cdt.internal.core.parser.scanner.CPreprocessor;
 import org.eclipse.cdt.internal.core.pdom.dom.IPDOMLinkageFactory;
 import org.eclipse.cdt.internal.core.pdom.dom.c.PDOMCLinkageFactory;
+import org.eclipse.cdt.internal.core.pdom.dom.cpp.PDOMCPPLinkageFactory;
 import org.eclipse.core.runtime.CoreException;
 
 
 /**
  * Implementation of the ILanguage extension point, 
  * provides the ability to add LPG based languages to CDT.
- *
- * @author Mike Kucera
  */
-@SuppressWarnings("restriction")
-public abstract class BaseExtensibleLanguage extends AbstractLanguage implements ILanguage, ICLanguageKeywords {
+@SuppressWarnings({ "restriction", "nls" })
+public abstract class BaseExtensibleLanguage extends AbstractLanguage {
 			
 	
 	private static final boolean DEBUG_PRINT_GCC_AST = false;
 	private static final boolean DEBUG_PRINT_AST     = false;
-	
+
 	private ICLanguageKeywords keywords = null;
-	
 	
 	/**
 	 * Retrieve the parser (runs after the preprocessor runs).
@@ -57,28 +60,7 @@ public abstract class BaseExtensibleLanguage extends AbstractLanguage implements
 	 * Can be overridden in subclasses to provide a different parser
 	 * for a language extension.
 	 */
-	protected abstract IParser getParser();
-	
-	
-	/**
-	 * A token map is used to map tokens from the DOM preprocessor
-	 * to the tokens defined by an LPG parser.
-	 */
-	protected abstract IDOMTokenMap getTokenMap();
-	
-	
-	/**
-	 * Normally all the AST nodes are created by the parser, but we
-	 * need the root node ahead of time.
-	 * 
-	 * The preprocessor is responsible for creating preprocessor AST nodes,
-     * so the preprocessor needs access to the translation unit so that it can
-     * set the parent pointers on the AST nodes it creates.
-     * 
-	 * @return an IASTTranslationUnit object thats empty and will be filled in by the parser
-	 */
-	protected abstract IASTTranslationUnit createASTTranslationUnit(IIndex index, IScanner preprocessor);
-	
+	protected abstract IParser<IASTTranslationUnit> getParser(IScanner scanner, IIndex index, Map<String,String> properties);
 	
 	/**
 	 * Returns the ParserLanguage value that is to be used when creating
@@ -94,62 +76,48 @@ public abstract class BaseExtensibleLanguage extends AbstractLanguage implements
 	protected abstract IScannerExtensionConfiguration getScannerExtensionConfiguration();
 	
 	
-	
-	private void getCLanguageKeywords() {
-		ParserLanguage lang = getParserLanguage();
-		IScannerExtensionConfiguration config = getScannerExtensionConfiguration();
-		keywords = new CLanguageKeywords(lang, config);
+	protected ICLanguageKeywords getCLanguageKeywords() {
+		if(keywords == null) {
+			ParserLanguage lang = getParserLanguage();
+			IScannerExtensionConfiguration config = getScannerExtensionConfiguration();
+			keywords = new CLanguageKeywords(lang, config);
+		}
+		return keywords;
 	}
 	
 	
-	@SuppressWarnings("unchecked")
-	@Override
-	public Object getAdapter(Class adapter) {
-		if (adapter == IPDOMLinkageFactory.class)
-			return new PDOMCLinkageFactory();
-		
-		return super.getAdapter(adapter);
-	}
-	
-	
-	
-	
-	@SuppressWarnings("nls")
 	@Override
 	public IASTTranslationUnit getASTTranslationUnit(CodeReader reader, IScannerInfo scanInfo,
 			ICodeReaderFactory fileCreator, IIndex index, int options, IParserLogService log) throws CoreException {
 		
 		IASTTranslationUnit gtu = null;
 		if(DEBUG_PRINT_GCC_AST) {
-			ILanguage gppLanguage = GCCLanguage.getDefault();
-			gtu = gppLanguage.getASTTranslationUnit(reader, scanInfo, fileCreator, index, log);
+			System.out.println("\n********************************************************\nParsing\nOptions: " + options);
 			
-			System.out.println();
-			System.out.println("********************************************************");
-			System.out.println("Parsing");
-			System.out.println("Options: " + options);
-			System.out.println("GPP AST:");
+			ILanguage gppLanguage = getParserLanguage() == ParserLanguage.CPP ? GPPLanguage.getDefault() : GCCLanguage.getDefault();
+			gtu = gppLanguage.getASTTranslationUnit(reader, scanInfo, fileCreator, index, options, log);
+			
+			System.out.println(gppLanguage.getName() + " AST:");
 			ASTPrinter.print(gtu);
 			System.out.println();
 		}
 
-		// TODO temporary
-		IScannerExtensionConfiguration config = new ScannerExtensionConfiguration();
+		IScannerExtensionConfiguration config = getScannerExtensionConfiguration();
 		
 		ParserLanguage pl = getParserLanguage();
 		IScanner preprocessor = new CPreprocessor(reader, scanInfo, pl, log, config, fileCreator);
-		preprocessor.setScanComments((options & OPTION_ADD_COMMENTS) != 0);
 		preprocessor.setComputeImageLocations((options & ILanguage.OPTION_NO_IMAGE_LOCATIONS) == 0);
 		
-		IParser parser = getParser();
-		IASTTranslationUnit tu = createASTTranslationUnit(index, preprocessor);
+		Map<String,String> parserProperties = new HashMap<String,String>();
+		parserProperties.put(LRParserProperties.TRANSLATION_UNIT_PATH, reader.getPath());
+		if((options & OPTION_SKIP_FUNCTION_BODIES) != 0)
+			parserProperties.put(LRParserProperties.SKIP_FUNCTION_BODIES, "true");
+		//if((options & OPTION_SKIP_TRIVIAL_EXPRESSIONS_IN_AGGREGATE_INITIALIZERS) != 0)
+		//	parserProperties.put(LRParserProperties.SKIP_TRIVIAL_EXPRESSIONS_IN_AGGREGATE_INITIALIZERS, "true");
 		
-		CPreprocessorAdapter.runCPreprocessor(preprocessor, parser, getTokenMap(), tu);
-		
-		parser.parse(tu); // the parser will fill in the rest of the AST
-		
-		// the TU is marked as either a source file or a header file
-		tu.setIsHeaderUnit((options & OPTION_IS_SOURCE_UNIT) == 0);
+		IParser<IASTTranslationUnit> parser = getParser(preprocessor, index, parserProperties);
+		IASTTranslationUnit tu = parser.parse();
+		tu.setIsHeaderUnit((options & OPTION_IS_SOURCE_UNIT) == 0); // the TU is marked as either a source file or a header file
 		
 		if(DEBUG_PRINT_AST) {
 			System.out.println("Base Extensible Language AST:");
@@ -168,7 +136,6 @@ public abstract class BaseExtensibleLanguage extends AbstractLanguage implements
 	}
 
 	
-	@SuppressWarnings("nls")
 	public IASTCompletionNode getCompletionNode(CodeReader reader,
 			IScannerInfo scanInfo, ICodeReaderFactory fileCreator,
 			IIndex index, IParserLogService log, int offset) throws CoreException {
@@ -185,30 +152,27 @@ public abstract class BaseExtensibleLanguage extends AbstractLanguage implements
 			printCompletionNode(cn);
 		}
 		
-		// TODO temporary
 		IScannerExtensionConfiguration config = getScannerExtensionConfiguration();
 		
 		ParserLanguage pl = getParserLanguage();
 		IScanner preprocessor = new CPreprocessor(reader, scanInfo, pl, log, config, fileCreator);
 		preprocessor.setContentAssistMode(offset);
 		
-		IParser parser = getParser();
-		IASTTranslationUnit tu = createASTTranslationUnit(index, preprocessor);
 		
-		CPreprocessorAdapter.runCPreprocessor(preprocessor, parser, getTokenMap(), tu);
+		Map<String,String> parserProperties = new HashMap<String,String>();
+		parserProperties.put(LRParserProperties.TRANSLATION_UNIT_PATH, reader.getPath());
+		parserProperties.put(LRParserProperties.SKIP_FUNCTION_BODIES, "true");
+		parserProperties.put(LRParserProperties.SKIP_TRIVIAL_EXPRESSIONS_IN_AGGREGATE_INITIALIZERS, "true");
 		
-		// the parser will fill in the rest of the AST
-		IASTCompletionNode completionNode = parser.parse(tu);
+		IParser<IASTTranslationUnit> parser = getParser(preprocessor, index, parserProperties);
+		parser.parse();
+		
+		IASTCompletionNode completionNode = parser.getCompletionNode();
 		
 		if(DEBUG_PRINT_AST) {
 			System.out.println("Base Extensible Language AST:");
 			printCompletionNode(completionNode);
 		}
-		
-//		List<String> messages = ASTComparer.compare(completionNode.getTranslationUnit(), cn.getTranslationUnit());
-//		for(String m : messages) {
-//			System.out.println(m);
-//		}
 		
 		return completionNode;
 	}
@@ -217,7 +181,6 @@ public abstract class BaseExtensibleLanguage extends AbstractLanguage implements
 	/*
 	 * For debugging.
 	 */
-	@SuppressWarnings("nls")
 	private static void printCompletionNode(IASTCompletionNode cn) {
 		if(cn == null) {
 			System.out.println("Completion node is null");
@@ -241,25 +204,34 @@ public abstract class BaseExtensibleLanguage extends AbstractLanguage implements
 		return GCCLanguage.getDefault().getSelectedNames(ast, start, length);
 	}
 	
+
+	
+	@SuppressWarnings("unchecked")
+	@Override
+	public Object getAdapter(Class adapter) {
+		if(IPDOMLinkageFactory.class.equals(adapter)) {
+			if(getParserLanguage().isCPP())
+				return new PDOMCPPLinkageFactory();
+			return new PDOMCLinkageFactory();
+		}
+		
+		return super.getAdapter(adapter);
+	}
+	
 	public String[] getBuiltinTypes() {
-		if(keywords == null)
-			getCLanguageKeywords();
-			
-		return keywords.getBuiltinTypes();
+		return getCLanguageKeywords().getBuiltinTypes();
 	}
 
 	public String[] getKeywords() {
-		if(keywords == null)
-			getCLanguageKeywords();
-		
-		return keywords.getKeywords();
+		return getCLanguageKeywords().getKeywords();
 	}
 
 	public String[] getPreprocessorKeywords() {
-		if(keywords == null)
-			getCLanguageKeywords();
-		
-		return keywords.getPreprocessorKeywords();
+		return getCLanguageKeywords().getPreprocessorKeywords();
+	}
+	
+	public IContributedModelBuilder createModelBuilder(@SuppressWarnings("unused") ITranslationUnit tu) {
+		return null;
 	}
 	
 }

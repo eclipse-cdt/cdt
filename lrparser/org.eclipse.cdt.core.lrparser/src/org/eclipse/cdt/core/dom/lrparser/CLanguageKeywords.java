@@ -33,7 +33,7 @@ import org.eclipse.cdt.internal.core.parser.token.KeywordSets;
  * @author Mike Kucera
  */
 @SuppressWarnings({"restriction", "nls"})
-class CLanguageKeywords implements ICLanguageKeywords {
+public class CLanguageKeywords implements ICLanguageKeywords {
 
 	private final ParserLanguage language;
 	private final IScannerExtensionConfiguration config;

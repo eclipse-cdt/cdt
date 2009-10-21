@@ -11,10 +11,16 @@ Require-Bundle: org.eclipse.cdt.core,
 Export-Package: org.eclipse.cdt.core.dom.lrparser,
  org.eclipse.cdt.core.dom.lrparser.action,
  org.eclipse.cdt.core.dom.lrparser.action.c99,
+ org.eclipse.cdt.core.dom.lrparser.action.cpp,
+ org.eclipse.cdt.core.dom.lrparser.action.gnu,
  org.eclipse.cdt.core.dom.lrparser.c99,
  org.eclipse.cdt.core.dom.lrparser.cpp,
+ org.eclipse.cdt.core.dom.lrparser.gnu,
  org.eclipse.cdt.core.dom.lrparser.lpgextensions,
- org.eclipse.cdt.internal.core.dom.lrparser.c99;x-internal:=true
+ org.eclipse.cdt.internal.core.dom.lrparser.c99;x-internal:=true,
+ org.eclipse.cdt.internal.core.dom.lrparser.cpp,
+ org.eclipse.cdt.internal.core.dom.lrparser.gcc,
+ org.eclipse.cdt.internal.core.dom.lrparser.gpp
 Bundle-Localization: plugin
 Bundle-Vendor: %Bundle-Vendor.0
 Bundle-RequiredExecutionEnvironment: J2SE-1.5

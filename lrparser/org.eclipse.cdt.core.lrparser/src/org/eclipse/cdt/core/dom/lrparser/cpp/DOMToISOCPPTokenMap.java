@@ -1,11 +1,11 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2008 IBM Corporation and others.
- * All rights reserved. This program and the accompanying materials
- * are made available under the terms of the Eclipse Public License v1.0
- * which accompanies this distribution, and is available at
- * http://www.eclipse.org/legal/epl-v10.html
- *
- * Contributors:
+ *  Copyright (c) 2006, 2009 IBM Corporation and others.
+ *  All rights reserved. This program and the accompanying materials
+ *  are made available under the terms of the Eclipse Public License v1.0
+ *  which accompanies this distribution, and is available at
+ *  http://www.eclipse.org/legal/epl-v10.html
+ * 
+ *  Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 package org.eclipse.cdt.core.dom.lrparser.cpp;
@@ -162,8 +162,12 @@ public class DOMToISOCPPTokenMap implements IDOMTokenMap {
 			case tFLOATINGPT   : return TK_floating;
 			case tSTRING       : return TK_stringlit;
 			case tLSTRING      : return TK_stringlit;
+			//case tUTF16STRING  : return TK_stringlit;
+			//case tUTF32STRING  : return TK_stringlit;
 			case tCHAR         : return TK_charconst;
 			case tLCHAR        : return TK_charconst;
+	        //case tUTF16CHAR    : return TK_charconst;
+	        //case tUTF32CHAR    : return TK_charconst;
 			case tCOMPLETION   : return TK_Completion;
 			case tEOC          : return TK_EndOfCompletion;
 			case tEND_OF_INPUT : return TK_EOF_TOKEN;

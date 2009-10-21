@@ -1,0 +1,225 @@
+/*******************************************************************************
+ * Copyright (c) 2006, 2009 IBM Corporation and others.
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
+ *     IBM Corporation - initial API and implementation
+ *******************************************************************************/
+package org.eclipse.cdt.core.dom.lrparser.action.cpp;
+
+import org.eclipse.cdt.core.dom.ast.IASTDeclSpecifier;
+import org.eclipse.cdt.core.dom.ast.IASTDeclaration;
+import org.eclipse.cdt.core.dom.ast.IASTDeclarator;
+import org.eclipse.cdt.core.dom.ast.IASTExpression;
+import org.eclipse.cdt.core.dom.ast.IASTName;
+import org.eclipse.cdt.core.dom.ast.IASTProblem;
+import org.eclipse.cdt.core.dom.ast.IASTProblemTypeId;
+import org.eclipse.cdt.core.dom.ast.IASTStatement;
+import org.eclipse.cdt.core.dom.ast.IASTTypeId;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTBinaryExpression;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCastExpression;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCatchHandler;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCompositeTypeSpecifier;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTConstructorChainInitializer;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTConstructorInitializer;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTConversionName;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTDeleteExpression;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTElaboratedTypeSpecifier;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTExplicitTemplateInstantiation;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTFieldReference;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTForStatement;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTFunctionDeclarator;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTFunctionTryBlockDeclarator;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTIfStatement;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTLinkageSpecification;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTLiteralExpression;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTNamedTypeSpecifier;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTNamespaceAlias;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTNamespaceDefinition;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTNewExpression;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTOperatorName;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTParameterDeclaration;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTPointerToMember;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTQualifiedName;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTReferenceOperator;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTSimpleDeclSpecifier;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTSimpleTypeConstructorExpression;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTSimpleTypeTemplateParameter;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTSwitchStatement;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTemplateDeclaration;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTemplateId;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTemplateSpecialization;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTemplatedTypeTemplateParameter;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTranslationUnit;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTryBlockStatement;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTypeIdExpression;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTypenameExpression;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTUnaryExpression;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTUsingDeclaration;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTUsingDirective;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTVisibilityLabel;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTWhileStatement;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCompositeTypeSpecifier.ICPPASTBaseSpecifier;
+import org.eclipse.cdt.core.dom.ast.gnu.cpp.IGPPASTExplicitTemplateInstantiation;
+import org.eclipse.cdt.core.dom.ast.gnu.cpp.IGPPASTPointer;
+import org.eclipse.cdt.core.dom.ast.gnu.cpp.IGPPASTPointerToMember;
+import org.eclipse.cdt.core.dom.ast.gnu.cpp.IGPPASTSimpleDeclSpecifier;
+import org.eclipse.cdt.core.dom.lrparser.action.INodeFactory;
+import org.eclipse.cdt.core.parser.IScanner;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.OverloadableOperator;
+
+/**
+ * Factory for AST nodes for the C++ programming language.
+ * 
+ * @author Mike Kucera
+ * @since 5.1
+ * @noextend This interface is not intended to be extended by clients.
+ * @noimplement This interface is not intended to be implemented by clients.
+ */
+@SuppressWarnings("restriction")
+public interface ICPPNodeFactory extends INodeFactory {
+	
+	/**
+	 * @deprecated use {@link #newTranslationUnit(IScanner)}, instead.
+	 */
+	@Deprecated
+	public ICPPASTTranslationUnit newTranslationUnit();
+
+	/**
+	 * Creates a new translation unit that cooperates with the given scanner in order
+	 * to track macro-expansions and location information.
+	 * @scanner the preprocessor the translation unit interacts with.
+	 * @since 5.2
+	 */
+	public ICPPASTTranslationUnit newTranslationUnit(IScanner scanner);
+	
+	public ICPPASTLiteralExpression newLiteralExpression(int kind, String rep);
+	
+	public ICPPASTUnaryExpression newUnaryExpression(int operator, IASTExpression operand);
+	
+	public ICPPASTCastExpression newCastExpression(int operator, IASTTypeId typeId, IASTExpression operand);
+	
+	public ICPPASTBinaryExpression newBinaryExpression(int op, IASTExpression expr1, IASTExpression expr2);
+	
+	public ICPPASTTypeIdExpression newTypeIdExpression(int operator, IASTTypeId typeId);
+	
+	// CHANGED this node type does not exist
+//	public ICPPASTFunctionDefinition newFunctionDefinition(IASTDeclSpecifier declSpecifier,
+//			IASTFunctionDeclarator declarator, IASTStatement bodyStatement);
+	
+	public ICPPASTFunctionDeclarator newFunctionDeclarator(IASTName name);
+	
+	public ICPPASTElaboratedTypeSpecifier newElaboratedTypeSpecifier(int kind, IASTName name);
+	
+	public ICPPASTParameterDeclaration newParameterDeclaration(IASTDeclSpecifier declSpec, IASTDeclarator declarator);
+
+	public ICPPASTSimpleDeclSpecifier newSimpleDeclSpecifier();
+	
+	public ICPPASTOperatorName newOperatorName(OverloadableOperator oper);
+
+	public ICPPASTNewExpression newNewExpression(IASTExpression placement, IASTExpression initializer, IASTTypeId typeId);
+	
+	public ICPPASTFieldReference newFieldReference(IASTName name, IASTExpression owner);
+	
+	public ICPPASTTemplateId newTemplateId(IASTName templateName);
+
+	public ICPPASTConversionName newConversionName(char[] name, IASTTypeId typeId);
+
+	public ICPPASTQualifiedName newQualifiedName();
+	
+	public ICPPASTSwitchStatement newSwitchStatement(IASTExpression controlloer, IASTStatement body);
+	
+	public ICPPASTSwitchStatement newSwitchStatement(IASTDeclaration controller, IASTStatement body);
+	
+	public ICPPASTSwitchStatement newSwitchStatement();
+
+	public ICPPASTIfStatement newIfStatement(IASTExpression condition, IASTStatement then, IASTStatement elseClause);
+	
+	public ICPPASTIfStatement newIfStatement(IASTDeclaration condition, IASTStatement then, IASTStatement elseClause);
+	
+	public ICPPASTIfStatement newIfStatement();
+	
+	public ICPPASTForStatement newForStatement(IASTStatement init, IASTExpression condition,
+			IASTExpression iterationExpression, IASTStatement body);
+	
+	public ICPPASTForStatement newForStatement(IASTStatement init, IASTDeclaration condition,
+			IASTExpression iterationExpression, IASTStatement body);
+	
+	public ICPPASTForStatement newForStatement();
+	
+	public ICPPASTWhileStatement newWhileStatement(IASTExpression condition, IASTStatement body);
+	
+	public ICPPASTWhileStatement newWhileStatement(IASTDeclaration condition, IASTStatement body);
+	
+	public ICPPASTWhileStatement newWhileStatement();
+
+	public ICPPASTDeleteExpression newDeleteExpression(IASTExpression operand);
+	
+	public IGPPASTSimpleDeclSpecifier newSimpleDeclSpecifierGPP();
+
+	public ICPPASTSimpleTypeConstructorExpression newSimpleTypeConstructorExpression(int type, IASTExpression expression);
+
+	public ICPPASTTypenameExpression newTypenameExpression(IASTName qualifiedName, IASTExpression expr, boolean isTemplate);
+
+	public ICPPASTNamespaceAlias newNamespaceAlias(IASTName alias, IASTName qualifiedName);
+	
+	public ICPPASTUsingDeclaration newUsingDeclaration(IASTName name);
+	
+	public ICPPASTUsingDirective newUsingDirective(IASTName name);
+
+	public ICPPASTLinkageSpecification newLinkageSpecification(String literal);
+	
+	public ICPPASTNamespaceDefinition newNamespaceDefinition(IASTName name);
+
+	public ICPPASTTemplateDeclaration newTemplateDeclaration(IASTDeclaration declaration);
+
+	public ICPPASTExplicitTemplateInstantiation newExplicitTemplateInstantiation(IASTDeclaration declaration);
+	
+	public IGPPASTExplicitTemplateInstantiation newExplicitTemplateInstantiationGPP(IASTDeclaration declaration);
+
+	public ICPPASTTemplateSpecialization newTemplateSpecialization(IASTDeclaration declaration);
+
+	public ICPPASTTryBlockStatement newTryBlockStatement(IASTStatement body);
+
+	public ICPPASTCatchHandler newCatchHandler(IASTDeclaration decl, IASTStatement body);
+	
+	public ICPPASTVisibilityLabel newVisibilityLabel(int visibility);
+	
+	public ICPPASTBaseSpecifier newBaseSpecifier(IASTName name, int visibility, boolean isVirtual);
+	
+	public ICPPASTCompositeTypeSpecifier newCompositeTypeSpecifier(int key, IASTName name);
+	
+	public ICPPASTNamedTypeSpecifier newTypedefNameSpecifier(IASTName name);
+	
+	public IGPPASTPointer newPointerGPP();
+	
+	public ICPPASTReferenceOperator newReferenceOperator();
+	
+	public ICPPASTPointerToMember newPointerToMember(IASTName name);
+	
+	public IGPPASTPointerToMember newPointerToMemberGPP(IASTName name);
+
+	public ICPPASTConstructorInitializer newConstructorInitializer(IASTExpression exp);
+	
+	public ICPPASTConstructorChainInitializer newConstructorChainInitializer(IASTName memberInitializerId, IASTExpression initializerValue);
+
+	// CHANGED
+//	public ICPPASTFunctionWithTryBlock newFunctionTryBlock(IASTDeclSpecifier declSpecifier, IASTFunctionDeclarator declarator,
+//			IASTStatement bodyStatement);
+
+	public ICPPASTSimpleTypeTemplateParameter newSimpleTypeTemplateParameter(int type, IASTName name, IASTTypeId typeId);
+
+	public ICPPASTTemplatedTypeTemplateParameter newTemplatedTypeTemplateParameter(IASTName name, IASTExpression defaultValue);
+	
+	public IASTProblemTypeId newProblemTypeId(IASTProblem problem);
+	
+	//public ICPPASTArraySubscriptExpression newArraySubscriptExpression(IASTExpression arrayExpr, IASTExpression subscript);
+	
+	//public ICPPASTFunctionCallExpression newFunctionCallExpression(IASTExpression idExpr, IASTExpression argList);
+
+	public ICPPASTFunctionTryBlockDeclarator newFunctionTryBlockDeclarator(IASTName name);
+	
+}

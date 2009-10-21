@@ -1,5 +1,5 @@
 -----------------------------------------------------------------------------------
--- Copyright (c) 2006, 2008 IBM Corporation and others.
+-- Copyright (c) 2006, 2009 IBM Corporation and others.
 -- All rights reserved. This program and the accompanying materials
 -- are made available under the terms of the Eclipse Public License v1.0
 -- which accompanies this distribution, and is available at
@@ -11,7 +11,7 @@
 
 %options la=2
 %options package=org.eclipse.cdt.internal.core.dom.lrparser.c99
-%options template=FixedBtParserTemplateD.g
+%options template=LRSecondaryParserTemplate.g
 
 
 $Import
@@ -19,19 +19,23 @@ $Import
 $DropRules
 
 	unary_expression
-	    ::= 'sizeof' '(' type_name ')'
+	    ::= 'sizeof' '(' type_id ')'
     
 $End
 
+$Define
+    $ast_class /. IASTExpression ./
+$End
+
 $Start
-    no_sizeof_type_name_start
+    no_sizeof_type_id_start
 $End
 
 $Rules 
 
-	no_sizeof_type_name_start
+	no_sizeof_type_id_start
 	    ::= expression
 	      | ERROR_TOKEN
-	          /. $Build  consumeExpressionProblem();  $EndBuild ./
+	          /. $Build  consumeEmpty();  $EndBuild ./
           
 $End

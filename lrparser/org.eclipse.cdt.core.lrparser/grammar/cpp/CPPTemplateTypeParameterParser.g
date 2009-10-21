@@ -11,7 +11,7 @@
 
 %options la=2
 %options package=org.eclipse.cdt.internal.core.dom.lrparser.cpp
-%options template=FixedBtParserTemplateD.g
+%options template=LRSecondaryParserTemplate.g
 
 -- This parser is a bit of a hack.
 
@@ -33,6 +33,16 @@ $Import
 	CPPGrammar.g
 $End
 
+$Globals
+/. 
+	import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTemplateParameter;
+./
+$End
+
+$Define
+    $ast_class /. ICPPASTTemplateParameter ./
+$End
+
 $Start
     type_parameter_start
 $End
@@ -42,6 +52,6 @@ $Rules
 	type_parameter_start
 	    ::= type_parameter
 	      | ERROR_TOKEN
-	          /. $Build  consumeDeclarationProblem();  $EndBuild ./
+	          /. $Build  consumeEmpty();  $EndBuild ./
           
 $End

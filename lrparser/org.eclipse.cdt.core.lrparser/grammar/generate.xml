@@ -1,0 +1,64 @@
+<!--
+ Copyright (c) 2009 IBM Corporation and others.
+ All rights reserved. This program and the accompanying materials
+ are made available under the terms of the Eclipse Public License v1.0
+ which accompanies this distribution, and is available at
+ http://www.eclipse.org/legal/epl-v10.html
+
+ Contributors:
+     IBM Corporation - initial API and implementation
+-->
+
+<project name="CDT Extensible LR Parser Framework" basedir=".">
+
+	<!--
+		Common tasks that can be used to generate a parser using LPG and the
+		LR parser framework.
+		
+		There are two ANT properties that must be defined:
+		1) lpg_exe - This property must be set to the full path to the LPG generator executable (lpg.exe).
+	    2) lpg_template - This property must be set to the full path to the folder that contains the LRParserTemplate.g file.
+	
+		Additionally if the $Import or $Include directives are being used in a grammar
+		file then the LPG_INCLUDE environment variable must be set to the directory
+		of the files being included.
+	-->
+	
+	<fail unless="lpg_exe">
+		Property $${lpg_exe} not set.
+		This property must be set to the full path to the LPG generator executable.
+	</fail>
+		
+	<fail unless="lpg_template">
+		Property $${lpg_template} not set.
+		This property must be set to the full path to the LPG templates folder.
+	</fail>
+	
+	
+	<!--
+	Parameters: 
+	${grammar_dir} - directory that contains the grammar files
+	${grammar_name} - the name of the main grammar file to run LPG on (not including the .g extension)
+	${output_dir} - name of directory where generated files should go
+	-->
+	<target name="generate">
+		<property name="grammar_file" value="${grammar_dir}/${grammar_name}.g"/>
+		<echo message="lpg_exe=${lpg_exe}"/>
+		<echo message="lpg_template=${lpg_template}"/>
+		<echo message="grammar_file=${grammar_file}.g"/>
+		<echo message="output_dir=${output_dir}"/>
+
+		<exec executable="${lpg_exe}">
+			<arg value="${grammar_file}"/>
+			<env key="LPG_TEMPLATE" path="${lpg_template}"/>
+		</exec>
+		
+		<move overwrite="true" toDir="${output_dir}">
+		    <fileset dir=".">
+			    <include name="${grammar_name}*.*"/>
+			</fileset>
+		</move>
+	</target>
+	
+	
+</project>

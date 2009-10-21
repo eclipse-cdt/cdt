@@ -1,5 +1,5 @@
 -----------------------------------------------------------------------------------
--- Copyright (c) 2006, 2008 IBM Corporation and others.
+-- Copyright (c) 2006, 2009 IBM Corporation and others.
 -- All rights reserved. This program and the accompanying materials
 -- are made available under the terms of the Eclipse Public License v1.0
 -- which accompanies this distribution, and is available at
@@ -11,15 +11,19 @@
 
 %options la=2
 %options package=org.eclipse.cdt.internal.core.dom.lrparser.c99
-%options template=FixedBtParserTemplateD.g
+%options template=LRSecondaryParserTemplate.g
 
 $Import
 	C99Grammar.g
 $DropRules
 
 	cast_expression
-	    ::= '(' type_name ')' cast_expression
+	    ::= '(' type_id ')' cast_expression
 
+$End
+
+$Define
+    $ast_class /. IASTExpression ./
 $End
 
 $Start
@@ -31,6 +35,6 @@ $Rules
 	no_cast_start
 	    ::= expression
 	      | ERROR_TOKEN
-	          /. $Build  consumeExpressionProblem();  $EndBuild ./
+	          /. $Build  consumeEmpty();  $EndBuild ./
           
 $End

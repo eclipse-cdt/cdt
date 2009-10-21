@@ -11,13 +11,17 @@
 
 %options la=2
 %options package=org.eclipse.cdt.internal.core.dom.lrparser.c99
-%options template=FixedBtParserTemplateD.g
+%options template=LRSecondaryParserTemplate.g
 
 -- All we need to do is import the main parser and redefine the start symbol.
 
 
 $Import
 	C99Grammar.g
+$End
+
+$Define
+    $ast_class /. IASTExpression ./
 $End
 
 $Start
@@ -29,6 +33,6 @@ $Rules
 	expression_parser_start
 	    ::= expression
 	      | ERROR_TOKEN
-	          /. $Build  consumeExpressionProblem();  $EndBuild ./
+	          /. $Build  consumeEmpty();  $EndBuild ./
           
 $End

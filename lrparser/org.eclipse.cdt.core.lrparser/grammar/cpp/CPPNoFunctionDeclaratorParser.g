@@ -11,7 +11,7 @@
 
 %options la=2
 %options package=org.eclipse.cdt.internal.core.dom.lrparser.cpp
-%options template=FixedBtParserTemplateD.g
+%options template=LRSecondaryParserTemplate.g
 
 $Import
 	CPPGrammar.g
@@ -25,6 +25,10 @@ $DropRules
 
 $End
 
+$Define
+    $ast_class /. IASTDeclarator ./
+$End
+
 $Start
     no_function_declarator_start
 $End
@@ -34,7 +38,7 @@ $Rules
 	no_function_declarator_start
 	    ::= init_declarator_complete
 	      | ERROR_TOKEN
-	          /. $Build  consumeDeclarationProblem();  $EndBuild ./
+	          /. $Build  consumeEmpty();  $EndBuild ./
 	
 	-- redeclare this rule with no semantic action, prevents recursion
 	init_declarator_complete

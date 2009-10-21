@@ -118,7 +118,7 @@ public class MacroExpansionHandler {
 						int eOff = mName.getFileLocation().getNodeOffset();
 						int eLength = mName.getFileLocation().getNodeLength();
 						if(eOff < nOff && Math.abs((eOff+eLength-nOff)) < 3) {
-							scribe.print(mName.toString() + " ");
+							scribe.print(mName.toString() + " "); //$NON-NLS-1$
 						}
 					}
 				}

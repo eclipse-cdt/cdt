@@ -227,7 +227,7 @@ public final class RegexErrorParserOptionPage extends AbstractCOptionPage {
 			// TODO: remove the warning before 6.1
 			MessageLine errorImageLabel = new MessageLine(composite, SWT.NONE);
 			errorImageLabel.setImage(JFaceResources.getImage(Dialog.DLG_IMG_MESSAGE_WARNING));
-			errorImageLabel.setText("Error Parser Options user entries may be lost on CDT update as persistence will be finalized with CDT 6.1 final release.");
+			errorImageLabel.setText("Error Parser Options user entries may be lost on CDT update as persistence will be finalized with CDT 6.1 final release."); //$NON-NLS-1$
 		}
 
 		setControl(group);

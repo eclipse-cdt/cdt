@@ -915,7 +915,7 @@ public class CUIPlugin extends AbstractUIPlugin {
 	 */
 	public ContextTypeRegistry getCodeTemplateContextRegistry() {
 		if (fCodeTemplateContextTypeRegistry == null) {
-			fCodeTemplateContextTypeRegistry= new ContributionContextTypeRegistry("org.eclipse.cdt.ui.codeTemplates");
+			fCodeTemplateContextTypeRegistry= new ContributionContextTypeRegistry("org.eclipse.cdt.ui.codeTemplates"); //$NON-NLS-1$
 			
 			CodeTemplateContextType.registerContextTypes(fCodeTemplateContextTypeRegistry);
 			FileTemplateContextType.registerContextTypes(fCodeTemplateContextTypeRegistry);

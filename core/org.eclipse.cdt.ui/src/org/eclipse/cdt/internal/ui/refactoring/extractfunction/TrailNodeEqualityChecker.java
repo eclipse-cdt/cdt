@@ -445,6 +445,9 @@ public class TrailNodeEqualityChecker implements EqualityChecker<IASTNode> {
 		}else {
 			IType oType = getType(trailName.getRealName().resolveBinding());
 			IType nType = getType(name.resolveBinding());
+			if (oType == null || nType == null)
+				return false;
+			
 			if(oType.isSameType(nType)) {
 				return true;
 			}
@@ -459,25 +462,7 @@ public class TrailNodeEqualityChecker implements EqualityChecker<IASTNode> {
 				return var.getType();
 			}
 		} catch (DOMException e) {
-			return new NullType();
 		}
-		return new NullType();
-	}
-	
-	private class NullType implements IType{
-		
-		@Override
-		public Object clone() {
-			try {
-				return super.clone();
-			} catch (CloneNotSupportedException e) {
-				return null;
-			}
-		}
-
-		public boolean isSameType(IType type) {
-			return false;
-		}
-		
+		return null;
 	}
 }

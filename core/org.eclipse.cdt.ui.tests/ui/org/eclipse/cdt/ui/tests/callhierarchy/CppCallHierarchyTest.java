@@ -377,7 +377,7 @@ public class CppCallHierarchyTest extends CallHierarchyBaseTest {
 	}
 	
 	//	template<typename T> void f(T t) {}
-	//	template<> void f(int t) {}
+	//	template<> void f(char t) {}
 	//
 	//	template<typename T> class CT {
 	//	public:
@@ -415,18 +415,18 @@ public class CppCallHierarchyTest extends CallHierarchyBaseTest {
 		String source = content[0].toString();
 		IFile file= createFile(getProject(), "testTemplates.cpp", source);
 		IWorkbenchPage page = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage();
-		CEditor editor= openEditor(file);
 		waitForIndexer(fIndex, file, CallHierarchyBaseTest.INDEXER_WAIT_TIME);
 		CCorePlugin.getIndexManager().joinIndexer(INDEXER_WAIT_TIME, NPM);
 		
+		CEditor editor= openEditor(file);
 		int pos= source.indexOf("f(");
 		editor.selectAndReveal(pos, 1);
 		openCallHierarchy(editor, true);
 		Tree tree = getCHTreeViewer().getTree();
 
 		checkTreeNode(tree, 0, "f<T>(T)");
-		checkTreeNode(tree, 0, 0, "testintptr()");
-		checkTreeNode(tree, 0, 1, "testint()");
+		checkTreeNode(tree, 0, 0, "testint()");
+		checkTreeNode(tree, 0, 1, "testintptr()");
 		checkTreeNode(tree, 0, 2, null);
 		
 		pos= source.indexOf("f(", pos+1);
@@ -452,7 +452,7 @@ public class CppCallHierarchyTest extends CallHierarchyBaseTest {
 		openCallHierarchy(editor, true);
 		tree = getCHTreeViewer().getTree();
 
-		checkTreeNode(tree, 0, "CT<T*>::m()");
+		checkTreeNode(tree, 0, "CT<T *>::m()");
 		checkTreeNode(tree, 0, 0, "testintptr()");
 		checkTreeNode(tree, 0, 1, null);
 

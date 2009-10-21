@@ -17,7 +17,9 @@ import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPMethod;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPSpecialization;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateInstance;
+import org.eclipse.cdt.core.index.IIndexBinding;
 import org.eclipse.cdt.core.index.IndexFilter;
+import org.eclipse.cdt.internal.core.index.composite.CompositeIndexBinding;
 import org.eclipse.core.runtime.CoreException;
 
 public class DeclaredBindingsFilter extends IndexFilter {
@@ -50,6 +52,14 @@ public class DeclaredBindingsFilter extends IndexFilter {
 					|| (fAcceptImplicit && isImplicit(binding));
 		}
 		// composite bindings don't support that kind of check.
+		if (binding instanceof CompositeIndexBinding) {
+			IIndexBinding raw= ((CompositeIndexBinding) binding).getRawBinding();
+			if (raw instanceof IIndexFragmentBinding) {
+				if (((IIndexFragmentBinding) raw).hasDeclaration()) {
+					return true;
+				}
+			}
+		}
 		return fAcceptImplicit || !isImplicit(binding);	
 	}
 

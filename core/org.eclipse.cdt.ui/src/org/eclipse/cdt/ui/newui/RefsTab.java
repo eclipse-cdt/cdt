@@ -159,11 +159,15 @@ public class RefsTab extends AbstractCPropertyTab {
     		List<String> projNames = new ArrayList<String>(oldMapping.keySet());
     		int index = projNames.indexOf(projectName);
     		if (n == MOVEUP_BUTTON) {
-    			projNames.set(index, projNames.get(index - 1));
-    			projNames.set(index - 1, projectName);
+    			if (index > 0) {
+	    			projNames.set(index, projNames.get(index - 1));
+	    			projNames.set(index - 1, projectName);
+    			}
     		} else {
-    			projNames.set(index, projNames.get(index + 1));
-    			projNames.set(index + 1, projectName);    			
+    			if (index < projNames.size() - 1) {
+	    			projNames.set(index, projNames.get(index + 1));
+	    			projNames.set(index + 1, projectName);
+    			}
     		}
     		Map<String, String> newMapping = new LinkedHashMap<String, String>(oldMapping.size());
     		for (String name : projNames)

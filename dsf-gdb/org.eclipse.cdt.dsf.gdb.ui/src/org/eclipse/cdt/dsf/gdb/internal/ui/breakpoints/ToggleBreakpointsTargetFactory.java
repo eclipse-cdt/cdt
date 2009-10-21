@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.cdt.dsf.gdb.internal.ui.breakpoints;
 
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -30,6 +31,14 @@ public class ToggleBreakpointsTargetFactory implements IToggleBreakpointsTargetF
 	/**
 	 * Toggle breakpoint target-id for normal C breakpoints.
 	 * Note: The id must be the same as in <code>ToggleCBreakpointsTargetFactory</code>
+	 *       which is used for the editor.  We need the id to be the same so that when
+	 *       the user goes from editor to DSF disassembly view, the choice of breakpoint
+	 *       targets looks the same and is remembered.
+	 *       To use the same id though, we must be careful not to have the two factories
+	 *       return the same id for the same part, or else it may confuse things.
+	 *       This is why this factory only returns this id for the DSF disassembly part,
+	 *       leaving <code>ToggleCBreakpointsTargetFactory</code> to return the same id
+	 *       for the editor.
 	 */
 	public static final String TOGGLE_C_BREAKPOINT_TARGET_ID = CDebugUIPlugin.PLUGIN_ID + ".toggleCBreakpointTarget"; //$NON-NLS-1$
 //	public static final String TOGGLE_C_TRACEPOINT_TARGET_ID = CDebugUIPlugin.PLUGIN_ID + ".toggleCTracepointTarget"; //$NON-NLS-1$
@@ -68,7 +77,10 @@ public class ToggleBreakpointsTargetFactory implements IToggleBreakpointsTargetF
 	}
 
 	public Set<String> getToggleTargets(IWorkbenchPart part, ISelection selection) {
-		return TOGGLE_TARGET_IDS;
+		if (part instanceof IDisassemblyPart) {
+			return TOGGLE_TARGET_IDS;
+		}
+		return Collections.emptySet();
 	}
 
 }

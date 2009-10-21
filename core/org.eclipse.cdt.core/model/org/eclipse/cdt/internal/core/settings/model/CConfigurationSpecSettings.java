@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2008 Intel Corporation and others.
+ * Copyright (c) 2007, 2009 Intel Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -15,9 +15,9 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Set;
-import java.util.Map.Entry;
 
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.settings.model.CExternalSetting;
@@ -36,8 +36,6 @@ import org.eclipse.cdt.internal.core.CExtensionInfo;
 import org.eclipse.cdt.internal.core.COwner;
 import org.eclipse.cdt.internal.core.COwnerConfiguration;
 import org.eclipse.cdt.internal.core.cdtvariables.StorableCdtVariables;
-import org.eclipse.cdt.internal.core.settings.model.xml.InternalXmlStorageElement;
-import org.eclipse.cdt.internal.core.settings.model.xml.XmlStorage;
 import org.eclipse.cdt.utils.envvar.StorableEnvironment;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.QualifiedName;
@@ -406,7 +404,7 @@ public class CConfigurationSpecSettings implements ICSettingsStorage{
 			return CfgExportSettingContainerFactory.getReferenceMap(fCfg);
 		if(fRefMapCache == null)
 			fRefMapCache = CfgExportSettingContainerFactory.getReferenceMap(fCfg);
-		return new HashMap<String, String>(fRefMapCache);
+		return new LinkedHashMap<String, String>(fRefMapCache);
 //		if(fRefInfoMap == null || fRefInfoMap.size() == 0)
 //			return new HashMap(0);
 //		
@@ -801,21 +799,17 @@ public class CConfigurationSpecSettings implements ICSettingsStorage{
 
 	private void encodeProjectExtensions(ICStorageElement configRootElement) {
 		ICStorageElement element;
-		Iterator<CConfigExtensionReference[]> extIterator = getExtMap().values().iterator();
-		while (extIterator.hasNext()) {
-			CConfigExtensionReference extension[] = extIterator.next();
-			for (int i = 0; i < extension.length; i++) {
+		for (CConfigExtensionReference[] extensions : getExtMap().values()) {
+			for (CConfigExtensionReference extension : extensions) {
 				element = configRootElement.createChild(PROJECT_EXTENSION);
-				element.setAttribute(PROJECT_EXTENSION_ATTR_POINT, extension[i].getExtensionPoint());
-				element.setAttribute(PROJECT_EXTENSION_ATTR_ID, extension[i].getID());
-				CExtensionInfo info = fExtInfoMap.get(extension[i]);
+				element.setAttribute(PROJECT_EXTENSION_ATTR_POINT, extension.getExtensionPoint());
+				element.setAttribute(PROJECT_EXTENSION_ATTR_ID, extension.getID());
+				CExtensionInfo info = fExtInfoMap.get(extension);
 				if (info != null) {
-					Iterator attribIterator = info.getAttributes().entrySet().iterator();
-					while (attribIterator.hasNext()) {
-						Entry entry = (Entry)attribIterator.next();
+					for (Map.Entry<String, String> entry : info.getAttributes().entrySet()) {
 						ICStorageElement extAttributes = element.createChild(PROJECT_EXTENSION_ATTRIBUTE);
-						extAttributes.setAttribute(PROJECT_EXTENSION_ATTRIBUTE_KEY, (String)entry.getKey());
-						extAttributes.setAttribute(PROJECT_EXTENSION_ATTRIBUTE_VALUE, (String)entry.getValue());
+						extAttributes.setAttribute(PROJECT_EXTENSION_ATTRIBUTE_KEY, entry.getKey());
+						extAttributes.setAttribute(PROJECT_EXTENSION_ATTRIBUTE_VALUE, entry.getValue());
 					}
 				}
 			}

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007 Symbian Software Systems and others.
+ * Copyright (c) 2007, 2009 Symbian Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,13 +7,14 @@
  *
  * Contributors:
  * Andrew Ferguson (Symbian) - Initial implementation
+ * James Blackburn (Broadcom Corp.)
  *******************************************************************************/
 package org.eclipse.cdt.core.settings.model;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.HashMap;
 import java.util.Iterator;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -105,16 +106,16 @@ public class CConfigurationDescriptionReferenceTests extends BaseTestCase {
 		coreModel.setProjectDescription(p3.getProject(), des3);
 		coreModel.setProjectDescription(p4.getProject(), des4);
 	}
-	
+
 	private void setRefs(ICConfigurationDescription node, ICConfigurationDescription[] refs) {
-		Map p1RefData = new HashMap();
-		for(int i=0; i<refs.length; i++) {
-			String projectName = refs[i].getProjectDescription().getName();
-			p1RefData.put(projectName, refs[i].getId());
+		Map p1RefData = new LinkedHashMap<String, String>();
+		for (ICConfigurationDescription ref : refs) {
+			String projectName = ref.getProjectDescription().getName();
+			p1RefData.put(projectName, ref.getId());
 		}
 		node.setReferenceInfo(p1RefData);
 	}
-	
+
 	private ICConfigurationDescription newCfg(ICProjectDescription des, String project, String config) throws CoreException {
 		CDefaultConfigurationData data= new CDefaultConfigurationData(project+"."+config, project+" "+config+" name", null);
 		data.initEmptyData();
@@ -160,7 +161,73 @@ public class CConfigurationDescriptionReferenceTests extends BaseTestCase {
 		assertEdges(p4cd2, new ICConfigurationDescription[] {p3cd1, p3cd2, p3cd3}, false);
 		assertEdges(p4cd3, new ICConfigurationDescription[] {}, false);
 	}
-	
+
+	/**
+	 * Test that the the referencing mechanism preserves order
+	 */
+	public void testDependencyOrder() throws CoreException {
+		ICProject p1 = null;
+		ICProject p2 = null;
+		ICProject p3 = null;
+		try {
+			String p1Name = "referenceDependency";
+			String p2Name = "refereeDependency";
+			String p3Name = "referee2Dependency";
+			p1 = CProjectHelper.createCCProject(p1Name, "bin");
+			p2 = CProjectHelper.createCCProject(p2Name, "bin");
+			p3 = CProjectHelper.createCCProject(p3Name, "bin");
+
+			CoreModel coreModel = CoreModel.getDefault();
+			ICProjectDescription des1 = coreModel.getProjectDescription(p1.getProject());
+			ICProjectDescription des2 = coreModel.getProjectDescription(p2.getProject());
+			ICProjectDescription des3 = coreModel.getProjectDescription(p3.getProject());
+			ICConfigurationDescription p1cd1 = newCfg(des1, p1Name, "p1cd1");
+			ICConfigurationDescription p2cd1 = newCfg(des2, p2Name, "p2cd1");
+			ICConfigurationDescription p3cd1 = newCfg(des3, p2Name, "p3cd1");
+
+			/* Setup references:
+			 *
+			 * p1: cd1
+			 *      | \
+			 *      |  \
+			 * p2: cd1  \
+			 * p3:      cd1
+			 */
+			setRefs(p1cd1, new ICConfigurationDescription[] {p2cd1, p3cd1});
+			coreModel.setProjectDescription(p1.getProject(), des1);
+			coreModel.setProjectDescription(p2.getProject(), des2);
+			coreModel.setProjectDescription(p3.getProject(), des3);
+
+			// Check that the order is persisted
+			ICConfigurationDescription[] cfgs;
+			cfgs = CoreModelUtil.getReferencedConfigurationDescriptions(p1cd1, false);
+			assertTrue(cfgs.length == 2);
+			assertEquals(cfgs[0].getId(), p2cd1.getId());
+			assertEquals(cfgs[1].getId(), p3cd1.getId());
+
+			// Swap them round and check that the order is still persisted...
+			setRefs(p1cd1, new ICConfigurationDescription[] {p3cd1, p2cd1});
+			coreModel.setProjectDescription(p1.getProject(), des1);
+			cfgs = CoreModelUtil.getReferencedConfigurationDescriptions(p1cd1, false);
+			assertTrue(cfgs.length == 2);
+			assertEquals(cfgs[0].getId(), p3cd1.getId());
+			assertEquals(cfgs[1].getId(), p2cd1.getId());
+		} finally {
+			if (p1 != null)
+				try {
+					p1.getProject().delete(true, NPM);
+				} catch (CoreException e){}
+			if (p2 != null)
+				try {
+					p2.getProject().delete(true, NPM);
+				} catch (CoreException e){}
+			if (p3 != null)
+				try {
+					p3.getProject().delete(true, NPM);
+				} catch (CoreException e){}
+		}
+	}
+
 	protected void assertEdges(ICConfigurationDescription cfgDes, ICConfigurationDescription[] expected, boolean references) {
 		ICConfigurationDescription[] actual;
 		

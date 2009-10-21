@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007 Intel Corporation and others.
+ * Copyright (c) 2007, 2009 Intel Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  * Intel Corporation - Initial API and implementation
+ * James Blackburn (Broadcom Corp.)
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.settings.model;
 
@@ -22,7 +23,7 @@ import org.eclipse.cdt.core.settings.model.ICStorageElement;
 import org.eclipse.cdt.internal.core.settings.model.CExternalSettinsDeltaCalculator.ExtSettingMapKey;
 
 public class CExternalSettingsHolder extends CExternalSettingsContainer {
-	private Map fSettingsMap;
+	private Map<ExtSettingMapKey, CExternalSetting> fSettingsMap;
 	static final String ELEMENT_EXT_SETTINGS_CONTAINER = "externalSettings"; //$NON-NLS-1$
 	static final CExternalSetting[] EMPTY_EXT_SETTINGS_ARRAY = new CExternalSetting[0];
 	
@@ -34,14 +35,14 @@ public class CExternalSettingsHolder extends CExternalSettingsContainer {
 
 	CExternalSettingsHolder(ICStorageElement element){
 		ICStorageElement children[] = element.getChildren();
-		List externalSettingList = null;
+		List<CExternalSetting> externalSettingList = null;
 		for(int i = 0; i < children.length; i++){
 			ICStorageElement child = children[i];
 			String name = child.getName();
 			
 			if(CExternalSettingSerializer.ELEMENT_SETTING_INFO.equals(name)){
 				if(externalSettingList == null)
-					externalSettingList = new ArrayList();
+					externalSettingList = new ArrayList<CExternalSetting>();
 				
 				CExternalSetting setting = CExternalSettingSerializer.load(child);
 				externalSettingList.add(setting);
@@ -50,7 +51,7 @@ public class CExternalSettingsHolder extends CExternalSettingsContainer {
 		
 		if(externalSettingList != null && externalSettingList.size() != 0){
 			for(int i = 0; i < externalSettingList.size(); i++){
-				CExternalSetting setting = (CExternalSetting)externalSettingList.get(i);
+				CExternalSetting setting = externalSettingList.get(i);
 				createExternalSetting(setting.getCompatibleLanguageIds(),
 						setting.getCompatibleContentTypeIds(),
 						setting.getCompatibleExtensions(), 
@@ -61,13 +62,13 @@ public class CExternalSettingsHolder extends CExternalSettingsContainer {
 
 	CExternalSettingsHolder(CExternalSettingsHolder base){
 		if(base.fSettingsMap != null)
-			fSettingsMap = new HashMap(base.fSettingsMap);
+			fSettingsMap = new HashMap<ExtSettingMapKey, CExternalSetting>(base.fSettingsMap);
 	}
 
 	@Override
 	public CExternalSetting[] getExternalSettings(){
 		if(fSettingsMap != null)
-			return (CExternalSetting[])fSettingsMap.values().toArray(new CExternalSetting[fSettingsMap.size()]);
+			return fSettingsMap.values().toArray(new CExternalSetting[fSettingsMap.size()]);
 		return EMPTY_EXT_SETTINGS_ARRAY;
 	}
 
@@ -105,7 +106,7 @@ public class CExternalSettingsHolder extends CExternalSettingsContainer {
 		ExtSettingMapKey key = new ExtSettingMapKey(setting);
 		CExternalSetting newSetting;
 		if(fSettingsMap != null){
-			newSetting = (CExternalSetting)fSettingsMap.get(key);
+			newSetting = fSettingsMap.get(key);
 			if(newSetting == null){
 				newSetting = new CExternalSetting(setting);
 			} else {
@@ -115,7 +116,7 @@ public class CExternalSettingsHolder extends CExternalSettingsContainer {
 			fSettingsMap.put(key, newSetting);
 		} else {
 			newSetting = new CExternalSetting(setting);
-			fSettingsMap = new HashMap();
+			fSettingsMap = new HashMap<ExtSettingMapKey, CExternalSetting>();
 			fSettingsMap.put(key, newSetting);
 		}
 		fIsModified = true;
@@ -126,7 +127,7 @@ public class CExternalSettingsHolder extends CExternalSettingsContainer {
 		if(fSettingsMap != null){
 			
 			ExtSettingMapKey key = new ExtSettingMapKey(setting);
-			CExternalSetting settingToRemove = (CExternalSetting)fSettingsMap.get(key);
+			CExternalSetting settingToRemove = fSettingsMap.get(key);
 			if(setting.equals(settingToRemove)){
 				fSettingsMap.remove(key);
 				fIsModified = true;
@@ -144,8 +145,8 @@ public class CExternalSettingsHolder extends CExternalSettingsContainer {
 	
 	public void serialize(ICStorageElement el){
 		if(fSettingsMap != null && fSettingsMap.size() != 0){
-			for(Iterator iter = fSettingsMap.values().iterator(); iter.hasNext();){
-				CExternalSetting setting = (CExternalSetting)iter.next();
+			for(Iterator<CExternalSetting> iter = fSettingsMap.values().iterator(); iter.hasNext();){
+				CExternalSetting setting = iter.next();
 				ICStorageElement child = el.createChild(CExternalSettingSerializer.ELEMENT_SETTING_INFO);
 				CExternalSettingSerializer.store(setting, child);
 			}

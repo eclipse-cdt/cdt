@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007 Intel Corporation and others.
+ * Copyright (c) 2007, 2009 Intel Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -43,7 +43,7 @@ public class CExternalSettingsManager implements ICExternalSettingsListener, ICP
 	private static final QualifiedName EXTERNAL_SETTING_PROPERTY = new QualifiedName(CCorePlugin.PLUGIN_ID, "externalSettings"); //$NON-NLS-1$
 	private static final String EXTERNAL_SETTING_STORAGE_ID = CCorePlugin.PLUGIN_ID + ".externalSettings"; //$NON-NLS-1$
 	
-	private Map fFactoryMap = new HashMap();
+	private Map<String, FactoryDescriptor> fFactoryMap = new HashMap<String, FactoryDescriptor>();
 	private static CExternalSettingsManager fInstance;
 	
 	public static class SettingsUpdateStatus {
@@ -72,8 +72,8 @@ public class CExternalSettingsManager implements ICExternalSettingsListener, ICP
 	}
 
 	public void shutdown(){
-		for(Iterator iter = fFactoryMap.values().iterator(); iter.hasNext();){
-			FactoryDescriptor dr = (FactoryDescriptor)iter.next();
+		for(Iterator<FactoryDescriptor> iter = fFactoryMap.values().iterator(); iter.hasNext();){
+			FactoryDescriptor dr = iter.next();
 			dr.shutdown();
 		}
 		fFactoryMap.clear();
@@ -267,7 +267,7 @@ public class CExternalSettingsManager implements ICExternalSettingsListener, ICP
 //		boolean isWritable();
 	}
 	
-	private class CfgContainer implements ICfgContainer {
+	private static class CfgContainer implements ICfgContainer {
 		private ICConfigurationDescription fCfgDes;
 		
 		CfgContainer(ICConfigurationDescription cfgDes){
@@ -384,9 +384,9 @@ public class CExternalSettingsManager implements ICExternalSettingsListener, ICP
 	
 	private static class ProjDesCfgList implements ICfgList{
 		private ICProjectDescription fProjDes;
-		private List fCfgList = new ArrayList();
+		private List<ICConfigurationDescription> fCfgList = new ArrayList<ICConfigurationDescription>();
 		
-		public ProjDesCfgList(ICProjectDescription des, Set idSet){
+		public ProjDesCfgList(ICProjectDescription des, Set<String> idSet){
 			fProjDes = des;
 			ICConfigurationDescription[] cfgs = des.getConfigurations();
 			for(int i = 0; i < cfgs.length; i++){
@@ -403,14 +403,14 @@ public class CExternalSettingsManager implements ICExternalSettingsListener, ICP
 			if(write && fProjDes.isReadOnly()){
 				makeWritable();
 			}
-			return (ICConfigurationDescription)fCfgList.get(num);
+			return fCfgList.get(num);
 		}
 		
 		private void makeWritable(){
 			ICProjectDescription writeDes = CProjectDescriptionManager.getInstance().getProjectDescription(fProjDes.getProject());
 			fProjDes = writeDes;
 			for(int i = 0; i < fCfgList.size(); i++){
-				ICConfigurationDescription cfg = (ICConfigurationDescription)fCfgList.get(i);
+				ICConfigurationDescription cfg = fCfgList.get(i);
 				cfg = writeDes.getConfigurationById(cfg.getId());
 				if(cfg != null)
 					fCfgList.set(i, cfg);
@@ -421,7 +421,7 @@ public class CExternalSettingsManager implements ICExternalSettingsListener, ICP
 		
 		public int getNumForId(String id){
 			for(int i = 0; i < fCfgList.size(); i++){
-				ICConfigurationDescription cfg = (ICConfigurationDescription)fCfgList.get(i);
+				ICConfigurationDescription cfg = fCfgList.get(i);
 				if(id.equals(cfg.getId()))
 					return i;
 			}
@@ -455,7 +455,7 @@ public class CExternalSettingsManager implements ICExternalSettingsListener, ICP
 	}
 
 	private FactoryDescriptor getFactoryDescriptor(String id){
-		FactoryDescriptor dr = (FactoryDescriptor)fFactoryMap.get(id);
+		FactoryDescriptor dr = fFactoryMap.get(id);
 		if(dr == null){
 			dr = new FactoryDescriptor(id);
 			fFactoryMap.put(id, dr);
@@ -501,13 +501,13 @@ public class CExternalSettingsManager implements ICExternalSettingsListener, ICP
 	}
 	
 	private void applyLists(ProjDesCfgList[] lists){
-		final List list = getModifiedProjDesList(lists);
+		final List<ICProjectDescription> list = getModifiedProjDesList(lists);
 		if(list.size() != 0){
 			IWorkspaceRunnable r = new IWorkspaceRunnable(){
 
 				public void run(IProgressMonitor monitor) throws CoreException {
 					for(int i = 0; i < list.size(); i++){
-						ICProjectDescription des = (ICProjectDescription)list.get(i);
+						ICProjectDescription des = list.get(i);
 						CProjectDescriptionManager.getInstance().setProjectDescription(des.getProject(), des, false, monitor);
 					}
 				}
@@ -518,8 +518,8 @@ public class CExternalSettingsManager implements ICExternalSettingsListener, ICP
 		}
 	}
 	
-	private List getModifiedProjDesList(ProjDesCfgList[] lists){
-		List list = new ArrayList();
+	private List<ICProjectDescription> getModifiedProjDesList(ProjDesCfgList[] lists){
+		List<ICProjectDescription> list = new ArrayList<ICProjectDescription>();
 		for(int i = 0; i < lists.length; i++){
 			if(lists[i].isWritable())
 				list.add(lists[i].fProjDes);
@@ -551,26 +551,26 @@ public class CExternalSettingsManager implements ICExternalSettingsListener, ICP
 
 	private ProjDesCfgList[] createCfgLists(){
 		IProject[] projects = ResourcesPlugin.getWorkspace().getRoot().getProjects();
-		List list = new ArrayList();
+		List<ProjDesCfgList> list = new ArrayList<ProjDesCfgList>();
 		for(int i = 0; i < projects.length; i++){
-			ProjDesCfgList l = createCfgList(projects[i], (Set)null);
+			ProjDesCfgList l = createCfgList(projects[i], (Set<String>)null);
 			if(l != null)
 				list.add(l);
 		}
-		return (ProjDesCfgList[])list.toArray(new ProjDesCfgList[list.size()]);
+		return list.toArray(new ProjDesCfgList[list.size()]);
 	}
 
 	private ProjDesCfgList createCfgList(IProject project, String cfgId){
-		Set set = null;
+		Set<String> set = null;
 		if(cfgId != null){
-			set = new HashSet();
+			set = new HashSet<String>();
 			set.add(cfgId);
 		}
 		
 		return createCfgList(project, set);
 	}
 
-	private ProjDesCfgList createCfgList(IProject project, Set cfgIdSet){
+	private ProjDesCfgList createCfgList(IProject project, Set<String> cfgIdSet){
 		ICProjectDescription des = CProjectDescriptionManager.getInstance().getProjectDescription(project, false);
 		if(des == null)
 			return null;

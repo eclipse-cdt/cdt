@@ -8,11 +8,18 @@
  * Contributors:
  *     Intel Corporation - initial API and implementation
  *     IBM Corporation
+ *     James Blackburn (Broadcom Corp.)
  *******************************************************************************/
 package org.eclipse.cdt.ui.newui;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
+import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
+import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.eclipse.core.resources.IProject;
 import org.eclipse.swt.SWT;
@@ -22,9 +29,11 @@ import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.TreeEvent;
 import org.eclipse.swt.events.TreeListener;
+import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Tree;
 import org.eclipse.swt.widgets.TreeItem;
 
@@ -35,28 +44,42 @@ import org.eclipse.cdt.core.settings.model.ICResourceDescription;
  * @noextend This class is not intended to be subclassed by clients.
  */
 public class RefsTab extends AbstractCPropertyTab {
-	
+
+	/** gray colour for 'disabled' items */
+	private final Color GRAY_COLOR = new Color(Display.getDefault(), 100, 100, 100);
 	public Composite comp;
 	private Tree tree;
 
 	static private final String ACTIVE = "[" + UIMessages.getString("RefsTab.3") + "]"; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-	
+
+	private static final int EXPAND_ALL_BUTTON = 0;
+	private static final int COLLAPSE_ALL_BUTTON = 1;
+	private static final int MOVEUP_BUTTON = 3;
+	private static final int MOVEDOWN_BUTTON = 4;
+
 	@Override
 	public void createControls(Composite parent) {
 		super.createControls(parent);
-		initButtons(new String[] {UIMessages.getString("RefsTab.0"), UIMessages.getString("RefsTab.2")}, 120); //$NON-NLS-1$ //$NON-NLS-2$
+		initButtons(new String[] {
+				UIMessages.getString("RefsTab.0"), //$NON-NLS-1$
+				UIMessages.getString("RefsTab.2"), //$NON-NLS-1$
+				null,
+				MOVEUP_STR,
+				MOVEDOWN_STR}, 120);
 		usercomp.setLayout(new GridLayout(1, false));
-		
+
 		tree = new Tree(usercomp, SWT.SINGLE | SWT.CHECK | SWT.BORDER);
 		tree.setLayoutData(new GridData(GridData.FILL_BOTH));
 		tree.getAccessible().addAccessibleListener(
             new AccessibleAdapter() {                       
                 @Override
 				public void getName(AccessibleEvent e) {
-                        e.result = UIMessages.getString("RefsTab.4"); //$NON-NLS-1$
+                	e.result = UIMessages.getString("RefsTab.4"); //$NON-NLS-1$
                 }
             }
         );
+
+		// Populate the tree
 		initData();
 		tree.addSelectionListener(new SelectionAdapter() {
 
@@ -64,63 +87,91 @@ public class RefsTab extends AbstractCPropertyTab {
 			public void widgetSelected(SelectionEvent e) {
 				if ((e.detail & SWT.CHECK) == SWT.CHECK && e.item != null && (e.item instanceof TreeItem)) {
 					TreeItem sel = (TreeItem)e.item;
-					Object x = sel.getData();
-					if (x instanceof IProject) {
-						TreeItem[] objs = sel.getItems();
-						if (sel.getChecked()) {
+					Object data = sel.getData();
+
+					// If data is not a configuration ID, then the user isn't allowed to select this...
+					if (data == null) {
+						sel.setChecked(false);
+						return;
+					}
+
+					boolean checked = sel.getChecked();
+					TreeItem parent = sel.getParentItem();
+
+					if (parent == null) {
+						// Project -- top-level item -- selected
+						if (checked)
 							sel.setExpanded(true);
-			    		    objs[0].setChecked(true);
-			    	    } else {
-			    	    	for (TreeItem obj : objs)
-								obj.setChecked(false);
-			    	    }
-			    	} else {
-			    		TreeItem parent = sel.getParentItem();
-			    		TreeItem[] objs = parent.getItems();
-			    		if (sel.getChecked()) {
-			    			if (parent.getChecked()) {
-			    				for (TreeItem obj : objs) {
-			    				//	if (!sel.equals(objs[i]))
-			    						obj.setChecked(false);
-			    				}
-			    				sel.setChecked(true);
-			    			} else
-			    				parent.setChecked(true);
-			    		} else {
-			    			parent.setChecked(false);
-			    		}
-		    		}
-					
+						for (TreeItem child : sel.getItems()) {
+							if (checked) {
+								// Don't select a non-allowed configuration
+								if (child.getData() != null) {
+									child.setChecked(true);
+									break;
+								}
+							} else
+								child.setChecked(false);
+						}
+					} else {
+						// Configuration selected (it has a parent)
+		    			if (parent.getChecked()) {
+		    				// Deselect other configs already selected
+		    				for (TreeItem obj : parent.getItems())
+	    						obj.setChecked(false);
+		    				sel.setChecked(checked);
+		    			}
+			    		parent.setChecked(checked);
+					}
+
+					// Save the checked configurations
 					saveChecked();
 			    }
 				updateButtons();
 			}
 		});
-		
+
 		tree.addTreeListener(new TreeListener() {
 			public void treeCollapsed(TreeEvent e) {
-				updateButtons(e, false, true); 
+				updateExpandButtons(e, false, true); 
 			}
 			public void treeExpanded(TreeEvent e) {
-				updateButtons(e, true, false); 
+				updateExpandButtons(e, true, false); 
 			}});
 			
 	}
 
-	// Class which represents "Active" configuration
-	private static class ActiveCfg {
-		public ActiveCfg(IProject _project) {
-		}
-		@Override
-		public String toString() {
-			return ACTIVE;
-		}
-	}
-
     @Override
 	public void buttonPressed(int n) {
-   		for (TreeItem item : tree.getItems()) 
-   			item.setExpanded(n==0);
+    	switch (n)
+    	{
+    	case COLLAPSE_ALL_BUTTON:
+    	case EXPAND_ALL_BUTTON:
+       		for (TreeItem item : tree.getItems()) 
+       			item.setExpanded(n==EXPAND_ALL_BUTTON);
+       		updateButtons();
+       		break;
+    	case MOVEUP_BUTTON:
+    	case MOVEDOWN_BUTTON:
+    		// TODO cache this...
+    		Map<String, String> oldMapping = getResDesc().getConfiguration().getReferenceInfo();
+    		TreeItem ti = tree.getSelection()[0];
+    		String projectName = ti.getText();
+    		List<String> projNames = new ArrayList<String>(oldMapping.keySet());
+    		int index = projNames.indexOf(projectName);
+    		if (n == MOVEUP_BUTTON) {
+    			projNames.set(index, projNames.get(index - 1));
+    			projNames.set(index - 1, projectName);
+    		} else {
+    			projNames.set(index, projNames.get(index + 1));
+    			projNames.set(index + 1, projectName);    			
+    		}
+    		Map<String, String> newMapping = new LinkedHashMap<String, String>(oldMapping.size());
+    		for (String name : projNames)
+    			newMapping.put(name, oldMapping.get(name));
+    		getResDesc().getConfiguration().setReferenceInfo(newMapping);
+    		initData();
+    		break;
+    	}
     }
 
 	@Override
@@ -134,72 +185,132 @@ public class RefsTab extends AbstractCPropertyTab {
 		}
 	}
 
+	/**
+	 * Persist the checked configurations
+	 */
 	private void saveChecked() {
-		TreeItem[] tr = tree.getItems();
-		Map<String, String> refs = new HashMap<String, String>();
-		for (TreeItem element : tr) {
-			if (element.getChecked()) {
-				TreeItem[] cfgs = element.getItems();
-				for (int j=0; j<cfgs.length; j++) {
-					if (cfgs[j].getChecked()) {
-						String cfgId = EMPTY_STR;
-						Object ob = cfgs[j].getData();
-						if (ob instanceof ICConfigurationDescription) {
-							cfgId = ((ICConfigurationDescription)ob).getId();
+		Map<String, String> refs = new LinkedHashMap<String, String>();
+		for (TreeItem project : tree.getItems()) {
+			if (project.getChecked()) {
+				if (project.getData() instanceof String) {
+					assert(project.getData() != null);
+					// Project is missing from the workspace, maintain references
+					refs.put(project.getText(), (String)project.getData());
+				} else {
+					for (TreeItem config : project.getItems()) {
+						if (config.getChecked()) {
+							assert(config.getData() != null);
+							refs.put(project.getText(), (String)config.getData());
+							break; // only one configuration can be selected a time in a project
 						}
-						refs.put(element.getText(), cfgId);
-						break;
-					}				
+					}
 				}
 			}
 		}
 		getResDesc().getConfiguration().setReferenceInfo(refs);
 	}
 
+	/**
+	 * Initialises the tree.
+	 * 
+	 * TreeItems are either
+	 * TI:       Text            ,     Data
+	 *   {IProject.getName()}    , {IProject}
+	 *       {cfgName}           , {String cfgId}
+	 *       {cfgName}           , {null}  // config is not allowed to be selected
+	 *
+	 * If the projects doesn't exist in the workspace:
+	 *   {IProject.getName()}    , {String cfgId}
+	 *
+	 */
     private void initData() {
+    	// Persist the current select / expand state to restore...
+    	String currentSelection = tree.getSelectionCount() == 1 ? tree.getSelection()[0].getText() : null;
+    	Set<String> currentExpanded = new HashSet<String>();
+    	for (TreeItem ti : tree.getItems())
+    		if (ti.getExpanded())
+    			currentExpanded.add(ti.getText());
+
 		tree.removeAll();
 		IProject p = page.getProject();
 		if (p == null)
 			return;
 
+		// Get all the CDT references
 		Map<String,String> refs = getResDesc().getConfiguration().getReferenceInfo();
 
-		for (IProject prj : p.getWorkspace().getRoot().getProjects()) {
+		// Preserve project order. All linked to projects occur before others
+		Set<String> projects = new LinkedHashSet<String>(refs.keySet());
+		for (IProject prj : p.getWorkspace().getRoot().getProjects())
+			projects.add(prj.getName());
+
+		for (String pname : projects) {
+			// The referenced configuration ID
+			String ref = refs.get(pname);
+			IProject prj = p.getWorkspace().getRoot().getProject(pname);
 			ICConfigurationDescription[] cfgs = page.getCfgsReadOnly(prj);
-			if (cfgs == null || cfgs.length == 0) 
+			if (cfgs == null || cfgs.length == 0) {
+				// If the project is referenced, then make sure the user knows about it!
+				if (ref != null) {
+					TreeItem ti = new TreeItem(tree, SWT.NONE);
+					ti.setChecked(true);
+					ti.setText(pname);
+					ti.setData(refs.get(pname));
+					ti.setForeground(GRAY_COLOR);
+				}
+				continue;
+			}
+
+			// Only show the current project if it's got more than 1 configuration
+			if (page.getProject().equals(prj) && cfgs.length < 2)
 				continue;
 
-			String name = prj.getName();
-			String ref = null;
+			// Add the project
 			TreeItem ti = new TreeItem(tree, SWT.NONE);
-			ti.setText(name);
+			ti.setText(pname);
 			ti.setData(prj);
-			if (refs.containsKey(name)) {
-				ref = refs.get(name);
+			if (ref != null)
 				ti.setChecked(true);
-			}
+
+			// Add the configurations
 			TreeItem ti1;
 			if (!prj.equals(p)) {
 				// [ Active ] config in the tree
 				ti1 = new TreeItem(ti, SWT.NONE);
 				ti1.setText(ACTIVE);
-				ti1.setData(new ActiveCfg(prj));
-				if (EMPTY_STR.equals(ref))
+				ti1.setData(EMPTY_STR);
+				if (EMPTY_STR.equals(ref)) {
 					ti1.setChecked(true);
+					ti1.setData(ref);
+				}
 			}
 			// Name configurations in the tree
 			for (ICConfigurationDescription cfg : cfgs) {
 				// Don't include self configuration
-				if (prj.equals(p) && cfg.getId().equals(page.getResDesc().getConfiguration().getId()))
-					continue;
 				ti1 = new TreeItem(ti, SWT.NONE);
 				ti1.setText(cfg.getName());
-				ti1.setData(cfg);
-				if (cfg.getId().equals(ref)) {
+				if (prj.equals(p) && cfg.getId().equals(page.getResDesc().getConfiguration().getId())) {
+					// users may *only* reference other configuration in the project
+					// this data is deliberately null as it may not be selected...
+					ti1.setForeground(GRAY_COLOR);
+					continue;
+				} else if (cfg.getId().equals(ref))
 					ti1.setChecked(true);
-				}
+				ti1.setData(cfg.getId());
 			}
 		}
+
+		// Reselect / Re-expand previously selected & expanded items
+		if (currentSelection != null)
+			for (TreeItem ti : tree.getItems())
+				if (ti.getText().equals(currentSelection)) {
+					tree.setSelection(ti);
+					break;
+				}
+		for (TreeItem ti : tree.getItems())
+			if (currentExpanded.contains(ti.getText()))
+				ti.setExpanded(true);
+
 		updateButtons();
 	}
 
@@ -211,7 +322,7 @@ public class RefsTab extends AbstractCPropertyTab {
 	// This page can be displayed for project only
 	@Override
 	public boolean canBeVisible() {
-		return page.isForProject() && ! page.isMultiCfg();
+		return page.isForProject() && !page.isMultiCfg();
 	}
 
 	@Override
@@ -222,10 +333,17 @@ public class RefsTab extends AbstractCPropertyTab {
 	
 	@Override
 	protected void updateButtons() {
-		updateButtons(null, false, false);
+		updateExpandButtons(null, false, false);
+		updateMoveButtons();
 	}
 
-	private void updateButtons(TreeEvent e, boolean stateE, boolean stateC) {
+	@Override
+	public void dispose() {
+		super.dispose();
+		GRAY_COLOR.dispose();
+	}
+
+	private void updateExpandButtons(TreeEvent e, boolean stateE, boolean stateC) {
 		boolean cntE = stateE;
 		boolean cntC = stateC;
    		for (TreeItem item : tree.getItems()) {
@@ -236,8 +354,26 @@ public class RefsTab extends AbstractCPropertyTab {
    			else 
    				cntC = true;
    		}
-		buttonSetEnabled(0, cntC); // Expand All 
-		buttonSetEnabled(1, cntE); // Collapse all 
+		buttonSetEnabled(EXPAND_ALL_BUTTON, cntC); // Expand All 
+		buttonSetEnabled(COLLAPSE_ALL_BUTTON, cntE); // Collapse all 
+	}
+
+	/**
+	 * Make the move buttons enabled when a project is selected
+	 */
+	private void updateMoveButtons() {
+		if (tree.getSelectionCount() == 1) {
+			TreeItem ti = tree.getSelection()[0];
+			// Is a project selected?
+			if (ti.getParentItem() == null && ti.getChecked()) {
+				int index = tree.indexOf(ti);
+				buttonSetEnabled(MOVEUP_BUTTON, index > 0);				
+				buttonSetEnabled(MOVEDOWN_BUTTON, index < tree.getItemCount() - 1);
+				return;
+			}
+		}
+		buttonSetEnabled(MOVEUP_BUTTON, false);
+		buttonSetEnabled(MOVEDOWN_BUTTON, false);
 	}
 
 }

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2008 Wind River Systems and others.
+ * Copyright (c) 2007, 2009 Wind River Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -21,7 +21,7 @@ import org.eclipse.jface.text.BadLocationException;
 public class FunctionOffsetRulerColumn extends DisassemblyRulerColumn {
 
 	/** Maximum width of column (in characters) */
-	private static final int MAXWIDTH= 40;
+	private static final int MAXWIDTH= 20;
 
 	/**
 	 * Default constructor.

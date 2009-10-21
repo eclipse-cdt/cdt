@@ -14,9 +14,12 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.ui.search;
 
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.Map.Entry;
@@ -30,6 +33,7 @@ import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.IRegion;
 import org.eclipse.jface.text.Region;
+import org.eclipse.osgi.util.NLS;
 import org.eclipse.search.ui.ISearchQuery;
 import org.eclipse.search.ui.ISearchResult;
 import org.eclipse.ui.IEditorInput;
@@ -54,11 +58,13 @@ import org.eclipse.cdt.core.index.IndexLocationFactory;
 import org.eclipse.cdt.core.model.CoreModel;
 import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.core.model.ICProject;
+import org.eclipse.cdt.core.model.util.CElementBaseLabels;
 import org.eclipse.cdt.core.parser.util.ArrayUtil;
 import org.eclipse.cdt.ui.CUIPlugin;
 
 import org.eclipse.cdt.internal.core.browser.ASTTypeInfo;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ClassTypeHelper;
+import org.eclipse.cdt.internal.core.model.ext.ICElementHandle;
 
 import org.eclipse.cdt.internal.ui.search.LineSearchElement.Match;
 import org.eclipse.cdt.internal.ui.util.Messages;
@@ -72,6 +78,12 @@ public abstract class PDOMSearchQuery implements ISearchQuery {
 	public static final int FIND_DECLARATIONS_DEFINITIONS = FIND_DECLARATIONS | FIND_DEFINITIONS;
 	public static final int FIND_ALL_OCCURANCES = FIND_DECLARATIONS | FIND_DEFINITIONS | FIND_REFERENCES;
 	
+	protected final static int LABEL_FLAGS= 
+		CElementBaseLabels.M_PARAMETER_TYPES | 
+		CElementBaseLabels.ALL_FULLY_QUALIFIED |
+		CElementBaseLabels.TEMPLATE_ARGUMENTS;
+
+
 	protected PDOMSearchResult result = new PDOMSearchResult(this);
 	protected int flags;
 	
@@ -111,6 +123,18 @@ public abstract class PDOMSearchQuery implements ISearchQuery {
 		}
 	}
 	
+	protected String labelForBinding(final IIndex index, IBinding binding, String defaultLabel) throws CoreException {
+		IIndexName[] names= index.findNames(binding, IIndex.FIND_DECLARATIONS_DEFINITIONS);
+		if (names.length > 0) {
+			ICElementHandle elem= IndexUI.getCElementForName((ICProject) null, index, names[0]);
+			if (elem != null) {
+				return CElementBaseLabels.getElementLabel(elem, LABEL_FLAGS);
+			}
+		}
+		return defaultLabel;
+	}
+
+
 	public String getLabel() {
 		String type;
 		if ((flags & FIND_REFERENCES) != 0)
@@ -128,12 +152,13 @@ public abstract class PDOMSearchQuery implements ISearchQuery {
 		// Report pattern and number of matches
 		String label;
 		if ((flags & FIND_REFERENCES) != 0)
-			label = CSearchMessages.bind(CSearchMessages.PDOMSearchQuery_refs_result_label, pattern); 
+			label = NLS.bind(CSearchMessages.PDOMSearchQuery_refs_result_label, pattern);
 		else if ((flags & FIND_DECLARATIONS) != 0)
-			label =CSearchMessages.bind(CSearchMessages.PDOMSearchQuery_decls_result_label, pattern); 
+			label = NLS.bind(CSearchMessages.PDOMSearchQuery_decls_result_label, pattern);
 		else
- 			label = CSearchMessages.bind(CSearchMessages.PDOMSearchQuery_defs_result_label, pattern); 
-		String countLabel = Messages.format(CSearchMessages.CSearchResultCollector_matches, new Integer(matchCount));
+			label = NLS.bind(CSearchMessages.PDOMSearchQuery_defs_result_label, pattern);
+		String countLabel = Messages.format(CSearchMessages.CSearchResultCollector_matches, new Integer(
+				matchCount));
 		return label + " " + countLabel; //$NON-NLS-1$
 	}
 
@@ -159,7 +184,7 @@ public abstract class PDOMSearchQuery implements ISearchQuery {
 		return false; // i.e. keep it
 	}
 
-	private void createMatchesFromNames(IIndex index, Map<IIndexFile, Set<Match>> fileMatches, IIndexName[] names, boolean isPolymorphicOnly)
+	private void createMatchesFromNames(IIndex index, Map<IIndexFile, Set<Match>> fileMatches, Collection<IIndexName> names, boolean isPolymorphicOnly)
 			throws CoreException {
 		if (names == null)
 			return;
@@ -212,7 +237,7 @@ public abstract class PDOMSearchQuery implements ISearchQuery {
 		return matches;
 	}
 
-	private void collectNames(IIndex index, IIndexName[] names, IIndexName[] polymorphicNames) throws CoreException {
+	private void collectNames(IIndex index, Collection<IIndexName> names, Collection<IIndexName> polymorphicNames) throws CoreException {
 		// group all matched names by files
 		Map<IIndexFile, Set<Match>> fileMatches = new HashMap<IIndexFile, Set<Match>>();
 		createMatchesFromNames(index, fileMatches, names, false);
@@ -271,27 +296,30 @@ public abstract class PDOMSearchQuery implements ISearchQuery {
 	protected void createMatches(IIndex index, IBinding[] bindings) throws CoreException {
 		if (bindings == null)
 			return;
-		IIndexName[] names= null;
-		IIndexName[] polymorphicNames= null;
+		List<IIndexName> names= new ArrayList<IIndexName>();
+		List<IIndexName> polymorphicNames= null;
 		for (IBinding binding : bindings) {
 			if (binding != null) {
-				IIndexName[] bindingNames= index.findNames(binding, flags);
-				if (names == null) {
-					names = bindingNames;
-				} else {
-					names= (IIndexName[]) ArrayUtil.addAll(IIndexName.class, names, bindingNames);
-				}
+				createMatches1(index, binding, names);
+
 				if ((flags & FIND_REFERENCES) != 0) {
+					List<? extends IBinding> specializations = IndexUI.findSpecializations(binding);
+					if (!specializations.isEmpty()) {
+						for (IBinding spec : specializations) {
+							createMatches1(index, spec, names);
+						}
+					}
+
 					if (binding instanceof ICPPMethod) {
 						ICPPMethod m= (ICPPMethod) binding;
 						try {
 							ICPPMethod[] msInBases = ClassTypeHelper.findOverridden(m);
-							for (ICPPMethod mInBase : msInBases) {
-								bindingNames= index.findNames(mInBase, FIND_REFERENCES);
+							if (msInBases.length > 0) {
 								if (polymorphicNames == null) {
-									polymorphicNames = bindingNames;
-								} else {
-									polymorphicNames= (IIndexName[]) ArrayUtil.addAll(IIndexName.class, names, bindingNames);
+									polymorphicNames= new ArrayList<IIndexName>();
+								}
+								for (ICPPMethod mInBase : msInBases) {
+									createMatches1(index, mInBase, polymorphicNames);
 								}
 							}
 						} catch (DOMException e) {
@@ -301,9 +329,14 @@ public abstract class PDOMSearchQuery implements ISearchQuery {
 				}
 			}
 		}
-		if (names != null) {
+		if (!names.isEmpty()) {
 			collectNames(index, names, polymorphicNames);
 		}
+	}
+
+	private void createMatches1(IIndex index, IBinding binding, List<IIndexName> names) throws CoreException {
+		IIndexName[] bindingNames= index.findNames(binding, flags);
+		names.addAll(Arrays.asList(bindingNames));
 	}
 
 	protected void createLocalMatches(IASTTranslationUnit ast, IBinding binding) {

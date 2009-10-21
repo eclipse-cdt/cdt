@@ -25,7 +25,9 @@ import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.IProblemBinding;
 import org.eclipse.cdt.core.dom.ast.IScope;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPSpecialization;
 import org.eclipse.cdt.core.index.IIndex;
+import org.eclipse.cdt.core.index.IndexFilter;
 import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.core.model.ILanguage;
 import org.eclipse.cdt.core.model.ITranslationUnit;
@@ -38,16 +40,15 @@ import org.eclipse.cdt.internal.ui.editor.ASTProvider;
  * Query for searching the index based on a text selection.
  */
 public class PDOMSearchTextSelectionQuery extends PDOMSearchQuery {
-
 	private ITranslationUnit tu;
 	private ITextSelection selection;
-	private String searchText;
+	private String label;
 	
 	public PDOMSearchTextSelectionQuery(ICElement[] scope, ITranslationUnit tu, ITextSelection selection, int flags) {
 		super(scope, flags | IIndex.SEARCH_ACROSS_LANGUAGE_BOUNDARIES);
 		this.tu = tu;
 		this.selection = selection;
-		this.searchText= selection.getText();
+		this.label= selection.getText();
 	}
 
 	@Override
@@ -57,7 +58,7 @@ public class PDOMSearchTextSelectionQuery extends PDOMSearchQuery {
 				if (ast != null) {
 					IASTName searchName= ast.getNodeSelector(null).findEnclosingName(selection.getOffset(), selection.getLength());
 					if (searchName != null) {
-						searchText= searchName.toString();
+						label= searchName.toString();
 						IBinding binding= searchName.resolveBinding();
 						if (binding instanceof IProblemBinding == false) {
 							if (binding != null) {
@@ -72,7 +73,9 @@ public class PDOMSearchTextSelectionQuery extends PDOMSearchQuery {
 								}
 							}
 							binding = index.findBinding(searchName);
+							binding= findDeclarationForSpecialization(binding);
 							if (binding != null) {
+								label= labelForBinding(index, binding, label);
 								createMatches(index, binding);
 								return Status.OK_STATUS;
 							}
@@ -81,11 +84,27 @@ public class PDOMSearchTextSelectionQuery extends PDOMSearchQuery {
 				}
 				return Status.OK_STATUS;
 			}
+
+			private IBinding findDeclarationForSpecialization(IBinding binding) {
+				while (binding instanceof ICPPSpecialization) {
+					try {
+						if (IndexFilter.ALL_DECLARED.acceptBinding(binding))
+							return binding;
+					} catch (CoreException e) {
+					}
+
+					IBinding original= ((ICPPSpecialization) binding).getSpecializedBinding();
+					if (original == null)
+						return binding;
+					binding= original;
+				}
+				return binding;
+			}
 		});
 	}
 
 	@Override
 	public String getResultLabel(int numMatches) {
-		return getResultLabel(searchText, numMatches);
+		return getResultLabel(label, numMatches);
 	}
 }

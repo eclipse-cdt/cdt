@@ -12,6 +12,9 @@
 package org.eclipse.cdt.internal.ui.viewsupport;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
 import java.util.Properties;
 
 import org.eclipse.core.resources.IFile;
@@ -51,12 +54,14 @@ import org.eclipse.cdt.core.dom.ast.IEnumerator;
 import org.eclipse.cdt.core.dom.ast.IField;
 import org.eclipse.cdt.core.dom.ast.ITypedef;
 import org.eclipse.cdt.core.dom.ast.IVariable;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassSpecialization;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassTemplate;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunction;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunctionTemplate;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPMethod;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPNamespace;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateInstance;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateParameter;
 import org.eclipse.cdt.core.index.IIndex;
 import org.eclipse.cdt.core.index.IIndexBinding;
@@ -80,6 +85,7 @@ import org.eclipse.cdt.core.model.IWorkingCopy;
 import org.eclipse.cdt.ui.CUIPlugin;
 
 import org.eclipse.cdt.internal.core.dom.parser.ASTQueries;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPInstanceCache;
 import org.eclipse.cdt.internal.core.model.ASTCache.ASTRunnable;
 import org.eclipse.cdt.internal.core.model.ext.CElementHandleFactory;
 import org.eclipse.cdt.internal.core.model.ext.ICElementHandle;
@@ -108,8 +114,7 @@ public class IndexUI {
 				String name= element.getElementName();
 				name= name.substring(name.lastIndexOf(':')+1);
 				IIndexBinding[] bindings= index.findBindings(name.toCharArray(), IndexFilter.ALL, new NullProgressMonitor());
-				for (int i = 0; i < bindings.length; i++) {
-					IIndexBinding binding = bindings[i];
+				for (IIndexBinding binding : bindings) {
 					if (checkBinding(binding, element)) {
 						return binding;
 					}
@@ -187,16 +192,15 @@ public class IndexUI {
 				IIndexFileLocation location= IndexLocationFactory.getIFL(tu);
 				if (location != null) {
 					IIndexFile[] files= index.getFiles(location);
-					for (int i = 0; i < files.length; i++) {
-						IIndexFile file = files[i];
+					for (IIndexFile file : files) {
 						if (linkageID == -1 || file.getLinkageID() == linkageID) {
 							String elementName= element.getElementName();
 							int idx= elementName.lastIndexOf(":")+1; //$NON-NLS-1$
 							ISourceRange pos= sf.getSourceRange();
 							IRegion region = getConvertedRegion(tu, file, pos.getIdStartPos()+idx, pos.getIdLength()-idx);
 							IIndexName[] names= file.findNames(region.getOffset(), region.getLength());
-							for (int j = 0; j < names.length; j++) {
-								IIndexName name = names[j];
+							for (IIndexName name2 : names) {
+								IIndexName name = name2;
 								if (!name.isReference() && elementName.endsWith(new String(name.getSimpleID()))) {
 									return name;
 								}
@@ -240,8 +244,7 @@ public class IndexUI {
 				IIndexFileLocation location= IndexLocationFactory.getIFL(tu);
 				if (location != null) {
 					IIndexFile[] files= index.getFiles(location);
-					for (int j=0; j<files.length; j++) {
-						IIndexFile file= files[j];
+					for (IIndexFile file : files) {
 						String elementName= include.getElementName();
 						ISourceRange pos= include.getSourceRange();
 						IRegion region= getConvertedRegion(tu, file, pos.getIdStartPos(), pos.getIdLength());
@@ -249,8 +252,7 @@ public class IndexUI {
 						IIndexInclude[] includes= index.findIncludes(file);
 						int bestDiff= Integer.MAX_VALUE;
 						IIndexInclude best= null;
-						for (int i = 0; i < includes.length; i++) {
-							IIndexInclude candidate = includes[i];
+						for (IIndexInclude candidate : includes) {
 							int diff= Math.abs(candidate.getNameOffset()- region.getOffset());
 							if (diff > bestDiff) {
 								break;
@@ -286,8 +288,7 @@ public class IndexUI {
 			IIndexName[] defs= index.findNames(binding, IIndex.FIND_DEFINITIONS | IIndex.SEARCH_ACROSS_LANGUAGE_BOUNDARIES);
 
 			ArrayList<ICElementHandle> result= new ArrayList<ICElementHandle>();
-			for (int i = 0; i < defs.length; i++) {
-				IIndexName in = defs[i];
+			for (IIndexName in : defs) {
 				ICElementHandle definition= getCElementForName((ICProject) null, index, in);
 				if (definition != null) {
 					result.add(definition);
@@ -379,8 +380,8 @@ public class IndexUI {
 			throws CoreException {
 		if (binding != null) {
 			IIndexName[] names= index.findNames(binding, IIndex.FIND_DECLARATIONS);
-			for (int i = 0; i < names.length; i++) {
-				ICElementHandle elem= getCElementForName(preferProject, index, names[i]);
+			for (IIndexName name : names) {
+				ICElementHandle elem= getCElementForName(preferProject, index, name);
 				if (elem != null) {
 					return elem;
 				}
@@ -477,5 +478,49 @@ public class IndexUI {
 			}
 		} 
 		return input;
+	}
+	
+	/**
+	 * Searches for all specializations that depend on the definition of the given binding.
+	 */
+	public static List<? extends IBinding> findSpecializations(IBinding binding) throws CoreException {
+		try {
+			List<IBinding> result= null;
+
+			IBinding owner = binding.getOwner();
+			if (owner != null) {
+				List<? extends IBinding> specializedOwners= findSpecializations(owner);
+				if (!specializedOwners.isEmpty()) {
+					result= new ArrayList<IBinding>(specializedOwners.size());
+
+					for (IBinding specOwner : specializedOwners) {
+						if (specOwner instanceof ICPPClassSpecialization) {
+							result.add(((ICPPClassSpecialization) specOwner).specializeMember(binding));
+						}
+					}
+				}
+			}
+			
+			if (binding instanceof ICPPInstanceCache) {
+				final List<ICPPTemplateInstance> instances= Arrays.asList(((ICPPInstanceCache) binding).getAllInstances());
+				if (!instances.isEmpty()) {
+					if (result == null)
+						result= new ArrayList<IBinding>(instances.size());
+
+
+					for (ICPPTemplateInstance inst : instances) {
+						if (!IndexFilter.ALL_DECLARED.acceptBinding(inst)) {
+							result.add(inst);
+						}
+					}
+				}
+			}
+			
+			if (result != null) {
+				return result;
+			}
+		} catch (DOMException e) {
+		}
+		return Collections.emptyList();
 	}
 }

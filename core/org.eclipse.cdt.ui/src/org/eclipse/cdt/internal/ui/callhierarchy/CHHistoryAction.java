@@ -27,6 +27,7 @@ public class CHHistoryAction extends Action {
 	final static int LABEL_OPTIONS= 
 		CElementBaseLabels.M_PARAMETER_TYPES | 
 		CElementBaseLabels.ALL_FULLY_QUALIFIED |
+		CElementBaseLabels.TEMPLATE_ARGUMENTS |
 		CElementBaseLabels.MF_POST_FILE_QUALIFIED;
 	
 	private CHViewPart fViewPart;

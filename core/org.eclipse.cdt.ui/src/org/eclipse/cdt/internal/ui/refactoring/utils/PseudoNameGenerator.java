@@ -38,7 +38,19 @@ public class PseudoNameGenerator {
 		if(typeName.length() != 0) {
 			typeName = typeName.substring(0, 1).toLowerCase() + typeName.substring(1);
 		}
-		
+
+		nameParts = typeName.split("\\s"); //$NON-NLS-1$
+		for (int i = 0; i < nameParts.length; i++) {
+			if(i <= 0) {
+				typeName = nameParts[i];
+			}else {
+				typeName = typeName.concat(nameParts[i].substring(0,1).toUpperCase());
+				if(nameParts[i].length() > 1) {
+					typeName = typeName.concat(nameParts[i].substring(1));
+				}
+			}
+		}
+
 		String numberString = ""; //$NON-NLS-1$
 		String newNameCandidate;
 		int index = 0;

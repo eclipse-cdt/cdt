@@ -24,4 +24,6 @@ public interface IUPCASTTypeIdSizeofExpression extends IASTTypeIdExpression {
 	public int getUPCSizeofOperator();
 
 	public void setUPCSizeofOperator(int upcSizeofOperator);
+	
+	
 }

@@ -1,5 +1,5 @@
 <!--
- Copyright (c) 2006, 2008 IBM Corporation and others.
+ Copyright (c) 2006, 2009 IBM Corporation and others.
  All rights reserved. This program and the accompanying materials
  are made available under the terms of the Eclipse Public License v1.0
  which accompanies this distribution, and is available at
@@ -12,15 +12,7 @@
 <project name="UPC Parser" default="upc" basedir=".">
     <description>Generates the UPC parser from LPG grammar files</description>
 	
-	<fail unless="lpg_exe">
-		Property $${lpg_exe} not set.
-		This property must be set to the full path to the LPG generator executable.
-	</fail>
-	
-	<fail unless="lpg_template">
-		Property $${lpg_template} not set.
-		This property must be set to the full path to the LPG templates folder.
-	</fail>
+	<import file="../../org.eclipse.cdt.core.lrparser/grammar/generate.xml"/>
 	
 	<property name="upc_location" value="../src/org/eclipse/cdt/internal/core/dom/parser/upc"/>
 
@@ -52,25 +44,5 @@
 			<param name="grammar_name" value="${grammar_name}"/>
 		</antcall>
 	</target>
-
-	
-	<target name="generate">
-		<property name="grammar_file" value="${grammar_dir}/${grammar_name}.g"/>
-		<echo message="lpg_exe=${lpg_exe}"/>
-		<echo message="lpg_template=${lpg_template}"/>
-		<echo message="grammar_file=${grammar_file}.g"/>
-		<echo message="output_dir=${output_dir}"/>
-
-		<exec executable="${lpg_exe}">
-			<arg value="${grammar_file}"/>
-			<env key="LPG_TEMPLATE" path="${lpg_template}"/>
-		</exec>
-		
-		<move overwrite="true" toDir="${output_dir}">
-		    <fileset dir=".">
-			    <include name="${grammar_name}*.*"/>
-			</fileset>
-		</move>
-	</target> 
 	
 </project>  

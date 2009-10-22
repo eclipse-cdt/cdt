@@ -22,6 +22,7 @@ public class UPCASTUnarySizeofExpression extends CASTUnaryExpression implements 
 	
 	
 	public UPCASTUnarySizeofExpression() {
+		this(null);
 	}
 
 	public UPCASTUnarySizeofExpression(IASTExpression operand) {

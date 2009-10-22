@@ -1,11 +1,11 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2007 IBM Corporation and others.
- * All rights reserved. This program and the accompanying materials
- * are made available under the terms of the Eclipse Public License v1.0
- * which accompanies this distribution, and is available at
- * http://www.eclipse.org/legal/epl-v10.html
- *
- * Contributors:
+ *  Copyright (c) 2006, 2008 IBM Corporation and others.
+ *  All rights reserved. This program and the accompanying materials
+ *  are made available under the terms of the Eclipse Public License v1.0
+ *  which accompanies this distribution, and is available at
+ *  http://www.eclipse.org/legal/epl-v10.html
+ * 
+ *  Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.dom.parser.upc.ast;
@@ -17,9 +17,7 @@ import org.eclipse.cdt.core.dom.upc.ast.IUPCASTTypedefNameSpecifier;
 import org.eclipse.cdt.internal.core.dom.parser.c.CASTTypedefNameSpecifier;
 
 @SuppressWarnings("restriction")
-public class UPCASTTypedefNameSpecifier extends CASTTypedefNameSpecifier
-		implements IUPCASTTypedefNameSpecifier {
-	
+public class UPCASTTypedefNameSpecifier extends CASTTypedefNameSpecifier implements IUPCASTTypedefNameSpecifier {
 	
 	private int referenceType;
 	private int sharedQualifier;
@@ -29,11 +27,15 @@ public class UPCASTTypedefNameSpecifier extends CASTTypedefNameSpecifier
 	public UPCASTTypedefNameSpecifier() {
 	}
 
+	public UPCASTTypedefNameSpecifier(IASTName name) {
+		super(name);
+	}
+
 	public UPCASTTypedefNameSpecifier(IASTName name, IASTExpression blockSizeExpression) {
 		super(name);
 		setBlockSizeExpression(blockSizeExpression);
 	}
-
+	
 	public IASTExpression getBlockSizeExpression() {
 		return blockSizeExpression;
 	}

@@ -21,6 +21,7 @@ public class UPCASTTypeIdSizeofExpression extends CASTTypeIdExpression implement
 	private int upcSizeofOperator;
 	
 	public UPCASTTypeIdSizeofExpression() {
+		this(null);
 	}
 
 	public UPCASTTypeIdSizeofExpression(IASTTypeId typeId) {

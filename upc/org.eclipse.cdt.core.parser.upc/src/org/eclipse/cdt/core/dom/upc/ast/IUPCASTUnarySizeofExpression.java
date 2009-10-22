@@ -25,4 +25,5 @@ public interface IUPCASTUnarySizeofExpression extends IASTUnaryExpression {
 
 	public void setUPCSizeofOperator(int upcSizeofOperator);
 	
+	
 }

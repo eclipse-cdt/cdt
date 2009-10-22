@@ -55,7 +55,7 @@ public class XlcCLanguage extends GCCLanguage {
 	
 	@Override
 	protected IScannerExtensionConfiguration getScannerExtensionConfiguration() {
-		return XlcScannerExtensionConfiguration.getInstance();
+		return XlcCScannerExtensionConfiguration.getInstance();
 	}
 
 	

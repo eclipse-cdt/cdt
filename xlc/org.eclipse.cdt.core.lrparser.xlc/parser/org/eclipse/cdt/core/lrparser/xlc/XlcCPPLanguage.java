@@ -82,7 +82,7 @@ public class XlcCPPLanguage extends GPPLanguage {
 	
 	@Override
 	protected IScannerExtensionConfiguration getScannerExtensionConfiguration() {
-		return XlcScannerExtensionConfiguration.getInstance();
+		return XlcCPPScannerExtensionConfiguration.getInstance();
 	}
 	
 	

@@ -4167,4 +4167,20 @@ public class AST2TemplateTests extends AST2BaseTest {
 		final String code= getAboveComment();
 		parseAndCheckBindings(code, ParserLanguage.CPP);
 	}
+	
+	//	template<typename T> class XT {
+	//		void n() {
+	//			m(); // ok
+	//		}
+	//		void m() const {
+	//			n();  // must be a problem
+	//		}
+	//	};
+	public void testResolutionOfNonDependentNames_293052() throws Exception {
+		final String code = getAboveComment();
+		BindingAssertionHelper bh= new BindingAssertionHelper(code, true);
+    	ICPPFunction func= bh.assertNonProblem("m();", 1, ICPPFunction.class);
+    	assertFalse(func instanceof ICPPUnknownBinding);
+    	bh.assertProblem("n();", 1);
+	}
 }

@@ -2157,9 +2157,17 @@ public class CPPSemantics {
 			} else if (thisType.isSameType(implicitType)) {
 				cost = new Cost(thisType, implicitType, Rank.IDENTITY);
 			} else {
-			    if (CPPTemplates.isDependentType(implicitType))
-			    	return CONTAINS_DEPENDENT_TYPES;
 				cost = Conversions.checkImplicitConversionSequence(sourceIsLValue, thisType, implicitType, UDCMode.noUDC, true);
+			    if (cost.getRank() == Rank.NO_MATCH) {
+				    if (CPPTemplates.isDependentType(implicitType) || CPPTemplates.isDependentType(thisType)) {
+				    	IType s= getNestedType(thisType, TDEF|REF|CVQ);
+				    	IType t= getNestedType(implicitType, TDEF|REF|CVQ);
+				    	if (Conversions.calculateInheritanceDepth(MAX_INHERITANCE_DEPTH, s, t) >= 0)
+				    		return null;
+				    	
+				    	return CONTAINS_DEPENDENT_TYPES;
+				    }
+			    }
 			}
 			if (cost.getRank() == Rank.NO_MATCH)
 				return null;

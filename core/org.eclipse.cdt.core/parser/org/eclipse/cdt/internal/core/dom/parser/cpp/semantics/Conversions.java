@@ -479,7 +479,7 @@ public class Conversions {
 	 * no inheritance relation
 	 * @throws DOMException
 	 */
-	private static final int calculateInheritanceDepth(int maxdepth, IType type, IType ancestorToFind)
+	static final int calculateInheritanceDepth(int maxdepth, IType type, IType ancestorToFind)
 			throws DOMException {
 		if (type == ancestorToFind || type.isSameType(ancestorToFind)) {
 			return 0;

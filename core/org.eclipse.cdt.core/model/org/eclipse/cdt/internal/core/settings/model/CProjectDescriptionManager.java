@@ -667,7 +667,7 @@ public class CProjectDescriptionManager implements ICProjectDescriptionManager {
 		if(projNames.size() == 0)
 			return new HashSet<IProject>(0);
 
-		Set<IProject> set = new HashSet<IProject>();
+		Set<IProject> set = new LinkedHashSet<IProject>();
 		IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
 
 		for (String sproj : projNames)
@@ -685,16 +685,21 @@ public class CProjectDescriptionManager implements ICProjectDescriptionManager {
 		Collection<IProject> oldProjSet = oldMap != null ? projSetFromProjNameSet(oldMap.keySet()) : new HashSet<IProject>(0);
 		Collection<IProject> newProjSet = newMap != null ? projSetFromProjNameSet(newMap.keySet()) : new HashSet<IProject>(0);
 
-		Set<IProject> tmp = new HashSet<IProject>(newProjSet);
-		newProjSet.removeAll(oldProjSet);
-		oldProjSet.removeAll(tmp);
-		if(oldProjSet.size() != 0 || newProjSet.size() != 0){
-			IProject[] refs = des.getReferencedProjects();
-			Set<IProject> set = new HashSet<IProject>(Arrays.asList(refs));
-			set.removeAll(oldProjSet);
-			set.addAll(newProjSet);
-			des.setReferencedProjects(set.toArray(new IProject[set.size()]));
+		// Referenced projects are set in the CDT RefsTab.  These settings override those set in the Platform tab.
+		if (oldProjSet.size() != newProjSet.size()) {
+			des.setReferencedProjects(newProjSet.toArray(new IProject[newProjSet.size()]));
 			return true;
+		}
+
+		Iterator<IProject> oldIt = oldProjSet.iterator();
+		Iterator<IProject> newIt = newProjSet.iterator();
+		while (oldIt.hasNext() && newIt.hasNext()) {
+			IProject oldP = oldIt.next();
+			IProject newP = newIt.next();
+			if (!oldP.equals(newP)) {
+				des.setReferencedProjects(newProjSet.toArray(new IProject[newProjSet.size()]));
+				return true;
+			}
 		}
 		return false;
 	}
@@ -1359,8 +1364,9 @@ public class CProjectDescriptionManager implements ICProjectDescriptionManager {
 			Map<String, CConfigExtensionReference[]> newMap = newSettings.getExtensionMapCopy();
 			Map<String, CConfigExtensionReference[]> oldMap = oldSettings.getExtensionMapCopy();
 
-			for(Iterator<Map.Entry<String, CConfigExtensionReference[]>> iter = newMap.entrySet().iterator(); iter.hasNext();){
-				Map.Entry entry = iter.next();
+			Iterator<Map.Entry<String, CConfigExtensionReference[]>> iter = newMap.entrySet().iterator();
+			while(iter.hasNext()) {
+				Map.Entry<String, CConfigExtensionReference[]> entry = iter.next();
 				iter.remove();
 				CConfigExtensionReference[] oldRefs = oldMap.remove(entry.getKey());
 				if(oldRefs == null){
@@ -1368,7 +1374,7 @@ public class CProjectDescriptionManager implements ICProjectDescriptionManager {
 					break;
 				}
 
-				CConfigExtensionReference[] newRefs = (CConfigExtensionReference[])entry.getValue();
+				CConfigExtensionReference[] newRefs = entry.getValue();
 				if(newRefs.length != oldRefs.length){
 					flags |= ICDescriptionDelta.EXT_REF;
 					break;
@@ -1554,11 +1560,10 @@ public class CProjectDescriptionManager implements ICProjectDescriptionManager {
 				flags = ICDescriptionDelta.CFG_REF_ADDED;
 			} else {
 				boolean stop = false;
-				for(Iterator iter = newMap.entrySet().iterator(); iter.hasNext();){
-					Map.Entry newEntry = (Map.Entry)iter.next();
-					Object newProj = newEntry.getKey();
-					Object newCfg = newEntry.getValue();
-					Object oldCfg = oldMap.remove(newProj);
+				for (Map.Entry<String, String> newEntry : newMap.entrySet()) {
+					String newProj = newEntry.getKey();
+					String newCfg = newEntry.getValue();
+					String oldCfg = oldMap.remove(newProj);
 					if(!newCfg.equals(oldCfg)){
 						flags |= ICDescriptionDelta.CFG_REF_ADDED;
 						if(oldCfg != null){
@@ -1942,6 +1947,7 @@ public class CProjectDescriptionManager implements ICProjectDescriptionManager {
 					generateCElementDeltasFromResourceDelta(cProject, child, list);
 				}
 			}
+			break;
 		case ICDescriptionDelta.ADDED:
 		case ICDescriptionDelta.REMOVED:
 			break;
@@ -2478,14 +2484,15 @@ public class CProjectDescriptionManager implements ICProjectDescriptionManager {
 				CResourceData parentRcData = null;
 				for(parent = child.getParentContainer();
 					(parentRcData = (CResourceData)parent.getValue()).getType() != ICSettingBase.SETTING_FOLDER;
-					parent = parent.getParentContainer());
-				if(!settingsCustomized(project, (CFolderData)parentRcData, (CFolderData)childRcData)){
-					try {
-						data.removeResourceData(childRcData);
-						child.remove();
-						modified = true;
-					} catch (CoreException e) {
-						CCorePlugin.log(e);
+					parent = parent.getParentContainer()) {
+					if(!settingsCustomized(project, (CFolderData)parentRcData, (CFolderData)childRcData)){
+						try {
+							data.removeResourceData(childRcData);
+							child.remove();
+							modified = true;
+						} catch (CoreException e) {
+							CCorePlugin.log(e);
+						}
 					}
 				}
 			} else {
@@ -2519,13 +2526,12 @@ public class CProjectDescriptionManager implements ICProjectDescriptionManager {
 			HashMap<HashSet<String>, CLanguageData> parentMap = createExtSetToLDataMap(project, parentLDatas);
 			HashMap<HashSet<String>, CLanguageData> childMap = createExtSetToLDataMap(project, childLDatas);
 			CLanguageData parentLData, childLData;
-			for(Iterator iter = parentMap.entrySet().iterator(); iter.hasNext();){
-				Map.Entry entry = (Map.Entry)iter.next();
+			for (Map.Entry<HashSet<String>, CLanguageData> entry : parentMap.entrySet()) {
 				childLData = childMap.get(entry.getKey());
 				if(childLData == null)
 					return true;
 
-				parentLData = (CLanguageData)entry.getValue();
+				parentLData = entry.getValue();
 				if(!langDatasEqual(parentLData, childLData))
 					return true;
 			}

@@ -78,7 +78,7 @@ public class XlcKeywords extends CLanguageKeywords {
 	
 
 	private XlcKeywords(ParserLanguage language) {
-		super(language, XlcScannerExtensionConfiguration.getInstance());
+		super(language, XlcCScannerExtensionConfiguration.getInstance());
 		this.language = language;
 	}
 	
@@ -93,7 +93,7 @@ public class XlcKeywords extends CLanguageKeywords {
 	@Override
 	public synchronized String[] getKeywords() {
 		if(allKeywords == null) {
-			ICLanguageKeywords base = new CLanguageKeywords(language, XlcScannerExtensionConfiguration.getInstance());
+			ICLanguageKeywords base = new CLanguageKeywords(language, XlcCScannerExtensionConfiguration.getInstance());
 			String[] baseKeywords = base.getKeywords();
 			
 			List<String> keywords = new ArrayList<String>();

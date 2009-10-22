@@ -746,8 +746,9 @@ implements
 			configSelector.add(name);
 		}
 
-		int cfgIndex = -1;
-		
+		// Ensure that the last selected config is selected by default
+		int cfgIndex = getCfgIndex(lastSelectedCfg);
+
 		// "All cfgs" - shown if at least 2 cfgs available
 		if (cfgDescs.length > 1) {
 			configSelector.add(UIMessages.getString("AbstractPage.4")); //$NON-NLS-1$

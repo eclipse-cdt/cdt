@@ -15,6 +15,7 @@ import java.util.Arrays;
 import java.util.List;
 
 import org.eclipse.cdt.core.dom.parser.CLanguageKeywords;
+import org.eclipse.cdt.core.dom.parser.IScannerExtensionConfiguration;
 import org.eclipse.cdt.core.model.ICLanguageKeywords;
 import org.eclipse.cdt.core.parser.ParserLanguage;
 import org.eclipse.cdt.core.parser.util.CharArrayMap;
@@ -78,8 +79,14 @@ public class XlcKeywords extends CLanguageKeywords {
 	
 
 	private XlcKeywords(ParserLanguage language) {
-		super(language, XlcCScannerExtensionConfiguration.getInstance());
+		super(language, getConfig(language));
 		this.language = language;
+	}
+	
+	private static IScannerExtensionConfiguration getConfig(ParserLanguage lang) {
+		return lang.isCPP() 
+				? XlcCPPScannerExtensionConfiguration.getInstance() 
+				: XlcCScannerExtensionConfiguration.getInstance();
 	}
 	
 	/**
@@ -93,7 +100,7 @@ public class XlcKeywords extends CLanguageKeywords {
 	@Override
 	public synchronized String[] getKeywords() {
 		if(allKeywords == null) {
-			ICLanguageKeywords base = new CLanguageKeywords(language, XlcCScannerExtensionConfiguration.getInstance());
+			ICLanguageKeywords base = new CLanguageKeywords(language, getConfig(language));
 			String[] baseKeywords = base.getKeywords();
 			
 			List<String> keywords = new ArrayList<String>();

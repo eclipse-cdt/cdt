@@ -50,8 +50,10 @@ import org.eclipse.cdt.core.dom.ast.IVariable;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPBase;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunction;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunctionTemplate;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPMethod;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateInstance;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateParameter;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPUsingDirective;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPVariable;
 import org.eclipse.cdt.core.index.IIndex;
@@ -2148,6 +2150,29 @@ public class IndexBugsTests extends BaseTestCase {
 			assertEquals("X", new String(uds[0].getNominatedScope().getScopeName().getSimpleID()));
 			assertEquals("Y", new String(uds[1].getNominatedScope().getScopeName().getSimpleID()));
 			assertTrue(uds[0].getPointOfDeclaration() < uds[1].getPointOfDeclaration());
+		} finally {
+			index.releaseReadLock();
+		}
+	}
+	
+	//	template<typename T> void f(T t) throw (T) {}
+	public void testFunctionTemplateWithThrowsException_293021() throws Exception {
+		waitForIndexer();
+		String testData = getContentsForTest(1)[0].toString();
+		IFile f= TestSourceReader.createFile(fCProject.getProject(), "testFunctionTemplateWithThrowsException_293021.cpp", testData);
+		final IIndexManager indexManager = CCorePlugin.getIndexManager();
+		waitUntilFileIsIndexed(f, 4000);
+		IIndex index= indexManager.getIndex(fCProject);
+		index.acquireReadLock();
+		try {
+			IIndexFile file= index.getFile(ILinkage.CPP_LINKAGE_ID, IndexLocationFactory.getWorkspaceIFL(f));
+			int idx= testData.indexOf("f(");
+			IIndexName[] names = file.findNames(idx, idx+1);
+			assertEquals(1, names.length);
+			ICPPFunctionTemplate ft= (ICPPFunctionTemplate) index.findBinding(names[0]);
+			final IType[] espec = ft.getExceptionSpecification();
+			ICPPTemplateParameter par= (ICPPTemplateParameter) espec[0];
+			assertEquals(ft, par.getOwner());
 		} finally {
 			index.releaseReadLock();
 		}

@@ -20,6 +20,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.URI;
+
 import com.ibm.icu.text.MessageFormat;
 
 import org.eclipse.cdt.core.CCorePlugin;
@@ -190,7 +191,7 @@ public class Util implements ICLogConstants {
 	 * Add a log entry
 	 */
 	public static void log(Throwable e, String message, LogConst logType) {
-		IStatus status = new Status(IStatus.ERROR, CCorePlugin.PLUGIN_ID, IStatus.ERROR, message,e);
+		IStatus status = new Status(IStatus.ERROR, CCorePlugin.PLUGIN_ID, message,e);
 		Util.log(status, logType);
 	}
 

@@ -1244,7 +1244,7 @@ public class CCorePlugin extends Plugin {
 	 * @noreference This method is not intended to be referenced by clients.
 	 */
 	public static IStatus createStatus(String msg, Throwable e) {
-		return new Status(IStatus.ERROR, PLUGIN_ID, IStatus.ERROR, msg, e);
+		return new Status(IStatus.ERROR, PLUGIN_ID, msg, e);
 	}
 	
 	/**

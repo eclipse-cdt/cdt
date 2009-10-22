@@ -87,19 +87,19 @@ class PDOMCPPFunction extends PDOMCPPBinding implements ICPPFunction, IPDOMOverl
 		Database db = getDB();		
 		Integer sigHash = IndexCPPSignatureUtil.getSignatureHash(function);
 		getDB().putInt(record + SIGNATURE_HASH, sigHash != null ? sigHash.intValue() : 0);
+		db.putByte(record + ANNOTATION, PDOMCPPAnnotation.encodeAnnotation(function));
 
 		if (setTypes) {
-			initData(function.getType(), function.getParameters());
+			initData(function.getType(), function.getParameters(), extractExceptionSpec(function));
 		}
-		db.putByte(record + ANNOTATION, PDOMCPPAnnotation.encodeAnnotation(function));
-		storeExceptionSpec(db, function);
 	}
 
-	public void initData(ICPPFunctionType ftype, IParameter[] params) {
+	public void initData(ICPPFunctionType ftype, IParameter[] params, IType[] exceptionSpec) {
 		PDOMCPPFunctionType pft;
 		try {
 			pft = setType(ftype);
-			setParameters(pft, params);	
+			setParameters(pft, params);
+			storeExceptionSpec(exceptionSpec);
 		} catch (CoreException e) {
 			CCorePlugin.log(e);
 		}
@@ -135,25 +135,32 @@ class PDOMCPPFunction extends PDOMCPPBinding implements ICPPFunction, IPDOMOverl
 			annotation= newAnnotation;
 			
 			long oldRec = db.getRecPtr(record+EXCEPTION_SPEC);
-			storeExceptionSpec(db, func);
+			storeExceptionSpec(extractExceptionSpec(func));
 			if (oldRec != 0) {
 				PDOMCPPTypeList.clearTypes(this, oldRec);
 			}
 		}
 	}
 
-	private void storeExceptionSpec(final Database db, ICPPFunction binding) throws CoreException {
-		long typelist= 0;
-		try {
-			if (binding instanceof ICPPMethod && ((ICPPMethod) binding).isImplicit()) {
-				// don't store the exception specification, computed it on demand.
-			} else {
-				typelist = PDOMCPPTypeList.putTypes(this, binding.getExceptionSpecification());
+	private void storeExceptionSpec(IType[] exceptionSpec) throws CoreException {
+		long typelist= PDOMCPPTypeList.putTypes(this, exceptionSpec);
+		getDB().putRecPtr(record + EXCEPTION_SPEC, typelist);
+	}
+
+	IType[] extractExceptionSpec(ICPPFunction binding) {
+		IType[] exceptionSpec;
+		if (binding instanceof ICPPMethod && ((ICPPMethod) binding).isImplicit()) {
+			// don't store the exception specification, compute it on demand.
+			exceptionSpec= null;
+		} else {
+			try{
+				exceptionSpec= binding.getExceptionSpecification();
+			} catch (DOMException e) {
+				// ignore problems in the exception specification.
+				exceptionSpec= null;
 			}
-		} catch (DOMException e) {
-			// ignore problems in the exception specification.
 		}
-		db.putRecPtr(record + EXCEPTION_SPEC, typelist);
+		return exceptionSpec;
 	}
 
 	private void setParameters(PDOMCPPFunctionType pft, IParameter[] params) throws CoreException {

@@ -176,6 +176,7 @@ class PDOMCPPLinkage extends PDOMLinkage implements IIndexCPPBindingConstants {
 		private final ICPPTemplateParameter[] fOriginalTemplateParameters;
 		private final ICPPFunctionType fOriginalFunctionType;
 		private final IParameter[] fOriginalParameters;
+		private final IType[] fOriginalExceptionSpec;
 		
 		public ConfigureFunctionTemplate(ICPPFunctionTemplate original, PDOMCPPFunctionTemplate template) throws DOMException {
 			fTemplate = template;
@@ -183,6 +184,7 @@ class PDOMCPPLinkage extends PDOMLinkage implements IIndexCPPBindingConstants {
 			fOriginalTemplateParameters= original.getTemplateParameters();
 			fOriginalFunctionType= original.getType();
 			fOriginalParameters= original.getParameters();
+			fOriginalExceptionSpec= template.extractExceptionSpec(original);
 			postProcesses.add(this);
 		}
 		
@@ -192,8 +194,7 @@ class PDOMCPPLinkage extends PDOMLinkage implements IIndexCPPBindingConstants {
 				if (tp != null)
 					tp.configure(fOriginalTemplateParameters[i]);
 			}
-
-			fTemplate.initData(fOriginalFunctionType, fOriginalParameters);
+			fTemplate.initData(fOriginalFunctionType, fOriginalParameters, fOriginalExceptionSpec);
 		}
 	}
 	

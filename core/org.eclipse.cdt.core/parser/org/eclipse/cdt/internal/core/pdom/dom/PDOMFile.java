@@ -310,8 +310,10 @@ public class PDOMFile implements IIndexFragmentFile {
 				return result;
 			}
 		} catch (CoreException e) {
-			if( e.getStatus() != null && e.getStatus().getCode() == CCorePlugin.STATUS_PDOM_TOO_LARGE ) {
-				throw e;
+			final IStatus status = e.getStatus();
+			if (status != null && status.getCode() == CCorePlugin.STATUS_PDOM_TOO_LARGE) {
+				if (CCorePlugin.PLUGIN_ID.equals(status.getPlugin()))
+					throw e;
 			}
 			CCorePlugin.log(e);
 		}
@@ -643,6 +645,6 @@ public class PDOMFile implements IIndexFragmentFile {
 	
 	// required because we cannot reference CCorePlugin in order for StandaloneIndexer to work
 	private static IStatus createStatus(String msg) {
-		return new Status(IStatus.ERROR, "org.eclipse.cdt.core", IStatus.ERROR, msg, null); //$NON-NLS-1$
+		return new Status(IStatus.ERROR, "org.eclipse.cdt.core", msg, null); //$NON-NLS-1$
 	}
 }

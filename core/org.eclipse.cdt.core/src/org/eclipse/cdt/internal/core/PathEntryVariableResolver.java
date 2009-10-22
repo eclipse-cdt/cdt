@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2005 QNX Software Systems and others.
+ * Copyright (c) 2000, 2009 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,9 +8,7 @@
  * Contributors:
  *     QNX Software Systems - Initial API and implementation
  *******************************************************************************/
-
 package org.eclipse.cdt.internal.core;
-
 
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.resources.IPathEntryVariableManager;
@@ -30,7 +28,7 @@ public class PathEntryVariableResolver implements IDynamicVariableResolver {
 
 	public String resolveValue(IDynamicVariable variable, String argument) throws CoreException {
 		if (argument == null) {
-			throw new CoreException(new Status(IStatus.ERROR, CCorePlugin.PLUGIN_ID, IStatus.ERROR, CCorePlugin.getResourceString("PathEntryVariableResolver.0"), null)); //$NON-NLS-1$
+			throw new CoreException(new Status(IStatus.ERROR, CCorePlugin.PLUGIN_ID, CCorePlugin.getResourceString("PathEntryVariableResolver.0"), null)); //$NON-NLS-1$
 		}
 		IPathEntryVariableManager manager = CCorePlugin.getDefault().getPathEntryVariableManager();
 		IPath path = manager.getValue(argument);

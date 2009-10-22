@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2008 QNX Software Systems and others.
+ * Copyright (c) 2000, 2009 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -746,7 +746,7 @@ public class PathEntryManager implements IPathEntryStoreListener, IElementChange
 					SafeRunner.run(new ISafeRunnable() {
 
 						public void handleException(Throwable exception) {
-							IStatus status = new Status(IStatus.ERROR, CCorePlugin.PLUGIN_ID, IStatus.ERROR,
+							IStatus status = new Status(IStatus.ERROR, CCorePlugin.PLUGIN_ID, 
 									"Exception occurred in container initializer: " + initializer, exception); //$NON-NLS-1$
 							CCorePlugin.log(status);
 						}

@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.pdom;
 
+import java.lang.reflect.InvocationTargetException;
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -805,13 +806,20 @@ public abstract class AbstractIndexerTask extends PDOMWriter {
 		 */
 		if (e instanceof CoreException) {
 			s=((CoreException)e).getStatus();
-			if( s != null && s.getCode() == CCorePlugin.STATUS_PDOM_TOO_LARGE ) {
-				throw (CoreException)e;
+			if (s != null && s.getCode() == CCorePlugin.STATUS_PDOM_TOO_LARGE) {
+				if (CCorePlugin.PLUGIN_ID.equals(s.getPlugin()))
+					throw (CoreException) e;
 			}
 		}
 		if (e instanceof CoreException) {
 			s= ((CoreException) e).getStatus();
-			if (s.getException() == null) {
+			Throwable exception = s.getException();
+			if (exception instanceof OutOfMemoryError || exception instanceof StackOverflowError) {
+				// mask errors in order to avoid dialog from platform
+				e= new InvocationTargetException(exception);
+				exception= null;
+			}
+			if (exception == null) {
 				s= new Status(s.getSeverity(), s.getPlugin(), s.getCode(), s.getMessage(), e);
 			}
 		} else {

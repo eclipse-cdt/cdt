@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2005 QNX Software Systems and others.
+ * Copyright (c) 2004, 2009 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     QNX Software Systems - initial API and implementation
+ *     IBM Corporation
  *******************************************************************************/
 package org.eclipse.cdt.internal.ui.wizards;
 
@@ -17,7 +18,9 @@ import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExtensionPoint;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.jface.action.IAction;
+import org.eclipse.ui.IPluginContribution;
 import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.activities.WorkbenchActivityHelper;
 
 import org.eclipse.cdt.ui.CUIPlugin;
 
@@ -373,6 +376,25 @@ public class CWizardRegistry {
 	    
 		return actionList.toArray(new IAction[actionList.size()]);
     }
+    
+    private static class WizardConfig implements IPluginContribution {
+    	
+		private IConfigurationElement fElement;
+		
+    	public WizardConfig(IConfigurationElement element) {
+			fElement = element;
+		}
+    	
+		public String getLocalId() {
+			return fElement.getAttribute("id"); //$NON-NLS-1$
+		}
+
+		public String getPluginId() {
+			return fElement.getContributor().getName();
+		}
+    	
+    }
+    
 
     /**
 	 * Returns extension data for all the C/C++ wizards contributed to the workbench.
@@ -394,13 +416,15 @@ public class CWizardRegistry {
 		if (extensionPoint != null) {
 			IConfigurationElement[] elements = extensionPoint.getConfigurationElements();
 			for (IConfigurationElement element : elements) {
-				if (element.getName().equals(TAG_WIZARD)) {
-				    String category = element.getAttribute(ATT_CATEGORY);
-				    if (category != null &&
-				        (category.equals(CUIPlugin.CCWIZARD_CATEGORY_ID)
-				           || category.equals(CUIPlugin.CWIZARD_CATEGORY_ID))) {
-			            elemList.add(element);
-				    }
+				if (element.getName().equals(TAG_WIZARD)) {					
+					if (!WorkbenchActivityHelper.filterItem(new WizardConfig(element))) {												
+					    String category = element.getAttribute(ATT_CATEGORY);
+					    if (category != null &&
+					        (category.equals(CUIPlugin.CCWIZARD_CATEGORY_ID)
+					           || category.equals(CUIPlugin.CWIZARD_CATEGORY_ID))) {
+				            elemList.add(element);
+					    }
+					}
 				}
 			}
 		}

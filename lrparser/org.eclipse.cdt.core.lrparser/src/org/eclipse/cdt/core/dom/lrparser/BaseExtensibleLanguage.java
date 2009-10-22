@@ -46,7 +46,7 @@ import org.eclipse.core.runtime.CoreException;
  * provides the ability to add LPG based languages to CDT.
  */
 @SuppressWarnings({ "restriction", "nls" })
-public abstract class BaseExtensibleLanguage extends AbstractLanguage {
+public abstract class BaseExtensibleLanguage extends AbstractLanguage implements ICLanguageKeywords {
 			
 	
 	private static final boolean DEBUG_PRINT_GCC_AST = false;

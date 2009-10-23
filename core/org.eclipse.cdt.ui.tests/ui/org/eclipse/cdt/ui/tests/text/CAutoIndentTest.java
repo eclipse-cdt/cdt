@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2008 Wind River Systems, Inc. and others.
+ * Copyright (c) 2006, 2009 Wind River Systems, Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -65,6 +65,7 @@ public class CAutoIndentTest extends AbstractAutoEditTest {
 		return new TestSuite(CAutoIndentTest.class);
 	}
 
+	@Override
 	protected void setUp() throws Exception {
 		super.setUp();
 //		Shell shell = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell();  
@@ -89,6 +90,7 @@ public class CAutoIndentTest extends AbstractAutoEditTest {
 	/*
 	 * @see junit.framework.TestCase#tearDown()
 	 */
+	@Override
 	protected void tearDown() throws Exception {
 		final Plugin plugin = CUIPlugin.getDefault();
 		if (plugin != null) {
@@ -499,7 +501,20 @@ public class CAutoIndentTest extends AbstractAutoEditTest {
 			store.setToDefault(PreferenceConstants.EDITOR_SMART_TAB);
 		}
 	}
-	
+
+	public void testSmartIndentAfterArrayIndexOperator_Bug291821() throws Exception  {
+		AutoEditTester tester = createAutoEditTester();
+		
+		tester.type("int &Array::operator [](int subindex)\n"); //$NON-NLS-1$
+		assertEquals(1, tester.getCaretLine());
+		tester.type('{');
+		// Brace is not indented
+		assertEquals(1, tester.getCaretColumn());
+		tester.type('\n');
+		// The brace was closed automatically.
+		assertEquals("}", tester.getLine(1)); //$NON-NLS-1$
+	}
+
 	private void assertNoError() {
 		if (!fStatusLog.isEmpty()) {
 			fail(fStatusLog.get(0).toString());

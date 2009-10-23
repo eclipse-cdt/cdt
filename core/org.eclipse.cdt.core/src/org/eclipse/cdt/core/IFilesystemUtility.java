@@ -30,7 +30,7 @@ public interface IFilesystemUtility {
 	 * In the future, it would be better if EFS had an API for this.
 	 * 
 	 * @param locationURI
-	 * @return String representing the path, or null if there is an error or if there is no such physical file.
+	 * @return String representing the path, or <code>null</code> if there is an error or if there is no such physical file.
 	 */
 	public String getPathFromURI(URI locationURI);
 	
@@ -53,4 +53,12 @@ public interface IFilesystemUtility {
 	 * @return URI
 	 */
 	public URI replacePathInURI(URI locationOnSameFilesystem, String path);
+	
+	/**
+	 * Gets the path for this file as it appears when it is mapped into the filesystem.  For
+	 * unmapped filesystems, this would return the same path as getPathFromURI(URI locationURI)
+	 * 
+	 * @return String representing the path, or <code>null</code> on error.
+	 */
+	public String getMappedPath(URI locationURI);
 }

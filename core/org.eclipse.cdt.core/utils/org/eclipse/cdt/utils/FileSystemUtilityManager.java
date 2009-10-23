@@ -151,5 +151,19 @@ public class FileSystemUtilityManager {
 			return utility.replacePathInURI(uri, path);
 		}
 	}
+	
+	public String getMappedPath(URI uri) {
+		IFilesystemUtility utility = fSchemeToUtilityImplementerMap.get(uri.getScheme());
+		
+		if(utility == null) {
+			// if there is no corresponding utility, then assume it's just the path field
+			return uri.getPath();
+
+		}
+			
+		else {
+			return utility.getMappedPath(uri);
+		}
+	}
 
 }

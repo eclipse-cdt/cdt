@@ -24,6 +24,7 @@ import org.eclipse.cdt.core.dom.ast.IASTParameterDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTPointerOperator;
 import org.eclipse.cdt.core.dom.ast.IASTSimpleDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTTypeId;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTLinkageSpecification;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassScope;
 import org.eclipse.cdt.core.parser.util.ArrayUtil;
 import org.eclipse.cdt.internal.core.dom.parser.ASTNode;
@@ -166,56 +167,60 @@ public class CPPASTDeclarator extends ASTNode implements IASTDeclarator {
 
 
 	public int getRoleForName(IASTName n) {
-        IASTNode getParent = getParent();
-        boolean fnDtor = (this instanceof IASTFunctionDeclarator);
-        if (getParent instanceof IASTDeclaration) {
-            if (getParent instanceof IASTFunctionDefinition)
+		// 3.1.2
+        IASTNode parent = ASTQueries.findOutermostDeclarator(this).getParent();
+        if (parent instanceof IASTDeclaration) {
+        	// a declaration is a definition unless ...
+            if (parent instanceof IASTFunctionDefinition)
                 return r_definition;
-			if (getParent instanceof IASTSimpleDeclaration) {
-				final int storage = ((IASTSimpleDeclaration) getParent).getDeclSpecifier().getStorageClass();
-				
-				if (getInitializer() != null || storage == IASTDeclSpecifier.sc_typedef)
-					return r_definition;
-				if (storage == IASTDeclSpecifier.sc_extern) {
-					return r_declaration;
-				}
+            
+            if (parent instanceof IASTSimpleDeclaration) {
+            	final IASTSimpleDeclaration sdecl = (IASTSimpleDeclaration) parent;
 
-				// static member variables without initializer are declarations
-				if (!fnDtor && storage == IASTDeclSpecifier.sc_static) {
-					if (CPPVisitor.getContainingScope(getParent) instanceof ICPPClassScope) {
-						return r_declaration;
-					}
-				}
-			}
-            return fnDtor ? r_declaration : r_definition;
-        }
-        if (getParent instanceof IASTTypeId)
-            return r_reference;
-        if (getParent instanceof IASTDeclarator) {
-            IASTNode t = getParent;
-            while (t instanceof IASTDeclarator)
-                t = t.getParent();
-            if (t instanceof IASTDeclaration) {
-                if (getParent instanceof IASTFunctionDefinition)
-                    return r_definition;
-                if (getParent instanceof IASTSimpleDeclaration) {
-                    if (getInitializer() != null)
-                        return r_definition;
-                    IASTSimpleDeclaration sd = (IASTSimpleDeclaration) getParent;
-                    int storage = sd.getDeclSpecifier().getStorageClass();
-                    if (storage == IASTDeclSpecifier.sc_extern || storage == IASTDeclSpecifier.sc_typedef ||
-                    		storage == IASTDeclSpecifier.sc_static) {
-                        return r_declaration;
-                    }
-                }
-                return fnDtor ? r_declaration : r_definition;                    
+            	// unless it declares a function without body
+            	if (this instanceof IASTFunctionDeclarator) {
+            		return r_declaration;
+            	}
+
+				final int storage = sdecl.getDeclSpecifier().getStorageClass();
+            	// unless it contains the extern specifier or a linkage-specification and neither initializer nor function-body
+            	if (getInitializer() == null && (storage == IASTDeclSpecifier.sc_extern || isSimpleLinkageSpec(sdecl))) {
+            		return r_declaration;
+            	}
+            	// unless it declares a static data member in a class declaration
+            	if (storage == IASTDeclSpecifier.sc_static && CPPVisitor.getContainingScope(parent) instanceof ICPPClassScope) {
+            		return r_declaration;
+            	}
+            	// unless it is a class name declaration: no declarator in this case 
+            	// unless it is a typedef declaration
+            	if (storage == IASTDeclSpecifier.sc_typedef)
+            		return r_definition; // should actually be a declaration
+            	
+            	// unless it is a using-declaration or using-directive: no declarator in this case            	
             }
-            if (t instanceof IASTTypeId)
-                return r_reference;
+
+            // all other cases
+        	return r_definition;
         }
-        if (getParent instanceof IASTParameterDeclaration)
+        
+        if (parent instanceof IASTTypeId)
+            return r_reference;
+
+        if (parent instanceof IASTParameterDeclaration)
             return (n.getLookupKey().length > 0) ? r_definition : r_declaration;
         
         return r_unclear;
+	}
+
+	private boolean isSimpleLinkageSpec(IASTSimpleDeclaration sdecl) {
+		IASTNode parent= sdecl.getParent();
+		if (parent instanceof ICPPASTLinkageSpecification) {
+			ICPPASTLinkageSpecification spec= (ICPPASTLinkageSpecification) parent;
+			// todo distinction between braced enclose and simple linkage specification
+			if (spec.getDeclarations().length == 1) {
+				return true;
+			}
+		}
+		return false;
 	}
 }

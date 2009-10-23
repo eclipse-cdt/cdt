@@ -7281,15 +7281,35 @@ public class AST2CPPTests extends AST2BaseTest {
 		IASTTranslationUnit tu= parseAndCheckBindings(getAboveComment(), ParserLanguage.CPP);
 		checkDeclDef(declNames, defNames, tu.getDeclarations());
 
-		declNames= new String[] {"v7"};
-		defNames=  new String[] {"v6", "v8"};
+		declNames= new String[] {"v7", "v8"};
+		defNames=  new String[] {"v6"};
 		IASTCompositeTypeSpecifier cls= getCompositeType(tu, 5);
+		checkDeclDef(declNames, defNames, cls.getMembers());
+	}
+	
+	//	extern "C" int v1;
+	//	class X {
+	//		static const int v2= 1;
+	//	};
+	//	const int X::v2;
+	public void testVariableDefVsDecl_292635() throws Exception {
+		String[] declNames= {"v1"};
+		String[] defNames=  {"X::v2"};
+		IASTTranslationUnit tu= parseAndCheckBindings(getAboveComment(), ParserLanguage.CPP);
+		checkDeclDef(declNames, defNames, tu.getDeclarations());
+
+		declNames= new String[] {"v2"};
+		defNames=  new String[] {};
+		IASTCompositeTypeSpecifier cls= getCompositeType(tu, 1);
 		checkDeclDef(declNames, defNames, cls.getMembers());
 	}
 
 	private void checkDeclDef(String[] declNames, String[] defNames, IASTDeclaration[] decls) {
 		int i=0, j=0; 
 		for (IASTDeclaration decl : decls) {
+			if (decl instanceof ICPPASTLinkageSpecification) {
+				decl= ((ICPPASTLinkageSpecification) decl).getDeclarations()[0];
+			}
 			final IASTDeclarator[] dtors = ((IASTSimpleDeclaration) decl).getDeclarators();
 			for (IASTDeclarator dtor : dtors) {
 				final String name = dtor.getName().toString();
@@ -7299,7 +7319,7 @@ public class AST2CPPTests extends AST2BaseTest {
 					assertEquals(declNames[i++], name);
 					break;
 				case IASTNameOwner.r_definition:
-					assertTrue("Unexpected decl " + name, i < defNames.length);
+					assertTrue("Unexpected decl " + name, j < defNames.length);
 					assertEquals(defNames[j++], name);
 					break;
 				default:

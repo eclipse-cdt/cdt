@@ -11,7 +11,6 @@
 package org.eclipse.cdt.internal.core.dom.parser.cpp;
 
 import org.eclipse.cdt.core.dom.ast.DOMException;
-import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.IScope;
@@ -115,10 +114,5 @@ public class CPPBuiltinVariable extends CPPVariable {
 	@Override
 	public IBinding getOwner() throws DOMException {
 		return null;
-	}
-
-	@Override
-	protected boolean isDefinition(IASTName name) {
-		return false;
 	}
 }

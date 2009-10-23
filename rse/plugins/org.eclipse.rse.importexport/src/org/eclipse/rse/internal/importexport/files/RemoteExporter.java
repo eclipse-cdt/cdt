@@ -124,9 +124,9 @@ class RemoteExporter {
 			int bytesRead = 0;
 			boolean done = false;
 			while (!done){
-				bytesRead = instream.read(buffer);	
+				bytesRead = instream.read(buffer, 0, length);	
 				if (bytesRead > 0){
-					outstream.write(buffer);
+					outstream.write(buffer, 0, bytesRead);
 				}
 				if (bytesRead == -1){
 					done = true;

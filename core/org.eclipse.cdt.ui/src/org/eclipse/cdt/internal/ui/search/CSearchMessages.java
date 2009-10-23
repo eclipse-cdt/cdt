@@ -68,6 +68,8 @@ public final class CSearchMessages extends NLS {
 	public static String PDOMSearchQuery_refs_result_label;
 	public static String PDOMSearchQuery_defs_result_label;
 	public static String PDOMSearchQuery_decls_result_label;
+	public static String PDOMSearchQuery_decldefs_result_label;
+	public static String PDOMSearchQuery_occurrences_result_label;
 	public static String PDOMSearchElementQuery_something;
 	public static String PDOMSearchPatternQuery_PatternQuery_labelPatternInScope;
 	public static String PDOMSearch_query_pattern_error;

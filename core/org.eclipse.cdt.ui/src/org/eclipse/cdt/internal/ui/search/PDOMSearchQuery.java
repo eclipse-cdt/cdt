@@ -151,12 +151,24 @@ public abstract class PDOMSearchQuery implements ISearchQuery {
 	public String getResultLabel(String pattern, int matchCount) {
 		// Report pattern and number of matches
 		String label;
-		if ((flags & FIND_REFERENCES) != 0)
+		final int kindFlags= flags & FIND_ALL_OCCURANCES;
+		switch(kindFlags) {
+		case FIND_REFERENCES:
 			label = NLS.bind(CSearchMessages.PDOMSearchQuery_refs_result_label, pattern);
-		else if ((flags & FIND_DECLARATIONS) != 0)
+			break;
+		case FIND_DECLARATIONS:
 			label = NLS.bind(CSearchMessages.PDOMSearchQuery_decls_result_label, pattern);
-		else
+			break;
+		case FIND_DEFINITIONS:
 			label = NLS.bind(CSearchMessages.PDOMSearchQuery_defs_result_label, pattern);
+			break;
+		case FIND_DECLARATIONS_DEFINITIONS:
+			label = NLS.bind(CSearchMessages.PDOMSearchQuery_decldefs_result_label, pattern);
+			break;
+		default:
+			label = NLS.bind(CSearchMessages.PDOMSearchQuery_occurrences_result_label, pattern);
+			break;
+		}
 		String countLabel = Messages.format(CSearchMessages.CSearchResultCollector_matches, new Integer(
 				matchCount));
 		return label + " " + countLabel; //$NON-NLS-1$

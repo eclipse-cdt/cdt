@@ -29,7 +29,6 @@ import org.eclipse.cdt.core.dom.ast.IPointerType;
 import org.eclipse.cdt.core.dom.ast.IScope;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.IValue;
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCompositeTypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTConstructorInitializer;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTQualifiedName;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPBlockScope;
@@ -94,7 +93,7 @@ public class CPPVariable extends PlatformObject implements ICPPVariable, ICPPInt
 	private IType type = null;
 	
 	public CPPVariable(IASTName name) {
-	    boolean isDef = isDefinition(name);
+	    boolean isDef = name == null ? false : name.isDefinition();
 	    if (name instanceof ICPPASTQualifiedName) {
 	        IASTName[] ns = ((ICPPASTQualifiedName)name).getNames();
 	        name = ns[ns.length - 1];
@@ -111,28 +110,6 @@ public class CPPVariable extends PlatformObject implements ICPPVariable, ICPPInt
 	    } else {
 	    	assert this instanceof CPPBuiltinVariable;
 	    }
-	}
-	
-	protected boolean isDefinition(IASTName name) {
-	    IASTDeclarator dtor= findDeclarator(name);
-	    if (dtor == null) {
-	    	return false;
-	    }
-	    
-	    IASTSimpleDeclaration simpleDecl = (IASTSimpleDeclaration) dtor.getParent();
-	    IASTDeclSpecifier declSpec = simpleDecl.getDeclSpecifier();
-	    
-	    // (3.1-1) A declaration is a definition unless ...
-	    // it contains the extern specifier or a linkage-spec and does not contain an initializer
-	    if (dtor.getInitializer() == null && declSpec.getStorageClass() == IASTDeclSpecifier.sc_extern)
-	        return false;
-	    // or it declares a static data member in a class declaration
-	    if (simpleDecl.getParent() instanceof ICPPASTCompositeTypeSpecifier && 
-	    		declSpec.getStorageClass() == IASTDeclSpecifier.sc_static) {
-	        return false;
-	    }
-	    
-	    return true;
 	}
 	
 	private IASTDeclarator findDeclarator(IASTName name) {
@@ -154,7 +131,7 @@ public class CPPVariable extends PlatformObject implements ICPPVariable, ICPPInt
 		if (!(node instanceof IASTName))
 			return;
 		IASTName name = (IASTName) node;
-	    if (isDefinition(name)) {
+	    if (name.isDefinition()) {
 	        definition = name;
 	    } else if (declarations == null) {
 	        declarations = new IASTName[] { name };
@@ -316,8 +293,8 @@ public class CPPVariable extends PlatformObject implements ICPPVariable, ICPPInt
 	    }
         IASTNode[] ds= getDeclarations();
         if (ds != null) {
-        	for (int i = 0; i < ds.length; i++) {
-        		if (CPPVisitor.isExternC(ds[i])) {
+        	for (IASTNode element : ds) {
+        		if (CPPVisitor.isExternC(element)) {
         			return true;
         		}
 			}

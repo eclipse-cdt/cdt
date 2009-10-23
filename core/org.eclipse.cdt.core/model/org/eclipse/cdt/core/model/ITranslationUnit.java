@@ -172,21 +172,6 @@ public interface ITranslationUnit extends ICElement, IParent, IOpenable, ISource
 	INamespace createNamespace (String namespace, ICElement sibling, IProgressMonitor monitor) throws CModelException;   
 
 	/**
-	 * Finds the shared working copy for this element, given a <code>IBuffer</code> factory. 
-	 * If no working copy has been created for this element associated with this
-	 * buffer factory, returns <code>null</code>.
-	 * <p>
-	 * Users of this method must not destroy the resulting working copy. 
-	 * 
-	 * @param bufferFactory the given <code>IBuffer</code> factory
-	 * @return the found shared working copy for this element, <code>null</code> if none
-	 * @see IBufferFactory
-	 * @since 2.0
-	 * @noreference This method is not intended to be referenced by clients.
-	 */
-	IWorkingCopy findSharedWorkingCopy(IBufferFactory bufferFactory);
-
-	/**
 	 * Returns the shared working copy for this element, using the default <code>IBuffer</code> factory, or
 	 * <code>null</code>, if no working copy has been created for this element.
 	 * <p>
@@ -271,100 +256,7 @@ public interface ITranslationUnit extends ICElement, IParent, IOpenable, ISource
 	 *		exception occurs while accessing its corresponding resource
 	 */
 	IInclude[] getIncludes() throws CModelException;
-
-	/**
-	 * Returns a shared working copy on this element using the given factory to create
-	 * the buffer, or this element if this element is already a working copy.
-	 * This API can only answer an already existing working copy if it is based on the same
-	 * original translation unit AND was using the same buffer factory (i.e. as
-	 * defined by <code>Object#equals</code>).
-	 * <p>
-	 * The life time of a shared working copy is as follows:
-	 * <ul>
-	 * <li>The first call to <code>getSharedWorkingCopy(...)</code> creates a new working copy for this
-	 *     element</li>
-	 * <li>Subsequent calls increment an internal counter.</li>
-	 * <li>A call to <code>destroy()</code> decrements the internal counter.</li>
-	 * <li>When this counter is 0, the working copy is destroyed.
-	 * </ul>
-	 * So users of this method must destroy exactly once the working copy.
-	 * <p>
-	 * Note that the buffer factory will be used for the life time of this working copy, i.e. if the 
-	 * working copy is closed then reopened, this factory will be used.
-	 * The buffer will be automatically initialized with the original's compilation unit content
-	 * upon creation.
-	 * <p>
-	 * When the shared working copy instance is created, an ADDED ICElementDelta is reported on this
-	 * working copy.
-	 *
-	 * @param monitor a progress monitor used to report progress while opening this compilation unit
-	 *                 or <code>null</code> if no progress should be reported 
-	 * @param factory the factory that creates a buffer that is used to get the content of the working copy
-	 *                 or <code>null</code> if the internal factory should be used
-	 * @param problemRequestor a requestor which will get notified of problems detected during
-	 * 	reconciling as they are discovered. The requestor can be set to <code>null</code> indicating
-	 * 	that the client is not interested in problems.
-	 * @exception CModelException if the contents of this element can   not be
-	 * determined. Reasons include:
-	 * <ul>
-	 * <li> This C element does not exist (ELEMENT_DOES_NOT_EXIST)</li>
-	 * </ul>
-	 * @return a shared working copy on this element using the given factory to create
-	 * the buffer, or this element if this element is already a working copy
-	 * @see IBufferFactory
-	 * @see IProblemRequestor
-	 * @since 2.0
-	 * @noreference This method is not intended to be referenced by clients.
-	 */
-	IWorkingCopy getSharedWorkingCopy(IProgressMonitor monitor, IBufferFactory factory)
-			throws CModelException;
 	
-	/**
-	 * Returns a shared working copy on this element using the given factory to create
-	 * the buffer, or this element if this element is already a working copy.
-	 * This API can only answer an already existing working copy if it is based on the same
-	 * original translation unit AND was using the same buffer factory (i.e. as
-	 * defined by <code>Object#equals</code>).
-	 * <p>
-	 * The life time of a shared working copy is as follows:
-	 * <ul>
-	 * <li>The first call to <code>getSharedWorkingCopy(...)</code> creates a new working copy for this
-	 *     element</li>
-	 * <li>Subsequent calls increment an internal counter.</li>
-	 * <li>A call to <code>destroy()</code> decrements the internal counter.</li>
-	 * <li>When this counter is 0, the working copy is destroyed.
-	 * </ul>
-	 * So users of this method must destroy exactly once the working copy.
-	 * <p>
-	 * Note that the buffer factory will be used for the life time of this working copy, i.e. if the 
-	 * working copy is closed then reopened, this factory will be used.
-	 * The buffer will be automatically initialized with the original's compilation unit content
-	 * upon creation.
-	 * <p>
-	 * When the shared working copy instance is created, an ADDED ICElementDelta is reported on this
-	 * working copy.
-	 *
-	 * @param monitor a progress monitor used to report progress while opening this compilation unit
-	 *                 or <code>null</code> if no progress should be reported 
-	 * @param factory the factory that creates a buffer that is used to get the content of the working copy
-	 *                 or <code>null</code> if the internal factory should be used
-	 * @param problemRequestor a requestor which will get notified of problems detected during
-	 * 	reconciling as they are discovered. The requestor can be set to <code>null</code> indicating
-	 * 	that the client is not interested in problems.
-	 * @exception CModelException if the contents of this element can   not be
-	 * determined. Reasons include:
-	 * <ul>
-	 * <li> This C element does not exist (ELEMENT_DOES_NOT_EXIST)</li>
-	 * </ul>
-	 * @return a shared working copy on this element using the given factory to create
-	 * the buffer, or this element if this element is already a working copy
-	 * @see IBufferFactory
-	 * @see IProblemRequestor
-	 * @since 2.0
-	 * @noreference This method is not intended to be referenced by clients.
-	 */
-	IWorkingCopy getSharedWorkingCopy(IProgressMonitor monitor, IBufferFactory factory, IProblemRequestor requestor) throws CModelException;
-
 	/**
 	 * Returns a shared working copy on this element using the given factory to create the buffer, or this
 	 * element if this element is already a working copy. This API can only answer an already existing working
@@ -484,12 +376,6 @@ public interface ITranslationUnit extends ICElement, IParent, IOpenable, ISource
 	 * @since 5.1
 	 */
 	IWorkingCopy getWorkingCopy(IProgressMonitor monitor) throws CModelException;
-
-	/**
-	 * Returns a new working copy for the Translation Unit.
-	 * @noreference This method is not intended to be referenced by clients.
-	 */
-	IWorkingCopy getWorkingCopy(IProgressMonitor monitor, IBufferFactory factory) throws CModelException;
 
 	/**
 	 * Return the contentType id for this file.

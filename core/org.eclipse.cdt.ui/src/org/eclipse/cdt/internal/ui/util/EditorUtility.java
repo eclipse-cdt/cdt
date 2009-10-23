@@ -20,7 +20,6 @@ import java.io.IOException;
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
-import com.ibm.icu.text.MessageFormat;
 
 import org.eclipse.compare.rangedifferencer.IRangeComparator;
 import org.eclipse.compare.rangedifferencer.RangeDifference;
@@ -73,6 +72,8 @@ import org.eclipse.ui.ide.ResourceUtil;
 import org.eclipse.ui.part.FileEditorInput;
 import org.eclipse.ui.texteditor.ITextEditor;
 
+import com.ibm.icu.text.MessageFormat;
+
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.model.CModelException;
 import org.eclipse.cdt.core.model.CoreModel;
@@ -88,6 +89,7 @@ import org.eclipse.cdt.core.model.IWorkingCopy;
 import org.eclipse.cdt.core.resources.FileStorage;
 import org.eclipse.cdt.ui.CUIPlugin;
 
+import org.eclipse.cdt.internal.core.model.CModelManager;
 import org.eclipse.cdt.internal.core.resources.ResourceLookup;
 
 import org.eclipse.cdt.internal.ui.ICStatusConstants;
@@ -540,7 +542,7 @@ public class EditorUtility {
 		if (cu.isWorkingCopy())
 			return cu;
 
-		return cu.findSharedWorkingCopy(CUIPlugin.getDefault().getBufferFactory());
+		return CModelManager.getDefault().findSharedWorkingCopy(CUIPlugin.getDefault().getBufferFactory(), cu);
 	}
 
 	/**
@@ -828,8 +830,7 @@ public class EditorUtility {
 
 					List<IRegion> regions= new ArrayList<IRegion>();
 					final int numberOfLines= currentDocument.getNumberOfLines();
-					for (int i= 0; i < differences.length; i++) {
-						RangeDifference curr= differences[i];
+					for (RangeDifference curr : differences) {
 						if (curr.kind() == RangeDifference.CHANGE) {
 							int startLine= Math.min(curr.rightStart(), numberOfLines - 1);
 							int endLine= curr.rightEnd() - 1;

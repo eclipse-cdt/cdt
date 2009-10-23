@@ -49,6 +49,8 @@ import org.eclipse.cdt.ui.CElementGrouping;
 import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.cdt.ui.IncludesGrouping;
 import org.eclipse.cdt.ui.NamespacesGrouping;
+
+import org.eclipse.cdt.internal.core.model.CModelManager;
  
 /**
  * A base content provider for C elements. It provides access to the
@@ -208,7 +210,7 @@ public class BaseCElementContentProvider implements ITreeContentProvider {
 						// if it is not already a working copy
 						if (!(element instanceof IWorkingCopy)){
 							// if it has a valid working copy
-							IWorkingCopy copy = tu.findSharedWorkingCopy(CUIPlugin.getDefault().getBufferFactory());
+							IWorkingCopy copy = CModelManager.getDefault().findSharedWorkingCopy(CUIPlugin.getDefault().getBufferFactory(), tu);
 							if (copy != null) {
 								tu = copy;
 							}
@@ -389,8 +391,7 @@ public class BaseCElementContentProvider implements ITreeContentProvider {
 			
 		List<ICElement> list= new ArrayList<ICElement>();
 		ICElement[] children = cproject.getChildren();
-		for (int i= 0; i < children.length; i++) {
-			ICElement child = children[i];
+		for (ICElement child : children) {
 			if (child instanceof ISourceRoot && child.getResource().getType() == IResource.PROJECT) {
 				// Was a source root at the project, get the children of this element
 				ICElement[] c2 = ((ISourceRoot)child).getChildren();
@@ -565,8 +566,8 @@ public class BaseCElementContentProvider implements ITreeContentProvider {
 			roots = new ISourceRoot[0];
 		}
 		List<Object> nonCResources = new ArrayList<Object>(objects.length);
-		for (int i= 0; i < objects.length; i++) {
-			Object o= objects[i];
+		for (Object object : objects) {
+			Object o= object;
 			// A folder can also be a source root in the following case
 			// Project
 			//  + src <- source folder
@@ -577,8 +578,8 @@ public class BaseCElementContentProvider implements ITreeContentProvider {
 			if (o instanceof IFolder) {
 				IFolder folder = (IFolder)o;
 				boolean found = false;
-				for (int j = 0; j < roots.length; j++) {
-					if (roots[j].getPath().equals(folder.getFullPath())) {
+				for (ISourceRoot root : roots) {
+					if (root.getPath().equals(folder.getFullPath())) {
 						found = true;
 						break;
 					}
@@ -589,19 +590,19 @@ public class BaseCElementContentProvider implements ITreeContentProvider {
 				}
 			} else if (o instanceof IFile){
 				boolean found = false;
-				for (int j = 0; j < binaries.length; j++) {
-					IResource res = binaries[j].getResource();
+				for (ICElement binarie : binaries) {
+					IResource res = binarie.getResource();
 					if (o.equals(res)) {
-						o = binaries[j];
+						o = binarie;
 						found = true;
 						break;
 					}
 				}
 				if (!found) {
-					for (int j = 0; j < archives.length; j++) {
-						IResource res = archives[j].getResource();
+					for (ICElement archive : archives) {
+						IResource res = archive.getResource();
 						if (o.equals(res)) {
-							o = archives[j];
+							o = archive;
 							break;
 						}
 					}
@@ -641,9 +642,9 @@ public class BaseCElementContentProvider implements ITreeContentProvider {
 	protected IBinary[] getBinaries(IBinaryContainer container) throws CModelException {
 		ICElement[] celements = container.getChildren();
 		ArrayList<IBinary> list = new ArrayList<IBinary>(celements.length);
-		for (int i = 0; i < celements.length; i++) {
-			if (celements[i] instanceof IBinary) {
-				IBinary bin = (IBinary)celements[i];
+		for (ICElement celement : celements) {
+			if (celement instanceof IBinary) {
+				IBinary bin = (IBinary)celement;
 				list.add(bin);
 			}
 		}
@@ -660,9 +661,9 @@ public class BaseCElementContentProvider implements ITreeContentProvider {
 	protected IArchive[] getArchives(IArchiveContainer container) throws CModelException {
 		ICElement[] celements = container.getChildren();
 		ArrayList<IArchive> list = new ArrayList<IArchive>(celements.length);
-		for (int i = 0; i < celements.length; i++) {
-			if (celements[i] instanceof IArchive) {
-				IArchive ar = (IArchive)celements[i];
+		for (ICElement celement : celements) {
+			if (celement instanceof IArchive) {
+				IArchive ar = (IArchive)celement;
 				list.add(ar);
 			}
 		}

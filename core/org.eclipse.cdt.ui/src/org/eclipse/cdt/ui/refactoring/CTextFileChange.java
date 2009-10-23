@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2008 Wind River Systems and others.
+ * Copyright (c) 2006, 2009 Wind River Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -25,6 +25,8 @@ import org.eclipse.cdt.core.model.CoreModel;
 import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.core.model.ITranslationUnit;
 import org.eclipse.cdt.core.model.IWorkingCopy;
+
+import org.eclipse.cdt.internal.core.model.TranslationUnit;
 
 import org.eclipse.cdt.internal.ui.refactoring.DocumentAdapter;
 import org.eclipse.cdt.internal.ui.refactoring.UndoCTextFileChange;
@@ -69,8 +71,8 @@ public class CTextFileChange extends TextFileChange {
 	protected IDocument acquireDocument(IProgressMonitor pm) throws CoreException {
         IDocument doc= super.acquireDocument(pm);
         if (++fAquireCount == 1) {
-            if (fTranslationUnit != null && fWorkingCopy == null) {
-                fWorkingCopy= fTranslationUnit.getWorkingCopy(null, DocumentAdapter.FACTORY);
+            if (fTranslationUnit instanceof TranslationUnit && fWorkingCopy == null) {
+                fWorkingCopy= ((TranslationUnit) fTranslationUnit).getWorkingCopy(null, DocumentAdapter.FACTORY);
                 if (!fTranslationUnit.isOpen()) {
                     fTranslationUnit.open(null);
                 }

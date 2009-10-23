@@ -35,7 +35,6 @@ import org.eclipse.ltk.core.refactoring.RefactoringDescriptor;
 import org.eclipse.ltk.core.refactoring.RefactoringStatus;
 import org.eclipse.text.edits.TextEditGroup;
 
-import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IASTBinaryExpression;
 import org.eclipse.cdt.core.dom.ast.IASTComment;
@@ -214,11 +213,6 @@ public class ExtractFunctionRefactoring extends CRefactoring {
 						}
 					}
 				}
-				if(unit != null) {
-					IIndex index = CCorePlugin.getIndexManager().getIndex(project);
-					unit.setIndex(index);
-				}	
-
 				sm.done();
 			}
 			finally {

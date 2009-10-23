@@ -16,10 +16,8 @@ package org.eclipse.cdt.core;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Map;
 import java.util.MissingResourceException;
 import java.util.ResourceBundle;
 
@@ -50,11 +48,8 @@ import org.eclipse.cdt.internal.core.PositionTrackerManager;
 import org.eclipse.cdt.internal.core.cdtvariables.CdtVariableManager;
 import org.eclipse.cdt.internal.core.cdtvariables.UserVarSupplier;
 import org.eclipse.cdt.internal.core.envvar.EnvironmentVariableManager;
-import org.eclipse.cdt.internal.core.model.BufferManager;
 import org.eclipse.cdt.internal.core.model.CModelManager;
-import org.eclipse.cdt.internal.core.model.IBufferFactory;
 import org.eclipse.cdt.internal.core.model.Util;
-import org.eclipse.cdt.internal.core.model.WorkingCopy;
 import org.eclipse.cdt.internal.core.pdom.PDOMManager;
 import org.eclipse.cdt.internal.core.resources.ResourceLookup;
 import org.eclipse.cdt.internal.core.settings.model.CProjectDescriptionManager;
@@ -225,7 +220,7 @@ public class CCorePlugin extends Plugin {
 	 * @since 5.1
 	 */
 	public static IWorkingCopy[] getSharedWorkingCopies() {
-		return getSharedWorkingCopies(null);
+		return CModelManager.getDefault().getSharedWorkingCopies(null);
 	}
 
 	public static String getResourceString(String key) {
@@ -1173,32 +1168,6 @@ public class CCorePlugin extends Plugin {
 	public CCorePlugin() {
 		super();
 		fgCPlugin = this;
-	}
-
-	/**
-	 * Answers the shared working copies currently registered for this buffer factory. 
-	 * Working copies can be shared by several clients using the same buffer factory,see 
-	 * <code>IWorkingCopy.getSharedWorkingCopy</code>.
-	 * 
-	 * @param factory the given buffer factory
-	 * @return the list of shared working copies for a given buffer factory
-	 * @see IWorkingCopy
-	 * @noreference This method is not intended to be referenced by clients.
-	 */
-	public static IWorkingCopy[] getSharedWorkingCopies(IBufferFactory factory) {
-		// if factory is null, default factory must be used
-		if (factory == null)
-			factory = BufferManager.getDefaultBufferManager().getDefaultBufferFactory();
-		Map<IBufferFactory, Map<ITranslationUnit, WorkingCopy>> sharedWorkingCopies = CModelManager
-				.getDefault().sharedWorkingCopies;
-
-		Map<ITranslationUnit, WorkingCopy> perFactoryWorkingCopies = sharedWorkingCopies.get(factory);
-		if (perFactoryWorkingCopies == null)
-			return CModelManager.NoWorkingCopy;
-		Collection<WorkingCopy> copies = perFactoryWorkingCopies.values();
-		IWorkingCopy[] result = new IWorkingCopy[copies.size()];
-		copies.toArray(result);
-		return result;
 	}
 	
 	/**

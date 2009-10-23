@@ -81,6 +81,7 @@ import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.cdt.ui.PreferenceConstants;
 import org.eclipse.cdt.ui.text.ICPartitions;
 
+import org.eclipse.cdt.internal.core.model.CModelManager;
 import org.eclipse.cdt.internal.core.model.IBufferFactory;
 import org.eclipse.cdt.internal.core.model.TranslationUnit;
 
@@ -861,7 +862,7 @@ public class CDocumentProvider extends TextFileDocumentProvider {
 
 		IProblemRequestor requestor= tuInfo.fModel instanceof IProblemRequestor ? (IProblemRequestor) tuInfo.fModel : null;
 		IBufferFactory factory = CUIPlugin.getDefault().getBufferFactory();
-		tuInfo.fCopy = original.getSharedWorkingCopy(getProgressMonitor(), factory, requestor);
+		tuInfo.fCopy = CModelManager.getDefault().getSharedWorkingCopy(factory, original, requestor, getProgressMonitor());
 
 		if (tuInfo.fModel == null) {
 			IPath location = original.getLocation();

@@ -27,9 +27,10 @@ import org.eclipse.text.edits.UndoEdit;
 import org.eclipse.cdt.core.model.CoreModel;
 import org.eclipse.cdt.core.model.IBuffer;
 import org.eclipse.cdt.core.model.ICElement;
-import org.eclipse.cdt.core.model.ITranslationUnit;
 import org.eclipse.cdt.core.model.IWorkingCopy;
 import org.eclipse.cdt.ui.CUIPlugin;
+
+import org.eclipse.cdt.internal.core.model.TranslationUnit;
 
 /**
  * UndoCTextFileChange that uses a working copy in order to generate CModel events. 
@@ -61,11 +62,11 @@ public class UndoCTextFileChange
         }
         final IFile file = (IFile) obj;
         ICElement element = CoreModel.getDefault().create(file);
-        if (!(element instanceof ITranslationUnit)) {
+        if (!(element instanceof TranslationUnit)) {
             return super.perform(pm);
         }
 
-        final ITranslationUnit tu = (ITranslationUnit) element;
+        final TranslationUnit tu = (TranslationUnit) element;
         IWorkingCopy wc= tu.getWorkingCopy(pm, DocumentAdapter.FACTORY);
         final IBuffer buffer= wc.getBuffer();
         assert buffer instanceof DocumentAdapter;

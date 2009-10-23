@@ -73,6 +73,7 @@ import org.eclipse.cdt.core.model.IWorkingCopy;
 import org.eclipse.cdt.core.model.IWorkingCopyProvider;
 
 import org.eclipse.cdt.internal.core.dom.rewrite.ASTRewriteAnalyzer;
+import org.eclipse.cdt.internal.core.model.CModelManager;
 import org.eclipse.cdt.internal.core.model.IBufferFactory;
 import org.eclipse.cdt.internal.corext.template.c.CContextType;
 import org.eclipse.cdt.internal.corext.template.c.CodeTemplateContextType;
@@ -89,7 +90,6 @@ import org.eclipse.cdt.internal.ui.editor.ASTProvider;
 import org.eclipse.cdt.internal.ui.editor.CDocumentProvider;
 import org.eclipse.cdt.internal.ui.editor.CustomBufferFactory;
 import org.eclipse.cdt.internal.ui.editor.WorkingCopyManager;
-import org.eclipse.cdt.internal.ui.editor.asm.AsmTextTools;
 import org.eclipse.cdt.internal.ui.refactoring.CTextFileChangeFactory;
 import org.eclipse.cdt.internal.ui.text.CTextTools;
 import org.eclipse.cdt.internal.ui.text.c.hover.CEditorTextHoverDescriptor;
@@ -254,7 +254,7 @@ public class CUIPlugin extends AbstractUIPlugin {
 	}
 	
 	public static IWorkingCopy[] getSharedWorkingCopies() {
-		return CCorePlugin.getSharedWorkingCopies(getDefault().getBufferFactory());
+		return CModelManager.getDefault().getSharedWorkingCopies(getDefault().getBufferFactory());
 	}
 	
 	public static String getResourceString(String key) {
@@ -387,7 +387,6 @@ public class CUIPlugin extends AbstractUIPlugin {
 	private IBufferFactory fBufferFactory;
 	private WorkingCopyManager fWorkingCopyManager;
 	private CTextTools fTextTools;
-	private AsmTextTools fAsmTextTools;
 	private ProblemMarkerManager fProblemMarkerManager;
 	private Map<String, BuildConsoleManager> fBuildConsoleManagers;
 	private ResourceAdapterFactory fResourceAdapterFactory;
@@ -462,18 +461,6 @@ public class CUIPlugin extends AbstractUIPlugin {
 		if (fTextTools == null)
 			fTextTools = new CTextTools();
 		return fTextTools;
-	}
-
-	/**
-	 * Returns the shared assembly text tools.
-	 * @deprecated Use methods provided by {@link CDTUITools} instead.
-	 * @noreference This method is not intended to be referenced by clients.
-	 */
-	@Deprecated
-	public AsmTextTools getAsmTextTools() {
-		if (fAsmTextTools == null)
-			fAsmTextTools = new AsmTextTools();
-		return fAsmTextTools;
 	}
 
 	/**
@@ -562,10 +549,6 @@ public class CUIPlugin extends AbstractUIPlugin {
 		if (fTextTools != null) {
 			fTextTools.dispose();
 			fTextTools= null;
-		}
-		if (fAsmTextTools != null) {
-			fAsmTextTools.dispose();
-			fAsmTextTools= null;
 		}
 		if (fImageDescriptorRegistry != null) {
 			fImageDescriptorRegistry.dispose();

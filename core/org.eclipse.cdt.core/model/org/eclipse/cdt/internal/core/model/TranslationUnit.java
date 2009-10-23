@@ -20,7 +20,6 @@ import java.io.InputStream;
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
@@ -402,22 +401,7 @@ public class TranslationUnit extends Openable implements ITranslationUnit {
 	}
 
 	public IWorkingCopy findSharedWorkingCopy() {
-		return findSharedWorkingCopy(null);
-	}
-
-	public IWorkingCopy findSharedWorkingCopy(IBufferFactory factory) {
-
-		// if factory is null, default factory must be used
-		if (factory == null) factory = BufferManager.getDefaultBufferManager();
-
-		// In order to be shared, working copies have to denote the same translation unit
-		// AND use the same buffer factory.
-		// Assuming there is a little set of buffer factories, then use a 2 level Map cache.
-		Map<IBufferFactory, Map<ITranslationUnit, WorkingCopy>> sharedWorkingCopies = CModelManager.getDefault().sharedWorkingCopies;
-
-		Map<ITranslationUnit, WorkingCopy> perFactoryWorkingCopies = sharedWorkingCopies.get(factory);
-		if (perFactoryWorkingCopies == null) return null;
-		return perFactoryWorkingCopies.get(this);
+		return CModelManager.getDefault().findSharedWorkingCopy(null, this);
 	}
 
 	@Override
@@ -457,40 +441,7 @@ public class TranslationUnit extends Openable implements ITranslationUnit {
 
 	public IWorkingCopy getSharedWorkingCopy(IProgressMonitor monitor, IProblemRequestor requestor)
 			throws CModelException {
-		return getSharedWorkingCopy(monitor, null, requestor);
-	}
-
-	public IWorkingCopy getSharedWorkingCopy(IProgressMonitor monitor,IBufferFactory factory)
-		throws CModelException {
-		return getSharedWorkingCopy(monitor, factory, null);
-	}
-
-	public IWorkingCopy getSharedWorkingCopy(IProgressMonitor monitor,IBufferFactory factory, IProblemRequestor requestor)
-			throws CModelException {
-
-		// if factory is null, default factory must be used
-		if (factory == null) factory = BufferManager.getDefaultBufferManager();
-
-		CModelManager manager = CModelManager.getDefault();
-
-		// In order to be shared, working copies have to denote the same translation unit
-		// AND use the same buffer factory.
-		// Assuming there is a little set of buffer factories, then use a 2 level Map cache.
-		Map<IBufferFactory, Map<ITranslationUnit, WorkingCopy>> sharedWorkingCopies = manager.sharedWorkingCopies;
-
-		Map<ITranslationUnit, WorkingCopy> perFactoryWorkingCopies = sharedWorkingCopies.get(factory);
-		if (perFactoryWorkingCopies == null) {
-			perFactoryWorkingCopies = new HashMap<ITranslationUnit, WorkingCopy>();
-			sharedWorkingCopies.put(factory, perFactoryWorkingCopies);
-		}
-		WorkingCopy workingCopy = perFactoryWorkingCopies.get(this);
-		if (workingCopy != null) {
-			workingCopy.useCount++;
-			return workingCopy;
-		}
-		CreateWorkingCopyOperation op = new CreateWorkingCopyOperation(this, perFactoryWorkingCopies, factory, requestor);
-		op.runOperation(monitor);
-		return (IWorkingCopy) op.getResultElements()[0];
+		return CModelManager.getDefault().getSharedWorkingCopy(null, this, requestor, monitor);
 	}
 
 	public IWorkingCopy getWorkingCopy() throws CModelException {

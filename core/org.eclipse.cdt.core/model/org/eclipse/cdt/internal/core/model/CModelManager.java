@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2008 QNX Software Systems and others.
+ * Copyright (c) 2000, 2009 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -50,6 +50,7 @@ import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.core.model.IElementChangedListener;
 import org.eclipse.cdt.core.model.IIncludeReference;
 import org.eclipse.cdt.core.model.IParent;
+import org.eclipse.cdt.core.model.IProblemRequestor;
 import org.eclipse.cdt.core.model.ISourceRoot;
 import org.eclipse.cdt.core.model.ITranslationUnit;
 import org.eclipse.cdt.core.model.IWorkingCopy;
@@ -72,6 +73,7 @@ import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.ISafeRunnable;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.SafeRunner;
@@ -123,7 +125,7 @@ public class CModelManager implements IResourceChangeListener, ICDescriptorListe
 	/**
 	 * A map from ITranslationUnit to IWorkingCopy of the shared working copies.
 	 */
-	public Map<IBufferFactory, Map<ITranslationUnit, WorkingCopy>> sharedWorkingCopies = new HashMap<IBufferFactory, Map<ITranslationUnit, WorkingCopy>>();
+	private Map<IBufferFactory, Map<ITranslationUnit, WorkingCopy>> sharedWorkingCopies = new HashMap<IBufferFactory, Map<ITranslationUnit, WorkingCopy>>();
 	/**
 	 * Set of elements which are out of sync with their buffers.
 	 */
@@ -1277,4 +1279,61 @@ public class CModelManager implements IResourceChangeListener, ICDescriptorListe
 		CCoreInternals.getPDOMManager().preCloseProject(create(project));
 	}
 
+	public IWorkingCopy[] getSharedWorkingCopies(IBufferFactory factory) {
+		// if factory is null, default factory must be used
+		if (factory == null)
+			factory = BufferManager.getDefaultBufferManager().getDefaultBufferFactory();
+
+		Map<ITranslationUnit, WorkingCopy> perFactoryWorkingCopies = sharedWorkingCopies.get(factory);
+		if (perFactoryWorkingCopies == null)
+			return NoWorkingCopy;
+		Collection<WorkingCopy> copies = perFactoryWorkingCopies.values();
+		return copies.toArray(new IWorkingCopy[copies.size()]);
+	}
+
+	public IWorkingCopy findSharedWorkingCopy(IBufferFactory factory, ITranslationUnit tu) {
+		// if factory is null, default factory must be used
+		if (factory == null)
+			factory = BufferManager.getDefaultBufferManager();
+
+		Map<ITranslationUnit, WorkingCopy> perFactoryWorkingCopies = sharedWorkingCopies.get(factory);
+		if (perFactoryWorkingCopies == null)
+			return null;
+
+		return perFactoryWorkingCopies.get(tu);
+	}
+
+	public IWorkingCopy getSharedWorkingCopy(IBufferFactory factory, ITranslationUnit tu, IProblemRequestor requestor,
+			IProgressMonitor monitor) throws CModelException {
+
+		// if factory is null, default factory must be used
+		if (factory == null)
+			factory = BufferManager.getDefaultBufferManager();
+
+		Map<ITranslationUnit, WorkingCopy> perFactoryWorkingCopies = sharedWorkingCopies.get(factory);
+		if (perFactoryWorkingCopies == null) {
+			perFactoryWorkingCopies = new HashMap<ITranslationUnit, WorkingCopy>();
+			sharedWorkingCopies.put(factory, perFactoryWorkingCopies);
+		}
+		WorkingCopy workingCopy = perFactoryWorkingCopies.get(this);
+		if (workingCopy != null) {
+			workingCopy.useCount++;
+			return workingCopy;
+		}
+		CreateWorkingCopyOperation op = new CreateWorkingCopyOperation(tu, perFactoryWorkingCopies,
+				factory, requestor);
+		op.runOperation(monitor);
+		return (IWorkingCopy) op.getResultElements()[0];
+	}
+
+	public IWorkingCopy removeSharedWorkingCopy(final IBufferFactory bufferFactory,	ITranslationUnit originalElement) {
+		// In order to be shared, working copies have to denote the same compilation unit
+		// AND use the same buffer factory.
+		// Assuming there is a little set of buffer factories, then use a 2 level Map cache.
+		Map<ITranslationUnit, WorkingCopy> perFactoryWorkingCopies = sharedWorkingCopies.get(bufferFactory);
+		if (perFactoryWorkingCopies != null) {
+			return perFactoryWorkingCopies.remove(originalElement);
+		}
+		return null;
+	}
 }

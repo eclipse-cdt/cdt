@@ -189,40 +189,38 @@ abstract public class PDOMWriter {
 	private void storeSymbolsInIndex(final Map<IIndexFileLocation, Symbols> symbolMap, IIndexFileLocation[] ifls, int linkageID, int configHash,
 			HashSet<IASTPreprocessorIncludeStatement> contextIncludes, IWritableIndex index, int readlockCount, boolean flushIndex,
 			ArrayList<IStatus> stati, IProgressMonitor pm) throws InterruptedException, CoreException {
-		index.acquireWriteLock(readlockCount);
-		long start= System.currentTimeMillis();
-		try {
-			for (int i=0; i<ifls.length; i++) {
-				if (pm.isCanceled()) 
-					return;
+		for (int i= 0; i < ifls.length; i++) {
+			if (pm.isCanceled()) 
+				return;
 
-				final IIndexFileLocation ifl= ifls[i];
-				if (ifl != null) {
-					if (fShowActivity) {
-						System.out.println("Indexer: adding " + ifl.getURI());  //$NON-NLS-1$
-					}
-					Throwable th= null;
-					try {
-						storeFileInIndex(index, ifl, symbolMap, linkageID, configHash, contextIncludes);
-					} catch (RuntimeException e) {
-						th= e; 
-					} catch (PDOMNotImplementedError e) {
-						th= e; 
-					} catch (StackOverflowError e) {
-						th= e;
-					}
-					if (th != null) {
-						stati.add(createStatus(NLS.bind(Messages.PDOMWriter_errorWhileParsing, ifl.getURI().getPath()), th));
-					}
-					if (i<ifls.length-1) {
-						updateFileCount(0, 0, 1); // update header count
-					}
+			final IIndexFileLocation ifl= ifls[i];
+			if (ifl != null) {
+				if (fShowActivity) {
+					System.out.println("Indexer: adding " + ifl.getURI());  //$NON-NLS-1$
 				}
+				index.acquireWriteLock(readlockCount);
+				long start= System.currentTimeMillis();
+				Throwable th= null;
+				try {
+					storeFileInIndex(index, ifl, symbolMap, linkageID, configHash, contextIncludes);
+				} catch (RuntimeException e) {
+					th= e; 
+				} catch (PDOMNotImplementedError e) {
+					th= e; 
+				} catch (StackOverflowError e) {
+					th= e;
+				} finally {
+					index.releaseWriteLock(readlockCount, flushIndex);
+				}
+				if (th != null) {
+					stati.add(createStatus(NLS.bind(Messages.PDOMWriter_errorWhileParsing, ifl.getURI().getPath()), th));
+				}
+				if (i < ifls.length - 1) {
+					updateFileCount(0, 0, 1); // update header count
+				}
+				fStatistics.fAddToIndexTime+= System.currentTimeMillis() - start;
 			}
-		} finally {
-			index.releaseWriteLock(readlockCount, flushIndex);
 		}
-		fStatistics.fAddToIndexTime+= System.currentTimeMillis()-start;
 	}
 
 	private void resolveNames(final Map<IIndexFileLocation, Symbols> symbolMap, IIndexFileLocation[] ifls, ArrayList<IStatus> stati, IProgressMonitor pm) {

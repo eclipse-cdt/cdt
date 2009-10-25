@@ -202,26 +202,24 @@ abstract public class PDOMWriter {
 				}
 				index.acquireWriteLock(readlockCount);
 				long start= System.currentTimeMillis();
+				Throwable th= null;
 				try {
-					Throwable th= null;
-					try {
-						storeFileInIndex(index, ifl, symbolMap, linkageID, configHash, contextIncludes);
-					} catch (RuntimeException e) {
-						th= e; 
-					} catch (PDOMNotImplementedError e) {
-						th= e; 
-					} catch (StackOverflowError e) {
-						th= e;
-					}
-					if (th != null) {
-						stati.add(createStatus(NLS.bind(Messages.PDOMWriter_errorWhileParsing,
-								ifl.getURI().getPath()), th));
-					}
-					if (i < ifls.length - 1) {
-						updateFileCount(0, 0, 1); // update header count
-					}
+					storeFileInIndex(index, ifl, symbolMap, linkageID, configHash, contextIncludes);
+				} catch (RuntimeException e) {
+					th= e; 
+				} catch (PDOMNotImplementedError e) {
+					th= e; 
+				} catch (StackOverflowError e) {
+					th= e;
 				} finally {
 					index.releaseWriteLock(readlockCount, flushIndex);
+				}
+				if (th != null) {
+					stati.add(createStatus(NLS.bind(Messages.PDOMWriter_errorWhileParsing,
+							ifl.getURI().getPath()), th));
+				}
+				if (i < ifls.length - 1) {
+					updateFileCount(0, 0, 1); // update header count
 				}
 				fStatistics.fAddToIndexTime+= System.currentTimeMillis() - start;
 			}

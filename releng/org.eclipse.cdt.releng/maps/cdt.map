@@ -97,11 +97,6 @@ feature@org.eclipse.cdt.core.parser.upc.sdk=@cdtTag@,:pserver:anonymous@dev.ecli
 plugin@org.eclipse.cdt.util=@cdtTag@,:pserver:anonymous@dev.eclipse.org:/cvsroot/tools,,org.eclipse.cdt/util/org.eclipse.cdt.util
 feature@org.eclipse.cdt.util=@cdtTag@,:pserver:anonymous@dev.eclipse.org:/cvsroot/tools,,org.eclipse.cdt/util/org.eclipse.cdt.util-feature
 
-! CDT Mylyn Bridge
-plugin@org.eclipse.cdt.mylyn=@cdtTag@,:pserver:anonymous@dev.eclipse.org:/cvsroot/tools,,org.eclipse.cdt/mylyn/org.eclipse.cdt.mylyn
-plugin@org.eclipse.cdt.mylyn.ui=@cdtTag@,:pserver:anonymous@dev.eclipse.org:/cvsroot/tools,,org.eclipse.cdt/mylyn/org.eclipse.cdt.mylyn.ui
-feature@org.eclipse.cdt.mylyn=@cdtTag@,:pserver:anonymous@dev.eclipse.org:/cvsroot/tools,,org.eclipse.cdt/mylyn/org.eclipse.cdt.mylyn-feature
-
 ! DSF 
 plugin@org.eclipse.cdt.dsf=@cdtTag@,:pserver:anonymous@dev.eclipse.org:/cvsroot/tools,,org.eclipse.cdt/dsf/org.eclipse.cdt.dsf
 plugin@org.eclipse.cdt.dsf.ui=@cdtTag@,:pserver:anonymous@dev.eclipse.org:/cvsroot/tools,,org.eclipse.cdt/dsf/org.eclipse.cdt.dsf.ui

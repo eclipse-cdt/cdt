@@ -76,14 +76,18 @@ plugin@org.eclipse.cdt.managedbuilder.xlc.core=@cdtTag@,:pserver:anonymous@dev.e
 plugin@org.eclipse.cdt.managedbuilder.xlc.ui=@cdtTag@,:pserver:anonymous@dev.eclipse.org:/cvsroot/tools,,org.eclipse.cdt/xlc/org.eclipse.cdt.managedbuilder.xlc.ui
 feature@org.eclipse.cdt.xlc.feature=@cdtTag@,:pserver:anonymous@dev.eclipse.org:/cvsroot/tools,,org.eclipse.cdt/xlc/org.eclipse.cdt.xlc.feature
 feature@org.eclipse.cdt.xlc.sdk=@cdtTag@,:pserver:anonymous@dev.eclipse.org:/cvsroot/tools,,org.eclipse.cdt/xlc/org.eclipse.cdt.xlc.sdk-feature
+plugin@org.eclipse.cdt.core.lrparser.xlc=@cdtTag@,:pserver:anonymous@dev.eclipse.org:/cvsroot/tools,,org.eclipse.cdt/xlc/org.eclipse.cdt.core.lrparser.xlc
+plugin@org.eclipse.cdt.core.lrparser.xlc.tests=@cdtTag@,:pserver:anonymous@dev.eclipse.org:/cvsroot/tools,,org.eclipse.cdt/xlc/org.eclipse.cdt.core.lrparser.xlc.tests
 
 ! LR parser
 plugin@org.eclipse.cdt.core.lrparser=@cdtTag@,:pserver:anonymous@dev.eclipse.org:/cvsroot/tools,,org.eclipse.cdt/lrparser/org.eclipse.cdt.core.lrparser
+plugin@org.eclipse.cdt.core.lrparser.tests=@cdtTag@,:pserver:anonymous@dev.eclipse.org:/cvsroot/tools,,org.eclipse.cdt/lrparser/org.eclipse.cdt.core.lrparser.tests
 plugin@net.sourceforge.lpg.lpgjavaruntime,1.1.0=GET,http://archive.eclipse.org/tools/orbit/downloads/drops/R20080611105805/bundles/net.sourceforge.lpg.lpgjavaruntime_1.1.0.v200803061910.jar
 feature@org.eclipse.cdt.core.lrparser.feature=@cdtTag@,:pserver:anonymous@dev.eclipse.org:/cvsroot/tools,,org.eclipse.cdt/lrparser/org.eclipse.cdt.core.lrparser.feature
 
 ! UPC parser - also uses LPG but since we already download it above no need to download again
 plugin@org.eclipse.cdt.core.parser.upc=@cdtTag@,:pserver:anonymous@dev.eclipse.org:/cvsroot/tools,,org.eclipse.cdt/upc/org.eclipse.cdt.core.parser.upc
+plugin@org.eclipse.cdt.core.parser.upc.tests=@cdtTag@,:pserver:anonymous@dev.eclipse.org:/cvsroot/tools,,org.eclipse.cdt/upc/org.eclipse.cdt.core.parser.upc.tests
 feature@org.eclipse.cdt.core.parser.upc.feature=@cdtTag@,:pserver:anonymous@dev.eclipse.org:/cvsroot/tools,,org.eclipse.cdt/upc/org.eclipse.cdt.core.parser.upc.feature
 
 ! CDT Utilities

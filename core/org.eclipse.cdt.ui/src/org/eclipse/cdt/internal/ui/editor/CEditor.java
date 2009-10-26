@@ -11,6 +11,7 @@
  *     Anton Leherbauer (Wind River Systems)
  *     Markus Schorn (Wind River Systems)
  *     Sergey Prigogin (Google)
+ *     Axel Mueller - [289339] Surround with
  *******************************************************************************/
 package org.eclipse.cdt.internal.ui.editor;
 
@@ -200,6 +201,7 @@ import org.eclipse.cdt.internal.ui.actions.GoToNextPreviousMemberAction;
 import org.eclipse.cdt.internal.ui.actions.GotoNextBookmarkAction;
 import org.eclipse.cdt.internal.ui.actions.IndentAction;
 import org.eclipse.cdt.internal.ui.actions.RemoveBlockCommentAction;
+import org.eclipse.cdt.internal.ui.actions.SurroundWithActionGroup;
 import org.eclipse.cdt.internal.ui.search.OccurrencesFinder;
 import org.eclipse.cdt.internal.ui.search.IOccurrencesFinder.OccurrenceLocation;
 import org.eclipse.cdt.internal.ui.search.actions.SelectionSearchGroup;
@@ -1206,6 +1208,9 @@ public class CEditor extends TextEditor implements ISelectionChangedListener, IC
 
 	/** Generate action group filling the "Source" submenu */
 	private GenerateActionGroup fGenerateActionGroup;
+	
+	/** Generate action group filling the "Surround with" submenu */
+	private SurroundWithActionGroup fSurroundWithActionGroup;
 
 	/** Pairs of brackets, used to match. */
     protected final static char[] BRACKETS = { '{', '}', '(', ')', '[', ']', '<', '>' };
@@ -2048,7 +2053,12 @@ public class CEditor extends TextEditor implements ISelectionChangedListener, IC
 			fGenerateActionGroup.dispose();
 			fGenerateActionGroup= null;
 		}
-
+		
+		if (fSurroundWithActionGroup != null) {
+			fSurroundWithActionGroup.dispose();
+			fSurroundWithActionGroup= null;
+		}
+		
 		if (fEditorSelectionChangedListener != null)  {
 			fEditorSelectionChangedListener.uninstall(getSelectionProvider());
 			fEditorSelectionChangedListener = null;
@@ -2198,7 +2208,8 @@ public class CEditor extends TextEditor implements ISelectionChangedListener, IC
 		fRefactoringActionGroup= new CRefactoringActionGroup(this, ITextEditorActionConstants.GROUP_EDIT);
 		fOpenInViewGroup= createOpenViewActionGroup();
 		fGenerateActionGroup= new GenerateActionGroup(this, ITextEditorActionConstants.GROUP_EDIT);
-
+		fSurroundWithActionGroup = new SurroundWithActionGroup(this, ITextEditorActionConstants.GROUP_EDIT);
+		
 		action = getAction(ITextEditorActionConstants.SHIFT_RIGHT);
 		if (action != null) {
 			action.setId(ITextEditorActionConstants.SHIFT_RIGHT);
@@ -2259,6 +2270,10 @@ public class CEditor extends TextEditor implements ISelectionChangedListener, IC
 		fGenerateActionGroup.fillContextMenu(menu);
 		fGenerateActionGroup.setContext(null);
 
+		fSurroundWithActionGroup.setContext(context);
+		fSurroundWithActionGroup.fillContextMenu(menu);
+		fSurroundWithActionGroup.setContext(null);
+		
 		if (hasCElement) {
 			fSelectionSearchGroup.fillContextMenu(menu);
 		}
@@ -2984,6 +2999,7 @@ public class CEditor extends TextEditor implements ISelectionChangedListener, IC
 		fRefactoringActionGroup.fillActionBars(actionBars);
 		fGenerateActionGroup.fillActionBars(actionBars);
 		fFoldingGroup.updateActionBars();
+		fSurroundWithActionGroup.fillActionBars(actionBars);
 	}
 
 	/*

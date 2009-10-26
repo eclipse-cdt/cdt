@@ -1277,6 +1277,14 @@
                retarget="true">
          </action>
          <action
+               class="org.eclipse.cdt.internal.ui.actions.SurroundWithTemplateMenuAction"
+               definitionId="org.eclipse.cdt.ui.edit.text.c.surround.with.quickMenu"
+               label="%SurroundWithTemplateAction.label"
+               menubarPath="org.eclipse.jdt.ui.source.menu/codeGroup"
+               id="org.eclipse.cdt.internal.ui.actions.SurroundWithTemplateMenuAction"
+               style="pulldown">
+         </action>
+         <action
                class="org.eclipse.ltk.ui.refactoring.actions.ShowRefactoringHistoryAction"
                definitionId="org.eclipse.ltk.ui.refactor.show.refactoring.history"
                id="org.eclipse.cdt.ui.actions.RefactoringHistory"
@@ -1306,6 +1314,9 @@
                path="edit">
             <separator
                   name="generateGroup">
+            </separator>
+            <separator
+                  name="codeGroup">
             </separator>
          </menu>
       </actionSet>
@@ -1588,6 +1599,22 @@
             contextId="org.eclipse.cdt.ui.cEditorScope"
             commandId="org.eclipse.cdt.ui.edit.text.c.indent"
             schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"/>
+       <key
+            sequence="M2+M3+Z"
+            contextId="org.eclipse.cdt.ui.cEditorScope"
+            commandId="org.eclipse.cdt.ui.edit.text.c.surround.with.quickMenu"
+            schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"/>        
+       <key
+            platform="carbon"
+            sequence="M2+M3+Z"
+            commandId=""
+            schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"/>
+       <key
+            platform="carbon"
+            sequence="COMMAND+ALT+Z"
+            contextId="org.eclipse.cdt.ui.cEditorScope"
+            commandId="org.eclipse.cdt.ui.edit.text.c.surround.with.quickMenu"
+            schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"/>            
      <key
             sequence="M1+M3+H"
             contextId="org.eclipse.cdt.ui.cEditorScope"
@@ -2152,6 +2179,12 @@
             description="%ActionDefinition.gettersAndSetters.description"
 	        categoryId="org.eclipse.cdt.ui.category.source"
 	        id="org.eclipse.cdt.ui.refactor.getters.and.setters"/>
+      <command
+            name="%ActionDefinition.surroundWith.quickMenu.name"
+            description="%ActionDefinition.surroundWith.quickMenu.description"
+            categoryId="org.eclipse.cdt.ui.category.source"
+            id="org.eclipse.cdt.ui.edit.text.c.surround.with.quickMenu">
+      </command>
    </extension>
    <extension
          id="pdomSearchPage"

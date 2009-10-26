@@ -88,6 +88,16 @@ public class DefaultDsfExecutor extends ScheduledThreadPoolExecutor
         return Thread.currentThread().equals( ((DsfThreadFactory)getThreadFactory()).fThread );
     }
 
+    /**
+	 * @since 2.1
+	 */
+    public int getCurrentExecutionDepth() {
+    	if (fCurrentlyExecuting != null) {
+    		return fCurrentlyExecuting.fDepth;
+    	}
+        return -1;
+    }
+
     protected String getName() { 
         return fName;
     }
@@ -153,6 +163,7 @@ public class DefaultDsfExecutor extends ScheduledThreadPoolExecutor
     abstract class TracingWrapper {
         /** Sequence number of this runnable/callable */
         int fSequenceNumber = -1; 
+        int fDepth = 0;
         
         /** Trace of where the runnable/callable was submitted to the executor */
         StackTraceWrapper fSubmittedAt = null; 
@@ -210,6 +221,7 @@ public class DefaultDsfExecutor extends ScheduledThreadPoolExecutor
         
         void traceExecution() {
             fSequenceNumber = fSequenceCounter++;
+            fDepth = fSubmittedBy == null ? 0 : fSubmittedBy.fDepth + 1;
             fCurrentlyExecuting = this;
 
             // Write to console only if tracing is enabled (as opposed to tracing or assertions).

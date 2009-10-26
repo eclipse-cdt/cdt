@@ -82,6 +82,7 @@ import org.eclipse.ui.progress.UIJob;
  *  is not useful. Such events are ignored by this rendering.
  */
 
+@SuppressWarnings("restriction")
 public class TraditionalRendering extends AbstractMemoryRendering implements IRepositionableMemoryRendering, IResettableMemoryRendering
 {
 	protected Rendering fRendering;
@@ -89,11 +90,11 @@ public class TraditionalRendering extends AbstractMemoryRendering implements IRe
     protected Action displayEndianLittleAction;
     
     private IWorkbenchAdapter fWorkbenchAdapter;
-    private IMemoryBlockConnection fConnection;
+	private IMemoryBlockConnection fConnection;
     
     private final static int MAX_MENU_COLUMN_COUNT = 8;
 
-    public TraditionalRendering(String id)
+	public TraditionalRendering(String id)
     {
         super(id);
 
@@ -1191,7 +1192,7 @@ public class TraditionalRendering extends AbstractMemoryRendering implements IRe
     /* (non-Javadoc)
      * @see org.eclipse.core.runtime.PlatformObject#getAdapter(java.lang.Class)
      */
-    @SuppressWarnings("unchecked")
+    @SuppressWarnings({ "unchecked" })
 	public Object getAdapter(Class adapter)
     {
         if(adapter == IWorkbenchAdapter.class)

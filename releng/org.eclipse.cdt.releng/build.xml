@@ -426,6 +426,12 @@
 			<param name="tagmodule" value="org.eclipse.cdt/xlc/org.eclipse.cdt.make.xlc.core"/>
 		</antcall>
 		<antcall target="tagone">
+			<param name="tagmodule" value="org.eclipse.cdt/xlc/org.eclipse.cdt.core.lrparser.xlc"/>
+		</antcall>
+		<antcall target="tagone">
+			<param name="tagmodule" value="org.eclipse.cdt/xlc/org.eclipse.cdt.core.lrparser.xlc.tests"/>
+		</antcall>
+		<antcall target="tagone">
 			<param name="tagmodule" value="org.eclipse.cdt/xlc/org.eclipse.cdt.xlc.feature"/>
 		</antcall>
 		<antcall target="tagone">

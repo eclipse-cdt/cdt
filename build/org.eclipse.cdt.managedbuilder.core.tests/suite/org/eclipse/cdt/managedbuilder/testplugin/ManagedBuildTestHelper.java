@@ -20,6 +20,7 @@ import java.io.InputStream;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
@@ -63,6 +64,7 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Path;
+import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.ui.dialogs.IOverwriteQuery;
 import org.eclipse.ui.wizards.datatransfer.ImportOperation;
 import org.eclipse.ui.wizards.datatransfer.ZipFileStructureProvider;
@@ -121,6 +123,17 @@ public class ManagedBuildTestHelper {
 		// Open the project if we have to
 		if (!project.isOpen()) {
 			project.open(new NullProgressMonitor());
+			// CDT opens the Project with BACKGROUND_REFRESH enabled which causes the 
+			// refresh manager to refresh the project 200ms later.  This Job interferes
+			// with the resource change handler firing see: bug 271264
+			try {
+				// CDT opens the Project with BACKGROUND_REFRESH enabled which causes the 
+				// refresh manager to refresh the project 200ms later.  This Job interferes
+				// with the resource change handler firing see: bug 271264
+				Job.getJobManager().join(ResourcesPlugin.FAMILY_AUTO_REFRESH, null);
+			} catch (Exception e) {
+				// Ignore
+			}
 		}
 				
 		return project;	
@@ -462,10 +475,10 @@ public class ManagedBuildTestHelper {
 		final String ECHO_INVOKING_PATTERN = "	@echo 'Invoking: .* C\\+\\+ .*'";
 		final String IFNEQ_PATTERN = "ifneq \\(\\$\\(strip \\$\\(.*\\)\\),\\)";
 		final String INCLUDE_PATTERN = "-include \\$\\(.*\\)";
-		final String MACRO_PATTERN = "\\S* :=.*";
+		final String MACRO_PATTERN = "\\S* [:+]=.*";
 		final String EMPTY_MACRO_PATTERN = "\\S* :=";
-		ArrayList<String> testArray = getContents(testFile);
-		ArrayList<String> benchmarkArray = getContents(benchmarkFile);
+		ArrayList<String> testArray = mergeContinuationLines(getContents(testFile));
+		ArrayList<String> benchmarkArray = mergeContinuationLines(getContents(benchmarkFile));
 		
 		Set<String> testNotMatchingLines = new TreeSet<String>();
 		Set<String> benchNotMatchingLines = new TreeSet<String>();
@@ -568,6 +581,20 @@ public class ManagedBuildTestHelper {
 			} while (line !=null);
 		} catch (IOException e) {
 			Assert.fail("File " + fullPath.toString() + " could not be read: " + e.getLocalizedMessage());
+		}
+		return lines;
+	}
+	
+	private static ArrayList<String> mergeContinuationLines(ArrayList<String> lines) {
+		for (int i=0;i<lines.size();) {
+			String line = lines.get(i);
+			if (line.endsWith("\\") && i+1<lines.size()) {
+				lines.set(i, line.substring(0, line.length()-1)+lines.get(i+1));
+				lines.remove(i+1);
+				// do not advance i and check the renewed line again
+				continue;
+			}
+			i++;
 		}
 		return lines;
 	}
@@ -728,49 +755,62 @@ public class ManagedBuildTestHelper {
 						Assert.fail("Temporary directory " + tmpSrcDirFile.toString() + " already exists.");
 					}
 				}
-				boolean succeed = tmpSrcDirFile.mkdir();
-				if (succeed) {
-					for (int i=0; i<files.length; i++) {
-						IPath file = files[i];
-						IPath srcFile = srcDir.append(file);
-						FileReader srcReader = null;
-						try {
-							srcReader = new FileReader(srcFile.toFile());
-						} catch (Exception e) {
-							Assert.fail("File " + file.toString() + " could not be read.");
-							return null;
-						}
-						if (file.segmentCount() > 1) {
-							IPath newDir = tmpSrcDir;
-							do {
-								IPath dir = file.uptoSegment(1);
-								newDir = newDir.append(dir);
-								file = file.removeFirstSegments(1);
-								succeed = newDir.toFile().mkdir();
-							} while (file.segmentCount() > 1);
-						}
-						IPath destFile = tmpSrcDir.append(files[i]);
-						FileWriter writer = null;
-						try {
-							writer = new FileWriter(destFile.toFile());
-						} catch (Exception e) {
-							Assert.fail("File " + files[i].toString() + " could not be written.");
-							return null;
-						}
-						try {
-							int c;
-							do {
-								c = srcReader.read();
-								if (c == -1) break;
-								writer.write(c);
-							} while (c != -1);
-							srcReader.close();
-							writer.close();
-						} catch (Exception e) {
-							Assert.fail("File " + file.toString() + " could not be copied.");
-						}
+				tmpSrcDirFile.mkdir();
+				if (!tmpSrcDirFile.exists()) {
+					Assert.fail("Can't create temporary directory " + tmpSrcDirFile.toString());
+				}
+				for (int i=0; i<files.length; i++) {
+					IPath file = files[i];
+					IPath srcFile = srcDir.append(file);
+					FileReader srcReader = null;
+					try {
+						srcReader = new FileReader(srcFile.toFile());
+					} catch (Exception e) {
+						Assert.fail("File " + file.toString() + " could not be read.");
+						return null;
+					}
+					if (file.segmentCount() > 1) {
+						IPath newDir = tmpSrcDir;
+						do {
+							IPath dir = file.uptoSegment(1);
+							newDir = newDir.append(dir);
+							file = file.removeFirstSegments(1);
+							newDir.toFile().mkdir();
+							if (!newDir.toFile().exists()) {
+								Assert.fail("Can't create temporary directory " + tmpSrcDirFile.toString());
+							}
+						} while (file.segmentCount() > 1);
+					}
+					IPath destFile = tmpSrcDir.append(files[i]);
+					FileWriter writer = null;
+					try {
+						writer = new FileWriter(destFile.toFile());
+					} catch (Exception e) {
+						Assert.fail("File " + files[i].toString() + " could not be written.");
+						return null;
+					}
+					try {
+						int c;
+						do {
+							c = srcReader.read();
+							if (c == -1) break;
+							writer.write(c);
+						} while (c != -1);
+						srcReader.close();
+						writer.close();
+					} catch (Exception e) {
+						Assert.fail("File " + file.toString() + " could not be copied.");
 					}
 				}
+			}
+		}
+		IWorkspace workspace = ResourcesPlugin.getWorkspace();
+		IWorkspaceRoot root = workspace.getRoot();
+		for (IFile rc : root.findFilesForLocation(tmpSrcDir)) {
+			try {
+				rc.refreshLocal(IFile.DEPTH_INFINITE, null);
+			} catch (CoreException e) {
+				// ignore exception
 			}
 		}
 		return tmpSrcDir;

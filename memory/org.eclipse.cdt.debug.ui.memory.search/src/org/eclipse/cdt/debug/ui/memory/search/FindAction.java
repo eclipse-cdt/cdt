@@ -78,7 +78,7 @@ public class FindAction implements IViewActionDelegate {
 				dialog.open();
 
 				// TODO: finish feature?
-				Object results[] = dialog.getResult();
+				//Object results[] = dialog.getResult();
 			}
 		}
 

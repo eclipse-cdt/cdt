@@ -21,9 +21,11 @@
       <update label="%updateSiteName" url="http://download.eclipse.org/tools/cdt/releases/galileo"/>
    </url>
 
+   <!--
    <includes
          id="org.eclipse.cdt.debug.ui.memory.source"
          version="0.0.0"/>
+   -->
 
    <requires>
       <import plugin="org.eclipse.debug.core"/>

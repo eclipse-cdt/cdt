@@ -74,10 +74,10 @@ plugin@org.eclipse.cdt.errorparsers.xlc=@cdtTag@,:pserver:anonymous@dev.eclipse.
 plugin@org.eclipse.cdt.make.xlc.core=@cdtTag@,:pserver:anonymous@dev.eclipse.org:/cvsroot/tools,,org.eclipse.cdt/xlc/org.eclipse.cdt.make.xlc.core
 plugin@org.eclipse.cdt.managedbuilder.xlc.core=@cdtTag@,:pserver:anonymous@dev.eclipse.org:/cvsroot/tools,,org.eclipse.cdt/xlc/org.eclipse.cdt.managedbuilder.xlc.core
 plugin@org.eclipse.cdt.managedbuilder.xlc.ui=@cdtTag@,:pserver:anonymous@dev.eclipse.org:/cvsroot/tools,,org.eclipse.cdt/xlc/org.eclipse.cdt.managedbuilder.xlc.ui
-feature@org.eclipse.cdt.xlc.feature=@cdtTag@,:pserver:anonymous@dev.eclipse.org:/cvsroot/tools,,org.eclipse.cdt/xlc/org.eclipse.cdt.xlc.feature
-feature@org.eclipse.cdt.xlc.sdk=@cdtTag@,:pserver:anonymous@dev.eclipse.org:/cvsroot/tools,,org.eclipse.cdt/xlc/org.eclipse.cdt.xlc.sdk-feature
 plugin@org.eclipse.cdt.core.lrparser.xlc=@cdtTag@,:pserver:anonymous@dev.eclipse.org:/cvsroot/tools,,org.eclipse.cdt/xlc/org.eclipse.cdt.core.lrparser.xlc
 plugin@org.eclipse.cdt.core.lrparser.xlc.tests=@cdtTag@,:pserver:anonymous@dev.eclipse.org:/cvsroot/tools,,org.eclipse.cdt/xlc/org.eclipse.cdt.core.lrparser.xlc.tests
+feature@org.eclipse.cdt.xlc.feature=@cdtTag@,:pserver:anonymous@dev.eclipse.org:/cvsroot/tools,,org.eclipse.cdt/xlc/org.eclipse.cdt.xlc.feature
+feature@org.eclipse.cdt.xlc.sdk=@cdtTag@,:pserver:anonymous@dev.eclipse.org:/cvsroot/tools,,org.eclipse.cdt/xlc/org.eclipse.cdt.xlc.sdk-feature
 
 ! LR parser
 plugin@org.eclipse.cdt.core.lrparser=@cdtTag@,:pserver:anonymous@dev.eclipse.org:/cvsroot/tools,,org.eclipse.cdt/lrparser/org.eclipse.cdt.core.lrparser

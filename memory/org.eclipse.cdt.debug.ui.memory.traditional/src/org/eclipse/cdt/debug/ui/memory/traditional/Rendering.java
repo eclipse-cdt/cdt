@@ -55,6 +55,7 @@ import org.eclipse.swt.widgets.Layout;
 import org.eclipse.swt.widgets.ScrollBar;
 import org.eclipse.swt.widgets.Text;
 
+@SuppressWarnings("restriction")
 public class Rendering extends Composite implements IDebugEventSetListener
 {
     // the IMemoryRendering parent
@@ -375,8 +376,6 @@ public class Rendering extends Composite implements IDebugEventSetListener
         {
             public void widgetSelected(SelectionEvent se)
             {
-            	int addressableSize = getAddressableSize();
-            	
                 switch(se.detail)
                 {
                     case SWT.ARROW_DOWN:
@@ -733,13 +732,13 @@ public class Rendering extends Composite implements IDebugEventSetListener
             }
         }
 
-        private HashMap fEditBuffer = new HashMap();
+        private HashMap<BigInteger, TraditionalMemoryByte[]> fEditBuffer = new HashMap<BigInteger,TraditionalMemoryByte[]>();
 
         private boolean fDisposed = false;
         
         private Object fLastQueued = null;
 
-        private Vector fQueue = new Vector();
+        private Vector<Object> fQueue = new Vector<Object>();
 
         protected MemoryUnit fCache = null;
 
@@ -821,7 +820,8 @@ public class Rendering extends Composite implements IDebugEventSetListener
             }
         }
 
-        public void run()
+        @SuppressWarnings("unchecked")
+		public void run()
         {
             while(!fDisposed)
             {
@@ -1076,8 +1076,8 @@ public class Rendering extends Composite implements IDebugEventSetListener
                 Display.getDefault().getThread()) : TraditionalRenderingMessages
                 .getString("TraditionalRendering.CALLED_ON_NON_DISPATCH_THREAD"); //$NON-NLS-1$
 
-            Set keySet = fEditBuffer.keySet();
-            Iterator iterator = keySet.iterator();
+            Set<BigInteger> keySet = fEditBuffer.keySet();
+            Iterator<BigInteger> iterator = keySet.iterator();
 
             while(iterator.hasNext())
                 {

@@ -85,7 +85,7 @@ public abstract class StandaloneIndexer {
 	protected IWritableIndex fIndex;
 	
 	/**
-	 * A flag that indiciates if all files (sources without config, headers not included)
+	 * A flag that indicates if all files (sources without config, headers not included)
 	 * should be parsed.
 	 */
 	protected boolean fIndexAllFiles;
@@ -291,6 +291,13 @@ public abstract class StandaloneIndexer {
 	 */
 	public IParserLogService getParserLog() {
 		return fLog;
+	}
+	
+	/**
+	 * Sets the logger.
+	 */
+	public void setParserLog(IParserLogService log) {
+		fLog = log;
 	}
 	
 	/**

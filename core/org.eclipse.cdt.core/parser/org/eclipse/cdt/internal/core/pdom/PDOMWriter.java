@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2008 Wind River Systems, Inc. and others.
+ * Copyright (c) 2007, 2009 Wind River Systems, Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *    Markus Schorn - initial API and implementation
+ *    IBM Corporation
  *******************************************************************************/ 
 package org.eclipse.cdt.internal.core.pdom;
 
@@ -190,7 +191,7 @@ abstract public class PDOMWriter {
 				final IIndexFileLocation ifl= ifls[i];
 				if (ifl != null) {
 					if (fShowActivity) {
-						System.out.println("Indexer: adding " + ifl.getURI());  //$NON-NLS-1$
+						trace("Indexer: adding " + ifl.getURI());  //$NON-NLS-1$
 					}
 					Throwable th= null;
 					try {
@@ -504,12 +505,16 @@ abstract public class PDOMWriter {
 		String pmsg= problem.getMessage();
 		if (pmsg != null && pmsg.length() > 0) 
 			msg+= "; " + problem.getMessage(); //$NON-NLS-1$
-		System.out.println(msg);
+		trace(msg);
 	}
 	
 	private void reportProblem(IASTProblem problem) {
 		String msg= "Indexer: " + problem.getMessageWithLocation(); //$NON-NLS-1$
-		System.out.println(msg);
+		trace(msg);
+	}
+	
+	protected void trace(String message) {
+		System.out.println(message);
 	}
 
 }

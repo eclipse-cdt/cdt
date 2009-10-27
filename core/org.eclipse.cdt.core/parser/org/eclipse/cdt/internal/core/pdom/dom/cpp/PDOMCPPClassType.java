@@ -119,10 +119,10 @@ class PDOMCPPClassType extends PDOMCPPBinding implements IPDOMCPPClassType, IPDO
 	}
 	
 	@Override
-	public void addChild(PDOMNode member) throws CoreException {
-		getPDOM().removeCachedResult(record + PDOMCPPLinkage.CACHE_MEMBERS);
+	public final void addChild(PDOMNode member) throws CoreException {
 		PDOMNodeLinkedList list = new PDOMNodeLinkedList(getLinkage(), record + MEMBERLIST);
 		list.addMember(member);
+		PDOMCPPClassScope.updateCache(this, member);
 	}
 	
 	@Override

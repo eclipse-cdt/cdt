@@ -7017,4 +7017,15 @@ public class AST2Tests extends AST2BaseTest {
 		parseAndCheckBindings(code, ParserLanguage.C);
 		parseAndCheckBindings(code, ParserLanguage.CPP);
 	}
+	
+	// void f1(const int* p);
+	// void f2(const int* p) {}
+	public void testDroppingOfStorageDecl_293322() throws Exception {
+		final String code = getAboveComment();
+		BindingAssertionHelper bh= new BindingAssertionHelper(code, false);
+		IFunction f= bh.assertNonProblem("f1", 2);
+		assertEquals("const int *", ASTTypeUtil.getType(f.getParameters()[0].getType()));
+		f= bh.assertNonProblem("f2", 2);
+		assertEquals("const int *", ASTTypeUtil.getType(f.getParameters()[0].getType()));
+	}
 }

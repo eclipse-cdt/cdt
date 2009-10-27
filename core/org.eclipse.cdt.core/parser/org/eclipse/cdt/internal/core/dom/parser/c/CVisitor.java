@@ -52,6 +52,7 @@ import org.eclipse.cdt.core.dom.ast.IASTStatement;
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
 import org.eclipse.cdt.core.dom.ast.IASTTypeId;
 import org.eclipse.cdt.core.dom.ast.IArrayType;
+import org.eclipse.cdt.core.dom.ast.IBasicType;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.ICompositeType;
 import org.eclipse.cdt.core.dom.ast.IEnumeration;
@@ -651,7 +652,7 @@ public class CVisitor extends ASTQueries {
 		} catch (DOMException e) {
 		}
 
-		return new CBasicType(Kind.eInt, CBasicType.IS_UNSIGNED | CBasicType.IS_LONG, expr);
+		return new CBasicType(Kind.eInt, IBasicType.IS_UNSIGNED | IBasicType.IS_LONG, expr);
 	}
     
 	static IType getSize_T(IASTExpression expr) {
@@ -663,7 +664,7 @@ public class CVisitor extends ASTQueries {
 			}
 		} catch (DOMException e) {
 		}
-		return new CBasicType(Kind.eInt, CBasicType.IS_LONG | CBasicType.IS_UNSIGNED);
+		return new CBasicType(Kind.eInt, IBasicType.IS_LONG | IBasicType.IS_UNSIGNED);
 	}
 
 	static IType unwrapTypedefs(IType type) {
@@ -1259,16 +1260,7 @@ public class CVisitor extends ASTQueries {
 	
 		boolean isParameter = (node instanceof IASTParameterDeclaration || node.getParent() instanceof ICASTKnRFunctionDeclarator); 
 		
-		IType type = null;
-		
-		//C99 6.7.5.3-12 The storage class specifier for a parameter declaration is ignored unless the declared parameter is one of the 
-		//members of the parameter type list for a function definition.
-		if (isParameter && node.getParent().getParent() instanceof IASTFunctionDefinition) {
-		    type = createBaseType(declSpec);
-		} else {
-		    type = createType((ICASTDeclSpecifier) declSpec);
-		}
-		
+		IType type = createType((ICASTDeclSpecifier) declSpec);
 		type = createType(type, declarator);
 		
 		

@@ -101,7 +101,7 @@ public abstract class PDOMSearchQuery implements ISearchQuery {
 				
 				// Filter out closed projects for this case
 				for (int i = 0; i < allProjects.length; i++) {
-					if (!allProjects[i].isOpen()) { 
+					if (!allProjects[i].getProject().isOpen()) { 
 						allProjects[i] = null;
 					}
 				}
@@ -112,8 +112,9 @@ public abstract class PDOMSearchQuery implements ISearchQuery {
 				
 				for (int i = 0; i < scope.length; ++i) {
 					ICProject project = scope[i].getCProject();
-					if (project != null)
+					if (project != null && project.getProject().isOpen()) {
 						projectMap.put(project.getElementName(), project);
+					}
 				}
 				
 				projects = projectMap.values().toArray(new ICProject[projectMap.size()]);

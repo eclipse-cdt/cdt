@@ -44,6 +44,7 @@ import com.ibm.icu.text.MessageFormat;
 public abstract class StandaloneIndexerTask extends AbstractIndexerTask {
 	
 	protected StandaloneIndexer fIndexer;
+	protected IParserLogService fLogger;
 
 	public static final int[] IDS_FOR_LINKAGES_TO_INDEX = {
 		ILinkage.CPP_LINKAGE_ID, ILinkage.C_LINKAGE_ID, ILinkage.FORTRAN_LINKAGE_ID
@@ -137,20 +138,20 @@ public abstract class StandaloneIndexerTask extends AbstractIndexerTask {
 			String name= getClass().getName();
 			name= name.substring(name.lastIndexOf('.')+1);
 
-			System.out.println(name + " "  //$NON-NLS-1$
+			trace(name + " "  //$NON-NLS-1$
 					+ " (" + info.fCompletedSources + " sources, "  //$NON-NLS-1$ //$NON-NLS-2$
 					+ info.fCompletedHeaders + " headers)"); //$NON-NLS-1$
 			
 			boolean allFiles= getIndexAllFiles();
 			boolean skipRefs= fIndexer.getSkipReferences() == StandaloneIndexer.SKIP_ALL_REFERENCES;
 			boolean skipTypeRefs= skipRefs || fIndexer.getSkipReferences() == StandaloneIndexer.SKIP_TYPE_REFERENCES;
-			System.out.println(name + " Options: "  //$NON-NLS-1$
+			trace(name + " Options: "  //$NON-NLS-1$
 					+ "parseAllFiles=" + allFiles //$NON-NLS-1$
 					+ ",skipReferences=" + skipRefs //$NON-NLS-1$
 					+ ", skipTypeReferences=" + skipTypeRefs //$NON-NLS-1$
 					+ "."); //$NON-NLS-1$
 			
-			System.out.println(name + " Timings: "  //$NON-NLS-1$
+			trace(name + " Timings: "  //$NON-NLS-1$
 					+ (System.currentTimeMillis() - start) + " total, " //$NON-NLS-1$
 					+ fStatistics.fParsingTime + " parser, " //$NON-NLS-1$
 					+ fStatistics.fResolutionTime + " resolution, " //$NON-NLS-1$
@@ -160,7 +161,7 @@ public abstract class StandaloneIndexerTask extends AbstractIndexerTask {
 			NumberFormat nf= NumberFormat.getPercentInstance();
 			nf.setMaximumFractionDigits(2);
 			nf.setMinimumFractionDigits(2);
-			System.out.println(name + " Result: " //$NON-NLS-1$
+			trace(name + " Result: " //$NON-NLS-1$
 					+ fStatistics.fDeclarationCount + " declarations, " //$NON-NLS-1$
 					+ fStatistics.fReferenceCount + " references, " //$NON-NLS-1$
 					+ fStatistics.fErrorCount + " errors, " //$NON-NLS-1$
@@ -172,7 +173,7 @@ public abstract class StandaloneIndexerTask extends AbstractIndexerTask {
 				long hits= index.getCacheHits();
 				long tries= misses+hits;
 				double missPct= tries==0 ? 0.0 : (double) misses / (double) tries;
-				System.out.println(name + " Cache: " //$NON-NLS-1$
+				trace(name + " Cache: " //$NON-NLS-1$
 					+ hits + " hits, "  //$NON-NLS-1$
 					+ misses + "(" + nf.format(missPct)+ ") misses."); //$NON-NLS-1$ //$NON-NLS-2$
 			}
@@ -224,7 +225,13 @@ public abstract class StandaloneIndexerTask extends AbstractIndexerTask {
 	 */
 	@Override
 	protected IParserLogService getLogService() {
+		if (fLogger != null)
+			return fLogger;
 		return new StdoutLogService();
+	}
+	
+	protected void setLogService(IParserLogService logService){
+		fLogger = logService;
 	}
 
 	/* (non-Javadoc)
@@ -232,7 +239,7 @@ public abstract class StandaloneIndexerTask extends AbstractIndexerTask {
 	 */
 	@Override
 	protected void logError(IStatus s) {
-		getLogService().traceLog(s.getMessage());
+		trace(s.getMessage());
 	}
 	
 	/* (non-Javadoc)
@@ -240,7 +247,7 @@ public abstract class StandaloneIndexerTask extends AbstractIndexerTask {
 	 */
 	@Override
 	protected void logException(Throwable e) {
-		getLogService().traceLog(e.getMessage());
+		trace(e.getMessage());
 	}
 
 	@SuppressWarnings("deprecation")
@@ -264,4 +271,12 @@ public abstract class StandaloneIndexerTask extends AbstractIndexerTask {
 	protected int[] getLinkagesToParse() {
 		return IDS_FOR_LINKAGES_TO_INDEX;
 	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.internal.core.pdom.PDOMWriter#trace(java.lang.String)
+	 */
+	@Override
+	protected void trace(String message) {
+		getLogService().traceLog(message);
+	}	
 }

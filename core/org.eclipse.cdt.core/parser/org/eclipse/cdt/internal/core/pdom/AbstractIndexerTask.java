@@ -7,6 +7,7 @@
  *
  * Contributors:
  *    Markus Schorn - initial API and implementation
+ *    IBM Corporation
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.pdom;
 
@@ -532,7 +533,7 @@ public abstract class AbstractIndexerTask extends PDOMWriter {
 			final String fileName = path.lastSegment();
 			try {
 				if (fShowActivity) {
-					System.out.println("Indexer: parsing " + filePath + " up front");  //$NON-NLS-1$ //$NON-NLS-2$
+					trace("Indexer: parsing " + filePath + " up front");  //$NON-NLS-1$ //$NON-NLS-2$
 				}
 				monitor.subTask(getMessage(MessageKind.parsingFileTask,
 						fileName, path.removeLastSegments(1).toString()));
@@ -682,7 +683,7 @@ public abstract class AbstractIndexerTask extends PDOMWriter {
 		Throwable th= null;
 		try {
 			if (fShowActivity) {
-				System.out.println("Indexer: parsing " + path.toOSString()); //$NON-NLS-1$
+				trace("Indexer: parsing " + path.toOSString()); //$NON-NLS-1$
 			}
 			pm.subTask(getMessage(MessageKind.parsingFileTask,
 					path.lastSegment(), path.removeLastSegments(1).toString()));

@@ -7,6 +7,7 @@
  *
  * Contributors:
  *    Markus Schorn - initial API and implementation
+ *    IBM Corporation
  *******************************************************************************/ 
 package org.eclipse.cdt.internal.core.pdom;
 
@@ -198,7 +199,7 @@ abstract public class PDOMWriter {
 			final IIndexFileLocation ifl= ifls[i];
 			if (ifl != null) {
 				if (fShowActivity) {
-					System.out.println("Indexer: adding " + ifl.getURI());  //$NON-NLS-1$
+					trace("Indexer: adding " + ifl.getURI());  //$NON-NLS-1$
 				}
 				index.acquireWriteLock(readlockCount);
 				long start= System.currentTimeMillis();
@@ -523,12 +524,16 @@ abstract public class PDOMWriter {
 		String pmsg= problem.getMessage();
 		if (pmsg != null && pmsg.length() > 0) 
 			msg+= "; " + problem.getMessage(); //$NON-NLS-1$
-		System.out.println(msg);
+		trace(msg);
 	}
 
 	private void reportProblem(IASTProblem problem) {
 		String msg= "Indexer: " + problem.getMessageWithLocation(); //$NON-NLS-1$
-		System.out.println(msg);
+		trace(msg);
+	}
+	
+	protected void trace(String message) {
+		System.out.println(message);
 	}
 
 	protected IStatus createStatus(String msg) {

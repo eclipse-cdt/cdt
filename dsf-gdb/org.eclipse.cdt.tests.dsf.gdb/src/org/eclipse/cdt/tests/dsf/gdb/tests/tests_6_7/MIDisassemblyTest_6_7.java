@@ -24,5 +24,6 @@ public class MIDisassemblyTest_6_7 extends MIDisassemblyTest {
 	@BeforeClass
     public static void beforeClassMethod_6_7() {
 		BaseTestCase.setLaunchAttribute(IGDBLaunchConfigurationConstants.ATTR_DEBUG_NAME, "gdb.6.7");
+		BaseTestCase.setLaunchAttribute(ATTR_DEBUG_SERVER_NAME, "gdbserver.6.7");
 	}
 }

@@ -22,5 +22,6 @@ public class GDBProcessesTest_6_6 extends GDBProcessesTest {
 	@BeforeClass
     public static void beforeClassMethod_6_6() {
 		BaseTestCase.setLaunchAttribute(IGDBLaunchConfigurationConstants.ATTR_DEBUG_NAME, "gdb.6.6");
+		BaseTestCase.setLaunchAttribute(ATTR_DEBUG_SERVER_NAME, "gdbserver.6.6");
 	}
 }

@@ -22,5 +22,6 @@ public class MIMemoryTest_7_0 extends MIMemoryTest {
 	@BeforeClass
 	public static void beforeClassMethod_7_0() {
 		BaseTestCase.setLaunchAttribute(IGDBLaunchConfigurationConstants.ATTR_DEBUG_NAME, "gdb.7.0");
+		BaseTestCase.setLaunchAttribute(ATTR_DEBUG_SERVER_NAME, "gdbserver.7.0");
 	}
 }

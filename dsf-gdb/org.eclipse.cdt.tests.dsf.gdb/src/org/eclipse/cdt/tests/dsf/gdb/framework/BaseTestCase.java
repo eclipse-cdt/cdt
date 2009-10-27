@@ -68,8 +68,16 @@ public class BaseTestCase {
 		attrs.put(ICDTLaunchConfigurationConstants.ATTR_DEBUGGER_STOP_AT_MAIN, true);
 		attrs.put(ICDTLaunchConfigurationConstants.ATTR_DEBUGGER_STOP_AT_MAIN_SYMBOL, ICDTLaunchConfigurationConstants.DEBUGGER_STOP_AT_MAIN_SYMBOL_DEFAULT);
 		attrs.put(IGDBLaunchConfigurationConstants.ATTR_GDB_INIT, ".gdbinit");
-		attrs.put(ICDTLaunchConfigurationConstants.ATTR_DEBUGGER_START_MODE, ICDTLaunchConfigurationConstants.DEBUGGER_MODE_RUN );
 
+    	if (attrs.get(ICDTLaunchConfigurationConstants.ATTR_DEBUGGER_START_MODE) == null) {
+    		attrs.put(ICDTLaunchConfigurationConstants.ATTR_DEBUGGER_START_MODE, ICDTLaunchConfigurationConstants.DEBUGGER_MODE_RUN );
+    	}
+		
+		// Set these up in case we will be running Remote tests.  They will be ignored if we don't
+    	attrs.put(ATTR_DEBUG_SERVER_NAME, "gdbserver.7.1");
+    	attrs.put(IGDBLaunchConfigurationConstants.ATTR_REMOTE_TCP, true);
+    	attrs.put(IGDBLaunchConfigurationConstants.ATTR_HOST, "localhost");
+    	attrs.put(IGDBLaunchConfigurationConstants.ATTR_PORT, "9999");
     }
     
     @Before

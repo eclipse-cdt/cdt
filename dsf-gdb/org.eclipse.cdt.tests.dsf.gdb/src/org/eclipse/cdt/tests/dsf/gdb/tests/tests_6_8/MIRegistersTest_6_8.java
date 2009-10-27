@@ -22,5 +22,6 @@ public class MIRegistersTest_6_8 extends MIRegistersTest {
 	@BeforeClass
     public static void beforeClassMethod_6_8() {
 		BaseTestCase.setLaunchAttribute(IGDBLaunchConfigurationConstants.ATTR_DEBUG_NAME, "gdb.6.8");
+		BaseTestCase.setLaunchAttribute(ATTR_DEBUG_SERVER_NAME, "gdbserver.6.8");
 	}
 }

@@ -550,31 +550,35 @@ public class CoreModelUtil {
 	 */
 	public static ITranslationUnit findTranslationUnitForLocation(IPath location, ICProject preferredProject) throws CModelException {
 		IFile[] files= ResourceLookup.findFilesForLocation(location);
+		boolean oneExisting= false;
 		if (files.length > 0) {
 			for (IFile file : files) {
-				ITranslationUnit tu= findTranslationUnit(file);
-				if (tu != null) {
-					return tu;
-				}
-			}
-		} else {
-			CoreModel coreModel = CoreModel.getDefault();
-			ITranslationUnit tu= null;
-			if (preferredProject != null) {
-				tu= coreModel.createTranslationUnitFrom(preferredProject, location);
-			}
-			if (tu == null) {
-				ICProject[] projects= coreModel.getCModel().getCProjects();
-				for (int i = 0; i < projects.length && tu == null; i++) {
-					ICProject project = projects[i];
-					if (!project.equals(preferredProject)) {
-						tu= coreModel.createTranslationUnitFrom(project, location);
+				if (file.exists()) {
+					oneExisting= true;
+					ITranslationUnit tu= findTranslationUnit(file);
+					if (tu != null) {
+						return tu;
 					}
 				}
 			}
-			return tu;
+			if (oneExisting)
+				return null;
+		} 
+		CoreModel coreModel = CoreModel.getDefault();
+		ITranslationUnit tu= null;
+		if (preferredProject != null) {
+			tu= coreModel.createTranslationUnitFrom(preferredProject, location);
 		}
-		return null;
+		if (tu == null) {
+			ICProject[] projects= coreModel.getCModel().getCProjects();
+			for (int i = 0; i < projects.length && tu == null; i++) {
+				ICProject project = projects[i];
+				if (!project.equals(preferredProject)) {
+					tu= coreModel.createTranslationUnitFrom(project, location);
+				}
+			}
+		}
+		return tu;
 	}	
 
 	/**

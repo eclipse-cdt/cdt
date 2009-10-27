@@ -4183,4 +4183,32 @@ public class AST2TemplateTests extends AST2BaseTest {
     	assertFalse(func instanceof ICPPUnknownBinding);
     	bh.assertProblem("n();", 1);
 	}
+	
+	//	template<class T> struct CT {};
+	//	class D : public CT<char> {};
+	//	template<typename S> void f1(const CT<S> &) {}
+	//	template<typename S> void f2(const CT<S> *) {}
+	//	template<typename S> void f3(CT<S> *) {}
+	//	template<typename S> void f4(volatile S*) {}
+	//	void t() {
+	//		D d;
+	//		const volatile int *i= 0;
+	//		const D cd= *new D();
+	//		f1(d);
+	//		f2(&d);
+	//		f2(&cd);
+	//		f3(&d);
+	//		f4(i);
+	//		f3(&cd);  // must be a problem, cd is const
+	//	}
+	public void testArgumentDeduction_293409() throws Exception {
+		final String code = getAboveComment();
+		BindingAssertionHelper bh= new BindingAssertionHelper(code, true);
+    	bh.assertNonProblem("f1(d);", 2, ICPPFunction.class);
+    	bh.assertNonProblem("f2(&d);", 2, ICPPFunction.class);
+    	bh.assertNonProblem("f2(&cd);", 2, ICPPFunction.class);
+    	bh.assertNonProblem("f3(&d);", 2, ICPPFunction.class);
+    	bh.assertNonProblem("f4(i);", 2, ICPPFunction.class);
+    	bh.assertProblem("f3(&cd);", 2);
+	}
 }

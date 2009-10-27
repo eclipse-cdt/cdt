@@ -1478,13 +1478,40 @@ public class CPPTemplates {
 					par= getParameterTypeForDeduction(par, isReferenceType);
 					
 					// 14.8.2.1.3
-					if (par instanceof ICPPTemplateInstance && !(par instanceof ICPPTemplateParameter) && arg instanceof ICPPClassType) {
-						ICPPTemplateInstance pInst = (ICPPTemplateInstance) par;
-						ICPPClassTemplate pTemplate= getPrimaryTemplate(pInst);
-						if (pTemplate != null) {
-							ICPPClassType aInst= findBaseInstance((ICPPClassType) arg, pTemplate, CPPSemantics.MAX_INHERITANCE_DEPTH);	
-							if (aInst != null) {
-								arg= aInst;
+					int cvPar= Conversions.getCVQualifier(par);
+					int cvArg= Conversions.getCVQualifier(arg);
+					if (cvPar == cvArg || (isReferenceType && (cvArg & ~cvPar) == 0)) {
+						IType pcheck= SemanticUtil.getNestedType(par, SemanticUtil.CVQ | SemanticUtil.PTR_CVQ);
+						if (!(pcheck instanceof ICPPTemplateParameter)) {
+							par= pcheck;
+							arg= SemanticUtil.getNestedType(arg, SemanticUtil.CVQ | SemanticUtil.PTR_CVQ);
+							IType argcheck= arg;
+							if (par instanceof IPointerType && arg instanceof IPointerType) {
+								pcheck= ((IPointerType) par).getType();
+								argcheck= ((IPointerType) arg).getType();
+								if (pcheck instanceof ICPPTemplateParameter) {
+									pcheck= null;
+								} else {
+									cvPar= Conversions.getCVQualifier(pcheck);
+									cvArg= Conversions.getCVQualifier(argcheck);
+									if ((cvArg & ~cvPar) == 0) {
+										pcheck= SemanticUtil.getNestedType(pcheck, SemanticUtil.CVQ);
+										argcheck= SemanticUtil.getNestedType(argcheck, SemanticUtil.CVQ);
+									} else {
+										pcheck= null;
+									}
+								}
+							}
+							if (pcheck instanceof ICPPTemplateInstance && argcheck instanceof ICPPClassType) {
+								ICPPTemplateInstance pInst = (ICPPTemplateInstance) pcheck;
+								ICPPClassTemplate pTemplate= getPrimaryTemplate(pInst);
+								if (pTemplate != null) {
+									ICPPClassType aInst= findBaseInstance((ICPPClassType) argcheck, pTemplate, CPPSemantics.MAX_INHERITANCE_DEPTH);	
+									if (aInst != null && aInst != argcheck) {
+										par= pcheck;
+										arg= aInst;
+									}
+								}
 							}
 						}
 					}
@@ -1637,10 +1664,16 @@ public class CPPTemplates {
 				p = pa.getType();
 				a = aa.getType();
 			} else if (p instanceof IQualifierType) {
-				if (a instanceof IQualifierType) {
-					a = ((IQualifierType) a).getType(); //TODO a = strip qualifiers from p out of a
+				IType uqp = SemanticUtil.getNestedType(p, SemanticUtil.CVQ | SemanticUtil.PTR_CVQ); 
+				IType uqa = SemanticUtil.getNestedType(a, SemanticUtil.CVQ | SemanticUtil.PTR_CVQ); 
+				if (uqp instanceof ICPPTemplateParameter) {
+					int remaining= Conversions.getCVQualifier(a) & ~Conversions.getCVQualifier(p);
+					if (remaining != 0) {
+						uqa= SemanticUtil.addQualifiers(uqa, (remaining & 1) != 0, (remaining & 2) != 0);
+					}
 				}
-				p = ((IQualifierType) p).getType();
+				a= uqa;
+				p= uqp;
 			} else if (p instanceof IFunctionType) {
 				if (!(a instanceof IFunctionType))
 					return false;

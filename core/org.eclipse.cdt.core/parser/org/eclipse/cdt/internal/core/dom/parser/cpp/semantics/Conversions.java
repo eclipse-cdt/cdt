@@ -235,7 +235,7 @@ public class Conversions {
 	/** 
 	 * Returns 0 for no qualifier, 1 for const, 2 for volatile and 3 for const volatile.
 	 */
-	private static int getCVQualifier(IType t) {
+	static int getCVQualifier(IType t) {
 		if (t instanceof IQualifierType) {
 			int result= 0;
 			IQualifierType qt= (IQualifierType) t;

@@ -1268,16 +1268,7 @@ public class CVisitor extends ASTQueries {
 	
 		boolean isParameter = (node instanceof IASTParameterDeclaration || node.getParent() instanceof ICASTKnRFunctionDeclarator); 
 		
-		IType type = null;
-		
-		//C99 6.7.5.3-12 The storage class specifier for a parameter declaration is ignored unless the declared parameter is one of the 
-		//members of the parameter type list for a function definition.
-		if (isParameter && node.getParent().getParent() instanceof IASTFunctionDefinition) {
-		    type = createBaseType(declSpec);
-		} else {
-		    type = createType((ICASTDeclSpecifier) declSpec);
-		}
-		
+		IType type = createType((ICASTDeclSpecifier) declSpec);
 		type = createType(type, declarator);
 		
 		

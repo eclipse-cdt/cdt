@@ -651,12 +651,6 @@ public class CPPSemantics {
     	        n = ((ICPPASTQualifiedName) n).getLastName();
     	    }
 	        scope = CPPVisitor.getContainingScope(n);
-	    } else if (parent instanceof ICPPASTConstructorChainInitializer) {
-	    	ICPPASTConstructorChainInitializer initializer = (ICPPASTConstructorChainInitializer) parent;
-	    	IASTFunctionDefinition fdef= (IASTFunctionDefinition) initializer.getParent();
-	    	IBinding binding = fdef.getDeclarator().getName().resolveBinding();
-	    	if (!(binding instanceof IProblemBinding))
-	    		scope = binding.getScope();
 	    } else {
 	    	scope = CPPVisitor.getContainingScope(name, data);
 	    }

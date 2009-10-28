@@ -60,6 +60,7 @@ import org.eclipse.cdt.core.dom.ast.IASTTypeId;
 import org.eclipse.cdt.core.dom.ast.IASTTypeIdInitializerExpression;
 import org.eclipse.cdt.core.dom.ast.IASTUnaryExpression;
 import org.eclipse.cdt.core.dom.ast.IArrayType;
+import org.eclipse.cdt.core.dom.ast.IBasicType;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.ICompositeType;
 import org.eclipse.cdt.core.dom.ast.IEnumeration;
@@ -108,7 +109,6 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTypenameExpression;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTUsingDeclaration;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTUsingDirective;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTWhileStatement;
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPBasicType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPBlockScope;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassScope;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassTemplate;
@@ -812,7 +812,15 @@ public class CPPVisitor extends ASTQueries {
 		    	        return getContainingScope(ns[ns.length - 1]);
 		    	    }
 			    }
-			} else if (node instanceof IASTExpression) {
+			} else if (node instanceof ICPPASTConstructorChainInitializer) {
+		    	ICPPASTConstructorChainInitializer initializer = (ICPPASTConstructorChainInitializer) node;
+		    	IASTFunctionDefinition fdef= (IASTFunctionDefinition) initializer.getParent();
+		    	IBinding binding = fdef.getDeclarator().getName().resolveBinding();
+		    	try {
+		    		return binding.getScope();
+		    	} catch (DOMException e) {
+		    	}
+		    } else if (node instanceof IASTExpression) {
 		    	IASTNode parent = node.getParent();
 			    if (parent instanceof IASTForStatement) {
 			        return ((IASTForStatement) parent).getScope();
@@ -1763,7 +1771,7 @@ public class CPPVisitor extends ASTQueries {
 			}
 		} catch (DOMException e) {
 		}
-		basicType= new CPPBasicType(Kind.eInt, ICPPBasicType.IS_LONG | ICPPBasicType.IS_UNSIGNED);
+		basicType= new CPPBasicType(Kind.eInt, IBasicType.IS_LONG | IBasicType.IS_UNSIGNED);
 		basicType.setFromExpression(binary);
 		return basicType;
 	}
@@ -1795,7 +1803,7 @@ public class CPPVisitor extends ASTQueries {
 			}
 		} catch (DOMException e) {
 		}
-		return new CPPBasicType(Kind.eInt, ICPPBasicType.IS_LONG | ICPPBasicType.IS_UNSIGNED);
+		return new CPPBasicType(Kind.eInt, IBasicType.IS_LONG | IBasicType.IS_UNSIGNED);
 	}
 	
 	public static IASTProblem[] getProblems(IASTTranslationUnit tu) {

@@ -7589,5 +7589,24 @@ public class AST2CPPTests extends AST2BaseTest {
 		final String code = getAboveComment();
 		parseAndCheckBindings(code, ParserLanguage.CPP);
 	}
+	
+	//	template <typename T> struct CT {
+	//		CT(int) {}
+	//	};
+	//	namespace ns {
+	//		typedef int B;
+	//		struct A : CT<B>{
+	//			A();
+	//		};
+	//	}
+	//
+	//	ns::A::A() : CT<B>(1) {
+	//	}
+	public void testLookupInConstructorChainInitializer_293566() throws Exception {
+		final String code = getAboveComment();
+		BindingAssertionHelper bh= new BindingAssertionHelper(code, true);
+		bh.assertNonProblem("B>(1)", 1);
+		parseAndCheckBindings(code, ParserLanguage.CPP);
+	}
 }
 

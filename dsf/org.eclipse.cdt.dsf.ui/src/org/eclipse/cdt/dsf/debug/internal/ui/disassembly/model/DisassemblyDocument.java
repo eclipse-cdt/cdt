@@ -539,7 +539,7 @@ public class DisassemblyDocument extends REDDocument {
 	 * @param lineNumber  the 0-based line number
 	 * @return the document position or <code>null</code>
 	 */
-	protected Position getSourcePosition(SourceFileInfo info, int lineNumber) {
+	public Position getSourcePosition(SourceFileInfo info, int lineNumber) {
 		if (info == null || info.fSource == null) {
 			return null;
 		}

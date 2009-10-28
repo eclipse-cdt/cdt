@@ -35,7 +35,6 @@ import org.eclipse.cdt.dsf.debug.internal.ui.disassembly.actions.ActionGotoProgr
 import org.eclipse.cdt.dsf.debug.internal.ui.disassembly.actions.ActionGotoSymbol;
 import org.eclipse.cdt.dsf.debug.internal.ui.disassembly.actions.ActionOpenPreferences;
 import org.eclipse.cdt.dsf.debug.internal.ui.disassembly.actions.TextOperationAction;
-import org.eclipse.cdt.dsf.debug.internal.ui.disassembly.model.Addr2Line;
 import org.eclipse.cdt.dsf.debug.internal.ui.disassembly.model.AddressRangePosition;
 import org.eclipse.cdt.dsf.debug.internal.ui.disassembly.model.BreakpointsAnnotationModel;
 import org.eclipse.cdt.dsf.debug.internal.ui.disassembly.model.DisassemblyDocument;
@@ -1999,7 +1998,7 @@ public abstract class DisassemblyPart extends WorkbenchPart implements IDisassem
 			for (int i = 0; i < mixedInstructions.length; ++i) {
 				IMixedInstruction mixedInstruction= mixedInstructions[i];
 				final String file= mixedInstruction.getFileName();
-				final int lineNumber= mixedInstruction.getLineNumber() - 1;
+				int lineNumber= mixedInstruction.getLineNumber() - 1;
 				IInstruction[] instructions= mixedInstruction.getInstructions();
 				for (int j = 0; j < instructions.length; ++j) {
 					IInstruction instruction = instructions[j];
@@ -2537,39 +2536,17 @@ public abstract class DisassemblyPart extends WorkbenchPart implements IDisassem
 			}
 			return null;
 		}
-//		if (!fi.fValid) {
-//			// need line info first
-//			return null;
-//		}
-		// determine stmt line of source range
-		try {
-			int stmtLine = ((DisassemblyPosition)pos).getLine();
-			if (stmtLine < 0) {
-				return pos;
-			}
-			BigInteger stmtAddress = fi.fLine2Addr[stmtLine];
-			if (stmtAddress.compareTo(BigInteger.ZERO) < 0) {
-				return pos;
-			}
-			SourcePosition srcPos = fDocument.getSourcePosition(stmtAddress);
-			if (srcPos == null) {
-				return pos;
-			} else if (!srcPos.fValid) {
-				return null;
-			}
-			assert stmtLine >= srcPos.fLine;
-			int baseOffset = fi.fSource.getLineOffset(srcPos.fLine);
-			IRegion stmtLineRegion = fi.fSource.getLineInformation(stmtLine);
-			int lineOffset = stmtLineRegion.getOffset();
-			int offset = srcPos.offset + lineOffset - baseOffset;
-			int length = stmtLineRegion.getLength() + 1;
-			if (offset >= srcPos.offset && offset < srcPos.offset + srcPos.length) {
-				return new AddressRangePosition(offset, length, address, BigInteger.ZERO);
-			}
-		} catch (BadLocationException e) {
-			internalError(e);
+		int stmtLine = ((DisassemblyPosition)pos).getLine();
+		if (stmtLine < 0) {
+			return pos;
 		}
-		return pos;
+		Position srcPos = fDocument.getSourcePosition(fi, stmtLine);
+		if (srcPos == null) {
+			return pos;
+		}
+		int offset = srcPos.offset;
+		int length = srcPos.length;
+		return new AddressRangePosition(offset, length, address, BigInteger.ZERO);
     }
 
     /**
@@ -3084,76 +3061,65 @@ public abstract class DisassemblyPart extends WorkbenchPart implements IDisassem
     		return;
     	}
     	SourceFileInfo fi = pos.fFileInfo;
-    	BigInteger address = pos.fAddressOffset;
-    	int lineNr = pos.fLine;
-		if (fi.fError != null) {
-			// handled below
-		} else if (fi.fValid) {
-//			assert fi.fLinesNode.isValid();
-			Addr2Line a2l = fi.fAddr2Line[Addr2Line.hash(address, fi.fAddr2Line.length)];
-			while (a2l != null && !a2l.addr.equals(address))
-				a2l = a2l.next;
-			if (a2l != null) {
-				int first = a2l.first;
-				int line;
-				for (line = first; line <= a2l.last; ++line) {
-					if (!fi.fLine2Addr[line].equals(address)) {
-						if (line > first) {
-							String source = fi.getLines(first, line-1);
-							pos = fDocument.insertSource(pos, source, first, false);
-						}
-						first = line+1;
-					}
-				}
-				if (line > first) {
-					String source = fi.getLines(first, line-1);
-					fDocument.insertSource(pos, source, first, true);
-					if (source.length() == 0) {
-						fDocument.removeSourcePosition(pos);
-					}
-				} else if (first > a2l.first) {
-					fDocument.insertSource(pos, "", first, true); //$NON-NLS-1$
-					fDocument.removeSourcePosition(pos);
-				}
-			} else {
-				// no source at all
-				fDocument.insertSource(pos, "", lineNr, true); //$NON-NLS-1$
-				fDocument.removeSourcePosition(pos);
-			}
-		} else if (fi.fLinesNode == null) {
-			// TLETODO [disassembly] asynchronous line info
-			if (fi.fSource != null) {
-				fi.fError= new Error();
-			}
-		}
-		if (fi.fError != null && !pos.fValid) {
-			if (fi.fSource != null) {
-				if (fi.fSource != null && lineNr >= 0 && lineNr < fi.fSource.getNumberOfLines()) {
-					fi.fStartAddress = fi.fStartAddress.min(pos.fAddressOffset);
-					fi.fEndAddress = fi.fEndAddress.max(pos.fAddressOffset.add(pos.fAddressLength));
-					if (fi.fLine2Addr[lineNr] == null || fi.fLine2Addr[lineNr].compareTo(BigInteger.ZERO) < 0) {
-						fi.fLine2Addr[lineNr] = pos.fAddressOffset;
-						String sourceLine = fi.getLine(lineNr);
-						fDocument.insertSource(pos, sourceLine, lineNr, true);
-					} else if (fi.fLine2Addr[lineNr].compareTo(pos.fAddressOffset) > 0) {
-						SourcePosition oldPos = fDocument.getSourcePosition(fi.fLine2Addr[lineNr]);
+		if (fi.fSource != null || fi.fError != null) {
+	    	int lineNr = pos.fLine;
+			if (fi.fSource != null && lineNr >= 0 && lineNr < fi.fSource.getNumberOfLines()) {
+				fi.fStartAddress = fi.fStartAddress.min(pos.fAddressOffset);
+				fi.fEndAddress = fi.fEndAddress.max(pos.fAddressOffset.add(pos.fAddressLength));
+				final BigInteger lineAddr = fi.fLine2Addr[lineNr];
+				if (lineAddr == null) {
+					fi.fLine2Addr[lineNr] = pos.fAddressOffset;
+					String sourceLine = fi.getLine(lineNr);
+					fDocument.insertSource(pos, sourceLine, lineNr, true);
+				} else {
+					final int comparison = lineAddr.compareTo(pos.fAddressOffset);
+					if (comparison > 0) {
+						// new source position is before old position
+						SourcePosition oldPos = fDocument.getSourcePosition(lineAddr);
 						if (oldPos != null) {
+							// test if source positions are consecutive
 							try {
-								fDocument.replace(oldPos, oldPos.length, null);
+								int index = fDocument.computeIndexInCategory(DisassemblyDocument.CATEGORY_SOURCE, pos.fAddressOffset);
+								if (index >= 0) {
+									SourcePosition nextPos = (SourcePosition) fDocument.getPositionOfIndex(DisassemblyDocument.CATEGORY_SOURCE, index+1);
+									if (nextPos.fFileInfo == fi && nextPos.fLine == lineNr) {
+										fDocument.replace(oldPos, oldPos.length, ""); //$NON-NLS-1$
+										fDocument.removeSourcePosition(oldPos);
+									}
+								}
 							} catch (BadLocationException e) {
 								internalError(e);
+							} catch (BadPositionCategoryException e) {
+								internalError(e);
 							}
-							fDocument.removeSourcePosition(oldPos);
 						}
 						fi.fLine2Addr[lineNr] = pos.fAddressOffset;
 						String sourceLine = fi.getLine(lineNr);
 						fDocument.insertSource(pos, sourceLine, lineNr, true);
-					} else if (fi.fLine2Addr[lineNr].equals(pos.fAddressOffset)) {
+					} else if (comparison == 0) {
 						String sourceLine = fi.getLine(lineNr);
 						fDocument.insertSource(pos, sourceLine, lineNr, true);
 					} else {
-						fDocument.insertSource(pos, "", lineNr, true); //$NON-NLS-1$
-						fDocument.removeSourcePosition(pos);
+						// new source position is after old position
+						try {
+							// test if source positions are consecutive
+							int index = fDocument.computeIndexInCategory(DisassemblyDocument.CATEGORY_SOURCE, pos.fAddressOffset);
+							if (index > 0) {
+								SourcePosition prevPos = (SourcePosition) fDocument.getPositionOfIndex(DisassemblyDocument.CATEGORY_SOURCE, index-1);
+								if (prevPos.fFileInfo == fi && prevPos.fLine == lineNr) {
+									fDocument.insertSource(pos, "", lineNr, true); //$NON-NLS-1$
+									fDocument.removeSourcePosition(pos);
+								} else {
+									String sourceLine = fi.getLine(lineNr);
+									fDocument.insertSource(pos, sourceLine, lineNr, true);
+								}
+							} else {
+								String sourceLine = fi.getLine(lineNr);
+								fDocument.insertSource(pos, sourceLine, lineNr, true);
+							}
+						} catch (BadPositionCategoryException e) {
+							internalError(e);
+						}
 					}
 				}
 			} else {

@@ -220,15 +220,14 @@ public class SemanticUtil {
 				t= ((ITypedef) type).getType();
 			} else if (type instanceof IQualifierType) {
 				final IQualifierType qt = (IQualifierType) type;
-				if (((options & CVQ) != 0)) {
-					t= qt.getType();
-				} else if (tdef) {
-					IType temp= qt.getType();
-					if (temp instanceof ITypedef) {
-						temp= getNestedType(temp, TDEF);
-						return addQualifiers(temp, qt.isConst(), qt.isVolatile());
+				final boolean cvq = (options & CVQ) != 0;
+				if (cvq || tdef) {
+					t= getNestedType(qt.getType(), options);
+					if (!cvq || t instanceof IArrayType || t instanceof ICPPReferenceType) {
+						t= addQualifiers(t, qt.isConst(), qt.isVolatile());
 					}
-				}
+					return t;
+				} 
 			} else if ((options & ARRAY) != 0 && type instanceof IArrayType) {
 				t= ((IArrayType) type).getType();
 			} else if ((options & REF) != 0 && type instanceof ICPPReferenceType) {
@@ -245,45 +244,42 @@ public class SemanticUtil {
 	 * Simplifies type by resolving typedefs within the given type.
 	 */
 	static IType getSimplifiedType(IType type) {
-		try {
-			if (type instanceof ICPPFunctionType) {
-				final ICPPFunctionType ft = (ICPPFunctionType) type;
-				IType ret = null;
-				IType[] params = null;
-				final IType r = ft.getReturnType();
-				ret = getSimplifiedType(r);
-				IType[] ps = ft.getParameterTypes();
-				params = getSimplifiedTypes(ps);
-				if (ret == r && params == ps) {
-					return type;
-				}
-				return new CPPFunctionType(ret, params, ft.isConst(), ft.isVolatile());
-			} 
-
-			if (type instanceof ITypedef) {
-				IType t= ((ITypedef) type).getType();
-				if (t != null)
-					return getSimplifiedType(t);
+		if (type instanceof ICPPFunctionType) {
+			final ICPPFunctionType ft = (ICPPFunctionType) type;
+			IType ret = null;
+			IType[] params = null;
+			final IType r = ft.getReturnType();
+			ret = getSimplifiedType(r);
+			IType[] ps = ft.getParameterTypes();
+			params = getSimplifiedTypes(ps);
+			if (ret == r && params == ps) {
 				return type;
 			}
-			if (type instanceof ITypeContainer) {
-				final ITypeContainer tc = (ITypeContainer) type;
-				final IType nestedType= tc.getType();
-				if (nestedType == null) 
-					return type;
-				
-				IType newType= getSimplifiedType(nestedType);
-				if (newType != nestedType) {
-					return replaceNestedType(tc, newType);
-				} 
+			return new CPPFunctionType(ret, params, ft.isConst(), ft.isVolatile());
+		} 
+
+		if (type instanceof ITypedef) {
+			IType t= ((ITypedef) type).getType();
+			if (t != null)
+				return getSimplifiedType(t);
+			return type;
+		}
+		if (type instanceof ITypeContainer) {
+			final ITypeContainer tc = (ITypeContainer) type;
+			final IType nestedType= tc.getType();
+			if (nestedType == null) 
 				return type;
+			
+			IType newType= getSimplifiedType(nestedType);
+			if (newType != nestedType) {
+				return replaceNestedType(tc, newType);
 			} 
-		} catch (DOMException e) {
+			return type;
 		}
 		return type;
 	}
 
-	public static IType replaceNestedType(ITypeContainer type, IType newNestedType) throws DOMException {
+	public static IType replaceNestedType(ITypeContainer type, IType newNestedType) {
 		// bug 249085 make sure not to add unnecessary qualifications
 		if (type instanceof IQualifierType) {
 			IQualifierType qt= (IQualifierType) type;
@@ -299,34 +295,31 @@ public class SemanticUtil {
 		if (!(type instanceof IIndexType))
 			return type;
 		
-		try {
-			if (type instanceof IFunctionType) {
-				final ICPPFunctionType ft = (ICPPFunctionType) type;
-				final IType r = ft.getReturnType();
-				final IType ret = mapToAST(r, node);
-				if (ret == r) {
-					return type;
-				}
-				return new CPPFunctionType(ret, ft.getParameterTypes(), ft.isConst(), ft.isVolatile());
-			}
-			if (type instanceof ITypeContainer) {
-				final ITypeContainer tc = (ITypeContainer) type;
-				final IType nestedType= tc.getType();
-				if (nestedType == null) 
-					return type;
-				
-				IType newType= mapToAST(nestedType, node);
-				if (newType != nestedType) {
-					return replaceNestedType(tc, newType);
-				} 
+		if (type instanceof IFunctionType) {
+			final ICPPFunctionType ft = (ICPPFunctionType) type;
+			final IType r = ft.getReturnType();
+			final IType ret = mapToAST(r, node);
+			if (ret == r) {
 				return type;
-			} else if (type instanceof ICPPClassType && type instanceof IIndexType) {
-				IASTTranslationUnit tu = node.getTranslationUnit();
-				if (tu instanceof CPPASTTranslationUnit) {
-					return ((CPPASTTranslationUnit) tu).mapToAST((ICPPClassType) type);
-				}
 			}
-		} catch (DOMException e) {
+			return new CPPFunctionType(ret, ft.getParameterTypes(), ft.isConst(), ft.isVolatile());
+		}
+		if (type instanceof ITypeContainer) {
+			final ITypeContainer tc = (ITypeContainer) type;
+			final IType nestedType= tc.getType();
+			if (nestedType == null) 
+				return type;
+			
+			IType newType= mapToAST(nestedType, node);
+			if (newType != nestedType) {
+				return replaceNestedType(tc, newType);
+			} 
+			return type;
+		} else if (type instanceof ICPPClassType && type instanceof IIndexType) {
+			IASTTranslationUnit tu = node.getTranslationUnit();
+			if (tu instanceof CPPASTTranslationUnit) {
+				return ((CPPASTTranslationUnit) tu).mapToAST((ICPPClassType) type);
+			}
 		}
 		return type;
 	}
@@ -427,7 +420,17 @@ public class SemanticUtil {
 					return new CPPPointerType(pt.getType(), cnst || pt.isConst(), vol || pt.isVolatile());
 				}
 				return baseType;
-			} 
+			} else if (baseType instanceof IArrayType) {
+				IArrayType at= (IArrayType) baseType;
+				IType nested= at.getType();
+				IType newNested= addQualifiers(nested, cnst, vol);
+				if (newNested != nested && at instanceof ITypeContainer) {
+					return replaceNestedType((ITypeContainer) at, newNested);
+				}
+				return at;
+			} else if (baseType instanceof ICPPReferenceType) {
+				return baseType;
+			}
 			
 			return new CPPQualifierType(baseType, cnst, vol);
 		}

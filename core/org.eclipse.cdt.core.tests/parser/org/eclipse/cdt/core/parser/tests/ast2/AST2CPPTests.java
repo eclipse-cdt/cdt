@@ -7577,5 +7577,17 @@ public class AST2CPPTests extends AST2BaseTest {
 		IASTImplicitNameOwner no= (IASTImplicitNameOwner) stmt.getReturnValue();
 		assertEquals(0, no.getImplicitNames().length);
 	}
+	
+	//	typedef int Fixed_Array[20];
+	//	void f(const ::Fixed_Array message) {}
+	//
+	//	void test() {
+	//		int* ptr;
+	//		f(ptr);
+	//	}
+	public void testParameterAdjustment_293538() throws Exception {
+		final String code = getAboveComment();
+		parseAndCheckBindings(code, ParserLanguage.CPP);
+	}
 }
 

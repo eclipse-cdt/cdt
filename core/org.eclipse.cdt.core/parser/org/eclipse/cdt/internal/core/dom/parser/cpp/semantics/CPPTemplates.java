@@ -39,7 +39,6 @@ import org.eclipse.cdt.core.dom.ast.IEnumeration;
 import org.eclipse.cdt.core.dom.ast.IEnumerator;
 import org.eclipse.cdt.core.dom.ast.IFunction;
 import org.eclipse.cdt.core.dom.ast.IFunctionType;
-import org.eclipse.cdt.core.dom.ast.IParameter;
 import org.eclipse.cdt.core.dom.ast.IPointerType;
 import org.eclipse.cdt.core.dom.ast.IProblemBinding;
 import org.eclipse.cdt.core.dom.ast.IQualifierType;
@@ -111,13 +110,11 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPDeferredClassInstance;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPFieldSpecialization;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPFunctionInstance;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPFunctionSpecialization;
-import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPFunctionTemplate;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPFunctionTemplateSpecialization;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPFunctionType;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPMethodInstance;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPMethodSpecialization;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPMethodTemplateSpecialization;
-import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPParameter;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPPointerToMemberType;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPPointerType;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPTemplateArgument;
@@ -1794,9 +1791,8 @@ public class CPPTemplates {
 	 * for each occurrence of that parameter in the function parameter list
 	 * @throws DOMException
 	 */
-	static private ICPPTemplateArgument[] createArgsForFunctionTemplateOrdering(ICPPFunctionTemplate template)
+	static private ICPPTemplateArgument[] createArgsForFunctionTemplateOrdering(ICPPTemplateParameter[] paramList)
 			throws DOMException{
-		ICPPTemplateParameter[] paramList = template.getTemplateParameters();
 		int size = paramList.length;
 		ICPPTemplateArgument[] args = new ICPPTemplateArgument[size];
 		for (int i = 0; i < size; i++) {
@@ -1812,51 +1808,54 @@ public class CPPTemplates {
 
 	static protected int orderTemplateFunctions(ICPPFunctionTemplate f1, ICPPFunctionTemplate f2)
 			throws DOMException {
-		// Using the transformed parameter list, perform argument deduction against the other
-		// function template
-		CPPTemplateParameterMap m1= new CPPTemplateParameterMap(2);
-		CPPTemplateParameterMap m2= new CPPTemplateParameterMap(2);
-
-		ICPPTemplateArgument[] args = createArgsForFunctionTemplateOrdering(f1);
-		IBinding function = instantiateFunctionTemplate(f1, args);
-		if (function instanceof ICPPFunction)
-			if (!deduceTemplateParameterMapFromFunctionParameters(f2, ((ICPPFunction) function).getType().getParameterTypes(), m1))
-				m1= null;
-
-		args = createArgsForFunctionTemplateOrdering(f2);
-		function = instantiateFunctionTemplate(f2, args);
-		if (function instanceof ICPPFunction)
-			if (!deduceTemplateParameterMapFromFunctionParameters(f1, ((ICPPFunction) function).getType().getParameterTypes(), m2))
-				m2= null;
-		
-		
-		// The transformed template is at least as specialized as the other iff the deduction
-		// succeeds and the deduced parameter types are an exact match.
-		// A template is more specialized than another iff it is at least as specialized as the
+		// 14.5.5.2
+		// A template is more specialized than another if and only if it is at least as specialized as the
 		// other template and that template is not at least as specialized as the first.
-		if (m1 == null) {
-			if (m2 == null) 
-				return 0;
-			return -1;
-		} 
+		boolean f1IsAtLeastAsSpecializedAsF2 = isAtLeastAsSpecializedAs(f1, f2);
+		boolean f2IsAtLeastAsSpecializedAsF1 = isAtLeastAsSpecializedAs(f2, f1);
 
-		if (m2 == null) 
+		if (f1IsAtLeastAsSpecializedAsF2 == f2IsAtLeastAsSpecializedAsF1)
+			return 0;
+
+		if (f1IsAtLeastAsSpecializedAsF2)
 			return 1;
 
-		// Count the number of cv-qualifications. The function with a lower number
-		// of cv-qualifications is more specialized.
-		int d1 = 0;
-		for (ICPPTemplateArgument arg : m1.values()) {
-			if (arg.getTypeValue() instanceof IQualifierType)
-				d1++;
+		return -1;
+	}
+
+	private static boolean isAtLeastAsSpecializedAs(ICPPFunctionTemplate f1, ICPPFunctionTemplate f2) throws DOMException {
+		// 14.5.5.2
+		// Using the transformed parameter list, perform argument deduction against the other
+		// function template
+		// The transformed template is at least as specialized as the other if and only if the deduction
+		// succeeds and the deduced parameter types are an exact match.
+		ICPPTemplateArgument[] transferArgs = createArgsForFunctionTemplateOrdering(f1.getTemplateParameters());
+		IBinding transferredTemplate = instantiateFunctionTemplate(f1, transferArgs);
+		if (!(transferredTemplate instanceof ICPPFunction))
+			return false;
+		
+		CPPTemplateParameterMap map= new CPPTemplateParameterMap(2);
+		final IType[] transferredParameterTypes = ((ICPPFunction) transferredTemplate).getType().getParameterTypes();
+		if (!deduceTemplateParameterMapFromFunctionParameters(f2, transferredParameterTypes, map))
+			return false;
+		
+		final ICPPTemplateParameter[] tmplParams = f2.getTemplateParameters();
+		for (ICPPTemplateParameter tmplParam : tmplParams) {
+			ICPPTemplateArgument deducedArg= map.getArgument(tmplParam);
+			if (deducedArg == null)
+				return false;
 		}
-		int d2 = 0;
-		for (ICPPTemplateArgument arg : m2.values()) {
-			if (arg.getTypeValue() instanceof IQualifierType) {
-				d2++;
-			}
+		
+		// length can be different in case of varargs or default arguments
+		IType[] params= f2.getType().getParameterTypes();
+		final int len= Math.min(params.length, transferredParameterTypes.length);
+		for (int i = 0; i <len; i++) {
+			IType instantiated= instantiateType(params[i], map, null);
+			// we need to be able to compare class instances from different caches here
+			if (!instantiated.isSameType(transferredParameterTypes[i]))
+				return false;
 		}
-		return d1 - d2;
+		return true;
 	}
 
 	private static ICPPClassTemplatePartialSpecialization findPartialSpecialization(ICPPClassTemplate ct, ICPPTemplateArgument[] args) throws DOMException {
@@ -1930,71 +1929,62 @@ public class CPPTemplates {
 			return -1;
 		}
 
-		//to order class template specializations, we need to transform them into function templates
-		ICPPFunctionTemplate template1 = classTemplateSpecializationToFunctionTemplate(spec1);
-		ICPPFunctionTemplate template2 = classTemplateSpecializationToFunctionTemplate(spec2);
-		if (template1 == null) {
-			if (template2 == null)
-				return 0;
+		// we avoid the transformation to function templates, of which the one parameter
+		// will be used in the end.
+
+		// 14.5.5.2
+		// A template is more specialized than another if and only if it is at least as specialized as the
+		// other template and that template is not at least as specialized as the first.
+		boolean f1IsAtLeastAsSpecializedAsF2 = isAtLeastAsSpecializedAs(spec1, spec2);
+		boolean f2IsAtLeastAsSpecializedAsF1 = isAtLeastAsSpecializedAs(spec2, spec1);
+
+		if (f1IsAtLeastAsSpecializedAsF2 == f2IsAtLeastAsSpecializedAsF1)
+			return 0;
+
+		if (f1IsAtLeastAsSpecializedAsF2)
 			return 1;
+
+		return -1;
+	}
+
+	private static boolean isAtLeastAsSpecializedAs(ICPPClassTemplatePartialSpecialization f1, ICPPClassTemplatePartialSpecialization f2) throws DOMException {
+		// 14.5.5.2
+		// Using the transformed parameter list, perform argument deduction against the other
+		// function template
+		// The transformed template is at least as specialized as the other if and only if the deduction
+		// succeeds and the deduced parameter types are an exact match.
+		final ICPPTemplateParameter[] tpars1 = f1.getTemplateParameters();
+		final ICPPTemplateParameter[] tpars2 = f2.getTemplateParameters();
+		final ICPPTemplateArgument[] targs1 = f1.getTemplateArguments();
+		final ICPPTemplateArgument[] targs2 = f2.getTemplateArguments();
+		if (targs1.length != targs2.length)
+			return false;
+
+		// transfer arguments of specialization 1
+		final ICPPTemplateArgument[] helperArgs = createArgsForFunctionTemplateOrdering(tpars1);
+		final CPPTemplateParameterMap transferMap= new CPPTemplateParameterMap(5);
+		for (int i = 0; i < tpars1.length; i++) {
+			transferMap.put(tpars1[i], helperArgs[i]);
 		}
-		if (template2 == null)
-			return -1;
+		final ICPPTemplateArgument[] transferredArgs1 = instantiateArguments(targs1, transferMap, null);
 		
-		return orderTemplateFunctions(template1, template2);
-	}
-
-	public static final class CPPImplicitFunctionTemplate extends CPPFunctionTemplate {
-		IParameter[] functionParameters = null;
-		ICPPTemplateParameter[] templateParameters = null;
-
-		public CPPImplicitFunctionTemplate(ICPPTemplateParameter[] templateParameters, IParameter[] functionParameters) {
-			super(null);
-			this.functionParameters = functionParameters;
-			this.templateParameters = templateParameters;
+		// deduce arguments for specialization 2
+		final CPPTemplateParameterMap deductionMap= new CPPTemplateParameterMap(2);
+		if (!deduceTemplateParameterMap(targs2, transferredArgs1, deductionMap))
+			return false;
+		for (ICPPTemplateParameter tmplParam : tpars2) {
+			ICPPTemplateArgument deducedArg= deductionMap.getArgument(tmplParam);
+			if (deducedArg == null)
+				return false;
 		}
-		@Override
-		public IParameter[] getParameters() {
-			return functionParameters;
+		
+		// compare
+		for (int i = 0; i < targs2.length; i++) {
+			ICPPTemplateArgument transferredArg2= instantiateArgument(targs2[i], deductionMap, null);
+			if (!transferredArg2.isSameValue(transferredArgs1[i]))
+				return false;
 		}
-		@Override
-		public ICPPTemplateParameter[] getTemplateParameters() {
-			return templateParameters;
-		}
-		@Override
-		public IScope getScope() {
-			return null;
-		}
-		@Override
-		public ICPPFunctionType getType() {
-			if (type == null) {
-				type = CPPVisitor.createImplicitFunctionType(new CPPBasicType(Kind.eVoid, 0), functionParameters, false, false);
-			}
-			return type;
-		}
-	}
-	/**
-	 * transform the class template to a function template as described in the spec
-	 * 14.5.4.2-1
-	 * @param template
-	 * @return IParameterizedSymbol
-	 * the function template has the same template parameters as the partial specialization and
-	 * has a single function parameter whose type is a class template specialization with the template
-	 * arguments of the partial specialization
-	 */
-	static private ICPPFunctionTemplate classTemplateSpecializationToFunctionTemplate(ICPPClassTemplatePartialSpecialization specialization) {
-		try {
-			ICPPTemplateArgument[] args= specialization.getTemplateArguments();
-			IBinding paramType = deferredInstance(specialization, args);
-			if (!(paramType instanceof IType))
-				return null;
-
-			IParameter[] functionParameters = new IParameter[] { new CPPParameter((IType) paramType, 0) };
-
-			return new CPPImplicitFunctionTemplate(specialization.getTemplateParameters(), functionParameters);
-		} catch (DOMException e) {
-			return null;
-		}
+		return true;
 	}
 
 	static private boolean isValidType(IType t) {

@@ -32,7 +32,7 @@ public class CPPBasicType implements ICPPBasicType {
 	private IASTExpression fExpression;
 
 	public CPPBasicType(Kind kind, int qualifiers, IASTExpression expression) {
-		if (kind == Kind.eUnspecified) {
+		if (kind == Kind.eUnspecified && qualifiers != UNIQUE_TYPE_QUALIFIER) {
 			if ( (qualifiers & (IS_COMPLEX | IS_IMAGINARY)) != 0) {
 				fKind= Kind.eFloat;
 			} else if ( (qualifiers & (IS_LONG | IS_SHORT | IS_SIGNED | IS_UNSIGNED | IS_LONG_LONG)) != 0 ) {
@@ -101,7 +101,7 @@ public class CPPBasicType implements ICPPBasicType {
 		if (object == this)
 			return true;
 
-		if (fModifiers == -1)
+		if (fModifiers == UNIQUE_TYPE_QUALIFIER)
 			return false;
 
 	    if (object instanceof ITypedef || object instanceof IIndexType)

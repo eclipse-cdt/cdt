@@ -42,6 +42,7 @@ import org.eclipse.cdt.internal.core.dom.parser.c.CASTTypeId;
 import org.eclipse.cdt.internal.core.dom.parser.c.CVisitor;
 import org.eclipse.cdt.internal.core.dom.parser.c.ICInternalBinding;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTTypeId;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPBasicType;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPInternalBinding;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPVisitor;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.SemanticUtil;
@@ -246,6 +247,9 @@ public class ASTTypeUtil {
 			result.append(Keywords.cpRBRACKET);
 		} else if (type instanceof IBasicType) {
 			IBasicType basicType= (IBasicType) type;
+			if (basicType.getModifiers() == CPPBasicType.UNIQUE_TYPE_QUALIFIER) {
+				return "@" + String.valueOf(basicType.hashCode()); //$NON-NLS-1$
+			}
 			final Kind kind = basicType.getKind();
 			if (basicType.isSigned()) {
 				// 3.9.1.2: signed integer types

@@ -4211,4 +4211,20 @@ public class AST2TemplateTests extends AST2BaseTest {
     	bh.assertNonProblem("f4(i);", 2, ICPPFunction.class);
     	bh.assertProblem("f3(&cd);", 2);
 	}
+	
+	//	template<typename T> struct C {};
+	//	template<typename T, typename V> void f(T, C<V>) {}
+	//	template<typename T> void f(T, C<int>) {}
+	//
+	//	void test() {
+	//		char ch;
+	//		C<int> cint;
+	//		C<char> cchar;
+	//		f(ch, cchar);
+	//		f(ch, cint);
+	//	}
+	public void testFunctionTemplateOrdering_293468() throws Exception {
+		final String code= getAboveComment();
+		parseAndCheckBindings(code, ParserLanguage.CPP);
+	}
 }

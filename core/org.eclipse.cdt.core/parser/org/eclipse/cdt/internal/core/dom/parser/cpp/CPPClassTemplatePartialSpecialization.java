@@ -15,14 +15,17 @@ import org.eclipse.cdt.core.dom.ast.ASTTypeUtil;
 import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.IType;
+import org.eclipse.cdt.core.dom.ast.ITypedef;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTemplateId;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassTemplate;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassTemplatePartialSpecialization;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPSpecialization;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateArgument;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateParameterMap;
 import org.eclipse.cdt.core.parser.util.ObjectMap;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPTemplates;
+import org.eclipse.cdt.internal.core.index.IIndexType;
 
 /**
  * A partial class template specialization.
@@ -85,5 +88,45 @@ public class CPPClassTemplatePartialSpecialization extends CPPClassTemplate
 	@Deprecated
 	public IType[] getArguments() throws DOMException {
 		return CPPTemplates.getArguments(getTemplateArguments());
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.core.dom.ast.IType#isSameType(org.eclipse.cdt.core.dom.ast.IType)
+	 */
+	@Override
+	public boolean isSameType(IType type) {
+		if (type == this)
+			return true;
+		if (type instanceof ITypedef || type instanceof IIndexType)
+			return type.isSameType(this);
+
+		if (type instanceof ICPPClassTemplatePartialSpecialization) {
+			return isSamePartialClassSpecialization(this, (ICPPClassTemplatePartialSpecialization) type);
+		}
+		return false;
+	}
+
+	public static boolean isSamePartialClassSpecialization(
+			ICPPClassTemplatePartialSpecialization lhs,
+			ICPPClassTemplatePartialSpecialization rhs) {
+		try {
+			ICPPClassType ct1= lhs.getPrimaryClassTemplate();
+			ICPPClassType ct2= rhs.getPrimaryClassTemplate();
+			if(!ct1.isSameType(ct2))
+				return false;
+
+			ICPPTemplateArgument[] args1= lhs.getTemplateArguments();
+			ICPPTemplateArgument[] args2= rhs.getTemplateArguments();
+			if (args1.length != args2.length)
+				return false;
+
+			for (int i = 0; i < args2.length; i++) {
+				if (args1[i].isSameValue(args2[i])) 
+					return false;
+			}
+		} catch (DOMException e) {
+			return false;
+		}
+		return true;
 	}
 }

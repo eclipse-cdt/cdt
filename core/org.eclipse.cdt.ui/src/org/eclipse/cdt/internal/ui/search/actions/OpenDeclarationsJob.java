@@ -310,8 +310,22 @@ class OpenDeclarationsJob extends Job implements ASTRunnable {
 		declNames.addAll(Arrays.asList(ast.getDefinitionsInAST(binding)));
 		for (Iterator<IASTName> i = declNames.iterator(); i.hasNext();) {
 			IASTName name= i.next();
-			if (name.resolveBinding() instanceof ICPPUsingDeclaration) {
+			final IBinding b2 = name.resolveBinding();
+			if (b2 instanceof ICPPUsingDeclaration) {
 				i.remove();
+			}
+			if (binding != b2 && binding instanceof ICPPSpecialization) {
+				// make sure binding specializes b2 so that for instance we do not navigate from
+				// one partial specialization to another.
+				IBinding spec= binding;
+				while (spec instanceof ICPPSpecialization) {
+					spec= ((ICPPSpecialization) spec).getSpecializedBinding();
+					if (spec == b2)
+						break;
+				}
+				if (!(spec instanceof ICPPSpecialization)) {
+					i.remove();
+				}
 			}
 		}
 		if (!declNames.isEmpty()) {

@@ -84,6 +84,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateParameterMap;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateTemplateParameter;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateTypeParameter;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCompositeTypeSpecifier.ICPPASTBaseSpecifier;
+import org.eclipse.cdt.core.index.IIndexBinding;
 import org.eclipse.cdt.core.parser.util.ArrayUtil;
 import org.eclipse.cdt.core.parser.util.CharArraySet;
 import org.eclipse.cdt.core.parser.util.CharArrayUtils;
@@ -149,7 +150,7 @@ public class CPPTemplates {
 	/**
 	 * Instantiates a class template with the given arguments. May return <code>null</code>.
 	 */
-	public static IBinding instantiate(ICPPClassTemplate template, ICPPTemplateArgument[] arguments) {
+	public static IBinding instantiate(ICPPClassTemplate template, ICPPTemplateArgument[] arguments, boolean isDef) {
 		try {
 			arguments= SemanticUtil.getSimplifiedArguments(arguments);
 			if (template instanceof ICPPTemplateTemplateParameter || hasDependentArgument(arguments)) {
@@ -157,7 +158,7 @@ public class CPPTemplates {
 			}
 			
 			if (template instanceof ICPPClassTemplatePartialSpecialization) {
-				return instantiatePartialSpecialization((ICPPClassTemplatePartialSpecialization) template, arguments);
+				return instantiatePartialSpecialization((ICPPClassTemplatePartialSpecialization) template, arguments, isDef);
 			}
 		
 			// check whether we need to use default arguments
@@ -209,10 +210,10 @@ public class CPPTemplates {
 				return tdef;
 
 			if (tdef instanceof ICPPClassTemplatePartialSpecialization) {
-				return instantiatePartialSpecialization((ICPPClassTemplatePartialSpecialization) tdef, completeArgs);
+				return instantiatePartialSpecialization((ICPPClassTemplatePartialSpecialization) tdef, completeArgs, isDef);
 			}
 
-			return instantiatePrimaryTemplate(template, completeArgs, map);	
+			return instantiatePrimaryTemplate(template, completeArgs, map, isDef);	
 		} catch (DOMException e) {
 			return e.getProblem();
 		}
@@ -269,8 +270,8 @@ public class CPPTemplates {
 	/**
 	 * Instantiates a partial class template specialization.
 	 */
-	private static IBinding instantiatePartialSpecialization(ICPPClassTemplatePartialSpecialization partialSpec, ICPPTemplateArgument[] args) throws DOMException {
-		ICPPTemplateInstance instance= getInstance(partialSpec, args);
+	private static IBinding instantiatePartialSpecialization(ICPPClassTemplatePartialSpecialization partialSpec, ICPPTemplateArgument[] args, boolean isDef) throws DOMException {
+		ICPPTemplateInstance instance= getInstance(partialSpec, args, isDef);
 		if (instance != null)
 			return instance;
 
@@ -296,10 +297,10 @@ public class CPPTemplates {
 	 * @param map 
 	 */
 	private static IBinding instantiatePrimaryTemplate(ICPPClassTemplate template, ICPPTemplateArgument[] arguments, 
-			CPPTemplateParameterMap map) throws DOMException {
+			CPPTemplateParameterMap map, boolean isDef) throws DOMException {
 		
 		assert !(template instanceof ICPPClassTemplatePartialSpecialization);
-		ICPPTemplateInstance instance= getInstance(template, arguments);
+		ICPPTemplateInstance instance= getInstance(template, arguments, isDef);
 		if (instance != null) {
 			return instance;
 		}
@@ -312,7 +313,7 @@ public class CPPTemplates {
 
 	private static IBinding instantiateFunctionTemplate(ICPPFunctionTemplate template, ICPPTemplateArgument[] arguments) 
 			throws DOMException {
-		ICPPTemplateInstance instance= getInstance(template, arguments);
+		ICPPTemplateInstance instance= getInstance(template, arguments, false);
 		if (instance != null) {
 			return instance;
 		}
@@ -336,9 +337,12 @@ public class CPPTemplates {
 	/**
 	 * Obtains a cached instance from the template.
 	 */
-	private static ICPPTemplateInstance getInstance(ICPPTemplateDefinition template, ICPPTemplateArgument[] args) {
+	private static ICPPTemplateInstance getInstance(ICPPTemplateDefinition template, ICPPTemplateArgument[] args, boolean forDefinition) {
 		if (template instanceof ICPPInstanceCache) {
-			return ((ICPPInstanceCache) template).getInstance(args);
+			ICPPTemplateInstance result = ((ICPPInstanceCache) template).getInstance(args);
+			if (forDefinition && result instanceof IIndexBinding)
+				return null;
+			return result;
 		}
 		return null;
 	}
@@ -353,7 +357,7 @@ public class CPPTemplates {
 	}
 
 	private static IBinding deferredInstance(ICPPClassTemplate template, ICPPTemplateArgument[] arguments) throws DOMException {
-		ICPPTemplateInstance instance= getInstance(template, arguments);
+		ICPPTemplateInstance instance= getInstance(template, arguments, false);
 		if (instance != null)
 			return instance;
 
@@ -590,7 +594,7 @@ public class CPPTemplates {
 				}
 			}
 			if (result == null) {
-				result= instantiate(classTemplate, args);
+				result= instantiate(classTemplate, args, isDef);
 				if (result instanceof ICPPInternalBinding) {
 					if (isDecl) {
 						ASTInternal.addDeclaration(result, id);
@@ -2211,7 +2215,7 @@ public class CPPTemplates {
 	            		ICPPTemplateArgument[] newArgs = CPPTemplates.instantiateArguments(
 	            				((ICPPUnknownClassInstance) unknown).getArguments(), tpMap, within);
 	            		if (result instanceof ICPPClassTemplate) {
-	            			result = instantiate((ICPPClassTemplate) result, newArgs);
+	            			result = instantiate((ICPPClassTemplate) result, newArgs, false);
 	            		}
 	            	}
 	            }
@@ -2235,7 +2239,7 @@ public class CPPTemplates {
 		}
 
 		if (changed) {
-			IBinding inst= instantiate(classTemplate, newArgs);
+			IBinding inst= instantiate(classTemplate, newArgs, false);
 			if (inst != null)
 				return inst;
 		}

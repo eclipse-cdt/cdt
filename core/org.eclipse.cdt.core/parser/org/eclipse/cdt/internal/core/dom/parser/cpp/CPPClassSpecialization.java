@@ -22,6 +22,7 @@ import org.eclipse.cdt.core.dom.ast.IASTSimpleDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.IField;
+import org.eclipse.cdt.core.dom.ast.IProblemBinding;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.ITypedef;
 import org.eclipse.cdt.core.dom.ast.cpp.CPPASTVisitor;
@@ -37,6 +38,8 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPConstructor;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPField;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPMethod;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPSpecialization;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateDefinition;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateInstance;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateParameterMap;
 import org.eclipse.cdt.core.parser.util.CharArrayUtils;
 import org.eclipse.cdt.core.parser.util.ObjectMap;
@@ -277,11 +280,15 @@ public class CPPClassSpecialization extends CPPSpecialization
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.dom.ast.IType#isSameType(org.eclipse.cdt.core.dom.ast.IType)
 	 */
-	public final boolean isSameType(IType type) {
-		if( type == this )
+	public boolean isSameType(IType type) {
+		if (type == this)
 			return true;
-		if( type instanceof ITypedef || type instanceof IIndexType )
-			return type.isSameType( this );
+		if (type instanceof ITypedef || type instanceof IIndexType)
+			return type.isSameType(this);
+
+		if (type instanceof ICPPClassSpecialization) {
+			return isSameClassSpecialization(this, (ICPPClassSpecialization) type);
+		}
 		return false;
 	}
 
@@ -307,5 +314,35 @@ public class CPPClassSpecialization extends CPPSpecialization
 			}
 		}
 		return false;
+	}
+
+
+	public static boolean isSameClassSpecialization(ICPPClassSpecialization t1, ICPPClassSpecialization t2) {
+		// exclude class template specialization or class instance
+		if (t2 instanceof ICPPTemplateInstance || t2 instanceof ICPPTemplateDefinition || 
+				t2 instanceof IProblemBinding)
+			return false;
+		
+		try {
+			if (t1.getKey() != t2.getKey()) 
+				return false;
+			
+			if (!CharArrayUtils.equals(t1.getNameCharArray(), t2.getNameCharArray()))
+				return false;
+			
+			// the argument map is not significant for comparing specializations, the map is
+			// determined by the owner of the specialization. This is different for instances,
+			// which have a separate implementation for isSameType().
+			final IBinding owner1= t1.getOwner();
+			final IBinding owner2= t2.getOwner();
+			
+			// for a specialization that is not an instance the owner has to be a class-type
+			if (owner1 instanceof ICPPClassType == false || owner2 instanceof ICPPClassType == false)
+				return false;
+
+			return ((ICPPClassType) owner1).isSameType((ICPPClassType) owner2);
+		} catch (DOMException e) {
+			return false;
+		}
 	}
 }

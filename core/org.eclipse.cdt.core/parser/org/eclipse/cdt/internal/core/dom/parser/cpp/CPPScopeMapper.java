@@ -295,7 +295,7 @@ public class CPPScopeMapper {
 			if (template instanceof IIndexBinding && template instanceof ICPPClassType) {
 				IBinding mapped= mapToAST((ICPPClassType) template);
 				if (mapped != template && mapped instanceof ICPPClassType) {
-					mapped= CPPTemplates.instantiate((ICPPClassTemplate) mapped, inst.getTemplateArguments());
+					mapped= CPPTemplates.instantiate((ICPPClassTemplate) mapped, inst.getTemplateArguments(), false);
 					if (mapped instanceof ICPPClassType)
 						return (ICPPClassType) mapped;
 				}

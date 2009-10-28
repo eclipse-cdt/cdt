@@ -13,14 +13,13 @@
 package org.eclipse.cdt.internal.core.pdom.dom.cpp;
 
 import org.eclipse.cdt.core.CCorePlugin;
-import org.eclipse.cdt.core.dom.ast.IProblemBinding;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.ITypedef;
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassSpecialization;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateArgument;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateDefinition;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateInstance;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPClassInstance;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPTemplates;
 import org.eclipse.cdt.internal.core.index.IIndexCPPBindingConstants;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMBinding;
@@ -90,19 +89,7 @@ class PDOMCPPClassInstance extends PDOMCPPClassSpecialization implements ICPPTem
 			}
 		}
 		
-		// require a class instance
-		if (!(type instanceof ICPPClassSpecialization) || !(type instanceof ICPPTemplateInstance) ||
-				type instanceof IProblemBinding) {
-			return false;
-		}
-
-		final ICPPClassSpecialization classSpec2 = (ICPPClassSpecialization) type;
-		final ICPPClassType orig1= getSpecializedBinding();
-		final ICPPClassType orig2= classSpec2.getSpecializedBinding();
-		if (!orig1.isSameType(orig2))
-			return false;
-		
-		return CPPTemplates.haveSameArguments(this, (ICPPTemplateInstance) type);
+		return CPPClassInstance.isSameClassInstance(this, type);
 	}
 	
 	@Deprecated

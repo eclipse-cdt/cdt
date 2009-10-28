@@ -15,21 +15,19 @@ import java.text.NumberFormat;
 import java.util.Collection;
 import java.util.Iterator;
 
+import com.ibm.icu.text.MessageFormat;
+
 import org.eclipse.cdt.core.dom.ILinkage;
 import org.eclipse.cdt.core.model.AbstractLanguage;
 import org.eclipse.cdt.core.model.ILanguage;
 import org.eclipse.cdt.core.parser.IParserLogService;
 import org.eclipse.cdt.core.parser.IScannerInfo;
-import org.eclipse.cdt.internal.core.dom.AbstractCodeReaderFactory;
-import org.eclipse.cdt.internal.core.dom.IIncludeFileResolutionHeuristics;
 import org.eclipse.cdt.internal.core.index.IWritableIndex;
 import org.eclipse.cdt.internal.core.pdom.AbstractIndexerTask;
 import org.eclipse.cdt.internal.core.pdom.IndexerProgress;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
-
-import com.ibm.icu.text.MessageFormat;
 
 /**
  * A task for index updates.

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2008 Intel Corporation and others.
+ * Copyright (c) 2007, 2009 Intel Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     Intel Corporation - initial API and implementation
+ *     James Blackburn (Broadcom Corp.)
  *******************************************************************************/
 package org.eclipse.cdt.ui.newui;
 
@@ -168,8 +169,8 @@ public abstract class AbstractExportTab extends AbstractCPropertyTab {
 	public abstract boolean hasValues();
 	
 	/**
-	 * Called when item added/edited/removed.
-	 * Refreshes whole table contwnts
+	 * Called when item added/edited/removed or Tab is changed.
+	 * Refreshes whole table contents
 	 */
 	protected void update() {
 		int x = table.getSelectionIndex();
@@ -262,7 +263,7 @@ public abstract class AbstractExportTab extends AbstractCPropertyTab {
 					getKind(), names_ls, names_ts, null, isWsp); 
 			if (dlg.open()) {
 				ent[0] = doEdit(dlg.text1.trim(), dlg.text2.trim(), dlg.check2);
-				ICSettingEntry[] ls = old.setting.getEntries(getKind());
+				ICSettingEntry[] ls = old.setting.getEntries();
 				ICSettingEntry[] ls2 = new ICLanguageSettingEntry[ls.length];
 				for (int x=0; x<ls.length; x++) 
 					if (ls[x].equals(old.entry)) ls2[x] = ent[0];
@@ -270,7 +271,6 @@ public abstract class AbstractExportTab extends AbstractCPropertyTab {
 				cfg.removeExternalSetting(old.setting);
 				cfg.createExternalSetting(name2id(dlg.sel_langs, names_l), name2id(dlg.sel_types, names_t), null, ls2);
 				update();
-				
 			}
 			break;
 		case 2: // delete
@@ -298,11 +298,16 @@ outer:
 					}
 					lst.add(se);
 				}
+				// Ensure we don't lose external settings we know nothing about
+				for (ICSettingEntry e : old.setting.getEntries())
+					if (e.getKind() != getKind())
+						lst.add(e);
+				// Remove and re-add the particular setting entry
 				cfg.removeExternalSetting(old.setting);
 				cfg.createExternalSetting(old.setting.getCompatibleLanguageIds(), 
 						old.setting.getCompatibleContentTypeIds(),
 						old.setting.getCompatibleExtensions(), 
-						lst.toArray(new ICLanguageSettingEntry[lst.size()])); 
+						lst.toArray(new ICSettingEntry[lst.size()])); 
 			}
 			update();
 			break;

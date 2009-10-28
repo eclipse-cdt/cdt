@@ -77,7 +77,6 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPImplicitFunction;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPImplicitMethod;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPImplicitTypedef;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.AccessContext;
-import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPTemplates.CPPImplicitFunctionTemplate;
 
 import org.eclipse.cdt.internal.ui.viewsupport.CElementImageProvider;
 
@@ -285,7 +284,6 @@ public class DOMCompletionProposalComputer extends ParsingBasedProposalComputer 
 	protected void handleBinding(IBinding binding, CContentAssistInvocationContext cContext, String prefix, 
 			IASTCompletionContext astContext, List<ICompletionProposal> proposals) {
 		if ((binding instanceof CPPImplicitFunction
-				|| binding instanceof CPPImplicitFunctionTemplate 
 				|| binding instanceof CPPImplicitTypedef
 				|| binding instanceof CPPBuiltinVariable
 				|| binding instanceof CPPBuiltinParameter

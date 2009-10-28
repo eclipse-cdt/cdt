@@ -433,6 +433,10 @@ outer:
 		protected String getTypeStr() {
 			return getLabel(setting.getCompatibleContentTypeIds(), names_t);
 		}
+		@Override
+		public String toString() {
+			return getName();
+		}
 	}
 	
 	static protected String getLabel(String[] lst, Map<String, String> names) {

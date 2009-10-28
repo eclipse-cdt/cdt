@@ -7608,5 +7608,22 @@ public class AST2CPPTests extends AST2BaseTest {
 		bh.assertNonProblem("B>(1)", 1);
 		parseAndCheckBindings(code, ParserLanguage.CPP);
 	}
+	
+	//	namespace ns {
+	//		enum E { e1, e2 };
+	//		E operator|(E __a, E __b) { return e1; }
+	//	}
+	//
+	//	void f(ns::E e) {}
+	//	void test() {
+	//		f(ns::e1);
+	//		f(ns::e1 | ns::e2);  // the operator| needs to be looked up in the 
+	//	                             // associated namespace.
+	//	}
+	public void testAssociatedScopesForOverloadedOperators_293589() throws Exception {
+		final String code = getAboveComment();
+		parseAndCheckBindings(code, ParserLanguage.CPP);
+	}
+
 }
 

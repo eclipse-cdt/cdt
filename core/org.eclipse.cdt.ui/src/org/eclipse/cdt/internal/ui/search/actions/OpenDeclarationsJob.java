@@ -690,7 +690,7 @@ class OpenDeclarationsJob extends Job implements ASTRunnable {
 			sourceQualifiedName= CPPVisitor.getQualifiedName(sourceName.resolveBinding());
 			if (sourceName.resolveBinding() instanceof ICPPUnknownBinding) {
 				LookupData data= CPPSemantics.createLookupData(sourceName, false);
-				if (data.functionCall()) {
+				if (data.isFunctionCall()) {
 					funcArgCount= data.getFunctionArgumentCount();
 				}
 			}

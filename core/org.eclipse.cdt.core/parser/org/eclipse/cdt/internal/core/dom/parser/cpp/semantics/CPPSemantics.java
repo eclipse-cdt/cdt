@@ -272,14 +272,11 @@ public class CPPSemantics {
             			doKoenig= false;
             	}
             	if (doKoenig) {
-                    data.ignoreUsingDirectives = true;
-                    data.forceQualified = true;
-                    for (int i = 0; i < data.associated.size(); i++) {
-                    	final IScope scope = data.associated.keyAt(i);
-                    	if (!data.visited.containsKey(scope))
-                    		lookup(data, scope);
+            		int count= data.getFoundItemCount();
+                    doKoenigLookup(data);
+                    if (data.getFoundItemCount() > count) {
+                    	binding = resolveAmbiguities(data, data.astName);
                     }
-                    binding = resolveAmbiguities(data, data.astName);
                 }
             } catch (DOMException e) {
                 binding = e.getProblem();
@@ -484,6 +481,18 @@ public class CPPSemantics {
 		}
         return binding;
     }
+
+	private static void doKoenigLookup(LookupData data) throws DOMException {
+		data.ignoreUsingDirectives = true;
+		data.forceQualified = true;
+		ObjectSet<IScope> associated = getAssociatedScopes(data);
+		for (int i = 0; i < associated.size(); i++) {
+			final IScope scope = associated.keyAt(i);
+			if (!data.visited.containsKey(scope)) {
+				lookup(data, scope);
+			}
+		}
+	}
        
 	static IBinding checkDeclSpecifier(IBinding binding, IASTName name, IASTNode decl) {
 		// check for empty declaration specifiers
@@ -565,10 +574,6 @@ public class CPPSemantics {
 			ICPPASTConstructorChainInitializer ctorinit = (ICPPASTConstructorChainInitializer) parent;
 			IASTExpression val = ctorinit.getInitializerValue();
 			data.setFunctionArguments(val);
-		}
-		
-		if (considerAssociatedScopes && !(name.getParent() instanceof ICPPASTQualifiedName) && data.functionCall()) {
-		    data.associated = getAssociatedScopes(data);
 		}
 		
 		return data;
@@ -2802,6 +2807,12 @@ public class CPPSemantics {
 					if (scope == null)
 						return null;
 					lookup(funcData, scope);
+					if (methodData == null || !methodData.hasResults()) {
+						try {
+							doKoenigLookup(funcData);
+						} catch (DOMException e) {
+						}
+					}
 				}
 			} catch (DOMException e) {
 				return null;

@@ -85,9 +85,6 @@ public class LookupData {
 	
 	/** Used to ensure we don't visit things more than once. */
 	public ObjectSet<IScope> visited= new ObjectSet<IScope>(1);
-
-	@SuppressWarnings("unchecked")
-	public ObjectSet<IScope> associated = ObjectSet.EMPTY_SET;
 	
 	public boolean checkWholeClassScope = false;
 	public boolean ignoreUsingDirectives = false;
@@ -306,7 +303,7 @@ public class LookupData {
 		return p1 instanceof ICPPASTFieldReference;
 	}
 	
-	public boolean functionCall() {
+	public boolean isFunctionCall() {
 	    if (astName == null) return false;
 	    if (astName.getPropertyInParent() == CPPSemantics.STRING_LOOKUP_PROPERTY) return false;
 	    IASTNode p1 = astName.getParent();
@@ -507,15 +504,18 @@ public class LookupData {
 	}
 	
 	public boolean checkAssociatedScopes() {
-		if (astName == null || astName instanceof ICPPASTQualifiedName)
+		IASTName name= astName;
+		if (name == null || name instanceof ICPPASTQualifiedName)
 			return false;
-		IASTNode parent = astName.getParent();
+		
+		IASTNode parent = name.getParent();
+		if (name.getPropertyInParent() == ICPPASTTemplateId.TEMPLATE_NAME)
+			parent= parent.getParent();
+		
 		if (parent instanceof ICPPASTQualifiedName) {
-			IASTName[] ns = ((ICPPASTQualifiedName)parent).getNames();
-			if (ns[ns.length - 1] != astName)
-				return false;
+			return false;
 		}
-		return functionCall() && (associated.size() > 0);
+		return isFunctionCall();
 	}
 
 	public boolean checkClassContainingFriend() {
@@ -657,5 +657,18 @@ public class LookupData {
 			}
 		}
 		return IBinding.EMPTY_BINDING_ARRAY;
+	}
+
+	public int getFoundItemCount() {
+		if (foundItems instanceof Object[]) {
+			Object[] items = (Object[]) foundItems;
+			int len;
+			for (len= items.length-1; len >=0; len--) {
+				if (items[len] != null)
+					break;
+			}
+			return len+1;
+		}
+		return 0;
 	}
 }

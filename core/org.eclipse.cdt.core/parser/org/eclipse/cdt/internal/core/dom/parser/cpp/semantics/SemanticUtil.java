@@ -280,6 +280,9 @@ public class SemanticUtil {
 	}
 
 	public static IType replaceNestedType(ITypeContainer type, IType newNestedType) {
+		if (newNestedType == null)
+			return type;
+		
 		// bug 249085 make sure not to add unnecessary qualifications
 		if (type instanceof IQualifierType) {
 			IQualifierType qt= (IQualifierType) type;
@@ -430,6 +433,8 @@ public class SemanticUtil {
 				return at;
 			} else if (baseType instanceof ICPPReferenceType) {
 				return baseType;
+			} else if (baseType == null) {
+				return null;
 			}
 			
 			return new CPPQualifierType(baseType, cnst, vol);

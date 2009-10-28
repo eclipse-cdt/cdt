@@ -139,4 +139,33 @@ final class Cost {
 		}
 		return 0;
 	}
+
+	@SuppressWarnings("nls")
+	@Override
+	public String toString() {
+		StringBuilder buf= new StringBuilder();
+		String comma= "";
+		buf.append(fRank).append('[');
+		if (fQualificationAdjustments != 0) {
+			buf.append(comma).append("qualification=").append(fQualificationAdjustments);
+			comma= ", ";
+		}
+		if (fInheritanceDistance != 0) {
+			buf.append(comma).append("inheritance=").append(fInheritanceDistance);
+			comma= ", ";
+		}
+		if (fDeferredUDC) {
+			buf.append(comma).append("deferred UDC");
+			comma= ", ";
+		}
+		if (fAmbiguousUDC) {
+			buf.append(comma).append("ambiguous UDC");
+			comma= ", ";
+		}
+		if (fSecondStandardConversionRank != null) {
+			buf.append(comma).append("2ndConvRank=").append(fSecondStandardConversionRank);
+		}
+		buf.append(']');
+		return buf.toString();
+	}
 }

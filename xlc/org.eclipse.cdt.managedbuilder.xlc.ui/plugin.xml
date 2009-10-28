@@ -127,9 +127,9 @@
       </tool>
 	<tool
        command="${XL_compilerRoot}/xlc"
-       id="cdt.managedbuild.tool.xlc.c.compiler"
+       id="cdt.managedbuild.tool.xlc.c.compiler.abstract"
        isAbstract="true"
-       name="%ToolName.compiler.xlc.c"
+       name="Abstract XL C Compiler"
        natureFilter="cnature"
        outputFlag="-o"
        superClass="org.eclipse.cdt.managedbuilder.xlc.ui.tool.abstractCompiler">
@@ -219,23 +219,26 @@
            value="__IBMC__">
      </listOptionValue>
   </option>
+  <option
+        applicabilityCalculator="org.eclipse.cdt.managedbuilder.xlc.ui.properties.XLCApplicabilityCalculator"
+        category="xlc.c.compiler.category.objcc"
+        command="-qunique"
+        defaultValue="false"
+        id="org.eclipse.cdt.managedbuilder.xlc.ui.cpp.option.output.unique.v10"
+        isAbstract="false"
+        name="%Option.unique.v10"
+        resourceFilter="all"
+        valueType="boolean">
+  </option>
 	  </tool>
 	  <tool
          command="${XL_compilerRoot}/xlC"
-         id="cdt.managedbuild.tool.xlc.cpp.compiler"
+         id="cdt.managedbuild.tool.xlc.cpp.compiler.abstract"
          isAbstract="true"
-         name="%ToolName.compiler.xlc.cpp"
+         name="Abstract XL C++ Compiler"
          natureFilter="ccnature"
          outputFlag="-o"
          superClass="org.eclipse.cdt.managedbuilder.xlc.ui.tool.abstractCompiler">
-           <inputType
-                 dependencyContentType="org.eclipse.cdt.core.cxxHeader"
-                 dependencyExtensions="h,H,hpp"
-                 id="cdt.managedbuild.tool.xlc.cpp.compiler.input"
-                 scannerConfigDiscoveryProfileId="org.eclipse.cdt.managedbuilder.xlc.core.XLCManagedMakePerProjectProfileCPP"
-                 sourceContentType="org.eclipse.cdt.core.cxxSource"
-                 sources="c,C,cc,cxx,cpp">
-          </inputType>
            <option
                  category="xlc.c.compiler.category.Input"
                  command="-+"
@@ -275,6 +278,7 @@
                  valueType="string">
            </option>
            <option
+                 applicabilityCalculator="org.eclipse.cdt.managedbuilder.xlc.ui.properties.XLCApplicabilityCalculator"
                  category="xlc.c.compiler.category.output"
                  id="org.eclipse.cdt.managedbuilder.xlc.ui.cpp.option.namemangling"
                  isAbstract="false"
@@ -312,6 +316,66 @@
                     name="%Option.namemangling.v3">
               </enumeratedOptionValue>
            </option>
+           <option
+                 applicabilityCalculator="org.eclipse.cdt.managedbuilder.xlc.ui.properties.XLCApplicabilityCalculator"
+                 category="xlc.c.compiler.category.output"
+                 id="org.eclipse.cdt.managedbuilder.xlc.ui.cpp.option.namemangling.v10"
+                 isAbstract="false"
+                 name="%Option.namemangling.v10.name"
+                 resourceFilter="all"
+                 valueType="enumerated">
+              <enumeratedOptionValue
+                    id="org.eclipse.cdt.managedbuilder.xlc.ui.cpp.option.namemangling.default"
+                    isDefault="true"
+                    name="%Option.default">
+              </enumeratedOptionValue>
+              <enumeratedOptionValue
+                    command="-qnamemangling=ansi"
+                    id="org.eclipse.cdt.managedbuilder.xlc.ui.cpp.option.namemangling.ansi"
+                    name="%Option.namemangling.ansi">
+              </enumeratedOptionValue>
+              <enumeratedOptionValue
+                    command="-qnamemangling=v10"
+                    id="org.eclipse.cdt.managedbuilder.xlc.ui.cpp.option.namemangling.v10"
+                    name="%Option.namemangling.v10">
+              </enumeratedOptionValue>
+              <enumeratedOptionValue
+                    command="-qnamemangling=v9"
+                    id="org.eclipse.cdt.managedbuilder.xlc.ui.cpp.option.namemangling.v9"
+                    name="%Option.namemangling.v9">
+              </enumeratedOptionValue>
+              <enumeratedOptionValue
+                    command="-qnamemangling=v8"
+                    id="org.eclipse.cdt.managedbuilder.xlc.ui.cpp.option.namemangling.v8"
+                    name="%Option.namemangling.v8">
+              </enumeratedOptionValue>
+              <enumeratedOptionValue
+                    command="-qnamemangling=v7"
+                    id="org.eclipse.cdt.managedbuilder.xlc.ui.cpp.option.namemangling.v7"
+                    name="%Option.namemangling.v7">
+              </enumeratedOptionValue>
+              <enumeratedOptionValue
+                    command="-qnamemangling=v6"
+                    id="org.eclipse.cdt.managedbuilder.xlc.ui.enumeratedOptionValue22"
+                    name="%Option.namemangling.v6">
+              </enumeratedOptionValue>
+              <enumeratedOptionValue
+                    command="-qnamemangling=v5"
+                    id="org.eclipse.cdt.managedbuilder.xlc.ui.cpp.option.namemangling.v5"
+                    name="%Option.namemangling.v5">
+              </enumeratedOptionValue>
+              <enumeratedOptionValue
+                    command="-qnamemangling=v4"
+                    id="org.eclipse.cdt.managedbuilder.xlc.ui.cpp.option.namemangling.v4"
+                    name="%Option.namemangling.v4">
+              </enumeratedOptionValue>
+              <enumeratedOptionValue
+                    command="-qnamemangling=v3"
+                    id="org.eclipse.cdt.managedbuilder.xlc.ui.cpp.option.namemangling.v3"
+                    name="%Option.namemangling.v3">
+              </enumeratedOptionValue>
+           </option>
+
            <option
                  category="xlc.c.compiler.category.output"
                  id="org.eclipse.cdt.managedbuilder.xlc.ui.cpp.option.objectmodel"
@@ -370,7 +434,7 @@
               </enumeratedOptionValue>
            </option>
            <option
-                 category="xlc.c.compiler.category.output"
+                 category="xlc.c.compiler.category.objcc"
                  command="-qunique"
                  defaultValue="false"
                  id="org.eclipse.cdt.managedbuilder.xlc.ui.cpp.option.output.unique"
@@ -449,12 +513,13 @@
       		errorParsers="org.eclipse.cdt.errorparsers.xlc.XlcErrorParser"
 			id="cdt.managedbuild.config.xlc.exe.debug">
 			<toolChain
-                     archList="all"
-                     osList="all"
-                     name="%ToolChainName.Dbg"
-                     targetTool="cdt.managedbuild.tool.xlc.c.linker.exe.debug;cdt.managedbuild.tool.xlc.cpp.linker.exe.debug"
-                     configurationEnvironmentSupplier="org.eclipse.cdt.managedbuilder.xlc.aix.AixConfigurationEnvironmentSupplier"
-                     id="cdt.managedbuild.toolchain.xlc.exe.debug">
+         archList="all"
+         configurationEnvironmentSupplier="org.eclipse.cdt.managedbuilder.xlc.aix.AixConfigurationEnvironmentSupplier"
+         id="cdt.managedbuild.toolchain.xlc.exe.debug"
+         name="%ToolChainName.Dbg"
+         osList="all"
+         scannerConfigDiscoveryProfileId="org.eclipse.cdt.managedbuilder.xlc.core.XLCManagedMakePerProjectProfileCPP"
+         targetTool="cdt.managedbuild.tool.xlc.c.linker.exe.debug;cdt.managedbuild.tool.xlc.cpp.linker.exe.debug">
 			      <targetPlatform
 					  id="cdt.managedbuild.target.xlc.platform.exe.debug"
 				 	  name="%PlatformName.Dbg"            					  
@@ -514,11 +579,12 @@
 			errorParsers="org.eclipse.cdt.errorparsers.xlc.XlcErrorParser"
 			id="cdt.managedbuild.config.xlc.exe.release">
 			<toolChain
-                     archList="all"
-                     osList="all"
-                     name="%ToolChainName.Rel"
-                     targetTool="cdt.managedbuild.tool.xlc.c.linker.exe.release;cdt.managedbuild.tool.xlc.cpp.linker.exe.release"
-                     id="cdt.managedbuild.toolchain.xlc.exe.release">
+           archList="all"
+           id="cdt.managedbuild.toolchain.xlc.exe.release"
+           name="%ToolChainName.Rel"
+           osList="all"
+           scannerConfigDiscoveryProfileId="org.eclipse.cdt.managedbuilder.xlc.core.XLCManagedMakePerProjectProfileCPP"
+           targetTool="cdt.managedbuild.tool.xlc.c.linker.exe.release;cdt.managedbuild.tool.xlc.cpp.linker.exe.release">
 		          <targetPlatform
 		              id="cdt.managedbuild.target.xlc.platform.exe.release"
 		              name="%PlatformName.Rel"		             
@@ -570,6 +636,7 @@
 					  superClass="cdt.managedbuild.tool.xlc.assembler">
 				  </tool>
             </toolChain>
+            
 		</configuration>
 	</projectType>	      		
     
@@ -654,7 +721,7 @@
                      id="cdt.managedbuild.toolchain.xlc.so.release">
 		          <targetPlatform
 		              id="cdt.managedbuild.target.xlc.platform.so.release"
-		              name="%PlatformName.Rel"	            
+		              name="%PlatformName.Rel"		            
 		              osList="all"
 		              archList="all">
 		          </targetPlatform>
@@ -830,11 +897,12 @@
                </toolChain>
         </configuration>
     </projectType>
+    
     <tool
-          errorParsers="org.eclipse.cdt.errorparsers.xlc.XlcErrorParser"
-          id="org.eclipse.cdt.managedbuilder.xlc.ui.tool.abstractCompiler"
-          isAbstract="true"
-          name="Abstract XL Compiler">
+            errorParsers="org.eclipse.cdt.errorparsers.xlc.XlcErrorParser"
+            id="org.eclipse.cdt.managedbuilder.xlc.ui.tool.abstractCompiler"
+            isAbstract="true"
+            name="Abstract XL Compiler">
          <envVarBuildPath 
 			pathType="buildpathInclude"
 			variableList="CPATH,C_INCLUDE_PATH">
@@ -1584,7 +1652,7 @@
      </enumeratedOptionValue> 
 		</option>
 				<option
-        applicabilityCalculator="org.eclipse.cdt.managedbuilder.xlc.ui.properties.XLCv8ApplicabiltyCalculator"
+        applicabilityCalculator="org.eclipse.cdt.managedbuilder.xlc.ui.properties.XLCApplicabilityCalculator"
         category="xlc.c.compiler.category.optimization"
         id="xlc.c.compiler.option.optimization.arch"
         name="%Option.optimization.arch"
@@ -1716,7 +1784,7 @@
      </enumeratedOptionValue>
 		</option>
         <option
-              applicabilityCalculator="org.eclipse.cdt.managedbuilder.xlc.ui.properties.XLCv9ApplicabilityCalculator"
+              applicabilityCalculator="org.eclipse.cdt.managedbuilder.xlc.ui.properties.XLCApplicabilityCalculator"
               category="xlc.c.compiler.category.optimization"
               id="xlc.c.compiler.option.optimization.arch.9.0"
               name="%Option.optimization.arch"
@@ -1818,7 +1886,7 @@
            </enumeratedOptionValue>
         </option>
   <option
-        applicabilityCalculator="org.eclipse.cdt.managedbuilder.xlc.ui.properties.XLCv8ApplicabiltyCalculator"
+        applicabilityCalculator="org.eclipse.cdt.managedbuilder.xlc.ui.properties.XLCApplicabilityCalculator"
         category="xlc.c.compiler.category.optimization"
         id="xlc.c.compiler.option.optimization.tune"
         name="%Option.optimization.tune"
@@ -1945,7 +2013,7 @@
      </enumeratedOptionValue>
   </option>
         <option
-              applicabilityCalculator="org.eclipse.cdt.managedbuilder.xlc.ui.properties.XLCv9ApplicabilityCalculator"
+              applicabilityCalculator="org.eclipse.cdt.managedbuilder.xlc.ui.properties.XLCApplicabilityCalculator"
               category="xlc.c.compiler.category.optimization"
               id="xlc.c.compiler.option.optimization.tune.9.0"
               name="%Option.optimization.tune"
@@ -2212,12 +2280,22 @@
 			valueType="boolean">
 		</option>
 		<option
-			defaultValue="false"
-			name="%Option.optimization.smp"
-			category="xlc.c.compiler.category.optimization"
-			command="-qsmp"
-			id="xlc.c.compiler.option.optimization.smp"
-			valueType="boolean">
+        applicabilityCalculator="org.eclipse.cdt.managedbuilder.xlc.ui.properties.XLCApplicabilityCalculator"
+        category="xlc.c.compiler.category.optimization"
+        command="-qsmp"
+        defaultValue="false"
+        id="xlc.c.compiler.option.optimization.smp"
+        name="%Option.optimization.smp"
+        valueType="boolean">
+		</option>
+		<option
+        applicabilityCalculator="org.eclipse.cdt.managedbuilder.xlc.ui.properties.XLCApplicabilityCalculator"
+        category="xlc.c.compiler.category.optimization"
+        command="-qsmp="
+        id="xlc.c.compiler.option.optimization.smp.v10"
+        name="%Option.optimization.smp.v10"
+        tip="%Option.optimization.smp.v10.tooltip"
+        valueType="string">
 		</option>
 		<option
 			name="%Option.optimization.Spill"
@@ -2227,12 +2305,22 @@
 			valueType="string">
 		</option>
 		<option
-			defaultValue="false"
-			name="%Option.optimization.Strict"
-			category="xlc.c.compiler.category.optimization"
-			command="-qstrict"
-			id="xlc.c.compiler.option.optimization.strict"
-			valueType="boolean">
+        applicabilityCalculator="org.eclipse.cdt.managedbuilder.xlc.ui.properties.XLCApplicabilityCalculator"
+        category="xlc.c.compiler.category.optimization"
+        command="-qstrict"
+        defaultValue="false"
+        id="xlc.c.compiler.option.optimization.strict"
+        name="%Option.optimization.Strict"
+        valueType="boolean">
+		</option>
+		<option
+        applicabilityCalculator="org.eclipse.cdt.managedbuilder.xlc.ui.properties.XLCApplicabilityCalculator"
+        category="xlc.c.compiler.category.optimization"
+        command="-qstrict="
+        id="xlc.c.compiler.option.optimization.strict.v10"
+        name="%Option.optimization.Strict.v10"
+        tip="%Option.optimization.Strict.v10.tooltip"
+        valueType="string">
 		</option>
 		<option
 			name="%Option.optimization.loopinduction"
@@ -2431,11 +2519,61 @@
         valueType="string"> 
 		</option>
 		<option
-			name="%Option.tls"
-			category="xlc.c.compiler.category.cc"
-			command="-qtls="
-			id="xlc.c.compiler.option.cc.tls"
-			valueType="string"> 
+        applicabilityCalculator="org.eclipse.cdt.managedbuilder.xlc.ui.properties.XLCApplicabilityCalculator"
+        category="xlc.c.compiler.category.cc"
+        command="-qtls="
+        id="xlc.c.compiler.option.cc.tls"
+        name="%Option.tls"
+        valueType="string"> 
+		</option>
+		
+		<option
+        applicabilityCalculator="org.eclipse.cdt.managedbuilder.xlc.ui.properties.XLCApplicabilityCalculator"
+        category="xlc.c.compiler.category.objcc"
+        id="xlc.c.compiler.option.cc.tls.v10"
+        name="%Option.tls"
+        valueType="enumerated">
+     <enumeratedOptionValue
+           id="xlc.c.compiler.option.cc.tls.none"
+           isDefault="true"
+           name="%Option.none">
+     </enumeratedOptionValue>
+     <enumeratedOptionValue
+           command="-qtls=unsupported"
+           id="xlc.c.compiler.option.cc.tls.unsupported"
+           isDefault="true"
+           name="%Option.tls.unsupported">
+     </enumeratedOptionValue>
+     <enumeratedOptionValue
+           command="-qtls=default"
+           id="xlc.c.compiler.option.cc.tls.default"
+           name="%Option.tls.default">
+     </enumeratedOptionValue>
+     <enumeratedOptionValue
+           command="-qtls=global-dynamic"
+           id="xlc.c.compiler.option.cc.tls.global-dynamic"
+           name="%Option.tls.global-dynamic">
+     </enumeratedOptionValue>
+     <enumeratedOptionValue
+           command="-qtls=initial-exec"
+           id="xlc.c.compiler.option.cc.tls.initial-exec"
+           name="%Option.tls.initial-exec">
+     </enumeratedOptionValue>
+     <enumeratedOptionValue
+           command="-qtls=local-exec"
+           id="xlc.c.compiler.option.cc.tls.local-exec"
+           name="%Option.tls.local-exec">
+     </enumeratedOptionValue>
+     <enumeratedOptionValue
+           command="-qtls=local-dynamic"
+           id="xlc.c.compiler.option.cc.tls.local-dynamic"
+           name="%Option.tls.local-dynamic">
+     </enumeratedOptionValue>
+     <enumeratedOptionValue
+           command="-qnotls"
+           id="xlc.c.compiler.option.cc.tls.notls"
+           name="%Option.tls.notls">
+     </enumeratedOptionValue> 
 		</option>
 		<optionCategory
 			name="%OptionCategory.lm"
@@ -2540,7 +2678,7 @@
 			
 		<option
 			name="%Option.info"
-			category="xlc.c.compiler.category.lm"
+			category="xlc.c.compiler.category.ecd"
 			command="-qinfo="
 			id="xlc.c.compiler.option.lm.info"
 			valueType="string"> 
@@ -2800,7 +2938,7 @@
 
 		<!-- Version 9 Options -->
 		       <option
-              applicabilityCalculator="org.eclipse.cdt.managedbuilder.xlc.ui.properties.XLCv9ApplicabilityCalculator"
+              applicabilityCalculator="org.eclipse.cdt.managedbuilder.xlc.ui.properties.XLCApplicabilityCalculator"
               category="xlc.c.compiler.category.ifp"
               id="xlc.c.compiler.option.ifp.dfp"
               name="%Option.dfp"
@@ -2823,7 +2961,7 @@
         </option>
 
         <option
-              applicabilityCalculator="org.eclipse.cdt.managedbuilder.xlc.ui.properties.XLCv9ApplicabilityCalculator"
+              applicabilityCalculator="org.eclipse.cdt.managedbuilder.xlc.ui.properties.XLCApplicabilityCalculator"
               category="xlc.c.compiler.category.output"
               command="-C!"
               defaultValue="false"
@@ -2832,7 +2970,7 @@
               valueType="boolean">
         </option>
         <option
-              applicabilityCalculator="org.eclipse.cdt.managedbuilder.xlc.ui.properties.XLCv9ApplicabilityCalculator"
+              applicabilityCalculator="org.eclipse.cdt.managedbuilder.xlc.ui.properties.XLCApplicabilityCalculator"
               category="xlc.c.compiler.category.ecd"
               command="-qoptdebug"
               defaultValue="false"
@@ -2840,28 +2978,52 @@
               name="%Option.optdebug"
               valueType="boolean">
         </option>
-
-		  
-          <inputType
-                dependencyContentType="org.eclipse.cdt.core.cHeader"
-                dependencyExtensions="h"
-                id="cdt.managedbuild.tool.xlc.c.compiler.input"
-                scannerConfigDiscoveryProfileId="org.eclipse.cdt.managedbuilder.xlc.core.XLCManagedMakePerProjectProfile"
-                sourceContentType="org.eclipse.cdt.core.cSource"
-                sources="c">
-          </inputType>
-          <outputType
-			  outputs="o"
-              buildVariable="OBJS"
-              id="cdt.managedbuild.tool.xlc.c.compiler.output">
-          </outputType>
+          <option
+                applicabilityCalculator="org.eclipse.cdt.managedbuilder.xlc.ui.properties.XLCApplicabilityCalculator"
+                category="xlc.c.compiler.category.output"
+                id="xlc.c.compiler.option.output.macros"
+                name="%Option.macros"
+                valueType="enumerated">
+             <enumeratedOptionValue
+                   id="xlc.c.compiler.option.output.macros.none"
+                   isDefault="true"
+                   name="%Option.none">
+             </enumeratedOptionValue>
+             <enumeratedOptionValue
+                   command="-qshowmacros=all"
+                   id="xlc.c.compiler.option.output.macros.all"
+                   name="%Option.macros.all">
+             </enumeratedOptionValue>
+             <enumeratedOptionValue
+                   command="-qshowmacros=pre"
+                   id="xlc.c.compiler.option.output.macros.pre"
+                   name="%Option.macros.pre">
+             </enumeratedOptionValue>
+             <enumeratedOptionValue
+                   command="-qshowmacros=nopre"
+                   id="xlc.c.compiler.option.output.macros.nopre"
+                   name="%Option.macros.nopre">
+             </enumeratedOptionValue>
+          </option>
+          <option
+                applicabilityCalculator="org.eclipse.cdt.managedbuilder.xlc.ui.properties.XLCApplicabilityCalculator"
+                category="xlc.c.compiler.category.output"
+                command="-qnotimestamps"
+                id="xlc.c.compiler.option.output.timestamps"
+                name="%Options.timestamps"
+                valueType="boolean">
+          </option>
+          <optionCategory
+                id="xlc.c.compiler.category.objcc"
+                name="%OptionCategory.objcc">
+          </optionCategory>
     </tool>
     <tool
-          errorParsers="org.eclipse.cdt.errorparsers.xlc.XlcErrorParser"
-          id="org.eclipse.cdt.managedbuilder.xlc.ui.tool.abstractLinker"
-          isAbstract="true"
-          name="Abstract XL Linker"
-          outputFlag="-o">
+            errorParsers="org.eclipse.cdt.errorparsers.xlc.XlcErrorParser"
+            id="org.eclipse.cdt.managedbuilder.xlc.ui.tool.abstractLinker"
+            isAbstract="true"
+            name="Abstract XL Linker"
+            outputFlag="-o">
                   <envVarBuildPath 
          	pathType="buildpathLibrary"
          	variableList="LIBRARY_PATH">
@@ -3053,11 +3215,11 @@
          </outputType>
     </tool>
      <tool
-           errorParsers="org.eclipse.cdt.errorparsers.xlc.XlcErrorParser"
-           id="org.eclipse.cdt.managedbuilder.xlc.ui.tool.linker.abstractSOLinker"
-           isAbstract="true"
-           name="Abstract XL Shared Object Linker"
-           superClass="org.eclipse.cdt.managedbuilder.xlc.ui.tool.abstractLinker">
+            errorParsers="org.eclipse.cdt.errorparsers.xlc.XlcErrorParser"
+            id="org.eclipse.cdt.managedbuilder.xlc.ui.tool.linker.abstractSOLinker"
+            isAbstract="true"
+            name="Abstract XL Shared Object Linker"
+            superClass="org.eclipse.cdt.managedbuilder.xlc.ui.tool.abstractLinker">
             <option
             	name="%Option.Linking.mkshrobj"
 				id="xlc.c.link.so.option.shared"
@@ -3095,10 +3257,58 @@
 			    id="cdt.managedbuild.tool.xlc.c.linker.so.debug.output">
 			</outputType>
     </tool>
-
-
-
-
+     <tool
+           id="cdt.managedbuild.tool.xlc.c.compiler"
+           isAbstract="false"
+           name="Local XL C Compiler"
+           superClass="cdt.managedbuild.tool.xlc.c.compiler.abstract">
+           <inputType
+                 dependencyContentType="org.eclipse.cdt.core.cHeader"
+                 dependencyExtensions="h"
+                 id="cdt.managedbuild.tool.xlc.c.compiler.input"
+                 name="Local C Sources"
+                 primaryInput="true"
+                 scannerConfigDiscoveryProfileId="org.eclipse.cdt.managedbuilder.xlc.core.XLCManagedMakePerProjectProfile"
+                 sourceContentType="org.eclipse.cdt.core.cSource"
+                 sources="c">
+       		</inputType>
+       		<outputType
+			outputs="o"
+            buildVariable="OBJS"
+            id="cdt.managedbuild.tool.xlc.c.compiler.output">
+            </outputType>
+     </tool>
+     <tool
+           id="cdt.managedbuild.tool.xlc.cpp.compiler"
+           isAbstract="false"
+           name="Local XL C++ Compiler"
+           superClass="cdt.managedbuild.tool.xlc.cpp.compiler.abstract">
+           <inputType
+                 dependencyContentType="org.eclipse.cdt.core.cHeader"
+                 dependencyExtensions="h"
+                 id="cdt.managedbuild.tool.xlc.cpp.c.compiler.input"
+                 name="Local C Sources"
+                 primaryInput="true"
+                 scannerConfigDiscoveryProfileId="org.eclipse.cdt.managedbuilder.xlc.core.XLCManagedMakePerProjectProfile"
+                 sourceContentType="org.eclipse.cdt.core.cSource"
+                 sources="c">
+           </inputType>
+           <inputType
+                 dependencyContentType="org.eclipse.cdt.core.cxxHeader"
+                 dependencyExtensions="h,H,hpp"
+                 id="cdt.managedbuild.tool.xlc.cpp.compiler.input"
+                 name="Local C++ Sources"
+                 primaryInput="true"
+                 scannerConfigDiscoveryProfileId="org.eclipse.cdt.managedbuilder.xlc.core.XLCManagedMakePerProjectProfileCPP"
+                 sourceContentType="org.eclipse.cdt.core.cxxSource"
+                 sources="c,C,cc,cxx,cpp">
+          </inputType>
+          <outputType
+               buildVariable="OBJS"
+               id="org.eclipse.cdt.managedbuilder.xlc.cpp.compiler.output"
+               outputs="o">
+         </outputType>
+     </tool>
     
 	</extension>
    <extension
@@ -3156,6 +3366,7 @@
          <projectType
                projectTypeID="cdt.managedbuild.target.xlc.lib">
          </projectType>
+         
       </wizardPage>
    </extension>
    <extension

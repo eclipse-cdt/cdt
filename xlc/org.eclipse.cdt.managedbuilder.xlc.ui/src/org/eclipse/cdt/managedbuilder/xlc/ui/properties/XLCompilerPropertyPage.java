@@ -1,11 +1,11 @@
 /*******************************************************************************
- * Copyright (c) 2007 IBM Corporation and others.
- * All rights reserved. This program and the accompanying materials
- * are made available under the terms of the Eclipse Public License v1.0
- * which accompanies this distribution, and is available at
- * http://www.eclipse.org/legal/epl-v10.html
- *
- * Contributors:
+ *  Copyright (c) 2007, 2009 IBM Corporation and others.
+ *  All rights reserved. This program and the accompanying materials
+ *  are made available under the terms of the Eclipse Public License v1.0
+ *  which accompanies this distribution, and is available at
+ *  http://www.eclipse.org/legal/epl-v10.html
+ * 
+ *  Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 package org.eclipse.cdt.managedbuilder.xlc.ui.properties;
@@ -45,16 +45,13 @@ public class XLCompilerPropertyPage extends FieldEditorPreferencePage implements
 			{
 				// always return true, as we don't want to fail cases when compiler is installed remotely
 				// just warn user
-				if (getPage() != null)
+				if (!super.doCheckState())
 				{
-					if (!super.doCheckState())
-					{
-						getPage().setMessage(Messages.XLCompilerPropertyPage_2, IMessageProvider.WARNING);
-					}
-					else
-					{
-						getPage().setMessage(originalMessage, 0);
-					}
+					setMessage(Messages.XLCompilerPropertyPage_2, IMessageProvider.WARNING);
+				}
+				else
+				{
+					setMessage(originalMessage);
 				}
 				
 				return true;
@@ -90,7 +87,8 @@ public class XLCompilerPropertyPage extends FieldEditorPreferencePage implements
 		fPathEditor.setStringValue(currentPath);
 		
 		String[] versionEntries = {PreferenceConstants.P_XL_COMPILER_VERSION_8_NAME, 
-				PreferenceConstants.P_XL_COMPILER_VERSION_9_NAME};
+				PreferenceConstants.P_XL_COMPILER_VERSION_9_NAME,
+				PreferenceConstants.P_XL_COMPILER_VERSION_10_NAME};
 		
 		Composite versionParent = getFieldEditorParent();
 		

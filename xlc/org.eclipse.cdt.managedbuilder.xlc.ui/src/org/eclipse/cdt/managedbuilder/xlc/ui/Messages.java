@@ -17,6 +17,7 @@ public class Messages extends NLS {
 	private static final String BUNDLE_NAME = "org.eclipse.cdt.managedbuilder.xlc.ui.messages"; //$NON-NLS-1$
 	public static String XLCompiler_v8;
 	public static String XLCompiler_v9;
+	public static String XLCompiler_v10;
 	public static String XLCompilerPreferencePage_0;
 	public static String XLCompilerPreferencePage_1;
 	public static String XLCompilerPreferencePage_2;

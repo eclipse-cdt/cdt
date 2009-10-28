@@ -24,5 +24,6 @@ public class PreferenceConstants {
 	
 	public static final String P_XL_COMPILER_VERSION_8_NAME = Messages.XLCompiler_v8;
 	public static final String P_XL_COMPILER_VERSION_9_NAME = Messages.XLCompiler_v9;
+	public static final String P_XL_COMPILER_VERSION_10_NAME = Messages.XLCompiler_v10;
 
 }

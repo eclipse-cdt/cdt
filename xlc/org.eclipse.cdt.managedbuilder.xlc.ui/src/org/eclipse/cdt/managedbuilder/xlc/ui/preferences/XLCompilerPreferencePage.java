@@ -58,16 +58,13 @@ public class XLCompilerPreferencePage
 			{
 				// always return true, as we don't want to fail cases when compiler is installed remotely
 				// just warn user
-				if (getPage() != null)
+				if (!super.doCheckState())
 				{
-					if (!super.doCheckState())
-					{
-						getPage().setMessage(Messages.XLCompilerPreferencePage_3, IMessageProvider.WARNING);
-					}
-					else
-					{
-						getPage().setMessage(originalMessage, 0);
-					}
+					setMessage(Messages.XLCompilerPreferencePage_3, IMessageProvider.WARNING);
+				}
+				else
+				{
+					setMessage(originalMessage);
 				}
 				
 				return true;
@@ -83,7 +80,8 @@ public class XLCompilerPreferencePage
 		addField(pathEditor);
 		
 		String[][] versionEntries = {{PreferenceConstants.P_XL_COMPILER_VERSION_8_NAME, Messages.XLCompiler_v8},
-									   {PreferenceConstants.P_XL_COMPILER_VERSION_9_NAME, Messages.XLCompiler_v9}};
+									   {PreferenceConstants.P_XL_COMPILER_VERSION_9_NAME, Messages.XLCompiler_v9},
+									   {PreferenceConstants.P_XL_COMPILER_VERSION_10_NAME, Messages.XLCompiler_v10}};
 		
 		addField(new ComboFieldEditor(PreferenceConstants.P_XLC_COMPILER_VERSION,
 				Messages.XLCompilerPreferencePage_2, versionEntries, getFieldEditorParent()));

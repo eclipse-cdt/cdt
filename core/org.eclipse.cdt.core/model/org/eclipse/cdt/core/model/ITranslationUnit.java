@@ -461,22 +461,26 @@ public interface ITranslationUnit extends ICElement, IParent, IOpenable, ISource
 	
 	
 	/**
-	 * @deprecated use {@link #getSharedWorkingCopy(IProgressMonitor, IProblemRequestor)}, instead.
+	 * @deprecated use {@link #getSharedWorkingCopy(IProgressMonitor, IProblemRequestor)}, 
+	 * or CDTUITools.getWorkingCopyManager() instead.
 	 * @noreference This method is not intended to be referenced by clients.
 	 */
 	@Deprecated IWorkingCopy getSharedWorkingCopy(IProgressMonitor monitor, IBufferFactory factory) throws CModelException;
 	/**
-	 * @deprecated use {@link #getSharedWorkingCopy(IProgressMonitor, IProblemRequestor)}, instead.
+	 * @deprecated use {@link #getSharedWorkingCopy(IProgressMonitor, IProblemRequestor)}, 
+	 * or CDTUITools.getWorkingCopyManager() instead.
 	 * @noreference This method is not intended to be referenced by clients.
 	 */
 	@Deprecated IWorkingCopy getSharedWorkingCopy(IProgressMonitor monitor, IBufferFactory factory, IProblemRequestor requestor) throws CModelException;
 	/**
-	 * @deprecated use {@link #findSharedWorkingCopy()}, instead.
+	 * @deprecated use {@link #findSharedWorkingCopy()}, 
+	 * or CDTUITools.getWorkingCopyManager() instead.
 	 * @noreference This method is not intended to be referenced by clients.
 	 */
 	@Deprecated IWorkingCopy findSharedWorkingCopy(IBufferFactory bufferFactory);
 	/**
-	 * @deprecated use {@link #getWorkingCopy(IProgressMonitor)}, instead.
+	 * @deprecated use {@link #getWorkingCopy(IProgressMonitor)}, 
+	 * or CDTUITools.getWorkingCopyManager() instead.
 	 * @noreference This method is not intended to be referenced by clients.
 	 */
 	@Deprecated IWorkingCopy getWorkingCopy(IProgressMonitor monitor, IBufferFactory factory) throws CModelException;

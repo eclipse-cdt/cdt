@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007 Intel Corporation and others.
+ * Copyright (c) 2007, 2009 Intel Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  * Intel Corporation - Initial API and implementation
+ * James Blackburn (Broadcom Corp.)
  *******************************************************************************/
 package org.eclipse.cdt.managedbuilder.internal.dataprovider;
 
@@ -28,6 +29,7 @@ import org.eclipse.cdt.core.settings.model.util.CDataUtil;
 import org.eclipse.cdt.core.settings.model.util.SettingsSet;
 import org.eclipse.cdt.core.settings.model.util.SettingsSet.EntryInfo;
 import org.eclipse.cdt.core.settings.model.util.SettingsSet.SettingLevel;
+import org.eclipse.cdt.managedbuilder.core.BuildException;
 import org.eclipse.cdt.managedbuilder.core.IConfiguration;
 import org.eclipse.cdt.managedbuilder.core.IEnvVarBuildPath;
 import org.eclipse.cdt.managedbuilder.core.IOption;
@@ -50,6 +52,10 @@ import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
 
+/**
+ * BuildEntryStorage has a handle back to the BuildLanguageData
+ * to allow checking on which language entries are actually defined.
+ */
 public class BuildEntryStorage extends AbstractEntryStorage {
 	private static final int USER_ENTRIES_LEVEL = 0;
 	private static final int ENV_ENTRIES_LEVEL = 1;
@@ -186,6 +192,11 @@ public class BuildEntryStorage extends AbstractEntryStorage {
 		}
 	}
 
+	/**
+	 * Return scanner discovered entries (level 2)
+	 * @param flags
+	 * @return
+	 */
 	private ICLanguageSettingEntry[] getDiscoveredEntries(int flags){
 		ICLanguageSettingEntry[] entries = ProfileInfoProvider.getInstance().getEntryValues(fLangData, getKind(), flags);
 		if(entries == null || entries.length == 0){
@@ -209,6 +220,16 @@ public class BuildEntryStorage extends AbstractEntryStorage {
 				: new SupplierBasedCdtVariableSubstitutor(ci, "", " "); //$NON-NLS-1$ //$NON-NLS-2$
 	}
 
+	/**
+	 * Return user entries (level 0) 
+	 * 
+	 * The UserEntryInfo[] is an array of all user entries from all the options
+	 * applicable to the language setting entry kind.
+	 * @param flags
+	 * @param usr
+	 * @param emptyValuesInfos list to which unresolved entries are added
+	 * @return UserEntryInfo[] (never null)
+	 */
 	private UserEntryInfo[] getUserEntries(int flags, boolean usr, List<EmptyEntryInfo> emptyValuesInfos){
 		IOption options[] = fLangData.getOptionsForKind(getKind());
 		if(options.length > 0){
@@ -223,10 +244,12 @@ public class BuildEntryStorage extends AbstractEntryStorage {
 						OptionStringValue ve = list.get(j);
 						OptionStringValue[] rVes = resolve(ve, option, bSVarsSubst);
 						if(rVes.length == 0){
+							// If not resolved, add EmptyEntryInfo based off the value entry
 							if(emptyValuesInfos != null){
 								emptyValuesInfos.add(new EmptyEntryInfo(ve, j));
 							}
 						} else {
+							// If resolved, add each resolved entry as a separate UserEntryInfo
 							boolean isMultiple = rVes.length > 1;
 							List<UserEntryInfo> sequense = isMultiple ? new ArrayList<UserEntryInfo>(rVes.length) : null;
 							for (OptionStringValue rVe : rVes) {
@@ -278,6 +301,11 @@ public class BuildEntryStorage extends AbstractEntryStorage {
 		return set;
 	}
 
+	/**
+	 * Makes non-absolute paths relative to the build directory 
+	 * @param info
+	 * @return
+	 */
 	private PathInfo fromBuildToProj(PathInfo info){
 		if(info.isAbsolute())
 			return info;
@@ -334,6 +362,11 @@ public class BuildEntryStorage extends AbstractEntryStorage {
 		return result;
 	}
 
+	/**
+	 * Return env envtries (level 1)
+	 * @param flags
+	 * @return
+	 */
 	private ICLanguageSettingEntry[] getEnvEntries(int flags){
 		String paths[] = null;
 		int kind = getKind();
@@ -361,26 +394,53 @@ public class BuildEntryStorage extends AbstractEntryStorage {
 		return new ICLanguageSettingEntry[0];
 	}
 
-	private ICLanguageSettingEntry createUserEntry(IOption option, OptionStringValue optionValue, int flags, SupplierBasedCdtVariableSubstitutor subst){
-//	private ICLanguageSettingEntry createUserEntry(Option option, String optionValue, int flags){
-		int kind = getKind();
+	/**
+	 * Create an ICLanguageSettingEntry based on the passed in Option
+	 * @param option
+	 * @param optionValue
+	 * @param flags
+	 * @param subst
+	 * @return
+	 */
+	private ICLanguageSettingEntry createUserEntry(Option option, OptionStringValue optionValue, int flags, SupplierBasedCdtVariableSubstitutor subst){
+		final int kind = getKind();
 
-		ICLanguageSettingEntry entry = null;
+		if (kind == ICSettingEntry.MACRO) {
+			String nv[] = macroNameValueFromValue(optionValue.getValue());
+			return new CMacroEntry(nv[0], nv[1], flags);
+		}
 
 		IPath srcPath = null, srcRootPath = null, srcPrefixMapping = null;
 
-		switch (kind){
-		case ICSettingEntry.MACRO:
-			String nv[] = macroNameValueFromValue(optionValue.getValue());
-//			String nv[] = macroNameValueFromValue(optionValue);
+		IOptionPathConverter optionPathConverter = fLangData.getTool().getOptionPathConverter();
+		// Create a PathInfo entry representing the optionValue
+		PathInfo pInfo = optionPathValueToEntry(optionValue.getValue(), subst);
 
-			entry = new CMacroEntry(nv[0], nv[1], flags);
-			break;
-//		case ICSettingEntry.INCLUDE_PATH:
-//		case ICSettingEntry.INCLUDE_FILE:
-//		case ICSettingEntry.MACRO_FILE:
-//		case ICSettingEntry.LIBRARY_PATH:
-		case ICSettingEntry.LIBRARY_FILE:
+		if(pInfo.isWorkspacePath()){
+			flags |= ICSettingEntry.VALUE_WORKSPACE_PATH;
+		} else if (optionPathConverter != null){
+			IPath path = optionPathConverter.convertToPlatformLocation(pInfo.getUnresolvedPath(), option, fLangData.getTool());
+			if(path != null){
+				pInfo = new PathInfo(path.toString(), false, subst);
+			}
+		}
+
+		// make non absolute paths relative to the build directory
+		if (getOptionType(option) != IOption.LIBRARIES)
+			pInfo = fromBuildToProj(pInfo);
+		else {
+			// The IOption.LIBRARIES type is morphed to => ICSettingEntyr#LIBRARY_FILE
+			// It *isn't* a workspace path!
+			flags &= ~ICSettingEntry.VALUE_WORKSPACE_PATH;
+			pInfo = new PathInfo(optionValue.getValue(), false, subst);
+		}
+
+		// Library files are special, they potentially know about their source Prefix & Root
+		// The build system has two different types for storing Library Files: IOption.LIBRARIES
+		//  && IOption.LIBRARY_FILES.  We map both of these to a CLibraryFileEntry, and mark the
+		//  difference with a flag isRawEntry Type.
+		if (kind == ICSettingEntry.LIBRARY_FILE) {
+			// Handle source types
 			String tmp = optionValue.getSourceAttachmentPath();
 			if(tmp != null)
 				srcPath = new Path(tmp);
@@ -390,29 +450,9 @@ public class BuildEntryStorage extends AbstractEntryStorage {
 			tmp = optionValue.getSourceAttachmentPrefixMapping();
 			if(tmp != null)
 				srcPrefixMapping = new Path(tmp);
-			//do not break
-			//$FALL-THROUGH$
-		default:
-			IOptionPathConverter optionPathConverter = fLangData.getTool().getOptionPathConverter();
-			PathInfo pInfo = optionPathValueToEntry(optionValue.getValue(), subst);
-//			Object[] v = optionPathValueToEntry(stripQuotes(optionValue.getValue()));
-//			Object[] v = optionPathValueToEntry(optionValue);
-
-			if(pInfo.isWorkspacePath()){
-				flags |= ICSettingEntry.VALUE_WORKSPACE_PATH;
-			} else if (optionPathConverter != null){
-				IPath path = optionPathConverter.convertToPlatformLocation(pInfo.getUnresolvedPath(), option, fLangData.getTool());
-				if(path != null){
-					pInfo = new PathInfo(path.toString(), false, subst);
-				}
-			}
-
-			pInfo = fromBuildToProj(pInfo);
-
-			entry = (ICLanguageSettingEntry)CDataUtil.createEntry(kind, pInfo.getUnresolvedPath(), null, null, flags, srcPath, srcRootPath, srcPrefixMapping);
-			break;
 		}
-		return entry;
+
+		return (ICLanguageSettingEntry)CDataUtil.createEntry(kind, pInfo.getUnresolvedPath(), null, null, flags, srcPath, srcRootPath, srcPrefixMapping);
 	}
 
 	private OptionStringValue createOptionValue(IOption option, UserEntryInfo info, SupplierBasedCdtVariableSubstitutor subst){
@@ -485,11 +525,27 @@ public class BuildEntryStorage extends AbstractEntryStorage {
 
 			result = ManagedBuildManager.fullPathToLocation(result);
 		} else {
-			pInfo = fromProjToBuild(pInfo);
+			// Persisting to the LIBRARIES option type doens't require path translation
+			// as this is just the name of a library, not the path to it...
+			if (getOptionType(option) != IOption.LIBRARIES)
+				pInfo = fromProjToBuild(pInfo);
 			result = pInfo.getUnresolvedPath();
 		}
 
 		return result;
+	}
+
+	/**
+	 * @param option
+	 * @return the option type for the option
+	 */
+	private static int getOptionType(IOption option) {
+		try {
+			return option.getValueType();
+		} catch (BuildException e) {
+			ManagedBuilderCorePlugin.log(e);
+		}
+		return IOption.STRING;
 	}
 
 	private static String doubleQuotePath(String pathName, boolean nullIfNone)	{
@@ -558,7 +614,11 @@ public class BuildEntryStorage extends AbstractEntryStorage {
 	private void setUserEntries(UserEntryInfo[] entries, List<EmptyEntryInfo> emptyEntryInfos){
 		int kind = getKind();
 		IOption options[] = fLangData.getOptionsForKind(kind);
-		if(options.length != 0){
+		// We don't expect more than one option to manage a particular entry kind, though it
+		// is theoretically possible... Add a trace for Toolchain developers
+		if (options.length > 1)
+			ManagedBuilderCorePlugin.error("Unexpected error: Warning more than one options found for kind " + getKind()); //$NON-NLS-1$
+		if(options.length != 0) {
 			IOption option = options[0];
 			OptionStringValue[]  optValue;
 			if(entries.length != 0){
@@ -604,6 +664,16 @@ public class BuildEntryStorage extends AbstractEntryStorage {
 		return list.toArray(new UserEntryInfo[list.size()]);
 	}
 
+	/**
+	 * This method iterates over the passed in UserEntryInfo[].  The point of it is
+	 * to collapse entries which are contained in a given UserEntry's sequence into a single
+	 * UserEntryInfo.
+	 * 
+	 * FIXME: As far as I can see info.fSequense only ever has a single entry in it...
+	 * 		see UserEntryInfo constructor => this method doesn't accomplish anything useful
+	 * @param infos
+	 * @return
+	 */
 	private UserEntryInfo[] combineSequenses(UserEntryInfo infos[]){
 		if(infos.length == 0)
 			return infos;
@@ -629,10 +699,10 @@ public class BuildEntryStorage extends AbstractEntryStorage {
 				if(match){
 					i = i + seqSize - 1;
 				} else {
-					infos[i] = createDesecuencedEntry(info);
+					infos[i] = createDesequencedEntry(info);
 					for(int k = i + 1; k < infos.length; k++){
 						if(infos[k].fSequense == info.fSequense)
-							infos[k] = createDesecuencedEntry(infos[k]);
+							infos[k] = createDesequencedEntry(infos[k]);
 					}
 					info = infos[i];
 				}
@@ -643,7 +713,7 @@ public class BuildEntryStorage extends AbstractEntryStorage {
 		return list.toArray(new UserEntryInfo[list.size()]);
 	}
 
-	private static UserEntryInfo createDesecuencedEntry(UserEntryInfo info){
+	private static UserEntryInfo createDesequencedEntry(UserEntryInfo info){
 		OptionStringValue resolvedValue = info.fBsResolvedValue;
 		if(resolvedValue != null){
 			String v = doubleQuotePath(resolvedValue.getValue(), true);

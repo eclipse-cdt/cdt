@@ -34,11 +34,29 @@ import org.eclipse.cdt.core.settings.model.util.KindBasedStore;
 import org.eclipse.cdt.internal.core.settings.model.CExternalSettinsDeltaCalculator.ExtSettingsDelta;
 import org.eclipse.core.runtime.CoreException;
 
+/**
+ * Responsible for applying external settings delta to a given ICConfigurationDescrptions
+ */
 public class CExternalSettingsDeltaProcessor {
+	
+	/**
+	 * Main entrance point for applying a full array of external settings delta
+	 * @param des ICConfigurationDescription
+	 * @param deltas ExtSettingsDelta array
+	 * @return boolean indicating whether there was change
+	 */
 	static boolean applyDelta(ICConfigurationDescription des, ExtSettingsDelta deltas[]){
 		return applyDelta(des, deltas, KindBasedStore.ORED_ALL_ENTRY_KINDS);
 	}
 
+	/**
+	 * Applies the deltas to all resource description (overriden resource configs)
+	 * in the configuration description
+	 * @param des The configuration description to be updated
+	 * @param deltas deltas to be applied
+	 * @param kindMask
+	 * @return
+	 */
 	static boolean applyDelta(ICConfigurationDescription des, ExtSettingsDelta deltas[], int kindMask){
 		ICResourceDescription rcDess[] = des.getResourceDescriptions();
 		boolean changed = false;

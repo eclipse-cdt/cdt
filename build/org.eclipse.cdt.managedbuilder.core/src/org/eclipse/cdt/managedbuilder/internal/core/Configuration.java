@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2003, 2008 IBM Corporation and others.
+ * Copyright (c) 2003, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  * IBM - Initial API and implementation
+ * James Blackburn (Broadcom Corp.)
  *******************************************************************************/
 package org.eclipse.cdt.managedbuilder.internal.core;
 
@@ -25,6 +26,7 @@ import org.eclipse.cdt.build.core.scannerconfig.ICfgScannerConfigBuilderInfo2Set
 import org.eclipse.cdt.build.internal.core.scannerconfig.CfgDiscoveredPathManager.PathInfoCache;
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.settings.model.CIncludePathEntry;
+import org.eclipse.cdt.core.settings.model.CLibraryFileEntry;
 import org.eclipse.cdt.core.settings.model.CLibraryPathEntry;
 import org.eclipse.cdt.core.settings.model.CSourceEntry;
 import org.eclipse.cdt.core.settings.model.ICConfigurationDescription;
@@ -2648,6 +2650,13 @@ public class Configuration extends BuildObject implements IConfiguration, IBuild
 		return getRootFolderInfo().buildsFileType(srcExt);
 	}
 	
+	/**
+	 * Responsible for contributing 'external' settings back to the core for use
+	 * by referenced projects.
+	 * 
+	 * In this case it returns Include, Library path & Library File settings
+	 * to be used be references for linking the output of this library project
+	 */
 	public void exportArtifactInfo(){
 		if(isExtensionConfig)
 			return;
@@ -2663,10 +2672,12 @@ public class Configuration extends BuildObject implements IConfiguration, IBuild
 					ICOutputEntry entries[] = getConfigurationData().getBuildData().getOutputDirectories();
 					IPath path = getOwner().getFullPath();
 					
-					List list = new ArrayList(entries.length + 1);
+					List<ICSettingEntry> list = new ArrayList<ICSettingEntry>(entries.length + 1);
 					
+					// Add project level include path
 					list.add(new CIncludePathEntry(path.toString(), ICLanguageSettingEntry.VALUE_WORKSPACE_PATH));
 
+					// Add Build output path as an exported library path
 					entries = CDataUtil.resolveEntries(entries, des);
 					for(int i = 0; i < entries.length; i++){
 						ICOutputEntry out = entries[i];
@@ -2675,17 +2686,22 @@ public class Configuration extends BuildObject implements IConfiguration, IBuild
 						IPath p = new Path(value);
 						if(!p.isAbsolute())
 							value = getOwner().getFullPath().append(value).toString();
-						
 						ICLibraryPathEntry lib = new CLibraryPathEntry(value, out.getFlags() & (~ICSettingEntry.RESOLVED));
 						list.add(lib);
 					}
-					
-					des.createExternalSetting(null, null, null, (ICLanguageSettingEntry[])list.toArray(new ICLanguageSettingEntry[list.size()]));
+
+					// Add 'libs' artifact names themselves
+					ICSettingEntry[] libFile = new ICSettingEntry[] {new CLibraryFileEntry(getArtifactName(), 0)};
+					libFile = CDataUtil.resolveEntries(libFile, des);
+					list.add(libFile[0]);
+
+					// Contribute the settings back as 'exported'
+					des.createExternalSetting(null, null, null, list.toArray(new ICSettingEntry[list.size()]));
 				}
-				
 			}
 		}
 	}
+
 	public boolean supportsBuild(boolean managed) {
 		return supportsBuild(managed, true);
 	}

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2003, 2007 IBM Corporation and others.
+ * Copyright (c) 2003, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,12 +8,12 @@
  * Contributors:
  *     IBM - Initial API and implementation
  *     ARM Ltd. - basic tooltip support
+ *     James Blackburn (Broadcom Corp.)
  *******************************************************************************/
 package org.eclipse.cdt.managedbuilder.core;
 
-
 /**
- * 
+ * Basic Tool / Toolchain Option type.
  */
 public interface IOption extends IBuildObject {
 	// Type for the value of the option
@@ -23,10 +23,28 @@ public interface IOption extends IBuildObject {
 	public static final int STRING_LIST = 3;
 	public static final int INCLUDE_PATH = 4;
 	public static final int PREPROCESSOR_SYMBOLS = 5;
+	/**
+	 * String list of library names to link against searched for
+	 * via LIBRARY_PATHS by the linker. In the GNU
+	 * toolchain these correspond to -l{lib_name}. <br/>
+	 * This option type is persisted / referenced by the name
+	 * {@link IOption#TYPE_LIB}
+	 */
 	public static final int LIBRARIES = 6;
 	public static final int OBJECTS = 7;
 	public static final int INCLUDE_FILES = 8;
+	/**
+	 * String list of library search paths <br/>
+	 * This option type is persisted / referenced by the name 
+	 * {@link IOption #TYPE_LIB_PATHS}
+	 */
 	public static final int LIBRARY_PATHS = 9;
+	/**
+	 * String list of absolute path to libraries.
+	 * Not currently used by the GNU integration <br/>
+	 * This option type is persisted / referenced by the name 'libFiles'
+	 * {@link IOption #TYPE_LIB_FILES}
+	 */
 	public static final int LIBRARY_FILES = 10;
 	public static final int MACRO_FILES = 11;
 
@@ -36,7 +54,7 @@ public interface IOption extends IBuildObject {
 	public static final int UNDEF_LIBRARY_PATHS = -LIBRARY_PATHS;
 	public static final int UNDEF_LIBRARY_FILES = -LIBRARY_FILES;
 	public static final int UNDEF_MACRO_FILES = -MACRO_FILES;
-	
+
 	// Browse type
 	public static final int BROWSE_NONE = 0;
 	public static final String NONE = "none";	//$NON-NLS-1$

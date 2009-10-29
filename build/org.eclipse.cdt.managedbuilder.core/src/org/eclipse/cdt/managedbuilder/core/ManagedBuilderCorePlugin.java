@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2003, 2007 IBM Corporation and others.
+ * Copyright (c) 2003, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  * IBM Rational Software - Initial API and implementation
+ * James Blackburn (Broadcom Corp.)
  *******************************************************************************/
 package org.eclipse.cdt.managedbuilder.core;
 
@@ -208,6 +209,24 @@ public class ManagedBuilderCorePlugin extends Plugin {
 		else
 			status = new Status(IStatus.ERROR, getUniqueIdentifier(), IStatus.OK, e.getMessage(), e);
 		log(status);
+	}
+
+	/**
+	 * Log a String error to the error log
+	 * @param str string error message to log
+	 * @since 6.1
+	 */
+	public static void error(String str) {
+		log(new Status(IStatus.ERROR, getUniqueIdentifier(), IStatus.OK, str, new Exception()));
+	}
+
+	/**
+	 * Log a String info message to the log
+	 * @param str string info message to log
+	 * @since 6.1
+	 */
+	public static void info(String str) {
+		log(new Status(IStatus.INFO, getUniqueIdentifier(), IStatus.OK, str, new Exception()));
 	}
 
 	/**

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2008 Intel Corporation and others.
+ * Copyright (c) 2007, 2009 Intel Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,6 +8,7 @@
  * Contributors:
  * Intel Corporation - Initial API and implementation
  * IBM Corporation
+ * James Blackburn (Broadcom Corp.)
  *******************************************************************************/
 package org.eclipse.cdt.managedbuilder.ui.properties;
 
@@ -543,13 +544,15 @@ public class NewCfgDialog implements INewCfgDialog {
 				}
 				if (cfgDes != null) {
 					config.setConfigurationDescription(cfgDes);
-					config.exportArtifactInfo();
 					config.setName(newName);
 					config.setDescription(newDescription);
 					
 					String target = config.getArtifactName();
 					if (target == null || target.length() == 0)
 						config.setArtifactName(mp.getDefaultArtifactName());
+
+					// Export artifact info as needed by project references
+					config.exportArtifactInfo();
 				}
 			}
 			if (config == null || cfgDes == null) {

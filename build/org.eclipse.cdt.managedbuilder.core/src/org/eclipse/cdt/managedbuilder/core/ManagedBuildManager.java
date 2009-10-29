@@ -60,6 +60,7 @@ import org.eclipse.cdt.core.settings.model.ICLanguageSettingEntry;
 import org.eclipse.cdt.core.settings.model.ICMultiConfigDescription;
 import org.eclipse.cdt.core.settings.model.ICProjectDescription;
 import org.eclipse.cdt.core.settings.model.ICProjectDescriptionManager;
+import org.eclipse.cdt.core.settings.model.ICSettingEntry;
 import org.eclipse.cdt.core.settings.model.XmlStorageUtil;
 import org.eclipse.cdt.core.settings.model.extension.CConfigurationData;
 import org.eclipse.cdt.managedbuilder.buildproperties.IBuildProperty;
@@ -3910,7 +3911,12 @@ public class ManagedBuildManager extends AbstractCExtension {
 		}
 		return null;
 	}
-	
+
+	/**
+	 * Convert the IOption integer type ID to the {@link ICSettingEntry#getKind()} type ID
+	 * @param type {@link IOption#getValueType()}
+	 * @return ICSettingEntry type
+	 */
 	public static int optionTypeToEntryKind(int type){
 		switch(type){
 		case IOption.INCLUDE_PATH:
@@ -3921,16 +3927,20 @@ public class ManagedBuildManager extends AbstractCExtension {
 			return ICLanguageSettingEntry.INCLUDE_FILE;
 		case IOption.LIBRARY_PATHS:
 			return ICLanguageSettingEntry.LIBRARY_PATH;
+		case IOption.LIBRARIES:
 		case IOption.LIBRARY_FILES:
 			return ICLanguageSettingEntry.LIBRARY_FILE;
 		case IOption.MACRO_FILES:
 			return ICLanguageSettingEntry.MACRO_FILE;
-//		case IOption.LIBRARIES:
-//			return ICLanguageSettingEntry.LIBRARY_PATH;
 		}
 		return 0;
 	}
-	
+
+	/**
+	 * Convert the IOption integer type ID to the {@link ICSettingEntry#getKind()} type ID
+	 * @param type {@link IOption#getValueType()}
+	 * @return ICSettingEntry type
+	 */
 	public static int optionUndefTypeToEntryKind(int type){
 		switch(type){
 		case IOption.UNDEF_INCLUDE_PATH:
@@ -3945,8 +3955,6 @@ public class ManagedBuildManager extends AbstractCExtension {
 			return ICLanguageSettingEntry.LIBRARY_FILE;
 		case IOption.UNDEF_MACRO_FILES:
 			return ICLanguageSettingEntry.MACRO_FILE;
-//		case IOption.LIBRARIES:
-//			return ICLanguageSettingEntry.LIBRARY_PATH;
 		}
 		return 0;
 	}

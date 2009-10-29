@@ -183,7 +183,7 @@ public class RefsTab extends AbstractCPropertyTab {
 		if (page.isMultiCfg()) {
 			setAllVisible(false, null);
 		} else {
-			if ( !usercomp.getVisible()) 
+			if (!usercomp.isVisible()) 
 				setAllVisible(true, null);
 			initData();
 		}
@@ -326,11 +326,13 @@ public class RefsTab extends AbstractCPropertyTab {
 	// This page can be displayed for project only
 	@Override
 	public boolean canBeVisible() {
-		return page.isForProject() && !page.isMultiCfg();
+		return page.isForProject();
 	}
 
 	@Override
 	protected void performDefaults() {
+		if (!usercomp.isVisible())
+			return;
 		getResDesc().getConfiguration().setReferenceInfo(new HashMap<String, String>());
 		initData();
 	}

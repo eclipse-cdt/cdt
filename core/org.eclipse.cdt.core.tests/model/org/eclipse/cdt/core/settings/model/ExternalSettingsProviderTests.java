@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007 Intel Corporation and others.
+ * Copyright (c) 2007, 2009 Intel Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  * Intel Corporation - Initial API and implementation
+ * James Blackburn (Broadcom Corp.)
  *******************************************************************************/
 package org.eclipse.cdt.core.settings.model;
 
@@ -40,6 +41,10 @@ public class ExternalSettingsProviderTests extends BaseTestCase{
 		p4 = CProjectHelper.createNewStileCProject(PROJ_NAME_PREFIX + "d", IPDOMManager.ID_NO_INDEXER);
 	}
 	
+	/**
+	 * Test adding a external setting provider to p1 -- the contributed paths should appear
+	 * @throws Exception
+	 */
 	public void testRefs() throws Exception {
 		TestExtSettingsProvider.setVariantNum(0);
 		CoreModel model = CoreModel.getDefault();
@@ -56,6 +61,7 @@ public class ExternalSettingsProviderTests extends BaseTestCase{
 		};
 		assertEquals(1, sourceEntries.length);
 		assertTrue(Arrays.equals(expectedSourceEntries, sourceEntries));
+
 		String[] extPIds = new String[]{CTestPlugin.PLUGIN_ID + ".testExtSettingsProvider"};
 		cfgDes.setExternalSettingsProviderIds(extPIds);
 		assertEquals(extPIds.length, cfgDes.getExternalSettingsProviderIds().length);
@@ -75,6 +81,7 @@ public class ExternalSettingsProviderTests extends BaseTestCase{
 		};
 		assertTrue(Arrays.equals(newExpectedSourceEntries, sourceEntries));
 		
+		// insert entry into the mix; check that the new entry appears
 		ICLanguageSettingEntry[] newEntries = new ICLanguageSettingEntry[3];
 		newEntries[0] = expectedEntries[1];
 		newEntries[1] = new CIncludePathEntry("added", 0);
@@ -264,7 +271,85 @@ public class ExternalSettingsProviderTests extends BaseTestCase{
 		assertEquals(2, outputEntries.length);
 		assertTrue(Arrays.equals(expectedOutputEntries, outputEntries));
 	}
-	
+
+	private static final int[] ENTRY_KINDS = {
+		ICSettingEntry.INCLUDE_PATH,
+		ICSettingEntry.INCLUDE_FILE,
+		ICSettingEntry.MACRO,
+		ICSettingEntry.MACRO_FILE,
+		ICSettingEntry.LIBRARY_PATH,
+		ICSettingEntry.LIBRARY_FILE,
+		ICSettingEntry.OUTPUT_PATH ,
+		ICSettingEntry.SOURCE_PATH ,
+	};
+
+	/**
+	 * Test that all entries are present
+	 */
+	public void testCheckAllProvidedSettingTypes() throws CoreException {
+		TestExtSettingsProvider.setVariantNum(0);
+		CoreModel model = CoreModel.getDefault();
+		IProject project = p3.getProject();
+
+		ICProjectDescription des = model.getProjectDescription(project);
+		ICConfigurationDescription cfgDes = des.getConfigurations()[0];
+
+		TestExtSettingsProvider.setVariantNum(0);
+		String[] extPIds = new String[]{TestExtSettingsProvider.TEST_EXTERNAL_PROVIDER_ID};
+		cfgDes.setExternalSettingsProviderIds(extPIds);
+
+		assertEquals(extPIds.length, cfgDes.getExternalSettingsProviderIds().length);
+		assertTrue(Arrays.equals(extPIds, cfgDes.getExternalSettingsProviderIds()));
+
+		ICLanguageSetting langSettings = cfgDes.getRootFolderDescription().getLanguageSettings()[0];
+		for (int kind : ENTRY_KINDS) {
+			ICSettingEntry[] provided = TestExtSettingsProvider.SETTINGS_VARIANTS[0][0].getEntries(kind);
+			switch (kind) {
+			// Language setting kinds: see KindBasedStore
+			case ICSettingEntry.INCLUDE_PATH :
+			case ICSettingEntry.INCLUDE_FILE :
+			case ICSettingEntry.LIBRARY_PATH :
+			case ICSettingEntry.LIBRARY_FILE :
+			case ICSettingEntry.MACRO 		:
+			case ICSettingEntry.MACRO_FILE 	:
+				assertTrue(Arrays.equals(langSettings.getSettingEntries(kind), provided));
+				break;
+			// All settings kind
+			case ICSettingEntry.OUTPUT_PATH  :
+				assertTrue(Arrays.equals(cfgDes.getBuildSetting().getOutputDirectories(), makeProjectRelativePath(project, provided)));
+				break;
+			case ICSettingEntry.SOURCE_PATH  :
+				assertTrue(Arrays.equals(cfgDes.getSourceEntries(), makeProjectRelativePath(project, provided)));
+				break;
+			default:
+				fail("Unhandled entry_kind: " + kind);			
+			}
+		}
+	}
+
+	/**
+	 * converts an array of project relative source / output entries to be full path based
+	 * @param project
+	 * @param input
+	 * @return
+	 */
+	private ICSettingEntry[] makeProjectRelativePath(IProject project, ICSettingEntry[] input) {
+		ICSettingEntry[] out = new ICSettingEntry[input.length];
+		for (int i = 0; i < input.length; i ++) {
+			switch (input[i].getKind()) {
+			case ICSettingEntry.OUTPUT_PATH:
+				out[i] = new COutputEntry(project.getFullPath().append(input[i].getValue()), 
+						((ICOutputEntry)input[i]).getExclusionPatterns(), input[i].getFlags());
+				break;
+			case ICSettingEntry.SOURCE_PATH:
+				out[i] = new CSourceEntry(project.getFullPath().append(input[i].getValue()), 
+						((ICSourceEntry)input[i]).getExclusionPatterns(), input[i].getFlags());
+				break;
+			}
+		}
+		return out;
+	}
+
 	protected void tearDown() throws Exception {
 		try {
 			p1.getProject().delete(true, null);

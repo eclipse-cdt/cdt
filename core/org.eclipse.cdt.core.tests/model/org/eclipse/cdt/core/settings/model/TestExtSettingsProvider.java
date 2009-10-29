@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007 Intel Corporation and others.
+ * Copyright (c) 2007, 2009 Intel Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -11,9 +11,13 @@
 package org.eclipse.cdt.core.settings.model;
 
 import org.eclipse.cdt.core.settings.model.extension.CExternalSettingProvider;
+import org.eclipse.cdt.core.testplugin.CTestPlugin;
 import org.eclipse.core.resources.IProject;
 
 public class TestExtSettingsProvider extends CExternalSettingProvider {
+	
+	public static final String TEST_EXTERNAL_PROVIDER_ID = CTestPlugin.PLUGIN_ID + ".testExtSettingsProvider";
+
 	private static CExternalSetting[] SETTINGS_1 = new CExternalSetting[]{
 		new CExternalSetting(null, null, null, new ICSettingEntry[]{
 				new CIncludePathEntry("ip_a", 0),
@@ -55,8 +59,8 @@ public class TestExtSettingsProvider extends CExternalSettingProvider {
 				new COutputEntry("op_b2", null, 0),
 		})
 	};
-	
-	private static CExternalSetting[][] SETTINGS_VARIANTS = new CExternalSetting[][]{
+
+	public static final CExternalSetting[][] SETTINGS_VARIANTS = new CExternalSetting[][]{
 								SETTINGS_1, 
 								SETTINGS_2};
 

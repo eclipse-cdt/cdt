@@ -396,6 +396,8 @@ class OpenDeclarationsJob extends Job implements ASTRunnable {
 	private boolean isSameName(IName n1, IName n2) {
 		IASTFileLocation loc1 = n1.getFileLocation();
 		IASTFileLocation loc2 = n2.getFileLocation();
+		if (loc1 == null || loc2 == null)
+			return false;
 		return loc1.getFileName().equals(loc2.getFileName()) &&
 				loc1.getNodeOffset() == loc2.getNodeOffset() &&
 				loc1.getNodeLength() == loc2.getNodeLength();

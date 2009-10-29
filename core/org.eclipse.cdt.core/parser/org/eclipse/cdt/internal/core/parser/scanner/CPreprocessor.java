@@ -893,14 +893,20 @@ public class CPreprocessor implements ILexerLog, IScanner, IAdaptable {
     			}
     		}
         }
-
-        // If we're not include_next, then we are looking for the first occurrence of
-        // the file, otherwise, we ignore all the paths before the current directory.
+        
+        // Now we need to search for the file on the include search path.
+        // If this is a include_next directive then the search starts with the directory 
+        // in the search path after the one where the current file was found.
         IncludeSearchPathElement searchAfter= null;
-        if (includeNext) {
+        if (includeNext && currentFile != null) {
         	searchAfter = fCurrentContext.getFoundOnPath();
         	if (searchAfter == null) {
-        		searchAfter = findFileInIncludePath(currentFile, includeDirective);
+        		// the current file was found without search path
+        		String directive= fCurrentContext.getFoundViaDirective();
+        		if (directive == null) {
+        			directive= new File(currentFile).getName();
+        		}
+        		searchAfter = findFileInIncludePath(currentFile, directive);
         	}
         }
 
@@ -1171,16 +1177,17 @@ public class CPreprocessor implements ILexerLog, IScanner, IAdaptable {
 		boolean reported= false;
 		boolean isHeuristic= false;
 		
+		final String includeDirective = new String(headerName);
 		if (!active) {
 			// test if the include is inactive just because it was included before (bug 167100)
-			final IncludeResolution resolved= findInclusion(new String(headerName), userInclude, include_next,
+			final IncludeResolution resolved= findInclusion(includeDirective, userInclude, include_next,
 					getCurrentFilename(), createPathTester);
 			if (resolved != null && fCodeReaderFactory.hasFileBeenIncludedInCurrentTranslationUnit(resolved.fLocation)) {
 				path= resolved.fLocation;
 				isHeuristic= resolved.fHeuristic;
 			}
 		} else {
-			final IncludeFileContent fi= findInclusion(new String(headerName), userInclude, include_next,
+			final IncludeFileContent fi= findInclusion(includeDirective, userInclude, include_next,
 					getCurrentFilename(), createCodeReaderTester);
 			if (fi != null) {
 				path= fi.getFileLocation();
@@ -1198,7 +1205,7 @@ public class CPreprocessor implements ILexerLog, IScanner, IAdaptable {
 								condEndOffset, reader.buffer, path, headerName, userInclude, isHeuristic, fi.isSource());
 						ScannerContext fctx= new ScannerContext(ctx, fCurrentContext, new Lexer(reader.buffer,
 								fLexOptions, this, this));
-						fctx.setFoundOnPath(fi.getFoundOnPath());
+						fctx.setFoundOnPath(fi.getFoundOnPath(), includeDirective);
 						fCurrentContext= fctx;
 					}
 					break;

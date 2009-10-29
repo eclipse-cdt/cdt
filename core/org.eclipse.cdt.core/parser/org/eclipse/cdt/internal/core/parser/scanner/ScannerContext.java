@@ -45,6 +45,7 @@ final class ScannerContext {
 	private ArrayList<Conditional> fConditionals= null;
 	private CodeState fCurrentState= CodeState.eActive;
 	private IncludeSearchPathElement fFoundOnPath;
+	private String fFoundViaDirective;
 
 	/**
 	 * @param ctx 
@@ -278,9 +279,17 @@ final class ScannerContext {
 	}
 
 	/**
+	 * Returns the directive with which the this context was found, or <code>null</code> if not applicable.
+	 */
+	public String getFoundViaDirective() {
+		return fFoundViaDirective;
+	}
+
+	/**
 	 * Returns the element of the include search path that was used to find this context, or <code>null</code> if not applicable.
 	 */
-	public void setFoundOnPath(IncludeSearchPathElement foundOnPath) {
+	public void setFoundOnPath(IncludeSearchPathElement foundOnPath, String viaDirective) {
 		fFoundOnPath= foundOnPath;
+		fFoundViaDirective= viaDirective;
 	}
 }

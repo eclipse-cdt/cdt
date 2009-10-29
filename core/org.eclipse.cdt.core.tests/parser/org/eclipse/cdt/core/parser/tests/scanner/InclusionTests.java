@@ -152,6 +152,35 @@ public class InclusionTests extends PreprocessorTestsBase {
     	validateEOF();
 	}
 
+    public void testIncludeNext_286081() throws Exception {    	
+    	String baseFile = "0 \n#include \"foo.h\""; //$NON-NLS-1$
+    	String foo1 =     "1 \n#include \"intermed.h\""; //$NON-NLS-1$
+    	String intermed = "2 \n#include_next <foo.h>"; //$NON-NLS-1$
+    	String foo2 =     "3 \n"; //$NON-NLS-1$
+
+    	IFolder one = importFolder("one"); //$NON-NLS-1$
+    	IFolder two = importFolder("two"); //$NON-NLS-1$
+    	IFile base = importFile("base.cpp", baseFile); //$NON-NLS-1$
+    	importFile("one/foo.h", foo1); //$NON-NLS-1$
+    	importFile("one/intermed.h", intermed); //$NON-NLS-1$
+    	importFile("two/foo.h", foo2); //$NON-NLS-1$
+    	
+    	String[] path = new String[2];
+    	path[0] = one.getLocation().toOSString();
+    	path[1] = two.getLocation().toOSString();
+    	
+    	IScannerInfo scannerInfo = new ExtendedScannerInfo(Collections.EMPTY_MAP, path, new String[]{}, null);
+    	CodeReader reader= new CodeReader(base.getLocation().toString());
+    	initializeScanner(reader, ParserLanguage.C, ParserMode.COMPLETE_PARSE, scannerInfo);
+
+    	validateInteger("0");
+    	validateInteger("1");
+    	validateInteger("2");
+    	validateInteger("3");
+    	
+    	validateEOF();
+	}
+
     public void testIncludePathOrdering() throws Exception {    	
     	// create directory structure:
     	//  project/base.cpp

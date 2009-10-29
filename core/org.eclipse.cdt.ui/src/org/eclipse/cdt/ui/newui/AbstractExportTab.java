@@ -208,8 +208,8 @@ public abstract class AbstractExportTab extends AbstractCPropertyTab {
 		if (rcfg == null) return;
 		if (page.isMultiCfg()) {
 			setAllVisible(false, null);
-		} else { 
-			if (! usercomp.getVisible()) 
+		} else {
+			if (!usercomp.isVisible())
 				setAllVisible(true, null);
 			cfg = rcfg.getConfiguration();
 			update();

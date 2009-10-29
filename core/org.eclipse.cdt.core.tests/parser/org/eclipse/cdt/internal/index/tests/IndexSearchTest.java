@@ -54,6 +54,7 @@ public class IndexSearchTest extends IndexTestBase {
 		super(name);
 	}
 
+	@Override
 	public void setUp() throws Exception {
 		super.setUp();
 		if (fProject == null) {
@@ -63,6 +64,7 @@ public class IndexSearchTest extends IndexTestBase {
 		fIndex.acquireReadLock();
 	}
 	
+	@Override
 	public void tearDown() throws Exception {
 		fIndex.releaseReadLock();
 		super.tearDown();
@@ -235,6 +237,39 @@ public class IndexSearchTest extends IndexTestBase {
 		assertEquals(1, bindings.length);
 		checkIsEnumeration(bindings[0]);
 	}
+
+	public void testCaseInsensitivePatternSearch_239669() throws CoreException {
+		IIndexBinding[] bindings;
+
+		Pattern pEnumAndEnumeration= Pattern.compile("E20061017", Pattern.CASE_INSENSITIVE);
+		Pattern pEnumeration= Pattern.compile("E20061017");
+		bindings= fIndex.findBindings(pEnumAndEnumeration, true, INDEX_FILTER, NPM);
+		assertEquals(2, bindings.length);
+		bindings= fIndex.findBindings(pEnumeration, true, INDEX_FILTER, NPM);
+		assertEquals(1, bindings.length);
+
+		pEnumAndEnumeration= Pattern.compile("E2006101.*", Pattern.CASE_INSENSITIVE);
+		pEnumeration= Pattern.compile("E2006101.*");
+		bindings= fIndex.findBindings(pEnumAndEnumeration, true, INDEX_FILTER, NPM);
+		assertEquals(2, bindings.length);
+		bindings= fIndex.findBindings(pEnumeration, true, INDEX_FILTER, NPM);
+		assertEquals(1, bindings.length);
+		
+		Pattern macro1= Pattern.compile("Foo", Pattern.CASE_INSENSITIVE);
+		Pattern macro2= Pattern.compile("Foo");
+		bindings= fIndex.findMacroContainers(macro1, INDEX_FILTER, NPM);
+		assertEquals(2, bindings.length);
+		bindings= fIndex.findMacroContainers(macro2, INDEX_FILTER, NPM);
+		assertEquals(1, bindings.length);
+
+		macro1= Pattern.compile("Foo.*", Pattern.CASE_INSENSITIVE);
+		macro2= Pattern.compile("Foo.*");
+		bindings= fIndex.findMacroContainers(macro1, INDEX_FILTER, NPM);
+		assertEquals(2, bindings.length);
+		bindings= fIndex.findMacroContainers(macro2, INDEX_FILTER, NPM);
+		assertEquals(1, bindings.length);
+	}
+
 	
 	public void testFindStatic_161216() throws CoreException {
 		Pattern pFunc= Pattern.compile("staticFunc20061017");

@@ -571,26 +571,29 @@ public class PDOM extends PlatformObject implements IPDOM {
 		return findBindings(new Pattern[] { pattern }, isFullyQualified, filter, monitor);
 	}
 
-	public IIndexFragmentBinding[] findBindings(Pattern[] pattern, boolean isFullyQualified, IndexFilter filter, IProgressMonitor monitor) throws CoreException {
+	public IIndexFragmentBinding[] findBindings(Pattern[] patterns, boolean isFullyQualified, IndexFilter filter, IProgressMonitor monitor) throws CoreException {
 		if (monitor == null) {
 			monitor= new NullProgressMonitor();
 		}
 		// check for some easy cases
-		char[][] simpleNames= extractSimpleNames(pattern);
-		if (simpleNames != null) {
-			if (simpleNames.length == 1) {
-				return findBindings(simpleNames[0], isFullyQualified, filter, monitor);
-			} else if (isFullyQualified) {
-				return findBindings(simpleNames, filter, monitor);
+		Boolean caseSensitive= getCaseSensitive(patterns);
+		if (caseSensitive != null) {
+			char[][] simpleNames= extractSimpleNames(patterns);
+			if (simpleNames != null) {
+				if (simpleNames.length == 1) {
+					return findBindings(simpleNames[0], isFullyQualified, caseSensitive, filter, monitor);
+				} else if (isFullyQualified) {
+					return findBindings(simpleNames, caseSensitive, filter, monitor);
+				}
+			}
+
+			char[] prefix= extractPrefix(patterns);
+			if (prefix != null) {
+				return findBindingsForPrefix(prefix, isFullyQualified, caseSensitive, filter, monitor);
 			}
 		}
 		
-		char[] prefix= extractPrefix(pattern);
-		if (prefix != null) {
-			return findBindingsForPrefix(prefix, isFullyQualified, filter, monitor);
-		}
-		
-		BindingFinder finder = new BindingFinder(pattern, isFullyQualified, filter, monitor);
+		BindingFinder finder = new BindingFinder(patterns, isFullyQualified, filter, monitor);
 		for (PDOMLinkage linkage : getLinkageList()) {
 			if (filter.acceptLinkage(linkage)) {
 				try {
@@ -604,6 +607,29 @@ public class PDOM extends PlatformObject implements IPDOM {
 			}
 		}
 		return finder.getBindings();
+	}
+
+	private Boolean getCaseSensitive(Pattern[] patterns) {
+		Boolean caseSensitive= null;
+		for (Pattern p : patterns) {
+			switch(p.flags()) {
+			case 0:
+				if (caseSensitive == Boolean.FALSE) {
+					return null;
+				}
+				caseSensitive= Boolean.TRUE;
+				break;
+			case Pattern.CASE_INSENSITIVE:
+				if (caseSensitive == Boolean.TRUE) {
+					return null;
+				}
+				caseSensitive= Boolean.FALSE;
+				break;
+			default:
+				return null;
+			}
+		}
+		return caseSensitive;
 	}
 
 	private char[][] extractSimpleNames(Pattern[] pattern) {
@@ -642,6 +668,20 @@ public class PDOM extends PlatformObject implements IPDOM {
 		if (monitor == null) {
 			monitor= new NullProgressMonitor();
 		}
+		
+		Pattern[] patterns= new Pattern[]{pattern};
+		Boolean caseSensitive= getCaseSensitive(patterns);
+		if (caseSensitive != null) {
+			char[][] simpleNames= extractSimpleNames(patterns);
+			if (simpleNames != null && simpleNames.length == 1) {
+				return findMacroContainers(simpleNames[0], false, caseSensitive, filter, monitor);
+			} 
+			char[] prefix= extractPrefix(patterns);
+			if (prefix != null) {
+				return findMacroContainers(prefix, true, caseSensitive, filter, monitor);
+			}
+		}
+
 		List<IIndexFragmentBinding> result= new ArrayList<IIndexFragmentBinding>();
 		for (PDOMLinkage linkage : getLinkageList()) {
 			if (filter.acceptLinkage(linkage)) {
@@ -661,6 +701,10 @@ public class PDOM extends PlatformObject implements IPDOM {
 	}
 
 	public IIndexFragmentBinding[] findBindings(char[][] names, IndexFilter filter, IProgressMonitor monitor) throws CoreException {
+		return findBindings(names, true, filter, monitor);
+	}
+	
+	public IIndexFragmentBinding[] findBindings(char[][] names, boolean caseSensitive, IndexFilter filter, IProgressMonitor monitor) throws CoreException {
 		if (names.length == 0) {
 			return IIndexFragmentBinding.EMPTY_INDEX_BINDING_ARRAY;
 		}
@@ -671,7 +715,7 @@ public class PDOM extends PlatformObject implements IPDOM {
 				nodes.add(linkage);
 				for (int i=0; i < names.length-1; i++) {
 					char[] name= names[i];
-					NamedNodeCollector collector= new NamedNodeCollector(linkage, name, false, true);
+					NamedNodeCollector collector= new NamedNodeCollector(linkage, name, false, caseSensitive);
 					for (Iterator<PDOMNamedNode> in = nodes.iterator(); in.hasNext();) {
 						PDOMNode node= in.next();
 						node.accept(collector);
@@ -680,7 +724,7 @@ public class PDOM extends PlatformObject implements IPDOM {
 					nodes.addAll(Arrays.asList(collector.getNodes()));
 				}
 				char[] name= names[names.length-1];
-				BindingCollector collector= new BindingCollector(linkage, name, filter, false, true);
+				BindingCollector collector= new BindingCollector(linkage, name, filter, false, caseSensitive);
 				for (Iterator<PDOMNamedNode> in = nodes.iterator(); in.hasNext();) {
 					PDOMNode node= in.next();
 					node.accept(collector);
@@ -965,13 +1009,17 @@ public class PDOM extends PlatformObject implements IPDOM {
 	public File getPath() {
 		return fPath;
 	}
-	
+
 	public IIndexFragmentBinding[] findBindingsForPrefix(char[] prefix, boolean filescope, IndexFilter filter, IProgressMonitor monitor) throws CoreException {
+		return findBindingsForPrefix(prefix, filescope, false, filter, monitor);
+	}
+	
+	public IIndexFragmentBinding[] findBindingsForPrefix(char[] prefix, boolean filescope, boolean caseSensitive, IndexFilter filter, IProgressMonitor monitor) throws CoreException {
 		ArrayList<IIndexFragmentBinding> result= new ArrayList<IIndexFragmentBinding>();
 		for (PDOMLinkage linkage : getLinkageList()) {
 			if (filter.acceptLinkage(linkage)) {
 				PDOMBinding[] bindings;
-				BindingCollector visitor = new BindingCollector(linkage, prefix, filter, true, false);
+				BindingCollector visitor = new BindingCollector(linkage, prefix, filter, true, caseSensitive);
 				visitor.setMonitor(monitor);
 				try {
 					linkage.accept(visitor);
@@ -992,22 +1040,34 @@ public class PDOM extends PlatformObject implements IPDOM {
 	}
 
 	public IIndexFragmentBinding[] findBindings(char[] name, boolean filescope, IndexFilter filter, IProgressMonitor monitor) throws CoreException {
+		return findBindings(name, filescope, true, filter, monitor);
+	}
+	
+	public IIndexFragmentBinding[] findBindings(char[] name, boolean filescope, boolean isCaseSensitive, IndexFilter filter, IProgressMonitor monitor) throws CoreException {
 		ArrayList<IIndexFragmentBinding> result= new ArrayList<IIndexFragmentBinding>();
 		try {
 			for (PDOMLinkage linkage : getLinkageList()) {
 				if (filter.acceptLinkage(linkage)) {
-					PDOMBinding[] bindings= linkage.getBindingsViaCache(name, monitor);
-					for (PDOMBinding binding : bindings) {
-						if (filter.acceptBinding(binding)) {
-							result.add(binding);
+					if (isCaseSensitive) {
+						PDOMBinding[] bindings= linkage.getBindingsViaCache(name, monitor);
+						for (PDOMBinding binding : bindings) {
+							if (filter.acceptBinding(binding)) {
+								result.add(binding);
+							}
 						}
-					}
-					if (!filescope) {
-						BindingCollector visitor = new BindingCollector(linkage, name, filter, false, true);
+					} 
+					
+					if (!isCaseSensitive || !filescope) {
+						BindingCollector visitor= new BindingCollector(linkage, name, filter, false, isCaseSensitive);
 						visitor.setMonitor(monitor);
-						linkage.getNestedBindingsIndex().accept(visitor);
-
-						bindings= visitor.getBindings();
+					
+						if (!isCaseSensitive)
+							linkage.accept(visitor);
+						
+						if (!filescope) 
+							linkage.getNestedBindingsIndex().accept(visitor);
+						
+						PDOMBinding[] bindings = visitor.getBindings();
 						for (PDOMBinding binding : bindings) {
 							result.add(binding);
 						}
@@ -1015,6 +1075,23 @@ public class PDOM extends PlatformObject implements IPDOM {
 				}
 			}
 		} catch (OperationCanceledException e) {
+		}
+		return result.toArray(new IIndexFragmentBinding[result.size()]);
+	}
+
+	public IIndexFragmentBinding[] findMacroContainers(char[] prefix, boolean isPrefix, boolean isCaseSensitive, IndexFilter filter, IProgressMonitor monitor) throws CoreException {
+		ArrayList<IIndexFragmentBinding> result= new ArrayList<IIndexFragmentBinding>();
+		try {
+			for (PDOMLinkage linkage : getLinkageList()) {
+				if (filter.acceptLinkage(linkage)) {
+					MacroContainerCollector visitor = new MacroContainerCollector(linkage, prefix, isPrefix, isCaseSensitive);
+					visitor.setMonitor(monitor);
+					linkage.getMacroIndex().accept(visitor);
+					result.addAll(visitor.getMacroList());
+				}
+			}
+		}
+		catch (OperationCanceledException e) {
 		}
 		return result.toArray(new IIndexFragmentBinding[result.size()]);
 	}

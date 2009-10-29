@@ -1110,4 +1110,19 @@ public class TranslationUnit extends Openable implements ITranslationUnit {
 	public int getIndex() {
 		return 0;
 	}
+
+	@Deprecated
+	public IWorkingCopy findSharedWorkingCopy(IBufferFactory bufferFactory) {
+		return CModelManager.getDefault().findSharedWorkingCopy(bufferFactory, this);
+	}
+
+	@Deprecated
+	public IWorkingCopy getSharedWorkingCopy(IProgressMonitor monitor, IBufferFactory factory, IProblemRequestor requestor) throws CModelException {
+		return CModelManager.getDefault().getSharedWorkingCopy(factory, this, requestor, monitor);
+	}
+
+	@Deprecated
+	public IWorkingCopy getSharedWorkingCopy(IProgressMonitor monitor, IBufferFactory factory) throws CModelException {
+		return CModelManager.getDefault().getSharedWorkingCopy(factory, this, null, monitor);
+	}
 }

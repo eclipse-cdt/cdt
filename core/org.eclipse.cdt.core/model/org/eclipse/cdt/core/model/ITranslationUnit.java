@@ -390,15 +390,6 @@ public interface ITranslationUnit extends ICElement, IParent, IOpenable, ISource
 	boolean isWorkingCopy();
 
 	/**
-	 * parse()
-	 * returns a map of all new elements and their element info
-	 * @deprecated this is currently only used by the core tests. It should
-	 * be removed from the interface.
-	 */
-	@Deprecated
-	Map<?,?> parse();
-
-	/**
 	 * Return the language for this translation unit.
 	 */
 	ILanguage getLanguage() throws CoreException;
@@ -467,4 +458,30 @@ public interface ITranslationUnit extends ICElement, IParent, IOpenable, ISource
 	 * Return the completion node using the given index and parsing style at the given offset.
 	 */
 	public IASTCompletionNode getCompletionNode(IIndex index, int style, int offset) throws CoreException;	
+	
+	
+	/**
+	 * @deprecated use {@link #getSharedWorkingCopy(IProgressMonitor, IProblemRequestor)}, instead.
+	 * @noreference This method is not intended to be referenced by clients.
+	 */
+	@Deprecated IWorkingCopy getSharedWorkingCopy(IProgressMonitor monitor, IBufferFactory factory) throws CModelException;
+	/**
+	 * @deprecated use {@link #getSharedWorkingCopy(IProgressMonitor, IProblemRequestor)}, instead.
+	 * @noreference This method is not intended to be referenced by clients.
+	 */
+	@Deprecated IWorkingCopy getSharedWorkingCopy(IProgressMonitor monitor, IBufferFactory factory, IProblemRequestor requestor) throws CModelException;
+	/**
+	 * @deprecated use {@link #findSharedWorkingCopy()}, instead.
+	 * @noreference This method is not intended to be referenced by clients.
+	 */
+	@Deprecated IWorkingCopy findSharedWorkingCopy(IBufferFactory bufferFactory);
+	/**
+	 * @deprecated use {@link #getWorkingCopy(IProgressMonitor)}, instead.
+	 * @noreference This method is not intended to be referenced by clients.
+	 */
+	@Deprecated IWorkingCopy getWorkingCopy(IProgressMonitor monitor, IBufferFactory factory) throws CModelException;
+	/**
+	 * @deprecated don't use this method.
+	 */
+	@Deprecated	Map<?,?> parse();
 }

@@ -87,9 +87,9 @@ import org.eclipse.cdt.core.model.ISourceReference;
 import org.eclipse.cdt.core.model.ITranslationUnit;
 import org.eclipse.cdt.core.model.IWorkingCopy;
 import org.eclipse.cdt.core.resources.FileStorage;
+import org.eclipse.cdt.ui.CDTUITools;
 import org.eclipse.cdt.ui.CUIPlugin;
 
-import org.eclipse.cdt.internal.core.model.CModelManager;
 import org.eclipse.cdt.internal.core.resources.ResourceLookup;
 
 import org.eclipse.cdt.internal.ui.ICStatusConstants;
@@ -542,7 +542,7 @@ public class EditorUtility {
 		if (cu.isWorkingCopy())
 			return cu;
 
-		return CModelManager.getDefault().findSharedWorkingCopy(CUIPlugin.getDefault().getBufferFactory(), cu);
+		return CDTUITools.getWorkingCopyManager().findSharedWorkingCopy(cu);
 	}
 
 	/**

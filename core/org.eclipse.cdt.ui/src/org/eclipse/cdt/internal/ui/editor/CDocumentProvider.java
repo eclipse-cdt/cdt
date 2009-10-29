@@ -77,12 +77,11 @@ import org.eclipse.cdt.core.model.ITranslationUnit;
 import org.eclipse.cdt.core.model.IWorkingCopy;
 import org.eclipse.cdt.core.parser.IPersistableProblem;
 import org.eclipse.cdt.core.parser.IProblem;
+import org.eclipse.cdt.ui.CDTUITools;
 import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.cdt.ui.PreferenceConstants;
 import org.eclipse.cdt.ui.text.ICPartitions;
 
-import org.eclipse.cdt.internal.core.model.CModelManager;
-import org.eclipse.cdt.internal.core.model.IBufferFactory;
 import org.eclipse.cdt.internal.core.model.TranslationUnit;
 
 import org.eclipse.cdt.internal.ui.text.IProblemRequestorExtension;
@@ -861,8 +860,7 @@ public class CDocumentProvider extends TextFileDocumentProvider {
 		setUpSynchronization(tuInfo);
 
 		IProblemRequestor requestor= tuInfo.fModel instanceof IProblemRequestor ? (IProblemRequestor) tuInfo.fModel : null;
-		IBufferFactory factory = CUIPlugin.getDefault().getBufferFactory();
-		tuInfo.fCopy = CModelManager.getDefault().getSharedWorkingCopy(factory, original, requestor, getProgressMonitor());
+		tuInfo.fCopy = CDTUITools.getWorkingCopyManager().getSharedWorkingCopy(original, requestor, getProgressMonitor());
 
 		if (tuInfo.fModel == null) {
 			IPath location = original.getLocation();

@@ -45,12 +45,10 @@ import org.eclipse.cdt.core.model.ISourceReference;
 import org.eclipse.cdt.core.model.ISourceRoot;
 import org.eclipse.cdt.core.model.ITranslationUnit;
 import org.eclipse.cdt.core.model.IWorkingCopy;
+import org.eclipse.cdt.ui.CDTUITools;
 import org.eclipse.cdt.ui.CElementGrouping;
-import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.cdt.ui.IncludesGrouping;
 import org.eclipse.cdt.ui.NamespacesGrouping;
-
-import org.eclipse.cdt.internal.core.model.CModelManager;
  
 /**
  * A base content provider for C elements. It provides access to the
@@ -210,7 +208,7 @@ public class BaseCElementContentProvider implements ITreeContentProvider {
 						// if it is not already a working copy
 						if (!(element instanceof IWorkingCopy)){
 							// if it has a valid working copy
-							IWorkingCopy copy = CModelManager.getDefault().findSharedWorkingCopy(CUIPlugin.getDefault().getBufferFactory(), tu);
+							IWorkingCopy copy = CDTUITools.getWorkingCopyManager().findSharedWorkingCopy(tu);
 							if (copy != null) {
 								tu = copy;
 							}

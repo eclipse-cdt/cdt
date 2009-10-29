@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2008 IBM Corporation and others.
+ * Copyright (c) 2000, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,19 +8,26 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-
 package org.eclipse.cdt.internal.ui.editor;
 
 
 import java.util.HashMap;
 import java.util.Map;
 
+import org.eclipse.core.runtime.Assert;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.ui.IEditorInput;
+
+import org.eclipse.cdt.core.model.CModelException;
+import org.eclipse.cdt.core.model.IProblemRequestor;
+import org.eclipse.cdt.core.model.ITranslationUnit;
 import org.eclipse.cdt.core.model.IWorkingCopy;
 import org.eclipse.cdt.ui.IWorkingCopyManager;
 import org.eclipse.cdt.ui.IWorkingCopyManagerExtension;
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.Assert;
-import org.eclipse.ui.IEditorInput;
+
+import org.eclipse.cdt.internal.core.model.CModelManager;
+import org.eclipse.cdt.internal.core.model.IBufferFactory;
 
 
 /**
@@ -32,6 +39,7 @@ public class WorkingCopyManager implements IWorkingCopyManager, IWorkingCopyMana
 	private CDocumentProvider fDocumentProvider;
 	private Map<IEditorInput, IWorkingCopy> fMap;
 	private boolean fIsShuttingDown;
+	private IBufferFactory fBufferFactory;
 
 	/**
 	 * Creates a new working copy manager that co-operates with the given
@@ -102,5 +110,28 @@ public class WorkingCopyManager implements IWorkingCopyManager, IWorkingCopyMana
 		fMap.remove(input);
 		if (fMap.isEmpty())
 			fMap= null;
+	}
+
+	public IBufferFactory getBufferFactory() {		
+		if (fBufferFactory == null) {
+			synchronized (this) {
+				if (fBufferFactory == null)
+					fBufferFactory= new CustomBufferFactory();
+			}
+		}
+		return fBufferFactory;
+	}
+
+	public IWorkingCopy findSharedWorkingCopy(ITranslationUnit tu) {
+		return CModelManager.getDefault().findSharedWorkingCopy(getBufferFactory(), tu);
+	}
+
+	public IWorkingCopy[] getSharedWorkingCopies() {
+		return CModelManager.getDefault().getSharedWorkingCopies(getBufferFactory());
+	}
+
+	public IWorkingCopy getSharedWorkingCopy(ITranslationUnit original, IProblemRequestor requestor,
+			IProgressMonitor progressMonitor) throws CModelException {
+		return CModelManager.getDefault().getSharedWorkingCopy(getBufferFactory(), original, requestor, progressMonitor);
 	}
 }

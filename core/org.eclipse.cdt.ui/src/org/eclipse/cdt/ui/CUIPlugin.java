@@ -73,7 +73,6 @@ import org.eclipse.cdt.core.model.IWorkingCopy;
 import org.eclipse.cdt.core.model.IWorkingCopyProvider;
 
 import org.eclipse.cdt.internal.core.dom.rewrite.ASTRewriteAnalyzer;
-import org.eclipse.cdt.internal.core.model.CModelManager;
 import org.eclipse.cdt.internal.core.model.IBufferFactory;
 import org.eclipse.cdt.internal.corext.template.c.CContextType;
 import org.eclipse.cdt.internal.corext.template.c.CodeTemplateContextType;
@@ -88,7 +87,6 @@ import org.eclipse.cdt.internal.ui.ResourceAdapterFactory;
 import org.eclipse.cdt.internal.ui.buildconsole.BuildConsoleManager;
 import org.eclipse.cdt.internal.ui.editor.ASTProvider;
 import org.eclipse.cdt.internal.ui.editor.CDocumentProvider;
-import org.eclipse.cdt.internal.ui.editor.CustomBufferFactory;
 import org.eclipse.cdt.internal.ui.editor.WorkingCopyManager;
 import org.eclipse.cdt.internal.ui.refactoring.CTextFileChangeFactory;
 import org.eclipse.cdt.internal.ui.text.CTextTools;
@@ -246,15 +244,15 @@ public class CUIPlugin extends AbstractUIPlugin {
 
 	/**
 	 * @noreference This method is not intended to be referenced by clients.
+	 * @deprecated use {@link CDTUITools#getWorkingCopyManager()}, instead.
 	 */
+	@Deprecated
 	public synchronized IBufferFactory getBufferFactory() {
-		if (fBufferFactory == null)
-			fBufferFactory= new CustomBufferFactory();
-		return fBufferFactory;
+		return ((WorkingCopyManager) getWorkingCopyManager()).getBufferFactory();
 	}
 	
 	public static IWorkingCopy[] getSharedWorkingCopies() {
-		return CModelManager.getDefault().getSharedWorkingCopies(getDefault().getBufferFactory());
+		return getDefault().getWorkingCopyManager().getSharedWorkingCopies();
 	}
 	
 	public static String getResourceString(String key) {
@@ -384,7 +382,6 @@ public class CUIPlugin extends AbstractUIPlugin {
 
 	private CoreModel fCoreModel;
 	private CDocumentProvider fDocumentProvider;
-	private IBufferFactory fBufferFactory;
 	private WorkingCopyManager fWorkingCopyManager;
 	private CTextTools fTextTools;
 	private ProblemMarkerManager fProblemMarkerManager;

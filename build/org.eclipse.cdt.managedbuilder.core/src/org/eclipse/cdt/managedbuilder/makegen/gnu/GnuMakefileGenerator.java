@@ -1399,7 +1399,7 @@ public class GnuMakefileGenerator implements IManagedBuilderMakefileGenerator2 {
 									"", //$NON-NLS-1$
 									" ", //$NON-NLS-1$
 									IBuildMacroProvider.CONTEXT_CONFIGURATION,
-									config);
+									depCfg);
 						} catch (BuildMacroException e){
 						}
 
@@ -1410,7 +1410,7 @@ public class GnuMakefileGenerator implements IManagedBuilderMakefileGenerator2 {
 									"", //$NON-NLS-1$
 									" ", //$NON-NLS-1$
 									IBuildMacroProvider.CONTEXT_CONFIGURATION,
-									config);
+									depCfg);
 							if((resolved = resolved.trim()).length() > 0)
 								depTarget = resolved;
 						} catch (BuildMacroException e){

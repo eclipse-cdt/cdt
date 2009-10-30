@@ -219,9 +219,11 @@ public class DefaultSpellChecker implements ISpellChecker {
 		
 		iterator.setIgnoreSingleLetters(ignoreSingleLetters);
 		
-		Iterator<ISpellDictionary> iter= fDictionaries.iterator();
-		while (iter.hasNext())
-			iter.next().setStripNonLetters(ignoreNonLetters);
+		synchronized (fDictionaries) {
+			Iterator<ISpellDictionary> iter= fDictionaries.iterator();
+			while (iter.hasNext())
+				iter.next().setStripNonLetters(ignoreNonLetters);
+		}
 
 		String word= null;
 		boolean starts= false;
@@ -233,12 +235,12 @@ public class DefaultSpellChecker implements ISpellChecker {
 				if (!fIgnored.contains(word)) {
 					starts= iterator.startsSentence();
 					if (!isCorrect(word)) {
-					    boolean isMixed=  isMixedCase(word, true);
+					    boolean isMixed= isMixedCase(word, true);
 					    boolean isUpper= isUpperCase(word);
 					    boolean isDigits= isDigits(word);
 					    boolean isUrl= isUrl(word);
 
-					    if ( !ignoreMixed && isMixed || !ignoreUpper && isUpper || !ignoreDigits && isDigits || !ignoreUrls && isUrl || !(isMixed || isUpper || isDigits || isUrl))
+					    if (!ignoreMixed && isMixed || !ignoreUpper && isUpper || !ignoreDigits && isDigits || !ignoreUrls && isUrl || !(isMixed || isUpper || isDigits || isUrl))
 					        fireEvent(new SpellEvent(this, word, iterator.getBegin(), iterator.getEnd(), starts, false));
 					} else {
 						if (!ignoreSentence && starts && Character.isLowerCase(word.charAt(0)))

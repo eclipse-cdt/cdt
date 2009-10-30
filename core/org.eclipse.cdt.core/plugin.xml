@@ -534,14 +534,6 @@
       </pathEntryContainerInitializer>
    </extension>
    <extension
-         point="org.eclipse.cdt.core.ScannerInfoProvider">
-      <cextension>
-         <run
-              class="org.eclipse.cdt.core.index.export.ConfigurableScannerInfoProvider">
-         </run>
-      </cextension>
-   </extension>
-   <extension
          point="org.eclipse.cdt.core.CIndex">
       <ExportProjectProvider
             class="org.eclipse.cdt.core.index.export.ExternalExportProjectProvider">

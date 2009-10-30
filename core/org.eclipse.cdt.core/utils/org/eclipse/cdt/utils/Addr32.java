@@ -93,23 +93,15 @@ public class Addr32 implements IAddress {
 	}
 
 	public BigInteger distanceTo(IAddress other) {
-		if (!(other instanceof Addr32)) {
-			throw new IllegalArgumentException();
-		}
-		return BigInteger.valueOf(((Addr32)other).address - address);
+		return other.getValue().subtract(getValue());
 	}
 
 	public int compareTo(Object other) {
-		if (!(other instanceof Addr32)) {
+		if (!(other instanceof IAddress)) {
 			throw new IllegalArgumentException();
 		}
-		if (address > ((Addr32)other).address) {
-			return 1;
-		}
-		if (address < ((Addr32)other).address) {
-			return -1;
-		}
-		return 0;
+		
+		return getValue().compareTo(((IAddress)other).getValue());
 	}
 
 	public boolean isMax() {
@@ -133,9 +125,9 @@ public class Addr32 implements IAddress {
 	public boolean equals(Object x) {
 		if (x == this)
 			return true;
-		if (!(x instanceof Addr32))
+		if (!(x instanceof IAddress))
 			return false;
-		return this.address == ((Addr32)x).address;
+		return getValue().equals(((IAddress)x).getValue());
 	}
 
 	@Override

@@ -93,10 +93,7 @@ public class Addr64 implements IAddress {
 	}
 
 	public BigInteger distanceTo(IAddress other) {
-		if (! (other instanceof Addr64)) {
-			throw new IllegalArgumentException();
-		}
-		return ((Addr64)other).address.add(address.negate());
+		return other.getValue().subtract(getValue());
 	}
 
 	public boolean isMax() {
@@ -112,16 +109,20 @@ public class Addr64 implements IAddress {
 	}
 
 	public int compareTo(Object other) {
-		return this.address.compareTo(((Addr64)other).address);
+		if (!(other instanceof IAddress)) {
+			throw new IllegalArgumentException();
+		}
+		
+		return getValue().compareTo(((IAddress)other).getValue());
 	}
 
 	@Override
 	public boolean equals(Object x) {
 		if (x == this)
 			return true;
-		if (! (x instanceof Addr64))
+		if (!(x instanceof IAddress))
 			return false;
-		return this.address.equals(((Addr64)x).address);
+		return getValue().equals(((IAddress)x).getValue());
 	}
 
 	@Override

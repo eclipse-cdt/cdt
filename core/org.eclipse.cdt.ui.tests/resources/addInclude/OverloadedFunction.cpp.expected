@@ -1,8 +1,0 @@
-#include "A.h"
-#include "OverloadedFunction.h"
-
-using ns3::func;
-
-void test() {
-  func(0);
-}

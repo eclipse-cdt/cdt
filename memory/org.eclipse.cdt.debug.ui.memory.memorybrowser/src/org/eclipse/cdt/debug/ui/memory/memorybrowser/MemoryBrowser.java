@@ -34,7 +34,9 @@ import org.eclipse.debug.core.model.IMemoryBlockExtension;
 import org.eclipse.debug.core.model.IMemoryBlockRetrieval;
 import org.eclipse.debug.core.model.IMemoryBlockRetrievalExtension;
 import org.eclipse.debug.core.model.MemoryByte;
+import org.eclipse.debug.internal.ui.DebugUIMessages;
 import org.eclipse.debug.internal.ui.memory.MemoryRenderingManager;
+import org.eclipse.debug.internal.ui.views.memory.MemoryViewUtil;
 import org.eclipse.debug.ui.DebugUITools;
 import org.eclipse.debug.ui.contexts.DebugContextEvent;
 import org.eclipse.debug.ui.contexts.IDebugContextListener;
@@ -339,13 +341,16 @@ public class MemoryBrowser extends ViewPart implements IDebugContextListener, IL
 								}
 							});
 						} catch (DebugException e1) {
-							MemoryBrowserPlugin.getDefault().getLog().log(new Status(Status.ERROR, MemoryBrowserPlugin.PLUGIN_ID, "", e1)); //$NON-NLS-1$
+							MemoryViewUtil.openError(Messages.getString("MemoryBrowser.FailedToGoToAddressTitle"), "", e1);  //$NON-NLS-1$
 						}
 					}
 				}.start();
 			}
 		}
 	}
+	
+//	MemoryBrowser.FailedToGoToAddressTitle=Unable to Go To specified address
+//	MemoryBrowser.UnableToEvaluateAddress
 	
 	private void updateLabel(CTabItem tab, IMemoryRendering rendering)
 	{

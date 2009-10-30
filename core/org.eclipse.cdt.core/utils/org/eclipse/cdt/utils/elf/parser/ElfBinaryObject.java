@@ -182,7 +182,19 @@ public class ElfBinaryObject extends BinaryObjectAdapter {
 
 	protected void addSymbols(Elf.Symbol[] array, int type, List<Symbol> list) {
 		for (int i = 0; i < array.length; i++) {
-			list.add(new Symbol(this, array[i].toString(), type, array[i].st_value, array[i].st_size));
+			// Multiple function symbol entries for the same address are generated
+			// do not add duplicate symbols with 0 size to the list
+			boolean duplicateAddressFound = false;
+			if (type == ISymbol.FUNCTION && array[i].st_size == 0){
+				for (Symbol s : list) {
+					if (s.getAddress().equals(array[i].st_value)){
+						duplicateAddressFound = true;
+						break;
+					}
+				}
+			}
+			if (!duplicateAddressFound)	
+				list.add(new Symbol(this, array[i].toString(), type, array[i].st_value, array[i].st_size));
 		}
 	}
 

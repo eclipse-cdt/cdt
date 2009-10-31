@@ -76,11 +76,11 @@ public class Profiler {
 	}
 	
 	private Map<String, Timer> timers;
-	private Map<String, Integer> counters;
+	private Map<String, int[]> counters;
 	
 	private Profiler() {
 		timers = new HashMap<String, Timer>();
-		counters = new HashMap<String, Integer>();
+		counters = new HashMap<String, int[]>();
 	}
 	
 	private static ThreadLocal<Profiler> threadProfiler = new ThreadLocal<Profiler>();
@@ -112,11 +112,11 @@ public class Profiler {
 	public static void incrementCounter(String name) {
 		Profiler profiler = threadProfiler.get();
 		if (profiler != null) {
-			Integer n = profiler.counters.get(name);
+			int[] n = profiler.counters.get(name);
 			if (n == null) {
-				n = 1;
+				n = new int[] { 1 };
 			} else {
-				n = n.intValue() + 1;
+				n[0]++;
 			}
 			profiler.counters.put(name, n);
 		}
@@ -149,18 +149,18 @@ public class Profiler {
 			}
 
 			if (!profiler.counters.isEmpty()) {
-				List<Map.Entry<String, Integer>> keyList =
-					new ArrayList<Map.Entry<String, Integer>>(profiler.counters.entrySet());
-				Comparator<Map.Entry<String, Integer>> c2 = new Comparator<Map.Entry<String, Integer>>() {
-					public int compare(Entry<String, Integer> o1, Entry<String, Integer> o2) {
-						return o2.getValue().intValue() - o1.getValue().intValue();
+				List<Map.Entry<String, int[]>> keyList =
+					new ArrayList<Map.Entry<String, int[]>>(profiler.counters.entrySet());
+				Comparator<Map.Entry<String, int[]>> c2 = new Comparator<Map.Entry<String, int[]>>() {
+					public int compare(Entry<String, int[]> o1, Entry<String, int[]> o2) {
+						return o2.getValue()[0] - o1.getValue()[0];
 					}
 				};
 				Collections.sort(keyList, c2);
 				System.out.println("==="); //$NON-NLS-1$
 				System.out.println("===\t" + profiler.counters.size() + " counters"); //$NON-NLS-1$ //$NON-NLS-2$
-				for (Entry<String, Integer> item : keyList) {
-					System.out.println("===\t" + item.getValue().intValue() + "\t" + item.getKey()); //$NON-NLS-1$ //$NON-NLS-2$
+				for (Entry<String, int[]> item : keyList) {
+					System.out.println("===\t" + item.getValue()[0] + "\t" + item.getKey()); //$NON-NLS-1$ //$NON-NLS-2$
 				}
 			}
 		}

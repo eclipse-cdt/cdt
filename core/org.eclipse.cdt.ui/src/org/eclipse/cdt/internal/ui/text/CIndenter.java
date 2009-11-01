@@ -2085,6 +2085,20 @@ public final class CIndenter {
 		case Symbols.TokenNEW:
 			nextToken();
 			return fToken == Symbols.TokenOPERATOR;
+		case Symbols.TokenRPAREN:
+			nextToken();
+			if (fToken != Symbols.TokenLPAREN)
+				return false;
+			nextToken();
+			return fToken == Symbols.TokenOPERATOR;
+		case Symbols.TokenRBRACKET:
+			nextToken();
+			if (fToken != Symbols.TokenLBRACKET)
+				return false;
+			nextToken();
+			if (fToken == Symbols.TokenNEW || fToken == Symbols.TokenDELETE)
+				nextToken();
+			return fToken == Symbols.TokenOPERATOR;
 		case Symbols.TokenOTHER:
 			if (getTokenContent().length() == 1) {
 				nextToken();

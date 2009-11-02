@@ -547,4 +547,16 @@ public abstract class CSelectionTestsAnyIndexer extends BaseSelectionTestsIndexe
 		assertTrue(name.isDefinition());
         assertEquals("myFunc", name.toString());
     }
+    
+    // int x= __LINE__;
+    public void testBuiltinMacro_Bug293864() throws Exception {
+        final StringBuffer[] contents = getContentsForTest(1);
+        String code= contents[0].toString();
+        IFile file = importFile("source.c", code); 
+        int offset= code.indexOf("__LINE__");
+
+        TestSourceReader.waitUntilFileIsIndexed(index, file, MAX_WAIT_TIME);
+        // just make sure that no NPE is thrown.
+        testF3(file, offset);
+    }
 }

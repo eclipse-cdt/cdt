@@ -42,7 +42,7 @@ import org.eclipse.core.runtime.PlatformObject;
  * Represents a function.
  */
 public class CFunction extends PlatformObject implements IFunction, ICInternalFunction {
-	private IASTStandardFunctionDeclarator [] declarators = null;
+	private IASTDeclarator[] declarators = null;
 	private IASTFunctionDeclarator definition;
 	
 	private static final int FULLY_RESOLVED         = 1;
@@ -51,52 +51,40 @@ public class CFunction extends PlatformObject implements IFunction, ICInternalFu
 	
 	protected IFunctionType type = null;
 	
-	public CFunction( IASTFunctionDeclarator declarator ){
-		if( declarator != null ) {
-		    if( declarator.getParent() instanceof IASTFunctionDefinition || declarator instanceof ICASTKnRFunctionDeclarator )
-		        definition = declarator;
-		    else {
-		        declarators = new IASTStandardFunctionDeclarator [] { (IASTStandardFunctionDeclarator) declarator };
-		    }
+	public CFunction(IASTDeclarator declarator) {
+		storeDeclarator(declarator);
+	}
+
+	private void storeDeclarator(IASTDeclarator declarator) {
+		if (declarator != null) {
+			if (declarator instanceof ICASTKnRFunctionDeclarator) {
+				definition = (IASTFunctionDeclarator) declarator;
+			} else if (declarator instanceof IASTFunctionDeclarator
+					&& ASTQueries.findOutermostDeclarator(declarator).getParent() instanceof IASTFunctionDefinition) {
+				definition = (IASTFunctionDeclarator) declarator;
+			} else {
+				declarators = (IASTDeclarator[]) ArrayUtil.append(IASTDeclarator.class, declarators, declarator);
+			}
 		}
 	}
 	
-    public IASTNode getPhysicalNode(){
-    	if( definition != null )
-    		return definition;
-    	else if( declarators != null && declarators.length > 0 )
-    		return declarators[0];
-    	return null;
-    }
-    public void addDeclarator( IASTFunctionDeclarator fnDeclarator ){
-    	if (!fnDeclarator.isActive())
-    		return;
-    	
-        if( fnDeclarator.getParent() instanceof IASTFunctionDefinition || fnDeclarator instanceof ICASTKnRFunctionDeclarator ) {
-        	if (definition == fnDeclarator) {
-        		// recursion?
-        		return;
-        	}
-            updateParameterBindings( fnDeclarator );
-            definition = fnDeclarator;
-            return;
-        }
-		updateParameterBindings( fnDeclarator );
-		if( declarators == null ){
-		    declarators = new IASTStandardFunctionDeclarator[] { (IASTStandardFunctionDeclarator) fnDeclarator };
+	public IASTDeclarator getPhysicalNode() {
+		if (definition != null)
+			return definition;
+		else if (declarators != null && declarators.length > 0)
+			return declarators[0];
+		return null;
+	}
+
+	public void addDeclarator(IASTDeclarator fnDeclarator) {
+		if (!fnDeclarator.isActive())
 			return;
+
+		if (fnDeclarator instanceof IASTFunctionDeclarator) {
+			updateParameterBindings((IASTFunctionDeclarator) fnDeclarator);
 		}
-		for( int i = 0; i < declarators.length; i++ ){
-		    if( declarators[i] == null ){
-		        declarators[i] = (IASTStandardFunctionDeclarator) fnDeclarator;
-		        return;
-		    }
-		}
-		IASTStandardFunctionDeclarator tmp [] = new IASTStandardFunctionDeclarator [ declarators.length * 2 ];
-		System.arraycopy( declarators, 0, tmp, 0, declarators.length );
-		tmp[ declarators.length ] = (IASTStandardFunctionDeclarator) fnDeclarator;
-		declarators = tmp;
-    }
+		storeDeclarator(fnDeclarator);
+	}
 	
     protected IASTTranslationUnit getTranslationUnit() {
 		if( definition != null )
@@ -113,7 +101,7 @@ public class CFunction extends PlatformObject implements IFunction, ICInternalFu
 	        if( tu != null ){
 	            CVisitor.getDeclarations( tu, this );
 	        }
-	        declarators = (IASTStandardFunctionDeclarator[]) ArrayUtil.trim( IASTStandardFunctionDeclarator.class, declarators );
+			declarators = (IASTDeclarator[]) ArrayUtil.trim(IASTDeclarator.class, declarators);
 	        bits |= FULLY_RESOLVED;
 	        bits &= ~RESOLUTION_IN_PROGRESS;
 	    }
@@ -123,41 +111,53 @@ public class CFunction extends PlatformObject implements IFunction, ICInternalFu
 	 * @see org.eclipse.cdt.core.dom.ast.IFunction#getParameters()
 	 */
 	public IParameter[] getParameters() {
-		IParameter [] result = IParameter.EMPTY_PARAMETER_ARRAY;
-		
-	    IASTFunctionDeclarator dtor = (IASTFunctionDeclarator) getPhysicalNode();
-	    if( dtor == null && (bits & FULLY_RESOLVED) == 0){
-            resolveAllDeclarations();
-            dtor = (IASTFunctionDeclarator) getPhysicalNode();
-    	}
-	    
-		if (dtor instanceof IASTStandardFunctionDeclarator) {
-			IASTParameterDeclaration[] params = ((IASTStandardFunctionDeclarator)dtor).getParameters();
-			int size = params.length;
-			result = new IParameter[ size ];
-			if( size > 0 ){
-				for( int i = 0; i < size; i++ ){
-					IASTParameterDeclaration p = params[i];
-					result[i] = (IParameter) ASTQueries.findInnermostDeclarator(p.getDeclarator()).getName().resolveBinding();
-				}
+		int j=-1;
+		int len = declarators != null ? declarators.length : 0;
+		for (IASTDeclarator dtor = definition; j < len; j++) {
+			if (j >= 0) {
+				dtor = declarators[j];
 			}
-		} else if (dtor instanceof ICASTKnRFunctionDeclarator) {
-			IASTName[] names = ((ICASTKnRFunctionDeclarator)dtor).getParameterNames();
-			result = new IParameter[ names.length ];
-			if( names.length > 0 ){
-				// ensures that the List of parameters is created in the same order as the K&R C parameter names
-				for( int i=0; i<names.length; i++ ) {
-				    IASTDeclarator decl = CVisitor.getKnRParameterDeclarator( (ICASTKnRFunctionDeclarator) dtor, names[i] );
-				    if( decl != null ) {
-				        result[i] = (IParameter) decl.getName().resolveBinding();
-				    } else {
-				        result[i] = new CParameter.CParameterProblem( names[i], IProblemBinding.SEMANTIC_KNR_PARAMETER_DECLARATION_NOT_FOUND, names[i].toCharArray() );
-				    }
+			if (dtor instanceof IASTStandardFunctionDeclarator) {
+				IASTParameterDeclaration[] params = ((IASTStandardFunctionDeclarator) dtor).getParameters();
+				int size = params.length;
+				IParameter[] result = new IParameter[size];
+				if (size > 0) {
+					for (int i = 0; i < size; i++) {
+						IASTParameterDeclaration p = params[i];
+						result[i] = (IParameter) ASTQueries.findInnermostDeclarator(p.getDeclarator())
+								.getName().resolveBinding();
+					}
 				}
+				return result;
+			} 
+			if (dtor instanceof ICASTKnRFunctionDeclarator) {
+				IASTName[] names = ((ICASTKnRFunctionDeclarator) dtor).getParameterNames();
+				IParameter[] result = new IParameter[names.length];
+				if (names.length > 0) {
+					// Ensures that the list of parameters is created in the same order as the K&R C parameter
+					// names
+					for (int i = 0; i < names.length; i++) {
+						IASTDeclarator decl = CVisitor.getKnRParameterDeclarator(
+								(ICASTKnRFunctionDeclarator) dtor, names[i]);
+						if (decl != null) {
+							result[i] = (IParameter) decl.getName().resolveBinding();
+						} else {
+							result[i] = new CParameter.CParameterProblem(names[i],
+									IProblemBinding.SEMANTIC_KNR_PARAMETER_DECLARATION_NOT_FOUND, names[i]
+											.toCharArray());
+						}
+					}
+				}
+				return result;
 			}
 		}
 		
-		return result;	    
+		if ((bits & (FULLY_RESOLVED | RESOLUTION_IN_PROGRESS)) == 0) {
+			resolveAllDeclarations();
+			return getParameters();
+		}
+		
+		return IParameter.EMPTY_PARAMETER_ARRAY;
 	}
 
 	/* (non-Javadoc)
@@ -172,22 +172,16 @@ public class CFunction extends PlatformObject implements IFunction, ICInternalFu
 	}
 
 	private IASTName getASTName() {
-		IASTDeclarator dtor = ( definition != null ) ? definition : declarators[0];
-	    IASTDeclarator nested= dtor.getNestedDeclarator();
-	    while (nested != null && nested.getPointerOperators().length == 0) {
-	    	dtor= nested;
-	    	nested= nested.getNestedDeclarator();
-	    }
-	    return dtor.getName();
+		return ASTQueries.findInnermostDeclarator(getPhysicalNode()).getName();
 	}
 		
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.dom.ast.IBinding#getScope()
 	 */
 	public IScope getScope() {
-	    IASTFunctionDeclarator dtor = (IASTFunctionDeclarator) getPhysicalNode();
-	    if( dtor != null )
-	    	return CVisitor.getContainingScope( dtor.getParent() );
+	    IASTDeclarator dtor = getPhysicalNode();
+		if (dtor != null)
+			return CVisitor.getContainingScope(ASTQueries.findOutermostDeclarator(dtor).getParent());
 	    return null;
 	}
 
@@ -195,7 +189,7 @@ public class CFunction extends PlatformObject implements IFunction, ICInternalFu
 	 * @see org.eclipse.cdt.core.dom.ast.IFunction#getFunctionScope()
 	 */
 	public IScope getFunctionScope() {
-		if( definition != null ){
+		if (definition != null) {
 			IASTFunctionDefinition def = (IASTFunctionDefinition) definition.getParent();
 			return def.getScope();
 		}
@@ -205,25 +199,21 @@ public class CFunction extends PlatformObject implements IFunction, ICInternalFu
     /* (non-Javadoc)
      * @see org.eclipse.cdt.core.dom.ast.IFunction#getType()
      */
-    public IFunctionType getType() {
-        if( type == null ) {
-        	IASTDeclarator functionDtor = (IASTDeclarator) getPhysicalNode();
-        	if( functionDtor == null && (bits & FULLY_RESOLVED) == 0){
-                resolveAllDeclarations();
-                functionDtor = (IASTDeclarator) getPhysicalNode();
-        	}
-        	if( functionDtor != null ) {
-	        	while (functionDtor.getNestedDeclarator() != null)
-	        		functionDtor = functionDtor.getNestedDeclarator();
-	        	
-	        	IType tempType = CVisitor.createType( functionDtor );
-	        	if (tempType instanceof IFunctionType)
-	        		type = (IFunctionType)tempType;
-        	}
-        }
-        
-        return type;
-    }
+	public IFunctionType getType() {
+		if (type == null) {
+			IASTDeclarator declarator = getPhysicalNode();
+			if (declarator == null && (bits & FULLY_RESOLVED) == 0) {
+				resolveAllDeclarations();
+				declarator = getPhysicalNode();
+			}
+			if (declarator != null) {
+				IType tempType = CVisitor.unwrapTypedefs(CVisitor.createType(declarator));
+				if (tempType instanceof IFunctionType)
+					type = (IFunctionType) tempType;
+			}
+		}
+		return type;
+	}
 	
     public IBinding resolveParameter( IASTName paramName ){
     	if( paramName.getBinding() != null )
@@ -289,12 +279,15 @@ public class CFunction extends PlatformObject implements IFunction, ICInternalFu
     	    	}
     	    }
     	}
-    	if( declarators != null ){
-    		for( int j = 0; j < declarators.length && declarators[j] != null; j++ ){
-    		    if( declarators[j].getParameters().length > idx ){
-					temp = declarators[j].getParameters()[idx];
-					ASTQueries.findInnermostDeclarator(temp.getDeclarator()).getName().setBinding( binding );
-    		    }
+    	if (declarators != null) {
+    		for (IASTDeclarator dtor : declarators) {
+    			if (dtor instanceof IASTStandardFunctionDeclarator) {
+    				IASTStandardFunctionDeclarator fdtor= (IASTStandardFunctionDeclarator) dtor;
+    				if( fdtor.getParameters().length > idx ){
+    					temp = fdtor.getParameters()[idx];
+    					ASTQueries.findInnermostDeclarator(temp.getDeclarator()).getName().setBinding( binding );
+    				}
+    			}
     		}
     	}
     	return binding;
@@ -437,22 +430,26 @@ public class CFunction extends PlatformObject implements IFunction, ICInternalFu
     }
 
 
-    public boolean takesVarArgs() {
-        if( (bits & FULLY_RESOLVED) == 0 ){
-            resolveAllDeclarations();
-        }
-           
-        if( definition != null ){
-            if( definition instanceof IASTStandardFunctionDeclarator )
-                return ((IASTStandardFunctionDeclarator)definition).takesVarArgs();
-            return false;
-        }
+	public boolean takesVarArgs() {
+		if ((bits & FULLY_RESOLVED) == 0) {
+			resolveAllDeclarations();
+		}
 
-        if( declarators != null && declarators.length > 0 ){
-            return declarators[0].takesVarArgs();
-        }
-        return false;
-    }
+		if (definition != null) {
+			if (definition instanceof IASTStandardFunctionDeclarator)
+				return ((IASTStandardFunctionDeclarator) definition).takesVarArgs();
+			return false;
+		}
+
+		if (declarators != null) {
+			for (IASTDeclarator dtor : declarators) {
+				if (dtor instanceof IASTStandardFunctionDeclarator) {
+					return ((IASTStandardFunctionDeclarator) dtor).takesVarArgs();
+				}
+			}
+		}
+		return false;
+	}
 
 	public void setFullyResolved(boolean resolved) {
 		if( resolved )

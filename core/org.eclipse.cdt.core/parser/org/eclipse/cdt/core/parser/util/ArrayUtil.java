@@ -17,7 +17,7 @@ package org.eclipse.cdt.core.parser.util;
 import java.lang.reflect.Array;
 
 /**
- * @noextend This interface is not intended to be extended by clients.
+ * @noextend This class is not intended to be subclassed by clients.
  */
 public abstract class ArrayUtil {
     private static final int DEFAULT_LENGTH = 2;

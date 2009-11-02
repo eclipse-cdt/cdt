@@ -689,7 +689,7 @@ public class CVisitor extends ASTQueries {
 				}
 				if (binding != null && !(binding instanceof IIndexBinding) && name.isActive()) {
 				    if (binding instanceof ICInternalFunction)
-				        ((ICInternalFunction)binding).addDeclarator((ICASTKnRFunctionDeclarator) declarator);
+				        ((ICInternalFunction)binding).addDeclarator(declarator);
 				    else 
 				        binding = new ProblemBinding(name, IProblemBinding.SEMANTIC_INVALID_OVERLOAD, name.toCharArray());
 				} else { 
@@ -708,17 +708,9 @@ public class CVisitor extends ASTQueries {
 	}
 
 	private static IBinding createBinding(IASTDeclarator declarator) {
-		IASTNode parent = declarator.getParent();
-		while (parent instanceof IASTDeclarator) {
-			parent = parent.getParent();
-		}
-
-		declarator= ASTQueries.findInnermostDeclarator(declarator);
+		IASTNode parent = ASTQueries.findOutermostDeclarator(declarator).getParent();
+		declarator= ASTQueries.findInnermostDeclarator(declarator);		
 		IASTDeclarator typeRelevant= ASTQueries.findTypeRelevantDeclarator(declarator);
-		IASTFunctionDeclarator funcDeclarator= null;
-		if (typeRelevant instanceof IASTFunctionDeclarator) {
-			funcDeclarator= (IASTFunctionDeclarator) typeRelevant;
-		}
 		
 		IScope scope= getContainingScope(parent);
 		ASTNodeProperty prop = parent.getPropertyInParent();
@@ -736,7 +728,8 @@ public class CVisitor extends ASTQueries {
             binding = (scope != null) ? scope.getBinding(name, false) : null;
         } catch (DOMException e1) {
         }  
-		
+        
+        boolean isFunction= false;
         if (parent instanceof IASTParameterDeclaration || parent.getPropertyInParent() == ICASTKnRFunctionDeclarator.FUNCTION_PARAMETER) {
         	IASTDeclarator fdtor = (IASTDeclarator) parent.getParent();
         	if (ASTQueries.findTypeRelevantDeclarator(fdtor) instanceof IASTFunctionDeclarator) {
@@ -750,49 +743,58 @@ public class CVisitor extends ASTQueries {
         		}
         		return binding;
         	}
-		} else if (funcDeclarator != null) {
-			if (binding != null && !(binding instanceof IIndexBinding) && name.isActive()) {
-			    if (binding instanceof IFunction) {
-			        IFunction function = (IFunction) binding;
-			        if (function instanceof CFunction) {
-			        	((CFunction)function).addDeclarator(funcDeclarator);
-			        }
-			        return function;
-			    }
-		        binding = new ProblemBinding(name, IProblemBinding.SEMANTIC_INVALID_OVERLOAD, name.toCharArray());
-			} else if (parent instanceof IASTSimpleDeclaration && ((IASTSimpleDeclaration) parent).getDeclSpecifier().getStorageClass() == IASTDeclSpecifier.sc_typedef)
-				binding = new CTypedef(name);
-			else
-				binding = new CFunction(funcDeclarator);
+		} else if (parent instanceof IASTFunctionDefinition) {
+			isFunction= true;
 		} else if (parent instanceof IASTSimpleDeclaration) {
 			IASTSimpleDeclaration simpleDecl = (IASTSimpleDeclaration) parent;			
 			if (simpleDecl.getDeclSpecifier().getStorageClass() == IASTDeclSpecifier.sc_typedef) {
 				binding = new CTypedef(name);
 			} else {
-			    IType t1 = null, t2 = null;
-			    if (binding != null && !(binding instanceof IIndexBinding) && name.isActive()) {
-			        if (binding instanceof IParameter) {
-			            return new ProblemBinding(name, IProblemBinding.SEMANTIC_INVALID_REDECLARATION, name.toCharArray());
-			        } else if (binding instanceof IVariable) {
-				        t1 = createType(declarator);
-				        try {
-	                        t2 = ((IVariable)binding).getType();
-	                    } catch (DOMException e1) {
-	                    }
-	                    if (t1 != null && t2 != null && (
-	                    		t1.isSameType(t2) || isCompatibleArray(t1, t2) != null)) {
-	    			        if (binding instanceof CVariable)
-	    			            ((CVariable)binding).addDeclaration(name);
-	    			    } else {
-	    			        return new ProblemBinding(name, IProblemBinding.SEMANTIC_INVALID_REDECLARATION, name.toCharArray());
-	    			    }
-			    	}
-			    } else if (simpleDecl.getParent() instanceof ICASTCompositeTypeSpecifier) {
-					binding = new CField(name);
-				} else {
-					binding = new CVariable(name);
+				isFunction= typeRelevant instanceof IASTFunctionDeclarator;
+				if (!isFunction) { 
+					IType t1 = createType(declarator), t2 = null;
+					if (CVisitor.unwrapTypedefs(t1) instanceof IFunctionType) {
+						isFunction= true;
+					} else {
+						if (binding != null && !(binding instanceof IIndexBinding) && name.isActive()) {
+							if (binding instanceof IParameter) {
+								return new ProblemBinding(name, IProblemBinding.SEMANTIC_INVALID_REDECLARATION, name.toCharArray());
+							} else if (binding instanceof IVariable) {
+								try {
+									t2 = ((IVariable)binding).getType();
+								} catch (DOMException e1) {
+								}
+								if (t1 != null && t2 != null && (
+										t1.isSameType(t2) || isCompatibleArray(t1, t2) != null)) {
+									if (binding instanceof CVariable)
+										((CVariable)binding).addDeclaration(name);
+								} else {
+									return new ProblemBinding(name, IProblemBinding.SEMANTIC_INVALID_REDECLARATION, name.toCharArray());
+								}
+							}
+						} else if (simpleDecl.getParent() instanceof ICASTCompositeTypeSpecifier) {
+							binding = new CField(name);
+						} else {
+							binding = new CVariable(name);
+						}
+					}
 				}
 			}
+		}
+		if (isFunction) {
+			if (binding != null && !(binding instanceof IIndexBinding) && name.isActive()) {
+				if (binding instanceof IFunction) {
+					IFunction function = (IFunction) binding;
+					if (function instanceof CFunction) {
+						((CFunction)function).addDeclarator(typeRelevant);
+					}
+					return function;
+				}
+				binding = new ProblemBinding(name, IProblemBinding.SEMANTIC_INVALID_OVERLOAD, name.toCharArray());
+			} else {
+				binding = new CFunction(typeRelevant);
+			}
+
 		}
 		return binding;
 	}

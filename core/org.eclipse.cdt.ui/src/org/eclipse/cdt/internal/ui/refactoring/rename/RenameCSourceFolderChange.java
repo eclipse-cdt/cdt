@@ -97,7 +97,7 @@ public class RenameCSourceFolderChange extends Change {
 			entries = renameEntry(entries);
 			cfg.setSourceEntries(entries);
 		}
-		CCorePlugin.getDefault().setProjectDescription(project, des, false, new NullProgressMonitor());//TODO Add PM
+		CCorePlugin.getDefault().setProjectDescription(project, des, false, new NullProgressMonitor());
 	}
 	
 	private ICSourceEntry[] renameEntry(ICSourceEntry[] entries){

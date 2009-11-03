@@ -747,3 +747,67 @@ inline void nspace::TestClass::testMethod()
 
 #endif /* TESTCLASS_H_ */
 
+//!Bug 290110 Source-> Implement Method
+//#org.eclipse.cdt.ui.tests.refactoring.implementmethod.ImplementMethodRefactoringTest
+//@.config
+filename=A.h
+//@A.h
+#ifndef A_H_
+#define A_H_
+
+namespace n1 {
+namespace n2 {
+
+class A {
+public:
+	A();
+	~A();
+	void testmethod(int x);
+protected:
+	class B {
+	public:
+		void /*$*/testmethod2()/*$$*/;
+	};
+};
+
+}
+}
+
+
+#endif /* A_H_ */
+//@A.cpp
+#include "A.h"
+
+namespace n1 {
+namespace n2 {
+
+A::A() {
+}
+
+A::~A() {
+}
+
+}
+}
+
+//=
+#include "A.h"
+
+namespace n1 {
+namespace n2 {
+
+A::A() {
+}
+
+A::~A() {
+}
+
+}
+}
+
+void n1::n2::A::B::testmethod2()
+{
+}
+
+
+

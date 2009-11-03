@@ -244,7 +244,7 @@ public class ImplementMethodRefactoring extends CRefactoring {
 	private ICPPASTQualifiedName createQualifiedNameFor(IASTFunctionDeclarator functionDeclarator, IASTNode declarationParent) 
 		throws CoreException {
 		int insertOffset = insertLocation.getInsertPosition();
-		return NameHelper.createQualifiedNameFor(functionDeclarator.getName(), file, region.getOffset(), insertLocation.getInsertFile(), insertOffset);
+		return NameHelper.createQualifiedNameFor(functionDeclarator.getName(), file, functionDeclarator.getFileLocation().getNodeOffset(), insertLocation.getInsertFile(), insertOffset);
 	}
 	
 	public ImplementMethodData getRefactoringData() {

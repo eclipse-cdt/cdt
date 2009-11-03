@@ -36,6 +36,7 @@ import org.eclipse.cdt.dsf.debug.service.IRunControl.IExitedDMEvent;
 import org.eclipse.cdt.dsf.debug.service.IRunControl.IResumedDMEvent;
 import org.eclipse.cdt.dsf.debug.service.IRunControl.IStartedDMEvent;
 import org.eclipse.cdt.dsf.debug.service.IRunControl.ISuspendedDMEvent;
+import org.eclipse.cdt.dsf.debug.service.command.BufferedCommandControl;
 import org.eclipse.cdt.dsf.debug.service.command.CommandCache;
 import org.eclipse.cdt.dsf.debug.service.command.IEventListener;
 import org.eclipse.cdt.dsf.debug.service.command.ICommandControlService.ICommandControlDMContext;
@@ -428,12 +429,23 @@ public class GDBProcesses_7_0 extends AbstractDsfService
         
 		fCommandControl = getServicesTracker().getService(IGDBControl.class);
     	fBackend = getServicesTracker().getService(IGDBBackend.class);
+    	BufferedCommandControl bufferedCommandControl = new BufferedCommandControl(fCommandControl, getExecutor(), 2);
 
-        fContainerCommandCache = new CommandCache(getSession(), fCommandControl);
+		// These caches store the result of a command when received; also, these caches
+		// are manipulated when receiving events.  Currently, events are received after
+		// three scheduling of the executor, while command results after only one.  This
+		// can cause problems because command results might be processed before an event
+		// that actually arrived before the command result.
+		// To solve this, we use a bufferedCommandControl that will delay the command
+		// result by two scheduling of the executor.
+		// See bug 280461
+        fContainerCommandCache = new CommandCache(getSession(), bufferedCommandControl);
         fContainerCommandCache.setContextAvailable(fCommandControl.getContext(), true);
-        fThreadCommandCache = new CommandCache(getSession(), fCommandControl);
+        fThreadCommandCache = new CommandCache(getSession(), bufferedCommandControl);
         fThreadCommandCache.setContextAvailable(fCommandControl.getContext(), true);
         
+        // No need to use the bufferedCommandControl for the listThreadGroups cache
+        // because it is not being affected by events.
         fListThreadGroupsAvailableCache = new CommandCache(getSession(), fCommandControl);
         fListThreadGroupsAvailableCache.setContextAvailable(fCommandControl.getContext(), true);
 
@@ -757,7 +769,6 @@ public class GDBProcesses_7_0 extends AbstractDsfService
 		final ICommandControlDMContext controlDmc = DMContexts.getAncestorOfType(dmc, ICommandControlDMContext.class);
 
 		if (controlDmc != null) {
-			// Don't cache this command since the list can change at any time.
 			fListThreadGroupsAvailableCache.execute(
 				new MIListThreadGroups(controlDmc, true),
 				new DataRequestMonitor<MIListThreadGroupsInfo>(getExecutor(), rm) {

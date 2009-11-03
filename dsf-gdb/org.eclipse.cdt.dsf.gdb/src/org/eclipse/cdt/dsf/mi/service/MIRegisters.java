@@ -25,6 +25,7 @@ import org.eclipse.cdt.dsf.debug.service.IRunControl;
 import org.eclipse.cdt.dsf.debug.service.IExpressions.IExpressionDMContext;
 import org.eclipse.cdt.dsf.debug.service.IRunControl.IContainerDMContext;
 import org.eclipse.cdt.dsf.debug.service.IRunControl.StateChangeReason;
+import org.eclipse.cdt.dsf.debug.service.command.BufferedCommandControl;
 import org.eclipse.cdt.dsf.debug.service.command.CommandCache;
 import org.eclipse.cdt.dsf.debug.service.command.ICommandControlService;
 import org.eclipse.cdt.dsf.gdb.internal.GdbPlugin;
@@ -172,8 +173,20 @@ public class MIRegisters extends AbstractDsfService implements IRegisters, ICach
          * Create the lower level register cache.
          */
     	ICommandControlService commandControl = getServicesTracker().getService(ICommandControlService.class);
-        fRegisterValueCache = new CommandCache(getSession(), commandControl);
+		BufferedCommandControl bufferedCommandControl = new BufferedCommandControl(commandControl, getExecutor(), 2);
+		
+		// This cache stores the result of a command when received; also, this cache
+		// is manipulated when receiving events.  Currently, events are received after
+		// three scheduling of the executor, while command results after only one.  This
+		// can cause problems because command results might be processed before an event
+		// that actually arrived before the command result.
+		// To solve this, we use a bufferedCommandControl that will delay the command
+		// result by two scheduling of the executor.
+		// See bug 280461
+        fRegisterValueCache = new CommandCache(getSession(), bufferedCommandControl);
         fRegisterValueCache.setContextAvailable(commandControl.getContext(), true);
+
+        // This cache is not affected by events so does not need the bufferedCommandControl
         fRegisterNameCache  = new CommandCache(getSession(), commandControl);
         fRegisterNameCache.setContextAvailable(commandControl.getContext(), true);
                

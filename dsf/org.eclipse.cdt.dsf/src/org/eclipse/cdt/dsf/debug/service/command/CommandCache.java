@@ -22,7 +22,9 @@ import java.util.Map;
 import java.util.Set;
 
 import org.eclipse.cdt.dsf.concurrent.DataRequestMonitor;
+import org.eclipse.cdt.dsf.concurrent.DsfRunnable;
 import org.eclipse.cdt.dsf.concurrent.IDsfStatusConstants;
+import org.eclipse.cdt.dsf.concurrent.ImmediateExecutor;
 import org.eclipse.cdt.dsf.datamodel.DMContexts;
 import org.eclipse.cdt.dsf.datamodel.IDMContext;
 import org.eclipse.cdt.dsf.internal.DsfPlugin;
@@ -118,6 +120,13 @@ public class CommandCache implements ICommandListener
 
     private DsfSession fSession;
     
+    /**
+     * The command control to be used to send commands to the backend.
+     * In certain cases, a {@link BufferedCommandControl} should be used
+     * to artificially delay the processing of command results; these
+     * artificial delays are important to keep events and command results
+     * ordered as received by the backend.
+     */
     private ICommandControl fCommandControl;    
     
     /*
@@ -384,7 +393,24 @@ public class CommandCache implements ICommandListener
         
         finalCachedCmd.fToken = fCommandControl.queueCommand(
             finalCachedCmd.getCommand(), 
-            new DataRequestMonitor<ICommandResult>(fSession.getExecutor(), null) { 
+            new DataRequestMonitor<ICommandResult>(ImmediateExecutor.getInstance(), null) {
+            	@Override
+            	public synchronized void done() {
+            		// protect against the cache being called in non-session thread, but at 
+            		// the same time avoid adding extra dispatch cycles to command processing. 
+            		if (fSession.getExecutor().isInExecutorThread()) {;
+            			super.done();
+            		} else {
+            			fSession.getExecutor().execute(new DsfRunnable() {
+            				public void run() {
+            					superDone();
+            				}
+            			});
+            		}
+            	}
+            	private void superDone() {
+            		super.done();
+            	}
                 @Override
                 public void handleCompleted() {
                     
@@ -462,20 +488,21 @@ public class CommandCache implements ICommandListener
                             }
                         }
                     } else {
-                        /*
-                         *  This is an original request which completed. Indicate success or
-                         *  failure to the original requesters.
-                         */
-                        CommandResultInfo resultInfo = new CommandResultInfo(result, status);
+                    	// Save the command result in cache, but only if the command's context 
+                    	// is still available.  Otherwise an error may get cached incorrectly.
+                    	if (isTargetAvailable(context)) {
+                    		CommandResultInfo resultInfo = new CommandResultInfo(result, status);
 
-                        if (fCachedContexts.get(context) != null){
-                        	fCachedContexts.get(context).put(finalCachedCmd, resultInfo);
-                        } else {
-                        	HashMap<CommandInfo, CommandResultInfo> map = new HashMap<CommandInfo, CommandResultInfo>();
-                        	map.put(finalCachedCmd, resultInfo);
-                        	fCachedContexts.put(context, map);
-                        }
-                        
+                    		if (fCachedContexts.get(context) != null){
+                    			fCachedContexts.get(context).put(finalCachedCmd, resultInfo);
+                    		} else {
+                    			HashMap<CommandInfo, CommandResultInfo> map = new HashMap<CommandInfo, CommandResultInfo>();
+                    			map.put(finalCachedCmd, resultInfo);
+                    			fCachedContexts.put(context, map);
+                    		}
+                    	}
+                    	// This is an original request which completed. Indicate success or
+                    	// failure to the original requesters.
                         if (!isSuccess()) {
                             /*
                              *  We had some form of error with the original command. So notify the 

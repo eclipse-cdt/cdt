@@ -37,6 +37,7 @@ import org.eclipse.cdt.dsf.debug.service.IRunControl.IContainerSuspendedDMEvent;
 import org.eclipse.cdt.dsf.debug.service.IRunControl.IResumedDMEvent;
 import org.eclipse.cdt.dsf.debug.service.IRunControl.ISuspendedDMEvent;
 import org.eclipse.cdt.dsf.debug.service.IRunControl.StateChangeReason;
+import org.eclipse.cdt.dsf.debug.service.command.BufferedCommandControl;
 import org.eclipse.cdt.dsf.debug.service.command.CommandCache;
 import org.eclipse.cdt.dsf.debug.service.command.ICommandControlService;
 import org.eclipse.cdt.dsf.gdb.internal.GdbPlugin;
@@ -127,7 +128,17 @@ public class MIMemory extends AbstractDsfService implements IMemory, ICachingSer
     private void doInitialize(final RequestMonitor requestMonitor) {
     	// Create the command cache
         ICommandControlService commandControl = getServicesTracker().getService(ICommandControlService.class);
-    	fCommandCache = new CommandCache(getSession(), commandControl);
+        BufferedCommandControl bufferedCommandControl = new BufferedCommandControl(commandControl, getExecutor(), 2);
+		
+		// This cache stores the result of a command when received; also, this cache
+		// is manipulated when receiving events.  Currently, events are received after
+		// three scheduling of the executor, while command results after only one.  This
+		// can cause problems because command results might be processed before an event
+		// that actually arrived before the command result.
+		// To solve this, we use a bufferedCommandControl that will delay the command
+		// result by two scheduling of the executor.
+		// See bug 280461
+    	fCommandCache = new CommandCache(getSession(), bufferedCommandControl);
     	fCommandCache.setContextAvailable(commandControl.getContext(), true);
 
     	// Register this service

@@ -21,6 +21,7 @@ import org.eclipse.cdt.dsf.datamodel.IDMContext;
 import org.eclipse.cdt.dsf.datamodel.IDMEvent;
 import org.eclipse.cdt.dsf.debug.service.ICachingService;
 import org.eclipse.cdt.dsf.debug.service.IStack.IFrameDMContext;
+import org.eclipse.cdt.dsf.debug.service.command.BufferedCommandControl;
 import org.eclipse.cdt.dsf.debug.service.command.CommandCache;
 import org.eclipse.cdt.dsf.debug.service.command.ICommandControlService;
 import org.eclipse.cdt.dsf.debug.service.command.ICommandControlService.ICommandControlShutdownDMEvent;
@@ -288,7 +289,17 @@ public class MIRunControl extends AbstractDsfService implements IMIRunControl, I
 
     private void doInitialize(final RequestMonitor rm) {
         fConnection = getServicesTracker().getService(ICommandControlService.class);
-        fMICommandCache = new CommandCache(getSession(), fConnection);
+        BufferedCommandControl bufferedCommandControl = new BufferedCommandControl(fConnection, getExecutor(), 2);
+        
+		// This cache stores the result of a command when received; also, this cache
+		// is manipulated when receiving events.  Currently, events are received after
+		// three scheduling of the executor, while command results after only one.  This
+		// can cause problems because command results might be processed before an event
+		// that actually arrived before the command result.
+		// To solve this, we use a bufferedCommandControl that will delay the command
+		// result by two scheduling of the executor.
+		// See bug 280461
+        fMICommandCache = new CommandCache(getSession(), bufferedCommandControl);
         fMICommandCache.setContextAvailable(fConnection.getContext(), true);
         getSession().addServiceEventListener(this, null);
         rm.done();

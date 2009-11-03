@@ -7029,19 +7029,16 @@ public class AST2Tests extends AST2BaseTest {
 		assertEquals("const int *", ASTTypeUtil.getType(f.getParameters()[0].getType()));
 	}
 	
-	// typedef int f();
+	// typedef int f(int);
 	// f ff;
-	// int ff() { return 0;}
 	public void testFunctionDeclViaTypedef_86495() throws Exception {
         final String code = getAboveComment();
-//	    for(ParserLanguage lang : ParserLanguage.values()) {
-//			IASTTranslationUnit tu = parseAndCheckBindings(code, lang);
-        	IASTTranslationUnit tu = parseAndCheckBindings(code, ParserLanguage.C);
+	    for(ParserLanguage lang : ParserLanguage.values()) {
+			IASTTranslationUnit tu = parseAndCheckBindings(code, lang);
 			IASTSimpleDeclaration decl= getDeclaration(tu, 1);
-			IASTFunctionDefinition def= getDeclaration(tu, 2);
-			IBinding ffDecl= decl.getDeclarators()[0].getName().resolveBinding();
-			IBinding ffDef= def.getDeclarator().getName().resolveBinding();
-			assertSame(ffDecl, ffDef);
-//	    }
+			IFunction ff= (IFunction) decl.getDeclarators()[0].getName().resolveBinding();
+			assertNotNull(ff.getType());
+			assertEquals(1, ff.getParameters().length);
+	    }
 	}
 }

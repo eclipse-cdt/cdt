@@ -30,7 +30,6 @@ import org.eclipse.cdt.core.parser.util.ArrayUtil;
 import org.eclipse.cdt.internal.core.dom.Linkage;
 import org.eclipse.cdt.internal.core.dom.parser.ASTTranslationUnit;
 import org.eclipse.cdt.internal.core.dom.parser.IASTAmbiguityParent;
-import org.eclipse.cdt.internal.core.dom.parser.GCCBuiltinSymbolProvider.CPPBuiltinParameter;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPVisitor;
 import org.eclipse.cdt.internal.core.index.IIndexScope;
 import org.eclipse.cdt.internal.core.parser.scanner.IncludeFileContent;

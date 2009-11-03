@@ -101,7 +101,11 @@ class PDOMCFunction extends PDOMBinding implements IFunction {
 			}
 				
 			IFunctionType oldType= getType();
-			setType(linkage, newType);
+			if (oldType != null && oldType.isSameType(newType)) {
+				oldType= null;
+			} else {
+				setType(linkage, newType);
+			}
 			PDOMCParameter oldParams= getFirstParameter();
 			setParameters(newParams);
 			if (oldType != null) {

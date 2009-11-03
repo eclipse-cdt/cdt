@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2008 IBM Corporation and others.
+ * Copyright (c) 2004, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -32,70 +32,64 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPMethod;
 import org.eclipse.cdt.core.parser.util.CharArrayUtils;
 import org.eclipse.cdt.internal.core.dom.parser.ASTInternal;
+import org.eclipse.cdt.internal.core.dom.parser.ASTQueries;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPVisitor;
 
 /**
  * The binding for a method.
  */
 public class CPPMethod extends CPPFunction implements ICPPMethod {
-    public static class CPPMethodProblem extends CPPFunctionProblem implements ICPPMethod {
-        /**
-         * @param id
-         * @param arg
-         */
-        public CPPMethodProblem( IASTNode node, int id, char[] arg ) {
-            super( node, id, arg );
-        }
+	public static class CPPMethodProblem extends CPPFunctionProblem implements ICPPMethod {
+		public CPPMethodProblem(IASTNode node, int id, char[] arg) {
+			super(node, id, arg);
+		}
 
-        public int getVisibility() throws DOMException {
-            throw new DOMException( this );
-        }
-        public ICPPClassType getClassOwner() throws DOMException {
-            throw new DOMException( this );
-        }
-        @Override
-        public boolean isStatic() throws DOMException {
-            throw new DOMException( this );        
-        }
-        public boolean isVirtual() throws DOMException {
-            throw new DOMException( this );
-        }
-        public boolean isPureVirtual() throws DOMException {
-        	throw new DOMException( this );
-        }
-
-		/* (non-Javadoc)
-    	 * @see org.eclipse.cdt.core.dom.ast.cpp.ICPPMethod#isDestructor()
-	     */
+		public int getVisibility() throws DOMException {
+			throw new DOMException(this);
+		}
+		public ICPPClassType getClassOwner() throws DOMException {
+			throw new DOMException(this);
+		}
+		public boolean isVirtual() throws DOMException {
+			throw new DOMException(this);
+		}
+		public boolean isPureVirtual() throws DOMException {
+			throw new DOMException(this);
+		}
 		public boolean isDestructor() {
 			char[] name = getNameCharArray();
 			if (name.length > 1 && name[0] == '~')
 				return true;
-			
+
 			return false;
 		}
-
 		public boolean isImplicit() {
 			return false;
 		}
-    }
+	}
     
-	public CPPMethod( ICPPASTFunctionDeclarator declarator ){
-		super( declarator );
+	public CPPMethod(IASTDeclarator declarator) {
+		super(declarator);
 	}
 	
 	public IASTDeclaration getPrimaryDeclaration() throws DOMException{
 		//first check if we already know it
-		if( declarations != null ){
+		if (declarations != null) {
 			for (IASTDeclarator dtor : declarations) {
-			    if (dtor == null) {
-			    	break;
-			    }
-				dtor= CPPVisitor.findOutermostDeclarator(dtor);
+				if (dtor == null) {
+					break;
+				}
+				dtor = ASTQueries.findOutermostDeclarator(dtor);
 				IASTDeclaration decl = (IASTDeclaration) dtor.getParent();
-				if( decl.getParent() instanceof ICPPASTCompositeTypeSpecifier )
+				if (decl.getParent() instanceof ICPPASTCompositeTypeSpecifier)
 					return decl;
 			}
+		}
+		if (definition != null) {
+			IASTDeclarator dtor = ASTQueries.findOutermostDeclarator(definition);
+			IASTDeclaration decl = (IASTDeclaration) dtor.getParent();
+			if (decl.getParent() instanceof ICPPASTCompositeTypeSpecifier)
+				return decl;
 		}
 		
 		final char[] myName = getASTName().getLookupKey();
@@ -107,14 +101,14 @@ public class CPPMethod extends CPPFunction implements ICPPMethod {
 				if (member instanceof IASTSimpleDeclaration) {
 					IASTDeclarator[] dtors = ((IASTSimpleDeclaration) member).getDeclarators();
 					for (IASTDeclarator dtor : dtors) {
-						IASTName name = CPPVisitor.findInnermostDeclarator(dtor).getName();
+						IASTName name = ASTQueries.findInnermostDeclarator(dtor).getName();
 						if (CharArrayUtils.equals(name.getLookupKey(), myName) && name.resolveBinding() == this) {
 							return member;
 						}
 					}
 				} else if (member instanceof IASTFunctionDefinition) {
 					final IASTFunctionDeclarator declarator = ((IASTFunctionDefinition) member).getDeclarator();
-					IASTName name = CPPVisitor.findInnermostDeclarator(declarator).getName();
+					IASTName name = ASTQueries.findInnermostDeclarator(declarator).getName();
 					if (CharArrayUtils.equals(name.getLookupKey(), myName) && name.resolveBinding() == this) {
 						return member;
 					}
@@ -163,7 +157,7 @@ public class CPPMethod extends CPPFunction implements ICPPMethod {
 	@Override
 	protected IASTName getASTName() {
 		IASTDeclarator dtor= (declarations != null && declarations.length > 0) ? declarations[0] : definition;
-		dtor= CPPVisitor.findInnermostDeclarator(dtor);
+		dtor= ASTQueries.findInnermostDeclarator(dtor);
 	    IASTName name= dtor.getName();
 	    if (name instanceof ICPPASTQualifiedName) {
 	        IASTName[] ns = ((ICPPASTQualifiedName)name).getNames();
@@ -247,10 +241,10 @@ public class CPPMethod extends CPPFunction implements ICPPMethod {
 				if (dtor == null) 
 					break;
 
-				dtor = CPPVisitor.findOutermostDeclarator(dtor);
+				dtor = ASTQueries.findOutermostDeclarator(dtor);
 				IASTDeclaration decl = (IASTDeclaration) dtor.getParent();
 				if (decl.getParent() instanceof ICPPASTCompositeTypeSpecifier) {
-					dtor= CPPVisitor.findTypeRelevantDeclarator(dtor);
+					dtor= ASTQueries.findTypeRelevantDeclarator(dtor);
 					if (dtor instanceof ICPPASTFunctionDeclarator) {
 						return ((ICPPASTFunctionDeclarator) dtor).isPureVirtual();
 					}

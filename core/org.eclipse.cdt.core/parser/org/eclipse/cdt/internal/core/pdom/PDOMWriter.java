@@ -212,6 +212,8 @@ abstract public class PDOMWriter {
 					th= e; 
 				} catch (StackOverflowError e) {
 					th= e;
+				} catch (AssertionError e) {
+					th= e;
 				} finally {
 					index.releaseWriteLock(readlockCount, flushIndex);
 				}

@@ -13,6 +13,7 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.dom.parser.cpp.semantics;
 
+import static org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.SemanticUtil.TDEF;
 import static org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.SemanticUtil.getUltimateType;
 import static org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.SemanticUtil.getUltimateTypeUptoPointers;
 
@@ -509,11 +510,7 @@ public class CPPVisitor extends ASTQueries {
 		IASTNode parent = findOutermostDeclarator(declarator).getParent();
 		declarator= findInnermostDeclarator(declarator);
 
-		IASTFunctionDeclarator funcDeclarator= null;
 		final IASTDeclarator typeRelevantDtor= findTypeRelevantDeclarator(declarator);
-		if (typeRelevantDtor instanceof IASTFunctionDeclarator) {
-			funcDeclarator= (IASTFunctionDeclarator) typeRelevantDtor;
-		}
 			
 		IASTName name= declarator.getName();
 		if (name instanceof ICPPASTQualifiedName) {
@@ -606,29 +603,65 @@ public class CPPVisitor extends ASTQueries {
             return e.getProblem();
         }
         
-        IASTSimpleDeclaration simpleDecl = (parent instanceof IASTSimpleDeclaration) ?
-        		(IASTSimpleDeclaration) parent : null;
-        if (simpleDecl != null &&
-				simpleDecl.getDeclSpecifier().getStorageClass() == IASTDeclSpecifier.sc_typedef) {
-		    if (binding instanceof ICPPInternalBinding && binding instanceof ITypedef && name.isActive()) {
-		        IType t1 = ((ITypedef) binding).getType();
-				IType t2 = createType(declarator);
-				if (t1 != null && t2 != null && t1.isSameType(t2)) {
-				    ASTInternal.addDeclaration(binding, name);
-				    return binding;
-				}
-                return new ProblemBinding(name, IProblemBinding.SEMANTIC_INVALID_REDECLARATION);
-		    }
-		    // if we don't resolve the target type first, we get a problem binding in case the typedef
-		    // redeclares the target type, otherwise it is safer to defer the resolution of the target type.
-		    IType targetType= createType(declarator);
-		    CPPTypedef td= new CPPTypedef(name);
-		    td.setType(targetType);
-		    binding = td;
-		} else if (funcDeclarator != null) {
+        boolean isFunction= false;
+        if (parent instanceof ICPPASTFunctionDefinition) {
+        	isFunction= true;
+        } else if (parent instanceof IASTSimpleDeclaration) {
+        	IASTSimpleDeclaration simpleDecl = (IASTSimpleDeclaration) parent;
+        	if (simpleDecl.getDeclSpecifier().getStorageClass() == IASTDeclSpecifier.sc_typedef) {
+        		// typedef declaration
+        		if (binding instanceof ICPPInternalBinding && binding instanceof ITypedef && name.isActive()) {
+        			IType t1 = ((ITypedef) binding).getType();
+        			IType t2 = createType(declarator);
+        			if (t1 != null && t2 != null && t1.isSameType(t2)) {
+        				ASTInternal.addDeclaration(binding, name);
+        				return binding;
+        			}
+        			return new ProblemBinding(name, IProblemBinding.SEMANTIC_INVALID_REDECLARATION);
+        		}
+        		// if we don't resolve the target type first, we get a problem binding in case the typedef
+        		// redeclares the target type, otherwise it is safer to defer the resolution of the target type.
+        		IType targetType= createType(declarator);
+        		CPPTypedef td= new CPPTypedef(name);
+        		td.setType(targetType);
+        		binding = td;
+        	} else if (typeRelevantDtor instanceof IASTFunctionDeclarator) {
+        		// function declaration
+    			isFunction= true;
+    		} else {
+        		// looks like a variable declaration
+        	    IType t1 = createType(declarator);
+        	    if (SemanticUtil.getNestedType(t1, TDEF) instanceof IFunctionType) {
+        	    	// function declaration with typedef
+        	    	isFunction= true;
+        	    } else {
+        	    	// variable declaration
+        	    	IType t2= null;
+        	    	if (binding != null && binding instanceof IVariable && !(binding instanceof IIndexBinding)) {
+        	    		try {
+        	    			t2 = ((IVariable) binding).getType();
+        	    		} catch (DOMException e1) {
+        	    		}
+        	    	}
+        	    	if (t1 != null && t2 != null) {
+        	    		if (t1.isSameType(t2) || isCompatibleArray(t1, t2) != null) {
+        	    			ASTInternal.addDeclaration(binding, name);
+        	    		} else {
+        	    			binding = new ProblemBinding(name, IProblemBinding.SEMANTIC_INVALID_REDECLARATION);
+        	    		}
+        	    	} else if (simpleDecl.getParent() instanceof ICPPASTCompositeTypeSpecifier) {
+        	    		binding = new CPPField(name); 
+        	    	} else {
+        	    		binding = new CPPVariable(name);
+        	    	}
+        	    }
+        	}
+		} 
+        
+        if (isFunction) {
 			if (binding instanceof ICPPInternalBinding && binding instanceof IFunction && name.isActive()) {
 			    IFunction function = (IFunction) binding;
-			    if (CPPSemantics.isSameFunction(function, funcDeclarator)) {
+			    if (CPPSemantics.isSameFunction(function, typeRelevantDtor)) {
 			    	binding= CPPSemantics.checkDeclSpecifier(binding, name, parent);
 			    	if (binding instanceof IProblemBinding)
 			    		return binding;
@@ -652,40 +685,20 @@ public class CPPVisitor extends ASTQueries {
 			} 
 						
 			if (scope instanceof ICPPClassScope) {
-				if (isConstructor(scope, funcDeclarator)) {
+				if (isConstructor(scope, typeRelevantDtor)) {
 					binding = template ? (ICPPConstructor)  new CPPConstructorTemplate(name)
-									   : new CPPConstructor((ICPPASTFunctionDeclarator) funcDeclarator);
+									   : new CPPConstructor((ICPPASTFunctionDeclarator) typeRelevantDtor);
 				} else {
 					binding = template ? (ICPPMethod) new CPPMethodTemplate(name)
-							           : new CPPMethod((ICPPASTFunctionDeclarator) funcDeclarator);
+							           : new CPPMethod(typeRelevantDtor);
 				}
 			} else {
 				binding = template ? (ICPPFunction) new CPPFunctionTemplate(name)
-								   : new CPPFunction((ICPPASTFunctionDeclarator) funcDeclarator);
+								   : new CPPFunction(typeRelevantDtor);
 			}
 			binding= CPPSemantics.checkDeclSpecifier(binding, name, parent);
-		} else if (simpleDecl != null) {
-    	    IType t1 = null, t2 = null;
-		    if (binding != null && binding instanceof IVariable && !(binding instanceof IIndexBinding)) {
-		        t1 = createType(declarator);
-		        try {
-                    t2 = ((IVariable) binding).getType();
-                } catch (DOMException e1) {
-                }
-		    }
-		    if (t1 != null && t2 != null) {
-				if (t1.isSameType(t2) || isCompatibleArray(t1, t2) != null) {
-		    		ASTInternal.addDeclaration(binding, name);
-		    	} else {
-		    		binding = new ProblemBinding(name, IProblemBinding.SEMANTIC_INVALID_REDECLARATION);
-		    	}
-		    } else if (simpleDecl.getParent() instanceof ICPPASTCompositeTypeSpecifier) {
-				binding = new CPPField(name); 
-		    } else {
-		        binding = new CPPVariable(name);
-		    }
-		} 
-
+        }
+        
 		return binding;
 	}
 
@@ -712,8 +725,8 @@ public class CPPVisitor extends ASTQueries {
 	}
 
 	public static boolean isConstructor(IASTName parentName, IASTDeclarator declarator) {
-	    if (declarator == null      || !(declarator instanceof IASTFunctionDeclarator))
-	        return false;
+		if (declarator == null || !(declarator instanceof IASTFunctionDeclarator))
+			return false;
         
 	    IASTName name = findInnermostDeclarator(declarator).getName();
 	    if (!CharArrayUtils.equals(name.getLookupKey(), parentName.getLookupKey()))

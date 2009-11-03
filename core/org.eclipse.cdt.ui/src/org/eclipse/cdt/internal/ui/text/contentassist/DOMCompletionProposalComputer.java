@@ -67,11 +67,11 @@ import org.eclipse.cdt.core.parser.util.CharArrayUtils;
 import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.cdt.ui.text.ICPartitions;
 
-import org.eclipse.cdt.internal.core.dom.parser.GCCBuiltinSymbolProvider.CBuiltinParameter;
-import org.eclipse.cdt.internal.core.dom.parser.GCCBuiltinSymbolProvider.CPPBuiltinParameter;
+import org.eclipse.cdt.internal.core.dom.parser.c.CBuiltinParameter;
 import org.eclipse.cdt.internal.core.dom.parser.c.CBuiltinVariable;
 import org.eclipse.cdt.internal.core.dom.parser.c.CImplicitFunction;
 import org.eclipse.cdt.internal.core.dom.parser.c.CImplicitTypedef;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPBuiltinParameter;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPBuiltinVariable;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPImplicitFunction;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPImplicitMethod;

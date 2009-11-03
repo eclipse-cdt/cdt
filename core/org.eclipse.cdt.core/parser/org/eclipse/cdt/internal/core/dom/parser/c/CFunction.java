@@ -157,7 +157,7 @@ public class CFunction extends PlatformObject implements IFunction, ICInternalFu
 			return getParameters();
 		}
 		
-		return IParameter.EMPTY_PARAMETER_ARRAY;
+		return CBuiltinParameter.createParameterList(getType());
 	}
 
 	/* (non-Javadoc)

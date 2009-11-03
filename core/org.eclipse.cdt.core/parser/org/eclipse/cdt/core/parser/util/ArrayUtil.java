@@ -464,7 +464,43 @@ public abstract class ArrayUtil {
 
         return array;
 	}
-	
+
+	/**
+	 * Inserts the obj at the beginning of the array, shifting the whole thing one index
+	 * Assumes that array contains nulls at the end, only. 
+	 * array must not be <code>null</code>.
+	 * @since 5.2
+	 */
+	public static <T> T[] prepend(T[] array, T obj) {
+		assert array != null;
+		
+		if (obj == null)
+    		return array;
+        if (array.length == 0) {
+            array = newArray(array, DEFAULT_LENGTH);
+            array[0] = obj;
+            return array;
+        }
+
+        int i = findFirstNull(array);
+        if (i >= 0) {
+			System.arraycopy(array, 0, array, 1, i);
+			array[0] = obj;
+        } else {
+			T[] temp = newArray(array, array.length*2);
+	        System.arraycopy(array, 0, temp, 1, array.length);
+	        temp[0] = obj;
+	        array = temp;
+		}
+
+        return array;
+	}
+
+	@SuppressWarnings("unchecked")
+	private static <T> T[] newArray(T[] array, int newLen) {
+		return (T[]) Array.newInstance(array.getClass().getComponentType(), newLen);
+	}
+
 	/**
 	 * Removes first occurrence of element in array and moves objects behind up front.
 	 * @since 4.0

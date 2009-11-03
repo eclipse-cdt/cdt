@@ -122,11 +122,15 @@ class PDOMCPPFunction extends PDOMCPPBinding implements ICPPFunction, IPDOMOverl
 				
 			IFunctionType oldType= getType();
 			PDOMCPPParameter oldParams= getFirstParameter();
-			PDOMCPPFunctionType pft= setType(newType);
-			setParameters(pft, newParams);
-			if (oldType != null) {
-				linkage.deleteType(oldType, record);
-			}
+			if (oldType instanceof PDOMCPPFunctionType && oldType.isSameType(newType)) {
+				setParameters((PDOMCPPFunctionType) oldType, newParams);
+			} else {
+				PDOMCPPFunctionType pft= setType(newType);
+				setParameters(pft, newParams);
+				if (oldType != null) {
+					linkage.deleteType(oldType, record);
+				}
+			} 
 			if (oldParams != null) {
 				oldParams.delete(linkage);
 			}

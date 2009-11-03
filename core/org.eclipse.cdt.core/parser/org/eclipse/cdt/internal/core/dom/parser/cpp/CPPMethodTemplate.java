@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2008 IBM Corporation and others.
+ * Copyright (c) 2005, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -52,6 +52,15 @@ public class CPPMethodTemplate extends CPPFunctionTemplate implements ICPPMethod
 				if (decl != null && decl.getParent() instanceof ICPPASTCompositeTypeSpecifier)
 					return decl;
 			}
+		}
+		if (definition != null) {
+			IASTNode parent = definition.getParent();
+			while (!(parent instanceof IASTDeclaration) && parent != null)
+				parent = parent.getParent();
+
+			IASTDeclaration decl = (IASTDeclaration) parent;
+			if (decl != null && decl.getParent() instanceof ICPPASTCompositeTypeSpecifier)
+				return decl;
 		}
 		
 		final char[] myName = getTemplateName().getLookupKey();

@@ -86,7 +86,7 @@ public class CPPImplicitMethod extends CPPImplicitFunction implements ICPPMethod
 	public IASTDeclaration getPrimaryDeclaration() throws DOMException {
 		// first check if we already know it
 		if (declarations != null) {
-			for (ICPPASTFunctionDeclarator dtor : declarations) {
+			for (IASTDeclarator dtor : declarations) {
 				if (dtor == null)
 					break;
 

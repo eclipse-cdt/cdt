@@ -100,6 +100,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPConstructor;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPField;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunction;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunctionTemplate;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunctionType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPMember;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPMethod;
@@ -7625,5 +7626,34 @@ public class AST2CPPTests extends AST2BaseTest {
 		parseAndCheckBindings(code, ParserLanguage.CPP);
 	}
 
+	// typedef int F(int);
+	// template<typename T> F functionTemplate;
+	// class C {
+	//   F method;
+	//   friend F friendFunction;
+	//   template<typename T> F methodTemplate;
+	// };
+	public void testFunctionDeclViaTypedef_86495() throws Exception {
+        final String code = getAboveComment();
+        parseAndCheckBindings(code, ParserLanguage.CPP);
+        BindingAssertionHelper bh= new BindingAssertionHelper(code, true);
+
+        ICPPFunctionTemplate template= bh.assertNonProblem("functionTemplate", 16);
+        assertNotNull(template.getType());
+        assertEquals(1, template.getParameters().length);
+        
+        ICPPMethod method= bh.assertNonProblem("method", 6);
+        assertNotNull(method.getType());
+        assertEquals(1, method.getParameters().length);
+
+        ICPPFunction friendFunction= bh.assertNonProblem("friendFunction", 14);
+        assertNotNull(friendFunction.getType());
+        assertEquals(1, friendFunction.getParameters().length);
+
+        ICPPMethod methodTemplate= bh.assertNonProblem("methodTemplate", 14);
+        assertTrue(methodTemplate instanceof ICPPFunctionTemplate);
+        assertNotNull(methodTemplate.getType());
+        assertEquals(1, methodTemplate.getParameters().length);
+	}
 }
 

@@ -19,6 +19,7 @@ import org.eclipse.cdt.core.dom.IName;
 import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.EScopeKind;
 import org.eclipse.cdt.core.dom.ast.IASTCompoundStatement;
+import org.eclipse.cdt.core.dom.ast.IASTDeclarator;
 import org.eclipse.cdt.core.dom.ast.IASTFunctionDeclarator;
 import org.eclipse.cdt.core.dom.ast.IASTFunctionDefinition;
 import org.eclipse.cdt.core.dom.ast.IASTName;
@@ -27,7 +28,6 @@ import org.eclipse.cdt.core.dom.ast.IASTStatement;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.ILabel;
 import org.eclipse.cdt.core.dom.ast.IScope;
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTFunctionDeclarator;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunctionScope;
 import org.eclipse.cdt.core.parser.util.CharArrayObjectMap;
 import org.eclipse.cdt.core.parser.util.CharArrayUtils;
@@ -89,8 +89,8 @@ public class CPPFunctionScope extends CPPScope implements ICPPFunctionScope {
 	    }
 	    
 	    IBinding[] additional = super.find(name);
-	    for (int i = 0; i < additional.length; i++) {
-	    	bindings.add(additional[i]);
+	    for (IBinding element : additional) {
+	    	bindings.add(element);
 	    }
 	    
 	    return bindings.toArray(new IBinding[bindings.size()]);
@@ -125,8 +125,8 @@ public class CPPFunctionScope extends CPPScope implements ICPPFunctionScope {
     @Override
 	public IName getScopeName() {
         IASTNode node = getPhysicalNode();
-        if (node instanceof ICPPASTFunctionDeclarator) {
-            return ((ICPPASTFunctionDeclarator)node).getName();
+        if (node instanceof IASTDeclarator) {
+            return ((IASTDeclarator)node).getName();
         }
         return null;
     }

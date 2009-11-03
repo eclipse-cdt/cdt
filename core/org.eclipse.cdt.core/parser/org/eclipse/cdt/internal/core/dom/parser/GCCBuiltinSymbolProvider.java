@@ -13,7 +13,6 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.dom.parser;
 
-import org.eclipse.cdt.core.dom.ILinkage;
 import org.eclipse.cdt.core.dom.ast.ASTNodeProperty;
 import org.eclipse.cdt.core.dom.ast.IBasicType;
 import org.eclipse.cdt.core.dom.ast.IBinding;
@@ -21,15 +20,13 @@ import org.eclipse.cdt.core.dom.ast.IFunctionType;
 import org.eclipse.cdt.core.dom.ast.IParameter;
 import org.eclipse.cdt.core.dom.ast.IScope;
 import org.eclipse.cdt.core.dom.ast.IType;
-import org.eclipse.cdt.core.dom.ast.IValue;
 import org.eclipse.cdt.core.dom.ast.IBasicType.Kind;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunctionType;
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPParameter;
 import org.eclipse.cdt.core.dom.parser.IBuiltinBindingsProvider;
 import org.eclipse.cdt.core.parser.ParserLanguage;
 import org.eclipse.cdt.core.parser.util.ArrayUtil;
-import org.eclipse.cdt.internal.core.dom.Linkage;
 import org.eclipse.cdt.internal.core.dom.parser.c.CBasicType;
+import org.eclipse.cdt.internal.core.dom.parser.c.CBuiltinParameter;
 import org.eclipse.cdt.internal.core.dom.parser.c.CBuiltinVariable;
 import org.eclipse.cdt.internal.core.dom.parser.c.CFunctionType;
 import org.eclipse.cdt.internal.core.dom.parser.c.CImplicitFunction;
@@ -37,6 +34,7 @@ import org.eclipse.cdt.internal.core.dom.parser.c.CImplicitTypedef;
 import org.eclipse.cdt.internal.core.dom.parser.c.CPointerType;
 import org.eclipse.cdt.internal.core.dom.parser.c.CQualifierType;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPBasicType;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPBuiltinParameter;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPBuiltinVariable;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPFunctionType;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPImplicitFunction;
@@ -44,7 +42,6 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPImplicitTypedef;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPPointerType;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPQualifierType;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.GPPPointerType;
-import org.eclipse.core.runtime.PlatformObject;
 
 /**
  * This is the IBuiltinBindingsProvider used to implement the "Other" built-in GCC symbols defined:
@@ -2972,167 +2969,4 @@ public class GCCBuiltinSymbolProvider implements IBuiltinBindingsProvider {
 		initialize();
 		return (IBinding[]) ArrayUtil.trim(IBinding.class, bindings);
 	}
-	
-	public static class CBuiltinParameter extends PlatformObject implements IParameter {
-		private static final String BLANK_STRING = ""; //$NON-NLS-1$
-		private IType type= null;
-		
-		public CBuiltinParameter(IType type) {
-			this.type = type;
-		}
-		
-		public IType getType() {
-			return type;
-		}
-
-		/**
-		 * Returns false
-		 */
-		public boolean isStatic() {
-			return false;
-		}
-
-		/**
-		 * Returns false
-		 */
-		public boolean isExtern() {
-			return false;
-		}
-
-		/**
-		 * Returns false
-		 */
-		public boolean isAuto() {
-			return false;
-		}
-
-		/**
-		 * Returns false
-		 */
-		public boolean isRegister() {
-			return false;
-		}
-
-		public String getName() {
-			return BLANK_STRING;
-		}
-
-		public char[] getNameCharArray() {
-			return BLANK_STRING.toCharArray();
-		}
-
-		/**
-		 * Returns false
-		 */
-		public IScope getScope() {
-			return null;
-		}
-
-		public ILinkage getLinkage() {
-			return Linkage.C_LINKAGE;
-		}
-		
-		public IBinding getOwner() {
-			return null;
-		}
-
-		public IValue getInitialValue() {
-			return null;
-		}
-	}
-
-	static public class CPPBuiltinParameter extends PlatformObject implements ICPPParameter {
-        private static final String BLANK_STRING = ""; //$NON-NLS-1$
-        private IType type= null;
-
-        public CPPBuiltinParameter(IType type) {
-            this.type = type;
-        }
-
-        public IType getType() {
-            return type;
-        }
-
-        /**
-         * Returns false
-         */
-        public boolean isStatic() {
-            return false;
-        }
-
-        /**
-         * Returns false
-         */
-        public boolean isExtern() {
-            return false;
-        }
-
-		public boolean isExternC() {
-			return false;
-		}
-
-        /**
-         * Returns false
-         */
-        public boolean isAuto() {
-            return false;
-        }
-
-        /**
-         * Returns false
-         */
-        public boolean isRegister() {
-            return false;
-        }
-
-        public String getName() {
-            return BLANK_STRING;
-        }
-
-        public char[] getNameCharArray() {
-            return BLANK_STRING.toCharArray();
-        }
-
-        /**
-         * Returns false
-         */
-        public IScope getScope() {
-            return null;
-        }
-
-        public boolean hasDefaultValue() {
-            return false;
-        }
-
-        /**
-         * Returns false
-         */
-        public boolean isMutable() {
-            return false;
-        }
-
-        public String[] getQualifiedName() {
-            return new String[0];
-        }
-
-        public char[][] getQualifiedNameCharArray() {
-            return new char[0][];
-        }
-
-        public boolean isGloballyQualified() {
-            return false;
-        }
-
-		public ILinkage getLinkage() {
-			return Linkage.CPP_LINKAGE;
-		}
-
-		public IBinding getOwner() {
-			return null;
-		}
-
-		public IValue getInitialValue() {
-			return null;
-		}
-    }
 }

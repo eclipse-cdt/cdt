@@ -486,11 +486,13 @@ public class ManagedBuildTestHelper {
 		for (int i=0;i<benchmarkArray.size() || i<testArray.size();i++) {
 			if (!(i<benchmarkArray.size())) {
 				System.out.println(testFile.lastSegment()+": extra line =["+testArray.get(i)+ "] not in benchmark. File "+testFile);
+				System.out.println(testFile.lastSegment()+": benchmark file "+benchmarkFile);
 				extraLines.add(testArray.get(i));
 				continue;
 			}
 			if (!(i<testArray.size())) {
 				System.out.println(testFile.lastSegment()+": missing line =["+benchmarkArray.get(i)+ "] comparing to benchmark. File "+testFile);
+				System.out.println(testFile.lastSegment()+": benchmark file "+benchmarkFile);
 				extraLines.add(benchmarkArray.get(i));
 				continue;
 			}

@@ -13,6 +13,8 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.dom.parser.cpp.semantics;
 
+import static org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CVQualifier.*;
+
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
@@ -59,8 +61,8 @@ public class SemanticUtil {
 	
 	public static final int TDEF =    0x01;
 	public static final int REF =     0x02;
-	public static final int CVQ =     0x04;
-	public static final int PTR_CVQ=  0x08;
+	public static final int CVTYPE =  0x04;
+	public static final int ALLCVQ=   0x08;
 	public static final int PTR=      0x10;
 	public static final int MPTR=     0x20;
 	public static final int ARRAY=    0x40;
@@ -164,6 +166,40 @@ public class SemanticUtil {
 		return result;
 	}
 	
+	/** 
+	 * Returns 0 for no qualifier, 1 for const, 2 for volatile and 3 for const volatile.
+	 */
+	static CVQualifier getCVQualifier(IType t) {
+		if (t instanceof IQualifierType) {
+			IQualifierType qt= (IQualifierType) t;
+			if (qt.isConst()) {
+				if (qt.isVolatile()) {
+					return cv;
+				} 
+				return c;
+			}
+			if (qt.isVolatile())
+				return v;
+			return _;
+		} 
+		if (t instanceof IPointerType) {
+			IPointerType pt= (IPointerType) t;
+			if (pt.isConst()) {
+				if (pt.isVolatile()) {
+					return cv;
+				} 
+				return c;
+			}
+			if (pt.isVolatile())
+				return v;
+			return _;
+		}
+		if (t instanceof IArrayType) {
+			return getCVQualifier(((IArrayType) t).getType());
+		}
+		return _;
+	}
+		
 	/**
 	 * Descends into type containers, stopping at pointer-to-member types if
 	 * specified.
@@ -172,7 +208,7 @@ public class SemanticUtil {
 	 * @return the deepest type in a type container sequence
 	 */
 	public static IType getUltimateType(IType type, boolean stopAtPointerToMember) {
-		final int options = TDEF | CVQ | PTR | ARRAY | REF;
+		final int options = TDEF | ALLCVQ | PTR | ARRAY | REF;
 		return getNestedType(type, stopAtPointerToMember ? options : (options | MPTR));
 	}
 	
@@ -183,25 +219,26 @@ public class SemanticUtil {
 	 * @return the ultimate type contained inside the specified type
 	 */
 	public static IType getUltimateTypeUptoPointers(IType type) {
-		return getNestedType(type, TDEF | REF | CVQ);
+		return getNestedType(type, TDEF | REF | CVTYPE);
 	}
 
 	/**
 	 * Descends into typedefs, references, etc. as specified by options.
 	 */
 	public static IType getNestedType(IType type, int options) {
-		boolean tdef= (options & TDEF) != 0;
-		boolean ptrcvq= (options & PTR_CVQ) != 0;
-		boolean ptr= (options & PTR) != 0;
-		boolean mptr= (options & MPTR) != 0;
-		assert !(ptrcvq && (ptr || mptr));
+		final boolean tdef= (options & TDEF) != 0;
+		final boolean ptr= (options & PTR) != 0;
+		final boolean mptr= (options & MPTR) != 0;
+		final boolean allcvq= (options & ALLCVQ) != 0;
+		final boolean cvtype = (options & CVTYPE) != 0;
+
 		while (true) {
 			IType t= null;
 			if (type instanceof IPointerType) {
 				final boolean isMbrPtr = type instanceof ICPPPointerToMemberType;
 				if ((ptr && !isMbrPtr) || (mptr && isMbrPtr)) {
 					t= ((IPointerType) type).getType();
-				} else if (ptrcvq) {
+				} else if (allcvq) {
 					if (type instanceof CPPPointerType) {
 						return ((CPPPointerType) type).stripQualifiers();
 					}
@@ -220,16 +257,24 @@ public class SemanticUtil {
 				t= ((ITypedef) type).getType();
 			} else if (type instanceof IQualifierType) {
 				final IQualifierType qt = (IQualifierType) type;
-				final boolean cvq = (options & CVQ) != 0;
-				if (cvq || tdef) {
+				if (allcvq || cvtype) {
+					t= qt.getType();
+				} else if (tdef) {
 					t= getNestedType(qt.getType(), options);
-					if (!cvq || t instanceof IArrayType || t instanceof ICPPReferenceType) {
-						t= addQualifiers(t, qt.isConst(), qt.isVolatile());
-					}
+					t= addQualifiers(t, qt.isConst(), qt.isVolatile());
 					return t;
 				} 
-			} else if ((options & ARRAY) != 0 && type instanceof IArrayType) {
-				t= ((IArrayType) type).getType();
+			} else if (type instanceof IArrayType) {
+				final IArrayType atype= (IArrayType) type;
+				if ((options & ARRAY) != 0) {
+					t= atype.getType();
+				} else if (allcvq) {
+					IType nested= atype.getType();
+					IType newNested= getNestedType(nested, ALLCVQ);
+					if (nested == newNested)
+						return type;
+					return replaceNestedType((ITypeContainer) atype, newNested);
+				}
 			} else if ((options & REF) != 0 && type instanceof ICPPReferenceType) {
 				t= ((ICPPReferenceType) type).getType();
 			}
@@ -397,7 +442,7 @@ public class SemanticUtil {
 		//8.3.5-3 
 		//Any cv-qualifier modifying a parameter type is deleted.
 		if (forFunctionType && (t instanceof IQualifierType || t instanceof IPointerType)) {
-			return SemanticUtil.getNestedType(t, TDEF | CVQ | PTR_CVQ);
+			return SemanticUtil.getNestedType(t, TDEF | ALLCVQ);
 		}
 		return pt;
 	}

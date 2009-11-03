@@ -929,7 +929,7 @@ public class CPPSemantics {
 			public int visit(IASTExpression expression) {
 				if (expression instanceof IASTLiteralExpression) {
 					if (((IASTLiteralExpression) expression).getKind() == IASTLiteralExpression.lk_this) {
-						final IType thisType = SemanticUtil.getNestedType(expression.getExpressionType(), TDEF | CVQ | PTR | ARRAY | MPTR | REF);
+						final IType thisType = SemanticUtil.getNestedType(expression.getExpressionType(), TDEF | ALLCVQ | PTR | ARRAY | MPTR | REF);
 						if (thisType instanceof ICPPUnknownBinding || thisType instanceof ICPPTemplateDefinition) {
 							result[0]= true;
 							return PROCESS_ABORT;
@@ -2159,8 +2159,8 @@ public class CPPSemantics {
 				cost = Conversions.checkImplicitConversionSequence(sourceIsLValue, thisType, implicitType, UDCMode.noUDC, true);
 			    if (cost.getRank() == Rank.NO_MATCH) {
 				    if (CPPTemplates.isDependentType(implicitType) || CPPTemplates.isDependentType(thisType)) {
-				    	IType s= getNestedType(thisType, TDEF|REF|CVQ);
-				    	IType t= getNestedType(implicitType, TDEF|REF|CVQ);
+				    	IType s= getNestedType(thisType, TDEF|REF|CVTYPE);
+				    	IType t= getNestedType(implicitType, TDEF|REF|CVTYPE);
 				    	if (Conversions.calculateInheritanceDepth(MAX_INHERITANCE_DEPTH, s, t) >= 0)
 				    		return null;
 				    	
@@ -2707,7 +2707,7 @@ public class CPPSemantics {
 	    	args = new IASTExpression[] { exp.getOperand() };
 	    
     	IType type = exp.getOperand().getExpressionType();
-		type = SemanticUtil.getNestedType(type, TDEF | REF | CVQ);
+		type = SemanticUtil.getNestedType(type, TDEF | REF | CVTYPE);
 		if (!isUserDefined(type))
 			return null;
 		

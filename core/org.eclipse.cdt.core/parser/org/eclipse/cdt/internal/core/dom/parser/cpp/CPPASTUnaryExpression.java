@@ -13,7 +13,7 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.dom.parser.cpp;
 
-import static org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.SemanticUtil.CVQ;
+import static org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.SemanticUtil.CVTYPE;
 import static org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.SemanticUtil.REF;
 import static org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.SemanticUtil.TDEF;
 
@@ -229,7 +229,7 @@ public class CPPASTUnaryExpression extends ASTNode implements ICPPASTUnaryExpres
 		
 		if (op == op_star) {
 			IType type= operand.getExpressionType();
-			type = SemanticUtil.getNestedType(type, TDEF | REF | CVQ);
+			type = SemanticUtil.getNestedType(type, TDEF | REF | CVTYPE);
 	    	if (type instanceof IProblemBinding) {
 	    		return type;
 	    	}

@@ -13,6 +13,10 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.dom.parser.cpp.semantics;
 
+import static org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.SemanticUtil.ALLCVQ;
+import static org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.SemanticUtil.CVTYPE;
+import static org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.SemanticUtil.TDEF;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -1479,13 +1483,13 @@ public class CPPTemplates {
 					par= getParameterTypeForDeduction(par, isReferenceType);
 					
 					// 14.8.2.1.3
-					int cvPar= Conversions.getCVQualifier(par);
-					int cvArg= Conversions.getCVQualifier(arg);
-					if (cvPar == cvArg || (isReferenceType && (cvArg & ~cvPar) == 0)) {
-						IType pcheck= SemanticUtil.getNestedType(par, SemanticUtil.CVQ | SemanticUtil.PTR_CVQ);
+					CVQualifier cvPar= SemanticUtil.getCVQualifier(par);
+					CVQualifier cvArg= SemanticUtil.getCVQualifier(arg);
+					if (cvPar == cvArg || (isReferenceType && cvPar.isAtLeastAsQualifiedAs(cvArg))) {
+						IType pcheck= SemanticUtil.getNestedType(par, CVTYPE);
 						if (!(pcheck instanceof ICPPTemplateParameter)) {
 							par= pcheck;
-							arg= SemanticUtil.getNestedType(arg, SemanticUtil.CVQ | SemanticUtil.PTR_CVQ);
+							arg= SemanticUtil.getNestedType(arg, CVTYPE);
 							IType argcheck= arg;
 							if (par instanceof IPointerType && arg instanceof IPointerType) {
 								pcheck= ((IPointerType) par).getType();
@@ -1493,11 +1497,11 @@ public class CPPTemplates {
 								if (pcheck instanceof ICPPTemplateParameter) {
 									pcheck= null;
 								} else {
-									cvPar= Conversions.getCVQualifier(pcheck);
-									cvArg= Conversions.getCVQualifier(argcheck);
-									if ((cvArg & ~cvPar) == 0) {
-										pcheck= SemanticUtil.getNestedType(pcheck, SemanticUtil.CVQ);
-										argcheck= SemanticUtil.getNestedType(argcheck, SemanticUtil.CVQ);
+									cvPar= SemanticUtil.getCVQualifier(pcheck);
+									cvArg= SemanticUtil.getCVQualifier(argcheck);
+									if (cvPar.isAtLeastAsQualifiedAs(cvArg)) {
+										pcheck= SemanticUtil.getNestedType(pcheck, CVTYPE);
+										argcheck= SemanticUtil.getNestedType(argcheck, CVTYPE);
 									} else {
 										pcheck= null;
 									}
@@ -1581,7 +1585,7 @@ public class CPPTemplates {
 		if (isReferenceType) {
 			return SemanticUtil.getNestedType(pType, SemanticUtil.REF | SemanticUtil.TDEF);
 		}
-		return SemanticUtil.getNestedType(pType, SemanticUtil.TDEF | SemanticUtil.CVQ | SemanticUtil.PTR_CVQ);
+		return SemanticUtil.getNestedType(pType, SemanticUtil.TDEF | SemanticUtil.ALLCVQ);
 	}
 
 	/**
@@ -1605,7 +1609,7 @@ public class CPPTemplates {
 			} else if (type instanceof IFunctionType) {
 				result = new CPPPointerType(type);
 			} else {
-				result = SemanticUtil.getNestedType(type, SemanticUtil.TDEF | SemanticUtil.CVQ | SemanticUtil.PTR_CVQ );
+				result = SemanticUtil.getNestedType(type, TDEF | ALLCVQ );
 			}
 		}
 		return result;
@@ -1665,12 +1669,12 @@ public class CPPTemplates {
 				p = pa.getType();
 				a = aa.getType();
 			} else if (p instanceof IQualifierType) {
-				IType uqp = SemanticUtil.getNestedType(p, SemanticUtil.CVQ | SemanticUtil.PTR_CVQ); 
-				IType uqa = SemanticUtil.getNestedType(a, SemanticUtil.CVQ | SemanticUtil.PTR_CVQ); 
+				IType uqp = SemanticUtil.getNestedType(p, ALLCVQ); 
+				IType uqa = SemanticUtil.getNestedType(a, ALLCVQ); 
 				if (uqp instanceof ICPPTemplateParameter) {
-					int remaining= Conversions.getCVQualifier(a) & ~Conversions.getCVQualifier(p);
-					if (remaining != 0) {
-						uqa= SemanticUtil.addQualifiers(uqa, (remaining & 1) != 0, (remaining & 2) != 0);
+					CVQualifier remaining= SemanticUtil.getCVQualifier(a).remove(SemanticUtil.getCVQualifier(p));
+					if (remaining != CVQualifier._) {
+						uqa= SemanticUtil.addQualifiers(uqa, remaining.isConst(), remaining.isVolatile());
 					}
 				}
 				a= uqa;

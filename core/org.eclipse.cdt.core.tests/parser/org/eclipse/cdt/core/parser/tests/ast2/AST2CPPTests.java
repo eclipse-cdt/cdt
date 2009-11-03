@@ -7655,5 +7655,23 @@ public class AST2CPPTests extends AST2BaseTest {
         assertNotNull(methodTemplate.getType());
         assertEquals(1, methodTemplate.getParameters().length);
 	}
+	
+	//	void x(const char (&)[1]) {};
+	//
+	//	typedef char Array[12];
+	//	typedef const char CArray[12];
+	//	void xx(CArray* p);
+	//
+	//  template <typename T> void f(T& p);
+	//	void test() {
+	//	  x("");
+	//	  Array a;
+	//    xx(&a);
+	//	  f("");  
+	//	}
+	public void testCVQualifiersWithArrays_293982() throws Exception {
+        final String code = getAboveComment();
+        parseAndCheckBindings(code, ParserLanguage.CPP);
+	}		
 }
 

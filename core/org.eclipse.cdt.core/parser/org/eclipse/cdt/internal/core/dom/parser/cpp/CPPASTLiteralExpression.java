@@ -12,13 +12,15 @@
 package org.eclipse.cdt.internal.core.dom.parser.cpp;
 
 import org.eclipse.cdt.core.dom.ast.ASTVisitor;
+import org.eclipse.cdt.core.dom.ast.IBasicType;
 import org.eclipse.cdt.core.dom.ast.IScope;
 import org.eclipse.cdt.core.dom.ast.IType;
+import org.eclipse.cdt.core.dom.ast.IValue;
 import org.eclipse.cdt.core.dom.ast.IBasicType.Kind;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTLiteralExpression;
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPBasicType;
 import org.eclipse.cdt.core.parser.util.CharArrayUtils;
 import org.eclipse.cdt.internal.core.dom.parser.ASTNode;
+import org.eclipse.cdt.internal.core.dom.parser.Value;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPVisitor;
 
 /**
@@ -106,12 +108,21 @@ public class CPPASTLiteralExpression extends ASTNode implements ICPPASTLiteralEx
     		case lk_string_literal:
     			IType type = new CPPBasicType(getCharType(), 0, this);
     			type = new CPPQualifierType(type, true, false);
-    			return new CPPArrayType(type);
+    			return new CPPArrayType(type, getStringLiteralSize());
     	}
     	return null;
     }
     
-    private Kind getCharType() {
+	private IValue getStringLiteralSize() {
+		char[] value= getValue();
+		int length= value.length-1;
+		if (value[0] != '"') {
+			length--;
+		}
+		return Value.create(length);
+	}
+
+	private Kind getCharType() {
     	return getValue()[0] == 'L' ? Kind.eWChar : Kind.eChar;
     }
     
@@ -126,7 +137,7 @@ public class CPPASTLiteralExpression extends ASTNode implements ICPPASTLiteralEx
 				kind= Kind.eFloat;
 				break;
 			case 'l': case 'L':
-				flags |= ICPPBasicType.IS_LONG;
+				flags |= IBasicType.IS_LONG;
 				break;
 			}
 		}
@@ -157,13 +168,13 @@ public class CPPASTLiteralExpression extends ASTNode implements ICPPASTLiteralEx
 
 		int flags= 0;
 		if (unsigned) {
-			flags |= ICPPBasicType.IS_UNSIGNED;
+			flags |= IBasicType.IS_UNSIGNED;
 		}
 		
 		if (makelong > 1) {
-			flags |= ICPPBasicType.IS_LONG_LONG;
+			flags |= IBasicType.IS_LONG_LONG;
 		} else if (makelong == 1) {
-			flags |= ICPPBasicType.IS_LONG;
+			flags |= IBasicType.IS_LONG;
 		} 
 		return new CPPBasicType(Kind.eInt, flags, this);
 	}

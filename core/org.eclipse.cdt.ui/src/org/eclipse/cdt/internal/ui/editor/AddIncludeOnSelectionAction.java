@@ -216,7 +216,7 @@ public class AddIncludeOnSelectionAction extends TextEditorAction {
 			if (binding instanceof ICPPVariable) {
 				IType type = ((ICPPVariable) binding).getType();
 				type = SemanticUtil.getNestedType(type,
-						SemanticUtil.CVQ | SemanticUtil.PTR | SemanticUtil.ARRAY | SemanticUtil.REF);
+						SemanticUtil.ALLCVQ | SemanticUtil.PTR | SemanticUtil.ARRAY | SemanticUtil.REF);
 				if (type instanceof IBinding) {
 					binding = (IBinding) type;
 					nameChars = binding.getNameCharArray();
@@ -532,8 +532,7 @@ public class AddIncludeOnSelectionAction extends TextEditorAction {
 			int systemIncludeVotes = 0;
 			String[] ballotBox = new String[includes.length];
 			int k = 0;
-			for (int i = 0; i < includes.length; i++) {
-				IIndexInclude include = includes[i];
+			for (IIndexInclude include : includes) {
 				if (isResolvable(include)) {
 					ballotBox[k++] = include.getFullName();
 					if (include.isSystemInclude()) {

@@ -14,6 +14,7 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.dom.parser.cpp.semantics;
 
+import static org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CVQualifier._;
 import static org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.SemanticUtil.*;
 
 import org.eclipse.cdt.core.CCorePlugin;
@@ -30,6 +31,7 @@ import org.eclipse.cdt.core.dom.ast.IPointerType;
 import org.eclipse.cdt.core.dom.ast.IProblemBinding;
 import org.eclipse.cdt.core.dom.ast.IQualifierType;
 import org.eclipse.cdt.core.dom.ast.IType;
+import org.eclipse.cdt.core.dom.ast.IValue;
 import org.eclipse.cdt.core.dom.ast.IBasicType.Kind;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPBase;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPBasicType;
@@ -87,7 +89,7 @@ public class Conversions {
 				source= getNestedType(source, TDEF | REF);
 			}
 			
-			IType T2= getNestedType(source, TDEF | REF | CVQ | PTR_CVQ);
+			IType T2= getNestedType(source, TDEF | REF | ALLCVQ);
 
 		    // [8.5.3-5] Is an lvalue (but is not a bit-field), and "cv1 T1" is reference-compatible with "cv2 T2," 
 			if (sourceIsLValue) {
@@ -137,7 +139,7 @@ public class Conversions {
 			}
 
 			// [8.5.3-5] Direct binding failed  - Otherwise
-			boolean cv1isConst= getCVQualifier(cv1T1) == 1;
+			boolean cv1isConst= getCVQualifier(cv1T1) == CVQualifier.c;
 			if (cv1isConst)  {
 				if (!sourceIsLValue && T2 instanceof ICPPClassType) {
 					Cost cost= isReferenceCompatible(cv1T1, source, isImpliedObject);
@@ -155,7 +157,7 @@ public class Conversions {
 				
 				// 13.3.3.1.7 no temporary object when converting the implicit object parameter
 				if (!isImpliedObject) {
-					IType T1= getNestedType(cv1T1, TDEF | REF | CVQ | PTR_CVQ);
+					IType T1= getNestedType(cv1T1, TDEF | REF | ALLCVQ);
 					boolean illformed= isReferenceRelated(T1, T2) >= 0 && compareQualifications(cv1T1, source) < 0;
 
 					// We must do a non-reference initialization
@@ -168,8 +170,8 @@ public class Conversions {
 		} 
 		
 		// Non-reference binding
-		IType uqsource= getNestedType(source, TDEF | REF | CVQ);
-		IType uqtarget= getNestedType(target, TDEF | REF | CVQ);
+		IType uqsource= getNestedType(source, TDEF | REF | ALLCVQ);
+		IType uqtarget= getNestedType(target, TDEF | REF | ALLCVQ);
 		
 		// [13.3.3.1-6] Derived to base conversion
 		if (uqsource instanceof ICPPClassType && uqtarget instanceof ICPPClassType) {
@@ -209,54 +211,41 @@ public class Conversions {
 	 * ordering on cv-qualifiers, so that a type can be said to be more
 	 * cv-qualified than another.
 	 * @return <ul>
-	 * <li>GT 1 if cv1 is more qualified than cv2
-	 * <li>EQ 0 if cv1 and cv2 are equally qualified
+	 * <li>3 if cv1 == const volatile cv2 
+	 * <li>2 if cv1 == volatile cv2
+	 * <li>1 if cv1 == const cv2
+	 * <li>EQ 0 if cv1 == cv2
 	 * <li>LT -1 if cv1 is less qualified than cv2 or not comparable
 	 * </ul>
 	 * @throws DOMException
 	 */
 	private static final int compareQualifications(IType t1, IType t2) throws DOMException {
-		int cv1= getCVQualifier(t1);
-		int cv2= getCVQualifier(t2);
+		CVQualifier cv1= getCVQualifier(t1);
+		CVQualifier cv2= getCVQualifier(t2);
 		
 		// same qualifications
 		if (cv1 == cv2)
 			return 0;
 
-		// both are different but not comparable
-		final int diffs= cv1 ^ cv2;
-		if (diffs == 3 && cv1 != 3 && cv2 != 3) {
+		switch (cv1) {
+		case cv:
+			switch (cv2) {
+			case _: return 3;
+			case c: return 2;
+			case v: return 1;
+			case cv: return 0;
+			}
+			break;
+		case c:
+			return cv2 == _ ? 1 : -1;
+		case v:
+			return cv2 == _ ? 2 : -1;
+		case _:
 			return -1;
 		}
-
-		return cv1 - cv2;
+		return -1;
 	}
 
-	/** 
-	 * Returns 0 for no qualifier, 1 for const, 2 for volatile and 3 for const volatile.
-	 */
-	static int getCVQualifier(IType t) {
-		if (t instanceof IQualifierType) {
-			int result= 0;
-			IQualifierType qt= (IQualifierType) t;
-			if (qt.isConst()) 
-				result= 1;
-			if (qt.isVolatile())
-				result |= 2;
-			return result;
-		} 
-		if (t instanceof IPointerType) {
-			IPointerType pt= (IPointerType) t;
-			int result= 0;
-			if (pt.isConst()) 
-				result= 1;
-			if (pt.isVolatile())
-				result |= 2;
-			return result;
-		}
-		return 0;
-	}
-	
 	/**
 	 * [8.5.3] "cv1 T1" is reference-related to "cv2 T2" if T1 is the same type as T2,
 	 * or T1 is a base class of T2.
@@ -269,9 +258,28 @@ public class Conversions {
 		
 		// The way cv-qualification is currently modeled means
 		// we must cope with IPointerType objects separately.
-		if (t instanceof IPointerType && s instanceof IPointerType) {
-			t= SemanticUtil.getNestedType(((IPointerType) t).getType(), TDEF | REF);
-			s= SemanticUtil.getNestedType(((IPointerType) s).getType(), TDEF | REF);
+		if (t instanceof IPointerType) {
+			if (s instanceof IPointerType) {
+				t= SemanticUtil.getNestedType(((IPointerType) t).getType(), TDEF | REF);
+				s= SemanticUtil.getNestedType(((IPointerType) s).getType(), TDEF | REF);
+			} else {
+				return -1;
+			}
+		} else if (t instanceof IArrayType) {
+			if (s instanceof IArrayType) {
+				final IArrayType at = (IArrayType) t;
+				final IArrayType st = (IArrayType) s;
+				final IValue av= at.getSize();
+				final IValue sv= st.getSize();
+				if (av == sv || (av != null && av.equals(sv))) {
+					t= SemanticUtil.getNestedType(at.getType(), TDEF | REF);
+					s= SemanticUtil.getNestedType(st.getType(), TDEF | REF);
+				} else {
+					return -1;
+				}
+			} else {
+				return -1;
+			}
 		} else {
 			if (t instanceof IQualifierType)
 				t= SemanticUtil.getNestedType(((IQualifierType) t).getType(), TDEF | REF);
@@ -350,8 +358,8 @@ public class Conversions {
 	 * @throws DOMException
 	 */
 	static final Cost checkUserDefinedConversionSequence(boolean sourceIsLValue, IType source, IType target, boolean deferUDC) throws DOMException {
-		IType s= getNestedType(source, TDEF | CVQ | REF);
-		IType t= getNestedType(target, TDEF | CVQ | REF);
+		IType s= getNestedType(source, TDEF | CVTYPE | REF);
+		IType t= getNestedType(target, TDEF | CVTYPE | REF);
 
 		if (!(s instanceof ICPPClassType || t instanceof ICPPClassType)) {
 			return null;
@@ -406,7 +414,7 @@ public class Conversions {
 				for (final ICPPMethod op : ops) {
 					if (op != null && !(op instanceof IProblemBinding)) {
 						final IType returnType = op.getType().getReturnType();
-						final IType uqReturnType= getNestedType(returnType, REF | TDEF | CVQ);
+						final IType uqReturnType= getNestedType(returnType, REF | TDEF | CVTYPE);
 						final int dist = calculateInheritanceDepth(CPPSemantics.MAX_INHERITANCE_DEPTH, uqReturnType, t);
 						if (dist >= 0) {
 							final ICPPFunctionType ft = op.getType();
@@ -444,7 +452,7 @@ public class Conversions {
 			for (final ICPPMethod op : ops) {
 				if (op != null && !(op instanceof IProblemBinding)) {
 					final IType returnType = op.getType().getReturnType();
-					IType uqReturnType= getNestedType(returnType, TDEF | CVQ | PTR_CVQ);
+					IType uqReturnType= getNestedType(returnType, TDEF | ALLCVQ);
 					Cost c2= checkImplicitConversionSequence(false, uqReturnType, target, UDCMode.noUDC, false);
 					if (c2.getRank() != Rank.NO_MATCH) {
 						ICPPFunctionType ftype = op.getType();
@@ -533,7 +541,7 @@ public class Conversions {
 			// 4.1 lvalue of non-function and non-array
 			if (!(srcRValue instanceof IFunctionType) && !(srcRValue instanceof IArrayType)) {
 				// 4.1 if T is a non-class type, the type of the rvalue is the cv-unqualified version of T
-				IType unqualifiedSrcRValue= getNestedType(srcRValue, CVQ | PTR_CVQ | TDEF | REF);
+				IType unqualifiedSrcRValue= getNestedType(srcRValue, ALLCVQ | TDEF | REF);
 				if (unqualifiedSrcRValue instanceof ICPPClassType) {
 					if (isCompleteType(unqualifiedSrcRValue)) {
 						source= srcRValue;
@@ -568,7 +576,7 @@ public class Conversions {
 								IASTLiteralExpression lit= (IASTLiteralExpression) val;
 								if (lit.getKind() == IASTLiteralExpression.lk_string_literal) {
 									source= new CPPPointerType(tmp, false, false);
-									cost.setQualificationAdjustment(getCVQualifier(targetPtrTgt) | 1);
+									cost.setQualificationAdjustment(getCVQualifier(targetPtrTgt).isVolatile() ? 2 : 1);
 									cost.setRank(Rank.LVALUE_TRANSFORMATION);
 									isConverted= true;
 								}
@@ -596,9 +604,9 @@ public class Conversions {
 
 		// This should actually be done before the conversion is attempted, see for instance 13.3.3.1-6 and 8.5.14.
 		// However, it does not hurt to do it here either.
-		IType unqualifiedTarget= getNestedType(target, CVQ | PTR_CVQ | TDEF | REF);
+		IType unqualifiedTarget= getNestedType(target, ALLCVQ | TDEF | REF);
 		if (!(unqualifiedTarget instanceof ICPPClassType)) {
-			IType unqualifiedSource= getNestedType(source, CVQ | PTR_CVQ | TDEF | REF);
+			IType unqualifiedSource= getNestedType(source, ALLCVQ | TDEF | REF);
 			if (!(unqualifiedSource instanceof ICPPClassType)) {
 				source= unqualifiedSource;
 				target= unqualifiedTarget;
@@ -659,17 +667,15 @@ public class Conversions {
 			}
 		}
 
-		if (s instanceof IQualifierType || t instanceof IQualifierType) {
-			adjustments <<= 2;
-			int cmp= compareQualifications(t, s);  // is t more qualified than s?
-			if (cmp < 0 || (cmp > 0 && !constInEveryCV2k)) {
-				return false;
-			} 
-
-			adjustments |= cmp;
-			s= getNestedType(s, CVQ | TDEF | REF);
-			t= getNestedType(t, CVQ | TDEF | REF);
+		adjustments <<= 2;
+		int cmp= compareQualifications(t, s);  // is t more qualified than s?
+		if (cmp < 0 || (cmp > 0 && !constInEveryCV2k)) {
+			return false;
 		} 
+
+		adjustments |= cmp;
+		s= getNestedType(s, ALLCVQ | TDEF | REF);
+		t= getNestedType(t, ALLCVQ | TDEF | REF);
 		
 		if (adjustments > 0) {
 			cost.setQualificationAdjustment(adjustments);
@@ -793,12 +799,12 @@ public class Conversions {
 				IPointerType srcPtr= (IPointerType) s;
 				// 4.10-2 an rvalue of type "pointer to cv T", where T is an object type can be
 				// converted to an rvalue of type "pointer to cv void"
-				IType tgtPtrTgt= getNestedType(tgtPtr.getType(), TDEF | CVQ | REF);
+				IType tgtPtrTgt= getNestedType(tgtPtr.getType(), TDEF | CVTYPE | REF);
 				if (tgtPtrTgt instanceof IBasicType && ((IBasicType) tgtPtrTgt).getKind() == Kind.eVoid) {
 					cost.setRank(Rank.CONVERSION);
 					cost.setInheritanceDistance(Short.MAX_VALUE); // mstodo add distance to last base class
-					int cv= getCVQualifier(srcPtr.getType());
-					cost.source= new CPPPointerType(addQualifiers(CPPSemantics.VOID_TYPE, (cv&1) != 0, (cv&2) != 0));
+					CVQualifier cv= getCVQualifier(srcPtr.getType());
+					cost.source= new CPPPointerType(addQualifiers(CPPSemantics.VOID_TYPE, cv.isConst(), cv.isVolatile()));
 					return false; 
 				}
 				
@@ -807,7 +813,7 @@ public class Conversions {
 				if (!tIsPtrToMember && !sIsPtrToMember) {
 					// 4.10-3 An rvalue of type "pointer to cv D", where D is a class type can be converted
 					// to an rvalue of type "pointer to cv B", where B is a base class of D.
-					IType srcPtrTgt= getNestedType(srcPtr.getType(), TDEF | CVQ | REF);
+					IType srcPtrTgt= getNestedType(srcPtr.getType(), TDEF | CVTYPE | REF);
 					if (tgtPtrTgt instanceof ICPPClassType && srcPtrTgt instanceof ICPPClassType) {
 						int depth= calculateInheritanceDepth(CPPSemantics.MAX_INHERITANCE_DEPTH, srcPtrTgt, tgtPtrTgt);
 						if (depth == -1) {
@@ -819,8 +825,8 @@ public class Conversions {
 								cost.setRank(Rank.CONVERSION);
 								cost.setInheritanceDistance(depth);
 							}
-							int cv= getCVQualifier(srcPtr.getType());
-							cost.source= new CPPPointerType(addQualifiers(tgtPtrTgt, (cv&1) != 0, (cv&2) != 0));
+							CVQualifier cv= getCVQualifier(srcPtr.getType());
+							cost.source= new CPPPointerType(addQualifiers(tgtPtrTgt, cv.isConst(), cv.isVolatile()));
 						}
 						return false;
 					}

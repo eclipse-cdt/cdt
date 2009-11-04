@@ -52,8 +52,10 @@ import org.eclipse.cdt.core.settings.model.ICProjectDescriptionManager;
 import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.cdt.ui.newui.UIMessages;
 
+import org.eclipse.cdt.internal.ui.wizards.ICDTCommonProjectWizard;
+
 public abstract class CDTCommonProjectWizard extends BasicNewResourceWizard 
-implements IExecutableExtension, IWizardWithMemory  
+implements IExecutableExtension, IWizardWithMemory, ICDTCommonProjectWizard
 {
 	private static final String PREFIX= "CProjectWizard"; //$NON-NLS-1$
 	private static final String OP_ERROR= "CProjectWizard.op_error"; //$NON-NLS-1$

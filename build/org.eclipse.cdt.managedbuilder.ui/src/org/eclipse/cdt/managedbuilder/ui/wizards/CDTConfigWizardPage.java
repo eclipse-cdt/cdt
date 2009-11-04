@@ -13,13 +13,13 @@ package org.eclipse.cdt.managedbuilder.ui.wizards;
 import java.util.ArrayList;
 import java.util.Arrays;
 
+import org.eclipse.cdt.internal.ui.wizards.ICDTCommonProjectWizard;
 import org.eclipse.cdt.managedbuilder.core.IProjectType;
 import org.eclipse.cdt.managedbuilder.core.IToolChain;
 import org.eclipse.cdt.managedbuilder.core.ManagedBuildManager;
 import org.eclipse.cdt.managedbuilder.ui.properties.ManagedBuilderUIImages;
 import org.eclipse.cdt.ui.newui.CDTPrefUtil;
 import org.eclipse.cdt.ui.newui.UIMessages;
-import org.eclipse.cdt.ui.wizards.CDTCommonProjectWizard;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.jface.viewers.CheckStateChangedEvent;
 import org.eclipse.jface.viewers.CheckboxTableViewer;
@@ -309,8 +309,8 @@ public class CDTConfigWizardPage extends WizardPage {
 	 * Edit properties
 	 */
 	private void advancedDialog() {
-		if (getWizard() instanceof CDTCommonProjectWizard) {
-			CDTCommonProjectWizard nmWizard = (CDTCommonProjectWizard)getWizard();
+		if (getWizard() instanceof ICDTCommonProjectWizard) {
+			ICDTCommonProjectWizard nmWizard = (ICDTCommonProjectWizard)getWizard();
 			IProject newProject = nmWizard.getProject(true, false);
 			if (newProject != null) {
 				boolean oldManage = CDTPrefUtil.getBool(CDTPrefUtil.KEY_NOMNG);

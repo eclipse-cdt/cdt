@@ -13,14 +13,15 @@ package org.eclipse.cdt.managedbuilder.xlc.ui.wizards;
 import java.lang.reflect.InvocationTargetException;
 
 import org.eclipse.cdt.core.CCorePlugin;
+import org.eclipse.cdt.internal.ui.wizards.ICDTCommonProjectWizard;
 import org.eclipse.cdt.managedbuilder.ui.wizards.MBSCustomPageManager;
 import org.eclipse.cdt.managedbuilder.xlc.ui.preferences.PreferenceConstants;
-import org.eclipse.cdt.ui.wizards.CDTCommonProjectWizard;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.QualifiedName;
 import org.eclipse.jface.operation.IRunnableWithProgress;
+import org.eclipse.jface.wizard.IWizard;
 import org.eclipse.jface.wizard.IWizardPage;
 
 /**
@@ -44,7 +45,7 @@ public class XLCSettingsWizardRunnable implements IRunnableWithProgress {
 		
 		if(pages != null && pages.length > 0) {
 		
-			CDTCommonProjectWizard wizard = (CDTCommonProjectWizard) pages[0].getWizard();
+			ICDTCommonProjectWizard wizard = (ICDTCommonProjectWizard) pages[0].getWizard();
 			IProject project = wizard.getLastProject();
 			
 			try {

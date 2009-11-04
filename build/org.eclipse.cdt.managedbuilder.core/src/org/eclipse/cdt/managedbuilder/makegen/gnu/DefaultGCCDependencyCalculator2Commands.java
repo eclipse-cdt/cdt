@@ -178,7 +178,7 @@ public class DefaultGCCDependencyCalculator2Commands implements
 		if( buildContext instanceof IResourceConfiguration || needExplicitRuleForFile ) {
 			IPath outPath = getDependencyFiles()[0];
 			// -MT"dependency-file-name"
-			String optTxt = "-MT\"" + outPath.toString() + "\"";	//$NON-NLS-1$ //$NON-NLS-2$
+			String optTxt = "-MT\"" + GnuMakefileGenerator.escapeWhitespaces(outPath.toString()) + "\"";	//$NON-NLS-1$ //$NON-NLS-2$
 			options[3] = optTxt;
 		} else {
 			// -MT"$(@:%.o=%.d) %.o"

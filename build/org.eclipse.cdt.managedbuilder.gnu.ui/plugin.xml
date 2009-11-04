@@ -1854,7 +1854,7 @@
                   <targetPlatform
 					  id="cdt.managedbuild.target.gnu.platform.macosx.base"
 				 	  name="%PlatformName.Dbg"
-                      binaryParser="org.eclipse.cdt.core.MachO"
+                      binaryParser="org.eclipse.cdt.core.MachO64"
 					  osList="macosx"					  
 					  archList="all">
 				  </targetPlatform>

@@ -11,12 +11,12 @@
 package org.eclipse.cdt.managedbuilder.ui.wizards;
 
 import org.eclipse.cdt.internal.ui.CPluginImages;
+import org.eclipse.cdt.internal.ui.wizards.ICDTCommonProjectWizard;
 import org.eclipse.cdt.managedbuilder.core.IInputType;
 import org.eclipse.cdt.managedbuilder.core.ITool;
 import org.eclipse.cdt.managedbuilder.core.IToolChain;
 import org.eclipse.cdt.managedbuilder.core.ManagedBuildManager;
 import org.eclipse.cdt.managedbuilder.ui.properties.ManagedBuilderUIImages;
-import org.eclipse.cdt.ui.wizards.CDTCommonProjectWizard;
 import org.eclipse.cdt.ui.wizards.CNewWizard;
 import org.eclipse.cdt.ui.wizards.IWizardItemsListListener;
 import org.eclipse.jface.wizard.IWizard;
@@ -70,11 +70,11 @@ public abstract class AbstractCWizard extends CNewWizard {
 	protected boolean isLanguageCompatible(IToolChain tc, IWizard w) {
 		if (w == null) 
 			return true;
-		if (!(w instanceof CDTCommonProjectWizard))
+		if (!(w instanceof ICDTCommonProjectWizard))
 			return true;
 
 		ITool[] tools = tc.getTools(); 
-		CDTCommonProjectWizard wz = (CDTCommonProjectWizard)w;
+		ICDTCommonProjectWizard wz = (ICDTCommonProjectWizard)w;
 		String[] langIDs = wz.getLanguageIDs(); 
 		String[] ctypeIDs = wz.getContentTypeIDs();
 		String[] exts = wz.getExtensions();

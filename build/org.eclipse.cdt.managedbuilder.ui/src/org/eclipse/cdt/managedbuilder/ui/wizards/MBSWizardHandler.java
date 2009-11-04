@@ -29,6 +29,7 @@ import org.eclipse.cdt.core.settings.model.ICProjectDescription;
 import org.eclipse.cdt.core.settings.model.ICProjectDescriptionManager;
 import org.eclipse.cdt.core.settings.model.extension.CConfigurationData;
 import org.eclipse.cdt.core.templateengine.process.ProcessFailureException;
+import org.eclipse.cdt.internal.ui.wizards.ICDTCommonProjectWizard;
 import org.eclipse.cdt.managedbuilder.buildproperties.IBuildProperty;
 import org.eclipse.cdt.managedbuilder.buildproperties.IBuildPropertyValue;
 import org.eclipse.cdt.managedbuilder.core.BuildException;
@@ -48,7 +49,6 @@ import org.eclipse.cdt.ui.templateengine.Template;
 import org.eclipse.cdt.ui.templateengine.TemplateEngineUI;
 import org.eclipse.cdt.ui.templateengine.TemplateEngineUIUtil;
 import org.eclipse.cdt.ui.templateengine.pages.UIWizardPage;
-import org.eclipse.cdt.ui.wizards.CDTCommonProjectWizard;
 import org.eclipse.cdt.ui.wizards.CDTMainWizardPage;
 import org.eclipse.cdt.ui.wizards.CWizardHandler;
 import org.eclipse.cdt.ui.wizards.EntryDescriptor;
@@ -166,8 +166,8 @@ public class MBSWizardHandler extends CWizardHandler {
 						path.length > 1 && (!path[0].equals(ManagedBuildWizard.OTHERS_LABEL))){
 					templateId = path[path.length - 1]; 
 					Template templates[] = null; 
-					if(wizard instanceof CDTCommonProjectWizard) {
-						CDTCommonProjectWizard wz = (CDTCommonProjectWizard)wizard;
+					if(wizard instanceof ICDTCommonProjectWizard) {
+						ICDTCommonProjectWizard wz = (ICDTCommonProjectWizard)wizard;
 						String[] langIDs = wz.getLanguageIDs();
 						if(langIDs.length > 0) {
 							List<Template> lstTemplates = new ArrayList<Template>();
@@ -421,10 +421,10 @@ public class MBSWizardHandler extends CWizardHandler {
 	}
 	
 	private void loadCustomPages() {
-		if (! (getWizard() instanceof CDTCommonProjectWizard)) 
+		if (! (getWizard() instanceof ICDTCommonProjectWizard)) 
 			return; // not probable 
 		
-		CDTCommonProjectWizard wz = (CDTCommonProjectWizard)getWizard();
+		ICDTCommonProjectWizard wz = (ICDTCommonProjectWizard)getWizard();
 		
 		if (customPages == null) {
 			MBSCustomPageManager.init();
@@ -447,7 +447,7 @@ public class MBSWizardHandler extends CWizardHandler {
 		setCustomPagesFilter(wz);
 	}
 
-	private void setCustomPagesFilter(CDTCommonProjectWizard wz) {
+	private void setCustomPagesFilter(ICDTCommonProjectWizard wz) {
 		String[] natures = wz.getNatures();
 		if (natures == null || natures.length == 0)
 			MBSCustomPageManager.addPageProperty(MBSCustomPageManager.PAGE_ID, MBSCustomPageManager.NATURE, null);

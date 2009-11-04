@@ -62,7 +62,6 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTQualifiedName;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTUsingDeclaration;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTUsingDirective;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPBinding;
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPMethod;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPNamespace;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPVariable;
 import org.eclipse.cdt.core.index.IIndex;
@@ -242,9 +241,8 @@ public class AddIncludeOnSelectionAction extends TextEditorAction {
 			// class, struct, union, enum
 			if (indexBinding instanceof ICompositeType || indexBinding instanceof IEnumeration) {
 				definitions= index.findDefinitions(indexBinding);
-			} else if (indexBinding instanceof ITypedef ||
-					(indexBinding instanceof IFunction && !(indexBinding instanceof ICPPMethod))) {
-				definitions= index.findDeclarations(indexBinding);
+			} else if (indexBinding instanceof ITypedef || (indexBinding instanceof IFunction)) {
+				definitions = index.findDeclarations(indexBinding);
 			}
 			if (definitions != null) {
 				for (IIndexName definition : definitions) {

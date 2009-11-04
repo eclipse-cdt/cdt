@@ -7672,6 +7672,21 @@ public class AST2CPPTests extends AST2BaseTest {
 	public void testCVQualifiersWithArrays_293982() throws Exception {
         final String code = getAboveComment();
         parseAndCheckBindings(code, ParserLanguage.CPP);
-	}		
+	}	
+	
+	//	template <typename T, int N> char (&func(T (&array)[N]))[N];
+	//	void f(const int (&a)[1]) {}
+	//	typedef int TA[];
+	//	TA a = { 0 };
+	//	int b[1];
+	//
+	//	void test() {
+	//	  f(a); func(a);
+	//	  f(b); func(b);
+	//	}
+	public void testArrayTypeSizeFromInitializer_294144() throws Exception {
+        final String code = getAboveComment();
+        parseAndCheckBindings(code, ParserLanguage.CPP);
+	}	
 }
 

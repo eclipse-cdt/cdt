@@ -175,9 +175,8 @@ public class GNUCSourceParser extends AbstractGNUSourceCodeParser {
         	if (designator == null) {
         		IASTInitializer initializer= cInitializerClause(true);
         		// depending on value of skipTrivialItemsInCompoundInitializers initializer may be null
-        		if (initializer != null) {
-        			result.addInitializer(initializer);
-        		}
+        		// in any way add the initializer such that the actual size can be tracked.
+        		result.addInitializer(initializer);
         	} else {
         		if (LT(1) == IToken.tASSIGN)
         			consume();

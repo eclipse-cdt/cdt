@@ -42,6 +42,7 @@ import org.eclipse.cdt.core.dom.ast.IASTIdExpression;
 import org.eclipse.cdt.core.dom.ast.IASTImplicitNameOwner;
 import org.eclipse.cdt.core.dom.ast.IASTInitializer;
 import org.eclipse.cdt.core.dom.ast.IASTInitializerExpression;
+import org.eclipse.cdt.core.dom.ast.IASTInitializerList;
 import org.eclipse.cdt.core.dom.ast.IASTLabelStatement;
 import org.eclipse.cdt.core.dom.ast.IASTLiteralExpression;
 import org.eclipse.cdt.core.dom.ast.IASTName;
@@ -137,6 +138,7 @@ import org.eclipse.cdt.core.parser.util.CharArrayUtils;
 import org.eclipse.cdt.internal.core.dom.parser.ASTInternal;
 import org.eclipse.cdt.internal.core.dom.parser.ASTQueries;
 import org.eclipse.cdt.internal.core.dom.parser.ProblemBinding;
+import org.eclipse.cdt.internal.core.dom.parser.Value;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTTranslationUnit;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPArrayType;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPBasicType;
@@ -1638,26 +1640,34 @@ public class CPPVisitor extends ASTQueries {
 		if (declarator == null) 
 			return null;
 		
+		declarator= findOutermostDeclarator(declarator);
+		IASTNode parent = declarator.getParent();
+		
 		IASTDeclSpecifier declSpec = null;
-		
-		IASTNode node = declarator.getParent();
-		while (node instanceof IASTDeclarator) {
-			declarator = (IASTDeclarator) node;
-			node = node.getParent();
-		}
-		
-		if (node instanceof IASTParameterDeclaration) {
-			declSpec = ((IASTParameterDeclaration) node).getDeclSpecifier();
-		} else if (node instanceof IASTSimpleDeclaration) {
-			declSpec = ((IASTSimpleDeclaration)node).getDeclSpecifier();
-		} else if (node instanceof IASTFunctionDefinition) {
-			declSpec = ((IASTFunctionDefinition)node).getDeclSpecifier();
-		} else if (node instanceof IASTTypeId) {
-			declSpec = ((IASTTypeId)node).getDeclSpecifier();
+		if (parent instanceof IASTParameterDeclaration) {
+			declSpec = ((IASTParameterDeclaration) parent).getDeclSpecifier();
+		} else if (parent instanceof IASTSimpleDeclaration) {
+			declSpec = ((IASTSimpleDeclaration)parent).getDeclSpecifier();
+		} else if (parent instanceof IASTFunctionDefinition) {
+			declSpec = ((IASTFunctionDefinition)parent).getDeclSpecifier();
+		} else if (parent instanceof IASTTypeId) {
+			declSpec = ((IASTTypeId)parent).getDeclSpecifier();
 		}
 	
 		IType type = createType(declSpec);
 		type = createType(type, declarator);
+		
+		// C++ specification 8.3.4.3 and 8.5.1.4
+		IASTInitializer initializer= declarator.getInitializer();
+		if (initializer instanceof IASTInitializerList) {
+			IType t= SemanticUtil.getNestedType(type, TDEF);
+			if (t instanceof IArrayType) {
+				IArrayType at= (IArrayType) t;
+				if (at.getSize() == null) {
+					type= new CPPArrayType(at.getType(), Value.create(((IASTInitializerList) initializer).getSize()));
+				}
+			}
+		}
 		return type;
 	}
 

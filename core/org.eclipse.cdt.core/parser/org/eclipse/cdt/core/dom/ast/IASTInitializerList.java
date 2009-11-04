@@ -12,6 +12,8 @@ package org.eclipse.cdt.core.dom.ast;
 
 /**
  * This is an an initializer that is a list of initializers.
+ * For example as in:
+ * <pre> int a[]= {1,2,3}; </pre>
  * 
  * @noextend This interface is not intended to be extended by clients.
  * @noimplement This interface is not intended to be implemented by clients.
@@ -26,20 +28,25 @@ public interface IASTInitializerList extends IASTInitializer {
 			"IASTInitializerList.NESTED_INITIALIZER - sub-IASTInitializer for IASTInitializerList"); //$NON-NLS-1$
 
 	/**
-	 * Get the list of initializers.
-	 * 
-	 * @return <code>IASTInitializer[]</code> array of initializers
+	 * Returns the size of the initializer list, including trivial initializers. This size may
+	 * be larger than the length of the array returned by {@link #getInitializers()}.
+	 * @since 5.2
+	 */
+	public int getSize();
+
+	/**
+	 * Returns the list of initializers. Depending on how the ast was created, this may omit
+	 * trivial initializers in order to save memory.
 	 */
 	public IASTInitializer[] getInitializers();
 
 	/**
-	 * Add an initializer to the initializer list.
-	 * 
-	 * @param initializer
-	 *            <code>IASTInitializer</code>
+	 * Add an initializer to the initializer list. Depending on how the AST is created the
+	 * initializer may be <code>null</code>. A <code>null</code> initializer will not be returned
+	 * by {@link #getInitializers()}, however it contributes to the actual element count (#getSize()).
 	 */
 	public void addInitializer(IASTInitializer initializer);
-	
+		
 	/**
 	 * @since 5.1
 	 */

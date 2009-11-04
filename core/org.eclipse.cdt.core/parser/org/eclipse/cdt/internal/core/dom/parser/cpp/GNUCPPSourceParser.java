@@ -603,17 +603,9 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
             return throwExpression();
         }
 
-//        if (LT(1) == IToken.tLPAREN && LT(2) == IToken.tLBRACE
-//                && supportStatementsInExpressions) {
-//            IASTExpression resultExpression = compoundStatementExpression();
-//            if (resultExpression != null)
-//                return resultExpression;
-//        }
-
+        // if this is a conditional expression, return right away.
         IASTExpression conditionalExpression = conditionalExpression();
-        // if the condition not taken, try assignment operators
-        if (conditionalExpression != null
-                && conditionalExpression instanceof IASTConditionalExpression) // &&
+        if (conditionalExpression instanceof IASTConditionalExpression) 
             return conditionalExpression;
 
         switch (LT(1)) {
@@ -2609,10 +2601,10 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
                 if (LT(1) == IToken.tRBRACE)
                     break;
 
+                // clause may be null, add to initializer anyways, such that the
+                // actual size can be computed.
                 IASTInitializer clause = initializerClause(true);
-                if (clause != null) {
-                    result.addInitializer(clause);
-                }
+                result.addInitializer(clause);
                 if (LT(1) == IToken.tRBRACE || LT(1) == IToken.tEOC)
                     break;
                 consume(IToken.tCOMMA);

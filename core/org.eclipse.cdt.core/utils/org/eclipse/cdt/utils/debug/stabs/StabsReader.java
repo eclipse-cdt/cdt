@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006 Nokia and others.
+ * Copyright (c) 2006, 2009 Nokia and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -21,16 +21,23 @@ public class StabsReader implements ISymbolReader {
 	byte[] stabData;
 	byte[] stabstrData;
 	boolean isLe;
+	boolean is64;
 	List<String> fileList;
 	String[] files = null;
 	boolean parsed = false;
 	String currentFile;
 
 	public StabsReader(byte[] data, byte[] stabstr, boolean littleEndian) {
+		this(data,stabstr,littleEndian,false);
+	}
+	/**
+	 * @since 5.2
+	 */
+	public StabsReader(byte[] data, byte[] stabstr, boolean littleEndian, boolean is64bit) {
 		stabData = data;
 		stabstrData = stabstr;
 		isLe = littleEndian;
-		
+		is64 = is64bit;
 		fileList = new ArrayList<String>();
 	}
 
@@ -80,7 +87,28 @@ public class StabsReader implements ISymbolReader {
 		}
 		return (short) (((bytes[offset] & 0xff) << 8) | (bytes[offset + 1] & 0xff));
 	}
-
+	private long read_8_bytes(byte[] bytes, int offset) throws IndexOutOfBoundsException {
+	
+		if (isLe) {
+			return (((bytes[offset + 7] & 0xff) << 56)
+				| ((bytes[offset +6] & 0xff) << 48)
+				| ((bytes[offset +5] & 0xff) << 40)
+				| ((bytes[offset +4] & 0xff) << 32)
+				| ((bytes[offset +3] & 0xff) << 24)
+				| ((bytes[offset +2] & 0xff) << 16)
+				| ((bytes[offset +1] & 0xff) << 8)
+				| (bytes[offset +0] & 0xff));
+		}
+	
+		return (((bytes[offset +0] & 0xff) << 56)
+			| ((bytes[offset +1] & 0xff) << 48)
+			| ((bytes[offset +2] & 0xff) << 40)
+			| ((bytes[offset +3] & 0xff) << 32)
+			| ((bytes[offset +4] & 0xff) << 24)
+			| ((bytes[offset +5] & 0xff) << 16)
+			| ((bytes[offset +6] & 0xff) << 8)
+			| (bytes[offset +7] & 0xff));
+	}
 	private String fixUpPath(String path) {
 		// some compilers generate extra back slashes
 		path = path.replaceAll("\\\\\\\\", "\\\\");  //$NON-NLS-1$//$NON-NLS-2$
@@ -115,7 +143,8 @@ public class StabsReader implements ISymbolReader {
 	}
 	
 	private void parse() {
-		long nstab = stabData.length / StabConstant.SIZE;
+		int size = is64 ? StabConstant.SIZE_64 : StabConstant.SIZE;
+		long nstab =  stabData.length / size;
 		int i, offset;
 		String holder = null;
 		long stroff = 0;
@@ -124,7 +153,7 @@ public class StabsReader implements ISymbolReader {
 		short desc = 0;
 		long value = 0;
 
-		for (i = offset = 0; i < nstab; i++, offset += StabConstant.SIZE) {
+		for (i = offset = 0; i < nstab; i++, offset += size) {
 
 			// get the type; 1 byte;
 			type = 0xff & stabData[offset + 4];
@@ -137,8 +166,8 @@ public class StabsReader implements ISymbolReader {
 				// get the desc
 				desc = read_2_bytes(stabData, offset + 6);
 				// get the value
-				value = read_4_bytes(stabData, offset + 8);
-
+				value = is64 ? read_8_bytes(stabData, offset + 8) : read_4_bytes(stabData, offset + 8);
+				
 				// get the offset for the string; 4 bytes
 				stroff = read_4_bytes(stabData, offset);
 

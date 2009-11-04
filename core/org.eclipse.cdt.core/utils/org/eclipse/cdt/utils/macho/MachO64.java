@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 QNX Software Systems and others.
+ * Copyright (c) 2000, 2009 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -24,9 +24,12 @@ import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.ISymbolReader;
 import org.eclipse.cdt.utils.CPPFilt;
 import org.eclipse.cdt.utils.debug.stabs.StabsReader;
+import org.eclipse.cdt.utils.debug.stabs.StabConstant;
 
-// test checkin
-public class MachO {
+/**
+ * @since 5.2
+ */
+public class MachO64 {
 	protected ERandomAccessFile efile;		
 
 	protected MachOhdr mhdr;
@@ -35,7 +38,7 @@ public class MachO {
 	protected CPPFilt cppFilt;
 	protected String file;
 	protected boolean debugsym = false;	/* contains debugging symbols */
-
+	protected boolean b64 = false;
     private Symbol[] symbols;			/* symbols from SymtabCommand */
     private Symbol[] local_symbols;		/* local symbols from DySymtabCommand */
     private boolean dynsym = false;		/* set if DynSymtabCommand is present */
@@ -54,19 +57,32 @@ public class MachO {
 	    public final static int MH_MAGIC = 0xfeedface;      /* the mach magic number */
 	    public final static int MH_CIGAM = 0xcefaedfe;
 	    public final static int MH_UNIVERSAL = 0xcafebabe;
+	    public final static int MH_MAGIC_64 = 0xfeedfacf;
+	    public final static int MH_CIGAM_64 = 0xcffaedfe;
+
+	    /* Capability mashs for cpu type*/
+	    public final static int CPU_ARCH_MASK =  0xff000000;
+	    public final static int CPU_ARCH_ABI64 = 0x01000000;   
 
 	    /* values of cputype */
 	    public final static int CPU_TYPE_ANY = -1;
 	    public final static int CPU_TYPE_VAX = 1;
 	    public final static int CPU_TYPE_MC680x0 = 6;
 	    public final static int CPU_TYPE_I386 = 7;
+	    public final static int CPU_TYPE_X86 = 7;
+	    public final static int CPU_TYPE_X86_64 = (CPU_TYPE_X86 | CPU_ARCH_ABI64);
 	    public final static int CPU_TYPE_MC98000 = 10;
 	    public final static int CPU_TYPE_HPPA = 11;
 	    public final static int CPU_TYPE_MC88000 = 13;
 	    public final static int CPU_TYPE_SPARC = 14;
 	    public final static int CPU_TYPE_I860 = 15;
 	    public final static int CPU_TYPE_POWERPC = 18;
-
+	    public final static int CPU_TYPE_POWERPC64 = (CPU_TYPE_POWERPC | CPU_ARCH_ABI64);
+	    
+	    /* Capability bits for cpu_subtype*/
+	    public final static int CPU_SUBTYPE_MASK = 0xff000000;
+	    public final static int CPU_SUBTYPE_LIB64 = 0x80000000;
+	    
 	    /* values of cpusubtype */
 	    public final static int CPU_SUBTYPE_MULTIPLE = -1;
 	    public final static int CPU_SUBTYPE_LITTLE_ENDIAN = 0;
@@ -97,6 +113,21 @@ public class MachO {
 	    public final static int CPU_SUBTYPE_PENTPRO = 32;
 	    public final static int CPU_SUBTYPE_PENTII_M3 = 54;
 	    public final static int CPU_SUBTYPE_PENTII_M5 = 86;
+	    public final static int CPU_SUBTYPE_CELERON = 7 + (6 << 4);
+	    public final static int CPU_SUBTYPE_CELERON_MOBILE = 7 + (7 << 4);
+	    public final static int CPU_SUBTYPE_PENTIUM_3 = 8 + (0 << 4);
+	    public final static int CPU_SUBTYPE_PENTIUM_3_M = 8 + (1 << 4);
+	    public final static int CPU_SUBTYPE_PENTIUM_3_XEON = 8 + (2 << 4);
+	    public final static int CPU_SUBTYPE_PENTIUM_M = 9 + (0 << 4);
+	    public final static int CPU_SUBTYPE_PENTIUM_4 = 10 + (0 << 4);
+	    public final static int CPU_SUBTYPE_PENTIUM_4_M = 10 + (0 << 1);
+	    public final static int CPU_SUBTYPE_ITANIUM = 11 + (0 << 4);
+	    public final static int CPU_SUBTYPE_ITANIUM_2 = 11 + (1 << 4);
+	    public final static int CPU_SUBTYPE_XEON = 12 + (0 << 4);
+	    public final static int CPU_SUBTYPE_XEON_MP = 12 + (1 << 4);	  
+	    public final static int CPU_SUBTYPE_X86_ALL = 3;
+	    public final static int CPU_SUBTYPE_X86_64_ALL = 3;
+	    public final static int CPU_SUBTYPE_X86_ARCH1 = 4;
 	    public final static int CPU_SUBTYPE_MIPS_ALL = 0;
 	    public final static int CPU_SUBTYPE_MIPS_R2300 = 1;
 	    public final static int CPU_SUBTYPE_MIPS_R2600 = 2;
@@ -140,6 +171,7 @@ public class MachO {
 	    public final static int MH_DYLINKER = 0x7;		/* dynamic link editor */
 	    public final static int MH_BUNDLE = 0x8;			/* dynamically bound bundle file */
 	    public final static int MH_DYLIB_STUB = 0x9;		/* shared library stub for static linking only, no section contents */
+	    public final static int MH_DSYM = 0xa;             /* companion file with only debug */
 	    
 	    /* values of flags */
 	    public final static int MH_NOUNDEFS = 0x1;			/* the object file has no undefined references */
@@ -153,7 +185,17 @@ public class MachO {
 		public final static int MH_FORCE_FLAT = 0x100;		/* the executable is forcing all images to use flat name space bindings */
 		public final static int MH_NOMULTIDEFS = 0x200;		/* this umbrella guarantees no multiple defintions of symbols in its sub-images so the two-level namespace hints can always be used. */
 		public final static int MH_NOFIXPREBINDING = 0x400;	/* do not have dyld notify the prebinding agent about this executable */
-
+		public final static int MH_PREBINDABLE = 0x800;      /* the binary is not prebound but can  have its prebinding redone. only used  when MH_PREBOUND is not set. */
+		public final static int MH_ALLMODSBOUND = 0x1000;    /* indicates that this binary binds to all two-level namespace modules of  its dependent libraries. only used  when MH_PREBINDABLE and MH_TWOLEVEL are both set. */ 
+		public final static int MH_SUBSECTIONS_VIA_SYMBOLS = 0x2000; /* safe to divide up the sections into sub-sections via symbols for dead code stripping */
+		public final static int MH_CANONICAL = 0x4000;          /* the binary has been canonicalized via the unprebind operation */
+		public final static int MH_WEAK_DEFINES = 0x8000;      /* the final linked image contains external weak symbols */
+		public final static int MH_BINDS_TO_WEAK = 0x10000;    /* the final linked image uses weak symbols */
+		public final static int MH_ALLOW_STACK_EXECUTION = 0x20000; /* When this bit is set, all stacks in the task will be given stack execution privilege.  Only used in MH_EXECUTE filetypes. */
+		public final static int MH_ROOT_SAFE = 0x40000;        /* When this bit is set, the binary declares it is safe for use in processes with uid zero */
+		public final static int MH_SETUID_SAFE = 0x80000;         /* When this bit is set, the binary declares it is safe for use in processes when issetugid() is true */
+		public final static int MH_NO_REEXPORTED_DYLIBS = 0x100000; /* When this bit is set on a dylib,the static linker does not need to examine dependent dylibs to see if any are re-exported */
+		public final static int MH_PIE = 0x200000;          /* When this bit is set, the OS will load the main executable at a random address.  Only used in  MH_EXECUTE filetypes. */
         public int magic;		/* mach magic number identifier */
         public int cputype;		/* cpu specifier */
         public int cpusubtype;	/* machine specifier */
@@ -161,13 +203,16 @@ public class MachO {
         public int ncmds;		/* number of load commands */
         public int sizeofcmds;	/* the size of all the load commands */
         public int flags;			/* flags */
-
+        public int reserved; // 64bit reserved
 		protected MachOhdr() throws IOException {
 			efile.seek(0);
 			efile.setEndian(false);
 			magic = efile.readIntE();
-			if ( magic == MH_CIGAM )
+			if ( magic == MH_CIGAM || magic == MH_CIGAM_64) {
 				efile.setEndian(true);
+				if (MH_CIGAM_64 == magic)
+					b64 = true;
+			}
 			else
 			if ( magic == MH_UNIVERSAL)
 			{ 
@@ -180,35 +225,46 @@ public class MachO {
 					int archiveOffset = efile.readIntE(); // archiveOffset
 									 	efile.readIntE(); // archiveSize
 									 	efile.readIntE(); // archiveAlignment
-					if ((cpuType == MachO.MachOhdr.CPU_TYPE_I386 && arch.equalsIgnoreCase("i386")) ||  //$NON-NLS-1$
-							(cpuType == MachO.MachOhdr.CPU_TYPE_POWERPC && arch.equalsIgnoreCase("ppc"))) //$NON-NLS-1$
+					if ((cpuType == MachO64.MachOhdr.CPU_TYPE_I386 && arch.equalsIgnoreCase("i386")) ||  //$NON-NLS-1$
+							(cpuType == MachO64.MachOhdr.CPU_TYPE_POWERPC && arch.equalsIgnoreCase("ppc")) || //$NON-NLS-1$
+							(cpuType == MachO64.MachOhdr.CPU_TYPE_X86_64 && arch.equalsIgnoreCase("x86_64"))) //$NON-NLS-1$
 					{
+						if (cpuType == MachO64.MachOhdr.CPU_TYPE_X86_64)
+							b64 = true;
 						efile.seek(archiveOffset);
 						magic = efile.readIntE();
-						if ( magic == MH_CIGAM )
+						if ( magic == MH_CIGAM || magic == MH_CIGAM_64)
 							efile.setEndian(true);
-							else if ( magic != MH_MAGIC )
+							else if ( magic != MH_MAGIC && magic != MH_MAGIC_64)
 								throw new IOException(CCorePlugin.getResourceString("Util.exception.notMACHO")); //$NON-NLS-1$
 					break;
 					}
 				}
 			}
-			else if ( magic != MH_MAGIC )
+			else if ( magic != MH_MAGIC && magic != MH_MAGIC_64)
 				throw new IOException(CCorePlugin.getResourceString("Util.exception.notMACHO")); //$NON-NLS-1$
+			if (magic == MH_MAGIC_64 || magic == MH_CIGAM_64)
+				b64 = true;
 			cputype = efile.readIntE();
 			cpusubtype = efile.readIntE();
 			filetype = efile.readIntE();
 			ncmds = efile.readIntE();
 			sizeofcmds = efile.readIntE();
 			flags = efile.readIntE();
+			if (b64) {
+				reserved = efile.readIntE();
+			}
 		}
 		
 		protected MachOhdr(byte [] bytes) throws IOException {
 			boolean isle = false;
 			int offset = 0;
 			magic = makeInt(bytes, offset, isle); offset += 4;
-			if ( magic == MH_CIGAM )
+			if ( magic == MH_CIGAM || magic == MH_CIGAM_64) {
 				isle = true;
+				if (MH_CIGAM_64 == magic)
+					b64 = true;
+			}
 			else
 				if ( magic == MH_UNIVERSAL)
 				{ 
@@ -221,27 +277,38 @@ public class MachO {
 						int archiveOffset = makeInt(bytes, offset, isle); offset += 4; 
 						offset += 4; // archiveSize
 						offset += 4; // archiveAlignment
-						if ((cpuType == MachO.MachOhdr.CPU_TYPE_I386 && arch.equalsIgnoreCase("i386")) ||  //$NON-NLS-1$
-								(cpuType == MachO.MachOhdr.CPU_TYPE_POWERPC && arch.equalsIgnoreCase("ppc"))) //$NON-NLS-1$
+						if ((cpuType == MachO64.MachOhdr.CPU_TYPE_I386 && arch.equalsIgnoreCase("i386")) ||  //$NON-NLS-1$
+								(cpuType == MachO64.MachOhdr.CPU_TYPE_POWERPC && arch.equalsIgnoreCase("ppc")) || //$NON-NLS-1$
+								(cpuType == MachO64.MachOhdr.CPU_TYPE_X86_64 && arch.equalsIgnoreCase("x86_64"))) //$NON-NLS-1$
 						{
+							if (cpuType == MachO64.MachOhdr.CPU_TYPE_X86_64)
+								b64 = true;
 							offset = archiveOffset;
 							magic = makeInt(bytes, offset, isle); offset += 4;
-							if ( magic == MH_CIGAM )
+							if ( magic == MH_CIGAM || magic == MH_CIGAM_64 )
 								isle = true;
-								else if ( magic != MH_MAGIC )
+								else if ( magic != MH_MAGIC && magic != MH_MAGIC_64)
 									throw new IOException(CCorePlugin.getResourceString("Util.exception.notMACHO")); //$NON-NLS-1$
 						break;
 						}
 					}
 				}
-			else if ( magic != MH_MAGIC )
+			else if ( magic != MH_MAGIC && magic != MH_MAGIC_64)
 				throw new IOException(CCorePlugin.getResourceString("Util.exception.notMACHO")); //$NON-NLS-1$
+			if (magic == MH_MAGIC_64 || magic == MH_CIGAM_64)
+				b64 = true;
 			cputype = makeInt(bytes, offset, isle); offset += 4;
 			cpusubtype = makeInt(bytes, offset, isle); offset += 4;
 			filetype = makeInt(bytes, offset, isle); offset += 4;
 			ncmds = makeInt(bytes, offset, isle); offset += 4;
 			sizeofcmds = makeInt(bytes, offset, isle); offset += 4;
 			flags = makeInt(bytes, offset, isle); offset += 4;
+			if (b64) {
+				reserved = makeInt(bytes, offset, isle); offset += 4;
+			}
+		}
+		public boolean is64() {
+			return b64;
 		}
 	}
 
@@ -289,6 +356,9 @@ public class MachO {
 		public final static int LC_SUB_LIBRARY = 0x15;		/* sub library */
 		public final static int LC_TWOLEVEL_HINTS = 0x16;	/* two-level namespace lookup hints */
 		public final static int LC_PREBIND_CKSUM = 0x17;		/* prebind checksum */
+		public final static int LC_SEGMENT_64 = 0x19;
+		public final static int LC_ROUTINES_64 = 0x1a;
+		public final static int LC_UUID = 0x1b;
 		/*
 		 * load a dynamically linked shared library that is allowed to be missing
 		 * (all symbols are weak imported).
@@ -325,10 +395,10 @@ public class MachO {
 		public final static int VM_PROT_WANTS_COPY = 0x10;
 
         public String segname;    /* segment name */
-        public int vmaddr;        /* memory address of this segment */
-        public int vmsize;        /* memory size of this segment */
-        public int fileoff;        /* file offset of this segment */
-        public int filesize;       /* amount to map from the file */
+        public long vmaddr;        /* memory address of this segment */
+        public long vmsize;        /* memory size of this segment */
+        public long fileoff;        /* file offset of this segment */
+        public long filesize;       /* amount to map from the file */
         public int maxprot;       /* maximum VM protection */
         public int initprot;      /* initial VM protection */
         public int nsects;        /* number of sections in segment */
@@ -369,8 +439,8 @@ public class MachO {
         public String sectname;			/* name of this section */
         public String segname;			/* name segment this section goes in */
         public SegmentCommand segment;	/* segment this section goes in */
-        public int addr;					/* memory address of this section */
-        public int size;					/* size in bytes of this section */
+        public long addr;					/* memory address of this section */
+        public long size;					/* size in bytes of this section */
         public int offset;				/* file offset of this section */
         public int align;				/* section alignment (power of 2) */
         public int reloff;				/* file offset of relocation entries */
@@ -378,6 +448,7 @@ public class MachO {
         public int flags;					/* flags (section type and attributes)*/
         public int reserved1;			/* reserved */
         public int reserved2;			/* reserved */
+        public int reserved3;
         
         public int flags(int mask) {
         		return flags & mask;
@@ -398,7 +469,9 @@ public class MachO {
 			return lc_str_name;
 		}
 	}
-
+	public class MachUUID extends LoadCommand {
+		public String uuid;
+	}
 	public class FVMLibCommand extends LoadCommand {
          public FVMLib fvmlib;	/* the library identification */
 	}
@@ -507,14 +580,14 @@ public class MachO {
 	}
 
 	public class RoutinesCommand extends LoadCommand {
-	    public int init_address;       /* address of initialization routine */
-	    public int init_module;        /* index into the module table that the init routine is defined in */
-	    public int reserved1;
-	    public int reserved2;
-	    public int reserved3;        
-	    public int reserved4;
-	    public int reserved5;
-	    public int reserved6;
+	    public long init_address;       /* address of initialization routine */
+	    public long init_module;        /* index into the module table that the init routine is defined in */
+	    public long reserved1;
+	    public long reserved2;
+	    public long reserved3;        
+	    public long reserved4;
+	    public long reserved5;
+	    public long reserved6;
 	}
 	
 	public class SymtabCommand extends LoadCommand {
@@ -564,7 +637,7 @@ public class MachO {
         public int nextrel;                    /* number of external relocation entries */        
         public int iinit_iterm;                /* low 16 bits are the index into the init section, high 16 bits are the index into the term section */        
         public int ninit_nterm;                /* low 16 bits are the number of init section entries, high 16 bits are the number of term section entries */        
-        public int objc_module_info_addr;      /* for this module address of the start of the (__OBJC,__module_info) section */        
+        public long objc_module_info_addr;      /* for this module address of the start of the (__OBJC,__module_info) section */        
         public int objc_module_info_size;      /* for this module size of the (__OBJC,__module_info) section */        
     }  
         
@@ -627,7 +700,7 @@ public class MachO {
 		}
     }
     
-	protected String string_from_macho_symtab(MachO.SymtabCommand symtab, int index) throws IOException {
+	protected String string_from_macho_symtab(MachO64.SymtabCommand symtab, int index) throws IOException {
 		if ( index > symtab.strsize ) {
 				return EMPTY_STRING;
 			}
@@ -697,7 +770,7 @@ public class MachO {
 		public short n_desc;
 		public byte n_type;
 		public byte n_sect;		
-
+		public boolean is64;
 		private String name = null;		/* symbol name */
 		private Line line = null;		/* symbol line information */
 
@@ -936,22 +1009,22 @@ public class MachO {
 	}
 	
     //A hollow entry, to be used with caution in controlled situations
-    protected MachO () {
+    protected MachO64 () {
     }
 
-	public MachO (String file, long offset) throws IOException {
+	public MachO64 (String file, long offset) throws IOException {
         commonSetup( file, offset, true );
     }
 
-    public MachO (String file) throws IOException {
+    public MachO64 (String file) throws IOException {
         commonSetup( file, 0, true );
     }
      
-    public MachO (String file, long offset, boolean filton) throws IOException {
+    public MachO64 (String file, long offset, boolean filton) throws IOException {
         commonSetup( file, offset, filton );
     }
 
-    public MachO (String file, boolean filton) throws IOException {
+    public MachO64 (String file, boolean filton) throws IOException {
         commonSetup( file, 0, filton );
     }
 
@@ -1008,62 +1081,67 @@ public class MachO {
 		Attribute attrib = new Attribute();
     
 	    switch( mhdr.filetype ) {
-        	case MachO.MachOhdr.MH_OBJECT:
+        	case MachO64.MachOhdr.MH_OBJECT:
 				attrib.type = Attribute.MACHO_TYPE_OBJ;
 				break;
-            case MachO.MachOhdr.MH_EXECUTE:
-            case MachO.MachOhdr.MH_PRELOAD:
-            case MachO.MachOhdr.MH_BUNDLE:
-            case MachO.MachOhdr.MH_DYLINKER:
+            case MachO64.MachOhdr.MH_EXECUTE:
+            case MachO64.MachOhdr.MH_PRELOAD:
+            case MachO64.MachOhdr.MH_BUNDLE:
+            case MachO64.MachOhdr.MH_DYLINKER:
                 attrib.type = Attribute.MACHO_TYPE_EXE;
                 break;
-            case MachO.MachOhdr.MH_CORE:
+            case MachO64.MachOhdr.MH_CORE:
                 attrib.type = Attribute.MACHO_TYPE_CORE;
                 break;
-            case MachO.MachOhdr.MH_DYLIB:
-            case MachO.MachOhdr.MH_FVMLIB:
+            case MachO64.MachOhdr.MH_DYLIB:
+            case MachO64.MachOhdr.MH_FVMLIB:
                attrib.type = Attribute.MACHO_TYPE_SHLIB;
                 break;
         }
 	   
 		switch (mhdr.cputype) {
-			case MachO.MachOhdr.CPU_TYPE_I386 :
+			case MachO64.MachOhdr.CPU_TYPE_X86_64:
+				attrib.cpu = "x86_64"; //$NON-NLS-1$
+				break;
+			case MachO64.MachOhdr.CPU_TYPE_I386 :
 				attrib.cpu = "x86"; //$NON-NLS-1$
 				break;
-			case MachO.MachOhdr.CPU_TYPE_POWERPC :
+			case MachO64.MachOhdr.CPU_TYPE_POWERPC :
 				attrib.cpu = "ppc"; //$NON-NLS-1$
 				break;
-			case MachO.MachOhdr.CPU_TYPE_VAX :
+			case MachO64.MachOhdr.CPU_TYPE_VAX :
 				attrib.cpu = "vax"; //$NON-NLS-1$
 				break;
-			case MachO.MachOhdr.CPU_TYPE_MC680x0 :
+			case MachO64.MachOhdr.CPU_TYPE_MC680x0 :
 				attrib.cpu = "m68k"; //$NON-NLS-1$
 				break;
-			case MachO.MachOhdr.CPU_TYPE_MC98000 :
+			case MachO64.MachOhdr.CPU_TYPE_MC98000 :
 				attrib.cpu = "98000"; //$NON-NLS-1$
 				break;
-			case MachO.MachOhdr.CPU_TYPE_MC88000 :
+			case MachO64.MachOhdr.CPU_TYPE_MC88000 :
 				attrib.cpu = "88000"; //$NON-NLS-1$
 				break;
-			case MachO.MachOhdr.CPU_TYPE_HPPA :
+			case MachO64.MachOhdr.CPU_TYPE_HPPA :
 				attrib.cpu = "hp"; //$NON-NLS-1$
 				break;
-			case MachO.MachOhdr.CPU_TYPE_SPARC:
+			case MachO64.MachOhdr.CPU_TYPE_SPARC:
 				attrib.cpu = "sparc"; //$NON-NLS-1$
 				break;
-			case MachO.MachOhdr.CPU_TYPE_I860:
+			case MachO64.MachOhdr.CPU_TYPE_I860:
 				attrib.cpu = "i860"; //$NON-NLS-1$
 				break;
-			case MachO.MachOhdr.CPU_TYPE_ANY:
+			case MachO64.MachOhdr.CPU_TYPE_ANY:
 			default:
 				attrib.cpu = "any"; //$NON-NLS-1$
 		}
 		
 		switch (mhdr.magic) {
-			case MachO.MachOhdr.MH_CIGAM :
+			case MachO64.MachOhdr.MH_CIGAM_64:
+			case MachO64.MachOhdr.MH_CIGAM :
 				attrib.isle = true;
 				break;
-			case MachO.MachOhdr.MH_MAGIC :
+			case MachO64.MachOhdr.MH_MAGIC_64 :
+			case MachO64.MachOhdr.MH_MAGIC :
 				attrib.isle = false;
 				break;
 		}
@@ -1076,7 +1154,7 @@ public class MachO {
     }
 
 	public static Attribute getAttributes(String file) throws IOException {
-		MachO macho = new MachO(file);
+		MachO64 macho = new MachO64(file);
 		Attribute attrib = macho.getAttributes();
 		macho.dispose();	
 		return attrib;	
@@ -1084,9 +1162,9 @@ public class MachO {
 
 	public static Attribute getAttributes(byte [] array) throws IOException {
 		
-		MachO emptyMachO = new MachO();
+		MachO64 emptyMachO = new MachO64();
 		emptyMachO.mhdr = emptyMachO.new MachOhdr(array);
-		//emptyMachO.sections = new MachO.Section[0];
+		//emptyMachO.sections = new MachO64.Section[0];
 		Attribute attrib = emptyMachO.getAttributes();
 		emptyMachO.dispose();	
 				
@@ -1096,7 +1174,7 @@ public class MachO {
 	public static boolean isMachOHeader(byte[] bytes) {
 		try {
 			int magic = makeInt(bytes, 0, false);
-			return (magic == MachO.MachOhdr.MH_MAGIC || magic == MachO.MachOhdr.MH_CIGAM || magic == MachO.MachOhdr.MH_UNIVERSAL);
+			return (magic == MachO64.MachOhdr.MH_MAGIC || magic == MachO64.MachOhdr.MH_CIGAM || magic == MachO64.MachOhdr.MH_UNIVERSAL || magic == MachO64.MachOhdr.MH_CIGAM_64 || magic == MachO64.MachOhdr.MH_MAGIC_64);
 		} catch (IOException e) {
 			return false;
 		}
@@ -1140,11 +1218,16 @@ public class MachO {
 					ArrayList<Symbol> symList = new ArrayList<Symbol>(symtab.nsyms);
 					for (int s = 0; s < symtab.nsyms; s++) {
 						Symbol symbol = new Symbol();
+						symbol.is64 = b64;
 						symbol.n_strx = efile.readIntE();
 						symbol.n_type = (byte)efile.readUnsignedByte();
 						symbol.n_sect = (byte)efile.readUnsignedByte();
 						symbol.n_desc = efile.readShortE();
-						symbol.n_value = efile.readIntE();
+						// figure out 64 bit file an dload 64 bit symbols
+						if (b64)
+							symbol.n_value = efile.readLongE();
+						else
+							symbol.n_value = efile.readIntE();							
 						symList.add(symbol);
 						if ((symbol.n_type & Symbol.N_STAB) != 0) {
 							debugsym = true;
@@ -1241,8 +1324,13 @@ public class MachO {
 			efile.readFully(segname);
 			section.segment = seg;
 			section.segname = new String(segname, 0, 16);
-			section.addr = efile.readIntE();
-			section.size = efile.readIntE();
+			if (b64) {
+				section.addr = efile.readLongE();
+				section.size = efile.readLongE();
+			}else {
+				section.addr = efile.readIntE();
+				section.size = efile.readIntE();				
+			}
 			section.offset = efile.readIntE();
 			section.align = efile.readIntE();
 			section.reloff = efile.readIntE();
@@ -1250,6 +1338,8 @@ public class MachO {
 			section.flags = efile.readIntE();
 			section.reserved1 = efile.readIntE();
 			section.reserved2 = efile.readIntE();
+			if (b64)
+				section.reserved3 = efile.readInt();
 			sections.add(section);
 		}
 		return sections;
@@ -1302,13 +1392,32 @@ public class MachO {
 			loadcommands = new LoadCommand[mhdr.ncmds];
 			for ( int i = 0; i < mhdr.ncmds; i++ ) {
 				int cmd = efile.readIntE();
-				int len;
+				int len = efile.readIntE();
+				
 				switch (cmd) {
+					case LoadCommand.LC_SEGMENT_64:
+						SegmentCommand seg64 = new SegmentCommand();
+						byte[] segname64 = new byte[16];
+						seg64.cmd = cmd;
+						seg64.cmdsize = len;
+						efile.readFully(segname64);
+						seg64.segname = new String(segname64, 0, 16);
+						seg64.vmaddr = efile.readLongE();
+						seg64.vmsize = efile.readLongE();
+						seg64.fileoff = efile.readLongE();
+						seg64.filesize = efile.readLongE();
+				        seg64.maxprot = efile.readIntE();
+				        seg64.initprot = efile.readIntE();
+				        seg64.nsects = efile.readIntE();
+				        seg64.flags = efile.readIntE();
+				        sections.addAll(getSections(seg64));
+				        loadcommands[i] = seg64;
+						break;
 					case LoadCommand.LC_SEGMENT:
 						SegmentCommand seg = new SegmentCommand();
 						byte[] segname = new byte[16];
 						seg.cmd = cmd;
-						seg.cmdsize = efile.readIntE();
+						seg.cmdsize = len;
 						efile.readFully(segname);
 						seg.segname = new String(segname, 0, 16);
 						seg.vmaddr = efile.readIntE();
@@ -1326,7 +1435,7 @@ public class MachO {
 					case LoadCommand.LC_SYMTAB:
 						SymtabCommand stcmd = new SymtabCommand();
 						stcmd.cmd = cmd;
-						stcmd.cmdsize = efile.readIntE();
+						stcmd.cmdsize = len;
 						stcmd.symoff = efile.readIntE();
 						stcmd.nsyms = efile.readIntE();
 						stcmd.stroff = efile.readIntE();
@@ -1337,7 +1446,7 @@ public class MachO {
 					case LoadCommand.LC_SYMSEG:
 						SymSegCommand sscmd = new SymSegCommand();
 						sscmd.cmd = cmd;
-						sscmd.cmdsize = efile.readIntE();
+						sscmd.cmdsize = len;
 						sscmd.offset = efile.readIntE();
 						sscmd.size = efile.readIntE();
 						loadcommands[i] = sscmd;
@@ -1347,8 +1456,8 @@ public class MachO {
 					case LoadCommand.LC_UNIXTHREAD:
 						ThreadCommand thcmd = new ThreadCommand();
 						thcmd.cmd = cmd;
-						thcmd.cmdsize = efile.readIntE();
-						efile.skipBytes(thcmd.cmdsize - 8 /* sizeof(ThreadCommand) */);
+						thcmd.cmdsize = len;
+						efile.skipBytes(len - 8);
 						loadcommands[i] = thcmd;
 						break;
 					
@@ -1356,7 +1465,7 @@ public class MachO {
 					case LoadCommand.LC_IDFVMLIB:
 						FVMLibCommand fvmcmd = new FVMLibCommand();
 						fvmcmd.cmd = cmd;
-						fvmcmd.cmdsize = efile.readIntE();
+						fvmcmd.cmdsize = len;
 						fvmcmd.fvmlib = new FVMLib();
 						fvmcmd.fvmlib.name = efile.readIntE();
 						fvmcmd.fvmlib.minor_version = efile.readIntE();
@@ -1371,14 +1480,14 @@ public class MachO {
 					case LoadCommand.LC_IDENT:
 						IdentCommand icmd = new IdentCommand();
 						icmd.cmd = cmd;
-						icmd.cmdsize = efile.readIntE();
+						icmd.cmdsize = len;
 						loadcommands[i] = icmd;
 						break;
 						
 					case LoadCommand.LC_FVMFILE:
 						FVMFileCommand fcmd = new FVMFileCommand();
 						fcmd.cmd = cmd;
-						fcmd.cmdsize = efile.readIntE();
+						fcmd.cmdsize = len;
 						fcmd.name = efile.readIntE();
 						fcmd.header_addr = efile.readIntE();
 						len = fcmd.cmdsize - 16 /* sizeof FVMFileCommand */;
@@ -1391,7 +1500,7 @@ public class MachO {
 					case LoadCommand.LC_DYSYMTAB:
 						DySymtabCommand dscmd = new DySymtabCommand();
 						dscmd.cmd = cmd;
-						dscmd.cmdsize = efile.readIntE();
+						dscmd.cmdsize = len;
 						dscmd.ilocalsym = efile.readIntE();
 						dscmd.nlocalsym = efile.readIntE();
 						dscmd.iextdefsym = efile.readIntE();
@@ -1419,7 +1528,7 @@ public class MachO {
 					case LoadCommand.LC_LOAD_WEAK_DYLIB:
 						DyLibCommand dylcmd = new DyLibCommand();
 						dylcmd.cmd = cmd;
-						dylcmd.cmdsize = efile.readIntE();
+						dylcmd.cmdsize = len;
 						dylcmd.dylib = new DyLib();
 						dylcmd.dylib.name = efile.readIntE();
 						dylcmd.dylib.timestamp = efile.readIntE();
@@ -1436,7 +1545,7 @@ public class MachO {
 					case LoadCommand.LC_ID_DYLINKER:
 						DyLinkerCommand dylkcmd = new DyLinkerCommand();
 						dylkcmd.cmd = cmd;
-						dylkcmd.cmdsize = efile.readIntE();
+						dylkcmd.cmdsize = len;
 						dylkcmd.name = efile.readIntE();
 						len = dylkcmd.cmdsize - 12 /* sizeof(DyLinkerCommand) */;
 						dylkcmd.lc_str_name = getLCStr(len);
@@ -1448,7 +1557,7 @@ public class MachO {
 					case LoadCommand.LC_PREBOUND_DYLIB:
 						PreboundDyLibCommand pbcmd = new PreboundDyLibCommand();
 						pbcmd.cmd = cmd;
-						pbcmd.cmdsize = efile.readIntE();
+						pbcmd.cmdsize = len;
 						pbcmd.name = efile.readIntE();
 						pbcmd.nmodules = efile.readIntE();
 						pbcmd.linked_modules = efile.readIntE();
@@ -1459,10 +1568,25 @@ public class MachO {
 						loadcommands[i] = pbcmd;
 						break;
 
+					case LoadCommand.LC_ROUTINES_64:
+						RoutinesCommand rcmd64 = new RoutinesCommand();
+						rcmd64.cmd = cmd;
+						rcmd64.cmdsize = len;
+						rcmd64.init_address = efile.readLongE();
+						rcmd64.init_module = efile.readLongE();
+						rcmd64.reserved1 = efile.readLongE();
+						rcmd64.reserved2 = efile.readLongE();
+						rcmd64.reserved3 = efile.readLongE();
+						rcmd64.reserved4 = efile.readLongE();
+						rcmd64.reserved5 = efile.readLongE();
+						rcmd64.reserved6 = efile.readLongE();
+						loadcommands[i] = rcmd64;
+						break;
+
 					case LoadCommand.LC_ROUTINES:
 						RoutinesCommand rcmd = new RoutinesCommand();
 						rcmd.cmd = cmd;
-						rcmd.cmdsize = efile.readIntE();
+						rcmd.cmdsize = len;
 						rcmd.init_address = efile.readIntE();
 						rcmd.init_module = efile.readIntE();
 						rcmd.reserved1 = efile.readIntE();
@@ -1477,7 +1601,7 @@ public class MachO {
 					case LoadCommand.LC_SUB_FRAMEWORK:
 						SubFrameworkCommand subfcmd = new SubFrameworkCommand();
 						subfcmd.cmd = cmd;
-						subfcmd.cmdsize = efile.readIntE();
+						subfcmd.cmdsize = len;
 						subfcmd.umbrella = efile.readIntE();
 						len = subfcmd.cmdsize - 12 /* sizeof(SubFrameworkCommand) */   ;
 						subfcmd.lc_str_name = getLCStr(len);
@@ -1489,7 +1613,7 @@ public class MachO {
 					case LoadCommand.LC_SUB_UMBRELLA:
 						SubUmbrellaCommand subucmd = new SubUmbrellaCommand();
 						subucmd.cmd = cmd;
-						subucmd.cmdsize = efile.readIntE();
+						subucmd.cmdsize = len;
 						subucmd.sub_umbrella = efile.readIntE();
 						len = subucmd.cmdsize - 12 /* sizeof(SubUmbrellaCommand) */;
 						subucmd.lc_str_name = getLCStr(len);
@@ -1501,7 +1625,7 @@ public class MachO {
 					case LoadCommand.LC_SUB_CLIENT:
 						SubClientCommand subccmd = new SubClientCommand();
 						subccmd.cmd = cmd;
-						subccmd.cmdsize = efile.readIntE();
+						subccmd.cmdsize = len;
 						subccmd.client = efile.readIntE();
 						len = subccmd.cmdsize - 12 /* sizeof(SubClientCommand) */;
 						subccmd.lc_str_name = getLCStr(len);
@@ -1513,7 +1637,7 @@ public class MachO {
 					case LoadCommand.LC_SUB_LIBRARY:
 						SubLibraryCommand sublcmd = new SubLibraryCommand();
 						sublcmd.cmd = cmd;
-						sublcmd.cmdsize = efile.readIntE();
+						sublcmd.cmdsize = len;
 						sublcmd.sub_library = efile.readIntE();
 						len = sublcmd.cmdsize - 12 /* sizeof(SubLibraryCommand) */;
 						sublcmd.lc_str_name = getLCStr(len);
@@ -1525,16 +1649,24 @@ public class MachO {
 					case LoadCommand.LC_TWOLEVEL_HINTS:
 						TwoLevelHintsCommand tlhcmd = new TwoLevelHintsCommand();
 						tlhcmd.cmd = cmd;
-						tlhcmd.cmdsize = efile.readIntE();
+						tlhcmd.cmdsize = len;
 						tlhcmd.offset = efile.readIntE();
 						tlhcmd.nhints = efile.readIntE();
 						loadcommands[i] = tlhcmd;
 						break;
-					
+					case LoadCommand.LC_UUID:
+						MachUUID uuidCmd = new MachUUID();
+						uuidCmd.cmd = cmd;
+						uuidCmd.cmdsize = len;
+						byte[] uuid = new byte[16];
+						efile.readFully(uuid);
+						uuidCmd.uuid = new String(uuid,0,16);
+						loadcommands[i] = uuidCmd;
+						break;
 					case LoadCommand.LC_PREBIND_CKSUM:
 						PrebindCksumCommand pbccmd = new PrebindCksumCommand();
 						pbccmd.cmd = cmd;
-						pbccmd.cmdsize = efile.readIntE();
+						pbccmd.cmdsize = len;
 						pbccmd.cksum = efile.readIntE();
 						loadcommands[i] = pbccmd;
 						break;
@@ -1558,7 +1690,9 @@ public class MachO {
 			loadLineTable();
 		}
 	}
-
+	public boolean is64() {
+		return b64;
+	}
     public Symbol[] getSymbols() {
         return symbols;
     }
@@ -1617,7 +1751,7 @@ public class MachO {
 	}
 		
 	public long swapInt( long val ) {
-		if ( mhdr.magic == MachOhdr.MH_CIGAM ) {
+		if ( mhdr.magic == MachOhdr.MH_CIGAM || mhdr.magic == MachOhdr.MH_CIGAM_64 ) {
 			short tmp[] = new short[4];
 			tmp[0] = (short)(val & 0x00ff);
 			tmp[1] = (short)((val >> 8) & 0x00ff);
@@ -1629,7 +1763,7 @@ public class MachO {
 	}
 
 	public int swapShort( short val ) {
-		if ( mhdr.magic == MachOhdr.MH_CIGAM ) {
+		if ( mhdr.magic == MachOhdr.MH_CIGAM || mhdr.magic == MachOhdr.MH_CIGAM_64) {
 			short tmp[] = new short[2];
 			tmp[0] = (short)(val & 0x00ff);
 			tmp[1] = (short)((val >> 8) & 0x00ff);
@@ -1649,7 +1783,7 @@ public class MachO {
 				if ( loadcommands == null ) {
 					loadLoadCommands();
 				}
-			} catch (IOException e) { }
+			} catch (Throwable e) { e.printStackTrace(); }
 
 
 			for (LoadCommand loadcommand : loadcommands) {
@@ -1657,15 +1791,15 @@ public class MachO {
 				{
 					symtab = (SymtabCommand)loadcommand;
 					try {
-						int symSize = symtab.nsyms * 12;
+						int symSize = symtab.nsyms * (mhdr.is64() ? StabConstant.SIZE_64 :StabConstant.SIZE);
 						byte[] data = new byte[symSize];
 						efile.seek(symtab.symoff);
 						efile.readFully(data);
 						byte[] stabstr = new byte[symtab.strsize];			
 						efile.seek(symtab.stroff);
 						efile.readFully(stabstr);
-						symReader = new StabsReader(data, stabstr, getAttributes().isLittleEndian());
-					} catch (IOException e) {}
+						symReader = new StabsReader(data, stabstr, getAttributes().isLittleEndian(),mhdr.is64());
+					} catch (Throwable e) { e.printStackTrace(); }
 					
 				}
 			}

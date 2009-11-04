@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 QNX Software Systems and others.
+ * Copyright (c) 2000, 2009 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -60,6 +60,8 @@ public final class StabConstant {
 	public final static int N_NBLCS = 0xf8;
 
 	public final static int SIZE = 12; // 4 + 1 + 1 + 2 + 4
+	/** @since 5.2 */
+	public final static int SIZE_64 = 16; // 4 + 1 + 1 + 2 + 8
 
 	public static String type2String(int t) {
 		switch (t) {

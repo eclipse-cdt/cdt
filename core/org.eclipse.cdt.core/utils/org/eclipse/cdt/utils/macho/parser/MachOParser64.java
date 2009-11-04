@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2002, 2007 QNX Software Systems and others.
+ * Copyright (c) 2002, 2009 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -18,14 +18,15 @@ import org.eclipse.cdt.core.IBinaryParser;
 import org.eclipse.cdt.core.ICExtensionReference;
 import org.eclipse.cdt.utils.CPPFilt;
 import org.eclipse.cdt.utils.macho.AR;
-import org.eclipse.cdt.utils.macho.MachO;
-import org.eclipse.cdt.utils.macho.MachO.Attribute;
+import org.eclipse.cdt.utils.macho.MachO64;
+import org.eclipse.cdt.utils.macho.MachO64.Attribute;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
 
 /**
+ * @since 5.2
  */
-public class MachOParser extends AbstractCExtension implements IBinaryParser {
+public class MachOParser64 extends AbstractCExtension implements IBinaryParser {
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.IBinaryParser#getBinary(org.eclipse.core.runtime.IPath)
@@ -42,10 +43,10 @@ public class MachOParser extends AbstractCExtension implements IBinaryParser {
 
 		IBinaryFile binary = null;
 		try {
-			MachO.Attribute attribute = null;
+			MachO64.Attribute attribute = null;
 			if (hints != null && hints.length > 0) {
 				try {
-					attribute = MachO.getAttributes(hints);
+					attribute = MachO64.getAttributes(hints);
 				} catch (IOException eof) {
 					// continue, the array was to small.
 				}
@@ -53,7 +54,7 @@ public class MachOParser extends AbstractCExtension implements IBinaryParser {
 
 			//Take a second run at it if the data array failed. 			
  			if(attribute == null) {
-				attribute = MachO.getAttributes(path.toOSString());
+				attribute = MachO64.getAttributes(path.toOSString());
  			}
 
 			if (attribute != null) {
@@ -92,7 +93,7 @@ public class MachOParser extends AbstractCExtension implements IBinaryParser {
 	 * @see org.eclipse.cdt.core.IBinaryParser#isBinary(byte[], org.eclipse.core.runtime.IPath)
 	 */
 	public boolean isBinary(byte[] array, IPath path) {
-		return MachO.isMachOHeader(array) || AR.isARHeader(array);
+		return MachO64.isMachOHeader(array) || AR.isARHeader(array);
 	}
 
 	/* (non-Javadoc)
@@ -117,6 +118,7 @@ public class MachOParser extends AbstractCExtension implements IBinaryParser {
 		return cppfilt;
 	}
 
+	@SuppressWarnings("deprecation")
 	protected IPath getCPPFiltPath() {
 		ICExtensionReference ref = getExtensionReference();
 		String value = ref.getExtensionData("c++filt"); //$NON-NLS-1$
@@ -131,18 +133,18 @@ public class MachOParser extends AbstractCExtension implements IBinaryParser {
 	}
 
 	protected IBinaryObject createBinaryObject(IPath path) throws IOException {
-		return new MachOBinaryObject(this, path, IBinaryFile.OBJECT);
+		return new MachOBinaryObject64(this, path, IBinaryFile.OBJECT);
 	}
 
 	protected IBinaryExecutable createBinaryExecutable(IPath path) throws IOException {
-		return new MachOBinaryExecutable(this, path);
+		return new MachOBinaryExecutable64(this, path);
 	}
 
 	protected IBinaryShared createBinaryShared(IPath path) throws IOException {
-		return new MachOBinaryShared(this, path);
+		return new MachOBinaryShared64(this, path);
 	}
 
 	protected IBinaryObject createBinaryCore(IPath path) throws IOException {
-		return new MachOBinaryObject(this, path, IBinaryFile.CORE);
+		return new MachOBinaryObject64(this, path, IBinaryFile.CORE);
 	}
 }

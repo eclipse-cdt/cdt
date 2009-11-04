@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2006 QNX Software Systems and others.
+ * Copyright (c) 2004, 2009 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -16,9 +16,12 @@ import org.eclipse.cdt.core.IBinaryParser.IBinaryShared;
 import org.eclipse.core.runtime.IPath;
 
 
-public class MachOBinaryShared extends MachOBinaryObject implements IBinaryShared {
+/**
+ * @since 5.2
+ */
+public class MachOBinaryShared64 extends MachOBinaryObject64 implements IBinaryShared {
 
-	protected MachOBinaryShared(IBinaryParser parser, IPath path) {
+	protected MachOBinaryShared64(IBinaryParser parser, IPath path) {
 		super(parser, path, IBinaryFile.SHARED);
 	}
 

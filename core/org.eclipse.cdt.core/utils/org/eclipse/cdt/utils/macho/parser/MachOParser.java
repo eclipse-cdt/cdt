@@ -24,7 +24,10 @@ import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
 
 /**
+ * @deprecated. Deprecated as of CDT 6.1. Use 64 bit version {@link MachOParser64}.
+ * This class is planned for removal in next major release.
  */
+@Deprecated
 public class MachOParser extends AbstractCExtension implements IBinaryParser {
 
 	/* (non-Javadoc)

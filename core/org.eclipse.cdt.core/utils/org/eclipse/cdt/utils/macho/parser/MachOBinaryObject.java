@@ -36,9 +36,11 @@ import org.eclipse.cdt.utils.macho.MachOHelper;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
 
-/*
- * MachOBinaryObject 
+/**
+ * @deprecated. Deprecated as of CDT 6.1. Use 64 bit version {@link MachOBinaryObject64}.
+ * This class is planned for removal in next major release.
  */
+@Deprecated
 public class MachOBinaryObject extends BinaryObjectAdapter {
 
 	protected AR.ARHeader header;

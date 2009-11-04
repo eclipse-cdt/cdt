@@ -24,6 +24,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 
 import org.eclipse.cdt.core.CCorePlugin;
+import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IASTPreprocessorIncludeStatement;
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit.IDependencyTree;
@@ -532,14 +533,14 @@ public abstract class AbstractIndexerTask extends PDOMWriter {
 			final IPath path= new Path(filePath);
 			final String fileName = path.lastSegment();
 			try {
-				if (fShowActivity) {
-					trace("Indexer: parsing " + filePath + " up front");  //$NON-NLS-1$ //$NON-NLS-2$
-				}
 				monitor.subTask(getMessage(MessageKind.parsingFileTask,
 						fileName, path.removeLastSegments(1).toString()));
 				
 				AbstractLanguage[] langs= getLanguages(fileName);
 				for (AbstractLanguage lang : langs) {
+					if (fShowActivity) {
+						trace("Indexer: " + lang.getName() + ": Parsing " + filePath + " up front");  //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+					}
 					int linkageID= lang.getLinkageID();
 					String code= "#include \"" + filePath + "\"\n";  //$NON-NLS-1$ //$NON-NLS-2$
 					
@@ -548,8 +549,23 @@ public abstract class AbstractIndexerTask extends PDOMWriter {
 						long start= System.currentTimeMillis();
 						IASTTranslationUnit ast= createAST(code, lang, scanInfo, fASTOptions, monitor);
 						fStatistics.fParsingTime += System.currentTimeMillis()-start;
-						
 						if (ast != null) {
+							if (fShowActivity || fShowInclusionProblems) {
+								IASTNode node= ast.getNodeSelector(null).findEnclosingNode(0,6);
+								if (node instanceof IASTPreprocessorIncludeStatement) {
+									IASTPreprocessorIncludeStatement p= (IASTPreprocessorIncludeStatement) node;
+									String found= p.getPath();
+									if (found != null) {
+										IIndexFileLocation ifl= fResolver.resolveASTPath(found);
+										FileContent fileinfo = getFileInfo(linkageID, ifl);
+										if (fileinfo != null) {
+											if (fileinfo.fIndexFile != null) {
+												trace(filePath + " was not properly parsed up front for " + lang.getName()); //$NON-NLS-1$
+											}
+										}
+									}
+								}
+							}
 							writeToIndex(linkageID, ast, computeHashCode(scanInfo), monitor);
 							updateFileCount(0, 0, 1);
 						}

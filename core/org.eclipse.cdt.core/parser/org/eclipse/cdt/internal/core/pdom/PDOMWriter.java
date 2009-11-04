@@ -80,7 +80,7 @@ abstract public class PDOMWriter {
 		ArrayList<IASTPreprocessorIncludeStatement> fIncludes= new ArrayList<IASTPreprocessorIncludeStatement>();
 	}
 	private boolean fShowProblems;
-	private boolean fShowInclusionProblems;
+	protected boolean fShowInclusionProblems;
 	private boolean fShowScannerProblems;
 	private boolean fShowSyntaxProblems;
 	protected boolean fShowActivity;

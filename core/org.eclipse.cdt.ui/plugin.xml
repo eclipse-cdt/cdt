@@ -1737,6 +1737,18 @@
             commandId="org.eclipse.cdt.ui.edit.text.c.toggle.source.header"
             schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"/>
      <key
+            platform="carbon"
+            sequence="M1+TAB"
+            contextId=""
+            commandId=""
+            schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"/>
+     <key
+            platform="carbon"
+            sequence="CTRL+TAB"
+            contextId="org.eclipse.cdt.ui.cEditorScope"
+            commandId="org.eclipse.cdt.ui.edit.text.c.toggle.source.header"
+            schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"/>
+     <key
             sequence="M3+ARROW_LEFT"
             contextId="org.eclipse.cdt.ui.macroExpansionHoverScope"
             commandId="org.eclipse.cdt.ui.hover.backwardMacroExpansion"

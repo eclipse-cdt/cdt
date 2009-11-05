@@ -18,6 +18,7 @@ import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Set;
+import java.util.Map.Entry;
 
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.settings.model.CExternalSetting;
@@ -97,9 +98,7 @@ public class CConfigurationSpecSettings implements ICSettingsStorage{
 		
 		setCOwner(settings.getAttribute(OWNER_ID));
 		
-		ICStorageElement children[] = settings.getChildren();
-		for(int i = 0; i < children.length; i++){
-			ICStorageElement child = children[i];
+		for (ICStorageElement child : settings.getChildren()) {
 			String name = child.getName();
 			
 			if(StorableCdtVariables.MACROS_ELEMENT_NAME.equals(name)){
@@ -563,7 +562,7 @@ public class CConfigurationSpecSettings implements ICSettingsStorage{
 		ICConfigExtensionReference refs[] = doGet(extensionPointID);
 		if (refs == null)
 			return new ICConfigExtensionReference[0];
-		return (ICConfigExtensionReference[])refs.clone();
+		return refs.clone();
 	}
 	
 	private void checkReconsile(String extensionPointID, boolean toExt){
@@ -672,10 +671,10 @@ public class CConfigurationSpecSettings implements ICSettingsStorage{
 		ICConfigExtensionReference[] refs = doGet(extensionPoint);
 		ICConfigExtensionReference extRef = null;
 		
-		if (refs != null && refs.length != 0){
-			for(int i = 0; i < refs.length; i++){
-				if(refs[i].getID().equals(extension)){
-					extRef = refs[i];
+		if (refs != null) {
+			for (ICConfigExtensionReference ref : refs) {
+				if(ref.getID().equals(extension)){
+					extRef = ref;
 					break;
 				}
 			}
@@ -761,10 +760,7 @@ public class CConfigurationSpecSettings implements ICSettingsStorage{
 	}
 
 	private void loadExtensionInfo(ICStorageElement node, boolean oldData) {
-		ICStorageElement childNode;
-		ICStorageElement list[] = node.getChildren();
-		for (int i = 0; i < list.length; i++) {
-			childNode = list[i];
+		for (ICStorageElement childNode : node.getChildren()) {
 //			if (childNode.getNodeType() == Node.ELEMENT_NODE) {
 				if (childNode.getName().equals(PROJECT_EXTENSION)) {
 					try {
@@ -787,12 +783,11 @@ public class CConfigurationSpecSettings implements ICSettingsStorage{
 		String point = element.getAttribute(PROJECT_EXTENSION_ATTR_POINT);
 		String id = element.getAttribute(PROJECT_EXTENSION_ATTR_ID);
 		CConfigExtensionReference ext = createRef(point, id);
-		ICStorageElement extAttrib[] = element.getChildren();
-		for (int j = 0; j < extAttrib.length; j++) {
-			if (extAttrib[j].getName().equals(PROJECT_EXTENSION_ATTRIBUTE)) {
+		for (ICStorageElement extAttr : element.getChildren()) {
+			if (extAttr.getName().equals(PROJECT_EXTENSION_ATTRIBUTE)) {
 //				NamedNodeMap attrib = extAttrib.item(j).getAttributes();
-				getInfo(ext).setAttribute(extAttrib[j].getAttribute(PROJECT_EXTENSION_ATTRIBUTE_KEY),
-						extAttrib[j].getAttribute(PROJECT_EXTENSION_ATTRIBUTE_VALUE));
+				getInfo(ext).setAttribute(extAttr.getAttribute(PROJECT_EXTENSION_ATTRIBUTE_KEY),
+						extAttr.getAttribute(PROJECT_EXTENSION_ATTRIBUTE_VALUE));
 			}
 		}
 	}
@@ -817,10 +812,8 @@ public class CConfigurationSpecSettings implements ICSettingsStorage{
 	}
 
 	private void decodeProjectData(ICStorageElement data) throws CoreException {
-		ICStorageElement[] nodes = data.getChildren();
-		for (int i = 0; i < nodes.length; ++i) {
-			if(PROJECT_DATA_ITEM.equals(nodes[i].getName())){
-				ICStorageElement element = nodes[i];
+		for (ICStorageElement element : data.getChildren()) {
+			if(PROJECT_DATA_ITEM.equals(element.getName())){
 				String dataId = element.getAttribute(PROJECT_DATA_ID);
 				if (dataId != null){
 					element.removeAttribute(PROJECT_DATA_ID);
@@ -843,7 +836,7 @@ public class CConfigurationSpecSettings implements ICSettingsStorage{
 			fExtMap = (HashMap<String, CConfigExtensionReference[]>)other.fExtMap.clone();
 			for (Map.Entry<String, CConfigExtensionReference[]> entry : fExtMap.entrySet()) {
 				CConfigExtensionReference refs[] = entry.getValue();
-				refs = (CConfigExtensionReference[])refs.clone();
+				refs = refs.clone();
 				for(int i = 0; i < refs.length; i++){
 					refs[i] = new CConfigExtensionReference(this, refs[i]);
 				}
@@ -921,8 +914,8 @@ public class CConfigurationSpecSettings implements ICSettingsStorage{
 	
 	private Map<String, ICConfigExtensionReference> createRefMap(ICConfigExtensionReference refs[]){
 		Map<String, ICConfigExtensionReference> refsMap = new HashMap<String, ICConfigExtensionReference>(refs.length);
-		for(int i = 0; i < refs.length; i++){
-			refsMap.put(refs[i].getID(), refs[i]);
+		for (ICConfigExtensionReference ref : refs) {
+			refsMap.put(ref.getID(), ref);
 		}
 		return refsMap;
 	}
@@ -936,9 +929,8 @@ public class CConfigurationSpecSettings implements ICSettingsStorage{
 		if(fExtMap.size() != other.fExtMap.size())
 			return false;
 		
-		for(Iterator iter = fExtMap.entrySet().iterator(); iter.hasNext();){
-			Map.Entry entry = (Map.Entry)iter.next();
-			ICConfigExtensionReference[] thisRefs = (ICConfigExtensionReference[])entry.getValue();
+		for (Entry<String, CConfigExtensionReference[]> entry : fExtMap.entrySet()) {
+			ICConfigExtensionReference[] thisRefs = entry.getValue();
 			ICConfigExtensionReference[] otherRefs = other.fExtMap.get(entry.getKey());
 			if(otherRefs == null)
 				return thisRefs.length == 0;

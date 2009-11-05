@@ -8,6 +8,7 @@
  * Contributors:
  *     QNX Software Systems - Initial API and implementation
  *     Andrew Gvozdev (Quoin Inc.)
+ *     Gaetano Santoro (STMicroelectronics)
  *******************************************************************************/
 package org.eclipse.cdt.make.ui.views;
 
@@ -41,6 +42,8 @@ import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.IToolBarManager;
 import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.action.Separator;
+import org.eclipse.jface.bindings.BindingManagerEvent;
+import org.eclipse.jface.bindings.IBindingManagerListener;
 import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.util.DelegatingDragAdapter;
 import org.eclipse.jface.util.DelegatingDropAdapter;
@@ -64,7 +67,11 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IActionBars;
+import org.eclipse.ui.IWorkbenchCommandConstants;
+import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.actions.ActionFactory;
 import org.eclipse.ui.actions.TextActionHandler;
+import org.eclipse.ui.keys.IBindingService;
 import org.eclipse.ui.part.DrillDownAdapter;
 import org.eclipse.ui.part.ViewPart;
 
@@ -81,6 +88,7 @@ public class MakeView extends ViewPart {
 	private TreeViewer fViewer;
 	private DrillDownAdapter drillDownAdapter;
 	private Action trimEmptyFolderAction;
+	private IBindingService bindingService;
 
 	public MakeView() {
 		super();
@@ -141,6 +149,13 @@ public class MakeView extends ViewPart {
 		makeActions();
 		hookContextMenu();
 		contributeToActionBars();
+		
+		updateActions((IStructuredSelection)fViewer.getSelection());
+		
+		bindingService = (IBindingService) PlatformUI.getWorkbench().getService(IBindingService.class);
+		if (bindingService != null) {
+			bindingService.addBindingManagerListener(bindingManagerListener);
+		}
 	}
 
 	/**
@@ -288,10 +303,13 @@ public class MakeView extends ViewPart {
 		textActionHandler.setCopyAction(copyTargetAction);
 		textActionHandler.setPasteAction(pasteTargetAction);
 		textActionHandler.setDeleteAction(deleteTargetAction);
+		
+		actionBars.setGlobalActionHandler(ActionFactory.RENAME.getId(), editTargetAction);
 	}
 
 	private void fillLocalToolBar(IToolBarManager toolBar) {
 		toolBar.add(newTargetAction);
+		toolBar.add(editTargetAction);
 		toolBar.add(buildTargetAction);
 		toolBar.add(new Separator());
 		drillDownAdapter.addNavigationActions(toolBar);
@@ -359,7 +377,37 @@ public class MakeView extends ViewPart {
 			clipboard.dispose();
 			clipboard = null;
 		}
+		
+		if (bindingService != null) {
+			bindingService.removeBindingManagerListener(bindingManagerListener);
+			bindingService = null;
+		}
+		
 		super.dispose();
 	}
 
+	private IBindingManagerListener bindingManagerListener = new IBindingManagerListener() {
+
+		public void bindingManagerChanged(BindingManagerEvent event) {
+			
+			if (event.isActiveBindingsChanged()) {
+				String keyBinding = bindingService.getBestActiveBindingFormattedFor(IWorkbenchCommandConstants.FILE_RENAME);
+				if (keyBinding != null) editTargetAction.setText(
+						MakeUIPlugin.getResourceString("EditTargetAction.label")+"\t"+ keyBinding); //$NON-NLS-1$ //$NON-NLS-2$
+				
+				keyBinding = bindingService.getBestActiveBindingFormattedFor(IWorkbenchCommandConstants.EDIT_COPY);
+				if (keyBinding != null) copyTargetAction.setText(
+						MakeUIPlugin.getResourceString("CopyTargetAction.label")+"\t"+ keyBinding); //$NON-NLS-1$ //$NON-NLS-2$
+				
+				keyBinding = bindingService.getBestActiveBindingFormattedFor(IWorkbenchCommandConstants.EDIT_PASTE);
+				if (keyBinding != null) pasteTargetAction.setText(
+						MakeUIPlugin.getResourceString("PasteTargetAction.label")+"\t"+ keyBinding); //$NON-NLS-1$ //$NON-NLS-2$
+				
+				keyBinding = bindingService.getBestActiveBindingFormattedFor(IWorkbenchCommandConstants.EDIT_DELETE);
+				if (keyBinding != null) deleteTargetAction.setText(
+						MakeUIPlugin.getResourceString("DeleteTargetAction.label")+"\t"+ keyBinding); //$NON-NLS-1$ //$NON-NLS-2$
+			}
+		}
+	};
+	
 }

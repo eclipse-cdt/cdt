@@ -1478,11 +1478,6 @@
          <adapter type="org.eclipse.debug.internal.ui.viewers.model.provisional.IElementContentProvider"/>
          <adapter type="org.eclipse.debug.internal.ui.viewers.model.provisional.IModelProxyFactory"/>
          <adapter type="org.eclipse.debug.internal.ui.viewers.model.provisional.IElementMementoProvider"/>
-         <!-- Enable after 5.0
-         <adapter
-               type="org.eclipse.cdt.debug.core.disassembly.IDisassemblyContextProvider">
-         </adapter>
-         -->
          <adapter
                type="org.eclipse.cdt.debug.ui.disassembly.IDocumentElementContentProvider">
          </adapter>

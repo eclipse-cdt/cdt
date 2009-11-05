@@ -35,9 +35,9 @@
       [<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=294327">294327</a>].</li>
 </ul>
 </li>
-<li>At least 1 bug was resolved: Use 
-  <!-- <a href="https://bugs.eclipse.org/bugs/buglist.cgi?negate0=1;field0-0-0=target_milestone;type0-0-1=regexp;field0-0-1=target_milestone;resolution=FIXED;resolution=WONTFIX;resolution=WORKSFORME;classification=DSDP;value0-0-2=3.1;chfieldto=2010-03-01;chfield=resolution;query_format=advanced;type0-0-3=equals;field0-0-3=target_milestone;value0-0-3=3.1.1;chfieldfrom=2009-09-24;bug_status=RESOLVED;bug_status=VERIFIED;bug_status=CLOSED;field0-0-2=target_milestone;value0-0-1=3.2%20M[234567];type0-0-0=regexp;value0-0-0=[23]\.[02].*;component=Core;component=RSE;component=Terminal;product=Target%20Management;type0-0-2=equals"> -->
-  <a href="https://bugs.eclipse.org/bugs/buglist.cgi?query_format=advanced&classification=DSDP&product=Target+Management&component=Core&component=RSE&component=Terminal&target_milestone=3.1.2&bug_status=RESOLVED&bug_status=VERIFIED&bug_status=CLOSED&resolution=FIXED&resolution=WONTFIX&resolution=WORKSFORME&cmdtype=doit">
+<li>At least 6 bugs were resolved: Use 
+  <!-- <a href="https://bugs.eclipse.org/bugs/buglist.cgi?negate0=1;field0-0-0=target_milestone;type0-0-1=regexp;field0-0-1=target_milestone;resolution=FIXED;resolution=WONTFIX;resolution=WORKSFORME;classification=DSDP;chfieldto=2009-11-20;chfield=resolution;query_format=advanced;chfieldfrom=2009-09-10;bug_status=RESOLVED;bug_status=VERIFIED;bug_status=CLOSED;value0-0-1=3.2%20M[4567];type0-0-0=regexp;value0-0-0=[23]\.[01].*;component=Core;component=RSE;component=Terminal;product=Target%20Management"> -->
+  <a href="https://bugs.eclipse.org/bugs/buglist.cgi?resolution=FIXED;resolution=WONTFIX;resolution=WORKSFORME;classification=DSDP;query_format=advanced;bug_status=RESOLVED;bug_status=VERIFIED;bug_status=CLOSED;component=Core;component=RSE;component=Terminal;target_milestone=3.2;target_milestone=3.2%20M2;target_milestone=3.2%20M3;product=Target%20Management">
   this query</a> to show the list of bugs fixed since
   <a href="http://download.eclipse.org/dsdp/tm/downloads/drops/R-3.1.1-200909160905/">
   TM 3.1.1</a>
@@ -51,8 +51,8 @@
 <li>For other questions, please check the
   <a href="http://wiki.eclipse.org/TM_and_RSE_FAQ">TM and RSE FAQ</a>
   as well as the
-  <a href="http://wiki.eclipse.org/DSDP/TM/3.1_Known_Issues_and_Workarounds">
-  TM 3.1 Known Issues and Workarounds</a>.</li>
+  <a href="http://wiki.eclipse.org/DSDP/TM/3.2_Known_Issues_and_Workarounds">
+  TM 3.2 Known Issues and Workarounds</a>.</li>
 </ul>
 </td></tr></tbody></table>
 
@@ -85,13 +85,6 @@ are the best places for you to get started.
 	</tr>
 </table>
 <table><tbody><tr><td>
-<p>No API changes are allowed in the TM 3.1.x maintenance stream.
-Therefore, <b>TM 3.1.x is fully upward and backward compatible with TM 3.1</b>,
-and can be fully exchanged for TM 3.1 in any product based on it.
-Take care of API specification updates though, where the TM 3.1.x API Docs
-have been updated to add clarifications or missing information compared
-to 3.1.</p>
-
 <p>For the upcoming TM 3.2 release, only backward compatible API changes
 are planned, especially in order to support improved componentization
 and UI/Non-UI splitting.
@@ -168,8 +161,8 @@ Use
 for an up-to-date list of major or critical bugs.</p>
 
 <p>The 
-<a href="http://wiki.eclipse.org/DSDP/TM/3.1_Known_Issues_and_Workarounds">
-TM 3.1 Known Issues and Workarounds</a> Wiki page gives an up-to-date list
+<a href="http://wiki.eclipse.org/DSDP/TM/3.2_Known_Issues_and_Workarounds">
+TM 3.2 Known Issues and Workarounds</a> Wiki page gives an up-to-date list
 of the most frequent and obvious problems, and describes workarounds for them.<br/>
 If you have other questions regarding TM or RSE, please check the
 <a href="http://wiki.eclipse.org/TM_and_RSE_FAQ">TM and RSE FAQ</a>

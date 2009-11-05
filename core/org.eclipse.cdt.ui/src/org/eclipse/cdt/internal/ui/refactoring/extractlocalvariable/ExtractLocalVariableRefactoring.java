@@ -86,7 +86,10 @@ public class ExtractLocalVariableRefactoring extends CRefactoring {
 	public RefactoringStatus checkInitialConditions(IProgressMonitor pm)
 			throws CoreException, OperationCanceledException {
 		SubMonitor sm = SubMonitor.convert(pm, 9);
-		super.checkInitialConditions(sm.newChild(6));
+		RefactoringStatus status = super.checkInitialConditions(sm.newChild(6));
+		if(status.hasError()) {
+			return status;
+		}
 
 		container = findAllExpressions();
 		if (container.size() < 1) {

@@ -87,7 +87,10 @@ public class ExtractConstantRefactoring extends CRefactoring {
 	@Override
 	public RefactoringStatus checkInitialConditions(IProgressMonitor pm) throws CoreException, OperationCanceledException {
 		SubMonitor sm = SubMonitor.convert(pm, 9);
-		super.checkInitialConditions(sm.newChild(6));
+		RefactoringStatus status = super.checkInitialConditions(sm.newChild(6));
+		if(status.hasError()) {
+			return status;
+		}
 
 		Collection<IASTLiteralExpression> literalExpressionCollection = findAllLiterals();
 		if(literalExpressionCollection.isEmpty()){

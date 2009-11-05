@@ -52,7 +52,7 @@ ep_ver=3.6M3
 ep_date="-200910301201"
 P2_disabled=false
 P2_no_dropins=false
-if [ ! -f eclipse/plugins/org.eclipse.swt_3.6.0.v3617 ]; then
+if [ ! -f eclipse/plugins/org.eclipse.swt_3.6.0.v3617.jar ]; then
   curdir2=`pwd`
   if [ ! -d eclipse -o -h eclipse ]; then
     if [ -d eclipse-${ep_ver}-${ep_arch} ]; then
@@ -145,9 +145,9 @@ fi
 
 # checkout the basebuilder
 baseBuilderTag=R36_M2
-if [ ! -f org.eclipse.releng.basebuilder/plugins/org.eclipse.pde.core_3.5.0.v20090309-1900.jar \
-  -o ! -f org.eclipse.releng.basebuilder/plugins/org.eclipse.pde.build_3.5.0.v20090312-1500/pdebuild.jar \
-  -o ! -f org.eclipse.releng.basebuilder/plugins/org.eclipse.equinox.p2.metadata.generator_1.0.100.v20090309-1845.jar ]; then
+if [ ! -f org.eclipse.releng.basebuilder/plugins/org.eclipse.pde.core_3.5.100.v20090911.jar \
+  -o ! -f org.eclipse.releng.basebuilder/plugins/org.eclipse.pde.build_3.5.100.v20090911/pdebuild.jar \
+  -o ! -f org.eclipse.releng.basebuilder/plugins/org.eclipse.equinox.p2.metadata.generator_1.0.200.v20090831.jar ]; then
   if [ -d org.eclipse.releng.basebuilder ]; then
     echo "Re-getting basebuilder from CVS..."
     rm -rf org.eclipse.releng.basebuilder

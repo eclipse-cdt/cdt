@@ -120,7 +120,6 @@ public class IndexUpdateTests extends IndexTestBase {
 		}
 		IProject project= cpp ? fCppProject.getProject() : fCProject.getProject();
 		fFile= TestSourceReader.createFile(project, "file" + (cpp ? ".cpp" : ".c"), fContents[++fContentUsed].toString());
-		fContentUsed= 0;
 		TestSourceReader.waitUntilFileIsIndexed(fIndex, fFile, INDEXER_WAIT_TIME);
 		assertTrue(CCorePlugin.getIndexManager().joinIndexer(INDEXER_WAIT_TIME, NPM));
 	}
@@ -1169,5 +1168,18 @@ public class IndexUpdateTests extends IndexTestBase {
 		} finally {
 			fIndex.releaseReadLock();
 		}
+	}
+	
+	
+	// void funcTypeDeletion(int);
+
+	// #include "header.h"
+	// typeof(funcTypeDeletion) storeRef;
+	// char funcTypeDeletion(int);		// delete type
+	// typeof(storeRef) useRef;         // use reference
+	public void _testTypedeletion_Bug294306() throws Exception {
+		setupHeader(2, true);
+		setupFile(2, true);
+		checkFunction("useRef", new String[]{"char", "void"}, new String[]{});
 	}
 }

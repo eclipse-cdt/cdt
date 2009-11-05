@@ -99,7 +99,10 @@ public class GenerateGettersAndSettersRefactoring extends CRefactoring {
 	public RefactoringStatus checkInitialConditions(IProgressMonitor pm) throws CoreException, OperationCanceledException {
 		SubMonitor sm = SubMonitor.convert(pm, 10);
 
-		super.checkInitialConditions(sm.newChild(6));
+		RefactoringStatus status = super.checkInitialConditions(sm.newChild(6));
+		if(status.hasError()) {
+			return status;
+		}
 
 		if(!initStatus.hasFatalError()) {
 

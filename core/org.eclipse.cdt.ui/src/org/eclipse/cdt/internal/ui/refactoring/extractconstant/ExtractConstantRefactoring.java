@@ -99,7 +99,10 @@ public class ExtractConstantRefactoring extends CRefactoring {
 		try {
 			lockIndex();
 			try {
-				super.checkInitialConditions(sm.newChild(6));
+				RefactoringStatus status = super.checkInitialConditions(sm.newChild(6));
+				if(status.hasError()) {
+					return status;
+				}
 
 				Collection<IASTLiteralExpression> literalExpressionCollection = findAllLiterals();
 				if(literalExpressionCollection.isEmpty()){

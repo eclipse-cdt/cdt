@@ -518,7 +518,7 @@ public class RSEFileStoreImpl extends FileStore
 	public IFileInfo fetchInfo(int options, IProgressMonitor monitor) throws CoreException {
 		long curTime = System.currentTimeMillis();
 		// don't clear cache when there are several successive queries in a short time-span
-		if (_lastFetch == 0 || ((curTime - _lastFetch) > 1000)){	
+		if (_lastFetch == 0 || ((curTime - _lastFetch) > 5000)){	
 			// clear cache in order to query latest info
 			cacheRemoteFile(null);
 			_lastFetch = curTime;
@@ -648,6 +648,7 @@ public class RSEFileStoreImpl extends FileStore
 
 		if (remoteFile.isFile()) {
 			try {
+				cacheRemoteFile(null);
 				return subSys.getInputStream(remoteFile.getParentPath(), remoteFile.getName(), true, monitor);
 			}
 			catch (SystemMessageException e) {
@@ -742,6 +743,7 @@ public class RSEFileStoreImpl extends FileStore
 				} else {
 					options = IFileService.NONE;
 				}
+				cacheRemoteFile(null);
 				return subSys.getOutputStream(remoteFile.getParentPath(), remoteFile.getName(), options, monitor);
 			}
 			catch (SystemMessageException e) {

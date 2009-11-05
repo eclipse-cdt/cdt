@@ -32,10 +32,11 @@
 	<!-- folder ${target.folder}/${projectName}                                 -->
 	<!-- =====================================================================  -->
 	<target name="gather.bin.parts">	
-		<apitooling.apifilesgenerator
-					projectName="${projectName}"
-					targetFolder="${target.folder}"
-				projectLocation="${projectLocation}" />
+		<apitooling.apigeneration
+			projectname="${projectName}"
+			target="${target.folder}"
+			binary="${target.folder}/${projectName}"
+			project="${projectLocation}" />
 	</target>
 
 	

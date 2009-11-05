@@ -8,6 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     QNX Software System
+ *     James Blackburn (Broadcom Corp.)
  *******************************************************************************/
 package org.eclipse.cdt.utils.ui.controls;
 
@@ -172,7 +173,7 @@ public class RadioButtonsArea extends Composite {
 			boolean found = false;
 			for (Button radio : radioButtons) {
 				boolean selection = false;
-				if (((String) radio.getData()).equals(this.value)) {
+				if (radio.getData().equals(this.value)) {
 					selection = true;
 					found = true;
 				}
@@ -208,8 +209,9 @@ public class RadioButtonsArea extends Composite {
 					b.setSelection(false);
 			}
 		}
-		
+
 		b = radioButtons[index];
+		this.value = (String)b.getData();
 		b.setSelection(true);
     }
 	
@@ -223,7 +225,7 @@ public class RadioButtonsArea extends Composite {
 	
 		if (value != null) {
 			for (int i = 0; i < radioButtons.length; i++) {
-				if (((String) radioButtons[i].getData()).equals(this.value)) 
+				if (radioButtons[i].getData().equals(this.value)) 
 					return i;
 			}
 		}

@@ -8,20 +8,32 @@
  * Contributors:
  *     BitMethods Inc - initial API and implementation
  *     Sascha Radike <sradike@ejectlag.com> - Support for workspace browsing and small improvements
+ *     James Blackburn (Broadcom Corp.)
  *******************************************************************************/
 package org.eclipse.cdt.utils.ui.controls;
 
-
 import java.util.ArrayList;
+import java.util.Arrays;
 
+import org.eclipse.core.commands.ExecutionException;
+import org.eclipse.core.commands.operations.AbstractOperation;
+import org.eclipse.core.commands.operations.IOperationHistory;
+import org.eclipse.core.commands.operations.IUndoContext;
+import org.eclipse.core.commands.operations.IUndoableOperation;
+import org.eclipse.core.commands.operations.ObjectUndoContext;
+import org.eclipse.core.commands.operations.OperationHistoryFactory;
+import org.eclipse.core.filesystem.URIUtil;
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.ResourcesPlugin;
+import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Path;
+import org.eclipse.core.runtime.Status;
 import org.eclipse.core.variables.IStringVariableManager;
 import org.eclipse.core.variables.VariablesPlugin;
 import org.eclipse.jface.dialogs.IDialogConstants;
@@ -30,6 +42,9 @@ import org.eclipse.jface.dialogs.InputDialog;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.window.Window;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.dnd.Clipboard;
+import org.eclipse.swt.dnd.TextTransfer;
+import org.eclipse.swt.dnd.Transfer;
 import org.eclipse.swt.events.KeyAdapter;
 import org.eclipse.swt.events.KeyEvent;
 import org.eclipse.swt.events.MouseAdapter;
@@ -44,6 +59,7 @@ import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.DirectoryDialog;
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.FileDialog;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.List;
@@ -51,45 +67,75 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.ToolBar;
 import org.eclipse.swt.widgets.ToolItem;
 import org.eclipse.swt.widgets.Widget;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.dialogs.ElementTreeSelectionDialog;
 import org.eclipse.ui.dialogs.ISelectionStatusValidator;
 import org.eclipse.ui.model.WorkbenchContentProvider;
 import org.eclipse.ui.model.WorkbenchLabelProvider;
+import org.eclipse.ui.swt.IFocusService;
 import org.eclipse.ui.views.navigator.ResourceComparator;
 
+import org.eclipse.cdt.core.cdtvariables.CdtVariableException;
+import org.eclipse.cdt.core.cdtvariables.ICdtVariable;
 import org.eclipse.cdt.ui.CDTUIImages;
+import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.cdt.ui.newui.CDTStatusInfo;
 import org.eclipse.cdt.ui.newui.TypedCDTViewerFilter;
 import org.eclipse.cdt.ui.newui.UIMessages;
+import org.eclipse.cdt.utils.cdtvariables.CdtVariableResolver;
 import org.eclipse.cdt.utils.cdtvariables.IVariableContextInfo;
+import org.eclipse.cdt.utils.cdtvariables.IVariableSubstitutor;
+import org.eclipse.cdt.utils.cdtvariables.SupplierBasedCdtVariableManager;
+import org.eclipse.cdt.utils.cdtvariables.SupplierBasedCdtVariableSubstitutor;
 
 import org.eclipse.cdt.internal.core.resources.ResourceLookup;
 
 /**
- * Instances of this class allow the user to add,remove, delete, moveup and movedown
+ * Instances of this class allow the user to add, remove, delete, moveup and movedown
  * the items in the list control.
  * 
  * @noextend This class is not intended to be subclassed by clients.
  */
-
 public class FileListControl {
 
-	// Browse type values
-	//  (copied from IOption to fix the dependency on MBS ui plugins issue)
-	private static final int BROWSE_NONE = 0;
-	private static final int BROWSE_FILE = 1;
-	private static final int BROWSE_DIR = 2;
+	/**
+	 * Constant copied from ManagedBuild IOption indicating that the entries in this
+	 * FileListControl are neither files nor directories -- they're treated as a plain
+	 * String list.
+	 * 
+	 * #see org.eclipse.cdt.managedbuilder.core.IOption#BROWSE_NONE
+	 * @since 5.2
+	 */
+	public static final int BROWSE_NONE = 0;
+	/**
+	 * Constant copied from ManagedBuild IOption indicating that the entries in this
+	 * FileListControl are Files.
+	 * 
+	 * #see org.eclipse.cdt.managedbuilder.core.IOption#BROWSE_FILE
+	 * @since 5.2
+	 */
+	public static final int BROWSE_FILE = 1;
+	/**
+	 * Constant copied from ManagedBuild IOption indicating that the entries in this
+	 * FileListControl are Directories.
+	 * 
+	 * #see org.eclipse.cdt.managedbuilder.core.IOption#BROWSE_DIR
+	 * @since 5.2
+	 */
+	public static final int BROWSE_DIR = 2;
 
 	/**
 	 * Multi-purpose dialog to prompt the user for a value, path, or file.
-	 * 
+	 *
 	 * @since 2.0
 	 */
 	class SelectPathInputDialog extends InputDialog {
+
+		private String[] values = new String[0];
+
 		private int type;
 		/* True if user successfully set the text value by a browse dialog */
 		private boolean fSetByBrowseDialog = false;
-		
 
 		/**
 		 * @param parentShell
@@ -103,22 +149,32 @@ public class FileListControl {
 			super(parentShell, dialogTitle, dialogMessage, initialValue, validator);
 			this.type = browseType;
 		}
-		
+
 		/**
-		 * Returns true if the value has been set by a browse dialog. 
+		 * Returns true if the value has been set by a browse dialog.
 		 */
 		public boolean isValueSetByBrowse() {
 			return fSetByBrowseDialog;
 		}
-		
-		
+
+		/**
+		 * Allow this dialog to return multiple entires
+		 * @return String[] represeting the collected values
+		 */
+		public String[] getValues() {
+			// If values only has one entry or fewer, then return getValue() to catch more recent changes to edit field
+			if (values.length <= 1)
+				return new String[] { getValue() };
+			return values;
+		}
+
 		/* (non-Javadoc)
 		 * @see org.eclipse.jface.dialogs.Dialog#createButtonsForButtonBar(org.eclipse.swt.widgets.Composite)
 		 */
 		@Override
 		protected void createButtonsForButtonBar(Composite parent) {
 			super.createButtonsForButtonBar(parent);
-			
+
 			if (((type == BROWSE_DIR) || (type == BROWSE_FILE)
 					) && (fWorkspaceSupport)) {
 
@@ -130,107 +186,110 @@ public class FileListControl {
 						/* Before opening the browse dialog we try to convert the current
 						 * path text to a valid workspace resource, so we can set it
 						 * as initial selection in the dialog.
-						 * 
+						 *
 						 * First we remove all double-quotes. Then the build macro provider
 						 * will resolve all macros/variables (like workspace_loc, ...).
-						 * 
+						 *
 						 * If the workspace location path is a prefix of our resolved path,
 						 * we will remove that part and finally get a full path relative to the
 						 * workspace. We can use that path to set the initially selected resource.
 						 */
-						
-						String currentPathText;
-						IPath path;
-						
-						currentPathText = getText().getText();
-						if(contextInfo != null){
-							/*
-							try {
-								currentPathText = 
-									MacroResolver.resolveToString(currentPathText,
-											new DefaultMacroSubstitutor(contextInfo ,
-													"", //$NON-NLS-1$
-													" ")); //$NON-NLS-1$
-							} catch (BuildMacroException e) {
-							}
-							*/
-						}
+
+						String currentPathText = getText().getText();
 
 						/* Remove double quotes */
 						currentPathText = currentPathText.replaceAll("\"", ""); //$NON-NLS-1$ //$NON-NLS-2$
 
 						/* Resolve variables */
-						IStringVariableManager variableManager =
-							VariablesPlugin.getDefault().getStringVariableManager();
-						
-						/* Remove workspace location prefix (if any) */
-						path = new Path(currentPathText);
-						
+						IStringVariableManager variableManager = VariablesPlugin.getDefault().getStringVariableManager();
+
+						/* See if we can discover the project from the context *
+						 * and check whether the path must be resolved... */
+						IProject project = null;
+						IResource resource = null;
+						if(contextInfo != null) {
+							try {
+								// Try to find the project
+								ICdtVariable var = SupplierBasedCdtVariableManager.getVariable(PROJECTNAME_VAR, contextInfo, true);
+								if (var != null && var.getValueType() == ICdtVariable.VALUE_TEXT)
+									project = ResourcesPlugin.getWorkspace().getRoot().getProject(var.getStringValue());
+
+								// Try to resolve the currentPathText
+								IVariableSubstitutor varSubs = new SupplierBasedCdtVariableSubstitutor(contextInfo, "", "");  //$NON-NLS-1$//$NON-NLS-2$
+								String value = CdtVariableResolver.resolveToString(currentPathText, varSubs);
+								if (!"".equals(value)) { //$NON-NLS-1$
+									IResource rs[] = ResourcesPlugin.getWorkspace().getRoot().findContainersForLocationURI(URIUtil.toURI(value));
+									if (rs == null || rs.length == 0)
+										resource = ResourceLookup.selectFileForLocation(path, null);
+									if (rs != null && rs.length > 0)
+										resource = rs[0];
+								}
+							} catch (CdtVariableException e) {
+								// It's OK not to find the project... carry on as before
+							}
+						}
+
 						/* Create workspace folder/file selection dialog and
 						 * set initial selection */
 						ElementTreeSelectionDialog dialog = new ElementTreeSelectionDialog(getShell(),
 								new WorkbenchLabelProvider(), new WorkbenchContentProvider());
 
-		                dialog.setInput(ResourcesPlugin.getWorkspace().getRoot()); 
+		                dialog.setInput(ResourcesPlugin.getWorkspace().getRoot());
 		                dialog.setComparator(new ResourceComparator(ResourceComparator.NAME));
-						
+
 						if (type == BROWSE_DIR)	{
-							IResource container = null;
-							if(path.isAbsolute()){
-								IContainer cs[] = ResourcesPlugin.getWorkspace().getRoot().findContainersForLocation(path);
-								if(cs != null && cs.length > 0)
-									container = cs[0];
-							}
-							if(container == null && rc instanceof IContainer)
-								container = rc;
-
-
-							dialog.setInitialSelection(container);
-
+							dialog.setInitialSelection(resource);
 							Class<?>[] filteredResources = {IContainer.class, IProject.class};
 							dialog.addFilter(new TypedCDTViewerFilter(filteredResources));
-							dialog.setTitle(WORKSPACE_DIR_DIALOG_TITLE); 
-			                dialog.setMessage(WORKSPACE_DIR_DIALOG_MSG); 
+							dialog.setTitle(WORKSPACE_DIR_DIALOG_TITLE);
+			                dialog.setMessage(WORKSPACE_DIR_DIALOG_MSG);
 						} else {
-							IResource resource = null;
-							if(path.isAbsolute()){
-								resource= ResourceLookup.selectFileForLocation(path, null);
-							}
-							if(resource == null) resource = rc;
-
 							dialog.setInitialSelection(resource);
 							dialog.setValidator(new ISelectionStatusValidator() {
 							    public IStatus validate(Object[] selection) {
 							    	if (selection != null)
-							    		if (selection.length > 0)
-							    			if (!(selection[0] instanceof IFile))
+						    			for (Object sel : selection)
+							    			if (!(sel instanceof IFile))
 							    				return new CDTStatusInfo(IStatus.ERROR, WORKSPACE_FILE_DIALOG_ERR);
 							    	return new CDTStatusInfo();
 							    }
 							});
-							dialog.setTitle(WORKSPACE_FILE_DIALOG_TITLE); 
-			                dialog.setMessage(WORKSPACE_FILE_DIALOG_MSG); 
+							dialog.setTitle(WORKSPACE_FILE_DIALOG_TITLE);
+			                dialog.setMessage(WORKSPACE_FILE_DIALOG_MSG);
 						}
-						
-						/* Open dialog and process result. If a resource has
-						 * been selected we create an absolute file system
-						 * path for it based on the workspace_loc variable */
+
+						/* Open dialog and process result. 
+						 * If a resource has been selected we create a workspace relative path for it.
+						 * Use ${ProjName} if the full path is relative to the context's location */
 						if (dialog.open() == Window.OK) {
 							fSetByBrowseDialog = true;
-							
-							IResource resource = (IResource) dialog.getFirstResult();
-							
-							if (resource != null) {
-								getText().setText(variableManager.generateVariableExpression(WORKSPACELOC_VAR,
-										resource.getFullPath().toString()));
+
+							Object[] rs = dialog.getResult();
+
+							if (rs != null) {
+								int i = 0;
+								values = new String[rs.length];
+								for (Object o : rs) {
+									resource = (IResource) o;
+									if (resource.getProject().equals(project))
+										values[i++] = variableManager.generateVariableExpression(WORKSPACELOC_VAR,
+												PROJECTNAME_PATH.append(resource.getProjectRelativePath()).toString());
+									else
+										values[i++] = variableManager.generateVariableExpression(WORKSPACELOC_VAR,
+												resource.getFullPath().makeRelative().toString());
+								}
+								// If only one entry, update the text field
+								if (values.length == 1)
+									getText().setText(values[0]);
+								else
+									// More then one item selected and OK pressed. Exit this edit dialog
+									buttonPressed(IDialogConstants.OK_ID);
 							}
 						}
-							
-						
 					}
 				});
 			}
-			
+
 			if (type != BROWSE_NONE) {
 				/* Browse button for external directories/files */
 				final Button externalButton = createButton(parent, 4, FILESYSTEMBUTTON_NAME, false);
@@ -241,7 +300,7 @@ public class FileListControl {
 						String result;
 						switch (type) {
 							case BROWSE_DIR :
-								DirectoryDialog dialog = new DirectoryDialog(getParentShell(), 
+								DirectoryDialog dialog = new DirectoryDialog(getParentShell(),
 										SWT.OPEN|SWT.APPLICATION_MODAL);
 								currentName = getText().getText();
 								if(currentName != null && currentName.trim().length() != 0) {
@@ -274,9 +333,97 @@ public class FileListControl {
 
 	}
 
+	/**
+	 * An extended List control with support for cut / copy / paste & undo
+	 * Needs to be public for the copy method to be called by the platform via reflection
+	 * @since 5.2
+	 * @noextend
+	 * @noinstantiate This class is not intended to be instantiated by clients.
+	 */
+	public final class ClipboardList extends List {
+		private Clipboard clipboard;
+
+		public ClipboardList(Composite parent, int style) {
+			super (parent, style);
+		}
+		private String[] getClipboardContents() {
+			Clipboard cp = getClipboard();
+			String contents = (String)cp.getContents(TextTransfer.getInstance());
+			if (contents != null) {
+				String[] arr = contents.split("\n"); //$NON-NLS-1$
+				return arr;
+			}
+			return new String[0];
+		}
+		public void copy() {
+			String[] toCopy = getSelection();
+			if (toCopy != null && toCopy.length > 0) {
+				StringBuilder sb = new StringBuilder();
+				for (String item : toCopy)
+					sb.append(item.trim()).append("\n"); //$NON-NLS-1$
+				Clipboard cp = getClipboard();
+				cp.setContents(new Object[]{sb.toString().trim()}, new Transfer[] {TextTransfer.getInstance()});
+			}
+		}
+		public void cut() {
+			copy();
+			// Only remove from the list box if the cut was successful
+			if (Arrays.equals(getClipboardContents(), getSelection()))
+				removePressed();
+		}
+		public void paste() {
+			String[] pasteBuffer = getClipboardContents();
+			int i = getSelectionIndex();
+			// insert items at the correct location
+			for (String item : pasteBuffer)
+				if (!item.trim().equals("")) //$NON-NLS-1$
+					add(item.trim(), ++i);
+			checkNotificationNeeded();
+		}
+		public void undo() {
+			try {
+				operationHistory.undo(undoContext, null, null);
+			} catch (ExecutionException e) {
+				CUIPlugin.log(e);
+			}
+		}
+		public void redo() {
+			try {
+				operationHistory.redo(undoContext, null, null);
+			} catch (ExecutionException e) {
+				CUIPlugin.log(e);
+			}
+		}		
+		private Clipboard getClipboard() {
+			if (clipboard == null)
+				clipboard = new Clipboard(Display.getDefault());
+			return clipboard;
+		}
+		@Override
+		public void dispose() {
+			super.dispose();
+			if (clipboard != null)
+				clipboard.dispose();
+		}
+		/**
+		 * Handle backspace / delete key
+		 */
+		public void delete() {
+			removePressed();
+		}
+		@Override
+		protected void checkSubclass() {
+			// We're adding action handlers, override...
+		}
+	}
+
+
 	/* Variable names */
+	/* See CdtMacroSupplier: used for making absolute paths relative if desired */
 	private static final String WORKSPACELOC_VAR = "workspace_loc"; //$NON-NLS-1$
-	
+	private static final String PROJECTNAME_VAR = "ProjName"; //$NON-NLS-1$
+	private static final IPath PROJECTNAME_PATH = new Path(VariablesPlugin.getDefault().getStringVariableManager().generateVariableExpression(PROJECTNAME_VAR, null));
+
 	/* Names, messages and titles */
 	private static final String WORKSPACEBUTTON_NAME = UIMessages.getString("FileListControl.button.workspace"); //$NON-NLS-1$
 	private static final String FILESYSTEMBUTTON_NAME = UIMessages.getString("FileListControl.button.fs"); //$NON-NLS-1$
@@ -292,42 +439,46 @@ public class FileListControl {
 	private static final String DIR_TITLE_EDIT = UIMessages.getString("BrowseEntryDialog.dir.title.edit");	//$NON-NLS-1$
 	private static final String WORKSPACE_DIR_DIALOG_TITLE = UIMessages.getString("BrowseEntryDialog.wsp.dir.dlg.title");	//$NON-NLS-1$
 	private static final String WORKSPACE_FILE_DIALOG_TITLE = UIMessages.getString("BrowseEntryDialog.wsp.file.dlg.title");	//$NON-NLS-1$
-	private static final String WORKSPACE_DIR_DIALOG_MSG = UIMessages.getString("BrowseEntryDialog.wsp.dir.dlg.msg");	//$NON-NLS-1$
-	private static final String WORKSPACE_FILE_DIALOG_MSG = UIMessages.getString("BrowseEntryDialog.wsp.file.dlg.msg");	//$NON-NLS-1$
-	private static final String WORKSPACE_FILE_DIALOG_ERR = UIMessages.getString("BrowseEntryDialog.wsp.file.dlg.err");	//$NON-NLS-1$
+	private static final String WORKSPACE_DIR_DIALOG_MSG = UIMessages.getString("FileListControl.BrowseEntryDialog.wsp.dir.dlg.msg");	//$NON-NLS-1$
+	private static final String WORKSPACE_FILE_DIALOG_MSG = UIMessages.getString("FileListControl.BrowseEntryDialog.wsp.file.dlg.msg");	//$NON-NLS-1$
+	private static final String WORKSPACE_FILE_DIALOG_ERR = UIMessages.getString("FileListControl.BrowseEntryDialog.wsp.file.dlg.err");	//$NON-NLS-1$
 	private static final String FILESYSTEM_DIR_DIALOG_MSG = UIMessages.getString("BrowseEntryDialog.fs.dir.dlg.msg");	//$NON-NLS-1$
 	private static final String FILE_MSG = UIMessages.getString("BrowseEntryDialog.message.file");	//$NON-NLS-1$
 	private static final String DIR_MSG = UIMessages.getString("BrowseEntryDialog.message.directory");	//$NON-NLS-1$
 	private static final String TITLE = UIMessages.getString("BuildPropertyCommon.label.title");	//$NON-NLS-1$
-	
+
+	/** flag which prevents us from resetting the prompt for delete flag */
+	private boolean neverPromptForDelete;
+	/** Flag indicating whether the user should be prompted for delete */
+	private boolean promptForDelete;
+
 	//toolbar
 	private ToolBar toolBar;
 	// toolbar items
-	private ToolItem addItem, deleteItem, editItem, moveUpItem,
-			moveDownItem;
+	private ToolItem addItem, deleteItem, editItem, moveUpItem, moveDownItem;
 	// title label
 	private Label title;
-	// images
-//	private Image addImage, deleteImage, editImage, moveUpImage, moveDownImage;
-//	private Composite composite;
 	// list control
-	private List list;
+	private ClipboardList list;
 	private String compTitle;
 	private SelectionListener selectionListener;
 	private GridData tgdata, grid3, grid4, grid2;
-	
+
 	// The type of browse support that is required
 	private int browseType;
+	/** The base path that should be used when adding new resources */
 	private IPath path;
-	
+
 	/* Workspace support */
 	private boolean fWorkspaceSupport = false;
 	private IVariableContextInfo contextInfo;
-	private IResource rc;
-
-	private java.util.List<IFileListChangeListener> listeners = new ArrayList<IFileListChangeListener>();
-	private String oldValue[];
+	/** Undo support */
+	IUndoContext undoContext;
+	IOperationHistory operationHistory = OperationHistoryFactory.getOperationHistory();
 	
+	private java.util.List<IFileListChangeListener> listeners = new ArrayList<IFileListChangeListener>();
+	private String[] oldValue;
+
 	//images
 	private final Image IMG_ADD = CDTUIImages
 			.get(CDTUIImages.IMG_FILELIST_ADD);
@@ -339,15 +490,37 @@ public class FileListControl {
 			.get(CDTUIImages.IMG_FILELIST_MOVEUP);
 	private final Image IMG_MOVEDOWN = CDTUIImages
 			.get(CDTUIImages.IMG_FILELIST_MOVEDOWN);
-	
+
 	/**
 	 * Constructor
-	 * 
+	 *
 	 * @param parent
 	 * @param compTitle
 	 * @param type
+	 * @param promptForDelete indicates whether the user should be prompted on delete
+	 * @see #FileListControl(Composite, String, int)
+	 * @since 5.2
+	 */
+	public FileListControl(Composite parent, String compTitle, int type, boolean promptForDelete) {
+		this(parent, compTitle, type);
+		this.promptForDelete = promptForDelete;
+		this.neverPromptForDelete = !promptForDelete;
+	}
+
+	/**
+	 * Constructor
+	 *
+	 * This FileListControl only prompts the user on Delete for BROWSE_FILE and BROWSE_DIR
+	 * @param parent
+	 * @param compTitle
+	 * @param type one of the IOption BROWSE types
+	 * @see #BROWSE_NONE
+	 * @see #BROWSE_FILE
+	 * @see #BROWSE_DIR
 	 */
 	public FileListControl(Composite parent, String compTitle, int type) {
+		promptForDelete = type == BROWSE_FILE || type == BROWSE_DIR;
+
 		// Default to no browsing
 		browseType = type;
 
@@ -419,10 +592,10 @@ public class FileListControl {
 				| GridData.HORIZONTAL_ALIGN_END);
 		buttonPanel.setLayoutData(grid3);
 		// list control
-		list = new List(filePanel, SWT.V_SCROLL | SWT.H_SCROLL | SWT.BORDER);
+		list = new ClipboardList(filePanel, SWT.V_SCROLL | SWT.H_SCROLL | SWT.BORDER | SWT.MULTI);
 		grid4 = new GridData(GridData.FILL_BOTH);
 		// force the list to be no wider than the title bar
-		Point preferredSize = titlePanel.computeSize(SWT.DEFAULT, SWT.DEFAULT); 
+		Point preferredSize = titlePanel.computeSize(SWT.DEFAULT, SWT.DEFAULT);
 		grid4.widthHint = preferredSize.x;
 		grid4.heightHint = preferredSize.y * 3;
 		grid4.horizontalSpan = 2;
@@ -436,27 +609,44 @@ public class FileListControl {
 				editSelection();
 			}
 		});
-		// Add a delete event handler
+		// Add a delete key listener
 		list.addKeyListener(new KeyAdapter() {
 			/* (non-Javadoc)
 			 * @see org.eclipse.swt.events.KeyAdapter#keyPressed(org.eclipse.swt.events.KeyEvent)
 			 */
 			@Override
 			public void keyPressed(KeyEvent e) {
-				// Is this the delete key
-				if (e.keyCode == SWT.DEL) {
-					removePressed();
-				} else {
-					super.keyPressed(e);
+				switch (e.keyCode) {
+				case SWT.BS:
+				case SWT.DEL:
+					if (e.stateMask == SWT.NONE)
+						removePressed();
+					break;
 				}
 			}
 		});
 
+		// Set-up Undo history
+		undoContext = new ObjectUndoContext(this);
+		operationHistory.setLimit(undoContext, 50);
+
+		// Add command handlers for undo to the control
+		try {
+			IFocusService fs = (IFocusService)PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage()
+								.getActivePart().getSite().getService(IFocusService.class);
+			fs.addFocusTracker(list, "org.eclipse.cdt.ui.FileListControl"); //$NON-NLS-1$
+		} catch (Exception e) {
+			// Any of the get* methods may return null. As this is in the UI constructor for this control
+			// it shouldn't happen. Log and carry on.
+			CUIPlugin.log(e);
+		}
+
 		selectionChanged();
 	}
+	
 	/**
 	 * Set list values
-	 * 
+	 *
 	 * @param listVal
 	 */
 	public void setList(String[] listVal) {
@@ -468,44 +658,71 @@ public class FileListControl {
 		}
 		checkNotificationNeeded();
 	}
-	
+
 	public void addChangeListener(IFileListChangeListener listener){
 		listeners.add(listener);
 	}
-	
+
 	public void removeChangeListener(IFileListChangeListener listener){
 		listeners.remove(listener);
 	}
 
+	/**
+	 * Checks whether a notification is needed, and notifies listeners
+	 *
+	 * Persist any changes in the undo history.
+	 *
+	 * This method must be called after every change to the contents of the list box
+	 *
+	 * At end of method oldValue.equals(list.getItems())
+	 */
 	public void checkNotificationNeeded(){
-		String items[] = getItems();
-		if(oldValue != null){
-			if(oldValue.length == items.length){
-				int i;
-				for(i = 0; i < oldValue.length; i++){
-					if(!oldValue[i].equals(items[i]))
-						break;
-				}
-				if(i == oldValue.length)
-					return;
-			}
-			String old[] = oldValue;
-			System.arraycopy(items,0,oldValue = new String[items.length],0,items.length);
-			notifyListeners(old,oldValue);
-		} else{
-			System.arraycopy(items,0,oldValue = new String[items.length],0,items.length);
-		}
-	}
+		final String items[] = getItems();
+		if(oldValue != null) {
+			if (Arrays.equals(oldValue, items))
+				return;
 	
+			// Add some context to the undo history
+			IUndoableOperation op = new AbstractOperation("") { //$NON-NLS-1$
+				final String[] previousValue = oldValue;
+				final String[] newValue = items;
+				@Override
+				public IStatus undo(IProgressMonitor monitor, IAdaptable info) throws ExecutionException {
+					list.setItems(previousValue);
+					notifyListeners(newValue, previousValue);
+					oldValue = previousValue;
+					return Status.OK_STATUS;
+				}
+				@Override
+				public IStatus redo(IProgressMonitor monitor, IAdaptable info) throws ExecutionException {
+					list.setItems(newValue);
+					notifyListeners(previousValue, newValue);				
+					oldValue = newValue;
+					return Status.OK_STATUS;
+				}
+				@Override
+				public IStatus execute(IProgressMonitor monitor, IAdaptable info) throws ExecutionException {
+					return Status.CANCEL_STATUS;
+				}
+			};
+			op.addContext(undoContext);
+			operationHistory.add(op);
+			System.arraycopy(items, 0, oldValue = new String[items.length], 0, items.length);
+			notifyListeners(oldValue, items);
+			list.setFocus(); // Ensure this control retains focus
+		} else
+			System.arraycopy(items, 0, oldValue = new String[items.length], 0, items.length);
+	}
+
 	public void notifyListeners(String oldVal[], String newVal[]){
 		for (IFileListChangeListener listener: listeners) {
 			listener.fileListChanged(this,oldVal,newVal);
 		}
 	}
-	
+
 	/**
 	 * Set selection
-	 * 
+	 *
 	 * @param sel
 	 */
 	public void setSelection(int sel) {
@@ -561,7 +778,7 @@ public class FileListControl {
 	}
 	/**
 	 * Returns selection listener
-	 * 
+	 *
 	 * @return
 	 */
 	private SelectionListener getSelectionListener() {
@@ -569,45 +786,43 @@ public class FileListControl {
 			createSelectionListener();
 		return selectionListener;
 	}
+
 	/**
 	 * This method will be called when the add button is pressed
 	 */
 	private void addPressed() {
 		// Prompt user for a new item
-		String input = getNewInputObject();
-		
+		String[] input = getNewInputObject();
+
 		// Add it to the list
-		if (input != null && input.length() > 0) {
+		if (input.length > 0) {
 			int index = list.getSelectionIndex();
-			if (index >= 0) {
-				list.add(input, index + 1);
-				list.setSelection(index + 1);
-			}
-			else {
-				list.add(input, 0);
-				list.setSelection(0);
-			}
+			int i = 0;
+			for (String s : input)
+				list.add(s, index + ++i);
+			list.setSelection(index + 1);
 			checkNotificationNeeded();
 		}
 
 		selectionChanged();
 	}
+
 	/**
 	 * This method will be called when the remove button is pressed
 	 */
 	private void removePressed() {
-		int index = list.getSelectionIndex();
-		if (browseType == BROWSE_DIR || browseType == BROWSE_FILE) {
+		if (list.getSelectionCount() == 0 || list.getSelectionIndex() == -1)
+			return;
+		boolean delDir = true;
+		if (promptForDelete) {
 			String quest = UIMessages.getString("FileListControl.deletedialog.message"); //$NON-NLS-1$
 			String title = UIMessages.getString("FileListControl.deletedialog.title"); //$NON-NLS-1$
-			boolean delDir = MessageDialog.openQuestion(list.getShell(), title,
-					quest);
-			if (delDir && index != -1){
-				list.remove(index);
-				checkNotificationNeeded();
-			}
-		} else if (index != -1){
-			list.remove(index);
+			delDir = MessageDialog.openQuestion(list.getShell(), title, quest);
+		}
+		if (delDir){
+			int i;
+			while ((i = list.getSelectionIndex()) != -1)
+				list.remove(i);
 			checkNotificationNeeded();
 		}
 		selectionChanged();
@@ -642,7 +857,7 @@ public class FileListControl {
 	 * This method will be called when the edit button is pressed
 	 */
 	private void editSelection() {
-		int index = list.getSelectionIndex();
+		final int index = list.getSelectionIndex();
 		if (index != -1) {
 			String selItem = list.getItem(index);
 			if (selItem != null) {
@@ -662,20 +877,15 @@ public class FileListControl {
 						title = FILE_TITLE_EDIT;
 						message = FILE_MSG;
 					}
-					dialog =  new SelectPathInputDialog(getListControl().getShell(), title,
-							message, selItem, null, browseType);
-					
+					dialog =  new SelectPathInputDialog(getListControl().getShell(), title, message, selItem, null, browseType);
 				} else {
 					String title = UIMessages.getString("FileListControl.editdialog.title"); //$NON-NLS-1$
-					dialog = new InputDialog(null, title, compTitle,
-							selItem, null);
+					dialog = new InputDialog(null, title, compTitle, selItem, null);
 				}
-					
-				
-				String newItem = null;
+
 				if (dialog.open() == Window.OK) {
-					newItem = dialog.getValue();
-					
+					String[] newItems;
+
 					/* If newItem is a directory or file path we need to
 					 * double-quote it if required. We only do this if the user
 					 * selected a new path using a browse button. If he/she simply
@@ -683,29 +893,40 @@ public class FileListControl {
 					 * wants to.
 					 */
 					if (dialog instanceof SelectPathInputDialog) {
-						if (((SelectPathInputDialog) dialog).isValueSetByBrowse())
-							newItem = doubleQuotePath(newItem);
-					}
-					
-					if (newItem != null && !newItem.equals(selItem)) {
-						list.setItem(index, newItem);
-						checkNotificationNeeded();
-						selectionChanged();
-					}
+						SelectPathInputDialog selDialog = (SelectPathInputDialog)dialog;
+						newItems = selDialog.getValues();
+						if (selDialog.isValueSetByBrowse())
+							for (int i = 0 ; i < newItems.length ; i++)
+								newItems[i] = doubleQuotePath(newItems[i]);
+					} else
+						newItems = new String[] { dialog.getValue() };
+
+					// If no change, return
+					if (newItems.length == 1 && newItems[0].equals(selItem))
+						return;
+
+					// Replace the changed item & insert new items
+					list.setItem(index, newItems[0]);
+					for (int i = 1 ; i < newItems.length ; i++)
+						list.add(newItems[i], index + i);
+					checkNotificationNeeded();
+					selectionChanged();
 				}
 			}
 		}
 	}
+
 	/**
 	 * This method will be called when the list selection changed
 	 */
 	public void selectionChanged() {
 		int index = list.getSelectionIndex();
 		int size = list.getItemCount();
+		int selectionCount = list.getSelectionCount();
 		deleteItem.setEnabled(size > 0);
-		moveUpItem.setEnabled(size > 1 && index > 0);
-		moveDownItem.setEnabled(size > 1 && index >= 0 && index < size - 1);
-		editItem.setEnabled(size > 0);
+		moveUpItem.setEnabled(size > 1 && index > 0 && selectionCount == 1);
+		moveDownItem.setEnabled(size > 1 && index >= 0 && index < size - 1 && selectionCount == 1);
+		editItem.setEnabled(selectionCount == 1);
 	}
 	/**
 	 * Returns List control
@@ -717,18 +938,22 @@ public class FileListControl {
 	/**
 	 * Sets the IPath of the project the field editor was
 	 * created for.
-	 * 
-	 * @param path The path to the 
+	 *
+	 * @param path The path to the
 	 */
 	public void setPath(IPath path) {
 		this.path = path;
 	}
-	
+
 	/**
 	 * Set browseType
+	 * @deprecated This class should be constructed with the correct type
 	 */
+	@Deprecated
 	public void setType(int type) {
 		browseType = type;
+		if (!neverPromptForDelete)
+			promptForDelete = type == BROWSE_FILE || type == BROWSE_DIR;
 	}
 
 	/**
@@ -759,13 +984,13 @@ public class FileListControl {
 	/**
 	 * Returns the input dialog string
 	 */
-	private String getNewInputObject() {
+	private String[] getNewInputObject() {
 		// Create a dialog to prompt for a new list item
-		String input = null;
+		String[] input = new String[0];
 		String title = new String();
 		String message = new String();
 		String initVal = new String();
-		
+
 		if (browseType == BROWSE_DIR) {
 			title = DIR_TITLE_ADD;
 			message = DIR_MSG;
@@ -778,34 +1003,33 @@ public class FileListControl {
 			title = TITLE;
 			message = compTitle;
 		}
-		
+
 		// Prompt for value
 		SelectPathInputDialog dialog = new SelectPathInputDialog(getListControl().getShell(), title, message, initVal, null, browseType);
 		if (dialog.open() == Window.OK) {
-			input = dialog.getValue();
-		}
-		
-		/* Double-quote (if required) the text if it is a directory or file */
-		if (input != null && input.length() > 0) {
-			if (browseType == BROWSE_DIR ||
-					browseType == BROWSE_FILE) {
-				input = doubleQuotePath(input);
+			input = dialog.getValues();
+
+			/* Double-quote (if required) the text if it is a directory or file */
+			if (input.length > 0) {
+				if (browseType == BROWSE_DIR || browseType == BROWSE_FILE)
+					for (int i = 0 ; i < input.length ; i++)
+						input[i] = doubleQuotePath(input[i]);
 			}
 		}
 
 		return input;
 	}
-	
+
 	public Label getLabelControl(){
 		return title;
 	}
-	
+
 	public void setEnabled(boolean enabled){
 		title.setEnabled(enabled);
 		toolBar.setEnabled(enabled);
 		list.setEnabled(enabled);
 	}
-	
+
 	/**
 	 * Double-quotes a path name if it contains white spaces, backslahes
 	 * or a macro/variable (We don't know if a macro will contain spaces, so we
@@ -816,15 +1040,15 @@ public class FileListControl {
 	private String doubleQuotePath(String pathName)	{
 		/* Trim */
 		pathName = pathName.trim();
-		
+
 		/* Check if path is already double-quoted */
 		boolean bStartsWithQuote = pathName.startsWith("\""); //$NON-NLS-1$
 		boolean bEndsWithQuote = pathName.endsWith("\""); //$NON-NLS-1$
-		
-		/* Check for spaces, backslashes or macros */ 
+
+		/* Check for spaces, backslashes or macros */
 		int i = pathName.indexOf(" ") + pathName.indexOf("\\") //$NON-NLS-1$ //$NON-NLS-2$
 			+ pathName.indexOf("${"); //$NON-NLS-1$
-		
+
 		/* If indexof didn't fail all three times, double-quote path */
 		if (i != -3) {
 			if (!bStartsWithQuote)
@@ -832,7 +1056,7 @@ public class FileListControl {
 			if (!bEndsWithQuote)
 				pathName = pathName + "\""; //$NON-NLS-1$
 		}
-		
+
 		return pathName;
 	}
 }

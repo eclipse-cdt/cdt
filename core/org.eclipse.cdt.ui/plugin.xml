@@ -3277,4 +3277,36 @@
 			</enablement>
 		</renameParticipant>
 	</extension>
+   <!-- Add support for undo / redo in the FileListControl -->
+   <extension
+         id="org.eclipse.cdt.ui.FileListControlHandler"
+         point="org.eclipse.ui.handlers">
+      <handler
+            class="org.eclipse.ui.internal.handlers.WidgetMethodHandler:undo"
+            commandId="org.eclipse.ui.edit.undo">
+         <activeWhen>      
+         	<with variable="activeFocusControlId">
+         	         <equals value="org.eclipse.cdt.ui.FileListControl"/>
+         	</with>
+         </activeWhen>
+      </handler>
+      <handler
+            class="org.eclipse.ui.internal.handlers.WidgetMethodHandler:redo"
+            commandId="org.eclipse.ui.edit.redo">
+         <activeWhen>      
+         	<with variable="activeFocusControlId">
+         	         <equals value="org.eclipse.cdt.ui.FileListControl"/>
+         	</with>
+         </activeWhen>
+      </handler>
+      <handler
+            class="org.eclipse.ui.internal.handlers.WidgetMethodHandler:delete"
+            commandId="org.eclipse.ui.edit.delete">
+         <activeWhen>      
+         	<with variable="activeFocusControlId">
+         	         <equals value="org.eclipse.cdt.ui.FileListControl"/>
+         	</with>
+         </activeWhen>
+      </handler>
+   </extension>
 </plugin>

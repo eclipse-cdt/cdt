@@ -72,6 +72,7 @@ public class FileListControlFieldEditor extends FieldEditor {
 	 * @param name the name of the preference this field editor works on
 	 * @param labelText the label text of the field editor
 	 * @param tooltip the tooltip text of the field editor
+	 * @param contextId 
 	 * @param parent the parent of the field editor's control
 	 * @param type the browseType of the file list control
 	 */
@@ -154,11 +155,7 @@ public class FileListControlFieldEditor extends FieldEditor {
 		gddata.horizontalSpan = 2;
 		topLayout.setLayoutData(gddata);
 		// file list control
-		list =
-			new FileListControl(
-				topLayout,
-				getLabelText(),
-				getType());
+		list = new FileListControl(topLayout, getLabelText(), getType(), false);
 		list.addChangeListener(new IFileListChangeListener(){
 
 			public void fileListChanged(FileListControl fileList, String oldValue[], String newValue[]) {

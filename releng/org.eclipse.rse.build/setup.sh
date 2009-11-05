@@ -18,6 +18,12 @@
 # script to find the published packages
 #
 # Bootstrapping: Get this script by
+# export CVSROOT=:pserver:anonymous@dev.eclipse.org:/cvsroot/dsdp
+# cvs co -r HEAD org.eclipse.tm.rse/releng/org.eclipse.rse.build
+# sh org.eclipse.tm.rse/releng/org.eclipse.rse.build/setup.sh
+#
+# - OR -
+#
 # wget -O setup.sh "http://dev.eclipse.org/viewcvs/index.cgi/org.eclipse.tm.rse/releng/org.eclipse.rse.build/setup.sh?rev=HEAD&cvsroot=DSDP_Project&content-type=text/plain"
 # sh setup.sh
 # ./doit_ibuild.sh
@@ -42,11 +48,8 @@ esac
 
 # prepare the base Eclipse installation in folder "eclipse"
 ep_rel="S-"
-ep_ver=3.5M7
-ep_date="-200904302300"
-#ep_rel=
-#ep_ver=I20090426-2000
-#ep_date=
+ep_ver=3.6M3
+ep_date="-200910301201"
 P2_disabled=false
 P2_no_dropins=false
 if [ ! -f eclipse/plugins/org.eclipse.swt_3.5.0.v3545a.jar ]; then
@@ -110,11 +113,11 @@ else
   DROPUP=../..
 fi
 
-# EMF 2.5M7
+# EMF 2.5.0
 EMFBRANCH=2.5.0
-EMFREL=S
-EMFDATE=200905041408
-EMFVER=2.5.0M7
+EMFREL=R
+EMFDATE=200906151043
+EMFVER=2.5.0
 if [ ! -f ${DROPIN}/eclipse/plugins/org.eclipse.emf.doc_${EMFBRANCH}.v${EMFDATE}.jar ]; then
   # Need EMF 2.4 SDK for Service Discovery ISV Docs Backlinks
   echo "Getting EMF SDK..."
@@ -141,7 +144,7 @@ if [ ! -f ${DROPIN}/eclipse/plugins/gnu.io.rxtx_2.1.7.4_v20071016.jar ]; then
 fi
 
 # checkout the basebuilder
-baseBuilderTag=R35_M6
+baseBuilderTag=R36_M2
 if [ ! -f org.eclipse.releng.basebuilder/plugins/org.eclipse.pde.core_3.5.0.v20090309-1900.jar \
   -o ! -f org.eclipse.releng.basebuilder/plugins/org.eclipse.pde.build_3.5.0.v20090312-1500/pdebuild.jar \
   -o ! -f org.eclipse.releng.basebuilder/plugins/org.eclipse.equinox.p2.metadata.generator_1.0.100.v20090309-1845.jar ]; then

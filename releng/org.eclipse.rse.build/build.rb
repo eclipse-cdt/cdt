@@ -63,7 +63,7 @@ packageDirectory = "#{working}/package"
 publishDirectory = "#{working}/publish"
 
 tag = ask("Enter tag to fetch from CVS", "HEAD")
-buildType = ask("Enter build type (P=Personal, N=Nightly, I=Integration, S=Stable)", "P")
+buildType = ask("Enter build type (P=Personal, N=Nightly, I=Integration, S=Stable, J/M=Maintenance, K/L=Legacy)", "P")
 mydstamp = Time.now.strftime("%Y%m%d")
 mytstamp = Time.now.strftime("%H%M")
 buildId = ask("Enter the build id", buildType + mydstamp + "-" + mydstamp)

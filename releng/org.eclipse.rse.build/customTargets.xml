@@ -206,6 +206,18 @@
 					<equals arg1="${buildType}" arg2="M"/>
 					<not><matches pattern="M[0-9-]*" string="${buildId}"/></not>
 				</and>
+				<and>
+					<equals arg1="${buildType}" arg2="J"/>
+					<not><matches pattern="J[0-9-]*" string="${buildId}"/></not>
+				</and>
+				<and>
+					<equals arg1="${buildType}" arg2="K"/>
+					<not><matches pattern="K[0-9-]*" string="${buildId}"/></not>
+				</and>
+				<and>
+					<equals arg1="${buildType}" arg2="L"/>
+					<not><matches pattern="L[0-9-]*" string="${buildId}"/></not>
+				</and>
 			</or>
 		</condition>
 		<property name="buildUpdateSitePath" value="${packageDirectory}/${dropDir}/updates"/>
@@ -371,7 +383,10 @@
 		<condition property="buildTypeLong" value="Integration"><equals arg1="${buildType}" arg2="I"/></condition>
 		<condition property="buildTypeLong" value="Stable"><equals arg1="${buildType}" arg2="S"/></condition>
 		<condition property="buildTypeLong" value="Release"><equals arg1="${buildType}" arg2="R"/></condition>
+		<condition property="buildTypeLong" value="Maintenance"><equals arg1="${buildType}" arg2="J"/></condition>
 		<condition property="buildTypeLong" value="Maintenance"><equals arg1="${buildType}" arg2="M"/></condition>
+		<condition property="buildTypeLong" value="Legacy"><equals arg1="${buildType}" arg2="K"/></condition>
+		<condition property="buildTypeLong" value="Legacy"><equals arg1="${buildType}" arg2="L"/></condition>
 		<replace file="${packageDirectory}/${dropDir}/index.php">
 			<replacefilter token="@buildTypeLong@" value="${buildTypeLong}"/>
 			<replacefilter token="@dateLong@" value="${dateLong}"/>

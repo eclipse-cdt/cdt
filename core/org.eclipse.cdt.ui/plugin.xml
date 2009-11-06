@@ -1262,28 +1262,6 @@
                id="org.eclipse.cdt.ui.actions.ExtractLocalVariable"
                retarget="true">
          </action>
-        <action
-               definitionId="org.eclipse.cdt.ui.refactor.getters.and.setters"
-               label="%Refactoring.gettersAndSetters.label"
-               menubarPath="org.eclipse.jdt.ui.source.menu/generateGroup"
-               id="org.eclipse.cdt.ui.actions.GettersAndSetters"
-               retarget="true">
-         </action> 
-         <action
-               definitionId="org.eclipse.cdt.ui.refactor.implement.method"
-               label="%Refactoring.implementMethod.label"
-               menubarPath="org.eclipse.jdt.ui.source.menu/generateGroup"
-               id="org.eclipse.cdt.ui.actions.ImplementMethod"
-               retarget="true">
-         </action>
-         <action
-               class="org.eclipse.cdt.internal.ui.actions.SurroundWithTemplateMenuAction"
-               definitionId="org.eclipse.cdt.ui.edit.text.c.surround.with.quickMenu"
-               label="%SurroundWithTemplateAction.label"
-               menubarPath="org.eclipse.jdt.ui.source.menu/codeGroup"
-               id="org.eclipse.cdt.internal.ui.actions.SurroundWithTemplateMenuAction"
-               style="pulldown">
-         </action>
          <action
                class="org.eclipse.ltk.ui.refactoring.actions.ShowRefactoringHistoryAction"
                definitionId="org.eclipse.ltk.ui.refactor.show.refactoring.history"
@@ -1308,17 +1286,135 @@
                menubarPath="org.eclipse.jdt.ui.refactoring.menu/historyGroup"
                retarget="false">
          </action>
+<!-- =========================================================================== -->
+<!-- Source Menu                                                                 -->
+<!-- =========================================================================== -->
+         <!-- Note: This menu layout must match the definition in org.eclipse.jdt.ui -->
          <menu
                id="org.eclipse.jdt.ui.source.menu"
                label="%Source.menu.label"
                path="edit">
+		    <separator
+                  name="commentGroup">
+            </separator>
+            <separator
+                  name="editGroup">
+            </separator>
+            <separator
+                  name="importGroup">
+            </separator>
             <separator
                   name="generateGroup">
             </separator>
             <separator
                   name="codeGroup">
             </separator>
+            <separator
+                  name="externalizeGroup">
+            </separator>
+            <separator
+                  name="convertGroup">
+            </separator>
          </menu>
+<!-- Code Group -->
+         <action
+               class="org.eclipse.cdt.internal.ui.actions.SurroundWithTemplateMenuAction"
+               definitionId="org.eclipse.cdt.ui.edit.text.c.surround.with.quickMenu"
+               label="%SurroundWithTemplateAction.label"
+               menubarPath="org.eclipse.jdt.ui.source.menu/codeGroup"
+               id="org.eclipse.cdt.internal.ui.actions.SurroundWithTemplateMenuAction"
+               style="pulldown">
+         </action>
+<!-- Generate Group -->
+        <action
+               definitionId="org.eclipse.cdt.ui.refactor.getters.and.setters"
+               label="%Refactoring.gettersAndSetters.label"
+               menubarPath="org.eclipse.jdt.ui.source.menu/generateGroup"
+               id="org.eclipse.cdt.ui.actions.GettersAndSetters"
+               retarget="true">
+         </action> 
+         <action
+               definitionId="org.eclipse.cdt.ui.refactor.implement.method"
+               label="%Refactoring.implementMethod.label"
+               menubarPath="org.eclipse.jdt.ui.source.menu/generateGroup"
+               id="org.eclipse.cdt.ui.actions.ImplementMethod"
+               retarget="true">
+         </action>
+<!-- Import Group -->
+         <action
+               definitionId="org.eclipse.cdt.ui.edit.text.c.add.include"
+               label="%AddIncludeAction.label"
+               retarget="true"
+               menubarPath="org.eclipse.jdt.ui.source.menu/importGroup"
+               id="org.eclipse.cdt.ui.actions.AddInclude">
+         </action>
+<!-- Edit group -->
+         <action
+               definitionId="org.eclipse.cdt.ui.edit.text.c.format"
+               label="%FormatAction.label"
+               retarget="true"
+               menubarPath="org.eclipse.jdt.ui.source.menu/editGroup"
+               id="org.eclipse.cdt.ui.actions.Format">
+         </action>
+         <action
+               definitionId="org.eclipse.cdt.ui.edit.text.c.indent"
+               label="%IndentAction.label"
+               retarget="true"
+               menubarPath="org.eclipse.jdt.ui.source.menu/editGroup"
+               id="org.eclipse.cdt.ui.actions.Indent">
+         </action>
+         <action
+               definitionId="org.eclipse.ui.edit.text.shiftLeft"
+               disabledIcon="icons/dlcl16/shift_l_edit.gif"
+               icon="icons/elcl16/shift_l_edit.gif"
+               id="org.eclipse.cdt.ui.actions.ShiftLeft"
+               label="%ShiftLeftAction.label"
+               menubarPath="org.eclipse.jdt.ui.source.menu/editGroup"
+               retarget="true">
+         </action>
+         <action
+               definitionId="org.eclipse.ui.edit.text.shiftRight"
+               disabledIcon="icons/dlcl16/shift_r_edit.gif"
+               icon="icons/elcl16/shift_r_edit.gif"
+               id="org.eclipse.cdt.ui.actions.ShiftRight"
+               label="%ShiftRightAction.label"
+               menubarPath="org.eclipse.jdt.ui.source.menu/editGroup"
+               retarget="true">
+         </action>
+<!-- Comment Group -->
+         <action
+               definitionId="org.eclipse.cdt.ui.edit.text.c.uncomment"
+               label="%UncommentAction.label"
+               retarget="true"
+               id="org.eclipse.cdt.ui.actions.Uncomment">
+         </action>
+         <action
+               definitionId="org.eclipse.cdt.ui.edit.text.c.comment"
+               label="%CommentAction.label"
+               retarget="true"
+               id="org.eclipse.cdt.ui.actions.Comment">
+         </action>
+         <action
+               definitionId="org.eclipse.cdt.ui.edit.text.c.remove.block.comment"
+               label="%RemoveBlockCommentAction.label"
+               retarget="true"
+               menubarPath="org.eclipse.jdt.ui.source.menu/commentGroup"
+               id="org.eclipse.cdt.ui.actions.RemoveBlockComment">
+         </action>
+         <action
+               definitionId="org.eclipse.cdt.ui.edit.text.c.add.block.comment"
+               label="%AddBlockCommentAction.label"
+               retarget="true"
+               menubarPath="org.eclipse.jdt.ui.source.menu/commentGroup"
+               id="org.eclipse.cdt.ui.actions.AddBlockComment">
+         </action>
+         <action
+               definitionId="org.eclipse.cdt.ui.edit.text.c.toggle.comment"
+               label="%ToggleCommentAction.label"
+               retarget="true"
+               menubarPath="org.eclipse.jdt.ui.source.menu/commentGroup"
+               id="org.eclipse.cdt.ui.actions.ToggleComment">
+         </action>
       </actionSet>
       <actionSet
             label="%CSearchActionSet.label"
@@ -1569,6 +1665,23 @@
  
       <!--  win32:  M1=CTRL,    M2=SHIFT, M3=ALT, M4=-
             carbon: M1=COMMAND, M2=SHIFT, M3=ALT, M4=CTRL -->
+      <key
+            sequence="M2+M3+S"
+            commandId="org.eclipse.cdt.ui.edit.text.c.source.quickMenu"
+            schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
+            contextId="org.eclipse.cdt.ui.cEditorScope"/>
+      <key
+            platform="carbon"
+            sequence="M2+M3+S"
+            commandId=""
+            schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
+            contextId="org.eclipse.cdt.ui.cEditorScope"/>
+      <key
+            platform="carbon"
+            sequence="COMMAND+ALT+S"
+            commandId="org.eclipse.cdt.ui.edit.text.c.source.quickMenu"
+            schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
+            contextId="org.eclipse.cdt.ui.cEditorScope"/>
    	 <key
             sequence="M1+M2+F"
             schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
@@ -1983,6 +2096,24 @@
             description="%ActionDefinition.format.description"
             categoryId="org.eclipse.cdt.ui.category.source"
             id="org.eclipse.cdt.ui.edit.text.c.format">
+      </command>
+      <command
+            name="%ActionDefinition.sourceQuickMenu.name"
+            description="%ActionDefinition.sourceQuickMenu.description"
+            categoryId="org.eclipse.cdt.ui.category.source"
+            id="org.eclipse.cdt.ui.edit.text.c.source.quickMenu">
+      </command>
+      <command
+            name="%ActionDefinition.comment.name"
+            description="%ActionDefinition.comment.description"
+            categoryId="org.eclipse.cdt.ui.category.source"
+            id="org.eclipse.cdt.ui.edit.text.c.comment">
+      </command>
+      <command
+            name="%ActionDefinition.uncomment.name"
+            description="%ActionDefinition.uncomment.description"
+            categoryId="org.eclipse.cdt.ui.category.source"
+            id="org.eclipse.cdt.ui.edit.text.c.uncomment">
       </command>
       <command
             name="%ActionDefinition.toggleComment.name"

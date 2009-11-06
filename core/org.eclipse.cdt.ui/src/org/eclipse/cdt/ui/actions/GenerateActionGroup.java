@@ -15,6 +15,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
+import org.eclipse.core.commands.IHandler;
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.action.IMenuManager;
@@ -26,22 +27,23 @@ import org.eclipse.jface.viewers.ISelectionProvider;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.ui.IActionBars;
 import org.eclipse.ui.IViewPart;
+import org.eclipse.ui.IWorkbenchCommandConstants;
 import org.eclipse.ui.IWorkbenchSite;
 import org.eclipse.ui.actions.ActionGroup;
 import org.eclipse.ui.actions.AddBookmarkAction;
 import org.eclipse.ui.actions.AddTaskAction;
+import org.eclipse.ui.handlers.IHandlerActivation;
 import org.eclipse.ui.handlers.IHandlerService;
 import org.eclipse.ui.ide.IDEActionFactory;
 import org.eclipse.ui.part.Page;
 import org.eclipse.ui.texteditor.ITextEditorActionConstants;
 import org.eclipse.ui.texteditor.IUpdate;
-import org.eclipse.ui.texteditor.IWorkbenchActionDefinitionIds;
-
 import org.eclipse.cdt.ui.refactoring.actions.GettersAndSettersAction;
 import org.eclipse.cdt.ui.refactoring.actions.ImplementMethodAction;
 
 import org.eclipse.cdt.internal.ui.IContextMenuConstants;
 import org.eclipse.cdt.internal.ui.actions.ActionMessages;
+import org.eclipse.cdt.internal.ui.actions.CDTQuickMenuCreator;
 import org.eclipse.cdt.internal.ui.editor.AddIncludeOnSelectionAction;
 import org.eclipse.cdt.internal.ui.editor.CEditor;
 import org.eclipse.cdt.internal.ui.editor.ICEditorActionDefinitionIds;
@@ -124,19 +126,11 @@ public class GenerateActionGroup extends ActionGroup {
 //	private FormatAllAction fFormatAll;
 //	private CopyQualifiedNameAction fCopyQualifiedNameAction;
 //	
-//	private static final String QUICK_MENU_ID= "org.eclipse.cdt.ui.edit.text.c.source.quickMenu"; //$NON-NLS-1$
-//	
-//	private class RefactorQuickAccessAction extends CDTQuickMenuAction {
-//		public RefactorQuickAccessAction(CEditor editor) {
-//			super(editor, QUICK_MENU_ID); 
-//		}
-//		protected void fillMenu(IMenuManager menu) {
-//			fillQuickMenu(menu);
-//		}
-//	}
-//	
-//	private RefactorQuickAccessAction fQuickAccessAction;
-//	private IKeyBindingService fKeyBindingService;
+	private static final String QUICK_MENU_ID= "org.eclipse.cdt.ui.edit.text.c.source.quickMenu"; //$NON-NLS-1$
+
+	private IHandlerActivation fQuickAccessHandlerActivation;
+	private IHandlerService fHandlerService;
+
 
 	/**
 	 * Note: This constructor is for internal use only. Clients should not call this constructor.
@@ -149,7 +143,7 @@ public class GenerateActionGroup extends ActionGroup {
 		fSite= editor.getSite();
 		fEditor= editor;
 		fGroupName= groupName;
-				
+		
 		fAddInclude= new AddIncludeOnSelectionAction(editor);
 		fAddInclude.setActionDefinitionId(ICEditorActionDefinitionIds.ADD_INCLUDE);
 		editor.setAction("AddIncludeOnSelection", fAddInclude); //$NON-NLS-1$
@@ -207,9 +201,7 @@ public class GenerateActionGroup extends ActionGroup {
 //		fExternalizeStrings.setActionDefinitionId(ICEditorActionDefinitionIds.EXTERNALIZE_STRINGS);
 //		editor.setAction("ExternalizeStrings", fExternalizeStrings); //$NON-NLS-1$	
 //				
-//		fQuickAccessAction= new RefactorQuickAccessAction(editor);
-//		fKeyBindingService= editor.getEditorSite().getKeyBindingService();
-//		fKeyBindingService.registerAction(fQuickAccessAction);
+		installQuickAccessAction();
 	}
 	
 	/**
@@ -220,7 +212,7 @@ public class GenerateActionGroup extends ActionGroup {
 	 * @param page the page that owns this action group
 	 */
 	public GenerateActionGroup(Page page) {
-		this(page.getSite(), null);
+		this(page.getSite());
 	}
 
 	/**
@@ -231,10 +223,10 @@ public class GenerateActionGroup extends ActionGroup {
 	 * @param part the view part that owns this action group
 	 */
 	public GenerateActionGroup(IViewPart part) {
-		this(part.getSite(), (IHandlerService)part.getSite().getService(IHandlerService.class));
+		this(part.getSite());
 	}
 	
-	private GenerateActionGroup(IWorkbenchSite site, IHandlerService handlerService) {
+	private GenerateActionGroup(IWorkbenchSite site) {
 		fSite= site;
 		ISelectionProvider provider= fSite.getSelectionProvider();
 		ISelection selection= provider.getSelection();
@@ -261,10 +253,10 @@ public class GenerateActionGroup extends ActionGroup {
 //		fAddCppDocStub.setActionDefinitionId(ICEditorActionDefinitionIds.ADD_JAVADOC_COMMENT);
 		
 		fAddBookmark= new AddBookmarkAction(site, true);
-		fAddBookmark.setActionDefinitionId(IWorkbenchActionDefinitionIds.ADD_BOOKMARK);
+		fAddBookmark.setActionDefinitionId(IWorkbenchCommandConstants.EDIT_ADD_BOOKMARK);
 		
 		fAddTaskAction= new AddTaskAction(site);
-		fAddTaskAction.setActionDefinitionId(IWorkbenchActionDefinitionIds.ADD_TASK);
+		fAddTaskAction.setActionDefinitionId(IWorkbenchCommandConstants.EDIT_ADD_TASK);
 		
 //		fExternalizeStrings= new ExternalizeStringsAction(site);
 //		fExternalizeStrings.setActionDefinitionId(ICEditorActionDefinitionIds.EXTERNALIZE_STRINGS);
@@ -320,13 +312,22 @@ public class GenerateActionGroup extends ActionGroup {
 		registerSelectionListener(provider, fAddTaskAction);
 //		registerSelectionListener(provider, fCleanUp);
 		
-//		fKeyBindingService= keyBindingService;
-//		if (fKeyBindingService != null) {
-//			fQuickAccessAction= new RefactorQuickAccessAction(null);
-//			fKeyBindingService.registerAction(fQuickAccessAction);
-//		}
+		installQuickAccessAction();
 	}
 	
+	private void installQuickAccessAction() {
+		fHandlerService= (IHandlerService)fSite.getService(IHandlerService.class);
+		if (fHandlerService != null) {
+			IHandler handler= new CDTQuickMenuCreator(fEditor) {
+				@Override
+				protected void fillMenu(IMenuManager menu) {
+					fillQuickMenu(menu);
+				}
+			}.createHandler();
+			fQuickAccessHandlerActivation= fHandlerService.activateHandler(QUICK_MENU_ID, handler);
+		}
+	}
+
 	private void registerSelectionListener(ISelectionProvider provider, ISelectionChangedListener listener) {
 		if (fRegisteredSelectionListeners == null)
 			fRegisteredSelectionListeners= new ArrayList<ISelectionChangedListener>(10);
@@ -361,11 +362,8 @@ public class GenerateActionGroup extends ActionGroup {
 	@Override
 	public void fillContextMenu(IMenuManager menu) {
 		super.fillContextMenu(menu);
-		String menuText= ActionMessages.getString("SourceMenu_label");  //$NON-NLS-1$
-//		if (fQuickAccessAction != null) {
-//			menuText= fQuickAccessAction.addShortcut(menuText); 
-//		}
-		IMenuManager subMenu= new MenuManager(menuText, MENU_ID); 
+		MenuManager subMenu= new MenuManager(ActionMessages.getString("SourceMenu_label"), MENU_ID);  //$NON-NLS-1$
+		subMenu.setActionDefinitionId(QUICK_MENU_ID);
 		int added= 0;
 		if (isEditorOwner()) {
 			added= fillEditorSubMenu(subMenu);
@@ -376,13 +374,13 @@ public class GenerateActionGroup extends ActionGroup {
 			menu.appendToGroup(fGroupName, subMenu);
 	}
 
-//	private void fillQuickMenu(IMenuManager menu) {
-//		if (isEditorOwner()) {
-//			fillEditorSubMenu(menu);
-//		} else {
-//			fillViewSubMenu(menu);
-//		}
-//	}
+	private void fillQuickMenu(IMenuManager menu) {
+		if (isEditorOwner()) {
+			fillEditorSubMenu(menu);
+		} else {
+			fillViewSubMenu(menu);
+		}
+	}
 	
 	private int fillEditorSubMenu(IMenuManager source) {
 		int added= 0;
@@ -402,7 +400,6 @@ public class GenerateActionGroup extends ActionGroup {
 //		added+= addAction(source, fSortMembers);
 //		added+= addAction(source, fCleanUp);
 		source.add(new Separator(GROUP_GENERATE));
-		added+= addEditorAction(source, "ContentAssistProposal"); //$NON-NLS-1$
 //		added+= addAction(source, fOverrideMethods);
 		added+= addAction(source, fAddGetterSetter);
 		added+= addAction(source, fImplementMethod);
@@ -454,9 +451,9 @@ public class GenerateActionGroup extends ActionGroup {
 				provider.removeSelectionChangedListener(listener);
 			}
 		}
-//		if (fQuickAccessAction != null && fKeyBindingService != null) {
-//			fKeyBindingService.unregisterAction(fQuickAccessAction);
-//		}
+		if (fQuickAccessHandlerActivation != null && fHandlerService != null) {
+			fHandlerService.deactivateHandler(fQuickAccessHandlerActivation);
+		}
 		fEditor= null;
 		super.dispose();
 	}

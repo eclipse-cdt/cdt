@@ -18,17 +18,18 @@ import java.util.ResourceBundle;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.Separator;
-import org.eclipse.jface.text.ITextOperationTarget;
 import org.eclipse.ui.IActionBars;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IWorkbenchActionConstants;
 import org.eclipse.ui.editors.text.TextEditorActionContributor;
+import org.eclipse.ui.ide.IDEActionFactory;
 import org.eclipse.ui.texteditor.ITextEditor;
 import org.eclipse.ui.texteditor.ITextEditorActionConstants;
 import org.eclipse.ui.texteditor.ITextEditorActionDefinitionIds;
 import org.eclipse.ui.texteditor.RetargetTextEditorAction;
 
-import org.eclipse.cdt.internal.ui.CPluginImages;
+import org.eclipse.cdt.ui.actions.CdtActionConstants;
+
 import org.eclipse.cdt.internal.ui.IContextMenuConstants;
 import org.eclipse.cdt.internal.ui.actions.FindWordAction;
 import org.eclipse.cdt.internal.ui.actions.GoToNextPreviousMemberAction;
@@ -38,10 +39,6 @@ public class CEditorActionContributor extends TextEditorActionContributor {
 	
 	private RetargetTextEditorAction fContentAssist;
 	private RetargetTextEditorAction fContextInformation;
-	private RetargetTextEditorAction fFormatter;
-	private RetargetTextEditorAction fAddInclude;
-	private RetargetTextEditorAction fShiftLeft;
-	private RetargetTextEditorAction fShiftRight;
 	private TogglePresentationAction fTogglePresentation;
 	private GotoAnnotationAction fPreviousAnnotation;
 	private GotoAnnotationAction fNextAnnotation;
@@ -60,25 +57,11 @@ public class CEditorActionContributor extends TextEditorActionContributor {
 		
 		ResourceBundle bundle = ConstructedCEditorMessages.getResourceBundle();
 	
-		fShiftRight= new RetargetTextEditorAction(bundle, "ShiftRight.", ITextOperationTarget.SHIFT_RIGHT);		 //$NON-NLS-1$
-		fShiftRight.setActionDefinitionId(ITextEditorActionDefinitionIds.SHIFT_RIGHT);
-		CPluginImages.setImageDescriptors(fShiftRight, CPluginImages.T_LCL, CPluginImages.IMG_MENU_SHIFT_RIGHT);
-
-		fShiftLeft= new RetargetTextEditorAction(bundle, "ShiftLeft.", ITextOperationTarget.SHIFT_LEFT); //$NON-NLS-1$
-		fShiftLeft.setActionDefinitionId(ITextEditorActionDefinitionIds.SHIFT_LEFT);
-		CPluginImages.setImageDescriptors(fShiftLeft, CPluginImages.T_LCL, CPluginImages.IMG_MENU_SHIFT_LEFT);
-		
 		fContentAssist = new RetargetTextEditorAction(bundle, "ContentAssistProposal."); //$NON-NLS-1$
 		fContentAssist.setActionDefinitionId(ITextEditorActionDefinitionIds.CONTENT_ASSIST_PROPOSALS);
 
 		fContextInformation = new RetargetTextEditorAction(bundle, "ContentAssistContextInformation."); //$NON-NLS-1$
 		fContextInformation.setActionDefinitionId(ITextEditorActionDefinitionIds.CONTENT_ASSIST_CONTEXT_INFORMATION);
-
-		fFormatter = new RetargetTextEditorAction(bundle, "Format."); //$NON-NLS-1$
-		fFormatter.setActionDefinitionId(ICEditorActionDefinitionIds.FORMAT);
-		
-		fAddInclude = new RetargetTextEditorAction(bundle, "AddIncludeOnSelection."); //$NON-NLS-1$
-		fAddInclude.setActionDefinitionId(ICEditorActionDefinitionIds.ADD_INCLUDE);
 
 		// actions that are "contributed" to editors, they are considered belonging to the active editor
 		fTogglePresentation= new TogglePresentationAction();
@@ -127,12 +110,12 @@ public class CEditorActionContributor extends TextEditorActionContributor {
 
 			editMenu.prependToGroup(IWorkbenchActionConstants.FIND_EXT, fFindWord);
 
-			editMenu.appendToGroup(ITextEditorActionConstants.GROUP_GENERATE, fShiftRight);
-			editMenu.appendToGroup(ITextEditorActionConstants.GROUP_GENERATE, fShiftLeft);
-			editMenu.appendToGroup(ITextEditorActionConstants.GROUP_GENERATE, fFormatter);
-			editMenu.appendToGroup(ITextEditorActionConstants.GROUP_GENERATE, new Separator());
-			editMenu.appendToGroup(ITextEditorActionConstants.GROUP_GENERATE, fAddInclude);
-			editMenu.appendToGroup(ITextEditorActionConstants.GROUP_GENERATE, new Separator());
+//			editMenu.appendToGroup(ITextEditorActionConstants.GROUP_GENERATE, fShiftRight);
+//			editMenu.appendToGroup(ITextEditorActionConstants.GROUP_GENERATE, fShiftLeft);
+//			editMenu.appendToGroup(ITextEditorActionConstants.GROUP_GENERATE, fFormatter);
+//			editMenu.appendToGroup(ITextEditorActionConstants.GROUP_GENERATE, new Separator());
+//			editMenu.appendToGroup(ITextEditorActionConstants.GROUP_GENERATE, fAddInclude);
+//			editMenu.appendToGroup(ITextEditorActionConstants.GROUP_GENERATE, new Separator());
 
 			editMenu.appendToGroup(IContextMenuConstants.GROUP_ADDITIONS, fToggleInsertModeAction);
 		}
@@ -183,9 +166,6 @@ public class CEditorActionContributor extends TextEditorActionContributor {
 		if (part instanceof ITextEditor)
 			textEditor= (ITextEditor) part;
 		
-		fShiftRight.setAction(getAction(textEditor, ITextEditorActionConstants.SHIFT_RIGHT));
-		fShiftLeft.setAction(getAction(textEditor, ITextEditorActionConstants.SHIFT_LEFT));
-
 		fTogglePresentation.setEditor(textEditor);
 		fToggleMarkOccurrencesAction.setEditor(textEditor);
 		fPreviousAnnotation.setEditor(textEditor);
@@ -193,8 +173,6 @@ public class CEditorActionContributor extends TextEditorActionContributor {
 
 		fContentAssist.setAction(getAction(textEditor, "ContentAssistProposal")); //$NON-NLS-1$
 		fContextInformation.setAction(getAction(textEditor, "ContentAssistContextInformation")); //$NON-NLS-1$
-		fAddInclude.setAction(getAction(textEditor, "AddIncludeOnSelection")); //$NON-NLS-1$
-		fFormatter.setAction(getAction(textEditor, "Format")); //$NON-NLS-1$
 
 		fGotoMatchingBracket.setAction(getAction(textEditor, GotoMatchingBracketAction.GOTO_MATCHING_BRACKET));
 		fGotoNextBookmark.setAction(getAction(textEditor, GotoNextBookmarkAction.NEXT_BOOKMARK));
@@ -206,9 +184,32 @@ public class CEditorActionContributor extends TextEditorActionContributor {
 		fToggleInsertModeAction.setAction(getAction(textEditor, ITextEditorActionConstants.TOGGLE_INSERT_MODE));
 		fFindWord.setAction(getAction(textEditor, FindWordAction.FIND_WORD));
 
+		// Source menu.
+		IActionBars bars= getActionBars();
+		bars.setGlobalActionHandler(CdtActionConstants.SHIFT_RIGHT, getAction(textEditor, "ShiftRight")); //$NON-NLS-1$
+		bars.setGlobalActionHandler(CdtActionConstants.SHIFT_LEFT, getAction(textEditor, "ShiftLeft")); //$NON-NLS-1$
+		bars.setGlobalActionHandler(CdtActionConstants.COMMENT, getAction(textEditor, "Comment")); //$NON-NLS-1$
+		bars.setGlobalActionHandler(CdtActionConstants.UNCOMMENT, getAction(textEditor, "Uncomment")); //$NON-NLS-1$
+		bars.setGlobalActionHandler(CdtActionConstants.TOGGLE_COMMENT, getAction(textEditor, "ToggleComment")); //$NON-NLS-1$
+		bars.setGlobalActionHandler(CdtActionConstants.FORMAT, getAction(textEditor, "Format")); //$NON-NLS-1$
+		bars.setGlobalActionHandler(CdtActionConstants.ADD_BLOCK_COMMENT, getAction(textEditor, "AddBlockComment")); //$NON-NLS-1$
+		bars.setGlobalActionHandler(CdtActionConstants.REMOVE_BLOCK_COMMENT, getAction(textEditor, "RemoveBlockComment")); //$NON-NLS-1$
+		bars.setGlobalActionHandler(CdtActionConstants.INDENT, getAction(textEditor, "Indent")); //$NON-NLS-1$
+		bars.setGlobalActionHandler(CdtActionConstants.ADD_INCLUDE, getAction(textEditor, "AddIncludeOnSelection")); //$NON-NLS-1$
+
+		IAction action= getAction(textEditor, ITextEditorActionConstants.REFRESH);
+		bars.setGlobalActionHandler(ITextEditorActionConstants.REFRESH, action);
+
+		bars.setGlobalActionHandler(IDEActionFactory.ADD_TASK.getId(), getAction(textEditor, IDEActionFactory.ADD_TASK.getId()));
+		bars.setGlobalActionHandler(IDEActionFactory.BOOKMARK.getId(), getAction(textEditor, IDEActionFactory.BOOKMARK.getId()));
+
+		bars.setGlobalActionHandler(IDEActionFactory.OPEN_PROJECT.getId(), getAction(textEditor, IDEActionFactory.OPEN_PROJECT.getId()));
+		bars.setGlobalActionHandler(IDEActionFactory.CLOSE_PROJECT.getId(), getAction(textEditor, IDEActionFactory.CLOSE_PROJECT.getId()));
+		bars.setGlobalActionHandler(IDEActionFactory.CLOSE_UNRELATED_PROJECTS.getId(), getAction(textEditor, IDEActionFactory.CLOSE_UNRELATED_PROJECTS.getId()));
+
 		if (part instanceof CEditor) {
 			CEditor cEditor= (CEditor) part;
-			cEditor.fillActionBars(getActionBars());
+			cEditor.fillActionBars(bars);
 		}
 
 	}

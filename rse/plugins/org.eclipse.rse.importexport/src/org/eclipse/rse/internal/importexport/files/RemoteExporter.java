@@ -118,22 +118,26 @@ class RemoteExporter {
 			OutputStream outstream = rfss.getOutputStream(remoteParent, remoteFile, IFileService.NONE, new NullProgressMonitor());
 			
 			InputStream instream = file.getContents();
-			int length = 1000;
-			byte[] buffer = new byte[length];
-			
-			int bytesRead = 0;
-			boolean done = false;
-			while (!done){
-				bytesRead = instream.read(buffer, 0, length);	
-				if (bytesRead > 0){
-					outstream.write(buffer, 0, bytesRead);
-				}
-				if (bytesRead == -1){
-					done = true;
+			try {
+				int length = 1000;
+				byte[] buffer = new byte[length];
+				
+				int bytesRead = 0;
+				boolean done = false;
+				while (!done){
+					bytesRead = instream.read(buffer, 0, length);	
+					if (bytesRead > 0){
+						outstream.write(buffer, 0, bytesRead);
+					}
+					if (bytesRead == -1){
+						done = true;
+					}
 				}
 			}
-			instream.close();
-			outstream.close();
+			finally {
+				instream.close();
+				outstream.close();
+			}
 		}
 	}
 

@@ -1,5 +1,5 @@
 /********************************************************************************
- * Copyright (c) 2002, 2008 IBM Corporation and others. All rights reserved.
+ * Copyright (c) 2002, 2009 IBM Corporation and others. All rights reserved.
  * This program and the accompanying materials are made available under the terms
  * of the Eclipse Public License v1.0 which accompanies this distribution, and is 
  * available at http://www.eclipse.org/legal/epl-v10.html
@@ -19,6 +19,7 @@
  * David McKnight (IBM) - [165680] "Show in Remote Shell View" does not work
  * Kevin Doyle (IBM) - [198534] Shell Menu Enablement Issue's
  * Radoslav Gerganov (ProSyst) - [181563] Fix hardcoded Ctrl+Space for remote shell content assist
+ * David McKnight   (IBM)        - [294398] [shells] SystemCommandsViewPart always assumes systemResourceChanged() called on Display thread
  ********************************************************************************/
 
 package org.eclipse.rse.internal.shells.ui.view;
@@ -749,6 +750,7 @@ public class SystemCommandsViewPart
 	}
 	
 	
+	
 	public void systemResourceChanged(ISystemResourceChangeEvent event)
 	{ 
 		if (event.getType() == ISystemResourceChangeEvents.EVENT_COMMAND_SHELL_FINISHED)
@@ -762,9 +764,21 @@ public class SystemCommandsViewPart
 			else if (source instanceof IRemoteCommandShell)
 			{
 				// find out if we're listening to this
-
-				updateOutput((IRemoteCommandShell) source, false);
-				updateActionStates();
+				if (Display.getCurrent() != null){			
+					updateOutput((IRemoteCommandShell) source, false);
+					updateActionStates();
+				}
+				else {
+					final IRemoteCommandShell fsource = (IRemoteCommandShell)source;
+					Display.getDefault().asyncExec(new Runnable() {
+						public void run() {
+							updateOutput((IRemoteCommandShell) fsource, false);
+							updateActionStates();
+						}					
+					});
+				}
+				
+			
 			}
 		} 
 		
@@ -773,9 +787,21 @@ public class SystemCommandsViewPart
 			Object source = event.getSource();
 			if (source instanceof IRemoteCommandShell)
 			{
-			    updateOutput((IRemoteCommandShell) source, false);
-			    _folder.remove(source);
-				updateActionStates();
+				if (Display.getCurrent() != null){			
+					updateOutput((IRemoteCommandShell) source, false);
+					 _folder.remove(source);
+					updateActionStates();
+				}
+				else {
+					final IRemoteCommandShell fsource = (IRemoteCommandShell)source;
+					Display.getDefault().asyncExec(new Runnable() {
+						public void run() {
+							updateOutput(fsource, false);
+							 _folder.remove(fsource);
+							updateActionStates();
+						}					
+					});
+				}
 			}
 		}
 		else if (event.getType() == ISystemResourceChangeEvents.EVENT_REFRESH)
@@ -783,7 +809,19 @@ public class SystemCommandsViewPart
 			Object parent = event.getParent();
 			if (parent instanceof IRemoteCommandShell)
 			{
-				updateOutput((IRemoteCommandShell) parent, false);
+				if (Display.getCurrent() != null){			
+					updateOutput((IRemoteCommandShell) parent, false);
+					updateActionStates();
+				}
+				else {
+					final IRemoteCommandShell fsource = (IRemoteCommandShell)parent;
+					Display.getDefault().asyncExec(new Runnable() {
+						public void run() {
+							updateOutput(fsource, false);
+							updateActionStates();
+						}					
+					});
+				}
 			}
 		}
 		else if (event.getType() == ISystemResourceChangeEvents.EVENT_PROPERTY_CHANGE)
@@ -823,6 +861,7 @@ public class SystemCommandsViewPart
 			}		    
 		}
 	}
+
 
 	public void widgetDefaultSelected(SelectionEvent e)
 	{

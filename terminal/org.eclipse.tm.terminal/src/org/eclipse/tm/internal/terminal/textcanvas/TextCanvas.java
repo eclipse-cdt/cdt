@@ -8,7 +8,8 @@
  * Contributors:
  * Michael Scharf (Wind River) - initial API and implementation
  * Michael Scharf (Wind River) - [240098] The cursor should not blink when the terminal is disconnected
- * Uwe Stieber (Wind River) - [281238] The very first few characters might be missing in the terminal control if opened and connected programmatically
+ * Uwe Stieber (Wind River) - [281328] The very first few characters might be missing in the terminal control if opened and connected programmatically
+ * Martin Oberhuber (Wind River) - [294327] After logging in, the remote prompt is hidden
  *******************************************************************************/
 package org.eclipse.tm.internal.terminal.textcanvas;
 
@@ -185,7 +186,7 @@ public class TextCanvas extends GridCanvas {
 			int columns=bonds.width/getCellWidth();
 			// when the view is minimised, its size is set to 0
 			// we don't sent this to the terminal!
-			if(lines>0 && columns>0 || init) {
+			if((lines>0 && columns>0) || init) {
 				if(columns<fMinColumns) {
 					if(!isHorizontalBarVisble()) {
 						setHorizontalBarVisible(true);
@@ -300,12 +301,20 @@ public class TextCanvas extends GridCanvas {
 			throw new IllegalArgumentException("There can be at most one listener at the moment!"); //$NON-NLS-1$
 		fResizeListener=listener;
 
-		// Bug 281238: [terminal] The very first few characters might be missing in
+		// Bug 281328: [terminal] The very first few characters might be missing in
 		//             the terminal control if opened and connected programmatically
 		//
 		// In case the terminal had not been visible yet or is to small (less than one
 		// line visible), the terminal should have a minimum size to avoid RuntimeExceptions.
-		setMinColumns(80); setMinLines(24);
+		//
+		// Bug 294327: Min lines 1 is sufficient to avoid the exception, and ensures
+		//             that on a new connection, the initial prompt is visible.
+		// MinColumns was changed from 20 to 80 in TM 3.1.1 -- Having MinColumns 80
+		// ensures that dumb terminals render properly. On a narrow Terminal, users
+		// will not see everything, but since the backing store is 80 wide they can
+		// always resize the terminal to see all. A better solution than guessing the
+		// MinColumns here should be implemented with bug 196462 (optional fixed-width).
+		setMinColumns(80); setMinLines(1);
 		onResize(true);
 	}
 

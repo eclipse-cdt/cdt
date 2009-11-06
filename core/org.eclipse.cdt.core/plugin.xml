@@ -136,6 +136,16 @@
          </run>
       </cextension>
    </extension>
+   <extension
+         id="MachO64"
+         name="%MachOParser64.name"
+         point="org.eclipse.cdt.core.BinaryParser">
+      <cextension>
+         <run
+               class="org.eclipse.cdt.utils.macho.parser.internal.MachOParser64">
+         </run>
+      </cextension>
+   </extension>
 <!-- =================================================================================== -->
 <!-- Define the list of Error Parser provided by the CDT                                 -->
 <!-- =================================================================================== -->

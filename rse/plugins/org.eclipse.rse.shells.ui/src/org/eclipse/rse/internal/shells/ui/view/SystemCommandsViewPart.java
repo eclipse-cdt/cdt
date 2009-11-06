@@ -772,7 +772,7 @@ public class SystemCommandsViewPart
 					final IRemoteCommandShell fsource = (IRemoteCommandShell)source;
 					Display.getDefault().asyncExec(new Runnable() {
 						public void run() {
-							updateOutput((IRemoteCommandShell) fsource, false);
+							updateOutput(fsource, false);
 							updateActionStates();
 						}					
 					});
@@ -811,14 +811,12 @@ public class SystemCommandsViewPart
 			{
 				if (Display.getCurrent() != null){			
 					updateOutput((IRemoteCommandShell) parent, false);
-					updateActionStates();
 				}
 				else {
 					final IRemoteCommandShell fsource = (IRemoteCommandShell)parent;
 					Display.getDefault().asyncExec(new Runnable() {
 						public void run() {
 							updateOutput(fsource, false);
-							updateActionStates();
 						}					
 					});
 				}

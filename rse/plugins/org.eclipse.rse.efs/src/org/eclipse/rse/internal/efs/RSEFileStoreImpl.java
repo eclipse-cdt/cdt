@@ -80,8 +80,11 @@ import org.eclipse.rse.ui.RSEUIPlugin;
 public class RSEFileStoreImpl extends FileStore
 {
 	private RSEFileStore _store;
-	private long _lastFetch = 0;
 
+	// to help with with performance issues when eclipse makes excessing fetchInfo calls
+	private long _lastFetch = 0;
+	private int _fetchWaitThreshold = 5000;
+	
 	//cached IRemoteFile object: an Object to avoid early class loading
 	private transient volatile IRemoteFile _remoteFile;
 
@@ -94,6 +97,16 @@ public class RSEFileStoreImpl extends FileStore
 	 */
 	public RSEFileStoreImpl(RSEFileStore store) {
 		_store = store;
+		
+		String waitStr = System.getProperty("rse_efs_fetch_wait_threshold"); //$NON-NLS-1$
+		if (waitStr != null && waitStr.length() > 0){
+			try {
+				_fetchWaitThreshold = Integer.parseInt(waitStr);
+			}
+			catch (Exception e){
+				_fetchWaitThreshold = 5000;
+			}
+		}
 	}
 
 	/*
@@ -517,8 +530,10 @@ public class RSEFileStoreImpl extends FileStore
 	 */
 	public IFileInfo fetchInfo(int options, IProgressMonitor monitor) throws CoreException {
 		long curTime = System.currentTimeMillis();
+
+		
 		// don't clear cache when there are several successive queries in a short time-span
-		if (_lastFetch == 0 || ((curTime - _lastFetch) > 5000)){	
+		if (_lastFetch == 0 || ((curTime - _lastFetch) > _fetchWaitThreshold)){	
 			// clear cache in order to query latest info
 			cacheRemoteFile(null);
 			_lastFetch = curTime;

@@ -89,12 +89,12 @@ public class PathEntryTranslator {
 	public static final int OP_ADD = 1;
 	public static final int OP_REMOVE = 2;
 	public static final int OP_REPLACE = 3;
-	
+
 	public static final int INCLUDE_BUILT_INS = 1;
 	public static final int INCLUDE_USER = 1 << 1;
 	public static final int INCLUDE_ALL = INCLUDE_BUILT_INS | INCLUDE_USER;
-	
-	
+
+
 	static String PATH_ENTRY = "pathentry"; //$NON-NLS-1$
 	static String ATTRIBUTE_KIND = "kind"; //$NON-NLS-1$
 	static String ATTRIBUTE_PATH = "path"; //$NON-NLS-1$
@@ -113,22 +113,22 @@ public class PathEntryTranslator {
 	static String ATTRIBUTE_VALUE = "value"; //$NON-NLS-1$
 	static String ATTRIBUTE_MACRO_FILE = "macro-file"; //$NON-NLS-1$
 	static String VALUE_TRUE = "true"; //$NON-NLS-1$
-	
+
 	static final IPathEntry[] NO_PATHENTRIES = new IPathEntry[0];
 
-	private static final char[] SPEC_CHARS = new char[]{'*', '?'}; 
+	private static final char[] SPEC_CHARS = new char[]{'*', '?'};
 	private PathSettingsContainer fRcDataHolder;
 	private IProject fProject;
 	private CConfigurationData fCfgData;
 	private PathSettingsContainer fTranslatedFilters;
-	private Map fResourceMap = new HashMap();
+	private Map<IPath, ResourceInfo> fResourceMap = new HashMap<IPath, ResourceInfo>();
 	private IWorkspaceRoot fRoot = ResourcesPlugin.getWorkspace().getRoot();
-	
-	
+
+
 	private static class VarSubstitutor extends CoreVariableSubstitutor {
 		ICConfigurationDescription fCfg;
 		ICdtVariableManager fMngr = CCorePlugin.getDefault().getCdtVariableManager();
-		
+
 		public VarSubstitutor(ICConfigurationDescription cfg) {
 			super(new DefaultVariableContextInfo(ICoreVariableContextInfo.CONTEXT_CONFIGURATION, cfg), "", " ");  //$NON-NLS-1$  //$NON-NLS-2$
 			fCfg = cfg;
@@ -149,42 +149,41 @@ public class PathEntryTranslator {
 
 		public ReferenceSettingsInfo(ICConfigurationDescription des){
 			fExtSettings = des.getExternalSettings();
-			Map map = des.getReferenceInfo();
+			Map<String, String> map = des.getReferenceInfo();
 			fRefProjPaths = new IPath[map.size()];
 			int num = 0;
-			for(Iterator iter = map.keySet().iterator(); iter.hasNext();){
-				String proj = (String)iter.next();
+			for (String proj : map.keySet()) {
 				fRefProjPaths[num++] = new Path(proj).makeAbsolute();
 			}
 		}
 
 		public ReferenceSettingsInfo(IPath[] projPaths, ICExternalSetting extSettings[]){
 			if(projPaths != null)
-				fRefProjPaths = (IPath[])projPaths.clone();
+				fRefProjPaths = projPaths.clone();
 			if(extSettings != null)
-				fExtSettings = (ICExternalSetting[])extSettings.clone();
+				fExtSettings = extSettings.clone();
 		}
 
 		public IPath[] getReferencedProjectsPaths(){
 			if(fRefProjPaths != null)
-				return (IPath[])fRefProjPaths.clone();
+				return fRefProjPaths.clone();
 			return new IPath[0];
 		}
-		
-		public Map getRefProjectsMap(){
+
+		public Map<String, String> getRefProjectsMap(){
 			if(fRefProjPaths != null && fRefProjPaths.length != 0){
-				Map map = new HashMap(fRefProjPaths.length);
-				for(int i = 0; i < fRefProjPaths.length; i++){
-					map.put(fRefProjPaths[i].segment(0), ""); //$NON-NLS-1$
+				Map<String, String> map = new HashMap<String, String>(fRefProjPaths.length);
+				for (IPath fRefProjPath : fRefProjPaths) {
+					map.put(fRefProjPath.segment(0), ""); //$NON-NLS-1$
 				}
 				return map;
 			}
-			return new HashMap(0);
+			return new HashMap<String, String>(0);
 		}
-		
+
 		public ICExternalSetting[] getExternalSettings(){
 			if(fExtSettings != null)
-				return (ICExternalSetting[])fExtSettings.clone();
+				return fExtSettings.clone();
 			return new ICExternalSetting[0];
 		}
 	}
@@ -199,9 +198,9 @@ public class PathEntryTranslator {
 		private static final int INDEX_CDT_OUTPUT = 6;
 		private static final int INDEX_CDT_INCLUDE_FILE = 7;
 		private static final int INDEX_CDT_MACRO_FILE = 8;
-		
+
 		private static final int STORAGE_SIZE = 9;
-	
+
 		private static final int ENTRY_KINDS[] = new int[]{
 			IPathEntry.CDT_LIBRARY,
 			IPathEntry.CDT_PROJECT,
@@ -214,8 +213,8 @@ public class PathEntryTranslator {
 			IPathEntry.CDT_MACRO_FILE,
 		};
 //		private static final int INEXISTENT_INDEX = -1;
-		
-		private Object[] fEntryStorage = new Object[STORAGE_SIZE];
+
+		private Map<String, IPathEntry>[] fEntryStorage = new Map[STORAGE_SIZE];
 
 		private int kindToIndex(int kind){
 			switch (kind){
@@ -240,189 +239,87 @@ public class PathEntryTranslator {
 			}
 			throw new IllegalArgumentException(UtilMessages.getString("PathEntryTranslator.0")); //$NON-NLS-1$
 		}
-		
+
 		public static int[] getSupportedKinds(){
-			return (int[])ENTRY_KINDS.clone();
+			return ENTRY_KINDS.clone();
 		}
 
-		private int indexToKind(int index){
-			switch (index){
-			case INDEX_CDT_LIBRARY:
-				return IPathEntry.CDT_LIBRARY;
-			case INDEX_CDT_PROJECT:
-				return IPathEntry.CDT_PROJECT;
-			case INDEX_CDT_SOURCE:
-				return IPathEntry.CDT_SOURCE;
-			case INDEX_CDT_INCLUDE:
-				return IPathEntry.CDT_INCLUDE;
-			case INDEX_CDT_CONTAINER:
-				return IPathEntry.CDT_CONTAINER;
-			case INDEX_CDT_MACRO:
-				return IPathEntry.CDT_MACRO;
-			case INDEX_CDT_OUTPUT:
-				return IPathEntry.CDT_OUTPUT;
-			case INDEX_CDT_INCLUDE_FILE:
-				return IPathEntry.CDT_INCLUDE_FILE;
-			case INDEX_CDT_MACRO_FILE:
-				return IPathEntry.CDT_MACRO_FILE;
-			}
-			throw new IllegalArgumentException(UtilMessages.getString("PathEntryTranslator.1")); //$NON-NLS-1$
-		}
-		public Object get(int kind){
+		public Map<String, IPathEntry> get(int kind){
 			return fEntryStorage[kindToIndex(kind)];
 		}
 
-		public Object put(int kind, Object object){
+		public Map<String, IPathEntry> put(int kind, Map<String, IPathEntry> object){
 			int index = kindToIndex(kind);
-			Object old = fEntryStorage[index];
+			Map<String, IPathEntry> old = fEntryStorage[index];
 			fEntryStorage[index] = object;
 			return old;
 		}
-		
-		private class KindBasedInfo implements IKindBasedInfo {
-			int fIdex;
-			int fKind;
-			
-			KindBasedInfo(int num, boolean isKind){
-				if(isKind){
-					fIdex = kindToIndex(num);
-					fKind = num;
-				} else {
-					fIdex = num;
-					fKind = indexToKind(num);
-				}
-			}
-		
-			public Object getInfo() {
-				return fEntryStorage[fIdex];
-			}
-
-			public int getKind() {
-				return fKind;
-			}
-
-			public Object setInfo(Object newInfo) {
-				Object old = fEntryStorage[fIdex];
-				fEntryStorage[fIdex] = newInfo;
-				return old;
-			}
-			
-		}
-		
-		public IKindBasedInfo[] getContents(){
-			IKindBasedInfo infos[] = new IKindBasedInfo[STORAGE_SIZE];
-			for(int i = 0; i < STORAGE_SIZE; i++){
-				infos[i] = new KindBasedInfo(i, false);
-			}
-			return infos;
-		}
-		
-		public IKindBasedInfo getInfo(int kind){
-			return new KindBasedInfo(kind, true);
-		}
-		
-		public void clear(){
-			for(int i = 0; i < STORAGE_SIZE; i++){
-				fEntryStorage[i] = null;
-			}
-		}
 	}
-	
+
 	private static class LangEntryInfo {
 		ICLanguageSettingEntry fLangEntry;
 		ResolvedEntry fResolvedEntry;
-		
+
 		public LangEntryInfo(ICLanguageSettingEntry lEntry, ResolvedEntry re){
 			fLangEntry = lEntry;
 			fResolvedEntry = re;
 		}
 	}
-	
+
 	private class RcDesInfo {
-		ResourceInfo fRcInfo;
-		List fResolvedEntries;
-		KindBasedStore fLangEntries;
-//		boolean fIsExcluded;
+		List<ResolvedEntry> fResolvedEntries;
+		KindBasedStore<List<LangEntryInfo>> fLangEntries;
 
 		private RcDesInfo(ResourceInfo rcInfo){
-			this.fRcInfo = rcInfo;
-			fResolvedEntries = new ArrayList();
-			fLangEntries = new KindBasedStore();
+			fResolvedEntries = new ArrayList<ResolvedEntry>();
+			fLangEntries = new KindBasedStore<List<LangEntryInfo>>();
 		}
-		
-//		public boolean isExcluded(){
-//			return fIsExcluded;
-//		}
-//		
-//		public void setExcluded(boolean excluded){
-//			fIsExcluded = excluded;
-//		}
-		
-		public ResolvedEntry[] getResolvedEntries(){
-			return (ResolvedEntry[])fResolvedEntries.toArray(new ResolvedEntry[fResolvedEntries.size()]);
-		}
-		
+
 		public void add(LangEntryInfo info){
-			List list = (List)fLangEntries.get(info.fLangEntry.getKind());
+			List<LangEntryInfo> list = fLangEntries.get(info.fLangEntry.getKind());
 			if(list == null){
-				list = new ArrayList();
+				list = new ArrayList<LangEntryInfo>();
 				fLangEntries.put(info.fLangEntry.getKind(), list);
 			}
 			list.add(info);
 		}
-		
-//		public ICLanguageSettingEntry addLangInfo(ResolvedEntry entry){
-//			ICLanguageSettingEntry le = createLangEntry(entry);
-//			if(le != null){
-//				List list = (List)fLangEntries.get(le.getKind());
-//				if(list == null){
-//					list = new ArrayList();
-//					fLangEntries.put(le.getKind(), list);
-//				}
-//				list.add(new LangEntryInfo(le, entry));
-//			}
-//			return le;
-//		}
-		
+
 		public ICLanguageSettingEntry[] getEntries(int kind){
-			List list = (List)fLangEntries.get(kind);
+			List<LangEntryInfo> list = fLangEntries.get(kind);
 			if(list != null){
 				ICLanguageSettingEntry[] entries = new ICLanguageSettingEntry[list.size()];
 				for(int i = 0; i < entries.length; i++){
-					LangEntryInfo info = (LangEntryInfo)list.get(i);
+					LangEntryInfo info = list.get(i);
 					entries[i] = info.fLangEntry;
 				}
 				return entries;
 			}
 			return new ICLanguageSettingEntry[0];
-			
-			
-		}
-		
-//		private void initThisEntries
 
+
+		}
 	}
-	
+
 	private static ICLanguageSettingEntry createLangEntry(ResolvedEntry entry){
 		PathEntryValueInfo value = entry.getResolvedValue();
-		int flags = ICLanguageSettingEntry.RESOLVED;
+		int flags = ICSettingEntry.RESOLVED;
 		if(entry.isReadOnly())
-			flags |= ICLanguageSettingEntry.READONLY;
+			flags |= ICSettingEntry.READONLY;
 		if(entry.isBuiltIn())
-			flags |= ICLanguageSettingEntry.BUILTIN;
-		
+			flags |= ICSettingEntry.BUILTIN;
+
 		switch(entry.fEntry.getEntryKind()){
 			case IPathEntry.CDT_LIBRARY:{
 				ILibraryEntry libEntry = (ILibraryEntry)entry.fEntry;
 				IPath path = value.getFullPath();
 				if(path != null){
-					flags |= ICLanguageSettingEntry.VALUE_WORKSPACE_PATH;
+					flags |= ICSettingEntry.VALUE_WORKSPACE_PATH;
 				} else {
 					path = value.getLocation();
 				}
-				
+
 				if(path != null){
-					return new CLibraryFileEntry(value.getName(), flags, 
+					return new CLibraryFileEntry(value.getName(), flags,
 							libEntry.getSourceAttachmentPath(),
 							libEntry.getSourceAttachmentRootPath(),
 							libEntry.getSourceAttachmentPrefixMapping());
@@ -436,11 +333,11 @@ public class PathEntryTranslator {
 			case IPathEntry.CDT_INCLUDE:{
 				IPath path = value.getFullPath();
 				if(path != null){
-					flags |= ICLanguageSettingEntry.VALUE_WORKSPACE_PATH;
+					flags |= ICSettingEntry.VALUE_WORKSPACE_PATH;
 				} else {
 					path = value.getLocation();
 				}
-				
+
 				if(path != null){
 					return new CIncludePathEntry(value.getName(), flags);
 				}
@@ -460,11 +357,11 @@ public class PathEntryTranslator {
 			case IPathEntry.CDT_INCLUDE_FILE:{
 				IPath path = value.getFullPath();
 				if(path != null){
-					flags |= ICLanguageSettingEntry.VALUE_WORKSPACE_PATH;
+					flags |= ICSettingEntry.VALUE_WORKSPACE_PATH;
 				} else {
 					path = value.getLocation();
 				}
-				
+
 				if(path != null){
 					return new CIncludeFileEntry(value.getName(), flags);
 				}
@@ -473,11 +370,11 @@ public class PathEntryTranslator {
 			case IPathEntry.CDT_MACRO_FILE:{
 				IPath path = value.getFullPath();
 				if(path != null){
-					flags |= ICLanguageSettingEntry.VALUE_WORKSPACE_PATH;
+					flags |= ICSettingEntry.VALUE_WORKSPACE_PATH;
 				} else {
 					path = value.getLocation();
 				}
-				
+
 				if(path != null){
 					return new CMacroFileEntry(value.getName(), flags);
 				}
@@ -490,53 +387,52 @@ public class PathEntryTranslator {
 	private class ResourceInfo {
 		IResource fRc;
 		boolean fExists;
-		
+
 		public ResourceInfo(IResource rc, boolean exists) {
 			fRc = rc;
 			fExists = exists;
 		}
 	}
-	
+
 	private class PathEntryValueInfo {
 		private ResourceInfo fResourceInfo;
-//		private IPath fFullPath;
 		private IPath fLocation;
 		private String fName;
 		private String fValue;
 		private ResolvedEntry fResolvedEntry;
-		
+
 		private PathEntryValueInfo(ResolvedEntry rEntry){
 			fResolvedEntry = rEntry;
-			
+
 			init();
 		}
-		
+
 		public IPath getFullPath(){
 			if(fResourceInfo != null)
 				return fResourceInfo.fRc.getFullPath();
 			return null;
 		}
-		
+
 		public IPath getLocation(){
 			if(fResourceInfo != null)
 				return fResourceInfo.fRc.getLocation();
 			return fLocation;
 		}
-		
+
 		public String getName(){
 			if(fName != null)
 				return fName;
 			return ""; //$NON-NLS-1$
 		}
-		
+
 		public String getValue(){
 			if(fValue != null)
 				return fValue;
 			return ""; //$NON-NLS-1$
 		}
-		
+
 		private void init() {
-			IPathEntry entry = fResolvedEntry.fEntry; 
+			IPathEntry entry = fResolvedEntry.fEntry;
 			int peKind = entry.getEntryKind();
 			IPath basePath = null, valuePath = null;
 			boolean isFile = false;
@@ -580,28 +476,21 @@ public class PathEntryTranslator {
 			case IPathEntry.CDT_CONTAINER:
 			case IPathEntry.CDT_OUTPUT:
 				fResourceInfo = fResolvedEntry.getResourceInfo();
-//				fFullPath = fResourceInfo.fRc.getFullPath();
-//				fLocation = fResourceInfo.fRc.getLocation();
-				
-//				fName = fValuePath.toString();
-//				fValue = fValuePath.toString();
 				break;
 			}
-			
+
 			if(calcPath){
 				do{
-		//			IPath p;
-		//			IPath inc = getIncludePath();
 					IPath unresolvedBase = basePath;
 					IPath unresolvedValue = valuePath;
 					IPathEntryVariableManager mngr = CCorePlugin.getDefault().getPathEntryVariableManager();
-					
+
 					basePath = mngr.resolvePath(basePath);
 					valuePath = mngr.resolvePath(valuePath);
 
 					fName = unresolvedBase.isEmpty() ? unresolvedValue.toString() : unresolvedBase.append(unresolvedValue).toString();
 					fValue = fName;
-					
+
 					if (!basePath.isEmpty()) {
 						IPath loc = basePath;
 						if (!loc.isAbsolute()) {
@@ -610,26 +499,15 @@ public class PathEntryTranslator {
 								fResourceInfo = rcInfo;
 								fName = unresolvedBase.append(unresolvedValue).toString();
 								fValue = fName;
-//								fFullPath = fResourceInfo.fRc.getFullPath();
-//								fLocation = fResourceInfo.fRc.getLocation();
-//								fName = fValuePath.toString();
-//								fValue = fValuePath.toString();
-								break;							
+								break;
 							}
 						}
 						fLocation = loc.append(valuePath);
-//						fName = fValuePath.toString();
-//						fValue = fValuePath.toString();
 						break;
 					}
-					
-//					p = inc;
-		
+
 					if (!valuePath.isAbsolute()) {
 						ResourceInfo rcInfo = fResolvedEntry.getResourceInfo();
-//						
-//						IPath resPath = getPath();
-//						IResource res = ResourcesPlugin.getWorkspace().getRoot().findMember(resPath);
 						if (rcInfo.fExists) {
 							if (rcInfo.fRc.getType() == IResource.FILE) {
 								rcInfo = findResourceInfo(fRoot, rcInfo.fRc.getFullPath().removeLastSegments(1), true);
@@ -638,23 +516,15 @@ public class PathEntryTranslator {
 							if (location != null && rcInfo.fRc.getType() != IResource.FILE) {
 								rcInfo = findResourceInfo((IContainer)rcInfo.fRc, valuePath, !isFile);
 								fResourceInfo = rcInfo;
-//								fFullPath = fResourceInfo.fRc.getFullPath();
-//								fLocation = fResourceInfo.fRc.getLocation();
 								break;
 							}
 						}
 					}
-					
+
 					fLocation = valuePath;
 				}while(false);
 			}
 		}
-		
-		public boolean isWorkspacePath(){
-			return fResourceInfo != null;
-		}
-		
-		
 	}
 
 	private class ResolvedEntry {
@@ -686,17 +556,13 @@ public class PathEntryTranslator {
 			return fIsBuiltIn;
 		}
 
-		public PathEntryResolveInfoElement getResolveInfoElement(){
-			return fResolveElement;
-		}
-		
 		public ResourceInfo getResourceInfo(){
 			if(fResourceInfo == null){
 				fResourceInfo = findResourceInfo(fRoot, getEntryFullPath(fEntry), true);
 			}
 			return fResourceInfo;
 		}
-		
+
 		public ResourceInfo[] getFilterInfos(){
 			if(fFilterInfos == null){
 				IPath[] paths = obtainFilters(fEntry);
@@ -708,9 +574,9 @@ public class PathEntryTranslator {
 						if(rcInfo.fRc.getType() == IResource.FILE){
 							fFilterInfos = new ResourceInfo[0];
 						} else {
-							List list = new ArrayList();
-							for(int i = 0; i < paths.length; i++){
-								list.addAll(Arrays.asList(processFilter((IContainer)rcInfo.fRc, paths[i])));
+							List<ResourceInfo> list = new ArrayList<ResourceInfo>();
+							for (IPath path : paths) {
+								list.addAll(Arrays.asList(processFilter((IContainer)rcInfo.fRc, path)));
 							}
 							fFilterInfos = new ResourceInfo[list.size()];
 							list.toArray(fFilterInfos);
@@ -725,7 +591,7 @@ public class PathEntryTranslator {
 			}
 			return fFilterInfos;
 		}
-		
+
 		private ResourceInfo[] processFilter(IContainer container, IPath path){
 			return resolveFilter(container, path);
 		}
@@ -734,7 +600,7 @@ public class PathEntryTranslator {
 			IFolder f = container.getFolder(path);
 			ResourceInfo rcInfo = new ResourceInfo(f, false);
 			addRcInfoToMap(rcInfo);
-			
+
 			addResolvedFilterToMap(container.getFullPath(), new ResourceInfo[]{rcInfo}, true);
 			return rcInfo;
 		}
@@ -742,7 +608,7 @@ public class PathEntryTranslator {
 		public IPathEntry getEntry(){
 			return fEntry;
 		}
-		
+
 		public PathEntryValueInfo getResolvedValue(){
 			if(fResolvedValue == null){
 				fResolvedValue = new PathEntryValueInfo(this);
@@ -750,25 +616,19 @@ public class PathEntryTranslator {
 			return fResolvedValue;
 		}
 
-		
+
 	}
-	
+
 	private static class PathEntryComposer {
 		private IPath fPath;
 		private ICSettingEntry fLangEntry;
-		private Set fFiltersSet;
+		private Set<IPath> fFiltersSet;
 		private boolean fIsExported;
 		private IProject fProject;
-//		private ICConfigurationDescription fCfg;
-
-		PathEntryComposer(String projName, IProject project/*, ICConfigurationDescription cfg*/){
-			this(new Path(projName).makeAbsolute(), project/*, cfg*/);
-		}
 
 		PathEntryComposer(IPath path, IProject project/*, ICConfigurationDescription cfg*/){
 			fPath = toProjectPath(path);
 			fProject = project;
-//			fCfg = cfg;
 		}
 
 		private static IPath toProjectPath(IPath path){
@@ -782,10 +642,9 @@ public class PathEntryTranslator {
 			fPath = new Path(entry.getValue());
 			fLangEntry = entry;
 			fProject = project;
-//			fCfg = cfg;
 			IPath[] exclusions = entry.getExclusionPatterns();
 			if(exclusions.length != 0){
-				fFiltersSet = new HashSet(exclusions.length);
+				fFiltersSet = new HashSet<IPath>(exclusions.length);
 				fFiltersSet.addAll(Arrays.asList(entry.getExclusionPatterns()));
 			}
 		}
@@ -795,27 +654,26 @@ public class PathEntryTranslator {
 			fLangEntry = entry;
 			fIsExported = exported;
 			fProject = project;
-//			fCfg = cfg;
 		}
-		
+
 		public void addFilter(IPath path){
 			if(fFiltersSet == null)
-				fFiltersSet = new HashSet();
-			
+				fFiltersSet = new HashSet<IPath>();
+
 			fFiltersSet.add(path);
 		}
-		
+
 		public ICSettingEntry getSettingEntry(){
 			return fLangEntry;
 		}
-		
+
 		public IPath getPath(){
 			return fPath;
 		}
-		
+
 		public IPath[] getExclusionPatterns(){
 			if(fFiltersSet != null)
-				return (IPath[])fFiltersSet.toArray(new IPath[fFiltersSet.size()]);
+				return fFiltersSet.toArray(new IPath[fFiltersSet.size()]);
 			return new IPath[0];
 		}
 
@@ -834,7 +692,6 @@ public class PathEntryTranslator {
 					if(!resolvedPath.isAbsolute()){
 						result[0][i] = fProject.getFullPath().makeRelative();
 						result[1][i] = pathVarPath;
-//						path = fProject.getFullPath().append(path);
 					} else {
 						if(resolvedPath.segmentCount() != 0){
 							String projName = resolvedPath.segment(0);
@@ -854,7 +711,6 @@ public class PathEntryTranslator {
 							result[1][i] = valuePath;
 						}
 					}
-//					path = path.makeRelative();
 				} else {
 					if(!resolvedPath.isAbsolute()){
 						IPath location = fProject.getLocation();
@@ -864,58 +720,58 @@ public class PathEntryTranslator {
 					result[1][i] = pathVarPath;
 				}
 			}
-			
+
 			return result;
 		}
-		
+
 		public IPathEntry[] toPathEntry(ICConfigurationDescription cfg, boolean keepPathInfo){
 			IPath path = keepPathInfo ? fPath : fProject.getFullPath();
 			IPathEntry[] result = new IPathEntry[0];
 			if(fLangEntry != null){
 				switch(fLangEntry.getKind()){
-				case ICLanguageSettingEntry.INCLUDE_FILE:{
+				case ICSettingEntry.INCLUDE_FILE:{
 						IPath paths[][] = getEntryPath(fLangEntry, cfg);
 						result = new IPathEntry[paths[0].length];
 						for (int i=0; i<result.length; i++)
 							result[i] = CoreModel.newIncludeFileEntry(path, null, paths[0][i], paths[1][i], getExclusionPatterns(), fIsExported);
-						return result; 
+						return result;
 					}
-				case ICLanguageSettingEntry.INCLUDE_PATH:{
+				case ICSettingEntry.INCLUDE_PATH:{
 						IPath paths[][] = getEntryPath(fLangEntry, cfg);
 						ICIncludePathEntry ipe = (ICIncludePathEntry)fLangEntry;
 
 						result = new IPathEntry[paths[0].length];
 						for (int i=0; i<result.length; i++)
 							result[i] = CoreModel.newIncludeEntry(path, paths[0][i], paths[1][i], !ipe.isLocal(), getExclusionPatterns(), fIsExported);
-						return result; 
+						return result;
 					}
-				case ICLanguageSettingEntry.MACRO:
+				case ICSettingEntry.MACRO:
 					result = new IPathEntry[1];
 					result[0] = CoreModel.newMacroEntry(path, fLangEntry.getName(), fLangEntry.getValue(), getExclusionPatterns(), fIsExported);
 					return result;
-				case ICLanguageSettingEntry.MACRO_FILE:{
+				case ICSettingEntry.MACRO_FILE:{
 						IPath paths[][] = getEntryPath(fLangEntry, cfg);
 						result = new IPathEntry[paths[0].length];
 						for (int i=0; i<result.length; i++)
 							result[i] = CoreModel.newMacroFileEntry(path, paths[0][i], null, paths[1][i], getExclusionPatterns(), fIsExported);
-						return result; 
+						return result;
 					}
-				case ICLanguageSettingEntry.LIBRARY_PATH:
+				case ICSettingEntry.LIBRARY_PATH:
 					return null;
-				case ICLanguageSettingEntry.LIBRARY_FILE:{
+				case ICSettingEntry.LIBRARY_FILE:{
 						IPath paths[][] = getEntryPath(fLangEntry, cfg);
 						result = new IPathEntry[paths[0].length];
 						for (int i=0; i<result.length; i++)
 							result[i] = CoreModel.newLibraryEntry(path, paths[0][i], paths[1][i], null, null, null, fIsExported);
-						return result; 
+						return result;
 					}
-				case ICLanguageSettingEntry.OUTPUT_PATH:
+				case ICSettingEntry.OUTPUT_PATH:
 					result = new IPathEntry[1];
 					result[0] = CoreModel.newOutputEntry(fPath, getExclusionPatterns());
 					return result;
-				case ICLanguageSettingEntry.SOURCE_PATH:
+				case ICSettingEntry.SOURCE_PATH:
 					result = new IPathEntry[1];
-					result[0] = CoreModel.newSourceEntry(fPath, getExclusionPatterns());;
+					result[0] = CoreModel.newSourceEntry(fPath, getExclusionPatterns());
 					return result;
 				default:
 					return result; // empty
@@ -928,7 +784,7 @@ public class PathEntryTranslator {
 			return result; // empty
 		}
 	}
-	
+
 	private static String resolveAll(String value, ICConfigurationDescription cfg){
 		try {
 			return CCorePlugin.getDefault().getCdtVariableManager().resolveValue(value, "", " ", cfg); //$NON-NLS-1$ //$NON-NLS-2$
@@ -942,7 +798,7 @@ public class PathEntryTranslator {
 		String[] result = new String[] { value }; // default value;
 		try {
 			VarSubstitutor substitutor = new VarSubstitutor(cfg);
-		
+
 			result = CdtVariableResolver.resolveToStringList(value, substitutor);
 			if (result == null || result.length == 0)
 				result = new String[] {	CdtVariableResolver.resolveToString(value, substitutor) };
@@ -951,149 +807,121 @@ public class PathEntryTranslator {
 		}
 		return result;
 	}
-/*
-	private static int lsKindToPeKind(int kind){
-		switch(kind){
-		case ICLanguageSettingEntry.INCLUDE_FILE:
-			return IPathEntry.CDT_INCLUDE_FILE;
-		case ICLanguageSettingEntry.INCLUDE_PATH:
-			return IPathEntry.CDT_INCLUDE;
-		case ICLanguageSettingEntry.MACRO:
-			return IPathEntry.CDT_MACRO;
-		case ICLanguageSettingEntry.MACRO_FILE:
-			return IPathEntry.CDT_MACRO_FILE;
-		case ICLanguageSettingEntry.LIBRARY_PATH:
-			return 0;
-		case ICLanguageSettingEntry.LIBRARY_FILE:
-			return IPathEntry.CDT_LIBRARY;
-		case ICLanguageSettingEntry.OUTPUT_PATH:
-			return IPathEntry.CDT_OUTPUT;
-		case ICLanguageSettingEntry.SOURCE_PATH:
-			return IPathEntry.CDT_SOURCE;
-		default:
-			return 0;
-		}
-	}
-	*/
+
 	public static class PathEntryCollector {
 		private PathSettingsContainer fStorage;
-		private KindBasedStore fStore;
-		private KindBasedStore fNameKeyMapStore; //utility map, does not contain all entries, only those added explicitly
-		private LinkedHashMap fRefProjMap;
+		private KindBasedStore<LinkedHashMap<ICSettingEntry, PathEntryComposer>> fStore;
+		private KindBasedStore<LinkedHashMap<EntryNameKey, PathEntryComposer>> fNameKeyMapStore; //utility map, does not contain all entries, only those added explicitly
+		private LinkedHashMap<IPath, PathEntryComposer> fRefProjMap;
 		private IProject fProject;
-//		private ICConfigurationDescription fCfg;
-		
+
 		private PathEntryCollector(IProject project/*, ICConfigurationDescription cfg*/){
 			fStorage = PathSettingsContainer.createRootContainer();
 			fStorage.setValue(this);
-			fStore = new KindBasedStore(false);
-			fNameKeyMapStore = new KindBasedStore(false);
-//			fCfg = cfg;
+			fStore = new KindBasedStore<LinkedHashMap<ICSettingEntry, PathEntryComposer>>(false);
+			fNameKeyMapStore = new KindBasedStore<LinkedHashMap<EntryNameKey, PathEntryComposer>>(false);
 			fProject = project;
 		}
 
-		private PathEntryCollector(PathSettingsContainer container, KindBasedStore store, IProject project/*, ICConfigurationDescription cfg*/){
+		private PathEntryCollector(PathSettingsContainer container, KindBasedStore<LinkedHashMap<ICSettingEntry, PathEntryComposer>> store, IProject project/*, ICConfigurationDescription cfg*/){
 			fStorage = container;
 			fStore = store;
-			fNameKeyMapStore = new KindBasedStore(false);
-//			fCfg = cfg;
+			fNameKeyMapStore = new KindBasedStore<LinkedHashMap<EntryNameKey, PathEntryComposer>>(false);
 			fProject = project;
 		}
-		
+
 		public void setSourceOutputEntries(int kind, ICExclusionPatternPathEntry entries[]){
-			Map map = getEntriesMap(kind, true);
-			Map nameKeyMap = getEntriesNameKeyMap(kind, true);
-			for(int i = 0; i < entries.length; i++){
-				ICExclusionPatternPathEntry entry = entries[i];
+			Map<ICSettingEntry, PathEntryComposer> map = getEntriesMap(kind, true);
+			Map<EntryNameKey, PathEntryComposer> nameKeyMap = getEntriesNameKeyMap(kind, true);
+			for (ICExclusionPatternPathEntry entry : entries) {
 				entry = CDataUtil.makeAbsolute(fProject, entry, true);
 				EntryNameKey nameKey = new EntryNameKey(entry);
-				PathEntryComposer old = (PathEntryComposer)nameKeyMap.get(nameKey);
+				PathEntryComposer old = nameKeyMap.get(nameKey);
 				if(old != null){
-					entry = CDataUtil.addRemoveExclusionsToEntry(entry, 
-							((ICExclusionPatternPathEntry)old.fLangEntry).getExclusionPatterns(), 
+					entry = CDataUtil.addRemoveExclusionsToEntry(entry,
+							((ICExclusionPatternPathEntry)old.fLangEntry).getExclusionPatterns(),
 							true);
 				}
-				PathEntryComposer newComposer = new PathEntryComposer(entry, fProject/*, fCfg*/); 
+				PathEntryComposer newComposer = new PathEntryComposer(entry, fProject/*, fCfg*/);
 				map.put(entry, newComposer);
 				nameKeyMap.put(nameKey, newComposer);
 			}
 		}
-		
+
 		public void setRefProjects(IPath []paths){
 			if(paths == null || paths.length == 0)
 				fRefProjMap = null;
 			else {
-				fRefProjMap = new LinkedHashMap();
-				for(int i = 0; i < paths.length; i++){
-					PathEntryComposer cs = new PathEntryComposer(paths[i], fProject/*, fCfg*/);
-					IPath path = cs.getPath();
-					fRefProjMap.put(path, cs);
+				fRefProjMap = new LinkedHashMap<IPath, PathEntryComposer>();
+				for (IPath path : paths) {
+					PathEntryComposer cs = new PathEntryComposer(path, fProject/*, fCfg*/);
+					IPath composerPath = cs.getPath();
+					fRefProjMap.put(composerPath, cs);
 				}
 			}
 		}
-		
+
 		public PathEntryCollector createChild(IPath path){
 			if(path.segmentCount() == 0)
 				return this;
-			
+
 			PathEntryCollector cr = (PathEntryCollector)fStorage.getChildContainer(path, false, false).getValue();
 			if(cr != this){
 				IPath basePath = cr.getPath();
 				path = path.removeFirstSegments(basePath.segmentCount());
 				return cr.createChild(path);
-			} 
-			
+			}
+
 			PathSettingsContainer newContainer = fStorage.getChildContainer(path, true, true);
-			KindBasedStore cloneStore = (KindBasedStore)fStore.clone();
-			IKindBasedInfo info[] = cloneStore.getContents();
-			for(int i = 0; i < info.length; i++){
-				LinkedHashMap map = (LinkedHashMap)info[i].getInfo();
+			KindBasedStore<LinkedHashMap<ICSettingEntry, PathEntryComposer>> cloneStore =
+				(KindBasedStore<LinkedHashMap<ICSettingEntry, PathEntryComposer>>)fStore.clone();
+			IKindBasedInfo<LinkedHashMap<ICSettingEntry, PathEntryComposer>> info[] = cloneStore.getContents();
+			for (IKindBasedInfo<LinkedHashMap<ICSettingEntry, PathEntryComposer>> kindInfo : info) {
+				LinkedHashMap<ICSettingEntry, PathEntryComposer> map = kindInfo.getInfo();
 				if(map != null){
-					info[i].setInfo((LinkedHashMap)map.clone());
+					kindInfo.setInfo((LinkedHashMap<ICSettingEntry, PathEntryComposer>)map.clone());
 				}
 			}
 			PathEntryCollector newCr = new PathEntryCollector(newContainer, cloneStore, fProject/*, fCfg*/);
 			newContainer.setValue(newCr);
 			return newCr;
 		}
-		
+
 		public IPath getPath(){
 			return fStorage.getPath();
 		}
-		
-		public void setEntries(int kind, ICLanguageSettingEntry entries[], Set exportedEntries){
+
+		public void setEntries(int kind, ICLanguageSettingEntry entries[], Set<ICSettingEntry> exportedEntries){
 			IPath path = getPath();
-			HashSet parentSet = getEntriesSetCopy(kind);
-			HashSet removedParentSet = (HashSet)parentSet.clone();
-			HashSet addedThisSet = new HashSet(Arrays.asList(entries));
+			HashSet<ICSettingEntry> parentSet = getEntriesSetCopy(kind);
+			HashSet<ICSettingEntry> removedParentSet = (HashSet<ICSettingEntry>)parentSet.clone();
+			HashSet<ICLanguageSettingEntry> addedThisSet = new HashSet<ICLanguageSettingEntry>(Arrays.asList(entries));
 			removedParentSet.removeAll(addedThisSet);
 			addedThisSet.removeAll(parentSet);
-			
-			
+
+
 			if(removedParentSet.size() != 0){
 				PathEntryCollector parent = getParent();
 				IPath parentPath = parent.getPath();
-				
+
 				int segsToRemove = parentPath.segmentCount();
 				if(segsToRemove > path.segmentCount())
 					segsToRemove = path.segmentCount() - 1;
 				if(segsToRemove < 0)
 					segsToRemove = 0;
-				
+
 				IPath filterPath = path.removeFirstSegments(segsToRemove);
-				
-				if(parent != null){
-					parent.addFilter(kind, filterPath, removedParentSet);
-				}
-				
-				Map map = getEntriesMap(kind, true);
-				for(Iterator iter = removedParentSet.iterator(); iter.hasNext();){
-					map.remove(iter.next());
+
+				parent.addFilter(kind, filterPath, removedParentSet);
+
+				Map<ICSettingEntry, PathEntryComposer> map = getEntriesMap(kind, true);
+				for (ICSettingEntry item : removedParentSet) {
+					map.remove(item);
 				}
 			}
-			
+
 			if(addedThisSet.size() != 0){
-				Map map = getEntriesMap(kind, true);
+				Map<ICSettingEntry, PathEntryComposer> map = getEntriesMap(kind, true);
 				IPath fullPath = fProject.getFullPath().append(path);
 				for(int i = 0; i < entries.length; i++){
 					if(!addedThisSet.remove(entries[i]))
@@ -1104,54 +932,54 @@ public class PathEntryTranslator {
 				}
 			}
 		}
-		
-		private LinkedHashMap getEntriesMap(int kind, boolean create){
-			LinkedHashMap map = (LinkedHashMap)fStore.get(kind);
+
+		private LinkedHashMap<ICSettingEntry, PathEntryComposer> getEntriesMap(int kind, boolean create){
+			LinkedHashMap<ICSettingEntry, PathEntryComposer> map = fStore.get(kind);
 			if(map == null && create){
-				map = new LinkedHashMap();
+				map = new LinkedHashMap<ICSettingEntry, PathEntryComposer>();
 				fStore.put(kind, map);
 			}
 			return map;
 		}
-		
-		private LinkedHashMap getEntriesNameKeyMap(int kind, boolean create){
-			LinkedHashMap map = (LinkedHashMap)fNameKeyMapStore.get(kind);
+
+		private LinkedHashMap<EntryNameKey, PathEntryComposer> getEntriesNameKeyMap(int kind, boolean create){
+			LinkedHashMap<EntryNameKey, PathEntryComposer> map = fNameKeyMapStore.get(kind);
 			if(map == null && create){
-				map = new LinkedHashMap();
+				map = new LinkedHashMap<EntryNameKey, PathEntryComposer>();
 				fNameKeyMapStore.put(kind, map);
 			}
 			return map;
 		}
-		
-		private void addFilter(int kind, IPath path, Set entriesSet){
+
+		private void addFilter(int kind, IPath path, Set<ICSettingEntry> entriesSet){
 			if(entriesSet.size() == 0)
 				return;
-			
-			Map map = (Map)fStore.get(kind);
-			for(Iterator iter = entriesSet.iterator(); iter.hasNext();){
-				PathEntryComposer cs = (PathEntryComposer)map.get(iter.next());
+
+			Map<ICSettingEntry, PathEntryComposer> map = fStore.get(kind);
+			for (ICSettingEntry fltPath : entriesSet) {
+				PathEntryComposer cs = map.get(fltPath);
 				cs.addFilter(path);
 			}
 		}
-		
+
 		public PathEntryCollector getParent(){
 			if(fStorage.isRoot())
 				return null;
 			PathSettingsContainer cr = fStorage.getParentContainer();
 			return (PathEntryCollector)cr.getValue();
 		}
-		
-		private HashSet getEntriesSetCopy(int kind){
-			Map map = getEntriesMap(kind, false);
+
+		private HashSet<ICSettingEntry> getEntriesSetCopy(int kind){
+			Map<ICSettingEntry, PathEntryComposer> map = getEntriesMap(kind, false);
 			if(map != null){
-				return new HashSet(map.keySet());
+				return new HashSet<ICSettingEntry>(map.keySet());
 			}
-			return new HashSet(0);
+			return new HashSet<ICSettingEntry>(0);
 		}
-		
-		private List getCollectedEntriesList(final int kind){
-			final List list = new ArrayList();
-			final Set set = new HashSet();
+
+		private List<PathEntryComposer> getCollectedEntriesList(final int kind){
+			final List<PathEntryComposer> list = new ArrayList<PathEntryComposer>();
+			final Set<PathEntryComposer> set = new HashSet<PathEntryComposer>();
 			fStorage.accept(new IPathSettingsContainerVisitor(){
 
 				public boolean visit(PathSettingsContainer container) {
@@ -1159,79 +987,75 @@ public class PathEntryTranslator {
 					clr.getLocalCollectedEntries(kind, list, set);
 					return true;
 				}
-				
+
 			});
-			
+
 			return list;
 		}
-		
-		private void getLocalCollectedEntries(int kind, List list, Set addedEntries){
-			Map map = getEntriesMap(kind, false);
+
+		private void getLocalCollectedEntries(int kind, List<PathEntryComposer> list, Set<PathEntryComposer> addedEntries){
+			Map<ICSettingEntry, PathEntryComposer> map = getEntriesMap(kind, false);
 			if(map == null)
 				return;
-			
-			for(Iterator iter = map.values().iterator(); iter.hasNext();){
-				Object o = iter.next();
 
-				if(addedEntries.add(o)){
-					list.add(o);
+			for (PathEntryComposer pathEntryComposer : map.values()) {
+				if(addedEntries.add(pathEntryComposer)){
+					list.add(pathEntryComposer);
 				}
 			}
 		}
-		
-		public List getEntries(int peKind, List list, int flags, ICConfigurationDescription cfg){
+
+		public List<IPathEntry> getEntries(int peKind, List<IPathEntry> list, int flags, ICConfigurationDescription cfg){
 			if(list == null){
-				list = new ArrayList();
+				list = new ArrayList<IPathEntry>();
 			}
-			
+
 			int sKind = peKindToSettingKind(peKind);
-			List composerList = null;
+			List<PathEntryComposer> composerList = null;
 			if(sKind != 0){
 				composerList = getCollectedEntriesList(sKind);
 			} else if(peKind == IPathEntry.CDT_PROJECT){
 				if(fRefProjMap != null && fRefProjMap.size() != 0){
-					composerList = new ArrayList(fRefProjMap.values()); 
+					composerList = new ArrayList<PathEntryComposer>(fRefProjMap.values());
 				}
 			}
 			if(composerList != null){
 				PathEntryKyndStore store = new PathEntryKyndStore();
-				
-				for(Iterator iter = composerList.iterator(); iter.hasNext();){
-					PathEntryComposer cs = (PathEntryComposer)iter.next();
+				for (PathEntryComposer cs : composerList) {
 					ICSettingEntry entry = cs.getSettingEntry();
 					if(checkFilter(cs, entry, flags)){
 						IPathEntry[] pe = null;
 						if(isBuiltIn(entry) && cs.getPath().segmentCount() > 1){
 							String name = entry.getName();
-							Map map = (Map)store.get(peKind);
+							Map<String, IPathEntry> map = store.get(peKind);
 							if(map == null){
-								map = new HashMap();
+								map = new HashMap<String, IPathEntry>();
 								store.put(peKind, map);
 							}
 							if(!map.containsKey(name)){
 								pe = cs.toPathEntry(cfg, false);
-								if (pe.length > 1) {
-									System.out.println();
-								}
 								if(pe != null){
+									if (pe.length > 1) {
+										System.out.println();
+									}
 									map.put(name, pe[0]);
 								}
 							}
 						} else {
-							pe = cs.toPathEntry(cfg, true); 
+							pe = cs.toPathEntry(cfg, true);
 						}
 						if(pe != null)
 							list.addAll(Arrays.asList(pe));
 					}
 				}
 			}
-			
+
 			return list;
 		}
-		
+
 		private static boolean checkFilter(PathEntryComposer cs, ICSettingEntry entry, int flags){
 			boolean builtIn = isBuiltIn(entry);
-			
+
 //			if(builtIn && cs.getPath().segmentCount() > 1)
 //				return false;
 			if((flags & INCLUDE_BUILT_INS) != 0 && builtIn)
@@ -1240,46 +1064,31 @@ public class PathEntryTranslator {
 				return true;
 			return false;
 		}
-		
+
 		private static boolean isBuiltIn(ICSettingEntry entry){
 			return entry != null ?
 					entry.isBuiltIn() || entry.isReadOnly() : false;
 		}
-		
-		
-		public List getEntries(List list, int flags, ICConfigurationDescription cfg){
+
+
+		public List<IPathEntry> getEntries(List<IPathEntry> list, int flags, ICConfigurationDescription cfg){
 			if(list == null)
-				list = new ArrayList();
+				list = new ArrayList<IPathEntry>();
 			int peKinds[] = PathEntryKyndStore.getSupportedKinds();
-			for(int i = 0; i < peKinds.length; i++){
-				getEntries(peKinds[i], list, flags, cfg);
+			for (int peKind : peKinds) {
+				getEntries(peKind, list, flags, cfg);
 			}
-			
+
 			return list;
 		}
-		
+
 		public IPathEntry[] getEntries(int flags, ICConfigurationDescription cfg){
-			List list = getEntries(null, flags,cfg);
-			IPathEntry[] entries = (IPathEntry[])list.toArray(new IPathEntry[list.size()]);
+			List<IPathEntry> list = getEntries(null, flags,cfg);
+			IPathEntry[] entries = list.toArray(new IPathEntry[list.size()]);
 			return entries;
 		}
-
-		
-//		public IPathEntry[] getRawEntries(String containerId){
-//			List list = getEntries(null, false, false);
-//			if(containerId != null)
-//				list.add(CoreModel.newContainerEntry(new Path(containerId)));
-//			IPathEntry[] entries = (IPathEntry[])list.toArray(new IPathEntry[list.size()]);
-//			return entries;
-//		}
-//	
-//		public IPathEntry[] getResolvedEntries(){
-//			List list = getEntries(null, true, true);
-//			IPathEntry[] entries = (IPathEntry[])list.toArray(new IPathEntry[list.size()]);
-//			return entries;
-//		}
 	}
-	
+
 	private static LangEntryInfo createLangEntryInfo(ResolvedEntry entry){
 		ICLanguageSettingEntry le = createLangEntry(entry);
 		if(le != null){
@@ -1288,7 +1097,7 @@ public class PathEntryTranslator {
 		return null;
 	}
 
-	
+
 	private static boolean areEntriesReadOnly(PathEntryResolveInfoElement el){
 		switch(el.getRawEntry().getEntryKind()){
 		case IPathEntry.CDT_LIBRARY:
@@ -1304,8 +1113,8 @@ public class PathEntryTranslator {
 		}
 		return true;
 	}
-	
-	
+
+
 	private IPath getEntryFullPath(IPathEntry entry){
 		IPath path = entry.getPath();
 		if(path == null)
@@ -1313,9 +1122,9 @@ public class PathEntryTranslator {
 		else if(path.isAbsolute())
 			return path;
 		return fProject.getFullPath().append(path);
-		
+
 	}
-	
+
 	private IPath[] obtainFilters(IPathEntry entry){
 		switch (entry.getEntryKind()) {
 		case IPathEntry.CDT_INCLUDE:
@@ -1327,7 +1136,7 @@ public class PathEntryTranslator {
 		}
 		return new IPath[0];
 	}
-	
+
 	public PathEntryTranslator(IProject project, CConfigurationData data){
 		fProject = project;
 		fCfgData = data;
@@ -1335,195 +1144,16 @@ public class PathEntryTranslator {
 		fTranslatedFilters = PathSettingsContainer.createRootContainer();
 		fTranslatedFilters.setValue(new ResourceInfo[]{new ResourceInfo(fRoot, true)});
 	}
-	
+
 	private static PathSettingsContainer createRcDataHolder(CConfigurationData data){
 		return CDataUtil.createRcDataHolder(data);
 	}
-	
+
 	public ReferenceSettingsInfo applyPathEntries(PathEntryResolveInfo info, int op){
 		ResolvedEntry[] rEntries = getResolvedEntries(info);
 		return addPathEntries(rEntries, op);
 	}
-	
-//	public static ICSourceEntry[] calculateSourceEntriesFromPaths(IProject project, PathSettingsContainer rcDatas, IPath paths[]){
-//		if(paths == null || paths.length == 0)
-//			paths = new IPath[]{new Path("")}; //$NON-NLS-1$
-//		
-////		Set set = new HashSet(paths.length);
-//		PathSettingsContainer cr = PathSettingsContainer.createRootContainer();
-//		IPath pi, pj;
-//		List entriesList = new ArrayList(paths.length);
-//		IPath projPath = project != null ? project.getFullPath() : null;
-//		
-//		for(int i = 0; i < paths.length; i++){
-//			pi = paths[i];
-////			set.clear();
-//			cr.removeChildren();
-//			cr.setValue(null);
-//			for(int j = 0; j < paths.length; j++){
-//				pj = paths[j];
-//				if(pi != pj && pi.isPrefixOf(pj)){
-////					set.add(pj);
-//					cr.getChildContainer(pj, true, true);
-//				}
-//			}
-//			
-//			PathSettingsContainer children[] = rcDatas.getDirectChildrenForPath(pi);
-//			for(int k = 0; k < children.length; k++){
-//				PathSettingsContainer child = children[k];
-//				IPath childPath = child.getPath();
-//				PathSettingsContainer parentExclusion = cr.getChildContainer(childPath, false, false);
-//				IPath parentExclusionPath = parentExclusion.getPath();
-//				if(parentExclusionPath.segmentCount() > 0 && !parentExclusionPath.equals(childPath) && parentExclusionPath.isPrefixOf(childPath))
-//					continue;
-//				
-//				CResourceData rcData = (CResourceData)child.getValue();
-//				if(rcData.isExcluded()){
-////					set.add(rcDes.getPath());
-//					cr.getChildContainer(childPath, true, true);
-//				}
-//			}
-//			
-//			PathSettingsContainer exclusions[] = cr.getChildren(false);
-////			IPath exlusionPaths[] = new IPath[set.size()];
-//			IPath exlusionPaths[] = new IPath[exclusions.length];
-////			int k = 0;
-//			int segCount = pi.segmentCount();
-////			for(Iterator iter = set.iterator(); iter.hasNext(); k++) {
-////				IPath path = (IPath)iter.next();
-////				exlusionPaths[k] = path.removeFirstSegments(segCount).makeRelative();
-////			}
-//			for(int k = 0; k < exlusionPaths.length; k++) {
-//				exlusionPaths[k] = exclusions[k].getPath().removeFirstSegments(segCount).makeRelative();
-//			}
-//			if(projPath != null)
-//				pi = projPath.append(pi);
-//			entriesList.add(new CSourceEntry(pi, exlusionPaths, 0));
-//		}
-//
-//		return (ICSourceEntry[])entriesList.toArray(new ICSourceEntry[entriesList.size()]);
-//	}
-	
-//	private IPath[] setSourceEntries(PathSettingsContainer crontainer, List res) {
-////		ICSourceEntry entry;
-//		IPath entryPath;
-////		IPath paths[];
-//		Set srcPathSet = new HashSet();
-//		IPath projPath = fProject != null ? fProject.getFullPath() : null;
-//		PathSettingsContainer cr = PathSettingsContainer.createRootContainer();
-//		cr.setValue(Boolean.TRUE);
-//
-////		Map exclusionMap = new HashMap();
-//		
-////		HashSet pathSet = new HashSet();
-//		for(Iterator iter = res.iterator(); iter.hasNext();){
-//			ResolvedEntry re = (ResolvedEntry)iter.next();
-//			ResourceInfo rcInfo = re.getResourceInfo();
-//			entryPath = rcInfo.fRc.getFullPath();
-//			if(projPath != null){
-//				if(projPath.isPrefixOf(entryPath)){
-//					entryPath = entryPath.removeFirstSegments(projPath.segmentCount());
-//				} else {
-//					continue;
-//				}
-//			} 
-////			else {
-////				if(entryPath.segmentCount() > 0)
-////					entryPath = entryPath.removeFirstSegments(1);
-////				else
-////					continue;
-////			}
-//			if(srcPathSet.add(entryPath)){
-//	//			exclusionMap.put(entryPath, Boolean.TRUE);
-//				PathSettingsContainer entryCr = cr.getChildContainer(entryPath, true, true);
-//				entryCr.setValue(Boolean.TRUE);
-//	
-//				ResourceInfo[] filters = re.getFilterInfos();
-//				
-////				paths = entry.getExclusionPatterns();
-//				
-//				for(int j = 0; j < filters.length; j++){
-//					IPath path = filters[j].fRc.getFullPath();
-//					path = path.removeFirstSegments(entryPath.segmentCount());
-//					PathSettingsContainer exclusion = entryCr.getChildContainer(path, true, true);
-//					if(exclusion.getValue() == null)
-//						exclusion.setValue(Boolean.FALSE);
-//	//				if(null == exclusionMap.get(path))
-//	//					exclusionMap.put(path, Boolean.FALSE);
-//				}
-//			}
-//		}
-//
-////		CConfigurationData data = getConfigurationData(true);
-////		data.setSourcePaths((IPath[])srcPathSet.toArray(new IPath[srcPathSet.size()]));
-////		ICResourceDescription rcDess[] = getResourceDescriptions();
-////		ICResourceDescription rcDes;
-//		Set pathSet = new HashSet();
-//		PathSettingsContainer children[] = crontainer.getChildren(true);
-//		
-//		for(int i = 0; i < children.length; i++){
-//			PathSettingsContainer child = children[i];
-//			RcDesInfo rcDesInfo = (RcDesInfo)child.getValue();
-////			rcDes = rcDess[i];
-//			IPath path  = child.getPath();
-//			pathSet.add(path);
-////			Boolean b = (Boolean)exclusionMap.remove(path);
-//			Boolean b = (Boolean)cr.getChildContainer(path, false, false).getValue();
-//			assert (b != null);
-//			if(Boolean.TRUE == b) {
-//				if(rcDesInfo.isExcluded())
-//					rcDesInfo.setExcluded(false);
-//			} else {
-//				if(path.segmentCount() != 0)
-//					rcDesInfo.setExcluded(true);
-//			}
-//		}
-//		
-//		PathSettingsContainer crs[] = cr.getChildren(true);
-//		for(int i= 0; i < crs.length; i++){
-//			PathSettingsContainer c = crs[i];
-//			IPath path = c.getPath();
-//			if(!pathSet.remove(path)){
-//				Boolean b = (Boolean)c.getValue();
-//				assert (b != null);
-//				PathSettingsContainer baseCr = crontainer.getChildContainer(path, false, false); 
-//				RcDesInfo baseInfo = (RcDesInfo)baseCr.getValue();
-//				if(b == Boolean.TRUE){
-//					if(baseInfo.isExcluded()){
-//						RcDesInfo newInfo = new RcDesInfo(findResourceInfo(fProject, path, true));
-//						PathSettingsContainer newCr = crontainer.getChildContainer(path, true, true);
-//						newCr.setValue(newInfo);
-////						if(newInfo == null){
-////							ICResourceDescription fo = getResourceDescription(path, false);
-////							if(fo.getType() == ICSettingBase.SETTING_FILE){
-////								fo = getResourceDescription(path.removeLastSegments(1), false);
-////							}
-////							newDes = createFolderDescription(path, (ICFolderDescription)fo);
-////						}
-//						newInfo.setExcluded(false);
-//					}
-//				} else {
-//					if(!baseInfo.isExcluded()){
-////						ICResourceDescription newDes = createResourceDescription(path, base);
-//						RcDesInfo newInfo = new RcDesInfo(findResourceInfo(fProject, path, true));
-//						PathSettingsContainer newCr = crontainer.getChildContainer(path, true, true);
-//						newCr.setValue(newInfo);
-//
-////						if(newDes == null){
-////							ICResourceDescription fo = getResourceDescription(path, false);
-////							if(fo.getType() == ICSettingBase.SETTING_FILE){
-////								fo = getResourceDescription(path.removeLastSegments(1), false);
-////							}
-////							newDes = createFolderDescription(path, (ICFolderDescription)fo);
-////						}
-//						newInfo.setExcluded(true);
-//					}
-//				}
-//			}
-//		}
-//		return (IPath[])pathSet.toArray(new IPath[pathSet.size()]);
-//	}
-	
+
 	private RcDesInfo getRcDesInfo(PathSettingsContainer cr, ResourceInfo rcInfo){
 		IResource rc = rcInfo.fRc;
 		IPath projPath = rc.getProjectRelativePath();
@@ -1535,23 +1165,18 @@ public class PathEntryTranslator {
 		}
 		return rcDes;
 	}
-	
+
 	private ReferenceSettingsInfo addPathEntries(ResolvedEntry[] rEntries, int op){
 		PathSettingsContainer cr = PathSettingsContainer.createRootContainer();
 		cr.setValue(new RcDesInfo(new ResourceInfo(fProject, true)));
-		List srcList = new ArrayList();
-		List outList = new ArrayList();
-		List projList = new ArrayList();
-		List exportSettingsList = new ArrayList();
+		List<IPathEntry> srcList = new ArrayList<IPathEntry>();
+		List<IPathEntry> outList = new ArrayList<IPathEntry>();
+		List<ResolvedEntry> projList = new ArrayList<ResolvedEntry>();
+		List<ResolvedEntry> exportSettingsList = new ArrayList<ResolvedEntry>();
 		ICSourceEntry srcEntries[] = null;
 		ICOutputEntry outEntries[] = null;
-//		PathSettingsContainer child;
-		ResolvedEntry rEntry;
-//		IPath projPath;
-//		IResource rc;
 		ResourceInfo rcInfo;
-		for(int i = 0; i < rEntries.length; i++){
-			rEntry = rEntries[i];
+		for (ResolvedEntry rEntry : rEntries) {
 			if(rEntry.isReadOnly())
 				continue;
 			if(toLanguageEntryKind(rEntry.fEntry.getEntryKind()) == 0){
@@ -1576,83 +1201,61 @@ public class PathEntryTranslator {
 			RcDesInfo rcDes = getRcDesInfo(cr, rcInfo);
 
 			rcDes.fResolvedEntries.add(rEntry);
-			
+
 			ResourceInfo[] fInfos = rEntry.getFilterInfos();
-			for(int k = 0; k < fInfos.length; k++){
-				getRcDesInfo(cr, fInfos[k]);
+			for (ResourceInfo fInfo : fInfos) {
+				getRcDesInfo(cr, fInfo);
 			}
 		}
-		
+
 		if(srcList.size() != 0){
 			srcEntries = toCSourceEntries(srcList);
-		} else {
-//			srcPaths = new IPath[]{new Path("")}; //$NON-NLS-1$
 		}
 		if(outList.size() != 0){
 			outEntries = toCOutputEntries(outList);
-		} else {
-//			srcPaths = new IPath[]{new Path("")}; //$NON-NLS-1$
 		}
-		
-//		cr.accept(new IPathSettingsContainerVisitor(){
-//
-//			public boolean visit(PathSettingsContainer container) {
-//				RcDesInfo info = (RcDesInfo)container.getValue();
-//				if(info != null){
-//					if(info.fResolvedEntries.size() != 0){
-//						for(Iterator iter = info.fResolvedEntries.iterator(); iter.hasNext();){
-//							ResolvedEntry entry = (ResolvedEntry)iter.next();
-//							info.addLangInfo(entry);
-//						}
-//					}
-//				}
-//				return true;
-//			}
-//		});
-		
-		propagateValues(cr, new ArrayList(0));
-		
-		//applying settings
 
-		//applySourcePaths(srcPaths, op);
+		propagateValues(cr, new ArrayList<LangEntryInfo>(0));
+
+		//applying settings
 		applyOutputEntries(outEntries, op);
 		applySourceEntries(srcEntries, op);
 		applyLangSettings(cr, op);
-		
+
 		IPath refProjPaths[] = new IPath[projList.size()];
 		for(int i = 0; i < refProjPaths.length; i++){
-			ResolvedEntry e = (ResolvedEntry)projList.get(i);
+			ResolvedEntry e = projList.get(i);
 			refProjPaths[i] = e.getResourceInfo().fRc.getFullPath();
 		}
-		
+
 		ICExternalSetting extSettings[];
 		if(exportSettingsList.size() != 0){
 			extSettings = new ICExternalSetting[1];
-			List list = new ArrayList(exportSettingsList.size());
+			List<ICLanguageSettingEntry> list = new ArrayList<ICLanguageSettingEntry>(exportSettingsList.size());
 			for(int i = 0; i < exportSettingsList.size(); i++){
-				ResolvedEntry re = (ResolvedEntry)exportSettingsList.get(i);
+				ResolvedEntry re = exportSettingsList.get(i);
 				ICLanguageSettingEntry le = createLangEntry(re);
 				if(le != null)
 					list.add(le);
 			}
-			ICLanguageSettingEntry expEntries[] = (ICLanguageSettingEntry[])list.toArray(new ICLanguageSettingEntry[list.size()]);
+			ICLanguageSettingEntry expEntries[] = list.toArray(new ICLanguageSettingEntry[list.size()]);
 			extSettings[0] = new CExternalSetting(null, null, null, expEntries);
 		} else {
 			extSettings = new ICExternalSetting[0];
 		}
-		
+
 		return new ReferenceSettingsInfo(refProjPaths, extSettings);
 	}
-	
-	private static ICSourceEntry[] toCSourceEntries(List list){
+
+	private static ICSourceEntry[] toCSourceEntries(List<IPathEntry> list){
 		ICSourceEntry[] entries = new ICSourceEntry[list.size()];
 		for(int i = 0; i < entries.length; i++){
 			entries[i] = toCSourceEntry((ISourceEntry)list.get(i), true);
 		}
 		return entries;
 	}
-	
-	private static ICOutputEntry[] toCOutputEntries(List list){
+
+	private static ICOutputEntry[] toCOutputEntries(List<IPathEntry> list){
 		ICOutputEntry[] entries = new ICOutputEntry[list.size()];
 		for(int i = 0; i < entries.length; i++){
 			entries[i] = toCOutputEntry((IOutputEntry)list.get(i), true);
@@ -1660,46 +1263,44 @@ public class PathEntryTranslator {
 		return entries;
 	}
 
-	
+
 	private static ICSourceEntry toCSourceEntry(ISourceEntry entry, boolean makeProjRelative){
 		IPath path = entry.getPath();
 		if(makeProjRelative && path.isAbsolute())
 			path = path.removeFirstSegments(1);
 		return new CSourceEntry(path,
-				entry.getExclusionPatterns(), 
+				entry.getExclusionPatterns(),
 				ICSettingEntry.VALUE_WORKSPACE_PATH
-				| ICSourceEntry.RESOLVED);
+				| ICSettingEntry.RESOLVED);
 	}
-	
+
 	private static ICOutputEntry toCOutputEntry(IOutputEntry entry, boolean makeProjRelative){
 		IPath path = entry.getPath();
 		if(makeProjRelative && path.isAbsolute())
 			path = path.removeFirstSegments(1);
 		return new COutputEntry(path,
-				entry.getExclusionPatterns(), 
+				entry.getExclusionPatterns(),
 				ICSettingEntry.VALUE_WORKSPACE_PATH
-				| ICSourceEntry.RESOLVED);
+				| ICSettingEntry.RESOLVED);
 	}
-	
+
 	private static ICSettingEntry[] replaceUserEntries(ICSettingEntry[] oldEntries, ICSettingEntry[] newUsrEntries){
-		Set set = new LinkedHashSet();
+		Set<ICSettingEntry> set = new LinkedHashSet<ICSettingEntry>();
 		Class componentType = null;
-		
+
 		if(newUsrEntries != null){
-			for(int i = 0; i < newUsrEntries.length; i++ ){
-				ICSettingEntry entry = newUsrEntries[i];
+			for (ICSettingEntry entry : newUsrEntries) {
 				if(entry.isBuiltIn() || entry.isReadOnly())
 					continue;
 				set.add(entry);
 			}
 			componentType = newUsrEntries.getClass().getComponentType();
 		}
-		
+
 		if(oldEntries != null){
-			for(int i = 0; i < oldEntries.length; i++ ){
-				ICSettingEntry entry = oldEntries[i];
+			for (ICSettingEntry entry : oldEntries) {
 				if(entry.isBuiltIn() || entry.isReadOnly())
-					set.add(entry);;
+					set.add(entry);
 			}
 			if(componentType == null)
 				componentType = oldEntries.getClass().getComponentType();
@@ -1718,22 +1319,22 @@ public class PathEntryTranslator {
 		oldEntries = (ICSourceEntry[])CDataUtil.makeRelative(fProject, oldEntries, true);
 		entries = (ICSourceEntry[])CDataUtil.makeRelative(fProject, entries, true);
 		entries = (ICSourceEntry[])replaceUserEntries(oldEntries, entries);
-		
+
 		switch (op) {
 		case OP_ADD:
 			if(entries != null && entries.length != 0){
-				Set set = new LinkedHashSet();
+				Set<ICSourceEntry> set = new LinkedHashSet<ICSourceEntry>();
 				set.addAll(Arrays.asList(oldEntries));
 				set.addAll(Arrays.asList(entries));
-				fCfgData.setSourceEntries((ICSourceEntry[])set.toArray(new ICSourceEntry[set.size()]));
+				fCfgData.setSourceEntries(set.toArray(new ICSourceEntry[set.size()]));
 			}
 			break;
 		case OP_REMOVE:
 			if(entries != null && entries.length != 0){
-				Set set = new HashSet();
+				Set<ICSourceEntry> set = new HashSet<ICSourceEntry>();
 				set.addAll(Arrays.asList(oldEntries));
 				set.removeAll(Arrays.asList(entries));
-				fCfgData.setSourceEntries((ICSourceEntry[])set.toArray(new ICSourceEntry[set.size()]));
+				fCfgData.setSourceEntries(set.toArray(new ICSourceEntry[set.size()]));
 			}
 			break;
 		case OP_REPLACE:
@@ -1744,36 +1345,36 @@ public class PathEntryTranslator {
 				fCfgData.setSourceEntries(new ICSourceEntry[0]);
 			}
 			break;
-		}		
+		}
 	}
-	
+
 	private void applyOutputEntries(ICOutputEntry entries[], int op){
 		CBuildData bData = fCfgData.getBuildData();
 		if(bData == null){
 			CCorePlugin.log(UtilMessages.getString("PathEntryTranslator.2")); //$NON-NLS-1$
 			return;
 		}
-		
+
 		ICOutputEntry[] oldEntries = bData.getOutputDirectories();
 		oldEntries = (ICOutputEntry[])CDataUtil.makeRelative(fProject, oldEntries, true);
 		entries = (ICOutputEntry[])CDataUtil.makeRelative(fProject, entries, true);
 		entries = (ICOutputEntry[])replaceUserEntries(oldEntries, entries);
-		
+
 		switch (op) {
 		case OP_ADD:
 			if(entries != null && entries.length != 0){
-				Set set = new LinkedHashSet();
+				Set<ICOutputEntry> set = new LinkedHashSet<ICOutputEntry>();
 				set.addAll(Arrays.asList(oldEntries));
 				set.addAll(Arrays.asList(entries));
-				bData.setOutputDirectories((ICOutputEntry[])set.toArray(new ICOutputEntry[set.size()]));
+				bData.setOutputDirectories(set.toArray(new ICOutputEntry[set.size()]));
 			}
 			break;
 		case OP_REMOVE:
 			if(entries != null && entries.length != 0){
-				Set set = new HashSet();
+				Set<ICOutputEntry> set = new HashSet<ICOutputEntry>();
 				set.addAll(Arrays.asList(oldEntries));
 				set.removeAll(Arrays.asList(entries));
-				bData.setOutputDirectories((ICOutputEntry[])set.toArray(new ICOutputEntry[set.size()]));
+				bData.setOutputDirectories(set.toArray(new ICOutputEntry[set.size()]));
 			}
 			break;
 		case OP_REPLACE:
@@ -1784,13 +1385,12 @@ public class PathEntryTranslator {
 				bData.setOutputDirectories(new ICOutputEntry[0]);
 			}
 			break;
-		}		
+		}
 	}
-	
+
 	private void applyLangSettings(PathSettingsContainer cr, int op){
 		PathSettingsContainer crs[] = cr.getChildren(true);
-		for(int i = 0; i < crs.length; i++){
-			PathSettingsContainer cur = crs[i];
+		for (PathSettingsContainer cur : crs) {
 			RcDesInfo desInfo = (RcDesInfo)cur.getValue();
 			try {
 				CResourceData rcData = getResourceData(cur.getPath(), true, true);
@@ -1799,29 +1399,27 @@ public class PathEntryTranslator {
 				CCorePlugin.log(e);
 			}
 		}
-		
+
 		CResourceData[] rcDatas = getResourceDatas();
-		for(int i = 0; i < rcDatas.length; i++){
-			CResourceData rcData = rcDatas[i];
+		for (CResourceData rcData : rcDatas) {
 			PathSettingsContainer c = cr.getChildContainer(rcData.getPath(), false, false);
 			if(cr.getPath().makeRelative().equals(rcData.getPath().makeRelative())){
 				continue;
 			}
-			
+
 			RcDesInfo desInfo = (RcDesInfo)c.getValue();
-//			rcData.setExcluded(desInfo.isExcluded());
-			
+
 			applyEntries(rcData, desInfo, op);
 		}
 	}
 
 	private CResourceData[] getResourceDatas(){
 		PathSettingsContainer crs[] = fRcDataHolder.getChildren(true);
-		List list = new ArrayList(crs.length);
-		for(int i = 0; i < crs.length; i++){
-			list.add(crs[i].getValue());
+		List<CResourceData> list = new ArrayList<CResourceData>(crs.length);
+		for (PathSettingsContainer cur : crs) {
+			list.add((CResourceData)cur.getValue());
 		}
-		return (CResourceData[])list.toArray(new CResourceData[list.size()]);
+		return list.toArray(new CResourceData[list.size()]);
 	}
 
 	private CResourceData getResourceData(IPath path, boolean create, boolean exactPath) throws CoreException{
@@ -1831,7 +1429,7 @@ public class PathEntryTranslator {
 		} else if (create) {
 			ResourceInfo rcInfo = findResourceInfo(fProject, path, true);
 			CResourceData base = getResourceData(path, false, false);
-			
+
 			CResourceData newRcData;
 			if(rcInfo.fRc.getType() == IResource.FILE){
 				if(base.getType() == ICSettingBase.SETTING_FILE){
@@ -1846,59 +1444,56 @@ public class PathEntryTranslator {
 				while(base.getType() == ICSettingBase.SETTING_FILE){
 					base = getResourceData(base.getPath().removeLastSegments(1), false, false);
 				}
-				
+
 				newRcData = fCfgData.createFolderData(path, (CFolderData)base);
 			}
-			
+
 			fRcDataHolder.getChildContainer(path, true, true).setValue(newRcData);
 			return newRcData;
 		}
 		return null;
 	}
-	
+
 	private void applyEntries(CResourceData data, RcDesInfo info, int op){
-		CLanguageData lDatas[] = data.getType() == ICSettingBase.SETTING_FILE ? 
-				new CLanguageData[]{((CFileData)data).getLanguageData()} 
+		CLanguageData lDatas[] = data.getType() == ICSettingBase.SETTING_FILE ?
+				new CLanguageData[]{((CFileData)data).getLanguageData()}
 				: ((CFolderData)data).getLanguageDatas();
-				
-		for(int i = 0; i < lDatas.length; i++){
-			CLanguageData lData = lDatas[i];
+
+		for (CLanguageData lData : lDatas) {
 			if(lData == null)
 				continue;
-			
+
 			applyEntries(lData, info, op);
 		}
 	}
-	
-	
+
+
 	private void applyEntries(CLanguageData lData, RcDesInfo info, int op){
 		int kinds[] = KindBasedStore.getLanguageEntryKinds();
 		int supported = lData.getSupportedEntryKinds();
-		for(int i = 0; i < kinds.length; i++){
-			int kind = kinds[i];
+		for (int kind : kinds) {
 			if((supported & kind) == 0)
 				continue;
-			
+
 			ICLanguageSettingEntry opEntries[] = info.getEntries(kind);
 			ICLanguageSettingEntry oldEntries[] = lData.getEntries(kind);
 			opEntries = (ICLanguageSettingEntry[])replaceUserEntries(oldEntries, opEntries);
-			
+
 			if(op == OP_REPLACE)
 				oldEntries = null;
-//			ICLanguageSettingEntry oldEntries[] = op != OP_REPLACE ? lData.getEntries(kind) : null;
 			ICLanguageSettingEntry result[] = composeNewEntries(oldEntries, opEntries, op);
 			lData.setEntries(kind, result);
 		}
 	}
-	
+
 	private ICLanguageSettingEntry[] composeNewEntries(ICLanguageSettingEntry oldEntries[],
 			ICLanguageSettingEntry newEntries[],
 			int op){
 		ICLanguageSettingEntry result[];
 		switch(op){
 		case OP_ADD:{
-			Set oldSet = new HashSet(Arrays.asList(oldEntries));
-			Set newSet = new HashSet(Arrays.asList(newEntries));
+			Set<ICLanguageSettingEntry> oldSet = new HashSet<ICLanguageSettingEntry>(Arrays.asList(oldEntries));
+			Set<ICLanguageSettingEntry> newSet = new HashSet<ICLanguageSettingEntry>(Arrays.asList(newEntries));
 			newSet.removeAll(oldSet);
 			if(newSet.size() == 0){
 				result = oldEntries;
@@ -1910,8 +1505,8 @@ public class PathEntryTranslator {
 			break;
 		}
 		case OP_REMOVE:{
-			Set oldSet = new HashSet(Arrays.asList(oldEntries));
-			Set newSet = new HashSet(Arrays.asList(newEntries));
+			Set<ICLanguageSettingEntry> oldSet = new HashSet<ICLanguageSettingEntry>(Arrays.asList(oldEntries));
+			Set<ICLanguageSettingEntry> newSet = new HashSet<ICLanguageSettingEntry>(Arrays.asList(newEntries));
 			oldSet.removeAll(newSet);
 			if(oldSet.size() == 0){
 				result = new ICLanguageSettingEntry[0];
@@ -1926,87 +1521,51 @@ public class PathEntryTranslator {
 			result = newEntries;
 			break;
 		}
-		
+
 		return result;
 	}
-/*
-	private PathEntryKyndStore sort(ResolvedEntry[] rEntries, PathEntryKyndStore store){
-		if(store == null){
-			store = new PathEntryKyndStore();
-		}
-		
-		ResolvedEntry rEntry;
-		for(int i = 0; i < rEntries.length; i++){
-			rEntry = rEntries[i];
-			List list = (List)store.get(rEntry.fEntry.getEntryKind());
-			if(list == null){
-				list = new ArrayList();
-				store.put(rEntry.fEntry.getEntryKind(), list);
-			}
-			list.add(rEntry);
-		}
-		
-		return store;
-	}
-*/	
-//	private void listStoreToArrayStore(PathEntryKyndStore store, boolean nullAsEmptyArray){
-//		int[]kinds = store.getSupportedKinds();
-//		int kind;
-//		
-//		for(int i = 0; i < kinds.length; i++){
-//			kind = kinds[i];
-//			ResolvedE
-//			List list = (List)store.get(kind);
-//			if(list == null && nullAsEmptyArray){
-//				
-//			}
-//		}
-//	}
-	
 
 	public ReferenceSettingsInfo applyPathEntries(IPathEntry[] usrEntries, IPathEntry[] sysEntries, int op){
 		ResolvedEntry[] rEntries = getResolvedEntries(usrEntries, sysEntries);
 		return addPathEntries(rEntries, op);
 	}
 
-	private void propagateValues(PathSettingsContainer cr, List langEntryInfoList){
-		
+	private void propagateValues(PathSettingsContainer cr, List<LangEntryInfo> langEntryInfoList){
+
 		RcDesInfo rcDes = (RcDesInfo)cr.getValue();
 		if(rcDes != null){
-			List rEntries = rcDes.fResolvedEntries;
-			List curLanfInfos = new ArrayList(rEntries.size() + langEntryInfoList.size());
-			for(Iterator iter = rEntries.iterator(); iter.hasNext();){
-				ResolvedEntry re = (ResolvedEntry)iter.next();
+			List<ResolvedEntry> rEntries = rcDes.fResolvedEntries;
+			List<LangEntryInfo> curLanfInfos = new ArrayList<LangEntryInfo>(rEntries.size() + langEntryInfoList.size());
+			for (ResolvedEntry re : rEntries) {
 				LangEntryInfo li = createLangEntryInfo(re);
 				if(li != null){
 					curLanfInfos.add(li);
 				}
 			}
-			
+
 			curLanfInfos.addAll(langEntryInfoList);
 			langEntryInfoList = curLanfInfos;
+
+			for (LangEntryInfo li : langEntryInfoList) {
+				rcDes.add(li);
+			}
 		}
-		
-		for(Iterator iter = langEntryInfoList.iterator(); iter.hasNext();){
-			LangEntryInfo li = (LangEntryInfo)iter.next();
-			rcDes.add(li);
-		}
-		
+
 		PathSettingsContainer directChildren[] = cr.getDirectChildren();
-		for(int i = 0; i < directChildren.length; i++){
-			filterAndPropagate(directChildren[i], langEntryInfoList);
+		for (PathSettingsContainer directChild : directChildren) {
+			filterAndPropagate(directChild, langEntryInfoList);
 		}
 	}
-	
-	private void filterAndPropagate(PathSettingsContainer cr, List list){
-		list = new ArrayList(list);
+
+	private void filterAndPropagate(PathSettingsContainer cr, List<LangEntryInfo> list){
+		list = new ArrayList<LangEntryInfo>(list);
 		IPath path = cr.getPath();
-		for(Iterator iter = list.iterator(); iter.hasNext();){
-			LangEntryInfo li = (LangEntryInfo)iter.next();
+		for(Iterator<LangEntryInfo> iter = list.iterator(); iter.hasNext();){
+			LangEntryInfo li = iter.next();
 			ResolvedEntry re = li.fResolvedEntry;
 			ResourceInfo[] filters = re.getFilterInfos();
-			for(int i = 0; i < filters.length; i++){
-				IResource rc = filters[i].fRc;
+			for (ResourceInfo filter : filters) {
+				IResource rc = filter.fRc;
 				IPath projPath = rc.getProjectRelativePath();
 				if(projPath.isPrefixOf(path.makeRelative())){
 					iter.remove();
@@ -2014,115 +1573,72 @@ public class PathEntryTranslator {
 				}
 			}
 		}
-		
+
 		propagateValues(cr, list);
 	}
 
-//	private void propagateValues(PathSettingsContainer cr){
-//		RcDesInfo rcDes = (RcDesInfo)cr.getValue();
-//		if(rcDes == null)
-//			return;
-//		
-//		final List rEntries = rcDes.fResolvedEntries;
-//
-//		int size = rEntries.size();
-//		if(size == 0)
-//			return;
-//		
-//		ArrayList[] skipLists = new ArrayList[size];
-//		ArrayList skipList;
-//		ResolvedEntry rEntry;
-//		ResourceInfo[] filters;
-//		ResourceInfo filter;
-//		for(int i = 0; i < size; i++){
-//			rEntry = (ResolvedEntry)rEntries.get(i);
-//			filters = rEntry.getFilterInfos();
-//			if(filters.length != 0){
-//				
-//			}
-//		}
-//		
-//		cr.accept(new IPathSettingsContainerVisitor(){
-//
-//			public boolean visit(PathSettingsContainer container) {
-//				if(container == cr){
-//					
-//				} else {
-//					for(Iterator iter = rEntries.iterator(); iter.hasNext();){
-//						ResolvedEntry re = (ResolvedEntry)iter.next();
-//						ResourceInfo filters[] = re.getFilterInfos();
-//						
-//					}
-//				}
-//				return true;
-//			}
-//			
-//		});
-//	}
-	
 	private int toLanguageEntryKind(int peKind){
 		switch(peKind){
 		case IPathEntry.CDT_LIBRARY:
-			return ICLanguageSettingEntry.LIBRARY_FILE;
+			return ICSettingEntry.LIBRARY_FILE;
 //		case IPathEntry.CDT_PROJECT:
 //			return ICLanguageSettingEntry;
 //		case IPathEntry.CDT_SOURCE:
 //			return INDEX_CDT_SOURCE;
 		case IPathEntry.CDT_INCLUDE:
-			return ICLanguageSettingEntry.INCLUDE_PATH;
+			return ICSettingEntry.INCLUDE_PATH;
 //		case IPathEntry.CDT_CONTAINER:
 //			return INDEX_CDT_CONTAINER;
 		case IPathEntry.CDT_MACRO:
-			return ICLanguageSettingEntry.MACRO;
+			return ICSettingEntry.MACRO;
 //		case IPathEntry.CDT_OUTPUT:
 //			return INDEX_CDT_OUTPUT;
 		case IPathEntry.CDT_INCLUDE_FILE:
-			return ICLanguageSettingEntry.INCLUDE_FILE;
+			return ICSettingEntry.INCLUDE_FILE;
 		case IPathEntry.CDT_MACRO_FILE:
-			return ICLanguageSettingEntry.MACRO_FILE;
+			return ICSettingEntry.MACRO_FILE;
 		}
 		return 0;
 	}
-	
+
 	private static int peKindToSettingKind(int peKind){
 		switch(peKind){
 		case IPathEntry.CDT_LIBRARY:
-			return ICLanguageSettingEntry.LIBRARY_FILE;
+			return ICSettingEntry.LIBRARY_FILE;
 //		case IPathEntry.CDT_PROJECT:
 //			return ICLanguageSettingEntry;
 		case IPathEntry.CDT_SOURCE:
-			return ICLanguageSettingEntry.SOURCE_PATH;
+			return ICSettingEntry.SOURCE_PATH;
 		case IPathEntry.CDT_INCLUDE:
-			return ICLanguageSettingEntry.INCLUDE_PATH;
+			return ICSettingEntry.INCLUDE_PATH;
 //		case IPathEntry.CDT_CONTAINER:
 //			return INDEX_CDT_CONTAINER;
 		case IPathEntry.CDT_MACRO:
-			return ICLanguageSettingEntry.MACRO;
+			return ICSettingEntry.MACRO;
 		case IPathEntry.CDT_OUTPUT:
-			return ICLanguageSettingEntry.OUTPUT_PATH;
+			return ICSettingEntry.OUTPUT_PATH;
 		case IPathEntry.CDT_INCLUDE_FILE:
-			return ICLanguageSettingEntry.INCLUDE_FILE;
+			return ICSettingEntry.INCLUDE_FILE;
 		case IPathEntry.CDT_MACRO_FILE:
-			return ICLanguageSettingEntry.MACRO_FILE;
+			return ICSettingEntry.MACRO_FILE;
 		}
 		return 0;
 	}
-	
+
 	private ResolvedEntry[] getResolvedEntries(PathEntryResolveInfo info){
 		PathEntryResolveInfoElement els[] = info.getElements();
-		List list = new ArrayList();
-		for(int i = 0; i < els.length; i++){
-			getResolvedEntries(els[i], list);
+		List<ResolvedEntry> list = new ArrayList<ResolvedEntry>();
+		for (PathEntryResolveInfoElement el : els) {
+			getResolvedEntries(el, list);
 		}
-		return (ResolvedEntry[])list.toArray(new ResolvedEntry[list.size()]);
+		return list.toArray(new ResolvedEntry[list.size()]);
 	}
-	
-	private List getResolvedEntries(PathEntryResolveInfoElement el, List list){
+
+	private List<ResolvedEntry> getResolvedEntries(PathEntryResolveInfoElement el, List<ResolvedEntry> list){
 		if(list == null)
-			list = new ArrayList();
-		
+			list = new ArrayList<ResolvedEntry>();
+
 		IPathEntry[] rpEntries = el.getResolvedEntries();
-		IPathEntry rpEntry;
 		ResolvedEntry resolvedE;
 		IPathEntry rawEntry = el.getRawEntry();
 		if(rawEntry.getEntryKind() == IPathEntry.CDT_PROJECT){
@@ -2130,27 +1646,26 @@ public class PathEntryTranslator {
 			if(resolvedE != null)
 				list.add(resolvedE);
 		}
-		for(int i = 0; i < rpEntries.length; i++){
-			rpEntry = rpEntries[i];
+		for (IPathEntry rpEntry : rpEntries) {
 			resolvedE = createResolvedEntry(rpEntry, el);
 			if(resolvedE != null)
 				list.add(resolvedE);
 		}
 		return list;
 	}
-	
+
 	private ResolvedEntry createResolvedEntry(IPathEntry entry, PathEntryResolveInfoElement el){
 		switch(entry.getEntryKind()){
 //		case IPathEntry.CDT_PROJECT:
 //			//should not be here
 		case IPathEntry.CDT_CONTAINER:
-			//the case of extension path entry container 
+			//the case of extension path entry container
 			return null;
 		}
 		return new ResolvedEntry(entry, el);
 	}
 
-	
+
 	private ResolvedEntry[] getResolvedEntries(IPathEntry[] usrEntries, IPathEntry[] sysEntries){
 		int length = usrEntries != null ? usrEntries.length : 0;
 		if(sysEntries != null)
@@ -2158,19 +1673,19 @@ public class PathEntryTranslator {
 		ResolvedEntry[] rEntries = new ResolvedEntry[length];
 		int num = 0;
 		if(usrEntries != null){
-			for(int i = 0; i < usrEntries.length; i++){
-				rEntries[num++] = new ResolvedEntry(usrEntries[i], false);
+			for (IPathEntry usrEntry : usrEntries) {
+				rEntries[num++] = new ResolvedEntry(usrEntry, false);
 			}
 		}
-		
+
 		if(sysEntries != null){
-			for(int i = 0; i < sysEntries.length; i++){
-				rEntries[num++] = new ResolvedEntry(sysEntries[i], true);
+			for (IPathEntry sysEntry : sysEntries) {
+				rEntries[num++] = new ResolvedEntry(sysEntry, true);
 			}
 		}
 		return rEntries;
 	}
-	
+
 	private ResourceInfo[] resolveFilter(IContainer container, IPath path){
 		IPath containerFullPath = container.getFullPath();
 		IPath fullPath = containerFullPath.append(path);
@@ -2194,10 +1709,10 @@ public class PathEntryTranslator {
 				throw new IllegalStateException();
 			}
 		}
-		
+
 		return result;
 	}
-	
+
 	private ResourceInfo[] performTranslation(IPath basePath, ResourceInfo baseInfos[], IPath filter){
 		ResourceInfo result[];
 		int segCount = filter.segmentCount();
@@ -2211,14 +1726,14 @@ public class PathEntryTranslator {
 			basePath = basePath.append(seg);
 			filter = filter.removeFirstSegments(1);
 		}
-		
+
 		if(i < segCount){
 			result = new ResourceInfo[baseInfos.length];
 			ResourceInfo baseInfo;
 			IFolder rc;
-			
+
 			for(int k = 0; k < baseInfos.length; k++){
-				baseInfo = baseInfos[k]; 
+				baseInfo = baseInfos[k];
 				rc = (IFolder)baseInfo.fRc;
 				rc = rc.getFolder(filter);
 				result[k] = new ResourceInfo(rc, false);
@@ -2226,15 +1741,15 @@ public class PathEntryTranslator {
 		} else {
 			result = baseInfos;
 		}
-		
+
 		return result;
 	}
-	
+
 	private ResourceInfo[] performTranslation(IPath basePath, ResourceInfo[] baseInfos, String seg){
 		IPath filterFullPath = basePath.append(seg);
 		boolean needsParsing = hasSpecChars(seg);
 		ResourceInfo baseInfo;
-		List list = new ArrayList();
+		List<ResourceInfo> list = new ArrayList<ResourceInfo>();
 		char[] segChars = seg.toCharArray();
 		IResource baseRc;
 		for(int i = 0; i < baseInfos.length; i++){
@@ -2253,7 +1768,7 @@ public class PathEntryTranslator {
 					try {
 						IResource children[] = baseCr.members();
 						ResourceInfo rcInfo;
-						for(int k = 0; k < children.length; k++){
+						for (IResource child : children) {
 							if(CoreModelUtil.match(segChars, children[i].getName().toCharArray(), true)){
 								rcInfo = new ResourceInfo(children[i], true);
 								addRcInfoToMap(rcInfo);
@@ -2266,7 +1781,7 @@ public class PathEntryTranslator {
 				}
 			}
 		}
-		
+
 		if(list.size() == 0){
 			IFolder f = fRoot.getFolder(filterFullPath);
 			ResourceInfo rcInfo = new ResourceInfo(f, false);
@@ -2279,10 +1794,10 @@ public class PathEntryTranslator {
 		addResolvedFilterToMap(filterFullPath, result, false);
 		return result;
 	}
-	
+
 	private boolean hasSpecChars(String str){
-		for(int i = 0; i < SPEC_CHARS.length; i++){
-			if(str.indexOf(SPEC_CHARS[i]) != -1)
+		for (char ch : SPEC_CHARS) {
+			if(str.indexOf(ch) != -1)
 				return true;
 		}
 		return false;
@@ -2302,8 +1817,8 @@ public class PathEntryTranslator {
 
 	private ResourceInfo findResourceInfo(IContainer container, IPath relPath, boolean folderIfNotExist){
 		IPath fullPath = container.getFullPath().append(relPath);
-		ResourceInfo rcInfo = (ResourceInfo)fResourceMap.get(fullPath);
-		
+		ResourceInfo rcInfo = fResourceMap.get(fullPath);
+
 		if(rcInfo == null){
 			IResource rc = container.findMember(relPath);
 			boolean exists = true;
@@ -2317,24 +1832,23 @@ public class PathEntryTranslator {
 					rc = container.getFile(relPath);
 				}
 			}
-			
+
 			rcInfo = new ResourceInfo(rc, exists);
 			addRcInfoToMap(rcInfo);
 		}
 		return rcInfo;
 	}
-	
+
 	private void addRcInfoToMap(ResourceInfo rcInfo){
 		IPath fullPath = rcInfo.fRc.getFullPath();
 		fResourceMap.put(fullPath, rcInfo);
 		addResolvedFilterToMap(fullPath, new ResourceInfo[]{rcInfo}, true);
 	}
-	
+
 	public static IPathEntry[] decodePathEntries(IProject project, ICStorageElement el){
-		ArrayList pathEntries = new ArrayList();
+		ArrayList<IPathEntry> pathEntries = new ArrayList<IPathEntry>();
 		ICStorageElement children[] = el.getChildren();
-		for (int i = 0; i < children.length; i++) {
-			ICStorageElement child = children[i];
+		for (ICStorageElement child : children) {
 			if (child.getName().equals(PATH_ENTRY)) {
 				try {
 					pathEntries.add(decodePathEntry(project, child));
@@ -2343,25 +1857,25 @@ public class PathEntryTranslator {
 				}
 			}
 		}
-		IPathEntry[] entries = new IPathEntry[pathEntries.size()]; 
+		IPathEntry[] entries = new IPathEntry[pathEntries.size()];
 		pathEntries.toArray(entries);
 		return entries;
 	}
-	
+
 	private static String getAttribute(ICStorageElement el, String attr){
 		String v = el.getAttribute(attr);
 		if(v != null)
 			return v;
 		return ""; //$NON-NLS-1$
 	}
-	
+
 	static IPathEntry decodePathEntry(IProject project, ICStorageElement element) throws CModelException {
 		IPath projectPath = project.getFullPath();
-		
+
 		// kind
 		String kindAttr = getAttribute(element, ATTRIBUTE_KIND);
 		int kind = PathEntry.kindFromString(kindAttr);
-		
+
 		// exported flag
 		boolean isExported = false;
 		if (element.getAttribute(ATTRIBUTE_EXPORTED) != null) {
@@ -2398,13 +1912,13 @@ public class PathEntryTranslator {
 				}
 			}
 		}
-		
+
 		// recreate the entry
 		switch (kind) {
 			case IPathEntry.CDT_PROJECT :
 				return CoreModel.newProjectEntry(path, isExported);
 			case IPathEntry.CDT_LIBRARY : {
-				IPath libraryPath = new Path(getAttribute(element, ATTRIBUTE_LIBRARY));				
+				IPath libraryPath = new Path(getAttribute(element, ATTRIBUTE_LIBRARY));
 				// source attachment info (optional)
 				IPath sourceAttachmentPath = element.getAttribute(ATTRIBUTE_SOURCEPATH) != null ? new Path(
 						element.getAttribute(ATTRIBUTE_SOURCEPATH)) : null;
@@ -2412,8 +1926,8 @@ public class PathEntryTranslator {
 						element.getAttribute(ATTRIBUTE_ROOTPATH)) : null;
 				IPath sourceAttachmentPrefixMapping = element.getAttribute(ATTRIBUTE_PREFIXMAPPING) != null ? new Path(
 						element.getAttribute(ATTRIBUTE_PREFIXMAPPING)) : null;
-				
-				if (baseRef != null && !baseRef.isEmpty()) {
+
+				if (!baseRef.isEmpty()) {
 					return CoreModel.newLibraryRefEntry(path, baseRef, libraryPath);
 				}
 				return CoreModel.newLibraryEntry(path, basePath, libraryPath, sourceAttachmentPath, sourceAttachmentRootPath,
@@ -2440,7 +1954,7 @@ public class PathEntryTranslator {
 				if (element.getAttribute(ATTRIBUTE_SYSTEM) != null) {
 					isSystemInclude = getAttribute(element, ATTRIBUTE_SYSTEM).equals(VALUE_TRUE);
 				}
-				if (baseRef != null && !baseRef.isEmpty()) {
+				if (!baseRef.isEmpty()) {
 					return CoreModel.newIncludeRefEntry(path, baseRef, includePath);
 				}
 				return CoreModel.newIncludeEntry(path, basePath, includePath, isSystemInclude, exclusionPatterns, isExported);
@@ -2448,12 +1962,12 @@ public class PathEntryTranslator {
 			case IPathEntry.CDT_INCLUDE_FILE: {
 				// include path info
 				IPath includeFilePath = new Path(getAttribute(element, ATTRIBUTE_INCLUDE_FILE));
-				return CoreModel.newIncludeFileEntry(path, basePath, baseRef, includeFilePath, exclusionPatterns, isExported);				
+				return CoreModel.newIncludeFileEntry(path, basePath, baseRef, includeFilePath, exclusionPatterns, isExported);
 			}
 			case IPathEntry.CDT_MACRO : {
 				String macroName = getAttribute(element, ATTRIBUTE_NAME);
 				String macroValue = getAttribute(element, ATTRIBUTE_VALUE);
-				if (baseRef != null && !baseRef.isEmpty()) {
+				if (!baseRef.isEmpty()) {
 					return CoreModel.newMacroRefEntry(path, baseRef, macroName);
 				}
 				return CoreModel.newMacroEntry(path, macroName, macroValue, exclusionPatterns, isExported);
@@ -2474,10 +1988,10 @@ public class PathEntryTranslator {
 	}
 
 	private static CConfigurationData getCfgData(ICConfigurationDescription cfgDes){
-		return cfgDes instanceof CConfigurationDescriptionCache ? 
+		return cfgDes instanceof CConfigurationDescriptionCache ?
 				(CConfigurationData)cfgDes : ((IInternalCCfgInfo)cfgDes).getConfigurationData(false);
 	}
-	
+
 	private static void addOutputEntries(PathEntryCollector cr, CConfigurationData data){
 		CBuildData bData = data.getBuildData();
 		if(bData != null){
@@ -2490,39 +2004,33 @@ public class PathEntryTranslator {
 
 	public static PathEntryCollector collectEntries(IProject project, ICConfigurationDescription des){
 		CConfigurationData data = getCfgData(des);
-				
+
 		ReferenceSettingsInfo refInfo = new ReferenceSettingsInfo(des);
-		ICConfigurationDescription[] allCfgs = des.isPreferenceConfiguration() ? 
+		ICConfigurationDescription[] allCfgs = des.isPreferenceConfiguration() ?
 				new ICConfigurationDescription[]{des}
 				: des.getProjectDescription().getConfigurations();
-		
+
 		CConfigurationData[] allDatas = new CConfigurationData[allCfgs.length];
 		for(int i = 0; i < allCfgs.length; i++){
 			allDatas[i] = getCfgData(allCfgs[i]);
 		}
-//		return collectEntries(project, data, info);
-//	}
-//
-//	public static PathEntryCollector collectEntries(IProject project, CConfigurationData data, ReferenceSettingsInfo refInfo){
+
 		final PathEntryCollector cr = new PathEntryCollector(project/*, des*/);
 		PathSettingsContainer rcDatas = createRcDataHolder(data);
 		ICSourceEntry sEntries[] = data.getSourceEntries();
-//		ICSourceEntry sEntries[] = calculateSourceEntriesFromPaths(project, rcDatas, srcPaths);
 		if(sEntries != null && sEntries.length != 0){
 			cr.setSourceOutputEntries(ICSettingEntry.SOURCE_PATH, sEntries);
 		}
-		for(int i = 0; i < allDatas.length; i++){
-			addOutputEntries(cr, allDatas[i]);
+		for (CConfigurationData allData : allDatas) {
+			addOutputEntries(cr, allData);
 		}
-		final HashSet exportedSettings = new HashSet();
-		if(refInfo != null){
-			cr.setRefProjects(refInfo.getReferencedProjectsPaths());
-			ICExternalSetting[] settings = refInfo.getExternalSettings();
-			for(int i = 0; i < settings.length; i++){
-				exportedSettings.addAll(Arrays.asList(settings[i].getEntries()));
-			}
+		final HashSet<ICSettingEntry> exportedSettings = new HashSet<ICSettingEntry>();
+		cr.setRefProjects(refInfo.getReferencedProjectsPaths());
+		ICExternalSetting[] settings = refInfo.getExternalSettings();
+		for (ICExternalSetting setting : settings) {
+			exportedSettings.addAll(Arrays.asList(setting.getEntries()));
 		}
-		
+
 		final int kinds[] = KindBasedStore.getLanguageEntryKinds();
 		rcDatas.accept(new IPathSettingsContainerVisitor(){
 
@@ -2530,54 +2038,51 @@ public class PathEntryTranslator {
 				CResourceData data = (CResourceData)container.getValue();
 				if (data != null) {
 					PathEntryCollector child = cr.createChild(container.getPath());
-					for(int i = 0; i < kinds.length; i++){
-						List list = new ArrayList();
-						if(collectEntries(kinds[i], data, list)){
-							ICLanguageSettingEntry[] entries = (ICLanguageSettingEntry[])list.toArray(new ICLanguageSettingEntry[list.size()]);
-							child.setEntries(kinds[i], entries, exportedSettings);
+					for (int kind : kinds) {
+						List<ICLanguageSettingEntry> list = new ArrayList<ICLanguageSettingEntry>();
+						if(collectEntries(kind, data, list)){
+							ICLanguageSettingEntry[] entries = list.toArray(new ICLanguageSettingEntry[list.size()]);
+							child.setEntries(kind, entries, exportedSettings);
 						}
 					}
 				}
 				return true;
 			}
-			
+
 		});
 		return cr;
 	}
-	
-	private static boolean collectEntries(int kind, CResourceData data, List list){
+
+	private static boolean collectEntries(int kind, CResourceData data, List<ICLanguageSettingEntry> list){
 		if(data.getType() == ICSettingBase.SETTING_FOLDER){
 			return collectEntries(kind, (CFolderData)data, list);
-		} 
+		}
 		return collectEntries(kind, (CFileData)data, list);
 	}
 
-	private static boolean collectEntries(int kind, CFolderData data, List list){
-		
+	private static boolean collectEntries(int kind, CFolderData data, List<ICLanguageSettingEntry> list){
+
 		CLanguageData lDatas[] = data.getLanguageDatas();
 		boolean supported = false;
 		if(lDatas != null && lDatas.length != 0){
-			for(int i = 0; i < lDatas.length; i++){
-				if(collectEntries(kind, lDatas[i], list))
+			for (CLanguageData lData : lDatas) {
+				if(collectEntries(kind, lData, list))
 					supported = true;
 			}
 		}
 		return supported;
 	}
 
-	private static boolean collectEntries(int kind, CFileData data, List list){
-		
+	private static boolean collectEntries(int kind, CFileData data, List<ICLanguageSettingEntry> list){
+
 		CLanguageData lData = data.getLanguageData();
 		if(lData != null){
 			return collectEntries(kind, lData, list);
 		}
 		return false;
 	}
-	
-	private static boolean collectEntries(int kind, CLanguageData lData, List list){
-//		if(list == null)
-//			list = new ArrayList();
-		
+
+	private static boolean collectEntries(int kind, CLanguageData lData, List<ICLanguageSettingEntry> list){
 		if((kind & lData.getSupportedEntryKinds()) != 0){
 			ICLanguageSettingEntry[] entries = lData.getEntries(kind);
 			if(entries != null && entries.length != 0){
@@ -2585,11 +2090,10 @@ public class PathEntryTranslator {
 			}
 			return true;
 		}
-		
+
 		return false;
 	}
 
-//	public static IPathEntry[] getPathEntries(IProject project, CConfigurationData data, ReferenceSettingsInfo refInfo, int flags){
 	public static IPathEntry[] getPathEntries(IProject project, ICConfigurationDescription cfg, int flags){
 		PathEntryCollector cr = collectEntries(project, cfg);
 		return cr.getEntries(flags, cfg);

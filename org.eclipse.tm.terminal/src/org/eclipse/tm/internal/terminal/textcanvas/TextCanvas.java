@@ -42,6 +42,30 @@ public class TextCanvas extends GridCanvas {
 	private Point fDraggingEnd;
 	private boolean fHasSelection;
 	private ResizeListener fResizeListener;
+
+	// The minSize is meant to determine the minimum size of the backing store
+	// (grid) into which remote data is rendered. If the viewport is smaller
+	// than that minimum size, the backing store size remains at the minSize,
+	// and a scrollbar is shown instead. In reality, this has the following
+	// issues or effects today:
+	//  (a) Bug 281328: For very early data coming in before the widget is 
+	//      realized, the minSize determines into what initial grid that is 
+	//      rendered. See also @link{#addResizeHandler(ResizeListener)}.
+	//  (b) Bug 294468: Since we have redraw and size computation problems 
+	//      with horizontal scrollers, for now the minColumns must be small
+	//      enough to avoid a horizontal scroller appearing in most cases.
+	//  (b) Bug 294327: since we have problems with the vertical scroller
+	//      showing the correct location, minLines must be small enough
+	//      to avoid a vertical scroller or new data may be rendered off-screen.
+	// As a compromise, we have been working with a 20x4 since the Terminal
+	// inception, though many users would want a 80x24 minSize and backing
+	// store. Pros and cons of the small minsize:
+	//   + consistent "remote size==viewport size", vi works as expected
+	//   - dumb terminals which expect 80x24 render garbled on small viewport.
+	// If bug 294468 were resolved, an 80 wide minSize would be preferrable
+	// since it allows switching the terminal viewport small/large as needed,
+	// without destroying the backing store. For a complete solution, 
+	// Bug 196462 tracks the request for a user-defined fixed-widow-size-mode.
 	private int fMinColumns=20;
 	private int fMinLines=4;
 	private boolean fCursorEnabled;
@@ -304,18 +328,17 @@ public class TextCanvas extends GridCanvas {
 		// Bug 281328: [terminal] The very first few characters might be missing in
 		//             the terminal control if opened and connected programmatically
 		//
-		// In case the terminal had not been visible yet or is to small (less than one
+		// In case the terminal had not been visible yet or is too small (less than one
 		// line visible), the terminal should have a minimum size to avoid RuntimeExceptions.
-		//
-		// Bug 294327: Min lines 1 is sufficient to avoid the exception, and ensures
-		//             that on a new connection, the initial prompt is visible.
-		// MinColumns was changed from 20 to 80 in TM 3.1.1 -- Having MinColumns 80
-		// ensures that dumb terminals render properly. On a narrow Terminal, users
-		// will not see everything, but since the backing store is 80 wide they can
-		// always resize the terminal to see all. A better solution than guessing the
-		// MinColumns here should be implemented with bug 196462 (optional fixed-width).
-		setMinColumns(80); setMinLines(1);
-		onResize(true);
+		Rectangle bonds=getClientArea();
+		if (bonds.height<getCellHeight() || bonds.width<getCellWidth()) {
+			//Widget not realized yet, or minimized to < 1 item:
+			//Just tell the listener our min size
+			fResizeListener.sizeChanged(getMinLines(), getMinColumns());
+		} else {
+			//Widget realized: compute actual size and force telling the listener
+			onResize(true);
+		}
 	}
 
 	public void onFontChange() {

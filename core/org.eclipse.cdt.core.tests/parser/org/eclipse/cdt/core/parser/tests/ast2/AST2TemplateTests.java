@@ -4227,4 +4227,22 @@ public class AST2TemplateTests extends AST2BaseTest {
 		final String code= getAboveComment();
 		parseAndCheckBindings(code, ParserLanguage.CPP);
 	}
+	
+	//	template <typename T> void func(T* t) {};
+	//	template <typename T> void func(T& t) {};
+	//	void test() {
+	//	  int* a;
+	//	  func(a);
+	//	}
+	//
+	//	template <typename T> void func1(const T* const t) {};
+	//	template <typename T> void func1(T* const t) {};
+	//	void test2() {
+	//	  const int* a;
+	//	  func1  (a);
+	//	}
+	public void testFunctionTemplateOrdering_294539() throws Exception {
+		final String code= getAboveComment();
+		parseAndCheckBindings(code, ParserLanguage.CPP);
+	}
 }

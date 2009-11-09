@@ -653,7 +653,7 @@ public class CPPTemplates {
 			result[i]= tmplArg;
 		}
 		
-		if (!deduceTemplateParameterMapFromFunctionParameters(template, fnArgs, map)) 
+		if (!deduceTemplateParameterMapFromFunctionParameters(template, fnArgs, map, false)) 
 			return null;
 		
 		for (int i = 0; i < length; i++) {
@@ -1456,7 +1456,8 @@ public class CPPTemplates {
 	 * Deduces the mapping for the template parameters from the function parameters,
 	 * returns <code>false</code> if there is no mapping.
 	 */
-	private static boolean deduceTemplateParameterMapFromFunctionParameters(ICPPFunctionTemplate template, IType[] fnArgs, CPPTemplateParameterMap map) throws DOMException{
+	private static boolean deduceTemplateParameterMapFromFunctionParameters(ICPPFunctionTemplate template,
+			IType[] fnArgs, CPPTemplateParameterMap map, boolean checkExactMatch) throws DOMException {
 		try {
 			IType[] fnPars = template.getType().getParameterTypes();
 			if (fnPars.length == 0)
@@ -1474,7 +1475,8 @@ public class CPPTemplates {
 			
 			for (int j= 0; j < len; j++) {
 				IType par= instPars[j];
-				if (isDependentType(par)) {
+				boolean isDependentPar= isDependentType(par);
+				if (checkExactMatch || isDependentPar) {
 					par= SemanticUtil.getNestedType(par, SemanticUtil.TDEF); // adjustParameterType preserves typedefs
 					par= SemanticUtil.adjustParameterType(par, false);
 					// 14.8.2.1.2 and 14.8.2.1.3
@@ -1483,45 +1485,52 @@ public class CPPTemplates {
 					par= getParameterTypeForDeduction(par, isReferenceType);
 					
 					// 14.8.2.1.3
-					CVQualifier cvPar= SemanticUtil.getCVQualifier(par);
-					CVQualifier cvArg= SemanticUtil.getCVQualifier(arg);
-					if (cvPar == cvArg || (isReferenceType && cvPar.isAtLeastAsQualifiedAs(cvArg))) {
-						IType pcheck= SemanticUtil.getNestedType(par, CVTYPE);
-						if (!(pcheck instanceof ICPPTemplateParameter)) {
-							par= pcheck;
-							arg= SemanticUtil.getNestedType(arg, CVTYPE);
-							IType argcheck= arg;
-							if (par instanceof IPointerType && arg instanceof IPointerType) {
-								pcheck= ((IPointerType) par).getType();
-								argcheck= ((IPointerType) arg).getType();
-								if (pcheck instanceof ICPPTemplateParameter) {
-									pcheck= null;
-								} else {
-									cvPar= SemanticUtil.getCVQualifier(pcheck);
-									cvArg= SemanticUtil.getCVQualifier(argcheck);
-									if (cvPar.isAtLeastAsQualifiedAs(cvArg)) {
-										pcheck= SemanticUtil.getNestedType(pcheck, CVTYPE);
-										argcheck= SemanticUtil.getNestedType(argcheck, CVTYPE);
-									} else {
+					if (!checkExactMatch) {
+						CVQualifier cvPar= SemanticUtil.getCVQualifier(par);
+						CVQualifier cvArg= SemanticUtil.getCVQualifier(arg);
+						if (cvPar == cvArg || (isReferenceType && cvPar.isAtLeastAsQualifiedAs(cvArg))) {
+							IType pcheck= SemanticUtil.getNestedType(par, CVTYPE);
+							if (!(pcheck instanceof ICPPTemplateParameter)) {
+								par= pcheck;
+								arg= SemanticUtil.getNestedType(arg, CVTYPE);
+								IType argcheck= arg;
+								if (par instanceof IPointerType && arg instanceof IPointerType) {
+									pcheck= ((IPointerType) par).getType();
+									argcheck= ((IPointerType) arg).getType();
+									if (pcheck instanceof ICPPTemplateParameter) {
 										pcheck= null;
+									} else {
+										cvPar= SemanticUtil.getCVQualifier(pcheck);
+										cvArg= SemanticUtil.getCVQualifier(argcheck);
+										if (cvPar.isAtLeastAsQualifiedAs(cvArg)) {
+											pcheck= SemanticUtil.getNestedType(pcheck, CVTYPE);
+											argcheck= SemanticUtil.getNestedType(argcheck, CVTYPE);
+										} else {
+											pcheck= null;
+										}
 									}
 								}
-							}
-							if (pcheck instanceof ICPPTemplateInstance && argcheck instanceof ICPPClassType) {
-								ICPPTemplateInstance pInst = (ICPPTemplateInstance) pcheck;
-								ICPPClassTemplate pTemplate= getPrimaryTemplate(pInst);
-								if (pTemplate != null) {
-									ICPPClassType aInst= findBaseInstance((ICPPClassType) argcheck, pTemplate, CPPSemantics.MAX_INHERITANCE_DEPTH);	
-									if (aInst != null && aInst != argcheck) {
-										par= pcheck;
-										arg= aInst;
+								if (pcheck instanceof ICPPTemplateInstance && argcheck instanceof ICPPClassType) {
+									ICPPTemplateInstance pInst = (ICPPTemplateInstance) pcheck;
+									ICPPClassTemplate pTemplate= getPrimaryTemplate(pInst);
+									if (pTemplate != null) {
+										ICPPClassType aInst= findBaseInstance((ICPPClassType) argcheck, pTemplate, CPPSemantics.MAX_INHERITANCE_DEPTH);	
+										if (aInst != null && aInst != argcheck) {
+											par= pcheck;
+											arg= aInst;
+										}
 									}
 								}
 							}
 						}
 					}
-					if (!deduceTemplateParameterMap(par, arg, map)) {
+					if (isDependentPar && !deduceTemplateParameterMap(par, arg, map)) {
 						return false;
+					}
+					if (checkExactMatch) {
+						IType instantiated= instantiateType(par, map, null);
+						if (!instantiated.isSameType(arg))
+							return false;
 					}
 				}
 			}
@@ -1844,7 +1853,7 @@ public class CPPTemplates {
 		
 		CPPTemplateParameterMap map= new CPPTemplateParameterMap(2);
 		final IType[] transferredParameterTypes = ((ICPPFunction) transferredTemplate).getType().getParameterTypes();
-		if (!deduceTemplateParameterMapFromFunctionParameters(f2, transferredParameterTypes, map))
+		if (!deduceTemplateParameterMapFromFunctionParameters(f2, transferredParameterTypes, map, true))
 			return false;
 		
 		final ICPPTemplateParameter[] tmplParams = f2.getTemplateParameters();
@@ -1854,15 +1863,6 @@ public class CPPTemplates {
 				return false;
 		}
 		
-		// length can be different in case of varargs or default arguments
-		IType[] params= f2.getType().getParameterTypes();
-		final int len= Math.min(params.length, transferredParameterTypes.length);
-		for (int i = 0; i <len; i++) {
-			IType instantiated= instantiateType(params[i], map, null);
-			// we need to be able to compare class instances from different caches here
-			if (!instantiated.isSameType(transferredParameterTypes[i]))
-				return false;
-		}
 		return true;
 	}
 

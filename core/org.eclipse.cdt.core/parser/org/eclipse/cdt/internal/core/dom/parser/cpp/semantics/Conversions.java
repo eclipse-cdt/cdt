@@ -390,12 +390,17 @@ public class Conversions {
 							continue;
 						}
 					} else {
+						IType ptype= ptypes[0];
+						// We don't need to check the implicit conversion sequence it the type is void
+						if (ptype instanceof ICPPBasicType && ((ICPPBasicType) ptype).getKind() == Kind.eVoid)
+							continue;
 						if (ptypes.length > 1) {
 							IParameter[] pars = ctor.getParameters();
 							if (pars.length < 2 || !((ICPPParameter) pars[1]).hasDefaultValue())
 								continue;
+							
 						}
-						c1= checkImplicitConversionSequence(sourceIsLValue, source, ptypes[0], UDCMode.noUDC, false);
+						c1= checkImplicitConversionSequence(sourceIsLValue, source, ptype, UDCMode.noUDC, false);
 					}
 					int cmp= c1.compareTo(cost1);
 					if (cmp <= 0) {

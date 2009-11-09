@@ -353,9 +353,7 @@ public class CCorePlugin extends Plugin {
      *   (key type: <code>String</code>; value type: <code>String</code>)
      * @see #setOptions
      */
-    
-    public static HashMap<String, String> getDefaultOptions()
-    {
+    public static HashMap<String, String> getDefaultOptions() {
         HashMap<String, String> defaultOptions = new HashMap<String, String>(10);
 
         // see #initializeDefaultPluginPreferences() for changing default settings
@@ -378,7 +376,6 @@ public class CCorePlugin extends Plugin {
         return defaultOptions;
     }
 
-   
     /**
      * Helper method for returning one option value only. Equivalent to <code>(String)CCorePlugin.getOptions().get(optionName)</code>
      * Note that it may answer <code>null</code> if this option does not exist.
@@ -414,7 +411,6 @@ public class CCorePlugin extends Plugin {
      * @see CCorePlugin#getDefaultOptions
      */
     public static HashMap<String, String> getOptions() {
-        
         HashMap<String, String> options = new HashMap<String, String>(10);
 
         // see #initializeDefaultPluginPreferences() for changing default settings

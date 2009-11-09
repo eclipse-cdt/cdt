@@ -10,7 +10,6 @@
  *******************************************************************************/
 package org.eclipse.cdt.core.model;
 
-
 import java.util.Map;
 
 import org.eclipse.cdt.core.CCorePlugin;
@@ -168,7 +167,7 @@ public interface ICProject extends IParent, IOpenable, ICElement {
 	 *   (key type: <code>String</code>; value type: <code>String</code>)
 	 * @see CCorePlugin#getDefaultOptions
 	 */
-	Map<String,String> getOptions(boolean inheritCCoreOptions);
+	Map<String, String> getOptions(boolean inheritCCoreOptions);
 
 	/**
 	 * Helper method for setting one option value only. Equivalent to <code>Map options = this.getOptions(false); map.put(optionName, optionValue); this.setOptions(map)</code>

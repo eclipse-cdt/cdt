@@ -238,7 +238,7 @@ public class CEditor extends TextEditor implements ISelectionChangedListener, IC
 		public void gotoMarker(IMarker marker) {
 			if (fIsUpdatingMarkerViews)
 				return;
-			
+
 			if (getSourceViewer() == null)
 				return;
 

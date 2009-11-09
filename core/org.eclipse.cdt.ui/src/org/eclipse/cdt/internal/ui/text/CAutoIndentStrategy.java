@@ -566,18 +566,20 @@ public class CAutoIndentStrategy extends DefaultIndentLineAutoEditStrategy {
 				firstLine= 0;
 			}
 
-			// prefix: the part we need for formatting but won't paste
-			IRegion refLine= document.getLineInformationOfOffset(refOffset);
-			String prefix= document.get(refLine.getOffset(), newOffset - refLine.getOffset());
+			// Prefix: the part we need for formatting but won't paste.
+			// Take up to 100 previous lines to preserve enough context.
+			int firstPrefixLine= Math.max(document.getLineOfOffset(refOffset) - 100, 0);
+			int prefixOffset= document.getLineInformation(firstPrefixLine).getOffset();
+			String prefix= document.get(prefixOffset, newOffset - prefixOffset);
 
-			// handle the indentation computation inside a temporary document
+			// Handle the indentation computation inside a temporary document
 			Document temp= new Document(prefix + newText);
 			DocumentRewriteSession session= temp.startRewriteSession(DocumentRewriteSessionType.STRICTLY_SEQUENTIAL);
 			scanner= new CHeuristicScanner(temp);
 			indenter= new CIndenter(temp, scanner, fProject);
 			installCPartitioner(temp);
 
-			// indent the first and second line
+			// Indent the first and second line
 			// compute the relative indentation difference from the second line
 			// (as the first might be partially selected) and use the value to
 			// indent all other lines.

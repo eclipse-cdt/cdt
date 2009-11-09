@@ -25,7 +25,7 @@ class CompositeCPPTypedef extends CompositeCPPBinding implements ITypedef, IInde
 
 	public IType getType() {
 		IType type = ((ITypedef)rbinding).getType();
-		return cf.getCompositeType((IIndexType)type);
+		return cf.getCompositeType(type);
 	}
 
 	public boolean isSameType(IType type) {

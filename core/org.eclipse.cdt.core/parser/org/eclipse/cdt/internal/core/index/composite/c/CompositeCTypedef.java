@@ -24,7 +24,7 @@ class CompositeCTypedef extends CompositeCBinding implements ITypedef, IIndexTyp
 
 	public IType getType() {
 		IType type = ((ITypedef)rbinding).getType();
-		return cf.getCompositeType((IIndexType)type);
+		return cf.getCompositeType(type);
 	}
 
 	public boolean isSameType(IType type) {

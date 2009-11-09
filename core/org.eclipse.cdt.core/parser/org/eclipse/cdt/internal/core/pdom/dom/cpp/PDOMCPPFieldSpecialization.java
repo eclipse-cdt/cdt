@@ -31,22 +31,12 @@ import org.eclipse.core.runtime.CoreException;
 /**
  * Binding for a specialization of a field, used in the index.
  */
-class PDOMCPPFieldSpecialization extends PDOMCPPSpecialization implements
-		ICPPField {
+class PDOMCPPFieldSpecialization extends PDOMCPPSpecialization implements ICPPField {
 
-	private static final int TYPE = PDOMCPPSpecialization.RECORD_SIZE + 0;
-	
-	/**
-	 * Offset of pointer to value information for this variable
-	 * (relative to the beginning of the record).
-	 */
-	private static final int VALUE_OFFSET = PDOMBinding.RECORD_SIZE + 4;
-
-	/**
-	 * The size in bytes of a PDOMCPPFieldSpecialization record in the database.
-	 */
+	private static final int TYPE_OFFSET = PDOMCPPSpecialization.RECORD_SIZE + 0;
+	private static final int VALUE_OFFSET = TYPE_OFFSET + Database.TYPE_SIZE;
 	@SuppressWarnings("hiding")
-	protected static final int RECORD_SIZE = PDOMCPPSpecialization.RECORD_SIZE + 8;
+	protected static final int RECORD_SIZE = VALUE_OFFSET + Database.PTR_SIZE;
 	
 	public PDOMCPPFieldSpecialization(PDOMLinkage linkage, PDOMNode parent,
 			ICPPField field, PDOMBinding specialized)
@@ -55,13 +45,8 @@ class PDOMCPPFieldSpecialization extends PDOMCPPSpecialization implements
 		
 		try {
 			final Database db = getDB();
-			IType type = field.getType();
-			PDOMNode typeNode = linkage.addType(this, type);
-			if (typeNode != null) {
-				db.putRecPtr(record + TYPE, typeNode.getRecord());
-			}
-			IValue val= field.getInitialValue();
-			long rec= PDOMValue.store(db, linkage, val);
+			linkage.storeType(record + TYPE_OFFSET, field.getType());
+			long rec= PDOMValue.store(db, linkage, field.getInitialValue());
 			db.putRecPtr(record + VALUE_OFFSET, rec);
 		} catch (DOMException e) {
 			throw new CoreException(Util.createStatus(e));
@@ -92,10 +77,7 @@ class PDOMCPPFieldSpecialization extends PDOMCPPSpecialization implements
 
 	public IType getType() throws DOMException {
 		try {
-			PDOMNode node = getLinkage().getNode(getDB().getRecPtr(record + TYPE));
-			if (node instanceof IType) {
-				return (IType) node;
-			}
+			return getLinkage().loadType(record + TYPE_OFFSET);
 		} catch (CoreException e) {
 			CCorePlugin.log(e);
 		}

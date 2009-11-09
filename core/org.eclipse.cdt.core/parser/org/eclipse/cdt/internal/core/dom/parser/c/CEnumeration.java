@@ -6,7 +6,7 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *     IBM Corporation - initial API and implementation
+ *     Andrew Niefer (IBM Corporation) - initial API and implementation
  *     Markus Schorn (Wind River Systems)
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.dom.parser.c;
@@ -28,12 +28,12 @@ import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.ITypedef;
 import org.eclipse.cdt.core.dom.ast.c.ICASTElaboratedTypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.c.ICASTEnumerationSpecifier;
+import org.eclipse.cdt.core.index.IIndexBinding;
 import org.eclipse.cdt.internal.core.dom.Linkage;
-import org.eclipse.cdt.internal.core.index.IIndexType;
 import org.eclipse.core.runtime.PlatformObject;
 
 /**
- * @author aniefer
+ * Binding for enumerations in C.
  */
 public class CEnumeration extends PlatformObject implements IEnumeration, ICInternalBinding {
 
@@ -155,7 +155,7 @@ public class CEnumeration extends PlatformObject implements IEnumeration, ICInte
     public boolean isSameType(IType type) {
         if (type == this)
             return true;
-        if (type instanceof ITypedef || type instanceof IIndexType)
+        if (type instanceof ITypedef || type instanceof IIndexBinding)
             return type.isSameType(this);
 
         return false;

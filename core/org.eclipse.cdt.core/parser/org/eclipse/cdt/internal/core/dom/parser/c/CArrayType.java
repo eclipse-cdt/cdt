@@ -11,7 +11,6 @@
 package org.eclipse.cdt.internal.core.dom.parser.c;
 
 import org.eclipse.cdt.core.dom.ast.ASTTypeUtil;
-import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IASTExpression;
 import org.eclipse.cdt.core.dom.ast.IArrayType;
 import org.eclipse.cdt.core.dom.ast.IType;
@@ -20,36 +19,55 @@ import org.eclipse.cdt.core.dom.ast.IValue;
 import org.eclipse.cdt.core.dom.ast.c.ICASTArrayModifier;
 import org.eclipse.cdt.core.dom.ast.c.ICArrayType;
 import org.eclipse.cdt.core.parser.util.CharArrayUtils;
+import org.eclipse.cdt.internal.core.dom.parser.ISerializableType;
 import org.eclipse.cdt.internal.core.dom.parser.ITypeContainer;
+import org.eclipse.cdt.internal.core.dom.parser.ITypeMarshalBuffer;
 import org.eclipse.cdt.internal.core.dom.parser.Value;
-import org.eclipse.cdt.internal.core.index.IIndexType;
+import org.eclipse.core.runtime.CoreException;
 
-public class CArrayType implements ICArrayType, ITypeContainer {
+public class CArrayType implements ICArrayType, ITypeContainer, ISerializableType {
 	IType type;
-	ICASTArrayModifier mod;
+    private IASTExpression sizeExpression;
+    private IValue value= Value.NOT_INITIALIZED;
+    private boolean isConst;
+    private boolean isVolatile;
+    private boolean isRestrict;
+    private boolean isStatic;
+	private boolean isVariableSized;
 	
 	public CArrayType(IType type) {
 		this.type = type;
 	}
+
+	public CArrayType(IType type, boolean isConst, boolean isVolatile, boolean isRestrict, IValue size) {
+		this.type= type;
+		this.isConst= isConst;
+		this.isVolatile= isVolatile;
+		this.isRestrict= isRestrict;
+		this.value= size;
+	}
 	
+	public void setIsStatic(boolean val) {
+		isStatic= val;
+	}
+	public void setIsVariableLength(boolean val) {
+		isVariableSized= val;
+	}
+
     public boolean isSameType(IType obj) {
         if (obj == this)
             return true;
-        if (obj instanceof ITypedef || obj instanceof IIndexType)
+        if (obj instanceof ITypedef)
             return obj.isSameType(this);
         if (obj instanceof ICArrayType) {
         	ICArrayType at = (ICArrayType) obj;
-        	try {
-        		if (isConst() != at.isConst()) return false;
-        		if (isRestrict() != at.isRestrict()) return false;
-        		if (isStatic() != at.isStatic()) return false;
-        		if (isVolatile() != at.isVolatile()) return false;
-        		if (isVariableLength() != at.isVariableLength()) return false;
+        	if (isConst() != at.isConst()) return false;
+			if (isRestrict() != at.isRestrict()) return false;
+			if (isStatic() != at.isStatic()) return false;
+			if (isVolatile() != at.isVolatile()) return false;
+			if (isVariableLength() != at.isVariableLength()) return false;
 
-        		return at.getType().isSameType(type) && hasSameSize(at);
-        	} catch (DOMException e) {
-        		return false;
-        	}
+			return at.getType().isSameType(type) && hasSameSize(at);
         }
     	return false;
     }
@@ -76,68 +94,42 @@ public class CArrayType implements ICArrayType, ITypeContainer {
 	}
 	
 	public void setModifier(ICASTArrayModifier mod) {
-		this.mod = mod;
+		isConst= mod.isConst();
+		isVolatile= mod.isVolatile();
+		isRestrict= mod.isRestrict();
+		isStatic= mod.isStatic();
+		isVariableSized= mod.isVariableSized();
+		sizeExpression= mod.getConstantExpression();
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.dom.ast.c.ICArrayType#isConst()
-	 */
 	public boolean isConst() {
-		if (mod == null) return false;
-		return mod.isConst();
+		return isConst;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.dom.ast.c.ICArrayType#isRestrict()
-	 */
 	public boolean isRestrict() {
-		if (mod == null) return false;
-		return mod.isRestrict();
+		return isRestrict;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.dom.ast.c.ICArrayType#isVolatile()
-	 */
 	public boolean isVolatile() {
-		if (mod == null) return false;
-		return mod.isVolatile();
+		return isVolatile;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.dom.ast.c.ICArrayType#isStatic()
-	 */
 	public boolean isStatic() {
-		if (mod == null) return false;
-		return mod.isStatic();
+		return isStatic;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.dom.ast.c.ICArrayType#isVariableLength()
-	 */
 	public boolean isVariableLength() {
-		if (mod == null) return false;
-		return mod.isVariableSized();
+		return isVariableSized;
 	}
-
-    public ICASTArrayModifier getModifier() {
-        return mod;
-    }
 
     public IValue getSize() {
-    	if (mod != null) {
-    		IASTExpression sizeExpression = mod.getConstantExpression();
-    		if (sizeExpression != null) {
-    			return Value.create(sizeExpression, Value.MAX_RECURSION_DEPTH);
-    		}
-    	}
-    	return null;
-    }
+    	if (value != Value.NOT_INITIALIZED)
+    		return value;
+    	
+    	if (sizeExpression == null)
+    		return value= null;
 
-	@Deprecated
-    public IASTExpression getArraySizeExpression() {
-        if (mod != null)
-            return mod.getConstantExpression();
-        return null;
+    	return value= Value.create(sizeExpression, Value.MAX_RECURSION_DEPTH);
     }
 
     @Override
@@ -155,4 +147,70 @@ public class CArrayType implements ICArrayType, ITypeContainer {
 	public String toString() {
 		return ASTTypeUtil.getType(this);
 	}
+
+	
+	public void marshal(ITypeMarshalBuffer buffer) throws CoreException {
+		int firstByte= ITypeMarshalBuffer.ARRAY;
+		int flags= 0;
+		short nval= -1;
+		IValue val= null;
+
+		if (isConst()) flags |= 0x01;
+		if (isVolatile()) flags |= 0x02;
+		if (isRestrict()) flags |= 0x04;
+		if (isStatic()) flags |= 0x08;
+		if (isVariableLength()) flags |= 0x10;
+		if (flags != 0) {
+			firstByte |= ITypeMarshalBuffer.FLAG1;
+		}
+
+
+		val= getSize();
+		if (val != null) {
+			firstByte |= ITypeMarshalBuffer.FLAG2;
+			Long num= val.numericalValue();
+			if (num != null) {
+				long l= num;
+				if (l>=0 && l <= Short.MAX_VALUE) {
+					nval= (short) l;
+					firstByte |= ITypeMarshalBuffer.FLAG3;
+				} 
+			}
+		}
+		buffer.putByte((byte) firstByte);
+		if (flags != 0) {
+			buffer.putByte((byte) flags);
+		}
+		if (nval >= 0) {
+			buffer.putShort(nval);
+		} else if (val != null) {
+			buffer.putValue(val);
+		}
+		buffer.marshalType(getType());
+	}
+
+	public static IType unmarshal(int firstByte, ITypeMarshalBuffer buffer) throws CoreException {
+		int flags= 0;
+		IValue value= null;
+		if ( (firstByte & ITypeMarshalBuffer.FLAG1) != 0) {
+			flags= buffer.getByte();
+		}
+		if ((firstByte & ITypeMarshalBuffer.FLAG3) != 0) {
+			value = Value.create(buffer.getShort());
+		} else if ((firstByte & ITypeMarshalBuffer.FLAG2) != 0) {
+			value = buffer.getValue();
+		}
+		IType nested= buffer.unmarshalType();		
+		CArrayType result= new CArrayType(nested, (flags & 0x01) != 0, (flags & 0x02) != 0, (flags & 0x04) != 0, value);
+		result.setIsStatic((flags & 0x08) != 0);
+		result.setIsVariableLength((flags & 0x10) != 0);
+		return result;
+	}
+	
+	@Deprecated
+    public IASTExpression getArraySizeExpression() {
+        if (sizeExpression != null)
+            return sizeExpression;
+        return null;
+    }
 }

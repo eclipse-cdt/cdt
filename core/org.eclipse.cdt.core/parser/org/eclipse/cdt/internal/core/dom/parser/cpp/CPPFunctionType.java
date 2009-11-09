@@ -18,12 +18,15 @@ import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.ITypedef;
 import org.eclipse.cdt.core.dom.ast.IBasicType.Kind;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunctionType;
+import org.eclipse.cdt.internal.core.dom.parser.ISerializableType;
+import org.eclipse.cdt.internal.core.dom.parser.ITypeMarshalBuffer;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.SemanticUtil;
+import org.eclipse.core.runtime.CoreException;
 
 /**
  * Represents c++ function types. Note that we keep typedefs as part of the function type.
  */
-public class CPPFunctionType implements ICPPFunctionType {
+public class CPPFunctionType implements ICPPFunctionType, ISerializableType {
     private IType[] parameters;
     private IType returnType;
     private boolean isConst;
@@ -125,5 +128,42 @@ public class CPPFunctionType implements ICPPFunctionType {
 	@Override
 	public String toString() {
 		return ASTTypeUtil.getType(this);
+	}
+
+	public void marshal(ITypeMarshalBuffer buffer) throws CoreException {
+		int firstByte= ITypeMarshalBuffer.FUNCTION_TYPE;
+		if (isConst()) firstByte |= ITypeMarshalBuffer.FLAG1;
+		if (isVolatile()) firstByte |= ITypeMarshalBuffer.FLAG2;
+		
+		int len= (parameters.length & 0xffff);
+		if (len > 0xff) {
+			firstByte |= ITypeMarshalBuffer.FLAG3;
+			buffer.putByte((byte) firstByte);
+			buffer.putShort((short) len);
+		} else {
+			buffer.putByte((byte) firstByte);
+			buffer.putByte((byte) len);
+		}
+		
+		buffer.marshalType(returnType);
+		for (int i = 0; i < len; i++) {
+			buffer.marshalType(parameters[i]);
+		}
+	}
+	
+	public static IType unmarshal(int firstByte, ITypeMarshalBuffer buffer) throws CoreException {
+		int len;
+		if (((firstByte & ITypeMarshalBuffer.FLAG3) != 0)) {
+			len= buffer.getShort();
+		} else {
+			len= buffer.getByte();
+		}
+		IType rt= buffer.unmarshalType();
+		IType[] pars= new IType[len];
+		for (int i = 0; i < pars.length; i++) {
+			pars[i]= buffer.unmarshalType();
+		}
+		return new CPPFunctionType(rt, pars, (firstByte & ITypeMarshalBuffer.FLAG1) != 0,
+				(firstByte & ITypeMarshalBuffer.FLAG2) != 0);
 	}
 }

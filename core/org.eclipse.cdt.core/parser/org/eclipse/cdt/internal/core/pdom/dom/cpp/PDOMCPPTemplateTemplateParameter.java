@@ -51,16 +51,12 @@ public class PDOMCPPTemplateTemplateParameter extends PDOMCPPBinding
 		implements ICPPTemplateTemplateParameter, ICPPUnknownBinding, ICPPUnknownType, IIndexType, 
 		IPDOMCPPTemplateParameter, IPDOMCPPTemplateParameterOwner {
 
-	private static final int DEFAULT_TYPE = PDOMCPPBinding.RECORD_SIZE + 0;	
-	private static final int MEMBERLIST = PDOMCPPBinding.RECORD_SIZE + 4;
-	private static final int PARAMETERID= PDOMCPPBinding.RECORD_SIZE + 8;
-	private static final int PARAMETERS= PDOMCPPBinding.RECORD_SIZE + 12;
-
-	/**
-	 * The size in bytes of a PDOMCPPTemplateTypeParameter record in the database.
-	 */
+	private static final int DEFAULT_TYPE = PDOMCPPBinding.RECORD_SIZE;	
+	private static final int MEMBERLIST = DEFAULT_TYPE + Database.TYPE_SIZE;
+	private static final int PARAMETERID= MEMBERLIST + Database.PTR_SIZE;
+	private static final int PARAMETERS= PARAMETERID + 4;
 	@SuppressWarnings("hiding")
-	protected static final int RECORD_SIZE = PDOMCPPBinding.RECORD_SIZE + 14;
+	protected static final int RECORD_SIZE = PARAMETERS + Database.PTR_SIZE;
 	
 	private ICPPScope fUnknownScope;
 	private int fCachedParamID= -1;
@@ -144,10 +140,7 @@ public class PDOMCPPTemplateTemplateParameter extends PDOMCPPBinding
 
 	public IType getDefault() {
 		try {
-			PDOMNode node = getLinkage().getNode(getDB().getRecPtr(record + DEFAULT_TYPE));
-			if (node instanceof IType) {
-				return (IType) node;
-			}
+			return getLinkage().loadType(record + DEFAULT_TYPE);
 		} catch (CoreException e) {
 			CCorePlugin.log(e);
 		}
@@ -183,11 +176,7 @@ public class PDOMCPPTemplateTemplateParameter extends PDOMCPPBinding
 			if (val != null) {
 				IType dflt= val.getTypeValue();
 				if (dflt != null) {
-					final Database db= getPDOM().getDB();
-					PDOMNode typeNode = getLinkage().addType(this, dflt);
-					if (typeNode != null) {
-						db.putRecPtr(record + DEFAULT_TYPE, typeNode.getRecord());
-					}
+					getLinkage().storeType(record + DEFAULT_TYPE, dflt);
 				}
 			}
 		} catch (CoreException e) {
@@ -208,13 +197,7 @@ public class PDOMCPPTemplateTemplateParameter extends PDOMCPPBinding
 				// ignore
 			}
 			if (newDefault != null) {
-				IType mytype= getDefault();
-				PDOMNode typeNode = getLinkage().addType(this, newDefault);
-				if (typeNode != null) {
-					db.putRecPtr(record + DEFAULT_TYPE, typeNode.getRecord());
-					if (mytype != null) 
-						linkage.deleteType(mytype, record);
-				}
+				linkage.storeType(record + DEFAULT_TYPE, newDefault);
 			}
 			long oldRec= db.getRecPtr(record + PARAMETERS);
 			IPDOMCPPTemplateParameter[] oldParams= getTemplateParameters();
@@ -234,15 +217,9 @@ public class PDOMCPPTemplateTemplateParameter extends PDOMCPPBinding
 
 	public void forceDelete(PDOMLinkage linkage) throws CoreException {
 		getDBName().delete();
-		IType type= getDefault();
-		if (type instanceof PDOMNode) {
-			((PDOMNode) type).delete(linkage);
-		}
-		Database db= getDB();
-		long valueRec= db.getRecPtr(record + DEFAULT_TYPE);
-		if (valueRec != 0)
-			db.getString(valueRec).delete();
+		linkage.storeType(record + DEFAULT_TYPE, null);
 
+		final Database db= getDB();
 		long oldRec= db.getRecPtr(record + PARAMETERS);
 		IPDOMCPPTemplateParameter[] oldParams= getTemplateParameters();
 		if (oldRec != 0)

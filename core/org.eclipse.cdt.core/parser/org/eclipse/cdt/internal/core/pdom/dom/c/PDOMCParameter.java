@@ -14,13 +14,10 @@ package org.eclipse.cdt.internal.core.pdom.dom.c;
 
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.dom.ast.DOMException;
-import org.eclipse.cdt.core.dom.ast.IASTInitializer;
 import org.eclipse.cdt.core.dom.ast.IParameter;
-import org.eclipse.cdt.core.dom.ast.IProblemBinding;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.IValue;
 import org.eclipse.cdt.core.index.IIndexFile;
-import org.eclipse.cdt.internal.core.Util;
 import org.eclipse.cdt.internal.core.index.IIndexCBindingConstants;
 import org.eclipse.cdt.internal.core.index.IIndexFragment;
 import org.eclipse.cdt.internal.core.index.IIndexScope;
@@ -35,43 +32,32 @@ import org.eclipse.core.runtime.CoreException;
 /**
  * Binding for a function parameter in the index.
  */
-class PDOMCParameter extends PDOMNamedNode implements IParameter, IPDOMBinding {
+final class PDOMCParameter extends PDOMNamedNode implements IParameter, IPDOMBinding {
 
-	private static final int NEXT_PARAM = PDOMNamedNode.RECORD_SIZE + 0;
-	private static final int TYPE = PDOMNamedNode.RECORD_SIZE + 4;
-	
-	protected static final int FLAGS = PDOMNamedNode.RECORD_SIZE + 8;
-	
+	private static final int NEXT_PARAM = PDOMNamedNode.RECORD_SIZE;
+	private static final int FLAG_OFFSET = NEXT_PARAM + Database.PTR_SIZE;	
 	@SuppressWarnings("hiding")
-	public static final int RECORD_SIZE = PDOMNamedNode.RECORD_SIZE + 9;
+	public static final int RECORD_SIZE = FLAG_OFFSET + 1;
 	static {
 		assert RECORD_SIZE <= 22; // 23 would yield a 32-byte block
 	}
 	
-	public PDOMCParameter(PDOMLinkage linkage, long record) {
+	private final IType fType;
+	public PDOMCParameter(PDOMLinkage linkage, long record, IType type) {
 		super(linkage, record);
+		fType= type;
 	}
 
-	public PDOMCParameter(PDOMLinkage linkage, PDOMNode parent, IParameter param)
+	public PDOMCParameter(PDOMLinkage linkage, PDOMNode parent, IParameter param, PDOMCParameter next)
 			throws CoreException {
 		super(linkage, parent, param.getNameCharArray());
+		fType= null; // this constructor is used for adding parameters to the database, only.
 		
 		Database db = getDB();
 
 		db.putRecPtr(record + NEXT_PARAM, 0);
-		try {
-			if(!(param instanceof IProblemBinding)) {
-				IType type = param.getType();
-				if (type != null) {
-					PDOMNode typeNode = getLinkage().addType(this, type);
-					db.putRecPtr(record + TYPE, typeNode != null ? typeNode.getRecord() : 0);
-				}
-				byte flags = encodeFlags(param);
-				db.putByte(record + FLAGS, flags);
-			}
-		} catch(DOMException e) {
-			throw new CoreException(Util.createStatus(e));
-		}
+		db.putRecPtr(record + NEXT_PARAM, next == null ? 0 : next.getRecord());
+		db.putByte(record + FLAG_OFFSET, encodeFlags(param));
 	}
 
 	@Override
@@ -83,31 +69,9 @@ class PDOMCParameter extends PDOMNamedNode implements IParameter, IPDOMBinding {
 	public int getNodeType() {
 		return IIndexCBindingConstants.CPARAMETER;
 	}
-	
-	public void setNextParameter(PDOMCParameter nextParam) throws CoreException {
-		long rec = nextParam != null ? nextParam.getRecord() : 0;
-		getDB().putRecPtr(record + NEXT_PARAM, rec);
-	}
-
-	public PDOMCParameter getNextParameter() throws CoreException {
-		long rec = getDB().getRecPtr(record + NEXT_PARAM);
-		return rec != 0 ? new PDOMCParameter(getLinkage(), rec) : null;
-	}
-	
-	public IASTInitializer getDefaultValue() {
-		return null;
-//		TODO throw new PDOMNotImplementedError();
-	}
-
+		
 	public IType getType() {
-		try {
-			PDOMLinkage linkage = getLinkage(); 
-			PDOMNode node = linkage.getNode(getDB().getRecPtr(record + TYPE));
-			return node instanceof IType ? (IType)node : null;
-		} catch (CoreException e) {
-			CCorePlugin.log(e);
-			return null;
-		}
+		return fType;
 	}
 
 	public boolean isAuto() throws DOMException {
@@ -115,17 +79,9 @@ class PDOMCParameter extends PDOMNamedNode implements IParameter, IPDOMBinding {
 		return hasFlag(flag, true);
 	}
 
-	public boolean isExtern() throws DOMException {
-		throw new PDOMNotImplementedError();
-	}
-
 	public boolean isRegister() throws DOMException {
 		byte flag = 1<<PDOMCAnnotation.REGISTER_OFFSET;
 		return hasFlag(flag, false);
-	}
-
-	public boolean isStatic() throws DOMException {
-		throw new PDOMNotImplementedError();
 	}
 
 	public String getName() {
@@ -187,14 +143,18 @@ class PDOMCParameter extends PDOMNamedNode implements IParameter, IPDOMBinding {
 	
 	@Override
 	public void delete(PDOMLinkage linkage) throws CoreException {
-		linkage.deleteType(getType(), record);
-		PDOMCParameter next= getNextParameter();
-		if (next != null) {
-			next.delete(linkage);
+		long rec = getNextPtr();
+		if (rec != 0) {
+			new PDOMCParameter(linkage, rec, null).delete(linkage);
 		}
 		super.delete(linkage);
 	}
 	
+	public long getNextPtr() throws CoreException {
+		long rec = getDB().getRecPtr(record + NEXT_PARAM);
+		return rec;
+	}
+
 	public boolean isFileLocal() throws CoreException {
 		return false;
 	}
@@ -221,7 +181,7 @@ class PDOMCParameter extends PDOMNamedNode implements IParameter, IPDOMBinding {
 
 	protected boolean hasFlag(byte flag, boolean defValue) {
 		try {
-			byte myflags= getDB().getByte(record + FLAGS);
+			byte myflags= getDB().getByte(record + FLAG_OFFSET);
 			return (myflags & flag) == flag;
 		} catch (CoreException e) {
 			CCorePlugin.log(e);
@@ -229,4 +189,12 @@ class PDOMCParameter extends PDOMNamedNode implements IParameter, IPDOMBinding {
 		return defValue;
 	}
 	
+	
+	public boolean isExtern() throws DOMException {
+		return false;
+	}
+
+	public boolean isStatic() throws DOMException {
+		return false;
+	}
 }

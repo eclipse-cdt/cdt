@@ -18,10 +18,13 @@ import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.ITypedef;
 import org.eclipse.cdt.core.dom.ast.IValue;
 import org.eclipse.cdt.core.parser.util.CharArrayUtils;
+import org.eclipse.cdt.internal.core.dom.parser.ISerializableType;
 import org.eclipse.cdt.internal.core.dom.parser.ITypeContainer;
+import org.eclipse.cdt.internal.core.dom.parser.ITypeMarshalBuffer;
 import org.eclipse.cdt.internal.core.dom.parser.Value;
+import org.eclipse.core.runtime.CoreException;
 
-public class CPPArrayType implements IArrayType, ITypeContainer {
+public class CPPArrayType implements IArrayType, ITypeContainer, ISerializableType {
     private IType type;
     private IASTExpression sizeExpression;
     private IValue value= Value.NOT_INITIALIZED;
@@ -101,5 +104,41 @@ public class CPPArrayType implements IArrayType, ITypeContainer {
 	@Override
 	public String toString() {
 		return ASTTypeUtil.getType(this);
+	}
+
+	public void marshal(ITypeMarshalBuffer buffer) throws CoreException {
+		final byte firstByte = ITypeMarshalBuffer.ARRAY;
+
+		IValue val= getSize();
+		if (val == null) {
+			buffer.putByte(firstByte);
+			buffer.marshalType(getType());
+			return;
+		} 
+		
+		Long num= val.numericalValue();
+		if (num != null) {
+			long lnum= num;
+			if (lnum >= 0 && lnum <= Short.MAX_VALUE) {
+				buffer.putByte((byte) (firstByte | ITypeMarshalBuffer.FLAG1));
+				buffer.putShort((short) lnum);
+				buffer.marshalType(getType());
+				return;
+			} 
+		}
+		buffer.putByte((byte) (firstByte | ITypeMarshalBuffer.FLAG2));
+		buffer.putValue(val);
+		buffer.marshalType(getType());
+	}
+
+	public static IType unmarshal(int firstByte, ITypeMarshalBuffer buffer) throws CoreException {
+		IValue value= null;
+		if ((firstByte & ITypeMarshalBuffer.FLAG1) != 0) {
+			value = Value.create(buffer.getShort());
+		} else if ((firstByte & ITypeMarshalBuffer.FLAG2) != 0) {
+			value = buffer.getValue();
+		}
+		IType nested= buffer.unmarshalType();
+		return new CPPArrayType(nested, value);
 	}
 }

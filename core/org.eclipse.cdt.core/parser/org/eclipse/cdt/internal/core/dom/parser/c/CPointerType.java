@@ -13,9 +13,12 @@ package org.eclipse.cdt.internal.core.dom.parser.c;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.ITypedef;
 import org.eclipse.cdt.core.dom.ast.c.ICPointerType;
+import org.eclipse.cdt.internal.core.dom.parser.ISerializableType;
 import org.eclipse.cdt.internal.core.dom.parser.ITypeContainer;
+import org.eclipse.cdt.internal.core.dom.parser.ITypeMarshalBuffer;
+import org.eclipse.core.runtime.CoreException;
 
-public class CPointerType implements ICPointerType, ITypeContainer {
+public class CPointerType implements ICPointerType, ITypeContainer, ISerializableType {
 	static public final int IS_CONST       = 1;
 	static public final int IS_RESTRICT    = 1 << 1;
 	static public final int IS_VOLATILE    = 1 << 2;
@@ -92,5 +95,19 @@ public class CPointerType implements ICPointerType, ITypeContainer {
 
 	public void setQualifiers(int qualifiers) {
 		this.qualifiers = qualifiers;
+	}
+
+	public void marshal(ITypeMarshalBuffer buffer) throws CoreException {
+		int firstByte= ITypeMarshalBuffer.POINTER;
+		if (isConst()) firstByte |= ITypeMarshalBuffer.FLAG1;
+		if (isVolatile()) firstByte |= ITypeMarshalBuffer.FLAG2;
+		if (isRestrict()) firstByte |= ITypeMarshalBuffer.FLAG3;
+		buffer.putByte((byte) firstByte);
+		buffer.marshalType(getType());
+	}
+	
+	public static IType unmarshal(int firstByte, ITypeMarshalBuffer buffer) throws CoreException {
+		IType nested= buffer.unmarshalType();
+		return new CPointerType(nested, firstByte/ITypeMarshalBuffer.FLAG1);
 	}
 }

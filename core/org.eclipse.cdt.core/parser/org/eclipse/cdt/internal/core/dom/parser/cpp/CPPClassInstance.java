@@ -25,7 +25,6 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateArgument;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateDefinition;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateInstance;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPTemplates;
-import org.eclipse.cdt.internal.core.index.IIndexType;
 
 /**
  * The result of instantiating a class template.
@@ -68,7 +67,7 @@ public class CPPClassInstance extends CPPClassSpecialization implements ICPPTemp
 	public boolean isSameType(IType type) {
 		if (type == this)
 			return true;
-		if (type instanceof ITypedef || type instanceof IIndexType)
+		if (type instanceof ITypedef)
 			return type.isSameType(this);
 
 		return isSameClassInstance(this, type);

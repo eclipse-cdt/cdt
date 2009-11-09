@@ -84,47 +84,45 @@ final class Chunk {
 		assert fLocked;
 		fDirty= true;
 		int idx= recPtrToIndex( offset );
-		fBuffer[idx]=   (byte)(value >> 24);
-		fBuffer[++idx]= (byte)(value >> 16);
-		fBuffer[++idx]= (byte)(value >> 8);
-		fBuffer[++idx]= (byte)(value);
+		putInt(value, fBuffer, idx);
 	}
+
+	static final void putInt(final int value, final byte[] buffer, int idx) {
+		buffer[idx]=   (byte)(value >> 24);
+		buffer[++idx]= (byte)(value >> 16);
+		buffer[++idx]= (byte)(value >> 8);
+		buffer[++idx]= (byte)(value);
+	}
+
 	
 	public int getInt(final long offset) {
-		int idx= recPtrToIndex( offset );
-		return ((fBuffer[idx] & 0xff) << 24) |
-			((fBuffer[++idx] & 0xff) << 16) |
-			((fBuffer[++idx] & 0xff) <<  8) |
-			((fBuffer[++idx] & 0xff) <<  0);
+		return getInt(fBuffer, recPtrToIndex(offset));
 	}
-	
-	/*
-	 * A Record Pointer is a pointer as returned by Database.malloc().
-	 * This is a pointer to a block + BLOCK_HEADER_SIZE.
-	 * 
+
+	static final int getInt(final byte[] buffer, int idx) {
+		return ((buffer[idx] & 0xff) << 24) |
+			((buffer[++idx] & 0xff) << 16) |
+			((buffer[++idx] & 0xff) <<  8) |
+			((buffer[++idx] & 0xff) <<  0);
+	}
+
+
+	/**
 	 * A free Record Pointer is a pointer to a raw block, i.e. the
 	 * pointer is not moved past the BLOCK_HEADER_SIZE.
 	 */
-	public void putRecPtr(final long offset, final long value) {
-		putFreeRecPtr(offset, value == 0 ? value : value - Database.BLOCK_HEADER_SIZE);
-	}
-	
-	public void putFreeRecPtr(final long offset, final long value) {
-		/*
-		 * This assert verifies the alignment. We expect the low bits to be clear.
-		 */
+	private static int compressFreeRecPtr(final long value) {
+		// This assert verifies the alignment. We expect the low bits to be clear.
 		assert (value & (Database.BLOCK_SIZE_DELTA - 1)) == 0;
-		putInt(offset, (int) (value >> Database.BLOCK_SIZE_DELTA_BITS));
+		final int dense = (int) (value >> Database.BLOCK_SIZE_DELTA_BITS);
+		return dense;
 	}
 	
-	public long getRecPtr(final long offset) {
-		long address = getFreeRecPtr(offset);
-		return address != 0 ? (address + Database.BLOCK_HEADER_SIZE) : address;
-	}
-	
-	
-	public long getFreeRecPtr(final long offset) {
-		int value = getInt(offset);
+	/**
+	 * A free Record Pointer is a pointer to a raw block, i.e. the
+	 * pointer is not moved past the BLOCK_HEADER_SIZE.
+	 */
+	private static long expandToFreeRecPtr(int value) {
 		/*
 		 * We need to properly manage the integer that was read. The value will be sign-extended 
 		 * so if the most significant bit is set, the resulting long will look negative. By 
@@ -136,6 +134,59 @@ final class Chunk {
 		return address << Database.BLOCK_SIZE_DELTA_BITS;
 	}
 
+
+	/**
+	 * A Record Pointer is a pointer as returned by Database.malloc().
+	 * This is a pointer to a block + BLOCK_HEADER_SIZE.
+	 */
+	static void putRecPtr(final long value, byte[] buffer, int idx) {
+		final int denseValue = value == 0 ? 0 : compressFreeRecPtr(value - Database.BLOCK_HEADER_SIZE);
+		putInt(denseValue, buffer, idx);
+	}
+
+	/**
+	 * A Record Pointer is a pointer as returned by Database.malloc().
+	 * This is a pointer to a block + BLOCK_HEADER_SIZE.
+	 */
+	static long getRecPtr(byte[] buffer, final int idx) {
+		int value = getInt(buffer, idx);
+		long address = expandToFreeRecPtr(value);
+		return address != 0 ? (address + Database.BLOCK_HEADER_SIZE) : address;
+	}
+
+	/**
+	 * A Record Pointer is a pointer as returned by Database.malloc().
+	 * This is a pointer to a block + BLOCK_HEADER_SIZE.
+	 */
+	public void putRecPtr(final long offset, final long value) {
+		assert fLocked;
+		fDirty = true;
+		int idx = recPtrToIndex(offset);
+		putRecPtr(value, fBuffer, idx);
+	}
+
+	
+	/**
+	 * A free Record Pointer is a pointer to a raw block, i.e. the
+	 * pointer is not moved past the BLOCK_HEADER_SIZE.
+	 */
+	public void putFreeRecPtr(final long offset, final long value) {
+		assert fLocked;
+		fDirty = true;
+		int idx = recPtrToIndex(offset);
+		putInt(compressFreeRecPtr(value), fBuffer, idx);
+	}
+
+	public long getRecPtr(final long offset) {
+		final int idx = recPtrToIndex(offset);
+		return getRecPtr(fBuffer, idx);
+	}
+	
+	public long getFreeRecPtr(final long offset) {
+		final int idx = recPtrToIndex(offset);
+		int value = getInt(fBuffer, idx);
+		return expandToFreeRecPtr(value);
+	}
 	
 	public void put3ByteUnsignedInt(final long offset, final int value) {
 		assert fLocked;
@@ -215,10 +266,29 @@ final class Chunk {
 	void clear(final long offset, final int length) {
 		assert fLocked;
 		fDirty= true;
-		int idx= recPtrToIndex( offset );
-		final int end= idx + length;
+		int idx = recPtrToIndex(offset);
+		final int end = idx + length;
 		for (; idx < end; idx++) {
-			fBuffer[idx]= 0;
+			fBuffer[idx] = 0;
+		}
+	}
+
+	void put(final long offset, final byte[] data, final int len) {
+		assert fLocked;
+		fDirty= true;
+		int idx = recPtrToIndex(offset);
+		int i=0;
+		while (i<len) {
+			fBuffer[idx++]= data[i++];
+		}
+	}
+	
+	public void get(final long offset, byte[] data) {
+		int idx = recPtrToIndex(offset);
+		final int end= idx + data.length;
+		int i= 0;
+		while (idx < end) {
+			data[i++]= fBuffer[idx++];
 		}
 	}
 }

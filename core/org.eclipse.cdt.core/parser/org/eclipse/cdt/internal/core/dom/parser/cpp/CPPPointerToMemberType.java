@@ -20,6 +20,8 @@ import org.eclipse.cdt.core.dom.ast.ITypedef;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTPointerToMember;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTQualifiedName;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPPointerToMemberType;
+import org.eclipse.cdt.internal.core.dom.parser.ITypeMarshalBuffer;
+import org.eclipse.core.runtime.CoreException;
 
 /**
  * Models pointer to members.
@@ -85,5 +87,22 @@ public class CPPPointerToMemberType extends CPPPointerType implements ICPPPointe
 			}
 		}
 		return classType;
+	}
+	
+	@Override
+	public void marshal(ITypeMarshalBuffer buffer) throws CoreException {
+		int firstByte= ITypeMarshalBuffer.POINTER_TO_MEMBER;
+		if (isConst()) firstByte |= ITypeMarshalBuffer.FLAG1;
+		if (isVolatile()) firstByte |= ITypeMarshalBuffer.FLAG2;
+		buffer.putByte((byte) firstByte);
+		buffer.marshalType(getType());
+		buffer.marshalType(getMemberOfClass());
+	}
+	
+	public static IType unmarshal(int firstByte, ITypeMarshalBuffer buffer) throws CoreException {
+		IType nested= buffer.unmarshalType();
+		IType memberOf= buffer.unmarshalType();
+		return new CPPPointerToMemberType(nested, memberOf, (firstByte & ITypeMarshalBuffer.FLAG1) != 0,
+				(firstByte & ITypeMarshalBuffer.FLAG2) != 0);
 	}
 }

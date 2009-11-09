@@ -33,11 +33,11 @@ import org.eclipse.cdt.core.dom.ast.c.ICASTCompositeTypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.c.ICASTElaboratedTypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.c.ICCompositeTypeScope;
 import org.eclipse.cdt.core.index.IIndex;
+import org.eclipse.cdt.core.index.IIndexBinding;
 import org.eclipse.cdt.core.parser.util.ArrayUtil;
 import org.eclipse.cdt.internal.core.dom.Linkage;
 import org.eclipse.cdt.internal.core.dom.parser.ASTNode;
 import org.eclipse.cdt.internal.core.dom.parser.ProblemBinding;
-import org.eclipse.cdt.internal.core.index.IIndexType;
 import org.eclipse.core.runtime.PlatformObject;
 
 /**
@@ -260,13 +260,13 @@ public class CStructure extends PlatformObject implements ICompositeType, ICInte
     /* (non-Javadoc)
      * @see org.eclipse.cdt.core.dom.ast.IType#isSameType(org.eclipse.cdt.core.dom.ast.IType)
      */
-    public boolean isSameType( IType type ) {
-        if( type == this )
-            return true;
-        if( type instanceof ITypedef || type instanceof IIndexType)
-            return type.isSameType( this );
-        return false;
-    }
+	public boolean isSameType(IType type) {
+		if (type == this)
+			return true;
+		if (type instanceof ITypedef || type instanceof IIndexBinding)
+			return type.isSameType(this);
+		return false;
+	}
     
 	public ILinkage getLinkage() {
 		return Linkage.C_LINKAGE;

@@ -36,13 +36,10 @@ import org.eclipse.core.runtime.CoreException;
 class PDOMCPPFunctionTemplate extends PDOMCPPFunction 
 		implements ICPPFunctionTemplate, ICPPInstanceCache, IPDOMMemberOwner, IPDOMCPPTemplateParameterOwner {
 
-	private static final int TEMPLATE_PARAMS = PDOMCPPFunction.RECORD_SIZE + 0;
+	private static final int TEMPLATE_PARAMS = PDOMCPPFunction.RECORD_SIZE;
 	
-	/**
-	 * The size in bytes of a PDOMCPPFunctionTemplate record in the database.
-	 */
 	@SuppressWarnings("hiding")
-	protected static final int RECORD_SIZE = PDOMCPPFunction.RECORD_SIZE + 4;
+	protected static final int RECORD_SIZE = TEMPLATE_PARAMS + Database.PTR_SIZE;
 	
 	private IPDOMCPPTemplateParameter[] params;  // Cached template parameters.
 

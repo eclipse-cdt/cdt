@@ -36,58 +36,35 @@ import org.eclipse.core.runtime.CoreException;
  */
 class PDOMCPPParameter extends PDOMNamedNode implements ICPPParameter, IPDOMBinding {
 
-	/**
-	 * Offset of pointer to the next parameter (relative to the
-	 * beginning of the record).
-	 */
-	private static final int NEXT_PARAM = PDOMNamedNode.RECORD_SIZE + 0;
-	
-	/**
-	 * Offset of pointer to type information for this parameter
-	 * (relative to the beginning of the record).
-	 */
-	private static final int TYPE = PDOMNamedNode.RECORD_SIZE + 4;
-
-	/**
-	 * Offset of annotation information (relative to the beginning of the
-	 * record).
-	 */
-	private static final int ANNOTATIONS = PDOMNamedNode.RECORD_SIZE + 8;
-
-	/**
-	 * Offset of flags
-	 * (relative to the beginning of the record).
-	 */
-	private static final int FLAGS = PDOMNamedNode.RECORD_SIZE + 9;
-
-	
-	/**
-	 * The size in bytes of a PDOMCPPParameter record in the database.
-	 */
+	private static final int NEXT_PARAM = PDOMNamedNode.RECORD_SIZE;
+	private static final int ANNOTATIONS = NEXT_PARAM + Database.PTR_SIZE;
+	private static final int FLAGS = ANNOTATIONS + 1;
 	@SuppressWarnings("hiding")
-	protected static final int RECORD_SIZE = PDOMNamedNode.RECORD_SIZE + 10;
+	protected static final int RECORD_SIZE = FLAGS + 1;
 	static {
 		assert RECORD_SIZE <= 22; // 23 would yield a 32-byte block
 	}
-
+	
 	private static final byte FLAG_DEFAULT_VALUE = 0x1;
 
-	public PDOMCPPParameter(PDOMLinkage linkage, long record) {
+	private final IType fType;
+	public PDOMCPPParameter(PDOMLinkage linkage, long record, IType type) {
 		super(linkage, record);
+		fType= type;
 	}
 
-	public PDOMCPPParameter(PDOMLinkage linkage, PDOMNode parent, IParameter param, long typeRecord)
+	public PDOMCPPParameter(PDOMLinkage linkage, PDOMNode parent, IParameter param, PDOMCPPParameter next)
 			throws CoreException {
 		super(linkage, parent, param.getNameCharArray());
+		fType= null;	// this constructor is used for adding parameters to the database, only.
 		
 		Database db = getDB();
 
 		db.putRecPtr(record + NEXT_PARAM, 0);
 		byte flags= encodeFlags(param);
 		db.putByte(record + FLAGS, flags);
-		
-		db.putRecPtr(record + TYPE, typeRecord);
-		
+		db.putRecPtr(record + NEXT_PARAM, next == null ? 0 : next.getRecord());
+
 		try {
 			byte annotations = PDOMCPPAnnotation.encodeAnnotation(param);
 			db.putByte(record + ANNOTATIONS, annotations);
@@ -116,16 +93,6 @@ class PDOMCPPParameter extends PDOMNamedNode implements ICPPParameter, IPDOMBind
 		return IIndexCPPBindingConstants.CPPPARAMETER;
 	}
 	
-	public void setNextParameter(PDOMCPPParameter nextParam) throws CoreException {
-		long rec = nextParam != null ? nextParam.getRecord() : 0;
-		getDB().putRecPtr(record + NEXT_PARAM, rec);
-	}
-
-	public PDOMCPPParameter getNextParameter() throws CoreException {
-		long rec = getDB().getRecPtr(record + NEXT_PARAM);
-		return rec != 0 ? new PDOMCPPParameter(getLinkage(), rec) : null;
-	}
-	
 	public String[] getQualifiedName() {
 		throw new PDOMNotImplementedError();
 	}
@@ -144,13 +111,7 @@ class PDOMCPPParameter extends PDOMNamedNode implements ICPPParameter, IPDOMBind
 	}
 
 	public IType getType() {
-		try {
-			PDOMNode node = getLinkage().getNode(getDB().getRecPtr(record + TYPE));
-			return node instanceof IType ? (IType)node : null;
-		} catch (CoreException e) {
-			CCorePlugin.log(e);
-			return null;
-		}
+		return fType;
 	}
 
 	public boolean isAuto() throws DOMException {
@@ -240,12 +201,16 @@ class PDOMCPPParameter extends PDOMNamedNode implements ICPPParameter, IPDOMBind
 
 	@Override
 	public void delete(PDOMLinkage linkage) throws CoreException {
-		// the parameter reuses the type from the function type, so do not delete it.
-		PDOMCPPParameter next= getNextParameter();
-		if (next != null) {
-			next.delete(linkage);
+		long rec = getNextPtr();
+		if (rec != 0) {
+			new PDOMCPPParameter(linkage, rec, null).delete(linkage);
 		}
 		super.delete(linkage);
+	}
+
+	public long getNextPtr() throws CoreException {
+		long rec = getDB().getRecPtr(record + NEXT_PARAM);
+		return rec;
 	}
 
 	public boolean isFileLocal() throws CoreException {

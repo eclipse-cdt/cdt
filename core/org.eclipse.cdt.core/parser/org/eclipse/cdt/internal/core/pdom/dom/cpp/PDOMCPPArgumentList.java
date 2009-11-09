@@ -27,6 +27,9 @@ import org.eclipse.core.runtime.CoreException;
  * Collects methods to store an argument list in the database
  */
 public class PDOMCPPArgumentList {
+	private static final int VALUE_OFFSET= Database.TYPE_SIZE;
+	private static final int NODE_SIZE = VALUE_OFFSET + Database.PTR_SIZE;
+	
 	/**
 	 * Stores the given template arguments in the database.
 	 * @return the record by which the arguments can be referenced.
@@ -34,24 +37,20 @@ public class PDOMCPPArgumentList {
 	public static long putArguments(PDOMNode parent, ICPPTemplateArgument[] templateArguments) throws CoreException {
 		final PDOMLinkage linkage= parent.getLinkage();
 		final Database db= linkage.getDB();
-		final short len= (short) Math.min(templateArguments.length, (Database.MAX_MALLOC_SIZE-2)/8); 
-		final long block= db.malloc(2+8*len);
+		final short len= (short) Math.min(templateArguments.length, (Database.MAX_MALLOC_SIZE-2)/NODE_SIZE); 
+		final long block= db.malloc(2+NODE_SIZE*len);
 		long p= block;
 
 		db.putShort(p, len); p+=2;
-		for (int i=0; i<len; i++, p+=8) {
+		for (int i=0; i<len; i++, p+=NODE_SIZE) {
 			final ICPPTemplateArgument arg = templateArguments[i];
 			final boolean isNonType= arg.isNonTypeValue();
 			if (isNonType) {
-				final PDOMNode type= linkage.addType(parent, arg.getTypeOfNonTypeValue());
-				// type can be null, if it is a local type
-				db.putRecPtr(p, type == null ? 0 : type.getRecord()); 
+				linkage.storeType(p, arg.getTypeOfNonTypeValue());
 				long valueRec= PDOMValue.store(db, linkage, arg.getNonTypeValue());
-				db.putRecPtr(p+4, valueRec); 
+				db.putRecPtr(p+VALUE_OFFSET, valueRec); 
 			} else {
-				final PDOMNode type= linkage.addType(parent, arg.getTypeValue());
-				// type can be null, if it is a local type.
-				db.putRecPtr(p, type == null ? 0 : type.getRecord()); 
+				linkage.storeType(p, arg.getTypeValue());
 			}
 		}
 		return block;
@@ -66,17 +65,13 @@ public class PDOMCPPArgumentList {
 		final Database db= linkage.getDB();
 		final short len= db.getShort(record);
 		
-		Assert.isTrue(len >= 0 && len <= (Database.MAX_MALLOC_SIZE-2)/8);
+		Assert.isTrue(len >= 0 && len <= (Database.MAX_MALLOC_SIZE-2)/NODE_SIZE);
 		long p= record+2;
 		for (int i=0; i<len; i++) {
-			final long typeRec= db.getRecPtr(p);
-			if (typeRec != 0) {
-				final IType t= (IType) linkage.getNode(typeRec);
-				linkage.deleteType(t, parent.getRecord());
-			}			
-			final long nonTypeValueRec= db.getRecPtr(p+4);
+			linkage.storeType(p, null);
+			final long nonTypeValueRec= db.getRecPtr(p+VALUE_OFFSET);
 			PDOMValue.delete(db, nonTypeValueRec);
-			p+= 8;
+			p+= NODE_SIZE;
 		}
 		db.free(record);
 	}
@@ -89,7 +84,7 @@ public class PDOMCPPArgumentList {
 		final Database db= linkage.getDB();
 		final short len= db.getShort(rec);
 		
-		Assert.isTrue(len >= 0 && len <= (Database.MAX_MALLOC_SIZE-2)/8);
+		Assert.isTrue(len >= 0 && len <= (Database.MAX_MALLOC_SIZE-2)/NODE_SIZE);
 		if (len == 0) {
 			return ICPPTemplateArgument.EMPTY_ARGUMENTS;
 		}
@@ -97,16 +92,18 @@ public class PDOMCPPArgumentList {
 		rec+=2;
 		ICPPTemplateArgument[] result= new ICPPTemplateArgument[len];
 		for (int i=0; i<len; i++) {
-			final long typeRec= db.getRecPtr(rec);
-			final IType type= typeRec == 0 ? new CPPBasicType(Kind.eUnspecified,CPPBasicType.UNIQUE_TYPE_QUALIFIER) : (IType) linkage.getNode(typeRec);
-			final long nonTypeValRec= db.getRecPtr(rec+4); 
+			IType type= linkage.loadType(rec);
+			if (type == null) {
+				type= new CPPBasicType(Kind.eUnspecified,CPPBasicType.UNIQUE_TYPE_QUALIFIER);
+			}
+			final long nonTypeValRec= db.getRecPtr(rec+VALUE_OFFSET); 
 			if (nonTypeValRec != 0) {
 				final IValue val= PDOMValue.restore(db, linkage, nonTypeValRec);
 				result[i]= new CPPTemplateArgument(val, type);
 			} else {
 				result[i]= new CPPTemplateArgument(type);
 			}
-			rec+= 8;
+			rec+= NODE_SIZE;
 		}
 		return result;
 	}

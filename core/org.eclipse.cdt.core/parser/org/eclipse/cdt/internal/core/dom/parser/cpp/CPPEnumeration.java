@@ -6,7 +6,7 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *     IBM Corporation - initial API and implementation
+ *     Andrew Niefer (IBM Corporation) - initial API and implementation
  *     Markus Schorn (Wind River Systems)
  *     Sergey Prigogin (Google)
  *******************************************************************************/
@@ -24,13 +24,13 @@ import org.eclipse.cdt.core.dom.ast.IScope;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.ITypedef;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPBlockScope;
+import org.eclipse.cdt.core.index.IIndexBinding;
 import org.eclipse.cdt.internal.core.dom.Linkage;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPVisitor;
-import org.eclipse.cdt.internal.core.index.IIndexType;
 import org.eclipse.core.runtime.PlatformObject;
 
 /**
- * @author aniefer
+ * Enumerations in C++
  */
 public class CPPEnumeration extends PlatformObject implements IEnumeration, ICPPInternalBinding {
     private IASTName enumName;
@@ -113,7 +113,7 @@ public class CPPEnumeration extends PlatformObject implements IEnumeration, ICPP
     public boolean isSameType(IType type) {
         if (type == this)
             return true;
-        if (type instanceof ITypedef || type instanceof IIndexType)
+        if (type instanceof ITypedef || type instanceof IIndexBinding)
             return type.isSameType(this);
         return false;
     }

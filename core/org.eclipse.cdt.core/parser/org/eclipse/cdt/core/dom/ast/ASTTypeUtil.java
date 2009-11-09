@@ -201,30 +201,27 @@ public class ASTTypeUtil {
 		if (type instanceof IArrayType) {
 			result.append(Keywords.cpLBRACKET);
 			if (type instanceof ICArrayType) {
-				try {
-					final ICArrayType catype = (ICArrayType) type;
-					if (catype.isConst()) {
-						result.append(Keywords.CONST); needSpace = true;
+				final ICArrayType catype = (ICArrayType) type;
+				if (catype.isConst()) {
+					result.append(Keywords.CONST); needSpace = true;
+				}
+				if (catype.isRestrict()) {
+					if (needSpace) {
+						result.append(SPACE); needSpace = false;
 					}
-					if (catype.isRestrict()) {
-						if (needSpace) {
-							result.append(SPACE); needSpace = false;
-						}
-						result.append(Keywords.RESTRICT); needSpace = true;
+					result.append(Keywords.RESTRICT); needSpace = true;
+				}
+				if (catype.isStatic()) {
+					if (needSpace) {
+						result.append(SPACE); needSpace = false;
 					}
-					if (catype.isStatic()) {
-						if (needSpace) {
-							result.append(SPACE); needSpace = false;
-						}
-						result.append(Keywords.STATIC); needSpace = true;
+					result.append(Keywords.STATIC); needSpace = true;
+				}
+				if (catype.isVolatile()) {
+					if (needSpace) {
+						result.append(SPACE); needSpace = false;
 					}
-					if (catype.isVolatile()) {
-						if (needSpace) {
-							result.append(SPACE); needSpace = false;
-						}
-						result.append(Keywords.VOLATILE);
-					}
-				} catch (DOMException e) {
+					result.append(Keywords.VOLATILE);
 				}
 			} 
 			IValue val= ((IArrayType) type).getSize();

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2008 Symbian Software Systems and others.
+ * Copyright (c) 2007, 2009 Symbian Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -22,14 +22,11 @@ public interface IIndexCPPBindingConstants {
 	 int CPPMETHOD = IIndexBindingConstants.LAST_CONSTANT + 5;
 	 int CPPNAMESPACE = IIndexBindingConstants.LAST_CONSTANT + 6;
 	 int CPPNAMESPACEALIAS = IIndexBindingConstants.LAST_CONSTANT + 7;
-	 int CPPBASICTYPE = IIndexBindingConstants.LAST_CONSTANT + 8;
 	 int CPPPARAMETER = IIndexBindingConstants.LAST_CONSTANT + 9;
 	 int CPPENUMERATION = IIndexBindingConstants.LAST_CONSTANT + 10;
 	 int CPPENUMERATOR = IIndexBindingConstants.LAST_CONSTANT + 11;
 	 int CPPTYPEDEF = IIndexBindingConstants.LAST_CONSTANT + 12;
-	 int CPP_POINTER_TO_MEMBER_TYPE= IIndexBindingConstants.LAST_CONSTANT + 13;
 	 int CPP_CONSTRUCTOR= IIndexBindingConstants.LAST_CONSTANT + 14;
-	 int CPP_REFERENCE_TYPE= IIndexBindingConstants.LAST_CONSTANT + 15;
 	 int CPP_FUNCTION_TEMPLATE= IIndexBindingConstants.LAST_CONSTANT + 16;
 	 int CPP_METHOD_TEMPLATE= IIndexBindingConstants.LAST_CONSTANT + 17;
 	 int CPP_CONSTRUCTOR_TEMPLATE= IIndexBindingConstants.LAST_CONSTANT + 18;
@@ -52,8 +49,6 @@ public interface IIndexCPPBindingConstants {
 	 int CPP_CLASS_TEMPLATE_SPECIALIZATION= IIndexBindingConstants.LAST_CONSTANT + 36;
 	 int CPP_TYPEDEF_SPECIALIZATION= IIndexBindingConstants.LAST_CONSTANT + 37;
 	 int CPP_TEMPLATE_TYPE_PARAMETER= IIndexBindingConstants.LAST_CONSTANT + 38;
-	 int CPP_FUNCTION_TYPE= IIndexBindingConstants.LAST_CONSTANT + 39;
-	 int GPPBASICTYPE = IIndexBindingConstants.LAST_CONSTANT + 40;
 	 int CPP_USING_DECLARATION= IIndexBindingConstants.LAST_CONSTANT + 41;
 	 int CPP_UNKNOWN_CLASS_TYPE= IIndexBindingConstants.LAST_CONSTANT + 42;
 	 int CPP_UNKNOWN_CLASS_INSTANCE= IIndexBindingConstants.LAST_CONSTANT + 43;

@@ -6,8 +6,8 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- * QNX - Initial API and implementation
- * Markus Schorn (Wind River Systems)
+ *    Bryan Wilkinson (QNX) - Initial API and implementation
+ *    Markus Schorn (Wind River Systems)
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.pdom.dom.cpp;
 
@@ -20,26 +20,26 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPTypedefSpecialization;
 import org.eclipse.cdt.internal.core.index.CPPTypedefClone;
 import org.eclipse.cdt.internal.core.index.IIndexCPPBindingConstants;
 import org.eclipse.cdt.internal.core.index.IIndexType;
+import org.eclipse.cdt.internal.core.pdom.db.Database;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMBinding;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMLinkage;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMNode;
 import org.eclipse.core.runtime.CoreException;
 
-/**
- * @author Bryan Wilkinson
- */
-class PDOMCPPTypedefSpecialization extends PDOMCPPSpecialization
-		implements ITypedef, ITypeContainer, IIndexType {
+class PDOMCPPTypedefSpecialization extends PDOMCPPSpecialization implements ITypedef, ITypeContainer,
+		IIndexType {
 
-	private static final int TYPE = PDOMCPPSpecialization.RECORD_SIZE + 0;
+	private static final int TYPE_OFFSET = PDOMCPPSpecialization.RECORD_SIZE + 0;
 	
 	@SuppressWarnings("hiding")
-	protected static final int RECORD_SIZE = PDOMCPPSpecialization.RECORD_SIZE + 4;
+	protected static final int RECORD_SIZE = TYPE_OFFSET + Database.TYPE_SIZE;
 	
 	public PDOMCPPTypedefSpecialization(PDOMLinkage linkage, PDOMNode parent, ITypedef typedef, PDOMBinding specialized)
 			throws CoreException {
 		super(linkage, parent, (ICPPSpecialization) typedef, specialized);
 
+		// The following may try to add the same typedef specialization to the index again.
+		// We protect against infinite recursion using a counter inside typedef.
 		try {
 			if (typedef instanceof CPPTypedefSpecialization) {
 				if (((CPPTypedefSpecialization) typedef).incResolutionDepth(1) >
@@ -47,12 +47,7 @@ class PDOMCPPTypedefSpecialization extends PDOMCPPSpecialization
 					return;
 				}
 			}
-			IType type = typedef.getType();
-			// The following may try to add the same typedef specialization to the index again.
-			// We protect against infinite recursion using a counter inside typedef.
-			PDOMNode typeNode = parent.getLinkage().addType(this, type);
-			if (typeNode != null)
-				getDB().putRecPtr(record + TYPE, typeNode.getRecord());
+			parent.getLinkage().storeType(record + TYPE_OFFSET, typedef.getType());
 		} finally {
 			if (typedef instanceof CPPTypedefSpecialization) {
 				((CPPTypedefSpecialization) typedef).incResolutionDepth(-1);
@@ -76,8 +71,7 @@ class PDOMCPPTypedefSpecialization extends PDOMCPPSpecialization
 
 	public IType getType() {
 		try {
-			PDOMNode node = getLinkage().getNode(getDB().getRecPtr(record + TYPE));
-			return node instanceof IType ? (IType)node : null;
+			return getLinkage().loadType(record + TYPE_OFFSET);
 		} catch (CoreException e) {
 			CCorePlugin.log(e);
 			return null;

@@ -29,6 +29,11 @@ import org.eclipse.core.runtime.CoreException;
  * Collects methods to store an argument list in the database
  */
 public class PDOMCPPTemplateParameterMap {
+	private static final int PARAMPOS_OFFSET= 0;
+	private static final int TYPE_OFFSET= PARAMPOS_OFFSET + 4;
+	private static final int VALUE_OFFSET= TYPE_OFFSET + Database.TYPE_SIZE;
+	private static final int NODE_SIZE = VALUE_OFFSET + Database.PTR_SIZE;
+
 	/**
 	 * Stores the given template parameter map in the database.
 	 * @return the record by which the arguments can be referenced.
@@ -37,28 +42,22 @@ public class PDOMCPPTemplateParameterMap {
 		final PDOMLinkage linkage= parent.getLinkage();
 		final Database db= linkage.getDB();
 		Integer[] keys= map.getAllParameterPositions();
-		final short len= (short) Math.min(keys.length, (Database.MAX_MALLOC_SIZE-2)/12); 
-		final long block= db.malloc(2+12*len);
+		final short len= (short) Math.min(keys.length, (Database.MAX_MALLOC_SIZE-2)/NODE_SIZE); 
+		final long block= db.malloc(2+NODE_SIZE*len);
 		long p= block;
 
 		db.putShort(p, len); p+=2;
 		for (int i=0; i<len; i++) {
 			final Integer paramPos = keys[i];
-			db.putInt(p, paramPos); 
-			p+=4; //TODO? assumes stored pointer size is 4?
+			db.putInt(p + PARAMPOS_OFFSET, paramPos); 
 			final ICPPTemplateArgument arg = map.getArgument(paramPos);
 			if (arg.isNonTypeValue()) {
-				final PDOMNode type= linkage.addType(parent, arg.getTypeOfNonTypeValue());
-				// type can be null, if it is local
-				db.putRecPtr(p, type == null ? 0 : type.getRecord());
-				long valueRec= PDOMValue.store(db, linkage, arg.getNonTypeValue());
-				db.putRecPtr(p+4, valueRec); //TODO: assumes that stored pointer size is 4.
+				linkage.storeType(p + TYPE_OFFSET, arg.getTypeOfNonTypeValue());
+				db.putRecPtr(p+VALUE_OFFSET, PDOMValue.store(db, linkage, arg.getNonTypeValue())); 
 			} else {
-				final PDOMNode type= linkage.addType(parent, arg.getTypeValue());
-				// type can be null, if it is local
-				db.putRecPtr(p, type == null ? 0 : type.getRecord()); 
+				linkage.storeType(p + TYPE_OFFSET, arg.getTypeValue());
 			}
-			p+=8; //TODO; assumes stored pointer size
+			p+=NODE_SIZE; 
 		}
 		return block;
 	}
@@ -72,18 +71,12 @@ public class PDOMCPPTemplateParameterMap {
 		final Database db= linkage.getDB();
 		final short len= db.getShort(rec);
 		
-		Assert.isTrue(len >= 0 && len <= (Database.MAX_MALLOC_SIZE-2)/12);
+		Assert.isTrue(len >= 0 && len <= (Database.MAX_MALLOC_SIZE-2)/NODE_SIZE);
 		rec+=2;
 		for (int i=0; i<len; i++) {
-			rec+=4;
-			final long typeRec= db.getRecPtr(rec);
-			if (typeRec != 0) {
-				final IType t= (IType) linkage.getNode(typeRec);
-				linkage.deleteType(t, parent.getRecord());
-			}			
-			final long nonTypeValueRec= db.getRecPtr(rec+4);
-			PDOMValue.delete(db, nonTypeValueRec);
-			rec+= 8;
+			linkage.storeType(rec+TYPE_OFFSET, null);
+			PDOMValue.delete(db, db.getRecPtr(rec+VALUE_OFFSET));
+			rec+= NODE_SIZE;
 		}
 		db.free(rec);
 	}
@@ -96,7 +89,7 @@ public class PDOMCPPTemplateParameterMap {
 		final Database db= linkage.getDB();
 		final short len= db.getShort(rec);
 		
-		Assert.isTrue(len >= 0 && len <= (Database.MAX_MALLOC_SIZE-2)/12);
+		Assert.isTrue(len >= 0 && len <= (Database.MAX_MALLOC_SIZE-2)/NODE_SIZE);
 		if (len == 0) {
 			return CPPTemplateParameterMap.EMPTY;
 		}
@@ -104,10 +97,12 @@ public class PDOMCPPTemplateParameterMap {
 		rec+=2;
 		CPPTemplateParameterMap result= new CPPTemplateParameterMap(len);
 		for (int i=0; i<len; i++) {
-			final int parPos= db.getInt(rec);
-			final long typeRec= db.getRecPtr(rec+4);
-			final IType type= typeRec == 0 ? new CPPBasicType(Kind.eUnspecified, CPPBasicType.UNIQUE_TYPE_QUALIFIER) : (IType) linkage.getNode(typeRec);
-			final long nonTypeValRec= db.getRecPtr(rec+8); 
+			final int parPos= db.getInt(rec + PARAMPOS_OFFSET);
+			IType type= linkage.loadType(rec + TYPE_OFFSET);
+			if (type == null) {
+				type= new CPPBasicType(Kind.eUnspecified, CPPBasicType.UNIQUE_TYPE_QUALIFIER);
+			}
+			final long nonTypeValRec= db.getRecPtr(rec+VALUE_OFFSET); 
 			ICPPTemplateArgument arg;
 			if (nonTypeValRec != 0) {
 				IValue val= PDOMValue.restore(db, linkage, nonTypeValRec);
@@ -116,7 +111,7 @@ public class PDOMCPPTemplateParameterMap {
 				arg= new CPPTemplateArgument(type);
 			}
 			result.put(parPos, arg);
-			rec+= 12;
+			rec+= NODE_SIZE;
 		}
 		return result;
 	}

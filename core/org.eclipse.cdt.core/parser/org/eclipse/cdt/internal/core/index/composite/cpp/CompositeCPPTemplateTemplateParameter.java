@@ -44,7 +44,7 @@ public class CompositeCPPTemplateTemplateParameter extends CompositeCPPBinding
 	}
 
 	public IType getDefault() throws DOMException {
-		IIndexType preresult= (IIndexType) ((ICPPTemplateTemplateParameter)rbinding).getDefault();
+		IType preresult= ((ICPPTemplateTemplateParameter)rbinding).getDefault();
 		return cf.getCompositeType(preresult);
 	}
 

@@ -20,12 +20,14 @@ import org.eclipse.cdt.core.dom.ast.ITypedef;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTSimpleDeclSpecifier;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPBasicType;
 import org.eclipse.cdt.core.dom.ast.gnu.cpp.IGPPASTSimpleDeclSpecifier;
-import org.eclipse.cdt.internal.core.index.IIndexType;
+import org.eclipse.cdt.internal.core.dom.parser.ISerializableType;
+import org.eclipse.cdt.internal.core.dom.parser.ITypeMarshalBuffer;
+import org.eclipse.core.runtime.CoreException;
 
 /**
  * Integral c++ type.
  */
-public class CPPBasicType implements ICPPBasicType {
+public class CPPBasicType implements ICPPBasicType, ISerializableType {
 	public static int UNIQUE_TYPE_QUALIFIER= -1;
 	private final Kind fKind;
 	private final int fModifiers;
@@ -104,7 +106,7 @@ public class CPPBasicType implements ICPPBasicType {
 		if (fModifiers == UNIQUE_TYPE_QUALIFIER)
 			return false;
 
-	    if (object instanceof ITypedef || object instanceof IIndexType)
+	    if (object instanceof ITypedef)
 	        return object.isSameType(this);
 
 		if (!(object instanceof ICPPBasicType))
@@ -183,6 +185,32 @@ public class CPPBasicType implements ICPPBasicType {
 	public String toString() {
 		return ASTTypeUtil.getType(this);
 	}
+	
+	public void marshal(ITypeMarshalBuffer buffer) throws CoreException {
+		int firstByte= ITypeMarshalBuffer.BASIC_TYPE;
+
+		int kind= getKind().ordinal() * ITypeMarshalBuffer.FLAG1;
+		assert kind < ITypeMarshalBuffer.FLAG4;
+		firstByte |= kind;
+
+		int modifiers= getModifiers();
+		if (modifiers != 0) {
+			buffer.putByte((byte) (firstByte | ITypeMarshalBuffer.FLAG4));
+			buffer.putByte((byte) modifiers);
+		} else {
+			buffer.putByte((byte) firstByte);
+		}
+	}
+	
+	public static IType unmarshal(int firstByte, ITypeMarshalBuffer buffer) throws CoreException {
+		int kind= (firstByte & (ITypeMarshalBuffer.FLAG4-1))/ITypeMarshalBuffer.FLAG1;
+		int modifiers= 0;
+		if (((firstByte & ITypeMarshalBuffer.FLAG4) != 0)) {
+			modifiers= buffer.getByte();
+		}
+		return new CPPBasicType(Kind.values()[kind], modifiers);
+	}
+
 
 	@Deprecated
 	public int getQualifierBits() {

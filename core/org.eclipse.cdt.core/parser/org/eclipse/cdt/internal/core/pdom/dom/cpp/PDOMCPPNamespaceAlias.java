@@ -6,7 +6,7 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *    QNX - Initial API and implementation
+ *    Doug Schaefer (QNX) - Initial API and implementation
  *    Markus Schorn (Wind River Systems)
  *******************************************************************************/
 
@@ -18,6 +18,7 @@ import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPNamespaceAlias;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPNamespaceScope;
 import org.eclipse.cdt.internal.core.index.IIndexCPPBindingConstants;
+import org.eclipse.cdt.internal.core.pdom.db.Database;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMBinding;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMLinkage;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMNode;
@@ -25,14 +26,13 @@ import org.eclipse.cdt.internal.core.pdom.dom.PDOMNotImplementedError;
 import org.eclipse.core.runtime.CoreException;
 
 /**
- * @author Doug Schaefer
- *
+ * Binding for namespace alias
  */
 class PDOMCPPNamespaceAlias extends PDOMCPPBinding implements ICPPNamespaceAlias {
 
-	private static final int NAMESPACE_BINDING = PDOMCPPBinding.RECORD_SIZE + 0;
+	private static final int NAMESPACE_BINDING = PDOMCPPBinding.RECORD_SIZE;
 	@SuppressWarnings("hiding")
-	protected static final int RECORD_SIZE = PDOMCPPBinding.RECORD_SIZE + 4;
+	protected static final int RECORD_SIZE = PDOMCPPBinding.RECORD_SIZE + Database.PTR_SIZE;
 	
 	public PDOMCPPNamespaceAlias(PDOMLinkage linkage, PDOMNode parent, ICPPNamespaceAlias alias)
 	throws CoreException {
@@ -48,12 +48,8 @@ class PDOMCPPNamespaceAlias extends PDOMCPPBinding implements ICPPNamespaceAlias
 	public void update(final PDOMLinkage linkage, IBinding newBinding) throws CoreException {
 		if (newBinding instanceof ICPPNamespaceAlias) {
 			ICPPNamespaceAlias alias= (ICPPNamespaceAlias) newBinding;
-			IBinding oldTarget= getBinding();
 			IBinding newTarget= alias.getBinding();
 			setTargetBinding(linkage, newTarget);
-			if (oldTarget != null) {
-				linkage.deleteBinding(oldTarget);
-			}				
 		}
 	}
 	

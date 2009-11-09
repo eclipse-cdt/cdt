@@ -11,73 +11,45 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.pdom.dom.cpp;
 
-import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.dom.ast.DOMException;
+import org.eclipse.cdt.core.dom.ast.IBinding;
+import org.eclipse.cdt.core.dom.ast.IParameter;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.IValue;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunction;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunctionType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPParameter;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPSpecialization;
-import org.eclipse.cdt.internal.core.Util;
 import org.eclipse.cdt.internal.core.index.IIndexCPPBindingConstants;
 import org.eclipse.cdt.internal.core.pdom.db.Database;
+import org.eclipse.cdt.internal.core.pdom.dom.IPDOMBinding;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMLinkage;
-import org.eclipse.cdt.internal.core.pdom.dom.PDOMNode;
 import org.eclipse.core.runtime.CoreException;
 
 /**
  * Binding for a specialization of a parameter in the index.
  */
 class PDOMCPPParameterSpecialization extends PDOMCPPSpecialization implements ICPPParameter {
-	/**
-	 * Offset of pointer to the next parameter (relative to the
-	 * beginning of the record).
-	 */
-	private static final int NEXT_PARAM = PDOMCPPSpecialization.RECORD_SIZE + 0;
-	
-	/**
-	 * Offset of pointer to type information for this parameter
-	 * (relative to the beginning of the record).
-	 */
-	private static final int TYPE = PDOMCPPSpecialization.RECORD_SIZE + 4;
-	
-	/**
-	 * The size in bytes of a PDOMCPPParameterSpecialization record in the database.
-	 */
+	private static final int NEXT_PARAM = PDOMCPPSpecialization.RECORD_SIZE;
 	@SuppressWarnings("hiding")
-	protected static final int RECORD_SIZE = PDOMCPPSpecialization.RECORD_SIZE + 8;
+	private static final int RECORD_SIZE = NEXT_PARAM + Database.PTR_SIZE;
 
-	public PDOMCPPParameterSpecialization(PDOMLinkage linkage, PDOMNode parent, ICPPParameter param, PDOMCPPParameter specialized, long typeRecord)
-	throws CoreException {
-		super(linkage, parent, (ICPPSpecialization) param, specialized);
-		Database db = getDB();
-		db.putRecPtr(record + NEXT_PARAM, 0);
-		db.putRecPtr(record + TYPE, typeRecord);
-	}
-
-	public PDOMCPPParameterSpecialization(PDOMLinkage linkage, PDOMNode parent, ICPPParameter param, PDOMCPPParameter specialized, IType type)
-			throws CoreException {
-		super(linkage, parent, (ICPPSpecialization) param, specialized);
-		
-		Database db = getDB();
-
-		db.putRecPtr(record + NEXT_PARAM, 0);
-		
-		try {
-			if (type == null) 
-				type= param.getType();
-			if (type != null) {
-				PDOMNode typeNode = getLinkage().addType(this, type);
-				db.putRecPtr(record + TYPE, typeNode != null ? typeNode.getRecord() : 0);
-			}
-		} catch (DOMException e) {
-			throw new CoreException(Util.createStatus(e));
-		}
-	}
+	private final IType fType;
 	
-	public PDOMCPPParameterSpecialization(PDOMLinkage linkage, long record) {
+	public PDOMCPPParameterSpecialization(PDOMLinkage linkage, long record, IType t) {
 		super(linkage, record);
+		fType= t;
 	}
-	
+		
+	public PDOMCPPParameterSpecialization(PDOMLinkage linkage, PDOMCPPFunctionSpecialization parent, IParameter param,
+			PDOMCPPParameter specialized, PDOMCPPParameterSpecialization next) throws CoreException {
+		super(linkage, parent, (ICPPSpecialization) param, specialized);
+		fType= null;  // this constructor is used for adding parameters to the database, only.
+		
+		Database db = getDB();
+		db.putRecPtr(record + NEXT_PARAM, next == null ? 0 : next.getRecord());
+	}
+
 	@Override
 	protected int getRecordSize() {
 		return RECORD_SIZE;
@@ -88,26 +60,54 @@ class PDOMCPPParameterSpecialization extends PDOMCPPSpecialization implements IC
 		return IIndexCPPBindingConstants.CPP_PARAMETER_SPECIALIZATION;
 	}
 
-	public void setNextParameter(PDOMCPPParameterSpecialization nextParam) throws CoreException {
-		long rec = nextParam != null ? nextParam.getRecord() : 0;
-		getDB().putRecPtr(record + NEXT_PARAM, rec);
+	public PDOMCPPParameterSpecialization getNextParameter(IType t) throws CoreException {
+		long rec = getNextPtr();
+		return rec != 0 ? new PDOMCPPParameterSpecialization(getLinkage(), rec, t) : null;
 	}
 
-	public PDOMCPPParameterSpecialization getNextParameter() throws CoreException {
+	long getNextPtr() throws CoreException {
 		long rec = getDB().getRecPtr(record + NEXT_PARAM);
-		return rec != 0 ? new PDOMCPPParameterSpecialization(getLinkage(), rec) : null;
+		return rec;
 	}
 	
-	public IType getType() throws DOMException {
-		try {
-			PDOMNode node = getLinkage().getNode(getDB().getRecPtr(record + TYPE));
-			return node instanceof IType ? (IType)node : null;
-		} catch (CoreException e) {
-			CCorePlugin.log(e);
+	public IType getType() {
+		return fType;
+	}
+	
+	@Override
+	protected IPDOMBinding loadSpecializedBinding(long record) throws CoreException {
+		if (record == 0)
 			return null;
-		}
+		IType type= null;
+		IBinding parent = getParentBinding();
+		if (parent instanceof ICPPSpecialization && parent instanceof ICPPFunction) {
+			try {
+				IParameter[] pars= ((ICPPFunction) parent).getParameters();
+				int parPos= -1;
+				for (parPos= 0; parPos<pars.length; parPos++) {
+					IParameter par= pars[parPos];
+					if (equals(par)) {
+						break;
+					}
+				}
+				if (parPos < pars.length) {
+					parent= ((ICPPSpecialization) parent).getSpecializedBinding();
+					if (parent instanceof ICPPFunction) {
+						ICPPFunctionType ftype = ((ICPPFunction) parent).getType();
+						if (ftype != null) {
+							IType[] ptypes= ftype.getParameterTypes();
+							if (parPos < ptypes.length) {
+								type= ptypes[parPos];
+							}
+						}
+					}
+				}
+			} catch (DOMException e) {
+			}
+		} 
+		return new PDOMCPPParameter(getLinkage(), record, type);
 	}
-	
+
 	private ICPPParameter getParameter(){
 		return (ICPPParameter) getSpecializedBinding();
 	}

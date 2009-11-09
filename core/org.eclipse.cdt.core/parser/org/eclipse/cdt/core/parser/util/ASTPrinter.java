@@ -199,12 +199,8 @@ public class ASTPrinter {
 		
 		if (n instanceof ICArrayType) {
 			ICArrayType at = (ICArrayType)n;
-			try {
-				if (at.isRestrict()) {
-					out.print(" restrict"); 
-				}
-			} catch (DOMException e) { 
-				e.printStackTrace();
+			if (at.isRestrict()) {
+				out.print(" restrict"); 
 			}
 		}
 		

@@ -35,6 +35,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPNamespace;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPPointerToMemberType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPReferenceType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateArgument;
+import org.eclipse.cdt.core.index.IIndexBinding;
 import org.eclipse.cdt.core.parser.Keywords;
 import org.eclipse.cdt.core.parser.util.ArrayUtil;
 import org.eclipse.cdt.core.parser.util.CharArraySet;
@@ -49,7 +50,6 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPQualifierType;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPTemplateArgument;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPDeferredClassInstance;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.OverloadableOperator;
-import org.eclipse.cdt.internal.core.index.IIndexType;
 
 /**
  *
@@ -340,9 +340,6 @@ public class SemanticUtil {
 	}
 	
 	public static IType mapToAST(IType type, IASTNode node) {
-		if (!(type instanceof IIndexType))
-			return type;
-		
 		if (type instanceof IFunctionType) {
 			final ICPPFunctionType ft = (ICPPFunctionType) type;
 			final IType r = ft.getReturnType();
@@ -363,7 +360,7 @@ public class SemanticUtil {
 				return replaceNestedType(tc, newType);
 			} 
 			return type;
-		} else if (type instanceof ICPPClassType && type instanceof IIndexType) {
+		} else if (type instanceof ICPPClassType && type instanceof IIndexBinding) {
 			IASTTranslationUnit tu = node.getTranslationUnit();
 			if (tu instanceof CPPASTTranslationUnit) {
 				return ((CPPASTTranslationUnit) tu).mapToAST((ICPPClassType) type);

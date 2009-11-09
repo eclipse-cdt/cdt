@@ -1280,13 +1280,9 @@ public class CVisitor extends ASTQueries {
 				int q= 0;
 				if (at instanceof ICArrayType) {
 					ICArrayType cat= (ICArrayType) at;
-					try {
-						if (cat.isConst()) q |= CPointerType.IS_CONST;
-						if (cat.isVolatile()) q |= CPointerType.IS_VOLATILE;
-						if (cat.isRestrict()) q |= CPointerType.IS_RESTRICT;
-					} catch (DOMException e) {
-						// ignore the qualifiers
-					}
+					if (cat.isConst()) q |= CPointerType.IS_CONST;
+					if (cat.isVolatile()) q |= CPointerType.IS_VOLATILE;
+					if (cat.isRestrict()) q |= CPointerType.IS_RESTRICT;
 				}
 				type = new CPointerType(at.getType(), q);
 	        } else if (paramType instanceof IFunctionType) {

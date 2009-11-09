@@ -14,12 +14,14 @@ import org.eclipse.cdt.core.dom.ast.ASTTypeUtil;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.ITypedef;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPReferenceType;
+import org.eclipse.cdt.internal.core.dom.parser.ISerializableType;
 import org.eclipse.cdt.internal.core.dom.parser.ITypeContainer;
+import org.eclipse.cdt.internal.core.dom.parser.ITypeMarshalBuffer;
+import org.eclipse.core.runtime.CoreException;
 
-public class CPPReferenceType implements ICPPReferenceType, ITypeContainer {
+public class CPPReferenceType implements ICPPReferenceType, ITypeContainer, ISerializableType {
     IType type = null;
     
-
     public CPPReferenceType(IType type) {
         this.type = type;
     }
@@ -39,7 +41,7 @@ public class CPPReferenceType implements ICPPReferenceType, ITypeContainer {
             return ((ITypedef)obj).isSameType(this);
         
         if (type == null)
-            return (obj == null);
+            return false;
         
         if (obj instanceof ICPPReferenceType) {
             return type.isSameType(((ICPPReferenceType) obj).getType());
@@ -61,5 +63,16 @@ public class CPPReferenceType implements ICPPReferenceType, ITypeContainer {
 	@Override
 	public String toString() {
 		return ASTTypeUtil.getType(this);
+	}
+
+	public void marshal(ITypeMarshalBuffer buffer) throws CoreException {
+		int firstByte= ITypeMarshalBuffer.REFERENCE;
+		buffer.putByte((byte) firstByte);
+		buffer.marshalType(getType());
+	}
+	
+	public static IType unmarshal(int firstByte, ITypeMarshalBuffer buffer) throws CoreException {
+		IType nested= buffer.unmarshalType();
+		return new CPPReferenceType(nested);
 	}
 }

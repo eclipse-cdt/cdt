@@ -22,6 +22,7 @@ import org.eclipse.cdt.core.dom.ast.IPointerType;
 import org.eclipse.cdt.core.dom.ast.IQualifierType;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.ITypedef;
+import org.eclipse.cdt.core.dom.ast.IValue;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPBinding;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassScope;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassTemplate;
@@ -52,20 +53,24 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPVariable;
 import org.eclipse.cdt.core.index.IIndex;
 import org.eclipse.cdt.core.index.IIndexBinding;
 import org.eclipse.cdt.core.index.IIndexMacroContainer;
+import org.eclipse.cdt.internal.core.dom.parser.Value;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPArrayType;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPFunctionType;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPPointerToMemberType;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPPointerType;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPQualifierType;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPReferenceType;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPClassSpecializationScope;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPDeferredClassInstance;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPInternalUnknownScope;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPUnknownBinding;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPUnknownClassInstance;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPUnknownClassType;
 import org.eclipse.cdt.internal.core.index.CIndex;
 import org.eclipse.cdt.internal.core.index.IIndexFragmentBinding;
 import org.eclipse.cdt.internal.core.index.IIndexScope;
-import org.eclipse.cdt.internal.core.index.IIndexType;
 import org.eclipse.cdt.internal.core.index.composite.AbstractCompositeFactory;
-import org.eclipse.cdt.internal.core.index.composite.CompositeArrayType;
 import org.eclipse.cdt.internal.core.index.composite.CompositeMacroContainer;
-import org.eclipse.cdt.internal.core.index.composite.CompositePointerType;
-import org.eclipse.cdt.internal.core.index.composite.CompositeQualifierType;
 import org.eclipse.cdt.internal.core.index.composite.CompositingNotImplementedError;
 import org.eclipse.cdt.internal.core.index.composite.ICompositesFactory;
 import org.eclipse.core.runtime.CoreException;
@@ -116,40 +121,87 @@ public class CPPCompositesFactory extends AbstractCompositeFactory {
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.internal.core.index.composite.cpp.ICompositesFactory#getCompositeType(org.eclipse.cdt.core.index.IIndex, org.eclipse.cdt.core.dom.ast.IType)
 	 */
-	public IType getCompositeType(IIndexType rtype) {
-		IType result;
-
-		if (rtype instanceof ICPPSpecialization) {
-			result = (IIndexType) getCompositeBinding((IIndexFragmentBinding) rtype);
-		} else if (rtype instanceof ICPPClassType) {
-			result = (ICPPClassType) getCompositeBinding((IIndexFragmentBinding) rtype);
-		} else if (rtype instanceof ITypedef) {
-			result = new CompositeCPPTypedef(this, (ICPPBinding) rtype);
-		} else if (rtype instanceof IEnumeration) {
-			result = (IEnumeration) getCompositeBinding((IIndexFragmentBinding) rtype);
-		} else if (rtype instanceof ICPPFunctionType) {
-			result = new CompositeCPPFunctionType((ICPPFunctionType) rtype, this); 
-		} else if (rtype instanceof ICPPPointerToMemberType) {
-			result = new CompositeCPPPointerToMemberType(this, (ICPPPointerToMemberType) rtype);
-		} else if (rtype instanceof IPointerType) {
-			result = new CompositePointerType((IPointerType) rtype, this);
-		} else if (rtype instanceof ICPPReferenceType) {
-			result = new CompositeCPPReferenceType((ICPPReferenceType)rtype, this);			
-		} else if (rtype instanceof IQualifierType) {
-			result = new CompositeQualifierType((IQualifierType) rtype, this);
-		} else if (rtype instanceof IArrayType) {
-			result = new CompositeArrayType((IArrayType) rtype, this);
-		} else if (rtype == null) {
-			result = null;
-		} else if (rtype instanceof ICPPTemplateTypeParameter) {
-			result = (IIndexType) getCompositeBinding((IIndexFragmentBinding) rtype);
-		} else if (rtype instanceof IBasicType) {
-			result = rtype; // no context required its a leaf with no way to traverse upward
-		} else {
-			throw new CompositingNotImplementedError();
+	public IType getCompositeType(IType rtype) {
+		if (rtype instanceof IIndexFragmentBinding) {
+			return (IType) getCompositeBinding((IIndexFragmentBinding) rtype);
+		} 
+		if (rtype instanceof ICPPFunctionType) {
+			ICPPFunctionType ft= (ICPPFunctionType) rtype;
+			IType r= ft.getReturnType();
+			IType r2= getCompositeType(r);
+			IType[] p= ft.getParameterTypes();
+			IType[] p2= getCompositeTypes(p);
+			if (r != r2 || p != p2) {
+				return new CPPFunctionType(r2, p2, ft.isConst(), ft.isVolatile());
+			}
+			return ft;
+		} 
+		if (rtype instanceof ICPPPointerToMemberType) {
+			ICPPPointerToMemberType pmt= (ICPPPointerToMemberType) rtype;
+			IType ct= pmt.getMemberOfClass();
+			IType ct2= getCompositeType(ct);
+			IType t= pmt.getType();
+			IType t2= getCompositeType(t);
+			if (ct != ct2 || t != t2) {
+				return new CPPPointerToMemberType(t2, ct2, pmt.isConst(), pmt.isVolatile());
+			}
+			return pmt;
+		} 
+		if (rtype instanceof IPointerType) {
+			IPointerType pt= (IPointerType) rtype;
+			IType r= pt.getType();
+			IType r2= getCompositeType(r);
+			if (r != r2) {
+				return new CPPPointerType(r2, pt.isConst(), pt.isVolatile());
+			}
+			return pt;
 		}
-
-		return result;
+		if (rtype instanceof ICPPReferenceType) {
+			ICPPReferenceType rt= (ICPPReferenceType) rtype;
+			IType r= rt.getType();
+			IType r2= getCompositeType(r);
+			if (r != r2) {
+				return new CPPReferenceType(r2);
+			}
+			return rt;
+		}
+		if (rtype instanceof IQualifierType) {
+			IQualifierType qt= (IQualifierType) rtype;
+			IType r= qt.getType();
+			IType r2= getCompositeType(r);
+			if (r != r2) {
+				return new CPPQualifierType(r2, qt.isConst(), qt.isVolatile());
+			}
+			return qt;
+		} 
+		if (rtype instanceof IArrayType) {
+			IArrayType at= (IArrayType) rtype;
+			IType r= at.getType();
+			IType r2= getCompositeType(r);
+			IValue v= at.getSize();
+			IValue v2= getCompositeValue(v);
+			if (r != r2 || v != v2) {
+				return new CPPArrayType(r2, v2);
+			}
+			return at;
+		} 
+		if (rtype instanceof IBasicType || rtype == null) {
+			return rtype;
+		} 
+		
+		throw new CompositingNotImplementedError();
+	}
+	
+	public IValue getCompositeValue(IValue v) {
+		IBinding[] b= v.getUnknownBindings();
+		if (b.length == 0)
+			return v;
+		
+		ICPPUnknownBinding[] b2= new ICPPUnknownBinding[b.length];
+		for (int i = 0; i < b2.length; i++) {
+			b2[i]= (ICPPUnknownBinding) getCompositeBinding((IIndexFragmentBinding) b[i]);
+		}
+		return Value.fromInternalRepresentation(v.getInternalExpression(), b2);
 	}
 
 	private ICPPNamespace[] getNamespaces(IBinding rbinding) throws CoreException {
@@ -259,10 +311,14 @@ public class CPPCompositesFactory extends AbstractCompositeFactory {
 				result = new CompositeCPPField(this, (ICPPField) binding);
 			} else if (binding instanceof ICPPVariable) {
 				result = new CompositeCPPVariable(this, (ICPPVariable) binding);
-			} else if (binding instanceof ICPPUnknownClassInstance) {
-				result = new CompositeCPPUnknownClassInstance(this, (ICPPUnknownClassInstance) binding);
-			} else if (binding instanceof ICPPUnknownClassType) {
-				result = new CompositeCPPUnknownClassType(this, (ICPPUnknownClassType) binding);
+			} else if (binding instanceof ICPPUnknownBinding) {
+				if (binding instanceof ICPPUnknownClassInstance) {
+					result = new CompositeCPPUnknownClassInstance(this, (ICPPUnknownClassInstance) binding);
+				} else if (binding instanceof ICPPUnknownClassType) {
+					result = new CompositeCPPUnknownClassType(this, (ICPPUnknownClassType) binding);
+				} else {
+					result= new CompositeCPPUnknownBinding(this, (ICPPUnknownBinding) binding);
+				}
 			} else if (binding instanceof ICPPClassType) {
 				ICPPClassType def = (ICPPClassType) findOneBinding(binding);
 				result = def == null ? null : new CompositeCPPClassType(this, def);

@@ -69,12 +69,16 @@ abstract class PDOMCPPSpecialization extends PDOMCPPBinding implements ICPPSpeci
 		if (fSpecializedCache == null) {
 			try {
 				long specializedRec = getDB().getRecPtr(record + SPECIALIZED);
-				fSpecializedCache= (IPDOMBinding) getLinkage().getNode(specializedRec);
+				fSpecializedCache= loadSpecializedBinding(specializedRec);
 			} catch (CoreException e) {
 				CCorePlugin.log(e);
 			}
 		}
 		return fSpecializedCache;
+	}
+
+	protected IPDOMBinding loadSpecializedBinding(long specializedRec) throws CoreException {
+		return (IPDOMBinding) getLinkage().getNode(specializedRec);
 	}
 		
 	@Deprecated

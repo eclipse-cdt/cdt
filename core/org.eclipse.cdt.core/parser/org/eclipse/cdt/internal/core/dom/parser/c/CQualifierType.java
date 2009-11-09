@@ -19,9 +19,12 @@ import org.eclipse.cdt.core.dom.ast.c.ICASTDeclSpecifier;
 import org.eclipse.cdt.core.dom.ast.c.ICASTSimpleDeclSpecifier;
 import org.eclipse.cdt.core.dom.ast.c.ICASTTypedefNameSpecifier;
 import org.eclipse.cdt.core.dom.ast.c.ICQualifierType;
+import org.eclipse.cdt.internal.core.dom.parser.ISerializableType;
 import org.eclipse.cdt.internal.core.dom.parser.ITypeContainer;
+import org.eclipse.cdt.internal.core.dom.parser.ITypeMarshalBuffer;
+import org.eclipse.core.runtime.CoreException;
 
-public class CQualifierType implements ICQualifierType, ITypeContainer {
+public class CQualifierType implements ICQualifierType, ITypeContainer, ISerializableType {
 
 	private boolean isConst;
 	private boolean isVolatile;
@@ -125,4 +128,19 @@ public class CQualifierType implements ICQualifierType, ITypeContainer {
         }
         return t;
     }
+
+	public void marshal(ITypeMarshalBuffer buffer) throws CoreException {
+		int firstByte= ITypeMarshalBuffer.CVQUALIFIER;
+		if (isConst()) firstByte |= ITypeMarshalBuffer.FLAG1;
+		if (isVolatile()) firstByte |= ITypeMarshalBuffer.FLAG2;
+		if (isRestrict()) firstByte |= ITypeMarshalBuffer.FLAG3;
+		buffer.putByte((byte) firstByte);
+		buffer.marshalType(getType());
+	}
+	
+	public static IType unmarshal(int firstByte, ITypeMarshalBuffer buffer) throws CoreException {
+		IType nested= buffer.unmarshalType();
+		return new CQualifierType(nested, (firstByte & ITypeMarshalBuffer.FLAG1) != 0,
+				(firstByte & ITypeMarshalBuffer.FLAG2) != 0, (firstByte & ITypeMarshalBuffer.FLAG3) != 0);
+	}
 }

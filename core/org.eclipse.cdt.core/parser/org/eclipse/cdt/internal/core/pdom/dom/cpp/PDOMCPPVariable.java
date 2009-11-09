@@ -24,7 +24,6 @@ import org.eclipse.cdt.internal.core.Util;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPVariableReadWriteFlags;
 import org.eclipse.cdt.internal.core.index.IIndexCPPBindingConstants;
 import org.eclipse.cdt.internal.core.pdom.db.Database;
-import org.eclipse.cdt.internal.core.pdom.dom.PDOMBinding;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMLinkage;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMName;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMNode;
@@ -37,29 +36,11 @@ import org.eclipse.core.runtime.CoreException;
  */
 class PDOMCPPVariable extends PDOMCPPBinding implements ICPPVariable {
 
-	/**
-	 * Offset of pointer to type information for this variable
-	 * (relative to the beginning of the record).
-	 */
-	private static final int TYPE_OFFSET = PDOMBinding.RECORD_SIZE + 0;
-	
-	/**
-	 * Offset of pointer to value information for this variable
-	 * (relative to the beginning of the record).
-	 */
-	private static final int VALUE_OFFSET = PDOMBinding.RECORD_SIZE + 4;
-
-	/**
-	 * Offset of annotation information (relative to the beginning of the
-	 * record).
-	 */
-	protected static final int ANNOTATIONS = PDOMBinding.RECORD_SIZE + 8; // byte
-	
-	/**
-	 * The size in bytes of a PDOMCPPVariable record in the database.
-	 */
+	private static final int TYPE_OFFSET = PDOMCPPBinding.RECORD_SIZE;
+	private static final int VALUE_OFFSET = TYPE_OFFSET + Database.TYPE_SIZE;
+	protected static final int ANNOTATIONS = VALUE_OFFSET + Database.PTR_SIZE; // byte
 	@SuppressWarnings("hiding")
-	protected static final int RECORD_SIZE = PDOMBinding.RECORD_SIZE + 9;
+	protected static final int RECORD_SIZE = ANNOTATIONS + 1;
 	
 	public PDOMCPPVariable(PDOMLinkage linkage, PDOMNode parent, IVariable variable) throws CoreException {
 		super(linkage, parent, variable.getNameCharArray());
@@ -86,15 +67,12 @@ class PDOMCPPVariable extends PDOMCPPBinding implements ICPPVariable {
 		if (newBinding instanceof IVariable) {
 			final Database db = getDB();
 			IVariable var= (IVariable) newBinding;
-			IType mytype= getType();
 			long valueRec= db.getRecPtr(record + VALUE_OFFSET);
 			try {
 				IType newType= var.getType();
 				setType(linkage, newType);
 				db.putByte(record + ANNOTATIONS, encodeFlags(var));
 				setValue(db, var);
-				if (mytype != null) 
-					linkage.deleteType(mytype, record);
 				PDOMValue.delete(db, valueRec);
 				
 			} catch (DOMException e) {
@@ -104,9 +82,8 @@ class PDOMCPPVariable extends PDOMCPPBinding implements ICPPVariable {
 	}
 
 
-	private void setType(final PDOMLinkage linkage, IType newType) throws CoreException, DOMException {
-		PDOMNode typeNode = linkage.addType(this, newType);
-		getDB().putRecPtr(record + TYPE_OFFSET, typeNode != null ? typeNode.getRecord() : 0);
+	private void setType(final PDOMLinkage linkage, IType newType) throws CoreException {
+		linkage.storeType(record+TYPE_OFFSET, newType);
 	}
 
 	protected byte encodeFlags(IVariable variable) throws DOMException {
@@ -134,8 +111,7 @@ class PDOMCPPVariable extends PDOMCPPBinding implements ICPPVariable {
 
 	public IType getType() {
 		try {
-			long typeRec = getDB().getRecPtr(record + TYPE_OFFSET);
-			return (IType)getLinkage().getNode(typeRec);
+			return getLinkage().loadType(record + TYPE_OFFSET);
 		} catch (CoreException e) {
 			CCorePlugin.log(e);
 			return null;

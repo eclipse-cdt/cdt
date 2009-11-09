@@ -37,7 +37,6 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTFunctionDeclarator;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTNamespaceDefinition;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTQualifiedName;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTUsingDirective;
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPBasicType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassScope;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassTemplate;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassTemplatePartialSpecialization;
@@ -52,12 +51,12 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPMember;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPMethod;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPNamespace;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPNamespaceAlias;
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPPointerToMemberType;
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPReferenceType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPSpecialization;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateArgument;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateInstance;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateNonTypeParameter;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateParameter;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateTemplateParameter;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateTypeParameter;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPUsingDeclaration;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPUsingDirective;
@@ -66,6 +65,14 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCompositeTypeSpecifier.ICPPASTBas
 import org.eclipse.cdt.core.index.IIndexBinding;
 import org.eclipse.cdt.internal.core.Util;
 import org.eclipse.cdt.internal.core.dom.parser.ASTInternal;
+import org.eclipse.cdt.internal.core.dom.parser.ITypeMarshalBuffer;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPArrayType;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPBasicType;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPFunctionType;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPPointerToMemberType;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPPointerType;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPQualifierType;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPReferenceType;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPDeferredClassInstance;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPUnknownBinding;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPUnknownClassInstance;
@@ -492,12 +499,10 @@ class PDOMCPPLinkage extends PDOMLinkage implements IIndexCPPBindingConstants {
 		} else if (binding instanceof ICPPTemplateParameter) {
 			if (binding instanceof ICPPTemplateTypeParameter) {
 				return CPP_TEMPLATE_TYPE_PARAMETER;
-			}
-// TODO other template parameter types
-//			else if (binding instanceof ICPPTemplateTemplateParameter)
-//				return CPP_TEMPLATE_TEMPLATE_PARAMETER;
-//			else if (binding instanceof ICPPTemplateNonTypeParameter)
-//				return CPP_TEMPLATE_NON_TYPE_PARAMETER;
+			} else if (binding instanceof ICPPTemplateTemplateParameter)
+				return CPP_TEMPLATE_TEMPLATE_PARAMETER;
+			else if (binding instanceof ICPPTemplateNonTypeParameter)
+				return CPP_TEMPLATE_NON_TYPE_PARAMETER;
 		} else if (binding instanceof ICPPField) {
 			// this must be before variables
 			return CPPFIELD;
@@ -518,8 +523,6 @@ class PDOMCPPLinkage extends PDOMLinkage implements IIndexCPPBindingConstants {
 		} else if (binding instanceof ICPPMethod) {
 			// this must be before functions
 			return CPPMETHOD;
-		} else if (binding instanceof ICPPFunctionType) {
-			return CPP_FUNCTION_TYPE;
 		} else if (binding instanceof ICPPFunction) {
 			return CPPFUNCTION;
 		} else if (binding instanceof ICPPUnknownBinding) {
@@ -681,39 +684,6 @@ class PDOMCPPLinkage extends PDOMLinkage implements IIndexCPPBindingConstants {
 		return adaptBinding(binding);
 	}
 
-	@Override
-	public PDOMNode addType(PDOMNode parent, IType type) throws CoreException {
-		if (type instanceof IProblemBinding) {
-			return null;
-		}
-		if (type instanceof ICPPBasicType) {
-			return new PDOMCPPBasicType(this, parent, (ICPPBasicType) type);
-		}
-		if (type instanceof ICPPFunctionType) {
-			return new PDOMCPPFunctionType(this, parent, (ICPPFunctionType) type);
-		}
-		if (type instanceof ICPPClassType) {
-			return addBinding((ICPPClassType) type, null);
-		}
-		if (type instanceof IEnumeration) {
-			return addBinding((IEnumeration) type, null);
-		}
-		if (type instanceof ITypedef) {
-			return addBinding((ITypedef) type, null);
-		}
-		if (type instanceof ICPPReferenceType) {
-			return new PDOMCPPReferenceType(this, parent, (ICPPReferenceType) type);
-		}
-		if (type instanceof ICPPPointerToMemberType) {
-			return new PDOMCPPPointerToMemberType(this, parent,	(ICPPPointerToMemberType) type);
-		}
-		if (type instanceof ICPPTemplateTypeParameter) {
-			return addBinding((ICPPTemplateTypeParameter) type, null);
-		}
-
-		return super.addType(parent, type); 
-	}
-
 	private void handlePostProcesses() {
 		while (!postProcesses.isEmpty()) {
 			postProcesses.removeFirst().run();
@@ -741,22 +711,12 @@ class PDOMCPPLinkage extends PDOMLinkage implements IIndexCPPBindingConstants {
 			return new PDOMCPPNamespaceAlias(this, record);
 		case CPP_USING_DECLARATION:
 			return new PDOMCPPUsingDeclaration(this, record);
-		case GPPBASICTYPE:
-			return new PDOMCPPBasicType(this, record);
-		case CPPBASICTYPE:
-			return new PDOMCPPBasicType(this, record);
-		case CPPPARAMETER:
-			return new PDOMCPPParameter(this, record);
 		case CPPENUMERATION:
 			return new PDOMCPPEnumeration(this, record);
 		case CPPENUMERATOR:
 			return new PDOMCPPEnumerator(this, record);
 		case CPPTYPEDEF:
 			return new PDOMCPPTypedef(this, record);
-		case CPP_POINTER_TO_MEMBER_TYPE:
-			return new PDOMCPPPointerToMemberType(this, record);
-		case CPP_REFERENCE_TYPE:
-			return new PDOMCPPReferenceType(this, record);
 		case CPP_FUNCTION_TEMPLATE:
 			return new PDOMCPPFunctionTemplate(this, record);
 		case CPP_METHOD_TEMPLATE:
@@ -811,10 +771,6 @@ class PDOMCPPLinkage extends PDOMLinkage implements IIndexCPPBindingConstants {
 			return new PDOMCPPClassTemplateSpecialization(this, record);
 		case CPP_TYPEDEF_SPECIALIZATION:
 			return new PDOMCPPTypedefSpecialization(this, record);
-		case CPP_FUNCTION_TYPE:
-			return new PDOMCPPFunctionType(this, record);
-		case CPP_PARAMETER_SPECIALIZATION:
-			return new PDOMCPPParameterSpecialization(this, record);
 		}
 		assert false : "nodeid= " + nodeType; //$NON-NLS-1$
 		return null;
@@ -1006,5 +962,34 @@ class PDOMCPPLinkage extends PDOMLinkage implements IIndexCPPBindingConstants {
 			return null;
 		}
 		return super.getLocalToFile(binding, glob);
+	}
+	
+	@Override 
+	public PDOMBinding addTypeBinding(IBinding type) throws CoreException {
+		return addBinding(type, null);
+	}
+
+	
+	@Override
+	public IType unmarshalType(ITypeMarshalBuffer buffer) throws CoreException {
+		int firstByte= buffer.getByte() & 0xff;
+		switch((firstByte & ITypeMarshalBuffer.KIND_MASK)) {
+		case ITypeMarshalBuffer.ARRAY:
+			return CPPArrayType.unmarshal(firstByte, buffer);
+		case ITypeMarshalBuffer.BASIC_TYPE:
+			return CPPBasicType.unmarshal(firstByte, buffer);
+		case ITypeMarshalBuffer.CVQUALIFIER:
+			return CPPQualifierType.unmarshal(firstByte, buffer);
+		case ITypeMarshalBuffer.FUNCTION_TYPE:
+			return CPPFunctionType.unmarshal(firstByte, buffer);
+		case ITypeMarshalBuffer.POINTER:
+			return CPPPointerType.unmarshal(firstByte, buffer);
+		case ITypeMarshalBuffer.REFERENCE:
+			return CPPReferenceType.unmarshal(firstByte, buffer);
+		case ITypeMarshalBuffer.POINTER_TO_MEMBER:
+			return CPPPointerToMemberType.unmarshal(firstByte, buffer);
+		}
+		
+		throw new CoreException(CCorePlugin.createStatus("Cannot unmarshal a type, first byte=" + firstByte)); //$NON-NLS-1$
 	}
 }

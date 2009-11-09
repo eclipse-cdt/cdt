@@ -39,16 +39,13 @@ class PDOMCPPTemplateNonTypeParameter extends PDOMCPPBinding implements IPDOMMem
 		ICPPTemplateNonTypeParameter, IPDOMCPPTemplateParameter {
 
 	private static final int TYPE_OFFSET= PDOMCPPBinding.RECORD_SIZE;
-	private static final int PARAMETERID= PDOMCPPBinding.RECORD_SIZE + 4;
-	private static final int DEFAULTVAL= PDOMCPPBinding.RECORD_SIZE + 8;
+	private static final int PARAMETERID= TYPE_OFFSET + Database.TYPE_SIZE;
+	private static final int DEFAULTVAL= PARAMETERID + 4;
+	@SuppressWarnings("hiding")
+	protected static final int RECORD_SIZE = DEFAULTVAL + Database.PTR_SIZE;
 
 	private int fCachedParamID= -1;
 
-	/**
-	 * The size in bytes of a PDOMCPPTemplateTypeParameter record in the database.
-	 */
-	@SuppressWarnings("hiding")
-	protected static final int RECORD_SIZE = PDOMCPPVariable.RECORD_SIZE + 12;
 	
 	public PDOMCPPTemplateNonTypeParameter(PDOMLinkage linkage, PDOMNode parent,
 			ICPPTemplateNonTypeParameter param) throws CoreException {
@@ -91,13 +88,10 @@ class PDOMCPPTemplateNonTypeParameter extends PDOMCPPBinding implements IPDOMMem
 			ICPPTemplateNonTypeParameter ntp= (ICPPTemplateNonTypeParameter) newBinding;
 			updateName(newBinding.getNameCharArray());
 			final Database db = getDB();
-			IType mytype= getType();
 			long valueRec= db.getRecPtr(record + DEFAULTVAL);
 			try {
 				IType newType= ntp.getType();
 				setType(linkage, newType);
-				if (mytype != null) 
-					linkage.deleteType(mytype, record);
 				if (setDefaultValue(db, ntp)) {
 					PDOMValue.delete(db, valueRec);
 				}
@@ -109,12 +103,9 @@ class PDOMCPPTemplateNonTypeParameter extends PDOMCPPBinding implements IPDOMMem
 
 	public void forceDelete(PDOMLinkage linkage) throws CoreException {
 		getDBName().delete();
-		IType type= getType();
-		if (type instanceof PDOMNode) {
-			((PDOMNode) type).delete(linkage);
-		}
-		Database db= getDB();
-		long valueRec= db.getRecPtr(record + DEFAULTVAL);
+		linkage.storeType(record+TYPE_OFFSET, null);
+		final Database db= getDB();
+		final long valueRec= db.getRecPtr(record + DEFAULTVAL);
 		PDOMValue.delete(db, valueRec);
 	}
 
@@ -146,8 +137,7 @@ class PDOMCPPTemplateNonTypeParameter extends PDOMCPPBinding implements IPDOMMem
 	}
 	
 	private void setType(final PDOMLinkage linkage, IType newType) throws CoreException, DOMException {
-		PDOMNode typeNode = linkage.addType(this, newType);
-		getDB().putRecPtr(record + TYPE_OFFSET, typeNode != null ? typeNode.getRecord() : 0);
+		linkage.storeType(record + TYPE_OFFSET, newType);
 	}
 
 	public void configure(ICPPTemplateParameter param) {
@@ -180,8 +170,7 @@ class PDOMCPPTemplateNonTypeParameter extends PDOMCPPBinding implements IPDOMMem
 
 	public IType getType() {
 		try {
-			long typeRec = getDB().getRecPtr(record + TYPE_OFFSET);
-			return (IType)getLinkage().getNode(typeRec);
+			return getLinkage().loadType(record + TYPE_OFFSET);
 		} catch (CoreException e) {
 			CCorePlugin.log(e);
 			return null;

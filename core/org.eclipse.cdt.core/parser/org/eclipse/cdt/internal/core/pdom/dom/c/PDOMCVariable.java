@@ -39,25 +39,25 @@ class PDOMCVariable extends PDOMBinding implements IVariable {
 	 * Offset of pointer to type information for this variable
 	 * (relative to the beginning of the record).
 	 */
-	private static final int TYPE_OFFSET = PDOMBinding.RECORD_SIZE + 0;
+	private static final int TYPE_OFFSET = PDOMBinding.RECORD_SIZE;
 
 	/**
 	 * Offset of pointer to value information for this variable
 	 * (relative to the beginning of the record).
 	 */
-	private static final int VALUE_OFFSET = PDOMBinding.RECORD_SIZE + 4;
+	private static final int VALUE_OFFSET = TYPE_OFFSET + Database.TYPE_SIZE;
 
 	/**
 	 * Offset of annotation information (relative to the beginning of the
 	 * record).
 	 */
-	private static final int ANNOTATIONS = PDOMBinding.RECORD_SIZE + 8;
+	private static final int ANNOTATIONS = VALUE_OFFSET + Database.PTR_SIZE;
 	
 	/**
 	 * The size in bytes of a PDOMCVariable record in the database.
 	 */
 	@SuppressWarnings("hiding")
-	protected static final int RECORD_SIZE = PDOMBinding.RECORD_SIZE + 9;
+	protected static final int RECORD_SIZE = ANNOTATIONS + 1;
 	
 	public PDOMCVariable(PDOMLinkage linkage, PDOMNode parent, IVariable variable) throws CoreException {
 		super(linkage, parent, variable.getNameCharArray());
@@ -84,7 +84,6 @@ class PDOMCVariable extends PDOMBinding implements IVariable {
 		if (newBinding instanceof IVariable) {
 			final Database db = getDB();
 			IVariable var= (IVariable) newBinding;
-			IType mytype= getType();
 			long valueRec= db.getRecPtr(record + VALUE_OFFSET);
 			try {
 				IType newType= var.getType();
@@ -92,8 +91,6 @@ class PDOMCVariable extends PDOMBinding implements IVariable {
 				db.putByte(record + ANNOTATIONS, PDOMCAnnotation.encodeAnnotation(var));
 				setValue(db, var);
 				
-				if (mytype != null) 
-					linkage.deleteType(mytype, record);
 				PDOMValue.delete(db, valueRec);
 			} catch (DOMException e) {
 				throw new CoreException(Util.createStatus(e));
@@ -102,8 +99,7 @@ class PDOMCVariable extends PDOMBinding implements IVariable {
 	}
 
 	private void setType(final PDOMLinkage linkage, final IType type) throws CoreException {
-		final PDOMNode typeNode = linkage.addType(this, type);
-		getDB().putRecPtr(record + TYPE_OFFSET, typeNode != null ? typeNode.getRecord() : 0);
+		linkage.storeType(record + TYPE_OFFSET, type);
 	}
 
 	public PDOMCVariable(PDOMLinkage linkage, long record) {
@@ -122,8 +118,7 @@ class PDOMCVariable extends PDOMBinding implements IVariable {
 	
 	public IType getType() {
 		try {
-			long typeRec = getDB().getRecPtr(record + TYPE_OFFSET);
-			return (IType)getLinkage().getNode(typeRec);
+			return getLinkage().loadType(record + TYPE_OFFSET);
 		} catch (CoreException e) {
 			CCorePlugin.log(e);
 			return null;

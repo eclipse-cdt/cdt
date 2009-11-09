@@ -74,6 +74,7 @@ public class Database {
 	public static final int MAX_BLOCK_DELTAS = CHUNK_SIZE/BLOCK_SIZE_DELTA;	
 	public static final int MAX_MALLOC_SIZE = MAX_BLOCK_DELTAS*BLOCK_SIZE_DELTA - BLOCK_HEADER_SIZE;  
 	public static final int PTR_SIZE = 4;  // size of a pointer in the database in bytes  
+	public static final int TYPE_SIZE = 2+PTR_SIZE;  // size of a type in the database in bytes
 	public static final long MAX_DB_SIZE= ((long) 1 << (Integer.SIZE + BLOCK_SIZE_DELTA_BITS));
 
 
@@ -514,6 +515,18 @@ public class Database {
 		return getChunk(offset).getChar(offset);
 	}
 	
+	public void clearBytes(long offset, int byteCount) throws CoreException {
+		getChunk(offset).clear(offset, byteCount);
+	}
+
+	public void putBytes(long offset, byte[] data, int len) throws CoreException {
+		getChunk(offset).put(offset, data, len);
+	}
+
+	public void getBytes(long offset, byte[] data) throws CoreException {
+		getChunk(offset).get(offset, data);
+	}
+
 	public IString newString(String string) throws CoreException {
 		if (string.length() > ShortString.MAX_LENGTH)
 			return new LongString(this, string);
@@ -754,5 +767,4 @@ public class Database {
 		}
 		return 0;
 	}
-
 }

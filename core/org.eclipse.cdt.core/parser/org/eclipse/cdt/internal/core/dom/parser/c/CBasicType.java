@@ -17,9 +17,11 @@ import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.ITypedef;
 import org.eclipse.cdt.core.dom.ast.c.ICASTSimpleDeclSpecifier;
 import org.eclipse.cdt.core.dom.ast.c.ICBasicType;
-import org.eclipse.cdt.internal.core.index.IIndexType;
+import org.eclipse.cdt.internal.core.dom.parser.ISerializableType;
+import org.eclipse.cdt.internal.core.dom.parser.ITypeMarshalBuffer;
+import org.eclipse.core.runtime.CoreException;
 
-public class CBasicType implements ICBasicType {
+public class CBasicType implements ICBasicType, ISerializableType {
 	private final Kind fKind;
 	private int fModifiers = 0;
 	private IASTExpression value = null;
@@ -104,10 +106,10 @@ public class CBasicType implements ICBasicType {
 	}
 
 	public boolean isSameType(IType obj) {
-	    if( obj == this )
-	        return true;
-	    if( obj instanceof ITypedef || obj instanceof IIndexType)
-	        return obj.isSameType( this );
+		if (obj == this)
+			return true;
+		if (obj instanceof ITypedef)
+			return obj.isSameType(this);
 	    
 		if (!(obj instanceof ICBasicType)) return false;
 		
@@ -153,6 +155,31 @@ public class CBasicType implements ICBasicType {
 	 */
 	public boolean isImaginary() {
 		return ( fModifiers & IS_IMAGINARY) != 0;
+	}
+
+	public void marshal(ITypeMarshalBuffer buffer) throws CoreException {
+		int firstByte= ITypeMarshalBuffer.BASIC_TYPE;
+
+		int kind= getKind().ordinal() * ITypeMarshalBuffer.FLAG1;
+		assert kind < ITypeMarshalBuffer.FLAG4;
+		firstByte |= kind;
+
+		int modifiers= getModifiers();
+		if (modifiers != 0) {
+			buffer.putByte((byte) (firstByte | ITypeMarshalBuffer.FLAG4));
+			buffer.putByte((byte) modifiers);
+		} else {
+			buffer.putByte((byte) firstByte);
+		}
+	}
+	
+	public static IType unmarshal(int firstByte, ITypeMarshalBuffer buffer) throws CoreException {
+		int kind= (firstByte & (ITypeMarshalBuffer.FLAG4-1))/ITypeMarshalBuffer.FLAG1;
+		int modifiers= 0;
+		if (((firstByte & ITypeMarshalBuffer.FLAG4) != 0)) {
+			modifiers= buffer.getByte();
+		}
+		return new CBasicType(Kind.values()[kind], modifiers);
 	}
 
 	@Deprecated

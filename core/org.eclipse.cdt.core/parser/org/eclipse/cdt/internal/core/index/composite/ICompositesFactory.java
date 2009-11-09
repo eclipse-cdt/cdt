@@ -12,10 +12,10 @@ package org.eclipse.cdt.internal.core.index.composite;
 
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.IType;
+import org.eclipse.cdt.core.dom.ast.IValue;
 import org.eclipse.cdt.core.index.IIndexBinding;
 import org.eclipse.cdt.internal.core.index.IIndexFragmentBinding;
 import org.eclipse.cdt.internal.core.index.IIndexScope;
-import org.eclipse.cdt.internal.core.index.IIndexType;
 
 public interface ICompositesFactory {
 	
@@ -25,7 +25,7 @@ public interface ICompositesFactory {
 	 * Returns a composite (in the sense of potentially spanning multiple index fragments - i.e. not to be confused
 	 * with ICompositeType) type for the specified type.
 	 */
-	public IType getCompositeType(IIndexType rtype);
+	public IType getCompositeType(IType rtype);
 
 	/**
 	 * Returns a composite (index context carrying) binding for the specified binding. It does not
@@ -45,4 +45,9 @@ public interface ICompositesFactory {
 	 * Selects all equivalent bindings from the available fragments
 	 */
 	public IIndexFragmentBinding[] findEquivalentBindings(IBinding binding);
+
+	/**
+	 * Converts values.
+	 */
+	public IValue getCompositeValue(IValue v);
 }

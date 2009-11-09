@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2008 IBM Corporation and others.
+ * Copyright (c) 2006, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -96,15 +96,13 @@ public class C99ArrayType implements ICArrayType, ITypeContainer {
 			return t.isSameType(this);
 		if(t instanceof ICArrayType) {
 			ICArrayType at = (ICArrayType)t;
-			try {
-				if(at.isConst() == isConst &&
-				   at.isRestrict() == isRestrict &&
-				   at.isStatic() == isStatic &&
-				   at.isVolatile() == isVolatile &&
-				   at.isVariableLength() == isVariableLength) {
-					return at.isSameType(type);
-				}
-			} catch(DOMException _) { }
+			if(at.isConst() == isConst &&
+			   at.isRestrict() == isRestrict &&
+			   at.isStatic() == isStatic &&
+			   at.isVolatile() == isVolatile &&
+			   at.isVariableLength() == isVariableLength) {
+				return at.isSameType(type);
+			}
 		}
 		return false;
 	}

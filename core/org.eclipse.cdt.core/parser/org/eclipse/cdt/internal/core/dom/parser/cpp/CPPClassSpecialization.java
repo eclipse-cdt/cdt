@@ -44,7 +44,6 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateParameterMap;
 import org.eclipse.cdt.core.parser.util.CharArrayUtils;
 import org.eclipse.cdt.core.parser.util.ObjectMap;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPTemplates;
-import org.eclipse.cdt.internal.core.index.IIndexType;
 
 /**
  * Specialization of a class.
@@ -283,7 +282,7 @@ public class CPPClassSpecialization extends CPPSpecialization
 	public boolean isSameType(IType type) {
 		if (type == this)
 			return true;
-		if (type instanceof ITypedef || type instanceof IIndexType)
+		if (type instanceof ITypedef)
 			return type.isSameType(this);
 
 		if (type instanceof ICPPClassSpecialization) {

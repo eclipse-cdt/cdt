@@ -21,16 +21,13 @@ import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IASTDeclSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
-import org.eclipse.cdt.core.dom.ast.IArrayType;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.ICompositeType;
 import org.eclipse.cdt.core.dom.ast.IEnumeration;
 import org.eclipse.cdt.core.dom.ast.IField;
 import org.eclipse.cdt.core.dom.ast.IFunction;
 import org.eclipse.cdt.core.dom.ast.IParameter;
-import org.eclipse.cdt.core.dom.ast.IPointerType;
 import org.eclipse.cdt.core.dom.ast.IProblemBinding;
-import org.eclipse.cdt.core.dom.ast.IQualifierType;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.ITypedef;
 import org.eclipse.cdt.core.dom.ast.IVariable;
@@ -38,6 +35,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPUsingDirective;
 import org.eclipse.cdt.core.index.IIndexLinkage;
 import org.eclipse.cdt.core.parser.util.CharArrayMap;
 import org.eclipse.cdt.internal.core.dom.parser.ASTInternal;
+import org.eclipse.cdt.internal.core.dom.parser.ITypeMarshalBuffer;
 import org.eclipse.cdt.internal.core.index.IIndexBindingConstants;
 import org.eclipse.cdt.internal.core.pdom.PDOM;
 import org.eclipse.cdt.internal.core.pdom.WritablePDOM;
@@ -46,6 +44,7 @@ import org.eclipse.cdt.internal.core.pdom.db.Database;
 import org.eclipse.cdt.internal.core.pdom.db.IBTreeComparator;
 import org.eclipse.cdt.internal.core.pdom.db.IBTreeVisitor;
 import org.eclipse.cdt.internal.core.pdom.db.IString;
+import org.eclipse.cdt.internal.core.pdom.db.TypeMarshalBuffer;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 
@@ -183,28 +182,11 @@ public abstract class PDOMLinkage extends PDOMNamedNode implements IIndexLinkage
 		switch (nodeType) {
 		case LINKAGE:
 			return null;
-		case POINTER_TYPE:
-			return new PDOMPointerType(this, record);
-		case ARRAY_TYPE:
-			return new PDOMArrayType(this, record);
-		case QUALIFIER_TYPE:
-			return new PDOMQualifierType(this, record);
 		}
 		return getNode(record, nodeType);
 	}
 
 	abstract public PDOMNode getNode(long record, int nodeType) throws CoreException;
-
-	public PDOMNode addType(PDOMNode parent, IType type) throws CoreException {
-		if (type instanceof IPointerType)
-			return new PDOMPointerType(this, parent, (IPointerType)type);
-		else if (type instanceof IArrayType) 
-			return new PDOMArrayType(this, parent, (IArrayType) type);
-		else if (type instanceof IQualifierType)
-			return new PDOMQualifierType(this, parent, (IQualifierType)type);
-		else
-			return null;
-	}
 
 	public abstract IBTreeComparator getIndexComparator();
 
@@ -331,7 +313,7 @@ public abstract class PDOMLinkage extends PDOMNamedNode implements IIndexLinkage
 	}
 
 	/**
-	 * Callback informing the linkage that a binding is about to be removed. Used to index nested bindings.
+	 * Call-back informing the linkage that a binding is about to be removed. Used to index nested bindings.
 	 * @param pdomBinding
 	 * @throws CoreException
 	 * @since 4.0.1
@@ -340,26 +322,6 @@ public abstract class PDOMLinkage extends PDOMNamedNode implements IIndexLinkage
 		if (pdomBinding.getParentNodeRec() != record) {
 			getNestedBindingsIndex().delete(pdomBinding.getRecord());
 		}
-	}
-
-	public void deleteType(IType type, long ownerRec) throws CoreException {
-		if (type instanceof PDOMNode) {
-			PDOMNode node= (PDOMNode) type;
-			// at this point only delete types that are actually owned by the requesting party.
-			if (node.getParentNodeRec() == ownerRec) {
-				assert ! (node instanceof IBinding);
-				node.delete(this);
-			}
-		}
-	}
-
-	public void deleteBinding(IBinding binding) throws CoreException {
-		// no implementation, yet.
-	}
-
-	@Override
-	public void delete(PDOMLinkage linkage) throws CoreException {
-		assert false; // no need to delete linkages.
 	}
 
 	public ICPPUsingDirective[] getUsingDirectives(PDOMFile file) throws CoreException {
@@ -460,5 +422,73 @@ public abstract class PDOMLinkage extends PDOMNamedNode implements IIndexLinkage
 			pdom.putCachedResult(key, new SoftReference<CharArrayMap<?>>(map));
 		}
 		return map;
+	}
+
+	public abstract PDOMBinding addTypeBinding(IBinding type) throws CoreException;
+	public abstract IType unmarshalType(ITypeMarshalBuffer buffer) throws CoreException;
+
+	public void storeType(long offset, IType type) throws CoreException {
+		final Database db= getDB();
+		deleteType(db, offset);
+		storeType(db, offset, type);
+	}
+
+	private void storeType(Database db, long offset, IType type) throws CoreException {
+		if (type != null) {
+			TypeMarshalBuffer bc= new TypeMarshalBuffer(this);
+			bc.marshalType(type);
+			int len= bc.getPosition();
+			if (len > 0) {
+				if (len <= Database.TYPE_SIZE) {
+					db.putBytes(offset, bc.getBuffer(), len);
+				} else if (len <= Database.MAX_MALLOC_SIZE-2){
+					long ptr= db.malloc(len+2);
+					db.putShort(ptr, (short) len);
+					db.putBytes(ptr+2, bc.getBuffer(), len);
+					db.putByte(offset, TypeMarshalBuffer.INDIRECT_TYPE);
+					db.putRecPtr(offset+2, ptr);
+				}
+			}
+		}
+	}
+
+	private void deleteType(Database db, long offset) throws CoreException {
+		byte firstByte= db.getByte(offset);
+		if (firstByte == TypeMarshalBuffer.INDIRECT_TYPE) {
+			long ptr= db.getRecPtr(offset+2);
+			clearType(db, offset);
+			db.free(ptr);
+		} else {
+			clearType(db, offset);
+		}
+	}
+
+	private void clearType(Database db, long offset) throws CoreException {
+		db.clearBytes(offset, Database.TYPE_SIZE);
+	}
+
+	public IType loadType(long offset) throws CoreException {
+		final Database db= getDB();
+		final byte firstByte= db.getByte(offset);
+		byte[] data= null;
+		switch(firstByte) {
+		case TypeMarshalBuffer.INDIRECT_TYPE:
+			long ptr= db.getRecPtr(offset+2);
+			int len= db.getShort(ptr) & 0xffff;
+			data= new byte[len];
+			db.getBytes(ptr+2, data);
+			break;
+		case TypeMarshalBuffer.NULL_TYPE:
+			break;
+		default:
+			data= new byte[Database.TYPE_SIZE];
+			db.getBytes(offset, data);
+			break;
+		}
+			
+		if (data != null) {
+			return new TypeMarshalBuffer(this, data).unmarshalType();
+		}
+		return null;
 	}
 }

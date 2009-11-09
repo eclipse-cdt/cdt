@@ -12,7 +12,6 @@ package org.eclipse.cdt.internal.core.index.composite.c;
 
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.dom.ast.DOMException;
-import org.eclipse.cdt.core.dom.ast.IArrayType;
 import org.eclipse.cdt.core.dom.ast.IBasicType;
 import org.eclipse.cdt.core.dom.ast.ICompositeType;
 import org.eclipse.cdt.core.dom.ast.IEnumeration;
@@ -21,24 +20,25 @@ import org.eclipse.cdt.core.dom.ast.IField;
 import org.eclipse.cdt.core.dom.ast.IFunction;
 import org.eclipse.cdt.core.dom.ast.IFunctionType;
 import org.eclipse.cdt.core.dom.ast.IParameter;
-import org.eclipse.cdt.core.dom.ast.IPointerType;
-import org.eclipse.cdt.core.dom.ast.IQualifierType;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.ITypedef;
+import org.eclipse.cdt.core.dom.ast.IValue;
 import org.eclipse.cdt.core.dom.ast.IVariable;
+import org.eclipse.cdt.core.dom.ast.c.ICArrayType;
 import org.eclipse.cdt.core.dom.ast.c.ICCompositeTypeScope;
+import org.eclipse.cdt.core.dom.ast.c.ICPointerType;
+import org.eclipse.cdt.core.dom.ast.c.ICQualifierType;
 import org.eclipse.cdt.core.index.IIndex;
 import org.eclipse.cdt.core.index.IIndexBinding;
 import org.eclipse.cdt.core.index.IIndexMacroContainer;
+import org.eclipse.cdt.internal.core.dom.parser.c.CArrayType;
+import org.eclipse.cdt.internal.core.dom.parser.c.CFunctionType;
+import org.eclipse.cdt.internal.core.dom.parser.c.CPointerType;
+import org.eclipse.cdt.internal.core.dom.parser.c.CQualifierType;
 import org.eclipse.cdt.internal.core.index.IIndexFragmentBinding;
 import org.eclipse.cdt.internal.core.index.IIndexScope;
-import org.eclipse.cdt.internal.core.index.IIndexType;
 import org.eclipse.cdt.internal.core.index.composite.AbstractCompositeFactory;
-import org.eclipse.cdt.internal.core.index.composite.CompositeArrayType;
-import org.eclipse.cdt.internal.core.index.composite.CompositeFunctionType;
 import org.eclipse.cdt.internal.core.index.composite.CompositeMacroContainer;
-import org.eclipse.cdt.internal.core.index.composite.CompositePointerType;
-import org.eclipse.cdt.internal.core.index.composite.CompositeQualifierType;
 import org.eclipse.cdt.internal.core.index.composite.CompositingNotImplementedError;
 
 public class CCompositesFactory extends AbstractCompositeFactory {
@@ -68,34 +68,70 @@ public class CCompositesFactory extends AbstractCompositeFactory {
 	/* 
 	 * @see org.eclipse.cdt.internal.core.index.composite.cpp.ICompositesFactory#getCompositeType(org.eclipse.cdt.core.index.IIndex, org.eclipse.cdt.core.dom.ast.IType)
 	 */
-	public IType getCompositeType(IIndexType rtype) {
-		IType result;
-		
-		if(rtype==null) {
-			result = null;
-		} else if(rtype instanceof IFunctionType) {
-			result = new CompositeFunctionType((IFunctionType)rtype, this);
-		} else if(rtype instanceof ICompositeType) {
-			result = (ICompositeType) getCompositeBinding((IIndexFragmentBinding) rtype);
-		} else if (rtype instanceof IEnumeration) {
-			result = (IEnumeration) getCompositeBinding((IIndexFragmentBinding) rtype);
-		} else if(rtype instanceof IPointerType) {
-			result = new CompositePointerType((IPointerType)rtype, this);
-		} else if(rtype instanceof IQualifierType) {
-			result = new CompositeQualifierType((IQualifierType) rtype, this);
-		} else if(rtype instanceof IArrayType) {
-			result = new CompositeArrayType((IArrayType) rtype, this);
-		} else if(rtype instanceof ITypedef) {
-			result = new CompositeCTypedef(this, (IIndexFragmentBinding) rtype);
-		} else if(rtype instanceof IBasicType) {
-			result = rtype; // no context required its a leaf with no way to traverse upward
-		} else {
-			throw new CompositingNotImplementedError();
-		}
+	public IType getCompositeType(IType rtype) {
 
-		return result;
+		if (rtype instanceof IIndexFragmentBinding) {
+			return (IType) getCompositeBinding((IIndexFragmentBinding) rtype);
+		} 
+		if (rtype instanceof IFunctionType) {
+			IFunctionType ft= (IFunctionType) rtype;
+			IType r= ft.getReturnType();
+			IType r2= getCompositeType(r);
+			IType[] p= ft.getParameterTypes();
+			IType[] p2= getCompositeTypes(p);
+			if (r != r2 || p != p2) {
+				return new CFunctionType(r2, p2);
+			}
+			return ft;
+		} 
+		if (rtype instanceof ICPointerType) {
+			ICPointerType pt= (ICPointerType) rtype;
+			IType r= pt.getType();
+			IType r2= getCompositeType(r);
+			if (r != r2) {
+				int q= 0;
+				if (pt.isConst())
+					q |= CPointerType.IS_CONST;
+				if (pt.isVolatile())
+					q |= CPointerType.IS_VOLATILE;
+				if (pt.isRestrict())
+					q |= CPointerType.IS_RESTRICT;
+				return new CPointerType(r2, q);
+			}
+			return pt;
+		}
+		if (rtype instanceof ICQualifierType) {
+			ICQualifierType qt= (ICQualifierType) rtype;
+			IType r= qt.getType();
+			IType r2= getCompositeType(r);
+			if (r != r2) {
+				return new CQualifierType(r2, qt.isConst(), qt.isVolatile(), qt.isRestrict());
+			}
+			return qt;
+		} 
+		if (rtype instanceof ICArrayType) {
+			ICArrayType at= (ICArrayType) rtype;
+			IType r= at.getType();
+			IType r2= getCompositeType(r);
+			IValue v= at.getSize();
+			IValue v2= getCompositeValue(v);
+			if (r != r2 || v != v2) {
+				CArrayType at2 = new CArrayType(r2, at.isConst(), at.isVolatile(), at.isRestrict(), v2);
+				at2.setIsStatic(at.isStatic());
+				at2.setIsVariableLength(at.isVariableLength());
+			}
+			return at;
+		} 
+		if (rtype instanceof IBasicType || rtype == null) {
+			return rtype;
+		} 
+		
+		throw new CompositingNotImplementedError();
 	}
 
+	public IValue getCompositeValue(IValue v) {
+		return v;
+	}
 
 	/* 
 	 * @see org.eclipse.cdt.internal.core.index.composite.cpp.ICompositesFactory#getCompositeBinding(org.eclipse.cdt.core.index.IIndex, org.eclipse.cdt.core.dom.ast.IBinding)

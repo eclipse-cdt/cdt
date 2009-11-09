@@ -1177,9 +1177,12 @@ public class IndexUpdateTests extends IndexTestBase {
 	// typeof(funcTypeDeletion) storeRef;
 	// char funcTypeDeletion(int);		// delete type
 	// typeof(storeRef) useRef;         // use reference
-	public void _testTypedeletion_Bug294306() throws Exception {
+	public void testTypedeletion_Bug294306() throws Exception {
 		setupHeader(2, true);
 		setupFile(2, true);
-		checkFunction("useRef", new String[]{"char", "void"}, new String[]{});
+		checkFunction("useRef", new String[]{"void", "int"}, new String[]{});
+		fContentUsed--;
+		updateFile();
+		checkFunction("useRef", new String[]{"char", "int"}, new String[]{});
 	}
 }

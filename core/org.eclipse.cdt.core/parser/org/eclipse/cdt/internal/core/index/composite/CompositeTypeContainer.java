@@ -13,7 +13,6 @@ package org.eclipse.cdt.internal.core.index.composite;
 import org.eclipse.cdt.core.dom.ast.ASTTypeUtil;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.internal.core.dom.parser.ITypeContainer;
-import org.eclipse.cdt.internal.core.index.IIndexType;
 
 public class CompositeTypeContainer extends CompositeType implements ITypeContainer {
 
@@ -22,7 +21,7 @@ public class CompositeTypeContainer extends CompositeType implements ITypeContai
 	}
 
 	public final IType getType() {
-		return cf.getCompositeType((IIndexType) ((ITypeContainer) type).getType());
+		return cf.getCompositeType(((ITypeContainer) type).getType());
 	}
 
 	@Override

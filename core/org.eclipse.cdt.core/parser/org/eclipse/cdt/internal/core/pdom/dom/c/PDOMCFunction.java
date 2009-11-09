@@ -21,8 +21,10 @@ import org.eclipse.cdt.core.dom.ast.IFunction;
 import org.eclipse.cdt.core.dom.ast.IFunctionType;
 import org.eclipse.cdt.core.dom.ast.IParameter;
 import org.eclipse.cdt.core.dom.ast.IScope;
+import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.internal.core.Util;
 import org.eclipse.cdt.internal.core.index.IIndexCBindingConstants;
+import org.eclipse.cdt.internal.core.pdom.db.Database;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMBinding;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMLinkage;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMNode;
@@ -37,31 +39,31 @@ class PDOMCFunction extends PDOMBinding implements IFunction {
 	 * Offset of total number of function parameters (relative to the
 	 * beginning of the record).
 	 */
-	public static final int NUM_PARAMS = PDOMBinding.RECORD_SIZE + 0;
+	public static final int NUM_PARAMS = PDOMBinding.RECORD_SIZE;
 	
 	/**
 	 * Offset of total number of function parameters (relative to the
 	 * beginning of the record).
 	 */
-	public static final int FIRST_PARAM = PDOMBinding.RECORD_SIZE + 4;
+	public static final int FIRST_PARAM = NUM_PARAMS + 4;
 	
 	/**
 	 * Offset for the type of this function (relative to
 	 * the beginning of the record).
 	 */
-	private static final int FUNCTION_TYPE = PDOMBinding.RECORD_SIZE + 8;
+	private static final int FUNCTION_TYPE = FIRST_PARAM + Database.PTR_SIZE;
 	
 	/**
 	 * Offset of annotation information (relative to the beginning of the
 	 * record).
 	 */
-	private static final int ANNOTATIONS = PDOMBinding.RECORD_SIZE + 12; // byte
+	private static final int ANNOTATIONS = FUNCTION_TYPE + Database.TYPE_SIZE; // byte
 	
 	/**
 	 * The size in bytes of a PDOMCPPFunction record in the database.
 	 */
 	@SuppressWarnings("hiding")
-	public static final int RECORD_SIZE = PDOMBinding.RECORD_SIZE + 13;
+	public static final int RECORD_SIZE = ANNOTATIONS + 1;
 	
 	public PDOMCFunction(PDOMLinkage linkage, long record) {
 		super(linkage, record);
@@ -100,17 +102,9 @@ class PDOMCFunction extends PDOMBinding implements IFunction {
 				throw new CoreException(Util.createStatus(e));
 			}
 				
-			IFunctionType oldType= getType();
-			if (oldType != null && oldType.isSameType(newType)) {
-				oldType= null;
-			} else {
-				setType(linkage, newType);
-			}
-			PDOMCParameter oldParams= getFirstParameter();
+			setType(linkage, newType);
+			PDOMCParameter oldParams= getFirstParameter(null);
 			setParameters(newParams);
-			if (oldType != null) {
-				linkage.deleteType(oldType, record);
-			}
 			if (oldParams != null) {
 				oldParams.delete(linkage);
 			}
@@ -119,36 +113,25 @@ class PDOMCFunction extends PDOMBinding implements IFunction {
 	}
 
 	private void setType(PDOMLinkage linkage, IFunctionType ft) throws CoreException {
-		long rec= 0;
-		if (ft != null) {
-			PDOMNode typeNode = linkage.addType(this, ft);
-			if (typeNode != null) {
-				rec= typeNode.getRecord();
-			}
-		}
-		getDB().putRecPtr(record + FUNCTION_TYPE, rec);
+		linkage.storeType(record+FUNCTION_TYPE, ft);
 	}
 
 	private void setParameters(IParameter[] params) throws CoreException {
-		getDB().putInt(record + NUM_PARAMS, params.length);
-		getDB().putRecPtr(record + FIRST_PARAM, 0);
-		for (int i = 0; i < params.length; ++i) {
-			setFirstParameter(new PDOMCParameter(getLinkage(), this, params[i]));
+		final PDOMLinkage linkage = getLinkage();
+		final Database db= getDB();
+		db.putInt(record + NUM_PARAMS, params.length);
+		db.putRecPtr(record + FIRST_PARAM, 0);
+		PDOMCParameter next= null;
+		for (int i= params.length-1; i >= 0; --i) {
+			next= new PDOMCParameter(linkage, this, params[i], next);
 		}
+		db.putRecPtr(record + FIRST_PARAM, next == null ? 0 : next.getRecord());
 	}
 	
-	public PDOMCParameter getFirstParameter() throws CoreException {
+	public PDOMCParameter getFirstParameter(IType t) throws CoreException {
 		long rec = getDB().getRecPtr(record + FIRST_PARAM);
-		return rec != 0 ? new PDOMCParameter(getLinkage(), rec) : null;
+		return rec != 0 ? new PDOMCParameter(getLinkage(), rec, t) : null;
 	}
-	
-	public void setFirstParameter(PDOMCParameter param) throws CoreException {
-		if (param != null)
-			param.setNextParameter(getFirstParameter());
-		long rec = param != null ? param.getRecord() :  0;
-		getDB().putRecPtr(record + FIRST_PARAM, rec);
-	}
-
 	
 	@Override
 	protected int getRecordSize() {
@@ -161,16 +144,8 @@ class PDOMCFunction extends PDOMBinding implements IFunction {
 	}
 
 	public IFunctionType getType() {
-		/*
-		 * CVisitor binding resolution assumes any IBinding which is
-		 * also an IType should be converted to a IProblemBinding in a
-		 * route through the code that triggers errors here. This means
-		 * we can't use the convenient idea of having PDOMCFunction implement
-		 * both the IType and IBinding interfaces. 
-		 */
 		try {
-			long offset= getDB().getRecPtr(record + FUNCTION_TYPE);
-			return offset==0 ? null : new PDOMCFunctionType(getLinkage(), offset); 
+			return (IFunctionType) getLinkage().loadType(record + FUNCTION_TYPE);
 		} catch(CoreException ce) {
 			CCorePlugin.log(ce);
 			return null;
@@ -187,17 +162,25 @@ class PDOMCFunction extends PDOMBinding implements IFunction {
 
 	public IParameter[] getParameters() throws DOMException {
 		try {
-			int n = getDB().getInt(record + NUM_PARAMS);
-			IParameter[] params = new IParameter[n];
-			PDOMCParameter param = getFirstParameter();
-			while (param != null) {
-				params[--n] = param;
-				param = param.getNextParameter();
+			PDOMLinkage linkage= getLinkage();
+			Database db= getDB();
+			IFunctionType ft = getType();
+			IType[] ptypes= ft == null ? IType.EMPTY_TYPE_ARRAY : ft.getParameterTypes();
+			
+			int n = db.getInt(record + NUM_PARAMS);
+			IParameter[] result = new IParameter[n];
+			
+			long next = db.getRecPtr(record + FIRST_PARAM);
+ 			for (int i = 0; i < n && next != 0; i++) {
+ 				IType type= i<ptypes.length ? ptypes[i] : null;
+				final PDOMCParameter par = new PDOMCParameter(linkage, next, type);
+				next= par.getNextPtr();
+				result[i]= par;
 			}
-			return params;
+			return result;
 		} catch (CoreException e) {
 			CCorePlugin.log(e);
-			return new IParameter[0];
+			return IParameter.EMPTY_PARAMETER_ARRAY;
 		}
 	}
 	

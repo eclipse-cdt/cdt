@@ -21,7 +21,7 @@ import org.eclipse.core.runtime.CoreException;
  * Stores a list of types
  */
 class PDOMCPPTypeList {
-	protected static final int NODE_SIZE = 4;
+	private static final int NODE_SIZE = Database.TYPE_SIZE;
 
 	/**
 	 * Stores the given types in the database. 
@@ -40,14 +40,7 @@ class PDOMCPPTypeList {
 		db.putShort(p, len); p+=2;
 		for (int i=0; i<len; i++, p+=NODE_SIZE) {
 			final IType type = types[i];
-			long rec= 0;
-			if (type != null) {
-				final PDOMNode pdomType = linkage.addType(parent, type);
-				if (pdomType != null) {
-					rec= pdomType.getRecord();
-				} 
-			}
-			db.putRecPtr(p, rec);
+			linkage.storeType(p, type);
 		}
 		return block;
 	}
@@ -67,9 +60,7 @@ class PDOMCPPTypeList {
 		rec+=2;
 		IType[] result= new IType[len];
 		for (int i=0; i<len; i++, rec+=NODE_SIZE) {
-			final long typeRec= db.getRecPtr(rec);
-			if (typeRec != 0)
-				result[i]= (IType)linkage.getNode(typeRec);
+			result[i]= linkage.loadType(rec);
 		}
 		return result;
 	}
@@ -88,9 +79,7 @@ class PDOMCPPTypeList {
 		Assert.isTrue(len >= 0 && len <= (Database.MAX_MALLOC_SIZE-2)/NODE_SIZE);
 		long p= record+2;
 		for (int i=0; i<len; i++, p+=NODE_SIZE) {
-			final long typeRec= db.getRecPtr(p);
-			final IType t= (IType) linkage.getNode(typeRec);
-			linkage.deleteType(t, parent.getRecord());
+			linkage.storeType(p, null);
 		}
 		db.free(record);
 	}

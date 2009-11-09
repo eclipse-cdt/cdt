@@ -23,9 +23,9 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPSpecialization;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateArgument;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateParameterMap;
+import org.eclipse.cdt.core.index.IIndexBinding;
 import org.eclipse.cdt.core.parser.util.ObjectMap;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPTemplates;
-import org.eclipse.cdt.internal.core.index.IIndexType;
 
 /**
  * A partial class template specialization.
@@ -97,7 +97,7 @@ public class CPPClassTemplatePartialSpecialization extends CPPClassTemplate
 	public boolean isSameType(IType type) {
 		if (type == this)
 			return true;
-		if (type instanceof ITypedef || type instanceof IIndexType)
+		if (type instanceof ITypedef || type instanceof IIndexBinding)
 			return type.isSameType(this);
 
 		if (type instanceof ICPPClassTemplatePartialSpecialization) {

@@ -55,12 +55,8 @@ public class PDOMCPPTemplateTemplateParameter extends PDOMCPPBinding
 	private static final int MEMBERLIST = PDOMCPPBinding.RECORD_SIZE + 4;
 	private static final int PARAMETERID= PDOMCPPBinding.RECORD_SIZE + 8;
 	private static final int PARAMETERS= PDOMCPPBinding.RECORD_SIZE + 12;
-
-	/**
-	 * The size in bytes of a PDOMCPPTemplateTypeParameter record in the database.
-	 */
 	@SuppressWarnings("hiding")
-	protected static final int RECORD_SIZE = PDOMCPPBinding.RECORD_SIZE + 14;
+	protected static final int RECORD_SIZE = PDOMCPPBinding.RECORD_SIZE + 16;
 	
 	private ICPPScope fUnknownScope;
 	private int fCachedParamID= -1;
@@ -239,10 +235,6 @@ public class PDOMCPPTemplateTemplateParameter extends PDOMCPPBinding
 			((PDOMNode) type).delete(linkage);
 		}
 		Database db= getDB();
-		long valueRec= db.getRecPtr(record + DEFAULT_TYPE);
-		if (valueRec != 0)
-			db.getString(valueRec).delete();
-
 		long oldRec= db.getRecPtr(record + PARAMETERS);
 		IPDOMCPPTemplateParameter[] oldParams= getTemplateParameters();
 		if (oldRec != 0)

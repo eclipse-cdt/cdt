@@ -1528,11 +1528,14 @@ public class IndexBugsTests extends BaseTestCase {
 	//    void method();
 	// };
 	// #include "MyClass_inline.h"
+	
+	// #include "MyClass.h"
 	public void testAddingMemberBeforeContainer_Bug203170() throws Exception {
-		String[] contents= getContentsForTest(2);
+		String[] contents= getContentsForTest(3);
 		final IIndexManager indexManager = CCorePlugin.getIndexManager();
 		TestSourceReader.createFile(fCProject.getProject(), "MyClass_inline.h", contents[0]);
-		TestSourceReader.createFile(fCProject.getProject(), "source.cpp", contents[1]);
+		TestSourceReader.createFile(fCProject.getProject(), "MyClass.h", contents[1]);
+		TestSourceReader.createFile(fCProject.getProject(), "MyClass.cpp", contents[2]);
 		indexManager.reindex(fCProject);
 		waitForIndexer();
 		fIndex.acquireReadLock();

@@ -74,7 +74,7 @@ public class BaseTestCase {
     	}
 		
 		// Set these up in case we will be running Remote tests.  They will be ignored if we don't
-    	attrs.put(ATTR_DEBUG_SERVER_NAME, "gdbserver.7.1");
+    	attrs.put(ATTR_DEBUG_SERVER_NAME, "gdbserver");
     	attrs.put(IGDBLaunchConfigurationConstants.ATTR_REMOTE_TCP, true);
     	attrs.put(IGDBLaunchConfigurationConstants.ATTR_HOST, "localhost");
     	attrs.put(IGDBLaunchConfigurationConstants.ATTR_PORT, "9999");

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005 IBM Corporation and others.
+ * Copyright (c) 2005, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -36,7 +36,7 @@ public class ProcessList implements IProcessList {
 	public IProcessInfo [] getProcessList()  {
 		Process ps;
 		BufferedReader psOutput;
-		String[] args = {"/bin/ps", "-a", "-o", "pid,command"}; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
+		String[] args = {"/bin/ps", "-a", "-c", "-x", "-o", "pid,command"}; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$ //$NON-NLS-6$
 
 		try {
 			ps = ProcessFactory.getFactory().exec(args);

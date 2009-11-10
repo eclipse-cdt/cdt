@@ -19,10 +19,12 @@ import java.util.List;
 import java.util.Map;
 
 import org.eclipse.cdt.dsf.debug.internal.ui.disassembly.text.REDDocument;
+import org.eclipse.cdt.dsf.debug.internal.ui.disassembly.text.REDTextStore;
 import org.eclipse.core.resources.IStorage;
 import org.eclipse.debug.core.sourcelookup.containers.LocalFileStorage;
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.BadPositionCategoryException;
+import org.eclipse.jface.text.DefaultLineTracker;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.IRegion;
 import org.eclipse.jface.text.Position;
@@ -39,9 +41,9 @@ public class DisassemblyDocument extends REDDocument {
 
 	private final static boolean DEBUG = false;
 
-	public ArrayList<AddressRangePosition> fInvalidAddressRanges = new ArrayList<AddressRangePosition>();
-	public ArrayList<SourcePosition> fInvalidSource = new ArrayList<SourcePosition>();
-	private Map<IStorage, SourceFileInfo> fFileInfoMap = new HashMap<IStorage, SourceFileInfo>();
+	private final ArrayList<AddressRangePosition> fInvalidAddressRanges = new ArrayList<AddressRangePosition>();
+	private final ArrayList<SourcePosition> fInvalidSource = new ArrayList<SourcePosition>();
+	private final Map<IStorage, SourceFileInfo> fFileInfoMap = new HashMap<IStorage, SourceFileInfo>();
 
 	private int fMaxFunctionLength = 0;
 
@@ -73,6 +75,8 @@ public class DisassemblyDocument extends REDDocument {
 		addPositionCategory(CATEGORY_LABELS);
 		setRadix(16);
 		setShowRadixPrefix(false);
+		fNumberOfInstructions = 0;
+		fMeanSizeOfInstructions = 4;
 	}
 
 	/**
@@ -81,16 +85,26 @@ public class DisassemblyDocument extends REDDocument {
 	@Override
 	public void dispose() {
 		super.dispose();
-		if (fFileInfoMap != null) {
-			// cleanup source info
-			for (Iterator<SourceFileInfo> iter = fFileInfoMap.values().iterator(); iter.hasNext();) {
-				SourceFileInfo fi = iter.next();
-				fi.dispose();
-			}
-			fFileInfoMap = null;
+		// cleanup source info
+		for (Iterator<SourceFileInfo> iter = fFileInfoMap.values().iterator(); iter.hasNext();) {
+			SourceFileInfo fi = iter.next();
+			fi.dispose();
 		}
+		fFileInfoMap.clear();
+		fInvalidAddressRanges.clear();
+		fInvalidSource.clear();
 	}
 
+	/**
+	 * Clears all content and state.
+	 */
+	public void clear() {
+		dispose();
+		setTextStore(new REDTextStore());
+		setLineTracker(new DefaultLineTracker());
+		completeInitialization();
+	}
+	
 	public List<AddressRangePosition> getInvalidAddressRanges() {
 		return fInvalidAddressRanges;
 	}

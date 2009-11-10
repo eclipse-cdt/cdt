@@ -2493,10 +2493,8 @@ public abstract class DisassemblyPart extends WorkbenchPart implements IDisassem
 		fPCHistory.clear();
 		fPendingPCUpdates.clear();
 		fFile2Storage.clear();
-		DisassemblyDocument doc= fDocument;
-		fDocument = createDocument();
+		fDocument.clear();
 		fViewer.setDocument(fDocument, new AnnotationModel());
-		doc.dispose();
         if (fDebugSessionId != null) {
             attachBreakpointsAnnotationModel();
 			fDocument.insertInvalidAddressRange(0, 0, fStartAddress, fEndAddress);

@@ -52,7 +52,6 @@ import org.eclipse.cdt.managedbuilder.internal.core.ManagedBuildInfo;
 import org.eclipse.cdt.managedbuilder.internal.core.ManagedProject;
 import org.eclipse.cdt.managedbuilder.testplugin.BuildSystemTestHelper;
 import org.eclipse.cdt.managedbuilder.testplugin.ManagedBuildTestHelper;
-import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IProjectDescription;
 import org.eclipse.core.resources.IResource;
@@ -68,27 +67,16 @@ import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Path;
 
 public class ProjectModelTests extends TestCase implements IElementChangedListener{
-	private CModelEventChecker fEventChecker;
+	private CDefaultModelEventChecker fEventChecker;
 	
 	public void elementChanged(ElementChangedEvent event) {
 		if(fEventChecker != null)
 			fEventChecker.checkEvent(event);
 	}
 	
-	private class CModelEventChecker {
-		private boolean fEventOccured;
-		
-		void checkEvent(ElementChangedEvent event){
-			fEventOccured = true;
-		}
-		
-	}
-	
-	private class CDefaultModelEventChecker extends CModelEventChecker{
+	private class CDefaultModelEventChecker {
 
 		void checkEvent(ElementChangedEvent event) {
-			super.checkEvent(event);
-			
 			assertEquals(ElementChangedEvent.POST_CHANGE, event.getType());
 			
 			ICElementDelta delta = event.getDelta();
@@ -103,12 +91,14 @@ public class ProjectModelTests extends TestCase implements IElementChangedListen
 		return new TestSuite(ProjectModelTests.class);
 	}
 	
+	@Override
 	protected void setUp() throws Exception {
 		super.setUp();
 		fEventChecker = null;
 		CoreModel.getDefault().addElementChangedListener(this);
 	}
 
+	@Override
 	protected void tearDown() throws Exception {
 		super.tearDown();
 		fEventChecker = null;
@@ -126,7 +116,7 @@ public class ProjectModelTests extends TestCase implements IElementChangedListen
 	}
 	
 	private void modify(ICLanguageSetting ls){
-		List list = ls.getSettingEntriesList(ICSourceEntry.INCLUDE_PATH);
+		List<ICLanguageSettingEntry> list = ls.getSettingEntriesList(ICSourceEntry.INCLUDE_PATH);
 		list.add(new CIncludePathEntry("_modify_", 0));
 		ls.setSettingEntries(ICSettingEntry.INCLUDE_PATH, list);
 	}
@@ -175,7 +165,7 @@ public class ProjectModelTests extends TestCase implements IElementChangedListen
 			Configuration config = new Configuration(mProj, (Configuration)cfgs[i], id, false, true, false);
 			CConfigurationData data = config.getConfigurationData();
 			assertNotNull("data is null for created configuration", data);
-			ICConfigurationDescription cfgDes = des.createConfiguration("org.eclipse.cdt.managedbuilder.core.configurationDataProvider", data);
+			des.createConfiguration("org.eclipse.cdt.managedbuilder.core.configurationDataProvider", data);
 		}
 		coreModel.setProjectDescription(project, des);
 		
@@ -422,12 +412,12 @@ public class ProjectModelTests extends TestCase implements IElementChangedListen
 		
 		assertEquals(6, cfgDes.getResourceDescriptions().length);
 		
-		IFolder folder = ManagedBuildTestHelper.createFolder(project, "a/b");
+		ManagedBuildTestHelper.createFolder(project, "a/b");
 		ICFolderDescription base = (ICFolderDescription)cfgDes.getResourceDescription(new Path("a/b"), false);
 		ICFolderDescription abFoDes =  cfgDes.createFolderDescription(new Path("a/b"), base);
 		ICLanguageSetting ls = abFoDes.getLanguageSettingForFile("a.c");
 		assertNotNull(ls);
-		List list = ls.getSettingEntriesList(ICLanguageSettingEntry.INCLUDE_PATH);
+		List<ICLanguageSettingEntry> list = ls.getSettingEntriesList(ICLanguageSettingEntry.INCLUDE_PATH);
 		list.add(0, new CIncludePathEntry("zzza/b/c", 0));
 		ls.setSettingEntries(ICLanguageSettingEntry.INCLUDE_PATH, list);
 
@@ -448,15 +438,15 @@ public class ProjectModelTests extends TestCase implements IElementChangedListen
 		cfgDes = cfgDess[0];
 		rf = cfgDes.getRootFolderDescription();
 		
-		IFolder f_bc = ManagedBuildTestHelper.createFolder(project, "b/c");
+		ManagedBuildTestHelper.createFolder(project, "b/c");
 		base = (ICFolderDescription)cfgDes.getResourceDescription(new Path("b/c"), false);
 		ICFolderDescription bcFoDes =  cfgDes.createFolderDescription(new Path("b/c"), base);
 		ls = bcFoDes.getLanguageSettingForFile("a.c");
 		assertNotNull(ls);
 		ICLanguageSetting rLS = rf.getLanguageSettingForFile("a.c");
 		assertNotNull(rLS);
-		List lsList = ls.getSettingEntriesList(ICLanguageSettingEntry.INCLUDE_PATH);
-		List rLSList = rLS.getSettingEntriesList(ICLanguageSettingEntry.INCLUDE_PATH);
+		ls.getSettingEntriesList(ICLanguageSettingEntry.INCLUDE_PATH);
+		rLS.getSettingEntriesList(ICLanguageSettingEntry.INCLUDE_PATH);
 		
 		System.out.println("default entries for non-root folder..\n");
 		fEventChecker = new CDefaultModelEventChecker();
@@ -497,7 +487,7 @@ public class ProjectModelTests extends TestCase implements IElementChangedListen
 			Configuration config = new Configuration(mProj, (Configuration)cfgs[i], id, false, true);
 			CConfigurationData data = config.getConfigurationData();
 			assertNotNull("data is null for created configuration", data);
-			ICConfigurationDescription cfgDes = des.createConfiguration("org.eclipse.cdt.managedbuilder.core.configurationDataProvider", data);
+			des.createConfiguration("org.eclipse.cdt.managedbuilder.core.configurationDataProvider", data);
 		}
 		coreModel.setProjectDescription(project, des);
 		
@@ -536,7 +526,7 @@ public class ProjectModelTests extends TestCase implements IElementChangedListen
 		assertEquals(projPath, s[0].getFullPath());
 		assertEquals(0, s[0].getExclusionPatterns().length);
 		
-		IFolder folder = ManagedBuildTestHelper.createFolder(project, "a/b");
+		ManagedBuildTestHelper.createFolder(project, "a/b");
 
 		ICSourceEntry updatetSEs[] = new ICSourceEntry[2];
 		updatetSEs[0] = new CSourceEntry(projPath.append("a"), new Path[]{new Path("b")}, ICSourceEntry.VALUE_WORKSPACE_PATH);
@@ -591,7 +581,7 @@ public class ProjectModelTests extends TestCase implements IElementChangedListen
 			Configuration config = new Configuration(mProj, (Configuration)cfgs[i], id, false, true);
 			CConfigurationData data = config.getConfigurationData();
 			assertNotNull("data is null for created configuration", data);
-			ICConfigurationDescription cfgDes = des.createConfiguration("org.eclipse.cdt.managedbuilder.core.configurationDataProvider", data);
+			des.createConfiguration("org.eclipse.cdt.managedbuilder.core.configurationDataProvider", data);
 		}
 		coreModel.setProjectDescription(project, des);
 
@@ -624,7 +614,7 @@ public class ProjectModelTests extends TestCase implements IElementChangedListen
 		}
 		
 		CMacroEntry entry = new CMacroEntry("a", "b", 0);
-		List list = new ArrayList();
+		List<ICLanguageSettingEntry> list = new ArrayList<ICLanguageSettingEntry>();
 		list.add(entry);
 		list.addAll(Arrays.asList(entries));
 		
@@ -648,20 +638,14 @@ public class ProjectModelTests extends TestCase implements IElementChangedListen
 	public void testReferences() throws Exception{
 		final String projectName4 = "test4";
 		final String projectName5 = "test5";
-		final String projectName6 = "test6";
-		final String projectName7 = "test7";
 		CoreModel coreModel = CoreModel.getDefault();
 
 		IProject project4 = createProject(projectName4, "cdt.managedbuild.target.gnu30.exe");
 		IProject project5 = createProject(projectName5, "cdt.managedbuild.target.gnu30.exe");
-		IProject project6 = createProject(projectName6, "cdt.managedbuild.target.gnu30.exe");
-		IProject project7 = createProject(projectName7, "cdt.managedbuild.target.gnu30.exe");
 		
 		ICProjectDescription des4 = coreModel.getProjectDescription(project4);
 		ICProjectDescription des5 = coreModel.getProjectDescription(project5);
 		ICConfigurationDescription dess[] = des5.getConfigurations();
-		String id1 = dess[0].getId();
-		String id2 = dess[1].getId();
 		
 		ICLanguageSettingEntry entries[] = new ICLanguageSettingEntry[]{
 				new CMacroEntry("a", "b", 0),
@@ -676,11 +660,11 @@ public class ProjectModelTests extends TestCase implements IElementChangedListen
 		assertEquals(extSettings.length, 1);
 		
 		checkArrays(extSettings[0].getEntries(), entries);
-		List list = new ArrayList(Arrays.asList(entries));
+		List<ICLanguageSettingEntry> list = new ArrayList<ICLanguageSettingEntry>(Arrays.asList(entries));
 		list.remove(3);
 		list.remove(2);
 		checkArrays(extSettings[0].getEntries(ICLanguageSettingEntry.MACRO), list.toArray());
-		list = new ArrayList(Arrays.asList(entries));
+		list = new ArrayList<ICLanguageSettingEntry>(Arrays.asList(entries));
 		list.remove(0);
 		list.remove(0);
 		checkArrays(extSettings[0].getEntries(ICLanguageSettingEntry.INCLUDE_PATH), list.toArray());
@@ -690,11 +674,11 @@ public class ProjectModelTests extends TestCase implements IElementChangedListen
 		assertEquals(extSettings.length, 1);
 		
 		checkArrays(extSettings[0].getEntries(), entries);
-		list = new ArrayList(Arrays.asList(entries));
+		list = new ArrayList<ICLanguageSettingEntry>(Arrays.asList(entries));
 		list.remove(3);
 		list.remove(2);
 		checkArrays(extSettings[0].getEntries(ICLanguageSettingEntry.MACRO), list.toArray());
-		list = new ArrayList(Arrays.asList(entries));
+		list = new ArrayList<ICLanguageSettingEntry>(Arrays.asList(entries));
 		list.remove(0);
 		list.remove(0);
 		checkArrays(extSettings[0].getEntries(ICLanguageSettingEntry.INCLUDE_PATH), list.toArray());
@@ -707,7 +691,7 @@ public class ProjectModelTests extends TestCase implements IElementChangedListen
 		assertFalse(arrayContains(entries[1], macros));
 		assertFalse(arrayContains(entries[2], includes));
 		assertFalse(arrayContains(entries[3], includes));
-		Map map = new HashMap();
+		Map<String, String> map = new HashMap<String, String>();
 		map.put(projectName5, "");
 		dess[0].setReferenceInfo(map);
 		ICLanguageSettingEntry updatedMacros[] = ls.getSettingEntries(ICLanguageSettingEntry.MACRO);
@@ -728,7 +712,7 @@ public class ProjectModelTests extends TestCase implements IElementChangedListen
 		ICProjectDescription des = coreModel.getProjectDescription(project);
 		ICConfigurationDescription cfgs[] = des.getConfigurations();
 		String id1 = cfgs[0].getId();
-		String id2 = cfgs[1].getId();
+		cfgs[1].getId();
 		
 		cfgs[0].setActive();
 		assertEquals(cfgs[0], des.getActiveConfiguration());
@@ -823,7 +807,7 @@ public class ProjectModelTests extends TestCase implements IElementChangedListen
 			Configuration config = new Configuration(mProj, (Configuration)cfgs[i], id, false, true);
 			CConfigurationData data = config.getConfigurationData();
 			assertNotNull("data is null for created configuration", data);
-			ICConfigurationDescription cfgDes = des.createConfiguration("org.eclipse.cdt.managedbuilder.core.configurationDataProvider", data);
+			des.createConfiguration("org.eclipse.cdt.managedbuilder.core.configurationDataProvider", data);
 		}
 
 		coreModel.setProjectDescription(project, des);

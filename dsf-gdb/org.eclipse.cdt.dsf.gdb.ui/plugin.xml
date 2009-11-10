@@ -715,4 +715,14 @@
       </toggleTargetFactory>
    </extension>
 
+   <extension
+         point="org.eclipse.cdt.ui.textHovers">
+      <hover
+            label="%editorTextHover.description"
+            description="%editorTextHover.description"
+            class="org.eclipse.cdt.dsf.gdb.internal.ui.GdbDebugTextHover"
+            id="org.eclipse.cdt.dsf.gdb.internal.ui.GdbDebugTextHover">
+      </hover>
+   </extension>
+
 </plugin>

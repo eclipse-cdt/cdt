@@ -436,9 +436,10 @@ public class SemanticUtil {
 			return new CPPPointerType(pt);
 		}
 
-		//8.3.5-3 
-		//Any cv-qualifier modifying a parameter type is deleted.
-		if (forFunctionType && (t instanceof IQualifierType || t instanceof IPointerType)) {
+		// 8.3.5-3 
+		// Any cv-qualifier modifying a parameter type is deleted. The parameter type remains
+		// to be qualified.
+		if (forFunctionType && SemanticUtil.getCVQualifier(t) != CVQualifier._) {
 			return SemanticUtil.getNestedType(t, TDEF | ALLCVQ);
 		}
 		return pt;

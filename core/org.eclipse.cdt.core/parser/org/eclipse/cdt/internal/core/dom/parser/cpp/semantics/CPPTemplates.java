@@ -143,6 +143,7 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPUnknownBinding;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPUnknownClassInstance;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPUnknownClassType;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPUnknownType;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.Conversions.UDCMode;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.Cost.Rank;
 
 /**
@@ -678,9 +679,9 @@ public class CPPTemplates {
 		
 		ICPPTemplateArgument[] result = new ICPPTemplateArgument[length];
 		IType a= SemanticUtil.getSimplifiedType(conversionType);
-		final boolean isReferenceType = a instanceof ICPPReferenceType;
-		final IType p= getArgumentTypeForDeduction(template.getType().getReturnType(), isReferenceType);
-		a= getParameterTypeForDeduction(a, isReferenceType);
+		IType p= template.getType().getReturnType();
+		p= getArgumentTypeForDeduction(p, a instanceof ICPPReferenceType);
+		a= SemanticUtil.getNestedType(a, SemanticUtil.REF | SemanticUtil.TDEF);
 		if (!deduceTemplateParameterMap(p, a, map)) {
 			return null;
 		}
@@ -1478,17 +1479,17 @@ public class CPPTemplates {
 				boolean isDependentPar= isDependentType(par);
 				if (checkExactMatch || isDependentPar) {
 					par= SemanticUtil.getNestedType(par, SemanticUtil.TDEF); // adjustParameterType preserves typedefs
-					par= SemanticUtil.adjustParameterType(par, false);
-					// 14.8.2.1.2 and 14.8.2.1.3
-					final boolean isReferenceType = par instanceof ICPPReferenceType;
-					IType arg= getArgumentTypeForDeduction(fnArgs[j], isReferenceType);
-					par= getParameterTypeForDeduction(par, isReferenceType);
+					// 14.8.2.1-2
+					final boolean isReferenceTypeParameter = par instanceof ICPPReferenceType;
+					IType arg= getArgumentTypeForDeduction(fnArgs[j], isReferenceTypeParameter);
+					if (isReferenceTypeParameter)
+						par= SemanticUtil.getNestedType(par, SemanticUtil.REF | SemanticUtil.TDEF);
 					
-					// 14.8.2.1.3
 					if (!checkExactMatch) {
+						// 14.8.2.1-3
 						CVQualifier cvPar= SemanticUtil.getCVQualifier(par);
 						CVQualifier cvArg= SemanticUtil.getCVQualifier(arg);
-						if (cvPar == cvArg || (isReferenceType && cvPar.isAtLeastAsQualifiedAs(cvArg))) {
+						if (cvPar == cvArg || (isReferenceTypeParameter && cvPar.isAtLeastAsQualifiedAs(cvArg))) {
 							IType pcheck= SemanticUtil.getNestedType(par, CVTYPE);
 							if (!(pcheck instanceof ICPPTemplateParameter)) {
 								par= pcheck;
@@ -1582,19 +1583,6 @@ public class CPPTemplates {
 		} 
 		
 		return deduceTemplateParameterMap(p.getTypeValue(), a.getTypeValue(), map);
-	}
-
-	/**
-	 * 14.8.2.1-2 If P is a cv-qualified type, the top level cv-qualifiers of P's type are ignored for type
-	 * deduction.  If P is a reference type, the type referred to by P is used for Type deduction.
-	 * 
-	 * Also 14.8.2.3-2 where the same logics is used in reverse.
-	 */
-	static private IType getParameterTypeForDeduction(IType pType, boolean isReferenceType) {
-		if (isReferenceType) {
-			return SemanticUtil.getNestedType(pType, SemanticUtil.REF | SemanticUtil.TDEF);
-		}
-		return SemanticUtil.getNestedType(pType, SemanticUtil.TDEF | SemanticUtil.ALLCVQ);
 	}
 
 	/**
@@ -2090,7 +2078,7 @@ public class CPPTemplates {
 	    } else if (paramType instanceof IArrayType) {
 	    	paramType = new CPPPointerType(((IArrayType) paramType).getType());
 		}
-		Cost cost = Conversions.checkStandardConversionSequence(arg, paramType, false);
+		Cost cost = Conversions.checkImplicitConversionSequence(true, arg, paramType, UDCMode.noUDC, false);
 		return cost != null && cost.getRank() != Rank.NO_MATCH;
 	}
 

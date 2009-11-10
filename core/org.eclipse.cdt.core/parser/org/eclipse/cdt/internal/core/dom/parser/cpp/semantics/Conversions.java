@@ -162,7 +162,7 @@ public class Conversions {
 
 					// We must do a non-reference initialization
 					if (!illformed) {
-						return nonReferenceConversion(sourceIsLValue, source, cv1T1, udc, isImpliedObject);
+						return nonReferenceConversion(sourceIsLValue, source, T1, udc, isImpliedObject);
 					}
 				}
 			}
@@ -186,16 +186,13 @@ public class Conversions {
 			}
 		}
 		
-		// [13.3.3.1-6] Subsume cv-qualifications
-		if (!(uqsource instanceof ICPPClassType) && !(uqtarget instanceof ICPPClassType)) {
-			source= uqsource;
-			target= uqtarget;
-		}
-		return nonReferenceConversion(sourceIsLValue, source, target, udc, isImpliedObject);
+		return nonReferenceConversion(sourceIsLValue, source, uqtarget, udc, isImpliedObject);
 	}
 
 	private static Cost nonReferenceConversion(boolean sourceIsLValue, IType source, IType target, UDCMode udc, boolean isImpliedObject) throws DOMException {
-		Cost cost= checkStandardConversionSequence(source, target, isImpliedObject);
+		// [13.3.3.1-6] Subsume cv-qualifications
+		IType uqSource= SemanticUtil.getNestedType(source, TDEF | ALLCVQ);
+		Cost cost= checkStandardConversionSequence(uqSource, target, isImpliedObject);
 		if (cost.getRank() != Rank.NO_MATCH || udc == UDCMode.noUDC) 
 			return cost;
 		
@@ -330,7 +327,7 @@ public class Conversions {
 	 *    base conversion does not cause any costs.
 	 * @throws DOMException
 	 */
-	protected static final Cost checkStandardConversionSequence(IType source, IType target,
+	private static final Cost checkStandardConversionSequence(IType source, IType target,
 			boolean isImplicitThis) throws DOMException {
 		final Cost cost= new Cost(source, target, Rank.IDENTITY);
 		if (lvalue_to_rvalue(cost))
@@ -606,17 +603,6 @@ public class Conversions {
 				isConverted= true;
 			} 
 		}
-
-		// This should actually be done before the conversion is attempted, see for instance 13.3.3.1-6 and 8.5.14.
-		// However, it does not hurt to do it here either.
-		IType unqualifiedTarget= getNestedType(target, ALLCVQ | TDEF | REF);
-		if (!(unqualifiedTarget instanceof ICPPClassType)) {
-			IType unqualifiedSource= getNestedType(source, ALLCVQ | TDEF | REF);
-			if (!(unqualifiedSource instanceof ICPPClassType)) {
-				source= unqualifiedSource;
-				target= unqualifiedTarget;
-			}
-		}		
 
 		if (source == null || target == null) {
 			cost.setRank(Rank.NO_MATCH);

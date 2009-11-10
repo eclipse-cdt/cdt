@@ -21,6 +21,9 @@ import java.util.concurrent.RejectedExecutionException;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import org.eclipse.cdt.core.model.ITranslationUnit;
+import org.eclipse.cdt.debug.internal.core.sourcelookup.CSourceNotFoundElement;
+import org.eclipse.cdt.debug.internal.ui.sourcelookup.CSourceNotFoundEditorInput;
+import org.eclipse.cdt.debug.ui.ICDebugUIConstants;
 import org.eclipse.cdt.dsf.concurrent.DataRequestMonitor;
 import org.eclipse.cdt.dsf.concurrent.DsfExecutor;
 import org.eclipse.cdt.dsf.concurrent.DsfRunnable;
@@ -55,9 +58,7 @@ import org.eclipse.debug.core.sourcelookup.ISourceLookupDirector;
 import org.eclipse.debug.core.sourcelookup.ISourceLookupParticipant;
 import org.eclipse.debug.core.sourcelookup.containers.LocalFileStorage;
 import org.eclipse.debug.ui.DebugUITools;
-import org.eclipse.debug.ui.IDebugUIConstants;
 import org.eclipse.debug.ui.ISourcePresentation;
-import org.eclipse.debug.ui.sourcelookup.CommonSourceNotFoundEditorInput;
 import org.eclipse.debug.ui.sourcelookup.ISourceDisplay;
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.IDocument;
@@ -183,7 +184,7 @@ public class DsfSourceDisplayAdapter implements ISourceDisplay, ISteppingControl
 			return Status.OK_STATUS;
 		}
         
-        private SourceLookupResult performLookup() {
+		private SourceLookupResult performLookup() {
             IDMContext dmc = fFrameData.fDmc;
 			SourceLookupResult result = new SourceLookupResult(dmc , null, null, null);
             String editorId = null;
@@ -191,8 +192,8 @@ public class DsfSourceDisplayAdapter implements ISourceDisplay, ISteppingControl
             Object sourceElement = fSourceLookup.getSourceElement(dmc);
 
             if (sourceElement == null) {
-                editorInput = new CommonSourceNotFoundEditorInput(dmc);
-                editorId = IDebugUIConstants.ID_COMMON_SOURCE_NOT_FOUND_EDITOR;
+				editorInput = new CSourceNotFoundEditorInput(new CSourceNotFoundElement(dmc, fSourceLookup.getLaunchConfiguration(), fFrameData.fFile));
+				editorId = ICDebugUIConstants.CSOURCENOTFOUND_EDITOR_ID;
             } else {
 				ISourcePresentation presentation= null;
 				if (fSourceLookup instanceof ISourcePresentation) {
@@ -217,8 +218,8 @@ public class DsfSourceDisplayAdapter implements ISourceDisplay, ISteppingControl
 	            		editorInput = new FileStoreEditorInput(fileStore);
 	            		editorId = getEditorIdForFilename(fileStore.getName());
 	            	} catch (CoreException e) {
-	                    editorInput = new CommonSourceNotFoundEditorInput(dmc);
-	                    editorId = IDebugUIConstants.ID_COMMON_SOURCE_NOT_FOUND_EDITOR;
+						editorInput = new CSourceNotFoundEditorInput(new CSourceNotFoundElement(dmc, fSourceLookup.getLaunchConfiguration(), fFrameData.fFile));
+						editorId = ICDebugUIConstants.CSOURCENOTFOUND_EDITOR_ID;
 	            	}
 	            } else if (sourceElement instanceof LocalFileStorage) {
 	            	File file = ((LocalFileStorage)sourceElement).getFile();

@@ -94,7 +94,7 @@ public class CSourceLookupParticipant extends AbstractSourceLookupParticipant {
 				if ( name == null || name.length() == 0 )
 				{
 					if (object instanceof IDebugElement)
-						return new Object[] { new CSourceNotFoundElement( (IDebugElement) object ) };
+						return new Object[] { new CSourceNotFoundElement((IDebugElement) object, ((IDebugElement) object).getLaunch().getLaunchConfiguration(), name) };
 					else
 						return new Object[] { gfNoSource };					
 				}
@@ -121,7 +121,7 @@ public class CSourceLookupParticipant extends AbstractSourceLookupParticipant {
 			if (new File(name).exists()) {
 				foundElements = new AbsolutePathSourceContainer().findSourceElements(name);
 			} else {
-				foundElements = new Object[] { new CSourceNotFoundElement((IDebugElement) object) };
+				foundElements = new Object[] { new CSourceNotFoundElement((IDebugElement) object, ((IDebugElement) object).getLaunch().getLaunchConfiguration(), name) };
 			}
 		}
 

@@ -11,54 +11,37 @@
 
 package org.eclipse.cdt.debug.internal.core.sourcelookup;
 
-import org.eclipse.cdt.debug.core.model.ICStackFrame;
 import org.eclipse.core.runtime.IAdaptable;
-import org.eclipse.debug.core.ILaunch;
-import org.eclipse.debug.core.model.IDebugElement;
-import org.eclipse.debug.core.model.IDebugTarget;
+import org.eclipse.debug.core.ILaunchConfiguration;
 
 /**
- * Wrapper for debug elements that have missing source, for example a stack frame
- * whose source file can not be located. Used to enable the CSourceNotFoundEditor
- * that will let you find the missing file.
- *
+ * Wrapper for debug elements that have missing source, for example a stack
+ * frame whose source file can not be located. Used to enable the
+ * CSourceNotFoundEditor that will let you find the missing file.
+ * 
  */
-public class CSourceNotFoundElement implements IDebugElement{
+public class CSourceNotFoundElement {
 
-	private IDebugElement element;
+	private IAdaptable element;
+	private ILaunchConfiguration launch;
+	private String file;
 
-	public IDebugElement getElement() {
+	public IAdaptable getElement() {
 		return element;
 	}
 
-	public CSourceNotFoundElement(IDebugElement element)
-	{
+	public CSourceNotFoundElement(IAdaptable element, ILaunchConfiguration launch, String file) {
 		this.element = element;
+		this.launch = launch;
+		this.file = file;
 	}
 
-	public IDebugTarget getDebugTarget() {
-		return element.getDebugTarget();
-	}
-
-	public ILaunch getLaunch() {
-		return element.getLaunch();
-	}
-
-	public String getModelIdentifier() {
-		return element.getModelIdentifier();
-	}
-
-	public Object getAdapter(Class adapter) {
-		return element.getAdapter(adapter);
+	public ILaunchConfiguration getLaunch() {
+		return launch;
 	}
 
 	public String getFile() {
-		ICStackFrame frame = (ICStackFrame)((IAdaptable)element).getAdapter( ICStackFrame.class );
-		if ( frame != null ) {
-			return frame.getFile().trim();
-		}
-		return "";
+		return file;
 	}
-	
-	
+
 }

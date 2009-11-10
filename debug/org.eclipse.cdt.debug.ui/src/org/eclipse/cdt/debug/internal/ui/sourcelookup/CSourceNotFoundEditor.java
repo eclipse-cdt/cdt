@@ -12,7 +12,6 @@
 
 package org.eclipse.cdt.debug.internal.ui.sourcelookup;
 
-import com.ibm.icu.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Iterator;
@@ -31,14 +30,13 @@ import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.core.filesystem.URIUtil;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.debug.core.DebugPlugin;
-import org.eclipse.debug.core.ILaunch;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
 import org.eclipse.debug.core.ILaunchManager;
-import org.eclipse.debug.core.model.IDebugElement;
 import org.eclipse.debug.core.model.ISourceLocator;
 import org.eclipse.debug.core.sourcelookup.AbstractSourceLookupDirector;
 import org.eclipse.debug.core.sourcelookup.ISourceContainer;
@@ -57,6 +55,8 @@ import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
 
+import com.ibm.icu.text.MessageFormat;
+
 /**
  * Editor that lets you select a replacement for the missing source file
  * and modifies the source locator accordingly.
@@ -72,8 +72,8 @@ public class CSourceNotFoundEditor extends CommonSourceNotFoundEditor {
 	public static final String UID_EDIT_LOOKUP_BUTTON = UID_CLASS_NAME+ "editLookupButton"; //$NON-NLS-1$
 		
 	private String missingFile;
-	private ILaunch launch;
-	private IDebugElement context;
+	private ILaunchConfiguration launch;
+	private IAdaptable context;
 	private ITranslationUnit tunit;
 
 	private Button disassemblyButton;
@@ -238,7 +238,7 @@ public class CSourceNotFoundEditor extends CommonSourceNotFoundEditor {
 		String memento = null;
 		String type = null;
 
-		ILaunchConfigurationWorkingCopy configuration = launch.getLaunchConfiguration().getWorkingCopy();
+		ILaunchConfigurationWorkingCopy configuration = launch.getWorkingCopy();
 		memento = configuration.getAttribute(ILaunchConfiguration.ATTR_SOURCE_LOCATOR_MEMENTO, (String) null);
 		type = configuration.getAttribute(ILaunchConfiguration.ATTR_SOURCE_LOCATOR_ID, (String) null);
 		if (type == null) {

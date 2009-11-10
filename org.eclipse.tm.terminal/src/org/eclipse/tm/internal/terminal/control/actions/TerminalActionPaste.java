@@ -15,6 +15,7 @@
  * Martin Oberhuber (Wind River) - fixed copyright headers and beautified
  * Anna Dushistova (MontaVista) - [227537] moved actions from terminal.view to terminal plugin
  * Uwe Stieber (Wind River) - [260372] [terminal] Certain terminal actions are enabled if no target terminal control is available
+ * Uwe Stieber (Wind River) - [294719] [terminal] SWT Widget disposed in TerminalActionPaste
  *******************************************************************************/
 package org.eclipse.tm.internal.terminal.control.actions;
 
@@ -52,7 +53,7 @@ public class TerminalActionPaste extends AbstractTerminalAction {
 
 	public void updateAction(boolean aboutToShow) {
 		ITerminalViewControl target = getTarget();
-		boolean bEnabled = target != null;
+		boolean bEnabled = aboutToShow && target != null && target.getClipboard() != null && !target.getClipboard().isDisposed();
 		if (bEnabled) {
 			String strText = (String) target.getClipboard().getContents(
 					TextTransfer.getInstance());

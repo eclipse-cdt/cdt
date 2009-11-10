@@ -33,7 +33,7 @@ import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.debug.core.model.IDebugModelProvider;
 
 /**
- * An implementation of AbstractDebugTextHover using DSF services
+ * An implementation of AbstractDebugTextHover using DSF services.
  * 
  * @since 2.1
  */
@@ -112,15 +112,19 @@ abstract public class AbstractDsfDebugTextHover extends AbstractDebugTextHover {
 		IFrameDMContext frame = getFrame();
 		String sessionId = frame.getSessionId();
 		DsfServicesTracker dsfServicesTracker = new DsfServicesTracker(DsfUIPlugin.getBundleContext(), sessionId);
-		GetExpressionValueQuery query = new GetExpressionValueQuery(frame, expression, dsfServicesTracker);
-		DsfSession session = DsfSession.getSession(sessionId);
-        session.getExecutor().execute(query);
-        try {
-        	FormattedValueDMData data = query.get();
-        	if (data != null)
-        		return data.getFormattedValue();
-        } catch (Exception e) {
-        }
+		try {
+			GetExpressionValueQuery query = new GetExpressionValueQuery(frame, expression, dsfServicesTracker);
+			DsfSession session = DsfSession.getSession(sessionId);
+	        session.getExecutor().execute(query);
+	        try {
+	        	FormattedValueDMData data = query.get();
+	        	if (data != null)
+	        		return data.getFormattedValue();
+	        } catch (Exception e) {
+	        }
+		} finally {
+			dsfServicesTracker.dispose();
+		}
         return null;
 	}
 

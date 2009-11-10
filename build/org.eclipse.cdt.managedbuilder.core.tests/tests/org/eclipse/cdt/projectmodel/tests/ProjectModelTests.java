@@ -327,6 +327,8 @@ public class ProjectModelTests extends TestCase implements IElementChangedListen
 		for(int i = 0; i < settings.length; i++){
 			ICLanguageSetting setting = settings[i];
 			ICLanguageSettingEntry[] entries = setting.getSettingEntries(ICLanguageSettingEntry.INCLUDE_PATH);
+			if (!setting.supportsEntryKind(ICSettingEntry.INCLUDE_PATH))
+				assertTrue(entries.length == 0);
 			for(int j = 0; j < entries.length; j++){
 				System.out.println(entries[j].getName());
 			}
@@ -403,18 +405,13 @@ public class ProjectModelTests extends TestCase implements IElementChangedListen
 		for(int i = 0; i < settings.length; i++){
 			ICLanguageSetting setting = settings[i];
 			ICLanguageSettingEntry[] entries = setting.getSettingEntries(ICLanguageSettingEntry.INCLUDE_PATH);
-			BuildSystemTestHelper.checkDiff(entries, updatedEntries);
-			if(entries.length > 0){
-//				ICLanguageSettingEntry updated[] = new ICLanguageSettingEntry[entries.length + 1];
-//				System.arraycopy(entries, 0, updated, 1, entries.length);
-//				updated[0] = new CIncludePathEntry("a/b/c", 0);
-//				setting.setSettingEntries(ICLanguageSettingEntry.INCLUDE_PATH, updated);
-//				updatedEntries = setting.getSettingEntries(ICLanguageSettingEntry.INCLUDE_PATH);
+			if (setting.supportsEntryKind(ICSettingEntry.INCLUDE_PATH)) {
+				BuildSystemTestHelper.checkDiff(entries, updatedEntries);
 				assertEquals(entries.length, updatedEntries.length);
-				for(int k = 0; k < entries.length; k++){
+				for(int k = 0; k < entries.length; k++)
 					assertEquals(entries[i].getValue(), updatedEntries[i].getValue());
-				}
-			}
+			} else
+				assertTrue(entries.length == 0);
 		}
 
 		assertEquals(2, cfgDess.length);

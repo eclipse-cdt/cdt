@@ -634,7 +634,12 @@ public class AbstractCachingVMProvider extends AbstractVMProvider
             }
             
             if (childrenMissingFromCache.size() > 0) {
-                assert !entry.fAllChildrenKnown : "If the cache says it knows all the children, how did we end up with unknown children?";  //$NON-NLS-1$
+                // Note: it is possible that entry.fAllChildrenKnown == true at this point.
+                // This can happen if the node's has children implementation returns true
+                // while the actual children update returns with no elements.  A node 
+                // may do this for optimization reasons.  I.e. sometimes it may be more
+                // efficient to ask the user to expand a node to see if it has any
+                // children.
             	
                 // Some children were not found in the cache, create separate 
                 // proxy updates for the continuous ranges of missing children.

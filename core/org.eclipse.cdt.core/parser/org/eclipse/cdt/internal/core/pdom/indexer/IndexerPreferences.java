@@ -59,9 +59,16 @@ public class IndexerPreferences {
 	private static final String KEY_INDEX_IMPORT_LOCATION = "indexImportLocation"; //$NON-NLS-1$
 	
 	private static final String DEFAULT_INDEX_IMPORT_LOCATION = ".settings/cdt-index.zip"; //$NON-NLS-1$
-	// See https://bugs.eclipse.org/bugs/show_bug.cgi?id=259843 for the rationale.
+	// See https://bugs.eclipse.org/bugs/show_bug.cgi?id=259843 
+	// and https://bugs.eclipse.org/bugs/show_bug.cgi?id=294180 for the rationale.
 	private static final String DEFAULT_FILES_TO_PARSE_UP_FRONT=
-			"cstdarg, cstdio, sys/resource.h, ctime, stdarg.h, stddef.h, sys/types.h"; //$NON-NLS-1$
+		"cstdarg, " +          // configures stdarg.h for c++ 							//$NON-NLS-1$
+		"stdarg.h, " +         // can be fragmented										//$NON-NLS-1$
+		"stddef.h, " +         // can be fragmented										//$NON-NLS-1$
+		"sys/resource.h, " +   // configures bits/time.h, !! fragments stddef.h !!		//$NON-NLS-1$
+		"ctime, " +            // configures time.h for c++								//$NON-NLS-1$
+		"sys/types.h, " +      // can be fragmented,      !! fragments bits/time.h !!	//$NON-NLS-1$
+		"cstdio";              // configures stdio.h for c++							//$NON-NLS-1$
 	private static final int DEFAULT_UPDATE_POLICY= 0; 
 
 	private static final String QUALIFIER = CCorePlugin.PLUGIN_ID;
@@ -301,8 +308,7 @@ public class IndexerPreferences {
 	private static void readProperties(Preferences preferences, Properties props) {
 		try {
 			String[] keys = preferences.keys();
-			for (int i=0; i < keys.length; i++) {
-				String key= keys[i];
+			for (String key : keys) {
 				if (props.get(key) == null) {
 					String val= preferences.get(key, null);
 					if (val != null) {

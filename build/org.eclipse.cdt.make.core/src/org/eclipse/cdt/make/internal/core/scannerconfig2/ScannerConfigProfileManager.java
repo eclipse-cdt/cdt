@@ -36,7 +36,7 @@ public final class ScannerConfigProfileManager {
 	public static final String SI_PROFILE_SIMPLE_ID = "ScannerConfigurationDiscoveryProfile";	//$NON-NLS-1$
 	public static final String PER_PROJECT_PROFILE_ID = MakeCorePlugin.getUniqueIdentifier() + ".GCCStandardMakePerProjectProfile"; //$NON-NLS-1$
 	public static final String NULL_PROFILE_ID = "";//$NON-NLS-1$
-	public static final String DEFAULT_SI_PROFILE_ID = NULL_PROFILE_ID;
+	public static final String DEFAULT_SI_PROFILE_ID = PER_PROJECT_PROFILE_ID;
 	
 	private final Map<IProject, Map<InfoContext, Object>> projectToProfileInstanceMap;
 	private List<String> profileIds;

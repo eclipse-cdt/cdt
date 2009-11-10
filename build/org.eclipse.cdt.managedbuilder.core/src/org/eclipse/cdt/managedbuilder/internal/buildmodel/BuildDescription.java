@@ -102,7 +102,8 @@ public class BuildDescription implements IBuildDescription {
 	private Map<ITool, BuildStep> fToolToMultiStepMap = new HashMap<ITool, BuildStep>();
 	private BuildStep fOrderedMultiActions[];
 
-	private Map<IPath, BuildResource> fLocationToRcMap = new HashMap<IPath, BuildResource>();
+//	private Map<IPath, BuildResource> fLocationToRcMap = new HashMap<IPath, BuildResource>();
+	private Map<URI, BuildResource> fLocationToRcMap = new HashMap<URI, BuildResource>();
 
 	private Map<String, Set<BuildIOType>> fVarToAddlInSetMap = new HashMap<String, Set<BuildIOType>>();
 
@@ -911,9 +912,9 @@ public class BuildDescription implements IBuildDescription {
 			}
 		}while(foundUnused);
 
-		Set<Entry<IPath,BuildResource>> set = fLocationToRcMap.entrySet();
+		Set<Entry<URI, BuildResource>> set = fLocationToRcMap.entrySet();
 		List<BuildResource> list = new ArrayList<BuildResource>();
-		for (Entry<IPath, BuildResource> entry : set) {
+		for (Entry<URI, BuildResource> entry : set) {
 			BuildResource rc = entry.getValue();
 			boolean doRemove = false;
 			BuildIOType producerArg = (BuildIOType)rc.getProducerIOType();
@@ -953,11 +954,11 @@ public class BuildDescription implements IBuildDescription {
 	}
 
 	protected void resourceRemoved(BuildResource rc){
-		fLocationToRcMap.remove(rc.getLocation());
+		fLocationToRcMap.remove(rc.getLocationURI());
 	}
 
 	protected void resourceCreated(BuildResource rc){
-		fLocationToRcMap.put(rc.getLocation(), rc);
+		fLocationToRcMap.put(rc.getLocationURI(), rc);
 	}
 
 	private IManagedBuilderMakefileGenerator getMakeGenInitialized(){
@@ -1464,9 +1465,13 @@ public class BuildDescription implements IBuildDescription {
 	}
 
 	public IBuildResource getBuildResource(IPath location) {
-		return fLocationToRcMap.get(location);
+		return getBuildResource(URIUtil.toURI(location));
 	}
 
+	private IBuildResource getBuildResource(URI locationURI) {
+		return fLocationToRcMap.get(locationURI);
+	}
+	
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.managedbuilder.builddescription.IBuildDescription#getResources()
 	 */
@@ -1957,7 +1962,7 @@ public class BuildDescription implements IBuildDescription {
 
 	public BuildResource createResource(IPath fullWorkspacePath, URI locationURI){
 
-		BuildResource rc = (BuildResource)getBuildResource(fullWorkspacePath);
+		BuildResource rc = (BuildResource)getBuildResource(locationURI);
 
 		if(rc == null)
 			rc = new BuildResource(this, fullWorkspacePath, locationURI);

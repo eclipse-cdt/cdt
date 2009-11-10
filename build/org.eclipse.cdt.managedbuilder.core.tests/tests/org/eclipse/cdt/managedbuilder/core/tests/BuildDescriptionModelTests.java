@@ -60,7 +60,6 @@ import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Path;
 
-@SuppressWarnings("restriction")
 public class BuildDescriptionModelTests extends TestCase {
 	private static final String PREFIX = "BuildDescription_";
 	private static final String PROJ_PATH = "testBuildDescriptionProjects";

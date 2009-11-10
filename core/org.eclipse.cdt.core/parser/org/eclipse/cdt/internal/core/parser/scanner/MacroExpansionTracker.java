@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008 Wind River Systems, Inc. and others.
+ * Copyright (c) 2008, 2009 Wind River Systems, Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -41,7 +41,7 @@ public class MacroExpansionTracker {
 	private ReplaceEdit fReplacement;
 	private IMacroBinding fMacroDefinition;
 
-	private Lexer fLexer;
+	private char[] fInput;
 	private String fReplacementText= ""; //$NON-NLS-1$
 	private LinkedList<MacroInfo> fMacroStack= new LinkedList<MacroInfo>();
 
@@ -97,8 +97,8 @@ public class MacroExpansionTracker {
 	/**
 	 * Informs the tracker that macro expansion is started.
 	 */
-	void start(Lexer lexer) {
-		fLexer= lexer;
+	void start(char[] input) {
+		fInput= input;
 	}
 
 	/**
@@ -108,7 +108,7 @@ public class MacroExpansionTracker {
 	 * @param endOffset the end offset of the input that was read from the lexer.
 	 */
 	void finish(TokenList result, int endOffset) {
-		final char[] lexInput = fLexer.getInput();
+		final char[] lexInput = fInput;
 		if (!isDone()) {
 			// special case we compute the entire expansion as one step, the result contains the
 			// expanded text
@@ -138,7 +138,7 @@ public class MacroExpansionTracker {
 	 * There was no macro at the beginning of the input.
 	 */
 	void fail() {
-		fPreStep= new String(fLexer.getInput());
+		fPreStep= new String(fInput);
 		fReplacement= new ReplaceEdit(0, 0, ""); //$NON-NLS-1$
 	}
 	
@@ -229,7 +229,7 @@ public class MacroExpansionTracker {
 		appendFunctionStyleMacro(result);
 		fReplaceTo= result.last();
 		StringBuilder buf= new StringBuilder();
-		toString(replacement, fLexer.getInput(), buf, buf, buf);
+		toString(replacement, fInput, buf, buf, buf);
 		fReplacementText= buf.toString();
 	}
 
@@ -329,7 +329,7 @@ public class MacroExpansionTracker {
 		fReplaceFrom= fReplaceTo= identifier;
 		result.append(identifier);
 		StringBuilder buf= new StringBuilder();
-		toString(replacement, fLexer.getInput(), buf, buf, buf);
+		toString(replacement, fInput, buf, buf, buf);
 		fReplacementText= buf.toString();
 	}
 

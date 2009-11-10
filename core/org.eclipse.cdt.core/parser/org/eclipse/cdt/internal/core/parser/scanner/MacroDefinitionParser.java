@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2008 Wind River Systems, Inc. and others.
+ * Copyright (c) 2007, 2009 Wind River Systems, Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -61,7 +61,7 @@ public class MacroDefinitionParser {
 		}
 	}
 	
-	public static char[] getExpansion(char[] expansionImage, int offset, int endOffset) {
+	public static char[] getExpansion(AbstractCharArray expansionImage, int offset, int endOffset) {
 		TokenList tl= new TokenList();
 		Lexer lex= new Lexer(expansionImage, offset, endOffset, new LexerOptions(), ILexerLog.NULL, null);
 		try {
@@ -111,7 +111,7 @@ public class MacroDefinitionParser {
 	public ObjectStyleMacro parseMacroDefinition(final Lexer lexer, final ILexerLog log) 
 			throws OffsetLimitReachedException, InvalidMacroDefinitionException {
     	final Token name = parseName(lexer);
-    	final char[] source= lexer.getInput();
+    	final AbstractCharArray source= lexer.getInput();
     	final char[] nameChars= name.getCharImage();
     	final char[][] paramList= parseParamList(lexer, name);
     	final TokenList replacement= new TokenList();

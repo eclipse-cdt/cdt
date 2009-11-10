@@ -41,7 +41,7 @@ public class PreprocessorSpeedTest  {
 			if (args.length > 0)
 				stream = new PrintStream(new FileOutputStream(args[0]));
 
-			new PreprocessorSpeedTest().runTest(stream, 30);
+			new PreprocessorSpeedTest().runTest(stream, 200);
 		} catch (Exception e) {
 			System.out.println(e);
 		}
@@ -122,8 +122,107 @@ public class PreprocessorSpeedTest  {
 			return msvc98ScannerInfo();
 		else if (config.equals("ydl"))
 			return ydlScannerInfo();
+		else if (config.equals("cygwin"))
+			return cygwinScannerInfo();
 		else
 			return mingwScannerInfo();
+	}
+
+	private IScannerInfo cygwinScannerInfo() {
+		// TODO It would be easier and more flexible if we used discovery for this
+		Map definitions = new Hashtable();
+		definitions.put("i386", "1");
+		definitions.put("unix", "1");
+		definitions.put("_cdecl", "__attribute__((__cdecl__))");
+		definitions.put("_fastcall", "__attribute__((__fastcall__))");
+		definitions.put("_stdcall", "__attribute__((__stdcall__))");
+		definitions.put("_X86_", "1");
+		definitions.put("__CHAR_BIT__", "8");
+		definitions.put("__cplusplus", "1");
+		definitions.put("__CYGWIN32__", "1");
+		definitions.put("__CYGWIN__", "1");
+		definitions.put("__DBL_DENORM_MIN__", "4.9406564584124654e-324");
+		definitions.put("__DBL_DIG__", "15");
+		definitions.put("__DBL_EPSILON__", "2.2204460492503131e-16");
+		definitions.put("__DBL_HAS_INFINITY__", "1");
+		definitions.put("__DBL_HAS_QUIET_NAN__", "1");
+		definitions.put("__DBL_MANT_DIG__", "53");
+		definitions.put("__DBL_MAX_10_EXP__", "308");
+		definitions.put("__DBL_MAX_EXP__", "1024");
+		definitions.put("__DBL_MAX__", "1.7976931348623157e+308");
+		definitions.put("__DBL_MIN_10_EXP__", "(-307)");
+		definitions.put("__DBL_MIN_EXP__", "(-1021)");
+		definitions.put("__DBL_MIN__", "2.2250738585072014e-308");
+		definitions.put("__DECIMAL_DIG__", "21");
+		definitions.put("__declspec(x)", "__attribute__((x))");
+		definitions.put("__DEPRECATED", "1");
+		definitions.put("__EXCEPTIONS", "1");
+		definitions.put("__fastcall", "__attribute__((__fastcall__))");
+		definitions.put("__FINITE_MATH_ONLY__", "0");
+		definitions.put("__FLT_DENORM_MIN__", "1.40129846e-45F");
+		definitions.put("__FLT_DIG__", "6");
+		definitions.put("__FLT_EPSILON__", "1.19209290e-7F");
+		definitions.put("__FLT_EVAL_METHOD__", "2");
+		definitions.put("__FLT_HAS_INFINITY__", "1");
+		definitions.put("__FLT_HAS_QUIET_NAN__", "1");
+		definitions.put("__FLT_MANT_DIG__", "24");
+		definitions.put("__FLT_MAX_10_EXP__", "38");
+		definitions.put("__FLT_MAX_EXP__", "128");
+		definitions.put("__FLT_MAX__", "3.40282347e+38F");
+		definitions.put("__FLT_MIN_10_EXP__", "(-37)");
+		definitions.put("__FLT_MIN_EXP__", "(-125)");
+		definitions.put("__FLT_MIN__", "1.17549435e-38F");
+		definitions.put("__FLT_RADIX__", "2");
+		definitions.put("__GNUC_MINOR__", "4");
+		definitions.put("__GNUC_PATCHLEVEL__", "4");
+		definitions.put("__GNUC__", "3");
+		definitions.put("__GNUG__", "3");
+		definitions.put("__GXX_ABI_VERSION", "1002");
+		definitions.put("__GXX_WEAK__", "1");
+		definitions.put("__i386", "1");
+		definitions.put("__i386__", "1");
+		definitions.put("__INT_MAX__", "2147483647");
+		definitions.put("__LDBL_DENORM_MIN__", "3.64519953188247460253e-4951L");
+		definitions.put("__LDBL_DIG__", "18");
+		definitions.put("__LDBL_EPSILON__", "1.08420217248550443401e-19L");
+		definitions.put("__LDBL_HAS_INFINITY__", "1");
+		definitions.put("__LDBL_HAS_QUIET_NAN__", "1");
+		definitions.put("__LDBL_MANT_DIG__", "64");
+		definitions.put("__LDBL_MAX_10_EXP__", "4932");
+		definitions.put("__LDBL_MAX_EXP__", "16384");
+		definitions.put("__LDBL_MAX__", "1.18973149535723176502e+4932L");
+		definitions.put("__LDBL_MIN_10_EXP__", "(-4931)");
+		definitions.put("__LDBL_MIN_EXP__", "(-16381)");
+		definitions.put("__LDBL_MIN__", "3.36210314311209350626e-4932L");
+		definitions.put("__LONG_LONG_MAX__", "9223372036854775807LL");
+		definitions.put("__LONG_MAX__", "2147483647L");
+		definitions.put("__NO_INLINE__", "1");
+		definitions.put("__PTRDIFF_TYPE__", "int");
+		definitions.put("__REGISTER_PREFIX__", "");
+		definitions.put("__SCHAR_MAX__", "127");
+		definitions.put("__SHRT_MAX__", "32767");
+		definitions.put("__SIZE_TYPE__", "unsigned int");
+		definitions.put("__stdcall", "__attribute__((__stdcall__))");
+		definitions.put("__STDC_HOSTED__", "1");
+		definitions.put("__tune_i686__", "1");
+		definitions.put("__tune_pentiumpro__", "1");
+		definitions.put("__unix", "1");
+		definitions.put("__unix__", "1");
+		definitions.put("__USER_LABEL_PREFIX__", "_");
+		definitions.put("__USING_SJLJ_EXCEPTIONS__", "1");
+		definitions.put("__VERSION__", "\"3.4.4 (cygming special, gdc 0.12, using dmd 0.125)\"");
+		definitions.put("__WCHAR_MAX__", "65535U");
+		definitions.put("__WCHAR_TYPE__", "short unsigned int");
+		definitions.put("__WCHAR_UNSIGNED__", "1");
+		definitions.put("__WINT_TYPE__", "unsigned int");
+
+		String[] includePaths = new String[] { "C:/programs/cygwin/lib/gcc/i686-pc-cygwin/3.4.4/include/c++",
+				"C:/programs/cygwin/lib/gcc/i686-pc-cygwin/3.4.4/include/c++/i686-pc-cygwin",
+				"C:/programs/cygwin/lib/gcc/i686-pc-cygwin/3.4.4/include/c++/backward",
+				"C:/programs/cygwin/lib/gcc/i686-pc-cygwin/3.4.4/include", "C:/programs/cygwin/usr/include",
+				"C:/programs/cygwin/usr/include/w32api" };
+
+		return new ScannerInfo(definitions, includePaths);
 	}
 
 	private IScannerInfo msvcScannerInfo() {

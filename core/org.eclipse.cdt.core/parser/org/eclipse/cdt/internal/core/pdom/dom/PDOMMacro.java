@@ -32,6 +32,7 @@ import org.eclipse.cdt.internal.core.index.IIndexFragment;
 import org.eclipse.cdt.internal.core.index.IIndexFragmentBinding;
 import org.eclipse.cdt.internal.core.index.IIndexFragmentName;
 import org.eclipse.cdt.internal.core.index.IIndexScope;
+import org.eclipse.cdt.internal.core.parser.scanner.CharArray;
 import org.eclipse.cdt.internal.core.parser.scanner.MacroDefinitionParser;
 import org.eclipse.cdt.internal.core.pdom.PDOM;
 import org.eclipse.cdt.internal.core.pdom.db.Database;
@@ -321,7 +322,7 @@ public class PDOMMacro implements IIndexMacro, IPDOMBinding, IASTFileLocation {
 
 	public char[] getExpansion() {
 		char[] expansionImage= getExpansionImage();
-		return MacroDefinitionParser.getExpansion(expansionImage, 0, expansionImage.length);
+		return MacroDefinitionParser.getExpansion(new CharArray(expansionImage), 0, expansionImage.length);
 	}
 
 	public char[][] getParameterPlaceholderList() {

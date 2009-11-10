@@ -197,7 +197,7 @@ public class MacroExpander {
 		Lexer lexer= new Lexer(fFixedInput, fLexOptions, fLog, this);
 		
 		try {
-			tracker.start(lexer);
+			tracker.start(fFixedInput);
 			Token identifier= lexer.nextToken();
 			if (identifier.getType() != IToken.tIDENTIFIER) {
 				tracker.fail();
@@ -252,8 +252,7 @@ public class MacroExpander {
 				lastConsumed= parseArguments(input, (FunctionStyleMacro) macro, forbidden, argInputs, tracker);
 			} catch (AbortMacroExpansionException e) {
 				// ignore this macro expansion
-				for (int i = 0; i < argInputs.length; i++) {
-					TokenSource argInput= argInputs[i];
+				for (TokenSource argInput : argInputs) {
 					executeScopeMarkers(argInput, forbidden);
 					if (tracker != null) {
 						tracker.setExpandedMacroArgument(null);

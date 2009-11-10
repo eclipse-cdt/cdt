@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2008 Wind River Systems, Inc. and others.
+ * Copyright (c) 2007, 2009 Wind River Systems, Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -101,16 +101,17 @@ abstract class PreprocessorMacro implements IMacroBinding {
 }
 
 class ObjectStyleMacro extends PreprocessorMacro {
-	private final char[] fExpansion;
+	private final AbstractCharArray fExpansion;
 	final int fExpansionOffset;
 	final int fEndOffset;
 	private TokenList fExpansionTokens;
+
 	
 	public ObjectStyleMacro(char[] name, char[] expansion) {
-		this(name, 0, expansion.length, null, expansion);
+		this(name, 0, expansion.length, null, new CharArray(expansion));
 	}
 
-	public ObjectStyleMacro(char[] name, int expansionOffset, int endOffset, TokenList expansion, char[] source) {
+	public ObjectStyleMacro(char[] name, int expansionOffset, int endOffset, TokenList expansion, AbstractCharArray source) {
 		super(name);
 		fExpansionOffset= expansionOffset;
 		fEndOffset= endOffset;
@@ -144,11 +145,8 @@ class ObjectStyleMacro extends PreprocessorMacro {
 
 	public char[] getExpansionImage() {
 		final int length = fEndOffset - fExpansionOffset;
-		if (length == fExpansion.length) {
-			return fExpansion;
-		}
 		char[] result= new char[length];
-		System.arraycopy(fExpansion, fExpansionOffset, result, 0, length);
+		fExpansion.arraycopy(fExpansionOffset, result, 0, length);
 		return result;
 	}
 	
@@ -182,13 +180,16 @@ class FunctionStyleMacro extends ObjectStyleMacro {
 	private char[] fSignature;
 	
 	public FunctionStyleMacro(char[] name, char[][] paramList, int hasVarArgs, char[] expansion) {
-		super(name, expansion);
-		fParamList = paramList;
-		fHasVarArgs= hasVarArgs;
+		this(name, paramList, hasVarArgs, 0, expansion.length, null, new CharArray(expansion));
+	}
+
+	public FunctionStyleMacro(char[] name, char[][] paramList, int hasVarArgs, AbstractCharArray expansion,
+			int expansionOffset, int expansionEndOffset) {
+		this(name, paramList, hasVarArgs, expansionOffset, expansionEndOffset, null, expansion);
 	}
 
 	public FunctionStyleMacro(char[] name, char[][] paramList, int hasVarArgs, int expansionFileOffset, int endFileOffset, 
-			TokenList expansion, char[] source) {
+			TokenList expansion, AbstractCharArray source) {
 		super(name, expansionFileOffset, endFileOffset, expansion, source);
 		fParamList = paramList;
 		fHasVarArgs= hasVarArgs;

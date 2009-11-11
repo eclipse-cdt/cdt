@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2002, 2008 QNX Software Systems and others.
+ * Copyright (c) 2002, 2009 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,17 +8,14 @@
  * Contributors:
  *     QNX Software Systems - Initial API and implementation
  *     Anton Leherbauer (Wind River Systems)
+ *     Ericsson             - Fix improper hover order (Bug 294812)
  *******************************************************************************/
 
 package org.eclipse.cdt.internal.ui.text.c.hover;
 
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 
-import org.eclipse.cdt.ui.CUIPlugin;
-import org.eclipse.cdt.ui.PreferenceConstants;
-import org.eclipse.cdt.ui.text.c.hover.ICEditorTextHover;
 import org.eclipse.jface.text.IInformationControlCreator;
 import org.eclipse.jface.text.IRegion;
 import org.eclipse.jface.text.ITextHover;
@@ -28,8 +25,16 @@ import org.eclipse.jface.text.ITextViewer;
 import org.eclipse.jface.text.information.IInformationProviderExtension2;
 import org.eclipse.ui.IEditorPart;
 
+import org.eclipse.cdt.ui.CUIPlugin;
+import org.eclipse.cdt.ui.PreferenceConstants;
+import org.eclipse.cdt.ui.text.c.hover.ICEditorTextHover;
+
 /**
- * BestMatchHover
+ * BestMatchHover.
+ * This is not a real hover, but instead, it is always the first hover used
+ * and it will choose the best of the real hovers.  To choose the best hover,
+ * we simply find the first hover that returns some text.  This implies
+ * that the order of hovers is important and must be preserved. (Bug 294812)
  */
 public class BestMatchHover extends AbstractCEditorTextHover {
 
@@ -50,39 +55,46 @@ public class BestMatchHover extends AbstractCEditorTextHover {
 	 * Installs all text hovers.
 	 */
 	private void installTextHovers() {
+		CEditorTextHoverDescriptor[] hoverDescs= CUIPlugin.getDefault().getCEditorTextHoverDescriptors();
 		
 		// initialize lists - indicates that the initialization happened
-		fTextHoverSpecifications= new ArrayList<CEditorTextHoverDescriptor>(2);
-		fInstantiatedTextHovers= new ArrayList<ITextHover>(2);
+		fTextHoverSpecifications= new ArrayList<CEditorTextHoverDescriptor>(hoverDescs.length-1);
+		fInstantiatedTextHovers= new ArrayList<ITextHover>(hoverDescs.length-1);
 
 		// populate list
-		CEditorTextHoverDescriptor[] hoverDescs= CUIPlugin.getDefault().getCEditorTextHoverDescriptors();
 		for (int i= 0; i < hoverDescs.length; i++) {
 			// ensure that we don't add ourselves to the list
-			if (!PreferenceConstants.ID_BESTMATCH_HOVER.equals(hoverDescs[i].getId()))
+			if (!PreferenceConstants.ID_BESTMATCH_HOVER.equals(hoverDescs[i].getId())) {
 				fTextHoverSpecifications.add(hoverDescs[i]);
-		}
-	}
-
-	private void checkTextHovers() {
-		if (fTextHoverSpecifications.size() == 0)
-			return;
-
-		for (Iterator<CEditorTextHoverDescriptor> iterator= new ArrayList<CEditorTextHoverDescriptor>(fTextHoverSpecifications).iterator(); iterator.hasNext(); ) {
-			CEditorTextHoverDescriptor spec= iterator.next();
-
-			ICEditorTextHover hover= spec.createTextHover();
-			if (hover != null) {
-				hover.setEditor(getEditor());
-				addTextHover(hover);
-				fTextHoverSpecifications.remove(spec);
+				// add place-holder for hover instance
+				fInstantiatedTextHovers.add(null);
 			}
 		}
 	}
 
-	protected void addTextHover(ITextHover hover) {
-		if (!fInstantiatedTextHovers.contains(hover))
-			fInstantiatedTextHovers.add(hover);
+	private void checkTextHovers() {
+		if (fTextHoverSpecifications == null)
+			return;
+
+		boolean allCreated = true;
+		for (int i= 0; i < fTextHoverSpecifications.size(); ++i) {
+			CEditorTextHoverDescriptor spec= fTextHoverSpecifications.get(i);
+			if (spec == null) continue;
+			
+			ICEditorTextHover hover= spec.createTextHover();
+			if (hover != null) {
+				hover.setEditor(getEditor());
+				// remember instance and mark as created
+				fInstantiatedTextHovers.set(i, hover);
+				fTextHoverSpecifications.set(i, null);
+			} else {
+				allCreated = false;
+			}
+		}
+		
+		if (allCreated) {
+			fTextHoverSpecifications = null;
+		}
 	}
 
 	/*
@@ -98,8 +110,8 @@ public class BestMatchHover extends AbstractCEditorTextHover {
 		if (fInstantiatedTextHovers == null)
 			return null;
 
-		for (Iterator<ITextHover> iterator= fInstantiatedTextHovers.iterator(); iterator.hasNext(); ) {
-			ITextHover hover= iterator.next();
+		for (ITextHover hover : fInstantiatedTextHovers) {
+			if (hover == null) continue;
 
 			String s= hover.getHoverInfo(textViewer, hoverRegion);
 			if (s != null && s.trim().length() > 0) {
@@ -124,9 +136,9 @@ public class BestMatchHover extends AbstractCEditorTextHover {
 		if (fInstantiatedTextHovers == null)
 			return null;
 		
-		for (Iterator<ITextHover> iterator= fInstantiatedTextHovers.iterator(); iterator.hasNext(); ) {
-			ITextHover hover= iterator.next();
-			
+		for (ITextHover hover : fInstantiatedTextHovers) {
+			if (hover == null) continue;
+
 			if (hover instanceof ITextHoverExtension2) {
 				Object info= ((ITextHoverExtension2) hover).getHoverInfo2(textViewer, hoverRegion);
 				if (info != null) {

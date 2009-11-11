@@ -220,8 +220,8 @@ public class FileListControl {
 								if (!"".equals(value)) { //$NON-NLS-1$
 									IResource rs[] = ResourcesPlugin.getWorkspace().getRoot().findContainersForLocationURI(URIUtil.toURI(value));
 									if (rs == null || rs.length == 0)
-										resource = ResourceLookup.selectFileForLocation(path, null);
-									if (rs != null && rs.length > 0)
+										resource = ResourceLookup.selectFileForLocation(new Path(value), null);
+									else
 										resource = rs[0];
 								}
 							} catch (CdtVariableException e) {
@@ -467,7 +467,7 @@ public class FileListControl {
 	// The type of browse support that is required
 	private int browseType;
 	/** The base path that should be used when adding new resources */
-	private IPath path;
+	private IPath path = new Path(""); //$NON-NLS-1$
 
 	/* Workspace support */
 	private boolean fWorkspaceSupport = false;
@@ -987,18 +987,18 @@ public class FileListControl {
 	private String[] getNewInputObject() {
 		// Create a dialog to prompt for a new list item
 		String[] input = new String[0];
-		String title = new String();
-		String message = new String();
-		String initVal = new String();
+		String title = ""; //$NON-NLS-1$
+		String message = ""; //$NON-NLS-1$
+		String initVal = ""; //$NON-NLS-1$
 
 		if (browseType == BROWSE_DIR) {
 			title = DIR_TITLE_ADD;
 			message = DIR_MSG;
-			initVal = (path == null ? initVal : path.toString());
+			initVal = path.toString();
 		} else if (browseType == BROWSE_FILE) {
 			title = FILE_TITLE_ADD;
 			message = FILE_MSG;
-			initVal = (path == null ? initVal : path.toString());
+			initVal = path.toString();
 		} else {
 			title = TITLE;
 			message = compTitle;

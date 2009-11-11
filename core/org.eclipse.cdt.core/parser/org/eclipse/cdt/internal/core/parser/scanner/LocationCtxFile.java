@@ -24,7 +24,7 @@ class LocationCtxFile extends LocationCtxContainer {
 	private final ASTInclusionStatement fASTInclude;
 	private final boolean fIsSource;
 
-	public LocationCtxFile(LocationCtxContainer parent, String filename, char[] source, int parentOffset,
+	public LocationCtxFile(LocationCtxContainer parent, String filename, AbstractCharArray source, int parentOffset,
 			int parentEndOffset, int sequenceNumber, ASTInclusionStatement inclusionStatement,
 			boolean isSource) {
 		super(parent, source, parentOffset, parentEndOffset, sequenceNumber);

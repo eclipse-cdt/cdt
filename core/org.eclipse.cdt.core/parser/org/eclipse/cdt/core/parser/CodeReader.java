@@ -30,7 +30,9 @@ import org.eclipse.cdt.core.parser.util.CharArrayUtils;
  * Reads the content of a file into a char[] buffer.
  * 
  * @noextend This class is not intended to be subclassed by clients.
+ * @deprecated replaced by {@link FileContent}
  */
+@Deprecated
 public class CodeReader {
 	public static final String SYSTEM_DEFAULT_ENCODING = System.getProperty("file.encoding"); //$NON-NLS-1$
 

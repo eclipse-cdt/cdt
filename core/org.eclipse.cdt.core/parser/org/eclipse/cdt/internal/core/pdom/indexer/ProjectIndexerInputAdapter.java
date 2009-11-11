@@ -25,7 +25,7 @@ import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.core.model.ILanguage;
 import org.eclipse.cdt.core.model.ITranslationUnit;
 import org.eclipse.cdt.core.model.LanguageManager;
-import org.eclipse.cdt.core.parser.CodeReader;
+import org.eclipse.cdt.core.parser.FileContent;
 import org.eclipse.cdt.core.parser.IScannerInfo;
 import org.eclipse.cdt.core.parser.ScannerInfo;
 import org.eclipse.cdt.internal.core.pdom.IndexerInputAdapter;
@@ -228,12 +228,12 @@ public class ProjectIndexerInputAdapter extends IndexerInputAdapter {
 	}
 
 	@Override
-	public CodeReader getCodeReader(Object tuo) {
+	public FileContent getCodeReader(Object tuo) {
 		ITranslationUnit tu= (ITranslationUnit) tuo;
-		final CodeReader reader= tu.getCodeReader();
+		final FileContent reader= FileContent.create(tu);
 		if (reader != null) {
 			IIndexFileLocation ifl= IndexLocationFactory.getIFL(tu);
-			fIflCache.put(reader.getPath(), ifl);
+			fIflCache.put(reader.getFileLocation(), ifl);
 		}
 		return reader;
 	}

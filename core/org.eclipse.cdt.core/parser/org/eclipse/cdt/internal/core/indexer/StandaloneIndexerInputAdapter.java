@@ -17,7 +17,7 @@ import java.util.HashMap;
 import org.eclipse.cdt.core.index.IIndexFileLocation;
 import org.eclipse.cdt.core.model.AbstractLanguage;
 import org.eclipse.cdt.core.model.ILanguage;
-import org.eclipse.cdt.core.parser.CodeReader;
+import org.eclipse.cdt.core.parser.FileContent;
 import org.eclipse.cdt.core.parser.IScannerInfo;
 import org.eclipse.cdt.internal.core.index.IndexFileLocation;
 import org.eclipse.cdt.internal.core.pdom.IndexerInputAdapter;
@@ -123,12 +123,8 @@ public class StandaloneIndexerInputAdapter extends IndexerInputAdapter {
 	}
 
 	@Override
-	public CodeReader getCodeReader(Object tu) {
-		try {
-			return new CodeReader((String) tu);
-		} catch (IOException e) {
-		}
-		return null;
+	public FileContent getCodeReader(Object tu) {
+		return FileContent.createForExternalFileLocation((String) tu);
 	}
 
 	@Override

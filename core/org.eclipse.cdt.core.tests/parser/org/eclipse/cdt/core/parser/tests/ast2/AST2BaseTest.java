@@ -67,16 +67,16 @@ import org.eclipse.cdt.core.dom.parser.cpp.ANSICPPParserExtensionConfiguration;
 import org.eclipse.cdt.core.dom.parser.cpp.GPPParserExtensionConfiguration;
 import org.eclipse.cdt.core.dom.parser.cpp.GPPScannerExtensionConfiguration;
 import org.eclipse.cdt.core.dom.parser.cpp.ICPPParserExtensionConfiguration;
-import org.eclipse.cdt.core.parser.CodeReader;
+import org.eclipse.cdt.core.parser.FileContent;
 import org.eclipse.cdt.core.parser.IParserLogService;
 import org.eclipse.cdt.core.parser.IScanner;
 import org.eclipse.cdt.core.parser.IScannerInfo;
+import org.eclipse.cdt.core.parser.IncludeFileContentProvider;
 import org.eclipse.cdt.core.parser.NullLogService;
 import org.eclipse.cdt.core.parser.ParserLanguage;
 import org.eclipse.cdt.core.parser.ParserMode;
 import org.eclipse.cdt.core.parser.ScannerInfo;
 import org.eclipse.cdt.core.parser.tests.ASTComparer;
-import org.eclipse.cdt.core.parser.tests.scanner.FileCodeReaderFactory;
 import org.eclipse.cdt.core.testplugin.CTestPlugin;
 import org.eclipse.cdt.core.testplugin.util.BaseTestCase;
 import org.eclipse.cdt.core.testplugin.util.TestSourceReader;
@@ -93,6 +93,7 @@ import org.eclipse.cdt.internal.core.parser.scanner.CPreprocessor;
  * @author aniefer
  */
 public class AST2BaseTest extends BaseTestCase {
+	protected final static String TEST_CODE = "<testcode>";
     protected static final IParserLogService NULL_LOG = new NullLogService();
 	protected static boolean sValidateCopy;
 
@@ -131,7 +132,7 @@ public class AST2BaseTest extends BaseTestCase {
     
     protected IASTTranslationUnit parse(String code, ParserLanguage lang, boolean useGNUExtensions,
     		boolean expectNoProblems, boolean skipTrivialInitializers) throws ParserException {
-        IScanner scanner = createScanner(new CodeReader(code.toCharArray()), lang, ParserMode.COMPLETE_PARSE, 
+		IScanner scanner = createScanner(FileContent.create(TEST_CODE, code.toCharArray()), lang, ParserMode.COMPLETE_PARSE, 
         		new ScannerInfo());
         configureScanner(scanner);
         AbstractGNUSourceCodeParser parser = null;
@@ -179,7 +180,7 @@ public class AST2BaseTest extends BaseTestCase {
 	protected void configureScanner(IScanner scanner) {
 	}
 
-	public static IScanner createScanner(CodeReader codeReader, ParserLanguage lang, ParserMode mode,
+	public static IScanner createScanner(FileContent codeReader, ParserLanguage lang, ParserMode mode,
 			IScannerInfo scannerInfo) {
 		IScannerExtensionConfiguration configuration = null;
         if (lang == ParserLanguage.C)
@@ -188,7 +189,7 @@ public class AST2BaseTest extends BaseTestCase {
             configuration= GPPScannerExtensionConfiguration.getInstance();
         IScanner scanner;
         scanner= new CPreprocessor(codeReader, scannerInfo, lang, NULL_LOG, configuration, 
-        		FileCodeReaderFactory.getInstance());
+        		IncludeFileContentProvider.getSavedFilesProvider());
 		return scanner;
 	}
 

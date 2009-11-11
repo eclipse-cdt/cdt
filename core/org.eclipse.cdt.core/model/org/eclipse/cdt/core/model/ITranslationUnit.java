@@ -18,7 +18,7 @@ import org.eclipse.cdt.core.dom.ast.IASTCompletionNode;
 import org.eclipse.cdt.core.dom.ast.IASTDeclarationListOwner;
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
 import org.eclipse.cdt.core.index.IIndex;
-import org.eclipse.cdt.core.parser.CodeReader;
+import org.eclipse.cdt.core.parser.FileContent;
 import org.eclipse.cdt.core.parser.IScannerInfo;
 import org.eclipse.cdt.internal.core.model.IBufferFactory;
 import org.eclipse.core.runtime.CoreException;
@@ -415,14 +415,6 @@ public interface ITranslationUnit extends ICElement, IParent, IOpenable, ISource
 	public IPath getLocation();
 
 	/**
-	 * Returns the code reader that can be used to parse the translation unit. If the translation unit is a 
-	 * working copy the reader will read from the buffer.
-	 * @return a code reader for parsing the translation unit
-	 * @since 4.0
-	 */
-	public CodeReader getCodeReader();
-
-	/**
 	 * Returns the scanner info associated with this translation unit. May return <code>null</code> if no 
 	 * configuration is available.
 	 * @param force if <code>true</code> a default info is returned, even if nothing is configured for this
@@ -488,4 +480,11 @@ public interface ITranslationUnit extends ICElement, IParent, IOpenable, ISource
 	 * @deprecated don't use this method.
 	 */
 	@Deprecated	Map<?,?> parse();
+	/**
+	 * @deprecated, use {@link FileContent#create(ITranslationUnit)}, instead.
+	 */
+	@Deprecated
+	org.eclipse.cdt.core.parser.CodeReader getCodeReader();
+
+
 }

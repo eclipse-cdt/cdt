@@ -93,6 +93,10 @@ final public class Lexer implements ITokenSequence {
 		this(new CharArray(input), 0, input.length, options, log, source);
 	}
 
+	public Lexer(AbstractCharArray input, LexerOptions options, ILexerLog log, Object source) {
+		this(input, 0, input.tryGetLength(), options, log, source);
+	}
+	
 	public Lexer(AbstractCharArray input, int start, int end, LexerOptions options, ILexerLog log, Object source) {
 		fInput= input;
 		fStart= fOffset= fEndOffset= start;

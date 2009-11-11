@@ -12,8 +12,22 @@ package org.eclipse.cdt.internal.core.parser.scanner;
 
 /**
  * Abstract class for providing input to the lexer.
+ * @since 5.2
  */
 public abstract class AbstractCharArray {
+
+	/**
+	 * Returns the length of this array or -1 if it is yet, unknown. This method may be called
+	 * before the array has been traversed.
+	 */
+	public abstract int tryGetLength();
+	
+	/**
+	 * Returns the length of the array. This method is called only after the lexer has worked its
+	 * way through the array. Therefore for subclasses it is efficient enough to read through to the
+	 * end of the array and provide the length. 
+	 */
+	public abstract int getLength();
 
 	/** 
 	 * Checks whether the given offset is valid for this array. Subclasses may assume
@@ -21,12 +35,6 @@ public abstract class AbstractCharArray {
 	 */
 	public abstract boolean isValidOffset(int offset);
 
-	/**
-	 * Returns the limit for valid offsets or -1 if it is unknown. All offsets below
-	 * the given limit are guaranteed to be valid.
-	 */
-	public abstract int getLimit();
-	
 	/**
 	 * Returns the character at the given position, subclasses do not have to do range checks.
 	 */

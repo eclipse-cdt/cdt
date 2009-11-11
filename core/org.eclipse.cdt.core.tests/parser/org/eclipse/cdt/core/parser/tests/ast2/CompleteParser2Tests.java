@@ -69,7 +69,7 @@ import org.eclipse.cdt.core.dom.parser.c.ICParserExtensionConfiguration;
 import org.eclipse.cdt.core.dom.parser.cpp.ANSICPPParserExtensionConfiguration;
 import org.eclipse.cdt.core.dom.parser.cpp.GPPParserExtensionConfiguration;
 import org.eclipse.cdt.core.dom.parser.cpp.ICPPParserExtensionConfiguration;
-import org.eclipse.cdt.core.parser.CodeReader;
+import org.eclipse.cdt.core.parser.FileContent;
 import org.eclipse.cdt.core.parser.IScanner;
 import org.eclipse.cdt.core.parser.NullLogService;
 import org.eclipse.cdt.core.parser.ParserLanguage;
@@ -176,8 +176,7 @@ public class CompleteParser2Tests extends BaseTestCase {
             ParserLanguage lang, boolean gcc) throws Exception {
 
         
-        CodeReader codeReader = new CodeReader(code
-                .toCharArray());
+        FileContent codeReader = FileContent.create("<test-code>", code.toCharArray());
         ScannerInfo scannerInfo = new ScannerInfo();
         ISourceCodeParser parser2 = null;
         IScanner scanner= AST2BaseTest.createScanner(codeReader, lang, ParserMode.COMPLETE_PARSE, scannerInfo);

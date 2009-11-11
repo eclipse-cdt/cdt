@@ -15,13 +15,12 @@ import java.util.List;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPUsingDirective;
 import org.eclipse.cdt.core.index.IIndexFile;
 import org.eclipse.cdt.core.index.IIndexMacro;
-import org.eclipse.cdt.core.parser.CodeReader;
+import org.eclipse.cdt.core.parser.FileContent;
 
 /**
  * Instructs the preprocessor on how to handle a file-inclusion.
- * @since 5.0
  */
-public class IncludeFileContent {
+public class InternalFileContent extends FileContent {
 	public enum InclusionKind {
 		/**
 		 * Instruct the preprocessor to skip this inclusion. 
@@ -33,13 +32,13 @@ public class IncludeFileContent {
 		 */
 		FOUND_IN_INDEX,
 		/**
-		 * The file has to be scanned, a code reader is provided.
+		 * The file has to be scanned, source is provided.
 		 */
-		USE_CODE_READER
+		USE_SOURCE
 	}
 
 	private final InclusionKind fKind;
-	private final CodeReader fCodeReader;
+	private final AbstractCharArray fSource;
 	private final List<IIndexMacro> fMacroDefinitions;
 	private final List<ICPPUsingDirective> fUsingDirectives;
 	private final String fFileLocation;
@@ -55,7 +54,7 @@ public class IncludeFileContent {
 	 * @throws IllegalArgumentException if fileLocation is <code>null</code> or the kind value is illegal for
 	 * this constructor.
 	 */
-	public IncludeFileContent(String fileLocation, InclusionKind kind) throws IllegalArgumentException {
+	public InternalFileContent(String fileLocation, InclusionKind kind) throws IllegalArgumentException {
 		if (fileLocation == null || kind != InclusionKind.SKIP_FILE) {
 			throw new IllegalArgumentException();
 		}
@@ -63,21 +62,20 @@ public class IncludeFileContent {
 		fFileLocation= fileLocation;
 		fMacroDefinitions= null;
 		fUsingDirectives= null;
-		fCodeReader= null;
+		fSource= null;
 	}
 
 	/**
 	 * For reading include files from disk.
-	 * @param codeReader the code reader for the inclusion.
 	 * @throws IllegalArgumentException in case the codeReader or its location is <code>null</code>.
 	 */
-	public IncludeFileContent(CodeReader codeReader) throws IllegalArgumentException {
-		if (codeReader == null) {
+	public InternalFileContent(String filePath, AbstractCharArray content) throws IllegalArgumentException {
+		if (content == null) {
 			throw new IllegalArgumentException();
 		}
-		fKind= InclusionKind.USE_CODE_READER;
-		fFileLocation= codeReader.getPath();
-		fCodeReader= codeReader;
+		fKind= InclusionKind.USE_SOURCE;
+		fFileLocation= filePath;
+		fSource= content;
 		fMacroDefinitions= null;
 		fUsingDirectives= null;
 		if (fFileLocation == null) {
@@ -92,11 +90,11 @@ public class IncludeFileContent {
 	 * @param files 
 	 * @throws IllegalArgumentException in case the fileLocation or the macroDefinitions are <code>null</code>.
 	 */
-	public IncludeFileContent(String fileLocation, List<IIndexMacro> macroDefinitions, List<ICPPUsingDirective> usingDirectives,
+	public InternalFileContent(String fileLocation, List<IIndexMacro> macroDefinitions, List<ICPPUsingDirective> usingDirectives,
 			List<IIndexFile> files) {
 		fKind= InclusionKind.FOUND_IN_INDEX;
 		fFileLocation= fileLocation;
-		fCodeReader= null;
+		fSource= null;
 		fUsingDirectives= usingDirectives;
 		fMacroDefinitions= macroDefinitions;
 		fFiles= files;
@@ -112,16 +110,17 @@ public class IncludeFileContent {
 	/**
 	 * Returns the location of the file to be included.
 	 */
+	@Override
 	public String getFileLocation() {
 		return fFileLocation;
 	}
 
 	/**
-	 * Valid with {@link InclusionKind#USE_CODE_READER}.
-	 * @return the codeReader or <code>null</code> if kind is different to {@link InclusionKind#USE_CODE_READER}.
+	 * Valid with {@link InclusionKind#USE_SOURCE}.
+	 * @return the codeReader or <code>null</code> if kind is different to {@link InclusionKind#USE_SOURCE}.
 	 */
-	public CodeReader getCodeReader() {
-		return fCodeReader;
+	public AbstractCharArray getSource() {
+		return fSource;
 	}
 
 	/**

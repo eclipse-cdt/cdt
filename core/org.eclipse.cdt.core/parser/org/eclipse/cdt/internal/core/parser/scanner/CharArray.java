@@ -10,6 +10,7 @@
  *******************************************************************************/ 
 package org.eclipse.cdt.internal.core.parser.scanner;
 
+
 /**
  * Wrapper around char[] to implement {@link AbstractCharArray}.
  */
@@ -21,8 +22,21 @@ public final class CharArray extends AbstractCharArray {
 		fArray= array;
 	}
 
+	public CharArray(String str) {
+		fArray= str.toCharArray();
+	}
+	
+	public char[] getArray() {
+		return fArray;
+	}
+
 	@Override
-	public int getLimit() {
+	public int getLength() {
+		return fArray.length;
+	}
+
+	@Override
+	public int tryGetLength() {
 		return fArray.length;
 	}
 

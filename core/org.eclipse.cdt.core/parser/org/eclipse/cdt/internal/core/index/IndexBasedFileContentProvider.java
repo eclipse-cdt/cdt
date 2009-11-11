@@ -14,7 +14,6 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.index;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
@@ -28,25 +27,20 @@ import org.eclipse.cdt.core.index.IIndexFile;
 import org.eclipse.cdt.core.index.IIndexFileLocation;
 import org.eclipse.cdt.core.index.IIndexInclude;
 import org.eclipse.cdt.core.index.IIndexMacro;
-import org.eclipse.cdt.core.parser.CodeReader;
-import org.eclipse.cdt.core.parser.ICodeReaderCache;
-import org.eclipse.cdt.core.parser.ParserUtil;
-import org.eclipse.cdt.internal.core.dom.AbstractCodeReaderFactory;
-import org.eclipse.cdt.internal.core.dom.IIncludeFileResolutionHeuristics;
-import org.eclipse.cdt.internal.core.parser.InternalParserUtil;
-import org.eclipse.cdt.internal.core.parser.scanner.IIndexBasedCodeReaderFactory;
-import org.eclipse.cdt.internal.core.parser.scanner.IncludeFileContent;
-import org.eclipse.cdt.internal.core.parser.scanner.IncludeFileContent.InclusionKind;
+import org.eclipse.cdt.core.parser.IncludeFileContentProvider;
+import org.eclipse.cdt.internal.core.parser.scanner.InternalFileContent;
+import org.eclipse.cdt.internal.core.parser.scanner.InternalFileContentProvider;
+import org.eclipse.cdt.internal.core.parser.scanner.InternalFileContent.InclusionKind;
 import org.eclipse.cdt.internal.core.pdom.ASTFilePathResolver;
 import org.eclipse.cdt.internal.core.pdom.AbstractIndexerTask;
-import org.eclipse.cdt.internal.core.pdom.AbstractIndexerTask.FileContent;
+import org.eclipse.cdt.internal.core.pdom.AbstractIndexerTask.IndexFileContent;
 import org.eclipse.core.runtime.CoreException;
 
 /**
  * Code reader factory, that fakes code readers for header files already stored in the 
  * index.
  */
-public final class IndexBasedCodeReaderFactory extends AbstractCodeReaderFactory implements IIndexBasedCodeReaderFactory {
+public final class IndexBasedFileContentProvider extends InternalFileContentProvider {
 	private static final class NeedToParseException extends Exception {}
 	private static final String GAP = "__gap__"; //$NON-NLS-1$
 
@@ -54,22 +48,20 @@ public final class IndexBasedCodeReaderFactory extends AbstractCodeReaderFactory
 	private int fLinkage;
 	private Set<IIndexFileLocation> fIncludedFiles= new HashSet<IIndexFileLocation>();
 	/** The fall-back code reader factory used in case a header file is not indexed */
-	private final AbstractCodeReaderFactory fFallBackFactory;
+	private final InternalFileContentProvider fFallBackFactory;
 	private final ASTFilePathResolver fPathResolver;
 	private final AbstractIndexerTask fRelatedIndexerTask;
 	private boolean fSupportFillGapFromContextToHeader= false;
 	
-	public IndexBasedCodeReaderFactory(IIndex index, IIncludeFileResolutionHeuristics heuristics,
-			ASTFilePathResolver pathResolver, int linkage, AbstractCodeReaderFactory fallbackFactory) {
-		this(index, heuristics, pathResolver, linkage, fallbackFactory, null);
+	public IndexBasedFileContentProvider(IIndex index,
+			ASTFilePathResolver pathResolver, int linkage, IncludeFileContentProvider fallbackFactory) {
+		this(index, pathResolver, linkage, fallbackFactory, null);
 	}
 
-	public IndexBasedCodeReaderFactory(IIndex index, IIncludeFileResolutionHeuristics heuristics,
-			ASTFilePathResolver pathResolver, int linkage,
-			AbstractCodeReaderFactory fallbackFactory, AbstractIndexerTask relatedIndexerTask) {
-		super(heuristics);
+	public IndexBasedFileContentProvider(IIndex index, ASTFilePathResolver pathResolver, int linkage,
+			IncludeFileContentProvider fallbackFactory, AbstractIndexerTask relatedIndexerTask) {
 		fIndex= index;
-		fFallBackFactory= fallbackFactory;
+		fFallBackFactory= (InternalFileContentProvider) fallbackFactory;
 		fPathResolver= pathResolver;
 		fRelatedIndexerTask= relatedIndexerTask;
 		fLinkage= linkage;
@@ -87,52 +79,25 @@ public final class IndexBasedCodeReaderFactory extends AbstractCodeReaderFactory
 		fIncludedFiles.clear();
 	}
 	
-	public int getUniqueIdentifier() {
-		return 0;
-	}
-
-	public ICodeReaderCache getCodeReaderCache() {
-		return null;
-	}
-	
-	public CodeReader createCodeReaderForTranslationUnit(String path) {
-		if (fFallBackFactory != null) {
-			return fFallBackFactory.createCodeReaderForTranslationUnit(path);
-		}
-		return ParserUtil.createReader(path, null);
-	}
-
 	@Override
-	public CodeReader createCodeReaderForInclusion(IIndexFileLocation ifl, String astPath) throws CoreException, IOException {
-		if (fFallBackFactory != null) {
-			return fFallBackFactory.createCodeReaderForInclusion(ifl, astPath);
-		}
-		return InternalParserUtil.createCodeReader(ifl, null);
-	}
-	
-	@Deprecated
-	public CodeReader createCodeReaderForInclusion(String path) {
-		if (fFallBackFactory != null) {
-			return fFallBackFactory.createCodeReaderForInclusion(path);
-		}
-		return ParserUtil.createReader(path, null);
-	}
-
 	public boolean getInclusionExists(String path) {
 		return fPathResolver.doesIncludeFileExist(path); 
 	}
 	
+	@Override
 	public void reportTranslationUnitFile(String path) {
 		IIndexFileLocation ifl= fPathResolver.resolveASTPath(path);
 		fIncludedFiles.add(ifl);
 	}
 
-	public boolean hasFileBeenIncludedInCurrentTranslationUnit(String path) {
+	@Override
+	public Boolean hasFileBeenIncludedInCurrentTranslationUnit(String path) {
 		IIndexFileLocation ifl= fPathResolver.resolveASTPath(path);
 		return fIncludedFiles.contains(ifl);
 	}
 	
-	public IncludeFileContent getContentForInclusion(String path) {
+	@Override
+	public InternalFileContent getContentForInclusion(String path) {
 		IIndexFileLocation ifl= fPathResolver.resolveIncludeFile(path);
 		if (ifl == null) {
 			return null;
@@ -141,7 +106,7 @@ public final class IndexBasedCodeReaderFactory extends AbstractCodeReaderFactory
 		
 		// include files once, only.
 		if (!fIncludedFiles.add(ifl)) {
-			return new IncludeFileContent(path, InclusionKind.SKIP_FILE);
+			return new InternalFileContent(path, InclusionKind.SKIP_FILE);
 		}
 		
 		try {
@@ -155,7 +120,7 @@ public final class IndexBasedCodeReaderFactory extends AbstractCodeReaderFactory
 					collectFileContent(file, ifls, files, macros, directives, false);
 					// add included files only, if no exception was thrown
 					fIncludedFiles.addAll(ifls);
-					return new IncludeFileContent(path, macros, directives, files);
+					return new InternalFileContent(path, macros, directives, files);
 				} catch (NeedToParseException e) {
 				}
 			}
@@ -164,21 +129,22 @@ public final class IndexBasedCodeReaderFactory extends AbstractCodeReaderFactory
 			CCorePlugin.log(e);
 		}
 
-		try {
-			CodeReader codeReader= createCodeReaderForInclusion(ifl, path);
-			if (codeReader != null) {
-				IncludeFileContent ifc= new IncludeFileContent(codeReader);
+		if (fFallBackFactory != null) {
+			InternalFileContent ifc= getContentForInclusion(ifl, path);
+			if (ifc != null)
 				ifc.setIsSource(fPathResolver.isSource(path));
-				return ifc;
-			}
-		} catch (CoreException e) {
-			CCorePlugin.log(e);
-		} catch (IOException e) {
-			CCorePlugin.log(e);
+			return ifc;
 		}
 		return null;
 	}
 
+	@Override
+	public InternalFileContent getContentForInclusion(IIndexFileLocation ifl, String astPath) {
+		if (fFallBackFactory != null) {
+			return fFallBackFactory.getContentForInclusion(ifl, astPath);
+		}
+		return null;
+	}
 
 	private void collectFileContent(IIndexFile file, Set<IIndexFileLocation> ifls, List<IIndexFile> files,
 			List<IIndexMacro> macros, List<ICPPUsingDirective> usingDirectives, boolean checkIncluded)
@@ -187,14 +153,14 @@ public final class IndexBasedCodeReaderFactory extends AbstractCodeReaderFactory
 		if (!ifls.add(ifl) || (checkIncluded && fIncludedFiles.contains(ifl))) {
 			return;
 		}
-		FileContent content;
+		IndexFileContent content;
 		if (fRelatedIndexerTask != null) {
 			content= fRelatedIndexerTask.getFileContent(fLinkage, ifl);
 			if (content == null) {
 				throw new NeedToParseException();
 			}
 		} else {
-			content= new FileContent();
+			content= new IndexFileContent();
 			content.setPreprocessorDirectives(file.getIncludes(), file.getMacros());
 			content.setUsingDirectives(file.getUsingDirectives());
 		}
@@ -214,7 +180,8 @@ public final class IndexBasedCodeReaderFactory extends AbstractCodeReaderFactory
 		}
 	}
 
-	public IncludeFileContent getContentForContextToHeaderGap(String path) {
+	@Override
+	public InternalFileContent getContentForContextToHeaderGap(String path) {
 		if (!fSupportFillGapFromContextToHeader) {
 			return null;
 		}
@@ -246,7 +213,7 @@ public final class IndexBasedCodeReaderFactory extends AbstractCodeReaderFactory
 			for (IIndexFile file : filesIncluded) {
 				fIncludedFiles.add(file.getLocation());
 			}
-			return new IncludeFileContent(GAP, macros, directives, new ArrayList<IIndexFile>(filesIncluded));
+			return new InternalFileContent(GAP, macros, directives, new ArrayList<IIndexFile>(filesIncluded));
 		}
 		catch (CoreException e) {
 			CCorePlugin.log(e);
@@ -284,7 +251,7 @@ public final class IndexBasedCodeReaderFactory extends AbstractCodeReaderFactory
 
 		final IIndexInclude[] ids= from.getIncludes();
 		final IIndexMacro[] ms= from.getMacros();
-		final Object[] dirs= FileContent.merge(ids, ms);
+		final Object[] dirs= IndexFileContent.merge(ids, ms);
 		IIndexInclude success= null;
 		for (Object d : dirs) {
 			if (d instanceof IIndexMacro) {

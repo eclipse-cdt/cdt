@@ -18,6 +18,7 @@ import java.util.Collections;
 import org.eclipse.cdt.core.dom.ast.IASTFileLocation;
 import org.eclipse.cdt.core.dom.ast.IASTNodeLocation;
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit.IDependencyTree.IASTInclusionNode;
+import org.eclipse.cdt.core.parser.util.CharArrayUtils;
 
 /**
  * Base class for all location contexts that can contain children. 
@@ -31,10 +32,10 @@ class LocationCtxContainer extends LocationCtx {
 	private int fChildSequenceLength;
 
 	private ArrayList<LocationCtx> fChildren;
-	private char[] fSource;
+	private AbstractCharArray fSource;
 	private int[] fLineOffsets;
 	
-	public LocationCtxContainer(LocationCtxContainer parent, char[] source, int parentOffset, int parentEndOffset, int sequenceNumber) {
+	public LocationCtxContainer(LocationCtxContainer parent, AbstractCharArray source, int parentOffset, int parentEndOffset, int sequenceNumber) {
 		super(parent, parentOffset, parentEndOffset, sequenceNumber);
 		fSource= source;
 	}
@@ -55,16 +56,17 @@ class LocationCtxContainer extends LocationCtx {
 	}
 
 	public char[] getSource(int offset, int length) {
-		offset= Math.max(0, Math.min(offset, fSource.length));
-		length= Math.max(0, Math.min(length, fSource.length-offset));
-		char[] result= new char[length];
-		System.arraycopy(fSource, offset, result, 0, length);
-		return result;
+		if (fSource.isValidOffset(offset+length-1)) {
+			char[] result= new char[length];
+			fSource.arraycopy(offset, result, 0, length);
+			return result;
+		}
+		return CharArrayUtils.EMPTY;
 	}
 
 	@Override
 	public final int getSequenceLength() {
-		return fSource.length + fChildSequenceLength;
+		return fSource.getLength() + fChildSequenceLength;
 	}
 	
 	@Override
@@ -170,12 +172,12 @@ class LocationCtxContainer extends LocationCtx {
 
 		// create the location after the last child.
 		final int myEndNumber = fSequenceNumber + getSequenceLength();
-		final int offset= fSource.length - (myEndNumber - sequenceNumber);
+		final int offset= fSource.getLength() - (myEndNumber - sequenceNumber);
 		if (endSequenceNumber <= myEndNumber) {
 			addFileLocation(offset, endSequenceNumber-sequenceNumber, locations);
 			return true;
 		}
-		addFileLocation(offset, fSource.length-offset, locations);
+		addFileLocation(offset, fSource.getLength()-offset, locations);
 		return false;
 	}
 	
@@ -247,8 +249,9 @@ class LocationCtxContainer extends LocationCtx {
 
 	private int[] computeLineOffsets() {
 		ArrayList<Integer> offsets= new ArrayList<Integer>();
-		for (int i = 0; i < fSource.length; i++) {
-			if (fSource[i] == '\n') {
+		final int len= fSource.getLength();
+		for (int i = 0; i < len; i++) {
+			if (fSource.get(i) == '\n') {
 				offsets.add(new Integer(i));
 			}
 		}

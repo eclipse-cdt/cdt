@@ -14,13 +14,13 @@ import java.io.IOException;
 
 import junit.framework.ComparisonFailure;
 
-import org.eclipse.cdt.core.dom.ICodeReaderFactory;
 import org.eclipse.cdt.core.dom.ast.IASTProblem;
 import org.eclipse.cdt.core.dom.ast.IMacroBinding;
 import org.eclipse.cdt.core.dom.parser.IScannerExtensionConfiguration;
 import org.eclipse.cdt.core.dom.parser.c.GCCScannerExtensionConfiguration;
 import org.eclipse.cdt.core.dom.parser.cpp.GPPScannerExtensionConfiguration;
-import org.eclipse.cdt.core.parser.CodeReader;
+import org.eclipse.cdt.core.parser.FileContent;
+import org.eclipse.cdt.core.parser.IncludeFileContentProvider;
 import org.eclipse.cdt.core.parser.EndOfFileException;
 import org.eclipse.cdt.core.parser.IParserLogService;
 import org.eclipse.cdt.core.parser.IScannerInfo;
@@ -55,23 +55,27 @@ public abstract class PreprocessorTestsBase extends BaseTestCase {
 	}
 
 	protected void initializeScanner(String input, ParserMode mode) throws IOException {
-		initializeScanner(new CodeReader(input.toCharArray()), ParserLanguage.CPP, mode, new ScannerInfo());
+		initializeScanner(getContent(input), ParserLanguage.CPP, mode, new ScannerInfo());
 	}
 
 	protected void initializeScanner(String input, ParserLanguage lang) throws IOException {
-		initializeScanner(new CodeReader(input.toCharArray()), lang, ParserMode.COMPLETE_PARSE, new ScannerInfo());
+		initializeScanner(getContent(input), lang, ParserMode.COMPLETE_PARSE, new ScannerInfo());
 	}
 	
 	protected void initializeScanner(String input, ParserLanguage lang, IScannerExtensionConfiguration scannerConfig) throws IOException {
-		initializeScanner(new CodeReader(input.toCharArray()), lang, ParserMode.COMPLETE_PARSE, new ScannerInfo(), scannerConfig);
+		initializeScanner(getContent(input), lang, ParserMode.COMPLETE_PARSE, new ScannerInfo(), scannerConfig);
 	}
 
-	protected void initializeScanner(CodeReader input, ParserLanguage lang, ParserMode mode, IScannerInfo scannerInfo) throws IOException {
+	private FileContent getContent(String input) {
+		return FileContent.create("<test-code>", input.toCharArray());
+	}
+
+	protected void initializeScanner(FileContent input, ParserLanguage lang, ParserMode mode, IScannerInfo scannerInfo) throws IOException {
 		initializeScanner(input, lang, mode, scannerInfo, null);
 	}
 	
-	protected void initializeScanner(CodeReader input, ParserLanguage lang, ParserMode mode, IScannerInfo scannerInfo, IScannerExtensionConfiguration scannerConfig) throws IOException {
-		ICodeReaderFactory readerFactory= FileCodeReaderFactory.getInstance();
+	protected void initializeScanner(FileContent input, ParserLanguage lang, ParserMode mode, IScannerInfo scannerInfo, IScannerExtensionConfiguration scannerConfig) throws IOException {
+		IncludeFileContentProvider readerFactory= FileCodeReaderFactory.getInstance();
 		//IScannerExtensionConfiguration scannerConfig;
 	
 		if(scannerConfig == null) {

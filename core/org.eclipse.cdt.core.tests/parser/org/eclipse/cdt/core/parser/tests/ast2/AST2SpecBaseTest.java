@@ -26,7 +26,7 @@ import org.eclipse.cdt.core.dom.parser.c.ICParserExtensionConfiguration;
 import org.eclipse.cdt.core.dom.parser.cpp.ANSICPPParserExtensionConfiguration;
 import org.eclipse.cdt.core.dom.parser.cpp.GPPParserExtensionConfiguration;
 import org.eclipse.cdt.core.dom.parser.cpp.ICPPParserExtensionConfiguration;
-import org.eclipse.cdt.core.parser.CodeReader;
+import org.eclipse.cdt.core.parser.FileContent;
 import org.eclipse.cdt.core.parser.IScanner;
 import org.eclipse.cdt.core.parser.ParserLanguage;
 import org.eclipse.cdt.core.parser.ParserMode;
@@ -80,7 +80,7 @@ public class AST2SpecBaseTest extends AST2BaseTest {
 		// TODO beef this up with tests... i.e. run once with \n, and then run again with \r\n replacing \n ... etc
 		// TODO another example might be to replace all characters with corresponding trigraph/digraph tests...
 		
-		CodeReader codeReader = new CodeReader(code.toCharArray());
+        FileContent codeReader = FileContent.create("<test-code>", code.toCharArray());
 		return parse(codeReader, lang, useGNUExtensions, expectNoProblems, checkBindings, expectedProblemBindings, problems);
     }
 	
@@ -97,7 +97,7 @@ public class AST2SpecBaseTest extends AST2BaseTest {
 //		return parse(codeReader, lang, useGNUExtensions, expectNoProblems);
 //    }
 	
-	private IASTTranslationUnit parse(CodeReader codeReader, ParserLanguage lang,
+	private IASTTranslationUnit parse(FileContent codeReader, ParserLanguage lang,
 			boolean useGNUExtensions, boolean expectNoProblems, boolean checkBindings,
 			int expectedProblemBindings, String[] problems) throws ParserException {
         ScannerInfo scannerInfo = new ScannerInfo();

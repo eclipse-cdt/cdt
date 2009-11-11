@@ -32,7 +32,7 @@ import org.eclipse.cdt.internal.core.dom.parser.ASTTranslationUnit;
 import org.eclipse.cdt.internal.core.dom.parser.IASTAmbiguityParent;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPVisitor;
 import org.eclipse.cdt.internal.core.index.IIndexScope;
-import org.eclipse.cdt.internal.core.parser.scanner.IncludeFileContent;
+import org.eclipse.cdt.internal.core.parser.scanner.InternalFileContent;
 
 /**
  * C++-specific implementation of a translation-unit.
@@ -146,7 +146,7 @@ public class CPPASTTranslationUnit extends ASTTranslationUnit implements ICPPAST
 	 * @see org.eclipse.cdt.internal.core.parser.scanner.ISkippedIndexedFilesListener#skippedFile(org.eclipse.cdt.internal.core.parser.scanner.IncludeFileContent)
 	 */
 	@Override
-	public void skippedFile(int offset, IncludeFileContent fileContent) {
+	public void skippedFile(int offset, InternalFileContent fileContent) {
 		super.skippedFile(offset, fileContent);
 		fScopeMapper.registerAdditionalDirectives(offset, fileContent.getUsingDirectives());
 	}	

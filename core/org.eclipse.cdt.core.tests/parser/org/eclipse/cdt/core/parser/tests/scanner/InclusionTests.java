@@ -17,8 +17,8 @@ import java.util.Collections;
 import junit.framework.TestSuite;
 
 import org.eclipse.cdt.core.model.ICProject;
-import org.eclipse.cdt.core.parser.CodeReader;
 import org.eclipse.cdt.core.parser.ExtendedScannerInfo;
+import org.eclipse.cdt.core.parser.FileContent;
 import org.eclipse.cdt.core.parser.IScannerInfo;
 import org.eclipse.cdt.core.parser.IToken;
 import org.eclipse.cdt.core.parser.ParserLanguage;
@@ -99,7 +99,7 @@ public class InclusionTests extends PreprocessorTestsBase {
     			f0.getLocation().removeLastSegments(1) + "/__framework__.framework/__header__"
     	};
     	IScannerInfo scannerInfo = new ExtendedScannerInfo(Collections.EMPTY_MAP, path, new String[]{}, null);
-    	CodeReader reader= new CodeReader(base.getLocation().toString());
+    	FileContent reader= FileContent.create(base);
     	initializeScanner(reader, ParserLanguage.C, ParserMode.COMPLETE_PARSE, scannerInfo);
 
     	// first file is not picked up (no framework)
@@ -130,7 +130,7 @@ public class InclusionTests extends PreprocessorTestsBase {
     	path[2] = oneThree.getLocation().toOSString();
     	
     	IScannerInfo scannerInfo = new ExtendedScannerInfo(Collections.EMPTY_MAP, path, new String[]{}, null);
-    	CodeReader reader= new CodeReader(base.getLocation().toString());
+    	FileContent reader= FileContent.create(base);
     	initializeScanner(reader, ParserLanguage.C, ParserMode.COMPLETE_PARSE, scannerInfo);
 
     	validateToken(IToken.t_int);
@@ -170,7 +170,7 @@ public class InclusionTests extends PreprocessorTestsBase {
     	path[1] = two.getLocation().toOSString();
     	
     	IScannerInfo scannerInfo = new ExtendedScannerInfo(Collections.EMPTY_MAP, path, new String[]{}, null);
-    	CodeReader reader= new CodeReader(base.getLocation().toString());
+    	FileContent reader= FileContent.create(base);
     	initializeScanner(reader, ParserLanguage.C, ParserMode.COMPLETE_PARSE, scannerInfo);
 
     	validateInteger("0");
@@ -208,7 +208,7 @@ public class InclusionTests extends PreprocessorTestsBase {
        	path[1] = threef.getLocation().toOSString();
    	
     	IScannerInfo scannerInfo = new ExtendedScannerInfo( Collections.EMPTY_MAP, path, new String[]{}, null );
-    	CodeReader reader= new CodeReader(base.getLocation().toString());
+    	FileContent reader= FileContent.create(base);
     	initializeScanner(reader, ParserLanguage.C, ParserMode.COMPLETE_PARSE, scannerInfo);
 
     	validateToken(IToken.t_int);
@@ -236,7 +236,7 @@ public class InclusionTests extends PreprocessorTestsBase {
         buffer.append( "int var = FOUND;\n"); //$NON-NLS-1$
     	IFile base = importFile( "base.cpp", buffer.toString() ); //$NON-NLS-1$
 
-    	CodeReader reader= new CodeReader(base.getLocation().toString());
+    	FileContent reader= FileContent.create(base);
     	ParserLanguage lang[]= {ParserLanguage.C, ParserLanguage.CPP};
     	for (ParserLanguage element : lang) {
     		initializeScanner(reader, element, ParserMode.COMPLETE_PARSE, new ScannerInfo());
@@ -254,7 +254,7 @@ public class InclusionTests extends PreprocessorTestsBase {
         StringBuffer buffer = new StringBuffer( "#include \"file.h\"" );
     	IFile base = importFile( "base.cpp", buffer.toString() ); //$NON-NLS-1$
 
-    	CodeReader reader= new CodeReader(base.getLocation().toString());
+    	FileContent reader= FileContent.create(base);
     	initializeScanner(reader, ParserLanguage.CPP, ParserMode.COMPLETE_PARSE, new ScannerInfo());
     	validateIdentifier("ok");
     	validateEOF();
@@ -272,7 +272,7 @@ public class InclusionTests extends PreprocessorTestsBase {
 
     	String[] path = {"f2"};  // relative include
     	IScannerInfo scannerInfo = new ExtendedScannerInfo(Collections.EMPTY_MAP, path, new String[]{}, null);
-    	CodeReader reader= new CodeReader(base.getLocation().toString());
+    	FileContent reader= FileContent.create(base);
     	initializeScanner(reader, ParserLanguage.C, ParserMode.COMPLETE_PARSE, scannerInfo);
 
     	validateInteger("1");

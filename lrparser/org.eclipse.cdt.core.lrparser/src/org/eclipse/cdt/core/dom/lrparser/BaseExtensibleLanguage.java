@@ -27,10 +27,11 @@ import org.eclipse.cdt.core.model.ICLanguageKeywords;
 import org.eclipse.cdt.core.model.IContributedModelBuilder;
 import org.eclipse.cdt.core.model.ILanguage;
 import org.eclipse.cdt.core.model.ITranslationUnit;
-import org.eclipse.cdt.core.parser.CodeReader;
+import org.eclipse.cdt.core.parser.FileContent;
 import org.eclipse.cdt.core.parser.IParserLogService;
 import org.eclipse.cdt.core.parser.IScanner;
 import org.eclipse.cdt.core.parser.IScannerInfo;
+import org.eclipse.cdt.core.parser.IncludeFileContentProvider;
 import org.eclipse.cdt.core.parser.ParserLanguage;
 import org.eclipse.cdt.core.parser.util.ASTPrinter;
 import org.eclipse.cdt.core.parser.util.DebugUtil;
@@ -77,9 +78,18 @@ public abstract class BaseExtensibleLanguage extends AbstractLanguage {
 	protected abstract IScannerExtensionConfiguration getScannerExtensionConfiguration();
 	
 	
+	@Override @Deprecated
+	public IASTTranslationUnit getASTTranslationUnit(org.eclipse.cdt.core.parser.CodeReader reader,
+			IScannerInfo scanInfo, ICodeReaderFactory codeReaderFactory, IIndex index, int options,
+			IParserLogService log) throws CoreException {
+		return getASTTranslationUnit(FileContent.adapt(reader), scanInfo, IncludeFileContentProvider
+				.adapt(codeReaderFactory), index, options, log);
+	}
+	
 	@Override
-	public IASTTranslationUnit getASTTranslationUnit(CodeReader reader, IScannerInfo scanInfo,
-			ICodeReaderFactory fileCreator, IIndex index, int options, IParserLogService log) throws CoreException {
+	public IASTTranslationUnit getASTTranslationUnit(FileContent reader, IScannerInfo scanInfo,
+			IncludeFileContentProvider fileCreator, IIndex index, int options, IParserLogService log)
+			throws CoreException {
 		
 		IASTTranslationUnit gtu = null;
 		if(DEBUG_PRINT_GCC_AST) {
@@ -100,7 +110,7 @@ public abstract class BaseExtensibleLanguage extends AbstractLanguage {
 		preprocessor.setComputeImageLocations((options & ILanguage.OPTION_NO_IMAGE_LOCATIONS) == 0);
 		
 		Map<String,String> parserProperties = new HashMap<String,String>();
-		parserProperties.put(LRParserProperties.TRANSLATION_UNIT_PATH, reader.getPath());
+		parserProperties.put(LRParserProperties.TRANSLATION_UNIT_PATH, reader.getFileLocation());
 		if((options & OPTION_SKIP_FUNCTION_BODIES) != 0)
 			parserProperties.put(LRParserProperties.SKIP_FUNCTION_BODIES, "true");
 		if((options & OPTION_SKIP_TRIVIAL_EXPRESSIONS_IN_AGGREGATE_INITIALIZERS) != 0)
@@ -118,19 +128,26 @@ public abstract class BaseExtensibleLanguage extends AbstractLanguage {
 		return tu;
 	}
 	
-	
-	public IASTTranslationUnit getASTTranslationUnit(CodeReader reader,
-			IScannerInfo scanInfo, ICodeReaderFactory fileCreator,
-			IIndex index, IParserLogService log) throws CoreException {
-		
+	@Deprecated
+	public IASTTranslationUnit getASTTranslationUnit(org.eclipse.cdt.core.parser.CodeReader reader,
+			IScannerInfo scanInfo, ICodeReaderFactory fileCreator, IIndex index, IParserLogService log)
+			throws CoreException {
+
 		return getASTTranslationUnit(reader, scanInfo, fileCreator, index, 0, log);
 	}
-
 	
-	public IASTCompletionNode getCompletionNode(CodeReader reader,
-			IScannerInfo scanInfo, ICodeReaderFactory fileCreator,
-			IIndex index, IParserLogService log, int offset) throws CoreException {
+	@Deprecated
+	public IASTCompletionNode getCompletionNode(org.eclipse.cdt.core.parser.CodeReader reader,
+			IScannerInfo scanInfo, ICodeReaderFactory fileCreator, IIndex index, IParserLogService log,
+			int offset) throws CoreException {
+		return getCompletionNode(FileContent.adapt(reader), scanInfo, IncludeFileContentProvider
+				.adapt(fileCreator), index, log, offset);
+	}
 		
+	@Override
+	public IASTCompletionNode getCompletionNode(FileContent reader, IScannerInfo scanInfo,
+			IncludeFileContentProvider fileCreator, IIndex index, IParserLogService log, int offset)
+			throws CoreException {		
 		
 		IASTCompletionNode cn;
 		if(DEBUG_PRINT_GCC_AST) {
@@ -151,7 +168,7 @@ public abstract class BaseExtensibleLanguage extends AbstractLanguage {
 		
 		
 		Map<String,String> parserProperties = new HashMap<String,String>();
-		parserProperties.put(LRParserProperties.TRANSLATION_UNIT_PATH, reader.getPath());
+		parserProperties.put(LRParserProperties.TRANSLATION_UNIT_PATH, reader.getFileLocation());
 		parserProperties.put(LRParserProperties.SKIP_FUNCTION_BODIES, "true");
 		parserProperties.put(LRParserProperties.SKIP_TRIVIAL_EXPRESSIONS_IN_AGGREGATE_INITIALIZERS, "true");
 		
@@ -190,7 +207,7 @@ public abstract class BaseExtensibleLanguage extends AbstractLanguage {
 		System.out.println();
 	}
 	
-	
+	@Deprecated
 	public IASTName[] getSelectedNames(IASTTranslationUnit ast, int start, int length) {
 		return GCCLanguage.getDefault().getSelectedNames(ast, start, length);
 	}

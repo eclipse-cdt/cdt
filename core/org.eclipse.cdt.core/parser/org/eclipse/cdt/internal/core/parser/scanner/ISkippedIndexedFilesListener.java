@@ -23,5 +23,5 @@ public interface ISkippedIndexedFilesListener {
 	 * @param offset offset at which the file is included (see {@link ASTNode#getOffset()} 
 	 * @param fileContent information about the skipped file.
 	 */
-	void skippedFile(int offset, IncludeFileContent fileContent);
+	void skippedFile(int offset, InternalFileContent fileContent);
 }

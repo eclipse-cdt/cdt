@@ -30,12 +30,12 @@ import org.eclipse.cdt.core.dom.parser.cpp.GPPScannerExtensionConfiguration;
 import org.eclipse.cdt.core.dom.parser.cpp.ICPPParserExtensionConfiguration;
 import org.eclipse.cdt.core.dom.parser.cpp.POPCPPParserExtensionConfiguration;
 import org.eclipse.cdt.core.dom.parser.cpp.POPCPPScannerExtensionConfiguration;
-import org.eclipse.cdt.core.parser.CodeReader;
+import org.eclipse.cdt.core.parser.FileContent;
+import org.eclipse.cdt.core.parser.IncludeFileContentProvider;
 import org.eclipse.cdt.core.parser.IScanner;
 import org.eclipse.cdt.core.parser.ParserLanguage;
 import org.eclipse.cdt.core.parser.ParserMode;
 import org.eclipse.cdt.core.parser.ScannerInfo;
-import org.eclipse.cdt.core.parser.tests.scanner.FileCodeReaderFactory;
 import org.eclipse.cdt.internal.core.dom.parser.c.GNUCSourceParser;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.GNUCPPSourceParser;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPVisitor;
@@ -72,19 +72,19 @@ public class LanguageExtensionsTest extends AST2BaseTest {
 
 	protected IASTTranslationUnit parse(String code, IScannerExtensionConfiguration sext,
 			ICPPParserExtensionConfiguration pext) throws Exception {
-		IScanner scanner= 
-			new CPreprocessor(new CodeReader(code.toCharArray()), new ScannerInfo(), ParserLanguage.CPP, NULL_LOG, 
-					sext, FileCodeReaderFactory.getInstance());
-		GNUCPPSourceParser parser= new GNUCPPSourceParser(scanner, ParserMode.COMPLETE_PARSE, NULL_LOG, pext);
-		return  parse(parser);
+		FileContent codeReader = FileContent.create("<test-code>", code.toCharArray());
+		IScanner scanner = new CPreprocessor(codeReader, new ScannerInfo(), ParserLanguage.CPP, NULL_LOG,
+				sext, IncludeFileContentProvider.getSavedFilesProvider());
+		GNUCPPSourceParser parser = new GNUCPPSourceParser(scanner, ParserMode.COMPLETE_PARSE, NULL_LOG, pext);
+		return parse(parser);
 	}
 
 	protected IASTTranslationUnit parse(String code, IScannerExtensionConfiguration sext,
 			ICParserExtensionConfiguration pext) throws Exception {
-		IScanner scanner= 
-			new CPreprocessor(new CodeReader(code.toCharArray()), new ScannerInfo(), ParserLanguage.C, NULL_LOG, 
-					sext, FileCodeReaderFactory.getInstance());
-		GNUCSourceParser parser= new GNUCSourceParser(scanner, ParserMode.COMPLETE_PARSE, NULL_LOG, pext);
+		FileContent codeReader = FileContent.create("<test-code>", code.toCharArray());
+		IScanner scanner = new CPreprocessor(codeReader, new ScannerInfo(), ParserLanguage.C, NULL_LOG, sext,
+				IncludeFileContentProvider.getSavedFilesProvider());
+		GNUCSourceParser parser = new GNUCSourceParser(scanner, ParserMode.COMPLETE_PARSE, NULL_LOG, pext);
 		return parse(parser);
 	}
 	

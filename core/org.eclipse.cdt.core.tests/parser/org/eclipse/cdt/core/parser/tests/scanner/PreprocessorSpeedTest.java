@@ -16,11 +16,10 @@ import java.io.PrintStream;
 import java.util.Hashtable;
 import java.util.Map;
 
-import org.eclipse.cdt.core.dom.ICodeReaderFactory;
 import org.eclipse.cdt.core.dom.parser.IScannerExtensionConfiguration;
 import org.eclipse.cdt.core.dom.parser.c.GCCScannerExtensionConfiguration;
 import org.eclipse.cdt.core.dom.parser.cpp.GPPScannerExtensionConfiguration;
-import org.eclipse.cdt.core.parser.CodeReader;
+import org.eclipse.cdt.core.parser.FileContent;
 import org.eclipse.cdt.core.parser.EndOfFileException;
 import org.eclipse.cdt.core.parser.IScannerInfo;
 import org.eclipse.cdt.core.parser.IToken;
@@ -62,7 +61,7 @@ public class PreprocessorSpeedTest  {
 			"#include <stdio.h>\n" +
 			"#include <iostream>\n";
 		
-		CodeReader reader = new CodeReader(code.toCharArray());
+		FileContent reader = FileContent.create("<test-code>", code.toCharArray());
 		IScannerInfo info = getScannerInfo();
 		long totalTime = 0;
 		for (int i = 0; i < n; ++i) {
@@ -76,8 +75,8 @@ public class PreprocessorSpeedTest  {
 		}
 	}
 
-	protected long testScan(CodeReader reader, boolean quick, IScannerInfo info, ParserLanguage lang) throws Exception {
-		ICodeReaderFactory readerFactory= FileCodeReaderFactory.getInstance();
+	protected long testScan(FileContent reader, boolean quick, IScannerInfo info, ParserLanguage lang) throws Exception {
+		FileCodeReaderFactory readerFactory= FileCodeReaderFactory.getInstance();
 		IScannerExtensionConfiguration scannerConfig;
 	    if (lang == ParserLanguage.C) {
 	    	scannerConfig= GCCScannerExtensionConfiguration.getInstance();

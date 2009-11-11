@@ -37,7 +37,7 @@ import org.eclipse.cdt.core.index.IIndexFileSet;
 import org.eclipse.cdt.core.parser.util.ArrayUtil;
 import org.eclipse.cdt.internal.core.parser.scanner.ILocationResolver;
 import org.eclipse.cdt.internal.core.parser.scanner.ISkippedIndexedFilesListener;
-import org.eclipse.cdt.internal.core.parser.scanner.IncludeFileContent;
+import org.eclipse.cdt.internal.core.parser.scanner.InternalFileContent;
 import org.eclipse.cdt.internal.core.parser.scanner.Lexer.LexerOptions;
 import org.eclipse.core.runtime.CoreException;
 
@@ -341,7 +341,7 @@ public abstract class ASTTranslationUnit extends ASTNode implements IASTTranslat
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.internal.core.parser.scanner.ISkippedIndexedFilesListener#skippedFile(org.eclipse.cdt.internal.core.parser.scanner.IncludeFileContent)
 	 */
-	public void skippedFile(int offset, IncludeFileContent fileContent) {
+	public void skippedFile(int offset, InternalFileContent fileContent) {
 		if (fIndexFileSet != null) {
 			List<IIndexFile> files= fileContent.getFilesIncluded();
 			for (IIndexFile indexFile : files) {

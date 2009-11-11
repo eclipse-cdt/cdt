@@ -38,18 +38,19 @@ import org.eclipse.cdt.core.index.IIndexManager;
 import org.eclipse.cdt.core.index.IndexLocationFactory;
 import org.eclipse.cdt.core.model.AbstractLanguage;
 import org.eclipse.cdt.core.model.ILanguage;
-import org.eclipse.cdt.core.parser.CodeReader;
+import org.eclipse.cdt.core.parser.FileContent;
 import org.eclipse.cdt.core.parser.IExtendedScannerInfo;
 import org.eclipse.cdt.core.parser.IParserLogService;
 import org.eclipse.cdt.core.parser.IScannerInfo;
+import org.eclipse.cdt.core.parser.IncludeFileContentProvider;
 import org.eclipse.cdt.core.parser.ParserUtil;
 import org.eclipse.cdt.core.parser.ScannerInfo;
-import org.eclipse.cdt.internal.core.dom.AbstractCodeReaderFactory;
 import org.eclipse.cdt.internal.core.dom.IIncludeFileResolutionHeuristics;
 import org.eclipse.cdt.internal.core.index.IIndexFragment;
 import org.eclipse.cdt.internal.core.index.IIndexFragmentFile;
 import org.eclipse.cdt.internal.core.index.IWritableIndex;
-import org.eclipse.cdt.internal.core.index.IndexBasedCodeReaderFactory;
+import org.eclipse.cdt.internal.core.index.IndexBasedFileContentProvider;
+import org.eclipse.cdt.internal.core.parser.scanner.InternalFileContentProvider;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMNotImplementedError;
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.CoreException;
@@ -90,7 +91,7 @@ public abstract class AbstractIndexerTask extends PDOMWriter {
 		}
 	}
 
-	public static class FileContent {
+	public static class IndexFileContent {
 		private IIndexFile fIndexFile= null;
 		private boolean fRequestUpdate= false;
 		private boolean fRequestIsCounted= true;
@@ -167,7 +168,7 @@ public abstract class AbstractIndexerTask extends PDOMWriter {
 	private int fUpdateFlags= IIndexManager.UPDATE_ALL;
 	private UnusedHeaderStrategy fIndexHeadersWithoutContext= UnusedHeaderStrategy.useDefaultLanguage;
 	private boolean fIndexFilesWithoutConfiguration= true;
-	private HashMap<FileKey, FileContent> fFileInfos= new HashMap<FileKey, FileContent>();
+	private HashMap<FileKey, IndexFileContent> fFileInfos= new HashMap<FileKey, IndexFileContent>();
 
 	private Object[] fFilesToUpdate;
 	private List<Object> fFilesToRemove = new ArrayList<Object>();
@@ -178,7 +179,7 @@ public abstract class AbstractIndexerTask extends PDOMWriter {
 	protected IWritableIndex fIndex;
 	private ITodoTaskUpdater fTodoTaskUpdater;
 	private final boolean fIsFastIndexer;
-	private AbstractCodeReaderFactory fCodeReaderFactory;
+	private InternalFileContentProvider fCodeReaderFactory;
 
 	public AbstractIndexerTask(Object[] filesToUpdate, Object[] filesToRemove, IndexerInputAdapter resolver, boolean fastIndexer) {
 		super(resolver);
@@ -212,7 +213,7 @@ public abstract class AbstractIndexerTask extends PDOMWriter {
 
 	protected abstract IWritableIndex createIndex();
 	protected abstract IIncludeFileResolutionHeuristics createIncludeHeuristics();
-	protected abstract AbstractCodeReaderFactory createReaderFactory();
+	protected abstract IncludeFileContentProvider createReaderFactory();
 	protected abstract AbstractLanguage[] getLanguages(String fileName);
 
 	protected ITodoTaskUpdater createTodoTaskUpdater() {
@@ -233,7 +234,7 @@ public abstract class AbstractIndexerTask extends PDOMWriter {
 		if (dummyName != null) {
 			IIndexFileLocation dummyLoc= fResolver.resolveASTPath(dummyName);
 			setIndexed(lang.getLinkageID(), dummyLoc);
-			CodeReader codeReader= new CodeReader(dummyName, code.toCharArray());
+			FileContent codeReader= FileContent.create(dummyName, code.toCharArray());
 			return createAST(lang, codeReader, scanInfo, options, monitor);
 		}
 		return null;
@@ -242,7 +243,7 @@ public abstract class AbstractIndexerTask extends PDOMWriter {
 
 	private final IASTTranslationUnit createAST(Object tu, AbstractLanguage language, IScannerInfo scanInfo, int options, IProgressMonitor pm)
 			throws CoreException {
-		final CodeReader codeReader= fResolver.getCodeReader(tu);
+		final FileContent codeReader= fResolver.getCodeReader(tu);
 		if (codeReader == null) {
 			return null;
 		}
@@ -252,19 +253,19 @@ public abstract class AbstractIndexerTask extends PDOMWriter {
 		return createAST(language, codeReader, scanInfo, options, pm);
 	}
 
-	private final IASTTranslationUnit createAST(AbstractLanguage language, CodeReader codeReader,
+	private final IASTTranslationUnit createAST(AbstractLanguage language, FileContent codeReader,
 			IScannerInfo scanInfo, int options, IProgressMonitor pm) throws CoreException {
 		if (fCodeReaderFactory == null) {
+			InternalFileContentProvider fileContentProvider = createInternalFileContentProvider();
 			if (fIsFastIndexer) {
-				fCodeReaderFactory= new IndexBasedCodeReaderFactory(fIndex, createIncludeHeuristics(),
-						fResolver, language.getLinkageID(), createReaderFactory(), this);
+				fCodeReaderFactory= new IndexBasedFileContentProvider(fIndex, fResolver, language.getLinkageID(), fileContentProvider, this);
 			} else {
-				fCodeReaderFactory= createReaderFactory();
+				fCodeReaderFactory= fileContentProvider;
 			}
 		} else if (fIsFastIndexer) {
-			((IndexBasedCodeReaderFactory) fCodeReaderFactory).setLinkage(language.getLinkageID());
+			((IndexBasedFileContentProvider) fCodeReaderFactory).setLinkage(language.getLinkageID());
 		}
-		
+		fCodeReaderFactory.setIncludeResolutionHeuristics(createIncludeHeuristics());
 		try {
 			IASTTranslationUnit ast= language.getASTTranslationUnit(codeReader, scanInfo, fCodeReaderFactory,
 					fIndex, options, getLogService());
@@ -274,9 +275,17 @@ public abstract class AbstractIndexerTask extends PDOMWriter {
 			return ast;
 		} finally {
 			if (fIsFastIndexer) {
-				((IndexBasedCodeReaderFactory) fCodeReaderFactory).cleanupAfterTranslationUnit();
+				((IndexBasedFileContentProvider) fCodeReaderFactory).cleanupAfterTranslationUnit();
 			}
 		}
+	}
+
+	private InternalFileContentProvider createInternalFileContentProvider() {
+		final IncludeFileContentProvider fileContentProvider = createReaderFactory();
+		if (fileContentProvider instanceof InternalFileContentProvider)
+			return (InternalFileContentProvider) fileContentProvider;
+		
+		throw new IllegalArgumentException("Invalid file content provider"); //$NON-NLS-1$
 	}
 
 	protected IParserLogService getLogService() {
@@ -417,7 +426,7 @@ public abstract class AbstractIndexerTask extends PDOMWriter {
 	
 	private void requestUpdate(int linkageID, IIndexFileLocation ifl, IIndexFragmentFile ifile) {
 		FileKey key= new FileKey(linkageID, ifl.getURI());
-		FileContent info= fFileInfos.get(key);
+		IndexFileContent info= fFileInfos.get(key);
 		if (info == null) {
 			info= createFileInfo(key, null);
 		}
@@ -427,7 +436,7 @@ public abstract class AbstractIndexerTask extends PDOMWriter {
 	
 	private void setIndexed(int linkageID, IIndexFileLocation ifl) {
 		FileKey key= new FileKey(linkageID, ifl.getURI());
-		FileContent info= fFileInfos.get(key);
+		IndexFileContent info= fFileInfos.get(key);
 		if (info == null) {
 			info= createFileInfo(key, null);
 		}
@@ -435,14 +444,14 @@ public abstract class AbstractIndexerTask extends PDOMWriter {
 		info.clearCaches();
 	}
 
-	private FileContent createFileInfo(FileKey key, IIndexFile ifile) {
-		FileContent info = new FileContent();
+	private IndexFileContent createFileInfo(FileKey key, IIndexFile ifile) {
+		IndexFileContent info = new IndexFileContent();
 		fFileInfos.put(key, info);
 		info.fIndexFile= ifile;
 		return info;
 	}
 
-	private FileContent getFileInfo(int linkageID, IIndexFileLocation ifl) {
+	private IndexFileContent getFileInfo(int linkageID, IIndexFileLocation ifl) {
 		FileKey key= new FileKey(linkageID, ifl.getURI());
 		return fFileInfos.get(key);
 	}
@@ -557,7 +566,7 @@ public abstract class AbstractIndexerTask extends PDOMWriter {
 									String found= p.getPath();
 									if (found != null) {
 										IIndexFileLocation ifl= fResolver.resolveASTPath(found);
-										FileContent fileinfo = getFileInfo(linkageID, ifl);
+										IndexFileContent fileinfo = getFileInfo(linkageID, ifl);
 										if (fileinfo != null) {
 											if (fileinfo.fIndexFile != null) {
 												trace(filePath + " was not properly parsed up front for " + lang.getName()); //$NON-NLS-1$
@@ -591,7 +600,7 @@ public abstract class AbstractIndexerTask extends PDOMWriter {
 				final IIndexFileLocation ifl = fResolver.resolveFile(tu);
 				if (ifl == null)
 					continue;
-				final FileContent info= getFileInfo(linkageID, ifl);
+				final IndexFileContent info= getFileInfo(linkageID, ifl);
 				if (info != null && info.fRequestUpdate && !info.fIsUpdated) {
 					info.fRequestIsCounted= false;
 					final IScannerInfo scannerInfo= fResolver.getBuildConfiguration(linkageID, tu);
@@ -613,7 +622,7 @@ public abstract class AbstractIndexerTask extends PDOMWriter {
 					return;
 				final Object header= iter.next();
 				final IIndexFileLocation ifl = fResolver.resolveFile(header);
-				final FileContent info= getFileInfo(linkageID, ifl);
+				final IndexFileContent info= getFileInfo(linkageID, ifl);
 				if (info != null && info.fRequestUpdate && !info.fIsUpdated) {
 					if (info.fIndexFile != null && fIndex.isWritableFile(info.fIndexFile)) {
 						Object tu= findContext((IIndexFragmentFile) info.fIndexFile, contextMap);
@@ -640,7 +649,7 @@ public abstract class AbstractIndexerTask extends PDOMWriter {
 					return;
 				final Object header= iter.next();
 				final IIndexFileLocation ifl = fResolver.resolveFile(header);
-				final FileContent info= getFileInfo(linkageID, ifl);
+				final IndexFileContent info= getFileInfo(linkageID, ifl);
 				if (info != null && info.fRequestUpdate && !info.fIsUpdated) {
 					info.fRequestIsCounted= false;
 					final IScannerInfo scannerInfo= fResolver.getBuildConfiguration(linkageID, header);
@@ -740,7 +749,7 @@ public abstract class AbstractIndexerTask extends PDOMWriter {
 			collectOrderedIFLs(linkageID, inclusion, enteredFiles, orderedIFLs);
 		}
 		
-		FileContent info= getFileInfo(linkageID, topIfl);
+		IndexFileContent info= getFileInfo(linkageID, topIfl);
 		if (info != null && info.fRequestUpdate && !info.fIsUpdated) {
 			orderedIFLs.add(topIfl);
 		}
@@ -775,7 +784,7 @@ public abstract class AbstractIndexerTask extends PDOMWriter {
 	}
 
 	public final boolean needToUpdateHeader(int linkageID, IIndexFileLocation ifl) throws CoreException {
-		FileContent info= getFileInfo(linkageID, ifl);
+		IndexFileContent info= getFileInfo(linkageID, ifl);
 		if (info == null) {
 			IIndexFile ifile= null;
 			if (fResolver.canBePartOfSDK(ifl)) {
@@ -914,9 +923,9 @@ public abstract class AbstractIndexerTask extends PDOMWriter {
 		return result*31 + key.hashCode();
 	}
 
-	public final FileContent getFileContent(int linkageID, IIndexFileLocation ifl) throws CoreException {
+	public final IndexFileContent getFileContent(int linkageID, IIndexFileLocation ifl) throws CoreException {
 		if (!needToUpdateHeader(linkageID, ifl)) {
-			FileContent info= getFileInfo(linkageID, ifl);
+			IndexFileContent info= getFileInfo(linkageID, ifl);
 			Assert.isNotNull(info);
 			if (info.fIndexFile == null) {
 				info.fIndexFile= fIndex.getFile(linkageID, ifl);

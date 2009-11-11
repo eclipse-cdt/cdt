@@ -21,7 +21,7 @@ import org.eclipse.cdt.core.dom.parser.c.ICParserExtensionConfiguration;
 import org.eclipse.cdt.core.dom.parser.cpp.ANSICPPParserExtensionConfiguration;
 import org.eclipse.cdt.core.dom.parser.cpp.GPPParserExtensionConfiguration;
 import org.eclipse.cdt.core.dom.parser.cpp.ICPPParserExtensionConfiguration;
-import org.eclipse.cdt.core.parser.CodeReader;
+import org.eclipse.cdt.core.parser.FileContent;
 import org.eclipse.cdt.core.parser.IParserLogService;
 import org.eclipse.cdt.core.parser.IScanner;
 import org.eclipse.cdt.core.parser.NullLogService;
@@ -89,8 +89,8 @@ public class ASTWriterTest extends RewriteBaseTest {
 	}
 	
 	protected ISourceCodeParser getParser(TestSourceFile testFile) throws Exception {
-		CodeReader codeReader = new CodeReader(file.getLocation().toOSString(), file.getContents());
-	
+        FileContent codeReader = FileContent.create(file);
+
         ScannerInfo scannerInfo = new ScannerInfo();
         ParserLanguage language = getLanguage(testFile);
     	boolean useGNUExtensions = getGNUExtension(testFile);

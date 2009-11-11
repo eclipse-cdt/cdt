@@ -27,10 +27,12 @@ import org.eclipse.cdt.core.dom.parser.cpp.GPPParserExtensionConfiguration;
 import org.eclipse.cdt.core.dom.parser.cpp.GPPScannerExtensionConfiguration;
 import org.eclipse.cdt.core.dom.parser.cpp.ICPPParserExtensionConfiguration;
 import org.eclipse.cdt.core.parser.CodeReader;
+import org.eclipse.cdt.core.parser.FileContent;
 import org.eclipse.cdt.core.parser.IParserLogService;
 import org.eclipse.cdt.core.parser.IScanner;
 import org.eclipse.cdt.core.parser.IScannerInfo;
 import org.eclipse.cdt.core.parser.IScannerInfoProvider;
+import org.eclipse.cdt.core.parser.IncludeFileContentProvider;
 import org.eclipse.cdt.core.parser.ParserFactory;
 import org.eclipse.cdt.core.parser.ParserLanguage;
 import org.eclipse.cdt.core.parser.ParserMode;
@@ -46,8 +48,9 @@ import org.eclipse.core.resources.IStorage;
 import org.eclipse.core.runtime.content.IContentType;
 
 /**
- * @author jcamelon
+ * @deprecated
  */
+@Deprecated
 public class InternalASTServiceProvider implements IASTServiceProvider {
 
 	protected static final GCCScannerExtensionConfiguration C_GNU_SCANNER_EXTENSION = GCCScannerExtensionConfiguration.getInstance();
@@ -234,7 +237,7 @@ public class InternalASTServiceProvider implements IASTServiceProvider {
 	private IScanner createScanner(CodeReader reader, IScannerInfo scanInfo,
 			ParserMode mode, ParserLanguage lang, IParserLogService log,
 			IScannerExtensionConfiguration scanConfig, ICodeReaderFactory fileCreator) {
-		return new CPreprocessor(reader, scanInfo, lang, log, scanConfig, fileCreator);
+		return new CPreprocessor(FileContent.adapt(reader), scanInfo, lang, log, scanConfig, IncludeFileContentProvider.adapt(fileCreator));
 	}
 	
     /*

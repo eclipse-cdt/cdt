@@ -22,7 +22,7 @@ import org.eclipse.cdt.core.dom.parser.c.ICParserExtensionConfiguration;
 import org.eclipse.cdt.core.dom.parser.cpp.ANSICPPParserExtensionConfiguration;
 import org.eclipse.cdt.core.dom.parser.cpp.GPPParserExtensionConfiguration;
 import org.eclipse.cdt.core.dom.parser.cpp.ICPPParserExtensionConfiguration;
-import org.eclipse.cdt.core.parser.CodeReader;
+import org.eclipse.cdt.core.parser.FileContent;
 import org.eclipse.cdt.core.parser.IParserLogService;
 import org.eclipse.cdt.core.parser.IScanner;
 import org.eclipse.cdt.core.parser.NullLogService;
@@ -80,8 +80,7 @@ public class AST2SelectionParseBaseTest extends FileBasePluginTest {
      * @throws ParserException
      */
     protected IASTTranslationUnit parse( String code, ParserLanguage lang, boolean useGNUExtensions, boolean expectNoProblems ) throws ParserException {
-        CodeReader codeReader = new CodeReader(code
-                .toCharArray());
+		FileContent codeReader = FileContent.create("<test-code>", code.toCharArray());
         ScannerInfo scannerInfo = new ScannerInfo();
         IScanner scanner= AST2BaseTest.createScanner(codeReader, lang, ParserMode.COMPLETE_PARSE, scannerInfo);
         

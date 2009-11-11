@@ -46,6 +46,7 @@ import org.eclipse.cdt.core.testplugin.util.BaseTestCase;
 import org.eclipse.cdt.core.testplugin.util.TestSourceReader;
 import org.eclipse.cdt.internal.core.dom.Linkage;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTTranslationUnit;
+import org.eclipse.cdt.internal.core.parser.scanner.CharArray;
 import org.eclipse.cdt.internal.core.parser.scanner.ILocationCtx;
 import org.eclipse.cdt.internal.core.parser.scanner.ImageLocationInfo;
 import org.eclipse.cdt.internal.core.parser.scanner.LocationMap;
@@ -118,7 +119,7 @@ public class LocationMapTests extends BaseTestCase {
 	}
 
 	private void init(char[] content) {
-		fLocationMap.pushTranslationUnit(FN, content);
+		fLocationMap.pushTranslationUnit(FN, new CharArray(content));
 		fTu= new CPPASTTranslationUnit();
 		fTu.setLocationResolver(fLocationMap);
 	}
@@ -489,18 +490,18 @@ public class LocationMapTests extends BaseTestCase {
 		assertEquals(FN, fLocationMap.getTranslationUnitPath());
 		assertEquals(FN, fLocationMap.getCurrentFilePath());
 		// number: [30,36)[46,50)
-		ILocationCtx pre1= fLocationMap.pushPreInclusion("0102030405".toCharArray(), 0, false);
+		ILocationCtx pre1= fLocationMap.pushPreInclusion(new CharArray("0102030405"), 0, false);
 		assertEquals(FN, fLocationMap.getCurrentFilePath());
 		// number: [0,6)[26,30)
-		ILocationCtx pre2= fLocationMap.pushPreInclusion("a1a2a3a4a5".toCharArray(), 0, true);
+		ILocationCtx pre2= fLocationMap.pushPreInclusion(new CharArray("a1a2a3a4a5"), 0, true);
 		assertEquals(FN, fLocationMap.getCurrentFilePath());
 		fLocationMap.encounteredComment(0,2,true);
 		// number: [6,15)[25,26)
-		ILocationCtx i1= fLocationMap.pushInclusion(0, 2, 4, 6, "b1b2b3b4b5".toCharArray(), "pre1", "pre1".toCharArray(), false, false, false);
+		ILocationCtx i1= fLocationMap.pushInclusion(0, 2, 4, 6, new CharArray("b1b2b3b4b5"), "pre1", "pre1".toCharArray(), false, false, false);
 		assertEquals("pre1", fLocationMap.getCurrentFilePath());
 		fLocationMap.encounteredComment(2,4,true);
 		// number: [15,25)
-		ILocationCtx i2= fLocationMap.pushInclusion(6, 7, 8, 9, "c1c2c3c4c5".toCharArray(), "pre11", "pre11".toCharArray(), false, false, false);
+		ILocationCtx i2= fLocationMap.pushInclusion(6, 7, 8, 9, new CharArray("c1c2c3c4c5"), "pre11", "pre11".toCharArray(), false, false, false);
 		assertEquals("pre11", fLocationMap.getCurrentFilePath());
 		fLocationMap.encounteredComment(2,6,true);
 		fLocationMap.popContext(i2);
@@ -513,7 +514,7 @@ public class LocationMapTests extends BaseTestCase {
 		fLocationMap.popContext(pre2);
 		assertEquals(FN, fLocationMap.getCurrentFilePath());
 		// number [36, 46)
-		ILocationCtx i3= fLocationMap.pushInclusion(0, 2, 4, 6, "d1d2d3d4d5".toCharArray(), "pre2", "pre2".toCharArray(), false, false, false);
+		ILocationCtx i3= fLocationMap.pushInclusion(0, 2, 4, 6, new CharArray("d1d2d3d4d5"), "pre2", "pre2".toCharArray(), false, false, false);
 		assertEquals("pre2", fLocationMap.getCurrentFilePath());
 		fLocationMap.encounteredComment(0,2,true);
 		fLocationMap.popContext(i3);

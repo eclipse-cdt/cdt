@@ -12,7 +12,7 @@ package org.eclipse.cdt.internal.core.pdom;
 
 import org.eclipse.cdt.core.index.IIndexFileLocation;
 import org.eclipse.cdt.core.model.AbstractLanguage;
-import org.eclipse.cdt.core.parser.CodeReader;
+import org.eclipse.cdt.core.parser.FileContent;
 import org.eclipse.cdt.core.parser.IScannerInfo;
 
 /**
@@ -68,6 +68,6 @@ public abstract class IndexerInputAdapter extends ASTFilePathResolver {
 	/**
 	 * Returns a code reader for the given input file.
 	 */
-	public abstract CodeReader getCodeReader(Object tu);
+	public abstract FileContent getCodeReader(Object tu);
 
 }

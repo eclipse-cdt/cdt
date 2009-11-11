@@ -13,7 +13,8 @@ package org.eclipse.cdt.core.parser.tests.scanner;
 import junit.framework.TestSuite;
 
 import org.eclipse.cdt.core.dom.parser.c.GCCScannerExtensionConfiguration;
-import org.eclipse.cdt.core.parser.CodeReader;
+import org.eclipse.cdt.core.parser.FileContent;
+import org.eclipse.cdt.core.parser.IncludeFileContentProvider;
 import org.eclipse.cdt.core.parser.IToken;
 import org.eclipse.cdt.core.parser.NullLogService;
 import org.eclipse.cdt.core.parser.OffsetLimitReachedException;
@@ -22,7 +23,6 @@ import org.eclipse.cdt.core.parser.ScannerInfo;
 import org.eclipse.cdt.core.testplugin.CTestPlugin;
 import org.eclipse.cdt.core.testplugin.util.BaseTestCase;
 import org.eclipse.cdt.core.testplugin.util.TestSourceReader;
-import org.eclipse.cdt.internal.core.dom.NullCodeReaderFactory;
 import org.eclipse.cdt.internal.core.parser.scanner.CPreprocessor;
 import org.eclipse.cdt.internal.core.parser.scanner.MacroExpander;
 import org.eclipse.cdt.internal.core.parser.scanner.MacroExpansionTracker;
@@ -83,9 +83,9 @@ public class ExpansionExplorerTests extends BaseTestCase {
 	}
 
 	private MacroExpander createExpander(final String macrodefs) throws OffsetLimitReachedException {
-		CPreprocessor cpp= new CPreprocessor(new CodeReader(macrodefs.toCharArray()),
+		CPreprocessor cpp= new CPreprocessor(FileContent.create("<macro-expander>", macrodefs.toCharArray()),
 				new ScannerInfo(), ParserLanguage.C, new NullLogService(), 
-				GCCScannerExtensionConfiguration.getInstance(), NullCodeReaderFactory.getInstance());
+				GCCScannerExtensionConfiguration.getInstance(), IncludeFileContentProvider.getEmptyFilesProvider());
 		int type;
 		do {
 			type= cpp.nextTokenRaw().getType();

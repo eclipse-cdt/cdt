@@ -10,60 +10,32 @@
  *******************************************************************************/
 package org.eclipse.cdt.core.parser.tests.scanner;
 
-import org.eclipse.cdt.core.dom.ICodeReaderFactory;
-import org.eclipse.cdt.core.model.ITranslationUnit;
-import org.eclipse.cdt.core.parser.CodeReader;
-import org.eclipse.cdt.core.parser.ICodeReaderCache;
-import org.eclipse.cdt.internal.core.dom.parser.EmptyCodeReaderCache;
+import org.eclipse.cdt.core.index.IIndexFileLocation;
+import org.eclipse.cdt.core.parser.FileContent;
+import org.eclipse.cdt.internal.core.parser.scanner.InternalFileContent;
+import org.eclipse.cdt.internal.core.parser.scanner.InternalFileContentProvider;
 
-/**
- * @author jcamelon
- */
-public class FileCodeReaderFactory implements ICodeReaderFactory {
+public class FileCodeReaderFactory extends InternalFileContentProvider {
 
     private static FileCodeReaderFactory instance;
-	private ICodeReaderCache cache = null;
 
-    private FileCodeReaderFactory(ICodeReaderCache cache)
-    {
-		this.cache = cache;
-    }
+    private FileCodeReaderFactory() {}
+
     
-    /* (non-Javadoc)
-     * @see org.eclipse.cdt.core.dom.ICodeReaderFactory#getUniqueIdentifier()
-     */
-    public int getUniqueIdentifier() {
-        return 3;
-    }
-
-    /* (non-Javadoc)
-     * @see org.eclipse.cdt.core.dom.ICodeReaderFactory#createCodeReaderForTranslationUnit(java.lang.String)
-     */
-    public CodeReader createCodeReaderForTranslationUnit(String path) {
-		return cache.get(path);
+    @Override
+	public InternalFileContent getContentForInclusion(String path) {
+		return (InternalFileContent) FileContent.createForExternalFileLocation(path);
 	}
 
-    public CodeReader createCodeReaderForTranslationUnit(ITranslationUnit tu) {
-		return new CodeReader(tu.getPath().toOSString(), tu.getContents());
-    }
-    
-    /* (non-Javadoc)
-     * @see org.eclipse.cdt.core.dom.ICodeReaderFactory#createCodeReaderForInclusion(org.eclipse.cdt.core.dom.ICodeReaderFactoryCallback, java.lang.String)
-     */
-    public CodeReader createCodeReaderForInclusion(String path) {
-		return cache.get(path);
-	}
-
-    /**
-     * @return
-     */
     public static FileCodeReaderFactory getInstance() {
-        if( instance == null )
-            instance = new FileCodeReaderFactory(new EmptyCodeReaderCache());
-        return instance;
-    }
+		if (instance == null)
+			instance = new FileCodeReaderFactory();
+		return instance;
+	}
 
-	public ICodeReaderCache getCodeReaderCache() {
-		return cache;
+	@Override
+	public InternalFileContent getContentForInclusion(IIndexFileLocation ifl, String astPath) {
+		// not used as a delegate
+		return null;
 	}
 }

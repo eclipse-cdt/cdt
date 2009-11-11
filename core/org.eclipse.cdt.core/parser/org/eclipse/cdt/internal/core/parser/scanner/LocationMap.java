@@ -93,7 +93,7 @@ public class LocationMap implements ILocationResolver {
 	 * The outermost context must be a translation unit. You must call this method exactly once and before
 	 * creating any other context.
 	 */
-	public ILocationCtx pushTranslationUnit(String filename, char[] buffer) {
+	public ILocationCtx pushTranslationUnit(String filename, AbstractCharArray buffer) {
 		assert fCurrentContext == null;
 		fTranslationUnitPath= filename;
 		fCurrentContext= fRootContext= new LocationCtxFile(null, filename, buffer, 0, 0, 0, null, true);
@@ -107,7 +107,7 @@ public class LocationMap implements ILocationResolver {
 	 * @param buffer a buffer containing the include directives.
 	 * @param isMacroFile whether the context is used for running the preprocessor, only.
 	 */
-	public ILocationCtx pushPreInclusion(char[] buffer, int offset, boolean isMacroFile) {
+	public ILocationCtx pushPreInclusion(AbstractCharArray buffer, int offset, boolean isMacroFile) {
 		assert fCurrentContext instanceof LocationCtxContainer;
 		int sequenceNumber= getSequenceNumberForOffset(offset);
 		fCurrentContext= new LocationCtxContainer((LocationCtxContainer) fCurrentContext, buffer, offset, offset, sequenceNumber);
@@ -126,7 +126,7 @@ public class LocationMap implements ILocationResolver {
 	 * @param userInclude <code>true</code> when specified with double-quotes.
 	 */
 	public ILocationCtx pushInclusion(int startOffset,	int nameOffset, int nameEndOffset, int endOffset, 
-			char[] buffer, String filename, char[] name, boolean userInclude, boolean heuristic, boolean isSource) {
+			AbstractCharArray buffer, String filename, char[] name, boolean userInclude, boolean heuristic, boolean isSource) {
 		assert fCurrentContext instanceof LocationCtxContainer;
 		int startNumber= getSequenceNumberForOffset(startOffset);	
 		int nameNumber= getSequenceNumberForOffset(nameOffset);		
@@ -721,7 +721,7 @@ public class LocationMap implements ILocationResolver {
 	public void cleanup() {
 	}
 
-	public void skippedFile(int sequenceNumber, IncludeFileContent fi) {
+	public void skippedFile(int sequenceNumber, InternalFileContent fi) {
 		for (ISkippedIndexedFilesListener l : fSkippedFilesListeners) {
 			l.skippedFile(sequenceNumber, fi);
 		}

@@ -78,8 +78,6 @@ public class DOMLocationTests extends AST2BaseTest {
     public DOMLocationTests() {
 	}
 
-	private static final String _TEXT_ = "<text>"; //$NON-NLS-1$
-
 	public DOMLocationTests(String name) {
 		setName(name);
 	}
@@ -97,7 +95,7 @@ public class DOMLocationTests extends AST2BaseTest {
             assertEquals(nodeLocations.length, 1);
             assertTrue(nodeLocations[0] instanceof IASTFileLocation);
             IASTFileLocation fileLocation = ((IASTFileLocation) nodeLocations[0]);
-            assertEquals(fileLocation.getFileName(), _TEXT_); 
+            assertEquals(fileLocation.getFileName(), TEST_CODE); 
             assertEquals(fileLocation.getNodeOffset(), 0);
             assertEquals(fileLocation.getNodeLength(), 6);
             IASTNodeLocation[] tuLocations = tu.getNodeLocations();
@@ -120,7 +118,7 @@ public class DOMLocationTests extends AST2BaseTest {
             assertEquals(nodeLocations.length, 1);
             assertTrue(nodeLocations[0] instanceof IASTFileLocation);
             IASTFileLocation fileLocation = ((IASTFileLocation) nodeLocations[0]);
-            assertEquals(fileLocation.getFileName(), _TEXT_); 
+            assertEquals(fileLocation.getFileName(), TEST_CODE); 
             assertEquals(fileLocation.getNodeOffset(), 0);
             assertEquals(fileLocation.getNodeLength(), code.indexOf(";") + 1); //$NON-NLS-1$
             IASTDeclarator[] declarators = declaration.getDeclarators();

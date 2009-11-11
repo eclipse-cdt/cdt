@@ -518,7 +518,18 @@ public class DefaultCodeFormatterConstants {
 	public static final String FORMATTER_INDENT_ACCESS_SPECIFIER_COMPARE_TO_TYPE_HEADER = CCorePlugin.PLUGIN_ID + ".formatter.indent_access_specifier_compare_to_type_header";  //$NON-NLS-1$
 	/**
 	 * <pre>
-	 * FORMATTER / Option to indent body declarations compare to access specifiers (visibility labels)
+	 * FORMATTER / Number of extra spaces in front of 'public:', 'protected:', 'private:' access specifiers.
+	 *             Enables fractional indent of access specifiers. Does not affect indentation of body declarations.
+	 *     - option id:         "org.eclipse.cdt.core.formatter.indent_access_specifier_extra_spaces"
+	 *     - possible values:   "&lt;n&gt;", where n is zero or a positive integer
+	 *     - default:           "0"
+	 * </pre>
+	 * @since 5.2
+	 */
+	public static final String FORMATTER_INDENT_ACCESS_SPECIFIER_EXTRA_SPACES = CCorePlugin.PLUGIN_ID + ".formatter.indent_access_specifier_extra_spaces"; //$NON-NLS-1$
+	/**
+	 * <pre>
+	 * FORMATTER / Option to indent body declarations relative to access specifiers (visibility labels)
 	 *     - option id:         "org.eclipse.cdt.core.formatter.indent_body_declarations_compare_to_access_specifier"
 	 *     - possible values:   { TRUE, FALSE }
 	 *     - default:           TRUE

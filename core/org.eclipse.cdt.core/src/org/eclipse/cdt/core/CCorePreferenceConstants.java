@@ -120,7 +120,14 @@ public class CCorePreferenceConstants {
 	 * Default absolute maximum size of the index-db in megabytes.
 	 */
 	public static final String DEFAULT_MAX_INDEX_DB_CACHE_SIZE_MB = "64"; //$NON-NLS-1$
-	
+
+	/**
+	 * Boolean preference controlling whether paths of non-workspace files are stored in index in canonical
+	 * form or not. Canonicalization is performed by calling {@link java.io.File#getCanonicalPath()}.
+	 * @since 5.2
+	 */
+	public static final String FILE_PATH_CANONICALIZATION = CCorePlugin.PLUGIN_ID + ".path_canonicalization"; //$NON-NLS-1$
+
 	/**
 	 * Workspace-wide language mappings. 
 	 */

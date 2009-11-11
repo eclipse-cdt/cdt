@@ -7,7 +7,7 @@
  *
  * Contributors:
  *     QNX Software Systems - Initial API and implementation
- *     Sergey Prigogin, Google
+ *     Sergey Prigogin (Google)
  *     Markus Schorn (Wind River Systems)
  *******************************************************************************/
 package org.eclipse.cdt.internal.core;
@@ -59,7 +59,8 @@ public class CCorePreferenceInitializer extends AbstractPreferenceInitializer {
 
 		defaultPreferences.putBoolean(CCorePreferenceConstants.SHOW_SOURCE_FILES_IN_BINARIES, true);
 		defaultPreferences.putBoolean(CCorePlugin.PREF_USE_STRUCTURAL_PARSE_MODE, false);
-
+		defaultPreferences.putBoolean(CCorePreferenceConstants.FILE_PATH_CANONICALIZATION, true);
+		
 		// indexer defaults
 		IndexerPreferences.initializeDefaultPreferences(defaultPreferences);
 	}

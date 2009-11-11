@@ -12,9 +12,13 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.ui.text;
 
+import org.eclipse.core.resources.ProjectScope;
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.Platform;
+import org.eclipse.core.runtime.preferences.DefaultScope;
 import org.eclipse.core.runtime.preferences.IPreferencesService;
+import org.eclipse.core.runtime.preferences.IScopeContext;
+import org.eclipse.core.runtime.preferences.InstanceScope;
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.IRegion;
@@ -75,6 +79,8 @@ public final class CIndenter {
 		final boolean prefHasTemplates;
 		final String prefTabChar;
 		
+		private final IPreferencesService preferenceService;
+		private final IScopeContext[] preferenceContexts;
 		private final ICProject fProject;
 
 		/**
@@ -84,12 +90,22 @@ public final class CIndenter {
 		 * @return the value of the preference
 		 */
 		private String getCoreFormatterOption(String key) {
-			if (fProject == null)
-				return CCorePlugin.getOption(key);
-			return fProject.getOption(key, true);
+			return getCoreFormatterOption(key, null);
 		}
-		
+
+		private String getCoreFormatterOption(String key, String defaultValue) {
+			return preferenceService.getString(CCorePlugin.PLUGIN_ID, key, defaultValue, preferenceContexts);
+		}
+
+		private int getCoreFormatterOption(String key, int defaultValue) {
+			return preferenceService.getInt(CCorePlugin.PLUGIN_ID, key, defaultValue, preferenceContexts);
+		}
+
 		CorePrefs(ICProject project) {
+			preferenceService = Platform.getPreferencesService();
+			preferenceContexts = project != null ?
+					new IScopeContext[] { new ProjectScope(project.getProject()), new InstanceScope(), new DefaultScope() } :
+					new IScopeContext[] { new InstanceScope(), new DefaultScope() };
 			fProject= project;
 			prefUseTabs= prefUseTabs();
 			prefTabSize= prefTabSize();
@@ -345,9 +361,7 @@ public final class CIndenter {
 		}
 
 		private int prefAccessSpecifierExtraSpaces() {
-			// Hidden option that enables fractional indent of access specifiers.
-			IPreferencesService prefs = Platform.getPreferencesService();
-			return prefs.getInt(CCorePlugin.PLUGIN_ID, CCorePlugin.PLUGIN_ID + ".formatter.indent_access_specifier_extra_spaces", 0, null); //$NON-NLS-1$
+			return getCoreFormatterOption(DefaultCodeFormatterConstants.FORMATTER_INDENT_ACCESS_SPECIFIER_EXTRA_SPACES, 0);
 		}
 
 		private int prefNamespaceBodyIndent() {

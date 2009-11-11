@@ -151,14 +151,6 @@ public class PDOMManager implements IWritableIndexManager, IListener {
 	};
 
 	/**
-	 * Boolean preference controlling whether paths to non-workspace files are stored in canonical
-	 * form or not. 
-	 */
-	// TODO(sprigogin): Move to CPreferencesConstants and add UI support.
-	public static final String PREFERENCES_CONSTANT_PATH_CANONICALIZATION =
-		CCorePlugin.PLUGIN_ID + ".path_canonicalization"; //$NON-NLS-1$
-
-	/**
 	 * Protects fIndexerJob, fCurrentTask and fTaskQueue.
 	 */
 	private final LinkedList<IPDOMIndexerTask> fTaskQueue = new LinkedList<IPDOMIndexerTask>();
@@ -283,7 +275,7 @@ public class PDOMManager implements IWritableIndexManager, IListener {
 				prop.equals(CCorePreferenceConstants.TODO_TASK_PRIORITIES) ||
 				prop.equals(CCorePreferenceConstants.TODO_TASK_CASE_SENSITIVE)) {
 			reindexAll();
-		} else if (prop.equals(PREFERENCES_CONSTANT_PATH_CANONICALIZATION)) {
+		} else if (prop.equals(CCorePreferenceConstants.FILE_PATH_CANONICALIZATION)) {
 			updatePathCanonicalizationStrategy();
 			reindexAll();
 		}
@@ -302,7 +294,7 @@ public class PDOMManager implements IWritableIndexManager, IListener {
 
 	private void updatePathCanonicalizationStrategy() {
 		IPreferencesService prefs = Platform.getPreferencesService();
-		boolean canonicalize = prefs.getBoolean(CCorePlugin.PLUGIN_ID, PREFERENCES_CONSTANT_PATH_CANONICALIZATION, true, null);
+		boolean canonicalize = prefs.getBoolean(CCorePlugin.PLUGIN_ID, CCorePreferenceConstants.FILE_PATH_CANONICALIZATION, true, null);
 		PathCanonicalizationStrategy.setPathCanonicalization(canonicalize);
 	}
 

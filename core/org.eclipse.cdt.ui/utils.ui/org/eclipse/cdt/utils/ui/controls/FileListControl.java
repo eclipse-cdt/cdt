@@ -273,10 +273,10 @@ public class FileListControl {
 									resource = (IResource) o;
 									if (resource.getProject().equals(project))
 										values[i++] = variableManager.generateVariableExpression(WORKSPACELOC_VAR,
-												PROJECTNAME_PATH.append(resource.getProjectRelativePath()).toString());
+												PROJECTNAME_PATH.append(resource.getProjectRelativePath()).makeAbsolute().toString());
 									else
 										values[i++] = variableManager.generateVariableExpression(WORKSPACELOC_VAR,
-												resource.getFullPath().makeRelative().toString());
+												resource.getFullPath().toString());
 								}
 								// If only one entry, update the text field
 								if (values.length == 1)

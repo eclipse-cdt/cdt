@@ -36,6 +36,7 @@ import org.eclipse.cdt.core.index.IIndex;
 import org.eclipse.cdt.core.parser.util.ArrayUtil;
 import org.eclipse.cdt.internal.core.dom.Linkage;
 import org.eclipse.cdt.internal.core.dom.parser.ASTNode;
+import org.eclipse.cdt.internal.core.dom.parser.ASTQueries;
 import org.eclipse.cdt.internal.core.dom.parser.ProblemBinding;
 import org.eclipse.cdt.internal.core.index.IIndexType;
 import org.eclipse.core.runtime.PlatformObject;
@@ -165,7 +166,7 @@ public class CStructure extends PlatformObject implements ICompositeType, ICInte
 						}
 					} else {
 						for (IASTDeclarator declarator : declarators) {
-							IASTName name = declarator.getName();
+							IASTName name = ASTQueries.findInnermostDeclarator(declarator).getName();
 							IBinding binding = name.resolveBinding();
 							if (binding != null)
 								fields = (IField[]) ArrayUtil.append(IField.class, fields, binding);

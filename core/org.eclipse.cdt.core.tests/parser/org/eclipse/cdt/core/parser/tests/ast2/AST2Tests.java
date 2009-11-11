@@ -111,6 +111,7 @@ import org.eclipse.cdt.core.parser.ParserLanguage;
 import org.eclipse.cdt.internal.core.dom.parser.ASTNode;
 import org.eclipse.cdt.internal.core.dom.parser.c.CFunction;
 import org.eclipse.cdt.internal.core.dom.parser.c.CVisitor;
+import org.eclipse.cdt.internal.core.dom.parser.c.ICInternalBinding;
 import org.eclipse.cdt.internal.core.parser.ParserException;
 
 /**
@@ -6418,6 +6419,44 @@ public class AST2Tests extends AST2BaseTest {
             assertTrue(((IFunction)n.resolveBinding()).getType().getParameterTypes()[0] instanceof IPointerType);
 	    }
 	}
+	//
+	// extern void goo();
+	// struct MyStruct {
+	//      int a;
+	//      void (*ptr)();
+	// };
+	// void foo() {
+	//     struct MyStruct structure;
+	//     structure.a = 1;
+	//     structure.ptr = goo;
+	// }
+	//
+	public void testBindingsOnFields() throws Exception {
+	    IASTTranslationUnit tu = parse(getAboveComment(), ParserLanguage.C, false);
+	    IASTCompoundStatement bodyStmt  = (IASTCompoundStatement)((IASTFunctionDefinition)tu.getDeclarations()[2]).getBody();
+
+	    // Get the IFields bindings from the type used in the declaration of structure
+	    IASTName n = ((IASTSimpleDeclaration)((IASTDeclarationStatement)bodyStmt.getStatements()[0]).getDeclaration()).getDeclarators()[0].getName();
+	    ICompositeType t = (ICompositeType)((IVariable)n.resolveBinding()).getType();
+	    IField[] fields = t.getFields();
+	    assertTrue( fields.length ==2 );
+
+	    // Get the IField for the first assignment
+	    IASTFieldReference ref1 = (IASTFieldReference)((IASTBinaryExpression)((IASTExpressionStatement)bodyStmt.getStatements()[1]).getExpression()).getOperand1();
+	    IBinding field1 = ref1.getFieldName().resolveBinding();
+	    
+	    // Get the IField for the second assignment
+	    IASTFieldReference ref2 = (IASTFieldReference)((IASTBinaryExpression)((IASTExpressionStatement)bodyStmt.getStatements()[2]).getExpression()).getOperand1();
+	    IBinding field2 = ref2.getFieldName().resolveBinding();
+
+	    // Compare the IField from the type and the assignments
+	    assertEquals( fields[0], field1);
+	    assertEquals( fields[1], field2); // fails
+	    
+	    assertEquals(1, ((ICInternalBinding) field1).getDeclarations().length);
+	    assertEquals(1, ((ICInternalBinding) field2).getDeclarations().length);
+	}
+	
 	
 	
     //	/*

@@ -33,7 +33,7 @@ import org.eclipse.debug.core.model.IDebugModelProvider;
 abstract public class AbstractDsfDebugTextHover extends AbstractDebugTextHover {
 
     /**
-     * Returns the debug model ID of that this debug text hover is to be used for.
+     * Returns the debug model ID that this debug text hover is to be used for.
      */
     abstract protected String getModelId();
     

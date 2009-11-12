@@ -27,7 +27,6 @@ import org.eclipse.cdt.core.dom.ast.IASTBinaryExpression;
 import org.eclipse.cdt.core.dom.ast.IASTCastExpression;
 import org.eclipse.cdt.core.dom.ast.IASTCompositeTypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTCompoundStatement;
-import org.eclipse.cdt.core.dom.ast.IASTConditionalExpression;
 import org.eclipse.cdt.core.dom.ast.IASTDeclSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTDeclarator;
@@ -61,7 +60,6 @@ import org.eclipse.cdt.core.dom.ast.IASTWhileStatement;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.IScope;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTAmbiguousTemplateArgument;
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTBinaryExpression;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCastExpression;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCatchHandler;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCompositeTypeSpecifier;
@@ -156,6 +154,7 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
 	private char[] currentClassName;
 
 	private final ICPPNodeFactory nodeFactory;
+	private boolean fInTemplateParameterList;
 	
     public GNUCPPSourceParser(IScanner scanner, ParserMode mode,
             IParserLogService log, ICPPParserExtensionConfiguration config) {
@@ -316,8 +315,6 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
         
         IToken secondMark = mark();
         consume(IToken.tLT);
-        final boolean wasOnTop= onTopInTemplateArgs;
-        onTopInTemplateArgs= true;
         try {
         	// bug 229062: content assist after '<' needs to prefer to backtrack here
         	if (rejectLogicalOperatorInTemplateID == 1) {
@@ -342,9 +339,7 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
         } catch (BacktrackException bt) {
         	backup(secondMark);
         	return templateName;
-        } finally {
-        	onTopInTemplateArgs= wasOnTop;
-        }
+        } 
     }
 
     private ICPPASTTemplateId buildTemplateID(IASTName templateName, int endOffset, List<IASTNode> args) {
@@ -475,7 +470,7 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
         				throw backtrack;
 
         			backup(argStart);
-    				IASTExpression expression = assignmentExpression();
+    				IASTExpression expression = expression(false, true, true);
     				if (expression instanceof IASTIdExpression) {
     					if (mark() != typeIdEnd) 
     						throw backtrack;
@@ -496,7 +491,7 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
     		} else {
     			// not a type-id - try as expression
     			backup(argStart);
-    			IASTExpression expression = assignmentExpression();
+    			IASTExpression expression = expression(false, true, true);
     			list.add(expression);
     		}
 
@@ -569,90 +564,166 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
         return name;
     }
 
-    @Override
-	protected IASTExpression expression() throws EndOfFileException, BacktrackException {
-    	final boolean wasOnTop= onTopInTemplateArgs;
-    	onTopInTemplateArgs= false;
-    	try {
-    		return super.expression();
-    	} finally {
-    		onTopInTemplateArgs= wasOnTop;
+	@Override
+	protected IASTExpression expression() throws BacktrackException, EndOfFileException {
+		return expression(true, true, false);
+	}
+
+	@Override
+	protected IASTExpression assignmentExpression() throws EndOfFileException, BacktrackException {
+    	return expression(false, true, false);
+    }
+
+	@Override
+	protected IASTExpression constantExpression() throws BacktrackException, EndOfFileException {
+    	return expression(false, false, false);
+    }
+
+    private IASTExpression expression(boolean allowComma, boolean allowAssignment, boolean onTopOfTemplateArgs) throws EndOfFileException, BacktrackException {
+    	if (allowAssignment && LT(1) == IToken.t_throw) {
+    		return throwExpression();
+    	} 
+
+    	int lt1;
+    	int conditionCount= 0;
+    	CastExpressionOp lastComponent= null;
+    	IASTExpression expr= castExpression(true);
+
+    	loop: while(true) {
+    		// typically after a binary operator there cannot be a throw expression
+    		boolean allowThrow= false;
+    		lt1= LT(1);
+    		switch(lt1) {
+    		case IToken.tQUESTION:
+    			conditionCount++;
+    			// <logical-or> ? <expression> : <assignment-expression>
+    			// Precedence: 25 is lower than precedence of logical or; 1 is lower than precedence of expression
+    			lastComponent= new CastExpressionOp(lastComponent, expr, lt1, 25, 1);  
+    			if (LT(2) ==  IToken.tCOLON) {
+    				// Gnu extension: The expression after '?' can be omitted.
+    				consume();				// Consume operator
+    				expr= null; 	// Next cast expression is just null
+    				continue;
+    			} 
+    			allowAssignment= true;  // assignment expressions will be subsumed by the conditional expression
+    			allowThrow= true;
+    			break;
+
+    		case IToken.tCOLON:
+    			if (--conditionCount < 0) 
+    				break loop;
+
+    			// <logical-or> ? <expression> : <assignment-expression>
+    			// Precedence: 0 is lower than precedence of expression; 15 is lower than precedence of assignment; 
+    			lastComponent= new CastExpressionOp(lastComponent, expr, lt1, 0, 15);  
+    			allowAssignment= true;  // assignment expressions will be subsumed by the conditional expression
+    			allowThrow= true;
+    			break;
+
+    		case IToken.tCOMMA:
+    			allowThrow= true;
+    			if (!allowComma && conditionCount == 0)
+    				break loop;
+    			// Lowest precedence except inside the conditional expression
+    			lastComponent= new CastExpressionOp(lastComponent, expr, lt1, 10, 11);
+    			break;
+
+    		case IToken.tASSIGN:
+    		case IToken.tSTARASSIGN:
+    		case IToken.tDIVASSIGN:
+    		case IToken.tMODASSIGN:
+    		case IToken.tPLUSASSIGN:
+    		case IToken.tMINUSASSIGN:
+    		case IToken.tSHIFTRASSIGN:
+    		case IToken.tSHIFTLASSIGN:
+    		case IToken.tAMPERASSIGN:
+    		case IToken.tXORASSIGN:
+    		case IToken.tBITORASSIGN:
+    			if (!allowAssignment && conditionCount == 0)
+    				break loop;
+    			// Assignments group right to left
+    			lastComponent= new CastExpressionOp(lastComponent, expr, lt1, 21, 20); 
+    			break;
+
+    		case IToken.tOR:
+            	if (onTopOfTemplateArgs && rejectLogicalOperatorInTemplateID > 0) {
+            		throwBacktrack(LA(1));
+            	}
+    			lastComponent= new CastExpressionOp(lastComponent, expr, lt1, 30, 31); 
+    			break;
+    		case IToken.tAND:
+            	if (onTopOfTemplateArgs && rejectLogicalOperatorInTemplateID > 0) {
+            		throwBacktrack(LA(1));
+            	}
+    			lastComponent= new CastExpressionOp(lastComponent, expr, lt1, 40, 41);
+    			break;
+    		case IToken.tBITOR:
+    			lastComponent= new CastExpressionOp(lastComponent, expr, lt1, 50, 51);
+    			break;
+    		case IToken.tXOR:
+    			lastComponent= new CastExpressionOp(lastComponent, expr, lt1, 60, 61);
+    			break;
+    		case IToken.tAMPER:
+    			lastComponent= new CastExpressionOp(lastComponent, expr, lt1, 70, 71);
+    			break;
+    		case IToken.tEQUAL:
+    		case IToken.tNOTEQUAL:
+    			lastComponent= new CastExpressionOp(lastComponent, expr, lt1, 80, 81);
+    			break;
+    		case IToken.tGT:
+            	if (onTopOfTemplateArgs)
+            		break loop;
+				//$FALL-THROUGH$
+			case IToken.tLT:
+    		case IToken.tLTEQUAL:
+    		case IToken.tGTEQUAL:
+    		case IGCCToken.tMAX:
+    		case IGCCToken.tMIN:
+    			lastComponent= new CastExpressionOp(lastComponent, expr, lt1, 90, 91);
+    			break;
+    		case IToken.tSHIFTL:
+    		case IToken.tSHIFTR:
+    			lastComponent= new CastExpressionOp(lastComponent, expr, lt1, 100, 101);
+    			break;
+    		case IToken.tPLUS:
+    		case IToken.tMINUS:
+    			lastComponent= new CastExpressionOp(lastComponent, expr, lt1, 110, 111);
+    			break;
+    		case IToken.tSTAR:
+    		case IToken.tDIV:
+    		case IToken.tMOD:
+    			lastComponent= new CastExpressionOp(lastComponent, expr, lt1, 120, 121);
+    			break;
+            case IToken.tDOTSTAR:
+            case IToken.tARROWSTAR:
+            	lastComponent= new CastExpressionOp(lastComponent, expr, lt1, 130, 131);
+            	break;
+    		default:
+    			break loop;
+    		}
+
+    		consume(); 						// consume operator
+    		if (allowThrow && LT(1) == IToken.t_throw) {
+    			expr= throwExpression();
+    			switch (LT(1)) {
+    			case IToken.tCOLON:
+    			case IToken.tCOMMA:
+    				break;
+    			default:
+    				break loop;
+    			}
+    		} 
+    		expr= castExpression(true); 	// next cast expression
     	}
+
+    	// Check for incomplete conditional expression
+    	if (lt1 != IToken.tEOC && conditionCount > 0)
+    		throwBacktrack(LA(1));
+
+    	return buildExpression(lastComponent, expr);
     }
 
-    @Override
-	protected boolean shallRejectLogicalOperator() {
-    	return onTopInTemplateArgs && rejectLogicalOperatorInTemplateID > 0;
-    }
-
-    @Override
-	protected IASTExpression constantExpression() throws EndOfFileException, BacktrackException {
-    	final boolean wasOnTop= onTopInTemplateArgs;
-    	onTopInTemplateArgs= false;
-    	try {
-    		return super.constantExpression();
-    	} finally {
-    		onTopInTemplateArgs= wasOnTop;
-    	}
-    }
-
-    @Override
-	protected IASTExpression assignmentExpression() throws EndOfFileException,
-            BacktrackException {
-        if (LT(1) == IToken.t_throw) {
-            return throwExpression();
-        }
-
-        // if this is a conditional expression, return right away.
-        IASTExpression conditionalExpression = conditionalExpression();
-        if (conditionalExpression instanceof IASTConditionalExpression) 
-            return conditionalExpression;
-
-        switch (LT(1)) {
-        case IToken.tASSIGN:
-            return assignmentOperatorExpression(IASTBinaryExpression.op_assign,
-                    conditionalExpression);
-        case IToken.tSTARASSIGN:
-            return assignmentOperatorExpression(
-                    IASTBinaryExpression.op_multiplyAssign,
-                    conditionalExpression);
-        case IToken.tDIVASSIGN:
-            return assignmentOperatorExpression(
-                    IASTBinaryExpression.op_divideAssign, conditionalExpression);
-        case IToken.tMODASSIGN:
-            return assignmentOperatorExpression(
-                    IASTBinaryExpression.op_moduloAssign, conditionalExpression);
-        case IToken.tPLUSASSIGN:
-            return assignmentOperatorExpression(
-                    IASTBinaryExpression.op_plusAssign, conditionalExpression);
-        case IToken.tMINUSASSIGN:
-            return assignmentOperatorExpression(
-                    IASTBinaryExpression.op_minusAssign, conditionalExpression);
-        case IToken.tSHIFTRASSIGN:
-            return assignmentOperatorExpression(
-                    IASTBinaryExpression.op_shiftRightAssign,
-                    conditionalExpression);
-        case IToken.tSHIFTLASSIGN:
-            return assignmentOperatorExpression(
-                    IASTBinaryExpression.op_shiftLeftAssign,
-                    conditionalExpression);
-        case IToken.tAMPERASSIGN:
-            return assignmentOperatorExpression(
-                    IASTBinaryExpression.op_binaryAndAssign,
-                    conditionalExpression);
-        case IToken.tXORASSIGN:
-            return assignmentOperatorExpression(
-                    IASTBinaryExpression.op_binaryXorAssign,
-                    conditionalExpression);
-        case IToken.tBITORASSIGN:
-            return assignmentOperatorExpression(
-                    IASTBinaryExpression.op_binaryOrAssign,
-                    conditionalExpression);
-        }
-        return conditionalExpression;
-    }
-
-    protected IASTExpression throwExpression() throws EndOfFileException, BacktrackException {
+    private IASTExpression throwExpression() throws EndOfFileException, BacktrackException {
         IToken throwToken = consume();
         IASTExpression throwExpression = null;
         try {
@@ -665,34 +736,6 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
                 : throwToken.getEndOffset();
         return buildUnaryExpression(ICPPASTUnaryExpression.op_throw,
                 throwExpression, throwToken.getOffset(), o); // fix for 95225
-    }
-
-    @Override
-	protected IASTExpression pmExpression() throws EndOfFileException, BacktrackException {
-        IASTExpression firstExpression = castExpression();
-        for (;;) {
-            switch (LT(1)) {
-            case IToken.tDOTSTAR:
-            case IToken.tARROWSTAR:
-                IToken t = consume();
-                IASTExpression secondExpression = castExpression();
-                int operator = 0;
-                switch (t.getType()) {
-                case IToken.tDOTSTAR:
-                    operator = ICPPASTBinaryExpression.op_pmdot;
-                    break;
-                case IToken.tARROWSTAR:
-                    operator = ICPPASTBinaryExpression.op_pmarrow;
-                    break;
-                }
-                firstExpression = buildBinaryExpression(operator,
-                        firstExpression, secondExpression,
-                        calculateEndOffset(secondExpression));
-                break;
-            default:
-                return firstExpression;
-            }
-        }
     }
 
     protected IASTExpression deleteExpression() throws EndOfFileException, BacktrackException {
@@ -713,7 +756,7 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
             consume(IToken.tRBRACKET);
             vectored = true;
         }
-        IASTExpression castExpression = castExpression();
+        IASTExpression castExpression = castExpression(false);
         ICPPASTDeleteExpression deleteExpression = nodeFactory.newDeleteExpression(castExpression);
         ((ASTNode) deleteExpression).setOffsetAndLength(startingOffset, calculateEndOffset(castExpression) - startingOffset);
         deleteExpression.setIsGlobal(global);
@@ -855,24 +898,24 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
 
 
     @Override
-	protected IASTExpression unaryExpression() throws EndOfFileException, BacktrackException {
+	protected IASTExpression unaryExpression(boolean inBinaryExpression) throws EndOfFileException, BacktrackException {
         switch (LT(1)) {
         case IToken.tSTAR:
-            return unarayExpression(IASTUnaryExpression.op_star);
+            return unarayExpression(IASTUnaryExpression.op_star, inBinaryExpression);
         case IToken.tAMPER:
-            return unarayExpression(IASTUnaryExpression.op_amper);
+            return unarayExpression(IASTUnaryExpression.op_amper, inBinaryExpression);
         case IToken.tPLUS:
-            return unarayExpression(IASTUnaryExpression.op_plus);
+            return unarayExpression(IASTUnaryExpression.op_plus, inBinaryExpression);
         case IToken.tMINUS:
-            return unarayExpression(IASTUnaryExpression.op_minus);
+            return unarayExpression(IASTUnaryExpression.op_minus, inBinaryExpression);
         case IToken.tNOT:
-            return unarayExpression(IASTUnaryExpression.op_not);
+            return unarayExpression(IASTUnaryExpression.op_not, inBinaryExpression);
         case IToken.tBITCOMPLEMENT:
-            return unarayExpression(IASTUnaryExpression.op_tilde);
+            return unarayExpression(IASTUnaryExpression.op_tilde, inBinaryExpression);
         case IToken.tINCR:
-            return unarayExpression(IASTUnaryExpression.op_prefixIncr);
+            return unarayExpression(IASTUnaryExpression.op_prefixIncr, inBinaryExpression);
         case IToken.tDECR:
-            return unarayExpression(IASTUnaryExpression.op_prefixDecr);
+            return unarayExpression(IASTUnaryExpression.op_prefixDecr, inBinaryExpression);
         case IToken.t_new:
             return newExpression();
         case IToken.t_delete:
@@ -884,23 +927,23 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
             case IToken.t_delete:
                 return deleteExpression();
             default:
-                return postfixExpression();
+                return postfixExpression(inBinaryExpression);
             }
         case IToken.t_sizeof:
         	return parseTypeidInParenthesisOrUnaryExpression(false, consume().getOffset(), 
-        			IASTTypeIdExpression.op_sizeof, IASTUnaryExpression.op_sizeof);
+        			IASTTypeIdExpression.op_sizeof, IASTUnaryExpression.op_sizeof, inBinaryExpression);
         case IGCCToken.t_typeof:
         	return parseTypeidInParenthesisOrUnaryExpression(false, consume().getOffset(), 
-        			IASTTypeIdExpression.op_typeof, IASTUnaryExpression.op_typeof);
+        			IASTTypeIdExpression.op_typeof, IASTUnaryExpression.op_typeof, inBinaryExpression);
         case IGCCToken.t___alignof__:
         	return parseTypeidInParenthesisOrUnaryExpression(false, consume().getOffset(), 
-        			IASTTypeIdExpression.op_alignof, IASTUnaryExpression.op_alignOf);
+        			IASTTypeIdExpression.op_alignof, IASTUnaryExpression.op_alignOf, inBinaryExpression);
         default:
-            return postfixExpression();
+            return postfixExpression(inBinaryExpression);
         }
     }
 
-    protected IASTExpression postfixExpression() throws EndOfFileException, BacktrackException {
+    private IASTExpression postfixExpression(boolean inBinaryExpression) throws EndOfFileException, BacktrackException {
         IASTExpression firstExpression = null;
         boolean isTemplate = false;
 
@@ -989,7 +1032,8 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
             break;
         case IToken.t_typeid:
             int so = consume().getOffset();
-            firstExpression= parseTypeidInParenthesisOrUnaryExpression(true, so, ICPPASTTypeIdExpression.op_typeid, ICPPASTUnaryExpression.op_typeid);
+			firstExpression = parseTypeidInParenthesisOrUnaryExpression(true, so,
+					ICPPASTTypeIdExpression.op_typeid, ICPPASTUnaryExpression.op_typeid, inBinaryExpression);
             break;
             
         default:
@@ -1191,7 +1235,7 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
         	}
             t = consume();
             int finalOffset= 0;
-            IASTExpression lhs= expression();
+            IASTExpression lhs= expression(true, true, false); // instead of expression(), to keep the stack smaller
             switch (LT(1)) {
             case IToken.tRPAREN:
             case IToken.tEOC:
@@ -1421,15 +1465,8 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
     		return templateSpecialization;
     	}
 
-    	final boolean wasOnTop= onTopInTemplateArgs;
-    	onTopInTemplateArgs= true;
-    	List<ICPPASTTemplateParameter> parms;
-    	try {
-    		parms = templateParameterList();
-    		consume(IToken.tGT);
-    	} finally {
-    		onTopInTemplateArgs= wasOnTop;
-    	}
+    	List<ICPPASTTemplateParameter> parms= templateParameterList();
+    	consume(IToken.tGT);
     	IASTDeclaration d = declaration(option);
     	ICPPASTTemplateDeclaration templateDecl = nodeFactory.newTemplateDeclaration(d);
     	((ASTNode) templateDecl).setOffsetAndLength(firstToken.getOffset(), calculateEndOffset(d) - firstToken.getOffset());
@@ -1526,8 +1563,14 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
                 consume();
                 continue;
             } else {
-                ICPPASTParameterDeclaration parm = parameterDeclaration();
-                returnValue.add(parm);
+            	boolean inTParList= fInTemplateParameterList;
+            	try {
+            		fInTemplateParameterList= true;
+            		ICPPASTParameterDeclaration parm = parameterDeclaration();
+            		returnValue.add(parm);
+            	} finally {
+            		fInTemplateParameterList= inTParList;
+            	}
             }
         }
     }
@@ -2182,14 +2225,8 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
         			if (encounteredRawType || encounteredTypename)
         				throwBacktrack(LA(1));
 
-        			final boolean wasInBinary= inBinaryExpression;
-        			try {
-        				inBinaryExpression= false;
-        				typeofExpression= parseTypeidInParenthesisOrUnaryExpression(false, consume().getOffset(), 
-        						IGNUASTTypeIdExpression.op_typeof, IGNUASTUnaryExpression.op_typeof);
-        			} finally {
-        				inBinaryExpression= wasInBinary;
-        			}
+        			typeofExpression= parseTypeidInParenthesisOrUnaryExpression(false, consume().getOffset(), 
+        					IGNUASTTypeIdExpression.op_typeof, IGNUASTUnaryExpression.op_typeof, false);
 
         			encounteredTypename= true;
         			endOffset= calculateEndOffset(typeofExpression);
@@ -2617,7 +2654,7 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
         // if we get this far, it means that we did not
         // try this now instead
         // assignmentExpression
-        IASTExpression assignmentExpression = assignmentExpression();
+        IASTExpression assignmentExpression = expression(false, true, fInTemplateParameterList);
         if (inAggregateInitializer && skipTrivialExpressionsInAggregateInitializers) {
         	if (!ASTQueries.canContainName(assignmentExpression)) 
         		return null;

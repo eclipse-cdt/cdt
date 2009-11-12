@@ -7080,4 +7080,27 @@ public class AST2Tests extends AST2BaseTest {
 			assertEquals(1, ff.getParameters().length);
 	    }
 	}
+	
+	// void f() {
+	// int a= 
+	public void testLargeExpression_294029() throws Exception {
+		// when running the test in a suite, it cannot handle more than 200 parenthesis.
+		// run as a single test it does > 600.
+		sValidateCopy= false;
+        StringBuilder buf= new StringBuilder();
+        buf.append(getAboveComment());
+        final int depth= 200;
+        for (int i = 0; i < depth; i++) {
+        	buf.append('(');
+        }
+        buf.append('1');
+        for (int i = 0; i < depth; i++) {
+        	buf.append(")+1");
+        }
+        buf.append(";}");
+        String code= buf.toString();
+	    for(ParserLanguage lang : ParserLanguage.values()) {
+			IASTTranslationUnit tu = parseAndCheckBindings(code, lang);
+	    }
+	}
 }

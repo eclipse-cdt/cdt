@@ -30,14 +30,20 @@ import org.eclipse.cdt.ui.PreferenceConstants;
 import org.eclipse.cdt.ui.text.c.hover.ICEditorTextHover;
 
 /**
- * BestMatchHover.
- * This is not a real hover, but instead, it is always the first hover used
- * and it will choose the best of the real hovers.  To choose the best hover,
- * we simply find the first hover that returns some text.  This implies
- * that the order of hovers is important and must be preserved. (Bug 294812)
+ * 'Fake' hover used to choose the best available hover.
+ * This hover is always the first hover used and will delegate the hover
+ * request to the best of the real hovers.  The 'best' hover is the first 
+ * hover that returns some text for the specified parameters.
+ * 
+ * Note that hovers are ordered by plugin dependency, with the most specific
+ * hovers being placed before less specific ones.
  */
 public class BestMatchHover extends AbstractCEditorTextHover {
 
+	/*
+	 * Note that hover ordering is very important to be preserved by this
+	 * class. (Bug 294812)
+	 */
 	private List<CEditorTextHoverDescriptor> fTextHoverSpecifications;
 	private List<ITextHover> fInstantiatedTextHovers;
 	private ITextHover fBestHover;

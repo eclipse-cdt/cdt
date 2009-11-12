@@ -7688,5 +7688,16 @@ public class AST2CPPTests extends AST2BaseTest {
         final String code = getAboveComment();
         parseAndCheckBindings(code, ParserLanguage.CPP);
 	}	
+	
+	//	struct A {
+	//		template<typename T> void m() {
+	//			C<T> c;
+	//		}
+	//		template<typename T> struct C {};
+	//	};
+	public void testLookupInClassScopeForTemplateIDs_294904() throws Exception {
+        final String code = getAboveComment();
+        parseAndCheckBindings(code, ParserLanguage.CPP);		
+	}
 }
 

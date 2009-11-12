@@ -322,6 +322,11 @@ public class LookupData {
 
         boolean inInitializer= false;
         IASTNode parent = name.getParent();
+        while (parent instanceof IASTName) {
+        	name= (IASTName) parent;
+        	parent= name.getParent();
+        }
+        
         while (parent != null && !(parent instanceof IASTFunctionDefinition)) {
          	if (parent instanceof IASTInitializer) {
         		inInitializer= true;
@@ -342,8 +347,6 @@ public class LookupData {
                 return false;
 
             ASTNodeProperty prop = name.getPropertyInParent();
-            if (prop == ICPPASTQualifiedName.SEGMENT_NAME)
-                prop = name.getParent().getPropertyInParent();
             if (prop == IASTIdExpression.ID_NAME ||
 					prop == IASTFieldReference.FIELD_NAME ||
 					prop == ICASTFieldDesignator.FIELD_NAME ||

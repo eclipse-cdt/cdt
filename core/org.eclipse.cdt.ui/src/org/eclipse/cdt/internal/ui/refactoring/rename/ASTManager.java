@@ -94,6 +94,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPNamespaceScope;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPReferenceType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateTypeParameter;
 import org.eclipse.cdt.core.index.IIndex;
+import org.eclipse.cdt.core.index.IIndexName;
 import org.eclipse.cdt.core.model.CoreModel;
 import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.core.model.ITranslationUnit;
@@ -394,7 +395,10 @@ public class ASTManager {
         try {
         	if (s1 instanceof IIndexScope) {
         		IIndexScope indexScope= (IIndexScope) s1;
-        		name= indexScope.getScopeName().toString();
+        		final IIndexName scopeName = indexScope.getScopeName();
+        		if (scopeName != null) {
+        			name= scopeName.toString();
+        		}
         	} else {
         		name= getNameOrNull(ASTInternal.getPhysicalNodeOfScope(s1));
         	}

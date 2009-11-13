@@ -595,6 +595,9 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
     		lt1= LT(1);
     		switch(lt1) {
     		case IToken.tQUESTION:
+            	if (onTopOfTemplateArgs && rejectLogicalOperatorInTemplateID > 0) {
+            		throwBacktrack(LA(1));
+            	}
     			conditionCount++;
     			// <logical-or> ? <expression> : <assignment-expression>
     			// Precedence: 25 is lower than precedence of logical or; 1 is lower than precedence of expression
@@ -1766,7 +1769,17 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
         case IToken.t_try:
         case IToken.tCOLON:
         case IToken.tLBRACE:
-        	return functionDefinition(firstOffset, declSpec, declarators);
+        	if (declarators.length != 1)
+        		throwBacktrack(LA(1));
+        	
+        	dtor= declarators[0];
+        	if (altDeclSpec != null && altDtor != null && dtor != null &&
+        			!(ASTQueries.findTypeRelevantDeclarator(dtor) instanceof IASTFunctionDeclarator)) {
+        		declSpec= altDeclSpec;
+        		dtor= altDtor;
+        	}
+        	return functionDefinition(firstOffset, declSpec, dtor);
+        
         default:	
         	if (declOption != DeclarationOptions.LOCAL) {
         		insertSemi= true;
@@ -1817,12 +1830,8 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
     }
 
 	private IASTDeclaration functionDefinition(final int firstOffset, IASTDeclSpecifier declSpec,
-			IASTDeclarator[] dtors) throws EndOfFileException, BacktrackException {
+			IASTDeclarator outerDtor) throws EndOfFileException, BacktrackException {
 		
-    	if (dtors.length != 1) 
-    		throwBacktrack(firstOffset, LA(1).getEndOffset() - firstOffset);
-    	
-		final IASTDeclarator outerDtor= dtors[0];
 		final IASTDeclarator dtor= ASTQueries.findTypeRelevantDeclarator(outerDtor);
 		if (dtor instanceof ICPPASTFunctionDeclarator == false)
 			throwBacktrack(firstOffset, LA(1).getEndOffset() - firstOffset);

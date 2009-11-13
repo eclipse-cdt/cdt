@@ -7713,5 +7713,25 @@ public class AST2CPPTests extends AST2BaseTest {
         final String code = getAboveComment();
         parseAndCheckBindings(code, ParserLanguage.CPP);		
 	}
+	
+	//	void test() {
+	//		int x,y;
+	//		return y < x ? -1 : y > x ? 1 : 0;
+	//	}
+	public void testSyntax1_295064() throws Exception {
+        final String code = getAboveComment();
+        parseAndCheckBindings(code, ParserLanguage.CPP);		
+	}
+	
+	//	typedef int TInt;
+	//	template <typename T> class CT {
+	//		CT(TInt);
+	//	};
+	//	template <typename T> inline CT<T>::CT(TInt) {}
+	public void testSyntax2_295064() throws Exception {
+        final String code = getAboveComment();
+        parseAndCheckBindings(code, ParserLanguage.CPP);		
+	}
+
 }
 

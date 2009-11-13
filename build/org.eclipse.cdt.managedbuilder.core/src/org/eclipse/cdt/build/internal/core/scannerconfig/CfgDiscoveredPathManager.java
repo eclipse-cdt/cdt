@@ -67,6 +67,39 @@ public class CfgDiscoveredPathManager implements IResourceChangeListener {
 
 	private IDiscoveredPathManager fBaseMngr;
 	
+	
+	private class GetDiscoveredInfoRunnable implements IWorkspaceRunnable {
+
+		private PathInfo fPathInfo;
+		private ContextInfo fContextInfo;
+		private IProject fProject;
+		private CfgInfoContext fContext;
+		
+		public GetDiscoveredInfoRunnable(ContextInfo cInfo, IProject project, CfgInfoContext context) {
+			fContextInfo = cInfo;
+			fProject = project;
+			fContext = context;
+		}
+
+		public void run(IProgressMonitor monitor) throws CoreException {
+						
+			fPathInfo = getCachedPathInfo(fContextInfo);
+
+			if(fPathInfo == null){
+				IDiscoveredPathManager.IDiscoveredPathInfo baseInfo = loadPathInfo(fProject, fContext.getConfiguration(), fContextInfo);
+				
+				fPathInfo = resolveCacheBaseDiscoveredInfo(fContextInfo, baseInfo);
+			}
+			
+		}
+		
+		public PathInfo getPathInfo() {
+			return fPathInfo;
+		}
+		
+	};
+
+	
 	private static class ContextInfo {
 		
 		public ContextInfo() {
@@ -161,21 +194,15 @@ public class CfgDiscoveredPathManager implements IResourceChangeListener {
 
         PathInfo info = getCachedPathInfo(cInfo);
 		if (info == null) {
-			synchronized (this) {
-				info = getCachedPathInfo(cInfo);
+			// Change synchronization to be a workspace lock on the project.  Otherwise
+			// if the project description is queried from a project change listener, it will deadlock
+		
+			GetDiscoveredInfoRunnable runnable = new GetDiscoveredInfoRunnable(cInfo, project, context); 
 
-				if(info == null){
-					IDiscoveredPathManager.IDiscoveredPathInfo baseInfo = loadPathInfo(project, context.getConfiguration(), cInfo);
-					
-					info = resolveCacheBaseDiscoveredInfo(cInfo, baseInfo);
-				}
-			}
+			ResourcesPlugin.getWorkspace().run(runnable, project, IWorkspace.AVOID_UPDATE, null);
+			
+			info = runnable.getPathInfo();
 
-//			setCachedPathInfo(context, info);
-//			if(info instanceof DiscoveredPathInfo && !((DiscoveredPathInfo)info).isLoadded()){
-//				info = createPathInfo(project, context);
-//				setCachedPathInfo(context, info);
-//			}
 		}
 		return info;
 	}

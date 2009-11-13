@@ -1204,6 +1204,7 @@ public class CPPVisitor extends ASTQueries {
 		private IBinding[] bindings;
 		private int idx = 0;
 		private int kind;
+		private char[] requiredName;
 		
 		private static final int KIND_LABEL  = 1;
 		private static final int KIND_OBJ_FN = 2;
@@ -1217,6 +1218,10 @@ public class CPPVisitor extends ASTQueries {
 			shouldVisitNames = true;
 			this.decls = new IASTName[DEFAULT_LIST_SIZE];
 			
+			final String bname= binding.getName();
+			if (bname.length() > 0 && !bname.startsWith("operator")) { //$NON-NLS-1$
+				requiredName= bname.toCharArray();
+			}
 			this.bindings = new IBinding[] {binding};
 			if (binding instanceof ICPPUsingDeclaration) {
 				this.bindings= ((ICPPUsingDeclaration) binding).getDelegates();
@@ -1240,6 +1245,9 @@ public class CPPVisitor extends ASTQueries {
 		@Override
 		public int visit(IASTName name) {
 			if (name instanceof ICPPASTQualifiedName) return PROCESS_CONTINUE;
+			if (requiredName != null && !CharArrayUtils.equals(name.getLookupKey(), requiredName)) {
+				return PROCESS_CONTINUE;
+			}
 			
 			ASTNodeProperty prop = name.getPropertyInParent();
 			if (prop == ICPPASTQualifiedName.SEGMENT_NAME)

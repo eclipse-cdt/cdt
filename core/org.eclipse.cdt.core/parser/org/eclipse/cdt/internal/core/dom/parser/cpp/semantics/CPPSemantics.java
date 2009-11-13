@@ -32,6 +32,7 @@ import org.eclipse.cdt.core.dom.ast.EScopeKind;
 import org.eclipse.cdt.core.dom.ast.IASTArraySubscriptExpression;
 import org.eclipse.cdt.core.dom.ast.IASTBinaryExpression;
 import org.eclipse.cdt.core.dom.ast.IASTCastExpression;
+import org.eclipse.cdt.core.dom.ast.IASTCompositeTypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTCompoundStatement;
 import org.eclipse.cdt.core.dom.ast.IASTDeclSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTDeclaration;
@@ -115,6 +116,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassTemplate;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassTemplatePartialSpecialization;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPConstructor;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPField;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunction;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunctionTemplate;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunctionType;
@@ -282,6 +284,10 @@ public class CPPSemantics {
                 binding = e.getProblem();
             }
         }
+        
+        if (binding instanceof IProblemBinding)
+        	return binding;
+        
         if (binding == null && data.checkClassContainingFriend()) {
         	// 3.4.1-10 if we don't find a name used in a friend declaration in the member declaration's class
         	// we should look in the class granting friendship
@@ -418,7 +424,7 @@ public class CPPSemantics {
 			}
 		}
 		
-        if (binding != null && !(binding instanceof IProblemBinding)) {
+        if (binding != null) {
 	        if (namePropertyInParent == IASTNamedTypeSpecifier.NAME) {
 	        	if (!(binding instanceof IType || binding instanceof ICPPConstructor)) {
 	        		IASTNode parent = name.getParent().getParent();
@@ -452,7 +458,7 @@ public class CPPSemantics {
         
         // explicit function specializations are found via name resolution, need to
         // add name as definition and check the declaration specifier.
-		if (binding instanceof IFunction && !(binding instanceof IProblemBinding)) {
+		if (binding instanceof IFunction) {
 			if (data.forFunctionDeclaration()) {
 				IASTNode declaration= data.astName;
 				while (declaration instanceof IASTName)
@@ -466,6 +472,19 @@ public class CPPSemantics {
 						ASTInternal.addDefinition(binding, data.astName);
 					}
 				}
+			}
+		}
+		
+		// Definitions of static fields are found via name resolution, need to add name to
+		// the binding to get the right type of arrays that may be declared incomplete.
+		if (binding instanceof ICPPField && data.astName.isDefinition()) { 
+			IASTNode declaration= data.astName;
+			while (declaration instanceof IASTName)
+				declaration= declaration.getParent();
+			while (declaration instanceof IASTDeclarator)
+				declaration= declaration.getParent();
+			if (declaration.getPropertyInParent() != IASTCompositeTypeSpecifier.MEMBER_DECLARATION) {
+				ASTInternal.addDefinition(binding, data.astName);
 			}
 		}
 		

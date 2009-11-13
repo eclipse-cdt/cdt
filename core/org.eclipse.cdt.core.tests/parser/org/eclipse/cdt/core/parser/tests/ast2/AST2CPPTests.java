@@ -7699,5 +7699,19 @@ public class AST2CPPTests extends AST2BaseTest {
         final String code = getAboveComment();
         parseAndCheckBindings(code, ParserLanguage.CPP);		
 	}
+	
+	//	template <typename T, int N> char (&func(T (&array)[N]))[N];
+	//	struct A {
+	//	  static int array[];
+	//	};
+	//	int A::array[] = { 0 };
+	//
+	//	void test() {
+	//	  func(A::array); // func is not resolved
+	//	}
+	public void testCompleteArrayTypeWithIncompleteDeclaration_294144() throws Exception {
+        final String code = getAboveComment();
+        parseAndCheckBindings(code, ParserLanguage.CPP);		
+	}
 }
 

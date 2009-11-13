@@ -23,6 +23,8 @@ import org.eclipse.cdt.core.dom.ast.IASTInitializerExpression;
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IASTSimpleDeclaration;
+import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
+import org.eclipse.cdt.core.dom.ast.IArrayType;
 import org.eclipse.cdt.core.dom.ast.IBasicType;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.IPointerType;
@@ -88,9 +90,10 @@ public class CPPVariable extends PlatformObject implements ICPPVariable, ICPPInt
 		}
     }
 
-	private IASTName declarations[] = null;
-	private IASTName definition = null;
-	private IType type = null;
+	private IASTName fDefinition = null;
+	private IASTName fDeclarations[] = null;
+	private IType fType = null;
+	private boolean fAllResolved;
 	
 	public CPPVariable(IASTName name) {
 	    boolean isDef = name == null ? false : name.isDefinition();
@@ -100,9 +103,9 @@ public class CPPVariable extends PlatformObject implements ICPPVariable, ICPPInt
 	    }
 	    
 	    if (isDef)
-	        definition = name;
+	        fDefinition = name;
 	    else 
-	        declarations = new IASTName[] { name };
+	        fDeclarations = new IASTName[] { name };
 	    
 	    // built-in variables supply a null
 	    if (name != null) {
@@ -131,54 +134,91 @@ public class CPPVariable extends PlatformObject implements ICPPVariable, ICPPInt
 		if (!(node instanceof IASTName))
 			return;
 		IASTName name = (IASTName) node;
-	    if (name.isDefinition()) {
-	        definition = name;
-	    } else if (declarations == null) {
-	        declarations = new IASTName[] { name };
-	    } else {
-	        //keep the lowest offset declaration in[0]
-			if (declarations.length > 0 && ((ASTNode) node).getOffset() < ((ASTNode) declarations[0]).getOffset()) {
-				declarations = (IASTName[]) ArrayUtil.prepend(IASTName.class, declarations, name);
+		if (fDefinition == null && name.isDefinition()) {
+			fDefinition = name;
+		} else if (fDeclarations == null) {
+			fDeclarations = new IASTName[] { name };
+		} else {
+			// keep the lowest offset declaration at the first position
+			if (fDeclarations.length > 0
+					&& ((ASTNode) node).getOffset() < ((ASTNode) fDeclarations[0]).getOffset()) {
+				fDeclarations = (IASTName[]) ArrayUtil.prepend(IASTName.class, fDeclarations, name);
 			} else {
-				declarations = (IASTName[]) ArrayUtil.append(IASTName.class, declarations, name);
+				fDeclarations = (IASTName[]) ArrayUtil.append(IASTName.class, fDeclarations, name);
 			}
-	    }
+		}
+		// array types may be incomplete
+		if (fType instanceof IArrayType) {
+			fType = null;
+		}
 	}
 	
     /* (non-Javadoc)
      * @see org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPBinding#getDeclarations()
      */
     public IASTNode[] getDeclarations() {
-        return declarations;
+        return fDeclarations;
     }
 
     /* (non-Javadoc)
      * @see org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPBinding#getDefinition()
      */
     public IASTNode getDefinition() {
-        return definition;
+        return fDefinition;
     }
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.dom.ast.IVariable#getType()
 	 */
 	public IType getType() {
-		if (type == null) {
-			IASTName n = null;
-			if (definition != null)
-				n = definition;
-			else if (declarations != null && declarations.length > 0)
-				n = declarations[0];
-			
+		if (fType != null) {
+			return fType;
+		}
+		
+		IArrayType firstCandidate= null;
+		final int length = fDeclarations == null ? 0 : fDeclarations.length;
+		for (int i = -1; i < length; i++) {
+			IASTName n = i==-1 ? fDefinition : fDeclarations[i];
 			if (n != null) {
 				while (n.getParent() instanceof IASTName)
 					n = (IASTName) n.getParent();
+
 				IASTNode node = n.getParent();
-				if (node instanceof IASTDeclarator)
-					type = CPPVisitor.createType((IASTDeclarator) node);
+				if (node instanceof IASTDeclarator) {
+					IType t= CPPVisitor.createType((IASTDeclarator) node);
+					if (t instanceof IArrayType && ((IArrayType) t).getSize() == null) {
+						if (firstCandidate == null) {
+							firstCandidate= (IArrayType) t;
+						}
+					} else {
+						return fType= t;
+					}
+				}
 			}
 		}
-		return type;
+		fType= firstCandidate;
+		if (!fAllResolved) {
+			resolveAllDeclarations();
+			return getType();
+		}
+		return fType;
+	}
+
+	private void resolveAllDeclarations() {
+		if (fAllResolved)
+			return;
+		fAllResolved= true;
+		final int length = fDeclarations == null ? 0 : fDeclarations.length;
+		for (int i = -1; i < length; i++) {
+			IASTName n = i==-1 ? fDefinition : fDeclarations[i];
+			if (n != null) {
+			    IASTTranslationUnit tu = n.getTranslationUnit();
+		        if (tu != null) {
+		            CPPVisitor.getDeclarations(tu, this);
+		            return;
+		        }
+		    }
+		}
 	}
 
 	/* (non-Javadoc)
@@ -192,17 +232,17 @@ public class CPPVariable extends PlatformObject implements ICPPVariable, ICPPInt
 	 * @see org.eclipse.cdt.core.dom.ast.IBinding#getNameCharArray()
 	 */
 	public char[] getNameCharArray() {
-	    if (declarations != null) {
-	        return declarations[0].getSimpleID();
+	    if (fDeclarations != null) {
+	        return fDeclarations[0].getSimpleID();
 	    } 
-	    return definition.getSimpleID();
+	    return fDefinition.getSimpleID();
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.dom.ast.IBinding#getScope()
 	 */
 	public IScope getScope() {
-		return CPPVisitor.getContainingScope(definition != null ? definition : declarations[0]);
+		return CPPVisitor.getContainingScope(fDefinition != null ? fDefinition : fDeclarations[0]);
 	}
 	
     /* (non-Javadoc)
@@ -321,7 +361,7 @@ public class CPPVariable extends PlatformObject implements ICPPVariable, ICPPInt
 	}
 	
 	public IBinding getOwner() throws DOMException {
-		IASTName node = definition != null ? definition : declarations[0];
+		IASTName node = fDefinition != null ? fDefinition : fDeclarations[0];
 		return CPPVisitor.findNameOwner(node, !hasStorageClass(IASTDeclSpecifier.sc_extern)); 
 	}
 	
@@ -335,13 +375,13 @@ public class CPPVariable extends PlatformObject implements ICPPVariable, ICPPInt
 	}
 	
 	public IValue getInitialValue(int maxDepth) {
-		if (definition != null) {
-			final IValue val= getInitialValue(definition, maxDepth);
+		if (fDefinition != null) {
+			final IValue val= getInitialValue(fDefinition, maxDepth);
 			if (val != null)
 				return val;
 		}
-		if (declarations != null) {
-			for (IASTName decl : declarations) {
+		if (fDeclarations != null) {
+			for (IASTName decl : fDeclarations) {
 				if (decl == null)
 					break;
 				final IValue val= getInitialValue(decl, maxDepth);

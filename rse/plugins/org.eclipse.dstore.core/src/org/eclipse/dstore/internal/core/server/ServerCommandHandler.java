@@ -16,12 +16,14 @@
  *  David McKnight   (IBM) - [244388] [dstore] Connection hangs when a miner not installed
  *  David McKnight   (IBM) - [278341] [dstore] Disconnect on idle causes the client hang
  *  Noriaki Takatsu  (IBM) - [283656] [dstore][multithread] Serviceability issue
+ *  David McKnight   (IBM) - [294933] [dstore] RSE goes into loop
  *******************************************************************************/
 
 package org.eclipse.dstore.internal.core.server;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 import org.eclipse.dstore.core.java.IRemoteClassInstance;
@@ -271,10 +273,15 @@ public class ServerCommandHandler extends CommandHandler
 					clientTicket.setAttribute(DE.A_VALUE,DataStoreResources.model_valid);
 
 					DataElement host = _dataStore.getHostRoot();
-					_dataStore.getHashMap().remove(host.getId());
+					HashMap map = _dataStore.getHashMap();					
+					synchronized (map){
+						map.remove(host.getId());
+					}
 					host.setAttribute(DE.A_ID, "host." + serverTicket.getName()); //$NON-NLS-1$
 
-					_dataStore.getHashMap().put(host.getId(), host);
+					synchronized (map){
+						map.put(host.getId(), host);
+					}
 					_dataStore.update(host);
 				}
 				else

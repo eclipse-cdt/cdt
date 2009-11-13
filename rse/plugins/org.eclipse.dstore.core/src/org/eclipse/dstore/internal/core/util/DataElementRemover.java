@@ -15,11 +15,13 @@
  *  David McKnight  (IBM)  - [202822] don't need to remove children from map here
  *  David McKnight  (IBM)  - [255390] check memory to determine whether to queue
  *  David McKnight  (IBM)  - [261644] [dstore] remote search improvements
+ *  David McKnight   (IBM) - [294933] [dstore] RSE goes into loop
  *******************************************************************************/
 
 package org.eclipse.dstore.internal.core.util;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.LinkedList;
 
 import org.eclipse.dstore.core.model.DataElement;
@@ -193,7 +195,10 @@ public class DataElementRemover extends Handler
 	
 	private void unmap(DataElement element)
 	{	 
-		_dataStore.getHashMap().remove(element.getId());
+		HashMap map = _dataStore.getHashMap();					
+		synchronized (map){
+			map.remove(element.getId());
+		}
 	}
 	
 	

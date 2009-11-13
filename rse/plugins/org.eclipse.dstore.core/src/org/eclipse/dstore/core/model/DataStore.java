@@ -32,6 +32,7 @@
  * David McKnight   (IBM) - [285301] [dstore] 100% CPU if user does not  have write access to $HOME
  * David McKnight   (IBM) - [287457] [dstore] problems with disconnect when readonly trace file
  * David McKnight   (IBM) - [289891] [dstore] StringIndexOutOfBoundsException in getUserPreferencesDirectory when DSTORE_LOG_DIRECTORY is ""
+ * David McKnight   (IBM) - [294933] [dstore] RSE goes into loop
  *******************************************************************************/
 
 package org.eclipse.dstore.core.model;
@@ -845,7 +846,9 @@ public final class DataStore
 	 */
 	public int getNumElements()
 	{
-		return _hashMap.size();
+		synchronized (_hashMap){	
+			return _hashMap.size();
+		}
 	}
 
 	/**
@@ -923,8 +926,9 @@ public final class DataStore
 			parent.addNestedData(reference, false);
 
 			String sugId = reference.getId();
-			_hashMap.put(sugId, reference);
-
+			synchronized (_hashMap){
+				_hashMap.put(sugId, reference);
+			}
 			refresh(parent);
 
 			return reference;
@@ -977,8 +981,10 @@ public final class DataStore
 			parent.addNestedData(reference, false);
 
 			String sugId = reference.getId();
-			_hashMap.put(sugId, reference);
-
+			synchronized (_hashMap){
+				_hashMap.put(sugId, reference);
+			}
+			
 			if (doRefresh)
 			{
 			    refresh(parent);
@@ -1049,8 +1055,9 @@ public final class DataStore
 			parent.addNestedData(toReference, false);
 
 			String toId = toReference.getId();
-			_hashMap.put(toId, toReference);
-
+			synchronized (_hashMap){
+				_hashMap.put(toId, toReference);
+			}
 			// reference with "from" relationship
 			DataElement fromReference = createElement();
 
@@ -1059,7 +1066,9 @@ public final class DataStore
 			realObject.addNestedData(fromReference, false);
 
 			String fromId = fromReference.getId();
-			_hashMap.put(fromId, fromReference);
+			synchronized (_hashMap){
+				_hashMap.put(fromId, fromReference);
+			}
 			refresh(parent);
 
 
@@ -1096,7 +1105,9 @@ public final class DataStore
 			parent.addNestedData(toReference, false);
 
 			String toId = toReference.getId();
-			_hashMap.put(toId, toReference);
+			synchronized (_hashMap){
+				_hashMap.put(toId, toReference);
+			}
 
 			// reference with "from" relationship
 			DataElement fromReference = createElement();
@@ -1114,8 +1125,9 @@ public final class DataStore
 			realObject.addNestedData(fromReference, false);
 
 			String fromId = fromReference.getId();
-			_hashMap.put(fromId, fromReference);
-
+			synchronized (_hashMap){
+				_hashMap.put(fromId, fromReference);
+			}
 			 refresh(parent);
 
 
@@ -1830,7 +1842,9 @@ public final class DataStore
 	 */
 	public boolean contains(String id)
 	{
-		return _hashMap.containsKey(id);
+		synchronized (_hashMap){
+			return _hashMap.containsKey(id);
+		}
 	}
 
 	/**
@@ -3121,8 +3135,10 @@ public final class DataStore
 	 */
 	public DataElement find(String id)
 	{
-		DataElement result = (DataElement) _hashMap.get(id);
-		return result;
+		synchronized (_hashMap){
+			DataElement result = (DataElement) _hashMap.get(id);
+			return result;
+		}
 	}
 
 	/**
@@ -3986,8 +4002,12 @@ public final class DataStore
 
 	private String makeIdUnique(String id)
 	{
-
-		if (!_hashMap.containsKey(id))
+		boolean containsKey = false;
+		synchronized (_hashMap){
+			containsKey = _hashMap.containsKey(id);
+		}
+		
+		if (!containsKey)
 		{
 			return id;
 		}
@@ -4022,16 +4042,13 @@ public final class DataStore
 	 */
 	protected String generateId()
 	{
-		//return "" + _uniqueNumber++;
-		///*
 		String newId = String.valueOf(_random.nextInt());
-		while (_hashMap.containsKey(newId))
+		while (contains(newId))
 		{
 			newId = String.valueOf(_random.nextInt());
 		}
 
 		return newId;
-//		*/
 	}
 
 	public void startTracing()

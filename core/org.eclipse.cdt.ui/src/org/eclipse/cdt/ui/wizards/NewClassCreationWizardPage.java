@@ -164,7 +164,7 @@ public class NewClassCreationWizardPage extends NewElementWizardPage {
 	 */
 	public NewClassCreationWizardPage() {
 		super(PAGE_NAME);
-
+		setTitle(NewClassWizardMessages.NewClassCreationWizardPage_title);
 		setDescription(NewClassWizardMessages.NewClassCreationWizardPage_description);
 		
 		SourceFolderFieldAdapter sourceFolderAdapter = new SourceFolderFieldAdapter();

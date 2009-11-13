@@ -47,7 +47,8 @@ public class NewHeaderFileCreationWizardPage extends AbstractFileCreationWizardP
 	private StringDialogField fNewFileDialogField;
 	
 	public NewHeaderFileCreationWizardPage() {
-		super(NewFileWizardMessages.NewHeaderFileCreationWizardPage_title); 
+		super(NewFileWizardMessages.NewHeaderFileCreationWizard_title);
+		setTitle(NewFileWizardMessages.NewHeaderFileCreationWizardPage_title);
 		setDescription(NewFileWizardMessages.NewHeaderFileCreationWizardPage_description); 
 
 		fNewFileDialogField = new StringDialogField();

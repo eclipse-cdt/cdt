@@ -51,7 +51,8 @@ public class NewSourceFileCreationWizardPage extends AbstractFileCreationWizardP
 	private StringDialogField fNewFileDialogField;
 	
 	public NewSourceFileCreationWizardPage() {
-		super(NewFileWizardMessages.NewSourceFileCreationWizardPage_title); 
+		super(NewFileWizardMessages.NewSourceFileCreationWizard_title);
+		setTitle(NewFileWizardMessages.NewSourceFileCreationWizardPage_title);
 		setDescription(NewFileWizardMessages.NewSourceFileCreationWizardPage_description); 
 
 		fNewFileDialogField = new StringDialogField();

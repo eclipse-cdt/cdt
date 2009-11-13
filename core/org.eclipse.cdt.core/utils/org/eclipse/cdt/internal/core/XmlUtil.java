@@ -11,6 +11,7 @@
 package org.eclipse.cdt.internal.core;
 
 import org.w3c.dom.Document;
+import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
@@ -43,7 +44,10 @@ public class XmlUtil {
 	 */
 	public static void prettyFormat(Document doc, String ident) {
 		doc.normalize();
-		prettyFormat(doc.getDocumentElement(), "", ident); //$NON-NLS-1$
+		Element documentElement = doc.getDocumentElement();
+		if (documentElement!=null) {
+			prettyFormat(documentElement, "", ident); //$NON-NLS-1$
+		}
 	}
 
 	/**

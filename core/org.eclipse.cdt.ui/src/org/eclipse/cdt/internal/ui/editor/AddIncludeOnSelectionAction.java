@@ -62,6 +62,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTQualifiedName;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTUsingDeclaration;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTUsingDirective;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPBinding;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPConstructor;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPNamespace;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPVariable;
 import org.eclipse.cdt.core.index.IIndex;
@@ -97,7 +98,7 @@ import org.eclipse.cdt.internal.ui.util.ExceptionHandler;
  * selected name. 
  */
 public class AddIncludeOnSelectionAction extends TextEditorAction {
-	public static boolean sIsJUnitTest = false;	
+	public static boolean sIsJUnitTest = false;
 
 	private ITranslationUnit fTu;
 	private IProject fProject;
@@ -105,15 +106,15 @@ public class AddIncludeOnSelectionAction extends TextEditorAction {
 	private IRequiredInclude[] fRequiredIncludes;
 	private String[] fUsingDeclarations;
 
-	public AddIncludeOnSelectionAction(ITextEditor editor) {	
+	public AddIncludeOnSelectionAction(ITextEditor editor) {
 		super(CEditorMessages.getBundleForConstructedKeys(), "AddIncludeOnSelection.", editor); //$NON-NLS-1$
-		
+
 		CUIPlugin.getDefault().getWorkbench().getHelpSystem().setHelp(this,
 				ICHelpContextIds.ADD_INCLUDE_ON_SELECTION_ACTION);
 	}
-	
-	private void insertInclude(IRequiredInclude[] includes, String[] usings) {
-		AddIncludesOperation op= new AddIncludesOperation(fTu, includes, usings, false);
+
+	private void insertInclude(IRequiredInclude[] includes, String[] usings, int beforeOffset) {
+		AddIncludesOperation op= new AddIncludesOperation(fTu, beforeOffset, includes, usings);
 		try {
 			PlatformUI.getWorkbench().getProgressService().runInUI(
 					PlatformUI.getWorkbench().getProgressService(),
@@ -125,14 +126,14 @@ public class AddIncludeOnSelectionAction extends TextEditorAction {
 			// Do nothing. Operation has been canceled.
 		}
 	}
-	
+
 	private static ITranslationUnit getTranslationUnit(ITextEditor editor) {
 		if (editor == null) {
 			return null;
 		}
 		return CUIPlugin.getDefault().getWorkingCopyManager().getWorkingCopy(editor.getEditorInput());
 	}
-	
+
 	private Shell getShell() {
 		return getTextEditor().getSite().getShell();
 	}
@@ -166,7 +167,7 @@ public class AddIncludeOnSelectionAction extends TextEditorAction {
 			}
 
 			final String[] lookupName = new String[1];
-			
+
 			SharedASTJob job = new SharedASTJob(CEditorMessages.AddIncludeOnSelection_label, fTu) {
 				@Override
 				public IStatus runOnAST(ILanguage lang, IASTTranslationUnit ast) throws CoreException {
@@ -176,7 +177,7 @@ public class AddIncludeOnSelectionAction extends TextEditorAction {
 			};
 			job.schedule();
 			job.join();
-			
+
 			if (fRequiredIncludes == null || fRequiredIncludes.length == 0 && lookupName[0].length() > 0) {
 				// Try contribution from plugins.
 				IFunctionSummary fs = findContribution(lookupName[0]);
@@ -190,13 +191,13 @@ public class AddIncludeOnSelectionAction extends TextEditorAction {
 
 			}
 			if (fRequiredIncludes != null && fRequiredIncludes.length >= 0) {
-				insertInclude(fRequiredIncludes, fUsingDeclarations);
+				insertInclude(fRequiredIncludes, fUsingDeclarations, ((ITextSelection) selection).getOffset());
 			}
 		} catch (InterruptedException e) {
 			Thread.currentThread().interrupt();
 		}
 	}
-	
+
 	/**
 	 * Extract the includes for the given selection.  This can be both used to perform
 	 * the work as well as being invoked when there is a change.
@@ -237,6 +238,14 @@ public class AddIncludeOnSelectionAction extends TextEditorAction {
 						index.findBindings(nameChars, false, filter, new NullProgressMonitor());
 
 		for (IIndexBinding indexBinding : bindings) {
+			// Replace ctor with the class itself.
+			if (indexBinding instanceof ICPPConstructor) {
+				try {
+					indexBinding = indexBinding.getOwner();
+				} catch (DOMException e) {
+					continue;
+				}
+			}
 			IIndexName[] definitions= null;
 			// class, struct, union, enum
 			if (indexBinding instanceof ICompositeType || indexBinding instanceof IEnumeration) {
@@ -255,7 +264,7 @@ public class AddIncludeOnSelectionAction extends TextEditorAction {
 			IIndexName definition = macro.getDefinition();
 			considerForInclusion(definition, macro, index, candidatesMap);
 		}
-		
+
 		final ArrayList<IncludeCandidate> candidates = new ArrayList<IncludeCandidate>(candidatesMap.values());
 		if (candidates.size() > 1) {
 			if (sIsJUnitTest) {
@@ -287,7 +296,7 @@ public class AddIncludeOnSelectionAction extends TextEditorAction {
 				// Decide what 'using' declaration, if any, should be added along with the include.
 				String usingDeclaration = deduceUsingDeclaration(binding, indexBinding, ast);
 				if (usingDeclaration != null)
-					fUsingDeclarations = new String[] { usingDeclaration };						
+					fUsingDeclarations = new String[] { usingDeclaration };
 			}
 		}
 	}
@@ -366,7 +375,7 @@ public class AddIncludeOnSelectionAction extends TextEditorAction {
 		}
 		return buf.toString();
 	}
-	
+
 	private boolean match(IASTName name, ArrayList<String> usingChain, boolean excludeLast) {
 		IASTName[] names;
 		if (name instanceof ICPPASTQualifiedName) {
@@ -465,7 +474,7 @@ public class AddIncludeOnSelectionAction extends TextEditorAction {
 
 					public ITranslationUnit getTranslationUnit() {
 						return fTu;
-					}	
+					}
 				};
 
 				fs[0] = CHelpProviderManager.getDefault().getFunctionInfo(context, name);
@@ -514,7 +523,7 @@ public class AddIncludeOnSelectionAction extends TextEditorAction {
 	private static String getPath(IIndexFile file) throws CoreException {
 		return file.getLocation().getURI().getPath();
 	}
-	
+
 	/**
 	 * Returns the RequiredInclude object to be added to the include list
 	 * @param path - the full path of the file to include
@@ -638,7 +647,7 @@ public class AddIncludeOnSelectionAction extends TextEditorAction {
 		private final IIndexBinding binding;
 		private final IRequiredInclude include;
 		private final String label;
-		
+
 		public IncludeCandidate(IIndexBinding binding, IRequiredInclude include) throws CoreException {
 			this.binding = binding;
 			this.include = include;
@@ -681,7 +690,7 @@ public class AddIncludeOnSelectionAction extends TextEditorAction {
 		public boolean isStandard() {
 			return isSystem;
 		}
-		
+
 		@Override
 		public String toString() {
 			StringBuilder buf = new StringBuilder(includeName.length() + 2);

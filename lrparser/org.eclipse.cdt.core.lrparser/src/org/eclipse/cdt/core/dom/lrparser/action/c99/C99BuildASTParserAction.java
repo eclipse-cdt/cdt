@@ -651,8 +651,8 @@ public class C99BuildASTParserAction extends BuildASTParserAction  {
 	
     /**
      * function_definition
-     *     ::= declaration_specifiers <openscope> declarator 
-     *         <openscope> declaration_list compound_statement
+     *     ::= declaration_specifiers <openscope-ast> knr_function_declarator 
+     *     <openscope-ast> declaration_list compound_statement
      */
 	public void consumeFunctionDefinitionKnR() {
     	IASTCompoundStatement  body = (IASTCompoundStatement) astStack.pop();
@@ -663,7 +663,7 @@ public class C99BuildASTParserAction extends BuildASTParserAction  {
     	ICASTKnRFunctionDeclarator decl = (ICASTKnRFunctionDeclarator) astStack.pop();
     	astStack.closeScope();
 
-    	ICASTSimpleDeclSpecifier declSpecifier = (ICASTSimpleDeclSpecifier) astStack.pop();
+    	ICASTDeclSpecifier declSpecifier = (ICASTDeclSpecifier) astStack.pop();
     	decl.setParameterDeclarations(declarations);
 		
 		// re-compute the length of the declaration to take the parameter declarations into account

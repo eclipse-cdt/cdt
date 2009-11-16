@@ -1,12 +1,13 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2007 Intel Corporation and others.
+ * Copyright (c) 2005, 2009 Intel Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- * Intel Corporation - Initial API and implementation
+ *    Intel Corporation - Initial API and implementation
+ *    James Blackburn (Broadcom Corp.)
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.envvar;
 
@@ -151,6 +152,7 @@ public class UserDefinedEnvironmentSupplier extends
 					settings.setEnvironment(env);
 				}
 			} catch (CoreException e) {
+				CCorePlugin.log(e);
 			}
 		}
 		else if(context instanceof IWorkspace || context == null){
@@ -161,22 +163,20 @@ public class UserDefinedEnvironmentSupplier extends
 		
 		return env;
 	}
-	
+
 	@Override
 	protected ISerializeInfo getSerializeInfo(Object context){
 		ISerializeInfo serializeInfo = null;
-		
+
 		if(context instanceof ICConfigurationDescription){
-			ICConfigurationDescription cfg = (ICConfigurationDescription)context;
-			
-			final Preferences prefs = getConfigurationNode(cfg.getProjectDescription());
+			final ICConfigurationDescription cfg = (ICConfigurationDescription)context;
 			final String name = cfg.getId();
-			if(prefs != null && name != null)
+			if(name != null)
 				serializeInfo = new ISerializeInfo(){
 				public Preferences getNode(){
-					return prefs;
+					return getConfigurationNode(cfg.getProjectDescription());
 				}
-				
+
 				public String getPrefName(){
 					return name;
 				}

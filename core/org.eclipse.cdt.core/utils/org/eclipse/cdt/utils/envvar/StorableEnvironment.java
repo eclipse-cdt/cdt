@@ -1,16 +1,16 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2008 Intel Corporation and others.
+ * Copyright (c) 2005, 2009 Intel Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- * Intel Corporation - Initial API and implementation
+ *    Intel Corporation - Initial API and implementation
+ *    James Blackburn (Broadcom Corp.)
  *******************************************************************************/
 package org.eclipse.cdt.utils.envvar;
 
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
@@ -20,30 +20,58 @@ import org.eclipse.cdt.core.envvar.IEnvironmentVariableManager;
 import org.eclipse.cdt.core.settings.model.ICStorageElement;
 import org.eclipse.cdt.internal.core.envvar.EnvironmentVariableManager;
 import org.eclipse.cdt.internal.core.settings.model.ExceptionFactory;
+import org.eclipse.cdt.utils.envvar.StorableEnvironmentLoader.ISerializeInfo;
 
 /**
  * This class represents the set of environment variables that could be loaded
  * and stored in XML
  * 
  * @since 3.0
- *
  */
 public class StorableEnvironment /*implements Cloneable*/{
 	public static final String ENVIRONMENT_ELEMENT_NAME = "environment"; //$NON-NLS-1$
 	private static final String ATTRIBUTE_APPEND = "append";  //$NON-NLS-1$
 	private static final String ATTRIBUTE_APPEND_CONTRIBUTED = "appendContributed";  //$NON-NLS-1$
 	private static final boolean DEFAULT_APPEND = true;
+	/** The map of in-flight environment variables */
 	private HashMap<String, IEnvironmentVariable> fVariables;
+	/** Map of 'deleted' variables (which shouldn't be updated by a backing store change) */
+	private HashMap<String, IEnvironmentVariable> fDeletedVariables;
 	private boolean fIsDirty = false;
 	private boolean fIsChanged = false;
-	private boolean fIsReadOnly;
+	private final boolean fIsReadOnly;
 	private boolean fAppend = DEFAULT_APPEND;
 	private boolean fAppendContributedEnv = DEFAULT_APPEND;
-	
+
+
+	// State to manage and handle external changes to the environment
+
+	/** A cache copy of the environment as stored in the {@link ISerializeInfo} 
+	 *  used to work-out whether the cachedStorableEnvironment map needs refreshing */
+	private String fCachedSerialEnvString;
+	/** Map of Environment as loaded from the {@link ISerializeInfo} */
+	private HashMap<String, IEnvironmentVariable> fCachedSerialEnv;
+	private ISerializeInfo fSerialEnv;
+	// State to track whether API users have changed these boolean values
+	private boolean fAppendChanged = false;
+	private boolean fAppendContributedChanged = false;
+
+
+	/** 
+	 * @return the live {@link IEnvironmentVariable} map
+	 */
 	private Map<String, IEnvironmentVariable> getMap(){
 		if(fVariables == null)
 			fVariables = new HashMap<String, IEnvironmentVariable>();
 		return fVariables;
+	}
+	/** 
+	 * @return the live removed {@link IEnvironmentVariable} map
+	 */
+	private Map<String, IEnvironmentVariable> getDeletedMap(){
+		if(fDeletedVariables == null)
+			fDeletedVariables = new HashMap<String, IEnvironmentVariable>();
+		return fDeletedVariables;
 	}
 
 	public StorableEnvironment(IEnvironmentVariable variables[], boolean isReadOnly) {
@@ -61,8 +89,16 @@ public class StorableEnvironment /*implements Cloneable*/{
 			final HashMap<String, IEnvironmentVariable> clone = (HashMap<String, IEnvironmentVariable>)env.fVariables.clone();
 			fVariables = clone;
 		}
+		if(env.fDeletedVariables != null) {
+			@SuppressWarnings("unchecked")
+			final HashMap<String, IEnvironmentVariable> clone = (HashMap<String, IEnvironmentVariable>)env.fDeletedVariables.clone();
+			fDeletedVariables = clone;
+		}
+		fSerialEnv = env.fSerialEnv;
 		fAppend = env.fAppend;
+		fAppendChanged = env.fAppendChanged;
 		fAppendContributedEnv = env.fAppendContributedEnv;
+		fAppendContributedChanged = env.fAppendContributedChanged;
 		fIsReadOnly = isReadOnly;
 		fIsDirty = env.isDirty();
 	}
@@ -71,13 +107,63 @@ public class StorableEnvironment /*implements Cloneable*/{
 		load(element);
 		fIsReadOnly = isReadOnly;
 	}
-	
+
+	/**
+	 * Create a StorableEnvironment backed by this ISerializeInfo.
+	 * 
+	 * @param serializeInfo
+	 * @since 5.2
+	 */
+	StorableEnvironment(ISerializeInfo serializeInfo, boolean isReadOnly) {
+		fIsReadOnly = isReadOnly;
+		fSerialEnv = serializeInfo;
+
+		// Update the cached state
+		checkBackingSerializeInfo();			
+	}
+
+	/**
+	 * Check and update the state of the backing {@link ISerializeInfo} cache
+	 */
+	private void checkBackingSerializeInfo() {
+		String envString = StorableEnvironmentLoader.loadPreferenceNode(fSerialEnv);
+
+		// Has anything changed?
+		if (envString == null || envString.equals(fCachedSerialEnvString))
+			return;
+		fCachedSerialEnvString = envString;
+
+		ICStorageElement element = StorableEnvironmentLoader.environmentStorageFromString(fCachedSerialEnvString);
+		if (element == null)
+			return;
+
+		// Now update the cached environment
+		if (fCachedSerialEnv == null)
+			fCachedSerialEnv = new HashMap<String, IEnvironmentVariable>();
+		else
+			fCachedSerialEnv.clear();
+
+		for (ICStorageElement child : element.getChildren())
+			if (child.getName().equals(StorableEnvVar.VARIABLE_ELEMENT_NAME))
+				addVariable(fCachedSerialEnv, new StorableEnvVar(child));
+
+		// If user hasn't changed fAppend or fAppend Contributed, then update
+		if (!fAppendChanged) {
+			String append = element.getAttribute(ATTRIBUTE_APPEND);
+			fAppend = append != null ? Boolean.valueOf(append).booleanValue() : DEFAULT_APPEND;
+		}
+		if (!fAppendContributedChanged) {
+			String append = element.getAttribute(ATTRIBUTE_APPEND_CONTRIBUTED);
+			fAppendContributedEnv = append != null ? Boolean.valueOf(append).booleanValue()	: DEFAULT_APPEND;
+		}
+	}
+
 	private void load(ICStorageElement element){
 		ICStorageElement children[] = element.getChildren();
 		for (int i = 0; i < children.length; ++i) {
 			ICStorageElement node = children[i];
 			if (node.getName().equals(StorableEnvVar.VARIABLE_ELEMENT_NAME)) {
-				addVariable(new StorableEnvVar(node));
+				addVariable(getMap(), new StorableEnvVar(node));
 			}
 		}
 		
@@ -108,15 +194,20 @@ public class StorableEnvironment /*implements Cloneable*/{
 		fIsDirty = false;
 	}
 
-	private void addVariable(IEnvironmentVariable var){
+	/**
+	 * Add the environment variable to the map
+	 * @param map
+	 * @param var
+	 */
+	private void addVariable(Map<String, IEnvironmentVariable> map, IEnvironmentVariable var){
 		String name = var.getName();
 		if(name == null)
 			return;
 		IEnvironmentVariableManager provider = EnvironmentVariableManager.getDefault();
 		if(!provider.isVariableCaseSensitive())
 			name = name.toUpperCase();
-		
-		getMap().put(name,var);
+
+		map.put(name,var);
 	}
 
 	public IEnvironmentVariable createVariable(String name, String value, int op, String delimiter){
@@ -129,7 +220,10 @@ public class StorableEnvironment /*implements Cloneable*/{
 		IEnvironmentVariable var = checkVariable(name,value,op,delimiter);
 		if(var == null){
 			var = new StorableEnvVar(name, value, op, delimiter);
-			addVariable(var);
+			addVariable(getMap(), var);
+			// Variable added, ensure it's not in the removed set
+			if (fDeletedVariables != null)
+				fDeletedVariables.remove(EnvironmentVariableManager.getDefault().isVariableCaseSensitive() ? name : name.toUpperCase());
 			fIsDirty = true;
 			fIsChanged = true;
 		}
@@ -210,16 +304,34 @@ public class StorableEnvironment /*implements Cloneable*/{
 		fIsChanged = changed;
 	}
 
+	/**
+	 * @param name
+	 * @return the environment variable with the given name, or null
+	 */
 	public IEnvironmentVariable getVariable(String name){
 		if(name == null || "".equals(name = name.trim())) //$NON-NLS-1$
 			return null;
 		IEnvironmentVariableManager provider = EnvironmentVariableManager.getDefault();
 		if(!provider.isVariableCaseSensitive())
 			name = name.toUpperCase();
-		
-		return getMap().get(name);
+
+		IEnvironmentVariable var = getMap().get(name);
+		if (var != null)
+			return var;
+
+		if (fDeletedVariables != null && fDeletedVariables.containsKey(name))
+			return null;
+
+		checkBackingSerializeInfo();
+		if (fCachedSerialEnv != null)
+			return fCachedSerialEnv.get(name);
+		return null;
 	}
 	
+	/**
+	 * Set the enviornment variables in this {@link StorableEnvironment}
+	 * @param vars
+	 */
 	public void setVariales(IEnvironmentVariable vars[]){
 		if(fIsReadOnly)
 			throw ExceptionFactory.createIsReadOnlyException();
@@ -252,13 +364,23 @@ public class StorableEnvironment /*implements Cloneable*/{
 					vars[i].getOperation(),
 					vars[i].getDelimiter());
 	}
-	
+
 	public IEnvironmentVariable[] getVariables(){
-		Collection<IEnvironmentVariable> vars = getMap().values();
-		
-		return vars.toArray(new IEnvironmentVariable[vars.size()]);
+		checkBackingSerializeInfo();
+		// Get all the environment from the backing store first
+		Map<String, IEnvironmentVariable> vars = new HashMap<String, IEnvironmentVariable>();
+		if (fCachedSerialEnv != null)
+			vars.putAll(fCachedSerialEnv);
+		if (fDeletedVariables != null)
+			for (String name : fDeletedVariables.keySet())
+				vars.remove(name);
+
+		// Now overwrite with the live variables set, and return
+		vars.putAll(getMap());
+
+		return vars.values().toArray(new IEnvironmentVariable[vars.size()]);
 	}
-	
+
 	public IEnvironmentVariable deleteVariable(String name){
 		if(fIsReadOnly)
 			throw ExceptionFactory.createIsReadOnlyException();
@@ -269,6 +391,7 @@ public class StorableEnvironment /*implements Cloneable*/{
 			name = name.toUpperCase();
 
 		IEnvironmentVariable var = getMap().remove(name);
+		getDeletedMap().put(name, var);
 		if(var != null){
 			fIsDirty = true;
 			fIsChanged = true;
@@ -284,6 +407,7 @@ public class StorableEnvironment /*implements Cloneable*/{
 		if(map.size() > 0){
 			fIsDirty = true;
 			fIsChanged = true;
+			getDeletedMap().putAll(map);
 			map.clear();
 			return true;
 		}
@@ -307,6 +431,7 @@ public class StorableEnvironment /*implements Cloneable*/{
 			throw ExceptionFactory.createIsReadOnlyException();
 
 		fAppend = append;
+		fAppendChanged = true;
 		fIsDirty = true;
 	}
 
@@ -322,6 +447,7 @@ public class StorableEnvironment /*implements Cloneable*/{
 			throw ExceptionFactory.createIsReadOnlyException();
 		
 		fAppendContributedEnv = append;
+		fAppendContributedChanged = true;
 		fIsDirty = true;
 	}
 	

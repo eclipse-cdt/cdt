@@ -6,14 +6,14 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- * Intel Corporation - Initial API and implementation
+ *    Intel Corporation - Initial API and implementation
+ *    James Blackburn (Broadcom Corp.)
  *******************************************************************************/
 package org.eclipse.cdt.utils.envvar;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
 
 import javax.xml.parsers.DocumentBuilder;
@@ -28,6 +28,7 @@ import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 
 import org.eclipse.cdt.core.CCorePlugin;
+import org.eclipse.cdt.core.settings.model.ICStorageElement;
 import org.eclipse.cdt.internal.core.settings.model.xml.XmlStorageElement;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IStatus;
@@ -55,8 +56,14 @@ public abstract class StorableEnvironmentLoader {
 	 * @noimplement This interface is not intended to be implemented by clients.
 	 */
 	public interface ISerializeInfo{
+		/**
+		 * @return the Preferences Node into which environment should be (de) serialized
+		 */
 		Preferences getNode();
-		
+
+		/**
+		 * @return the key in the preference node to use for loading preferences 
+		 */
 		String getPrefName();
 	}
 
@@ -67,18 +74,23 @@ public abstract class StorableEnvironmentLoader {
 	 */
 	protected abstract ISerializeInfo getSerializeInfo(Object context);
 
-	/*
-	 * loads the stored environment for the given context 
+	/**
+	 * Loads the environment from the context's {@link ISerializeInfo}.
+	 * 
+	 * NB the environment in the {@link ISerializeInfo} need not be available
+	 * yet. The {@link ISerializeInfo} may be held by the {@link StorableEnvironment} 
+	 * to pick up any external changes in the environment.
+	 * 
+	 * @param context
+	 * @param readOnly
+	 * @return StorableEnvironment
 	 */
 	protected StorableEnvironment loadEnvironment(Object context, boolean readOnly){
 		ISerializeInfo serializeInfo = getSerializeInfo(context);
 		if(serializeInfo == null)
 			return null;
-		
-		InputStream stream = loadInputStream(serializeInfo.getNode(),serializeInfo.getPrefName());
-		if(stream == null)
-			return new StorableEnvironment(readOnly);
-		return loadEnvironmentFromStream(stream, readOnly);
+
+		return new StorableEnvironment(serializeInfo, readOnly);
 	}
 	
 	/*
@@ -95,37 +107,41 @@ public abstract class StorableEnvironmentLoader {
 		ByteArrayOutputStream stream = storeEnvironmentToStream(env);
 		if(stream == null)
 			return;
-		storeOutputStream(stream,serializeInfo.getNode(),serializeInfo.getPrefName(), flush);
+		storeOutputStream(stream,serializeInfo.getNode(), serializeInfo.getPrefName(), flush);
 		
 		env.setDirty(false);
 	}
 	
-	private StorableEnvironment loadEnvironmentFromStream(InputStream stream, boolean readOnly){
+	/**
+	 * @param env String representing the encoded environment
+	 * @return ICStorageElement tree from the passed in InputStream
+	 *                          or null on failure
+	 */
+	static ICStorageElement environmentStorageFromString(String env) {
+		if (env == null)
+			return null;
 		try{
 			DocumentBuilder parser = DocumentBuilderFactory.newInstance().newDocumentBuilder();
-			InputSource inputSource = new InputSource(stream);
+			InputSource inputSource = new InputSource(new ByteArrayInputStream(env.getBytes()));
 			Document document = parser.parse(inputSource);
 			Element el = document.getDocumentElement();
 			XmlStorageElement rootElement = new XmlStorageElement(el);
-			
+
 			if(!StorableEnvironment.ENVIRONMENT_ELEMENT_NAME.equals(rootElement.getName()))
 				return null;
-			
-			return new StorableEnvironment(rootElement, readOnly);
+
+			return rootElement;
 		}
 		catch(ParserConfigurationException e){
-			
+			CCorePlugin.log(e);
+		} catch(SAXException e) {
+			CCorePlugin.log(e);			
+		} catch(IOException e) {
+			CCorePlugin.log(e);
 		}
-		catch(SAXException e){
-			
-		}
-		catch(IOException e){
-			
-		}
-		
 		return null;
 	}
-	
+
 	private ByteArrayOutputStream storeEnvironmentToStream(StorableEnvironment env) throws CoreException{
 		try{
 			DocumentBuilderFactory factory= DocumentBuilderFactory.newInstance();
@@ -171,23 +187,31 @@ public abstract class StorableEnvironmentLoader {
 					e));
 		}
 	}
-	
-	private InputStream loadInputStream(Preferences node, String key){
+
+	/**
+	 * @return String value stored in the node or null if no such value exists.
+	 */
+	static String loadPreferenceNode(ISerializeInfo serializeInfo) {
+		if (serializeInfo == null)
+			return null;
+		return loadPreferenceNode(serializeInfo.getNode(), serializeInfo.getPrefName());
+	}
+
+	/**
+	 * Returns the value stored in a Preferences node
+	 * @param node Preferences node
+	 * @param key
+	 * @return String value stored in the node or null if no such value exists.
+	 */
+	static String loadPreferenceNode(Preferences node, String key){
 		if(node == null || key == null)
 			return null;
 		
-		String value = node.get(key,null);
+		String value = node.get(key, null);
 		if(value == null || value.length() == 0)
 			return null;
 		
-		byte[] bytes;
-		try {
-			bytes = value.getBytes("UTF-8"); //$NON-NLS-1$
-		} catch (UnsupportedEncodingException e) {
-			bytes = value.getBytes();
-		}
-		
-		return new ByteArrayInputStream(bytes);
+		return value;
 	}
 	
 	private void storeOutputStream(ByteArrayOutputStream stream, Preferences node, String key, boolean flush) throws CoreException{

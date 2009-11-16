@@ -17,6 +17,7 @@ import junit.framework.TestSuite;
 
 import org.eclipse.cdt.core.cdescriptor.tests.CDescriptorOldTests;
 import org.eclipse.cdt.core.cdescriptor.tests.CDescriptorTests;
+import org.eclipse.cdt.core.envvar.IEnvironmentVariableManagerTests;
 import org.eclipse.cdt.core.internal.errorparsers.tests.ErrorParserTests;
 import org.eclipse.cdt.core.internal.tests.PositionTrackerTests;
 import org.eclipse.cdt.core.internal.tests.ResourceLookupTests;
@@ -58,6 +59,7 @@ public class AutomatedIntegrationSuite extends TestSuite {
 		// Add all success tests
 		suite.addTest(CDescriptorTests.suite());
 		suite.addTest(CDescriptorOldTests.suite());
+		suite.addTest(IEnvironmentVariableManagerTests.suite());
 		suite.addTest(ErrorParserTests.suite());
 		suite.addTest(ParserTestSuite.suite());
 		suite.addTest(AllCoreTests.suite());

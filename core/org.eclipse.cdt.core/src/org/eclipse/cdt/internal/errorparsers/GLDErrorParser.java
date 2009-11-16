@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2005, 2008 IBM Corporation and others.
+ *  Copyright (c) 2005, 2009 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -19,6 +19,7 @@ import org.eclipse.cdt.core.errorparsers.ErrorPattern;
 public class GLDErrorParser extends AbstractErrorParser {
 
 	private static final ErrorPattern[] patterns = {
+		new ErrorPattern(Messages.GLDErrorParser_warning_text, 1, 0, 2, 0, IMarkerGenerator.SEVERITY_WARNING), //$NON-NLS-1
 		new ErrorPattern(Messages.GLDErrorParser_error_text, 1, 0, 2, 0, IMarkerGenerator.SEVERITY_ERROR_RESOURCE), //$NON-NLS-1
 		new ErrorPattern(Messages.GLDErrorParser_warning_general, 2, IMarkerGenerator.SEVERITY_WARNING), //$NON-NLS-1
 		new ErrorPattern(Messages.GLDErrorParser_error_general, 2, IMarkerGenerator.SEVERITY_ERROR_RESOURCE) //$NON-NLS-1

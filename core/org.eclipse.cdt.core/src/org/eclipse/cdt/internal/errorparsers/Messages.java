@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2008 Siemens AG.
+ * Copyright (c) 2006, 2009 Siemens AG and others.
  * All rights reserved. This content and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -26,6 +26,7 @@ public class Messages extends NLS {
 	public static String GLDErrorParser_error_general;
 	public static String GLDErrorParser_error_text;
 	public static String GLDErrorParser_warning_general;
+	public static String GLDErrorParser_warning_text;
 	static {
 		// initialize resource bundle
 		NLS.initializeMessages(BUNDLE_NAME, Messages.class);

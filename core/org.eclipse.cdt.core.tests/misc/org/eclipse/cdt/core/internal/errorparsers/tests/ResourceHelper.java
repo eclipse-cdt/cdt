@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     Andrew Gvozdev - Initial API and implementation
+ *     James Blackburn (Broadcom Corp.)
  *******************************************************************************/
 
 package org.eclipse.cdt.core.internal.errorparsers.tests;
@@ -25,6 +26,9 @@ import java.util.Set;
 import junit.framework.Assert;
 
 import org.eclipse.cdt.core.CCorePlugin;
+import org.eclipse.cdt.core.dom.IPDOMManager;
+import org.eclipse.cdt.core.model.ICProject;
+import org.eclipse.cdt.core.testplugin.CProjectHelper;
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IFolder;
@@ -142,6 +146,18 @@ public class ResourceHelper {
 	 */
 	public static IProject createCDTProject(String projectName) throws OperationCanceledException, CoreException {
 		return createCDTProject(projectName, (String)null);
+	}
+
+	/**
+	 * Create a new style cdt project with an 1 project description
+	 * @param projectName
+	 * @return IProject
+	 * @throws Exception
+	 */
+	public static IProject createCDTProjectWithConfig(String projectName) throws Exception {
+		ICProject proj = CProjectHelper.createNewStileCProject(projectName, IPDOMManager.ID_FAST_INDEXER);
+		resourcesCreated.add(proj.getProject());
+		return proj.getProject();
 	}
 
 	/**

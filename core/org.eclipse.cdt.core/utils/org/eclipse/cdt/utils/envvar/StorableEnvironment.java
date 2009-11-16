@@ -178,19 +178,37 @@ public class StorableEnvironment /*implements Cloneable*/{
 		fIsDirty = false;
 		fIsChanged = false;
 	}
-	
+
+	/**
+	 * Serialize the Storable enviornment into the ICStorageElement
+	 * 
+	 * NB assumes that any variables part of the ISerializeInfo will continue to be serialized
+	 * @param element
+	 */
 	public void serialize(ICStorageElement element){
+		checkBackingSerializeInfo();
+		Map<String, IEnvironmentVariable> map = new HashMap<String, IEnvironmentVariable>();
+		if (fCachedSerialEnv != null)
+			map.putAll(fCachedSerialEnv);
+		if (fDeletedVariables != null) {
+			for (String rem : fDeletedVariables.keySet())
+				map.remove(rem);
+			fDeletedVariables.clear();
+		}
+		if (fVariables != null)
+			map.putAll(fVariables);
+
 		element.setAttribute(ATTRIBUTE_APPEND, Boolean.valueOf(fAppend).toString());
 		element.setAttribute(ATTRIBUTE_APPEND_CONTRIBUTED, Boolean.valueOf(fAppendContributedEnv).toString());
-		if(fVariables != null){
-			Iterator<IEnvironmentVariable> iter = fVariables.values().iterator();
+		if(!map.isEmpty()){
+			Iterator<IEnvironmentVariable> iter = map.values().iterator();
 			while(iter.hasNext()){
 				StorableEnvVar var = (StorableEnvVar)iter.next();
 				ICStorageElement varEl = element.createChild(StorableEnvVar.VARIABLE_ELEMENT_NAME);
 				var.serialize(varEl);
 			}
 		}
-		
+
 		fIsDirty = false;
 	}
 

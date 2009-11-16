@@ -10,6 +10,8 @@
  *******************************************************************************/
 package org.eclipse.cdt.core.envvar;
 
+import java.io.ByteArrayInputStream;
+
 import junit.framework.Test;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
@@ -90,6 +92,63 @@ public class IEnvironmentVariableManagerTests extends TestCase {
 		assertNull(var2);
 	}
 
+
+	public void testNoChangeToOneVariable() throws Exception {
+		final IProject project = ResourceHelper.createCDTProjectWithConfig("envProject");
+
+		// Add another, derived configuration
+		ICProjectDescription prjDesc = CoreModel.getDefault().getProjectDescription(project);
+		ICConfigurationDescription desc = prjDesc.getActiveConfiguration();
+		final String id1 = desc.getId();
+
+		IEnvironmentVariableManager envManager = CCorePlugin.getDefault().getBuildEnvironmentManager();
+		IContributedEnvironment contribEnv = envManager.getContributedEnvironment();
+
+		// Try setting an environment variable
+		final IEnvironmentVariable var = new EnvironmentVariable("FOO", "BAR");
+		final IEnvironmentVariable var1 = new EnvironmentVariable("FOO1", "BAR1");
+		final IEnvironmentVariable var2 = new EnvironmentVariable("FOO2", "BAR2");		
+		contribEnv.addVariable(var, prjDesc.getConfigurationById(id1));
+		contribEnv.addVariable(var1, prjDesc.getConfigurationById(id1));
+		contribEnv.addVariable(var2, prjDesc.getConfigurationById(id1));
+
+		// Check that the variable exists on config1
+		IEnvironmentVariable readVar = envManager.getVariable(var.getName(), prjDesc.getConfigurationById(id1), true);
+		assertEquals(var, readVar);
+		readVar = envManager.getVariable(var1.getName(), prjDesc.getConfigurationById(id1), true);
+		assertEquals(var1, readVar);
+		readVar = envManager.getVariable(var2.getName(), prjDesc.getConfigurationById(id1), true);
+		assertEquals(var2, readVar);
+
+		// Save the project description
+		CoreModel.getDefault().setProjectDescription(project, prjDesc);
+
+		// Close and open the project
+		project.close(null);
+		project.open(null);
+		prjDesc = CoreModel.getDefault().getProjectDescription(project);
+		final IEnvironmentVariable var3 = new EnvironmentVariable("FOO", "BAZ");
+		contribEnv.addVariable(var3, prjDesc.getConfigurationById(id1));
+		readVar = envManager.getVariable(var3.getName(), prjDesc.getConfigurationById(id1), true);
+		assertEquals(var3, readVar);
+		readVar = envManager.getVariable(var1.getName(), prjDesc.getConfigurationById(id1), true);
+		assertEquals(var1, readVar);
+		// Save the project description
+		CoreModel.getDefault().setProjectDescription(project, prjDesc);
+
+		// Close and open the project
+		project.close(null);
+		project.open(null);
+		prjDesc = CoreModel.getDefault().getProjectDescription(project);
+		
+		readVar = envManager.getVariable(var3.getName(), prjDesc.getConfigurationById(id1), true);
+		assertEquals(var3, readVar);
+		readVar = envManager.getVariable(var1.getName(), prjDesc.getConfigurationById(id1), true);
+		assertEquals(var1, readVar);
+		readVar = envManager.getVariable(var2.getName(), prjDesc.getConfigurationById(id1), true);
+		assertEquals(var2, readVar);
+	}
+	
 
 	/**
 	 * This bug checks for an environment load race during project open / import.

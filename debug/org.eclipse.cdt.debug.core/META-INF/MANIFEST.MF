@@ -17,10 +17,10 @@ Export-Package: org.eclipse.cdt.debug.core,
  org.eclipse.cdt.debug.core.model,
  org.eclipse.cdt.debug.core.sourcelookup,
  org.eclipse.cdt.debug.internal.core;x-internal:=true,
- org.eclipse.cdt.debug.internal.core.breakpoints;x-internal:=true,
+ org.eclipse.cdt.debug.internal.core.breakpoints;x-friends:="org.eclipse.cdt.debug.edc",
  org.eclipse.cdt.debug.internal.core.executables;x-internal:=true,
  org.eclipse.cdt.debug.internal.core.model;x-internal:=true,
- org.eclipse.cdt.debug.internal.core.sourcelookup;x-friends:="org.eclipse.cdt.dsf.ui"
+ org.eclipse.cdt.debug.internal.core.sourcelookup;x-friends:="org.eclipse.cdt.dsf.ui,org.eclipse.cdt.debug.edc"
 Require-Bundle: org.eclipse.core.resources;bundle-version="[3.2.0,4.0.0)",
  org.eclipse.debug.core;bundle-version="[3.2.0,4.0.0)",
  org.eclipse.cdt.core;bundle-version="[5.0.0,6.0.0)",

@@ -63,7 +63,7 @@ import org.eclipse.cdt.internal.core.envvar.UserDefinedEnvironmentSupplier;
  * @noextend This class is not intended to be subclassed by clients.
  */
 public class EnvironmentTab extends AbstractCPropertyTab {
-	private static final String SEMI = ";"; //$NON-NLS-1$
+	private static final String SEPARATOR = System.getProperty("path.separator", ";"); //$NON-NLS-1$ //$NON-NLS-2$
 	private static final String LBR = " ["; //$NON-NLS-1$
 	private static final String RBR = "]"; //$NON-NLS-1$
 	private static final UserDefinedEnvironmentSupplier fUserSupplier = EnvironmentVariableManager.fUserSupplier;
@@ -472,12 +472,12 @@ public class EnvironmentTab extends AbstractCPropertyTab {
 					cfgs = new ICConfigurationDescription[] {cfgd};
 				if (cfgd == null)
 					vars.createVariable(name, dlg.t2.trim(), 
-							IEnvironmentVariable.ENVVAR_APPEND,	SEMI);
+							IEnvironmentVariable.ENVVAR_APPEND, SEPARATOR);
 				else
 					for (ICConfigurationDescription cfg : cfgs) { 
 						ce.addVariable(name, dlg.t2.trim(), 
 								IEnvironmentVariable.ENVVAR_APPEND, 
-								SEMI, cfg);
+								SEPARATOR, cfg);
 					}
 				updateData();
 				setPos(name);
@@ -528,7 +528,7 @@ public class EnvironmentTab extends AbstractCPropertyTab {
 						ce.addVariable(
 								name, value, 
 								IEnvironmentVariable.ENVVAR_APPEND, 
-								SEMI, cfg);
+								SEPARATOR, cfg);
 				}
 			}
 			updateData();

@@ -112,6 +112,7 @@ public class TokenUtil {
         case IToken.tSHIFTRASSIGN: 	return Keywords.cpSHIFTRASSIGN;
         case IToken.tSHIFTR:       	return Keywords.cpSHIFTR;
         case IToken.tGTEQUAL:      	return Keywords.cpGTEQUAL;
+        case IToken.tGT_in_SHIFTR:
         case IToken.tGT:           	return Keywords.cpGT;
         case IToken.tSHIFTLASSIGN: 	return Keywords.cpSHIFTLASSIGN;
         case IToken.tELLIPSIS:     	return Keywords.cpELLIPSIS;

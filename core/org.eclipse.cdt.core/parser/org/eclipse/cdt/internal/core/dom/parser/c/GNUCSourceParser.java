@@ -145,7 +145,7 @@ public class GNUCSourceParser extends AbstractGNUSourceCodeParser {
     protected IASTInitializer cInitializerClause(boolean inAggregate) throws EndOfFileException, BacktrackException {
         final int offset = LA(1).getOffset();
         if (LT(1) != IToken.tLBRACE) {
-            IASTExpression assignmentExpression= assignmentExpression();
+            IASTExpression assignmentExpression= expression(ExprKind.eAssignment);
             if (inAggregate && skipTrivialExpressionsInAggregateInitializers) {
             	if (!ASTQueries.canContainName(assignmentExpression))
             		return null;
@@ -446,32 +446,29 @@ public class GNUCSourceParser extends AbstractGNUSourceCodeParser {
 	
 	@Override
 	protected IASTExpression expression() throws BacktrackException, EndOfFileException {
-		return expression(true, true);
+		return expression(ExprKind.eExpression);
 	}
 
 	@Override
-	protected IASTExpression assignmentExpression() throws EndOfFileException, BacktrackException {
-    	return expression(false, true);
-    } 
-
-	@Override
 	protected IASTExpression constantExpression() throws BacktrackException, EndOfFileException {
-    	return expression(false, false);
+    	return expression(ExprKind.eConstant);
     }
 
-	private IASTExpression expression(boolean allowComma, boolean allowAssignment) throws BacktrackException, EndOfFileException {
+    private IASTExpression expression(final ExprKind kind) throws EndOfFileException, BacktrackException {
+    	final boolean allowComma= kind==ExprKind.eExpression;
+    	boolean allowAssignment= kind !=ExprKind.eConstant;
 		int lt1;
 		int conditionCount= 0;
-		CastExpressionOp lastComponent= null;
-		IASTExpression lastExpression= castExpression(true);
+		BinaryOperator lastOperator= null;
+		IASTExpression lastExpression= castExpression(CastExprCtx.eBExpr);
 		loop: while(true) {
 			lt1= LT(1);
 			switch(lt1) {
 	        case IToken.tQUESTION:
 				conditionCount++;
 				// <logical-or> ? <expression> : <assignment-expression>
-				// Precedence: 25 is lower than precedence of logical or; 1 is lower than precedence of expression
-				lastComponent= new CastExpressionOp(lastComponent, lastExpression, lt1, 25, 1);  
+				// Precedence: 25 is lower than precedence of logical or; 0 is lower than precedence of expression
+				lastOperator= new BinaryOperator(lastOperator, lastExpression, lt1, 25, 0);  
 				if (LT(2) ==  IToken.tCOLON) {
 					// Gnu extension: The expression after '?' can be omitted.
 					consume();				// Consume operator
@@ -487,7 +484,7 @@ public class GNUCSourceParser extends AbstractGNUSourceCodeParser {
 				
 				// <logical-or> ? <expression> : <assignment-expression>
 				// Precedence: 0 is lower than precedence of expression; 15 is lower than precedence of assignment; 
-	        	lastComponent= new CastExpressionOp(lastComponent, lastExpression, lt1, 0, 15);  
+	        	lastOperator= new BinaryOperator(lastOperator, lastExpression, lt1, 0, 15);  
 				allowAssignment= true;  // assignment expressions will be subsumed by the conditional expression
 	        	break;
 
@@ -495,7 +492,7 @@ public class GNUCSourceParser extends AbstractGNUSourceCodeParser {
 				if (!allowComma && conditionCount == 0)
 					break loop;
 				// Lowest precedence except inside the conditional expression
-	        	lastComponent= new CastExpressionOp(lastComponent, lastExpression, lt1, 10, 11);
+	        	lastOperator= new BinaryOperator(lastOperator, lastExpression, lt1, 10, 11);
 	        	break;
 
 	        case IToken.tASSIGN:
@@ -512,27 +509,27 @@ public class GNUCSourceParser extends AbstractGNUSourceCodeParser {
 				if (!allowAssignment && conditionCount == 0)
 					break loop;
 	        	// Assignments group right to left
-	        	lastComponent= new CastExpressionOp(lastComponent, lastExpression, lt1, 21, 20); 
+	        	lastOperator= new BinaryOperator(lastOperator, lastExpression, lt1, 21, 20); 
 	        	break;
 	        	
 	        case IToken.tOR:
-	        	lastComponent= new CastExpressionOp(lastComponent, lastExpression, lt1, 30, 31); 
+	        	lastOperator= new BinaryOperator(lastOperator, lastExpression, lt1, 30, 31); 
 	        	break;
 	        case IToken.tAND:
-	        	lastComponent= new CastExpressionOp(lastComponent, lastExpression, lt1, 40, 41);
+	        	lastOperator= new BinaryOperator(lastOperator, lastExpression, lt1, 40, 41);
 	        	break;
 	        case IToken.tBITOR:
-	        	lastComponent= new CastExpressionOp(lastComponent, lastExpression, lt1, 50, 51);
+	        	lastOperator= new BinaryOperator(lastOperator, lastExpression, lt1, 50, 51);
 	        	break;
 	        case IToken.tXOR:
-	        	lastComponent= new CastExpressionOp(lastComponent, lastExpression, lt1, 60, 61);
+	        	lastOperator= new BinaryOperator(lastOperator, lastExpression, lt1, 60, 61);
 	        	break;
 	        case IToken.tAMPER:
-	        	lastComponent= new CastExpressionOp(lastComponent, lastExpression, lt1, 70, 71);
+	        	lastOperator= new BinaryOperator(lastOperator, lastExpression, lt1, 70, 71);
 	        	break;
 	        case IToken.tEQUAL:
             case IToken.tNOTEQUAL:
-	        	lastComponent= new CastExpressionOp(lastComponent, lastExpression, lt1, 80, 81);
+	        	lastOperator= new BinaryOperator(lastOperator, lastExpression, lt1, 80, 81);
 	        	break;
             case IToken.tGT:
             case IToken.tLT:
@@ -540,70 +537,70 @@ public class GNUCSourceParser extends AbstractGNUSourceCodeParser {
             case IToken.tGTEQUAL:
             case IGCCToken.tMAX:
             case IGCCToken.tMIN:
-	        	lastComponent= new CastExpressionOp(lastComponent, lastExpression, lt1, 90, 91);
+	        	lastOperator= new BinaryOperator(lastOperator, lastExpression, lt1, 90, 91);
 	        	break;
             case IToken.tSHIFTL:
             case IToken.tSHIFTR:
-	        	lastComponent= new CastExpressionOp(lastComponent, lastExpression, lt1, 100, 101);
+	        	lastOperator= new BinaryOperator(lastOperator, lastExpression, lt1, 100, 101);
 	        	break;
             case IToken.tPLUS:
             case IToken.tMINUS:
-	        	lastComponent= new CastExpressionOp(lastComponent, lastExpression, lt1, 110, 111);
+	        	lastOperator= new BinaryOperator(lastOperator, lastExpression, lt1, 110, 111);
 	        	break;
             case IToken.tSTAR:
             case IToken.tDIV:
             case IToken.tMOD:
-	        	lastComponent= new CastExpressionOp(lastComponent, lastExpression, lt1, 120, 121);
+	        	lastOperator= new BinaryOperator(lastOperator, lastExpression, lt1, 120, 121);
 	        	break;
             default:
             	break loop;
 			}
 	         
-			consume(); 								// consume operator
-			lastExpression= castExpression(true); 	// next cast expression
+			consume(); 											// consume operator
+			lastExpression= castExpression(CastExprCtx.eBExpr); 	// next cast expression
 		}
 		
     	// Check for incomplete conditional expression
     	if (lt1 != IToken.tEOC && conditionCount > 0)
     		throwBacktrack(LA(1));
     	
-    	return buildExpression(lastComponent, lastExpression);
+    	return buildExpression(lastOperator, lastExpression);
 	}
     
     @Override
-	protected IASTExpression unaryExpression(boolean inBinary) throws EndOfFileException, BacktrackException {
+	protected IASTExpression unaryExpression(CastExprCtx ctx) throws EndOfFileException, BacktrackException {
         switch (LT(1)) {
         case IToken.tSTAR:
-            return unarayExpression(IASTUnaryExpression.op_star, inBinary);
+            return unaryExpression(IASTUnaryExpression.op_star, ctx);
         case IToken.tAMPER:
-            return unarayExpression(IASTUnaryExpression.op_amper, inBinary);
+            return unaryExpression(IASTUnaryExpression.op_amper, ctx);
         case IToken.tPLUS:
-            return unarayExpression(IASTUnaryExpression.op_plus, inBinary);
+            return unaryExpression(IASTUnaryExpression.op_plus, ctx);
         case IToken.tMINUS:
-            return unarayExpression(IASTUnaryExpression.op_minus, inBinary);
+            return unaryExpression(IASTUnaryExpression.op_minus, ctx);
         case IToken.tNOT:
-            return unarayExpression(IASTUnaryExpression.op_not, inBinary);
+            return unaryExpression(IASTUnaryExpression.op_not, ctx);
         case IToken.tBITCOMPLEMENT:
-            return unarayExpression(IASTUnaryExpression.op_tilde, inBinary);
+            return unaryExpression(IASTUnaryExpression.op_tilde, ctx);
         case IToken.tINCR:
-            return unarayExpression(IASTUnaryExpression.op_prefixIncr, inBinary);
+            return unaryExpression(IASTUnaryExpression.op_prefixIncr, ctx);
         case IToken.tDECR:
-            return unarayExpression(IASTUnaryExpression.op_prefixDecr, inBinary);
+            return unaryExpression(IASTUnaryExpression.op_prefixDecr, ctx);
         case IToken.t_sizeof:
         	return parseTypeidInParenthesisOrUnaryExpression(false, consume().getOffset(), 
-        			IASTTypeIdExpression.op_sizeof, IASTUnaryExpression.op_sizeof, inBinary);
+        			IASTTypeIdExpression.op_sizeof, IASTUnaryExpression.op_sizeof, ctx);
         case IGCCToken.t_typeof:
         	return parseTypeidInParenthesisOrUnaryExpression(false, consume().getOffset(), 
-        			IASTTypeIdExpression.op_typeof, IASTUnaryExpression.op_typeof, inBinary);
+        			IASTTypeIdExpression.op_typeof, IASTUnaryExpression.op_typeof, ctx);
         case IGCCToken.t___alignof__:
         	return parseTypeidInParenthesisOrUnaryExpression(false, consume().getOffset(), 
-        			IASTTypeIdExpression.op_alignof, IASTUnaryExpression.op_alignOf, inBinary);
+        			IASTTypeIdExpression.op_alignof, IASTUnaryExpression.op_alignOf, ctx);
         default:
-            return postfixExpression();
+            return postfixExpression(ctx);
         }
     }
 
-    protected IASTExpression postfixExpression() throws EndOfFileException, BacktrackException {
+    protected IASTExpression postfixExpression(CastExprCtx ctx) throws EndOfFileException, BacktrackException {
         IASTExpression firstExpression = null;
         switch (LT(1)) {
         case IToken.tLPAREN:
@@ -625,11 +622,11 @@ public class GNUCSourceParser extends AbstractGNUSourceCodeParser {
         	} catch (BacktrackException bt) {
         	}
         	backup(m); 
-        	firstExpression= primaryExpression();
+        	firstExpression= primaryExpression(ctx);
         	break;
         	
         default:
-            firstExpression = primaryExpression();
+            firstExpression = primaryExpression(ctx);
         	break;
         }
 
@@ -719,7 +716,7 @@ public class GNUCSourceParser extends AbstractGNUSourceCodeParser {
     }
 
     @Override
-	protected IASTExpression primaryExpression() throws EndOfFileException, BacktrackException {
+	protected IASTExpression primaryExpression(CastExprCtx ctx) throws EndOfFileException, BacktrackException {
         IToken t = null;
         IASTLiteralExpression literalExpression = null;
         switch (LT(1)) {
@@ -755,7 +752,7 @@ public class GNUCSourceParser extends AbstractGNUSourceCodeParser {
         		return compoundStatementExpression();
         	}
             t = consume();
-            IASTExpression lhs = expression(true, true); // instead of expression(), to keep the stack smaller
+            IASTExpression lhs = expression(ExprKind.eExpression); // instead of expression(), to keep the stack smaller
             int finalOffset = 0;
             switch (LT(1)) {
             case IToken.tRPAREN:
@@ -1085,7 +1082,7 @@ public class GNUCSourceParser extends AbstractGNUSourceCodeParser {
     					throwBacktrack(LA(1));
 
     				typeofExpression = parseTypeidInParenthesisOrUnaryExpression(false, consume().getOffset(), 
-    						IGNUASTTypeIdExpression.op_typeof, IGNUASTUnaryExpression.op_typeof, false);
+    						IGNUASTTypeIdExpression.op_typeof, IGNUASTUnaryExpression.op_typeof, CastExprCtx.eNotBExpr);
 
     				encounteredTypename= true;
     				endOffset= calculateEndOffset(typeofExpression);
@@ -1705,7 +1702,7 @@ public class GNUCSourceParser extends AbstractGNUSourceCodeParser {
 
             if (LT(1) != IToken.tRBRACKET) {
                 if (!(isStatic || isRestrict || isConst || isVolatile))
-                    exp = assignmentExpression();
+                    exp = expression(ExprKind.eAssignment);
                 else
                     exp = constantExpression();
             }

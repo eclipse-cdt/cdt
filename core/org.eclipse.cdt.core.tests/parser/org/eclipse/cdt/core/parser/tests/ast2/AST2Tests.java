@@ -26,6 +26,7 @@ import org.eclipse.cdt.core.dom.ast.IASTCaseStatement;
 import org.eclipse.cdt.core.dom.ast.IASTCastExpression;
 import org.eclipse.cdt.core.dom.ast.IASTCompositeTypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTCompoundStatement;
+import org.eclipse.cdt.core.dom.ast.IASTConditionalExpression;
 import org.eclipse.cdt.core.dom.ast.IASTDeclSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTDeclarationStatement;
@@ -33,6 +34,7 @@ import org.eclipse.cdt.core.dom.ast.IASTDeclarator;
 import org.eclipse.cdt.core.dom.ast.IASTDoStatement;
 import org.eclipse.cdt.core.dom.ast.IASTElaboratedTypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTExpression;
+import org.eclipse.cdt.core.dom.ast.IASTExpressionList;
 import org.eclipse.cdt.core.dom.ast.IASTExpressionStatement;
 import org.eclipse.cdt.core.dom.ast.IASTFieldReference;
 import org.eclipse.cdt.core.dom.ast.IASTFileLocation;
@@ -5434,6 +5436,59 @@ public class AST2Tests extends AST2BaseTest {
     	}
     }
 
+    // int a,b;
+    // void test() {
+    
+    // 1+2+3 		 				// 1,2,+,3,+
+    // a=b=1   			    		// a,b,1,=,=
+    // 0, a= 1 ? 2,3 : b= 4, 5    	// 0,a,1,2,3,,,b,4,=,?,=,5,,
+    // 1 ? 2 ? 3 : 4 ? 5 : 6 : 7    // 1,2,3,4,5,6,?,?,7,?
+    public void testBinaryExpressionBinding() throws Exception {
+    	StringBuffer[] input= getContents(2);
+    	String code= input[0].toString();
+    	String[] samples= input[1].toString().split("\n");
+    	for (ParserLanguage lang : ParserLanguage.values()) {
+    		for (String s : samples) {
+				final String[] io= s.split("//");
+	    		final String exprStr = io[0].trim();
+	    		final IASTTranslationUnit tu= parse(code + exprStr + ";}", lang);
+	    		final IASTFunctionDefinition fdef= getDeclaration(tu, 1);
+	    		IASTExpression expr= getExpressionOfStatement(fdef, 0);
+				assertEquals("expr: " + exprStr, io[1].trim(), polnishNotation(expr));
+	    		assertEquals(exprStr, expr.getRawSignature());
+	    		checkOffsets(exprStr, expr);
+			}
+    	}
+    }
+
+    // int a,b;
+    // void test(int a=
+    
+    // 1+2+3 		 				// 1,2,+,3,+
+    // a=b=1   			    		// a,b,1,=,=
+    // 1 ? 2,3 : b= 4	    		// 1,2,3,,,b,4,=,?
+    // 1 ? 2 ? 3 : 4 ? 5 : 6 : 7    // 1,2,3,4,5,6,?,?,7,?
+    public void testConstantExpressionBinding() throws Exception {
+    	StringBuffer[] input= getContents(2);
+    	String code= input[0].toString();
+    	String[] samples= input[1].toString().split("\n");
+    	for (ParserLanguage lang : ParserLanguage.values()) {
+    		for (String s : samples) {
+				final String[] io= s.split("//");
+	    		final String exprStr = io[0].trim();
+	    		final IASTTranslationUnit tu= parse(code + exprStr + "){}", lang);
+	    		final IASTFunctionDefinition fdef= getDeclaration(tu, 1);
+	    		IASTFunctionDeclarator fdtor= fdef.getDeclarator();
+	    		IASTParameterDeclaration pdecl= (IASTParameterDeclaration) fdtor.getChildren()[1];
+	    		IASTExpression expr= ((IASTInitializerExpression) pdecl.getDeclarator().getInitializer()).getExpression();
+				assertEquals("expr: " + exprStr, io[1].trim(), polnishNotation(expr));
+	    		assertEquals(exprStr, expr.getRawSignature());
+	    		checkOffsets(exprStr, expr);
+			}
+    	}
+    }
+
+
 	private void checkOffsets(String exprStr, IASTExpression expr) {
 		if (expr instanceof IASTBinaryExpression) {
 			IASTBinaryExpression bexpr= (IASTBinaryExpression) expr;
@@ -5484,7 +5539,24 @@ public class AST2Tests extends AST2BaseTest {
 	}
 
 	private void polnishNotation(IASTExpression expr, StringBuilder buf) {
-		if (expr instanceof IASTBinaryExpression) {
+		if (expr instanceof IASTConditionalExpression) {
+			IASTConditionalExpression bexpr= (IASTConditionalExpression) expr;
+			polnishNotation(bexpr.getLogicalConditionExpression(), buf);
+			buf.append(',');
+			polnishNotation(bexpr.getPositiveResultExpression(), buf);
+			buf.append(',');
+			polnishNotation(bexpr.getNegativeResultExpression(), buf);
+			buf.append(',');
+			buf.append('?');
+		} else if (expr instanceof IASTExpressionList) {
+			IASTExpressionList bexpr= (IASTExpressionList) expr;
+			IASTExpression[] args = bexpr.getExpressions();
+			for (IASTExpression e : args) {
+				polnishNotation(e, buf);
+				buf.append(',');
+			}
+			buf.append(',');
+		} else if (expr instanceof IASTBinaryExpression) {
 			IASTBinaryExpression bexpr= (IASTBinaryExpression) expr;
 			polnishNotation(bexpr.getOperand1(), buf);
 			buf.append(',');

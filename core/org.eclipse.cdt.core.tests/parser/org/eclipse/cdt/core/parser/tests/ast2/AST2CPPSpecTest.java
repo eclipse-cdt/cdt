@@ -4395,7 +4395,8 @@ public class AST2CPPSpecTest extends AST2SpecBaseTest {
 	// X<(1>2)> x2; // OK
 	// template<class T> class Y {  };
 	// Y< X<1> > x3; // OK
-	// Y<X<6>> 1> > x4; // OK: Y< X< (6>>1) > >
+	// // with C++0x this is no longer valid:
+	// // Y<X<6>> 1> > x4; // OK: Y< X< (6>>1) > >
 	public void test14_2s3() throws Exception {
 		parse(getAboveComment(), ParserLanguage.CPP, true, 0);
 	}

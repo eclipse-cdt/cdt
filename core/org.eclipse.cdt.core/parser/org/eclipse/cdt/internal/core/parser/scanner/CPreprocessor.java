@@ -171,6 +171,7 @@ public class CPreprocessor implements ILexerLog, IScanner, IAdaptable {
 
     private int fContentAssistLimit= -1;
 	private boolean fHandledCompletion= false;
+	private boolean fSplitShiftRightOperator= false;
 
     // state information
     private final CharArrayMap<PreprocessorMacro> fMacroDictionary = new CharArrayMap<PreprocessorMacro>(512);
@@ -238,6 +239,9 @@ public class CPreprocessor implements ILexerLog, IScanner, IAdaptable {
         }
     }
 
+    public void setSplitShiftROperator(boolean val) {
+    	fSplitShiftRightOperator= val;
+    }
 
 	public void setComputeImageLocations(boolean val) {
     	fLexOptions.fCreateImageLocations= val;
@@ -442,7 +446,8 @@ public class CPreprocessor implements ILexerLog, IScanner, IAdaptable {
     }
 
     /**
-     * Returns the next token from the preprocessor without concatenating string literals.
+     * Returns the next token from the preprocessor without concatenating string literals
+     * and also without splitting the shift-right operator.
      */
     private Token fetchToken() throws OffsetLimitReachedException {
     	if (fIsFirstFetchToken) {
@@ -537,7 +542,6 @@ public class CPreprocessor implements ILexerLog, IScanner, IAdaptable {
     	case IToken.tLSTRING:
         case IToken.tUTF16STRING:
         case IToken.tUTF32STRING:
-        	
     		StringType st = StringType.fromToken(tt1);
     		Token t2;
     		StringBuffer buf= null;
@@ -580,6 +584,18 @@ public class CPreprocessor implements ILexerLog, IScanner, IAdaptable {
     			image[image.length - 1]= '"';
     			t1= new TokenWithImage(st.getTokenValue(), null, t1.getOffset(), endOffset, image);
     		}
+    		break;
+    		
+        case IToken.tSHIFTR:
+        	if (fSplitShiftRightOperator) {
+        		int offset= t1.getOffset();
+        		endOffset= t1.getEndOffset();
+        		
+        		t1.setType(IToken.tGT_in_SHIFTR);
+        		t1.setOffset(offset, offset+1);
+        		t2= new Token(IToken.tGT_in_SHIFTR, t1.fSource, offset+1, endOffset);
+        		pushbackToken(t2);
+        	}
     	}
 
     	if (fLastToken != null) {

@@ -68,12 +68,11 @@ public interface IScanner {
 	public void setContentAssistMode(int offset);
 
 	/**
-	 * Method has no effect.
+	 * Instructs the scanner to split tokens of kind {@link IToken#tSHIFTR} into two tokens of
+	 * kind {@link IToken#tGT_in_SHIFTR}.
 	 * @noreference This method is not intended to be referenced by clients.
-	 * @since 4.0
 	 */
-	@Deprecated
-	public void setScanComments(boolean val);
+	public void setSplitShiftROperator(boolean val);
 	
 	/**
 	 * Turns on/off creation of image locations. 
@@ -106,4 +105,10 @@ public interface IScanner {
 	 * @noreference This method is not intended to be referenced by clients.
 	 */
 	public int getCodeBranchNesting();
+	
+	/**
+	 * @noreference This method is not intended to be referenced by clients.
+	 */
+	@Deprecated
+	public void setScanComments(boolean val);
 }

@@ -94,7 +94,11 @@ public interface IToken {
 	int tDOT = 50;
 	int tDIVASSIGN = 51;
 	int tDIV = 52;
-	
+	/**
+	 * @see IScanner#setSplitShiftROperator(boolean) 
+	 * @since 5.2 
+	 */
+	int tGT_in_SHIFTR= 53;
 	/** @deprecated use {@link #tAND} */ @Deprecated int t_and = 54;
 	/** @deprecated use {@link #tAMPERASSIGN} */ @Deprecated int t_and_eq = 55;
 	int t_asm = 56;

@@ -25,6 +25,7 @@ import org.eclipse.cdt.core.dom.ast.IASTFunctionDefinition;
 import org.eclipse.cdt.core.dom.ast.IASTIdExpression;
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
+import org.eclipse.cdt.core.dom.ast.IASTProblemStatement;
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
 import org.eclipse.cdt.core.dom.ast.IASTTypeId;
 import org.eclipse.cdt.core.dom.ast.IBasicType;
@@ -4242,6 +4243,60 @@ public class AST2TemplateTests extends AST2BaseTest {
 	//	  func1  (a);
 	//	}
 	public void testFunctionTemplateOrdering_294539() throws Exception {
+		final String code= getAboveComment();
+		parseAndCheckBindings(code, ParserLanguage.CPP);
+	}
+	
+	//	template<typename T> class CT {};
+	//	template<int I> class CTI {};
+	//
+	//	int test() {
+	//		int a;
+	//		CT<CT<int>> x;
+	//		a= 1 >> 2;
+	//		return a;
+	//	}
+	public void testClosingAngleBrackets1_261268() throws Exception {
+		final String code= getAboveComment();
+		parseAndCheckBindings(code, ParserLanguage.CPP);
+	}
+
+	//	template<typename T> class CT {};
+	//	template<int I> class CTI {};
+	//
+	//	int test() {
+	//		int a;
+	//		a= 1 > > 3;         // must be syntax error
+	//		return a;
+	//	}
+	public void testClosingAngleBrackets2_261268() throws Exception {
+		final String code= getAboveComment();
+		IASTTranslationUnit tu = parse(code, ParserLanguage.CPP, true, false); 
+		IASTFunctionDefinition fdef= getDeclaration(tu, 2);
+		IASTProblemStatement p1= getStatement(fdef, 1);
+	}
+
+	//	template<typename T> class CT {};
+	//  typedef int TInt;
+	//	int test() {
+	//		int a;
+	//		CT<CT<TInt>> x; // declaration
+	//      int y= a<a<a>> a;      // binary expression
+	//		a<a<a>> a;      		// binary expression via ambiguity
+	//      y= a < a >> (1+2);	    // binary expression
+	//      a < a >> (1+2);	   		// binary expression via ambiguity
+	//	}
+	public void testClosingAngleBracketsAmbiguity_261268() throws Exception {
+		final String code= getAboveComment();
+		parseAndCheckBindings(code, ParserLanguage.CPP);
+	}
+	
+	//	#define OPASSIGN(x) x##=
+	//	int test() {
+	//		int a=1;
+	//      a OPASSIGN(>>) 1;
+	//	}
+	public void testTokenPasteShiftROperaotr_261268() throws Exception {
 		final String code= getAboveComment();
 		parseAndCheckBindings(code, ParserLanguage.CPP);
 	}

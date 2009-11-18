@@ -30,11 +30,6 @@ public interface IToken {
 	public void setNext(IToken t);
 	public void setType(int i);	
 
-	/**
-	 * @noreference This method is not intended to be referenced by clients.
-	 */
-	@Deprecated
-	public boolean isOperator();
 	
 	// Token types
 	int FIRST_RESERVED_PREPROCESSOR= -200;
@@ -99,6 +94,7 @@ public interface IToken {
 	 * @since 5.2 
 	 */
 	int tGT_in_SHIFTR= 53;
+	
 	/** @deprecated use {@link #tAND} */ @Deprecated int t_and = 54;
 	/** @deprecated use {@link #tAMPERASSIGN} */ @Deprecated int t_and_eq = 55;
 	int t_asm = 56;
@@ -153,6 +149,7 @@ public interface IToken {
 	int t_short = 104;
 	int t_sizeof = 105;
 	int t_static = 106;
+	/** @since 5.2 */ int t_static_assert = 5010;
 	int t_static_cast = 107;
 	int t_signed = 108;
 	int t_struct = 109;
@@ -210,4 +207,9 @@ public interface IToken {
 	int LAST_RESERVED_IExtensionToken	= 299;
 	
 	
+	/**
+	 * @noreference This method is not intended to be referenced by clients.
+	 */
+	@Deprecated
+	public boolean isOperator();
 }

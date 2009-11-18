@@ -509,12 +509,14 @@ public abstract class AbstractGNUSourceCodeParser implements ISourceCodeParser {
         return node.getOffset() + node.getLength();
     }
 
-    protected final void setRange(IASTNode n, IASTNode from) {
+    protected final <T extends IASTNode> T setRange(T n, IASTNode from) {
     	((ASTNode) n).setOffsetAndLength((ASTNode) from);
+    	return n;
     }
 
-    protected final void setRange(IASTNode n, int offset, int endOffset) {
+    protected final <T extends IASTNode> T setRange(T n, int offset, int endOffset) {
     	((ASTNode) n).setOffsetAndLength(offset, endOffset-offset);
+    	return n;
     }
     
     protected final void adjustLength(IASTNode n, IASTNode endNode) {

@@ -7733,5 +7733,22 @@ public class AST2CPPTests extends AST2BaseTest {
         parseAndCheckBindings(code, ParserLanguage.CPP);		
 	}
 
+	//	const unsigned int EIGHT= 8;
+	//	static_assert(sizeof(long) >= EIGHT, "no 64-bit support");
+	//	namespace ns {
+	//	   static_assert(sizeof(long) >= 4, "no 32-bit support");
+	//	}
+	//	template <typename T> class basic_string {
+	//		static_assert(T::value, "bla");
+	//	};
+	//	void do_something() {
+	//		struct VMPage {
+	//		};
+	//		static_assert(sizeof(VMPage) == 1, "bla");
+	//	}
+	public void testStaticAssertions_294730() throws Exception {
+		final String code= getAboveComment();
+		parseAndCheckBindings(code, ParserLanguage.CPP);
+	}
 }
 

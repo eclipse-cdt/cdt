@@ -77,6 +77,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTFunctionDefinition;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTFunctionWithTryBlock;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTIfStatement;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTLinkageSpecification;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTLiteralExpression;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTNamedTypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTNamespaceAlias;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTNamespaceDefinition;
@@ -88,6 +89,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTReferenceOperator;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTSimpleDeclSpecifier;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTSimpleTypeConstructorExpression;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTSimpleTypeTemplateParameter;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTStaticAssertDeclaration;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTSwitchStatement;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTemplateDeclaration;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTemplateId;
@@ -1293,10 +1295,7 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
         case IToken.tLSTRING:
         case IToken.tUTF16STRING:
         case IToken.tUTF32STRING:
-            t = consume();
-            literalExpression = nodeFactory.newLiteralExpression(IASTLiteralExpression.lk_string_literal, t.getImage()); 
-            ((ASTNode) literalExpression).setOffsetAndLength(t.getOffset(), t.getEndOffset() - t.getOffset());
-            return literalExpression;
+            return stringLiteral();
         case IToken.tCHAR:
         case IToken.tLCHAR:
         case IToken.tUTF16CHAR:
@@ -1356,6 +1355,22 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
         }
 
     }
+
+	private ICPPASTLiteralExpression stringLiteral() throws EndOfFileException, BacktrackException {
+		switch(LT(1)) {
+        case IToken.tSTRING:
+        case IToken.tLSTRING:
+        case IToken.tUTF16STRING:
+        case IToken.tUTF32STRING:
+        	break;
+        default:
+        	throwBacktrack(LA(1));
+		}
+		IToken t= consume();
+		ICPPASTLiteralExpression r= nodeFactory.newLiteralExpression(IASTLiteralExpression.lk_string_literal, t.getImage());
+		setRange(r, t.getOffset(), t.getEndOffset());
+		return r;
+	}
 
     protected IASTExpression specialCastExpression(int kind) throws EndOfFileException, BacktrackException {
         final int offset = LA(1).getOffset();
@@ -1458,6 +1473,25 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
 	}
 
 
+    /**
+     * static_assert-declaration:
+               static_assert ( constant-expression  ,  string-literal  ) ;
+     */
+    private ICPPASTStaticAssertDeclaration staticAssertDeclaration() throws EndOfFileException, BacktrackException {
+        int offset= consume(IToken.t_static_assert).getOffset(); 
+        consume(IToken.tLPAREN);
+        IASTExpression e= constantExpression();
+        int endOffset= calculateEndOffset(e);
+        ICPPASTLiteralExpression lit= null;
+        if (LT(1) != IToken.tEOC) {
+        	consume(IToken.tCOMMA);
+        	lit= stringLiteral();
+        	consume(IToken.tRPAREN);
+        	endOffset= consume(IToken.tSEMI).getEndOffset();
+        }
+        ICPPASTStaticAssertDeclaration assertion = nodeFactory.newStaticAssertion(e, lit); 
+        return setRange(assertion, offset, endOffset);
+    }
 
     /**
      * Implements Linkage specification in the ANSI C++ grammar.
@@ -1690,6 +1724,8 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
             return namespaceDefinitionOrAlias();
         case IToken.t_using:
             return usingClause();
+        case IToken.t_static_assert:
+        	return staticAssertDeclaration();
         case IToken.t_export:
         case IToken.t_template:
             return templateDeclaration(option);

@@ -82,6 +82,8 @@ public class Keywords {
 	public static final String SIGNED = "signed"; //$NON-NLS-1$
 	public static final String SIZEOF = "sizeof"; //$NON-NLS-1$
 	public static final String STATIC = "static"; //$NON-NLS-1$
+	/** @since 5.2 */
+	public static final String STATIC_ASSERT = "static_assert"; //$NON-NLS-1$
 	public static final String STATIC_CAST = "static_cast"; //$NON-NLS-1$
 	public static final String STRUCT = "struct"; //$NON-NLS-1$
 	public static final String SWITCH = "switch"; //$NON-NLS-1$
@@ -162,6 +164,8 @@ public class Keywords {
 	public static final char[] cSIGNED = "signed".toCharArray(); //$NON-NLS-1$
 	public static final char[] cSIZEOF = "sizeof".toCharArray(); //$NON-NLS-1$
 	public static final char[] cSTATIC = "static".toCharArray(); //$NON-NLS-1$
+	/** @since 5.2 */
+	public static final char[] cSTATIC_ASSERT = "static_assert".toCharArray(); //$NON-NLS-1$
 	public static final char[] cSTATIC_CAST = "static_cast".toCharArray(); //$NON-NLS-1$
 	public static final char[] cSTRUCT = "struct".toCharArray(); //$NON-NLS-1$
 	public static final char[] cSWITCH = "switch".toCharArray(); //$NON-NLS-1$
@@ -339,6 +343,7 @@ public class Keywords {
         cppkeywords.put(Keywords.cPROTECTED, IToken.t_protected); 
         cppkeywords.put(Keywords.cPUBLIC, IToken.t_public); 
         cppkeywords.put(Keywords.cREINTERPRET_CAST, IToken.t_reinterpret_cast); 
+        cppkeywords.put(Keywords.cSTATIC_ASSERT, IToken.t_static_assert);
         cppkeywords.put(Keywords.cSTATIC_CAST, IToken.t_static_cast); 
         cppkeywords.put(Keywords.cTEMPLATE, IToken.t_template); 
         cppkeywords.put(Keywords.cTHIS, IToken.t_this); 

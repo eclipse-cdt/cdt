@@ -151,6 +151,7 @@ public class KeywordSets {
 		DECLARATION_CPP.add( Keywords.USING );
 		DECLARATION_CPP.add( Keywords.NAMESPACE );
 		DECLARATION_CPP.add( Keywords.EXPORT );
+		DECLARATION_CPP.add( Keywords.STATIC_ASSERT );
 	}
 	
 	private static final Set<String> DECLARATION_C; 
@@ -453,6 +454,7 @@ public class KeywordSets {
 		ALL_CPP.add( Keywords.SIGNED);
 		ALL_CPP.add( Keywords.SIZEOF);
 		ALL_CPP.add( Keywords.STATIC);
+		ALL_CPP.add( Keywords.STATIC_ASSERT);
 		ALL_CPP.add( Keywords.STATIC_CAST);
 		ALL_CPP.add( Keywords.STRUCT);
 		ALL_CPP.add( Keywords.SWITCH);
@@ -534,6 +536,7 @@ public class KeywordSets {
 		KEYWORDS_CPP.add( Keywords.RETURN );
 		KEYWORDS_CPP.add( Keywords.SIZEOF );
 		KEYWORDS_CPP.add( Keywords.STATIC );
+		KEYWORDS_CPP.add( Keywords.STATIC_ASSERT );
 		KEYWORDS_CPP.add( Keywords.STATIC_CAST );
 		KEYWORDS_CPP.add( Keywords.STRUCT );
 		KEYWORDS_CPP.add( Keywords.SWITCH );

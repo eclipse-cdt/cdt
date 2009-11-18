@@ -57,6 +57,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTLinkageSpecification;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTNamespaceAlias;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTNamespaceDefinition;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTQualifiedName;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTStaticAssertDeclaration;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTemplateDeclaration;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTemplateId;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTemplateSpecialization;
@@ -332,6 +333,8 @@ public class CModelBuilder2 implements IContributedModelBuilder {
 			// TODO [cmodel] asm declaration?
 		} else if (declaration instanceof IASTProblemDeclaration) {
 			// TODO [cmodel] problem declaration?
+		} else if (declaration instanceof ICPPASTStaticAssertDeclaration) {
+			// ignore
 		} else {
 			assert false : "TODO: " + declaration.getClass().getName(); //$NON-NLS-1$
 		}

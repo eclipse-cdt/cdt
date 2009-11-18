@@ -76,9 +76,24 @@ public class IncludeReferenceProxy extends CElementGrouping {
 	 */
 	@Override
 	public boolean equals(Object obj) {
-		return reference.equals(obj);
+		if (this == obj) {
+			return true;
+		}
+		if (!(obj instanceof IncludeReferenceProxy)) {
+			return false;
+		}
+		IncludeReferenceProxy other = (IncludeReferenceProxy) obj;
+		return reference.equals(other.reference);
 	}
 
+	/*
+	 * @see java.lang.Object#hashCode()
+	 */
+	@Override
+	public int hashCode() {
+		return reference.hashCode();
+	}
+	
 	/* (non-Javadoc)
 	 * @see java.lang.Object#toString()
 	 */

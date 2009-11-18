@@ -334,6 +334,60 @@ public class IEnvironmentVariableManagerTests extends TestCase {
 	}
 
 	/**
+	 * Tests file system change of the settings file without recreating the project description
+	 */
+	public void testSettingsOverwriteBug295436() throws Exception {
+		final IProject project = ResourceHelper.createCDTProjectWithConfig("envProject");
+
+		// Add another, derived configuration
+		ICProjectDescription prjDesc = CoreModel.getDefault().getProjectDescription(project);
+		ICConfigurationDescription desc = prjDesc.getActiveConfiguration();
+		final String id1 = desc.getId();  	      // Config 1's ID
+		final String id2 = CDataUtil.genId(id1);  // Config 2's ID
+		prjDesc.createConfiguration(id2, "config2", desc);
+		CoreModel.getDefault().setProjectDescription(project, prjDesc);
+
+		// Get all the configurations
+		prjDesc = CoreModel.getDefault().getProjectDescription(project);
+		ICConfigurationDescription[] descs = prjDesc.getConfigurations();
+		assertTrue(descs.length == 2);
+
+		IEnvironmentVariableManager envManager = CCorePlugin.getDefault().getBuildEnvironmentManager();
+		IContributedEnvironment contribEnv = envManager.getContributedEnvironment();
+
+		assertFalse(descs[0].isModified());
+		assertFalse(descs[1].isModified());
+
+		// Try setting an environment variable
+		final IEnvironmentVariable var = new EnvironmentVariable("FOO", "BAR");
+		contribEnv.addVariable(var, prjDesc.getConfigurationById(id1));
+		assertTrue(prjDesc.getConfigurationById(id1).isModified());
+		assertFalse(prjDesc.getConfigurationById(id2).isModified());
+		CoreModel.getDefault().setProjectDescription(project, prjDesc);
+
+		// Backup the settings file
+		project.getFile(".settings/org.eclipse.cdt.core.prefs.bak").create(
+				project.getFile(".settings/org.eclipse.cdt.core.prefs").getContents(), true, null);
+
+		// Change the environment variable
+		final IEnvironmentVariable var2 = new EnvironmentVariable("FOO", "BOO");
+		contribEnv.addVariable(var2, prjDesc.getConfigurationById(id1));
+		assertEquals(var2, envManager.getVariable(var2.getName(), prjDesc.getConfigurationById(id1), true));
+		CoreModel.getDefault().setProjectDescription(project, prjDesc);
+
+		// clean desc should be updated when the preference file is overwritten
+		final ICProjectDescription cleanDesc = CoreModel.getDefault().getProjectDescription(project);
+		assertEquals(contribEnv.getVariable(var.getName(), cleanDesc.getConfigurationById(id1)).getValue(), var2.getValue());
+
+		// Replace the settings with it's backup
+		project.getFile(".settings/org.eclipse.cdt.core.prefs").setContents(
+				project.getFile(".settings/org.eclipse.cdt.core.prefs.bak").getContents(), true, false, null);
+		// check that cleanDesc has been updated
+		assertEquals(contribEnv.getVariable(var.getName(), cleanDesc.getConfigurationById(id1)).getValue(), var.getValue());
+		assertEquals(var, envManager.getVariable(var.getName(), cleanDesc.getConfigurationById(id1), true));
+	}
+
+	/**
 	 * Test that on deleting and recreating the project variables haven't persisted
 	 * @throws Exception
 	 */

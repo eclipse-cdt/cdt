@@ -10,6 +10,9 @@
  *******************************************************************************/
 package org.eclipse.cdt.utils.envvar;
 
+import java.lang.ref.Reference;
+import java.lang.ref.WeakReference;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -21,6 +24,7 @@ import org.eclipse.cdt.core.envvar.IEnvironmentVariable;
 import org.eclipse.cdt.core.settings.model.ICStorageElement;
 import org.eclipse.cdt.utils.envvar.StorableEnvironmentLoader.ISerializeInfo;
 import org.eclipse.core.runtime.preferences.IEclipsePreferences;
+import org.eclipse.core.runtime.preferences.IPreferenceNodeVisitor;
 import org.eclipse.core.runtime.preferences.IEclipsePreferences.INodeChangeListener;
 import org.eclipse.core.runtime.preferences.IEclipsePreferences.IPreferenceChangeListener;
 import org.eclipse.core.runtime.preferences.IEclipsePreferences.NodeChangeEvent;
@@ -74,10 +78,15 @@ public class PrefsStorableEnvironment extends StorableEnvironment {
 		/** boolean indicating whether preferences have changed */
 		private volatile boolean prefsChanged = true;
 
-		/** The node we're registered on */
-		volatile IEclipsePreferences prefs;
+		private Set<IEclipsePreferences> registeredOn = Collections.synchronizedSet(new HashSet<IEclipsePreferences>());
 
-		public PrefListener(ISerializeInfo info) {
+		/** The node we're registered on */
+		volatile IEclipsePreferences root;
+
+		Reference<PrefsStorableEnvironment> parentRef;
+
+		public PrefListener(PrefsStorableEnvironment parent, ISerializeInfo info) {
+			this.parentRef = new WeakReference<PrefsStorableEnvironment>(parent);
 			register (info);
 		}
 
@@ -85,15 +94,15 @@ public class PrefsStorableEnvironment extends StorableEnvironment {
 		 * Remove the listener
 		 */
 		public void remove() {
-			if (prefs != null) {
+			if (root != null) {
 				try {
-					prefs.removePreferenceChangeListener(this);
-					prefs.removeNodeChangeListener(this);
+					removeListener();
 				} catch (Exception e) {
+					CCorePlugin.log(e);
 					// Catch all exceptions, this is called during parent finalization which we don't want to prevent...
 					//   e.g. IllegalStateException may occur during de-register
 				}
-				prefs = null;
+				root = null;
 			}
 		}
 
@@ -101,14 +110,42 @@ public class PrefsStorableEnvironment extends StorableEnvironment {
 		 * Register the Prefs change listener
 		 */
 		private void register(ISerializeInfo info) {
-			if (prefs != null)
+			if (root != null)
 				return;
-			prefs = (IEclipsePreferences)info.getNode();
-			if (prefs != null) {
-				prefs.addPreferenceChangeListener(this);
-				prefs.addNodeChangeListener(this);
-			}
+			root = (IEclipsePreferences)info.getNode();
+			if (root != null)
+				addListener(root);
 			prefsChanged = true;
+		}
+
+		private void addListener(IEclipsePreferences node) {
+			try {
+				node.accept(new IPreferenceNodeVisitor() {
+					public boolean visit(IEclipsePreferences node) throws BackingStoreException {
+						// {environment/{project|workspace/}config_name/variable/...
+						node.addPreferenceChangeListener(PrefListener.this);
+						node.addNodeChangeListener(PrefListener.this);
+						registeredOn.add(node);
+						return true;
+					}
+				});
+			} catch (BackingStoreException e) {
+				CCorePlugin.log(e);
+			}
+		}
+		private void removeListener() {
+			synchronized(registeredOn) {
+				for (IEclipsePreferences pref : registeredOn) {
+					try {
+						// {environment/{project|workspace/}config_name/variable/...
+						pref.removePreferenceChangeListener(PrefListener.this);
+						pref.removeNodeChangeListener(PrefListener.this);
+					} catch (IllegalStateException e) {
+						// Catch all exceptions, this is called during parent finalization which we don't want to prevent...
+						//   e.g. IllegalStateException may occur during de-register
+					}
+				}
+			}
 		}
 
 		/**
@@ -116,21 +153,27 @@ public class PrefsStorableEnvironment extends StorableEnvironment {
 		 * @return whether there's been a change in the backing store
 		 */
 		public boolean preferencesChanged(ISerializeInfo info) {
-			if (prefs == null)
+			if (root == null)
 				register(info);
 
 			boolean retVal = prefsChanged;
 			// If we're registered for change, then unset
-			if (prefs != null)
+			if (root != null)
 				prefsChanged = false;
 			return retVal;
 		}
 
 		public void preferenceChange(PreferenceChangeEvent event) {
 			prefsChanged = true;
+			if (parentRef.get() == null)
+				removeListener();
 		}
 		public void added(NodeChangeEvent event) {
 			prefsChanged = true;
+			if (parentRef.get() == null)
+				removeListener();
+			else
+				addListener((IEclipsePreferences)event.getChild());
 		}
 		public void removed(NodeChangeEvent event) {
 			prefsChanged = true;
@@ -219,7 +262,7 @@ public class PrefsStorableEnvironment extends StorableEnvironment {
 		if (fPrefsChangedListener != null)
 			fPrefsChangedListener.remove();
  		fSerialEnv = serializeInfo;
- 		fPrefsChangedListener = new PrefListener(fSerialEnv);
+ 		fPrefsChangedListener = new PrefListener(this, fSerialEnv);
 
 		// Update the cached state
 		checkBackingSerializeInfo();

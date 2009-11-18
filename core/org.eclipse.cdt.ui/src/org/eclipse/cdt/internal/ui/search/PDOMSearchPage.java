@@ -562,6 +562,8 @@ public class PDOMSearchPage extends DialogPage implements ISearchPage {
 				previousPatterns = settings.getArray(STORE_PREVIOUS_PATTERNS);
 				if (previousPatterns != null)
 					patternCombo.setItems(previousPatterns);
+				
+				patternCombo.setVisibleItemCount(15);
 
 				// Initialize the selection
 				ISelection selection = getContainer().getSelection();
@@ -619,6 +621,9 @@ public class PDOMSearchPage extends DialogPage implements ISearchPage {
 					patternCombo.setText(textSelection.getText());
 					// TODO it might be good to do a selection parse to ensure that
 					// the selection is valid.
+				}
+				if (patternCombo.getText().trim().length() == 0 && previousPatterns.length > 0) {
+					patternCombo.setText(previousPatterns[0]);
 				}
 
 				caseSensitiveButton.setSelection(settings.getBoolean(STORE_CASE_SENSITIVE));

@@ -33,6 +33,7 @@ import org.eclipse.cdt.internal.core.settings.model.xml.XmlStorageElement;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
+import org.eclipse.core.runtime.preferences.IEclipsePreferences;
 import org.osgi.service.prefs.BackingStoreException;
 import org.osgi.service.prefs.Preferences;
 import org.w3c.dom.Document;
@@ -45,7 +46,6 @@ import org.xml.sax.SAXException;
  * storing and loading environment variable settings from eclipse properties
  * 
  * @since 3.0
- *
  */
 public abstract class StorableEnvironmentLoader {
 
@@ -56,15 +56,32 @@ public abstract class StorableEnvironmentLoader {
 	 * @noimplement This interface is not intended to be implemented by clients.
 	 */
 	public interface ISerializeInfo{
+
 		/**
+		 * {@link IEclipsePreferences} root node in the Preference store
 		 * @return the Preferences Node into which environment should be (de) serialized
 		 */
 		Preferences getNode();
 
 		/**
+		 * Name in the preference store
 		 * @return the key in the preference node to use for loading preferences 
 		 */
 		String getPrefName();
+	}
+
+	/**
+	 * Creates the StorableEnvironment clone for a new configuration, say,
+	 * based on an existing configuration
+	 *
+	 * @param context the configuration / workspace context the configuration is to be cloned for
+	 * @param base the base environment to copy
+	 * @return a StorableEnvironment clone of the configuration's environment
+	 * @since 5.2
+	 */
+	public StorableEnvironment cloneEnvironmentWithContext(Object context, StorableEnvironment base, boolean isReadOnly) {
+		PrefsStorableEnvironment env = new PrefsStorableEnvironment(base, getSerializeInfo(context), isReadOnly);			
+		return env;
 	}
 
 	/**
@@ -85,12 +102,12 @@ public abstract class StorableEnvironmentLoader {
 	 * @param readOnly
 	 * @return StorableEnvironment
 	 */
-	protected StorableEnvironment loadEnvironment(Object context, boolean readOnly){
+	protected StorableEnvironment loadEnvironment(Object context, boolean readOnly) {
 		ISerializeInfo serializeInfo = getSerializeInfo(context);
 		if(serializeInfo == null)
 			return null;
 
-		return new StorableEnvironment(serializeInfo, readOnly);
+		return new PrefsStorableEnvironment(serializeInfo, readOnly);
 	}
 	
 	/*
@@ -103,13 +120,18 @@ public abstract class StorableEnvironmentLoader {
 		ISerializeInfo serializeInfo = getSerializeInfo(context);
 		if(serializeInfo == null)
 			return;
-		
-		ByteArrayOutputStream stream = storeEnvironmentToStream(env);
-		if(stream == null)
-			return;
-		storeOutputStream(stream,serializeInfo.getNode(), serializeInfo.getPrefName(), flush);
-		
-		env.setDirty(false);
+
+		if (env instanceof PrefsStorableEnvironment) {
+			((PrefsStorableEnvironment)env).serialize();
+		} else {
+			// Backwards compatibility
+			ByteArrayOutputStream stream = storeEnvironmentToStream(env);
+			if(stream == null)
+				return;
+			storeOutputStream(stream,serializeInfo.getNode(), serializeInfo.getPrefName(), flush);
+			
+			env.setDirty(false);
+		}
 	}
 	
 	/**
@@ -189,6 +211,7 @@ public abstract class StorableEnvironmentLoader {
 	}
 
 	/**
+	 * Preferences can be encoded as a single long ICStorageElement String
 	 * @return String value stored in the node or null if no such value exists.
 	 */
 	static String loadPreferenceNode(ISerializeInfo serializeInfo) {

@@ -10,6 +10,8 @@
  *******************************************************************************/
 package org.eclipse.cdt.core.envvar;
 
+import java.io.ByteArrayInputStream;
+
 import junit.framework.Test;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
@@ -68,9 +70,14 @@ public class IEnvironmentVariableManagerTests extends TestCase {
 		IEnvironmentVariableManager envManager = CCorePlugin.getDefault().getBuildEnvironmentManager();
 		IContributedEnvironment contribEnv = envManager.getContributedEnvironment();
 
+		assertFalse(descs[0].isModified());
+		assertFalse(descs[1].isModified());
+
 		// Try setting an environment variable
 		final IEnvironmentVariable var = new EnvironmentVariable("FOO", "BAR");
 		contribEnv.addVariable(var, prjDesc.getConfigurationById(id1));
+		assertTrue(prjDesc.getConfigurationById(id1).isModified());
+		assertFalse(prjDesc.getConfigurationById(id2).isModified());
 
 		// Check that the variable exists on the config1 & not in config2:
 		IEnvironmentVariable var2 = envManager.getVariable(var.getName(), prjDesc.getConfigurationById(id1), true);
@@ -83,13 +90,100 @@ public class IEnvironmentVariableManagerTests extends TestCase {
 		// Close and reopen, variables should still exist
 		project.close(null);
 		project.open(null);
-		descs = CoreModel.getDefault().getProjectDescription(project).getConfigurations();
+		prjDesc = CoreModel.getDefault().getProjectDescription(project);
 		var2 = envManager.getVariable(var.getName(), prjDesc.getConfigurationById(id1), true);
 		assertEquals(var2, var);
 		var2 = envManager.getVariable(var.getName(), prjDesc.getConfigurationById(id2), true);
 		assertNull(var2);
+		assertFalse(prjDesc.getConfigurationById(id1).isModified());
+		assertFalse(prjDesc.getConfigurationById(id2).isModified());
 	}
 
+	/**
+	 * Tests that we can load the environment stored as a single (old-style) long XML string
+	 * Also tests that an an external change to the settings file is correctly picked up.
+	 * @throws Exception
+	 */
+	public void testOldStyleLoad() throws Exception {
+		final IProject project = ResourceHelper.createCDTProjectWithConfig("envProjectOldStyleLoad");
+
+		// Add another, derived configuration
+		ICProjectDescription prjDesc = CoreModel.getDefault().getProjectDescription(project);
+		ICConfigurationDescription desc = prjDesc.getActiveConfiguration();
+		final String id1 = desc.getId(); // Config 1's ID
+		final String id2 = "712427638";  // Config 2's ID
+		prjDesc.createConfiguration(id2, "config2", desc);
+		CoreModel.getDefault().setProjectDescription(project, prjDesc);
+
+		IEnvironmentVariableManager envManager = CCorePlugin.getDefault().getBuildEnvironmentManager();
+		IContributedEnvironment contribEnv = envManager.getContributedEnvironment();
+		final IEnvironmentVariable varOrig = new EnvironmentVariable("FOO", "ZOO");
+		contribEnv.addVariable(varOrig, prjDesc.getConfigurationById(id2));
+		CoreModel.getDefault().setProjectDescription(project, prjDesc);
+
+		final String env = "#Mon Nov 16 21:47:46 GMT 2009\n" +
+			"eclipse.preferences.version=1\n" +
+			"environment/project/712427638=<?xml version\\=\"1.0\" encoding\\=\"UTF-8\" standalone\\=\"no\"?>\\n" +
+			"<environment append\\=\"true\" appendContributed\\=\"true\">\\n" +
+			"<variable delimiter\\=\"\\:\" name\\=\"FOO1\" operation\\=\"replace\" value\\=\"BAR1\"/>\\n" +
+			"<variable delimiter\\=\"\\:\" name\\=\"FOO2\" operation\\=\"replace\" value\\=\"BAR2\"/>\\n" +
+			"<variable delimiter\\=\"\\;\" name\\=\"FOO\" operation\\=\"append\" value\\=\"BAR\"/>\\n</environment>\n";
+		project.getFile(".settings/org.eclipse.cdt.core.prefs").setContents(new ByteArrayInputStream(env.getBytes("UTF-8")), true, false, null);
+
+		final IEnvironmentVariable var = new EnvironmentVariable("FOO", "BAR", IEnvironmentVariable.ENVVAR_APPEND, ";");
+		final IEnvironmentVariable var1 = new EnvironmentVariable("FOO1", "BAR1");
+		final IEnvironmentVariable var2 = new EnvironmentVariable("FOO2", "BAR2");
+
+		prjDesc = CoreModel.getDefault().getProjectDescription(project);
+		assertEquals(var, envManager.getVariable(var.getName(), prjDesc.getConfigurationById(id2), true));
+		assertEquals(var1, envManager.getVariable(var1.getName(), prjDesc.getConfigurationById(id2), true));
+		assertEquals(var2, envManager.getVariable(var2.getName(), prjDesc.getConfigurationById(id2), true));
+	}
+
+	/**
+	 * Test that an ovewrite of new style preferences is loaded correctly
+	 * @throws Exception
+	 */
+	public void testNewStyleOverwrite() throws Exception {
+		final IProject project = ResourceHelper.createCDTProjectWithConfig("envProjectNewStyleLoad");
+
+		// Add another, derived configuration
+		ICProjectDescription prjDesc = CoreModel.getDefault().getProjectDescription(project);
+		ICConfigurationDescription desc = prjDesc.getActiveConfiguration();
+		final String id1 = desc.getId(); // Config 1's ID
+		final String id2 = "712427638";  // Config 2's ID
+		prjDesc.createConfiguration(id2, "config2", desc);
+		CoreModel.getDefault().setProjectDescription(project, prjDesc);
+
+		IEnvironmentVariableManager envManager = CCorePlugin.getDefault().getBuildEnvironmentManager();
+		IContributedEnvironment contribEnv = envManager.getContributedEnvironment();
+		// Variable which will be overwritten
+		final IEnvironmentVariable varOrig = new EnvironmentVariable("FOO", "ZOO");
+		contribEnv.addVariable(varOrig, prjDesc.getConfigurationById(id2));
+		CoreModel.getDefault().setProjectDescription(project, prjDesc);
+
+		final String env = "environment/project/712427638/FOO/delimiter=;\n" +
+						   "environment/project/712427638/FOO/operation=append\n" +
+						   "environment/project/712427638/FOO/value=BAR\n" +
+						   "environment/project/712427638/FOO1/delimiter=\\:\n" +
+						   "environment/project/712427638/FOO1/operation=replace\n" +
+						   "environment/project/712427638/FOO1/value=BAR1\n" +
+						   "environment/project/712427638/FOO2/delimiter=\\:\n" +
+						   "environment/project/712427638/FOO2/operation=replace\n" +
+						   "environment/project/712427638/FOO2/value=BAR2\n" +
+						   "environment/project/712427638/append=true\n" +
+						   "environment/project/712427638/appendContributed=true\n";
+		project.getFile(".settings/org.eclipse.cdt.core.prefs").setContents(new ByteArrayInputStream(env.getBytes("UTF-8")), true, false, null);
+
+		final IEnvironmentVariable var = new EnvironmentVariable("FOO", "BAR", IEnvironmentVariable.ENVVAR_APPEND, ";");
+		final IEnvironmentVariable var1 = new EnvironmentVariable("FOO1", "BAR1");
+		final IEnvironmentVariable var2 = new EnvironmentVariable("FOO2", "BAR2");
+
+		prjDesc = CoreModel.getDefault().getProjectDescription(project);
+		assertEquals(var, envManager.getVariable(var.getName(), prjDesc.getConfigurationById(id2), true));
+		assertEquals(var1, envManager.getVariable(var1.getName(), prjDesc.getConfigurationById(id2), true));
+		assertEquals(var2, envManager.getVariable(var2.getName(), prjDesc.getConfigurationById(id2), true));
+	}
 
 	public void testNoChangeToOneVariable() throws Exception {
 		final IProject project = ResourceHelper.createCDTProjectWithConfig("envProject");
@@ -105,7 +199,7 @@ public class IEnvironmentVariableManagerTests extends TestCase {
 		// Try setting an environment variable
 		final IEnvironmentVariable var = new EnvironmentVariable("FOO", "BAR");
 		final IEnvironmentVariable var1 = new EnvironmentVariable("FOO1", "BAR1");
-		final IEnvironmentVariable var2 = new EnvironmentVariable("FOO2", "BAR2");		
+		final IEnvironmentVariable var2 = new EnvironmentVariable("FOO2", "BAR2");
 		contribEnv.addVariable(var, prjDesc.getConfigurationById(id1));
 		contribEnv.addVariable(var1, prjDesc.getConfigurationById(id1));
 		contribEnv.addVariable(var2, prjDesc.getConfigurationById(id1));
@@ -138,7 +232,7 @@ public class IEnvironmentVariableManagerTests extends TestCase {
 		project.close(null);
 		project.open(null);
 		prjDesc = CoreModel.getDefault().getProjectDescription(project);
-		
+
 		readVar = envManager.getVariable(var3.getName(), prjDesc.getConfigurationById(id1), true);
 		assertEquals(var3, readVar);
 		readVar = envManager.getVariable(var1.getName(), prjDesc.getConfigurationById(id1), true);
@@ -146,12 +240,141 @@ public class IEnvironmentVariableManagerTests extends TestCase {
 		readVar = envManager.getVariable(var2.getName(), prjDesc.getConfigurationById(id1), true);
 		assertEquals(var2, readVar);
 	}
-	
+
+	/**
+	 * tests the get / set append persisting
+	 */
+	public void testGetSetAppend() throws Exception {
+		final IProject project = ResourceHelper.createCDTProjectWithConfig("envProject");
+
+		// Add another, derived configuration
+		ICProjectDescription prjDesc = CoreModel.getDefault().getProjectDescription(project);
+		ICConfigurationDescription desc = prjDesc.getActiveConfiguration();
+		final String id1 = desc.getId();  	      // Config 1's ID
+		final String id2 = CDataUtil.genId(id1);  // Config 2's ID
+		prjDesc.createConfiguration(id2, "config2", desc);
+		CoreModel.getDefault().setProjectDescription(project, prjDesc);
+
+		// Get all the configurations
+		prjDesc = CoreModel.getDefault().getProjectDescription(project);
+		ICConfigurationDescription[] descs = prjDesc.getConfigurations();
+		assertEquals(2, descs.length);
+
+		IEnvironmentVariableManager envManager = CCorePlugin.getDefault().getBuildEnvironmentManager();
+		IContributedEnvironment contribEnv = envManager.getContributedEnvironment();
+
+		assertFalse(descs[0].isModified());
+		assertFalse(descs[1].isModified());
+
+		// Set append & append contributed on the 2 configs respectively
+		final boolean append = contribEnv.appendEnvironment(prjDesc.getConfigurationById(id2));
+		contribEnv.setAppendEnvironment(!append, prjDesc.getConfigurationById(id2));
+		assertEquals(!append, contribEnv.appendEnvironment(prjDesc.getConfigurationById(id2)));
+		assertFalse(prjDesc.getConfigurationById(id1).isModified());
+		assertTrue(prjDesc.getConfigurationById(id2).isModified());
+
+		CoreModel.getDefault().setProjectDescription(project, prjDesc);
+
+		// Close and reopen, variables should still exist
+		project.close(null);
+		project.open(null);
+		prjDesc = CoreModel.getDefault().getProjectDescription(project);
+		assertEquals(!append, contribEnv.appendEnvironment(prjDesc.getConfigurationById(id2)));
+		assertFalse(prjDesc.getConfigurationById(id1).isModified());
+		assertFalse(prjDesc.getConfigurationById(id2).isModified());
+	}
+
+	/**
+	 * Tests file system change of the settings file
+	 */
+	public void testSettingsOverwrite() throws Exception {
+		final IProject project = ResourceHelper.createCDTProjectWithConfig("envProject");
+
+		// Add another, derived configuration
+		ICProjectDescription prjDesc = CoreModel.getDefault().getProjectDescription(project);
+		ICConfigurationDescription desc = prjDesc.getActiveConfiguration();
+		final String id1 = desc.getId();  	      // Config 1's ID
+		final String id2 = CDataUtil.genId(id1);  // Config 2's ID
+		prjDesc.createConfiguration(id2, "config2", desc);
+		CoreModel.getDefault().setProjectDescription(project, prjDesc);
+
+		// Get all the configurations
+		prjDesc = CoreModel.getDefault().getProjectDescription(project);
+		ICConfigurationDescription[] descs = prjDesc.getConfigurations();
+		assertTrue(descs.length == 2);
+
+		IEnvironmentVariableManager envManager = CCorePlugin.getDefault().getBuildEnvironmentManager();
+		IContributedEnvironment contribEnv = envManager.getContributedEnvironment();
+
+		assertFalse(descs[0].isModified());
+		assertFalse(descs[1].isModified());
+
+		// Try setting an environment variable
+		final IEnvironmentVariable var = new EnvironmentVariable("FOO", "BAR");
+		contribEnv.addVariable(var, prjDesc.getConfigurationById(id1));
+		assertTrue(prjDesc.getConfigurationById(id1).isModified());
+		assertFalse(prjDesc.getConfigurationById(id2).isModified());
+		CoreModel.getDefault().setProjectDescription(project, prjDesc);
+
+		// Backup the settings file
+		project.getFile(".settings/org.eclipse.cdt.core.prefs.bak").create(
+				project.getFile(".settings/org.eclipse.cdt.core.prefs").getContents(), true, null);
+
+		// Change the environment variable
+		final IEnvironmentVariable var2 = new EnvironmentVariable("FOO", "BOO");
+		contribEnv.addVariable(var2, prjDesc.getConfigurationById(id1));
+		assertEquals(var2, envManager.getVariable(var2.getName(), prjDesc.getConfigurationById(id1), true));
+		CoreModel.getDefault().setProjectDescription(project, prjDesc);
+
+		// Replace the settings with it's backup
+		project.getFile(".settings/org.eclipse.cdt.core.prefs").setContents(
+				project.getFile(".settings/org.eclipse.cdt.core.prefs.bak").getContents(), true, false, null);
+		prjDesc = CoreModel.getDefault().getProjectDescription(project);
+		assertEquals(var, envManager.getVariable(var.getName(), prjDesc.getConfigurationById(id1), true));
+	}
+
+	/**
+	 * Test that on deleting and recreating the project variables haven't persisted
+	 * @throws Exception
+	 */
+	public void testBrokenCaching() throws Exception {
+		final IProject project = ResourceHelper.createCDTProjectWithConfig("envProject");
+
+		// Add another, derived configuration
+		ICProjectDescription prjDesc = CoreModel.getDefault().getProjectDescription(project);
+		ICConfigurationDescription desc = prjDesc.getActiveConfiguration();
+		final String id1 = desc.getId();
+
+		IEnvironmentVariableManager envManager = CCorePlugin.getDefault().getBuildEnvironmentManager();
+		IContributedEnvironment contribEnv = envManager.getContributedEnvironment();
+		// At the moment 0 variables are set
+		assertEquals(0, contribEnv.getVariables(desc).length);
+
+		// Try setting an environment variable
+		final IEnvironmentVariable var = new EnvironmentVariable("FOO", "BAR");
+		contribEnv.addVariable(var, prjDesc.getConfigurationById(id1));
+		assertEquals(1, contribEnv.getVariables(desc).length);
+		// Check that the variable exists on config1
+		IEnvironmentVariable readVar = envManager.getVariable(var.getName(), prjDesc.getConfigurationById(id1), true);
+		assertEquals(var, readVar);
+
+		// Save the project description
+		CoreModel.getDefault().setProjectDescription(project, prjDesc);
+
+		ResourceHelper.cleanUp();
+		assertFalse(project.exists());
+		ResourceHelper.createCDTProjectWithConfig("envProject");
+		assertTrue(project.exists());
+		// Fetch the current configuration
+		prjDesc = CoreModel.getDefault().getProjectDescription(project);
+		desc = prjDesc.getActiveConfiguration();
+		assertEquals(0, contribEnv.getVariables(desc).length);
+	}
 
 	/**
 	 * This bug checks for an environment load race during project open / import.
 	 *
-	 * This occurs because enviornment is stored using platform Preferences (persisted in
+	 * This occurs because environment is stored using platform Preferences (persisted in
 	 * the .settings directory) and, when background refresh is enabled this is loaded
 	 * asynchronously.
 	 *
@@ -172,7 +395,7 @@ public class IEnvironmentVariableManagerTests extends TestCase {
 		// Try setting an environment variable
 		final IEnvironmentVariable var = new EnvironmentVariable("FOO", "BAR");
 		final IEnvironmentVariable var1 = new EnvironmentVariable("FOO1", "BAR1");
-		final IEnvironmentVariable var2 = new EnvironmentVariable("FOO2", "BAR2");		
+		final IEnvironmentVariable var2 = new EnvironmentVariable("FOO2", "BAR2");
 		contribEnv.addVariable(var, prjDesc.getConfigurationById(id1));
 
 		// Check that the variable exists on config1
@@ -221,7 +444,7 @@ public class IEnvironmentVariableManagerTests extends TestCase {
 		assertNull(readVar);
 		readVar = envManager.getVariable(var2.getName(), prjDesc.getConfigurationById(id1), true);
 		assertEquals(var3, readVar);
-		
+
 		// Get project description should only have the persisted envvar
 		prjDesc = CoreModel.getDefault().getProjectDescription(project);
 		readVar = envManager.getVariable(var.getName(), prjDesc.getConfigurationById(id1), true);

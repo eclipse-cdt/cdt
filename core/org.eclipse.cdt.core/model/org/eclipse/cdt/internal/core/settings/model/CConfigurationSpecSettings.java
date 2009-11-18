@@ -37,6 +37,7 @@ import org.eclipse.cdt.internal.core.CExtensionInfo;
 import org.eclipse.cdt.internal.core.COwner;
 import org.eclipse.cdt.internal.core.COwnerConfiguration;
 import org.eclipse.cdt.internal.core.cdtvariables.StorableCdtVariables;
+import org.eclipse.cdt.internal.core.envvar.EnvironmentVariableManager;
 import org.eclipse.cdt.utils.envvar.StorableEnvironment;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.QualifiedName;
@@ -161,7 +162,7 @@ public class CConfigurationSpecSettings implements ICSettingsStorage{
 			fSessionPropertiesMap = (HashMap<QualifiedName, Object>)base.fSessionPropertiesMap.clone();
 		
 		if(base.fEnvironment != null)
-			fEnvironment = new StorableEnvironment(base.fEnvironment, des.isReadOnly());
+			fEnvironment = EnvironmentVariableManager.fUserSupplier.cloneEnvironmentWithContext(fCfg, base.fEnvironment, des.isReadOnly());
 		
 		fOwnerId = base.fOwnerId;
 		fOwner = base.fOwner;

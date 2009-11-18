@@ -1,24 +1,25 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2007 Intel Corporation and others.
+ * Copyright (c) 2005, 2009 Intel Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- * Intel Corporation - Initial API and implementation
+ *    Intel Corporation - Initial API and implementation
+ *    James Blackburn (Broadcom Corp.)
  *******************************************************************************/
 package org.eclipse.cdt.utils.envvar;
 
 import org.eclipse.cdt.core.envvar.EnvironmentVariable;
 import org.eclipse.cdt.core.settings.model.ICStorageElement;
+import org.osgi.service.prefs.Preferences;
 
 /**
  * This class represents the Environment variable that could be loaded
  * and stored in XML
  * 
  * @since 3.0
- *
  */
 public class StorableEnvVar extends EnvironmentVariable {
 	public static final String VARIABLE_ELEMENT_NAME = "variable"; //$NON-NLS-1$
@@ -47,12 +48,12 @@ public class StorableEnvVar extends EnvironmentVariable {
 	public StorableEnvVar(String name, String value, String delimiter){
 		this(name,value,ENVVAR_REPLACE,delimiter);	
 	}
-	
+
+	/**
+	 * Load the environment variable from the ICStorageElement
+	 * @param element
+	 */
 	public StorableEnvVar(ICStorageElement element){
-		load(element);
-	}
-	
-	private void load(ICStorageElement element){
 		fName = element.getAttribute(NAME);
 
 		fValue = element.getAttribute(VALUE);
@@ -63,6 +64,20 @@ public class StorableEnvVar extends EnvironmentVariable {
 		if("".equals(fDelimiter)) //$NON-NLS-1$
 			fDelimiter = null;
 	}
+
+	/**
+	 * Load the Environment Variable directly from a Preference element 
+	 * @param name
+	 * @param element
+	 * @since 5.2
+	 */
+	public StorableEnvVar(String name, Preferences element){
+		fName = name;
+		fValue = element.get(VALUE, null);
+		fOperation = opStringToInt(element.get(OPERATION, null));
+		fDelimiter = element.get(DELIMITER, null);
+	}
+
 	
 	private int opStringToInt(String op){
 		int operation;
@@ -105,5 +120,21 @@ public class StorableEnvVar extends EnvironmentVariable {
 		
 		if(fDelimiter != null)
 			element.setAttribute(DELIMITER,fDelimiter);
+	}
+
+	/**
+	 * Serialize this Preference straight into the Preferences element.
+	 * It's assumed that the Preference node represents this StorableEnvVar's name
+	 * @param element
+	 * @since 5.2
+	 */
+	public void serialize(Preferences element) {
+		if(fValue != null)
+			element.put(VALUE, fValue);
+
+		element.put(OPERATION, opIntToString(fOperation));
+
+		if(fDelimiter != null)
+			element.put(DELIMITER, fDelimiter);
 	}
 }

@@ -125,7 +125,7 @@ is to be searched:</p>
   <tr>
     <td width="49%">&nbsp;<samp>*</samp></td>
     <td width="51%">Any string<p><b>Tip:<br>
-    </b> Use the character <samp>*</samp> to search for 
+    </b> Use the character sequence <samp>\*</samp> to search for 
     operators that begin with *. See syntax examples in the table below.</td>
   </tr>
   <tr>
@@ -137,11 +137,13 @@ is to be searched:</p>
     <td width="51%">Nested elements</td>
   </tr>
 </table>
+<!-- no support for function parameters
 <p><b>Tip: </b>Do not use wild cards between the brackets of a function or 
 method pattern.  For example, the search 
 string <samp>f( * )</samp> is an invalid search that results in a search for any function <samp>f</samp> 
     because 
 the asterisk is interpreted as a pointer rather than a wild card.</p>
+-->
 <h2>Syntax examples</h2>
 <p>The table below provides syntax examples and an explanation for each example 
 to help you conduct an effective search.</p>
@@ -163,6 +165,7 @@ to help you conduct an effective search.</p>
     <td width="64%" height="32">&nbsp; <samp>::A</samp> </td>
     <td width="36%" height="32">Searches for A not nested in anything</td>
   </tr>
+<!-- no support for function parameters
   <tr>
     <td width="64%" height="17">&nbsp; <samp>*()</samp></td>
     <td width="36%" height="17">Any function taking no parameters</td>
@@ -183,6 +186,7 @@ to help you conduct an effective search.</p>
     <td width="36%" height="64">Will search for a function f, taking 2 parameters; one is a 
     const char array, the other is a reference to type A</td>
   </tr>
+-->
   <tr>
     <td width="64%" height="32">&nbsp;<samp>operator \*</samp></td>
     <td width="36%" height="32">Finds only operator *</td>

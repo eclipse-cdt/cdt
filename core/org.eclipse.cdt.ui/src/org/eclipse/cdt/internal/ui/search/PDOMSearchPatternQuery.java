@@ -23,6 +23,7 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.OperationCanceledException;
 import org.eclipse.core.runtime.Status;
+import org.eclipse.osgi.util.NLS;
 
 import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.ICompositeType;
@@ -89,6 +90,22 @@ public class PDOMSearchPatternQuery extends PDOMSearchQuery {
     	for (int i = 0; i < n; ++i) {
     		char c = patternStr.charAt(i);
     		switch (c) {
+    		case '\\':
+    			if (i+1 < n) {
+    				switch(patternStr.charAt(i+1)) {
+    				case '?':
+    					buff.append("\\?"); //$NON-NLS-1$
+    					break;
+    				case '*':
+    					buff.append("\\*"); //$NON-NLS-1$
+    					break;
+    				default:
+    					buff.append('\\');
+    				}
+    			} else {
+    				buff.append('\\');
+    			}
+    			break;
     		case '*':
     			buff.append(".*"); //$NON-NLS-1$
     			break;
@@ -104,6 +121,9 @@ public class PDOMSearchPatternQuery extends PDOMSearchQuery {
     				buff = new StringBuffer();
     			}
     			break;
+			case '|': case '+': case '^': case '(': case ')': case '[': case ']': 
+				buff.append('\\').append(c);
+				break;
    			default:
     			buff.append(c);
     		}
@@ -186,7 +206,7 @@ public class PDOMSearchPatternQuery extends PDOMSearchQuery {
 
 	@Override
 	public String getResultLabel(int numMatches) {
-		String patternInScope = CSearchMessages.bind(
+		String patternInScope = NLS.bind(
 				CSearchMessages.PDOMSearchPatternQuery_PatternQuery_labelPatternInScope, patternStr, scopeDesc);
 		return getResultLabel(patternInScope, numMatches); 
 	}

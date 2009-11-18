@@ -57,6 +57,7 @@ import org.eclipse.ui.PlatformUI;
 import org.eclipse.cdt.core.model.CoreModel;
 import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.core.model.ICProject;
+import org.eclipse.cdt.core.parser.Keywords;
 import org.eclipse.cdt.ui.CUIPlugin;
 
 import org.eclipse.cdt.internal.ui.ICHelpContextIds;
@@ -344,15 +345,37 @@ public class PDOMSearchPage extends DialogPage implements ISearchPage {
 		patternCombo = new Combo( result, SWT.SINGLE | SWT.BORDER );
 		patternCombo.addVerifyListener(new VerifyListener() {
 			public void verifyText(VerifyEvent e) {
+				final String text = patternCombo.getText();
+				boolean relax= text.contains(Keywords.OPERATOR + " "); //$NON-NLS-1$
 				char[] chars= e.text.toCharArray();
 				StringBuilder result= new StringBuilder(chars.length);
-				for (char c : chars) {
+				for (int i = 0; i < chars.length; i++) {
+					final char c = chars[i];
 					switch (c) {
 					case  '_': 
 					case ':': // scope operator
 					case '?': case '*':  // wild cards
+					case '\\': // escaping wild-cards
 						result.append(c);
 						break;
+					case ' ':
+						if (prefix(text, e, e.start+i).endsWith(Keywords.OPERATOR)) {
+							relax= true;
+							result.append(c);
+						}
+						break;
+					case '&': case '|': case '+': case '-':
+					case '!': case '=': case '>': case '<':
+					case '%': case '^': case '(': case ')':
+					case '[': case ']': 
+						if (prefix(text, e, e.start+i).endsWith(Keywords.OPERATOR)) {
+							result.append(' ');
+							relax= true;
+						}
+						if (relax)
+							result.append(c);
+						break;
+					case '~':
 					default:
 						if (Character.isLetterOrDigit(c)) {
 							result.append(c);
@@ -361,6 +384,13 @@ public class PDOMSearchPage extends DialogPage implements ISearchPage {
 					}
 					e.text= result.toString();
 				}
+			}
+
+			private String prefix(String text, VerifyEvent e, int length) {
+				StringBuilder result= new StringBuilder(length);
+				result.append(text, 0, e.start);
+				result.append(e.text, 0, length-e.start);
+				return result.toString();
 			}
 		});
 		

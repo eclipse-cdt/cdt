@@ -235,14 +235,14 @@ public abstract class AbstractIndexerTask extends PDOMWriter {
 			IIndexFileLocation dummyLoc= fResolver.resolveASTPath(dummyName);
 			setIndexed(lang.getLinkageID(), dummyLoc);
 			FileContent codeReader= FileContent.create(dummyName, code.toCharArray());
-			return createAST(lang, codeReader, scanInfo, options, monitor);
+			return createAST(lang, codeReader, scanInfo, options, false, monitor);
 		}
 		return null;
 	}
 	
 
-	private final IASTTranslationUnit createAST(Object tu, AbstractLanguage language, IScannerInfo scanInfo, int options, IProgressMonitor pm)
-			throws CoreException {
+	private final IASTTranslationUnit createAST(Object tu, AbstractLanguage language, IScannerInfo scanInfo, int options, 
+			boolean inContext, IProgressMonitor pm) throws CoreException {
 		final FileContent codeReader= fResolver.getCodeReader(tu);
 		if (codeReader == null) {
 			return null;
@@ -250,15 +250,18 @@ public abstract class AbstractIndexerTask extends PDOMWriter {
 		if (fResolver.isSourceUnit(tu)) {
 			options |= ILanguage.OPTION_IS_SOURCE_UNIT;
 		}
-		return createAST(language, codeReader, scanInfo, options, pm);
+		return createAST(language, codeReader, scanInfo, options, inContext, pm);
 	}
 
 	private final IASTTranslationUnit createAST(AbstractLanguage language, FileContent codeReader,
-			IScannerInfo scanInfo, int options, IProgressMonitor pm) throws CoreException {
+			IScannerInfo scanInfo, int options, boolean inContext, IProgressMonitor pm) throws CoreException {
 		if (fCodeReaderFactory == null) {
 			InternalFileContentProvider fileContentProvider = createInternalFileContentProvider();
 			if (fIsFastIndexer) {
-				fCodeReaderFactory= new IndexBasedFileContentProvider(fIndex, fResolver, language.getLinkageID(), fileContentProvider, this);
+				IndexBasedFileContentProvider ibfcp = new IndexBasedFileContentProvider(fIndex, fResolver,
+						language.getLinkageID(), fileContentProvider, this);
+				ibfcp.setSupportFillGapFromContextToHeader(inContext);
+				fCodeReaderFactory= ibfcp;
 			} else {
 				fCodeReaderFactory= fileContentProvider;
 			}
@@ -604,7 +607,7 @@ public abstract class AbstractIndexerTask extends PDOMWriter {
 				if (info != null && info.fRequestUpdate && !info.fIsUpdated) {
 					info.fRequestIsCounted= false;
 					final IScannerInfo scannerInfo= fResolver.getBuildConfiguration(linkageID, tu);
-					parseFile(tu, linkageID, ifl, scannerInfo, monitor);
+					parseFile(tu, linkageID, ifl, scannerInfo, false, monitor);
 					if (info.fIsUpdated) {
 						updateFileCount(1, 0, 0);	// a source file was parsed
 					}
@@ -625,13 +628,13 @@ public abstract class AbstractIndexerTask extends PDOMWriter {
 				final IndexFileContent info= getFileInfo(linkageID, ifl);
 				if (info != null && info.fRequestUpdate && !info.fIsUpdated) {
 					if (info.fIndexFile != null && fIndex.isWritableFile(info.fIndexFile)) {
-						Object tu= findContext((IIndexFragmentFile) info.fIndexFile, contextMap);
+						Object tu= findContext(linkageID, (IIndexFragmentFile) info.fIndexFile, contextMap);
 						if (tu != null) {
 							final IScannerInfo scannerInfo= fResolver.getBuildConfiguration(linkageID, tu);
 							info.fRequestIsCounted= false;
-							parseFile(tu, linkageID, fResolver.resolveFile(tu), scannerInfo, monitor);
+							parseFile(header, linkageID, ifl, scannerInfo, true, monitor);
 							if (info.fIsUpdated) {
-								updateFileCount(0, 0, 1);	// a header was parsed in context
+								updateFileCount(0, 1, 1);	// a header was parsed in context
 								iter.remove();
 							}
 						}
@@ -653,7 +656,7 @@ public abstract class AbstractIndexerTask extends PDOMWriter {
 				if (info != null && info.fRequestUpdate && !info.fIsUpdated) {
 					info.fRequestIsCounted= false;
 					final IScannerInfo scannerInfo= fResolver.getBuildConfiguration(linkageID, header);
-					parseFile(header, linkageID, ifl, scannerInfo, monitor);
+					parseFile(header, linkageID, ifl, scannerInfo, false, monitor);
 					if (info.fIsUpdated) {
 						updateFileCount(0, 1, 1);	// a header was parsed without context
 						iter.remove();
@@ -664,7 +667,7 @@ public abstract class AbstractIndexerTask extends PDOMWriter {
 	}
 
 	private static Object NO_CONTEXT= new Object();
-	private Object findContext(IIndexFragmentFile ifile, HashMap<IIndexFragmentFile, Object> contextMap) {
+	private Object findContext(int linkageID, IIndexFragmentFile ifile, HashMap<IIndexFragmentFile, Object> contextMap) {
 		Object cachedContext= contextMap.get(ifile);
 		if (cachedContext != null) {
 			return cachedContext == NO_CONTEXT ? null : cachedContext;
@@ -679,8 +682,13 @@ public abstract class AbstractIndexerTask extends PDOMWriter {
 			contextMap.put(ifile, NO_CONTEXT); // prevent recursion
 			final IIndexInclude contextInclude= ifile.getParsedInContext();
 			if (contextInclude != null) {
+				// in case we are in context of another file that will be indexed, just wait.
+				final IndexFileContent info= getFileInfo(linkageID, contextInclude.getIncludedByLocation());
+				if (info != null && info.fRequestUpdate) {
+					return null;
+				}
 				final IIndexFragmentFile contextIFile= (IIndexFragmentFile) contextInclude.getIncludedBy();
-				context= findContext(contextIFile, contextMap);
+				context= findContext(linkageID, contextIFile, contextMap);
 				if (context != null) {
 					contextMap.put(ifile, context);
 					return context;
@@ -693,7 +701,7 @@ public abstract class AbstractIndexerTask extends PDOMWriter {
 	}
 
 	private void parseFile(Object tu, int linkageID, IIndexFileLocation ifl, IScannerInfo scanInfo,
-			IProgressMonitor pm) throws CoreException, InterruptedException {
+			boolean inContext, IProgressMonitor pm) throws CoreException, InterruptedException {
 		IPath path= getPathForLabel(ifl);
 		AbstractLanguage[] langs= fResolver.getLanguages(tu, fIndexHeadersWithoutContext==UnusedHeaderStrategy.useBoth);
 		AbstractLanguage lang= null;
@@ -715,7 +723,7 @@ public abstract class AbstractIndexerTask extends PDOMWriter {
 			pm.subTask(getMessage(MessageKind.parsingFileTask,
 					path.lastSegment(), path.removeLastSegments(1).toString()));
 			long start= System.currentTimeMillis();
-			IASTTranslationUnit ast= createAST(tu, lang, scanInfo, fASTOptions, pm);
+			IASTTranslationUnit ast= createAST(tu, lang, scanInfo, fASTOptions, inContext, pm);
 			fStatistics.fParsingTime += System.currentTimeMillis()-start;
 			if (ast != null) {
 				writeToIndex(linkageID, ast, computeHashCode(scanInfo), pm);

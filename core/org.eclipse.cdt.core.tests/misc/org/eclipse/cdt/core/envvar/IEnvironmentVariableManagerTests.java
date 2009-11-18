@@ -10,8 +10,6 @@
  *******************************************************************************/
 package org.eclipse.cdt.core.envvar;
 
-import java.io.ByteArrayInputStream;
-
 import junit.framework.Test;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;

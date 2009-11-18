@@ -10,14 +10,12 @@
  *     Anton Leherbauer (Wind River Systems)
  *     Markus Schorn (Wind River Systems)
  *******************************************************************************/
-
 package org.eclipse.cdt.ui.dialogs;
 
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.NullProgressMonitor;
-import org.eclipse.core.runtime.Preferences;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
@@ -79,10 +77,14 @@ public class IndexerOptionPropertyPage extends PropertyPage implements ICOptionC
 		return project;
 	}
 
-	public Preferences getPreferences() {
-		throw new UnsupportedOperationException();
-	}
-
 	public void updateContainer() {
+	}
+	
+	/**
+	 * @deprecated
+	 */
+	@Deprecated
+	public org.eclipse.core.runtime.Preferences getPreferences() {
+		throw new UnsupportedOperationException();
 	}
 }

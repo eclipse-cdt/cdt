@@ -16,6 +16,7 @@ import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.layout.GridData;
+import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
@@ -37,6 +38,12 @@ abstract public class PreferenceScopeBlock {
 	
 	public void createControl(final Composite parent) {
 		Composite group= ControlFactory.createComposite(parent,2);
+		GridLayout layout = (GridLayout)group.getLayout();
+		layout.marginHeight= 0;
+		layout.marginWidth= 0;
+		GridData gd = (GridData) group.getLayoutData();
+		gd.horizontalIndent= 0; 
+
 		fUseProjectSettings= ControlFactory.createCheckBox(group, DialogsMessages.PreferenceScopeBlock_enableProjectSettings);
 		
 		Composite two= ControlFactory.createComposite(group, 1);

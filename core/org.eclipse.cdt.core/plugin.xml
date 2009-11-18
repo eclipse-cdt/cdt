@@ -480,12 +480,6 @@
       <run class="org.eclipse.cdt.internal.core.pdom.indexer.PDOMFastIndexer"/>
    </extension>
    <extension
-         name="%CDTIndexer.domsourceindexer"
-         id="domsourceindexer"
-         point="org.eclipse.cdt.core.CIndexer">
-      <run class="org.eclipse.cdt.internal.core.pdom.indexer.PDOMFullIndexer"/>
-   </extension>
-   <extension
          point="org.eclipse.core.variables.dynamicVariables">
       <variable
             name="cdt_pathentry_var"

@@ -28,7 +28,5 @@ public class SelectionTestSuite extends TestSuite {
 		addTest( CSelectionTestsNoIndexer.suite() );
 		addTest( CPPSelectionTestsFastIndexer.suite() );
 		addTest( CSelectionTestsFastIndexer.suite() );
-		addTest( CPPSelectionTestsDOMIndexer.suite() );
-		addTest( CSelectionTestsDOMIndexer.suite() );
     }
 }

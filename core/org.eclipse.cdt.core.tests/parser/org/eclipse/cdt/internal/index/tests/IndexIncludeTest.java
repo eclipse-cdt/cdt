@@ -96,19 +96,6 @@ public class IndexIncludeTest extends IndexTestBase {
 		assertTrue(CCorePlugin.getIndexManager().joinIndexer(10000, NPM));
 	}
 
-	public void testFullIndexer() throws Exception {
-		CCorePlugin.getIndexManager().setIndexerId(fProject, IPDOMManager.ID_FULL_INDEXER);
-		IndexerPreferences.set(fProject.getProject(), IndexerPreferences.KEY_INDEX_UNUSED_HEADERS_WITH_DEFAULT_LANG, "false");
-		waitForIndexer();
-		checkHeader(false);
-
-		IndexerPreferences.set(fProject.getProject(), IndexerPreferences.KEY_INDEX_UNUSED_HEADERS_WITH_DEFAULT_LANG, "true");
-		waitForIndexer();
-		checkHeader(true);
-		
-		checkContext();
-	}
-
 	private void checkHeader(boolean all) throws Exception {
 		fIndex.acquireReadLock();
 		try {

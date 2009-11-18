@@ -253,6 +253,7 @@ public abstract class AbstractCModelOutlinePage extends Page implements IContent
 	private ActionGroup fMemberFilterActionGroup;
 	private ActionGroup fSelectionSearchGroup;
 	private ActionGroup fRefactoringActionGroup;
+	private ActionGroup fSourceActionGroup;
 	private ActionGroup fOpenViewActionGroup;
 	/**
 	 * Custom filter action group.
@@ -403,6 +404,10 @@ public abstract class AbstractCModelOutlinePage extends Page implements IContent
 			fSelectionSearchGroup.fillContextMenu(menu);
 			menu.add(new Separator(IWorkbenchActionConstants.MB_ADDITIONS));
 		}
+		
+		if (fSourceActionGroup != null) {
+			fSourceActionGroup.fillContextMenu(menu);
+		}
 	
 		if (fRefactoringActionGroup != null) {
 			fRefactoringActionGroup.fillContextMenu(menu);
@@ -464,6 +469,7 @@ public abstract class AbstractCModelOutlinePage extends Page implements IContent
 	
 		fSelectionSearchGroup = createSearchActionGroup();
 		fOpenViewActionGroup = createOpenViewActionGroup();
+		fSourceActionGroup = createSourceActionGroup();
 		fRefactoringActionGroup= createRefactoringActionGroup();
 		// Custom filter group
 		fCustomFiltersActionGroup= createCustomFiltersActionGroup();
@@ -587,6 +593,15 @@ public abstract class AbstractCModelOutlinePage extends Page implements IContent
 		// default: no refactoring actions
 		return null;
 	}
+	
+	/**
+	 * @return an ActionGroup contributing source actions or
+	 *         <code>null</code> if source actions are not supported
+	 */
+	protected ActionGroup createSourceActionGroup() {
+		// default: no source actions
+		return null;
+	}
 
 	/**
 	 * @return an ActionGroup instance to provide custom filters or
@@ -627,6 +642,11 @@ public abstract class AbstractCModelOutlinePage extends Page implements IContent
 		if (fRefactoringActionGroup != null) {
 			fRefactoringActionGroup.setContext(new ActionContext(selection));
 			fRefactoringActionGroup.updateActionBars();
+		}
+		
+		if (fSourceActionGroup != null) {
+			fSourceActionGroup.setContext(new ActionContext(selection));
+			fSourceActionGroup.updateActionBars();
 		}
 	}
 

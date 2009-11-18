@@ -27,6 +27,7 @@ import org.eclipse.ui.dialogs.PreferencesUtil;
 import org.eclipse.cdt.core.model.ITranslationUnit;
 import org.eclipse.cdt.ui.PreferenceConstants;
 import org.eclipse.cdt.ui.actions.CustomFiltersActionGroup;
+import org.eclipse.cdt.ui.actions.GenerateActionGroup;
 import org.eclipse.cdt.ui.actions.MemberFilterActionGroup;
 import org.eclipse.cdt.ui.actions.OpenViewActionGroup;
 import org.eclipse.cdt.ui.refactoring.actions.CRefactoringActionGroup;
@@ -133,6 +134,12 @@ public class CContentOutlinePage extends AbstractCModelOutlinePage {
 	@Override
 	protected ActionGroup createRefactoringActionGroup() {
 		return new CRefactoringActionGroup(this);
+	}
+	
+
+	@Override
+	protected ActionGroup createSourceActionGroup() {
+		return new GenerateActionGroup(this);
 	}
 
 	@Override

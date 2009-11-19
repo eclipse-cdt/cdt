@@ -17,7 +17,7 @@ public interface ICProjectDescriptionPreferences {
 	 * configuration used by the core and vie a versa
 	 *  
 	 * @see #getConfigurationRelations()
-	 * @see #setConfigurationRelations(Integer)
+	 * @see #setConfigurationRelations(int)
 	 */
 	public static final int CONFIGS_INDEPENDENT = 1;
 
@@ -27,7 +27,7 @@ public interface ICProjectDescriptionPreferences {
 	 * configuration used by the core and vie a versa
 	 *  
 	 * @see #getConfigurationRelations()
-	 * @see #setConfigurationRelations(Integer)
+	 * @see #setConfigurationRelations(int)
 	 */
 	public static final int CONFIGS_LINK_SETTINGS_AND_ACTIVE = 2;
 

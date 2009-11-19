@@ -29,17 +29,14 @@ public interface ICProjectDescription  extends ICSettingContainer,
 							ICProjectDescriptionPreferences {
 
 	/**
-	 * returns an array of configurations available for this project
-	 * 
-	 * @return
+	 * @return {@link ICConfigurationDescription}[] containing all configurations in the project
 	 */
 	ICConfigurationDescription[] getConfigurations();
 	
 	/**
-	 * returns active configuration
-	 * Active configuratiuon is the one that is built by default.
-	 * 
-	 * @return
+	 * Returns the Project's active configuration. This is the configuration which is built by default
+	 * @see ICProjectDescriptionPreferences#setConfigurationRelations(int)
+	 * @return active {@link ICConfigurationDescription} - the one which is build by default
 	 */
 	ICConfigurationDescription getActiveConfiguration();
 
@@ -49,7 +46,7 @@ public interface ICProjectDescription  extends ICSettingContainer,
 	 * @param cfg
 	 * 
 	 * @throws WriteAccessException when the project description is read-only
-	 * the description is read only if it was queried/returned by the {@link CoreModel#getProjectDescription(org.eclipse.core.resources.IProject, false)} call
+	 * the description is read only if it was queried/returned by the <code>CoreModel.getProjectDescription(org.eclipse.core.resources.IProject, false)</code> call
 	 */
 	void setActiveConfiguration(ICConfigurationDescription cfg) throws WriteAccessException;
 
@@ -59,10 +56,10 @@ public interface ICProjectDescription  extends ICSettingContainer,
 	 * @param id configuration id
 	 * @param name configuration name
 	 * @param base the configuration description from which the settings are to be copied
-	 * @return
+	 * @return {@link ICConfigurationDescription} created
 	 * @throws CoreException
 	 * @throws WriteAccessException when the project description is read-only
-	 * the description is read only if it was queried/returned by the {@link CoreModel#getProjectDescription(org.eclipse.core.resources.IProject, false)} call
+	 * the description is read only if it was queried/returned by the <code>CoreModel#getProjectDescription(org.eclipse.core.resources.IProject, false)</code> call
 	 * 
 	 */
 	ICConfigurationDescription createConfiguration(String id, String name, ICConfigurationDescription base) throws CoreException, WriteAccessException;
@@ -74,53 +71,48 @@ public interface ICProjectDescription  extends ICSettingContainer,
 	 * @param buildSystemId build system id, i.e. the extension id contributing to the 
 	 * org.eclipse.cdt.core.CConfigurationDataProvider extension point
 	 * @param data CConfigurationData to be associated with this configuration
-	 * @return the created configuration
+	 * @return {@link ICConfigurationDescription} created
 	 * @throws CoreException
 	 * @throws WriteAccessException when the project description is read-only
-	 * the description is read only if it was queried/returned by the {@link CoreModel#getProjectDescription(org.eclipse.core.resources.IProject, false)} call
+	 * the description is read only if it was queried/returned by the <code>CoreModel.getProjectDescription(org.eclipse.core.resources.IProject, false)</code> call
 	 */
 	ICConfigurationDescription createConfiguration(String buildSystemId, CConfigurationData data) throws CoreException, WriteAccessException;
 
 	/**
-	 * returns Configuration of the given name or null if not found
-	 * @param name
-	 * @return
+	 * @param name String name of the configuration to get
+	 * @return {@link ICConfigurationDescription} of the given name or null if not found
 	 */
 	ICConfigurationDescription getConfigurationByName(String name);
 
 	/**
-	 * returns Configuration of the given id or null if not found
-	 * @param id
-	 * @return
+	 * @param id {@link ICConfigurationDescription} id
+	 * @return {@link ICConfigurationDescription} of the given id or null if not found
 	 */
 	ICConfigurationDescription getConfigurationById(String id);
 	
 	/**
-	 * removes Configuration of the given name from the project description
-	 * @param name
+	 * Remove Configuration of the given name from the project description
+	 * @param name String name of the configuration to remove
 	 * @throws WriteAccessException when the project description is read-only
-	 * the description is read only if it was queried/returned by the {@link CoreModel#getProjectDescription(org.eclipse.core.resources.IProject, false)} call
+	 * the description is read only if it was queried/returned by the <code>CoreModel.getProjectDescription(org.eclipse.core.resources.IProject, false)</code> call
 	 */
 	void removeConfiguration(String name) throws WriteAccessException;
 
 	/**
-	 * removed the given configuration from the project description
-	 * @param cfg
+	 * Remove the given configuration from the project description
+	 * @param cfg {@link ICConfigurationDescription} to remove
 	 * @throws WriteAccessException when the project description is read-only
-	 * the description is read only if it was queried/returned by the {@link CoreModel#getProjectDescription(org.eclipse.core.resources.IProject, false)} call
+	 * the description is read only if it was queried/returned by the <code>CoreModel.getProjectDescription(IProject, false)</code> call
 	 */
 	void removeConfiguration(ICConfigurationDescription cfg) throws WriteAccessException;
 	
 	/**
-	 * IProject this project description is associated with
-	 * @return
+	 * @return IProject this project description is associated with
 	 */
 	IProject getProject();
 	
 	/**
-	 * returns true if the project description was modified
-	 * false otherwise
-	 * @return
+	 * @return true if the project description was modified, false otherwise
 	 */
 	boolean isModified();
 	
@@ -150,7 +142,7 @@ public interface ICProjectDescription  extends ICSettingContainer,
 	 * used by the CDT editor and views. 
 	 * 
 	 * @see ICProjectDescriptionPreferences#setConfigurationRelations(int)
-	 * @return
+	 * @return the default {@link ICConfigurationDescription}
 	 */
 	ICConfigurationDescription getDefaultSettingConfiguration();
 

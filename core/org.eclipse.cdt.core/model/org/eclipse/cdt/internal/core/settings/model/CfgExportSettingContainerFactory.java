@@ -101,7 +101,7 @@ public class CfgExportSettingContainerFactory extends
 	
 	@Override
 	public CExternalSettingsContainer createContainer(String id,
-			IProject project, ICConfigurationDescription cfgDes) {
+			IProject project, ICConfigurationDescription cfgDes, CExternalSetting[] previousSettings) {
 		try {
 			String[] r = parseId(id);
 			return new CfgRefContainer(r[0], r[1]);

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007 Intel Corporation and others.
+ * Copyright (c) 2007, 2009 Intel Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,16 +10,28 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.settings.model;
 
+import org.eclipse.cdt.core.settings.model.CExternalSetting;
 import org.eclipse.cdt.core.settings.model.ICConfigurationDescription;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
 
 public abstract class CExternalSettingContainerFactory {
-	
+
+	/**
+	 * Create a settings container for fetching External Settings from the External
+	 * Settings provider with the given id on the specified project and configuration
+	 *
+	 * @param id of the external settings provider
+	 * @param project project to fetch settings for
+	 * @param cfgDes configuration to fetch settings for
+	 * @param previousSettings settings as previously cached by cdt.core
+	 * @return {@link CExternalSettingsContainer}
+	 * @throws CoreException
+	 */
 	public abstract CExternalSettingsContainer createContainer(
 			String id,
 			IProject project,
-			ICConfigurationDescription cfgDes) throws CoreException;
+			ICConfigurationDescription cfgDes, CExternalSetting[] previousSettings) throws CoreException;
 
 	public void addListener(ICExternalSettingsListener listener){
 	}

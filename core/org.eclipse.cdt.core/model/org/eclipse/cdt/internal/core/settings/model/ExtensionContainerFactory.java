@@ -102,8 +102,8 @@ public class ExtensionContainerFactory extends CExternalSettingContainerFactoryW
 			return fProvider;
 		}
 		
-		CExternalSettingsContainer getContainer(IProject project, ICConfigurationDescription cfg){
-			return new CESContainer(getProvider().getSettings(project, cfg));
+		CExternalSettingsContainer getContainer(IProject project, ICConfigurationDescription cfg, CExternalSetting[] previousSettings){
+			return new CESContainer(getProvider().getSettings(project, cfg, previousSettings));
 		}
 
 		CExternalSettingProvider createProvider() throws CoreException{
@@ -175,10 +175,10 @@ public class ExtensionContainerFactory extends CExternalSettingContainerFactoryW
 
 	@Override
 	public CExternalSettingsContainer createContainer(String id,
-			IProject project, ICConfigurationDescription cfgDes) throws CoreException {
+			IProject project, ICConfigurationDescription cfgDes, CExternalSetting[] previousSettings) throws CoreException {
 		CExtensionSettingProviderDescriptor dr = getProviderDescriptorMap().get(id);
 		if(dr != null)
-			return dr.getContainer(project, cfgDes);
+			return dr.getContainer(project, cfgDes, previousSettings);
 		return CExternalSettingsManager.NullContainer.INSTANCE;
 	}
 	

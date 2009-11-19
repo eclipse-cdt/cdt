@@ -147,13 +147,14 @@ public class CExternalSettingsManager implements ICExternalSettingsListener, ICP
 		private ContainerDescriptor(FactoryDescriptor factoryDr,
 				String containerId, 
 				IProject project,
-				ICConfigurationDescription cfgDes){
+				ICConfigurationDescription cfgDes,
+				CExternalSetting[] previousSettings){
 			fFactoryDr = factoryDr;
 //			fContainerId = containerId;
 //			fProjectName = project.getName();
 //			fCfgId = cfgDes.getId();
 			try {
-				fContainer = fFactoryDr.getFactory().createContainer(containerId, project, cfgDes);
+				fContainer = fFactoryDr.getFactory().createContainer(containerId, project, cfgDes, previousSettings);
 			} catch (CoreException e) {
 			}
 			if(fContainer == null)
@@ -201,7 +202,7 @@ public class CExternalSettingsManager implements ICExternalSettingsListener, ICP
 
 		@Override
 		public CExternalSettingsContainer createContainer(String id,
-				IProject project, ICConfigurationDescription cfgDes) throws CoreException {
+				IProject project, ICConfigurationDescription cfgDes, CExternalSetting[] previousSettings) throws CoreException {
 			return NullContainer.INSTANCE;
 		}
 
@@ -471,10 +472,10 @@ public class CExternalSettingsManager implements ICExternalSettingsListener, ICP
 	private ContainerDescriptor createDescriptor(String factoryId,
 			String containerId,
 			IProject project,
-			ICConfigurationDescription cfgDes
-			) {
+			ICConfigurationDescription cfgDes,
+			CExternalSetting[] previousSettings) {
 		FactoryDescriptor dr = getFactoryDescriptor(factoryId);
-		return new ContainerDescriptor(dr, containerId, project, cfgDes);
+		return new ContainerDescriptor(dr, containerId, project, cfgDes, previousSettings);
 	}
 
 	public void settingsChanged(IProject project, String cfgId,
@@ -791,7 +792,7 @@ public class CExternalSettingsManager implements ICExternalSettingsListener, ICP
 		CExternalSetting[] newSettings = null;
 		CExternalSetting[] oldSettings = hCr.getHolder(false).getExternalSettings();
 		if(add){
-			ContainerDescriptor cdr = createDescriptor(cr.getFactoryId(), cr.getContainerId(), proj, cfgDes);
+			ContainerDescriptor cdr = createDescriptor(cr.getFactoryId(), cr.getContainerId(), proj, cfgDes, oldSettings);
 			newSettings = cdr.getExternalSettings();
 		}
 		

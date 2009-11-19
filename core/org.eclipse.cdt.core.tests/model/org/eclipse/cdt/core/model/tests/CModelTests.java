@@ -314,8 +314,6 @@ public class CModelTests extends TestCase {
 		// store the changed configuration
 		CoreModel.getDefault().setProjectDescription(testProject.getProject(), prjDesc);
 		
-		testProject.close();
-
         cSourceRoots = testProject.getChildrenOfType(ICElement.C_CCONTAINER);
         assertEquals(1, cSourceRoots.size());
         assertEquals(testProject.getElementName(), cSourceRoots.get(0).getElementName());
@@ -395,8 +393,6 @@ public class CModelTests extends TestCase {
 		// store the changed configuration
 		CoreModel.getDefault().setProjectDescription(testProject.getProject(), prjDesc);
 		
-		testProject.close();
-
         cSourceRoots = testProject.getChildrenOfType(ICElement.C_CCONTAINER);
         assertEquals(1, cSourceRoots.size());
         assertEquals(testProject.getElementName(), cSourceRoots.get(0).getElementName());

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2008 IBM Corporation and others.
+ * Copyright (c) 2000, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -33,6 +33,7 @@ import org.eclipse.jface.text.quickassist.IQuickAssistInvocationContext;
 import org.eclipse.jface.text.source.Annotation;
 import org.eclipse.jface.text.source.IAnnotationModel;
 import org.eclipse.jface.text.source.ISourceViewer;
+import org.eclipse.ltk.core.refactoring.NullChange;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IMarkerHelpRegistry;
 import org.eclipse.ui.IMarkerResolution;
@@ -48,8 +49,8 @@ import org.eclipse.cdt.ui.text.IQuickAssistProcessor;
 import org.eclipse.cdt.ui.text.IQuickFixProcessor;
 
 import org.eclipse.cdt.internal.ui.editor.ICAnnotation;
-import org.eclipse.cdt.internal.ui.text.contentassist.CCompletionProposal;
 import org.eclipse.cdt.internal.ui.text.contentassist.CCompletionProposalComparator;
+import org.eclipse.cdt.internal.ui.text.correction.proposals.ChangeCorrectionProposal;
 
 public class CCorrectionProcessor implements org.eclipse.jface.text.quickassist.IQuickAssistProcessor {
 	private static final String QUICKFIX_PROCESSOR_CONTRIBUTION_ID= "quickFixProcessors"; //$NON-NLS-1$
@@ -210,7 +211,7 @@ public class CCorrectionProcessor implements org.eclipse.jface.text.quickassist.
 		
 		if (res == null || res.length == 0) {
 			return new ICCompletionProposal[]
-					{ new CCompletionProposal("", 0, 0, null, CorrectionMessages.NoCorrectionProposal_description, 0) }; //$NON-NLS-1$
+					{ new ChangeCorrectionProposal(CorrectionMessages.NoCorrectionProposal_description, new NullChange(""), 0, null) }; //$NON-NLS-1$
 		}
 		if (res.length > 1) {
 			Arrays.sort(res, new CCompletionProposalComparator());

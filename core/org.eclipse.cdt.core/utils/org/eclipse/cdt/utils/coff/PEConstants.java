@@ -39,6 +39,7 @@ public final static int IMAGE_FILE_MACHINE_UNKNOWN   = 0x0;
 public final static int IMAGE_FILE_MACHINE_ALPHA     = 0x184;
 public final static int IMAGE_FILE_MACHINE_ARM       = 0x1c0;
 public final static int IMAGE_FILE_MACHINE_ALPHA64   = 0x284;
+/** @since 5.2 */
 public final static int IMAGE_FILE_MACHINE_AMD64     = 0x8664;
 public final static int IMAGE_FILE_MACHINE_I386      = 0x14c;
 public final static int IMAGE_FILE_MACHINE_IA64      = 0x200;

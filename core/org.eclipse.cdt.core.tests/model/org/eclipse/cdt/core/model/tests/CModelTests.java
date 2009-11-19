@@ -13,6 +13,7 @@ package org.eclipse.cdt.core.model.tests;
 import java.io.ByteArrayInputStream;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.util.Arrays;
 import java.util.List;
 
 import junit.framework.TestCase;
@@ -321,7 +322,7 @@ public class CModelTests extends TestCase {
         
         sourceRoot = (ISourceRoot) cSourceRoots.get(0);
         
-        cContainers = sourceRoot .getChildrenOfType(ICElement.C_CCONTAINER);
+        cContainers = sourceRoot.getChildrenOfType(ICElement.C_CCONTAINER);
         assertEquals(1, cContainers.size());
         assertEquals("test", cContainers.get(0).getElementName());
         
@@ -337,6 +338,89 @@ public class CModelTests extends TestCase {
 		assertEquals(subFolder1, nonCResources[0]);
 		assertEquals(subFolder2, nonCResources[1]);
 		assertEquals(file0, nonCResources[2]);
+		
+		try {
+			testProject.getProject().delete(true,true,monitor);
+		} 
+		catch (CoreException e) {}
+
+	}
+
+    // bug 179474
+    public void testSourceExclusionFilters_179474() throws Exception {
+        ICProject testProject;
+        testProject=CProjectHelper.createCProject("bug179474", "none", IPDOMManager.ID_NO_INDEXER);
+        if (testProject==null)
+            fail("Unable to create project");
+
+        IFolder subFolder = testProject.getProject().getFolder("sub");
+    	subFolder.create(true, true, monitor);
+        IFile fileA = testProject.getProject().getFile("a.cpp");
+        fileA.create(new ByteArrayInputStream(new byte[0]), true, monitor);
+        IFile fileB = subFolder.getFile("b.cpp");
+        fileB.create(new ByteArrayInputStream(new byte[0]), true, monitor);
+
+        List<ICElement> cSourceRoots = testProject.getChildrenOfType(ICElement.C_CCONTAINER);
+        assertEquals(1, cSourceRoots.size());
+        assertEquals(testProject.getElementName(), cSourceRoots.get(0).getElementName());
+        
+        ISourceRoot sourceRoot = (ISourceRoot) cSourceRoots.get(0);
+        
+        List<ICElement> cContainers = sourceRoot.getChildrenOfType(ICElement.C_CCONTAINER);
+        assertEquals(1, cContainers.size());
+        assertEquals(subFolder.getName(), cContainers.get(0).getElementName());
+
+        ICContainer subContainer = (ICContainer) cContainers.get(0);
+        
+        List<ICElement> tUnits = subContainer.getChildrenOfType(ICElement.C_UNIT);
+        assertEquals(1, tUnits.size());
+        assertEquals(fileB.getName(), tUnits.get(0).getElementName());
+
+        tUnits = sourceRoot.getChildrenOfType(ICElement.C_UNIT);
+        assertEquals(1, tUnits.size());
+        assertEquals(fileA.getName(), tUnits.get(0).getElementName());
+
+		ICProjectDescription prjDesc= CoreModel.getDefault().getProjectDescription(testProject.getProject(), true);
+		ICConfigurationDescription activeCfg= prjDesc.getActiveConfiguration();
+		assertNotNull(activeCfg);
+		
+		// add filter to source entry
+		ICSourceEntry[] entries = activeCfg.getSourceEntries();
+		final String sourceEntryName = entries[0].getName();
+		final IPath[] exclusionPatterns = new IPath[] { new Path("**/*.cpp") };
+
+		ICSourceEntry entry = new CSourceEntry(sourceEntryName, exclusionPatterns, entries[0].getFlags());
+		activeCfg.setSourceEntries(new ICSourceEntry[] {entry});
+
+		// store the changed configuration
+		CoreModel.getDefault().setProjectDescription(testProject.getProject(), prjDesc);
+		
+		testProject.close();
+
+        cSourceRoots = testProject.getChildrenOfType(ICElement.C_CCONTAINER);
+        assertEquals(1, cSourceRoots.size());
+        assertEquals(testProject.getElementName(), cSourceRoots.get(0).getElementName());
+        
+        sourceRoot = (ISourceRoot) cSourceRoots.get(0);
+        
+        cContainers = sourceRoot.getChildrenOfType(ICElement.C_CCONTAINER);
+        assertEquals(1, cContainers.size());
+        assertEquals(subFolder.getName(), cContainers.get(0).getElementName());
+        
+        subContainer = (ICContainer) cContainers.get(0);
+        
+        tUnits = subContainer.getChildrenOfType(ICElement.C_UNIT);
+        assertEquals(0, tUnits.size());
+
+        tUnits = sourceRoot.getChildrenOfType(ICElement.C_UNIT);
+        assertEquals(0, tUnits.size());
+
+        Object[] nonCResources = subContainer.getNonCResources();
+		assertEquals(1, nonCResources.length);
+		assertEquals(fileB, nonCResources[0]);
+
+		nonCResources = sourceRoot.getNonCResources();
+		assertTrue(Arrays.asList(nonCResources).contains(fileA));
 		
 		try {
 			testProject.getProject().delete(true,true,monitor);

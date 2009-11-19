@@ -2322,13 +2322,13 @@ public class Configuration extends BuildObject implements IConfiguration, IBuild
 	}
 
 	public void setSourceEntries(ICSourceEntry[] entries, boolean setRebuildState) {
+		exportArtifactInfo();
 		if(Arrays.equals(getSourceEntries(), entries))
 			return;
 		sourceEntries = entries != null ? (ICSourceEntry[])entries.clone() : null;
 //		for(int i = 0; i < sourcePaths.length; i++){
 //			sourcePaths[i] = sourcePaths[i].makeRelative();
 //		}
-		exportArtifactInfo();
 		if(setRebuildState){
 			setDirty(true);
 			setRebuildState(true);

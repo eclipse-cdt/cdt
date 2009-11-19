@@ -18,6 +18,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.content.IContentType;
 import org.eclipse.core.runtime.content.IContentTypeManager;
@@ -48,6 +49,7 @@ import org.eclipse.cdt.core.settings.model.ICExternalSetting;
 import org.eclipse.cdt.core.settings.model.ICLanguageSettingEntry;
 import org.eclipse.cdt.core.settings.model.ICResourceDescription;
 import org.eclipse.cdt.core.settings.model.ICSettingEntry;
+import org.eclipse.cdt.ui.CUIPlugin;
 
 import org.eclipse.cdt.internal.ui.CPluginImages;
 
@@ -353,9 +355,15 @@ outer:
 	@Override
 	protected void performDefaults() {
 		cfg.removeExternalSettings();
+		// Bug 295602 Add any resources which are exported by 'default' in this configuration
+		// There's no hook on the Build system to do this, but 
+		//            setSourceEntries -> ... -> Configuration#setSourceEntries(...) -> Configuration#exportArtifactInfo()
+		try {
+			cfg.setSourceEntries(cfg.getSourceEntries());
+		} catch (CoreException e) {CUIPlugin.log(e);}
 		updateData(this.getResDesc());
 	}
-	
+
 	// Extended label provider
 	private class RichLabelProvider extends LabelProvider implements IFontProvider, ITableLabelProvider /*, IColorProvider*/{
 		public RichLabelProvider(){}

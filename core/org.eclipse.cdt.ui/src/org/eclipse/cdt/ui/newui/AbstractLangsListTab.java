@@ -69,6 +69,7 @@ import org.eclipse.cdt.core.settings.model.ICResourceDescription;
 import org.eclipse.cdt.core.settings.model.ICSettingBase;
 import org.eclipse.cdt.core.settings.model.ICSettingEntry;
 import org.eclipse.cdt.core.settings.model.MultiLanguageSetting;
+import org.eclipse.cdt.core.settings.model.util.CDataUtil;
 
 import org.eclipse.cdt.internal.ui.CPluginImages;
 
@@ -85,6 +86,7 @@ public abstract class AbstractLangsListTab extends AbstractCPropertyTab {
 	
 	protected ICLanguageSetting lang;
 	protected LinkedList<ICLanguageSettingEntry> shownEntries;
+	/** A set of resolved exported entries */
 	protected ArrayList<ICSettingEntry> exported; 
 	protected SashForm sashForm;
 	protected ICLanguageSetting [] ls; // all languages known
@@ -260,7 +262,7 @@ public abstract class AbstractLangsListTab extends AbstractCPropertyTab {
 			ent = (ICLanguageSettingEntry)(table.getItem(index).getData());
 			if (ent.isReadOnly()) canEdit = false;
 			if (ent.isReadOnly()) canDelete = false;
-			if (exported.contains(ent))
+			if (exported.contains(resolve(ent)))
 				buttonSetText(BUTTON_EXPORT_UNEXPORT, UIMessages.getString("AbstractLangsListTab.4")); //$NON-NLS-1$
 			else
 				buttonSetText(BUTTON_EXPORT_UNEXPORT, UIMessages.getString("AbstractLangsListTab.2")); //$NON-NLS-1$
@@ -550,7 +552,7 @@ public abstract class AbstractLangsListTab extends AbstractCPropertyTab {
 		case BUTTON_EXPORT_UNEXPORT:
 			if (n == -1) return;
 			for (int x=ids.length-1; x>=0; x--) {
-				old = (ICLanguageSettingEntry)(table.getItem(ids[x]).getData());
+				old = resolve((ICLanguageSettingEntry)(table.getItem(ids[x]).getData()));
 				if (exported.contains(old)) {
 					deleteExportSetting(old);
 				} else {
@@ -580,6 +582,13 @@ public abstract class AbstractLangsListTab extends AbstractCPropertyTab {
 			break;
 		}
 		table.setFocus();
+	}
+
+	/**
+	 * @return resolved ICLanguageSettingEntry
+	 */
+	private ICLanguageSettingEntry resolve(ICLanguageSettingEntry entry) {
+		return CDataUtil.resolveEntries(new ICLanguageSettingEntry[] {entry}, getResDesc().getConfiguration())[0];
 	}
 
 	private void deleteExportSetting(ICSettingEntry ent) {
@@ -717,7 +726,7 @@ public abstract class AbstractLangsListTab extends AbstractCPropertyTab {
 			ICLanguageSettingEntry le = (ICLanguageSettingEntry) element;
 			if (columnIndex == 0) {
 				String s = le.getName();
-				if (exported.contains(le))
+				if (exported.contains(resolve(le)))
 					s = s + UIMessages.getString("AbstractLangsListTab.3"); //$NON-NLS-1$
 				return s;
 			}

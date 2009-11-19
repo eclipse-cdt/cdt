@@ -1,12 +1,13 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2008 Intel Corporation and others.
+ * Copyright (c) 2007, 2009 Intel Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- * Intel Corporation - Initial API and implementation
+ *    Intel Corporation - Initial API and implementation
+ *    James Blackburn (Broadcom Corp.)
  *******************************************************************************/
 package org.eclipse.cdt.managedbuilder.ui.properties;
 
@@ -16,14 +17,12 @@ import java.util.TreeSet;
 import org.eclipse.cdt.core.settings.model.ICConfigurationDescription;
 import org.eclipse.cdt.core.settings.model.ICMultiItemsHolder;
 import org.eclipse.cdt.core.settings.model.ICResourceDescription;
-import org.eclipse.cdt.managedbuilder.buildproperties.IBuildProperty;
 import org.eclipse.cdt.managedbuilder.buildproperties.IBuildPropertyValue;
-import org.eclipse.cdt.managedbuilder.core.IBuildObjectProperties;
+import org.eclipse.cdt.managedbuilder.core.BuildException;
 import org.eclipse.cdt.managedbuilder.core.IConfiguration;
 import org.eclipse.cdt.managedbuilder.core.IMultiConfiguration;
 import org.eclipse.cdt.managedbuilder.core.ITool;
 import org.eclipse.cdt.managedbuilder.core.ManagedBuildManager;
-import org.eclipse.core.runtime.CoreException;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
@@ -45,7 +44,6 @@ public class ArtifactTab extends AbstractCBuildPropertyTab {
 	private Combo c1;
 	private int savedPos = -1; // current project type
 	private IConfiguration fCfg; 
-	private IBuildObjectProperties fProperties; 
 	private IBuildPropertyValue[] values;
 	private ITool tTool;
 	private boolean canModify = true;
@@ -55,7 +53,8 @@ public class ArtifactTab extends AbstractCBuildPropertyTab {
 	private Set<String> set2 = new TreeSet<String>();
 	private Set<String> set3 = new TreeSet<String>();
 	private Set<String> set4 = new TreeSet<String>();
-	
+
+	@Override
 	public void createControls(Composite parent) {
 		super.createControls(parent);
 		usercomp.setLayout(new GridLayout(2, false));
@@ -66,6 +65,7 @@ public class ArtifactTab extends AbstractCBuildPropertyTab {
 		c1 = new Combo(usercomp, SWT.READ_ONLY | SWT.DROP_DOWN | SWT.BORDER);
 		c1.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		c1.addSelectionListener(new SelectionAdapter() {
+		@Override
 		public void widgetSelected(SelectionEvent e) {
 			typeChanged();
 		}});
@@ -120,27 +120,20 @@ public class ArtifactTab extends AbstractCBuildPropertyTab {
 	private void setProjectType(int n) {
 		try {
 			String s = values[n].getId();
-			if (fCfg instanceof IMultiConfiguration) {
-				((IMultiConfiguration)fCfg).setBuildProperty(PROPERTY, s);
-			} else {				
-				if (fProperties == null) 
-					return;
-				fProperties.setProperty(PROPERTY, s);
-			}
-		} catch (CoreException ex) {
+			fCfg.setBuildArtefactType(s);
+		} catch (BuildException ex) {
 			ManagedBuilderUIPlugin.log(ex);
 		}
 	}
 	
+	@Override
 	public void updateData(ICResourceDescription cfgd) {
 		if (cfgd == null) return;
 		fCfg = getCfg();
 		if (page.isMultiCfg()) {
-			fProperties = null;
 			values = ((IMultiConfiguration)fCfg).getSupportedValues(PROPERTY);
 		} else {
-			fProperties = fCfg.getBuildProperties();
-			values = fProperties.getSupportedValues(PROPERTY);
+			values = fCfg.getBuildProperties().getSupportedValues(PROPERTY);
 		}
 		c1.removeAll();
 		c1.setData(values);
@@ -148,11 +141,9 @@ public class ArtifactTab extends AbstractCBuildPropertyTab {
 			c1.add(values[i].getName());
 		}
 		c1.setText(EMPTY_STR);
-		IBuildProperty pr = (page.isMultiCfg()) ?
-			((IMultiConfiguration)fCfg).getBuildProperty(PROPERTY) :
-			fProperties.getProperty(PROPERTY);
-		if (pr != null) {
-			String s = pr.getValue().getId();
+		IBuildPropertyValue pv = fCfg.getBuildArtefactType();
+		if (pv != null) {
+			String s = pv.getId();
 			for (int i=0; i<values.length; i++) {
 				if (s.equals(values[i].getId())) {
 					c1.select(i);
@@ -203,6 +194,7 @@ public class ArtifactTab extends AbstractCBuildPropertyTab {
 		canModify = true;
 	}
 	
+	@Override
 	protected void performApply(ICResourceDescription src, ICResourceDescription dst) {
 		IConfiguration cfg1 = getCfg(src.getConfiguration());
 		IConfiguration cfg2 = getCfg(dst.getConfiguration());
@@ -215,19 +207,15 @@ public class ArtifactTab extends AbstractCBuildPropertyTab {
 			t2.setOutputPrefixForPrimaryOutput(t1.getOutputPrefix());
 			
 		try {
-			IBuildProperty bp = cfg1.getBuildProperties().getProperty(PROPERTY);
-			if (bp != null) {
-				IBuildPropertyValue bv = bp.getValue();
-				if (bv != null) {
-					String s = bv.getId();
-					cfg2.getBuildProperties().setProperty(PROPERTY, s);
-				}
-			}
-		} catch (CoreException e) {
+			IBuildPropertyValue bv = cfg1.getBuildArtefactType();
+			if (bv != null)
+				cfg2.setBuildArtefactType(bv.getId());
+		} catch (BuildException e) {
 			ManagedBuilderUIPlugin.log(e);
 		}
 	}
 	
+	@Override
 	protected void performDefaults() {
 		fCfg.setArtifactName(fCfg.getManagedProject().getDefaultArtifactName());
 		fCfg.setArtifactExtension(null);
@@ -247,6 +235,7 @@ public class ArtifactTab extends AbstractCBuildPropertyTab {
 		updateData(getResDesc());
 	}
 
+	@Override
 	public boolean canBeVisible() {
 		if (page.isForProject()) {
 			if (page.isMultiCfg()) {
@@ -263,6 +252,7 @@ public class ArtifactTab extends AbstractCBuildPropertyTab {
 		else
 			return false;
 	}
+	@Override
 	protected void updateButtons() {} // Do nothing. No buttons to update.
 	
 	private Combo setCombo(FIELD field, Set<String> set) {

@@ -30,6 +30,7 @@ import org.eclipse.cdt.core.settings.model.CLibraryFileEntry;
 import org.eclipse.cdt.core.settings.model.CLibraryPathEntry;
 import org.eclipse.cdt.core.settings.model.CSourceEntry;
 import org.eclipse.cdt.core.settings.model.ICConfigurationDescription;
+import org.eclipse.cdt.core.settings.model.ICExternalSetting;
 import org.eclipse.cdt.core.settings.model.ICLanguageSettingEntry;
 import org.eclipse.cdt.core.settings.model.ICLibraryPathEntry;
 import org.eclipse.cdt.core.settings.model.ICOutputEntry;
@@ -1449,6 +1450,23 @@ public class Configuration extends BuildObject implements IConfiguration, IBuild
 	public void setArtifactName(String name) {
 		if (name == null && artifactName == null) return;
 		if (artifactName == null || name == null || !artifactName.equals(name)) {
+			if (canExportedArtifactInfo()) {
+				// Remove existing exported library, if it exists
+				ICConfigurationDescription des = ManagedBuildManager.getDescriptionForConfiguration(this);
+				ICSettingEntry lib = CDataUtil.resolveEntries(new ICSettingEntry[] {
+														new CLibraryFileEntry(getArtifactName(), 0)}, des)[0];
+				for (ICExternalSetting setting : des.getExternalSettings()) {
+					Set<ICSettingEntry> entries = new LinkedHashSet<ICSettingEntry>(Arrays.asList(setting.getEntries()));
+					if (entries.contains(lib)) {
+						entries.remove(lib);
+						des.removeExternalSetting(setting);
+						des.createExternalSetting(setting.getCompatibleLanguageIds(), setting.getCompatibleContentTypeIds(), 
+								setting.getCompatibleExtensions(), entries.toArray(new ICSettingEntry[entries.size()]));
+						break;
+					}
+				}
+			}
+
 			artifactName = name;
 			if(!isExtensionElement()){
 				ITool tool = calculateTargetTool();
@@ -1460,8 +1478,7 @@ public class Configuration extends BuildObject implements IConfiguration, IBuild
 			}
 //			rebuildNeeded = true;
 			isDirty = true;
-//			exportArtifactInfo();
-
+			exportArtifactInfo();
 		}
 	}
 
@@ -2649,7 +2666,26 @@ public class Configuration extends BuildObject implements IConfiguration, IBuild
 	public boolean buildsFileType(String srcExt) {
 		return getRootFolderInfo().buildsFileType(srcExt);
 	}
-	
+
+	/**
+	 * @return whether this Configuration exports settings to other referenced configurations
+	 */
+	private boolean canExportedArtifactInfo() {
+		if (isExtensionConfig)
+			return false;
+
+		IBuildObjectProperties props = getBuildProperties();
+		IBuildProperty prop = props.getProperty(ManagedBuildManager.BUILD_ARTEFACT_TYPE_PROPERTY_ID);
+		if (prop == null)
+			return false;
+		String valueId = prop.getValue().getId();
+		if(!ManagedBuildManager.BUILD_ARTEFACT_TYPE_PROPERTY_SHAREDLIB.equals(valueId)
+				&& !ManagedBuildManager.BUILD_ARTEFACT_TYPE_PROPERTY_STATICLIB.equals(valueId))
+			return false;
+		ICConfigurationDescription des = ManagedBuildManager.getDescriptionForConfiguration(this);
+		return des != null && !des.isReadOnly();
+	}
+
 	/**
 	 * Responsible for contributing 'external' settings back to the core for use
 	 * by referenced projects.
@@ -2658,47 +2694,39 @@ public class Configuration extends BuildObject implements IConfiguration, IBuild
 	 * to be used be references for linking the output of this library project
 	 */
 	public void exportArtifactInfo(){
-		if(isExtensionConfig)
+		if (!canExportedArtifactInfo())
 			return;
-		
-		IBuildObjectProperties props = getBuildProperties();
-		IBuildProperty prop = props.getProperty(ManagedBuildManager.BUILD_ARTEFACT_TYPE_PROPERTY_ID);
-		if(prop != null){
-			String valueId = prop.getValue().getId(); 
-			if(ManagedBuildManager.BUILD_ARTEFACT_TYPE_PROPERTY_SHAREDLIB.equals(valueId)
-					|| ManagedBuildManager.BUILD_ARTEFACT_TYPE_PROPERTY_STATICLIB.equals(valueId)){
-				ICConfigurationDescription des = ManagedBuildManager.getDescriptionForConfiguration(this);
-				if(des != null && !des.isReadOnly()){
-					ICOutputEntry entries[] = getConfigurationData().getBuildData().getOutputDirectories();
-					IPath path = getOwner().getFullPath();
-					
-					List<ICSettingEntry> list = new ArrayList<ICSettingEntry>(entries.length + 1);
-					
-					// Add project level include path
-					list.add(new CIncludePathEntry(path.toString(), ICLanguageSettingEntry.VALUE_WORKSPACE_PATH));
 
-					// Add Build output path as an exported library path
-					entries = CDataUtil.resolveEntries(entries, des);
-					for(int i = 0; i < entries.length; i++){
-						ICOutputEntry out = entries[i];
-						String value = out.getValue();
+		ICConfigurationDescription des = ManagedBuildManager.getDescriptionForConfiguration(this);
+		if(des != null && !des.isReadOnly()){
+			ICOutputEntry entries[] = getConfigurationData().getBuildData().getOutputDirectories();
+			IPath path = getOwner().getFullPath();
 
-						IPath p = new Path(value);
-						if(!p.isAbsolute())
-							value = getOwner().getFullPath().append(value).toString();
-						ICLibraryPathEntry lib = new CLibraryPathEntry(value, out.getFlags() & (~ICSettingEntry.RESOLVED));
-						list.add(lib);
-					}
+			List<ICSettingEntry> list = new ArrayList<ICSettingEntry>(entries.length + 1);
 
-					// Add 'libs' artifact names themselves
-					ICSettingEntry[] libFile = new ICSettingEntry[] {new CLibraryFileEntry(getArtifactName(), 0)};
-					libFile = CDataUtil.resolveEntries(libFile, des);
-					list.add(libFile[0]);
+			// Add project level include path
+			list.add(new CIncludePathEntry(path.toString(), ICLanguageSettingEntry.VALUE_WORKSPACE_PATH));
 
-					// Contribute the settings back as 'exported'
-					des.createExternalSetting(null, null, null, list.toArray(new ICSettingEntry[list.size()]));
-				}
+			// Add Build output path as an exported library path
+			entries = CDataUtil.resolveEntries(entries, des);
+			for(int i = 0; i < entries.length; i++){
+				ICOutputEntry out = entries[i];
+				String value = out.getValue();
+
+				IPath p = new Path(value);
+				if(!p.isAbsolute())
+					value = getOwner().getFullPath().append(value).toString();
+				ICLibraryPathEntry lib = new CLibraryPathEntry(value, out.getFlags() & (~ICSettingEntry.RESOLVED));
+				list.add(lib);
 			}
+
+			// Add 'libs' artifact names themselves
+			ICSettingEntry[] libFile = new ICSettingEntry[] {new CLibraryFileEntry(getArtifactName(), 0)};
+			libFile = CDataUtil.resolveEntries(libFile, des);
+			list.add(libFile[0]);
+
+			// Contribute the settings back as 'exported'
+			des.createExternalSetting(null, null, null, list.toArray(new ICSettingEntry[list.size()]));
 		}
 	}
 
@@ -2948,8 +2976,10 @@ public class Configuration extends BuildObject implements IConfiguration, IBuild
 		} catch (CoreException e){
 			throw new BuildException(e.getLocalizedMessage());
 		}
+		// May need to update the exports paths & symbols after artifact type change
+		exportArtifactInfo();		
 	}
-	
+
 	boolean isExcluded(IPath path){
 //		if(path.segmentCount() == 0)
 //			return false;

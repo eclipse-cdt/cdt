@@ -1,18 +1,19 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 QNX Software Systems and others.
+ * Copyright (c) 2000, 2009 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *     QNX Software Systems - Initial API and implementation
+ *     Peter Graves (QNX Software Systems) - Initial API and implementation
  *******************************************************************************/
-
 package org.eclipse.cdt.core.model.tests;
 
+import java.io.ByteArrayInputStream;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.util.List;
 
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
@@ -21,26 +22,31 @@ import org.eclipse.cdt.core.CCProjectNature;
 import org.eclipse.cdt.core.CProjectNature;
 import org.eclipse.cdt.core.dom.IPDOMManager;
 import org.eclipse.cdt.core.model.CoreModel;
+import org.eclipse.cdt.core.model.ICContainer;
+import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.core.model.ICProject;
+import org.eclipse.cdt.core.model.ISourceRoot;
+import org.eclipse.cdt.core.settings.model.CSourceEntry;
+import org.eclipse.cdt.core.settings.model.ICConfigurationDescription;
+import org.eclipse.cdt.core.settings.model.ICProjectDescription;
+import org.eclipse.cdt.core.settings.model.ICSourceEntry;
 import org.eclipse.cdt.core.testplugin.CProjectHelper;
 import org.eclipse.cdt.core.testplugin.CTestPlugin;
 import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.core.resources.IWorkspaceDescription;
 import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Path;
 
-
 /**
- * @author Peter Graves
- *
  * This file contains a set of generic tests for the core C model. Nothing 
  * exotic, but should be a small sanity set of tests.
- *
  */
 public class CModelTests extends TestCase {
     IWorkspace workspace;
@@ -64,7 +70,8 @@ public class CModelTests extends TestCase {
      * Example code test the packages in the project 
      *  "com.qnx.tools.ide.cdt.core"
      */
-    protected void setUp() throws Exception {
+    @Override
+	protected void setUp() throws Exception {
         /***
          * The test of the tests assume that they have a working workspace
          * and workspace root object to use to create projects/files in, 
@@ -89,7 +96,8 @@ public class CModelTests extends TestCase {
      *
      * Called after every test case method.
      */
-    protected void tearDown() {
+    @Override
+	protected void tearDown() {
        // release resources here and clean-up
     }
     
@@ -246,4 +254,94 @@ public class CModelTests extends TestCase {
         assertTrue("Invalid C file", !CoreModel.isValidTranslationUnitName(null, "not.ca"));        
         assertTrue("Valid C file", CoreModel.isValidTranslationUnitName(null, "areal.c"));        
     }
+    
+    // bug 275609
+    public void testSourceExclusionFilters_275609() throws Exception {
+        ICProject testProject;
+        testProject=CProjectHelper.createCProject("bug257609", "none", IPDOMManager.ID_NO_INDEXER);
+        if (testProject==null)
+            fail("Unable to create project");
+
+        IFolder testFolder = testProject.getProject().getFolder("test");
+    	testFolder.create(true, true, monitor);
+        IFolder subFolder1 = testFolder.getFolder("1");
+    	subFolder1.create(true, true, monitor);
+        IFolder subFolder2 = testFolder.getFolder("2");
+    	subFolder2.create(true, true, monitor);
+        IFile file0 = testFolder.getFile("test0.c");
+        file0.create(new ByteArrayInputStream(new byte[0]), true, monitor);
+        IFile file1 = subFolder1.getFile("test1.c");
+        file1.create(new ByteArrayInputStream(new byte[0]), true, monitor);
+        IFile file2 = subFolder2.getFile("test2.c");
+        file2.create(new ByteArrayInputStream(new byte[0]), true, monitor);
+
+        List<ICElement> cSourceRoots = testProject.getChildrenOfType(ICElement.C_CCONTAINER);
+        assertEquals(1, cSourceRoots.size());
+        assertEquals(testProject.getElementName(), cSourceRoots.get(0).getElementName());
+        
+        ISourceRoot sourceRoot = (ISourceRoot) cSourceRoots.get(0);
+        
+        List<ICElement> cContainers = sourceRoot.getChildrenOfType(ICElement.C_CCONTAINER);
+        assertEquals(1, cContainers.size());
+        assertEquals("test", cContainers.get(0).getElementName());
+
+        ICContainer testContainer = (ICContainer) cContainers.get(0);
+        
+        List<ICElement> subContainers = testContainer.getChildrenOfType(ICElement.C_CCONTAINER);
+        assertEquals(2, subContainers.size());
+        assertEquals("1", subContainers.get(0).getElementName());
+        assertEquals("2", subContainers.get(1).getElementName());
+		Object[] nonCResources= testContainer.getNonCResources();
+		assertEquals(0, nonCResources.length);
+		
+        List<ICElement> tUnits = testContainer.getChildrenOfType(ICElement.C_UNIT);
+        assertEquals(1, tUnits.size());
+        assertEquals("test0.c", tUnits.get(0).getElementName());
+
+		ICProjectDescription prjDesc= CoreModel.getDefault().getProjectDescription(testProject.getProject(), true);
+		ICConfigurationDescription activeCfg= prjDesc.getActiveConfiguration();
+		assertNotNull(activeCfg);
+		
+		// add filter to source entry
+		ICSourceEntry[] entries = activeCfg.getSourceEntries();
+		final String sourceEntryName = entries[0].getName();
+		final IPath[] exclusionPatterns = new IPath[] { new Path("test/*") };
+
+		ICSourceEntry entry = new CSourceEntry(sourceEntryName, exclusionPatterns, entries[0].getFlags());
+		activeCfg.setSourceEntries(new ICSourceEntry[] {entry});
+
+		// store the changed configuration
+		CoreModel.getDefault().setProjectDescription(testProject.getProject(), prjDesc);
+		
+		testProject.close();
+
+        cSourceRoots = testProject.getChildrenOfType(ICElement.C_CCONTAINER);
+        assertEquals(1, cSourceRoots.size());
+        assertEquals(testProject.getElementName(), cSourceRoots.get(0).getElementName());
+        
+        sourceRoot = (ISourceRoot) cSourceRoots.get(0);
+        
+        cContainers = sourceRoot .getChildrenOfType(ICElement.C_CCONTAINER);
+        assertEquals(1, cContainers.size());
+        assertEquals("test", cContainers.get(0).getElementName());
+        
+        testContainer = (ICContainer) cContainers.get(0);
+        
+        tUnits = testContainer.getChildrenOfType(ICElement.C_UNIT);
+        assertEquals(0, tUnits.size());
+
+        subContainers = testContainer.getChildrenOfType(ICElement.C_CCONTAINER);
+        assertEquals(0, subContainers.size());
+        nonCResources= testContainer.getNonCResources();
+		assertEquals(3, nonCResources.length);
+		assertEquals(subFolder1, nonCResources[0]);
+		assertEquals(subFolder2, nonCResources[1]);
+		assertEquals(file0, nonCResources[2]);
+		
+		try {
+			testProject.getProject().delete(true,true,monitor);
+		} 
+		catch (CoreException e) {}
+
+	}
 }

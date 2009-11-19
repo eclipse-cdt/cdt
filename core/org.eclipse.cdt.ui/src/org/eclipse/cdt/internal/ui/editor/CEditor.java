@@ -51,6 +51,7 @@ import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.BadPositionCategoryException;
 import org.eclipse.jface.text.DefaultLineTracker;
+import org.eclipse.jface.text.Document;
 import org.eclipse.jface.text.DocumentEvent;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.IDocumentExtension;
@@ -640,7 +641,8 @@ public class CEditor extends TextEditor implements ISelectionChangedListener, IC
 					case '"':
 						if (!fCloseStrings
 								|| nextToken == Symbols.TokenIDENT
-								|| next != null && (next.length() > 1 || next.charAt(0) == '"'))
+								|| next != null && (next.length() > 1 || next.charAt(0) == event.character)
+								|| isInsideStringInPreprocessorDirective(partition, document, offset))
 							return;
 						break;
 
@@ -658,7 +660,7 @@ public class CEditor extends TextEditor implements ISelectionChangedListener, IC
 				buffer.append(closingCharacter);
 				if (closingCharacter == '>' && nextToken != Symbols.TokenEOF
 						&& document.getChar(offset + length) == '>') {
-					// Insert a space to avoid two consequtive closing angular brackets.
+					// Insert a space to avoid two consecutive closing angular brackets.
 					buffer.append(' ');
 				}
 
@@ -705,6 +707,23 @@ public class CEditor extends TextEditor implements ISelectionChangedListener, IC
 			} catch (BadPositionCategoryException e) {
 				CUIPlugin.log(e);
 			}
+		}
+
+		private boolean isInsideStringInPreprocessorDirective(ITypedRegion partition, IDocument document, int offset) throws BadLocationException {
+			if (ICPartitions.C_PREPROCESSOR.equals(partition.getType())) {
+				// use temporary document to test whether offset is inside non-default partition
+				String directive = document.get(partition.getOffset(), offset - partition.getOffset() + 1);
+				int hashIdx = directive.indexOf('#');
+				if (hashIdx >= 0) {
+					IDocument tmp = new Document(directive.substring(hashIdx + 1));
+					new CDocumentSetupParticipant().setup(tmp);
+					String type = TextUtilities.getContentType(tmp, ICPartitions.C_PARTITIONING, offset - (partition.getOffset() + hashIdx + 1), true);
+					if (!type.equals(IDocument.DEFAULT_CONTENT_TYPE)) {
+						return true;
+					}
+				}
+			}
+			return false;
 		}
 
 		/*

@@ -303,11 +303,26 @@ public class BracketInserterTest extends TestCase {
 		setCaret(BODY_OFFSET);
 		type("#define MACRO ");
 		int offset = getCaret();
+		// enter opening quote (should be closed again)
 		type('"');
 		
 		assertEquals("\"\"", fDocument.get(offset, 2));
-		
 		assertSingleLinkedPosition(offset + 1);
+
+		// enter closing quote (should not add a quote, but proceed cursor)
+		type('"');
+		assertEquals("\"\"", fDocument.get(offset, 2));
+		assertEquals(offset + 2, getCaret());
+		
+		// delete closing quote and enter quote again
+		type(SWT.BS);
+		assertEquals("\"", fDocument.get(offset, 1));
+		int length = fDocument.getLength();
+		type('"');
+
+		assertEquals("\"\"", fDocument.get(offset, 2));
+		assertEquals(offset + 2, getCaret());
+		assertEquals(length + 1, fDocument.getLength());
 	}
 	
 	public void testPreferences() throws BadLocationException, CModelException, CoreException {

@@ -405,6 +405,7 @@ public class PE {
 			case PEConstants.IMAGE_FILE_MACHINE_ARM:
 			case PEConstants.IMAGE_FILE_MACHINE_ARM2:
 			case PEConstants.IMAGE_FILE_MACHINE_ALPHA64:
+			case PEConstants.IMAGE_FILE_MACHINE_AMD64:
 			case PEConstants.IMAGE_FILE_MACHINE_I386:
 			case PEConstants.IMAGE_FILE_MACHINE_IA64:
 			case PEConstants.IMAGE_FILE_MACHINE_M68K:
@@ -441,6 +442,9 @@ public class PE {
 			break;
 			case PEConstants.IMAGE_FILE_MACHINE_ALPHA64:
 				attrib.cpu = "arm64"; //$NON-NLS-1$
+			break;
+			case PEConstants.IMAGE_FILE_MACHINE_AMD64:
+				attrib.cpu = "amd64"; //$NON-NLS-1$
 			break;
 			case PEConstants.IMAGE_FILE_MACHINE_I386:
 				attrib.cpu = "x86"; //$NON-NLS-1$

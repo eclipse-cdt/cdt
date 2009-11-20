@@ -348,6 +348,17 @@ public class ManagedBuildTestHelper {
 		} catch (CoreException e2) {
 			Assert.fail(e2.getLocalizedMessage());
 		}
+		// CDT opens the Project with BACKGROUND_REFRESH enabled which causes the 
+		// refresh manager to refresh the project 200ms later.  This Job interferes
+		// with the resource change handler firing see: bug 271264
+		try {
+			// CDT opens the Project with BACKGROUND_REFRESH enabled which causes the 
+			// refresh manager to refresh the project 200ms later.  This Job interferes
+			// with the resource change handler firing see: bug 271264
+			Job.getJobManager().join(ResourcesPlugin.FAMILY_AUTO_REFRESH, null);
+		} catch (Exception e) {
+			// Ignore
+		}
 
 		// Initialize the path entry container
 		IStatus initResult = ManagedBuildManager.initBuildInfoContainer(project);

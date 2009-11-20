@@ -839,9 +839,7 @@ public class ManagedBuildTestHelper {
 				Assert.fail("Temporary sub-directory cannot be the empty string.");				
 			} else {
 				File tmpSrcDirFile = tmpSrcDir.toFile();
-				if (!tmpSrcDirFile.exists()) {
-					Assert.fail("Temporary directory " + tmpSrcDirFile.toString() + " does not exist.");				
-				} else {
+				if (tmpSrcDirFile.exists()) {
 					for (int i=0; i<files.length; i++) {
 						// Delete the file
 						IPath thisFile = tmpSrcDir.append(files[i]);

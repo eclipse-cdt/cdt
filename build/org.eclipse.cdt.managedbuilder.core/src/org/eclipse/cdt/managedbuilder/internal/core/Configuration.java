@@ -1453,16 +1453,19 @@ public class Configuration extends BuildObject implements IConfiguration, IBuild
 			if (canExportedArtifactInfo()) {
 				// Remove existing exported library, if it exists
 				ICConfigurationDescription des = ManagedBuildManager.getDescriptionForConfiguration(this);
-				ICSettingEntry lib = CDataUtil.resolveEntries(new ICSettingEntry[] {
-														new CLibraryFileEntry(getArtifactName(), 0)}, des)[0];
-				for (ICExternalSetting setting : des.getExternalSettings()) {
-					Set<ICSettingEntry> entries = new LinkedHashSet<ICSettingEntry>(Arrays.asList(setting.getEntries()));
-					if (entries.contains(lib)) {
-						entries.remove(lib);
-						des.removeExternalSetting(setting);
-						des.createExternalSetting(setting.getCompatibleLanguageIds(), setting.getCompatibleContentTypeIds(), 
-								setting.getCompatibleExtensions(), entries.toArray(new ICSettingEntry[entries.size()]));
-						break;
+				ICSettingEntry[] libs = CDataUtil.resolveEntries(new ICSettingEntry[] {
+														new CLibraryFileEntry(getArtifactName(), 0)}, des);
+				if (libs.length > 0) {
+					for (ICExternalSetting setting : des.getExternalSettings()) {
+						Set<ICSettingEntry> entries = new LinkedHashSet<ICSettingEntry>(Arrays.asList(setting.getEntries()));
+						for (ICSettingEntry lib : libs) {
+							if (entries.contains(lib)) {
+								entries.remove(lib);
+								des.removeExternalSetting(setting);
+								des.createExternalSetting(setting.getCompatibleLanguageIds(), setting.getCompatibleContentTypeIds(), 
+										setting.getCompatibleExtensions(), entries.toArray(new ICSettingEntry[entries.size()]));
+							}
+						}
 					}
 				}
 			}

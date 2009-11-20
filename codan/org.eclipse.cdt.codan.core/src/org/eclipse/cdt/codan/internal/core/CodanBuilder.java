@@ -12,6 +12,8 @@ package org.eclipse.cdt.codan.internal.core;
 
 import java.io.File;
 import java.net.URI;
+import java.util.Collection;
+import java.util.Iterator;
 import java.util.Map;
 
 import org.eclipse.cdt.codan.core.CodanCorePlugin;
@@ -20,6 +22,8 @@ import org.eclipse.cdt.codan.core.model.ICAstChecker;
 import org.eclipse.cdt.codan.core.model.IChecker;
 import org.eclipse.cdt.codan.core.model.ICodanAstReconciler;
 import org.eclipse.cdt.codan.core.model.ICodanBuilder;
+import org.eclipse.cdt.codan.core.model.IProblem;
+import org.eclipse.cdt.codan.core.model.IProblemProfile;
 import org.eclipse.cdt.codan.core.model.IProblemReporter;
 import org.eclipse.cdt.codan.internal.core.model.CodanMarkerProblemReporter;
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
@@ -122,6 +126,8 @@ public class CodanBuilder extends IncrementalProjectBuilder implements
 				boolean run = false;
 				if (checker.enabledInContext(resource))
 					run = true;
+				if (areProblemsForCheckerEnabled(checker, resource))
+					run = true;
 				if (run)
 					checker.processResource(resource);
 			} catch (Throwable e) {
@@ -161,6 +167,9 @@ public class CodanBuilder extends IncrementalProjectBuilder implements
 					boolean run = false;
 					if (checker.enabledInContext(resource))
 						run = true;
+					if (areProblemsForCheckerEnabled(checker, resource)) {
+						run = true;
+					}
 					if (run && checker instanceof ICAstChecker
 							&& checker.runInEditor())
 						((ICAstChecker) checker).processAst(ast);
@@ -169,6 +178,30 @@ public class CodanBuilder extends IncrementalProjectBuilder implements
 				}
 			}
 		}
+	}
+
+	/**
+	 * @param checker
+	 * @param resource
+	 * @return
+	 */
+	private boolean areProblemsForCheckerEnabled(IChecker checker,
+			IResource resource) {
+		IProblemProfile resourceProfile = CheckersRegisry.getInstance()
+				.getResourceProfile(resource);
+		Collection<IProblem> refProblems = CheckersRegisry.getInstance()
+				.getRefProblems(checker);
+		for (Iterator iterator = refProblems.iterator(); iterator.hasNext();) {
+			IProblem p = (IProblem) iterator.next();
+			// we need to check problem enablement in particular profile
+			IProblem problem = resourceProfile.findProblem(p.getId());
+			if (problem == null)
+				throw new IllegalArgumentException("Id is not registered");
+			if (problem.isEnabled())
+				return true;
+		}
+		// no problem is enabled for this checker, skip the checker
+		return false;
 	}
 
 	protected void fullBuild(final IProgressMonitor monitor)

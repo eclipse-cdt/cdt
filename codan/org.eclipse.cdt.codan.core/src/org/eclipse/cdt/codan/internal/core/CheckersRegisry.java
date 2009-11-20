@@ -44,6 +44,7 @@ public class CheckersRegisry implements Iterable<IChecker>, ICheckersRegistry {
 	private Collection<IChecker> checkers = new ArrayList<IChecker>();
 	private static CheckersRegisry instance;
 	private HashMap<Object, IProblemProfile> profiles = new HashMap<Object, IProblemProfile>();
+	private HashMap<IChecker, Collection<IProblem>> problemList = new HashMap<IChecker, Collection<IProblem>>();
 
 	private CheckersRegisry() {
 		instance = this;
@@ -135,7 +136,9 @@ public class CheckersRegisry implements Iterable<IChecker>, ICheckersRegistry {
 					}
 				}
 				if (!hasRef) {
-					addProblem(new CodanProblem(id, name), null);
+					CodanProblem p = new CodanProblem(id, name);
+					addProblem(p, null);
+					addRefProblem(checkerObj, p);
 				}
 			}
 		} catch (Exception e) {
@@ -183,7 +186,9 @@ public class CheckersRegisry implements Iterable<IChecker>, ICheckersRegistry {
 		return elementValue;
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.cdt.codan.core.model.ICheckersRegistry#iterator()
 	 */
 	public Iterator<IChecker> iterator() {
@@ -196,15 +201,23 @@ public class CheckersRegisry implements Iterable<IChecker>, ICheckersRegistry {
 		return instance;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.codan.core.model.ICheckersRegistry#addChecker(org.eclipse.cdt.codan.core.model.IChecker)
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.eclipse.cdt.codan.core.model.ICheckersRegistry#addChecker(org.eclipse
+	 * .cdt.codan.core.model.IChecker)
 	 */
 	public void addChecker(IChecker checker) {
 		checkers.add(checker);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.codan.core.model.ICheckersRegistry#addProblem(org.eclipse.cdt.codan.core.model.IProblem, java.lang.String)
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.eclipse.cdt.codan.core.model.ICheckersRegistry#addProblem(org.eclipse
+	 * .cdt.codan.core.model.IProblem, java.lang.String)
 	 */
 	public void addProblem(IProblem p, String category) {
 		IProblemCategory cat = getDefaultProfile().findCategory(category);
@@ -213,8 +226,12 @@ public class CheckersRegisry implements Iterable<IChecker>, ICheckersRegistry {
 		((ProblemProfile) getDefaultProfile()).addProblem(p, cat);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.codan.core.model.ICheckersRegistry#addCategory(org.eclipse.cdt.codan.core.model.IProblemCategory, java.lang.String)
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.eclipse.cdt.codan.core.model.ICheckersRegistry#addCategory(org.eclipse
+	 * .cdt.codan.core.model.IProblemCategory, java.lang.String)
 	 */
 	public void addCategory(IProblemCategory p, String category) {
 		IProblemCategory cat = getDefaultProfile().findCategory(category);
@@ -223,21 +240,46 @@ public class CheckersRegisry implements Iterable<IChecker>, ICheckersRegistry {
 		((ProblemProfile) getDefaultProfile()).addCategory(p, cat);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.codan.core.model.ICheckersRegistry#addRefProblem(org.eclipse.cdt.codan.core.model.IChecker, org.eclipse.cdt.codan.core.model.IProblem)
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.eclipse.cdt.codan.core.model.ICheckersRegistry#addRefProblem(org.
+	 * eclipse.cdt.codan.core.model.IChecker,
+	 * org.eclipse.cdt.codan.core.model.IProblem)
 	 */
 	public void addRefProblem(IChecker c, IProblem p) {
+		Collection<IProblem> plist = problemList.get(c);
+		if (plist == null) {
+			plist = new ArrayList<IProblem>();
+			problemList.put(c, plist);
+		}
+		plist.add(p);
+	}
+	
+	/**
+	 * Returns list of problems registered for given checker
+	 * @return collection of problems or null
+	 */
+	public Collection<IProblem> getRefProblems(IChecker checker) {
+		return problemList.get(checker);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.codan.core.model.ICheckersRegistry#getDefaultProfile()
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.eclipse.cdt.codan.core.model.ICheckersRegistry#getDefaultProfile()
 	 */
 	public IProblemProfile getDefaultProfile() {
 		return profiles.get(DEFAULT);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.codan.core.model.ICheckersRegistry#getWorkspaceProfile()
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.eclipse.cdt.codan.core.model.ICheckersRegistry#getWorkspaceProfile()
 	 */
 	public IProblemProfile getWorkspaceProfile() {
 		IProblemProfile wp = profiles.get(ResourcesPlugin.getWorkspace());
@@ -261,8 +303,12 @@ public class CheckersRegisry implements Iterable<IChecker>, ICheckersRegistry {
 			profiles.put(element, profile);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.codan.core.model.ICheckersRegistry#getResourceProfile(org.eclipse.core.resources.IResource)
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.eclipse.cdt.codan.core.model.ICheckersRegistry#getResourceProfile
+	 * (org.eclipse.core.resources.IResource)
 	 */
 	public IProblemProfile getResourceProfile(IResource element) {
 		IProblemProfile prof = profiles.get(element);
@@ -295,8 +341,11 @@ public class CheckersRegisry implements Iterable<IChecker>, ICheckersRegistry {
 		return prof;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.codan.core.model.ICheckersRegistry#getResourceProfileWorkingCopy(org.eclipse.core.resources.IResource)
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @seeorg.eclipse.cdt.codan.core.model.ICheckersRegistry#
+	 * getResourceProfileWorkingCopy(org.eclipse.core.resources.IResource)
 	 */
 	public IProblemProfile getResourceProfileWorkingCopy(IResource element) {
 		if (element instanceof IProject) {

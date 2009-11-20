@@ -4690,12 +4690,12 @@ public class ManagedBuildManager extends AbstractCExtension {
 					ICommand[] commands = project.getDescription().getBuildSpec();
 					monitor.beginTask("", commands.length); //$NON-NLS-1$
 					for (int i = 0; i < commands.length; i++) {
-						if (commands[i].getBuilderName().equals(CommonBuilder.BUILDER_ID)) {
-							project.build(IncrementalProjectBuilder.FULL_BUILD, CommonBuilder.BUILDER_ID, map, new SubProgressMonitor(monitor, 1));
-						} else {
-							project.build(IncrementalProjectBuilder.FULL_BUILD, commands[i].getBuilderName(),
-							commands[i].getArguments(), new SubProgressMonitor(monitor, 1));
+						Map newArgs = map;
+						if (!commands[i].getBuilderName().equals(CommonBuilder.BUILDER_ID)) {
+							newArgs = new HashMap(map);
+							newArgs.putAll(commands[i].getArguments());
 						}
+						project.build(IncrementalProjectBuilder.FULL_BUILD, commands[i].getBuilderName(), newArgs, new SubProgressMonitor(monitor, 1));
 					}
 					monitor.done();
 				} else {

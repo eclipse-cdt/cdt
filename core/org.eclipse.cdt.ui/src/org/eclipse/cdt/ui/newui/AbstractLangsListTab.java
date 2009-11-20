@@ -588,7 +588,10 @@ public abstract class AbstractLangsListTab extends AbstractCPropertyTab {
 	 * @return resolved ICLanguageSettingEntry
 	 */
 	private ICLanguageSettingEntry resolve(ICLanguageSettingEntry entry) {
-		return CDataUtil.resolveEntries(new ICLanguageSettingEntry[] {entry}, getResDesc().getConfiguration())[0];
+		ICLanguageSettingEntry[] entries = CDataUtil.resolveEntries(new ICLanguageSettingEntry[] {entry}, getResDesc().getConfiguration());
+		if (entries.length > 0)
+			return entries[0];
+		return entry;
 	}
 
 	private void deleteExportSetting(ICSettingEntry ent) {

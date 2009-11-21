@@ -50,7 +50,7 @@ public class SuggestedParenthesisChecker extends AbstractIndexAstChecker {
 			int precedence = getPrecedence(expression);
 			if (precedence == 2) { // unary not
 				if (isUsedAsOperand(expression)) {
-					reportProblem(ER_ID, svis.other,
+					reportProblem(ER_ID, expression,
 							"Suggested parenthesis around expression");
 					return PROCESS_SKIP;
 				}

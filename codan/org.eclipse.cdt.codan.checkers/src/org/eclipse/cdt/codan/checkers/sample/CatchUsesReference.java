@@ -46,7 +46,7 @@ public class CatchUsesReference extends AbstractIndexAstChecker {
 				for (int i = 0; i < catchHandlers.length; i++) {
 					ICPPASTCatchHandler catchHandler = catchHandlers[i];
 					if (usesReference(catchHandler)) {
-						reportProblem(ER_ID, catchHandler, "Catch clause uses reference in declaration of exception");
+						reportProblem(ER_ID, catchHandler.getDeclaration(), "Catch clause uses reference in declaration of exception");
 					}
 				}
 		

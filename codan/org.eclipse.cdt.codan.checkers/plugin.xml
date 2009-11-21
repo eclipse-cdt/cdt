@@ -52,6 +52,16 @@
             name="Catch uses reference to exception">
       </problem>
       </checker>
-
+      <checker
+            class="org.eclipse.cdt.codan.checkers.sample.SuggestedParenthesisChecker"
+            id="org.eclipse.cdt.codan.checkers.sample.SuggestedParenthesisChecker"
+            name="SuggestedParenthesisChecker">
+      <problem
+            category="org.eclipse.cdt.codan.core.categories.ProgrammingProblems"
+            defaultSeverity="Warning"
+            id="org.eclipse.cdt.codan.checkers.sample.SuggestedParenthesisProblem"
+            name="Suggested parenthesis around expression">
+      </problem>
+      </checker>
    </extension>
 </plugin>

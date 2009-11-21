@@ -85,12 +85,18 @@ public abstract class AbstractIndexAstChecker extends AbstractChecker implements
 		if (astFile == null) {
 			astFile = file;
 		}
-		getProblemReporter().reportProblem(
-				id,
-				new ProblemLocation(astFile, astLocation
-						.getStartingLineNumber()), message);
+		ProblemLocation loc;
+		if (astLocation.getStartingLineNumber() == astLocation
+				.getEndingLineNumber())
+			loc = new ProblemLocation(astFile, astLocation.getNodeOffset(),
+					astLocation.getNodeOffset() + astLocation.getNodeLength());
+		else
+			loc = new ProblemLocation(astFile, astLocation
+					.getStartingLineNumber());
+		getProblemReporter().reportProblem(id, loc, message);
 	}
 
+	@Override
 	public boolean runInEditor() {
 		return true;
 	}

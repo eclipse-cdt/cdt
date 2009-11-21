@@ -12,6 +12,9 @@ package org.eclipse.cdt.codan.core.test;
 
 import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -47,6 +50,7 @@ public class CheckerTestCase extends BaseTestCase {
 	protected File tmpDir;
 	private ICProject cproject;
 	private IMarker[] markers;
+	private File currentFile;
 
 	/**
 	 * Override for c++
@@ -64,12 +68,12 @@ public class CheckerTestCase extends BaseTestCase {
 		tmpDir = cproject.getProject().getLocation().makeAbsolute().toFile();
 	}
 
-	public File load(String file)  {
+	public File load(String file) {
 		CodanCoreTestActivator plugin = CodanCoreTestActivator.getDefault();
 		String name = getClass().getName();
 		String classFile = name.replaceAll("\\.", "/");
 		classFile += ".java";
-		InputStream st=null;
+		InputStream st = null;
 		File f = null;
 		try {
 			if (plugin != null) {
@@ -79,18 +83,17 @@ public class CheckerTestCase extends BaseTestCase {
 			} else {
 				st = getClass().getResourceAsStream(classFile);
 			}
-		
 		} catch (IOException e) {
 			fail("Cannot find java file: " + classFile);
 		}
 		try {
 			f = saveFile(st, file);
 			st.close();
+			currentFile = f;
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-	
 		return f;
 	}
 	static final Pattern filePattern = Pattern.compile("file=\"(.*)\"");
@@ -141,7 +144,6 @@ public class CheckerTestCase extends BaseTestCase {
 				throw e;
 			}
 		}
-
 	}
 
 	/**
@@ -153,12 +155,10 @@ public class CheckerTestCase extends BaseTestCase {
 		for (int i = 0; i < projects.length; i++) {
 			IProject p = projects[i];
 			if (p.getName().startsWith("Codan")) {
-				p.delete(
-						IResource.FORCE
-								| IResource.ALWAYS_DELETE_PROJECT_CONTENT,
+				p.delete(IResource.FORCE
+						| IResource.ALWAYS_DELETE_PROJECT_CONTENT,
 						new NullProgressMonitor());
 			}
-			
 		}
 	}
 
@@ -167,7 +167,8 @@ public class CheckerTestCase extends BaseTestCase {
 		ModelJoiner mj = new ModelJoiner();
 		try {
 			// Create the cproject
-			final String projectName = "CodanProjTest_" + System.currentTimeMillis();
+			final String projectName = "CodanProjTest_"
+					+ System.currentTimeMillis();
 			final IWorkspace workspace = ResourcesPlugin.getWorkspace();
 			workspace.run(new IWorkspaceRunnable() {
 				public void run(IProgressMonitor monitor) throws CoreException {
@@ -213,33 +214,67 @@ public class CheckerTestCase extends BaseTestCase {
 		}
 		return;
 	}
-	
 
 	/**
-	 * @param i - line
+	 * @param i
+	 *            - line
 	 */
 	public void checkErrorLine(int i) {
-		assertTrue(markers!=null);
-		assertTrue(markers.length>0);
-		boolean found=false;
+		assertTrue(markers != null);
+		assertTrue(markers.length > 0);
+		boolean found = false;
 		for (int j = 0; j < markers.length; j++) {
 			IMarker m = markers[j];
-			Object line=null;
+			Object line = null;
+			Object pos;
 			try {
 				line = m.getAttribute(IMarker.LINE_NUMBER);
+				if (line == null || line.equals(-1)) {
+					pos = m.getAttribute(IMarker.CHAR_START);
+					line = new Integer(pos2line(((Integer) pos).intValue()));
+				}
 			} catch (CoreException e) {
+				fail(e.getMessage());
+			} catch (IOException e) {
 				fail(e.getMessage());
 			}
 			if (line.equals(i)) {
-				found=true;
+				found = true;
 			}
 		}
-		assertTrue("Error on line "+i+" not found ",found);
+		assertTrue("Error on line " + i + " not found ", found);
 	}
+
+	/**
+	 * @param pos
+	 * @return
+	 * @throws IOException
+	 */
+	private int pos2line(int pos) throws IOException {
+		FileInputStream st = new FileInputStream(currentFile);
+		try {
+			int c;
+			int line = 1;
+			int cur = 0;
+			while ((c = st.read()) != -1) {
+				if (c == '\n')
+					line++;
+				if (cur >= pos)
+					return line;
+				cur++;
+			}
+			;
+		} finally {
+			st.close();
+		}
+		return 0;
+	}
+
 	public void checkNoErrors() {
-		assertTrue("Found errors but should not",markers==null || markers.length==0);
+		assertTrue("Found errors but should not", markers == null
+				|| markers.length == 0);
 	}
-	
+
 	/**
 	 * 
 	 */
@@ -249,9 +284,13 @@ public class CheckerTestCase extends BaseTestCase {
 		} catch (CoreException e) {
 			fail(e.getMessage());
 		}
-		CodanRuntime.getInstance().getBuilder().processResource(cproject.getProject(), NPM);
+		CodanRuntime.getInstance().getBuilder().processResource(
+				cproject.getProject(), NPM);
 		try {
-			markers = cproject.getProject().findMarkers(IProblemReporter.GENERIC_CODE_ANALYSIS_MARKER_TYPE, true, 1);
+			markers = cproject.getProject()
+					.findMarkers(
+							IProblemReporter.GENERIC_CODE_ANALYSIS_MARKER_TYPE,
+							true, 1);
 		} catch (CoreException e) {
 			fail(e.getMessage());
 		}

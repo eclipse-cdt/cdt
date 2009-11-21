@@ -15,9 +15,9 @@ import junit.framework.Test;
 import junit.framework.TestSuite;
 
 import org.eclipse.cdt.codan.core.checkers.sample.StatementHasNoEffectCheckerTest;
+import org.eclipse.cdt.codan.core.checkers.sample.SuggestedParenthesisCheckerTest;
 
 public class AutomatedIntegrationSuite extends TestSuite {
-
 	public AutomatedIntegrationSuite() {
 	}
 
@@ -34,15 +34,9 @@ public class AutomatedIntegrationSuite extends TestSuite {
 	}
 
 	public static Test suite() {
-
 		final AutomatedIntegrationSuite suite = new AutomatedIntegrationSuite();
-		
 		suite.addTestSuite(StatementHasNoEffectCheckerTest.class);
-
+		suite.addTestSuite(SuggestedParenthesisCheckerTest.class);
 		return suite;
 	}
-
-
-
-
 }

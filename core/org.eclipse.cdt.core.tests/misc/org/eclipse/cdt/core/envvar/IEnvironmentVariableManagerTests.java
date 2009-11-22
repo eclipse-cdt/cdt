@@ -131,8 +131,8 @@ public class IEnvironmentVariableManagerTests extends TestCase {
 		project.getFile(".settings/org.eclipse.cdt.core.prefs").setContents(new ByteArrayInputStream(env.getBytes("UTF-8")), true, false, null);
 
 		final IEnvironmentVariable var = new EnvironmentVariable("FOO", "BAR", IEnvironmentVariable.ENVVAR_APPEND, ";");
-		final IEnvironmentVariable var1 = new EnvironmentVariable("FOO1", "BAR1");
-		final IEnvironmentVariable var2 = new EnvironmentVariable("FOO2", "BAR2");
+		final IEnvironmentVariable var1 = new EnvironmentVariable("FOO1", "BAR1", ":");
+		final IEnvironmentVariable var2 = new EnvironmentVariable("FOO2", "BAR2", ":");
 
 		prjDesc = CoreModel.getDefault().getProjectDescription(project);
 		assertEquals(var, envManager.getVariable(var.getName(), prjDesc.getConfigurationById(id2), true));
@@ -176,8 +176,8 @@ public class IEnvironmentVariableManagerTests extends TestCase {
 		project.getFile(".settings/org.eclipse.cdt.core.prefs").setContents(new ByteArrayInputStream(env.getBytes("UTF-8")), true, false, null);
 
 		final IEnvironmentVariable var = new EnvironmentVariable("FOO", "BAR", IEnvironmentVariable.ENVVAR_APPEND, ";");
-		final IEnvironmentVariable var1 = new EnvironmentVariable("FOO1", "BAR1");
-		final IEnvironmentVariable var2 = new EnvironmentVariable("FOO2", "BAR2");
+		final IEnvironmentVariable var1 = new EnvironmentVariable("FOO1", "BAR1", ":");
+		final IEnvironmentVariable var2 = new EnvironmentVariable("FOO2", "BAR2", ":");
 
 		prjDesc = CoreModel.getDefault().getProjectDescription(project);
 		assertEquals(var, envManager.getVariable(var.getName(), prjDesc.getConfigurationById(id2), true));

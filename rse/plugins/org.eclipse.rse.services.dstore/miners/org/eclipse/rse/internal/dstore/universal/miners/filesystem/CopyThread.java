@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2008 IBM Corporation and others.
+ * Copyright (c) 2007, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -12,6 +12,7 @@
  * Contributors:
  * Xuan Chen (IBM) - [209827] Update DStore command implementation to enable cancelation of archive operations
  * Noriaki Takatsu (IBM)  - [220126] [dstore][api][breaking] Single process server for multiple clients
+ * David McKnight  (IBM)  - [290290] [dstore] Error message when copy a file from another user’s folder
  *******************************************************************************/
 package org.eclipse.rse.internal.dstore.universal.miners.filesystem;
 
@@ -20,6 +21,7 @@ import java.io.InputStream;
 
 import org.eclipse.dstore.core.model.DE;
 import org.eclipse.dstore.core.model.DataElement;
+import org.eclipse.dstore.core.server.SecuredThread;
 import org.eclipse.rse.dstore.universal.miners.ICancellableHandler;
 import org.eclipse.rse.dstore.universal.miners.IUniversalDataStoreConstants;
 import org.eclipse.rse.dstore.universal.miners.UniversalFileSystemMiner;
@@ -27,7 +29,6 @@ import org.eclipse.rse.dstore.universal.miners.UniversalServerUtilities;
 import org.eclipse.rse.services.clientserver.IServiceConstants;
 import org.eclipse.rse.services.clientserver.PathUtility;
 import org.eclipse.rse.services.clientserver.SystemOperationMonitor;
-import org.eclipse.dstore.core.server.SecuredThread;
 
 public class CopyThread extends SecuredThread implements ICancellableHandler {
 
@@ -200,6 +201,38 @@ public class CopyThread extends SecuredThread implements ICancellableHandler {
 					    err = err.substring(0, err.length() - newLine.length());
 					}
 					
+					String theOS = System.getProperty("os.name"); //$NON-NLS-1$
+					boolean isZ = theOS.toLowerCase().startsWith("z"); //$NON-NLS-1$
+					
+					// special case for bug 290290 - which only occurs on z/OS
+					if (isZ && err.startsWith("cp: FSUM8985")){ //$NON-NLS-1$
+						// attempt against without the -p
+						if (folderCopy) {
+							command = "cp  -R " + source + " " + tgt; //$NON-NLS-1$ //$NON-NLS-2$
+						}
+						else {
+							command = "cp " + source + " " + tgt; //$NON-NLS-1$ //$NON-NLS-2$
+						}
+						String theShell = "sh"; //$NON-NLS-1$
+						String args[] = new String[3];
+						args[0] = theShell;					
+						args[1] = "-c"; //$NON-NLS-1$
+						args[2] = command;
+														
+						p = runtime.exec(args);
+						
+					    // wait for process to finish
+					    p.waitFor();
+					    
+					    // get the exit value of the process
+					   result = p.exitValue();
+					    
+					    // if the exit value is not 0, then the process did not terminate normally
+					    if (result == 0) {
+					    	status.setAttribute(DE.A_SOURCE, IServiceConstants.SUCCESS);
+					    	return;
+					    }
+					}
 					// if there is something in error buffer
 					// there was something in the error stream of the process
 					if (err.length() > 0) {

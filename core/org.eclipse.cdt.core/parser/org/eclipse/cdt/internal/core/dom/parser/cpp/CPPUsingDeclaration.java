@@ -100,4 +100,13 @@ public class CPPUsingDeclaration extends PlatformObject implements ICPPUsingDecl
 	public IBinding getOwner() {
 		return CPPVisitor.findDeclarationOwner(name, true);
 	}
+
+	@Override
+	public String toString() {
+		IASTNode node = name.getParent();
+		if (node instanceof ICPPASTQualifiedName) {
+			return node.toString();
+		}
+		return super.toString();
+	}
 }

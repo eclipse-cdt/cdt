@@ -56,7 +56,7 @@ public class MacroExpansionHandler {
 	}
 
 	protected boolean isStatementWithMixedLocation(IASTStatement node) {
-		if(node.getNodeLocations().length > 1) {
+		if(node.getNodeLocations() != null && node.getNodeLocations().length > 1) {
 			for (IASTNodeLocation loc : node.getNodeLocations()) {
 				if (loc instanceof IASTMacroExpansionLocation) {
 					return true;

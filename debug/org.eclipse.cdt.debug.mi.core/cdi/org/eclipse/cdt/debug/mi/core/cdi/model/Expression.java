@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 QNX Software Systems and others.
+ * Copyright (c) 2000, 2009 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -105,11 +105,18 @@ public class Expression extends CObject implements ICDIExpression {
 			mgr.deleteVariable(fVariable);
 			fVariable = null;
 		}
-		if (fVariable == null)
-		{ // Reuse the variable so we don't have to ask gdb to create another one. Bug 150565.
-			fVariable = mgr.createVariable((StackFrame)context, getExpressionText());
-		}
 		fContext = context;
+		if (fVariable != null) {
+			// Reuse the variable so we don't have to ask gdb to create another one. Bug 150565.
+			try {
+				// It's possible this variable is no longer valid... (Bug 296006)
+				fVariable.getValue().getValueString();
+			} catch (CDIException e) {
+				fVariable = null;
+			}
+		}
+		if (fVariable == null)
+			fVariable = mgr.createVariable((StackFrame)context, getExpressionText());
 		return fVariable.getValue();
 	}
 
@@ -122,6 +129,7 @@ public class Expression extends CObject implements ICDIExpression {
 		mgr.destroyExpressions((Target)getTarget(), new Expression[] {this});
 		if (fVariable != null)
 			mgr.deleteVariable(fVariable);
+		fVariable = null;
 	}
 
 }

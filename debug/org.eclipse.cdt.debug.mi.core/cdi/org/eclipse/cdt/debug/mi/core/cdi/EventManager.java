@@ -23,6 +23,7 @@ import org.eclipse.cdt.debug.core.cdi.event.ICDIEvent;
 import org.eclipse.cdt.debug.core.cdi.event.ICDIEventListener;
 import org.eclipse.cdt.debug.core.cdi.model.ICDIStackFrame;
 import org.eclipse.cdt.debug.mi.core.MIException;
+import org.eclipse.cdt.debug.mi.core.MIPlugin;
 import org.eclipse.cdt.debug.mi.core.MISession;
 import org.eclipse.cdt.debug.mi.core.cdi.event.ChangedEvent;
 import org.eclipse.cdt.debug.mi.core.cdi.event.CreatedEvent;
@@ -328,7 +329,8 @@ public class EventManager extends SessionObject implements ICDIEventManager, Obs
 				srcMgr.update(currentTarget);
 			}
 		} catch (CDIException e) {
-			//System.out.println(e);
+			// Something went wrong => preventing updates to the model, this is serious
+			MIPlugin.log(e);
 		}
 		return true;
 	}

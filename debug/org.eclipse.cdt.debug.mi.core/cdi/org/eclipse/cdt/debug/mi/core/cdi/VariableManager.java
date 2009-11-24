@@ -687,7 +687,11 @@ public class VariableManager extends Manager {
 				variable.setMIVarCreate(var);						
 				update(target, variable, eventList);
 			} catch (MIException e) {
-				throw new MI2CDIException(e);
+				// Creating failed, variable not in scope => remove
+				// No events to fire as the variable isn't backed by a MIVar
+				getVariablesList(target).remove(variable);
+				variable.setUpdated(false);
+				return;
 			} catch (CDIException e) {
 				throw e;
 			}

@@ -316,8 +316,8 @@ public class Value implements IValue {
 		if (e instanceof IASTConditionalExpression) {
 			IASTConditionalExpression cexpr= (IASTConditionalExpression) e;
 			Object o= evaluate(cexpr.getLogicalConditionExpression(), unknownSigs, unknowns, maxdepth);
-			if (o instanceof Long) {
-				Long v= (Long) o;
+			if (o instanceof Number) {
+				Number v= (Number) o;
 				if (v.longValue() == 0) {
 					return evaluate(cexpr.getNegativeResultExpression(), unknownSigs, unknowns, maxdepth);
 				}
@@ -330,7 +330,7 @@ public class Value implements IValue {
 			final IASTExpression pe = cexpr.getPositiveResultExpression();
 			Object po= pe == null ? o : evaluate(pe, unknownSigs, unknowns, maxdepth);
 			Object neg= evaluate(cexpr.getNegativeResultExpression(), unknownSigs, unknowns, maxdepth);
-			return CONDITIONAL_CHAR + SEPARATOR + o.toString() + SEPARATOR + po.toString() + SEPARATOR + neg.toString();
+			return "" + CONDITIONAL_CHAR + SEPARATOR + o.toString() + SEPARATOR + po.toString() + SEPARATOR + neg.toString(); //$NON-NLS-1$
 		}
 		if (e instanceof IASTIdExpression) {
 			IBinding b= ((IASTIdExpression) e).getName().resolvePreBinding();
@@ -462,8 +462,8 @@ public class Value implements IValue {
 			return value;
 		}
 		
-		if (value instanceof Long) {
-			long v= (Long) value;
+		if (value instanceof Number) {
+			long v= ((Number) value).longValue();
 			switch(unaryOp) {
 			case IASTUnaryExpression.op_prefixIncr:
 			case IASTUnaryExpression.op_postFixIncr:
@@ -504,9 +504,9 @@ public class Value implements IValue {
 	}
 	
 	private static Object combineBinary(final int op, final Object o1, final Object o2) throws UnknownValueException {
-		if (o1 instanceof Long && o2 instanceof Long) {
-			long v1= (Long) o1;
-			long v2= (Long) o2;
+		if (o1 instanceof Number && o2 instanceof Number) {
+			long v1= ((Number) o1).longValue();
+			long v2= ((Number) o2).longValue();
 			switch(op) {
 			case IASTBinaryExpression.op_multiply:
 				return v1*v2;
@@ -601,8 +601,8 @@ public class Value implements IValue {
 			if (reeval.pos != reeval.fExpression.length)
 				return UNKNOWN;
 			
-			if (obj instanceof Long)
-				return create(((Long) obj).longValue());
+			if (obj instanceof Number)
+				return create(((Number) obj).longValue());
 			
 			ICPPUnknownBinding[] ua;
 			if (unknown.isEmpty()) {
@@ -645,8 +645,8 @@ public class Value implements IValue {
 			Object cond= reevaluate(reeval, maxdepth);
 			Object po= reevaluate(reeval, maxdepth);
 			Object neg= reevaluate(reeval, maxdepth);
-			if (cond instanceof Long) {
-				Long v= (Long) cond;
+			if (cond instanceof Number) {
+				Number v= (Number) cond;
 				if (v.longValue() == 0) {
 					return neg;
 				}

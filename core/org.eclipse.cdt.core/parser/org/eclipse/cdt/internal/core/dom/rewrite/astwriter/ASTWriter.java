@@ -78,7 +78,9 @@ public class ASTWriter {
 	 */
 	public String write(IASTNode rootNode, String fileScope, NodeCommentMap commentMap) throws ProblemRuntimeException {
 		transformationVisitor = new ChangeGeneratorWriterVisitor(modificationStore, givenIndentation, fileScope, commentMap);
-		rootNode.accept(transformationVisitor);
+		if(rootNode != null){
+			rootNode.accept(transformationVisitor);
+		}
 		String str = transformationVisitor.toString();
 		transformationVisitor.cleanCache();
 		return str;

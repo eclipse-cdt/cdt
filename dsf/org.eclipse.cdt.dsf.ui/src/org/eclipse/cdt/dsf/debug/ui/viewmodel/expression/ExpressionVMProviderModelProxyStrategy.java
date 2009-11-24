@@ -155,7 +155,10 @@ public class ExpressionVMProviderModelProxyStrategy extends DefaultVMModelProxyS
     {
         switch (event.getType()) {
         case ADDED:
-            parentDelta.addNode(element, -1, IModelDelta.ADDED);            
+            // New expressions are always added one element before last.  
+            // Last element is the "Add new expression" element.
+            int parentCount = parentDelta.getChildCount();
+            parentDelta.addNode(element, parentCount > 1 ? parentCount - 2 : -1, IModelDelta.ADDED);            
             break;
         case CHANGED:
             parentDelta.setFlags(parentDelta.getFlags() | IModelDelta.CONTENT);

@@ -127,8 +127,14 @@ public class ChangeGenerator extends CPPASTVisitor {
 				List<ASTModification> modificationsForNode = rootModifications
 						.getModificationsForNode(modifiedNode);
 				IASTNode modifiedNodeParent = determineParentToBeRewritten(modifiedNode, modificationsForNode);
-				modificationParent.put(modifiedNodeParent != null ? modifiedNodeParent : modifiedNode,
-						modificationsForNode);
+				List<ASTModification> list = modificationParent.get(modifiedNodeParent != null ? modifiedNodeParent : modifiedNode);
+				if(list != null){
+					list.addAll(modificationsForNode);
+				}else{
+					List<ASTModification> modifiableList = new ArrayList<ASTModification>(modificationsForNode);
+					modificationParent.put(modifiedNodeParent != null ? modifiedNodeParent : modifiedNode,
+							modifiableList);
+				}
 			}
 		}
 	}

@@ -8,6 +8,7 @@
  * Contributors:
  *     John Camelon (IBM) - Initial API and implementation
  *     Mike Kucera (IBM)
+ *     Markus Schorn (Wind River Systems)
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.dom.parser.cpp;
  
@@ -25,15 +26,14 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunction;
 import org.eclipse.cdt.internal.core.dom.parser.ASTNode;
 import org.eclipse.cdt.internal.core.dom.parser.IASTAmbiguityParent;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPSemantics;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPVisitor;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.SemanticUtil;
 
-/**
- * @author jcamelon
- */
 public class CPPASTArraySubscriptExpression extends ASTNode implements ICPPASTArraySubscriptExpression, IASTAmbiguityParent {
 
     private IASTExpression subscriptExp;
     private IASTExpression arrayExpression;
+    private ICPPFunction overload= UNINITIALIZED_FUNCTION;
 
     private IASTImplicitName[] implicitNames = null;
     
@@ -104,7 +104,15 @@ public class CPPASTArraySubscriptExpression extends ASTNode implements ICPPASTAr
     
     
     public ICPPFunction getOverload() {
-    	return CPPSemantics.findOverloadedOperator(this);
+    	if (overload == UNINITIALIZED_FUNCTION) {
+    		overload= null;
+    		IType t = getArrayExpression().getExpressionType();
+    		t= SemanticUtil.getUltimateTypeUptoPointers(t);
+    		if (t instanceof ICPPClassType && !(t instanceof ICPPUnknownType)) {
+    			overload= CPPSemantics.findOverloadedOperator(this);
+    		}
+    	}
+    	return overload;
     }
     
     @Override
@@ -156,28 +164,36 @@ public class CPPASTArraySubscriptExpression extends ASTNode implements ICPPASTAr
     }
 
     public IType getExpressionType() {
+		ICPPFunction op = getOverload();
+		if (op != null) {
+			try {
+				return op.getType().getReturnType();
+			} catch (DOMException e) {
+				return e.getProblem();
+			}
+		}
 		IType t = getArrayExpression().getExpressionType();
 		t= SemanticUtil.getUltimateTypeUptoPointers(t);
-		try {
-			if (t instanceof ICPPUnknownType) {
-				return CPPUnknownClass.createUnnamedInstance();
-			}
-			if (t instanceof ICPPClassType) {
-				ICPPFunction op = getOverload();
-				if (op != null) {
-					return op.getType().getReturnType();
-				}
-			}
-			if (t instanceof IPointerType) {
-				return ((IPointerType) t).getType();
-			}
-			if (t instanceof IArrayType) {
-				return ((IArrayType) t).getType();
-			}
-		} catch (DOMException e) {
-			return e.getProblem();
+		if (t instanceof ICPPUnknownType) {
+			return CPPUnknownClass.createUnnamedInstance();
+		}
+		if (t instanceof IPointerType) {
+			return ((IPointerType) t).getType();
+		}
+		if (t instanceof IArrayType) {
+			return ((IArrayType) t).getType();
 		}
 		return null;
     }
-    
+
+	public boolean isLValue() {
+		ICPPFunction op = getOverload();
+		if (op != null) {
+			try {
+				return CPPVisitor.isLValueReference(op.getType().getReturnType());
+			} catch (DOMException e) {
+			}
+		}
+		return true;
+	}
 }

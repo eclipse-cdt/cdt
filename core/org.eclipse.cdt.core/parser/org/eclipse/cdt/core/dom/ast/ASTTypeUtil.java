@@ -350,7 +350,11 @@ public class ASTTypeUtil {
 				result.append(getArgumentListString(inst.getTemplateArguments(), normalize));
 			}
 		} else if (type instanceof ICPPReferenceType) {
-			result.append(Keywords.cpAMPER);
+			if (((ICPPReferenceType) type).isRValueReference()) {
+				result.append(Keywords.cpAND);
+			} else {
+				result.append(Keywords.cpAMPER);
+			}
 		} else if (type instanceof IEnumeration) {
 			result.append(Keywords.ENUM);
 			result.append(SPACE);
@@ -451,6 +455,7 @@ public class ASTTypeUtil {
 		// push all of the types onto the stack
 		int i = 0;
 		IQualifierType cvq= null;
+		ICPPReferenceType ref= null;
 		while (type != null && ++i < 100) {
 			if (!normalize) {
 			    types = (IType[]) ArrayUtil.append(IType.class, types, type);
@@ -461,19 +466,38 @@ public class ASTTypeUtil {
 				if (type instanceof ITypedef) {
 					// skip it
 				} else {
-					if (cvq != null) {
-						if (type instanceof IQualifierType || type instanceof IPointerType) {
-							type= SemanticUtil.addQualifiers(type, cvq.isConst(), cvq.isVolatile());
-							cvq= null;
-						} else {
-							types = (IType[]) ArrayUtil.append(IType.class, types, cvq);							
+					if (type instanceof ICPPReferenceType) {
+						// reference types ignore cv-qualifiers
+						cvq=null;
+						// lvalue references win over rvalue references
+						if (ref == null || ref.isRValueReference()) {
+							// delay reference to see if there are more
+							ref= (ICPPReferenceType) type;
 						}
-					} 
-					if (type instanceof IQualifierType) {
-						cvq= (IQualifierType) type;
 					} else {
-						types = (IType[]) ArrayUtil.append(IType.class, types, type);
-					} 
+						if (cvq != null) {
+							// merge cv qualifiers
+							if (type instanceof IQualifierType || type instanceof IPointerType) {
+								type= SemanticUtil.addQualifiers(type, cvq.isConst(), cvq.isVolatile());
+								cvq= null;
+							} 
+						} 
+						if (type instanceof IQualifierType) {
+							// delay cv qualifier to merge it with others
+							cvq= (IQualifierType) type;
+						} else {
+							// no reference, no cv qualifier: output reference and cv-qualifier
+							if (ref != null) {
+								types = (IType[]) ArrayUtil.append(IType.class, types, ref);
+								ref= null;
+							}
+							if (cvq != null) {
+								types = (IType[]) ArrayUtil.append(IType.class, types, cvq);
+								cvq= null;
+							}
+							types = (IType[]) ArrayUtil.append(IType.class, types, type);
+						} 
+					}
 				}
 			}
 			if (type instanceof ITypeContainer) {

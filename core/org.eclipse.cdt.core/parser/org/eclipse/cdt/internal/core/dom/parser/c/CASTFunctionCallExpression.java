@@ -120,4 +120,8 @@ public class CASTFunctionCallExpression extends ASTNode implements
 			return ((IFunctionType) type).getReturnType();
 		return null;
 	}
+
+	public boolean isLValue() {
+		return false;
+	}
 }

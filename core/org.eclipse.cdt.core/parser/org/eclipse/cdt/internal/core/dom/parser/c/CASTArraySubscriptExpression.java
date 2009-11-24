@@ -120,4 +120,8 @@ public class CASTArraySubscriptExpression extends ASTNode implements
 			return ((IArrayType)t).getType();
 		return t;
     }
+
+	public boolean isLValue() {
+		return true;
+	}
 }

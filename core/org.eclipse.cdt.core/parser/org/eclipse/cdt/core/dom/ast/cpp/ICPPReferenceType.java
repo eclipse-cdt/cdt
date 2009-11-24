@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     Andrew Niefer (IBM Corporation) - initial API and implementation
+ *     Markus Schorn (Wind River Systems)
  *******************************************************************************/
 package org.eclipse.cdt.core.dom.ast.cpp;
 
@@ -19,7 +20,13 @@ import org.eclipse.cdt.core.dom.ast.IType;
 public interface ICPPReferenceType extends IType {
 	
 	/**
-	 * get the type that this is a reference of
+	 * Returns the type that this is a reference of
 	 */
 	public IType getType();
+	
+	/**
+	 * Returns whether this is an rvalue reference (e.g: int&&)
+	 * @since 5.2
+	 */
+	public boolean isRValueReference();
 }

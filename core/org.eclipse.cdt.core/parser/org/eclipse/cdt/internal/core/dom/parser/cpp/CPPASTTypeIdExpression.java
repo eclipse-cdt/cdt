@@ -6,21 +6,18 @@
  *  http://www.eclipse.org/legal/epl-v10.html
  * 
  *  Contributors:
- *  IBM - Initial API and implementation
+ *     John Camelon (IBM) - Initial API and implementation
+ *     Markus Schorn (Wind River Systems)
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.dom.parser.cpp;
 
 import org.eclipse.cdt.core.dom.ast.ASTVisitor;
 import org.eclipse.cdt.core.dom.ast.IASTTypeId;
-import org.eclipse.cdt.core.dom.ast.IASTTypeIdExpression;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTypeIdExpression;
 import org.eclipse.cdt.internal.core.dom.parser.ASTNode;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPVisitor;
 
-/**
- * @author jcamelon
- */
 public class CPPASTTypeIdExpression extends ASTNode implements ICPPASTTypeIdExpression {
 
     private int op;
@@ -86,11 +83,21 @@ public class CPPASTTypeIdExpression extends ASTNode implements ICPPASTTypeIdExpr
     
 	public IType getExpressionType() {
 		switch (getOperator()) {
-		case IASTTypeIdExpression.op_sizeof:
+		case op_sizeof:
 			return CPPVisitor.get_SIZE_T(this);
-		case IASTTypeIdExpression.op_typeid:
+		case op_typeid:
 			return CPPVisitor.get_type_info(this);
 		}
 		return CPPVisitor.createType(getTypeId());
 	}
+
+	public boolean isLValue() {
+		switch(getOperator()) {
+		case op_typeid:
+			return true;
+		}
+		return false;
+	}
+	
+	
 }

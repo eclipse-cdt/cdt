@@ -144,4 +144,8 @@ public class CASTConditionalExpression extends ASTNode implements
 			return t3;
 		return t2;
 	}
+    
+	public boolean isLValue() {
+		return false;
+	}
 }

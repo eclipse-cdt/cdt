@@ -2947,17 +2947,16 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
         	// __attribute__ in-between pointers
             __attribute_decl_seq(supportAttributeSpecifiers, false);
         	
-            if (LT(1) == IToken.tAMPER) {
-//            	boolean isRestrict= false;
-            	IToken lastToken= consume();
-            	final int from= lastToken.getOffset();
+            final int lt1 = LT(1);
+			if (lt1 == IToken.tAMPER || lt1 == IToken.tAND) {
+            	IToken endToken= consume();
+            	final int offset= endToken.getOffset();
+
             	if (allowCPPRestrict && LT(1) == IToken.t_restrict) {
-//            		isRestrict= true;
-            		lastToken= consume();
+            		endToken= consume();
             	}
-                ICPPASTReferenceOperator refOp = nodeFactory.newReferenceOperator();
-                ((ASTNode) refOp).setOffsetAndLength(from, lastToken.getEndOffset()-from);
-                collection.add(refOp);
+                ICPPASTReferenceOperator refOp = nodeFactory.newReferenceOperator(lt1 == IToken.tAND);
+                collection.add(setRange(refOp, offset, endToken.getEndOffset()));
                 return;
             }
             

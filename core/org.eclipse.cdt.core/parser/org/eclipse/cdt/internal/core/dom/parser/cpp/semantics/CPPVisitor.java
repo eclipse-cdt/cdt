@@ -44,7 +44,6 @@ import org.eclipse.cdt.core.dom.ast.IASTInitializer;
 import org.eclipse.cdt.core.dom.ast.IASTInitializerExpression;
 import org.eclipse.cdt.core.dom.ast.IASTInitializerList;
 import org.eclipse.cdt.core.dom.ast.IASTLabelStatement;
-import org.eclipse.cdt.core.dom.ast.IASTLiteralExpression;
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTNamedTypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
@@ -1617,7 +1616,8 @@ public class CPPVisitor extends ASTQueries {
 		    } else if (ptrOp instanceof IASTPointer) {
 		        type = new CPPPointerType(type, (IASTPointer) ptrOp);
 		    } else if (ptrOp instanceof ICPPASTReferenceOperator) {
-		        type = new CPPReferenceType(type);
+		        final ICPPASTReferenceOperator refOp = (ICPPASTReferenceOperator) ptrOp;
+				type = new CPPReferenceType(type, refOp.isRValueReference());
 		    }
 		}
 		return type;
@@ -1976,37 +1976,9 @@ public class CPPVisitor extends ASTQueries {
 		return false;
 	}
 	
-	/**
-     * [3.10] Lvalues and Rvalues
-	 * @param exp
-	 * @return whether the specified expression is an rvalue
-	 */
-	static boolean isRValue(IASTExpression exp) {
-		if (exp instanceof IASTUnaryExpression) {
-			IASTUnaryExpression ue= (IASTUnaryExpression) exp;
-			if (ue.getOperator() == IASTUnaryExpression.op_amper) {
-				return true;
-			}
-		}
-		if (exp instanceof IASTLiteralExpression)
-			return true;
-		if (exp instanceof IASTFunctionCallExpression) {
-			try {
-				IASTFunctionCallExpression fc= (IASTFunctionCallExpression) exp;
-				IASTExpression fne= fc.getFunctionNameExpression();
-				if (fne instanceof IASTIdExpression) {
-					IASTIdExpression ide= (IASTIdExpression) fne;
-					IBinding b= ide.getName().resolveBinding();
-					if (b instanceof IFunction) {
-						IFunctionType tp= ((IFunction) b).getType();
-						return !(tp.getReturnType() instanceof ICPPReferenceType);
-					}
-				}
-			} catch (DOMException de) {
-				// fall-through
-			}
-		}
-		return false;
+	public static boolean isLValueReference(IType t) {
+		t= SemanticUtil.getNestedType(t, TDEF);
+		return t instanceof ICPPReferenceType && !((ICPPReferenceType) t).isRValueReference();
 	}
 		
 	/**

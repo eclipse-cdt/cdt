@@ -6,8 +6,9 @@
  *  http://www.eclipse.org/legal/epl-v10.html
  * 
  *  Contributors:
- *  IBM - Initial API and implementation
- *  Bryan Wilkinson (QNX)
+ *    John Camelon (IBM) - Initial API and implementation
+ *    Bryan Wilkinson (QNX)
+ *    Markus Schorn (Wind River Systems)
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.dom.parser.cpp;
 
@@ -28,9 +29,6 @@ import org.eclipse.cdt.internal.core.dom.parser.ASTNode;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPSemantics;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.SemanticUtil;
 
-/**
- * @author jcamelon
- */
 public class CPPASTIdExpression extends ASTNode implements IASTIdExpression, IASTCompletionContext {
 
 	private IASTName name;
@@ -110,6 +108,14 @@ public class CPPASTIdExpression extends ASTNode implements IASTIdExpression, IAS
 			return e.getProblem();
 		}
 		return null;
+	}
+
+	public boolean isLValue() {
+		IBinding b= getName().resolveBinding();
+		if (b instanceof IVariable || b instanceof IFunction) {
+			return true;
+		}
+		return false;
 	}
 
 	public IBinding[] findBindings(IASTName n, boolean isPrefix) {

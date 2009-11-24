@@ -144,6 +144,14 @@ public class CASTFieldReference extends ASTNode implements IASTFieldReference, I
 		return null;
     }
 
+    
+	public boolean isLValue() {
+		if (isPointerDereference())
+			return true;
+
+		return getFieldOwner().isLValue();
+	}
+
 	public IBinding[] findBindings(IASTName n, boolean isPrefix) {
 		return CVisitor.findBindingsForContentAssist(n, isPrefix);
 	}

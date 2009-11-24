@@ -33,6 +33,12 @@ class FunctionCost {
 		fSourceIsLValue= new BitSet(paramCount);
 	}
 	
+	public FunctionCost(IFunction fn, Cost cost) {
+		fFunction= fn;
+		fCosts= new Cost[] {cost};
+		fSourceIsLValue= null; // no udc will be performed
+	}
+
 	public int getLength() {
 		return fCosts.length;
 	}

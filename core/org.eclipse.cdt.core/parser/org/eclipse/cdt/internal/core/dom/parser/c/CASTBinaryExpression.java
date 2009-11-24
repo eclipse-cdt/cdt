@@ -161,4 +161,22 @@ public class CASTBinaryExpression extends ASTNode implements
 		}
 		return t1;
     }
+    
+	public boolean isLValue() {
+		switch (getOperator()) {
+		case op_assign:
+		case op_binaryAndAssign:
+		case op_binaryOrAssign:
+		case op_binaryXorAssign:
+		case op_divideAssign:
+		case op_minusAssign:
+		case op_moduloAssign:
+		case op_multiplyAssign:
+		case op_plusAssign:
+		case op_shiftLeftAssign:
+		case op_shiftRightAssign:
+			return true;
+		}
+		return false;
+	}
 }

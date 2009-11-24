@@ -17,7 +17,8 @@ package org.eclipse.cdt.internal.core.dom.parser.cpp.semantics;
 import static org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CVQualifier._;
 import static org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.SemanticUtil.*;
 
-import org.eclipse.cdt.core.CCorePlugin;
+import java.util.BitSet;
+
 import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IASTExpression;
 import org.eclipse.cdt.core.dom.ast.IASTLiteralExpression;
@@ -43,7 +44,6 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPParameter;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPPointerToMemberType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPReferenceType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPSpecialization;
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateInstance;
 import org.eclipse.cdt.internal.core.dom.parser.ArithmeticConversion;
 import org.eclipse.cdt.internal.core.dom.parser.Value;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPBasicType;
@@ -51,126 +51,166 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPPointerToMemberType;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPPointerType;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPDeferredClassInstance;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.Cost.Rank;
-import org.eclipse.cdt.internal.core.index.IIndexFragmentBinding;
-import org.eclipse.core.runtime.CoreException;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.Cost.ReferenceBinding;
 
 /**
  * Routines for calculating the cost of conversions.
  */
 public class Conversions {
 	enum UDCMode {allowUDC, noUDC, deferUDC}
-	
+
+	private static final BitSet RVBITSET = new BitSet();
+	private static final BitSet LVBITSET = new BitSet();
+	static {
+		LVBITSET.set(0, true);
+	}
 	/**
 	 * Computes the cost of an implicit conversion sequence
 	 * [over.best.ics] 13.3.3.1
-	 * @param sourceIsLValue whether the source type is an lvalue
-	 * @param source the source (argument) type
 	 * @param target the target (parameter) type
-	 * @param isImpliedObject
-	 * 
+	 * @param exprType the source (argument) type
+	 * @param exprIsLValue whether the source type is an lvalue
+	 * @param isImpliedObjectType
 	 * @return the cost of converting from source to target
 	 * @throws DOMException
 	 */
-	public static Cost checkImplicitConversionSequence(boolean sourceIsLValue, IType source,
-			IType target, UDCMode udc, boolean isImpliedObject) throws DOMException {
-		if (isImpliedObject) {
+	public static Cost checkImplicitConversionSequence(IType target, IType exprType,
+			boolean exprIsLValue, UDCMode udc, boolean isImpliedObjectType) throws DOMException {
+		if (isImpliedObjectType) {
 			udc= UDCMode.noUDC;
 		}
 		
 		target= getNestedType(target, TDEF);
-		source= getNestedType(source, TDEF);
+		exprType= getNestedType(exprType, TDEF | REF);
 		
 		if (target instanceof ICPPReferenceType) {
 			// [8.5.3-5] initialization of a reference 
-			IType cv1T1= getNestedType(target, TDEF | REF);
-			
-			if (source instanceof ICPPReferenceType) {
-				sourceIsLValue= true;
-				source= getNestedType(source, TDEF | REF);
-			}
-			
-			IType T2= getNestedType(source, TDEF | REF | ALLCVQ);
+			final boolean isLValueRef= !((ICPPReferenceType) target).isRValueReference();
+			final IType cv1T1= getNestedType(target, TDEF | REF);
+			final IType T1= getNestedType(cv1T1, TDEF | REF | ALLCVQ);
+			final IType cv2T2= exprType;
+			final IType T2= getNestedType(cv2T2, TDEF | REF | ALLCVQ);
 
-		    // [8.5.3-5] Is an lvalue (but is not a bit-field), and "cv1 T1" is reference-compatible with "cv2 T2," 
-			if (sourceIsLValue) {
-				Cost cost= isReferenceCompatible(cv1T1, source, isImpliedObject);
-				if (cost != null) {
-					// [8.5.3-5] this is a direct reference binding
-					// [13.3.3.1.4-1] direct binding has either identity or conversion rank.					
-					if (cost.getInheritanceDistance() > 0) {
-						cost.setRank(Rank.CONVERSION);
-					} 
-					return cost;
-				} 
-			}
-			
-			if (T2 instanceof ICPPClassType && udc != UDCMode.noUDC) {
-				// Or has a class type (i.e., T2 is a class type) and can be implicitly converted to
-				// an lvalue of type "cv3 T3," where "cv1 T1" is reference-compatible with "cv3 T3" 92)
-				// (this conversion is selected by enumerating the applicable conversion functions
-				// (13.3.1.6) and choosing the best one through overload resolution (13.3)).
-				ICPPMethod[] fcns= SemanticUtil.getConversionOperators((ICPPClassType) T2);
-				Cost operatorCost= null;
-				boolean ambiguousConversionOperator= false;
-				if (fcns.length > 0 && !(fcns[0] instanceof IProblemBinding)) {
-					for (final ICPPMethod op : fcns) {
-						IType newSource= op.getType().getReturnType();
-						if (newSource instanceof ICPPReferenceType) { // require an lvalue
-							IType cvT2= getNestedType(newSource, TDEF | REF);
-							Cost cost2= isReferenceCompatible(cv1T1, cvT2, false); 
-							if (cost2 != null) {
-								int cmp= cost2.compareTo(operatorCost);
-								if (cmp <= 0) {
-									ambiguousConversionOperator= cmp == 0;
-									operatorCost= cost2;
-									operatorCost.setUserDefinedConversion(op);
-								}
-							}
-						}
-					}
-				}
-
-				if (operatorCost != null && !ambiguousConversionOperator) {
-					if (isImpliedObject) {
-						operatorCost.setInheritanceDistance(0);
-					}
-					return operatorCost;
+			final boolean isImplicitWithoutRefQualifier = isImpliedObjectType; // mstodo need to pass this information to here
+			ReferenceBinding refBindingType= ReferenceBinding.OTHER;
+			if (!isImplicitWithoutRefQualifier) {
+				if (isLValueRef) {
+					refBindingType= ReferenceBinding.LVALUE_REF;
+				} else if (exprIsLValue) {
+					refBindingType= ReferenceBinding.RVALUE_REF_BINDS_RVALUE;
 				}
 			}
 
-			// [8.5.3-5] Direct binding failed  - Otherwise
-			boolean cv1isConst= getCVQualifier(cv1T1) == CVQualifier.c;
-			if (cv1isConst)  {
-				if (!sourceIsLValue && T2 instanceof ICPPClassType) {
-					Cost cost= isReferenceCompatible(cv1T1, source, isImpliedObject);
-					if (cost != null)
+			
+			// If the reference is an lvalue reference and ...
+			if (isLValueRef) {
+				// ... the initializer expression is an lvalue (but is not a bit field)
+				// [for overload resolution bit-fields are treated the same, error if selected as best match]
+				if (exprIsLValue) {
+					// ... and "cv1 T1" is reference-compatible with "cv2 T2" 
+					Cost cost= isReferenceCompatible(cv1T1, cv2T2, isImpliedObjectType);
+					if (cost != null) {
+						// [13.3.3.1.4-1] direct binding has either identity or conversion rank.					
+						if (cost.getInheritanceDistance() > 0) {
+							cost.setRank(Rank.CONVERSION);
+						} 
+						cost.setReferenceBinding(refBindingType);
 						return cost;
+					} 
 				}
-			
-				// 5 - Otherwise
-				// Otherwise, a temporary of type "cv1 T1" is created and initialized from
-				// the initializer expression using the rules for a non-reference copy
-				// initialization (8.5). The reference is then bound to the temporary.
-
-				// If T1 is reference-related to T2, cv1 must be the same cv-qualification as,
-				// or greater cv-qualification than, cv2; otherwise, the program is ill-formed.
-				
-				// 13.3.3.1.7 no temporary object when converting the implicit object parameter
-				if (!isImpliedObject) {
-					IType T1= getNestedType(cv1T1, TDEF | REF | ALLCVQ);
-					boolean illformed= isReferenceRelated(T1, T2) >= 0 && compareQualifications(cv1T1, source) < 0;
-
-					// We must do a non-reference initialization
-					if (!illformed) {
-						return nonReferenceConversion(sourceIsLValue, source, T1, udc, isImpliedObject);
+				// ... or has a class type (i.e., T2 is a class type), where T1 is not reference-related to T2, and can be
+				// implicitly converted to an lvalue of type “cv3 T3,” where “cv1 T1” is reference-compatible with 
+				// “cv3 T3” (this conversion is selected by enumerating the applicable conversion functions (13.3.1.6)
+				// and choosing the best one through overload resolution (13.3)),
+				if (T2 instanceof ICPPClassType && udc != UDCMode.noUDC && isReferenceRelated(T1, T2) < 0) {
+					Cost cost= conversionFuncForDirectReference(cv1T1, cv2T2, T2, true);
+					if (cost != null) {
+						cost.setReferenceBinding(refBindingType);
+						return cost;
 					}
 				}
 			}
-			return new Cost(source, cv1T1, Rank.NO_MATCH);
+			
+			// Otherwise, the reference shall be an lvalue reference to a non-volatile const type (i.e., cv1
+			// shall be const), or the reference shall be an rvalue reference and the initializer expression
+			// shall be an rvalue.
+			boolean ok;
+			if (isLValueRef) {
+				// mstodo
+				// Special rule for implicit object type, 13.3.1-5:
+				// Even if the implicit object type is not const-qualified, an rvalue temporary can
+				// be bound to the parameter as long as in all other respects ....
+				// 
+				final CVQualifier cvq = getCVQualifier(cv1T1);
+				ok = cvq == CVQualifier.c;
+			} else {
+				ok= !exprIsLValue;
+			}
+			if (!ok) {
+				return new Cost(exprType, cv1T1, Rank.NO_MATCH);
+			}
+
+			// If T1 and T2 are class types and ...
+			if (T1 instanceof ICPPClassType && T2 instanceof ICPPClassType) {
+				// ... the initializer expression is an rvalue and “cv1 T1” is reference-compatible with “cv2 T2”
+				if (!exprIsLValue) {
+					Cost cost= isReferenceCompatible(cv1T1, cv2T2, isImpliedObjectType);
+					if (cost != null) {
+						// [13.3.3.1.4-1] direct binding has either identity or conversion rank.					
+						if (cost.getInheritanceDistance() > 0) {
+							cost.setRank(Rank.CONVERSION);
+						} 
+						cost.setReferenceBinding(refBindingType);
+						return cost;
+					} 
+				}
+
+				// or T1 is not reference-related to T2 and the initializer expression can be implicitly
+				// converted to an rvalue of type “cv3 T3” (this conversion is selected by enumerating the
+				// applicable conversion functions (13.3.1.6) and choosing the best one through overload
+				// resolution (13.3)), then the reference is bound to the initializer expression rvalue in the
+				// first case and to the object that is the result of the conversion in the second case (or,
+				// in either case, to the appropriate base class subobject of the object).
+				if (udc != UDCMode.noUDC && isReferenceRelated(T1, T2) < 0) {
+					Cost cost= conversionFuncForDirectReference(cv1T1, cv2T2, T2, false);
+					if (cost != null) {
+						cost.setReferenceBinding(refBindingType);
+						return cost;
+					}
+				}
+			}
+			
+			// If the initializer expression is an rvalue, with T2 an array type, and “cv1 T1” is
+			// reference-compatible with “cv2 T2,” the reference is bound to the object represented by the
+			// rvalue (see 3.10).
+			if (!exprIsLValue && T2 instanceof IArrayType) {
+				Cost cost= isReferenceCompatible(cv1T1, cv2T2, isImpliedObjectType);
+				if (cost != null) {
+					cost.setReferenceBinding(refBindingType);
+					return cost;
+				}
+			}
+
+			// — Otherwise, a temporary of type “cv1 T1” is created and initialized from the initializer
+			// expression using the rules for a non-reference copy initialization (8.5). The reference is then
+			// bound to the temporary. If T1 is reference-related to T2, cv1 must be the same cv-qualification
+			// as, or greater cv-qualification than, cv2; otherwise, the program is ill-formed.
+				
+			// 13.3.3.1.7 no temporary object when converting the implicit object parameter
+			if (!isImpliedObjectType) {
+				if (isReferenceRelated(T1, T2) < 0 || compareQualifications(cv1T1, cv2T2) >= 0) {
+					Cost cost= nonReferenceConversion(exprIsLValue, cv2T2, T1, udc, false);
+					if (!isImplicitWithoutRefQualifier) {
+						cost.setReferenceBinding(isLValueRef ? ReferenceBinding.LVALUE_REF : ReferenceBinding.RVALUE_REF_BINDS_RVALUE);
+					}
+					return cost;
+				}
+			}
+			return new Cost(exprType, cv1T1, Rank.NO_MATCH);
 		} 
 		
 		// Non-reference binding
-		IType uqsource= getNestedType(source, TDEF | REF | ALLCVQ);
+		IType uqsource= getNestedType(exprType, TDEF | REF | ALLCVQ);
 		IType uqtarget= getNestedType(target, TDEF | REF | ALLCVQ);
 		
 		// [13.3.3.1-6] Derived to base conversion
@@ -186,13 +226,53 @@ public class Conversions {
 			}
 		}
 		
-		return nonReferenceConversion(sourceIsLValue, source, uqtarget, udc, isImpliedObject);
+		return nonReferenceConversion(exprIsLValue, exprType, uqtarget, udc, isImpliedObjectType);
+	}
+
+	/**
+	 * 0x: 13.3.1.6 Initialization by conversion function for direct reference binding	 
+	 */
+	private static Cost conversionFuncForDirectReference(final IType cv1T1, final IType cv2T2, final IType T2, boolean forLValue)
+			throws DOMException {
+		ICPPMethod[] fcns= SemanticUtil.getConversionOperators((ICPPClassType) T2);
+		Cost operatorCost= null;
+		FunctionCost bestUdcCost= null;
+		boolean ambiguousConversionOperator= false;
+		if (fcns.length > 0 && !(fcns[0] instanceof IProblemBinding)) {
+			for (final ICPPMethod op : fcns) {
+				final ICPPFunctionType ft = op.getType();
+				IType convertedType= ft.getReturnType();
+				final boolean isLValue = CPPVisitor.isLValueReference(convertedType);
+				if (isLValue == forLValue) { // require an lvalue or rvalue
+					IType implicitObjectType= CPPSemantics.getImplicitType(op, ft.isConst(), ft.isVolatile());
+					Cost udcCost= isReferenceCompatible(getNestedType(implicitObjectType, TDEF | REF), cv2T2, true); // expression type to implicit object type
+					if (udcCost != null) {
+						FunctionCost udcFuncCost= new FunctionCost(op, udcCost);
+						int cmp= udcFuncCost.compareTo(null, bestUdcCost);
+						if (cmp <= 0) {
+							Cost cost= isReferenceCompatible(cv1T1, getNestedType(convertedType, TDEF | REF), false); // converted to target
+							if (cost != null) {
+								bestUdcCost= udcFuncCost;
+								ambiguousConversionOperator= cmp == 0;
+								operatorCost= cost;
+								operatorCost.setUserDefinedConversion(op);
+							}
+						}
+					}
+				}
+			}
+		}
+
+		if (operatorCost != null && !ambiguousConversionOperator) {
+			return operatorCost;
+		}
+		return null;
 	}
 
 	private static Cost nonReferenceConversion(boolean sourceIsLValue, IType source, IType target, UDCMode udc, boolean isImpliedObject) throws DOMException {
 		// [13.3.3.1-6] Subsume cv-qualifications
 		IType uqSource= SemanticUtil.getNestedType(source, TDEF | ALLCVQ);
-		Cost cost= checkStandardConversionSequence(uqSource, target, isImpliedObject);
+		Cost cost= checkStandardConversionSequence(uqSource, sourceIsLValue, target, isImpliedObject);
 		if (cost.getRank() != Rank.NO_MATCH || udc == UDCMode.noUDC) 
 			return cost;
 		
@@ -327,10 +407,10 @@ public class Conversions {
 	 *    base conversion does not cause any costs.
 	 * @throws DOMException
 	 */
-	private static final Cost checkStandardConversionSequence(IType source, IType target,
+	private static final Cost checkStandardConversionSequence(IType source, boolean isLValue, IType target,
 			boolean isImplicitThis) throws DOMException {
 		final Cost cost= new Cost(source, target, Rank.IDENTITY);
-		if (lvalue_to_rvalue(cost))
+		if (lvalue_to_rvalue(cost, isLValue))
 			return cost;
 
 		if (promotion(cost))
@@ -370,25 +450,25 @@ public class Conversions {
 		
 		// 13.3.1.4 Copy initialization of class by user-defined conversion
 		if (t instanceof ICPPClassType) {
-			Cost cost1= null;
+			FunctionCost cost1= null;
 			Cost cost2= null;
 			ICPPConstructor[] ctors= ((ICPPClassType) t).getConstructors();
-			CPPTemplates.instantiateFunctionTemplates(ctors, new IType[]{source},  null);
+			CPPTemplates.instantiateFunctionTemplates(ctors, new IType[]{source}, sourceIsLValue ? LVBITSET : RVBITSET, null);
 
 			for (ICPPConstructor ctor : ctors) {
 				if (ctor != null && !(ctor instanceof IProblemBinding) && !ctor.isExplicit()) {
 					final ICPPFunctionType ft = ctor.getType();
 					final IType[] ptypes = ft.getParameterTypes();
-					Cost c1;
+					FunctionCost c1;
 					if (ptypes.length == 0) {
 						if (ctor.takesVarArgs()) {
-							c1= new Cost(source, null, Rank.ELLIPSIS_CONVERSION);
+							c1= new FunctionCost(ctor, new Cost(source, null, Rank.ELLIPSIS_CONVERSION));
 						} else {
 							continue;
 						}
 					} else {
 						IType ptype= ptypes[0];
-						// We don't need to check the implicit conversion sequence it the type is void
+						// We don't need to check the implicit conversion sequence if the type is void
 						if (ptype instanceof ICPPBasicType && ((ICPPBasicType) ptype).getKind() == Kind.eVoid)
 							continue;
 						if (ptypes.length > 1) {
@@ -397,9 +477,9 @@ public class Conversions {
 								continue;
 							
 						}
-						c1= checkImplicitConversionSequence(sourceIsLValue, source, ptype, UDCMode.noUDC, false);
+						c1= new FunctionCost(ctor, checkImplicitConversionSequence(ptype, source, sourceIsLValue, UDCMode.noUDC, false));
 					}
-					int cmp= c1.compareTo(cost1);
+					int cmp= c1.compareTo(null, cost1);
 					if (cmp <= 0) {
 						cost1= c1;
 						cost2= new Cost(t, t, Rank.IDENTITY);
@@ -421,25 +501,28 @@ public class Conversions {
 						if (dist >= 0) {
 							final ICPPFunctionType ft = op.getType();
 							IType implicitType= CPPSemantics.getImplicitType(op, ft.isConst(), ft.isVolatile());
-							Cost c1= checkImplicitConversionSequence(sourceIsLValue, source, implicitType, UDCMode.noUDC, false);
-							int cmp= c1.compareTo(cost1);
-							if (cmp <= 0) {
-								cost1= c1;
-								cost2= new Cost(t, t, Rank.IDENTITY);
-								if (dist > 0) {
-									cost2.setInheritanceDistance(dist);
-									cost2.setRank(Rank.CONVERSION);
-								}
-								cost2.setUserDefinedConversion(op);
-								if (cmp == 0) {
-									cost2.setAmbiguousUDC(true);
+							final Cost udcCost = isReferenceCompatible(getNestedType(implicitType, TDEF | REF), source, true);
+							if (udcCost != null) {
+								FunctionCost c1= new FunctionCost(op, udcCost);
+								int cmp= c1.compareTo(null, cost1);
+								if (cmp <= 0) {
+									cost1= c1;
+									cost2= new Cost(t, t, Rank.IDENTITY);
+									if (dist > 0) {
+										cost2.setInheritanceDistance(dist);
+										cost2.setRank(Rank.CONVERSION);
+									}
+									cost2.setUserDefinedConversion(op);
+									if (cmp == 0) {
+										cost2.setAmbiguousUDC(true);
+									}
 								}
 							}
 						}
 					}
 				}
 			}
-			if (cost1 == null || cost1.getRank() == Rank.NO_MATCH)
+			if (cost1 == null || cost1.getCost(0).getRank() == Rank.NO_MATCH)
 				return null;
 			
 			return cost2;
@@ -449,30 +532,35 @@ public class Conversions {
 		if (s instanceof ICPPClassType) {
 			ICPPMethod[] ops = SemanticUtil.getConversionOperators((ICPPClassType) s); 
 			CPPTemplates.instantiateConversionTemplates(ops, target);
-			Cost cost1= null;
+			FunctionCost cost1= null;
 			Cost cost2= null;
 			for (final ICPPMethod op : ops) {
 				if (op != null && !(op instanceof IProblemBinding)) {
 					final IType returnType = op.getType().getReturnType();
 					IType uqReturnType= getNestedType(returnType, TDEF | ALLCVQ);
-					Cost c2= checkImplicitConversionSequence(false, uqReturnType, target, UDCMode.noUDC, false);
+					boolean isLValue = uqReturnType instanceof ICPPReferenceType
+							&& !((ICPPReferenceType) uqReturnType).isRValueReference();
+					Cost c2= checkImplicitConversionSequence(target, uqReturnType, isLValue, UDCMode.noUDC, false);
 					if (c2.getRank() != Rank.NO_MATCH) {
 						ICPPFunctionType ftype = op.getType();
 						IType implicitType= CPPSemantics.getImplicitType(op, ftype.isConst(), ftype.isVolatile());
-						Cost c1= checkImplicitConversionSequence(sourceIsLValue, source, implicitType, UDCMode.noUDC, false);
-						int cmp= c1.compareTo(cost1);
-						if (cmp <= 0) {
-							cost1= c1;
-							cost2= c2;
-							cost2.setUserDefinedConversion(op);
-							if (cmp == 0) {
-								cost2.setAmbiguousUDC(true);
+						final Cost udcCost = isReferenceCompatible(getNestedType(implicitType, TDEF | REF), source, true);
+						if (udcCost != null) {
+							FunctionCost c1= new FunctionCost(op, udcCost);
+							int cmp= c1.compareTo(null, cost1);
+							if (cmp <= 0) {
+								cost1= c1;
+								cost2= c2;
+								cost2.setUserDefinedConversion(op);
+								if (cmp == 0) {
+									cost2.setAmbiguousUDC(true);
+								}
 							}
 						}
 					}
 				}
 			}
-			if (cost1 == null || cost1.getRank() == Rank.NO_MATCH)
+			if (cost1 == null || cost1.getCost(0).getRank() == Rank.NO_MATCH)
 				return null;
 			
 			return cost2;
@@ -511,7 +599,6 @@ public class Conversions {
 						return 1;
 					}
 
-					tbase= getNestedType(tbase, TDEF);
 					if (tbase instanceof ICPPClassType) {
 						int n= calculateInheritanceDepth(maxdepth - 1, tbase, ancestorToFind);
 						if (n > 0)
@@ -531,38 +618,31 @@ public class Conversions {
 	 * [4.2] array-to-ptr
 	 * [4.3] function-to-ptr
 	 */
-	private static final boolean lvalue_to_rvalue(final Cost cost) throws DOMException {
+	private static final boolean lvalue_to_rvalue(final Cost cost, boolean isLValue) throws DOMException {
 		// target should not be a reference here.
 		boolean isConverted= false;
 		IType target = getNestedType(cost.target, REF | TDEF);
-		IType source= getNestedType(cost.source, TDEF);
+		IType source= getNestedType(cost.source, REF | TDEF);
 		
 		// 4.1 lvalue to rvalue
-		IType srcRValue= getNestedType(source, REF | TDEF);
-		if (source instanceof ICPPReferenceType) {
+		if (isLValue) {
 			// 4.1 lvalue of non-function and non-array
-			if (!(srcRValue instanceof IFunctionType) && !(srcRValue instanceof IArrayType)) {
+			if (!(source instanceof IFunctionType) && !(source instanceof IArrayType)) {
 				// 4.1 if T is a non-class type, the type of the rvalue is the cv-unqualified version of T
-				IType unqualifiedSrcRValue= getNestedType(srcRValue, ALLCVQ | TDEF | REF);
+				IType unqualifiedSrcRValue= getNestedType(source, ALLCVQ | TDEF | REF);
 				if (unqualifiedSrcRValue instanceof ICPPClassType) {
-					if (isCompleteType(unqualifiedSrcRValue)) {
-						source= srcRValue;
-					} else {
-						// ill-formed
-						cost.setRank(Rank.NO_MATCH);
-						return true;
-					}
+					cost.setRank(Rank.NO_MATCH);
+					return true;
 				} else {
 					source= unqualifiedSrcRValue;
 				}
-				cost.setRank(Rank.LVALUE_TRANSFORMATION);
 				isConverted= true;
 			}
 		}
 		
 		// 4.2 array to pointer conversion
-		if (!isConverted && srcRValue instanceof IArrayType) {
-			final IArrayType arrayType= (IArrayType) srcRValue;
+		if (!isConverted && source instanceof IArrayType) {
+			final IArrayType arrayType= (IArrayType) source;
 			
 			if (target instanceof IPointerType) {
 				final IType targetPtrTgt= getNestedType(((IPointerType) target).getType(), TDEF);
@@ -579,7 +659,6 @@ public class Conversions {
 								if (lit.getKind() == IASTLiteralExpression.lk_string_literal) {
 									source= new CPPPointerType(tmp, false, false);
 									cost.setQualificationAdjustment(getCVQualifier(targetPtrTgt).isVolatile() ? 2 : 1);
-									cost.setRank(Rank.LVALUE_TRANSFORMATION);
 									isConverted= true;
 								}
 							}
@@ -589,7 +668,6 @@ public class Conversions {
 			}
 			if (!isConverted && (target instanceof IPointerType || target instanceof IBasicType)) {
 				source = new CPPPointerType(getNestedType(arrayType.getType(), TDEF));
-				cost.setRank(Rank.LVALUE_TRANSFORMATION);
 				isConverted= true;
 			}
 		}
@@ -597,9 +675,8 @@ public class Conversions {
 		// 4.3 function to pointer conversion
 		if (!isConverted && target instanceof IPointerType) {
 			final IType targetPtrTgt= getNestedType(((IPointerType) target).getType(), TDEF);
-			if (targetPtrTgt instanceof IFunctionType && srcRValue instanceof IFunctionType) {
+			if (targetPtrTgt instanceof IFunctionType && source instanceof IFunctionType) {
 				source = new CPPPointerType(source);
-				cost.setRank(Rank.LVALUE_TRANSFORMATION);
 				isConverted= true;
 			} 
 		}
@@ -848,31 +925,5 @@ public class Conversions {
 			}
 		}
 		return false;
-	}
-		
-	/**
-	 * @param type
-	 * @return whether the specified type has an associated definition
-	 */
-	private static final boolean isCompleteType(IType type) {
-		type= getUltimateType(type, false);
-		if (type instanceof ICPPTemplateInstance)
-			return true;
-		if (type instanceof ICPPClassType) {
-			if (type instanceof IIndexFragmentBinding) {
-				try {
-					return ((IIndexFragmentBinding) type).hasDefinition();
-				} catch (CoreException e) {
-					CCorePlugin.log(e);
-				}
-			}
-			try {
-				return ((ICPPClassType) type).getCompositeScope() != null;
-			} catch (DOMException e) {
-				return false;
-			}
-		}
-		
-		return true;
 	}
 }

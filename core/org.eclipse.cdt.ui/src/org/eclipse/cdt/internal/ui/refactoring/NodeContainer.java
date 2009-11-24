@@ -172,7 +172,7 @@ public class NodeContainer {
 					declarator.addPointerOperator(new CASTPointer());
 					break;
 				case CPP:
-					declarator.addPointerOperator(new CPPASTReferenceOperator());
+					declarator.addPointerOperator(new CPPASTReferenceOperator(false));
 					break;
 				}
 			}

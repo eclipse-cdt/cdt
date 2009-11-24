@@ -8,6 +8,7 @@
  * Contributors:
  *     John Camelon (IBM) - Initial API and implementation
  *     Mike Kucera (IBM) - implicit names
+ *     Markus Schorn (Wind River Systems)
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.dom.parser.cpp;
 
@@ -34,6 +35,7 @@ import org.eclipse.cdt.internal.core.dom.parser.ASTNode;
 import org.eclipse.cdt.internal.core.dom.parser.IASTAmbiguityParent;
 import org.eclipse.cdt.internal.core.dom.parser.ProblemBinding;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPSemantics;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPVisitor;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.SemanticUtil;
 
 
@@ -199,7 +201,11 @@ public class CPPASTFunctionCallExpression extends ASTNode implements
     	return type;
     }
     
-    private IType computeExpressionType() {
+    public boolean isLValue() {
+    	return CPPVisitor.isLValueReference(getExpressionType());
+	}
+
+	private IType computeExpressionType() {
     	overload= null;
     	try {
     		IType t= null;

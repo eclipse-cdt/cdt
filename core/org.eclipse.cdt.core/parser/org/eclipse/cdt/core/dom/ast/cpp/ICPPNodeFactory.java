@@ -40,12 +40,6 @@ import org.eclipse.cdt.core.parser.IScanner;
 public interface ICPPNodeFactory extends INodeFactory {
 	
 	/**
-	 * @deprecated use {@link #newTranslationUnit(IScanner)}, instead.
-	 */
-	@Deprecated
-	public ICPPASTTranslationUnit newTranslationUnit();
-
-	/**
 	 * Creates a new translation unit that cooperates with the given scanner in order
 	 * to track macro-expansions and location information.
 	 * @scanner the preprocessor the translation unit interacts with.
@@ -152,8 +146,12 @@ public interface ICPPNodeFactory extends INodeFactory {
 	
 	public IGPPASTPointer newPointerGPP();
 	
-	public ICPPASTReferenceOperator newReferenceOperator();
-	
+	/**
+	 * Creates an lvalue or rvalue reference operator.
+	 * @since 5.2
+	 */
+	public ICPPASTReferenceOperator newReferenceOperator(boolean isRValueReference);
+
 	public ICPPASTPointerToMember newPointerToMember(IASTName name);
 	
 	public IGPPASTPointerToMember newPointerToMemberGPP(IASTName name);
@@ -183,4 +181,14 @@ public interface ICPPNodeFactory extends INodeFactory {
 	 */
 	public ICPPASTStaticAssertDeclaration newStaticAssertion(IASTExpression condition, ICPPASTLiteralExpression message);
 	
+	
+	/**
+	 * @deprecated Replaced by {@link #newReferenceOperator(boolean)}.
+	 */
+	@Deprecated	public ICPPASTReferenceOperator newReferenceOperator();
+	/**
+	 * @deprecated Replaced by {@link #newTranslationUnit(IScanner)}.
+	 */
+	@Deprecated
+	public ICPPASTTranslationUnit newTranslationUnit();
 }

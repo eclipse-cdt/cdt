@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2006, 2008 IBM Corporation and others.
+ *  Copyright (c) 2006, 2009 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -11,7 +11,6 @@
 package org.eclipse.cdt.internal.core.dom.parser.upc.ast;
 
 import org.eclipse.cdt.core.dom.ast.ASTVisitor;
-import org.eclipse.cdt.core.dom.ast.IBasicType;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.IBasicType.Kind;
 import org.eclipse.cdt.core.dom.upc.ast.IUPCASTKeywordExpression;
@@ -50,7 +49,10 @@ public class UPCASTKeywordExpression extends ASTNode implements IUPCASTKeywordEx
 		return new CBasicType(Kind.eInt, 0, this);
 	}
 
-	
+	public boolean isLValue() {
+		return false;
+	}
+
 	@Override
 	public boolean accept(ASTVisitor visitor) {
 		if(visitor.shouldVisitExpressions) {

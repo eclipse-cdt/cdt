@@ -86,4 +86,8 @@ public abstract class ASTTypeIdInitializerExpression extends ASTNode implements 
 		}
         return true;
     }
+
+	public boolean isLValue() {
+		return false;
+	}
 }

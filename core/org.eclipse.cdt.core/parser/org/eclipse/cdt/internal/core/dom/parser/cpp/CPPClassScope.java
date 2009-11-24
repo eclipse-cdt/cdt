@@ -100,7 +100,7 @@ public class CPPClassScope extends CPPScope implements ICPPClassScope {
         char[] className = name.getLookupKey();
 
 		IParameter[] voidPs = new IParameter[] { new CPPParameter(CPPSemantics.VOID_TYPE, 0) };
-		IType pType = new CPPReferenceType(SemanticUtil.addQualifiers(clsType, true, false));
+		IType pType = new CPPReferenceType(SemanticUtil.addQualifiers(clsType, true, false), false);
 		IParameter[] ps = new IParameter[] { new CPPParameter(pType, 0) };
 
 		int i= 0;
@@ -124,7 +124,7 @@ public class CPPClassScope extends CPPScope implements ICPPClassScope {
 
 		if (!ia.hasUserDeclaredCopyAssignmentOperator()) {
 			//copy assignment operator: A& operator = (const A &)
-			IType refType = new CPPReferenceType(clsType);
+			IType refType = new CPPReferenceType(clsType, false);
 			ICPPFunctionType ft= CPPVisitor.createImplicitFunctionType(refType, ps, false, false);
 			ICPPMethod m = new CPPImplicitMethod(this, OverloadableOperator.ASSIGN.toCharArray(), ft, ps);
 			implicits[i++] = m;

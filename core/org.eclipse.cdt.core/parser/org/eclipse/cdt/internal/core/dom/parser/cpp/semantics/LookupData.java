@@ -14,6 +14,7 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.dom.parser.cpp.semantics;
 
+import java.util.BitSet;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
@@ -66,6 +67,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassScope;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPMethod;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPNamespaceScope;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPReferenceType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCompositeTypeSpecifier.ICPPASTBaseSpecifier;
 import org.eclipse.cdt.core.parser.util.ArrayUtil;
 import org.eclipse.cdt.core.parser.util.CharArrayObjectMap;
@@ -108,6 +110,7 @@ public class LookupData {
 	private Object[] functionArgs;
 	private IType[] functionArgTypes;
 	public ProblemBinding problem;
+	private BitSet functionArgLValues;
 	
 	public LookupData(IASTName n) {
 		astName = n;
@@ -600,7 +603,7 @@ public class LookupData {
 				functionArgTypes= new IType[pdecls.length];
 				for (int i = 0; i < pdecls.length; i++) {
 					IASTParameterDeclaration p = pdecls[i];
-					functionArgTypes[i]= CPPVisitor.createType(p.getDeclarator());
+					functionArgTypes[i]= SemanticUtil.getSimplifiedType(CPPVisitor.createType(p.getDeclarator()));
 				}
 			} else if (functionArgs instanceof IASTExpression[]) {
 				IASTExpression[] exprs= (IASTExpression[]) functionArgs;
@@ -608,13 +611,37 @@ public class LookupData {
 				for (int i = 0; i < exprs.length; i++) {
 					IASTExpression e = exprs[i];
 					IType etype= e.getExpressionType();
-					functionArgTypes[i]= etype;
+					functionArgTypes[i]= SemanticUtil.getSimplifiedType(etype);
 				}
-
 			}
 		}
 		return functionArgTypes;
 	}
+	
+	public BitSet getFunctionArgumentLValues() {
+		if (functionArgLValues == null) {
+			functionArgLValues= new BitSet();
+			IASTExpression[] args= getFunctionArguments();
+			if (args != null) {
+				for (int i = 0; i < args.length; i++) {
+					final IASTExpression arg = args[i];
+					if (arg != null) {
+						functionArgLValues.set(i, arg.isLValue());
+					}
+				}
+			} else {
+				IType[] argTypes= getFunctionArgumentTypes();
+				if (argTypes != null) {
+					for (int i = 0; i < argTypes.length; i++) {
+						IType t= argTypes[i];
+						functionArgLValues.set(i, t instanceof ICPPReferenceType && !((ICPPReferenceType) t).isRValueReference());
+					}
+				}
+			}
+		}
+		return functionArgLValues;
+	}
+
 
 	public void setFunctionArgumentTypes(IType[] paramTypes) {
 		functionArgTypes= paramTypes;

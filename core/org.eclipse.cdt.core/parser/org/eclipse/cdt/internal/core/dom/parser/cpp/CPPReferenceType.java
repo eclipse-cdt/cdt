@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     Andrew Niefer (IBM Corporation) - initial API and implementation
+ *     Markus Schorn (Wind River Systems)
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.dom.parser.cpp;
 
@@ -20,18 +21,29 @@ import org.eclipse.cdt.internal.core.dom.parser.ITypeMarshalBuffer;
 import org.eclipse.core.runtime.CoreException;
 
 public class CPPReferenceType implements ICPPReferenceType, ITypeContainer, ISerializableType {
-    IType type = null;
+    private IType fType = null;
+    private boolean fIsRValue;
     
-    public CPPReferenceType(IType type) {
-        this.type = type;
+    public CPPReferenceType(IType type, boolean isRValue) {
+    	fIsRValue= isRValue;
+    	setType(type);
     }
 
     public IType getType() {
-        return type;
+        return fType;
     }
     
+	public boolean isRValueReference() {
+		return fIsRValue;
+	}
+
     public void setType(IType t) {
-        type = t;
+    	if (t instanceof ICPPReferenceType) {
+    		final ICPPReferenceType rt = (ICPPReferenceType) t;
+			fIsRValue = fIsRValue && rt.isRValueReference();
+    		t= rt.getType();
+    	} 
+    	fType= t;
     }
 
     public boolean isSameType(IType obj) {
@@ -40,11 +52,36 @@ public class CPPReferenceType implements ICPPReferenceType, ITypeContainer, ISer
         if (obj instanceof ITypedef)
             return ((ITypedef)obj).isSameType(this);
         
-        if (type == null)
-            return false;
-        
         if (obj instanceof ICPPReferenceType) {
-            return type.isSameType(((ICPPReferenceType) obj).getType());
+            final ICPPReferenceType rhs = (ICPPReferenceType) obj;
+            IType t1= getType();
+            IType t2= rhs.getType();
+            boolean rv1= isRValueReference();
+            boolean rv2= rhs.isRValueReference();
+            for(;;) {
+            	if (t1 instanceof ITypedef) {
+            		t1= ((ITypedef) t1).getType();
+            	} else if (t1 instanceof ICPPReferenceType) {
+            		rv1= rv1 && ((ICPPReferenceType) t1).isRValueReference();
+            		t1= ((ICPPReferenceType) t1).getType();
+            	} else {
+            		break;
+            	}
+            }
+            for(;;) {
+            	if (t2 instanceof ITypedef) {
+            		t2= ((ITypedef) t2).getType();
+            	} else if (t2 instanceof ICPPReferenceType) {
+            		rv2= rv2 && ((ICPPReferenceType) t2).isRValueReference();
+            		t2= ((ICPPReferenceType) t2).getType();
+            	} else {
+            		break;
+            	}
+            }
+            if (t1 == null)
+            	return false;
+            
+			return rv1 == rv2 && t1.isSameType(t2);
         }
     	return false;
     }
@@ -67,12 +104,15 @@ public class CPPReferenceType implements ICPPReferenceType, ITypeContainer, ISer
 
 	public void marshal(ITypeMarshalBuffer buffer) throws CoreException {
 		int firstByte= ITypeMarshalBuffer.REFERENCE;
+		if (isRValueReference()) {
+			firstByte |= ITypeMarshalBuffer.FLAG1;
+		}
 		buffer.putByte((byte) firstByte);
 		buffer.marshalType(getType());
 	}
 	
 	public static IType unmarshal(int firstByte, ITypeMarshalBuffer buffer) throws CoreException {
 		IType nested= buffer.unmarshalType();
-		return new CPPReferenceType(nested);
+		return new CPPReferenceType(nested, (firstByte & ITypeMarshalBuffer.FLAG1) != 0);
 	}
 }

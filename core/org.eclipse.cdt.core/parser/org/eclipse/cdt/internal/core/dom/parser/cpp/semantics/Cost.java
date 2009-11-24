@@ -24,8 +24,11 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPMethod;
  */
 final class Cost {
 	enum Rank {
-		IDENTITY, LVALUE_TRANSFORMATION, PROMOTION, CONVERSION, CONVERSION_PTR_BOOL, 
+		IDENTITY, PROMOTION, CONVERSION, CONVERSION_PTR_BOOL, 
 		USER_DEFINED_CONVERSION, ELLIPSIS_CONVERSION, NO_MATCH
+	}
+	enum ReferenceBinding {
+		RVALUE_REF_BINDS_RVALUE, LVALUE_REF, OTHER
 	}
 
 	IType source;
@@ -38,11 +41,13 @@ final class Cost {
 	private int fQualificationAdjustments;
 	private int fInheritanceDistance;
 	private ICPPFunction fUserDefinedConversion;
+	private ReferenceBinding fReferenceBinding;
 	
 	public Cost(IType s, IType t, Rank rank) {
 		source = s;
 		target = t;
 		fRank= rank;
+		fReferenceBinding= ReferenceBinding.OTHER;
 	}
 
 	public Rank getRank() {
@@ -52,6 +57,11 @@ final class Cost {
 	public void setRank(Rank rank) {
 		fRank= rank;
 	}
+	
+	public void setReferenceBinding(ReferenceBinding binding) {
+		fReferenceBinding= binding;
+	}
+
 	
 	public boolean isAmbiguousUDC() {
 		return fAmbiguousUDC;
@@ -79,9 +89,6 @@ final class Cost {
 
 	public void setQualificationAdjustment(int adjustment) {
 		fQualificationAdjustments= adjustment;
-		if (adjustment != 0 && fRank == Rank.IDENTITY) { 
-			fRank= Rank.LVALUE_TRANSFORMATION;
-		}
 	}
 
 	/**
@@ -130,13 +137,21 @@ final class Cost {
 		if (cmp != 0)
 			return cmp;
 
+		if (fReferenceBinding == ReferenceBinding.LVALUE_REF) {
+			if (other.fReferenceBinding == ReferenceBinding.RVALUE_REF_BINDS_RVALUE)
+				return 1;
+		} else if (fReferenceBinding == ReferenceBinding.RVALUE_REF_BINDS_RVALUE) {
+			if (other.fReferenceBinding == ReferenceBinding.LVALUE_REF)
+				return -1;
+		}
+
 		int qdiff= fQualificationAdjustments ^ other.fQualificationAdjustments;
 		if (qdiff != 0) {
 			if ((fQualificationAdjustments & qdiff) == 0)
 				return -1;
 			if ((other.fQualificationAdjustments & qdiff) == 0)
 				return 1;
-		}
+		}		
 		return 0;
 	}
 

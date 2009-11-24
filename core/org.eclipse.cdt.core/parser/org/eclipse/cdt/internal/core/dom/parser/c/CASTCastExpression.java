@@ -121,4 +121,8 @@ public class CASTCastExpression extends ASTNode implements IASTCastExpression, I
         IASTTypeId id= getTypeId();
         return CVisitor.createType(id.getAbstractDeclarator());
     }
+
+	public boolean isLValue() {
+		return false;
+	}
 }

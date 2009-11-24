@@ -7,6 +7,7 @@
  *
  * Contributors:
  *    Doug Schaefer (IBM) - Initial API and implementation
+ *    Markus Schorn (Wind River Systems)
  *******************************************************************************/
 package org.eclipse.cdt.core.dom.ast.cpp;
 
@@ -19,6 +20,12 @@ import org.eclipse.cdt.core.dom.ast.IASTPointerOperator;
  * @noimplement This interface is not intended to be implemented by clients.
  */
 public interface ICPPASTReferenceOperator extends IASTPointerOperator {
+	
+	/**
+	 * Returns whether the operator denotes a rvalue reference (e.g. <code>int &&</code>).
+	 * @since 5.2
+	 */
+	public boolean isRValueReference();
 	
 	/**
 	 * @since 5.1

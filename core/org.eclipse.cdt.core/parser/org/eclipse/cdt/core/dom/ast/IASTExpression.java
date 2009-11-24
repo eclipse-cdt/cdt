@@ -7,6 +7,7 @@
  *
  * Contributors:
  *    Doug Schaefer (IBM) - Initial API and implementation
+ *    Markus Schorn (Wind River Systems)
  *******************************************************************************/
 package org.eclipse.cdt.core.dom.ast;
 
@@ -23,6 +24,13 @@ public interface IASTExpression extends IASTNode {
 	public static final IASTExpression[] EMPTY_EXPRESSION_ARRAY = new IASTExpression[0];
 	
 	public IType getExpressionType();
+	
+	/**
+	 * Returns whether this expression is an lvalue. LValues are for instance required on the
+	 * left hand side of an assignment expression.
+	 * @since 5.2
+	 */
+	public boolean isLValue();
 	
 	/**
 	 * @since 5.1

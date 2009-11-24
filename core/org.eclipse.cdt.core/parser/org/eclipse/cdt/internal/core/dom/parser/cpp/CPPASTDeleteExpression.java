@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     John Camelon (IBM) - Initial API and implementation
+ *     Markus Schorn (Wind River Systems)
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.dom.parser.cpp;
 
@@ -151,4 +152,8 @@ public class CPPASTDeleteExpression extends ASTNode implements ICPPASTDeleteExpr
     public IType getExpressionType() {
     	return CPPSemantics.VOID_TYPE;
     }
+
+	public boolean isLValue() {
+		return false;
+	}
 }

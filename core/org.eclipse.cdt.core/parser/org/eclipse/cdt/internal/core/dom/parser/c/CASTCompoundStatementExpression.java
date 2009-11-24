@@ -85,5 +85,15 @@ public class CASTCompoundStatementExpression extends ASTNode implements IGNUASTC
 		}
 		return null;
 	}
-    
+
+	public boolean isLValue() {
+		IASTCompoundStatement compound = getCompoundStatement();
+		IASTStatement[] statements = compound.getStatements();
+		if (statements.length > 0) {
+			IASTStatement st = statements[statements.length - 1];
+			if (st instanceof IASTExpressionStatement)
+				return ((IASTExpressionStatement)st).getExpression().isLValue();
+		}
+		return false;
+	}
 }

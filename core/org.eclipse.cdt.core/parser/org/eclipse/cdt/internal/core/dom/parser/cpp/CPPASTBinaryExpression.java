@@ -172,6 +172,31 @@ public class CPPASTBinaryExpression extends ASTNode implements ICPPASTBinaryExpr
     	return overload = CPPSemantics.findOverloadedOperator(this);
     }
     
+	public boolean isLValue() {
+		ICPPFunction op = getOverload();
+		if (op != null) {
+			try {
+				return CPPVisitor.isLValueReference(op.getType().getReturnType());
+			} catch (DOMException e) {
+			}
+		}
+		switch (getOperator()) {
+		case op_assign:
+		case op_binaryAndAssign:
+		case op_binaryOrAssign:
+		case op_binaryXorAssign:
+		case op_divideAssign:
+		case op_minusAssign:
+		case op_moduloAssign:
+		case op_multiplyAssign:
+		case op_plusAssign:
+		case op_shiftLeftAssign:
+		case op_shiftRightAssign:
+			return true;
+		}
+		return false;
+	}
+
 	private IType createExpressionType() {
 		// Check for overloaded operator.
 		ICPPFunction o= getOverload();

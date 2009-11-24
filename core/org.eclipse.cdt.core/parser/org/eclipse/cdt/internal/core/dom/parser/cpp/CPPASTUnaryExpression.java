@@ -271,6 +271,26 @@ public class CPPASTUnaryExpression extends ASTNode implements ICPPASTUnaryExpres
 		return origType;
     }
     
+	public boolean isLValue() {
+		ICPPFunction op = getOverload();
+		if (op != null) {
+			try {
+				return CPPVisitor.isLValueReference(op.getType().getReturnType());
+			} catch (DOMException e) {
+			}
+		}
+
+		switch (getOperator()) {
+		case op_bracketedPrimary:
+			return getOperand().isLValue();
+		case op_star:
+		case op_prefixDecr:
+		case op_prefixIncr:
+			return true;
+		default:
+			return false;
+		}
+	}
     
     private IType findOperatorReturnType() {
     	ICPPFunction operatorFunction = getOverload();

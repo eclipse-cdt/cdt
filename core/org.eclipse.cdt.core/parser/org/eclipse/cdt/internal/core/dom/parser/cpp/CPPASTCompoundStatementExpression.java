@@ -6,7 +6,8 @@
  *  http://www.eclipse.org/legal/epl-v10.html
  * 
  *  Contributors:
- *  IBM - Initial API and implementation
+ *     John Camelon (IBM) - Initial API and implementation
+ *     Markus Schorn (Wind River Systems)
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.dom.parser.cpp;
 
@@ -84,5 +85,16 @@ public class CPPASTCompoundStatementExpression extends ASTNode implements IGNUAS
 				return ((IASTExpressionStatement) st).getExpression().getExpressionType();
 		}
 		return null;
+	}
+    
+	public boolean isLValue() {
+		IASTCompoundStatement compound = getCompoundStatement();
+		IASTStatement[] statements = compound.getStatements();
+		if (statements.length > 0) {
+			IASTStatement st = statements[statements.length - 1];
+			if (st instanceof IASTExpressionStatement)
+				return ((IASTExpressionStatement)st).getExpression().isLValue();
+		}
+		return false;
 	}
 }

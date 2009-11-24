@@ -18,6 +18,7 @@ package org.eclipse.cdt.internal.core.dom.parser.cpp.semantics;
 import static org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.SemanticUtil.*;
 
 import java.util.ArrayList;
+import java.util.BitSet;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -1799,7 +1800,7 @@ public class CPPSemantics {
 			return !b1FromIndex ? 1 : -1;
 		} else if (b1FromIndex) {
 			// Both are from index.
-			if (data.tu != null) {
+			if (data != null && data.tu != null) {
 	    		boolean b1Reachable= isReachableFromAst(data.tu, b1);
 	    		boolean b2Reachable= isReachableFromAst(data.tu, b2);
 	    		if (b1Reachable != b2Reachable) {
@@ -2047,7 +2048,7 @@ public class CPPSemantics {
 		}
 
 		if (!data.forFunctionDeclaration() || data.forExplicitFunctionSpecialization()) {
-			CPPTemplates.instantiateFunctionTemplates(fns, data.getFunctionArgumentTypes(), data.astName);
+			CPPTemplates.instantiateFunctionTemplates(fns, data.getFunctionArgumentTypes(), data.getFunctionArgumentLValues(), data.astName);
 		}
 		
 		// Reduce our set of candidate functions to only those who have the right number of parameters
@@ -2069,7 +2070,6 @@ public class CPPSemantics {
 			return firstViable;
 
 		// The arguments the function is being called with
-		final IASTExpression[] args= data.getFunctionArguments();
 		IType[] argTypes = data.getFunctionArgumentTypes();
 		if (CPPTemplates.containsDependentType(argTypes)) {
 			if (viableCount == 1)
@@ -2086,7 +2086,7 @@ public class CPPSemantics {
 			if (fn == null) 
 				continue;
 			
-			final FunctionCost fnCost= costForFunctionCall(fn, argTypes, args, allowUDC, data);
+			final FunctionCost fnCost= costForFunctionCall(fn, allowUDC, data);
 			if (fnCost == null)
 				continue;
 			
@@ -2137,8 +2137,10 @@ public class CPPSemantics {
 		return bestFnCost.getFunction();
 	}
 
-	private static FunctionCost costForFunctionCall(IFunction fn, IType[] argTypes, IASTExpression[] args,
-			boolean allowUDC, LookupData data) throws DOMException {
+	private static FunctionCost costForFunctionCall(IFunction fn, boolean allowUDC, LookupData data)
+			throws DOMException {
+		IType[] argTypes = data.getFunctionArgumentTypes();
+		BitSet isLValue= data.getFunctionArgumentLValues();
 	    final ICPPFunctionType ftype= (ICPPFunctionType) fn.getType();
 	    if (ftype == null)
 	    	return null;
@@ -2149,9 +2151,7 @@ public class CPPSemantics {
 		    implicitType = getImplicitType((ICPPMethod) fn, ftype.isConst(), ftype.isVolatile());
 		    if (data.firstArgIsImpliedMethodArg) {
 				argTypes = ArrayUtil.removeFirst(argTypes);
-				if (args != null) {
-					args = ArrayUtil.removeFirst(args);
-				}
+				isLValue = isLValue.get(1, isLValue.size());
 			}
 		}
 
@@ -2175,7 +2175,7 @@ public class CPPSemantics {
 			} else if (thisType.isSameType(implicitType)) {
 				cost = new Cost(thisType, implicitType, Rank.IDENTITY);
 			} else {
-				cost = Conversions.checkImplicitConversionSequence(sourceIsLValue, thisType, implicitType, UDCMode.noUDC, true);
+				cost = Conversions.checkImplicitConversionSequence(implicitType, thisType, sourceIsLValue, UDCMode.noUDC, true);
 			    if (cost.getRank() == Rank.NO_MATCH) {
 				    if (CPPTemplates.isDependentType(implicitType) || CPPTemplates.isDependentType(thisType)) {
 				    	IType s= getNestedType(thisType, TDEF|REF|CVTYPE);
@@ -2195,12 +2195,11 @@ public class CPPSemantics {
 
 		final UDCMode udc = allowUDC ? UDCMode.deferUDC : UDCMode.noUDC;
 		for (int j = 0; j < sourceLen; j++) {
-			final IType argType= argTypes[j];
+			final IType argType= SemanticUtil.getNestedType(argTypes[j], TDEF | REF);
 			if (argType == null)
 				return null;
 
-			final IASTExpression arg= args != null && j < args.length ? args[j] : null;
-			final boolean sourceIsLValue = arg != null && !CPPVisitor.isRValue(arg);
+			final boolean sourceIsLValue = isLValue.get(j);
 
 			IType paramType;
 			if (j < paramTypes.length) {
@@ -2218,7 +2217,7 @@ public class CPPSemantics {
 			} else {
 			    if (CPPTemplates.isDependentType(paramType))
 			    	return CONTAINS_DEPENDENT_TYPES;
-				cost = Conversions.checkImplicitConversionSequence(sourceIsLValue, argType, paramType, udc, false);
+				cost = Conversions.checkImplicitConversionSequence(paramType, argType, sourceIsLValue, udc, false);
 			}
 			if (cost.getRank() == Rank.NO_MATCH)
 				return null;
@@ -2236,7 +2235,7 @@ public class CPPSemantics {
 			owner= CPPTemplates.instantiateWithinClassTemplate((ICPPClassTemplate) owner);
 		}
 		implicitType= SemanticUtil.addQualifiers(owner, isConst, isVolatile);
-		implicitType= new CPPReferenceType(implicitType);
+		implicitType= new CPPReferenceType(implicitType, false);
 		return implicitType;
 	}
 

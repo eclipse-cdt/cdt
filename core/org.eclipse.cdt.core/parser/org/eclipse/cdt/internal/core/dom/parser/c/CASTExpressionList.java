@@ -102,4 +102,13 @@ public class CASTExpressionList extends ASTNode implements IASTExpressionList,
 		}
     	return null;
     }
+
+	public boolean isLValue() {
+    	for (int i = expressions.length-1; i >= 0; i--) {
+    		IASTExpression expr= expressions[i];
+    		if (expr != null)
+    			return expr.isLValue();
+		}
+    	return false;
+	}
 }

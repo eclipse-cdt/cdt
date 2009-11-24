@@ -111,6 +111,10 @@ public class CASTIdExpression extends ASTNode implements IASTIdExpression, IASTC
 		return null;
 	}
 	
+	public boolean isLValue() {
+		return true;
+	}
+
 	public IBinding[] findBindings(IASTName n, boolean isPrefix) {
 		IBinding[] bindings = CVisitor.findBindingsForContentAssist(n, isPrefix);
 

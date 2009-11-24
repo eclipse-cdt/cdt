@@ -8,6 +8,7 @@
  * Contributors:
  *     John Camelon (IBM) - Initial API and implementation
  *     Mike Kucera (IBM) - implicit names
+ *     Markus Schorn (Wind River Systems)
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.dom.parser.cpp;
 
@@ -24,6 +25,7 @@ import org.eclipse.cdt.core.parser.util.ArrayUtil;
 import org.eclipse.cdt.internal.core.dom.parser.ASTNode;
 import org.eclipse.cdt.internal.core.dom.parser.IASTAmbiguityParent;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPSemantics;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPVisitor;
 
 
 public class CPPASTExpressionList extends ASTNode implements ICPPASTExpressionList, IASTAmbiguityParent {
@@ -172,22 +174,44 @@ public class CPPASTExpressionList extends ASTNode implements ICPPASTExpressionLi
         }
     }
     
-    public IType getExpressionType() {
-    	ICPPFunction[] overloads = getOverloads();
-    	if(overloads.length > 0) {
-    		ICPPFunction last = overloads[overloads.length-1];
-    		if(last != null) {
-    			try {
+	public IType getExpressionType() {
+		ICPPFunction[] overloads = getOverloads();
+		if (overloads.length > 0) {
+			ICPPFunction last = overloads[overloads.length - 1];
+			if (last != null) {
+				try {
 					return last.getType().getReturnType();
-				} catch (DOMException e) { }
-    		}
-    	}
-    	
-    	for (int i = expressions.length-1; i >= 0 ; i--) {
-			IASTExpression expr= expressions[i];
+				} catch (DOMException e) {
+				}
+			}
+		}
+
+		for (int i = expressions.length - 1; i >= 0; i--) {
+			IASTExpression expr = expressions[i];
 			if (expr != null)
 				return expr.getExpressionType();
 		}
-    	return null;
-    }
+		return null;
+	}
+    
+	public boolean isLValue() {
+		ICPPFunction[] overloads = getOverloads();
+		if (overloads.length > 0) {
+			ICPPFunction last = overloads[overloads.length - 1];
+			if (last != null) {
+				try {
+					return CPPVisitor.isLValueReference(last.getType().getReturnType());
+				} catch (DOMException e) {
+					return false;
+				}
+			}
+		}
+
+    	for (int i = expressions.length-1; i >= 0; i--) {
+    		IASTExpression expr= expressions[i];
+    		if (expr != null)
+    			return expr.isLValue();
+		}
+    	return false;
+	}
 }

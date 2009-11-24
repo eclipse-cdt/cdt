@@ -121,5 +121,17 @@ public class CASTUnaryExpression extends ASTNode implements IASTUnaryExpression,
 		}
 		return exprType; // return the original
 	}
-    
+
+	public boolean isLValue() {
+		switch (getOperator()) {
+		case op_bracketedPrimary:
+			return getOperand().isLValue();
+		case op_star:
+		case op_prefixDecr:
+		case op_prefixIncr:
+			return true;
+		default:
+			return false;
+		}
+	}
 }

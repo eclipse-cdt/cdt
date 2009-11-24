@@ -13,11 +13,10 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.dom.parser.cpp.semantics;
 
-import static org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.SemanticUtil.ALLCVQ;
-import static org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.SemanticUtil.CVTYPE;
-import static org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.SemanticUtil.TDEF;
+import static org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.SemanticUtil.*;
 
 import java.util.ArrayList;
+import java.util.BitSet;
 import java.util.Collections;
 import java.util.List;
 
@@ -122,6 +121,7 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPMethodSpecialization;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPMethodTemplateSpecialization;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPPointerToMemberType;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPPointerType;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPReferenceType;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPTemplateArgument;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPTemplateDefinition;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPTemplateNonTypeParameter;
@@ -634,7 +634,7 @@ public class CPPTemplates {
 	 * 14.8.2.1
 	 */
 	static private ICPPTemplateArgument[] deduceTemplateFunctionArguments(ICPPFunctionTemplate template,
-			ICPPTemplateArgument[] tmplArgs, IType[] fnArgs, CPPTemplateParameterMap map) throws DOMException {
+			ICPPTemplateArgument[] tmplArgs, IType[] fnArgs, BitSet argIsLValue, CPPTemplateParameterMap map) throws DOMException {
 		final ICPPTemplateParameter[] tmplParams = template.getTemplateParameters();
 		final int length = tmplParams.length;
 		if (tmplArgs.length > length)
@@ -654,7 +654,7 @@ public class CPPTemplates {
 			result[i]= tmplArg;
 		}
 		
-		if (!deduceTemplateParameterMapFromFunctionParameters(template, fnArgs, map, false)) 
+		if (!deduceTemplateParameterMapFromFunctionParameters(template, fnArgs, argIsLValue, map, false)) 
 			return null;
 		
 		for (int i = 0; i < length; i++) {
@@ -1360,7 +1360,7 @@ public class CPPTemplates {
 		return result;
 	}
 	
-	static protected void instantiateFunctionTemplates(IFunction[] functions, IType[] fnArgs, IASTName name) {
+	static protected void instantiateFunctionTemplates(IFunction[] functions, IType[] fnArgs, BitSet argIsLValue, IASTName name) {
 		boolean requireTemplate= false;
 		if (name != null) {
 			if (name.getPropertyInParent() == ICPPASTTemplateId.TEMPLATE_NAME) {
@@ -1399,7 +1399,7 @@ public class CPPTemplates {
 				}
 				CPPTemplateParameterMap map= new CPPTemplateParameterMap(fnArgs.length);
 				try {
-					ICPPTemplateArgument[] args= deduceTemplateFunctionArguments(template, templateArguments, fnArgs, map);
+					ICPPTemplateArgument[] args= deduceTemplateFunctionArguments(template, templateArguments, fnArgs, argIsLValue, map);
 					if (args != null) {
 						IBinding instance= instantiateFunctionTemplate(template, args);
 						if (instance instanceof IFunction) {
@@ -1458,7 +1458,7 @@ public class CPPTemplates {
 	 * returns <code>false</code> if there is no mapping.
 	 */
 	private static boolean deduceTemplateParameterMapFromFunctionParameters(ICPPFunctionTemplate template,
-			IType[] fnArgs, CPPTemplateParameterMap map, boolean checkExactMatch) throws DOMException {
+			IType[] fnArgs, BitSet argIsLValue, CPPTemplateParameterMap map, boolean checkExactMatch) throws DOMException {
 		try {
 			IType[] fnPars = template.getType().getParameterTypes();
 			if (fnPars.length == 0)
@@ -1478,12 +1478,24 @@ public class CPPTemplates {
 				IType par= instPars[j];
 				boolean isDependentPar= isDependentType(par);
 				if (checkExactMatch || isDependentPar) {
+					boolean isReferenceTypeParameter= false;
+					IType arg = fnArgs[j];
 					par= SemanticUtil.getNestedType(par, SemanticUtil.TDEF); // adjustParameterType preserves typedefs
 					// 14.8.2.1-2
-					final boolean isReferenceTypeParameter = par instanceof ICPPReferenceType;
-					IType arg= getArgumentTypeForDeduction(fnArgs[j], isReferenceTypeParameter);
-					if (isReferenceTypeParameter)
+					if (par instanceof ICPPReferenceType) {
+						// If P is an rvalue reference to a cv-unqualified template parameter and the argument is an
+						// lvalue, the type A& “lvalue reference to A” is used in place of A for type deduction.
+						isReferenceTypeParameter= true;
+						final ICPPReferenceType refPar = (ICPPReferenceType) par;
+						if (refPar.isRValueReference() && refPar.getType() instanceof ICPPTemplateParameter && argIsLValue.get(j)) {
+							arg= new CPPReferenceType(getSimplifiedType(arg), false);
+						} else {
+							arg= getArgumentTypeForDeduction(arg, true);
+						}
 						par= SemanticUtil.getNestedType(par, SemanticUtil.REF | SemanticUtil.TDEF);
+					} else {
+						arg= getArgumentTypeForDeduction(arg, false);
+					}
 					
 					if (!checkExactMatch) {
 						// 14.8.2.1-3
@@ -1841,7 +1853,7 @@ public class CPPTemplates {
 		
 		CPPTemplateParameterMap map= new CPPTemplateParameterMap(2);
 		final IType[] transferredParameterTypes = ((ICPPFunction) transferredTemplate).getType().getParameterTypes();
-		if (!deduceTemplateParameterMapFromFunctionParameters(f2, transferredParameterTypes, map, true))
+		if (!deduceTemplateParameterMapFromFunctionParameters(f2, transferredParameterTypes, new BitSet(), map, true))
 			return false;
 		
 		final ICPPTemplateParameter[] tmplParams = f2.getTemplateParameters();
@@ -2078,7 +2090,7 @@ public class CPPTemplates {
 	    } else if (paramType instanceof IArrayType) {
 	    	paramType = new CPPPointerType(((IArrayType) paramType).getType());
 		}
-		Cost cost = Conversions.checkImplicitConversionSequence(true, arg, paramType, UDCMode.noUDC, false);
+		Cost cost = Conversions.checkImplicitConversionSequence(paramType, arg, true, UDCMode.noUDC, false);
 		return cost != null && cost.getRank() != Rank.NO_MATCH;
 	}
 

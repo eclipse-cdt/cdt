@@ -161,7 +161,7 @@ public class CPPCompositesFactory extends AbstractCompositeFactory {
 			IType r= rt.getType();
 			IType r2= getCompositeType(r);
 			if (r != r2) {
-				return new CPPReferenceType(r2);
+				return new CPPReferenceType(r2, rt.isRValueReference());
 			}
 			return rt;
 		}

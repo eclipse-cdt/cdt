@@ -4296,8 +4296,51 @@ public class AST2TemplateTests extends AST2BaseTest {
 	//		int a=1;
 	//      a OPASSIGN(>>) 1;
 	//	}
-	public void testTokenPasteShiftROperaotr_261268() throws Exception {
+	public void testTokenPasteShiftROperator_261268() throws Exception {
 		final String code= getAboveComment();
 		parseAndCheckBindings(code, ParserLanguage.CPP);
+	}
+	
+	//	template <class T> class X {
+	//	    void f(const T&);
+	//	    void g(T&&);
+	//	};
+	//	X<int&> x1;         // X<int&>::f has the parameter type int&
+	//	                    // X<int&>::g has the parameter type int&
+	//	X<const int&&> x2;  // X<const int&&>::f has the parameter type const int&
+	//	                    // X<const int&&>::g has the parameter type const int&&
+	public void testRValueReferences_1_294730() throws Exception {
+		final String code= getAboveComment();
+		parseAndCheckBindings(code, ParserLanguage.CPP);
+		BindingAssertionHelper bh= new BindingAssertionHelper(code, true);
+
+		ICPPClassType type= bh.assertNonProblem("X<int&>", 7);
+		ICPPMethod[] ms= type.getMethods();
+		int i= ms[0].getName().equals("f") ? 0 : 1;
+		ICPPMethod m= ms[i];
+		assertEquals("int &", ASTTypeUtil.getType(m.getType().getParameterTypes()[0]));
+		m= ms[1-i];
+		assertEquals("int &", ASTTypeUtil.getType(m.getType().getParameterTypes()[0]));
+
+		type= bh.assertNonProblem("X<const int&&>", 14);
+		ms= type.getMethods();
+		i= ms[0].getName().equals("f") ? 0 : 1;
+		m= ms[i];
+		assertEquals("const int &", ASTTypeUtil.getType(m.getType().getParameterTypes()[0]));
+		m= ms[1-i];
+		assertEquals("const int &&", ASTTypeUtil.getType(m.getType().getParameterTypes()[0]));
+	}
+	
+	//	template<typename T> int f(T&&);
+	//	void test() {
+	//		int i;
+	//		int j = f(i);    // calls f<int&>(i)
+	//	}
+	public void testRValueReferences_2_294730() throws Exception {
+		final String code= getAboveComment();
+		parseAndCheckBindings(code, ParserLanguage.CPP);
+		BindingAssertionHelper bh= new BindingAssertionHelper(code, true);
+		ICPPTemplateInstance inst= bh.assertNonProblem("f(i)", 1);
+		assertEquals("<int &>", ASTTypeUtil.getArgumentListString(inst.getTemplateArguments(), true));
 	}
 }

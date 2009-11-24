@@ -6,7 +6,8 @@
  *  http://www.eclipse.org/legal/epl-v10.html
  * 
  *  Contributors:
- *  IBM - Initial API and implementation
+ *     John Camelon (IBM) - Initial API and implementation
+ *     Markus Schorn (Wind River Systems)
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.dom.parser.cpp;
 
@@ -144,4 +145,8 @@ public class CPPASTConditionalExpression extends ASTNode implements
 			return t3;
 		return t2;
     }
+
+	public boolean isLValue() {
+		return false;
+	}
 }

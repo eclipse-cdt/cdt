@@ -256,4 +256,8 @@ public class CPPASTNewExpression extends ASTNode implements
 		}
 		return new CPPPointerType(t);
     }
+
+	public boolean isLValue() {
+		return false;
+	}
 }

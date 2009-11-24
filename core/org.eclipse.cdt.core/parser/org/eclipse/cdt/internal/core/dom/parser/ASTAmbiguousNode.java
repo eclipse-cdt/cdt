@@ -133,4 +133,8 @@ public abstract class ASTAmbiguousNode extends ASTNode  {
 		afterResolution(resolver, bestAlternative);
 		return bestAlternative;
 	}
+    
+    public boolean isLValue() {
+    	return false;
+    }
 }

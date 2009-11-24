@@ -20,11 +20,18 @@ import org.eclipse.cdt.internal.core.dom.parser.ASTNode;
  */
 public class CPPASTReferenceOperator extends ASTNode implements ICPPASTReferenceOperator {
     
-	public CPPASTReferenceOperator() {
+	private final boolean fIsRValue;
+
+	public CPPASTReferenceOperator(boolean isRValueReference) {
+		fIsRValue= isRValueReference;
 	}
 	
+	public boolean isRValueReference() {
+		return fIsRValue;
+	}
+
 	public CPPASTReferenceOperator copy() {
-		CPPASTReferenceOperator copy = new CPPASTReferenceOperator();
+		CPPASTReferenceOperator copy = new CPPASTReferenceOperator(fIsRValue);
 		copy.setOffsetAndLength(this);
 		return copy;
 	}

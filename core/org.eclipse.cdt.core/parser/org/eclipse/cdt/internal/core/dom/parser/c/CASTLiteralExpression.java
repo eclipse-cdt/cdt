@@ -99,7 +99,11 @@ public class CASTLiteralExpression extends ASTNode implements IASTLiteralExpress
 		}
 		return null;
 	}
-    
+	
+	public boolean isLValue() {
+		return getKind() == IASTLiteralExpression.lk_string_literal;
+	}
+
 	private IType classifyTypeOfFloatLiteral() {
 		final char[] lit= getValue();
 		final int len= lit.length;

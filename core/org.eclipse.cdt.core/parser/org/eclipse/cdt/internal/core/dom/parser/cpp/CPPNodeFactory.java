@@ -454,7 +454,11 @@ public class CPPNodeFactory extends NodeFactory implements ICPPNodeFactory {
 	}
 	
 	public ICPPASTReferenceOperator newReferenceOperator() {
-		return new CPPASTReferenceOperator();
+		return new CPPASTReferenceOperator(false);
+	}
+
+	public ICPPASTReferenceOperator newReferenceOperator(boolean isRValueReference) {
+		return new CPPASTReferenceOperator(isRValueReference);
 	}
 
 	public ICPPASTPointerToMember newPointerToMember(IASTName name) {

@@ -23,6 +23,7 @@ import java.util.Iterator;
 import junit.framework.TestSuite;
 
 import org.eclipse.cdt.core.dom.ast.ASTSignatureUtil;
+import org.eclipse.cdt.core.dom.ast.ASTTypeUtil;
 import org.eclipse.cdt.core.dom.ast.EScopeKind;
 import org.eclipse.cdt.core.dom.ast.IASTArrayDeclarator;
 import org.eclipse.cdt.core.dom.ast.IASTBinaryExpression;
@@ -7747,6 +7748,158 @@ public class AST2CPPTests extends AST2BaseTest {
 	//		static_assert(sizeof(VMPage) == 1, "bla");
 	//	}
 	public void testStaticAssertions_294730() throws Exception {
+		final String code= getAboveComment();
+		parseAndCheckBindings(code, ParserLanguage.CPP);
+	}
+	
+	//	struct A {};
+	//	 
+	//	void foo(const A&);  // #1
+	//	void foo(A&&);       // #2
+	//	 
+	//	A   source_rvalue();
+	//	A&  source_ref();
+	//	A&& source_rvalue_ref();
+	//	 
+	//	const A   source_const_rvalue();
+	//	const A&  source_const_ref();
+	//	const A&& source_const_rvalue_ref();
+	//	 
+	//	int main() {
+	//	    A a;
+	//	    A&  ra = a;
+	//	    A&& rra = a;
+	//	    const A ca;
+	//	    const A& rca = ca;
+	//	    const A&& rrca = ca;
+	//	 
+	//	    foo(a);      // #1
+	//	    foo(ra);     // #1
+	//	    foo(rra);    // #1
+	//	    foo(ca);     // #1
+	//	    foo(rca);    // #1
+	//	    foo(rrca);   // #1
+	//	    foo(source_rvalue());     // #2
+	//	    foo(source_ref());        // #1
+	//	    foo(source_rvalue_ref()); // #2
+	//	    foo(source_const_rvalue());     // #1
+	//	    foo(source_const_ref());        // #1
+	//	    foo(source_const_rvalue_ref()); // #1
+	//	}
+	public void testRValueReference_294730() throws Exception {
+		final String code= getAboveComment();
+		BindingAssertionHelper bh= new BindingAssertionHelper(code, true);
+		IBinding foo1= bh.assertNonProblem("foo(const A&)", 3);
+		IBinding foo2= bh.assertNonProblem("foo(A&&)", 3);
+		IBinding b;
+		b= bh.assertNonProblem("foo(a)", 3);
+		assertSame(b, foo1);
+		b= bh.assertNonProblem("foo(ra)", 3);
+		assertSame(b, foo1);
+		b= bh.assertNonProblem("foo(rra)", 3);
+		assertSame(b, foo1);
+		b= bh.assertNonProblem("foo(ca)", 3);
+		assertSame(b, foo1);
+		b= bh.assertNonProblem("foo(rca)", 3);
+		assertSame(b, foo1);
+		b= bh.assertNonProblem("foo(rrca)", 3);
+		assertSame(b, foo1);
+		b= bh.assertNonProblem("foo(source_rvalue())", 3);
+		assertSame(b, foo2);
+		b= bh.assertNonProblem("foo(source_ref())", 3);
+		assertSame(b, foo1);
+		b= bh.assertNonProblem("foo(source_rvalue_ref())", 3);
+		assertSame(b, foo2);
+		b= bh.assertNonProblem("foo(source_const_rvalue())", 3);
+		assertSame(b, foo1);
+		b= bh.assertNonProblem("foo(source_const_ref())", 3);
+		assertSame(b, foo1);
+		b= bh.assertNonProblem("foo(source_const_rvalue_ref())", 3);
+		assertSame(b, foo1);
+	}
+	
+
+	//	int i;
+	//	typedef int&  LRI;
+	//	typedef int&& RRI;
+	//	LRI& r1 = i;            // r1 has the type int&
+	//	const LRI& r2 = i;      // r2 has the type int&
+	//	const LRI&& r3 = i;     // r3 has the type int&
+	//	RRI& r4 = i;            // r4 has the type int&
+	//	RRI&& r5 = i;           // r5 has the type int&&
+	public void testRValueReferenceTypedefs_294730() throws Exception {
+		final String code= getAboveComment();
+		BindingAssertionHelper bh= new BindingAssertionHelper(code, true);
+		IVariable v;
+		v= bh.assertNonProblem("r1", 2);
+		assertEquals("int &", ASTTypeUtil.getType(v.getType()));
+		v= bh.assertNonProblem("r2", 2);
+		assertEquals("int &", ASTTypeUtil.getType(v.getType()));
+		v= bh.assertNonProblem("r3", 2);
+		assertEquals("int &", ASTTypeUtil.getType(v.getType()));
+		v= bh.assertNonProblem("r4", 2);
+		assertEquals("int &", ASTTypeUtil.getType(v.getType()));
+		v= bh.assertNonProblem("r5", 2);
+		assertEquals("int &&", ASTTypeUtil.getType(v.getType()));
+	}
+	
+	//  void dref(double&);
+	//  void drref(double&&);
+	//  void cdref(const double&);
+	//	struct A { };
+	//	struct B : A { };
+	// 	extern B f();
+	//	struct X {
+	//		operator B();
+	//	} x;
+	//  void aref(A&);
+	//  void caref(const A&);
+	//  void carref(const A&&);
+	//  void test() {
+	//    B b;
+	//	  double d = 2.0;
+	//	  const volatile double cvd = 1;
+	//	  int i = 2;
+	//	  dref(d); 	
+	//	  cdref(d);
+	//    aref(b);
+	//    caref(b);
+	//	  dref(2.0); // error: not an lvalue and reference not const
+	//	  dref(i);   // error: type mismatch and reference not const
+	//	  drref(i);  // error: rvalue reference cannot bind to lvalue
+	//    caref(f());  // bound to the A subobject of the B rvalue.
+	//    carref(f()); // same as above
+	//    caref(x);    // bound to the A subobject of the result of the conversion
+	//	  cdref(2); // rcd2 refers to temporary with value 2.0
+	//	  drref(2);  // rcd3 refers to temporary with value 2.0
+	//	  cdref(cvd); // error: type qualifiers dropped
+	// }
+	public void testDirectBinding_294730() throws Exception {
+		final String code= getAboveComment();
+		BindingAssertionHelper bh= new BindingAssertionHelper(code, true);
+		bh.assertNonProblem("dref(d)", 4);
+		bh.assertNonProblem("cdref(d)", 5);
+		bh.assertNonProblem("aref(b)", 4);
+		bh.assertNonProblem("caref(b)", 5);
+		bh.assertProblem("dref(2.0)", 4);
+		bh.assertProblem("dref(i)", 4);
+		bh.assertProblem("drref(i)", 5);
+		bh.assertNonProblem("caref(f())", 5);
+		bh.assertNonProblem("carref(f())", 6);
+		bh.assertNonProblem("caref(x)", 5);
+		bh.assertNonProblem("cdref(2)", 5);
+		bh.assertNonProblem("drref(2)", 5);
+		bh.assertProblem("cdref(cvd)", 5);
+	}
+
+	//	struct S {
+	//		operator int() {return 0;}
+	//	};
+	//	S s(){return *new S();}
+	//	void test(int) {
+	//		test(s());
+	//	}
+	public void testSpecialRuleForImplicitObjectType_294730() throws Exception {
 		final String code= getAboveComment();
 		parseAndCheckBindings(code, ParserLanguage.CPP);
 	}

@@ -28,6 +28,7 @@ public class CPPASTCastExpression extends ASTNode implements ICPPASTCastExpressi
     private int op;
     private IASTExpression operand;
 	private IASTTypeId typeId;
+	private IType fType;
 	
     public CPPASTCastExpression() {
 	}
@@ -117,6 +118,15 @@ public class CPPASTCastExpression extends ASTNode implements ICPPASTCastExpressi
     }
     
 	public IType getExpressionType() {
-		return CPPVisitor.createType(typeId.getAbstractDeclarator());
+		if (fType == null) {
+			fType= CPPVisitor.createType(typeId.getAbstractDeclarator());
+		}
+		return fType;
 	}
+
+	public boolean isLValue() {
+		return CPPVisitor.isLValueReference(getExpressionType());
+	}
+	
+	
 }

@@ -275,8 +275,18 @@ public class SemanticUtil {
 						return type;
 					return replaceNestedType((ITypeContainer) atype, newNested);
 				}
-			} else if ((options & REF) != 0 && type instanceof ICPPReferenceType) {
-				t= ((ICPPReferenceType) type).getType();
+			} else if (type instanceof ICPPReferenceType) {
+				final ICPPReferenceType rt = (ICPPReferenceType) type;
+				if ((options & REF) != 0) {
+					t= rt.getType();
+				} else if (tdef) {
+					// a typedef within the reference type can influence whether the reference is lvalue or rvalue
+					IType nested= rt.getType();
+					IType newNested = getNestedType(nested, TDEF);
+					if (nested == newNested) 
+						return type;
+					return replaceNestedType((ITypeContainer) rt, newNested);
+				}
 			}
 			if (t == null)
 				return type;
@@ -322,6 +332,28 @@ public class SemanticUtil {
 			return type;
 		}
 		return type;
+	}
+	
+	static boolean isSimplified(IType type) {
+		if (type instanceof ICPPFunctionType) {
+			final ICPPFunctionType ft = (ICPPFunctionType) type;
+			if (!isSimplified(ft.getReturnType()))
+				return false;
+			
+			IType[] ps = ft.getParameterTypes();
+			for (IType p : ps) {
+				if (!isSimplified(p))
+					return false;
+			}
+			return true;
+		} 
+		if (type instanceof ITypedef) {
+			return false;
+		}
+		if (type instanceof ITypeContainer) {
+			return isSimplified(((ITypeContainer) type).getType());
+		}
+		return true;
 	}
 
 	public static IType replaceNestedType(ITypeContainer type, IType newNestedType) {

@@ -1152,6 +1152,10 @@ public abstract class AbstractGNUSourceCodeParser implements ISourceCodeParser {
 		public IType getExpressionType() {
 			throw new UnsupportedOperationException();
 		}
+
+		public boolean isLValue() {
+			throw new UnsupportedOperationException();
+		}		
 	}
 
 	protected final IASTExpression castExpression(CastExprCtx ctx) throws EndOfFileException, BacktrackException {

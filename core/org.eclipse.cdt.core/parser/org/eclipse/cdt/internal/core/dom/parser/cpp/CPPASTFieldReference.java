@@ -9,8 +9,11 @@
  *     John Camelon (IBM) - Initial API and implementation
  *     Bryan Wilkinson (QNX)
  *     Mike Kucera (IBM)
+ *     Markus Schorn (Wind River Systems)
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.dom.parser.cpp;
+
+import static org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.SemanticUtil.TDEF;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -31,7 +34,9 @@ import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.IVariable;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTFieldReference;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunction;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPMember;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPMethod;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPReferenceType;
 import org.eclipse.cdt.internal.core.dom.parser.ASTNode;
 import org.eclipse.cdt.internal.core.dom.parser.IASTAmbiguityParent;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPSemantics;
@@ -204,6 +209,26 @@ public class CPPASTFieldReference extends ASTNode implements
         }
 	    return null;
     }
+
+    
+	public boolean isLValue() {
+		if (isPointerDereference())
+			return true;
+		
+		IBinding b= getFieldName().resolveBinding();
+		try {
+			if (b instanceof ICPPMember && ((ICPPMember) b).isStatic())
+				return true;
+			if (b instanceof IVariable) {
+				if (SemanticUtil.getNestedType(((IVariable) b).getType(), TDEF) instanceof ICPPReferenceType) {
+					return true;
+				}
+				return getFieldOwner().isLValue();
+			}
+		} catch (DOMException e) {
+		}
+		return false;
+	}
 
 	public IBinding[] findBindings(IASTName n, boolean isPrefix) {
 		IBinding[] bindings = CPPSemantics.findBindingsForContentAssist(n, isPrefix);

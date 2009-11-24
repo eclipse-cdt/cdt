@@ -90,4 +90,8 @@ public class CASTTypeIdExpression extends ASTNode implements IASTTypeIdExpressio
 		}
     	return CVisitor.createType(typeId.getAbstractDeclarator());
     }
+
+	public boolean isLValue() {
+		return false;
+	}
 }

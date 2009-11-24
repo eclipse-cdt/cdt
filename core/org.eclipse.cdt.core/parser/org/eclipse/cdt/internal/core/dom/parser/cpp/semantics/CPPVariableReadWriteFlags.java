@@ -46,7 +46,7 @@ public final class CPPVariableReadWriteFlags extends VariableReadWriteFlags {
 	@Override
 	protected int rwAssignmentToType(IType type, int indirection) {
 		if (indirection == 0) {
-			if (!(type instanceof ICPPReferenceType)) {
+			if (!(type instanceof ICPPReferenceType) || ((ICPPReferenceType) type).isRValueReference()) {
 				return READ;
 			}
 			type= ((ICPPReferenceType) type).getType();

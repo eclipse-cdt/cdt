@@ -12,6 +12,7 @@
 package org.eclipse.cdt.internal.core.dom.parser.cpp;
 
 import org.eclipse.cdt.core.dom.ast.ASTVisitor;
+import org.eclipse.cdt.core.dom.ast.IASTLiteralExpression;
 import org.eclipse.cdt.core.dom.ast.IBasicType;
 import org.eclipse.cdt.core.dom.ast.IScope;
 import org.eclipse.cdt.core.dom.ast.IType;
@@ -113,6 +114,10 @@ public class CPPASTLiteralExpression extends ASTNode implements ICPPASTLiteralEx
     	return null;
     }
     
+	public boolean isLValue() {
+		return getKind() == IASTLiteralExpression.lk_string_literal;
+	}
+
 	private IValue getStringLiteralSize() {
 		char[] value= getValue();
 		int length= value.length-1;

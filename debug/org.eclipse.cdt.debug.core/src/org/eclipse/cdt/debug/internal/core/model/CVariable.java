@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2007 QNX Software Systems and others.
+ * Copyright (c) 2004, 2009 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -16,6 +16,7 @@ import org.eclipse.cdt.debug.core.CDebugCorePlugin;
 import org.eclipse.cdt.debug.core.ICDTLaunchConfigurationConstants;
 import org.eclipse.cdt.debug.core.ICDebugConstants;
 import org.eclipse.cdt.debug.core.cdi.event.ICDIChangedEvent;
+import org.eclipse.cdt.debug.core.cdi.event.ICDIDestroyedEvent;
 import org.eclipse.cdt.debug.core.cdi.event.ICDIEvent;
 import org.eclipse.cdt.debug.core.cdi.event.ICDIEventListener;
 import org.eclipse.cdt.debug.core.cdi.event.ICDIMemoryChangedEvent;
@@ -506,6 +507,11 @@ public abstract class CVariable extends AbstractCVariable implements ICDIEventLi
 				}
 				else if ( event instanceof ICDIResumedEvent ) {
 					handleResumedEvent( (ICDIResumedEvent)event );
+				}
+				else if (event instanceof ICDIDestroyedEvent
+						&& iv.getCdiObject() == source) {
+					dispose();
+					fireChangeEvent(DebugEvent.STATE);
 				}
 			}
 		}

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2007 QNX Software Systems and others.
+ * Copyright (c) 2004, 2009 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -155,16 +155,16 @@ public class CStackFrame extends CDebugElement implements ICStackFrame, IRestart
 	 */
 	protected void updateVariables() throws DebugException {
 		List locals = getAllCDIVariableObjects();
-		int index = 0;
-		while( index < fVariables.size() ) {
-			ICDIVariableDescriptor varObject = findVariable( locals, (CVariable)fVariables.get( index ) );
-			if ( varObject != null ) {
-				locals.remove( varObject );
-				index++;
-			}
+		Iterator<CVariable> it = fVariables.iterator();
+		while (it.hasNext()) {
+			CVariable var = it.next();
+			ICDIVariableDescriptor varObject = findVariable(locals, var);
+			if (varObject != null && !var.isDisposed())
+				locals.remove(varObject);
 			else {
-				// remove variable
-				fVariables.remove( index );
+				// ensure variable is unregistered from event listener
+				var.dispose();
+				it.remove();
 			}
 		}
 		// add any new locals

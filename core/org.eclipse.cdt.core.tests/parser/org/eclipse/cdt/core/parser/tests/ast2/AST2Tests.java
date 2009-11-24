@@ -33,6 +33,7 @@ import org.eclipse.cdt.core.dom.ast.IASTDeclarationStatement;
 import org.eclipse.cdt.core.dom.ast.IASTDeclarator;
 import org.eclipse.cdt.core.dom.ast.IASTDoStatement;
 import org.eclipse.cdt.core.dom.ast.IASTElaboratedTypeSpecifier;
+import org.eclipse.cdt.core.dom.ast.IASTEnumerationSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTExpression;
 import org.eclipse.cdt.core.dom.ast.IASTExpressionStatement;
 import org.eclipse.cdt.core.dom.ast.IASTFieldReference;
@@ -6501,6 +6502,32 @@ public class AST2Tests extends AST2BaseTest {
 	                }
 	            }
 	        }
+	    }
+	}
+	
+	
+	
+	
+	//
+	// /* check that enumerator values are evaluated correctly for
+	//  * conditional expressions */
+	//
+	//enum
+	//{
+	//    _ISalnum = 11 < 8 ? 1 : 2,
+	//    _ISalnum2 = 11 > 8 ? 1 : 2
+	//};
+	//
+	public void testBug295851() throws Exception {
+	    for(ParserLanguage lang : ParserLanguage.values()) {
+            IASTTranslationUnit tu = parseAndCheckBindings(getAboveComment(), lang);
+            IASTEnumerationSpecifier enumSpec = (IASTEnumerationSpecifier)((IASTSimpleDeclaration)tu.getDeclarations()[0]).getDeclSpecifier();
+            IEnumerator enumeratorBinding = (IEnumerator)enumSpec.getEnumerators()[0].getName().resolveBinding();
+            IValue value = enumeratorBinding.getValue();
+            assertEquals( 2, value.numericalValue().longValue());
+            IEnumerator enumeratorBinding2 = (IEnumerator)enumSpec.getEnumerators()[1].getName().resolveBinding();
+            IValue value2 = enumeratorBinding2.getValue();
+            assertEquals( 1, value2.numericalValue().longValue());
 	    }
 	}
 }

@@ -7903,5 +7903,68 @@ public class AST2CPPTests extends AST2BaseTest {
 		final String code= getAboveComment();
 		parseAndCheckBindings(code, ParserLanguage.CPP);
 	}
+	
+	//	template <class T, class X> struct enable_if_same {};
+	//	template <class X> struct enable_if_same<X, X> {
+	//	    typedef char type;
+	//	};
+	//	struct X {
+	//	    X();
+	//	    X(X& rhs);
+	//	    template <class T> X(T& rhs, typename enable_if_same<X const,T>::type = 0);
+	//	    X& operator=(X rhs);
+	//
+	//	    struct ref { ref(X*p) : p(p) {} X* p; };
+	//	    operator ref();
+	//	    X(ref rhs);
+	//	};
+	//
+	//	X source();
+	//	X const csource();
+	//	void sink(X);
+	//	void sink2(X&);
+	//	void sink2(X const&);
+	//	void sink3(X&);
+	//	template <class T> void tsink(T);
+	//
+	//	void test() {
+	//	    X z2((X()));
+	//	    X z4 = X();
+	//	    X z5 = z4;
+	//	    X z6(z4);
+	//	    X const z7;
+	//	    X z8 = z7;
+	//	    X z9(z7);
+	//	    sink(source());
+	//	    sink(csource());
+	//	    sink2(source());
+	//	    sink2(csource());
+	//	    sink(z5);
+	//	    sink(z7);
+	//	    sink2(z4);
+	//	    sink2(z7);
+	//	    tsink(source());
+	//	    typedef X const XC;
+	//	    sink2(XC(X()));
+	//	    z4 = z5;
+	//	    z4 = source();
+
+	//	    // expexted failures
+	//	    sink3(source());
+	//	    sink3(csource());
+	//	    sink3(z7);
+	
+	// }
+	public void testInitOfClassObjectsByRValues_294730() throws Exception {
+		final StringBuffer[] contents = getContents(3);
+		final String code= contents[0].toString();
+		final String end= contents[2].toString();
+		parseAndCheckBindings(code + end, ParserLanguage.CPP);
+		BindingAssertionHelper bh= new BindingAssertionHelper(code + contents[1] + end, true);
+		bh.assertProblem("sink3(source())", 5);
+		bh.assertProblem("sink3(csource())", 5);
+		bh.assertProblem("sink3(z7)", 5);
+	}
+
 }
 

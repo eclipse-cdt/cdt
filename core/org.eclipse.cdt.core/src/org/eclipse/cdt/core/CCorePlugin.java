@@ -308,8 +308,9 @@ public class CCorePlugin extends Plugin {
         ResourceLookup.startup();
         
         // new project model needs to register the resource listener first.
-		fNewCProjectDescriptionManager= CProjectDescriptionManager.getInstance();
-		final Job post1= fNewCProjectDescriptionManager.startup();
+        CProjectDescriptionManager descManager = CProjectDescriptionManager.getInstance();
+		final Job post1 = descManager.startup();
+		fNewCProjectDescriptionManager = descManager;
 
 		fPathEntryVariableManager = new CdtVarPathEntryVariableManager();
 		fPathEntryVariableManager.startup();

@@ -10,23 +10,20 @@
  *******************************************************************************/
 package org.eclipse.cdt.make.xlc.core.scannerconfig;
 
-import java.io.File;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import org.eclipse.cdt.core.IMarkerGenerator;
+import org.eclipse.cdt.make.core.scannerconfig.IScannerInfoCollector2;
 import org.eclipse.cdt.make.core.scannerconfig.ScannerInfoTypes;
 import org.eclipse.cdt.make.internal.core.MakeMessages;
-import org.eclipse.cdt.make.internal.core.scannerconfig.gnu.AbstractGCCBOPConsoleParserUtility;
 import org.eclipse.cdt.make.internal.core.scannerconfig.util.TraceUtil;
+import org.eclipse.cdt.make.xlc.core.activator.Activator;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
-import org.eclipse.core.resources.IWorkspaceRoot;
-import org.eclipse.core.runtime.IPath;
-import org.eclipse.core.runtime.Path;
+import org.eclipse.core.runtime.CoreException;
 
 /**
  * @author crecoskie
@@ -50,9 +47,9 @@ public class XLCPerProjectBuildOutputParser extends
         }
 
         // Recognized gcc or g++ compiler invocation
-        List includes = new ArrayList();
-        List symbols = new ArrayList();
-        List targetSpecificOptions = new ArrayList();
+        List<String> includes = new ArrayList<String>();
+        List<String> symbols = new ArrayList<String>();
+        List<String> targetSpecificOptions = new ArrayList<String>();
 
         String fileName = null;
         for (int j= compilerInvocationIdx+1; j < tokens.length; j++) {
@@ -125,7 +122,7 @@ public class XLCPerProjectBuildOutputParser extends
 
         IProject project = getProject();   
         IFile file = null;
-        List translatedIncludes = includes;
+        List<String> translatedIncludes = includes;
         if (includes.size() > 0) {
         	if (fileName != null) {
         		if (getUtility() != null) {
@@ -155,11 +152,20 @@ public class XLCPerProjectBuildOutputParser extends
         }
         // Contribute discovered includes and symbols to the ScannerInfoCollector
         if (translatedIncludes.size() > 0 || symbols.size() > 0) {
-        	Map scannerInfo = new HashMap();
+        	Map<ScannerInfoTypes, List<String>> scannerInfo = new HashMap<ScannerInfoTypes, List<String>>();
         	scannerInfo.put(ScannerInfoTypes.INCLUDE_PATHS, translatedIncludes);
         	scannerInfo.put(ScannerInfoTypes.SYMBOL_DEFINITIONS, symbols);
         	scannerInfo.put(ScannerInfoTypes.TARGET_SPECIFIC_OPTION, targetSpecificOptions);
         	getCollector().contributeToScannerConfig(project, scannerInfo);
+        	if(fCollector != null && fCollector instanceof IScannerInfoCollector2) {
+    			IScannerInfoCollector2 collector = (IScannerInfoCollector2) fCollector;
+    			try {
+    				collector.updateScannerConfiguration(null);
+    			} catch (CoreException e) {
+    				// TODO Auto-generated catch block
+    				Activator.log(e);
+    			}
+    		}
 
         	TraceUtil.outputTrace("Discovered scanner info for file \'" + fileName + '\'',	//$NON-NLS-1$
         			"Include paths", includes, translatedIncludes, "Defined symbols", symbols);	//$NON-NLS-1$ //$NON-NLS-2$

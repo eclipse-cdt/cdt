@@ -11,32 +11,25 @@
 package org.eclipse.cdt.make.xlc.core.scannerconfig;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Map;
 
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.IMarkerGenerator;
 import org.eclipse.cdt.make.core.scannerconfig.IScannerInfoCollector;
+import org.eclipse.cdt.make.core.scannerconfig.IScannerInfoCollector2;
 import org.eclipse.cdt.make.core.scannerconfig.IScannerInfoConsoleParser;
-import org.eclipse.cdt.make.core.scannerconfig.ScannerInfoTypes;
-import org.eclipse.cdt.make.internal.core.scannerconfig.gnu.AbstractGCCBOPConsoleParserUtility;
-import org.eclipse.cdt.make.internal.core.scannerconfig.util.CCommandDSC;
 import org.eclipse.cdt.make.internal.core.scannerconfig.util.TraceUtil;
 import org.eclipse.cdt.make.internal.core.scannerconfig2.SCProfileInstance;
 import org.eclipse.cdt.make.internal.core.scannerconfig2.ScannerConfigProfileManager;
 import org.eclipse.cdt.make.internal.core.scannerconfig2.ScannerConfigProfile.BuildOutputProvider;
-import org.eclipse.core.resources.IFile;
+import org.eclipse.cdt.make.xlc.core.activator.Activator;
 import org.eclipse.core.resources.IProject;
-import org.eclipse.core.resources.IWorkspaceRoot;
-import org.eclipse.core.resources.ResourcesPlugin;
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.content.IContentType;
 import org.eclipse.core.runtime.content.IContentTypeManager;
-
-import sun.misc.FpUtils;
 
 /**
  * @author crecoskie
@@ -59,7 +52,7 @@ public abstract class AbstractXLCBuildOutputParser implements IScannerInfoConsol
 	protected boolean fBMultiline = false;
 	protected String fSMultiline = ""; //$NON-NLS-1$
 
-	protected String[] fCompilerCommands = { "xlc", "xlC" };
+	protected String[] fCompilerCommands = { "xlc", "xlC" }; //$NON-NLS-1$ //$NON-NLS-2$
 
 	/**
 	 * @return Returns the fProject.
@@ -163,7 +156,7 @@ public abstract class AbstractXLCBuildOutputParser implements IScannerInfoConsol
 		return processSingleLine(line.trim());
 	}
 
-	protected XLCBuildOutputParserUtility getUtility() {
+	protected synchronized XLCBuildOutputParserUtility getUtility() {
 		if (fUtility == null)
 			fUtility = new XLCBuildOutputParserUtility(fProject, fWorkingDir, fMarkerGenerator);
 
@@ -194,6 +187,16 @@ public abstract class AbstractXLCBuildOutputParser implements IScannerInfoConsol
 	public void shutdown() {
 		if (getUtility() != null) {
 			getUtility().reportProblems();
+		}
+		
+		if(fCollector != null && fCollector instanceof IScannerInfoCollector2) {
+			IScannerInfoCollector2 collector = (IScannerInfoCollector2) fCollector;
+			try {
+				collector.updateScannerConfiguration(null);
+			} catch (CoreException e) {
+				// TODO Auto-generated catch block
+				Activator.log(e);
+			}
 		}
 	}
 
@@ -369,7 +372,7 @@ public abstract class AbstractXLCBuildOutputParser implements IScannerInfoConsol
 
 	abstract protected boolean processCommand(String[] tokens);
 
-	protected List<String> getFileExtensionsList() {
+	protected  List<String> getFileExtensionsList() {
 		IContentTypeManager manager = Platform.getContentTypeManager();
 		List<String> extensions = new LinkedList<String>();
 		IContentType cSource = manager.getContentType(CCorePlugin.CONTENT_TYPE_CSOURCE);
@@ -379,11 +382,11 @@ public abstract class AbstractXLCBuildOutputParser implements IScannerInfoConsol
 		String[] cppExtensions = cppSource.getFileSpecs(IContentType.FILE_EXTENSION_SPEC);
 
 		for (int k = 0; k < cExtensions.length; k++) {
-			extensions.add("." + cExtensions[k]);
+			extensions.add("." + cExtensions[k]); //$NON-NLS-1$
 		}
 
 		for (int k = 0; k < cppExtensions.length; k++) {
-			extensions.add("." + cppExtensions[k]);
+			extensions.add("." + cppExtensions[k]); //$NON-NLS-1$
 		}
 
 		return extensions;
@@ -399,11 +402,11 @@ public abstract class AbstractXLCBuildOutputParser implements IScannerInfoConsol
 		String[] cppExtensions = cppSource.getFileSpecs(IContentType.FILE_EXTENSION_SPEC);
 
 		for (int k = 0; k < cExtensions.length; k++) {
-			extensions.add("." + cExtensions[k]);
+			extensions.add("." + cExtensions[k]); //$NON-NLS-1$
 		}
 
 		for (int k = 0; k < cppExtensions.length; k++) {
-			extensions.add("." + cppExtensions[k]);
+			extensions.add("." + cppExtensions[k]); //$NON-NLS-1$
 		}
 
 		return extensions.toArray(new String[0]);

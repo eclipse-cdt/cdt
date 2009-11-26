@@ -195,7 +195,7 @@ public class CCorePlugin extends Plugin {
 	 */
     public CDTLogWriter cdtLog = null;
 
-	private CProjectDescriptionManager fNewCProjectDescriptionManager;
+	private volatile CProjectDescriptionManager fNewCProjectDescriptionManager;
 
 	private CoreModel fCoreModel;
 	

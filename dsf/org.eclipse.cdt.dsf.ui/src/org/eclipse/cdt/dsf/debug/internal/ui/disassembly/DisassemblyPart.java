@@ -1752,7 +1752,7 @@ public abstract class DisassemblyPart extends WorkbenchPart implements IDisassem
 			return;
 		}
 		if (DEBUG) System.out.println("retrieveDisassembly "+getAddressText(startAddress)+" "+lines+" lines"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-		retrieveDisassembly(startAddress, endAddress, lines, true, false);
+		retrieveDisassembly(startAddress, endAddress, lines, fShowSource, false);
 	}
 
 	private void retrieveDisassembly(final BigInteger startAddress, BigInteger endAddress, final int linesHint, boolean mixed, boolean ignoreFile) {
@@ -3346,6 +3346,14 @@ public abstract class DisassemblyPart extends WorkbenchPart implements IDisassem
 		} else {
 			fPCAnnotationUpdatePending = true;
 			updateInvalidSource();
+			if (fShowSource) {
+				Runnable doit = new Runnable() {
+					public void run() {
+						fDocument.invalidateAddressRange(fStartAddress, fEndAddress, true);
+						fGotoFramePending = true;
+					}};
+				doScrollLocked(doit);
+			}
 		}
 	}
 

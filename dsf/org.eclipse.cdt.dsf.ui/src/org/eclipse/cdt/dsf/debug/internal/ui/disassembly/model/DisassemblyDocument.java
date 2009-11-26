@@ -25,6 +25,8 @@ import org.eclipse.debug.core.sourcelookup.containers.LocalFileStorage;
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.BadPositionCategoryException;
 import org.eclipse.jface.text.DefaultLineTracker;
+import org.eclipse.jface.text.DocumentRewriteSession;
+import org.eclipse.jface.text.DocumentRewriteSessionType;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.IRegion;
 import org.eclipse.jface.text.Position;
@@ -1228,71 +1230,76 @@ public class DisassemblyDocument extends REDDocument {
 	}
 	
 	public void deleteDisassemblyRange(BigInteger startAddress, BigInteger endAddress, boolean invalidate, boolean collapse) {
-		String replacement = invalidate ? "...\n" : null; //$NON-NLS-1$
-		int replaceLen = replacement != null ? replacement.length() : 0;
-		AddressRangePosition lastPos = null;
-		ArrayList<AddressRangePosition> toRemove = new ArrayList<AddressRangePosition>();
-		Iterator<AddressRangePosition> it = getModelPositionIterator(startAddress);
-		while (it.hasNext()) {
-			AddressRangePosition pos = it.next();
-			BigInteger posEndAddress = pos.fAddressOffset.add(pos.fAddressLength);
-			if (pos instanceof LabelPosition) {
-				if (!invalidate && pos.length > 0 && posEndAddress.compareTo(endAddress) > 0) {
+		DocumentRewriteSession session = startRewriteSession(DocumentRewriteSessionType.STRICTLY_SEQUENTIAL);
+		try {
+			String replacement = invalidate ? "...\n" : null; //$NON-NLS-1$
+			int replaceLen = replacement != null ? replacement.length() : 0;
+			AddressRangePosition lastPos = null;
+			ArrayList<AddressRangePosition> toRemove = new ArrayList<AddressRangePosition>();
+			Iterator<AddressRangePosition> it = getModelPositionIterator(startAddress);
+			while (it.hasNext()) {
+				AddressRangePosition pos = it.next();
+				BigInteger posEndAddress = pos.fAddressOffset.add(pos.fAddressLength);
+				if (pos instanceof LabelPosition) {
+					if (!invalidate && pos.length > 0 && posEndAddress.compareTo(endAddress) > 0) {
+						try {
+							int oldLength = pos.length;
+							pos.length = 0;
+							replace(pos, oldLength, null);
+						} catch (BadLocationException e) {
+							internalError(e);
+						}
+					}
+					pos = null;
+				} else if (pos instanceof SourcePosition) {
+					pos = null;
+				} else if (pos instanceof ErrorPosition) {
+					pos = null;
+				} else if (pos instanceof DisassemblyPosition) {
+					// optimization: join adjacent positions
+					if (collapse && lastPos != null
+							&& (invalidate || lastPos.fValid == pos.fValid)
+							&& lastPos.offset+lastPos.length == pos.offset) {
+						assert lastPos.fAddressOffset.add(lastPos.fAddressLength).compareTo(pos.fAddressOffset) == 0;
+						lastPos.length += pos.length;
+						lastPos.fAddressLength = lastPos.fAddressLength.add(pos.fAddressLength);
+						toRemove.add(pos);
+						if (!pos.fValid) {
+							fInvalidAddressRanges.remove(pos);
+						}
+						pos = null;
+						if (posEndAddress.compareTo(endAddress) < 0) {
+							continue;
+						}
+					}
+				}
+				if (lastPos != null) {
 					try {
-						int oldLength = pos.length;
-						pos.length = 0;
-						replace(pos, oldLength, null);
+						if (lastPos.length > 0 || replaceLen > 0) {
+							int oldLength = lastPos.length;
+							lastPos.length = replaceLen;
+							replace(lastPos, oldLength, replacement);
+						}
 					} catch (BadLocationException e) {
 						internalError(e);
 					}
 				}
-				pos = null;
-			} else if (pos instanceof SourcePosition) {
-				pos = null;
-			} else if (pos instanceof ErrorPosition) {
-				pos = null;
-			} else if (pos instanceof DisassemblyPosition) {
-				// optimization: join adjacent positions
-				if (collapse && lastPos != null
-					&& (invalidate || lastPos.fValid == pos.fValid)
-					&& lastPos.offset+lastPos.length == pos.offset) {
-					assert lastPos.fAddressOffset.add(lastPos.fAddressLength).compareTo(pos.fAddressOffset) == 0;
-					lastPos.length += pos.length;
-					lastPos.fAddressLength = lastPos.fAddressLength.add(pos.fAddressLength);
-					toRemove.add(pos);
-					if (!pos.fValid) {
-						fInvalidAddressRanges.remove(pos);
+				if (pos == null && posEndAddress.compareTo(endAddress) >= 0) {
+					break;
+				}
+				lastPos = null;
+				if (pos != null) {
+					if (pos.fValid && invalidate) {
+						pos.fValid = false;
+						fInvalidAddressRanges.add(pos);
 					}
-					pos = null;
-					if (posEndAddress.compareTo(endAddress) < 0) {
-						continue;
-					}
+					lastPos = pos;
 				}
 			}
-			if (lastPos != null) {
-				try {
-					if (lastPos.length > 0 || replaceLen > 0) {
-						int oldLength = lastPos.length;
-						lastPos.length = replaceLen;
-						replace(lastPos, oldLength, replacement);
-					}
-				} catch (BadLocationException e) {
-					internalError(e);
-				}
-			}
-			if (pos == null && posEndAddress.compareTo(endAddress) >= 0) {
-				break;
-			}
-			lastPos = null;
-			if (pos != null) {
-				if (pos.fValid && invalidate) {
-					pos.fValid = false;
-					fInvalidAddressRanges.add(pos);
-				}
-				lastPos = pos;
-			}
+			removePositions(CATEGORY_DISASSEMBLY, toRemove);
+		} finally {
+			stopRewriteSession(session);
 		}
-		removePositions(CATEGORY_DISASSEMBLY, toRemove);
 		if (DEBUG) checkConsistency();
 	}
 

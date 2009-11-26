@@ -246,7 +246,7 @@ public class CProjectDescriptionManager implements ICProjectDescriptionManager {
 	/** Set of Listeners listening for Project Description Deltas */
 	private Set<ListenerDescriptor> fListeners = new CopyOnWriteArraySet<ListenerDescriptor>();
 	private Map<String, CConfigurationDescriptionCache> fPreferenceMap = new HashMap<String, CConfigurationDescriptionCache>();
-	private CConfigBasedDescriptorManager fDescriptorManager;
+	private volatile CConfigBasedDescriptorManager fDescriptorManager;
 	private ResourceChangeHandler fRcChangeHandler;
 	private CProjectDescriptionWorkspacePreferences fPreferences;
 	private boolean fAllowEmptyCreatingDescription = true; // allowed by default

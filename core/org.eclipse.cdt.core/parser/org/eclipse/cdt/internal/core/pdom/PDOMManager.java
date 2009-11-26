@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2008 QNX Software Systems and others.
+ * Copyright (c) 2005, 2009 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -12,6 +12,7 @@
  *     Sergey Prigogin (Google)
  *     Tim Kelly (Nokia)
  *     Anna Dushistova (MontaVista)
+ *     IBM Corporation
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.pdom;
 
@@ -719,7 +720,17 @@ public class PDOMManager implements IWritableIndexManager, IListener {
 		// in case a team provider does not implement a rule-factory, the
 		// platform makes a pessimistic choice and locks the workspace. We
 		// have to check for that.
-		ISchedulingRule rule= project.getWorkspace().getRuleFactory().refreshRule(project.getFolder(SETTINGS_FOLDER_NAME));
+		
+		// Unfortunately, updating the project description, which can be
+		// caused by accessing the scanner info if it's not already created,
+		// requires a workspace lock.  We thus have to lock on the workspace root
+		// as well, because it is illegal to lock an object higher up in the
+		// resource hierarchy (i.e. the root) when you only hold the lock for an object
+		// lower in the hierarchy (the project in our case).  Locking
+		// the root from the outset will prevent this from happening, although it means
+		// that the indexer will have to wait if someone is modifying the workspace,
+		// even if that modification is not to our project.
+		ISchedulingRule rule= project.getWorkspace().getRoot();
 		if (project.contains(rule)) {
 			rule= MultiRule.combine(project, INIT_INDEXER_SCHEDULING_RULE);
 		}

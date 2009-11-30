@@ -25,6 +25,7 @@
 			<property name="data-dir" value="${cdt-core-loc}"/>
 			<property name="plugin-name" value="org.eclipse.cdt.core.tests"/>
 			<property name="classname" value="org.eclipse.cdt.core.suite.AutomatedIntegrationSuite"/>
+			<property name="extraVMargs" value="-Dorg.eclipse.swt.browser.XULRunnerPath=/shared/common/mozilla-xulrunner181-1.8.1.4-30.ppc"/>
 		</ant>
 	</target>
 
@@ -33,6 +34,7 @@
 			<property name="data-dir" value="${cdt-ui-loc}"/>
 			<property name="plugin-name" value="org.eclipse.cdt.ui.tests"/>
 			<property name="classname" value="org.eclipse.cdt.ui.tests.AutomatedSuite"/>
+			<property name="extraVMargs" value="-Dorg.eclipse.swt.browser.XULRunnerPath=/shared/common/mozilla-xulrunner181-1.8.1.4-30.ppc"/>
 		</ant>
 	</target>
 
@@ -41,6 +43,7 @@
 			<property name="data-dir" value="${cdt-debug-ui-loc}"/>
 			<property name="plugin-name" value="org.eclipse.cdt.debug.ui.tests"/>
 			<property name="classname" value="org.eclipse.cdt.debug.core.tests.AllDebugTests"/>
+			<property name="extraVMargs" value="-Dorg.eclipse.swt.browser.XULRunnerPath=/shared/common/mozilla-xulrunner181-1.8.1.4-30.ppc"/>
 		</ant>
 	</target>
 
@@ -49,6 +52,7 @@
 			<property name="data-dir" value="${cdt-mbs-core-loc}"/>
 			<property name="plugin-name" value="org.eclipse.cdt.managedbuilder.core.tests"/>
 			<property name="classname" value="org.eclipse.cdt.managedbuilder.tests.suite.AllManagedBuildTests"/>
+			<property name="extraVMargs" value="-Dorg.eclipse.swt.browser.XULRunnerPath=/shared/common/mozilla-xulrunner181-1.8.1.4-30.ppc"/>
 		</ant>
 	</target>
 
@@ -57,6 +61,7 @@
 			<property name="data-dir" value="${cdt-mbs-ui-loc}"/>
 			<property name="plugin-name" value="org.eclipse.cdt.managedbuilder.ui.tests"/>
 			<property name="classname" value="org.eclipse.cdt.managedbuilder.ui.tests.suite.AllManagedBuildUITests"/>
+			<property name="extraVMargs" value="-Dorg.eclipse.swt.browser.XULRunnerPath=/shared/common/mozilla-xulrunner181-1.8.1.4-30.ppc"/>
 		</ant>
 	</target>
 

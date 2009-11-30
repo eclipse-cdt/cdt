@@ -33,6 +33,7 @@ import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Preferences;
 import org.eclipse.core.runtime.Status;
+import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.equinox.app.IApplication;
 import org.eclipse.equinox.app.IApplicationContext;
 
@@ -213,6 +214,11 @@ public class HeadlessBuilder implements IApplication {
 			desc.setAutoBuilding(isAutoBuilding);
 			root.getWorkspace().setDescription(desc);
 		}
+
+		// Wait for any outstanding jobs to finish
+		while (!Job.getJobManager().isIdle())
+			Thread.sleep(10);
+
 		return OK;
 	}
 

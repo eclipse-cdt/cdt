@@ -213,11 +213,11 @@ public class HeadlessBuilder implements IApplication {
 			IWorkspaceDescription desc = root.getWorkspace().getDescription();
 			desc.setAutoBuilding(isAutoBuilding);
 			root.getWorkspace().setDescription(desc);
-		}
 
-		// Wait for any outstanding jobs to finish
-		while (!Job.getJobManager().isIdle())
-			Thread.sleep(10);
+			// Wait for any outstanding jobs to finish
+			while (!Job.getJobManager().isIdle())
+				Thread.sleep(10);
+		}
 
 		return OK;
 	}

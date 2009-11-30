@@ -60,7 +60,13 @@ public class SelectionListenerWithASTManager {
 			return rule == this;
 		}
 		public boolean isConflicting(ISchedulingRule rule) {
-			return rule == this;
+			if (rule instanceof SingletonRule) {
+				return rule == this;
+			}
+			
+			else {
+				return false;
+			}
 		}
 	}
 

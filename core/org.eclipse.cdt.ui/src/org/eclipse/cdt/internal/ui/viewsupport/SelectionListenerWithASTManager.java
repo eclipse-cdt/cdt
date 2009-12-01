@@ -57,16 +57,16 @@ public class SelectionListenerWithASTManager {
 	
 	private static class SingletonRule implements ISchedulingRule {
 		public boolean contains(ISchedulingRule rule) {
-			return rule == this;
-		}
-		public boolean isConflicting(ISchedulingRule rule) {
-			if (rule instanceof SingletonRule) {
+			//if(rule instanceof SingletonRule) {
 				return rule == this;
-			}
+			/*}
 			
 			else {
-				return false;
-			}
+				return true;
+			}*/
+		}
+		public boolean isConflicting(ISchedulingRule rule) {
+			return rule == this;
 		}
 	}
 

@@ -18,6 +18,7 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.ListenerList;
 import org.eclipse.core.runtime.Status;
+import org.eclipse.core.runtime.jobs.ILock;
 import org.eclipse.core.runtime.jobs.ISchedulingRule;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.jface.text.ISelectionValidator;
@@ -55,15 +56,6 @@ public class SelectionListenerWithASTManager {
 		return fgDefault;
 	}
 	
-	private static class SingletonRule implements ISchedulingRule {
-		public boolean contains(ISchedulingRule rule) {
-			return rule == this;
-		}
-		public boolean isConflicting(ISchedulingRule rule) {
-			return rule == this;
-		}
-	}
-
 	private final static class PartListenerGroup {
 		private ITextEditor fPart;
 		private ISelectionListener fPostSelectionListener;
@@ -71,7 +63,7 @@ public class SelectionListenerWithASTManager {
 		private Job fCurrentJob;
 		private ListenerList fAstListeners;
 		/** Rule to make sure only one job is running at a time */
-		private final ISchedulingRule fJobRule= new SingletonRule();
+		private final ILock fJobLock= Job.getJobManager().newLock();
 		private ISelectionValidator fValidator;
 		
 		public PartListenerGroup(ITextEditor editorPart) {
@@ -144,15 +136,22 @@ public class SelectionListenerWithASTManager {
 			fCurrentJob= new Job(Messages.SelectionListenerWithASTManager_jobName) { 
 				@Override
 				public IStatus run(IProgressMonitor monitor) {
-					if (!monitor.isCanceled() && isSelectionValid(selection)) {
-						return calculateASTandInform(workingCopy, selection, monitor);
+					try {
+						// Try to acquire the lock
+						while (!monitor.isCanceled() && !fJobLock.acquire(10)) {}
+						if (!monitor.isCanceled() && isSelectionValid(selection)) {
+							return calculateASTandInform(workingCopy, selection, monitor);
+						}
+					} catch (InterruptedException e) {
+					} finally {
+						if (fJobLock.getDepth() != 0)
+							fJobLock.release();
 					}
 					return Status.OK_STATUS;
 				}
 			};
 			fCurrentJob.setPriority(Job.DECORATE);
 			fCurrentJob.setSystem(true);
-			fCurrentJob.setRule(fJobRule);
 			fCurrentJob.schedule();
 		}
 

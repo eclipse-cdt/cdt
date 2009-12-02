@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2008 Wind River Systems and others.
+ * Copyright (c) 2007, 2009 Wind River Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -11,10 +11,12 @@
 package org.eclipse.cdt.dsf.debug.internal.ui.disassembly;
 
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.ui.IActionBars;
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IEditorSite;
+import org.eclipse.ui.IWorkbenchActionConstants;
 import org.eclipse.ui.PartInitException;
 
 /**
@@ -36,6 +38,19 @@ public class DisassemblyEditor extends DisassemblyPart implements IEditorPart {
 		return getEditorSite().getActionBars();
 	}
 
+	/*
+	 * @see org.eclipse.cdt.dsf.debug.internal.ui.disassembly.DisassemblyPart#fillContextMenu(org.eclipse.jface.action.IMenuManager)
+	 */
+	@Override
+	protected void fillContextMenu(IMenuManager manager) {
+		super.fillContextMenu(manager);
+		manager.appendToGroup(IWorkbenchActionConstants.GO_TO, fActionGotoPC);
+		manager.appendToGroup(IWorkbenchActionConstants.GO_TO, fActionGotoAddress);
+		manager.appendToGroup(IWorkbenchActionConstants.GO_TO, fActionGotoSymbol);
+		manager.appendToGroup("group.bottom", fActionRefreshView); //$NON-NLS-1$
+
+	}
+	
 	/*
 	 * @see org.eclipse.ui.IEditorPart#getEditorInput()
 	 */

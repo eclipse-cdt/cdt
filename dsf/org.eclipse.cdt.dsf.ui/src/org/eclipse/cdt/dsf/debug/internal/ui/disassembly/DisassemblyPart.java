@@ -34,6 +34,8 @@ import org.eclipse.cdt.dsf.debug.internal.ui.disassembly.actions.ActionGotoAddre
 import org.eclipse.cdt.dsf.debug.internal.ui.disassembly.actions.ActionGotoProgramCounter;
 import org.eclipse.cdt.dsf.debug.internal.ui.disassembly.actions.ActionGotoSymbol;
 import org.eclipse.cdt.dsf.debug.internal.ui.disassembly.actions.ActionOpenPreferences;
+import org.eclipse.cdt.dsf.debug.internal.ui.disassembly.actions.AddressBarContributionItem;
+import org.eclipse.cdt.dsf.debug.internal.ui.disassembly.actions.JumpToAddressAction;
 import org.eclipse.cdt.dsf.debug.internal.ui.disassembly.actions.TextOperationAction;
 import org.eclipse.cdt.dsf.debug.internal.ui.disassembly.model.AddressRangePosition;
 import org.eclipse.cdt.dsf.debug.internal.ui.disassembly.model.BreakpointsAnnotationModel;
@@ -98,8 +100,10 @@ import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.IToolBarManager;
 import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.action.Separator;
+import org.eclipse.jface.action.ToolBarManager;
 import org.eclipse.jface.commands.ActionHandler;
 import org.eclipse.jface.dialogs.ErrorDialog;
+import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.preference.PreferenceConverter;
 import org.eclipse.jface.resource.JFaceResources;
@@ -156,6 +160,7 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Menu;
+import org.eclipse.swt.widgets.ToolBar;
 import org.eclipse.ui.IActionBars;
 import org.eclipse.ui.IPartListener2;
 import org.eclipse.ui.IWorkbenchActionConstants;
@@ -171,6 +176,7 @@ import org.eclipse.ui.handlers.IHandlerActivation;
 import org.eclipse.ui.handlers.IHandlerService;
 import org.eclipse.ui.ide.IGotoMarker;
 import org.eclipse.ui.part.WorkbenchPart;
+import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.eclipse.ui.texteditor.AbstractDecoratedTextEditorPreferenceConstants;
 import org.eclipse.ui.texteditor.AnnotationPreference;
 import org.eclipse.ui.texteditor.ChainedPreferenceStore;
@@ -223,11 +229,11 @@ public abstract class DisassemblyPart extends WorkbenchPart implements IDisassem
 
 	protected AbstractDisassemblyAction fActionGotoPC;
 	protected AbstractDisassemblyAction fActionGotoAddress;
-	private AbstractDisassemblyAction fActionGotoSymbol;
+	protected AbstractDisassemblyAction fActionGotoSymbol;
 	protected AbstractDisassemblyAction fActionToggleSource;
 	private AbstractDisassemblyAction fActionToggleFunctionColumn;
 	private AbstractDisassemblyAction fActionToggleSymbols;
-	private AbstractDisassemblyAction fActionRefreshView;
+	protected AbstractDisassemblyAction fActionRefreshView;
 	private Action fActionOpenPreferences;
 	private AbstractDisassemblyAction fActionToggleAddressColumn;
 	private AbstractDisassemblyAction fActionToggleBreakpointEnablement;
@@ -339,7 +345,9 @@ public abstract class DisassemblyPart extends WorkbenchPart implements IDisassem
 	private DsfServicesTracker fServicesTracker;
 	private IFrameDMContext fTargetFrameContext;
 	protected IFrameDMData fTargetFrameData;
-
+	
+	private AddressBarContributionItem fAddressBar = null;
+	private Action fJumpToAddressAction = new JumpToAddressAction(this);
 	
 	private final class ActionRefreshView extends AbstractDisassemblyAction {
 		public ActionRefreshView() {
@@ -679,7 +687,7 @@ public abstract class DisassemblyPart extends WorkbenchPart implements IDisassem
 		hookRulerContextMenu();
 		hookContextMenu();
 		contributeToActionBars();
-
+		
 		fViewer.addSelectionChangedListener(new ISelectionChangedListener() {
 			public void selectionChanged(SelectionChangedEvent event) {
 				updateSelectionDependentActions();
@@ -1197,7 +1205,6 @@ public abstract class DisassemblyPart extends WorkbenchPart implements IDisassem
 		if (navigateMenu != null) {
 			navigateMenu.appendToGroup(IWorkbenchActionConstants.MB_ADDITIONS, fActionGotoPC);
 			navigateMenu.appendToGroup(IWorkbenchActionConstants.MB_ADDITIONS, fActionGotoAddress);
-			navigateMenu.appendToGroup(IWorkbenchActionConstants.MB_ADDITIONS, fActionGotoSymbol);
 		}
 		bars.updateActionBars();
 	}
@@ -1210,9 +1217,6 @@ public abstract class DisassemblyPart extends WorkbenchPart implements IDisassem
 		manager.add(new GroupMarker("group.top")); // ICommonMenuConstants.GROUP_TOP //$NON-NLS-1$
 		manager.add(new Separator("group.breakpoints")); //$NON-NLS-1$
 		manager.add(new Separator(IWorkbenchActionConstants.GO_TO));
-		manager.add(fActionGotoPC);
-		manager.add(fActionGotoAddress);
-		manager.add(fActionGotoSymbol);
 		manager.add(new Separator("group.debug")); //$NON-NLS-1$
 		manager.add(new Separator(ITextEditorActionConstants.GROUP_EDIT));
 		manager.appendToGroup(ITextEditorActionConstants.GROUP_EDIT, fGlobalActions.get(ITextEditorActionConstants.COPY));
@@ -1221,8 +1225,7 @@ public abstract class DisassemblyPart extends WorkbenchPart implements IDisassem
 		manager.add(fActionToggleSource);
 		manager.add(fActionToggleSymbols);
 		manager.add(fActionOpenPreferences);
-		manager.add(new Separator());
-		manager.add(fActionRefreshView);
+		manager.add(new Separator("group.bottom")); //$NON-NLS-1$
 		// Other plug-ins can contribute their actions here
 		manager.add(new Separator(IWorkbenchActionConstants.MB_ADDITIONS));
 	}
@@ -1252,8 +1255,17 @@ public abstract class DisassemblyPart extends WorkbenchPart implements IDisassem
 	}
 
 	protected void fillLocalToolBar(IToolBarManager manager) {
+		final int ADDRESS_BAR_WIDTH = 190;
+		ToolBar toolbar = ((ToolBarManager)manager).getControl();
+		fAddressBar = new AddressBarContributionItem(fJumpToAddressAction);
+		fAddressBar.createAddressBox(toolbar, ADDRESS_BAR_WIDTH, DisassemblyMessages.Disassembly_GotoLocation_initial_text, DisassemblyMessages.Disassembly_GotoLocation_warning);
+		manager.add(fAddressBar);
+		fJumpToAddressAction.setEnabled(fDebugSessionId!=null);
+		
+		manager.add(new Separator());
+		manager.add(fActionRefreshView);
 		manager.add(fActionGotoPC);
-		manager.add(fActionGotoAddress);
+		manager.add(fActionToggleSource);
 	}
 
 	protected void updateSelectionDependentActions() {
@@ -1293,6 +1305,8 @@ public abstract class DisassemblyPart extends WorkbenchPart implements IDisassem
 
 		fActionGotoPC = new ActionGotoProgramCounter(this);
 		fActionGotoPC.setActionDefinitionId(COMMAND_ID_GOTO_PC);
+		fActionGotoPC.setImageDescriptor(DisassemblyImageRegistry.getImageDescriptor(DisassemblyImageRegistry.ICON_Home_enabled));
+		fActionGotoPC.setDisabledImageDescriptor(DisassemblyImageRegistry.getImageDescriptor(DisassemblyImageRegistry.ICON_Home_disabled));
 		fStateDependentActions.add(fActionGotoPC);
 		registerWithHandlerService(fActionGotoPC);
 		
@@ -1308,6 +1322,7 @@ public abstract class DisassemblyPart extends WorkbenchPart implements IDisassem
 
 		fActionToggleSource = new ActionToggleSource();
 		fStateDependentActions.add(fActionToggleSource);
+		fActionToggleSource.setImageDescriptor(AbstractUIPlugin.imageDescriptorFromPlugin(DsfUIPlugin.PLUGIN_ID, "icons/source.gif"));  //$NON-NLS-1$
 		fVerticalRuler.getControl().addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseDoubleClick(MouseEvent e) {
@@ -2344,6 +2359,8 @@ public abstract class DisassemblyPart extends WorkbenchPart implements IDisassem
 		fUpdatePending = false;
 		resetViewer();
 		if (fDebugSessionId != null) {
+			fJumpToAddressAction.setEnabled(true);
+			fAddressBar.enableAddressBox(true);
 			try {
 				final DsfSession session= getSession();
 				session.getExecutor().execute(new DsfRunnable() {
@@ -2365,6 +2382,8 @@ public abstract class DisassemblyPart extends WorkbenchPart implements IDisassem
 	        }
 			fViewer.addViewportListener(this);
         } else {
+        	fJumpToAddressAction.setEnabled(false);
+        	fAddressBar.enableAddressBox(false);
 			fViewer.removeViewportListener(this);
         	fGotoMarkerPending = null;
 //        	invokeLater(new Runnable() {
@@ -3380,6 +3399,15 @@ public abstract class DisassemblyPart extends WorkbenchPart implements IDisassem
 			System.err.println("Disassembly: Internal error"); //$NON-NLS-1$
 			e.printStackTrace();
 		}
+	}
+	
+	public AddressBarContributionItem getAddressBar() {
+		return fAddressBar;
+	}
+	
+	public void generateErrorDialog(String message) {
+		MessageDialog messageDialog = new MessageDialog(PlatformUI.getWorkbench().getDisplay().getActiveShell(), DisassemblyMessages.Disassembly_Error_Dialog_title, null, message, MessageDialog.ERROR, new String[]{DisassemblyMessages.Disassembly_Error_Dialog_ok_button}, 0); 
+		messageDialog.open();	
 	}
 
 }

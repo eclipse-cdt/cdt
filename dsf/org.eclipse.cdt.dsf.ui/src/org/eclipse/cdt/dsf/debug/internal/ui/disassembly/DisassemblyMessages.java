@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2008 Wind River Systems and others.
+ * Copyright (c) 2007, 2009 Wind River Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -91,6 +91,10 @@ public final class DisassemblyMessages extends NLS {
 	public static String EditionFinderJob_name;
 	public static String EditionFinderJob_task_get_timestamp;
 	public static String EditionFinderJob_task_search_history;
+	public static String Disassembly_GotoLocation_initial_text;
+	public static String Disassembly_GotoLocation_warning;
+	public static String Disassembly_Error_Dialog_title;
+	public static String Disassembly_Error_Dialog_ok_button;
 
 	static {
 		NLS.initializeMessages(BUNDLE_NAME, DisassemblyMessages.class);

@@ -71,7 +71,7 @@ public class Rendering extends Composite implements IDebugEventSetListener
 
     private GoToAddressComposite fAddressBar;
     
-    private Control fAddressBarControl;
+    protected Control fAddressBarControl;
 
     private Selection fSelection = new Selection();
 
@@ -84,10 +84,10 @@ public class Rendering extends Composite implements IDebugEventSetListener
     
     protected BigInteger fBaseAddress = null; // remember the base address
     
-    private int fColumnCount = 0; 	// auto calculate can be disabled by user,
+    protected int fColumnCount = 0; 	// auto calculate can be disabled by user,
     								// making this user settable
     
-    private int fBytesPerRow = 0;	// current number of bytes per row are displayed
+    protected int fBytesPerRow = 0;	// current number of bytes per row are displayed
     
     private int fCurrentScrollSelection = 0;	// current scroll selection;
     

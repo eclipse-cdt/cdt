@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2008 QNX Software Systems and others.
+ * Copyright (c) 2004, 2009 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -38,6 +38,7 @@ import org.eclipse.cdt.debug.internal.ui.views.disassembly.DisassemblyView;
 import org.eclipse.cdt.debug.ui.CDebugUIPlugin;
 import org.eclipse.cdt.debug.ui.disassembly.IElementToggleBreakpointAdapter;
 import org.eclipse.cdt.internal.ui.util.ExternalEditorInput;
+import org.eclipse.cdt.ui.CDTUITools;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IWorkspaceRoot;
@@ -250,18 +251,32 @@ public class ToggleBreakpointAdapter implements IToggleBreakpointsTarget {
 			ITextSelection textSelection = (ITextSelection)selection;
 			String text = textSelection.getText();
 			if ( text != null ) {
-				IResource resource = getResource( part );
-				if ( resource instanceof IFile ) {
-					ITranslationUnit tu = getTranslationUnit( (IFile)resource );
-					if ( tu != null ) {
+				if (part instanceof ITextEditor) {
+					ICElement editorElement = CDTUITools.getEditorInputCElement(((ITextEditor) part).getEditorInput());
+					if (editorElement instanceof ITranslationUnit) {
+						ITranslationUnit tu = (ITranslationUnit) editorElement;
 						try {
-							ICElement element = tu.getElement( text.trim() );
-							if ( element == null ) {
-								element = tu.getElementAtLine( textSelection.getStartLine() );
+							if (tu.isStructureKnown() && tu.isConsistent()) {
+								return tu.getElementAtOffset( textSelection.getOffset() );
 							}
-							return element;
+						} catch (CModelException exc) {
+							// ignored on purpose
 						}
-						catch( CModelException e ) {
+					}
+				} else {
+					IResource resource = getResource( part );
+					if ( resource instanceof IFile ) {
+						ITranslationUnit tu = getTranslationUnit( (IFile)resource );
+						if ( tu != null ) {
+							try {
+								ICElement element = tu.getElement( text.trim() );
+								if ( element == null ) {
+									element = tu.getElementAtLine( textSelection.getStartLine() );
+								}
+								return element;
+							}
+							catch( CModelException e ) {
+							}
 						}
 					}
 				}
@@ -297,33 +312,9 @@ public class ToggleBreakpointAdapter implements IToggleBreakpointsTarget {
 	}
 
 	protected IVariable getVariableFromSelection( IWorkbenchPart part, ISelection selection ) {
-		if ( selection instanceof ITextSelection ) {
-			String text = ((ITextSelection)selection).getText();
-			if ( text != null ) {
-				IResource resource = getResource( part );
-				if ( resource instanceof IFile ) {
-					ITranslationUnit tu = getTranslationUnit( (IFile)resource );
-					if ( tu != null ) {
-						try {
-							ICElement element = tu.getElement( text.trim() );
-							if (element instanceof IVariable) {
-								return (IVariable)element;
-							}
-						}
-						catch( CModelException e ) {
-						}
-					}
-				}
-			}
-		}
-		else if ( selection instanceof IStructuredSelection ) {
-			IStructuredSelection ss = (IStructuredSelection)selection;
-			if ( ss.size() == 1 ) {
-				Object selected = ss.getFirstElement();
-				if (selected instanceof IVariable) {
-					return (IVariable)selected;
-				}
-			}
+		ICElement element = getCElementFromSelection(part, selection);
+		if (element instanceof IVariable) {
+			return (IVariable) element;
 		}
 		return null;
 	}
@@ -451,8 +442,8 @@ public class ToggleBreakpointAdapter implements IToggleBreakpointsTarget {
 		StringBuffer name = new StringBuffer();
 		String methodName = method.getElementName();
 		ICElement parent = method.getParent();
-		while ( parent != null && ( parent.getElementType() == ICElement.C_NAMESPACE || parent.getElementType() == ICElement.C_CLASS )
-				|| parent.getElementType() == ICElement.C_STRUCT || parent.getElementType() == ICElement.C_UNION) {
+		while ( parent != null && ( parent.getElementType() == ICElement.C_NAMESPACE || parent.getElementType() == ICElement.C_CLASS
+				|| parent.getElementType() == ICElement.C_STRUCT || parent.getElementType() == ICElement.C_UNION ) ) {
 			name.append( parent.getElementName() ).append( "::" ); //$NON-NLS-1$
 			parent = parent.getParent();
 		}

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2007 Rational Software Corporation and others.
+ * Copyright (c) 2004, 2009 Rational Software Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,6 +8,7 @@
  * Contributors:
  * IBM Rational Software - Initial API and implementation
  * Intel corp. 2007 - modification for new CDT model. 
+ * Miwako Tokugawa (Intel Corporation) - Fixed-location tooltip support
  *******************************************************************************/
 package org.eclipse.cdt.managedbuilder.ui.properties;
 
@@ -21,10 +22,11 @@ public abstract class AbstractToolSettingUI extends FieldEditorPreferencePage {
 
 	protected AbstractCBuildPropertyTab buildPropPage;
 	protected IResourceInfo fInfo;
-	private boolean dirty = false; 
+	private boolean dirty = false;
+	private boolean toolTipBoxNeeded = false;
 
 	/**
-	 * @param style
+	 * 
 	 */
 	protected AbstractToolSettingUI(IResourceInfo info) {
 		this(info, GRID);
@@ -41,6 +43,7 @@ public abstract class AbstractToolSettingUI extends FieldEditorPreferencePage {
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.preference.FieldEditorPreferencePage#createFieldEditors()
 	 */
+	@Override
 	protected void createFieldEditors() {
 		// Get the preference store for the build settings
 		IPreferenceStore settings = getToolSettingsPrefStore();
@@ -48,15 +51,32 @@ public abstract class AbstractToolSettingUI extends FieldEditorPreferencePage {
 	}
 
 	/**
-	 * Return the tool settings preference store
+	 * @return the tool settings preference store
 	 */
 	protected ToolSettingsPrefStore getToolSettingsPrefStore() {
 		return ToolSettingsPrefStore.getDefault();	
 	}
 
 	/**
+	 * @param flag indicating that tooltip box need to be displayed
+	 * @since 5.2
+	 */
+	protected void setToolTipBoxNeeded(boolean flag) {
+		toolTipBoxNeeded = flag;
+	}
+	
+	/**
+	 * @return true if this page needs to have a tool tip box.
+	 * @since 5.2
+	 */
+	protected boolean isToolTipBoxNeeded() {
+		return toolTipBoxNeeded;
+	}
+
+	/**
 	 * Method called when the value of a dialog field changes
 	 */
+	@Override
 	public void propertyChange(PropertyChangeEvent event) {
 	    super.propertyChange(event);
 		if (event.getProperty().equals(FieldEditor.VALUE)) {

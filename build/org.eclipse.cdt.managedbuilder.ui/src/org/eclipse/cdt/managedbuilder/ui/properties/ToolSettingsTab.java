@@ -6,7 +6,8 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- * Intel Corporation - Initial API and implementation
+ * Intel Corporation - Initial API and implementation 
+ * Miwako Tokugawa (Intel Corporation) - Fixed-location tooltip support
  * QNX Software Systems - [269571] Apply button failure on tool changes
  *******************************************************************************/
 package org.eclipse.cdt.managedbuilder.ui.properties;
@@ -32,6 +33,7 @@ import org.eclipse.cdt.managedbuilder.core.ITool;
 import org.eclipse.cdt.managedbuilder.core.ManagedBuildManager;
 import org.eclipse.cdt.managedbuilder.internal.core.MultiConfiguration;
 import org.eclipse.cdt.managedbuilder.internal.macros.BuildMacroProvider;
+import org.eclipse.cdt.ui.newui.CDTPrefUtil;
 import org.eclipse.cdt.ui.newui.PageLayout;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.jface.preference.IPreferencePageContainer;
@@ -46,8 +48,12 @@ import org.eclipse.jface.viewers.ViewerFilter;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.SashForm;
 import org.eclipse.swt.custom.ScrolledComposite;
+import org.eclipse.swt.custom.StyleRange;
+import org.eclipse.swt.custom.StyledText;
 import org.eclipse.swt.events.ControlAdapter;
 import org.eclipse.swt.events.ControlEvent;
+import org.eclipse.swt.graphics.Font;
+import org.eclipse.swt.graphics.FontData;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
@@ -61,7 +67,10 @@ public class ToolSettingsTab extends AbstractCBuildPropertyTab implements IPrefe
 		 * Dialog widgets
 		 */
 		private TreeViewer optionList;
+		private StyledText tipText;
+		private StyleRange styleRange;
 		private SashForm sashForm;
+		private SashForm sashForm2;
 		private Composite settingsPageContainer;
 		private ScrolledComposite containerSC;
 
@@ -76,6 +85,10 @@ public class ToolSettingsTab extends AbstractCBuildPropertyTab implements IPrefe
 		private Object propertyObject;
 
 		private IResourceInfo fInfo;
+		
+		private boolean displayFixedTip = CDTPrefUtil.getBool(CDTPrefUtil.KEY_TIPBOX);
+		private int[] defaultWeights = new int[] {4, 1};
+		private int[] hideTipBoxWeights = new int[] {1, 0};
 		
 		@Override
 		public void createControls(Composite par)  {
@@ -94,9 +107,17 @@ public class ToolSettingsTab extends AbstractCBuildPropertyTab implements IPrefe
 			layout.numColumns = 2;
 			layout.marginHeight = 5;
 			sashForm.setLayout(layout);
-			createSelectionArea(sashForm);
-			createEditArea(sashForm);
-			
+			if (displayFixedTip==false) {
+				createSelectionArea(sashForm);
+				createEditArea(sashForm);
+			} else {
+				createSelectionArea(sashForm);
+				sashForm2 = new SashForm(sashForm, SWT.NONE);
+				sashForm2.setOrientation(SWT.VERTICAL);
+				createEditArea(sashForm2);
+				createTipArea(sashForm2);
+				sashForm2.setWeights(defaultWeights);
+			}
 			usercomp.addControlListener(new ControlAdapter() {
 				@Override
 				public void controlResized(ControlEvent e) {
@@ -108,7 +129,7 @@ public class ToolSettingsTab extends AbstractCBuildPropertyTab implements IPrefe
 		}
 		
 		private void specificResize() {
-			Point p1 = optionList.getTree().computeSize(-1, -1);
+			Point p1 = optionList.getTree().computeSize(SWT.DEFAULT, SWT.DEFAULT);
 			Point p2 = optionList.getTree().getSize();
 			Point p3 = usercomp.getSize();
 			p1.x += calcExtra();
@@ -146,6 +167,33 @@ public class ToolSettingsTab extends AbstractCBuildPropertyTab implements IPrefe
 				}
 			});
 		}
+		
+		/**
+		 * @param name - header of the tooltip help
+		 * @param tip - tooltip text
+		 * @since 5.2
+		 */
+		protected void updateTipText(String name, String tip) {
+			if (tipText==null) {
+				return;
+			}
+			tipText.setText(name+"\n\n"+tip); //$NON-NLS-1$
+			styleRange.length = name.length();
+			tipText.setStyleRange(styleRange);
+			tipText.update();
+		}
+		
+		/* (non-Javadoc)
+		 * Method resetTipText
+		 * @since 7.0
+		 */
+		private void resetTipText() {
+			if (tipText==null) {
+				return;
+			}
+			tipText.setText(Messages.getString("ToolSettingsTab.0")); //$NON-NLS-1$
+			tipText.update();
+		}
 
 		/* (non-Javadoc)
 		 * Method displayOptionsForCategory
@@ -176,9 +224,15 @@ public class ToolSettingsTab extends AbstractCBuildPropertyTab implements IPrefe
 						this, 
 						fInfo, 
 						optionHolder, 
-						category);
+						category,
+						displayFixedTip);
+				boolean needToolTipBox = false;
+				if (displayFixedTip==true) {
+					needToolTipBox = ((BuildOptionSettingsUI)currentSettingsPage).needToolTipBox(optionHolder,category);
+				}
 				pages.add(currentSettingsPage);
 				currentSettingsPage.setContainer(this);
+				currentSettingsPage.setToolTipBoxNeeded(needToolTipBox);
 				if (currentSettingsPage.getControl() == null) {
 					currentSettingsPage.createControl(settingsPageContainer);
 				}
@@ -191,11 +245,25 @@ public class ToolSettingsTab extends AbstractCBuildPropertyTab implements IPrefe
 				if (children[i] != currentControl)
 					children[i].setVisible(false);
 			}
+			
+			if (displayFixedTip==true) {
+				if (currentSettingsPage.isToolTipBoxNeeded()==false) {
+					// eliminate the option tip box
+					sashForm2.setWeights(hideTipBoxWeights);
+					sashForm2.layout();
+				} else {
+					// display the option tip box
+					sashForm2.setWeights(defaultWeights);
+					sashForm2.layout();
+				}
+			}
 			currentSettingsPage.setVisible(true);
 			currentSettingsPage.updateFields();
 			
-			if (oldPage != null  && oldPage != currentSettingsPage)
+			if (oldPage != null  && oldPage != currentSettingsPage) {
 				oldPage.setVisible(false);
+				resetTipText();
+			}
 
 			// Set the size of the scrolled area
 			containerSC.setMinSize(currentSettingsPage.computeSize());
@@ -241,6 +309,12 @@ public class ToolSettingsTab extends AbstractCBuildPropertyTab implements IPrefe
 					children[i].setVisible(false);
 			}
 			
+			if (displayFixedTip==true) {
+				// eliminate the tool tip area
+				sashForm2.setWeights(hideTipBoxWeights); 
+				sashForm2.layout();
+			}
+			
 			// Make the current page visible
 			currentSettingsPage.setVisible(true);
 
@@ -257,12 +331,34 @@ public class ToolSettingsTab extends AbstractCBuildPropertyTab implements IPrefe
 			containerSC.setMinSize(currentSettingsPage.computeSize());
 			settingsPageContainer.layout();
 		}
+
+		/* (non-Javadoc)
+		 * Add the fixed-location tool tip box.
+		 */
+		private void createTipArea (Composite parent) {
+			tipText = new StyledText(parent, SWT.V_SCROLL|SWT.BORDER | SWT.READ_ONLY | SWT.MULTI | SWT.WRAP);
+			tipText.setLayoutData(new GridData(GridData.FILL_BOTH));
+			tipText.setText(Messages.getString("ToolSettingsTab.0")); //$NON-NLS-1$
+			
+			styleRange = new StyleRange();
+			styleRange.start = 0;
+			FontData data = new FontData();
+			data.setHeight(10);
+			//data.setName("sans");
+			data.setStyle(SWT.BOLD);
+			Font font = new Font(parent.getDisplay(),data);
+			styleRange.font = font;
+		}
 		
 		/* (non-Javadoc)
 		 * Add the tabs relevant to the project to edit area tab folder.
 		 */
 		protected void createEditArea(Composite parent) {
-			containerSC = new ScrolledComposite(parent, SWT.H_SCROLL | SWT.V_SCROLL);
+			int style = (SWT.H_SCROLL | SWT.V_SCROLL);
+			if (displayFixedTip) {
+				style |= SWT.BORDER;
+			}
+			containerSC = new ScrolledComposite(parent, style);
 			containerSC.setExpandHorizontal(true);
 			containerSC.setExpandVertical(true);
 			
@@ -573,7 +669,7 @@ public class ToolSettingsTab extends AbstractCBuildPropertyTab implements IPrefe
 		}
 
 		/**
-		 * Returns the "dirty" state
+		 * @return the "dirty" state
 		 */
 		public boolean isDirty() {
 			// Check each settings page
@@ -593,12 +689,13 @@ public class ToolSettingsTab extends AbstractCBuildPropertyTab implements IPrefe
 		}
 		
 		/**
-		 * Returns the build macro provider to be used for macro resolution
+		 * @return the build macro provider to be used for macro resolution
 		 * In case the "Build Macros" tab is available, returns the BuildMacroProvider
 		 * supplied by that tab. 
 		 * Unlike the default provider, that provider also contains
 		 * the user-modified macros that are not applied yet
 		 * If the "Build Macros" tab is not available, returns the default BuildMacroProvider
+		 *
 		 * @noreference This method is not intended to be referenced by clients.
 		 */
 		public BuildMacroProvider obtainMacroProvider(){

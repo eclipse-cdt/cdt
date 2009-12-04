@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2008 BitMethods Inc and others.
+ * Copyright (c) 2004, 2009 BitMethods Inc and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,6 +8,7 @@
  * Contributors:
  * BitMethods Inc - Initial API and implementation
  * ARM Ltd. - basic tooltip support
+ * Miwako Tokugawa (Intel Corporation) - Fixed-location tooltip support
  *******************************************************************************/
 package org.eclipse.cdt.managedbuilder.ui.properties;
 
@@ -147,8 +148,8 @@ public class FileListControlFieldEditor extends FieldEditor {
 		topLayout = new Composite(parent, SWT.NONE);
 		GridLayout layout = new GridLayout();
 		layout.numColumns = numColumns;
-		layout.marginWidth = 7;
-		layout.marginHeight = 5;
+		layout.marginWidth = 0;
+		layout.marginHeight = 0;
 		layout.makeColumnsEqualWidth = false;
 		topLayout.setLayout(layout);
 		GridData gddata = new GridData(GridData.FILL_HORIZONTAL);

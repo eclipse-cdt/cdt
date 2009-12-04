@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2003, 2008 IBM Corporation and others.
+ * Copyright (c) 2003, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,6 +8,7 @@
  * Contributors:
  * IBM Rational Software - Initial API and implementation
  * ARM Ltd. - basic tooltip support
+ * Miwako Tokugawa (Intel Corporation) - Fixed-location tooltip support
  *******************************************************************************/
 package org.eclipse.cdt.managedbuilder.ui.properties;
 
@@ -41,11 +42,17 @@ import org.eclipse.jface.preference.FileFieldEditor;
 import org.eclipse.jface.preference.StringFieldEditor;
 import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.osgi.util.TextProcessor;
+import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.widgets.Button;
+import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Event;
+import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.widgets.Listener;
+import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.PlatformUI;
 
 public class BuildOptionSettingsUI extends AbstractToolSettingUI {
@@ -59,12 +66,44 @@ public class BuildOptionSettingsUI extends AbstractToolSettingUI {
 	private int curr = -1;
 	private Map<FieldEditor, Composite> fieldEditorsToParentMap = 
 		new HashMap<FieldEditor, Composite>();
+	/** True if the user selected "Display tool option tips at a fixed location" in Preferences */
+	private boolean displayFixedTip;	
+	/** type of mouse action the displayFixedTip responds to.
+	 ** currently set to Enter rather than Hover since the former seems more responsive **/
+	private final static int selectAction = SWT.MouseEnter;
+
+	private class TipInfo {
+		private String name;
+		private String tip;
+		
+		public TipInfo(String name, String tip) {
+			this.name = name;
+			this.tip = tip;
+		}
+		protected String getName() {
+			return name;
+		}
+		protected String getTip() {
+			return tip;
+		}
+	}
+	
 
 	public BuildOptionSettingsUI(AbstractCBuildPropertyTab page,
 			IResourceInfo info, IHoldsOptions optionHolder, 
 			IOptionCategory _category) {
+		this(page, info, optionHolder, _category, false);
+	}
+
+	/**
+	 * @since 5.2
+	 */
+	public BuildOptionSettingsUI(AbstractCBuildPropertyTab page,
+			IResourceInfo info, IHoldsOptions optionHolder, 
+			IOptionCategory _category, boolean _displayFixedTip) {
 		super(info);
 		this.category = _category;
+		this.displayFixedTip = _displayFixedTip;
 		this.optionHolder = optionHolder;
 		buildPropPage = page;
 		if (info instanceof MultiItemsHolder) {
@@ -123,10 +162,14 @@ public class BuildOptionSettingsUI extends AbstractToolSettingUI {
 	}
 
 	/* (non-Javadoc)
-	 * @see org.eclipse.jface.preference.FieldEditorPreferencePage#createFieldEditors()
+	 * @see org.eclipse.jface.preference.FieldEditorPreferencePage#Editors()
 	 */
 	@Override
 	protected void createFieldEditors() {
+		// true if he user selected "Display tool option tips at a fixed location" in Preferences AND  
+		// and we are displaying the tool tip box on this page because one or more option has non-empty tool tip.
+		boolean pageHasToolTipBox = isToolTipBoxNeeded();
+		
 		// Get the preference store for the build settings
 		super.createFieldEditors();
 		// Iterate over the options in the category and create a field editor
@@ -138,7 +181,6 @@ public class BuildOptionSettingsUI extends AbstractToolSettingUI {
 			IHoldsOptions holder = (IHoldsOptions)options[index][0];
 			if (holder == null) break;	//  The array may not be full
 			IOption opt = (IOption)options[index][1];
-			String optId = getToolSettingsPrefStore().getOptionId(opt);
 			
 			// check to see if the option has an applicability calculator
 			IOptionApplicability applicabilityCalculator = opt.getApplicabilityCalculator();
@@ -146,6 +188,15 @@ public class BuildOptionSettingsUI extends AbstractToolSettingUI {
 
 			if (applicabilityCalculator == null || applicabilityCalculator.isOptionVisible(config, holder, opt)) {
 		
+				String optId = getToolSettingsPrefStore().getOptionId(opt);
+				String nameStr = TextProcessor.process(opt.getName());
+				String tipStr = TextProcessor.process(opt.getToolTip());
+				String contextId = opt.getContextId();
+				
+				if (pageHasToolTipBox && (tipStr==null || tipStr.trim().length()==0)) {
+					tipStr = Messages.getString("BuildOptionSettingsUI.0"); //$NON-NLS-1$
+				}
+				
 				try {
 					// Figure out which type the option is and add a proper field
 					// editor for it
@@ -160,11 +211,11 @@ public class BuildOptionSettingsUI extends AbstractToolSettingUI {
 							// browse button of the appropriate type.
 							switch (opt.getBrowseType()) {
 								case IOption.BROWSE_DIR: {
-									stringField = new DirectoryFieldEditor(optId, TextProcessor.process(opt.getName()), fieldEditorParent);
+									stringField = new DirectoryFieldEditor(optId, nameStr, fieldEditorParent);
 								} break;
 		
 								case IOption.BROWSE_FILE: {
-									stringField = new FileFieldEditor(optId, TextProcessor.process(opt.getName()), fieldEditorParent) {
+									stringField = new FileFieldEditor(optId, nameStr, fieldEditorParent) {
 										/**
 										 * Do not perform validity check on the file name due to losing focus,
 										 * see http://bugs.eclipse.org/289448
@@ -178,7 +229,7 @@ public class BuildOptionSettingsUI extends AbstractToolSettingUI {
 								} break;
 		
 								case IOption.BROWSE_NONE: {
-									final StringFieldEditorM local = new StringFieldEditorM(optId, TextProcessor.process(opt.getName()), fieldEditorParent);
+									final StringFieldEditorM local = new StringFieldEditorM(optId, nameStr, fieldEditorParent);
 									stringField = local;
 									local.getTextControl().addModifyListener(new ModifyListener() {
 							            public void modifyText(ModifyEvent e) {
@@ -191,22 +242,33 @@ public class BuildOptionSettingsUI extends AbstractToolSettingUI {
 									throw new BuildException(null);
 								}
 							}
-
-							stringField.getTextControl(fieldEditorParent).setToolTipText(TextProcessor.process(opt.getToolTip()));
-							stringField.getLabelControl(fieldEditorParent).setToolTipText(TextProcessor.process(opt.getToolTip()));
-							PlatformUI.getWorkbench().getHelpSystem().setHelp(stringField.getTextControl(fieldEditorParent), opt.getContextId());
+							Label label = stringField.getLabelControl(fieldEditorParent);
+							Text text = stringField.getTextControl(fieldEditorParent);
+							if (pageHasToolTipBox) {
+								label.setData(new TipInfo(nameStr,tipStr));
+								label.addListener(selectAction, tipSetListener);
+								text.setData(new TipInfo(nameStr,tipStr));
+								text.addListener(selectAction, tipSetListener);
+							} else {
+								label.setToolTipText(tipStr);
+								text.setToolTipText(tipStr);	
+							}
+							if (!contextId.equals(AbstractPage.EMPTY_STR)) {	
+								PlatformUI.getWorkbench().getHelpSystem().setHelp(text, contextId);
+							}
 							fieldEditor = stringField;
 						} break;
 						
 						case IOption.BOOLEAN: {
 							fieldEditor = new TriStateBooleanFieldEditor(
 									optId, 
-									TextProcessor.process(opt.getName()), 
-									opt.getToolTip(), 
+									nameStr, 
+									tipStr,
 									fieldEditorParent, 
-									opt.getContextId(), 
+									contextId, 
 									ohs,
 									curr);
+							// tipStr is handled in TriStateBooleanFieldEditor constructor
 						} break;
 						
 						case IOption.ENUMERATED: {
@@ -228,7 +290,19 @@ public class BuildOptionSettingsUI extends AbstractToolSettingUI {
 							String[] enumValidNames = new String[enumValidList.size()];
 							enumValidList.copyInto(enumValidNames);
 	
-							fieldEditor = new BuildOptionComboFieldEditor(optId, TextProcessor.process(opt.getName()), TextProcessor.process(opt.getToolTip()), opt.getContextId(), enumValidNames, sel, fieldEditorParent);
+							// if (displayFixedTip==false), tooltip was already set in BuildOptionComboFieldEditor constructor.
+							String tooltipHoverStr = displayFixedTip ? null : tipStr;
+							fieldEditor = new BuildOptionComboFieldEditor(optId, nameStr, 
+									tooltipHoverStr, contextId, enumValidNames, sel, fieldEditorParent);
+							
+							if (pageHasToolTipBox) {
+								Combo combo = ((BuildOptionComboFieldEditor)fieldEditor).getComboControl();
+								Label label = fieldEditor.getLabelControl(fieldEditorParent);
+								combo.setData(new TipInfo(nameStr,tipStr));
+								combo.addListener(selectAction, tipSetListener);
+								label.setData(new TipInfo(nameStr,tipStr));
+								label.addListener(selectAction, tipSetListener);
+							}
 						} break;
 						
 						case IOption.INCLUDE_PATH:
@@ -245,8 +319,17 @@ public class BuildOptionSettingsUI extends AbstractToolSettingUI {
 						case IOption.UNDEF_INCLUDE_FILES:
 						case IOption.UNDEF_LIBRARY_PATHS:
 						case IOption.UNDEF_LIBRARY_FILES:
-						case IOption.UNDEF_MACRO_FILES:						{
-							fieldEditor = new FileListControlFieldEditor(optId, TextProcessor.process(opt.getName()), TextProcessor.process(opt.getToolTip()), opt.getContextId(), fieldEditorParent, opt.getBrowseType());
+						case IOption.UNDEF_MACRO_FILES:	
+						{
+							 // if (displayFixedTip==false), tooltip was already set in FileListControlFieldEditor constructor.
+							String tooltipHoverStr = displayFixedTip ? null : tipStr;
+							fieldEditor = new FileListControlFieldEditor(optId, nameStr, 
+									tooltipHoverStr, contextId, fieldEditorParent, opt.getBrowseType());
+							if (pageHasToolTipBox) {
+								Label label = fieldEditor.getLabelControl(fieldEditorParent);
+								label.setData(new TipInfo(nameStr,tipStr));
+								label.addListener(selectAction, tipSetListener);		
+							}
 						} break;
 						
 						default:
@@ -455,6 +538,10 @@ public class BuildOptionSettingsUI extends AbstractToolSettingUI {
 			fieldEditor.setEnabled(true, parent);
 		}
 	}
+	
+	private boolean hasStr(String tipStr) {
+		return (tipStr!=null && tipStr.trim().length()>0);
+	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.util.IPropertyChangeListener#propertyChange(org.eclipse.jface.util.PropertyChangeEvent)
@@ -583,6 +670,35 @@ public class BuildOptionSettingsUI extends AbstractToolSettingUI {
 	public void setValues() {
 		updateFields();
 	}
+	
+	/**
+	 * @return true if the page needs to have the tool tip box.
+	 * @since 5.2
+	 */
+	protected boolean needToolTipBox(IHoldsOptions optionHolder, IOptionCategory category) {
+		if (optionHolder instanceof ITool) { // option category page
+			Object[][] options = category.getOptions(fInfo, optionHolder);
+			for (int index = 0; index < options.length; ++index) {
+				IHoldsOptions holder = (IHoldsOptions)options[index][0];
+				if (holder == null) break; //  The array may not be full
+				IOption opt = (IOption)options[index][1];
+				String tipStr = TextProcessor.process(opt.getToolTip());
+				
+				// check to see if the option has an applicability calculator
+				IOptionApplicability applicabilityCalculator = opt.getApplicabilityCalculator();
+				IBuildObject config = fInfo;
+
+				if (applicabilityCalculator == null || applicabilityCalculator.isOptionVisible(config, holder, opt)) {
+					if (hasStr(tipStr)) {
+						return true; // an option with a tip string was found.
+					}
+				}
+			}
+		}
+		// A tool option summary page does not list individual options 
+		// so never should have the box
+		return false;
+	}
 
 	/**
 	 * The items shown in an enumerated option may depend on other option values.
@@ -633,7 +749,7 @@ public class BuildOptionSettingsUI extends AbstractToolSettingUI {
 		enumValidList.copyInto(enumValidNames);
 
 		if ( selectNewEnum ) {
-			// apparantly the currently selected enum value is not part anymore of the enum list
+			// apparently the currently selected enum value is not part anymore of the enum list
 			// select a new value.
 			String selection = null;
 			if ( selectDefault ) {
@@ -648,6 +764,16 @@ public class BuildOptionSettingsUI extends AbstractToolSettingUI {
 		((BuildOptionComboFieldEditor)fieldEditor).setOptions(enumValidNames);
 		fieldEditor.load();
 	}
+	
+	private final Listener tipSetListener = new Listener() {
+		public void handleEvent(Event event) {
+			Object data = event.widget.getData();
+			if (data!=null && buildPropPage!=null) {
+				TipInfo obj = (TipInfo)data;
+				((ToolSettingsTab)buildPropPage).updateTipText(obj.getName(), obj.getTip());
+			}
+		}
+	};
 	
 	/**
 	 * 
@@ -664,8 +790,15 @@ public class BuildOptionSettingsUI extends AbstractToolSettingUI {
 			holders = ho; 
 			current = curr;
 			button = getChangeControl(parent);
-			button.setToolTipText(tooltip);
-			if (!contextId.equals(AbstractPage.EMPTY_STR)) PlatformUI.getWorkbench().getHelpSystem().setHelp(button, contextId);
+			if (displayFixedTip && isToolTipBoxNeeded()) {
+				button.setData(new TipInfo(labelText,tooltip));
+				button.addListener(selectAction, tipSetListener);
+			} else {
+				button.setToolTipText(tooltip);
+			}
+			if (!contextId.equals(AbstractPage.EMPTY_STR)) {
+				PlatformUI.getWorkbench().getHelpSystem().setHelp(button, contextId);
+			}
 			
 		}
 		@Override

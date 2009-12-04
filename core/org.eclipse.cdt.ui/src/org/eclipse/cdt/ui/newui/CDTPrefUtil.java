@@ -37,6 +37,8 @@ public class CDTPrefUtil {
 	public static final String KEY_DTREE   = "properties.data.hierarchy.enable"; //$NON-NLS-1$
 	public static final String KEY_NOTOOLM   = "properties.toolchain.modification.disable"; //$NON-NLS-1$
 	public static final String KEY_EXPORT   = "properties.export.page.enable"; //$NON-NLS-1$
+	/** @since 5.2 */
+	public static final String KEY_TIPBOX   = "properties.option.tipbox.enable"; //$NON-NLS-1$
 	// string keys
 	public static final String KEY_PREFTC  = "wizard.preferred.toolchains";  //$NON-NLS-1$
 	public static final String KEY_CONFSET = "workingsets.selected.configs";  //$NON-NLS-1$

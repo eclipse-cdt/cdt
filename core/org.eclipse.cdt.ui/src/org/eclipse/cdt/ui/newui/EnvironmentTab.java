@@ -81,10 +81,8 @@ public class EnvironmentTab extends AbstractCPropertyTab {
 
 	private class TabData implements Comparable<TabData> {
 		IEnvironmentVariable var;
-		boolean changed;
-		TabData(IEnvironmentVariable _var, boolean _changed) {
+		TabData(IEnvironmentVariable _var) {
 			var = _var;
-			changed = _changed;
 		}
 		public int compareTo(TabData a) {
 			String s = var.getName();
@@ -176,10 +174,10 @@ public class EnvironmentTab extends AbstractCPropertyTab {
 		tv = new TableViewer(table);
 		tv.setContentProvider(new IStructuredContentProvider() {
 
-			@SuppressWarnings("unchecked")
 			public Object[] getElements(Object inputElement) {
-				if (inputElement != null && inputElement instanceof ArrayList) {
-					ArrayList<Object> ar = (ArrayList)inputElement;
+				if (inputElement != null && inputElement instanceof ArrayList<?>) {
+					@SuppressWarnings("unchecked")
+					ArrayList<TabData> ar = (ArrayList<TabData>)inputElement;
 					return ar.toArray(new TabData[0]);
 				}
 				return null;
@@ -336,7 +334,7 @@ public class EnvironmentTab extends AbstractCPropertyTab {
 		data.clear();
 		if (_vars != null) {
 			for (IEnvironmentVariable _var : _vars) {
-				data.add(new TabData(_var, false));
+				data.add(new TabData(_var));
 			}
 		}
 		Collections.sort(data);
@@ -543,7 +541,7 @@ public class EnvironmentTab extends AbstractCPropertyTab {
 				String[] els = null;
 				if (inputElement instanceof Map<?, ?>) {
 					@SuppressWarnings("unchecked")
-					Map<String,?> m = (Map)inputElement;
+					Map<String, String> m = (Map<String, String>)inputElement;
 					els = new String[m.size()];  
 					int index = 0;
 					for (Iterator<String> iterator = m.keySet().iterator(); iterator.hasNext(); index++) {

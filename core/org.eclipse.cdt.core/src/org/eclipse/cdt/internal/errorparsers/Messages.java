@@ -23,10 +23,6 @@ public class Messages extends NLS {
 	public static String GCCErrorParser_varPattern_parseError;
 	public static String GCCErrorParser_varPattern_undeclared;
 	public static String GCCErrorParser_Warnings;
-	public static String GLDErrorParser_error_general;
-	public static String GLDErrorParser_error_text;
-	public static String GLDErrorParser_warning_general;
-	public static String GLDErrorParser_warning_text;
 	static {
 		// initialize resource bundle
 		NLS.initializeMessages(BUNDLE_NAME, Messages.class);

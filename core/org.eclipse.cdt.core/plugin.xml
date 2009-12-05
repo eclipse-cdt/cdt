@@ -184,9 +184,37 @@
          name="%CDTGNULinkerErrorParser.name"
          point="org.eclipse.cdt.core.ErrorParser">
       <errorparser
+            class="org.eclipse.cdt.core.errorparsers.RegexErrorParser"
             id="org.eclipse.cdt.core.GLDErrorParser"
-            name="%CDTGNULinkerErrorParser.name"
-            class="org.eclipse.cdt.internal.errorparsers.GLDErrorParser">
+            name="%CDTGNULinkerErrorParser.name">
+         <pattern
+               description-expr="$2"
+               eat-processed-line="true"
+               file-expr="$1"
+               line-expr=""
+               regex="(.*)\(\.text\+.*\): [Ww]arning:? (.*)"
+               severity="Warning"/>
+         <pattern
+               description-expr="$2"
+               eat-processed-line="true"
+               file-expr="$1"
+               line-expr=""
+               regex="(.*?):?\(\.\w+\+.*\): (.*)"
+               severity="Error"/>
+         <pattern
+               description-expr="$2"
+               eat-processed-line="true"
+               file-expr=""
+               line-expr=""
+               regex="ld(\.exe)?: [Ww]arning:? (.*)"
+               severity="Warning"/>
+         <pattern
+               description-expr="$2"
+               eat-processed-line="true"
+               file-expr=""
+               line-expr=""
+               regex="ld(\.exe)?: (.*)"
+               severity="Error"/>
       </errorparser>
    </extension>
    <extension

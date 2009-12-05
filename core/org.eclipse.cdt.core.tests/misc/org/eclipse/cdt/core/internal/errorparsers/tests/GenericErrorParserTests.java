@@ -35,6 +35,7 @@ import org.eclipse.core.runtime.NullProgressMonitor;
  */
 public abstract class GenericErrorParserTests extends TestCase {
 	public static final String GCC_ERROR_PARSER_ID = "org.eclipse.cdt.core.GCCErrorParser";
+	public static final String GLD_ERROR_PARSER_ID = "org.eclipse.cdt.core.GLDErrorParser";
 
 	protected IProject fTempProject;
 

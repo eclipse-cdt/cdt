@@ -149,7 +149,7 @@ public class BaseTestCase extends TestCase {
 				testThrowable=e;
 			}
 			
-			if (statusLog.size()!=fExpectedLoggedNonOK) {
+			if (statusLog.size() != fExpectedLoggedNonOK) {
 				StringBuffer msg= new StringBuffer("Expected number ("+fExpectedLoggedNonOK+") of ");
 				msg.append("non-OK status objects differs from actual ("+statusLog.size()+").\n");
 				Throwable cause= null;

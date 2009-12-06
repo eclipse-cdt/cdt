@@ -43,8 +43,7 @@ public class IndexTestBase extends BaseTestCase {
 				String name= "IndexTest_" + System.currentTimeMillis();
 				if (useCpp) {
 					result[0]= CProjectHelper.createCCProject(name, null, IPDOMManager.ID_NO_INDEXER);
-				}
-				else {
+				} else {
 					result[0]= CProjectHelper.createCProject(name, null, IPDOMManager.ID_NO_INDEXER);
 				}					
 				CProjectHelper.importSourcesFromPlugin(result[0], CTestPlugin.getDefault().getBundle(), importSource);

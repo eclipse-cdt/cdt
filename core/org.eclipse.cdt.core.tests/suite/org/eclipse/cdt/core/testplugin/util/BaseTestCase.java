@@ -123,7 +123,7 @@ public class BaseTestCase extends TestCase {
 		final List<IStatus> statusLog= Collections.synchronizedList(new ArrayList());
 		ILogListener logListener= new ILogListener() {
 			public void logging(IStatus status, String plugin) {
-				if(!status.isOK() && status.getSeverity() != IStatus.INFO) {
+				if (!status.isOK() && status.getSeverity() != IStatus.INFO) {
 					switch (status.getCode()) {
 					case IResourceStatus.NOT_FOUND_LOCAL:
 					case IResourceStatus.NO_LOCATION_LOCAL:
@@ -145,32 +145,32 @@ public class BaseTestCase extends TestCase {
 		try {
 			try {
 				super.runBare();
-			} catch(Throwable e) {
+			} catch (Throwable e) {
 				testThrowable=e;
 			}
 			
-			if(statusLog.size()!=fExpectedLoggedNonOK) {
+			if (statusLog.size()!=fExpectedLoggedNonOK) {
 				StringBuffer msg= new StringBuffer("Expected number ("+fExpectedLoggedNonOK+") of ");
 				msg.append("non-OK status objects differs from actual ("+statusLog.size()+").\n");
 				Throwable cause= null;
-				if(!statusLog.isEmpty()) {
-					for(IStatus status : statusLog) {
+				if (!statusLog.isEmpty()) {
+					for (IStatus status : statusLog) {
 						IStatus[] ss= {status};
-						ss= status instanceof MultiStatus ? ((MultiStatus)status).getChildren() : ss; 
-						for(IStatus s : ss) {
-							msg.append("\t"+s.getMessage()+" ");
+						ss= status instanceof MultiStatus ? ((MultiStatus) status).getChildren() : ss; 
+						for (IStatus s : ss) {
+							msg.append("\t" + s.getMessage()+" ");
 							
 							Throwable t= s.getException();
-							cause= (cause==null) ? t : cause;
-							if(t != null) {
-								msg.append(t.getMessage()!=null ? t.getMessage() : t.getClass().getCanonicalName());
+							cause= cause != null ? cause : t;
+							if (t != null) {
+								msg.append(t.getMessage() != null ? t.getMessage() : t.getClass().getCanonicalName());
 							}
 							
 							msg.append("\n");
 						}
 					}
 				}
-				cause= (cause==null) ? testThrowable : cause;
+				cause= cause != null ? cause : testThrowable;
 				AssertionFailedError afe= new AssertionFailedError(msg.toString());
 				afe.initCause(cause);
 				throw afe;
@@ -181,38 +181,36 @@ public class BaseTestCase extends TestCase {
 			}
 		}
 		
-		if(testThrowable!=null)
+		if (testThrowable!=null)
 			throw testThrowable;
 	}
 
     @Override
-	public void run( TestResult result ) {
+	public void run(TestResult result) {
     	if (!fExpectFailure || "true".equals(System.getProperty("SHOW_EXPECTED_FAILURES"))) {
     		super.run(result);
     		return;
     	}
     	
-        result.startTest( this );
+        result.startTest(this);
         
         TestResult r = new TestResult();
-        super.run( r );
+        super.run(r);
         if (r.failureCount() == 1) {
         	TestFailure failure= (TestFailure) r.failures().nextElement();
         	String msg= failure.exceptionMessage();
         	if (msg != null && msg.startsWith("Method \"" + getName() + "\"")) {
         		result.addFailure(this, new AssertionFailedError(msg));
         	}
-        }
-        else if( r.errorCount() == 0 && r.failureCount() == 0 )
-        {
+        } else if (r.errorCount() == 0 && r.failureCount() == 0) {
             String err = "Unexpected success of " + getName();
-            if( fBugnumber > 0 ) {
+            if (fBugnumber > 0) {
                 err += ", bug #" + fBugnumber; 
             }
-            result.addFailure( this, new AssertionFailedError( err ) );
+            result.addFailure(this, new AssertionFailedError(err));
         }
         
-        result.endTest( this );
+        result.endTest(this);
     }
     
     public void setExpectFailure(int bugnumber) {
@@ -253,12 +251,12 @@ public class BaseTestCase extends TestCase {
 		public void join() throws CoreException {
 			try {
 				synchronized(changed) {
-					while(!changed[0]) {
+					while (!changed[0]) {
 						changed.wait();
 					}
 				}
-			} catch(InterruptedException ie) {
-				throw new CoreException(CCorePlugin.createStatus("Interrupted", ie));
+			} catch (InterruptedException e) {
+				throw new CoreException(CCorePlugin.createStatus("Interrupted", e));
 			}
 		}
 		

@@ -101,8 +101,7 @@ public class IndexIncludeTest extends IndexTestBase {
 		try {
 			IIndexBinding[] result= fIndex.findBindings(Pattern.compile(".*included"), true, IndexFilter.ALL, NPM);
 			assertEquals(all ? 2 : 1, result.length);
-		}
-		finally {
+		} finally {
 			fIndex.releaseReadLock();
 		}
 	}
@@ -132,8 +131,7 @@ public class IndexIncludeTest extends IndexTestBase {
 
 			result= fIndex.findBindings("testInclude_cpp".toCharArray(), IndexFilter.ALL, NPM);
 			assertEquals(1, result.length);
-		}
-		finally {
+		} finally {
 			fIndex.releaseReadLock();
 		}
 	}			
@@ -159,8 +157,7 @@ public class IndexIncludeTest extends IndexTestBase {
 
 			checkInclude(includes[0], content, "user20061107.h", false);
 			checkInclude(includes[1], content, "system20061107.h", true);
-		}
-		finally {
+		} finally {
 			fIndex.releaseReadLock();
 		}
 	}
@@ -183,8 +180,7 @@ public class IndexIncludeTest extends IndexTestBase {
 			assertEquals(1, includes.length);
 
 			checkInclude(includes[0], content, "header20061107.h", false);
-		}
-		finally {
+		} finally {
 			fIndex.releaseReadLock();
 		}
 	}
@@ -205,8 +201,7 @@ public class IndexIncludeTest extends IndexTestBase {
 
 			assertFalse(includes[0].isActive());
 			checkInclude(includes[0], content, "inactive20070213.h", false);
-		}
-		finally {
+		} finally {
 			fIndex.releaseReadLock();
 		}
 	}
@@ -228,8 +223,7 @@ public class IndexIncludeTest extends IndexTestBase {
 			assertTrue(includes[0].isActive());
 			assertFalse(includes[0].isResolved());
 			checkInclude(includes[0], content, "unresolved20070213.h", false);
-		}
-		finally {
+		} finally {
 			fIndex.releaseReadLock();
 		}
 	}
@@ -259,8 +253,7 @@ public class IndexIncludeTest extends IndexTestBase {
 			IBinding[] bindings= fIndex.findBindings("ctx_20070404x".toCharArray(), IndexFilter.ALL, NPM);
 			assertEquals(1, bindings.length);
 			assertTrue(bindings[0] instanceof IVariable);
-		}
-		finally {
+		} finally {
 			fIndex.releaseReadLock();
 		}
 		
@@ -277,11 +270,9 @@ public class IndexIncludeTest extends IndexTestBase {
 			IBinding[] bindings= fIndex.findBindings("ctx_20070404y".toCharArray(), IndexFilter.ALL, NPM);
 			assertEquals(1, bindings.length);
 			assertTrue(bindings[0] instanceof IVariable);
-		}
-		finally {
+		} finally {
 			fIndex.releaseReadLock();
 		}
-		
 	}
 	
 	// #define SOME_MACRO1 ok_1_220358
@@ -308,8 +299,7 @@ public class IndexIncludeTest extends IndexTestBase {
 			IIndexBinding[] binding= fIndex.findBindings("ok_1_220358".toCharArray(), IndexFilter.ALL_DECLARED, NPM);
 			assertEquals(1, binding.length);
 			assertTrue(binding[0] instanceof IVariable);
-		}
-		finally {
+		} finally {
 			fIndex.releaseReadLock();
 		}
 		
@@ -321,12 +311,10 @@ public class IndexIncludeTest extends IndexTestBase {
 			IIndexBinding[] binding= fIndex.findBindings("ok_2_220358".toCharArray(), IndexFilter.ALL_DECLARED, NPM);
 			assertEquals(1, binding.length);
 			assertTrue(binding[0] instanceof IVariable);
-		}
-		finally {
+		} finally {
 			fIndex.releaseReadLock();
 		}		
 	}
-	
 	
 	// #include "resolved20070426.h"
 	public void testFixedContext() throws Exception {
@@ -355,8 +343,7 @@ public class IndexIncludeTest extends IndexTestBase {
 
 			assertEquals(s1.getFullPath().toString(), includes[0].getIncludedByLocation().getFullPath());
 			assertEquals(s2.getFullPath().toString(), includes[1].getIncludedByLocation().getFullPath());
-		}
-		finally {
+		} finally {
 			fIndex.releaseReadLock();
 		}
 		
@@ -374,8 +361,7 @@ public class IndexIncludeTest extends IndexTestBase {
 			IIndexInclude context= ifile.getParsedInContext();
 			assertNotNull(context);
 			assertEquals(s1.getFullPath().toString(), context.getIncludedByLocation().getFullPath());
-		}
-		finally {
+		} finally {
 			fIndex.releaseReadLock();
 		}
 
@@ -393,8 +379,7 @@ public class IndexIncludeTest extends IndexTestBase {
 			IIndexInclude context= ifile.getParsedInContext();
 			assertNotNull(context);
 			assertEquals(s1.getFullPath().toString(), context.getIncludedByLocation().getFullPath());
-		}
-		finally {
+		} finally {
 			fIndex.releaseReadLock();
 		}
 	}
@@ -500,8 +485,7 @@ public class IndexIncludeTest extends IndexTestBase {
 			assertFalse(includes[2].isActive());
 			assertFalse(includes[2].isResolved());
 			assertFalse(includes[2].isSystemInclude());
-		}
-		finally {
+		} finally {
 			fIndex.releaseReadLock();
 		}
 	}	
@@ -532,8 +516,7 @@ public class IndexIncludeTest extends IndexTestBase {
 			assertFalse(includes[1].isActive());
 			assertFalse(includes[1].isResolved());
 			assertTrue(includes[1].isSystemInclude());
-		}
-		finally {
+		} finally {
 			fIndex.releaseReadLock();
 		}
 	}	
@@ -568,8 +551,7 @@ public class IndexIncludeTest extends IndexTestBase {
 			assertFalse(includes[1].isActive());
 			assertFalse(includes[1].isResolved());
 			assertTrue(includes[1].isSystemInclude());
-		}
-		finally {
+		} finally {
 			fIndex.releaseReadLock();
 		}
 	}	
@@ -604,8 +586,7 @@ public class IndexIncludeTest extends IndexTestBase {
 			assertTrue(includes[1].isActive());
 			assertFalse(includes[1].isResolved());
 			assertFalse(includes[1].isSystemInclude());
-		}
-		finally {
+		} finally {
 			fIndex.releaseReadLock();
 		}
 	}	

@@ -442,4 +442,12 @@ public class ShortString implements IString {
 	}
 */
 
+	@Override
+	public String toString() {
+		try {
+			return getString();
+		} catch (CoreException e) {
+			return super.toString();
+		}
+	}
 }

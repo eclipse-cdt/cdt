@@ -434,7 +434,7 @@ public class Database {
 	}
 	
 	/**
-	 * Free an allocate block.
+	 * Free an allocated block.
 	 * 
 	 * @param offset
 	 */
@@ -444,9 +444,10 @@ public class Database {
 		long block = offset - BLOCK_HEADER_SIZE;
 		Chunk chunk = getChunk(block);
 		int blocksize = - chunk.getShort(block);
-		if (blocksize < 0)
+		if (blocksize < 0) {
 			// already freed
 			throw new CoreException(new Status(IStatus.ERROR, CCorePlugin.PLUGIN_ID, 0, "Already Freed", new Exception())); //$NON-NLS-1$
+		}
 		addBlock(chunk, blocksize, block);
 		freed += blocksize;
 	}

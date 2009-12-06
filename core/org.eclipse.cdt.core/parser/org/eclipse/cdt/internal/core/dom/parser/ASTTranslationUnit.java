@@ -54,7 +54,7 @@ public abstract class ASTTranslationUnit extends ASTNode implements IASTTranslat
 
     private IASTDeclaration[] fAllDeclarations = null;
     private IASTDeclaration[] fActiveDeclarations= null;
-	private int fLastDeclaration=-1;
+	private int fLastDeclaration= -1;
 
 	protected ILocationResolver fLocationResolver;
 	private IIndex fIndex;
@@ -72,7 +72,7 @@ public abstract class ASTTranslationUnit extends ASTNode implements IASTTranslat
 		if (d != null) {
 			d.setParent(this);
 			d.setPropertyInParent(OWNED_DECLARATION);
-			fAllDeclarations = (IASTDeclaration[]) ArrayUtil.append( IASTDeclaration.class, fAllDeclarations, ++fLastDeclaration, d);
+			fAllDeclarations = (IASTDeclaration[]) ArrayUtil.append(IASTDeclaration.class, fAllDeclarations, ++fLastDeclaration, d);
 			fActiveDeclarations= null;
 		}
 	}
@@ -253,12 +253,12 @@ public abstract class ASTTranslationUnit extends ASTNode implements IASTTranslat
 	}
 	
 	 @Override
-	public final boolean accept( ASTVisitor action ){
+	public final boolean accept(ASTVisitor action) {
 		if (action.shouldVisitTranslationUnit) {
 			switch (action.visit(this)) {
-	            case ASTVisitor.PROCESS_ABORT : return false;
-	            case ASTVisitor.PROCESS_SKIP  : return true;
-	            default : break;
+	            case ASTVisitor.PROCESS_ABORT: return false;
+	            case ASTVisitor.PROCESS_SKIP: return true;
+	            default: break;
 	        }
 		}
 		IASTDeclaration[] decls = getDeclarations(action.includeInactiveNodes);
@@ -275,7 +275,7 @@ public abstract class ASTTranslationUnit extends ASTNode implements IASTTranslat
 	public final IASTFileLocation flattenLocationsToFile(IASTNodeLocation[] nodeLocations) {
         if (fLocationResolver == null)
             return null;
-        return fLocationResolver.flattenLocations( nodeLocations );
+        return fLocationResolver.flattenLocations(nodeLocations);
     }
 
     public final IDependencyTree getDependencyTree() {
@@ -287,7 +287,7 @@ public abstract class ASTTranslationUnit extends ASTNode implements IASTTranslat
 	public final String getContainingFilename(int offset) {
 		if (fLocationResolver == null)
 			return EMPTY_STRING;
-		return fLocationResolver.getContainingFilePath( offset );
+		return fLocationResolver.getContainingFilePath(offset);
 	}
 
     public final IIndex getIndex() {

@@ -170,7 +170,6 @@ public abstract class PDOMNode implements IInternalPDOMNode {
 	 * Delete this PDOMNode, make sure you are actually the owner of this record!
 	 * @param linkage 
 	 * @throws CoreException 
-	 * @throws CoreException 
 	 */
 	public void delete(PDOMLinkage linkage) throws CoreException {
 		getDB().free(record);

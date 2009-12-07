@@ -359,7 +359,11 @@ public class EditorUtility {
 						// crecoskie test
 						// TODO FIXME
 						// include entries don't handle URIs yet, so fake it out for now
-						if (includeReferences[j].isOnIncludeEntry(URIUtil.toPath(locationURI))) {
+						IPath path = URIUtil.toPath(locationURI);
+						if(path == null)
+							path = new Path(locationURI.getPath());
+						
+						if (includeReferences[j].isOnIncludeEntry(path)) {
 							context = projects[i];
 							break outerFor;
 						}

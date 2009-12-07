@@ -332,7 +332,7 @@ public abstract class PDOMBinding extends PDOMNamedNode implements IPDOMBinding 
 	}
 
 	public boolean hasDefinition() throws CoreException {
-		return getFirstDefinition() != null;
+		return getDB().getRecPtr(record + FIRST_DEF_OFFSET) != 0;
 	}
 
 	/**

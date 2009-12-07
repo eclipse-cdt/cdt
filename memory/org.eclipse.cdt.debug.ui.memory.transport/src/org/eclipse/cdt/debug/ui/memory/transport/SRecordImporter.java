@@ -77,11 +77,12 @@ public class SRecordImporter implements IMemoryImporter {
 			{
 				fProperties.setProperty(TRANSFER_FILE, fFileText.getText());
 				fProperties.setProperty(TRANSFER_START, fStartText.getText());
-				fProperties.setProperty(TRANSFER_SCROLL_TO_START, fScrollToStart.toString());
+				fProperties.setProperty(TRANSFER_SCROLL_TO_START, Boolean.toString(fScrollToBeginningOnImportComplete.getSelection()));
 				fProperties.setProperty(TRANSFER_CUSTOM_START_ADDRESS, "" + fComboRestoreToThisAddress.getSelection()); //$NON-NLS-1$
 				
 				fStartAddress = getStartAddress();
 				fInputFile = getFile();
+				fScrollToStart = getScrollToStart();
 				
 				super.dispose();
 			}
@@ -157,7 +158,6 @@ public class SRecordImporter implements IMemoryImporter {
 		fileButton.setLayoutData(data);
 		
 		fFileText.setText(properties.getProperty(TRANSFER_FILE, "")); //$NON-NLS-1$
-		fScrollToStart = Boolean.valueOf(properties.getProperty(TRANSFER_SCROLL_TO_START, Boolean.TRUE.toString())); 
 		try
 		{
 			fStartText.setText(properties.getProperty(TRANSFER_START));
@@ -226,6 +226,8 @@ public class SRecordImporter implements IMemoryImporter {
 		data = new FormData();
 		data.top = new FormAttachment(fileButton);
 		fScrollToBeginningOnImportComplete.setLayoutData(data);
+		final boolean scrollToStart = Boolean.valueOf(properties.getProperty(TRANSFER_SCROLL_TO_START, Boolean.TRUE.toString())).booleanValue();
+		fScrollToBeginningOnImportComplete.setSelection(scrollToStart);
 		
 		composite.pack();
 		parent.pack();
@@ -429,7 +431,7 @@ public class SRecordImporter implements IMemoryImporter {
 					reader.close();
 					monitor.done();
 					
-					if(Boolean.parseBoolean(fProperties.getProperty(TRANSFER_SCROLL_TO_START, Boolean.FALSE.toString())))  
+					if (fScrollToStart)  
 						fParentDialog.scrollRenderings(scrollToAddress);
 					
 				} catch (IOException ex) {

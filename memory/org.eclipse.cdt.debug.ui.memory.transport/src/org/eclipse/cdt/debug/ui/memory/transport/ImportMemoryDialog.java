@@ -12,6 +12,7 @@
 package org.eclipse.cdt.debug.ui.memory.transport;
 
 import java.math.BigInteger;
+import java.text.MessageFormat;
 import java.util.Properties;
 import java.util.Vector;
 
@@ -25,7 +26,6 @@ import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.model.IMemoryBlock;
-import org.eclipse.debug.internal.ui.views.memory.RenderingViewPane;
 import org.eclipse.debug.ui.memory.IMemoryRendering;
 import org.eclipse.debug.ui.memory.IMemoryRenderingContainer;
 import org.eclipse.debug.ui.memory.IMemoryRenderingSite;
@@ -47,7 +47,6 @@ import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.dialogs.SelectionDialog;
 import org.eclipse.ui.progress.UIJob;
 
-@SuppressWarnings("restriction")
 public class ImportMemoryDialog extends SelectionDialog 
 {
 
@@ -81,23 +80,15 @@ public class ImportMemoryDialog extends SelectionDialog
 	{
 		UIJob job = new UIJob("repositionRenderings"){ //$NON-NLS-1$
 			public IStatus runInUIThread(IProgressMonitor monitor) {
-				final IMemoryRenderingContainer containers[] = fMemoryView.getMemoryRenderingContainers();
-				for(int i = 0; i < containers.length; i++)
-				{
-					if(containers[i] instanceof RenderingViewPane)
-					{
-						IMemoryRendering rendering = containers[i].getActiveRendering();
-						
-						if(rendering instanceof IRepositionableMemoryRendering)
-						{
-							try 
-							{
-								((IRepositionableMemoryRendering) rendering).goToAddress(address);
-							} 
-							catch (DebugException e) 
-							{
-								// do nothing
-							}
+				for (IMemoryRenderingContainer container : fMemoryView.getMemoryRenderingContainers()) {
+					IMemoryRendering rendering = container.getActiveRendering();
+					if(rendering instanceof IRepositionableMemoryRendering)	{
+						try  {
+							((IRepositionableMemoryRendering) rendering).goToAddress(address);
+						} 
+						catch (DebugException ex) {
+							MemoryTransportPlugin.getDefault().getLog().log(new Status(IStatus.ERROR, MemoryTransportPlugin.getUniqueIdentifier(),
+									DebugException.REQUEST_FAILED, MessageFormat.format(Messages.getString("ImportMemoryDialog.ErrRepositioningRendering"), address.toString(16)), ex));  //$NON-NLS-1$
 						}
 					}
 				}

@@ -53,10 +53,6 @@ public class PlainTextImporter implements IMemoryImporter {
 	
 	private Text fStartText;
 	private Text fFileText;
-	
-//	private Button fComboRestoreToThisAddress;
-//	private Button fComboRestoreToFileAddress;
-	
 	private Button fScrollToBeginningOnImportComplete;
 	
 	private IMemoryBlock fMemoryBlock;
@@ -81,10 +77,11 @@ public class PlainTextImporter implements IMemoryImporter {
 			{
 				fProperties.setProperty(TRANSFER_FILE, fFileText.getText());
 				fProperties.setProperty(TRANSFER_START, fStartText.getText());
-				fProperties.setProperty(TRANSFER_SCROLL_TO_START, fScrollToStart.toString());
+				fProperties.setProperty(TRANSFER_SCROLL_TO_START, Boolean.toString(fScrollToBeginningOnImportComplete.getSelection()));
 				
 				fStartAddress = getStartAddress();
 				fInputFile = getFile();
+				fScrollToStart = getScrollToStart();
 				
 				super.dispose();
 			}
@@ -142,7 +139,6 @@ public class PlainTextImporter implements IMemoryImporter {
 		fileButton.setLayoutData(data);
 		
 		fFileText.setText(properties.getProperty(TRANSFER_FILE, "")); //$NON-NLS-1$
-		fScrollToStart = Boolean.valueOf(properties.getProperty(TRANSFER_SCROLL_TO_START, Boolean.TRUE.toString()));
 		try
 		{
 			fStartText.setText(properties.getProperty(TRANSFER_START));
@@ -211,6 +207,8 @@ public class PlainTextImporter implements IMemoryImporter {
 		data = new FormData();
 		data.top = new FormAttachment(fileButton);
 		fScrollToBeginningOnImportComplete.setLayoutData(data);
+		final boolean scrollToStart = Boolean.valueOf(properties.getProperty(TRANSFER_SCROLL_TO_START, Boolean.TRUE.toString())).booleanValue();
+		fScrollToBeginningOnImportComplete.setSelection(scrollToStart);
 		
 		composite.pack();
 		parent.pack();
@@ -344,7 +342,7 @@ public class PlainTextImporter implements IMemoryImporter {
 					reader.close();
 					monitor.done();
 					
-					if(Boolean.parseBoolean(fProperties.getProperty(TRANSFER_SCROLL_TO_START, Boolean.FALSE.toString())))
+					if (fScrollToStart)
 						fParentDialog.scrollRenderings(scrollToAddress);
 				} catch (IOException ex) {
 					MemoryTransportPlugin.getDefault().getLog().log(new Status(IStatus.ERROR, MemoryTransportPlugin.getUniqueIdentifier(),

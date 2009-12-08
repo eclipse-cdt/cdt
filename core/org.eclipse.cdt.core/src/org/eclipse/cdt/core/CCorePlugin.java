@@ -21,8 +21,6 @@ import java.util.HashSet;
 import java.util.MissingResourceException;
 import java.util.ResourceBundle;
 
-import com.ibm.icu.text.MessageFormat;
-
 import org.eclipse.cdt.core.cdtvariables.ICdtVariableManager;
 import org.eclipse.cdt.core.cdtvariables.IUserVarSupplier;
 import org.eclipse.cdt.core.dom.IPDOMManager;
@@ -55,6 +53,7 @@ import org.eclipse.cdt.internal.core.resources.ResourceLookup;
 import org.eclipse.cdt.internal.core.settings.model.CProjectDescriptionManager;
 import org.eclipse.cdt.internal.core.settings.model.ExceptionFactory;
 import org.eclipse.cdt.internal.errorparsers.ErrorParserExtensionManager;
+import org.eclipse.core.resources.ICommand;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IProjectDescription;
 import org.eclipse.core.resources.IResource;
@@ -65,6 +64,7 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExtension;
 import org.eclipse.core.runtime.IExtensionPoint;
+import org.eclipse.core.runtime.IExtensionRegistry;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.NullProgressMonitor;
@@ -72,11 +72,14 @@ import org.eclipse.core.runtime.OperationCanceledException;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Plugin;
 import org.eclipse.core.runtime.Preferences;
+import org.eclipse.core.runtime.QualifiedName;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.SubProgressMonitor;
 import org.eclipse.core.runtime.content.IContentType;
 import org.eclipse.core.runtime.jobs.Job;
 import org.osgi.framework.BundleContext;
+
+import com.ibm.icu.text.MessageFormat;
 
 /**
  * CCorePlugin is the life-cycle owner of the core plug-in, and starting point for access to many core APIs.
@@ -131,6 +134,10 @@ public class CCorePlugin extends Plugin {
 
 	public static final String DEFAULT_PROVIDER_ID = CCorePlugin.PLUGIN_ID + ".defaultConfigDataProvider"; //$NON-NLS-1$
 
+	
+	public final static String SCANNER_INFO_PROVIDER2_NAME = "ScannerInfoProvider2"; //$NON-NLS-1$
+	public final static String SCANNER_INFO_PROVIDER2 = PLUGIN_ID + "." + SCANNER_INFO_PROVIDER2_NAME; //$NON-NLS-1$ 
+	
 	/**
 	 * Name of the extension point for contributing a source code formatter
 	 */
@@ -910,7 +917,43 @@ public class CCorePlugin extends Plugin {
 	}
 
 	public IScannerInfoProvider getScannerInfoProvider(IProject project) {
-		return fNewCProjectDescriptionManager.getScannerInfoProviderProxy(project);
+		IScannerInfoProvider provider = null;
+		try {
+			// Look up in session property for previously created provider
+			QualifiedName scannerInfoProviderName = new QualifiedName(PLUGIN_ID, SCANNER_INFO_PROVIDER2_NAME);
+			provider = (IScannerInfoProvider)project.getSessionProperty(scannerInfoProviderName);
+			if (provider != null)
+				return provider;
+			
+			// Next search the extension registry to see if a provider is registered with a build command
+			IExtensionRegistry registry = Platform.getExtensionRegistry();
+			IExtensionPoint point = registry.getExtensionPoint(SCANNER_INFO_PROVIDER2);
+			if (point != null) {
+				IExtension[] exts = point.getExtensions();
+				for (IExtension ext : exts) {
+					IConfigurationElement[] elems = ext.getConfigurationElements();
+					for (IConfigurationElement elem : elems) {
+						String builder = elem.getAttribute("builder"); //$NON-NLS-1$
+						if (builder != null) {
+							IProjectDescription desc = project.getDescription();
+							ICommand[] commands = desc.getBuildSpec();
+							for (ICommand command : commands)
+								if (builder.equals(command.getBuilderName()))
+									provider = (IScannerInfoProvider)elem.createExecutableExtension("class"); //$NON-NLS-1$
+						}
+					}
+				}
+			}
+			
+			// Default to the proxy
+			if (provider == null)
+				provider = fNewCProjectDescriptionManager.getScannerInfoProviderProxy(project);
+			project.setSessionProperty(scannerInfoProviderName, provider);
+		} catch (CoreException e) {
+			log(e);
+ 		}
+		
+		return provider;
 	}
 	
 	/**

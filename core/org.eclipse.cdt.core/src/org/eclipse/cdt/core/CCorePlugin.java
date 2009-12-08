@@ -134,9 +134,8 @@ public class CCorePlugin extends Plugin {
 
 	public static final String DEFAULT_PROVIDER_ID = CCorePlugin.PLUGIN_ID + ".defaultConfigDataProvider"; //$NON-NLS-1$
 
-	
-	public final static String SCANNER_INFO_PROVIDER2_NAME = "ScannerInfoProvider2"; //$NON-NLS-1$
-	public final static String SCANNER_INFO_PROVIDER2 = PLUGIN_ID + "." + SCANNER_INFO_PROVIDER2_NAME; //$NON-NLS-1$ 
+	private final static String SCANNER_INFO_PROVIDER2_NAME = "ScannerInfoProvider2"; //$NON-NLS-1$
+	private final static String SCANNER_INFO_PROVIDER2 = PLUGIN_ID + "." + SCANNER_INFO_PROVIDER2_NAME; //$NON-NLS-1$ 
 	
 	/**
 	 * Name of the extension point for contributing a source code formatter

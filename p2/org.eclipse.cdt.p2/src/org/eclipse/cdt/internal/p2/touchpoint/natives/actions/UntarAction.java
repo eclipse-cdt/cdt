@@ -92,7 +92,7 @@ public class UntarAction extends ProvisioningAction {
 		IInstallableUnit iu = (IInstallableUnit) parameters.get(ActionConstants.PARM_IU);
 		Profile profile = (Profile) parameters.get(ActionConstants.PARM_PROFILE);
 
-		if (source.equals(ActionConstants.PARM_ARTIFACT)) {
+		if (source.equals(ActionConstants.PARM_AT_ARTIFACT)) {
 			//TODO: fix wherever this occurs -- investigate as this is probably not desired
 			if (iu.getArtifacts() == null || iu.getArtifacts().length == 0)
 				return Status.OK_STATUS;

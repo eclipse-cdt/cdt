@@ -49,7 +49,9 @@ class Messages extends NLS {
 		ProjectSettingsWizardPage_deselectAll,
 		ProjectSettingsWizardPage_selectProject,
 		ProjectSettingsWizardPage_browse,
-		ProjectSettingsWizardPage_selectConfiguration;
+		ProjectSettingsWizardPage_noOpenProjects,
+		ProjectSettingsWizardPage_selectConfiguration,
+		ProjectSettingsWizardPage_active;
 	
 	// messages for settings processors
 	public static String

@@ -16,6 +16,7 @@ import java.util.Collections;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.accessibility.AccessibleAdapter;
 import org.eclipse.swt.accessibility.AccessibleEvent;
+import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.TableColumn;
 
 import org.eclipse.cdt.core.model.util.CDTListComparator;
@@ -91,5 +92,13 @@ public class SymbolTab extends AbstractLangsListTab {
 		}		
 		updateLbs(lb1, lb2);
 		updateButtons();
+	}
+	
+	
+	@Override
+	public void createControls(final Composite parent) {
+		super.createControls(parent);
+		showBIButton.setSelection(true);
+		ImportExportWizardButtons.addWizardLaunchButtons(usercomp, page.getElement());
 	}
 }

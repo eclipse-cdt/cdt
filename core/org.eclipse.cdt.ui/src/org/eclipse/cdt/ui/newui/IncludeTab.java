@@ -12,6 +12,7 @@
 package org.eclipse.cdt.ui.newui;
 
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.TableColumn;
 
 import org.eclipse.cdt.core.settings.model.CIncludePathEntry;
@@ -65,4 +66,11 @@ public void additionalTableSet() {
 	
 	@Override
 	public int getKind() { return ICSettingEntry.INCLUDE_PATH; }
+	
+	
+	@Override
+	public void createControls(final Composite parent) {
+		super.createControls(parent);
+		ImportExportWizardButtons.addWizardLaunchButtons(usercomp, page.getElement());
+	}
 }

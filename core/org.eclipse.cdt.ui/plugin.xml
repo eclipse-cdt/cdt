@@ -3161,7 +3161,7 @@
      <wizard
            category="org.eclipse.cdt.ui.exportWizardCategory"
            class="org.eclipse.cdt.internal.ui.wizards.settingswizards.ProjectSettingsExportWizard"
-           icon="icons/obj16/hfolder_obj.gif"
+           icon="icons/obj16/export_settings_wiz.gif"
            id="org.eclipse.cdt.ui.projectSettingsExportWizard"
            name="%projectSettingsIndexExportWizard.name">
         <selection
@@ -3289,7 +3289,7 @@
       <wizard
             category="org.eclipse.cdt.ui.importWizardCategory"
             class="org.eclipse.cdt.internal.ui.wizards.settingswizards.ProjectSettingsImportWizard"
-            icon="icons/obj16/hfolder_obj.gif"
+            icon="icons/obj16/import_settings_wiz.gif"
             id="org.eclipse.cdt.ui.projectSettingsImportWizard"
             name="%projectSettingsIndexExportWizard.name">
          <selection

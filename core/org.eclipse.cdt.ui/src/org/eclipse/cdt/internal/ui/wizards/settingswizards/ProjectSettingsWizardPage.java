@@ -13,6 +13,7 @@ package org.eclipse.cdt.internal.ui.wizards.settingswizards;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 import org.eclipse.core.resources.IProject;
@@ -36,6 +37,7 @@ import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.FileDialog;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
@@ -52,6 +54,7 @@ import org.eclipse.cdt.core.settings.model.ICProjectDescription;
 import org.eclipse.cdt.ui.CElementLabelProvider;
 import org.eclipse.cdt.ui.CUIPlugin;
 
+import org.eclipse.cdt.internal.ui.CPluginImages;
 import org.eclipse.cdt.internal.ui.viewsupport.ListContentProvider;
 import org.eclipse.cdt.internal.ui.wizards.settingswizards.IProjectSettingsWizardPageStrategy.MessageType;
 
@@ -163,6 +166,8 @@ abstract public class ProjectSettingsWizardPage extends WizardPage implements IP
 	public void setDisplayedSettingsProcessors(List<ISettingsProcessor> processors) {
 		settingsViewer.setInput(processors);
 		settingsViewer.refresh();
+		settingsViewer.setAllChecked(true);
+		updateWidgetEnablements();
 	}
 	
 	
@@ -225,6 +230,11 @@ abstract public class ProjectSettingsWizardPage extends WizardPage implements IP
 		projectViewer.setContentProvider(new ListContentProvider());
 		projectViewer.setLabelProvider(new CElementLabelProvider());
 		List<ICProject> openProjects = getAllOpenCProjects();
+		Collections.sort(openProjects, new Comparator<ICProject>() {
+			public int compare(ICProject o1, ICProject o2) {
+				return o1.getProject().getName().compareTo(o2.getProject().getName());
+			}
+		});
 		projectViewer.setInput(openProjects);
 		
 		final Table configTable = new Table(projectSelectionGroup, SWT.SINGLE | SWT.BORDER);
@@ -233,20 +243,28 @@ abstract public class ProjectSettingsWizardPage extends WizardPage implements IP
 		final TableViewer configViewer = new TableViewer(configTable);
 		configViewer.setContentProvider(new ListContentProvider());
 		configViewer.setLabelProvider(new LabelProvider() { 
+			@Override public Image getImage(Object element) {
+				return CPluginImages.get(CPluginImages.IMG_OBJS_CONFIG);
+			}
 			@Override public String getText(Object element) {
-				return ((ICConfigurationDescription)element).getName();
+				ICConfigurationDescription config = (ICConfigurationDescription)element;
+				String label = config.getName();
+				if(config.isActive())
+					label += " (" + Messages.ProjectSettingsWizardPage_active + ")"; //$NON-NLS-1$ //$NON-NLS-2$
+				return label;
 			}
 		});
+		
 		
 		// TODO what if nothing is selected?
 		projectTable.addSelectionListener(new SelectionAdapter() {
 			@Override public void widgetSelected(SelectionEvent e) {
 				TableItem[] items = projectTable.getSelection();
 				selectedProject = (ICProject)items[0].getData(); // its a single select so this is ok
-				selectedConfiguration = null;
 				configViewer.setInput(getConfigurations(selectedProject));
 				configViewer.refresh();
-				updateWidgetEnablements();
+				configTable.select(0);
+				configTable.notifyListeners(SWT.Selection, new Event());
 			}
 		});
 		
@@ -259,6 +277,15 @@ abstract public class ProjectSettingsWizardPage extends WizardPage implements IP
 			}
 		});
 		
+		if(openProjects.isEmpty()) {
+			setErrorMessage(Messages.ProjectSettingsWizardPage_noOpenProjects);
+		}
+		
+		
+		if((initialProject == null || !initialProject.isOpen()) && !openProjects.isEmpty()) {
+			initialProject = openProjects.get(0).getProject();
+		}
+			
 		if(initialProject != null) {
 			String initialProjectName = initialProject.getName();
 			for(int i = 0; i < openProjects.size(); i++) {
@@ -267,7 +294,9 @@ abstract public class ProjectSettingsWizardPage extends WizardPage implements IP
 					projectTable.select(i);
 					configViewer.setInput(getConfigurations(tableProject));
 					configViewer.refresh();
+					configTable.select(0);
 					selectedProject = tableProject;
+					selectedConfiguration = (ICConfigurationDescription)configTable.getSelection()[0].getData();
 					break;
 				}
 			}
@@ -330,6 +359,7 @@ abstract public class ProjectSettingsWizardPage extends WizardPage implements IP
 		
 		settingsViewer.setLabelProvider(settingsProcessorLabelProvider); 
 		settingsViewer.setInput(processors);
+		settingsViewer.setAllChecked(true);
 		
 		
 		Composite buttonComposite = new Composite(settingsSelectionGroup, SWT.NONE);

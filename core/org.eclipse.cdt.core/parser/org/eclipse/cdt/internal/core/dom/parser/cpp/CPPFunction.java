@@ -30,7 +30,6 @@ import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
 import org.eclipse.cdt.core.dom.ast.IASTTypeId;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.IFunctionType;
-import org.eclipse.cdt.core.dom.ast.IParameter;
 import org.eclipse.cdt.core.dom.ast.IProblemBinding;
 import org.eclipse.cdt.core.dom.ast.IScope;
 import org.eclipse.cdt.core.dom.ast.IType;
@@ -41,6 +40,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPBlockScope;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassScope;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunction;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunctionType;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPParameter;
 import org.eclipse.cdt.core.parser.util.ArrayUtil;
 import org.eclipse.cdt.internal.core.dom.Linkage;
 import org.eclipse.cdt.internal.core.dom.parser.ASTInternal;
@@ -60,7 +60,7 @@ public class CPPFunction extends PlatformObject implements ICPPFunction, ICPPInt
             super(node, id, arg);
         }
 
-        public IParameter[] getParameters() throws DOMException {
+        public ICPPParameter[] getParameters() throws DOMException {
             throw new DOMException(this);
         }
 
@@ -209,21 +209,21 @@ public class CPPFunction extends PlatformObject implements ICPPFunction, ICPPInt
 		return ASTQueries.findTypeRelevantDeclarator((IASTDeclarator) node);
 	}
 
-	public IParameter[] getParameters() {
+	public ICPPParameter[] getParameters() {
 	    IASTStandardFunctionDeclarator dtor = getPreferredDtor();
 	    if (dtor == null) {
 			return CPPBuiltinParameter.createParameterList(getType());
 	    }
 		IASTParameterDeclaration[] params = dtor.getParameters();
 		int size = params.length;
-		IParameter[] result = new IParameter[size];
+		ICPPParameter[] result = new ICPPParameter[size];
 		if (size > 0) {
 			for (int i = 0; i < size; i++) {
 				IASTParameterDeclaration p = params[i];
 				final IASTName name = getParamName(p);
 				final IBinding binding= name.resolveBinding();
-				if (binding instanceof IParameter) {
-					result[i]= (IParameter) binding;
+				if (binding instanceof ICPPParameter) {
+					result[i]= (ICPPParameter) binding;
 				} else {
 					result[i] = new CPPParameter.CPPParameterProblem(p, IProblemBinding.SEMANTIC_INVALID_TYPE,
 							name.toCharArray());

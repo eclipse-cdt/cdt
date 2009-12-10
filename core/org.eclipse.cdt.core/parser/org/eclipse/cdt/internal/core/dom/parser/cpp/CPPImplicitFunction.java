@@ -12,9 +12,9 @@
 package org.eclipse.cdt.internal.core.dom.parser.cpp;
 
 import org.eclipse.cdt.core.dom.ast.IBinding;
-import org.eclipse.cdt.core.dom.ast.IParameter;
 import org.eclipse.cdt.core.dom.ast.IScope;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunctionType;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPParameter;
 
 /**
  * The CPPImplicitFunction is used to represent implicit functions that exist on the translation
@@ -24,13 +24,13 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunctionType;
  */
 public class CPPImplicitFunction extends CPPFunction {
 
-	private IParameter[] parms=null;
+	private ICPPParameter[] parms=null;
 	private IScope scope=null;
     private ICPPFunctionType functionType=null;
 	private boolean takesVarArgs=false;
 	private char[] name=null;
 	
-	public CPPImplicitFunction(char[] name, IScope scope, ICPPFunctionType type, IParameter[] parms, boolean takesVarArgs) {
+	public CPPImplicitFunction(char[] name, IScope scope, ICPPFunctionType type, ICPPParameter[] parms, boolean takesVarArgs) {
         super( null );
         this.name=name;
 		this.scope=scope;
@@ -40,7 +40,7 @@ public class CPPImplicitFunction extends CPPFunction {
 	}
 
     @Override
-	public IParameter [] getParameters() {
+	public ICPPParameter [] getParameters() {
         return parms;
     }
     

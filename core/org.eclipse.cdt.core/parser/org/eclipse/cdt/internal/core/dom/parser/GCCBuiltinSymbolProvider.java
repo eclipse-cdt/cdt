@@ -22,6 +22,7 @@ import org.eclipse.cdt.core.dom.ast.IScope;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.IBasicType.Kind;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunctionType;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPParameter;
 import org.eclipse.cdt.core.dom.parser.IBuiltinBindingsProvider;
 import org.eclipse.cdt.core.parser.ParserLanguage;
 import org.eclipse.cdt.core.parser.util.ArrayUtil;
@@ -438,7 +439,7 @@ public class GCCBuiltinSymbolProvider implements IBuiltinBindingsProvider {
 			IType[] parms = new IType[1];
 			parms[0] = cpp_va_list;
 			functionType = new CPPFunctionType(cpp_void_p, parms);
-			IParameter[] theParms = new IParameter[1];
+			ICPPParameter[] theParms = new ICPPParameter[1];
 			theParms[0] = new CPPBuiltinParameter(parms[0]);
 			temp = new CPPImplicitFunction(__BUILTIN_VA_START, scope, functionType, theParms, true);
 		}
@@ -461,7 +462,7 @@ public class GCCBuiltinSymbolProvider implements IBuiltinBindingsProvider {
 			IType[] parms = new IType[1];
 			parms[0] = cpp_va_list;
 			functionType = new CPPFunctionType(cpp_void, parms);
-			IParameter[] theParms = new IParameter[1];
+			ICPPParameter[] theParms = new ICPPParameter[1];
 			theParms[0] = new CPPBuiltinParameter(parms[0]);
 			temp = new CPPImplicitFunction(__BUILTIN_VA_END, scope, functionType, theParms, false);
 		}
@@ -487,7 +488,7 @@ public class GCCBuiltinSymbolProvider implements IBuiltinBindingsProvider {
 			parms[0] = cpp_va_list;
 			parms[1] = cpp_va_list;
 			functionType = new CPPFunctionType(cpp_void, parms);
-			IParameter[] theParms = new IParameter[2];
+			ICPPParameter[] theParms = new ICPPParameter[2];
 			theParms[0] = new CPPBuiltinParameter(parms[0]);
 			theParms[1] = theParms[0];
 			temp = new CPPImplicitFunction(__BUILTIN_VA_COPY, scope, functionType, theParms, false);
@@ -514,7 +515,7 @@ public class GCCBuiltinSymbolProvider implements IBuiltinBindingsProvider {
 			parms[0] = cpp_long_int;
 			parms[1] = cpp_long_int;
 			functionType = new CPPFunctionType(cpp_long_int, parms);
-			IParameter[] theParms = new IParameter[2];
+			ICPPParameter[] theParms = new ICPPParameter[2];
 			theParms[0] = new CPPBuiltinParameter(parms[0]);
 			theParms[1] = theParms[0];
 			temp = new CPPImplicitFunction(__BUILTIN_EXPECT, scope, functionType, theParms, false);
@@ -542,7 +543,7 @@ public class GCCBuiltinSymbolProvider implements IBuiltinBindingsProvider {
 			IType[] parms = new IType[1];
 			parms[0] = cpp_unsigned_int;
 			functionType = new CPPFunctionType(cpp_void_p, parms);
-			IParameter[] theParms = new IParameter[1];
+			ICPPParameter[] theParms = new ICPPParameter[1];
 			theParms[0] = new CPPBuiltinParameter(parms[0]);
 			temp = new CPPImplicitFunction(__BUILTIN_FRAME_ADDRESS, scope, functionType, theParms, false);
 			bindings = (IBinding[]) ArrayUtil.append(IBinding.class, bindings, temp);
@@ -567,7 +568,7 @@ public class GCCBuiltinSymbolProvider implements IBuiltinBindingsProvider {
 			IType[] parms = new IType[1];
 			parms[0] = cpp_const_void_p;
 			functionType = new CPPFunctionType(cpp_void, parms);
-			IParameter[] theParms = new IParameter[1];
+			ICPPParameter[] theParms = new ICPPParameter[1];
 			theParms[0] = new CPPBuiltinParameter(parms[0]);
 			temp = new CPPImplicitFunction(__BUILTIN_PREFETCH, scope, functionType, theParms, true);
 		}
@@ -590,7 +591,7 @@ public class GCCBuiltinSymbolProvider implements IBuiltinBindingsProvider {
 			IType[] parms = new IType[1];
 			parms[0] = cpp_void;
 			functionType = new CPPFunctionType(cpp_double, parms);
-			IParameter[] theParms = new IParameter[1];
+			ICPPParameter[] theParms = new ICPPParameter[1];
 			theParms[0] = new CPPBuiltinParameter(parms[0]);
 			temp = new CPPImplicitFunction(__BUILTIN_HUGE_VAL, scope, functionType, theParms, false);
 		}
@@ -611,7 +612,7 @@ public class GCCBuiltinSymbolProvider implements IBuiltinBindingsProvider {
 			IType[] parms = new IType[1];
 			parms[0] = cpp_void;
 			functionType = new CPPFunctionType(cpp_float, parms);
-			IParameter[] theParms = new IParameter[1];
+			ICPPParameter[] theParms = new ICPPParameter[1];
 			theParms[0] = new CPPBuiltinParameter(parms[0]);
 			temp = new CPPImplicitFunction(__BUILTIN_HUGE_VALF, scope, functionType, theParms, false);
 		}
@@ -632,7 +633,7 @@ public class GCCBuiltinSymbolProvider implements IBuiltinBindingsProvider {
 			IType[] parms = new IType[1];
 			parms[0] = cpp_void;
 			functionType = new CPPFunctionType(cpp_long_double, parms);
-			IParameter[] theParms = new IParameter[1];
+			ICPPParameter[] theParms = new ICPPParameter[1];
 			theParms[0] = new CPPBuiltinParameter(parms[0]);
 			temp = new CPPImplicitFunction(__BUILTIN_HUGE_VALL, scope, functionType, theParms, false);
 		}
@@ -656,7 +657,7 @@ public class GCCBuiltinSymbolProvider implements IBuiltinBindingsProvider {
 			IType[] parms = new IType[1];
 			parms[0] = cpp_void;
 			functionType = new CPPFunctionType(cpp_double, parms);
-			IParameter[] theParms = new IParameter[1];
+			ICPPParameter[] theParms = new ICPPParameter[1];
 			theParms[0] = new CPPBuiltinParameter(parms[0]);
 			temp = new CPPImplicitFunction(__BUILTIN_INF, scope, functionType, theParms, false);
 		}
@@ -677,7 +678,7 @@ public class GCCBuiltinSymbolProvider implements IBuiltinBindingsProvider {
 			IType[] parms = new IType[1];
 			parms[0] = cpp_void;
 			functionType = new CPPFunctionType(cpp_float, parms);
-			IParameter[] theParms = new IParameter[1];
+			ICPPParameter[] theParms = new ICPPParameter[1];
 			theParms[0] = new CPPBuiltinParameter(parms[0]);
 			temp = new CPPImplicitFunction(__BUILTIN_INFF, scope, functionType, theParms, false);
 		}
@@ -698,7 +699,7 @@ public class GCCBuiltinSymbolProvider implements IBuiltinBindingsProvider {
 			IType[] parms = new IType[1];
 			parms[0] = cpp_void;
 			functionType = new CPPFunctionType(cpp_long_double, parms);
-			IParameter[] theParms = new IParameter[1];
+			ICPPParameter[] theParms = new ICPPParameter[1];
 			theParms[0] = new CPPBuiltinParameter(parms[0]);
 			temp = new CPPImplicitFunction(__BUILTIN_INFL, scope, functionType, theParms, false);
 		}
@@ -721,7 +722,7 @@ public class GCCBuiltinSymbolProvider implements IBuiltinBindingsProvider {
 			IType[] parms = new IType[1];
 			parms[0] = cpp_const_char_p;
 			functionType = new CPPFunctionType(cpp_double, parms);
-			IParameter[] theParms = new IParameter[1];
+			ICPPParameter[] theParms = new ICPPParameter[1];
 			theParms[0] = new CPPBuiltinParameter(parms[0]);
 			temp = new CPPImplicitFunction(__BUILTIN_NAN, scope, functionType, theParms, false);
 		}
@@ -742,7 +743,7 @@ public class GCCBuiltinSymbolProvider implements IBuiltinBindingsProvider {
 			IType[] parms = new IType[1];
 			parms[0] = cpp_const_char_p;
 			functionType = new CPPFunctionType(cpp_float, parms);
-			IParameter[] theParms = new IParameter[1];
+			ICPPParameter[] theParms = new ICPPParameter[1];
 			theParms[0] = new CPPBuiltinParameter(parms[0]);
 			temp = new CPPImplicitFunction(__BUILTIN_NANF, scope, functionType, theParms, false);
 		}
@@ -763,7 +764,7 @@ public class GCCBuiltinSymbolProvider implements IBuiltinBindingsProvider {
 			IType[] parms = new IType[1];
 			parms[0] = cpp_const_char_p;
 			functionType = new CPPFunctionType(cpp_long_double, parms);
-			IParameter[] theParms = new IParameter[1];
+			ICPPParameter[] theParms = new ICPPParameter[1];
 			theParms[0] = new CPPBuiltinParameter(parms[0]);
 			temp = new CPPImplicitFunction(__BUILTIN_NANL, scope, functionType, theParms, false);
 		}
@@ -784,7 +785,7 @@ public class GCCBuiltinSymbolProvider implements IBuiltinBindingsProvider {
 			IType[] parms = new IType[1];
 			parms[0] = cpp_const_char_p;
 			functionType = new CPPFunctionType(cpp_double, parms);
-			IParameter[] theParms = new IParameter[1];
+			ICPPParameter[] theParms = new ICPPParameter[1];
 			theParms[0] = new CPPBuiltinParameter(parms[0]);
 			temp = new CPPImplicitFunction(__BUILTIN_NANS, scope, functionType, theParms, false);
 		}
@@ -805,7 +806,7 @@ public class GCCBuiltinSymbolProvider implements IBuiltinBindingsProvider {
 			IType[] parms = new IType[1];
 			parms[0] = cpp_const_char_p;
 			functionType = new CPPFunctionType(cpp_float, parms);
-			IParameter[] theParms = new IParameter[1];
+			ICPPParameter[] theParms = new ICPPParameter[1];
 			theParms[0] = new CPPBuiltinParameter(parms[0]);
 			temp = new CPPImplicitFunction(__BUILTIN_NANSF, scope, functionType, theParms, false);
 		}
@@ -826,7 +827,7 @@ public class GCCBuiltinSymbolProvider implements IBuiltinBindingsProvider {
 			IType[] parms = new IType[1];
 			parms[0] = cpp_const_char_p;
 			functionType = new CPPFunctionType(cpp_long_double, parms);
-			IParameter[] theParms = new IParameter[1];
+			ICPPParameter[] theParms = new ICPPParameter[1];
 			theParms[0] = new CPPBuiltinParameter(parms[0]);
 			temp = new CPPImplicitFunction(__BUILTIN_NANSL, scope, functionType, theParms, false);
 		}
@@ -838,6 +839,7 @@ public class GCCBuiltinSymbolProvider implements IBuiltinBindingsProvider {
 		IBinding temp = null;
 		IFunctionType functionType = null;
 		IParameter[] theParms = new IParameter[1];
+		ICPPParameter[] theCPPParms = new ICPPParameter[1];
 		if (lang == ParserLanguage.C) {
 			IType[] parms = new IType[1];
 			parms[0] = c_unsigned_int;
@@ -848,8 +850,8 @@ public class GCCBuiltinSymbolProvider implements IBuiltinBindingsProvider {
 			IType[] parms = new IType[1];
 			parms[0] = cpp_unsigned_int;
 			functionType = new CPPFunctionType(cpp_int, parms);
-			theParms[0] = new CPPBuiltinParameter(parms[0]);
-			temp = new CPPImplicitFunction(__BUILTIN_FFS, scope, (ICPPFunctionType) functionType, theParms, false);
+			theCPPParms[0] = new CPPBuiltinParameter(parms[0]);
+			temp = new CPPImplicitFunction(__BUILTIN_FFS, scope, (ICPPFunctionType) functionType, theCPPParms, false);
 		}
 		bindings = (IBinding[]) ArrayUtil.append(IBinding.class, bindings, temp);
 		
@@ -858,7 +860,7 @@ public class GCCBuiltinSymbolProvider implements IBuiltinBindingsProvider {
 		if (lang == ParserLanguage.C) {
 			temp = new CImplicitFunction(__BUILTIN_CLZ, scope, functionType, theParms, false);
 		} else {
-			temp = new CPPImplicitFunction(__BUILTIN_CLZ, scope, (ICPPFunctionType) functionType, theParms, false);
+			temp = new CPPImplicitFunction(__BUILTIN_CLZ, scope, (ICPPFunctionType) functionType, theCPPParms, false);
 		}
 		bindings = (IBinding[]) ArrayUtil.append(IBinding.class, bindings, temp);
 		
@@ -867,7 +869,7 @@ public class GCCBuiltinSymbolProvider implements IBuiltinBindingsProvider {
 		if (lang == ParserLanguage.C) {
 			temp = new CImplicitFunction(__BUILTIN_CTZ, scope, functionType, theParms, false);
 		} else {
-			temp = new CPPImplicitFunction(__BUILTIN_CTZ, scope, (ICPPFunctionType) functionType, theParms, false);
+			temp = new CPPImplicitFunction(__BUILTIN_CTZ, scope, (ICPPFunctionType) functionType, theCPPParms, false);
 		}
 		bindings = (IBinding[]) ArrayUtil.append(IBinding.class, bindings, temp);
 		
@@ -876,7 +878,7 @@ public class GCCBuiltinSymbolProvider implements IBuiltinBindingsProvider {
 		if (lang == ParserLanguage.C) {
 			temp = new CImplicitFunction(__BUILTIN_POPCOUNT, scope, functionType, theParms, false);
 		} else {
-			temp = new CPPImplicitFunction(__BUILTIN_POPCOUNT, scope, (ICPPFunctionType) functionType, theParms, false);
+			temp = new CPPImplicitFunction(__BUILTIN_POPCOUNT, scope, (ICPPFunctionType) functionType, theCPPParms, false);
 		}
 		bindings = (IBinding[]) ArrayUtil.append(IBinding.class, bindings, temp);
 		
@@ -885,7 +887,7 @@ public class GCCBuiltinSymbolProvider implements IBuiltinBindingsProvider {
 		if (lang == ParserLanguage.C) {
 			temp = new CImplicitFunction(__BUILTIN_PARITY, scope, functionType, theParms, false);
 		} else {
-			temp = new CPPImplicitFunction(__BUILTIN_PARITY, scope, (ICPPFunctionType) functionType, theParms, false);
+			temp = new CPPImplicitFunction(__BUILTIN_PARITY, scope, (ICPPFunctionType) functionType, theCPPParms, false);
 		}
 		bindings = (IBinding[]) ArrayUtil.append(IBinding.class, bindings, temp);
 	}
@@ -895,6 +897,7 @@ public class GCCBuiltinSymbolProvider implements IBuiltinBindingsProvider {
 		IBinding temp = null;
 		IFunctionType functionType = null;
 		IParameter[] theParms = new IParameter[1];
+		ICPPParameter[] theCPPParms = new ICPPParameter[1];
 		if (lang == ParserLanguage.C) {
 			IType[] parms = new IType[1];
 			parms[0] = c_unsigned_long;
@@ -905,8 +908,8 @@ public class GCCBuiltinSymbolProvider implements IBuiltinBindingsProvider {
 			IType[] parms = new IType[1];
 			parms[0] = cpp_unsigned_long;
 			functionType = new CPPFunctionType(cpp_int, parms);
-			theParms[0] = new CPPBuiltinParameter(parms[0]);
-			temp = new CPPImplicitFunction(__BUILTIN_FFSL, scope, (ICPPFunctionType) functionType, theParms, false);
+			theCPPParms[0] = new CPPBuiltinParameter(parms[0]);
+			temp = new CPPImplicitFunction(__BUILTIN_FFSL, scope, (ICPPFunctionType) functionType, theCPPParms, false);
 		}
 		bindings = (IBinding[]) ArrayUtil.append(IBinding.class, bindings, temp);
 		
@@ -915,7 +918,7 @@ public class GCCBuiltinSymbolProvider implements IBuiltinBindingsProvider {
 		if (lang == ParserLanguage.C) {
 			temp = new CImplicitFunction(__BUILTIN_CLZL, scope, functionType, theParms, false);
 		} else {
-			temp = new CPPImplicitFunction(__BUILTIN_CLZL, scope, (ICPPFunctionType) functionType, theParms, false);
+			temp = new CPPImplicitFunction(__BUILTIN_CLZL, scope, (ICPPFunctionType) functionType, theCPPParms, false);
 		}
 		bindings = (IBinding[]) ArrayUtil.append(IBinding.class, bindings, temp);
 		
@@ -924,7 +927,7 @@ public class GCCBuiltinSymbolProvider implements IBuiltinBindingsProvider {
 		if (lang == ParserLanguage.C) {
 			temp = new CImplicitFunction(__BUILTIN_CTZL, scope, functionType, theParms, false);
 		} else {
-			temp = new CPPImplicitFunction(__BUILTIN_CTZL, scope, (ICPPFunctionType) functionType, theParms, false);
+			temp = new CPPImplicitFunction(__BUILTIN_CTZL, scope, (ICPPFunctionType) functionType, theCPPParms, false);
 		}
 		bindings = (IBinding[]) ArrayUtil.append(IBinding.class, bindings, temp);
 
@@ -933,7 +936,7 @@ public class GCCBuiltinSymbolProvider implements IBuiltinBindingsProvider {
 		if (lang == ParserLanguage.C) {
 			temp = new CImplicitFunction(__BUILTIN_POPCOUNTL, scope, functionType, theParms, false);
 		} else {
-			temp = new CPPImplicitFunction(__BUILTIN_POPCOUNTL, scope, (ICPPFunctionType) functionType, theParms, false);
+			temp = new CPPImplicitFunction(__BUILTIN_POPCOUNTL, scope, (ICPPFunctionType) functionType, theCPPParms, false);
 		}
 		bindings = (IBinding[]) ArrayUtil.append(IBinding.class, bindings, temp);
 		
@@ -942,7 +945,7 @@ public class GCCBuiltinSymbolProvider implements IBuiltinBindingsProvider {
 		if (lang == ParserLanguage.C) {
 			temp = new CImplicitFunction(__BUILTIN_PARITYL, scope, functionType, theParms, false);
 		} else {
-			temp = new CPPImplicitFunction(__BUILTIN_PARITYL, scope, (ICPPFunctionType) functionType, theParms, false);
+			temp = new CPPImplicitFunction(__BUILTIN_PARITYL, scope, (ICPPFunctionType) functionType, theCPPParms, false);
 		}
 		bindings = (IBinding[]) ArrayUtil.append(IBinding.class, bindings, temp);
 	}
@@ -952,6 +955,7 @@ public class GCCBuiltinSymbolProvider implements IBuiltinBindingsProvider {
 		IBinding temp = null;
 		IFunctionType functionType = null;
 		IParameter[] theParms = new IParameter[1];
+		ICPPParameter[] theCPPParms = new ICPPParameter[1];
 		if (lang == ParserLanguage.C) {
 			IType[] parms = new IType[1];
 			parms[0] = c_unsigned_long_long;
@@ -962,8 +966,8 @@ public class GCCBuiltinSymbolProvider implements IBuiltinBindingsProvider {
 			IType[] parms = new IType[1];
 			parms[0] = cpp_unsigned_long_long;
 			functionType = new CPPFunctionType(cpp_int, parms);
-			theParms[0] = new CPPBuiltinParameter(parms[0]);
-			temp = new CPPImplicitFunction(__BUILTIN_FFSLL, scope, (ICPPFunctionType) functionType, theParms, false);
+			theCPPParms[0] = new CPPBuiltinParameter(parms[0]);
+			temp = new CPPImplicitFunction(__BUILTIN_FFSLL, scope, (ICPPFunctionType) functionType, theCPPParms, false);
 		}
 		bindings = (IBinding[]) ArrayUtil.append(IBinding.class, bindings, temp);
 		
@@ -972,7 +976,7 @@ public class GCCBuiltinSymbolProvider implements IBuiltinBindingsProvider {
 		if (lang == ParserLanguage.C) {
 			temp = new CImplicitFunction(__BUILTIN_CLZLL, scope, functionType, theParms, false);
 		} else {
-			temp = new CPPImplicitFunction(__BUILTIN_CLZLL, scope, (ICPPFunctionType) functionType, theParms, false);
+			temp = new CPPImplicitFunction(__BUILTIN_CLZLL, scope, (ICPPFunctionType) functionType, theCPPParms, false);
 		}
 		bindings = (IBinding[]) ArrayUtil.append(IBinding.class, bindings, temp);
 		
@@ -981,7 +985,7 @@ public class GCCBuiltinSymbolProvider implements IBuiltinBindingsProvider {
 		if (lang == ParserLanguage.C) {
 			temp = new CImplicitFunction(__BUILTIN_CTZLL, scope, functionType, theParms, false);
 		} else {
-			temp = new CPPImplicitFunction(__BUILTIN_CTZLL, scope, (ICPPFunctionType) functionType, theParms, false);
+			temp = new CPPImplicitFunction(__BUILTIN_CTZLL, scope, (ICPPFunctionType) functionType, theCPPParms, false);
 		}
 		bindings = (IBinding[]) ArrayUtil.append(IBinding.class, bindings, temp);
 		
@@ -990,7 +994,7 @@ public class GCCBuiltinSymbolProvider implements IBuiltinBindingsProvider {
 		if (lang == ParserLanguage.C) {
 			temp = new CImplicitFunction(__BUILTIN_POPCOUNTLL, scope, functionType, theParms, false);
 		} else {
-			temp = new CPPImplicitFunction(__BUILTIN_POPCOUNTLL, scope, (ICPPFunctionType) functionType, theParms, false);
+			temp = new CPPImplicitFunction(__BUILTIN_POPCOUNTLL, scope, (ICPPFunctionType) functionType, theCPPParms, false);
 		}
 		bindings = (IBinding[]) ArrayUtil.append(IBinding.class, bindings, temp);
 		
@@ -999,7 +1003,7 @@ public class GCCBuiltinSymbolProvider implements IBuiltinBindingsProvider {
 		if (lang == ParserLanguage.C) {
 			temp = new CImplicitFunction(__BUILTIN_PARITYLL, scope, functionType, theParms, false);
 		} else {
-			temp = new CPPImplicitFunction(__BUILTIN_PARITYLL, scope, (ICPPFunctionType) functionType, theParms, false);
+			temp = new CPPImplicitFunction(__BUILTIN_PARITYLL, scope, (ICPPFunctionType) functionType, theCPPParms, false);
 		}
 		bindings = (IBinding[]) ArrayUtil.append(IBinding.class, bindings, temp);
 	}
@@ -1043,7 +1047,7 @@ public class GCCBuiltinSymbolProvider implements IBuiltinBindingsProvider {
 			parms[0] = cpp_unspecified;
 			parms[1] = cpp_unspecified;
 			functionType = new CPPFunctionType(cpp_int, parms);
-			IParameter[] theParms = new IParameter[2];
+			ICPPParameter[] theParms = new ICPPParameter[2];
 			theParms[0] = new CPPBuiltinParameter(parms[0]);
 			theParms[1] = theParms[0];
 			temp = new CPPImplicitFunction(__BUILTIN_TYPES_COMPATIBLE_P, scope, functionType, theParms, true);
@@ -1069,7 +1073,7 @@ public class GCCBuiltinSymbolProvider implements IBuiltinBindingsProvider {
 			parms[0] = cpp_double;
 			parms[1] = cpp_int;
 			ICPPFunctionType functionType = new CPPFunctionType(cpp_double, parms);
-			IParameter[] theParms = new IParameter[2];
+			ICPPParameter[] theParms = new ICPPParameter[2];
 			theParms[0] = new CPPBuiltinParameter(parms[0]);
 			theParms[1] = new CPPBuiltinParameter(parms[1]);
 			temp = new CPPImplicitFunction(__BUILTIN_POWI, scope, functionType, theParms, false);
@@ -1093,7 +1097,7 @@ public class GCCBuiltinSymbolProvider implements IBuiltinBindingsProvider {
 			parms[0] = cpp_float;
 			parms[1] = cpp_int;
 			ICPPFunctionType functionType = new CPPFunctionType(cpp_float, parms);
-			IParameter[] theParms = new IParameter[2];
+			ICPPParameter[] theParms = new ICPPParameter[2];
 			theParms[0] = new CPPBuiltinParameter(parms[0]);
 			theParms[1] = new CPPBuiltinParameter(parms[1]);
 			temp = new CPPImplicitFunction(__BUILTIN_POWIF, scope, functionType, theParms, false);
@@ -1117,7 +1121,7 @@ public class GCCBuiltinSymbolProvider implements IBuiltinBindingsProvider {
 			parms[0] = cpp_long_double;
 			parms[1] = cpp_int;
 			ICPPFunctionType functionType = new CPPFunctionType(cpp_long_double, parms);
-			IParameter[] theParms = new IParameter[2];
+			ICPPParameter[] theParms = new ICPPParameter[2];
 			theParms[0] = new CPPBuiltinParameter(parms[0]);
 			theParms[1] = new CPPBuiltinParameter(parms[1]);
 			temp = new CPPImplicitFunction(__BUILTIN_POWIL, scope, functionType, theParms, false);
@@ -1140,7 +1144,7 @@ public class GCCBuiltinSymbolProvider implements IBuiltinBindingsProvider {
             IType[] parms = new IType[1];
             parms[0] = cpp_void;
             ICPPFunctionType functionType = new CPPFunctionType(cpp_void, parms);
-            IParameter[] theParms = new IParameter[1];
+            ICPPParameter[] theParms = new ICPPParameter[1];
             theParms[0] = new CPPBuiltinParameter(parms[0]);
             temp = new CPPImplicitFunction(__BUILTIN_ABORT, scope, functionType, theParms, false);
         }
@@ -1167,7 +1171,7 @@ public class GCCBuiltinSymbolProvider implements IBuiltinBindingsProvider {
             IType[] parms = new IType[1];
             parms[0] = cpp_int;
             ICPPFunctionType functionType = new CPPFunctionType(cpp_void, parms);
-            IParameter[] theParms = new IParameter[1];
+            ICPPParameter[] theParms = new ICPPParameter[1];
             theParms[0] = new CPPBuiltinParameter(parms[0]);
             temp = new CPPImplicitFunction(__BUILTIN_EXIT1, scope, functionType, theParms, false);
             bindings = (IBinding[]) ArrayUtil.append(IBinding.class, bindings, temp);
@@ -1193,7 +1197,7 @@ public class GCCBuiltinSymbolProvider implements IBuiltinBindingsProvider {
             IType[] parms = new IType[1];
             parms[0] = cpp_double_complex;
             ICPPFunctionType functionType = new CPPFunctionType(cpp_double_complex, parms);
-            IParameter[] theParms = new IParameter[1];
+            ICPPParameter[] theParms = new ICPPParameter[1];
             theParms[0] = new CPPBuiltinParameter(parms[0]);
             temp = new CPPImplicitFunction(__BUILTIN_CONJ, scope, functionType, theParms, false);
         }
@@ -1213,7 +1217,7 @@ public class GCCBuiltinSymbolProvider implements IBuiltinBindingsProvider {
             IType[] parms = new IType[1];
             parms[0] = cpp_float_complex;
             ICPPFunctionType functionType = new CPPFunctionType(cpp_float_complex, parms);
-            IParameter[] theParms = new IParameter[1];
+            ICPPParameter[] theParms = new ICPPParameter[1];
             theParms[0] = new CPPBuiltinParameter(parms[0]);
             temp = new CPPImplicitFunction(__BUILTIN_CONJF, scope, functionType, theParms, false);
         }
@@ -1233,7 +1237,7 @@ public class GCCBuiltinSymbolProvider implements IBuiltinBindingsProvider {
             IType[] parms = new IType[1];
             parms[0] = cpp_long_double_complex;
             ICPPFunctionType functionType = new CPPFunctionType(cpp_long_double_complex, parms);
-            IParameter[] theParms = new IParameter[1];
+            ICPPParameter[] theParms = new ICPPParameter[1];
             theParms[0] = new CPPBuiltinParameter(parms[0]);
             temp = new CPPImplicitFunction(__BUILTIN_CONJL, scope, functionType, theParms, false);
         }
@@ -1255,7 +1259,7 @@ public class GCCBuiltinSymbolProvider implements IBuiltinBindingsProvider {
             IType[] parms = new IType[1];
             parms[0] = cpp_double_complex;
             ICPPFunctionType functionType = new CPPFunctionType(cpp_double, parms);
-            IParameter[] theParms = new IParameter[1];
+            ICPPParameter[] theParms = new ICPPParameter[1];
             theParms[0] = new CPPBuiltinParameter(parms[0]);
             temp = new CPPImplicitFunction(__BUILTIN_CREAL, scope, functionType, theParms, false);
         }
@@ -1275,7 +1279,7 @@ public class GCCBuiltinSymbolProvider implements IBuiltinBindingsProvider {
             IType[] parms = new IType[1];
             parms[0] = cpp_float_complex;
             ICPPFunctionType functionType = new CPPFunctionType(cpp_float, parms);
-            IParameter[] theParms = new IParameter[1];
+            ICPPParameter[] theParms = new ICPPParameter[1];
             theParms[0] = new CPPBuiltinParameter(parms[0]);
             temp = new CPPImplicitFunction(__BUILTIN_CREALF, scope, functionType, theParms, false);
         }
@@ -1295,7 +1299,7 @@ public class GCCBuiltinSymbolProvider implements IBuiltinBindingsProvider {
             IType[] parms = new IType[1];
             parms[0] = cpp_long_double_complex;
             ICPPFunctionType functionType = new CPPFunctionType(cpp_long_double, parms);
-            IParameter[] theParms = new IParameter[1];
+            ICPPParameter[] theParms = new ICPPParameter[1];
             theParms[0] = new CPPBuiltinParameter(parms[0]);
             temp = new CPPImplicitFunction(__BUILTIN_CREALL, scope, functionType, theParms, false);
         }
@@ -1314,7 +1318,7 @@ public class GCCBuiltinSymbolProvider implements IBuiltinBindingsProvider {
             IType[] parms = new IType[1];
             parms[0] = cpp_double_complex;
             ICPPFunctionType functionType = new CPPFunctionType(cpp_double, parms);
-            IParameter[] theParms = new IParameter[1];
+            ICPPParameter[] theParms = new ICPPParameter[1];
             theParms[0] = new CPPBuiltinParameter(parms[0]);
             temp = new CPPImplicitFunction(__BUILTIN_CIMAG, scope, functionType, theParms, false);
         }
@@ -1334,7 +1338,7 @@ public class GCCBuiltinSymbolProvider implements IBuiltinBindingsProvider {
             IType[] parms = new IType[1];
             parms[0] = cpp_float_complex;
             ICPPFunctionType functionType = new CPPFunctionType(cpp_float, parms);
-            IParameter[] theParms = new IParameter[1];
+            ICPPParameter[] theParms = new ICPPParameter[1];
             theParms[0] = new CPPBuiltinParameter(parms[0]);
             temp = new CPPImplicitFunction(__BUILTIN_CIMAGF, scope, functionType, theParms, false);
         }
@@ -1354,7 +1358,7 @@ public class GCCBuiltinSymbolProvider implements IBuiltinBindingsProvider {
             IType[] parms = new IType[1];
             parms[0] = cpp_long_double_complex;
             ICPPFunctionType functionType = new CPPFunctionType(cpp_long_double, parms);
-            IParameter[] theParms = new IParameter[1];
+            ICPPParameter[] theParms = new ICPPParameter[1];
             theParms[0] = new CPPBuiltinParameter(parms[0]);
             temp = new CPPImplicitFunction(__BUILTIN_CIMAGL, scope, functionType, theParms, false);
         }
@@ -1376,7 +1380,7 @@ public class GCCBuiltinSymbolProvider implements IBuiltinBindingsProvider {
             IType[] parms = new IType[1];
             parms[0] = cpp_int;
             ICPPFunctionType functionType = new CPPFunctionType(cpp_int, parms);
-            IParameter[] theParms = new IParameter[1];
+            ICPPParameter[] theParms = new ICPPParameter[1];
             theParms[0] = new CPPBuiltinParameter(parms[0]);
             temp = new CPPImplicitFunction(__BUILTIN_ABS, scope, functionType, theParms, false);
         }
@@ -1396,7 +1400,7 @@ public class GCCBuiltinSymbolProvider implements IBuiltinBindingsProvider {
             IType[] parms = new IType[1];
             parms[0] = cpp_double;
             ICPPFunctionType functionType = new CPPFunctionType(cpp_double, parms);
-            IParameter[] theParms = new IParameter[1];
+            ICPPParameter[] theParms = new ICPPParameter[1];
             theParms[0] = new CPPBuiltinParameter(parms[0]);
             temp = new CPPImplicitFunction(__BUILTIN_FABS, scope, functionType, theParms, false);
         }
@@ -1416,7 +1420,7 @@ public class GCCBuiltinSymbolProvider implements IBuiltinBindingsProvider {
             IType[] parms = new IType[1];
             parms[0] = cpp_long_int;
             ICPPFunctionType functionType = new CPPFunctionType(cpp_long_int, parms);
-            IParameter[] theParms = new IParameter[1];
+            ICPPParameter[] theParms = new ICPPParameter[1];
             theParms[0] = new CPPBuiltinParameter(parms[0]);
             temp = new CPPImplicitFunction(__BUILTIN_LABS, scope, functionType, theParms, false);
         }
@@ -1436,7 +1440,7 @@ public class GCCBuiltinSymbolProvider implements IBuiltinBindingsProvider {
             IType[] parms = new IType[1];
             parms[0] = cpp_signed_long_int;
             ICPPFunctionType functionType = new CPPFunctionType(cpp_signed_long_int, parms);
-            IParameter[] theParms = new IParameter[1];
+            ICPPParameter[] theParms = new ICPPParameter[1];
             theParms[0] = new CPPBuiltinParameter(parms[0]);
             temp = new CPPImplicitFunction(__BUILTIN_IMAXABS, scope, functionType, theParms, false);
         }
@@ -1456,7 +1460,7 @@ public class GCCBuiltinSymbolProvider implements IBuiltinBindingsProvider {
             IType[] parms = new IType[1];
             parms[0] = cpp_long_long_int;
             ICPPFunctionType functionType = new CPPFunctionType(cpp_long_long_int, parms);
-            IParameter[] theParms = new IParameter[1];
+            ICPPParameter[] theParms = new ICPPParameter[1];
             theParms[0] = new CPPBuiltinParameter(parms[0]);
             temp = new CPPImplicitFunction(__BUILTIN_LLABS, scope, functionType, theParms, false);
         }
@@ -1476,7 +1480,7 @@ public class GCCBuiltinSymbolProvider implements IBuiltinBindingsProvider {
             IType[] parms = new IType[1];
             parms[0] = cpp_float;
             ICPPFunctionType functionType = new CPPFunctionType(cpp_float, parms);
-            IParameter[] theParms = new IParameter[1];
+            ICPPParameter[] theParms = new ICPPParameter[1];
             theParms[0] = new CPPBuiltinParameter(parms[0]);
             temp = new CPPImplicitFunction(__BUILTIN_FABSF, scope, functionType, theParms, false);
         }
@@ -1496,7 +1500,7 @@ public class GCCBuiltinSymbolProvider implements IBuiltinBindingsProvider {
             IType[] parms = new IType[1];
             parms[0] = cpp_long_double;
             ICPPFunctionType functionType = new CPPFunctionType(cpp_long_double, parms);
-            IParameter[] theParms = new IParameter[1];
+            ICPPParameter[] theParms = new ICPPParameter[1];
             theParms[0] = new CPPBuiltinParameter(parms[0]);
             temp = new CPPImplicitFunction(__BUILTIN_FABSL, scope, functionType, theParms, false);
         }
@@ -1518,7 +1522,7 @@ public class GCCBuiltinSymbolProvider implements IBuiltinBindingsProvider {
             IType[] parms = new IType[1];
             parms[0] = cpp_const_char_p_r;
             ICPPFunctionType functionType = new CPPFunctionType(cpp_int, parms);
-            IParameter[] theParms = new IParameter[1];
+            ICPPParameter[] theParms = new ICPPParameter[1];
             theParms[0] = new CPPBuiltinParameter(parms[0]);
             temp = new CPPImplicitFunction(__BUILTIN_PRINTF, scope, functionType, theParms, true);
         }
@@ -1541,7 +1545,7 @@ public class GCCBuiltinSymbolProvider implements IBuiltinBindingsProvider {
             parms[0] = cpp_char_p_r;
             parms[1] = cpp_const_char_p_r;
             ICPPFunctionType functionType = new CPPFunctionType(cpp_int, parms);
-            IParameter[] theParms = new IParameter[2];
+            ICPPParameter[] theParms = new ICPPParameter[2];
             theParms[0] = new CPPBuiltinParameter(parms[0]);
             theParms[1] = new CPPBuiltinParameter(parms[1]);
             temp = new CPPImplicitFunction(__BUILTIN_SPRINTF, scope, functionType, theParms, true);
@@ -1568,7 +1572,7 @@ public class GCCBuiltinSymbolProvider implements IBuiltinBindingsProvider {
             parms[1] = cpp_size_t;
             parms[2] = cpp_const_char_p_r;
             ICPPFunctionType functionType = new CPPFunctionType(cpp_int, parms);
-            IParameter[] theParms = new IParameter[3];
+            ICPPParameter[] theParms = new ICPPParameter[3];
             theParms[0] = new CPPBuiltinParameter(parms[0]);
             theParms[1] = new CPPBuiltinParameter(parms[1]);
             theParms[2] = new CPPBuiltinParameter(parms[2]);
@@ -1593,7 +1597,7 @@ public class GCCBuiltinSymbolProvider implements IBuiltinBindingsProvider {
             parms[0] = cpp_FILE_p_r;
             parms[1] = cpp_const_char_p_r;
             ICPPFunctionType functionType = new CPPFunctionType(cpp_int, parms);
-            IParameter[] theParms = new IParameter[2];
+            ICPPParameter[] theParms = new ICPPParameter[2];
             theParms[0] = new CPPBuiltinParameter(parms[0]);
             theParms[1] = new CPPBuiltinParameter(parms[1]);
             temp = new CPPImplicitFunction(__BUILTIN_FPRINTF, scope, functionType, theParms, true);
@@ -1617,7 +1621,7 @@ public class GCCBuiltinSymbolProvider implements IBuiltinBindingsProvider {
             parms[0] = cpp_const_char_p_r;
             parms[1] = cpp_va_list;
             ICPPFunctionType functionType = new CPPFunctionType(cpp_int, parms);
-            IParameter[] theParms = new IParameter[2];
+            ICPPParameter[] theParms = new ICPPParameter[2];
             theParms[0] = new CPPBuiltinParameter(parms[0]);
             theParms[1] = new CPPBuiltinParameter(parms[1]);
             temp = new CPPImplicitFunction(__BUILTIN_VPRINTF, scope, functionType, theParms, true);
@@ -1651,7 +1655,7 @@ public class GCCBuiltinSymbolProvider implements IBuiltinBindingsProvider {
             parms[2] = cpp_const_char_p_r;
             parms[3] = cpp_va_list;
             ICPPFunctionType functionType = new CPPFunctionType(cpp_int, parms);
-            IParameter[] theParms = new IParameter[4];
+            ICPPParameter[] theParms = new ICPPParameter[4];
             theParms[0] = new CPPBuiltinParameter(parms[0]);
             theParms[1] = new CPPBuiltinParameter(parms[1]);
             theParms[2] = new CPPBuiltinParameter(parms[2]);
@@ -1681,7 +1685,7 @@ public class GCCBuiltinSymbolProvider implements IBuiltinBindingsProvider {
             parms[0] = cpp_const_char_p_r;
             parms[1] = cpp_va_list;
             ICPPFunctionType functionType = new CPPFunctionType(cpp_int, parms);
-            IParameter[] theParms = new IParameter[2];
+            ICPPParameter[] theParms = new ICPPParameter[2];
             theParms[0] = new CPPBuiltinParameter(parms[0]);
             theParms[1] = new CPPBuiltinParameter(parms[1]);
             temp = new CPPImplicitFunction(__BUILTIN_VSCANF, scope, functionType, theParms, false);
@@ -1708,7 +1712,7 @@ public class GCCBuiltinSymbolProvider implements IBuiltinBindingsProvider {
             parms[1] = cpp_const_char_p_r;
             parms[2] = cpp_va_list;
             ICPPFunctionType functionType = new CPPFunctionType(cpp_int, parms);
-            IParameter[] theParms = new IParameter[3];
+            ICPPParameter[] theParms = new ICPPParameter[3];
             theParms[0] = new CPPBuiltinParameter(parms[0]);
             theParms[1] = new CPPBuiltinParameter(parms[1]);
             theParms[2] = new CPPBuiltinParameter(parms[2]);
@@ -1730,7 +1734,7 @@ public class GCCBuiltinSymbolProvider implements IBuiltinBindingsProvider {
             IType[] parms = new IType[1];
             parms[0] = cpp_const_char_p_r;
             ICPPFunctionType functionType = new CPPFunctionType(cpp_int, parms);
-            IParameter[] theParms = new IParameter[1];
+            ICPPParameter[] theParms = new ICPPParameter[1];
             theParms[0] = new CPPBuiltinParameter(parms[0]);
             temp = new CPPImplicitFunction(__BUILTIN_SCANF, scope, functionType, theParms, true);
         }
@@ -1753,7 +1757,7 @@ public class GCCBuiltinSymbolProvider implements IBuiltinBindingsProvider {
             parms[0] = cpp_const_char_p_r;
             parms[1] = cpp_const_char_p_r;
             ICPPFunctionType functionType = new CPPFunctionType(cpp_int, parms);
-            IParameter[] theParms = new IParameter[2];
+            ICPPParameter[] theParms = new ICPPParameter[2];
             theParms[0] = new CPPBuiltinParameter(parms[0]);
             theParms[1] = new CPPBuiltinParameter(parms[1]);
             temp = new CPPImplicitFunction(__BUILTIN_SSCANF, scope, functionType, theParms, true);
@@ -1819,7 +1823,7 @@ public class GCCBuiltinSymbolProvider implements IBuiltinBindingsProvider {
             IType[] parms = new IType[1];
             parms[0] = cpp_double;
             ICPPFunctionType functionType = new CPPFunctionType(cpp_double, parms);
-            IParameter[] theParms = new IParameter[1];
+            ICPPParameter[] theParms = new ICPPParameter[1];
             theParms[0] = new CPPBuiltinParameter(parms[0]);
             temp = new CPPImplicitFunction(__BUILTIN_ACOS, scope, functionType, theParms, false);
             bindings = (IBinding[]) ArrayUtil.append(IBinding.class, bindings, temp);
@@ -1913,7 +1917,7 @@ public class GCCBuiltinSymbolProvider implements IBuiltinBindingsProvider {
             IType[] parms = new IType[1];
             parms[0] = cpp_float;
             ICPPFunctionType functionType = new CPPFunctionType(cpp_float, parms);
-            IParameter[] theParms = new IParameter[1];
+            ICPPParameter[] theParms = new ICPPParameter[1];
             theParms[0] = new CPPBuiltinParameter(parms[0]);
             temp = new CPPImplicitFunction(__BUILTIN_ACOSF, scope, functionType, theParms, false);
             bindings = (IBinding[]) ArrayUtil.append(IBinding.class, bindings, temp);
@@ -2009,7 +2013,7 @@ public class GCCBuiltinSymbolProvider implements IBuiltinBindingsProvider {
             IType[] parms = new IType[1];
             parms[0] = cpp_long_double;
             ICPPFunctionType functionType = new CPPFunctionType(cpp_long_double, parms);
-            IParameter[] theParms = new IParameter[1];
+            ICPPParameter[] theParms = new ICPPParameter[1];
             theParms[0] = new CPPBuiltinParameter(parms[0]);
             temp = new CPPImplicitFunction(__BUILTIN_ACOSL, scope, functionType, theParms, false);
             bindings = (IBinding[]) ArrayUtil.append(IBinding.class, bindings, temp);
@@ -2065,7 +2069,7 @@ public class GCCBuiltinSymbolProvider implements IBuiltinBindingsProvider {
             parms[0] = cpp_double;
             parms[1] = cpp_double;
             ICPPFunctionType functionType = new CPPFunctionType(cpp_double, parms);
-            IParameter[] theParms = new IParameter[2];
+            ICPPParameter[] theParms = new ICPPParameter[2];
             theParms[0] = new CPPBuiltinParameter(parms[0]);
             theParms[1] = new CPPBuiltinParameter(parms[1]);
             temp = new CPPImplicitFunction(__BUILTIN_ATAN2, scope, functionType, theParms, false);
@@ -2094,7 +2098,7 @@ public class GCCBuiltinSymbolProvider implements IBuiltinBindingsProvider {
             parms[0] = cpp_float;
             parms[1] = cpp_float;
             ICPPFunctionType functionType = new CPPFunctionType(cpp_float, parms);
-            IParameter[] theParms = new IParameter[2];
+            ICPPParameter[] theParms = new ICPPParameter[2];
             theParms[0] = new CPPBuiltinParameter(parms[0]);
             theParms[1] = new CPPBuiltinParameter(parms[1]);
             temp = new CPPImplicitFunction(__BUILTIN_ATAN2F, scope, functionType, theParms, false);
@@ -2123,7 +2127,7 @@ public class GCCBuiltinSymbolProvider implements IBuiltinBindingsProvider {
             parms[0] = cpp_long_double;
             parms[1] = cpp_long_double;
             ICPPFunctionType functionType = new CPPFunctionType(cpp_long_double, parms);
-            IParameter[] theParms = new IParameter[2];
+            ICPPParameter[] theParms = new ICPPParameter[2];
             theParms[0] = new CPPBuiltinParameter(parms[0]);
             theParms[1] = new CPPBuiltinParameter(parms[1]);
             temp = new CPPImplicitFunction(__BUILTIN_ATAN2L, scope, functionType, theParms, false);
@@ -2149,7 +2153,7 @@ public class GCCBuiltinSymbolProvider implements IBuiltinBindingsProvider {
             parms[0] = cpp_float;
             parms[1] = cpp_float_p;
             ICPPFunctionType functionType = new CPPFunctionType(cpp_float, parms);
-            IParameter[] theParms = new IParameter[2];
+            ICPPParameter[] theParms = new ICPPParameter[2];
             theParms[0] = new CPPBuiltinParameter(parms[0]);
             theParms[1] = new CPPBuiltinParameter(parms[1]);
             temp = new CPPImplicitFunction(__BUILTIN_MODFF, scope, functionType, theParms, false);
@@ -2173,7 +2177,7 @@ public class GCCBuiltinSymbolProvider implements IBuiltinBindingsProvider {
             parms[0] = cpp_long_double;
             parms[1] = cpp_long_double_p;
             ICPPFunctionType functionType = new CPPFunctionType(cpp_long_double, parms);
-            IParameter[] theParms = new IParameter[2];
+            ICPPParameter[] theParms = new ICPPParameter[2];
             theParms[0] = new CPPBuiltinParameter(parms[0]);
             theParms[1] = new CPPBuiltinParameter(parms[1]);
             temp = new CPPImplicitFunction(__BUILTIN_MODFL, scope, functionType, theParms, false);
@@ -2197,7 +2201,7 @@ public class GCCBuiltinSymbolProvider implements IBuiltinBindingsProvider {
             parms[0] = cpp_double;
             parms[1] = cpp_int_p;
             ICPPFunctionType functionType = new CPPFunctionType(cpp_double, parms);
-            IParameter[] theParms = new IParameter[2];
+            ICPPParameter[] theParms = new ICPPParameter[2];
             theParms[0] = new CPPBuiltinParameter(parms[0]);
             theParms[1] = new CPPBuiltinParameter(parms[1]);
             temp = new CPPImplicitFunction(__BUILTIN_FREXP, scope, functionType, theParms, false);
@@ -2221,7 +2225,7 @@ public class GCCBuiltinSymbolProvider implements IBuiltinBindingsProvider {
             parms[0] = cpp_float;
             parms[1] = cpp_int_p;
             ICPPFunctionType functionType = new CPPFunctionType(cpp_float, parms);
-            IParameter[] theParms = new IParameter[2];
+            ICPPParameter[] theParms = new ICPPParameter[2];
             theParms[0] = new CPPBuiltinParameter(parms[0]);
             theParms[1] = new CPPBuiltinParameter(parms[1]);
             temp = new CPPImplicitFunction(__BUILTIN_FREXPF, scope, functionType, theParms, false);
@@ -2245,7 +2249,7 @@ public class GCCBuiltinSymbolProvider implements IBuiltinBindingsProvider {
             parms[0] = cpp_long_double;
             parms[1] = cpp_int_p;
             ICPPFunctionType functionType = new CPPFunctionType(cpp_long_double, parms);
-            IParameter[] theParms = new IParameter[2];
+            ICPPParameter[] theParms = new ICPPParameter[2];
             theParms[0] = new CPPBuiltinParameter(parms[0]);
             theParms[1] = new CPPBuiltinParameter(parms[1]);
             temp = new CPPImplicitFunction(__BUILTIN_FREXPL, scope, functionType, theParms, false);
@@ -2269,7 +2273,7 @@ public class GCCBuiltinSymbolProvider implements IBuiltinBindingsProvider {
             parms[0] = cpp_double;
             parms[1] = cpp_int;
             ICPPFunctionType functionType = new CPPFunctionType(cpp_double, parms);
-            IParameter[] theParms = new IParameter[2];
+            ICPPParameter[] theParms = new ICPPParameter[2];
             theParms[0] = new CPPBuiltinParameter(parms[0]);
             theParms[1] = new CPPBuiltinParameter(parms[1]);
             temp = new CPPImplicitFunction(__BUILTIN_LDEXP, scope, functionType, theParms, false);
@@ -2293,7 +2297,7 @@ public class GCCBuiltinSymbolProvider implements IBuiltinBindingsProvider {
             parms[0] = cpp_float;
             parms[1] = cpp_int;
             ICPPFunctionType functionType = new CPPFunctionType(cpp_float, parms);
-            IParameter[] theParms = new IParameter[2];
+            ICPPParameter[] theParms = new ICPPParameter[2];
             theParms[0] = new CPPBuiltinParameter(parms[0]);
             theParms[1] = new CPPBuiltinParameter(parms[1]);
             temp = new CPPImplicitFunction(__BUILTIN_LDEXPF, scope, functionType, theParms, false);
@@ -2317,7 +2321,7 @@ public class GCCBuiltinSymbolProvider implements IBuiltinBindingsProvider {
             parms[0] = cpp_long_double;
             parms[1] = cpp_int;
             ICPPFunctionType functionType = new CPPFunctionType(cpp_long_double, parms);
-            IParameter[] theParms = new IParameter[2];
+            ICPPParameter[] theParms = new ICPPParameter[2];
             theParms[0] = new CPPBuiltinParameter(parms[0]);
             theParms[1] = new CPPBuiltinParameter(parms[1]);
             temp = new CPPImplicitFunction(__BUILTIN_LDEXPL, scope, functionType, theParms, false);
@@ -2343,7 +2347,7 @@ public class GCCBuiltinSymbolProvider implements IBuiltinBindingsProvider {
             parms[0] = cpp_const_char_p_r;
             parms[1] = cpp_FILE_p_r;
             ICPPFunctionType functionType = new CPPFunctionType(cpp_int, parms);
-            IParameter[] theParms = new IParameter[2];
+            ICPPParameter[] theParms = new ICPPParameter[2];
             theParms[0] = new CPPBuiltinParameter(parms[0]);
             theParms[1] = new CPPBuiltinParameter(parms[1]);
             temp = new CPPImplicitFunction(__BUILTIN_FPUTS, scope, functionType, theParms, false);
@@ -2364,7 +2368,7 @@ public class GCCBuiltinSymbolProvider implements IBuiltinBindingsProvider {
             IType[] parms = new IType[1];
             parms[0] = cpp_int;
             ICPPFunctionType functionType = new CPPFunctionType(cpp_int, parms);
-            IParameter[] theParms = new IParameter[1];
+            ICPPParameter[] theParms = new ICPPParameter[1];
             theParms[0] = new CPPBuiltinParameter(parms[0]);
             temp = new CPPImplicitFunction(__BUILTIN_PUTCHAR, scope, functionType, theParms, false);
         }
@@ -2384,7 +2388,7 @@ public class GCCBuiltinSymbolProvider implements IBuiltinBindingsProvider {
             IType[] parms = new IType[1];
             parms[0] = cpp_const_char_p;
             ICPPFunctionType functionType = new CPPFunctionType(cpp_int, parms);
-            IParameter[] theParms = new IParameter[1];
+            ICPPParameter[] theParms = new ICPPParameter[1];
             theParms[0] = new CPPBuiltinParameter(parms[0]);
             temp = new CPPImplicitFunction(__BUILTIN_PUTS, scope, functionType, theParms, false);
         }
@@ -2406,7 +2410,7 @@ public class GCCBuiltinSymbolProvider implements IBuiltinBindingsProvider {
             IType[] parms = new IType[1];
             parms[0] = cpp_size_t;
             ICPPFunctionType functionType = new CPPFunctionType(cpp_void_p, parms);
-            IParameter[] theParms = new IParameter[1];
+            ICPPParameter[] theParms = new ICPPParameter[1];
             theParms[0] = new CPPBuiltinParameter(parms[0]);
             temp = new CPPImplicitFunction(__BUILTIN_ALLOCA, scope, functionType, theParms, false);
         }
@@ -2431,7 +2435,7 @@ public class GCCBuiltinSymbolProvider implements IBuiltinBindingsProvider {
             parms[1] = cpp_const_void_p;
             parms[2] = cpp_size_t;
             ICPPFunctionType functionType = new CPPFunctionType(cpp_int, parms);
-            IParameter[] theParms = new IParameter[3];
+            ICPPParameter[] theParms = new ICPPParameter[3];
             theParms[0] = new CPPBuiltinParameter(parms[0]);
             theParms[1] = new CPPBuiltinParameter(parms[1]);
             theParms[2] = new CPPBuiltinParameter(parms[2]);
@@ -2459,7 +2463,7 @@ public class GCCBuiltinSymbolProvider implements IBuiltinBindingsProvider {
             parms[1] = cpp_const_void_p_r;
             parms[2] = cpp_size_t;
             ICPPFunctionType functionType = new CPPFunctionType(cpp_void_p, parms);
-            IParameter[] theParms = new IParameter[3];
+            ICPPParameter[] theParms = new ICPPParameter[3];
             theParms[0] = new CPPBuiltinParameter(parms[0]);
             theParms[1] = new CPPBuiltinParameter(parms[1]);
             theParms[2] = new CPPBuiltinParameter(parms[2]);
@@ -2487,7 +2491,7 @@ public class GCCBuiltinSymbolProvider implements IBuiltinBindingsProvider {
             parms[1] = cpp_int;
             parms[2] = cpp_size_t;
             ICPPFunctionType functionType = new CPPFunctionType(cpp_void_p, parms);
-            IParameter[] theParms = new IParameter[3];
+            ICPPParameter[] theParms = new ICPPParameter[3];
             theParms[0] = new CPPBuiltinParameter(parms[0]);
             theParms[1] = new CPPBuiltinParameter(parms[1]);
             theParms[2] = new CPPBuiltinParameter(parms[2]);
@@ -2514,7 +2518,7 @@ public class GCCBuiltinSymbolProvider implements IBuiltinBindingsProvider {
             parms[0] = cpp_char_p_r;
             parms[1] = cpp_const_char_p_r;
             ICPPFunctionType functionType = new CPPFunctionType(cpp_char_p, parms);
-            IParameter[] theParms = new IParameter[2];
+            ICPPParameter[] theParms = new ICPPParameter[2];
             theParms[0] = new CPPBuiltinParameter(parms[0]);
             theParms[1] = new CPPBuiltinParameter(parms[1]);
             temp = new CPPImplicitFunction(__BUILTIN_STRCAT, scope, functionType, theParms, false);
@@ -2538,7 +2542,7 @@ public class GCCBuiltinSymbolProvider implements IBuiltinBindingsProvider {
             parms[0] = cpp_const_char_p;
             parms[1] = cpp_int;
             ICPPFunctionType functionType = new CPPFunctionType(cpp_char_p, parms);
-            IParameter[] theParms = new IParameter[2];
+            ICPPParameter[] theParms = new ICPPParameter[2];
             theParms[0] = new CPPBuiltinParameter(parms[0]);
             theParms[1] = new CPPBuiltinParameter(parms[1]);
             temp = new CPPImplicitFunction(__BUILTIN_STRCHR, scope, functionType, theParms, false);
@@ -2562,7 +2566,7 @@ public class GCCBuiltinSymbolProvider implements IBuiltinBindingsProvider {
             parms[0] = cpp_const_char_p;
             parms[1] = cpp_const_char_p;
             ICPPFunctionType functionType = new CPPFunctionType(cpp_int, parms);
-            IParameter[] theParms = new IParameter[2];
+            ICPPParameter[] theParms = new ICPPParameter[2];
             theParms[0] = new CPPBuiltinParameter(parms[0]);
             theParms[1] = new CPPBuiltinParameter(parms[1]);
             temp = new CPPImplicitFunction(__BUILTIN_STRCMP, scope, functionType, theParms, false);
@@ -2586,7 +2590,7 @@ public class GCCBuiltinSymbolProvider implements IBuiltinBindingsProvider {
             parms[0] = cpp_char_p_r;
             parms[1] = cpp_const_char_p_r;
             ICPPFunctionType functionType = new CPPFunctionType(cpp_char_p, parms);
-            IParameter[] theParms = new IParameter[2];
+            ICPPParameter[] theParms = new ICPPParameter[2];
             theParms[0] = new CPPBuiltinParameter(parms[0]);
             theParms[1] = new CPPBuiltinParameter(parms[1]);
             temp = new CPPImplicitFunction(__BUILTIN_STRCPY, scope, functionType, theParms, false);
@@ -2610,7 +2614,7 @@ public class GCCBuiltinSymbolProvider implements IBuiltinBindingsProvider {
             parms[0] = cpp_const_char_p;
             parms[1] = cpp_const_char_p;
             ICPPFunctionType functionType = new CPPFunctionType(cpp_size_t, parms);
-            IParameter[] theParms = new IParameter[2];
+            ICPPParameter[] theParms = new ICPPParameter[2];
             theParms[0] = new CPPBuiltinParameter(parms[0]);
             theParms[1] = theParms[0];
             temp = new CPPImplicitFunction(__BUILTIN_STRCSPN, scope, functionType, theParms, false);
@@ -2631,7 +2635,7 @@ public class GCCBuiltinSymbolProvider implements IBuiltinBindingsProvider {
             IType[] parms = new IType[1];
             parms[0] = cpp_const_char_p;
             ICPPFunctionType functionType = new CPPFunctionType(cpp_size_t, parms);
-            IParameter[] theParms = new IParameter[1];
+            ICPPParameter[] theParms = new ICPPParameter[1];
             theParms[0] = new CPPBuiltinParameter(parms[0]);
             temp = new CPPImplicitFunction(__BUILTIN_STRLEN, scope, functionType, theParms, false);
         }
@@ -2654,7 +2658,7 @@ public class GCCBuiltinSymbolProvider implements IBuiltinBindingsProvider {
             parms[0] = cpp_const_char_p;
             parms[1] = cpp_const_char_p;
             ICPPFunctionType functionType = new CPPFunctionType(cpp_char_p, parms);
-            IParameter[] theParms = new IParameter[2];
+            ICPPParameter[] theParms = new ICPPParameter[2];
             theParms[0] = new CPPBuiltinParameter(parms[0]);
             theParms[1] = theParms[0];
             temp = new CPPImplicitFunction(__BUILTIN_STRPBRK, scope, functionType, theParms, false);
@@ -2678,7 +2682,7 @@ public class GCCBuiltinSymbolProvider implements IBuiltinBindingsProvider {
             parms[0] = cpp_const_char_p;
             parms[1] = cpp_int;
             ICPPFunctionType functionType = new CPPFunctionType(cpp_char_p, parms);
-            IParameter[] theParms = new IParameter[2];
+            ICPPParameter[] theParms = new ICPPParameter[2];
             theParms[0] = new CPPBuiltinParameter(parms[0]);
             theParms[1] = new CPPBuiltinParameter(parms[1]);
             temp = new CPPImplicitFunction(__BUILTIN_STRRCHR, scope, functionType, theParms, false);
@@ -2702,7 +2706,7 @@ public class GCCBuiltinSymbolProvider implements IBuiltinBindingsProvider {
             parms[0] = cpp_const_char_p;
             parms[1] = cpp_const_char_p;
             ICPPFunctionType functionType = new CPPFunctionType(cpp_size_t, parms);
-            IParameter[] theParms = new IParameter[2];
+            ICPPParameter[] theParms = new ICPPParameter[2];
             theParms[0] = new CPPBuiltinParameter(parms[0]);
             theParms[1] = theParms[0];
             temp = new CPPImplicitFunction(__BUILTIN_STRSPN, scope, functionType, theParms, false);
@@ -2726,7 +2730,7 @@ public class GCCBuiltinSymbolProvider implements IBuiltinBindingsProvider {
             parms[0] = cpp_const_char_p;
             parms[1] = cpp_const_char_p;
             ICPPFunctionType functionType = new CPPFunctionType(cpp_char_p, parms);
-            IParameter[] theParms = new IParameter[2];
+            ICPPParameter[] theParms = new ICPPParameter[2];
             theParms[0] = new CPPBuiltinParameter(parms[0]);
             theParms[1] = theParms[0];
             temp = new CPPImplicitFunction(__BUILTIN_STRSTR, scope, functionType, theParms, false);
@@ -2753,7 +2757,7 @@ public class GCCBuiltinSymbolProvider implements IBuiltinBindingsProvider {
             parms[1] = cpp_const_char_p_r;
             parms[2] = cpp_size_t;
             ICPPFunctionType functionType = new CPPFunctionType(cpp_char_p, parms);
-            IParameter[] theParms = new IParameter[3];
+            ICPPParameter[] theParms = new ICPPParameter[3];
             theParms[0] = new CPPBuiltinParameter(parms[0]);
             theParms[1] = new CPPBuiltinParameter(parms[1]);
             theParms[2] = new CPPBuiltinParameter(parms[2]);
@@ -2781,7 +2785,7 @@ public class GCCBuiltinSymbolProvider implements IBuiltinBindingsProvider {
             parms[1] = cpp_const_char_p;
             parms[2] = cpp_size_t;
             ICPPFunctionType functionType = new CPPFunctionType(cpp_int, parms);
-            IParameter[] theParms = new IParameter[3];
+            ICPPParameter[] theParms = new ICPPParameter[3];
             theParms[0] = new CPPBuiltinParameter(parms[0]);
             theParms[1] = new CPPBuiltinParameter(parms[1]);
             theParms[2] = new CPPBuiltinParameter(parms[2]);
@@ -2809,7 +2813,7 @@ public class GCCBuiltinSymbolProvider implements IBuiltinBindingsProvider {
             parms[1] = cpp_const_char_p_r;
             parms[2] = cpp_size_t;
             ICPPFunctionType functionType = new CPPFunctionType(cpp_char_p, parms);
-            IParameter[] theParms = new IParameter[3];
+            ICPPParameter[] theParms = new ICPPParameter[3];
             theParms[0] = new CPPBuiltinParameter(parms[0]);
             theParms[1] = new CPPBuiltinParameter(parms[1]);
             theParms[2] = new CPPBuiltinParameter(parms[2]);
@@ -2836,7 +2840,7 @@ public class GCCBuiltinSymbolProvider implements IBuiltinBindingsProvider {
             parms[0] = cpp_float;
             parms[1] = cpp_float;
             ICPPFunctionType functionType = new CPPFunctionType(cpp_int, parms);
-            IParameter[] theParms = new IParameter[2];
+            ICPPParameter[] theParms = new ICPPParameter[2];
             theParms[0] = new CPPBuiltinParameter(parms[0]);
             theParms[1] = theParms[0];
             temp = new CPPImplicitFunction(__BUILTIN_ISGREATER, scope, functionType, theParms, false);
@@ -2860,7 +2864,7 @@ public class GCCBuiltinSymbolProvider implements IBuiltinBindingsProvider {
             parms[0] = cpp_float;
             parms[1] = cpp_float;
             ICPPFunctionType functionType = new CPPFunctionType(cpp_int, parms);
-            IParameter[] theParms = new IParameter[2];
+            ICPPParameter[] theParms = new ICPPParameter[2];
             theParms[0] = new CPPBuiltinParameter(parms[0]);
             theParms[1] = theParms[0];
             temp = new CPPImplicitFunction(__BUILTIN_ISGREATEREQUAL, scope, functionType, theParms, false);
@@ -2884,7 +2888,7 @@ public class GCCBuiltinSymbolProvider implements IBuiltinBindingsProvider {
             parms[0] = cpp_float;
             parms[1] = cpp_float;
             ICPPFunctionType functionType = new CPPFunctionType(cpp_int, parms);
-            IParameter[] theParms = new IParameter[2];
+            ICPPParameter[] theParms = new ICPPParameter[2];
             theParms[0] = new CPPBuiltinParameter(parms[0]);
             theParms[1] = theParms[0];
             temp = new CPPImplicitFunction(__BUILTIN_ISLESS, scope, functionType, theParms, false);
@@ -2908,7 +2912,7 @@ public class GCCBuiltinSymbolProvider implements IBuiltinBindingsProvider {
             parms[0] = cpp_float;
             parms[1] = cpp_float;
             ICPPFunctionType functionType = new CPPFunctionType(cpp_int, parms);
-            IParameter[] theParms = new IParameter[2];
+            ICPPParameter[] theParms = new ICPPParameter[2];
             theParms[0] = new CPPBuiltinParameter(parms[0]);
             theParms[1] = theParms[0];
             temp = new CPPImplicitFunction(__BUILTIN_ISLESSEQUAL, scope, functionType, theParms, false);
@@ -2932,7 +2936,7 @@ public class GCCBuiltinSymbolProvider implements IBuiltinBindingsProvider {
             parms[0] = cpp_float;
             parms[1] = cpp_float;
             ICPPFunctionType functionType = new CPPFunctionType(cpp_int, parms);
-            IParameter[] theParms = new IParameter[2];
+            ICPPParameter[] theParms = new ICPPParameter[2];
             theParms[0] = new CPPBuiltinParameter(parms[0]);
             theParms[1] = theParms[0];
             temp = new CPPImplicitFunction(__BUILTIN_ISLESSGREATER, scope, functionType, theParms, false);
@@ -2956,7 +2960,7 @@ public class GCCBuiltinSymbolProvider implements IBuiltinBindingsProvider {
             parms[0] = cpp_float;
             parms[1] = cpp_float;
             ICPPFunctionType functionType = new CPPFunctionType(cpp_int, parms);
-            IParameter[] theParms = new IParameter[2];
+            ICPPParameter[] theParms = new ICPPParameter[2];
             theParms[0] = new CPPBuiltinParameter(parms[0]);
             theParms[1] = theParms[0];
             temp = new CPPImplicitFunction(__BUILTIN_ISUNORDERED, scope, functionType, theParms, false);

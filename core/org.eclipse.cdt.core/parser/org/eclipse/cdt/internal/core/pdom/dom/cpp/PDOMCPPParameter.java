@@ -14,11 +14,11 @@ package org.eclipse.cdt.internal.core.pdom.dom.cpp;
 
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.dom.ast.DOMException;
-import org.eclipse.cdt.core.dom.ast.IParameter;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.IValue;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPParameter;
 import org.eclipse.cdt.core.index.IIndexFile;
+import org.eclipse.cdt.core.parser.util.CharArrayUtils;
 import org.eclipse.cdt.internal.core.index.IIndexCPPBindingConstants;
 import org.eclipse.cdt.internal.core.index.IIndexFragment;
 import org.eclipse.cdt.internal.core.index.IIndexScope;
@@ -53,34 +53,39 @@ class PDOMCPPParameter extends PDOMNamedNode implements ICPPParameter, IPDOMBind
 		fType= type;
 	}
 
-	public PDOMCPPParameter(PDOMLinkage linkage, PDOMNode parent, IParameter param, PDOMCPPParameter next)
+	public PDOMCPPParameter(PDOMLinkage linkage, PDOMNode parent, ICPPParameter param, PDOMCPPParameter next)
 			throws CoreException {
 		super(linkage, parent, param.getNameCharArray());
 		fType= null;	// this constructor is used for adding parameters to the database, only.
 		
 		Database db = getDB();
-
-		db.putRecPtr(record + NEXT_PARAM, 0);
-		byte flags= encodeFlags(param);
-		db.putByte(record + FLAGS, flags);
+		db.putByte(record + FLAGS, param.hasDefaultValue() ? FLAG_DEFAULT_VALUE : 0);
 		db.putRecPtr(record + NEXT_PARAM, next == null ? 0 : next.getRecord());
 
+		storeAnnotations(db, param);
+	}
+
+	private void storeAnnotations(Database db, ICPPParameter param) throws CoreException {
 		try {
 			byte annotations = PDOMCPPAnnotation.encodeAnnotation(param);
 			db.putByte(record + ANNOTATIONS, annotations);
 		} catch (DOMException e) {
 			// ignore and miss out on some properties of the parameter
 		}
-
 	}
 
-	private byte encodeFlags(IParameter param) {
-		byte flags= 0;
-		if (param instanceof ICPPParameter && 
-				((ICPPParameter) param).hasDefaultValue()) {
-			flags |= FLAG_DEFAULT_VALUE;
+	public void update(ICPPParameter newPar) throws CoreException {
+		final Database db = getDB();
+		// Bug 297438: Don't clear the property of having a default value.
+		if (newPar.hasDefaultValue()) {
+			db.putByte(record + FLAGS, FLAG_DEFAULT_VALUE);
 		}
-		return flags;
+		storeAnnotations(db, newPar);
+		
+		final char[] newName = newPar.getNameCharArray();
+		if (!CharArrayUtils.equals(newName, getNameCharArray())) {
+			updateName(newName);
+		}
 	}
 
 	@Override
@@ -94,15 +99,15 @@ class PDOMCPPParameter extends PDOMNamedNode implements ICPPParameter, IPDOMBind
 	}
 	
 	public String[] getQualifiedName() {
-		throw new PDOMNotImplementedError();
+		return new String[] {getName()};
 	}
 
 	public char[][] getQualifiedNameCharArray() throws DOMException {
-		throw new PDOMNotImplementedError();
+		return new char[][]{getNameCharArray()};
 	}
 
-	public boolean isGloballyQualified() throws DOMException {
-		throw new PDOMNotImplementedError();
+	public boolean isGloballyQualified() {
+		return false;
 	}
 
 	public boolean isMutable() throws DOMException {
@@ -148,7 +153,7 @@ class PDOMCPPParameter extends PDOMNamedNode implements ICPPParameter, IPDOMBind
 		return null;
 	}
 
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings("rawtypes")
 	public Object getAdapter(Class adapter) {
 		return null;
 	}

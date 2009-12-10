@@ -32,7 +32,6 @@ import org.eclipse.cdt.core.dom.ast.IASTSimpleDeclSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTSimpleDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTTypeId;
 import org.eclipse.cdt.core.dom.ast.IBinding;
-import org.eclipse.cdt.core.dom.ast.IParameter;
 import org.eclipse.cdt.core.dom.ast.IProblemBinding;
 import org.eclipse.cdt.core.dom.ast.IScope;
 import org.eclipse.cdt.core.dom.ast.IType;
@@ -50,6 +49,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPConstructor;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunctionType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPMethod;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPParameter;
 import org.eclipse.cdt.core.index.IIndexFileSet;
 import org.eclipse.cdt.core.parser.util.ArrayUtil;
 import org.eclipse.cdt.core.parser.util.CharArrayObjectMap;
@@ -99,9 +99,9 @@ public class CPPClassScope extends CPPScope implements ICPPClassScope {
         }
         char[] className = name.getLookupKey();
 
-		IParameter[] voidPs = new IParameter[] { new CPPParameter(CPPSemantics.VOID_TYPE, 0) };
+        ICPPParameter[] voidPs = new ICPPParameter[] { new CPPParameter(CPPSemantics.VOID_TYPE, 0) };
 		IType pType = new CPPReferenceType(SemanticUtil.addQualifiers(clsType, true, false), false);
-		IParameter[] ps = new IParameter[] { new CPPParameter(pType, 0) };
+		ICPPParameter[] ps = new ICPPParameter[] { new CPPParameter(pType, 0) };
 
 		int i= 0;
 		ImplicitsAnalysis ia= new ImplicitsAnalysis(compTypeSpec);
@@ -190,7 +190,7 @@ public class CPPClassScope extends CPPScope implements ICPPClassScope {
 		super.addName(name);
 	}
 
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings({ "rawtypes", "unchecked" })
 	private void addConstructor(Object constructor) {
 		if (bindings == null)
             bindings = new CharArrayObjectMap(1);

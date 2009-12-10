@@ -2916,7 +2916,7 @@ public class CPPSemantics {
     
 	private static IBinding createSurrogateCallFunction(IScope scope, IType returnType, IType rt, IType[] parameterTypes) {
 		IType[] parms = new IType[parameterTypes.length+1];
-		IParameter[] theParms = new IParameter[parms.length];
+		ICPPParameter[] theParms = new ICPPParameter[parms.length];
 
 		parms[0] = rt;
 		theParms[0]= new CPPBuiltinParameter(rt);

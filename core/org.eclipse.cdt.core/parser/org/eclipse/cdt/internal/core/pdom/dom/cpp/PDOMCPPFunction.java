@@ -15,12 +15,12 @@ package org.eclipse.cdt.internal.core.pdom.dom.cpp;
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IBinding;
-import org.eclipse.cdt.core.dom.ast.IParameter;
 import org.eclipse.cdt.core.dom.ast.IScope;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunction;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunctionType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPMethod;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPParameter;
 import org.eclipse.cdt.internal.core.Util;
 import org.eclipse.cdt.internal.core.index.IIndexCPPBindingConstants;
 import org.eclipse.cdt.internal.core.index.IndexCPPSignatureUtil;
@@ -93,7 +93,7 @@ class PDOMCPPFunction extends PDOMCPPBinding implements ICPPFunction, IPDOMOverl
 		}
 	}
 
-	public void initData(ICPPFunctionType ftype, IParameter[] params, IType[] exceptionSpec) {
+	public void initData(ICPPFunctionType ftype, ICPPParameter[] params, IType[] exceptionSpec) {
 		try {
 			setType(ftype);
 			setParameters(params);
@@ -108,7 +108,7 @@ class PDOMCPPFunction extends PDOMCPPBinding implements ICPPFunction, IPDOMOverl
 		if (newBinding instanceof ICPPFunction) {
 			ICPPFunction func= (ICPPFunction) newBinding;
 			ICPPFunctionType newType;
-			IParameter[] newParams;
+			ICPPParameter[] newParams;
 			byte newAnnotation;
 			try {
 				newType= func.getType();
@@ -119,12 +119,22 @@ class PDOMCPPFunction extends PDOMCPPBinding implements ICPPFunction, IPDOMOverl
 			}
 				
 			fType= null;
-			getLinkage().storeType(record+FUNCTION_TYPE, newType);
+			linkage.storeType(record+FUNCTION_TYPE, newType);
 
 			PDOMCPPParameter oldParams= getFirstParameter(null);
-			setParameters(newParams);
-			if (oldParams != null) {
-				oldParams.delete(linkage);
+			if (oldParams != null && hasDeclaration()) {
+				for (ICPPParameter newPar : newParams) {
+					oldParams.update(newPar);
+					long next= oldParams.getNextPtr();
+					if (next == 0)
+						break;
+					oldParams= new PDOMCPPParameter(linkage, next, null);
+				}
+			} else {
+				setParameters(newParams);
+				if (oldParams != null) {
+					oldParams.delete(linkage);
+				}
 			}
 			final Database db = getDB();
 			db.putByte(record + ANNOTATION, newAnnotation);
@@ -159,7 +169,7 @@ class PDOMCPPFunction extends PDOMCPPBinding implements ICPPFunction, IPDOMOverl
 		return exceptionSpec;
 	}
 
-	private void setParameters(IParameter[] params) throws CoreException {
+	private void setParameters(ICPPParameter[] params) throws CoreException {
 		final PDOMLinkage linkage = getLinkage();
 		final Database db= getDB();
 		db.putInt(record + NUM_PARAMS, params.length);
@@ -225,7 +235,7 @@ class PDOMCPPFunction extends PDOMCPPBinding implements ICPPFunction, IPDOMOverl
 		throw new PDOMNotImplementedError();
 	}
 
-	public IParameter[] getParameters() throws DOMException {
+	public ICPPParameter[] getParameters() throws DOMException {
 		try {
 			PDOMLinkage linkage= getLinkage();
 			Database db= getDB();
@@ -233,7 +243,7 @@ class PDOMCPPFunction extends PDOMCPPBinding implements ICPPFunction, IPDOMOverl
 			IType[] ptypes= ft == null ? IType.EMPTY_TYPE_ARRAY : ft.getParameterTypes();
 			
 			int n = db.getInt(record + NUM_PARAMS);
-			IParameter[] result = new IParameter[n];
+			ICPPParameter[] result = new ICPPParameter[n];
 			
 			long next = db.getRecPtr(record + FIRST_PARAM);
  			for (int i = 0; i < n && next != 0; i++) {
@@ -245,7 +255,7 @@ class PDOMCPPFunction extends PDOMCPPBinding implements ICPPFunction, IPDOMOverl
 			return result;
 		} catch (CoreException e) {
 			CCorePlugin.log(e);
-			return IParameter.EMPTY_PARAMETER_ARRAY;
+			return ICPPParameter.EMPTY_CPPPARAMETER_ARRAY;
 		}
 	}
 

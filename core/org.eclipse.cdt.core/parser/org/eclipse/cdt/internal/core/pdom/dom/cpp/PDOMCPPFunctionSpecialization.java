@@ -20,6 +20,7 @@ import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunction;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunctionType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPMethod;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPParameter;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPSpecialization;
 import org.eclipse.cdt.internal.core.Util;
 import org.eclipse.cdt.internal.core.index.IIndexCPPBindingConstants;
@@ -84,7 +85,7 @@ class PDOMCPPFunctionSpecialization extends PDOMCPPSpecialization implements ICP
 			}
 
 			ICPPFunction spAstFunc= (ICPPFunction) ((ICPPSpecialization)astFunction).getSpecializedBinding();
-			IParameter[] spAstParams= spAstFunc.getParameters();
+			ICPPParameter[] spAstParams= spAstFunc.getParameters();
 			
 			final int length= Math.min(spAstParams.length, astParams.length);
 			db.putInt(record + NUM_PARAMS, length);
@@ -140,7 +141,7 @@ class PDOMCPPFunctionSpecialization extends PDOMCPPSpecialization implements ICP
 		throw new PDOMNotImplementedError();
 	}
 
-	public IParameter[] getParameters() throws DOMException {
+	public ICPPParameter[] getParameters() throws DOMException {
 		try {
 			PDOMLinkage linkage= getLinkage();
 			Database db= getDB();
@@ -148,7 +149,7 @@ class PDOMCPPFunctionSpecialization extends PDOMCPPSpecialization implements ICP
 			IType[] ptypes= ft == null ? IType.EMPTY_TYPE_ARRAY : ft.getParameterTypes();
 			
 			int n = db.getInt(record + NUM_PARAMS);
-			IParameter[] result = new IParameter[n];
+			ICPPParameter[] result = new ICPPParameter[n];
 			
 			long next = db.getRecPtr(record + FIRST_PARAM);
  			for (int i = 0; i < n && next != 0; i++) {
@@ -160,7 +161,7 @@ class PDOMCPPFunctionSpecialization extends PDOMCPPSpecialization implements ICP
 			return result;
 		} catch (CoreException e) {
 			CCorePlugin.log(e);
-			return new IParameter[0];
+			return ICPPParameter.EMPTY_CPPPARAMETER_ARRAY;
 		}
 	}
 

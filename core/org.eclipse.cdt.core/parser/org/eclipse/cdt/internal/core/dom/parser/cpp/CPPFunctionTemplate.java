@@ -27,16 +27,15 @@ import org.eclipse.cdt.core.dom.ast.IASTSimpleDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTTypeId;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.IFunctionType;
-import org.eclipse.cdt.core.dom.ast.IParameter;
 import org.eclipse.cdt.core.dom.ast.IProblemBinding;
 import org.eclipse.cdt.core.dom.ast.IScope;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTDeclSpecifier;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTFunctionDeclarator;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassTemplatePartialSpecialization;
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunction;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunctionTemplate;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunctionType;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPParameter;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateParameter;
 import org.eclipse.cdt.internal.core.dom.parser.ASTInternal;
 import org.eclipse.cdt.internal.core.dom.parser.ASTQueries;
@@ -47,9 +46,9 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPVisitor;
  * Implementation of function templates
  */
 public class CPPFunctionTemplate extends CPPTemplateDefinition
-		implements ICPPFunctionTemplate, ICPPFunction, ICPPInternalFunction {
+		implements ICPPFunctionTemplate, ICPPInternalFunction {
 	public static final class CPPFunctionTemplateProblem extends ProblemBinding
-			implements ICPPFunctionTemplate, ICPPFunction {
+			implements ICPPFunctionTemplate {
 		public CPPFunctionTemplateProblem(IASTNode node, int id, char[] arg) {
 			super(node, id, arg);
 		}
@@ -77,7 +76,7 @@ public class CPPFunctionTemplate extends CPPTemplateDefinition
 		public boolean isExternC() throws DOMException {
 			throw new DOMException(this);
 		}
-		public IParameter[] getParameters() throws DOMException {
+		public ICPPParameter[] getParameters() throws DOMException {
 			throw new DOMException(this);
 		}
 		public IScope getFunctionScope() throws DOMException {
@@ -153,19 +152,19 @@ public class CPPFunctionTemplate extends CPPTemplateDefinition
         return null;
 	}
 
-	public IParameter[] getParameters() {
+	public ICPPParameter[] getParameters() {
 		ICPPASTFunctionDeclarator fdecl= getFirstFunctionDtor();
 		if (fdecl != null) {
 			IASTParameterDeclaration[] params = fdecl.getParameters();
 			int size = params.length;
-			IParameter[] result = new IParameter[size];
+			ICPPParameter[] result = new ICPPParameter[size];
 			if (size > 0) {
 				for(int i = 0; i < size; i++) {
 					IASTParameterDeclaration p = params[i];
 					final IASTName pname = ASTQueries.findInnermostDeclarator(p.getDeclarator()).getName();
 					final IBinding binding= pname.resolveBinding();
-					if (binding instanceof IParameter) {
-						result[i]= (IParameter) binding;
+					if (binding instanceof ICPPParameter) {
+						result[i]= (ICPPParameter) binding;
 					} else {
 						result[i] = new CPPParameter.CPPParameterProblem(p,
 								IProblemBinding.SEMANTIC_INVALID_TYPE, pname.toCharArray());

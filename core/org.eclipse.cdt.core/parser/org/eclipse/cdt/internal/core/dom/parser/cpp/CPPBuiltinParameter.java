@@ -12,7 +12,6 @@ package org.eclipse.cdt.internal.core.dom.parser.cpp;
 
 import org.eclipse.cdt.core.dom.ILinkage;
 import org.eclipse.cdt.core.dom.ast.IBinding;
-import org.eclipse.cdt.core.dom.ast.IParameter;
 import org.eclipse.cdt.core.dom.ast.IScope;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.IValue;
@@ -23,12 +22,12 @@ import org.eclipse.cdt.internal.core.dom.Linkage;
 import org.eclipse.core.runtime.PlatformObject;
 
 public class CPPBuiltinParameter extends PlatformObject implements ICPPParameter {
-	public static IParameter[] createParameterList(ICPPFunctionType ft) {
+	public static ICPPParameter[] createParameterList(ICPPFunctionType ft) {
 		if (ft == null) {
-			return IParameter.EMPTY_PARAMETER_ARRAY;
+			return ICPPParameter.EMPTY_CPPPARAMETER_ARRAY;
 		}
 		IType[] ptypes= ft.getParameterTypes();
-		IParameter[] result= new IParameter[ptypes.length];
+		ICPPParameter[] result= new ICPPParameter[ptypes.length];
 		for (int i = 0; i < result.length; i++) {
 			result[i]= new CPPBuiltinParameter(ptypes[i]);
 		}

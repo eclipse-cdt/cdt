@@ -13,11 +13,11 @@ package org.eclipse.cdt.internal.core.index.composite.cpp;
 
 import org.eclipse.cdt.core.dom.ast.ASTTypeUtil;
 import org.eclipse.cdt.core.dom.ast.DOMException;
-import org.eclipse.cdt.core.dom.ast.IParameter;
 import org.eclipse.cdt.core.dom.ast.IScope;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunction;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunctionType;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPParameter;
 import org.eclipse.cdt.internal.core.index.IIndexFragmentBinding;
 import org.eclipse.cdt.internal.core.index.composite.ICompositesFactory;
 
@@ -43,10 +43,10 @@ class CompositeCPPFunction extends CompositeCPPBinding implements ICPPFunction {
 		fail(); return null;
 	}
 
-	public IParameter[] getParameters() throws DOMException {
-		IParameter[] result = ((ICPPFunction)rbinding).getParameters();
+	public ICPPParameter[] getParameters() throws DOMException {
+		ICPPParameter[] result = ((ICPPFunction)rbinding).getParameters();
 		for(int i=0; i<result.length; i++) {
-			result[i] = (IParameter) cf.getCompositeBinding((IIndexFragmentBinding) result[i]);
+			result[i] = (ICPPParameter) cf.getCompositeBinding((IIndexFragmentBinding) result[i]);
 		}
 		return result;
 	}

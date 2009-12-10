@@ -588,7 +588,7 @@ class OpenDeclarationsJob extends Job implements ASTRunnable {
 					try {
 						IBinding b= astName.resolveBinding();
 						if (b != null && !(b instanceof IProblemBinding)) {
-							if (primaryBindings.add(b)) {
+							if (!ignoreIndexBindings.contains(b) && primaryBindings.add(b)) {
 								ignoreIndexBindings.add(fIndex.adaptBinding(b));
 							}
 						}

@@ -22,7 +22,6 @@ import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IASTParameterDeclaration;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.IFunctionType;
-import org.eclipse.cdt.core.dom.ast.IParameter;
 import org.eclipse.cdt.core.dom.ast.IScope;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTFunctionDeclarator;
@@ -41,7 +40,7 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPVisitor;
  */
 public class CPPFunctionSpecialization extends CPPSpecialization implements ICPPFunction, ICPPInternalFunction {
 	private ICPPFunctionType type = null;
-	private IParameter[] specializedParams = null;
+	private ICPPParameter[] specializedParams = null;
 	private IType[] specializedExceptionSpec = null;
 
 	public CPPFunctionSpecialization(IBinding orig, IBinding owner, ICPPTemplateParameterMap argMap) {
@@ -52,13 +51,13 @@ public class CPPFunctionSpecialization extends CPPSpecialization implements ICPP
 		return (ICPPFunction) getSpecializedBinding();
 	}
 
-	public IParameter[] getParameters() throws DOMException {
+	public ICPPParameter[] getParameters() throws DOMException {
 		if (specializedParams == null) {
 			ICPPFunction function = (ICPPFunction) getSpecializedBinding();
-			IParameter[] params = function.getParameters();
-			specializedParams = new IParameter[params.length];
+			ICPPParameter[] params = function.getParameters();
+			specializedParams = new ICPPParameter[params.length];
 			for (int i = 0; i < params.length; i++) {
-				specializedParams[i] = new CPPParameterSpecialization((ICPPParameter)params[i],
+				specializedParams[i] = new CPPParameterSpecialization(params[i],
 						this, getTemplateParameterMap());
 			}
 		}

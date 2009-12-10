@@ -1185,4 +1185,35 @@ public class IndexUpdateTests extends IndexTestBase {
 		updateFile();
 		checkFunction("useRef", new String[]{"char", "int"}, new String[]{});
 	}
+
+	// void f(int a, int b=0);
+
+	// #include "header.h"
+	// void f(int a, int b) {}
+	// void ref() {
+	//   f(1);
+	// }
+	
+	// #include "header.h"
+	// void f(int a, int b) {}
+	// void ref() {
+	//   f(1);
+	// }
+	public void testDefaultParam_Bug297438() throws Exception {
+		setupHeader(3, true);
+		setupFile(3, true);
+		checkReferenceCount("f", 1);
+		updateFile();
+		checkReferenceCount("f", 1);
+	}
+
+	private void checkReferenceCount(String name, int count) throws InterruptedException, CoreException {
+		fIndex.acquireReadLock();
+		try { 
+			IBinding func = findBinding(name);
+			assertEquals(count, fIndex.findReferences(func).length);
+		} finally {
+			fIndex.releaseReadLock();
+		}
+	}
 }

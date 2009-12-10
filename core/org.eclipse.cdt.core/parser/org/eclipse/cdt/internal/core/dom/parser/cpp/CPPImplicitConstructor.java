@@ -17,6 +17,7 @@ import org.eclipse.cdt.core.dom.ast.IBasicType.Kind;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassScope;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPConstructor;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunctionType;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPParameter;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPVisitor;
 
 /**
@@ -24,7 +25,7 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPVisitor;
  */
 public class CPPImplicitConstructor extends CPPImplicitMethod implements ICPPConstructor {
 
-    public CPPImplicitConstructor(ICPPClassScope scope, char[] name, IParameter[] params) {
+    public CPPImplicitConstructor(ICPPClassScope scope, char[] name, ICPPParameter[] params) {
         super( scope, name, createFunctionType(scope, params), params );
     }
 

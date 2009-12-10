@@ -51,6 +51,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPMember;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPMethod;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPNamespace;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPNamespaceAlias;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPParameter;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPSpecialization;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateArgument;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateInstance;
@@ -181,7 +182,7 @@ class PDOMCPPLinkage extends PDOMLinkage implements IIndexCPPBindingConstants {
 		private final IPDOMCPPTemplateParameter[] fTemplateParameters;
 		private final ICPPTemplateParameter[] fOriginalTemplateParameters;
 		private final ICPPFunctionType fOriginalFunctionType;
-		private final IParameter[] fOriginalParameters;
+		private final ICPPParameter[] fOriginalParameters;
 		private final IType[] fOriginalExceptionSpec;
 		
 		public ConfigureFunctionTemplate(ICPPFunctionTemplate original, PDOMCPPFunctionTemplate template) throws DOMException {

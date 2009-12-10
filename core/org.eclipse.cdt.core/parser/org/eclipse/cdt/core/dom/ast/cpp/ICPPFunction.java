@@ -52,4 +52,9 @@ public interface ICPPFunction extends IFunction, ICPPBinding {
 	 * @since 5.1
 	 */
     public ICPPFunctionType getType() throws DOMException;
+    
+    /**
+	 * @since 5.2
+	 */
+    public ICPPParameter[] getParameters() throws DOMException;
 }

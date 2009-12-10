@@ -117,10 +117,12 @@ abstract public class AbstractDsfService
 	 * 
 	 * @param classes
 	 *            The class names under which the service can be located. For
-	 *            convenience, [classes] need not contain {@link IDsfService} or this
-	 *            base class; they are automatically added if not present. The
-	 *            class names in this array will be stored in the service's
-	 *            properties under the key {@link Constants#OBJECTCLASS}.
+	 *            convenience, [classes] need not contain {@link IDsfService} or
+	 *            the runtime class of this object; they are automatically added
+	 *            if not present. The complete list of classes the service ends
+	 *            up being registered with in OSGi is recorded and made
+	 *            available via
+	 *            <code>getProperties().get(Constants.OBJECTCLASS)</code>
 	 * @param properties
 	 *            The properties for this service. The keys in the properties
 	 *            object must all be <code>String</code> objects. See

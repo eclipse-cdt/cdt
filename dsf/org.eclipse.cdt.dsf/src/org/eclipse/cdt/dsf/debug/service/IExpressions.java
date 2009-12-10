@@ -166,6 +166,10 @@ public interface IExpressions extends IFormattedValues {
     /**
      * Retrieves the sub-expressions of the given expression.  Sub-expressions are fields of a struct, union,
      * or class, the enumerators of an enumeration, and the element of an array.
+     * <br> 
+     * Note: Clients may call this method on any valid expression context, and before calling any other
+     * method to evaluate the expression value.  It is up to the implementation to internally evaluate the 
+     * expression if needed, in order to calculate sub expressions.    
      * 
      * @param exprCtx: The data model context representing an expression.
      * 
@@ -177,6 +181,10 @@ public interface IExpressions extends IFormattedValues {
      * Retrieves a particular range of sub-expressions of the given expression.  
      * Sub-expressions are fields of a struct, union, or class, the enumerators 
      * of an enumeration, and the element of an array.
+     * <br> 
+     * Note: Clients may call this method on any valid expression context, and before calling any other
+     * method to evaluate the expression value.  It is up to the implementation to internally evaluate the 
+     * expression if needed, in order to calculate sub expressions.    
      * 
      * @param exprCtx: The data model context representing an expression.
      *        startIndex: Index of the first sub-expression to retrieve
@@ -191,6 +199,10 @@ public interface IExpressions extends IFormattedValues {
     /**
      * Retrieves the number of sub-expressions of the given expression.  Sub-expressions are fields of a struct, union,
      * or class, the enumerators of an enumeration, and the element of an array.
+     * <br> 
+     * Note: Clients may call this method on any valid expression context, and before calling any other
+     * method to evaluate the expression value.  It is up to the implementation to internally evaluate the 
+     * expression if needed, in order to calculate sub expressions.    
      * 
      * @param exprCtx: The data model context representing an expression.
      * 
@@ -202,6 +214,10 @@ public interface IExpressions extends IFormattedValues {
     /**
      * For object oriented languages, this method returns the expressions representing base types of
      * the given expression type.
+     * <br> 
+     * Note: Clients may call this method on any valid expression context, and before calling any other
+     * method to evaluate the expression value.  It is up to the implementation to internally evaluate the 
+     * expression if needed, in order to calculate sub expressions.    
      * 
      * @param exprContext: The data model context representing an expression.
      * 

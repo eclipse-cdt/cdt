@@ -7966,5 +7966,24 @@ public class AST2CPPTests extends AST2BaseTest {
 		bh.assertProblem("sink3(z7)", 5);
 	}
 
+	//	struct A {};
+	//	namespace ns {
+	//	    struct C {
+	//	    	int operator+(int);
+	//	    };
+	//	    int operator+(const C&, const A&);
+	//	}
+	//
+	//	void check(int);
+	//	int main(int argc, char** argv) {
+	//		A a;
+	//		ns::C c;
+	//		check(c+1);
+	//		check(c+a);
+	//	}
+	public void testADLForOperators_296906() throws Exception {
+		String code= getAboveComment();
+		parseAndCheckBindings(code, ParserLanguage.CPP);
+	}
 }
 

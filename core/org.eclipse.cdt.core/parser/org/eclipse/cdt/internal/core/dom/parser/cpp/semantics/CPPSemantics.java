@@ -2825,11 +2825,9 @@ public class CPPSemantics {
 					if (scope == null)
 						return null;
 					lookup(funcData, scope);
-					if (methodData == null || !methodData.hasResults()) {
-						try {
-							doKoenigLookup(funcData);
-						} catch (DOMException e) {
-						}
+					try {
+						doKoenigLookup(funcData);
+					} catch (DOMException e) {
 					}
 				}
 			} catch (DOMException e) {

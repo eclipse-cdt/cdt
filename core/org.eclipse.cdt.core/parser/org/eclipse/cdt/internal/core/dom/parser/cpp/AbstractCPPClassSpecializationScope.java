@@ -163,8 +163,11 @@ public class AbstractCPPClassSpecializationScope implements ICPPClassSpecializat
 	
 	public ICPPMethod[] getImplicitMethods() {
 		try {
-			ICPPClassScope origClassType= (ICPPClassScope) specialClass.getSpecializedBinding().getCompositeScope();
-			ICPPMethod[] methods= origClassType.getImplicitMethods();
+			ICPPClassScope origClassScope= (ICPPClassScope) specialClass.getSpecializedBinding().getCompositeScope();
+			if (origClassScope == null) {
+				return ICPPMethod.EMPTY_CPPMETHOD_ARRAY;
+			}
+			ICPPMethod[] methods= origClassScope.getImplicitMethods();
 			return specializeMembers(methods);
 		} catch (DOMException e) {
 			return ICPPMethod.EMPTY_CPPMETHOD_ARRAY;

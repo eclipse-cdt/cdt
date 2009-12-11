@@ -12,9 +12,11 @@
 package org.eclipse.cdt.launch.internal.refactoring;
 
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.Set;
 
 import org.eclipse.cdt.debug.core.ICDTLaunchConfigurationConstants;
+import org.eclipse.cdt.launch.internal.LaunchConfigAffinityExtensionPoint;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
@@ -111,10 +113,15 @@ public class ResourceRenameParticipant extends RenameParticipant implements
 	static Collection<ILaunchConfigurationType> getCLaunchConfigTypes() {
 		Set<ILaunchConfigurationType> result = new java.util.HashSet<ILaunchConfigurationType>();
 
+		// Get launch config types registered by CDT adopters
+		Set<String> thirdPartyConfgTypeIds = new HashSet<String>(5);
+		LaunchConfigAffinityExtensionPoint.getLaunchConfigTypeIds(thirdPartyConfgTypeIds);
+		
 		ILaunchManager mgr = DebugPlugin.getDefault().getLaunchManager();
 		for (ILaunchConfigurationType next : mgr.getLaunchConfigurationTypes()) {
-			// is it a CDT launch type?
-			if (next.getPluginIdentifier().startsWith("org.eclipse.cdt.")) { //$NON-NLS-1$
+			// is it a CDT launch type or a third party one that is CDT-ish?
+			if (next.getPluginIdentifier().startsWith("org.eclipse.cdt.") || //$NON-NLS-1$ 
+					thirdPartyConfgTypeIds.contains(next.getIdentifier())) { 
 				result.add(next);
 			}
 		}

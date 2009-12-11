@@ -1730,7 +1730,7 @@ public abstract class DisassemblyPart extends WorkbenchPart implements IDisassem
 				if (!isCanceled() && data != null) {
 					asyncExec(new Runnable() {
 						public void run() {
-							if (!insertDisassembly(null, data)) {
+							if (!insertDisassembly(null, fEndAddress, data)) {
 								// retry in non-mixed mode
 								retrieveDisassembly(file, lines, false);
 							}
@@ -1803,7 +1803,7 @@ public abstract class DisassemblyPart extends WorkbenchPart implements IDisassem
 					if (!isCanceled() && data != null) {
 						asyncExec(new Runnable() {
 							public void run() {
-								if (!insertDisassembly(startAddress, data)) {
+								if (!insertDisassembly(startAddress, finalEndAddress, data)) {
 									// retry in non-mixed mode
 									retrieveDisassembly(startAddress, finalEndAddress, linesHint, false, false);
 								}
@@ -1862,7 +1862,7 @@ public abstract class DisassemblyPart extends WorkbenchPart implements IDisassem
 					if (!isCanceled() && getData() != null) {
 						asyncExec(new Runnable() {
 							public void run() {
-								insertDisassembly(startAddress, getData());
+								insertDisassembly(startAddress, finalEndAddress, getData());
 							}});
 					} else {
 						final IStatus status= getStatus();
@@ -1919,7 +1919,7 @@ public abstract class DisassemblyPart extends WorkbenchPart implements IDisassem
 		}
 	}
 
-	private void insertDisassembly(BigInteger startAddress, IInstruction[] instructions) {
+	private void insertDisassembly(BigInteger startAddress, BigInteger endAddress, IInstruction[] instructions) {
 		if (fViewer == null || fDebugSessionId == null) {
 			return;
 		}
@@ -1945,7 +1945,7 @@ public abstract class DisassemblyPart extends WorkbenchPart implements IDisassem
 				if (p instanceof ErrorPosition && p.fValid) {
 					p.fValid = false;
 					fDocument.getInvalidAddressRanges().add(p);
-				} else if (p == null || p.fValid) {
+				} else if (p == null || p.fValid || address.compareTo(endAddress) > 0) {
 					if (DEBUG) System.out.println("Excess disassembly lines at " + getAddressText(address)); //$NON-NLS-1$
 					return;
 				}
@@ -1994,7 +1994,7 @@ public abstract class DisassemblyPart extends WorkbenchPart implements IDisassem
 		}
 	}
 
-	private boolean insertDisassembly(BigInteger startAddress, IMixedInstruction[] mixedInstructions) {
+	private boolean insertDisassembly(BigInteger startAddress, BigInteger endAddress, IMixedInstruction[] mixedInstructions) {
 		if (fViewer == null || fDebugSessionId == null) {
 			return true;
 		}
@@ -2027,7 +2027,7 @@ public abstract class DisassemblyPart extends WorkbenchPart implements IDisassem
 					if (p instanceof ErrorPosition && p.fValid) {
 						p.fValid = false;
 						fDocument.getInvalidAddressRanges().add(p);
-					} else if (p == null) {
+					} else if (p == null || address.compareTo(endAddress) > 0) {
 						if (DEBUG) System.out.println("Excess disassembly lines at " + getAddressText(address)); //$NON-NLS-1$
 						return success;
 					} else if (p.fValid) {

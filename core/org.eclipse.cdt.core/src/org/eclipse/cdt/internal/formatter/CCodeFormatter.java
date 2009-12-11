@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2008 QNX Software Systems and others.
+ * Copyright (c) 2000, 2009 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -17,7 +17,6 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.eclipse.cdt.core.CCorePlugin;
-import org.eclipse.cdt.core.dom.ICodeReaderFactory;
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
 import org.eclipse.cdt.core.dom.ast.gnu.cpp.GPPLanguage;
 import org.eclipse.cdt.core.formatter.CodeFormatter;
@@ -26,11 +25,11 @@ import org.eclipse.cdt.core.index.IIndex;
 import org.eclipse.cdt.core.model.CoreModel;
 import org.eclipse.cdt.core.model.ILanguage;
 import org.eclipse.cdt.core.model.ITranslationUnit;
-import org.eclipse.cdt.core.parser.CodeReader;
+import org.eclipse.cdt.core.parser.FileContent;
 import org.eclipse.cdt.core.parser.IScannerInfo;
+import org.eclipse.cdt.core.parser.IncludeFileContentProvider;
 import org.eclipse.cdt.core.parser.ParserUtil;
 import org.eclipse.cdt.core.parser.ScannerInfo;
-import org.eclipse.cdt.internal.core.dom.SavedCodeReaderFactory;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IStatus;
@@ -167,13 +166,11 @@ public class CCodeFormatter extends CodeFormatter {
 				index.releaseReadLock();
 			}
 		} else {
-			ICodeReaderFactory codeReaderFactory;
-			codeReaderFactory = SavedCodeReaderFactory.getInstance();
+			IncludeFileContentProvider contentProvider = IncludeFileContentProvider.getSavedFilesProvider();
 			
 			IScannerInfo scanInfo = new ScannerInfo();
 			
-			CodeReader reader;
-			reader= new CodeReader(source.toCharArray());
+			FileContent content = FileContent.create("<text>", source.toCharArray()); //$NON-NLS-1$
 			
 			ILanguage language= (ILanguage)options.get(DefaultCodeFormatterConstants.FORMATTER_LANGUAGE);
 			if (language == null) {
@@ -181,7 +178,7 @@ public class CCodeFormatter extends CodeFormatter {
 			}
 			IASTTranslationUnit ast;
 			try {
-				ast= language.getASTTranslationUnit(reader, scanInfo, codeReaderFactory, null, ParserUtil.getParserLogService());
+				ast= language.getASTTranslationUnit(content, scanInfo, contentProvider, null, 0, ParserUtil.getParserLogService());
 				CodeFormatterVisitor codeFormatter = new CodeFormatterVisitor(this.preferences, offset, length);
 				edit= codeFormatter.format(source, ast);
 			} catch (CoreException exc) {

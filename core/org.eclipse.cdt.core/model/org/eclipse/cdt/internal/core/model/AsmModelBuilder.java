@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2008 Wind River Systems, Inc. and others.
+ * Copyright (c) 2007, 2009 Wind River Systems, Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -18,7 +18,6 @@ import org.eclipse.cdt.core.model.AssemblyLanguage;
 import org.eclipse.cdt.core.model.CModelException;
 import org.eclipse.cdt.core.model.IContributedModelBuilder;
 import org.eclipse.cdt.core.model.ITranslationUnit;
-import org.eclipse.cdt.core.parser.CodeReader;
 import org.eclipse.cdt.core.parser.IToken;
 import org.eclipse.cdt.core.parser.OffsetLimitReachedException;
 import org.eclipse.cdt.internal.core.parser.scanner.ILexerLog;
@@ -97,12 +96,11 @@ public class AsmModelBuilder implements IContributedModelBuilder {
 	 * @see org.eclipse.cdt.core.model.IContributedModelBuilder#parse(boolean)
 	 */
 	public void parse(boolean quickParseMode) throws Exception {
-		CodeReader reader;
-		reader = fTranslationUnit.getCodeReader();
-		if (reader == null) {
+		char[] source = fTranslationUnit.getContents();
+		if (source == null) {
 			return;
 		}
-		buildModel(reader.buffer);
+		buildModel(source);
 		// not sure whether this is necessary or not
 		fTranslationUnit.setIsStructureKnown(true);
 		// cleanup

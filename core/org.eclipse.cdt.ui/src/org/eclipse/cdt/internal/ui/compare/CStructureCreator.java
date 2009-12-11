@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2008 IBM Corporation and others.
+ * Copyright (c) 2005, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -36,21 +36,19 @@ import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.IDocumentPartitioner;
 import org.eclipse.jface.text.Position;
 
-import org.eclipse.cdt.core.dom.ICodeReaderFactory;
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
 import org.eclipse.cdt.core.dom.ast.gnu.cpp.GPPLanguage;
 import org.eclipse.cdt.core.model.CoreModel;
 import org.eclipse.cdt.core.model.ILanguage;
 import org.eclipse.cdt.core.model.ITranslationUnit;
-import org.eclipse.cdt.core.parser.CodeReader;
+import org.eclipse.cdt.core.parser.FileContent;
 import org.eclipse.cdt.core.parser.IScannerInfo;
+import org.eclipse.cdt.core.parser.IncludeFileContentProvider;
 import org.eclipse.cdt.core.parser.ParserUtil;
 import org.eclipse.cdt.core.parser.ScannerInfo;
 import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.cdt.ui.text.ICPartitions;
 import org.eclipse.cdt.ui.text.doctools.IDocCommentOwner;
-
-import org.eclipse.cdt.internal.core.dom.NullCodeReaderFactory;
 
 import org.eclipse.cdt.internal.ui.text.doctools.DocCommentOwnerManager;
 
@@ -101,12 +99,12 @@ public class CStructureCreator extends StructureCreator {
 		DocumentRangeNode root= new StructureRootNode(document, element, this, sharedDocumentAdapter);
 
 		// don't follow inclusions
-		ICodeReaderFactory codeReaderFactory= NullCodeReaderFactory.getInstance();
+		IncludeFileContentProvider contentProvider = IncludeFileContentProvider.getEmptyFilesProvider();
 		
 		// empty scanner info
 		IScannerInfo scanInfo= new ScannerInfo();
 		
-		CodeReader reader= new CodeReader(document.get().toCharArray());
+		FileContent content = FileContent.create("<text>", document.get().toCharArray()); //$NON-NLS-1$
 		
 		// determine the language
 		boolean isSource[]= {false};
@@ -115,7 +113,7 @@ public class CStructureCreator extends StructureCreator {
 		try {
 			IASTTranslationUnit ast;
 			int options= isSource[0] ? ILanguage.OPTION_IS_SOURCE_UNIT : 0;
-			ast= language.getASTTranslationUnit(reader, scanInfo, codeReaderFactory, null, options, ParserUtil.getParserLogService());
+			ast= language.getASTTranslationUnit(content, scanInfo, contentProvider, null, options, ParserUtil.getParserLogService());
 			CStructureCreatorVisitor structureCreator= new CStructureCreatorVisitor(root);
 			// build structure
 			ast.accept(structureCreator);

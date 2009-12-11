@@ -1400,17 +1400,19 @@ public abstract class AbstractGNUSourceCodeParser implements ISourceCodeParser {
             mark = mark();
             final IASTDeclarator dtor= initDeclarator(option);
             final IToken la = LA(1);
+            backup(mark);
             if (la == null || la == mark)
             	return;
 
             if (verifyLookaheadDeclarator(option, dtor, la))
             	throw new FoundDeclaratorException(dtor, la);
         } catch (BacktrackException bte) {
-        } catch (EndOfFileException e) {
-        } finally {
         	if (mark != null)
         		backup(mark);
-        }
+        } catch (EndOfFileException e) {
+        	if (mark != null)
+        		backup(mark);
+        } 
     }
 
 	protected abstract boolean verifyLookaheadDeclarator(DeclarationOptions option, IASTDeclarator d, IToken nextToken);

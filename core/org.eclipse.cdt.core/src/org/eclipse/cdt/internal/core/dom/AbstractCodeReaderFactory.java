@@ -29,7 +29,7 @@ public abstract class AbstractCodeReaderFactory implements ICodeReaderFactory, I
 		fHeuristics= heuristics;
 	}
 	
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings({ "unchecked", "rawtypes" })
 	public Object getAdapter(Class adapter) {
 		if (adapter.isAssignableFrom(IIncludeFileResolutionHeuristics.class)) {
 			return fHeuristics;

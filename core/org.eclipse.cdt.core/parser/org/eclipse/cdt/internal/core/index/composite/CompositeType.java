@@ -16,7 +16,7 @@ import org.eclipse.cdt.internal.core.index.IIndexType;
 /**
  * Represents an index-contexting carrying type
  */
-public abstract class CompositeType implements IType, IIndexType {
+public abstract class CompositeType implements IIndexType {
 	protected final IType type;
 	protected final ICompositesFactory cf; 
 	

@@ -44,7 +44,7 @@ public class LibraryRefContainer extends CElementGrouping {
 	/* (non-Javadoc)
 	 * @see org.eclipse.core.runtime.IAdaptable#getAdapter(java.lang.Class)
 	 */
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings("rawtypes")
 	@Override
 	public Object getAdapter(Class adapter) {
 		if (adapter == IWorkbenchAdapter.class) {
@@ -64,11 +64,11 @@ public class LibraryRefContainer extends CElementGrouping {
 		try {
 			ILibraryReference[] references = fCProject.getLibraryReferences();
 			ArrayList<ILibraryReference> list = new ArrayList<ILibraryReference>(references.length);
-			for (int i = 0; i < references.length; i++) {
-				IPath path = references[i].getPath();
-				IFile file = references[i].getCModel().getWorkspace().getRoot().getFileForLocation(path);
+			for (ILibraryReference reference : references) {
+				IPath path = reference.getPath();
+				IFile file = reference.getCModel().getWorkspace().getRoot().getFileForLocation(path);
 				if (file == null || !file.isAccessible()) {
-					list.add(references[i]);
+					list.add(reference);
 				}
 			}
 			return list.toArray();

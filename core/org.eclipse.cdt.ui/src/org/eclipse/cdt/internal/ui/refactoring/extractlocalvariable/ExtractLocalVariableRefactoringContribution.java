@@ -23,7 +23,7 @@ import org.eclipse.cdt.internal.ui.refactoring.CRefactoringContribution;
  */
 public class ExtractLocalVariableRefactoringContribution extends CRefactoringContribution {
 
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings({ "unchecked", "rawtypes" })
 	@Override
 	public RefactoringDescriptor createDescriptor(String id, String project, String description,
 			String comment, Map arguments, int flags) throws IllegalArgumentException {

@@ -44,7 +44,7 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPVisitor;
  * A template template parameter.
  */
 public class CPPTemplateTemplateParameter extends CPPTemplateParameter implements
-		ICPPTemplateTemplateParameter, ICPPClassType, ICPPInternalTemplate, ICPPUnknownBinding,
+		ICPPTemplateTemplateParameter, ICPPInternalTemplate, ICPPUnknownBinding,
 		ICPPUnknownType {
 
 	private ICPPTemplateParameter[] templateParameters;

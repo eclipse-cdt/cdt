@@ -109,7 +109,7 @@ public final class ExternalEditorInput extends FileStoreEditorInput implements I
 	/*
 	 * @see org.eclipse.ui.ide.FileStoreEditorInput#getAdapter(java.lang.Class)
 	 */
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings({ "unchecked", "rawtypes" })
 	@Override
 	public Object getAdapter(Class adapter) {
 		if (adapter.isAssignableFrom(ITranslationUnit.class) && unit != null) {

@@ -54,7 +54,7 @@ public class CElementAdapterFactory implements IAdapterFactory {
 	/**
 	 * @see CElementAdapterFactory#getAdapter
 	 */	
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings({ "unchecked", "rawtypes" })
 	public Object getAdapter(Object element, Class key) {
 		ICElement celem = (ICElement) element;
 		

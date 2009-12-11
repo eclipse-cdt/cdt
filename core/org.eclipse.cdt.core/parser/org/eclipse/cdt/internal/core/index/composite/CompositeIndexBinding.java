@@ -59,7 +59,7 @@ public abstract class CompositeIndexBinding implements IIndexBinding {
 		return rbinding.getNameCharArray();
 	}
 
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings("rawtypes")
 	public Object getAdapter(Class adapter) {
 		if (adapter.isInstance(rbinding)) {
 			return rbinding;

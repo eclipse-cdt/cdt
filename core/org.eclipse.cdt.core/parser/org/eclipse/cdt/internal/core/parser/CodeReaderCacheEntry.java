@@ -20,7 +20,9 @@ import org.eclipse.cdt.internal.core.util.ILRUCacheable;
  * 
  * Although the size of the CodeReaderCache is specified in terms of MB, the actual granularity of
  * the cache is KB.
+ * @deprecated
  */
+@Deprecated
 class CodeReaderCacheEntry implements ILRUCacheable {
 
 	private static final double CHAR_TO_KB_FACTOR = 1024;

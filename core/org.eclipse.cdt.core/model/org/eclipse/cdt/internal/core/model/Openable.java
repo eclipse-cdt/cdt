@@ -27,7 +27,7 @@ import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 
-public abstract class Openable extends Parent implements IOpenable, IBufferChangedListener {
+public abstract class Openable extends Parent implements IOpenable {
 
 	protected IResource resource;	
 

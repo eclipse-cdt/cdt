@@ -1493,7 +1493,7 @@ public class CEditor extends TextEditor implements ISelectionChangedListener, IC
 	/**
 	 * @see org.eclipse.core.runtime.IAdaptable#getAdapter(java.lang.Class)
 	 */
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings("rawtypes")
 	@Override
 	public Object getAdapter(Class required) {
 		if (IContentOutlinePage.class.equals(required)) {
@@ -2527,7 +2527,7 @@ public class CEditor extends TextEditor implements ISelectionChangedListener, IC
 		if (model == null)
 			return null;
 		
-		@SuppressWarnings("unchecked")
+		@SuppressWarnings("rawtypes")
 		Iterator parent;
 		if (model instanceof IAnnotationModelExtension2) {
 			parent= ((IAnnotationModelExtension2)model).getAnnotationIterator(offset, length, true, true);

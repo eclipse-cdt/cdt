@@ -313,7 +313,7 @@ public class CView extends ViewPart implements ISetSelectionTarget, IPropertyCha
 	/**
 	 * Answer the property defined by key.
 	 */
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings("rawtypes")
 	@Override
 	public Object getAdapter(Class key) {
 		if (key.equals(ISelectionProvider.class)) {
@@ -936,8 +936,8 @@ public class CView extends ViewPart implements ISetSelectionTarget, IPropertyCha
 		if (childMem != null) {
 			ArrayList<ICElement> elements = new ArrayList<ICElement>();
 			IMemento[] elementMem = childMem.getChildren(TAG_ELEMENT);
-			for (int i = 0; i < elementMem.length; i++) {
-				String p = elementMem[i].getString(TAG_PATH);
+			for (IMemento element2 : elementMem) {
+				String p = element2.getString(TAG_PATH);
 				if (p != null) {
 					IPath path = new Path(p);
 					ICElement element = factory.create(path);
@@ -952,8 +952,8 @@ public class CView extends ViewPart implements ISetSelectionTarget, IPropertyCha
 		if (childMem != null) {
 			ArrayList<ICElement> list = new ArrayList<ICElement>();
 			IMemento[] elementMem = childMem.getChildren(TAG_ELEMENT);
-			for (int i = 0; i < elementMem.length; i++) {
-				String p = elementMem[i].getString(TAG_PATH);
+			for (IMemento element2 : elementMem) {
+				String p = element2.getString(TAG_PATH);
 				if (p != null) {
 					IPath path = new Path(p);
 					ICElement element = factory.create(path);
@@ -1005,8 +1005,8 @@ public class CView extends ViewPart implements ISetSelectionTarget, IPropertyCha
 		Object expandedElements[] = viewer.getExpandedElements();
 		if (expandedElements.length > 0) {
 			IMemento expandedMem = memento.createChild(TAG_EXPANDED);
-			for (int i = 0; i < expandedElements.length; i++) {
-				Object o = expandedElements[i];
+			for (Object expandedElement : expandedElements) {
+				Object o = expandedElement;
 				// Do not save expanded binary files are libraries.
 				if (o instanceof IParent
 						&& !(o instanceof IArchiveContainer || o instanceof IBinaryContainer || o instanceof IBinary || o instanceof IArchive)) {
@@ -1024,9 +1024,9 @@ public class CView extends ViewPart implements ISetSelectionTarget, IPropertyCha
 		Object elements[] = ((IStructuredSelection) viewer.getSelection()).toArray();
 		if (elements.length > 0) {
 			IMemento selectionMem = memento.createChild(TAG_SELECTION);
-			for (int i = 0; i < elements.length; i++) {
-				if (elements[i] instanceof ICElement) {
-					ICElement e = (ICElement) elements[i];
+			for (Object element : elements) {
+				if (element instanceof ICElement) {
+					ICElement e = (ICElement) element;
 					IResource r = e.getResource();
 					if (r != null && r.getLocation() != null) {
 						IMemento elementMem = selectionMem.createChild(TAG_ELEMENT);

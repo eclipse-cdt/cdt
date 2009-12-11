@@ -29,7 +29,6 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTemplateId;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTypenameExpression;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTUsingDeclaration;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPBinding;
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPScope;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCompositeTypeSpecifier.ICPPASTBaseSpecifier;
 import org.eclipse.cdt.core.index.IIndexFileSet;
 import org.eclipse.cdt.core.parser.util.CharArrayObjectMap;
@@ -39,7 +38,7 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPSemantics;
  * Models the scope represented by an unknown binding such (e.g.: template type parameter). Used within
  * the context of templates, only.
  */
-public class CPPUnknownScope implements ICPPScope, ICPPInternalUnknownScope {
+public class CPPUnknownScope implements ICPPInternalUnknownScope {
     private final ICPPUnknownBinding binding;
     private final IASTName scopeName;
     private CharArrayObjectMap map;

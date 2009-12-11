@@ -13,6 +13,7 @@ package org.eclipse.cdt.core.dom;
 
 import org.eclipse.cdt.core.parser.CodeReader;
 import org.eclipse.cdt.core.parser.ICodeReaderCache;
+import org.eclipse.cdt.core.parser.IncludeFileContentProvider;
 
 /**
  * This is the interface that an AST Service uses to delegate the construction
@@ -21,7 +22,9 @@ import org.eclipse.cdt.core.parser.ICodeReaderCache;
  * @author jcamelon
  * @noextend This interface is not intended to be extended by clients.
  * @noimplement This interface is not intended to be implemented by clients.
+ * @deprecated replaced by {@link IncludeFileContentProvider}
  */
+@Deprecated
 public interface ICodeReaderFactory {
 
 	/**

@@ -48,7 +48,7 @@ public class PDOMSearchElement implements IAdaptable {
 		return location;
 	}
 	
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings({ "unchecked", "rawtypes" })
 	public Object getAdapter(Class adapterType) {
 		if (adapterType.isAssignableFrom(IFile.class)) {
 			String fullPath= location.getFullPath();

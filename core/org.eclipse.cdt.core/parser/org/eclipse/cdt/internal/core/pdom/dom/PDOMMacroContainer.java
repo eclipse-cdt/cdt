@@ -163,7 +163,7 @@ public class PDOMMacroContainer extends PDOMNamedNode implements IIndexMacroCont
 		return new String(getNameCharArray());
 	}
 
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings({ "unchecked", "rawtypes" })
 	public Object getAdapter(Class adapter) {
 		if (adapter.isAssignableFrom(PDOMMacroContainer.class)) {
 			return this;

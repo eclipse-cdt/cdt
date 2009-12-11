@@ -24,7 +24,9 @@ import org.eclipse.core.runtime.CoreException;
  * every time a CodeReader is retrieved. 
  * 
  * This cache is not optimized to be run from within Eclipse (i.e. it ignores IResources).
+ * @deprecated
  */
+@Deprecated
 public class EmptyCodeReaderCache implements ICodeReaderCache {
 
 	/**

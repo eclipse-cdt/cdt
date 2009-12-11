@@ -181,20 +181,20 @@ public class ElfBinaryObject extends BinaryObjectAdapter {
 	}
 
 	protected void addSymbols(Elf.Symbol[] array, int type, List<Symbol> list) {
-		for (int i = 0; i < array.length; i++) {
+		for (org.eclipse.cdt.utils.elf.Elf.Symbol element : array) {
 			// Multiple function symbol entries for the same address are generated
 			// do not add duplicate symbols with 0 size to the list
 			boolean duplicateAddressFound = false;
-			if (type == ISymbol.FUNCTION && array[i].st_size == 0){
+			if (type == ISymbol.FUNCTION && element.st_size == 0){
 				for (Symbol s : list) {
-					if (s.getAddress().equals(array[i].st_value)){
+					if (s.getAddress().equals(element.st_value)){
 						duplicateAddressFound = true;
 						break;
 					}
 				}
 			}
 			if (!duplicateAddressFound)	
-				list.add(new Symbol(this, array[i].toString(), type, array[i].st_value, array[i].st_size));
+				list.add(new Symbol(this, element.toString(), type, element.st_value, element.st_size));
 		}
 	}
 
@@ -202,7 +202,7 @@ public class ElfBinaryObject extends BinaryObjectAdapter {
 	/* (non-Javadoc)
 	 * @see org.eclipse.core.runtime.IAdaptable#getAdapter(java.lang.Class)
 	 */
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings("rawtypes")
 	@Override
 	public Object getAdapter(Class adapter) {
 		if (adapter.equals(Elf.class)) {

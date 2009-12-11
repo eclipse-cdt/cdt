@@ -1337,8 +1337,8 @@ public class ASTManager {
         }
         
         for (int i = 0; i < 3; i++) {
-            Collection coll= cflc[i];
-            for (Iterator iter = coll.iterator(); iter.hasNext();) {
+            Collection<?> coll= cflc[i];
+            for (Iterator<?> iter = coll.iterator(); iter.hasNext();) {
                 boolean warn= false;
                 String msg= errs[i];
                 IBinding conflict = (IBinding) iter.next();

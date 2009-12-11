@@ -69,7 +69,7 @@ public class ElfBinaryArchive extends BinaryFile implements IBinaryArchive {
 	/**
 	 * @deprecated use {@link ElfBinaryArchive#createArchiveMembers(ARHeader[])} 
 	 */
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings({ "unchecked", "rawtypes" })
 	@Deprecated
 	protected void addArchiveMembers(ARHeader[] headers, ArrayList children) {
 		IBinaryObject[] bobjs= createArchiveMembers(headers);

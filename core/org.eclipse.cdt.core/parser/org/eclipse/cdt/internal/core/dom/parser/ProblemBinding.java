@@ -13,6 +13,8 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.dom.parser;
 
+import com.ibm.icu.text.MessageFormat;
+
 import org.eclipse.cdt.core.dom.ILinkage;
 import org.eclipse.cdt.core.dom.IName;
 import org.eclipse.cdt.core.dom.ast.DOMException;
@@ -32,12 +34,10 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPVisitor;
 import org.eclipse.cdt.internal.core.parser.ParserMessages;
 import org.eclipse.core.runtime.PlatformObject;
 
-import com.ibm.icu.text.MessageFormat;
-
 /**
  * Implementation of problem bindings
  */
-public class ProblemBinding extends PlatformObject implements IProblemBinding, IType, IScope, IASTInternalScope {
+public class ProblemBinding extends PlatformObject implements IProblemBinding, IASTInternalScope {
     protected final int id;
     protected char[] arg;
     protected IASTNode node;

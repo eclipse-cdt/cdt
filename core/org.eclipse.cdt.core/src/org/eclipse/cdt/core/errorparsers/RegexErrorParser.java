@@ -31,7 +31,7 @@ import org.eclipse.cdt.core.IErrorParserNamed;
  * @see IErrorParser
  * @since 5.2
  */
-public class RegexErrorParser implements IErrorParserNamed, Cloneable {
+public class RegexErrorParser implements IErrorParserNamed {
 	private String fId;
 	private String fName;
 	private final List<RegexErrorPattern> fPatterns= new ArrayList<RegexErrorPattern>();

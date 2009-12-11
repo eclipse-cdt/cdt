@@ -12,9 +12,7 @@ package org.eclipse.cdt.internal.core.parser;
 
 import java.io.IOException;
 
-import org.eclipse.cdt.core.dom.ICodeReaderFactory;
 import org.eclipse.cdt.core.index.IIndexFileLocation;
-import org.eclipse.cdt.core.parser.ICodeReaderCache;
 import org.eclipse.cdt.core.parser.IncludeFileContentProvider;
 import org.eclipse.cdt.internal.core.dom.AbstractCodeReaderFactory;
 import org.eclipse.cdt.internal.core.parser.scanner.InternalFileContentProvider;
@@ -26,7 +24,7 @@ public class CodeReaderFactoryAdapter extends AbstractCodeReaderFactory {
 	 * @deprecated avoid using the adapter, its for backwards compatibility, only.
 	 */
 	@Deprecated
-	public static ICodeReaderFactory adapt(IncludeFileContentProvider fileCreator) {
+	public static org.eclipse.cdt.core.dom.ICodeReaderFactory adapt(IncludeFileContentProvider fileCreator) {
 		if (fileCreator == null)
 			return null;
 		
@@ -62,7 +60,8 @@ public class CodeReaderFactoryAdapter extends AbstractCodeReaderFactory {
 		return CodeReaderAdapter.adapt(fDelegate.getContentForInclusion(path));
 	}
 
-	public ICodeReaderCache getCodeReaderCache() {
+	@Deprecated
+	public org.eclipse.cdt.core.parser.ICodeReaderCache getCodeReaderCache() {
 		return null;
 	}
 

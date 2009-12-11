@@ -40,7 +40,7 @@ public class HTMLAnnotationHover extends DefaultAnnotationHover {
 	/*
 	 * Formats several message as HTML text.
 	 */
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings({ "unchecked", "rawtypes" })
 	@Override
 	protected String formatMultipleMessages(List messages) {
 		StringBuffer buffer= new StringBuffer();

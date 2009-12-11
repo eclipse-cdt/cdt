@@ -424,7 +424,7 @@ public class UserDefinedVariableSupplier extends CoreMacroSupplierBase {
 			
 			newSetCopy.removeAll(newSet);
 			
-			HashSet modifiedSet = new HashSet(newSetCopy.size());
+			HashSet<VarKey> modifiedSet = new HashSet<VarKey>(newSetCopy.size());
 			for (Object element : newSetCopy) {
 				VarKey key = (VarKey)element;
 				modifiedSet.add(new VarKey(key.getVariable(), false));

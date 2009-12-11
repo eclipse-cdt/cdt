@@ -11,7 +11,6 @@
 package org.eclipse.cdt.core.dom.ast.c;
 
 import org.eclipse.cdt.core.dom.ast.IASTCompositeTypeSpecifier;
-import org.eclipse.cdt.core.dom.ast.IASTDeclarationListOwner;
 
 /**
  * Structs and Unions in C can be qualified w/restrict keyword.
@@ -19,8 +18,7 @@ import org.eclipse.cdt.core.dom.ast.IASTDeclarationListOwner;
  * @noextend This interface is not intended to be extended by clients.
  * @noimplement This interface is not intended to be implemented by clients.
  */
-public interface ICASTCompositeTypeSpecifier extends IASTCompositeTypeSpecifier, ICASTDeclSpecifier,
-		IASTDeclarationListOwner {
+public interface ICASTCompositeTypeSpecifier extends IASTCompositeTypeSpecifier, ICASTDeclSpecifier {
 
 	/**
 	 * @since 5.1

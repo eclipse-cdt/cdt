@@ -39,7 +39,7 @@ public interface ICompletionContributor {
 	 * @param proposals the current list of proposals. This method should add any additional
 	 * proposals to this list.
 	 */
-	@SuppressWarnings("unchecked") // no need to change, it's deprecated
+	@SuppressWarnings("rawtypes") // no need to change, it's deprecated
 	void contributeCompletionProposals(ITextViewer viewer,
 									   int offset,
 									   IWorkingCopy workingCopy,

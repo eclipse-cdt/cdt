@@ -19,7 +19,9 @@ import org.eclipse.cdt.internal.core.util.OverflowingLRUCache;
  * 
  * It uses CodeReaderCacheEntry (which implements ILRUCacheable) to specify that the size of
  * the cache should be relative to the size of the entries and not the number of entries. 
+ * @deprecated
  */
+@Deprecated
 public class CodeReaderLRUCache extends OverflowingLRUCache<String, CodeReaderCacheEntry> {
 	
 	

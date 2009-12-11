@@ -79,7 +79,7 @@ abstract class CElementHandle implements ICElementHandle, ISourceReference {
 	}
 
 
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings("rawtypes")
 	public Object getAdapter(Class adapter) {
 		return null;
 	}

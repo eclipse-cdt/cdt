@@ -155,7 +155,7 @@ public class CHNode implements IAdaptable {
 		return fFileOfReferences;
 	}
 
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings({ "unchecked", "rawtypes" })
 	public Object getAdapter(Class adapter) {
 		if (adapter.isAssignableFrom(ICElement.class)) {
 			return getRepresentedDeclaration();

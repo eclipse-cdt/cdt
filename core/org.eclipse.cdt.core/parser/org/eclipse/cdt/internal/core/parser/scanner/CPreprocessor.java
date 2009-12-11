@@ -1555,7 +1555,7 @@ public class CPreprocessor implements ILexerLog, IScanner, IAdaptable {
         return true;
 	}
 
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings({ "rawtypes", "unchecked" })
 	public Object getAdapter(Class adapter) {
 		if (adapter.isAssignableFrom(fMacroExpander.getClass())) {
 			return fMacroExpander;

@@ -126,7 +126,7 @@ public class AsmTextEditor extends TextEditor implements ISelectionChangedListen
 	/*
 	 * @see org.eclipse.ui.editors.text.TextEditor#getAdapter(java.lang.Class)
 	 */
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings("rawtypes")
 	@Override
 	public Object getAdapter(Class adapter) {
 		if (IContentOutlinePage.class.equals(adapter)) {
@@ -276,7 +276,7 @@ public class AsmTextEditor extends TextEditor implements ISelectionChangedListen
 		if (model == null)
 			return null;
 		
-		@SuppressWarnings("unchecked")
+		@SuppressWarnings("rawtypes")
 		Iterator parent;
 		if (model instanceof IAnnotationModelExtension2) {
 			parent= ((IAnnotationModelExtension2)model).getAnnotationIterator(offset, length, true, true);

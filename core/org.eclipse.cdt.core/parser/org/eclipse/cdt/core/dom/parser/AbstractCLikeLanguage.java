@@ -15,7 +15,6 @@ package org.eclipse.cdt.core.dom.parser;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.eclipse.cdt.core.dom.ICodeReaderFactory;
 import org.eclipse.cdt.core.dom.ast.ASTVisitor;
 import org.eclipse.cdt.core.dom.ast.IASTCompletionNode;
 import org.eclipse.cdt.core.dom.ast.IASTName;
@@ -104,15 +103,16 @@ public abstract class AbstractCLikeLanguage extends AbstractLanguage implements 
 	
 	@Deprecated
 	public IASTTranslationUnit getASTTranslationUnit(org.eclipse.cdt.core.parser.CodeReader reader,
-			IScannerInfo scanInfo, ICodeReaderFactory fileCreator, IIndex index, IParserLogService log)
-			throws CoreException {
-		return getASTTranslationUnit(reader, scanInfo, fileCreator, index, 0, log);
-	}	
-	
-	@Override @Deprecated
-	public IASTTranslationUnit getASTTranslationUnit(org.eclipse.cdt.core.parser.CodeReader reader,
-			IScannerInfo scanInfo, ICodeReaderFactory codeReaderFactory, IIndex index, int options,
+			IScannerInfo scanInfo, org.eclipse.cdt.core.dom.ICodeReaderFactory fileCreator, IIndex index,
 			IParserLogService log) throws CoreException {
+		return getASTTranslationUnit(reader, scanInfo, fileCreator, index, 0, log);
+	}
+	
+	@Override
+	@Deprecated
+	public IASTTranslationUnit getASTTranslationUnit(org.eclipse.cdt.core.parser.CodeReader reader,
+			IScannerInfo scanInfo, org.eclipse.cdt.core.dom.ICodeReaderFactory codeReaderFactory,
+			IIndex index, int options, IParserLogService log) throws CoreException {
 		return getASTTranslationUnit(FileContent.adapt(reader), scanInfo, IncludeFileContentProvider
 				.adapt(codeReaderFactory), index, options, log);
 	}
@@ -152,8 +152,8 @@ public abstract class AbstractCLikeLanguage extends AbstractLanguage implements 
 
 	@Deprecated
 	public IASTCompletionNode getCompletionNode(org.eclipse.cdt.core.parser.CodeReader reader,
-			IScannerInfo scanInfo, ICodeReaderFactory fileCreator, IIndex index, IParserLogService log,
-			int offset) throws CoreException {
+			IScannerInfo scanInfo, org.eclipse.cdt.core.dom.ICodeReaderFactory fileCreator, IIndex index,
+			IParserLogService log, int offset) throws CoreException {
 		return getCompletionNode(FileContent.adapt(reader), scanInfo, IncludeFileContentProvider
 				.adapt(fileCreator), index, log, offset);
 	}
@@ -204,11 +204,12 @@ public abstract class AbstractCLikeLanguage extends AbstractLanguage implements 
 	
 	
 	/**
-	 * @deprecated replaced by {@link #createScanner(FileContent, IScannerInfo, IncludeFileContentProvider, IParserLogService)}
+	 * @deprecated Replaced by
+	 *             {@link #createScanner(FileContent, IScannerInfo, IncludeFileContentProvider, IParserLogService)}
 	 */
 	@Deprecated
 	protected IScanner createScanner(org.eclipse.cdt.core.parser.CodeReader reader, IScannerInfo scanInfo,
-			ICodeReaderFactory fileCreator, IParserLogService log) {
+			org.eclipse.cdt.core.dom.ICodeReaderFactory fileCreator, IParserLogService log) {
 		return createScanner(FileContent.adapt(reader), scanInfo, IncludeFileContentProvider
 				.adapt(fileCreator), log);
 	}
@@ -256,8 +257,8 @@ public abstract class AbstractCLikeLanguage extends AbstractLanguage implements 
 		return cLanguageKeywords;
 	}
 	
-	@SuppressWarnings("unchecked")
 	@Override
+	@SuppressWarnings("rawtypes")
 	public Object getAdapter(Class adapter) {
 		if(ICLanguageKeywords.class.equals(adapter))
 			return getCLanguageKeywords();

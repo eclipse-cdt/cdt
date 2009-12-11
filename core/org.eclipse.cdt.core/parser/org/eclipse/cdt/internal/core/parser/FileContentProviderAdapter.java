@@ -13,7 +13,6 @@ package org.eclipse.cdt.internal.core.parser;
 import java.io.IOException;
 
 import org.eclipse.cdt.core.CCorePlugin;
-import org.eclipse.cdt.core.dom.ICodeReaderFactory;
 import org.eclipse.cdt.core.index.IIndexFileLocation;
 import org.eclipse.cdt.core.parser.FileContent;
 import org.eclipse.cdt.internal.core.dom.AbstractCodeReaderFactory;
@@ -28,7 +27,7 @@ public class FileContentProviderAdapter extends InternalFileContentProvider {
 	 * @deprecated avoid using the adapter, its for backwards compatibility, only.
 	 */
 	@Deprecated
-	public static InternalFileContentProvider adapt(ICodeReaderFactory fileCreator) {
+	public static InternalFileContentProvider adapt(org.eclipse.cdt.core.dom.ICodeReaderFactory fileCreator) {
 		if (fileCreator == null)
 			return null;
 		
@@ -47,7 +46,11 @@ public class FileContentProviderAdapter extends InternalFileContentProvider {
 		setIncludeResolutionHeuristics((IIncludeFileResolutionHeuristics) factory.getAdapter(IIncludeFileResolutionHeuristics.class));
 	}
 
-	public ICodeReaderFactory getCodeReaderFactory() {
+	/**
+	 * @deprecated avoid using the adapter, its for backwards compatibility, only.
+	 */
+	@Deprecated
+	public org.eclipse.cdt.core.dom.ICodeReaderFactory getCodeReaderFactory() {
 		return fDelegate;
 	}
 

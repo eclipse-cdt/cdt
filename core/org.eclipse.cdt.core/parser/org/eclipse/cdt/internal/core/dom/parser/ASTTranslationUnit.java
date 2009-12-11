@@ -316,7 +316,7 @@ public abstract class ASTTranslationUnit extends ASTNode implements IASTTranslat
 		return new IASTComment[0];
 	}
 
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings({ "unchecked", "rawtypes" })
 	public final Object getAdapter(Class adapter) {
 		if (adapter.isAssignableFrom(fLocationResolver.getClass())) {
 			return fLocationResolver;

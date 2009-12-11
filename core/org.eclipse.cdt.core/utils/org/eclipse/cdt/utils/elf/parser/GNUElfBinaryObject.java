@@ -169,8 +169,8 @@ public class GNUElfBinaryObject extends ElfBinaryObject {
 	 */
 	@Override
 	protected void addSymbols(Elf.Symbol[] array, int type, List<Symbol> list) {
-		for (int i = 0; i < array.length; i++) {
-			String name = array[i].toString();
+		for (org.eclipse.cdt.utils.elf.Elf.Symbol element : array) {
+			String name = element.toString();
 			if (symbolLoadingCPPFilt != null) {
 				try {
 					name = symbolLoadingCPPFilt.getFunction(name);
@@ -179,8 +179,8 @@ public class GNUElfBinaryObject extends ElfBinaryObject {
 					symbolLoadingCPPFilt = null;
 				}
 			}
-			IAddress addr = array[i].st_value;
-			long size = array[i].st_size;
+			IAddress addr = element.st_value;
+			long size = element.st_size;
 			if (symbolLoadingAddr2line != null) {
 				try {
 					String filename = symbolLoadingAddr2line.getFileName(addr);
@@ -207,7 +207,7 @@ public class GNUElfBinaryObject extends ElfBinaryObject {
 	 * 
 	 * @see org.eclipse.core.runtime.PlatformObject#getAdapter(java.lang.Class)
 	 */
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings("rawtypes")
 	@Override
 	public Object getAdapter(Class adapter) {
 		if (adapter == Addr2line.class) {

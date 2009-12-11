@@ -10,7 +10,6 @@
  *******************************************************************************/ 
 package org.eclipse.cdt.core.parser;
 
-import org.eclipse.cdt.core.dom.ICodeReaderFactory;
 import org.eclipse.cdt.internal.core.parser.EmptyFilesProvider;
 import org.eclipse.cdt.internal.core.parser.FileContentProviderAdapter;
 import org.eclipse.cdt.internal.core.parser.SavedFilesProvider;
@@ -44,7 +43,7 @@ public abstract class IncludeFileContentProvider {
 	 * @deprecated Provided to achieve backwards compatibility.
 	 */
 	@Deprecated
-	public static IncludeFileContentProvider adapt(ICodeReaderFactory factory) {
+	public static IncludeFileContentProvider adapt(org.eclipse.cdt.core.dom.ICodeReaderFactory factory) {
 		return FileContentProviderAdapter.adapt(factory);
 	}
 }

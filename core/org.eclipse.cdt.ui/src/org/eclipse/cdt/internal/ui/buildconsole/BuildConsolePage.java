@@ -477,7 +477,7 @@ public class BuildConsolePage extends Page
 	/* (non-Javadoc)
 	 * @see org.eclipse.core.runtime.IAdaptable#getAdapter(java.lang.Class)
 	 */
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings("rawtypes")
 	public Object getAdapter(Class required) {
 		if (IFindReplaceTarget.class.equals(required)) {
 			return getViewer().getFindReplaceTarget();

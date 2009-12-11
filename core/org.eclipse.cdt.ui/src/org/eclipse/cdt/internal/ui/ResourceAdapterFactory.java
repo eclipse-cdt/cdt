@@ -40,7 +40,7 @@ public class ResourceAdapterFactory implements IAdapterFactory {
 	/**
 	 * @see IAdapterFactory#getAdapter
 	 */
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings("rawtypes")
 	public Object getAdapter(Object element, Class key) {
 		if (ICElement.class.equals(key)) {
 			//try {

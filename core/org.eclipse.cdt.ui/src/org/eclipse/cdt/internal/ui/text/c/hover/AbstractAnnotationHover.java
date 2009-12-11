@@ -13,7 +13,6 @@
 
 package org.eclipse.cdt.internal.ui.text.c.hover;
 
-import com.ibm.icu.text.MessageFormat;
 import java.util.Iterator;
 
 import org.eclipse.core.filebuffers.FileBuffers;
@@ -79,6 +78,8 @@ import org.eclipse.ui.dialogs.PreferencesUtil;
 import org.eclipse.ui.editors.text.EditorsUI;
 import org.eclipse.ui.texteditor.AnnotationPreference;
 import org.eclipse.ui.texteditor.DefaultMarkerAnnotationAccess;
+
+import com.ibm.icu.text.MessageFormat;
 
 import org.eclipse.cdt.ui.CUIPlugin;
 
@@ -207,8 +208,8 @@ public class AbstractAnnotationHover extends AbstractCEditorTextHover {
 		
 		protected void disposeDeferredCreatedContent() {
 			Control[] children= fParent.getChildren();
-			for (int i= 0; i < children.length; i++) {
-				children[i].dispose();
+			for (Control element : children) {
+				element.dispose();
 			}
 			ToolBarManager toolBarManager= getToolBarManager();
 			if (toolBarManager != null)
@@ -283,8 +284,8 @@ public class AbstractAnnotationHover extends AbstractCEditorTextHover {
 			
 			if (control instanceof Composite) {
 				Control[] children= ((Composite) control).getChildren();
-				for (int i= 0; i < children.length; i++) {
-					setColorAndFont(children[i], foreground, background, font);
+				for (Control element : children) {
+					setColorAndFont(element, foreground, background, font);
 				}
 			}
 		}
@@ -658,7 +659,7 @@ public class AbstractAnnotationHover extends AbstractCEditorTextHover {
 			return null;
 
 		try {
-			@SuppressWarnings("unchecked")
+			@SuppressWarnings("rawtypes")
 			Iterator parent;
 			if (model instanceof IAnnotationModelExtension2)
 				parent= ((IAnnotationModelExtension2) model).getAnnotationIterator(hoverRegion.getOffset(), hoverRegion.getLength(), true, true);

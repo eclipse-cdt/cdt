@@ -26,7 +26,7 @@ public abstract class CRefactoringContribution extends RefactoringContribution {
 		super();
 	}
 
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings("rawtypes")
 	@Override
 	public Map retrieveArgumentMap(RefactoringDescriptor descriptor) {
 		if (descriptor instanceof CRefactoringDescription) {

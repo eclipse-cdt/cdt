@@ -76,7 +76,7 @@ public class OpenTypeHierarchyAction extends SelectionDispatchAction {
 		}
 	}
 
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings("rawtypes")
 	private Object getAdapter(Object object, Class desiredClass) {
 		if (desiredClass.isInstance(object)) {
 			return object;

@@ -92,7 +92,7 @@ public class OpenCallHierarchyAction extends SelectionDispatchAction {
 		return false;
 	}
 
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings("rawtypes")
 	private Object getAdapter(Object object, Class desiredClass) {
 		if (desiredClass.isInstance(object)) {
 			return object;

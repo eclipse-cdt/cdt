@@ -483,7 +483,7 @@ public class DocumentAdapter implements IBuffer, IAdaptable, IDocumentListener {
 		return fTextFileBuffer;
 	}
 
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings({ "unchecked", "rawtypes" })
 	public Object getAdapter(Class adapter) {
 		if (adapter.isAssignableFrom(ITextFileBuffer.class)) {
 			return fTextFileBuffer;

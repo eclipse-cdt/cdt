@@ -61,7 +61,7 @@ public abstract class PDOMBinding extends PDOMNamedNode implements IPDOMBinding 
 		super(linkage, record);
 	}
 	
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings({ "unchecked", "rawtypes" })
 	public Object getAdapter(Class adapter) {
 		if (adapter.isAssignableFrom(PDOMBinding.class))
 			return this;

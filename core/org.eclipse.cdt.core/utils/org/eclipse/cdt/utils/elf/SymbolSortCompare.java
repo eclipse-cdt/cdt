@@ -16,7 +16,7 @@ import java.util.Comparator;
 /**
  * @deprecated This class is slated for removal, it is not used by the CDT classes
  */
-@SuppressWarnings("unchecked")
+@SuppressWarnings("rawtypes")
 @Deprecated
 public class SymbolSortCompare implements Comparator {
 	public int compare( Object o1, Object o2 ) {

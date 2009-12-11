@@ -92,7 +92,7 @@ final class PDOMCParameter extends PDOMNamedNode implements IParameter, IPDOMBin
 		throw new PDOMNotImplementedError();
 	}
 
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings("rawtypes")
 	public Object getAdapter(Class adapter) {
 		return null;
 	}

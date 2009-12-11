@@ -237,7 +237,7 @@ public class PDOMASTAdapter {
 			throw new PDOMNotImplementedError();
 		}
 
-		@SuppressWarnings("unchecked")
+		@SuppressWarnings("rawtypes")
 		public Object getAdapter(Class adapter) {
 			return fDelegate.getAdapter(adapter);
 		}
@@ -289,7 +289,7 @@ public class PDOMASTAdapter {
 			return fDelegate.findField(name);
 		}
 
-		@SuppressWarnings("unchecked")
+		@SuppressWarnings("rawtypes")
 		public Object getAdapter(Class adapter) {
 			return fDelegate.getAdapter(adapter);
 		}
@@ -375,7 +375,7 @@ public class PDOMASTAdapter {
 			return qn;
 		}
 
-		@SuppressWarnings("unchecked")
+		@SuppressWarnings("rawtypes")
 		public Object getAdapter(Class adapter) {
 			return fDelegate.getAdapter(adapter);
 		}

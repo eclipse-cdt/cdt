@@ -157,7 +157,7 @@ public class IBNode implements IAdaptable {
         return fRepresentedFile.getName();
     }
 
-    @SuppressWarnings("unchecked")
+    @SuppressWarnings({ "unchecked", "rawtypes" })
 	public Object getAdapter(Class adapter) {
         if (fRepresentedFile != null) {
             if (adapter.isAssignableFrom(ITranslationUnit.class)) {

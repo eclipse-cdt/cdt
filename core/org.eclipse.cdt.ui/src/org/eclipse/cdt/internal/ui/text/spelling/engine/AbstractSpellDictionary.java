@@ -375,7 +375,7 @@ public abstract class AbstractSpellDictionary implements ISpellDictionary {
 		if (bucket == null) {
 			fHashBuckets.put(hash, word);
 		} else if (bucket instanceof ArrayList<?>) {
-			@SuppressWarnings("unchecked")
+			@SuppressWarnings({"unchecked", "rawtypes"})
 			final ArrayList<Object> bucket2 = (ArrayList)bucket;
 			bucket2.add(word);
 		} else {
@@ -414,7 +414,7 @@ public abstract class AbstractSpellDictionary implements ISpellDictionary {
 				return true;
 			return false;
 		}
-		@SuppressWarnings("unchecked")
+		@SuppressWarnings({ "unchecked", "rawtypes" })
 		final ArrayList<String> candidateList= (ArrayList)candidates;
 		if (candidateList.contains(word) || candidateList.contains(word.toLowerCase()))
 			return true;

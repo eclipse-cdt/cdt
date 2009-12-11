@@ -55,7 +55,7 @@ public class CPPTypedefClone implements ITypedef, ITypeContainer, IIndexType, IC
 		return delegate.getOwner();
 	}
 
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings("rawtypes")
 	public Object getAdapter(Class adapter) {
 		return delegate.getAdapter(adapter);
 	}

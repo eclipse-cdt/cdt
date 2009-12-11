@@ -20,7 +20,7 @@ public class ObjectSet<T> extends ObjectTable<T> {
 	/**
 	 * Represents the empty ObjectSet
 	 */
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings("rawtypes")
     public static final ObjectSet EMPTY_SET = new ObjectSet( 0 ){
     	@Override public Object clone()               { return this; }
     	@Override public List toList()                { return Collections.EMPTY_LIST; }
@@ -107,8 +107,8 @@ public class ObjectSet<T> extends ObjectTable<T> {
 		if( objs == null )
 			return;
 		
-		for (int i = 0; i < objs.length; i++) {
-			if( objs[i] != null ) add( objs[i] );
+		for (T obj : objs) {
+			if( obj != null ) add( obj );
 		}
 	}
 

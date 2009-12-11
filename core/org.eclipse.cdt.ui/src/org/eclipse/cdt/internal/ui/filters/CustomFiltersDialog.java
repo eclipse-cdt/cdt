@@ -297,7 +297,7 @@ public class CustomFiltersDialog extends SelectionDialog {
 
 	// ---------- result handling ----------
 	
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings("rawtypes")
 	@Override
 	protected void setResult(List newResult) {
 		super.setResult(newResult);

@@ -474,7 +474,7 @@ import org.eclipse.cdt.internal.ui.CPluginImages;
 			return IMG_ITEM;
 		}
 
-		@SuppressWarnings("unchecked")
+		@SuppressWarnings({ "unchecked", "rawtypes" })
 		public List filterItems(List items) {
 			return items;
 		}

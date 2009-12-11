@@ -53,9 +53,8 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPVisitor;
 /**
  * Represents a class template.
  */
-public class CPPClassTemplate extends CPPTemplateDefinition implements
-		ICPPClassTemplate, ICPPClassType, ICPPInternalClassTemplate,
-		ICPPInternalClassTypeMixinHost {
+public class CPPClassTemplate extends CPPTemplateDefinition implements ICPPClassTemplate,
+		ICPPInternalClassTemplate, ICPPInternalClassTypeMixinHost {
 
 	private ICPPClassTemplate fIndexBinding= null;
 	private boolean checkedIndex= false;

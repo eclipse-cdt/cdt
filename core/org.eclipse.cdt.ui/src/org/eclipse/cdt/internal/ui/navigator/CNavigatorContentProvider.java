@@ -273,7 +273,7 @@ public class CNavigatorContentProvider extends CViewContentProvider implements I
 	/*
 	 * @see org.eclipse.ui.navigator.IPipelinedTreeContentProvider#getPipelinedChildren(java.lang.Object, java.util.Set)
 	 */
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings({ "unchecked", "rawtypes" })
 	public void getPipelinedChildren(Object parent, Set currentChildren) {
 		customizeCElements(getChildren(parent), currentChildren);
 	}
@@ -281,7 +281,7 @@ public class CNavigatorContentProvider extends CViewContentProvider implements I
 	/*
 	 * @see org.eclipse.ui.navigator.IPipelinedTreeContentProvider#getPipelinedElements(java.lang.Object, java.util.Set)
 	 */
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings({ "unchecked", "rawtypes" })
 	public void getPipelinedElements(Object input, Set currentElements) {
 		// only replace plain resource elements with custom elements
 		// and avoid duplicating elements already customized

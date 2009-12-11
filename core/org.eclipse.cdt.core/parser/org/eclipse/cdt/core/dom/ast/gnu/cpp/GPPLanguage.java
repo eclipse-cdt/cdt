@@ -49,7 +49,7 @@ public class GPPLanguage extends AbstractCLikeLanguage {
 	
 	
 	@Override
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings("rawtypes")
 	public Object getAdapter(Class adapter) {
 		if (adapter == IPDOMLinkageFactory.class) {
 			return new PDOMCPPLinkageFactory();

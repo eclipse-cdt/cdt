@@ -107,7 +107,7 @@ public abstract class ArrayUtil {
     	if (obj == null)
     		return array;
     	if (array == null || array.length == 0) {
-    		Class c = array != null ? array.getClass().getComponentType() : Object.class;
+    		Class<? extends Object> c = array != null ? array.getClass().getComponentType() : Object.class;
     		array = (T[]) Array.newInstance(c, DEFAULT_LENGTH);
     		array[0] = obj;
     		return array;
@@ -264,7 +264,7 @@ public abstract class ArrayUtil {
         }
 
         if (dest == null || dest.length == 0) {
-    		Class c = dest != null ? dest.getClass().getComponentType() : source.getClass().getComponentType();
+    		Class<? extends Object> c = dest != null ? dest.getClass().getComponentType() : source.getClass().getComponentType();
             dest = (T[]) Array.newInstance(c, numToAdd);
             System.arraycopy(source, 0, dest, 0, numToAdd);
             return dest;

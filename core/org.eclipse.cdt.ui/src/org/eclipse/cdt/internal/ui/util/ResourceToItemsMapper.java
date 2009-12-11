@@ -141,7 +141,7 @@ public class ResourceToItemsMapper {
 			} else if (existingMapping instanceof Item) {
 				fResourceToItem.remove(resource);
 			} else { // List
-				@SuppressWarnings("unchecked")
+				@SuppressWarnings({ "unchecked", "rawtypes" })
 				List<Item> list= (List) existingMapping;
 				list.remove(item);
 				if (list.isEmpty()) {

@@ -1281,7 +1281,7 @@ public class GNUCSourceParser extends AbstractGNUSourceCodeParser {
 		}
 		
         if (lt1 == IToken.tASSIGN && LT(2) == IToken.tLBRACE) 
-        	throw new FoundAggregateInitializer(d);
+        	throw new FoundAggregateInitializer(declspec, d);
        
         IASTInitializer i = optionalCInitializer();
         if (i != null) {

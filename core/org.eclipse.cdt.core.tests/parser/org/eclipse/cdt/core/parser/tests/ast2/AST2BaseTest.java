@@ -619,7 +619,12 @@ public class AST2BaseTest extends BaseTestCase {
 	}
 
 	final protected IASTTranslationUnit parseAndCheckBindings(String code, ParserLanguage lang, boolean useGnuExtensions) throws Exception {
-		IASTTranslationUnit tu = parse(code, lang, useGnuExtensions); 
+		return parseAndCheckBindings(code, lang, useGnuExtensions, false);
+	}
+	
+	final protected IASTTranslationUnit parseAndCheckBindings(String code, ParserLanguage lang, boolean useGnuExtensions,
+			boolean skipTrivialInitializers) throws Exception {
+		IASTTranslationUnit tu = parse(code, lang, useGnuExtensions, skipTrivialInitializers); 
 		CNameCollector col = new CNameCollector();
 		tu.accept(col);
 		assertNoProblemBindings(col);

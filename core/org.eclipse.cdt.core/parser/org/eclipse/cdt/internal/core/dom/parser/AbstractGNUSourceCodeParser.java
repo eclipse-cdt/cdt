@@ -90,8 +90,9 @@ import org.eclipse.cdt.internal.core.parser.scanner.ILocationResolver;
 public abstract class AbstractGNUSourceCodeParser implements ISourceCodeParser {
 	protected static class FoundAggregateInitializer extends Exception {
 		public final IASTDeclarator fDeclarator;
-		public IASTDeclSpecifier fDeclSpec;
-		public FoundAggregateInitializer(IASTDeclarator d) {
+		public final IASTDeclSpecifier fDeclSpec;
+		public FoundAggregateInitializer(IASTDeclSpecifier declSpec, IASTDeclarator d) {
+			fDeclSpec= declSpec;
 			fDeclarator= d;
 		}
 	}
@@ -1566,10 +1567,7 @@ public abstract class AbstractGNUSourceCodeParser implements ISourceCodeParser {
 		try {
 			// declarator for first variant
 			dtor1= initDeclarator(declspec1, option);
-    	} catch (FoundAggregateInitializer e) {
-    		e.fDeclSpec= declspec1;
-    		throw e;
-		} catch (BacktrackException e) {
+    	} catch (BacktrackException e) {
 			if (acceptEmpty) {
 				backup(dtorMark1);
 				return result.set(declspec1, null, null);

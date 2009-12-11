@@ -7202,4 +7202,10 @@ public class AST2Tests extends AST2BaseTest {
 			IASTTranslationUnit tu = parseAndCheckBindings(code, lang);
 	    }
 	}
+	
+	//	static a[2]= {0,0};
+	public void testSkipAggregateInitializer_297550() throws Exception {
+        final String code = getAboveComment();
+		parseAndCheckBindings(code, ParserLanguage.C, false, true);
+	}
 }

@@ -2515,7 +2515,7 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
     	IASTDeclarator dtor2= null;
     	BacktrackException bt= null;
     	try {
-    		dtor1= initDeclarator(DtorStrategy.PREFER_FUNCTION, option);
+    		dtor1= initDeclarator(DtorStrategy.PREFER_FUNCTION, declspec, option);
     		verifyDtor(declspec, dtor1, option);
     		
     		int lt1= LTcatchEOF(1);
@@ -2555,7 +2555,7 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
 
     	backup(mark);
     	try {
-    		dtor2= initDeclarator(DtorStrategy.PREFER_NESTED, option);
+    		dtor2= initDeclarator(DtorStrategy.PREFER_NESTED, declspec, option);
     		if (dtor1 == null) { 
     			return dtor2;
     		}
@@ -2671,12 +2671,12 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
      *             request a backtrack
 	 * @throws FoundAggregateInitializer 
      */
-    protected IASTDeclarator initDeclarator(DtorStrategy strategy, DeclarationOptions option)
+    private IASTDeclarator initDeclarator(DtorStrategy strategy, IASTDeclSpecifier declspec, DeclarationOptions option)
             throws EndOfFileException, BacktrackException, FoundAggregateInitializer {
     	final IASTDeclarator dtor= declarator(strategy, option);
         if (option.fAllowInitializer) {
             if (LTcatchEOF(1) == IToken.tASSIGN && LTcatchEOF(2) == IToken.tLBRACE) 
-            	throw new FoundAggregateInitializer(dtor);
+            	throw new FoundAggregateInitializer(declspec, dtor);
 
         	IASTInitializer initializer= optionalCPPInitializer(dtor, option);
         	if (initializer != null) {

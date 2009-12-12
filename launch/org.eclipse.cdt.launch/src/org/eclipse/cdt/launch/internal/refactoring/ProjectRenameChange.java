@@ -19,11 +19,14 @@ import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.MultiStatus;
+import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
+import org.eclipse.debug.core.ILaunchManager;
 import org.eclipse.ltk.core.refactoring.Change;
 import org.eclipse.osgi.util.NLS;
 
@@ -42,6 +45,12 @@ class ProjectRenameChange extends AbstractLaunchConfigChange {
 	private String newName;
 
 	/**
+	 * The project relative path of the .launch file if the launch config is a
+	 * non-local one and is stored within the project.
+	 */
+	private IPath  projectRelativePath; 
+	
+	/**
 	 * Initializes me.
 	 * 
 	 * @param launchConfig
@@ -57,6 +66,16 @@ class ProjectRenameChange extends AbstractLaunchConfigChange {
 
 		this.oldName = oldName;
 		this.newName = newName;
+		
+		// keep the project relative path if launch config is contained in the old project
+		if (!launchConfig.isLocal()) {
+			IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
+			IProject oldProject = root.getProject(oldName);
+			IPath oldConfig = launchConfig.getFile().getLocation();
+			if (oldConfig != null && oldProject.getLocation().isPrefixOf(oldConfig)) {
+				projectRelativePath = oldConfig.makeRelativeTo(oldProject.getLocation());
+			} 
+		} 		 
 	}
 
 	@Override
@@ -72,14 +91,21 @@ class ProjectRenameChange extends AbstractLaunchConfigChange {
 	@Override
 	public Change perform(IProgressMonitor pm) throws CoreException {
 
-		ILaunchConfiguration launchConfig = getLaunchConfiguration();
-		ILaunchConfigurationWorkingCopy copy = launchConfig.getWorkingCopy();
-
-		IResource[] mapped = launchConfig.getMappedResources();
-
 		IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
 		IProject oldProject = root.getProject(oldName);
 		IProject newProject = root.getProject(newName);
+
+		ILaunchConfiguration launchConfig = getLaunchConfiguration();
+		if (projectRelativePath !=  null) {
+			// If the launch config is non-local and lives in the project, we
+			// need to update its representation in the new project folder, not
+			// the old one
+			ILaunchManager mgr = DebugPlugin.getDefault().getLaunchManager();
+			launchConfig = mgr.getLaunchConfiguration(newProject.getFile(projectRelativePath));
+		}
+		
+		ILaunchConfigurationWorkingCopy copy = launchConfig.getWorkingCopy();
+		IResource[] mapped = launchConfig.getMappedResources();
 
 		if ((oldProject != null) && (newProject != null)) {
 			if ((mapped != null) && (mapped.length > 0)) {
@@ -97,6 +123,10 @@ class ProjectRenameChange extends AbstractLaunchConfigChange {
 				newName);
 
 		try {
+			// Note: for non-local LCs, this will end up updating the .launch
+			// file on disk but Eclipse's in memory representation will not
+			// get updated. See https://bugs.eclipse.org/bugs/show_bug.cgi?id=288368#c1
+			// This comment can/should be removed when 288368 is fixed.
 			copy.doSave();
 		} catch (CoreException e) {
 			LaunchUIPlugin.log(new MultiStatus(LaunchUIPlugin.PLUGIN_ID, 0,
@@ -106,7 +136,7 @@ class ProjectRenameChange extends AbstractLaunchConfigChange {
 			return null; // not undoable, as we didn't effect our change
 		}
 
-		return new ProjectRenameChange(getLaunchConfiguration(), newName,
+		return new ProjectRenameChange(launchConfig, newName,
 				oldName);
 	}
 

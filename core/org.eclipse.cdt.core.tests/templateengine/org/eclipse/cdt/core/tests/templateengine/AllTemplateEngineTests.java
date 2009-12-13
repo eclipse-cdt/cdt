@@ -24,7 +24,7 @@ import junit.framework.TestSuite;
 public class AllTemplateEngineTests extends TestSuite {
 
 	public static void main(String[] args) {
-		junit.swingui.TestRunner.run(AllTemplateEngineTests.class);
+		junit.textui.TestRunner.run(AllTemplateEngineTests.suite());
 	}
 	
 	/**

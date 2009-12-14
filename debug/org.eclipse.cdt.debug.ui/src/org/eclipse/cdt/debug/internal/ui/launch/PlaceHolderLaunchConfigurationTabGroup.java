@@ -15,9 +15,18 @@ import org.eclipse.debug.ui.ILaunchConfigurationDialog;
 import org.eclipse.debug.ui.ILaunchConfigurationTab;
 
 /**
+ * This implementation is used where the composition of the tab group is defined
+ * via the launchConfigurationTabGroups extension-point. Thus we just provide an
+ * empty array of tab objects. The platform will add the ones declared in the
+ * extension.
+ * 
  * @since 6.0
  */
 public class PlaceHolderLaunchConfigurationTabGroup extends AbstractLaunchConfigurationTabGroup {
+	
+    /* (non-Javadoc)
+     * @see org.eclipse.debug.ui.ILaunchConfigurationTabGroup#createTabs(org.eclipse.debug.ui.ILaunchConfigurationDialog, java.lang.String)
+     */
     public void createTabs(ILaunchConfigurationDialog dialog, String mode) {
         setTabs(new ILaunchConfigurationTab[0]);
     }

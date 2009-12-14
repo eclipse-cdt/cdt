@@ -13,6 +13,7 @@ package org.eclipse.cdt.debug.core.executables;
 
 import java.io.File;
 import java.io.IOException;
+import java.net.URI;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
@@ -135,7 +136,7 @@ public class Executable extends PlatformObject {
 	 * @noreference This method is not intended to be referenced by clients.
 	 * @since 6.0
 	 */
-	public TranslationUnit[] getSourceFiles(IProgressMonitor monitor) {
+	public ITranslationUnit[] getSourceFiles(IProgressMonitor monitor) {
 		
 		if (!refreshSourceFiles)
 			return sourceFiles.toArray(new TranslationUnit[sourceFiles.size()]) ;
@@ -153,26 +154,18 @@ public class Executable extends PlatformObject {
 
 		String[] symReaderSources = ExecutablesManager.getExecutablesManager().getSourceFiles(this, monitor);
 		if (symReaderSources != null && symReaderSources.length > 0) {
-			for (int i = 0; i < symReaderSources.length; i++) {
-				String filename = symReaderSources[i];
+			for (String filename : symReaderSources) {
 				String orgPath = filename;
 
 				filename = ExecutablesManager.getExecutablesManager().remapSourceFile(this, filename);
 
-				// Sometimes the path in the symbolics will have a
-				// different
-				// case than the actual file system path. Even if the
-				// file
-				// system is not case sensitive this will confuse the
-				// Path
-				// class.
-				// So make sure the path is canonical, otherwise
-				// breakpoints
-				// won't be resolved, etc..
-				// Also check for relative path names and attempt to
-				// resolve
-				// them relative to the executable.
-
+				// Sometimes the path in the symbolics will have a different
+				// case than the actual file system path. Even if the file
+				// system is not case sensitive this will confuse the Path
+				// class. So make sure the path is canonical, otherwise
+				// breakpoints won't be resolved, etc.. Also check for relative
+				// path names and attempt to resolve them relative to the
+				// executable.
 				boolean fileExists = false;
 
 				try {
@@ -198,11 +191,10 @@ public class Executable extends PlatformObject {
 					if (sourceFile.exists())
 						wkspFile = sourceFile;
 					else {
-						IFile[] filesInWP = ResourcesPlugin.getWorkspace().getRoot().findFilesForLocation(sourcePath);
-
-						for (int j = 0; j < filesInWP.length; j++) {
-							if (filesInWP[j].isAccessible()) {
-								wkspFile = filesInWP[j];
+						IFile[] filesInWP = ResourcesPlugin.getWorkspace().getRoot().findFilesForLocationURI(URIUtil.toURI(sourcePath));
+						for (IFile fileInWP : filesInWP) {
+							if (fileInWP.isAccessible()) {
+								wkspFile = fileInWP;
 								break;
 							}
 						}
@@ -218,8 +210,14 @@ public class Executable extends PlatformObject {
 					TranslationUnit tu;
 					if (wkspFile != null)
 						tu = new TranslationUnit(cproject, wkspFile, id);
-					else
-						tu = new ExternalTranslationUnit(cproject, URIUtil.toURI(sourcePath), id);
+					else {
+						// Be careful not to convert a unix path like
+						// "/src/home" to "c:\source\home" on Windows. See
+						// bugzilla 297781
+						URI uri = (sourcePath.toFile().exists()) ? URIUtil.toURI(sourcePath) : URIUtil.toURI(filename);
+						
+						tu = new ExternalTranslationUnit(cproject, uri, id);
+					}
 
 					sourceFiles.add(tu);
 

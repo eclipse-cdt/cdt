@@ -982,6 +982,14 @@ public class CompletionTests extends AbstractContentAssistTest {
 				"\"sub1/inc11.h"
 			};
 			assertCompletionResults(fCursorOffset+=4, expected, AbstractContentAssistTest.COMPARE_REP_STRINGS);
+
+			// bug 278967
+			getDocument().replace(fCursorOffset-5, 5, "../");
+			expected= new String[] {
+				"\"../h1/",
+				"\"../h2/",
+			};
+			assertCompletionResults(fCursorOffset-=2, expected, AbstractContentAssistTest.COMPARE_REP_STRINGS);
 		} finally {
 			deleteDir(tempDir);
 		}

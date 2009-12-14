@@ -232,6 +232,11 @@ public class AddressBarContributionItem extends ContributionItem {
 			};
 
 			public void focusGained(FocusEvent e) {
+				// [nmehregani] bugzilla 297387: 'Home' shouldn't jump to PC address when focus is on location combo box
+				if (action instanceof JumpToAddressAction) 
+					((JumpToAddressAction)action).deactivateDisassemblyContext();				
+				// end 297387
+				
 				// Erase the guide text when the focus is gained.
 				if (addressBox.getText().trim().equals(initialText))
 					addressBox.setText(""); //$NON-NLS-1$
@@ -241,6 +246,11 @@ public class AddressBarContributionItem extends ContributionItem {
 			}
 
 			public void focusLost(FocusEvent e) {
+				// [nmehregani] bugzilla 297387: 'Home' shouldn't jump to PC address when focus is on location combo box
+				if (action instanceof JumpToAddressAction) 
+					((JumpToAddressAction)action).activateDisassemblyContext();				
+				// end 297387
+				
 				// Re-insert the guide text when the focus is lost and the text
 				// field is empty.
 				if (addressBox.getText().trim().length() == 0)

@@ -61,4 +61,12 @@ public class JumpToAddressAction extends Action {
 			}		
 		}		
 	}
+	
+	protected void activateDisassemblyContext() {
+		fDisassemblyPart.activateDisassemblyContext();		
+	}
+	
+	protected void deactivateDisassemblyContext() {
+		fDisassemblyPart.deactivateDisassemblyContext();
+	}
 }

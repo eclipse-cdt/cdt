@@ -223,7 +223,7 @@ public abstract class DisassemblyPart extends WorkbenchPart implements IDisassem
 //	private static final String COMMAND_ID_RUN_TO_LINE = "org.eclipse.debug.ui.commands.RunToLine"; //$NON-NLS-1$
 //	private static final String COMMAND_ID_TOGGLE_STEPPING_MODE = "org.eclipse.cdt.dsf.debug.ui.debug.ui.menu.showDisassemblyAction"; //$NON-NLS-1$
 
-	private static final String KEY_BINDING_CONTEXT_DISASSEMBLY = "org.eclipse.cdt.dsf.debug.ui.disassembly.context"; //$NON-NLS-1$
+	public static final String KEY_BINDING_CONTEXT_DISASSEMBLY = "org.eclipse.cdt.dsf.debug.ui.disassembly.context"; //$NON-NLS-1$
 
 	protected DisassemblyViewer fViewer;
 
@@ -749,10 +749,9 @@ public abstract class DisassemblyPart extends WorkbenchPart implements IDisassem
 			handlerService.deactivateHandlers(fHandlerActivations);
 			fHandlerActivations = null;
 		}
-		if (fContextActivation != null) {
-			IContextService ctxService = (IContextService)site.getService(IContextService.class);
-			ctxService.deactivateContext(fContextActivation);
-		}
+		
+		deactivateDisassemblyContext();
+		
 		fViewer = null;
 		setDebugContext(null);
 		DsfSession.removeSessionEndedListener(this);
@@ -1187,8 +1186,7 @@ public abstract class DisassemblyPart extends WorkbenchPart implements IDisassem
 	private void contributeToActionBars() {
 		IWorkbenchPartSite site = getSite();
 		site.setSelectionProvider(new DisassemblySelectionProvider(this));
-		IContextService ctxService = (IContextService)site.getService(IContextService.class);
-		fContextActivation = ctxService.activateContext(KEY_BINDING_CONTEXT_DISASSEMBLY);
+		activateDisassemblyContext();
 		contributeToActionBars(getActionBars());
 	}
 
@@ -3409,5 +3407,17 @@ public abstract class DisassemblyPart extends WorkbenchPart implements IDisassem
 		MessageDialog messageDialog = new MessageDialog(PlatformUI.getWorkbench().getDisplay().getActiveShell(), DisassemblyMessages.Disassembly_Error_Dialog_title, null, message, MessageDialog.ERROR, new String[]{DisassemblyMessages.Disassembly_Error_Dialog_ok_button}, 0); 
 		messageDialog.open();	
 	}
-
+	
+	public void activateDisassemblyContext() {
+		IContextService ctxService = (IContextService)getSite().getService(IContextService.class);
+		if (ctxService!=null)
+			fContextActivation = ctxService.activateContext(KEY_BINDING_CONTEXT_DISASSEMBLY);		
+	}
+	
+	public void deactivateDisassemblyContext() {
+		if (fContextActivation != null) {
+			IContextService ctxService = (IContextService)getSite().getService(IContextService.class);
+			ctxService.deactivateContext(fContextActivation);
+		}		
+	}
 }

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008 Wind River Systems, Inc. and others.
+ * Copyright (c) 2008, 2009 Wind River Systems, Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -279,12 +279,16 @@ public class InclusionProposalComputer implements ICompletionProposalComputer {
 		} else if (prefixPath.hasTrailingSeparator()) {
 			namePrefix= ""; //$NON-NLS-1$
 			prefixPath= prefixPath.removeTrailingSeparator();
-			parent= parent.getFolder(prefixPath);
 		} else {
 			namePrefix= prefixPath.lastSegment();
 			prefixPath= prefixPath.removeLastSegments(1);
-			if (prefixPath.segmentCount() > 0) {
+		}
+		if (prefixPath.segmentCount() > 0) {
+			IPath parentPath = parent.getFullPath().append(prefixPath);
+			if (parentPath.segmentCount() > 0) {
 				parent= parent.getFolder(prefixPath);
+			} else {
+				return;
 			}
 		}
 		if (!parent.exists()) {

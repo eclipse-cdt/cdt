@@ -12,7 +12,6 @@
 
 package org.eclipse.cdt.utils.debug.dwarf;
 
-import java.io.File;
 import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
@@ -35,11 +34,6 @@ import org.eclipse.core.runtime.Path;
  */
 public class DwarfReader extends Dwarf implements ISymbolReader {
 
-	private static boolean isWindows() {
-		String os = System.getProperty("os.name"); //$NON-NLS-1$
-		return (os != null && os.toLowerCase().startsWith("win")); //$NON-NLS-1$
-	}
-
 	// These are sections that need be parsed to get the source file list.
 	final static String[] DWARF_SectionsToParse =
 		{
@@ -51,8 +45,6 @@ public class DwarfReader extends Dwarf implements ISymbolReader {
 
 	private final Collection<String>	m_fileCollection = new ArrayList<String>();
 	private String[] 	m_fileNames = null;
-	private String		m_exeFileWin32Drive; // Win32 drive of the exe file.
-	private boolean		m_onWindows;
 	private boolean		m_parsed = false;
 	private final ArrayList<Integer>	m_parsedLineTableOffsets = new ArrayList<Integer>();
 	private int			m_parsedLineTableSize = 0;
@@ -103,11 +95,6 @@ public class DwarfReader extends Dwarf implements ISymbolReader {
 		// Don't print during parsing.
 		printEnabled = false;
 		m_parsed = false;
-		
-		Path pa = new Path(exe.getFilename());
-		m_exeFileWin32Drive = pa.getDevice(); 
-		
-		m_onWindows = isWindows();
 	}
 
 	@Override
@@ -136,11 +123,6 @@ public class DwarfReader extends Dwarf implements ISymbolReader {
 		// Don't print during parsing.
 		printEnabled = false;
 		m_parsed = false;
-
-		Path pa = new Path(exe.getFilename());
-		m_exeFileWin32Drive = pa.getDevice();
-
-		m_onWindows = (File.separatorChar == '\\');
 	}
 
 	/*
@@ -419,25 +401,6 @@ public class DwarfReader extends Dwarf implements ISymbolReader {
 		if (!pa.isAbsolute() && dir.length() > 0)
 			pa = dirPa.append(pa);
 
-		// Fix cygwin style paths
-		pa = new Path(fixUpPath(pa.toString()));
-
-		// For win32 only.
-		// On Windows, there are cases where the source file itself has the full path
-		// except the drive letter.
-		if (m_onWindows && pa.isAbsolute() && pa.getDevice() == null) {
-			// Try to get drive letter from comp_dir.
-			if (dirPa.getDevice() != null)
-				pa = pa.setDevice(dirPa.getDevice());
-			else if (m_exeFileWin32Drive != null)
-				// No drive from Dwarf data, which is also possible with RVCT or GCCE 
-				// compilers for ARM. A practically good solution is to assume
-				// drive of the exe file as the drive. Though it's not good in theory, 
-				// it does not hurt when the assumption is wrong, as user still has the
-				// option to locate the file manually...03/15/07
-				pa = pa.setDevice(m_exeFileWin32Drive);
-		}
-	
 		// This convert the path to canonical path (but not necessarily absolute, which
 		// is different from java.io.File.getCanonicalPath()).
 		fullName = pa.toOSString();
@@ -446,42 +409,6 @@ public class DwarfReader extends Dwarf implements ISymbolReader {
 			m_fileCollection.add(fullName);					
 	}
 	
-
-	private String fixUpPath(String path) {
-		// some compilers generate extra back slashes
-		path = path.replaceAll("\\\\\\\\", "\\\\"); //$NON-NLS-1$//$NON-NLS-2$
-
-		// translate any cygwin drive paths, e.g. //G/System/main.cpp or /cygdrive/c/system/main.c
-		if (path.startsWith("/cygdrive/") && ('/' == path.charAt(11))) { //$NON-NLS-1$
-			char driveLetter = path.charAt(10);
-			driveLetter = (Character.isLowerCase(driveLetter)) ? Character.toUpperCase(driveLetter)
-					: driveLetter;
-
-			StringBuffer buf = new StringBuffer(path);
-			buf.delete(0, 11);
-			buf.insert(0, driveLetter);
-			buf.insert(1, ':');
-
-			path = buf.toString();
-		}
-
-		// translate any cygwin drive paths, e.g. //G/System/main.cpp or /cygdrive/c/system/main.c
-		if (path.startsWith("//") && ('/' == path.charAt(3))) { //$NON-NLS-1$
-			char driveLetter = path.charAt(2);
-			driveLetter = (Character.isLowerCase(driveLetter)) ? Character.toUpperCase(driveLetter)
-					: driveLetter;
-
-			StringBuffer buf = new StringBuffer(path);
-			buf.delete(0, 3);
-			buf.insert(0, driveLetter);
-			buf.insert(1, ':');
-
-			path = buf.toString();
-		}
-
-		return path;
-	}		
-
 	/**
 	 * Read a null-ended string from the given "data" stream.
 	 * data	:  IN, byte buffer

@@ -10,9 +10,9 @@
  *******************************************************************************/
 package org.eclipse.cdt.dsf.gdb.internal.ui.actions;
 
+import org.eclipse.cdt.debug.core.model.IReverseToggleHandler;
 import org.eclipse.cdt.dsf.datamodel.DMContexts;
 import org.eclipse.cdt.dsf.debug.service.command.ICommandControlService.ICommandControlDMContext;
-import org.eclipse.cdt.dsf.gdb.actions.IReverseToggleHandler;
 import org.eclipse.cdt.dsf.ui.viewmodel.datamodel.IDMVMContext;
 import org.eclipse.core.expressions.PropertyTester;
 import org.eclipse.debug.ui.DebugUITools;
@@ -54,15 +54,15 @@ public class ReverseDebuggingPropertyTester extends PropertyTester {
     }   
     
     private boolean test(IDMVMContext context) {
+    	boolean result = false;
 		ICommandControlDMContext controlDmc = DMContexts.getAncestorOfType(context.getDMContext(), ICommandControlDMContext.class);
 		if (controlDmc != null) {
 			IReverseToggleHandler toggle = (IReverseToggleHandler)(controlDmc.getAdapter(IReverseToggleHandler.class));
 			if (toggle != null) {
-				boolean t=  toggle.isReverseToggled(controlDmc);
-				return t;
+				result = toggle.isReverseToggled(controlDmc);
 			}
 		}
-		return false;
+		return result;
     }
 
     private static Object getContextSelectionForPart(IWorkbenchPart part) {

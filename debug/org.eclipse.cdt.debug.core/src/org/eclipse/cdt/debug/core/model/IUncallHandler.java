@@ -8,17 +8,13 @@
  * Contributors:
  *     Ericsson - Initial API and implementation
  *******************************************************************************/
-package org.eclipse.cdt.dsf.gdb.actions;
+package org.eclipse.cdt.debug.core.model;
 
-import org.eclipse.jface.viewers.ISelection;
+import org.eclipse.debug.core.commands.IDebugCommandHandler;
 
 /**
- * @since 2.0
- * @deprecated This interface was synchronous.  I has been replaced with the asynchronous
- *             interface @{link org.eclipse.cdt.debug.core.model.IUncallHandler}
+ * Handler interface to perform an Uncall operation (reverse debugging)
+ * @since 6.1
  */
-@Deprecated
-public interface IUncallHandler {
-	public boolean canUncall(ISelection debugContext);
-	public void uncall(ISelection debugContext);
+public interface IUncallHandler extends IDebugCommandHandler {
 }

@@ -4,44 +4,29 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     Ericsson - initial API and implementation
  *******************************************************************************/
-package org.eclipse.cdt.dsf.gdb.internal.ui.actions;
+package org.eclipse.cdt.dsf.gdb.internal.ui.commands;
 
-import org.eclipse.cdt.dsf.concurrent.Immutable;
+import org.eclipse.cdt.debug.core.model.IReverseStepOverHandler;
 import org.eclipse.cdt.dsf.debug.service.IRunControl.StepType;
 import org.eclipse.cdt.dsf.debug.ui.actions.DsfSteppingModeTarget;
-import org.eclipse.cdt.dsf.gdb.actions.IReverseStepOverHandler;
 import org.eclipse.cdt.dsf.service.DsfSession;
-import org.eclipse.jface.viewers.ISelection;
 
 /**
- * @since 2.0
+ * Command performing a reverse step over
+ * @since 2.1
  */
-@Immutable
 public class GdbReverseStepOverCommand extends GdbAbstractReverseStepCommand implements IReverseStepOverHandler {
-
 	public GdbReverseStepOverCommand(DsfSession session, DsfSteppingModeTarget steppingMode) {
 		super(session, steppingMode);
-	}       
-
-	public boolean canReverseStepOver(ISelection debugContext) {
-		return canReverseStep(debugContext);
 	}
 
-	public void reverseStepOver(ISelection debugContext) {
-		reverseStep(debugContext);
+	@Override
+	protected final StepType getStepType() {
+		boolean instructionSteppingEnabled = getSteppingMode() != null && getSteppingMode().isInstructionSteppingEnabled();
+		return instructionSteppingEnabled ? StepType.INSTRUCTION_STEP_OVER : StepType.STEP_OVER;
 	}
-
-	/**
-	 * @return the currently active step type
-	 */
-	 @Override
-	 protected final StepType getStepType() {
-		 boolean instructionSteppingEnabled = getSteppingMode() != null && getSteppingMode().isInstructionSteppingEnabled();
-		 return instructionSteppingEnabled ? StepType.INSTRUCTION_STEP_OVER : StepType.STEP_OVER;
-	 }
 }
-

@@ -14,7 +14,10 @@ import org.eclipse.jface.viewers.ISelection;
 
 /**
  * @since 2.0
+ * @deprecated This interface was synchronous.  I has been replaced with the asynchronous
+ *             interface @{link org.eclipse.cdt.debug.core.model.IReverseStepIntoHandler}
  */
+@Deprecated
 public interface IReverseStepIntoHandler {
 	public boolean canReverseStepInto(ISelection debugContext);
 	public void reverseStepInto(ISelection debugContext);

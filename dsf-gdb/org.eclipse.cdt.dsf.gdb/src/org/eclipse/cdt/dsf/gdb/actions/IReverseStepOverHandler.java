@@ -14,7 +14,10 @@ import org.eclipse.jface.viewers.ISelection;
 
 /**
  * @since 2.0
+ * @deprecated This interface was synchronous.  I has been replaced with the asynchronous
+ *             interface @{link org.eclipse.cdt.debug.core.model.IReverseStepOverHandler}
  */
+@Deprecated
 public interface IReverseStepOverHandler {
 	public boolean canReverseStepOver(ISelection debugContext);
 	public void reverseStepOver(ISelection debugContext);

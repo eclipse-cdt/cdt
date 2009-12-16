@@ -14,7 +14,10 @@ import org.eclipse.jface.viewers.ISelection;
 
 /**
  * @since 2.0
+ * @deprecated This interface was synchronous.  I has been replaced with the asynchronous
+ *             interface @{link org.eclipse.cdt.debug.core.model.IReverseResumeHandler}
  */
+@Deprecated
 public interface IReverseResumeHandler {
 	public boolean canReverseResume(ISelection debugContext);
 	public void reverseResume(ISelection debugContext);

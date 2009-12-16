@@ -15,7 +15,10 @@ import org.eclipse.jface.viewers.ISelection;
 
 /**
  * @since 2.0
+ * @deprecated This interface was synchronous.  I has been replaced with the asynchronous
+ *             interface @{link org.eclipse.cdt.debug.core.model.IReverseToggleHandler}
  */
+@Deprecated
 public interface IReverseToggleHandler {
 	public boolean canToggleReverse(ISelection debugContext);
 	public void toggleReverse(ISelection debugContext);

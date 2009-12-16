@@ -4,37 +4,40 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     Ericsson - initial API and implementation
  *******************************************************************************/
-package org.eclipse.cdt.dsf.gdb.internal.ui.actions;
+package org.eclipse.cdt.dsf.gdb.internal.ui.commands;
 
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.RejectedExecutionException;
 
+import org.eclipse.cdt.debug.core.model.IReverseResumeHandler;
 import org.eclipse.cdt.dsf.concurrent.DataRequestMonitor;
 import org.eclipse.cdt.dsf.concurrent.DsfExecutor;
-import org.eclipse.cdt.dsf.concurrent.Immutable;
 import org.eclipse.cdt.dsf.concurrent.Query;
 import org.eclipse.cdt.dsf.datamodel.DMContexts;
 import org.eclipse.cdt.dsf.debug.service.IRunControl.IExecutionDMContext;
-import org.eclipse.cdt.dsf.gdb.actions.IReverseResumeHandler;
 import org.eclipse.cdt.dsf.gdb.internal.ui.GdbUIPlugin;
 import org.eclipse.cdt.dsf.gdb.service.IReverseRunControl;
 import org.eclipse.cdt.dsf.service.DsfServicesTracker;
 import org.eclipse.cdt.dsf.service.DsfSession;
 import org.eclipse.cdt.dsf.ui.viewmodel.datamodel.IDMVMContext;
-import org.eclipse.jface.viewers.ISelection;
-import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.debug.core.IRequest;
+import org.eclipse.debug.core.commands.AbstractDebugCommand;
+import org.eclipse.debug.core.commands.IDebugCommandRequest;
+import org.eclipse.debug.core.commands.IEnabledStateRequest;
 
 /**
- * @since 2.0
+ * Command performing a reverse resume.
+ * 
+ * @since 2.1
  */
-@Immutable
-public class GdbReverseResumeCommand implements IReverseResumeHandler {
-    
-	private final DsfExecutor fExecutor;
+public class GdbReverseResumeCommand extends AbstractDebugCommand implements IReverseResumeHandler {
+    private final DsfExecutor fExecutor;
     private final DsfServicesTracker fTracker;
     
     public GdbReverseResumeCommand(DsfSession session) {
@@ -46,12 +49,51 @@ public class GdbReverseResumeCommand implements IReverseResumeHandler {
         fTracker.dispose();
     }
 
-    public boolean canReverseResume(ISelection debugContext) {
-        final IExecutionDMContext dmc = getContext(debugContext);
-        
+    @Override
+	protected void doExecute(Object[] targets, IProgressMonitor monitor, IRequest request) throws CoreException {
+    	if (targets.length != 1) {
+    		return;
+    	}
+
+        final IExecutionDMContext dmc = DMContexts.getAncestorOfType(((IDMVMContext)targets[0]).getDMContext(), IExecutionDMContext.class);
         if (dmc == null) {
-        	return false;
+        	return;
         }
+
+        Query<Object> reverseResume = new Query<Object>() {
+            @Override
+            public void execute(DataRequestMonitor<Object> rm) {
+       			IReverseRunControl runControl = fTracker.getService(IReverseRunControl.class);
+
+       			if (runControl != null) {
+       				runControl.reverseResume(dmc, rm);
+       			} else {
+       				rm.done();
+       			}
+       		}
+       	};
+    	try {
+    		fExecutor.execute(reverseResume);
+    		reverseResume.get();
+		} catch (InterruptedException e) {
+		} catch (ExecutionException e) {
+        } catch (RejectedExecutionException e) {
+        	// Can be thrown if the session is shutdown
+        }
+    }
+
+    @Override
+	protected boolean isExecutable(Object[] targets, IProgressMonitor monitor, IEnabledStateRequest request)
+        throws CoreException 
+    {
+    	if (targets.length != 1) {
+    		return false;
+    	}
+
+    	final IExecutionDMContext dmc = DMContexts.getAncestorOfType(((IDMVMContext)targets[0]).getDMContext(), IExecutionDMContext.class);
+    	if (dmc == null) {
+    		return false;
+    	}
 
         Query<Boolean> canReverseResume = new Query<Boolean>() {
             @Override
@@ -78,47 +120,16 @@ public class GdbReverseResumeCommand implements IReverseResumeHandler {
 		return false;
     }
     
-    public void reverseResume(ISelection debugContext) {
-        final IExecutionDMContext dmc = getContext(debugContext);
-        
-        if (dmc == null) {
-        	return;
-        }
-
-        Query<Object> reverseResume = new Query<Object>() {
-            @Override
-            public void execute(DataRequestMonitor<Object> rm) {
-       			IReverseRunControl runControl = fTracker.getService(IReverseRunControl.class);
-
-       			if (runControl != null) {
-       				runControl.reverseResume(dmc, rm);
-       			} else {
-       				rm.setData(false);
-       				rm.done();
-       			}
-       		}
-       	};
-    	try {
-    		fExecutor.execute(reverseResume);
-    		reverseResume.get();
-		} catch (InterruptedException e) {
-		} catch (ExecutionException e) {
-        } catch (RejectedExecutionException e) {
-        	// Can be thrown if the session is shutdown
-        }
+    @Override
+	protected Object getTarget(Object element) {
+    	if (element instanceof IDMVMContext) {
+    		return element;
+    	}
+        return null;
     }
 
-	private IExecutionDMContext getContext(ISelection debugContext) {
-        if (debugContext instanceof IStructuredSelection) {
-            IStructuredSelection ss = (IStructuredSelection) debugContext;
-            if (!ss.isEmpty()) {
-                Object object = ss.getFirstElement();
-                if (object instanceof IDMVMContext) {
-                	return DMContexts.getAncestorOfType(((IDMVMContext)object).getDMContext(), IExecutionDMContext.class);
-                }
-            }
-        }
-        
-        return null;
+    @Override
+	protected boolean isRemainEnabled(IDebugCommandRequest request) {
+		return false;
 	}
 }

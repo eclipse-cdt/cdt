@@ -6,19 +6,21 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *     Ericsson - Initial API and implementation
+ *     Ericsson - initial API and implementation
  *******************************************************************************/
-package org.eclipse.cdt.dsf.gdb.actions;
+package org.eclipse.cdt.debug.internal.ui.commands;
 
-import org.eclipse.jface.viewers.ISelection;
+import org.eclipse.cdt.debug.core.model.IReverseStepIntoHandler;
+import org.eclipse.debug.ui.actions.DebugCommandHandler;
 
 /**
- * @since 2.0
- * @deprecated This interface was synchronous.  I has been replaced with the asynchronous
- *             interface @{link org.eclipse.cdt.debug.core.model.IUncallHandler}
+ * Command handler to trigger a reverse stepinto operation
+ * 
+ * @since 6.1
  */
-@Deprecated
-public interface IUncallHandler {
-	public boolean canUncall(ISelection debugContext);
-	public void uncall(ISelection debugContext);
+public class ReverseStepIntoCommandHandler extends DebugCommandHandler {
+    @Override
+    protected Class<?> getCommandType() {
+        return IReverseStepIntoHandler.class;
+    }
 }

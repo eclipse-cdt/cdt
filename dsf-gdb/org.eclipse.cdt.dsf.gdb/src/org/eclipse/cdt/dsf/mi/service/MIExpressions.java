@@ -11,7 +11,6 @@
  *******************************************************************************/
 package org.eclipse.cdt.dsf.mi.service;
 
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Hashtable;
 import java.util.Map;
@@ -755,15 +754,42 @@ public class MIExpressions extends AbstractDsfService implements IExpressions, I
 	 */
 	public void getSubExpressions(IExpressionDMContext exprCtx, final int startIndex,
 			final int length, final DataRequestMonitor<IExpressionDMContext[]> rm) {
-		getSubExpressions(
-				exprCtx,
-				new DataRequestMonitor<IExpressionDMContext[]>(getExecutor(), rm) {
-					@Override
-					protected void handleSuccess() {
-						rm.setData((IExpressionDMContext[])Arrays.asList(getData()).subList(startIndex, startIndex + length).toArray());
-						rm.done();
-					}
-				});
+
+		if (startIndex < 0 || length < 0) {
+			rm.setStatus(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, INVALID_HANDLE, "Invalid range for evaluating sub expressions.", null)); //$NON-NLS-1$
+			rm.done();
+			return;
+		}
+		
+		if (exprCtx instanceof MIExpressionDMC) {
+			getSubExpressions(
+					exprCtx,
+					new DataRequestMonitor<IExpressionDMContext[]>(getExecutor(), rm) {
+						@Override
+						protected void handleSuccess() {
+							IExpressionDMContext[] subExpressions = getData();
+
+							if (startIndex >= subExpressions.length || startIndex + length > subExpressions.length) {
+								rm.setStatus(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, INVALID_HANDLE, "Invalid range for evaluating sub expressions.", null)); //$NON-NLS-1$
+								rm.done();
+								return;
+							}
+							
+							IExpressionDMContext[] subRange = new IExpressionDMContext[length];
+							for (int i=0; i<subRange.length; i++) {
+								subRange[i] = subExpressions[i+startIndex]; 
+							}
+							rm.setData(subRange);
+							rm.done();
+						}
+					});
+		} else if (exprCtx instanceof InvalidContextExpressionDMC) {
+			rm.setStatus(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, INVALID_HANDLE, "Invalid context for evaluating expressions.", null)); //$NON-NLS-1$
+			rm.done();
+		} else {
+			rm.setStatus(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, INTERNAL_ERROR, "Invalid expression context.", null)); //$NON-NLS-1$
+			rm.done();
+		}		
 	}
 	
 	/**

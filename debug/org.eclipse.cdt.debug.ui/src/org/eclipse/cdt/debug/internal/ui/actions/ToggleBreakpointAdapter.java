@@ -51,7 +51,7 @@ import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IPresentationContext;
-import org.eclipse.debug.ui.actions.IToggleBreakpointsTarget;
+import org.eclipse.debug.ui.actions.IToggleBreakpointsTargetExtension;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.ITextSelection;
 import org.eclipse.jface.viewers.ISelection;
@@ -68,7 +68,7 @@ import org.eclipse.ui.texteditor.ITextEditor;
 /**
  * Toggles a line breakpoint in a C/C++ editor.
  */
-public class ToggleBreakpointAdapter implements IToggleBreakpointsTarget {
+public class ToggleBreakpointAdapter implements IToggleBreakpointsTargetExtension {
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.ui.actions.IToggleBreakpointsTarget#toggleLineBreakpoints(org.eclipse.ui.IWorkbenchPart, org.eclipse.jface.viewers.ISelection)
@@ -539,4 +539,26 @@ public class ToggleBreakpointAdapter implements IToggleBreakpointsTarget {
         }
         return adapter;
     }
+    
+    /*
+     * @see org.eclipse.debug.ui.actions.IToggleBreakpointsTargetExtension#canToggleBreakpoints(org.eclipse.ui.IWorkbenchPart, org.eclipse.jface.viewers.ISelection)
+     */
+    public boolean canToggleBreakpoints(IWorkbenchPart part, ISelection selection) {
+        return canToggleLineBreakpoints(part, selection);
+    }
+
+	/*
+	 * @see org.eclipse.debug.ui.actions.IToggleBreakpointsTargetExtension#toggleBreakpoints(org.eclipse.ui.IWorkbenchPart, org.eclipse.jface.viewers.ISelection)
+	 */
+	public void toggleBreakpoints(IWorkbenchPart part, ISelection selection) throws CoreException {
+		ICElement element = getCElementFromSelection(part, selection);
+		if (element instanceof IFunction || element instanceof IMethod) {
+			toggleMethodBreakpoints0((IDeclaration)element);
+		} else if (element instanceof IVariable) {
+			toggleVariableWatchpoint(part, (IVariable) element);
+		} else {
+			toggleLineBreakpoints(part, selection);
+		}
+	}
+
 }

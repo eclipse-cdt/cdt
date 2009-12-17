@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2008 Wind River Systems and others.
+ * Copyright (c) 2006, 2009 Wind River Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -19,6 +19,7 @@ import org.eclipse.cdt.dsf.concurrent.RequestMonitor;
 import org.eclipse.cdt.dsf.debug.service.ICachingService;
 import org.eclipse.cdt.dsf.debug.service.IExpressions;
 import org.eclipse.cdt.dsf.debug.service.IRegisters;
+import org.eclipse.cdt.dsf.debug.service.IExpressions.IExpressionDMContext;
 import org.eclipse.cdt.dsf.debug.service.IRunControl.ISuspendedDMEvent;
 import org.eclipse.cdt.dsf.debug.ui.DsfDebugUITools;
 import org.eclipse.cdt.dsf.debug.ui.IDsfDebugUIConstants;
@@ -46,6 +47,7 @@ import org.eclipse.debug.core.model.IExpression;
 import org.eclipse.debug.internal.core.IExpressionsListener2;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IColumnPresentation;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IPresentationContext;
+import org.eclipse.debug.internal.ui.viewers.model.provisional.IViewerInputUpdate;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.ModelDelta;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.util.IPropertyChangeListener;
@@ -210,8 +212,13 @@ public class ExpressionVMProvider extends AbstractDMVMProvider
         /*
          * Now the Over-arching management node.
          */
-        ExpressionManagerVMNode expressionManagerNode = new ExpressionManagerVMNode(this);
-        addChildNodes(rootNode, new IVMNode[] {expressionManagerNode});
+        if (IDsfDebugUIConstants.ID_EXPRESSION_HOVER.equals(getPresentationContext().getId())) {
+        	SingleExpressionVMNode expressionManagerNode = new SingleExpressionVMNode(this);
+        	addChildNodes(rootNode, new IVMNode[] { expressionManagerNode });
+        } else {
+            ExpressionManagerVMNode expressionManagerNode = new ExpressionManagerVMNode(this);
+            addChildNodes(rootNode, new IVMNode[] {expressionManagerNode});
+        }
         
         /*
          *  The expression view wants to support fully all of the components of the register view.
@@ -371,5 +378,21 @@ public class ExpressionVMProvider extends AbstractDMVMProvider
         } catch (RejectedExecutionException e) {
             // Session disposed, ignore.
         }
+    }
+
+    @Override
+    public void update(IViewerInputUpdate update) {
+        if (IDsfDebugUIConstants.ID_EXPRESSION_HOVER.equals(getPresentationContext().getId())) {
+        	Object input = update.getElement();
+        	if (input instanceof IExpressionDMContext) {
+        		IExpressionDMContext dmc = (IExpressionDMContext) input;
+        		SingleExpressionVMNode vmNode = (SingleExpressionVMNode) getChildVMNodes(getRootVMNode())[0];
+        		vmNode.setExpression(dmc);
+				update.setInputElement(vmNode.createVMContext(dmc));
+        		update.done();
+        		return;
+        	}
+        }
+        super.update(update);
     }
 }

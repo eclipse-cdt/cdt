@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2008 Wind River Systems and others.
+ * Copyright (c) 2006, 2009 Wind River Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -79,4 +79,11 @@ public interface IDsfDebugUIConstants {
      * @since 2.0 
      */
     public static final String PREF_COLOR_STALE_DATA_BACKGROUND= PLUGIN_ID + ".staledata.background"; //$NON-NLS-1$
+
+    /**
+     * Presentation context id for the expression hover.
+     * 
+     * @since 2.1
+     */
+	public static final String ID_EXPRESSION_HOVER= PLUGIN_ID + ".expression_hover"; //$NON-NLS-1$
 }

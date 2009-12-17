@@ -10,9 +10,13 @@
  *******************************************************************************/
 package org.eclipse.cdt.dsf.debug.ui;
 
+import java.util.concurrent.Callable;
+import java.util.concurrent.ExecutionException;
+
 import org.eclipse.cdt.debug.ui.editors.AbstractDebugTextHover;
 import org.eclipse.cdt.dsf.concurrent.DataRequestMonitor;
 import org.eclipse.cdt.dsf.concurrent.Query;
+import org.eclipse.cdt.dsf.debug.internal.ui.ExpressionInformationControlCreator;
 import org.eclipse.cdt.dsf.debug.service.IExpressions;
 import org.eclipse.cdt.dsf.debug.service.IFormattedValues;
 import org.eclipse.cdt.dsf.debug.service.IExpressions.IExpressionDMContext;
@@ -24,13 +28,21 @@ import org.eclipse.cdt.dsf.service.DsfServicesTracker;
 import org.eclipse.cdt.dsf.service.DsfSession;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.debug.core.model.IDebugModelProvider;
+import org.eclipse.jface.text.DefaultInformationControl;
+import org.eclipse.jface.text.IInformationControl;
+import org.eclipse.jface.text.IInformationControlCreator;
+import org.eclipse.jface.text.IRegion;
+import org.eclipse.jface.text.ITextHoverExtension2;
+import org.eclipse.jface.text.ITextViewer;
+import org.eclipse.swt.widgets.Shell;
+import org.eclipse.ui.editors.text.EditorsUI;
 
 /**
- * An implementation of AbstractDebugTextHover using DSF services.
+ * An implementation of AbstractDebugTextHover using DSF services
  * 
  * @since 2.1
  */
-abstract public class AbstractDsfDebugTextHover extends AbstractDebugTextHover {
+abstract public class AbstractDsfDebugTextHover extends AbstractDebugTextHover implements ITextHoverExtension2 {
 
     /**
      * Returns the debug model ID that this debug text hover is to be used for.
@@ -119,6 +131,65 @@ abstract public class AbstractDsfDebugTextHover extends AbstractDebugTextHover {
 			dsfServicesTracker.dispose();
 		}
         return null;
+	}
+
+    /**
+     * Returns whether the expression explorer information control should be used.
+     * The default implementation returns <code>false</code>.
+     */
+    protected boolean useExpressionExplorer() {
+    	return false;
+    }
+    
+	@Override
+	public IInformationControlCreator getHoverControlCreator() {
+		if (useExpressionExplorer()) {
+			return new ExpressionInformationControlCreator();
+		} else {
+			return new IInformationControlCreator() {
+				public IInformationControl createInformationControl(Shell parent) {
+					return new DefaultInformationControl(parent, EditorsUI.getTooltipAffordanceString());
+				}
+			};
+		}
+	}
+
+	/*
+	 * @see org.eclipse.jface.text.ITextHoverExtension2#getHoverInfo2(org.eclipse.jface.text.ITextViewer, org.eclipse.jface.text.IRegion)
+	 */
+	public Object getHoverInfo2(ITextViewer textViewer, IRegion hoverRegion) {
+    	final String simpleInfo = getHoverInfo(textViewer, hoverRegion);
+		if (!useExpressionExplorer() || simpleInfo == null) {
+    		return simpleInfo;
+    	}
+		// improved version using ExpressionInformationControlCreator
+    	// see also getHoverControlCreator()
+    	final String text;
+		text= getExpressionText(textViewer, hoverRegion);
+    	if (text != null && text.length() > 0) {
+			final IFrameDMContext frameDmc = getFrame();
+			final DsfSession dsfSession = DsfSession.getSession(frameDmc.getSessionId());
+			Callable<IExpressionDMContext> callable = new Callable<IExpressionDMContext>() {
+				public IExpressionDMContext call() throws Exception {
+					DsfServicesTracker tracker = new DsfServicesTracker(DsfUIPlugin.getBundleContext(), frameDmc.getSessionId());
+					try {
+						IExpressions expressions = tracker.getService(IExpressions.class);
+						if (expressions != null) {
+							return expressions.createExpression(frameDmc, text);
+						}
+						return null;
+					} finally {
+						tracker.dispose();
+					}
+				}
+			};
+			try {
+				return dsfSession.getExecutor().submit(callable).get();
+			} catch (InterruptedException e) {
+			} catch (ExecutionException e) {
+			}
+    	}
+    	return null;
 	}
 
 }

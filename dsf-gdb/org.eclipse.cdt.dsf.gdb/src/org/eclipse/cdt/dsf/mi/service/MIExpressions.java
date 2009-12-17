@@ -746,9 +746,10 @@ public class MIExpressions extends AbstractDsfService implements IExpressions, I
 	 *            should be retrieved.
 	 * @param startIndex
 	 *            The starting index within the list of all children of the parent
-	 *            expression.
+	 *            expression.  Must be a positive integer.  
 	 * @param length
-	 *            The length or number of elements of the range requested
+	 *            The length or number of elements of the range requested.  
+	 *            Must be a positive integer.
 	 * @param rm
 	 *            The data request monitor that will contain the requested data
 	 */
@@ -756,7 +757,7 @@ public class MIExpressions extends AbstractDsfService implements IExpressions, I
 			final int length, final DataRequestMonitor<IExpressionDMContext[]> rm) {
 
 		if (startIndex < 0 || length < 0) {
-			rm.setStatus(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, INVALID_HANDLE, "Invalid range for evaluating sub expressions.", null)); //$NON-NLS-1$
+			rm.setStatus(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, INTERNAL_ERROR, "Invalid range for evaluating sub expressions.", null)); //$NON-NLS-1$
 			rm.done();
 			return;
 		}
@@ -770,7 +771,7 @@ public class MIExpressions extends AbstractDsfService implements IExpressions, I
 							IExpressionDMContext[] subExpressions = getData();
 
 							if (startIndex >= subExpressions.length || startIndex + length > subExpressions.length) {
-								rm.setStatus(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, INVALID_HANDLE, "Invalid range for evaluating sub expressions.", null)); //$NON-NLS-1$
+								rm.setStatus(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, REQUEST_FAILED, "Invalid range for evaluating sub expressions.", null)); //$NON-NLS-1$
 								rm.done();
 								return;
 							}

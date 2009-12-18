@@ -130,7 +130,7 @@ public class MemoryBrowser extends ViewPart implements IDebugContextListener, IL
 	public MemoryBrowser() {
 	}
 	
-	private Control getControl()
+	public Control getControl()
 	{
 		return fMainComposite;
 	}

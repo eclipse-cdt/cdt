@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 QNX Software Systems and others.
+ * Copyright (c) 2000, 2009 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -92,7 +92,7 @@ class CProjectInfo extends OpenableInfo {
 						case IResource.FILE:
 							// Must be a translation unit or binary
 							if (CoreModel.isValidTranslationUnitName(cproject.getProject(), child.getName())
-									|| CModelManager.getDefault().createBinaryFile((IFile)child) != null)
+									|| (cproject.isOnOutputEntry(child) && (CModelManager.getDefault().createBinaryFile((IFile)child) != null)) )
 								continue;
 							break;
 						case IResource.FOLDER:

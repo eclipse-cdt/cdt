@@ -27,8 +27,10 @@ import org.eclipse.cdt.core.model.ICContainer;
 import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.core.model.ISourceRoot;
+import org.eclipse.cdt.core.settings.model.COutputEntry;
 import org.eclipse.cdt.core.settings.model.CSourceEntry;
 import org.eclipse.cdt.core.settings.model.ICConfigurationDescription;
+import org.eclipse.cdt.core.settings.model.ICOutputEntry;
 import org.eclipse.cdt.core.settings.model.ICProjectDescription;
 import org.eclipse.cdt.core.settings.model.ICSourceEntry;
 import org.eclipse.cdt.core.testplugin.CProjectHelper;
@@ -422,6 +424,54 @@ public class CModelTests extends TestCase {
 			testProject.getProject().delete(true,true,monitor);
 		} 
 		catch (CoreException e) {}
-
 	}
+    
+    // bug 294965
+    public void testBinaryInProjectRoot_294965() throws Exception {
+        ICProject testProject;
+        testProject = CProjectHelper.createCProject("bug294965", "none", IPDOMManager.ID_NO_INDEXER);
+        if (testProject == null) {
+            fail("Unable to create project");
+        }
+        CProjectHelper.addDefaultBinaryParser(testProject.getProject());
+        CProjectHelper.importSourcesFromPlugin(testProject, CTestPlugin.getDefault().getBundle(), "resources/exe/x86/o");
+
+		testProject.getProject().getFolder("out").create(true, true, monitor);
+		
+		ICProjectDescription prjDesc= CoreModel.getDefault().getProjectDescription(testProject.getProject(), true);
+		ICConfigurationDescription cfg= prjDesc.getActiveConfiguration();
+		assertNotNull(cfg);
+
+		// add filter to source entry
+		ICSourceEntry[] entries = cfg.getSourceEntries();
+		final String sourceEntryName = entries[0].getName();
+		final IPath[] exclusionPatterns = new IPath[] { new Path("test/*") };
+
+		ICSourceEntry sourceEntry = new CSourceEntry(sourceEntryName, exclusionPatterns, entries[0].getFlags());
+		cfg.setSourceEntries(new ICSourceEntry[] { sourceEntry });
+
+		// set output entry
+		ICOutputEntry outputEntry = new COutputEntry(testProject.getProject().getFolder("out"), new IPath[0], 0);
+		cfg.getBuildSetting().setOutputDirectories(new ICOutputEntry[] { outputEntry });
+		
+		assertEquals(outputEntry, cfg.getBuildSetting().getOutputDirectories()[0]);
+		
+		// store the changed configuration
+		CoreModel.getDefault().setProjectDescription(testProject.getProject(), prjDesc, true, monitor);
+		testProject.close();
+		testProject.getProject().close(monitor);
+		testProject.getProject().open(monitor);
+
+		prjDesc= CoreModel.getDefault().getProjectDescription(testProject.getProject(), false);
+		cfg= prjDesc.getActiveConfiguration();
+		assertEquals(outputEntry, cfg.getBuildSetting().getOutputDirectories()[0]);
+
+        Object[] nonCResources = testProject.getNonCResources();
+		assertEquals(7, nonCResources.length);
+		
+		try {
+			testProject.getProject().delete(true,true,monitor);
+		} 
+		catch (CoreException e) {}
+    }
 }

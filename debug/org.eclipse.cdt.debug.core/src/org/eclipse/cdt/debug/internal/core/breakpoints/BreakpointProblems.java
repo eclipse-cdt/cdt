@@ -48,6 +48,11 @@ public class BreakpointProblems {
 		return marker;
 	}
 
+	public static IMarker reportUnsupportedTracepoint(ICBreakpoint breakpoint, String contextName, String contextID) throws CoreException {
+		IMarker marker = BreakpointProblems.reportBreakpointProblem(breakpoint, BreakpointMessages.getString("BreakpointProblems_UnsupportedTracepoint"), IMarker.SEVERITY_WARNING, UNRESOLVED, true, false, contextName, contextID); //$NON-NLS-1$
+		return marker;
+	}
+
 	public static void removeProblemsForBreakpoint(ICBreakpoint breakpoint) throws CoreException {
 		IMarker marker = breakpoint.getMarker();
 		if (marker != null)

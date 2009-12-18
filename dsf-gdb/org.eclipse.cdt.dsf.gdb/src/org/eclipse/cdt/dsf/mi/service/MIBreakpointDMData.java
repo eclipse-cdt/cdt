@@ -39,7 +39,8 @@ public class MIBreakpointDMData implements IBreakpointDMData {
 	private final Map<String, Object> fProperties;
 
 	// Breakpoint types
-	public static enum MIBreakpointNature { UNKNOWN, BREAKPOINT, WATCHPOINT, CATCHPOINT };
+	public static enum MIBreakpointNature { UNKNOWN, BREAKPOINT, WATCHPOINT, CATCHPOINT, 
+		                                    /** @since 2.1*/ TRACEPOINT };
 	private final MIBreakpointNature fNature;
 
 
@@ -66,9 +67,15 @@ public class MIBreakpointDMData implements IBreakpointDMData {
 	 */
 	public MIBreakpointDMData(MIBreakpoint dsfMIBreakpoint) {
 
-		// We only support breakpoint and watchpoint (so far) 
+		// No support for catchpoints yet
 		fBreakpoint = dsfMIBreakpoint;
-		fNature = dsfMIBreakpoint.isWatchpoint() ? MIBreakpointNature.WATCHPOINT : MIBreakpointNature.BREAKPOINT;
+		if (dsfMIBreakpoint.isTracepoint()) {
+			fNature = MIBreakpointNature.TRACEPOINT;
+		} else if (dsfMIBreakpoint.isWatchpoint()) {
+			fNature = MIBreakpointNature.WATCHPOINT;
+		} else {
+			fNature = MIBreakpointNature.BREAKPOINT;
+		}
 
 		fProperties = new HashMap<String,Object>();
 		switch (fNature) {
@@ -109,7 +116,31 @@ public class MIBreakpointDMData implements IBreakpointDMData {
 				fProperties.put(NUMBER,     dsfMIBreakpoint.getNumber());
 				break;
 			}
-
+			
+			case TRACEPOINT:
+			{
+				// Generic breakpoint attributes
+				fProperties.put(MIBreakpoints.BREAKPOINT_TYPE, MIBreakpoints.TRACEPOINT);
+				fProperties.put(MIBreakpoints.FILE_NAME,       dsfMIBreakpoint.getFile());
+				fProperties.put(MIBreakpoints.LINE_NUMBER,     dsfMIBreakpoint.getLine());
+				fProperties.put(MIBreakpoints.FUNCTION,        dsfMIBreakpoint.getFunction());
+				fProperties.put(MIBreakpoints.ADDRESS,         dsfMIBreakpoint.getAddress());
+				fProperties.put(MIBreakpoints.CONDITION,       dsfMIBreakpoint.getCondition());
+				fProperties.put(MIBreakpoints.IGNORE_COUNT,    dsfMIBreakpoint.getPassCount());
+				fProperties.put(MIBreakpoints.IS_ENABLED,      new Boolean(dsfMIBreakpoint.isEnabled()));
+	
+				// MI-specific breakpoint attributes
+				fProperties.put(NUMBER,       dsfMIBreakpoint.getNumber());
+				fProperties.put(TYPE,         dsfMIBreakpoint.getType());
+				fProperties.put(THREAD_ID,    dsfMIBreakpoint.getThreadId());
+				fProperties.put(FULL_NAME,    dsfMIBreakpoint.getFullName());
+				fProperties.put(HITS,         dsfMIBreakpoint.getTimes());
+				fProperties.put(IS_TEMPORARY, new Boolean(dsfMIBreakpoint.isTemporary()));
+				fProperties.put(IS_HARDWARE,  new Boolean(dsfMIBreakpoint.isHardware()));
+				fProperties.put(LOCATION,     formatLocation());
+				break;
+			}
+			
 			// Not reachable
 			default:
 			{
@@ -201,6 +232,20 @@ public class MIBreakpointDMData implements IBreakpointDMData {
 		return fBreakpoint.isEnabled();
 	}
 
+	/**
+	 * @since 2.1
+	 */
+	public int getPassCount() {
+		return fBreakpoint.getPassCount();
+	}
+	
+	/**
+	 * @since 2.1
+	 */
+	public String getCommands() {
+		return fBreakpoint.getCommands();
+	}
+
 	///////////////////////////////////////////////////////////////////////////
 	// MIBreakpointDMData
 	///////////////////////////////////////////////////////////////////////////
@@ -250,6 +295,14 @@ public class MIBreakpointDMData implements IBreakpointDMData {
 	public void setEnabled(boolean isEnabled) {
 		fBreakpoint.setEnabled(isEnabled);
 		fProperties.put(MIBreakpoints.IS_ENABLED, isEnabled);
+	}
+	
+	/**
+	 * @since 2.1
+	 */
+	public void setPassCount(int count) {
+		fBreakpoint.setPassCount(count);
+		fProperties.put(MIBreakpoints.IGNORE_COUNT, count);
 	}
 
 	public boolean isReadWatchpoint() {

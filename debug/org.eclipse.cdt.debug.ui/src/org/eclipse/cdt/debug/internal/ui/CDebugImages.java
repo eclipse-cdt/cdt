@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 QNX Software Systems and others.
+ * Copyright (c) 2009 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     QNX Software Systems - Initial API and implementation
+ *     Ericsson             - Added tracepoint support (284286)
  *******************************************************************************/
 package org.eclipse.cdt.debug.internal.ui;
 
@@ -48,7 +49,7 @@ public class CDebugImages {
 
 	// The plugin registry
 	private static ImageRegistry fgImageRegistry = null;
-	private static HashMap fgAvoidSWTErrorMap = null;
+	private static HashMap<String, ImageDescriptor> fgAvoidSWTErrorMap = null;
 
 	/*
 	 * Available cached Images in the C/C++ debug plug-in image registry.
@@ -74,6 +75,8 @@ public class CDebugImages {
 	public static final String IMG_OBJS_ADDRESS_BREAKPOINT_DISABLED = NAME_PREFIX + "addrbrkpd_obj.gif";	//$NON-NLS-1$
 	public static final String IMG_OBJS_FUNCTION_BREAKPOINT_ENABLED = NAME_PREFIX + "funbrkp_obj.gif";	//$NON-NLS-1$
 	public static final String IMG_OBJS_FUNCTION_BREAKPOINT_DISABLED = NAME_PREFIX + "funbrkpd_obj.gif";	//$NON-NLS-1$
+	public static final String IMG_OBJS_TRACEPOINT_ENABLED = NAME_PREFIX + "trcp_obj.gif";	//$NON-NLS-1$
+	public static final String IMG_OBJS_TRACEPOINT_DISABLED = NAME_PREFIX + "trcpd_obj.gif";	//$NON-NLS-1$
 	public static final String IMG_OBJS_WATCHPOINT_ENABLED = NAME_PREFIX + "readwrite_obj.gif";	//$NON-NLS-1$
 	public static final String IMG_OBJS_WATCHPOINT_DISABLED = NAME_PREFIX + "readwrite_obj_disabled.gif";	//$NON-NLS-1$
 	public static final String IMG_OBJS_READ_WATCHPOINT_ENABLED = NAME_PREFIX + "read_obj.gif";	//$NON-NLS-1$
@@ -154,6 +157,8 @@ public class CDebugImages {
 	public static final ImageDescriptor DESC_OVRS_GLOBAL = createManaged( T_OVR, IMG_OVRS_GLOBAL );
 	public static final ImageDescriptor DESC_OBJS_BREAKPOINT_ENABLED = createManaged( T_OBJ, IMG_OBJS_BREAKPOINT_ENABLED );
 	public static final ImageDescriptor DESC_OBJS_BREAKPOINT_DISABLED = createManaged( T_OBJ, IMG_OBJS_BREAKPOINT_DISABLED );
+	public static final ImageDescriptor DESC_OBJS_TRACEPOINT_ENABLED = createManaged( T_ELCL, IMG_OBJS_TRACEPOINT_ENABLED );
+	public static final ImageDescriptor DESC_OBJS_TRACEPOINT_DISABLED = createManaged( T_DLCL, IMG_OBJS_TRACEPOINT_DISABLED );
 	public static final ImageDescriptor DESC_OBJS_WATCHPOINT_ENABLED = createManaged( T_OBJ, IMG_OBJS_WATCHPOINT_ENABLED );
 	public static final ImageDescriptor DESC_OBJS_WATCHPOINT_DISABLED = createManaged( T_OBJ, IMG_OBJS_WATCHPOINT_DISABLED );
 	public static final ImageDescriptor DESC_OBJS_READ_WATCHPOINT_ENABLED = createManaged( T_OBJ, IMG_OBJS_READ_WATCHPOINT_ENABLED );
@@ -236,10 +241,10 @@ public class CDebugImages {
 		if ( fgImageRegistry == null )
 		{
 			fgImageRegistry = new ImageRegistry();
-			for ( Iterator iter = fgAvoidSWTErrorMap.keySet().iterator(); iter.hasNext(); )
+			for ( Iterator<String> iter = fgAvoidSWTErrorMap.keySet().iterator(); iter.hasNext(); )
 			{
-				String key = (String)iter.next();
-				fgImageRegistry.put( key, (ImageDescriptor)fgAvoidSWTErrorMap.get( key ) );
+				String key = iter.next();
+				fgImageRegistry.put( key, fgAvoidSWTErrorMap.get( key ) );
 			}
 			fgAvoidSWTErrorMap = null;
 		}
@@ -283,7 +288,7 @@ public class CDebugImages {
 			ImageDescriptor result = ImageDescriptor.createFromURL( makeIconFileURL( prefix, name.substring( NAME_PREFIX_LENGTH ) ) );
 			if ( fgAvoidSWTErrorMap == null )
 			{
-				fgAvoidSWTErrorMap = new HashMap();
+				fgAvoidSWTErrorMap = new HashMap<String, ImageDescriptor>();
 			}
 			fgAvoidSWTErrorMap.put( name, result );
 			if ( fgImageRegistry != null )

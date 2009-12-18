@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 QNX Software Systems and others.
+ * Copyright (c) 2009 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -9,6 +9,7 @@
  *     QNX Software Systems - Initial API and implementation
  *     Wind River Systems   - Modified for new DSF Reference Implementation
  *     Ericsson             - Modified for the breakpoint service
+ *     Ericsson             - Added Tracepoint support (284286)
  *******************************************************************************/
 
 package org.eclipse.cdt.dsf.mi.service.command.output;
@@ -41,7 +42,12 @@ package org.eclipse.cdt.dsf.mi.service.command.output;
  * -break-watch p
  * ^done,wpt={number="6",exp="p"}
  * (gdb)
- */
+ *
+ * Tracepoints:
+ * bkpt={number="5",type="tracepoint",disp="keep",enabled="y",addr="0x0804846b",func="main",file="hello.c",line="4",thread="0",thread="0",times="0"}
+ * bkpt={number="1",type="tracepoint",disp="keep",enabled="y",addr="0x0041bca0",func="main",file="hello.c",line="4",times="0",pass="4",original-location="hello.c:4"},
+ * bkpt={number="5",type="fast tracepoint",disp="keep",enabled="y",addr="0x0804852d",func="testTracepoints()",file="TracepointTestApp.cc",fullname="/local/src/TracepointTestApp.cc",line="84",times="0",original-location="TracepointTestApp.cc:84"}
+ * */
 public class MIBreakpoint  {
 
     int     number   = -1;
@@ -58,6 +64,10 @@ public class MIBreakpoint  {
     String  exp      = "";  //$NON-NLS-1$
     String  threadId = "0"; //$NON-NLS-1$
     int     ignore   = 0;
+    String  commands = ""; //$NON-NLS-1$
+    
+    // For tracepoints
+    int     passcount = 0;
 
     boolean isWpt  = false;
     boolean isAWpt = false;
@@ -65,6 +75,10 @@ public class MIBreakpoint  {
     boolean isWWpt = false;
     boolean isHdw  = false;
 
+    // Indicate if we are dealing with a tracepoint. 
+    // (if its a fast or slow tracepoint can be known through the 'type' field)
+    boolean isTpt = false;
+    
     public MIBreakpoint() {
 	}
 
@@ -73,7 +87,6 @@ public class MIBreakpoint  {
         type     = new String(other.type);
         disp     = new String(other.disp);
         enabled  = other.enabled;
-        type     = new String(other.type);
         address  = new String(other.address);
         func     = new String(other.func);
         fullName = new String(other.fullName);
@@ -84,11 +97,14 @@ public class MIBreakpoint  {
         exp      = new String(other.exp);
         threadId = new String(other.threadId);
         ignore   = other.ignore;
+        commands = other.commands;
+        passcount= other.passcount;
         isWpt    = other.isWpt;
         isAWpt   = other.isAWpt;
         isRWpt   = other.isRWpt;
         isWWpt   = other.isWWpt;
         isHdw    = other.isHdw;
+        isTpt    = other.isTpt;
 	}
 
     public MIBreakpoint(MITuple tuple) {
@@ -171,6 +187,11 @@ public class MIBreakpoint  {
         return getDisposition().equals("del"); //$NON-NLS-1$
     }
 
+    /**
+     * Will return true if we are dealing with a hardware breakpoint.
+     * Note that this method will return false for tracepoint, even
+     * if it is a fast tracepoint.
+     */
     public boolean isHardware() {
         return isHdw;
     }
@@ -215,6 +236,56 @@ public class MIBreakpoint  {
 		isWWpt = b;
 	}
 
+    /**
+     * Return whether this breakpoint is actually a tracepoint.
+     * This method will return true for both fast and slow tracepoints.
+     * To know of fast vs slow tracepoint use {@link getType()} and look
+     * for "tracepoint" or "fast tracepoint"
+     * 
+	 * @since 2.1
+	 */
+    public boolean isTracepoint() {
+        return isTpt;
+    }
+
+    /**
+     * Returns the passcount of a tracepoint.  Will return 0 if this
+     * breakpoint is not a tracepoint.
+     * 
+	 * @since 2.1
+	 */
+    public int getPassCount() {
+        return passcount;
+    }
+
+    /**
+     * Set the passcount of a tracepoint.  Will not do anything if
+     * this breakpoint is not a tracepoint.
+	 * @since 2.1
+	 */
+    public void setPassCount(int count) {
+    	if (isTpt == false) return;
+        passcount = count;
+    }
+    
+    /**
+     * Return the commands associated with this breakpoint (or tracepoint)
+     * 
+	 * @since 2.1
+	 */
+    public String getCommands() {
+        return commands;
+    }
+
+    /**
+     * Sets the commands associated with this breakpoint (or tracepoint)
+     * 
+	 * @since 2.1
+	 */
+    public void setCommands(String cmds) {
+        commands = cmds;
+    }
+    
     // Parse the result string
     void parse(MITuple tuple) {
         MIResult[] results = tuple.getMIResults();
@@ -248,6 +319,10 @@ public class MIBreakpoint  {
                 if (type.startsWith("read")) { //$NON-NLS-1$
                     isRWpt = true;
                     isWpt = true;
+                }
+                if (type.startsWith("tracepoint") ||  //$NON-NLS-1$
+                    type.startsWith("fast tracepoint")) { //$NON-NLS-1$
+                	isTpt = true;
                 }
                 // type="breakpoint"
                 // default ok.
@@ -283,6 +358,11 @@ public class MIBreakpoint  {
             } else if (var.equals("ignore")) { //$NON-NLS-1$
                 try {
                     ignore = Integer.parseInt(str.trim());
+                } catch (NumberFormatException e) {
+                }
+            } else if (var.equals("pass")) { //$NON-NLS-1$
+                try {
+                    passcount = Integer.parseInt(str.trim());
                 } catch (NumberFormatException e) {
                 }
             } else if (var.equals("cond")) { //$NON-NLS-1$

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2008 QNX Software Systems and others.
+ * Copyright (c) 2009 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -9,6 +9,7 @@
  *     QNX Software Systems - Initial API and implementation
  *     Wind River Systems   - Modified for new DSF Reference Implementation
  *     Ericsson             - Modified for bug 219920
+ *     Ericsson             - Modified for tracepoints (284286)
  *******************************************************************************/
 
 package org.eclipse.cdt.dsf.mi.service.command.commands;
@@ -18,11 +19,11 @@ import org.eclipse.cdt.dsf.mi.service.command.output.MIBreakInsertInfo;
 import org.eclipse.cdt.dsf.mi.service.command.output.MIOutput;
 
 /**
- * -break-insert [ -t ] [ -h ] [ -r ]
+ * -break-insert [ -t ] [ -h ] [ -f ] [ -d ] [ -a ]
  *       [ -c CONDITION ] [ -i IGNORE-COUNT ]
- *       [ -p THREAD ] [ LINE | ADDR ]
+ *       [ -p THREAD ] [ LOCATION ]
  *  
- * If specified, LINE, can be one of:
+ * If specified, LOCATION, can be one of:
  *  * function
  *  * filename:linenum
  *  * filename:function
@@ -35,20 +36,31 @@ import org.eclipse.cdt.dsf.mi.service.command.output.MIOutput;
  *
  * '-h'
  *      Insert a hardware breakpoint.
- *
- * '-r'
- *     Insert a regular breakpoint in all the functions whose names match
- *     the given regular expression.  Other flags are not applicable to
- *     regular expression.
+ *      When inserting a tracepoint (-a), this option indicates a fast tracepoint
  *
  * '-c CONDITION'
- *     Make the breakpoint conditional on CONDITION.
+ *      Make the breakpoint conditional on CONDITION.
  *
  * '-i IGNORE-COUNT'
- *     Initialize the IGNORE-COUNT (number of breakpoint hits before breaking).
+ *      Initialize the IGNORE-COUNT (number of breakpoint hits before breaking).
  *
+ * '-f'
+ *      If location cannot be parsed (for example if it refers to unknown files or 
+ *      functions), create a pending breakpoint. Without this flag, if a location
+ *      cannot be parsed, the breakpoint will not be created and an error will be
+ *      reported.
+ *      Only available starting GDB 6.8
+ *
+ * '-d'
+ *      Create a disabled breakpoint.
+ *      Only available starting GDB 7.0
+ *      
+ * '-a'
+ *      Insert a tracepoint instead of a breakpoint
+ *      Only available starting GDB 7.1
+ *      
  * '-p THREAD'
- *     THREAD on which to apply the breakpoint
+ *      THREAD on which to apply the breakpoint
  */
 public class MIBreakInsert extends MICommand<MIBreakInsertInfo> 
 {
@@ -58,7 +70,29 @@ public class MIBreakInsert extends MICommand<MIBreakInsertInfo>
 
 	public MIBreakInsert(IBreakpointsTargetDMContext ctx, boolean isTemporary, boolean isHardware,
 			String condition, int ignoreCount, String line, int tid) {
+		this(ctx, isTemporary, isHardware, condition, ignoreCount, line, tid, false, false);
+	}
+	
+	/**
+	 * This constructor allows to specify if the breakpoint should actually be
+	 * a tracepoint (this will only work starting with GDB 7.1)
+	 * It also includes if a breakpoint should be created disabled (starting GDB 7.0)
+	 * @since 2.1
+	 */
+	public MIBreakInsert(IBreakpointsTargetDMContext ctx, boolean isTemporary, boolean isHardware,
+			String condition, int ignoreCount, String line, int tid, boolean disabled, boolean isTracepoint) {
 		super(ctx, "-break-insert"); //$NON-NLS-1$
+
+		// For a tracepoint, force certain parameters to what is allowed
+		if (isTracepoint) {
+			// A tracepoint cannot be temporary
+			isTemporary = false;
+			// GDB 7.1 does not support ignore-counts for tracepoints
+			// and passcounts cannot be set by a -break-insert
+			ignoreCount = 0;
+			// GDB 7.1 only supports tracepoints that apply to all threads
+			tid = 0;
+		}
 
         // Determine the number of optional parameters that are present
         // and allocate a corresponding string array
@@ -78,6 +112,12 @@ public class MIBreakInsert extends MICommand<MIBreakInsertInfo>
         if (tid > 0) {
             i += 2;
         }
+        if (disabled) {
+        	i++;
+        }
+        if (isTracepoint) {
+            i ++;
+        }
         String[] opts = new String[i];
 
         // Fill in the optional parameters  
@@ -87,6 +127,7 @@ public class MIBreakInsert extends MICommand<MIBreakInsertInfo>
             i++;
         } 
         if (isHardware) {
+        	// For tracepoints, this will request a fast tracepoint
             opts[i] = "-h"; //$NON-NLS-1$
             i++;
         }
@@ -106,6 +147,14 @@ public class MIBreakInsert extends MICommand<MIBreakInsertInfo>
             opts[i] = "-p"; //$NON-NLS-1$
             i++;
             opts[i] = Integer.toString(tid);
+        }
+        if (disabled) {
+            opts[i] = "-d"; //$NON-NLS-1$
+            i ++;
+        }
+        if (isTracepoint) {
+            opts[i] = "-a"; //$NON-NLS-1$
+            i ++;
         }
 
         if (opts.length > 0) {

@@ -83,6 +83,9 @@ public class GdbDebugServicesFactory extends AbstractDsfDebugServicesFactory {
 
 	@Override
 	protected IBreakpoints createBreakpointService(DsfSession session) {
+		if (GDB_7_0_VERSION.compareTo(fVersion) <= 0) {
+			return new GDBBreakpoints_7_0(session);
+		}
 		return new MIBreakpoints(session);
 	}
 	

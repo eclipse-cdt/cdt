@@ -31,6 +31,7 @@ import org.eclipse.cdt.debug.core.model.ICAddressBreakpoint;
 import org.eclipse.cdt.debug.core.model.ICBreakpoint;
 import org.eclipse.cdt.debug.core.model.ICBreakpointExtension;
 import org.eclipse.cdt.debug.core.model.ICLineBreakpoint;
+import org.eclipse.cdt.debug.core.model.ICTracepoint;
 import org.eclipse.cdt.debug.core.model.ICWatchpoint;
 import org.eclipse.cdt.debug.internal.core.breakpoints.BreakpointProblems;
 import org.eclipse.cdt.dsf.concurrent.CountingRequestMonitor;
@@ -416,7 +417,9 @@ public class MIBreakpointsManager extends AbstractDsfService implements IBreakpo
                 @Override
                 protected void handleSuccess() {
                 	// Install only if the breakpoint is enabled at startup (Bug261082)
-                	boolean bpEnabled = attributes.get(ICBreakpoint.ENABLED).equals(true) && fBreakpointManager.isEnabled();
+                    // Note that Tracepoints are not affected by "skip-all"
+                	boolean bpEnabled = attributes.get(ICBreakpoint.ENABLED).equals(true) &&
+					                    (breakpoint instanceof ICTracepoint || fBreakpointManager.isEnabled());
                 	if (bpEnabled)
                 		installBreakpoint(dmc, breakpoint, attributes, countingRm);
                 	else
@@ -784,7 +787,9 @@ public class MIBreakpointsManager extends AbstractDsfService implements IBreakpo
         // some attribute might have changed which will make the install succeed.
         if (!breakpointIDs.containsKey(breakpoint) && !targetBPs.containsValue(breakpoint)) {
         	// Install only if the breakpoint is enabled
-        	boolean bpEnabled = attributes.get(ICBreakpoint.ENABLED).equals(true) && fBreakpointManager.isEnabled();
+            // Note that Tracepoints are not affected by "skip-all"
+        	boolean bpEnabled = attributes.get(ICBreakpoint.ENABLED).equals(true) && 
+        						(breakpoint instanceof ICTracepoint || fBreakpointManager.isEnabled());
         	if (bpEnabled) {
                 attributes.put(ATTR_DEBUGGER_PATH, NULL_STRING);
                 attributes.put(ATTR_THREAD_FILTER, extractThreads(dmc, breakpoint));
@@ -967,7 +972,8 @@ public class MIBreakpointsManager extends AbstractDsfService implements IBreakpo
             // Convert the breakpoint attributes for the back-end
             // Refresh the set of attributes at each iteration just in case...
             Map<String,Object> attrs = convertToTargetBreakpoint(breakpoint, attributes);
-            if (!fBreakpointManager.isEnabled()) {
+            // Tracepoints are not affected by "skip-all"
+            if (!(breakpoint instanceof ICTracepoint) && !fBreakpointManager.isEnabled()) {
                 attrs.put(MIBreakpoints.IS_ENABLED, false);
             }
             // Add the secret ingredient..
@@ -1010,7 +1016,8 @@ public class MIBreakpointsManager extends AbstractDsfService implements IBreakpo
         for (IBreakpointsTargetDMContext context : fBreakpointIDs.keySet()) {
             for (ICBreakpoint breakpoint : fBreakpointIDs.get(context).keySet()) {
                 try {
-                    if (breakpoint.isEnabled()) {
+                    // Note that Tracepoints are not affected by "skip-all"
+                    if (!(breakpoint instanceof ICTracepoint) && breakpoint.isEnabled()) {
                         for (IBreakpointDMContext ref : fBreakpointIDs.get(context).get(breakpoint)) {
                             Map<String,Object> delta = new HashMap<String,Object>();
                             delta.put(MIBreakpoints.IS_ENABLED, enabled);
@@ -1090,7 +1097,8 @@ public class MIBreakpointsManager extends AbstractDsfService implements IBreakpo
                 // Retrieve the breakpoint attributes
                 @SuppressWarnings("unchecked")
                 final Map<String, Object> attrs = breakpoint.getMarker().getAttributes();
-                if (!fBreakpointManager.isEnabled()) {
+                // Tracepoints are not affected by "skip-all"
+                if (!(breakpoint instanceof ICTracepoint) && !fBreakpointManager.isEnabled()) {
                     attrs.put(ICBreakpoint.ENABLED, false);
                 }
 
@@ -1136,7 +1144,7 @@ public class MIBreakpointsManager extends AbstractDsfService implements IBreakpo
                                 new RequestMonitor(getExecutor(), countingRm) {
                                     @Override
                                     protected void handleSuccess() {
-                                        modifyBreakpoint(dmc, (ICBreakpoint) breakpoint, attrs, delta, new RequestMonitor(getExecutor(), countingRm));
+                                        modifyBreakpoint(dmc, (ICBreakpoint) breakpoint, attrs, delta, countingRm);
                                     }
                                  });
                         }
@@ -1499,6 +1507,9 @@ public class MIBreakpointsManager extends AbstractDsfService implements IBreakpo
         if (cdt_attributes.containsKey(IMarker.LINE_NUMBER))
             result.put(MIBreakpoints.LINE_NUMBER, cdt_attributes.get(IMarker.LINE_NUMBER));
             
+        if (cdt_attributes.containsKey(BreakpointActionManager.BREAKPOINT_ACTION_ATTRIBUTE))
+            result.put(MIBreakpoints.COMMANDS, cdt_attributes.get(BreakpointActionManager.BREAKPOINT_ACTION_ATTRIBUTE));
+
         // ICLineBreakpoint attributes
         if (cdt_attributes.containsKey(ICLineBreakpoint.FUNCTION))
             result.put(MIBreakpoints.FUNCTION, cdt_attributes.get(ICLineBreakpoint.FUNCTION));
@@ -1512,6 +1523,9 @@ public class MIBreakpointsManager extends AbstractDsfService implements IBreakpo
             
         if (cdt_attributes.containsKey(ICBreakpoint.IGNORE_COUNT))
             result.put(MIBreakpoints.IGNORE_COUNT, cdt_attributes.get(ICBreakpoint.IGNORE_COUNT));
+
+        if (cdt_attributes.containsKey(ICTracepoint.PASS_COUNT))
+            result.put(MIBreakpoints.PASS_COUNT, cdt_attributes.get(ICTracepoint.PASS_COUNT));
 
         if (cdt_attributes.containsKey(ICBreakpoint.ENABLED))
             result.put(MIBreakpoints.IS_ENABLED, cdt_attributes.get(ICBreakpoint.ENABLED));
@@ -1633,6 +1647,12 @@ public class MIBreakpointsManager extends AbstractDsfService implements IBreakpo
             properties.put(MIBreakpoints.LINE_NUMBER,     attributes.get(IMarker.LINE_NUMBER));
             properties.put(MIBreakpoints.FUNCTION,        attributes.get(ICLineBreakpoint.FUNCTION));
             properties.put(MIBreakpoints.ADDRESS,         attributes.get(ICLineBreakpoint.ADDRESS));
+            
+            if (breakpoint instanceof ICTracepoint) {
+            	// A tracepoint is a LineBreakpoint, but needs its own type
+                properties.put(MIBreakpoints.BREAKPOINT_TYPE, MIBreakpoints.TRACEPOINT);
+                properties.put(MIBreakpoints.PASS_COUNT, attributes.get(ICTracepoint.PASS_COUNT));
+            }
         } else {
         	// catchpoint?
         }
@@ -1644,7 +1664,8 @@ public class MIBreakpointsManager extends AbstractDsfService implements IBreakpo
         properties.put(MIBreakpointDMData.THREAD_ID,      attributes.get(ATTR_THREAD_ID));
 
         // Adjust for "skip-all"
-        if (!fBreakpointManager.isEnabled()) {
+        // Tracepoints are not affected by "skip-all"
+        if (!(breakpoint instanceof ICTracepoint ) && !fBreakpointManager.isEnabled()) {
             properties.put(MIBreakpoints.IS_ENABLED, false);
         }
 

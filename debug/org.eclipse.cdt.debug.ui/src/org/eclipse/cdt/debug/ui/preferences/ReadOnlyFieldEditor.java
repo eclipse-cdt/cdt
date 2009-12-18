@@ -20,6 +20,9 @@ import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
 
+/**
+ * @since 6.1
+ */
 public class ReadOnlyFieldEditor extends FieldEditor implements ICBreakpointsUIContributionUser {
 	protected Label textField;
 	protected ICBreakpointsUIContribution contribution;

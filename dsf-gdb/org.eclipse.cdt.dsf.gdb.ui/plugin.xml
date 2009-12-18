@@ -183,10 +183,22 @@
    <extension point="org.eclipse.ui.propertyPages">
          <page class="org.eclipse.cdt.dsf.gdb.internal.ui.breakpoints.CBreakpointGdbThreadFilterPage"
             id="org.eclipse.cdt.dsf.gdb.breakpoint.filtering"
-            name="Filter">
+            name="%breakpoints.property.filter">
          <filter name="debugModelId" value="org.eclipse.cdt.dsf.gdb"/>
          <enabledWhen>
-            <adapt type="org.eclipse.cdt.debug.core.model.ICBreakpoint"/>
+            <and>
+               <adapt type="org.eclipse.cdt.debug.core.model.ICBreakpoint"/>
+               <not>
+                  <adapt type="org.eclipse.cdt.debug.core.model.ICTracepoint"/>
+               </not>
+            </and>
+         </enabledWhen>
+      </page>
+      <page class="org.eclipse.cdt.dsf.gdb.internal.ui.breakpoints.GDBTracepointPropertyPage"
+            id="org.eclipse.cdt.dsf.gdb.tracepoint.common"
+            name="%tracepoints.property.common">
+         <enabledWhen>
+            <adapt type="org.eclipse.cdt.debug.core.model.ICTracepoint"/>
          </enabledWhen>
       </page>
    </extension>

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2008 QNX Software Systems and others.
+ * Copyright (c) 2009 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,11 +10,11 @@
  * Ken Ryall (Nokia) - Added support for CSourceNotFoundElement ( 167305 )
  * ARM Limited - https://bugs.eclipse.org/bugs/show_bug.cgi?id=186981
  * Ken Ryall (Nokia) - Bug 201165 don't toss images on dispose.
+ * Ericsson          - Bug 284286 support for tracepoints
  *******************************************************************************/
 package org.eclipse.cdt.debug.internal.ui;
 
 import java.io.File;
-import com.ibm.icu.text.MessageFormat;
 import java.util.HashMap;
 
 import org.eclipse.cdt.core.IAddress;
@@ -44,6 +44,7 @@ import org.eclipse.cdt.debug.core.model.ICModule;
 import org.eclipse.cdt.debug.core.model.ICSignal;
 import org.eclipse.cdt.debug.core.model.ICStackFrame;
 import org.eclipse.cdt.debug.core.model.ICThread;
+import org.eclipse.cdt.debug.core.model.ICTracepoint;
 import org.eclipse.cdt.debug.core.model.ICType;
 import org.eclipse.cdt.debug.core.model.ICValue;
 import org.eclipse.cdt.debug.core.model.ICVariable;
@@ -97,6 +98,8 @@ import org.eclipse.ui.IEditorRegistry;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.part.FileEditorInput;
 
+import com.ibm.icu.text.MessageFormat;
+
 /**
  * @see IDebugModelPresentation
  */
@@ -106,7 +109,7 @@ public class CDebugModelPresentation extends LabelProvider implements IDebugMode
 
 	private static final String DUMMY_STACKFRAME_LABEL = "..."; //$NON-NLS-1$
 
-	protected HashMap fAttributes = new HashMap( 3 );
+	protected HashMap<String, Object> fAttributes = new HashMap<String, Object>( 3 );
 
 	protected CDebugImageDescriptorRegistry fDebugImageRegistry = CDebugUIPlugin.getImageDescriptorRegistry();
 
@@ -318,6 +321,10 @@ public class CDebugModelPresentation extends LabelProvider implements IDebugMode
 			if (image!=null) return image;
 		}
 		try {
+			// Check for ICTracepoint first because they are also ICLineBreakpoint
+			if ( breakpoint instanceof ICTracepoint ) {
+				return getTracepointImage( (ICTracepoint)breakpoint );
+			}
 			if ( breakpoint instanceof ICLineBreakpoint ) {
 				return getLineBreakpointImage( (ICLineBreakpoint)breakpoint );
 			}
@@ -330,6 +337,17 @@ public class CDebugModelPresentation extends LabelProvider implements IDebugMode
 		return null;
 	}
 
+	protected Image getTracepointImage( ICTracepoint tracepoint ) throws CoreException {
+		ImageDescriptor descriptor = null;
+		if ( tracepoint.isEnabled() ) {
+			descriptor = CDebugImages.DESC_OBJS_TRACEPOINT_ENABLED;
+		}
+		else {
+			descriptor = CDebugImages.DESC_OBJS_TRACEPOINT_DISABLED;
+		}
+		return getImageCache().getImageFor( new OverlayImageDescriptor( fDebugImageRegistry.get( descriptor ), computeOverlays( tracepoint ) ) );
+	}
+
 	protected Image getLineBreakpointImage( ICLineBreakpoint breakpoint ) throws CoreException {
 		ImageDescriptor descriptor = null;
 		if ( breakpoint.isEnabled() ) {
@@ -338,7 +356,7 @@ public class CDebugModelPresentation extends LabelProvider implements IDebugMode
 		else {
 			descriptor = CDebugImages.DESC_OBJS_BREAKPOINT_DISABLED;
 		}
-		return getImageCache().getImageFor( new OverlayImageDescriptor( fDebugImageRegistry.get( descriptor ), computeBreakpointOverlays( breakpoint ) ) );
+		return getImageCache().getImageFor( new OverlayImageDescriptor( fDebugImageRegistry.get( descriptor ), computeOverlays( breakpoint ) ) );
 	}
 
 	protected Image getWatchpointImage( ICWatchpoint watchpoint ) throws CoreException {
@@ -359,7 +377,7 @@ public class CDebugModelPresentation extends LabelProvider implements IDebugMode
 			else
 				descriptor = CDebugImages.DESC_OBJS_WATCHPOINT_DISABLED;
 		}
-		return getImageCache().getImageFor( new OverlayImageDescriptor( fDebugImageRegistry.get( descriptor ), computeBreakpointOverlays( watchpoint ) ) );
+		return getImageCache().getImageFor( new OverlayImageDescriptor( fDebugImageRegistry.get( descriptor ), computeOverlays( watchpoint ) ) );
 	}
 
 	@Override
@@ -478,7 +496,7 @@ public class CDebugModelPresentation extends LabelProvider implements IDebugMode
 		return showQualified.booleanValue();
 	}
 
-	private HashMap getAttributes() {
+	private HashMap<String, Object> getAttributes() {
 		return this.fAttributes;
 	}
 
@@ -494,7 +512,7 @@ public class CDebugModelPresentation extends LabelProvider implements IDebugMode
 		return DebugPlugin.getDefault().getBreakpointManager().getBreakpoint( marker );
 	}
 
-	private ImageDescriptor[] computeBreakpointOverlays( ICBreakpoint breakpoint ) {
+	private ImageDescriptor[] computeOverlays( ICBreakpoint breakpoint ) {
 		ImageDescriptor[] overlays = new ImageDescriptor[]{ null, null, null, null };
 		try {
 			if ( CDebugCorePlugin.getDefault().getBreakpointActionManager().breakpointHasActions(breakpoint) ) {

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2008 Ericsson and others.
+ * Copyright (c) 2009 Ericsson and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,8 +8,7 @@
  * Contributors:
  *     Ericsson - Initial API and implementation
  *******************************************************************************/
-
-package org.eclipse.cdt.dsf.mi.service;
+package org.eclipse.cdt.dsf.gdb.service;
 
 import java.util.HashMap;
 import java.util.Hashtable;
@@ -25,8 +24,11 @@ import org.eclipse.cdt.dsf.datamodel.DMContexts;
 import org.eclipse.cdt.dsf.datamodel.IDMContext;
 import org.eclipse.cdt.dsf.debug.service.IBreakpoints;
 import org.eclipse.cdt.dsf.debug.service.command.ICommandControl;
-import org.eclipse.cdt.dsf.debug.service.command.ICommandControlService.ICommandControlShutdownDMEvent;
 import org.eclipse.cdt.dsf.gdb.internal.GdbPlugin;
+import org.eclipse.cdt.dsf.mi.service.MIBreakpointDMData;
+import org.eclipse.cdt.dsf.mi.service.MIBreakpoints;
+import org.eclipse.cdt.dsf.mi.service.command.commands.CLIPasscount;
+import org.eclipse.cdt.dsf.mi.service.command.commands.CLITrace;
 import org.eclipse.cdt.dsf.mi.service.command.commands.MIBreakAfter;
 import org.eclipse.cdt.dsf.mi.service.command.commands.MIBreakCondition;
 import org.eclipse.cdt.dsf.mi.service.command.commands.MIBreakDelete;
@@ -35,13 +37,12 @@ import org.eclipse.cdt.dsf.mi.service.command.commands.MIBreakEnable;
 import org.eclipse.cdt.dsf.mi.service.command.commands.MIBreakInsert;
 import org.eclipse.cdt.dsf.mi.service.command.commands.MIBreakList;
 import org.eclipse.cdt.dsf.mi.service.command.commands.MIBreakWatch;
-import org.eclipse.cdt.dsf.mi.service.command.events.MIWatchpointScopeEvent;
+import org.eclipse.cdt.dsf.mi.service.command.output.CLITraceInfo;
 import org.eclipse.cdt.dsf.mi.service.command.output.MIBreakInsertInfo;
 import org.eclipse.cdt.dsf.mi.service.command.output.MIBreakListInfo;
 import org.eclipse.cdt.dsf.mi.service.command.output.MIBreakpoint;
 import org.eclipse.cdt.dsf.mi.service.command.output.MIInfo;
 import org.eclipse.cdt.dsf.service.AbstractDsfService;
-import org.eclipse.cdt.dsf.service.DsfServiceEventHandler;
 import org.eclipse.cdt.dsf.service.DsfSession;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
@@ -50,43 +51,10 @@ import org.osgi.framework.BundleContext;
 /**
  * Initial breakpoint service implementation.
  * Implements the IBreakpoints interface.
+ * @since 2.1
  */
-public class MIBreakpoints extends AbstractDsfService implements IBreakpoints
+public class GDBBreakpoints_7_0 extends AbstractDsfService implements IBreakpoints
 {
-    /**
-     * Breakpoint attributes markers used in the map parameters of insert/updateBreakpoint().
-     * All are optional with the possible exception of TYPE. It is the responsibility of the
-     * service to ensure that the set of attributes provided is sufficient to create/update
-     * a valid breakpoint on the back-end.
-     */
-    public static final String PREFIX   = "org.eclipse.cdt.dsf.debug.breakpoint"; //$NON-NLS-1$
-    
-    // General markers
-    public static final String BREAKPOINT_TYPE = PREFIX + ".type";      //$NON-NLS-1$
-    public static final String BREAKPOINT      = "breakpoint";          //$NON-NLS-1$
-    public static final String WATCHPOINT      = "watchpoint";          //$NON-NLS-1$
-    public static final String CATCHPOINT      = "catchpoint";          //$NON-NLS-1$
-    /** @since 2.1 */
-    public static final String TRACEPOINT      = "tracepoint";          //$NON-NLS-1$
-
-    // Basic set of breakpoint attribute markers
-    public static final String FILE_NAME     = PREFIX + ".fileName";    //$NON-NLS-1$
-    public static final String LINE_NUMBER   = PREFIX + ".lineNumber";  //$NON-NLS-1$
-    public static final String FUNCTION      = PREFIX + ".function";    //$NON-NLS-1$
-    public static final String ADDRESS       = PREFIX + ".address";     //$NON-NLS-1$
-    public static final String CONDITION     = PREFIX + ".condition";   //$NON-NLS-1$
-    public static final String IGNORE_COUNT  = PREFIX + ".ignoreCount"; //$NON-NLS-1$
-    /** @since 2.1 */
-    public static final String PASS_COUNT    = PREFIX + ".passCount"; //$NON-NLS-1$
-    public static final String IS_ENABLED    = PREFIX + ".isEnabled";   //$NON-NLS-1$
-    /** @since 2.1 */
-    public static final String COMMANDS      = PREFIX + ".commands";     //$NON-NLS-1$
-
-    // Basic set of watchpoint attribute markers
-    public static final String EXPRESSION    = PREFIX + ".expression";  //$NON-NLS-1$
-    public static final String READ          = PREFIX + ".read";        //$NON-NLS-1$
-    public static final String WRITE         = PREFIX + ".write";       //$NON-NLS-1$
-
 	// Services
 	ICommandControl fConnection;
 
@@ -103,14 +71,16 @@ public class MIBreakpoints extends AbstractDsfService implements IBreakpoints
 	final String UNKNOWN_BREAKPOINT           = "Unknown breakpoint";           //$NON-NLS-1$
 	final String BREAKPOINT_INSERTION_FAILURE = "Breakpoint insertion failure"; //$NON-NLS-1$
 	final String WATCHPOINT_INSERTION_FAILURE = "Watchpoint insertion failure"; //$NON-NLS-1$
+	final String TRACEPOINT_INSERTION_FAILURE = "Tracepoint insertion failure"; //$NON-NLS-1$
 	final String INVALID_CONDITION            = "Invalid condition";            //$NON-NLS-1$
+	final String INVALID_BREAKPOINT_TYPE      = "Invalid breakpoint type";      //$NON-NLS-1$
 
 	
 	///////////////////////////////////////////////////////////////////////////
 	// Breakpoint Events
 	///////////////////////////////////////////////////////////////////////////
 	
-    public class BreakpointsChangedEvent extends AbstractDMEvent<IBreakpointsTargetDMContext> implements IBreakpointsChangedEvent {
+    static private class BreakpointsChangedEvent extends AbstractDMEvent<IBreakpointsTargetDMContext> implements IBreakpointsChangedEvent {
     	private IBreakpointDMContext[] fEventBreakpoints;
  
 		public BreakpointsChangedEvent(IBreakpointDMContext bp) {
@@ -122,19 +92,19 @@ public class MIBreakpoints extends AbstractDsfService implements IBreakpoints
 		}
     }
     
-    public class BreakpointAddedEvent extends BreakpointsChangedEvent implements IBreakpointsAddedEvent {
+    static private class BreakpointAddedEvent extends BreakpointsChangedEvent implements IBreakpointsAddedEvent {
     	public BreakpointAddedEvent(IBreakpointDMContext context) {
             super(context);
 		}
     }
 
-    public class BreakpointUpdatedEvent extends BreakpointsChangedEvent implements IBreakpointsUpdatedEvent {
+    static private class BreakpointUpdatedEvent extends BreakpointsChangedEvent implements IBreakpointsUpdatedEvent {
         public BreakpointUpdatedEvent(IBreakpointDMContext context) {
             super(context);
         }
     }
 
-    public class BreakpointRemovedEvent extends BreakpointsChangedEvent implements IBreakpointsRemovedEvent {
+    static private class BreakpointRemovedEvent extends BreakpointsChangedEvent implements IBreakpointsRemovedEvent {
         public BreakpointRemovedEvent(IBreakpointDMContext context) {
             super(context);
         }
@@ -146,18 +116,18 @@ public class MIBreakpoints extends AbstractDsfService implements IBreakpoints
 	// be used to get the actual DsfMIBreakpoint.
 	///////////////////////////////////////////////////////////////////////////
 	@Immutable
-    public static final class MIBreakpointDMContext extends AbstractDMContext implements IBreakpointDMContext {
+    private static final class MIBreakpointDMContext extends AbstractDMContext implements IBreakpointDMContext {
 
     	// The breakpoint reference
-    	private final Integer fReference;
+    	private final int fReference;
 
     	/**
-    	 * @param service       the Breakpoint service
+    	 * @param session       the DsfSession for this service
     	 * @param parents       the parent contexts
     	 * @param reference     the DsfMIBreakpoint reference
     	 */
-    	public MIBreakpointDMContext(MIBreakpoints service, IDMContext[] parents, int reference) {
-            super(service.getSession().getId(), parents);
+    	public MIBreakpointDMContext(DsfSession session, IDMContext[] parents, int reference) {
+            super(session.getId(), parents);
             fReference = reference;
         }
 
@@ -181,7 +151,7 @@ public class MIBreakpoints extends AbstractDsfService implements IBreakpoints
          */
         @Override
         public int hashCode() {
-            return baseHashCode() + fReference.hashCode();
+            return baseHashCode() + fReference;
         }
 
         /* (non-Javadoc)
@@ -189,7 +159,7 @@ public class MIBreakpoints extends AbstractDsfService implements IBreakpoints
          */
         @Override
         public String toString() {
-            return baseToString() + ".reference(" + fReference + ")";  //$NON-NLS-1$//$NON-NLS-2$*/
+            return baseToString() + ".reference(" + fReference + ")";  //$NON-NLS-1$//$NON-NLS-2$
         }
     }
 
@@ -202,7 +172,7 @@ public class MIBreakpoints extends AbstractDsfService implements IBreakpoints
 	 * 
 	 * @param session           The debugging session
 	 */
-	public MIBreakpoints(DsfSession session) {
+	public GDBBreakpoints_7_0(DsfSession session) {
 		super(session);
 	}
 
@@ -227,11 +197,9 @@ public class MIBreakpoints extends AbstractDsfService implements IBreakpoints
     	// Get the services references
 		fConnection = getServicesTracker().getService(ICommandControl.class);
 
-        // Register for the useful events
-		getSession().addServiceEventListener(this, null);
-
 		// Register this service
-		register(new String[] { IBreakpoints.class.getName(), MIBreakpoints.class.getName() },
+		register(new String[] { IBreakpoints.class.getName(),
+				 				GDBBreakpoints_7_0.class.getName() },
 				new Hashtable<String, String>());
 
 		rm.done();
@@ -243,7 +211,6 @@ public class MIBreakpoints extends AbstractDsfService implements IBreakpoints
 	@Override
 	public void shutdown(final RequestMonitor rm) {
 		unregister();
-		getSession().removeServiceEventListener(this);
 		rm.done();
 	}
 
@@ -254,46 +221,6 @@ public class MIBreakpoints extends AbstractDsfService implements IBreakpoints
 	protected BundleContext getBundleContext() {
 		return GdbPlugin.getBundleContext();
 	}
-
-	///////////////////////////////////////////////////////////////////////////
-    // IServiceEventListener
-    ///////////////////////////////////////////////////////////////////////////
-
-    /**
-     * This method is left for API compatibility only.
-     * @nooverride This method is not intended to be re-implemented or extended by clients.
-     * @noreference This method is not intended to be referenced by clients.
-     */
-	@DsfServiceEventHandler
-	public void eventDispatched(MIWatchpointScopeEvent e) {
-	    // When a watchpoint goes out of scope, it is automatically removed from
-	    // the back-end. To keep our internal state synchronized, we have to
-	    // remove it from our breakpoints map.
-	    IBreakpointsTargetDMContext bpContext = DMContexts.getAncestorOfType(e.getDMContext(), IBreakpointsTargetDMContext.class);
-	    if (bpContext != null) {
-	        Map<Integer, MIBreakpointDMData> contextBps = fBreakpoints.get(bpContext);
-	        if (contextBps != null) {
-	            contextBps.remove(e.getNumber());
-	        }
-	    }
-	}
-
-    /**
-     * @since 1.1
-     * @nooverride This method is not intended to be re-implemented or extended by clients.
-     * @noreference This method is not intended to be referenced by clients.
-     */
-    @DsfServiceEventHandler
-    public void eventDispatched(ICommandControlShutdownDMEvent e) {
-    }
-
-	///////////////////////////////////////////////////////////////////////////
-	// IBreakpoints interface
-	///////////////////////////////////////////////////////////////////////////
-
-	//-------------------------------------------------------------------------
-	// getBreakpoints
-	//-------------------------------------------------------------------------
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.dsf.debug.service.IBreakpoints#getBreakpoints(org.eclipse.cdt.dsf.debug.service.IBreakpoints.IBreakpointsTargetDMContext, org.eclipse.cdt.dsf.concurrent.DataRequestMonitor)
@@ -329,7 +256,7 @@ public class MIBreakpoints extends AbstractDsfService implements IBreakpoints
 					for (int i = 0; i < breakpoints.length; i++) {
 						MIBreakpointDMData breakpoint = new MIBreakpointDMData(breakpoints[i]);
 						int reference = breakpoint.getReference();
-						result[i] = new MIBreakpointDMContext(MIBreakpoints.this, new IDMContext[] { context }, reference);
+						result[i] = new MIBreakpointDMContext(getSession(), new IDMContext[] { context }, reference);
 						breakpointContext.put(reference, breakpoint);
 					}
 					drm.setData(result);
@@ -337,10 +264,6 @@ public class MIBreakpoints extends AbstractDsfService implements IBreakpoints
 				}
 			});
 	}
-
-	//-------------------------------------------------------------------------
-	// getBreakpointDMData
-	//-------------------------------------------------------------------------
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.dsf.debug.service.IBreakpoints#getBreakpointDMData(org.eclipse.cdt.dsf.debug.service.IBreakpoints.IDsfBreakpointDMContext, org.eclipse.cdt.dsf.concurrent.DataRequestMonitor)
@@ -387,10 +310,6 @@ public class MIBreakpoints extends AbstractDsfService implements IBreakpoints
 		drm.done();
 	}
 
-	//-------------------------------------------------------------------------
-	// insertBreakpoint
-	//-------------------------------------------------------------------------
-
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.dsf.debug.service.IBreakpoints#insertBreakpoint(org.eclipse.cdt.dsf.debug.service.IBreakpoints.IBreakpointsTargetDMContext, java.util.Map, org.eclipse.cdt.dsf.concurrent.DataRequestMonitor)
 	 */
@@ -411,7 +330,7 @@ public class MIBreakpoints extends AbstractDsfService implements IBreakpoints
 		}
 
 		// Validate the breakpoint type
-		String type = (String) attributes.get(BREAKPOINT_TYPE);
+		String type = (String) attributes.get(MIBreakpoints.BREAKPOINT_TYPE);
 		if (type == null) {
        		drm.setStatus(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, REQUEST_FAILED, UNKNOWN_BREAKPOINT_TYPE, null));
    			drm.done();
@@ -419,11 +338,14 @@ public class MIBreakpoints extends AbstractDsfService implements IBreakpoints
 		}
 
 		// And go...
-		if (type.equals(BREAKPOINT)) {
+		if (type.equals(MIBreakpoints.BREAKPOINT)) {
 			addBreakpoint(context, attributes, drm);
 		}
-		else if (type.equals(WATCHPOINT)) {
+		else if (type.equals(MIBreakpoints.WATCHPOINT)) {
 			addWatchpoint(context, attributes, drm);
+		}
+		else if (type.equals(MIBreakpoints.TRACEPOINT)) {
+			addTracepoint(context, attributes, drm);
 		}
 		else {
        		drm.setStatus(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, REQUEST_FAILED, UNKNOWN_BREAKPOINT_TYPE, null));
@@ -438,7 +360,8 @@ public class MIBreakpoints extends AbstractDsfService implements IBreakpoints
 	 * @return
 	 */
 	public Object getProperty(Map<String, Object> map, String key, Object defaultValue) {
-		return (map.containsKey(key) && (map.get(key) != null)) ? map.get(key) : defaultValue;
+		Object value = map.get(key);
+		return (value != null) ? value : defaultValue;
 	}
 
 	/**
@@ -448,12 +371,12 @@ public class MIBreakpoints extends AbstractDsfService implements IBreakpoints
 	private String formatLocation(Map<String, Object> attributes) {
 
 		// Unlikely default location
-		String location = (String)  getProperty(attributes, ADDRESS, NULL_STRING);
+		String location = (String)  getProperty(attributes, MIBreakpoints.ADDRESS, NULL_STRING);
 
 		// Get the relevant parameters
-		String  fileName   = (String)  getProperty(attributes, FILE_NAME, NULL_STRING);
-		Integer lineNumber = (Integer) getProperty(attributes, LINE_NUMBER, -1);
-		String  function   = (String)  getProperty(attributes, FUNCTION,  NULL_STRING);
+		String  fileName   = (String)  getProperty(attributes, MIBreakpoints.FILE_NAME, NULL_STRING);
+		Integer lineNumber = (Integer) getProperty(attributes, MIBreakpoints.LINE_NUMBER, -1);
+		String  function   = (String)  getProperty(attributes, MIBreakpoints.FUNCTION,  NULL_STRING);
 
 		// Fix for Bug264721
 		if (fileName.contains(" ")) { //$NON-NLS-1$
@@ -505,11 +428,12 @@ public class MIBreakpoints extends AbstractDsfService implements IBreakpoints
 			return;
 		}
 
+		Boolean enabled        = (Boolean) getProperty(attributes, MIBreakpoints.IS_ENABLED,        true);
 		Boolean isTemporary    = (Boolean) getProperty(attributes, MIBreakpointDMData.IS_TEMPORARY, false);
 		Boolean isHardware     = (Boolean) getProperty(attributes, MIBreakpointDMData.IS_HARDWARE,  false);
-		final String condition = (String)  getProperty(attributes, CONDITION,    NULL_STRING);
-		Integer ignoreCount    = (Integer) getProperty(attributes, IGNORE_COUNT,          0 );
-		String  threadId       = (String)  getProperty(attributes, MIBreakpointDMData.THREAD_ID,      "0"); //$NON-NLS-1$
+		String  condition      = (String)  getProperty(attributes, MIBreakpoints.CONDITION,         NULL_STRING);
+		Integer ignoreCount    = (Integer) getProperty(attributes, MIBreakpoints.IGNORE_COUNT,      0);
+		String  threadId       = (String)  getProperty(attributes, MIBreakpointDMData.THREAD_ID,    "0"); //$NON-NLS-1$
 		int     tid            = Integer.parseInt(threadId);
 
 		// The DataRequestMonitor for the add request
@@ -536,17 +460,13 @@ public class MIBreakpoints extends AbstractDsfService implements IBreakpoints
                 	contextBreakpoints.put(reference, newBreakpoint);
 
                		// Format the return value
-               		MIBreakpointDMContext dmc = new MIBreakpointDMContext(MIBreakpoints.this, new IDMContext[] { context }, reference);
+               		MIBreakpointDMContext dmc = new MIBreakpointDMContext(getSession(), new IDMContext[] { context }, reference);
                		drm.setData(dmc);
 
                		// Flag the event
 					getSession().dispatchEvent(new BreakpointAddedEvent(dmc), getProperties());
 
-					// By default the breakpoint is enabled at creation
-                	// If it wasn't supposed to be, then disable it right away
-               		Map<String,Object> delta = new HashMap<String,Object>();
-               		delta.put(IS_ENABLED, getProperty(attributes, IS_ENABLED, true));
-               		modifyBreakpoint(dmc, delta, drm, false);
+					drm.done();
 				}
 
 				@Override
@@ -557,8 +477,83 @@ public class MIBreakpoints extends AbstractDsfService implements IBreakpoints
 		};
 
 		// Execute the command
-        fConnection.queueCommand(
-            new MIBreakInsert(context, isTemporary, isHardware, condition, ignoreCount, location, tid), addBreakpointDRM);
+		fConnection.queueCommand(
+				new MIBreakInsert(context, isTemporary, isHardware, condition, ignoreCount, location, tid, !enabled, false), addBreakpointDRM);
+	}
+	
+	/**
+	 * Add a tracepoint
+	 * 
+	 * @param context
+	 * @param breakpoint
+	 * @param drm
+	 */
+	private void addTracepoint(final IBreakpointsTargetDMContext context, final Map<String, Object> attributes, final DataRequestMonitor<IBreakpointDMContext> drm)
+	{
+		// Select the context breakpoints map
+		final Map<Integer, MIBreakpointDMData> contextBreakpoints = fBreakpoints.get(context);
+		if (contextBreakpoints == null) {
+       		drm.setStatus(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, REQUEST_FAILED, UNKNOWN_BREAKPOINT_CONTEXT, null));
+       		drm.done();
+			return;
+		}
+
+		// Extract the relevant parameters (providing default values to avoid potential NPEs)
+		final String location = formatLocation(attributes);
+		if (location.equals(NULL_STRING)) {
+       		drm.setStatus(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, REQUEST_FAILED, UNKNOWN_BREAKPOINT_CONTEXT, null));
+       		drm.done();
+			return;
+		}
+
+		final String condition = (String)  getProperty(attributes, MIBreakpoints.CONDITION, NULL_STRING);
+
+		fConnection.queueCommand(
+				new CLITrace(context, location, condition),
+				new DataRequestMonitor<CLITraceInfo>(getExecutor(), drm) {
+					@Override
+					protected void handleSuccess() {
+						// The simplest way to convert from the CLITraceInfo to a MIBreakInsertInfo
+						// is to list the breakpoints and take the proper output
+						final int tpReference = getData().getTraceReference();
+						fConnection.queueCommand(
+								new MIBreakList(context),
+								new DataRequestMonitor<MIBreakListInfo>(getExecutor(), drm) {
+									@Override
+									protected void handleSuccess() {
+										MIBreakpoint[] breakpoints = getData().getMIBreakpoints();
+										for (MIBreakpoint bp : breakpoints) {
+											if (bp.getNumber() == tpReference) {
+
+												// Create a breakpoint object and store it in the map
+												final MIBreakpointDMData newBreakpoint = new MIBreakpointDMData(bp);
+												int reference = newBreakpoint.getNumber();
+												contextBreakpoints.put(reference, newBreakpoint);
+
+												// Format the return value
+												MIBreakpointDMContext dmc = new MIBreakpointDMContext(getSession(), new IDMContext[] { context }, reference);
+												drm.setData(dmc);
+
+												// Flag the event
+												getSession().dispatchEvent(new BreakpointAddedEvent(dmc), getProperties());
+
+												// By default the tracepoint is enabled at creation
+												// If it wasn't supposed to be, then disable it right away
+												// Also, tracepoints are created with no passcount.
+												// We have to set the passcount manually now.
+												Map<String,Object> delta = new HashMap<String,Object>();
+												delta.put(MIBreakpoints.IS_ENABLED, getProperty(attributes, MIBreakpoints.IS_ENABLED, true));
+												delta.put(MIBreakpoints.PASS_COUNT, getProperty(attributes, MIBreakpoints.PASS_COUNT, 0));
+												modifyBreakpoint(dmc, delta, drm, false);
+												return;
+											}
+										}
+										drm.setStatus(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, REQUEST_FAILED, BREAKPOINT_INSERTION_FAILURE, null));
+										drm.done();
+									}
+								});
+					}
+				});
 	}
 
 	/**
@@ -579,9 +574,9 @@ public class MIBreakpoints extends AbstractDsfService implements IBreakpoints
 		}
 
 		// Extract the relevant parameters (providing default values to avoid potential NPEs)
-		String expression = (String)  getProperty(attributes, EXPRESSION, NULL_STRING);
-		boolean isRead    = (Boolean) getProperty(attributes, READ,    false);
-		boolean isWrite   = (Boolean) getProperty(attributes, WRITE,   false);
+		String expression = (String)  getProperty(attributes, MIBreakpoints.EXPRESSION, NULL_STRING);
+		boolean isRead    = (Boolean) getProperty(attributes, MIBreakpoints.READ,    false);
+		boolean isWrite   = (Boolean) getProperty(attributes, MIBreakpoints.WRITE,   false);
 
 		// The DataRequestMonitor for the add request
 		DataRequestMonitor<MIBreakInsertInfo> addWatchpointDRM =
@@ -607,7 +602,7 @@ public class MIBreakpoints extends AbstractDsfService implements IBreakpoints
                 	contextBreakpoints.put(reference, newBreakpoint);
 
                		// Format the return value
-               		IBreakpointDMContext dmc = new MIBreakpointDMContext(MIBreakpoints.this, new IDMContext[] { context }, reference);
+               		MIBreakpointDMContext dmc = new MIBreakpointDMContext(getSession(), new IDMContext[] { context }, reference);
                		drm.setData(dmc);
 
                		// Flag the event
@@ -616,9 +611,9 @@ public class MIBreakpoints extends AbstractDsfService implements IBreakpoints
                		// Condition, ignore count and state can not be specified at watchpoint creation time.
                		// Therefore, we have to update the watchpoint if any of these is present
                		Map<String,Object> delta = new HashMap<String,Object>();
-               		delta.put(CONDITION,    getProperty(attributes, CONDITION, NULL_STRING));
-               		delta.put(IGNORE_COUNT, getProperty(attributes, IGNORE_COUNT, 0 ));
-               		delta.put(IS_ENABLED,   getProperty(attributes, IS_ENABLED, true));
+               		delta.put(MIBreakpoints.CONDITION,    getProperty(attributes, MIBreakpoints.CONDITION, NULL_STRING));
+               		delta.put(MIBreakpoints.IGNORE_COUNT, getProperty(attributes, MIBreakpoints.IGNORE_COUNT, 0 ));
+               		delta.put(MIBreakpoints.IS_ENABLED,   getProperty(attributes, MIBreakpoints.IS_ENABLED, true));
                		modifyBreakpoint(dmc, delta, drm, false);
 				}
 
@@ -632,7 +627,7 @@ public class MIBreakpoints extends AbstractDsfService implements IBreakpoints
 			// Execute the command
 	        fConnection.queueCommand(new MIBreakWatch(context, isRead, isWrite, expression), addWatchpointDRM);
 	}
-
+	
 	//-------------------------------------------------------------------------
 	// removeBreakpoint
 	//-------------------------------------------------------------------------
@@ -690,11 +685,9 @@ public class MIBreakpoints extends AbstractDsfService implements IBreakpoints
 			new MIBreakDelete(context, new int[] { reference }),
 			new DataRequestMonitor<MIInfo>(getExecutor(), rm) {
 				@Override
-				protected void handleCompleted() {
-					if (isSuccess()) {
-						getSession().dispatchEvent(new BreakpointRemovedEvent(dmc), getProperties());
-						contextBreakpoints.remove(reference);
-					}
+				protected void handleSuccess() {
+					getSession().dispatchEvent(new BreakpointRemovedEvent(dmc), getProperties());
+					contextBreakpoints.remove(reference);
 					rm.done();
 				}
 		});
@@ -752,7 +745,7 @@ public class MIBreakpoints extends AbstractDsfService implements IBreakpoints
 			return;
 		}
 
-        modifyBreakpoint(dmc, properties, rm, true);
+        modifyBreakpoint(breakpointCtx, properties, rm, true);
 	}
 
 	/**
@@ -761,15 +754,15 @@ public class MIBreakpoints extends AbstractDsfService implements IBreakpoints
 	 * @param rm
 	 * @param generateUpdateEvent
 	 */
-	private void modifyBreakpoint(final IBreakpointDMContext dmc, Map<String, Object> attributes, final RequestMonitor rm, final boolean generateUpdateEvent)
+	private void modifyBreakpoint(final MIBreakpointDMContext breakpointCtx, Map<String, Object> attributes, 
+			                      final RequestMonitor rm, final boolean generateUpdateEvent)
 	{
 		// Use a working copy of the attributes since we are going to tamper happily with them
 		Map<String, Object> properties = new HashMap<String, Object>(attributes);
 		
 		// Retrieve the breakpoint parameters
 		// At this point, we know their are OK so there is no need to re-validate
-		MIBreakpointDMContext breakpointCtx = (MIBreakpointDMContext) dmc;
-        IBreakpointsTargetDMContext context = DMContexts.getAncestorOfType(dmc, IBreakpointsTargetDMContext.class);
+        IBreakpointsTargetDMContext context = DMContexts.getAncestorOfType(breakpointCtx, IBreakpointsTargetDMContext.class);
 		final Map<Integer, MIBreakpointDMData> contextBreakpoints = fBreakpoints.get(context);
 		final int reference = breakpointCtx.getReference();
 		MIBreakpointDMData breakpoint = contextBreakpoints.get(reference);
@@ -780,13 +773,13 @@ public class MIBreakpoints extends AbstractDsfService implements IBreakpoints
             @Override
             protected void handleSuccess() {
            		if (generateUpdateEvent)
-           			getSession().dispatchEvent(new BreakpointUpdatedEvent(dmc), getProperties());
+           			getSession().dispatchEvent(new BreakpointUpdatedEvent(breakpointCtx), getProperties());
         		rm.done();
             }
         };
 
         // Determine if the breakpoint condition changed
-		String conditionAttribute = CONDITION;
+		String conditionAttribute = MIBreakpoints.CONDITION;
 		if (properties.containsKey(conditionAttribute)) {
 			String oldValue = breakpoint.getCondition();
 			String newValue = (String) properties.get(conditionAttribute);
@@ -799,9 +792,9 @@ public class MIBreakpoints extends AbstractDsfService implements IBreakpoints
 		}
 
         // Determine if the breakpoint ignore count changed
-		String ignoreCountAttribute = IGNORE_COUNT;
+		String ignoreCountAttribute = MIBreakpoints.IGNORE_COUNT;
 		if (properties.containsKey(ignoreCountAttribute)) {
-			Integer oldValue = breakpoint.getIgnoreCount();
+			Integer oldValue =  breakpoint.getIgnoreCount();
 			Integer newValue = (Integer) properties.get(ignoreCountAttribute);
 			if (newValue == null) newValue = 0;
 	        if (!oldValue.equals(newValue)) {
@@ -811,8 +804,21 @@ public class MIBreakpoints extends AbstractDsfService implements IBreakpoints
 			properties.remove(ignoreCountAttribute);
 		}
 
+        // Determine if the tracepoint pass count changed
+		String passCountAttribute = MIBreakpoints.PASS_COUNT;
+		if (properties.containsKey(passCountAttribute)) {
+			Integer oldValue =  breakpoint.getPassCount();
+			Integer newValue = (Integer) properties.get(passCountAttribute);
+			if (newValue == null) newValue = 0;
+	        if (!oldValue.equals(newValue)) {
+	        	changePassCount(context, reference, newValue, countingRm);
+	        	numberOfChanges++;
+	        }
+			properties.remove(passCountAttribute);
+		}
+
         // Determine if the breakpoint state changed
-		String enableAttribute = IS_ENABLED;
+		String enableAttribute = MIBreakpoints.IS_ENABLED;
 		if (properties.containsKey(enableAttribute)) {
 			Boolean oldValue = breakpoint.isEnabled();
 			Boolean newValue = (Boolean) properties.get(enableAttribute);
@@ -827,10 +833,34 @@ public class MIBreakpoints extends AbstractDsfService implements IBreakpoints
 			properties.remove(enableAttribute);
 		}
 
+//		// Determine if the breakpoint state changed
+//		String commandsAttribute = MIBreakpoints.COMMANDS;
+//		if (properties.containsKey(commandsAttribute)) {
+//			String oldValue = "khouzam"; //TODO
+//			String newValue = (String) properties.get(commandsAttribute);
+//			if (newValue == null) newValue = NULL_STRING;
+//	        if (!oldValue.equals(newValue)) {
+//	        	IBreakpointAction[] actions = generateGdbActions(newValue);
+//	        	numberOfChanges++;
+//	        	changeActions(context, reference, actions, countingRm);
+//	        }
+//			properties.remove(commandsAttribute);
+//		}
+
 		// Set the number of completions required
         countingRm.setDoneCount(numberOfChanges);
 	}
 
+//	private IBreakpointAction[] generateGdbActions(String actionStr) {
+//		String[] actionNames = actionStr.split(",");
+//		IBreakpointAction[] actions = new IBreakpointAction[actionNames.length];
+//		
+//		for (int i = 0; i < actionNames.length; i++) {
+//			BreakpointActionManager actionManager = CDebugCorePlugin.getDefault().getBreakpointActionManager();
+//			actions[i] = actionManager.findTracepointAction(actionNames[i]);
+//		}
+//		return actions;
+//	}
 	/**
 	 * Update the breakpoint condition
 	 * 
@@ -895,6 +925,45 @@ public class MIBreakpoints extends AbstractDsfService implements IBreakpoints
 			});
 	}
 
+//	private void changeActions(final IBreakpointsTargetDMContext context,
+//			final int reference, final IBreakpointAction[] actions, final RequestMonitor rm)
+//	{
+//		// Pick the context breakpoints map
+//		final Map<Integer, MIBreakpointDMData> contextBreakpoints = fBreakpoints.get(context);
+//		if (contextBreakpoints == null) {
+//       		rm.setStatus(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, REQUEST_FAILED, UNKNOWN_BREAKPOINT_CONTEXT, null));
+//       		rm.done();
+//			return;
+//		}
+//
+//		// We only do this for tracepoints
+//		
+//		ArrayList<String> actionStrings = new ArrayList<String>();
+//		for (int i = 0; i< actions.length; i++) {
+//			IBreakpointAction action = actions[i];
+//			if (action != null) {
+//				actionStrings.add(action.toString());
+//			}
+//		}
+//		// Queue the command
+//		//TODO should we use a cache?
+//		fConnection.queueCommand(
+//			new MIBreakCommands(context, reference, actionStrings.toArray(new String[0])),
+//		    new DataRequestMonitor<MIInfo>(getExecutor(), rm) {
+//		        @Override
+//		        protected void handleSuccess() {
+////		        	MIBreakpointDMData breakpoint = contextBreakpoints.get(reference);
+////		        	if (breakpoint == null) {
+////		        		rm.setStatus(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, REQUEST_FAILED, UNKNOWN_BREAKPOINT, null));
+////                   		rm.done();
+////                   		return;
+////		        	}
+////			        breakpoint.setCondition(condition);
+//		            rm.done();
+//		        }
+//			});
+//	}
+
 
 	/**
 	 * Update the breakpoint ignoreCount
@@ -914,6 +983,14 @@ public class MIBreakpoints extends AbstractDsfService implements IBreakpoints
        		rm.done();
 			return;
 		}
+		
+		final MIBreakpointDMData breakpoint = contextBreakpoints.get(reference);
+		if (breakpoint.getBreakpointType().equals(MIBreakpoints.TRACEPOINT)) {
+			// Ingorecount is not supported for tracepoints
+       		rm.setStatus(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, REQUEST_FAILED, INVALID_BREAKPOINT_TYPE, null));
+       		rm.done();
+			return;			
+		}
 
 		// Queue the command
 		fConnection.queueCommand(
@@ -928,6 +1005,50 @@ public class MIBreakpoints extends AbstractDsfService implements IBreakpoints
                    		return;
 		        	}
 			        breakpoint.setIgnoreCount(ignoreCount);
+		            rm.done();
+		        }
+		});
+	}
+	
+	/**
+	 * Update the tracepoint passCount
+	 * 
+	 * @param context
+	 * @param reference
+	 * @param ignoreCount
+	 * @param rm
+	 */
+	private void changePassCount(IBreakpointsTargetDMContext context,
+			final int reference, final int ignoreCount, final RequestMonitor rm)
+	{
+		// Pick the context breakpoints map
+		final Map<Integer, MIBreakpointDMData> contextBreakpoints = fBreakpoints.get(context);
+		if (contextBreakpoints == null) {
+       		rm.setStatus(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, REQUEST_FAILED, UNKNOWN_BREAKPOINT_CONTEXT, null));
+       		rm.done();
+			return;
+		}
+		
+		final MIBreakpointDMData breakpoint = contextBreakpoints.get(reference);
+		if (breakpoint.getBreakpointType().equals(MIBreakpoints.TRACEPOINT) == false) {
+			// Passcount is just for tracepoints
+       		rm.setStatus(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, REQUEST_FAILED, INVALID_BREAKPOINT_TYPE, null));
+       		rm.done();
+			return;			
+		}
+
+		// Queue the command
+		fConnection.queueCommand(
+			new CLIPasscount(context, reference, ignoreCount),
+		    new DataRequestMonitor<MIInfo>(getExecutor(), rm) {
+		        @Override
+		        protected void handleSuccess() {
+		        	if (breakpoint == null) {
+		        		rm.setStatus(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, REQUEST_FAILED, UNKNOWN_BREAKPOINT, null));
+                   		rm.done();
+                   		return;
+		        	}
+			        breakpoint.setPassCount(ignoreCount);
 		            rm.done();
 		        }
 		});
@@ -1004,5 +1125,4 @@ public class MIBreakpoints extends AbstractDsfService implements IBreakpoints
 		        }
         });
 	}
-
 }

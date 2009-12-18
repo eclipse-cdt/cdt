@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007 Wind River Systems and others.
+ * Copyright (c) 2009 Wind River Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,10 +7,12 @@
  * 
  * Contributors:
  *     Wind River Systems - initial API and implementation
+ *     Ericsson           - Added tracepoint support (284286)
  *******************************************************************************/
 package org.eclipse.cdt.debug.internal.ui;
 
 import org.eclipse.cdt.debug.core.model.ICBreakpoint;
+import org.eclipse.cdt.debug.core.model.ICTracepoint;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IAdapterFactory;
 import org.eclipse.core.runtime.Platform;
@@ -76,7 +78,7 @@ class CBreakpointContextActionFilter implements IActionFilter {
     
     public boolean testAttribute(Object target, String name, String value) {
         if (target instanceof CBreakpointContext) {
-            if ("debugModelId".equals(name)) {
+            if ("debugModelId".equals(name)) { //$NON-NLS-1$
                 String[] targetModelIds = getDebugModelIds( (CBreakpointContext)target );
                 for (int i = 0; i < targetModelIds.length; i++) {
                     if (targetModelIds[i].equals(value)) {
@@ -113,7 +115,7 @@ class CBreakpointContextActionFilter implements IActionFilter {
 class CBreakpointContextAdapterFactory implements IAdapterFactory {
     
     private static final Class[] fgAdapterList = new Class[] {
-        IBreakpoint.class, ICBreakpoint.class, IActionFilter.class
+        IBreakpoint.class, ICBreakpoint.class, ICTracepoint.class, IActionFilter.class
     };
 
     private static final IActionFilter fgActionFilter = new CBreakpointContextActionFilter();

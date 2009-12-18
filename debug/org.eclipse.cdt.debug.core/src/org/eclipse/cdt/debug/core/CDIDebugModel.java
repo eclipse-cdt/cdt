@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2006-7 QNX Software Systems and others.
+ * Copyright (c) 2009 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -9,6 +9,7 @@
  * QNX Software Systems - Initial API and implementation
  * Freescale Semiconductor - Address watchpoints, https://bugs.eclipse.org/bugs/show_bug.cgi?id=118299
  * QNX Software Systems - catchpoints - bug 226689
+ * Ericsson             - tracepoints - bug 284286
  *******************************************************************************/
 package org.eclipse.cdt.debug.core;
 
@@ -34,9 +35,12 @@ import org.eclipse.cdt.debug.core.model.ICLineBreakpoint;
 import org.eclipse.cdt.debug.core.model.ICWatchpoint;
 import org.eclipse.cdt.debug.core.model.ICWatchpoint2;
 import org.eclipse.cdt.debug.internal.core.breakpoints.CAddressBreakpoint;
+import org.eclipse.cdt.debug.internal.core.breakpoints.CAddressTracepoint;
 import org.eclipse.cdt.debug.internal.core.breakpoints.CEventBreakpoint;
 import org.eclipse.cdt.debug.internal.core.breakpoints.CFunctionBreakpoint;
+import org.eclipse.cdt.debug.internal.core.breakpoints.CFunctionTracepoint;
 import org.eclipse.cdt.debug.internal.core.breakpoints.CLineBreakpoint;
+import org.eclipse.cdt.debug.internal.core.breakpoints.CLineTracepoint;
 import org.eclipse.cdt.debug.internal.core.breakpoints.CWatchpoint;
 import org.eclipse.cdt.debug.internal.core.model.CDebugTarget;
 import org.eclipse.core.resources.IFile;
@@ -231,7 +235,30 @@ public class CDIDebugModel {
 	 *             </ul>
 	 */
 	public static ICLineBreakpoint createLineBreakpoint( String sourceHandle, IResource resource, int type, int lineNumber, boolean enabled, int ignoreCount, String condition, boolean register ) throws CoreException {
-		HashMap attributes = new HashMap( 10 );
+		HashMap<String, Object> attributes = new HashMap<String, Object>( 10 );
+		setLineBreakpointAttributes( attributes, sourceHandle, type, lineNumber, enabled, ignoreCount, condition );
+		return new CLineBreakpoint( resource, attributes, register );
+	}
+
+	/**
+	 * @since 6.1
+	 */
+	public static ICLineBreakpoint createLineTracepoint( String sourceHandle, IResource resource, int type, int lineNumber, boolean enabled, int ignoreCount, String condition, boolean register ) throws CoreException {
+		HashMap<String, Object> attributes = new HashMap<String, Object>( 10 );
+		setLineBreakpointAttributes( attributes, sourceHandle, type, lineNumber, enabled, ignoreCount, condition );
+		return new CLineTracepoint( resource, attributes, register );
+	}
+
+	/**
+	 * Helper function for setting common line breakpoint attributes.
+	 */
+	private static void setLineBreakpointAttributes( HashMap<String, Object> attributes, 
+			                                         String sourceHandle, 
+			                                         Integer type, 
+			                                         int lineNumber, 
+			                                         boolean enabled, 
+			                                         int ignoreCount, 
+			                                         String condition ) {
 		attributes.put( IBreakpoint.ID, getPluginIdentifier() );
 		attributes.put( IMarker.LINE_NUMBER, new Integer( lineNumber ) );
 		attributes.put( IBreakpoint.ENABLED, Boolean.valueOf( enabled ) );
@@ -239,7 +266,6 @@ public class CDIDebugModel {
 		attributes.put( ICBreakpoint.CONDITION, condition );
 		attributes.put( ICBreakpoint.SOURCE_HANDLE, sourceHandle );
 		attributes.put( ICBreakpointType.TYPE, type );
-		return new CLineBreakpoint( resource, attributes, register );
 	}
 
 	/**
@@ -319,21 +345,39 @@ public class CDIDebugModel {
 	 *             </ul>
 	 */
 	public static ICAddressBreakpoint createAddressBreakpoint( String module, String sourceHandle, IResource resource, int type, int lineNumber, IAddress address, boolean enabled, int ignoreCount, String condition, boolean register ) throws CoreException {
-		HashMap attributes = new HashMap( 10 );
-		attributes.put( IBreakpoint.ID, getPluginIdentifier() );
-		attributes.put( IMarker.CHAR_START, new Integer( -1 ) );
-		attributes.put( IMarker.CHAR_END, new Integer( -1 ) );
-		attributes.put( IMarker.LINE_NUMBER, new Integer( lineNumber ) );
-		attributes.put( ICLineBreakpoint.ADDRESS, address.toHexAddressString() );
-		attributes.put( IBreakpoint.ENABLED, Boolean.valueOf( enabled ) );
-		attributes.put( ICBreakpoint.IGNORE_COUNT, new Integer( ignoreCount ) );
-		attributes.put( ICBreakpoint.CONDITION, condition );
-		attributes.put( ICBreakpoint.SOURCE_HANDLE, sourceHandle );
-		attributes.put( ICBreakpoint.MODULE, module );
-		attributes.put( ICBreakpointType.TYPE, type );
+		HashMap<String, Object> attributes = new HashMap<String, Object>( 10 );
+		setAddressBreakpointAttributes( attributes, module, sourceHandle, type, lineNumber, address, enabled, ignoreCount, condition );
 		return new CAddressBreakpoint( resource, attributes, register );
 	}
 
+	/**
+	 * @since 6.1
+	 */
+	public static ICAddressBreakpoint createAddressTracepoint( String module, String sourceHandle, IResource resource, int type, int lineNumber, IAddress address, boolean enabled, int ignoreCount, String condition, boolean register ) throws CoreException {
+		HashMap<String, Object> attributes = new HashMap<String, Object>( 10 );
+		setAddressBreakpointAttributes( attributes, module, sourceHandle, type, lineNumber, address, enabled, ignoreCount, condition );
+		return new CAddressTracepoint( resource, attributes, register );
+	}
+
+	/**
+	 * Helper function for setting common address breakpoint attributes.
+	 */
+	private static void setAddressBreakpointAttributes( HashMap<String, Object> attributes, 
+			                                            String module, 
+			                                            String sourceHandle, 
+			                                            int type, 
+			                                            int lineNumber, 
+			                                            IAddress address, 
+			                                            boolean enabled, 
+			                                            int ignoreCount, 
+			                                            String condition ) {
+		setLineBreakpointAttributes(attributes, sourceHandle, type, lineNumber, enabled, ignoreCount, condition);
+		attributes.put( IMarker.CHAR_START, new Integer( -1 ) );
+		attributes.put( IMarker.CHAR_END, new Integer( -1 ) );
+		attributes.put( ICLineBreakpoint.ADDRESS, address.toHexAddressString() );
+		attributes.put( ICBreakpoint.MODULE, module );
+	}
+	
 	/**
 	 * Creates and returns a watchpoint for the source defined by the given
 	 * source handle, at the given expression. The marker associated with the
@@ -357,8 +401,8 @@ public class CDIDebugModel {
 	 *             </ul>
 	 */
 	public static ICWatchpoint createWatchpoint( String sourceHandle, IResource resource, boolean writeAccess, boolean readAccess, String expression, boolean enabled, int ignoreCount, String condition, boolean register ) throws CoreException {
-		HashMap attributes = new HashMap( 10 );
-		setAttributes( attributes, sourceHandle, resource, writeAccess, readAccess, expression, "", BigInteger.ZERO, enabled, ignoreCount, condition, register );
+		HashMap<String, Object> attributes = new HashMap<String, Object>( 10 );
+		setWatchPointAttributes( attributes, sourceHandle, resource, writeAccess, readAccess, expression, "", BigInteger.ZERO, enabled, ignoreCount, condition, register ); //$NON-NLS-1$
 		return new CWatchpoint( resource, attributes, register );
 	}
 
@@ -396,8 +440,8 @@ public class CDIDebugModel {
 	 *             </ul>
 	 */
 	public static ICWatchpoint createWatchpoint( String sourceHandle, IResource resource, int charStart, int charEnd, int lineNumber, boolean writeAccess, boolean readAccess, String expression, String memorySpace, BigInteger range, boolean enabled, int ignoreCount, String condition, boolean register ) throws CoreException {
-		HashMap attributes = new HashMap( 10 );
-		setAttributes( attributes, sourceHandle, resource, writeAccess, readAccess, expression, memorySpace, range, enabled, ignoreCount, condition, register );
+		HashMap<String, Object> attributes = new HashMap<String, Object>( 10 );
+		setWatchPointAttributes( attributes, sourceHandle, resource, writeAccess, readAccess, expression, memorySpace, range, enabled, ignoreCount, condition, register );
 		attributes.put( IMarker.CHAR_START, new Integer( charStart ) );
 		attributes.put( IMarker.CHAR_END, new Integer( charEnd ) );
 		attributes.put( IMarker.LINE_NUMBER, new Integer( lineNumber ) );
@@ -430,15 +474,15 @@ public class CDIDebugModel {
 	 *             </ul>
 	 */
 	public static ICWatchpoint createWatchpoint( String sourceHandle, IResource resource, boolean writeAccess, boolean readAccess, String expression, String memorySpace, BigInteger range, boolean enabled, int ignoreCount, String condition, boolean register ) throws CoreException {
-		HashMap attributes = new HashMap( 10 );
-		setAttributes( attributes, sourceHandle, resource, writeAccess, readAccess, expression, memorySpace, range, enabled, ignoreCount, condition, register );
+		HashMap<String, Object> attributes = new HashMap<String, Object>( 10 );
+		setWatchPointAttributes( attributes, sourceHandle, resource, writeAccess, readAccess, expression, memorySpace, range, enabled, ignoreCount, condition, register );
 		return new CWatchpoint( resource, attributes, register );
 	}
 	
 	/**
-	 * Helper function for setting common attributes.
+	 * Helper function for setting common watchpoint attributes.
 	 */
-	private static void setAttributes( HashMap attributes, String sourceHandle, IResource resource, boolean writeAccess, boolean readAccess, String expression, String memorySpace, BigInteger range, boolean enabled, int ignoreCount, String condition, boolean register ) {
+	private static void setWatchPointAttributes( HashMap<String, Object> attributes, String sourceHandle, IResource resource, boolean writeAccess, boolean readAccess, String expression, String memorySpace, BigInteger range, boolean enabled, int ignoreCount, String condition, boolean register ) {
 		attributes.put( IBreakpoint.ID, getPluginIdentifier() );
 		attributes.put( IBreakpoint.ENABLED, Boolean.valueOf( enabled ) );
 		attributes.put( ICBreakpoint.IGNORE_COUNT, new Integer( ignoreCount ) );
@@ -517,20 +561,39 @@ public class CDIDebugModel {
 	 *             </ul>
 	 */
 	public static ICFunctionBreakpoint createFunctionBreakpoint( String sourceHandle, IResource resource, int type, String function, int charStart, int charEnd, int lineNumber, boolean enabled, int ignoreCount, String condition, boolean register ) throws CoreException {
-		HashMap attributes = new HashMap( 10 );
-		attributes.put( IBreakpoint.ID, getPluginIdentifier() );
-		attributes.put( IMarker.CHAR_START, new Integer( charStart ) );
-		attributes.put( IMarker.CHAR_END, new Integer( charEnd ) );
-		attributes.put( IMarker.LINE_NUMBER, new Integer( lineNumber ) );
-		attributes.put( ICLineBreakpoint.FUNCTION, function );
-		attributes.put( IBreakpoint.ENABLED, Boolean.valueOf( enabled ) );
-		attributes.put( ICBreakpoint.IGNORE_COUNT, new Integer( ignoreCount ) );
-		attributes.put( ICBreakpoint.CONDITION, condition );
-		attributes.put( ICBreakpoint.SOURCE_HANDLE, sourceHandle );
-		attributes.put( ICBreakpointType.TYPE, type );
+		HashMap<String, Object> attributes = new HashMap<String, Object>( 10 );
+		setFunctionBreakpointAttributes( attributes, sourceHandle, type, function, charStart, charEnd, lineNumber, enabled, ignoreCount, condition);
 		return new CFunctionBreakpoint( resource, attributes, register );
 	}
 
+	/**
+	 * @since 6.1
+	 */
+	public static ICFunctionBreakpoint createFunctionTracepoint( String sourceHandle, IResource resource, int type, String function, int charStart, int charEnd, int lineNumber, boolean enabled, int ignoreCount, String condition, boolean register ) throws CoreException {
+		HashMap<String, Object> attributes = new HashMap<String, Object>( 10 );
+		setFunctionBreakpointAttributes( attributes, sourceHandle, type, function, charStart, charEnd, lineNumber, enabled, ignoreCount, condition);
+		return new CFunctionTracepoint( resource, attributes, register );
+	}
+
+	/**
+	 * Helper function for setting common address breakpoint attributes.
+	 */
+	private static void setFunctionBreakpointAttributes( HashMap<String, Object> attributes, 
+			                                             String sourceHandle,
+			                                             int type,
+			                                             String function,
+			                                             int charStart,
+			                                             int charEnd,
+			                                             int lineNumber, 
+			                                             boolean enabled, 
+			                                             int ignoreCount, 
+			                                             String condition ) {
+		setLineBreakpointAttributes(attributes, sourceHandle, type, lineNumber, enabled, ignoreCount, condition);
+		attributes.put( IMarker.CHAR_START, new Integer( charStart ) );
+		attributes.put( IMarker.CHAR_END, new Integer( charEnd ) );
+		attributes.put( ICLineBreakpoint.FUNCTION, function );
+	}
+	
 	/**
 	 * Returns the line breakpoint that is already registered with the
 	 * breakpoint manager for a source with the given handle and the given
@@ -707,8 +770,8 @@ public class CDIDebugModel {
 			if (breakpoint.getEventType().equals(type)) {
 				String arg1 = breakpoint.getEventArgument();
 				if (arg1 == null)
-					arg1 = "";
-				String arg2 = arg == null ? "" : arg;
+					arg1 = ""; //$NON-NLS-1$
+				String arg2 = arg == null ? "" : arg; //$NON-NLS-1$
 				if (arg1.equals(arg2))
 					return breakpoint;
 			}
@@ -723,7 +786,7 @@ public class CDIDebugModel {
 		attributes.put(IBreakpoint.ID, CDIDebugModel.getPluginIdentifier());
 		attributes.put(IBreakpoint.ENABLED, true);
 		attributes.put(ICBreakpoint.IGNORE_COUNT, 0);
-		attributes.put(ICBreakpoint.CONDITION, "");
+		attributes.put(ICBreakpoint.CONDITION, ""); //$NON-NLS-1$
 		attributes.put(ICEventBreakpoint.EVENT_TYPE_ID, type);
 		attributes.put(ICEventBreakpoint.EVENT_ARG, arg);
 		return new CEventBreakpoint(resource, attributes, register);

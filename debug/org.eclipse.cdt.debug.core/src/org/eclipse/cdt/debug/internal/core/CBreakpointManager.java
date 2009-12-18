@@ -71,6 +71,7 @@ import org.eclipse.cdt.debug.core.model.ICEventBreakpoint;
 import org.eclipse.cdt.debug.core.model.ICFunctionBreakpoint;
 import org.eclipse.cdt.debug.core.model.ICLineBreakpoint;
 import org.eclipse.cdt.debug.core.model.ICThread;
+import org.eclipse.cdt.debug.core.model.ICTracepoint;
 import org.eclipse.cdt.debug.core.model.ICWatchpoint;
 import org.eclipse.cdt.debug.core.model.ICWatchpoint2;
 import org.eclipse.cdt.debug.core.sourcelookup.ICSourceLocator;
@@ -860,7 +861,13 @@ public class CBreakpointManager implements IBreakpointsListener, IBreakpointMana
 				if (icbreakpoint instanceof ICBreakpointType) {
 					breakpointType = ((ICBreakpointType) icbreakpoint).getType();
 				}
-				if ( icbreakpoint instanceof ICFunctionBreakpoint ) {
+				if ( icbreakpoint instanceof ICTracepoint) {
+					ICTracepoint breakpoint = (ICTracepoint)icbreakpoint; 
+					IMarker marker = BreakpointProblems.reportUnsupportedTracepoint(breakpoint, getDebugTarget().getName(), getDebugTarget().getInternalID());
+					if (marker != null)
+						fBreakpointProblems.add(marker);
+				}
+				else if ( icbreakpoint instanceof ICFunctionBreakpoint ) {
 					ICFunctionBreakpoint breakpoint = (ICFunctionBreakpoint)icbreakpoint; 
 					String function = breakpoint.getFunction();
 					String fileName = breakpoint.getFileName();

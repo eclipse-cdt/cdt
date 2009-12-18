@@ -1247,9 +1247,14 @@
             id="org.eclipse.cdt.debug.ui.propertypages.breakpoint.common"
             name="%CommonBreakpointPage.label">
          <enabledWhen>
-            <adapt
-                  type="org.eclipse.cdt.debug.core.model.ICBreakpoint">
-            </adapt>
+            <and>   
+               <adapt type="org.eclipse.cdt.debug.core.model.ICBreakpoint">
+               </adapt>
+               <not>   
+                  <adapt type="org.eclipse.cdt.debug.core.model.ICTracepoint">
+                  </adapt>
+               </not>  
+            </and>
          </enabledWhen>
       </page>
       <page
@@ -1257,9 +1262,14 @@
             id="org.eclipse.cdt.debug.ui.breakpointactions.actions"
             name="%BreakpointActionsPage.label">
          <enabledWhen>
-            <adapt
-                  type="org.eclipse.cdt.debug.core.model.ICBreakpoint">
-            </adapt>
+            <and>   
+               <adapt type="org.eclipse.cdt.debug.core.model.ICBreakpoint">
+               </adapt>
+               <not>   
+                  <adapt type="org.eclipse.cdt.debug.core.model.ICTracepoint">
+                  </adapt>
+               </not>
+            </and>
          </enabledWhen>
       </page>
       <page class="org.eclipse.cdt.debug.internal.ui.propertypages.CBreakpointFilteringPage"
@@ -1267,7 +1277,14 @@
             name="%FilteringBreakpointPage.label">
          <filter name="debugModelId" value="org.eclipse.cdt.debug.core"/>
          <enabledWhen>
-            <adapt type="org.eclipse.cdt.debug.core.model.ICBreakpoint"/>
+            <and>   
+               <adapt type="org.eclipse.cdt.debug.core.model.ICBreakpoint">
+               </adapt>
+               <not>   
+                  <adapt type="org.eclipse.cdt.debug.core.model.ICTracepoint">
+                  </adapt>
+               </not>
+            </and>
          </enabledWhen>
       </page>
       <page
@@ -1907,12 +1924,45 @@
             </or>
          </enablement>
       </toggleTargetFactory>
+      <toggleTargetFactory
+            id="org.eclipse.cdt.debug.ui.ToggleCTracepointsTargetFactory"
+            class="org.eclipse.cdt.debug.internal.ui.actions.ToggleCTracepointsTargetFactory">
+            <enablement>
+            <!-- Enable the breakpoint toggle for CDT's editors and model elements -->
+            <and>
+               <reference
+                     definitionId="org.eclipse.cdt.debug.ui.testIsTracepointActionSetActive">
+               </reference>
+               <or>
+                  <instanceof value="org.eclipse.cdt.internal.ui.editor.CEditor"/>
+                  <instanceof value="org.eclipse.cdt.internal.ui.editor.asm.AsmTextEditor"/>
+                  <instanceof value="org.eclipse.cdt.debug.internal.ui.views.disassembly.DisassemblyView"/>
+                  <instanceof value="org.eclipse.cdt.debug.internal.ui.disassembly.editor.DisassemblyEditor"/>
+                  <with variable="selection">
+                     <count value="1"/>
+                     <iterate>
+                        <or>
+                           <instanceof value="org.eclipse.cdt.core.model.IFunction"/>
+                           <instanceof value="org.eclipse.cdt.core.model.IMethod"/>
+                           <instanceof value="org.eclipse.cdt.core.model.IVariable"/>
+                        </or>
+                     </iterate>
+                  </with>
+               </or>
+            </and>
+         </enablement>
+      </toggleTargetFactory>
    </extension>
  <extension
        point="org.eclipse.ui.actionSets">
       <actionSet
           id="org.eclipse.cdt.debug.ui.reverseDebuggingActionSet"
           label="%ReverseActionSet.label"
+          visible="false">
+      </actionSet>
+      <actionSet
+          id="org.eclipse.cdt.debug.ui.tracepointActionSet"
+          label="%TracepointActionSet.label"
           visible="false">
       </actionSet>
  </extension>
@@ -2013,6 +2063,14 @@
                   </or>
                </and>
             </definition>
+      <definition id="org.eclipse.cdt.debug.ui.testIsTracepointActionSetActive">
+         <with variable="activeContexts">
+            <iterate operator="or">
+               <equals value="org.eclipse.cdt.debug.ui.tracepointActionSet">
+               </equals>
+            </iterate>
+         </with>
+      </definition>
  </extension>
  <extension
          point="org.eclipse.ui.bindings">
@@ -2268,5 +2326,19 @@
             </visibleWhen>
          </command>
       </menuContribution>
+ </extension>
+ <extension
+       point="org.eclipse.ui.popupMenus">
+    <viewerContribution
+          id="org.eclipse.cdt.debug.ui.breakpointTypeMenu"
+          targetID="#CEditorRulerContext">
+       <action
+          class="org.eclipse.debug.ui.actions.RulerBreakpointTypesActionDelegate"
+          id="org.eclipse.cdt.debug.ui.breakpointTypesAction"
+          label="%BreakpointTypes.label"
+          menubarPath="debug"
+          style="pulldown">
+       </action>
+    </viewerContribution>
  </extension>
 </plugin>

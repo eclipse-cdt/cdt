@@ -4,3 +4,4 @@ GDBMIGenericTestApp.exe
 MemoryTestApp.exe
 ExpressionTestApp.exe
 MultiThread.exe
+TracepointTestApp.exe

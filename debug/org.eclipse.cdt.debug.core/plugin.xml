@@ -105,6 +105,49 @@
       </persistent>
    </extension>
    <extension
+         id="cTracepointMarker"
+         point="org.eclipse.core.resources.markers">
+      <super
+            type="org.eclipse.cdt.debug.core.cLineBreakpointMarker">
+      </super>
+      <persistent
+            value="true">
+      </persistent>
+           <attribute
+            name="org.eclipse.cdt.debug.core.passCount">
+      </attribute>
+   </extension>
+   <extension
+         id="cLineTracepointMarker"
+         point="org.eclipse.core.resources.markers">
+      <super
+            type="org.eclipse.cdt.debug.core.cTracepointMarker">
+      </super>
+      <persistent
+            value="true">
+      </persistent>
+   </extension>
+   <extension
+         id="cAddressTracepointMarker"
+         point="org.eclipse.core.resources.markers">
+      <super
+            type="org.eclipse.cdt.debug.core.cTracepointMarker">
+      </super>
+      <persistent
+            value="true">
+      </persistent>
+   </extension>
+   <extension
+         id="cFunctionTracepointMarker"
+         point="org.eclipse.core.resources.markers">
+      <super
+            type="org.eclipse.cdt.debug.core.cTracepointMarker">
+      </super>
+      <persistent
+            value="true">
+      </persistent>
+   </extension>
+   <extension
          id="cWatchpointMarker"
          point="org.eclipse.core.resources.markers">
       <super
@@ -185,6 +228,24 @@
             name="%cWatchpoints.name"
             markerType="org.eclipse.cdt.debug.core.cWatchpointMarker"
             id="cWatchpoint">
+      </breakpoint>
+      <breakpoint
+            class="org.eclipse.cdt.debug.internal.core.breakpoints.CLineTracepoint"
+            name="%cLineTracepoints.name"
+            markerType="org.eclipse.cdt.debug.core.cLineTracepointMarker"
+            id="cLineTracepoint">
+      </breakpoint>
+      <breakpoint
+            class="org.eclipse.cdt.debug.internal.core.breakpoints.CAddressTracepoint"
+            name="%cAddressTracepoints.name"
+            markerType="org.eclipse.cdt.debug.core.cAddressTracepointMarker"
+            id="cAddressTracepoint">
+      </breakpoint>
+      <breakpoint
+            class="org.eclipse.cdt.debug.internal.core.breakpoints.CFunctionTracepoint"
+            name="%cFunctionTracepoints.name"
+            markerType="org.eclipse.cdt.debug.core.cFunctionTracepointMarker"
+            id="cFunctionTracepoint">
       </breakpoint>
        <breakpoint
             class="org.eclipse.cdt.debug.internal.core.breakpoints.CEventBreakpoint"

@@ -43,6 +43,7 @@ public class CPPASTConstructorChainInitializer extends ASTNode implements
 
     private IASTName name;
     private IASTExpression value;
+	private boolean fIsPackExpansion;
 
     
     public CPPASTConstructorChainInitializer() {
@@ -58,6 +59,7 @@ public class CPPASTConstructorChainInitializer extends ASTNode implements
 		copy.setMemberInitializerId(name == null ? null : name.copy());
 		copy.setInitializerValue(value == null ? null : value.copy());
 		copy.setOffsetAndLength(this);
+		copy.fIsPackExpansion= fIsPackExpansion;
 		return copy;
 	}
 	
@@ -172,5 +174,14 @@ public class CPPASTConstructorChainInitializer extends ASTNode implements
 		}
 
 		return null;
+	}
+	
+	public boolean isPackExpansion() {
+		return fIsPackExpansion;
+	}
+
+	public void setIsPackExpansion(boolean val) {
+		assertNotFrozen();
+		fIsPackExpansion= val;
 	}
 }

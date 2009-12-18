@@ -17,6 +17,7 @@ import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IASTPointerOperator;
 import org.eclipse.cdt.core.dom.ast.IScope;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTDeclarator;
 import org.eclipse.cdt.core.parser.util.ArrayUtil;
 import org.eclipse.cdt.internal.core.dom.parser.ASTAmbiguousNode;
 import org.eclipse.cdt.internal.core.dom.parser.IASTAmbiguousDeclarator;
@@ -28,7 +29,7 @@ import org.eclipse.core.runtime.Assert;
  * <br>
  * Example: void f(int (D));  // is D a type?
  */
-public class CPPASTAmbiguousDeclarator extends ASTAmbiguousNode implements IASTAmbiguousDeclarator {
+public class CPPASTAmbiguousDeclarator extends ASTAmbiguousNode implements IASTAmbiguousDeclarator, ICPPASTDeclarator {
 
     private IASTDeclarator[] dtors = new IASTDeclarator[2];
     private int dtorPos=-1;
@@ -121,6 +122,15 @@ public class CPPASTAmbiguousDeclarator extends ASTAmbiguousNode implements IASTA
 	}
 
 	public void setNestedDeclarator(IASTDeclarator nested) {
+        assertNotFrozen();
+		Assert.isLegal(false);
+	}
+
+	public boolean declaresParameterPack() {
+		return false;
+	}
+
+	public void setDeclaresParameterPack(boolean val) {
         assertNotFrozen();
 		Assert.isLegal(false);
 	}

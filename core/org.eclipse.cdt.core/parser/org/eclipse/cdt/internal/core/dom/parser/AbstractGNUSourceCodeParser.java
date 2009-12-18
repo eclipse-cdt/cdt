@@ -67,6 +67,7 @@ import org.eclipse.cdt.core.dom.ast.IASTWhileStatement;
 import org.eclipse.cdt.core.dom.ast.INodeFactory;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.IASTEnumerationSpecifier.IASTEnumerator;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTPackExpansionExpression;
 import org.eclipse.cdt.core.dom.ast.gnu.IGNUASTCompoundStatementExpression;
 import org.eclipse.cdt.core.dom.parser.IBuiltinBindingsProvider;
 import org.eclipse.cdt.core.dom.parser.ISourceCodeParser;
@@ -515,6 +516,12 @@ public abstract class AbstractGNUSourceCodeParser implements ISourceCodeParser {
     	return n;
     }
 
+    protected final <T extends IASTNode> T setRange(T n, IASTNode from, int endOffset) {
+    	final int offset = ((ASTNode) from).getOffset();
+		((ASTNode) n).setOffsetAndLength(offset, endOffset-offset);
+    	return n;
+    }
+
     protected final <T extends IASTNode> T setRange(T n, int offset, int endOffset) {
     	((ASTNode) n).setOffsetAndLength(offset, endOffset-offset);
     	return n;
@@ -525,9 +532,10 @@ public abstract class AbstractGNUSourceCodeParser implements ISourceCodeParser {
         adjustEndOffset(n, endOffset);
     }
 
-	protected final void adjustEndOffset(IASTNode n, final int endOffset) {
+	protected final <T extends IASTNode> T adjustEndOffset(T n, final int endOffset) {
 		final ASTNode node = (ASTNode) n;
         node.setLength(endOffset-node.getOffset());
+        return n;
 	}
 
     protected final int getEndOffset() {
@@ -914,8 +922,8 @@ public abstract class AbstractGNUSourceCodeParser implements ISourceCodeParser {
 		IASTExpression fExpression;
 		final CastAmbiguityMarker fAmbiguityMarker;
 
-		public BinaryOperator(BinaryOperator left, IASTExpression expression, int operatorToken, int leftPrecedence, int rightPrecedence) {
-			fNext= left;
+		public BinaryOperator(BinaryOperator nextOp, IASTExpression expression, int operatorToken, int leftPrecedence, int rightPrecedence) {
+			fNext= nextOp;
 			fOperatorToken= operatorToken;
 			fLeftPrecedence= leftPrecedence;
 			fRightPrecedence= rightPrecedence;
@@ -978,6 +986,17 @@ public abstract class AbstractGNUSourceCodeParser implements ISourceCodeParser {
             }
             return conditionalEx;
 			
+        case IToken.tELLIPSIS:
+        	if (right instanceof ICPPASTPackExpansionExpression) {
+        		((ICPPASTPackExpansionExpression) right).setPattern(left);
+        		int endOffset= ((ASTNode) right).getLength();
+        		setRange(right, left);
+        		adjustEndOffset(right, endOffset);
+        		return right;
+        	}
+        	assert false;
+        	return left;
+
 		case IToken.tCOMMA:
 			IASTExpressionList list;
 			if (left instanceof IASTExpressionList) {

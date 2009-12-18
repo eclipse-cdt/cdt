@@ -24,6 +24,7 @@ public class DeclarationOptions {
 	final public static int NO_FUNCTIONS= 			0x40;
 	final public static int NO_ARRAYS= 				0x80;
 	final public static int NO_NESTED= 				0x100;
+	final public static int ALLOW_PARAMETER_PACKS=  0x200;
 
     public static final DeclarationOptions 
     	GLOBAL=     new DeclarationOptions(ALLOW_EMPTY_SPECIFIER | ALLOW_CONSTRUCTOR_INITIALIZER),
@@ -31,7 +32,7 @@ public class DeclarationOptions {
     	C_MEMBER=   new DeclarationOptions(ALLOW_BITFIELD | ALLOW_ABSTRACT),
     	CPP_MEMBER= new DeclarationOptions(ALLOW_EMPTY_SPECIFIER | ALLOW_BITFIELD),
     	LOCAL=	    new DeclarationOptions(ALLOW_CONSTRUCTOR_INITIALIZER),
-    	PARAMETER=  new DeclarationOptions(ALLOW_ABSTRACT),
+    	PARAMETER=  new DeclarationOptions(ALLOW_ABSTRACT | ALLOW_PARAMETER_PACKS),
     	TYPEID=     new DeclarationOptions(REQUIRE_ABSTRACT | NO_INITIALIZER),
     	TYPEID_NEW= new DeclarationOptions(REQUIRE_ABSTRACT | NO_INITIALIZER | NO_FUNCTIONS | NO_NESTED),
     	TYPEID_CONVERSION= new DeclarationOptions(REQUIRE_ABSTRACT | NO_INITIALIZER | NO_FUNCTIONS | NO_NESTED),
@@ -47,6 +48,7 @@ public class DeclarationOptions {
 	final public boolean fAllowConstructorInitializer;
 	final public boolean fAllowFunctions;
 	final public boolean fAllowNested;
+	final public boolean fAllowParameterPacks;
 	
 	public DeclarationOptions(int options) {
 		fAllowEmptySpecifier= (options & ALLOW_EMPTY_SPECIFIER) != 0;
@@ -57,5 +59,6 @@ public class DeclarationOptions {
 		fAllowConstructorInitializer= fAllowInitializer && (options & ALLOW_CONSTRUCTOR_INITIALIZER) != 0;
 		fAllowFunctions= (options & NO_FUNCTIONS) == 0;
 		fAllowNested= (options & NO_NESTED) == 0;
+		fAllowParameterPacks= (options & ALLOW_PARAMETER_PACKS) != 0;
 	}
 }

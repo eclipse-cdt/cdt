@@ -50,87 +50,56 @@ public interface ICPPASTCompositeTypeSpecifier extends IASTCompositeTypeSpecifie
 	/**
 	 * Base Specifiers are where a class expresses from whom it inherits.
 	 * 
-	 * @author jcamelon
 	 * @noimplement This interface is not intended to be implemented by clients.
 	 */
-	public static interface ICPPASTBaseSpecifier extends IASTNode, IASTNameOwner  {
-		/**
-		 * Constant.
-		 */
+	public static interface ICPPASTBaseSpecifier extends IASTNode, IASTNameOwner, ICPPASTPackExpandable  {
 		public static final ICPPASTBaseSpecifier[] EMPTY_BASESPECIFIER_ARRAY = new ICPPASTBaseSpecifier[0];
 
 		/**
-		 * Is the keyword virtual used?
-		 * 
-		 * @return boolean
-		 */
-		public boolean isVirtual();
-
-		/**
-		 * Set the virtual flag on/off.
-		 * 
-		 * @param value
-		 *            boolean
-		 */
-		public void setVirtual(boolean value);
-
-		/**
-		 * <code>v_public</code> was public keyword used in describing this
-		 * base class?
-		 */
-		public static final int v_public = 1;
-
-		/**
-		 * <code>v_protected</code> was protected keyword used in describing
-		 * this base class?
-		 */
-		public static final int v_protected = 2;
-
-		/**
-		 * <code>v_private</code> was private keyword used in describing this
-		 * base class?
-		 */
-		public static final int v_private = 3;
-
-		/**
-		 * Get the visibility.
-		 * 
-		 * @return int
-		 */
-		public int getVisibility();
-
-		/**
-		 * Set the visibility.
-		 * 
-		 * @param visibility
-		 */
-		public void setVisibility(int visibility);
-
-		/**
-		 * <code>NAME</code> is the name of the base class.
+		 * Relation between base specifier and its name.
 		 */
 		public static final ASTNodeProperty NAME = new ASTNodeProperty(
 				"ICPPASTBaseSpecifier.NAME - Name of base class"); //$NON-NLS-1$
 
+		
+		public static final int v_public = 1;
+		public static final int v_protected = 2;
+		public static final int v_private = 3;
+
 		/**
-		 * Get the name.
-		 * 
-		 * @return <code>IASTName</code>
+		 * Returns whether this specifies a virtual base.
+		 */
+		public boolean isVirtual();
+
+		/**
+		 * Returns the accessibility for the base.
+		 */
+		public int getVisibility();
+
+		/**
+		 * Returns the name of this specifier.
 		 */
 		public IASTName getName();
 
 		/**
-		 * Set the name.
-		 * 
-		 * @param name
-		 *            <code>IASTName</code>
+		 * @since 5.1
+		 */
+		public ICPPASTBaseSpecifier copy();
+		
+		/**
+		 * Sets the name for this specifier, not allowed on frozen AST.
 		 */
 		public void setName(IASTName name);
 		
 		/**
-		 * @since 5.1
+		 * Sets whether this specifier is for a virtual base. Not allowed on frozen AST.
 		 */
-		public ICPPASTBaseSpecifier copy();
+		public void setVirtual(boolean value);
+
+		/**
+		 * Sets the visibility of this specifier, not allowed on frozen AST.
+		 */
+		public void setVisibility(int visibility);
 	}
 
 	/**

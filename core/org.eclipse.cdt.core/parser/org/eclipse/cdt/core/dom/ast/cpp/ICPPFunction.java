@@ -57,4 +57,14 @@ public interface ICPPFunction extends IFunction, ICPPBinding {
 	 * @since 5.2
 	 */
     public ICPPParameter[] getParameters() throws DOMException;
+    
+    /**
+     * @since 5.2
+	 */
+    public int getRequiredArgumentCount() throws DOMException;
+    
+    /**
+	 * @since 5.2
+	 */
+    public boolean hasParameterPack();
 }

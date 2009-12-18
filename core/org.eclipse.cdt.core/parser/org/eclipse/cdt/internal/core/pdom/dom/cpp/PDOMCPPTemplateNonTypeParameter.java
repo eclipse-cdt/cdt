@@ -19,6 +19,7 @@ import org.eclipse.cdt.core.dom.ast.IASTExpression;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.IValue;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPParameterPackType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateArgument;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateNonTypeParameter;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateParameter;
@@ -45,8 +46,8 @@ class PDOMCPPTemplateNonTypeParameter extends PDOMCPPBinding implements IPDOMMem
 	protected static final int RECORD_SIZE = DEFAULTVAL + Database.PTR_SIZE;
 
 	private int fCachedParamID= -1;
+	private IType fType;
 
-	
 	public PDOMCPPTemplateNonTypeParameter(PDOMLinkage linkage, PDOMNode parent,
 			ICPPTemplateNonTypeParameter param) throws CoreException {
 		super(linkage, parent, param.getNameCharArray());
@@ -110,15 +111,18 @@ class PDOMCPPTemplateNonTypeParameter extends PDOMCPPBinding implements IPDOMMem
 	}
 
 	public short getParameterPosition() {
-		readParamID();
-		return (short) fCachedParamID;
+		return (short) getParameterID();
 	}
 	
 	public short getTemplateNestingLevel() {
 		readParamID();
-		return (short)(fCachedParamID >> 16);
+		return (short)(getParameterID() >> 16);
 	}
 	
+	public boolean isParameterPack() {
+		return getType() instanceof ICPPParameterPackType;
+	}
+
 	public int getParameterID() {
 		readParamID();
 		return fCachedParamID;
@@ -131,7 +135,7 @@ class PDOMCPPTemplateNonTypeParameter extends PDOMCPPBinding implements IPDOMMem
 				fCachedParamID= db.getInt(record + PARAMETERID);
 			} catch (CoreException e) {
 				CCorePlugin.log(e);
-				fCachedParamID= -2;
+				fCachedParamID= Integer.MAX_VALUE;
 			}
 		}
 	}
@@ -169,12 +173,14 @@ class PDOMCPPTemplateNonTypeParameter extends PDOMCPPBinding implements IPDOMMem
 	}
 
 	public IType getType() {
-		try {
-			return getLinkage().loadType(record + TYPE_OFFSET);
-		} catch (CoreException e) {
-			CCorePlugin.log(e);
-			return null;
+		if (fType == null) {
+			try {
+				fType= getLinkage().loadType(record + TYPE_OFFSET);
+			} catch (CoreException e) {
+				CCorePlugin.log(e);
+			}
 		}
+		return fType;
 	}
 
 	public IValue getInitialValue() {

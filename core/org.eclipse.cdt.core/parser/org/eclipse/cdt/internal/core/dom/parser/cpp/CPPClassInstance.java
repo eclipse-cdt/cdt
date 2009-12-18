@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2008 IBM Corporation and others.
+ * Copyright (c) 2005, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -32,7 +32,7 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPTemplates;
 public class CPPClassInstance extends CPPClassSpecialization implements ICPPTemplateInstance {
 	private ICPPTemplateArgument[] arguments;
 
-	public CPPClassInstance(IBinding owner, ICPPClassType orig, CPPTemplateParameterMap argMap, ICPPTemplateArgument[] args) {
+	public CPPClassInstance(ICPPClassType orig, IBinding owner, CPPTemplateParameterMap argMap, ICPPTemplateArgument[] args) {
 		super(orig, owner, argMap);
 		this.arguments= args;
 	}

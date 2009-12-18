@@ -448,7 +448,8 @@ public class Value implements IValue {
 	
 	private static Object evaluateUnaryExpression(IASTUnaryExpression ue, Map<String, Integer> unknownSigs, List<ICPPUnknownBinding> unknowns, int maxdepth) throws UnknownValueException {
 		final int unaryOp= ue.getOperator();
-		if (unaryOp == IASTUnaryExpression.op_amper || unaryOp == IASTUnaryExpression.op_star) 
+		if (unaryOp == IASTUnaryExpression.op_amper || unaryOp == IASTUnaryExpression.op_star ||
+				unaryOp == IASTUnaryExpression.op_sizeof || unaryOp == IASTUnaryExpression.op_sizeofParameterPack) 
 			throw UNKNOWN_EX;
 			
 		final Object value= evaluate(ue.getOperand(), unknownSigs, unknowns, maxdepth);

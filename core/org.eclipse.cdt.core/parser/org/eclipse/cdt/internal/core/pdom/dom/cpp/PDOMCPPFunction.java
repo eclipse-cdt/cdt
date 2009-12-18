@@ -38,6 +38,8 @@ import org.eclipse.core.runtime.CoreException;
  */
 class PDOMCPPFunction extends PDOMCPPBinding implements ICPPFunction, IPDOMOverloader {
 
+	private static final short ANNOT_PARAMETER_PACK = 0x100;
+
 	/**
 	 * Offset of total number of function parameters (relative to the
 	 * beginning of the record).
@@ -70,15 +72,18 @@ class PDOMCPPFunction extends PDOMCPPBinding implements ICPPFunction, IPDOMOverl
 	 * Offset of annotation information (relative to the beginning of the
 	 * record).
 	 */
-	private static final int ANNOTATION = EXCEPTION_SPEC + Database.PTR_SIZE; // byte
+	private static final int ANNOTATION = EXCEPTION_SPEC + Database.PTR_SIZE; // short
+	
+	private static final int REQUIRED_ARG_COUNT = ANNOTATION + 2;
 
 	/**
 	 * The size in bytes of a PDOMCPPFunction record in the database.
 	 */
 	@SuppressWarnings("hiding")
-	protected static final int RECORD_SIZE = ANNOTATION + 1;
+	protected static final int RECORD_SIZE = REQUIRED_ARG_COUNT + 4;
 
-	private byte annotation= -1;
+	private short fAnnotation= -1;
+	private int fRequiredArgCount= -1;
 	private ICPPFunctionType fType;
 	
 	public PDOMCPPFunction(PDOMLinkage linkage, PDOMNode parent, ICPPFunction function, boolean setTypes) throws CoreException, DOMException {
@@ -86,11 +91,19 @@ class PDOMCPPFunction extends PDOMCPPBinding implements ICPPFunction, IPDOMOverl
 		Database db = getDB();		
 		Integer sigHash = IndexCPPSignatureUtil.getSignatureHash(function);
 		getDB().putInt(record + SIGNATURE_HASH, sigHash != null ? sigHash.intValue() : 0);
-		db.putByte(record + ANNOTATION, PDOMCPPAnnotation.encodeAnnotation(function));
-
+		db.putShort(record + ANNOTATION, getAnnotation(function));
+		db.putInt(record + REQUIRED_ARG_COUNT, function.getRequiredArgumentCount());
 		if (setTypes) {
 			initData(function.getType(), function.getParameters(), extractExceptionSpec(function));
 		}
+	}
+
+	private short getAnnotation(ICPPFunction function) throws DOMException {
+		int annot= PDOMCPPAnnotation.encodeAnnotation(function);
+		if (function.hasParameterPack()) {
+			annot |= ANNOT_PARAMETER_PACK;
+		}
+		return (short) annot;
 	}
 
 	public void initData(ICPPFunctionType ftype, ICPPParameter[] params, IType[] exceptionSpec) {
@@ -109,11 +122,13 @@ class PDOMCPPFunction extends PDOMCPPBinding implements ICPPFunction, IPDOMOverl
 			ICPPFunction func= (ICPPFunction) newBinding;
 			ICPPFunctionType newType;
 			ICPPParameter[] newParams;
-			byte newAnnotation;
+			short newAnnotation;
+			int newBindingRequiredArgCount;
 			try {
 				newType= func.getType();
 				newParams = func.getParameters();
-				newAnnotation = PDOMCPPAnnotation.encodeAnnotation(func);
+				newAnnotation = getAnnotation(func);
+				newBindingRequiredArgCount= func.getRequiredArgumentCount();
 			} catch (DOMException e) {
 				throw new CoreException(Util.createStatus(e));
 			}
@@ -122,23 +137,35 @@ class PDOMCPPFunction extends PDOMCPPBinding implements ICPPFunction, IPDOMOverl
 			linkage.storeType(record+FUNCTION_TYPE, newType);
 
 			PDOMCPPParameter oldParams= getFirstParameter(null);
+			int requiredCount;
 			if (oldParams != null && hasDeclaration()) {
+				int parCount= 0;
+				requiredCount= 0;
 				for (ICPPParameter newPar : newParams) {
+					parCount++;
+					if (parCount <= newBindingRequiredArgCount && !oldParams.hasDefaultValue())
+						requiredCount= parCount;
 					oldParams.update(newPar);
 					long next= oldParams.getNextPtr();
 					if (next == 0)
 						break;
 					oldParams= new PDOMCPPParameter(linkage, next, null);
 				}
+				if (parCount < newBindingRequiredArgCount) {
+					requiredCount= newBindingRequiredArgCount;
+				}
 			} else {
+				requiredCount= newBindingRequiredArgCount;
 				setParameters(newParams);
 				if (oldParams != null) {
 					oldParams.delete(linkage);
 				}
 			}
 			final Database db = getDB();
-			db.putByte(record + ANNOTATION, newAnnotation);
-			annotation= newAnnotation;
+			db.putShort(record + ANNOTATION, newAnnotation);
+			fAnnotation= newAnnotation;
+			db.putInt(record + REQUIRED_ARG_COUNT, requiredCount);
+			fRequiredArgCount= requiredCount;
 			
 			long oldRec = db.getRecPtr(record+EXCEPTION_SPEC);
 			storeExceptionSpec(extractExceptionSpec(func));
@@ -213,14 +240,31 @@ class PDOMCPPFunction extends PDOMCPPBinding implements ICPPFunction, IPDOMOverl
 		return rec != 0 ? new PDOMCPPParameter(getLinkage(), rec, type) : null;
 	}
 	
-	public boolean isInline() throws DOMException {
+	public boolean isInline() {
 		return getBit(getAnnotation(), PDOMCAnnotation.INLINE_OFFSET);
 	}
 
-	final protected byte getAnnotation() {
-		if (annotation == -1)
-			annotation= getByte(record + ANNOTATION);
-		return annotation;
+	
+	public int getRequiredArgumentCount() throws DOMException {
+		if (fRequiredArgCount == -1) {
+			try {
+				fRequiredArgCount= getDB().getInt(record + REQUIRED_ARG_COUNT);
+			} catch (CoreException e) {
+				fRequiredArgCount= 0;
+			}
+		}
+		return fRequiredArgCount;
+	}
+
+	final protected short getAnnotation() {
+		if (fAnnotation == -1) {
+			try {
+				fAnnotation= getDB().getShort(record + ANNOTATION);
+			} catch (CoreException e) {
+				fAnnotation= 0;
+			}
+		}
+		return fAnnotation;
 	}
 
 	public boolean isExternC() throws DOMException {
@@ -270,26 +314,30 @@ class PDOMCPPFunction extends PDOMCPPBinding implements ICPPFunction, IPDOMOverl
 		return fType;
 	}
 	
-	public boolean isAuto() throws DOMException {
+	public boolean isAuto() {
 		// ISO/IEC 14882:2003 7.1.1.2
 		return false; 
 	}
 
-	public boolean isExtern() throws DOMException {
+	public boolean isExtern() {
 		return getBit(getAnnotation(), PDOMCAnnotation.EXTERN_OFFSET);
 	}
 
-	public boolean isRegister() throws DOMException {
+	public boolean isRegister() {
 		// ISO/IEC 14882:2003 7.1.1.2
 		return false; 
 	}
 
-	public boolean isStatic() throws DOMException {
+	public boolean isStatic() {
 		return getBit(getAnnotation(), PDOMCAnnotation.STATIC_OFFSET);
 	}
 
 	public boolean takesVarArgs() throws DOMException {
 		return getBit(getAnnotation(), PDOMCAnnotation.VARARGS_OFFSET);
+	}
+
+	public boolean hasParameterPack() {
+		return getBit(getAnnotation(), ANNOT_PARAMETER_PACK);
 	}
 
 	@Override

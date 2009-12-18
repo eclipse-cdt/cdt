@@ -36,7 +36,6 @@ import org.eclipse.cdt.core.dom.ast.IASTInitializer;
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTNamedTypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
-import org.eclipse.cdt.core.dom.ast.IASTParameterDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTSimpleDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTTypeId;
 import org.eclipse.cdt.core.dom.ast.IASTUnaryExpression;
@@ -56,6 +55,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTFunctionDeclarator;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTNamedTypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTNamespaceDefinition;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTNewExpression;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTParameterDeclaration;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTQualifiedName;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTemplateDeclaration;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTemplateId;
@@ -598,12 +598,12 @@ public class LookupData {
 
 	public IType[] getFunctionArgumentTypes() {
 		if (functionArgTypes == null && functionArgs != null) {
-			if (functionArgs instanceof IASTParameterDeclaration[]) {
-				IASTParameterDeclaration[] pdecls= (IASTParameterDeclaration[]) functionArgs;
+			if (functionArgs instanceof ICPPASTParameterDeclaration[]) {
+				ICPPASTParameterDeclaration[] pdecls= (ICPPASTParameterDeclaration[]) functionArgs;
 				functionArgTypes= new IType[pdecls.length];
 				for (int i = 0; i < pdecls.length; i++) {
-					IASTParameterDeclaration p = pdecls[i];
-					functionArgTypes[i]= SemanticUtil.getSimplifiedType(CPPVisitor.createType(p.getDeclarator()));
+					functionArgTypes[i] = SemanticUtil.getSimplifiedType(CPPVisitor.createParameterType(
+							pdecls[i], true));
 				}
 			} else if (functionArgs instanceof IASTExpression[]) {
 				IASTExpression[] exprs= (IASTExpression[]) functionArgs;
@@ -647,7 +647,7 @@ public class LookupData {
 		functionArgTypes= paramTypes;
 	}
 
-	public void setFunctionParameters(IASTParameterDeclaration[] parameters) {
+	public void setFunctionParameters(ICPPASTParameterDeclaration[] parameters) {
 		functionArgs= parameters;
 	}
 

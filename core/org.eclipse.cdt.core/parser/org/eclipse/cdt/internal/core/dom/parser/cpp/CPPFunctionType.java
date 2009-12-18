@@ -12,11 +12,9 @@
 package org.eclipse.cdt.internal.core.dom.parser.cpp;
 
 import org.eclipse.cdt.core.dom.ast.ASTTypeUtil;
-import org.eclipse.cdt.core.dom.ast.IBasicType;
 import org.eclipse.cdt.core.dom.ast.IPointerType;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.ITypedef;
-import org.eclipse.cdt.core.dom.ast.IBasicType.Kind;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunctionType;
 import org.eclipse.cdt.internal.core.dom.parser.ISerializableType;
 import org.eclipse.cdt.internal.core.dom.parser.ITypeMarshalBuffer;
@@ -31,6 +29,7 @@ public class CPPFunctionType implements ICPPFunctionType, ISerializableType {
     private IType returnType;
     private boolean isConst;
     private boolean isVolatile;
+    private boolean takesVarargs;
     
     /**
      * @param returnType
@@ -41,11 +40,13 @@ public class CPPFunctionType implements ICPPFunctionType, ISerializableType {
         this.parameters = types;
     }
 
-	public CPPFunctionType(IType returnType, IType[] types, boolean isConst, boolean isVolatile) {
+	public CPPFunctionType(IType returnType, IType[] types, boolean isConst, boolean isVolatile,
+			boolean takesVarargs) {
         this.returnType = returnType;
         this.parameters = types;
         this.isConst = isConst;
         this.isVolatile= isVolatile;
+        this.takesVarargs= takesVarargs;
     }
 
     public boolean isSameType(IType o) {
@@ -53,6 +54,10 @@ public class CPPFunctionType implements ICPPFunctionType, ISerializableType {
             return o.isSameType(this);
         if (o instanceof ICPPFunctionType) {
             ICPPFunctionType ft = (ICPPFunctionType) o;
+            if (isConst() != ft.isConst() || isVolatile() != ft.isVolatile() || takesVarArgs() != ft.takesVarArgs()) {
+                return false;
+            }
+
             IType[] fps;
             fps = ft.getParameterTypes();
 			//constructors & destructors have null return type
@@ -62,12 +67,10 @@ public class CPPFunctionType implements ICPPFunctionType, ISerializableType {
 			    return false;
 			
 			if (parameters.length == 1 && fps.length == 0) {
-				IType p0= SemanticUtil.getNestedType(parameters[0], SemanticUtil.TDEF);
-				if (!(p0 instanceof IBasicType) || ((IBasicType) p0).getKind() != Kind.eVoid)
+				if (!SemanticUtil.isVoidType(parameters[0]))
 					return false;
 			} else if (fps.length == 1 && parameters.length == 0) {
-				IType p0= SemanticUtil.getNestedType(fps[0], SemanticUtil.TDEF);
-				if (!(p0 instanceof IBasicType) || ((IBasicType) p0).getKind() != Kind.eVoid)
+				if (!SemanticUtil.isVoidType(fps[0]))
 					return false;
 			} else if (parameters.length != fps.length) {
 			    return false;
@@ -77,11 +80,7 @@ public class CPPFunctionType implements ICPPFunctionType, ISerializableType {
 			            return false;
 			    }
 			}
-           
-            if (isConst() != ft.isConst() || isVolatile() != ft.isVolatile()) {
-                return false;
-            }
-                
+                           
             return true;
         }
         return false;
@@ -125,6 +124,10 @@ public class CPPFunctionType implements ICPPFunctionType, ISerializableType {
 		return isVolatile;
 	}
 
+	public boolean takesVarArgs() {
+		return takesVarargs;
+	}
+
 	@Override
 	public String toString() {
 		return ASTTypeUtil.getType(this);
@@ -134,10 +137,11 @@ public class CPPFunctionType implements ICPPFunctionType, ISerializableType {
 		int firstByte= ITypeMarshalBuffer.FUNCTION_TYPE;
 		if (isConst()) firstByte |= ITypeMarshalBuffer.FLAG1;
 		if (isVolatile()) firstByte |= ITypeMarshalBuffer.FLAG2;
+		if (takesVarArgs()) firstByte |= ITypeMarshalBuffer.FLAG3;
 		
 		int len= (parameters.length & 0xffff);
 		if (len > 0xff) {
-			firstByte |= ITypeMarshalBuffer.FLAG3;
+			firstByte |= ITypeMarshalBuffer.FLAG4;
 			buffer.putByte((byte) firstByte);
 			buffer.putShort((short) len);
 		} else {
@@ -153,7 +157,7 @@ public class CPPFunctionType implements ICPPFunctionType, ISerializableType {
 	
 	public static IType unmarshal(int firstByte, ITypeMarshalBuffer buffer) throws CoreException {
 		int len;
-		if (((firstByte & ITypeMarshalBuffer.FLAG3) != 0)) {
+		if (((firstByte & ITypeMarshalBuffer.FLAG4) != 0)) {
 			len= buffer.getShort();
 		} else {
 			len= buffer.getByte();
@@ -164,6 +168,6 @@ public class CPPFunctionType implements ICPPFunctionType, ISerializableType {
 			pars[i]= buffer.unmarshalType();
 		}
 		return new CPPFunctionType(rt, pars, (firstByte & ITypeMarshalBuffer.FLAG1) != 0,
-				(firstByte & ITypeMarshalBuffer.FLAG2) != 0);
+				(firstByte & ITypeMarshalBuffer.FLAG2) != 0, (firstByte & ITypeMarshalBuffer.FLAG3) != 0);
 	}
 }

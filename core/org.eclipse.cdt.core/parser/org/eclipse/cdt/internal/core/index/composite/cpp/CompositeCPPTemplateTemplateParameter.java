@@ -60,6 +60,10 @@ public class CompositeCPPTemplateTemplateParameter extends CompositeCPPBinding
 		return ((ICPPTemplateParameter)rbinding).getParameterID();
 	}
 
+	public boolean isParameterPack() {
+		return ((ICPPTemplateParameter)rbinding).isParameterPack();
+	}
+
 	public boolean isSameType(IType type) {
 		return ((IType)rbinding).isSameType(type);
 	}

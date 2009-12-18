@@ -27,7 +27,6 @@ import org.eclipse.cdt.core.dom.ast.IBasicType;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.IEnumeration;
 import org.eclipse.cdt.core.dom.ast.IFunctionType;
-import org.eclipse.cdt.core.dom.ast.IParameter;
 import org.eclipse.cdt.core.dom.ast.IPointerType;
 import org.eclipse.cdt.core.dom.ast.IProblemBinding;
 import org.eclipse.cdt.core.dom.ast.IQualifierType;
@@ -40,7 +39,6 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPConstructor;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunctionType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPMethod;
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPParameter;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPPointerToMemberType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPReferenceType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPSpecialization;
@@ -136,13 +134,7 @@ public class Conversions {
 			// shall be an rvalue.
 			boolean ok;
 			if (isLValueRef) {
-				// mstodo
-				// Special rule for implicit object type, 13.3.1-5:
-				// Even if the implicit object type is not const-qualified, an rvalue temporary can
-				// be bound to the parameter as long as in all other respects ....
-				// 
-				final CVQualifier cvq = getCVQualifier(cv1T1);
-				ok = cvq == CVQualifier.c;
+				ok = getCVQualifier(cv1T1) == CVQualifier.c;
 			} else {
 				ok= !exprIsLValue;
 			}
@@ -467,16 +459,13 @@ public class Conversions {
 							continue;
 						}
 					} else {
-						IType ptype= ptypes[0];
+						IType ptype= SemanticUtil.getNestedType(ptypes[0], TDEF);
 						// We don't need to check the implicit conversion sequence if the type is void
-						if (ptype instanceof ICPPBasicType && ((ICPPBasicType) ptype).getKind() == Kind.eVoid)
+						if (SemanticUtil.isVoidType(ptype)) 
 							continue;
-						if (ptypes.length > 1) {
-							IParameter[] pars = ctor.getParameters();
-							if (pars.length < 2 || !((ICPPParameter) pars[1]).hasDefaultValue())
-								continue;
-							
-						}
+						if (ctor.getRequiredArgumentCount() > 1) 
+							continue;
+						
 						c1= new FunctionCost(ctor, checkImplicitConversionSequence(ptype, source, sourceIsLValue, UDCMode.noUDC, false));
 					}
 					int cmp= c1.compareTo(null, cost1);
@@ -868,7 +857,7 @@ public class Conversions {
 				// 4.10-2 an rvalue of type "pointer to cv T", where T is an object type can be
 				// converted to an rvalue of type "pointer to cv void"
 				IType tgtPtrTgt= getNestedType(tgtPtr.getType(), TDEF | CVTYPE | REF);
-				if (tgtPtrTgt instanceof IBasicType && ((IBasicType) tgtPtrTgt).getKind() == Kind.eVoid) {
+				if (SemanticUtil.isVoidType(tgtPtrTgt)) {
 					cost.setRank(Rank.CONVERSION);
 					cost.setInheritanceDistance(Short.MAX_VALUE); // mstodo add distance to last base class
 					CVQualifier cv= getCVQualifier(srcPtr.getType());

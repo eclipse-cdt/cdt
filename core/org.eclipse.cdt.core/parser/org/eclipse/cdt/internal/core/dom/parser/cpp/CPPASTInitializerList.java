@@ -13,17 +13,18 @@ package org.eclipse.cdt.internal.core.dom.parser.cpp;
 
 import org.eclipse.cdt.core.dom.ast.ASTVisitor;
 import org.eclipse.cdt.core.dom.ast.IASTInitializer;
-import org.eclipse.cdt.core.dom.ast.IASTInitializerList;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTInitializerList;
 import org.eclipse.cdt.core.parser.util.ArrayUtil;
 import org.eclipse.cdt.internal.core.dom.parser.ASTNode;
 
 /**
  * e.g.: int a[]= {1,2,3};
  */
-public class CPPASTInitializerList extends ASTNode implements IASTInitializerList {
+public class CPPASTInitializerList extends ASTNode implements ICPPASTInitializerList {
     private IASTInitializer [] initializers = null;
     private int initializersPos=-1;
     private int actualLength;
+	private boolean fIsPackExpansion;
     
 	public CPPASTInitializerList copy() {
 		CPPASTInitializerList copy = new CPPASTInitializerList();
@@ -31,6 +32,7 @@ public class CPPASTInitializerList extends ASTNode implements IASTInitializerLis
 			copy.addInitializer(initializer == null ? null : initializer.copy());
 		copy.setOffsetAndLength(this);
 		copy.actualLength= getSize();
+		copy.fIsPackExpansion= fIsPackExpansion;
 		return copy;
 	}
 	
@@ -80,5 +82,14 @@ public class CPPASTInitializerList extends ASTNode implements IASTInitializerLis
 		}
         return true;
     }
+    
+	public boolean isPackExpansion() {
+		return fIsPackExpansion;
+	}
+
+	public void setIsPackExpansion(boolean val) {
+		assertNotFrozen();
+		fIsPackExpansion= val;
+	}
 
 }

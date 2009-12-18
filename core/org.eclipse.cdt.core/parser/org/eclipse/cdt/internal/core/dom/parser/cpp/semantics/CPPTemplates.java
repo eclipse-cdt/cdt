@@ -74,6 +74,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunction;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunctionTemplate;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunctionType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPMethod;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPParameterPackType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPPointerToMemberType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPReferenceType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPScope;
@@ -119,6 +120,7 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPFunctionType;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPMethodInstance;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPMethodSpecialization;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPMethodTemplateSpecialization;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPParameterPackType;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPPointerToMemberType;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPPointerType;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPReferenceType;
@@ -400,8 +402,13 @@ public class CPPTemplates {
 		for (int i = 0; i < templateParameters.length; i++) {
 			final ICPPTemplateParameter tp = templateParameters[i];
 			if (tp instanceof IType) {
-				args[i] = new CPPTemplateArgument((IType) tp);
+				IType t= (IType) tp;
+				if (tp.isParameterPack()) {
+					t= new CPPParameterPackType(t);
+				}
+				args[i] = new CPPTemplateArgument(t);
 			} else if (tp instanceof ICPPTemplateNonTypeParameter) {
+				// Non-type template parameter pack already has type 'ICPPParameterPackType'
 				final ICPPTemplateNonTypeParameter nttp = (ICPPTemplateNonTypeParameter) tp;
 				args[i] = new CPPTemplateArgument(Value.create(nttp), nttp.getType());
 			} else {
@@ -490,15 +497,15 @@ public class CPPTemplates {
 		return (binding instanceof ICPPTemplateDefinition) ? (ICPPTemplateDefinition) binding : null;
 	}
 
-	public static IBinding createBinding(ICPPASTTemplateParameter templateParameter) {
-    	if (templateParameter instanceof ICPPASTSimpleTypeTemplateParameter) {
-    		return new CPPTemplateTypeParameter(((ICPPASTSimpleTypeTemplateParameter) templateParameter).getName());
+	public static IBinding createBinding(ICPPASTTemplateParameter tp) {
+		if (tp instanceof ICPPASTSimpleTypeTemplateParameter) {
+    		return new CPPTemplateTypeParameter(((ICPPASTSimpleTypeTemplateParameter) tp).getName(), tp.isParameterPack());
     	} 
-    	if (templateParameter instanceof ICPPASTTemplatedTypeTemplateParameter) {
-        	return new CPPTemplateTemplateParameter(((ICPPASTTemplatedTypeTemplateParameter) templateParameter).getName());
+    	if (tp instanceof ICPPASTTemplatedTypeTemplateParameter) {
+        	return new CPPTemplateTemplateParameter(((ICPPASTTemplatedTypeTemplateParameter) tp).getName(), tp.isParameterPack());
     	}
-    	assert templateParameter instanceof ICPPASTParameterDeclaration;
-    	final IASTDeclarator dtor = ((ICPPASTParameterDeclaration) templateParameter).getDeclarator();
+    	assert tp instanceof ICPPASTParameterDeclaration;
+    	final IASTDeclarator dtor = ((ICPPASTParameterDeclaration) tp).getDeclarator();
     	return new CPPTemplateNonTypeParameter(ASTQueries.findInnermostDeclarator(dtor).getName());
 	}
 	
@@ -708,15 +715,15 @@ public class CPPTemplates {
 		
 		ICPPTemplateInstance instance = null;
 		if (template instanceof ICPPClassType) {
-			instance = new CPPClassInstance(owner, (ICPPClassType) template, tpMap, args);
+			instance = new CPPClassInstance((ICPPClassType) template, owner, tpMap, args);
 		} else if (owner instanceof ICPPClassType && template instanceof ICPPMethod) {
 			if (template instanceof ICPPConstructor) {
-				instance = new CPPConstructorInstance((ICPPClassType) owner, (ICPPConstructor) template, tpMap, args);
+				instance = new CPPConstructorInstance((ICPPConstructor) template, (ICPPClassType) owner, tpMap, args);
 			} else {
-				instance = new CPPMethodInstance((ICPPClassType) owner, (ICPPMethod) template, tpMap, args);
+				instance = new CPPMethodInstance((ICPPMethod) template, (ICPPClassType) owner, tpMap, args);
 			}
 		} else if (template instanceof ICPPFunction) {
-			instance = new CPPFunctionInstance(owner, (ICPPFunction) template, tpMap, args);
+			instance = new CPPFunctionInstance((ICPPFunction) template, owner, tpMap, args);
 		}
 		return instance;
 	}
@@ -739,17 +746,17 @@ public class CPPTemplates {
 			spec = new CPPFieldSpecialization(decl, owner, tpMap);
 		} else if (decl instanceof ICPPFunctionTemplate) {
 			if (decl instanceof ICPPConstructor)
-				spec = new CPPConstructorTemplateSpecialization(decl, owner, tpMap);
+				spec = new CPPConstructorTemplateSpecialization((ICPPConstructor) decl, owner, tpMap);
 			else if (decl instanceof ICPPMethod)
-				spec = new CPPMethodTemplateSpecialization(decl, owner, tpMap);
+				spec = new CPPMethodTemplateSpecialization((ICPPMethod) decl, owner, tpMap);
 			else
-				spec = new CPPFunctionTemplateSpecialization(decl, owner, tpMap);
+				spec = new CPPFunctionTemplateSpecialization((ICPPFunctionTemplate) decl, owner, tpMap);
 		} else if (decl instanceof ICPPConstructor) {
-			spec = new CPPConstructorSpecialization(decl, owner, tpMap);
+			spec = new CPPConstructorSpecialization((ICPPConstructor) decl, owner, tpMap);
 		} else if (decl instanceof ICPPMethod) {
-			spec = new CPPMethodSpecialization(decl, owner, tpMap);
+			spec = new CPPMethodSpecialization((ICPPMethod) decl, owner, tpMap);
 		} else if (decl instanceof ICPPFunction) {
-			spec = new CPPFunctionSpecialization(decl, owner, tpMap);
+			spec = new CPPFunctionSpecialization((ICPPFunction) decl, owner, tpMap);
 		} else if (decl instanceof ITypedef) {
 		    spec = new CPPTypedefSpecialization(decl, owner, tpMap);
 		} else if (decl instanceof IEnumeration || decl instanceof IEnumerator) {
@@ -815,7 +822,7 @@ public class CPPTemplates {
 				if (ret == r && params == ps) {
 					return type;
 				}
-				return new CPPFunctionType(ret, params, ft.isConst(), ft.isVolatile());
+				return new CPPFunctionType(ret, params, ft.isConst(), ft.isVolatile(), ft.takesVarArgs());
 			} 
 
 			if (type instanceof ICPPTemplateParameter) {
@@ -2105,7 +2112,16 @@ public class CPPTemplates {
 				if (arg.isNonTypeValue())
 					return false;
 				IType argType= arg.getTypeValue();
-				if (argType == null || !argType.isSameType((IType) par))
+				if (argType == null)
+					return false;
+				if (par.isParameterPack()) {
+					if (!(argType instanceof ICPPParameterPackType))
+						return false;
+					argType= ((ICPPParameterPackType) argType).getType();
+					if (argType == null)
+						return false;
+				}
+				if (!argType.isSameType((IType) par)) 
 					return false;
 			} else {
 				if (arg.isTypeValue())

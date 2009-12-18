@@ -6,7 +6,7 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *    QNX - Initial API and implementation
+ *    Bryan Wilkinson (QNX) - Initial API and implementation
  *    Markus Schorn (Wind River Systems)
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.pdom.dom.cpp;
@@ -25,8 +25,7 @@ import org.eclipse.cdt.internal.core.pdom.dom.c.PDOMCAnnotation;
 import org.eclipse.core.runtime.CoreException;
 
 /**
- * @author Bryan Wilkinson
- * 
+ * Template for a method.
  */
 class PDOMCPPMethodTemplate extends PDOMCPPFunctionTemplate implements ICPPMethod {
 
@@ -115,7 +114,7 @@ class PDOMCPPMethodTemplate extends PDOMCPPFunctionTemplate implements ICPPMetho
 	}
 	
 	@Override
-	public boolean isExtern() throws DOMException {
+	public boolean isExtern() {
 		// ISO/IEC 14882:2003 9.2.6
 		return false;
 	}
@@ -126,18 +125,18 @@ class PDOMCPPMethodTemplate extends PDOMCPPFunctionTemplate implements ICPPMetho
 	}
 
 	@Override
-	public boolean isAuto() throws DOMException {
+	public boolean isAuto() {
 		// ISO/IEC 14882:2003 9.2.6
 		return false;
 	}
 
 	@Override
-	public boolean isRegister() throws DOMException {
+	public boolean isRegister() {
 		// ISO/IEC 14882:2003 9.2.6
 		return false;
 	}
 
-	public boolean isPureVirtual() throws DOMException {
+	public boolean isPureVirtual() {
 		return false;
 	}
 }

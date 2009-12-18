@@ -28,4 +28,10 @@ public interface ICPPParameter extends IParameter, ICPPVariable {
 	 * if there is a default value or not.
 	 */
 	public boolean hasDefaultValue();
+
+	/**
+	 * Returns whether this parameter is a parameter pack.
+	 * @since 5.2
+	 */
+	public boolean isParameterPack();
 }

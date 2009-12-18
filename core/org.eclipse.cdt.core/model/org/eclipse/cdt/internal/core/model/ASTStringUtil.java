@@ -44,6 +44,7 @@ import org.eclipse.cdt.core.dom.ast.c.ICASTPointer;
 import org.eclipse.cdt.core.dom.ast.c.ICASTSimpleDeclSpecifier;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCompositeTypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTConstructorInitializer;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTDeclarator;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTElaboratedTypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTFunctionDeclarator;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTParameterDeclaration;
@@ -55,12 +56,13 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTSimpleTypeTemplateParameter;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTemplateId;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTemplateParameter;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTemplatedTypeTemplateParameter;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTypeId;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTypenameExpression;
 import org.eclipse.cdt.core.dom.ast.gnu.c.ICASTKnRFunctionDeclarator;
 import org.eclipse.cdt.core.dom.ast.gnu.cpp.IGPPASTPointer;
 import org.eclipse.cdt.core.dom.ast.gnu.cpp.IGPPASTSimpleDeclSpecifier;
 import org.eclipse.cdt.core.parser.Keywords;
-import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPVisitor;
+import org.eclipse.cdt.internal.core.dom.parser.ASTQueries;
 
 
 /**
@@ -129,7 +131,7 @@ public class ASTStringUtil {
 	 */
 	public static String getReturnTypeString(IASTDeclSpecifier declSpecifier, IASTFunctionDeclarator fdecl) {
 		final StringBuilder buffer= new StringBuilder();
-		final IASTDeclarator declarator= CPPVisitor.findOutermostDeclarator(fdecl);
+		final IASTDeclarator declarator= ASTQueries.findOutermostDeclarator(fdecl);
 		appendDeclarationString(buffer, declSpecifier, declarator, fdecl);
 		return trimRight(buffer).toString();
 	}
@@ -273,6 +275,8 @@ public class ASTStringUtil {
 					|| declarator instanceof IASTFunctionDeclarator
 					|| declarator instanceof IASTFieldDeclarator;
 				appendDeclaratorString(buffer, nestedDeclarator, protectPointers, returnTypeOf);
+			} else if (declarator instanceof ICPPASTDeclarator && ((ICPPASTDeclarator) declarator).declaresParameterPack()) {
+				buffer.append(Keywords.cpELLIPSIS);
 			}
 
 			if (declarator instanceof IASTArrayDeclarator) {
@@ -359,6 +363,8 @@ public class ASTStringUtil {
 	private static StringBuilder appendTypeIdString(StringBuilder buffer, IASTTypeId typeId) {
 		appendDeclSpecifierString(buffer, typeId.getDeclSpecifier());
 		appendDeclaratorString(buffer, typeId.getAbstractDeclarator(), false, null);
+		if (typeId instanceof ICPPASTTypeId && ((ICPPASTTypeId) typeId).isPackExpansion())
+			buffer.append(Keywords.cpELLIPSIS);
 		return buffer;
 	}
 

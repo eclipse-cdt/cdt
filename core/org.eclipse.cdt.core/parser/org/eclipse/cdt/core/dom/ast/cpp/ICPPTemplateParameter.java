@@ -62,4 +62,10 @@ public interface ICPPTemplateParameter extends ICPPBinding {
 	 * @since 5.1
 	 */
 	ICPPTemplateArgument getDefaultValue();
+	
+	/**
+	 * Returns whether this template parameter is a parameter pack.
+	 * @since 5.2
+	 */
+	boolean isParameterPack();
 }

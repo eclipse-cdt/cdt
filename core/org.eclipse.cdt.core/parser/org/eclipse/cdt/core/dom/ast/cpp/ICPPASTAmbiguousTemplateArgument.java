@@ -6,10 +6,12 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- * Andrew Ferguson (Symbian) - Initial Implementation
+ *    Andrew Ferguson (Symbian) - Initial Implementation
+ *    Markus Schorn (Wind River Systems)
  *******************************************************************************/
 package org.eclipse.cdt.core.dom.ast.cpp;
 
+import org.eclipse.cdt.core.dom.ast.IASTExpression;
 import org.eclipse.cdt.core.dom.ast.IASTIdExpression;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IASTTypeId;
@@ -25,14 +27,21 @@ public interface ICPPASTAmbiguousTemplateArgument extends IASTNode {
 	/**
 	 * Add an partial parse tree that could be a suitable subtree representing
 	 * the template argument
-	 * @param idExpression a non-null id-expression
+	 * @param idExpression a non-null id-expression or a pack expansion of an id-expression
+	 * @since 5.2
 	 */
-	public void addIdExpression(IASTIdExpression idExpression);
-	
+	public void addIdExpression(IASTExpression idExpression);
+
 	/**
 	 * Add an partial parse tree that could be a suitable subtree representing
 	 * the template argument
 	 * @param typeId a non-null type-id
 	 */
 	public void addTypeId(IASTTypeId typeId);
+	
+	/**
+	 * @deprecated Replaced by {@link #addIdExpression(IASTExpression)}.
+	 */
+	@Deprecated
+	public void addIdExpression(IASTIdExpression idExpression);
 }

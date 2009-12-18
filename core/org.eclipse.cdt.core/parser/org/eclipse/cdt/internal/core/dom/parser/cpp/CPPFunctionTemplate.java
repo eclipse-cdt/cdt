@@ -103,6 +103,12 @@ public class CPPFunctionTemplate extends CPPTemplateDefinition
 		public IType[] getExceptionSpecification() throws DOMException {
 			throw new DOMException( this );
 		}
+		public int getRequiredArgumentCount() throws DOMException {
+			throw new DOMException( this );
+		}
+		public boolean hasParameterPack() {
+			return false;
+		}
 	}
 	
 	protected ICPPFunctionType type = null;
@@ -174,6 +180,16 @@ public class CPPFunctionTemplate extends CPPTemplateDefinition
 			return result;
 		}
 		return CPPBuiltinParameter.createParameterList(getType());
+	}
+
+	
+	public int getRequiredArgumentCount() throws DOMException {
+		return CPPFunction.getRequiredArgumentCount(getParameters());
+	}
+
+	public boolean hasParameterPack() {
+		ICPPParameter[] pars= getParameters();
+		return pars.length > 0 && pars[pars.length-1].isParameterPack();
 	}
 
 	public IScope getFunctionScope() {

@@ -20,6 +20,7 @@ import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
 import org.eclipse.cdt.core.dom.ast.IArrayType;
+import org.eclipse.cdt.core.dom.ast.IBasicType;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.IFunctionType;
 import org.eclipse.cdt.core.dom.ast.IPointerType;
@@ -27,14 +28,17 @@ import org.eclipse.cdt.core.dom.ast.IProblemBinding;
 import org.eclipse.cdt.core.dom.ast.IQualifierType;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.ITypedef;
+import org.eclipse.cdt.core.dom.ast.IBasicType.Kind;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPBase;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunctionType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPMethod;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPNamespace;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPParameterPackType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPPointerToMemberType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPReferenceType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateArgument;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateParameter;
 import org.eclipse.cdt.core.index.IIndexBinding;
 import org.eclipse.cdt.core.parser.Keywords;
 import org.eclipse.cdt.core.parser.util.ArrayUtil;
@@ -49,6 +53,7 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPPointerType;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPQualifierType;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPTemplateArgument;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPDeferredClassInstance;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPUnknownBinding;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.OverloadableOperator;
 
 /**
@@ -288,6 +293,7 @@ public class SemanticUtil {
 					return replaceNestedType((ITypeContainer) rt, newNested);
 				}
 			}
+			// Pack expansion types are dependent types, there is no need to descend into those.
 			if (t == null)
 				return type;
 			
@@ -310,7 +316,7 @@ public class SemanticUtil {
 			if (ret == r && params == ps) {
 				return type;
 			}
-			return new CPPFunctionType(ret, params, ft.isConst(), ft.isVolatile());
+			return new CPPFunctionType(ret, params, ft.isConst(), ft.isVolatile(), ft.takesVarArgs());
 		} 
 
 		if (type instanceof ITypedef) {
@@ -371,6 +377,50 @@ public class SemanticUtil {
 		return type;
 	}
 	
+	public static boolean containsParameterPack(IType type) {
+		while (true) {
+			if (type instanceof ICPPTemplateParameter) {
+				return ((ICPPTemplateParameter) type).isParameterPack();
+			} else if (type instanceof ICPPDeferredClassInstance) {
+				// mstodo check the deferred arguments.
+				return false;
+			} else if (type instanceof ICPPUnknownBinding) {
+				try {
+					IBinding owner= ((ICPPUnknownBinding) type).getOwner();
+					if (owner instanceof IType) {
+						type= (IType) owner;
+					} else {
+						return false;
+					}
+				} catch (DOMException e) {
+					return false;
+				}
+			} else if (type instanceof IFunctionType) {
+				final ICPPFunctionType ft = (ICPPFunctionType) type;
+				final IType r = ft.getReturnType();
+				if (containsParameterPack(r))
+					return true;
+				final IType[] ps = ft.getParameterTypes();
+				for (IType p : ps) {
+					if (containsParameterPack(p))
+						return true;
+				}
+				
+			} else if (type instanceof ICPPParameterPackType) {
+				// A pack expansion expands all packs.
+				return false;
+			} else if (type instanceof IArrayType) {
+				final IArrayType atype= (IArrayType) type;
+				// mstodo check array size
+				type= atype.getType();
+			} else if (type instanceof ITypeContainer) {
+				type= ((ITypeContainer) type).getType();
+			} else {
+				return false;
+			}
+		}
+	}
+
 	public static IType mapToAST(IType type, IASTNode node) {
 		if (type instanceof IFunctionType) {
 			final ICPPFunctionType ft = (ICPPFunctionType) type;
@@ -379,7 +429,7 @@ public class SemanticUtil {
 			if (ret == r) {
 				return type;
 			}
-			return new CPPFunctionType(ret, ft.getParameterTypes(), ft.isConst(), ft.isVolatile());
+			return new CPPFunctionType(ret, ft.getParameterTypes(), ft.isConst(), ft.isVolatile(), ft.takesVarArgs());
 		}
 		if (type instanceof ITypeContainer) {
 			final ITypeContainer tc = (ITypeContainer) type;
@@ -453,30 +503,6 @@ public class SemanticUtil {
 		return arg;
 	}
 
-	/**
-	 * Adjusts the parameter type according to 8.3.5-3:
-	 * cv-qualifiers are deleted, arrays and function types are converted to pointers.
-	 */
-	public static IType adjustParameterType(final IType pt, boolean forFunctionType) {
-		// bug 239975
-		IType t= SemanticUtil.getNestedType(pt, TDEF);
-		if (t instanceof IArrayType) {
-			IArrayType at = (IArrayType) t;
-			return new CPPPointerType(at.getType());
-		}
-		if (t instanceof IFunctionType) {
-			return new CPPPointerType(pt);
-		}
-
-		// 8.3.5-3 
-		// Any cv-qualifier modifying a parameter type is deleted. The parameter type remains
-		// to be qualified.
-		if (forFunctionType && SemanticUtil.getCVQualifier(t) != CVQualifier._) {
-			return SemanticUtil.getNestedType(t, TDEF | ALLCVQ);
-		}
-		return pt;
-	}
-	
 	public static IType addQualifiers(IType baseType, boolean cnst, boolean vol) {
 		if (cnst || vol) {
 			if (baseType instanceof IQualifierType) {
@@ -547,6 +573,16 @@ public class SemanticUtil {
 			}
 		} catch (DOMException e) {
 			CCorePlugin.log(e);
+		}
+		return false;
+	}
+
+	public static boolean isVoidType(IType ptype) {
+		while (ptype instanceof ITypedef) {
+			ptype= ((ITypedef) ptype).getType();
+		}
+		if (ptype instanceof IBasicType) {
+			return ((IBasicType) ptype).getKind() == Kind.eVoid;
 		}
 		return false;
 	}

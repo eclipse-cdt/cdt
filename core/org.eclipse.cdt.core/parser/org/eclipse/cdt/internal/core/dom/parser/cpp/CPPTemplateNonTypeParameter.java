@@ -20,6 +20,8 @@ import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.IValue;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTParameterDeclaration;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPParameterPackType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateArgument;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateNonTypeParameter;
 import org.eclipse.cdt.internal.core.dom.parser.Value;
@@ -68,12 +70,21 @@ public class CPPTemplateNonTypeParameter extends CPPTemplateParameter implements
 	}
 
 	public IType getType() {
-		if( type == null ){
-			IASTName name = getPrimaryDeclaration();
-		    IASTDeclarator dtor = (IASTDeclarator) name.getParent();
-		    type = CPPVisitor.createType( dtor );
+		if (type == null) {
+			IASTNode parent= getPrimaryDeclaration().getParent();
+			while (parent != null) {
+				if (parent instanceof ICPPASTParameterDeclaration) {
+					type= CPPVisitor.createParameterType((ICPPASTParameterDeclaration) parent, true);
+					break;
+				}
+				parent= parent.getParent();
+			}
 		}
 		return type;
+	}
+
+	public boolean isParameterPack() {
+		return getType() instanceof ICPPParameterPackType;
 	}
 
 	public boolean isStatic() throws DOMException {

@@ -769,8 +769,7 @@ public class CodeFormatterVisitor extends CPPASTVisitor {
 				scribe.indent();
 			}
 			scribe.startNewLine();
-			for (int i = 0; i < memberDecls.length; i++) {
-				IASTDeclaration declaration = memberDecls[i];
+			for (IASTDeclaration declaration : memberDecls) {
 				declaration.accept(this);
 				scribe.startNewLine();
 			}
@@ -806,8 +805,7 @@ public class CodeFormatterVisitor extends CPPASTVisitor {
 				scribe.indent();
 			}
 			scribe.startNewLine();
-			for (int i = 0; i < memberDecls.length; i++) {
-				IASTDeclaration declaration = memberDecls[i];
+			for (IASTDeclaration declaration : memberDecls) {
 				declaration.accept(this);
 				scribe.startNewLine();
 			}
@@ -1036,8 +1034,8 @@ public class CodeFormatterVisitor extends CPPASTVisitor {
 
 		if (node instanceof ICPPASTFunctionWithTryBlock) {
 			ICPPASTCatchHandler[] catchHandlers= ((ICPPASTFunctionWithTryBlock)node).getCatchHandlers();
-			for (int i= 0; i < catchHandlers.length; i++) {
-				catchHandlers[i].accept(this);
+			for (ICPPASTCatchHandler catchHandler : catchHandlers) {
+				catchHandler.accept(this);
 				scribe.printTrailingComment();
 				scribe.startNewLine();
 			}
@@ -1137,8 +1135,7 @@ public class CodeFormatterVisitor extends CPPASTVisitor {
 	}
 
 	private void formatPointers(IASTPointerOperator[] pointers) {
-		for (int i = 0; i < pointers.length; i++) {
-			IASTPointerOperator pointer= pointers[i];
+		for (IASTPointerOperator pointer : pointers) {
 			if (scribe.printComment()) {
 				scribe.space();
 			}
@@ -1180,8 +1177,7 @@ public class CodeFormatterVisitor extends CPPASTVisitor {
 		scribe.startNewLine();
 		scribe.indent();
 		try {
-    		for (int i = 0; i < parameterDecls.length; i++) {
-    			IASTDeclaration declaration = parameterDecls[i];
+    		for (IASTDeclaration declaration : parameterDecls) {
     			declaration.accept(this);
     		}
 		} finally {
@@ -1202,8 +1198,8 @@ public class CodeFormatterVisitor extends CPPASTVisitor {
 	private int visit(IASTArrayDeclarator node) {
 		IASTArrayModifier[] arrayModifiers= node.getArrayModifiers();
 		if (arrayModifiers != null) {
-			for (int i = 0; i < arrayModifiers.length; i++) {
-				IASTArrayModifier arrayModifier = arrayModifiers[i];
+			for (IASTArrayModifier arrayModifier2 : arrayModifiers) {
+				IASTArrayModifier arrayModifier = arrayModifier2;
 				scribe.printNextToken(Token.tLBRACKET, preferences.insert_space_before_opening_bracket);
 				boolean emptyBrackets= arrayModifier.getConstantExpression() == null
 						&& !(arrayModifier instanceof ICASTArrayModifier);
@@ -1405,8 +1401,7 @@ public class CodeFormatterVisitor extends CPPASTVisitor {
 			scribe.indent();
 		}
 		scribe.startNewLine();
-		for (int i = 0; i < memberDecls.length; i++) {
-			IASTDeclaration declaration = memberDecls[i];
+		for (IASTDeclaration declaration : memberDecls) {
 			declaration.accept(this);
 			scribe.startNewLine();
 		}
@@ -1472,8 +1467,7 @@ public class CodeFormatterVisitor extends CPPASTVisitor {
 		}
 		IASTDeclaration[] memberDecls= node.getMembers();
 		scribe.startNewLine();
-		for (int i = 0; i < memberDecls.length; i++) {
-			IASTDeclaration declaration = memberDecls[i];
+		for (IASTDeclaration declaration : memberDecls) {
 			if (preferences.indent_body_declarations_compare_to_access_specifier) {
 				scribe.indent();
 			}
@@ -1729,8 +1723,8 @@ public class CodeFormatterVisitor extends CPPASTVisitor {
 		}
 		scribe.printTrailingComment();
 		ICPPASTCatchHandler[] catchHandlers= node.getCatchHandlers();
-		for (int i= 0; i < catchHandlers.length; i++) {
-			catchHandlers[i].accept(this);
+		for (ICPPASTCatchHandler catchHandler : catchHandlers) {
+			catchHandler.accept(this);
 			scribe.printTrailingComment();
 		}
 		return PROCESS_SKIP;
@@ -2032,6 +2026,14 @@ public class CodeFormatterVisitor extends CPPASTVisitor {
 			break;
 		case IASTUnaryExpression.op_sizeof:
 			scribe.printNextToken(Token.t_sizeof, scribe.printComment());
+			if (peekNextToken() != Token.tLPAREN) {
+				scribe.space();
+			}
+			operand.accept(this);
+			break;
+		case IASTUnaryExpression.op_sizeofParameterPack:
+			scribe.printNextToken(Token.t_sizeof, scribe.printComment());
+			scribe.printNextToken(Token.tELIPSE, scribe.printComment());
 			if (peekNextToken() != Token.tLPAREN) {
 				scribe.space();
 			}
@@ -3268,8 +3270,8 @@ public class CodeFormatterVisitor extends CPPASTVisitor {
 
 		IASTPreprocessorStatement[] preprocStmts = translationUnit.getAllPreprocessorStatements();
 
-		for (int i = 0; i < preprocStmts.length; i++) {
-			IASTPreprocessorStatement statement = preprocStmts[i];
+		for (IASTPreprocessorStatement preprocStmt : preprocStmts) {
+			IASTPreprocessorStatement statement = preprocStmt;
 			if (!statement.isPartOfTranslationUnitFile()) {
 				// preprocessor directive is from a different file
 				continue;

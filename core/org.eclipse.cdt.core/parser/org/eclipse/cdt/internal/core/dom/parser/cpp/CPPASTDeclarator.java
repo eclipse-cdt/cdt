@@ -24,6 +24,7 @@ import org.eclipse.cdt.core.dom.ast.IASTParameterDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTPointerOperator;
 import org.eclipse.cdt.core.dom.ast.IASTSimpleDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTTypeId;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTDeclarator;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTLinkageSpecification;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassScope;
 import org.eclipse.cdt.core.parser.util.ArrayUtil;
@@ -34,12 +35,12 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPVisitor;
 /**
  * C++ specific declarator.
  */
-public class CPPASTDeclarator extends ASTNode implements IASTDeclarator {
+public class CPPASTDeclarator extends ASTNode implements ICPPASTDeclarator {
     private IASTInitializer initializer;
     private IASTName name;
     private IASTDeclarator nested;
     private IASTPointerOperator[] pointerOps = null;
-    private int pointerOpsPos= -1;
+    private boolean isPackExpansion; 
    
     public CPPASTDeclarator() {
 	}
@@ -64,14 +65,19 @@ public class CPPASTDeclarator extends ASTNode implements IASTDeclarator {
     	copy.setName(name == null ? null : name.copy());
     	copy.setInitializer(initializer == null ? null : initializer.copy());
 		copy.setNestedDeclarator(nested == null ? null : nested.copy());
+		copy.isPackExpansion= isPackExpansion;
 		for(IASTPointerOperator pointer : getPointerOperators())
 			copy.addPointerOperator(pointer == null ? null : pointer.copy());
 		copy.setOffsetAndLength(this);
     }
     
+	public boolean declaresParameterPack() {
+		return isPackExpansion;
+	}
+
 	public IASTPointerOperator[] getPointerOperators() {
         if (pointerOps == null) return IASTPointerOperator.EMPTY_ARRAY;
-        pointerOps = (IASTPointerOperator[]) ArrayUtil.removeNullsAfter(IASTPointerOperator.class, pointerOps, pointerOpsPos);
+        pointerOps = (IASTPointerOperator[]) ArrayUtil.trim(IASTPointerOperator.class, pointerOps);
         return pointerOps;
     }
 
@@ -101,7 +107,7 @@ public class CPPASTDeclarator extends ASTNode implements IASTDeclarator {
     	if (operator != null) {
     		operator.setParent(this);
 			operator.setPropertyInParent(POINTER_OPERATOR);
-    		pointerOps = (IASTPointerOperator[]) ArrayUtil.append(IASTPointerOperator.class, pointerOps, ++pointerOpsPos, operator);
+    		pointerOps = (IASTPointerOperator[]) ArrayUtil.append(IASTPointerOperator.class, pointerOps, operator);
     	}
     }
 
@@ -122,8 +128,13 @@ public class CPPASTDeclarator extends ASTNode implements IASTDeclarator {
 			name.setPropertyInParent(DECLARATOR_NAME);
 		}
     }
+    
+    public void setDeclaresParameterPack(boolean val) {
+    	assertNotFrozen();
+    	isPackExpansion= val;
+	}
 
-    @Override
+	@Override
 	public boolean accept(ASTVisitor action) {
         if (action.shouldVisitDeclarators) {
 		    switch(action.visit(this)) {
@@ -133,9 +144,13 @@ public class CPPASTDeclarator extends ASTNode implements IASTDeclarator {
 	        }
 		}
         
-        for (int i = 0; i <= pointerOpsPos; i++) {
-            if (!pointerOps[i].accept(action))
-            	return false;
+        if (pointerOps != null) {
+        	for (IASTPointerOperator op : pointerOps) {
+        		if (op == null)
+        			break;
+                if (!op.accept(action))
+                	return false;
+        	}
         }
         
         if (nested == null && name != null) {

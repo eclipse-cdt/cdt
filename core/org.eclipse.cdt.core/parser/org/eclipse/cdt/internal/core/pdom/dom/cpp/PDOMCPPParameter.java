@@ -17,6 +17,7 @@ import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.IValue;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPParameter;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPParameterPackType;
 import org.eclipse.cdt.core.index.IIndexFile;
 import org.eclipse.cdt.core.parser.util.CharArrayUtils;
 import org.eclipse.cdt.internal.core.index.IIndexCPPBindingConstants;
@@ -79,7 +80,9 @@ class PDOMCPPParameter extends PDOMNamedNode implements ICPPParameter, IPDOMBind
 		// Bug 297438: Don't clear the property of having a default value.
 		if (newPar.hasDefaultValue()) {
 			db.putByte(record + FLAGS, FLAG_DEFAULT_VALUE);
-		}
+		} else if (newPar.isParameterPack()) {
+			db.putByte(record + FLAGS, (byte) 0);
+		} 
 		storeAnnotations(db, newPar);
 		
 		final char[] newName = newPar.getNameCharArray();
@@ -170,6 +173,10 @@ class PDOMCPPParameter extends PDOMNamedNode implements ICPPParameter, IPDOMBind
 
 	public boolean hasDefaultValue() {
 		return hasFlag(FLAG_DEFAULT_VALUE, false, FLAGS);
+	}
+
+	public boolean isParameterPack() {
+		return getType() instanceof ICPPParameterPackType;
 	}
 
 	private boolean hasFlag(byte flag, boolean defValue, int offset) {

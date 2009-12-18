@@ -7,6 +7,7 @@
  *
  * Contributors:
  *    John Camelon (IBM) - Initial API and implementation
+ *    Markus Schorn (Wind River Systems)
  *******************************************************************************/
 package org.eclipse.cdt.core.dom.ast.cpp;
 
@@ -19,10 +20,13 @@ import org.eclipse.cdt.core.dom.ast.IASTNode;
  * @noimplement This interface is not intended to be implemented by clients.
  */
 public interface ICPPASTTemplateParameter extends IASTNode {
-	/**
-	 * Constant
-	 */
 	public static final ICPPASTTemplateParameter[] EMPTY_TEMPLATEPARAMETER_ARRAY = new ICPPASTTemplateParameter[0];
+
+	/**
+	 * Returns whether this template parameter is a parameter pack.
+	 * @since 5.2
+	 */
+	public boolean isParameterPack();
 
 	/**
 	 * @since 5.1

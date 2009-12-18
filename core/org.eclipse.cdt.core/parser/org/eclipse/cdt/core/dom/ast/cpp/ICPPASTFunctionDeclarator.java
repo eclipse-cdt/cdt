@@ -21,7 +21,7 @@ import org.eclipse.cdt.core.dom.ast.IASTTypeId;
  * @noimplement This interface is not intended to be implemented by clients.
  * @noextend This interface is not intended to be extended by clients.
  */
-public interface ICPPASTFunctionDeclarator extends IASTStandardFunctionDeclarator {
+public interface ICPPASTFunctionDeclarator extends IASTStandardFunctionDeclarator, ICPPASTDeclarator {
 
 	/**
 	 * Used as return value for {@link #getExceptionSpecification()}.
@@ -66,6 +66,11 @@ public interface ICPPASTFunctionDeclarator extends IASTStandardFunctionDeclarato
 	 */
 	public void setPureVirtual(boolean isPureVirtual);
 
+	/**
+	 * @since 5.2
+	 */
+	public ICPPASTParameterDeclaration[] getParameters();
+	
 	/**
 	 * Returns an array of type-ids representing the exception specification. The return value
 	 * {@link #NO_EXCEPTION_SPECIFICATION} indicates that no exceptions are specified, whereas

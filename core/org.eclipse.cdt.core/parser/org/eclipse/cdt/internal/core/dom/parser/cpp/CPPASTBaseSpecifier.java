@@ -1,12 +1,12 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2008 IBM Corporation and others.
+ * Copyright (c) 2004, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *    IBM - Initial API and implementation
+ *    John Camelon (IBM) - Initial API and implementation
  *    Bryan Wilkinson (QNX)
  *    Markus Schorn (Wind River Systems)
  *******************************************************************************/
@@ -27,14 +27,14 @@ import org.eclipse.cdt.internal.core.dom.parser.ASTNode;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPSemantics;
 
 /**
- * @author jcamelon
+ * Base class specifier
  */
-public class CPPASTBaseSpecifier extends ASTNode implements
-        ICPPASTBaseSpecifier, IASTCompletionContext {
+public class CPPASTBaseSpecifier extends ASTNode implements ICPPASTBaseSpecifier, IASTCompletionContext {
 
     private boolean isVirtual;
     private int visibility;
     private IASTName name;
+	private boolean fIsPackExpansion;
 
     
     public CPPASTBaseSpecifier() {
@@ -54,6 +54,7 @@ public class CPPASTBaseSpecifier extends ASTNode implements
 		CPPASTBaseSpecifier copy = new CPPASTBaseSpecifier(name == null ? null : name.copy());
 		copy.isVirtual = isVirtual;
 		copy.visibility = visibility;
+		copy.fIsPackExpansion= fIsPackExpansion;
 		copy.setOffsetAndLength(this);
 		return copy;
 	}
@@ -129,9 +130,9 @@ public class CPPASTBaseSpecifier extends ASTNode implements
 			}
 		}
 
-		for (int i = 0; i < bindings.length; i++) {
-			if (bindings[i] instanceof ICPPClassType) {
-				ICPPClassType base = (ICPPClassType) bindings[i];
+		for (IBinding binding : bindings) {
+			if (binding instanceof ICPPClassType) {
+				ICPPClassType base = (ICPPClassType) binding;
 				try {
 					int key = base.getKey();
 					if (key == ICPPClassType.k_class &&
@@ -144,5 +145,14 @@ public class CPPASTBaseSpecifier extends ASTNode implements
 		}
 
 		return filtered.toArray(new IBinding[filtered.size()]);
+	}
+
+	public boolean isPackExpansion() {
+		return fIsPackExpansion;
+	}
+
+	public void setIsPackExpansion(boolean val) {
+		assertNotFrozen();
+		fIsPackExpansion= val;
 	}
 }

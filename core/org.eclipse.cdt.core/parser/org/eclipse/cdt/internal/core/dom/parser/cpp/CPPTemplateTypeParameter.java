@@ -29,9 +29,15 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPVisitor;
 public class CPPTemplateTypeParameter extends CPPTemplateParameter implements
 		ICPPTemplateTypeParameter, ICPPUnknownType, ICPPUnknownBinding {
 	private ICPPScope unknownScope;
+	private final boolean fIsParameterPack;
 
-	public CPPTemplateTypeParameter(IASTName name) {
+	public CPPTemplateTypeParameter(IASTName name, boolean isPack) {
 		super(name);
+		fIsParameterPack= isPack;
+	}
+
+	public final boolean isParameterPack() {
+		return fIsParameterPack;
 	}
 
 	public ICPPScope asScope() {

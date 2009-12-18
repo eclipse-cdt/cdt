@@ -7,12 +7,12 @@
  *
  * Contributors:
  *    Doug Schaefer (IBM) - Initial API and implementation
+ *    Markus Schorn (Wind River Systems)
  *******************************************************************************/
 package org.eclipse.cdt.core.dom.ast.cpp;
 
 import org.eclipse.cdt.core.dom.ast.ASTNodeProperty;
 import org.eclipse.cdt.core.dom.ast.IASTExpression;
-import org.eclipse.cdt.core.dom.ast.IASTInitializer;
 
 /**
  * This is an initializer that is a call to the constructor for the declarator.
@@ -20,7 +20,7 @@ import org.eclipse.cdt.core.dom.ast.IASTInitializer;
  * @noextend This interface is not intended to be extended by clients.
  * @noimplement This interface is not intended to be implemented by clients.
  */
-public interface ICPPASTConstructorInitializer extends IASTInitializer {
+public interface ICPPASTConstructorInitializer extends ICPPASTInitializer {
 
 	/**
 	 * <code>EXPRESSION</code> represents the expression being conusmed in a

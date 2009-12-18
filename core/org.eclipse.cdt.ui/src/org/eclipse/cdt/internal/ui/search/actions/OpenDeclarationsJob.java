@@ -54,7 +54,6 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTemplateDeclaration;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTranslationUnit;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunction;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPMethod;
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPParameter;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPSpecialization;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateParameter;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPUsingDeclaration;
@@ -80,6 +79,7 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPUnknownBinding;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPSemantics;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPVisitor;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.LookupData;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.SemanticUtil;
 import org.eclipse.cdt.internal.core.index.IIndexFragmentName;
 import org.eclipse.cdt.internal.core.model.ASTCache.ASTRunnable;
 import org.eclipse.cdt.internal.core.model.ext.CElementHandleFactory;
@@ -715,16 +715,18 @@ class OpenDeclarationsJob extends Job implements ASTRunnable {
 				if (binding instanceof ICPPFunction) {
 					ICPPFunction f= (ICPPFunction) binding;
 					try {
-						IParameter[] pars= f.getParameters();
-						if (pars.length < funcArgCount) {
-							if (!f.takesVarArgs()) {
-								iterator.remove();
-								result.add(binding);
-								continue;
+						if (f.getRequiredArgumentCount() > funcArgCount) {
+							iterator.remove();
+							result.add(binding);
+							continue;
+						}
+						if (!f.takesVarArgs() && !f.hasParameterPack()) {
+							final IType[] parameterTypes = f.getType().getParameterTypes();
+							int maxArgs= parameterTypes.length;
+							if (maxArgs == 1 && SemanticUtil.isVoidType(parameterTypes[0])) {
+								maxArgs= 0;
 							}
-						} else if (pars.length > funcArgCount) {
-							IParameter p= pars[funcArgCount];
-							if (!(p instanceof ICPPParameter) || !((ICPPParameter) p).hasDefaultValue()) {
+							if (maxArgs < funcArgCount) {
 								iterator.remove();
 								result.add(binding);
 								continue;

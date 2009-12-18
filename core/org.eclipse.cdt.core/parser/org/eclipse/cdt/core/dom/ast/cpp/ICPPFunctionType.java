@@ -22,15 +22,6 @@ import org.eclipse.cdt.core.dom.ast.IPointerType;
 public interface ICPPFunctionType extends IFunctionType {
 
 	/**
-	 * Returns type of implicit <code>this</code>. parameter, or null, if the function
-	 * is not a class method or a static method.
-	 * @deprecated function types don't relate to this pointers at all.
-	 * @noreference This method is not intended to be referenced by clients.
-	 */
-	@Deprecated
-	public IPointerType getThisType();
-	
-	/**
 	 * Returns <code>true</code> for a constant method
 	 */
 	public boolean isConst();
@@ -39,4 +30,18 @@ public interface ICPPFunctionType extends IFunctionType {
 	 * Returns <code>true</code> for a volatile method
 	 */
 	public boolean isVolatile();
+	
+	/**
+	 * Whether the function type takes variable number of arguments.
+	 * @since 5.2
+	 */
+	public boolean takesVarArgs();
+	
+	
+	/**
+	 * @deprecated function types don't relate to this pointers at all.
+	 * @noreference This method is not intended to be referenced by clients and should be removed.
+	 */
+	@Deprecated
+	public IPointerType getThisType();
 }

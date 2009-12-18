@@ -43,6 +43,8 @@ class PDOMCPPTemplateTypeParameter extends PDOMCPPBinding implements IPDOMMember
 		ICPPTemplateTypeParameter, ICPPUnknownBinding, ICPPUnknownType, IIndexType,
 		IPDOMCPPTemplateParameter {
 
+	private static final int PACK_BIT = 1 << 31;
+
 	private static final int DEFAULT_TYPE = PDOMCPPBinding.RECORD_SIZE;	
 	private static final int MEMBERLIST = DEFAULT_TYPE + Database.TYPE_SIZE;
 	private static final int PARAMETERID= MEMBERLIST + Database.PTR_SIZE;
@@ -57,7 +59,11 @@ class PDOMCPPTemplateTypeParameter extends PDOMCPPBinding implements IPDOMMember
 		super(linkage, parent, param.getNameCharArray());
 		
 		final Database db = getDB();
-		db.putInt(record + PARAMETERID, param.getParameterID());
+		int id= param.getParameterID();
+		if (param.isParameterPack()) {
+			id |= PACK_BIT;
+		}
+		db.putInt(record + PARAMETERID, id);
 	}
 
 	public PDOMCPPTemplateTypeParameter(PDOMLinkage linkage, long bindingRecord) {
@@ -75,18 +81,22 @@ class PDOMCPPTemplateTypeParameter extends PDOMCPPBinding implements IPDOMMember
 	}
 	
 	public short getParameterPosition() {
-		readParamID();
-		return (short) fCachedParamID;
+		return (short) getParameterID();
 	}
 	
 	public short getTemplateNestingLevel() {
 		readParamID();
-		return (short)(fCachedParamID >> 16);
+		return (short)(getParameterID() >> 16);
 	}
 	
+	public boolean isParameterPack() {
+		readParamID();
+		return (fCachedParamID & PACK_BIT) != 0;
+	}
+
 	public int getParameterID() {
 		readParamID();
-		return fCachedParamID;
+		return fCachedParamID & ~PACK_BIT;
 	}
 	
 	private void readParamID() {
@@ -96,7 +106,7 @@ class PDOMCPPTemplateTypeParameter extends PDOMCPPBinding implements IPDOMMember
 				fCachedParamID= db.getInt(record + PARAMETERID);
 			} catch (CoreException e) {
 				CCorePlugin.log(e);
-				fCachedParamID= -2;
+				fCachedParamID= Integer.MAX_VALUE;
 			}
 		}
 	}

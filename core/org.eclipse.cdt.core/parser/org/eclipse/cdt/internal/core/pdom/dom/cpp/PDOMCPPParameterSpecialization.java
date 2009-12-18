@@ -19,6 +19,7 @@ import org.eclipse.cdt.core.dom.ast.IValue;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunction;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunctionType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPParameter;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPParameterPackType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPSpecialization;
 import org.eclipse.cdt.internal.core.index.IIndexCPPBindingConstants;
 import org.eclipse.cdt.internal.core.pdom.db.Database;
@@ -41,9 +42,9 @@ class PDOMCPPParameterSpecialization extends PDOMCPPSpecialization implements IC
 		fType= t;
 	}
 		
-	public PDOMCPPParameterSpecialization(PDOMLinkage linkage, PDOMCPPFunctionSpecialization parent, IParameter param,
-			PDOMCPPParameter specialized, PDOMCPPParameterSpecialization next) throws CoreException {
-		super(linkage, parent, (ICPPSpecialization) param, specialized);
+	public PDOMCPPParameterSpecialization(PDOMLinkage linkage, PDOMCPPFunctionSpecialization parent, ICPPParameter astParam,
+			PDOMCPPParameter original, PDOMCPPParameterSpecialization next) throws CoreException {
+		super(linkage, parent, (ICPPSpecialization) astParam, original);
 		fType= null;  // this constructor is used for adding parameters to the database, only.
 		
 		Database db = getDB();
@@ -58,11 +59,6 @@ class PDOMCPPParameterSpecialization extends PDOMCPPSpecialization implements IC
 	@Override
 	public int getNodeType() {
 		return IIndexCPPBindingConstants.CPP_PARAMETER_SPECIALIZATION;
-	}
-
-	public PDOMCPPParameterSpecialization getNextParameter(IType t) throws CoreException {
-		long rec = getNextPtr();
-		return rec != 0 ? new PDOMCPPParameterSpecialization(getLinkage(), rec, t) : null;
 	}
 
 	long getNextPtr() throws CoreException {
@@ -114,6 +110,10 @@ class PDOMCPPParameterSpecialization extends PDOMCPPSpecialization implements IC
 	
 	public boolean hasDefaultValue() {
 		return getParameter().hasDefaultValue();
+	}
+
+	public boolean isParameterPack() {
+		return getType() instanceof ICPPParameterPackType;
 	}
 
 	public boolean isAuto() throws DOMException {

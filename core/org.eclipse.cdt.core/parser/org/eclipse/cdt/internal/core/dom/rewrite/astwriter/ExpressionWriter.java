@@ -70,6 +70,7 @@ public class ExpressionWriter extends NodeWriter{
 	private static final String TYPEID_OP = "typeid ("; //$NON-NLS-1$
 	private static final String OPEN_BRACKET_OP = "("; //$NON-NLS-1$
 	private static final String SIZEOF_OP = "sizeof "; //$NON-NLS-1$
+	private static final String SIZEOF_PARAMETER_PACK_OP = "sizeof... "; //$NON-NLS-1$
 	private static final String NOT_OP = "!"; //$NON-NLS-1$
 	private static final String TILDE_OP = "~"; //$NON-NLS-1$
 	private static final String AMPERSAND_OP = "&"; //$NON-NLS-1$
@@ -247,6 +248,7 @@ public class ExpressionWriter extends NodeWriter{
 		case IASTUnaryExpression.op_tilde:
 		case IASTUnaryExpression.op_not:
 		case IASTUnaryExpression.op_sizeof:
+		case IASTUnaryExpression.op_sizeofParameterPack:
 		case IASTUnaryExpression.op_bracketedPrimary:
 		case ICPPASTUnaryExpression.op_throw:
 		case ICPPASTUnaryExpression.op_typeid:
@@ -296,6 +298,8 @@ public class ExpressionWriter extends NodeWriter{
 			return NOT_OP;
 		case IASTUnaryExpression.op_sizeof:
 			return SIZEOF_OP;
+		case IASTUnaryExpression.op_sizeofParameterPack:
+			return SIZEOF_PARAMETER_PACK_OP;
 		case IASTUnaryExpression.op_bracketedPrimary:
 			return OPEN_BRACKET_OP;
 		case ICPPASTUnaryExpression.op_throw:

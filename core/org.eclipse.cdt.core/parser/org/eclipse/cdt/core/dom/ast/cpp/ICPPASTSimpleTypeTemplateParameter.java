@@ -7,6 +7,7 @@
  *
  * Contributors:
  *    John Camelon (IBM) - Initial API and implementation
+ *    Markus Schorn (Wind River Systems)
  *******************************************************************************/
 package org.eclipse.cdt.core.dom.ast.cpp;
 
@@ -21,8 +22,19 @@ import org.eclipse.cdt.core.dom.ast.IASTTypeId;
  * @noextend This interface is not intended to be extended by clients.
  * @noimplement This interface is not intended to be implemented by clients.
  */
-public interface ICPPASTSimpleTypeTemplateParameter extends
-		ICPPASTTemplateParameter, IASTNameOwner {
+public interface ICPPASTSimpleTypeTemplateParameter extends ICPPASTTemplateParameter, IASTNameOwner {
+
+	/**
+	 * Relation between template parameter and its name.
+	 */
+	public static final ASTNodeProperty PARAMETER_NAME = new ASTNodeProperty(
+			"ICPPASTSimpleTypeTemplateParameter.PARAMETER_NAME - The Parameter's Name"); //$NON-NLS-1$
+
+	/**
+	 * Relation between template parameter and its default type.
+	 */
+	public static final ASTNodeProperty DEFAULT_TYPE = new ASTNodeProperty(
+			"ICPPASTSimpleTypeTemplateParameter.DEFAULT_TYPE - Optional default TypeId value"); //$NON-NLS-1$
 
 	/**
 	 * <code>st_class</code> represents a class.
@@ -34,60 +46,40 @@ public interface ICPPASTSimpleTypeTemplateParameter extends
 	 */
 	public static final int st_typename = 2;
 
+
 	/**
 	 * Get the parameter type.
-	 * 
-	 * @return int
 	 */
 	public int getParameterType();
-
+	
 	/**
-	 * Set the parameter type.
-	 * 
-	 * @param value
-	 *            int
-	 */
-	public void setParameterType(int value);
-
-	/**
-	 * The parameter name.
-	 */
-	public static final ASTNodeProperty PARAMETER_NAME = new ASTNodeProperty(
-			"ICPPASTSimpleTypeTemplateParameter.PARAMETER_NAME - The Parameter's Name"); //$NON-NLS-1$
-
-	/**
-	 * Get the name.
-	 * 
-	 * @return <code>IASTName</code>
+	 * Returns the template parameter name.
 	 */
 	public IASTName getName();
 
 	/**
-	 * Set the name.
-	 * 
-	 * @param name
-	 *            <code>IASTName</code>
-	 */
-	public void setName(IASTName name);
-
-	/**
-	 * DEFAULT_TYPE is the optional default typeId value
-	 */
-	public static final ASTNodeProperty DEFAULT_TYPE = new ASTNodeProperty(
-			"ICPPASTSimpleTypeTemplateParameter.DEFAULT_TYPE - Optional default TypeId value"); //$NON-NLS-1$
-
-	/**
-	 * Get the default type.
-	 * 
-	 * @return <code>IASTTypeId</code>
+	 * Returns the default value (a type id) for this template parameter, or <code>null</code>.
 	 */
 	public IASTTypeId getDefaultType();
 
 	/**
-	 * Set the default type.
-	 * 
-	 * @param typeId
-	 *            <code>IASTTypeId</code>
+	 * Set the parameter type.
+	 */
+	public void setParameterType(int value);
+
+	/**
+	 * Set whether this is a parameter pack.
+	 * @since 5.2
+	 */
+	public void setIsParameterPack(boolean val);
+	
+	/**
+	 * Sets the template parameter name.
+	 */
+	public void setName(IASTName name);
+
+	/**
+	 * Sets the default value (a type id) for this template parameter.
 	 */
 	public void setDefaultType(IASTTypeId typeId);
 	
@@ -95,5 +87,4 @@ public interface ICPPASTSimpleTypeTemplateParameter extends
 	 * @since 5.1
 	 */
 	public ICPPASTSimpleTypeTemplateParameter copy();
-
 }

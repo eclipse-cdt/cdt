@@ -65,14 +65,12 @@ import org.eclipse.cdt.core.dom.ast.IASTTypeId;
 import org.eclipse.cdt.core.dom.ast.IASTTypeIdExpression;
 import org.eclipse.cdt.core.dom.ast.IASTTypeIdInitializerExpression;
 import org.eclipse.cdt.core.dom.ast.IASTUnaryExpression;
-import org.eclipse.cdt.core.dom.ast.IBasicType;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.ICompositeType;
 import org.eclipse.cdt.core.dom.ast.IEnumeration;
 import org.eclipse.cdt.core.dom.ast.IEnumerator;
 import org.eclipse.cdt.core.dom.ast.IFunction;
 import org.eclipse.cdt.core.dom.ast.IFunctionType;
-import org.eclipse.cdt.core.dom.ast.IParameter;
 import org.eclipse.cdt.core.dom.ast.IPointerType;
 import org.eclipse.cdt.core.dom.ast.IProblemBinding;
 import org.eclipse.cdt.core.dom.ast.IQualifierType;
@@ -87,6 +85,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCompositeTypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTConstructorChainInitializer;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTConversionName;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTDeclSpecifier;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTDeclarator;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTDeleteExpression;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTFieldReference;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTForStatement;
@@ -106,6 +105,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTemplateId;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTemplateParameter;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTemplateSpecialization;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTemplatedTypeTemplateParameter;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTUnaryExpression;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTUsingDeclaration;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTUsingDirective;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTWhileStatement;
@@ -446,6 +446,9 @@ public class CPPSemantics {
 		        	IASTNode parent= name.getParent().getParent();
 		        	if (parent instanceof ICPPASTTemplatedTypeTemplateParameter) {
 			        	// default for template template parameter is an id-expression, which is a type.
+					} else if (parent instanceof ICPPASTUnaryExpression
+							&& ((ICPPASTUnaryExpression) parent).getOperator() == IASTUnaryExpression.op_sizeofParameterPack) {
+						// argument of sizeof... can be a type
 		        	} else if (data.considerConstructors && 
 		        			(binding instanceof ICPPUnknownType || binding instanceof ITypedef || binding instanceof IEnumeration)) {
 		        		// constructor or simple-type constructor
@@ -959,6 +962,7 @@ public class CPPSemantics {
 				if (expression instanceof IASTUnaryExpression) {
 					switch (((IASTUnaryExpression) expression).getOperator()) {
 					case IASTUnaryExpression.op_sizeof:
+					case IASTUnaryExpression.op_sizeofParameterPack:
 					case IASTUnaryExpression.op_typeid:
 					case IASTUnaryExpression.op_throw:
 						return PROCESS_SKIP;
@@ -1949,25 +1953,23 @@ public class CPPSemantics {
 	    if (def && argumentCount == 1) {
 	    	// check for parameter of type void
 			final IType[] argTypes = data.getFunctionArgumentTypes();
-	    	if (argTypes.length == 1) {
-	    		IType t= getNestedType(argTypes[0], TDEF);
-	    		if (t instanceof IBasicType && ((IBasicType)t).getKind() == Kind.eVoid) {
-	    			argumentCount= 0;
-	    		}
+	    	if (argTypes.length == 1 && SemanticUtil.isVoidType(argTypes[0])) {
+	    		argumentCount= 0;
 	    	}
 	    }
 			
 		// Trim the list down to the set of viable functions
-		IFunction function = null;
+		ICPPFunction function = null;
 		int size = functions.length;
 		for (int i = 0; i < size; i++) {
-			function = (IFunction) functions[i];
-			if (function == null)
-				continue;
-			if (function instanceof IProblemBinding) {
+			if (functions[i] instanceof IProblemBinding) {
 				functions[i]= null;
 				continue;
 			} 
+			
+			function = (ICPPFunction) functions[i];
+			if (function == null)
+				continue;
 			if (function instanceof ICPPUnknownBinding) {
 				if (def) {
 					functions[i]= null;
@@ -1979,47 +1981,31 @@ public class CPPSemantics {
 			// as long as possible.
 			final IType[] parameterTypes = function.getType().getParameterTypes();
 			int numPars = parameterTypes.length;
+			if (numPars == 1 && SemanticUtil.isVoidType(parameterTypes[0]))
+				numPars= 0;
 			
 			int numArgs = argumentCount;
 			if (function instanceof ICPPMethod && data.firstArgIsImpliedMethodArg)
 				numArgs--;
 			
-			if (numArgs < 2 && numPars == 1) {
-				// check for void
-			    IType t = getNestedType(parameterTypes[0], TDEF);
-			    if (t instanceof IBasicType && ((IBasicType)t).getKind() == Kind.eVoid)
-			        numPars= 0;
-			}
-		
 			if (def) {
 				if (numPars != numArgs || !isMatchingFunctionDeclaration(function, data)) {
 					functions[i] = null;
 				}
 			} else {
-				// more arguments than parameters --> need ellipses
+				// more arguments than parameters --> need ellipsis
 				if (numArgs > numPars) {
-					if (!function.takesVarArgs()) {
+					if (!function.takesVarArgs() && !function.hasParameterPack()) {
 						functions[i] = null;
 					}
-				} else if (numArgs < numPars) {
-					// fewer arguments than parameters --> need default values
-					IParameter[] params = function.getParameters();
-					if (params.length < numPars) {
-						functions[i]= null;
-					} else {
-						for (int j = numArgs; j < numPars; j++) {
-							final ICPPParameter param = (ICPPParameter) params[j];
-							if (param == null || !param.hasDefaultValue()) {
-								functions[i] = null;
-								break;
-							}
-						}
-					}
+				} else if (numArgs < function.getRequiredArgumentCount()) {
+					// fewer arguments than required
+					functions[i]= null;
 				}
 			}
 		}
 	}
-	static private boolean isMatchingFunctionDeclaration(IFunction candidate, LookupData data) {		
+	static private boolean isMatchingFunctionDeclaration(ICPPFunction candidate, LookupData data) {		
 		IASTNode node = data.astName.getParent();
 		while (node instanceof IASTName)
 			node = node.getParent();
@@ -3039,8 +3025,9 @@ public class CPPSemantics {
 	    return set.keyArray(IBinding.class);
     }
     
-	public static boolean isSameFunction(IFunction function, IASTDeclarator declarator) {
-		IASTName name = ASTQueries.findInnermostDeclarator(declarator).getName();
+	public static boolean isSameFunction(ICPPFunction function, IASTDeclarator declarator) {
+		final ICPPASTDeclarator innerDtor = (ICPPASTDeclarator) ASTQueries.findInnermostDeclarator(declarator);
+		IASTName name = innerDtor.getName();
 		ICPPASTTemplateDeclaration templateDecl = CPPTemplates.getTemplateDeclaration(name);
 		if (templateDecl != null) {
 			if (templateDecl instanceof ICPPASTTemplateSpecialization) {

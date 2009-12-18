@@ -1,12 +1,12 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2008 IBM Corporation and others.
+ * Copyright (c) 2004, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *    IBM - Initial API and implementation
+ *    John Camelon (IBM) - Initial API and implementation
  *    Markus Schorn (Wind River Systems)
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.dom.parser.cpp;
@@ -15,18 +15,19 @@ import org.eclipse.cdt.core.dom.ast.ASTVisitor;
 import org.eclipse.cdt.core.dom.ast.IASTDeclSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTDeclarator;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTDeclarator;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTParameterDeclaration;
 import org.eclipse.cdt.internal.core.dom.parser.ASTNode;
 import org.eclipse.cdt.internal.core.dom.parser.IASTAmbiguityParent;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPVisitor;
 
 /**
- * @author jcamelon
+ * Function parameter or non-type template parameter declaration.
  */
 public class CPPASTParameterDeclaration extends ASTNode implements ICPPASTParameterDeclaration, IASTAmbiguityParent {
 
-    private IASTDeclSpecifier declSpec;
-    private IASTDeclarator declarator;
-
+    private IASTDeclSpecifier fDeclSpec;
+    private ICPPASTDeclarator fDeclarator;
     
     public CPPASTParameterDeclaration() {
 	}
@@ -36,25 +37,29 @@ public class CPPASTParameterDeclaration extends ASTNode implements ICPPASTParame
 		setDeclarator(declarator);
 	}
 	
+	public boolean isParameterPack() {
+		return fDeclarator != null && CPPVisitor.findInnermostDeclarator(fDeclarator).declaresParameterPack();
+	}
+
 	public CPPASTParameterDeclaration copy() {
 		CPPASTParameterDeclaration copy = new CPPASTParameterDeclaration();
-		copy.setDeclSpecifier(declSpec == null ? null : declSpec.copy());
-		copy.setDeclarator(declarator == null ? null : declarator.copy());
+		copy.setDeclSpecifier(fDeclSpec == null ? null : fDeclSpec.copy());
+		copy.setDeclarator(fDeclarator == null ? null : fDeclarator.copy());
 		copy.setOffsetAndLength(this);
 		return copy;
 	}
 
 	public IASTDeclSpecifier getDeclSpecifier() {
-        return declSpec;
+        return fDeclSpec;
     }
 
-    public IASTDeclarator getDeclarator() {
-        return declarator;
+    public ICPPASTDeclarator getDeclarator() {
+        return fDeclarator;
     }
 
     public void setDeclSpecifier(IASTDeclSpecifier declSpec) {
         assertNotFrozen();
-        this.declSpec = declSpec;
+        this.fDeclSpec = declSpec;
         if (declSpec != null) {
 			declSpec.setParent(this);
 			declSpec.setPropertyInParent(DECL_SPECIFIER);
@@ -63,10 +68,12 @@ public class CPPASTParameterDeclaration extends ASTNode implements ICPPASTParame
 
     public void setDeclarator(IASTDeclarator declarator) {
         assertNotFrozen();
-        this.declarator = declarator;
-        if (declarator != null) {
+        if (declarator instanceof ICPPASTDeclarator) {
+        	fDeclarator = (ICPPASTDeclarator) declarator;
 			declarator.setParent(this);
 			declarator.setPropertyInParent(DECLARATOR);
+		} else {
+			fDeclarator= null;
 		}
     }
 
@@ -80,8 +87,8 @@ public class CPPASTParameterDeclaration extends ASTNode implements ICPPASTParame
 	        }
 		}
         
-        if( declSpec != null ) if( !declSpec.accept( action ) ) return false;
-        if( declarator != null ) if( !declarator.accept( action ) ) return false;   
+        if( fDeclSpec != null ) if( !fDeclSpec.accept( action ) ) return false;
+        if( fDeclarator != null ) if( !fDeclarator.accept( action ) ) return false;   
         
         if( action.shouldVisitParameterDeclarations ){
 		    switch( action.leave( this ) ){
@@ -94,10 +101,10 @@ public class CPPASTParameterDeclaration extends ASTNode implements ICPPASTParame
     }
     
 	public void replace(IASTNode child, IASTNode other) {
-        if (child == declarator) {
+        if (child == fDeclarator) {
             other.setPropertyInParent(child.getPropertyInParent());
             other.setParent(child.getParent());
-            declarator= (IASTDeclarator) other;
+            fDeclarator= (ICPPASTDeclarator) other;
         }
 	}
 }

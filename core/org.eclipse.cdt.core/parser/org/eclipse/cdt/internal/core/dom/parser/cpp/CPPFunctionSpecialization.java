@@ -40,10 +40,10 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPVisitor;
  */
 public class CPPFunctionSpecialization extends CPPSpecialization implements ICPPFunction, ICPPInternalFunction {
 	private ICPPFunctionType type = null;
-	private ICPPParameter[] specializedParams = null;
+	private ICPPParameter[] fParams = null;
 	private IType[] specializedExceptionSpec = null;
 
-	public CPPFunctionSpecialization(IBinding orig, IBinding owner, ICPPTemplateParameterMap argMap) {
+	public CPPFunctionSpecialization(ICPPFunction orig, IBinding owner, ICPPTemplateParameterMap argMap) {
 		super(orig, owner, argMap);
 	}
 	
@@ -52,25 +52,38 @@ public class CPPFunctionSpecialization extends CPPSpecialization implements ICPP
 	}
 
 	public ICPPParameter[] getParameters() throws DOMException {
-		if (specializedParams == null) {
-			ICPPFunction function = (ICPPFunction) getSpecializedBinding();
+		if (fParams == null) {
+			ICPPFunction function = getFunction();
 			ICPPParameter[] params = function.getParameters();
-			specializedParams = new ICPPParameter[params.length];
-			for (int i = 0; i < params.length; i++) {
-				specializedParams[i] = new CPPParameterSpecialization(params[i],
-						this, getTemplateParameterMap());
+			if (params.length == 0) {
+				fParams= params;
+			} else {
+				// Because of parameter packs there can be more or less parameters in the specialization
+				final ICPPTemplateParameterMap tparMap = getTemplateParameterMap();
+				IType[] ptypes= getType().getParameterTypes();
+				final int length = ptypes.length;
+				ICPPParameter par= null;
+				fParams = new ICPPParameter[length];
+				for (int i = 0; i < length; i++) {
+					if (i < params.length) {
+						par= params[i];
+					} // else reuse last parameter (which should be a pack)
+					fParams[i] = new CPPParameterSpecialization(par, this, ptypes[i], tparMap);
+				}
 			}
 		}
-		return specializedParams;
+		return fParams;
+	}
+
+	public int getRequiredArgumentCount() throws DOMException {
+		return ((ICPPFunction) getSpecializedBinding()).getRequiredArgumentCount();
+	}
+
+	public boolean hasParameterPack() {
+		return ((ICPPFunction) getSpecializedBinding()).hasParameterPack();
 	}
 
 	public IScope getFunctionScope() {
-//		resolveAllDeclarations();
-//	    if (definition != null) {
-//			return definition.getFunctionScope();
-//	    } 
-//	        
-//	    return declarations[0].getFunctionScope();
 		return null;
 	}
 

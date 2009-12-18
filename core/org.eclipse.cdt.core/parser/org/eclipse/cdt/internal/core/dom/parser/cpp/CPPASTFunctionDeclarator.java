@@ -19,18 +19,19 @@ import org.eclipse.cdt.core.dom.ast.IASTParameterDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTTypeId;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTFunctionDeclarator;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTFunctionDefinition;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTParameterDeclaration;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunctionScope;
 import org.eclipse.cdt.core.parser.util.ArrayUtil;
-import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPVisitor;
+import org.eclipse.cdt.internal.core.dom.parser.ASTQueries;
+import org.eclipse.cdt.internal.core.dom.parser.IASTAmbiguityParent;
 
 /**
  * Represents a function declarator.
  */
-public class CPPASTFunctionDeclarator extends CPPASTDeclarator implements ICPPASTFunctionDeclarator {
-    private IASTParameterDeclaration[] parameters = null;
-    private int parametersPos = -1;
+public class CPPASTFunctionDeclarator extends CPPASTDeclarator implements ICPPASTFunctionDeclarator,
+		IASTAmbiguityParent {
+    private ICPPASTParameterDeclaration[] parameters = null;
     private IASTTypeId[] typeIds = NO_EXCEPTION_SPECIFICATION;
-    private int typeIdsPos = -1;
     
     private boolean varArgs;
     private boolean pureVirtual;
@@ -63,11 +64,11 @@ public class CPPASTFunctionDeclarator extends CPPASTDeclarator implements ICPPAS
 		return copy;
 	}
 
-	public IASTParameterDeclaration[] getParameters() {
+	public ICPPASTParameterDeclaration[] getParameters() {
         if (parameters == null) 
-        	return IASTParameterDeclaration.EMPTY_PARAMETERDECLARATION_ARRAY;
+        	return ICPPASTParameterDeclaration.EMPTY_CPPPARAMETERDECLARATION_ARRAY;
         
-        return parameters= ArrayUtil.trimAt(IASTParameterDeclaration.class, parameters, parametersPos);
+        return parameters= ArrayUtil.trim(parameters);
     }
 
     public void addParameterDeclaration(IASTParameterDeclaration parameter) {
@@ -75,7 +76,7 @@ public class CPPASTFunctionDeclarator extends CPPASTDeclarator implements ICPPAS
     	if (parameter != null) {
     		parameter.setParent(this);
 			parameter.setPropertyInParent(FUNCTION_PARAMETER);
-    		parameters = (IASTParameterDeclaration[]) ArrayUtil.append(IASTParameterDeclaration.class, parameters, ++parametersPos, parameter);
+    		parameters = (ICPPASTParameterDeclaration[]) ArrayUtil.append(ICPPASTParameterDeclaration.class, parameters, parameter);
     	}
     }
 
@@ -107,7 +108,7 @@ public class CPPASTFunctionDeclarator extends CPPASTDeclarator implements ICPPAS
     }
 
     public IASTTypeId[] getExceptionSpecification() {
-        return typeIds= ArrayUtil.trimAt(IASTTypeId.class, typeIds, typeIdsPos);
+        return typeIds= ArrayUtil.trim(typeIds);
     }
     
     public void setEmptyExceptionSpecification() {
@@ -118,7 +119,8 @@ public class CPPASTFunctionDeclarator extends CPPASTDeclarator implements ICPPAS
     public void addExceptionSpecificationTypeId(IASTTypeId typeId) {
         assertNotFrozen();
     	if (typeId != null) {
-    		typeIds = (IASTTypeId[]) ArrayUtil.append(IASTTypeId.class, typeIds, ++typeIdsPos, typeId);
+    		assert typeIds != null;
+    		typeIds = ArrayUtil.append(typeIds, typeId);
     		typeId.setParent(this);
 			typeId.setPropertyInParent(EXCEPTION_TYPEID);
     	}
@@ -135,7 +137,7 @@ public class CPPASTFunctionDeclarator extends CPPASTDeclarator implements ICPPAS
 
     @Deprecated
     public org.eclipse.cdt.core.dom.ast.cpp.ICPPASTConstructorChainInitializer[] getConstructorChain() {
-    	if (CPPVisitor.findTypeRelevantDeclarator(this) == this) {
+    	if (ASTQueries.findTypeRelevantDeclarator(this) == this) {
     		IASTNode parent= getParent();
     		while(!(parent instanceof IASTDeclaration)) {
     			if (parent == null)
@@ -168,7 +170,7 @@ public class CPPASTFunctionDeclarator extends CPPASTDeclarator implements ICPPAS
         if (node instanceof IASTParameterDeclaration)
         	return null;
         
-        if (CPPVisitor.findTypeRelevantDeclarator(this) == this) {
+        if (ASTQueries.findTypeRelevantDeclarator(this) == this) {
             scope = new CPPFunctionScope(this);
         }
         return scope;
@@ -189,5 +191,19 @@ public class CPPASTFunctionDeclarator extends CPPASTDeclarator implements ICPPAS
 		}
 
 		return super.postAccept(action);
+	}
+
+	public void replace(IASTNode child, IASTNode other) {
+		if (parameters != null) {
+			for (int i = 0; i < parameters.length; ++i) {
+				if (child == parameters[i]) {
+					other.setPropertyInParent(child.getPropertyInParent());
+					other.setParent(child.getParent());
+					parameters[i] = (ICPPASTParameterDeclaration) other;
+					return;
+				}
+			}
+		}
+		assert false;
 	}
 }

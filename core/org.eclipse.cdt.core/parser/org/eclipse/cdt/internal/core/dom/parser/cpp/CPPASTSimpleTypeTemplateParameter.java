@@ -1,12 +1,12 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2008 IBM Corporation and others.
+ * Copyright (c) 2004, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *    IBM - Initial API and implementation
+ *    John Camelon (IBM) - Initial API and implementation
  *    Markus Schorn (Wind River Systems)
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.dom.parser.cpp;
@@ -19,49 +19,60 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTVisitor;
 import org.eclipse.cdt.internal.core.dom.parser.ASTNode;
 
 /**
- * @author jcamelon
+ * Template type parameter as in <code>template &lttypename T&gt class X;</code>
  */
-public class CPPASTSimpleTypeTemplateParameter extends ASTNode implements
-        ICPPASTSimpleTypeTemplateParameter {
+public class CPPASTSimpleTypeTemplateParameter extends ASTNode implements ICPPASTSimpleTypeTemplateParameter {
 
-    private int type;
-    private IASTName name;
-    private IASTTypeId typeId;
+    private IASTName fName;
+    private IASTTypeId fTypeId;
+    private boolean fUsesKeywordClass;
+    private boolean fIsParameterPack;
 
     public CPPASTSimpleTypeTemplateParameter() {
 	}
 
 	public CPPASTSimpleTypeTemplateParameter(int type, IASTName name, IASTTypeId typeId) {
-		this.type = type;
+		fUsesKeywordClass= type == st_class;
 		setName(name);
 		setDefaultType(typeId);
 	}
 	
 	public CPPASTSimpleTypeTemplateParameter copy() {
 		CPPASTSimpleTypeTemplateParameter copy = new CPPASTSimpleTypeTemplateParameter();
-		copy.type = type;
-		copy.setName(name == null ? null : name.copy());
-		copy.setDefaultType(typeId == null ? null : typeId.copy());
+		copy.fUsesKeywordClass = fUsesKeywordClass;
+		copy.fIsParameterPack= fIsParameterPack;
+		copy.setName(fName == null ? null : fName.copy());
+		copy.setDefaultType(fTypeId == null ? null : fTypeId.copy());
 		copy.setOffsetAndLength(this);
 		return copy;
 	}
 
+	
+	public boolean isParameterPack() {
+		return fIsParameterPack;
+	}
+
+	public void setIsParameterPack(boolean val) {
+		assertNotFrozen();
+		fIsParameterPack= val;
+	}
+
 	public int getParameterType() {
-        return type;
+        return fUsesKeywordClass ? st_class : st_typename;
     }
 
     public void setParameterType(int value) {
         assertNotFrozen();
-        this.type = value;
+        fUsesKeywordClass = value == st_class;
     }
 
     public IASTName getName() {
-        return name;
+        return fName;
     }
 
     public void setName(IASTName name) {
         assertNotFrozen();
-        this.name = name;
+        this.fName = name;
         if (name != null) {
 			name.setParent(this);
 			name.setPropertyInParent(PARAMETER_NAME);
@@ -69,12 +80,12 @@ public class CPPASTSimpleTypeTemplateParameter extends ASTNode implements
     }
 
     public IASTTypeId getDefaultType() {
-        return typeId;
+        return fTypeId;
     }
 
     public void setDefaultType(IASTTypeId typeId) {
         assertNotFrozen();
-        this.typeId = typeId;
+        this.fTypeId = typeId;
         if (typeId != null) {
 			typeId.setParent(this);
 			typeId.setPropertyInParent(DEFAULT_TYPE);
@@ -91,8 +102,8 @@ public class CPPASTSimpleTypeTemplateParameter extends ASTNode implements
 	        }
 		}
         
-        if (name != null) if (!name.accept(action)) return false;
-        if (typeId != null) if (!typeId.accept(action)) return false;
+        if (fName != null) if (!fName.accept(action)) return false;
+        if (fTypeId != null) if (!fTypeId.accept(action)) return false;
         
     	if (action.shouldVisitTemplateParameters && action instanceof ICPPASTVisitor) {
     		switch (((ICPPASTVisitor) action).leave(this)) {
@@ -105,7 +116,7 @@ public class CPPASTSimpleTypeTemplateParameter extends ASTNode implements
     }
 
 	public int getRoleForName(IASTName n) {
-		if (n == name)
+		if (n == fName)
 			return r_declaration;
 		return r_unclear;
 	}

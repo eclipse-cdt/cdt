@@ -277,7 +277,7 @@ public class CPPClassTemplate extends CPPTemplateDefinition implements ICPPClass
 		return false;
 	}
 
-	public ICPPDeferredClassInstance asDeferredInstance() throws DOMException {
+	public final ICPPDeferredClassInstance asDeferredInstance() throws DOMException {
 		if (fDeferredInstance == null) {
 			fDeferredInstance= createDeferredInstance();
 		}

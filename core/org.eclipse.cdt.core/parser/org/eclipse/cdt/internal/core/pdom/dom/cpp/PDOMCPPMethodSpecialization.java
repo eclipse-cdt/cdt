@@ -6,7 +6,7 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *    QNX - Initial API and implementation
+ *    Bryan Wilkinson (QNX) - Initial API and implementation
  *    Markus Schorn (Wind River Systems)
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.pdom.dom.cpp;
@@ -27,8 +27,7 @@ import org.eclipse.cdt.internal.core.pdom.dom.c.PDOMCAnnotation;
 import org.eclipse.core.runtime.CoreException;
 
 /**
- * @author Bryan Wilkinson
- * 
+ * Specialization of a method
  */
 class PDOMCPPMethodSpecialization extends PDOMCPPFunctionSpecialization
 		implements ICPPMethod {
@@ -111,7 +110,7 @@ class PDOMCPPMethodSpecialization extends PDOMCPPFunctionSpecialization
 	}
 
 	public int getVisibility() throws DOMException {
-		return PDOMCPPAnnotation.getVisibility(getByte(record + ANNOTATION));
+		return PDOMCPPAnnotation.getVisibility(getByte(record + ANNOTATION_OFFSET));
 	}
 	
 	@Override

@@ -70,6 +70,7 @@ import org.eclipse.cdt.internal.core.dom.parser.ITypeMarshalBuffer;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPArrayType;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPBasicType;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPFunctionType;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPParameterPackType;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPPointerToMemberType;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPPointerType;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPQualifierType;
@@ -987,6 +988,8 @@ class PDOMCPPLinkage extends PDOMLinkage implements IIndexCPPBindingConstants {
 			return CPPPointerType.unmarshal(firstByte, buffer);
 		case ITypeMarshalBuffer.REFERENCE:
 			return CPPReferenceType.unmarshal(firstByte, buffer);
+		case ITypeMarshalBuffer.PACK_EXPANSION:
+			return CPPParameterPackType.unmarshal(firstByte, buffer);
 		case ITypeMarshalBuffer.POINTER_TO_MEMBER:
 			return CPPPointerToMemberType.unmarshal(firstByte, buffer);
 		}

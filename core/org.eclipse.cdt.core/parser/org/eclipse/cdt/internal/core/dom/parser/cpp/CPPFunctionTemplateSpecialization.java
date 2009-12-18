@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2008 IBM Corporation and others.
+ * Copyright (c) 2005, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -15,6 +15,7 @@ import org.eclipse.cdt.core.dom.ast.ASTTypeUtil;
 import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunction;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunctionTemplate;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateArgument;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateInstance;
@@ -30,8 +31,8 @@ public class CPPFunctionTemplateSpecialization extends CPPFunctionSpecialization
 
 	private ObjectMap instances = null;
 	
-	public CPPFunctionTemplateSpecialization(IBinding specialized, ICPPClassType owner, ICPPTemplateParameterMap argumentMap) {
-		super(specialized, owner, argumentMap);
+	public CPPFunctionTemplateSpecialization(ICPPFunction original, ICPPClassType owner, ICPPTemplateParameterMap argumentMap) {
+		super(original, owner, argumentMap);
 	}
 
 	public ICPPTemplateParameter[] getTemplateParameters() throws DOMException {

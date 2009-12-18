@@ -89,4 +89,12 @@ public class CPPUnknownFunction extends CPPUnknownBinding implements ICPPFunctio
 	public boolean takesVarArgs() throws DOMException {
 		return false;
 	}
+
+	public int getRequiredArgumentCount() throws DOMException {
+		return 0;
+	}
+
+	public boolean hasParameterPack() {
+		return false;
+	}
 }

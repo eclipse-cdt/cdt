@@ -107,4 +107,8 @@ public class CPPBuiltinParameter extends PlatformObject implements ICPPParameter
 	public IValue getInitialValue() {
 		return null;
 	}
+
+	public boolean isParameterPack() {
+		return false;
+	}
 }

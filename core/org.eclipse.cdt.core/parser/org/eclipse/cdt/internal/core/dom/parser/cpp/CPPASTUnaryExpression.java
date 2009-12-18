@@ -205,6 +205,7 @@ public class CPPASTUnaryExpression extends ASTNode implements ICPPASTUnaryExpres
     	final int op= getOperator();
 		switch (op) {
 		case op_sizeof:
+		case op_sizeofParameterPack:
 			return CPPVisitor.get_SIZE_T(this);
 		case op_typeid:
 			return CPPVisitor.get_type_info(this);

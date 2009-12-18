@@ -75,6 +75,14 @@ class CompositeCPPFunction extends CompositeCPPBinding implements ICPPFunction {
 	public boolean takesVarArgs() throws DOMException {
 		return ((ICPPFunction)rbinding).takesVarArgs();
 	}
+	
+	public int getRequiredArgumentCount() throws DOMException {
+		return ((ICPPFunction)rbinding).getRequiredArgumentCount();
+	}
+
+	public boolean hasParameterPack() {
+		return ((ICPPFunction)rbinding).hasParameterPack();
+	}
 
 	@Override
 	public Object clone() {

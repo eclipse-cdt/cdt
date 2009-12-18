@@ -13,7 +13,6 @@ package org.eclipse.cdt.core.dom.ast.cpp;
 
 import org.eclipse.cdt.core.dom.ast.ASTNodeProperty;
 import org.eclipse.cdt.core.dom.ast.IASTExpression;
-import org.eclipse.cdt.core.dom.ast.IASTInitializer;
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTNameOwner;
 
@@ -27,7 +26,7 @@ import org.eclipse.cdt.core.dom.ast.IASTNameOwner;
  * @noextend This interface is not intended to be extended by clients.
  * @noimplement This interface is not intended to be implemented by clients.
  */
-public interface ICPPASTConstructorChainInitializer extends IASTInitializer, IASTNameOwner {
+public interface ICPPASTConstructorChainInitializer extends ICPPASTInitializer, IASTNameOwner {
 	/**
 	 * Constant.
 	 */

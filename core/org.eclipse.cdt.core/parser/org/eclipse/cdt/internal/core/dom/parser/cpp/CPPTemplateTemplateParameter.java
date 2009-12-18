@@ -50,9 +50,15 @@ public class CPPTemplateTemplateParameter extends CPPTemplateParameter implement
 	private ICPPTemplateParameter[] templateParameters;
 	private ObjectMap instances;
 	private ICPPScope unknownScope;
-	
-	public CPPTemplateTemplateParameter(IASTName name) {
+	private final boolean fIsParameterPack;
+
+	public CPPTemplateTemplateParameter(IASTName name, boolean isPack) {
 		super(name);
+		fIsParameterPack= isPack;
+	}
+
+	public final boolean isParameterPack() {
+		return fIsParameterPack;
 	}
 
 	public ICPPScope asScope() {

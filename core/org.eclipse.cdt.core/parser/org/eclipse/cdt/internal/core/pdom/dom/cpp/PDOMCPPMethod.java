@@ -6,7 +6,7 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *    QNX - Initial API and implementation
+ *    Doug Schaefer (QNX) - Initial API and implementation
  *    IBM Corporation
  *    Andrew Ferguson (Symbian)
  *    Markus Schorn (Wind River Systems)
@@ -37,8 +37,7 @@ import org.eclipse.cdt.internal.core.pdom.dom.c.PDOMCAnnotation;
 import org.eclipse.core.runtime.CoreException;
 
 /**
- * @author Doug Schaefer
- * 
+ * Method
  */
 class PDOMCPPMethod extends PDOMCPPFunction implements ICPPMethod {
 
@@ -137,7 +136,7 @@ class PDOMCPPMethod extends PDOMCPPFunction implements ICPPMethod {
 	}
 
 	@Override
-	public boolean isExtern() throws DOMException {
+	public boolean isExtern() {
 		// ISO/IEC 14882:2003 9.2.6
 		return false;
 	}
@@ -148,13 +147,13 @@ class PDOMCPPMethod extends PDOMCPPFunction implements ICPPMethod {
 	}
 
 	@Override
-	public boolean isAuto() throws DOMException {
+	public boolean isAuto() {
 		// ISO/IEC 14882:2003 9.2.6
 		return false;
 	}
 
 	@Override
-	public boolean isRegister() throws DOMException {
+	public boolean isRegister() {
 		// ISO/IEC 14882:2003 9.2.6
 		return false;
 	}

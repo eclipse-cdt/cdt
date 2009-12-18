@@ -14,7 +14,6 @@ package org.eclipse.cdt.internal.core.pdom.dom.cpp;
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IFunctionType;
-import org.eclipse.cdt.core.dom.ast.IParameter;
 import org.eclipse.cdt.core.dom.ast.IScope;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunction;
@@ -63,41 +62,62 @@ class PDOMCPPFunctionSpecialization extends PDOMCPPSpecialization implements ICP
 	 * Offset of annotation information (relative to the beginning of the
 	 * record).
 	 */
-	protected static final int ANNOTATION = EXCEPTION_SPEC + Database.PTR_SIZE; // byte
+	protected static final int ANNOTATION_OFFSET = EXCEPTION_SPEC + Database.PTR_SIZE; // short
 	
+	private static final int REQUIRED_ARG_COUNT_OFFSET= ANNOTATION_OFFSET + 2;
 	/**
 	 * The size in bytes of a PDOMCPPFunction record in the database.
 	 */
 	@SuppressWarnings("hiding")
-	protected static final int RECORD_SIZE = ANNOTATION + 1;
+	protected static final int RECORD_SIZE = REQUIRED_ARG_COUNT_OFFSET + 4;
+
+	
+	private static final short ANNOT_HAS_PACK = 0x100;
 
 	private ICPPFunctionType fType;
+	private short fAnnotation= -1;
+
+	private int fRequiredArgCount= -1;
 	
 	public PDOMCPPFunctionSpecialization(PDOMLinkage linkage, PDOMNode parent, ICPPFunction astFunction, PDOMBinding specialized) throws CoreException {
 		super(linkage, parent, (ICPPSpecialization) astFunction, specialized);
 		
 		Database db = getDB();
 		try {
-			IParameter[] astParams= astFunction.getParameters();
+			ICPPParameter[] astParams= astFunction.getParameters();
 			IFunctionType astFt= astFunction.getType();
 			if (astFt != null) {
 				getLinkage().storeType(record + FUNCTION_TYPE, astFt);
 			}
 
-			ICPPFunction spAstFunc= (ICPPFunction) ((ICPPSpecialization)astFunction).getSpecializedBinding();
-			ICPPParameter[] spAstParams= spAstFunc.getParameters();
-			
-			final int length= Math.min(spAstParams.length, astParams.length);
-			db.putInt(record + NUM_PARAMS, length);
-			
-			db.putRecPtr(record + FIRST_PARAM, 0);
-			PDOMCPPParameterSpecialization next= null;
-			for (int i= length-1; i >= 0; --i) {
-				PDOMCPPParameter par= new PDOMCPPParameter(linkage, specialized, spAstParams[i], null);
-				next= new PDOMCPPParameterSpecialization(linkage, this, astParams[i], par, next);
+			ICPPFunction origAstFunc= (ICPPFunction) ((ICPPSpecialization)astFunction).getSpecializedBinding();
+			ICPPParameter[] origAstParams= origAstFunc.getParameters();
+			if (origAstParams.length == 0) {
+				db.putInt(record + NUM_PARAMS, 0);
+				db.putRecPtr(record + FIRST_PARAM, 0);
+			} else {
+				final int length= astParams.length;
+				db.putInt(record + NUM_PARAMS, length);
+
+				db.putRecPtr(record + FIRST_PARAM, 0);
+				PDOMCPPParameter origPar= null;
+				PDOMCPPParameterSpecialization next= null;
+				for (int i= length-1; i >= 0; --i) {
+					// There may be fewer or less original parameters, because of parameter packs.
+					if (i < origAstParams.length-1) {
+						// Normal case
+						origPar= new PDOMCPPParameter(linkage, specialized, origAstParams[i], null);
+					} else if (origPar == null) {
+						// Use last parameter
+						origPar= new PDOMCPPParameter(linkage, specialized, origAstParams[origAstParams.length-1], null);
+					}
+					next= new PDOMCPPParameterSpecialization(linkage, this, astParams[i], origPar, next);
+				}
+				db.putRecPtr(record + FIRST_PARAM, next == null ? 0 : next.getRecord());
 			}
-			db.putRecPtr(record + FIRST_PARAM, next == null ? 0 : next.getRecord());
-			db.putByte(record + ANNOTATION, PDOMCPPAnnotation.encodeAnnotation(astFunction));			
+			fAnnotation = getAnnotation(astFunction);
+			db.putShort(record + ANNOTATION_OFFSET, fAnnotation);	
+			db.putInt(record + REQUIRED_ARG_COUNT_OFFSET, astFunction.getRequiredArgumentCount());
 		} catch (DOMException e) {
 			throw new CoreException(Util.createStatus(e));
 		}
@@ -115,6 +135,14 @@ class PDOMCPPFunctionSpecialization extends PDOMCPPSpecialization implements ICP
 
 	}
 
+	private short getAnnotation(ICPPFunction astFunction) throws DOMException {
+		int annot= PDOMCPPAnnotation.encodeAnnotation(astFunction);
+		if (astFunction.hasParameterPack()) {
+			annot |= ANNOT_HAS_PACK;
+		}
+		return (short) annot;
+	}
+
 	public PDOMCPPFunctionSpecialization(PDOMLinkage linkage, long bindingRecord) {
 		super(linkage, bindingRecord);
 	}
@@ -130,11 +158,22 @@ class PDOMCPPFunctionSpecialization extends PDOMCPPSpecialization implements ICP
 	}
 
 	public boolean isInline() throws DOMException {
-		return getBit(getByte(record + ANNOTATION), PDOMCAnnotation.INLINE_OFFSET);
+		return getBit(readAnnotation(), PDOMCAnnotation.INLINE_OFFSET);
+	}
+
+	private short readAnnotation() {
+		if (fAnnotation == -1) {
+			try {
+				fAnnotation= getDB().getShort(record + ANNOTATION_OFFSET);
+			} catch (CoreException e) {
+				fAnnotation= 0;
+			}
+		}
+		return fAnnotation;
 	}
 
 	public boolean isMutable() throws DOMException {
-		throw new PDOMNotImplementedError();
+		return false;
 	}
 
 	public IScope getFunctionScope() throws DOMException {
@@ -182,11 +221,11 @@ class PDOMCPPFunctionSpecialization extends PDOMCPPSpecialization implements ICP
 	}
 
 	public boolean isExtern() throws DOMException {
-		return getBit(getByte(record + ANNOTATION), PDOMCAnnotation.EXTERN_OFFSET);
+		return getBit(readAnnotation(), PDOMCAnnotation.EXTERN_OFFSET);
 	}
 
 	public boolean isExternC() throws DOMException {
-		return getBit(getByte(record + ANNOTATION), PDOMCPPAnnotation.EXTERN_C_OFFSET);
+		return getBit(readAnnotation(), PDOMCPPAnnotation.EXTERN_C_OFFSET);
 	}
 
 	public boolean isRegister() throws DOMException {
@@ -195,11 +234,27 @@ class PDOMCPPFunctionSpecialization extends PDOMCPPSpecialization implements ICP
 	}
 
 	public boolean isStatic() throws DOMException {
-		return getBit(getByte(record + ANNOTATION), PDOMCAnnotation.STATIC_OFFSET);
+		return getBit(readAnnotation(), PDOMCAnnotation.STATIC_OFFSET);
 	}
 
 	public boolean takesVarArgs() throws DOMException {
-		return getBit(getByte(record + ANNOTATION), PDOMCAnnotation.VARARGS_OFFSET);
+		return getBit(readAnnotation(), PDOMCAnnotation.VARARGS_OFFSET);
+	}
+
+	
+	public int getRequiredArgumentCount() throws DOMException {
+		if (fRequiredArgCount == -1) {
+			try {
+				fRequiredArgCount= getDB().getInt(record + REQUIRED_ARG_COUNT_OFFSET);
+			} catch (CoreException e) {
+				fRequiredArgCount= 0;
+			}
+		}
+		return fRequiredArgCount;
+	}
+
+	public boolean hasParameterPack() {
+		return getBit(readAnnotation(), ANNOT_HAS_PACK);
 	}
 
 	public boolean isConst() {

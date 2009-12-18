@@ -113,6 +113,12 @@ public interface IASTUnaryExpression extends IASTExpression {
 	public static final int op_alignOf = 15;
 
 	/**
+	 * For c++, only: 'sizeof...(parameterPack)'
+	 * @since 5.2
+	 */
+	public static final int op_sizeofParameterPack = 16;
+
+	/**
 	 * <code>op_last</code> is made available for subclasses.
 	 * @deprecated all constants must be defined in this interface
 	 */

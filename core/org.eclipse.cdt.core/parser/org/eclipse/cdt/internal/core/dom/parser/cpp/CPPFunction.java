@@ -48,6 +48,7 @@ import org.eclipse.cdt.internal.core.dom.parser.ASTNode;
 import org.eclipse.cdt.internal.core.dom.parser.ASTQueries;
 import org.eclipse.cdt.internal.core.dom.parser.ProblemBinding;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPVisitor;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.SemanticUtil;
 import org.eclipse.core.runtime.PlatformObject;
 
 /**
@@ -106,6 +107,15 @@ public class CPPFunction extends PlatformObject implements ICPPFunction, ICPPInt
         }
 		public IType[] getExceptionSpecification() throws DOMException {
             throw new DOMException(this);
+		}
+		public int getRequiredArgumentCount() throws DOMException {
+			throw new DOMException(this);
+		}
+		public boolean hasParameterPack() {
+			return false;
+		}
+		public boolean hasSameFunctionParameterTypeList(ICPPFunction function) {
+			return false;
 		}
     }
     
@@ -573,5 +583,30 @@ public class CPPFunction extends PlatformObject implements ICPPFunction, ICPPInt
         	}
         }
         return null;
+	}
+
+	public int getRequiredArgumentCount() throws DOMException {
+		return getRequiredArgumentCount(getParameters());
+	}
+
+	public static int getRequiredArgumentCount(ICPPParameter[] pars) throws DOMException {
+		int result= pars.length;
+		while(result > 0) {
+			final ICPPParameter p = pars[result-1];
+			if (p.hasDefaultValue() || p.isParameterPack()) {
+				result--;
+			} else {
+				if (pars.length == 1 && SemanticUtil.isVoidType(p.getType())) {
+					return 0;
+				}
+				return result;
+			}
+		}
+		return 0;
+	}
+
+	public boolean hasParameterPack() {
+		ICPPParameter[] pars= getParameters();
+		return pars.length > 0 && pars[pars.length-1].isParameterPack();
 	}
 }

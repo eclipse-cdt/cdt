@@ -108,7 +108,7 @@ class PDOMCPPAnnotation {
 	 * @param annotation Annotation containing visibility information.
 	 * @return The visibility component of the annotation.
 	 */
-	public static int getVisibility(byte annotation) {
+	public static int getVisibility(int annotation) {
 		return (annotation >> VISIBILITY_OFFSET) & VISIBILITY_MASK;
 	}
 }

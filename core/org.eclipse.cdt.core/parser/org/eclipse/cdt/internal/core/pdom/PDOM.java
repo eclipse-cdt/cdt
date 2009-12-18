@@ -187,10 +187,11 @@ public class PDOM extends PlatformObject implements IPDOM {
 	 *  92.0 - simplification of basic types, bug 231859.
 	 *  93.0 - further simplification of basic types, bug 231859.
 	 *  94.0 - new model for storing types, bug 294306.
+	 *  95.0 - parameter packs, bug 294730.
 	 */
-	private static final int MIN_SUPPORTED_VERSION= version(94, 0);
-	private static final int MAX_SUPPORTED_VERSION= version(94, Short.MAX_VALUE);
-	private static final int DEFAULT_VERSION = version(94, 0);
+	private static final int MIN_SUPPORTED_VERSION= version(95, 0);
+	private static final int MAX_SUPPORTED_VERSION= version(95, Short.MAX_VALUE);
+	private static final int DEFAULT_VERSION = version(95, 0);
 	
 	private static int version(int major, int minor) {
 		return (major << 16) + minor;

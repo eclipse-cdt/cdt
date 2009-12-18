@@ -11,8 +11,6 @@
  *******************************************************************************/
 package org.eclipse.cdt.core.dom.ast;
 
-import static org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.SemanticUtil.TDEF;
-
 import java.util.ArrayList;
 import java.util.BitSet;
 import java.util.LinkedList;
@@ -27,6 +25,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPBinding;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunctionType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPNamespace;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPParameterPackType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPPointerToMemberType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPReferenceType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateArgument;
@@ -70,12 +69,19 @@ public class ASTTypeUtil {
 		String[] parms = getParameterTypeStringArray(type);
 		
 		result.append(Keywords.cpLPAREN);
-		for (int i = 0; i < parms.length; i++) {
-			if (parms[i] != null) {
-				result.append(parms[i]);
-				if (i < parms.length - 1)
+		boolean needComma= false;
+		for (String parm : parms) {
+			if (parm != null) {
+				if (needComma)
 					result.append(COMMA_SPACE);
+				result.append(parm);
+				needComma= true;
 			}
+		}
+		if (type instanceof ICPPFunctionType && ((ICPPFunctionType) type).takesVarArgs()) {
+			if (needComma)
+				result.append(COMMA_SPACE);
+			result.append(Keywords.cpELLIPSIS);
 		}
 		result.append(Keywords.cpRPAREN);
 		return result.toString();
@@ -94,16 +100,10 @@ public class ASTTypeUtil {
 
 		if (parameters.length == 0) {
 			return false;
-		} else if (parameters.length == 1) {
-			IType ultimateType = SemanticUtil.getNestedType(parameters[0].getType(), TDEF);
-
-			if (ultimateType instanceof IBasicType) {
-				if (((IBasicType) ultimateType).getKind() == Kind.eVoid) {
-					return false;
-				}
-			}
+		} 
+		if (parameters.length == 1 && SemanticUtil.isVoidType(parameters[0].getType())) {
+			return false;
 		}
-		
 		return true;
 	}
 	
@@ -355,6 +355,8 @@ public class ASTTypeUtil {
 			} else {
 				result.append(Keywords.cpAMPER);
 			}
+		} else if (type instanceof ICPPParameterPackType) {
+			result.append(Keywords.cpELLIPSIS);
 		} else if (type instanceof IEnumeration) {
 			result.append(Keywords.ENUM);
 			result.append(SPACE);

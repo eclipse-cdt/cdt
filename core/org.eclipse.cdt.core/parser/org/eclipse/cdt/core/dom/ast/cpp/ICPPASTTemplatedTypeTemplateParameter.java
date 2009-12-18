@@ -7,6 +7,7 @@
  *
  * Contributors:
  *    John Camelon (IBM) - Initial API and implementation
+ *    Markus Schorn (Wind River Systems)
  *******************************************************************************/
 package org.eclipse.cdt.core.dom.ast.cpp;
 
@@ -16,79 +17,72 @@ import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTNameOwner;
 
 /**
- * This is a templated template parameter.
+ * This is a template template parameter as <code> V </code> in 
+ * <code>template&lttemplate&lttypename T&gt class V&gt class CT;</code>
  * 
  * @noextend This interface is not intended to be extended by clients.
  * @noimplement This interface is not intended to be implemented by clients.
  */
-public interface ICPPASTTemplatedTypeTemplateParameter extends
-		ICPPASTTemplateParameter, IASTNameOwner {
+public interface ICPPASTTemplatedTypeTemplateParameter extends ICPPASTTemplateParameter, IASTNameOwner {
 
 	/**
-	 * PARAMETER
+	 * Relation between template template parameter and its (nested) template parameters.
 	 */
 	public static final ASTNodeProperty PARAMETER = new ASTNodeProperty(
-			"ICPPASTTemplateTypeTemplateParameter.PARAMETER - Template Parameter"); //$NON-NLS-1$
+			"ICPPASTTemplateTypeTemplateParameter.PARAMETER [ICPPASTTemplateParameter]"); //$NON-NLS-1$
 
 	/**
-	 * Get all template parameters.
-	 * 
-	 * @return <code>ICPPASTTemplateParameter []</code>
+	 * Relation between template template parameter and its name.
+	 */
+	public static final ASTNodeProperty PARAMETER_NAME = new ASTNodeProperty(
+			"ICPPASTTemplateTypeTemplateParameter.PARAMETER_NAME [ICPPASTName]"); //$NON-NLS-1$
+
+	/**
+	 * Relation between template template parameter and its default value.
+	 */
+	public static final ASTNodeProperty DEFAULT_VALUE = new ASTNodeProperty(
+			"ICPPASTTemplateTypeTemplateParameter.DEFAULT_VALUE [IASTExpression]"); //$NON-NLS-1$
+
+	/**
+	 * Get the nested template parameters.
 	 */
 	public ICPPASTTemplateParameter[] getTemplateParameters();
 
 	/**
-	 * Add a parameter.
-	 * 
-	 * @param parm
-	 *            <code>ICPPASTTemplateParameter</code>
-	 */
-	public void addTemplateParamter(ICPPASTTemplateParameter parm);
-
-	/**
-	 * This parameter's name.
-	 */
-	public static final ASTNodeProperty PARAMETER_NAME = new ASTNodeProperty(
-			"ICPPASTTemplateTypeTemplateParameter.PARAMETER_NAME - Template Parameter's Name"); //$NON-NLS-1$
-
-	/**
-	 * Get name.
-	 * 
-	 * @return <code>IASTName</code>
+	 * Get the (optional) name of this template template parameter. In case there is no name an
+	 * empty name is returned.
 	 */
 	public IASTName getName();
 
 	/**
-	 * Set name.
-	 * 
-	 * @param name
-	 *            <code>IASTName</code>
-	 */
-	public void setName(IASTName name);
-
-	/**
-	 * DEFAULT_VALUE is an expession.
-	 */
-	public static final ASTNodeProperty DEFAULT_VALUE = new ASTNodeProperty(
-			"ICPPASTTemplateTypeTemplateParameter.DEFAULT_VALUE - Default Value is an expression"); //$NON-NLS-1$
-
-	/**
-	 * Get default value for template type.
-	 * 
-	 * @return <code>IASTExpression</code>
+	 * Get default value for template template parameter or <code>null</code>.
 	 */
 	public IASTExpression getDefaultValue();
 
-	/**
-	 * Set default value for template type.
-	 * 
-	 * @param expression
-	 *            <code>IASTExpression</code>
-	 */
-	public void setDefaultValue(IASTExpression expression);
 	
 	/**
 	 * @since 5.1
 	 */
 	public ICPPASTTemplatedTypeTemplateParameter copy();
+
+	/**
+	 * Add a nested template parameter.
+	 */
+	public void addTemplateParamter(ICPPASTTemplateParameter parm);
+
+	/**
+	 * Set whether this template template parameter is a parameter pack.
+	 * @since 5.2
+	 */
+	public void setIsParameterPack(boolean val);
+
+	/**
+	 * Set the name of this template template parameter.
+	 */
+	public void setName(IASTName name);
+
+	/**
+	 * Set default value for the template template parameter.
+	 */
+	public void setDefaultValue(IASTExpression expression);
 }

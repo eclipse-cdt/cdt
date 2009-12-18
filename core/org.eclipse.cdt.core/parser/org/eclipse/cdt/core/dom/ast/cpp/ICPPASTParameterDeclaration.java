@@ -7,6 +7,7 @@
  *
  * Contributors:
  *    John Camelon (IBM) - Initial API and implementation
+ *    Markus Schorn (Wind River Systems)
  *******************************************************************************/
 package org.eclipse.cdt.core.dom.ast.cpp;
 
@@ -16,11 +17,20 @@ import org.eclipse.cdt.core.dom.ast.IASTParameterDeclaration;
  * @noextend This interface is not intended to be extended by clients.
  * @noimplement This interface is not intended to be implemented by clients.
  */
-public interface ICPPASTParameterDeclaration extends ICPPASTTemplateParameter,
-		IASTParameterDeclaration {
+public interface ICPPASTParameterDeclaration extends ICPPASTTemplateParameter, IASTParameterDeclaration {
+
+	/**
+	 * @since 5.2
+	 */
+	ICPPASTParameterDeclaration[] EMPTY_CPPPARAMETERDECLARATION_ARRAY = {};
 
 	/**
 	 * @since 5.1
 	 */
 	public ICPPASTParameterDeclaration copy();
+	
+	/**
+	 * @since 5.2
+	 */
+	public ICPPASTDeclarator getDeclarator();
 }

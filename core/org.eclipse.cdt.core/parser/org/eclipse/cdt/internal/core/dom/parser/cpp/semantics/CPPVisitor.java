@@ -13,9 +13,7 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.dom.parser.cpp.semantics;
 
-import static org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.SemanticUtil.TDEF;
-import static org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.SemanticUtil.getUltimateType;
-import static org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.SemanticUtil.getUltimateTypeUptoPointers;
+import static org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.SemanticUtil.*;
 
 import org.eclipse.cdt.core.dom.ast.ASTNodeProperty;
 import org.eclipse.cdt.core.dom.ast.DOMException;
@@ -66,7 +64,6 @@ import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.ICompositeType;
 import org.eclipse.cdt.core.dom.ast.IEnumeration;
 import org.eclipse.cdt.core.dom.ast.IEnumerator;
-import org.eclipse.cdt.core.dom.ast.IFunction;
 import org.eclipse.cdt.core.dom.ast.IFunctionType;
 import org.eclipse.cdt.core.dom.ast.ILabel;
 import org.eclipse.cdt.core.dom.ast.IParameter;
@@ -84,6 +81,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCompositeTypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTConstructorChainInitializer;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTConversionName;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTDeclSpecifier;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTDeclarator;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTElaboratedTypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTExplicitTemplateInstantiation;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTFieldReference;
@@ -106,6 +104,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTemplateId;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTemplateParameter;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTemplateSpecialization;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTemplatedTypeTemplateParameter;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTypeId;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTypenameExpression;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTUsingDeclaration;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTUsingDirective;
@@ -157,6 +156,7 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPMethodTemplate;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPNamespace;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPNamespaceAlias;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPParameter;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPParameterPackType;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPPointerToMemberType;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPPointerType;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPQualifierType;
@@ -556,7 +556,7 @@ public class CPPVisitor extends ASTQueries {
 			parent = param.getParent();
 			if (parent instanceof IASTStandardFunctionDeclarator) {
 				IASTStandardFunctionDeclarator fdtor = (IASTStandardFunctionDeclarator) param.getParent();
-				// if the fdtor does not declare a function we don't create a binding for the parameter.
+				// Create parameter bindings only if the declarator declares a function 
 				if (!(findOutermostDeclarator(fdtor).getParent() instanceof IASTDeclaration) ||
 						findTypeRelevantDeclarator(fdtor) != fdtor)
 					return null;
@@ -660,8 +660,8 @@ public class CPPVisitor extends ASTQueries {
 		} 
         
         if (isFunction) {
-			if (binding instanceof ICPPInternalBinding && binding instanceof IFunction && name.isActive()) {
-			    IFunction function = (IFunction) binding;
+			if (binding instanceof ICPPInternalBinding && binding instanceof ICPPFunction && name.isActive()) {
+				ICPPFunction function = (ICPPFunction) binding;
 			    if (CPPSemantics.isSameFunction(function, typeRelevantDtor)) {
 			    	binding= CPPSemantics.checkDeclSpecifier(binding, name, parent);
 			    	if (binding instanceof IProblemBinding)
@@ -1547,22 +1547,14 @@ public class CPPVisitor extends ASTQueries {
 	        pTypes[i] = pt; 
 	    }
 	    
-	    return new CPPFunctionType(returnType, pTypes, isConst, isVolatile);
+	    return new CPPFunctionType(returnType, pTypes, isConst, isVolatile, false);
 	}
 	
 	private static IType createType(IType returnType, ICPPASTFunctionDeclarator fnDtor) {
-	    IASTParameterDeclaration[] params = fnDtor.getParameters();
+	    ICPPASTParameterDeclaration[] params = fnDtor.getParameters();
 	    IType[] pTypes = new IType[params.length];
-	    IType pt = null;
-	    
 	    for (int i = 0; i < params.length; i++) {
-	        IASTDeclSpecifier pDeclSpec = params[i].getDeclSpecifier();
-	        IASTDeclarator pDtor = params[i].getDeclarator();
-	        pt = createType(pDeclSpec);
-	        pt = createType(pt, pDtor);
-
-	        pt = SemanticUtil.adjustParameterType(pt, true);
-	        pTypes[i] = pt;
+	        pTypes[i]= createParameterType(params[i], true);
 	    }
 	     
 	    IASTName name = fnDtor.getName();
@@ -1576,12 +1568,54 @@ public class CPPVisitor extends ASTQueries {
 	    	returnType = getPointerTypes(returnType, fnDtor);
 	    }
 	    
-	    IType type = new CPPFunctionType(returnType, pTypes, fnDtor.isConst(), fnDtor.isVolatile());
+	    CPPFunctionType type = new CPPFunctionType(returnType, pTypes, fnDtor.isConst(), fnDtor.isVolatile(),
+	    		fnDtor.takesVarArgs());
 	    final IASTDeclarator nested = fnDtor.getNestedDeclarator();
 	    if (nested != null) {
 	    	return createType(type, nested);
 	    }
 	    return type;
+	}
+
+	/**
+	 * Creates the type for a parameter declaration.
+	 */
+	public static IType createParameterType(final ICPPASTParameterDeclaration pdecl, boolean forFuncType) {
+		IType pt;
+		IASTDeclSpecifier pDeclSpec = pdecl.getDeclSpecifier();
+		ICPPASTDeclarator pDtor = pdecl.getDeclarator();
+		pt = createType(pDeclSpec);
+		pt = createType(pt, pDtor);
+		pt=  adjustParameterType(pt, forFuncType);
+		
+		if (CPPVisitor.findInnermostDeclarator(pDtor).declaresParameterPack()) {
+			pt= new CPPParameterPackType(pt);
+		}
+		return pt;
+	}
+	
+	/**
+	 * Adjusts the parameter type according to 8.3.5-3:
+	 * cv-qualifiers are deleted, arrays and function types are converted to pointers.
+	 */
+	private static IType adjustParameterType(final IType pt, boolean forFunctionType) {
+		// bug 239975
+		IType t= SemanticUtil.getNestedType(pt, TDEF);
+		if (t instanceof IArrayType) {
+			IArrayType at = (IArrayType) t;
+			return new CPPPointerType(at.getType());
+		}
+		if (t instanceof IFunctionType) {
+			return new CPPPointerType(pt);
+		}
+
+		// 8.3.5-3 
+		// Any cv-qualifier modifying a parameter type is deleted. The parameter type remains
+		// to be qualified.
+		if (forFunctionType && SemanticUtil.getCVQualifier(t) != CVQualifier._) {
+			return SemanticUtil.getNestedType(t, TDEF | ALLCVQ);
+		}
+		return pt;
 	}
 	
 	/**
@@ -1652,14 +1686,18 @@ public class CPPVisitor extends ASTQueries {
 		IASTNode parent = declarator.getParent();
 		
 		IASTDeclSpecifier declSpec = null;
-		if (parent instanceof IASTParameterDeclaration) {
-			declSpec = ((IASTParameterDeclaration) parent).getDeclSpecifier();
-		} else if (parent instanceof IASTSimpleDeclaration) {
+		boolean isPackExpansion= false;
+		if (parent instanceof IASTSimpleDeclaration) {
 			declSpec = ((IASTSimpleDeclaration)parent).getDeclSpecifier();
 		} else if (parent instanceof IASTFunctionDefinition) {
 			declSpec = ((IASTFunctionDefinition)parent).getDeclSpecifier();
-		} else if (parent instanceof IASTTypeId) {
-			declSpec = ((IASTTypeId)parent).getDeclSpecifier();
+		} else if (parent instanceof ICPPASTTypeId) {
+			final ICPPASTTypeId typeId = (ICPPASTTypeId)parent;
+			declSpec = typeId.getDeclSpecifier();
+			isPackExpansion= typeId.isPackExpansion();
+		} else {
+			assert false;
+			return null;
 		}
 	
 		IType type = createType(declSpec);
@@ -1675,6 +1713,9 @@ public class CPPVisitor extends ASTQueries {
 					type= new CPPArrayType(at.getType(), Value.create(((IASTInitializerList) initializer).getSize()));
 				}
 			}
+		}
+		if (isPackExpansion) {
+			type= new CPPParameterPackType(type);
 		}
 		return type;
 	}
@@ -2153,5 +2194,9 @@ public class CPPVisitor extends ASTQueries {
 			}
 		}
 		return false;
+	}
+	
+	public static ICPPASTDeclarator findInnermostDeclarator(ICPPASTDeclarator dtor) {
+		return (ICPPASTDeclarator) ASTQueries.findInnermostDeclarator(dtor);
 	}
 }

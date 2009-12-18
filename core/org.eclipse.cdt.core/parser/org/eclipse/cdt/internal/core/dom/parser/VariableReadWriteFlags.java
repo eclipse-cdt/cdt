@@ -259,6 +259,7 @@ public abstract class VariableReadWriteFlags {
 			return PDOMName.READ_ACCESS;
 
 		case IASTUnaryExpression.op_sizeof:
+		case IASTUnaryExpression.op_sizeofParameterPack:
 		case IGNUASTUnaryExpression.op_alignOf:
 		case IGNUASTUnaryExpression.op_typeof:
 			return 0;

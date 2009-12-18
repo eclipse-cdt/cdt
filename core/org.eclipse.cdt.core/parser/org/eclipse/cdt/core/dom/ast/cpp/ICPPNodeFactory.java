@@ -6,7 +6,7 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *     IBM Corporation - initial API and implementation
+ *     Mike Kucera (IBM Corporation) - initial API and implementation
  *     Markus Schorn (Wind River Systems)
  *******************************************************************************/
 package org.eclipse.cdt.core.dom.ast.cpp;
@@ -32,7 +32,6 @@ import org.eclipse.cdt.core.parser.IScanner;
 /**
  * Factory for AST nodes for the C++ programming language.
  * 
- * @author Mike Kucera
  * @since 5.1
  * @noextend This interface is not intended to be extended by clients.
  * @noimplement This interface is not intended to be implemented by clients.
@@ -60,8 +59,23 @@ public interface ICPPNodeFactory extends INodeFactory {
 	public ICPPASTFunctionDefinition newFunctionDefinition(IASTDeclSpecifier declSpecifier,
 			IASTFunctionDeclarator declarator, IASTStatement bodyStatement);
 	
+	/**
+	 * @since 5.2
+	 */
+	public ICPPASTDeclarator newDeclarator(IASTName name);
+
 	public ICPPASTFunctionDeclarator newFunctionDeclarator(IASTName name);
 	
+	/**
+	 * @since 5.2
+	 */
+	public ICPPASTArrayDeclarator newArrayDeclarator(IASTName name);
+
+	/**
+	 * @since 5.2
+	 */
+	public ICPPASTFieldDeclarator newFieldDeclarator(IASTName name, IASTExpression bitFieldSize);
+
 	public ICPPASTElaboratedTypeSpecifier newElaboratedTypeSpecifier(int kind, IASTName name);
 	
 	public ICPPASTParameterDeclaration newParameterDeclaration(IASTDeclSpecifier declSpec, IASTDeclarator declarator);
@@ -105,6 +119,11 @@ public interface ICPPNodeFactory extends INodeFactory {
 	public ICPPASTWhileStatement newWhileStatement(IASTDeclaration condition, IASTStatement body);
 	
 	public ICPPASTWhileStatement newWhileStatement();
+
+	/**
+	 * @since 5.2
+	 */
+	public ICPPASTTypeId newTypeId(IASTDeclSpecifier declSpecifier, IASTDeclarator declarator);
 
 	public ICPPASTDeleteExpression newDeleteExpression(IASTExpression operand);
 	
@@ -156,6 +175,16 @@ public interface ICPPNodeFactory extends INodeFactory {
 	
 	public IGPPASTPointerToMember newPointerToMemberGPP(IASTName name);
 
+	/**
+	 * @since 5.2
+	 */
+	public ICPPASTInitializerExpression newInitializerExpression(IASTExpression expression);
+	
+	/**
+	 * @since 5.2
+	 */
+	public ICPPASTInitializerList newInitializerList();
+
 	public ICPPASTConstructorInitializer newConstructorInitializer(IASTExpression exp);
 	
 	public ICPPASTConstructorChainInitializer newConstructorChainInitializer(IASTName memberInitializerId, IASTExpression initializerValue);
@@ -181,6 +210,11 @@ public interface ICPPNodeFactory extends INodeFactory {
 	 */
 	public ICPPASTStaticAssertDeclaration newStaticAssertion(IASTExpression condition, ICPPASTLiteralExpression message);
 	
+	/**
+	 * Creates a new pack expansion expression for the given pattern.
+	 * @since 5.2
+	 */
+	public ICPPASTPackExpansionExpression newPackExpansionExpression(IASTExpression pattern);
 	
 	/**
 	 * @deprecated Replaced by {@link #newReferenceOperator(boolean)}.

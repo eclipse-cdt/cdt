@@ -12,17 +12,18 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.dom.parser.cpp;
 
-import com.ibm.icu.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.eclipse.cdt.core.dom.ast.IASTExpression;
 import org.eclipse.cdt.core.dom.ast.IASTIdExpression;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IASTTypeId;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTAmbiguousTemplateArgument;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTPackExpansionExpression;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTemplateId;
 import org.eclipse.cdt.internal.core.dom.parser.ASTAmbiguousNode;
-import org.eclipse.cdt.internal.core.parser.ParserMessages;
+import org.eclipse.core.runtime.Assert;
 
 /**
  * Ambiguity node for deciding between type-id and id-expression in a template argument.
@@ -32,21 +33,22 @@ public class CPPASTAmbiguousTemplateArgument extends ASTAmbiguousNode implements
 	private List<IASTNode> fNodes;
 	
 	/**
-	 * @param nodes  nodes of type {@link IASTTypeId} or {@link IASTIdExpression}
-	 */
-	/*
-	 * We can replace this with a version taking ICPPASTTemplateArgument...
-	 * in the future
+	 * @param nodes  nodes of type {@link IASTTypeId}, {@link IASTIdExpression} or {@link ICPPASTPackExpansionExpression}.
 	 */
 	public CPPASTAmbiguousTemplateArgument(IASTNode... nodes) {
 		fNodes= new ArrayList<IASTNode>(2);
 		for(IASTNode node : nodes) {
-			if(node instanceof IASTTypeId || node instanceof IASTIdExpression) {
+			if (node instanceof IASTTypeId || node instanceof IASTIdExpression) {
 				fNodes.add(node);
+			} else if (node instanceof ICPPASTPackExpansionExpression) {
+				final IASTExpression pattern = ((ICPPASTPackExpansionExpression) node).getPattern();
+				if (pattern instanceof IASTIdExpression) {
+					fNodes.add(node);
+				} else {
+					Assert.isLegal(false, pattern == null ? "null" : pattern.getClass().getName()); //$NON-NLS-1$
+				}
 			} else {
-				String ns= node == null ? "null" : node.getClass().getName(); //$NON-NLS-1$
-				String msg= MessageFormat.format(ParserMessages.getString("CPPASTAmbiguousTemplateArgument_InvalidConstruction"), new Object[] {ns}); //$NON-NLS-1$
-				throw new IllegalArgumentException(msg);
+				Assert.isLegal(false, node == null ? "null" : node.getClass().getName()); //$NON-NLS-1$
 			}
 		}
 	}
@@ -69,7 +71,12 @@ public class CPPASTAmbiguousTemplateArgument extends ASTAmbiguousNode implements
         assertNotFrozen();
 		addNode(idExpression);
 	}
-	
+
+	public void addIdExpression(IASTExpression idExpression) {
+        assertNotFrozen();
+		addNode(idExpression);
+	}
+
 	private void addNode(IASTNode node) {
 		fNodes.add(node);
 		node.setParent(this);

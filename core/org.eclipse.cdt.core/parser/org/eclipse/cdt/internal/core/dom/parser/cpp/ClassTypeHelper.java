@@ -29,7 +29,6 @@ import org.eclipse.cdt.core.dom.ast.IASTFunctionDefinition;
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IASTSimpleDeclaration;
-import org.eclipse.cdt.core.dom.ast.IBasicType;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.IField;
 import org.eclipse.cdt.core.dom.ast.IFunctionType;
@@ -38,7 +37,6 @@ import org.eclipse.cdt.core.dom.ast.IQualifierType;
 import org.eclipse.cdt.core.dom.ast.IScope;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.ITypedef;
-import org.eclipse.cdt.core.dom.ast.IBasicType.Kind;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCompositeTypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTDeclSpecifier;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTElaboratedTypeSpecifier;
@@ -669,8 +667,8 @@ public class ClassTypeHelper {
 			if (params.length == 0)
 				return KIND_DEFAULT_CTOR;
 			if (params.length == 1) {
-				IType t= params[0];
-				if (t instanceof IBasicType && ((IBasicType) t).getKind() == Kind.eVoid)
+				IType t= SemanticUtil.getNestedType(params[0], SemanticUtil.TDEF);
+				if (SemanticUtil.isVoidType(t))
 					return KIND_DEFAULT_CTOR;
 
 				if (isRefToConstClass(ct, t))

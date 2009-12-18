@@ -15,19 +15,19 @@ import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.IValue;
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassSpecialization;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPParameter;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPParameterPackType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateParameterMap;
-import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPTemplates;
 
 /**
  * Binding for a specialization of a parameter.
  */
 public class CPPParameterSpecialization extends CPPSpecialization implements ICPPParameter {
-	private IType type = null;
+	private IType fType;
 	
-	public CPPParameterSpecialization(ICPPParameter orig, IBinding owner, ICPPTemplateParameterMap tpmap) {
+	public CPPParameterSpecialization(ICPPParameter orig, IBinding owner, IType type, ICPPTemplateParameterMap tpmap) {
 		super(orig, owner, tpmap);
+		fType= type;
 	}
 
 	private ICPPParameter getParameter(){
@@ -38,25 +38,17 @@ public class CPPParameterSpecialization extends CPPSpecialization implements ICP
 	 * @see org.eclipse.cdt.core.dom.ast.IVariable#getType()
 	 */
 	public IType getType() throws DOMException {
-		if( type == null ){
-			type= specializeType(getParameter().getType());
-		}
-		return type;
+		return fType;
 	}
 	
+	public boolean isParameterPack() {
+		return fType instanceof ICPPParameterPackType;
+	}
+
 	@Override
 	public IType specializeType(IType type) {
-		IBinding owner= getOwner();
-		if (owner != null) {
-			try {
-				owner= owner.getOwner();
-				if (owner instanceof ICPPClassSpecialization) {
-					return CPPTemplates.instantiateType(type, getTemplateParameterMap(), (ICPPClassSpecialization) owner);
-				}
-			} catch (DOMException e) {
-			}
-		}
-		return CPPTemplates.instantiateType(type, getTemplateParameterMap(), null);
+		assert false;
+		return type;
 	}
 
 	/* (non-Javadoc)

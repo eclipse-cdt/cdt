@@ -38,6 +38,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPMethod;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPNamespace;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPNamespaceAlias;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPNamespaceScope;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPParameterPackType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPParameter;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPPointerToMemberType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPReferenceType;
@@ -56,6 +57,7 @@ import org.eclipse.cdt.core.index.IIndexMacroContainer;
 import org.eclipse.cdt.internal.core.dom.parser.Value;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPArrayType;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPFunctionType;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPParameterPackType;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPPointerToMemberType;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPPointerType;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPQualifierType;
@@ -132,7 +134,7 @@ public class CPPCompositesFactory extends AbstractCompositeFactory {
 			IType[] p= ft.getParameterTypes();
 			IType[] p2= getCompositeTypes(p);
 			if (r != r2 || p != p2) {
-				return new CPPFunctionType(r2, p2, ft.isConst(), ft.isVolatile());
+				return new CPPFunctionType(r2, p2, ft.isConst(), ft.isVolatile(), ft.takesVarArgs());
 			}
 			return ft;
 		} 
@@ -162,6 +164,15 @@ public class CPPCompositesFactory extends AbstractCompositeFactory {
 			IType r2= getCompositeType(r);
 			if (r != r2) {
 				return new CPPReferenceType(r2, rt.isRValueReference());
+			}
+			return rt;
+		}
+		if (rtype instanceof ICPPParameterPackType) {
+			ICPPParameterPackType rt= (ICPPParameterPackType) rtype;
+			IType r= rt.getType();
+			IType r2= getCompositeType(r);
+			if (r != r2) {
+				return new CPPParameterPackType(r2);
 			}
 			return rt;
 		}

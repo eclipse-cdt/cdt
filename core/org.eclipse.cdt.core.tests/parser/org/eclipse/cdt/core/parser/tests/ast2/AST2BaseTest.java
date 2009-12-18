@@ -487,6 +487,8 @@ public class AST2BaseTest extends BaseTestCase {
     	}
     	
     	public IBinding assertProblem(String section, int len) {
+    		if (len <= 0)
+    			len= section.length()-len;
     		IBinding binding= binding(section, len);
     		assertTrue("Non-ProblemBinding for name: " + section.substring(0, len),
     				binding instanceof IProblemBinding);
@@ -494,6 +496,8 @@ public class AST2BaseTest extends BaseTestCase {
     	}
     	
     	public <T extends IBinding> T assertNonProblem(String section, int len) {
+    		if (len <= 0)
+    			len= section.length()-len;
     		IBinding binding= binding(section, len);
     		if (binding instanceof IProblemBinding) {
     			IProblemBinding problem= (IProblemBinding) binding;

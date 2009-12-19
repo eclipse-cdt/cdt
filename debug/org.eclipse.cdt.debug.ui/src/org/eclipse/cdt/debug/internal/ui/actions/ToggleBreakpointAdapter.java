@@ -544,21 +544,25 @@ public class ToggleBreakpointAdapter implements IToggleBreakpointsTargetExtensio
      * @see org.eclipse.debug.ui.actions.IToggleBreakpointsTargetExtension#canToggleBreakpoints(org.eclipse.ui.IWorkbenchPart, org.eclipse.jface.viewers.ISelection)
      */
     public boolean canToggleBreakpoints(IWorkbenchPart part, ISelection selection) {
-        return canToggleLineBreakpoints(part, selection);
+        return canToggleLineBreakpoints(part, selection) ||
+               canToggleWatchpoints(part, selection) ||
+               canToggleMethodBreakpoints(part, selection);
     }
 
 	/*
 	 * @see org.eclipse.debug.ui.actions.IToggleBreakpointsTargetExtension#toggleBreakpoints(org.eclipse.ui.IWorkbenchPart, org.eclipse.jface.viewers.ISelection)
 	 */
 	public void toggleBreakpoints(IWorkbenchPart part, ISelection selection) throws CoreException {
-		ICElement element = getCElementFromSelection(part, selection);
-		if (element instanceof IFunction || element instanceof IMethod) {
-			toggleMethodBreakpoints0((IDeclaration)element);
-		} else if (element instanceof IVariable) {
-			toggleVariableWatchpoint(part, (IVariable) element);
-		} else {
-			toggleLineBreakpoints(part, selection);
-		}
+		 if (canToggleLineBreakpoints(part, selection)) {
+			 toggleLineBreakpoints(part, selection);
+		 } else {
+			 ICElement element = getCElementFromSelection(part, selection);
+			 if (element instanceof IFunction || element instanceof IMethod) {
+				 toggleMethodBreakpoints0((IDeclaration)element);
+			 } else if (element instanceof IVariable) {
+				 toggleVariableWatchpoint(part, (IVariable) element);
+			 }
+		 }
 	}
 
 }

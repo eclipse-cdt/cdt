@@ -46,7 +46,15 @@ public class XlCSpecsConsoleParser implements IScannerInfoConsoleParser {
 	// pattern for the includes arguments
 	final Pattern includePattern = Pattern
 			.compile("-(?:qgcc_c_stdinc|qc_stdinc|qgcc_cpp_stdinc|qcpp_stdinc)=(.*)"); //$NON-NLS-1$
-
+	
+	// xlC compiler constants
+	final static String [] compilerConstants = {
+			"__IBMCPP__", //$NON-NLS-1$
+			"__xlC__",    //$NON-NLS-1$
+			"__IBMC__",   //$NON-NLS-1$
+			"__xlc__"     //$NON-NLS-1$
+	};
+	
 	private IProject fProject = null;
 
 	private IScannerInfoCollector fCollector = null;
@@ -130,8 +138,17 @@ public class XlCSpecsConsoleParser implements IScannerInfoConsoleParser {
 	 */
 	public void shutdown() {
 		Map<ScannerInfoTypes, List<String>> scannerInfo = new HashMap<ScannerInfoTypes, List<String>>();
+		
+		// insert compiler constants, work around buggy xlC option for dumping symbols (it misses a few)
+		for (String constant : compilerConstants) {
+			if (!symbols.contains(constant))
+				symbols.add(constant);
+		}
+
+		// add the scanner info
 		scannerInfo.put(ScannerInfoTypes.INCLUDE_PATHS, includes);
 		scannerInfo.put(ScannerInfoTypes.SYMBOL_DEFINITIONS, symbols);
+		
 		fCollector.contributeToScannerConfig(fProject, scannerInfo);
 		if(fCollector != null && fCollector instanceof IScannerInfoCollector2) {
 			IScannerInfoCollector2 collector = (IScannerInfoCollector2) fCollector;

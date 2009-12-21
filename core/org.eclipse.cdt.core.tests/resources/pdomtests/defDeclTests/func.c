@@ -48,7 +48,7 @@ void bar06(){
 	foo06(); // ref06
 }
 /* ---------- Test 7 ---------- 
- * static function foo07 defintined in second.c
+ * static function foo07 defined in second.c
  */
 void foo07(); // decl07
 void bar07(){
@@ -56,7 +56,7 @@ void bar07(){
 }
 
 /* ---------- Test 8 ---------- 
- * static function foo08 defintined in second.c
+ * static function foo08 defined in second.c
  */
 static void bar08(){
 	foo08(); // ref08

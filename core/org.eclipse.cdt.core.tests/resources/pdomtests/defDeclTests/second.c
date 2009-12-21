@@ -10,7 +10,7 @@ static void foo07() { // def07
 }
 
 /* ---------- Test 8 ---------- 
- * static function foo08 defintined in second.c
+ * static function foo08 defined in second.c
  */
 static void foo08() { // defS08
 }

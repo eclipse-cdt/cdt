@@ -13,10 +13,12 @@ package org.eclipse.cdt.internal.core.dom.parser.cpp;
 import org.eclipse.cdt.core.dom.ast.ASTVisitor;
 import org.eclipse.cdt.core.dom.ast.IASTExpression;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
+import org.eclipse.cdt.core.dom.ast.IProblemBinding;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTPackExpansionExpression;
 import org.eclipse.cdt.internal.core.dom.parser.ASTNode;
 import org.eclipse.cdt.internal.core.dom.parser.IASTAmbiguityParent;
+import org.eclipse.cdt.internal.core.dom.parser.ProblemBinding;
 
 /**
  * Implementation of pack expansion expression.
@@ -51,7 +53,11 @@ public class CPPASTPackExpansionExpression extends ASTNode implements ICPPASTPac
 	}
 
 	public IType getExpressionType() {
-		return new CPPParameterPackType(fPattern.getExpressionType());
+		final IType type = fPattern.getExpressionType();
+		if (type == null)
+			return new ProblemBinding(this, IProblemBinding.SEMANTIC_INVALID_TYPE, getRawSignatureChars());
+		
+		return new CPPParameterPackType(type);
 	}
 
 	public boolean isLValue() {

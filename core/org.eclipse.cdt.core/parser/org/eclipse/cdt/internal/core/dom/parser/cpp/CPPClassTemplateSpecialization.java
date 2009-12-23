@@ -53,6 +53,8 @@ public class CPPClassTemplateSpecialization extends CPPClassSpecialization
 	}
 
 	public ICPPTemplateParameter[] getTemplateParameters() throws DOMException {
+		// mstodo if we specialize the template parameters (because of its default values), it will
+		// be less error prone to use the defaults.
 		ICPPClassTemplate template = (ICPPClassTemplate) getSpecializedBinding();
 		return template.getTemplateParameters();
 	}

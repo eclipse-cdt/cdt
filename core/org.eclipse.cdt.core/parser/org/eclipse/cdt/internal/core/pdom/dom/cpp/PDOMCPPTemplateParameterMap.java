@@ -22,15 +22,13 @@ import org.eclipse.cdt.internal.core.pdom.db.Database;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMLinkage;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMNode;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMValue;
-import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.CoreException;
 
 /**
  * Collects methods to store an argument list in the database
  */
 public class PDOMCPPTemplateParameterMap {
-	private static final int PARAMPOS_OFFSET= 0;
-	private static final int TYPE_OFFSET= PARAMPOS_OFFSET + 4;
+	private static final int TYPE_OFFSET= 0;
 	private static final int VALUE_OFFSET= TYPE_OFFSET + Database.TYPE_SIZE;
 	private static final int NODE_SIZE = VALUE_OFFSET + Database.PTR_SIZE;
 
@@ -42,43 +40,74 @@ public class PDOMCPPTemplateParameterMap {
 		final PDOMLinkage linkage= parent.getLinkage();
 		final Database db= linkage.getDB();
 		Integer[] keys= map.getAllParameterPositions();
-		final short len= (short) Math.min(keys.length, (Database.MAX_MALLOC_SIZE-2)/NODE_SIZE); 
-		final long block= db.malloc(2+NODE_SIZE*len);
-		long p= block;
-
-		db.putShort(p, len); p+=2;
-		for (int i=0; i<len; i++) {
-			final Integer paramPos = keys[i];
-			db.putInt(p + PARAMPOS_OFFSET, paramPos); 
-			final ICPPTemplateArgument arg = map.getArgument(paramPos);
-			if (arg.isNonTypeValue()) {
-				linkage.storeType(p + TYPE_OFFSET, arg.getTypeOfNonTypeValue());
-				db.putRecPtr(p+VALUE_OFFSET, PDOMValue.store(db, linkage, arg.getNonTypeValue())); 
-			} else {
-				linkage.storeType(p + TYPE_OFFSET, arg.getTypeValue());
+		int keyLen= 0;
+		int dataSize= 2;
+		for (Integer key : keys) {
+			int delta= 2+4+NODE_SIZE;
+			ICPPTemplateArgument[] packExpansion= map.getPackExpansion(key);
+			if (packExpansion != null) {
+				delta+= (packExpansion.length-1) * NODE_SIZE;
 			}
-			p+=NODE_SIZE; 
+			if (dataSize+delta > Database.MAX_MALLOC_SIZE)
+				break;
+			dataSize += delta;
+			keyLen++;
 		}
+		final long block= db.malloc(dataSize);
+		long p= block;
+		db.putShort(p, (short)keyLen); p+=2;
+		for (final Integer paramId : keys) {
+			if (--keyLen < 0)
+				break;
+			db.putInt(p, paramId); p+=4; 
+			final ICPPTemplateArgument arg = map.getArgument(paramId);
+			if (arg != null) {
+				db.putShort(p, (short) -1); p+=2;
+				storeArgument(db, linkage, p, arg); p+= NODE_SIZE;
+			} else {
+				final ICPPTemplateArgument[] args = map.getPackExpansion(paramId);
+				db.putShort(p, (short) args.length); p+=2;
+				for (ICPPTemplateArgument a : args) {
+					storeArgument(db, linkage, p, a); p+= NODE_SIZE;
+				}
+			}
+		}
+		assert p == block+dataSize;
 		return block;
 	}
 
+	private static void storeArgument(final Database db, final PDOMLinkage linkage, long p,
+			final ICPPTemplateArgument arg) throws CoreException {
+		if (arg.isNonTypeValue()) {
+			linkage.storeType(p + TYPE_OFFSET, arg.getTypeOfNonTypeValue());
+			db.putRecPtr(p+VALUE_OFFSET, PDOMValue.store(db, linkage, arg.getNonTypeValue())); 
+		} else {
+			linkage.storeType(p + TYPE_OFFSET, arg.getTypeValue());
+		}
+	}
 
 	/**
 	 * Clears the map in the database.
 	 */
-	public static void clearMap(PDOMNode parent, int rec) throws CoreException {
+	public static void clearMap(PDOMNode parent, final int record) throws CoreException {
 		final PDOMLinkage linkage= parent.getLinkage();
 		final Database db= linkage.getDB();
-		final short len= db.getShort(rec);
 		
-		Assert.isTrue(len >= 0 && len <= (Database.MAX_MALLOC_SIZE-2)/NODE_SIZE);
-		rec+=2;
+		long p= record;
+		final short len= db.getShort(p); p+= 2;
+		
 		for (int i=0; i<len; i++) {
-			linkage.storeType(rec+TYPE_OFFSET, null);
-			PDOMValue.delete(db, db.getRecPtr(rec+VALUE_OFFSET));
-			rec+= NODE_SIZE;
+			p+= 4; // parameter id
+			short packSize= db.getShort(p); p+= 2;
+			if (packSize == -1) 
+				packSize= 1;
+			for (int j = 0; j < packSize; j++) {
+				linkage.storeType(p+TYPE_OFFSET, null);
+				PDOMValue.delete(db, db.getRecPtr(p+VALUE_OFFSET));
+				p+= NODE_SIZE;
+			}
 		}
-		db.free(rec);
+		db.free(record);
 	}
 
 	/**
@@ -89,7 +118,6 @@ public class PDOMCPPTemplateParameterMap {
 		final Database db= linkage.getDB();
 		final short len= db.getShort(rec);
 		
-		Assert.isTrue(len >= 0 && len <= (Database.MAX_MALLOC_SIZE-2)/NODE_SIZE);
 		if (len == 0) {
 			return CPPTemplateParameterMap.EMPTY;
 		}
@@ -97,22 +125,37 @@ public class PDOMCPPTemplateParameterMap {
 		rec+=2;
 		CPPTemplateParameterMap result= new CPPTemplateParameterMap(len);
 		for (int i=0; i<len; i++) {
-			final int parPos= db.getInt(rec + PARAMPOS_OFFSET);
-			IType type= linkage.loadType(rec + TYPE_OFFSET);
-			if (type == null) {
-				type= new CPPBasicType(Kind.eUnspecified, CPPBasicType.UNIQUE_TYPE_QUALIFIER);
-			}
-			final long nonTypeValRec= db.getRecPtr(rec+VALUE_OFFSET); 
-			ICPPTemplateArgument arg;
-			if (nonTypeValRec != 0) {
-				IValue val= PDOMValue.restore(db, linkage, nonTypeValRec);
-				arg= new CPPTemplateArgument(val, type);
+			final int parPos= db.getInt(rec); rec+= 4;
+			short packSize= db.getShort(rec); rec+= 2;
+			if (packSize == -1) {
+				ICPPTemplateArgument arg = readArgument(rec, linkage, db); rec+= NODE_SIZE;
+				result.put(parPos, arg);
 			} else {
-				arg= new CPPTemplateArgument(type);
+				ICPPTemplateArgument[] packExpansion= new ICPPTemplateArgument[packSize];
+				for (int j = 0; j < packExpansion.length; j++) {
+					packExpansion[j]= readArgument(rec, linkage, db); rec+= NODE_SIZE;
+				}
+				result.put(parPos, packExpansion);
 			}
-			result.put(parPos, arg);
-			rec+= NODE_SIZE;
 		}
 		return result;
+	}
+
+
+	private static ICPPTemplateArgument readArgument(long rec, final PDOMLinkage linkage, final Database db)
+			throws CoreException {
+		IType type= linkage.loadType(rec + TYPE_OFFSET);
+		if (type == null) {
+			type= new CPPBasicType(Kind.eUnspecified, CPPBasicType.UNIQUE_TYPE_QUALIFIER);
+		}
+		final long nonTypeValRec= db.getRecPtr(rec+VALUE_OFFSET); 
+		ICPPTemplateArgument arg;
+		if (nonTypeValRec != 0) {
+			IValue val= PDOMValue.restore(db, linkage, nonTypeValRec);
+			arg= new CPPTemplateArgument(val, type);
+		} else {
+			arg= new CPPTemplateArgument(type);
+		}
+		return arg;
 	}
 }

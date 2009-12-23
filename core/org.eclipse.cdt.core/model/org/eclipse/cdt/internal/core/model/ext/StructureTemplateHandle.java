@@ -11,6 +11,9 @@
  *******************************************************************************/ 
 package org.eclipse.cdt.internal.core.model.ext;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.eclipse.cdt.core.dom.ast.ASTTypeUtil;
 import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassSpecialization;
@@ -55,13 +58,21 @@ public class StructureTemplateHandle extends StructureHandle implements IStructu
 		fTemplate= new Template(classBinding.getName());
 		ICPPTemplateParameterMap map = classBinding.getTemplateParameterMap();
 		ICPPTemplateParameter[] tpars = ct.getTemplateParameters();
-		String[] args= new String[tpars.length];
-		for (int i = 0; i < tpars.length; i++) {
-			ICPPTemplateParameter par = tpars[i];
+		List<String> args= new ArrayList<String>(tpars.length);
+		for (ICPPTemplateParameter par : tpars) {
+			if (par.isParameterPack()) {
+				ICPPTemplateArgument[] pack= map.getPackExpansion(par);
+				if (pack != null) {
+					for (ICPPTemplateArgument p : pack) {
+						args.add(ASTTypeUtil.getArgumentString(p, false));
+					}
+					continue;
+				}
+			}
 			ICPPTemplateArgument arg = map.getArgument(par);
-			args[i]= arg == null ? par.getName() : ASTTypeUtil.getArgumentString(arg, false);
+			args.add(arg == null ? par.getName() : ASTTypeUtil.getArgumentString(arg, false));
 		}
-		fTemplate.setTemplateInfo(null, args);
+		fTemplate.setTemplateInfo(null, args.toArray(new String[args.size()]));
 	}
 
 	public int getNumberOfTemplateParameters() {

@@ -1588,7 +1588,7 @@ public class CPPVisitor extends ASTQueries {
 		pt = createType(pt, pDtor);
 		pt=  adjustParameterType(pt, forFuncType);
 		
-		if (CPPVisitor.findInnermostDeclarator(pDtor).declaresParameterPack()) {
+		if (pt != null && CPPVisitor.findInnermostDeclarator(pDtor).declaresParameterPack()) {
 			pt= new CPPParameterPackType(pt);
 		}
 		return pt;
@@ -1714,7 +1714,7 @@ public class CPPVisitor extends ASTQueries {
 				}
 			}
 		}
-		if (isPackExpansion) {
+		if (type != null && isPackExpansion) {
 			type= new CPPParameterPackType(type);
 		}
 		return type;

@@ -29,6 +29,8 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPConstructor;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPField;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPMethod;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPNamespace;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPParameterPackType;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateParameter;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateParameterMap;
 import org.eclipse.cdt.core.index.IIndexFileSet;
 import org.eclipse.cdt.core.parser.util.ArrayUtil;
@@ -125,10 +127,26 @@ public class AbstractCPPClassSpecializationScope implements ICPPClassSpecializat
 			} else {
 				final ICPPTemplateParameterMap tpmap = specialClass.getTemplateParameterMap();
 				for (ICPPBase base : bases) {
-					ICPPBase specBase = base.clone();
 					IBinding origClass = base.getBaseClass();
+					if (origClass instanceof ICPPTemplateParameter && ((ICPPTemplateParameter) origClass).isParameterPack()) {
+						IType[] specClasses= CPPTemplates.instantiateTypes(new IType[]{new CPPParameterPackType((IType) origClass)}, tpmap, -1, specialClass);
+						if (specClasses.length == 1 && specClasses[0] instanceof ICPPParameterPackType) {
+							result= (ICPPBase[]) ArrayUtil.append(ICPPBase.class, result, base);
+						} else {
+							for (IType specClass : specClasses) {
+								ICPPBase specBase = base.clone();
+								specClass = SemanticUtil.getUltimateType(specClass, false);
+								if (specClass instanceof IBinding && !(specClass instanceof IProblemBinding)) {
+									specBase.setBaseClass((IBinding) specClass);
+									result = (ICPPBase[]) ArrayUtil.append(ICPPBase.class, result, specBase);
+								}
+							}
+						}
+						continue;
+					}
 					if (origClass instanceof IType) {
-						IType specClass= CPPTemplates.instantiateType((IType) origClass, tpmap, specialClass);
+						ICPPBase specBase = base.clone();
+						IType specClass= CPPTemplates.instantiateType((IType) origClass, tpmap, -1, specialClass);
 						specClass = SemanticUtil.getUltimateType(specClass, false);
 						if (specClass instanceof IBinding && !(specClass instanceof IProblemBinding)) {
 							specBase.setBaseClass((IBinding) specClass);

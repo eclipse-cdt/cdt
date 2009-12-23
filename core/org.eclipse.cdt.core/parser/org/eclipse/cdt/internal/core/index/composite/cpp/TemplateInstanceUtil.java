@@ -43,7 +43,12 @@ public class TemplateInstanceUtil {
 		try {
 			for (Integer key : keys) {
 				ICPPTemplateArgument arg= preresult.getArgument(key);
-				result.put(key, convert(cf, arg));
+				if (arg != null) {
+					result.put(key, convert(cf, arg));
+				} else {
+					ICPPTemplateArgument[] pack= preresult.getPackExpansion(key);
+					result.put(key, convert(cf, pack));
+				}
 			}
 		} catch(DOMException de) {
 			CCorePlugin.log(de);

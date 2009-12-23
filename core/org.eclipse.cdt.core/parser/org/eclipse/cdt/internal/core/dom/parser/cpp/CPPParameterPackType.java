@@ -11,12 +11,14 @@
 package org.eclipse.cdt.internal.core.dom.parser.cpp;
 
 import org.eclipse.cdt.core.dom.ast.ASTTypeUtil;
+import org.eclipse.cdt.core.dom.ast.IProblemBinding;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.ITypedef;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPParameterPackType;
 import org.eclipse.cdt.internal.core.dom.parser.ISerializableType;
 import org.eclipse.cdt.internal.core.dom.parser.ITypeContainer;
 import org.eclipse.cdt.internal.core.dom.parser.ITypeMarshalBuffer;
+import org.eclipse.cdt.internal.core.dom.parser.ProblemBinding;
 import org.eclipse.core.runtime.CoreException;
 
 public class CPPParameterPackType implements ICPPParameterPackType, ITypeContainer, ISerializableType {
@@ -72,6 +74,9 @@ public class CPPParameterPackType implements ICPPParameterPackType, ITypeContain
 	
 	public static IType unmarshal(int firstByte, ITypeMarshalBuffer buffer) throws CoreException {
 		IType nested= buffer.unmarshalType();
+		if (nested == null)
+			return new ProblemBinding(null, IProblemBinding.SEMANTIC_INVALID_TYPE);
+		
 		return new CPPParameterPackType(nested);
 	}
 }

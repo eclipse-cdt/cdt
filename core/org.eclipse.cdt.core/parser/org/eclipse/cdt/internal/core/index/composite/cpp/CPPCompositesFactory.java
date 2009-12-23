@@ -38,8 +38,8 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPMethod;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPNamespace;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPNamespaceAlias;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPNamespaceScope;
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPParameterPackType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPParameter;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPParameterPackType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPPointerToMemberType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPReferenceType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPSpecialization;
@@ -171,7 +171,7 @@ public class CPPCompositesFactory extends AbstractCompositeFactory {
 			ICPPParameterPackType rt= (ICPPParameterPackType) rtype;
 			IType r= rt.getType();
 			IType r2= getCompositeType(r);
-			if (r != r2) {
+			if (r != r2 && r2 != null) {
 				return new CPPParameterPackType(r2);
 			}
 			return rt;

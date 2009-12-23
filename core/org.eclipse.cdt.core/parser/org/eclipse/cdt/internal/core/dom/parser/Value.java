@@ -46,10 +46,12 @@ public class Value implements IValue {
 	public static final int MAX_RECURSION_DEPTH = 25;
 	public final static IValue UNKNOWN= new Value("<unknown>".toCharArray(), ICPPUnknownBinding.EMPTY_UNKNOWN_BINDING_ARRAY); //$NON-NLS-1$
 	public final static IValue NOT_INITIALIZED= new Value("<__>".toCharArray(), ICPPUnknownBinding.EMPTY_UNKNOWN_BINDING_ARRAY); //$NON-NLS-1$
+	private static final int[] NO_INT = {};
 	
 	private static final String SCOPE_OP = "::"; //$NON-NLS-1$
 	private static final char UNIQUE_CHAR = '_';
 	private static final char TEMPLATE_PARAM_CHAR = '#';
+	private static final char TEMPLATE_PARAM_PACK_CHAR = '`';
 	private static final char REFERENCE_CHAR = '&';
 	private static final char UNARY_OP_CHAR = '$';
 	private static final char BINARY_OP_CHAR = '@';
@@ -69,13 +71,17 @@ public class Value implements IValue {
 	
 	private static class Reevaluation {
 		public final char[] fExpression;
+		private int fPackOffset;
 		public int pos=0;
 		public final Map<String, Integer> fUnknownSigs;
 		public final List<ICPPUnknownBinding> fUnknowns;
 		public final IBinding[] fResolvedUnknown;
 		public final ICPPTemplateParameterMap fMap;
-		public Reevaluation(char[] expr, Map<String, Integer> unknownSigs, List<ICPPUnknownBinding> unknowns, IBinding[] resolvedUnknowns, ICPPTemplateParameterMap map) {
+
+		public Reevaluation(char[] expr, int packOffset, Map<String, Integer> unknownSigs,
+				List<ICPPUnknownBinding> unknowns, IBinding[] resolvedUnknowns, ICPPTemplateParameterMap map) {
 			fExpression= expr;
+			fPackOffset= packOffset;
 			fUnknownSigs= unknownSigs;
 			fUnknowns= unknowns;
 			fResolvedUnknown= resolvedUnknowns;
@@ -189,25 +195,26 @@ public class Value implements IValue {
 	 * Creates a value representing the given template parameter.
 	 */
 	public static IValue create(ICPPTemplateNonTypeParameter tntp) {
-		final String expr = createTemplateParamExpression(tntp.getParameterID());
+		final String expr = createTemplateParamExpression(tntp.getParameterID(), tntp.isParameterPack());
 		return new Value(expr.toCharArray(), ICPPUnknownBinding.EMPTY_UNKNOWN_BINDING_ARRAY);
 	}
 
-	private static String createTemplateParamExpression(int id) {
+	private static String createTemplateParamExpression(int id, boolean isPack) {
 		StringBuilder buf= new StringBuilder();
-		buf.append(TEMPLATE_PARAM_CHAR);
+		buf.append(isPack ? TEMPLATE_PARAM_PACK_CHAR : TEMPLATE_PARAM_CHAR);
 		buf.append(Integer.toHexString(id));
 		return buf.toString();
 	}
 
 	/**
-	 * Tests whether the value is a template parameter, returns the parameter id of the
-	 * parameter, or <code>-1</code> if it is not a template parameter.
+	 * Tests whether the value is a template parameter (or parameter pack), 
+	 * returns the parameter id of the parameter, or <code>-1</code> if it is not a template parameter.
 	 */
 	public static int isTemplateParameter(IValue tval) {
 		final char[] rep= tval.getInternalExpression();
 		if (rep.length > 0) {
-			if (rep[0] == TEMPLATE_PARAM_CHAR) {
+			final char c = rep[0];
+			if (c == TEMPLATE_PARAM_CHAR || c == TEMPLATE_PARAM_PACK_CHAR) {
 				for (int i = 1; i < rep.length; i++) {
 					if (rep[i] == SEPARATOR)
 						return -1;
@@ -227,7 +234,7 @@ public class Value implements IValue {
 	public static boolean referencesTemplateParameter(IValue tval) {
 		final char[] rep= tval.getInternalExpression();
 		for (char element : rep) {
-			if (element == TEMPLATE_PARAM_CHAR)
+			if (element == TEMPLATE_PARAM_CHAR || element == TEMPLATE_PARAM_PACK_CHAR)
 				return true;
 		}
 		return false;
@@ -239,10 +246,48 @@ public class Value implements IValue {
 	public static boolean isDependentValue(IValue nonTypeValue) {
 		final char[] rep= nonTypeValue.getInternalExpression();
 		for (final char c : rep) {
-			if (c == REFERENCE_CHAR || c == TEMPLATE_PARAM_CHAR)
+			if (c == REFERENCE_CHAR || c == TEMPLATE_PARAM_CHAR || c == TEMPLATE_PARAM_PACK_CHAR)
 				return true;
 		}
 		return false;
+	}
+
+	/**
+	 * Collects all references to parameter packs.
+	 */
+	public static int[] getParameterPackReferences(IValue value) {
+		final char[] rep= value.getInternalExpression();
+		int result= -1;
+		List<Integer> array= null;
+		for (int i=0; i<rep.length-1; i++) {
+			if (rep[i] == TEMPLATE_PARAM_PACK_CHAR) {
+				int ref;
+				try {
+					ref = parseHex(rep, i + 1);
+					if (result < 0) {
+						result = ref;
+					} else {
+						if (array == null) {
+							array = new ArrayList<Integer>(2);
+							array.add(result);
+						}
+						array.add(ref);
+					}
+				} catch (UnknownValueException e) {
+				}
+			}
+		}
+		if (array != null) {
+			int[] ra= new int[array.size()];
+			for (int i = 0; i < ra.length; i++) {
+				ra[i]= array.get(i);
+			}
+			return ra;
+		}
+		if (result != -1)
+			return new int[] {result};
+		
+		return NO_INT;
 	}
 
 	/**
@@ -371,8 +416,10 @@ public class Value implements IValue {
 		if (b instanceof IType) {
 			throw UNKNOWN_EX;
 		}
-		if (b instanceof ICPPTemplateNonTypeParameter)
-			return createTemplateParamExpression(((ICPPTemplateNonTypeParameter) b).getParameterID());
+		if (b instanceof ICPPTemplateNonTypeParameter) {
+			final ICPPTemplateNonTypeParameter tp = (ICPPTemplateNonTypeParameter) b;
+			return createTemplateParamExpression(tp.getParameterID(), tp.isParameterPack());
+		}
 		
 		if (b instanceof ICPPUnknownBinding) {
 			return createReference((ICPPUnknownBinding) b, unknownSigs, unknowns);
@@ -591,11 +638,11 @@ public class Value implements IValue {
 		return BINARY_OP_CHAR + op + SEPARATOR + o1.toString() + SEPARATOR + o2.toString();
 	}
 	
-	public static IValue reevaluate(IValue val, IBinding[] resolvedUnknowns, ICPPTemplateParameterMap map, int maxdepth) {
+	public static IValue reevaluate(IValue val, int packOffset, IBinding[] resolvedUnknowns, ICPPTemplateParameterMap map, int maxdepth) {
 		try {
 			Map<String, Integer> unknownSigs= new HashMap<String, Integer>();
 			List<ICPPUnknownBinding> unknown= new ArrayList<ICPPUnknownBinding>();
-			Reevaluation reeval= new Reevaluation(val.getInternalExpression(),
+			Reevaluation reeval= new Reevaluation(val.getInternalExpression(), packOffset,
 					unknownSigs, unknown,
 					resolvedUnknowns, map);
 			Object obj= reevaluate(reeval, maxdepth);
@@ -672,7 +719,25 @@ public class Value implements IValue {
 					throw UNKNOWN_EX;
 				return evaluateValue(val, reeval.fUnknownSigs, reeval.fUnknowns);
 			}
-			return createTemplateParamExpression(num);
+			return createTemplateParamExpression(num, false);
+			
+		case TEMPLATE_PARAM_PACK_CHAR:
+			num= parseHex(buf, idx+1);
+			reeval.nextSeperator();
+			arg= null;
+			if (reeval.fPackOffset >= 0) {
+				ICPPTemplateArgument[] args= reeval.fMap.getPackExpansion(num);
+				if (args != null && reeval.fPackOffset < args.length) {
+					arg= args[reeval.fPackOffset];
+				}
+			}
+			if (arg != null) {
+				IValue val= arg.getNonTypeValue();
+				if (val == null)
+					throw UNKNOWN_EX;
+				return evaluateValue(val, reeval.fUnknownSigs, reeval.fUnknowns);
+			}
+			return createTemplateParamExpression(num, true);
 			
 		default:
 			reeval.nextSeperator();

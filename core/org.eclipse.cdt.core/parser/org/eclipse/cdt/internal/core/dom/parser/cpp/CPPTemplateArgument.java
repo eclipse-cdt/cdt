@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008 Wind River Systems, Inc. and others.
+ * Copyright (c) 2008, 2009 Wind River Systems, Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -12,6 +12,7 @@ package org.eclipse.cdt.internal.core.dom.parser.cpp;
 
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.IValue;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPParameterPackType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateArgument;
 import org.eclipse.core.runtime.Assert;
 
@@ -33,7 +34,7 @@ public class CPPTemplateArgument implements ICPPTemplateArgument {
 		fType= type;
 		fValue= null;
 	}
-
+	
 	public boolean isTypeValue() {
 		return fValue == null;
 	}
@@ -52,6 +53,23 @@ public class CPPTemplateArgument implements ICPPTemplateArgument {
 	
 	public IType getTypeOfNonTypeValue() {
 		return isNonTypeValue() ? fType : null;
+	}
+	
+	public boolean isPackExpansion() {
+		return fType instanceof ICPPParameterPackType;
+	}
+
+	public ICPPTemplateArgument getExpansionPattern() {
+		if (fType instanceof ICPPParameterPackType) {
+			IType t= ((ICPPParameterPackType) fType).getType();
+			if (t != null) {
+				if (fValue != null) {
+					return new CPPTemplateArgument(fValue, t);
+				}
+				return new CPPTemplateArgument(t);
+			}
+		}
+		return null;
 	}
 
 	public boolean isSameValue(ICPPTemplateArgument arg) {

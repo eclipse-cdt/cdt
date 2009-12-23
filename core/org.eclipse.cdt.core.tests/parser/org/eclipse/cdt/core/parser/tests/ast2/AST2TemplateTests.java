@@ -14,6 +14,8 @@
  *******************************************************************************/
 package org.eclipse.cdt.core.parser.tests.ast2;
 
+import static org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.SemanticUtil.TDEF;
+import static org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.SemanticUtil.getNestedType;
 import static org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.SemanticUtil.getUltimateType;
 import junit.framework.TestSuite;
 
@@ -4365,7 +4367,7 @@ public class AST2TemplateTests extends AST2BaseTest {
 		assertEquals("void (#0 (* ...)())", ASTTypeUtil.getType(f.getType(), true));
 		assertTrue(f.getParameters()[0].isParameterPack());
 		f= bh.assertNonProblem("f4", 2);
-		assertEquals("void (int (& ...)[#0])", ASTTypeUtil.getType(f.getType(), true));
+		assertEquals("void (int (& ...)[`0])", ASTTypeUtil.getType(f.getType(), true));
 		assertTrue(f.getParameters()[0].isParameterPack());
 		f= bh.assertNonProblem("f5", 2);
 		assertEquals("void (#0 ...)", ASTTypeUtil.getType(f.getType(), true));
@@ -4397,6 +4399,32 @@ public class AST2TemplateTests extends AST2BaseTest {
 		assertTrue(tp.isParameterPack());
 	}
 	
+	//	template <typename... Pack> class CT : public Pack... {
+	//		void mem() throw(Pack...);
+	//	};
+	//	struct A {int a;};
+	//	struct B {int b;};
+	//
+	//	void test() {
+	//		CT<A,B> c;
+	//		c.a= 1;
+	//		c.b= 1;
+	//		c.mem();
+	//	}
+	public void testParameterPackExpansions_280909() throws Exception {
+		final String code= getAboveComment();
+		parseAndCheckBindings(code, ParserLanguage.CPP);
+		BindingAssertionHelper bh= new BindingAssertionHelper(code, true);
+		ICPPField field= bh.assertNonProblem("a= 1", 1);
+		field= bh.assertNonProblem("b= 1", 1);
+
+		ICPPMethod meth= bh.assertNonProblem("mem();", 3);
+		IType[] spec= meth.getExceptionSpecification();
+		assertEquals(2, spec.length);
+		assertEquals("A", ASTTypeUtil.getType(spec[0]));
+		assertEquals("B", ASTTypeUtil.getType(spec[1]));
+	}	
+
 	//	template<typename... T> void f1(T*...);
 	//	template<typename T> void f2(T*...);
 	public void testTemplateParameterPacksAmbiguity_280909() throws Exception {
@@ -4426,7 +4454,7 @@ public class AST2TemplateTests extends AST2BaseTest {
 	//	void g() {
 	//		f(add, subtract);
 	//	}
-	public void _testVariadicTemplateExamples_280909b() throws Exception {
+	public void testVariadicTemplateExamples_280909b() throws Exception {
 		final String code= getAboveComment();
 		parseAndCheckBindings(code, ParserLanguage.CPP);
 	}		
@@ -4474,7 +4502,7 @@ public class AST2TemplateTests extends AST2BaseTest {
 	//	Y<A> ya; // ill-formed: a template parameter pack does not match a template parameter
 	//	Y<B> yb; // ill-formed: a template parameter pack does not match a template parameter
 	//	Y<C> yc; // okay
-	public void _testVariadicTemplateExamples_280909f() throws Exception {
+	public void testVariadicTemplateExamples_280909f() throws Exception {
 		final String code= getAboveComment();
 		BindingAssertionHelper bh= new BindingAssertionHelper(code, true);
 		bh.assertNonProblem("X<A>", 4);
@@ -4539,13 +4567,13 @@ public class AST2TemplateTests extends AST2BaseTest {
 	//   f("aa",3.0); 					// error: X cannot be deduced
 	//   f2<char, short, int, long>(); 	// okay
 	// }
-	public void _testVariadicTemplateExamples_280909i() throws Exception {
+	public void testVariadicTemplateExamples_280909i() throws Exception {
 		final String code= getAboveComment();
 		BindingAssertionHelper bh= new BindingAssertionHelper(code, true);
 		bh.assertNonProblem("f<int,char*,double>", 0);
 		bh.assertNonProblem("f<int,char*>", 0);
-		bh.assertProblem("f<int>", 0);
-		bh.assertNonProblem("f(", 1);
+		bh.assertNonProblem("f<int>", 0);
+		bh.assertProblem("f(\"aa\",3.0)", 1);
 		bh.assertNonProblem("f2<char, short, int, long>", 0);
 	}		
 
@@ -4553,19 +4581,19 @@ public class AST2TemplateTests extends AST2BaseTest {
 	//	void g() {
 	//		f<int*, float*>(0, 0, 0); // Types is the sequence int*, float*, int
 	//	}
-	public void _testVariadicTemplateExamples_280909j() throws Exception {
+	public void testVariadicTemplateExamples_280909j() throws Exception {
 		final String code= getAboveComment();
 		parseAndCheckBindings(code, ParserLanguage.CPP);
 	}		
 
 	//	template<class... Types> void f(Types&...);
-	//	template<class T, class... Types> void g(T1, Types...);
+	//	template<class T1, class... Types> void g(T1, Types...);
 	//	void h(int x, float& y) {
 	//	  const int z = x;
 	//	  f(x, y, z); // Types is deduced to int, float, const int
 	//	  g(x, y, z); // T1 is deduced to int, Types is deduced to float, int
 	//	}	
-	public void _testVariadicTemplateExamples_280909k() throws Exception {
+	public void testVariadicTemplateExamples_280909k() throws Exception {
 		final String code= getAboveComment();
 		parseAndCheckBindings(code, ParserLanguage.CPP);
 	}		
@@ -4574,11 +4602,13 @@ public class AST2TemplateTests extends AST2BaseTest {
 	//	template<typename... Types> void g(Tuple<Types...>); // #1
 	//	template<typename T1, typename... Types> void g(Tuple<T1, Types...>); // #2
 	//	template<typename T1, typename... Types> void g(Tuple<T1, Types&...>); // #3
-	//	g(Tuple<>()); // calls #1
-	//	g(Tuple<int, float>()); // calls #2
-	//	g(Tuple<int, float&>()); // calls #3
-	//	g(Tuple<int>()); // calls #3	
-	public void _testVariadicTemplateExamples_280909m() throws Exception {
+	//  void test() {
+	//	  g(Tuple<>()); // calls #1
+	//	  g(Tuple<int, float>()); // calls #2
+	//	  g(Tuple<int, float&>()); // calls #3
+	//	  g(Tuple<int>()); // calls #3	
+	// }
+	public void testVariadicTemplateExamples_280909m() throws Exception {
 		final String code= getAboveComment();
 		parseAndCheckBindings(code, ParserLanguage.CPP);
 		BindingAssertionHelper bh= new BindingAssertionHelper(code, true);
@@ -4586,21 +4616,21 @@ public class AST2TemplateTests extends AST2BaseTest {
 		ICPPFunction g2= bh.assertNonProblem("g(Tuple<T1, Types...>)", 1);
 		ICPPFunction g3= bh.assertNonProblem("g(Tuple<T1, Types&...>)", 1);
 		
-		ICPPFunction x= bh.assertNonProblem("g(Tuple<>())", 1);
-		assertSame(g1, x);
+		ICPPTemplateInstance x= bh.assertNonProblem("g(Tuple<>())", 1);
+		assertSame(g1, x.getTemplateDefinition());
 		x= bh.assertNonProblem("g(Tuple<int, float>())", 1);
-		assertSame(g2, x);
+		assertSame(g2, x.getTemplateDefinition());
 		x= bh.assertNonProblem("g(Tuple<int, float&>())", 1);
-		assertSame(g3, x);
+		assertSame(g3, x.getTemplateDefinition());
 		x= bh.assertNonProblem("g(Tuple<int>())", 1);
-		assertSame(g3, x);
+		assertSame(g3, x.getTemplateDefinition());
 	}		
 
 	//	template<class> struct X { };
 	//	template<class R, class... ArgTypes> struct X<R(int, ArgTypes...)> { };
 	//	template<class... Types> struct Y { };
 	//	template<class T, class... Types> struct Y<T, Types&...> { };
-	//	template <class... Types> int f (void ()(Types...));
+	//	template <class... Types> int f (void (*)(Types...));
 	//	void g(int, float);
 	//	X<int> x1; // uses primary template
 	//	X<int(int, float, double)> x2; // uses partial specialization, ArgTypes contains float, double
@@ -4609,7 +4639,7 @@ public class AST2TemplateTests extends AST2BaseTest {
 	//	Y<int&, float&, double&> y2; // uses partial specialization. T is int&, Types contains float, double
 	//	Y<int, float, double> y3; // uses primary template, Types contains int, float, double
 	//	int fv = f(g); // okay, Types contains int, float
-	public void _testVariadicTemplateExamples_280909n() throws Exception {
+	public void testVariadicTemplateExamples_280909n() throws Exception {
 		final String code= getAboveComment();
 		parseAndCheckBindings(code, ParserLanguage.CPP);
 	}		
@@ -4622,7 +4652,7 @@ public class AST2TemplateTests extends AST2BaseTest {
 	//	  f(1, 2, 3); 	// calls #2
 	//	  f(1, 2); 		// calls #3; non-variadic template #3 is
 	//	}				// more specialized than the variadic templates #1 and #2
-	public void _testVariadicTemplateExamples_280909o() throws Exception {
+	public void testVariadicTemplateExamples_280909o() throws Exception {
 		final String code= getAboveComment();
 		parseAndCheckBindings(code, ParserLanguage.CPP);
 		BindingAssertionHelper bh= new BindingAssertionHelper(code, true);
@@ -4630,12 +4660,12 @@ public class AST2TemplateTests extends AST2BaseTest {
 		ICPPFunction f2= bh.assertNonProblem("f(T1 a1, Args... args)", 1);
 		ICPPFunction f3= bh.assertNonProblem("f(T1 a2, T2 a2)", 1);
 		
-		ICPPFunction x= bh.assertNonProblem("f()", 1);
-		assertSame(f1, x);
+		ICPPTemplateInstance x= bh.assertNonProblem("f()", 1);
+		assertSame(f1, x.getTemplateDefinition());
 		x= bh.assertNonProblem("f(1, 2, 3)", 1);
-		assertSame(f2, x);
+		assertSame(f2, x.getTemplateDefinition());
 		x= bh.assertNonProblem("f(1, 2)", 1);
-		assertSame(f3, x);
+		assertSame(f3, x.getTemplateDefinition());
 	}		
 
 	//	template<typename... Types> struct Tuple { };
@@ -4645,7 +4675,7 @@ public class AST2TemplateTests extends AST2BaseTest {
 	//	  Tuple<int, float> t2; // Types contains two arguments: int and float
 	//	  Tuple<0> error; // Error: 0 is not a type
 	// }
-	public void _testVariadicTemplateExamples_280909p() throws Exception {
+	public void testVariadicTemplateExamples_280909p() throws Exception {
 		final String code= getAboveComment();
 		BindingAssertionHelper bh= new BindingAssertionHelper(code, true);
 		bh.assertNonProblem("Tuple<>", 0);
@@ -4660,7 +4690,7 @@ public class AST2TemplateTests extends AST2BaseTest {
 	//	  f(1); // okay: args contains one int argument
 	//	  f(2, 1.0); // okay: args contains two arguments, an int and a double
 	// }
-	public void _testVariadicTemplateExamples_280909q() throws Exception {
+	public void testVariadicTemplateExamples_280909q() throws Exception {
 		final String code= getAboveComment();
 		parseAndCheckBindings(code, ParserLanguage.CPP);
 	}		
@@ -4686,21 +4716,28 @@ public class AST2TemplateTests extends AST2BaseTest {
 	//	typedef zip<short>::with<unsigned short, unsigned>::type T2; 
 	//			// error: different number of arguments specified
 	//			// for Args1 and Args2
+	//	template<typename... Args> void f(Args... args) {}
+	//	template<typename... Args> void h(Args... args) {}
 	//	template<typename... Args> void g(Args... args) {
-	//	  f(const cast<const Args*>(&args)...); // okay: ‘‘Args’’ and ‘‘args’’ are expanded
+	//	  f(const_cast<const Args*>(&args)...); // okay: ‘‘Args’’ and ‘‘args’’ are expanded
 	//	  f(5 ...); // error: pattern does not contain any parameter packs
 	//	  f(args); // error: parameter pack ”args” is not expanded
 	//	  f(h(args...) + args...); // okay: first ‘‘args’’ expanded within h, second ‘‘args’’ expanded within f.
 	//	}
-	public void _testVariadicTemplateExamples_280909s() throws Exception {
+	public void testVariadicTemplateExamples_280909s() throws Exception {
 		final String code= getAboveComment();
 		BindingAssertionHelper bh= new BindingAssertionHelper(code, true);
 		ITypedef td= bh.assertNonProblem("T1;", 2);
-		assertEquals("Tuple<Pair<short, unsigned short>, Pair<int, unsigned> >", ASTTypeUtil.getType(td, true));
-		bh.assertProblem("zip<short>::with<unsigned short, unsigned>::type", 0);
-		bh.assertNonProblem("f(const cast<const Args*>(&args)...)", 1);
-		bh.assertProblem("f(5 ...)", 1);
-		bh.assertProblem("f(args)", 1);
-		bh.assertNonProblem("f(h(args...) + args...)", 1);
+		IType type = getNestedType(td, TDEF);
+		assertEquals("Tuple<Pair<short int,unsigned short int>,Pair<int,unsigned int>>", ASTTypeUtil.getType(type, false));
+		td= bh.assertNonProblem("zip<short>::with<unsigned short, unsigned>::type", 0);
+		type = getNestedType(td, TDEF);
+		assertTrue(type instanceof IProblemBinding);
+
+		ICPPUnknownBinding ub;
+		ub= bh.assertNonProblem("f(const_cast<const Args*>(&args)...)", 1);
+		ub= bh.assertNonProblem("f(5 ...)", 1);	// no diagnostics in CDT, treated as unknown function.
+		ub= bh.assertNonProblem("f(args)", 1);  // no diagnostics in CDT
+		ub= bh.assertNonProblem("f(h(args...) + args...)", 1);
 	}		
 }

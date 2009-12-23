@@ -60,4 +60,16 @@ public interface ICPPTemplateArgument {
 	 * Checks whether two arguments denote the same value.
 	 */
 	boolean isSameValue(ICPPTemplateArgument arg);
+	
+	/**
+	 * Returns whether this template argument is a pack expansion or not.
+	 * @since 5.2
+	 */
+	boolean isPackExpansion();
+
+	/**
+	 * Returns the expansion pattern, if this is a pack expansion, or <code>null</code> otherwise.
+	 * @since 5.2
+	 */
+	ICPPTemplateArgument getExpansionPattern();
 }

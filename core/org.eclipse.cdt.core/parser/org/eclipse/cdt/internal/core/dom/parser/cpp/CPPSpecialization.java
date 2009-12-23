@@ -23,6 +23,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassSpecialization;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunction;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPNamespace;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPParameterPackType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPSpecialization;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateParameterMap;
 import org.eclipse.cdt.core.parser.util.ArrayUtil;
@@ -53,17 +54,25 @@ public abstract class CPPSpecialization extends PlatformObject implements ICPPSp
 
 	public IType specializeType(IType type) {
 		if (owner instanceof ICPPClassSpecialization) {
-			return CPPTemplates.instantiateType(type, getTemplateParameterMap(), (ICPPClassSpecialization) owner);
+			return CPPTemplates.instantiateType(type, getTemplateParameterMap(), -1, (ICPPClassSpecialization) owner);
 		} else {
-			return CPPTemplates.instantiateType(type, getTemplateParameterMap(), null);
+			return CPPTemplates.instantiateType(type, getTemplateParameterMap(), -1, null);
 		}
 	}
-	
+
+	public IType[] specializeTypePack(ICPPParameterPackType type) {
+		if (owner instanceof ICPPClassSpecialization) {
+			return CPPTemplates.instantiateTypes(new IType[]{type}, getTemplateParameterMap(), -1, (ICPPClassSpecialization) owner);
+		} else {
+			return CPPTemplates.instantiateTypes(new IType[]{type}, getTemplateParameterMap(), -1, null);
+		}
+	}
+
 	public IValue specializeValue(IValue value, int maxdepth) {
 		if (owner instanceof ICPPClassSpecialization) {
-			return CPPTemplates.instantiateValue(value, getTemplateParameterMap(), (ICPPClassSpecialization) owner, maxdepth);
+			return CPPTemplates.instantiateValue(value, getTemplateParameterMap(), -1, (ICPPClassSpecialization) owner, maxdepth);
 		} else {
-			return CPPTemplates.instantiateValue(value, getTemplateParameterMap(), null, maxdepth);
+			return CPPTemplates.instantiateValue(value, getTemplateParameterMap(), -1, null, maxdepth);
 		}
 	}
 

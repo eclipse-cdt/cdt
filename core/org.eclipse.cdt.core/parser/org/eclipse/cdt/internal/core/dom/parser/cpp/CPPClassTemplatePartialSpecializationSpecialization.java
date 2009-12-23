@@ -91,9 +91,9 @@ public class CPPClassTemplatePartialSpecializationSpecialization extends CPPClas
 		ICPPTemplateArgument[] args = ((ICPPClassTemplatePartialSpecialization) getSpecializedBinding()).getTemplateArguments();
 		final IBinding owner = getOwner();
 		if (owner instanceof ICPPClassSpecialization) {
-			return CPPTemplates.instantiateArguments(args, getTemplateParameterMap(), (ICPPClassSpecialization) owner); 
+			return CPPTemplates.instantiateArguments(args, getTemplateParameterMap(), -1, (ICPPClassSpecialization) owner); 
 		}
-		return CPPTemplates.instantiateArguments(args, getTemplateParameterMap(), null);
+		return CPPTemplates.instantiateArguments(args, getTemplateParameterMap(), -1, null);
 	}
 	
 	public void addPartialSpecialization(ICPPClassTemplatePartialSpecialization spec) {

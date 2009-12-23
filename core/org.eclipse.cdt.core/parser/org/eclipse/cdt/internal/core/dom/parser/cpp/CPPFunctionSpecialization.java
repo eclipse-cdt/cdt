@@ -28,6 +28,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTFunctionDeclarator;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunction;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunctionType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPParameter;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPParameterPackType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateParameterMap;
 import org.eclipse.cdt.core.index.IIndexBinding;
 import org.eclipse.cdt.internal.core.dom.parser.ASTInternal;
@@ -288,8 +289,24 @@ public class CPPFunctionSpecialization extends CPPSpecialization implements ICPP
 			IType[] types = function.getExceptionSpecification();
 			if (types != null) {
 				IType[] specializedTypeList = new IType[types.length];
-				for (int i=0; i<types.length; ++i) 
-					specializedTypeList[i] = specializeType(types[i]);
+				int j=0;
+				for (int i=0; i<types.length; ++i) {
+					final IType origType = types[i];
+					if (origType instanceof ICPPParameterPackType) {
+						IType[] specialized= specializeTypePack((ICPPParameterPackType) origType);
+						if (specialized.length != 1) {
+							IType[] x= new IType[specializedTypeList.length + specialized.length-1];
+							System.arraycopy(specializedTypeList, 0, x, 0, j);
+							specializedTypeList= x;
+						}
+						for (IType iType : specialized) {
+							specializedTypeList[j++] = iType;
+						}
+					} else {
+						specializedTypeList[j++] = specializeType(origType);
+					}
+				}
+				specializedExceptionSpec= specializedTypeList;
 			}
 		}
 		return specializedExceptionSpec;

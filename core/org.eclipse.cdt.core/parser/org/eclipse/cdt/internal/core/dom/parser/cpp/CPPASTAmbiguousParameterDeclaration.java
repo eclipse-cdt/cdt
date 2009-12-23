@@ -25,8 +25,8 @@ import org.eclipse.cdt.internal.core.dom.parser.ASTAmbiguousNode;
 import org.eclipse.cdt.internal.core.dom.parser.ASTNode;
 import org.eclipse.cdt.internal.core.dom.parser.IASTAmbiguityParent;
 import org.eclipse.cdt.internal.core.dom.parser.IASTAmbiguousParameterDeclaration;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPTemplates;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPVisitor;
-import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.SemanticUtil;
 import org.eclipse.core.runtime.Assert;
 
 /**
@@ -57,7 +57,7 @@ public class CPPASTAmbiguousParameterDeclaration extends ASTAmbiguousNode implem
 		
 		IType t= CPPVisitor.createParameterType(fParameterDecl, true);
 		if (!(t instanceof ICPPParameterPackType) || 
-				!SemanticUtil.containsParameterPack(((ICPPParameterPackType) t).getType())) {
+				!CPPTemplates.containsParameterPack(((ICPPParameterPackType) t).getType())) {
 			final ICPPASTDeclarator dtor = fParameterDecl.getDeclarator();
 			dtor.setDeclaresParameterPack(false);
 			adjustOffsets(dtor);

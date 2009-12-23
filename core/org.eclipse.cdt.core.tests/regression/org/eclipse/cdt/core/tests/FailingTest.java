@@ -51,7 +51,7 @@ public class FailingTest extends TestCase {
         TestResult r = new TestResult();
         test.run( r );
         if (r.failureCount() == 1) {
-        	TestFailure failure= (TestFailure) r.failures().nextElement();
+        	TestFailure failure= r.failures().nextElement();
         	String msg= failure.exceptionMessage();
         	if (msg != null && msg.startsWith("Method \"" + test.getName() + "\"")) {
         		result.addFailure(this, new AssertionFailedError(msg));

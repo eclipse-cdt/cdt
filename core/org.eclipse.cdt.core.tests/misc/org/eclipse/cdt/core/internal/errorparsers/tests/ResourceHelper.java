@@ -27,8 +27,11 @@ import junit.framework.Assert;
 
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.dom.IPDOMManager;
-import org.eclipse.cdt.core.model.ICProject;
-import org.eclipse.cdt.core.testplugin.CProjectHelper;
+import org.eclipse.cdt.core.settings.model.ICConfigurationDescription;
+import org.eclipse.cdt.core.settings.model.ICProjectDescription;
+import org.eclipse.cdt.core.settings.model.ICProjectDescriptionManager;
+import org.eclipse.cdt.core.settings.model.TestCfgDataProvider;
+import org.eclipse.cdt.internal.core.pdom.indexer.IndexerPreferences;
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IFolder;
@@ -66,37 +69,62 @@ public class ResourceHelper {
 	private final static Set<IResource> resourcesCreated = new HashSet<IResource>();
 
 	/**
-	 * Creates CDT project in a specific location and opens it.
+	 * Creates CDT project in a specific path in workspace and opens it.
 	 *
 	 * @param projectName - project name.
-	 * @param locationInWorkspace - location relative to workspace root.
+	 * @param pathInWorkspace - path relative to workspace root.
 	 * @return - new {@link IProject}.
 	 * @throws CoreException - if the project can't be created.
 	 * @throws OperationCanceledException...
 	 */
-	public static IProject createCDTProject(String projectName, String locationInWorkspace) throws OperationCanceledException, CoreException {
+	public static IProject createCDTProject(String projectName, String pathInWorkspace) throws OperationCanceledException, CoreException {
+		return createCDTProject(projectName, pathInWorkspace, null);
+	}
+
+	/**
+	 * Creates CDT project in a specific path in workspace adding specified configurations and opens it.
+	 *
+	 * @param projectName - project name.
+	 * @param pathInWorkspace - path relative to workspace root.
+	 * @param configurationIds - array of configuration IDs.
+	 * @return - new {@link IProject}.
+	 * @throws CoreException - if the project can't be created.
+	 * @throws OperationCanceledException...
+	 */
+	public static IProject createCDTProject(String projectName, String pathInWorkspace, String[] configurationIds) throws OperationCanceledException, CoreException {
+		CCorePlugin cdtCorePlugin = CCorePlugin.getDefault();
 		IWorkspace workspace = ResourcesPlugin.getWorkspace();
 		IWorkspaceRoot root = workspace.getRoot();
+
 		IProject project = root.getProject(projectName);
+		IndexerPreferences.set(project, IndexerPreferences.KEY_INDEXER_ID, IPDOMManager.ID_NO_INDEXER);
 		resourcesCreated.add(project);
-		IProjectDescription description = workspace.newProjectDescription(projectName);
-		if(locationInWorkspace != null) {
-			IPath absoluteLocation = root.getLocation().append(locationInWorkspace);
-			description.setLocation(absoluteLocation);
+
+		IProjectDescription prjDescription = workspace.newProjectDescription(projectName);
+		if(pathInWorkspace != null) {
+			IPath absoluteLocation = root.getLocation().append(pathInWorkspace);
+			prjDescription.setLocation(absoluteLocation);
 		}
-		project = CCorePlugin.getDefault().createCDTProject(description, project, NULL_MONITOR);
+
+		if (configurationIds!=null && configurationIds.length>0) {
+			ICProjectDescriptionManager prjDescManager = cdtCorePlugin.getProjectDescriptionManager();
+
+			project.create(NULL_MONITOR);
+			project.open(NULL_MONITOR);
+
+			ICProjectDescription icPrjDescription = prjDescManager.createProjectDescription(project, false);
+			ICConfigurationDescription baseConfiguration = cdtCorePlugin.getPreferenceConfiguration(TestCfgDataProvider.PROVIDER_ID);
+
+			for (String cfgId : configurationIds) {
+				icPrjDescription.createConfiguration(cfgId, cfgId+" Name", baseConfiguration);
+			}
+			prjDescManager.setProjectDescription(project, icPrjDescription);
+		}
+		project = cdtCorePlugin.createCDTProject(prjDescription, project, NULL_MONITOR);
+		waitForProjectRefreshToFinish();
 		Assert.assertNotNull(project);
+
 		project.open(null);
-
-		try {
-			// CDT opens the Project with BACKGROUND_REFRESH enabled which causes the 
-			// refresh manager to refresh the project 200ms later.  This Job interferes
-			// with the resource change handler firing see: bug 271264
-			Job.getJobManager().join(ResourcesPlugin.FAMILY_AUTO_REFRESH, null);
-		} catch (Exception e) {
-			// Ignore
-		}
-
 		Assert.assertTrue(project.isOpen());
 
 		return project;
@@ -114,23 +142,18 @@ public class ResourceHelper {
 	public static IProject createCDTProject(String projectName, URI locationURI) throws OperationCanceledException, CoreException {
 		IWorkspace workspace = ResourcesPlugin.getWorkspace();
 		IWorkspaceRoot root = workspace.getRoot();
+
 		IProject project = root.getProject(projectName);
+		IndexerPreferences.set(project, IndexerPreferences.KEY_INDEXER_ID, IPDOMManager.ID_NO_INDEXER);
 		resourcesCreated.add(project);
+
 		IProjectDescription description = workspace.newProjectDescription(projectName);
 		description.setLocationURI(locationURI);
 		project = CCorePlugin.getDefault().createCDTProject(description, project, NULL_MONITOR);
+		waitForProjectRefreshToFinish();
 		Assert.assertNotNull(project);
+
 		project.open(null);
-
-		try {
-			// CDT opens the Project with BACKGROUND_REFRESH enabled which causes the 
-			// refresh manager to refresh the project 200ms later.  This Job interferes
-			// with the resource change handler firing see: bug 271264
-			Job.getJobManager().join(ResourcesPlugin.FAMILY_AUTO_REFRESH, null);
-		} catch (Exception e) {
-			// Ignore
-		}
-
 		Assert.assertTrue(project.isOpen());
 
 		return project;
@@ -145,19 +168,22 @@ public class ResourceHelper {
 	 * @throws OperationCanceledException...
 	 */
 	public static IProject createCDTProject(String projectName) throws OperationCanceledException, CoreException {
-		return createCDTProject(projectName, (String)null);
+		return createCDTProject(projectName, null, null);
 	}
 
 	/**
-	 * Create a new style cdt project with an 1 project description
-	 * @param projectName
-	 * @return IProject
-	 * @throws Exception
+	 * Creates a project with 1 test configuration and opens it.
+	 *
+	 * @param projectName - project name.
+	 * @return - new {@link IProject}.
+	 * @throws CoreException - if the project can't be created.
+	 * @throws OperationCanceledException...
 	 */
 	public static IProject createCDTProjectWithConfig(String projectName) throws Exception {
-		ICProject proj = CProjectHelper.createNewStileCProject(projectName, IPDOMManager.ID_FAST_INDEXER);
-		resourcesCreated.add(proj.getProject());
-		return proj.getProject();
+		IProject project = createCDTProject(projectName, null,
+				new String[] {"org.eclipse.cdt.core.tests.configuration"});
+		resourcesCreated.add(project);
+		return project;
 	}
 
 	/**
@@ -530,7 +556,7 @@ public class ResourceHelper {
 	public static void cleanUp() throws CoreException, IOException {
 		IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
 		root.refreshLocal(IResource.DEPTH_INFINITE, NULL_MONITOR);
-		
+
 		// Delete all external files & folders created using ResourceHelper
 		for (String loc : externalFilesCreated) {
 			File f = new File(loc);
@@ -538,7 +564,7 @@ public class ResourceHelper {
 				deleteRecursive(f);
 		}
 		externalFilesCreated.clear();
-		
+
 		// Remove IResources created by this helper
 		for (IResource r : resourcesCreated) {
 			if (r.exists())
@@ -549,6 +575,17 @@ public class ResourceHelper {
 				}
 		}
 		resourcesCreated.clear();
+	}
+
+	private static void waitForProjectRefreshToFinish() {
+		try {
+			// CDT opens the Project with BACKGROUND_REFRESH enabled which causes the
+			// refresh manager to refresh the project 200ms later.  This Job interferes
+			// with the resource change handler firing see: bug 271264
+			Job.getJobManager().join(ResourcesPlugin.FAMILY_AUTO_REFRESH, null);
+		} catch (Exception e) {
+			// Ignore
+		}
 	}
 
 	/**

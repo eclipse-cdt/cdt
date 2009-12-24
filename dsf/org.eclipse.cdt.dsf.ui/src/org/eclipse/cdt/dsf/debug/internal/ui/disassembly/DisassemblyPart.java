@@ -2804,13 +2804,23 @@ public abstract class DisassemblyPart extends WorkbenchPart implements IDisassem
 			return false;
 		}
 		if (session.getExecutor().isInExecutorThread()) {
-			return getRunControl().isSuspended(targetContext);
+			IRunControl runControl = getRunControl();
+			if (runControl == null) {
+				return false;
+			} else {
+				return runControl.isSuspended(targetContext);
+			}
 		}
 		Query<Boolean> query = new Query<Boolean>() {
 			@Override
 			protected void execute(DataRequestMonitor<Boolean> rm) {
 				try {
-					rm.setData(getRunControl().isSuspended(targetContext));
+					IRunControl runControl = getRunControl();
+					if (runControl == null) {
+						rm.setData(false);
+					} else {
+						rm.setData(runControl.isSuspended(targetContext));
+					}
 				} finally {
 					rm.done();
 				}

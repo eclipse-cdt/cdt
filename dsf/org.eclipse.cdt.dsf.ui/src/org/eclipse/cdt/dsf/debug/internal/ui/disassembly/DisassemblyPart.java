@@ -2218,10 +2218,10 @@ public abstract class DisassemblyPart extends WorkbenchPart implements IDisassem
 		stack.getFrameData(fTargetFrameContext, new DataRequestMonitor<IFrameDMData>(executor, null) {
 			@Override
 			protected void handleCompleted() {
-				if (!isCanceled()) {
-					fUpdatePending= false;
-					final IFrameDMData frameData= getData();
-					fTargetFrameData= frameData;
+				fUpdatePending= false;
+				IFrameDMData frameData= getData();
+				fTargetFrameData= frameData;
+				if (!isCanceled() && frameData != null) {
 					final IAddress address= frameData.getAddress();
 					final BigInteger addressValue= address.getValue();
 					if (DEBUG) System.out.println("retrieveFrameAddress done "+getAddressText(addressValue)); //$NON-NLS-1$
@@ -2238,6 +2238,15 @@ public abstract class DisassemblyPart extends WorkbenchPart implements IDisassem
 						}
 
 					});
+				} else {
+					final IStatus status= getStatus();
+					if (status != null && !status.isOK()) {
+						asyncExec(new Runnable() {
+							public void run() {
+				                ErrorDialog.openError(getSite().getShell(), "Error", null, getStatus()); //$NON-NLS-1$
+							}
+						});
+					}
 				}
 			}
 		});

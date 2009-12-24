@@ -26,6 +26,7 @@ public class AllCProjectDescriptionTests {
 		suite.addTest(CConfigurationDescriptionReferenceTests.suite());
 		suite.addTest(ExternalSettingsProviderTests.suite());
 		suite.addTest(CfgSettingsTests.suite());
+		suite.addTest(CProjectDescriptionDeltaTests.suite());
 		suite.addTest(ProjectCreationStateTests.suite());
 		suite.addTest(BackwardCompatibilityTests.suite());
 		suite.addTest(CProjectDescriptionBasicTests.suite());

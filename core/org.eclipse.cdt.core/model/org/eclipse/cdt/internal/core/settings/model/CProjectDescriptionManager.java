@@ -56,6 +56,7 @@ import org.eclipse.cdt.core.model.ICElementDelta;
 import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.core.settings.model.CExternalSetting;
 import org.eclipse.cdt.core.settings.model.CProjectDescriptionEvent;
+import org.eclipse.cdt.core.settings.model.ICBuildSetting;
 import org.eclipse.cdt.core.settings.model.ICConfigurationDescription;
 import org.eclipse.cdt.core.settings.model.ICDescriptionDelta;
 import org.eclipse.cdt.core.settings.model.ICFileDescription;
@@ -1446,12 +1447,20 @@ public class CProjectDescriptionManager implements ICProjectDescriptionManager {
 				}
 			}
 
+			CProjectDescriptionDelta bsDelta = createDelta(newCfg.getBuildSetting(), oldCfg.getBuildSetting());
+			if(bsDelta != null)
+				delta.addChild(bsDelta);
+
 			CProjectDescriptionDelta tpsDelta = createDelta(newCfg.getTargetPlatformSetting(), oldCfg.getTargetPlatformSetting());
 			if(tpsDelta != null)
 				delta.addChild(tpsDelta);
 
 			if(!newCfg.getName().equals(oldCfg.getName())){
 				delta.addChangeFlags(ICDescriptionDelta.NAME);
+			}
+
+			if (!CDataUtil.objectsEqual(newCfg.getDescription(), oldCfg.getDescription())) {
+				delta.addChangeFlags(ICDescriptionDelta.DESCRIPTION);
 			}
 
 			ICSourceEntry newEntries[] = newCfg.getSourceEntries();
@@ -1753,6 +1762,9 @@ public class CProjectDescriptionManager implements ICProjectDescriptionManager {
 		CProjectDescriptionDelta delta = new CProjectDescriptionDelta(newLs, oldLs);
 
 		if(delta.getDeltaKind() == ICDescriptionDelta.CHANGED){
+			if (!CDataUtil.objectsEqual(newLs.getLanguageId(), oldLs.getLanguageId()))
+				delta.addChangeFlags(ICDescriptionDelta.LANGUAGE_ID);
+
 			int kinds[] = KindBasedStore.getLanguageEntryKinds();
 			int kind;
 			int addedKinds = 0;
@@ -1873,6 +1885,14 @@ public class CProjectDescriptionManager implements ICProjectDescriptionManager {
 		return true;
 	}
 */
+	private CProjectDescriptionDelta createDelta(ICBuildSetting  newBuildSetting, ICBuildSetting  oldBuildSetting){
+		CProjectDescriptionDelta delta = new CProjectDescriptionDelta(newBuildSetting, oldBuildSetting);
+		if(!Arrays.equals(newBuildSetting.getErrorParserIDs(), oldBuildSetting.getErrorParserIDs()))
+			delta.addChangeFlags(ICDescriptionDelta.ERROR_PARSER_IDS);
+
+		return delta.isEmpty() ? null : delta;
+	}
+
 	private CProjectDescriptionDelta createDelta(ICTargetPlatformSetting newTPS, ICTargetPlatformSetting oldTPS){
 		CProjectDescriptionDelta delta = new CProjectDescriptionDelta(newTPS, oldTPS);
 		if(!Arrays.equals(newTPS.getBinaryParserIds(), oldTPS.getBinaryParserIds()))

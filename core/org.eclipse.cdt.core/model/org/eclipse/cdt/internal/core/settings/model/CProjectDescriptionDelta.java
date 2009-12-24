@@ -145,4 +145,66 @@ public class CProjectDescriptionDelta implements ICDescriptionDelta {
 		else
 			removeChangeFlags(SETTING_ENTRIES);
 	}
+	
+	@SuppressWarnings("nls")
+	private static String flagsToString(int flags) {
+		StringBuilder str = new StringBuilder();
+		str.append(", flags=0x" + Integer.toHexString(flags));
+		
+		str.append(":");
+		if ((flags&ACTIVE_CFG)!=0) str.append("ACTIVE_CFG|");
+		if ((flags&NAME)!=0) str.append("NAME|");
+		if ((flags&DESCRIPTION)!=0) str.append("DESCRIPTION|");
+		if ((flags&LANGUAGE_ID)!=0) str.append("LANGUAGE_ID|");
+		if ((flags&SOURCE_CONTENT_TYPE)!=0) str.append("SOURCE_CONTENT_TYPE|");
+		if ((flags&SOURCE_ENTENSIONS)!=0) str.append("SOURCE_ENTENSIONS|");
+		if ((flags&SETTING_ENTRIES)!=0) str.append("SETTING_ENTRIES|");
+		if ((flags&BINARY_PARSER_IDS)!=0) str.append("BINARY_PARSER_IDS|");
+		if ((flags&ERROR_PARSER_IDS)!=0) str.append("ERROR_PARSER_IDS|");
+		if ((flags&EXCLUDE)!=0) str.append("EXCLUDE|");
+		if ((flags&SOURCE_ADDED)!=0) str.append("SOURCE_ADDED|");
+		if ((flags&SOURCE_REMOVED)!=0) str.append("SOURCE_REMOVED|");
+		if ((flags&EXTERNAL_SETTINGS_ADDED)!=0) str.append("EXTERNAL_SETTINGS_ADDED|");
+		if ((flags&EXTERNAL_SETTINGS_REMOVED)!=0) str.append("EXTERNAL_SETTINGS_REMOVED|");
+		if ((flags&CFG_REF_ADDED)!=0) str.append("CFG_REF_ADDED|");
+		if ((flags&CFG_REF_REMOVED)!=0) str.append("CFG_REF_REMOVED|");
+		if ((flags&EXT_REF)!=0) str.append("EXT_REF|");
+		if ((flags&OWNER)!=0) str.append("OWNER|");
+		if ((flags&INDEX_CFG)!=0) str.append("INDEX_CFG|");
+
+		if (str.charAt(str.length()-1)=='|') str.deleteCharAt(str.length()-1);
+		return str.toString();
+	}
+	
+	/**
+	 * Helper method to make debugging easier.
+	 */
+	@SuppressWarnings("nls")
+	@Override
+	public String toString() {
+		StringBuilder str = new StringBuilder();
+		
+		String type = fSetting.getClass().getSimpleName();
+		str.append("[" + type + "]");
+		
+		int kind = getDeltaKind();
+		str.append(", kind="+kind);
+		switch (kind) {
+		case ADDED: str.append(":ADDED");break;
+		case REMOVED: str.append(":REMOVED");break;
+		case CHANGED: str.append(":CHANGED");break;
+		default: str.append(":<unknown>");
+		}
+		
+		str.append(flagsToString(getChangeFlags()));
+		
+		ICDescriptionDelta[] children = getChildren();
+		if (children==null) {
+			str.append(", no children");
+		} else {
+			str.append(", " + getChildren().length + " children");
+		}
+		
+		return str.toString();
+	}
 }

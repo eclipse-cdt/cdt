@@ -11,6 +11,7 @@
 package org.eclipse.cdt.internal.core.settings.model;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import org.eclipse.cdt.core.settings.model.ICLanguageSetting;
@@ -64,12 +65,9 @@ public class CLanguageSetting extends CDataProxy implements
 	public List<ICLanguageSettingEntry> getSettingEntriesList(int kind) {
 		CLanguageData data = getCLanguageData(false);
 		ICLanguageSettingEntry entries[] = data.getEntries(kind);
-		int size = entries != null ? entries.length : 0;
-		List<ICLanguageSettingEntry> arrayList = new ArrayList<ICLanguageSettingEntry>(size);
-		for(int i = 0; i < size; i++){
-			arrayList.add(entries[i]);
-		}
-		return arrayList;
+		if (entries!=null)
+			return new ArrayList<ICLanguageSettingEntry>(Arrays.asList(entries));
+		return new ArrayList<ICLanguageSettingEntry>();
 	}
 
 	public String[] getSourceContentTypeIds() {

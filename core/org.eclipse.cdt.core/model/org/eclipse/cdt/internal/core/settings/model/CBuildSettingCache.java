@@ -109,7 +109,7 @@ public class CBuildSettingCache extends CDefaultBuildData implements
 	@Override
 	public ICOutputEntry[] getOutputDirectories() {
 		initOutputEntries();
-		return (ICOutputEntry[])fProjOutputEntries.clone();
+		return fProjOutputEntries.clone();
 	}
 	
 	private void initOutputEntries(){

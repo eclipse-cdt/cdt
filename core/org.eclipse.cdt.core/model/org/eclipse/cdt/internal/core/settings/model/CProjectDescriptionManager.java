@@ -364,7 +364,7 @@ public class CProjectDescriptionManager implements ICProjectDescriptionManager {
 	private void startSaveParticipant() throws CoreException{
 		// Set up a listener for resource change events
 		ISavedState lastState =
-			ResourcesPlugin.getWorkspace().addSaveParticipant(CCorePlugin.getDefault(), fRcChangeHandler);
+			ResourcesPlugin.getWorkspace().addSaveParticipant(CCorePlugin.PLUGIN_ID, fRcChangeHandler);
 
 		if (lastState != null) {
 			lastState.processResourceChangeEvents(fRcChangeHandler);

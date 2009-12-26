@@ -287,7 +287,8 @@ public class CPluginImages {
     public static final ImageDescriptor DESC_OVR_READ_WRITE_ACCESS= create(T_OVR, "readwrite.gif"); //$NON-NLS-1$
     public static final ImageDescriptor DESC_OVR_WRITE_ACCESS= create(T_OVR, "write.gif"); //$NON-NLS-1$
 	public static final ImageDescriptor DESC_OVR_EXTERNAL_FILE= create(T_OVR, "external_file.gif"); //$NON-NLS-1$
-    
+	public static final ImageDescriptor DESC_OVR_SETTING= create(T_OVR, "setting_nav.gif"); //$NON-NLS-1$
+
 	public static final ImageDescriptor DESC_OVR_WARNING= create(T_OVR, "warning_co.gif"); //$NON-NLS-1$
 	public static final ImageDescriptor DESC_OVR_ERROR= create(T_OVR, "error_co.gif"); //$NON-NLS-1$
 

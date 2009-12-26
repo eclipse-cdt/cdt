@@ -92,7 +92,7 @@ public class ProblemsLabelDecorator implements ILabelDecorator, ILightweightLabe
 
 	private static final int ERRORTICK_WARNING= CElementImageDescriptor.WARNING;
 	private static final int ERRORTICK_ERROR= CElementImageDescriptor.ERROR;	
-	private static final int TICK_CONFIGURATION = CElementImageDescriptor.SYSTEM_INCLUDE;	
+	private static final int TICK_CONFIGURATION = CElementImageDescriptor.SETTINGS;	
 	
 	private ImageDescriptorRegistry fRegistry;
 	private boolean fUseNewRegistry= false;
@@ -360,7 +360,7 @@ public class ProblemsLabelDecorator implements ILabelDecorator, ILightweightLabe
 		int adornmentFlags= computeAdornmentFlags(element);
 
 		if ((adornmentFlags & TICK_CONFIGURATION) != 0) {
-			decoration.addOverlay(CPluginImages.DESC_OVR_SYSTEM_INCLUDE);
+			decoration.addOverlay(CPluginImages.DESC_OVR_SETTING);
 			adornmentFlags &= ~TICK_CONFIGURATION;
 		}
 		

@@ -104,6 +104,10 @@ public class CElementImageDescriptor extends CompositeImageDescriptor {
     /** Flag to render the 'external file' adornment for translation units */
 	public static final int EXTERNAL_FILE = 0x40000;
 
+    /** Flag to render the 'custom settings' adornment 
+     * @since 5.2 */
+    public final static int SETTINGS= 0x80000;
+
 	private ImageDescriptor fBaseImage;
 	private int fFlags;
 	private Point fSize;
@@ -234,11 +238,16 @@ public class CElementImageDescriptor extends CompositeImageDescriptor {
 			x-= data.width;
 			drawImage(data, x, 0);
 		}
-        if ((fFlags & SYSTEM_INCLUDE) != 0) {
-            data= CPluginImages.DESC_OVR_SYSTEM_INCLUDE.getImageData();
-            x-= data.width;
-            drawImage(data, x, 0);
-        }
+		if ((fFlags & SYSTEM_INCLUDE) != 0) {
+			data = CPluginImages.DESC_OVR_SYSTEM_INCLUDE.getImageData();
+			x -= data.width;
+			drawImage(data, x, 0);
+		}
+		if ((fFlags & SETTINGS) != 0) {
+			data = CPluginImages.DESC_OVR_SETTING.getImageData();
+			x -= data.width;
+			drawImage(data, x, 0);
+		}
 	}		
 	
 	private void drawBottomRight() {

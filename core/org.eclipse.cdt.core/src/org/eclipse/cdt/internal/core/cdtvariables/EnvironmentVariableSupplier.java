@@ -11,6 +11,7 @@
 package org.eclipse.cdt.internal.core.cdtvariables;
 
 import java.util.List;
+import java.util.regex.Pattern;
 
 import org.eclipse.cdt.core.cdtvariables.CdtVariable;
 import org.eclipse.cdt.core.cdtvariables.CdtVariableException;
@@ -42,7 +43,7 @@ public class EnvironmentVariableSupplier extends CoreMacroSupplierBase {
 			String value = var.getOperation() != IEnvironmentVariable.ENVVAR_REMOVE ?
 					var.getValue() : null;
 			
-			if(delimiter != null && !"".equals(delimiter)){	//$NON-NLS-1$
+			if(isTextList(value,delimiter)){
 				fType = VALUE_TEXT_LIST;
 				if(value != null){
 					List<String> list = EnvVarOperationProcessor.convertToList(value,delimiter);
@@ -97,6 +98,15 @@ public class EnvironmentVariableSupplier extends CoreMacroSupplierBase {
 	
 	public EnvironmentVariableSupplier(EnvironmentVariableManager varProvider){
 		fEnvironmentProvider = varProvider;
+	}
+	
+	private static boolean isTextList(String str, String delimiter) {
+		if (delimiter == null || "".equals(delimiter)) //$NON-NLS-1$
+			return false;
+		
+		// Regex: ([^:]+:)+[^:]*
+		String patternStr = "([^" + delimiter + "]+" + delimiter + ")+[^" + delimiter + "]*"; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$//$NON-NLS-4$
+		return Pattern.matches(patternStr, str);
 	}
 	
 	public ICdtVariable createBuildMacro(IEnvironmentVariable var){

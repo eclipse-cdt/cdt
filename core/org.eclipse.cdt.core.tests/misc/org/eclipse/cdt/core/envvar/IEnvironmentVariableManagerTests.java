@@ -509,4 +509,68 @@ public class IEnvironmentVariableManagerTests extends TestCase {
 		assertNull(readVar);
 	}
 
+	/**
+	 * This test checks if an environment variable is only processed as a list
+	 * if it matches a certain pattern. ([^:]+:)+[^:]* (; on Windows)
+	 * 
+	 * If a variable is a list, it is split into a String array depending on the
+	 * delimiter given. At some point, this array is used to build a new
+	 * String representing the list, separated by the delimiter. This should
+	 * only happen when the variable matches the pattern. For example, if a
+	 * variable has a value of ':' without the quotes, it shouldn't processed as
+	 * a list even if it contains a delimiter because if it was, it would give
+	 * an empty string when built since there are no items in the list.
+	 * 
+	 * @throws Exception
+	 */
+	public void testBug284843() throws Exception{
+		final IProject project = ResourceHelper.createCDTProjectWithConfig("envProject");
+		ICProjectDescription prjDesc = CoreModel.getDefault().getProjectDescription(project);
+		IEnvironmentVariableManager envManager = CCorePlugin.getDefault().getBuildEnvironmentManager();
+		IContributedEnvironment contribEnv = envManager.getContributedEnvironment();
+		ICConfigurationDescription confDesc = prjDesc.getActiveConfiguration();
+		String delimiter = System.getProperty("path.separator");
+
+		// Create the test variables
+		IEnvironmentVariable varDelim = new EnvironmentVariable("DELIM",
+				delimiter);
+		String varListValue = "value1" + delimiter + "value2" + delimiter + "value3";
+		IEnvironmentVariable varList = new EnvironmentVariable("LIST", varListValue);
+		IEnvironmentVariable varListDelim = new EnvironmentVariable("LISTDELIM", 
+				"value1" + delimiter);
+		IEnvironmentVariable varListDelims = new EnvironmentVariable("LISTDELIMS", 
+				varListValue + delimiter);
+		String varInvalidListValue = delimiter + "value1" + delimiter + "value2" + delimiter + delimiter + "value3" + delimiter;
+		IEnvironmentVariable varInvalidList = new EnvironmentVariable("INVALIDLIST", varInvalidListValue);
+		
+		// Add the variables to the contributed environment
+		contribEnv.addVariable(varDelim, confDesc);
+		contribEnv.addVariable(varList, confDesc);
+		contribEnv.addVariable(varListDelim, confDesc);
+		contribEnv.addVariable(varListDelims, confDesc);
+		contribEnv.addVariable(varInvalidList, confDesc);
+		
+		// Get the processed variables
+		varDelim = envManager.getVariable(varDelim.getName(), confDesc, true);
+		varList = envManager.getVariable(varList.getName(), confDesc, true);
+		varListDelim = envManager.getVariable(varListDelim.getName(), confDesc, true);
+		varListDelims = envManager.getVariable(varListDelims.getName(), confDesc, true);
+		varInvalidList = envManager.getVariable(varInvalidList.getName(), confDesc, true);
+		
+		// Should keep the same value, not a list
+		assertEquals(delimiter, varDelim.getValue());
+		
+		// Should keep the same value, processed as a list
+		assertEquals(varListValue, varList.getValue());
+		
+		// The delimiter will be trimmed, processed as a list
+		assertEquals("value1", varListDelim.getValue());
+		
+		// The last delimiter will be trimmed, processed as a list
+		assertEquals(varListValue, varListDelims.getValue()); 
+		
+		// Should keep the same value, not a list
+		assertEquals(varInvalidListValue,varInvalidList.getValue()); 
+	}
+
 }

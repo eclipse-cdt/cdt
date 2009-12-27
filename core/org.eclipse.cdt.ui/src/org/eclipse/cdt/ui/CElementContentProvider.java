@@ -32,6 +32,7 @@ import org.eclipse.cdt.core.model.CoreModel;
 import org.eclipse.cdt.core.model.ElementChangedEvent;
 import org.eclipse.cdt.core.model.IArchive;
 import org.eclipse.cdt.core.model.IBinary;
+import org.eclipse.cdt.core.model.ICContainer;
 import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.core.model.ICElementDelta;
 import org.eclipse.cdt.core.model.ICModel;
@@ -171,7 +172,7 @@ public class CElementContentProvider extends BaseCElementContentProvider impleme
 		}
 
 		// We do not care about changes in Working copies
-		// well, we do see bugzilla 147694
+		// well, we do see bug 147694
 		if (element instanceof ITranslationUnit) {
 			ITranslationUnit unit = (ITranslationUnit) element;
 			if (unit.isWorkingCopy()) {
@@ -196,10 +197,15 @@ public class CElementContentProvider extends BaseCElementContentProvider impleme
 			updateContainer(element);
 		}
 
+		if (isPathEntryChange(delta)) {
+			postRefresh(element.getCProject());
+			return;
+		}
+
 		if (kind == ICElementDelta.CHANGED) {
 			// Binary/Archive changes is done differently since they
 			// are at two places, they are in the {Binary,Archive}Container
-			// and in the Tree hiearchy
+			// and in the Tree hierarchy
 			if (updateContainer(element)) {
 				Object parent = getParent(element);
 				postRefresh(parent);
@@ -207,18 +213,17 @@ public class CElementContentProvider extends BaseCElementContentProvider impleme
 			} else if (element instanceof ITranslationUnit) {
 				postRefresh(element);
 				return;
+			} else if (element instanceof ICContainer) {
+				// if element itself has changed, not its children
+				if ((flags&~(ICElementDelta.F_CHILDREN|ICElementDelta.F_FINE_GRAINED))!=0) {
+					postRefresh(element);
+				}
 			} else if (element instanceof ArchiveContainer || element instanceof BinaryContainer) {
 				postContainerRefresh((IParent) element, element.getCProject());
 			}
 
 		}
 
-		if (isPathEntryChange(delta)) {
-			 // throw the towel and do a full refresh of the affected C project.
-			postRefresh(element.getCProject());
-			return;// bailout
-		}
-		
 		if (processResourceDeltas(delta.getResourceDeltas(), element))
 			return;
 	

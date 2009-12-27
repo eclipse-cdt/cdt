@@ -54,7 +54,7 @@ public class DoxygenHelper extends AbstractPreferenceInitializer {
 				for(String line= br.readLine(); line!=null; line= br.readLine()) {
 					content.append(line+"\n"); //$NON-NLS-1$
 				}
-				String[] values= content.toString().split("(\\s)*,(\\s)*"); //$NON-NLS-1$
+				String[] values= (content.toString()+"dummy-for-split").split("(\\s)*,(\\s)*"); //$NON-NLS-1$ //$NON-NLS-2$
 				
 				for(int i=0; i+1<values.length; i+=2) {
 					temp.add(new GenericDocTag(values[i], values[i+1]));

@@ -59,7 +59,7 @@ public class PDAAdapterFactory implements IAdapterFactory
 
     @SuppressWarnings("unchecked") // IAdapterFactory is Java 1.3
     public Class[] getAdapterList() {
-        return new Class[] { IElementContentProvider.class, IModelProxyFactory.class, IColumnPresentationFactory.class };
+        return new Class[] { IElementContentProvider.class, IModelProxyFactory.class, ISuspendTrigger.class };
     }
 
 }

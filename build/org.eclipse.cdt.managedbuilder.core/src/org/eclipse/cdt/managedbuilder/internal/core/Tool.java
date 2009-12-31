@@ -160,7 +160,7 @@ public class Tool extends HoldsOptions implements ITool, IOptionCategory, IMatch
 	private HashMap<IInputType, CLanguageData> typeToDataMap = new HashMap<IInputType, CLanguageData>(2);
 	private boolean fDataMapInited;
 	private List identicalList;
-	private HashMap<Object, PathInfoCache> discoveredInfoMap = new HashMap<Object, PathInfoCache>(2);
+	private HashMap<String, PathInfoCache> discoveredInfoMap = new HashMap<String, PathInfoCache>(2);
 	private String scannerConfigDiscoveryProfileId;
 
 	/*
@@ -459,9 +459,9 @@ public class Tool extends HoldsOptions implements ITool, IOptionCategory, IMatch
 		super.copyChildren(tool);
 		//  Clone the children
 		if (tool.inputTypeList != null) {
-			discoveredInfoMap = (HashMap<Object, PathInfoCache>)tool.discoveredInfoMap.clone();
+			discoveredInfoMap = (HashMap<String, PathInfoCache>)tool.discoveredInfoMap.clone();
 			for (InputType inputType : tool.getInputTypeList()) {
-				PathInfoCache cache = (PathInfoCache)discoveredInfoMap.remove(getTypeKey(inputType));
+				PathInfoCache cache = discoveredInfoMap.remove(getTypeKey(inputType));
 				int nnn = ManagedBuildManager.getRandomNumber();
 				String subId;
 				String subName;
@@ -974,6 +974,7 @@ public class Tool extends HoldsOptions implements ITool, IOptionCategory, IMatch
 	 * @param doc
 	 * @param element
 	 */
+	@Override
 	public void serialize(ICStorageElement element) {
 		try {
 			if (getSuperClass() != null)
@@ -1205,7 +1206,7 @@ public class Tool extends HoldsOptions implements ITool, IOptionCategory, IMatch
 		Vector<InputType> ourTypes = getInputTypeList();
 		if (types != null) {
 			for (int i = 0; i < ourTypes.size(); i++) {
-				IInputType ourType = (IInputType)ourTypes.get(i);
+				IInputType ourType = ourTypes.get(i);
 				int j;
 				for (j = 0; j < types.length; j++) {
 					IInputType otherTypeToCheck = ManagedBuildManager.getExtensionInputType(types[j]);
@@ -1250,7 +1251,7 @@ public class Tool extends HoldsOptions implements ITool, IOptionCategory, IMatch
 	}
 
 	public IInputType getAllInputTypeById(String id) {
-		IInputType type = (IInputType)getInputTypeMap().get(id);
+		IInputType type = getInputTypeMap().get(id);
 		if (type == null) {
 			if (getSuperClass() != null) {
 				return ((Tool)getSuperClass()).getAllInputTypeById(id);
@@ -1298,7 +1299,7 @@ public class Tool extends HoldsOptions implements ITool, IOptionCategory, IMatch
 		Vector<OutputType> ourTypes = getOutputTypeList();
 		if (types != null) {
 			for (int i = 0; i < ourTypes.size(); i++) {
-				IOutputType ourType = (IOutputType)ourTypes.get(i);
+				IOutputType ourType = ourTypes.get(i);
 				int j;
 				for (j = 0; j < types.length; j++) {
 					if (ourType.getSuperClass() != null &&
@@ -1383,7 +1384,7 @@ public class Tool extends HoldsOptions implements ITool, IOptionCategory, IMatch
 	}
 
 	public IOutputType getAllOutputTypeById(String id) {
-		IOutputType type = (IOutputType)getOutputTypeMap().get(id);
+		IOutputType type = getOutputTypeMap().get(id);
 		if (type == null) {
 			if (getSuperClass() != null) {
 				return ((Tool)getSuperClass()).getAllOutputTypeById(id);
@@ -1608,6 +1609,7 @@ public class Tool extends HoldsOptions implements ITool, IOptionCategory, IMatch
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.build.managed.ITool#getName()
 	 */
+	@Override
 	public String getName() {
 		return (name == null && getSuperClass() != null) ? getSuperClass().getName() : name;
 	}
@@ -1672,7 +1674,7 @@ public class Tool extends HoldsOptions implements ITool, IOptionCategory, IMatch
 					list.add(tok.nextToken());
 				}
 				String[] strArr = {""};	//$NON-NLS-1$
-				errorParsers = (String[]) list.toArray(strArr);
+				errorParsers = list.toArray(strArr);
 			}
 		} else {
 			errorParsers = new String[0];
@@ -1737,7 +1739,7 @@ public class Tool extends HoldsOptions implements ITool, IOptionCategory, IMatch
 		// If none, use the input extensions specified for the Tool (backwards compatibility)
 		List<String> extsList = getInputExtensionsAttribute();
 		// Use the first entry in the list
-		if (extsList != null && extsList.size() > 0) return (String)extsList.get(0);
+		if (extsList != null && extsList.size() > 0) return extsList.get(0);
 		return EMPTY_STRING;
 	}
 
@@ -1872,7 +1874,7 @@ public class Tool extends HoldsOptions implements ITool, IOptionCategory, IMatch
 				}
 			}
 		}
-		return (IPath[])allDeps.toArray(new IPath[allDeps.size()]);
+		return allDeps.toArray(new IPath[allDeps.size()]);
 	}
 
 	/* (non-Javadoc)
@@ -1914,7 +1916,7 @@ public class Tool extends HoldsOptions implements ITool, IOptionCategory, IMatch
 		// If none, use the header extensions specified for the Tool (backwards compatibility)
 		List<String> extsList = getHeaderExtensionsAttribute();
 		if (extsList != null && extsList.size() > 0) {
-			return (String[])extsList.toArray(new String[extsList.size()]);
+			return extsList.toArray(new String[extsList.size()]);
 		}
 		return EMPTY_STRING_ARRAY;
 	}
@@ -2161,14 +2163,14 @@ public class Tool extends HoldsOptions implements ITool, IOptionCategory, IMatch
 		return dependencyGeneratorElement;		
 	}
 	
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.managedbuilder.core.ITool#setDependencyGeneratorElement(String)
-	 * @deprecated
-	 */
-	private void setDependencyGeneratorElement(IConfigurationElement element) {
-		dependencyGeneratorElement = element;
-		setDirty(true);
-	}
+//	/* (non-Javadoc)
+//	 * @see org.eclipse.cdt.managedbuilder.core.ITool#setDependencyGeneratorElement(String)
+//	 * @deprecated
+//	 */
+//	private void setDependencyGeneratorElement(IConfigurationElement element) {
+//		dependencyGeneratorElement = element;
+//		setDirty(true);
+//	}
 	
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.managedbuilder.core.ITool#getDependencyGenerator()
@@ -2643,7 +2645,7 @@ public class Tool extends HoldsOptions implements ITool, IOptionCategory, IMatch
 			}
 		}
 		String[] f = new String[ flags.size() ];
-		return (String[])flags.toArray( f );
+		return flags.toArray( f );
 	}
 	
 	/* (non-Javadoc)
@@ -2792,8 +2794,8 @@ public class Tool extends HoldsOptions implements ITool, IOptionCategory, IMatch
 			} 
 			if (optionPathConverter==null)  {
 				// If there is still no optionPathConverter, ask superclass of this tool whether it has a converter
-				if (getSuperClass() instanceof ITool) {
-					ITool superTool = (ITool) getSuperClass();
+				if (getSuperClass() != null) {
+					ITool superTool = getSuperClass();
 					optionPathConverter = superTool.getOptionPathConverter();
 				}
 			}
@@ -2827,6 +2829,7 @@ public class Tool extends HoldsOptions implements ITool, IOptionCategory, IMatch
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.managedbuilder.core.ITool#isExtensionElement()
 	 */
+	@Override
 	public boolean isExtensionElement() {
 		return isExtensionTool;
 	}
@@ -2834,6 +2837,7 @@ public class Tool extends HoldsOptions implements ITool, IOptionCategory, IMatch
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.managedbuilder.core.ITool#isDirty()
 	 */
+	@Override
 	public boolean isDirty() {
 		// This shouldn't be called for an extension tool
  		if (isExtensionTool) return false;
@@ -2859,6 +2863,7 @@ public class Tool extends HoldsOptions implements ITool, IOptionCategory, IMatch
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.managedbuilder.core.ITool#setDirty(boolean)
 	 */
+	@Override
 	public void setDirty(boolean isDirty) {
 		this.isDirty = isDirty;
 		// Propagate "false" to options
@@ -2876,6 +2881,7 @@ public class Tool extends HoldsOptions implements ITool, IOptionCategory, IMatch
 	/* (non-Javadoc)
 	 *  Resolve the element IDs to interface references
 	 */
+	@Override
 	public void resolveReferences() {
 		if (!resolved) {
 			resolved = true;
@@ -3028,7 +3034,7 @@ public class Tool extends HoldsOptions implements ITool, IOptionCategory, IMatch
 	 */
 	public IEnvVarBuildPath[] getEnvVarBuildPaths(){
 		if(envVarBuildPathList != null){
-			return (IEnvVarBuildPath[])envVarBuildPathList.toArray(
+			return envVarBuildPathList.toArray(
 					new IEnvVarBuildPath[envVarBuildPathList.size()]);
 		}
 		else if(getSuperClass() != null)
@@ -3059,7 +3065,7 @@ public class Tool extends HoldsOptions implements ITool, IOptionCategory, IMatch
 			// If 'getSuperClass()' is null, then there is no tool available in
 			// plugin manifest file with the same 'id' & version.
 			// Look for the 'versionsSupported' attribute
-			String high = (String) ManagedBuildManager.getExtensionToolMap()
+			String high = ManagedBuildManager.getExtensionToolMap()
 					.lastKey();
 
 			SortedMap<String, Tool> subMap = null;
@@ -3299,6 +3305,7 @@ public class Tool extends HoldsOptions implements ITool, IOptionCategory, IMatch
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.managedbuilder.internal.core.HoldsOptions#needsRebuild()
 	 */
+	@Override
 	public boolean needsRebuild() {
 		if(rebuildState)
 			return true;
@@ -3318,6 +3325,7 @@ public class Tool extends HoldsOptions implements ITool, IOptionCategory, IMatch
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.managedbuilder.internal.core.HoldsOptions#setRebuildState(boolean)
 	 */
+	@Override
 	public void setRebuildState(boolean rebuild) {
 		if(isExtensionElement() && rebuild)
 			return;
@@ -3346,7 +3354,7 @@ public class Tool extends HoldsOptions implements ITool, IOptionCategory, IMatch
 
 	public CLanguageData getCLanguageData(IInputType type) {
 		initDataMap();
-		return (CLanguageData)typeToDataMap.get(type);
+		return typeToDataMap.get(type);
 	}
 	
 	@SuppressWarnings("unchecked")
@@ -3358,7 +3366,7 @@ public class Tool extends HoldsOptions implements ITool, IOptionCategory, IMatch
 		
 		if(types != null){
 			if(types.size() == 0){
-				CLanguageData data = (CLanguageData)typeToDataMap.get(null);
+				CLanguageData data = typeToDataMap.get(null);
 				if(data == null){
 					data = new BuildLanguageData(this, null);
 					if(typeToDataMap.size() != 0){
@@ -3377,7 +3385,7 @@ public class Tool extends HoldsOptions implements ITool, IOptionCategory, IMatch
 
 				Map<IInputType, CLanguageData> map = (Map<IInputType, CLanguageData>)typeToDataMap.clone();
 				for(IInputType type : types){
-					CLanguageData data = (CLanguageData)map.remove(type);
+					CLanguageData data = map.remove(type);
 					if(data == null){
 						data = new BuildLanguageData(this, type);
 						typeToDataMap.put(type, data);
@@ -3460,6 +3468,7 @@ public class Tool extends HoldsOptions implements ITool, IOptionCategory, IMatch
 		return null;
 	}
 
+	@Override
 	public IResourceInfo getParentResourceInfo() {
 		if(parent instanceof IFileInfo)
 			return (IResourceInfo)parent;
@@ -3474,7 +3483,9 @@ public class Tool extends HoldsOptions implements ITool, IOptionCategory, IMatch
 			return base;
 		
 		IInputType extType = base;
-		for(;extType != null && !extType.isExtensionElement();extType = extType.getSuperClass());
+		for(;extType != null && !extType.isExtensionElement();extType = extType.getSuperClass()) {
+			// empty body
+		}
 		String id;
 		if(extType != null){
 			id = ManagedBuildManager.calculateChildId(extType.getId(), null);
@@ -3502,14 +3513,16 @@ public class Tool extends HoldsOptions implements ITool, IOptionCategory, IMatch
 		} else {
 			id = ManagedBuildManager.calculateChildId(getId(), null);
 		}
-		IOutputType newType = (IOutputType)createOutputType(base, id, base.getName(), false);
+		IOutputType newType = createOutputType(base, id, base.getName(), false);
 		return newType;
 	}
 
+	@Override
 	public boolean supportsType(IBuildPropertyType type) {
 		return supportsType(type.getId());
 	}
 	
+	@Override
 	public boolean supportsType(String type) {
 		boolean suports = false;
 		
@@ -3528,6 +3541,7 @@ public class Tool extends HoldsOptions implements ITool, IOptionCategory, IMatch
 		return suports;
 	}
 
+	@Override
 	public boolean supportsValue(String type, String value){
 		boolean suports = false;
 		SupportedProperties props = findSupportedProperties();
@@ -3545,11 +3559,13 @@ public class Tool extends HoldsOptions implements ITool, IOptionCategory, IMatch
 		return suports;
 	}
 
+	@Override
 	public boolean supportsValue(IBuildPropertyType type,
 			IBuildPropertyValue value) {
 		return supportsValue(type.getId(), value.getId());
 	}
 	
+	@Override
 	public void propertiesChanged() {
 		if(isExtensionTool)
 			return;
@@ -3669,6 +3685,7 @@ public class Tool extends HoldsOptions implements ITool, IOptionCategory, IMatch
 			tool = tch;
 		}
 		
+		@Override
 		public boolean equals(Object obj) {
 			if(obj == this)
 				return true;
@@ -3678,6 +3695,7 @@ public class Tool extends HoldsOptions implements ITool, IOptionCategory, IMatch
 			return tool.performMatchComparison(other.tool);
 		}
 
+		@Override
 		public int hashCode() {
 			String name = tool.getName();
 			if(name == null)
@@ -3751,6 +3769,7 @@ public class Tool extends HoldsOptions implements ITool, IOptionCategory, IMatch
 		return identicalList;
 	}
 
+	@Override
 	public String[] getRequiredTypeIds() {
 		SupportedProperties props = findSupportedProperties();
 		String[] required = null;
@@ -3762,6 +3781,7 @@ public class Tool extends HoldsOptions implements ITool, IOptionCategory, IMatch
 		return required;
 	}
 
+	@Override
 	public String[] getSupportedTypeIds() {
 		SupportedProperties props = findSupportedProperties();
 		String[] supported = null;
@@ -3780,6 +3800,7 @@ public class Tool extends HoldsOptions implements ITool, IOptionCategory, IMatch
 		return supported;
 	}
 
+	@Override
 	public String[] getSupportedValueIds(String typeId) {
 		SupportedProperties props = findSupportedProperties();
 		String[] supported = null;
@@ -3798,6 +3819,7 @@ public class Tool extends HoldsOptions implements ITool, IOptionCategory, IMatch
 		return supported;
 	}
 
+	@Override
 	public boolean requiresType(String typeId) {
 		SupportedProperties props = findSupportedProperties();
 		boolean required;
@@ -3897,15 +3919,15 @@ public class Tool extends HoldsOptions implements ITool, IOptionCategory, IMatch
 	}
 	
 	public PathInfoCache setDiscoveredPathInfo(IInputType type, PathInfoCache info){
-		return (PathInfoCache)discoveredInfoMap.put(getTypeKey(type), info);
+		return discoveredInfoMap.put(getTypeKey(type), info);
 	}
 
 	public PathInfoCache getDiscoveredPathInfo(IInputType type){
-		return (PathInfoCache)discoveredInfoMap.get(getTypeKey(type));
+		return discoveredInfoMap.get(getTypeKey(type));
 	}
 	
 	public PathInfoCache clearDiscoveredPathInfo(IInputType type){
-		return (PathInfoCache)discoveredInfoMap.remove(getTypeKey(type));
+		return discoveredInfoMap.remove(getTypeKey(type));
 	}
 
 	public void clearAllDiscoveredPathInfo(){
@@ -3916,7 +3938,7 @@ public class Tool extends HoldsOptions implements ITool, IOptionCategory, IMatch
 		discoveredInfoMap.clear();
 	}
 
-	private Object getTypeKey(IInputType type){
+	private String getTypeKey(IInputType type){
 		if(type != null)
 			return type.getId();
 		return null;
@@ -4036,7 +4058,7 @@ public class Tool extends HoldsOptions implements ITool, IOptionCategory, IMatch
 				ManagedBuilderCorePlugin.log(e);
 			}
 		}
-		return (Option[])list.toArray(new Option[list.size()]);
+		return list.toArray(new Option[list.size()]);
 	}
 	
 	@SuppressWarnings("unchecked")

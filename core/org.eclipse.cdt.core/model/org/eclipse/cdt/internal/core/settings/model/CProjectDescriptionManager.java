@@ -2505,14 +2505,15 @@ public class CProjectDescriptionManager implements ICProjectDescriptionManager {
 				for(parent = child.getParentContainer();
 					(parentRcData = (CResourceData)parent.getValue()).getType() != ICSettingBase.SETTING_FOLDER;
 					parent = parent.getParentContainer()) {
-					if(!settingsCustomized(project, (CFolderData)parentRcData, (CFolderData)childRcData)){
-						try {
-							data.removeResourceData(childRcData);
-							child.remove();
-							modified = true;
-						} catch (CoreException e) {
-							CCorePlugin.log(e);
-						}
+					// no body, this loop is to find the parent
+				}
+				if(!settingsCustomized(project, (CFolderData)parentRcData, (CFolderData)childRcData)){
+					try {
+						data.removeResourceData(childRcData);
+						child.remove();
+						modified = true;
+					} catch (CoreException e) {
+						CCorePlugin.log(e);
 					}
 				}
 			} else {

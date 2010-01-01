@@ -235,11 +235,11 @@ public class Tool extends HoldsOptions implements ITool, IOptionCategory, IMatch
 	 * This constructor is called to create a Tool whose attributes and children will be 
 	 * added by separate calls.
 	 * 
-	 * @param ToolChain The parent of the tool, if any
-	 * @param Tool The superClass, if any
-	 * @param String The id for the new tool 
-	 * @param String The name for the new tool
-	 * @param boolean Indicates whether this is an extension element or a managed project element
+	 * @param parent - The parent of the tool, if any
+	 * @param superClass - The superClass, if any
+	 * @param Id - The id for the new tool 
+	 * @param name - The name for the new tool
+	 * @param isExtensionElement - Indicates whether this is an extension element or a managed project element
 	 */
 	public Tool(ToolChain parent, ITool superClass, String Id, String name, boolean isExtensionElement) {
 		super(resolvedDefault);
@@ -272,11 +272,11 @@ public class Tool extends HoldsOptions implements ITool, IOptionCategory, IMatch
 	 * This constructor is called to create a Tool whose attributes and children will be 
 	 * added by separate calls.
 	 * 
-	 * @param ResourceConfiguration, The parent of the tool, if any
-	 * @param Tool The superClass, if any
-	 * @param String The id for the new tool 
-	 * @param String The name for the new tool
-	 * @param boolean Indicates whether this is an extension element or a managed project element
+	 * @param parent - The parent of the tool, if any
+	 * @param superClass - The superClass, if any
+	 * @param Id - The id for the new tool 
+	 * @param name - The name for the new tool
+	 * @param isExtensionElement - Indicates whether this is an extension element or a managed project element
 	 */
 	 
 	public Tool(ResourceConfiguration parent, ITool superClass, String Id, String name, boolean isExtensionElement) {
@@ -2488,14 +2488,13 @@ public class Tool extends HoldsOptions implements ITool, IOptionCategory, IMatch
 	}
 	
 	/**
-	 * this method used internaly by the Tool to obtain the command flags with the build macros resolved,
+	 * this method used internally by the Tool to obtain the command flags with the build macros resolved,
 	 * but could be also used by other MBS components to adjust the tool flags resolution 
 	 * behavior by passing the method some custom macro substitutor
 	 *  
 	 * @param inputFileLocation
 	 * @param outputFileLocation
 	 * @param macroSubstitutor
-	 * @return
 	 * @throws BuildException
 	 */
 	public String[] getToolCommandFlags(IPath inputFileLocation, IPath outputFileLocation,

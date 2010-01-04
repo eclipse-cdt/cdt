@@ -79,10 +79,10 @@ public class InputStatusDialog extends StatusDialog {
      * @param validator
      *            an input validator, or <code>null</code> if none
      *            For a validator, following return statuses are recognized:
-	 *            <li/>{@link Status#OK_STATUS} or any {@link IStatus#OK} to indicate no error.
-	 *            <li/>{@link IStatus#ERROR} indicates an error.
-	 *            <li/>{@link IStatus#WARNING} indicates a warning.
-	 *            <li/>{@link IStatus#INFO} indicates an informational message
+     *            <li/>{@link Status#OK_STATUS} or any {@link IStatus#OK} to indicate no error.
+     *            <li/>{@link IStatus#ERROR} indicates an error.
+     *            <li/>{@link IStatus#WARNING} indicates a warning.
+     *            <li/>{@link IStatus#INFO} indicates an informational message
      */
 	public InputStatusDialog(Shell parentShell, String dialogTitle, String dialogMessage,
 			String initialValue, IInputStatusValidator validator) {
@@ -175,6 +175,11 @@ public class InputStatusDialog extends StatusDialog {
 		return validator;
 	}
 
+	/**
+	 * Returns the string typed into this input dialog.
+	 * 
+	 * @return the input string
+	 */
 	public String getValue() {
 		return value;
 	}

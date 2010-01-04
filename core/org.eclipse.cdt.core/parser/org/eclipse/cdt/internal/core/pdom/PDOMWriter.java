@@ -223,7 +223,7 @@ abstract public class PDOMWriter {
 				if (i < ifls.length - 1) {
 					updateFileCount(0, 0, 1); // update header count
 				}
-				fStatistics.fAddToIndexTime+= System.currentTimeMillis() - start;
+				fStatistics.fAddToIndexTime += System.currentTimeMillis() - start;
 			}
 		}
 	}
@@ -369,7 +369,7 @@ abstract public class PDOMWriter {
 		}
 		
 		fStatistics.fUnresolvedIncludesCount += unresolvedIncludes;
-		fStatistics.fPreprocessorProblemCount+= ast.getPreprocessorProblemsCount() - unresolvedIncludes;
+		fStatistics.fPreprocessorProblemCount += ast.getPreprocessorProblemsCount() - unresolvedIncludes;
 		if (fShowScannerProblems || fShowInclusionProblems) {
 			final boolean reportAll= fShowScannerProblems && fShowInclusionProblems;
 			IASTProblem[] scannerProblems= ast.getPreprocessorProblems();
@@ -512,7 +512,7 @@ abstract public class PDOMWriter {
 	 */
 	protected final void updateRequestedFiles(int delta) {
 		synchronized (fInfo) {
-			fInfo.fRequestedFilesCount+= delta;
+			fInfo.fRequestedFilesCount += delta;
 		}
 	}
 
@@ -524,7 +524,7 @@ abstract public class PDOMWriter {
 		String msg= "Indexer: unresolved name" + getLocationInfo(problem.getFileName(), problem.getLineNumber()); //$NON-NLS-1$
 		String pmsg= problem.getMessage();
 		if (pmsg != null && pmsg.length() > 0) 
-			msg+= "; " + problem.getMessage(); //$NON-NLS-1$
+			msg += "; " + problem.getMessage(); //$NON-NLS-1$
 		trace(msg);
 	}
 

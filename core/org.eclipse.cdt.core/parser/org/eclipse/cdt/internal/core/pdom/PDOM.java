@@ -1144,7 +1144,7 @@ public class PDOM extends PlatformObject implements IPDOM {
 		clearResultCache();
 	}
 
-	private void clearResultCache() {
+	public void clearResultCache() {
 		synchronized (fResultCache) {
 			fResultCache.clear();
 		}

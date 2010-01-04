@@ -617,6 +617,12 @@ public class CIndex implements IIndex {
 		}
 	}
 	
+	void clearResultCaches() {
+		for (IIndexFragment frag : fFragments) {
+			frag.clearResultCache();
+		}
+	}
+	
 	public IIndexFileSet createFileSet() {
 		return new IndexFileSet();
 	}

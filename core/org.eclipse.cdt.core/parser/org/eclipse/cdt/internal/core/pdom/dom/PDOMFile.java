@@ -642,9 +642,19 @@ public class PDOMFile implements IIndexFragmentFile {
 	public ICPPUsingDirective[] getUsingDirectives() throws CoreException {
 		return fLinkage.getUsingDirectives(this);
 	}
-	
-	// required because we cannot reference CCorePlugin in order for StandaloneIndexer to work
+
+	// Required because we cannot reference CCorePlugin in order for StandaloneIndexer to work
 	private static IStatus createStatus(String msg) {
 		return new Status(IStatus.ERROR, "org.eclipse.cdt.core", msg, null); //$NON-NLS-1$
+	}
+
+	@Override
+	public String toString() {
+		IIndexFileLocation loc = null;
+		try {
+			loc = getLocation();
+		} catch (CoreException e) {
+		}
+		return loc != null ? loc.toString() : super.toString();
 	}
 }

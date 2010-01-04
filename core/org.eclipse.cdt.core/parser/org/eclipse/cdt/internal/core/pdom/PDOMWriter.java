@@ -69,9 +69,9 @@ import org.eclipse.osgi.util.NLS;
  */
 abstract public class PDOMWriter {
 	public static int SKIP_ALL_REFERENCES= -1;
-	public static int SKIP_TYPE_REFERENCES=  1;
+	public static int SKIP_TYPE_REFERENCES= 1;
 	public static int SKIP_MACRO_REFERENCES= 2;
-	public static int SKIP_IMPLICIT_REFERENCES=  4;
+	public static int SKIP_IMPLICIT_REFERENCES= 4;
 	public static int SKIP_NO_REFERENCES= 0;
 	
 	private static class Symbols {
@@ -381,7 +381,7 @@ abstract public class PDOMWriter {
 		}
 
 		final List<IASTProblem> problems= visitor.getProblems();
-		fStatistics.fSyntaxProblemsCount+= problems.size();
+		fStatistics.fSyntaxProblemsCount += problems.size();
 		if (fShowSyntaxProblems) {
 			for (IASTProblem problem : problems) {
 				reportProblem(problem); 
@@ -515,7 +515,7 @@ abstract public class PDOMWriter {
 			fInfo.fRequestedFilesCount+= delta;
 		}
 	}
-		
+
 	private String getLocationInfo(String filename, int lineNumber) {
 		return " at " + filename + "(" + lineNumber + ")"; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 	}

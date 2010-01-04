@@ -169,7 +169,7 @@ abstract public class PDOMWriter {
 		if (!stati.isEmpty()) {
 			String path= null;
 			if (ifls.length > 0) {
-				path= ifls[ifls.length-1].getURI().getPath();
+				path= ifls[ifls.length - 1].getURI().getPath();
 			} else {
 				path= ast.getFilePath().toString();
 			}

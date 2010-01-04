@@ -16,6 +16,7 @@ import java.util.Arrays;
 import java.util.Comparator;
 import java.util.List;
 
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.IDocument;
 
@@ -23,6 +24,8 @@ import org.eclipse.cdt.core.index.IIndexFileLocation;
 import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.core.parser.CodeReader;
 import org.eclipse.cdt.ui.CUIPlugin;
+
+import org.eclipse.cdt.internal.core.parser.InternalParserUtil;
 
 /**
  * Element representing a line with one ore more matches.
@@ -141,11 +144,12 @@ public class LineSearchElement extends PDOMSearchElement {
 		Arrays.sort(matches, MATCHES_COMPARATOR);
 		LineSearchElement[] result = {};
 		try {
-			String path = fileLocation.getURI().getPath();
 			// read the content of file
-			CodeReader reader = new CodeReader(path);
+			CodeReader reader = InternalParserUtil.createCodeReader(fileLocation, null);
 			result = collectLineElements(reader.buffer, matches, fileLocation);
 		} catch (IOException e) {
+			CUIPlugin.log(e);
+		} catch (CoreException e) {
 			CUIPlugin.log(e);
 		}
 		return result;
@@ -210,7 +214,9 @@ public class LineSearchElement extends PDOMSearchElement {
 					int lineMatchesCount = nextMatch - lineFirstMatch;
 					Match[] lineMatches = new Match[lineMatchesCount];
 					System.arraycopy(matches, lineFirstMatch, lineMatches, 0, lineMatchesCount);
-					String lineContent = new String(buffer, lineOffset, lineLength);
+					char[] lineChars= new char[lineLength];
+					System.arraycopy(buffer, lineOffset, lineChars, 0, lineLength);
+					String lineContent = new String(lineChars);
 					result.add(new LineSearchElement(fileLocation, lineMatches, lineNumber, lineContent,
 							lineOffset));
 					lineFirstMatch = -1;
@@ -248,7 +254,9 @@ public class LineSearchElement extends PDOMSearchElement {
 			int lineMatchesCount = nextMatch - lineFirstMatch;
 			Match[] lineMatches = new Match[lineMatchesCount];
 			System.arraycopy(matches, lineFirstMatch, lineMatches, 0, lineMatchesCount);
-			String lineContent = new String(buffer, lineOffset, lineLength);
+			char[] lineChars= new char[lineLength];
+			System.arraycopy(buffer, lineOffset, lineChars, 0, lineLength);
+			String lineContent = new String(lineChars);
 			result.add(new LineSearchElement(fileLocation, lineMatches, lineNumber, lineContent, lineOffset));
 		}
 		return result.toArray(new LineSearchElement[result.size()]);

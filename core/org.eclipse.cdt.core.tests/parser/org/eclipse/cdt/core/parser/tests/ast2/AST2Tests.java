@@ -7221,4 +7221,18 @@ public class AST2Tests extends AST2BaseTest {
 			IASTTranslationUnit tu = parseAndCheckBindings(code, lang);
 	    }
 	}
+	
+	public void testDeepElseif_298455() throws Exception {
+		sValidateCopy= false;
+		StringBuilder buf= new StringBuilder("void f() {if (0) {}");
+		for (int i = 0; i < 75000; i++) {
+			buf.append("else if (0) {}");
+		}
+		buf.append("}");
+		String code= buf.toString();
+	    for(ParserLanguage lang : ParserLanguage.values()) {
+			IASTTranslationUnit tu = parseAndCheckBindings(code, lang);
+	    }
+	}
+
 }

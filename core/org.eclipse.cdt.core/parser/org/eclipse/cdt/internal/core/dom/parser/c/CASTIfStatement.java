@@ -92,26 +92,58 @@ public class CASTIfStatement extends ASTNode implements IASTIfStatement, IASTAmb
 		}
     }
 
-    @Override
-	public boolean accept( ASTVisitor action ){
-        if( action.shouldVisitStatements ){
-		    switch( action.visit( this ) ){
-	            case ASTVisitor.PROCESS_ABORT : return false;
-	            case ASTVisitor.PROCESS_SKIP  : return true;
-	            default : break;
-	        }
-		}
-        if( condition != null ) if( !condition.accept( action ) ) return false;
-        if( thenClause != null ) if( !thenClause.accept( action ) ) return false;
-        if( elseClause != null ) if( !elseClause.accept( action ) ) return false;
+	private static class N {
+		final IASTIfStatement fIfStatement;
+		N fNext;
 
-        if( action.shouldVisitStatements ){
-		    switch( action.leave( this ) ){
-	            case ASTVisitor.PROCESS_ABORT : return false;
-	            case ASTVisitor.PROCESS_SKIP  : return true;
-	            default : break;
-	        }
+		N(IASTIfStatement stmt) {
+			fIfStatement = stmt;
 		}
+	}
+
+    @Override
+	public boolean accept(ASTVisitor action) {
+    	N stack= null;
+    	IASTIfStatement stmt= this;
+    	loop: for(;;) {
+    		if (action.shouldVisitStatements) {
+    			switch (action.visit(this)) {
+    			case ASTVisitor.PROCESS_ABORT: 	return false;
+    			case ASTVisitor.PROCESS_SKIP: 	
+    				stmt= null;
+    				break loop;
+    			default: break;
+    			}
+    		}
+    		IASTNode child = stmt.getConditionExpression();
+    		if (child != null && !child.accept(action))
+    			return false;
+    		child= stmt.getThenClause();
+    		if (child != null && !child.accept(action))
+    			return false;
+    		child= stmt.getElseClause();
+    		if (child instanceof IASTIfStatement) {
+    			if (action.shouldVisitStatements) {
+    				N n= new N(stmt);
+    				n.fNext= stack;
+    				stack= n;
+    			}
+    			stmt= (IASTIfStatement) child;
+    		} else {
+    			if (child != null && !child.accept(action))
+    				return false;
+    			break loop;
+    		}
+    	}
+    	if (action.shouldVisitStatements) {
+    		if (stmt != null && action.leave(stmt) == ASTVisitor.PROCESS_ABORT)
+    			return false;
+    		while (stack != null) {
+    			if (action.leave(stack.fIfStatement) == ASTVisitor.PROCESS_ABORT)
+    				return false;
+    			stack= stack.fNext;
+    		}
+    	}
         return true;
     }
 

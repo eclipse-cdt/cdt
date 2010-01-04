@@ -123,7 +123,6 @@ public class WritableCIndex extends CIndex implements IWritableIndex {
 		fIsWriteLocked= false;
 		fWritableFragment.releaseWriteLock(establishReadlockCount, flush);
 	}
-	
 
 	public void flush() throws CoreException {
 		assert !fIsWriteLocked;

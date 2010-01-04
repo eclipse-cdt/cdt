@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2009 IBM Corporation and others.
+ * Copyright (c) 2004, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7207,5 +7207,18 @@ public class AST2Tests extends AST2BaseTest {
 	public void testSkipAggregateInitializer_297550() throws Exception {
         final String code = getAboveComment();
 		parseAndCheckBindings(code, ParserLanguage.C, false, true);
+	}
+	
+	public void testDeepBinaryExpression_294969() throws Exception {
+		sValidateCopy= false;
+		StringBuilder buf= new StringBuilder("void f() {0");
+		for (int i = 0; i < 150000; i++) {
+			buf.append('+').append(i);
+		}
+		buf.append(";}");
+		String code= buf.toString();
+	    for(ParserLanguage lang : ParserLanguage.values()) {
+			IASTTranslationUnit tu = parseAndCheckBindings(code, lang);
+	    }
 	}
 }

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2009 IBM Corporation and others.
+ * Copyright (c) 2004, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -17,6 +17,7 @@ import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IASTBinaryExpression;
 import org.eclipse.cdt.core.dom.ast.IASTExpression;
 import org.eclipse.cdt.core.dom.ast.IASTImplicitName;
+import org.eclipse.cdt.core.dom.ast.IASTImplicitNameOwner;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IPointerType;
 import org.eclipse.cdt.core.dom.ast.IProblemBinding;
@@ -112,51 +113,115 @@ public class CPPASTBinaryExpression extends ASTNode implements ICPPASTBinaryExpr
 	}
 
 	
-	
     @Override
-	public boolean accept( ASTVisitor action ){
-        if( action.shouldVisitExpressions ){
-		    switch( action.visit( this ) ){
+	public boolean accept(ASTVisitor action) {
+    	if (operand1 instanceof IASTBinaryExpression || operand2 instanceof IASTBinaryExpression) {
+    		return acceptWithoutRecursion(this, action);
+    	}
+    	
+		if (action.shouldVisitExpressions) {
+			switch (action.visit(this)) {
 	            case ASTVisitor.PROCESS_ABORT : return false;
 	            case ASTVisitor.PROCESS_SKIP  : return true;
 	            default : break;
 	        }
 		}
         
-        if( operand1 != null ) if( !operand1.accept( action ) ) return false;
+		if (operand1 != null && !operand1.accept(action))
+			return false;
         
-        if(action.shouldVisitImplicitNames) { 
-        	for(IASTImplicitName name : getImplicitNames()) {
-        		if(!name.accept(action)) return false;
-        	}
-        }
+		if (action.shouldVisitImplicitNames) {
+			for (IASTImplicitName name : getImplicitNames()) {
+				if (!name.accept(action))
+					return false;
+			}
+		}
         
-        if( operand2 != null ) if( !operand2.accept( action ) ) return false;
+		if (operand2 != null && !operand2.accept(action))
+			return false;
         
-        if(action.shouldVisitExpressions ){
-        	switch( action.leave( this ) ){
-        		case ASTVisitor.PROCESS_ABORT : return false;
-        		case ASTVisitor.PROCESS_SKIP  : return true;
-        		default : break;
-        	}
-        }
-        return true;
+		
+		if (action.shouldVisitExpressions && action.leave(this) == ASTVisitor.PROCESS_ABORT)
+			return false;
+
+		return true;
     }
 
-    public void replace(IASTNode child, IASTNode other) {
-        if( child == operand1 )
-        {
-            other.setPropertyInParent( child.getPropertyInParent() );
-            other.setParent( child.getParent() );
-            operand1  = (IASTExpression) other;
-        }
-        if( child == operand2 )
-        {
-            other.setPropertyInParent( child.getPropertyInParent() );
-            other.setParent( child.getParent() );
-            operand2  = (IASTExpression) other;
-        }
-    }
+	private static class N {
+		final IASTBinaryExpression fExpression;
+		int fState;
+		N fNext;
+
+		N(IASTBinaryExpression expr) {
+			fExpression = expr;
+		}
+	}
+	
+	public static boolean acceptWithoutRecursion(IASTBinaryExpression bexpr, ASTVisitor action) {
+		N stack= new N(bexpr);
+		while(stack != null) {
+			IASTBinaryExpression expr= stack.fExpression;
+			if (stack.fState == 0) {
+				if (action.shouldVisitExpressions) {
+					switch (action.visit(expr)) {
+					case ASTVisitor.PROCESS_ABORT : 
+						return false;
+					case ASTVisitor.PROCESS_SKIP: 
+						stack= stack.fNext;
+						continue;
+					}
+				}
+				stack.fState= 1;
+				IASTExpression op1 = expr.getOperand1();
+				if (op1 instanceof IASTBinaryExpression) {
+					N n= new N((IASTBinaryExpression) op1);
+					n.fNext= stack;
+					stack= n;
+					continue;
+				}
+				if (op1 != null && !op1.accept(action)) 
+					return false;
+			}
+			if (stack.fState == 1) {
+				if (action.shouldVisitImplicitNames) {
+					for (IASTImplicitName name : ((IASTImplicitNameOwner) expr).getImplicitNames()) {
+		        		if(!name.accept(action)) return false;
+		        	}
+		        }
+				stack.fState= 2;
+		        
+				IASTExpression op2 = expr.getOperand2();
+				if (op2 instanceof IASTBinaryExpression) {
+					N n= new N((IASTBinaryExpression) op2);
+					n.fNext= stack;
+					stack= n;
+					continue;
+				} 
+				if (op2 != null && !op2.accept(action)) 
+					return false;
+			}
+			
+			if (action.shouldVisitExpressions && action.leave(expr) == ASTVisitor.PROCESS_ABORT) 
+				return false;
+		
+			stack= stack.fNext;
+		}
+		
+		return true;
+	}
+
+	public void replace(IASTNode child, IASTNode other) {
+		if (child == operand1) {
+			other.setPropertyInParent(child.getPropertyInParent());
+			other.setParent(child.getParent());
+			operand1 = (IASTExpression) other;
+		}
+		if (child == operand2) {
+			other.setPropertyInParent(child.getPropertyInParent());
+			other.setParent(child.getParent());
+			operand2 = (IASTExpression) other;
+		}
+	}
 
     public IType getExpressionType() {
     	if (type == null) {

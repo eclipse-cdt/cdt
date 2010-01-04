@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2009 Wind River Systems, Inc. and others.
+ * Copyright (c) 2008, 2010 Wind River Systems, Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -14,6 +14,7 @@ import java.util.List;
 
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.dom.IName;
+import org.eclipse.cdt.core.dom.ast.ASTGenericVisitor;
 import org.eclipse.cdt.core.dom.ast.ASTVisitor;
 import org.eclipse.cdt.core.dom.ast.IASTComment;
 import org.eclipse.cdt.core.dom.ast.IASTDeclaration;
@@ -382,5 +383,15 @@ public abstract class ASTTranslationUnit extends ASTNode implements IASTTranslat
 			copy.addDeclaration(declaration == null ? null : declaration.copy());
 		
 		copy.setOffsetAndLength(this);
+	}
+	
+	public final void freeze() {
+		accept(new ASTGenericVisitor(true) {
+			@Override
+			protected int genericVisit(IASTNode node) {
+				((ASTNode) node).setIsFrozen();
+				return PROCESS_CONTINUE;
+			}
+		});
 	}
 }

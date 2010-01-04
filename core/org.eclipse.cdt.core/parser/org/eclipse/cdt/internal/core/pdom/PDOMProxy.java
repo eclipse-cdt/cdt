@@ -51,9 +51,9 @@ public class PDOMProxy implements IPDOM {
 		}
 	}
 	public synchronized void acquireReadLock() throws InterruptedException {
-		if (fDelegate != null)
+		if (fDelegate != null) {
 			fDelegate.acquireReadLock();
-		else {
+		} else {
 			fReadLockCount++;
 			if (PDOM.sDEBUG_LOCKS) {
 				PDOM.incReadLock(fLockDebugging);
@@ -201,9 +201,9 @@ public class PDOMProxy implements IPDOM {
 	}
 
 	public synchronized void addListener(IListener listener) {
-		if (fDelegate != null)
+		if (fDelegate != null) {
 			fDelegate.addListener(listener);
-		else {
+		} else {
 			fListeners.add(listener);
 		}
 	}
@@ -216,9 +216,9 @@ public class PDOMProxy implements IPDOM {
 	}
 
 	public synchronized void removeListener(IListener listener) {
-		if (fDelegate != null)
+		if (fDelegate != null) {
 			fDelegate.removeListener(listener);
-		else {
+		} else {
 			fListeners.remove(listener);
 		}
 	}

@@ -170,8 +170,7 @@ abstract public class PDOMWriter {
 			String path= null;
 			if (ifls.length > 0) {
 				path= ifls[ifls.length-1].getURI().getPath();
-			}
-			else {
+			} else {
 				path= ast.getFilePath().toString();
 			}
 			String msg= NLS.bind(Messages.PDOMWriter_errorWhileParsing, path);
@@ -501,7 +500,7 @@ abstract public class PDOMWriter {
 	 * Updates current progress information with the provided delta.
 	 */
 	protected final void updateFileCount(int sources, int primaryHeader, int header) {
-		synchronized(fInfo) {
+		synchronized (fInfo) {
 			fInfo.fCompletedSources += sources;
 			fInfo.fPrimaryHeaderCount += primaryHeader;
 			fInfo.fCompletedHeaders += header;
@@ -512,7 +511,7 @@ abstract public class PDOMWriter {
 	 * Updates current progress information with the provided delta.
 	 */
 	protected final void updateRequestedFiles(int delta) {
-		synchronized(fInfo) {
+		synchronized (fInfo) {
 			fInfo.fRequestedFilesCount+= delta;
 		}
 	}

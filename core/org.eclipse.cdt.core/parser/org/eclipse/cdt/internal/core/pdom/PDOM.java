@@ -437,7 +437,7 @@ public class PDOM extends PlatformObject implements IPDOM {
 			file= pdomFile;
 			fEvent.setHasNewFiles();
 		}
-		return file;		
+		return file;
 	}
 
 	protected void clearFileIndex() throws CoreException {
@@ -765,15 +765,13 @@ public class PDOM extends PlatformObject implements IPDOM {
 	private long lastReadAccess= 0;
 	private long timeWriteLockAcquired;
 
-
 	public void acquireReadLock() throws InterruptedException {
 		synchronized (mutex) {
 			++waitingReaders;
 			try {
 				while (lockCount < 0)
 					mutex.wait();
-			}
-			finally {
+			} finally {
 				--waitingReaders;
 			}
 			++lockCount;
@@ -834,8 +832,7 @@ public class PDOM extends PlatformObject implements IPDOM {
 				if (lockCount < giveupReadLocks) {
 					giveupReadLocks= lockCount;
 				}
-			}
-			else {
+			} else {
 				giveupReadLocks= 0;
 			}
 
@@ -942,8 +939,7 @@ public class PDOM extends PlatformObject implements IPDOM {
 					findNamesForMyBinding(xlangBinding, options, names);
 				}
 			}
-		}
-		else if (myBinding instanceof PDOMMacroContainer) {
+		} else if (myBinding instanceof PDOMMacroContainer) {
 			final PDOMMacroContainer macroContainer = (PDOMMacroContainer) myBinding;
 			findNamesForMyBinding(macroContainer, options, names);
 			if ((options & SEARCH_ACROSS_LANGUAGE_BOUNDARIES) != 0) {
@@ -1033,8 +1029,7 @@ public class PDOM extends PlatformObject implements IPDOM {
 					if (!filescope) {
 						linkage.getNestedBindingsIndex().accept(visitor);
 					}
-				}
-				catch (OperationCanceledException e) {
+				} catch (OperationCanceledException e) {
 				}
 				bindings= visitor.getBindings();
 
@@ -1116,18 +1111,17 @@ public class PDOM extends PlatformObject implements IPDOM {
 					}
 				}
 			}
-		}
-		catch (OperationCanceledException e) {
+		} catch (OperationCanceledException e) {
 		}
 		return result.toArray(new IIndexMacro[result.size()]);
 	}
 	
 	public String getProperty(String propertyName) throws CoreException {
-		if(IIndexFragment.PROPERTY_FRAGMENT_FORMAT_ID.equals(propertyName)) {
+		if (IIndexFragment.PROPERTY_FRAGMENT_FORMAT_ID.equals(propertyName)) {
 			return FRAGMENT_PROPERTY_VALUE_FORMAT_ID;
 		}
 		int version = db.getVersion();
-		if(IIndexFragment.PROPERTY_FRAGMENT_FORMAT_VERSION.equals(propertyName)) {
+		if (IIndexFragment.PROPERTY_FRAGMENT_FORMAT_VERSION.equals(propertyName)) {
 			return PDOM.versionString(version);
 		}
 		// play it safe, properties are accessed before version checks.

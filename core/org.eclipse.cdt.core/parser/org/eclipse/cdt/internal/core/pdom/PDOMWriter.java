@@ -161,7 +161,7 @@ abstract public class PDOMWriter {
 
 		// index update
 		storeSymbolsInIndex(symbolMap, ifls, ast.getLinkage().getLinkageID(), configHash, contextIncludes,
-				index, readlockCount, flushIndex,	stati, pm);
+				index, readlockCount, flushIndex, stati, pm);
 
 		if (taskUpdater != null) {
 			taskUpdater.updateTasks(ast.getComments(), ifls);

@@ -592,7 +592,7 @@ public class PDOMSearchPage extends DialogPage implements ISearchPage {
 					// TODO it might be good to do a selection parse to ensure that
 					// the selection is valid.
 				}
-				if (patternCombo.getText().trim().length() == 0 && previousPatterns.length > 0) {
+				if (patternCombo.getText().trim().length() == 0 && previousPatterns != null && previousPatterns.length > 0) {
 					patternCombo.setText(previousPatterns[0]);
 				}
 

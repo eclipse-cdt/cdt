@@ -349,10 +349,12 @@ public class Tool extends HoldsOptions implements ITool, IOptionCategory, IMatch
 	}
 
 	/**
-	 * Create a <code>Tool</code> based upon an existing tool.
+	 * Create a {@link Tool} based upon an existing tool.
 	 * 
-	 * @param parent The <code>IToolChain</code> or <code>IResourceConfiguration</code>
+	 * @param parent The {@link IToolChain} or {@link IResourceConfiguration}
 	 *               the tool will be added to. 
+	 * @param Id The new Tool ID
+	 * @param name The new Tool name
 	 * @param tool The existing tool to clone.
 	 */
 	public Tool(IBuildObject parent, ITool toolSuperClass, String Id, String name, Tool tool){
@@ -971,7 +973,6 @@ public class Tool extends HoldsOptions implements ITool, IOptionCategory, IMatch
 	/**
 	 * Persist the tool to the project file.
 	 * 
-	 * @param doc
 	 * @param element
 	 */
 	@Override
@@ -3067,7 +3068,7 @@ public class Tool extends HoldsOptions implements ITool, IOptionCategory, IMatch
 			String high = ManagedBuildManager.getExtensionToolMap()
 					.lastKey();
 
-			SortedMap<String, Tool> subMap = null;
+			SortedMap<String, ITool> subMap = null;
 			if (superClassId.compareTo(high) <= 0) {
 				subMap = ManagedBuildManager.getExtensionToolMap().subMap(
 						superClassId, high + "\0"); //$NON-NLS-1$
@@ -3505,7 +3506,9 @@ public class Tool extends HoldsOptions implements ITool, IOptionCategory, IMatch
 			return base;
 		
 		IOutputType extType = base;
-		for(;extType != null && !extType.isExtensionElement();extType = extType.getSuperClass());
+		for(;extType != null && !extType.isExtensionElement();extType = extType.getSuperClass()){
+			// empty body - loop to find extension
+		}
 		String id;
 		if(extType != null){
 			id = ManagedBuildManager.calculateChildId(extType.getId(), null);

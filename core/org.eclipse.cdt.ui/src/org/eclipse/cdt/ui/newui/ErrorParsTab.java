@@ -53,12 +53,12 @@ import org.eclipse.cdt.core.settings.model.ICMultiConfigDescription;
 import org.eclipse.cdt.core.settings.model.ICResourceDescription;
 import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.cdt.ui.dialogs.ICOptionPage;
+import org.eclipse.cdt.ui.dialogs.IInputStatusValidator;
+import org.eclipse.cdt.ui.dialogs.InputStatusDialog;
 import org.eclipse.cdt.ui.dialogs.RegexErrorParserOptionPage;
 import org.eclipse.cdt.utils.ui.controls.TabFolderLayout;
 
 import org.eclipse.cdt.internal.ui.ICHelpContextIds;
-import org.eclipse.cdt.internal.ui.dialogs.IInputStatusValidator;
-import org.eclipse.cdt.internal.ui.dialogs.InputStatusDialog;
 import org.eclipse.cdt.internal.ui.dialogs.StatusInfo;
 import org.eclipse.cdt.internal.ui.util.PixelConverter;
 

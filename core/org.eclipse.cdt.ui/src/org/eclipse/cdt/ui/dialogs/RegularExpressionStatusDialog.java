@@ -21,8 +21,6 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.fieldassist.ContentAssistCommandAdapter;
 
-import org.eclipse.cdt.internal.ui.dialogs.IInputStatusValidator;
-import org.eclipse.cdt.internal.ui.dialogs.InputStatusDialog;
 import org.eclipse.cdt.internal.ui.dialogs.StatusInfo;
 
 /**

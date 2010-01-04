@@ -8,7 +8,7 @@
  * Contributors:
  *     Andrew Gvozdev - initial API and implementation
  *******************************************************************************/
-package org.eclipse.cdt.internal.ui.dialogs;
+package org.eclipse.cdt.ui.dialogs;
 
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
@@ -31,6 +31,7 @@ import org.eclipse.swt.widgets.Text;
  * <p>
  * This concrete dialog class can be instantiated as is, or further subclassed as required.
  * </p>
+ * @since 5.2
  */
 public class InputStatusDialog extends StatusDialog {
 	/**

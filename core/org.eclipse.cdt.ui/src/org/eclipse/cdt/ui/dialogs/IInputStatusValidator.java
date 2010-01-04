@@ -8,13 +8,14 @@
  * Contributors:
  *     Andrew Gvozdev - initial API and implementation
  *******************************************************************************/
-package org.eclipse.cdt.internal.ui.dialogs;
+package org.eclipse.cdt.ui.dialogs;
 
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 
 /**
  * The IInputStatusValidator is the interface for IStatus validators. 
+ * @since 5.2
  */
 public interface IInputStatusValidator {
 	/**

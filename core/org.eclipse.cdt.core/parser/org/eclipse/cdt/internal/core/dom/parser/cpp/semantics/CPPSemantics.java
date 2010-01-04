@@ -1913,10 +1913,15 @@ public class CPPSemantics {
 	    }
 	        
 	    if (data.typesOnly) {
-	    	if (type != null)
+	    	if (type != null) {
+		    	if (obj instanceof ICPPNamespace && compareByRelevance(data, type, obj) < 0) {
+		    		return obj;
+		    	}
 	    		return type;
+	    	}
 	    	if (obj instanceof ICPPNamespace)
 	    		return obj;
+
 	    	return null;
 	    }
 	    
@@ -1935,6 +1940,11 @@ public class CPPSemantics {
 	    }
 	    
 	    if (obj != null) {
+	    	if (type != null && obj instanceof ICPPNamespace) {
+	    		if (compareByRelevance(data, type, obj) >= 0) {
+	    			return type;
+	    		}
+	    	}
 	    	return obj;
 	    }
 	    return type;

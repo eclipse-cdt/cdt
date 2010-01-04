@@ -59,6 +59,7 @@ public class MakeTargetDndUtil {
 	public static final String DEFAULT_BUILD_COMMAND = "make"; //$NON-NLS-1$
 
 	/**
+	 * @param project - project where to get build command from
 	 * @return build command from project settings.
 	 */
 	public static String getProjectBuildCommand(IProject project) {

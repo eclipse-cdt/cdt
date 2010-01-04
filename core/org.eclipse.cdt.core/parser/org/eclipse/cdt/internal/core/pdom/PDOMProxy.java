@@ -274,4 +274,8 @@ public class PDOMProxy implements IPDOM {
 	public Object putCachedResult(Object key, Object value, boolean replace) {
 		return value;
 	}
+	public void clearResultCache() {
+		if (fDelegate != null)
+			fDelegate.clearResultCache();
+	}
 }

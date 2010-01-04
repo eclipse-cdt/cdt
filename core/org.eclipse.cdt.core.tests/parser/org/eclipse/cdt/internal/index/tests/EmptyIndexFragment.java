@@ -139,4 +139,7 @@ public class EmptyIndexFragment implements IIndexFragment {
 	public Object putCachedResult(Object key, Object value, boolean replace) {
 		return value;
 	}
+
+	public void clearResultCache() {
+	}
 }

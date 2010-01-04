@@ -273,4 +273,9 @@ public interface IIndexFragment {
 	 * longer holds a locks. 
 	 */
 	Object getCachedResult(Object key);
+
+	/**
+	 * Clears the result cache.
+	 */
+	void clearResultCache();
 }

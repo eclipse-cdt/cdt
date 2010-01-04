@@ -122,6 +122,9 @@ public class WritableCIndex extends CIndex implements IWritableIndex {
 
 		fIsWriteLocked= false;
 		fWritableFragment.releaseWriteLock(establishReadlockCount, flush);
+		
+		// Bug 297641: Result cache of read only providers needs to be cleared.
+		clearResultCaches();
 	}
 
 	public void flush() throws CoreException {

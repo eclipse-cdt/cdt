@@ -2125,4 +2125,47 @@ public class IndexBugsTests extends BaseTestCase {
 			index.releaseReadLock();
 		}
 	}
+	
+	//  // a.h
+	//	class P {};
+	
+	//  // b.h
+	//	namespace P {class C {};}
+
+	//  // source1.cpp
+	// #include "a.h" 
+	// P p;
+
+	//  // source2.cpp
+	// #include "b.h" 
+	// P::C c;
+	public void testDisambiguateClassVsNamespace_297686() throws Exception {
+		waitForIndexer();
+		String[] testData = getContentsForTest(4);
+		TestSourceReader.createFile(fCProject.getProject(), "a.h", testData[0]);
+		TestSourceReader.createFile(fCProject.getProject(), "b.h", testData[1]);
+		IFile s1= TestSourceReader.createFile(fCProject.getProject(), "s1.cpp", testData[2]);
+		IFile s2= TestSourceReader.createFile(fCProject.getProject(), "s2.cpp", testData[3]);
+		final IIndexManager indexManager = CCorePlugin.getIndexManager();
+		indexManager.reindex(fCProject);
+		waitForIndexer();
+		IIndex index= indexManager.getIndex(fCProject);
+		index.acquireReadLock();
+		try {
+			IASTTranslationUnit tu = TestSourceReader.createIndexBasedAST(index, fCProject, s1);
+			IASTSimpleDeclaration sdecl= (IASTSimpleDeclaration) tu.getDeclarations()[0];
+			IVariable var= (IVariable) sdecl.getDeclarators()[0].getName().resolveBinding();
+			assertFalse(var.getType() instanceof IProblemBinding);
+			assertTrue(var.getType() instanceof ICPPClassType);
+
+			tu = TestSourceReader.createIndexBasedAST(index, fCProject, s2);
+			sdecl= (IASTSimpleDeclaration) tu.getDeclarations()[0];
+			var= (IVariable) sdecl.getDeclarators()[0].getName().resolveBinding();
+			assertFalse(var.getType() instanceof IProblemBinding);
+			assertTrue(var.getType() instanceof ICPPClassType);
+		} finally {
+			index.releaseReadLock();
+		}
+	}
+
 }

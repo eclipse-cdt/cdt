@@ -61,12 +61,10 @@ public class WritableCIndex extends CIndex implements IWritableIndex {
 	public void setFileContent(IIndexFragmentFile file, int linkageID,
 			IncludeInformation[] includes,
 			IASTPreprocessorStatement[] macros, IASTName[][] names, ASTFilePathResolver resolver) throws CoreException {
-
 		IIndexFragment indexFragment = file.getIndexFragment();
 		if (!isWritableFragment(indexFragment)) {
 			assert false : "Attempt to update file of read-only fragment"; //$NON-NLS-1$
-		}
-		else {
+		} else {
 			for (IncludeInformation ii : includes) {
 				if (ii.fLocation != null) {
 					ii.fTargetFile= addFile(linkageID, ii.fLocation);
@@ -89,8 +87,7 @@ public class WritableCIndex extends CIndex implements IWritableIndex {
 		IIndexFragment indexFragment = file.getIndexFragment();
 		if (!isWritableFragment(indexFragment)) {
 			assert false : "Attempt to clear file of read-only fragment"; //$NON-NLS-1$
-		}
-		else {
+		} else {
 			((IWritableIndexFragment) indexFragment).clearFile(file, clearedContexts);
 		}
 	}

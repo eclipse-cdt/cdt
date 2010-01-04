@@ -58,14 +58,14 @@ public interface IWritableIndexFragment extends IIndexFragment {
 	 * Acquires a write lock, while giving up a certain amount of read locks.
 	 */
 	void acquireWriteLock(int giveupReadLockCount) throws InterruptedException;
-	
+
 	/**
 	 * Releases a write lock, reestablishing a certain amount of read locks.
 	 * @param establishReadLockCount amount of read-locks to establish
 	 * @param flush if <code>true</code> changes are flushed to disk
 	 */
 	void releaseWriteLock(int establishReadLockCount, boolean flush);
-	
+
 	/**
 	 * Write the key, value mapping to the fragment properties. If a mapping for the
 	 * same key already exists, it is overwritten.

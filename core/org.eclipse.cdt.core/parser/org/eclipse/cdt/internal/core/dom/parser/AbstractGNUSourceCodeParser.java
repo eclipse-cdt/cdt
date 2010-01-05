@@ -2197,92 +2197,72 @@ public abstract class AbstractGNUSourceCodeParser implements ISourceCodeParser {
         }
     }
 
-    protected void __attribute__() throws BacktrackException, EndOfFileException {
-    	IToken token = LA(1);
+    protected void __attribute__() throws BacktrackException, EndOfFileException {    	
+    	if (LT(1) != IGCCToken.t__attribute__) 
+    		return;
     	
-    	if (token.getType() == IGCCToken.t__attribute__) {
-    		consume();
-    		
-    		token = LA(1);
-    		
-    		if (token.getType() == IToken.tLPAREN) {
+    	consume();
+    	if (LT(1) == IToken.tLPAREN) {
+    		consume(); 
+    		consume(IToken.tLPAREN);
+
+    		for (;;) {
+    			final int lt1= LT(1);				
+    			if (lt1 == IToken.tRPAREN || lt1 == IToken.tEOC) 
+    				break;
+    			
+    			// Allow empty attribute
+    			if (lt1 != IToken.tCOMMA) {
+    				singelAttribute();
+    			}
+
+				// Require comma
+    			if (LT(1) != IToken.tCOMMA) 
+    				break;
     			consume();
-            	while(true) {
-            		token = LA(1);
-            		switch(token.getType()) {
-            			case IToken.tLPAREN:
-            				consume();
-                        	boolean ident=false;
-                        	boolean comma1=false;
-                        	boolean first=true;
-            				whileLoop: while(true) {
-            					token = LA(1);
-            					switch(token.getType()) {
-            						case IToken.tIDENTIFIER:
-           								if (comma1 || first) {
-           									ident=true;
-           									first=false;
-           								} else {
-           									throwBacktrack(token.getOffset(), token.getLength());
-           								}
-            							consume();
-            							break;
-            						case IToken.tLPAREN:
-            							consume();
-            							if (ident) {
-            								token = LA(1);
-            								// consume the parameters
-            								whileLoop2: while(true) {
-            									try {
-            										expression();
-            									} catch (BacktrackException be) {
-            										switch(LT(1)) {
-	            										case IToken.tCOMMA:
-	            											consume();
-	            											break;
-	            										case IToken.tRPAREN:
-	            											consume();
-	            											break whileLoop2;
-	            										default:
-	            											throw be;
-            										}
-            									}
-            								}
-            							} else {
-            								throwBacktrack(token.getOffset(), token.getLength()); // can't have __attribute((()))
-            							}
-            							break;
-            						case IToken.tRPAREN:
-           								consume();
-           								break whileLoop;
-            						case IToken.tCOMMA:
-            							if (ident) {
-            								ident=false;
-            								comma1=true;
-            							}
-            							consume();            								
-            							break;
-            						case IToken.t_const:
-            							consume();
-            							break;
-            						default:
-           								throwBacktrack(token.getOffset(), token.getLength());
-            							break;
-            					}
-            				}
-            				break;
-            			case IToken.tRPAREN: // finished
-            				consume();
-            				return;
-            			default:
-            				throwBacktrack(token.getOffset(), token.getLength());
-            		}
-            	}
     		}
+
+    		consumeOrEOC(IToken.tRPAREN);
+    		consumeOrEOC(IToken.tRPAREN);
     	}
     }
+
+	private void singelAttribute() throws EndOfFileException, BacktrackException {
+		// Check if we have an identifier including keywords
+		if (!isIdentifier(LA(1)))
+			throw backtrack;					
+		consume();
+
+		// Check for parameters
+		if (LT(1) == IToken.tLPAREN) {
+			consume();
+			for(;;) {
+				final int lt2= LT(1);				
+				if (lt2 == IToken.tRPAREN || lt2 == IToken.tEOC) 
+					break;
+
+				// Allow empty parameter
+				if (lt2 != IToken.tCOMMA) {
+					expression();
+				}
+				// Require comma
+				if (LT(1) != IToken.tCOMMA) 
+					break;
+				consume();
+			}
+			consumeOrEOC(IToken.tRPAREN);
+		}
+	}
     
-    protected void __declspec() throws BacktrackException, EndOfFileException {
+	private boolean isIdentifier(IToken t) {
+		char[] image= t.getCharImage();
+		if (image.length == 0)
+			return false;
+		char firstChar= image[0];
+		return Character.isLetter(firstChar) || firstChar == '_'; 
+	}
+
+	protected void __declspec() throws BacktrackException, EndOfFileException {
     	IToken token = LA(1);
     	if (token.getType() == IGCCToken.t__declspec) {
     		consume();

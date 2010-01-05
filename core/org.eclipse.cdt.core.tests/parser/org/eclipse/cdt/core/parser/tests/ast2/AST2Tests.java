@@ -6347,6 +6347,12 @@ public class AST2Tests extends AST2BaseTest {
 		assertTrue(e instanceof IASTLiteralExpression);
 	}
 
+	// void f () __attribute__ ((int));
+	public void testAttributeSyntax_298841() throws Exception {
+        final String code = getAboveComment();
+		parseAndCheckBindings(code, ParserLanguage.C, true);
+		parseAndCheckBindings(code, ParserLanguage.CPP, true);
+	}
 	//	enum myenum { value1, value2, value3 };
 	//
 	//	void test() {

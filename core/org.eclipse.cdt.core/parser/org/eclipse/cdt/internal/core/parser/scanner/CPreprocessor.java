@@ -865,9 +865,19 @@ public class CPreprocessor implements ILexerLog, IScanner, IAdaptable {
     private <T> T findInclusion(final String includeDirective, final boolean quoteInclude,
     		final boolean includeNext, final String currentFile, final IIncludeFileTester<T> tester) {
         T reader = null;
-		// filename is an absolute path or it is a Linux absolute path on a windows machine
-		if (new File(includeDirective).isAbsolute() || includeDirective.startsWith("/")) {  //$NON-NLS-1$
+		// Filename is an absolute path
+		if (new File(includeDirective).isAbsolute()) {
 		    return tester.checkFile(includeDirective, false, null);
+		}
+		// Filename is a Linux absolute path on a windows machine
+		if (File.separatorChar == '\\' && includeDirective.length() > 0) {
+			final char firstChar = includeDirective.charAt(0);
+			if (firstChar == '\\' || firstChar == '/') {
+				if (currentFile != null && currentFile.length() > 1 && currentFile.charAt(1) == ':') {
+					return tester.checkFile(currentFile.substring(0, 2) + includeDirective, false, null);
+				}
+			    return tester.checkFile(includeDirective, false, null);
+			}
 		}
 
         if (currentFile != null && quoteInclude && !includeNext) {

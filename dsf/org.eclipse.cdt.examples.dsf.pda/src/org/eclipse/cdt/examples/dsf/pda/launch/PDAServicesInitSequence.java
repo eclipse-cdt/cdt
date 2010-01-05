@@ -12,6 +12,7 @@ package org.eclipse.cdt.examples.dsf.pda.launch;
 
 import org.eclipse.cdt.dsf.concurrent.RequestMonitor;
 import org.eclipse.cdt.dsf.concurrent.Sequence;
+import org.eclipse.cdt.dsf.datamodel.DataModelInitializedEvent;
 import org.eclipse.cdt.dsf.debug.service.BreakpointsMediator;
 import org.eclipse.cdt.dsf.service.DsfSession;
 import org.eclipse.cdt.examples.dsf.pda.service.PDABackend;
@@ -105,12 +106,18 @@ public class PDAServicesInitSequence extends Sequence {
                 new PDARegisters(fSession).initialize(requestMonitor);
             }
         },
-        new Step() { 
+        /*
+         * Indicate that the Data Model has been filled.  This will trigger the Debug view to expand.
+         */
+        new Step() {
             @Override
-            public void execute(RequestMonitor requestMonitor) {
-                fRunControl.resume(fCommandControl.getContext(), requestMonitor);
+            public void execute(final RequestMonitor requestMonitor) {
+                fSession.dispatchEvent(
+                    new DataModelInitializedEvent(fCommandControl.getContext()),
+                    fCommandControl.getProperties());
+                requestMonitor.done();
             }
-        },
+        }
     };
 
     // Sequence input parameters, used in initializing services.

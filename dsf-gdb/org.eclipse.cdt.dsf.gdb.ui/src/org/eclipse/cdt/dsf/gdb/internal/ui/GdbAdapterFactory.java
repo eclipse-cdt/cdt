@@ -29,7 +29,6 @@ import org.eclipse.cdt.dsf.debug.ui.actions.DsfStepIntoCommand;
 import org.eclipse.cdt.dsf.debug.ui.actions.DsfStepOverCommand;
 import org.eclipse.cdt.dsf.debug.ui.actions.DsfStepReturnCommand;
 import org.eclipse.cdt.dsf.debug.ui.actions.DsfSuspendCommand;
-import org.eclipse.cdt.dsf.debug.ui.contexts.DsfSuspendTrigger;
 import org.eclipse.cdt.dsf.debug.ui.sourcelookup.DsfSourceDisplayAdapter;
 import org.eclipse.cdt.dsf.debug.ui.viewmodel.SteppingController;
 import org.eclipse.cdt.dsf.debug.ui.viewmodel.actions.DefaultRefreshAllTarget;
@@ -99,7 +98,7 @@ public class GdbAdapterFactory
         final GdbConnectCommand fConnectCommand;
         final GdbDisconnectCommand fDisconnectCommand;
         final IDebugModelProvider fDebugModelProvider;
-        final DsfSuspendTrigger fSuspendTrigger;
+        final GdbSuspendTrigger fSuspendTrigger;
 		final GdbSteppingModeTarget fSteppingModeTarget;
 		final IModelSelectionPolicyFactory fModelSelectionPolicyFactory;
 		final SteppingController fSteppingController;
@@ -137,7 +136,7 @@ public class GdbAdapterFactory
             fTerminateCommand = new DsfTerminateCommand(session);
             fConnectCommand = new GdbConnectCommand(session);
             fDisconnectCommand = new GdbDisconnectCommand(session);
-            fSuspendTrigger = new DsfSuspendTrigger(session, fLaunch);
+            fSuspendTrigger = new GdbSuspendTrigger(session, fLaunch);
             fModelSelectionPolicyFactory = new DefaultDsfModelSelectionPolicyFactory();
             fRefreshAllTarget = new DefaultRefreshAllTarget();
             fReverseToggleTarget = new GdbReverseToggleCommand(session);

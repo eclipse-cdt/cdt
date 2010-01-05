@@ -207,6 +207,7 @@ public class PDAStack extends AbstractDsfService implements IStack, ICachingServ
 
         // Create the commands cache
         fCommandCache = new CommandCache(getSession(), fCommandControl);
+        fCommandCache.setContextAvailable(fCommandControl.getContext(), true);
 
         // Register to listen for run control events, to clear cache accordingly.
         getSession().addServiceEventListener(this, null);

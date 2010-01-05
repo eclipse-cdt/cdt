@@ -345,5 +345,15 @@
             id="org.eclipse.cdt.dsf.gdb.ui.GdbDebugTextHover">
       </hover>
    </extension>
+   <extension
+         point="org.eclipse.debug.ui.contextViewBindings">
+   </extension>
+   <extension
+         point="org.eclipse.debug.ui.debugModelContextBindings">
+      <modelContextBinding
+            contextId="org.eclipse.cdt.debug.ui.debugging"
+            debugModelId="org.eclipse.cdt.dsf.gdb">
+      </modelContextBinding>
+   </extension>
 
 </plugin>

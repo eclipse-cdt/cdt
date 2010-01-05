@@ -13,11 +13,19 @@ package org.eclipse.cdt.dsf.debug.ui.contexts;
 import java.util.concurrent.RejectedExecutionException;
 
 import org.eclipse.cdt.dsf.concurrent.ConfinedToDsfExecutor;
+import org.eclipse.cdt.dsf.concurrent.CountingRequestMonitor;
+import org.eclipse.cdt.dsf.concurrent.DataRequestMonitor;
 import org.eclipse.cdt.dsf.concurrent.DsfRunnable;
+import org.eclipse.cdt.dsf.concurrent.IDsfStatusConstants;
+import org.eclipse.cdt.dsf.concurrent.ImmediateExecutor;
 import org.eclipse.cdt.dsf.concurrent.ThreadSafe;
+import org.eclipse.cdt.dsf.datamodel.DataModelInitializedEvent;
 import org.eclipse.cdt.dsf.debug.service.IRunControl;
+import org.eclipse.cdt.dsf.debug.service.IRunControl.IContainerDMContext;
+import org.eclipse.cdt.dsf.debug.service.IRunControl.IExecutionDMContext;
 import org.eclipse.cdt.dsf.internal.ui.DsfUIPlugin;
 import org.eclipse.cdt.dsf.service.DsfServiceEventHandler;
+import org.eclipse.cdt.dsf.service.DsfServicesTracker;
 import org.eclipse.cdt.dsf.service.DsfSession;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.ISafeRunnable;
@@ -45,8 +53,9 @@ public class DsfSuspendTrigger implements ISuspendTrigger {
 
     private final DsfSession fSession;
     private final ILaunch fLaunch;
-    private boolean fDisposed = false;
+    private volatile boolean fDisposed = false;
     private boolean fEventListenerRegisterd = false;
+    private final DsfServicesTracker fServicesTracker;
 
     @ThreadSafe
     private final ListenerList fListeners = new ListenerList();
@@ -55,6 +64,7 @@ public class DsfSuspendTrigger implements ISuspendTrigger {
     public DsfSuspendTrigger(DsfSession session, ILaunch launch) {
         fSession = session;
         fLaunch = launch;
+        fServicesTracker = new DsfServicesTracker(DsfUIPlugin.getBundleContext(), fSession.getId());
         try {
             fSession.getExecutor().execute(new DsfRunnable() {
                 public void run() {
@@ -68,28 +78,93 @@ public class DsfSuspendTrigger implements ISuspendTrigger {
     }
     
     @ThreadSafe
-    public void addSuspendTriggerListener(ISuspendTriggerListener listener) {
-        if (fListeners != null) {
-            fListeners.add(listener);
-        }
+    public void addSuspendTriggerListener(final ISuspendTriggerListener listener) {
+        fListeners.add(listener);
+
+        // Check if an execution context in the model is already suspended.  
+        // If so notify the listener.
+        getIsLaunchSuspended(new DataRequestMonitor<Boolean>(ImmediateExecutor.getInstance(), null) {
+            @Override
+            protected void handleSuccess() {
+                if (!fDisposed && getData().booleanValue()) {
+                    listener.suspended(fLaunch, null);
+                }
+            }
+        });
     }
 
     @ThreadSafe
     public void removeSuspendTriggerListener(ISuspendTriggerListener listener) { 
-        if (fListeners != null) {
-            fListeners.remove(listener);
-        }
+        fListeners.remove(listener);
     }
     
+    @ThreadSafe
     public void dispose() {
         if (fEventListenerRegisterd) {
             fSession.removeServiceEventListener(this);
         }
+        fServicesTracker.dispose();
         fDisposed = true;
     }
 
+    /**
+     * @noreference This method is not intended to be referenced by clients.
+     */
     @DsfServiceEventHandler 
     public void eventDispatched(IRunControl.ISuspendedDMEvent e) {
+        fireSuspended(null);        
+    }
+
+    /**
+     * @noreference This method is not intended to be referenced by clients.
+     */
+    @DsfServiceEventHandler 
+    public void eventDispatched(DataModelInitializedEvent e) {
+        getIsLaunchSuspended(new DataRequestMonitor<Boolean>(ImmediateExecutor.getInstance(), null) {
+            @Override
+            protected void handleSuccess() {
+                if (!fDisposed && getData().booleanValue()) {
+                    fireSuspended(null);
+                }
+            }
+        });
+    }   
+    
+    /**
+     * Returns the services tracker used by the suspend trigger.
+     * @since 2.1
+     */
+    protected DsfServicesTracker getServicesTracker() {
+        return fServicesTracker;
+    }
+
+    /**
+     * Returns the launch for this suspend trigger.
+     * @since 2.1
+     */
+    @ThreadSafe
+    protected ILaunch getLaunch() {
+        return fLaunch;
+    }
+
+    /**
+     * Returns the DSF session for this suspend trigger.
+     * @since 2.1
+     */
+    @ThreadSafe
+    protected DsfSession getSession() {
+        return fSession;
+    }
+    
+    /**
+     * Notifies the listeners that a suspend event was received.
+     * 
+     * @param context
+     * 
+     * @since 2.1
+     */
+    @ThreadSafe
+    protected void fireSuspended(final Object context) {
         final Object[] listeners = fListeners.getListeners();
         if (listeners.length != 0) {
             new Job("DSF Suspend Trigger Notify") { //$NON-NLS-1$
@@ -104,7 +179,7 @@ public class DsfSuspendTrigger implements ISuspendTrigger {
                         final ISuspendTriggerListener listener = (ISuspendTriggerListener) listeners[i];
                         SafeRunner.run(new ISafeRunnable() {
                             public void run() throws Exception {
-                                listener.suspended(fLaunch, null);
+                                listener.suspended(fLaunch, context);
                             }
                         
                             public void handleException(Throwable exception) {
@@ -119,5 +194,145 @@ public class DsfSuspendTrigger implements ISuspendTrigger {
             }.schedule();
         }
     }
+
+    /**
+     * Retrieves the top-level containers for this launch.  This method should 
+     * be overriden by specific debugger integrations. 
+     * @param rm
+     * 
+     * @since 2.1
+     */
+    @ThreadSafe
+    protected void getLaunchTopContainers(DataRequestMonitor<IContainerDMContext[]> rm) {
+        rm.setStatus(new Status(IStatus.ERROR, DsfUIPlugin.PLUGIN_ID, IDsfStatusConstants.NOT_SUPPORTED, "Not implemented.", null)); //$NON-NLS-1$
+        rm.done();
+    }
+
+    /**
+     * Checks if the given launch is currently suspended.  
+     * 
+     * @param rm Request monitor.
+     * 
+     * @since 2.1
+     */
+    @ThreadSafe
+    private void getIsLaunchSuspended(final DataRequestMonitor<Boolean> rm) {
+        getLaunchTopContainers(new DataRequestMonitor<IContainerDMContext[]>(fSession.getExecutor(), rm) {
+            @Override
+            protected void handleSuccess() {
+                final CountingRequestMonitor crm = new CountingRequestMonitor(fSession.getExecutor(), rm) {
+                    @Override
+                    protected void handleSuccess() {
+                        if (rm.getData() == null) {
+                            rm.setData(Boolean.FALSE);
+                        }
+                        rm.done();
+                    };
+                };
+                int count = 0;
+                for (final IContainerDMContext containerCtx : getData()) {
+                    getIsContainerSuspended(containerCtx, new DataRequestMonitor<Boolean>(ImmediateExecutor.getInstance(), crm) {
+                        @Override
+                        protected void handleSuccess() {
+                            if (getData().booleanValue()) {
+                                rm.setData(Boolean.TRUE);
+                            }
+                            crm.done();
+                        };
+                    });
+                    count++;
+                }
+                crm.setDoneCount(count);
+            }
+        });
+    }
     
+    /**
+     * Recursively checks if the given container or any of its execution 
+     * contexts are suspended.
+     * 
+     * @param container Container to check.
+     * @param rm Request monitor.
+     * 
+     * @since 2.1
+     */
+    @ConfinedToDsfExecutor("fSession.getExecutor()")
+    private void getIsContainerSuspended(final IContainerDMContext container, final DataRequestMonitor<Boolean> rm) {
+        // Check if run control service is still available.
+        IRunControl rc = fServicesTracker.getService(IRunControl.class);
+        if (rc == null) {
+            rm.setData(Boolean.FALSE);
+            rm.done();
+            return;
+        }
+
+        // Check if container is suspended.  If so, stop searching.
+        if (rc.isSuspended(container)) {
+            rm.setData(Boolean.TRUE);
+            rm.done();
+            return;
+        }
+        
+        // Retrieve the execution contexts and check if any of them are suspended.
+        rc.getExecutionContexts(
+            container, 
+            new DataRequestMonitor<IExecutionDMContext[]>(fSession.getExecutor(), rm) {
+                @Override
+                protected void handleSuccess() {
+                    // Check if run control service is still available.
+                    IRunControl rc = fServicesTracker.getService(IRunControl.class);
+                    if (rc == null) {
+                        rm.setData(Boolean.FALSE);
+                        rm.done();
+                        return;
+                    }                    
+                        
+                    // If any of the execution contexts are suspended, stop searching
+                    boolean hasContainers = false;
+                    for (IExecutionDMContext execCtx : getData()) {
+                        if (rc.isSuspended(execCtx)) {
+                            rm.setData(Boolean.TRUE);
+                            rm.done();
+                            return;
+                        }
+                        hasContainers = hasContainers || execCtx instanceof IContainerDMContext; 
+                    }
+                    
+                    // If any of the returned contexts were containers, check them recursively.
+                    if (hasContainers) {
+                        final CountingRequestMonitor crm = new CountingRequestMonitor(fSession.getExecutor(), rm) {
+                            @Override
+                            protected void handleSuccess() {
+                                if (rm.getData() == null) {
+                                    rm.setData(Boolean.FALSE);
+                                }
+                                rm.done();
+                            };
+                        };
+                        int count = 0;
+                        for (IExecutionDMContext execCtx : getData()) {
+                            if (execCtx instanceof IContainerDMContext) {
+                                getIsContainerSuspended(
+                                    (IContainerDMContext)execCtx, 
+                                    new DataRequestMonitor<Boolean>(ImmediateExecutor.getInstance(), crm) {
+                                        @Override
+                                        protected void handleSuccess() {
+                                            if (getData().booleanValue()) {
+                                                rm.setData(Boolean.TRUE);
+                                            }
+                                            crm.done();
+                                        };
+                                    });
+                                count++;
+                            }
+                        }
+                        crm.setDoneCount(count);
+                    } else {
+                        rm.setData(Boolean.FALSE);
+                        rm.done();
+                    }
+                }
+            });
+    }
+
 }

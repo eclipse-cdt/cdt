@@ -10,24 +10,19 @@
  *******************************************************************************/
 package org.eclipse.cdt.examples.dsf.pda.ui;
 
-import org.eclipse.cdt.dsf.datamodel.IDMContext;
 import org.eclipse.cdt.dsf.debug.ui.actions.DsfResumeCommand;
 import org.eclipse.cdt.dsf.debug.ui.actions.DsfStepIntoCommand;
 import org.eclipse.cdt.dsf.debug.ui.actions.DsfStepOverCommand;
 import org.eclipse.cdt.dsf.debug.ui.actions.DsfStepReturnCommand;
 import org.eclipse.cdt.dsf.debug.ui.actions.DsfSuspendCommand;
-import org.eclipse.cdt.dsf.debug.ui.contexts.DsfSuspendTrigger;
 import org.eclipse.cdt.dsf.debug.ui.sourcelookup.DsfSourceDisplayAdapter;
 import org.eclipse.cdt.dsf.debug.ui.viewmodel.SteppingController;
 import org.eclipse.cdt.dsf.debug.ui.viewmodel.launch.DefaultDsfModelSelectionPolicyFactory;
-import org.eclipse.cdt.dsf.debug.ui.viewmodel.launch.DefaultDsfSelectionPolicy;
 import org.eclipse.cdt.dsf.service.DsfSession;
-import org.eclipse.cdt.dsf.ui.viewmodel.datamodel.IDMVMContext;
 import org.eclipse.cdt.examples.dsf.pda.PDAPlugin;
 import org.eclipse.cdt.examples.dsf.pda.launch.PDALaunch;
 import org.eclipse.cdt.examples.dsf.pda.ui.actions.PDATerminateCommand;
 import org.eclipse.cdt.examples.dsf.pda.ui.viewmodel.PDAVMAdapter;
-import org.eclipse.debug.core.ILaunch;
 import org.eclipse.debug.core.commands.IResumeHandler;
 import org.eclipse.debug.core.commands.IStepIntoHandler;
 import org.eclipse.debug.core.commands.IStepOverHandler;
@@ -36,10 +31,7 @@ import org.eclipse.debug.core.commands.ISuspendHandler;
 import org.eclipse.debug.core.commands.ITerminateHandler;
 import org.eclipse.debug.core.model.IDebugModelProvider;
 import org.eclipse.debug.core.sourcelookup.ISourceLookupDirector;
-import org.eclipse.debug.internal.ui.viewers.model.provisional.IModelSelectionPolicy;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IModelSelectionPolicyFactory;
-import org.eclipse.debug.internal.ui.viewers.model.provisional.IPresentationContext;
-import org.eclipse.debug.ui.IDebugUIConstants;
 import org.eclipse.debug.ui.sourcelookup.ISourceDisplay;
 
 /**
@@ -59,7 +51,7 @@ class SessionAdapterSet {
     final DsfSuspendCommand fSuspendCommand;
     final DsfResumeCommand fResumeCommand;
     final PDATerminateCommand fTerminateCommand;
-    final DsfSuspendTrigger fSuspendTrigger;
+    final PDASuspendTrigger fSuspendTrigger;
     
     // Adapters for integration with other UI actions
     final IDebugModelProvider fDebugModelProvider;
@@ -96,7 +88,7 @@ class SessionAdapterSet {
         fSuspendCommand = new DsfSuspendCommand(session);
         fResumeCommand = new DsfResumeCommand(session);
         fTerminateCommand = new PDATerminateCommand(session);
-        fSuspendTrigger = new DsfSuspendTrigger(session, fLaunch);
+        fSuspendTrigger = new PDASuspendTrigger(session, fLaunch);
 
         session.registerModelAdapter(IStepIntoHandler.class, fStepIntoCommand);
         session.registerModelAdapter(IStepOverHandler.class, fStepOverCommand);

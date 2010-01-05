@@ -192,6 +192,7 @@ public class PDAExpressions extends AbstractDsfService implements ICachingServic
         fCommandControl = getServicesTracker().getService(PDACommandControl.class);
         fStack = getServicesTracker().getService(PDAStack.class);
         fCommandCache = new CommandCache(getSession(), fCommandControl);
+        fCommandCache.setContextAvailable(fCommandControl.getContext(), true);
 
         getSession().addServiceEventListener(this, null);
         

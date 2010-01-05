@@ -306,11 +306,16 @@ public class BuildSystem40Tests  extends TestCase {
 		
 		//deletion is performed in case if no fail occured
 		for(int i = 0; i < projects.length; i++){
-			projects[i].delete(true, null);
-			assertNull(mngr.getProjectDescription(projects[i]));
-			assertNull(mngr.getProjectDescription(projects[i], false));
-			
-			assertNull(ManagedBuildManager.getBuildInfo(projects[i]));
+			try {
+				projects[i].delete(true, null);
+				assertNull(mngr.getProjectDescription(projects[i]));
+				assertNull(mngr.getProjectDescription(projects[i], false));
+				
+				assertNull(ManagedBuildManager.getBuildInfo(projects[i]));
+			} catch (Exception e) {
+				System.err.println("Exception deleting a project " + projects[i].getName());
+				System.err.println(e);
+			}
 		}
 	}
 	

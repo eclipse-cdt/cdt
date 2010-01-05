@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2005 QNX Software Systems and others.
+ * Copyright (c) 2004, 2010 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -11,8 +11,8 @@
 package org.eclipse.cdt.debug.internal.ui.preferences; 
 
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
+
 import org.eclipse.cdt.debug.core.CDebugCorePlugin;
 import org.eclipse.cdt.debug.internal.ui.ICDebugHelpContextIds;
 import org.eclipse.cdt.debug.internal.ui.sourcelookup.AddContainerAction;
@@ -41,12 +41,12 @@ import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPreferencePage;
 
 /**
- * The "Source Lookup Path" preference page.
+ * The "Common Source Lookup Path" preference page.
  */
 public class SourcePreferencePage extends PreferencePage implements IWorkbenchPreferencePage {
 
 	private SourceContainerViewer fPathViewer;
-	private List fActions = new ArrayList(6);
+	private List<SourceContainerAction> fActions = new ArrayList<SourceContainerAction>(6);
 	private IWorkbench fWorkbench;
 	private AddContainerAction fAddAction; 
 	private EditContainerAction fEditAction;
@@ -146,9 +146,7 @@ public class SourcePreferencePage extends PreferencePage implements IWorkbenchPr
 	}
 
 	private void retargetActions( SourceContainerViewer viewer ) {
-		Iterator actions = fActions.iterator();
-		while( actions.hasNext() ) {
-			SourceContainerAction action = (SourceContainerAction)actions.next();
+		for ( SourceContainerAction action : fActions ) {
 			action.setViewer( viewer );
 		}
 	}

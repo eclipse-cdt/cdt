@@ -5995,6 +5995,41 @@ public class AST2Tests extends AST2BaseTest {
 			assertTrue(tu.isFrozen());
 		}
 	}
+	
+	//	struct MyStrcutType {};
+	//	MyStructType Data [1000000] = {
+	//	   {1,2,3},
+	//	   1.2,
+	//	   { 
+		   
+	// 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 
+	
+	//	   }
+	//	};
+	public void testLargeTrivialAggregateInitializer_Bug253690() throws Exception {
+		sValidateCopy= false;
+		final int AMOUNT= 250000;
+		final StringBuffer[] input = getContents(3);
+		StringBuilder buf= new StringBuilder();
+		buf.append(input[0].toString());
+		final String line= input[1].toString();
+		for (int i = 0; i < AMOUNT/10; i++) {
+			buf.append(line);
+		}
+		buf.append(input[2].toString());
+		final String code= buf.toString();
+		for (ParserLanguage lang : ParserLanguage.values()) {
+			long mem= memoryUsed();
+			IASTTranslationUnit tu= parse(code, lang, false, true, true);
+			long diff= memoryUsed()-mem;
+			// allow a copy of the buffer + not even 1 byte per initializer
+			final int expected = code.length()*2 + AMOUNT/2;  
+			assertTrue(String.valueOf(diff) + " expected < " + expected, diff < expected);
+			assertTrue(tu.isFrozen());
+		}
+	}
+
+
 
 	private long memoryUsed() throws InterruptedException {
 		System.gc();Thread.sleep(200);System.gc();

@@ -488,6 +488,7 @@ public class ManagedBuildTestHelper {
 		final String INCLUDE_PATTERN = "-include \\$\\(.*\\)";
 		final String MACRO_PATTERN = "\\S* [:+]=.*";
 		final String EMPTY_MACRO_PATTERN = "\\S* :=";
+		final String WORKSPACE_DIR_STR = "${WorkspaceDirPath}";
 		ArrayList<String> testArray = mergeContinuationLines(getContents(testFile));
 		ArrayList<String> benchmarkArray = mergeContinuationLines(getContents(benchmarkFile));
 		
@@ -541,6 +542,38 @@ public class ManagedBuildTestHelper {
 					// accommodate for variable order of macros
 					testNotMatchingLines.add(testLine);
 					benchNotMatchingLines.add(benchmarkLine);
+				} else if (benchmarkLine.contains(WORKSPACE_DIR_STR)) {
+					String[] benchmarkSubstrings = benchmarkLine.split(" ");
+					String[] testSubstrings = testLine.split(" ");
+					if (testSubstrings.length!=benchmarkSubstrings.length) {
+						System.out.println("Following lines do not match ("+testFile.lastSegment()+"):");
+						System.out.println("actual  : ["+testLine+"], file "+testFile);
+						System.out.println("expected: ["+benchmarkLine+"], file "+benchmarkFile);
+						return false;
+					}
+					
+					final IWorkspace workspace = ResourcesPlugin.getWorkspace();
+					final IWorkspaceRoot root = workspace.getRoot();
+					final String workspaceLocation = root.getLocation().toOSString();
+					final String platformFileSeparator = System.getProperty("file.separator", Character.toString(IPath.SEPARATOR)); //$NON-NLS-1$
+					
+					for (int j=0;j<testSubstrings.length;j++) {
+						String testSubstring = testSubstrings[j];
+						String benchmarkSubstring = benchmarkSubstrings[j];
+						if (benchmarkSubstring.contains(WORKSPACE_DIR_STR)) {
+							benchmarkSubstring = benchmarkSubstring
+								.replace("/", platformFileSeparator)
+								.replace(WORKSPACE_DIR_STR,workspaceLocation);
+						}
+						if (!testSubstring.equals(benchmarkSubstring)) {
+							System.out.println("Following lines do not match ("+testFile.lastSegment()+"):");
+							System.out.println("actual  : ["+testLine+"], file "+testFile);
+							System.out.println("expected: ["+benchmarkLine+"], file "+benchmarkFile);
+							System.out.println("substring actual : ["+testSubstring+"], file "+testFile);
+							System.out.println("substring expected: ["+benchmarkSubstring+"], file "+benchmarkFile);
+							return false;
+						}
+					}
 				} else {
 					System.out.println("Following lines do not match ("+testFile.lastSegment()+"):");
 					System.out.println("actual  : ["+testLine+"], file "+testFile);

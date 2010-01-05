@@ -67,6 +67,7 @@ import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Path;
 
 public class ProjectModelTests extends TestCase implements IElementChangedListener{
+	private boolean isPrint = false;
 	private CDefaultModelEventChecker fEventChecker;
 	
 	public void elementChanged(ElementChangedEvent event) {
@@ -80,7 +81,8 @@ public class ProjectModelTests extends TestCase implements IElementChangedListen
 			assertEquals(ElementChangedEvent.POST_CHANGE, event.getType());
 			
 			ICElementDelta delta = event.getDelta();
-			System.out.println(delta.toString());
+			if (isPrint)
+				System.out.println(delta.toString());
 		}
 		
 	}
@@ -319,10 +321,12 @@ public class ProjectModelTests extends TestCase implements IElementChangedListen
 			ICLanguageSettingEntry[] entries = setting.getSettingEntries(ICLanguageSettingEntry.INCLUDE_PATH);
 			if (!setting.supportsEntryKind(ICSettingEntry.INCLUDE_PATH))
 				assertTrue(entries.length == 0);
-			for(int j = 0; j < entries.length; j++){
-				System.out.println(entries[j].getName());
+			if (isPrint) {
+				for(int j = 0; j < entries.length; j++){
+					System.out.println(entries[j].getName());
+				}
+				System.out.println(entries.length);
 			}
-			System.out.println(entries.length);
 		}
 		coreModel.setProjectDescription(project, des);
 		
@@ -340,7 +344,8 @@ public class ProjectModelTests extends TestCase implements IElementChangedListen
 		long time = System.currentTimeMillis();
 		des = coreModel.getProjectDescription(project);
 		time = System.currentTimeMillis() - time;
-		System.out.println("time to load = " + time);
+		if (isPrint)
+			System.out.println("time to load = " + time);
 		
 		assertNotNull("project description is null for re-created project", des);
 		assertTrue("des should be valid for re-created project", des.isValid());
@@ -382,7 +387,8 @@ public class ProjectModelTests extends TestCase implements IElementChangedListen
 		time = System.currentTimeMillis();
 		des = coreModel.getProjectDescription(project);
 		time = System.currentTimeMillis() - time;
-		System.out.println("time to load = " + time);
+		if (isPrint)
+			System.out.println("time to load = " + time);
 		
 		assertNotNull("project description is null for re-created project", des);
 		assertTrue("des should be valid for re-created project", des.isValid());
@@ -421,7 +427,8 @@ public class ProjectModelTests extends TestCase implements IElementChangedListen
 		list.add(0, new CIncludePathEntry("zzza/b/c", 0));
 		ls.setSettingEntries(ICLanguageSettingEntry.INCLUDE_PATH, list);
 
-		System.out.println("setting entries for non-root folder..\n");
+		if (isPrint)
+			System.out.println("setting entries for non-root folder..\n");
 		fEventChecker = new CDefaultModelEventChecker();
 		coreModel.setProjectDescription(project, des);
 		fEventChecker = null;
@@ -429,7 +436,8 @@ public class ProjectModelTests extends TestCase implements IElementChangedListen
 		time = System.currentTimeMillis();
 		des = coreModel.getProjectDescription(project);
 		time = System.currentTimeMillis() - time;
-		System.out.println("time to load = " + time);
+		if (isPrint)
+			System.out.println("time to load = " + time);
 		
 		assertNotNull("project description is null for re-created project", des);
 		assertTrue("des should be valid for re-created project", des.isValid());
@@ -448,7 +456,8 @@ public class ProjectModelTests extends TestCase implements IElementChangedListen
 		ls.getSettingEntriesList(ICLanguageSettingEntry.INCLUDE_PATH);
 		rLS.getSettingEntriesList(ICLanguageSettingEntry.INCLUDE_PATH);
 		
-		System.out.println("default entries for non-root folder..\n");
+		if (isPrint)
+			System.out.println("default entries for non-root folder..\n");
 		fEventChecker = new CDefaultModelEventChecker();
 		coreModel.setProjectDescription(project, des);
 		fEventChecker = null;
@@ -539,7 +548,8 @@ public class ProjectModelTests extends TestCase implements IElementChangedListen
 		checkArrays(updatetSEs, s);
 		//assertTrue(Arrays.equals(updatetSEs, s));
 
-		System.out.println("saving updated source entries..\n");
+		if (isPrint)
+			System.out.println("saving updated source entries..\n");
 		fEventChecker = new CDefaultModelEventChecker();
 		coreModel.setProjectDescription(project, des);
 		fEventChecker = null;
@@ -609,8 +619,10 @@ public class ProjectModelTests extends TestCase implements IElementChangedListen
 		ICLanguageSetting setting = rf.getLanguageSettingForFile("a.c");
 		ICLanguageSettingEntry entries[] = setting.getSettingEntries(ICLanguageSettingEntry.MACRO);
 		
-		for(int i = 0; i < entries.length; i++){
-			System.out.println("name = \"" + entries[i].getName() + "\", value = \"" + entries[i].getValue() + "\"");
+		if (isPrint) {
+			for(int i = 0; i < entries.length; i++){
+				System.out.println("name = \"" + entries[i].getName() + "\", value = \"" + entries[i].getValue() + "\"");
+			}
 		}
 		
 		CMacroEntry entry = new CMacroEntry("a", "b", 0);

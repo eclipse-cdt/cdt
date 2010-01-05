@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2007 QNX Software Systems and others.
+ * Copyright (c) 2004, 2010 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -12,6 +12,7 @@
 package org.eclipse.cdt.debug.internal.core.sourcelookup; 
 
 import java.util.ArrayList;
+import java.util.List;
 
 import org.eclipse.cdt.debug.core.CDebugCorePlugin;
 import org.eclipse.cdt.debug.core.ICDTLaunchConfigurationConstants;
@@ -42,14 +43,17 @@ public class CSourcePathComputerDelegate implements ISourcePathComputerDelegate 
 	 * @see org.eclipse.debug.core.sourcelookup.ISourcePathComputerDelegate#computeSourceContainers(org.eclipse.debug.core.ILaunchConfiguration, org.eclipse.core.runtime.IProgressMonitor)
 	 */
 	public ISourceContainer[] computeSourceContainers( ILaunchConfiguration configuration, IProgressMonitor monitor ) throws CoreException {
+		// First, get all the the containers in the global preferences
 		ISourceContainer[] common = CDebugCorePlugin.getDefault().getCommonSourceLookupDirector().getSourceContainers();
-		ArrayList containers = new ArrayList( common.length + 1 );
-		for ( int i = 0; i < common.length; ++i ) {
-			ISourceContainer sc = common[i];
+		List<ISourceContainer> containers = new ArrayList<ISourceContainer>( common.length + 1 );
+		for ( ISourceContainer sc : common ) {
+			// If the container is a path-mapper, use a copy (why?)
 			if ( sc.getType().getId().equals( MappingSourceContainer.TYPE_ID ) )
 				sc = ((MappingSourceContainer)sc).copy();
 			containers.add( sc );
 		}
+		
+		// Add a container that looks in the project specified in the configuration
 		String projectName = configuration.getAttribute( ICDTLaunchConfigurationConstants.ATTR_PROJECT_NAME, (String)null );
 		if (projectName != null && projectName.length() > 0) {
 			IProject project = ResourcesPlugin.getWorkspace().getRoot().getProject( projectName );
@@ -57,7 +61,10 @@ public class CSourcePathComputerDelegate implements ISourcePathComputerDelegate 
 				containers.add( 0, new ProjectSourceContainer( project, true ) );
 			}
 		}
+		
+		// Add a container that fetches files that are specified with an absolute path
 		containers.add( 0, new AbsolutePathSourceContainer() );
-		return (ISourceContainer[])containers.toArray( new ISourceContainer[containers.size()] );
+		
+		return containers.toArray( new ISourceContainer[containers.size()] );
 	}
 }

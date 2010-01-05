@@ -439,16 +439,16 @@ public class ManagedBuildEnvironmentTests extends TestCase {
 	/**
 	 * This test is not used iun suite. It just prints variabes 
 	 */	
-	public void testEnvPrint(){
-		doInit();
-		printVar("s-Var", envProvider.getVariables(null, false, false));    //$NON-NLS-1$
-		printVar("w-Var", envProvider.getVariables(worksp, false, false));  //$NON-NLS-1$
-		printVar("p-Var", envProvider.getVariables(mproj, false, false));   //$NON-NLS-1$
-		IConfiguration[] cfgs = mproj.getConfigurations();
-		for (int k=0; k<cfgs.length; k++) {
-			printVar("c[" + k + "]-Var", envProvider.getVariables(cfgs[k], false, false));  //$NON-NLS-1$ //$NON-NLS-2$ 
-		}
-	}
+//	public void testEnvPrint(){
+//		doInit();
+//		printVar("s-Var", envProvider.getVariables(null, false, false));    //$NON-NLS-1$
+//		printVar("w-Var", envProvider.getVariables(worksp, false, false));  //$NON-NLS-1$
+//		printVar("p-Var", envProvider.getVariables(mproj, false, false));   //$NON-NLS-1$
+//		IConfiguration[] cfgs = mproj.getConfigurations();
+//		for (int k=0; k<cfgs.length; k++) {
+//			printVar("c[" + k + "]-Var", envProvider.getVariables(cfgs[k], false, false));  //$NON-NLS-1$ //$NON-NLS-2$ 
+//		}
+//	}
   	
 	// Create all required user variables
 	

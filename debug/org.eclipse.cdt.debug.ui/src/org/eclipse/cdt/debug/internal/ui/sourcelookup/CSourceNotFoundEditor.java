@@ -228,6 +228,16 @@ public class CSourceNotFoundEditor extends CommonSourceNotFoundEditor {
 		director.setSourceContainers((ISourceContainer[]) containerList.toArray(new ISourceContainer[containerList.size()]));
 	}
 
+	/**
+	 * Add a path mapping source locator to the global director.
+	 * 
+	 * @param missingPath
+	 *            the compilation source path that was not found on the local
+	 *            machine
+	 * @param newSourcePath
+	 *            the location of the file locally; the user led us to it
+	 * @throws CoreException
+	 */	
 	private void addSourceMappingToCommon(IPath missingPath, IPath newSourcePath) throws CoreException {
 		CSourceLookupDirector director = CDebugCorePlugin.getDefault().getCommonSourceLookupDirector();
 		addSourceMappingToDirector(missingPath, newSourcePath, director);

@@ -61,7 +61,15 @@ public class BuildSystem40Tests  extends TestCase {
 				 "makefile", 
 				 "objects.mk", 
 				 "sources.mk", 
-				 "subdir.mk"};
+				 "d1/subdir.mk",
+				 "d1/d2/subdir.mk",
+				 "d1/d2/d3/subdir.mk",
+				 "d1_1/subdir.mk",
+				 "d1_1/d2_1/subdir.mk",
+				 "dir1/dd/excluded_c/subdir.mk",
+				 "dir1/dd/excluded_c/asd/subdir.mk",
+				 "dir1/dd/ff/subdir.mk",
+			};
 //		doTest("test_40", "dbg 2");
 		IProject[] projects = createProjects("test_40", null, null, true);
 		ICProjectDescriptionManager mngr = CoreModel.getDefault().getProjectDescriptionManager();
@@ -87,7 +95,7 @@ public class BuildSystem40Tests  extends TestCase {
 		ICLanguageSetting ls = foDes.getLanguageSettingForFile("foo.cpp");
 		IFolderInfo foInfo = cfg.getRootFolderInfo();
 		Tool tool = (Tool)foInfo.getToolFromInputExtension("cpp");
-		IOption option = ((Tool)tool).getOptionsOfType(IOption.INCLUDE_PATH)[0];
+		IOption option = tool.getOptionsOfType(IOption.INCLUDE_PATH)[0];
 		OptionStringValue[] value = option.getBasicStringListValueElements();
 		ICLanguageSettingEntry[] entries = ls.getSettingEntries(ICSettingEntry.INCLUDE_PATH);
 		ICLanguageSettingEntry[] expectedEntries = new ICLanguageSettingEntry[] {
@@ -311,7 +319,7 @@ public class BuildSystem40Tests  extends TestCase {
 		ICLanguageSetting ls = foDes.getLanguageSettingForFile("foo.cpp");
 		IFolderInfo foInfo = cfg.getRootFolderInfo();
 		Tool tool = (Tool)foInfo.getToolFromInputExtension("cpp");
-		IOption option = ((Tool)tool).getOptionsOfType(IOption.INCLUDE_PATH)[0];
+		IOption option = tool.getOptionsOfType(IOption.INCLUDE_PATH)[0];
 		OptionStringValue[] value = option.getBasicStringListValueElements();
 		ICLanguageSettingEntry[] entries = ls.getSettingEntries(ICSettingEntry.INCLUDE_PATH);
 		
@@ -329,7 +337,7 @@ public class BuildSystem40Tests  extends TestCase {
 		BuildSystemTestHelper.checkDiff(expectedEntries, entries);
 		
 		ls.setSettingEntries(ICLanguageSettingEntry.INCLUDE_PATH, entries);
-		assertTrue(option == ((Tool)tool).getOptionsOfType(IOption.INCLUDE_PATH)[0]);
+		assertTrue(option == tool.getOptionsOfType(IOption.INCLUDE_PATH)[0]);
 		value = option.getBasicStringListValueElements();
 		entries = ls.getSettingEntries(ICSettingEntry.INCLUDE_PATH);
 		
@@ -349,7 +357,7 @@ public class BuildSystem40Tests  extends TestCase {
 		
 		ls.setSettingEntries(ICLanguageSettingEntry.INCLUDE_PATH, list);
 		
-		assertTrue(option == ((Tool)tool).getOptionsOfType(IOption.INCLUDE_PATH)[0]);
+		assertTrue(option == tool.getOptionsOfType(IOption.INCLUDE_PATH)[0]);
 		
 		value = option.getBasicStringListValueElements();
 		entries = ls.getSettingEntries(ICSettingEntry.INCLUDE_PATH);
@@ -361,7 +369,7 @@ public class BuildSystem40Tests  extends TestCase {
 		//testing one-way converter
 		ls = foDes.getLanguageSettingForFile("foo.c");
 		tool = (Tool)foInfo.getToolFromInputExtension("c");
-		option = ((Tool)tool).getOptionsOfType(IOption.INCLUDE_PATH)[0];
+		option = tool.getOptionsOfType(IOption.INCLUDE_PATH)[0];
 		value = option.getBasicStringListValueElements();
 		entries = ls.getSettingEntries(ICSettingEntry.INCLUDE_PATH);
 		
@@ -379,7 +387,7 @@ public class BuildSystem40Tests  extends TestCase {
 		BuildSystemTestHelper.checkDiff(expectedEntries, entries);
 		
 		ls.setSettingEntries(ICLanguageSettingEntry.INCLUDE_PATH, entries);
-		assertTrue(option == ((Tool)tool).getOptionsOfType(IOption.INCLUDE_PATH)[0]);
+		assertTrue(option == tool.getOptionsOfType(IOption.INCLUDE_PATH)[0]);
 		value = option.getBasicStringListValueElements();
 		entries = ls.getSettingEntries(ICSettingEntry.INCLUDE_PATH);
 		
@@ -404,7 +412,7 @@ public class BuildSystem40Tests  extends TestCase {
 		
 		ls.setSettingEntries(ICLanguageSettingEntry.INCLUDE_PATH, list);
 		
-		assertTrue(option == ((Tool)tool).getOptionsOfType(IOption.INCLUDE_PATH)[0]);
+		assertTrue(option == tool.getOptionsOfType(IOption.INCLUDE_PATH)[0]);
 		
 		value = option.getBasicStringListValueElements();
 		entries = ls.getSettingEntries(ICSettingEntry.INCLUDE_PATH);

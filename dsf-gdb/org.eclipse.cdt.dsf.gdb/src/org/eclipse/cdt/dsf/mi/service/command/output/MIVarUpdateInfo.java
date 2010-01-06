@@ -64,6 +64,22 @@ public class MIVarUpdateInfo extends MIInfo {
 				parseChangeList((MIList)values[i], aList);
 			}
 		}
+		
+		// The MIList in Apple gdb contains MIResults instead of MIValues. It looks like:
+		// ^done,changelist=[varobj={name="var1",in_scope="true",type_changed="false"}],time={.....}
+		// Bug 250037
+		MIResult[] results = miList.getMIResults();
+        for (int i = 0; i < results.length; i++) {
+            String var = results[i].getVariable();
+            if (var.equals("varobj")) { //$NON-NLS-1$
+                MIValue value = results[i].getMIValue();
+                if (value instanceof MITuple) {
+                    parseChangeList((MITuple)value, aList);
+                } else if (value instanceof MIList) {
+                    parseChangeList((MIList)value, aList);
+                }
+            }
+        }
 	} 
 	
 	void parseChangeList(MITuple tuple, List<MIVarChange> aList) {

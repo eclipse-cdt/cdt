@@ -35,7 +35,8 @@ public class MIVarUpdate extends MICommand<MIVarUpdateInfo> {
      * @since 1.1
      */
 	public MIVarUpdate(ICommandControlDMContext dmc, String name) {
-		super(dmc, "-var-update", new String[] { "1", name }); //$NON-NLS-1$//$NON-NLS-2$
+		// Don't use the number parameters but use the full name '--all-values' for Apple gdb to work (bug 250037)
+		super(dmc, "-var-update", new String[] { "--all-values", name }); //$NON-NLS-1$//$NON-NLS-2$
 	}
 	
     @Override

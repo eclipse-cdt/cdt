@@ -16,6 +16,7 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.RejectedExecutionException;
 import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
 
@@ -164,9 +165,17 @@ public final class SteppingController
     }
 
     public void dispose() {
-    	if (fRunControl != null) {
-    		getSession().removeServiceEventListener(this);
-    	}
+        try {
+            fSession.getExecutor().execute(new DsfRunnable() {
+                public void run() {
+                    if (fRunControl != null) {
+                        getSession().removeServiceEventListener(this);
+                    }
+                }
+            });
+        } catch (RejectedExecutionException e) {
+            // Session already gone.
+        }
     	
         IPreferenceStore store= DsfUIPlugin.getDefault().getPreferenceStore();
         store.removePropertyChangeListener(fPreferencesListener);

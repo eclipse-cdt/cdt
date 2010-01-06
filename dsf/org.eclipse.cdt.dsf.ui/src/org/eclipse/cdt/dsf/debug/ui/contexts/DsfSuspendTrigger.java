@@ -100,9 +100,18 @@ public class DsfSuspendTrigger implements ISuspendTrigger {
     
     @ThreadSafe
     public void dispose() {
-        if (fEventListenerRegisterd) {
-            fSession.removeServiceEventListener(this);
+        try {
+            fSession.getExecutor().execute(new DsfRunnable() {
+                public void run() {
+                    if (fEventListenerRegisterd) {
+                        fSession.removeServiceEventListener(this);
+                    }
+                }
+            });
+        } catch (RejectedExecutionException e) {
+            // Session already gone.
         }
+            
         fServicesTracker.dispose();
         fDisposed = true;
     }

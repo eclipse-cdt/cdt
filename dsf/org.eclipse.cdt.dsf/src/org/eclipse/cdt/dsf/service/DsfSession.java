@@ -305,6 +305,8 @@ public class DsfSession
      * listener will receive events from 
      */
     public void addServiceEventListener(Object listener, Filter filter) {
+        assert getExecutor().isInExecutorThread();
+        
         ListenerEntry entry = new ListenerEntry(listener, filter);
         assert !fListeners.containsKey(entry);
         if (DEBUG_SESSION_LISTENERS) {
@@ -325,6 +327,8 @@ public class DsfSession
      * @param listener listener to remove
      */
     public void removeServiceEventListener(Object listener) {
+        assert getExecutor().isInExecutorThread();
+
         ListenerEntry entry = new ListenerEntry(listener, null);
         assert fListeners.containsKey(entry);
         if (DEBUG_SESSION_LISTENERS) {

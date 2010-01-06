@@ -102,7 +102,8 @@ public class BuildDescription implements IBuildDescription {
 	private Map<ITool, BuildStep> fToolToMultiStepMap = new HashMap<ITool, BuildStep>();
 	private BuildStep fOrderedMultiActions[];
 
-	private Map<IPath, BuildResource> fLocationToRcMap = new HashMap<IPath, BuildResource>();
+//	private Map<IPath, BuildResource> fLocationToRcMap = new HashMap<IPath, BuildResource>();
+	private Map<URI, BuildResource> fLocationToRcMap = new HashMap<URI, BuildResource>();
 
 	private Map<String, Set<BuildIOType>> fVarToAddlInSetMap = new HashMap<String, Set<BuildIOType>>();
 
@@ -561,7 +562,7 @@ public class BuildDescription implements IBuildDescription {
 				return;
 			} else {
 				for (IOutputType secondaryOutput : fCfg.getToolChain().getSecondaryOutputs()) {
-					if(secondaryOutput == inputActionArg.getIoType()){
+					if(inputActionArg!=null && secondaryOutput==inputActionArg.getIoType()){
 						BuildIOType arg = findTypeForExtension(fOutputStep,true,rc.getLocation().getFileExtension());
 						if(arg == null || arg.isPrimary()){
 							arg = fOutputStep.createIOType(true, false, null);
@@ -640,9 +641,10 @@ public class BuildDescription implements IBuildDescription {
 
 				if(inputActionArg == null){
 					inputActionArg = findTypeForExtension(inputAction,false,rc.getLocation().getFileExtension());
-					if(inputActionArg == null)
+					if(inputActionArg == null && inputAction!=null)
 						inputActionArg = inputAction.createIOType(false, false, null);
-					inputActionArg.addResource(rc);
+					if (inputActionArg!=null)
+						inputActionArg.addResource(rc);
 				}
 
 				calculateInputs(action);
@@ -671,9 +673,10 @@ public class BuildDescription implements IBuildDescription {
 
 						if(inputActionArg == null){
 							inputActionArg = findTypeForExtension(inputAction,false,rc.getLocation().getFileExtension());
-							if(inputActionArg == null)
+							if(inputActionArg == null && inputAction!=null)
 								inputActionArg = inputAction.createIOType(false, false, null);
-							inputActionArg.addResource(rc);
+							if (inputActionArg!=null)
+								inputActionArg.addResource(rc);
 						}
 					}
 				} else {
@@ -911,9 +914,9 @@ public class BuildDescription implements IBuildDescription {
 			}
 		}while(foundUnused);
 
-		Set<Entry<IPath,BuildResource>> set = fLocationToRcMap.entrySet();
+		Set<Entry<URI, BuildResource>> set = fLocationToRcMap.entrySet();
 		List<BuildResource> list = new ArrayList<BuildResource>();
-		for (Entry<IPath, BuildResource> entry : set) {
+		for (Entry<URI, BuildResource> entry : set) {
 			BuildResource rc = entry.getValue();
 			boolean doRemove = false;
 			BuildIOType producerArg = (BuildIOType)rc.getProducerIOType();
@@ -953,11 +956,11 @@ public class BuildDescription implements IBuildDescription {
 	}
 
 	protected void resourceRemoved(BuildResource rc){
-		fLocationToRcMap.remove(rc.getLocation());
+		fLocationToRcMap.remove(rc.getLocationURI());
 	}
 
 	protected void resourceCreated(BuildResource rc){
-		fLocationToRcMap.put(rc.getLocation(), rc);
+		fLocationToRcMap.put(rc.getLocationURI(), rc);
 	}
 
 	private IManagedBuilderMakefileGenerator getMakeGenInitialized(){
@@ -1374,7 +1377,7 @@ public class BuildDescription implements IBuildDescription {
 
 				BuildIOType buildArg = action.createIOType(false, true, null);
 
-				BuildResource outRc = createResource(outLocation, getURIForFullPath(outFullPath));
+				BuildResource outRc = createResource(outFullPath, getURIForFullPath(outLocation));
 				buildArg.addResource(outRc);
 		}
 
@@ -1464,9 +1467,13 @@ public class BuildDescription implements IBuildDescription {
 	}
 
 	public IBuildResource getBuildResource(IPath location) {
-		return fLocationToRcMap.get(location);
+		return getBuildResource(URIUtil.toURI(location));
 	}
 
+	private IBuildResource getBuildResource(URI locationURI) {
+		return fLocationToRcMap.get(locationURI);
+	}
+	
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.managedbuilder.builddescription.IBuildDescription#getResources()
 	 */
@@ -1931,7 +1938,7 @@ public class BuildDescription implements IBuildDescription {
 	}
 
 	public BuildResource createResource(IPath projPath){
-		return createResource(projPath, createProjectRelativeURI(projPath));
+		return createResource(fProject.getFullPath().append(projPath), createProjectRelativeURI(projPath));
 	}
 
 	private URI createProjectRelativeURI(IPath projPath) {
@@ -1957,7 +1964,7 @@ public class BuildDescription implements IBuildDescription {
 
 	public BuildResource createResource(IPath fullWorkspacePath, URI locationURI){
 
-		BuildResource rc = (BuildResource)getBuildResource(fullWorkspacePath);
+		BuildResource rc = (BuildResource)getBuildResource(locationURI);
 
 		if(rc == null)
 			rc = new BuildResource(this, fullWorkspacePath, locationURI);
@@ -2050,7 +2057,8 @@ public class BuildDescription implements IBuildDescription {
 					IInputType inType = tool.getInputType(e);
 					IOutputType outType = t.getOutputType(e);
 					if((inType == null && outType == null)
-							|| (inType.getBuildVariable().equals(outType.getBuildVariable()))){
+							|| (inType != null && outType != null
+									&& inType.getBuildVariable().equals(outType.getBuildVariable()))){
 
 						set.add(t);
 						ToolOrderEstimation est = getToolOrder(t);
@@ -2092,7 +2100,8 @@ public class BuildDescription implements IBuildDescription {
 					IOutputType inType = tool.getOutputType(e);
 					IInputType outType = t.getInputType(e);
 					if((inType == null && outType == null)
-							|| (inType.getBuildVariable().equals(outType.getBuildVariable()))){
+							|| (inType != null && outType != null
+									&& inType.getBuildVariable().equals(outType.getBuildVariable()))){
 
 						set.add(t);
 						ToolOrderEstimation est = getToolOrder(t);

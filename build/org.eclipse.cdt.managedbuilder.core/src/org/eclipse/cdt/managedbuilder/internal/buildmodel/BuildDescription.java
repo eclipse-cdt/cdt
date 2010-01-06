@@ -641,10 +641,10 @@ public class BuildDescription implements IBuildDescription {
 
 				if(inputActionArg == null){
 					inputActionArg = findTypeForExtension(inputAction,false,rc.getLocation().getFileExtension());
-					if(inputActionArg == null && inputAction!=null) {
+					if(inputActionArg == null && inputAction!=null)
 						inputActionArg = inputAction.createIOType(false, false, null);
+					if (inputActionArg!=null)
 						inputActionArg.addResource(rc);
-					}
 				}
 
 				calculateInputs(action);
@@ -673,10 +673,10 @@ public class BuildDescription implements IBuildDescription {
 
 						if(inputActionArg == null){
 							inputActionArg = findTypeForExtension(inputAction,false,rc.getLocation().getFileExtension());
-							if(inputActionArg == null && inputAction!=null) {
+							if(inputActionArg == null && inputAction!=null)
 								inputActionArg = inputAction.createIOType(false, false, null);
+							if (inputActionArg!=null)
 								inputActionArg.addResource(rc);
-							}
 						}
 					}
 				} else {

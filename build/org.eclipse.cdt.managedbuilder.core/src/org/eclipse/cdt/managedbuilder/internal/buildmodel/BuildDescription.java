@@ -1375,7 +1375,7 @@ public class BuildDescription implements IBuildDescription {
 
 				BuildIOType buildArg = action.createIOType(false, true, null);
 
-				BuildResource outRc = createResource(outLocation, getURIForFullPath(outFullPath));
+				BuildResource outRc = createResource(outFullPath, getURIForFullPath(outLocation));
 				buildArg.addResource(outRc);
 		}
 
@@ -1936,7 +1936,7 @@ public class BuildDescription implements IBuildDescription {
 	}
 
 	public BuildResource createResource(IPath projPath){
-		return createResource(projPath, createProjectRelativeURI(projPath));
+		return createResource(fProject.getFullPath().append(projPath), createProjectRelativeURI(projPath));
 	}
 
 	private URI createProjectRelativeURI(IPath projPath) {

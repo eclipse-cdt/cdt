@@ -249,7 +249,7 @@ public class ManagedBuildMacrosTests extends TestCase {
 			opt = cfgs[0].setOption(t, opt, set1);
 			assertNotNull(opt);
 
-			ArrayList ar = new ArrayList(1);
+			ArrayList<String> ar = new ArrayList<String>(1);
 			for (int i=0; i<set1.length; i++) {
 				try {
 					String[] aus = mp.resolveStringListValue(set1[i], UNKNOWN, LISTSEP, IBuildMacroProvider.CONTEXT_OPTION, new OptionContextData(opt,t));
@@ -257,7 +257,7 @@ public class ManagedBuildMacrosTests extends TestCase {
 					for (int j=0; j<aus.length; j++) ar.add(aus[j]);
 				} catch (BuildMacroException e) { fail(e.getLocalizedMessage()); } 
 			}
-			String[] res = (String[])ar.toArray(new String[0]);
+			String[] res = ar.toArray(new String[0]);
 			assertEquals(res.length, res1.length);
 			for (int i=0; i<res.length; i++) assertEquals(res[i], res1[i]);
 		} catch (BuildException e) { fail(e.getLocalizedMessage());	}
@@ -472,7 +472,7 @@ public class ManagedBuildMacrosTests extends TestCase {
 
 		boolean exceptionRaised = false;
 		try { // ZERO is undefined macro
-			String a = mp.resolveValue("${ONE} - ${ZERO}", null, null,  //$NON-NLS-1$
+			mp.resolveValue("${ONE} - ${ZERO}", null, null,  //$NON-NLS-1$
 				IBuildMacroProvider.CONTEXT_CONFIGURATION, cfgs[0]);
 		} catch (BuildMacroException e) {
 			exceptionRaised = true;
@@ -481,7 +481,7 @@ public class ManagedBuildMacrosTests extends TestCase {
 		
 		exceptionRaised = false;
 		try { // delimiter is undefined for list
-			String a = mp.resolveValue("${LST}", null, null,  //$NON-NLS-1$
+			mp.resolveValue("${LST}", null, null,  //$NON-NLS-1$
 				IBuildMacroProvider.CONTEXT_CONFIGURATION, cfgs[0]);
 		} catch (BuildMacroException e) {
 			exceptionRaised = true;
@@ -671,7 +671,7 @@ public class ManagedBuildMacrosTests extends TestCase {
 	
 	// returns a list of macro's NAMES (not values).
 	private String[] printMacros(IBuildMacro[] vars, String head) {
-		ArrayList ar = new ArrayList(0);
+		ArrayList<String> ar = new ArrayList<String>(0);
 		if (vars != null) {
 			if (vars.length > 0) {
 				for (int i=0; i < vars.length; i++) {
@@ -697,7 +697,7 @@ public class ManagedBuildMacrosTests extends TestCase {
 				}
 			} else { if (print) System.out.println(head + ": array is empty");	}  //$NON-NLS-1$
 		} else { if (print) System.out.println(head + ": array is null"); }  //$NON-NLS-1$
-		return (String[])ar.toArray(new String[0]);
+		return ar.toArray(new String[0]);
 	}
 
 	private void printStrings(String[] vars, String head) {

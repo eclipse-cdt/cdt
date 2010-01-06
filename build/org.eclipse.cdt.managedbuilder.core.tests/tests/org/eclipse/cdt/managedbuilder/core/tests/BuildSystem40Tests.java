@@ -45,6 +45,7 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.OperationCanceledException;
 import org.eclipse.core.runtime.Path;
+import org.eclipse.core.runtime.Platform;
 
 public class BuildSystem40Tests  extends TestCase {
 	private IPath resourcesLocation = new Path(CTestPlugin.getFileInPlugin(new Path("resources/test40Projects/")).getAbsolutePath());
@@ -53,6 +54,13 @@ public class BuildSystem40Tests  extends TestCase {
 		TestSuite suite = new TestSuite(BuildSystem40Tests.class);
 		
 		return suite;
+	}
+	
+	private String platformDependentPath(String cfgFolder, String winPath) {
+		if (!Platform.getOS().equals(Platform.OS_WIN32)) {
+			return cfgFolder + '/' + winPath;
+		}
+		return winPath;
 	}
 	
 	public void test40() throws Exception{
@@ -100,10 +108,10 @@ public class BuildSystem40Tests  extends TestCase {
 				new CIncludePathEntry("dbg 3/rel/path", 0),
 				new CIncludePathEntry("proj/rel/path", 0),
 				new CIncludePathEntry("/abs/path", 0),
-				new CIncludePathEntry("c:/abs/path", 0),
+				new CIncludePathEntry(platformDependentPath("dbg 3", "c:/abs/path"), 0),
 				new CIncludePathEntry("/test_40/dir1/dir2/dir3", ICSettingEntry.VALUE_WORKSPACE_PATH/* | ICSettingEntry.RESOLVED*/),
 				new CIncludePathEntry("/test_40", ICSettingEntry.VALUE_WORKSPACE_PATH/* | ICSettingEntry.RESOLVED*/),
-				new CIncludePathEntry("D:\\docs\\incs", 0),
+				new CIncludePathEntry(platformDependentPath("dbg 3", "D:\\docs\\incs"), 0),
 		};
 		
 		assertTrue(Arrays.equals(entries, expectedEntries));
@@ -120,7 +128,7 @@ public class BuildSystem40Tests  extends TestCase {
 		{
 			List<ICLanguageSettingEntry> list = new ArrayList<ICLanguageSettingEntry>();
 			list.addAll(Arrays.asList(entries));
-			list.add(new CIncludePathEntry("E:\\tmp\\w", 0));
+			list.add(new CIncludePathEntry(platformDependentPath("dbg 3", "E:\\tmp\\w"), 0));
 			entries = list.toArray(new ICLanguageSettingEntry[0]);
 			ls.setSettingEntries(ICLanguageSettingEntry.INCLUDE_PATH, entries);
 			expectedEntries = entries;
@@ -151,21 +159,21 @@ public class BuildSystem40Tests  extends TestCase {
 				new CIncludePathEntry("dbg 3/d2_rel/path", 0),
 				new CIncludePathEntry("d2_proj/rel/path", 0),
 				new CIncludePathEntry("/d2_abs/path", 0),
-				new CIncludePathEntry("c:/d2_abs/path", 0),
+				new CIncludePathEntry(platformDependentPath("dbg 3", "c:/d2_abs/path"), 0),
 				new CIncludePathEntry("dbg 3/d1_rel/path", 0),
 				new CIncludePathEntry("d1_proj/rel/path", 0),
 				new CIncludePathEntry("/d1_abs/path", 0),
-				new CIncludePathEntry("c:/d1_abs/path", 0),
+				new CIncludePathEntry(platformDependentPath("dbg 3", "c:/d1_abs/path"), 0),
 				new CIncludePathEntry("dbg 3/rel/path", 0),
 				new CIncludePathEntry("proj/rel/path", 0),
 				new CIncludePathEntry("/abs/path", 0),
-				new CIncludePathEntry("c:/abs/path", 0),
+				new CIncludePathEntry(platformDependentPath("dbg 3", "c:/abs/path"), 0),
 				new CIncludePathEntry("/test_40/dir1/dir2/dir3", ICSettingEntry.VALUE_WORKSPACE_PATH/* | ICSettingEntry.RESOLVED*/),
 				new CIncludePathEntry("/test_40", ICSettingEntry.VALUE_WORKSPACE_PATH/* | ICSettingEntry.RESOLVED*/),
-				new CIncludePathEntry("D:\\docs\\incs", 0),
-				new CIncludePathEntry("E:\\tmp\\w", 0),
-				new CIncludePathEntry("D:\\d1_docs\\incs", 0),
-				new CIncludePathEntry("D:\\d2_docs\\incs", 0),
+				new CIncludePathEntry(platformDependentPath("dbg 3", "D:\\docs\\incs"), 0),
+				new CIncludePathEntry(platformDependentPath("dbg 3", "E:\\tmp\\w"), 0),
+				new CIncludePathEntry(platformDependentPath("dbg 3", "D:\\d1_docs\\incs"), 0),
+				new CIncludePathEntry(platformDependentPath("dbg 3", "D:\\d2_docs\\incs"), 0),
 		};
 		
 		entries = ls.getSettingEntries(ICLanguageSettingEntry.INCLUDE_PATH);
@@ -245,11 +253,11 @@ public class BuildSystem40Tests  extends TestCase {
 				new CIncludePathEntry("dbg 3/rel/path", 0),
 				new CIncludePathEntry("proj/rel/path", 0),
 				new CIncludePathEntry("/abs/path", 0),
-				new CIncludePathEntry("c:/abs/path", 0),
+				new CIncludePathEntry(platformDependentPath("dbg 3", "c:/abs/path"), 0),
 				new CIncludePathEntry("/test_40/dir1/dir2/dir3", ICSettingEntry.VALUE_WORKSPACE_PATH/* | ICSettingEntry.RESOLVED*/),
 				new CIncludePathEntry("/test_40", ICSettingEntry.VALUE_WORKSPACE_PATH/* | ICSettingEntry.RESOLVED*/),
-				new CIncludePathEntry("D:\\docs\\incs", 0),
-				new CIncludePathEntry("E:\\tmp\\w", 0),
+				new CIncludePathEntry(platformDependentPath("dbg 3", "D:\\docs\\incs"), 0),
+				new CIncludePathEntry(platformDependentPath("dbg 3", "E:\\tmp\\w"), 0),
 		};
 		
 		entries = ls.getSettingEntries(ICLanguageSettingEntry.INCLUDE_PATH);
@@ -281,11 +289,11 @@ public class BuildSystem40Tests  extends TestCase {
 				new CIncludePathEntry("dbg 3/rel/path", 0),
 				new CIncludePathEntry("proj/rel/path", 0),
 				new CIncludePathEntry("/abs/path", 0),
-				new CIncludePathEntry("c:/abs/path", 0),
+				new CIncludePathEntry(platformDependentPath("dbg 3", "c:/abs/path"), 0),
 				new CIncludePathEntry("/test_40/dir1/dir2/dir3", ICSettingEntry.VALUE_WORKSPACE_PATH/* | ICSettingEntry.RESOLVED*/),
 				new CIncludePathEntry("/test_40", ICSettingEntry.VALUE_WORKSPACE_PATH/* | ICSettingEntry.RESOLVED*/),
-				new CIncludePathEntry("D:\\docs\\incs", 0),
-				new CIncludePathEntry("E:\\tmp\\w", 0),
+				new CIncludePathEntry(platformDependentPath("dbg 3", "D:\\docs\\incs"), 0),
+				new CIncludePathEntry(platformDependentPath("dbg 3", "E:\\tmp\\w"), 0),
 		};
 		
 		entries = ls.getSettingEntries(ICLanguageSettingEntry.INCLUDE_PATH);

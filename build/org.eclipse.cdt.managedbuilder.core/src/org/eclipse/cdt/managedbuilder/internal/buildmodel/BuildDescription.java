@@ -562,7 +562,7 @@ public class BuildDescription implements IBuildDescription {
 				return;
 			} else {
 				for (IOutputType secondaryOutput : fCfg.getToolChain().getSecondaryOutputs()) {
-					if(secondaryOutput == inputActionArg.getIoType()){
+					if(inputActionArg!=null && secondaryOutput==inputActionArg.getIoType()){
 						BuildIOType arg = findTypeForExtension(fOutputStep,true,rc.getLocation().getFileExtension());
 						if(arg == null || arg.isPrimary()){
 							arg = fOutputStep.createIOType(true, false, null);
@@ -641,9 +641,10 @@ public class BuildDescription implements IBuildDescription {
 
 				if(inputActionArg == null){
 					inputActionArg = findTypeForExtension(inputAction,false,rc.getLocation().getFileExtension());
-					if(inputActionArg == null)
+					if(inputActionArg == null && inputAction!=null) {
 						inputActionArg = inputAction.createIOType(false, false, null);
-					inputActionArg.addResource(rc);
+						inputActionArg.addResource(rc);
+					}
 				}
 
 				calculateInputs(action);
@@ -672,9 +673,10 @@ public class BuildDescription implements IBuildDescription {
 
 						if(inputActionArg == null){
 							inputActionArg = findTypeForExtension(inputAction,false,rc.getLocation().getFileExtension());
-							if(inputActionArg == null)
+							if(inputActionArg == null && inputAction!=null) {
 								inputActionArg = inputAction.createIOType(false, false, null);
-							inputActionArg.addResource(rc);
+								inputActionArg.addResource(rc);
+							}
 						}
 					}
 				} else {
@@ -2055,7 +2057,8 @@ public class BuildDescription implements IBuildDescription {
 					IInputType inType = tool.getInputType(e);
 					IOutputType outType = t.getOutputType(e);
 					if((inType == null && outType == null)
-							|| (inType.getBuildVariable().equals(outType.getBuildVariable()))){
+							|| (inType != null && outType != null
+									&& inType.getBuildVariable().equals(outType.getBuildVariable()))){
 
 						set.add(t);
 						ToolOrderEstimation est = getToolOrder(t);
@@ -2097,7 +2100,8 @@ public class BuildDescription implements IBuildDescription {
 					IOutputType inType = tool.getOutputType(e);
 					IInputType outType = t.getInputType(e);
 					if((inType == null && outType == null)
-							|| (inType.getBuildVariable().equals(outType.getBuildVariable()))){
+							|| (inType != null && outType != null
+									&& inType.getBuildVariable().equals(outType.getBuildVariable()))){
 
 						set.add(t);
 						ToolOrderEstimation est = getToolOrder(t);

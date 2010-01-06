@@ -17,6 +17,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.Map.Entry;
 
 import junit.framework.Test;
 import junit.framework.TestCase;
@@ -88,13 +89,6 @@ public class BuildDescriptionModelTests extends TestCase {
 	private class ProjectCleaner implements Runnable{
 		List<String> fProjList = new ArrayList<String>();
 		
-		public ProjectCleaner(){
-		}
-
-		public ProjectCleaner(String name){
-			addProject(name);
-		}
-
 		public ProjectCleaner(IProject project){
 			addProject(project);
 		}
@@ -132,8 +126,6 @@ public class BuildDescriptionModelTests extends TestCase {
 		IManagedProject mProj = info.getManagedProject();
 		IConfiguration cfg = mProj.getConfigurations()[0];
 		cfg.setArtifactExtension("tmp");
-		String cName = cfg.getName();
-
 		BuildDescription des = new BuildDescription(cfg);
 		
 		BuildResource aAsmRc = des.createResource("a.asm");
@@ -241,8 +233,6 @@ public class BuildDescriptionModelTests extends TestCase {
 		IManagedProject mProj = info.getManagedProject();
 		IConfiguration cfg = mProj.getConfigurations()[0];
 		cfg.setArtifactExtension("tmp");
-		String cName = cfg.getName();
-
 		BuildDescription tDes = new BuildDescription(cfg);
 		
 		IBuildDescription des = null;
@@ -265,8 +255,6 @@ public class BuildDescriptionModelTests extends TestCase {
 		IManagedProject mProj = info.getManagedProject();
 		IConfiguration cfg = mProj.getConfigurations()[0];
 		cfg.setArtifactExtension("tmp");
-		String cName = cfg.getName();
-
 		BuildDescription tDes = new BuildDescription(cfg);
 		IBuildDescription des = null;
 		try {
@@ -582,9 +570,8 @@ public class BuildDescriptionModelTests extends TestCase {
 		
 		Map<IBuildIOType, IBuildIOType> map = up ? outMap : inMap;
 		
-		for(Iterator<?> iter = map.entrySet().iterator();iter.hasNext();){
-			Map.Entry entry = (Map.Entry)iter.next();
-			doTestType((IBuildIOType)entry.getKey(), (IBuildIOType)entry.getValue());
+		for (Entry<IBuildIOType, IBuildIOType> entry : map.entrySet()) {
+			doTestType(entry.getKey(), entry.getValue());
 		}
 	}
 	
@@ -593,9 +580,8 @@ public class BuildDescriptionModelTests extends TestCase {
 		
 		typesMatch(type, oType, map, true);
 		
-		for(Iterator iter = map.entrySet().iterator();iter.hasNext();){
-			Map.Entry entry = (Map.Entry)iter.next();
-			doTestResource((IBuildResource)entry.getKey(), (IBuildResource)entry.getValue(), !type.isInput());
+		for (Entry<IBuildResource, IBuildResource> entry : map.entrySet()) {
+			doTestResource(entry.getKey(), entry.getValue(), !type.isInput());
 		}
 	}
 	
@@ -610,13 +596,12 @@ public class BuildDescriptionModelTests extends TestCase {
 		} else {
 			Set<IBuildStep> stepSet = new HashSet<IBuildStep>();
 			
-			for(Iterator iter = outMap.entrySet().iterator(); iter.hasNext();){
-				Map.Entry entry = (Map.Entry)iter.next();
-				IBuildIOType type = (IBuildIOType)entry.getKey();
+			for (Entry<IBuildIOType, IBuildIOType> entry : outMap.entrySet()) {
+				IBuildIOType type = entry.getKey();
 				
 				IBuildStep step = type.getStep();
 				if(stepSet.add(step)){
-					IBuildIOType oType = (IBuildIOType)entry.getValue();
+					IBuildIOType oType = entry.getValue();
 					typesMatch(type, oType, null, true);
 					doTestStep(step, oType.getStep(), up);
 				}
@@ -817,20 +802,20 @@ public class BuildDescriptionModelTests extends TestCase {
 	}
 
 	private void doFail(String dump, IBuildIOType type, IBuildIOType oType){
-		doFail(dump + "\nType:\n" + DbgUtil.dumpType(type) + "\noType:\n" + DbgUtil.dumpType(oType));
+		doFail(dump, "\nType:\n" + DbgUtil.dumpType(type) + "\noType:\n" + DbgUtil.dumpType(oType));
 	}
 
 	private void doFail(String dump, IBuildResource rc, IBuildResource oRc){
-		doFail(dump + "\nRc:\n" + DbgUtil.dumpResource(rc) + "\noRc:\n" + DbgUtil.dumpResource(oRc));
+		doFail(dump, "\nRc:\n" + DbgUtil.dumpResource(rc) + "\noRc:\n" + DbgUtil.dumpResource(oRc));
 	}
 
 	private void doFail(String dump, IBuildStep step, IBuildStep oStep){
-		doFail(dump + "\nStep:\n" + DbgUtil.dumpStep(step) + "\noStep:\n" + DbgUtil.dumpStep(oStep));
+		doFail(dump, "\nStep:\n" + DbgUtil.dumpStep(step) + "\noStep:\n" + DbgUtil.dumpStep(oStep));
 	}
 
-	private void doFail(String dump){
-		doTrace(dump);
-		fail(dump);
+	private void doFail(String message, String dump){
+		DbgUtil.trace(getClass().getSimpleName()+'.'+getName()+ ": "+ message+dump);
+		fail(message+" (see console output)");
 	}
 	
 	private void doTrace(String str){
@@ -843,16 +828,14 @@ public class BuildDescriptionModelTests extends TestCase {
 		
 		assertNotNull(des.getConfiguration());
 		
-		IProject project = des.getConfiguration().getOwner().getProject();
-		
 		IBuildStep inStep = des.getInputStep();
 		IBuildStep outStep = des.getOutputStep();
 		
 		if(inStep.getInputIOTypes().length !=  0){
-			doFail("input step contains inputs, " + DbgUtil.dumpStep(inStep));
+			doFail("input step contains unexpected inputs", DbgUtil.dumpStep(inStep));
 		}
 		if(outStep.getOutputIOTypes().length !=  0){
-			doFail("output step contains outputs, " + DbgUtil.dumpStep(outStep)); 
+			doFail("output step contains unexpected outputs", DbgUtil.dumpStep(outStep)); 
 		}
 
 		IBuildStep tInStep = tDes.getInputStep();
@@ -867,6 +850,7 @@ public class BuildDescriptionModelTests extends TestCase {
 		doTrace("*****up to down passed");
 	}
 	
+	@Override
 	protected void tearDown() throws Exception {
 		fCleaner.run();
 		if(DbgUtil.DEBUG)
@@ -1270,9 +1254,9 @@ public class BuildDescriptionModelTests extends TestCase {
 		}
 		
 		IFile ac = ManagedBuildTestHelper.createFile(project, "a.c");
-		IFile bc = ManagedBuildTestHelper.createFile(project, "b.c");
+		ManagedBuildTestHelper.createFile(project, "b.c");
 		IFile ccpp = ManagedBuildTestHelper.createFile(project, "c.cpp");
-		IFile dcpp = ManagedBuildTestHelper.createFile(project, "d.cpp");
+		ManagedBuildTestHelper.createFile(project, "d.cpp");
 	
 		IManagedBuildInfo info = ManagedBuildManager.getBuildInfo(project);
 		IManagedProject mProj = info.getManagedProject();
@@ -1384,15 +1368,15 @@ public class BuildDescriptionModelTests extends TestCase {
 			fail("fail to add CC nature");
 		}
 		
-		IFile ac = ManagedBuildTestHelper.createFile(project, "a.c");
-		IFile bc = ManagedBuildTestHelper.createFile(project, "b.c");
+		ManagedBuildTestHelper.createFile(project, "a.c");
+		ManagedBuildTestHelper.createFile(project, "b.c");
 		IFile ccpp = ManagedBuildTestHelper.createFile(project, "c.cpp");
-		IFile dcpp = ManagedBuildTestHelper.createFile(project, "d.cpp");
+		ManagedBuildTestHelper.createFile(project, "d.cpp");
 		IFile er = ManagedBuildTestHelper.createFile(project, "e.r");
-		IFile fr = ManagedBuildTestHelper.createFile(project, "f.r");
-		IFile gr = ManagedBuildTestHelper.createFile(project, "dir1/g.r");
-		IFile hr = ManagedBuildTestHelper.createFile(project, "dir2/h.r");
-		IFile ir = ManagedBuildTestHelper.createFile(project, "dir2/i.r");
+		ManagedBuildTestHelper.createFile(project, "f.r");
+		ManagedBuildTestHelper.createFile(project, "dir1/g.r");
+		ManagedBuildTestHelper.createFile(project, "dir2/h.r");
+		ManagedBuildTestHelper.createFile(project, "dir2/i.r");
 		
 		
 		IManagedBuildInfo info = ManagedBuildManager.getBuildInfo(project);
@@ -1568,17 +1552,17 @@ public class BuildDescriptionModelTests extends TestCase {
 			fail("fail to add CC nature");
 		}
 		
-		IFile ac = ManagedBuildTestHelper.createFile(project, "a.c");
-		IFile bc = ManagedBuildTestHelper.createFile(project, "b.c");
+		ManagedBuildTestHelper.createFile(project, "a.c");
+		ManagedBuildTestHelper.createFile(project, "b.c");
 		IFile ccpp = ManagedBuildTestHelper.createFile(project, "c.cpp");
-		IFile dcpp = ManagedBuildTestHelper.createFile(project, "d.cpp");
+		ManagedBuildTestHelper.createFile(project, "d.cpp");
 		IFile er = ManagedBuildTestHelper.createFile(project, "e.r");
-		IFile fr = ManagedBuildTestHelper.createFile(project, "f.r");
-		IFile gr = ManagedBuildTestHelper.createFile(project, "dir1/g.r");
-		IFile hr = ManagedBuildTestHelper.createFile(project, "dir2/h.r");
-		IFile ir = ManagedBuildTestHelper.createFile(project, "dir2/i.r");
-		IFile o1 = ManagedBuildTestHelper.createFile(project, "o1.o");
-		IFile o2 = ManagedBuildTestHelper.createFile(project, "dir3/o2.o");
+		ManagedBuildTestHelper.createFile(project, "f.r");
+		ManagedBuildTestHelper.createFile(project, "dir1/g.r");
+		ManagedBuildTestHelper.createFile(project, "dir2/h.r");
+		ManagedBuildTestHelper.createFile(project, "dir2/i.r");
+		ManagedBuildTestHelper.createFile(project, "o1.o");
+		ManagedBuildTestHelper.createFile(project, "dir3/o2.o");
 		
 		
 		IManagedBuildInfo info = ManagedBuildManager.getBuildInfo(project);
@@ -2572,12 +2556,12 @@ public class BuildDescriptionModelTests extends TestCase {
 			fail("fail to add CC nature");
 		}
 		
-		IFile ac = ManagedBuildTestHelper.createFile(project, "a.c");
-		IFile bc = ManagedBuildTestHelper.createFile(project, "b.c");
-		IFile ccpp = ManagedBuildTestHelper.createFile(project, "c.cpp");
-		IFile dcpp = ManagedBuildTestHelper.createFile(project, "d/d.cpp");
-		IFile es2 = ManagedBuildTestHelper.createFile(project, "d2/e.s2");
-		IFile fs2 = ManagedBuildTestHelper.createFile(project, "f.s2");
+		ManagedBuildTestHelper.createFile(project, "a.c");
+		ManagedBuildTestHelper.createFile(project, "b.c");
+		ManagedBuildTestHelper.createFile(project, "c.cpp");
+		ManagedBuildTestHelper.createFile(project, "d/d.cpp");
+		ManagedBuildTestHelper.createFile(project, "d2/e.s2");
+		ManagedBuildTestHelper.createFile(project, "f.s2");
 		
 		ManagedBuildTestHelper.createFile(project, "e.o");
 		ManagedBuildTestHelper.createFile(project, "dir/f.o");

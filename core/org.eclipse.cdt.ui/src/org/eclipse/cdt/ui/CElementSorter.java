@@ -227,6 +227,8 @@ public class CElementSorter extends ViewerSorter {
 			switch (type) {
 			case CElementGrouping.INCLUDES_GROUPING:
 				return INCLUDES;
+			case CElementGrouping.MACROS_GROUPING:
+				return MACROS;
 			case CElementGrouping.CLASS_GROUPING:
 				return TYPES;
 			case CElementGrouping.NAMESPACE_GROUPING:

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2008 QNX Software Systems and others.
+ * Copyright (c) 2000, 2009 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -578,8 +578,10 @@ public class CView extends ViewPart implements ISetSelectionTarget, IPropertyCha
 	protected IContentProvider createContentProvider() {
 		boolean showCUChildren = PreferenceConstants.getPreferenceStore().getBoolean(PreferenceConstants.PREF_SHOW_CU_CHILDREN);
 		boolean groupIncludes = PreferenceConstants.getPreferenceStore().getBoolean(PreferenceConstants.CVIEW_GROUP_INCLUDES);
+		boolean groupMacros = PreferenceConstants.getPreferenceStore().getBoolean(PreferenceConstants.CVIEW_GROUP_MACROS);
 		CViewContentProvider provider = new CViewContentProvider(viewer, getSite(), showCUChildren, true);
 		provider.setIncludesGrouping(groupIncludes);
+		provider.setMacroGrouping(groupMacros);
 		return provider;
 	}
 
@@ -849,6 +851,13 @@ public class CView extends ViewPart implements ISetSelectionTarget, IPropertyCha
 			IContentProvider provider = viewer.getContentProvider();
 			if (provider instanceof CElementContentProvider) {
 				((CElementContentProvider) provider).setIncludesGrouping(groupIncludes);
+			}
+			refreshViewer = true;
+		} else if (property.equals(PreferenceConstants.CVIEW_GROUP_MACROS)) {
+			boolean groupMacros = PreferenceConstants.getPreferenceStore().getBoolean(PreferenceConstants.CVIEW_GROUP_MACROS);
+			IContentProvider provider = viewer.getContentProvider();
+			if (provider instanceof CElementContentProvider) {
+				((CElementContentProvider) provider).setMacroGrouping(groupMacros);
 			}
 			refreshViewer = true;
 		}

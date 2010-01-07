@@ -46,7 +46,9 @@ public class AppearancePreferencePage extends PreferencePage implements IWorkben
 	private SelectionButtonDialogField fOutlineGroupNamespaces;
 	private SelectionButtonDialogField fCViewGroupIncludes;
 	private SelectionButtonDialogField fCViewSeparateHeaderAndSource;
+	private SelectionButtonDialogField fCViewGroupMacros;
 	private SelectionButtonDialogField fOutlineGroupMembers;
+	private SelectionButtonDialogField fOutlineGroupMacros;
 	
 	public AppearancePreferencePage() {
 		setPreferenceStore(PreferenceConstants.getPreferenceStore());
@@ -81,6 +83,14 @@ public class AppearancePreferencePage extends PreferencePage implements IWorkben
 		fCViewSeparateHeaderAndSource= new SelectionButtonDialogField(SWT.CHECK);
 		fCViewSeparateHeaderAndSource.setDialogFieldListener(listener);
 		fCViewSeparateHeaderAndSource.setLabelText(PreferencesMessages.AppearancePreferencePage_cviewSeparateHeaderAndSource_label); 
+		
+		fOutlineGroupMacros= new SelectionButtonDialogField(SWT.CHECK);
+		fOutlineGroupMacros.setDialogFieldListener(listener);
+		fOutlineGroupMacros.setLabelText(PreferencesMessages.AppearancePreferencePage_outlineGroupMacros_label);
+		
+		fCViewGroupMacros= new SelectionButtonDialogField(SWT.CHECK);
+		fCViewGroupMacros.setDialogFieldListener(listener);
+		fCViewGroupMacros.setLabelText(PreferencesMessages.AppearancePreferencePage_cviewGroupMacros_label); 
 	}
 
 	private void initFields() {
@@ -88,9 +98,11 @@ public class AppearancePreferencePage extends PreferencePage implements IWorkben
 		fShowTUChildren.setSelection(prefs.getBoolean(PreferenceConstants.PREF_SHOW_CU_CHILDREN));
 		fCViewGroupIncludes.setSelection(prefs.getBoolean(PreferenceConstants.CVIEW_GROUP_INCLUDES));
 		fCViewSeparateHeaderAndSource.setSelection(prefs.getBoolean(PreferenceConstants.CVIEW_SEPARATE_HEADER_AND_SOURCE));
+		fCViewGroupMacros.setSelection(prefs.getBoolean(PreferenceConstants.CVIEW_GROUP_MACROS));
 		fOutlineGroupIncludes.setSelection(prefs.getBoolean(PreferenceConstants.OUTLINE_GROUP_INCLUDES));
 		fOutlineGroupNamespaces.setSelection(prefs.getBoolean(PreferenceConstants.OUTLINE_GROUP_NAMESPACES));
 		fOutlineGroupMembers.setSelection(prefs.getBoolean(PreferenceConstants.OUTLINE_GROUP_MEMBERS));
+		fOutlineGroupMacros.setSelection(prefs.getBoolean(PreferenceConstants.OUTLINE_GROUP_MACROS));
 	}
 	
 	/*
@@ -122,6 +134,8 @@ public class AppearancePreferencePage extends PreferencePage implements IWorkben
 		fOutlineGroupIncludes.doFillIntoGrid(result, nColumns);
 		fOutlineGroupNamespaces.doFillIntoGrid(result, nColumns);
 		fOutlineGroupMembers.doFillIntoGrid(result, nColumns);
+		fCViewGroupMacros.doFillIntoGrid(result, nColumns);
+		fOutlineGroupMacros.doFillIntoGrid(result, nColumns);
 
 		new Separator().doFillIntoGrid(result, nColumns);
 		
@@ -168,9 +182,11 @@ public class AppearancePreferencePage extends PreferencePage implements IWorkben
 		prefs.setValue(PreferenceConstants.PREF_SHOW_CU_CHILDREN, fShowTUChildren.isSelected());
 		prefs.setValue(PreferenceConstants.CVIEW_GROUP_INCLUDES, fCViewGroupIncludes.isSelected());
 		prefs.setValue(PreferenceConstants.CVIEW_SEPARATE_HEADER_AND_SOURCE, fCViewSeparateHeaderAndSource.isSelected());
+		prefs.setValue(PreferenceConstants.CVIEW_GROUP_MACROS, fCViewGroupMacros.isSelected());
 		prefs.setValue(PreferenceConstants.OUTLINE_GROUP_INCLUDES, fOutlineGroupIncludes.isSelected());
 		prefs.setValue(PreferenceConstants.OUTLINE_GROUP_NAMESPACES, fOutlineGroupNamespaces.isSelected());
 		prefs.setValue(PreferenceConstants.OUTLINE_GROUP_MEMBERS, fOutlineGroupMembers.isSelected());
+		prefs.setValue(PreferenceConstants.OUTLINE_GROUP_MACROS, fOutlineGroupMacros.isSelected());
 		try {
 			new InstanceScope().getNode(CUIPlugin.PLUGIN_ID).flush();
 		} catch (BackingStoreException exc) {
@@ -188,9 +204,11 @@ public class AppearancePreferencePage extends PreferencePage implements IWorkben
 		fShowTUChildren.setSelection(prefs.getDefaultBoolean(PreferenceConstants.PREF_SHOW_CU_CHILDREN));
 		fCViewGroupIncludes.setSelection(prefs.getDefaultBoolean(PreferenceConstants.CVIEW_GROUP_INCLUDES));
 		fCViewSeparateHeaderAndSource.setSelection(prefs.getDefaultBoolean(PreferenceConstants.CVIEW_SEPARATE_HEADER_AND_SOURCE));
+		fCViewGroupMacros.setSelection(prefs.getDefaultBoolean(PreferenceConstants.CVIEW_GROUP_MACROS));
 		fOutlineGroupIncludes.setSelection(prefs.getDefaultBoolean(PreferenceConstants.OUTLINE_GROUP_INCLUDES));
 		fOutlineGroupNamespaces.setSelection(prefs.getDefaultBoolean(PreferenceConstants.OUTLINE_GROUP_NAMESPACES));
 		fOutlineGroupMembers.setSelection(prefs.getDefaultBoolean(PreferenceConstants.OUTLINE_GROUP_MEMBERS));
+		fOutlineGroupMacros.setSelection(prefs.getDefaultBoolean(PreferenceConstants.OUTLINE_GROUP_MACROS));
 		super.performDefaults();
 	}
 }

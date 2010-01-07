@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2007 Wind River Systems, Inc. and others.
+ * Copyright (c) 2006, 2009 Wind River Systems, Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -93,6 +93,10 @@ public class CNavigatorContentProvider extends CViewContentProvider implements I
 					boolean groupIncludes= newValue instanceof Boolean ? ((Boolean)newValue).booleanValue() : false;
 					setIncludesGrouping(groupIncludes);
 					refreshViewer= true;
+				} else if (property.equals(PreferenceConstants.CVIEW_GROUP_MACROS)) {
+					boolean groupMacros = newValue instanceof Boolean ? ((Boolean)newValue).booleanValue() : false;
+					setMacroGrouping(groupMacros);
+					refreshViewer= true;
 				}
 
 				if (refreshViewer && getViewer() != null) {
@@ -123,6 +127,7 @@ public class CNavigatorContentProvider extends CViewContentProvider implements I
 		IPreferenceStore store= PreferenceConstants.getPreferenceStore();
 		boolean showCUChildren= store.getBoolean(PreferenceConstants.PREF_SHOW_CU_CHILDREN);
 		boolean groupIncludes= store.getBoolean(PreferenceConstants.CVIEW_GROUP_INCLUDES);
+		boolean groupMacros= store.getBoolean(PreferenceConstants.CVIEW_GROUP_MACROS);
 		if (memento != null) {
 			// options controlled by preference only
 //			String mementoValue= memento.getString(PreferenceConstants.PREF_SHOW_CU_CHILDREN);
@@ -139,6 +144,7 @@ public class CNavigatorContentProvider extends CViewContentProvider implements I
 		}
 		setProvideMembers(showCUChildren);
 		setIncludesGrouping(groupIncludes);
+		setMacroGrouping(groupMacros);
 		setProvideWorkingCopy(true);
 	}
 
@@ -149,6 +155,7 @@ public class CNavigatorContentProvider extends CViewContentProvider implements I
 		if (memento != null) {
 			memento.putString(PreferenceConstants.PREF_SHOW_CU_CHILDREN, String.valueOf(getProvideMembers()));
 			memento.putString(PreferenceConstants.CVIEW_GROUP_INCLUDES, String.valueOf(areIncludesGroup()));
+			memento.putString(PreferenceConstants.CVIEW_GROUP_MACROS, String.valueOf(isMacroGroupingEnabled()));
 			// clear obsolete flag
 			memento.putInteger(LINKING_ENABLED_DELAYED, 0);
 		}

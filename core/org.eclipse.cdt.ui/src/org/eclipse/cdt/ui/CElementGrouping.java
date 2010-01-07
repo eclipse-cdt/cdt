@@ -23,6 +23,12 @@ import org.eclipse.cdt.internal.ui.CPluginImages;
 public abstract class CElementGrouping extends WorkbenchAdapter implements IAdaptable {
 
 	public final static int INCLUDES_GROUPING = 0x00001;
+	
+	/**
+	 * @since 5.2
+	 */
+	public final static int MACROS_GROUPING = 0x00011;
+	
 	public final static int NAMESPACE_GROUPING = 0x00010;
 	public final static int CLASS_GROUPING = 0x00100;
 	public final static int LIBRARY_REF_CONTAINER = 0x01000;
@@ -46,6 +52,8 @@ public abstract class CElementGrouping extends WorkbenchAdapter implements IAdap
 		switch (type) {
 			case INCLUDES_GROUPING:
 				return Messages.CElementGrouping_includeGroupingLabel; 
+			case MACROS_GROUPING:
+				return Messages.CElementGrouping_macroGroupingLabel;
 		}
 		return super.getLabel(object);
 	}
@@ -62,6 +70,8 @@ public abstract class CElementGrouping extends WorkbenchAdapter implements IAdap
 				return CPluginImages.DESC_OBJS_NAMESPACE;
 			case CLASS_GROUPING:
 				return CPluginImages.DESC_OBJS_CLASS;
+			case MACROS_GROUPING:
+				return CPluginImages.DESC_OBJS_MACRO;
 		}
 		return super.getImageDescriptor(object);
 	}

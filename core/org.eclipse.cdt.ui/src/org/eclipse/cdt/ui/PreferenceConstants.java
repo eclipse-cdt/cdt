@@ -755,6 +755,15 @@ public class PreferenceConstants {
 	 * @since 5.1
 	 */
 	public static final String OUTLINE_GROUP_MEMBERS= "org.eclipse.cdt.ui.outline.groupmembers"; //$NON-NLS-1$
+	
+	/**
+	 * A named preference that controls whether the Outline view should group macro definitions.
+	 * <p>
+	 * Value is of type <code>Boolean</code>.
+	 * </p>
+	 * @since 5.2
+	 */
+	public static final String OUTLINE_GROUP_MACROS= "org.eclipse.cdt.ui.outline.groupmacros"; //$NON-NLS-1$
 
 	/**
 	 * A named preference that controls whether the Outline view
@@ -773,6 +782,16 @@ public class PreferenceConstants {
 	 * </p>
 	 */
 	public static final String CVIEW_GROUP_INCLUDES= "org.eclipse.cdt.ui.cview.groupincludes"; //$NON-NLS-1$
+	
+	/**
+	 * A named preference that controls whether macro defintions should be grouped in the
+	 * C/C++ Projects view and the Project Explorer view.
+	 * <p>
+	 * Value is of type <code>Boolean</code>.
+	 * </p>
+	 * @since 5.2
+	 */
+	public static final String CVIEW_GROUP_MACROS= "org.eclipse.cdt.ui.cview.groupmacros"; //$NON-NLS-1$
 
 	/**
 	 * A named preference that controls whether header and source files should be separated in the

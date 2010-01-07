@@ -38,6 +38,7 @@ import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.core.model.ICModel;
 import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.core.model.IInclude;
+import org.eclipse.cdt.core.model.IMacro;
 import org.eclipse.cdt.core.model.IMember;
 import org.eclipse.cdt.core.model.INamespace;
 import org.eclipse.cdt.core.model.IParent;
@@ -79,6 +80,7 @@ public class BaseCElementContentProvider implements ITreeContentProvider {
 	protected boolean fIncludesGrouping= false;
 	protected boolean fNamespacesGrouping= false;
 	protected boolean fMemberGrouping= false;
+	protected boolean fMacroGrouping= false;
 	
 	public BaseCElementContentProvider() {
 		this(false, false);
@@ -164,6 +166,21 @@ public class BaseCElementContentProvider implements ITreeContentProvider {
 	 */
 	public void setMemberGrouping(boolean enable) {
 		fMemberGrouping = enable;
+	}
+	
+	/**
+	 * @return whether grouping of macros is enabled
+	 */
+	public boolean isMacroGroupingEnabled() {
+		return fMacroGrouping;
+	}
+	
+	/**
+	 * Enable/disable marco grouping
+	 * @param enable
+	 */
+	public void setMacroGrouping(boolean enable) {
+		fMacroGrouping = enable;
 	}
 
 	/* (non-Cdoc)
@@ -367,6 +384,9 @@ public class BaseCElementContentProvider implements ITreeContentProvider {
 		if (element instanceof IInclude && fIncludesGrouping) {
 			parent = new IncludesGrouping(((IInclude)element).getTranslationUnit());
 		}
+		if (element instanceof IMacro && fMacroGrouping) {
+			parent = new MacrosGrouping(((IMacro)element).getTranslationUnit());
+		}
 		return parent;
 	}
 	
@@ -470,6 +490,28 @@ public class BaseCElementContentProvider implements ITreeContentProvider {
 				} else {
 					list.add(children[i]);
 				}
+			}
+			children = list.toArray();
+		}
+		if (fMacroGrouping) {
+			ArrayList<Object> list = new ArrayList<Object>(children.length);
+			boolean hasMacros = false;
+			for (int i = 0; i < children.length; i++) {
+				if (!(children[i] instanceof IMacro))
+					list.add(children[i]);
+				else
+					hasMacros = true;
+			}
+			if (hasMacros) {
+				//Check if include gouping is there. If so, put macros after
+				if(!list.isEmpty()){
+					if(list.get(0) instanceof IncludesGrouping)
+						list.add (1, new MacrosGrouping(unit));
+					else
+						list.add (0, new MacrosGrouping(unit));
+				}
+				else
+					list.add (0, new MacrosGrouping(unit));
 			}
 			children = list.toArray();
 		}

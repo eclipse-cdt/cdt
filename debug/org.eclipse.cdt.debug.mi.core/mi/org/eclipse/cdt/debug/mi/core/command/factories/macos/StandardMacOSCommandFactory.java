@@ -7,6 +7,7 @@
  *
  * Contributors:
  * Nokia - Initial API and implementation
+ * Marc-Andre Laperle - patch for bug #250037
  *******************************************************************************/
 package org.eclipse.cdt.debug.mi.core.command.factories.macos;
 
@@ -14,6 +15,7 @@ import java.io.File;
 
 import org.eclipse.cdt.debug.mi.core.command.MIEnvironmentCD;
 import org.eclipse.cdt.debug.mi.core.command.MIInfoSharedLibrary;
+import org.eclipse.cdt.debug.mi.core.command.MIVarUpdate;
 import org.eclipse.cdt.debug.mi.core.command.factories.StandardCommandFactory;
 
 public class StandardMacOSCommandFactory extends StandardCommandFactory {
@@ -43,5 +45,14 @@ public class StandardMacOSCommandFactory extends StandardCommandFactory {
 	public MIInfoSharedLibrary createMIInfoSharedLibrary() {
 		return new MIInfoSharedLibrary(getMIVersion());
 	}
+
+	public MIVarUpdate createMIVarUpdate() {
+		return new MacOSMIVarUpdate(getMIVersion());
+	}
+
+	public MIVarUpdate createMIVarUpdate(String name) {
+		return new MacOSMIVarUpdate(getMIVersion(), name);
+	}
+	
 
 }

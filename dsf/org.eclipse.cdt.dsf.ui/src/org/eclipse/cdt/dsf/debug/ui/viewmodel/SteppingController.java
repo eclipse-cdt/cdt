@@ -19,6 +19,7 @@ import java.util.Map;
 import java.util.concurrent.RejectedExecutionException;
 import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import org.eclipse.cdt.dsf.concurrent.ConfinedToDsfExecutor;
 import org.eclipse.cdt.dsf.concurrent.DataRequestMonitor;
@@ -134,7 +135,7 @@ public final class SteppingController {
 	/**
 	 * Minimum step interval in milliseconds.
 	 */
-	private int fMinStepInterval= 0;
+	private AtomicInteger fMinStepInterval= new AtomicInteger(0);
 
 	/**
 	 * Map of execution contexts for which a step is in progress.
@@ -193,7 +194,7 @@ public final class SteppingController {
      */
     @ThreadSafe
     public void setMinimumStepInterval(int interval) {
-    	fMinStepInterval = interval;
+    	fMinStepInterval.set(interval);
     }
 
 	/**
@@ -314,11 +315,12 @@ public final class SteppingController {
 	 * @return  the number of milliseconds before the next possible step
 	 */
 	private int getStepDelay(IExecutionDMContext execCtx) {
-		if (fMinStepInterval > 0) {
+	    int minStepInterval = fMinStepInterval.get();
+		if (minStepInterval > 0) {
 	        for (IExecutionDMContext lastStepCtx : fLastStepTimes.keySet()) {
 	            if (execCtx.equals(lastStepCtx) || DMContexts.isAncestorOf(execCtx, lastStepCtx)) {
 	                long now = System.currentTimeMillis();
-					int delay= (int) (fLastStepTimes.get(lastStepCtx) + fMinStepInterval - now);
+					int delay= (int) (fLastStepTimes.get(lastStepCtx) + minStepInterval - now);
 					return Math.max(delay, 0);
 	            }
 	        }

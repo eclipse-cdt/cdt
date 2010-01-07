@@ -57,18 +57,20 @@ public interface ICDTLaunchConfigurationConstants {
 
 	/**
 	 * Launch configuration attribute value constants for build before launch.
-	 * @since 6.1 */
+	 * 
+	 * @since 7.0
+	 */
 	public static final int BUILD_BEFORE_LAUNCH_DISABLED = 0;
-	/** @since 6.1 */
+	/** @since 7.0 */
 	public static final int BUILD_BEFORE_LAUNCH_ENABLED = 1;
-	/** @since 6.1 */
+	/** @since 7.0 */
 	public static final int BUILD_BEFORE_LAUNCH_USE_WORKSPACE_SETTING = 2;
 
 	/**
 	 * Launch configuration attribute key. The value is the ID of the project's
 	 * build configuration that should be used when a build is required before launch.
 	 */
-	/** @since 6.1 */
+	/** @since 7.0 */
 	public static final String ATTR_BUILD_BEFORE_LAUNCH = CDT_LAUNCH_ID + ".ATTR_BUILD_BEFORE_LAUNCH_ATTR"; //$NON-NLS-1$
 
 	/**

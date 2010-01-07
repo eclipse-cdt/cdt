@@ -21,7 +21,7 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
 
 /**
- * @since 6.1
+ * @since 7.0
  */
 public class ReadOnlyFieldEditor extends FieldEditor implements ICBreakpointsUIContributionUser {
 	protected Label textField;

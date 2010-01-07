@@ -241,7 +241,7 @@ public class CDIDebugModel {
 	}
 
 	/**
-	 * @since 6.1
+	 * @since 7.0
 	 */
 	public static ICLineBreakpoint createLineTracepoint( String sourceHandle, IResource resource, int type, int lineNumber, boolean enabled, int ignoreCount, String condition, boolean register ) throws CoreException {
 		HashMap<String, Object> attributes = new HashMap<String, Object>( 10 );
@@ -351,7 +351,7 @@ public class CDIDebugModel {
 	}
 
 	/**
-	 * @since 6.1
+	 * @since 7.0
 	 */
 	public static ICAddressBreakpoint createAddressTracepoint( String module, String sourceHandle, IResource resource, int type, int lineNumber, IAddress address, boolean enabled, int ignoreCount, String condition, boolean register ) throws CoreException {
 		HashMap<String, Object> attributes = new HashMap<String, Object>( 10 );
@@ -567,7 +567,7 @@ public class CDIDebugModel {
 	}
 
 	/**
-	 * @since 6.1
+	 * @since 7.0
 	 */
 	public static ICFunctionBreakpoint createFunctionTracepoint( String sourceHandle, IResource resource, int type, String function, int charStart, int charEnd, int lineNumber, boolean enabled, int ignoreCount, String condition, boolean register ) throws CoreException {
 		HashMap<String, Object> attributes = new HashMap<String, Object>( 10 );

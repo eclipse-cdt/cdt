@@ -56,7 +56,7 @@ import org.eclipse.ui.IEditorPart;
 /**
  * The text hovering support for C/C++ debugger.
  * 
- * @since 6.1
+ * @since 7.0
  */
 public abstract class AbstractDebugTextHover implements ICEditorTextHover, ITextHoverExtension {
 

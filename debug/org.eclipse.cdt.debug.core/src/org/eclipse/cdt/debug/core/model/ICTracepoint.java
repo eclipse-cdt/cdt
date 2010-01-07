@@ -12,11 +12,10 @@ package org.eclipse.cdt.debug.core.model;
 
 import org.eclipse.core.runtime.CoreException;
 
-
 /**
  * A tracepoint specific to the C/C++ debug model.
  * 
- * @since 6.1
+ * @since 7.0
  */
 public interface ICTracepoint extends ICLineBreakpoint {
 	/**

@@ -14,7 +14,8 @@ import org.eclipse.debug.core.commands.IDebugCommandHandler;
 
 /**
  * Handler interface to toggle reverse debugging
- * @since 6.1
+ * 
+ * @since 7.0
  */
 public interface IReverseToggleHandler extends IDebugCommandHandler {
 	/**

@@ -224,17 +224,16 @@ public class ManagedBuildMacrosTests extends TestCase {
 //	}
 	
 	
-	public void testMacroOptL(){
+	public void testMacroOptL() {
 		doInit();
-		IToolChain tc = cfgs[0].getToolChain();
-		ITool       t = cfgs[0].getTools()[0];
-		IOption   opt = t.getOptionById(OPT_IDL);
-		OptionContextData ocd = new OptionContextData(opt,t);
+		ITool t = cfgs[0].getTools()[0];
+		IOption opt = t.getOptionById(OPT_IDL);
+		OptionContextData ocd = new OptionContextData(opt, t);
 		assertNotNull(opt);
 		ms = mp.getSuppliers(IBuildMacroProvider.CONTEXT_OPTION, ocd);
 		assertNotNull(ms);
 		assertEquals(ms.length, 1);
-		
+
 		try {
 			String[] set0 = opt.getStringListValue();
 			assertNotNull(set0);
@@ -243,24 +242,34 @@ public class ManagedBuildMacrosTests extends TestCase {
 			String[] res1 = {"new a", /*"test=CFGTEST",*/ "x", "y",      //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
 					     "z", ":", "PRJ=NewMacrosForProjectContext", "LIST=x|y|z"};        //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
 			try {
-				res1[4] = mp.resolveValue("${PATH}",UNKNOWN,LISTSEP,IBuildMacroProvider.CONTEXT_OPTION, ocd);  //$NON-NLS-1$
-			} catch (BuildMacroException e) { fail(e.getLocalizedMessage()); } 
+				res1[4] = mp.resolveValue("${Path}", UNKNOWN, LISTSEP, IBuildMacroProvider.CONTEXT_OPTION, ocd); //$NON-NLS-1$
+			} catch (BuildMacroException e) {
+				fail(e.getLocalizedMessage());
+			}
 
 			opt = cfgs[0].setOption(t, opt, set1);
 			assertNotNull(opt);
 
 			ArrayList<String> ar = new ArrayList<String>(1);
-			for (int i=0; i<set1.length; i++) {
+			for (int i = 0; i < set1.length; i++) {
 				try {
-					String[] aus = mp.resolveStringListValue(set1[i], UNKNOWN, LISTSEP, IBuildMacroProvider.CONTEXT_OPTION, new OptionContextData(opt,t));
-					if (aus == null) continue;
-					for (int j=0; j<aus.length; j++) ar.add(aus[j]);
-				} catch (BuildMacroException e) { fail(e.getLocalizedMessage()); } 
+					String[] aus = mp.resolveStringListValue(set1[i], UNKNOWN, LISTSEP,
+							IBuildMacroProvider.CONTEXT_OPTION, new OptionContextData(opt, t));
+					if (aus == null)
+						continue;
+					for (int j = 0; j < aus.length; j++)
+						ar.add(aus[j]);
+				} catch (BuildMacroException e) {
+					fail(e.getLocalizedMessage());
+				}
 			}
 			String[] res = ar.toArray(new String[0]);
 			assertEquals(res.length, res1.length);
-			for (int i=0; i<res.length; i++) assertEquals(res[i], res1[i]);
-		} catch (BuildException e) { fail(e.getLocalizedMessage());	}
+			for (int i = 0; i < res.length; i++)
+				assertEquals(res[i], res1[i]);
+		} catch (BuildException e) {
+			fail(e.getLocalizedMessage());
+		}
 	}
 	
 	/**

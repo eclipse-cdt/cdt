@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2003, 2009 IBM Corporation and others.
+ * Copyright (c) 2003, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -20,7 +20,8 @@ import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.index.IIndexFileLocation;
 import org.eclipse.cdt.core.parser.FileContent;
 import org.eclipse.cdt.core.parser.ParserFactory;
-import org.eclipse.cdt.internal.core.parser.scanner.CharArray;
+import org.eclipse.cdt.internal.core.parser.scanner.AbstractCharArray;
+import org.eclipse.cdt.internal.core.parser.scanner.FileCharArray;
 import org.eclipse.cdt.internal.core.parser.scanner.InternalFileContent;
 import org.eclipse.cdt.internal.core.resources.PathCanonicalizationStrategy;
 import org.eclipse.core.resources.IFile;
@@ -197,9 +198,8 @@ public class InternalParserUtil extends ParserFactory {
 
 	private static InternalFileContent createFileContent(String path, String charset, InputStream in) {
 		try {
-			// replace with a better implementation 
-			org.eclipse.cdt.core.parser.CodeReader reader= new org.eclipse.cdt.core.parser.CodeReader(path, charset, in);
-			return new InternalFileContent(path, new CharArray(reader.buffer));
+			AbstractCharArray chars= FileCharArray.create(path, charset, in);
+			return new InternalFileContent(path, chars);
 		} catch (IOException e) {
 			CCorePlugin.log(e);
 		}

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2009 IBM Corporation and others.
+ * Copyright (c) 2004, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -12,6 +12,7 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.dom.parser.cpp;
 
+import org.eclipse.cdt.core.dom.ast.ASTNodeProperty;
 import org.eclipse.cdt.core.dom.ast.ASTVisitor;
 import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IASTExpression;
@@ -19,7 +20,10 @@ import org.eclipse.cdt.core.dom.ast.IASTFunctionCallExpression;
 import org.eclipse.cdt.core.dom.ast.IASTImplicitName;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IType;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTConstructorChainInitializer;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTConstructorInitializer;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTExpressionList;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTNewExpression;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunction;
 import org.eclipse.cdt.core.parser.util.ArrayUtil;
 import org.eclipse.cdt.internal.core.dom.parser.ASTNode;
@@ -29,7 +33,7 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPVisitor;
 
 
 public class CPPASTExpressionList extends ASTNode implements ICPPASTExpressionList, IASTAmbiguityParent {
-
+	private static final ICPPFunction[] NO_FUNCTIONS = new ICPPFunction[0];
 
 	/**
 	 * Caution: may contain nulls. 
@@ -137,8 +141,15 @@ public class CPPASTExpressionList extends ASTNode implements ICPPASTExpressionLi
     private ICPPFunction[] getOverloads() {
     	if(overloads == null) {
 	    	IASTExpression[] exprs = getExpressions();
-	    	if(exprs.length < 2 || getPropertyInParent() == IASTFunctionCallExpression.PARAMETERS)
-	    		return overloads = new ICPPFunction[0];
+	    	if(exprs.length < 2)
+	    		return overloads = NO_FUNCTIONS;
+	    	
+	    	ASTNodeProperty prop = getPropertyInParent();
+	    	if (prop == IASTFunctionCallExpression.PARAMETERS || 
+	    			prop == ICPPASTConstructorChainInitializer.INITIALIZER ||
+	    			prop == ICPPASTConstructorInitializer.EXPRESSION ||
+	    			prop == ICPPASTNewExpression.NEW_INITIALIZER)
+	    		return overloads = NO_FUNCTIONS;
 	    	
 	    	overloads = new ICPPFunction[exprs.length-1];
 	    	IType lookupType = exprs[0].getExpressionType();

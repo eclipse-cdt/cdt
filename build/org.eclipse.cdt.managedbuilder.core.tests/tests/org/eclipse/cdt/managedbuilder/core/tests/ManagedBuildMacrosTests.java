@@ -13,6 +13,8 @@ package org.eclipse.cdt.managedbuilder.core.tests;
 
 import java.io.ByteArrayInputStream;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 import junit.framework.Test;
 import junit.framework.TestCase;
@@ -67,14 +69,16 @@ public class ManagedBuildMacrosTests extends TestCase {
 	
 	static final String UNKNOWN = "<HZ>"; //$NON-NLS-1$
 	static final String LISTSEP = "|";    //$NON-NLS-1$
+	static final String LISTSEP_REGEX = "\\|";    //$NON-NLS-1$
 	static final String TEST = "TEST";    //$NON-NLS-1$
 	static final String[] TST = {"DUMMY", "FILETEST",   //$NON-NLS-1$ //$NON-NLS-2$
 		"OPTTEST", "CFGTEST", "PRJTEST",  //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 		"WSPTEST", "INSTEST", "ENVTEST"}; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 	// used for options testing
-	final String OPT_IDS = "macro.test.string";  //$NON-NLS-1$
-	final String OPT_IDL = "macro.test.list";    //$NON-NLS-1$
-	final String INC_DEF  = "${IncludeDefaults}";//$NON-NLS-1$
+	static final String OPT_IDS = "macro.test.string";  //$NON-NLS-1$
+	static final String OPT_IDL = "macro.test.list";    //$NON-NLS-1$
+	static final String INC_DEF  = "${IncludeDefaults}";//$NON-NLS-1$
+	static final String PATH_ENV_VAR = "${PATH}"; //$NON-NLS-1$
 	
 	public ManagedBuildMacrosTests() { super(); }
 	public ManagedBuildMacrosTests(String name) { super(name); }
@@ -237,12 +241,16 @@ public class ManagedBuildMacrosTests extends TestCase {
 		try {
 			String[] set0 = opt.getStringListValue();
 			assertNotNull(set0);
-			final String[] set1 = {"new a", /*"test=${TEST}",*/ INC_DEF, //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$  
-				 "${PATH}", "PRJ=${NEW_FOR_PRJ}", "LIST=" + INC_DEF};//$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-			String[] res1 = {"new a", /*"test=CFGTEST",*/ "x", "y",      //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
-					     "z", ":", "PRJ=NewMacrosForProjectContext", "LIST=x|y|z"};        //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
+			final String[] set1 = {"new a", /*"test=${TEST}",*/ INC_DEF,  
+				 "PRJ=${NEW_FOR_PRJ}", "LIST=" + INC_DEF, PATH_ENV_VAR};
+			String[] resArr1 = {"new a", /*"test=CFGTEST",*/ "x", "y",
+					     "z", "PRJ=NewMacrosForProjectContext", "LIST=x|y|z"};
+			List<String> res1 = new ArrayList<String>(Arrays.asList(resArr1));
 			try {
-				res1[4] = mp.resolveValue("${Path}", UNKNOWN, LISTSEP, IBuildMacroProvider.CONTEXT_OPTION, ocd); //$NON-NLS-1$
+				// Add split ${PATH} to res1
+				String strList = mp.resolveValue(PATH_ENV_VAR, UNKNOWN, LISTSEP, IBuildMacroProvider.CONTEXT_OPTION, ocd);
+				String[] split = strList.split(LISTSEP_REGEX);
+				res1.addAll(Arrays.asList(split));
 			} catch (BuildMacroException e) {
 				fail(e.getLocalizedMessage());
 			}
@@ -250,7 +258,7 @@ public class ManagedBuildMacrosTests extends TestCase {
 			opt = cfgs[0].setOption(t, opt, set1);
 			assertNotNull(opt);
 
-			ArrayList<String> ar = new ArrayList<String>(1);
+			ArrayList<String> res2 = new ArrayList<String>(res1.size());
 			for (int i = 0; i < set1.length; i++) {
 				try {
 					String[] aus = mp.resolveStringListValue(set1[i], UNKNOWN, LISTSEP,
@@ -258,15 +266,14 @@ public class ManagedBuildMacrosTests extends TestCase {
 					if (aus == null)
 						continue;
 					for (int j = 0; j < aus.length; j++)
-						ar.add(aus[j]);
+						res2.add(aus[j]);
 				} catch (BuildMacroException e) {
 					fail(e.getLocalizedMessage());
 				}
 			}
-			String[] res = ar.toArray(new String[0]);
-			assertEquals(res.length, res1.length);
-			for (int i = 0; i < res.length; i++)
-				assertEquals(res[i], res1[i]);
+			assertEquals(res1.size(), res2.size());
+			for (int i = 0; i < res1.size(); i++)
+				assertEquals(res1.get(i), res2.get(i));
 		} catch (BuildException e) {
 			fail(e.getLocalizedMessage());
 		}

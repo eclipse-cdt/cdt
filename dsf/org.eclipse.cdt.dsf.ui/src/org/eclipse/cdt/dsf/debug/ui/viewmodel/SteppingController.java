@@ -20,11 +20,13 @@ import java.util.concurrent.RejectedExecutionException;
 import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
 
+import org.eclipse.cdt.dsf.concurrent.ConfinedToDsfExecutor;
 import org.eclipse.cdt.dsf.concurrent.DataRequestMonitor;
 import org.eclipse.cdt.dsf.concurrent.DsfExecutor;
 import org.eclipse.cdt.dsf.concurrent.DsfRunnable;
 import org.eclipse.cdt.dsf.concurrent.IDsfStatusConstants;
 import org.eclipse.cdt.dsf.concurrent.RequestMonitor;
+import org.eclipse.cdt.dsf.concurrent.ThreadSafe;
 import org.eclipse.cdt.dsf.datamodel.AbstractDMEvent;
 import org.eclipse.cdt.dsf.datamodel.DMContexts;
 import org.eclipse.cdt.dsf.debug.service.IRunControl;
@@ -53,8 +55,8 @@ import org.eclipse.jface.util.PropertyChangeEvent;
  * 
  * @since 1.1
  */
-public final class SteppingController
-{
+@ConfinedToDsfExecutor("#getExecutor()")
+public final class SteppingController {
     /**
      * Amount of time in milliseconds, that it takes the SteppingTimedOutEvent 
      * event to be issued after a step is started. 
@@ -164,6 +166,7 @@ public final class SteppingController
         setMinimumStepInterval(store.getInt(IDsfDebugUIConstants.PREF_MIN_STEP_INTERVAL));
     }
 
+    @ThreadSafe
     public void dispose() {
         try {
             fSession.getExecutor().execute(new DsfRunnable() {
@@ -188,6 +191,7 @@ public final class SteppingController
      * 
      * @param interval
      */
+    @ThreadSafe
     public void setMinimumStepInterval(int interval) {
     	fMinStepInterval = interval;
     }
@@ -205,6 +209,7 @@ public final class SteppingController
 	 * 
 	 * @param participant
 	 */
+    @ThreadSafe
     public void addSteppingControlParticipant(ISteppingControlParticipant participant) {
     	fParticipants.add(participant);
     }
@@ -214,6 +219,7 @@ public final class SteppingController
      * 
      * @param participant
      */
+    @ThreadSafe
     public void removeSteppingControlParticipant(final ISteppingControlParticipant participant) {
     	fParticipants.remove(participant);
     }
@@ -246,6 +252,7 @@ public final class SteppingController
     	}
     }
 
+    @ThreadSafe
 	public DsfSession getSession() {
 		return fSession;
 	}
@@ -254,6 +261,7 @@ public final class SteppingController
 	 * All access to this class should happen through this executor.
 	 * @return the executor this class is confined to
 	 */
+    @ThreadSafe
 	public DsfExecutor getExecutor() {
 		return getSession().getExecutor();
 	}

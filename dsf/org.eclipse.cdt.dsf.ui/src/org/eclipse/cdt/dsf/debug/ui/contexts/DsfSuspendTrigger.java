@@ -116,9 +116,6 @@ public class DsfSuspendTrigger implements ISuspendTrigger {
         fDisposed = true;
     }
 
-    /**
-     * @noreference This method is not intended to be referenced by clients.
-     */
     @DsfServiceEventHandler 
     public void eventDispatched(IRunControl.ISuspendedDMEvent e) {
         fireSuspended(null);        

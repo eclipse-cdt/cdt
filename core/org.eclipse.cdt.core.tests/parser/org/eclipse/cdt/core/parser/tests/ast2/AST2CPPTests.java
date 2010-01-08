@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2009 IBM Corporation and others.
+ * Copyright (c) 2004, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7984,6 +7984,31 @@ public class AST2CPPTests extends AST2BaseTest {
 	public void testADLForOperators_296906() throws Exception {
 		String code= getAboveComment();
 		parseAndCheckBindings(code, ParserLanguage.CPP);
+	}
+	
+	//	namespace ns {
+	//		struct A{};
+	//		void f(ns::A, char) {}
+	//	}
+	//	void f(ns::A, int) {}
+	//
+	//	ns::A a;
+	//	void test() {
+	//		f(a, '1');  // calls ns::f(ns::A, char)
+	//		f(a, 1);  // calls ns::f(ns::A, char)
+	//	}
+	public void testADL_299101() throws Exception {
+		String code= getAboveComment();
+		parseAndCheckBindings(code, ParserLanguage.CPP);
+		BindingAssertionHelper bh= new BindingAssertionHelper(code, true);
+		IFunction inns= bh.assertNonProblem("f(ns::A, char)", 1);
+		IFunction glob= bh.assertNonProblem("f(ns::A, int)", 1);
+		
+		IBinding b= bh.assertNonProblem("f(a, '1')", 1);
+		assertSame(b, inns);
+		
+		b= bh.assertNonProblem("f(a, 1)", 1);
+		assertSame(b, glob);
 	}
 }
 

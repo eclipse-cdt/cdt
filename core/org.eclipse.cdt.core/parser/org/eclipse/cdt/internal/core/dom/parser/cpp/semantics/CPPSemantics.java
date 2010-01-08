@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2009 IBM Corporation and others.
+ * Copyright (c) 2004, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -230,14 +230,19 @@ public class CPPSemantics {
 		
 		try {
             // 2: lookup
-            lookup(data, name);
+            lookup(data, null);
+
+            // Perform argument dependent lookup
+            if (data.checkAssociatedScopes() && !data.hasTypeOrMemberFunctionResult()) {
+                doKoenigLookup(data);
+            }
         } catch (DOMException e) {
             data.problem = (ProblemBinding) e.getProblem();
         }
-		
 		if (data.problem != null)
 		    return data.problem;
-		
+        
+
 		// 3: resolve ambiguities
 		IBinding binding;
         try {
@@ -263,29 +268,6 @@ public class CPPSemantics {
 	}
 
     private static IBinding postResolution(IBinding binding, LookupData data) {
-    	// If the normal lookup of the unqualified name finds a class member function, then ADL does not occur
-        if (data.checkAssociatedScopes() && !data.hasMemberFunctionResult()) {
-            // 3.4.2 argument dependent name lookup, aka Koenig lookup
-            try {
-            	boolean doKoenig= true;
-            	if (binding != null) {
-            		if (binding.getOwner() instanceof ICPPClassType)
-            			doKoenig= false;
-            		else if (binding instanceof ICPPClassType && data.considerConstructors)
-            			doKoenig= false;
-            	}
-            	if (doKoenig) {
-            		int count= data.getFoundItemCount();
-                    doKoenigLookup(data);
-                    if (data.getFoundItemCount() > count) {
-                    	binding = resolveAmbiguities(data, data.astName);
-                    }
-                }
-            } catch (DOMException e) {
-                binding = e.getProblem();
-            }
-        }
-        
         if (binding instanceof IProblemBinding)
         	return binding;
         
@@ -508,9 +490,9 @@ public class CPPSemantics {
 	private static void doKoenigLookup(LookupData data) throws DOMException {
 		data.ignoreUsingDirectives = true;
 		data.forceQualified = true;
-		ObjectSet<IScope> associated = getAssociatedScopes(data);
+		ObjectSet<ICPPScope> associated = getAssociatedScopes(data);
 		for (int i = 0; i < associated.size(); i++) {
-			final IScope scope = associated.keyAt(i);
+			final ICPPScope scope = associated.keyAt(i);
 			if (!data.visited.containsKey(scope)) {
 				lookup(data, scope);
 			}
@@ -602,12 +584,12 @@ public class CPPSemantics {
 		return data;
 	}
 
-    static private ObjectSet<IScope> getAssociatedScopes(LookupData data) {
+    static private ObjectSet<ICPPScope> getAssociatedScopes(LookupData data) {
     	if (!data.hasArgumentTypes())
     		return ObjectSet.emptySet();
     	
         IType[] ps = data.getFunctionArgumentTypes();
-        ObjectSet<IScope> namespaces = new ObjectSet<IScope>(2);
+        ObjectSet<ICPPScope> namespaces = new ObjectSet<ICPPScope>(2);
         ObjectSet<ICPPClassType> classes = new ObjectSet<ICPPClassType>(2);
         for (IType p : ps) {
             p = getUltimateType(p, true);
@@ -619,14 +601,14 @@ public class CPPSemantics {
         return namespaces;
     }
 
-    static private void getAssociatedScopes(IType t, ObjectSet<IScope> namespaces,
+    static private void getAssociatedScopes(IType t, ObjectSet<ICPPScope> namespaces,
     		ObjectSet<ICPPClassType> classes, CPPASTTranslationUnit tu) throws DOMException {
         // 3.4.2-2 
 		if (t instanceof ICPPClassType) {
 			ICPPClassType ct= (ICPPClassType) t;
 		    if (!classes.containsKey(ct)) {
 		        classes.put(ct);
-				IScope scope = getContainingNamespaceScope((IBinding) t, tu);
+		        ICPPScope scope = getContainingNamespaceScope((IBinding) t, tu);
 				if (scope != null)
 					namespaces.put(scope);
 
@@ -641,7 +623,7 @@ public class CPPSemantics {
 			    }
 		    }
 		} else if (t instanceof IEnumeration) {
-			IScope scope = getContainingNamespaceScope((IBinding) t, tu);
+			ICPPScope scope = getContainingNamespaceScope((IBinding) t, tu);
 			if (scope!=null)
 				namespaces.put(scope);
 		} else if (t instanceof IFunctionType) {
@@ -780,16 +762,30 @@ public class CPPSemantics {
 	 * @param data the lookup data created off a name
 	 * @param start either a scope or a name.
 	 */
-	static protected void lookup(LookupData data, Object start) throws DOMException {
+	static protected void lookup(LookupData data, IScope start) throws DOMException {
 		final IIndexFileSet fileSet= getIndexFileSet(data);
 		if (data.astName == null) 
 			return;
 
 		ICPPScope nextScope= null;
+		ICPPTemplateScope nextTmplScope= null;
 		if (start instanceof ICPPScope) {
 			nextScope= (ICPPScope) start;
-		} else if (start instanceof IASTName) {
-			nextScope= getLookupScope((IASTName) start, data);
+		} else {
+			nextScope= getLookupScope(data.astName, data);
+
+			if (nextScope instanceof ICPPTemplateScope) {
+				nextTmplScope= (ICPPTemplateScope) nextScope;
+				nextScope= getParentScope(nextScope, data.tu);
+			} else {
+				nextTmplScope= enclosingTemplateScope(data.astName);
+			}
+			if (!data.usesEnclosingScope && nextTmplScope != null) {
+				nextTmplScope= null;
+				if (dependsOnTemplateFieldReference(data.astName)) {
+					data.checkPointOfDecl= false;
+				}
+			}
 		}
 		if (nextScope == null)
 			return;
@@ -803,20 +799,6 @@ public class CPPSemantics {
 			}
 		}
 
-		ICPPTemplateScope nextTmplScope;
-		if (nextScope instanceof ICPPTemplateScope) {
-			nextTmplScope= (ICPPTemplateScope) nextScope;
-			nextScope= getParentScope(nextScope, data.tu);
-		} else {
-			nextTmplScope= enclosingTemplateScope(data.astName);
-		}
-		if (!data.usesEnclosingScope && nextTmplScope != null) {
-			nextTmplScope= null;
-			if (dependsOnTemplateFieldReference(data.astName)) {
-				data.checkPointOfDecl= false;
-			}
-		}
-		
 		while (nextScope != null || nextTmplScope != null) {
 			// when the non-template scope is no longer contained within the first template scope,
 			// we use the template scope for the next iteration.
@@ -884,7 +866,7 @@ public class CPPSemantics {
 			
 			// if still not found, loop and check our containing scope
 			if (data.qualified() && !(scope instanceof ICPPTemplateScope)) {
-				if (data.usingDirectives.isEmpty())
+				if (data.ignoreUsingDirectives || data.usingDirectives.isEmpty())
 					break;
 				data.usingDirectivesOnly = true;
 			}
@@ -2470,7 +2452,7 @@ public class CPPSemantics {
             IASTName name = idExp.getName();
 	        LookupData data = createLookupData(name, false);
 			try {
-	            lookup(data, name);
+	            lookup(data, null);
 	        } catch (DOMException e) {
 	            return null;
 	        }
@@ -2957,10 +2939,10 @@ public class CPPSemantics {
 		data.prefixLookup = prefixLookup;
 		data.foundItems = new CharArrayObjectMap(2);
 
-		return contentAssistLookup(data, name);
+		return contentAssistLookup(data, null);
 	}
 
-	private static IBinding[] contentAssistLookup(LookupData data, Object start) {        
+	private static IBinding[] contentAssistLookup(LookupData data, IScope start) {        
         try {
             lookup(data, start);
         } catch (DOMException e) {
@@ -2999,7 +2981,7 @@ public class CPPSemantics {
         return ArrayUtil.trim(result);
     }
 
-    private static IBinding[] standardLookup(LookupData data, Object start) {
+    private static IBinding[] standardLookup(LookupData data, IScope start) {
     	try {
 			lookup(data, start);
 		} catch (DOMException e) {

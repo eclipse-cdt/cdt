@@ -48,7 +48,21 @@ import org.eclipse.debug.core.model.IBreakpoint;
 import org.osgi.framework.BundleContext;
 
 /**
+ * Breakpoints mediator is a DSF service which synchronizes breakpoints in the 
+ * IDE and breakpoints in the debugger.  The IDE breakpoints are managed by the 
+ * {@link IBreakpointManager} while the debugger breakpoints are accessed 
+ * through the {@link IBreakpoints} service.
+ * <p>
+ * This class is not intended to be extended by clients.  Instead clients should
+ * implement the {@link IBreakpointAttributeTranslator} interface which is used
+ * to translate breakpoint attributes between the IDE and debugger breakpoints.
+ * <p>
+ * Note: This breakpoint mediator implementation has been superseded by a more
+ * powerful {@link BreakpointsMediator2} implementation.  
  * 
+ * @since 1.0
+ * @see IBreakpointAttributeTranslator
+ * @see BreakpointsMediator2
  */
 public class BreakpointsMediator extends AbstractDsfService implements IBreakpointManagerListener, IBreakpointListener
 {

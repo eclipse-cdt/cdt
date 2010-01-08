@@ -44,7 +44,6 @@ import org.eclipse.cdt.core.model.ITranslationUnit;
 import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.cdt.ui.text.ICCompletionProposal;
 
-import org.eclipse.cdt.internal.corext.template.c.CContextType;
 import org.eclipse.cdt.internal.corext.template.c.TranslationUnitContext;
 import org.eclipse.cdt.internal.corext.template.c.TranslationUnitContextType;
 
@@ -54,23 +53,20 @@ import org.eclipse.cdt.internal.ui.text.contentassist.RelevanceConstants;
 
 public class TemplateEngine {
 
-	private static final String $_LINE_SELECTION= "${" + GlobalTemplateVariables.LineSelection.NAME + "}"; //$NON-NLS-1$ //$NON-NLS-2$
-	private static final String $_WORD_SELECTION= "${" + GlobalTemplateVariables.WordSelection.NAME + "}"; //$NON-NLS-1$ //$NON-NLS-2$
+	private static final String $_LINE_SELECTION= "${" + GlobalTemplateVariables.LineSelection.NAME + '}'; //$NON-NLS-1$
+	private static final String $_WORD_SELECTION= "${" + GlobalTemplateVariables.WordSelection.NAME + '}'; //$NON-NLS-1$
 
 	/** The context type. */
-	private TemplateContextType fContextType;	
+	private final TemplateContextType fContextType;	
 	/** The result proposals. */
-	private ArrayList<ICompletionProposal> fProposals= new ArrayList<ICompletionProposal>();
+	private final ArrayList<ICompletionProposal> fProposals= new ArrayList<ICompletionProposal>();
 	/** Positions created on the key documents to remove in reset. */
 	private final Map<IDocument, Position> fPositions= new HashMap<IDocument, Position>();
 	/** Pattern to match the start of a line content */
 	private final Pattern fStartOfLineContentPattern = Pattern.compile("[^ \t]"); //$NON-NLS-1$
 
-	public class CTemplateProposal extends TemplateProposal implements ICCompletionProposal {
+	public static class CTemplateProposal extends TemplateProposal implements ICCompletionProposal {
 		
-		/*
-		 * @see org.eclipse.jface.text.contentassist.ICompletionProposalExtension3#getInformationControlCreator()
-		 */
 		@Override
 		public IInformationControlCreator getInformationControlCreator() {
 			return new IInformationControlCreator() {
@@ -80,12 +76,7 @@ public class TemplateEngine {
 				}
 			};
 		}
-		/**
-		 * @param template
-		 * @param context
-		 * @param region
-		 * @param image
-		 */
+
 		public CTemplateProposal(Template template, TemplateContext context, IRegion region, Image image) {
 			super(template, context, region, image, RelevanceConstants.CASE_MATCH_RELEVANCE + RelevanceConstants.TEMPLATE_TYPE_RELEVANCE);
 		}
@@ -105,17 +96,6 @@ public class TemplateEngine {
 	}
 
 	/**
-	 * This is the default constructor used by the new content assist extension point
-	 */
-	public TemplateEngine() {
-		fContextType = CUIPlugin.getDefault().getTemplateContextRegistry().getContextType(CContextType.ID);			
-		if (fContextType == null) {
-			fContextType= new CContextType();
-			CUIPlugin.getDefault().getTemplateContextRegistry().addContextType(fContextType);
-		}
-	}
-	
-	/**
 	 * Empties the collector.
 	 */
 	public void reset() {
@@ -133,7 +113,6 @@ public class TemplateEngine {
 	 * Returns the array of matching templates.
 	 */
 	public List<ICompletionProposal> getResults() {
-		//return (TemplateProposal[]) fProposals.toArray(new TemplateProposal[fProposals.size()]);
 		return fProposals;
 	}
 
@@ -144,8 +123,7 @@ public class TemplateEngine {
 	 * @param completionPosition the context position in the document of the text viewer
 	 * @param translationUnit the translation unit (may be <code>null</code>)
 	 */
-	public void complete(ITextViewer viewer, int completionPosition, ITranslationUnit translationUnit)
-	{
+	public void complete(ITextViewer viewer, int completionPosition, ITranslationUnit translationUnit) {
 		if (!(fContextType instanceof TranslationUnitContextType))
 			return;
 

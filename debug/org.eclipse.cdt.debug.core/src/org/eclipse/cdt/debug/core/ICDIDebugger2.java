@@ -18,8 +18,6 @@ import org.eclipse.debug.core.ILaunch;
  
 /**
  * Replacement for deprecated <code>ICDIDebugger</code>.
- * 
- * @since 3.1 experimental
  */
 public interface ICDIDebugger2 extends ICDIDebugger {
 	

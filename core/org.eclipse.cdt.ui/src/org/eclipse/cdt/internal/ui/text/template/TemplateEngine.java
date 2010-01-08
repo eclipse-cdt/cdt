@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2008 IBM Corporation and others.
+ * Copyright (c) 2000, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -17,6 +17,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.jface.text.BadLocationException;
@@ -61,6 +63,8 @@ public class TemplateEngine {
 	private ArrayList<ICompletionProposal> fProposals= new ArrayList<ICompletionProposal>();
 	/** Positions created on the key documents to remove in reset. */
 	private final Map<IDocument, Position> fPositions= new HashMap<IDocument, Position>();
+	/** Pattern to match the start of a line content */
+	private final Pattern fStartOfLineContentPattern = Pattern.compile("[^ \t]"); //$NON-NLS-1$
 
 	public class CTemplateProposal extends TemplateProposal implements ICCompletionProposal {
 		
@@ -201,12 +205,12 @@ public class TemplateEngine {
 		}
 
 	}
-	
+
 	/**
-	 * Returns <code>true</code> if one line is completely selected or if multiple lines are selected.
-	 * Being completely selected means that all characters except the new line characters are
-	 * selected.
-	 *
+	 * Returns <code>true</code> if one line is completely selected or if multiple lines are selected. Being
+	 * completely selected means that all characters are selected except the new line characters and
+	 * leading/trailing spaces.
+	 * 
 	 * @return <code>true</code> if one or multiple lines are selected
 	 */
 	private boolean areMultipleLinesSelected(ITextViewer viewer) {
@@ -221,9 +225,16 @@ public class TemplateEngine {
 
 			IDocument document= viewer.getDocument();
 			int startLine= document.getLineOfOffset(s.x);
-			int endLine= document.getLineOfOffset(s.x + s.y);
 			IRegion line= document.getLineInformation(startLine);
-			return startLine != endLine || (s.x == line.getOffset() && s.y == line.getLength());
+			
+			String lineContent = document.get(line.getOffset(), line.getLength());
+			Matcher m = fStartOfLineContentPattern.matcher(lineContent);
+			int lineContentStart = 0;
+			if(m.find())
+				lineContentStart = m.start() + line.getOffset();
+			int lineContentLength = lineContent.trim().length();
+			
+			return s.x <= lineContentStart && s.x + s.y >= lineContentStart + lineContentLength;
 
 		} catch (BadLocationException x) {
 			return false;

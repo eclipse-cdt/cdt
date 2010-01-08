@@ -265,9 +265,13 @@ public class DsfServicesTracker {
     }
 
     private void doDispose() {
-        fBundleContext.removeServiceListener(fListner);
-        for (Iterator<ServiceReference> itr = fServices.keySet().iterator(); itr.hasNext();) {
-            fBundleContext.ungetService(itr.next());
+        try {
+            fBundleContext.removeServiceListener(fListner);
+            for (Iterator<ServiceReference> itr = fServices.keySet().iterator(); itr.hasNext();) {
+                fBundleContext.ungetService(itr.next());
+            }
+        } catch (IllegalStateException e) {
+            // May be thrown during shutdown (bug 293049).
         }
         fServices.clear();
         fServiceReferences.clear();

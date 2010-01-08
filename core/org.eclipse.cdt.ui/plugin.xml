@@ -1881,6 +1881,18 @@
 	        contextId="org.eclipse.cdt.ui.cEditorScope"
 	        commandId="org.eclipse.cdt.ui.edit.text.c.toggleMarkOccurrences"
 	        schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"/>
+	 <key
+	        platform="carbon"
+	        sequence="M2+M3+O"
+	        contextId="org.eclipse.cdt.ui.cEditorScope"
+	        commandId=""
+	        schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"/>
+	 <key
+	        platform="carbon"
+	        sequence="M1+M3+O"
+	        contextId="org.eclipse.cdt.ui.cEditorScope"
+	        commandId="org.eclipse.cdt.ui.edit.text.c.toggleMarkOccurrences"
+	        schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"/>
      <key
             sequence="M1+="
             contextId="org.eclipse.cdt.ui.cEditorScope"
@@ -1896,13 +1908,49 @@
             schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
             contextId="org.eclipse.cdt.ui.cEditorScope"
             commandId="org.eclipse.cdt.ui.edit.text.rename.element"/>
-   	 <key
+     <key
+            platform="carbon"
+            sequence="M2+M3+R"
+            schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
+            contextId="org.eclipse.cdt.ui.cEditorScope"
+            commandId=""/>
+     <key
+            platform="carbon"
+            sequence="M1+M3+R"
+            schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
+            contextId="org.eclipse.cdt.ui.cEditorScope"
+            commandId="org.eclipse.cdt.ui.edit.text.rename.element"/>
+     <key
             sequence="M2+M3+R"
             schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
             contextId="org.eclipse.cdt.ui.cViewScope"
             commandId="org.eclipse.cdt.ui.edit.text.rename.element"/>
      <key
+            platform="carbon"
+            sequence="M2+M3+R"
+            schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
+            contextId="org.eclipse.cdt.ui.cViewScope"
+            commandId=""/>
+     <key
+            platform="carbon"
+            sequence="M1+M3+R"
+            schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
+            contextId="org.eclipse.cdt.ui.cViewScope"
+            commandId="org.eclipse.cdt.ui.edit.text.rename.element"/>
+     <key
             sequence="M2+M3+M"
+            schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
+            contextId="org.eclipse.cdt.ui.cEditorScope"
+            commandId="org.eclipse.cdt.ui.refactor.extract.function"/>
+     <key
+            platform="carbon"
+            sequence="M2+M3+M"
+            schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
+            contextId="org.eclipse.cdt.ui.cEditorScope"
+            commandId=""/>
+     <key
+            platform="carbon"
+            sequence="M1+M3+M"
             schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
             contextId="org.eclipse.cdt.ui.cEditorScope"
             commandId="org.eclipse.cdt.ui.refactor.extract.function"/>
@@ -1916,7 +1964,18 @@
             schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
             contextId="org.eclipse.cdt.ui.cEditorScope"
             commandId="org.eclipse.cdt.ui.refactor.extract.local.variable"/>
-            
+     <key
+            platform="carbon"
+            sequence="M2+M3+L"
+            schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
+            contextId="org.eclipse.cdt.ui.cEditorScope"
+            commandId=""/>
+     <key
+            platform="carbon"
+            sequence="M1+M3+L"
+            schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
+            contextId="org.eclipse.cdt.ui.cEditorScope"
+            commandId="org.eclipse.cdt.ui.refactor.extract.local.variable"/>
       <scheme
             id="org.eclipse.cdt.ui.visualstudio"
 			parentId="org.eclipse.ui.defaultAcceleratorConfiguration"

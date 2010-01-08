@@ -136,7 +136,7 @@ public class Executable extends PlatformObject {
 	 * @noreference This method is not intended to be referenced by clients.
 	 * @since 6.0
 	 */
-	public ITranslationUnit[] getSourceFiles(IProgressMonitor monitor) {
+	public synchronized ITranslationUnit[] getSourceFiles(IProgressMonitor monitor) {
 		
 		if (!refreshSourceFiles)
 			return sourceFiles.toArray(new TranslationUnit[sourceFiles.size()]) ;
@@ -166,6 +166,7 @@ public class Executable extends PlatformObject {
 				// breakpoints won't be resolved, etc.. Also check for relative
 				// path names and attempt to resolve them relative to the
 				// executable.
+
 				boolean fileExists = false;
 
 				try {
@@ -214,8 +215,7 @@ public class Executable extends PlatformObject {
 						// Be careful not to convert a unix path like
 						// "/src/home" to "c:\source\home" on Windows. See
 						// bugzilla 297781
-						URI uri = (sourcePath.toFile().exists()) ? URIUtil.toURI(sourcePath) : URIUtil.toURI(filename);
-						
+						URI uri = (sourcePath.toFile().exists()) ? URIUtil.toURI(sourcePath) : URIUtil.toURI(filename);						
 						tu = new ExternalTranslationUnit(cproject, uri, id);
 					}
 
@@ -239,7 +239,7 @@ public class Executable extends PlatformObject {
 		this.refreshSourceFiles = refreshSourceFiles;
 	}
 
-	public String getOriginalLocation(ITranslationUnit tu) {
+	public synchronized String getOriginalLocation(ITranslationUnit tu) {
 		String orgLocation = remappedPaths.get(tu);
 		if (orgLocation == null)
 			orgLocation = tu.getLocation().toOSString();

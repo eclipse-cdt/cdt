@@ -59,7 +59,7 @@ public class StandardExecutableImporter implements IExecutableImporter {
 	 *      org.eclipse.core.runtime.IProgressMonitor)
 	 */
 	public boolean importExecutables(String[] fileNames, IProgressMonitor monitor) {
-		monitor.beginTask("Import Executables", fileNames.length);
+		monitor.beginTask("Import Executables", fileNames.length); //$NON-NLS-1$
 
 		IProject exeProject = null;
 		boolean checkProject = false;
@@ -74,7 +74,7 @@ public class StandardExecutableImporter implements IExecutableImporter {
 			if (AllowImport(Path.fromOSString(path))) {
 				if (!checkProject) {
 					// See if the default project exists
-					String defaultProjectName = "Executables";
+					String defaultProjectName = "Executables"; //$NON-NLS-1$
 					ICProject cProject = CoreModel.getDefault().getCModel().getCProject(defaultProjectName);
 					if (cProject.exists()) {
 						exeProject = cProject.getProject();
@@ -184,8 +184,8 @@ public class StandardExecutableImporter implements IExecutableImporter {
 
 	private boolean isExtensionVisible(IExtension ext) {
 		IConfigurationElement[] elements = ext.getConfigurationElements();
-		for (int i = 0; i < elements.length; i++) {
-			IConfigurationElement[] children = elements[i].getChildren("filter"); //$NON-NLS-1$
+		for (IConfigurationElement element : elements) {
+			IConfigurationElement[] children = element.getChildren("filter"); //$NON-NLS-1$
 			for (int j = 0; j < children.length; j++) {
 				String name = children[j].getAttribute("name"); //$NON-NLS-1$
 				if (name != null && name.equals("visibility")) { //$NON-NLS-1$
@@ -208,7 +208,7 @@ public class StandardExecutableImporter implements IExecutableImporter {
 			IConfigurationElement[] children = elements[i].getChildren("run"); //$NON-NLS-1$
 			for (int j = 0; j < children.length; j++) {
 				try {
-					parser = (IBinaryParser) children[j].createExecutableExtension("class");
+					parser = (IBinaryParser) children[j].createExecutableExtension("class"); //$NON-NLS-1$
 				} catch (CoreException e) {
 					CDebugCorePlugin.log(e);
 				}

@@ -17,9 +17,6 @@ import java.util.Date;
 import org.eclipse.cdt.debug.core.executables.Executable;
 import org.eclipse.cdt.debug.core.executables.ExecutablesManager;
 import org.eclipse.core.runtime.IPath;
-import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.jface.viewers.ColumnLabelProvider;
 import org.eclipse.jface.viewers.IStructuredContentProvider;
 import org.eclipse.jface.viewers.ITreeContentProvider;
@@ -29,10 +26,7 @@ import org.eclipse.jface.viewers.ViewerCell;
 
 class ExecutablesContentProvider extends ColumnLabelProvider implements IStructuredContentProvider, ITreeContentProvider {
 
-	private TreeViewer viewer;
-
 	public ExecutablesContentProvider(TreeViewer viewer) {
-		this.viewer = viewer;
 	}
 
 	public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
@@ -43,42 +37,8 @@ class ExecutablesContentProvider extends ColumnLabelProvider implements IStructu
 
 	public Object[] getElements(final Object inputElement) {
 		if (inputElement instanceof ExecutablesManager) {
-			final ExecutablesManager em = (ExecutablesManager) inputElement;
-			if (em.refreshNeeded()) {
-				// do this asynchronously. just return an empty array
-				// immediately, and then refresh the view
-				// once the list of executables has been calculated. this can
-				// take a while and we don't want
-				// to block the UI.
-				Job refreshJob = new Job(Messages.ExecutablesContentProvider_FetchingExecutables) {
-
-					@Override
-					protected IStatus run(IProgressMonitor monitor) {
-						IStatus status = em.refreshExecutables(monitor);
-
-						// Are we in the UIThread? If so spin it until we are done
-						if (!viewer.getControl().isDisposed()) {
-							if (viewer.getControl().getDisplay().getThread() == Thread.currentThread()) {
-								viewer.refresh(inputElement);
-							} else {
-								viewer.getControl().getDisplay().asyncExec(new Runnable() {
-									public void run() {
-										viewer.refresh(inputElement);
-									}
-								});
-							}
-						}
-
-						monitor.done();
-						return status;
-					}
-				};
-
-				refreshJob.schedule();
-
-			} else {
-				return em.getExecutables();
-			}
+			ExecutablesManager em = (ExecutablesManager) inputElement;
+			return em.getExecutables().toArray();
 		}
 		return new Object[] {};
 	}

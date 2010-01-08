@@ -6,6 +6,10 @@
      <extension-point id="BreakpointActionType" name="%BreakpointAction" schema="schema/BreakpointAction.exsd"/>
      <extension-point id="BreakpointExtension" name="%BreakpointAction" schema="schema/BreakpointExtension.exsd"/>
      <extension-point id="supportedSourceContainerTypes" name="%SupportedSourceContainerTypes.name" schema="schema/SupportedSourceContainerTypes.exsd"/>
+     <extension-point id="ExecutablesProvider" name="Executables Provider" schema="schema/ExecutablesProvider.exsd"/>
+     <extension-point id="SourceFilesProvider" name="Source Files Provider" schema="schema/SourceFilesProvider.exsd"/>
+     <extension-point id="SourceRemappingProvider" name="Source Remapping Provider" schema="schema/SourceRemappingProvider.exsd"/>
+     <extension-point id="ExecutablesImporter" name="Executables Importer" schema="schema/ExecutablesImporter.exsd"/>
 
     <extension
          point="org.eclipse.debug.core.launchConfigurationTypes">

@@ -12,11 +12,11 @@
 package org.eclipse.cdt.debug.internal.core.executables;
 
 import org.eclipse.cdt.debug.core.CDebugCorePlugin;
-import org.eclipse.cdt.debug.core.executables.Executable;
 import org.eclipse.cdt.debug.core.executables.ISourceFileRemapping;
 import org.eclipse.cdt.debug.core.sourcelookup.ICSourceLocator;
 import org.eclipse.cdt.debug.internal.core.sourcelookup.CSourceLookupDirector;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IPath;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.ILaunch;
 import org.eclipse.debug.core.ILaunchManager;
@@ -25,7 +25,7 @@ import org.eclipse.debug.core.sourcelookup.containers.LocalFileStorage;
 
 public class StandardSourceFileRemapping implements ISourceFileRemapping {
 
-	public String remapSourceFile(Executable executable, String filePath) {
+	public String remapSourceFile(IPath executable, String filePath) {
 
 		try {
 			Object[] foundElements = CDebugCorePlugin.getDefault().getCommonSourceLookupDirector().findSourceElements(filePath);

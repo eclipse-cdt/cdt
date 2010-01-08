@@ -70,7 +70,7 @@ public class SourceFilesLabelProvider extends TreeColumnViewerLabelProvider {
 			if (cell.getElement() instanceof ITranslationUnit) {
 				Executable executable = (Executable) viewer.getInput();
 				Path path = new Path(executable.getOriginalLocation((ITranslationUnit) cell.getElement()));
-				cell.setText(executable.getOriginalLocation((ITranslationUnit) cell.getElement()));
+				cell.setText(path.toOSString());
 				if (path.toFile().exists())
 					cell.setForeground(Display.getDefault().getSystemColor(SWT.COLOR_BLACK));
 				else

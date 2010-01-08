@@ -225,6 +225,8 @@ public class ExecutablesView extends ViewPart {
 	private Action configureColumnsAction;
 
 	private IMemento memento;
+	
+	private IStructuredSelection oldSelection;
 
 	/**
 	 * Create contents of the Executables View
@@ -239,9 +241,9 @@ public class ExecutablesView extends ViewPart {
 		final SashForm sashForm = new SashForm(container, SWT.NONE);
 
 		// Create the two sub viewers.
-		executablesViewer = new ExecutablesViewer(this, sashForm, SWT.FULL_SELECTION + SWT.BORDER + SWT.MULTI);
+		executablesViewer = new ExecutablesViewer(this, sashForm, SWT.FULL_SELECTION | SWT.BORDER | SWT.MULTI);
 		ExecutablesManager.getExecutablesManager().addExecutablesChangeListener(executablesViewer);
-		sourceFilesViewer = new SourceFilesViewer(this, sashForm, SWT.BORDER);
+		sourceFilesViewer = new SourceFilesViewer(this, sashForm, SWT.BORDER | SWT.MULTI);
 
 		sashForm.setWeights(new int[] { 1, 1 });
 
@@ -271,30 +273,39 @@ public class ExecutablesView extends ViewPart {
 			public void selectionChanged(SelectionChangedEvent event) {
 				ISelection newSelection = event.getSelection();
 				if (newSelection instanceof IStructuredSelection) {
-					final Object firstElement = ((IStructuredSelection) newSelection).getFirstElement();
 					
-					Job setectExeJob = new Job(Messages.ExecutablesView_Select_Executable) {
+					if (oldSelection == null || !oldSelection.equals(newSelection))
+					{
+						// update the remove action
+						removeAction.setEnabled(!newSelection.isEmpty());
+						
+						final Object firstElement = ((IStructuredSelection) newSelection).getFirstElement();
+						
+						Job setectExeJob = new Job(Messages.ExecutablesView_Select_Executable) {
 
-						@Override
-						protected IStatus run(IProgressMonitor monitor) {
-							if (firstElement instanceof Executable) {
-								Executable executable = (Executable)firstElement;
-								this.setName(Messages.ExecutablesView_Finding_Sources_Job_Name + executable.getName());
-								executable.getSourceFiles(monitor);
-							}
-							UIJob selectExeUIJob = new UIJob(Messages.ExecutablesView_Select_Executable){
-								@Override
-								public IStatus runInUIThread(IProgressMonitor monitor) {
-									sourceFilesViewer.setInput(firstElement);
-									if (firstElement instanceof Executable) {
+							@Override
+							protected IStatus run(IProgressMonitor monitor) {
+								if (firstElement instanceof Executable) {
+									Executable executable = (Executable)firstElement;
+									this.setName(Messages.ExecutablesView_Finding_Sources_Job_Name + executable.getName());
+									executable.getSourceFiles(monitor);
+								}
+								// selection could be empty, so do this no matter what to update the source
+								// files viewer
+								UIJob selectExeUIJob = new UIJob(Messages.ExecutablesView_Select_Executable){
+									@Override
+									public IStatus runInUIThread(IProgressMonitor monitor) {
+										sourceFilesViewer.setInput(firstElement);
 										sourceFilesViewer.packColumns();
-									}
-									return Status.OK_STATUS;
-								}};
+										return Status.OK_STATUS;
+									}};
 								selectExeUIJob.schedule();								
 								return Status.OK_STATUS;
-						}};
+							}};
 						setectExeJob.schedule();
+						oldSelection = (IStructuredSelection) newSelection;
+					}
+					
 				}
 			}
 		});
@@ -360,6 +371,7 @@ public class ExecutablesView extends ViewPart {
 
 	private Action createRemoveAction() {
 		Action action = new Action("Remove") {
+			
 			public void run() {				
 				ISelection selection = getExecutablesViewer().getSelection();
 				if (selection instanceof IStructuredSelection)
@@ -404,7 +416,7 @@ public class ExecutablesView extends ViewPart {
 		action.setToolTipText("Remove the selected executables");
 		action.setImageDescriptor(ExecutablesView.DESC_REMOVE);
 		action.setDisabledImageDescriptor(ExecutablesView.DESC_REMOVE_DISABLED);
-		action.setEnabled(true);
+		action.setEnabled(false);
 		return action;
 	}
 
@@ -460,7 +472,7 @@ public class ExecutablesView extends ViewPart {
 	private Action createRefreshAction() {
 		Action action = new Action(Messages.ExecutablesView_Refresh) {
 			public void run() {
-				ExecutablesManager.getExecutablesManager().scheduleRefresh(null, 0);
+				ExecutablesManager.getExecutablesManager().refresh(null);
 			}
 		};
 		action.setToolTipText(Messages.ExecutablesView_RefreshList);

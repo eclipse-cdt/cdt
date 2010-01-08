@@ -11,7 +11,6 @@
 package org.eclipse.cdt.internal.core.parser.scanner;
 
 import java.lang.ref.SoftReference;
-import java.nio.CharBuffer;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -23,20 +22,6 @@ public abstract class LazyCharArray extends AbstractCharArray {
 	private final static int CHUNK_BITS= 16;  // 2^16 == 64K
 	protected final static int CHUNK_SIZE= 1 << CHUNK_BITS;
 	
-	/**
-	 * Utility method to extract char[] out of CharBuffer.
-	 */
-	protected static char[] extractChars(CharBuffer charBuffer) {
-		if (charBuffer.hasArray() && charBuffer.arrayOffset() == 0) {
-			char[] buf = charBuffer.array();
-			if (buf.length == charBuffer.remaining())
-				return buf;
-		}
-		char[] buf = new char[charBuffer.remaining()];
-		charBuffer.get(buf);
-		return buf;
-	}
-
 	protected static class Chunk {
 		final int fDataLength;
 		final long fFileOffset;
@@ -77,7 +62,8 @@ public abstract class LazyCharArray extends AbstractCharArray {
 		if (fLength >= 0)
 			return offset < fLength;
 		
-		return offset < fChunks.size() << CHUNK_BITS;
+		assert offset < fChunks.size() << CHUNK_BITS;
+		return true;
 	}
 
 	private void readUpTo(int offset) {
@@ -140,23 +126,22 @@ public abstract class LazyCharArray extends AbstractCharArray {
 		final int chunkCount = fChunks.size();
 		long fileOffset= chunkCount == 0 ? 0 : fChunks.get(chunkCount-1).fFileEndOffset;
 		try {
-			CharBuffer dest= CharBuffer.allocate(CHUNK_SIZE);
 			for (int i = chunkCount; i <= chunkOffset; i++) {
-				dest.clear();
-				long fileEndOffset= readChunkData(fileOffset, dest);
-				dest.flip();
-				final int charCount= dest.remaining();
+				long[] fileEndOffset= {0};
+				char[] data= readChunkData(fileOffset, fileEndOffset);
+				final int charCount= data.length;
 				if (charCount == 0) {
 					fLength= fChunks.size() * CHUNK_SIZE;
 					break;
 				} 
 				// New chunk
-				Chunk chunk= new Chunk(fileOffset, fileEndOffset, extractChars(dest));
+				Chunk chunk= new Chunk(fileOffset, fileEndOffset[0], data);
 				fChunks.add(chunk);
 				if (charCount < CHUNK_SIZE) {
 					fLength= (fChunks.size()-1) * CHUNK_SIZE + charCount;
 					break;
 				} 
+				fileOffset= fileEndOffset[0];
 			}
 		} catch (Exception e) {
 			// File cannot be read
@@ -170,16 +155,8 @@ public abstract class LazyCharArray extends AbstractCharArray {
 	}
 	
 	private char[] loadChunkData(Chunk chunk) {
-		CharBuffer dest= CharBuffer.allocate(chunk.fDataLength);
-		rereadChunkData(chunk.fFileOffset, chunk.fFileEndOffset, dest);
-		dest.flip();
-		char[] result= extractChars(dest);
-		if (result.length != chunk.fDataLength) {
-			// In case the file changed
-			char[] copy= new char[chunk.fDataLength];
-			System.arraycopy(result, 0, copy, 0, Math.min(result.length, copy.length));
-			result= copy;
-		}
+		char[] result= new char[chunk.fDataLength];
+		rereadChunkData(chunk.fFileOffset, chunk.fFileEndOffset, result);
 		chunk.fData= new SoftReference<char[]>(result);
 		return result;
 	}
@@ -188,11 +165,11 @@ public abstract class LazyCharArray extends AbstractCharArray {
 	 * Read the chunk data at the given source offset and provide the end-offset in the
 	 * source.
 	 */
-	protected abstract long readChunkData(long sourceOffset, CharBuffer dest) throws Exception;
+	protected abstract char[] readChunkData(long sourceOffset, long[] sourceEndOffsetHolder) throws Exception;
 		
 	/**
 	 * Read the chunk data at the given source range. In case the source range no longer (fully) exists,
 	 * read as much as possible.
 	 */
-	protected abstract void rereadChunkData(long fileOffset, long fileEndOffset, CharBuffer dest);
+	protected abstract void rereadChunkData(long fileOffset, long fileEndOffset, char[] dest);
 }

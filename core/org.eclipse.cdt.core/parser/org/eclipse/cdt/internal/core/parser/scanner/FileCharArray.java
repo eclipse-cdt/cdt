@@ -54,6 +54,17 @@ public class FileCharArray extends LazyCharArray {
 		char[] buf= extractChars(charBuffer);
 		return new CharArray(buf);
 	}
+	
+	private static char[] extractChars(CharBuffer charBuffer) {
+		if (charBuffer.hasArray() && charBuffer.arrayOffset() == 0) {
+			char[] buf = charBuffer.array();
+			if (buf.length == charBuffer.remaining())
+				return buf;
+		}
+		char[] buf = new char[charBuffer.remaining()];
+		charBuffer.get(buf);
+		return buf;
+	}
 
 	private String fFileName;
 	private String fCharSet;
@@ -88,7 +99,7 @@ public class FileCharArray extends LazyCharArray {
 	}
 	
 	@Override
-	protected long readChunkData(long fileOffset, CharBuffer dest) throws IOException {
+	protected char[] readChunkData(long fileOffset, long[] fileEndOffsetHolder) throws IOException {
 		assert fChannel != null;
 		final Charset charset = Charset.forName(fCharSet);
 		final CharsetDecoder decoder = charset.newDecoder().onMalformedInput(CodingErrorAction.REPLACE)
@@ -96,29 +107,30 @@ public class FileCharArray extends LazyCharArray {
 
 		int needBytes = (int) (CHUNK_SIZE * (double) decoder.averageCharsPerByte()); // avoid rounding errors.
 		final ByteBuffer in = ByteBuffer.allocate(needBytes);
+		final CharBuffer dest= CharBuffer.allocate(CHUNK_SIZE);
 
-		int total= 0;
 		boolean endOfInput= false;
-		while(total < CHUNK_SIZE && !endOfInput) {
+		while(dest.position() < CHUNK_SIZE && !endOfInput) {
 			fChannel.position(fileOffset);
 			in.clear();
 			int count= fChannel.read(in);
 			if (count == -1) {
-				return fileOffset;
+				break;
 			}
 			
 			endOfInput= count < in.capacity();
-			total+= count;
 			in.flip();
 			decoder.decode(in, dest, endOfInput);
 			fileOffset+= in.position();
 		}
-		return fileOffset;
+		fileEndOffsetHolder[0]= fileOffset;
+		dest.flip();
+		return extractChars(dest);
 	}
 	
 	
 	@Override
-	protected void rereadChunkData(long fileOffset, long fileEndOffset, CharBuffer dest) {
+	protected void rereadChunkData(long fileOffset, long fileEndOffset, char[] dest) {
 		FileInputStream fis;
 		try {
 			fis = new FileInputStream(fFileName);
@@ -128,7 +140,7 @@ public class FileCharArray extends LazyCharArray {
 		}
 		try {
 			FileChannel channel = fis.getChannel();
-			decode(channel, fileOffset, fileEndOffset, dest);
+			decode(channel, fileOffset, fileEndOffset, CharBuffer.wrap(dest));
 		} catch (IOException e) {
 			// File cannot be read
 		} finally {

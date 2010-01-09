@@ -10,6 +10,9 @@
  *******************************************************************************/
 package org.eclipse.cdt.tests.dsf;
 
+import org.eclipse.cdt.dsf.concurrent.RequestMonitor;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.osgi.framework.BundleContext;
 
@@ -65,5 +68,11 @@ public class DsfTestPlugin extends AbstractUIPlugin {
     public static BundleContext getBundleContext() {
         return fgBundleContext;
     }
+
+    public static void failRequest(RequestMonitor rm, int code, String message) {
+        rm.setStatus(new Status(IStatus.ERROR, PLUGIN_ID, code, message, null));
+        rm.done();
+    }
+    
 
 }

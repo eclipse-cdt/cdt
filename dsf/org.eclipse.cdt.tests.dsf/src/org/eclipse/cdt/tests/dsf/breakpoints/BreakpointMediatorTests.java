@@ -166,7 +166,7 @@ public class BreakpointMediatorTests {
     }
 
     @Test 
-    public void singleServiceTest() throws Exception {
+    public void proofOfConceptTest() throws Exception {
 
         ServiceEventWaitor<BreakpointsAddedEvent> waitor = new ServiceEventWaitor<BreakpointsAddedEvent>(fSession, BreakpointsAddedEvent.class);
 

@@ -128,7 +128,7 @@ abstract public class AbstractDMContext extends PlatformObject
      * @see org.eclipse.runtime.IAdapterManager 
      */
     @Override
-    @SuppressWarnings("unchecked")
+    @SuppressWarnings("rawtypes")
     public Object getAdapter(Class adapterType) {
         Object retVal = null;
         DsfSession session = DsfSession.getSession(fSessionId);

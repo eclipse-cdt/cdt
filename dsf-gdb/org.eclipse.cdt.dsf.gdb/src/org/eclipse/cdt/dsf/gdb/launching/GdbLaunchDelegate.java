@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2009  QNX Software Systems and others.
+ * Copyright (c) 2010 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -9,6 +9,7 @@
  * QNX Software Systems   - Initial API and implementation
  * Windriver and Ericsson - Updated for DSF
  * IBM Corporation 
+ * Ericsson               - Added support for Mac OS
  *******************************************************************************/
 package org.eclipse.cdt.dsf.gdb.launching; 
 
@@ -30,6 +31,7 @@ import org.eclipse.cdt.dsf.gdb.internal.GdbPlugin;
 import org.eclipse.cdt.dsf.gdb.service.GdbDebugServicesFactory;
 import org.eclipse.cdt.dsf.gdb.service.GdbDebugServicesFactoryNS;
 import org.eclipse.cdt.dsf.gdb.service.SessionType;
+import org.eclipse.cdt.dsf.gdb.service.macos.MacOSGdbDebugServicesFactory;
 import org.eclipse.cdt.dsf.service.DsfSession;
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IProject;
@@ -382,6 +384,11 @@ public class GdbLaunchDelegate extends LaunchConfigurationDelegate
 	}
 	
 	private boolean isNonStopSupported(String version) {
+		if (version.contains(LaunchUtils.MACOS_GDB_MARKER)) {
+			// Mac OS's GDB does not support Non-Stop
+			return false;
+		}
+		
 		if (NON_STOP_FIRST_VERSION.compareTo(version) <= 0) {
 			return true;
 		}
@@ -394,11 +401,14 @@ public class GdbLaunchDelegate extends LaunchConfigurationDelegate
 		if (isNonStopSession && isNonStopSupported(version)) {
 			return new GdbDebugServicesFactoryNS(version);
 		}
-
-		if (version.startsWith("6.6") ||  //$NON-NLS-1$
-			version.startsWith("6.7") ||  //$NON-NLS-1$
-			version.startsWith("6.8")) {  //$NON-NLS-1$
-			return new GdbDebugServicesFactory(version);
+		
+		if (version.contains(LaunchUtils.MACOS_GDB_MARKER)) {
+			// The version string at this point should look like
+			// 6.3.50-20050815APPLE1346, we extract the gdb version and apple version
+			String versions [] = version.split(LaunchUtils.MACOS_GDB_MARKER);
+			if (versions.length == 2) {
+				return new MacOSGdbDebugServicesFactory(versions[0], versions[1]);
+			}
 		}
 
 		return new GdbDebugServicesFactory(version);

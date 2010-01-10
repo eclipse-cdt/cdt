@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008 Ericsson and others.
+ * Copyright (c) 2010 Ericsson and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  * Ericsson   - Initial API and implementation
+ * Ericsson   - Added support for Mac OS
  *******************************************************************************/
 package org.eclipse.cdt.dsf.gdb.launching;
 
@@ -43,6 +44,12 @@ import org.eclipse.debug.core.ILaunchConfiguration;
 
 public class LaunchUtils {
 
+	/**
+	 * A prefix that we use to indicate that a GDB version is for MAC OS
+	 * @since 2.1
+	 */
+	public static final String MACOS_GDB_MARKER = "APPLE"; //$NON-NLS-1$
+	
    	/**
 	 * Verify the following things about the project:
 	 * - is a valid project name given
@@ -230,6 +237,26 @@ public class LaunchUtils {
 				version = "6.8"; //$NON-NLS-1$
 			}
 		}
+		
+        // Look for the case of Apple's GDB, since the version must be handled differently
+        // The format is:
+        // GNU gdb 6.3.50-20050815 (Apple version gdb-696) (Sat Oct 20 18:20:28 GMT 2007)
+        // GNU gdb 6.3.50-20050815 (Apple version gdb-966) (Tue Mar 10 02:43:13 UTC 2009)
+        // GNU gdb 6.3.50-20050815 (Apple version gdb-1346) (Fri Sep 18 20:40:51 UTC 2009)
+        // It seems the version that changes is the "Apple version" but we still use both. 
+		// The Mac OS prefix and version are appended to the normal version so the 
+		// returned string has this format: 6.3.50-20050815APPLE1346. The normal version and the 
+		// Apple version are extracted later and passed to the MacOS services factory.
+        if (versionOutput.indexOf("Apple") != -1) {  //$NON-NLS-1$
+        	// Add a prefix to indicate we are dealing with an Apple GDB
+        	version += MACOS_GDB_MARKER;
+    		Pattern aPattern = Pattern.compile(" \\(Apple version gdb-(\\d*)\\)",  Pattern.MULTILINE); //$NON-NLS-1$
+
+    		Matcher aMatcher = aPattern.matcher(versionOutput);
+    		if (aMatcher.find()) {
+    			version += aMatcher.group(1);
+    		}
+        }
 
         return version;
 	}

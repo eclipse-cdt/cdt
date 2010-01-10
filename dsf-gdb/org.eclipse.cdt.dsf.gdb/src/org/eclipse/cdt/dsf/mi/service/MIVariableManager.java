@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008 Monta Vista and others.
+ * Copyright (c) 2010 Monta Vista and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -697,7 +697,7 @@ public class MIVariableManager implements ICommandControl {
 	        							}
 
 	        							if (childVar == null) {
-	        								childVar = new MIVariableObject(childId, MIVariableObject.this);
+	        								childVar = createVariableObject(childId, MIVariableObject.this);
 	        								childVar.setGdbName(child.getVarName());
 	        								childVar.setExpressionData(
 	        										childFullExpression,
@@ -914,7 +914,19 @@ public class MIVariableManager implements ICommandControl {
 		}
 	}
 	
-	private class MIRootVariableObject extends MIVariableObject {
+	/**
+	 * Method to allow to override the MIVariableObject creation
+	 * 
+     * @since 2.1
+     */
+	protected MIVariableObject createVariableObject(VariableObjectId id, MIVariableObject parentObj) {
+	    return new MIVariableObject(id, parentObj);
+	}
+	
+	/**
+     * @since 2.1
+     */
+	public class MIRootVariableObject extends MIVariableObject {
 
 		// Only root variables go through the GDB creation process
 		protected static final int STATE_NOT_CREATED = 10;
@@ -925,7 +937,7 @@ public class MIVariableManager implements ICommandControl {
 		// will have the same control context
 	    private ICommandControlDMContext fControlContext = null;
 	    
-		private boolean outOfDate = false;
+		private boolean fOutOfDate = false;
 		
 	    // Modifiable descendants are any variable object that is a descendant or itself for
 	    // which the value can change.
@@ -940,8 +952,10 @@ public class MIVariableManager implements ICommandControl {
 		public ICommandControlDMContext getControlDMContext() { return fControlContext; }
 
 		public boolean isUpdating() { return currentState == STATE_UPDATING; }
-
-		public void markAsOutOfDate() { outOfDate = true; }
+        
+		public void setOutOfDate(boolean outOfDate) { fOutOfDate = outOfDate; }
+		
+		public boolean getOutOfDate() { return fOutOfDate; }
 		
 		// Remember that we must add ourself as a modifiable descendant if our value can change
 		public void addModifiableDescendant(String gdbName, MIVariableObject descendant) {
@@ -1033,7 +1047,7 @@ public class MIVariableManager implements ICommandControl {
 				// Object is not fully created or is being updated
 				// so add RequestMonitor to pending queue
 				updatesPending.add(rm);
-			} else if (outOfDate == false) {
+			} else if (getOutOfDate() == false) {
 				rm.setData(false);
 				rm.done();
 			} else {
@@ -1063,7 +1077,7 @@ public class MIVariableManager implements ICommandControl {
 								currentState = STATE_READY;
 								
 								if (isSuccess()) {
-									outOfDate = false;
+									setOutOfDate(false);
 
 									MIVarChange[] changes = getData().getMIVarChanges();
 									if (changes.length > 0 && changes[0].isInScope() == false) {
@@ -1088,7 +1102,7 @@ public class MIVariableManager implements ICommandControl {
 										// We only mark this root as updated in our list if it is in-scope.
 										// For out-of-scope object, we don't ever need to re-update them so
 										// we don't need to add them to this list.
-										updatedRootList.add(MIRootVariableObject.this);
+										rootVariableUpdated(MIRootVariableObject.this);
 
 										rm.setData(false);
 										rm.done();
@@ -1138,9 +1152,16 @@ public class MIVariableManager implements ICommandControl {
 		    } else {
 		        // Variable was never created or was already deleted, no need to do anything.
 		    }
-		}		
-		
-
+		}
+	}
+	
+    /**
+ 	 * Method to allow to override the MIRootVariableObject creation.
+	 *
+     * @since 2.1
+     */
+	protected MIRootVariableObject createRootVariableObject(VariableObjectId id) {
+	    return new MIRootVariableObject(id);
 	}
 	
 	/**
@@ -1153,8 +1174,10 @@ public class MIVariableManager implements ICommandControl {
 	 *     
 	 * Note that if no frameContext is specified (only Execution, or even only Container), which can
 	 * characterize a global variable for example, we will only use the available information.
+	 * 
+	 * @since 2.1
 	 */
-	private class VariableObjectId {
+	public class VariableObjectId {
 		// We don't use the expression context because it is not safe to compare them
 		// See bug 187718.  So we store the expression itself, and it's parent execution context.
 		String fExpression = null;
@@ -1162,6 +1185,9 @@ public class MIVariableManager implements ICommandControl {
 		// We need the depth of the frame.  The frame level is not sufficient because 
         // the same frame will have a different level based on the current depth of the stack 
 		Integer fFrameId = null;
+		
+		public VariableObjectId() {
+		}
 		
 		@Override
 		public boolean equals(Object other) {
@@ -1219,6 +1245,16 @@ public class MIVariableManager implements ICommandControl {
 			fExpression = childFullExp;
 		}
 	}
+	
+    /**
+ 	 * Method to allow to override the VariableObjectId creation.
+	 *
+     * @since 2.1
+     */
+	protected VariableObjectId createVariableObjectId() {
+	    return new VariableObjectId();
+	}
+
 	
 	/**
 	 * This is the real work horse of managing our objects. Not only must every
@@ -1338,6 +1374,34 @@ public class MIVariableManager implements ICommandControl {
     	fSession.removeServiceEventListener(this);
 	}
 
+    /**
+     * @since 2.1
+     */
+	protected DsfSession getSession() {
+	    return fSession;
+	}
+	
+	/**
+     * @since 2.1
+     */
+	protected ICommandControl getCommandControl() {
+	    return fCommandControl;
+	}
+	
+    /**
+     * @since 2.1
+     */
+	protected void rootVariableUpdated(MIRootVariableObject rootObj) {
+	    updatedRootList.add(rootObj);
+	}
+	
+    /**
+     * @since 2.1
+     */
+	protected Map<VariableObjectId, MIVariableObject> getLRUCache() {
+		return lruVariableList;
+	}
+	
 	/** 
 	 * This method returns a variable object based on the specified
 	 * ExpressionDMC, creating it in GDB if it was not created already.
@@ -1354,7 +1418,7 @@ public class MIVariableManager implements ICommandControl {
                              final DataRequestMonitor<MIVariableObject> rm) {
 		// Generate an id for this expression so that we can determine if we already
 		// have a variable object tracking it.  If we don't we'll need to create one.
-		final VariableObjectId id = new VariableObjectId();
+		final VariableObjectId id = createVariableObjectId();
 		id.generateId(
 				exprCtx,
 				new RequestMonitor(fSession.getExecutor(), rm) {
@@ -1431,7 +1495,7 @@ public class MIVariableManager implements ICommandControl {
 
 		// Variable objects that are created directly like this, are considered ROOT variable objects
 		// in comparison to variable objects that are children of other variable objects.
-		final MIRootVariableObject newVarObj = new MIRootVariableObject(id);
+		final MIRootVariableObject newVarObj = createRootVariableObject(id);
 		
 		// We must put this object in our map right away, in case it is 
 		// requested again, before it completes its creation.
@@ -1443,7 +1507,7 @@ public class MIVariableManager implements ICommandControl {
 			protected void handleCompleted() {
 				if (isSuccess()) {
 					// Also store the object as a varObj that is up-to-date
-					updatedRootList.add(newVarObj);
+    				rootVariableUpdated(newVarObj);	
 					// VarObj can now be used by others
 					newVarObj.creationCompleted(true);
 
@@ -1625,7 +1689,7 @@ public class MIVariableManager implements ICommandControl {
     					}
     				});
     	
-    	} else if (command instanceof MIDataEvaluateExpression) {
+    	} else if (command instanceof MIDataEvaluateExpression<?>) {
     		// This does not use the variable objects but sends the command directly to the back-end
 			fCommandControl.queueCommand(command, rm);
     	} else {
@@ -1684,7 +1748,7 @@ public class MIVariableManager implements ICommandControl {
     public void markAllOutOfDate() {
     	MIRootVariableObject root;
     	while ((root = updatedRootList.poll()) != null) {
-    		root.markAsOutOfDate();
+    		root.setOutOfDate(true);
     	}       
     }
 

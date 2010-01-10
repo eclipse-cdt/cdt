@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2008 Wind River Systems and others.
+ * Copyright (c) 2010 Wind River Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -452,7 +452,7 @@ public class MIExpressions extends AbstractDsfService implements IExpressions, I
         // to the back-end, through the MICommandControl service
 		// It must be created after the ExpressionService is registered
 		// since it will need to find it.
-        varManager = new MIVariableManager(getSession(), getServicesTracker());
+        varManager = createMIVariableManager();
 
         // Create the meta command cache which will use the variable manager
         // to actually send MI commands to the back-end
@@ -463,6 +463,16 @@ public class MIExpressions extends AbstractDsfService implements IExpressions, I
 		requestMonitor.done();
 	}
 
+	/**
+	 * Creates the MI variable manager to be used by this expression service.
+	 * Overriding classes may override to provide a custom services tracker. 
+	 * 
+	 * @since 2.1
+	 */
+	protected MIVariableManager createMIVariableManager() {
+	    return new MIVariableManager(getSession(), getServicesTracker());
+	}
+	
 	/**
 	 * This method shuts down this service. It unregisters the service, stops
 	 * receiving service events, and calls the superclass shutdown() method to

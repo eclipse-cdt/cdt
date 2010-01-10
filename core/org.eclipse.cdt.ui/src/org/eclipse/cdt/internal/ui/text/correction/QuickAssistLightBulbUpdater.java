@@ -61,7 +61,7 @@ import org.eclipse.cdt.internal.ui.viewsupport.SelectionListenerWithASTManager;
 public class QuickAssistLightBulbUpdater {
 
 	public static class AssistAnnotation extends Annotation implements IAnnotationPresentation {
-		//XXX: To be fully correct this should be a non-static fields in QuickAssistLightBulbUpdater
+		//XXX: To be fully correct this should be a non-static field in QuickAssistLightBulbUpdater
 		private static final int LAYER;
 
 		static {

@@ -18,7 +18,7 @@
       </annotation>
       <complexType>
          <sequence>
-            <element ref="provider"/>
+            <element ref="importer"/>
          </sequence>
          <attribute name="point" type="string" use="required">
             <annotation>

@@ -42,7 +42,7 @@ public class VariableColumnPresentation implements IColumnPresentation {
         } else if (IDebugVMConstants.COLUMN_ID__VALUE.equals(id)) {
             return MessagesForVariablesVM.VariableColumnPresentation_value;
         } else if (IDebugVMConstants.COLUMN_ID__ADDRESS.equals(id)) {
-        	return MessagesForVariablesVM.VariableColumnPresentation_address;
+        	return MessagesForVariablesVM.VariableColumnPresentation_location;
         } 
         return null;
     }

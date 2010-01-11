@@ -17,7 +17,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.RejectedExecutionException;
 
-import org.eclipse.cdt.core.IAddress;
 import org.eclipse.cdt.debug.internal.ui.CDebugImages;
 import org.eclipse.cdt.dsf.concurrent.ConfinedToDsfExecutor;
 import org.eclipse.cdt.dsf.concurrent.CountingRequestMonitor;
@@ -36,6 +35,7 @@ import org.eclipse.cdt.dsf.debug.service.IExpressions.IExpressionChangedDMEvent;
 import org.eclipse.cdt.dsf.debug.service.IExpressions.IExpressionDMAddress;
 import org.eclipse.cdt.dsf.debug.service.IExpressions.IExpressionDMContext;
 import org.eclipse.cdt.dsf.debug.service.IExpressions.IExpressionDMData;
+import org.eclipse.cdt.dsf.debug.service.IExpressions.IExpressionDMLocation;
 import org.eclipse.cdt.dsf.debug.service.IMemory.IMemoryChangedEvent;
 import org.eclipse.cdt.dsf.debug.service.IRunControl.ISuspendedDMEvent;
 import org.eclipse.cdt.dsf.debug.service.IStack.IFrameDMContext;
@@ -132,7 +132,7 @@ public class VariableVMNode extends AbstractExpressionVMNode
      *  
      * @since 2.0
      */    
-    private IElementLabelProvider fLabelProvider;
+    private final IElementLabelProvider fLabelProvider;
 
     public class VariableExpressionVMC extends DMVMContext implements IFormattedValueVMContext  {
         
@@ -375,9 +375,9 @@ public class VariableVMNode extends AbstractExpressionVMNode
             IDebugVMConstants.COLUMN_ID__ADDRESS,
             new LabelColumnInfo(new LabelAttribute[] { 
                 new LabelText(
-                    MessagesForVariablesVM.VariableVMNode_Address_column__text_format, 
+                    MessagesForVariablesVM.VariableVMNode_Location_column__text_format, 
                     new String[] { PROP_VARIABLE_ADDRESS }),
-                new LabelText(MessagesForVariablesVM.VariableVMNode_Address_column__Error__text_format, new String[] {}), 
+                new LabelText(MessagesForVariablesVM.VariableVMNode_Location_column__Error__text_format, new String[] {}), 
                 new LabelBackground(
                     DebugUITools.getPreferenceColor(IDebugUIConstants.PREF_CHANGED_VALUE_BACKGROUND).getRGB()) 
                 {
@@ -706,9 +706,10 @@ public class VariableVMNode extends AbstractExpressionVMNode
     @ConfinedToDsfExecutor("getSession().getExecutor()")
     protected void fillAddressDataProperties(IPropertiesUpdate update, IExpressionDMAddress address)
     { 
-	    IExpressionDMAddress expression = address;
-	    IAddress expAddress = expression.getAddress();
-	    update.setProperty(PROP_VARIABLE_ADDRESS, "0x" + expAddress.toString(16)); //$NON-NLS-1$
+    	if (address instanceof IExpressionDMLocation)
+    		update.setProperty(PROP_VARIABLE_ADDRESS, ((IExpressionDMLocation)address).getLocation());
+    	else
+    		update.setProperty(PROP_VARIABLE_ADDRESS, "0x" + address.getAddress().toString(16)); //$NON-NLS-1$
     }
     
     public CellEditor getCellEditor(IPresentationContext context, String columnId, Object element, Composite parent) {

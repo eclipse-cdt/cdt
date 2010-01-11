@@ -22,10 +22,10 @@ public class MessagesForVariablesVM extends NLS {
     public static String VariableColumnPresentation_name;
     public static String VariableColumnPresentation_type;
     public static String VariableColumnPresentation_value;
-    public static String VariableColumnPresentation_address;
+    public static String VariableColumnPresentation_location;
 
-    public static String VariableVMNode_Address_column__Error__text_format;
-    public static String VariableVMNode_Address_column__text_format;
+    public static String VariableVMNode_Location_column__Error__text_format;
+    public static String VariableVMNode_Location_column__text_format;
     public static String VariableVMNode_Description_column__text_format;
     public static String VariableVMNode_Expression_column__text_format;
     public static String VariableVMNode_Name_column__text_format;

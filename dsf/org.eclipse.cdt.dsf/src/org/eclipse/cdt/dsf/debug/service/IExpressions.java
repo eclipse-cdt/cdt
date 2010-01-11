@@ -11,6 +11,7 @@
  *******************************************************************************/
 package org.eclipse.cdt.dsf.debug.service;
 
+import java.math.BigInteger;
 import java.util.Map;
 
 import org.eclipse.cdt.core.IAddress;
@@ -41,14 +42,61 @@ public interface IExpressions extends IFormattedValues {
          */
         String getExpression();
     }
-    
+
+
     /**
      * The address and size of an expression.
      */
     public interface IExpressionDMAddress {
+        
+        /**
+         * Returns the address of the expression.
+         */
     	IAddress getAddress();
+    	
+    	/**
+    	 * Returns the size of the address.
+    	 */
     	int getSize();
     }
+ 
+    /**
+     * A representation of an expression location that does not correspond to 
+     * an address.  
+     * 
+     * @since 2.1
+     */
+    public interface IExpressionDMLocation extends IExpressionDMAddress {
+        
+        /**
+         * A constant that can be returned by {@link IExpressionDMAddress#getAddress()}
+         * to represent an invalid address.  Implementations of 
+         * <code>IExpressionDMLocation</code> can return this constant if no  
+         * valid address can be returned for a given expression location.  
+         */
+        public static final IAddress INVALID_ADDRESS = new IAddress() {
+            public IAddress add(BigInteger offset) { return this; }
+            public IAddress add(long offset) { return this; }
+            public BigInteger getMaxOffset() { return BigInteger.ZERO; }
+            public BigInteger distanceTo(IAddress other) { return BigInteger.ZERO; }
+            public BigInteger getValue() { return BigInteger.ZERO; }
+            public boolean isZero() { return false; }
+            public boolean isMax() { return false; }
+            public String toString(int radix) { return "INVALID"; }
+            public String toHexAddressString() { return toString(); }
+            public String toBinaryAddressString()  { return toString(); }
+            public int getCharsNum() { return 0; }
+            public int getSize() { return 0; }
+            public int compareTo(Object o) { return 0; }
+        };
+        
+        /**
+         * Returns a string representation of the expression location.
+         */
+    	public String getLocation();
+    }
+
+    
     
     /**
      * This is the model data interface that corresponds to IExpressionDMContext.
@@ -140,7 +188,9 @@ public interface IExpressions extends IFormattedValues {
     /**
      * Retrieves the address and size of an expression given by the expression context(<tt>dmc</tt>).
      * Non-lvalues do not have an addresses (e.g., "x + 5").  When the expression
--    * has no address, the data request monitor will contain null.
+-    * has no address, the request monitor will have an error with code 
+     * <code>IDsfStatusConstants.REQUEST_FAILED</code> and the data request
+     * monitor will contain null.
      * 
      * @param dmc
      *            The ExpressionDMC for the expression

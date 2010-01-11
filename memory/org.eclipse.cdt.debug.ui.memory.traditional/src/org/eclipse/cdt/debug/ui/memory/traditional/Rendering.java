@@ -837,7 +837,6 @@ public class Rendering extends Composite implements IDebugEventSetListener
             }
         }
 
-        @SuppressWarnings("unchecked")
 		public void run()
         {
             while(!fDisposed)
@@ -849,7 +848,7 @@ public class Rendering extends Composite implements IDebugEventSetListener
                     if(fQueue.size() > 0)
                     {
                     	Request request = (Request) fQueue.elementAt(0);
-                    	Class type = request.getClass();
+                    	Class<?> type = request.getClass();
                     	
                     	while(fQueue.size() > 0 && type.isInstance(fQueue.elementAt(0)))
                     	{

@@ -34,7 +34,7 @@ public class NumberFormatDetailPaneFactory implements IDetailPaneFactory {
     /* (non-Javadoc)
      * @see org.eclipse.debug.internal.ui.views.variables.IDetailsFactory#getDetailsTypes(org.eclipse.jface.viewers.IStructuredSelection)
      */
-    @SuppressWarnings("unchecked")
+    @SuppressWarnings("rawtypes")
     public Set getDetailPaneTypes(IStructuredSelection selection) {
         Set<String> possibleIDs = new HashSet<String>(1);
         possibleIDs.add(NumberFormatDetailPane.ID);

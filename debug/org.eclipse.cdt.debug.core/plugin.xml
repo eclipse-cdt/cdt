@@ -337,5 +337,14 @@
       <sourceContainer
       		id="org.eclipse.debug.core.containerType.project"/>
    </extension>
- 
+   <extension
+         point="org.eclipse.core.runtime.adapters">
+      <factory
+            adaptableType="org.eclipse.cdt.core.model.IBinary"
+            class="org.eclipse.cdt.debug.internal.core.srcfinder.CSourceFinderFactory">
+         <adapter
+               type="org.eclipse.cdt.core.ISourceFinder">
+         </adapter>
+      </factory>
+   </extension>  
 </plugin>

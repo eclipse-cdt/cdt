@@ -27,7 +27,7 @@ import org.eclipse.cdt.core.settings.model.ICProjectDescription;
 import org.eclipse.cdt.core.settings.model.ICProjectDescriptionListener;
 import org.eclipse.cdt.debug.core.CDebugCorePlugin;
 import org.eclipse.cdt.debug.internal.core.executables.StandardExecutableImporter;
-import org.eclipse.cdt.debug.internal.core.executables.StandardSourceFileRemapping;
+import org.eclipse.cdt.debug.internal.core.executables.StandardSourceFileRemappingFactory;
 import org.eclipse.cdt.debug.internal.core.executables.StandardSourceFilesProvider;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IProjectDescription;
@@ -73,7 +73,7 @@ public class ExecutablesManager extends PlatformObject implements IResourceChang
 	private List<IExecutablesChangeListener> changeListeners = Collections.synchronizedList(new ArrayList<IExecutablesChangeListener>());
 	private List<IProjectExecutablesProvider> executableProviders;
 	private List<ISourceFilesProvider> sourceFileProviders;
-	private List<ISourceFileRemapping> sourceFileRemappings;
+	private List<ISourceFileRemappingFactory> sourceFileRemappingFactories;
 	private List<IExecutableImporter> executableImporters;
 	
 	private boolean DEBUG;
@@ -164,7 +164,7 @@ public class ExecutablesManager extends PlatformObject implements IResourceChang
 		// add the standard providers
 		executableProviders.add(0, new StandardExecutableProvider());
 		sourceFileProviders.add(0, new StandardSourceFilesProvider());
-		sourceFileRemappings.add(0, new StandardSourceFileRemapping());
+		sourceFileRemappingFactories.add(0, new StandardSourceFileRemappingFactory());
 		executableImporters.add(0, new StandardExecutableImporter());
 		
 		// listen for events we're interested in
@@ -264,26 +264,6 @@ public class ExecutablesManager extends PlatformObject implements IResourceChang
 		}
 
 		return executables;
-	}
-
-	/**
-	 * Attempt to remap the path to the given source file in the given executable using
-	 * source file mapping extensions
-	 * @param executable the executable
-	 * @param filePath the absolute path to the source file
-	 * @return the new path to the source file, which was remapped if possible
-	 * 
-	 * @since 6.0  
-	 */
-	public String remapSourceFile(Executable executable, String filePath) {
-		synchronized (sourceFileRemappings) {
-			for (ISourceFileRemapping remapping : sourceFileRemappings) {
-				String remappedPath = remapping.remapSourceFile(executable.getPath(), filePath);
-				if (!remappedPath.equals(filePath))
-					return remappedPath;
-			}
-		}
-		return filePath;
 	}
 
 	/**
@@ -650,6 +630,10 @@ public class ExecutablesManager extends PlatformObject implements IResourceChang
 		
 		return provider;
 	}
+	
+	ISourceFileRemappingFactory[] getSourceFileRemappingFactories() {
+		return sourceFileRemappingFactories.toArray(new ISourceFileRemappingFactory[sourceFileRemappingFactories.size()]);
+	}
 
 	private void loadExecutableProviderExtensions() {
 		executableProviders = Collections.synchronizedList(new ArrayList<IProjectExecutablesProvider>());
@@ -714,7 +698,7 @@ public class ExecutablesManager extends PlatformObject implements IResourceChang
 	}
 
 	private void loadSoureRemappingExtensions() {
-		sourceFileRemappings = Collections.synchronizedList(new ArrayList<ISourceFileRemapping>());
+		sourceFileRemappingFactories = Collections.synchronizedList(new ArrayList<ISourceFileRemappingFactory>());
 
 		IExtensionRegistry extensionRegistry = Platform.getExtensionRegistry();
 		IExtensionPoint extensionPoint = extensionRegistry.getExtensionPoint(CDebugCorePlugin.PLUGIN_ID + ".SourceRemappingProvider"); //$NON-NLS-1$
@@ -729,7 +713,7 @@ public class ExecutablesManager extends PlatformObject implements IResourceChang
 			try {
 				Object extObject = element.createExecutableExtension("class"); //$NON-NLS-1$
 				if (extObject instanceof ISourceFileRemapping) {
-					sourceFileRemappings.add((ISourceFileRemapping)extObject);
+					sourceFileRemappingFactories.add((ISourceFileRemappingFactory)extObject);
 				} else {
 					failed = true;
 				}

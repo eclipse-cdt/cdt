@@ -65,7 +65,15 @@ public class StandardExecutableProvider implements IProjectExecutablesProvider {
 					IPath exePath = binary.getResource().getLocation();
 					if (exePath == null)
 						exePath = binary.getPath();
-					executables.add(new Executable(exePath, project, binary.getResource()));
+					List<ISourceFileRemapping> srcRemappers = new ArrayList<ISourceFileRemapping>(2);
+					ISourceFileRemappingFactory[] factories = ExecutablesManager.getExecutablesManager().getSourceFileRemappingFactories();
+					for (ISourceFileRemappingFactory factory : factories) {
+						ISourceFileRemapping remapper = factory.createRemapper(binary);
+						if (remapper != null) {
+							srcRemappers.add(remapper);
+						}
+					}
+					executables.add(new Executable(exePath, project, binary.getResource(), srcRemappers.toArray(new ISourceFileRemapping[srcRemappers.size()])));
 				}
 				
 				progress.worked(1);

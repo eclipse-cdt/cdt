@@ -89,6 +89,7 @@ public class Executable extends PlatformObject {
 	private final Map<ITranslationUnit, String> remappedPaths;
 	private final ArrayList<ITranslationUnit> sourceFiles;
 	private boolean refreshSourceFiles;
+	private ISourceFileRemapping[] remappers;
 
 	public IPath getPath() {
 		return executablePath;
@@ -98,11 +99,15 @@ public class Executable extends PlatformObject {
 		return project;
 	}
 
-	public Executable(IPath path, IProject project, IResource resource) {
+	/**
+	 * @since 7.0
+	 */
+	public Executable(IPath path, IProject project, IResource resource, ISourceFileRemapping[] sourceFileRemappings) {
 		this.executablePath = path;
 		this.project = project;
 		this.name = new File(path.toOSString()).getName();
 		this.resource = resource;
+		this.remappers = sourceFileRemappings;		
 		remappedPaths = new HashMap<ITranslationUnit, String>();
 		sourceFiles = new ArrayList<ITranslationUnit>();
 		refreshSourceFiles = true;
@@ -121,7 +126,7 @@ public class Executable extends PlatformObject {
 		return name;
 	}
 
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings("rawtypes")
 	@Override
 	public Object getAdapter(Class adapter) {
 		if (adapter.equals(IResource.class))
@@ -131,6 +136,17 @@ public class Executable extends PlatformObject {
 				return this.getProject();
 		return super.getAdapter(adapter);
 	}
+	
+	private String remapSourceFile(String filename) {
+		for (ISourceFileRemapping remapper : remappers) {
+			String remapped = remapper.remapSourceFile(this.getPath(), filename);
+			if (!remapped.equals(filename)) {
+				return remapped;
+			}
+		}
+		return filename;
+	}
+	
 
 	/**
 	 * @noreference This method is not intended to be referenced by clients.
@@ -157,7 +173,7 @@ public class Executable extends PlatformObject {
 			for (String filename : symReaderSources) {
 				String orgPath = filename;
 
-				filename = ExecutablesManager.getExecutablesManager().remapSourceFile(this, filename);
+				filename = remapSourceFile(filename);
 
 				// Sometimes the path in the symbolics will have a different
 				// case than the actual file system path. Even if the file

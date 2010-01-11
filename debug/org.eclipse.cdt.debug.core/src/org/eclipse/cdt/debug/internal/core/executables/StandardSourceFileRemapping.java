@@ -11,48 +11,25 @@
 
 package org.eclipse.cdt.debug.internal.core.executables;
 
-import org.eclipse.cdt.debug.core.CDebugCorePlugin;
+import org.eclipse.cdt.core.ISourceFinder;
+import org.eclipse.cdt.core.model.IBinary;
 import org.eclipse.cdt.debug.core.executables.ISourceFileRemapping;
-import org.eclipse.cdt.debug.core.sourcelookup.ICSourceLocator;
-import org.eclipse.cdt.debug.internal.core.sourcelookup.CSourceLookupDirector;
-import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
-import org.eclipse.debug.core.DebugPlugin;
-import org.eclipse.debug.core.ILaunch;
-import org.eclipse.debug.core.ILaunchManager;
-import org.eclipse.debug.core.model.ISourceLocator;
-import org.eclipse.debug.core.sourcelookup.containers.LocalFileStorage;
 
 public class StandardSourceFileRemapping implements ISourceFileRemapping {
 
+	ISourceFinder srcFinder;
+
+	public StandardSourceFileRemapping(IBinary binary) {
+		srcFinder = (ISourceFinder) binary.getAdapter(ISourceFinder.class);
+	}
+	
 	public String remapSourceFile(IPath executable, String filePath) {
-
-		try {
-			Object[] foundElements = CDebugCorePlugin.getDefault().getCommonSourceLookupDirector().findSourceElements(filePath);
-
-			if (foundElements.length == 0) {
-				Object foundElement = null;
-				ILaunchManager launchMgr = DebugPlugin.getDefault().getLaunchManager();
-				ILaunch[] launches = launchMgr.getLaunches();
-				for (ILaunch launch : launches) {
-					ISourceLocator locator = launch.getSourceLocator();
-					if (locator instanceof ICSourceLocator || locator instanceof CSourceLookupDirector) {
-						if (locator instanceof ICSourceLocator)
-							foundElement = ((ICSourceLocator) locator).findSourceElement(filePath);
-						else
-							foundElement = ((CSourceLookupDirector) locator).getSourceElement(filePath);
-					}
-				}
-				if (foundElement != null)
-					foundElements = new Object[] { foundElement };
+		if (srcFinder != null) {
+			String mappedPath = srcFinder.toLocalPath(filePath);
+			if (mappedPath != null) {
+				return mappedPath;
 			}
-
-			if (foundElements.length == 1 && foundElements[0] instanceof LocalFileStorage) {
-				LocalFileStorage newLocation = (LocalFileStorage) foundElements[0];
-				filePath = newLocation.getFullPath().toOSString();
-			}
-
-		} catch (CoreException e) {
 		}
 		return filePath;
 	}

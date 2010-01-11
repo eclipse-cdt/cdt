@@ -24,6 +24,9 @@ import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
+import org.eclipse.debug.core.DebugPlugin;
+import org.eclipse.debug.core.ILaunchConfiguration;
+import org.eclipse.debug.core.ILaunchConfigurationListener;
 import org.eclipse.debug.core.sourcelookup.ISourceLookupDirector;
 import org.eclipse.debug.core.sourcelookup.ISourceLookupParticipant;
 import org.eclipse.jface.viewers.IOpenListener;
@@ -46,7 +49,7 @@ import org.eclipse.ui.progress.UIJob;
  * Displays the list of source files for the executable selected in the
  * ExecutablesViewer.
  */
-public class SourceFilesViewer extends BaseViewer implements ISourceLookupParticipant {
+public class SourceFilesViewer extends BaseViewer implements ISourceLookupParticipant, ILaunchConfigurationListener {
 
 	private static final String P_COLUMN_ORDER_KEY_SF = "columnOrderKeySF"; //$NON-NLS-1$
 	private static final String P_SORTED_COLUMN_INDEX_KEY_SF = "sortedColumnIndexKeySF"; //$NON-NLS-1$
@@ -79,6 +82,11 @@ public class SourceFilesViewer extends BaseViewer implements ISourceLookupPartic
 		// source lookup as this viewer shows both original and remapped
 		// locations
 		CDebugCorePlugin.getDefault().getCommonSourceLookupDirector().addParticipants(new ISourceLookupParticipant[] { this });
+		
+		// We also look for launch configuration changes, since their source
+		// locators are involved in source path remapping, too
+		DebugPlugin.getDefault().getLaunchManager().addLaunchConfigurationListener(this);
+	
 		sourceFilesTree.addDisposeListener(new DisposeListener() {
 
 			public void widgetDisposed(DisposeEvent e) {
@@ -169,7 +177,7 @@ public class SourceFilesViewer extends BaseViewer implements ISourceLookupPartic
 		if (sortType == ExecutablesView.ORG_LOCATION) {
 			return new ExecutablesViewerComparator(sortType, column_sort_order[ExecutablesView.ORG_LOCATION]) {
 
-				@SuppressWarnings("unchecked") //$NON-NLS-1$
+				@SuppressWarnings("unchecked")
 				public int compare(Viewer viewer, Object e1, Object e2) {
 					if (e1 instanceof ITranslationUnit && e2 instanceof ITranslationUnit) {
 						ITranslationUnit entry1 = (ITranslationUnit) e1;
@@ -201,6 +209,10 @@ public class SourceFilesViewer extends BaseViewer implements ISourceLookupPartic
 	}
 
 	public void sourceContainersChanged(ISourceLookupDirector director) {
+		refreshContent();
+	}
+
+	private void refreshContent() {
 		UIJob refreshJob = new UIJob(Messages.SourceFilesViewer_RefreshSourceFiles) {
 
 			@Override
@@ -241,4 +253,32 @@ public class SourceFilesViewer extends BaseViewer implements ISourceLookupPartic
 		// default visible columns
 		return "1,1,0,0,0,0"; //$NON-NLS-1$
 	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.debug.core.ILaunchConfigurationListener#launchConfigurationAdded(org.eclipse.debug.core.ILaunchConfiguration)
+	 */
+	public void launchConfigurationAdded(ILaunchConfiguration configuration) {
+		if (!configuration.isWorkingCopy()) {
+			refreshContent();
+		}
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.debug.core.ILaunchConfigurationListener#launchConfigurationChanged(org.eclipse.debug.core.ILaunchConfiguration)
+	 */
+	public void launchConfigurationChanged(ILaunchConfiguration configuration) {
+		if (!configuration.isWorkingCopy()) {
+			refreshContent();
+		}
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.debug.core.ILaunchConfigurationListener#launchConfigurationRemoved(org.eclipse.debug.core.ILaunchConfiguration)
+	 */
+	public void launchConfigurationRemoved(ILaunchConfiguration configuration) {
+		if (!configuration.isWorkingCopy()) {
+			refreshContent();
+		}
+	}
+	
 }

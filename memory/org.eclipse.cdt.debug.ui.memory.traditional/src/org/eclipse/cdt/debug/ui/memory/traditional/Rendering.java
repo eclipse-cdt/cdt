@@ -11,7 +11,9 @@
 
 package org.eclipse.cdt.debug.ui.memory.traditional;
 
+import java.math.BigDecimal;
 import java.math.BigInteger;
+import java.math.MathContext;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Set;
@@ -124,7 +126,15 @@ public class Rendering extends Composite implements IDebugEventSetListener
     public final static int PANE_BINARY = 2;
 
     public final static int PANE_TEXT = 3;
-    
+
+	/**
+	 * Decimal precision used when converting between scroll units and number of
+	 * memory rows. Calculations do not need to be exact; two decimal places is
+	 * good enough.
+	 */
+	static private final MathContext SCROLL_CONVERSION_PRECISION = new MathContext(2);
+
+	
     // constants used to identify text, maybe java should be queried for all available sets
     public final static int TEXT_ISO_8859_1 = 1;
     public final static int TEXT_USASCII = 2;
@@ -407,10 +417,17 @@ public class Rendering extends Composite implements IDebugEventSetListener
                     	}
                     	else
                     	{
-                            // Figure out the delta
-                        	int delta = getVerticalBar().getSelection() - fCurrentScrollSelection;
-                    		fViewportAddress = fViewportAddress.add(BigInteger.valueOf(
-                    				getAddressableCellsPerRow() * delta));
+                            // Figure out the delta, ignore events with no delta
+                        	int deltaScroll = getVerticalBar().getSelection() - fCurrentScrollSelection;
+                        	if (deltaScroll == 0)
+                        		break;
+                        	
+							BigInteger deltaRows = scrollbar2rows(deltaScroll);
+							
+							BigInteger newAddress = fViewportAddress.add(BigInteger.valueOf(
+                    				getAddressableCellsPerRow()).multiply(deltaRows));
+							
+							fViewportAddress = newAddress;
                     	}
                         ensureViewportAddressDisplayable();
                         // Update tooltip
@@ -1402,16 +1419,10 @@ public class Rendering extends Composite implements IDebugEventSetListener
 	        // Update the number of bytes per row;
 	        // the max and min scroll range and the current thumb nail position.        
 	        fBytesPerRow = getBytesPerColumn() * getColumnCount();
-	        BigInteger difference = getMemoryBlockEndAddress().subtract(getMemoryBlockStartAddress()).add(BigInteger.ONE);
-	        BigInteger maxScrollRange = difference.divide(BigInteger.valueOf(getAddressableCellsPerRow()));
-	        if(maxScrollRange.multiply(BigInteger.valueOf(getAddressableCellsPerRow())).compareTo(difference) != 0)
-	        	maxScrollRange = maxScrollRange.add(BigInteger.ONE);
-	        
-	        // support targets with an addressable size greater than 1
-	        maxScrollRange = maxScrollRange.divide(BigInteger.valueOf(getAddressableSize()));
-	                
+
 	        getVerticalBar().setMinimum(1);
-	        getVerticalBar().setMaximum(maxScrollRange.intValue());
+	        // scrollbar maximum range is Integer.MAX_VALUE. 
+	        getVerticalBar().setMaximum(getMaxScrollRange().min(BigInteger.valueOf(Integer.MAX_VALUE)).intValue());
 	        getVerticalBar().setIncrement(1);
 	        getVerticalBar().setPageIncrement(this.getRowCount() -1);
 	    	//TW FIXME conversion of slider to scrollbar
@@ -1602,11 +1613,72 @@ public class Rendering extends Composite implements IDebugEventSetListener
 	protected void setCurrentScrollSelection()
 	{
 		BigInteger selection = getViewportStartAddress().divide(
-			BigInteger.valueOf(getAddressableCellsPerRow()).add(BigInteger.ONE));
-		getVerticalBar().setSelection(selection.intValue());
-		fCurrentScrollSelection = selection.intValue();
+			BigInteger.valueOf(getAddressableCellsPerRow()));
+				
+		fCurrentScrollSelection = rows2scrollbar(selection);
+		getVerticalBar().setSelection(fCurrentScrollSelection);
 	}
     
+	/**
+	 * compute the maximum scrolling range.
+	 * @return number of lines that rendering can display
+	 */
+	private BigInteger getMaxScrollRange() {
+		BigInteger difference = getMemoryBlockEndAddress().subtract(getMemoryBlockStartAddress()).add(BigInteger.ONE);
+		BigInteger maxScrollRange = difference.divide(BigInteger.valueOf(getAddressableCellsPerRow()));
+		if(maxScrollRange.multiply(BigInteger.valueOf(getAddressableCellsPerRow())).compareTo(difference) != 0)
+			maxScrollRange = maxScrollRange.add(BigInteger.ONE);
+		
+		// support targets with an addressable size greater than 1
+		maxScrollRange = maxScrollRange.divide(BigInteger.valueOf(getAddressableSize()));
+		return maxScrollRange;
+	}
+
+	/**
+	 * The scroll range is limited by SWT. Because it can be less than the
+	 * number of rows (of memory) that we need to display, we need an arithmetic
+	 * mapping.
+	 * 
+	 * @return ratio this function returns how many rows a scroll bar unit
+	 *         represents. The number will be some fractional value, up to but
+	 *         not exceeding the value 1. I.e., when the scroll range exceeds
+	 *         the row range, we use a 1:1 mapping.
+	 */
+	private final BigDecimal getScrollRatio() {
+		BigInteger maxRange = getMaxScrollRange();
+        if (maxRange.compareTo(BigInteger.valueOf(Integer.MAX_VALUE)) > 0 ) {
+        	return new BigDecimal(maxRange).divide(BigDecimal.valueOf(Integer.MAX_VALUE), SCROLL_CONVERSION_PRECISION);
+        } else {
+        	return BigDecimal.ONE;
+        }	
+	}
+
+	/**
+	 * Convert memory row units to scroll bar units. The scroll range is limited
+	 * by SWT. Because it can be less than the number of rows (of memory) that
+	 * we need to display, we need an arithmetic mapping.
+
+	 * @param rows
+	 *            units of memory
+	 * @return scrollbar units
+	 */
+	private int rows2scrollbar(BigInteger rows) {
+		return new BigDecimal(rows).divide(getScrollRatio(), SCROLL_CONVERSION_PRECISION).intValue();
+	}
+
+	/**
+	 * Convert scroll bar units to memory row units. The scroll range is limited
+	 * by SWT. Because it can be less than the number of rows (of memory) that
+	 * we need to display, we need an arithmetic mapping.
+	 * 
+	 * @param scrollbarUnits
+	 *            scrollbar units
+	 * @return number of rows of memory
+	 */
+	private BigInteger scrollbar2rows(int scrollbarUnits) {
+		return getScrollRatio().multiply(BigDecimal.valueOf(scrollbarUnits), SCROLL_CONVERSION_PRECISION).toBigInteger();
+	}
+	
     /**
 	 * @return start address of the memory block
 	 */

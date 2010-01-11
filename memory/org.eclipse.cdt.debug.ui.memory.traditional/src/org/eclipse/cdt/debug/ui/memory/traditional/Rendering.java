@@ -1004,9 +1004,12 @@ public class Rendering extends Composite implements IDebugEventSetListener
             }
             catch(Exception e)
             {
-                logError(
-                    TraditionalRenderingMessages
-                        .getString("TraditionalRendering.FAILURE_READ_MEMORY"), e); //$NON-NLS-1$
+				// User can scroll to any memory, whether it's valid on the
+				// target or not. Doesn't make much sense to fill up the Eclipse
+				// error log with such "failures".
+//                logError(
+//                    TraditionalRenderingMessages
+//                        .getString("TraditionalRendering.FAILURE_READ_MEMORY"), e); //$NON-NLS-1$
             }
         }
 

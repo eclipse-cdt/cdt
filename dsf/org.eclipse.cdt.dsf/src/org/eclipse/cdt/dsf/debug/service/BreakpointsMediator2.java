@@ -666,7 +666,7 @@ public class BreakpointsMediator2 extends AbstractDsfService implements IBreakpo
 		return bpsInfo.toArray(new PlatformBreakpointInfo[bpsInfo.size()]);
 	}
 
-	protected void doBreakpointsAddedInExecutor(PlatformBreakpointInfo[] bpsInfo, Collection<IBreakpointsTargetDMContext> bpTargetDMCs, final RequestMonitor rm) {
+	private void doBreakpointsAddedInExecutor(PlatformBreakpointInfo[] bpsInfo, Collection<IBreakpointsTargetDMContext> bpTargetDMCs, final RequestMonitor rm) {
 		final Map<IBreakpoint, Map<IBreakpointsTargetDMContext, ITargetBreakpointInfo[]>> eventBPs =  
 			new HashMap<IBreakpoint, Map<IBreakpointsTargetDMContext, ITargetBreakpointInfo[]>>(bpsInfo.length, 1);
 		
@@ -920,7 +920,7 @@ public class BreakpointsMediator2 extends AbstractDsfService implements IBreakpo
 		doBreakpointsRemoved(bps, null, null);
 	}
 	
-	protected void doBreakpointsRemoved(final IBreakpoint[] bps, final IBreakpointsTargetDMContext bpsTargetDmc, final RequestMonitor rm) {
+	private void doBreakpointsRemoved(final IBreakpoint[] bps, final IBreakpointsTargetDMContext bpsTargetDmc, final RequestMonitor rm) {
 	
 		final List<IBreakpoint> bpCandidates = new ArrayList<IBreakpoint>();
 		
@@ -962,7 +962,7 @@ public class BreakpointsMediator2 extends AbstractDsfService implements IBreakpo
         }
 	}
 	
-	protected void doBreakpointsRemovedInExecutor(IBreakpoint[] bpCandidates, 
+	private void doBreakpointsRemovedInExecutor(IBreakpoint[] bpCandidates, 
 			Collection<IBreakpointsTargetDMContext> targetContexts, final RequestMonitor rm) {
 		
 		final Map<IBreakpoint, Map<IBreakpointsTargetDMContext, ITargetBreakpointInfo[]>> eventBPs =  

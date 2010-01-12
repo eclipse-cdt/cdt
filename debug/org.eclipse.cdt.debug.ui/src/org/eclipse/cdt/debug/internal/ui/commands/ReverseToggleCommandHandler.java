@@ -58,20 +58,26 @@ public class ReverseToggleCommandHandler extends DebugCommandHandler implements 
 
     public ReverseToggleCommandHandler() {
        IWorkbenchWindow window = PlatformUI.getWorkbench().getActiveWorkbenchWindow();
-       fContextService = DebugUITools.getDebugContextManager().getContextService(window);
-       fContextService.addPostDebugContextListener(this);
+       if (window != null) {
+    	   fContextService = DebugUITools.getDebugContextManager().getContextService(window);
+    	   if (fContextService != null) {
+    		   fContextService.addPostDebugContextListener(this);
 
-       // This constructor might be called after the launch, so we must refresh here too.
-       // This can happen if we activate the action set after the launch.
-       refresh(fContextService.getActiveContext());
+    		   // This constructor might be called after the launch, so we must refresh here too.
+    		   // This can happen if we activate the action set after the launch.
+    		   refresh(fContextService.getActiveContext());
+    	   }
+       }
     }
 
     @Override
    public void dispose() {
-       // Must use the stored service.  If we try to fetch the service
+       // Must use the stored context service.  If we try to fetch the service
        // again with the workbenchWindow, it may fail if the window is
        // already closed.
-       fContextService.removePostDebugContextListener(this);
+    	if (fContextService != null) {
+    		fContextService.removePostDebugContextListener(this);
+    	}
        fTargetAdapter = null;
         super.dispose();
     }

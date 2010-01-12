@@ -10,6 +10,9 @@
  *******************************************************************************/
 package org.eclipse.cdt.tests.dsf.gdb.tests;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import junit.framework.TestCase;
 
 import org.eclipse.cdt.dsf.gdb.launching.LaunchUtils;
@@ -28,31 +31,31 @@ public class LaunchUtilsTest extends TestCase {
     }
 	
     @Test
-	public void testGetGDBVersionFromText(){
-		String test1 = "GNU gdb 6.8.50.20080730";
-		String test2 = "GNU gdb (GDB) 6.8.50.20080730-cvs";
-		String test3 = "GNU gdb (Ericsson GDB 1.0-10) 6.8.50.20080730-cvs";
-        String test4 = "GNU gdb (GDB) Fedora (7.0-3.fc12)";
-        String test5 = "GNU gdb 6.8.0.20080328-cvs (cygwin-special)";
-		String test6 = "GNU gdb 7.0";
+	public void testGetGDBVersionFromText() {
+    	Map<String, String> versions = new HashMap<String, String>(10);
 
-        assertEquals("6.8.50.20080730", LaunchUtils.getGDBVersionFromText(test1));
-        assertEquals("6.8.50.20080730", LaunchUtils.getGDBVersionFromText(test2));
-        assertEquals("6.8.50.20080730", LaunchUtils.getGDBVersionFromText(test3));
-        assertEquals("7.0", LaunchUtils.getGDBVersionFromText(test4));
-        assertEquals("6.8", LaunchUtils.getGDBVersionFromText(test5));
-        assertEquals("7.0", LaunchUtils.getGDBVersionFromText(test6));
+    	versions.put("GNU gdb 6.8.50.20080730", "6.8.50.20080730");
+    	versions.put("GNU gdb (GDB) 6.8.50.20080730-cvs", "6.8.50.20080730");
+    	versions.put("GNU gdb (Ericsson GDB 1.0-10) 6.8.50.20080730-cvs", "6.8.50.20080730");
+    	versions.put("GNU gdb (GDB) Fedora (7.0-3.fc12)", "7.0");
+    	versions.put("GNU gdb 6.8.0.20080328-cvs (cygwin-special)", "6.8");  // Special for cygwin
+    	versions.put("GNU gdb 7.0", "7.0");
+    	versions.put("GNU gdb Fedora (6.8-27.el5)", "6.8");
+    	versions.put("GNU gdb Red Hat Linux (6.3.0.0-1.162.el4rh)", "6.3.0.0");
+    	
+    	for (String key : versions.keySet()) {
+    		assertEquals("From \"" + key + "\"", versions.get(key), LaunchUtils.getGDBVersionFromText(key));
+    	}
 
-        String appleTest1 = "GNU gdb 6.3.50-20050815 (Apple version gdb-696) (Sat Oct 20 18:20:28 GMT 2007)";
-        String appleTest2 = "GNU gdb 6.3.50-20050815 (Apple version gdb-966) (Tue Mar 10 02:43:13 UTC 2009)";
-        String appleTest3 = "GNU gdb 6.3.50-20050815 (Apple version gdb-1346) (Fri Sep 18 20:40:51 UTC 2009)";
-        String appleTest4 = "GNU gdb 7.0 (Apple version gdb-1) (Fri Sep 18 20:40:51 UTC 2009)";
-        String appleTest5 = "GNU gdb 7.0-20050815 (Apple version gdb-01) (Fri Sep 18 20:40:51 UTC 2009)";
+    	versions.clear();
+    	versions.put("GNU gdb 6.3.50-20050815 (Apple version gdb-696) (Sat Oct 20 18:20:28 GMT 2007)", "6.3.50"+LaunchUtils.MACOS_GDB_MARKER+"696");
+    	versions.put("GNU gdb 6.3.50-20050815 (Apple version gdb-966) (Tue Mar 10 02:43:13 UTC 2009)", "6.3.50"+LaunchUtils.MACOS_GDB_MARKER+"966");
+    	versions.put("GNU gdb 6.3.50-20050815 (Apple version gdb-1346) (Fri Sep 18 20:40:51 UTC 2009)", "6.3.50"+LaunchUtils.MACOS_GDB_MARKER+"1346");
+    	versions.put("GNU gdb 7.0 (Apple version gdb-1) (Fri Sep 18 20:40:51 UTC 2009)", "7.0"+LaunchUtils.MACOS_GDB_MARKER+"1");
+    	versions.put("GNU gdb 7.0-20050815 (Apple version gdb-01) (Fri Sep 18 20:40:51 UTC 2009)", "7.0"+LaunchUtils.MACOS_GDB_MARKER+"01");
 
-        assertEquals("6.3.50"+LaunchUtils.MACOS_GDB_MARKER+"696", LaunchUtils.getGDBVersionFromText(appleTest1));
-        assertEquals("6.3.50"+LaunchUtils.MACOS_GDB_MARKER+"966", LaunchUtils.getGDBVersionFromText(appleTest2));
-        assertEquals("6.3.50"+LaunchUtils.MACOS_GDB_MARKER+"1346", LaunchUtils.getGDBVersionFromText(appleTest3));
-        assertEquals("7.0"+LaunchUtils.MACOS_GDB_MARKER+"1", LaunchUtils.getGDBVersionFromText(appleTest4));
-        assertEquals("7.0"+LaunchUtils.MACOS_GDB_MARKER+"01", LaunchUtils.getGDBVersionFromText(appleTest5));
-	}
+    	for (String key : versions.keySet()) {
+    		assertEquals("From \"" + key + "\"", versions.get(key), LaunchUtils.getGDBVersionFromText(key));
+    	}
+    }
 }

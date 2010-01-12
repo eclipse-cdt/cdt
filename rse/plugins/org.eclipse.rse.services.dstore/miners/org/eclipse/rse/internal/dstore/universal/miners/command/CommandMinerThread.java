@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2003, 2009 IBM Corporation and others.
+ * Copyright (c) 2003, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -24,6 +24,7 @@
  *  David McKnight (IBM) - [286671] Dstore shell service interprets &lt; and &gt; sequences
  *  David McKnight     (IBM)   [290743] [dstore][shells] allow bash shells and custom shell invocation
  *  David McKnight     (IBM)   [287305] [dstore] Need to set proper uid for commands when using SecuredThread and single server for multiple clients[
+ *  Peter Wang         (IBM)   [299422] [dstore] OutputHandler.readLines() not compatible with servers that return max 1024bytes available to be read
  *******************************************************************************/
 
 package org.eclipse.rse.internal.dstore.universal.miners.command;
@@ -681,7 +682,12 @@ public class CommandMinerThread extends MinerThread
 
 				writer.write(input);
 				writer.newLine();
-				writer.flush();
+				try{
+					writer.flush();
+				}
+				catch (Exception e){
+					//TODO find actual cause of problem. This only fails on certain machines. 
+				}
 
 				if (!_isWindows && (input.startsWith("cd ") || input.equals("cd"))) //$NON-NLS-1$ //$NON-NLS-2$
 				{

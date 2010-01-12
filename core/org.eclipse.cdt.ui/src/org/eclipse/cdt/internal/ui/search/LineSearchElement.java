@@ -146,7 +146,9 @@ public class LineSearchElement extends PDOMSearchElement {
 		try {
 			// read the content of file
 			CodeReader reader = InternalParserUtil.createCodeReader(fileLocation, null);
-			result = collectLineElements(reader.buffer, matches, fileLocation);
+			if (reader != null) {
+				result = collectLineElements(reader.buffer, matches, fileLocation);
+			}
 		} catch (IOException e) {
 			CUIPlugin.log(e);
 		} catch (CoreException e) {

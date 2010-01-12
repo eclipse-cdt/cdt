@@ -218,11 +218,14 @@ public class LaunchUtils {
 		// GNU gdb 6.8.50.20080730
 		// GNU gdb (GDB) 6.8.50.20080730-cvs
 		// GNU gdb (Ericsson GDB 1.0-10) 6.8.50.20080730-cvs
-		Pattern pattern = Pattern.compile(" gdb( \\(.*?\\))? (\\d*(\\.\\d*)*)",  Pattern.MULTILINE); //$NON-NLS-1$
+        // GNU gdb (GDB) Fedora (7.0-3.fc12)
+        // GNU gdb Red Hat Linux (6.3.0.0-1.162.el4rh)
+
+        Pattern pattern = Pattern.compile(" gdb( \\(.*?\\))? (\\w* )*\\(?(\\d*(\\.\\d*)*)",  Pattern.MULTILINE); //$NON-NLS-1$
 
 		Matcher matcher = pattern.matcher(versionOutput);
 		if (matcher.find()) {
-			version = matcher.group(2);
+			version = matcher.group(3);
 			// Temporary for cygwin, until GDB 7 is released
 			// Any cygwin GDB staring with 6.8 should be treated as plain 6.8
 			if (versionOutput.toLowerCase().indexOf("cygwin") != -1 && //$NON-NLS-1$

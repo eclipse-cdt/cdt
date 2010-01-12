@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009 Wind River Systems, Inc. and others.
+ * Copyright (c) 2009, 2010 Wind River Systems, Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,13 +10,10 @@
  *******************************************************************************/ 
 package org.eclipse.cdt.internal.core.dom.parser;
 
-import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IASTBinaryExpression;
 import org.eclipse.cdt.core.dom.ast.IBasicType;
 import org.eclipse.cdt.core.dom.ast.IEnumeration;
-import org.eclipse.cdt.core.dom.ast.IEnumerator;
 import org.eclipse.cdt.core.dom.ast.IType;
-import org.eclipse.cdt.core.dom.ast.IValue;
 import org.eclipse.cdt.core.dom.ast.IBasicType.Kind;
 
 /**
@@ -267,29 +264,8 @@ public abstract class ArithmeticConversion {
 	}
 	
 	public static int getEnumIntTypeModifiers(IEnumeration enumeration) {
-		// mstodo cache min/max values of enumerations
-		long minValue = 0;
-		long maxValue = 0;
-		try {
-			IEnumerator[] enumerators = enumeration.getEnumerators();
-			for (IEnumerator enumerator : enumerators) {
-				IValue value = enumerator.getValue();
-				if (value != null) {
-					Long val = value.numericalValue();
-					if (val != null) {
-						long v = val.longValue();
-						if (minValue > v) {
-							minValue = v;
-						}
-						if (maxValue < v) {
-							maxValue = v;
-						}
-					}
-				}
-			}
-		} catch (DOMException e) {
-			return 0;
-		}
+		final long minValue = enumeration.getMinValue();
+		final long maxValue = enumeration.getMaxValue();
 		// TODO(sprigogin): Use values of __INT_MAX__ and __LONG_MAX__ macros
 		if (minValue >= Integer.MIN_VALUE && maxValue <= Integer.MAX_VALUE) {
 			return 0;

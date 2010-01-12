@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2002, 2009 IBM Corporation and others.
+ * Copyright (c) 2002, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -2950,7 +2950,7 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
         	if (option.fRequireAbstract)
         		throwBacktrack(LA(1));
         	
-        	final IASTName declaratorName= qualifiedName(CastExprCtx.eNotBExpr);
+        	final IASTName declaratorName= !option.fRequireSimpleName ? qualifiedName(CastExprCtx.eNotBExpr) : identifier();
         	endOffset= calculateEndOffset(declaratorName);
         	return declarator(pointerOps, hasEllipsis, declaratorName, null, startingOffset, endOffset, strategy, option);
         } 

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2009 IBM Corporation and others.
+ * Copyright (c) 2004, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -26,6 +26,7 @@ import org.eclipse.cdt.core.dom.ast.IProblemBinding;
 import org.eclipse.cdt.core.dom.ast.IScope;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.ITypedef;
+import org.eclipse.cdt.core.dom.ast.IValue;
 import org.eclipse.cdt.core.dom.ast.c.ICASTElaboratedTypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.c.ICASTEnumerationSpecifier;
 import org.eclipse.cdt.core.index.IIndexBinding;
@@ -39,6 +40,8 @@ public class CEnumeration extends PlatformObject implements IEnumeration, ICInte
 
     private IASTName[] declarations = null;
     private IASTName definition = null;
+	private Long fMinValue;
+	private Long fMaxValue;
     public CEnumeration(IASTName enumeration) {
         ASTNodeProperty prop = enumeration.getPropertyInParent();
         if (prop == IASTElaboratedTypeSpecifier.TYPE_NAME)
@@ -185,5 +188,49 @@ public class CEnumeration extends PlatformObject implements IEnumeration, ICInte
 	@Override
 	public String toString() {
 		return getName();
+	}
+	
+	public long getMinValue() {
+		if (fMinValue != null)
+			return fMinValue.longValue();
+
+		long minValue = Long.MAX_VALUE;
+		IEnumerator[] enumerators = getEnumerators();
+		for (IEnumerator enumerator : enumerators) {
+			IValue value = enumerator.getValue();
+			if (value != null) {
+				Long val = value.numericalValue();
+				if (val != null) {
+					long v = val.longValue();
+					if (v < minValue) {
+						minValue = v;
+					}
+				}
+			}
+		}
+		fMinValue= minValue;
+		return minValue;
+	}
+
+	public long getMaxValue() {
+		if (fMaxValue != null)
+			return fMaxValue.longValue();
+
+		long maxValue = Long.MIN_VALUE;
+		IEnumerator[] enumerators = getEnumerators();
+		for (IEnumerator enumerator : enumerators) {
+			IValue value = enumerator.getValue();
+			if (value != null) {
+				Long val = value.numericalValue();
+				if (val != null) {
+					long v = val.longValue();
+					if (v > maxValue) {
+						maxValue = v;
+					}
+				}
+			}
+		}
+		fMaxValue= maxValue;
+		return maxValue;
 	}
 }

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2009 Wind River Systems, Inc. and others.
+ * Copyright (c) 2007, 2010 Wind River Systems, Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -270,6 +270,14 @@ public class PDOMASTAdapter {
 		public IBinding getOwner() throws DOMException {
 			return fDelegate.getOwner();
 		}
+		
+		public long getMinValue() {
+			return fDelegate.getMinValue();
+		}
+
+		public long getMaxValue() {
+			return fDelegate.getMaxValue();
+		}
 	}
 
 	private static class AnonymousCompositeType implements ICompositeType {
@@ -409,6 +417,14 @@ public class PDOMASTAdapter {
 
 		public boolean isSameType(IType type) {
 			return ((IEnumeration) fDelegate).isSameType(type);
+		}
+		
+		public long getMinValue() {
+			return ((IEnumeration)fDelegate).getMinValue();
+		}
+
+		public long getMaxValue() {
+			return ((IEnumeration)fDelegate).getMaxValue();
 		}
 	}
 

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2008 IBM Corporation and others.
+ * Copyright (c) 2006, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -22,6 +22,7 @@ import org.eclipse.cdt.core.dom.ast.IEnumerator;
 import org.eclipse.cdt.core.dom.ast.IScope;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.ITypedef;
+import org.eclipse.cdt.core.dom.ast.IValue;
 import org.eclipse.cdt.internal.core.dom.Linkage;
 import org.eclipse.cdt.internal.core.dom.parser.c.CVisitor;
 import org.eclipse.core.runtime.PlatformObject;
@@ -111,5 +112,41 @@ public class C99Enumeration extends PlatformObject implements IC99Binding, IEnum
 			return CVisitor.findEnclosingFunction((IASTNode) scope.getScopeName()); // local or global
 		}
 		return null;
+	}
+
+	public long getMinValue() {
+		long minValue = Long.MAX_VALUE;
+		IEnumerator[] enumerators = getEnumerators();
+		for (IEnumerator enumerator : enumerators) {
+			IValue value = enumerator.getValue();
+			if (value != null) {
+				Long val = value.numericalValue();
+				if (val != null) {
+					long v = val.longValue();
+					if (v < minValue) {
+						minValue = v;
+					}
+				}
+			}
+		}
+		return minValue;
+	}
+
+	public long getMaxValue() {
+		long maxValue = Long.MIN_VALUE;
+		IEnumerator[] enumerators = getEnumerators();
+		for (IEnumerator enumerator : enumerators) {
+			IValue value = enumerator.getValue();
+			if (value != null) {
+				Long val = value.numericalValue();
+				if (val != null) {
+					long v = val.longValue();
+					if (v > maxValue) {
+						maxValue = v;
+					}
+				}
+			}
+		}
+		return maxValue;
 	}
 }

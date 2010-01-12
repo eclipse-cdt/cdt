@@ -146,9 +146,11 @@ public class LineSearchElement extends PDOMSearchElement {
 		
 		// read the content of file
 		FileContent content = FileContent.create(fileLocation);
-		AbstractCharArray buf = ((InternalFileContent) content).getSource();
-		if (buf != null)
-			result = collectLineElements(buf, matches, fileLocation);
+		if (content != null) {
+			AbstractCharArray buf = ((InternalFileContent) content).getSource();
+			if (buf != null)
+				result = collectLineElements(buf, matches, fileLocation);
+		}
 		return result;
 	}
 

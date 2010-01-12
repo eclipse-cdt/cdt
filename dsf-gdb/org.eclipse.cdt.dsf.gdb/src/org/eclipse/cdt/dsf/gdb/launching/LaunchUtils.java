@@ -226,7 +226,9 @@ public class LaunchUtils {
 		// GNU gdb (GDB) 6.8.50.20080730-cvs
 		// GNU gdb (Ericsson GDB 1.0-10) 6.8.50.20080730-cvs
         // GNU gdb (GDB) Fedora (7.0-3.fc12)
-        Pattern pattern = Pattern.compile(" gdb( \\(.*?\\))? (\\w* )?\\(?(\\d*(\\.\\d*)*)",  Pattern.MULTILINE); //$NON-NLS-1$
+        // GNU gdb Red Hat Linux (6.3.0.0-1.162.el4rh)
+
+        Pattern pattern = Pattern.compile(" gdb( \\(.*?\\))? (\\w* )*\\(?(\\d*(\\.\\d*)*)",  Pattern.MULTILINE); //$NON-NLS-1$
 
 		Matcher matcher = pattern.matcher(versionOutput);
 		if (matcher.find()) {

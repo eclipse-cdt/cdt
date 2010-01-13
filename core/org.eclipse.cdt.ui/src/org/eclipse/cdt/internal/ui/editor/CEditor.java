@@ -154,6 +154,7 @@ import org.eclipse.ui.texteditor.IEditorStatusLine;
 import org.eclipse.ui.texteditor.ITextEditorActionConstants;
 import org.eclipse.ui.texteditor.ITextEditorActionDefinitionIds;
 import org.eclipse.ui.texteditor.IUpdate;
+import org.eclipse.ui.texteditor.MarkerAnnotation;
 import org.eclipse.ui.texteditor.MarkerUtilities;
 import org.eclipse.ui.texteditor.SourceViewerDecorationSupport;
 import org.eclipse.ui.texteditor.TextNavigationAction;
@@ -227,6 +228,7 @@ import org.eclipse.cdt.internal.ui.viewsupport.SelectionListenerWithASTManager;
  */
 public class CEditor extends TextEditor implements ISelectionChangedListener, ICReconcilingListener {
 
+	private IMarker fSyncProblemsViewMarker = null;
 	/**
 	 * A slightly modified implementation of IGotomarker compared to AbstractDecoratedTextEditor.
 	 * 
@@ -242,6 +244,8 @@ public class CEditor extends TextEditor implements ISelectionChangedListener, IC
 
 			if (getSourceViewer() == null)
 				return;
+
+			fSyncProblemsViewMarker = marker;
 
 			int start= MarkerUtilities.getCharStart(marker);
 			int end= MarkerUtilities.getCharEnd(marker);
@@ -292,8 +296,10 @@ public class CEditor extends TextEditor implements ISelectionChangedListener, IC
 			}
 
 			int length= document.getLength();
-			if (end - 1 < length && start < length)
+			if (end - 1 < length && start < length) {
+				fIsUpdatingMarkerViews= true;
 				selectAndReveal(start, end - start);
+			}
 		}
 	}
 
@@ -2504,7 +2510,8 @@ public class CEditor extends TextEditor implements ISelectionChangedListener, IC
 
 	protected void updateStatusLine() {
 		ITextSelection selection = (ITextSelection) getSelectionProvider().getSelection();
-		Annotation annotation = getAnnotation(selection.getOffset(), selection.getLength());
+		Annotation annotation = getAnnotation(selection.getOffset(), selection.getLength(), fSyncProblemsViewMarker);
+		fSyncProblemsViewMarker = null;
 		setStatusLineErrorMessage(null);
 		setStatusLineMessage(null);
 		if (annotation != null) {
@@ -2519,10 +2526,10 @@ public class CEditor extends TextEditor implements ISelectionChangedListener, IC
 	 *
 	 * @param offset the region offset
 	 * @param length the region length
+	 * @param marker associated marker or <code>null</code> of not available
 	 * @return the found annotation or <code>null</code>
-	 * @since 3.0
 	 */
-	private Annotation getAnnotation(int offset, int length) {
+	private Annotation getAnnotation(int offset, int length, IMarker marker) {
 		IAnnotationModel model= getDocumentProvider().getAnnotationModel(getEditorInput());
 		if (model == null)
 			return null;
@@ -2537,17 +2544,29 @@ public class CEditor extends TextEditor implements ISelectionChangedListener, IC
 
 		@SuppressWarnings("unchecked")
 		Iterator<Annotation> e= new CAnnotationIterator(parent, false);
+		Annotation annotation = null;
 		while (e.hasNext()) {
 			Annotation a = e.next();
 			if (!isNavigationTarget(a))
 				continue;
-
+			
 			Position p = model.getPosition(a);
-			if (p != null && p.overlapsWith(offset, length))
-				return a;
+			if (p != null && p.overlapsWith(offset, length)) {
+				if (annotation==null) {
+					annotation = a;
+					if (marker==null)
+						break;
+				}
+				if (a instanceof MarkerAnnotation) {
+					if (((MarkerAnnotation)a).getMarker().equals(marker)) {
+						annotation = a;
+						break;
+					}
+				}
+			}
 		}
-
-		return null;
+		
+		return annotation;
 	}
 
 	/*

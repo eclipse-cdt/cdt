@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2009 Wind River Systems and others.
+ * Copyright (c) 2007, 2010 Wind River Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -181,6 +181,7 @@ import org.eclipse.ui.texteditor.AbstractDecoratedTextEditorPreferenceConstants;
 import org.eclipse.ui.texteditor.AnnotationPreference;
 import org.eclipse.ui.texteditor.ChainedPreferenceStore;
 import org.eclipse.ui.texteditor.DefaultMarkerAnnotationAccess;
+import org.eclipse.ui.texteditor.FindReplaceAction;
 import org.eclipse.ui.texteditor.ITextEditorActionConstants;
 import org.eclipse.ui.texteditor.IUpdate;
 import org.eclipse.ui.texteditor.MarkerAnnotationPreferences;
@@ -524,8 +525,8 @@ public abstract class DisassemblyPart extends WorkbenchPart implements IDisassem
 	/*
 	 * @see IAdaptable#getAdapter(java.lang.Class)
 	 */
-    @Override
-    @SuppressWarnings("unchecked")
+    @SuppressWarnings("rawtypes")
+	@Override
     public Object getAdapter(Class required) {
 		if (IVerticalRulerInfo.class.equals(required)) {
 			if (fVerticalRuler != null) {
@@ -1300,6 +1301,11 @@ public abstract class DisassemblyPart extends WorkbenchPart implements IDisassem
 		action= new TextOperationAction(fViewer, ITextOperationTarget.PRINT);
 		action.setActionDefinitionId(IWorkbenchCommandConstants.FILE_PRINT);
 		fGlobalActions.put(ITextEditorActionConstants.PRINT, action);
+
+		action= new FindReplaceAction(DisassemblyMessages.getBundleForConstructedKeys(), "FindReplaceAction.", this); //$NON-NLS-1$
+		action.setActionDefinitionId(IWorkbenchCommandConstants.EDIT_FIND_AND_REPLACE);
+		fGlobalActions.put(ActionFactory.FIND.getId(), action);
+		fSelectionActions.add(action);
 
 		fActionGotoPC = new ActionGotoProgramCounter(this);
 		fActionGotoPC.setActionDefinitionId(COMMAND_ID_GOTO_PC);

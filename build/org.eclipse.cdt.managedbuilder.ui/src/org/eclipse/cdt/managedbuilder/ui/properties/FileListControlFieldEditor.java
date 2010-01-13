@@ -150,7 +150,7 @@ public class FileListControlFieldEditor extends FieldEditor {
 		layout.marginHeight = 5;
 		layout.makeColumnsEqualWidth = false;
 		topLayout.setLayout(layout);
-		GridData gddata = new GridData(GridData.FILL_HORIZONTAL);
+		GridData gddata = new GridData(GridData.FILL_BOTH);
 		gddata.horizontalSpan = 2;
 		topLayout.setLayoutData(gddata);
 		// file list control

@@ -1110,7 +1110,9 @@ public class Rendering extends Composite implements IDebugEventSetListener
 
             	try
             	{
-                    getMemoryBlock().setValue(address.subtract(fParent.getBigBaseAddress()), byteValue);
+            		IMemoryBlockExtension block = getMemoryBlock();
+                    BigInteger offset = address.subtract(block.getBigBaseAddress());
+                    block.setValue(offset, byteValue);
                 }
                 catch(Exception e)
                 {

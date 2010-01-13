@@ -175,14 +175,19 @@ public class CMemoryBlockExtension extends CDebugElement implements IMemoryBlock
 	 * @see org.eclipse.debug.core.model.IMemoryBlockExtension#setBaseAddress(java.math.BigInteger)
 	 */
 	public void setBaseAddress( BigInteger address ) throws DebugException {
+		BigInteger current = fBaseAddress;
+		if (current == address || (current != null && current.equals(address))) {
+			return;	// optimization
+		}
+		fBaseAddress = address;
+		fireChangeEvent(DebugEvent.STATE);
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.core.model.IMemoryBlockExtension#getBytesFromOffset(java.math.BigInteger, long)
 	 */
 	public MemoryByte[] getBytesFromOffset( BigInteger unitOffset, long addressableUnits ) throws DebugException {
-		// TODO Auto-generated method stub
-		return null;
+		return getBytesFromAddress(unitOffset.add(getBigBaseAddress()) , addressableUnits);
 	}
 
 	/* (non-Javadoc)

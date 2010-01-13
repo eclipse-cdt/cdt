@@ -1647,6 +1647,10 @@
             containerTypeID="org.eclipse.cdt.debug.core.containerType.absolutePath"
             icon="icons/obj16/abspath_obj.gif"
             id="org.eclipse.cdt.debug.ui.sourceContainerPresentation.absolutePath"/>
+      <sourceContainerPresentation
+            containerTypeID="org.eclipse.cdt.debug.core.containerType.programRelativePath"
+            icon="icons/obj16/program_rel_path_obj.gif"
+            id="org.eclipse.cdt.debug.ui.sourceContainerPresentation.programRelativePath"/>
    </extension>
    <extension
          point="org.eclipse.core.filebuffers.annotationModelCreation">

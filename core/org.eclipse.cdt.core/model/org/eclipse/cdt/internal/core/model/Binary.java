@@ -308,9 +308,6 @@ public class Binary extends Openable implements IBinary {
 		String[] sourceFiles = symbolreader.getSourceFiles();
 		if (sourceFiles != null && sourceFiles.length > 0) {
 			for (String filename : sourceFiles) {
-				if (filename.startsWith(".")) { //$NON-NLS-1$
-					filename = obj.getPath().removeLastSegments(1).append(filename).toOSString();
-				}
 				File file = new File(filename);
 				try {
 					if (file.exists()) {

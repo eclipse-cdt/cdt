@@ -297,6 +297,12 @@
             description="%containerDescription.absolutePath"
             id="org.eclipse.cdt.debug.core.containerType.absolutePath"
             name="%containerName.absolutePath"/>
+      <sourceContainerType
+            class="org.eclipse.cdt.debug.internal.core.sourcelookup.ProgramRelativePathSourceContainerType"
+            description="%containerDescription.programRelativePath"
+            id="org.eclipse.cdt.debug.core.containerType.programRelativePath"
+            name="%containerName.programRelativePath">
+      </sourceContainerType>
    </extension>
  
    <extension
@@ -326,6 +332,8 @@
          point="org.eclipse.cdt.debug.core.supportedSourceContainerTypes">
       <sourceContainer
             id="org.eclipse.cdt.debug.core.containerType.absolutePath"/>
+      <sourceContainer
+            id="org.eclipse.cdt.debug.core.containerType.programRelativePath"/>
       <sourceContainer
             id="org.eclipse.cdt.debug.core.containerType.mapping"/>
       <sourceContainer

@@ -21,6 +21,7 @@ import org.eclipse.cdt.core.ISourceFinder;
 import org.eclipse.cdt.core.model.IBinary;
 import org.eclipse.cdt.debug.core.CDebugCorePlugin;
 import org.eclipse.cdt.debug.core.ICDTLaunchConfigurationConstants;
+import org.eclipse.cdt.debug.core.sourcelookup.ProgramRelativePathSourceContainer;
 import org.eclipse.cdt.debug.internal.core.sourcelookup.CSourceLookupDirector;
 import org.eclipse.cdt.internal.core.model.ExternalTranslationUnit;
 import org.eclipse.core.filesystem.URIUtil;
@@ -74,6 +75,14 @@ public class CSourceFinder implements ISourceFinder, ILaunchConfigurationListene
 	private Map<ILaunchConfiguration, ISourceLocator> fConfigLocators = Collections.synchronizedMap(new HashMap<ILaunchConfiguration, ISourceLocator>());
 
 	/**
+	 * We use this when we don't have an ILaunch or ILaunchConfiguration
+	 * locator. A program relative container instance is automatically added to
+	 * every CDT launch configuration. So when we lack a configuration context,
+	 * we rely on this container to help us resolve relative paths.
+	 */
+	private ProgramRelativePathSourceContainer fRelativePathContainer;
+
+	/**
 	 * Constructor.
 	 * 
 	 * @param binary
@@ -83,6 +92,8 @@ public class CSourceFinder implements ISourceFinder, ILaunchConfigurationListene
 	public CSourceFinder(IBinary binary) {
 		assert(binary != null);
 		fBinary = binary;
+		
+		fRelativePathContainer = new ProgramRelativePathSourceContainer(binary); 
 		
 		ILaunchManager lmgr = DebugPlugin.getDefault().getLaunchManager();
 		lmgr.addLaunchConfigurationListener(this);
@@ -144,6 +155,16 @@ public class CSourceFinder implements ISourceFinder, ILaunchConfigurationListene
 			// Search for the file using the launch/config locator
 			if (fLaunchLocator != null) {
 				foundElement = fLaunchLocator.getSourceElement(compilationPath);
+			}
+			else {
+				// If there isn't a launch/config locator, we need to explicitly
+				// try to resolve relative paths...relative to the binary
+				// location.
+				Object[] elements = fRelativePathContainer.findSourceElements(compilationPath);
+				if (elements.length > 0) {
+					assert elements.length == 1; // relative path container should return at most one element
+					foundElement = elements[0];
+				}
 			}
 
 			// If not found, look in the global (common) locator

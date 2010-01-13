@@ -19,6 +19,7 @@ import java.util.Set;
 import org.eclipse.cdt.debug.core.CDebugCorePlugin;
 import org.eclipse.cdt.debug.core.model.ICBreakpoint;
 import org.eclipse.cdt.debug.core.sourcelookup.AbsolutePathSourceContainer;
+import org.eclipse.cdt.debug.core.sourcelookup.ProgramRelativePathSourceContainer;
 import org.eclipse.cdt.debug.core.sourcelookup.MappingSourceContainer;
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IFile;
@@ -151,6 +152,14 @@ public class CSourceLookupDirector extends AbstractSourceLookupDirector {
 		}
 		if ( container instanceof AbsolutePathSourceContainer ) {
 			return ( ((AbsolutePathSourceContainer)container).isValidAbsoluteFilePath( sourceName ) ); 
+		}
+		if ( container instanceof ProgramRelativePathSourceContainer ) {
+			try {
+				Object[] elements = ((ProgramRelativePathSourceContainer)container).findSourceElements(sourceName);
+				return elements.length > 0;	
+			} catch (CoreException e) {
+				return false;
+			}
 		}
 		try {
 			ISourceContainer[] containers;

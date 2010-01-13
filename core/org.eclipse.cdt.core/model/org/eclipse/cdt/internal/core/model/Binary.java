@@ -308,10 +308,11 @@ public class Binary extends Openable implements IBinary {
 
 		String[] sourceFiles = symbolreader.getSourceFiles();
 		if (sourceFiles != null && sourceFiles.length > 0) {
+			ISourceFinder srcFinder = (ISourceFinder) getAdapter(ISourceFinder.class);
+			
 			for (String filename : sourceFiles) {
 				
 				// Find the file locally
-				ISourceFinder srcFinder = (ISourceFinder) getAdapter(ISourceFinder.class);
 				if (srcFinder != null) {
 					String localPath = srcFinder.toLocalPath(filename);
 					if (localPath != null) {

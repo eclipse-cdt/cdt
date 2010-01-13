@@ -13,6 +13,8 @@ package org.eclipse.cdt.debug.internal.core.model;
 import java.math.BigInteger;
 import java.util.Arrays;
 import java.util.HashSet;
+import java.util.Set;
+
 import org.eclipse.cdt.debug.core.CDebugCorePlugin;
 import org.eclipse.cdt.debug.core.cdi.CDIException;
 import org.eclipse.cdt.debug.core.cdi.ICDISession;
@@ -66,7 +68,7 @@ public class CMemoryBlockExtension extends CDebugElement implements IMemoryBlock
 	 */
 	private MemoryByte[] fBytes = null;
 
-	private HashSet fChanges = new HashSet();
+	private Set<BigInteger> fChanges = new HashSet<BigInteger>();
 
 	/**
 	 * is fWordSize available?
@@ -156,8 +158,10 @@ public class CMemoryBlockExtension extends CDebugElement implements IMemoryBlock
 							targetRequestFailed( e.getMessage(), null );
 						}
 					}
-					fWordSize= block.getWordSize();
-					fHaveWordSize= true;
+					if (block != null) {
+						fWordSize= block.getWordSize();
+						fHaveWordSize= true;
+					}
 				}
 			}
 		}
@@ -216,14 +220,16 @@ public class CMemoryBlockExtension extends CDebugElement implements IMemoryBlock
 				catch( CDIException e ) {
 					targetRequestFailed( e.getMessage(), null );
 				}
-				fBytes = new MemoryByte[bytes.length];
-				for ( int i = 0; i < bytes.length; ++i ) {
-					fBytes[i] = createMemoryByte( bytes[i], getCDIBlock().getFlags( i ), hasChanged( getRealBlockAddress().add( BigInteger.valueOf( i ) ) ) );
+				if (bytes != null) {
+					fBytes = new MemoryByte[bytes.length];
+					for ( int i = 0; i < bytes.length; ++i ) {
+						fBytes[i] = createMemoryByte( bytes[i], getCDIBlock().getFlags( i ), hasChanged( getRealBlockAddress().add( BigInteger.valueOf( i ) ) ) );
+					}
 				}
 			}
 		}
 		MemoryByte[] result = new MemoryByte[0];
-		if ( fBytes != null ) {
+		if ( fBytes != null && cdiBlock != null ) {
 			int offset = address.subtract( getRealBlockAddress() ).intValue();
 			int offsetInBytes = offset * cdiBlock.getWordSize();
 			long lengthInBytes = length * cdiBlock.getWordSize();
@@ -381,7 +387,7 @@ public class CMemoryBlockExtension extends CDebugElement implements IMemoryBlock
 	private void handleChangedEvent( ICDIMemoryChangedEvent event ) {
 		ICDIMemoryBlock block = getCDIBlock();
 		if ( block != null && fBytes != null ) {
-			MemoryByte[] memBytes = (MemoryByte[])fBytes.clone();
+			MemoryByte[] memBytes = fBytes.clone();
 			try {
 				BigInteger start = getRealBlockAddress();
 				long length = block.getLength();
@@ -419,7 +425,7 @@ public class CMemoryBlockExtension extends CDebugElement implements IMemoryBlock
 
 	private void resetChanges() {
 		if ( fBytes != null ) {
-			BigInteger[] changes = (BigInteger[])fChanges.toArray( new BigInteger[fChanges.size()] );
+			BigInteger[] changes = fChanges.toArray( new BigInteger[fChanges.size()] );
 			for ( int i = 0; i < changes.length; ++i ) {
 				BigInteger real = getRealBlockAddress();
 				if ( real.compareTo( changes[i] ) <= 0 && real.add( BigInteger.valueOf( getBlockSize() ) ).compareTo( changes[i] ) > 0 ) {
@@ -487,6 +493,7 @@ public class CMemoryBlockExtension extends CDebugElement implements IMemoryBlock
 	/* (non-Javadoc)
 	 * @see org.eclipse.core.runtime.IAdaptable#getAdapter(java.lang.Class)
 	 */
+	@SuppressWarnings("rawtypes")
 	public Object getAdapter( Class adapter ) {
 		if ( IMemoryBlockRetrieval.class.equals( adapter ) )
 			return getMemoryBlockRetrieval();

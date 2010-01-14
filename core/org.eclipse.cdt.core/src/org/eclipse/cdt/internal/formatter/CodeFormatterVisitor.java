@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2009 Wind River Systems, Inc. and others.
+ * Copyright (c) 2006, 2010 Wind River Systems, Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -2928,18 +2928,7 @@ public class CodeFormatterVisitor extends CPPASTVisitor {
 						break;
 					}
 					else if (currentOffset == endOffset && i == locations.length - 1) {
-						if (node instanceof IASTExpressionList) {
-							IASTNode parent= node.getParent();
-							if (parent != null) {
-								IASTFileLocation parentLocation= parent.getFileLocation();
-								int parentEndOffset= parentLocation.getNodeOffset() + parentLocation.getNodeLength();
-								if (parentEndOffset == endOffset) {
-									scribe.skipRange(startOffset, endOffset);
-								}
-							}
-						} else {
-							scribe.skipRange(startOffset, endOffset);
-						}
+						scribe.skipRange(startOffset, endOffset);
 						break;
 					}
 				}

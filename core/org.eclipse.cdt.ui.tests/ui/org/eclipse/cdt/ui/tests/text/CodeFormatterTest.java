@@ -1307,7 +1307,19 @@ public class CodeFormatterTest extends BaseUITestCase {
 	//
 	//	return 0;
 	//}
-public void testControlStatementsAsMacro_Bug290630() throws Exception {
+	public void testControlStatementsAsMacro_Bug290630() throws Exception {
 		assertFormatterResult();
 	}
+
+	//#define new new(__FILE__, __LINE__)
+	//void func() {char* a = new    char[10];}
+	
+	//#define new new(__FILE__, __LINE__)
+	//void func() {
+	//	char* a = new char[10];
+	//}
+	public void testPlacementNewAsMacro_Bug298593() throws Exception {
+		assertFormatterResult();
+	}
+
 }

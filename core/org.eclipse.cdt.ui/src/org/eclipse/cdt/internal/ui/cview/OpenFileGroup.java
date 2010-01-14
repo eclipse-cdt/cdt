@@ -21,6 +21,7 @@ import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.MenuManager;
@@ -153,6 +154,12 @@ public class OpenFileGroup extends CViewActionGroup {
 			if (element instanceof IFile) {
 				openFileAction.selectionChanged(selection);
 				openFileAction.run();
+			}
+			else if(element instanceof IProject){
+				try {
+					((IProject)element).open(null);
+				} catch (CoreException e) {
+				}
 			}
 		}
 	}

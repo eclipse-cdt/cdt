@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2009 Wind River Systems, Inc. and others.
+ * Copyright (c) 2007, 2010 Wind River Systems, Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -1225,6 +1225,18 @@ public class CodeFormatterTest extends BaseUITestCase {
 	//			+ 1);
 	//}
 	public void testScannerErrorWithIntegerFollowedByStar_Bug278118() throws Exception {
+		assertFormatterResult();
+	}
+
+
+	//#define new new(__FILE__, __LINE__)
+	//void func() {char* a = new    char[10];}
+	
+	//#define new new(__FILE__, __LINE__)
+	//void func() {
+	//	char* a = new char[10];
+	//}
+	public void testPlacementNewAsMacro_Bug298593() throws Exception {
 		assertFormatterResult();
 	}
 

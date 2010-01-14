@@ -14,6 +14,7 @@ import java.io.File;
 import java.util.Map;
 import java.util.StringTokenizer;
 
+import org.eclipse.cdt.internal.p2.Activator;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.equinox.internal.p2.engine.Profile;
@@ -38,12 +39,20 @@ public class CleanupUntarAction extends ProvisioningAction {
 
 	@Override
 	public IStatus execute(Map parameters) {
-		return cleanup(parameters);
+		try {
+			return cleanup(parameters);
+		} catch (Exception e) {
+			return new Status(IStatus.ERROR, Activator.PLUGIN_ID, e.getLocalizedMessage(), e);
+		}
 	}
 
 	@Override
 	public IStatus undo(Map parameters) {
-		return UntarAction.untar(parameters);
+		try {
+			return UntarAction.untar(parameters);
+		} catch (Exception e) {
+			return new Status(IStatus.ERROR, Activator.PLUGIN_ID, e.getLocalizedMessage(), e);
+		}
 	}
 
 	public static IStatus cleanup(Map parameters) {

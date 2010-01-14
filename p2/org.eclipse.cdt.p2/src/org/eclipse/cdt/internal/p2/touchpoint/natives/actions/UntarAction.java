@@ -13,7 +13,6 @@ package org.eclipse.cdt.internal.p2.touchpoint.natives.actions;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
-import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Map;
@@ -22,6 +21,7 @@ import java.util.zip.GZIPInputStream;
 import org.apache.tools.bzip2.CBZip2InputStream;
 import org.apache.tools.tar.TarEntry;
 import org.apache.tools.tar.TarInputStream;
+import org.eclipse.cdt.internal.p2.Activator;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.equinox.internal.p2.engine.Profile;
@@ -59,15 +59,23 @@ public class UntarAction extends ProvisioningAction {
 	
 	@Override
 	public IStatus execute(Map parameters) {
-		return untar(parameters);
+		try {
+			return untar(parameters);
+		} catch (Exception e) {
+			return new Status(IStatus.ERROR, Activator.PLUGIN_ID, e.getLocalizedMessage(), e);
+		}
 	}
 
 	@Override
 	public IStatus undo(Map parameters) {
-		return CleanupUntarAction.cleanup(parameters);
+		try {
+			return CleanupUntarAction.cleanup(parameters);
+		} catch (Exception e) {
+			return new Status(IStatus.ERROR, Activator.PLUGIN_ID, e.getLocalizedMessage(), e);
+		}
 	}
 
-	public static IStatus untar(Map parameters) {
+	public static IStatus untar(Map parameters) throws Exception {
 		String source = (String)parameters.get(ActionConstants.PARM_SOURCE);
 		if (source == null)
 			return Util.createError(NLS.bind(Messages.param_not_set, ActionConstants.PARM_SOURCE, ACTION_NAME));
@@ -120,7 +128,7 @@ public class UntarAction extends ProvisioningAction {
 		return Status.OK_STATUS;
 	}
 	
-	private static File[] untar(String source, String destination, Compression compression) {
+	private static File[] untar(String source, String destination, Compression compression) throws Exception {
 		File zipFile = new File(source);
 		if (!zipFile.exists()) {
 			Util.log(UnzipAction.class.getName() + " the files to be unzipped is not here"); //$NON-NLS-1$
@@ -128,53 +136,47 @@ public class UntarAction extends ProvisioningAction {
 
 		File target = new File(destination);
 		
-		try {
-			FileInputStream fileIn = new FileInputStream(zipFile);
-			InputStream compIn = fileIn;
-			if (compression.equals(Compression.gz))
-				compIn = new GZIPInputStream(fileIn);
-			else if (compression.equals(Compression.bz2)) {
-				// Skip the magic bytes first
-				fileIn.read(new byte[2]);
-				compIn = new CBZip2InputStream(fileIn);
-			}
-
-			ArrayList<File> fileList = new ArrayList<File>();
-			TarInputStream tarIn = new TarInputStream(compIn);
-			for (TarEntry tarEntry = tarIn.getNextEntry(); tarEntry != null; tarEntry = tarIn.getNextEntry()) {
-				File outFile = new File(target, tarEntry.getName());
-				if (tarEntry.isDirectory()) {
-					outFile.mkdirs();
-				} else {
-					if (outFile.exists())
-						outFile.delete();
-					else
-						outFile.getParentFile().mkdirs();
-					FileOutputStream outStream = new FileOutputStream(outFile);
-					tarIn.copyEntryContents(outStream);
-					outStream.close();
-					
-					// Set last modified time from the tar entry
-					long lastModified = tarEntry.getModTime().getTime();
-					outFile.setLastModified(lastModified);
-					
-					// Set the executable bits from the tar entry
-					// we let the umask determine the r/w
-					int mode = tarEntry.getMode();
-					boolean exec = (mode & 0x111) != 0;
-					boolean execOwner = (mode & 0x11) == 0;
-//					outFile.setExecutable(exec, execOwner);
-					
-					fileList.add(outFile);
-				}
-			}
-			tarIn.close();
-			return fileList.toArray(new File[fileList.size()]);
-		} catch (IOException e) {
-			Util.log(UnzipAction.class.getName() + " error unzipping zipfile: " + zipFile.getAbsolutePath() + " destination: " + destination); //$NON-NLS-1$ //$NON-NLS-2$
-			Util.log(e.getLocalizedMessage());
+		FileInputStream fileIn = new FileInputStream(zipFile);
+		InputStream compIn = fileIn;
+		if (compression.equals(Compression.gz))
+			compIn = new GZIPInputStream(fileIn);
+		else if (compression.equals(Compression.bz2)) {
+			// Skip the magic bytes first
+			fileIn.read(new byte[2]);
+			compIn = new CBZip2InputStream(fileIn);
 		}
-		return null;
+
+		ArrayList<File> fileList = new ArrayList<File>();
+		TarInputStream tarIn = new TarInputStream(compIn);
+		for (TarEntry tarEntry = tarIn.getNextEntry(); tarEntry != null; tarEntry = tarIn.getNextEntry()) {
+			File outFile = new File(target, tarEntry.getName());
+			if (tarEntry.isDirectory()) {
+				outFile.mkdirs();
+			} else {
+				if (outFile.exists())
+					outFile.delete();
+				else
+					outFile.getParentFile().mkdirs();
+				FileOutputStream outStream = new FileOutputStream(outFile);
+				tarIn.copyEntryContents(outStream);
+				outStream.close();
+					
+				// Set last modified time from the tar entry
+				long lastModified = tarEntry.getModTime().getTime();
+				outFile.setLastModified(lastModified);
+					
+				// Set the executable bits from the tar entry
+				// we let the umask determine the r/w
+				int mode = tarEntry.getMode();
+				boolean exec = (mode & 0x111) != 0;
+				boolean execOwner = (mode & 0x11) == 0;
+//				outFile.setExecutable(exec, execOwner);
+					
+				fileList.add(outFile);
+			}
+		}
+		tarIn.close();
+		return fileList.toArray(new File[fileList.size()]);
 	}
 	
 }

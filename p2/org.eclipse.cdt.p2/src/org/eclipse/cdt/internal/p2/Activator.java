@@ -61,7 +61,7 @@ public class Activator extends Plugin {
 		return plugin;
 	}
 
-	static public BundleContext getContext() {
+	public static BundleContext getContext() {
 		return plugin.getBundle().getBundleContext();
 	}
 	
@@ -72,8 +72,8 @@ public class Activator extends Plugin {
 	 * @return the service
 	 */
 	@SuppressWarnings("unchecked")
-	public <T> T getService(Class<T> clazz) {
-		BundleContext context = getBundle().getBundleContext();
+	public static <T> T getService(Class<T> clazz) {
+		BundleContext context = plugin.getBundle().getBundleContext();
 		ServiceReference ref = context.getServiceReference(clazz.getName());
 		return (ref != null) ? (T)context.getService(ref) : null;
 	}
@@ -83,11 +83,11 @@ public class Activator extends Plugin {
 	 * 
 	 * @param status
 	 */
-	public void log(int severity, String message, Throwable exception) {
+	public static void log(int severity, String message, Throwable exception) {
 		Platform.getLog(plugin.getBundle()).log(new Status(severity, PLUGIN_ID, message, exception));
 	}
 	
-	public void log(IStatus status) {
+	public static void log(IStatus status) {
 		Platform.getLog(plugin.getBundle()).log(status);
 	}
 	

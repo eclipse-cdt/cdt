@@ -15,7 +15,9 @@ import java.io.File;
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.eclipse.core.runtime.Path;
@@ -48,8 +50,9 @@ import org.eclipse.equinox.internal.provisional.p2.repository.IRepository;
  */
 public class WascanaGenerator implements IApplication {
 
-	private static Version wascanaVersion = Version.parseVersion("1.0.0.0");
 	private static Version binutilsVersion = Version.parseVersion("2.20.0.0");
+	private static Version mingwrtVersion = Version.parseVersion("3.15.2.4");
+	private static Version wascanaVersion = Version.parseVersion("1.0.0.0");
 
 	private static final String REPO_NAME = "Wascana";
 	
@@ -61,6 +64,9 @@ public class WascanaGenerator implements IApplication {
 	
 	private ILicense gpl30License;
 	private ILicense lgpl21License;
+	private ILicense pdLicense; // public domain
+	
+	private List<IInstallableUnit> iuList = new ArrayList<IInstallableUnit>();
 	
 	@Override
 	public Object start(IApplicationContext context) throws Exception {
@@ -76,21 +82,21 @@ public class WascanaGenerator implements IApplication {
 		createRepos(repoDir);
 		loadLicenses();
 
-		// binutils
+		// tools
+		
 		IInstallableUnit binutilsIU = createIU(
 				"wascana.binutils",
-				"Wascana MinGW binutils",
+				"Wascana MinGW Binutils",
 				binutilsVersion,
 				gpl30License,
 				null);
 		IInstallableUnit binutilsSrcIU = createIU(
 				"wascana.binutils.source",
-				"Wascana MinGW binutils source",
+				"Wascana MinGW Binutils Source",
 				binutilsVersion,
 				gpl30License,
 				null);
 		
-		// toolchain
 		IInstallableUnit toolsIU = createCategory(
 				"wascana.tools",
 				"Wascana Tools",
@@ -98,12 +104,29 @@ public class WascanaGenerator implements IApplication {
 				new IRequiredCapability[] {
 						createRequiredCap(binutilsIU),
 				});
+
+		// sdks
 		
+		IInstallableUnit mingwrtIU = createIU(
+				"wascana.mingwrt",
+				"Wascana MinGW Runtime",
+				mingwrtVersion,
+				pdLicense,
+				null);
+				
+		IInstallableUnit mingwrtSrcIU = createIU(
+				"wascana.mingwrt.source",
+				"Wascana MinGW Runtime Source",
+				mingwrtVersion,
+				pdLicense,
+				null);
+				
 		IInstallableUnit sdksIU = createCategory(
 				"wascana.sdks",
 				"Wascana SDKs",
 				wascanaVersion,
 				new IRequiredCapability[] {
+						createRequiredCap(mingwrtIU),
 				});
 
 		IInstallableUnit sourceIU = createCategory(
@@ -112,6 +135,7 @@ public class WascanaGenerator implements IApplication {
 				wascanaVersion,
 				new IRequiredCapability[] {
 						createRequiredCap(binutilsSrcIU),
+						createRequiredCap(mingwrtSrcIU),
 				});
 		
 		IInstallableUnit wascanaIU = createCategory(
@@ -124,16 +148,7 @@ public class WascanaGenerator implements IApplication {
 						createRequiredCap(sourceIU),
 				});
 
-		metaRepo.addInstallableUnits(new IInstallableUnit[] {
-				binutilsIU,
-				binutilsSrcIU,
-				
-				toolsIU,
-				sdksIU,
-				sourceIU,
-				
-				wascanaIU
-			});
+		metaRepo.addInstallableUnits(iuList.toArray(new IInstallableUnit[iuList.size()]));
 
 		System.out.println("done");
 		
@@ -183,6 +198,7 @@ public class WascanaGenerator implements IApplication {
 		lgpl21License = MetadataFactory.createLicense(
 				new URI("http://www.gnu.org/licenses/old-licenses/lgpl-2.1.html"),
 				Activator.getFileContents(new Path("licenses/lgpl-2.1.txt")));
+		pdLicense = MetadataFactory.createLicense(null, "This package has no copyright assignment and is placed in the Public Domain.");
 	}
 	
 	private InstallableUnitDescription createIUDesc(String id, String name, Version version, ILicense license) throws ProvisionException {
@@ -217,7 +233,9 @@ public class WascanaGenerator implements IApplication {
 		ArtifactDescriptor artiDesc = new ArtifactDescriptor(artiKey);
 		artiRepo.addDescriptor(artiDesc);
 		iuDesc.setArtifacts(new IArtifactKey[] { artiKey });
-		return MetadataFactory.createInstallableUnit(iuDesc);
+		IInstallableUnit iu = MetadataFactory.createInstallableUnit(iuDesc);
+		iuList.add(iu);
+		return iu;
 	}
 
 	private IInstallableUnit createCategory(String id, String name, Version version,
@@ -226,7 +244,9 @@ public class WascanaGenerator implements IApplication {
 		if (reqs != null)
 			iuDesc.setRequiredCapabilities(reqs);
 		iuDesc.setProperty(IInstallableUnit.PROP_TYPE_CATEGORY, String.valueOf(true));
-		return MetadataFactory.createInstallableUnit(iuDesc);
+		IInstallableUnit iu = MetadataFactory.createInstallableUnit(iuDesc);
+		iuList.add(iu);
+		return iu;
 	}
 
 	private IRequiredCapability createRequiredCap(IInstallableUnit iu) {

@@ -2,15 +2,15 @@
 <?eclipse version="3.2"?>
 <plugin>
    <extension
-         id="mingwGenerator"
-         name="MinGW Generator"
+         id="wascanaGenerator"
+         name="Wascana Generator"
          point="org.eclipse.core.runtime.applications">
       <application
             cardinality="singleton-global"
             thread="main"
             visible="true">
          <run
-               class="org.eclipse.cdt.p2.generator.MinGWGenerator">
+               class="org.eclipse.cdt.p2.generator.WascanaGenerator">
          </run>
       </application>
    </extension>

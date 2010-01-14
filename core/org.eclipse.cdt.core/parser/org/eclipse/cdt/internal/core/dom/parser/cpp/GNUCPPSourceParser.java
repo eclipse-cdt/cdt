@@ -3252,7 +3252,7 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
 		// Handle ambiguity between parameter pack and varargs.
 		if (pd != null) {
 			ICPPASTDeclarator dtor = pd.getDeclarator();
-			if (!(dtor instanceof IASTAmbiguousDeclarator)) {
+			if (dtor != null && !(dtor instanceof IASTAmbiguousDeclarator)) {
 				if (dtor.declaresParameterPack() && dtor.getNestedDeclarator() == null
 						&& dtor.getInitializer() == null && dtor.getName().getSimpleID().length == 0) {
 					((IASTAmbiguityParent) fc).replace(pd, new CPPASTAmbiguousParameterDeclaration(pd));

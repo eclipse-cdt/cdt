@@ -2148,10 +2148,11 @@ public class CodeFormatterVisitor extends CPPASTVisitor {
 			final int line= scribe.line;
 			boolean indented= false;
 			try {
+				int[] stringLiterals = { Token.tSTRING, Token.tLSTRING };
 				while (true) {
-					scribe.printNextToken(Token.tSTRING, needSpace);
+					scribe.printNextToken(stringLiterals, needSpace);
 					token= peekNextToken();
-					if (token != Token.tSTRING) {
+					if (token != Token.tSTRING && token != Token.tLSTRING) {
 						break;
 					}
 					scribe.printCommentPreservingNewLines();

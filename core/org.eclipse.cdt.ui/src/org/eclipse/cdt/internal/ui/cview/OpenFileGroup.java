@@ -14,6 +14,7 @@ package org.eclipse.cdt.internal.ui.cview;
 import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.core.model.ISourceReference;
 import org.eclipse.cdt.core.model.ITranslationUnit;
+import org.eclipse.cdt.ui.CUIPlugin;
 
 import org.eclipse.cdt.internal.ui.actions.SelectionConverter;
 import org.eclipse.cdt.internal.ui.util.EditorUtility;
@@ -21,6 +22,7 @@ import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.MenuManager;
@@ -28,6 +30,7 @@ import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.ui.IActionBars;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IWorkbenchPage;
+import org.eclipse.ui.actions.CloseUnrelatedProjectsAction;
 import org.eclipse.ui.actions.OpenFileAction;
 import org.eclipse.ui.actions.OpenInNewWindowAction;
 import org.eclipse.ui.actions.OpenWithMenu;
@@ -153,6 +156,13 @@ public class OpenFileGroup extends CViewActionGroup {
 			if (element instanceof IFile) {
 				openFileAction.selectionChanged(selection);
 				openFileAction.run();
+			}
+			else if(element instanceof IProject){
+				try {
+					((IProject)element).open(null);
+				} catch (CoreException e) {
+					CUIPlugin.log(e);
+				}
 			}
 		}
 	}

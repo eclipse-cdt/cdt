@@ -50,6 +50,9 @@ import org.eclipse.core.runtime.IPath;
  * launch configuration. In all cases, the global locator is consulted if no other locator has converted the
  * file.
  * 
+ * <p>A new instance is created every time a Binary object is queried for this interface. Clients must call
+ * {@link #dispose()} when it is done with the object.
+ * 
  * @since 5.2
  * @noimplement This interface is not intended to be implemented by clients.
  * @noextend This interface is not intended to be extended by clients.
@@ -103,5 +106,10 @@ public interface ISourceFinder {
 	 */
 	public String toLocalPath(IAdaptable launch, String compilationPath);
 
-	
+	/**
+	 * Clients must call this to ensure that the object properly cleans up. E.g., a source finder may register
+	 * itself as a listener for changes that would effect how it searches for files. Calling this method will
+	 * allow it to unregister itself. 
+	 */
+	public void dispose();
 }

@@ -309,67 +309,74 @@ public class Binary extends Openable implements IBinary {
 		String[] sourceFiles = symbolreader.getSourceFiles();
 		if (sourceFiles != null && sourceFiles.length > 0) {
 			ISourceFinder srcFinder = (ISourceFinder) getAdapter(ISourceFinder.class);
-			
-			for (String filename : sourceFiles) {
-				
-				// Find the file locally
-				if (srcFinder != null) {
-					String localPath = srcFinder.toLocalPath(filename);
-					if (localPath != null) {
-						filename  = localPath; 
-					}
-				}
-
-				// Be careful how you use this File object. If filename is a relative path, the resulting File
-				// object will apply the relative path to the working directory, which is not what we want.
-				// Stay away from methods that return or use the absolute path of the object. Note that
-				// File.isAbsolute() returns false when the object was constructed with a relative path.
-				File file = new File(filename);
-
-				// Create a translation unit for this file and add it as a child of the binary
-				String id = CoreModel.getRegistedContentTypeId(getCProject().getProject(), file.getName());
-				if (id == null) {
-					// Don't add files we can't get an ID for.
-					continue;
-				}
-				
-				// See if this source file is already in the project.
-				// We check this to determine if we should create a TranslationUnit or ExternalTranslationUnit
-				IFile wkspFile = null;
-				if (file.isAbsolute()) {
-					IFile[] filesInWP = ResourceLookup.findFilesForLocation(new Path(filename));
-	
-					for (IFile element : filesInWP) {
-						if (element.isAccessible()) {
-							wkspFile = element;
-							break;
+			try {
+				for (String filename : sourceFiles) {
+					
+					// Find the file locally
+					if (srcFinder != null) {
+						String localPath = srcFinder.toLocalPath(filename);
+						if (localPath != null) {
+							filename  = localPath; 
 						}
 					}
-				}
-				
-				TranslationUnit tu;
-				if (wkspFile != null)
-					tu = new TranslationUnit(this, wkspFile, id);
-				else {
-					// If we have an absolute path (for the host file system), then use an IPath to create the
-					// ExternalTranslationUnit, as that is the more accurate way to specify the file. If it's
-					// not, then use the path specification we got from the debug information. We want to
-					// avoid, e.g., converting a UNIX path to a Windows one when debugging a UNIX-built binary
-					// on Windows. The opportunity to remap source paths was taken above, when we called
-					// ISourceFinder. If a mapping didn't occur, we want to preserve whatever the debug
-					// information told us. See bugzilla 297781
+	
+					// Be careful how you use this File object. If filename is a relative path, the resulting File
+					// object will apply the relative path to the working directory, which is not what we want.
+					// Stay away from methods that return or use the absolute path of the object. Note that
+					// File.isAbsolute() returns false when the object was constructed with a relative path.
+					File file = new File(filename);
+	
+					// Create a translation unit for this file and add it as a child of the binary
+					String id = CoreModel.getRegistedContentTypeId(getCProject().getProject(), file.getName());
+					if (id == null) {
+						// Don't add files we can't get an ID for.
+						continue;
+					}
+					
+					// See if this source file is already in the project.
+					// We check this to determine if we should create a TranslationUnit or ExternalTranslationUnit
+					IFile wkspFile = null;
 					if (file.isAbsolute()) {
-						tu = new ExternalTranslationUnit(this, Path.fromOSString(filename), id);
+						IFile[] filesInWP = ResourceLookup.findFilesForLocation(new Path(filename));
+		
+						for (IFile element : filesInWP) {
+							if (element.isAccessible()) {
+								wkspFile = element;
+								break;
+							}
+						}
 					}
+					
+					TranslationUnit tu;
+					if (wkspFile != null)
+						tu = new TranslationUnit(this, wkspFile, id);
 					else {
-						tu = new ExternalTranslationUnit(this, URIUtil.toURI(filename), id);						
+						// If we have an absolute path (for the host file system), then use an IPath to create the
+						// ExternalTranslationUnit, as that is the more accurate way to specify the file. If it's
+						// not, then use the path specification we got from the debug information. We want to
+						// avoid, e.g., converting a UNIX path to a Windows one when debugging a UNIX-built binary
+						// on Windows. The opportunity to remap source paths was taken above, when we called
+						// ISourceFinder. If a mapping didn't occur, we want to preserve whatever the debug
+						// information told us. See bugzilla 297781
+						if (file.isAbsolute()) {
+							tu = new ExternalTranslationUnit(this, Path.fromOSString(filename), id);
+						}
+						else {
+							tu = new ExternalTranslationUnit(this, URIUtil.toURI(filename), id);						
+						}
 					}
+	
+					if (! info.includesChild(tu))
+						info.addChild(tu);					
 				}
-
-				if (! info.includesChild(tu))
-					info.addChild(tu);					
+				return true;
 			}
-			return true;
+			finally {
+				if (srcFinder != null) {
+					srcFinder.dispose();
+				}
+			}
+			
 		}
 		return false;
 	}

@@ -33,5 +33,11 @@ public class StandardSourceFileRemapping implements ISourceFileRemapping {
 		}
 		return filePath;
 	}
-
+	
+	/* (non-Javadoc)
+	 * @see java.lang.Object#finalize()
+	 */
+	public void finalize(){
+		srcFinder.dispose();
+	}
 }

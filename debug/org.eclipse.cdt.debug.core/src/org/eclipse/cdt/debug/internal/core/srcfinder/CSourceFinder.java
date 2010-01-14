@@ -381,4 +381,13 @@ public class CSourceFinder implements ISourceFinder, ILaunchConfigurationListene
 	public void launchesChanged(ILaunch[] launches) {
 		// don't care. I don't think setting a new locator in a launch would result in us getting notified
 	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.core.ISourceFinder#dispose()
+	 */
+	public void dispose() {
+		ILaunchManager lmgr = DebugPlugin.getDefault().getLaunchManager();
+		lmgr.removeLaunchConfigurationListener(this);
+		lmgr.removeLaunchListener(this);
+	}
 }

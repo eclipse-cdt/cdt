@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2009 QNX Software Systems and others.
+ * Copyright (c) 2000, 2010 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     QNX Software Systems - Initial API and implementation
+ *     Markus Schorn (Wind River Systems)
  *******************************************************************************/
 package org.eclipse.cdt.utils;
 
@@ -29,6 +30,7 @@ public class CygPath {
 	private final Process cygpath;
 	private final BufferedReader stdout;
 	private final BufferedWriter stdin;
+	private boolean fSpaceIsSeparator= false;
 
 	public CygPath(String command) throws IOException {
 		if (!Platform.getOS().equals(Platform.OS_WIN32))
@@ -39,7 +41,17 @@ public class CygPath {
 		stdin = new BufferedWriter(new OutputStreamWriter(cygpath.getOutputStream()));
 		stdout = new BufferedReader(new InputStreamReader(cygpath.getInputStream()));
 		try {
-			getFileName("test"); //$NON-NLS-1$ // test for older cygpath 
+			getFileName("test"); //$NON-NLS-1$ // test for older cygpath
+			
+			// Bug 298615: Test for versions that tread space as a separator
+			getFileName("a b");  //$NON-NLS-1$ 
+			if (stdout.ready()) {
+				fSpaceIsSeparator= true;
+				// Read off everything
+				while(stdout.ready()) {
+					stdout.read();
+				}
+			}
 		} catch (IOException e) {
 			dispose();
 			useOldCygPath = true;
@@ -57,6 +69,14 @@ public class CygPath {
 		
 		if (useOldCygPath) {
 			return internalgetFileName(name);
+		}
+		if (fSpaceIsSeparator && name.indexOf(' ') != -1) {
+			return internalgetFileName(name);
+		}
+
+		// Clear everything from stdout
+		while(stdout.ready()) {
+			stdout.read();
 		}
 		stdin.write(name + "\n"); //$NON-NLS-1$
 		stdin.flush();
@@ -79,10 +99,6 @@ public class CygPath {
 		}
 	}
 
-	/**
-	 * @param path
-	 * @return
-	 */
 	private String internalgetFileName(String path) throws IOException {
 		Process cygPath = null;
 		BufferedReader reader = null;

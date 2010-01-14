@@ -167,8 +167,12 @@ public class CSourceFinder implements ISourceFinder, ILaunchConfigurationListene
 				}
 			}
 
-			// If not found, look in the global (common) locator
-			if (foundElement == null) {
+			// If we didn't search using the locator of an ILaunch or
+			// ILaunchConfiguration, look in the global (common) locator. The
+			// common locator is automatically included in every
+			// launch/configuration locator, which is why we skip looking
+			// through the common one again here.
+			if ((fLaunchLocator == null) && (foundElement == null)) {
 				CSourceLookupDirector locator = CDebugCorePlugin.getDefault().getCommonSourceLookupDirector();
 				foundElement = locator.getSourceElement(compilationPath);
 			}

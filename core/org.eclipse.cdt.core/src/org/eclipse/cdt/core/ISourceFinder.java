@@ -18,7 +18,7 @@ import org.eclipse.core.runtime.IPath;
 
 /**
  * This interface is available for a {@link Binary} via the adapter mechanism. It is used to translate the
- * source specification of a source file that was used to produce the executable to its local counterpart. In
+ * file specification of a source file that was used to produce the executable to its local counterpart. In
  * other words, the debug information in the binary tells us what source files where involved in building it.
  * Such a file specification may be a simple file name, a relative path, or an absolute path that might be
  * invalid on the local machine (the executable may have been built on another machine). In all cases, the
@@ -26,12 +26,12 @@ import org.eclipse.core.runtime.IPath;
  * end to that search capability.
  * 
  * <p>
- * In CDT, there is/are:
+ * CDT has:
  * <ul>
  * <li>A global (common) source locator. Its containers are defined via Window > Preferences > C/C++ > Debug >
  * Common Source Lookup Path
  * <li>Launch configuration source locators. The containers of such a locator are defined via the 'Source' tab
- * in a CDT launch configuration.
+ * in a CDT launch configuration. The common source containers are automatically added to this locator.
  * <li>Launch source locators. Typically, a launch's locator is the one defined in the launch configuration
  * that spawned the launch, but technically, they could be different. The ILaunch API allows any source
  * locator to be associated with a launch.
@@ -50,7 +50,8 @@ import org.eclipse.core.runtime.IPath;
  * launch configuration. In all cases, the global locator is consulted if no other locator has converted the
  * file.
  * 
- * <p>A new instance is created every time a Binary object is queried for this interface. Clients must call
+ * <p>
+ * A new instance is created every time a Binary object is queried for this interface. Clients must call
  * {@link #dispose()} when it is done with the object.
  * 
  * @since 5.2
@@ -66,7 +67,9 @@ public interface ISourceFinder {
 	 * multiple such debug sessions going on, the first one encountered is used.
 	 * <li>If there are no ongoing debug sessions on that binary that provide a locator, search for a CDT
 	 * launch configuration that references the binary. Use the locator of the first matching configuration.
-	 * <li>If the above locator did not find the file, use the global locators.
+	 * <li>If neither of the above result in a locator, explicitly consult the common (global) locator. Note
+	 * that the common locator's containers are automatically added to every launch configuration locator. So,
+	 * in effect, the common locator is always searched, and always last.
 	 * </ol>
 	 * 
 	 * In the first two cases, only the first locator of the first matching launch or launch configuration is

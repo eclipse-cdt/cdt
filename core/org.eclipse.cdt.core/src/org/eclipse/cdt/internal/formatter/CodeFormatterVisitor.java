@@ -19,6 +19,7 @@ import java.util.List;
 import java.util.Stack;
 
 import org.eclipse.cdt.core.CCorePlugin;
+import org.eclipse.cdt.core.dom.ast.ExpansionOverlapsBoundaryException;
 import org.eclipse.cdt.core.dom.ast.IASTASMDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTArrayDeclarator;
 import org.eclipse.cdt.core.dom.ast.IASTArrayModifier;
@@ -129,6 +130,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTWhileStatement;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCompositeTypeSpecifier.ICPPASTBaseSpecifier;
 import org.eclipse.cdt.core.dom.ast.gnu.c.ICASTKnRFunctionDeclarator;
 import org.eclipse.cdt.core.formatter.DefaultCodeFormatterConstants;
+import org.eclipse.cdt.core.parser.IToken;
 import org.eclipse.cdt.internal.formatter.align.Alignment;
 import org.eclipse.cdt.internal.formatter.align.AlignmentException;
 import org.eclipse.cdt.internal.formatter.scanner.Scanner;
@@ -1445,9 +1447,16 @@ public class CodeFormatterVisitor extends CPPASTVisitor {
 		// base specifiers
 		final List<ICPPASTBaseSpecifier> baseSpecifiers= Arrays.asList(node.getBaseSpecifiers());
 		if (baseSpecifiers.size() > 0) {
-			scribe.printNextToken(Token.tCOLON, preferences.insert_space_before_colon_in_base_clause);
-			if (preferences.insert_space_after_colon_in_base_clause) {
-				scribe.space();
+			ICPPASTBaseSpecifier baseSpecifier = baseSpecifiers.get(0);
+			try {
+				if (baseSpecifier.getLeadingSyntax().getType() == IToken.tCOLON) {
+					scribe.printNextToken(Token.tCOLON, preferences.insert_space_before_colon_in_base_clause);
+					if (preferences.insert_space_after_colon_in_base_clause) {
+						scribe.space();
+					}
+				}
+			} catch (UnsupportedOperationException exc) {
+			} catch (ExpansionOverlapsBoundaryException exc) {
 			}
 			final ListAlignment align= new ListAlignment(preferences.alignment_for_base_clause_in_type_declaration);
 			align.fSpaceAfterComma= preferences.insert_space_after_comma_in_base_types;

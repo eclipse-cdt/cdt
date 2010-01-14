@@ -83,46 +83,55 @@ public class WascanaGenerator implements IApplication {
 				binutilsVersion,
 				gpl30License,
 				null);
+		IInstallableUnit binutilsSrcIU = createIU(
+				"wascana.binutils.source",
+				"Wascana MinGW binutils source",
+				binutilsVersion,
+				gpl30License,
+				null);
 		
 		// toolchain
-		InstallableUnitDescription toolsIUDesc = createIUDesc(
+		IInstallableUnit toolsIU = createCategory(
 				"wascana.tools",
 				"Wascana Tools",
 				wascanaVersion,
-				null);
-		toolsIUDesc.setProperty(IInstallableUnit.PROP_TYPE_CATEGORY, Boolean.TRUE.toString());
-		toolsIUDesc.setRequiredCapabilities(new IRequiredCapability[] {
-				createRequiredCap(binutilsIU),
-		});
-		IInstallableUnit toolsIU = MetadataFactory.createInstallableUnit(toolsIUDesc);
+				new IRequiredCapability[] {
+						createRequiredCap(binutilsIU),
+				});
 		
-		InstallableUnitDescription sdksIUDesc = createIUDesc(
+		IInstallableUnit sdksIU = createCategory(
 				"wascana.sdks",
 				"Wascana SDKs",
 				wascanaVersion,
-				null);
-		sdksIUDesc.setProperty(IInstallableUnit.PROP_TYPE_CATEGORY, Boolean.TRUE.toString());
-		sdksIUDesc.setRequiredCapabilities(new IRequiredCapability[] {
-		});
-		IInstallableUnit sdksIU = MetadataFactory.createInstallableUnit(sdksIUDesc);
+				new IRequiredCapability[] {
+				});
 
-		// The main Wascana category
-		InstallableUnitDescription wascanaIUDesc = createIUDesc(
+		IInstallableUnit sourceIU = createCategory(
+				"wascana.source",
+				"Wascana Source",
+				wascanaVersion,
+				new IRequiredCapability[] {
+						createRequiredCap(binutilsSrcIU),
+				});
+		
+		IInstallableUnit wascanaIU = createCategory(
 				"wascana",
 				"Wascana Desktop Developer",
 				wascanaVersion,
-				null);
-		wascanaIUDesc.setProperty(IInstallableUnit.PROP_TYPE_CATEGORY, Boolean.TRUE.toString());
-		wascanaIUDesc.setRequiredCapabilities(new IRequiredCapability[] {
-				createRequiredCap(toolsIU),
-				createRequiredCap(sdksIU),
-		});
-		IInstallableUnit wascanaIU = MetadataFactory.createInstallableUnit(wascanaIUDesc);
+				new IRequiredCapability[] {
+						createRequiredCap(toolsIU),
+						createRequiredCap(sdksIU),
+						createRequiredCap(sourceIU),
+				});
 
 		metaRepo.addInstallableUnits(new IInstallableUnit[] {
 				binutilsIU,
+				binutilsSrcIU,
+				
 				toolsIU,
 				sdksIU,
+				sourceIU,
+				
 				wascanaIU
 			});
 
@@ -208,6 +217,15 @@ public class WascanaGenerator implements IApplication {
 		ArtifactDescriptor artiDesc = new ArtifactDescriptor(artiKey);
 		artiRepo.addDescriptor(artiDesc);
 		iuDesc.setArtifacts(new IArtifactKey[] { artiKey });
+		return MetadataFactory.createInstallableUnit(iuDesc);
+	}
+
+	private IInstallableUnit createCategory(String id, String name, Version version,
+			IRequiredCapability[] reqs) throws ProvisionException {
+		InstallableUnitDescription iuDesc = createIUDesc(id, name, version, null);
+		if (reqs != null)
+			iuDesc.setRequiredCapabilities(reqs);
+		iuDesc.setProperty(IInstallableUnit.PROP_TYPE_CATEGORY, String.valueOf(true));
 		return MetadataFactory.createInstallableUnit(iuDesc);
 	}
 

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2009 IBM Corporation and others.
+ * Copyright (c) 2005, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -34,6 +34,7 @@ import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IASTSimpleDeclaration;
 import org.eclipse.cdt.core.dom.ast.IArrayType;
+import org.eclipse.cdt.core.dom.ast.IBasicType;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.IEnumeration;
 import org.eclipse.cdt.core.dom.ast.IEnumerator;
@@ -1110,14 +1111,18 @@ public class CPPTemplates {
 					ICPPPointerToMemberType ptm = (ICPPPointerToMemberType) typeContainer;
 					IType memberOfClass = ptm.getMemberOfClass();
 					IType newMemberOfClass = instantiateType(memberOfClass, tpMap, packOffset, within);
-					if (newNestedType != nestedType || newMemberOfClass != memberOfClass) {
-						if (newMemberOfClass instanceof ICPPClassType) {
-							return new CPPPointerToMemberType(newNestedType, newMemberOfClass,
-								ptm.isConst(), ptm.isVolatile());
-						}
-						return typeContainer;
+					if (!(newMemberOfClass instanceof ICPPClassType) && 
+							!(newMemberOfClass instanceof IBasicType && ((IBasicType) newMemberOfClass).getModifiers() == CPPBasicType.UNIQUE_TYPE_QUALIFIER) &&
+							!(newMemberOfClass instanceof ICPPUnknownBinding)) {
+						newMemberOfClass= memberOfClass;
 					}
-				} else if (typeContainer instanceof IArrayType) {
+					if (newNestedType != nestedType || newMemberOfClass != memberOfClass) {
+						return new CPPPointerToMemberType(newNestedType, newMemberOfClass,
+								ptm.isConst(), ptm.isVolatile());
+					}
+					return typeContainer;
+				} 
+				if (typeContainer instanceof IArrayType) {
 					IArrayType at= (IArrayType) typeContainer;
 					IValue asize= at.getSize();
 					if (asize != null) {

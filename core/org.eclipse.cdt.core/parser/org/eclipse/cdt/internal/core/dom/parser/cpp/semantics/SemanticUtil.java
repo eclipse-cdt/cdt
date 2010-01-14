@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2009 IBM Corporation and others.
+ * Copyright (c) 2004, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -248,8 +248,7 @@ public class SemanticUtil {
 					if (p.isConst() || p.isVolatile()) {
 						if (p instanceof ICPPPointerToMemberType) {
 							final IType memberOfClass = ((ICPPPointerToMemberType) p).getMemberOfClass();
-							if (memberOfClass instanceof ICPPClassType)
-								return new CPPPointerToMemberType(p.getType(), memberOfClass, false, false);
+							return new CPPPointerToMemberType(p.getType(), memberOfClass, false, false);
 						} else {
 							return new CPPPointerType(p.getType(), false, false);
 						}

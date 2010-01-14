@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2009 IBM Corporation and others.
+ * Copyright (c) 2005, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -4739,5 +4739,19 @@ public class AST2TemplateTests extends AST2BaseTest {
 		ub= bh.assertNonProblem("f(5 ...)", 1);	// no diagnostics in CDT, treated as unknown function.
 		ub= bh.assertNonProblem("f(args)", 1);  // no diagnostics in CDT
 		ub= bh.assertNonProblem("f(h(args...) + args...)", 1);
-	}		
+	}	
+	
+	//	struct Test {
+	//		void Update() {}
+	//	};
+	//	template<class R, class T> void bind(R (T::*f) ()) {}
+	//	template<class R, class T> void bind(R T::*f) {}
+	//
+	//	void test() {
+	//		bind(&Test::Update);
+	//	}
+	public void testFunctionOrdering_299608() throws Exception {
+		final String code= getAboveComment();
+		parseAndCheckBindings(code, ParserLanguage.CPP);
+	}
 }

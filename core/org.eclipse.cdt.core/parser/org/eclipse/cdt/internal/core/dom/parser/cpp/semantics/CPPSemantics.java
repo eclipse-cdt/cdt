@@ -2055,7 +2055,7 @@ public class CPPSemantics {
 			return CPPUnknownFunction.createForSample(firstViable);
 		}
 		
-		boolean ambiguous = false;				// ambiguity, 2 functions are equally good
+		IFunction[] ambiguousFunctions= null;   // ambiguity, 2 functions are equally good
 		FunctionCost bestFnCost = null;		    // the cost of the best function
 
 		// Loop over all functions
@@ -2084,9 +2084,9 @@ public class CPPSemantics {
 			int cmp= fnCost.compareTo(data, bestFnCost);
 			if (cmp < 0) {
 				bestFnCost= fnCost;
-				ambiguous= false;
+				ambiguousFunctions= null;
 			} else if (cmp == 0) {
-				ambiguous= true;
+				ambiguousFunctions= (IFunction[]) ArrayUtil.append(IFunction.class, ambiguousFunctions, fn);
 			}
 		}
 		
@@ -2096,9 +2096,9 @@ public class CPPSemantics {
 					int cmp= fnCost.compareTo(data, bestFnCost);
 					if (cmp < 0) {
 						bestFnCost= fnCost;
-						ambiguous= false;
+						ambiguousFunctions= null;
 					} else if (cmp == 0) {
-						ambiguous= true;
+						ambiguousFunctions= (IFunction[]) ArrayUtil.append(IFunction.class, ambiguousFunctions, fnCost.getFunction());
 					}
 				}
 			}
@@ -2107,7 +2107,12 @@ public class CPPSemantics {
 		if (bestFnCost == null)
 			return null;
 		
-		if (ambiguous || bestFnCost.hasAmbiguousUserDefinedConversion()) {
+		if (ambiguousFunctions != null) {
+			ambiguousFunctions= (IFunction[]) ArrayUtil.append(IFunction.class, ambiguousFunctions, bestFnCost.getFunction());
+			return new ProblemBinding(data.astName, IProblemBinding.SEMANTIC_AMBIGUOUS_LOOKUP,
+					ambiguousFunctions);
+		}
+		if (bestFnCost.hasAmbiguousUserDefinedConversion()) {
 			return new ProblemBinding(data.astName, IProblemBinding.SEMANTIC_AMBIGUOUS_LOOKUP,
 					data.getFoundBindings());
 		}

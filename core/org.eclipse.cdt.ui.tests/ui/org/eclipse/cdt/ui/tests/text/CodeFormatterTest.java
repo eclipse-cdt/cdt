@@ -1332,4 +1332,19 @@ public class CodeFormatterTest extends BaseUITestCase {
 	public void testCompositeTypeSpecAsMacro_Bug298592() throws Exception {
 		assertFormatterResult();
 	}
+	
+	//void f() {
+	//w_char* p   =  L"wide string literal";
+	//int x = 0;
+	//if (x == 0) x = 5;}
+	
+	//void f() {
+	//	w_char* p = L"wide string literal";
+	//	int x = 0;
+	//	if (x == 0)
+	//		x = 5;
+	//}
+	public void testWideStringLiteral_Bug292626() throws Exception {
+		assertFormatterResult();
+	}
 }

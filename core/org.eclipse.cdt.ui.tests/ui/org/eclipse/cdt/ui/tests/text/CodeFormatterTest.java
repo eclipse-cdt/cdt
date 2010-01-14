@@ -1240,4 +1240,14 @@ public class CodeFormatterTest extends BaseUITestCase {
 		assertFormatterResult();
 	}
 
+	//#define MACRO(a) class b : public a
+	//MACRO(aClass){ int a;};
+	
+	//#define MACRO(a) class b : public a
+	//MACRO(aClass) {
+	//	int a;
+	//};
+	public void testCompositeTypeSpecAsMacro_Bug298592() throws Exception {
+		assertFormatterResult();
+	}
 }

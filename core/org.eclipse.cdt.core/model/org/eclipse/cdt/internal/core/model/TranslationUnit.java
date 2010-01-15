@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2009 QNX Software Systems and others.
+ * Copyright (c) 2000, 2010 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -421,8 +421,17 @@ public class TranslationUnit extends Openable implements ITranslationUnit {
 	}
 
 	@Override
-	public synchronized CElementInfo getElementInfo(IProgressMonitor monitor) throws CModelException {
-		return super.getElementInfo(monitor);
+	public CElementInfo getElementInfo(IProgressMonitor monitor) throws CModelException {
+		CModelManager manager = CModelManager.getDefault();
+		CElementInfo info = (CElementInfo)manager.getInfo(this);
+		if (info != null) {
+			return info;
+		}
+		synchronized (this) {
+			info = createElementInfo();
+			openWhenClosed(info, monitor);
+		}
+		return info;
 	}
 
 	@Override

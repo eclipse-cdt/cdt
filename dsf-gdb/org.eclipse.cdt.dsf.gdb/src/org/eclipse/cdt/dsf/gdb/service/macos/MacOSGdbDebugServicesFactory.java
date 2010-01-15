@@ -7,11 +7,13 @@
  * 
  * Contributors:
  *     Marc-Andre Laperle - Added support for Mac OS (separate factory)
+ *     					  - fix for bug 265483
  *     Ericsson           - Added a field for the specific Mac OS version scheme
  *******************************************************************************/
 package org.eclipse.cdt.dsf.gdb.service.macos;
 
 import org.eclipse.cdt.dsf.debug.service.IExpressions;
+import org.eclipse.cdt.dsf.debug.service.IRunControl;
 import org.eclipse.cdt.dsf.gdb.service.GdbDebugServicesFactory;
 import org.eclipse.cdt.dsf.service.DsfSession;
 
@@ -32,5 +34,10 @@ public class MacOSGdbDebugServicesFactory extends GdbDebugServicesFactory {
 	@Override
 	protected IExpressions createExpressionService(DsfSession session) {
 		return new MacOSGDBExpressions(session);
+	}
+
+	@Override
+	protected IRunControl createRunControlService(DsfSession session) {
+		return new MacOSGDBRunControl(session);
 	}
 }

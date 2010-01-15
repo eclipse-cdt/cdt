@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2009 IBM Corporation and others.
+ * Copyright (c) 2004, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *    Doug Schaefer (IBM) - Initial API and implementation
+ *    Markus Schorn (Wind River Systems)
  *******************************************************************************/
 package org.eclipse.cdt.core.dom.ast.c;
 
@@ -20,20 +21,6 @@ import org.eclipse.cdt.core.dom.ast.IASTDeclSpecifier;
  */
 public interface ICASTDeclSpecifier extends IASTDeclSpecifier {
 
-	/**
-	 * Is restrict keyword used?
-	 * 
-	 * @return boolean
-	 */
-	public boolean isRestrict();
-
-	/**
-	 * Set restrict to value.
-	 * 
-	 * @param value
-	 */
-	public void setRestrict(boolean value);
-	
 	/**
 	 * @since 5.1
 	 */

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2009 IBM Corporation and others.
+ * Copyright (c) 2006, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -107,7 +107,6 @@ import org.eclipse.cdt.core.dom.ast.gnu.IGNUASTCompoundStatementExpression;
 import org.eclipse.cdt.core.dom.ast.gnu.cpp.IGPPASTExplicitTemplateInstantiation;
 import org.eclipse.cdt.core.dom.ast.gnu.cpp.IGPPASTPointer;
 import org.eclipse.cdt.core.dom.ast.gnu.cpp.IGPPASTPointerToMember;
-import org.eclipse.cdt.core.dom.ast.gnu.cpp.IGPPASTSimpleDeclSpecifier;
 import org.eclipse.cdt.core.parser.IScanner;
 import org.eclipse.cdt.internal.core.dom.parser.NodeFactory;
 
@@ -356,10 +355,6 @@ public class CPPNodeFactory extends NodeFactory implements ICPPNodeFactory {
 		return new CPPASTSimpleDeclSpecifier();
 	}
 	
-	public IGPPASTSimpleDeclSpecifier newSimpleDeclSpecifierGPP() {
-		return new GPPASTSimpleDeclSpecifier();
-	}
-
 	public ICPPASTFunctionDeclarator newFunctionDeclarator(IASTName name) {
 		return new CPPASTFunctionDeclarator(name);
 	}
@@ -528,5 +523,10 @@ public class CPPNodeFactory extends NodeFactory implements ICPPNodeFactory {
 
 	public ICPPASTPackExpansionExpression newPackExpansionExpression(IASTExpression pattern) {
 		return new CPPASTPackExpansionExpression(pattern);
+	}
+	
+	@Deprecated
+	public org.eclipse.cdt.core.dom.ast.gnu.cpp.IGPPASTSimpleDeclSpecifier newSimpleDeclSpecifierGPP() {
+		return new GPPASTSimpleDeclSpecifier();
 	}
 }

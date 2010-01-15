@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2009 IBM Corporation and others.
+ * Copyright (c) 2005, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -83,7 +83,6 @@ import org.eclipse.cdt.core.dom.ast.c.ICArrayType;
 import org.eclipse.cdt.core.dom.ast.c.ICCompositeTypeScope;
 import org.eclipse.cdt.core.dom.ast.c.ICFunctionScope;
 import org.eclipse.cdt.core.dom.ast.gnu.c.ICASTKnRFunctionDeclarator;
-import org.eclipse.cdt.core.dom.ast.gnu.c.IGCCASTSimpleDeclSpecifier;
 import org.eclipse.cdt.core.index.IIndexBinding;
 import org.eclipse.cdt.core.index.IIndexFileSet;
 import org.eclipse.cdt.core.parser.util.ArrayUtil;
@@ -1332,13 +1331,12 @@ public class CVisitor extends ASTQueries {
 	 * @return the base IType
 	 */
 	public static IType createBaseType(IASTDeclSpecifier declSpec) {
-		if (declSpec instanceof IGCCASTSimpleDeclSpecifier) {
-			IASTExpression exp = ((IGCCASTSimpleDeclSpecifier)declSpec).getTypeofExpression();
+		if (declSpec instanceof ICASTSimpleDeclSpecifier) {
+			final ICASTSimpleDeclSpecifier sds = (ICASTSimpleDeclSpecifier)declSpec;
+			IASTExpression exp = sds.getDeclTypeExpression();
 			if (exp != null)
 				return exp.getExpressionType();
-			return new CBasicType((ICASTSimpleDeclSpecifier) declSpec);
-		} else if (declSpec instanceof ICASTSimpleDeclSpecifier) {
-		    return new CBasicType((ICASTSimpleDeclSpecifier)declSpec);
+			return new CBasicType(sds);
 		} 
 		IBinding binding = null;
 		IASTName name = null;

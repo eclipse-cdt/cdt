@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2002, 2009 IBM Corporation and others.
+ * Copyright (c) 2002, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -43,6 +43,8 @@ public class Keywords {
 	public static final String CONST = "const"; //$NON-NLS-1$
 	public static final String CONST_CAST = "const_cast"; //$NON-NLS-1$
 	public static final String CONTINUE = "continue"; //$NON-NLS-1$
+	/** @since 5.2 */
+	public static final String DECLTYPE = "decltype"; //$NON-NLS-1$
 	public static final String DEFAULT = "default"; //$NON-NLS-1$
 	public static final String DELETE = "delete"; //$NON-NLS-1$
 	public static final String DO = "do"; //$NON-NLS-1$
@@ -127,6 +129,8 @@ public class Keywords {
 	public static final char[] cCONST_CAST = "const_cast".toCharArray(); //$NON-NLS-1$
 	public static final char[] cCONTINUE = "continue".toCharArray(); //$NON-NLS-1$
 	public static final char[] cDEFAULT = "default".toCharArray(); //$NON-NLS-1$
+	/** @since 5.2 */
+	public static final char[] cDECLTYPE = DECLTYPE.toCharArray(); 
 	public static final char[] cDELETE = "delete".toCharArray(); //$NON-NLS-1$
 	public static final char[] cDO = "do".toCharArray(); //$NON-NLS-1$
 	public static final char[] cDOUBLE = "double".toCharArray(); //$NON-NLS-1$
@@ -165,7 +169,7 @@ public class Keywords {
 	public static final char[] cSIZEOF = "sizeof".toCharArray(); //$NON-NLS-1$
 	public static final char[] cSTATIC = "static".toCharArray(); //$NON-NLS-1$
 	/** @since 5.2 */
-	public static final char[] cSTATIC_ASSERT = "static_assert".toCharArray(); //$NON-NLS-1$
+	public static final char[] cSTATIC_ASSERT = STATIC_ASSERT.toCharArray(); 
 	public static final char[] cSTATIC_CAST = "static_cast".toCharArray(); //$NON-NLS-1$
 	public static final char[] cSTRUCT = "struct".toCharArray(); //$NON-NLS-1$
 	public static final char[] cSWITCH = "switch".toCharArray(); //$NON-NLS-1$
@@ -329,6 +333,7 @@ public class Keywords {
         cppkeywords.put(Keywords.cCATCH, IToken.t_catch); 
         cppkeywords.put(Keywords.cCLASS, IToken.t_class); 
         cppkeywords.put(Keywords.cCONST_CAST, IToken.t_const_cast); 
+        cppkeywords.put(Keywords.cDECLTYPE, IToken.t_decltype);
         cppkeywords.put(Keywords.cDELETE, IToken.t_delete); 
         cppkeywords.put(Keywords.cDYNAMIC_CAST, IToken.t_dynamic_cast); 
         cppkeywords.put(Keywords.cEXPLICIT, IToken.t_explicit); 

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2009 IBM Corporation and others.
+ * Copyright (c) 2004, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -12,16 +12,23 @@
 package org.eclipse.cdt.internal.core.dom.parser.cpp;
 
 import org.eclipse.cdt.core.dom.ast.ASTVisitor;
+import org.eclipse.cdt.core.dom.ast.IASTExpression;
+import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IBasicType.Kind;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTSimpleDeclSpecifier;
+import org.eclipse.cdt.internal.core.dom.parser.IASTAmbiguityParent;
 
-public class CPPASTSimpleDeclSpecifier extends CPPASTBaseDeclSpecifier implements ICPPASTSimpleDeclSpecifier {
-
+public class CPPASTSimpleDeclSpecifier extends CPPASTBaseDeclSpecifier implements ICPPASTSimpleDeclSpecifier,
+		IASTAmbiguityParent {
     private int type;
     private boolean isSigned;
     private boolean isUnsigned;
     private boolean isShort;
     private boolean isLong;
+    private boolean isLonglong;
+    private boolean isComplex=false;
+    private boolean isImaginary=false;
+	private IASTExpression fDeclTypeExpression;
 
     public CPPASTSimpleDeclSpecifier copy() {
 		CPPASTSimpleDeclSpecifier copy = new CPPASTSimpleDeclSpecifier();
@@ -36,6 +43,12 @@ public class CPPASTSimpleDeclSpecifier extends CPPASTBaseDeclSpecifier implement
     	other.isUnsigned = isUnsigned;
     	other.isShort = isShort;
     	other.isLong = isLong;
+    	other.isLonglong= isLonglong;
+    	other.isComplex= isComplex;
+    	other.isImaginary= isImaginary;
+    	if (fDeclTypeExpression != null) {
+    		other.setDeclTypeExpression(fDeclTypeExpression.copy());
+    	}
     }
 
 	/**
@@ -92,7 +105,23 @@ public class CPPASTSimpleDeclSpecifier extends CPPASTBaseDeclSpecifier implement
         return isLong;
     }
 
-    public void setSigned(boolean value) {
+    public boolean isLongLong() {
+		return isLonglong;
+	}
+
+	public boolean isComplex() {
+		return isComplex;
+	}
+
+	public boolean isImaginary() {
+		return isImaginary;
+	}
+
+	public IASTExpression getDeclTypeExpression() {
+		return fDeclTypeExpression;
+	}
+
+	public void setSigned(boolean value) {
         assertNotFrozen();
         isSigned = value;
     }
@@ -112,7 +141,31 @@ public class CPPASTSimpleDeclSpecifier extends CPPASTBaseDeclSpecifier implement
         isShort = value;
     }
 
-    @Override
+    public void setLongLong(boolean value) {
+        assertNotFrozen();
+        isLonglong = value;
+	}
+
+	public void setComplex(boolean value) {
+        assertNotFrozen();
+        isComplex = value;
+	}
+
+	public void setImaginary(boolean value) {
+        assertNotFrozen();
+        isImaginary = value;
+	}
+
+	public void setDeclTypeExpression(IASTExpression expression) {
+        assertNotFrozen();
+        fDeclTypeExpression = expression;
+        if (expression != null) {
+        	expression.setPropertyInParent(DECLTYPE_EXPRESSION);
+        	expression.setParent(this);
+        }
+	}
+
+	@Override
 	public boolean accept(ASTVisitor action) {
         if (action.shouldVisitDeclSpecifiers) {
 		    switch (action.visit(this)) {
@@ -121,6 +174,10 @@ public class CPPASTSimpleDeclSpecifier extends CPPASTBaseDeclSpecifier implement
 	            default: break;
 	        }
 		}
+        
+		if (fDeclTypeExpression != null && !fDeclTypeExpression.accept(action))
+			return false;
+               
         if (action.shouldVisitDeclSpecifiers) {
 		    switch (action.leave(this)) {
 	            case ASTVisitor.PROCESS_ABORT: return false;
@@ -130,4 +187,12 @@ public class CPPASTSimpleDeclSpecifier extends CPPASTBaseDeclSpecifier implement
 		}
         return true;
     }
+    
+	public void replace(IASTNode child, IASTNode other) {
+		if (child == fDeclTypeExpression) {
+			other.setPropertyInParent(child.getPropertyInParent());
+			other.setParent(child.getParent());
+			fDeclTypeExpression= (IASTExpression) other;
+		}
+	}
 }

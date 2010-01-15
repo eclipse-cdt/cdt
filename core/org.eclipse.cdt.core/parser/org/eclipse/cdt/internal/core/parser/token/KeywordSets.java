@@ -1,12 +1,13 @@
 /*******************************************************************************
- * Copyright (c) 2002, 2008 IBM Corporation and others.
+ * Copyright (c) 2002, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- * IBM Rational Software - Initial API and implementation
+ *    John Camelon (IBM Rational Software) - Initial API and implementation
+ *    Markus Schorn (Wind River Systems)
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.parser.token;
 
@@ -21,9 +22,6 @@ import org.eclipse.cdt.core.parser.KeywordSetKey;
 import org.eclipse.cdt.core.parser.Keywords;
 import org.eclipse.cdt.core.parser.ParserLanguage;
 
-/**
- * @author jcamelon
- */
 public class KeywordSets {
 
 	public static Set<String> getKeywords( KeywordSetKey kind, ParserLanguage language )
@@ -417,6 +415,7 @@ public class KeywordSets {
 		ALL_CPP.add( Keywords.CONST);
 		ALL_CPP.add( Keywords.CONST_CAST);
 		ALL_CPP.add( Keywords.CONTINUE);
+		ALL_CPP.add( Keywords.DECLTYPE);
 		ALL_CPP.add( Keywords.DEFAULT);
 		ALL_CPP.add( Keywords.DELETE);
 		ALL_CPP.add( Keywords.DO);
@@ -504,6 +503,7 @@ public class KeywordSets {
 		KEYWORDS_CPP.add( Keywords.CONST );
 		KEYWORDS_CPP.add( Keywords.CONST_CAST );
 		KEYWORDS_CPP.add( Keywords.CONTINUE );
+		KEYWORDS_CPP.add( Keywords.DECLTYPE);
 		KEYWORDS_CPP.add( Keywords.DEFAULT );
 		KEYWORDS_CPP.add( Keywords.DELETE );
 		KEYWORDS_CPP.add( Keywords.DO );

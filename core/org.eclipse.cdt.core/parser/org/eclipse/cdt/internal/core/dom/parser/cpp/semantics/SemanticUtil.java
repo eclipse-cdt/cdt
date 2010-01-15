@@ -171,7 +171,7 @@ public class SemanticUtil {
 	/** 
 	 * Returns 0 for no qualifier, 1 for const, 2 for volatile and 3 for const volatile.
 	 */
-	static CVQualifier getCVQualifier(IType t) {
+	public static CVQualifier getCVQualifier(IType t) {
 		if (t instanceof IQualifierType) {
 			IQualifierType qt= (IQualifierType) t;
 			if (qt.isConst()) {

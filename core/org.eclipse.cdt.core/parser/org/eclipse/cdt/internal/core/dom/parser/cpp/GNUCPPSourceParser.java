@@ -111,11 +111,9 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTVisibilityLabel;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPNodeFactory;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCompositeTypeSpecifier.ICPPASTBaseSpecifier;
 import org.eclipse.cdt.core.dom.ast.gnu.IGNUASTTypeIdExpression;
-import org.eclipse.cdt.core.dom.ast.gnu.IGNUASTUnaryExpression;
 import org.eclipse.cdt.core.dom.ast.gnu.cpp.IGPPASTExplicitTemplateInstantiation;
 import org.eclipse.cdt.core.dom.ast.gnu.cpp.IGPPASTPointer;
 import org.eclipse.cdt.core.dom.ast.gnu.cpp.IGPPASTPointerToMember;
-import org.eclipse.cdt.core.dom.ast.gnu.cpp.IGPPASTSimpleDeclSpecifier;
 import org.eclipse.cdt.core.dom.parser.IExtensionToken;
 import org.eclipse.cdt.core.dom.parser.cpp.ICPPParserExtensionConfiguration;
 import org.eclipse.cdt.core.index.IIndex;
@@ -152,7 +150,6 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
 
     private final boolean allowCPPRestrict;
     private final boolean supportExtendedTemplateSyntax;
-    private final boolean supportLongLong;
 
 	private final IIndex index;
     protected ICPPASTTranslationUnit translationUnit;
@@ -181,7 +178,6 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
                 config.getBuiltinBindingsProvider());
         allowCPPRestrict = config.allowRestrictPointerOperators();
         supportExtendedTemplateSyntax = config.supportExtendedTemplateSyntax();
-        supportLongLong = config.supportLongLongs();
         supportParameterInfoBlock= config.supportParameterInfoBlock();
         supportExtendedSizeofOperator= config.supportExtendedSizeofOperator();
         supportFunctionStyleAsm= config.supportFunctionStyleAssembler();
@@ -414,7 +410,6 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
         	                case IToken.t_new:
         	                case IToken.t_delete:
         	                case IToken.t_sizeof:
-        	                case IGCCToken.t_typeof:
         	                case IGCCToken.t___alignof__:
         	                // postfix expression
         	                case IToken.t_typename:
@@ -1087,9 +1082,6 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
         	}
         	return parseTypeidInParenthesisOrUnaryExpression(false, consume().getOffset(), 
         			IASTTypeIdExpression.op_sizeof, IASTUnaryExpression.op_sizeof, ctx);
-        case IGCCToken.t_typeof:
-        	return parseTypeidInParenthesisOrUnaryExpression(false, consume().getOffset(), 
-        			IASTTypeIdExpression.op_typeof, IASTUnaryExpression.op_typeof, ctx);
         case IGCCToken.t___alignof__:
         	return parseTypeidInParenthesisOrUnaryExpression(false, consume().getOffset(), 
         			IASTTypeIdExpression.op_alignof, IASTUnaryExpression.op_alignOf, ctx);
@@ -2442,11 +2434,26 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
         			if (encounteredRawType || encounteredTypename)
         				throwBacktrack(LA(1));
 
-        			typeofExpression= parseTypeidInParenthesisOrUnaryExpression(false, consume().getOffset(), 
-        					IGNUASTTypeIdExpression.op_typeof, IGNUASTUnaryExpression.op_typeof, CastExprCtx.eNotBExpr);
+        			simpleType= IASTSimpleDeclSpecifier.t_typeof;
+        			consume(IGCCToken.t_typeof);
+        			typeofExpression= parseTypeidInParenthesisOrUnaryExpression(false, LA(1).getOffset(), 
+        					IGNUASTTypeIdExpression.op_typeof, -1, CastExprCtx.eNotBExpr);
 
         			encounteredTypename= true;
         			endOffset= calculateEndOffset(typeofExpression);
+        			break;
+
+        		case IToken.t_decltype:
+        			if (encounteredRawType || encounteredTypename)
+        				throwBacktrack(LA(1));
+
+        			simpleType= IASTSimpleDeclSpecifier.t_decltype;
+        			consume(IToken.t_decltype);
+        			consume(IToken.tLPAREN);
+        			typeofExpression= unaryExpression(CastExprCtx.eNotBExpr);
+        			endOffset= consumeOrEOC(IToken.tRPAREN).getEndOffset();
+
+        			encounteredTypename= true;
         			break;
 
         		default:
@@ -2510,31 +2517,19 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
 
 	private ICPPASTSimpleDeclSpecifier buildSimpleDeclSpec(int storageClass, int simpleType,
 			int options, int isLong, IASTExpression typeofExpression, int offset, int endOffset) {
-
-		if (isLong > 1 && !supportLongLong)
-			isLong= 1;
-		
-		ICPPASTSimpleDeclSpecifier declSpec= null;
-        if (isLong > 1 || (options & (RESTRICT|COMPLEX|IMAGINARY)) != 0 || typeofExpression != null) {
-        	final IGPPASTSimpleDeclSpecifier gppDeclSpec= nodeFactory.newSimpleDeclSpecifierGPP();
-            gppDeclSpec.setLongLong(isLong > 1);
-            gppDeclSpec.setRestrict((options & RESTRICT) != 0);
-            gppDeclSpec.setComplex((options & COMPLEX) != 0);
-            gppDeclSpec.setImaginary((options & IMAGINARY) != 0);
-            gppDeclSpec.setTypeofExpression(typeofExpression);
-
-        	declSpec= gppDeclSpec;
-        } else {
-        	declSpec = nodeFactory.newSimpleDeclSpecifier();
-        }
+		ICPPASTSimpleDeclSpecifier declSpec= nodeFactory.newSimpleDeclSpecifier();
         
         configureDeclSpec(declSpec, storageClass, options);
 
         declSpec.setType(simpleType);
         declSpec.setLong(isLong == 1);
+        declSpec.setLongLong(isLong > 1);
         declSpec.setShort((options & SHORT) != 0);
         declSpec.setUnsigned((options & UNSIGNED) != 0);
         declSpec.setSigned((options & SIGNED) != 0);
+        declSpec.setComplex((options & COMPLEX) != 0);
+        declSpec.setImaginary((options & IMAGINARY) != 0);
+        declSpec.setDeclTypeExpression(typeofExpression);
 
         ((ASTNode) declSpec).setOffsetAndLength(offset, endOffset-offset);
         return declSpec;
@@ -2548,6 +2543,7 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
         declSpec.setFriend((options & FRIEND) != 0);
         declSpec.setVirtual((options & VIRTUAL) != 0);
         declSpec.setExplicit((options & EXPLICIT) != 0);
+        declSpec.setRestrict((options & RESTRICT) != 0);
 	}
 
     /**
@@ -2717,18 +2713,10 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
 
 		if (declspec instanceof ICPPASTSimpleDeclSpecifier) {
 			ICPPASTSimpleDeclSpecifier sspec= (ICPPASTSimpleDeclSpecifier) declspec;
-			switch(sspec.getType()) {
-			case IASTSimpleDeclSpecifier.t_unspecified:
-				if (sspec.isLong() || sspec.isShort() || sspec.isSigned() || sspec.isUnsigned())
-					return true;
-				if (sspec instanceof IGPPASTSimpleDeclSpecifier) {
-					final IGPPASTSimpleDeclSpecifier gspec = (IGPPASTSimpleDeclSpecifier) sspec;
-					if (gspec.isLongLong())
-						return true;
-				}
+			if (CPPVisitor.doesNotSpecifyType(declspec)) {
 				return false;
-				
-			case IASTSimpleDeclSpecifier.t_void:
+			}
+			if (sspec.getType() == IASTSimpleDeclSpecifier.t_void) {
 				return false;
 			}
 		}		

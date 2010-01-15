@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2009 IBM Corporation and others.
+ * Copyright (c) 2006, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -26,7 +26,6 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCompositeTypeSpecifier.ICPPASTBas
 import org.eclipse.cdt.core.dom.ast.gnu.cpp.IGPPASTExplicitTemplateInstantiation;
 import org.eclipse.cdt.core.dom.ast.gnu.cpp.IGPPASTPointer;
 import org.eclipse.cdt.core.dom.ast.gnu.cpp.IGPPASTPointerToMember;
-import org.eclipse.cdt.core.dom.ast.gnu.cpp.IGPPASTSimpleDeclSpecifier;
 import org.eclipse.cdt.core.parser.IScanner;
 
 /**
@@ -127,8 +126,6 @@ public interface ICPPNodeFactory extends INodeFactory {
 
 	public ICPPASTDeleteExpression newDeleteExpression(IASTExpression operand);
 	
-	public IGPPASTSimpleDeclSpecifier newSimpleDeclSpecifierGPP();
-
 	public ICPPASTSimpleTypeConstructorExpression newSimpleTypeConstructorExpression(int type, IASTExpression expression);
 
 	public ICPPASTTypenameExpression newTypenameExpression(IASTName qualifiedName, IASTExpression expr, boolean isTemplate);
@@ -225,4 +222,9 @@ public interface ICPPNodeFactory extends INodeFactory {
 	 */
 	@Deprecated
 	public ICPPASTTranslationUnit newTranslationUnit();
+	/**
+	 * @deprecated Replaced by {@link #newSimpleDeclSpecifier()}
+	 */
+	@Deprecated
+	public org.eclipse.cdt.core.dom.ast.gnu.cpp.IGPPASTSimpleDeclSpecifier newSimpleDeclSpecifierGPP();
 }

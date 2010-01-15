@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2009 IBM Corporation and others.
+ * Copyright (c) 2005, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -13,7 +13,6 @@ package org.eclipse.cdt.core.dom.ast;
 
 import org.eclipse.cdt.core.dom.ast.c.ICASTArrayDesignator;
 import org.eclipse.cdt.core.dom.ast.c.ICASTArrayModifier;
-import org.eclipse.cdt.core.dom.ast.c.ICASTDeclSpecifier;
 import org.eclipse.cdt.core.dom.ast.c.ICASTDesignatedInitializer;
 import org.eclipse.cdt.core.dom.ast.c.ICASTDesignator;
 import org.eclipse.cdt.core.dom.ast.c.ICASTFieldDesignator;
@@ -27,20 +26,15 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTDeleteExpression;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTNewExpression;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTPackExpansionExpression;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTReferenceOperator;
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTSimpleDeclSpecifier;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTSimpleTypeConstructorExpression;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTypeIdExpression;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTypenameExpression;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTUnaryExpression;
 import org.eclipse.cdt.core.dom.ast.gnu.IGNUASTCompoundStatementExpression;
 import org.eclipse.cdt.core.dom.ast.gnu.IGNUASTTypeIdExpression;
-import org.eclipse.cdt.core.dom.ast.gnu.IGNUASTUnaryExpression;
 import org.eclipse.cdt.core.dom.ast.gnu.c.ICASTKnRFunctionDeclarator;
 import org.eclipse.cdt.core.dom.ast.gnu.c.IGCCASTArrayRangeDesignator;
-import org.eclipse.cdt.core.dom.ast.gnu.cpp.IGPPASTDeclSpecifier;
 import org.eclipse.cdt.core.dom.ast.gnu.cpp.IGPPASTPointer;
-import org.eclipse.cdt.core.dom.ast.gnu.cpp.IGPPASTSimpleDeclSpecifier;
-import org.eclipse.cdt.core.parser.GCCKeywords;
 import org.eclipse.cdt.core.parser.Keywords;
 import org.eclipse.cdt.internal.core.dom.parser.ASTProblem;
 
@@ -440,7 +434,7 @@ public class ASTSignatureUtil {
 
 		StringBuffer result = new StringBuffer();
 
-		if (declSpec.getStorageClass() == ICPPASTDeclSpecifier.sc_mutable) {
+		if (declSpec.getStorageClass() == IASTDeclSpecifier.sc_mutable) {
 			result.append(Keywords.MUTABLE);
 			needSpace = true;
 		}
@@ -501,6 +495,14 @@ public class ASTSignatureUtil {
 			result.append(Keywords.INLINE);
 			needSpace = true;
 		}
+		if (declSpec.isRestrict()) {
+			if (needSpace) {
+				result.append(SPACE);
+				needSpace = false;
+			}
+			result.append(Keywords.RESTRICT);
+			needSpace = true;
+		}
 		if (declSpec.isVolatile()) {
 			if (needSpace) {
 				result.append(SPACE);
@@ -510,24 +512,7 @@ public class ASTSignatureUtil {
 			needSpace = true;
 		}
 
-		if (declSpec instanceof ICASTDeclSpecifier) {
-			if (((ICASTDeclSpecifier) declSpec).isRestrict()) {
-				if (needSpace) {
-					result.append(SPACE);
-					needSpace = false;
-				}
-				result.append(Keywords.RESTRICT);
-				needSpace = true;
-			}
-		} else if (declSpec instanceof ICPPASTDeclSpecifier) {
-			if (declSpec.getStorageClass() == ICPPASTDeclSpecifier.sc_mutable) {
-				if (needSpace) {
-					result.append(SPACE);
-					needSpace = false;
-				}
-				result.append(Keywords.MUTABLE);
-				needSpace = true;
-			}
+		if (declSpec instanceof ICPPASTDeclSpecifier) {
 			if (((ICPPASTDeclSpecifier) declSpec).isExplicit()) {
 				if (needSpace) {
 					result.append(SPACE);
@@ -552,16 +537,7 @@ public class ASTSignatureUtil {
 				result.append(Keywords.VIRTUAL);
 				needSpace = true;
 			}
-		} else if (declSpec instanceof IGPPASTDeclSpecifier) {
-			if (((IGPPASTDeclSpecifier) declSpec).isRestrict()) {
-				if (needSpace) {
-					result.append(SPACE);
-					needSpace = false;
-				}
-				result.append(Keywords.RESTRICT);
-				needSpace = true;
-			}
-		}
+		} 
 
 		// handle complex cases
 		if (declSpec instanceof IASTCompositeTypeSpecifier) {
@@ -631,100 +607,32 @@ public class ASTSignatureUtil {
 			result.append(((IASTNamedTypeSpecifier) declSpec).getName().toString());
 			needSpace = true;
 		} else if (declSpec instanceof IASTSimpleDeclSpecifier) {
-			// handle complex cases
-			if (declSpec instanceof IGPPASTSimpleDeclSpecifier) {
-				if (((IGPPASTSimpleDeclSpecifier) declSpec).isLongLong())
-					result.append(Keywords.LONG_LONG);
-				if (((IGPPASTSimpleDeclSpecifier) declSpec).isComplex()) {
-					if (needSpace) {
-						result.append(SPACE);
-						needSpace = false;
-					}
-					result.append(Keywords.c_COMPLEX);
-					needSpace = true;
+			final IASTSimpleDeclSpecifier sds = (IASTSimpleDeclSpecifier) declSpec;
+			if (sds.isLongLong()) {
+				if (needSpace) {
+					result.append(SPACE);
+					needSpace = false;
 				}
-				if (((IGPPASTSimpleDeclSpecifier) declSpec).isImaginary()) {
-					if (needSpace) {
-						result.append(SPACE);
-						needSpace = false;
-					}
-					result.append(Keywords.c_IMAGINARY);
-					needSpace = true;
-				}
-
-				switch (((IGPPASTSimpleDeclSpecifier) declSpec).getType()) {
-				case IGPPASTSimpleDeclSpecifier.t_typeof:
-					if (needSpace) {
-						result.append(SPACE);
-						needSpace = false;
-					}
-					result.append(GCCKeywords.TYPEOF);
-					needSpace = true;
-					break;
-				}
+				result.append(Keywords.LONG_LONG);
+				needSpace = true;
 			}
-
-			if (declSpec instanceof ICPPASTSimpleDeclSpecifier) {
-				switch (((ICPPASTSimpleDeclSpecifier) declSpec).getType()) {
-				case ICPPASTSimpleDeclSpecifier.t_bool:
-					if (needSpace) {
-						result.append(SPACE);
-						needSpace = false;
-					}
-					result.append(Keywords.BOOL);
-					needSpace = true;
-					break;
-				case ICPPASTSimpleDeclSpecifier.t_wchar_t:
-					if (needSpace) {
-						result.append(SPACE);
-						needSpace = false;
-					}
-					result.append(Keywords.WCHAR_T);
-					needSpace = true;
-					break;
+			if (sds.isComplex()) {
+				if (needSpace) {
+					result.append(SPACE);
+					needSpace = false;
 				}
+				result.append(Keywords.c_COMPLEX);
+				needSpace = true;
 			}
-
-			if (declSpec instanceof ICASTSimpleDeclSpecifier) {
-				if (((ICASTSimpleDeclSpecifier) declSpec).isLongLong()) {
-					if (needSpace) {
-						result.append(SPACE);
-						needSpace = false;
-					}
-					result.append(Keywords.LONG_LONG);
-					needSpace = true;
+			if (sds.isImaginary()) {
+				if (needSpace) {
+					result.append(SPACE);
+					needSpace = false;
 				}
-				if (((ICASTSimpleDeclSpecifier) declSpec).isComplex()) {
-					if (needSpace) {
-						result.append(SPACE);
-						needSpace = false;
-					}
-					result.append(Keywords.c_COMPLEX);
-					needSpace = true;
-				}
-				if (((ICASTSimpleDeclSpecifier) declSpec).isImaginary()) {
-					if (needSpace) {
-						result.append(SPACE);
-						needSpace = false;
-					}
-					result.append(Keywords.c_IMAGINARY);
-					needSpace = true;
-				}
-
-				switch (((ICASTSimpleDeclSpecifier) declSpec).getType()) {
-				case ICASTSimpleDeclSpecifier.t_Bool:
-					if (needSpace) {
-						result.append(SPACE);
-						needSpace = false;
-					}
-					result.append(Keywords.c_BOOL);
-					needSpace = true;
-					break;
-				}
+				result.append(Keywords.c_IMAGINARY);
+				needSpace = true;
 			}
-
-			// handle simple cases
-			if (((IASTSimpleDeclSpecifier) declSpec).isLong()) {
+			if (sds.isLong()) {
 				if (needSpace) {
 					result.append(SPACE);
 					needSpace = false;
@@ -732,7 +640,7 @@ public class ASTSignatureUtil {
 				result.append(Keywords.LONG);
 				needSpace = true;
 			}
-			if (((IASTSimpleDeclSpecifier) declSpec).isShort()) {
+			if (sds.isShort()) {
 				if (needSpace) {
 					result.append(SPACE);
 					needSpace = false;
@@ -740,7 +648,7 @@ public class ASTSignatureUtil {
 				result.append(Keywords.SHORT);
 				needSpace = true;
 			}
-			if (((IASTSimpleDeclSpecifier) declSpec).isSigned()) {
+			if (sds.isSigned()) {
 				if (needSpace) {
 					result.append(SPACE);
 					needSpace = false;
@@ -748,7 +656,7 @@ public class ASTSignatureUtil {
 				result.append(Keywords.SIGNED);
 				needSpace = true;
 			}
-			if (((IASTSimpleDeclSpecifier) declSpec).isUnsigned()) {
+			if (sds.isUnsigned()) {
 				if (needSpace) {
 					result.append(SPACE);
 					needSpace = false;
@@ -757,13 +665,49 @@ public class ASTSignatureUtil {
 				needSpace = true;
 			}
 
-			switch (((IASTSimpleDeclSpecifier) declSpec).getType()) {
+			switch (sds.getType()) {
+			case IASTSimpleDeclSpecifier.t_typeof:
+				if (needSpace) {
+					result.append(SPACE);
+					needSpace = false;
+				}
+				result.append(Keywords.TYPEOF);
+				needSpace = true;
+				break;
+			case IASTSimpleDeclSpecifier.t_decltype:
+				if (needSpace) {
+					result.append(SPACE);
+					needSpace = false;
+				}
+				result.append(Keywords.cDECLTYPE);
+				needSpace = true;
+				break;
+			case IASTSimpleDeclSpecifier.t_bool:
+				if (needSpace) {
+					result.append(SPACE);
+					needSpace = false;
+				}
+				if (declSpec instanceof ICASTSimpleDeclSpecifier) {
+					result.append(Keywords.c_BOOL);
+				} else {
+					result.append(Keywords.BOOL);
+				}
+				needSpace = true;
+				break;
 			case IASTSimpleDeclSpecifier.t_char:
 				if (needSpace) {
 					result.append(SPACE);
 					needSpace = false;
 				}
 				result.append(Keywords.CHAR);
+				needSpace = true;
+				break;
+			case IASTSimpleDeclSpecifier.t_wchar_t:
+				if (needSpace) {
+					result.append(SPACE);
+					needSpace = false;
+				}
+				result.append(Keywords.WCHAR_T);
 				needSpace = true;
 				break;
 			case IASTSimpleDeclSpecifier.t_double:
@@ -1181,21 +1125,14 @@ public class ASTSignatureUtil {
 				opString = Keywords.TYPEID;
 				break;
 			}
-		} else if (ue instanceof IGNUASTUnaryExpression) {
-			switch (op) {
-			case IGNUASTUnaryExpression.op_alignOf:
-				opString = Keywords.ALIGNOF;
-				break;
-			case IGNUASTUnaryExpression.op_typeof:
-				opString = Keywords.TYPEOF;
-				break;
-			}
-		}
-
+		} 
 		if (!opString.equals(EMPTY_STRING))
 			return opString;
 
 		switch (op) {
+		case IASTUnaryExpression.op_alignOf:
+			opString = Keywords.ALIGNOF;
+			break;
 		case IASTUnaryExpression.op_amper:
 			opString = String.valueOf(Keywords.cpAMPER);
 			break;

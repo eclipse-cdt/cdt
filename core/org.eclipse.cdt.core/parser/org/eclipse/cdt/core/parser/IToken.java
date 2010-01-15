@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2002, 2009 IBM Corporation and others.
+ * Copyright (c) 2002, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,7 +10,6 @@
  *    Markus Schorn (Wind River Systems)
  *******************************************************************************/
 package org.eclipse.cdt.core.parser;
-
 
 /**
  * @noextend This interface is not intended to be extended by clients.
@@ -93,7 +92,7 @@ public interface IToken {
 	 * @see IScanner#setSplitShiftROperator(boolean) 
 	 * @since 5.2 
 	 */
-	int tGT_in_SHIFTR= 53;
+	int tGT_in_SHIFTR= 5200;
 	
 	/** @deprecated use {@link #tAND} */ @Deprecated int t_and = 54;
 	/** @deprecated use {@link #tAMPERASSIGN} */ @Deprecated int t_and_eq = 55;
@@ -113,6 +112,7 @@ public interface IToken {
 	
 	int t_const_cast = 69;
 	int t_continue = 70;
+	/** @since 5.2 */ int t_decltype= 5201;
 	int t_default = 71;
 	int t_delete = 72;
 	int t_do = 73;
@@ -149,7 +149,7 @@ public interface IToken {
 	int t_short = 104;
 	int t_sizeof = 105;
 	int t_static = 106;
-	/** @since 5.2 */ int t_static_assert = 5010;
+	/** @since 5.2 */ int t_static_assert = 5202;
 	int t_static_cast = 107;
 	int t_signed = 108;
 	int t_struct = 109;

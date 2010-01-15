@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2009 IBM Corporation and others.
+ * Copyright (c) 2004, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -20,108 +20,71 @@ package org.eclipse.cdt.core.dom.ast;
 public interface IASTDeclSpecifier extends IASTNode {
 
 	/**
-	 * <code>sc_unspecified</code> undefined storage class
+	 * No storage class specified.
 	 */
 	public static final int sc_unspecified = 0;
-
-	/**
-	 * <code>sc_typedef</code> typedef
-	 */
 	public static final int sc_typedef = 1;
-
-	/**
-	 * <code>sc_extern</code>extern
-	 */
-
 	public static final int sc_extern = 2;
-
-	/**
-	 * <code>sc_static</code>static
-	 */
-
 	public static final int sc_static = 3;
-
-	/**
-	 * <code>sc_auto</code>auto
-	 */
-
 	public static final int sc_auto = 4;
-
-	/**
-	 * <code>sc_register</code>register
-	 */
 	public static final int sc_register = 5;
-
 	/**
-	 * <code>sc_last</code> for sub-interfaces to continue on
+	 * @since 5.2
 	 */
-	public static final int sc_last = sc_register;
+	public static final int sc_mutable = 6;
 
 	/**
-	 * Set the storage class.
-	 * 
-	 * @param storageClass
-	 *            int
-	 */
-	public void setStorageClass(int storageClass);
-
-	/**
-	 * Get the storage class.
-	 * 
-	 * @return int
+	 * Returns the storage class, which is one of the constants sc_...
 	 */
 	public int getStorageClass();
 
 	// Type qualifier
-	/**
-	 * Is const modifier used?
-	 * 
-	 * @return boolean
-	 */
 	public boolean isConst();
-
-	/**
-	 * Set const modifier used.
-	 * 
-	 * @param value
-	 *            boolean
-	 */
-	public void setConst(boolean value);
-
-	/**
-	 * Is volatile modifier used?
-	 * 
-	 * @return boolean
-	 */
 	public boolean isVolatile();
-
 	/**
-	 * Set volatile modifier used.
-	 * 
-	 * @param value
-	 *            boolean
+	 * @since 5.2
 	 */
-	public void setVolatile(boolean value);
+	public boolean isRestrict();
 
 	// Function specifier
-	/**
-	 * Is inline modifier used?
-	 * 
-	 * @return boolean
-	 */
 	public boolean isInline();
-
-	/**
-	 * Set inline modifier used.
-	 * 
-	 * @param value
-	 *            boolean
-	 */
-	public void setInline(boolean value);
 	
 	/**
 	 * @since 5.1
 	 */
 	public IASTDeclSpecifier copy();
+
+	/**
+	 * Not allowed on frozen ast.
+	 */
+	public void setStorageClass(int storageClass);
+
+	/**
+	 * Not allowed on frozen ast.
+	 */
+	public void setConst(boolean value);
+
+	/**
+	 * Not allowed on frozen ast.
+	 */
+	public void setVolatile(boolean value);
+
+	/**
+	 * Not allowed on frozen ast.
+	 * @since 5.2
+	 */
+	public void setRestrict(boolean value);
+
+	/**
+	 * Not allowed on frozen ast.
+	 */
+	public void setInline(boolean value);
+	
+	/**
+	 * @deprecated All constants must be defined in this interface.
+	 */
+	@Deprecated
+	public static final int sc_last = sc_register;
+
 
 }

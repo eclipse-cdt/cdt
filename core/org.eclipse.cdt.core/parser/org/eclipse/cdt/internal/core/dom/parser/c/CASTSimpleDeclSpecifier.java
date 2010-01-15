@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2009 IBM Corporation and others.
+ * Copyright (c) 2005, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -13,10 +13,14 @@
 package org.eclipse.cdt.internal.core.dom.parser.c;
 
 import org.eclipse.cdt.core.dom.ast.ASTVisitor;
+import org.eclipse.cdt.core.dom.ast.IASTExpression;
+import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IBasicType.Kind;
 import org.eclipse.cdt.core.dom.ast.c.ICASTSimpleDeclSpecifier;
+import org.eclipse.cdt.internal.core.dom.parser.IASTAmbiguityParent;
 
-public class CASTSimpleDeclSpecifier extends CASTBaseDeclSpecifier implements ICASTSimpleDeclSpecifier {
+public class CASTSimpleDeclSpecifier extends CASTBaseDeclSpecifier implements ICASTSimpleDeclSpecifier,
+		IASTAmbiguityParent {
     
     private int simpleType;
     private boolean isSigned;
@@ -26,6 +30,7 @@ public class CASTSimpleDeclSpecifier extends CASTBaseDeclSpecifier implements IC
     private boolean longlong;
     private boolean complex=false;
     private boolean imaginary=false;
+	private IASTExpression fDeclTypeExpression;
 
     public CASTSimpleDeclSpecifier copy() {
 		CASTSimpleDeclSpecifier copy = new CASTSimpleDeclSpecifier();
@@ -43,8 +48,9 @@ public class CASTSimpleDeclSpecifier extends CASTBaseDeclSpecifier implements IC
     	copy.longlong = longlong;
     	copy.complex = complex;
     	copy.imaginary = imaginary;
+    	if (fDeclTypeExpression != null)
+    		copy.setDeclTypeExpression(fDeclTypeExpression.copy());
     }
-    
     
     public int getType() {
         return simpleType;
@@ -78,7 +84,7 @@ public class CASTSimpleDeclSpecifier extends CASTBaseDeclSpecifier implements IC
     private int getType(Kind kind) {
     	switch(kind) {
     	case eBoolean:
-    		return t_Bool;
+    		return t_bool;
 		case eChar:
 		case eWChar:
 			return t_char;
@@ -134,6 +140,10 @@ public class CASTSimpleDeclSpecifier extends CASTBaseDeclSpecifier implements IC
 	            default : break;
 	        }
 		}
+
+        if (fDeclTypeExpression != null && !fDeclTypeExpression.accept(action))
+			return false;
+
         if( action.shouldVisitDeclSpecifiers ){
 		    switch( action.leave( this ) ){
 	            case ASTVisitor.PROCESS_ABORT : return false;
@@ -160,5 +170,26 @@ public class CASTSimpleDeclSpecifier extends CASTBaseDeclSpecifier implements IC
 	public void setImaginary(boolean value) {
         assertNotFrozen();
 		this.imaginary = value;		
+	}
+
+	public IASTExpression getDeclTypeExpression() {
+		return fDeclTypeExpression;
+	}
+
+	public void setDeclTypeExpression(IASTExpression expression) {
+        assertNotFrozen();
+        fDeclTypeExpression= expression;
+        if (expression != null) {
+        	expression.setPropertyInParent(DECLTYPE_EXPRESSION);
+        	expression.setParent(this);
+        }
+	}
+	
+	public void replace(IASTNode child, IASTNode other) {
+		if (child == fDeclTypeExpression) {
+			other.setPropertyInParent(child.getPropertyInParent());
+			other.setParent(child.getParent());
+			fDeclTypeExpression= (IASTExpression) other;
+		}
 	}
 }

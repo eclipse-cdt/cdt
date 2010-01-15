@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2009 Institute for Software, HSR Hochschule fuer Technik  
+ * Copyright (c) 2008, 2010 Institute for Software, HSR Hochschule fuer Technik  
  * Rapperswil, University of applied sciences and others
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Eclipse Public License v1.0 
@@ -37,7 +37,6 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTypeIdExpression;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTypenameExpression;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTUnaryExpression;
 import org.eclipse.cdt.core.dom.ast.gnu.IGNUASTTypeIdExpression;
-import org.eclipse.cdt.core.dom.ast.gnu.IGNUASTUnaryExpression;
 import org.eclipse.cdt.core.dom.ast.gnu.cpp.IGPPASTBinaryExpression;
 import org.eclipse.cdt.internal.core.dom.rewrite.commenthandler.NodeCommentMap;
 
@@ -252,8 +251,8 @@ public class ExpressionWriter extends NodeWriter{
 		case IASTUnaryExpression.op_bracketedPrimary:
 		case ICPPASTUnaryExpression.op_throw:
 		case ICPPASTUnaryExpression.op_typeid:
-		case IGNUASTUnaryExpression.op_alignOf:
-		case IGNUASTUnaryExpression.op_typeof:
+		case IASTUnaryExpression.op_alignOf: 
+		case IASTUnaryExpression.op_typeof:
 			return true;
 
 		default:
@@ -268,8 +267,8 @@ public class ExpressionWriter extends NodeWriter{
 		case IASTUnaryExpression.op_postFixIncr:
 		case IASTUnaryExpression.op_bracketedPrimary:
 		case ICPPASTUnaryExpression.op_typeid:
-		case IGNUASTUnaryExpression.op_alignOf:
-		case IGNUASTUnaryExpression.op_typeof:
+		case IASTUnaryExpression.op_alignOf:
+		case IASTUnaryExpression.op_typeof:
 			return true;
 
 		default:
@@ -306,9 +305,9 @@ public class ExpressionWriter extends NodeWriter{
 			return THROW;
 		case ICPPASTUnaryExpression.op_typeid:
 			return TYPEID_OP;
-		case IGNUASTUnaryExpression.op_alignOf:
+		case IASTUnaryExpression.op_alignOf:
 			return ALIGNOF_OP;
-		case IGNUASTUnaryExpression.op_typeof:
+		case IASTUnaryExpression.op_typeof:
 			return TYPEOF_OP;
 		default:
 			System.err.println("Unkwown unaryExpressionType: " + unaryExpressionType); //$NON-NLS-1$
@@ -326,8 +325,8 @@ public class ExpressionWriter extends NodeWriter{
 		case ICPPASTUnaryExpression.op_typeid:
 			return CLOSING_BRACKET_OP;
 		case IASTUnaryExpression.op_bracketedPrimary:
-		case IGNUASTUnaryExpression.op_alignOf:
-		case IGNUASTUnaryExpression.op_typeof:
+		case IASTUnaryExpression.op_alignOf:
+		case IASTUnaryExpression.op_typeof:
 			return CLOSING_BRACKET_OP;
 		default:
 			System.err.println("Unkwown unaryExpressionType " + unaryExpressionType); //$NON-NLS-1$

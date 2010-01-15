@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2006, 2009 IBM Corporation and others.
+ *  Copyright (c) 2006, 2010 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -77,7 +77,6 @@ import org.eclipse.cdt.core.dom.ast.c.ICNodeFactory;
 import org.eclipse.cdt.core.dom.ast.gnu.IGNUASTCompoundStatementExpression;
 import org.eclipse.cdt.core.dom.ast.gnu.c.ICASTKnRFunctionDeclarator;
 import org.eclipse.cdt.core.dom.ast.gnu.c.IGCCASTArrayRangeDesignator;
-import org.eclipse.cdt.core.dom.ast.gnu.c.IGCCASTSimpleDeclSpecifier;
 import org.eclipse.cdt.core.parser.IScanner;
 import org.eclipse.cdt.internal.core.dom.parser.NodeFactory;
 
@@ -349,7 +348,8 @@ public class CNodeFactory extends NodeFactory implements ICNodeFactory {
 		return new CASTArrayRangeDesignator(floor, ceiling);
 	}
 
-	public IGCCASTSimpleDeclSpecifier newSimpleDeclSpecifierGCC(IASTExpression typeofExpression) {
+	@Deprecated 
+	public org.eclipse.cdt.core.dom.ast.gnu.c.IGCCASTSimpleDeclSpecifier newSimpleDeclSpecifierGCC(IASTExpression typeofExpression) {
 		return new GCCASTSimpleDeclSpecifier(typeofExpression);
 	}
 } 

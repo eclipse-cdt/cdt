@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2009 IBM Corporation and others.
+ * Copyright (c) 2004, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -101,9 +101,9 @@ public interface IASTUnaryExpression extends IASTExpression {
 	public static final int op_typeid = 13;
 
 	/**
-	 * for gnu parsers, only. <code>op_typeof</code> is used for typeof( unaryExpression ) type
-	 * expressions.
+	 * @deprecated Shall not be used, 'typeof something' is not an expression, it's a declaration specifier.
 	 */
+	@Deprecated
 	public static final int op_typeof = 14;
 
 	/**

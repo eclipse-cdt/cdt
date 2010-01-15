@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2009 IBM Corporation and others.
+ * Copyright (c) 2004, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -64,6 +64,7 @@ import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.ICompositeType;
 import org.eclipse.cdt.core.dom.ast.IEnumeration;
 import org.eclipse.cdt.core.dom.ast.IEnumerator;
+import org.eclipse.cdt.core.dom.ast.IFunction;
 import org.eclipse.cdt.core.dom.ast.IFunctionType;
 import org.eclipse.cdt.core.dom.ast.ILabel;
 import org.eclipse.cdt.core.dom.ast.IParameter;
@@ -129,7 +130,6 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPUsingDeclaration;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCompositeTypeSpecifier.ICPPASTBaseSpecifier;
 import org.eclipse.cdt.core.dom.ast.gnu.cpp.IGPPASTPointer;
 import org.eclipse.cdt.core.dom.ast.gnu.cpp.IGPPASTPointerToMember;
-import org.eclipse.cdt.core.dom.ast.gnu.cpp.IGPPASTSimpleDeclSpecifier;
 import org.eclipse.cdt.core.index.IIndexBinding;
 import org.eclipse.cdt.core.parser.util.ArrayUtil;
 import org.eclipse.cdt.core.parser.util.CharArrayUtils;
@@ -1742,13 +1742,8 @@ public class CPPVisitor extends ASTQueries {
 			name = ((IASTEnumerationSpecifier)declSpec).getName();
 		} else if (declSpec instanceof ICPPASTSimpleDeclSpecifier) {
 			ICPPASTSimpleDeclSpecifier spec = (ICPPASTSimpleDeclSpecifier) declSpec;
-			if (spec instanceof IGPPASTSimpleDeclSpecifier) {
-				IGPPASTSimpleDeclSpecifier gspec = (IGPPASTSimpleDeclSpecifier) spec;
-				final IASTExpression typeofExpression = gspec.getTypeofExpression();
-				if (typeofExpression != null) {
-					type = typeofExpression.getExpressionType();
-				}
-			}
+			// Check for decltype(expr)
+			type = getDeclType(spec);
 			if (type == null) {
 				type = new CPPBasicType(spec);
 			}
@@ -1778,6 +1773,55 @@ public class CPPVisitor extends ASTQueries {
 					type = e.getProblem();
 				}
 			}
+		}
+		return type;
+	}
+
+	/**
+	 * Compute the type for decltype(expr) or typeof(expr)
+	 */
+	private static IType getDeclType(ICPPASTSimpleDeclSpecifier spec) {
+		IASTExpression expr = spec.getDeclTypeExpression();
+		if (expr == null) 
+			return null;
+		
+		if (spec.getType() == IASTSimpleDeclSpecifier.t_decltype) {
+			IASTName namedEntity= null;
+			if (expr instanceof IASTIdExpression) {
+				namedEntity= ((IASTIdExpression) expr).getName();
+			} else if (expr instanceof IASTFieldReference) {
+				namedEntity= ((IASTFieldReference) expr).getFieldName();
+			}
+			if (namedEntity != null) {
+				IBinding b= namedEntity.resolvePreBinding();
+				if (b instanceof IType) {
+					return (IType) b;
+				}
+				try {
+					if (b instanceof IVariable) {
+						return ((IVariable) b).getType();
+					}
+					if (b instanceof IFunction) {
+						return ((IFunction) b).getType();
+					}
+				} catch (DOMException e) {
+					return e.getProblem();
+				}
+			}
+		}
+		IType type = expr.getExpressionType();
+		if (spec.getType() == IASTSimpleDeclSpecifier.t_decltype) {
+			while (expr instanceof IASTUnaryExpression
+					&& ((IASTUnaryExpression) expr).getOperator() == IASTUnaryExpression.op_bracketedPrimary) {
+				expr = ((IASTUnaryExpression) expr).getOperand();
+			}
+			if (!(expr instanceof IASTFunctionCallExpression)) {
+				type= SemanticUtil.getNestedType(type, TDEF | REF);
+				if (expr.isLValue())
+					type= new CPPReferenceType(type, false);
+			}
+		} else {
+			type= SemanticUtil.getNestedType(type, TDEF | REF);
 		}
 		return type;
 	}
@@ -2182,12 +2226,7 @@ public class CPPVisitor extends ASTQueries {
 		if (declspec instanceof ICPPASTSimpleDeclSpecifier) {
 			ICPPASTSimpleDeclSpecifier ds= (ICPPASTSimpleDeclSpecifier) declspec;
 			if (ds.getType() == IASTSimpleDeclSpecifier.t_unspecified) {
-				if (ds instanceof IGPPASTSimpleDeclSpecifier) {
-					final IGPPASTSimpleDeclSpecifier gds = (IGPPASTSimpleDeclSpecifier) ds;
-					if (gds.isLongLong() || gds.getTypeofExpression() != null)
-						return false;
-				}
-				if (ds.isShort() || ds.isLong() || ds.isSigned() || ds.isUnsigned())
+				if (ds.isShort() || ds.isLong() || ds.isLongLong() || ds.isSigned() || ds.isUnsigned())
 					return false;
 
 				return true;

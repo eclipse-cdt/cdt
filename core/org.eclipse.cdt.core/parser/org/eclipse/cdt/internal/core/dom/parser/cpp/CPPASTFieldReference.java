@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2009 IBM Corporation and others.
+ * Copyright (c) 2004, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -13,7 +13,7 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.dom.parser.cpp;
 
-import static org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.SemanticUtil.TDEF;
+import static org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.SemanticUtil.*;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -28,10 +28,12 @@ import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.IEnumerator;
 import org.eclipse.cdt.core.dom.ast.IFunction;
+import org.eclipse.cdt.core.dom.ast.IPointerType;
 import org.eclipse.cdt.core.dom.ast.IProblemBinding;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.IVariable;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTFieldReference;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPField;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunction;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPMember;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPMethod;
@@ -39,6 +41,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPReferenceType;
 import org.eclipse.cdt.internal.core.dom.parser.ASTNode;
 import org.eclipse.cdt.internal.core.dom.parser.IASTAmbiguityParent;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPSemantics;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CVQualifier;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.SemanticUtil;
 
 public class CPPASTFieldReference extends ASTNode implements ICPPASTFieldReference, IASTAmbiguityParent,
@@ -190,7 +193,28 @@ public class CPPASTFieldReference extends ASTNode implements ICPPASTFieldReferen
 		IBinding binding = name.resolvePreBinding();
 		try {
 			if (binding instanceof IVariable) {
-                return SemanticUtil.mapToAST(((IVariable) binding).getType(), this);
+				IType e2= ((IVariable) binding).getType();
+				if (binding instanceof ICPPField && !((ICPPField) binding).isStatic()) {
+					IType e1= getFieldOwner().getExpressionType();
+					if (isPointerDereference()) {
+						e1= SemanticUtil.getNestedType(e1, TDEF | REF | CVTYPE);
+						if (e1 instanceof IPointerType) {
+							e1= ((IPointerType) e1).getType();
+						}
+					}
+					CVQualifier cvq1 = SemanticUtil.getCVQualifier(e1);
+					if (((ICPPField) binding).isMutable()) {
+						// Remove const, add union of volatile.
+						CVQualifier cvq2 = SemanticUtil.getCVQualifier(e2);
+						if (cvq2.isConst()) {
+							e2= SemanticUtil.getNestedType(e2, ALLCVQ | TDEF | REF);
+						}
+						e2= SemanticUtil.addQualifiers(e2, false, cvq1.isVolatile() || cvq2.isVolatile());
+					} else {
+						e2= SemanticUtil.addQualifiers(e2, cvq1.isConst(), cvq1.isVolatile());
+					}
+				}
+                return SemanticUtil.mapToAST(e2, this);
 			} else if (binding instanceof IEnumerator) {
 				return ((IEnumerator) binding).getType();
 			} else if (binding instanceof IFunction) {

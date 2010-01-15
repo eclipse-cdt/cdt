@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2009 Wind River Systems, Inc. and others.
+ * Copyright (c) 2007, 2010 Wind River Systems, Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -43,7 +43,6 @@ import org.eclipse.cdt.core.dom.ast.IFunctionType;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.IVariable;
 import org.eclipse.cdt.core.dom.ast.gnu.IGNUASTCompoundStatementExpression;
-import org.eclipse.cdt.core.dom.ast.gnu.IGNUASTUnaryExpression;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMName;
 
 /**
@@ -260,8 +259,7 @@ public abstract class VariableReadWriteFlags {
 
 		case IASTUnaryExpression.op_sizeof:
 		case IASTUnaryExpression.op_sizeofParameterPack:
-		case IGNUASTUnaryExpression.op_alignOf:
-		case IGNUASTUnaryExpression.op_typeof:
+		case IASTUnaryExpression.op_alignOf:
 			return 0;
 		}
 		return READ;

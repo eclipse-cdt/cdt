@@ -113,7 +113,6 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPReferenceType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPUsingDeclaration;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPVariable;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCompositeTypeSpecifier.ICPPASTBaseSpecifier;
-import org.eclipse.cdt.core.dom.ast.gnu.cpp.IGPPASTSimpleDeclSpecifier;
 import org.eclipse.cdt.core.dom.ast.gnu.cpp.IGPPPointerToMemberType;
 import org.eclipse.cdt.core.dom.ast.gnu.cpp.IGPPPointerType;
 import org.eclipse.cdt.core.parser.ParserLanguage;
@@ -4670,10 +4669,10 @@ public class AST2CPPTests extends AST2BaseTest {
 		IASTTranslationUnit tu = parse( getAboveComment(), ParserLanguage.CPP, true, true );
 		IASTDeclaration[] decls = tu.getDeclarations();
 		
-		assertTrue(((IGPPASTSimpleDeclSpecifier)((IASTSimpleDeclaration)decls[0]).getDeclSpecifier()).isComplex());
-		assertEquals(((IGPPASTSimpleDeclSpecifier)((IASTSimpleDeclaration)decls[0]).getDeclSpecifier()).getType(), IASTSimpleDeclSpecifier.t_float);
-		assertTrue(((IGPPASTSimpleDeclSpecifier)((IASTSimpleDeclaration)decls[1]).getDeclSpecifier()).isComplex());
-		assertEquals(((IGPPASTSimpleDeclSpecifier)((IASTSimpleDeclaration)decls[1]).getDeclSpecifier()).getType(), IASTSimpleDeclSpecifier.t_double);
+		assertTrue(((IASTSimpleDeclSpecifier)((IASTSimpleDeclaration)decls[0]).getDeclSpecifier()).isComplex());
+		assertEquals(((IASTSimpleDeclSpecifier)((IASTSimpleDeclaration)decls[0]).getDeclSpecifier()).getType(), IASTSimpleDeclSpecifier.t_float);
+		assertTrue(((IASTSimpleDeclSpecifier)((IASTSimpleDeclaration)decls[1]).getDeclSpecifier()).isComplex());
+		assertEquals(((IASTSimpleDeclSpecifier)((IASTSimpleDeclaration)decls[1]).getDeclSpecifier()).getType(), IASTSimpleDeclSpecifier.t_double);
 	}
 	
 	// class _A {                         
@@ -8009,6 +8008,42 @@ public class AST2CPPTests extends AST2BaseTest {
 		
 		b= bh.assertNonProblem("f(a, 1)", 1);
 		assertSame(b, glob);
+	}
+	
+	//	const int&& foo();
+	//	int i;
+	//	struct A { double x; };
+	//	const A* a = new A();
+	//	decltype(foo()) t1(); // type is const int&&
+	//	decltype(i) t2(); // type is int
+	//	decltype(a->x) t3(); // type is double
+	//	decltype((a->x)) t4(); // type is const double&
+	//	__typeof foo() t5();   // type is const int
+	//	__typeof(i) t6();      // type is int
+	//	__typeof(a->x) t7();   // type is const double
+	//	__typeof((a->x)) t8(); // type is const double
+
+	public void testDeclType_294730() throws Exception {
+		String code= getAboveComment();
+		parseAndCheckBindings(code, ParserLanguage.CPP);
+		BindingAssertionHelper bh= new BindingAssertionHelper(code, true);
+		IFunction f= bh.assertNonProblem("t1", 2);
+		assertEquals("const int &&", ASTTypeUtil.getType(f.getType().getReturnType()));
+		f= bh.assertNonProblem("t2", 2);
+		assertEquals("int", ASTTypeUtil.getType(f.getType().getReturnType()));
+		f= bh.assertNonProblem("t3", 2);
+		assertEquals("double", ASTTypeUtil.getType(f.getType().getReturnType()));
+		f= bh.assertNonProblem("t4", 2);
+		assertEquals("const double &", ASTTypeUtil.getType(f.getType().getReturnType()));
+
+		f= bh.assertNonProblem("t5", 2);
+		assertEquals("const int", ASTTypeUtil.getType(f.getType().getReturnType()));
+		f= bh.assertNonProblem("t6", 2);
+		assertEquals("int", ASTTypeUtil.getType(f.getType().getReturnType()));
+		f= bh.assertNonProblem("t7", 2);
+		assertEquals("const double", ASTTypeUtil.getType(f.getType().getReturnType()));
+		f= bh.assertNonProblem("t8", 2);
+		assertEquals("const double", ASTTypeUtil.getType(f.getType().getReturnType()));
 	}
 }
 

@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2004, 2009 IBM Corporation and others.
+ *  Copyright (c) 2004, 2010 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -19,7 +19,6 @@ import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.ITypedef;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTSimpleDeclSpecifier;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPBasicType;
-import org.eclipse.cdt.core.dom.ast.gnu.cpp.IGPPASTSimpleDeclSpecifier;
 import org.eclipse.cdt.internal.core.dom.parser.ISerializableType;
 import org.eclipse.cdt.internal.core.dom.parser.ITypeMarshalBuffer;
 import org.eclipse.core.runtime.CoreException;
@@ -58,19 +57,14 @@ public class CPPBasicType implements ICPPBasicType, ISerializableType {
 	}
 	
 	private static int getModifiers(ICPPASTSimpleDeclSpecifier sds) {
-		int qualifiers=
+		return
 			( sds.isLong()    ? IBasicType.IS_LONG  : 0 ) |
 			( sds.isShort()   ? IBasicType.IS_SHORT : 0 ) |
 			( sds.isSigned()  ? IBasicType.IS_SIGNED: 0 ) |
-			( sds.isUnsigned()? IBasicType.IS_UNSIGNED : 0 );
-		if (sds instanceof IGPPASTSimpleDeclSpecifier) {
-			IGPPASTSimpleDeclSpecifier gsds= (IGPPASTSimpleDeclSpecifier) sds;
-			qualifiers |=
-				( gsds.isLongLong()? IBasicType.IS_LONG_LONG : 0 ) |
-				( gsds.isComplex() ? IBasicType.IS_COMPLEX : 0 ) |
-				( gsds.isImaginary()?IBasicType.IS_IMAGINARY : 0 );
-		}
-		return qualifiers;
+			( sds.isUnsigned()? IBasicType.IS_UNSIGNED : 0 ) |
+			( sds.isLongLong()? IBasicType.IS_LONG_LONG : 0 ) |
+			( sds.isComplex() ? IBasicType.IS_COMPLEX : 0 ) |
+			( sds.isImaginary()?IBasicType.IS_IMAGINARY : 0 );
 	}
 	
 	private static Kind getKind(ICPPASTSimpleDeclSpecifier sds) {
@@ -79,11 +73,11 @@ public class CPPBasicType implements ICPPBasicType, ISerializableType {
 
 	static Kind getKind(final int simpleDeclSpecType) {
 		switch(simpleDeclSpecType) {
-		case ICPPASTSimpleDeclSpecifier.t_bool:
+		case IASTSimpleDeclSpecifier.t_bool:
 			return Kind.eBoolean;
 		case IASTSimpleDeclSpecifier.t_char:
 			return Kind.eChar;
-		case ICPPASTSimpleDeclSpecifier.t_wchar_t:
+		case IASTSimpleDeclSpecifier.t_wchar_t:
 			return Kind.eWChar;
 		case IASTSimpleDeclSpecifier.t_double:
 			return Kind.eDouble;

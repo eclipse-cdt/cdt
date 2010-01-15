@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2009 IBM Corporation and others.
+ * Copyright (c) 2004, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *    Doug Schaefer (IBM) - Initial API and implementation
+ *    Markus Schorn (Wind River Systems)
  *******************************************************************************/
 package org.eclipse.cdt.core.dom.ast.cpp;
 
@@ -19,17 +20,6 @@ import org.eclipse.cdt.core.dom.ast.IASTDeclSpecifier;
  * @noimplement This interface is not intended to be implemented by clients.
  */
 public interface ICPPASTDeclSpecifier extends IASTDeclSpecifier {
-
-	// Extra storage class in C++
-	/**
-	 * <code>sc_mutable</code> represents a mutable storage representation.
-	 */
-	public static final int sc_mutable = IASTDeclSpecifier.sc_last + 1;
-
-	/**
-	 * <code>sc_last</code> is overwritten to allow extensibility.
-	 */
-	public static final int sc_last = sc_mutable;
 
 	// A declaration in C++ can be a friend declaration
 	/**
@@ -81,5 +71,10 @@ public interface ICPPASTDeclSpecifier extends IASTDeclSpecifier {
 	 * @since 5.1
 	 */
 	public ICPPASTDeclSpecifier copy();
-
+	
+	/**
+	 * @deprecated All constants must be defined in {@link IASTDeclSpecifier}
+	 */
+	@Deprecated
+	public static final int sc_last = sc_mutable;
 }

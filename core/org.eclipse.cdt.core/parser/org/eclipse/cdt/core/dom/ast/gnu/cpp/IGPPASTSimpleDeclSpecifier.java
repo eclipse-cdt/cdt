@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2009 IBM Corporation and others.
+ * Copyright (c) 2004, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -12,6 +12,7 @@ package org.eclipse.cdt.core.dom.ast.gnu.cpp;
 
 import org.eclipse.cdt.core.dom.ast.ASTNodeProperty;
 import org.eclipse.cdt.core.dom.ast.IASTExpression;
+import org.eclipse.cdt.core.dom.ast.IASTSimpleDeclSpecifier;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTSimpleDeclSpecifier;
 
 /**
@@ -19,83 +20,38 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTSimpleDeclSpecifier;
  * 
  * @noextend This interface is not intended to be extended by clients.
  * @noimplement This interface is not intended to be implemented by clients.
+ * @deprecated Replaced by {@link ICPPASTSimpleDeclSpecifier}.
  */
+@Deprecated
 public interface IGPPASTSimpleDeclSpecifier extends IGPPASTDeclSpecifier, ICPPASTSimpleDeclSpecifier {
-
 	/**
-	 * <code>t_typeof</code> represents a typeof() expression type.
+	 * @deprecated Replaced by {@link ICPPASTSimpleDeclSpecifier#setDeclTypeExpression(IASTExpression)}.
 	 */
-	public static final int t_typeof = ICPPASTSimpleDeclSpecifier.t_last + 1;
-
-	/**
-	 * <code>t_last</code> is for subinterfaces to extend these types.
-	 */
-	public static final int t_last = t_typeof;
-	
-	/**
-	 * Is complex number? e.g. _Complex t;
-	 * @return true if it is a complex number, false otherwise
-	 */
-	public boolean isComplex();
-	
-	/**
-	 * Set the number to be complex.
-	 * @param value true if it is a complex number, false otherwise
-	 */
-	public void setComplex(boolean value);
-	
-	/**
-	 * Is imaginary number? e.g. _Imaginr
-	 * @return true if it is an imaginary number, false otherwise
-	 */
-	public boolean isImaginary();
-	
-	/**
-	 * Set the number to be imaginary.
-	 * @param value true if it is an imaginary number, false otherwise
-	 */
-	public void setImaginary(boolean value);
-	
-	/**
-	 * <code>TYPEOF_EXPRESSION</code> represents the relationship between the
-	 * decl spec & the expression for typeof().
-	 */
-	public static final ASTNodeProperty TYPEOF_EXPRESSION = new ASTNodeProperty(
-			"IGPPASTSimpleDeclSpecifier.TYPEOF_EXPRESSION - typeof() Expression"); //$NON-NLS-1$
-
-	/**
-	 * Did we encounter "long long" as a modifier?
-	 * 
-	 * @return boolean
-	 */
-	public boolean isLongLong();
-
-	/**
-	 * Encountered "long long" - set true or false.
-	 * 
-	 * @param value
-	 *            boolean
-	 */
-	public void setLongLong(boolean value);
-
-	/**
-	 * Set the typeof() expression.
-	 * 
-	 * @param typeofExpression
-	 *            <code>IASTExpression</code>
-	 */
+	@Deprecated
 	public void setTypeofExpression(IASTExpression typeofExpression);
 
 	/**
-	 * Get the typeof expression.
-	 * 
-	 * @return <code>IASTExpression</code>
+	 * @deprecated Replaced by {@link ICPPASTSimpleDeclSpecifier#getDeclTypeExpression()}.
 	 */
+	@Deprecated
 	public IASTExpression getTypeofExpression();
 	
 	/**
 	 * @since 5.1
 	 */
 	public IGPPASTSimpleDeclSpecifier copy();
+
+	/**
+	 * @deprecated All constants must be defined in {@link IASTSimpleDeclSpecifier}.
+	 */
+	@Deprecated
+	public static final int t_last = t_typeof;
+	
+	/**
+	 * @deprecated Replaced by {@link ICPPASTSimpleDeclSpecifier#DECLTYPE_EXPRESSION}.
+	 */
+	@Deprecated
+	public static final ASTNodeProperty TYPEOF_EXPRESSION = new ASTNodeProperty(
+			"IGPPASTSimpleDeclSpecifier.TYPEOF_EXPRESSION - typeof() Expression"); //$NON-NLS-1$
 
 }

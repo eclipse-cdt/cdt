@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2009 IBM Corporation and others.
+ * Copyright (c) 2005, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -71,7 +71,6 @@ import org.eclipse.cdt.core.dom.ast.c.ICASTSimpleDeclSpecifier;
 import org.eclipse.cdt.core.dom.ast.c.ICASTTypedefNameSpecifier;
 import org.eclipse.cdt.core.dom.ast.c.ICNodeFactory;
 import org.eclipse.cdt.core.dom.ast.gnu.IGNUASTTypeIdExpression;
-import org.eclipse.cdt.core.dom.ast.gnu.IGNUASTUnaryExpression;
 import org.eclipse.cdt.core.dom.ast.gnu.c.ICASTKnRFunctionDeclarator;
 import org.eclipse.cdt.core.dom.ast.gnu.c.IGCCASTArrayRangeDesignator;
 import org.eclipse.cdt.core.dom.parser.IExtensionToken;
@@ -589,9 +588,6 @@ public class GNUCSourceParser extends AbstractGNUSourceCodeParser {
         case IToken.t_sizeof:
         	return parseTypeidInParenthesisOrUnaryExpression(false, consume().getOffset(), 
         			IASTTypeIdExpression.op_sizeof, IASTUnaryExpression.op_sizeof, ctx);
-        case IGCCToken.t_typeof:
-        	return parseTypeidInParenthesisOrUnaryExpression(false, consume().getOffset(), 
-        			IASTTypeIdExpression.op_typeof, IASTUnaryExpression.op_typeof, ctx);
         case IGCCToken.t___alignof__:
         	return parseTypeidInParenthesisOrUnaryExpression(false, consume().getOffset(), 
         			IASTTypeIdExpression.op_alignof, IASTUnaryExpression.op_alignOf, ctx);
@@ -1004,7 +1000,7 @@ public class GNUCSourceParser extends AbstractGNUSourceCodeParser {
     			case IToken.t__Bool:
     				if (encounteredTypename)
     					break declSpecifiers;
-    				simpleType = ICASTSimpleDeclSpecifier.t_Bool;
+    				simpleType = IASTSimpleDeclSpecifier.t_bool;
     				encounteredRawType= true;
     				endOffset= consume().getEndOffset();
     				break;
@@ -1081,8 +1077,10 @@ public class GNUCSourceParser extends AbstractGNUSourceCodeParser {
     				if (encounteredRawType || encounteredTypename)
     					throwBacktrack(LA(1));
 
-    				typeofExpression = parseTypeidInParenthesisOrUnaryExpression(false, consume().getOffset(), 
-    						IGNUASTTypeIdExpression.op_typeof, IGNUASTUnaryExpression.op_typeof, CastExprCtx.eNotBExpr);
+    				simpleType= IASTSimpleDeclSpecifier.t_typeof;
+    				consume(IGCCToken.t_typeof);
+    				typeofExpression = parseTypeidInParenthesisOrUnaryExpression(false, LA(1).getOffset(), 
+    						IGNUASTTypeIdExpression.op_typeof, -1, CastExprCtx.eNotBExpr);
 
     				encounteredTypename= true;
     				endOffset= calculateEndOffset(typeofExpression);
@@ -1155,11 +1153,7 @@ public class GNUCSourceParser extends AbstractGNUSourceCodeParser {
 
 	private ICASTSimpleDeclSpecifier buildSimpleDeclSpec(int storageClass, int simpleType,
 			int options, int isLong, IASTExpression typeofExpression, int offset, int endOffset) {
-		ICASTSimpleDeclSpecifier declSpec;
-		if (typeofExpression != null)
-			declSpec = nodeFactory.newSimpleDeclSpecifierGCC(typeofExpression);
-        else
-			declSpec = nodeFactory.newSimpleDeclSpecifier();
+		ICASTSimpleDeclSpecifier declSpec= nodeFactory.newSimpleDeclSpecifier();
 		
     	configureDeclSpec(declSpec, storageClass, options);
 		declSpec.setType(simpleType);
@@ -1171,6 +1165,10 @@ public class GNUCSourceParser extends AbstractGNUSourceCodeParser {
 		declSpec.setShort((options & SHORT) != 0);
 		declSpec.setComplex((options & COMPLEX) != 0);
 		declSpec.setImaginary((options & IMAGINARY) != 0);
+		if (typeofExpression != null) {
+			declSpec.setDeclTypeExpression(typeofExpression);
+			typeofExpression.setParent(declSpec);
+		}
 
 		((ASTNode) declSpec).setOffsetAndLength(offset, endOffset - offset);
 		return declSpec;

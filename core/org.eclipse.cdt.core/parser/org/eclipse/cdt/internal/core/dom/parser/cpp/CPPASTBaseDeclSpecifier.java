@@ -1,12 +1,13 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2008 IBM Corporation and others.
+ * Copyright (c) 2004, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- * IBM - Initial API and implementation
+ *    John Camelon (IBM) - Initial API and implementation
+ *    Markus Schorn (Wind River Systems)
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.dom.parser.cpp;
 
@@ -15,14 +16,15 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTDeclSpecifier;
 import org.eclipse.cdt.internal.core.dom.parser.ASTNode;
 
 /**
- * @author jcamelon
+ * Base for all c++ declaration specifiers
  */
 public abstract class CPPASTBaseDeclSpecifier extends ASTNode implements ICPPASTDeclSpecifier {
 
     private boolean friend;
     private boolean inline;
-    private boolean volatil;
     private boolean isConst;
+    private boolean isVolatile;
+    private boolean isRestrict;
     private int sc;
     private boolean virtual;
     private boolean explicit;
@@ -50,12 +52,21 @@ public abstract class CPPASTBaseDeclSpecifier extends ASTNode implements ICPPAST
     }
 
     public boolean isVolatile() {
-        return volatil;
+        return isVolatile;
     }
 
     public void setVolatile(boolean value) {
         assertNotFrozen();
-        volatil = value;
+        isVolatile = value;
+    }
+
+    public boolean isRestrict() {
+        return isRestrict;
+    }
+
+    public void setRestrict(boolean value) {
+        assertNotFrozen();
+        isRestrict = value;
     }
 
     public boolean isInline() {
@@ -93,8 +104,9 @@ public abstract class CPPASTBaseDeclSpecifier extends ASTNode implements ICPPAST
     protected void copyBaseDeclSpec(CPPASTBaseDeclSpecifier other) {
     	other.friend = friend;
     	other.inline = inline;
-    	other.volatil = volatil;
     	other.isConst = isConst;
+    	other.isVolatile = isVolatile;
+    	other.isRestrict= isRestrict;
     	other.virtual = virtual;
     	other.explicit = explicit;
     	other.sc = sc;

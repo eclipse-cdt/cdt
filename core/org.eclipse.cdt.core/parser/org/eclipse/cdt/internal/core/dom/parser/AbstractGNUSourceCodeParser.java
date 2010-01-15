@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2009 IBM Corporation and others.
+ * Copyright (c) 2005, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -2104,7 +2104,7 @@ public abstract class AbstractGNUSourceCodeParser implements ISourceCodeParser {
     }
 
     protected IASTStatement parseDefaultStatement() throws EndOfFileException, BacktrackException {
-        int startOffset = consume().getOffset(); // t_default
+        int startOffset = consume(IToken.t_default).getOffset();
         int lastOffset = consume(IToken.tCOLON).getEndOffset();
 
         IASTDefaultStatement df = nodeFactory.newDefaultStatement();
@@ -2243,7 +2243,7 @@ public abstract class AbstractGNUSourceCodeParser implements ISourceCodeParser {
         		return result1;
         }
         
-        IASTExpression result2= buildUnaryExpression(unaryExprKind, expr, offset, endOffset2);
+        IASTExpression result2= unaryExprKind == -1 ? expr : buildUnaryExpression(unaryExprKind, expr, offset, endOffset2);
         if (ca != null)
         	result2= ca.updateExpression(result2);
         
@@ -2444,6 +2444,7 @@ public abstract class AbstractGNUSourceCodeParser implements ISourceCodeParser {
         case IToken.t__Imaginary:
         case IToken.t_signed:
         case IToken.t_unsigned:
+        case IToken.t_decltype:
 
         // class-specifier:
         case IToken.t_class:

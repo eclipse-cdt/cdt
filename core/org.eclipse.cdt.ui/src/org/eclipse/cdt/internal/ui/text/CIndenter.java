@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2009 IBM Corporation and others.
+ * Copyright (c) 2000, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -1049,6 +1049,13 @@ public final class CIndenter {
 		case Symbols.TokenTRY:
 			return skipToStatementStart(danglingElse, false);
 
+		case Symbols.TokenCONST:
+			nextToken();
+			if (fToken != Symbols.TokenRPAREN) {
+				return skipToPreviousListItemOrListStart();
+			}
+			// could be const method decl
+			//$FALL-THROUGH$
 		case Symbols.TokenRPAREN:
 			if (skipScope(Symbols.TokenLPAREN, Symbols.TokenRPAREN)) {
 				int scope= fPosition;
@@ -1756,7 +1763,7 @@ public final class CIndenter {
 					return setFirstElementAlignment(pos, bound);
 				else
 					fIndent= fPrefs.prefArrayIndent;
-			} else if (isNamespace()) {
+			} else if (isNamespace() || isLinkageSpec()) {
 				fIndent= fPrefs.prefNamespaceBodyIndent;
 			} else {
 				int typeDeclPos = matchTypeDeclaration();
@@ -1856,16 +1863,30 @@ public final class CIndenter {
 	 * @return <code>true</code> if the next elements look like the start of a namespace declaration.
 	 */
 	private boolean isNamespace() {
-		int pos = fPosition;
 		if (fToken == Symbols.TokenNAMESPACE) {
 			return true;		// Anonymous namespace
 		} else if (fToken == Symbols.TokenIDENT) {
+			int pos = fPosition;
+			int token = fToken;
 			nextToken();		// Get previous token
 			if (fToken == Symbols.TokenNAMESPACE) {
 				return true;	// Named namespace
 			}
+			fToken = token;
+			fPosition = pos;
 		}
-		fPosition = pos;
+		return false;
+	}
+
+	/**
+	 * Returns <code>true</code> if the current token is keyword "extern".
+	 *
+	 * @return <code>true</code> if the next elements look like the start of a linkage spec.
+	 */
+	private boolean isLinkageSpec() {
+		if (fToken == Symbols.TokenEXTERN) {
+			return true;
+		}
 		return false;
 	}
 
@@ -2062,6 +2083,15 @@ public final class CIndenter {
 					return true;
 				}
 				break;
+			case Symbols.TokenCOMMA:
+				nextToken();
+				if (fToken == Symbols.TokenRPAREN) {
+					// field initializer
+					if (skipScope()) {
+						return looksLikeMethodDecl();
+					}
+				}
+				break;
 			case Symbols.TokenCOLON:
 				nextToken();
 				switch (fToken) {
@@ -2073,6 +2103,7 @@ public final class CIndenter {
 				case Symbols.TokenRPAREN:
 					// constructor initializer
 					if (skipScope()) {
+						pos = fPosition;
 						nextToken();
 						// optional throw
 						if (fToken == Symbols.TokenTHROW) {
@@ -2080,6 +2111,8 @@ public final class CIndenter {
 							if (fToken != Symbols.TokenRPAREN || !skipScope()) {
 								return false;
 							}
+						} else {
+							fPosition = pos;
 						}
 						return looksLikeMethodDecl();
 					}
@@ -2143,7 +2176,7 @@ public final class CIndenter {
 			nextToken();
 			while (fToken == Symbols.TokenOTHER) { // dot of qualification
 				nextToken();
-				if (fToken != Symbols.TokenIDENT) // qualificating name
+				if (fToken != Symbols.TokenIDENT) // qualifying name
 					return false;
 				nextToken();
 			}

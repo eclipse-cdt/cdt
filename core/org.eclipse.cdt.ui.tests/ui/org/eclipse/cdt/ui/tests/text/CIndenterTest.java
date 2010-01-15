@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2009 Wind River Systems, Inc. and others.
+ * Copyright (c) 2007, 2010 Wind River Systems, Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -42,12 +42,14 @@ public class CIndenterTest extends BaseUITestCase {
 		return suite(CIndenterTest.class, "_");
 	}
 
+	@Override
 	protected void setUp() throws Exception {
 		super.setUp();
 		fDefaultOptions= DefaultCodeFormatterOptions.getDefaultSettings().getMap();
 		fOptions= new HashMap<String, String>();
 	}
 
+	@Override
 	protected void tearDown() throws Exception {
 		CCorePlugin.setOptions(new HashMap<String, String>(fDefaultOptions));
 		super.tearDown();
@@ -793,6 +795,59 @@ public class CIndenterTest extends BaseUITestCase {
 		fOptions.put(DefaultCodeFormatterConstants.FORMATTER_INDENT_SWITCHSTATEMENTS_COMPARE_TO_CASES, DefaultCodeFormatterConstants.FALSE);
 		fOptions.put(DefaultCodeFormatterConstants.FORMATTER_INDENT_SWITCHSTATEMENTS_COMPARE_TO_SWITCH, DefaultCodeFormatterConstants.TRUE);
 		fOptions.put(DefaultCodeFormatterConstants.FORMATTER_TAB_CHAR, CCorePlugin.TAB);
+		assertIndenterResult();
+	}
+
+	//extern "C" {
+	//	int a;
+	//}
+
+	//extern "C" {
+	//int a;
+	//}
+	public void testIndentationInsideLinkageSpec_Bug299482() throws Exception {
+		assertIndenterResult();
+	}
+	
+	//void t() const
+	//{
+	//}
+
+	//void t() const
+	//{
+	//}
+	public void testIndentationOfConstMethodBody_Bug298282() throws Exception {
+		assertIndenterResult();
+	}
+	
+	//class A {
+	//int f,g;
+	//A():f(0)
+	//{
+	//}
+	//A():f(0),g(0)
+	//{
+	//}
+	//A():f(0),
+	//g(0)
+	//{
+	//}
+	//};
+	
+	//class A {
+	//	int f,g;
+	//	A():f(0)
+	//	{
+	//	}
+	//	A():f(0),g(0)
+	//	{
+	//	}
+	//	A():f(0),
+	//			g(0)
+	//	{
+	//	}
+	//};
+	public void testIndentationOfConstructorBodyWithFieldInitializer_Bug298282() throws Exception {
 		assertIndenterResult();
 	}
 }

@@ -1886,8 +1886,15 @@ public class CodeFormatterVisitor extends CPPASTVisitor {
 				scribe.space();
 			}
 			node.getTypeId().accept(this);
-			scribe.printNextToken(Token.tRPAREN, preferences.insert_space_before_closing_paren_in_cast);
-			if (preferences.insert_space_after_closing_paren_in_cast) {
+			try {
+				if (node.getTypeId().getTrailingSyntax().getType() == IToken.tRPAREN) {
+					scribe.printNextToken(Token.tRPAREN, preferences.insert_space_before_closing_paren_in_cast);
+					if (preferences.insert_space_after_closing_paren_in_cast) {
+						scribe.space();
+					}
+				}
+			} catch (UnsupportedOperationException exc) {
+			} catch (ExpansionOverlapsBoundaryException exc) {
 				scribe.space();
 			}
 			// operand

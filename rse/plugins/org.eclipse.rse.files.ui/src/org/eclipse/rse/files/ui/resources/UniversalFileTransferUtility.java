@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2009 IBM Corporation and others.
+ * Copyright (c) 2006, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -58,6 +58,7 @@
  * David McKnight     (IBM)      - [276534] Cache Conflict After Synchronization when Browsing Remote System with Case-Differentiated-Only Filenames
  * David McKnight     (IBM)      - [281712] [dstore] Warning message is needed when disk is full
  * David McKnight     (IBM)      - [234258] [dnd] Drag&Drop a folder silently ignores elements without permissions
+ * David McKnight   (IBM)        - [299140] Local Readonly file can't be copied/pasted twice
  *******************************************************************************/
 
 package org.eclipse.rse.files.ui.resources;
@@ -685,52 +686,55 @@ public class UniversalFileTransferUtility {
 				String storedEncoding = properties.getEncoding();
 				String currentEncoding = srcFileOrFolder.getEncoding();
 
-				if (storedTime != currentTime && (storedEncoding == null || !storedEncoding.equals(currentEncoding)))
+				if (storedTime != currentTime || (storedEncoding == null || !storedEncoding.equals(currentEncoding)))
 				{
 					if (tempFile.exists())
 					{
-						// set the appropriate readonly flag
-						boolean readOnly = !srcFileOrFolder.canWrite();
-						setReadOnly(tempFile, readOnly);
-						
-						try
-						{
-							if (remoteEncoding != null)
+						// deal with encoding properties
+						if (storedEncoding == null || !storedEncoding.equals(currentEncoding)){
+							// set the appropriate readonly flag
+							boolean readOnly = !srcFileOrFolder.canWrite();
+							setReadOnly(tempFile, readOnly);
+							
+							try
 							{
-								if (srcFileOrFolder.isBinary())
+								if (remoteEncoding != null)
 								{
-									if (!tempFile.isSynchronized(IResource.DEPTH_ZERO))
+									if (srcFileOrFolder.isBinary())
 									{
-										tempFile.refreshLocal(IResource.DEPTH_ZERO, null/*monitor*/);
+										if (!tempFile.isSynchronized(IResource.DEPTH_ZERO))
+										{
+											tempFile.refreshLocal(IResource.DEPTH_ZERO, null/*monitor*/);
+										}
+										if (!tempFile.getCharset().equals(remoteEncoding))
+										{
+											tempFile.setCharset(remoteEncoding, null);
+										}
 									}
-									if (!tempFile.getCharset().equals(remoteEncoding))
+									else
 									{
-										tempFile.setCharset(remoteEncoding, null);
+										// using text mode so the char set needs to be local
+										if (properties.getLocalEncoding() != null){
+											String localEncoding = properties.getLocalEncoding();
+											tempFile.setCharset(localEncoding, null);
+										}
+										// otherwise, the default charset is inherited so no need to set
 									}
-								}
-								else
-								{
-									// using text mode so the char set needs to be local
-									if (properties.getLocalEncoding() != null){
-										String localEncoding = properties.getLocalEncoding();
-										tempFile.setCharset(localEncoding, null);
-									}
-									// otherwise, the default charset is inherited so no need to set
 								}
 							}
+							catch (Exception e)
+							{
+								SimpleSystemMessage errorMessage = new SimpleSystemMessage(Activator.PLUGIN_ID,
+												ICommonMessageIds.MSG_OPERATION_FAILED,
+												IStatus.ERROR, "", e);  //$NON-NLS-1$
+								resultSet.setMessage(errorMessage);
+								return null;
+							}
 						}
-						catch (Exception e)
-						{
-							SimpleSystemMessage errorMessage = new SimpleSystemMessage(Activator.PLUGIN_ID,
-											ICommonMessageIds.MSG_OPERATION_FAILED,
-											IStatus.ERROR, "", e);  //$NON-NLS-1$
-							resultSet.setMessage(errorMessage);
-							return null;
-						}
-
 
 						try
 						{
+							// set all properties
 							setIFileProperties(tempFile, srcFileOrFolder, srcFS);
 						}
 						catch (Exception e)

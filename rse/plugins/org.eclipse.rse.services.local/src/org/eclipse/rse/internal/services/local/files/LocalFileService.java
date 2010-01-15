@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2009 IBM Corporation and others.
+ * Copyright (c) 2006, 20010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -44,6 +44,7 @@
  * David McKnight   (IBM)        - [280899] RSE can't open files in some directory, which give the RSEG1067 error me
  * Martin Oberhuber (Wind River) - [285942] Throw exception when listing a non-folder
  * Martin Oberhuber (Wind River) - [286129][api] RemoteFileException(String) violates API contract
+ * David McKnight   (IBM)        - [299140] Local Readonly file can't be copied/pasted twice
  *******************************************************************************/
 
 package org.eclipse.rse.internal.services.local.files;
@@ -405,6 +406,13 @@ public class LocalFileService extends AbstractFileService implements ILocalServi
 
 			inputStream = new FileInputStream(file);
 			bufInputStream = new BufferedInputStream(inputStream);
+			
+			boolean wasReadonly = destinationFile.exists() && !destinationFile.canWrite();
+			if (wasReadonly){ // tempfile is readonly
+				// since we're replacing the tempfile that represents the real file, the readonly bit should be removed for the transfer
+				//destinationFile.setWritable(true);
+				setReadOnly(destinationFile.getParent(), destinationFile.getName(), false, monitor);
+			}
 			outputStream = new FileOutputStream(destinationFile);
 
 			if (isEncodingConversionRequired)
@@ -454,6 +462,9 @@ public class LocalFileService extends AbstractFileService implements ILocalServi
 					monitor.worked(bytesRead);
 					isCancelled = monitor.isCanceled();
 				}
+			}
+			if (wasReadonly){
+				destinationFile.setReadOnly();
 			}
 		}
 		catch (Exception e)

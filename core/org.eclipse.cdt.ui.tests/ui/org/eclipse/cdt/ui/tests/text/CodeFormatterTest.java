@@ -1265,4 +1265,13 @@ public class CodeFormatterTest extends BaseUITestCase {
 	public void testWideStringLiteral_Bug292626() throws Exception {
 		assertFormatterResult();
 	}
+
+	//#define INT (int)
+	//int i = INT 1;
+	
+	//#define INT (int)
+	//int i = INT 1;
+	public void testCastAsMacro_Bug285901() throws Exception {
+		assertFormatterResult();
+	}
 }

@@ -51,7 +51,10 @@ import org.eclipse.equinox.internal.provisional.p2.repository.IRepository;
 public class WascanaGenerator implements IApplication {
 
 	private static Version binutilsVersion = Version.parseVersion("2.20.0.0");
+	private static Version gccBaseVersion = Version.parseVersion("4.4.1.0");
+	private static Version gccVersion = Version.parseVersion("4.4.1.2");
 	private static Version mingwrtVersion = Version.parseVersion("3.15.2.4");
+	private static Version w32apiVersion = Version.parseVersion("3.13.0.4");
 	private static Version wascanaVersion = Version.parseVersion("1.0.0.0");
 
 	private static final String REPO_NAME = "Wascana";
@@ -97,12 +100,49 @@ public class WascanaGenerator implements IApplication {
 				gpl30License,
 				null);
 		
+		IInstallableUnit gccIU = createIU(
+				"wascana.gcc.core",
+				"Wascana TDM/MinGW GCC C Compiler",
+				gccVersion,
+				gpl30License,
+				null);
+				
+		IInstallableUnit gppIU = createIU(
+				"wascana.gcc.g++",
+				"Wascana TDM/MinGW GCC C++ Compiler",
+				gccVersion,
+				gpl30License,
+				null);
+				
+		IInstallableUnit gccSrcIU = createIU(
+				"wascana.gcc.core.source",
+				"Wascana Base GCC C Compiler Source",
+				gccBaseVersion,
+				gpl30License,
+				null);
+				
+		IInstallableUnit gppSrcIU = createIU(
+				"wascana.gcc.g++.source",
+				"Wascana Base GCC C++ Compiler Source",
+				gccBaseVersion,
+				gpl30License,
+				null);
+				
+		IInstallableUnit gccTDMSrcIU = createIU(
+				"wascana.gcc.source.tdm",
+				"Wascana TDM GCC Patches",
+				gccVersion,
+				gpl30License,
+				null);
+				
 		IInstallableUnit toolsIU = createCategory(
 				"wascana.tools",
 				"Wascana Tools",
 				wascanaVersion,
 				new IRequiredCapability[] {
 						createRequiredCap(binutilsIU),
+						createRequiredCap(gccIU),
+						createRequiredCap(gppIU),
 				});
 
 		// sdks
@@ -121,21 +161,40 @@ public class WascanaGenerator implements IApplication {
 				pdLicense,
 				null);
 				
+		IInstallableUnit w32apiIU = createIU(
+				"wascana.w32api",
+				"Wascana Win32 Headers and Stub Libraries",
+				w32apiVersion,
+				pdLicense,
+				null);
+		
+		IInstallableUnit w32apiSrcIU = createIU(
+				"wascana.w32api.source",
+				"Wascana Win32 Headers and Stub Libraries Source",
+				w32apiVersion,
+				pdLicense,
+				null);
+		
 		IInstallableUnit sdksIU = createCategory(
 				"wascana.sdks",
 				"Wascana SDKs",
 				wascanaVersion,
 				new IRequiredCapability[] {
 						createRequiredCap(mingwrtIU),
+						createRequiredCap(w32apiIU),
 				});
 
 		IInstallableUnit sourceIU = createCategory(
 				"wascana.source",
-				"Wascana Source",
+				"Wascana Desktop Developer Source",
 				wascanaVersion,
 				new IRequiredCapability[] {
 						createRequiredCap(binutilsSrcIU),
+						createRequiredCap(gccSrcIU),
+						createRequiredCap(gppSrcIU),
+						createRequiredCap(gccTDMSrcIU),
 						createRequiredCap(mingwrtSrcIU),
+						createRequiredCap(w32apiSrcIU),
 				});
 		
 		IInstallableUnit wascanaIU = createCategory(
@@ -145,7 +204,6 @@ public class WascanaGenerator implements IApplication {
 				new IRequiredCapability[] {
 						createRequiredCap(toolsIU),
 						createRequiredCap(sdksIU),
-						createRequiredCap(sourceIU),
 				});
 
 		metaRepo.addInstallableUnits(iuList.toArray(new IInstallableUnit[iuList.size()]));

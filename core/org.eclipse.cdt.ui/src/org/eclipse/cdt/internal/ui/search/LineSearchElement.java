@@ -8,6 +8,7 @@
  * Contributors:
  *     Andrey Eremchenko, kamre@ngs.ru - 222495 C/C++ search should show line matches and line numbers	
  *     Markus Schorn (Wind River Systems)
+ *     Sergey Prigogin (Google)
  *******************************************************************************/
 package org.eclipse.cdt.internal.ui.search;
 
@@ -231,7 +232,7 @@ public class LineSearchElement extends PDOMSearchElement {
 				continue;
 			}
 			// compare offset of next match with current position
-			if (nextMatchOffset > pos)
+			if (nextMatchOffset > pos || nextMatch >= matches.length)
 				continue;
 			// next match was reached
 			// check if this match is the first for current line
@@ -242,9 +243,6 @@ public class LineSearchElement extends PDOMSearchElement {
 			if (nextMatch < matches.length) {
 				// update offset of next match
 				nextMatchOffset = matches[nextMatch].getOffset();
-			} else {
-				// no more matches
-				break;
 			}
 		}
 		// check if there were matches on the last line

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007 Intel Corporation and others.
+ * Copyright (c) 2007, 2010 Intel Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -31,4 +31,26 @@ public abstract class CDataObject implements ICSettingBase{
 	}
 */
 	public abstract int getType();
+
+	/**
+	 * Intended for debugging purpose only.
+	 */
+	@Override
+	@SuppressWarnings("nls")
+	public String toString() {
+		int type = getType();
+		String strType="";
+		switch (type) {
+		case SETTING_PROJECT: strType="SETTING_PROJECT"; break;
+		case SETTING_CONFIGURATION: strType="SETTING_CONFIGURATION"; break;
+		case SETTING_FOLDER: strType="SETTING_FOLDER"; break;
+		case SETTING_FILE: strType="SETTING_FILE"; break;
+		case SETTING_LANGUAGE: strType="SETTING_LANGUAGE"; break;
+		case SETTING_TARGET_PLATFORM: strType="SETTING_TARGET_PLATFORM"; break;
+		case SETTING_BUILD: strType="SETTING_BUILD"; break;
+		}
+		return "type=0x" + Integer.toHexString(type)+":"+strType
+			+ ", name=["+getName()+"]"
+			+ ", id=["+getId()+"]";
+	}
 }

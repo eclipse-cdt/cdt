@@ -26,4 +26,13 @@ public abstract class CResourceData extends CDataObject {
 //	public abstract void setExcluded(boolean excluded);
 	
 	public abstract boolean hasCustomSettings();
+	
+	/**
+	 * Intended for debugging purpose only.
+	 */
+	@Override
+	@SuppressWarnings("nls")
+	public String toString() {
+		return "path="+getPath() + ", " + super.toString();
+	}
 }

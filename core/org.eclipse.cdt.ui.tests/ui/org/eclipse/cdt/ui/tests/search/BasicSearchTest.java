@@ -349,7 +349,7 @@ public class BasicSearchTest extends BaseUITestCase {
 	
 	protected PDOMSearchQuery makeProjectQuery(String pattern) {
 		String scope1= "Human Readable Description";
-		return new PDOMSearchPatternQuery(new ICElement[] {fCProject}, scope1, pattern, true, PDOMSearchQuery.FIND_ALL_OCCURANCES | PDOMSearchPatternQuery.FIND_ALL_TYPES);
+		return new PDOMSearchPatternQuery(new ICElement[] {fCProject}, scope1, pattern, true, PDOMSearchQuery.FIND_ALL_OCCURRENCES | PDOMSearchPatternQuery.FIND_ALL_TYPES);
 	}
 	
 	protected void assertOccurences(PDOMSearchQuery query, int expected) {

@@ -76,7 +76,7 @@ public abstract class PDOMSearchQuery implements ISearchQuery {
 	public static final int FIND_DEFINITIONS = IIndex.FIND_DEFINITIONS;
 	public static final int FIND_REFERENCES = IIndex.FIND_REFERENCES;
 	public static final int FIND_DECLARATIONS_DEFINITIONS = FIND_DECLARATIONS | FIND_DEFINITIONS;
-	public static final int FIND_ALL_OCCURANCES = FIND_DECLARATIONS | FIND_DEFINITIONS | FIND_REFERENCES;
+	public static final int FIND_ALL_OCCURRENCES = FIND_DECLARATIONS | FIND_DEFINITIONS | FIND_REFERENCES;
 	
 	protected final static int LABEL_FLAGS= 
 		CElementBaseLabels.M_PARAMETER_TYPES | 
@@ -135,7 +135,6 @@ public abstract class PDOMSearchQuery implements ISearchQuery {
 		return defaultLabel;
 	}
 
-
 	public String getLabel() {
 		String type;
 		if ((flags & FIND_REFERENCES) != 0)
@@ -152,8 +151,8 @@ public abstract class PDOMSearchQuery implements ISearchQuery {
 	public String getResultLabel(String pattern, int matchCount) {
 		// Report pattern and number of matches
 		String label;
-		final int kindFlags= flags & FIND_ALL_OCCURANCES;
-		switch(kindFlags) {
+		final int kindFlags= flags & FIND_ALL_OCCURRENCES;
+		switch (kindFlags) {
 		case FIND_REFERENCES:
 			label = NLS.bind(CSearchMessages.PDOMSearchQuery_refs_result_label, pattern);
 			break;
@@ -431,8 +430,7 @@ public abstract class PDOMSearchQuery implements ISearchQuery {
 			}
 			try {
 				return runWithIndex(index, monitor);
-			}
-			finally {
+			} finally {
 				index.releaseReadLock();
 			}
 		} catch (CoreException e) {

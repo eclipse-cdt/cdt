@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2009 Intel Corporation and others.
+ * Copyright (c) 2007, 2010 Intel Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -1978,9 +1978,6 @@ public class CProjectDescriptionManager implements ICProjectDescriptionManager {
 	private List<CElementDelta> generateCElementDeltasFromResourceDelta(ICProject cProject, ICDescriptionDelta delta, List<CElementDelta> list){
 		int kind = delta.getDeltaKind();
 		ICDescriptionDelta parentDelta = delta.getParent();
-		ICElement el;
-//		IProject project = cProject.getProject();
-		IResource rc = null;
 
 		ICResourceDescription oldRcDes;
 		ICResourceDescription newRcDes;
@@ -1991,6 +1988,11 @@ public class CProjectDescriptionManager implements ICProjectDescriptionManager {
 			path = oldRcDes.getPath();
 			newRcDes = ((ICConfigurationDescription)parentDelta.getNewSetting()).getResourceDescription(path, false);
 			break;
+		case ICDescriptionDelta.ADDED:
+			newRcDes = (ICResourceDescription)delta.getNewSetting();
+			path = newRcDes.getPath();
+			oldRcDes = null;
+			break;
 		case ICDescriptionDelta.CHANGED:
 //			if((delta.getChangeFlags() & ICProjectDescriptionDelta.PATH) == 0){
 				newRcDes = (ICResourceDescription)delta.getNewSetting();
@@ -1998,8 +2000,7 @@ public class CProjectDescriptionManager implements ICProjectDescriptionManager {
 				oldRcDes = (ICResourceDescription)delta.getOldSetting();
 				break;
 //			}
-			//if path changed treat as added
-		case ICDescriptionDelta.ADDED:
+//			//if path changed treat as default
 		default:
 			newRcDes = (ICResourceDescription)delta.getNewSetting();
 			path = newRcDes.getPath();
@@ -2007,14 +2008,15 @@ public class CProjectDescriptionManager implements ICProjectDescriptionManager {
 			break;
 		}
 		path = path.makeRelative();
-		el = null;
+
+		ICElement el = null;
 		try {
 			el = cProject.findElement(path);
-			rc = el.getResource();
 		} catch (CModelException e) {
-//			int i = 0;
+			return list;
 		}
-//			rc = ResourcesPlugin.getWorkspace().getRoot().findMember(project.getFullPath().append(path));
+		IResource rc = el.getResource();
+
 		if(rc != null){
 			if(rc.getType() == IResource.FILE){
 				String fileName = path.lastSegment();
@@ -2031,6 +2033,10 @@ public class CProjectDescriptionManager implements ICProjectDescriptionManager {
 					}
 					ICDescriptionDelta folderDelta = createDelta((ICFolderDescription)newRcDes, oldFoDes);
 					if(folderDelta != null){
+						CElementDelta cElDelta = new CElementDelta(el.getCModel());
+						cElDelta.changed(el, ICElementDelta.F_MODIFIERS);
+						list.add(cElDelta);
+						
 						ICDescriptionDelta children[] = folderDelta.getChildren();
 						ICDescriptionDelta child;
 						for(int i = 0; i < children.length; i++){

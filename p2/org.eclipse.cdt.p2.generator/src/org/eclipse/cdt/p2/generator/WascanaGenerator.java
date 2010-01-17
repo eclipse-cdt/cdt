@@ -52,9 +52,10 @@ public class WascanaGenerator implements IApplication {
 
 	private static Version binutilsVersion = Version.parseVersion("2.20.0.0");
 	private static Version gccBaseVersion = Version.parseVersion("4.4.1.0");
-	private static Version gccVersion = Version.parseVersion("4.4.1.2");
-	private static Version mingwrtVersion = Version.parseVersion("3.15.2.4");
-	private static Version w32apiVersion = Version.parseVersion("3.13.0.4");
+	private static Version gccVersion = Version.parseVersion("4.4.1.0");
+	private static Version mingwrtVersion = Version.parseVersion("3.15.2.0");
+	private static Version w32apiVersion = Version.parseVersion("3.13.0.0");
+	private static Version qtVersion = Version.parseVersion("4.6.0.0");
 	private static Version wascanaVersion = Version.parseVersion("1.0.0.0");
 
 	private static final String REPO_NAME = "Wascana";
@@ -175,6 +176,20 @@ public class WascanaGenerator implements IApplication {
 				pdLicense,
 				null);
 		
+		IInstallableUnit qtIU = createIU(
+				"wascana.qt",
+				"Wascana Qt",
+				qtVersion,
+				lgpl21License,
+				null);
+				
+		IInstallableUnit qtSrcIU = createIU(
+				"wascana.qt.source",
+				"Wascana Qt Source",
+				qtVersion,
+				lgpl21License,
+				null);
+				
 		IInstallableUnit sdksIU = createCategory(
 				"wascana.sdks",
 				"Wascana SDKs",
@@ -182,6 +197,7 @@ public class WascanaGenerator implements IApplication {
 				new IRequiredCapability[] {
 						createRequiredCap(mingwrtIU),
 						createRequiredCap(w32apiIU),
+						createRequiredCap(qtIU),
 				});
 
 		IInstallableUnit sourceIU = createCategory(
@@ -195,6 +211,7 @@ public class WascanaGenerator implements IApplication {
 						createRequiredCap(gccTDMSrcIU),
 						createRequiredCap(mingwrtSrcIU),
 						createRequiredCap(w32apiSrcIU),
+						createRequiredCap(qtSrcIU),
 				});
 		
 		IInstallableUnit wascanaIU = createCategory(

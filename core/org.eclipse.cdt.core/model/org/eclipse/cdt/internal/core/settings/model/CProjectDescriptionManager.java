@@ -1975,7 +1975,12 @@ public class CProjectDescriptionManager implements ICProjectDescriptionManager {
 		return list;
 	}
 
-	private List<CElementDelta> generateCElementDeltasFromResourceDelta(ICProject cProject, ICDescriptionDelta delta, List<CElementDelta> list){
+	/**
+	 * The method maps {@link ICDescriptionDelta} to {@link CElementDelta} which are added to the {@code list}.
+	 * The delta will indicate modification of CElement for a given resource plus language settings
+	 * if they changed (relative to parent resource description if the resource has no its own).
+	 */
+	private void generateCElementDeltasFromResourceDelta(ICProject cProject, ICDescriptionDelta delta, List<CElementDelta> list){
 		int kind = delta.getDeltaKind();
 		ICDescriptionDelta parentDelta = delta.getParent();
 
@@ -1991,21 +1996,17 @@ public class CProjectDescriptionManager implements ICProjectDescriptionManager {
 		case ICDescriptionDelta.ADDED:
 			newRcDes = (ICResourceDescription)delta.getNewSetting();
 			path = newRcDes.getPath();
-			oldRcDes = null;
-			break;
-		case ICDescriptionDelta.CHANGED:
-//			if((delta.getChangeFlags() & ICProjectDescriptionDelta.PATH) == 0){
-				newRcDes = (ICResourceDescription)delta.getNewSetting();
-				path = newRcDes.getPath();
-				oldRcDes = (ICResourceDescription)delta.getOldSetting();
-				break;
-//			}
-//			//if path changed treat as default
-		default:
-			newRcDes = (ICResourceDescription)delta.getNewSetting();
-			path = newRcDes.getPath();
 			oldRcDes = ((ICConfigurationDescription)parentDelta.getOldSetting()).getResourceDescription(path, false);
 			break;
+		case ICDescriptionDelta.CHANGED:
+			newRcDes = (ICResourceDescription)delta.getNewSetting();
+			path = newRcDes.getPath();
+			oldRcDes = (ICResourceDescription)delta.getOldSetting();
+			break;
+		default:
+			// Not possible
+			CCorePlugin.log(new Status(IStatus.ERROR, CCorePlugin.PLUGIN_ID, SettingsModelMessages.getString("CProjectDescriptionManager.illegalDeltaKind")+kind)); //$NON-NLS-1$
+			return;
 		}
 		path = path.makeRelative();
 
@@ -2013,11 +2014,15 @@ public class CProjectDescriptionManager implements ICProjectDescriptionManager {
 		try {
 			el = cProject.findElement(path);
 		} catch (CModelException e) {
-			return list;
+			return;
 		}
 		IResource rc = el.getResource();
 
 		if(rc != null){
+			CElementDelta ceRcDelta = new CElementDelta(el.getCModel());
+			ceRcDelta.changed(el, ICElementDelta.F_MODIFIERS);
+			list.add(ceRcDelta);
+			
 			if(rc.getType() == IResource.FILE){
 				String fileName = path.lastSegment();
 				ICLanguageSetting newLS = getLanguageSetting(newRcDes, fileName);
@@ -2025,34 +2030,29 @@ public class CProjectDescriptionManager implements ICProjectDescriptionManager {
 				ICDescriptionDelta ld = createDelta(newLS, oldLS);
 				generateCElementDeltasFromLanguageDelta(el, ld, list);
 			} else {
-				if(newRcDes.getType() == ICSettingBase.SETTING_FOLDER){
-					ICFolderDescription oldFoDes = null;
-					if (oldRcDes != null) {
-						if (oldRcDes.getType() == ICSettingBase.SETTING_FOLDER)
-							oldFoDes = (ICFolderDescription)oldRcDes;
-					}
-					ICDescriptionDelta folderDelta = createDelta((ICFolderDescription)newRcDes, oldFoDes);
-					if(folderDelta != null){
-						CElementDelta cElDelta = new CElementDelta(el.getCModel());
-						cElDelta.changed(el, ICElementDelta.F_MODIFIERS);
-						list.add(cElDelta);
-						
-						ICDescriptionDelta children[] = folderDelta.getChildren();
-						ICDescriptionDelta child;
-						for(int i = 0; i < children.length; i++){
-							child = children[i];
-							if(child.getSettingType() == ICSettingBase.SETTING_LANGUAGE){
-								generateCElementDeltasFromLanguageDelta(el, child, list);
-							}
+				if(newRcDes.getType() != ICSettingBase.SETTING_FOLDER){
+					CCorePlugin.log(new Status(IStatus.ERROR, CCorePlugin.PLUGIN_ID, SettingsModelMessages.getString("CProjectDescriptionManager.wrongTypeOfResourceDescription")+newRcDes)); //$NON-NLS-1$
+					return;
+				}
+				ICFolderDescription newFoDes = (ICFolderDescription)newRcDes;
+				
+				if(oldRcDes.getType() != ICSettingBase.SETTING_FOLDER){
+					CCorePlugin.log(new Status(IStatus.ERROR, CCorePlugin.PLUGIN_ID, SettingsModelMessages.getString("CProjectDescriptionManager.wrongTypeOfResourceDescription")+oldRcDes)); //$NON-NLS-1$
+					return;
+				}
+				ICFolderDescription oldFoDes = (ICFolderDescription)oldRcDes;
+				
+				ICDescriptionDelta folderDelta = createDelta(newFoDes, oldFoDes);
+				if (folderDelta != null) {
+					for (ICDescriptionDelta child : folderDelta.getChildren()) {
+						if(child.getSettingType() == ICSettingBase.SETTING_LANGUAGE){
+							generateCElementDeltasFromLanguageDelta(el, child, list);
 						}
 					}
-				} else {
-					//ERROR?
 				}
 
 			}
 		}
-		return list;
 	}
 
 	private ICLanguageSetting getLanguageSetting(ICResourceDescription rcDes, String fileName){

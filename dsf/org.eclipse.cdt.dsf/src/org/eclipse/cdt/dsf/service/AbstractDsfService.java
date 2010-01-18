@@ -120,7 +120,7 @@ abstract public class AbstractDsfService
 	 *            convenience, [classes] need not contain {@link IDsfService} or
 	 *            the runtime class of this object; they are automatically added
 	 *            if not present. The complete list of classes the service ends
-	 *            up being registered with in OSGi is recorded and made
+	 *            up being registered in OSGi with is recorded and made
 	 *            available via
 	 *            <code>getProperties().get(Constants.OBJECTCLASS)</code>
 	 * @param properties

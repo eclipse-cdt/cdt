@@ -35,7 +35,7 @@ import org.osgi.framework.BundleContext;
 
 
 public class ManagedBuilderCorePlugin extends Plugin {
-	private static final String PLUGIN_ID = "org.eclipse.cdt.managedbuilder.core"; //$NON-NLS-1$
+	public static final String PLUGIN_ID = "org.eclipse.cdt.managedbuilder.core"; //$NON-NLS-1$
 	// The shared instance
 	private static ManagedBuilderCorePlugin plugin;
 	// The attribute name for the makefile generator
@@ -51,9 +51,6 @@ public class ManagedBuilderCorePlugin extends Plugin {
 
 //	private DiscoveredPathManager fDiscoveryPathManager;
 
-	/**
-	 * @param descriptor
-	 */
 	public ManagedBuilderCorePlugin() {
 		super();
 		plugin = this;
@@ -70,7 +67,7 @@ public class ManagedBuilderCorePlugin extends Plugin {
 	}
 	
 	/**
-	 * Returns the shared instance.
+	 * @return the shared instance.
 	 */
 	public static ManagedBuilderCorePlugin getDefault() {
 		return plugin;
@@ -79,6 +76,7 @@ public class ManagedBuilderCorePlugin extends Plugin {
 	/* (non-Javadoc)
 	 * @see org.eclipse.core.runtime.Plugin#start(org.osgi.framework.BundleContext)
 	 */
+	@Override
 	public void start(BundleContext context) throws Exception {
 		// Turn on logging for plugin when debugging
 		super.start(context);
@@ -168,6 +166,7 @@ public class ManagedBuilderCorePlugin extends Plugin {
 	/* (non-Javadoc)
 	 * @see org.eclipse.core.runtime.Plugin#start(org.osgi.framework.BundleContext)
 	 */
+	@Override
 	public void stop(BundleContext context) throws Exception {
 		BuildStateManager.getInstance().shutdown();
 
@@ -184,8 +183,8 @@ public class ManagedBuilderCorePlugin extends Plugin {
 		//      elements
 		ResourcesPlugin.getWorkspace().removeResourceChangeListener(listener);
 		IProject projects[] = ResourcesPlugin.getWorkspace().getRoot().getProjects();
-		for(int i = 0; i < projects.length; i++){
-			listener.sendClose(projects[i]);
+		for (IProject project : projects) {
+			listener.sendClose(project);
 		}
 		listener = null;
 		super.stop(context);
@@ -253,7 +252,7 @@ public class ManagedBuilderCorePlugin extends Plugin {
 		}
 	}
 	
-	public static IBuilder[] createBuilders(IProject project, Map args){
+	public static IBuilder[] createBuilders(IProject project, Map<String, String> args){
 		return BuilderFactory.createBuilders(project, args);
 	}
 	

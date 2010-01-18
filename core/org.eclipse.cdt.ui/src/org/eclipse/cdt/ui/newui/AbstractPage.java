@@ -325,7 +325,11 @@ implements
 				excludeFromBuildCheck.addSelectionListener(new SelectionAdapter() {
 					@Override
 					public void widgetSelected(SelectionEvent e) {
-						getResDesc().setExcluded(excludeFromBuildCheck.getSelection());
+						ICResourceDescription rcDescription = getResDesc();
+						rcDescription.setExcluded(excludeFromBuildCheck.getSelection());
+						if (currentTab instanceof AbstractCPropertyTab) {
+							((AbstractCPropertyTab)currentTab).updateData(rcDescription);
+						}
 					}
 				});
 			}

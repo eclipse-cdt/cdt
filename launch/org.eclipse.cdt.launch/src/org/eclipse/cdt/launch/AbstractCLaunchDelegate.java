@@ -229,6 +229,10 @@ abstract public class AbstractCLaunchDelegate extends LaunchConfigurationDelegat
 		throw new CoreException(new Status(IStatus.OK, getPluginID(), code, message, null));
 	}
 
+	/**
+	 * @return the ID of the plugin hosting the launch delegate. It's used to
+	 *         create {@link IStatus} objects.
+	 */
 	abstract protected String getPluginID();
 
     /**

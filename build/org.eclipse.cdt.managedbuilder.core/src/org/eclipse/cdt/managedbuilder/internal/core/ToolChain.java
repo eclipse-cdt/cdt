@@ -125,28 +125,24 @@ public class ToolChain extends HoldsOptions implements IToolChain, IBuildPropert
 	private Boolean isRcTypeBasedDiscovery;
 
 
-	/*
-	 *  C O N S T R U C T O R S
-	 */
-	
 	/**
 	 * This constructor is called to create a tool-chain defined by an extension point in 
 	 * a plugin manifest file, or returned by a dynamic element provider
 	 * 
-	 * @param parent  The IConfiguration parent of this tool-chain, or <code>null</code> if
+	 * @param parentFldInfo  The {@link IFolderInfo} parent of this tool-chain, or {@code null} if
 	 *                defined at the top level
 	 * @param element The tool-chain definition from the manifest file or a dynamic element
 	 *                provider
-	 * @param managedBuildRevision the fileVersion of Managed Build System               
+	 * @param managedBuildRevision the fileVersion of Managed Build System
 	 */
-	public ToolChain(IFolderInfo folderInfo, IManagedConfigElement element, String managedBuildRevision) {
+	public ToolChain(IFolderInfo parentFldInfo, IManagedConfigElement element, String managedBuildRevision) {
 		// setup for resolving
 		super(false);
 		resolved = false;
 
-		if(folderInfo != null){
-			this.config = folderInfo.getParent();
-			parentFolderInfo = folderInfo;
+		if(parentFldInfo != null){
+			this.config = parentFldInfo.getParent();
+			parentFolderInfo = parentFldInfo;
 		}
 		
 		isExtensionToolChain = true;
@@ -202,16 +198,16 @@ public class ToolChain extends HoldsOptions implements IToolChain, IBuildPropert
 	 * This constructor is called to create a ToolChain whose attributes and children will be 
 	 * added by separate calls.
 	 * 
-	 * @param Configuration The parent of the tool chain, if any
-	 * @param ToolChain The superClass, if any
-	 * @param String The id for the new tool chain
-	 * @param String The name for the new tool chain
-	 * @param boolean Indicates whether this is an extension element or a managed project element
+	 * @param parentFldInfo The parent of the tool chain, if any
+	 * @param superClass The superClass, if any
+	 * @param Id The ID for the new tool chain
+	 * @param name The name for the new tool chain
+	 * @param isExtensionElement Indicates whether this is an extension element or a managed project element
 	 */
-	public ToolChain(IFolderInfo folderInfo, IToolChain superClass, String Id, String name, boolean isExtensionElement) {
+	public ToolChain(IFolderInfo parentFldInfo, IToolChain superClass, String Id, String name, boolean isExtensionElement) {
 		super(resolvedDefault);
-		this.config = folderInfo.getParent();
-		parentFolderInfo = folderInfo;
+		this.config = parentFldInfo.getParent();
+		parentFolderInfo = parentFldInfo;
 		
 		setSuperClassInternal(superClass);
 		setManagedBuildRevision(config.getManagedBuildRevision());
@@ -234,19 +230,19 @@ public class ToolChain extends HoldsOptions implements IToolChain, IBuildPropert
 	}
 
 	/**
-	 * Create a <code>ToolChain</code> based on the specification stored in the 
-	 * project file (.cdtbuild).
+	 * Create a {@link ToolChain} based on the specification stored in the 
+	 * project file (.cproject).
 	 * 
-	 * @param parent The <code>IConfiguration</code> the tool-chain will be added to. 
+	 * @param parentFldInfo The {@link IFolderInfo} the tool-chain will be added to. 
 	 * @param element The XML element that contains the tool-chain settings.
 	 * @param managedBuildRevision the fileVersion of Managed Build System			
 	 */
-	public ToolChain(IFolderInfo folderInfo, ICStorageElement element, String managedBuildRevision) {
+	public ToolChain(IFolderInfo parentFldInfo, ICStorageElement element, String managedBuildRevision) {
 		super(resolvedDefault);
-		this.config = folderInfo.getParent();
-		parentFolderInfo = folderInfo;
+		this.config = parentFldInfo.getParent();
+		this.parentFolderInfo = parentFldInfo;
 		
-		isExtensionToolChain = false;
+		this.isExtensionToolChain = false;
 		
 		// Set the managedBuildRevision
 		setManagedBuildRevision(managedBuildRevision);
@@ -286,15 +282,17 @@ public class ToolChain extends HoldsOptions implements IToolChain, IBuildPropert
 	}
 
 	/**
-	 * Create a <code>ToolChain</code> based upon an existing tool chain.
+	 * Create a {@link ToolChain} based upon an existing tool chain.
 	 * 
-	 * @param parent The <code>IConfiguration</code> the tool-chain will be added to. 
+	 * @param parentFldInfo The {@link IConfiguration} the tool-chain will be added to. 
+	 * @param Id ID of the new tool-chain
+	 * @param name name of the new tool-chain
 	 * @param toolChain The existing tool-chain to clone.
 	 */
-	public ToolChain(IFolderInfo folderInfo, String Id, String name, Map<IPath, Map<String, String>> superIdMap, ToolChain toolChain) {
+	public ToolChain(IFolderInfo parentFldInfo, String Id, String name, Map<IPath, Map<String, String>> superIdMap, ToolChain toolChain) {
 		super(resolvedDefault);
-		this.config = folderInfo.getParent();
-		parentFolderInfo = folderInfo;
+		this.config = parentFldInfo.getParent();
+		this.parentFolderInfo = parentFldInfo;
 		setSuperClassInternal(toolChain.getSuperClass());
 		if (getSuperClass() != null) {
 			if (toolChain.superClassId != null) {
@@ -392,11 +390,13 @@ public class ToolChain extends HoldsOptions implements IToolChain, IBuildPropert
 		ITargetPlatform tpBase = toolChain.getTargetPlatform();
 		if(tpBase != null){
 		ITargetPlatform extTp = tpBase;
-		for(;extTp != null && !extTp.isExtensionElement();extTp = extTp.getSuperClass());
+		for(;extTp != null && !extTp.isExtensionElement();extTp = extTp.getSuperClass()) {
+			// empty body, the loop is to find extension element
+		}
 
 		String subId;
 		if(copyIds){
-			subId = tpBase != null ? tpBase.getId() : ManagedBuildManager.calculateChildId(getId(), null);
+			subId = tpBase.getId();
 		} else {
 			subId = extTp != null ? ManagedBuildManager.calculateChildId(extTp.getId(), null):
 				ManagedBuildManager.calculateChildId(getId(), null);
@@ -423,10 +423,10 @@ public class ToolChain extends HoldsOptions implements IToolChain, IBuildPropert
 				String subName;
 //				String version;
 				ITool extTool = ManagedBuildManager.getExtensionTool(toolChild);
-				Map<String, String> curIdMap = (Map<String, String>)superIdMap.get(folderInfo.getPath());
+				Map<String, String> curIdMap = superIdMap.get(parentFldInfo.getPath());
 				if(curIdMap != null){
 					if(extTool != null)
-						subId = (String)curIdMap.get(extTool.getId());
+						subId = curIdMap.get(extTool.getId());
 				}
 				
 				subName = toolChild.getName();
@@ -474,7 +474,7 @@ public class ToolChain extends HoldsOptions implements IToolChain, IBuildPropert
 								}
 							} else {
 								superId = copyIds ? otherSuperTool.getId() : ManagedBuildManager.calculateChildId(otherExtTool.getId(), null);
-								Map<String, String> idMap = (Map<String, String>)superIdMap.get(otherRcInfo.getPath());
+								Map<String, String> idMap = superIdMap.get(otherRcInfo.getPath());
 								if(idMap == null){
 									idMap = new HashMap<String, String>();
 									superIdMap.put(otherRcInfo.getPath(), idMap);
@@ -514,7 +514,7 @@ public class ToolChain extends HoldsOptions implements IToolChain, IBuildPropert
 	 *  E L E M E N T   A T T R I B U T E   R E A D E R S   A N D   W R I T E R S
 	 */
 	
-	/* (non-Javadoc)
+	/**
 	 * Loads the tool-chain information from the ManagedConfigElement specified in the 
 	 * argument.
 	 * 
@@ -734,11 +734,11 @@ public class ToolChain extends HoldsOptions implements IToolChain, IBuildPropert
 	}
 
 	/**
-	 * Persist the tool-chain to the project file.
+	 * Persist the tool-chain to the XML document element.
 	 * 
-	 * @param doc
-	 * @param element
+	 * @param element XML element where tool-chain will be serialized
 	 */
+	@Override
 	public void serialize(ICStorageElement element) {
 		try {		
 			if (getSuperClass() != null)
@@ -788,7 +788,7 @@ public class ToolChain extends HoldsOptions implements IToolChain, IBuildPropert
 				Iterator<String> osIter = osList.listIterator();
 				String listValue = EMPTY_STRING;
 				while (osIter.hasNext()) {
-					String current = (String) osIter.next();
+					String current = osIter.next();
 					listValue += current;
 					if ((osIter.hasNext())) {
 						listValue += ","; //$NON-NLS-1$
@@ -801,7 +801,7 @@ public class ToolChain extends HoldsOptions implements IToolChain, IBuildPropert
 				Iterator<String> archIter = archList.listIterator();
 				String listValue = EMPTY_STRING;
 				while (archIter.hasNext()) {
-					String current = (String) archIter.next();
+					String current = archIter.next();
 					listValue += current;
 					if ((archIter.hasNext())) {
 						listValue += ","; //$NON-NLS-1$
@@ -894,7 +894,7 @@ public class ToolChain extends HoldsOptions implements IToolChain, IBuildPropert
 	public ITargetPlatform createTargetPlatform(ITargetPlatform superClass, String id, String name, boolean isExtensionElement) {
 		targetPlatform = new TargetPlatform(this, superClass, id, name, isExtensionElement);
 		setDirty(true);
-		return (ITargetPlatform)targetPlatform;
+		return targetPlatform;
 	}
 
 	/* (non-Javadoc)
@@ -906,7 +906,7 @@ public class ToolChain extends HoldsOptions implements IToolChain, IBuildPropert
 				return getSuperClass().getTargetPlatform();
 			}
 		}
-		return (ITargetPlatform)targetPlatform;
+		return targetPlatform;
 	}
 
 	/* (non-Javadoc)
@@ -924,7 +924,7 @@ public class ToolChain extends HoldsOptions implements IToolChain, IBuildPropert
 	public IBuilder createBuilder(IBuilder superClass, String id, String name, boolean isExtensionElement) {
 		builder = new Builder(this, superClass, id, name, isExtensionElement);
 		setDirty(true);
-		return (IBuilder)builder;
+		return builder;
 	}
 	
 	public void setBuilder(Builder builder){
@@ -940,7 +940,7 @@ public class ToolChain extends HoldsOptions implements IToolChain, IBuildPropert
 				return getSuperClass().getBuilder();
 			}
 		}
-		return (IBuilder)builder;
+		return builder;
 	}
 
 	/* (non-Javadoc)
@@ -959,7 +959,7 @@ public class ToolChain extends HoldsOptions implements IToolChain, IBuildPropert
 		Tool tool = new Tool(this, superClass, id, name, isExtensionElement);
 		addTool(tool);
 		setDirty(true);
-		return (ITool)tool;
+		return tool;
 	}
 
 	/* (non-Javadoc)
@@ -1058,8 +1058,8 @@ public class ToolChain extends HoldsOptions implements IToolChain, IBuildPropert
 	 * @see org.eclipse.cdt.managedbuilder.core.IToolChain#getTool(java.lang.String)
 	 */
 	public ITool getTool(String id) {
-		Tool tool = (Tool)getToolMap().get(id);
-		return (ITool)tool;
+		Tool tool = getToolMap().get(id);
+		return tool;
 	}
 
 	/* (non-Javadoc)
@@ -1084,7 +1084,7 @@ public class ToolChain extends HoldsOptions implements IToolChain, IBuildPropert
 		return retTools.toArray( new ITool[retTools.size()]);
 	}
 	
-	/* (non-Javadoc)
+	/**
 	 * Safe accessor for the list of tools.
 	 * 
 	 * @return List containing the tools
@@ -1096,7 +1096,7 @@ public class ToolChain extends HoldsOptions implements IToolChain, IBuildPropert
 		return toolList;
 	}
 	
-	/* (non-Javadoc)
+	/**
 	 * Safe accessor for the map of tool ids to tools
 	 * 
 	 * @return
@@ -1108,10 +1108,10 @@ public class ToolChain extends HoldsOptions implements IToolChain, IBuildPropert
 		return toolMap;
 	}
 
-	/* (non-Javadoc)
-	 * Adds the Tool to the Tool-chain list and map
+	/**
+	 * Adds the Tool to the tool-chain list and map
 	 * 
-	 * @param Tool
+	 * @param tool - tool to add
 	 */
 	public void addTool(Tool tool) {
 		getToolList().add(tool);
@@ -1175,6 +1175,7 @@ public class ToolChain extends HoldsOptions implements IToolChain, IBuildPropert
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.build.managed.IToolChain#getName()
 	 */
+	@Override
 	public String getName() {
 		return (name == null && getSuperClass() != null) ? getSuperClass().getName() : name;
 	}
@@ -1306,7 +1307,7 @@ public class ToolChain extends HoldsOptions implements IToolChain, IBuildPropert
 					list.add(tok.nextToken());
 				}
 				String[] strArr = {""};	//$NON-NLS-1$
-				targetTools = (String[]) list.toArray(strArr);
+				targetTools = list.toArray(strArr);
 			}
 		} else {
 			targetTools = new String[0];
@@ -1364,7 +1365,7 @@ public class ToolChain extends HoldsOptions implements IToolChain, IBuildPropert
 					list.add(tok.nextToken());
 				}
 				String[] strArr = {""};	//$NON-NLS-1$
-				errorParsers = (String[]) list.toArray(strArr);
+				errorParsers = list.toArray(strArr);
 			}
 		} else {
 			errorParsers = new String[0];
@@ -1410,7 +1411,7 @@ public class ToolChain extends HoldsOptions implements IToolChain, IBuildPropert
 				return new String[] {"all"}; //$NON-NLS-1$
 			}
 		}
-		return (String[]) archList.toArray(new String[archList.size()]);
+		return archList.toArray(new String[archList.size()]);
 	}
 	
 	/* (non-Javadoc)
@@ -1426,7 +1427,7 @@ public class ToolChain extends HoldsOptions implements IToolChain, IBuildPropert
 				return new String[] {"all"};	//$NON-NLS-1$
 			}
 		}
-		return (String[]) osList.toArray(new String[osList.size()]);
+		return osList.toArray(new String[osList.size()]);
 	}
 
 	/* (non-Javadoc)
@@ -1548,8 +1549,8 @@ public class ToolChain extends HoldsOptions implements IToolChain, IBuildPropert
 				}
 			} catch (CoreException e) {}
 		}  else  {
-			if (getSuperClass() instanceof IToolChain) {
-				IToolChain superTool = (IToolChain) getSuperClass();
+			if (getSuperClass() != null) {
+				IToolChain superTool = getSuperClass();
 				return superTool.getOptionPathConverter() ;
 			}
 		}
@@ -1565,6 +1566,7 @@ public class ToolChain extends HoldsOptions implements IToolChain, IBuildPropert
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.managedbuilder.core.IToolChain#isExtensionElement()
 	 */
+	@Override
 	public boolean isExtensionElement() {
 		return isExtensionToolChain;
 	}
@@ -1572,6 +1574,7 @@ public class ToolChain extends HoldsOptions implements IToolChain, IBuildPropert
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.managedbuilder.core.IToolChain#isDirty()
 	 */
+	@Override
 	public boolean isDirty() {
 		// This shouldn't be called for an extension tool-chain
  		if (isExtensionToolChain) return false;
@@ -1606,6 +1609,7 @@ public class ToolChain extends HoldsOptions implements IToolChain, IBuildPropert
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.managedbuilder.core.IToolChain#setDirty(boolean)
 	 */
+	@Override
 	public void setDirty(boolean isDirty) {
 		this.isDirty = isDirty;
 		// Propagate "false" to options
@@ -1617,9 +1621,10 @@ public class ToolChain extends HoldsOptions implements IToolChain, IBuildPropert
 		}
 	}
 	
-	/* (non-Javadoc)
+	/**
 	 *  Resolve the element IDs to interface references
 	 */
+	@Override
 	public void resolveReferences() {
 		if (!resolved) {
 			resolved = true;
@@ -1653,7 +1658,7 @@ public class ToolChain extends HoldsOptions implements IToolChain, IBuildPropert
 		}
 	}
 	
-	/* (non-Javadoc)
+	/**
 	 * Normalize the list of output extensions,for all tools in the toolchain by populating the list
 	 * with an empty string for those tools which have no explicit output extension (as defined in the
 	 * manifest file. In a post 2.1 manifest, all tools must have a specifed output extension, even
@@ -1854,12 +1859,11 @@ public class ToolChain extends HoldsOptions implements IToolChain, IBuildPropert
 		return null;
 	}
 	
-	/*
+	/**
 	 * This function checks for migration support for the toolchain, while
 	 * loading. If migration support is needed, looks for the available
 	 * converters and adds them to the list.
 	 */
-
 	public void checkForMigrationSupport() {
 
 		boolean isExists = false;
@@ -1868,10 +1872,10 @@ public class ToolChain extends HoldsOptions implements IToolChain, IBuildPropert
 			// If 'getSuperClass()' is null, then there is no toolchain available in
 			// plugin manifest file with the 'id' & version.
 			// Look for the 'versionsSupported' attribute
-			String high = (String) ManagedBuildManager
+			String high = ManagedBuildManager
 					.getExtensionToolChainMap().lastKey();
 			
-			SortedMap subMap = null;
+			SortedMap<String, IToolChain> subMap = null;
 			if (superClassId.compareTo(high) <= 0) {
 				subMap = ManagedBuildManager.getExtensionToolChainMap().subMap(
 						superClassId, high + "\0"); //$NON-NLS-1$
@@ -1893,8 +1897,8 @@ public class ToolChain extends HoldsOptions implements IToolChain, IBuildPropert
 			String baseId = ManagedBuildManager.getIdFromIdAndVersion(superClassId);
 			String version = getVersionFromId().toString();
 
-			Collection<IToolChain[]> c = subMap.values();
-			IToolChain[] toolChainElements = (IToolChain[]) c.toArray(new IToolChain[c.size()]);
+			Collection<IToolChain> c = subMap.values();
+			IToolChain[] toolChainElements = c.toArray(new IToolChain[c.size()]);
 			
 			for (int i = 0; i < toolChainElements.length; i++) {
 				IToolChain toolChainElement = toolChainElements[i];
@@ -2044,6 +2048,7 @@ public class ToolChain extends HoldsOptions implements IToolChain, IBuildPropert
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.managedbuilder.internal.core.BuildObject#updateManagedBuildRevision(java.lang.String)
 	 */
+	@Override
 	public void updateManagedBuildRevision(String revision){
 		super.updateManagedBuildRevision(revision);
 		
@@ -2057,6 +2062,7 @@ public class ToolChain extends HoldsOptions implements IToolChain, IBuildPropert
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.managedbuilder.internal.core.HoldsOptions#needsRebuild()
 	 */
+	@Override
 	public boolean needsRebuild() {
 		if(rebuildState)
 			return true;
@@ -2073,6 +2079,7 @@ public class ToolChain extends HoldsOptions implements IToolChain, IBuildPropert
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.managedbuilder.internal.core.HoldsOptions#setRebuildState(boolean)
 	 */
+	@Override
 	public void setRebuildState(boolean rebuild) {
 		if(isExtensionElement() && rebuild)
 			return;
@@ -2113,8 +2120,9 @@ public class ToolChain extends HoldsOptions implements IToolChain, IBuildPropert
 			ITargetPlatform platform = getTargetPlatform();
 			if(platform != null){
 				ITargetPlatform extPlatform = platform;
-				for(;extPlatform != null && !extPlatform.isExtensionElement();
-					extPlatform = extPlatform.getSuperClass());
+				for(;extPlatform != null && !extPlatform.isExtensionElement();extPlatform = extPlatform.getSuperClass()) {
+					// No body, this loop is to find extension element
+				}
 				String subId;
 				if(extPlatform != null)
 					subId = ManagedBuildManager.calculateChildId(extPlatform.getId(), null);
@@ -2157,14 +2165,17 @@ public class ToolChain extends HoldsOptions implements IToolChain, IBuildPropert
 		return supports;
 	}
 
+	@Override
 	public boolean supportsType(String type) {
 		return supportsType(type, true);
 	}
 
+	@Override
 	public boolean supportsType(IBuildPropertyType type) {
 		return supportsType(type.getId());
 	}
 
+	@Override
 	public boolean supportsValue(String type, String value){
 		return supportsValue(type, value, true);
 	}
@@ -2196,11 +2207,13 @@ public class ToolChain extends HoldsOptions implements IToolChain, IBuildPropert
 		return supports;
 	}
 
+	@Override
 	public boolean supportsValue(IBuildPropertyType type,
 			IBuildPropertyValue value) {
 		return supportsValue(type.getId(), value.getId());
 	}
 	
+	@Override
 	public void propertiesChanged() {
 		if(isExtensionToolChain)
 			return;
@@ -2224,6 +2237,7 @@ public class ToolChain extends HoldsOptions implements IToolChain, IBuildPropert
 		return booleanExpressionCalculator;
 	}
 
+	@Override
 	protected IResourceInfo getParentResourceInfo() {
 		return getParentFolderInfo();
 	}
@@ -2341,6 +2355,7 @@ public class ToolChain extends HoldsOptions implements IToolChain, IBuildPropert
 			toolChain = tch;
 		}
 		
+		@Override
 		public boolean equals(Object obj) {
 			if(obj == this)
 				return true;
@@ -2350,6 +2365,7 @@ public class ToolChain extends HoldsOptions implements IToolChain, IBuildPropert
 			return toolChain.performMatchCompatison(other.toolChain);
 		}
 
+		@Override
 		public int hashCode() {
 			String name = getName();
 			if(name == null)
@@ -2415,6 +2431,7 @@ public class ToolChain extends HoldsOptions implements IToolChain, IBuildPropert
 		config = parentFolderInfo.getParent();
 	}
 
+	@Override
 	public String[] getRequiredTypeIds() {
 		return getRequiredTypeIds(true);
 	}
@@ -2440,9 +2457,10 @@ public class ToolChain extends HoldsOptions implements IToolChain, IBuildPropert
 				result.addAll(Arrays.asList(((Tool)tools[i]).getRequiredTypeIds()));
 			}
 		}
-		return (String[])result.toArray(new String[result.size()]);
+		return result.toArray(new String[result.size()]);
 	}
 
+	@Override
 	public String[] getSupportedTypeIds() {
 		return getSupportedTypeIds(true);
 	}
@@ -2471,6 +2489,7 @@ public class ToolChain extends HoldsOptions implements IToolChain, IBuildPropert
 		return result.toArray(new String[result.size()]);
 	}
 
+	@Override
 	public String[] getSupportedValueIds(String typeId) {
 		return getSupportedValueIds(typeId, true);
 	}
@@ -2499,6 +2518,7 @@ public class ToolChain extends HoldsOptions implements IToolChain, IBuildPropert
 		return result.toArray(new String[result.size()]);
 	}
 
+	@Override
 	public boolean requiresType(String typeId) {
 		return requiresType(typeId, true);
 	}
@@ -2569,7 +2589,7 @@ public class ToolChain extends HoldsOptions implements IToolChain, IBuildPropert
 			oldSet = new HashSet<String>();
 		
 		oldSet.removeAll(set);
-		setErrorParserList((String[])oldSet.toArray(new String[oldSet.size()]));
+		setErrorParserList(oldSet.toArray(new String[oldSet.size()]));
 		
 		info.removeErrorParsers(info.getFilteredTools(), set);
 

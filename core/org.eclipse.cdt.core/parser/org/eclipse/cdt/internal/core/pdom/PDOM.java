@@ -244,7 +244,6 @@ public class PDOM extends PlatformObject implements IPDOM {
 			fFilesWritten.clear();
 		}
 
-
 		public boolean isCleared() {
 			return fCleared;
 		}
@@ -269,6 +268,7 @@ public class PDOM extends PlatformObject implements IPDOM {
 			return !fCleared && !fReloaded && !fNewFiles && fClearedFiles.isEmpty() && fFilesWritten.isEmpty();
 		}
 	}
+
 	public static interface IListener {
 		public void handleChange(PDOM pdom, ChangeEvent event);
 	}
@@ -516,7 +516,7 @@ public class PDOM extends PlatformObject implements IPDOM {
 				throw new CoreException(Status.OK_STATUS);
 
 			if (node instanceof PDOMNamedNode) {
-				PDOMNamedNode nnode = (PDOMNamedNode)node;
+				PDOMNamedNode nnode = (PDOMNamedNode) node;
 				String name = new String(nnode.getNameCharArray());
 
 				// check if we have a complete match.
@@ -1168,7 +1168,7 @@ public class PDOM extends PlatformObject implements IPDOM {
 	}
 
 	public Object getCachedResult(Object key) {
-		synchronized(fResultCache) {
+		synchronized (fResultCache) {
 			return fResultCache.get(key);
 		}
 	}
@@ -1178,7 +1178,7 @@ public class PDOM extends PlatformObject implements IPDOM {
 	}
 	
 	public Object putCachedResult(Object key, Object result, boolean replace) {
-		synchronized(fResultCache) {
+		synchronized (fResultCache) {
 			Object old= fResultCache.put(key, result);
 			if (old != null && !replace) {
 				fResultCache.put(key, old);
@@ -1189,13 +1189,13 @@ public class PDOM extends PlatformObject implements IPDOM {
 	}		
 
 	public void removeCachedResult(Object key) {
-		synchronized(fResultCache) {
+		synchronized (fResultCache) {
 			fResultCache.remove(key);
 		}
 	}		
 
 	public String createKeyForCache(long record, char[] name) {
-		return new StringBuilder(name.length+2).append((char) (record >> 16)).append((char) record).append(name).toString();
+		return new StringBuilder(name.length + 2).append((char) (record >> 16)).append((char) record).append(name).toString();
 	}
 	
 	private PDOMBinding[] getCrossLanguageBindings(IBinding binding) throws CoreException {
@@ -1340,7 +1340,7 @@ public class PDOM extends PlatformObject implements IPDOM {
 						return false;
 					}
 				};
-			} catch (DOMException e1) {
+			} catch (DOMException e) {
 			}
 		}
 		if (filter != null) {
@@ -1360,6 +1360,7 @@ public class PDOM extends PlatformObject implements IPDOM {
 		int fReadLocks;
 		int fWriteLocks;
 		List<StackTraceElement[]> fTraces= new ArrayList<StackTraceElement[]>();
+
 		public int addTrace() {
 			fTraces.add(Thread.currentThread().getStackTrace());
 			return fTraces.size();
@@ -1380,9 +1381,10 @@ public class PDOM extends PlatformObject implements IPDOM {
 			fTraces.addAll(val.fTraces);
 		}
 	}
+
 	// For debugging lock issues
 	private Map<Thread, DebugLockInfo> fLockDebugging;
-	
+
 	// For debugging lock issues
 	private static DebugLockInfo getLockInfo(Map<Thread, DebugLockInfo> lockDebugging) {
 		assert sDEBUG_LOCKS;

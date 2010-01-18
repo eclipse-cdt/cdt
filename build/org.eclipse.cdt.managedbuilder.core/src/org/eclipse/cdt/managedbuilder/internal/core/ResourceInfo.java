@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2008 Intel Corporation and others.
+ * Copyright (c) 2007, 2010 Intel Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -14,7 +14,6 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Set;
 
-import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.settings.model.ICSettingBase;
 import org.eclipse.cdt.core.settings.model.ICStorageElement;
 import org.eclipse.cdt.core.settings.model.extension.CResourceData;
@@ -30,9 +29,12 @@ import org.eclipse.cdt.managedbuilder.core.IResourceConfiguration;
 import org.eclipse.cdt.managedbuilder.core.IResourceInfo;
 import org.eclipse.cdt.managedbuilder.core.ITool;
 import org.eclipse.cdt.managedbuilder.core.ManagedBuildManager;
+import org.eclipse.cdt.managedbuilder.core.ManagedBuilderCorePlugin;
 import org.eclipse.cdt.managedbuilder.core.OptionStringValue;
 import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Path;
+import org.eclipse.core.runtime.Status;
 
 public abstract class ResourceInfo extends BuildObject implements IResourceInfo {
 	private Configuration config;
@@ -124,7 +126,8 @@ public abstract class ResourceInfo extends BuildObject implements IResourceInfo 
 			}
 			path = normalizePath(path);
 		} else {
-			CCorePlugin.log("ResourceInfo.loadFromManifest() : resourcePath is NULL");
+			Status status = new Status(IStatus.ERROR, ManagedBuilderCorePlugin.PLUGIN_ID, "ResourceInfo.loadFromManifest() : resourcePath=NULL", null); //$NON-NLS-1$
+			ManagedBuilderCorePlugin.log(status);
 		}
 
 		// exclude
@@ -154,7 +157,8 @@ public abstract class ResourceInfo extends BuildObject implements IResourceInfo 
 				}
 				path = normalizePath(path);
 			} else {
-				CCorePlugin.log("ResourceInfo.loadFromProject() : resourcePath is NULL");
+				Status status = new Status(IStatus.ERROR, ManagedBuilderCorePlugin.PLUGIN_ID, "ResourceInfo.loadFromProject() : resourcePath=NULL", null); //$NON-NLS-1$
+				ManagedBuilderCorePlugin.log(status);
 			}
 		}
 
@@ -224,7 +228,7 @@ public abstract class ResourceInfo extends BuildObject implements IResourceInfo 
 	
 	private ResourceInfoContainer getRcInfo(){
 		if(rcInfo == null)
-			rcInfo = ((Configuration)config).getRcInfoContainer(this);
+			rcInfo = (config).getRcInfoContainer(this);
 		return rcInfo;
 	}
 
@@ -286,7 +290,7 @@ public abstract class ResourceInfo extends BuildObject implements IResourceInfo 
 							ri.setOption(t, op, ((Boolean)value).booleanValue());
 					} else if (value instanceof String) {
 						String s = (String)oldValue;
-						if (s.equals(op.getStringValue()) && ! s.equals((String)value))
+						if (s.equals(op.getStringValue()) && ! s.equals(value))
 							ri.setOption(t, op, (String)value);
 					} else if (value instanceof String[]) {
 						String[] s = (String[])oldValue;
@@ -383,8 +387,8 @@ public abstract class ResourceInfo extends BuildObject implements IResourceInfo 
 			return;
 		
 		ITool tools[] = getTools();
-		for(int i = 0; i < tools.length; i++){
-			((Tool)tools[i]).propertiesChanged();
+		for (ITool tool : tools) {
+			((Tool)tool).propertiesChanged();
 		}
 	}
 	
@@ -393,9 +397,8 @@ public abstract class ResourceInfo extends BuildObject implements IResourceInfo 
 	public abstract Set<String> contributeErrorParsers(Set<String> set);
 	
 	protected Set<String> contributeErrorParsers(ITool[] tools, Set<String> set){
-		for(int i = 0; i < tools.length; i++){
-			Tool tool = (Tool)tools[i];
-			set = tool.contributeErrorParsers(set);
+		for (ITool tool : tools) {
+			set = ((Tool)tool).contributeErrorParsers(set);
 		}
 		return set;
 	}
@@ -403,26 +406,24 @@ public abstract class ResourceInfo extends BuildObject implements IResourceInfo 
 	public abstract void resetErrorParsers();
 	
 	protected void resetErrorParsers(ITool tools[]){
-		for(int i = 0; i < tools.length; i++){
-			Tool tool = (Tool)tools[i];
-			tool.resetErrorParsers();
+		for (ITool tool : tools) {
+			((Tool)tool).resetErrorParsers();
 		}
 	}
 	
 	abstract void removeErrorParsers(Set<String> set);
 	
 	protected void removeErrorParsers(ITool tools[], Set<String> set){
-		for(int i = 0; i < tools.length; i++){
-			Tool tool = (Tool)tools[i];
-			tool.removeErrorParsers(set);
+		for (ITool tool : tools) {
+			((Tool)tool).removeErrorParsers(set);
 		}
 	}
 	
 	public ITool getToolById(String id) {
 		ITool[] tools = getTools();
-		for(int i = 0; i < tools.length; i++){
-			if(id.equals(tools[i].getId()))
-				return tools[i];
+		for (ITool tool : tools) {
+			if(id.equals(tool.getId()))
+				return tool;
 		}
 		return null;
 	}
@@ -442,7 +443,9 @@ public abstract class ResourceInfo extends BuildObject implements IResourceInfo 
 
 	public IFolderInfo getParentFolderInfo(){
 		ResourceInfo parentRc = getParentResourceInfo();
-		for(; parentRc != null && !parentRc.isFolderInfo(); parentRc = parentRc.getParentResourceInfo());
+		for(; parentRc != null && !parentRc.isFolderInfo(); parentRc = parentRc.getParentResourceInfo()) {
+			// empty body, loop is to find parent only
+		}
 
 		return (IFolderInfo)parentRc;
 	}

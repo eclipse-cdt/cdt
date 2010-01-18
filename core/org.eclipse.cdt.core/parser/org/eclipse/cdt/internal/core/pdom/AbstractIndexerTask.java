@@ -132,8 +132,8 @@ public abstract class AbstractIndexerTask extends PDOMWriter {
 		
 		public static Object[] merge(IIndexInclude[] includes, IIndexMacro[] macros) throws CoreException {
 			Object[] merged= new Object[includes.length+macros.length];
-			int i=0;
-			int m=0;
+			int i= 0;
+			int m= 0;
 			int ioffset= getOffset(includes, i);
 			int moffset= getOffset(macros, m);
 			for (int k = 0; k < merged.length; k++) {
@@ -409,7 +409,7 @@ public abstract class AbstractIndexerTask extends PDOMWriter {
 						count++;
 					} else {
 						boolean update= false;
-						if (checkConfig && ifile.getParsedInContext() != null) {
+						if (checkConfig) {
 							update= isHeaderConfigChange(tu, ifile);
 						}
 						update= update || force || (checkTimestamps && fResolver.getLastModified(ifl) != ifile.getTimestamp());
@@ -423,7 +423,7 @@ public abstract class AbstractIndexerTask extends PDOMWriter {
 				}
 			}
 		}
-		updateRequestedFiles(count-fFilesToUpdate.length);
+		updateRequestedFiles(count - fFilesToUpdate.length);
 		fFilesToUpdate= null;
 	}
 	
@@ -496,7 +496,7 @@ public abstract class AbstractIndexerTask extends PDOMWriter {
 	}
 
 	private Integer getFileListKey(int linkageID, boolean isSourceUnit) {
-		Integer key= new Integer(linkageID*2 + (isSourceUnit ? 0 : 1));
+		Integer key= new Integer(linkageID * 2 + (isSourceUnit ? 0 : 1));
 		return key;
 	}
 
@@ -837,7 +837,7 @@ public abstract class AbstractIndexerTask extends PDOMWriter {
 		 * swallow this one.
 		 */
 		if (e instanceof CoreException) {
-			s=((CoreException)e).getStatus();
+			s=((CoreException) e).getStatus();
 			if (s.getCode() == CCorePlugin.STATUS_PDOM_TOO_LARGE) {
 				if (CCorePlugin.PLUGIN_ID.equals(s.getPlugin()))
 					throw (CoreException) e;
@@ -928,7 +928,7 @@ public abstract class AbstractIndexerTask extends PDOMWriter {
 	}
 
 	private static int addToHashcode(int result, String key) {
-		return result*31 + key.hashCode();
+		return result * 31 + key.hashCode();
 	}
 
 	public final IndexFileContent getFileContent(int linkageID, IIndexFileLocation ifl) throws CoreException {
@@ -957,8 +957,7 @@ public abstract class AbstractIndexerTask extends PDOMWriter {
 		}
 		return null;
 	}
-	
-	
+
 	/**
 	 * @return array of linkage IDs that should be parsed
 	 */

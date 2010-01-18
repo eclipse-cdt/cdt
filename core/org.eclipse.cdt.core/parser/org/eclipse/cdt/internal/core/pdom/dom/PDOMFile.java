@@ -103,15 +103,11 @@ public class PDOMFile implements IIndexFragmentFile {
 		Database db = fLinkage.getDB();
 		record = db.malloc(RECORD_SIZE);
 		String locationString = fLinkage.getPDOM().getLocationConverter().toInternalFormat(location);
-		if (locationString==null)
-			throw new CoreException(CCorePlugin.createStatus(Messages.getString("PDOMFile.toInternalProblem")+location.getURI())); //$NON-NLS-1$
+		if (locationString == null)
+			throw new CoreException(CCorePlugin.createStatus(Messages.getString("PDOMFile.toInternalProblem") + location.getURI())); //$NON-NLS-1$
 		IString locationDBString = db.newString(locationString);
 		db.putRecPtr(record + LOCATION_REPRESENTATION, locationDBString.getRecord());
 		db.putInt(record + LINKAGE_ID, linkageID);
-		db.putLong(record + TIME_STAMP, 0);
-		setFirstName(null);
-		setFirstInclude(null);
-		setFirstIncludedBy(null);
 		setTimestamp(-1);
 	}
 
@@ -456,7 +452,7 @@ public class PDOMFile implements IIndexFragmentFile {
 		for (PDOMName name= getFirstName(); name != null; name= name.getNextInFile()) {
 			int nameOffset=  name.getNodeOffset();
 			if (nameOffset >= offset) {
-				if (nameOffset + name.getNodeLength() <= offset+length) {
+				if (nameOffset + name.getNodeLength() <= offset + length) {
 					result.add(name);
 				} else if (name.isReference()) { 
 					// names are ordered, but callers are inserted before
@@ -469,7 +465,7 @@ public class PDOMFile implements IIndexFragmentFile {
 		for (PDOMMacro macro= getFirstMacro(); macro != null; macro= macro.getNextMacro()) {
 			int nameOffset=  macro.getNodeOffset();
 			if (nameOffset >= offset) {
-				if (nameOffset + macro.getNodeLength() <= offset+length) {
+				if (nameOffset + macro.getNodeLength() <= offset + length) {
 					IIndexFragmentName name= macro.getDefinition();
 					if (name != null) {
 						result.add(name);
@@ -482,7 +478,7 @@ public class PDOMFile implements IIndexFragmentFile {
 		for (PDOMMacroReferenceName name= getFirstMacroReference(); name != null; name= name.getNextInFile()) {
 			int nameOffset=  name.getNodeOffset();
 			if (nameOffset >= offset) {
-				if (nameOffset + name.getNodeLength() <= offset+length) {
+				if (nameOffset + name.getNodeLength() <= offset + length) {
 					result.add(name);
 				} else { 
 					break;
@@ -579,9 +575,9 @@ public class PDOMFile implements IIndexFragmentFile {
 			} else if (this.records == null) {
 				this.records= new long[] {this.record, record};
 			} else {
-				long[] cpy= new long[this.records.length+1];
+				long[] cpy= new long[this.records.length + 1];
 				System.arraycopy(this.records, 0, cpy, 0, this.records.length);
-				cpy[cpy.length-1]= record;
+				cpy[cpy.length - 1]= record;
 				this.records= cpy;
 			}
 			return linkageID < 0;
@@ -601,7 +597,7 @@ public class PDOMFile implements IIndexFragmentFile {
 				URI uri;
 				try {
 					int idx= raw.lastIndexOf('>');
-					uri= new URI("file", null, raw.substring(idx+1), null); //$NON-NLS-1$
+					uri= new URI("file", null, raw.substring(idx + 1), null); //$NON-NLS-1$
 				} catch (URISyntaxException e) {
 					uri= URI.create("file:/unknown-location"); //$NON-NLS-1$
 				}

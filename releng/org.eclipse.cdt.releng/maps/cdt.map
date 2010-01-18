@@ -132,13 +132,13 @@ plugin@org.eclipse.cdt.p2=@cdtTag@,:pserver:anonymous@dev.eclipse.org:/cvsroot/t
 feature@org.eclipse.cdt.p2=@cdtTag@,:pserver:anonymous@dev.eclipse.org:/cvsroot/tools,,org.eclipse.cdt/p2/org.eclipse.cdt.p2-feature
 
 ! EDC
-plugin@org.eclipse.cdt.debug.edc=@cdtTag@,:pserver:anonymous@dev.eclipse.org:/cvsroot/tools,,org.eclipse.cdt/edc/org.eclipse.cdt.edc.debug.edc
-plugin@org.eclipse.cdt.debug.edc.linux.x86=@cdtTag@,:pserver:anonymous@dev.eclipse.org:/cvsroot/tools,,org.eclipse.cdt/edc/org.eclipse.cdt.edc.debug.edc.linux.x86
-plugin@org.eclipse.cdt.debug.edc.tcf.extension=@cdtTag@,:pserver:anonymous@dev.eclipse.org:/cvsroot/tools,,org.eclipse.cdt/edc/org.eclipse.cdt.edc.debug.edc.tcf.extension
-plugin@org.eclipse.cdt.debug.edc.ui=@cdtTag@,:pserver:anonymous@dev.eclipse.org:/cvsroot/tools,,org.eclipse.cdt/edc/org.eclipse.cdt.edc.debug.edc.ui
-plugin@org.eclipse.cdt.debug.edc.windows=@cdtTag@,:pserver:anonymous@dev.eclipse.org:/cvsroot/tools,,org.eclipse.cdt/edc/org.eclipse.cdt.edc.debug.edc.windows
-plugin@org.eclipse.cdt.debug.edc.windows.ui=@cdtTag@,:pserver:anonymous@dev.eclipse.org:/cvsroot/tools,,org.eclipse.cdt/edc/org.eclipse.cdt.edc.debug.edc.windows.ui
-feature@org.eclipse.cdt.debug.edc=@cdtTag@,:pserver:anonymous@dev.eclipse.org:/cvsroot/tools,,org.eclipse.cdt/edc/org.eclipse.cdt.edc.debug.edc-feature
+plugin@org.eclipse.cdt.debug.edc=@cdtTag@,:pserver:anonymous@dev.eclipse.org:/cvsroot/tools,,org.eclipse.cdt/edc/org.eclipse.cdt.debug.edc
+plugin@org.eclipse.cdt.debug.edc.linux.x86=@cdtTag@,:pserver:anonymous@dev.eclipse.org:/cvsroot/tools,,org.eclipse.cdt/edc/org.eclipse.cdt.debug.edc.linux.x86
+plugin@org.eclipse.cdt.debug.edc.tcf.extension=@cdtTag@,:pserver:anonymous@dev.eclipse.org:/cvsroot/tools,,org.eclipse.cdt/edc/org.eclipse.cdt.debug.edc.tcf.extension
+plugin@org.eclipse.cdt.debug.edc.ui=@cdtTag@,:pserver:anonymous@dev.eclipse.org:/cvsroot/tools,,org.eclipse.cdt/edc/org.eclipse.cdt.debug.edc.ui
+plugin@org.eclipse.cdt.debug.edc.windows=@cdtTag@,:pserver:anonymous@dev.eclipse.org:/cvsroot/tools,,org.eclipse.cdt/edc/org.eclipse.cdt.debug.edc.windows
+plugin@org.eclipse.cdt.debug.edc.windows.ui=@cdtTag@,:pserver:anonymous@dev.eclipse.org:/cvsroot/tools,,org.eclipse.cdt/edc/org.eclipse.cdt.debug.edc.windows.ui
+feature@org.eclipse.cdt.debug.edc=@cdtTag@,:pserver:anonymous@dev.eclipse.org:/cvsroot/tools,,org.eclipse.cdt/edc/org.eclipse.cdt.debug.edc-feature
 
 ! TCF Requirements for EDC (not included in master)
 plugin@org.eclipse.tm.tcf=SVN,url=http://dev.eclipse.org/svnroot/dsdp/org.eclipse.tm.tcf/trunk/plugins/org.eclipse.tm.tcf

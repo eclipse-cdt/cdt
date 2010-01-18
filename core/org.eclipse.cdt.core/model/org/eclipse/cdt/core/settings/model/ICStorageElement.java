@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007 Intel Corporation and others.
+ * Copyright (c) 2010 Intel Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -17,7 +17,7 @@ import org.eclipse.core.runtime.CoreException;
 /**
  *
  * This interface represents an generic element in a storage tree.  These trees are rooted at 
- * @link{ICSettingsStorage}Elements.
+ * {@link ICSettingsStorage} Elements.
  * 
  * This abstract storage mechanism is used, e.g. with the {@link ICProjectDescription} and {@link ICConfigurationDescription}
  * for storing custom data in the settings file (.cproject) or in a database

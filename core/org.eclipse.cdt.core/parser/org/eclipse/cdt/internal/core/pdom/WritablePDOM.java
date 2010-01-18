@@ -37,11 +37,13 @@ public class WritablePDOM extends PDOM implements IWritableIndexFragment {
 	private boolean fCreatedFromScratch= false;
 	private ASTFilePathResolver fPathResolver;
 
-	public WritablePDOM(File dbPath, IIndexLocationConverter locationConverter, Map<String, IPDOMLinkageFactory> linkageFactoryMappings) throws CoreException {
+	public WritablePDOM(File dbPath, IIndexLocationConverter locationConverter,
+			Map<String, IPDOMLinkageFactory> linkageFactoryMappings) throws CoreException {
 		this(dbPath, locationConverter, ChunkCache.getSharedInstance(), linkageFactoryMappings);
 	}
 	
-	public WritablePDOM(File dbPath, IIndexLocationConverter locationConverter, ChunkCache cache, Map<String, IPDOMLinkageFactory> linkageFactoryMappings) throws CoreException {
+	public WritablePDOM(File dbPath, IIndexLocationConverter locationConverter, ChunkCache cache, Map<String,
+			IPDOMLinkageFactory> linkageFactoryMappings) throws CoreException {
 		super(dbPath, locationConverter, cache, linkageFactoryMappings);
 	}
 	
@@ -74,7 +76,8 @@ public class WritablePDOM extends PDOM implements IWritableIndexFragment {
 		fEvent.fFilesWritten.add(location);
 	}
 
-	public void clearFile(IIndexFragmentFile file, Collection<IIndexFileLocation> contextsRemoved) throws CoreException {
+	public void clearFile(IIndexFragmentFile file, Collection<IIndexFileLocation> contextsRemoved)
+			throws CoreException {
 		assert file.getIndexFragment() == this;
 		((PDOMFile) file).clear(contextsRemoved);	
 		
@@ -98,7 +101,7 @@ public class WritablePDOM extends PDOM implements IWritableIndexFragment {
 	public void setProperty(String propertyName, String value) throws CoreException {
 		if (IIndexFragment.PROPERTY_FRAGMENT_FORMAT_ID.equals(propertyName) 
 				|| IIndexFragment.PROPERTY_FRAGMENT_FORMAT_VERSION.equals(propertyName)) {
-			throw new IllegalArgumentException("Property "+value+" may not be written to"); //$NON-NLS-1$ //$NON-NLS-2$
+			throw new IllegalArgumentException("Property " + value + " may not be written to"); //$NON-NLS-1$ //$NON-NLS-2$
 		}
 		new DBProperties(db, PROPERTIES).setProperty(propertyName, value);
 	}

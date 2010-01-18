@@ -371,18 +371,23 @@ public class ProblemsLabelDecorator implements ILabelDecorator, ILightweightLabe
 		}  
 	}
 
-	private int getTicks (IResource r) {
-		if (r == null || r instanceof IProject) return 0;		
-		IPath path = r.getProjectRelativePath();
-		ICProjectDescription prjd = CoreModel.getDefault().getProjectDescription(r.getProject(), false);
+	/**
+	 * @param rc - resource to check
+	 * @return flags {@link TICK_CONFIGURATION} if the resource has custom settings and possibly needs
+	 * to be adorned or 0 otherwise.
+	 */
+	private int getTicks (IResource rc) {
+		if (rc == null || rc instanceof IProject) return 0;
+		IPath path = rc.getProjectRelativePath();
+		ICProjectDescription prjDescription = CoreModel.getDefault().getProjectDescription(rc.getProject(), false);
 		int result = 0;
-		if (prjd != null) { 
-			ICConfigurationDescription [] cf = prjd.getConfigurations();
-			if (cf == null) return 0;
-			for (ICConfigurationDescription element : cf) {
-				if (element.isActive()) {
-					ICResourceDescription out = element.getResourceDescription(path, true);
-					if (out != null) result |= TICK_CONFIGURATION;
+		if (prjDescription != null) { 
+			ICConfigurationDescription [] cfgDescriptions = prjDescription.getConfigurations();
+			if (cfgDescriptions == null) return 0;
+			for (ICConfigurationDescription cfgDescription : cfgDescriptions) {
+				if (cfgDescription.isActive()) {
+					ICResourceDescription rcDescription = cfgDescription.getResourceDescription(path, true);
+					if (rcDescription != null) result |= TICK_CONFIGURATION;
 				}
 			}
 		}

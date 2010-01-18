@@ -142,4 +142,9 @@ feature@org.eclipse.cdt.debug.edc=@cdtTag@,:pserver:anonymous@dev.eclipse.org:/c
 
 ! TCF Requirements for EDC (not included in master)
 plugin@org.eclipse.tm.tcf=SVN,url=http://dev.eclipse.org/svnroot/dsdp/org.eclipse.tm.tcf/trunk/plugins/org.eclipse.tm.tcf
+plugin@org.eclipse.tm.tcf.cdt.ui=SVN,url=http://dev.eclipse.org/svnroot/dsdp/org.eclipse.tm.tcf/trunk/plugins/org.eclipse.tm.tcf.cdt.ui
 plugin@org.eclipse.tm.tcf.core=SVN,url=http://dev.eclipse.org/svnroot/dsdp/org.eclipse.tm.tcf/trunk/plugins/org.eclipse.tm.tcf.core
+plugin@org.eclipse.tm.tcf.debug=SVN,url=http://dev.eclipse.org/svnroot/dsdp/org.eclipse.tm.tcf/trunk/plugins/org.eclipse.tm.tcf.debug
+plugin@org.eclipse.tm.tcf.debug.ui=SVN,url=http://dev.eclipse.org/svnroot/dsdp/org.eclipse.tm.tcf/trunk/plugins/org.eclipse.tm.tcf.debug.ui
+plugin@org.eclipse.tm.tcf.rse=SVN,url=http://dev.eclipse.org/svnroot/dsdp/org.eclipse.tm.tcf/trunk/plugins/org.eclipse.tm.tcf.rse
+feature@org.eclipse.tm.tcf=SVN,url=http://dev.eclipse.org/svnroot/dsdp/org.eclipse.tm.tcf/trunk/features/org.eclipse.tm.tcf.feature

@@ -74,7 +74,9 @@ public class FolderInfo extends ResourceInfo implements IFolderInfo {
 		
 		IToolChain parTc = folderInfo.getToolChain();
 		IToolChain extTc = parTc;
-		for(; extTc != null && !extTc.isExtensionElement(); extTc = extTc.getSuperClass());
+		for(; extTc != null && !extTc.isExtensionElement(); extTc = extTc.getSuperClass()) {
+			// empty body, loop is to find extension element only
+		}
 		if(extTc == null)
 			extTc = parTc;
 		
@@ -88,7 +90,9 @@ public class FolderInfo extends ResourceInfo implements IFolderInfo {
 		String subId = new String();
 		for (ITool tool : tools) {
 			ITool extTool = tool;
-			for(; extTool != null && !extTool.isExtensionElement(); extTool = extTool.getSuperClass());
+			for(; extTool != null && !extTool.isExtensionElement(); extTool = extTool.getSuperClass()) {
+				// empty body, loop is to find extension element only
+			}
 			if(extTool == null)
 				extTool = tool;
 				
@@ -171,7 +175,9 @@ public class FolderInfo extends ResourceInfo implements IFolderInfo {
 		
 		IToolChain cloneToolChain = cloneInfo.getToolChain();
 		IToolChain extToolChain = cloneToolChain;
-		for(; !extToolChain.isExtensionElement(); extToolChain = extToolChain.getSuperClass());
+		for(; !extToolChain.isExtensionElement(); extToolChain = extToolChain.getSuperClass()) {
+			// empty body, loop is to find extension element only
+		}
 		
 		subName = cloneToolChain.getName();
 		
@@ -207,7 +213,9 @@ public class FolderInfo extends ResourceInfo implements IFolderInfo {
 			
 			ITargetPlatform tpBase = cloneInfo.getToolChain().getTargetPlatform();
 			ITargetPlatform extTp = tpBase;
-			for(;extTp != null && !extTp.isExtensionElement();extTp = extTp.getSuperClass());
+			for(;extTp != null && !extTp.isExtensionElement();extTp = extTp.getSuperClass()) {
+				// empty body, loop is to find extension element only
+			}
 			
 			TargetPlatform tp;
 			if(extTp != null){
@@ -470,7 +478,7 @@ public class FolderInfo extends ResourceInfo implements IFolderInfo {
 		Map<String, String> map = new HashMap<String, String>(ids.length);
 		for(String id : ids){
 			IBuildProperty prop = props.getProperty(id);
-			map.put(id, props != null ? prop.getValue().getId() : null);
+			map.put(id, prop.getValue().getId());
 		}
 		return map;
 	}
@@ -662,15 +670,12 @@ public class FolderInfo extends ResourceInfo implements IFolderInfo {
 		if(curReal == newReal)
 			return true;
 		
-		if(tCh != null){
-			if(getToolChainConverterInfo(fromTc, tCh) != null)
-				compatible = true;
-			
-			if(!compatible)
-				compatible = isPropertiesModificationCompatible(tCh);
-		} else {
-			compatible = fromTc != null && fromTc.isPreferenceToolChain();
-		}
+		if(getToolChainConverterInfo(fromTc, tCh) != null)
+			compatible = true;
+
+		if(!compatible)
+			compatible = isPropertiesModificationCompatible(tCh);
+		
 		return compatible;
 	}
 
@@ -901,62 +906,61 @@ public class FolderInfo extends ResourceInfo implements IFolderInfo {
 	}
 	
 	public void modifyToolChain(ITool[] removed, ITool[] added){
-		if(true){
-			ToolListModificationInfo info = ToolChainModificationHelper.getModificationInfo(this, getTools(), added, removed);
-			info.apply();
-			return;
-		}
-		ITool[][] checked = checkDups(removed, added);
-		removed = checked[0];
-		added = checked[1];
-		if(added.length == 0 && removed.length == 0)
-			return;
-		
-		List<ITool> remainingRemoved = new ArrayList<ITool>();
-		List<ITool> remainingAdded = new ArrayList<ITool>();
-		Map<ITool, ConverterInfo> converterMap = 
-			calculateConverterTools(removed, added, remainingRemoved, remainingAdded);
-		invokeConverters(converterMap);
-		List<Tool> newTools = new ArrayList<Tool>(added.length);
-		for(ConverterInfo info : converterMap.values()){
-			if(info.getConvertedFromObject() instanceof Tool){
-				Tool newTool = (Tool)info.getConvertedFromObject();
-				newTool.updateParent(getToolChain());
-				newTools.add(newTool);
-			} else {
-				remainingAdded.add((ITool)info.getToObject());
-			}
-		}
+		ToolListModificationInfo info = ToolChainModificationHelper.getModificationInfo(this, getTools(), added, removed);
+		info.apply();
+		return;
 
-		for(ITool t : remainingAdded){
-			newTools.add(
-				new Tool(
-					toolChain, 
-					t, 
-					ManagedBuildManager.calculateChildId(t.getId(), null), 
-					t.getName(), 
-					false)
-				);
-		}
-		
-		performToolChainModification(removed, newTools.toArray(new Tool[newTools.size()]));
+//		ITool[][] checked = checkDups(removed, added);
+//		removed = checked[0];
+//		added = checked[1];
+//		if(added.length == 0 && removed.length == 0)
+//			return;
+//		
+//		List<ITool> remainingRemoved = new ArrayList<ITool>();
+//		List<ITool> remainingAdded = new ArrayList<ITool>();
+//		Map<ITool, ConverterInfo> converterMap = 
+//			calculateConverterTools(removed, added, remainingRemoved, remainingAdded);
+//		invokeConverters(converterMap);
+//		List<Tool> newTools = new ArrayList<Tool>(added.length);
+//		for(ConverterInfo info : converterMap.values()){
+//			if(info.getConvertedFromObject() instanceof Tool){
+//				Tool newTool = (Tool)info.getConvertedFromObject();
+//				newTool.updateParent(getToolChain());
+//				newTools.add(newTool);
+//			} else {
+//				remainingAdded.add((ITool)info.getToObject());
+//			}
+//		}
+//
+//		for(ITool t : remainingAdded){
+//			newTools.add(
+//				new Tool(
+//					toolChain, 
+//					t, 
+//					ManagedBuildManager.calculateChildId(t.getId(), null), 
+//					t.getName(), 
+//					false)
+//				);
+//		}
+//		
+//		performToolChainModification(removed, newTools.toArray(new Tool[newTools.size()]));
 	}
 	
-	private void performToolChainModification(ITool removed[], ITool[] added){
-		BuildSettingsUtil.disconnectDepentents(getParent(), removed);
-		
-		for (ITool tool : removed) {
-			toolChain.removeTool((Tool)tool);
-		}
-		
-		for (ITool tool : added) {
-			toolChain.addTool((Tool)tool);
-		}
-		
-		adjustTargetTools(removed, added);
-		
-		toolChain.propertiesChanged();
-	}
+//	private void performToolChainModification(ITool removed[], ITool[] added){
+//		BuildSettingsUtil.disconnectDepentents(getParent(), removed);
+//		
+//		for (ITool tool : removed) {
+//			toolChain.removeTool((Tool)tool);
+//		}
+//		
+//		for (ITool tool : added) {
+//			toolChain.addTool((Tool)tool);
+//		}
+//		
+//		adjustTargetTools(removed, added);
+//		
+//		toolChain.propertiesChanged();
+//	}
 	
 	private void adjustTargetTools(ITool removed[], ITool added[]){
 		if(!isRoot())
@@ -1066,59 +1070,59 @@ public class FolderInfo extends ResourceInfo implements IFolderInfo {
 		return null;
 	}
 	
-	private List<ConverterInfo> invokeConverters(Map<?, ConverterInfo> converterMap){
-		List<ConverterInfo> failed = new ArrayList<ConverterInfo>();
-		for(ConverterInfo info : converterMap.values()){
-			IBuildObject converted = info.getConvertedFromObject();
-			if(converted == null || 
-			  !converted.getClass().equals(info.getFromObject().getClass())){
-				failed.add(info);
-			}
-		}
-		return failed;
-	}
+//	private List<ConverterInfo> invokeConverters(Map<?, ConverterInfo> converterMap){
+//		List<ConverterInfo> failed = new ArrayList<ConverterInfo>();
+//		for(ConverterInfo info : converterMap.values()){
+//			IBuildObject converted = info.getConvertedFromObject();
+//			if(converted == null || 
+//			  !converted.getClass().equals(info.getFromObject().getClass())){
+//				failed.add(info);
+//			}
+//		}
+//		return failed;
+//	}
 	
-	private Map<ITool, ConverterInfo> calculateConverterTools(ITool[] removed, ITool[] added, List<ITool> remainingRemoved, List<ITool> remainingAdded){
-		if(remainingAdded == null)
-			remainingAdded = new ArrayList<ITool>(added.length);
-		if(remainingRemoved == null)
-			remainingRemoved = new ArrayList<ITool>(removed.length);
-		
-		remainingAdded.clear();
-		remainingRemoved.clear();
-		
-		remainingAdded.addAll(Arrays.asList(added));
-		remainingRemoved.addAll(Arrays.asList(removed));
-		
-		Map<ITool, ConverterInfo> resultMap = new HashMap<ITool, ConverterInfo>();
-		
-		for(Iterator<ITool> rIter = remainingRemoved.iterator(); rIter.hasNext();){
-			ITool r = rIter.next();
-			
-			if(r.getParentResourceInfo() != this)
-				continue;
-			
-			if(ManagedBuildManager.getConversionElements(r).size() == 0)
-				continue;
-
-			for(Iterator<ITool> aIter = remainingAdded.iterator(); aIter.hasNext();){
-				ITool a = aIter.next();
-				
-				if(a.getParentResourceInfo() == this)
-					continue;
-				
-				IConfigurationElement el = getToolConverterElement(r, a);
-				if(el != null){
-					resultMap.put(r, new ConverterInfo(this, r, a, el));
-					rIter.remove();
-					aIter.remove();
-					break;
-				}
-			}
-		}
-		
-		return resultMap;
-	}
+//	private Map<ITool, ConverterInfo> calculateConverterTools(ITool[] removed, ITool[] added, List<ITool> remainingRemoved, List<ITool> remainingAdded){
+//		if(remainingAdded == null)
+//			remainingAdded = new ArrayList<ITool>(added.length);
+//		if(remainingRemoved == null)
+//			remainingRemoved = new ArrayList<ITool>(removed.length);
+//		
+//		remainingAdded.clear();
+//		remainingRemoved.clear();
+//		
+//		remainingAdded.addAll(Arrays.asList(added));
+//		remainingRemoved.addAll(Arrays.asList(removed));
+//		
+//		Map<ITool, ConverterInfo> resultMap = new HashMap<ITool, ConverterInfo>();
+//		
+//		for(Iterator<ITool> rIter = remainingRemoved.iterator(); rIter.hasNext();){
+//			ITool r = rIter.next();
+//			
+//			if(r.getParentResourceInfo() != this)
+//				continue;
+//			
+//			if(ManagedBuildManager.getConversionElements(r).size() == 0)
+//				continue;
+//
+//			for(Iterator<ITool> aIter = remainingAdded.iterator(); aIter.hasNext();){
+//				ITool a = aIter.next();
+//				
+//				if(a.getParentResourceInfo() == this)
+//					continue;
+//				
+//				IConfigurationElement el = getToolConverterElement(r, a);
+//				if(el != null){
+//					resultMap.put(r, new ConverterInfo(this, r, a, el));
+//					rIter.remove();
+//					aIter.remove();
+//					break;
+//				}
+//			}
+//		}
+//		
+//		return resultMap;
+//	}
 	
 	private ITool[] calculateToolsArray(ITool[] removed, ITool[] added){
 		LinkedHashMap<Object, ITool> map = createRealToExtToolMap(getTools(), false);
@@ -1385,11 +1389,11 @@ public class FolderInfo extends ResourceInfo implements IFolderInfo {
 		return false;
 	}
 	
-	private IConfigurationElement getToolConverterElement(ITool fromTool, ITool toTool){
-		ToolChain curTc = (ToolChain)getToolChain();
-		if(curTc != null){
-			return curTc.getConverterModificationElement(fromTool, toTool);
-		}
-		return null;
-	}
+//	private IConfigurationElement getToolConverterElement(ITool fromTool, ITool toTool){
+//		ToolChain curTc = (ToolChain)getToolChain();
+//		if(curTc != null){
+//			return curTc.getConverterModificationElement(fromTool, toTool);
+//		}
+//		return null;
+//	}
 }

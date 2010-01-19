@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007 Intel Corporation and others.
+ * Copyright (c) 2007, 2010 Intel Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -13,7 +13,7 @@ package org.eclipse.cdt.core.settings.model;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 
-public interface ICFolderDescription extends ICResourceDescription, ICSettingContainer {
+public interface ICFolderDescription extends ICResourceDescription {
 	ICResourceDescription getNestedResourceDescription(IPath relPath, boolean exactPath);
 
 	ICResourceDescription[] getNestedResourceDescriptions(int kind);

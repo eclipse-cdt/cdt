@@ -15,8 +15,8 @@
 		<touch file="${user.home}/.cvspass" />
 		<tstamp/>
 		<property name="eclipseDist" value="/home/data/httpd/download.eclipse.org/eclipse/downloads/drops/S-3.6M4-200912101301/eclipse-SDK-3.6M4-linux-gtk-ppc.tar.gz"/>
-		<!--property name="mylynDist" value="/home/data/httpd/download.eclipse.org/tools/mylyn/update/galileo/mylyn-3.2.0.I20090520-2300-e3.4.zip"/-->
 		<property name="rseDist" value="/home/data/httpd/download.eclipse.org/dsdp/tm/downloads/drops/N.latest/RSE-SDK-latest.zip"/>
+		<property name="pdeSvnJar" value="/home/data/httpd/download.eclipse.org/technology/subversive/0.7/pde-update-site/plugins/org.eclipse.team.svn.pde.build_0.7.8.I20090525-1500.jar"/>
 		<property name="branchVersion" value="7.0.0"/>
 		<property name="timestamp" value="${DSTAMP}${TSTAMP}" />
 		<property name="forceContextQualifier" value="${timestamp}"/>
@@ -133,8 +133,8 @@
 	
 	<target name="unzip" depends="init" unless="dontUnzip">
 		<untar src="${eclipseDist}" dest="${buildDirectory}" compression="gzip"/>
-		<!--unzip src="${mylynDist}" dest="${buildDirectory}/eclipse"/-->
 		<unzip src="${rseDist}" dest="${buildDirectory}"/>
+		<copy file="${pdeSvnJar}" dest="${buildDirectory}/plugins"/>
 	</target>
 	
 	<target name="zips" depends="init,unzip">

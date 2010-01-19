@@ -55,6 +55,7 @@ import org.eclipse.jface.action.IToolBarManager;
 import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.action.Separator;
 import org.eclipse.jface.dialogs.IDialogConstants;
+import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.resource.ColorRegistry;
 import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.jface.util.IPropertyChangeListener;
@@ -126,6 +127,9 @@ public class MemoryBrowser extends ViewPart implements IDebugContextListener, IL
 	private final static String KEY_MEMORY_BLOCK = "MEMORY"; //$NON-NLS-1$
 	private final static String KEY_RETRIEVAL    = "RETRIEVAL"; //$NON-NLS-1$
 	private final static String KEY_CONTAINER    = "CONTAINER"; //$NON-NLS-1$
+	
+	public static final String PREF_DEFAULT_RENDERING = "org.eclipse.cdt.debug.ui.memory.memorybrowser.defaultRendering";  //$NON-NLS-1$
+
 
 	public MemoryBrowser() {
 	}
@@ -138,19 +142,25 @@ public class MemoryBrowser extends ViewPart implements IDebugContextListener, IL
 	public void createPartControl(Composite parent) {
 		// set default rendering type. use the traditional rendering if available. fallback on first registered type.
 		// this should eventually be configurable via a preference page.
-		boolean isTraditionalRenderingAvailable = false;
-		final String traditionalRenderingId = "org.eclipse.cdt.debug.ui.memory.traditional.TraditionalRendering"; //$NON-NLS-1$
+		boolean isDefaultRenderingAvailable = false;
+		IPreferenceStore store = MemoryBrowserPlugin.getDefault().getPreferenceStore();
+		String defaultRendering = store.getString(PREF_DEFAULT_RENDERING);
+		if(defaultRendering == null || defaultRendering.trim().length() == 0)
+		{
+			defaultRendering = "org.eclipse.cdt.debug.ui.memory.traditional.TraditionalRendering"; //$NON-NLS-1$
+		}
+
 		IMemoryRenderingType[] types = getRenderingTypes();
 		for(final IMemoryRenderingType type : types)
 		{
-			if(type.getId().equals(traditionalRenderingId))
+			if(type.getId().equals(defaultRendering))
 			{
-				isTraditionalRenderingAvailable = true;
+				isDefaultRenderingAvailable = true;
 				break;
 			}
 		}
-		if(isTraditionalRenderingAvailable)
-			defaultRenderingTypeId = traditionalRenderingId;
+		if(isDefaultRenderingAvailable)
+			defaultRenderingTypeId = defaultRendering;
 		else if(types.length > 0)
 			defaultRenderingTypeId = types[0].getId();
 		
@@ -581,9 +591,11 @@ public class MemoryBrowser extends ViewPart implements IDebugContextListener, IL
 		return defaultRenderingTypeId;
 	}
 	
-	private void setDefaultRenderingTypeId(String id)
+	public void setDefaultRenderingTypeId(String id)
 	{
 		defaultRenderingTypeId = id;
+		IPreferenceStore store = MemoryBrowserPlugin.getDefault().getPreferenceStore();
+		store.setValue(PREF_DEFAULT_RENDERING, defaultRenderingTypeId);
 	}
 	
 	private void populateTabWithRendering(final CTabItem tab, final IMemoryBlockRetrieval retrieval, Object context)

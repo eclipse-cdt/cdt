@@ -264,9 +264,9 @@
 	
 	<target name="sign" depends="init" unless="hasErrors">
 		<exec executable="sign">
-			<arg value="/home/data/httpd/download-staging.priv/tools/cdt/releng/results/${buildType}.${buildId}/${masterFile}"/>
+			<arg value="${buildDirectory}/${buildType}.${buildId}/${masterFile}"/>
 			<arg value="nomail"/>
-			<arg value="/home/data/httpd/download-staging.priv/tools/cdt/releng/results/signed"/>
+			<arg value="${buildDirectory}/signed"/>
 		</exec>
 		<waitfor maxwait="30" maxwaitunit="minute">
 			<available file="${buildDirectory}/signed/${masterFile}"/>

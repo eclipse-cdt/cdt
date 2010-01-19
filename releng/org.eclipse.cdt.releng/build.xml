@@ -134,7 +134,7 @@
 	<target name="unzip" depends="init" unless="dontUnzip">
 		<untar src="${eclipseDist}" dest="${buildDirectory}" compression="gzip"/>
 		<unzip src="${rseDist}" dest="${buildDirectory}"/>
-		<copy file="${pdeSvnJar}" todir="${buildDirectory}/plugins"/>
+		<copy file="${pdeSvnJar}" todir="${buildDirectory}/eclipse/plugins"/>
 	</target>
 	
 	<target name="zips" depends="init,unzip">

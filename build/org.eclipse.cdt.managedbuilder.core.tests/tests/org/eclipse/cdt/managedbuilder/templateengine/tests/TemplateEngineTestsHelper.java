@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007 Symbian Software Limited and others.
+ * Copyright (c) 2010 Symbian Software Limited and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -47,8 +47,8 @@ import org.w3c.dom.NamedNodeMap;
 public class TemplateEngineTestsHelper {
 	
 	public static final String LOGGER_FILE_NAME="TemplateEngineTests";	//$NON-NLS-1$
-	private static List projectTypes = new ArrayList();
-	private static List projectTypeNames = new ArrayList();
+	private static List<IProjectType> projectTypes = new ArrayList<IProjectType>();
+	private static List<String> projectTypeNames = new ArrayList<String>();
 	
 	/**
 	 * get the url of a xml template, by passing the xml file name.
@@ -70,9 +70,9 @@ public class TemplateEngineTestsHelper {
 	}
 	
 	public static int getChildCount(TemplateDescriptor templateDescriptor, String propertyGroupID){
-		List list = templateDescriptor.getPropertyGroupList();
+		List<Element> list = templateDescriptor.getPropertyGroupList();
 		for (int i = 0, l = list.size(); i < l; i++) {
-			Element element = (Element) list.get(i);
+			Element element = list.get(i);
 			NamedNodeMap attributes = element.getAttributes();
 			for (int j = 0, l1 = attributes.getLength(); j < l1; j++) {
 				String value = attributes.item(j).getNodeValue();
@@ -108,12 +108,12 @@ public class TemplateEngineTestsHelper {
 		workspace.setDescription(workspaceDesc);
 	}
 	
-	public static List getProjectTypes() {
+	public static List<IProjectType> getProjectTypes() {
 		populateProjectTypes();
 		return projectTypes;
 	}
 
-	public static List getProjectTypeNames() {
+	public static List<String> getProjectTypeNames() {
 		populateProjectTypes();
 		return projectTypeNames;
 	}
@@ -138,9 +138,9 @@ public class TemplateEngineTestsHelper {
 					IConfiguration[] configs = type.getConfigurations();
 					for (int j = 0; j < configs.length; ++j) {
 						IToolChain tc = configs[j].getToolChain();
-						List osList = Arrays.asList(tc.getOSList());
+						List<String> osList = Arrays.asList(tc.getOSList());
 						if (osList.contains("all") || osList.contains(os)) {	//$NON-NLS-1$
-							List archList = Arrays.asList(tc.getArchList());
+							List<String> archList = Arrays.asList(tc.getArchList());
 							if (archList.contains("all") || archList.contains(arch)) { //$NON-NLS-1$
 								projectTypes.add(type);
 								break;
@@ -151,8 +151,8 @@ public class TemplateEngineTestsHelper {
 			}
 		}
 
-		for (Iterator iter = projectTypes.iterator(); iter.hasNext();) {
-			projectTypeNames.add(((IProjectType)iter.next()).getName());
+		for (Iterator<IProjectType> iter = projectTypes.iterator(); iter.hasNext();) {
+			projectTypeNames.add(iter.next().getName());
 		}
 	}
 	

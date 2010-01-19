@@ -192,8 +192,7 @@ public class CProjectDescriptionManager implements ICProjectDescriptionManager {
 			try {
 				monitor.beginTask(fName, fRunnables.size());
 
-				for(Iterator<IWorkspaceRunnable> iter = fRunnables.iterator(); iter.hasNext();){
-					IWorkspaceRunnable r = iter.next();
+				for (IWorkspaceRunnable r : fRunnables) {
 					IProgressMonitor subMonitor = new SubProgressMonitor(monitor, 1);
 					try {
 						r.run(subMonitor);
@@ -288,18 +287,18 @@ public class CProjectDescriptionManager implements ICProjectDescriptionManager {
 	}
 
 	/**
-	 * 
+	 *
 	 * @param from 	Project to move the description from
 	 * @param to	Project where the description is moved to
-	 * @return		<b>ICProjectDescription</b> - non serialized, modified, writable 
-	 * project description. To serialize, call <code>setProjectDescription()</code> 
-	 * 
+	 * @return		<b>ICProjectDescription</b> - non serialized, modified, writable
+	 * project description. To serialize, call <code>setProjectDescription()</code>
+	 *
 	 */
 	public ICProjectDescription projectMove(IProject from, IProject to) {
 		CProjectDescriptionStorageManager.getInstance().projectMove(from, to);
 
 		int flags = CProjectDescriptionManager.INTERNAL_GET_IGNORE_CLOSE |
-					CProjectDescriptionManager.GET_WRITABLE;
+					ICProjectDescriptionManager.GET_WRITABLE;
 		CProjectDescription des = (CProjectDescription)getProjectDescription(to, flags);
 		// set configuration descriptions to "writable" state
 		for (ICConfigurationDescription cfgDes : des.getConfigurations()) {
@@ -513,8 +512,8 @@ public class CProjectDescriptionManager implements ICProjectDescriptionManager {
 				projects = wsp.getRoot().getProjects();
 			final ICProjectDescription dess[] = new ICProjectDescription[projects.length];
 			int num = 0;
-			for(int i = 0; i < projects.length; i++){
-				ICProjectDescription des = getProjectDescription(projects[i], false, true);
+			for (IProject project : projects) {
+				ICProjectDescription des = getProjectDescription(project, false, true);
 				if(des != null)
 					dess[num++] = des;
 			}
@@ -527,8 +526,7 @@ public class CProjectDescriptionManager implements ICProjectDescriptionManager {
 					public void run(IProgressMonitor monitor) throws CoreException {
 						monitor.beginTask(SettingsModelMessages.getString("CProjectDescriptionManager.13"), fi[0]); //$NON-NLS-1$
 
-						for(int i = 0; i < dess.length; i++){
-							ICProjectDescription des = dess[i];
+						for (ICProjectDescription des : dess) {
 							if(des == null)
 								break;
 							IProgressMonitor subMonitor = new SubProgressMonitor(monitor, 1);
@@ -553,10 +551,10 @@ public class CProjectDescriptionManager implements ICProjectDescriptionManager {
 	public ICProjectConverter getConverter(IProject project, String oldOwnerId, ICProjectDescription des){
 		CProjectConverterDesciptor[] converterDess = getConverterDescriptors();
 		ICProjectConverter converter = null;
-		for(int i = 0; i < converterDess.length; i++){
-			if(converterDess[i].canConvertProject(project, oldOwnerId, des)){
+		for (CProjectConverterDesciptor converterDes : converterDess) {
+			if(converterDes.canConvertProject(project, oldOwnerId, des)){
 				try {
-					converter = converterDess[i].getConverter();
+					converter = converterDes.getConverter();
 				} catch (CoreException e) {
 				}
 				if(converter != null)
@@ -927,10 +925,10 @@ public class CProjectDescriptionManager implements ICProjectDescriptionManager {
 	}
 
 	public ICLanguageSetting findLanguageSettingForContentTypeId(String id, ICLanguageSetting settings[]/*, boolean src*/){
-		for(int i = 0; i < settings.length; i++){
-			String ids[] = settings[i].getSourceContentTypeIds();
+		for (ICLanguageSetting setting : settings) {
+			String ids[] = setting.getSourceContentTypeIds();
 			if(ListComparator.indexOf(id, ids) != -1)
-				return settings[i];
+				return setting;
 		}
 		return null;
 	}
@@ -943,8 +941,8 @@ public class CProjectDescriptionManager implements ICProjectDescriptionManager {
 			if(exts != null && exts.length != 0){
 				List<ICLanguageSetting> list = new ArrayList<ICLanguageSetting>();
 				ICLanguageSetting setting;
-				for(int i = 0; i < exts.length; i++){
-					setting = findLanguageSettingForExtension(exts[i], settings/*, src*/);
+				for (String ext : exts) {
+					setting = findLanguageSettingForExtension(ext, settings/*, src*/);
 					if(setting != null)
 						list.add(setting);
 				}
@@ -955,9 +953,7 @@ public class CProjectDescriptionManager implements ICProjectDescriptionManager {
 	}
 
 	public ICLanguageSetting findLanguageSettingForExtension(String ext, ICLanguageSetting settings[]/*, boolean src*/){
-		ICLanguageSetting setting;
-		for(int i = 0; i < settings.length; i++){
-			setting = settings[i];
+		for (ICLanguageSetting setting : settings) {
 			String exts[] = setting.getSourceExtensions();
 /*			if(src){
 				if(setting.getSourceContentType() == null){
@@ -970,8 +966,8 @@ public class CProjectDescriptionManager implements ICProjectDescriptionManager {
 			}
 */
 			if(exts != null && exts.length != 0){
-				for(int j = 0; j < exts.length; j++){
-					if(ext.equals(exts[j]))
+				for (String ex: exts) {
+					if(ext.equals(ex))
 						return setting;
 				}
 			}
@@ -992,8 +988,7 @@ public class CProjectDescriptionManager implements ICProjectDescriptionManager {
 		if(rootElement != null){
 			ICStorageElement children[] = rootElement.getChildren();
 
-			for(int i = 0; i < children.length; i++){
-				ICStorageElement el = children[i];
+			for (ICStorageElement el : children) {
 				if(CONFIGURATION.equals(el.getName())){
 					String id = el.getAttribute(CConfigurationSpecSettings.ID);
 					if(id != null)
@@ -1016,10 +1011,10 @@ public class CProjectDescriptionManager implements ICProjectDescriptionManager {
 		ICStorageElement children[] = rootElement.getChildren();
 		ICStorageElement element = null;
 
-		for(int i = 0; i < children.length; i++){
-			if(CONFIGURATION.equals(children[i].getName())
-					&& cfgId.equals(children[i].getAttribute(CConfigurationSpecSettings.ID))){
-				element = children[i];
+		for (ICStorageElement el : children) {
+			if(CONFIGURATION.equals(el.getName())
+					&& cfgId.equals(el.getAttribute(CConfigurationSpecSettings.ID))){
+				element = el;
 				break;
 			}
 		}
@@ -1068,10 +1063,10 @@ public class CProjectDescriptionManager implements ICProjectDescriptionManager {
 		if(rootElement != null){
 			ICStorageElement children[] = rootElement.getChildren();
 
-			for(int i = 0; i < children.length; i++){
-				if(CONFIGURATION.equals(children[i].getName())
-						&& cfgId.equals(children[i].getAttribute(CConfigurationSpecSettings.ID))){
-					rootElement.removeChild(children[i]);
+			for (ICStorageElement el: children) {
+				if(CONFIGURATION.equals(el.getName())
+						&& cfgId.equals(el.getAttribute(CConfigurationSpecSettings.ID))){
+					rootElement.removeChild(el);
 					break;
 				}
 			}
@@ -1152,8 +1147,8 @@ public class CProjectDescriptionManager implements ICProjectDescriptionManager {
 			IExtension exts[] = extensionPoint.getExtensions();
 			fProviderMap = new HashMap<String, CConfigurationDataProviderDescriptor>(exts.length);
 
-			for(int i = 0; i < exts.length; i++){
-				CConfigurationDataProviderDescriptor des = new CConfigurationDataProviderDescriptor(exts[i]);
+			for (IExtension ext : exts) {
+				CConfigurationDataProviderDescriptor des = new CConfigurationDataProviderDescriptor(ext);
 				fProviderMap.put(des.getId(), des);
 			}
 		}
@@ -1278,19 +1273,19 @@ public class CProjectDescriptionManager implements ICProjectDescriptionManager {
 
 		if(delta.getDeltaKind() == ICDescriptionDelta.CHANGED){
 			ICConfigurationDescription[] cfgs = newDescription.getConfigurations();
-			for(int i = 0; i < cfgs.length; i++){
-				ICConfigurationDescription oldCfg = oldDescription.getConfigurationById(cfgs[i].getId());
-				CProjectDescriptionDelta cfgDelta = createDelta(cfgs[i], oldCfg);
+			for (ICConfigurationDescription cfg : cfgs) {
+				ICConfigurationDescription oldCfg = oldDescription.getConfigurationById(cfg.getId());
+				CProjectDescriptionDelta cfgDelta = createDelta(cfg, oldCfg);
 				if(cfgDelta != null){
 					delta.addChild(cfgDelta);
 				}
 			}
 
 			cfgs = oldDescription.getConfigurations();
-			for(int i = 0; i < cfgs.length; i++){
-				ICConfigurationDescription newCfg = newDescription.getConfigurationById(cfgs[i].getId());
+			for (ICConfigurationDescription cfg : cfgs) {
+				ICConfigurationDescription newCfg = newDescription.getConfigurationById(cfg.getId());
 				if(newCfg == null)
-					delta.addChild(createDelta(null, cfgs[i]));
+					delta.addChild(createDelta(null, cfg));
 			}
 
 			if(checkCfgChange(newDescription, oldDescription, true))
@@ -1344,10 +1339,10 @@ public class CProjectDescriptionManager implements ICProjectDescriptionManager {
 	private ICDescriptionDelta findDelta(String id, ICDescriptionDelta delta){
 		ICDescriptionDelta children[] = delta.getChildren();
 		ICSettingObject obj;
-		for(int i = 0; i < children.length; i++){
-			obj = children[i].getSetting();
+		for (ICDescriptionDelta child : children) {
+			obj = child.getSetting();
 			if(obj.getId().equals(id))
-				return children[i];
+				return child;
 		}
 		return null;
 	}
@@ -1408,42 +1403,42 @@ public class CProjectDescriptionManager implements ICProjectDescriptionManager {
 		IInternalCCfgInfo oldInfo = (IInternalCCfgInfo)oldCfg;
 		if(delta.getDeltaKind() == ICDescriptionDelta.CHANGED){
 			ICFolderDescription[] foDess = newCfg.getFolderDescriptions();
-			for(int i = 0; i < foDess.length; i++){
-				ICResourceDescription oldDes = oldCfg.getResourceDescription(foDess[i].getPath(), true);
+			for (ICFolderDescription foDes : foDess) {
+				ICResourceDescription oldDes = oldCfg.getResourceDescription(foDes.getPath(), true);
 				if(oldDes != null && oldDes.getType() == ICSettingBase.SETTING_FOLDER){
-					CProjectDescriptionDelta foDelta = createDelta(foDess[i], (ICFolderDescription)oldDes);
+					CProjectDescriptionDelta foDelta = createDelta(foDes, (ICFolderDescription)oldDes);
 					if(foDelta != null)
 						delta.addChild(foDelta);
 				} else {
-					delta.addChild(createDelta(foDess[i], null));
+					delta.addChild(createDelta(foDes, null));
 				}
 			}
 
 			foDess = oldCfg.getFolderDescriptions();
-			for(int i = 0; i < foDess.length; i++){
-				ICResourceDescription newDes = newCfg.getResourceDescription(foDess[i].getPath(), true);
+			for (ICFolderDescription foDes : foDess) {
+				ICResourceDescription newDes = newCfg.getResourceDescription(foDes.getPath(), true);
 				if(newDes == null || newDes.getType() != ICSettingBase.SETTING_FOLDER){
-					delta.addChild(createDelta(null, foDess[i]));
+					delta.addChild(createDelta(null, foDes));
 				}
 			}
 
 			ICFileDescription[] fiDess = newCfg.getFileDescriptions();
-			for(int i = 0; i < fiDess.length; i++){
-				ICResourceDescription oldDes = oldCfg.getResourceDescription(fiDess[i].getPath(), true);
+			for (ICFileDescription fiDes : fiDess) {
+				ICResourceDescription oldDes = oldCfg.getResourceDescription(fiDes.getPath(), true);
 				if(oldDes != null && oldDes.getType() == ICSettingBase.SETTING_FILE){
-					CProjectDescriptionDelta fiDelta = createDelta(fiDess[i], (ICFileDescription)oldDes);
+					CProjectDescriptionDelta fiDelta = createDelta(fiDes, (ICFileDescription)oldDes);
 					if(fiDelta != null)
 						delta.addChild(fiDelta);
 				} else {
-					delta.addChild(createDelta(fiDess[i], null));
+					delta.addChild(createDelta(fiDes, null));
 				}
 			}
 
 			fiDess = oldCfg.getFileDescriptions();
-			for(int i = 0; i < fiDess.length; i++){
-				ICResourceDescription newDes = newCfg.getResourceDescription(fiDess[i].getPath(), true);
+			for (ICFileDescription fiDes : fiDess) {
+				ICResourceDescription newDes = newCfg.getResourceDescription(fiDes.getPath(), true);
 				if(newDes == null || newDes.getType() != ICSettingBase.SETTING_FILE){
-					delta.addChild(createDelta(null, fiDess[i]));
+					delta.addChild(createDelta(null, fiDes));
 				}
 			}
 
@@ -1469,12 +1464,10 @@ public class CProjectDescriptionManager implements ICProjectDescriptionManager {
 			if(newEntries.length > oldEntries.length){
 				delta.addChangeFlags(ICDescriptionDelta.SOURCE_ADDED);
 			} else {
-				ICSourceEntry newEntry;
-				for(int i = 0; i < newEntries.length; i++){
+				for (ICSourceEntry newEntry : newEntries) {
 					boolean found = false;
-					newEntry = newEntries[i];
-					for(int j = 0; j < oldEntries.length; j++){
-						if(newEntry.equals(oldEntries[j])){
+					for (ICSourceEntry oldEntry : oldEntries) {
+						if(newEntry.equals(oldEntry)){
 							found = true;
 							break;
 						}
@@ -1490,12 +1483,10 @@ public class CProjectDescriptionManager implements ICProjectDescriptionManager {
 			if(oldEntries.length > newEntries.length){
 				delta.addChangeFlags(ICDescriptionDelta.SOURCE_REMOVED);
 			} else {
-				ICSourceEntry oldEntry;
-				for(int i = 0; i < oldEntries.length; i++){
+				for (ICSourceEntry oldEntry : oldEntries) {
 					boolean found = false;
-					oldEntry = oldEntries[i];
-					for(int j = 0; j < newEntries.length; j++){
-						if(oldEntry.equals(newEntries[j])){
+					for (ICSourceEntry newEntry : newEntries) {
+						if(oldEntry.equals(newEntry)){
 							found = true;
 							break;
 						}
@@ -1535,8 +1526,8 @@ public class CProjectDescriptionManager implements ICProjectDescriptionManager {
 		int flags = 0;
 		int addedRemoved = ICDescriptionDelta.EXTERNAL_SETTINGS_ADDED | ICDescriptionDelta.EXTERNAL_SETTINGS_REMOVED;
 		if(deltas != null ){
-			for(int i = 0; i < deltas.length; i++){
-				ICSettingEntry[][] d = deltas[i].getEntriesDelta();
+			for (ExtSettingsDelta dt : deltas) {
+				ICSettingEntry[][] d = dt.getEntriesDelta();
 				if(d[0] != null)
 					flags |= ICDescriptionDelta.EXTERNAL_SETTINGS_ADDED;
 				if(d[1] != null)
@@ -1609,20 +1600,17 @@ public class CProjectDescriptionManager implements ICProjectDescriptionManager {
 			List<ICLanguageSetting> oldList = new ArrayList<ICLanguageSetting>(Arrays.asList(oldLss));
 			List<ICLanguageSetting[]> matched = sortSettings(newList, oldList);
 
-			for(Iterator<ICLanguageSetting[]> iter = matched.iterator(); iter.hasNext();){
-				ICLanguageSetting[] match = iter.next();
+			for (ICLanguageSetting[] match : matched) {
 				CProjectDescriptionDelta lsDelta = createDelta(match[0], match[1]);
 				if(lsDelta != null)
 					delta.addChild(lsDelta);
 			}
 
-			for(Iterator<ICLanguageSetting> iter = newList.iterator(); iter.hasNext();){
-				ICLanguageSetting added = iter.next();
+			for (ICLanguageSetting added : newList) {
 				delta.addChild(createDelta(added, null));
 			}
 
-			for(Iterator<ICLanguageSetting> iter = oldList.iterator(); iter.hasNext();){
-				ICLanguageSetting removed = iter.next();
+			for (ICLanguageSetting removed : oldList) {
 				delta.addChild(createDelta(null, removed));
 			}
 
@@ -1766,12 +1754,10 @@ public class CProjectDescriptionManager implements ICProjectDescriptionManager {
 				delta.addChangeFlags(ICDescriptionDelta.LANGUAGE_ID);
 
 			int kinds[] = KindBasedStore.getLanguageEntryKinds();
-			int kind;
 			int addedKinds = 0;
 			int removedKinds = 0;
 			int reorderedKinds = 0;
-			for(int i = 0; i < kinds.length; i++){
-				kind = kinds[i];
+			for (int kind : kinds) {
 				ICLanguageSettingEntry newEntries[] = newLs.getSettingEntries(kind);
 				ICLanguageSettingEntry oldEntries[] = oldLs.getSettingEntries(kind);
 				boolean[] change = calculateSettingsChanges(newEntries, oldEntries);
@@ -1958,10 +1944,8 @@ public class CProjectDescriptionManager implements ICProjectDescriptionManager {
 			}
 
 			ICDescriptionDelta children[] = cfgDelta.getChildren();
-			ICDescriptionDelta child;
 			int type;
-			for(int i = 0; i < children.length; i++){
-				child = children[i];
+			for (ICDescriptionDelta child : children) {
 				type = child.getSettingType();
 				if(type == ICSettingBase.SETTING_FILE || type == ICSettingBase.SETTING_FOLDER){
 					generateCElementDeltasFromResourceDelta(cProject, child, list);
@@ -2022,7 +2006,7 @@ public class CProjectDescriptionManager implements ICProjectDescriptionManager {
 			CElementDelta ceRcDelta = new CElementDelta(el.getCModel());
 			ceRcDelta.changed(el, ICElementDelta.F_MODIFIERS);
 			list.add(ceRcDelta);
-			
+
 			if(rc.getType() == IResource.FILE){
 				String fileName = path.lastSegment();
 				ICLanguageSetting newLS = getLanguageSetting(newRcDes, fileName);
@@ -2035,13 +2019,13 @@ public class CProjectDescriptionManager implements ICProjectDescriptionManager {
 					return;
 				}
 				ICFolderDescription newFoDes = (ICFolderDescription)newRcDes;
-				
+
 				if(oldRcDes.getType() != ICSettingBase.SETTING_FOLDER){
 					CCorePlugin.log(new Status(IStatus.ERROR, CCorePlugin.PLUGIN_ID, SettingsModelMessages.getString("CProjectDescriptionManager.wrongTypeOfResourceDescription")+oldRcDes)); //$NON-NLS-1$
 					return;
 				}
 				ICFolderDescription oldFoDes = (ICFolderDescription)oldRcDes;
-				
+
 				ICDescriptionDelta folderDelta = createDelta(newFoDes, oldFoDes);
 				if (folderDelta != null) {
 					for (ICDescriptionDelta child : folderDelta.getChildren()) {
@@ -2082,25 +2066,25 @@ public class CProjectDescriptionManager implements ICProjectDescriptionManager {
 		int flags = 0;
 		int kindsArray[] = kindsToArray(languageDeltaKinds);
 
-		for(int i = 0; i < kindsArray.length; i++){
-			switch(kindsArray[i]){
-			case ICLanguageSettingEntry.INCLUDE_PATH:
+		for (int element : kindsArray) {
+			switch(element){
+			case ICSettingEntry.INCLUDE_PATH:
 				flags |= ICElementDelta.F_CHANGED_PATHENTRY_INCLUDE;
 				break;
-			case ICLanguageSettingEntry.INCLUDE_FILE:
+			case ICSettingEntry.INCLUDE_FILE:
 				flags |= ICElementDelta.F_CHANGED_PATHENTRY_INCLUDE;
 				break;
-			case ICLanguageSettingEntry.MACRO:
+			case ICSettingEntry.MACRO:
 				flags |= ICElementDelta.F_CHANGED_PATHENTRY_MACRO;
 				break;
-			case ICLanguageSettingEntry.MACRO_FILE:
+			case ICSettingEntry.MACRO_FILE:
 				flags |= ICElementDelta.F_CHANGED_PATHENTRY_MACRO;
 				break;
-			case ICLanguageSettingEntry.LIBRARY_PATH:
+			case ICSettingEntry.LIBRARY_PATH:
 				flags |= added ? ICElementDelta.F_ADDED_PATHENTRY_LIBRARY
 						: ICElementDelta.F_REMOVED_PATHENTRY_LIBRARY;
 				break;
-			case ICLanguageSettingEntry.LIBRARY_FILE:
+			case ICSettingEntry.LIBRARY_FILE:
 				flags |= added ? ICElementDelta.F_ADDED_PATHENTRY_LIBRARY
 						: ICElementDelta.F_REMOVED_PATHENTRY_LIBRARY;
 				break;
@@ -2113,9 +2097,9 @@ public class CProjectDescriptionManager implements ICProjectDescriptionManager {
 		int allKinds[] = KindBasedStore.getLanguageEntryKinds();
 		int kindsArray[] = new int[allKinds.length];
 		int num = 0;
-		for(int i = 0; i < allKinds.length; i++){
-			if((allKinds[i] & kinds) != 0){
-				kindsArray[num++] = allKinds[i];
+		for (int kind : allKinds) {
+			if((kind & kinds) != 0){
+				kindsArray[num++] = kind;
 			}
 		}
 
@@ -2153,9 +2137,9 @@ public class CProjectDescriptionManager implements ICProjectDescriptionManager {
 			return;
 
 		ICDescriptionDelta cfgDeltas[] = delta.getChildren();
-		for(int i = 0; i < cfgDeltas.length; i++){
-			if(cfgDeltas[i].getDeltaKind() == ICDescriptionDelta.REMOVED){
-				CConfigurationDescriptionCache des = (CConfigurationDescriptionCache)cfgDeltas[i].getOldSetting();
+		for (ICDescriptionDelta cfgDelta : cfgDeltas) {
+			if(cfgDelta.getDeltaKind() == ICDescriptionDelta.REMOVED){
+				CConfigurationDescriptionCache des = (CConfigurationDescriptionCache)cfgDelta.getOldSetting();
 				CConfigurationData data = des.getConfigurationData();
 				try {
 					removeData(des, data, null);
@@ -2303,8 +2287,7 @@ public class CProjectDescriptionManager implements ICProjectDescriptionManager {
 
 		if(el != null){
 			ICStorageElement children[] = el.getChildren();
-			for(int i = 0; i < children.length; i++){
-				ICStorageElement child = children[i];
+			for (ICStorageElement child : children) {
 				if(PREFERENCE_BUILD_SYSTEM_ELEMENT.equals(child.getName())){
 					if(buildSystemId.equals(child.getAttribute(ID))){
 						cfgEl = child;
@@ -2329,8 +2312,7 @@ public class CProjectDescriptionManager implements ICProjectDescriptionManager {
 
 		ICStorageElement children[] = el.getChildren();
 		ICStorageElement cfgEl = null;
-		for(int i = 0; i < children.length; i++){
-			ICStorageElement child = children[i];
+		for (ICStorageElement child : children) {
 			if(PREFERENCE_BUILD_SYSTEM_ELEMENT.equals(child.getName())){
 				if(buildSystemId.equals(child.getAttribute(ID))){
 					cfgEl = child;
@@ -2487,8 +2469,7 @@ public class CProjectDescriptionManager implements ICProjectDescriptionManager {
 	static private HashMap<HashSet<String>, CLanguageData> createExtSetToLDataMap(IProject project, CLanguageData[] lDatas){
 		HashMap<HashSet<String>, CLanguageData> map = new HashMap<HashSet<String>, CLanguageData>();
 
-		for(int i = 0; i < lDatas.length; i++){
-			CLanguageData lData = lDatas[i];
+		for (CLanguageData lData : lDatas) {
 			String[] exts = CDataUtil.getSourceExtensions(project, lData);
 			HashSet<String> set = new HashSet<String>(Arrays.asList(exts));
 			map.put(set, lData);
@@ -2498,13 +2479,12 @@ public class CProjectDescriptionManager implements ICProjectDescriptionManager {
 	}
 
 	static boolean removeNonCustomSettings(IProject project, CConfigurationData data){
-		PathSettingsContainer cr = CDataUtil.createRcDataHolder(data);
-		PathSettingsContainer[] crs = cr.getChildren(false);
-		PathSettingsContainer child, parent;
+		PathSettingsContainer cont = CDataUtil.createRcDataHolder(data);
+		PathSettingsContainer[] children = cont.getChildren(false);
+		PathSettingsContainer parent;
 		CResourceData childRcData;
 		boolean modified = false;
-		for(int i = 0; i < crs.length; i++){
-			child = crs[i];
+		for (PathSettingsContainer child : children) {
 			childRcData = (CResourceData)child.getValue();
 			if(childRcData.getType() == ICSettingBase.SETTING_FOLDER){
 				CResourceData parentRcData = null;
@@ -2599,9 +2579,7 @@ public class CProjectDescriptionManager implements ICProjectDescriptionManager {
 			return false;
 
 		int kinds[] = KindBasedStore.getLanguageEntryKinds();
-		int kind;
-		for(int i = 0; i < kinds.length; i++){
-			kind = kinds[i];
+		for (int kind : kinds) {
 			ICLanguageSettingEntry entries1[] = lData1.getEntries(kind);
 			ICLanguageSettingEntry entries2[] = lData2.getEntries(kind);
 			if(!Arrays.equals(entries1, entries2))
@@ -2703,9 +2681,9 @@ public class CProjectDescriptionManager implements ICProjectDescriptionManager {
 	private ICStorageElement getCProjectDescriptionPreferencesElement(boolean createIfNotFound, boolean readOnly) throws CoreException{
 		ICStorageElement el = getPreferenceStorage(PREFERENCES_STORAGE, MODULE_ID, createIfNotFound, readOnly);
 		ICStorageElement[] children = el.getChildren();
-		for(int i = 0; i < children.length; i++){
-			if(PREFERENCES_ELEMENT.equals(children[i].getName()))
-				return children[i];
+		for (ICStorageElement child : children) {
+			if(PREFERENCES_ELEMENT.equals(child.getName()))
+				return child;
 		}
 		if(createIfNotFound)
 			return el.createChild(PREFERENCES_ELEMENT);

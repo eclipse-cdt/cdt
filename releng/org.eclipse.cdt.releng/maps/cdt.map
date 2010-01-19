@@ -147,4 +147,4 @@ plugin@org.eclipse.tm.tcf.core=SVN,url=http://dev.eclipse.org/svnroot/dsdp/org.e
 plugin@org.eclipse.tm.tcf.debug=SVN,url=http://dev.eclipse.org/svnroot/dsdp/org.eclipse.tm.tcf,tag=trunk/plugins,path=org.eclipse.tm.tcf.debug
 plugin@org.eclipse.tm.tcf.debug.ui=SVN,url=http://dev.eclipse.org/svnroot/dsdp/org.eclipse.tm.tcf,tag=trunk/plugins,path=org.eclipse.tm.tcf.debug.ui
 plugin@org.eclipse.tm.tcf.rse=SVN,url=http://dev.eclipse.org/svnroot/dsdp/org.eclipse.tm.tcf,tag=trunk/plugins,path=org.eclipse.tm.tcf.rse
-feature@org.eclipse.tm.tcf.feature=SVN,url=http://dev.eclipse.org/svnroot/dsdp/org.eclipse.tm.tcf/trunk/features/org.eclipse.tm.tcf.feature,tag=trunk
+feature@org.eclipse.tm.tcf.feature=SVN,trunk,http://dev.eclipse.org/svnroot/dsdp/org.eclipse.tm.tcf,,features/org.eclipse.tm.tcf.feature

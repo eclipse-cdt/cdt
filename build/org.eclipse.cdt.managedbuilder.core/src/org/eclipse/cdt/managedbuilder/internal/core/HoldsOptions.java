@@ -652,12 +652,14 @@ public abstract class HoldsOptions extends BuildObject implements IHoldsOptions,
 		IOption options[] = getOptions();
 		
 		for (IOption opt : options) {
-			Option option = (Option)opt;
-			BooleanExpressionApplicabilityCalculator calc = 
-				option.getBooleanExpressionCalculator(extensions);
-				
-			if(calc != null)
-				calc.adjustOption(getParentResourceInfo(),this,option, extensions);
+			if (opt.isExtensionElement()) {
+				Option option = (Option)opt;
+				BooleanExpressionApplicabilityCalculator calc = 
+					option.getBooleanExpressionCalculator(extensions);
+					
+				if(calc != null)
+					calc.adjustOption(getParentResourceInfo(),this,option, extensions);
+			}
 		}
 	}
 

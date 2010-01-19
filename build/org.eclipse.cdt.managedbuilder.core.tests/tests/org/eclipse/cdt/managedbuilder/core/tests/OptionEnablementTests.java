@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005 Intel Corporation and others.
+ * Copyright (c) 2005, 2010 Intel Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -14,24 +14,37 @@ import junit.framework.Test;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
 
+import org.eclipse.cdt.core.model.CoreModel;
+import org.eclipse.cdt.core.settings.model.ICProjectDescription;
 import org.eclipse.cdt.managedbuilder.core.BuildException;
 import org.eclipse.cdt.managedbuilder.core.IBuildObject;
 import org.eclipse.cdt.managedbuilder.core.IConfiguration;
+import org.eclipse.cdt.managedbuilder.core.IFileInfo;
+import org.eclipse.cdt.managedbuilder.core.IFolderInfo;
 import org.eclipse.cdt.managedbuilder.core.IHoldsOptions;
 import org.eclipse.cdt.managedbuilder.core.IManagedBuildInfo;
 import org.eclipse.cdt.managedbuilder.core.IManagedOptionValueHandler;
 import org.eclipse.cdt.managedbuilder.core.IOption;
 import org.eclipse.cdt.managedbuilder.core.IOptionApplicability;
 import org.eclipse.cdt.managedbuilder.core.IResourceConfiguration;
+import org.eclipse.cdt.managedbuilder.core.IResourceInfo;
 import org.eclipse.cdt.managedbuilder.core.ITool;
 import org.eclipse.cdt.managedbuilder.core.ManagedBuildManager;
 import org.eclipse.cdt.managedbuilder.testplugin.ManagedBuildTestHelper;
 import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IProject;
 
-public class OptionEnablementTests extends TestCase 
-								implements IManagedOptionValueHandler,
-											IOptionApplicability{
+public class OptionEnablementTests extends TestCase implements IManagedOptionValueHandler, IOptionApplicability {
+	private static final String PROJECT_TYPE = "test.four.dot.zero.cdt.managedbuild.target.gnu.exe";
+	private static final String CFG_NAME = "Test 4.0 ConfigName.Dbg";
+	private static final String TOOL_ID = "test.four.dot.zero.cdt.managedbuild.tool.gnu.c.compiler";
+	private static final String OPTION_ID = "test.gnu.c.compiler.option.optimization.level";
+	private static final String OPTION_VALUE_ENABLEMENT = "test.gnu.c.optimization.level.none";
+	private static final String OPTION_VALUE_ROOT = "test.value.root";
+	private static final String OPTION_VALUE_FOLDER = "test.value.folder";
+	private static final String OPTION_VALUE_FILE = "test.value.file";
+	
 	private static boolean fEnUiVisible;
 	private static boolean fEnUiEnabled;
 	private static boolean fEnCmdUsed;
@@ -190,22 +203,22 @@ public class OptionEnablementTests extends TestCase
 		return null;
 	}
 
-	private IOption setOption(IBuildObject cfg, IHoldsOptions holder, String id, String value[]){
-		return setOption(cfg, holder, holder.getOptionBySuperClassId(id), value);
-	}
-
-	private IOption setOption(IBuildObject cfg, IHoldsOptions holder, IOption option, String value[]){
-		try{
-		if(cfg instanceof IConfiguration)
-			return ((IConfiguration)cfg).setOption(holder, option, value);
-		else if(cfg instanceof IResourceConfiguration)
-			return ((IResourceConfiguration)cfg).setOption(holder, option, value);
-		} catch(BuildException e){
-			fail(e.getLocalizedMessage());
-		}
-		fail("wrong arg");
-		return null;
-	}
+//	private IOption setOption(IBuildObject cfg, IHoldsOptions holder, String id, String value[]){
+//		return setOption(cfg, holder, holder.getOptionBySuperClassId(id), value);
+//	}
+//
+//	private IOption setOption(IBuildObject cfg, IHoldsOptions holder, IOption option, String value[]){
+//		try{
+//		if(cfg instanceof IConfiguration)
+//			return ((IConfiguration)cfg).setOption(holder, option, value);
+//		else if(cfg instanceof IResourceConfiguration)
+//			return ((IResourceConfiguration)cfg).setOption(holder, option, value);
+//		} catch(BuildException e){
+//			fail(e.getLocalizedMessage());
+//		}
+//		fail("wrong arg");
+//		return null;
+//	}
 
 	private void doTestEnablement(IBuildObject cfg){
 		ITool tool = getTool(cfg, "enablement.this.child_1.2.3");
@@ -541,4 +554,243 @@ public class OptionEnablementTests extends TestCase
 			fail(e.getLocalizedMessage());
 		}
 	}
+	
+	/**
+	 * This method assumes that folder has only one qualified tool.
+	 */
+	private IOption getOptionForFolder(IFolderInfo rcInfo, String toolId, String optionId) {
+		ITool[] tools = null;
+		tools = rcInfo.getToolsBySuperClassId(toolId);
+		assertNotNull(tools);
+		assertEquals(1, tools.length);
+		ITool tool = tools[0];
+		assertNotNull(tool);
+
+		IOption option = tool.getOptionBySuperClassId(optionId);
+		return option;
+	}
+
+	/**
+	 * This method assumes that file has only one tool.
+	 */
+	private IOption getOptionForFile(IFileInfo rcInfo, String optionId) {
+		ITool[] tools = null;
+		tools = rcInfo.getTools();
+		assertNotNull(tools);
+		assertEquals(1, tools.length);
+		ITool tool = tools[0];
+		assertNotNull(tool);
+		
+		IOption option = tool.getOptionBySuperClassId(optionId);
+		return option;
+	}
+	
+	public void testEnablement_Bug250686() throws Exception {
+		final String testName = getName();
+		IProject project = ManagedBuildTestHelper.createProject(testName, PROJECT_TYPE);
+		assertNotNull(project);
+		
+		IFolder folder = ManagedBuildTestHelper.createFolder(project, "Folder");
+		assertNotNull(folder);
+
+		IFile file = ManagedBuildTestHelper.createFile(project, "Folder/file.c");
+		assertNotNull(file);
+		
+		ICProjectDescription prjDescription = CoreModel.getDefault().getProjectDescription(project);
+		prjDescription.getConfigurationByName(CFG_NAME);
+		
+		IManagedBuildInfo info = ManagedBuildManager.getBuildInfo(project);
+		IConfiguration cfg = info.getManagedProject().getConfigurations()[0];
+		assertNotNull(cfg);
+		assertEquals(CFG_NAME, cfg.getName());
+		
+		{
+			// Round 1. Test root folder option
+			IFolderInfo rootFolderInfo = cfg.getRootFolderInfo();
+			assertNotNull(rootFolderInfo);
+			
+			IOption option = getOptionForFolder(rootFolderInfo, TOOL_ID, OPTION_ID);
+			assertNotNull(option);
+			assertEquals(OPTION_VALUE_ENABLEMENT, option.getValue());
+			assertFalse(option.isExtensionElement());
+		}
+		
+		{
+			// Round 1. Test subfolder option
+			IResourceInfo folderInfo = cfg.getResourceInfo(folder.getFullPath(), false);
+			assertNotNull(folderInfo);
+			assertTrue(folderInfo instanceof IFolderInfo);
+			
+			IOption option = getOptionForFolder((IFolderInfo) folderInfo, TOOL_ID, OPTION_ID);
+			assertNotNull(option);
+			assertEquals(OPTION_VALUE_ENABLEMENT, option.getValue());
+			assertFalse(option.isExtensionElement());
+		}
+		
+		{
+			// Round 1. Test file option
+			IResourceInfo fileInfo = cfg.getResourceInfo(file.getFullPath(), false);
+			assertNotNull(fileInfo);
+			assertTrue(fileInfo instanceof IFolderInfo);
+			
+			// Option is taken from root folder here
+			IOption option = getOptionForFolder((IFolderInfo) fileInfo, TOOL_ID, OPTION_ID);
+			assertNotNull(option);
+			assertEquals(OPTION_VALUE_ENABLEMENT, option.getValue());
+			assertFalse(option.isExtensionElement());
+		}
+		
+		{
+			// Round 2. Override the value of the option for the root folder
+			IFolderInfo rootFolderInfo = cfg.getRootFolderInfo();
+			ITool[] tools = rootFolderInfo.getToolsBySuperClassId(TOOL_ID);
+			assertEquals(1, tools.length);
+			IOption option = getOptionForFolder(rootFolderInfo, TOOL_ID, OPTION_ID);
+			rootFolderInfo.setOption(tools[0], option, OPTION_VALUE_ROOT);
+		}
+		
+		{
+			// Round 2. Test root folder option
+			IFolderInfo rootFolderInfo = cfg.getRootFolderInfo();
+			assertNotNull(rootFolderInfo);
+			
+			IOption option = getOptionForFolder(rootFolderInfo, TOOL_ID, OPTION_ID);
+			assertNotNull(option);
+			assertEquals(OPTION_VALUE_ROOT, option.getValue());
+			assertFalse(option.isExtensionElement());
+		}
+		
+		{
+			// Round 2. Test subfolder option
+			IResourceInfo folderInfo = cfg.getResourceInfo(folder.getFullPath(), false);
+			assertNotNull(folderInfo);
+			assertTrue(folderInfo instanceof IFolderInfo);
+			
+			IOption option = getOptionForFolder((IFolderInfo) folderInfo, TOOL_ID, OPTION_ID);
+			assertNotNull(option);
+			assertEquals(OPTION_VALUE_ROOT, option.getValue());
+			assertFalse(option.isExtensionElement());
+		}
+		
+		{
+			// Round 2. Test file option
+			IResourceInfo fileInfo = cfg.getResourceInfo(file.getFullPath(), false);
+			assertNotNull(fileInfo);
+			assertTrue(fileInfo instanceof IFolderInfo);
+			
+			// Option is taken from root folder here
+			IOption option = getOptionForFolder((IFolderInfo) fileInfo, TOOL_ID, OPTION_ID);
+			assertNotNull(option);
+			assertEquals(OPTION_VALUE_ROOT, option.getValue());
+			assertFalse(option.isExtensionElement());
+		}
+		
+		{
+			// Round 3. Override the value of the option for the subfolder
+			IFolderInfo folderInfo = cfg.createFolderInfo(folder.getFullPath());
+			assertNotNull(folderInfo);
+			
+			ITool[] tools = folderInfo.getToolsBySuperClassId(TOOL_ID);
+			assertEquals(1, tools.length);
+
+			IOption option = getOptionForFolder(folderInfo, TOOL_ID, OPTION_ID);
+			assertNotNull(option);
+			assertEquals(OPTION_VALUE_ROOT, option.getValue());
+			assertFalse(option.isExtensionElement());
+			
+			folderInfo.setOption(tools[0], option, OPTION_VALUE_FOLDER);
+		}
+		
+		{
+			// Round 3. Test root folder option
+			IFolderInfo rootFolderInfo = cfg.getRootFolderInfo();
+			assertNotNull(rootFolderInfo);
+			
+			IOption option = getOptionForFolder(rootFolderInfo, TOOL_ID, OPTION_ID);
+			assertNotNull(option);
+			assertEquals(OPTION_VALUE_ROOT, option.getValue());
+			assertFalse(option.isExtensionElement());
+		}
+		
+		{
+			// Round 3. Test subfolder option
+			IResourceInfo folderInfo = cfg.getResourceInfo(folder.getFullPath(), false);
+			assertNotNull(folderInfo);
+			assertTrue(folderInfo instanceof IFolderInfo);
+			
+			IOption option = getOptionForFolder((IFolderInfo) folderInfo, TOOL_ID, OPTION_ID);
+			assertNotNull(option);
+			assertEquals(OPTION_VALUE_FOLDER, option.getValue());
+			assertFalse(option.isExtensionElement());
+		}
+		
+		{
+			// Round 3. Test file option
+			IResourceInfo fileInfo = cfg.getResourceInfo(file.getFullPath(), false);
+			assertNotNull(fileInfo);
+			assertTrue(fileInfo instanceof IFolderInfo);
+			
+			// Option is taken from parent folder here
+			IOption option = getOptionForFolder((IFolderInfo) fileInfo, TOOL_ID, OPTION_ID);
+			assertNotNull(option);
+			assertEquals(OPTION_VALUE_FOLDER, option.getValue());
+			assertFalse(option.isExtensionElement());
+		}
+		
+		{
+			// Round 4. Override the value of the option for the file
+			IFileInfo fileInfo = cfg.createFileInfo(file.getFullPath());
+			assertNotNull(fileInfo);
+			
+			ITool[] tools = fileInfo.getTools();
+			assertEquals(1, tools.length);
+			ITool tool = tools[0];
+			assertNotNull(tool);
+			
+			IOption option = getOptionForFile(fileInfo, OPTION_ID);
+			assertNotNull(option);
+			assertEquals(OPTION_VALUE_FOLDER, option.getValue());
+			assertFalse(option.isExtensionElement());
+			
+			fileInfo.setOption(tool, option, OPTION_VALUE_FILE);
+		}
+		
+		{
+			// Round 4. Test root folder option
+			IFolderInfo rootFolderInfo = cfg.getRootFolderInfo();
+			assertNotNull(rootFolderInfo);
+			
+			IOption option = getOptionForFolder(rootFolderInfo, TOOL_ID, OPTION_ID);
+			assertNotNull(option);
+			assertEquals(OPTION_VALUE_ROOT, option.getValue());
+			assertFalse(option.isExtensionElement());
+		}
+		
+		{
+			// Round 4. Test subfolder option
+			IResourceInfo folderInfo = cfg.getResourceInfo(folder.getFullPath(), false);
+			assertNotNull(folderInfo);
+			assertTrue(folderInfo instanceof IFolderInfo);
+			
+			IOption option = getOptionForFolder((IFolderInfo) folderInfo, TOOL_ID, OPTION_ID);
+			assertNotNull(option);
+			assertEquals(OPTION_VALUE_FOLDER, option.getValue());
+			assertFalse(option.isExtensionElement());
+		}
+		
+		{
+			// Round 4. Test file option
+			IResourceInfo fileInfo = cfg.getResourceInfo(file.getFullPath(), false);
+			assertNotNull(fileInfo);
+			assertTrue(fileInfo instanceof IFileInfo);
+			
+			IOption option = getOptionForFile((IFileInfo) fileInfo, OPTION_ID);
+			assertNotNull(option);
+			assertEquals(OPTION_VALUE_FILE, option.getValue());
+			assertFalse(option.isExtensionElement());
+		}
+		
+		ManagedBuildTestHelper.removeProject(testName);
+	}
+
 }

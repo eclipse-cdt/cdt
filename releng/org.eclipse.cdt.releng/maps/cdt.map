@@ -138,6 +138,7 @@ plugin@org.eclipse.cdt.debug.edc.tcf.extension=@cdtTag@,:pserver:anonymous@dev.e
 plugin@org.eclipse.cdt.debug.edc.ui=@cdtTag@,:pserver:anonymous@dev.eclipse.org:/cvsroot/tools,,org.eclipse.cdt/edc/org.eclipse.cdt.debug.edc.ui
 plugin@org.eclipse.cdt.debug.edc.windows=@cdtTag@,:pserver:anonymous@dev.eclipse.org:/cvsroot/tools,,org.eclipse.cdt/edc/org.eclipse.cdt.debug.edc.windows
 plugin@org.eclipse.cdt.debug.edc.windows.ui=@cdtTag@,:pserver:anonymous@dev.eclipse.org:/cvsroot/tools,,org.eclipse.cdt/edc/org.eclipse.cdt.debug.edc.windows.ui
+plugin@org.eclipse.cdt.scripting=@cdtTag@,:pserver:anonymous@dev.eclipse.org:/cvsroot/tools,,org.eclipse.cdt/edc/org.eclipse.cdt.scripting
 feature@org.eclipse.cdt.debug.edc=@cdtTag@,:pserver:anonymous@dev.eclipse.org:/cvsroot/tools,,org.eclipse.cdt/edc/org.eclipse.cdt.debug.edc-feature
 
 ! TCF Requirements for EDC

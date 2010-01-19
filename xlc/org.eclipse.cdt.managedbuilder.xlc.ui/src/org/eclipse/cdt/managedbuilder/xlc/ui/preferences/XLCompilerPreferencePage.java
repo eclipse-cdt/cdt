@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2008 IBM Corporation and others.
+ * Copyright (c) 2007, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -79,9 +79,9 @@ public class XLCompilerPreferencePage
 
 		addField(pathEditor);
 		
-		String[][] versionEntries = {{PreferenceConstants.P_XL_COMPILER_VERSION_8_NAME, Messages.XLCompiler_v8},
-									   {PreferenceConstants.P_XL_COMPILER_VERSION_9_NAME, Messages.XLCompiler_v9},
-									   {PreferenceConstants.P_XL_COMPILER_VERSION_10_NAME, Messages.XLCompiler_v10}};
+		String[][] versionEntries = {{PreferenceConstants.P_XL_COMPILER_VERSION_8_NAME, PreferenceConstants.P_XL_COMPILER_VERSION_8},
+									   {PreferenceConstants.P_XL_COMPILER_VERSION_9_NAME, PreferenceConstants.P_XL_COMPILER_VERSION_9},
+									   {PreferenceConstants.P_XL_COMPILER_VERSION_10_NAME, PreferenceConstants.P_XL_COMPILER_VERSION_10}};
 		
 		addField(new ComboFieldEditor(PreferenceConstants.P_XLC_COMPILER_VERSION,
 				Messages.XLCompilerPreferencePage_2, versionEntries, getFieldEditorParent()));

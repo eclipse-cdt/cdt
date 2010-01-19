@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2007, 2009 IBM Corporation and others.
+ *  Copyright (c) 2007, 2010 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -23,7 +23,6 @@ import org.eclipse.jface.dialogs.IMessageProvider;
 import org.eclipse.jface.preference.DirectoryFieldEditor;
 import org.eclipse.jface.preference.FieldEditorPreferencePage;
 import org.eclipse.jface.preference.IPreferenceStore;
-import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.IWorkbenchPropertyPage;
@@ -113,7 +112,7 @@ public class XLCompilerPropertyPage extends FieldEditorPreferencePage implements
 		}
 		
 		Combo versionCombo = fVersionEditor.getComboControl(versionParent);
-		versionCombo.setText(currentVersion);
+		versionCombo.setText(PreferenceConstants.getVersionLabel(currentVersion));
 
 	}
 
@@ -139,10 +138,11 @@ public class XLCompilerPropertyPage extends FieldEditorPreferencePage implements
 		IPreferenceStore prefStore = XLCUIPlugin.getDefault().getPreferenceStore();
 		String currentPath = prefStore.getString(PreferenceConstants.P_XL_COMPILER_ROOT);
 		String currentVersion = prefStore.getString(PreferenceConstants.P_XLC_COMPILER_VERSION);
+		String currentVersionLabel = PreferenceConstants.getVersionLabel(currentVersion);
 		
 		fPathEditor.setStringValue(currentPath);
 
-		fVersionEditor.getComboControl(getFieldEditorParent()).setText(currentVersion);
+		fVersionEditor.getComboControl(getFieldEditorParent()).setText(currentVersionLabel);
 
 	}
 	
@@ -157,10 +157,14 @@ public class XLCompilerPropertyPage extends FieldEditorPreferencePage implements
 			project.setPersistentProperty(new QualifiedName("", //$NON-NLS-1$
 					PreferenceConstants.P_XL_COMPILER_ROOT), fPathEditor
 					.getStringValue());
-
-			project.setPersistentProperty(new QualifiedName("", //$NON-NLS-1$
-					PreferenceConstants.P_XLC_COMPILER_VERSION), fVersionEditor
-					.getSelection());
+			
+			String version = null;
+			if (fVersionEditor.getSelection() != null) {
+				version = PreferenceConstants.getVersion(fVersionEditor.getSelection());
+			
+				project.setPersistentProperty(new QualifiedName("", //$NON-NLS-1$
+						PreferenceConstants.P_XLC_COMPILER_VERSION), version);
+			}
 		} catch (CoreException e) {
 			return false;
 		}

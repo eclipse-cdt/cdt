@@ -1,11 +1,11 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2008 IBM Corporation and others.
- * All rights reserved. This program and the accompanying materials
- * are made available under the terms of the Eclipse Public License v1.0
- * which accompanies this distribution, and is available at
- * http://www.eclipse.org/legal/epl-v10.html
- *
- * Contributors:
+ *  Copyright (c) 2007, 2010 IBM Corporation and others.
+ *  All rights reserved. This program and the accompanying materials
+ *  are made available under the terms of the Eclipse Public License v1.0
+ *  which accompanies this distribution, and is available at
+ *  http://www.eclipse.org/legal/epl-v10.html
+ * 
+ *  Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 package org.eclipse.cdt.managedbuilder.xlc.ui.wizards;
@@ -144,7 +144,7 @@ public class XLCSettingsWizardPage extends MBSCustomPage {
 		});
 		
 		// create the browse button
-		String selectedPath = null;
+//		String selectedPath = null;
 		GridData buttonData = new GridData();
 		buttonData.horizontalAlignment = SWT.RIGHT;
 		Button browseButton = new Button(fComposite, SWT.PUSH);
@@ -172,19 +172,20 @@ public class XLCSettingsWizardPage extends MBSCustomPage {
 		// populate the combo
 		fVersionCombo.add(PreferenceConstants.P_XL_COMPILER_VERSION_8_NAME);
 		fVersionCombo.add(PreferenceConstants.P_XL_COMPILER_VERSION_9_NAME);
+		fVersionCombo.add(PreferenceConstants.P_XL_COMPILER_VERSION_10_NAME);
 		
 		// set the default based on the workbench preference
 		String compilerVersion = prefStore.getString(PreferenceConstants.P_XLC_COMPILER_VERSION);
-		fVersionCombo.setText(compilerVersion);
+		fVersionCombo.setText(PreferenceConstants.getVersionLabel(compilerVersion));
 		
 		// update the page manager with the setting
-		MBSCustomPageManager.addPageProperty(PAGE_ID, PreferenceConstants.P_XLC_COMPILER_VERSION, fVersionCombo.getText());
+		MBSCustomPageManager.addPageProperty(PAGE_ID, PreferenceConstants.P_XLC_COMPILER_VERSION, PreferenceConstants.getVersion(fVersionCombo.getText()));
 		
 		fVersionCombo.addModifyListener(new ModifyListener() {
 
 			public void modifyText(ModifyEvent e) {
 				// update the page manager with the setting
-				MBSCustomPageManager.addPageProperty(PAGE_ID, PreferenceConstants.P_XLC_COMPILER_VERSION, fVersionCombo.getText());
+				MBSCustomPageManager.addPageProperty(PAGE_ID, PreferenceConstants.P_XLC_COMPILER_VERSION, PreferenceConstants.getVersion(fVersionCombo.getText()));
 				
 			}
 			

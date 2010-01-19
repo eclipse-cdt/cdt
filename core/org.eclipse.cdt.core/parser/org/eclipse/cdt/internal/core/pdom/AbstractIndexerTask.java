@@ -402,7 +402,7 @@ public abstract class AbstractIndexerTask extends PDOMWriter {
 			
 			// handle other files present in index
 			for (IIndexFragmentFile ifile : indexFiles) {
-				if (ifile != null && ifile.hasContent()) {
+				if (ifile != null) {
 					IIndexInclude ctx= ifile.getParsedInContext();
 					if (ctx == null) {
 						iFilesToRemove.add(ifile);

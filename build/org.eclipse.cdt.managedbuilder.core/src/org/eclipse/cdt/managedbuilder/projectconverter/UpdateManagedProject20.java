@@ -392,10 +392,12 @@ class UpdateManagedProject20 {
 		for(int i = 0; i < options.length; i++){
 			IOption curOption = options[i]; 
 			IOption parent = curOption.getSuperClass();
-			//String curOptionId = curOption.getId();
-			
 			if(parent == null)
 				continue;
+			
+			for (;parent.getSuperClass()!=null;parent = parent.getSuperClass()) {
+				// empty body, the loop is to find superclass
+			}
 			
 			String parentId = parent.getId();
 			if(!parentId.equals(optId))

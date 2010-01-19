@@ -29,7 +29,7 @@
 		<property name="buildId" value="${buildType}${timestamp}"/>
 		<property name="zipsdir" value="${buildDirectory}/${buildType}.${buildId}"/>
 		<property name="masterFile" value="cdt-master-${branchVersion}-${buildId}.zip"/>
-		<property name="eclipseTest" value="org.eclipse.test_3.2.100"/>
+		<property name="eclipseTest" value="org.eclipse.test_3.3.0"/>
 		<property name="messagefile" value="message.in"/>
 		<property name="mailto" value="vivkong@ca.ibm.com"/>
 		<property name="eclipseRoot" value=":pserver:anonymous@dev.eclipse.org:/cvsroot/eclipse"/>

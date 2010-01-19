@@ -376,7 +376,7 @@ public abstract class AbstractIndexerTask extends PDOMWriter {
 			
 			if ((isSourceUnit && !isExcludedSource) || fIndexHeadersWithoutContext != UnusedHeaderStrategy.skip) {
 				// headers or sources required with a specific linkage
-				AbstractLanguage[] langs= fResolver.getLanguages(tu, fIndexHeadersWithoutContext==UnusedHeaderStrategy.useBoth);
+				AbstractLanguage[] langs= fResolver.getLanguages(tu, fIndexHeadersWithoutContext == UnusedHeaderStrategy.useBoth);
 				for (AbstractLanguage lang : langs) {
 					int linkageID = lang.getLinkageID();
 					IIndexFragmentFile ifile= getFile(linkageID, indexFiles);
@@ -703,7 +703,7 @@ public abstract class AbstractIndexerTask extends PDOMWriter {
 	private void parseFile(Object tu, int linkageID, IIndexFileLocation ifl, IScannerInfo scanInfo,
 			boolean inContext, IProgressMonitor pm) throws CoreException, InterruptedException {
 		IPath path= getPathForLabel(ifl);
-		AbstractLanguage[] langs= fResolver.getLanguages(tu, fIndexHeadersWithoutContext==UnusedHeaderStrategy.useBoth);
+		AbstractLanguage[] langs= fResolver.getLanguages(tu, fIndexHeadersWithoutContext == UnusedHeaderStrategy.useBoth);
 		AbstractLanguage lang= null;
 		for (AbstractLanguage lang2 : langs) {
 			if (lang2.getLinkageID() == linkageID) {
@@ -711,7 +711,7 @@ public abstract class AbstractIndexerTask extends PDOMWriter {
 				break;
 			}
 		}
-		if (lang==null) {
+		if (lang == null) {
 			return;
 		}
 		

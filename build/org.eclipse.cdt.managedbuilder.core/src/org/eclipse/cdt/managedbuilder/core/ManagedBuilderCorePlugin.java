@@ -35,6 +35,7 @@ import org.osgi.framework.BundleContext;
 
 
 public class ManagedBuilderCorePlugin extends Plugin {
+	/** @since 6.1 */
 	public static final String PLUGIN_ID = "org.eclipse.cdt.managedbuilder.core"; //$NON-NLS-1$
 	// The shared instance
 	private static ManagedBuilderCorePlugin plugin;

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2008 Intel Corporation and others.
+ * Copyright (c) 2007, 2010 Intel Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -28,6 +28,7 @@ public class BuildListComparator extends CDTListComparator {
 			comparator = new BuildListComparator();
 		return comparator;
 	}
+	@Override
 	public int compare(Object a, Object b) {
 		if (a == null || b == null) 
 			return 0;

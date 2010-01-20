@@ -35,6 +35,7 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.PlatformObject;
 import org.eclipse.core.runtime.Status;
+import org.eclipse.debug.core.DebugEvent;
 import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.ILaunchConfiguration;
@@ -392,7 +393,10 @@ public class CMemoryBlockRetrievalExtension extends PlatformObject implements IM
 	}
 
 	public void dispose() {
-		// Minimize leaks. See bugzilla 255120
+		// Fire a terminate event so our hosts can clean up. See 255120 and 283586
+		DebugPlugin.getDefault().fireDebugEventSet( new DebugEvent[]{new DebugEvent( this, DebugEvent.TERMINATE )}); 
+
+		// Minimize leaks in case we are ourselves are leaked
 		fDebugTarget = null;
 	}
 

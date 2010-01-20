@@ -24,17 +24,17 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.SafeRunner;
 import org.eclipse.core.runtime.Status;
+import org.eclipse.debug.core.DebugEvent;
 import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.DebugPlugin;
+import org.eclipse.debug.core.IDebugEventSetListener;
 import org.eclipse.debug.core.ILaunch;
-import org.eclipse.debug.core.ILaunchListener;
 import org.eclipse.debug.core.model.IDebugTarget;
 import org.eclipse.debug.core.model.IMemoryBlock;
 import org.eclipse.debug.core.model.IMemoryBlockExtension;
 import org.eclipse.debug.core.model.IMemoryBlockRetrieval;
 import org.eclipse.debug.core.model.IMemoryBlockRetrievalExtension;
 import org.eclipse.debug.core.model.MemoryByte;
-import org.eclipse.debug.internal.ui.DebugUIMessages;
 import org.eclipse.debug.internal.ui.memory.MemoryRenderingManager;
 import org.eclipse.debug.internal.ui.views.memory.MemoryViewUtil;
 import org.eclipse.debug.ui.DebugUITools;
@@ -92,6 +92,7 @@ import org.eclipse.ui.IWorkbenchActionConstants;
 import org.eclipse.ui.IWorkbenchPreferenceConstants;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.part.ViewPart;
+import org.eclipse.ui.progress.UIJob;
 import org.eclipse.ui.progress.WorkbenchJob;
 
 /**
@@ -107,7 +108,7 @@ import org.eclipse.ui.progress.WorkbenchJob;
  */
 
 @SuppressWarnings("restriction")
-public class MemoryBrowser extends ViewPart implements IDebugContextListener, ILaunchListener, IMemoryRenderingSite
+public class MemoryBrowser extends ViewPart implements IDebugContextListener, IMemoryRenderingSite, IDebugEventSetListener
 {
 	public static final String ID = "org.eclipse.cdt.debug.ui.memory.memorybrowser.MemoryBrowser";  //$NON-NLS-1$
 	
@@ -236,7 +237,7 @@ public class MemoryBrowser extends ViewPart implements IDebugContextListener, IL
             selection = contextService.getActiveContext();
 		}
 		
-		DebugPlugin.getDefault().getLaunchManager().addLaunchListener(this);
+		DebugPlugin.getDefault().addDebugEventListener(this);
 		
 		if(selection instanceof StructuredSelection)
 			handleDebugContextChanged(((StructuredSelection) selection).getFirstElement());
@@ -267,7 +268,7 @@ public class MemoryBrowser extends ViewPart implements IDebugContextListener, IL
     }
 	
 	public void dispose() {
-		DebugPlugin.getDefault().getLaunchManager().removeLaunchListener(this);
+		DebugPlugin.getDefault().removeDebugEventListener(this);
         IDebugContextService contextService = 
             DebugUITools.getDebugContextManager().getContextService(getSite().getWorkbenchWindow()); 
         if (isBug145635Patched()) {
@@ -279,18 +280,18 @@ public class MemoryBrowser extends ViewPart implements IDebugContextListener, IL
 		super.dispose();
 	}
 	
-	public void launchAdded(ILaunch launch) {}
-	public void launchChanged(ILaunch launch) {}
-
-	public void launchRemoved(ILaunch launch) {
-		// For CDT launch is not adaptable to memory rendering, but the debug targets do.
-		for (IDebugTarget target : launch.getDebugTargets()) {
-			IMemoryBlockRetrieval retrieval = ((IMemoryBlockRetrieval) target.getAdapter(IMemoryBlockRetrieval.class));
-			if(retrieval != null)
-				releaseTabFolder(retrieval);
+	/* (non-Javadoc)
+	 * @see org.eclipse.debug.core.IDebugEventSetListener#handleDebugEvents(org.eclipse.debug.core.DebugEvent[])
+	 */
+	public void handleDebugEvents(DebugEvent[] events) {
+		for (DebugEvent event: events) {
+			Object source = event.getSource();
+			if (event.getKind() == DebugEvent.TERMINATE && source instanceof IMemoryBlockRetrieval) {
+				releaseTabFolder(source);
+			}
 		}
 	}
-	
+
 	public IMemoryRenderingContainer getContainer(String id) {
 		return null;
 	}
@@ -344,7 +345,7 @@ public class MemoryBrowser extends ViewPart implements IDebugContextListener, IL
 							if(((IMemoryBlockExtension) rendering.getMemoryBlock()).supportBaseAddressModification())
 								((IMemoryBlockExtension) rendering.getMemoryBlock()).setBaseAddress(newBase);
 							rendering.goToAddress(newBase);
-							Display.getDefault().asyncExec(new Runnable(){
+							runOnUIThread(new Runnable(){
 								public void run()
 								{
 									updateLabel(activeFolder.getSelection(), rendering);
@@ -432,7 +433,8 @@ public class MemoryBrowser extends ViewPart implements IDebugContextListener, IL
 		}
 		IMemoryBlockExtension block = (IMemoryBlockExtension) item.getData(KEY_MEMORY_BLOCK);
 		try {
-			block.dispose();
+			if (block != null)
+				block.dispose();
 		} catch (DebugException e) {
 			MemoryBrowserPlugin.getDefault().getLog().log(new Status(Status.ERROR, MemoryBrowserPlugin.PLUGIN_ID, "Could not dispose memory block", e)); //$NON-NLS-1$
 		}
@@ -546,9 +548,11 @@ public class MemoryBrowser extends ViewPart implements IDebugContextListener, IL
 	
 		if(context instanceof IAdaptable)
 		{
-			IMemoryBlockRetrieval retrieval = ((IMemoryBlockRetrieval) ((IAdaptable) context).getAdapter(IMemoryBlockRetrieval.class));
+			IAdaptable adaptable = (IAdaptable) context;
+			IMemoryBlockRetrieval retrieval = ((IMemoryBlockRetrieval) adaptable.getAdapter(IMemoryBlockRetrieval.class));
+			ILaunch launch  = ((ILaunch) adaptable.getAdapter(ILaunch.class));
 			
-			if(retrieval != null)
+			if(retrieval != null && launch != null && !launch.isTerminated())
 			{
 				fGotoAddressBarControl.setVisible(true);
 				CTabFolder tabFolder = getTabFolder(retrieval);
@@ -678,20 +682,25 @@ public class MemoryBrowser extends ViewPart implements IDebugContextListener, IL
 		return fContextFolders.put(context, folder);
 	}	
 	
-	private void releaseTabFolder(Object context)
+	private void releaseTabFolder(final Object context)
 	{
 		final CTabFolder folder = getTabFolder(context);
 		if(folder != null)
 		{
-			for(CTabItem tab : folder.getItems()) {
-				disposeTab(tab);
-			}
-		}
-		fContextFolders.remove(context);
-		folder.dispose();
-
-		if (fStackLayout.topControl.equals(folder)) {
-			handleUnsupportedSelection();
+			Runnable run = new Runnable() {
+				public void run() {
+						for(CTabItem tab : folder.getItems()) {
+							disposeTab(tab);
+						}
+						fContextFolders.remove(context);
+						folder.dispose();
+				
+						if (fStackLayout.topControl.equals(folder)) {
+							handleUnsupportedSelection();
+						}
+					}
+				};
+			runOnUIThread(run);
 		}
 	}
 	
@@ -768,6 +777,29 @@ public class MemoryBrowser extends ViewPart implements IDebugContextListener, IL
 		BigInteger address = newBlock.getBigBaseAddress();
 		newBlock.dispose();
 		return address;
+	}
+
+	/**
+	 * Execute runnable on UI thread if the current thread is not an UI thread.
+	 * Otherwise execute it directly.
+	 * 
+	 * @param runnable
+	 *            the runnable to execute
+	 */
+	private void runOnUIThread(final Runnable runnable)
+	{
+		if (Display.getCurrent() != null)	{
+			runnable.run();
+		}
+		else {
+			UIJob job = new UIJob("Memory Browser UI Job"){ //$NON-NLS-1$
+				public IStatus runInUIThread(IProgressMonitor monitor) {
+					runnable.run();
+					return Status.OK_STATUS;
+				}};
+			job.setSystem(true);
+			job.schedule();
+		}
 	}
 }
 

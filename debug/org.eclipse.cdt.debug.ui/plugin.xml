@@ -318,8 +318,22 @@
 	           
             </menu>         
        </menuContribution>
+       <menuContribution
+            locationURI="popup:org.eclipse.debug.ui.RegisterView?after=variableGroup">
+            <menu 
+                 id="org.eclipse.cdt.debug.ui.registerView_CVariableFormatMenu" 
+            	 label="%CVariableFormatMenu.label">
+             <visibleWhen>
+             	<reference definitionId="org.eclipse.cdt.debug.ui.testAreNumberFormatsSupported"/>
+             </visibleWhen>
+               <dynamic
+	               id="org.eclipse.cdt.debug.ui.numberFormats"
+	               class="org.eclipse.cdt.debug.internal.ui.actions.NumberFormatsContribution">
+	           </dynamic>
+    		  <separator name="formatGroup" visible="false"/>	           
+            </menu>         
+       </menuContribution>
       </extension>
-      
       <extension point="org.eclipse.core.expressions.definitions">
       <definition
             id="org.eclipse.cdt.debug.ui.testAreNumberFormatsSupported">

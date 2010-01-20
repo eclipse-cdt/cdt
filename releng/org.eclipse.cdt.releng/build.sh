@@ -1,5 +1,5 @@
 #*******************************************************************************
-# Copyright (c) 2005, 2008 IBM Corporation and others.
+# Copyright (c) 2005, 2010 IBM Corporation and others.
 # All rights reserved. This program and the accompanying materials
 # are made available under the terms of the Eclipse Public License v1.0
 # which accompanies this distribution, and is available at
@@ -36,5 +36,5 @@ cd ..
 java $CDT_BUILD_VMARGS -jar tools/org.eclipse.releng.basebuilder/plugins/org.eclipse.equinox.launcher.jar \
 	-ws gtk -arch ppc -os linux -application org.eclipse.ant.core.antRunner $*
 
-# Copy the build.log to where the latest build is
-cp /opt/public/download-staging.priv/tools/cdt/releng/build.log /home/www/tools/cdt/builds/6.0.2/latest
+# Copy the build.log to where the latest build is - done in cdtbuild script
+#cp /opt/public/download-staging.priv/tools/cdt/releng/build.log /home/www/tools/cdt/builds/6.0.2/latest

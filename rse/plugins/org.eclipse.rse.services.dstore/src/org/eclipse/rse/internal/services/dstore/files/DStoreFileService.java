@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2009 IBM Corporation and others.
+ * Copyright (c) 2006, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -61,6 +61,7 @@
  * David McKnight   (IBM)        - [281712] [dstore] Warning message is needed when disk is full
  * David McKnight   (IBM)        - [284056] Sychronize Cache causes the UI to hang with no way out
  * David McKnight   (IBM)        - [284420] nullprogressmonitor is needed
+ * David McKnight     (IBM)      - [298440] jar files in a directory can't be pasted to another system properly
  *******************************************************************************/
 
 package org.eclipse.rse.internal.services.dstore.files;
@@ -1087,21 +1088,21 @@ public class DStoreFileService extends AbstractDStoreService implements IFileSer
 					if (resultChild.getType().equals(IUniversalDataStoreConstants.DOWNLOAD_RESULT_SUCCESS_TYPE))
 					{
 						// do standard conversion if this is text!
-						if (!isBinaries[i]){ // do standard conversion if this is text!
+						if (!isBinaries[j]){ // do standard conversion if this is text!
 							String localEncoding = SystemEncodingUtil.getInstance().getLocalDefaultEncoding();
-							IFileServiceCodePageConverter codePageConverter = CodePageConverterManager.getCodePageConverter(hostEncodings[i], this);
+							IFileServiceCodePageConverter codePageConverter = CodePageConverterManager.getCodePageConverter(hostEncodings[j], this);
 
 							try {
-								codePageConverter.convertFileFromRemoteEncoding(remoteElement.getName(), localFile, hostEncodings[i], localEncoding, this);
+								codePageConverter.convertFileFromRemoteEncoding(remoteElement.getName(), localFile, hostEncodings[j], localEncoding, this);
 							}
 							catch (RuntimeException e){
 								Throwable ex = e.getCause();
 								StringBuffer msgTxtBuffer = new StringBuffer(RSEServicesMessages.FILEMSG_OPERATION_FAILED);
 								msgTxtBuffer.append('\n');
 								msgTxtBuffer.append('\n');
-								msgTxtBuffer.append(remoteFiles[i]);
+								msgTxtBuffer.append(remoteFiles[j]);
 								msgTxtBuffer.append('\n');						
-								msgTxtBuffer.append(hostEncodings[i]);
+								msgTxtBuffer.append(hostEncodings[j]);
 								msgTxtBuffer.append(" -> ");
 								msgTxtBuffer.append(localEncoding);
 								

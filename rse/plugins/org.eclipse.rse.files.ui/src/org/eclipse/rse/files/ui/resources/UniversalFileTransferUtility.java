@@ -59,6 +59,7 @@
  * David McKnight     (IBM)      - [281712] [dstore] Warning message is needed when disk is full
  * David McKnight     (IBM)      - [234258] [dnd] Drag&Drop a folder silently ignores elements without permissions
  * David McKnight   (IBM)        - [299140] Local Readonly file can't be copied/pasted twice
+ * David McKnight     (IBM)      - [298440] jar files in a directory can't be pasted to another system properly
  *******************************************************************************/
 
 package org.eclipse.rse.files.ui.resources;
@@ -594,18 +595,31 @@ public class UniversalFileTransferUtility {
 						{
 							emptyFolders.add(tempFolder);
 						}
-						//get all subfolders
+						//get all subfolders						
 						children=srcFS.list(srcFileOrFolder, IFileService.FILE_TYPE_FOLDERS, monitor);
+						
 						if(!(children==null) && !(children.length==0))
 						{
-							SystemRemoteResourceSet childSet = new SystemRemoteResourceSet(srcFS, children);
-							//recurse with subfolders to check for empty folders
-							SystemWorkspaceResourceSet childResults = downloadResourcesToWorkspaceMultiple(childSet, monitor);
-							if (childResults.hasMessage())
-							{
-								resultSet.setMessage(childResults.getMessage());
+							// make sure children are not archives!
+							ArrayList fcs = new ArrayList();
+							for (int c = 0; c < children.length; c++){
+								IRemoteFile child = children[c];
+								if (!child.isArchive()){
+									fcs.add(child);								
+								}
 							}
-							resultSet.addResource(tempFolder);
+							if (fcs.size() > 0){
+								
+								SystemRemoteResourceSet childSet = new SystemRemoteResourceSet(srcFS, fcs);
+													
+								//recurse with subfolders to check for empty folders
+								SystemWorkspaceResourceSet childResults = downloadResourcesToWorkspaceMultiple(childSet, monitor);
+								if (childResults.hasMessage())
+								{
+									resultSet.setMessage(childResults.getMessage());
+								}
+								resultSet.addResource(tempFolder);
+							}
 						}
 					}
 					catch (SystemMessageException e)

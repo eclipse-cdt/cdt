@@ -21,19 +21,12 @@ export PATH=/opt/public/common/ibm-java2-ppc-50/bin:$PATH
 # make sure we're in the releng project dir 
 cd `dirname $0`
 
-# make sure the umask doesn't allow for group execute permissions\
-# TODO not sure we really need this any more
-umask 0022
-
 # Checkout basebuilder to run the build
 mkdir -p tools
 cd tools
-#cvs -d:pserver:anonymous@dev.eclipse.org:/cvsroot/eclipse 
-#cvs -d /cvsroot/eclipse	co -r R36_M3 org.eclipse.releng.basebuilder
-#cp /home/data/httpd/download.eclipse.org/technology/subversive/0.7/pde-update-site/plugins/org.eclipse.team.svn.pde.build_0.7.8.I20090525-1500.jar \
-#	org.eclipse.releng.basebuilder/plugins
-
 cvs -d /cvsroot/eclipse	co -r R3_5_1 org.eclipse.releng.basebuilder
+cp /home/data/httpd/download.eclipse.org/technology/subversive/0.7/pde-update-site/plugins/org.eclipse.team.svn.pde.build_0.7.8.I20090525-1500.jar \
+	org.eclipse.releng.basebuilder/plugins
 cd ..
 
 # Let's go!

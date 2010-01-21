@@ -416,9 +416,11 @@ public class SystemSearchViewPart extends ViewPart
 		public void checkEnabledState()
 		{
 			Viewer viewer = getRSEViewer();
-			if (viewer != null && viewer.getInput() != null)
-			{
-				setEnabled(true);
+			Object input = viewer.getInput();
+			if (viewer != null && input != null)
+			{			
+				boolean flag = getViewAdapter(input).hasChildren((IAdaptable)input);				
+				setEnabled(flag);
 			}
 			else
 			{

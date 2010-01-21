@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009 Wind River Systems and others.
+ * Copyright (c) 2009, 2010 Wind River Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -281,6 +281,11 @@ public class FormattedValueVMUtil {
 			// iteration to provide it. 
             boolean activeFormatValueRequested = false;	// does the update object ask for PROP_FORMATTED_VALUE_ACTIVE_FORMAT_VALUE?
             boolean activeFormatValueHandled = false;	// have we come across a specific format request that is the active format?
+            if (update.getProperties().contains(IDebugVMConstants.PROP_FORMATTED_VALUE_ACTIVE_FORMAT_VALUE)) {
+            	assert activeFormat != null : "Our caller should have provided the available formats if this property was specified; given available formats, an 'active' nomination is guaranteed."; //$NON-NLS-1$
+            	activeFormatValueRequested = true; // we may end up making an additional run
+            }
+
             for (Iterator<String> itr = update.getProperties().iterator(); itr.hasNext() || (activeFormatValueRequested && !activeFormatValueHandled);) {
                 String nextFormat;
                 if (itr.hasNext()) {
@@ -294,11 +299,6 @@ public class FormattedValueVMUtil {
                         if (availableFormats != null && !isFormatAvailable(nextFormat, availableFormats)) {
                             continue;
                         }
-                    }
-                    else if (propertyName.equals(IDebugVMConstants.PROP_FORMATTED_VALUE_ACTIVE_FORMAT_VALUE)) {
-                    	assert activeFormat != null : "Our caller should have provided the available formats if this property was specified; given available formats, an 'active' nomination is guaranteed."; //$NON-NLS-1$
-                    	activeFormatValueRequested = true;
-                    	continue;	// we may end up making an additional run
                     }
                     else {
                         continue;

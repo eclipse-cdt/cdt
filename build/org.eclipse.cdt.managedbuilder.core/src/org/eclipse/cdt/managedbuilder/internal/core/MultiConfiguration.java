@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2008 Intel Corporation and others.
+ * Copyright (c) 2007, 2010 Intel Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -13,7 +13,6 @@ package org.eclipse.cdt.managedbuilder.internal.core;
 import java.util.ArrayList;
 import java.util.Arrays;
 
-import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.settings.model.ICConfigurationDescription;
 import org.eclipse.cdt.core.settings.model.ICSourceEntry;
 import org.eclipse.cdt.core.settings.model.MultiItemsHolder;
@@ -38,6 +37,7 @@ import org.eclipse.cdt.managedbuilder.core.IResourceInfo;
 import org.eclipse.cdt.managedbuilder.core.ITool;
 import org.eclipse.cdt.managedbuilder.core.IToolChain;
 import org.eclipse.cdt.managedbuilder.core.ManagedBuildManager;
+import org.eclipse.cdt.managedbuilder.core.ManagedBuilderCorePlugin;
 import org.eclipse.cdt.managedbuilder.envvar.IConfigurationEnvironmentVariableSupplier;
 import org.eclipse.cdt.managedbuilder.macros.IConfigurationBuildMacroSupplier;
 import org.eclipse.core.resources.IFile;
@@ -81,6 +81,7 @@ public class MultiConfiguration extends MultiItemsHolder implements
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.settings.model.MultiItemsHolder#getItems()
 	 */
+	@Override
 	public Object[] getItems() {
 		return fCfgs;
 	}
@@ -596,7 +597,7 @@ public class MultiConfiguration extends MultiItemsHolder implements
 			IResourceInfo[] ris = fCfgs[i].getResourceInfos();
 			ri.addAll(Arrays.asList(ris));
 		}
-		return (IResourceInfo[])ri.toArray(new IResourceInfo[ri.size()]);
+		return ri.toArray(new IResourceInfo[ri.size()]);
 	}
 
 	/* (non-Javadoc)
@@ -1207,7 +1208,7 @@ public class MultiConfiguration extends MultiItemsHolder implements
 			for (int i=0; i<fCfgs.length; i++)
 				fCfgs[i].getBuildProperties().setProperty(id, val);
 		} catch (CoreException e) {
-			CCorePlugin.log(e);
+			ManagedBuilderCorePlugin.log(e);
 		}
 	}
 	

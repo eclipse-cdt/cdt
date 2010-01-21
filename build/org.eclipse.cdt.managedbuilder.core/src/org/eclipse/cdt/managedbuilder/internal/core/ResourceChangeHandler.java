@@ -15,7 +15,6 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 
-import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.managedbuilder.core.IConfiguration;
 import org.eclipse.cdt.managedbuilder.core.IManagedBuildInfo;
 import org.eclipse.cdt.managedbuilder.core.IManagedOptionValueHandler;
@@ -50,20 +49,20 @@ import org.eclipse.core.runtime.jobs.MultiRule;
 
 public class ResourceChangeHandler implements IResourceChangeListener, ISaveParticipant {
 	
-	private Map fRmProjectToBuildInfoMap = new HashMap();
+	private Map<IProject, IManagedBuildInfo> fRmProjectToBuildInfoMap = new HashMap<IProject, IManagedBuildInfo>();
 
 	private class ResourceConfigurationChecker implements IResourceDeltaVisitor{
 		private IResourceDelta fRootDelta;
-		private HashMap fBuildFileGeneratorMap = new HashMap();
-		private HashSet fValidatedFilesSet = new HashSet();
-		private HashSet fModifiedProjects = new HashSet();
+		private HashMap<IProject, IManagedBuilderMakefileGenerator> fBuildFileGeneratorMap = new HashMap<IProject, IManagedBuilderMakefileGenerator>();
+		private HashSet<IPath> fValidatedFilesSet = new HashSet<IPath>();
+		private HashSet<IProject> fModifiedProjects = new HashSet<IProject>();
 
 		public ResourceConfigurationChecker(IResourceDelta rootDelta){
 			fRootDelta = rootDelta;
 		}
 		
 		public IProject[] getModifiedProjects(){
-			return (IProject[])fModifiedProjects.toArray(new IProject[fModifiedProjects.size()]);
+			return fModifiedProjects.toArray(new IProject[fModifiedProjects.size()]);
 		}
 
 		public boolean visit(IResourceDelta delta) throws CoreException {
@@ -77,7 +76,7 @@ public class ResourceChangeHandler implements IResourceChangeListener, ISavePart
 				switch (delta.getKind()) {
 				case IResourceDelta.REMOVED :
 					if (rcType == IResource.PROJECT){
-						IManagedBuildInfo info = (IManagedBuildInfo)fRmProjectToBuildInfoMap.remove(dResource);
+						IManagedBuildInfo info = fRmProjectToBuildInfoMap.remove(dResource);
 
 						if((delta.getFlags() & IResourceDelta.MOVED_TO) == 0) {
 							if(info != null){
@@ -163,9 +162,7 @@ public class ResourceChangeHandler implements IResourceChangeListener, ISavePart
 			if(fromMakeGen == null || fromMakeGen.isGeneratedResource(root.getFile(substituteProject(fromPath,fromProject.getName()))))
 				return;
 			
-			IManagedBuildInfo fromInfo = fromProject != null ?
-					ManagedBuildManager.getBuildInfo(fromProject) :
-						null;
+			IManagedBuildInfo fromInfo = ManagedBuildManager.getBuildInfo(fromProject);
 
 			IProject toProject = root.findMember(toPath.uptoSegment(1)).getProject();
 			IManagedBuildInfo toInfo = toProject != null ? 
@@ -178,7 +175,7 @@ public class ResourceChangeHandler implements IResourceChangeListener, ISavePart
 				toInfo = null;
 
 			if(fromInfo == toInfo){
-				//the resource was moved whithing the project scope
+				//the resource was moved within the project scope
 				if(updateResourceConfigurations(fromInfo,fromPath,toPath) && toProject != null)
 					fModifiedProjects.add(toProject);
 			} else {
@@ -188,7 +185,7 @@ public class ResourceChangeHandler implements IResourceChangeListener, ISavePart
 					//should we handle this?
 					//e.g. add resource configurations to the destination project?
 				}
-				if(fromInfo != null && removeResourceConfigurations(fromInfo,fromPath) && fromProject != null)
+				if(fromInfo != null && removeResourceConfigurations(fromInfo,fromPath))
 					fModifiedProjects.add(fromProject);
 			}
 		}
@@ -264,7 +261,7 @@ public class ResourceChangeHandler implements IResourceChangeListener, ISavePart
 		}
 
 		private IManagedBuilderMakefileGenerator getInitializedGenerator(IProject project){
-			IManagedBuilderMakefileGenerator makeGen = (IManagedBuilderMakefileGenerator)fBuildFileGeneratorMap.get(project);
+			IManagedBuilderMakefileGenerator makeGen = fBuildFileGeneratorMap.get(project);
 			if (makeGen == null) {
 				try {
 					if (project.hasNature(ManagedCProjectNature.MNG_NATURE_ID)) {
@@ -353,7 +350,7 @@ public class ResourceChangeHandler implements IResourceChangeListener, ISavePart
 						initInfoSerialization(rcChecker.getModifiedProjects());
 					
 					} catch (CoreException e) {
-						CCorePlugin.log(e);
+						ManagedBuilderCorePlugin.log(e);
 					}
 					break;
 				default :
@@ -378,6 +375,7 @@ public class ResourceChangeHandler implements IResourceChangeListener, ISavePart
 		}
 
 		Job savingJob = new Job(ManagedMakeMessages.getResourceString("ResourceChangeHandler.buildInfoSerializationJob")){ 	//$NON-NLS-1$
+			@Override
 			protected IStatus run(IProgressMonitor monitor) {
 				for(int i = 0; i < projects.length; i++){
 					ManagedBuildManager.saveBuildInfo(projects[i],true);

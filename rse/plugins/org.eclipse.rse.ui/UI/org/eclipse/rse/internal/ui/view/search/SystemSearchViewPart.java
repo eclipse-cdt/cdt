@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2003, 2009 IBM Corporation and others.
+ * Copyright (c) 2003, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -18,6 +18,7 @@
  * David McKnight   (IBM)        - [250169] Problems with extending the menu's of results in Remote Search View
  * David McKnight   (IBM)        - [214395] Properties View not updated when clicking on Search Results
  * David McKnight   (IBM)        - [190015] [performance] Remove All Match's from Search Results Takes a while
+ * David McKnight   (IBM)        - [296877] Allow user to choose the attributes for remote search result
  *******************************************************************************/
 
 package org.eclipse.rse.internal.ui.view.search;
@@ -34,6 +35,7 @@ import org.eclipse.jface.action.IStatusLineManager;
 import org.eclipse.jface.action.IToolBarManager;
 import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.action.Separator;
+import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.viewers.AbstractTreeViewer;
 import org.eclipse.jface.viewers.DoubleClickEvent;
 import org.eclipse.jface.viewers.IDoubleClickListener;
@@ -46,6 +48,7 @@ import org.eclipse.jface.viewers.StructuredViewer;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.jface.viewers.Viewer;
+import org.eclipse.jface.window.Window;
 import org.eclipse.rse.core.RSECorePlugin;
 import org.eclipse.rse.core.events.ISystemResourceChangeEvent;
 import org.eclipse.rse.core.events.ISystemResourceChangeEvents;
@@ -62,20 +65,27 @@ import org.eclipse.rse.ui.RSEUIPlugin;
 import org.eclipse.rse.ui.SystemMenuManager;
 import org.eclipse.rse.ui.SystemWidgetHelpers;
 import org.eclipse.rse.ui.actions.SystemPasteFromClipboardAction;
+import org.eclipse.rse.ui.dialogs.SystemPromptDialog;
 import org.eclipse.rse.ui.messages.ISystemMessageLine;
 import org.eclipse.rse.ui.model.ISystemShellProvider;
 import org.eclipse.rse.ui.view.IRSEViewPart;
 import org.eclipse.rse.ui.view.ISystemRemoveElementAdapter;
+import org.eclipse.rse.ui.view.ISystemTableViewColumnManager;
 import org.eclipse.rse.ui.view.ISystemViewElementAdapter;
 import org.eclipse.rse.ui.view.SystemAdapterHelpers;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.dnd.Clipboard;
+import org.eclipse.swt.layout.GridData;
+import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Event;
+import org.eclipse.swt.widgets.List;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Tree;
 import org.eclipse.swt.widgets.TreeItem;
+import org.eclipse.swt.widgets.Widget;
 import org.eclipse.ui.IActionBars;
 import org.eclipse.ui.IMemento;
 import org.eclipse.ui.IViewSite;
@@ -83,6 +93,7 @@ import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.part.CellEditorActionHandler;
 import org.eclipse.ui.part.PageBook;
 import org.eclipse.ui.part.ViewPart;
+import org.eclipse.ui.views.properties.IPropertyDescriptor;
 
 /**
  * This class defines the Remote Search view.
@@ -92,6 +103,347 @@ public class SystemSearchViewPart extends ViewPart
                IMenuListener, ISelectionChangedListener, 
                ISystemMessageLine, IRSEViewPart
 {
+	class BrowseAction extends Action
+	{
+
+		public BrowseAction()
+		{
+		}
+
+		public BrowseAction(String label, ImageDescriptor des)
+		{
+			super(label, des);
+
+			setToolTipText(label);
+		}
+
+		public void checkEnabledState()
+		{
+			Viewer viewer = getRSEViewer();
+			if (viewer != null && viewer.getInput() != null)
+			{
+				setEnabled(true);
+			}
+			else
+			{
+				setEnabled(false);
+			}
+		}
+
+		public void run()
+		{
+		}
+	}
+	private class SelectColumnsAction extends BrowseAction
+	{
+
+	    class SelectColumnsDialog extends SystemPromptDialog
+		{
+	        private ISystemViewElementAdapter _adapter;
+	        private ISystemTableViewColumnManager _columnManager;
+			private IPropertyDescriptor[] _uniqueDescriptors;
+			private ArrayList _currentDisplayedDescriptors;
+			private ArrayList _availableDescriptors;
+
+			private List _availableList;
+			private List _displayedList;
+
+			private Button _addButton;
+			private Button _removeButton;
+			private Button _upButton;
+			private Button _downButton;
+
+
+			public SelectColumnsDialog(Shell shell, ISystemViewElementAdapter viewAdapter, ISystemTableViewColumnManager columnManager)
+			{
+				super(shell, SystemResources.RESID_TABLE_SELECT_COLUMNS_LABEL);
+				setToolTipText(SystemResources.RESID_TABLE_SELECT_COLUMNS_TOOLTIP);
+				_adapter = viewAdapter;
+				_columnManager = columnManager;
+				_uniqueDescriptors = viewAdapter.getUniquePropertyDescriptors();
+				IPropertyDescriptor[] initialDisplayedDescriptors = _columnManager.getVisibleDescriptors(_adapter);
+				_currentDisplayedDescriptors = new ArrayList(initialDisplayedDescriptors.length);
+				for (int i = 0; i < initialDisplayedDescriptors.length;i++)
+				{
+					if (!_currentDisplayedDescriptors.contains(initialDisplayedDescriptors[i]))
+				    _currentDisplayedDescriptors.add(initialDisplayedDescriptors[i]);
+				}
+				_availableDescriptors = new ArrayList(_uniqueDescriptors.length);
+				for (int i = 0; i < _uniqueDescriptors.length;i++)
+				{
+				    if (!_currentDisplayedDescriptors.contains(_uniqueDescriptors[i]))
+				    {
+				        _availableDescriptors.add(_uniqueDescriptors[i]);
+				    }
+				}
+			}
+
+
+			public void handleEvent(Event e)
+			{
+			    Widget source = e.widget;
+			    if (source == _addButton)
+			    {
+			        int[] toAdd = _availableList.getSelectionIndices();
+			        addToDisplay(toAdd);
+			    }
+			    else if (source == _removeButton)
+			    {
+			        int[] toAdd = _displayedList.getSelectionIndices();
+			        removeFromDisplay(toAdd);
+			    }
+			    else if (source == _upButton)
+			    {
+			        int index = _displayedList.getSelectionIndex();
+			        moveUp(index);
+			        _displayedList.select(index - 1);
+			    }
+			    else if (source == _downButton)
+			    {
+			        int index = _displayedList.getSelectionIndex();
+			        moveDown(index);
+			        _displayedList.select(index + 1);
+			    }
+
+			    // update button enable states
+			    updateEnableStates();
+			}
+
+			public IPropertyDescriptor[] getDisplayedColumns()
+			{
+			    IPropertyDescriptor[] displayedColumns = new IPropertyDescriptor[_currentDisplayedDescriptors.size()];
+			    for (int i = 0; i< _currentDisplayedDescriptors.size();i++)
+			    {
+			        displayedColumns[i]= (IPropertyDescriptor)_currentDisplayedDescriptors.get(i);
+			    }
+			    return displayedColumns;
+			}
+
+			private void updateEnableStates()
+			{
+			    boolean enableAdd = false;
+			    boolean enableRemove = false;
+			    boolean enableUp = false;
+			    boolean enableDown = false;
+
+			    int[] availableSelected = _availableList.getSelectionIndices();
+			    for (int i = 0; i < availableSelected.length; i++)
+			    {
+			        int index = availableSelected[i];
+			        IPropertyDescriptor descriptor = (IPropertyDescriptor)_availableDescriptors.get(index);
+			        if (!_currentDisplayedDescriptors.contains(descriptor))
+			        {
+			            enableAdd = true;
+			        }
+			    }
+
+			    if (_displayedList.getSelectionCount()>0)
+			    {
+			        enableRemove = true;
+
+			        int index = _displayedList.getSelectionIndex();
+			        if (index > 0)
+			        {
+			            enableUp = true;
+			        }
+			        if (index < _displayedList.getItemCount()-1)
+			        {
+			            enableDown = true;
+			        }
+			    }
+
+			    _addButton.setEnabled(enableAdd);
+			    _removeButton.setEnabled(enableRemove);
+			    _upButton.setEnabled(enableUp);
+			    _downButton.setEnabled(enableDown);
+
+			}
+
+			private void moveUp(int index)
+			{
+			    Object obj = _currentDisplayedDescriptors.remove(index);
+		        _currentDisplayedDescriptors.add(index - 1, obj);
+		        refreshDisplayedList();
+			}
+
+			private void moveDown(int index)
+			{
+			    Object obj = _currentDisplayedDescriptors.remove(index);
+		        _currentDisplayedDescriptors.add(index + 1, obj);
+
+		        refreshDisplayedList();
+			}
+
+			private void addToDisplay(int[] toAdd)
+			{
+			    ArrayList added = new ArrayList();
+			    for (int i = 0; i < toAdd.length; i++)
+			    {
+			        int index = toAdd[i];
+
+			        IPropertyDescriptor descriptor = (IPropertyDescriptor)_availableDescriptors.get(index);
+
+			        if (!_currentDisplayedDescriptors.contains(descriptor))
+			        {
+			            _currentDisplayedDescriptors.add(descriptor);
+			            added.add(descriptor);
+			        }
+			    }
+
+			    for (int i = 0; i < added.size(); i++)
+			    {
+			      _availableDescriptors.remove(added.get(i));
+			    }
+
+
+			    refreshAvailableList();
+			    refreshDisplayedList();
+
+			}
+
+			private void removeFromDisplay(int[] toRemove)
+			{
+			    for (int i = 0; i < toRemove.length; i++)
+			    {
+			        int index = toRemove[i];
+			        IPropertyDescriptor descriptor = (IPropertyDescriptor)_currentDisplayedDescriptors.get(index);
+			        _currentDisplayedDescriptors.remove(index);
+			        _availableDescriptors.add(descriptor);
+			    }
+			    refreshDisplayedList();
+			    refreshAvailableList();
+			}
+
+			protected void buttonPressed(int buttonId)
+			{
+				setReturnCode(buttonId);
+
+				close();
+			}
+
+			protected Control getInitialFocusControl()
+			{
+				return _availableList;
+			}
+
+			public Control createInner(Composite parent)
+			{
+				Composite main = SystemWidgetHelpers.createComposite(parent, 1);
+
+
+				Composite c = SystemWidgetHelpers.createComposite(main, 4);
+				c.setLayoutData(new GridData(GridData.FILL_BOTH));
+				_availableList = SystemWidgetHelpers.createListBox(c, SystemResources.RESID_TABLE_SELECT_COLUMNS_AVAILABLE_LABEL, this, true);
+
+				Composite addRemoveComposite = SystemWidgetHelpers.createComposite(c, 1);
+				addRemoveComposite.setLayoutData(new GridData(GridData.VERTICAL_ALIGN_CENTER));
+				_addButton = SystemWidgetHelpers.createPushButton(addRemoveComposite,
+				        SystemResources.RESID_TABLE_SELECT_COLUMNS_ADD_LABEL,
+				        this);
+				_addButton.setToolTipText(SystemResources.RESID_TABLE_SELECT_COLUMNS_ADD_TOOLTIP);
+
+				_removeButton = SystemWidgetHelpers.createPushButton(addRemoveComposite,
+				        SystemResources.RESID_TABLE_SELECT_COLUMNS_REMOVE_LABEL,
+				        this);
+				_removeButton.setToolTipText(SystemResources.RESID_TABLE_SELECT_COLUMNS_REMOVE_TOOLTIP);
+
+				_displayedList = SystemWidgetHelpers.createListBox(c, SystemResources.RESID_TABLE_SELECT_COLUMNS_DISPLAYED_LABEL, this, false);
+
+				Composite upDownComposite = SystemWidgetHelpers.createComposite(c, 1);
+				upDownComposite.setLayoutData(new GridData(GridData.VERTICAL_ALIGN_CENTER));
+				_upButton = SystemWidgetHelpers.createPushButton(upDownComposite,
+				        SystemResources.RESID_TABLE_SELECT_COLUMNS_UP_LABEL,
+				        this);
+				_upButton.setToolTipText(SystemResources.RESID_TABLE_SELECT_COLUMNS_UP_TOOLTIP);
+
+				_downButton = SystemWidgetHelpers.createPushButton(upDownComposite,
+				        SystemResources.RESID_TABLE_SELECT_COLUMNS_DOWN_LABEL,
+				        this);
+				_downButton.setToolTipText(SystemResources.RESID_TABLE_SELECT_COLUMNS_DOWN_TOOLTIP);
+
+				initLists();
+
+				setHelp();
+				return c;
+			}
+
+			private void initLists()
+			{
+			   refreshAvailableList();
+			   refreshDisplayedList();
+			   updateEnableStates();
+			}
+
+			private void refreshAvailableList()
+			{
+			    _availableList.removeAll();
+			    // initialize available list
+			    for (int i = 0; i < _availableDescriptors.size(); i++)
+			    {
+			        IPropertyDescriptor descriptor = (IPropertyDescriptor)_availableDescriptors.get(i);
+			        _availableList.add(descriptor.getDisplayName());
+			    }
+			}
+
+			private void refreshDisplayedList()
+			{
+			    _displayedList.removeAll();
+			    // initialize display list
+			    for (int i = 0; i < _currentDisplayedDescriptors.size(); i++)
+			    {
+
+			        Object obj = _currentDisplayedDescriptors.get(i);
+			        if (obj != null && obj instanceof IPropertyDescriptor)
+			        {
+			            _displayedList.add(((IPropertyDescriptor)obj).getDisplayName());
+			        }
+			    }
+			}
+
+			private void setHelp()
+			{
+				setHelp(RSEUIPlugin.HELPPREFIX + "gntc0000"); //$NON-NLS-1$
+			}
+		}
+
+		public SelectColumnsAction()
+		{
+			super(SystemResources.ACTION_SELECTCOLUMNS_LABEL, null);
+			setToolTipText(SystemResources.ACTION_SELECTCOLUMNS_TOOLTIP);
+			setImageDescriptor(RSEUIPlugin.getDefault().getImageDescriptor(ISystemIconConstants.ICON_SYSTEM_FILTER_ID));
+		}
+
+		public void checkEnabledState()
+		{
+			Viewer viewer = getRSEViewer();
+			if (viewer != null && viewer.getInput() != null)
+			{
+				setEnabled(true);
+			}
+			else
+			{
+				setEnabled(false);
+			}
+		}
+		public void run()
+		{
+			Viewer rviewer = getRSEViewer();
+			if (rviewer instanceof SystemSearchTableView){
+				SystemSearchTableView viewer = (SystemSearchTableView)rviewer;
+				ISystemTableViewColumnManager mgr = viewer.getColumnManager();
+				ISystemViewElementAdapter adapter = viewer.getViewAdapterForContents();
+				SelectColumnsDialog dlg = new SelectColumnsDialog(getShell(), adapter, mgr);
+				if (dlg.open() == Window.OK)
+				{
+					mgr.setCustomDescriptors(adapter, dlg.getDisplayedColumns());
+					viewer.computeLayout(true);
+					viewer.refresh();
+				}
+			}
+		}
+	}
+
+	
 	private PageBook pageBook;
 	private StructuredViewer currentViewer;
 
@@ -110,6 +462,7 @@ public class SystemSearchViewPart extends ViewPart
 	private SystemSearchClearHistoryAction clearHistoryAction;
 	private SystemSearchRemoveSelectedMatchesAction removeSelectedAction;
 	private SystemSearchRemoveAllMatchesAction removeAllAction;
+	private SelectColumnsAction _selectColumnsAction;
 	
 	private SystemSearchCopyToClipboardAction copyAction;
 	private SystemPasteFromClipboardAction pasteAction;
@@ -336,6 +689,14 @@ public class SystemSearchViewPart extends ViewPart
 			}
 		}
 		
+		if (_selectColumnsAction == null){
+			_selectColumnsAction = new SelectColumnsAction();
+			if (currentViewer == null){
+				_selectColumnsAction.setEnabled(false);
+			}
+		}
+		
+		
 		// add cancel action
 		tbMgr.add(cancelAction);
 		
@@ -344,6 +705,10 @@ public class SystemSearchViewPart extends ViewPart
 		
 		// add remove all action
 		tbMgr.add(removeAllAction);
+		
+		
+		tbMgr.add(new Separator("View")); //$NON-NLS-1$
+		tbMgr.add(_selectColumnsAction);
 
 		// clipboard
 		Clipboard clipboard = RSEUIPlugin.getTheSystemRegistryUI().getSystemClipboard();
@@ -541,6 +906,10 @@ public class SystemSearchViewPart extends ViewPart
 		if (removeAllAction != null) {
 			removeAllAction.setEnabled(isRemoveAllEnabled(resultSet));
 		}
+		
+		if (_selectColumnsAction != null){
+			_selectColumnsAction.checkEnabledState();
+		}
 	}
 
 	private StructuredViewer createSearchResultsTree(IAdaptable resultSet, ISystemViewElementAdapter adapter)
@@ -724,6 +1093,10 @@ public class SystemSearchViewPart extends ViewPart
 		if (removeAllAction != null) {
 			removeAllAction.setEnabled(isRemoveAllEnabled(resultSet));
 		}
+		
+		if (_selectColumnsAction != null){
+			_selectColumnsAction.checkEnabledState();
+		}
 	}
 
 	/**
@@ -788,6 +1161,10 @@ public class SystemSearchViewPart extends ViewPart
 			removeAllAction.setEnabled(isRemoveAllEnabled((IAdaptable)input));
 		}
 		
+		if (_selectColumnsAction != null){
+			_selectColumnsAction.checkEnabledState();
+		}
+		
 		return true;
 	}
 	
@@ -821,6 +1198,9 @@ public class SystemSearchViewPart extends ViewPart
 		
 		// disable remove all action
 		removeAllAction.setEnabled(false);
+		
+		// disable column selection
+		_selectColumnsAction.setEnabled(false);
 		
 		// clear the history action list
 		historyActions.clear();
@@ -919,7 +1299,10 @@ public class SystemSearchViewPart extends ViewPart
 		removeSelectedAction.setEnabled(false);
 		
 		// disable remove all action
-		removeAllAction.setEnabled(false);		
+		removeAllAction.setEnabled(false);	
+		
+		// disable the column selection
+		_selectColumnsAction.setEnabled(false);
 		
 		return true;
 	}
@@ -991,6 +1374,10 @@ public class SystemSearchViewPart extends ViewPart
 					// enable/disable state for this input
 					if (removeAllAction != null) {
 						removeAllAction.setEnabled(isRemoveAllEnabled((IAdaptable)source));
+					}
+					
+					if (_selectColumnsAction != null){
+						_selectColumnsAction.checkEnabledState();
 					}
 						
 					// find out where the current viewer is in the viewer list

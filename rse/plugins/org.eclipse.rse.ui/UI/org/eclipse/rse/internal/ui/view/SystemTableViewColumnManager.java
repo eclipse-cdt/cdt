@@ -1,5 +1,5 @@
 /********************************************************************************
- * Copyright (c) 2004, 2008 IBM Corporation. All rights reserved.
+ * Copyright (c) 2004, 2010 IBM Corporation. All rights reserved.
  * This program and the accompanying materials are made available under the terms
  * of the Eclipse Public License v1.0 which accompanies this distribution, and is 
  * available at http://www.eclipse.org/legal/epl-v10.html
@@ -13,6 +13,7 @@
  * Contributors:
  * David Dykstal (IBM) - moved SystemPreferencesManager to a new package
  * David McKnight   (IBM)        - [225506] [api][breaking] RSE UI leaks non-API types 
+ * David McKnight   (IBM)        - [296877] Allow user to choose the attributes for remote search result
  ********************************************************************************/
 
 package org.eclipse.rse.internal.ui.view;
@@ -54,10 +55,16 @@ public class SystemTableViewColumnManager implements ISystemTableViewColumnManag
 	{
 	    putCachedDescriptors(adapter, descriptors);
 	    String historyKey = getHistoryKey(adapter);
-	    String[] history = new String[descriptors.length];
-	    for (int i = 0; i < descriptors.length; i++)
-	    {
-	        history[i] = descriptors[i].getId().toString();
+	    String[] history;
+	    if (descriptors.length > 0){
+	    	history = new String[descriptors.length];	    
+	    	for (int i = 0; i < descriptors.length; i++){
+	    		history[i] = descriptors[i].getId().toString();
+	    	} 
+	    }
+	    else {
+	    	history = new String[1];
+	    	history[0] = "null"; //$NON-NLS-1$
 	    }
 	    
 	    SystemPreferencesManager.setWidgetHistory(historyKey, history);
@@ -105,6 +112,11 @@ public class SystemTableViewColumnManager implements ISystemTableViewColumnManag
 	    if (history != null && history.length > 0)
 	    {
 	        int len = history.length;
+	        if (len == 1 && history[0].equals("null")){ //$NON-NLS-1$
+	        	// no descriptors
+	        	return new IPropertyDescriptor[0];
+	        }
+	        
 	        if (uniqueDescriptors != null && uniqueDescriptors.length < len)
 	        {
 	            len = uniqueDescriptors.length;
@@ -135,6 +147,7 @@ public class SystemTableViewColumnManager implements ISystemTableViewColumnManag
 	            }
 	        }
 	        }
+	        putCachedDescriptors(adapter, customDescriptors);
 	        return customDescriptors;
 	    }
 	    else

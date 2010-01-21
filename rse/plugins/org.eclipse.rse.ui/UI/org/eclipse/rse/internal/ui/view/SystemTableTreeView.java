@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2002, 2008 IBM Corporation and others.
+ * Copyright (c) 2002, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -17,6 +17,7 @@
  * Kevin Doyle (IBM) - [196582] ClassCastException when doing copy/paste with Search view open
  * Xuan Chen   (IBM) - [160775] [api] rename (at least within a zip) blocks UI thread
  * David McKnight   (IBM)        - [224313] [api] Create RSE Events for MOVE and COPY holding both source and destination fields
+ * David McKnight   (IBM)        - [296877] Allow user to choose the attributes for remote search result
  *******************************************************************************/
 
 package org.eclipse.rse.internal.ui.view;
@@ -512,7 +513,7 @@ public class SystemTableTreeView
 			{
 				ISystemViewElementAdapter ad = (ISystemViewElementAdapter) adapter;
 				ad.setPropertySourceInput(child);
-				IPropertyDescriptor[] descriptors = ad.getUniquePropertyDescriptors();
+				IPropertyDescriptor[] descriptors = _uniqueDescriptors;
 				for (int i = 0; i < descriptors.length; i++)
 				{
 					IPropertyDescriptor descriptor = descriptors[i];

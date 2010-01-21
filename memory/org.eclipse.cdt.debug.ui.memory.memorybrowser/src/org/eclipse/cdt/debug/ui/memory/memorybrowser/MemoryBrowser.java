@@ -316,6 +316,11 @@ public class MemoryBrowser extends ViewPart implements IDebugContextListener, IM
 	
 	private void performGo(boolean inNewTab)
 	{
+		performGo(inNewTab, fGotoAddressBar.getExpressionText(), (short)0);
+	}
+	
+	public void performGo(boolean inNewTab, final String expression, short memoryPage)
+	{
 		final CTabFolder activeFolder = (CTabFolder) fStackLayout.topControl;
 		if(activeFolder != null)
 		{	
@@ -332,7 +337,7 @@ public class MemoryBrowser extends ViewPart implements IDebugContextListener, IM
 			}
 			
 			final IRepositionableMemoryRendering rendering = (IRepositionableMemoryRendering) activeFolder.getSelection().getData(KEY_RENDERING);
-			final String expression = fGotoAddressBar.getExpressionText();
+			final String gotoExpression = expression;
 			
 			if(retrieval instanceof IMemoryBlockRetrievalExtension)
 			{
@@ -341,7 +346,7 @@ public class MemoryBrowser extends ViewPart implements IDebugContextListener, IM
 					public void run()
 					{
 						try {
-							BigInteger newBase = getExpressionAddress(retrieval, expression, context);
+							BigInteger newBase = getExpressionAddress(retrieval, gotoExpression, context);
 							if(((IMemoryBlockExtension) rendering.getMemoryBlock()).supportBaseAddressModification())
 								((IMemoryBlockExtension) rendering.getMemoryBlock()).setBaseAddress(newBase);
 							rendering.goToAddress(newBase);

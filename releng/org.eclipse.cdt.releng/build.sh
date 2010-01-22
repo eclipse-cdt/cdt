@@ -16,7 +16,7 @@
 export DISPLAY=:1
 
 # set up to use the Java 5 JRE
-export PATH=/opt/public/common/ibm-java2-ppc-50/bin:$PATH
+export PATH=/opt/public/common/ibm-java-jdk-ppc-60/bin:$PATH
 
 # make sure we're in the releng project dir 
 cd `dirname $0`

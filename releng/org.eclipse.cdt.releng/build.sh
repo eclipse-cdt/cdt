@@ -16,7 +16,7 @@
 export DISPLAY=:1
 
 # set up to use the Java 5 JRE
-export PATH=/opt/public/common/ibm-java-jdk-ppc-60/bin:$PATH
+export PATH=/opt/public/common/ibm-java-jdk-ppc-60/bin:/usr/local/bin:$PATH
 
 # make sure we're in the releng project dir 
 cd `dirname $0`
@@ -24,7 +24,7 @@ cd `dirname $0`
 # Checkout basebuilder to run the build
 mkdir -p tools
 cd tools
-cvs -d /cvsroot/eclipse	co -r R3_5_1 org.eclipse.releng.basebuilder
+cvs -d /cvsroot/eclipse	co -r R36_M3 org.eclipse.releng.basebuilder
 cp /home/data/httpd/download.eclipse.org/technology/subversive/0.7/pde-update-site/plugins/org.eclipse.team.svn.pde.build_0.7.8.I20090525-1500.jar \
 	org.eclipse.releng.basebuilder/plugins
 cd ..

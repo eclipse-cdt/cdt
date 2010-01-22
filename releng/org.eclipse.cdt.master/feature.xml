@@ -98,11 +98,11 @@
          version="0.0.0"/>
 
    <includes
-         id="org.eclipse.cdt.debug.edc"
+         id="org.eclipse.tm.tcf.feature"
          version="0.0.0"/>
 
    <includes
-         id="org.eclipse.tm.tcf.feature"
+         id="org.eclipse.cdt.debug.edc"
          version="0.0.0"/>
 
 </feature>

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2008 Intel Corporation and others.
+ * Copyright (c) 2007, 2010 Intel Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -36,7 +36,7 @@ public class XmlStorageElement implements ICStorageElement {
 
 	Element fElement;
 	private ICStorageElement fParent;
-	private List fChildList = new ArrayList();
+	private List<XmlStorageElement> fChildList = new ArrayList<XmlStorageElement>();
 	private boolean fChildrenCreated;
 	private String[] fAttributeFilters;
 	private String[] fChildFilters;
@@ -118,7 +118,7 @@ public class XmlStorageElement implements ICStorageElement {
 		return getChildren(XmlStorageElement.class);
 	}
 
-	protected ICStorageElement[] getChildren(Class clazz){
+	protected ICStorageElement[] getChildren(Class<XmlStorageElement> clazz){
 		return getChildren(clazz, true);
 	}
 
@@ -126,14 +126,14 @@ public class XmlStorageElement implements ICStorageElement {
 		return getChildren(XmlStorageElement.class, load);
 	}
 
-	protected ICStorageElement[] getChildren(Class clazz, boolean load){
+	protected ICStorageElement[] getChildren(Class<XmlStorageElement> clazz, boolean load){
 		if(load)
 			createChildren();
 
 		ICStorageElement[] children = (ICStorageElement[])java.lang.reflect.Array.newInstance(
                                 clazz, fChildList.size());
 
-		return (ICStorageElement[])fChildList.toArray(children);
+		return fChildList.toArray(children);
 	}
 
 	public ICStorageElement getParent() {
@@ -218,7 +218,7 @@ public class XmlStorageElement implements ICStorageElement {
 	public void clear(){
 		createChildren();
 
-		ICStorageElement children[] = (ICStorageElement[])fChildList.toArray(new ICStorageElement[fChildList.size()]);
+		ICStorageElement children[] = fChildList.toArray(new ICStorageElement[fChildList.size()]);
 		for(int i = 0; i < children.length; i++){
 			removeChild(children[i]);
 		}
@@ -354,7 +354,7 @@ public class XmlStorageElement implements ICStorageElement {
 			return false;
 		
 		if(attrs.length != 0){
-			Set set = new HashSet(Arrays.asList(attrs));
+			Set<String> set = new HashSet<String>(Arrays.asList(attrs));
 			set.removeAll(Arrays.asList(otherAttrs));
 			if(set.size() != 0)
 				return false;
@@ -396,14 +396,14 @@ public class XmlStorageElement implements ICStorageElement {
 	public String[] getAttributeNames() {
 		NamedNodeMap nodeMap = fElement.getAttributes();
 		int length = nodeMap.getLength();
-		List list = new ArrayList(length);
+		List<String> list = new ArrayList<String>(length);
 		for(int i = 0; i < length; i++){
 			Node node = nodeMap.item(i);
 			String name = node.getNodeName();
 			if(isPropertyAlowed(name))
 				list.add(name);
 		}
-		return (String[])list.toArray(new String[list.size()]);
+		return list.toArray(new String[list.size()]);
 	}
 
 	/**

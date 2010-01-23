@@ -22,6 +22,7 @@ import org.eclipse.cdt.debug.core.ICDTLaunchConfigurationConstants;
 import org.eclipse.cdt.dsf.concurrent.DataRequestMonitor;
 import org.eclipse.cdt.dsf.concurrent.DsfRunnable;
 import org.eclipse.cdt.dsf.concurrent.IDsfStatusConstants;
+import org.eclipse.cdt.dsf.concurrent.ImmediateExecutor;
 import org.eclipse.cdt.dsf.concurrent.RequestMonitor;
 import org.eclipse.cdt.dsf.concurrent.Sequence;
 import org.eclipse.cdt.dsf.datamodel.AbstractDMEvent;
@@ -419,7 +420,7 @@ public class GDBControl extends AbstractMIControl implements IGDBControl {
     													IGdbDebugPreferenceConstants.PREF_AUTO_TERMINATE_GDB,
     													true, null)) {
     		// If the inferior finishes, let's terminate GDB
-    		terminate(new RequestMonitor(getExecutor(), null));
+    		terminate(new RequestMonitor(ImmediateExecutor.getInstance(), null));
     	}
     }
     

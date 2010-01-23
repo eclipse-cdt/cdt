@@ -115,8 +115,8 @@ public class CountingRequestMonitor extends RequestMonitor {
     
     @Override
     public synchronized void setStatus(IStatus status) {
-        if ((getStatus() instanceof MultiStatus)) {
-            ((MultiStatus)getStatus()).add(status);
+        if ((getStatus() instanceof DsfMultiStatus)) {
+            ((DsfMultiStatus)getStatus()).add(status);
         }
     };
 }

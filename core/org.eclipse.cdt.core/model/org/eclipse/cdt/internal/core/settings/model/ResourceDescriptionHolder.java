@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007 Intel Corporation and others.
+ * Copyright (c) 2007, 2010 Intel Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -43,7 +43,7 @@ public class ResourceDescriptionHolder {
 	}
 	
 	public void setCurrentPath(IPath path){
-		//TODO: do we need to move choldren here?
+		//TODO: do we need to move children here?
 		fPathSettingContainer.setPath(path, true);
 	}
 
@@ -53,7 +53,7 @@ public class ResourceDescriptionHolder {
 	}
 	
 	public ICResourceDescription[] getResourceDescriptions(final int kind){
-		final List list = new ArrayList();
+		final List<ICResourceDescription> list = new ArrayList<ICResourceDescription>();
 		fPathSettingContainer.accept(new IPathSettingsContainerVisitor(){
 
 			public boolean visit(PathSettingsContainer container) {
@@ -68,15 +68,15 @@ public class ResourceDescriptionHolder {
 		});
 		
 		if(kind == ICSettingBase.SETTING_FILE)
-			return (ICFileDescription[])list.toArray(new ICFileDescription[list.size()]);
+			return list.toArray(new ICFileDescription[list.size()]);
 		else if(kind == ICSettingBase.SETTING_FOLDER)
-			return (ICFolderDescription[])list.toArray(new ICFolderDescription[list.size()]);
+			return list.toArray(new ICFolderDescription[list.size()]);
 			
-		return (ICResourceDescription[])list.toArray(new ICResourceDescription[list.size()]);
+		return list.toArray(new ICResourceDescription[list.size()]);
 	}
 
 	public ICResourceDescription[] getResourceDescriptions(){
-		final List list = new ArrayList();
+		final List<Object> list = new ArrayList<Object>();
 		fPathSettingContainer.accept(new IPathSettingsContainerVisitor(){
 
 			public boolean visit(PathSettingsContainer container) {
@@ -85,7 +85,7 @@ public class ResourceDescriptionHolder {
 			}
 			
 		});
-		return (ICResourceDescription[])list.toArray(new ICResourceDescription[list.size()]);
+		return list.toArray(new ICResourceDescription[list.size()]);
 	}
 
 	public void removeResurceDescription(IPath path){

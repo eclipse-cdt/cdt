@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007 Intel Corporation and others.
+ * Copyright (c) 2007, 2010 Intel Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -19,7 +19,7 @@ import org.eclipse.cdt.core.settings.model.util.KindBasedStore;
 
 public final class CExternalSetting implements ICExternalSetting {
 //	private EntryStore fEntryStore = new EntryStore();
-	private KindBasedStore fStore = new KindBasedStore(false);
+	private KindBasedStore<CEntriesSet> fStore = new KindBasedStore<CEntriesSet>(false);
 	private String[] fContentTypeIds;
 	private String[] fLanguageIds;
 	private String[] fExtensions;
@@ -77,7 +77,7 @@ public final class CExternalSetting implements ICExternalSetting {
 //	}
 	
 	private CEntriesSet getEntriesSet(int kind, boolean create) {
-		CEntriesSet set = (CEntriesSet)fStore.get(kind);
+		CEntriesSet set = fStore.get(kind);
 		if (set == null && create) {
 			set = new CEntriesSet();
 			fStore.put(kind, set);

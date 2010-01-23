@@ -25,7 +25,7 @@ public final class PathSettingsContainer {
 	private static final String ROOY_PATH_NAME = Path.ROOT.toString();
 //	private static final boolean DEBUG = true;
 //	private static final int INIT_CHILDREN_MAP_CAPACITY = 2;
-	
+
 //	private Map fChildrenMap;
 //	private Map fPatternMap;
 	private PatternNameMap fPatternChildrenMap;
@@ -34,17 +34,17 @@ public final class PathSettingsContainer {
 	private String fName;
 	private PathSettingsContainer fRootContainer;
 	private PathSettingsContainer fDirectParentContainer;
-	private List fListeners;
-	
+	private List<IPathSettingsContainerListener> fListeners;
+
 	private boolean fIsPatternMode;
-	
+
 	private static final int ADDED = 1;
 	private static final int REMOVED = 2;
 	private static final int VALUE_CHANGED = 3;
 	private static final int PATH_CHANGED = 4;
-	
+
 	private static class PatternSearchInfo {
-		Set fStoreSet;
+		Set<PathSettingsContainer> fStoreSet;
 		int fNumDoubleStarEls;
 	}
 
@@ -59,7 +59,7 @@ public final class PathSettingsContainer {
 	private PathSettingsContainer(boolean pattternMode){
 		this(null, null, ROOY_PATH_NAME, pattternMode);
 	}
-	
+
 	private PathSettingsContainer(PathSettingsContainer root, PathSettingsContainer parent, String name, boolean patternMode){
 		fRootContainer = root;
 		fDirectParentContainer = parent;
@@ -72,13 +72,13 @@ public final class PathSettingsContainer {
 			fValue = INEXISTENT_VALUE;
 		}
 	}
-	
+
 	private PatternNameMap getPatternChildrenMap(boolean create){
 		if(fPatternChildrenMap == null && create)
 			fPatternChildrenMap = new PatternNameMap();
 		return fPatternChildrenMap;
 	}
-	
+
 	private PathSettingsContainer getExacChild(String name, boolean create){
 		PatternNameMap pMap = getPatternChildrenMap(create);
 		if(pMap != null){
@@ -104,7 +104,7 @@ public final class PathSettingsContainer {
 		return null;
 	}
 
-	private List getChildren(String name){
+	private List<PathSettingsContainer> getChildren(String name){
 		PatternNameMap pMap = getPatternChildrenMap(false);
 		if(pMap != null){
 			return pMap.getValues(name);
@@ -112,39 +112,39 @@ public final class PathSettingsContainer {
 		return null;
 	}
 
-	
+
 	private void notifyChange(PathSettingsContainer container, int type, Object oldValue, boolean childrenAffected){
-		List list = getListenersList(false);
+		List<IPathSettingsContainerListener> list = getListenersList(false);
 		if(list != null && list.size() > 0){
-			for(Iterator iter = list.iterator(); iter.hasNext();){
+			for (IPathSettingsContainerListener listener : list) {
 				switch(type){
 				case ADDED:
-					((IPathSettingsContainerListener)iter.next()).containerAdded(container);
+					listener.containerAdded(container);
 					break;
 				case REMOVED:
-					((IPathSettingsContainerListener)iter.next()).aboutToRemove(container);
+					listener.aboutToRemove(container);
 					break;
 				case VALUE_CHANGED:
-					((IPathSettingsContainerListener)iter.next()).containerValueChanged(container, oldValue);
+					listener.containerValueChanged(container, oldValue);
 					break;
 				case PATH_CHANGED:
-					((IPathSettingsContainerListener)iter.next()).containerPathChanged(container, (IPath)oldValue, childrenAffected);
+					listener.containerPathChanged(container, (IPath)oldValue, childrenAffected);
 					break;
 				}
-					
+
 			}
 		}
 		PathSettingsContainer parent = getParentContainer();
 		if(parent != null)
 			parent.notifyChange(container, type, oldValue, childrenAffected);
 	}
-	
-	private List getListenersList(boolean create){
+
+	private List<IPathSettingsContainerListener> getListenersList(boolean create){
 		if(fListeners == null && create)
-			fListeners = new ArrayList();
+			fListeners = new ArrayList<IPathSettingsContainerListener>();
 		return fListeners;
 	}
-	
+
 	public boolean hasChildren(){
 		PatternNameMap pMap = getPatternChildrenMap(false);
 		return pMap != null && pMap.size() != 0;
@@ -163,7 +163,8 @@ public final class PathSettingsContainer {
 			} else if(!exactPath){
 				for(;
 					container.internalGetValue() == INEXISTENT_VALUE;
-					container = container.getDirectParentContainer());
+					container = container.getDirectParentContainer()) {
+				}
 			} else if(container.internalGetValue() == INEXISTENT_VALUE){
 				container = null;
 			}
@@ -171,13 +172,13 @@ public final class PathSettingsContainer {
 		}
 		return container;
 	}
-	
+
 	static IPath toNormalizedContainerPath(IPath path){
 		return Path.ROOT.append(path);
 	}
 
 	public PathSettingsContainer[] getChildren(final boolean includeThis){
-		final List list = new ArrayList();
+		final List<PathSettingsContainer> list = new ArrayList<PathSettingsContainer>();
 		accept(new IPathSettingsContainerVisitor(){
 
 			public boolean visit(PathSettingsContainer container) {
@@ -187,9 +188,9 @@ public final class PathSettingsContainer {
 			}
 		});
 
-		return (PathSettingsContainer[])list.toArray(new PathSettingsContainer[list.size()]);
+		return list.toArray(new PathSettingsContainer[list.size()]);
 	}
-	
+
 	public PathSettingsContainer[] getChildrenForPath(IPath path, boolean includePath){
 		PathSettingsContainer cr = findContainer(path, false, true, fIsPatternMode, -1, null);
 		if(cr != null)
@@ -203,22 +204,22 @@ public final class PathSettingsContainer {
 			return cr.getDirectChildren();
 		return new PathSettingsContainer[0];
 	}
-	
+
 /*	public PathSettingsContainer[] getDirectChildrenForPath(IPath path, boolean searchPatterns){
 		if(!searchPatterns)
 			return getDirectChildrenForPath(path);
-		
+
 		if(!isRoot() && !PatternNameMap.isPatternName(fName)){
 			return getDirectParentContainer().getDirectChildrenForPath(
 					new Path(fName).append(path), true);
 		}
 		return searchPatternsDirectChildrenForPath(path);
 	}
-	
+
 	private PathSettingsContainer[] searchPatternsDirectChildrenForPath(IPath path){
 		Set set = new HashSet();
 		findContainer(path, false, false, path.segmentCount(), set);
-		
+
 		if(DEBUG){
 			for(Iterator iter = set.iterator(); iter.hasNext();){
 				PathSettingsContainer child = (PathSettingsContainer)iter.next();
@@ -226,22 +227,22 @@ public final class PathSettingsContainer {
 					throw new IllegalStateException();
 			}
 		}
-		
+
 		return (PathSettingsContainer[])set.toArray(new PathSettingsContainer[set.size()]);
 	}
 */
 	public PathSettingsContainer[] getDirectChildren(){
-		List list = doGetDirectChildren(null);
+		List<PathSettingsContainer> list = doGetDirectChildren(null);
 		if(list == null || list.size() == 0)
 			return new PathSettingsContainer[0];
-		return (PathSettingsContainer[])list.toArray(new PathSettingsContainer[list.size()]);
+		return list.toArray(new PathSettingsContainer[list.size()]);
 	}
-	
-	private List doGetDirectChildren(List list){
+
+	private List<PathSettingsContainer> doGetDirectChildren(List<PathSettingsContainer> list){
 		PatternNameMap pMap = getPatternChildrenMap(false);
 		if(pMap != null){
 			if(list == null)
-				list = new ArrayList();
+				list = new ArrayList<PathSettingsContainer>();
 			for(Iterator iter = pMap.values().iterator(); iter.hasNext(); ){
 				PathSettingsContainer cr = (PathSettingsContainer)iter.next();
 				if(cr.fValue == INEXISTENT_VALUE){
@@ -253,7 +254,7 @@ public final class PathSettingsContainer {
 		}
 		return list;
 	}
-	
+
 	public Object[] getValues(final boolean includeThis){
 		final List list = new ArrayList();
 		accept(new IPathSettingsContainerVisitor(){
@@ -273,13 +274,13 @@ public final class PathSettingsContainer {
 			return fDirectParentContainer.getValidContainer();
 		return null;
 	}
-	
+
 	private PathSettingsContainer getValidContainer(){
 		if(internalGetValue() == INEXISTENT_VALUE)
 			return getDirectParentContainer().getValidContainer();
 		return this;
 	}
-	
+
 	public Object removeChildContainer(IPath path){
 		PathSettingsContainer container = getChildContainer(path, false, true);
 		Object value = null;
@@ -289,7 +290,7 @@ public final class PathSettingsContainer {
 		}
 		return value;
 	}
-	
+
 	public void remove(){
 		if(!isValid())
 			return;
@@ -307,12 +308,12 @@ public final class PathSettingsContainer {
 			fRootContainer = null;
 		}
 	}
-	
+
 	private void checkRemove(){
 		if(fValue == INEXISTENT_VALUE && !hasChildren())
 			remove();
 	}
-	
+
 	private void disconnectChild(PathSettingsContainer child){
 		getPatternChildrenMap(true).remove(child.getName());
 	}
@@ -324,26 +325,26 @@ public final class PathSettingsContainer {
 	public boolean isValid(){
 		return fValue != INEXISTENT_VALUE && fRootContainer != null;
 	}
-	
+
 	public void removeChildren(){
 		PatternNameMap pMap = getPatternChildrenMap(false);
 		if(pMap == null || pMap.size() == 0)
 			return;
-		
-		
+
+
 		Collection c = pMap.values();
 		PathSettingsContainer childContainers[] = (PathSettingsContainer[])c.toArray(new PathSettingsContainer[c.size()]);
-		
-		for(int i = 0; i < childContainers.length; i++){
-			childContainers[i].removeChildren();
-			childContainers[i].remove();
+
+		for (PathSettingsContainer childContainer : childContainers) {
+			childContainer.removeChildren();
+			childContainer.remove();
 		}
 	}
-	
+
 	private void deleteChild(PathSettingsContainer child){
 		getPatternChildrenMap(false).remove(child.getName());
 	}
-	
+
 	private String getName(){
 		return fName;
 	}
@@ -368,7 +369,7 @@ public final class PathSettingsContainer {
 //				if(list != null){
 //					int size = list.size();
 //					PathSettingsContainer child, childFound;
-//					
+//
 //					for(int i = 0; i < size; i++){
 //						child = (PathSettingsContainer)list.get(i);
 //						if(directChildren && child.fValue != INEXISTENT_VALUE){
@@ -378,8 +379,8 @@ public final class PathSettingsContainer {
 //						}
 //
 //						if(childFound.fValue != INEXISTENT_VALUE){
-//							if(container == null 
-//									|| container.getValue() == INEXISTENT_VALUE 
+//							if(container == null
+//									|| container.getValue() == INEXISTENT_VALUE
 //									|| container.getPath().segmentCount() < childFound.getPath().segmentCount()){
 //								container = childFound;
 //							}
@@ -393,7 +394,7 @@ public final class PathSettingsContainer {
 //					if(dsChild != null && !storeSet.contains(dsChild)){
 //						container = dsChild.findContainer(path, false, false, directChildren, storeSet);
 //					}
-//					
+//
 //					if(container == null){
 //						if(isDoubleStarName()){
 //							if(path.segmentCount() != 0){
@@ -410,7 +411,7 @@ public final class PathSettingsContainer {
 		}
 		return container;
 	}
-	
+
 	static boolean pathsEqual(IPath p1, IPath p2) {
 		if (p1 == p2)
 			return true;
@@ -422,22 +423,22 @@ public final class PathSettingsContainer {
 		while (--i >= 0)
 			if (!p1.segment(i).equals(p2.segment(i)))
 				return false;
-		
+
 		return true;
 	}
-	
+
 	private PathSettingsContainer processPatterns(IPath path, int matchDepth, int depth, PatternSearchInfo psi){
-		Set storeSet = psi.fStoreSet;
+		Set<PathSettingsContainer> storeSet = psi.fStoreSet;
 		PathSettingsContainer container = null;
 		String name = path.segment(0);
-		List list = getChildren(name);
+		List<PathSettingsContainer> list = getChildren(name);
 		PathSettingsContainer child, childFound;
 		boolean exactPathFound = false;
 		if(list != null){
 			int size = list.size();
-			
+
 			for(int i = 0; i < size; i++){
-				child = (PathSettingsContainer)list.get(i);
+				child = list.get(i);
 				if(matchDepth == 0 && child.fValue != INEXISTENT_VALUE){
 					childFound = child;
 				} else {
@@ -445,14 +446,14 @@ public final class PathSettingsContainer {
 				}
 
 				if(childFound != null  && childFound.fValue != INEXISTENT_VALUE){
-					if(!exactPathFound 
+					if(!exactPathFound
 							&& path.segmentCount() == 1
 							&& child != childFound
 							&& name.equals(childFound.fName)){
 						container = childFound;
 						exactPathFound = true;
-					} else if(container == null 
-							|| container.getValue() == INEXISTENT_VALUE 
+					} else if(container == null
+							|| container.getValue() == INEXISTENT_VALUE
 							|| container.getPath().segmentCount() < childFound.getPath().segmentCount()){
 						container = childFound;
 					}
@@ -472,11 +473,11 @@ public final class PathSettingsContainer {
 				} else {
 					childFound = child.findContainer(path, false, false, true, matchDepth, psi);
 				}
-				
+
 				if(childFound != null && childFound.fValue != INEXISTENT_VALUE){
 					psi.fNumDoubleStarEls++;
-					if(container == null 
-							|| container.getValue() == INEXISTENT_VALUE 
+					if(container == null
+							|| container.getValue() == INEXISTENT_VALUE
 							|| container.getPath().segmentCount() < childFound.getPath().segmentCount() + depth - psi.fNumDoubleStarEls){
 						container = childFound;
 					}
@@ -484,7 +485,7 @@ public final class PathSettingsContainer {
 						storeSet.add(container);
 				}
 			}
-			
+
 			if(container == null){
 				if(isDoubleStarName()){
 					if(path.segmentCount() > 1){
@@ -504,19 +505,19 @@ public final class PathSettingsContainer {
 		}
 		return container;
 	}
-	
+
 	private int stepDepth(int depth){
 		return depth == 0 ? depth : depth-1;
 	}
-	
+
 	public void accept(IPathSettingsContainerVisitor visitor){
 		doAccept(visitor);
 	}
-	
+
 	private boolean doAccept(IPathSettingsContainerVisitor visitor){
 		if(fValue != INEXISTENT_VALUE && !visitor.visit(this))
 			return false;
-		
+
 		PatternNameMap pMap = getPatternChildrenMap(false);
 		if(pMap != null){
 			for(Iterator iter = pMap.values().iterator(); iter.hasNext();){
@@ -527,8 +528,8 @@ public final class PathSettingsContainer {
 		}
 		return true;
 	}
-	
-	
+
+
 	public IPath getPath(){
 		if(fPath == null){
 			if(fDirectParentContainer != null)
@@ -538,15 +539,15 @@ public final class PathSettingsContainer {
 		}
 		return fPath;
 	}
-	
+
 	public void setPath(IPath path, boolean moveChildren){
 		if(path == null || isRoot() || path.equals(getPath()) || path.segmentCount() == 0)
 			return;
 
 		IPath oldPath = getPath();
-		
+
 		fDirectParentContainer.disconnectChild(this);
-		
+
 		if(!moveChildren){
 			if(hasChildren()){
 				PathSettingsContainer cr = new PathSettingsContainer(fRootContainer, fDirectParentContainer, fName, fIsPatternMode);
@@ -558,9 +559,9 @@ public final class PathSettingsContainer {
 				}
 			}
 		} else {
-			
+
 		}
-		
+
 		PathSettingsContainer newParent = fRootContainer.findContainer(path.removeLastSegments(1), true, true, false, -1, null);
 		PathSettingsContainer oldParent = fDirectParentContainer;
 		fName = path.segment(path.segmentCount()-1);
@@ -568,19 +569,19 @@ public final class PathSettingsContainer {
 
 		setParent(newParent);
 		newParent.connectChild(this);
-		
+
 		oldParent.checkRemove();
 		notifyChange(this, PATH_CHANGED, oldPath, moveChildren);
 	}
-	
+
 	private Object internalGetValue(){
 		return fValue;
 	}
-	
+
 	public boolean isRoot(){
 		return fRootContainer == this;
 	}
-	
+
 	private Object internalSetValue(Object value){
 		Object oldValue = fValue;
 		fValue = value;
@@ -591,38 +592,38 @@ public final class PathSettingsContainer {
 		}
 		return oldValue;
 	}
-	
+
 	public Object setValue(Object value){
 		if(fValue == INEXISTENT_VALUE)
 			throw new IllegalStateException();
 		return internalSetValue(value);
 	}
-	
+
 	public Object getValue(){
 		if(fValue == INEXISTENT_VALUE)
 			throw new IllegalStateException();
 		return fValue;
 	}
-	
+
 	public PathSettingsContainer getRootContainer(){
 		return fRootContainer;
 	}
-	
+
 	private PathSettingsContainer getDirectParentContainer(){
 		return fDirectParentContainer;
 	}
-	
+
 	public void addContainerListener(IPathSettingsContainerListener listenet){
-		List list = getListenersList(true);
+		List<IPathSettingsContainerListener> list = getListenersList(true);
 		list.add(listenet);
 	}
 
 	public void removeContainerListener(IPathSettingsContainerListener listenet){
-		List list = getListenersList(false);
+		List<IPathSettingsContainerListener> list = getListenersList(false);
 		if(list != null)
 			list.remove(listenet);
 	}
-	
+
 	private void setParent(PathSettingsContainer parent){
 		fDirectParentContainer = parent;
 	}
@@ -631,7 +632,7 @@ public final class PathSettingsContainer {
 	public String toString() {
 		return contributeToString(new StringBuffer(), 0).toString();
 	}
-	
+
 	private StringBuffer contributeToString(StringBuffer buf, int depth){
 		for (int i= 0; i < depth; i++) {
 			buf.append('\t');
@@ -641,13 +642,13 @@ public final class PathSettingsContainer {
 		PathSettingsContainer[] directChildren = getDirectChildren();
 		if(directChildren.length != 0){
 			int nextDepth = depth + 1;
-			for(int i = 0; i < directChildren.length; i++){
-				directChildren[i].contributeToString(buf, nextDepth);
+			for (PathSettingsContainer child : directChildren) {
+				child.contributeToString(buf, nextDepth);
 			}
 		}
 		return buf;
 	}
-	
+
 	static boolean hasSpecChars(IPath path){
 		int count = path.segmentCount();
 		for(int i = 0; i < count; i++){

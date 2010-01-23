@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008 Broadcom Corp. and others.
+ * Copyright (c) 2008, 2010 Broadcom Corp. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -60,7 +60,7 @@ public class XmlStorageUtil {
 	 * Element which should only be modified via the ICStorageElement
 	 * interface subsequent to this conversion.
 	 * 
-	 * @param doc
+	 * @param el input XML element
 	 * @return ICStorageElement tree
 	 */
 	public static ICStorageElement createCStorageTree(Element el) {

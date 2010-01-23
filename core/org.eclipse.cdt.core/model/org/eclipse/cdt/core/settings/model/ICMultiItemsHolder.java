@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2008 Intel Corporation and others.
+ * Copyright (c) 2007, 2010 Intel Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -24,11 +24,10 @@ package org.eclipse.cdt.core.settings.model;
  *
  */
 public interface ICMultiItemsHolder {
-	public static final String EMPTY_STR = "";
+	public static final String EMPTY_STR = ""; //$NON-NLS-1$
 
 	/**
-	 * Returns array of items which it holds 
-	 * @return 
+	 * @return array of items which it holds 
 	 */
 	Object[] getItems();
 }

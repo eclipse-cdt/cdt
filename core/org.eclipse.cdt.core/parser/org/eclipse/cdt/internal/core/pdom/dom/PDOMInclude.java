@@ -141,6 +141,11 @@ public class PDOMInclude implements IIndexFragmentInclude {
 		return rec != 0 ? new PDOMFile(linkage, rec) : null;
 	}
 
+	void setIncludes(PDOMFile includedFile) throws CoreException {
+		long rec = includedFile != null ? includedFile.getRecord() : 0;
+		linkage.getDB().putRecPtr(record + INCLUDED_FILE, rec);
+	}
+
 	/**
 	 * Checks if the name is the same as the end part of the path of the included file.
 	 */
@@ -166,7 +171,7 @@ public class PDOMInclude implements IIndexFragmentInclude {
 		return rec != 0 ? new PDOMFile(linkage, rec) : null;
 	}
 
-	private void setIncludedBy(PDOMFile includedBy) throws CoreException {
+	void setIncludedBy(PDOMFile includedBy) throws CoreException {
 		long rec = includedBy != null ? includedBy.getRecord() : 0;
 		linkage.getDB().putRecPtr(record + INCLUDED_BY, rec);
 	}

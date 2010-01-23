@@ -6,11 +6,12 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *     Doug Schaefer (QNX) - Initial API and implementation
- *     Markus Schorn (Wind River Systems)
- *     IBM Corporation
- *     Andrew Ferguson (Symbian)
- *     Anton Leherbauer (Wind River Systems)
+ *    Doug Schaefer (QNX) - Initial API and implementation
+ *    Markus Schorn (Wind River Systems)
+ *    IBM Corporation
+ *    Andrew Ferguson (Symbian)
+ *    Anton Leherbauer (Wind River Systems)
+ *    Sergey Prigogin (Google)
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.pdom;
 
@@ -96,6 +97,7 @@ import org.eclipse.core.runtime.Status;
 public class PDOM extends PlatformObject implements IPDOM {
 	private static final int BLOCKED_WRITE_LOCK_OUTPUT_INTERVAL = 30000;
 	private static final int LONG_WRITE_LOCK_REPORT_THRESHOLD = 1000;
+	private static final int LONG_READ_LOCK_WAIT_REPORT_THRESHOLD = 1000;
 	static boolean sDEBUG_LOCKS= false; // initialized in the PDOMManager, because IBM needs PDOM independent of runtime plugin.
 
 	/**
@@ -341,7 +343,7 @@ public class PDOM extends PlatformObject implements IPDOM {
 		}
 	}
 
-	private PDOMLinkage createLinkage(int linkageID) throws CoreException {
+	protected PDOMLinkage createLinkage(int linkageID) throws CoreException {
 		PDOMLinkage pdomLinkage= fLinkageIDCache.get(linkageID);
 		if (pdomLinkage == null) {
 			final String linkageName= Linkage.getLinkageName(linkageID);
@@ -766,6 +768,7 @@ public class PDOM extends PlatformObject implements IPDOM {
 	private long timeWriteLockAcquired;
 
 	public void acquireReadLock() throws InterruptedException {
+		long t = sDEBUG_LOCKS ? System.nanoTime() : 0;
 		synchronized (mutex) {
 			++waitingReaders;
 			try {
@@ -776,13 +779,16 @@ public class PDOM extends PlatformObject implements IPDOM {
 			}
 			++lockCount;
 			db.setLocked(true);
-			
+
 			if (sDEBUG_LOCKS) {
+				t = (System.nanoTime() - t) / 1000000;
+				if (t >= LONG_READ_LOCK_WAIT_REPORT_THRESHOLD) {
+					System.out.println("Acquired index read lock after " + t + " ms wait."); //$NON-NLS-1$//$NON-NLS-2$
+				}
 				incReadLock(fLockDebugging);
 			}
 		}
 	}
-
 
 	public void releaseReadLock() {
 		boolean clearCache= false;
@@ -884,6 +890,12 @@ public class PDOM extends PlatformObject implements IPDOM {
 		fireChange(event);
 	}
 
+	public boolean hasWaitingReaders() {
+		synchronized (mutex) {
+			return waitingReaders > 0;
+		}
+	}
+	
 	public long getLastWriteAccess() {
 		return lastWriteAccess;
 	}
@@ -957,17 +969,23 @@ public class PDOM extends PlatformObject implements IPDOM {
 		PDOMName name;
 		if ((options & FIND_DECLARATIONS) != 0) {
 			for (name= pdomBinding.getFirstDeclaration(); name != null; name= name.getNextInBinding()) {
-				names.add(name);
+				if (isCommitted(name)) {
+					names.add(name);
+				}
 			}
 		}
 		if ((options & FIND_DEFINITIONS) != 0) {
 			for (name = pdomBinding.getFirstDefinition(); name != null; name= name.getNextInBinding()) {
-				names.add(name);
+				if (isCommitted(name)) {
+					names.add(name);
+				}
 			}
 		}
 		if ((options & FIND_REFERENCES) != 0) {
 			for (name = pdomBinding.getFirstReference(); name != null; name= name.getNextInBinding()) {
-				names.add(name);
+				if (isCommitted(name)) {
+					names.add(name);
+				}
 			}
 		}
 	}
@@ -977,16 +995,30 @@ public class PDOM extends PlatformObject implements IPDOM {
 		if ((options & FIND_DEFINITIONS) != 0) {
 			for (PDOMMacro macro= container.getFirstDefinition(); macro != null; macro= macro.getNextInContainer()) {
 				final IIndexFragmentName name = macro.getDefinition();
-				if (name != null) {
+				if (name != null && isCommitted(macro)) {
 					names.add(name);
 				}
 			}
 		}
 		if ((options & FIND_REFERENCES) != 0) {
 			for (PDOMMacroReferenceName name = container.getFirstReference(); name != null; name= name.getNextInContainer()) {
-				names.add(name);
+				if (isCommitted(name)) {
+					names.add(name);
+				}
 			}
 		}
+	}
+
+	protected boolean isCommitted(PDOMName name) throws CoreException {
+		return true;
+	}
+
+	protected boolean isCommitted(PDOMMacro name) throws CoreException {
+		return true;
+	}
+
+	protected boolean isCommitted(PDOMMacroReferenceName name) throws CoreException {
+		return true;
 	}
 
 	public IIndexFragmentInclude[] findIncludedBy(IIndexFragmentFile file) throws CoreException {
@@ -994,7 +1026,9 @@ public class PDOM extends PlatformObject implements IPDOM {
 		if (pdomFile != null) {
 			List<PDOMInclude> result = new ArrayList<PDOMInclude>();
 			for (PDOMInclude i= pdomFile.getFirstIncludedBy(); i != null; i= i.getNextInIncludedBy()) {
-				result.add(i);
+				if (i.getIncludedBy().getTimestamp() > 0) {
+					result.add(i);
+				}
 			}
 			return result.toArray(new PDOMInclude[result.size()]);
 		}
@@ -1196,6 +1230,10 @@ public class PDOM extends PlatformObject implements IPDOM {
 
 	public String createKeyForCache(long record, char[] name) {
 		return new StringBuilder(name.length + 2).append((char) (record >> 16)).append((char) record).append(name).toString();
+	}
+
+	public boolean hasLastingDefinition(PDOMBinding binding) throws CoreException {
+		return binding.hasDefinition();
 	}
 	
 	private PDOMBinding[] getCrossLanguageBindings(IBinding binding) throws CoreException {

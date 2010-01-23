@@ -9,6 +9,7 @@
  *    QNX - Initial API and implementation
  *    Markus Schorn (Wind River Systems)
  *    Andrew Ferguson (Symbian)
+ *    Sergey Prigogin (Google)
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.pdom.dom;
 
@@ -30,6 +31,7 @@ import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.IMacroBinding;
 import org.eclipse.cdt.core.dom.ast.IParameter;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPUsingDirective;
+import org.eclipse.cdt.core.index.IIndexFile;
 import org.eclipse.cdt.core.index.IIndexFileLocation;
 import org.eclipse.cdt.core.index.IIndexInclude;
 import org.eclipse.cdt.core.index.IIndexLocationConverter;
@@ -42,6 +44,7 @@ import org.eclipse.cdt.internal.core.index.IWritableIndexFragment;
 import org.eclipse.cdt.internal.core.index.IndexFileLocation;
 import org.eclipse.cdt.internal.core.index.IWritableIndex.IncludeInformation;
 import org.eclipse.cdt.internal.core.pdom.PDOM;
+import org.eclipse.cdt.internal.core.pdom.YieldableIndexLock;
 import org.eclipse.cdt.internal.core.pdom.db.BTree;
 import org.eclipse.cdt.internal.core.pdom.db.Database;
 import org.eclipse.cdt.internal.core.pdom.db.IBTreeComparator;
@@ -115,6 +118,10 @@ public class PDOMFile implements IIndexFragmentFile {
 		return record;
 	}
 
+	public PDOM getPDOM() {
+		return fLinkage.getPDOM();
+	}
+	
 	@Override
 	public boolean equals(Object obj) {
 		if (obj == this)
@@ -128,13 +135,116 @@ public class PDOMFile implements IIndexFragmentFile {
 
 	@Override
 	public final int hashCode() {
-		return System.identityHashCode(fLinkage.getPDOM()) + (int)(41*record);
+		return System.identityHashCode(fLinkage.getPDOM()) + (int) (41 * record);
 	}
 	
 	/**
-	 * Directly changes this record's internal location string. The format
-	 * of this string is unspecified in general and is determined by the 
-	 * associated IIndexLocationConverter
+	 * Transfers names, macros and includes from another file to this one and deletes the other file.
+	 * @param sourceFile the file to transfer the local bindings from.
+	 * @throws CoreException
+	 */
+	public void replaceContentsFrom(PDOMFile sourceFile) throws CoreException {
+		ICPPUsingDirective[] directives= getUsingDirectives();
+		for (ICPPUsingDirective ud : directives) {
+			if (ud instanceof IPDOMNode) {
+				((IPDOMNode) ud).delete(null);
+			}
+		}
+		setFirstUsingDirectiveRec(sourceFile.getLastUsingDirectiveRec());
+
+		// Replace the includes
+		PDOMInclude include = getFirstInclude();
+		while (include != null) {
+			PDOMInclude nextInclude = include.getNextInIncludes();
+			IIndexFile includedBy = include.getIncludedBy();
+			if (this.equals(includedBy)) {
+				include.delete();
+			}
+			include = nextInclude;
+		}
+		include = sourceFile.getFirstInclude();
+		setFirstInclude(include);
+		while (include != null) {
+			IIndexFile includedBy = include.getIncludedBy();
+			if (sourceFile.equals(includedBy)) {
+				include.setIncludedBy(this);
+				if (sourceFile.equals(include.getIncludes())) {
+					include.setIncludes(this);
+				}
+			}
+			include = include.getNextInIncludes();
+		}
+
+		// Replace all the macros in this file.
+		PDOMLinkage linkage= getLinkage();
+		PDOMMacro macro = getFirstMacro();
+		while (macro != null) {
+			PDOMMacro nextMacro = macro.getNextMacro();
+			macro.delete(linkage);
+			macro = nextMacro;
+		}
+		macro = sourceFile.getFirstMacro();
+		setFirstMacro(macro);
+		for (; macro != null; macro = macro.getNextMacro()) {
+			macro.setFile(this);
+		}
+
+		// Replace all macro references
+		ArrayList<PDOMMacroReferenceName> mrefs= new ArrayList<PDOMMacroReferenceName>();
+		PDOMMacroReferenceName mref = getFirstMacroReference();
+		while (mref != null) {
+			mrefs.add(mref);
+			mref= mref.getNextInFile();
+		}
+		for (PDOMMacroReferenceName m : mrefs) {
+			m.delete();
+		}
+		mref = sourceFile.getFirstMacroReference();
+		setFirstMacroReference(mref);
+		for (; mref != null; mref = mref.getNextInFile()) {
+			mref.setFile(this);
+		}
+
+		// Replace all the names in this file
+		ArrayList<PDOMName> names= new ArrayList<PDOMName>();
+		PDOMName name = getFirstName();
+		for (; name != null; name= name.getNextInFile()) {
+			names.add(name);
+			linkage.onDeleteName(name);
+		}
+		for (Iterator<PDOMName> iterator = names.iterator(); iterator.hasNext();) {
+			name = iterator.next();
+			name.delete();
+		}
+		name = sourceFile.getFirstName();
+		setFirstName(name);
+		for (; name != null; name= name.getNextInFile()) {
+			name.setFile(this);
+		}
+
+		setTimestamp(sourceFile.getTimestamp());
+		setScannerConfigurationHashcode(sourceFile.getScannerConfigurationHashcode());
+
+		sourceFile.delete();
+	}
+
+	/**
+	 * This method should not be called on PDOMFile objects that are referenced by the file index.
+	 * @param location a new location
+	 * @throws CoreException
+	 */
+	public void setLocation(IIndexFileLocation location) throws CoreException {
+		String locationString = fLinkage.getPDOM().getLocationConverter().toInternalFormat(location);
+		if (locationString == null)
+			throw new CoreException(CCorePlugin.createStatus(Messages.getString("PDOMFile.toInternalProblem") + //$NON-NLS-1$
+					location.getURI()));
+		setInternalLocation(locationString);
+	}
+
+	/**
+	 * Directly changes this record's internal location string. The format of this string is unspecified
+	 * in general and is determined by the associated IIndexLocationConverter.
+	 * This method should not be called on PDOMFile objects that are referenced by the file index.
 	 * @param internalLocation
 	 * @throws CoreException
 	 */
@@ -256,7 +366,7 @@ public class PDOMFile implements IIndexFragmentFile {
 		return fLinkage;
 	}
 
-	public void addNames(IASTName[][] names) throws CoreException {
+	public void addNames(IASTName[][] names, YieldableIndexLock lock) throws CoreException, InterruptedException {
 		assert getFirstName() == null;
 		assert getFirstMacroReference() == null;
 		final PDOMLinkage linkage= getLinkage();
@@ -265,6 +375,9 @@ public class PDOMFile implements IIndexFragmentFile {
 		PDOMMacroReferenceName lastMacroName= null;
 		for (IASTName[] name : names) {
 			if (name[0] != null) {
+				if (lock != null) {
+					lock.yield();
+				}
 				PDOMName caller= nameCache.get(name[1]);
 				IIndexFragmentName fname= createPDOMName(linkage, name[0], caller);
 				if (fname instanceof PDOMName) {
@@ -340,7 +453,7 @@ public class PDOMFile implements IIndexFragmentFile {
 			include.delete();
 			include = nextInclude;
 		}
-		setFirstInclude(include);
+		setFirstInclude(null);
 
 		// Delete all the macros in this file
 		PDOMLinkage linkage= getLinkage();
@@ -379,6 +492,15 @@ public class PDOMFile implements IIndexFragmentFile {
 		setFirstMacroReference(null);
 
 		setTimestamp(-1);
+	}
+
+	/**
+	 * Deletes this file from PDOM. Only uncommitted files can be safely deleted.
+	 *
+	 * @throws CoreException
+	 */
+	public void delete() throws CoreException {
+		fLinkage.getDB().free(record);
 	}
 
 	public void addIncludesTo(IncludeInformation[] includeInfos) throws CoreException {

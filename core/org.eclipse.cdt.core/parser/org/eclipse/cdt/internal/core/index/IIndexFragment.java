@@ -9,6 +9,7 @@
  *    Markus Schorn - initial API and implementation
  *    Bryan Wilkinson (QNX)
  *    Andrew Ferguson (Symbian)
+ *    Sergey Prigogin (Google)
  *******************************************************************************/ 
 package org.eclipse.cdt.internal.core.index;
 
@@ -190,6 +191,11 @@ public interface IIndexFragment {
 	 */
 	void releaseReadLock();
 	
+	/**
+	 * @return <code>true</code> if there are threads waiting for read locks.
+	 */
+	public boolean hasWaitingReaders();
+
 	/**
 	 * Returns the timestamp of the last modification to the index.
 	 */

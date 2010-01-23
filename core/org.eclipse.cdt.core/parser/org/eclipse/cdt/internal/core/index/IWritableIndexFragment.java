@@ -8,7 +8,8 @@
  * Contributors:
  *    Markus Schorn - initial API and implementation
  *    Andrew Ferguson (Symbian)
- *******************************************************************************/ 
+ *    Sergey Prigogin (Google)
+******************************************************************************/ 
 
 package org.eclipse.cdt.internal.core.index;
 
@@ -19,6 +20,7 @@ import org.eclipse.cdt.core.dom.ast.IASTPreprocessorStatement;
 import org.eclipse.cdt.core.index.IIndexFileLocation;
 import org.eclipse.cdt.internal.core.index.IWritableIndex.IncludeInformation;
 import org.eclipse.cdt.internal.core.pdom.ASTFilePathResolver;
+import org.eclipse.cdt.internal.core.pdom.YieldableIndexLock;
 import org.eclipse.core.runtime.CoreException;
 
 /**
@@ -41,18 +43,43 @@ public interface IWritableIndexFragment extends IIndexFragment {
 
 	/**
 	 * Creates a file object for the given location and linkage or returns an existing one.
-	 * @param fileLocation an IIndexFileLocation representing the location of the file
-	 * @return the existing IIndexFragmentFile for this location, or a newly created one 
+	 * @param fileLocation an IIndexFileLocation representing the location of the file.
+	 * @return the existing IIndexFragmentFile for this location, or a newly created one. 
 	 * @throws CoreException
 	 */
 	IIndexFragmentFile addFile(int linkageID, IIndexFileLocation fileLocation) throws CoreException;
 
 	/**
-	 * Adds an include to the given file.
+	 * Creates a file object for the given location and linkage. The created file object is not added to
+	 * the file index.
+	 * @param fileLocation an IIndexFileLocation representing the location of the file.
+	 * @return a newly created IIndexFragmentFile. 
+	 * @throws CoreException
 	 */
-	void addFileContent(IIndexFragmentFile sourceFile, 
-			IncludeInformation[] includes,  
-			IASTPreprocessorStatement[] macros, IASTName[][] names, ASTFilePathResolver resolver) throws CoreException;
+	IIndexFragmentFile addUncommittedFile(int linkageID, IIndexFileLocation fileLocation) throws CoreException;
+
+	/**
+	 * Makes an uncommitted file that was created earlier by calling
+	 * {@link #addUncommittedFile(int, IIndexFileLocation)} method visible in the index.
+     *
+	 * @return The file that was updated.
+	 * @throws CoreException
+	 */
+	IIndexFragmentFile commitUncommittedFile() throws CoreException;
+
+	/**
+	 * Removes an uncommitted file if there is one. Used to recover from a failed index update.
+	 *  
+	 * @throws CoreException
+	 */
+	void clearUncommittedFile() throws CoreException;
+
+	/**
+	 * Adds includes, macros and names to the given file.
+	 */
+	void addFileContent(IIndexFragmentFile sourceFile, IncludeInformation[] includes,  
+			IASTPreprocessorStatement[] macros, IASTName[][] names, ASTFilePathResolver resolver,
+			YieldableIndexLock lock) throws CoreException, InterruptedException;
 
 	/**
 	 * Acquires a write lock, while giving up a certain amount of read locks.

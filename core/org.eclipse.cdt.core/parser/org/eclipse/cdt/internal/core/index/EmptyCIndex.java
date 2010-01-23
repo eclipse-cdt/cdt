@@ -9,6 +9,7 @@
  *    Markus Schorn - initial API and implementation
  *    Bryan Wilkinson (QNX)
  *    Andrew Ferguson (Symbian)
+ *    Sergey Prigogin (Google)
  *******************************************************************************/ 
 
 package org.eclipse.cdt.internal.core.index;
@@ -83,6 +84,10 @@ final public class EmptyCIndex implements IIndex {
 	}
 
 	public void releaseReadLock() {
+	}
+
+	public boolean hasWaitingReaders() {
+		return false;
 	}
 
 	public long getLastWriteAccess() {

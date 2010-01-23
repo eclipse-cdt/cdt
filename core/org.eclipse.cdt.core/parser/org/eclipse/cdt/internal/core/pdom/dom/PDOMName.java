@@ -8,6 +8,7 @@
  * Contributors:
  *    QNX - Initial API and implementation
  *    Markus Schorn (Wind River Systems)
+ *    Sergey Prigogin (Google)
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.pdom.dom;
 
@@ -22,6 +23,7 @@ import org.eclipse.cdt.core.index.IndexLocationFactory;
 import org.eclipse.cdt.core.parser.util.CharArrayUtils;
 import org.eclipse.cdt.internal.core.index.IIndexFragment;
 import org.eclipse.cdt.internal.core.index.IIndexFragmentName;
+import org.eclipse.cdt.internal.core.pdom.PDOM;
 import org.eclipse.cdt.internal.core.pdom.db.Database;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
@@ -121,6 +123,10 @@ public final class PDOMName implements IIndexFragmentName, IASTFileLocation {
 		linkage.getDB().putRecPtr(record + offset, fieldrec);
 	}
 
+	public PDOM getPDOM() {
+		return linkage.getPDOM();
+	}
+	
 	public PDOMBinding getBinding() throws CoreException {
 		long bindingrec = getRecField(BINDING_REC_OFFSET);
 		return linkage.getBinding(bindingrec);
@@ -160,6 +166,14 @@ public final class PDOMName implements IIndexFragmentName, IASTFileLocation {
 	public PDOMFile getFile() throws CoreException {
 		long filerec = linkage.getDB().getRecPtr(record + FILE_REC_OFFSET);
 		return filerec != 0 ? new PDOMFile(linkage, filerec) : null;
+	}
+
+	public long getFileRecord() throws CoreException {
+		return linkage.getDB().getRecPtr(record + FILE_REC_OFFSET);
+	}
+
+	void setFile(PDOMFile file) throws CoreException {
+		linkage.getDB().putRecPtr(record + FILE_REC_OFFSET, file != null ? file.getRecord() : 0);
 	}
 
 	public IIndexName getEnclosingDefinition() throws CoreException {

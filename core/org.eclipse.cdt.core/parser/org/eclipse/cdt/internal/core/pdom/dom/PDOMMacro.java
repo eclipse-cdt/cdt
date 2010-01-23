@@ -9,6 +9,7 @@
  *    QNX - Initial API and implementation
  *    Markus Schorn (Wind River Systems)
  *    Andrew Ferguson (Symbian)
+ *    Sergey Prigogin (Google)
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.pdom.dom;
 
@@ -116,7 +117,7 @@ public class PDOMMacro implements IIndexMacro, IPDOMBinding, IASTFileLocation {
 	public PDOM getPDOM() {
 		return fLinkage.getPDOM();
 	}
-	
+
 	public long getRecord() {
 		return fRecord;
 	}
@@ -267,6 +268,14 @@ public class PDOMMacro implements IIndexMacro, IPDOMBinding, IASTFileLocation {
 	public PDOMFile getFile() throws CoreException {
 		long filerec = fLinkage.getDB().getRecPtr(fRecord + FILE);
 		return filerec != 0 ? new PDOMFile(fLinkage, filerec) : null;
+	}
+
+	public long getFileRecord() throws CoreException {
+		return fLinkage.getDB().getRecPtr(fRecord + FILE);
+	}
+
+	void setFile(PDOMFile file) throws CoreException {
+		fLinkage.getDB().putRecPtr(fRecord + FILE, file != null ? file.getRecord() : 0);
 	}
 
 	public int getEndingLineNumber() {

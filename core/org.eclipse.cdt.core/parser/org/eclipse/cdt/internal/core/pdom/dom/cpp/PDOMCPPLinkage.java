@@ -299,7 +299,7 @@ class PDOMCPPLinkage extends PDOMLinkage implements IIndexCPPBindingConstants {
 			if (fromName.isDefinition()) {
 				return true;
 			}
-			return !pdomBinding.hasDefinition();
+			return !getPDOM().hasLastingDefinition(pdomBinding);
 		}
 		return false;
 	}
@@ -444,8 +444,8 @@ class PDOMCPPLinkage extends PDOMLinkage implements IIndexCPPBindingConstants {
 					if (!(method instanceof IProblemBinding)) {
 						PDOMBinding pdomBinding= adaptBinding(method);
 						if (pdomBinding == null) {
-							createBinding(type, method, fileLocalRec);
-						} else if (!pdomBinding.hasDefinition()) {
+							pdomBinding = createBinding(type, method, fileLocalRec);
+						} else if (!getPDOM().hasLastingDefinition(pdomBinding)) {
 							pdomBinding.update(this, method);
 						}
 					}

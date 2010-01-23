@@ -9,6 +9,7 @@
  *    Markus Schorn - initial API and implementation
  *    Andrew Ferguson (Symbian)
  *    Bryan Wilkinson (QNX)
+ *    Sergey Prigogin (Google)
  *******************************************************************************/ 
 package org.eclipse.cdt.core.index;
 
@@ -91,6 +92,12 @@ public interface IIndex {
 	 */
 	public void releaseReadLock();
 	
+	/**
+	 * @return <code>true</code> if there are threads waiting for read locks.
+	 * @since 5.2
+	 */
+	public boolean hasWaitingReaders();
+
 	/**
 	 * Returns a timestamp of when the index was last written to. This can
 	 * be used to figure out whether information read from the index is 

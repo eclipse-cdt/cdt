@@ -10,6 +10,7 @@
  *    Bryan Wilkinson (QNX)
  *    Andrew Ferguson (Symbian)
  *    Anton Leherbauer (Wind River Systems)
+ *    Sergey Prigogin (Google)
  *******************************************************************************/ 
 package org.eclipse.cdt.internal.core.index;
 
@@ -353,6 +354,15 @@ public class CIndex implements IIndex {
 
 	protected synchronized int getReadLockCount() {
 		return fReadLock;
+	}
+
+	public boolean hasWaitingReaders() {
+		for (int i= 0; i < fFragments.length; i++) {
+			if (fFragments[i].hasWaitingReaders()) {
+				return true;
+			}
+		}
+		return false;
 	}
 
 	public long getLastWriteAccess() {

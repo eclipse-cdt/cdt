@@ -8,6 +8,7 @@
  * Contributors:
  *    Markus Schorn - initial API and implementation
  *    IBM Corporation
+ *    Sergey Prigogin (Google)
  *******************************************************************************/ 
 package org.eclipse.cdt.internal.core.pdom;
 
@@ -46,6 +47,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPNamespaceAlias;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateParameter;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCompositeTypeSpecifier.ICPPASTBaseSpecifier;
 import org.eclipse.cdt.core.index.IIndexFileLocation;
+import org.eclipse.cdt.core.index.IIndexInclude;
 import org.eclipse.cdt.core.parser.IProblem;
 import org.eclipse.cdt.internal.core.dom.parser.ASTInternal;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPUnknownBinding;
@@ -68,6 +70,9 @@ import org.eclipse.osgi.util.NLS;
  * @since 4.0
  */
 abstract public class PDOMWriter {
+	// TODO(sprigogin): Remove SEMI_TRANSACTIONAL_UPDATES and ALLOW_LOCK_YIELDING constants and simplify the code.
+	public static boolean SEMI_TRANSACTIONAL_UPDATES = true;
+	public static boolean ALLOW_LOCK_YIELDING = true;
 	public static int SKIP_ALL_REFERENCES= -1;
 	public static int SKIP_TYPE_REFERENCES= 1;
 	public static int SKIP_MACRO_REFERENCES= 2;
@@ -200,11 +205,11 @@ abstract public class PDOMWriter {
 				if (fShowActivity) {
 					trace("Indexer: adding " + ifl.getURI());  //$NON-NLS-1$
 				}
-				index.acquireWriteLock(readlockCount);
-				long start= System.currentTimeMillis();
 				Throwable th= null;
+				YieldableIndexLock lock = new YieldableIndexLock(index, readlockCount, flushIndex);
+				lock.acquire();
 				try {
-					storeFileInIndex(index, ifl, symbolMap, linkageID, configHash, contextIncludes);
+					storeFileInIndex(index, ifl, symbolMap, linkageID, configHash, contextIncludes, lock);
 				} catch (RuntimeException e) {
 					th= e; 
 				} catch (PDOMNotImplementedError e) {
@@ -214,7 +219,7 @@ abstract public class PDOMWriter {
 				} catch (AssertionError e) {
 					th= e;
 				} finally {
-					index.releaseWriteLock(readlockCount, flushIndex);
+					lock.release();
 				}
 				if (th != null) {
 					stati.add(createStatus(NLS.bind(Messages.PDOMWriter_errorWhileParsing,
@@ -223,7 +228,7 @@ abstract public class PDOMWriter {
 				if (i < ifls.length - 1) {
 					updateFileCount(0, 0, 1); // update header count
 				}
-				fStatistics.fAddToIndexTime += System.currentTimeMillis() - start;
+				fStatistics.fAddToIndexTime += lock.getCumulativeLockTime();
 			}
 		}
 	}
@@ -448,40 +453,70 @@ abstract public class PDOMWriter {
 
 	private IIndexFragmentFile storeFileInIndex(IWritableIndex index, IIndexFileLocation location,
 			Map<IIndexFileLocation, Symbols> symbolMap, int linkageID, int configHash,
-			Set<IASTPreprocessorIncludeStatement> contextIncludes) throws CoreException {
+			Set<IASTPreprocessorIncludeStatement> contextIncludes, YieldableIndexLock lock)
+			throws CoreException, InterruptedException {
 		Set<IIndexFileLocation> clearedContexts= Collections.emptySet();
-		IIndexFragmentFile file= index.getWritableFile(linkageID, location);
-		if (file != null) {
-			clearedContexts= new HashSet<IIndexFileLocation>();
-			index.clearFile(file, clearedContexts);
+		IIndexFragmentFile file;
+		long timestamp = fResolver.getLastModified(location);
+		if (SEMI_TRANSACTIONAL_UPDATES) {
+			// In fine grained locking mode we create a temporary PDOMFile with zero timestamp,
+			// add names to it, then replace contents of the old file from the temporary one, then
+			// delete the temporary file. The write lock on the index is periodically yielded while
+			// adding names to the temporary file, if the process takes long time.
+			IIndexFragmentFile oldFile = index.getWritableFile(linkageID, location);
+			if (oldFile != null) {
+				IIndexInclude[] includedBy = index.findIncludedBy(oldFile);
+				if (includedBy.length > 0) {
+					clearedContexts= new HashSet<IIndexFileLocation>();
+					for (IIndexInclude include : includedBy) {
+						clearedContexts.add(include.getIncludedByLocation());
+					}
+				}
+			}
+			file= index.addUncommittedFile(linkageID, location);
 		} else {
-			file= index.addFile(linkageID, location);
+			file= index.getWritableFile(linkageID, location);
+			if (file != null) {
+				clearedContexts= new HashSet<IIndexFileLocation>();
+				index.clearFile(file, clearedContexts);
+			} else {
+				file= index.addFile(linkageID, location);
+			}
+			file.setTimestamp(timestamp);
 		}
-		file.setTimestamp(fResolver.getLastModified(location));
-		file.setScannerConfigurationHashcode(configHash);
-		Symbols lists= symbolMap.get(location);
-		if (lists != null) {
-			IASTPreprocessorStatement[] macros= lists.fMacros.toArray(new IASTPreprocessorStatement[lists.fMacros.size()]);
-			IASTName[][] names= lists.fNames.toArray(new IASTName[lists.fNames.size()][]);
-			for (IASTName[] name2 : names) {
-				final IASTName name= name2[0];
-				if (name != null) {
-					ASTInternal.setFullyResolved(name.getBinding(), true);
+		try {
+			file.setScannerConfigurationHashcode(configHash);
+			Symbols lists= symbolMap.get(location);
+			if (lists != null) {
+				IASTPreprocessorStatement[] macros= lists.fMacros.toArray(new IASTPreprocessorStatement[lists.fMacros.size()]);
+				IASTName[][] names= lists.fNames.toArray(new IASTName[lists.fNames.size()][]);
+				for (IASTName[] name2 : names) {
+					final IASTName name= name2[0];
+					if (name != null) {
+						ASTInternal.setFullyResolved(name.getBinding(), true);
+					}
 				}
-			}
-
-			IncludeInformation[] includeInfos= new IncludeInformation[lists.fIncludes.size()];
-			for (int i= 0; i < lists.fIncludes.size(); i++) {
-				final IASTPreprocessorIncludeStatement include = lists.fIncludes.get(i);
-				final IncludeInformation info= includeInfos[i]= new IncludeInformation();
-				info.fStatement= include;
-				if (include.isResolved()) {
-					info.fLocation= fResolver.resolveASTPath(include.getPath());
-					info.fIsContext= include.isActive() && 
-						(contextIncludes.contains(include) || clearedContexts.contains(info.fLocation));
+	
+				IncludeInformation[] includeInfos= new IncludeInformation[lists.fIncludes.size()];
+				for (int i= 0; i < lists.fIncludes.size(); i++) {
+					final IASTPreprocessorIncludeStatement include = lists.fIncludes.get(i);
+					final IncludeInformation info= includeInfos[i]= new IncludeInformation();
+					info.fStatement= include;
+					if (include.isResolved()) {
+						info.fLocation= fResolver.resolveASTPath(include.getPath());
+						info.fIsContext= include.isActive() && 
+							(contextIncludes.contains(include) || clearedContexts.contains(info.fLocation));
+					}
 				}
+				index.setFileContent(file, linkageID, includeInfos, macros, names, fResolver,
+						SEMI_TRANSACTIONAL_UPDATES && ALLOW_LOCK_YIELDING ? lock : null);
 			}
-			index.setFileContent(file, linkageID, includeInfos, macros, names, fResolver);
+			if (SEMI_TRANSACTIONAL_UPDATES) {
+				file.setTimestamp(timestamp);
+				file = index.commitUncommittedFile();
+			}
+		} finally {
+			index.clearUncommittedFile();
 		}
 		return file;
 	}

@@ -8,6 +8,7 @@
  * Contributors:
  *    Markus Schorn - initial API and implementation
  *    Andrew Ferguson (Symbian)
+ *    Sergey Prigogin (Google)
  *******************************************************************************/ 
 package org.eclipse.cdt.internal.core.pdom;
 
@@ -25,17 +26,26 @@ import org.eclipse.cdt.internal.core.index.IIndexFragment;
 import org.eclipse.cdt.internal.core.index.IIndexFragmentFile;
 import org.eclipse.cdt.internal.core.index.IWritableIndexFragment;
 import org.eclipse.cdt.internal.core.index.IWritableIndex.IncludeInformation;
+import org.eclipse.cdt.internal.core.pdom.db.BTree;
 import org.eclipse.cdt.internal.core.pdom.db.ChunkCache;
 import org.eclipse.cdt.internal.core.pdom.db.DBProperties;
 import org.eclipse.cdt.internal.core.pdom.db.IBTreeVisitor;
 import org.eclipse.cdt.internal.core.pdom.dom.IPDOMLinkageFactory;
+import org.eclipse.cdt.internal.core.pdom.dom.PDOMBinding;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMFile;
+import org.eclipse.cdt.internal.core.pdom.dom.PDOMLinkage;
+import org.eclipse.cdt.internal.core.pdom.dom.PDOMMacro;
+import org.eclipse.cdt.internal.core.pdom.dom.PDOMMacroReferenceName;
+import org.eclipse.cdt.internal.core.pdom.dom.PDOMName;
 import org.eclipse.core.runtime.CoreException;
 
 public class WritablePDOM extends PDOM implements IWritableIndexFragment {	
 	private boolean fClearedBecauseOfVersionMismatch= false;
 	private boolean fCreatedFromScratch= false;
 	private ASTFilePathResolver fPathResolver;
+	private PDOMFile fileBeingUpdated;
+	private PDOMFile uncommittedFile;
+	private IIndexFileLocation uncommittedLocation;
 
 	public WritablePDOM(File dbPath, IIndexLocationConverter locationConverter,
 			Map<String, IPDOMLinkageFactory> linkageFactoryMappings) throws CoreException {
@@ -53,11 +63,57 @@ public class WritablePDOM extends PDOM implements IWritableIndexFragment {
 
 	@Override
 	public IIndexFragmentFile addFile(int linkageID, IIndexFileLocation location) throws CoreException {
+		if (uncommittedLocation != null && uncommittedLocation.equals(location)) {
+			return uncommittedFile;
+		}
 		return super.addFile(linkageID, location);
 	}
 
+	public IIndexFragmentFile addUncommittedFile(int linkageID, IIndexFileLocation location) throws CoreException {
+		uncommittedLocation = location;
+		fileBeingUpdated = getFile(linkageID, uncommittedLocation);
+		PDOMLinkage linkage= createLinkage(linkageID);
+		uncommittedFile = new PDOMFile(linkage, location, linkageID);
+		return uncommittedFile;
+	}
+
+	public IIndexFragmentFile commitUncommittedFile() throws CoreException {
+		if (uncommittedFile == null)
+			return null;
+		IIndexFragmentFile file;
+		if (fileBeingUpdated == null) {
+			// New file.
+			BTree fileIndex = getFileIndex();
+			fileIndex.insert(uncommittedFile.getRecord());
+			file = uncommittedFile;
+		} else {
+			// Existing file.
+			fileBeingUpdated.replaceContentsFrom(uncommittedFile);
+			file = fileBeingUpdated;
+			fileBeingUpdated = null;
+		}
+		fEvent.fFilesWritten.add(uncommittedLocation);
+		uncommittedFile = null;
+		uncommittedLocation = null;
+		return file;
+	}
+
+	public void clearUncommittedFile() throws CoreException {
+		if (uncommittedFile != null) {
+			try {
+				uncommittedFile.clear(null);
+				uncommittedFile.delete();
+			} finally {
+				uncommittedFile = null;
+				uncommittedLocation = null;
+				fileBeingUpdated = null;
+			}
+		}
+	}
+
 	public void addFileContent(IIndexFragmentFile sourceFile, IncludeInformation[] includes, 
-			IASTPreprocessorStatement[] macros, IASTName[][] names, ASTFilePathResolver pathResolver) throws CoreException {
+			IASTPreprocessorStatement[] macros, IASTName[][] names, ASTFilePathResolver pathResolver,
+			YieldableIndexLock lock) throws CoreException, InterruptedException {
 		assert sourceFile.getIndexFragment() == this;
 		
 		PDOMFile pdomFile = (PDOMFile) sourceFile;
@@ -66,14 +122,16 @@ public class WritablePDOM extends PDOM implements IWritableIndexFragment {
 		final ASTFilePathResolver origResolver= fPathResolver;
 		fPathResolver= pathResolver;
 		try {
-			pdomFile.addNames(names);
+			pdomFile.addNames(names, lock);
 		} finally {
 			fPathResolver= origResolver;
 		}
 		
 		final IIndexFileLocation location = pdomFile.getLocation();
-		fEvent.fClearedFiles.remove(location);
-		fEvent.fFilesWritten.add(location);
+		if (location != null) {
+			fEvent.fClearedFiles.remove(location);
+			fEvent.fFilesWritten.add(location);
+		}
 	}
 
 	public void clearFile(IIndexFragmentFile file, Collection<IIndexFileLocation> contextsRemoved)
@@ -171,9 +229,45 @@ public class WritablePDOM extends PDOM implements IWritableIndexFragment {
 
 	public PDOMFile getFileForASTPath(int linkageID, String astPath) throws CoreException {
 		if (fPathResolver != null && astPath != null) {
-			return getFile(linkageID, fPathResolver.resolveASTPath(astPath));
+			IIndexFileLocation location = fPathResolver.resolveASTPath(astPath);
+			if (location.equals(uncommittedLocation))
+				return fileBeingUpdated != null ? fileBeingUpdated : uncommittedFile;
+			return getFile(linkageID, location);
 		}
 		return null;
+	}
+
+	@Override
+	public boolean hasLastingDefinition(PDOMBinding binding) throws CoreException {
+		if (fileBeingUpdated == null) {
+			return binding.hasDefinition();
+		}
+		// Definitions in fileBeingUpdated will soon go away, so look for a definition elsewhere.
+		for (PDOMName name = binding.getFirstDefinition(); name != null; name = name.getNextInBinding()) {
+			if (!fileBeingUpdated.getPDOM().equals(name.getPDOM()) ||
+					fileBeingUpdated.getRecord() != name.getFileRecord()) {
+				return true;
+			}
+		}
+		return false;
+	}
+
+	@Override
+	protected boolean isCommitted(PDOMName name) throws CoreException {
+		return uncommittedFile == null || !uncommittedFile.getPDOM().equals(name.getPDOM()) ||
+				uncommittedFile.getRecord() != name.getFileRecord();
+	}
+
+	@Override
+	protected boolean isCommitted(PDOMMacro name) throws CoreException {
+		return uncommittedFile == null || !uncommittedFile.getPDOM().equals(name.getPDOM()) ||
+				uncommittedFile.getRecord() != name.getFileRecord();
+	}
+
+	@Override
+	protected boolean isCommitted(PDOMMacroReferenceName name) throws CoreException {
+		return uncommittedFile == null || !uncommittedFile.getPDOM().equals(name.getPDOM()) ||
+				uncommittedFile.getRecord() != name.getFileRecord();
 	}
 
 	/* (non-Javadoc)

@@ -8,6 +8,7 @@
  * Contributors:
  *    Andrew Ferguson (Symbian) - initial API and implementation
  *    Markus Schorn (Wind River Systems)
+ *    Sergey Prigogin (Google)
  *******************************************************************************/
 package org.eclipse.cdt.internal.index.tests;
 
@@ -123,6 +124,11 @@ public class EmptyIndexFragment implements IIndexFragment {
 	}
 
 	public void releaseReadLock() {}
+
+	public boolean hasWaitingReaders() {
+		return false;
+	}
+
 	public void resetCacheCounters() {}
 
 	public IIndexFragmentFileSet createFileSet() {

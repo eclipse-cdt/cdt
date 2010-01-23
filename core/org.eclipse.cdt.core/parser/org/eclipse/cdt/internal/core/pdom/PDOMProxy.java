@@ -7,6 +7,7 @@
  *
  * Contributors:
  *    Markus Schorn - initial API and implementation
+ *    Sergey Prigogin (Google)
  *******************************************************************************/ 
 package org.eclipse.cdt.internal.core.pdom;
 
@@ -185,6 +186,10 @@ public class PDOMProxy implements IPDOM {
 		} else if (fDelegate != null) {
 			fDelegate.releaseReadLock();
 		}
+	}
+
+	public boolean hasWaitingReaders() {
+		return fDelegate != null && fDelegate.hasWaitingReaders();
 	}
 
 	public synchronized void resetCacheCounters() {

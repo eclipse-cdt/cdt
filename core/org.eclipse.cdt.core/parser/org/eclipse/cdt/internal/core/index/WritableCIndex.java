@@ -8,6 +8,7 @@
  * Contributors:
  *    Markus Schorn - initial API and implementation
  *    Andrew Ferguson (Symbian)
+ *    Sergey Prigogin (Google)
  *******************************************************************************/ 
 
 package org.eclipse.cdt.internal.core.index;
@@ -19,6 +20,7 @@ import org.eclipse.cdt.core.dom.ast.IASTPreprocessorStatement;
 import org.eclipse.cdt.core.index.IIndexFile;
 import org.eclipse.cdt.core.index.IIndexFileLocation;
 import org.eclipse.cdt.internal.core.pdom.ASTFilePathResolver;
+import org.eclipse.cdt.internal.core.pdom.YieldableIndexLock;
 import org.eclipse.core.runtime.CoreException;
 
 public class WritableCIndex extends CIndex implements IWritableIndex {
@@ -50,17 +52,29 @@ public class WritableCIndex extends CIndex implements IWritableIndex {
 		return fWritableFragment.getFiles(location);
 	}
 
-	public IIndexFragmentFile addFile(int linkageID, IIndexFileLocation fileLocation) throws CoreException {
-		return fWritableFragment.addFile(linkageID, fileLocation);
+	public IIndexFragmentFile addFile(int linkageID, IIndexFileLocation location) throws CoreException {
+		return fWritableFragment.addFile(linkageID, location);
+	}
+
+	public IIndexFragmentFile addUncommittedFile(int linkageID, IIndexFileLocation location) throws CoreException {
+		return fWritableFragment.addUncommittedFile(linkageID, location);
+	}
+
+	public IIndexFragmentFile commitUncommittedFile() throws CoreException {
+		return fWritableFragment.commitUncommittedFile();
+	}
+
+	public void clearUncommittedFile() throws CoreException {
+		fWritableFragment.clearUncommittedFile();
 	}
 
 	private boolean isWritableFragment(IIndexFragment frag) {
 		return frag == fWritableFragment;
 	}
 
-	public void setFileContent(IIndexFragmentFile file, int linkageID,
-			IncludeInformation[] includes,
-			IASTPreprocessorStatement[] macros, IASTName[][] names, ASTFilePathResolver resolver) throws CoreException {
+	public void setFileContent(IIndexFragmentFile file, int linkageID, IncludeInformation[] includes,
+			IASTPreprocessorStatement[] macros, IASTName[][] names, ASTFilePathResolver resolver,
+			YieldableIndexLock lock) throws CoreException, InterruptedException {
 		IIndexFragment indexFragment = file.getIndexFragment();
 		if (!isWritableFragment(indexFragment)) {
 			assert false : "Attempt to update file of read-only fragment"; //$NON-NLS-1$
@@ -70,7 +84,7 @@ public class WritableCIndex extends CIndex implements IWritableIndex {
 					ii.fTargetFile= addFile(linkageID, ii.fLocation);
 				}
 			}
-			((IWritableIndexFragment) indexFragment).addFileContent(file, includes, macros, names, resolver);
+			((IWritableIndexFragment) indexFragment).addFileContent(file, includes, macros, names, resolver, lock);
 		}
 	}
 

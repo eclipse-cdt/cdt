@@ -65,14 +65,14 @@ public class CDefaultBuildData extends CBuildData {
 	@Override
 	public String[] getErrorParserIDs() {
 		if(fErrorParserIDs != null && fErrorParserIDs.length != 0)
-			return (String[])fErrorParserIDs.clone();
+			return fErrorParserIDs.clone();
 		return EMPTY_STRING_ARRAY;
 	}
 
 	@Override
 	public ICOutputEntry[] getOutputDirectories() {
 		if(fOutputEntries != null && fOutputEntries.length != 0)
-			return (ICOutputEntry[])fOutputEntries.clone();
+			return fOutputEntries.clone();
 		return EMPTY_OUTPUT_ENTRIES_ARRAY;
 	}
 
@@ -91,7 +91,7 @@ public class CDefaultBuildData extends CBuildData {
 		if(Arrays.equals(ids, fErrorParserIDs))
 			return;
 		if(ids != null && ids.length != 0)
-			fErrorParserIDs = (String[])ids.clone();
+			fErrorParserIDs = ids.clone();
 		else
 			fErrorParserIDs = ids;
 		
@@ -104,7 +104,7 @@ public class CDefaultBuildData extends CBuildData {
 			return;
 		
 		if(entries != null && entries.length != 0)
-			fOutputEntries = (ICOutputEntry[])entries.clone();
+			fOutputEntries = entries.clone();
 		else
 			fOutputEntries = entries; 
 

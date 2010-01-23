@@ -55,7 +55,7 @@ public class CDefaultTargetPlatformData extends CTargetPlatformData {
 	@Override
 	public String[] getBinaryParserIds() {
 		if(fBinaryParserIds != null)
-			return (String[])fBinaryParserIds.clone();
+			return fBinaryParserIds.clone();
 		return new String[0];
 	}
 
@@ -65,7 +65,7 @@ public class CDefaultTargetPlatformData extends CTargetPlatformData {
 			return;
 		
 		if(ids != null)
-			fBinaryParserIds = (String[])ids.clone();
+			fBinaryParserIds = ids.clone();
 		else
 			fBinaryParserIds = null;
 		

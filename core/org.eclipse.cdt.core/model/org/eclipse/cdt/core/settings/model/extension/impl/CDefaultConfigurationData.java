@@ -31,7 +31,7 @@ import org.eclipse.core.runtime.Path;
 
 public class CDefaultConfigurationData extends CConfigurationData {
 	protected String fDescription;
-	private HashMap fResourceDataMap = new HashMap();
+	private HashMap<IPath, CResourceData> fResourceDataMap = new HashMap<IPath, CResourceData>();
 	protected CFolderData fRootFolderData; 
 	protected String fName;
 	protected String fId;
@@ -199,7 +199,7 @@ public class CDefaultConfigurationData extends CConfigurationData {
 
 	@Override
 	public CResourceData[] getResourceDatas() {
-		return (CResourceData[])fResourceDataMap.values().toArray(new CResourceData[fResourceDataMap.size()]);
+		return fResourceDataMap.values().toArray(new CResourceData[fResourceDataMap.size()]);
 	}
 
 	@Override
@@ -226,7 +226,7 @@ public class CDefaultConfigurationData extends CConfigurationData {
 	
 	public CResourceData getResourceData(IPath path){
 		path = standardizePath(path);
-		return (CResourceData)fResourceDataMap.get(path);
+		return fResourceDataMap.get(path);
 	}
 
 	@Override

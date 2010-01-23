@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007 Intel Corporation and others.
+ * Copyright (c) 2007, 2010 Intel Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -67,18 +67,18 @@ public class LanguageSettingEntriesSerializer {
 	}
 
 	public static ICSettingEntry[] loadEntries(ICStorageElement el, int kindFilter){
-		List list = loadEntriesList(el, kindFilter);
-		return (ICSettingEntry[])list.toArray(new ICSettingEntry[list.size()]);
+		List<ICSettingEntry> list = loadEntriesList(el, kindFilter);
+		return list.toArray(new ICSettingEntry[list.size()]);
 	}
 
-	public static List loadEntriesList(ICStorageElement el){
+	public static List<ICSettingEntry> loadEntriesList(ICStorageElement el){
 		return loadEntriesList(el, 0);
 	}
 
-	public static List loadEntriesList(ICStorageElement el, int kindFilter){
+	public static List<ICSettingEntry> loadEntriesList(ICStorageElement el, int kindFilter){
 		ICStorageElement children[] = el.getChildren();
 		ICStorageElement child;
-		List list = new ArrayList();
+		List<ICSettingEntry> list = new ArrayList<ICSettingEntry>();
 		ICSettingEntry entry;
 		for(int i = 0; i < children.length; i++){
 			child = children[i];
@@ -134,10 +134,10 @@ public class LanguageSettingEntriesSerializer {
 		return null;
 	}
 
-	private static void storePath(ICStorageElement el, String attr, IPath path){
-		if(path != null)
-			el.setAttribute(attr, path.toString());
-	}
+//	private static void storePath(ICStorageElement el, String attr, IPath path){
+//		if(path != null)
+//			el.setAttribute(attr, path.toString());
+//	}
 
 	private static IPath[] loadExclusions(ICStorageElement el){
 		String attr = el.getAttribute(ATTRIBUTE_EXCLUDING);

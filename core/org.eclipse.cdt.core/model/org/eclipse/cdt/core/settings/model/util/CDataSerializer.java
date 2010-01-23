@@ -112,8 +112,8 @@ public class CDataSerializer {
 				if(tpData != null)
 					factory.link(data, tpData);
 			} else if (SOURCE_ENTRIES.equals(childName)){
-				List list = LanguageSettingEntriesSerializer.loadEntriesList(child, ICSettingEntry.SOURCE_PATH);
-				ICSourceEntry[] entries = (ICSourceEntry[])list.toArray(new ICSourceEntry[list.size()]);
+				List<ICSettingEntry> list = LanguageSettingEntriesSerializer.loadEntriesList(child, ICSettingEntry.SOURCE_PATH);
+				ICSourceEntry[] entries = list.toArray(new ICSourceEntry[list.size()]);
 				data.setSourceEntries(entries);
 			}
 		}
@@ -228,13 +228,13 @@ public class CDataSerializer {
 			child = children[i];
 			childName = child.getName();
 			if(OUTPUT_ENTRIES.equals(childName)){
-				List list = LanguageSettingEntriesSerializer.loadEntriesList(child);
+				List<ICSettingEntry> list = LanguageSettingEntriesSerializer.loadEntriesList(child);
 				for(int k = 0; k < list.size(); k++){
-					ICSettingEntry e = (ICSettingEntry)list.get(i);
+					ICSettingEntry e = list.get(i);
 					if(e.getKind() != ICSettingEntry.OUTPUT_PATH)
 						list.remove(i);
 				}
-				bData.setOutputDirectories((ICOutputEntry[])list.toArray(new ICOutputEntry[list.size()]));
+				bData.setOutputDirectories(list.toArray(new ICOutputEntry[list.size()]));
 			}
 		}
 		return bData;
@@ -307,9 +307,9 @@ public class CDataSerializer {
 	}
 	
 	public void loadEntries(CLanguageData lData, ICStorageElement el){
-		List entries = LanguageSettingEntriesSerializer.loadEntriesList(el);
+		List<ICSettingEntry> entries = LanguageSettingEntriesSerializer.loadEntriesList(el);
 		EntryStore store = new EntryStore();
-		store.addEntries((ICLanguageSettingEntry[])entries.toArray(new ICLanguageSettingEntry[entries.size()]));
+		store.addEntries(entries.toArray(new ICLanguageSettingEntry[entries.size()]));
 		int kinds[] = KindBasedStore.getLanguageEntryKinds();
 		int kind;
 		ICLanguageSettingEntry[] sortedEntries;

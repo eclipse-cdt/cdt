@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007 Intel Corporation and others.
+ * Copyright (c) 2007, 2010 Intel Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -58,16 +58,16 @@ public class CResourceDataContainer {
 		return getResourceDatas(kind, CResourceData.class);
 	}
 	
-	public CResourceData[] getResourceDatas(int kind, Class clazz){
-		List list = getRcDataList(kind);
+	public CResourceData[] getResourceDatas(int kind, Class<CResourceData> clazz){
+		List<CResourceData> list = getRcDataList(kind);
 
 		CResourceData datas[] = (CResourceData[])Array.newInstance(clazz, list.size());
 		
-		return (CResourceData[])list.toArray(datas);
+		return list.toArray(datas);
 	}
 	
-	public List getRcDataList(final int kind){
-		final List list = new ArrayList(); 
+	public List<CResourceData> getRcDataList(final int kind){
+		final List<CResourceData> list = new ArrayList<CResourceData>(); 
 		fRcDataContainer.accept(new IPathSettingsContainerVisitor(){
 
 			public boolean visit(PathSettingsContainer container) {

@@ -29,8 +29,8 @@ import org.eclipse.cdt.utils.spawner.ProcessFactory;
 
 public class CygwinPathResolver implements IBuildPathResolver {
 	private static final String TOOL = "/cygpath -w -p "; //$NON-NLS-1$ 
-	private static final char BS = '\\';                      //$NON-NLS-1$
-	private static final char SLASH = '/';                    //$NON-NLS-1$
+	private static final char BS = '\\';
+	private static final char SLASH = '/';
 	private static final String PROPERTY_OS_NAME = "os.name"; //$NON-NLS-1$
 	private static final String PROPERTY_OS_VALUE = "windows";//$NON-NLS-1$
 	private static final String SP = " ";         //$NON-NLS-1$
@@ -104,9 +104,7 @@ public class CygwinPathResolver implements IBuildPathResolver {
 		if (!checked) checkRegistry();
 		return rootCygwin;
 	}
-	/**
-	 * @return
-	 */
+	
 	public static boolean isWindows() {
 		return (System.getProperty(PROPERTY_OS_NAME).toLowerCase().startsWith(PROPERTY_OS_VALUE));
 	}
@@ -183,7 +181,7 @@ public class CygwinPathResolver implements IBuildPathResolver {
 			IEnvironmentVariable vars[] = ManagedBuildManager.getEnvironmentVariableProvider().getVariables(cfg,true);
 			String env[] = new String[vars.length];
 			for(int i = 0; i < env.length; i++){
-				env[i] = vars[i].getName() + "=";
+				env[i] = vars[i].getName() + "="; //$NON-NLS-1$
 				String value = vars[i].getValue();
 				if(value != null)
 					env[i] += value; 

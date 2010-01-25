@@ -534,7 +534,7 @@ public class MemoryBrowser extends ViewPart implements IDebugContextListener, IM
 			public IDebugTarget getDebugTarget() { return null; }
 			public ILaunch getLaunch() { return null; }
 			public String getModelIdentifier() { return null; }
-			@SuppressWarnings("unchecked")	// one warning is enough (in the import section)
+			@SuppressWarnings("rawtypes")
 			public Object getAdapter(Class adapter) { return null; }
 		});
 	}

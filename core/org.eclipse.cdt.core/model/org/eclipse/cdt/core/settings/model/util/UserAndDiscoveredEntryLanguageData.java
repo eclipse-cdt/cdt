@@ -18,7 +18,7 @@ import org.eclipse.cdt.core.settings.model.extension.CLanguageData;
 
 public abstract class UserAndDiscoveredEntryLanguageData extends
 		EntryStorageBasedLanguageData {
-	private KindBasedStore fDisabledNameSetStore;
+	private KindBasedStore<Set<String>> fDisabledNameSetStore;
 	
 	public UserAndDiscoveredEntryLanguageData() {
 		super();
@@ -35,15 +35,17 @@ public abstract class UserAndDiscoveredEntryLanguageData extends
 		if(data instanceof UserAndDiscoveredEntryLanguageData){
 			UserAndDiscoveredEntryLanguageData lData = (UserAndDiscoveredEntryLanguageData)data;
 			if(lData.fDisabledNameSetStore != null){
-				fDisabledNameSetStore = (KindBasedStore)lData.fDisabledNameSetStore.clone();
+				@SuppressWarnings("unchecked")
+				KindBasedStore<Set<String>> clone = (KindBasedStore<Set<String>>) lData.fDisabledNameSetStore.clone();
+				fDisabledNameSetStore = clone;
 				int kinds[] = KindBasedStore.getLanguageEntryKinds();
 				int kind;
-				Set set;
+				Set<String> set;
 				for(int i = 0; i < kinds.length; i++){
 					kind = kinds[i];
-					set = (Set)fDisabledNameSetStore.get(kind);
+					set = fDisabledNameSetStore.get(kind);
 					if(set != null){
-						set = new HashSet(set);
+						set = new HashSet<String>(set);
 						fDisabledNameSetStore.put(kind, set);
 					}
 				}
@@ -65,7 +67,7 @@ public abstract class UserAndDiscoveredEntryLanguageData extends
 
 		@Override
 		protected ICLanguageSettingEntry[] getDiscoveredEntries(
-				Set disabledNameSet) {
+				Set<String> disabledNameSet) {
 			return fLangData.getDiscoveredEntries(getKind(), disabledNameSet);
 		}
 
@@ -75,7 +77,7 @@ public abstract class UserAndDiscoveredEntryLanguageData extends
 		}
 
 		@Override
-		protected void setDisabledDiscoveredNames(Set disabledNameSet) {
+		protected void setDisabledDiscoveredNames(Set<String> disabledNameSet) {
 			fLangData.setDisabledDiscoveredNames(getKind(), disabledNameSet);
 		}
 
@@ -96,17 +98,17 @@ public abstract class UserAndDiscoveredEntryLanguageData extends
 	}
 
 	protected ICLanguageSettingEntry[] getDiscoveredEntries(int kind,
-			Set disabledNameSet){
+			Set<String> disabledNameSet){
 		ICLanguageSettingEntry[] entries = getAllDiscoveredEntries(kind);
-		Set set = getDisabledSet(kind);
+		Set<String> set = getDisabledSet(kind);
 		if(set != null && set.size() != 0){
 			disabledNameSet.addAll(set);
 		}
 		return entries;
 	}
 	
-	protected void removeInexistent(ICLanguageSettingEntry[] entries, Set set){
-		Set copy = new HashSet(set);
+	protected void removeInexistent(ICLanguageSettingEntry[] entries, Set<String> set){
+		Set<String> copy = new HashSet<String>(set);
 		for(int i = 0; i < entries.length; i++){
 			copy.remove(entries[i].getName());
 		}
@@ -120,25 +122,25 @@ public abstract class UserAndDiscoveredEntryLanguageData extends
 		return getEntriesFromStore(kind);
 	}
 
-	protected void setDisabledDiscoveredNames(int kind, Set disabledNameSet){
-		setDisabledSet(kind, disabledNameSet != null ? new HashSet(disabledNameSet) : null);
+	protected void setDisabledDiscoveredNames(int kind, Set<String> disabledNameSet){
+		setDisabledSet(kind, disabledNameSet != null ? new HashSet<String>(disabledNameSet) : null);
 	}
 	
-	protected Set getDisabledSet(int kind){
+	protected Set<String> getDisabledSet(int kind){
 		if(fDisabledNameSetStore != null){
-			return (Set)fDisabledNameSetStore.get(kind);
+			return fDisabledNameSetStore.get(kind);
 		}
 		return null;
 	}
 	
-	protected void setDisabledSet(int kind, Set set){
+	protected void setDisabledSet(int kind, Set<String> set){
 		if(set == null || set.size() == 0){
 			if(fDisabledNameSetStore != null){
 				fDisabledNameSetStore.put(kind, null);
 			}
 		} else {
 			if(fDisabledNameSetStore == null)
-				fDisabledNameSetStore = new KindBasedStore();
+				fDisabledNameSetStore = new KindBasedStore<Set<String>>();
 			fDisabledNameSetStore.put(kind, set);
 		}
 	}

@@ -53,7 +53,7 @@ public abstract class UserAndDiscoveredEntryStorage extends AbstractEntryStorage
 			break;
 		case DISCOVERY_ENTRIES_LEVEL:
 			if(level != null){
-				Set set = level.getOverrideSet();
+				Set<String> set = level.getOverrideSet();
 				setDisabledDiscoveredNames(set);
 			} else {
 				setDisabledDiscoveredNames(null);
@@ -68,7 +68,7 @@ public abstract class UserAndDiscoveredEntryStorage extends AbstractEntryStorage
 			level.addEntries(getUserEntries());
 			break;
 		case DISCOVERY_ENTRIES_LEVEL:
-			HashSet set = new HashSet();
+			HashSet<String> set = new HashSet<String>();
 			ICLanguageSettingEntry[] entries = getDiscoveredEntries(set);
 			level.addEntries(entries);
 			if(set.size() != 0)
@@ -85,7 +85,7 @@ public abstract class UserAndDiscoveredEntryStorage extends AbstractEntryStorage
 	
 	protected abstract ICLanguageSettingEntry[] getUserEntries();
 
-	protected abstract void setDisabledDiscoveredNames(Set disabledNameSet);
+	protected abstract void setDisabledDiscoveredNames(Set<String> disabledNameSet);
 
-	protected abstract ICLanguageSettingEntry[] getDiscoveredEntries(Set disabledNameSet);
+	protected abstract ICLanguageSettingEntry[] getDiscoveredEntries(Set<String> disabledNameSet);
 }

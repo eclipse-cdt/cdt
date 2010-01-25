@@ -41,12 +41,10 @@ import org.eclipse.cdt.dsf.service.DsfServiceEventHandler;
 import org.eclipse.cdt.dsf.service.DsfServicesTracker;
 import org.eclipse.cdt.dsf.service.DsfSession;
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.MultiStatus;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
-import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.debug.core.DebugEvent;
 import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.DebugPlugin;
@@ -269,15 +267,7 @@ public class GdbLaunch extends DsfLaunch
                     // Fire a terminate event for the memory retrieval object so
                     // that the hosting memory views can clean up. See 255120 and
                     // 283586
-                    new Job("Dispatch GDB Memory retrieval terminate event.") { //$NON-NLS-1$
-                        { setSystem(true); }
-                    
-                        @Override
-                        protected IStatus run(IProgressMonitor monitor) {
-                            DebugPlugin.getDefault().fireDebugEventSet( new DebugEvent[] { new DebugEvent(fMemRetrieval, DebugEvent.TERMINATE) });
-                            return Status.OK_STATUS;
-                        }
-                    }.schedule();
+                    DebugPlugin.getDefault().fireDebugEventSet( new DebugEvent[] { new DebugEvent(fMemRetrieval, DebugEvent.TERMINATE) });
 
                     // endSession takes a full dispatch to distribute the 
                     // session-ended event, finish step only after the dispatch.

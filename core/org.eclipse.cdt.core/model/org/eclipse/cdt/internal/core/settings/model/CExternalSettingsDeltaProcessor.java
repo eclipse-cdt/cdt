@@ -90,10 +90,10 @@ public class CExternalSettingsDeltaProcessor {
 				current = new ICSourceEntry[0];
 			}
 		}
-		List newEntries = calculateUpdatedEntries(current, diff[0], diff[1]);
+		List<ICSettingEntry> newEntries = calculateUpdatedEntries(current, diff[0], diff[1]);
 		if(newEntries != null){
 			try {
-				cfgDes.setSourceEntries((ICSourceEntry[])newEntries.toArray(new ICSourceEntry[newEntries.size()]));
+				cfgDes.setSourceEntries(newEntries.toArray(new ICSourceEntry[newEntries.size()]));
 			} catch (WriteAccessException e) {
 				CCorePlugin.log(e);
 			} catch (CoreException e) {
@@ -121,10 +121,10 @@ public class CExternalSettingsDeltaProcessor {
 			}
 		}
 
-		List newEntries = calculateUpdatedEntries(current, diff[0], diff[1]);
+		List<ICSettingEntry> newEntries = calculateUpdatedEntries(current, diff[0], diff[1]);
 		if(newEntries != null){
 			try {
-				bs.setOutputDirectories((ICOutputEntry[])newEntries.toArray(new ICOutputEntry[newEntries.size()]));
+				bs.setOutputDirectories(newEntries.toArray(new ICOutputEntry[newEntries.size()]));
 			} catch (WriteAccessException e) {
 				CCorePlugin.log(e);
 			}
@@ -207,8 +207,8 @@ public class CExternalSettingsDeltaProcessor {
 		return changed;
 	}
 	
-	private static List calculateUpdatedEntries(ICSettingEntry current[], ICSettingEntry added[], ICSettingEntry removed[]){
-		LinkedHashMap map = new LinkedHashMap();
+	private static List<ICSettingEntry> calculateUpdatedEntries(ICSettingEntry current[], ICSettingEntry added[], ICSettingEntry removed[]){
+		LinkedHashMap<EntryContentsKey, ICSettingEntry> map = new LinkedHashMap<EntryContentsKey, ICSettingEntry>();
 		boolean changed = false;
 		if(added != null){
 			CDataUtil.fillEntriesMapByContentsKey(map, added);
@@ -227,14 +227,14 @@ public class CExternalSettingsDeltaProcessor {
 			for(int i = 0; i < removed.length; i++){
 				ICSettingEntry entry = removed[i];
 				EntryContentsKey cKey = new EntryContentsKey(entry);
-				ICSettingEntry cur = (ICSettingEntry)map.get(cKey);
+				ICSettingEntry cur = map.get(cKey);
 				if(cur != null && !cur.isBuiltIn()){
 					map.remove(cKey);
 					changed = true;
 				}
 			}
 		}
-		return changed ? new ArrayList(map.values()) : null;
+		return changed ? new ArrayList<ICSettingEntry>(map.values()) : null;
 	}
 	
 	private static boolean isSettingCompatible(ICLanguageSetting setting, CExternalSetting provider){

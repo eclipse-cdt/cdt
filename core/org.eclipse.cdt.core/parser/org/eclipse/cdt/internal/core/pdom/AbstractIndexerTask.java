@@ -560,7 +560,7 @@ public abstract class AbstractIndexerTask extends PDOMWriter {
 					if (scanInfo != null) {
 						long start= System.currentTimeMillis();
 						IASTTranslationUnit ast= createAST(code, lang, scanInfo, fASTOptions, monitor);
-						fStatistics.fParsingTime += System.currentTimeMillis()-start;
+						fStatistics.fParsingTime += System.currentTimeMillis() - start;
 						if (ast != null) {
 							if (fShowActivity || fShowInclusionProblems) {
 								IASTNode node= ast.getNodeSelector(null).findEnclosingNode(0,6);
